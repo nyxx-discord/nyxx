@@ -1,0 +1,6 @@
+name: DiscordDart
+version: 0.1.0
+description: A Discord library for Dart
+author: Hackzzila
+dependencies:
+  http: any
