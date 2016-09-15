@@ -94,6 +94,9 @@ class Client {
     }
   }
 
+  /// Sends a message to `channel`
+  ///
+  ///    sendmessage("channelid", "My message!");
   sendMessage(String channel, String content) async {
     var r = await this._api.post('channels/$channel/messages', {"content": content});
     Map res = JSON.decode(r.body);
