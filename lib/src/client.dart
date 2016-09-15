@@ -23,11 +23,11 @@ class Client {
     "message": []
   };
 
-  _heartbeat() {
+  Map _heartbeat() {
     return JSON.encode({"op": 1,"d": this._lastS});
   }
 
-  _handleMsg(msg) {
+  void _handleMsg(msg) {
     //print('Message received: $msg');
     var json = JSON.decode(msg);
 
@@ -85,7 +85,7 @@ class Client {
     });
   }
 
-  onEvent(String event, function) {
+  int onEvent(String event, function) {
     if (this._handlers.keys.contains(event.toLowerCase())) {
       this._handlers[event].add(function);
       return this._handlers[event].indexOf(function);
@@ -97,7 +97,7 @@ class Client {
   /// Sends a message to `channel`
   ///
   ///    sendmessage("channelid", "My message!");
-  sendMessage(String channel, String content) async {
+  Future sendMessage(String channel, String content) async {
     var r = await this._api.post('channels/$channel/messages', {"content": content});
     Map res = JSON.decode(r.body);
 
