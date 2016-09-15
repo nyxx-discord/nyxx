@@ -1,6 +1,7 @@
-name: DiscordDart
+name: discord_dart
 version: 0.1.0
 description: A Discord library for Dart
-author: Hackzzila
+author: Hackzzila <admin@hackzzila.com>
+homepage: https://github.com/Hackzzila/Discord-Dart
 dependencies:
-  http: any
+  http: ">=0.11.3+9 <0.12.0"
