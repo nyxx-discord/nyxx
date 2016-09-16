@@ -4,9 +4,12 @@ import 'dart:async';
 import 'objects.dart';
 import 'http.dart';
 
+/// The base class.
+/// It contains all of the methods.
 class Client {
   Map _defaultOptions = {
    "bot": true,
+   "debug": false,
     "internal": {
       "ws": {
         "large_threshold": 100
@@ -16,19 +19,40 @@ class Client {
 
   var _socket;
   int _lastS = null;
+  String _sessionID;
   API _api = new API();
-  ObjectManager _om;
   Map _handlers = {
     "ready": [],
-    "message": []
+    "message": [],
+    "messageDelete": [],
+    "messageEdit": []
   };
 
-  Map _heartbeat() {
+  /// The token passed into the constructor.
+  String token;
+
+  /// The options passed into the constuctor.
+  ///
+  ///     {
+  ///      "bot": true,
+  ///      "debug":  false,
+  ///       "internal": {
+  ///         "ws": {
+  ///           "large_threshold": 100
+  ///         }
+  ///       }
+  ///     }
+  Map<String, Object> options;
+  //Map<String, Guild> guilds = {};
+
+  String _heartbeat() {
     return JSON.encode({"op": 1,"d": this._lastS});
   }
 
   void _handleMsg(msg) {
-    //print('Message received: $msg');
+    if (this.options['debug']) {
+      print('Message received: $msg\n');
+    }
     var json = JSON.decode(msg);
 
     if (json['s'] != null) {
@@ -52,20 +76,44 @@ class Client {
           "compress": false
         }
       }));
-    } else if (json["op"] == 0) {
+    } /*else if (json['op'] == 7) {
+      this._socket.add(JSON.encode({
+        "token": this.token,
+        "session_id": this._sessionID,
+        "seq": this._lastS
+      }));
+    }*/
+
+    else if (json["op"] == 0) {
       if (json['t'] == "READY") {
+        this._sessionID = json['d']['session_id'];
         this._handlers['ready'].forEach((function) => function());
-      } else if (json['t'] == "MESSAGE_CREATE") {
+      }
+
+      else if (json['t'] == "MESSAGE_CREATE") {
         Message message = new Message(json['d']);
         this._handlers['message'].forEach((function) => function(message));
       }
+
+      else if (json['t'] == "MESSAGE_DELETE") {
+        this._handlers['messageDelete'].forEach((function) => function(json['d']['id'], json['d']['channel_id']));
+      }
+
+      else if (json['t'] == "MESSAGE_UPDATE") {
+        if (!json['d'].containsKey('embeds')) {
+          Message message = new Message(json['d']);
+          this._handlers['messageEdit'].forEach((function) => function(message));
+        }
+      }
+
+      /*else if (json['t'] == "GUILD_CREATE") {
+        Guild guild = new Guild(json['d'], true);
+        this.guilds[guild.id] =  guild;
+
+        //this._handlers['message'].forEach((function) => function(message));
+      }*/
     }
   }
-
-
-
-  String token;
-  Map options;
 
   Client(String token, [Map options = const {}]) {
     this.options = this._defaultOptions..addAll(options);
@@ -77,7 +125,6 @@ class Client {
     }
 
     this._api.headers['Authorization'] = this.token;
-    this._om = new ObjectManager(this._api);
 
     WebSocket.connect('wss://gateway.discord.gg?v=6&encoding=json').then((socket) {
       this._socket = socket;
@@ -85,8 +132,14 @@ class Client {
     });
   }
 
+  /// Used for registering event handlers.
+  ///
+  /// Returns the index of the current handler.
+  ///     Client.onEvent("message", (m) {
+  ///       print(m.content);
+  ///     })
   int onEvent(String event, function) {
-    if (this._handlers.keys.contains(event.toLowerCase())) {
+    if (this._handlers.keys.contains(event)) {
       this._handlers[event].add(function);
       return this._handlers[event].indexOf(function);
     } else {
@@ -94,10 +147,12 @@ class Client {
     }
   }
 
-  /// Sends a message to `channel`
+  /// Sends a message.
   ///
-  ///    sendmessage("channelid", "My message!");
-  Future sendMessage(String channel, String content) async {
+  /// Throws an [Exception] if the HTTP request errored.
+  /// Returns a [Message] object.
+  ///     Client.sendMessage("channel id", "My content!");
+  Future<Message> sendMessage(String channel, String content) async {
     var r = await this._api.post('channels/$channel/messages', {"content": content});
     Map res = JSON.decode(r.body);
 
@@ -105,6 +160,127 @@ class Client {
       return new Message(res);
     } else {
       throw new Exception("${res['code']}: ${res['message']}");
+    }
+  }
+
+  /// Deletes a message.
+  ///
+  /// Throws an [Exception] if the HTTP request errored.
+  /// Returns nothing.
+  ///     Client.sendMessage("channel id", "message id");
+  Future deleteMessage(String channel, String message) async {
+    var r = await this._api.delete('channels/$channel/messages/$message');
+
+    if (r.statusCode == 204) {
+      return;
+    } else {
+      throw new Exception("'deleteMessage' error.");
+    }
+  }
+
+  /// Edits a message.
+  ///
+  /// Throws an [Exception] if the HTTP request errored.
+  /// Returns a [Message] object.
+  ///     Client.sendMessage("channel id", "message id", "My edited content!");
+  Future<Message> editMessage(String channel, String message, String content) async {
+    var r = await this._api.patch('channels/$channel/messages/$message', {"content": content});
+    Map res = JSON.decode(r.body);
+
+    if (r.statusCode == 200) {
+      return new Message(res);
+    } else {
+      throw new Exception("'deleteMessage' error.");
+    }
+  }
+
+  /// Gets a [Channel] object.
+  ///
+  /// Throws an [Exception] if the HTTP request errored.
+  /// Returns a [Channel] object.
+  ///     Client.getChannel("channel id");
+  Future<Channel> getChannel(String id) async {
+    var r = await this._api.get('channels/$id');
+    Map res = JSON.decode(r.body);
+    if (r.statusCode == 200) {
+      return new Channel(res);
+    } else {
+      throw new Exception("${res['code']}:${res['message']}");
+    }
+  }
+
+  /// Gets a [Guild] object.
+  ///
+  /// Throws an [Exception] if the HTTP request errored.
+  /// Returns a [Guild] object.
+  ///     Client.getGuild("guild id");
+  Future<Guild> getGuild(String id) async {
+    var r = await this._api.get('guilds/$id');
+    Map res = JSON.decode(r.body);
+    if (r.statusCode == 200) {
+      return new Guild(res, false);
+    } else {
+      throw new Exception("${res['code']}:${res['message']}");
+    }
+  }
+
+  /// Gets a [Member] object.
+  ///
+  /// Throws an [Exception] if the HTTP request errored.
+  /// Returns a [Member] object.
+  ///     Client.getMember("guild id", "user id");
+  Future<Member> getMember(String guild, String member) async {
+    var r = await this._api.get('guilds/$guild/members/$member');
+    Map res = JSON.decode(r.body);
+    if (r.statusCode == 200) {
+      return new Member(res);
+    } else {
+      throw new Exception("${res['code']}:${res['message']}");
+    }
+  }
+
+  /// Gets a [User] object.
+  ///
+  /// Throws an [Exception] if the HTTP request errored.
+  /// Returns a [User] object.
+  ///     Client.getUser("user id");
+  Future<User> getUser(String id) async {
+    var r = await this._api.get('users/$id');
+    Map res = JSON.decode(r.body);
+    if (r.statusCode == 200) {
+      return new User(res);
+    } else {
+      throw new Exception("${res['code']}:${res['message']}");
+    }
+  }
+
+  /// Gets the [User] object for the current logged in user.
+  ///
+  /// Throws an [Exception] if the HTTP request errored.
+  /// Returns a [User] object.
+  ///     Client.getUser("user id");
+  Future<User> getMe() async {
+    var r = await this._api.get('users/@me');
+    Map res = JSON.decode(r.body);
+    if (r.statusCode == 200) {
+      return new User(res);
+    } else {
+      throw new Exception("${res['code']}:${res['message']}");
+    }
+  }
+
+  /// Gets an [Invite] object.
+  ///
+  /// Throws an [Exception] if the HTTP request errored.
+  /// Returns a [Invite] object.
+  ///     Client.getInvite("invite code");
+  Future<Invite> getInvite(String code) async {
+    var r = await this._api.get('invites/$code');
+    Map res = JSON.decode(r.body);
+    if (r.statusCode == 200) {
+      return new Invite(res);
+    } else {
+      throw new Exception("${res['code']}:${res['message']}");
     }
   }
 }

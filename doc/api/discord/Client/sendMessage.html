@@ -94,6 +94,14 @@
       <li class="inherited"><a href="discord/Client/operator_equals.html">operator ==</a></li>
     
       <li class="section-title"><a href="discord/Client-class.html#instance-methods">Methods</a></li>
+      <li><a href="discord/Client/deleteMessage.html">deleteMessage</a></li>
+      <li><a href="discord/Client/editMessage.html">editMessage</a></li>
+      <li><a href="discord/Client/getChannel.html">getChannel</a></li>
+      <li><a href="discord/Client/getGuild.html">getGuild</a></li>
+      <li><a href="discord/Client/getInvite.html">getInvite</a></li>
+      <li><a href="discord/Client/getMe.html">getMe</a></li>
+      <li><a href="discord/Client/getMember.html">getMember</a></li>
+      <li><a href="discord/Client/getUser.html">getUser</a></li>
       <li class="inherited"><a href="discord/Client/noSuchMethod.html">noSuchMethod</a></li>
       <li><a href="discord/Client/onEvent.html">onEvent</a></li>
       <li><a href="discord/Client/sendMessage.html">sendMessage</a></li>
@@ -104,17 +112,20 @@
 
   <div class="col-xs-12 col-sm-9 col-md-8 main-content">
     <section class="multi-line-signature">
-      <span class="returntype">Future</span>
+      <span class="returntype">Future&lt;<a href="discord/Message-class.html">Message</a>&gt;</span>
       <span class="name ">sendMessage</span>(<wbr><span class="parameter" id="sendMessage-param-channel"><span class="type-annotation">String</span> <span class="parameter-name">channel</span></span>, <span class="parameter" id="sendMessage-param-content"><span class="type-annotation">String</span> <span class="parameter-name">content</span></span>)
     </section>
     <section class="desc markdown">
-      <p>Sends a message to <code>channel</code></p>
-<p>   sendmessage("channelid", "My message!");</p>
+      <p>Sends a message.</p>
+<p>Throws an <code>Exception</code> if the HTTP request errored.
+Returns a <a href="discord/Message-class.html">Message</a> object.</p>
+<pre class="prettyprint lang-dart"><code>Client.sendMessage("channel id", "My content!");
+</code></pre>
     </section>
     
     <section class="summary source-code" id="source">
       <h2><span>Source</span> </h2>
-      <pre class="prettyprint lang-dart">sendMessage(String channel, String content) async {
+      <pre class="prettyprint lang-dart">Future&lt;Message&gt; sendMessage(String channel, String content) async {
   var r = await this._api.post(&#39;channels&#47;$channel&#47;messages&#39;, {&quot;content&quot;: content});
   Map res = JSON.decode(r.body);
 
@@ -136,7 +147,7 @@
     <div class="container">
       <p class="text-center">
         <span class="no-break">
-          discord_dart 0.1.1
+          discord_dart 0.2.0
         </span>
         &bull;
         <span class="no-break">

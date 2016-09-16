@@ -91,6 +91,14 @@
       <li class="inherited"><a href="discord/Client/operator_equals.html">operator ==</a></li>
     
       <li class="section-title"><a href="discord/Client-class.html#instance-methods">Methods</a></li>
+      <li><a href="discord/Client/deleteMessage.html">deleteMessage</a></li>
+      <li><a href="discord/Client/editMessage.html">editMessage</a></li>
+      <li><a href="discord/Client/getChannel.html">getChannel</a></li>
+      <li><a href="discord/Client/getGuild.html">getGuild</a></li>
+      <li><a href="discord/Client/getInvite.html">getInvite</a></li>
+      <li><a href="discord/Client/getMe.html">getMe</a></li>
+      <li><a href="discord/Client/getMember.html">getMember</a></li>
+      <li><a href="discord/Client/getUser.html">getUser</a></li>
       <li class="inherited"><a href="discord/Client/noSuchMethod.html">noSuchMethod</a></li>
       <li><a href="discord/Client/onEvent.html">onEvent</a></li>
       <li><a href="discord/Client/sendMessage.html">sendMessage</a></li>
@@ -102,12 +110,25 @@
   <div class="col-xs-12 col-sm-9 col-md-8 main-content">
 
     <section class="multi-line-signature">
-      <span class="returntype">Map</span>
+      <span class="returntype">Map&lt;String, Object&gt;</span>
         <span class="name ">options</span>        <div class="features">
           read / write
         </div>
     </section>
 
+    <section class="desc markdown">
+      <p>The options passed into the constuctor.</p>
+<pre class="prettyprint lang-dart"><code>{
+ "bot": true,
+ "debug":  false,
+  "internal": {
+    "ws": {
+      "large_threshold": 100
+    }
+  }
+}
+</code></pre>
+    </section>
     
 
 
@@ -121,7 +142,7 @@
     <div class="container">
       <p class="text-center">
         <span class="no-break">
-          discord_dart 0.1.1
+          discord_dart 0.2.0
         </span>
         &bull;
         <span class="no-break">

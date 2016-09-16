@@ -95,6 +95,14 @@
       <li class="inherited"><a href="discord/Client/operator_equals.html">operator ==</a></li>
     
       <li class="section-title"><a href="discord/Client-class.html#instance-methods">Methods</a></li>
+      <li><a href="discord/Client/deleteMessage.html">deleteMessage</a></li>
+      <li><a href="discord/Client/editMessage.html">editMessage</a></li>
+      <li><a href="discord/Client/getChannel.html">getChannel</a></li>
+      <li><a href="discord/Client/getGuild.html">getGuild</a></li>
+      <li><a href="discord/Client/getInvite.html">getInvite</a></li>
+      <li><a href="discord/Client/getMe.html">getMe</a></li>
+      <li><a href="discord/Client/getMember.html">getMember</a></li>
+      <li><a href="discord/Client/getUser.html">getUser</a></li>
       <li class="inherited"><a href="discord/Client/noSuchMethod.html">noSuchMethod</a></li>
       <li><a href="discord/Client/onEvent.html">onEvent</a></li>
       <li><a href="discord/Client/sendMessage.html">sendMessage</a></li>
@@ -122,7 +130,6 @@
   }
 
   this._api.headers[&#39;Authorization&#39;] = this.token;
-  this._om = new ObjectManager(this._api);
 
   WebSocket.connect(&#39;wss:&#47;&#47;gateway.discord.gg?v=6&amp;encoding=json&#39;).then((socket) {
     this._socket = socket;
@@ -141,7 +148,7 @@
     <div class="container">
       <p class="text-center">
         <span class="no-break">
-          discord_dart 0.1.1
+          discord_dart 0.2.0
         </span>
         &bull;
         <span class="no-break">
