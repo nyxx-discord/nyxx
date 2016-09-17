@@ -10,5 +10,6 @@ export 'objects/Invite.dart';
 export 'objects/InviteChannel.dart';
 export 'objects/InviteGuild.dart';
 export 'objects/Member.dart';
+export 'objects/MessageOptions.dart';
 export 'objects/Message.dart';
 export 'objects/User.dart';

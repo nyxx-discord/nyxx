@@ -146,8 +146,16 @@ class Client {
   ///
   /// Throws an [Exception] if the HTTP request errored.
   ///     Client.sendMessage("channel id", "My content!");
-  Future<Message> sendMessage(String channel, String content) async {
-    var r = await this._api.post('channels/$channel/messages', {"content": content});
+  Future<Message> sendMessage(String channel, String content, [MessageOptions options]) async {
+    if (options == null) {
+      options = new MessageOptions();
+    }
+
+    if (options.disableEveryone || this.options.disableEveryone) {
+      content = content.replaceAll("@everyone", "@\u200Beveryone").replaceAll("@here", "@\u200Bhere");
+    }
+
+    var r = await this._api.post('channels/$channel/messages', {"content": content, "tts": options.tts, "nonce": options.nonce});
     Map res = JSON.decode(r.body);
 
     if (r.statusCode == 200) {
