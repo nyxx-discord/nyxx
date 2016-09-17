@@ -1,4 +1,4 @@
-import '../objects.dart';
+import '../../discord.dart';
 
 /// A channel.
 class Channel {
@@ -19,7 +19,7 @@ class Channel {
 
   /// The ID for the guild that the channel is in, only available if the channel
   /// is not private.
-  String guildID;
+  Guild guild;
 
   /// The channel's position in the channel list.
   int position;
@@ -34,23 +34,21 @@ class Channel {
   double createdAt;
 
   /// Whether or not the channel is a DM.
-  bool isPrivate;
+  bool isPrivate = false;
 
-  Channel(Map data) {
+  Channel(Client client, Map data, [Guild guild]) {
     this.name = data['name'];
     this.id = data['id'];
     this.type = data['type'];
-    this.guildID = data['guild_id'];
     this.position = data['position'];
-    this.isPrivate = data['is_private'];
     this.createdAt = (int.parse(this.id) / 4194304) + 1420070400000;
+    this.topic = data['topic'];
+    this.lastMessageID = data['last_message_id'];
+    this.bitrate = data['bitrate'];
+    this.userLimit = data['user_limit'];
 
-    if (this.type == "text") {
-      this.topic = data['topic'];
-      this.lastMessageID = data['last_message_id'];
-    } else {
-      this.bitrate = data['bitrate'];
-      this.userLimit = data['user_limit'];
+    if (guild != null) {
+      this.guild = guild;
     }
   }
 }

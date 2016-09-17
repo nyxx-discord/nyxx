@@ -1,4 +1,5 @@
-import '../objects.dart';
+import '../../discord.dart';
+
 
 /// A guild.
 class Guild {
@@ -20,6 +21,9 @@ class Guild {
   /// The channel ID for the guild's widget if enabled.
   String embedChannelID;
 
+  /// The guild's default channel.
+  Channel defaultChannel;
+
   /// The guild's AFK timeout.
   int afkTimeout;
 
@@ -38,8 +42,7 @@ class Guild {
   /// A timestamp for when the guild was created.
   double createdAt;
 
-  /// Whether or not the guild has over 100 members, it is only available in
-  /// `guildCreate` events, not via `Client.getGuild()`.
+  /// Whether or not the guild has over 100 members.
   bool large;
 
   /// If the guild's widget is enabled.
@@ -48,11 +51,13 @@ class Guild {
   /// The guild owner's ID
   User ownerID;
 
-  /// The guild's members, it is only available in
-  /// `guildCreate` events, not via `Client.getGuild()`.
+  /// The guild's members.
   Map<String, Member> members = {};
 
-  Guild(Map data, bool guildCreate) {
+  /// The guild's channels.
+  Map<String, Channel> channels = {};
+
+  Guild(Client client, Map data, bool guildCreate) {
     this.name = data['name'];
     this.id = data['id'];
     this.icon = data['icon'];
@@ -71,12 +76,17 @@ class Guild {
     if (guildCreate) {
       this.large = data['large'];
       //this.roles = JSON.decode(data['roles']);
-      data['members'].forEach((i) {
-        //print(data['members'][i]);
-        Member member = new Member(data['members'][0]);
-        print(member);
+      data['members'].forEach((o) {
+        Member member = new Member(o);
         this.members[member.user.id] = member;
       });
+
+      data['channels'].forEach((o) {
+        Channel channel = new Channel(client, o, this);
+        this.channels[channel.id] = channel;
+      });
+
+      this.defaultChannel = this.channels[this.id];
     }
   }
 }

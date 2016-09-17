@@ -1,4 +1,4 @@
-import '../objects.dart';
+import '../../discord.dart';
 
 /// A message.
 class Message {
@@ -17,8 +17,11 @@ class Message {
   /// The timestamp of when the message was last edited, null if not edited.
   String editedTimestamp;
 
-  /// The ID for the message's channel.
-  String channel;
+  /// The message's channel.
+  Channel channel;
+
+  /// The message's guild.
+  Guild guild;
 
   /// The message's author.
   User author;
@@ -47,14 +50,15 @@ class Message {
   /// Whether or @everyone was mentioned in the message.
   bool mentionEveryone;
 
-  Message(Map data) {
+  Message(Client client, Map data) {
     this.content = data['content'];
     this.id = data['id'];
     this.nonce = data['nonce'];
     this.timestamp = data['timestamp'];
     this.editedTimestamp = data['edited_timestamp'];
     this.author = new User(data['author']);
-    this.channel = data['channel_id'];
+    this.channel = client.channels[data['channel_id']];
+    this.guild = this.channel.guild;
     this.pinned = data['pinned'];
     this.tts = data['tts'];
     this.mentionEveryone = data['mention_everyone'];
