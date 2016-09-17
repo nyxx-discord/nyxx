@@ -9,7 +9,7 @@ main() {
 
   bot.onEvent('message', (m) async {
     if (m.content == "!ping") {
-      bot.sendMessage(m.channel, "");
+      bot.sendMessage(m.channel, "Pong!");
     }
   });
 }
