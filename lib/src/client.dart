@@ -7,16 +7,6 @@ import 'http.dart';
 /// The base class.
 /// It contains all of the methods.
 class Client {
-  Map _defaultOptions = {
-   "bot": true,
-   "debug": false,
-    "internal": {
-      "ws": {
-        "large_threshold": 100
-      }
-    }
-  };
-
   var _socket;
   int _lastS = null;
   String _sessionID;
@@ -25,35 +15,28 @@ class Client {
     "ready": [],
     "message": [],
     "messageDelete": [],
-    "messageEdit": []
+    "messageEdit": [],
+    "debug": [],
+    "loginError": []
   };
 
   /// The token passed into the constructor.
   String token;
 
-  /// The options passed into the constuctor.
-  ///
-  ///     {
-  ///      "bot": true,
-  ///      "debug":  false,
-  ///       "internal": {
-  ///         "ws": {
-  ///           "large_threshold": 100
-  ///         }
-  ///       }
-  ///     }
-  Map<String, Object> options;
-  //Map<String, Guild> guilds = {};
+  /// The client's options.
+  ClientOptions options;
 
-  String _heartbeat() {
-    return JSON.encode({"op": 1,"d": this._lastS});
+  /// The logged in user.
+  ClientUser user;
+
+  void _heartbeat() {
+    this._socket.add(JSON.encode({"op": 1,"d": this._lastS}));
   }
 
   void _handleMsg(msg) {
-    if (this.options['debug']) {
-      print('Message received: $msg\n');
-    }
     var json = JSON.decode(msg);
+
+    this._handlers['debug'].forEach((function) => function(json));
 
     if (json['s'] != null) {
       this._lastS = json['s'];
@@ -63,7 +46,7 @@ class Client {
 
     if (json["op"] == 10) {
       const heartbeat_interval = const Duration(milliseconds: 41250);
-      new Timer.periodic(heartbeat_interval, (Timer t) => this._socket.add(this._heartbeat()));
+      new Timer.periodic(heartbeat_interval, (Timer t) => this._heartbeat());
 
       this._socket.add(JSON.encode({
         "op": 2,
@@ -72,11 +55,17 @@ class Client {
           "properties": {
             "\$browser": "Discord Dart"
           },
-          "large_threshold": this.options['internal']['ws']['large_threshold'],
+          "large_threshold": 100,
           "compress": false
         }
       }));
-    } /*else if (json['op'] == 7) {
+    }
+
+    else if (json['op'] == 9) {
+      this._handlers['loginError'].forEach((function) => function());
+    }
+
+    /*else if (json['op'] == 7) {
       this._socket.add(JSON.encode({
         "token": this.token,
         "session_id": this._sessionID,
@@ -87,6 +76,14 @@ class Client {
     else if (json["op"] == 0) {
       if (json['t'] == "READY") {
         this._sessionID = json['d']['session_id'];
+        this.user = new ClientUser(json['d']['user']);
+
+        if (this.user.bot) {
+          this._api.headers['Authorization'] = "Bot ${this.token}";
+        } else {
+          this._api.headers['Authorization'] = this.token;
+        }
+
         this._handlers['ready'].forEach((function) => function());
       }
 
@@ -115,16 +112,14 @@ class Client {
     }
   }
 
-  Client(String token, [Map options = const {}]) {
-    this.options = this._defaultOptions..addAll(options);
-
-    if (this.options['bot']) {
-      this.token = "Bot $token";
+  Client(String token, [ClientOptions options]) {
+    if (options == null) {
+      this.options = new ClientOptions();
     } else {
-      this.token = token;
+      this.options = options;
     }
 
-    this._api.headers['Authorization'] = this.token;
+    this.token = token;
 
     WebSocket.connect('wss://gateway.discord.gg?v=6&encoding=json').then((socket) {
       this._socket = socket;
@@ -150,7 +145,6 @@ class Client {
   /// Sends a message.
   ///
   /// Throws an [Exception] if the HTTP request errored.
-  /// Returns a [Message] object.
   ///     Client.sendMessage("channel id", "My content!");
   Future<Message> sendMessage(String channel, String content) async {
     var r = await this._api.post('channels/$channel/messages', {"content": content});
@@ -166,7 +160,6 @@ class Client {
   /// Deletes a message.
   ///
   /// Throws an [Exception] if the HTTP request errored.
-  /// Returns nothing.
   ///     Client.sendMessage("channel id", "message id");
   Future deleteMessage(String channel, String message) async {
     var r = await this._api.delete('channels/$channel/messages/$message');
@@ -181,7 +174,6 @@ class Client {
   /// Edits a message.
   ///
   /// Throws an [Exception] if the HTTP request errored.
-  /// Returns a [Message] object.
   ///     Client.sendMessage("channel id", "message id", "My edited content!");
   Future<Message> editMessage(String channel, String message, String content) async {
     var r = await this._api.patch('channels/$channel/messages/$message', {"content": content});
@@ -190,14 +182,13 @@ class Client {
     if (r.statusCode == 200) {
       return new Message(res);
     } else {
-      throw new Exception("'deleteMessage' error.");
+      throw new Exception("${res['code']}:${res['message']}");
     }
   }
 
   /// Gets a [Channel] object.
   ///
   /// Throws an [Exception] if the HTTP request errored.
-  /// Returns a [Channel] object.
   ///     Client.getChannel("channel id");
   Future<Channel> getChannel(String id) async {
     var r = await this._api.get('channels/$id');
@@ -212,7 +203,6 @@ class Client {
   /// Gets a [Guild] object.
   ///
   /// Throws an [Exception] if the HTTP request errored.
-  /// Returns a [Guild] object.
   ///     Client.getGuild("guild id");
   Future<Guild> getGuild(String id) async {
     var r = await this._api.get('guilds/$id');
@@ -227,7 +217,6 @@ class Client {
   /// Gets a [Member] object.
   ///
   /// Throws an [Exception] if the HTTP request errored.
-  /// Returns a [Member] object.
   ///     Client.getMember("guild id", "user id");
   Future<Member> getMember(String guild, String member) async {
     var r = await this._api.get('guilds/$guild/members/$member');
@@ -242,7 +231,6 @@ class Client {
   /// Gets a [User] object.
   ///
   /// Throws an [Exception] if the HTTP request errored.
-  /// Returns a [User] object.
   ///     Client.getUser("user id");
   Future<User> getUser(String id) async {
     var r = await this._api.get('users/$id');
@@ -254,25 +242,9 @@ class Client {
     }
   }
 
-  /// Gets the [User] object for the current logged in user.
-  ///
-  /// Throws an [Exception] if the HTTP request errored.
-  /// Returns a [User] object.
-  ///     Client.getUser("user id");
-  Future<User> getMe() async {
-    var r = await this._api.get('users/@me');
-    Map res = JSON.decode(r.body);
-    if (r.statusCode == 200) {
-      return new User(res);
-    } else {
-      throw new Exception("${res['code']}:${res['message']}");
-    }
-  }
-
   /// Gets an [Invite] object.
   ///
   /// Throws an [Exception] if the HTTP request errored.
-  /// Returns a [Invite] object.
   ///     Client.getInvite("invite code");
   Future<Invite> getInvite(String code) async {
     var r = await this._api.get('invites/$code');
@@ -281,6 +253,25 @@ class Client {
       return new Invite(res);
     } else {
       throw new Exception("${res['code']}:${res['message']}");
+    }
+  }
+
+  /// Gets a [Message] object. Only usable by bot accounts.
+  ///
+  /// Throws an [Exception] if the HTTP request errored or if the client user
+  /// is not a bot.
+  ///     Client.getMessage("channel id", "message id");
+  Future<Message> getMessage(String channel, String message) async {
+    if (this.user.bot) {
+      var r = await this._api.get('channels/$channel/messages/$message');
+      Map res = JSON.decode(r.body);
+      if (r.statusCode == 200) {
+        return new Message(res);
+      } else {
+        throw new Exception("${res['code']}:${res['message']}");
+      }
+    } else {
+      throw new Exception("'getMessage' is only usable by bot accounts.");
     }
   }
 }
