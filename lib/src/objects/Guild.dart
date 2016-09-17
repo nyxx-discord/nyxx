@@ -63,7 +63,7 @@ class Guild {
     this.memberCount = data['member_count'];
     this.verificationLevel = data['verification_level'];
     this.notificationLevel = data['default_message_notifications'];
-    this.mfaLevel = data['default_message_notifications'];
+    this.mfaLevel = data['mfa_level'];
     this.embedEnabled = data['embed_enabled'];
     this.ownerID = data['owner_id'];
     this.createdAt = (int.parse(this.id) / 4194304) + 1420070400000;

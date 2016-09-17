@@ -1,5 +1,6 @@
 export 'objects/Attachment.dart';
 export 'objects/Channel.dart';
+export 'objects/ClientOAuth2Application.dart';
 export 'objects/ClientOptions.dart';
 export 'objects/ClientUser.dart';
 export 'objects/Embed.dart';
@@ -12,4 +13,7 @@ export 'objects/InviteGuild.dart';
 export 'objects/Member.dart';
 export 'objects/MessageOptions.dart';
 export 'objects/Message.dart';
+export 'objects/OAuth2Application.dart';
+export 'objects/OAuth2Guild.dart';
+export 'objects/OAuth2Info.dart';
 export 'objects/User.dart';

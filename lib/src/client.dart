@@ -29,11 +29,14 @@ class Client {
   /// The logged in user.
   ClientUser user;
 
+  /// The bot's OAuth2 app.
+  ClientOAuth2Application app;
+
   void _heartbeat() {
     this._socket.add(JSON.encode({"op": 1,"d": this._lastS}));
   }
 
-  void _handleMsg(msg) {
+  Future _handleMsg(msg) async {
     var json = JSON.decode(msg);
 
     this._handlers['debug'].forEach((function) => function(json));
@@ -80,6 +83,12 @@ class Client {
 
         if (this.user.bot) {
           this._api.headers['Authorization'] = "Bot ${this.token}";
+
+          var r = await this._api.get('oauth2/applications/@me');
+          Map res = JSON.decode(r.body);
+          if (r.statusCode == 200) {
+            this.app = new ClientOAuth2Application(res);
+          }
         } else {
           this._api.headers['Authorization'] = this.token;
         }
@@ -151,7 +160,7 @@ class Client {
       options = new MessageOptions();
     }
 
-    if (options.disableEveryone || this.options.disableEveryone) {
+    if (options.disableEveryone || (options.disableEveryone == null && this.options.disableEveryone)) {
       content = content.replaceAll("@everyone", "@\u200Beveryone").replaceAll("@here", "@\u200Bhere");
     }
 
@@ -169,11 +178,11 @@ class Client {
   ///
   /// Throws an [Exception] if the HTTP request errored.
   ///     Client.sendMessage("channel id", "message id");
-  Future deleteMessage(String channel, String message) async {
+  Future<bool> deleteMessage(String channel, String message) async {
     var r = await this._api.delete('channels/$channel/messages/$message');
 
     if (r.statusCode == 204) {
-      return;
+      return true;
     } else {
       throw new Exception("'deleteMessage' error.");
     }
@@ -280,6 +289,44 @@ class Client {
       }
     } else {
       throw new Exception("'getMessage' is only usable by bot accounts.");
+    }
+  }
+
+  /// Gets an [OAuth2Info] object. Only usable by user accounts.
+  ///
+  /// Throws an [Exception] if the HTTP request errored or if the client user
+  /// is a bot.
+  ///     Client.getOAuth2Info("app id");
+  Future<OAuth2Info> getOAuth2Info(String id) async {
+    if (!this.user.bot) {
+      var r = await this._api.get('oauth2/authorize?client_id=$id&scope=bot');
+      Map res = JSON.decode(r.body);
+      if (r.statusCode == 200) {
+        return new OAuth2Info(res);
+      } else {
+        throw new Exception("${res['code']}:${res['message']}");
+      }
+    } else {
+      throw new Exception("'getMessage' is only usable by user accounts.");
+    }
+  }
+
+  /// Gets an [OAuth2Info] object. Only usable by user accounts.
+  ///
+  /// Throws an [Exception] if the HTTP request errored or if the client user
+  /// is a bot.
+  ///     Client.getOAuth2Info("app id");
+  Future<bool> oauth2Authorize(String app, String guild, [int permissions = 0]) async {
+    if (!this.user.bot) {
+      var r = await this._api.post('oauth2/authorize?client_id=$app&scope=bot', {"guild_id": guild, "permissions": permissions, "authorize": true});
+      Map res = JSON.decode(r.body);
+      if (r.statusCode == 200) {
+        return true;
+      } else {
+        throw new Exception("${res['code']}:${res['message']}");
+      }
+    } else {
+      throw new Exception("'getMessage' is only usable by user accounts.");
     }
   }
 }

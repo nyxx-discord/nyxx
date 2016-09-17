@@ -8,5 +8,5 @@ class MessageOptions {
   String nonce;
 
   /// Whether or not to disable @everyone and @here mentions for the message.
-  bool disableEveryone = false;
+  bool disableEveryone;
 }
