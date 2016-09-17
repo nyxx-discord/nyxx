@@ -311,11 +311,11 @@ class Client {
     }
   }
 
-  /// Gets an [OAuth2Info] object. Only usable by user accounts.
+  /// Invites a bot to a guild. Only usable by user accounts.
   ///
   /// Throws an [Exception] if the HTTP request errored or if the client user
   /// is a bot.
-  ///     Client.getOAuth2Info("app id");
+  ///     Client.oauth2Authorize("app id", "guild id");
   Future<bool> oauth2Authorize(String app, String guild, [int permissions = 0]) async {
     if (!this.user.bot) {
       var r = await this._api.post('oauth2/authorize?client_id=$app&scope=bot', {"guild_id": guild, "permissions": permissions, "authorize": true});
