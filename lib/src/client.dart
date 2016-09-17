@@ -378,7 +378,7 @@ class Client {
     if (this.ready) {
       user = this._resolve('user', user);
 
-      var r = await this._api.get('users/$id');
+      var r = await this._api.get('users/$user');
       Map res = JSON.decode(r.body);
       if (r.statusCode == 200) {
         return new User(res);
