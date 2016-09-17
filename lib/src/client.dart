@@ -307,7 +307,7 @@ class Client {
         throw new Exception("${res['code']}:${res['message']}");
       }
     } else {
-      throw new Exception("'getMessage' is only usable by user accounts.");
+      throw new Exception("'getOAuth2Info' is only usable by user accounts.");
     }
   }
 
@@ -326,7 +326,7 @@ class Client {
         throw new Exception("${res['code']}:${res['message']}");
       }
     } else {
-      throw new Exception("'getMessage' is only usable by user accounts.");
+      throw new Exception("'oauth2Authorize' is only usable by user accounts.");
     }
   }
 }
