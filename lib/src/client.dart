@@ -18,7 +18,16 @@ class Client {
     "messageEdit": [],
     "debug": [],
     "loginError": [],
-    "guildCreate": []
+    "guildCreate": [],
+    "guildUpdate": [],
+    "guildDelete": [],
+    "guildBanAdd": [],
+    "guildBanRemove": [],
+    "guildMemberAdd": [],
+    "guildMemberRemove": [],
+    "channelCreate": [],
+    "channelUpdate": [],
+    "channelDelete": []
   };
 
   /// The token passed into the constructor.
@@ -36,8 +45,9 @@ class Client {
   /// A map of all the guilds the bot is in, by id.
   Map<String, Guild> guilds = {};
 
-  /// A map of all the channels the bot is in, by id.
-  Map<String, Channel> channels = {};
+  /// A map of all the channels the bot is in, by id. Either a [GuildChannel] or
+  /// [PrivateChannel].
+  Map<String, Object> channels = {};
 
   /// Whether or not the client is ready.
   bool ready = false;
@@ -95,6 +105,11 @@ class Client {
           this.guilds[o['id']] = null;
         });
 
+        json['d']['private_channels'].forEach((o) {
+          PrivateChannel channel = new PrivateChannel(o);
+          this.channels[channel.id] = channel;
+        });
+
         if (this.user.bot) {
           this._api.headers['Authorization'] = "Bot ${this.token}";
 
@@ -133,7 +148,7 @@ class Client {
       }
 
       else if (json['t'] == "GUILD_CREATE") {
-        Guild guild = new Guild(this, json['d'], true);
+        Guild guild = new Guild(this, json['d'], true, true);
         this.guilds[guild.id] = guild;
 
         guild.channels.forEach((i, v) {
@@ -156,6 +171,109 @@ class Client {
           this._handlers['guildCreate'].forEach((function) => function(guild));
         }
       }
+
+      else if (json['t'] == "GUILD_UPDATE") {
+        if (this.ready) {
+          Guild newGuild = new Guild(this, json['d']);
+          Guild oldGuild = this.guilds[newGuild.id];
+          newGuild.channels = oldGuild.channels;
+          newGuild.members = oldGuild.members;
+
+          this.guilds[newGuild.id] = newGuild;
+
+          this._handlers['guildUpdate'].forEach((function) => function(oldGuild, newGuild));
+        }
+      }
+
+      else if (json['t'] == "GUILD_DELETE") {
+        if (this.ready) {
+          if (json['d']['unavailable']) {
+            Guild newGuild = new Guild(this, {}, false);
+            this.guilds[json['d']['id']] = newGuild;
+            this._handlers['guildDelete'].forEach((function) => function(true, newGuild));
+          } else {
+            Guild guild = this.guilds[json['d']['id']];
+            this.guilds.remove(json['d']['id']);
+            this._handlers['guildDelete'].forEach((function) => function(false, guild));
+          }
+        }
+      }
+
+      else if (json['t'] == "GUILD_BAN_ADD") {
+        if (this.ready) {
+          Guild guild = this.guilds[json['d']['guild_id']];
+          User user = new User(json['d']['user']);
+          this._handlers['guildBanAdd'].forEach((function) => function(user, guild));
+        }
+      }
+
+      else if (json['t'] == "GUILD_BAN_REMOVE") {
+        if (this.ready) {
+          Guild guild = this.guilds[json['d']['guild_id']];
+          User user = new User(json['d']['user']);
+          this._handlers['guildBanRemove'].forEach((function) => function(user, guild));
+        }
+      }
+
+      else if (json['t'] == "GUILD_MEMBER_ADD") {
+        if (this.ready) {
+          Guild guild = this.guilds[json['d']['guild_id']];
+          Member member = new Member(json['d']);
+          guild.members[member.user.id] = member;
+          this._handlers['guildMemberAdd'].forEach((function) => function(member, guild));
+        }
+      }
+
+      else if (json['t'] == "GUILD_MEMBER_REMOVE") {
+        if (this.ready) {
+          Guild guild = this.guilds[json['d']['guild_id']];
+          User user = new User(json['d']['user']);
+          if (guild.members[user.id] != null) {
+            guild.members.remove(user.id);
+          }
+          this._handlers['guildMemberRemove'].forEach((function) => function(user, guild));
+        }
+      }
+
+      else if (json['t'] == "CHANNEL_CREATE") {
+        if (this.ready) {
+          if (json['d']['type'] == 1) {
+            PrivateChannel channel = new PrivateChannel(json['d']);
+            this.channels[channel.id] = channel;
+            this._handlers['channelCreate'].forEach((function) => function(channel));
+          } else {
+            Guild guild = this.guilds[json['d']['guild_id']];
+            GuildChannel channel = new GuildChannel(this, json['d'], guild);
+            this.channels[channel.id] = channel;
+            this._handlers['channelCreate'].forEach((function) => function(channel));
+          }
+        }
+      }
+
+      else if (json['t'] == "CHANNEL_UPDATE") {
+        if (this.ready) {
+          GuildChannel oldChannel = this.channels[json['d']['id']];
+          Guild guild = this.guilds[json['d']['guild_id']];
+          GuildChannel newChannel = new GuildChannel(this, json['d'], guild);
+          this.channels[newChannel.id] = newChannel;
+          this._handlers['channelUpdate'].forEach((function) => function(oldChannel, newChannel));
+        }
+      }
+
+      else if (json['t'] == "CHANNEL_DELETE") {
+        if (this.ready) {
+          if (json['d']['type'] == 1) {
+            PrivateChannel oldChannel = new PrivateChannel(json['d']);
+            this.channels.remove(oldChannel.id);
+            this._handlers['channelDelete'].forEach((function) => function(oldChannel));
+          } else {
+            Guild guild = this.guilds[json['d']['guild_id']];
+            GuildChannel oldChannel = new GuildChannel(this, json['d'], guild);
+            this.channels.remove(oldChannel.id);
+            this._handlers['channelDelete'].forEach((function) => function(oldChannel));
+          }
+        }
+      }
     }
   }
 
@@ -163,7 +281,9 @@ class Client {
     if (to == "channel") {
       if (object is Message) {
         return object.channel.id;
-      } else if (object is Channel) {
+      } else if (object is GuildChannel) {
+        return object.id;
+      } else if (object is PrivateChannel) {
         return object.id;
       } else if (object is Guild) {
         return object.defaultChannel.id;
@@ -183,7 +303,7 @@ class Client {
     else if (to == "guild") {
       if (object is Message) {
         return object.guild.id;
-      } else if (object is Channel) {
+      } else if (object is GuildChannel) {
         return object.guild.id;
       } else if (object is Guild) {
         return object.id;

@@ -1,7 +1,7 @@
 import '../../discord.dart';
 
-/// A channel.
-class Channel {
+/// A guild channel.
+class GuildChannel {
   /// The channel's name.
   String name;
 
@@ -11,15 +11,14 @@ class Channel {
   /// The channel's topic, only available if the channel is a text channel.
   String topic;
 
-  /// The channel's type, either `text` or `voice`.
-  String type;
-
   /// The ID for the last message in the channel.
   String lastMessageID;
 
-  /// The ID for the guild that the channel is in, only available if the channel
-  /// is not private.
+  /// The guild that the channel is in.
   Guild guild;
+
+  /// The channel's type, 0 for text, 2 for voice.
+  int type;
 
   /// The channel's position in the channel list.
   int position;
@@ -33,10 +32,10 @@ class Channel {
   /// A timestamp for when the channel was created.
   double createdAt;
 
-  /// Whether or not the channel is a DM.
+  /// Always false representing that it is a GuildChannel.
   bool isPrivate = false;
 
-  Channel(Client client, Map data, [Guild guild]) {
+  GuildChannel(Client client, Map data, Guild guild) {
     this.name = data['name'];
     this.id = data['id'];
     this.type = data['type'];
@@ -46,9 +45,6 @@ class Channel {
     this.lastMessageID = data['last_message_id'];
     this.bitrate = data['bitrate'];
     this.userLimit = data['user_limit'];
-
-    if (guild != null) {
-      this.guild = guild;
-    }
+    this.guild = guild;
   }
 }

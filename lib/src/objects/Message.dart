@@ -18,7 +18,7 @@ class Message {
   String editedTimestamp;
 
   /// The message's channel.
-  Channel channel;
+  GuildChannel channel;
 
   /// The message's guild.
   Guild guild;
