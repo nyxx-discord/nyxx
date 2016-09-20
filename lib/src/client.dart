@@ -25,9 +25,11 @@ class Client {
     "guildBanRemove": [],
     "guildMemberAdd": [],
     "guildMemberRemove": [],
+    "guildMemberUpdate": [],
     "channelCreate": [],
     "channelUpdate": [],
-    "channelDelete": []
+    "channelDelete": [],
+    "typing": []
   };
 
   /// The token passed into the constructor.
@@ -48,6 +50,10 @@ class Client {
   /// A map of all the channels the bot is in, by id. Either a [GuildChannel] or
   /// [PrivateChannel].
   Map<String, Object> channels = {};
+
+  /// A map of all of the users the bot can see, by id. Does not always have
+  /// offline users without forceFetchUsers enabled.
+  Map<String, User> users = {};
 
   /// Whether or not the client is ready.
   bool ready = false;
@@ -155,6 +161,10 @@ class Client {
           this.channels[v.id] = v;
         });
 
+        guild.members.forEach((i, v) {
+          this.users[v.user.id] = v.user;
+        });
+
         if (!this.ready) {
           bool match = true;
           this.guilds.forEach((i, o) {
@@ -203,6 +213,7 @@ class Client {
         if (this.ready) {
           Guild guild = this.guilds[json['d']['guild_id']];
           User user = new User(json['d']['user']);
+          this.users[user.id] = user;
           this._handlers['guildBanAdd'].forEach((function) => function(user, guild));
         }
       }
@@ -211,6 +222,7 @@ class Client {
         if (this.ready) {
           Guild guild = this.guilds[json['d']['guild_id']];
           User user = new User(json['d']['user']);
+          this.users[user.id] = user;
           this._handlers['guildBanRemove'].forEach((function) => function(user, guild));
         }
       }
@@ -218,9 +230,10 @@ class Client {
       else if (json['t'] == "GUILD_MEMBER_ADD") {
         if (this.ready) {
           Guild guild = this.guilds[json['d']['guild_id']];
-          Member member = new Member(json['d']);
+          Member member = new Member(json['d'], guild);
           guild.members[member.user.id] = member;
-          this._handlers['guildMemberAdd'].forEach((function) => function(member, guild));
+          this.users[member.user.id] = member.user;
+          this._handlers['guildMemberAdd'].forEach((function) => function(member));
         }
       }
 
@@ -228,10 +241,20 @@ class Client {
         if (this.ready) {
           Guild guild = this.guilds[json['d']['guild_id']];
           User user = new User(json['d']['user']);
-          if (guild.members[user.id] != null) {
-            guild.members.remove(user.id);
-          }
+          guild.members.remove(user.id);
+          this.users[user.id] = user;
           this._handlers['guildMemberRemove'].forEach((function) => function(user, guild));
+        }
+      }
+
+      else if (json['t'] == "GUILD_MEMBER_UPDATE") {
+        if (this.ready) {
+          Guild guild = this.guilds[json['d']['guild_id']];
+          Member oldMember = guild.members[json['d']['user']['id']];
+          Member newMember = new Member(json['d'], guild);
+          guild.members[newMember.user.id] = newMember;
+          this.users[newMember.user.id] = newMember.user;
+          this._handlers['guildMemberUpdate'].forEach((function) => function(oldMember, newMember));
         }
       }
 
@@ -272,6 +295,14 @@ class Client {
             this.channels.remove(oldChannel.id);
             this._handlers['channelDelete'].forEach((function) => function(oldChannel));
           }
+        }
+      }
+
+      else if (json['t'] == "TYPING_START") {
+        if (this.ready) {
+          GuildChannel channel = this.channels[json['d']['channel_id']];
+          User user = this.users[json['d']['user_id']];
+          this._handlers['typing'].forEach((function) => function(channel, user, json['d']['timestamp']));
         }
       }
     }
@@ -478,7 +509,7 @@ class Client {
         var r = await this._api.get('guilds/$guild/members/$member');
         Map res = JSON.decode(r.body);
         if (r.statusCode == 200) {
-          Member m = new Member(res);
+          Member m = new Member(res, this.guilds[guild]);
           this.guilds[guild].members[m.user.id] = m;
           return m;
         } else {
@@ -554,25 +585,20 @@ class Client {
     }
   }
 
-  /// Gets an [OAuth2Info] object. Only usable by user accounts.
+  /// Gets an [OAuth2Info] object.
   ///
-  /// Throws an [Exception] if the HTTP request errored or if the client user
-  /// is a bot.
+  /// Throws an [Exception] if the HTTP request errored
   ///     Client.getOAuth2Info("app id");
   Future<OAuth2Info> getOAuth2Info(Object app) async {
     if (this.ready) {
-      if (!this.user.bot) {
-        app = this._resolve('app', app);
+      app = this._resolve('app', app);
 
-        var r = await this._api.get('oauth2/authorize?client_id=$app&scope=bot');
-        Map res = JSON.decode(r.body);
-        if (r.statusCode == 200) {
-          return new OAuth2Info(res);
-        } else {
-          throw new Exception("${res['code']}:${res['message']}");
-        }
+      var r = await this._api.get('oauth2/authorize?client_id=$app&scope=bot');
+      Map res = JSON.decode(r.body);
+      if (r.statusCode == 200) {
+        return new OAuth2Info(res);
       } else {
-        throw new Exception("'getOAuth2Info' is only usable by user accounts.");
+        throw new Exception("${res['code']}:${res['message']}");
       }
     } else {
       throw new Exception("the client isn't ready");

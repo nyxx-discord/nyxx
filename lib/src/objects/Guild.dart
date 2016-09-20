@@ -77,7 +77,7 @@ class Guild {
       if (guildCreate) {
         //this.roles = JSON.decode(data['roles']);
         data['members'].forEach((o) {
-          Member member = new Member(o);
+          Member member = new Member(o, this);
           this.members[member.user.id] = member;
         });
 

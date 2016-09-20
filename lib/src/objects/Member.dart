@@ -20,12 +20,16 @@ class Member {
   /// The [User] object for the member.
   User user;
 
-  Member(Map data) {
+  /// The guild that the member is a part of.
+  Guild guild;
+
+  Member(Map data, Guild guild) {
     this.nickname = data['nick'];
     this.joinedAt = data['joined_at'];
     this.deaf = data['deaf'];
     this.mute = data['mute'];
     this.roles = data['roles'];
     this.user = new User(data['user']);
+    this.guild = guild;
   }
 }

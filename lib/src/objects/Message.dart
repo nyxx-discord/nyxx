@@ -26,6 +26,9 @@ class Message {
   /// The message's author.
   User author;
 
+  /// The message's author in a member form.
+  Member member;
+
   /// A list of the mentions in the message.
   List<User> mentions = [];
 
@@ -64,6 +67,7 @@ class Message {
     this.mentionEveryone = data['mention_everyone'];
     this.roleMentions = data['mention_roles'];
     this.createdAt = (int.parse(this.id) / 4194304) + 1420070400000;
+    this.member = guild.members[this.author.id];
 
     data['mentions'].forEach((user) {
       this.mentions.add(new User(user));
