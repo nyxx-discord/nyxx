@@ -3,11 +3,13 @@ import 'package:discord_dart/discord.dart' as discord;
 main() {
   var bot = new discord.Client("your token");
 
-  bot.onEvent('ready', () {
+  bot.on('ready', (e) {
     print("Ready!");
   });
 
-  bot.onEvent('message', (m) async {
+  bot.onEvent('message', (e) {
+    var m = e.message;
+
     if (m.content == "!ping") {
       bot.sendMessage(m.channel, "Pong!");
     }

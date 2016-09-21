@@ -14,26 +14,6 @@ class Client extends Events {
   int _lastS = null;
   String _sessionID;
   API _api = new API();
-  Map _handlers = {
-    "ready": [],
-    "message": [],
-    "messageDelete": [],
-    "messageEdit": [],
-    "debug": [],
-    "loginError": [],
-    "guildCreate": [],
-    "guildUpdate": [],
-    "guildDelete": [],
-    "guildBanAdd": [],
-    "guildBanRemove": [],
-    "guildMemberAdd": [],
-    "guildMemberRemove": [],
-    "guildMemberUpdate": [],
-    "channelCreate": [],
-    "channelUpdate": [],
-    "channelDelete": [],
-    "typing": []
-  };
 
   /// The token passed into the constructor.
   String token;
@@ -68,8 +48,6 @@ class Client extends Events {
   Future _handleMsg(msg) async {
     var json = JSON.decode(msg);
 
-    this._handlers['debug'].forEach((function) => function(json));
-
     if (json['s'] != null) {
       this._lastS = json['s'];
     }
@@ -91,10 +69,6 @@ class Client extends Events {
           "compress": false
         }
       }));
-    }
-
-    else if (json['op'] == 9) {
-      this._handlers['loginError'].forEach((function) => function());
     }
 
     /*else if (json['op'] == 7) {
