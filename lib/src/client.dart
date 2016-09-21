@@ -283,21 +283,6 @@ class Client extends Events {
     });
   }
 
-  /// Used for registering event handlers.
-  ///
-  /// Returns the index of the current handler.
-  ///     Client.onEvent("message", (m) {
-  ///       print(m.content);
-  ///     })
-  int onEvent(String event, function) {
-    if (this._handlers.keys.contains(event)) {
-      this._handlers[event].add(function);
-      return this._handlers[event].indexOf(function);
-    } else {
-      throw new Exception("invalid event handler '$event'");
-    }
-  }
-
   /// Sends a message.
   ///
   /// Throws an [Exception] if the HTTP request errored.
