@@ -6,7 +6,8 @@ class MessageUpdateEvent {
   /// The updated message.
   Message message;
 
-  MessageUpdateEvent(Client client, Map json) {
+  /// Constructs a new [MessageUpdateEvent].
+  MessageUpdateEvent(Client client, Map<String, dynamic> json) {
     if (client.ready) {
       if (!json['d'].containsKey('embeds')) {
         this.message = new Message(client, json['d']);

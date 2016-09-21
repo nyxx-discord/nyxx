@@ -13,14 +13,15 @@ class OAuth2Info {
   User me;
 
   /// A list of mini guild objects with permissions for every guild you are on.
-  List<OAuth2Guild> guilds = [];
+  List<OAuth2Guild> guilds = <OAuth2Guild>[];
 
-  OAuth2Info(Map data) {
+  /// Constructs a new [OAuth2Info].
+  OAuth2Info(Map<String, dynamic> data) {
     this.app = new OAuth2Application(data['application']);
     this.bot = new User(data['bot']);
     this.me = new User(data['user']);
 
-    data['guilds'].forEach((v) {
+    data['guilds'].forEach((Map<String, dynamic> v) {
       guilds.add(new OAuth2Guild(v));
     });
   }

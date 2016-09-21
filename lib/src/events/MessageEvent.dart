@@ -6,7 +6,8 @@ class MessageEvent {
   /// The new message.
   Message message;
 
-  MessageEvent(Client client, Map json) {
+  /// Constucts a new [MessageEvent].
+  MessageEvent(Client client, Map<String, dynamic> json) {
     if (client.ready) {
       this.message = new Message(client, json['d']);
       client.emit('message', this);

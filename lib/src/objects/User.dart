@@ -23,7 +23,8 @@ class User {
   /// Whether or not the user is a bot.
   bool bot = false;
 
-  User(Map data) {
+  /// Constructs a new [User].
+  User(Map<String, dynamic> data) {
     this.username = data['username'];
     this.id = data['id'];
     this.discriminator = data['discriminator'];

@@ -4,14 +4,15 @@ import 'dart:async';
 import '../objects.dart';
 import '../events.dart';
 import 'http.dart';
-import 'package:events/events.dart';
+import 'package:events/events.dart' as events;
+import 'package:http/http.dart' as http;
 
 
 /// The base class.
 /// It contains all of the methods.
-class Client extends Events {
-  var _socket;
-  int _lastS = null;
+class Client extends events.Events {
+  WebSocket _socket;
+  int _lastS;
   String _sessionID;
   API _api = new API();
 
@@ -28,25 +29,37 @@ class Client extends Events {
   ClientOAuth2Application app;
 
   /// A map of all the guilds the bot is in, by id.
-  Map<String, Guild> guilds = {};
+  Map<String, Guild> guilds = <String, Guild>{};
 
   /// A map of all the channels the bot is in, by id. Either a [GuildChannel] or
   /// [PrivateChannel].
-  Map<String, Object> channels = {};
+  Map<String, dynamic> channels = <String, dynamic>{};
 
   /// A map of all of the users the bot can see, by id. Does not always have
   /// offline users without forceFetchUsers enabled.
-  Map<String, User> users = {};
+  Map<String, User> users = <String, User>{};
 
   /// Whether or not the client is ready.
   bool ready = false;
 
-  void _heartbeat() {
-    this._socket.add(JSON.encode({"op": 1,"d": this._lastS}));
+  /// Creates and logs in a new client.
+  Client(this.token, [this.options]) {
+    if (this.options == null) {
+      this.options = new ClientOptions();
+    }
+
+    WebSocket.connect('wss://gateway.discord.gg?v=6&encoding=json').then((WebSocket socket) {
+      this._socket = socket;
+      this._socket.listen(this._handleMsg);
+    });
   }
 
-  Future _handleMsg(msg) async {
-    var json = JSON.decode(msg);
+  void _heartbeat() {
+    this._socket.add(JSON.encode(<String, dynamic>{"op": 1,"d": this._lastS}));
+  }
+
+  Future<Null> _handleMsg(String msg) async {
+    Map<String, dynamic> json = JSON.decode(msg);
 
     if (json['s'] != null) {
       this._lastS = json['s'];
@@ -55,14 +68,14 @@ class Client extends Events {
     //const ms = const JSON.decode(msg)["d"]["heartbeat_interval"];
 
     if (json["op"] == 10) {
-      const heartbeat_interval = const Duration(milliseconds: 41250);
-      new Timer.periodic(heartbeat_interval, (Timer t) => this._heartbeat());
+      const Duration heartbeatInterval = const Duration(milliseconds: 41250);
+      new Timer.periodic(heartbeatInterval, (Timer t) => this._heartbeat());
 
-      this._socket.add(JSON.encode({
+      this._socket.add(JSON.encode(<String, dynamic>{
         "op": 2,
-        "d": {
+        "d": <String, dynamic>{
           "token": this.token,
-          "properties": {
+          "properties": <String, dynamic>{
             "\$browser": "Discord Dart"
           },
           "large_threshold": 100,
@@ -84,11 +97,11 @@ class Client extends Events {
         this._sessionID = json['d']['session_id'];
         this.user = new ClientUser(json['d']['user']);
 
-        json['d']['guilds'].forEach((o) {
+        json['d']['guilds'].forEach((Map<String, dynamic> o) {
           this.guilds[o['id']] = null;
         });
 
-        json['d']['private_channels'].forEach((o) {
+        json['d']['private_channels'].forEach((Map<String, dynamic> o) {
           PrivateChannel channel = new PrivateChannel(o);
           this.channels[channel.id] = channel;
         });
@@ -96,8 +109,8 @@ class Client extends Events {
         if (this.user.bot) {
           this._api.headers['Authorization'] = "Bot ${this.token}";
 
-          var r = await this._api.get('oauth2/applications/@me');
-          Map res = JSON.decode(r.body);
+          http.Response r = await this._api.get('oauth2/applications/@me');
+          Map<String, dynamic> res = JSON.decode(r.body);
           if (r.statusCode == 200) {
             this.app = new ClientOAuth2Application(res);
           }
@@ -168,9 +181,11 @@ class Client extends Events {
           break;
       }
     }
+
+    return null;
   }
 
-  String _resolve(String to, Object object) {
+  String _resolve(String to, dynamic object) {
     if (to == "channel") {
       if (object is Message) {
         return object.channel.id;
@@ -244,26 +259,11 @@ class Client extends Events {
     }
   }
 
-  Client(String token, [ClientOptions options]) {
-    if (options == null) {
-      this.options = new ClientOptions();
-    } else {
-      this.options = options;
-    }
-
-    this.token = token;
-
-    WebSocket.connect('wss://gateway.discord.gg?v=6&encoding=json').then((socket) {
-      this._socket = socket;
-      this._socket.listen(this._handleMsg);
-    });
-  }
-
   /// Sends a message.
   ///
   /// Throws an [Exception] if the HTTP request errored.
   ///     Client.sendMessage("channel id", "My content!");
-  Future<Message> sendMessage(Object channel, String content, [MessageOptions options]) async {
+  Future<Message> sendMessage(dynamic channel, String content, [MessageOptions options]) async {
     if (this.ready) {
       if (options == null) {
         options = new MessageOptions();
@@ -275,8 +275,8 @@ class Client extends Events {
 
       String id = this._resolve("channel", channel);
 
-      var r = await this._api.post('channels/$id/messages', {"content": content, "tts": options.tts, "nonce": options.nonce});
-      Map res = JSON.decode(r.body);
+      http.Response r = await this._api.post('channels/$id/messages', <String, dynamic>{"content": content, "tts": options.tts, "nonce": options.nonce});
+      Map<String, dynamic> res = JSON.decode(r.body);
 
       if (r.statusCode == 200) {
         return new Message(this, res);
@@ -292,12 +292,12 @@ class Client extends Events {
   ///
   /// Throws an [Exception] if the HTTP request errored.
   ///     Client.sendMessage("channel id", "message id");
-  Future<bool> deleteMessage(Object channel, Object message) async {
+  Future<bool> deleteMessage(dynamic channel, dynamic message) async {
     if (this.ready) {
       channel = this._resolve('channel', channel);
       message = this._resolve('message', message);
 
-      var r = await this._api.delete('channels/$channel/messages/$message');
+      http.Response r = await this._api.delete('channels/$channel/messages/$message');
 
       if (r.statusCode == 204) {
         return true;
@@ -313,7 +313,7 @@ class Client extends Events {
   ///
   /// Throws an [Exception] if the HTTP request errored.
   ///     Client.sendMessage("channel id", "message id", "My edited content!");
-  Future<Message> editMessage(Object channel, Object message, String content, [MessageOptions options]) async {
+  Future<Message> editMessage(dynamic channel, dynamic message, String content, [MessageOptions options]) async {
     if (this.ready) {
       if (options == null) {
         options = new MessageOptions();
@@ -326,8 +326,8 @@ class Client extends Events {
       channel = this._resolve('channel', channel);
       message = this._resolve('message', message);
 
-      var r = await this._api.patch('channels/$channel/messages/$message', {"content": content});
-      Map res = JSON.decode(r.body);
+      http.Response r = await this._api.patch('channels/$channel/messages/$message', <String, dynamic>{"content": content});
+      Map<String, dynamic> res = JSON.decode(r.body);
 
       if (r.statusCode == 200) {
         return new Message(this, res);
@@ -344,7 +344,7 @@ class Client extends Events {
   ///
   /// Throws an [Exception] if the HTTP request errored.
   ///     Client.getMember("guild id", "user id");
-  Future<Member> getMember(Object guild, Object member) async {
+  Future<Member> getMember(dynamic guild, dynamic member) async {
     if (this.ready) {
 
       guild = this._resolve('guild', guild);
@@ -353,8 +353,8 @@ class Client extends Events {
       if (this.guilds[guild].members[member] != null) {
         return this.guilds[guild].members[member];
       } else {
-        var r = await this._api.get('guilds/$guild/members/$member');
-        Map res = JSON.decode(r.body);
+        http.Response r = await this._api.get('guilds/$guild/members/$member');
+        Map<String, dynamic> res = JSON.decode(r.body);
         if (r.statusCode == 200) {
           Member m = new Member(res, this.guilds[guild]);
           this.guilds[guild].members[m.user.id] = m;
@@ -372,12 +372,12 @@ class Client extends Events {
   ///
   /// Throws an [Exception] if the HTTP request errored.
   ///     Client.getUser("user id");
-  Future<User> getUser(Object user) async {
+  Future<User> getUser(dynamic user) async {
     if (this.ready) {
       user = this._resolve('user', user);
 
-      var r = await this._api.get('users/$user');
-      Map res = JSON.decode(r.body);
+      http.Response r = await this._api.get('users/$user');
+      Map<String, dynamic> res = JSON.decode(r.body);
       if (r.statusCode == 200) {
         return new User(res);
       } else {
@@ -394,8 +394,8 @@ class Client extends Events {
   ///     Client.getInvite("invite code");
   Future<Invite> getInvite(String code) async {
     if (this.ready) {
-      var r = await this._api.get('invites/$code');
-      Map res = JSON.decode(r.body);
+      http.Response r = await this._api.get('invites/$code');
+      Map<String, dynamic> res = JSON.decode(r.body);
       if (r.statusCode == 200) {
         return new Invite(res);
       } else {
@@ -411,14 +411,14 @@ class Client extends Events {
   /// Throws an [Exception] if the HTTP request errored or if the client user
   /// is not a bot.
   ///     Client.getMessage("channel id", "message id");
-  Future<Message> getMessage(Object channel, String message) async {
+  Future<Message> getMessage(dynamic channel, String message) async {
     if (this.ready) {
       if (this.user.bot) {
         channel = this._resolve('channel', channel);
         message = this._resolve('message', message);
 
-        var r = await this._api.get('channels/$channel/messages/$message');
-        Map res = JSON.decode(r.body);
+        http.Response r = await this._api.get('channels/$channel/messages/$message');
+        Map<String, dynamic> res = JSON.decode(r.body);
         if (r.statusCode == 200) {
           return new Message(this, res);
         } else {
@@ -436,12 +436,12 @@ class Client extends Events {
   ///
   /// Throws an [Exception] if the HTTP request errored
   ///     Client.getOAuth2Info("app id");
-  Future<OAuth2Info> getOAuth2Info(Object app) async {
+  Future<OAuth2Info> getOAuth2Info(dynamic app) async {
     if (this.ready) {
       app = this._resolve('app', app);
 
-      var r = await this._api.get('oauth2/authorize?client_id=$app&scope=bot');
-      Map res = JSON.decode(r.body);
+      http.Response r = await this._api.get('oauth2/authorize?client_id=$app&scope=bot');
+      Map<String, dynamic> res = JSON.decode(r.body);
       if (r.statusCode == 200) {
         return new OAuth2Info(res);
       } else {
@@ -457,14 +457,14 @@ class Client extends Events {
   /// Throws an [Exception] if the HTTP request errored or if the client user
   /// is a bot.
   ///     Client.oauth2Authorize("app id", "guild id");
-  Future<bool> oauth2Authorize(Object app, Object guild, [int permissions = 0]) async {
+  Future<bool> oauth2Authorize(dynamic app, dynamic guild, [int permissions = 0]) async {
     if (this.ready) {
       if (!this.user.bot) {
         app = this._resolve('app', app);
         guild = this._resolve('guild', guild);
 
-        var r = await this._api.post('oauth2/authorize?client_id=$app&scope=bot', {"guild_id": guild, "permissions": permissions, "authorize": true});
-        Map res = JSON.decode(r.body);
+        http.Response r = await this._api.post('oauth2/authorize?client_id=$app&scope=bot', <String, dynamic>{"guild_id": guild, "permissions": permissions, "authorize": true});
+        Map<String, dynamic> res = JSON.decode(r.body);
         if (r.statusCode == 200) {
           return true;
         } else {

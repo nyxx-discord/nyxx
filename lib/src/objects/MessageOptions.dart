@@ -1,5 +1,6 @@
 import '../../objects.dart';
 
+/// The options for message sending.
 class MessageOptions {
   /// Whether or not to send the message using TTS.
   bool tts = false;

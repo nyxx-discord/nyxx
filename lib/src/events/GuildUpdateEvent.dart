@@ -9,7 +9,8 @@ class GuildUpdateEvent {
   /// The guild after the update.
   Guild newGuild;
 
-  GuildUpdateEvent(Client client, Map json) {
+  /// Constructs a new [GuildUpdateEvent].
+  GuildUpdateEvent(Client client, Map<String, dynamic> json) {
     if (client.ready) {
       Guild newGuild = new Guild(client, json['d']);
       Guild oldGuild = client.guilds[newGuild.id];

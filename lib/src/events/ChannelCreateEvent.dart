@@ -1,12 +1,13 @@
 import '../../objects.dart';
 import '../client.dart';
 
-/// Sent when a channel is created, can be a [PMChannel].
+/// Sent when a channel is created, can be a `PMChannel`.
 class ChannelCreateEvent {
-  /// The channel that was created, either a [GuildChannel] or [PMChannel].
+  /// The channel that was created, either a `GuildChannel` or `PMChannel`.
   dynamic channel;
 
-  ChannelCreateEvent(Client client, Map json) {
+  /// Constructs a new [ChannelCreateEvent].
+  ChannelCreateEvent(Client client, Map<String, dynamic> json) {
     if (client.ready) {
       if (json['d']['type'] == 1) {
         this.channel = new PrivateChannel(json['d']);

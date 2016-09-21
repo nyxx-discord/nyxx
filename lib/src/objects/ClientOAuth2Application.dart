@@ -15,7 +15,7 @@ class ClientOAuth2Application {
   String name;
 
   /// The app's RPC origins.
-  List rpcOrigins;
+  List<String> rpcOrigins;
 
   /// The app's flags.
   int flags;
@@ -26,7 +26,8 @@ class ClientOAuth2Application {
   /// A timestamp for when the app was created
   double createdAt;
 
-  ClientOAuth2Application(Map data) {
+  /// Constructs a new [ClientOAuth2Application].
+  ClientOAuth2Application(Map<String, dynamic> data) {
     this.description = data['description'];
     this.icon = data['icon'];
     this.id = data['id'];

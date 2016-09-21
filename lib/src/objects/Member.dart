@@ -23,7 +23,8 @@ class Member {
   /// The guild that the member is a part of.
   Guild guild;
 
-  Member(Map data, Guild guild) {
+  /// Constructs a new [Member].
+  Member(Map<String, dynamic> data, Guild guild) {
     this.nickname = data['nick'];
     this.joinedAt = data['joined_at'];
     this.deaf = data['deaf'];

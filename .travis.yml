@@ -1,0 +1,3 @@
+language: dart
+install: pub get && pub global activate linter
+script: pub global run linter lib/
