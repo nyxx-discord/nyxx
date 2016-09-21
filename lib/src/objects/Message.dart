@@ -31,16 +31,16 @@ class Message {
   Member member;
 
   /// A list of the mentions in the message.
-  List<User> mentions = [];
+  List<User> mentions = <User>[];
 
   /// A list of IDs for the role mentions in the message.
-  List<String> roleMentions = [];
+  List<String> roleMentions = <String>[];
 
   /// A list of the embeds in the message.
-  List<Embed> embeds = [];
+  List<Embed> embeds = <Embed>[];
 
   /// A list of attachments in the message.
-  List<Attachment> attachments = [];
+  List<Attachment> attachments = <Attachment>[];
 
   /// When the message was created, redundant of `timestamp`.
   double createdAt;
@@ -54,7 +54,8 @@ class Message {
   /// Whether or @everyone was mentioned in the message.
   bool mentionEveryone;
 
-  Message(Client client, Map data) {
+  /// Constructs a new [Message].
+  Message(Client client, Map<String, dynamic> data) {
     this.content = data['content'];
     this.id = data['id'];
     this.nonce = data['nonce'];
@@ -70,15 +71,15 @@ class Message {
     this.createdAt = (int.parse(this.id) / 4194304) + 1420070400000;
     this.member = guild.members[this.author.id];
 
-    data['mentions'].forEach((user) {
+    data['mentions'].forEach((Map<String, dynamic> user) {
       this.mentions.add(new User(user));
     });
 
-    data['embeds'].forEach((embed) {
+    data['embeds'].forEach((Map<String, dynamic> embed) {
       this.embeds.add(new Embed(embed));
     });
 
-    data['attachments'].forEach((attachment) {
+    data['attachments'].forEach((Map<String, dynamic> attachment) {
       this.attachments.add(new Attachment(attachment));
     });
   }

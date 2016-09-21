@@ -36,7 +36,8 @@ class GuildChannel {
   /// Always false representing that it is a GuildChannel.
   bool isPrivate = false;
 
-  GuildChannel(Client client, Map data, Guild guild) {
+  /// Constructs a new [GuildChannel].
+  GuildChannel(Client client, Map<String, dynamic> data, Guild guild) {
     this.name = data['name'];
     this.id = data['id'];
     this.type = data['type'];

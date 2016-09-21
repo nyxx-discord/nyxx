@@ -52,12 +52,13 @@ class Guild {
   String ownerID;
 
   /// The guild's members.
-  Map<String, Member> members = {};
+  Map<String, Member> members = <String, Member>{};
 
   /// The guild's channels.
-  Map<String, GuildChannel> channels = {};
+  Map<String, GuildChannel> channels = <String, GuildChannel>{};
 
-  Guild(Client client, Map data, [bool available = true, bool guildCreate = false]) {
+  /// Constructs a new [Guild].
+  Guild(Client client, Map<String, dynamic> data, [bool available = true, bool guildCreate = false]) {
     if (available) {
       this.name = data['name'];
       this.id = data['id'];
@@ -76,12 +77,12 @@ class Guild {
 
       if (guildCreate) {
         //this.roles = JSON.decode(data['roles']);
-        data['members'].forEach((o) {
+        data['members'].forEach((Map<String, dynamic> o) {
           Member member = new Member(o, this);
           this.members[member.user.id] = member;
         });
 
-        data['channels'].forEach((o) {
+        data['channels'].forEach((Map<String, dynamic> o) {
           GuildChannel channel = new GuildChannel(client, o, this);
           this.channels[channel.id] = channel;
         });

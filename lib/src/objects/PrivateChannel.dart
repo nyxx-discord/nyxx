@@ -17,14 +17,15 @@ class PrivateChannel {
   double createdAt;
 
   /// The recipients.
-  List<User> recipients = [];
+  List<User> recipients = <User>[];
 
-  PrivateChannel(Map data) {
+  /// Constructs a new [PrivateChannel].
+  PrivateChannel(Map<String, dynamic> data) {
     this.id = data['id'];
     this.createdAt = (int.parse(this.id) / 4194304) + 1420070400000;
     this.lastMessageID = data['last_message_id'];
 
-    data['recipients'].forEach((o) {
+    data['recipients'].forEach((Map<String, dynamic> o) {
       this.recipients.add(new User(o));
     });
   }

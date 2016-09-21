@@ -26,7 +26,8 @@ class Attachment {
   /// A timestamp for when the message was created.
   double createdAt;
 
-  Attachment(Map data) {
+  /// Constructs a new [Attachment].
+  Attachment(Map<String, dynamic> data) {
     this.id = data['id'];
     this.filename = data['filename'];
     this.url = data['url'];

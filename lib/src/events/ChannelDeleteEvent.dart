@@ -1,12 +1,13 @@
 import '../../objects.dart';
 import '../client.dart';
 
-/// Sent when a channel is deleted, can be a [PMChannel].
+/// Sent when a channel is deleted, can be a `PMChannel`.
 class ChannelDeleteEvent {
-  /// The channel that was deleted, either a [GuildChannel] or [PMChannel].
+  /// The channel that was deleted, either a `GuildChannel` or `PMChannel`.
   dynamic channel;
 
-  ChannelDeleteEvent(Client client, Map json) {
+  /// Constructs a new [ChannelDeleteEvent].
+  ChannelDeleteEvent(Client client, Map<String, dynamic> json) {
     if (client.ready) {
       if (json['d']['type'] == 1) {
         this.channel = new PrivateChannel(json['d']);

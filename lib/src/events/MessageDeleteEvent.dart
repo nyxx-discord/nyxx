@@ -9,7 +9,8 @@ class MessageDeleteEvent {
   /// The message's channel.
   GuildChannel channel;
 
-  MessageDeleteEvent(Client client, Map json) {
+  /// Constructs a new [MessageDeleteEvent].
+  MessageDeleteEvent(Client client, Map<String, dynamic> json) {
     if (client.ready) {
       this.id = json['d']['id'];
       this.channel = client.channels[json['d']['channel_id']];

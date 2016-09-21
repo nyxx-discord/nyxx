@@ -9,7 +9,8 @@ class TypingEvent {
   /// The user that is typing.
   User user;
 
-  TypingEvent(Client client, Map json) {
+  /// Constructs a new [TypingEvent].
+  TypingEvent(Client client, Map<String, dynamic> json) {
     if (client.ready) {
       this.channel = client.channels[json['d']['channel_id']];
       this.user = client.users[json['d']['user_id']];

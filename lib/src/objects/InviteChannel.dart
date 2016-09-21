@@ -14,7 +14,8 @@ class InviteChannel {
   /// A timestamp for the channel was created.
   double createdAt;
 
-  InviteChannel(Map data) {
+  /// Constructs a new [InviteChannel].
+  InviteChannel(Map<String, dynamic> data) {
     this.id = data['id'];
     this.name = data['name'];
     this.type = data['type'];

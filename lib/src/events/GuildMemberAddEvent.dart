@@ -6,7 +6,8 @@ class GuildMemberAddEvent {
   /// The member that joined.
   Member member;
 
-  GuildMemberAddEvent(Client client, Map json) {
+  /// Constructs a new [GuildMemberAddEvent].
+  GuildMemberAddEvent(Client client, Map<String, dynamic> json) {
     if (client.ready) {
       Guild guild = client.guilds[json['d']['guild_id']];
       this.member = new Member(json['d'], guild);

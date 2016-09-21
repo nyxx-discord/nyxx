@@ -32,7 +32,8 @@ class ClientUser {
   /// Weather or not the client user has MFA enabled.
   bool mfa;
 
-  ClientUser(Map data) {
+  /// Constructs a new [ClientUser].
+  ClientUser(Map<String, dynamic> data) {
     this.username = data['username'];
     this.id = data['id'];
     this.discriminator = data['discriminator'];

@@ -14,7 +14,8 @@ class InviteGuild {
   /// A timestamp for when the guild was created.
   double createdAt;
 
-  InviteGuild(Map data) {
+  /// Constructs a new [InviteGuild].
+  InviteGuild(Map<String, dynamic> data) {
     this.id = data['id'];
     this.name = data['name'];
     this.spash = data['splash_hash'];

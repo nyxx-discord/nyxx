@@ -15,12 +15,13 @@ class OAuth2Application {
   String name;
 
   /// The app's RPC origins.
-  List rpcOrigins;
+  List<String> rpcOrigins;
 
   /// A timestamp for when the app was created.
   double createdAt;
 
-  OAuth2Application(Map data) {
+  /// Constructs a new [OAuth2Application].
+  OAuth2Application(Map<String, dynamic> data) {
     this.description = data['description'];
     this.icon = data['icon'];
     this.id = data['id'];
