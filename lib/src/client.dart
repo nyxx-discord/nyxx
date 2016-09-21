@@ -132,64 +132,66 @@ class Client extends Events {
         }
       }
 
-      else if (json['t'] == "MESSAGE_CREATE") {
-        new MessageEvent(this, json);
-      }
+      switch (json['t']) {
+        case 'MESSAGE_CREATE':
+          new MessageEvent(this, json);
+          break;
 
-      else if (json['t'] == "MESSAGE_DELETE") {
-        new MessageDeleteEvent(this, json);
-      }
+        case 'MESSAGE_DELETE':
+          new MessageDeleteEvent(this, json);
+          break;
 
-      else if (json['t'] == "MESSAGE_UPDATE") {
-        new MessageUpdateEvent(this, json);
-      }
+        case 'MESSAGE_UPDATE':
+          new MessageUpdateEvent(this, json);
+          break;
 
-      else if (json['t'] == "GUILD_CREATE") {
-        new GuildCreateEvent(this, json);
-      }
+        case 'GUILD_CREATE':
+          new GuildCreateEvent(this, json);
+          break;
 
-      else if (json['t'] == "GUILD_UPDATE") {
-        new GuildUpdateEvent(this, json);
-      }
+        case 'GUILD_UPDATE':
+          new GuildUpdateEvent(this, json);
+          break;
 
-      else if (json['t'] == "GUILD_DELETE") {
-        new GuildDeleteEvent(this, json);
-      }
+        case 'GUILD_DELETE':
+          new GuildDeleteEvent(this, json);
+          break;
 
-      else if (json['t'] == "GUILD_BAN_ADD") {
-        new GuildBanAddEvent(this, json);
-      }
+        case 'GUILD_BAN_ADD':
+          new GuildBanAddEvent(this, json);
+          break;
 
-      else if (json['t'] == "GUILD_BAN_REMOVE") {
-        new GuildBanRemoveEvent(this, json);
-      }
+        case 'GUILD_BAN_REMOVE':
+          new GuildBanRemoveEvent(this, json);
+          break;
 
-      else if (json['t'] == "GUILD_MEMBER_ADD") {
-        new GuildMemberAddEvent(this, json);
-      }
+        case 'GUILD_MEMBER_ADD':
+          new GuildMemberAddEvent(this, json);
+          break;
 
-      else if (json['t'] == "GUILD_MEMBER_REMOVE") {
-        new GuildMemberRemoveEvent(this, json);
-      }
+        case 'GUILD_MEMBER_REMOVE':
+          new GuildMemberRemoveEvent(this, json);
+          break;
 
-      else if (json['t'] == "GUILD_MEMBER_UPDATE") {
-        new GuildMemberUpdateEvent(this, json);
-      }
+        case 'GUILD_MEMBER_UPDATE':
+          new GuildMemberUpdateEvent(this, json);
+          break;
 
-      else if (json['t'] == "CHANNEL_CREATE") {
-        new ChannelCreateEvent(this, json);
-      }
+        case 'CHANNEL_CREATE':
+          new ChannelCreateEvent(this, json);
+          break;
 
-      else if (json['t'] == "CHANNEL_UPDATE") {
-        new ChannelUpdateEvent(this, json);
-      }
+        case 'CHANNEL_UPDATE':
+          new ChannelUpdateEvent(this, json);
+          break;
 
-      else if (json['t'] == "CHANNEL_DELETE") {
-        new ChannelDeleteEvent(this, json);
-      }
+        case 'CHANNEL_DELETE':
+          new ChannelDeleteEvent(this, json);
+          break;
 
-      else if (json['t'] == "TYPING_START") {
-        new TypingEvent(this, json);
+        case 'TYPING_START':
+          new TypingEvent(this, json);
+          break;
       }
     }
   }
