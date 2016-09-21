@@ -7,7 +7,7 @@ main() {
     print("Ready!");
   });
 
-  bot.onEvent('message', (e) {
+  bot.on('message', (e) {
     var m = e.message;
 
     if (m.content == "!ping") {
