@@ -1,4 +1,4 @@
-import '../objects.dart';
+import '../../objects.dart';
 
 /// The client's OAuth2 app, if the client is a bot.
 class ClientOAuth2Application {

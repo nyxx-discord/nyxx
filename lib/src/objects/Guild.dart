@@ -1,5 +1,5 @@
-import '../../discord.dart';
-
+import '../../objects.dart';
+import '../client.dart';
 
 /// A guild.
 class Guild {

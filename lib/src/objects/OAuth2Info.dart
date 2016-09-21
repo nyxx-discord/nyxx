@@ -1,4 +1,4 @@
-import '../objects.dart';
+import '../../objects.dart';
 
 /// Info about a OAuth2 app, bot, user, and possible guilds that that bot can
 /// be invited to.

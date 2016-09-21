@@ -1,12 +1,15 @@
 import 'dart:io';
 import 'dart:convert';
 import 'dart:async';
-import 'objects.dart';
+import '../objects.dart';
+import '../events.dart';
 import 'http.dart';
+import 'package:events/events.dart';
+
 
 /// The base class.
 /// It contains all of the methods.
-class Client {
+class Client extends Events {
   var _socket;
   int _lastS = null;
   String _sessionID;
@@ -127,183 +130,66 @@ class Client {
         } else {
           this._api.headers['Authorization'] = this.token;
         }
-
-        //this._handlers['ready'].forEach((function) => function());
       }
 
       else if (json['t'] == "MESSAGE_CREATE") {
-        if (this.ready) {
-          Message message = new Message(this, json['d']);
-          this._handlers['message'].forEach((function) => function(message));
-        }
+        new MessageEvent(this, json);
       }
 
       else if (json['t'] == "MESSAGE_DELETE") {
-        if (this.ready) {
-          this._handlers['messageDelete'].forEach((function) => function(json['d']['id'], json['d']['channel_id']));
-        }
+        new MessageDeleteEvent(this, json);
       }
 
       else if (json['t'] == "MESSAGE_UPDATE") {
-        if (this.ready) {
-          if (!json['d'].containsKey('embeds')) {
-            Message message = new Message(this, json['d']);
-            this._handlers['messageEdit'].forEach((function) => function(message));
-          }
-        }
+        new MessageUpdateEvent(this, json);
       }
 
       else if (json['t'] == "GUILD_CREATE") {
-        Guild guild = new Guild(this, json['d'], true, true);
-        this.guilds[guild.id] = guild;
-
-        guild.channels.forEach((i, v) {
-          this.channels[v.id] = v;
-        });
-
-        guild.members.forEach((i, v) {
-          this.users[v.user.id] = v.user;
-        });
-
-        if (!this.ready) {
-          bool match = true;
-          this.guilds.forEach((i, o) {
-            if (o == null) {
-              match = false;
-            }
-          });
-
-          if (match == true) {
-            this.ready = true;
-            this._handlers['ready'].forEach((function) => function());
-          }
-        } else {
-          this._handlers['guildCreate'].forEach((function) => function(guild));
-        }
+        new GuildCreateEvent(this, json);
       }
 
       else if (json['t'] == "GUILD_UPDATE") {
-        if (this.ready) {
-          Guild newGuild = new Guild(this, json['d']);
-          Guild oldGuild = this.guilds[newGuild.id];
-          newGuild.channels = oldGuild.channels;
-          newGuild.members = oldGuild.members;
-
-          this.guilds[newGuild.id] = newGuild;
-
-          this._handlers['guildUpdate'].forEach((function) => function(oldGuild, newGuild));
-        }
+        new GuildUpdateEvent(this, json);
       }
 
       else if (json['t'] == "GUILD_DELETE") {
-        if (this.ready) {
-          if (json['d']['unavailable']) {
-            Guild newGuild = new Guild(this, {}, false);
-            this.guilds[json['d']['id']] = newGuild;
-            this._handlers['guildDelete'].forEach((function) => function(true, newGuild));
-          } else {
-            Guild guild = this.guilds[json['d']['id']];
-            this.guilds.remove(json['d']['id']);
-            this._handlers['guildDelete'].forEach((function) => function(false, guild));
-          }
-        }
+        new GuildDeleteEvent(this, json);
       }
 
       else if (json['t'] == "GUILD_BAN_ADD") {
-        if (this.ready) {
-          Guild guild = this.guilds[json['d']['guild_id']];
-          User user = new User(json['d']['user']);
-          this.users[user.id] = user;
-          this._handlers['guildBanAdd'].forEach((function) => function(user, guild));
-        }
+        new GuildBanAddEvent(this, json);
       }
 
       else if (json['t'] == "GUILD_BAN_REMOVE") {
-        if (this.ready) {
-          Guild guild = this.guilds[json['d']['guild_id']];
-          User user = new User(json['d']['user']);
-          this.users[user.id] = user;
-          this._handlers['guildBanRemove'].forEach((function) => function(user, guild));
-        }
+        new GuildBanRemoveEvent(this, json);
       }
 
       else if (json['t'] == "GUILD_MEMBER_ADD") {
-        if (this.ready) {
-          Guild guild = this.guilds[json['d']['guild_id']];
-          Member member = new Member(json['d'], guild);
-          guild.members[member.user.id] = member;
-          this.users[member.user.id] = member.user;
-          this._handlers['guildMemberAdd'].forEach((function) => function(member));
-        }
+        new GuildMemberAddEvent(this, json);
       }
 
       else if (json['t'] == "GUILD_MEMBER_REMOVE") {
-        if (this.ready) {
-          Guild guild = this.guilds[json['d']['guild_id']];
-          User user = new User(json['d']['user']);
-          guild.members.remove(user.id);
-          this.users[user.id] = user;
-          this._handlers['guildMemberRemove'].forEach((function) => function(user, guild));
-        }
+        new GuildMemberRemoveEvent(this, json);
       }
 
       else if (json['t'] == "GUILD_MEMBER_UPDATE") {
-        if (this.ready) {
-          Guild guild = this.guilds[json['d']['guild_id']];
-          Member oldMember = guild.members[json['d']['user']['id']];
-          Member newMember = new Member(json['d'], guild);
-          guild.members[newMember.user.id] = newMember;
-          this.users[newMember.user.id] = newMember.user;
-          this._handlers['guildMemberUpdate'].forEach((function) => function(oldMember, newMember));
-        }
+        new GuildMemberUpdateEvent(this, json);
       }
 
       else if (json['t'] == "CHANNEL_CREATE") {
-        if (this.ready) {
-          if (json['d']['type'] == 1) {
-            PrivateChannel channel = new PrivateChannel(json['d']);
-            this.channels[channel.id] = channel;
-            this._handlers['channelCreate'].forEach((function) => function(channel));
-          } else {
-            Guild guild = this.guilds[json['d']['guild_id']];
-            GuildChannel channel = new GuildChannel(this, json['d'], guild);
-            this.channels[channel.id] = channel;
-            this._handlers['channelCreate'].forEach((function) => function(channel));
-          }
-        }
+        new ChannelCreateEvent(this, json);
       }
 
       else if (json['t'] == "CHANNEL_UPDATE") {
-        if (this.ready) {
-          GuildChannel oldChannel = this.channels[json['d']['id']];
-          Guild guild = this.guilds[json['d']['guild_id']];
-          GuildChannel newChannel = new GuildChannel(this, json['d'], guild);
-          this.channels[newChannel.id] = newChannel;
-          this._handlers['channelUpdate'].forEach((function) => function(oldChannel, newChannel));
-        }
+        new ChannelUpdateEvent(this, json);
       }
 
       else if (json['t'] == "CHANNEL_DELETE") {
-        if (this.ready) {
-          if (json['d']['type'] == 1) {
-            PrivateChannel oldChannel = new PrivateChannel(json['d']);
-            this.channels.remove(oldChannel.id);
-            this._handlers['channelDelete'].forEach((function) => function(oldChannel));
-          } else {
-            Guild guild = this.guilds[json['d']['guild_id']];
-            GuildChannel oldChannel = new GuildChannel(this, json['d'], guild);
-            this.channels.remove(oldChannel.id);
-            this._handlers['channelDelete'].forEach((function) => function(oldChannel));
-          }
-        }
+        new ChannelDeleteEvent(this, json);
       }
 
       else if (json['t'] == "TYPING_START") {
-        if (this.ready) {
-          GuildChannel channel = this.channels[json['d']['channel_id']];
-          User user = this.users[json['d']['user_id']];
-          this._handlers['typing'].forEach((function) => function(channel, user, json['d']['timestamp']));
-        }
+        new TypingEvent(this, json);
       }
     }
   }

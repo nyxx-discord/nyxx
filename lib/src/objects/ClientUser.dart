@@ -1,4 +1,4 @@
-import '../objects.dart';
+import '../../objects.dart';
 
 /// The client user.
 class ClientUser {

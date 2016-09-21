@@ -1,4 +1,4 @@
-import '../objects.dart';
+import '../../objects.dart';
 
 /// A mini channel object for invites.
 class InviteChannel {

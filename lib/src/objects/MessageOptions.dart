@@ -1,4 +1,4 @@
-import '../objects.dart';
+import '../../objects.dart';
 
 class MessageOptions {
   /// Whether or not to send the message using TTS.
