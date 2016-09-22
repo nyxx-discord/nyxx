@@ -20,7 +20,7 @@ main() {
     
     if (m.channel.id == "228308788954791939" && m.author.id == bot.user.id && m.content == "--trigger-test") {
       await bot.deleteMessage(m.channel, m);
-      await bot.sendMessage("Tests completed successfully!");
+      await bot.sendMessage(m.channel, "Tests completed successfully!");
       exit(0);
     }
   });
