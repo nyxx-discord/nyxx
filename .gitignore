@@ -4,3 +4,5 @@ packages/
 pubspec.lock
 doc/
 .pub/
+test/packages
+example/packages
