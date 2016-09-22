@@ -1,3 +1,6 @@
+# Exit on errors
+set -e
+
 # Install the linter
 pub global activate linter
 
