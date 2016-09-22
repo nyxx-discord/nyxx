@@ -53,7 +53,7 @@ class Client extends events.Events {
   void _connect([bool resume = true]) {
     WebSocket.connect('wss://gateway.discord.gg?v=6&encoding=json').then((WebSocket socket) {
       this._socket = socket;
-      this._socket.listen((msg) => this._handleMsg(msg, resume), onDone: () => this._handleErr());
+      this._socket.listen((String msg) => this._handleMsg(msg, resume), onDone: () => this._handleErr());
     });
   }
 
