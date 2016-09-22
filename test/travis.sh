@@ -1,5 +1,5 @@
 # Install the linter
-sudo pub global activate linter
+pub global activate linter
 
 # Check code for errors
 pub global run linter lib/
