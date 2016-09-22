@@ -7,7 +7,6 @@ import 'http.dart';
 import 'package:events/events.dart' as events;
 import 'package:http/http.dart' as http;
 
-
 /// The base class.
 /// It contains all of the methods.
 class Client extends events.Events {
@@ -48,9 +47,13 @@ class Client extends events.Events {
       this.options = new ClientOptions();
     }
 
+    this._connect();
+  }
+
+  void _connect([bool resume = true]) {
     WebSocket.connect('wss://gateway.discord.gg?v=6&encoding=json').then((WebSocket socket) {
       this._socket = socket;
-      this._socket.listen(this._handleMsg);
+      this._socket.listen((msg) => this._handleMsg(msg, resume), onDone: () => this._handleErr());
     });
   }
 
@@ -58,43 +61,49 @@ class Client extends events.Events {
     this._socket.add(JSON.encode(<String, dynamic>{"op": 1,"d": this._lastS}));
   }
 
-  Future<Null> _handleMsg(String msg) async {
+  Future<Null> _handleMsg(String msg, bool resume) async {
     Map<String, dynamic> json = JSON.decode(msg);
 
     if (json['s'] != null) {
       this._lastS = json['s'];
     }
 
-    //const ms = const JSON.decode(msg)["d"]["heartbeat_interval"];
-
     if (json["op"] == 10) {
       const Duration heartbeatInterval = const Duration(milliseconds: 41250);
       new Timer.periodic(heartbeatInterval, (Timer t) => this._heartbeat());
 
-      this._socket.add(JSON.encode(<String, dynamic>{
-        "op": 2,
-        "d": <String, dynamic>{
-          "token": this.token,
-          "properties": <String, dynamic>{
-            "\$browser": "Discord Dart"
-          },
-          "large_threshold": 100,
-          "compress": false
-        }
-      }));
+      if (this._sessionID == null || !resume) {
+        this.ready = false;
+        this._socket.add(JSON.encode(<String, dynamic>{
+          "op": 2,
+          "d": <String, dynamic>{
+            "token": this.token,
+            "properties": <String, dynamic>{
+              "\$browser": "Discord Dart"
+            },
+            "large_threshold": 100,
+            "compress": false
+          }
+        }));
+      } else if (resume) {
+        this._socket.add(JSON.encode(<String, dynamic>{
+          "op": 6,
+          "d": <String, dynamic>{
+            "token": this.token,
+            "session_id": this._sessionID,
+            "seq": this._lastS
+          }
+        }));
+      }
     }
 
-    /*else if (json['op'] == 7) {
-      this._socket.add(JSON.encode({
-        "token": this.token,
-        "session_id": this._sessionID,
-        "seq": this._lastS
-      }));
-    }*/
+    else if (json["op"] == 9) {
+      this._connect(false);
+    }
 
     else if (json["op"] == 0) {
       if (json['t'] == "READY") {
-        this._sessionID = json['d']['session_id'];
+        this._sessionID = json['d']['session_id'] + "foo";
         this.user = new ClientUser(json['d']['user']);
 
         json['d']['guilds'].forEach((Map<String, dynamic> o) {
@@ -183,6 +192,31 @@ class Client extends events.Events {
     }
 
     return null;
+  }
+
+  void _handleErr() {
+    switch (this._socket.closeCode) {
+      case 4004:
+        throw new Exception("invalid token");
+
+      case 4010:
+        throw new Exception("invalid shard");
+
+      case 4007:
+        new WebSocketErrorEvent(this, this._socket.closeCode);
+        this._connect(false);
+        return;
+
+      case 4009:
+        new WebSocketErrorEvent(this, this._socket.closeCode);
+        this._connect(false);
+        return;
+
+      default:
+        new WebSocketErrorEvent(this, this._socket.closeCode);
+        this._connect();
+        return;
+    }
   }
 
   String _resolve(String to, dynamic object) {
