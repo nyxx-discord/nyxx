@@ -1,6 +1,3 @@
-# Install the dependenvies
-pub get
-
 # Install the linter
 pub global activate linter
 
