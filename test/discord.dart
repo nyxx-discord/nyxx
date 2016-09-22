@@ -23,5 +23,5 @@ main() {
       await bot.sendMessage("Tests completed successfully!");
       exit(0);
     }
-  })
+  });
 }
