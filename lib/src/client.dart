@@ -7,7 +7,6 @@ import 'http.dart';
 import 'package:events/events.dart' as events;
 import 'package:http/http.dart' as http;
 
-
 /// The base class.
 /// It contains all of the methods.
 class Client extends events.Events {
