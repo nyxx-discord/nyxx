@@ -230,7 +230,7 @@ class Client extends events.Events {
       } else if (object is Guild) {
         return object.defaultChannel.id;
       } else {
-        return object;
+        return object.toString();
       }
     }
 
@@ -238,7 +238,7 @@ class Client extends events.Events {
       if (object is Message) {
         return object.id;
       } else {
-        return object;
+        return object.toString();
       }
     }
 
@@ -250,7 +250,7 @@ class Client extends events.Events {
       } else if (object is Guild) {
         return object.id;
       } else {
-        return object;
+        return object.toString();
       }
     }
 
@@ -262,7 +262,7 @@ class Client extends events.Events {
       } else if (object is Member) {
         return object.user.id;
       } else {
-        return object;
+        return object.toString();
       }
     }
 
@@ -274,7 +274,7 @@ class Client extends events.Events {
       } else if (object is Member) {
         return object.user.id;
       } else {
-        return object;
+        return object.toString();
       }
     }
 
@@ -284,7 +284,7 @@ class Client extends events.Events {
       } else if (object is Member) {
         return object.user.id;
       } else {
-        return object;
+        return object.toString();
       }
     }
 
