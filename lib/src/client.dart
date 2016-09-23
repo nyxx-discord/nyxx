@@ -103,7 +103,7 @@ class Client extends events.Events {
 
     else if (json["op"] == 0) {
       if (json['t'] == "READY") {
-        this._sessionID = json['d']['session_id'] + "foo";
+        this._sessionID = json['d']['session_id'];
         this.user = new ClientUser(json['d']['user']);
 
         json['d']['guilds'].forEach((Map<String, dynamic> o) {
