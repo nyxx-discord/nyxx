@@ -12,7 +12,7 @@ class ChannelUpdateEvent {
   /// Constructs a new [ChannelUpdateEvent].
   ChannelUpdateEvent(Client client, Map<String, dynamic> json) {
     if (client.ready) {
-      Guild guild = client.guilds[json['d']['guild_id']];
+      final Guild guild = client.guilds[json['d']['guild_id']];
       this.oldChannel = client.channels[json['d']['id']];
       this.newChannel = new GuildChannel(client, json['d'], guild);
       client.channels[newChannel.id] = newChannel;

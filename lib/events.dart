@@ -14,3 +14,4 @@ export 'src/events/MessageEvent.dart';
 export 'src/events/MessageUpdateEvent.dart';
 export 'src/events/ReadyEvent.dart';
 export 'src/events/TypingEvent.dart';
+export 'src/events/WebSocketErrorEvent.dart';
