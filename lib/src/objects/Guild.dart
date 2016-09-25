@@ -64,8 +64,8 @@ class Guild {
   Map<String, GuildChannel> channels = <String, GuildChannel>{};
 
   /// Constructs a new [Guild].
-  Guild(this.client, Map<String, dynamic> data, [bool available = true, bool guildCreate = false]) {
-    if (available) {
+  Guild(this.client, Map<String, dynamic> data, [this.available, bool guildCreate = false]) {
+    if (this.available) {
       this.name = data['name'];
       this.id = data['id'];
       this.icon = data['icon'];
@@ -84,19 +84,17 @@ class Guild {
       if (guildCreate) {
         //this.roles = JSON.decode(data['roles']);
         data['members'].forEach((Map<String, dynamic> o) {
-          Member member = new Member(o, this);
+          final Member member = new Member(o, this);
           this.members[member.user.id] = member;
         });
 
         data['channels'].forEach((Map<String, dynamic> o) {
-          GuildChannel channel = new GuildChannel(client, o, this);
+          final GuildChannel channel = new GuildChannel(client, o, this);
           this.channels[channel.id] = channel;
         });
 
         this.defaultChannel = this.channels[this.id];
       }
-    } else {
-      this.available = false;
     }
   }
 
@@ -107,15 +105,16 @@ class Guild {
   ///     Guild.getMember("user id");
   Future<Member> getMember(dynamic member) async {
     if (this.client.ready) {
-      member = this.client.resolve('member', member);
+      final String id = this.client.resolve('member', member);
 
       if (this.members[member] != null) {
         return this.members[member];
       } else {
-        http.Response r = await this.client.http.get('guilds/${this.id}/members/$member');
-        Map<String, dynamic> res = JSON.decode(r.body);
+        final http.Response r = await this.client.http.get('guilds/${this.id}/members/$id');
+        final Map<String, dynamic> res = JSON.decode(r.body);
+
         if (r.statusCode == 200) {
-          Member m = new Member(res, this);
+          final Member m = new Member(res, this);
           this.members[m.user.id] = m;
           return m;
         } else {
@@ -135,10 +134,11 @@ class Guild {
   Future<bool> oauth2Authorize(dynamic app, [int permissions = 0]) async {
     if (this.client.ready) {
       if (!this.client.user.bot) {
-        app = this.client.resolve('app', app);
+        final String id = this.client.resolve('app', app);
 
-        http.Response r = await this.client.http.post('oauth2/authorize?client_id=$app&scope=bot', <String, dynamic>{"guild_id": this.id, "permissions": permissions, "authorize": true});
-        Map<String, dynamic> res = JSON.decode(r.body);
+        final http.Response r = await this.client.http.post('oauth2/authorize?client_id=$id&scope=bot', <String, dynamic>{"guild_id": this.id, "permissions": permissions, "authorize": true});
+        final Map<String, dynamic> res = JSON.decode(r.body);
+
         if (r.statusCode == 200) {
           return true;
         } else {

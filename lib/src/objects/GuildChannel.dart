@@ -61,16 +61,20 @@ class GuildChannel {
   ///     Channel.sendMessage("My content!");
   Future<Message> sendMessage(String content, [MessageOptions options]) async {
     if (this.client.ready) {
+      MessageOptions newOptions;
       if (options == null) {
-        options = new MessageOptions();
+        newOptions = new MessageOptions();
+      } else {
+        newOptions = options;
       }
 
+      String newContent;
       if (options.disableEveryone || (options.disableEveryone == null && this.client.options.disableEveryone)) {
-        content = content.replaceAll("@everyone", "@\u200Beveryone").replaceAll("@here", "@\u200Bhere");
+        newContent = content.replaceAll("@everyone", "@\u200Beveryone").replaceAll("@here", "@\u200Bhere");
       }
 
-      http.Response r = await this.client.http.post('channels/${this.id}/messages', <String, dynamic>{"content": content, "tts": options.tts, "nonce": options.nonce});
-      Map<String, dynamic> res = JSON.decode(r.body);
+      final http.Response r = await this.client.http.post('channels/${this.id}/messages', <String, dynamic>{"content": newContent, "tts": newOptions.tts, "nonce": newOptions.nonce});
+      final Map<String, dynamic> res = JSON.decode(r.body);
 
       if (r.statusCode == 200) {
         return new Message(this.client, res);
@@ -90,10 +94,11 @@ class GuildChannel {
   Future<Message> getMessage(dynamic message) async {
     if (this.client.ready) {
       if (this.client.user.bot) {
-        message = this.client.resolve('message', message);
+        final String id = this.client.resolve('message', message);
 
-        http.Response r = await this.client.http.get('channels/${this.id}/messages/$message');
-        Map<String, dynamic> res = JSON.decode(r.body);
+        final http.Response r = await this.client.http.get('channels/${this.id}/messages/$id');
+        final Map<String, dynamic> res = JSON.decode(r.body);
+
         if (r.statusCode == 200) {
           return new Message(this.client, res);
         } else {

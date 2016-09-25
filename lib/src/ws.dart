@@ -45,7 +45,7 @@ class WS {
   }
 
   Future<Null> _handleMsg(String msg, bool resume) async {
-    Map<String, dynamic> json = JSON.decode(msg);
+    final Map<String, dynamic> json = JSON.decode(msg);
 
     if (json['s'] != null) {
       this.lastS = json['s'];
@@ -94,15 +94,16 @@ class WS {
         });
 
         json['d']['private_channels'].forEach((Map<String, dynamic> o) {
-          PrivateChannel channel = new PrivateChannel(o);
+          final PrivateChannel channel = new PrivateChannel(o);
           this.client.channels[channel.id] = channel;
         });
 
         if (this.client.user.bot) {
           this.client.http.headers['Authorization'] = "Bot ${this.client.token}";
 
-          http.Response r = await this.client.http.get('oauth2/applications/@me');
-          Map<String, dynamic> res = JSON.decode(r.body);
+          final http.Response r = await this.client.http.get('oauth2/applications/@me');
+          final Map<String, dynamic> res = JSON.decode(r.body);
+          
           if (r.statusCode == 200) {
             this.client.app = new ClientOAuth2Application(res);
           }

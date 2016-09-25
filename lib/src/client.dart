@@ -135,10 +135,11 @@ class Client extends events.Events {
   ///     Client.getUser("user id");
   Future<User> getUser(dynamic user) async {
     if (this.ready) {
-      user = this.resolve('user', user);
+      final String id = this.resolve('user', user);
 
-      http.Response r = await this.http.get('users/$user');
-      Map<String, dynamic> res = JSON.decode(r.body);
+      final http.Response r = await this.http.get('users/$id');
+      final Map<String, dynamic> res = JSON.decode(r.body);
+
       if (r.statusCode == 200) {
         return new User(res);
       } else {
@@ -155,8 +156,9 @@ class Client extends events.Events {
   ///     Client.getInvite("invite code");
   Future<Invite> getInvite(String code) async {
     if (this.ready) {
-      http.Response r = await this.http.get('invites/$code');
-      Map<String, dynamic> res = JSON.decode(r.body);
+      final http.Response r = await this.http.get('invites/$code');
+      final Map<String, dynamic> res = JSON.decode(r.body);
+
       if (r.statusCode == 200) {
         return new Invite(res);
       } else {
@@ -173,10 +175,11 @@ class Client extends events.Events {
   ///     Client.getOAuth2Info("app id");
   Future<OAuth2Info> getOAuth2Info(dynamic app) async {
     if (this.ready) {
-      app = this.resolve('app', app);
+      final String id = this.resolve('app', app);
 
-      http.Response r = await this.http.get('oauth2/authorize?client_id=$app&scope=bot');
-      Map<String, dynamic> res = JSON.decode(r.body);
+      final http.Response r = await this.http.get('oauth2/authorize?client_id=$id&scope=bot');
+      final Map<String, dynamic> res = JSON.decode(r.body);
+
       if (r.statusCode == 200) {
         return new OAuth2Info(res);
       } else {

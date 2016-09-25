@@ -94,18 +94,22 @@ class Message {
   ///
   /// Throws an [Exception] if the HTTP request errored.
   ///     Message.edit("My edited content!");
-  Future<Message> edit(String content, [MessageOptions options]) async {
+  Future<Message> edit(String rawContent, [MessageOptions msgOptions]) async {
     if (this.client.ready) {
-      if (options == null) {
+      MessageOptions options;
+      if (msgOptions == null) {
         options = new MessageOptions();
+      } else {
+        options = msgOptions;
       }
 
+      String content;
       if (options.disableEveryone || (options.disableEveryone == null && this.client.options.disableEveryone)) {
-        content = content.replaceAll("@everyone", "@\u200Beveryone").replaceAll("@here", "@\u200Bhere");
+        content = rawContent.replaceAll("@everyone", "@\u200Beveryone").replaceAll("@here", "@\u200Bhere");
       }
 
-      http.Response r = await this.client.http.patch('channels/${this.channel.id}/messages/${this.id}', <String, dynamic>{"content": content});
-      Map<String, dynamic> res = JSON.decode(r.body);
+      final http.Response r = await this.client.http.patch('channels/${this.channel.id}/messages/${this.id}', <String, dynamic>{"content": content});
+      final Map<String, dynamic> res = JSON.decode(r.body);
 
       if (r.statusCode == 200) {
         return new Message(this.client, res);
@@ -123,7 +127,7 @@ class Message {
   ///     Message.delete();
   Future<bool> delete() async {
     if (this.client.ready) {
-      http.Response r = await this.client.http.delete('channels/${this.channel.id}/messages/${this.id}');
+      final http.Response r = await this.client.http.delete('channels/${this.channel.id}/messages/${this.id}');
 
       if (r.statusCode == 204) {
         return true;
