@@ -71,6 +71,8 @@ class GuildChannel {
       String newContent;
       if (newOptions.disableEveryone || (newOptions.disableEveryone == null && this.client.options.disableEveryone)) {
         newContent = content.replaceAll("@everyone", "@\u200Beveryone").replaceAll("@here", "@\u200Bhere");
+      } else {
+        newContent = content;
       }
 
       final http.Response r = await this.client.http.post('channels/${this.id}/messages', <String, dynamic>{"content": newContent, "tts": newOptions.tts, "nonce": newOptions.nonce});
