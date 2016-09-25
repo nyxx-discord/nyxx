@@ -14,7 +14,7 @@ class ChannelDeleteEvent {
         client.channels.remove(channel.id);
         client.emit('channelDelete', this);
       } else {
-        Guild guild = client.guilds[json['d']['guild_id']];
+        final Guild guild = client.guilds[json['d']['guild_id']];
         this.channel = new GuildChannel(client, json['d'], guild);
         client.channels.remove(channel.id);
         client.emit('channelDelete', this);

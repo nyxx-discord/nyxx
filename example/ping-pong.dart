@@ -11,7 +11,7 @@ main() {
     var m = e.message;
 
     if (m.content == "!ping") {
-      bot.sendMessage(m.channel, "Pong!");
+      m.channel.sendMessage("Pong!");
     }
   });
 }
