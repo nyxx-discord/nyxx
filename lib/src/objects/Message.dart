@@ -1,8 +1,14 @@
-import '../../objects.dart';
+import 'dart:async';
+import 'dart:convert';
 import '../client.dart';
+import '../../objects.dart';
+import 'package:http/http.dart' as http;
 
 /// A message.
 class Message {
+  /// The client.
+  Client client;
+
   /// The message's content.
   String content;
 
@@ -55,14 +61,14 @@ class Message {
   bool mentionEveryone;
 
   /// Constructs a new [Message].
-  Message(Client client, Map<String, dynamic> data) {
+  Message(this.client, Map<String, dynamic> data) {
     this.content = data['content'];
     this.id = data['id'];
     this.nonce = data['nonce'];
     this.timestamp = data['timestamp'];
     this.editedTimestamp = data['edited_timestamp'];
     this.author = new User(data['author']);
-    this.channel = client.channels[data['channel_id']];
+    this.channel = this.client.channels[data['channel_id']];
     this.guild = this.channel.guild;
     this.pinned = data['pinned'];
     this.tts = data['tts'];
@@ -82,5 +88,50 @@ class Message {
     data['attachments'].forEach((Map<String, dynamic> attachment) {
       this.attachments.add(new Attachment(attachment));
     });
+  }
+
+  /// Edits the message.
+  ///
+  /// Throws an [Exception] if the HTTP request errored.
+  ///     Message.edit("My edited content!");
+  Future<Message> edit(String content, [MessageOptions options]) async {
+    if (this.client.ready) {
+      if (options == null) {
+        options = new MessageOptions();
+      }
+
+      if (options.disableEveryone || (options.disableEveryone == null && this.client.options.disableEveryone)) {
+        content = content.replaceAll("@everyone", "@\u200Beveryone").replaceAll("@here", "@\u200Bhere");
+      }
+
+      http.Response r = await this.client.http.patch('channels/${this.channel.id}/messages/${this.id}', <String, dynamic>{"content": content});
+      Map<String, dynamic> res = JSON.decode(r.body);
+
+      if (r.statusCode == 200) {
+        return new Message(this.client, res);
+      } else {
+        throw new Exception("${res['code']}:${res['message']}");
+      }
+    } else {
+      throw new Exception("the client isn't ready");
+    }
+  }
+
+  /// Deletes the message.
+  ///
+  /// Throws an [Exception] if the HTTP request errored.
+  ///     Message.delete();
+  Future<bool> delete() async {
+    if (this.client.ready) {
+      http.Response r = await this.client.http.delete('channels/${this.channel.id}/messages/${this.id}');
+
+      if (r.statusCode == 204) {
+        return true;
+      } else {
+        throw new Exception("'delete' error.");
+      }
+    } else {
+      throw new Exception("the client isn't ready");
+    }
   }
 }

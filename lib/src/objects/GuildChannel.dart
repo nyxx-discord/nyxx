@@ -1,8 +1,14 @@
-import '../../objects.dart';
+import 'dart:async';
+import 'dart:convert';
 import '../client.dart';
+import '../../objects.dart';
+import 'package:http/http.dart' as http;
 
 /// A guild channel.
 class GuildChannel {
+  /// The client.
+  Client client;
+
   /// The channel's name.
   String name;
 
@@ -37,7 +43,7 @@ class GuildChannel {
   bool isPrivate = false;
 
   /// Constructs a new [GuildChannel].
-  GuildChannel(Client client, Map<String, dynamic> data, Guild guild) {
+  GuildChannel(this.client, Map<String, dynamic> data, this.guild) {
     this.name = data['name'];
     this.id = data['id'];
     this.type = data['type'];
@@ -47,6 +53,57 @@ class GuildChannel {
     this.lastMessageID = data['last_message_id'];
     this.bitrate = data['bitrate'];
     this.userLimit = data['user_limit'];
-    this.guild = guild;
+  }
+
+  /// Sends a message.
+  ///
+  /// Throws an [Exception] if the HTTP request errored.
+  ///     Channel.sendMessage("My content!");
+  Future<Message> sendMessage(String content, [MessageOptions options]) async {
+    if (this.client.ready) {
+      if (options == null) {
+        options = new MessageOptions();
+      }
+
+      if (options.disableEveryone || (options.disableEveryone == null && this.client.options.disableEveryone)) {
+        content = content.replaceAll("@everyone", "@\u200Beveryone").replaceAll("@here", "@\u200Bhere");
+      }
+
+      http.Response r = await this.client.http.post('channels/${this.id}/messages', <String, dynamic>{"content": content, "tts": options.tts, "nonce": options.nonce});
+      Map<String, dynamic> res = JSON.decode(r.body);
+
+      if (r.statusCode == 200) {
+        return new Message(this.client, res);
+      } else {
+        throw new Exception("${res['code']}: ${res['message']}");
+      }
+    } else {
+      throw new Exception("the client isn't ready");
+    }
+  }
+
+  /// Gets a [Message] object. Only usable by bot accounts.
+  ///
+  /// Throws an [Exception] if the HTTP request errored or if the client user
+  /// is not a bot.
+  ///     Channel.getMessage("message id");
+  Future<Message> getMessage(dynamic message) async {
+    if (this.client.ready) {
+      if (this.client.user.bot) {
+        message = this.client.resolve('message', message);
+
+        http.Response r = await this.client.http.get('channels/${this.id}/messages/$message');
+        Map<String, dynamic> res = JSON.decode(r.body);
+        if (r.statusCode == 200) {
+          return new Message(this.client, res);
+        } else {
+          throw new Exception("${res['code']}:${res['message']}");
+        }
+      } else {
+        throw new Exception("'getMessage' is only usable by bot accounts.");
+      }
+    } else {
+      throw new Exception("the client isn't ready");
+    }
   }
 }
