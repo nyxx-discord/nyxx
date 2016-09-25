@@ -3,6 +3,7 @@ import 'dart:async';
 import 'client.dart';
 import 'package:http/http.dart' as http;
 
+/// The HTTP manager for the client.
 class HTTP {
   /// The base API URL.
   String host = "https://discordapp.com/api";
