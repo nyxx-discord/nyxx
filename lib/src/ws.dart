@@ -1,9 +1,7 @@
 import 'dart:convert';
 import 'dart:async';
 import 'dart:io';
-import 'client.dart';
-import '../objects.dart';
-import '../events.dart';
+import '../discord.dart';
 import 'package:http/http.dart' as http;
 
 /// The WS manager for the client.
@@ -103,7 +101,7 @@ class WS {
 
           final http.Response r = await this.client.http.get('oauth2/applications/@me');
           final Map<String, dynamic> res = JSON.decode(r.body);
-          
+
           if (r.statusCode == 200) {
             this.client.app = new ClientOAuth2Application(res);
           }

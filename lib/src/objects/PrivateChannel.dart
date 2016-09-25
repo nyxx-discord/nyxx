@@ -1,5 +1,4 @@
-import '../../objects.dart';
-import '../client.dart';
+import '../../discord.dart';
 
 /// A private channel.
 class PrivateChannel {

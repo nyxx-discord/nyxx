@@ -1,5 +1,4 @@
-import '../../objects.dart';
-import '../client.dart';
+import '../../discord.dart';
 
 /// Sent when the client is ready.
 class ReadyEvent {

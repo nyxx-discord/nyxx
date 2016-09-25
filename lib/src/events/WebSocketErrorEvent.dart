@@ -1,5 +1,4 @@
-import '../../objects.dart';
-import '../client.dart';
+import '../../discord.dart';
 
 /// Sent when the websocket encounters an error (but certian errors will throw
 /// an exception).

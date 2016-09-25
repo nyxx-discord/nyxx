@@ -1,4 +1,4 @@
-import '../../objects.dart';
+import '../../discord.dart';
 
 /// An OAuth2 application.
 class OAuth2Application {

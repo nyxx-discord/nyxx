@@ -1,4 +1,4 @@
-import '../../objects.dart';
+import '../../discord.dart';
 import '../client.dart';
 
 /// Sent when a channel is created, can be a `PMChannel`.

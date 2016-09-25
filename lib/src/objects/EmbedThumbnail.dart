@@ -1,4 +1,4 @@
-import '../../objects.dart';
+import '../../discord.dart';
 
 /// A message embed thumbnail.
 class EmbedThumbnail {

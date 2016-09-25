@@ -1,4 +1,4 @@
-import '../../objects.dart';
+import '../../discord.dart';
 
 /// A message embed.
 class Embed {

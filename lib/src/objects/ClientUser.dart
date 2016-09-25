@@ -1,4 +1,4 @@
-import '../../objects.dart';
+import '../../discord.dart';
 
 /// The client user.
 class ClientUser {
