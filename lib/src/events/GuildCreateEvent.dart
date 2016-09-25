@@ -1,5 +1,4 @@
-import '../../objects.dart';
-import '../../events.dart';
+import '../../discord.dart';
 import '../client.dart';
 
 /// Sent when the bot joins a guild.

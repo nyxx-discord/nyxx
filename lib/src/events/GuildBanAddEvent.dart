@@ -1,4 +1,4 @@
-import '../../objects.dart';
+import '../../discord.dart';
 import '../client.dart';
 
 /// Sent when a member is banned.

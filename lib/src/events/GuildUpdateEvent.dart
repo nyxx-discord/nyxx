@@ -1,5 +1,4 @@
-import '../../objects.dart';
-import '../client.dart';
+import '../../discord.dart';
 
 /// Sent when a guild is updated.
 class GuildUpdateEvent {

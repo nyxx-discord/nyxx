@@ -1,4 +1,4 @@
-import '../../objects.dart';
+import '../../discord.dart';
 
 /// A mini guild object for invites.
 class InviteGuild {

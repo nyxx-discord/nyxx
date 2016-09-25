@@ -1,8 +1,8 @@
 import 'dart:convert';
 import 'dart:async';
-import '../objects.dart';
 import 'http.dart';
 import 'ws.dart';
+import '../discord.dart';
 import 'package:events/events.dart' as events;
 import 'package:http/http.dart' as http;
 

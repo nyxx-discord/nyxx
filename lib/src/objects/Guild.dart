@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
-import '../client.dart';
-import '../../objects.dart';
+import '../../discord.dart';
 import 'package:http/http.dart' as http;
 
 /// A guild.

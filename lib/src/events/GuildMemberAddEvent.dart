@@ -1,5 +1,4 @@
-import '../../objects.dart';
-import '../client.dart';
+import '../../discord.dart';
 
 /// Sent when a member joins a guild.
 class GuildMemberAddEvent {
