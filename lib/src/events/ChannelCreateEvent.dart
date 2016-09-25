@@ -14,7 +14,7 @@ class ChannelCreateEvent {
         client.channels[channel.id] = channel;
         client.emit('channelCreate', this);
       } else {
-        Guild guild = client.guilds[json['d']['guild_id']];
+        final Guild guild = client.guilds[json['d']['guild_id']];
         this.channel = new GuildChannel(client, json['d'], guild);
         client.channels[channel.id] = channel;
         client.emit('channelCreate', this);
