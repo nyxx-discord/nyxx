@@ -15,12 +15,12 @@ class GuildDeleteEvent {
       if (json['d']['unavailable']) {
         this.unavailable = true;
         this.guild = new Guild(client, null, false);
-        client.guilds[json['d']['id']] = guild;
+        client.guilds.map[json['d']['id']] = guild;
         client.emit('guildDelete', this);
       } else {
         this.unavailable = false;
-        this.guild = client.guilds[json['d']['id']];
-        client.guilds.remove(json['d']['id']);
+        this.guild = client.guilds.map[json['d']['id']];
+        client.guilds.map.remove(json['d']['id']);
         client.emit('guildDelete', this);
       }
     }

@@ -11,8 +11,8 @@ class TypingEvent {
   /// Constructs a new [TypingEvent].
   TypingEvent(Client client, Map<String, dynamic> json) {
     if (client.ready) {
-      this.channel = client.channels[json['d']['channel_id']];
-      this.user = client.users[json['d']['user_id']];
+      this.channel = client.channels.map[json['d']['channel_id']];
+      this.user = client.users.map[json['d']['user_id']];
       client.emit('typing', this);
     }
   }

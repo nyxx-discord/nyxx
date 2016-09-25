@@ -8,6 +8,9 @@ class GuildChannel {
   /// The client.
   Client client;
 
+  /// A map of all of the properties.
+  Map<String, dynamic> map = <String, dynamic>{};
+
   /// The channel's name.
   String name;
 
@@ -44,14 +47,32 @@ class GuildChannel {
   /// Constructs a new [GuildChannel].
   GuildChannel(this.client, Map<String, dynamic> data, this.guild) {
     this.name = data['name'];
+    this.map['name'] = this.name;
+
     this.id = data['id'];
+    this.map['id'] = this.id;
+
     this.type = data['type'];
+    this.map['type'] = this.type;
+
     this.position = data['position'];
+    this.map['position'] = this.position;
+
     this.createdAt = (int.parse(this.id) / 4194304) + 1420070400000;
+    this.map['createdAt'] = this.createdAt;
+
     this.topic = data['topic'];
+    this.map['topic'] = this.topic;
+
     this.lastMessageID = data['last_message_id'];
+    this.map['lastMessageID'] = this.lastMessageID;
+
     this.bitrate = data['bitrate'];
+    this.map['bitrate'] = this.bitrate;
+
     this.userLimit = data['user_limit'];
+    this.map['userLimit'] = this.userLimit;
+
   }
 
   /// Sends a message.

@@ -6,7 +6,7 @@ main() {
   var bot = new discord.Client(env['DISCORD_TOKEN']);
 
   bot.on('ready', (e) async {
-    var channel = bot.channels['228308788954791939'];
+    var channel = bot.channels.get('228308788954791939');
     channel.sendMessage("Testing new Travis CI build `#${env['TRAVIS_BUILD_NUMBER']}` from commit `${env['TRAVIS_COMMIT']}` on branch `${env['TRAVIS_BRANCH']}`");
 
     var m = await channel.sendMessage("Message test.");

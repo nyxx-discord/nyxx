@@ -12,11 +12,11 @@ class GuildUpdateEvent {
   GuildUpdateEvent(Client client, Map<String, dynamic> json) {
     if (client.ready) {
       this.newGuild = new Guild(client, json['d']);
-      this.oldGuild = client.guilds[this.newGuild.id];
+      this.oldGuild = client.guilds.map[this.newGuild.id];
       this.newGuild.channels = this.oldGuild.channels;
       this.newGuild.members = this.oldGuild.members;
 
-      client.guilds[this.newGuild.id] = this.newGuild;
+      client.guilds.map[this.newGuild.id] = this.newGuild;
 
       client.emit('guildCreate', this);
     }
