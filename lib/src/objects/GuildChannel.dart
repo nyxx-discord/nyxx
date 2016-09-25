@@ -69,7 +69,7 @@ class GuildChannel {
       }
 
       String newContent;
-      if (options.disableEveryone || (options.disableEveryone == null && this.client.options.disableEveryone)) {
+      if (newOptions.disableEveryone || (newOptions.disableEveryone == null && this.client.options.disableEveryone)) {
         newContent = content.replaceAll("@everyone", "@\u200Beveryone").replaceAll("@here", "@\u200Bhere");
       }
 
