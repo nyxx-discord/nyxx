@@ -12,10 +12,10 @@ class GuildMemberRemoveEvent {
   /// Constructs a new [GuildMemberRemoveEvent].
   GuildMemberRemoveEvent(Client client, Map<String, dynamic> json) {
     if (client.ready) {
-      this.guild = client.guilds[json['d']['guild_id']];
+      this.guild = client.guilds.map[json['d']['guild_id']];
       this.user = new User(json['d']['user']);
       guild.members.remove(user.id);
-      client.users[user.id] = user;
+      client.users.map[user.id] = user;
       client.emit('guildMemberRemove', this);
     }
   }

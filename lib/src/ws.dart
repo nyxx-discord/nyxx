@@ -16,7 +16,7 @@ class WS {
   WebSocket socket;
 
   /// The last sequence sent to the WS manager.
-  int lastS;
+  int sequence;
 
   /// The session ID.
   String sessionID;
@@ -25,61 +25,62 @@ class WS {
   WS(this.client) {
     this.client.http.get('gateway').then((http.Response r) {
       this.gateway = JSON.decode(r.body)['url'];
-      this._connect();
+      this.connect();
     }).catchError((Error err) {
       throw new Exception("could not get '/gateway'");
     });
   }
 
-  void _connect([bool resume = true]) {
+  void connect([bool resume = true]) {
     WebSocket.connect('${this.gateway}?v=6&encoding=json').then((WebSocket socket) {
       this.socket = socket;
       this.socket.listen((String msg) => this._handleMsg(msg, resume), onDone: () => this._handleErr());
     });
   }
 
-  void _heartbeat() {
-    this.socket.add(JSON.encode(<String, dynamic>{"op": 1,"d": this.lastS}));
+  void send(int op, dynamic d) {
+    this.socket.add(JSON.encode(<String, dynamic>{
+      "op": op,
+      "d": d
+    }));
+  }
+
+  void heartbeat() {
+    this.send(1, this.sequence);
   }
 
   Future<Null> _handleMsg(String msg, bool resume) async {
     final Map<String, dynamic> json = JSON.decode(msg);
 
     if (json['s'] != null) {
-      this.lastS = json['s'];
+      this.sequence = json['s'];
     }
 
     if (json["op"] == 10) {
       const Duration heartbeatInterval = const Duration(milliseconds: 41250);
-      new Timer.periodic(heartbeatInterval, (Timer t) => this._heartbeat());
+      new Timer.periodic(heartbeatInterval, (Timer t) => this.heartbeat());
 
       if (this.sessionID == null || !resume) {
         this.client.ready = false;
-        this.socket.add(JSON.encode(<String, dynamic>{
-          "op": 2,
-          "d": <String, dynamic>{
-            "token": this.client.token,
-            "properties": <String, dynamic>{
-              "\$browser": "Discord Dart"
-            },
-            "large_threshold": 100,
-            "compress": false
-          }
-        }));
+        this.send(2, <String, dynamic>{
+          "token": this.client.token,
+          "properties": <String, dynamic>{
+            "\$browser": "Discord Dart"
+          },
+          "large_threshold": 100,
+          "compress": false
+        });
       } else if (resume) {
-        this.socket.add(JSON.encode(<String, dynamic>{
-          "op": 6,
-          "d": <String, dynamic>{
-            "token": this.client.token,
-            "session_id": this.sessionID,
-            "seq": this.lastS
-          }
-        }));
+        this.send(6, <String, dynamic>{
+          "token": this.client.token,
+          "session_id": this.sessionID,
+          "seq": this.sequence
+        });
       }
     }
 
     else if (json["op"] == 9) {
-      this._connect(false);
+      this.connect(false);
     }
 
     else if (json["op"] == 0) {
@@ -88,12 +89,12 @@ class WS {
         this.client.user = new ClientUser(json['d']['user']);
 
         json['d']['guilds'].forEach((Map<String, dynamic> o) {
-          this.client.guilds[o['id']] = null;
+          this.client.guilds.map[o['id']] = null;
         });
 
         json['d']['private_channels'].forEach((Map<String, dynamic> o) {
           final PrivateChannel channel = new PrivateChannel(o);
-          this.client.channels[channel.id] = channel;
+          this.client.channels.map[channel.id] = channel;
         });
 
         if (this.client.user.bot) {
@@ -186,17 +187,17 @@ class WS {
 
       case 4007:
         new WebSocketErrorEvent(this.client, this.socket.closeCode);
-        this._connect(false);
+        this.connect(false);
         return;
 
       case 4009:
         new WebSocketErrorEvent(this.client, this.socket.closeCode);
-        this._connect(false);
+        this.connect(false);
         return;
 
       default:
         new WebSocketErrorEvent(this.client, this.socket.closeCode);
-        this._connect();
+        this.connect();
         return;
     }
   }

@@ -22,6 +22,7 @@ export 'src/objects/Attachment.dart';
 export 'src/objects/ClientOAuth2Application.dart';
 export 'src/objects/ClientOptions.dart';
 export 'src/objects/ClientUser.dart';
+export 'src/objects/Collection.dart';
 export 'src/objects/Embed.dart';
 export 'src/objects/EmbedProvider.dart';
 export 'src/objects/EmbedThumbnail.dart';

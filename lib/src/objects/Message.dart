@@ -67,7 +67,7 @@ class Message {
     this.timestamp = data['timestamp'];
     this.editedTimestamp = data['edited_timestamp'];
     this.author = new User(data['author']);
-    this.channel = this.client.channels[data['channel_id']];
+    this.channel = this.client.channels.map[data['channel_id']];
     this.guild = this.channel.guild;
     this.pinned = data['pinned'];
     this.tts = data['tts'];

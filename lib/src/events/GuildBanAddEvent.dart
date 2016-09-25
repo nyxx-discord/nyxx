@@ -12,9 +12,9 @@ class GuildBanAddEvent {
   /// Constructs a new [GuildBanAddEvent].
   GuildBanAddEvent(Client client, Map<String, dynamic> json) {
     if (client.ready) {
-      this.guild = client.guilds[json['d']['guild_id']];
+      this.guild = client.guilds.map[json['d']['guild_id']];
       this.user = new User(json['d']['user']);
-      client.users[user.id] = user;
+      client.users.map[user.id] = user;
       client.emit('guildBanAdd', this);
     }
   }

@@ -21,16 +21,16 @@ class Client extends events.Events {
   /// The bot's OAuth2 app.
   ClientOAuth2Application app;
 
-  /// A map of all the guilds the bot is in, by id.
-  Map<String, Guild> guilds = <String, Guild>{};
+  /// All of the guilds the bot is in.
+  Collection guilds;
 
-  /// A map of all the channels the bot is in, by id. Either a [GuildChannel] or
+  /// All of the channels the bot is in. Either a [GuildChannel] or
   /// [PrivateChannel].
-  Map<String, dynamic> channels = <String, dynamic>{};
+  Collection channels;
 
-  /// A map of all of the users the bot can see, by id. Does not always have
-  /// offline users without forceFetchUsers enabled.
-  Map<String, User> users = <String, User>{};
+  /// All of the users the bot can see. Does not always have offline users
+  /// without forceFetchUsers enabled.
+  Collection users;
 
   /// Whether or not the client is ready.
   bool ready = false;
@@ -46,6 +46,10 @@ class Client extends events.Events {
 
   /// Creates and logs in a new client.
   Client(this.token, [this.options]) {
+    this.guilds = new Collection();
+    this.channels = new Collection();
+    this.users = new Collection();
+
     this.http = new HTTP(this);
     this.ws = new WS(this);
 
