@@ -2,11 +2,11 @@ import 'dart:convert';
 import 'dart:async';
 import 'dart:io';
 import 'client.dart';
-import 'http.dart';
 import '../objects.dart';
 import '../events.dart';
 import 'package:http/http.dart' as http;
 
+/// The WS manager for the client.
 class WS {
   /// The base websocket URL.
   String gateway;
