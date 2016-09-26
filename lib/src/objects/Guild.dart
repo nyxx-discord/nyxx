@@ -20,6 +20,9 @@ class Guild {
   /// The guild's icon hash.
   String icon;
 
+  /// The guild's icon URL.
+  String iconURL;
+
   /// The guild's afk channel ID, null if not set.
   String afkChannelID;
 
@@ -71,6 +74,7 @@ class Guild {
       this.name = this.map['name'] = data['name'];
       this.id = this.map['id'] = data['id'];
       this.icon = this.map['icon'] = data['icon'];
+      this.iconURL = this.map['iconURL'] = "https://discordapp.com/api/v6/guilds/${this.id}/icons/${this.icon}.jpg";
       this.afkChannelID = this.map['afkChannelID'] = data['afk_channel_id'];
       this.region = this.map['region'] = data['region'];
       this.embedChannelID = this.map['embedChannelID'] = data['embed_channel_id'];
