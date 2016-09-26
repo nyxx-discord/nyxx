@@ -31,6 +31,7 @@ class WS {
     });
   }
 
+  /// COnnects to the websocket.
   void connect([bool resume = true]) {
     if (this.socket != null) {
       this.socket.close();
@@ -41,6 +42,7 @@ class WS {
     });
   }
 
+  /// Sends WS data.
   void send(int op, dynamic d) {
     this.socket.add(JSON.encode(<String, dynamic>{
       "op": op,
@@ -48,6 +50,7 @@ class WS {
     }));
   }
 
+  /// Sends a heartbeat packet.
   void heartbeat() {
     this.send(1, this.sequence);
   }
@@ -72,7 +75,7 @@ class WS {
           },
           "large_threshold": 100,
           "compress": false,
-          "shard": [this.client.options.shardId, this.client.options.shardCount]
+          "shard": <int>[this.client.options.shardId, this.client.options.shardCount]
         });
       } else if (resume) {
         this.send(6, <String, dynamic>{
