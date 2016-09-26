@@ -31,6 +31,7 @@ class OAuth2Application {
   }
 
   /// Returns a string representation of this object.
+  @override
   String toString() {
     return this.name;
   }
