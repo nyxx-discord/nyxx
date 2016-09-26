@@ -20,6 +20,9 @@ class User {
   /// The user's avatar hash.
   String avatar;
 
+  /// The user's avatar URL.
+  String avatarURL;
+
   /// The string to mention the user.
   String mention;
 
@@ -35,6 +38,7 @@ class User {
     this.id = this.map['id'] = data['id'];
     this.discriminator = this.map['discriminator'] = data['discriminator'];
     this.avatar = this.map['avatar'] = data['avatar'];
+    this.avatarURL = this.map['avatarURL'] = "https://discordapp.com/api/v6/users/${this.id}/avatars/${this.avatar}.jpg";
     this.mention = this.map['mention'] = "<@${this.id}>";
     this.createdAt = this.map['createdAt'] = (int.parse(this.id) / 4194304) + 1420070400000;
 
