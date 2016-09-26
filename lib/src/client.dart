@@ -36,7 +36,7 @@ class Client extends events.Events {
   bool ready = false;
 
   /// The current version.
-  String version = "0.8.0";
+  String version = "0.10.1";
 
   /// The client's HTTP manager, this is for use internally.
   HTTP http;
