@@ -1,7 +1,9 @@
 import '../../discord.dart';
 
 /// A guild member.
-class Member {
+class Member extends User{
+  User _user;
+
   /// The client.
   Client client;
 
@@ -27,18 +29,25 @@ class Member {
   Guild guild;
 
   /// Constructs a new [Member].
-  Member(this.client, Map<String, dynamic> data, Guild guild) {
-    this.nickname = data['nick'];
-    this.joinedAt = data['joined_at'];
-    this.deaf = data['deaf'];
-    this.mute = data['mute'];
-    this.roles = data['roles'];
-    this.user = new User(client, data['user']);
-    this.guild = guild;
+  Member(Client client, Map<String, dynamic> data, Guild guild) : super(client, data['user']) {
+    this.client = client;
+
+    this.nickname = this.map['nickname'] = data['nick'];
+    this.joinedAt = this.map['joinedAt'] = data['joined_at'];
+    this.deaf = this.map['deaf'] = data['deaf'];
+    this.mute = this.map['mute'] = data['mute'];
+    this.roles = this.map['roles'] = data['roles'];
+    this.guild = this.map['guild'] = guild;
+    this._user = new User(client, data['user']);
   }
 
   /// Returns a string representation of this object.
   String toString() {
-    return this.user.username;
+    return this.username;
+  }
+
+  /// Returns a user from the member.
+  User toUser() {
+    return this._user;
   }
 }

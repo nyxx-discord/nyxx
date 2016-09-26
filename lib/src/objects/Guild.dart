@@ -68,47 +68,20 @@ class Guild {
   /// Constructs a new [Guild].
   Guild(this.client, Map<String, dynamic> data, [this.available, bool guildCreate = false]) {
     if (this.available) {
-      this.name = data['name'];
-      this.map['name'] = this.name;
-
-      this.id = data['id'];
-      this.map['id'] = this.id;
-
-      this.icon = data['icon'];
-      this.map['icon'] = this.icon;
-
-      this.afkChannelID = data['afk_channel_id'];
-      this.map['afkChannelID'] = this.afkChannelID;
-
-      this.region = data['region'];
-      this.map['region'] = this.region;
-
-      this.embedChannelID = data['embed_channel_id'];
-      this.map['embedChannelID'] = this.embedChannelID;
-
-      this.afkTimeout = data['afk_timeout'];
-      this.map['afkTimeout'] = this.afkTimeout;
-
-      this.memberCount = data['member_count'];
-      this.map['memberCount'] = this.memberCount;
-
-      this.verificationLevel = data['verification_level'];
-      this.map['verificationLevel'] = this.verificationLevel;
-
-      this.notificationLevel = data['default_message_notifications'];
-      this.map['notificationLevel'] = this.notificationLevel;
-
-      this.mfaLevel = data['mfa_level'];
-      this.map['mfaLevel'] = this.mfaLevel;
-
-      this.embedEnabled = data['embed_enabled'];
-      this.map['embedEnabled'] = this.embedEnabled;
-
-      this.ownerID = data['owner_id'];
-      this.map['ownerID'] = this.ownerID;
-
-      this.createdAt = (int.parse(this.id) / 4194304) + 1420070400000;
-      this.map['createdAt'] = this.createdAt;
+      this.name = this.map['name'] = data['name'];
+      this.id = this.map['id'] = data['id'];
+      this.icon = this.map['icon'] = data['icon'];
+      this.afkChannelID = this.map['afkChannelID'] = data['afk_channel_id'];
+      this.region = this.map['region'] = data['region'];
+      this.embedChannelID = this.map['embedChannelID'] = data['embed_channel_id'];
+      this.afkTimeout = this.map['afkTimeout'] = data['afk_timeout'];
+      this.memberCount = this.map['memberCount'] = data['member_count'];
+      this.verificationLevel = this.map['verificationLevel'] = data['verification_level'];
+      this.notificationLevel = this.map['notificationLevel'] = data['default_message_notifications'];
+      this.mfaLevel = this.map['mfaLevel'] = data['mfa_level'];
+      this.embedEnabled = this.map['embedEnabled'] = data['embed_enabled'];
+      this.ownerID = this.map['ownerID'] = data['owner_id'];
+      this.createdAt = this.map['createdAt'] = (int.parse(this.id) / 4194304) + 1420070400000;
 
 
       if (guildCreate) {
@@ -117,14 +90,12 @@ class Guild {
 
         //this.roles = JSON.decode(data['roles']);
         data['members'].forEach((Map<String, dynamic> o) {
-          final Member member = new Member(client, o, this);
-          this.members.map[member.user.id] = member;
+          this.members.add(new Member(client, o, this));
         });
         this.map['members'] = this.members;
 
         data['channels'].forEach((Map<String, dynamic> o) {
-          final GuildChannel channel = new GuildChannel(client, o, this);
-          this.channels.map[channel.id] = channel;
+          this.channels.add(new GuildChannel(client, o, this));
         });
         this.map['channels'] = this.channels;
 
@@ -156,7 +127,8 @@ class Guild {
 
         if (r.statusCode == 200) {
           final Member m = new Member(client, res, this);
-          this.members.map[m.user.id] = m;
+          this.members.add(m);
+          this.map['members'] = this.members;
           return m;
         } else {
           throw new Exception("${res['code']}:${res['message']}");
