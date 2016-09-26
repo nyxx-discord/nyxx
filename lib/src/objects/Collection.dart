@@ -1,3 +1,4 @@
+/// A collection of objects, easily searchable.
 class Collection {
   /// The collection's internal map of objects.
   Map<String, dynamic> map = <String, dynamic>{};

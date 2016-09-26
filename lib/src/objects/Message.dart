@@ -18,10 +18,10 @@ class Message {
   String nonce;
 
   /// The timestamp of when the message was created.
-  String timestamp;
+  DateTime timestamp;
 
   /// The timestamp of when the message was last edited, null if not edited.
-  String editedTimestamp;
+  DateTime editedTimestamp;
 
   /// The message's channel.
   GuildChannel channel;
@@ -64,8 +64,7 @@ class Message {
     this.content = data['content'];
     this.id = data['id'];
     this.nonce = data['nonce'];
-    this.timestamp = data['timestamp'];
-    this.editedTimestamp = data['edited_timestamp'];
+    this.timestamp = DateTime.parse(data['timestamp']);
     this.author = new User(client, data['author']);
     this.channel = this.client.channels.map[data['channel_id']];
     this.guild = this.channel.guild;
@@ -75,6 +74,10 @@ class Message {
     this.roleMentions = data['mention_roles'];
     this.createdAt = (int.parse(this.id) / 4194304) + 1420070400000;
     this.member = guild.members.get(this.author.id);
+
+    if (data['edited_timestamp'] != null) {
+      this.editedTimestamp = DateTime.parse(data['edited_timestamp']);
+    }
 
     this.mentions = new Collection();
     data['mentions'].forEach((Map<String, dynamic> o) {
@@ -102,7 +105,7 @@ class Message {
   ///
   /// Throws an [Exception] if the HTTP request errored.
   ///     Message.edit("My edited content!");
-  Future<Message> edit(String rawContent, [MessageOptions msgOptions]) async {
+  Future<Message> edit(String content, [MessageOptions msgOptions]) async {
     if (this.client.ready) {
       MessageOptions options;
       if (msgOptions == null) {
@@ -111,12 +114,14 @@ class Message {
         options = msgOptions;
       }
 
-      String content;
+      String newContent;
       if (options.disableEveryone || (options.disableEveryone == null && this.client.options.disableEveryone)) {
-        content = rawContent.replaceAll("@everyone", "@\u200Beveryone").replaceAll("@here", "@\u200Bhere");
+        newContent = content.replaceAll("@everyone", "@\u200Beveryone").replaceAll("@here", "@\u200Bhere");
+      } else {
+        newContent = content;
       }
 
-      final http.Response r = await this.client.http.patch('channels/${this.channel.id}/messages/${this.id}', <String, dynamic>{"content": content});
+      final http.Response r = await this.client.http.patch('channels/${this.channel.id}/messages/${this.id}', <String, dynamic>{"content": newContent});
       final Map<String, dynamic> res = JSON.decode(r.body);
 
       if (r.statusCode == 200) {
