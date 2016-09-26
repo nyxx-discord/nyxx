@@ -58,6 +58,11 @@ class Client extends events.Events {
     }
   }
 
+  /// Destroys the websocket connection.
+  void destroy() {
+    this.ws.socket.close();
+  }
+
   /// Resolves an object into a target object, this is for use internally.
   String resolve(String to, dynamic object) {
     if (to == "channel") {
