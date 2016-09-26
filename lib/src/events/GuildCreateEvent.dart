@@ -9,19 +9,19 @@ class GuildCreateEvent {
   /// Constructs a new [GuildCreateEvent].
   GuildCreateEvent(Client client, Map<String, dynamic> json) {
     this.guild = new Guild(client, json['d'], true, true);
-    client.guilds.map[guild.id] = guild;
+    client.guilds.add(guild);
 
     guild.channels.list.forEach((GuildChannel v) {
-      client.channels.map[v.id] = v;
+      client.channels.add(v);
     });
 
     guild.members.list.forEach((Member v) {
-      client.users.map[v.user.id] = v.user;
+      client.users.add(v.toUser());
     });
 
     if (!client.ready) {
       bool match = true;
-      client.guilds.map.forEach((String i, Guild o) {
+      client.guilds.forEach((Guild o) {
         if (o == null) {
           match = false;
         }

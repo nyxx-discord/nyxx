@@ -31,28 +31,18 @@ class User {
 
   /// Constructs a new [User].
   User(this.client, Map<String, dynamic> data) {
-    this.username = data['username'];
-    this.map['username'] = this.username;
-
-    this.id = data['id'];
-    this.map['id'] = this.id;
-
-    this.discriminator = data['discriminator'];
-    this.map['discriminator'] = this.discriminator;
-
-    this.avatar = data['avatar'];
-    this.map['avatar'] = this.avatar;
-
-    this.mention = "<@${this.id}>";
-    this.map['mention'] = this.mention;
-
-    this.createdAt = (int.parse(this.id) / 4194304) + 1420070400000;
-    this.map['createdAt'] = this.createdAt;
+    this.username = this.map['username'] = data['username'];
+    this.id = this.map['id'] = data['id'];
+    this.discriminator = this.map['discriminator'] = data['discriminator'];
+    this.avatar = this.map['avatar'] = data['avatar'];
+    this.mention = this.map['mention'] = "<@${this.id}>";
+    this.createdAt = this.map['createdAt'] = (int.parse(this.id) / 4194304) + 1420070400000;
 
     if (data['bot']) {
-      this.bot = data['bot'];
+      this.bot = this.map['bot'] = data['bot'];
+    } else {
+      this.map['bot'] = false;
     }
-    this.map['bot'] = this.bot;
   }
 
   /// Returns a string representation of this object.

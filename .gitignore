@@ -6,3 +6,4 @@ doc/
 .pub/
 test/packages
 example/packages
+pm2.json

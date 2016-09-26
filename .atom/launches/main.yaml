@@ -1,0 +1,13 @@
+# Cli launch configuration for main.dart.
+type: cli
+path: main.dart
+
+cli:
+  # Additional args for the application.
+  args:
+  # The working directory to use for the launch.
+  cwd:
+  # Enable or disable checked mode.
+  checked: true
+  # Enable or disable debugging.
+  debug: true

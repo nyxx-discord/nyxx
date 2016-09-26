@@ -85,7 +85,7 @@ class WS {
 
     else if (json["op"] == 0) {
       if (json['t'] == "READY") {
-        this.sessionID = json['d']['session_id'] + "foo";
+        this.sessionID = json['d']['session_id'];
         this.client.user = new ClientUser(json['d']['user']);
 
         json['d']['guilds'].forEach((Map<String, dynamic> o) {
@@ -93,8 +93,7 @@ class WS {
         });
 
         json['d']['private_channels'].forEach((Map<String, dynamic> o) {
-          final PrivateChannel channel = new PrivateChannel(client, o);
-          this.client.channels.map[channel.id] = channel;
+          this.client.channels.add(new PrivateChannel(client, o));
         });
 
         if (this.client.user.bot) {
