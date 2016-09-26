@@ -11,11 +11,11 @@ class GuildCreateEvent {
     this.guild = new Guild(client, json['d'], true, true);
     client.guilds.map[guild.id] = guild;
 
-    guild.channels.forEach((String i, GuildChannel v) {
+    guild.channels.list.forEach((GuildChannel v) {
       client.channels.map[v.id] = v;
     });
 
-    guild.members.forEach((String i, Member v) {
+    guild.members.list.forEach((Member v) {
       client.users.map[v.user.id] = v.user;
     });
 

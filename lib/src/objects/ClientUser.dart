@@ -48,4 +48,9 @@ class ClientUser {
       this.bot = data['bot'];
     }
   }
+
+  /// Returns a string representation of this object.
+  String toString() {
+    return this.username;
+  }
 }

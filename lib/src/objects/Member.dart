@@ -2,6 +2,9 @@ import '../../discord.dart';
 
 /// A guild member.
 class Member {
+  /// The client.
+  Client client;
+
   /// The member's nickname, null if not set.
   String nickname;
 
@@ -24,13 +27,18 @@ class Member {
   Guild guild;
 
   /// Constructs a new [Member].
-  Member(Map<String, dynamic> data, Guild guild) {
+  Member(this.client, Map<String, dynamic> data, Guild guild) {
     this.nickname = data['nick'];
     this.joinedAt = data['joined_at'];
     this.deaf = data['deaf'];
     this.mute = data['mute'];
     this.roles = data['roles'];
-    this.user = new User(data['user']);
+    this.user = new User(client, data['user']);
     this.guild = guild;
+  }
+
+  /// Returns a string representation of this object.
+  String toString() {
+    return this.user.username;
   }
 }

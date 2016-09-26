@@ -145,7 +145,7 @@ class Client extends events.Events {
       final Map<String, dynamic> res = JSON.decode(r.body);
 
       if (r.statusCode == 200) {
-        return new User(res);
+        return new User(this, res);
       } else {
         throw new Exception("${res['code']}:${res['message']}");
       }
@@ -185,7 +185,7 @@ class Client extends events.Events {
       final Map<String, dynamic> res = JSON.decode(r.body);
 
       if (r.statusCode == 200) {
-        return new OAuth2Info(res);
+        return new OAuth2Info(this, res);
       } else {
         throw new Exception("${res['code']}:${res['message']}");
       }

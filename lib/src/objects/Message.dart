@@ -35,8 +35,8 @@ class Message {
   /// The message's author in a member form.
   Member member;
 
-  /// A list of the mentions in the message.
-  List<User> mentions = <User>[];
+  /// The mentions in the message.
+  Collection mentions;
 
   /// A list of IDs for the role mentions in the message.
   List<String> roleMentions = <String>[];
@@ -44,8 +44,8 @@ class Message {
   /// A list of the embeds in the message.
   List<Embed> embeds = <Embed>[];
 
-  /// A list of attachments in the message.
-  List<Attachment> attachments = <Attachment>[];
+  /// The attachments in the message.
+  Collection attachments;
 
   /// When the message was created, redundant of `timestamp`.
   double createdAt;
@@ -66,7 +66,7 @@ class Message {
     this.nonce = data['nonce'];
     this.timestamp = data['timestamp'];
     this.editedTimestamp = data['edited_timestamp'];
-    this.author = new User(data['author']);
+    this.author = new User(client, data['author']);
     this.channel = this.client.channels.map[data['channel_id']];
     this.guild = this.channel.guild;
     this.pinned = data['pinned'];
@@ -74,19 +74,28 @@ class Message {
     this.mentionEveryone = data['mention_everyone'];
     this.roleMentions = data['mention_roles'];
     this.createdAt = (int.parse(this.id) / 4194304) + 1420070400000;
-    this.member = guild.members[this.author.id];
+    this.member = guild.members.get(this.author.id);
 
-    data['mentions'].forEach((Map<String, dynamic> user) {
-      this.mentions.add(new User(user));
+    this.mentions = new Collection();
+    data['mentions'].forEach((Map<String, dynamic> o) {
+      final User user = new User(client, o);
+      this.mentions.map[user.id] = user;
     });
 
-    data['embeds'].forEach((Map<String, dynamic> embed) {
-      this.embeds.add(new Embed(embed));
+    data['embeds'].forEach((Map<String, dynamic> o) {
+      this.embeds.add(new Embed(o));
     });
 
-    data['attachments'].forEach((Map<String, dynamic> attachment) {
-      this.attachments.add(new Attachment(attachment));
+    this.attachments = new Collection();
+    data['attachments'].forEach((Map<String, dynamic> o) {
+      final Attachment attachment = new Attachment(o);
+      this.attachments.map[attachment.id] = attachment;
     });
+  }
+
+  /// Returns a string representation of this object.
+  String toString() {
+    return this.content;
   }
 
   /// Edits the message.

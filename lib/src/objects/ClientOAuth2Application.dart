@@ -2,6 +2,9 @@ import '../../discord.dart';
 
 /// The client's OAuth2 app, if the client is a bot.
 class ClientOAuth2Application {
+  /// The client.
+  Client client;
+
   /// The app's description.
   String description;
 
@@ -27,14 +30,19 @@ class ClientOAuth2Application {
   double createdAt;
 
   /// Constructs a new [ClientOAuth2Application].
-  ClientOAuth2Application(Map<String, dynamic> data) {
+  ClientOAuth2Application(this.client, Map<String, dynamic> data) {
     this.description = data['description'];
     this.icon = data['icon'];
     this.id = data['id'];
     this.name = data['name'];
     this.rpcOrigins = data['rpcOrigins'];
     this.flags = data['flags'];
-    this.owner = new User(data['owner']);
+    this.owner = new User(client, data['owner']);
     this.createdAt = (int.parse(this.id) / 4194304) + 1420070400000;
+  }
+
+  /// Returns a string representation of this object.
+  String toString() {
+    return this.name;
   }
 }
