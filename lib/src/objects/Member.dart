@@ -1,7 +1,7 @@
 import '../../discord.dart';
 
 /// A guild member.
-class Member extends User{
+class Member extends User {
   User _user;
 
   /// The client.
@@ -11,7 +11,7 @@ class Member extends User{
   String nickname;
 
   /// When the member joined the guild.
-  String joinedAt;
+  DateTime joinedAt;
 
   /// Weather or not the member is deafened.
   bool deaf;
@@ -33,7 +33,7 @@ class Member extends User{
     this.client = client;
 
     this.nickname = this.map['nickname'] = data['nick'];
-    this.joinedAt = this.map['joinedAt'] = data['joined_at'];
+    this.joinedAt = this.map['joinedAt'] = DateTime.parse(data['joined_at']);
     this.deaf = this.map['deaf'] = data['deaf'];
     this.mute = this.map['mute'] = data['mute'];
     this.roles = this.map['roles'] = data['roles'];
