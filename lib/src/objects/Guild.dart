@@ -60,10 +60,10 @@ class Guild {
   String ownerID;
 
   /// The guild's members.
-  Map<String, Member> members = <String, Member>{};
+  Collection members;
 
   /// The guild's channels.
-  Map<String, GuildChannel> channels = <String, GuildChannel>{};
+  Collection channels;
 
   /// Constructs a new [Guild].
   Guild(this.client, Map<String, dynamic> data, [this.available, bool guildCreate = false]) {
@@ -112,23 +112,31 @@ class Guild {
 
 
       if (guildCreate) {
+        this.members = new Collection();
+        this.channels = new Collection();
+
         //this.roles = JSON.decode(data['roles']);
         data['members'].forEach((Map<String, dynamic> o) {
-          final Member member = new Member(o, this);
-          this.members[member.user.id] = member;
+          final Member member = new Member(client, o, this);
+          this.members.map[member.user.id] = member;
         });
         this.map['members'] = this.members;
 
         data['channels'].forEach((Map<String, dynamic> o) {
           final GuildChannel channel = new GuildChannel(client, o, this);
-          this.channels[channel.id] = channel;
+          this.channels.map[channel.id] = channel;
         });
         this.map['channels'] = this.channels;
 
-        this.defaultChannel = this.channels[this.id];
+        this.defaultChannel = this.channels.get(this.id);
         this.map['defaultChannel'] = this.defaultChannel;
       }
     }
+  }
+
+  /// Returns a string representation of this object.
+  String toString() {
+    return this.name;
   }
 
   /// Gets a [Member] object. Adds it to `Client.guilds["guild id"].members` if
@@ -140,15 +148,15 @@ class Guild {
     if (this.client.ready) {
       final String id = this.client.resolve('member', member);
 
-      if (this.members[member] != null) {
-        return this.members[member];
+      if (this.members.get(member) != null) {
+        return this.members.get(member);
       } else {
         final http.Response r = await this.client.http.get('guilds/${this.id}/members/$id');
         final Map<String, dynamic> res = JSON.decode(r.body);
 
         if (r.statusCode == 200) {
-          final Member m = new Member(res, this);
-          this.members[m.user.id] = m;
+          final Member m = new Member(client, res, this);
+          this.members.map[m.user.id] = m;
           return m;
         } else {
           throw new Exception("${res['code']}:${res['message']}");

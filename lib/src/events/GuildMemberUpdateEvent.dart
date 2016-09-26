@@ -12,9 +12,9 @@ class GuildMemberUpdateEvent {
   GuildMemberUpdateEvent(Client client, Map<String, dynamic> json) {
     if (client.ready) {
       final Guild guild = client.guilds.map[json['d']['guild_id']];
-      this.oldMember = guild.members[json['d']['user']['id']];
-      this.newMember = new Member(json['d'], guild);
-      guild.members[newMember.user.id] = newMember;
+      this.oldMember = guild.members.get(json['d']['user']['id']);
+      this.newMember = new Member(client, json['d'], guild);
+      guild.members.map[newMember.user.id] = newMember;
       client.users.map[newMember.user.id] = newMember.user;
       client.emit('guildMemberUpdate', this);
     }

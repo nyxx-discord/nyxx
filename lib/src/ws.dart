@@ -93,7 +93,7 @@ class WS {
         });
 
         json['d']['private_channels'].forEach((Map<String, dynamic> o) {
-          final PrivateChannel channel = new PrivateChannel(o);
+          final PrivateChannel channel = new PrivateChannel(client, o);
           this.client.channels.map[channel.id] = channel;
         });
 
@@ -104,7 +104,7 @@ class WS {
           final Map<String, dynamic> res = JSON.decode(r.body);
 
           if (r.statusCode == 200) {
-            this.client.app = new ClientOAuth2Application(res);
+            this.client.app = new ClientOAuth2Application(client, res);
           }
         } else {
           this.client.http.headers['Authorization'] = this.client.token;

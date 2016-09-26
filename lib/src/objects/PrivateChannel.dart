@@ -2,11 +2,14 @@ import '../../discord.dart';
 
 /// A private channel.
 class PrivateChannel {
-  /// The channel's ID.
-  String id;
+  /// The client.
+  Client client;
 
   /// A map of all of the properties.
   Map<String, dynamic> map = <String, dynamic>{};
+
+  /// The channel's ID.
+  String id;
 
   /// The ID for the last message in the channel.
   String lastMessageID;
@@ -18,10 +21,10 @@ class PrivateChannel {
   double createdAt;
 
   /// The recipients.
-  List<User> recipients = <User>[];
+  Collection recipients;
 
   /// Constructs a new [PrivateChannel].
-  PrivateChannel(Map<String, dynamic> data) {
+  PrivateChannel(this.client, Map<String, dynamic> data) {
     this.id = data['id'];
     this.map['id'] = this.id;
 
@@ -31,9 +34,10 @@ class PrivateChannel {
     this.lastMessageID = data['last_message_id'];
     this.map['lastMessageID'] = this.lastMessageID;
 
-
+    this.recipients = new Collection();
     data['recipients'].forEach((Map<String, dynamic> o) {
-      this.recipients.add(new User(o));
+      final User user = new User(client, o);
+      this.recipients.map[user.id] = user;
     });
     this.map['recipients'] = this.recipients;
   }

@@ -10,7 +10,7 @@ class ChannelCreateEvent {
   ChannelCreateEvent(Client client, Map<String, dynamic> json) {
     if (client.ready) {
       if (json['d']['type'] == 1) {
-        this.channel = new PrivateChannel(json['d']);
+        this.channel = new PrivateChannel(client, json['d']);
         client.channels.map[channel.id] = channel;
         client.emit('channelCreate', this);
       } else {

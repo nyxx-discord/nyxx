@@ -13,4 +13,9 @@ class EmbedProvider {
     this.name = data['name'];
     this.url = data['url'];
   }
+
+  /// Returns a string representation of this object.
+  String toString() {
+    return this.name;
+  }
 }

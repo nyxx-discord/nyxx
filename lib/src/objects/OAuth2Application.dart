@@ -29,4 +29,9 @@ class OAuth2Application {
     this.rpcOrigins = data['rpcOrigins'];
     this.createdAt = (int.parse(this.id) / 4194304) + 1420070400000;
   }
+
+  /// Returns a string representation of this object.
+  String toString() {
+    return this.name;
+  }
 }

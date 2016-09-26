@@ -30,7 +30,7 @@ class User {
   bool bot = false;
 
   /// Constructs a new [User].
-  User(Map<String, dynamic> data) {
+  User(this.client, Map<String, dynamic> data) {
     this.username = data['username'];
     this.map['username'] = this.username;
 
@@ -53,5 +53,10 @@ class User {
       this.bot = data['bot'];
     }
     this.map['bot'] = this.bot;
+  }
+
+  /// Returns a string representation of this object.
+  String toString() {
+    return this.username;
   }
 }

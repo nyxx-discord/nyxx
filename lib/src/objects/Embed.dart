@@ -33,4 +33,9 @@ class Embed {
       this.provider = new EmbedProvider(data['provider']);
     }
   }
+
+  /// Returns a string representation of this object.
+  String toString() {
+    return this.title;
+  }
 }

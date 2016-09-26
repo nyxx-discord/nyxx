@@ -75,6 +75,11 @@ class GuildChannel {
 
   }
 
+  /// Returns a string representation of this object.
+  String toString() {
+    return this.name;
+  }
+
   /// Sends a message.
   ///
   /// Throws an [Exception] if the HTTP request errored.
