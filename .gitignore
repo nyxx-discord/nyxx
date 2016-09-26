@@ -7,3 +7,4 @@ doc/
 test/packages
 example/packages
 pm2.json
+.atom
