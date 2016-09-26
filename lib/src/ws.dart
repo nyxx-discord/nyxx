@@ -32,6 +32,9 @@ class WS {
   }
 
   void connect([bool resume = true]) {
+    if (this.socket != null) {
+      this.socket.close();
+    }
     WebSocket.connect('${this.gateway}?v=6&encoding=json').then((WebSocket socket) {
       this.socket = socket;
       this.socket.listen((String msg) => this._handleMsg(msg, resume), onDone: () => this._handleErr());
@@ -68,7 +71,8 @@ class WS {
             "\$browser": "Discord Dart"
           },
           "large_threshold": 100,
-          "compress": false
+          "compress": false,
+          "shard": [this.client.options.shardId, this.client.options.shardCount]
         });
       } else if (resume) {
         this.send(6, <String, dynamic>{
@@ -178,6 +182,9 @@ class WS {
 
   void _handleErr() {
     switch (this.socket.closeCode) {
+      case 1005:
+        return;
+
       case 4004:
         throw new Exception("invalid token");
 
