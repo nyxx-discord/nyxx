@@ -15,7 +15,7 @@ class WS {
   /// The websocket connection.
   WebSocket socket;
 
-  /// The last sequence sent to the WS manager.
+  /// The last sequence received from Discord.
   int sequence;
 
   /// The session ID.
