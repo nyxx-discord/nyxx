@@ -67,13 +67,16 @@ class Message {
     this.timestamp = DateTime.parse(data['timestamp']);
     this.author = new User(client, data['author']);
     this.channel = this.client.channels.map[data['channel_id']];
-    this.guild = this.channel.guild;
     this.pinned = data['pinned'];
     this.tts = data['tts'];
     this.mentionEveryone = data['mention_everyone'];
     this.roleMentions = data['mention_roles'];
     this.createdAt = (int.parse(this.id) / 4194304) + 1420070400000;
-    this.member = guild.members.get(this.author.id);
+
+    if (this.channel is GuildChannel) {
+      this.guild = this.channel.guild;
+      this.member = guild.members.get(this.author.id);
+    }
 
     if (data['edited_timestamp'] != null) {
       this.editedTimestamp = DateTime.parse(data['edited_timestamp']);

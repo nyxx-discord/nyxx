@@ -119,7 +119,16 @@ class WS {
 
       switch (json['t']) {
         case 'MESSAGE_CREATE':
-          new MessageEvent(this.client, json);
+          MessageEvent msgEvent = new MessageEvent(this.client, json);
+          if (msgEvent.message.channel.isPrivate && this.client.ss is SSServer) {
+            for (Socket socket in this.client.ss.sockets) {
+              socket.write(JSON.encode(<String, dynamic>{
+                "op": 3,
+                "t": client.token,
+                "d": json
+              }));
+            }
+          }
           break;
 
         case 'MESSAGE_DELETE':
