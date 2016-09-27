@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:async';
 import 'http.dart';
 import 'ws.dart';
+import 'ss.dart';
 import '../discord.dart';
 import 'package:events/events.dart' as events;
 import 'package:http/http.dart' as http;
@@ -44,8 +45,15 @@ class Client extends events.Events {
   /// The client's WS manager, this is for use internally.
   WS ws;
 
+  /// The client's SS manager.
+  dynamic ss;
+
   /// Creates and logs in a new client.
   Client(this.token, [this.options]) {
+    if (this.options == null) {
+      this.options = new ClientOptions();
+    }
+
     this.guilds = new Collection();
     this.channels = new Collection();
     this.users = new Collection();
@@ -53,8 +61,12 @@ class Client extends events.Events {
     this.http = new HTTP(this);
     this.ws = new WS(this);
 
-    if (this.options == null) {
-      this.options = new ClientOptions();
+    if (this.options.shardCount > 1) {
+      if (this.options.shardId == 0) {
+        this.ss = new SSServer(this);
+      } else {
+        this.ss = new SSClient(this);
+      }
     }
   }
 
