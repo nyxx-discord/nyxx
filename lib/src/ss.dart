@@ -12,15 +12,29 @@ class SSServer extends events.Events {
   /// The server socket;
   ServerSocket serverSocket;
 
+  /// A list of all active sockets.
+  List<Socket> sockets = <Socket>[];
+
   /// Makes a new SS server.
   SSServer(this.client) {
     this._newServer();
   }
 
+  /// Sends a message to all shards.
+  void send(String msg) {
+    for (Socket socket in this.sockets) {
+      socket.write(JSON.encode(<String, dynamic>{
+        "op": 4,
+        "d": msg
+      }));
+    }
+  }
+
   Future<Null> _newServer() async {
     this.serverSocket = await ServerSocket.bind('0.0.0.0', 10048);
-    await for (var socket in serverSocket) {
-      socket.transform(UTF8.decoder).listen((String msg) => this._handleMsg(socket, msg));
+    await for (Socket socket in serverSocket) {
+      this.sockets.add(socket);
+      socket.transform(UTF8.decoder).listen((String msg) => this._handleMsg(socket, msg), onDone: () => this.sockets.remove(socket));
     }
   }
 
@@ -29,11 +43,15 @@ class SSServer extends events.Events {
     switch (data['op']) {
       case 1:
         if (data['t'] == this.client.token) {
-          socket.write(JSON.encode({"op": 2, "d": null}));
+          socket.write(JSON.encode(<String, dynamic>{"op": 2, "d": null}));
         } else {
-          socket.write(JSON.encode({"op": 0, "d": 0}));
+          socket.write(JSON.encode(<String, dynamic>{"op": 0, "d": 0}));
           socket.destroy();
         }
+        break;
+
+      case 4:
+        this.emit('message', data['d']);
         break;
     }
 
@@ -53,9 +71,7 @@ class SSClient extends events.Events {
   Socket socket;
 
   /// Makes a new SS client.
-  SSClient(this.client) {
-
-  }
+  SSClient(this.client);
 
   /// Connects to a SS server.
   void connect([String address]) {
@@ -65,8 +81,16 @@ class SSClient extends events.Events {
     Socket.connect(this.address, 10048).then((Socket socket) {
       this.socket = socket;
       this.socket.transform(UTF8.decoder).listen(this._handleMsg);
-      this.socket.write(JSON.encode({"op": 1, "d": null, "t": this.client.token}));
+      this.socket.write(JSON.encode(<String, dynamic>{"op": 1, "d": null, "t": this.client.token}));
     });
+  }
+
+  /// Sends a message to shard 0.
+  void send(String msg) {
+    socket.write(JSON.encode(<String, dynamic>{
+      "op": 4,
+      "d": msg
+    }));
   }
 
   Future<Null> _handleMsg(String msg) async {
@@ -74,6 +98,14 @@ class SSClient extends events.Events {
     switch (data['op']) {
       case 2:
         this.emit('ready', null);
+        break;
+
+      case 3:
+        new MessageEvent(this.client, data['d']);
+        break;
+
+      case 4:
+        this.emit('message', data['d']);
         break;
     }
 
