@@ -1,5 +1,4 @@
 import '../../discord.dart';
-import '../client.dart';
 
 /// Sent when a channel is deleted, can be a `PMChannel`.
 class ChannelDeleteEvent {

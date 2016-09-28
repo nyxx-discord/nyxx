@@ -1,5 +1,4 @@
 import '../../discord.dart';
-import '../client.dart';
 
 /// Sent when a channel is updated.
 class ChannelUpdateEvent {
