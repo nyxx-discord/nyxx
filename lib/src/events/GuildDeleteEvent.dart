@@ -1,5 +1,4 @@
 import '../../discord.dart';
-import '../client.dart';
 
 /// Sent when you leave a guild or it becomes unavailable.
 class GuildDeleteEvent {

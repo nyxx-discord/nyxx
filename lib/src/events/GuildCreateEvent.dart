@@ -1,5 +1,4 @@
 import '../../discord.dart';
-import '../client.dart';
 
 /// Sent when the bot joins a guild.
 class GuildCreateEvent {
