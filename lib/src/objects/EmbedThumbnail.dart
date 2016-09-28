@@ -1,5 +1,3 @@
-import '../../discord.dart';
-
 /// A message embed thumbnail.
 class EmbedThumbnail {
   /// The embed thumbnail's URL.

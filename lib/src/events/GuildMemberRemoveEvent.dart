@@ -1,5 +1,4 @@
 import '../../discord.dart';
-import '../client.dart';
 
 /// Sent when a user leaves a guild, can be a leave, kick, or ban.
 class GuildMemberRemoveEvent {
