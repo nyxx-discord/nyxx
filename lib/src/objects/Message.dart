@@ -48,7 +48,7 @@ class Message {
   Collection attachments;
 
   /// When the message was created, redundant of `timestamp`.
-  double createdAt;
+  DateTime createdAt;
 
   /// Whether or not the message is pinned.
   bool pinned;
@@ -71,7 +71,7 @@ class Message {
     this.tts = data['tts'];
     this.mentionEveryone = data['mention_everyone'];
     this.roleMentions = data['mention_roles'];
-    this.createdAt = (int.parse(this.id) / 4194304) + 1420070400000;
+    this.createdAt = getDate(this.id);
 
     if (this.channel is GuildChannel) {
       this.guild = this.channel.guild;

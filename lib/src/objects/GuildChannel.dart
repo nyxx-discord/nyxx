@@ -39,7 +39,7 @@ class GuildChannel {
   int userLimit;
 
   /// A timestamp for when the channel was created.
-  double createdAt;
+  DateTime createdAt;
 
   /// Always false representing that it is a GuildChannel.
   bool isPrivate = false;
@@ -50,7 +50,7 @@ class GuildChannel {
     this.id = this.map['id'] = data['id'];
     this.type = this.map['type'] = data['type'];
     this.position = this.map['position'] = data['position'];
-    this.createdAt = this.map['createdAt'] = (int.parse(this.id) / 4194304) + 1420070400000;
+    this.createdAt = this.map['createdAt'] = getDate(this.id);
     this.topic = this.map['topic'] = data['topic'];
     this.lastMessageID = this.map['lastMessageID'] = data['last_message_id'];
     this.bitrate = this.map['bitrate'] = data['bitrate'];

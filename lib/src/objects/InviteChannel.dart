@@ -12,14 +12,14 @@ class InviteChannel {
   String type;
 
   /// A timestamp for the channel was created.
-  double createdAt;
+  DateTime createdAt;
 
   /// Constructs a new [InviteChannel].
   InviteChannel(Map<String, dynamic> data) {
     this.id = data['id'];
     this.name = data['name'];
     this.type = data['type'];
-    this.createdAt = (int.parse(this.id) / 4194304) + 1420070400000;
+    this.createdAt = getDate(this.id);
   }
 
   /// Returns a string representation of this object.
