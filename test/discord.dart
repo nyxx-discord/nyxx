@@ -1,5 +1,5 @@
 import 'dart:io';
-import 'package:discord_dart/discord.dart' as discord;
+import 'package:discord/discord.dart' as discord;
 
 main() {
   var env = Platform.environment;
