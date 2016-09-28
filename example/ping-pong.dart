@@ -1,4 +1,4 @@
-import 'package:discord_dart/discord.dart' as discord;
+import 'package:discord/discord.dart' as discord;
 
 main() {
   var bot = new discord.Client("your token");
