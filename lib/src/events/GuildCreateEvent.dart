@@ -28,7 +28,7 @@ class GuildCreateEvent {
 
       if (match == true) {
         client.ready = true;
-        client.emit('ready', new ReadyEvent());
+        new ReadyEvent(client);
       }
     } else {
       client.emit('guildCreate', this);
