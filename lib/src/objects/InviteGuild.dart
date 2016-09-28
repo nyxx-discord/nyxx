@@ -12,14 +12,14 @@ class InviteGuild {
   String spash;
 
   /// A timestamp for when the guild was created.
-  double createdAt;
+  DateTime createdAt;
 
   /// Constructs a new [InviteGuild].
   InviteGuild(Map<String, dynamic> data) {
     this.id = data['id'];
     this.name = data['name'];
     this.spash = data['splash_hash'];
-    this.createdAt = (int.parse(this.id) / 4194304) + 1420070400000;
+    this.createdAt = getDate(this.id);
   }
 
   /// Returns a string representation of this object.

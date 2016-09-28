@@ -51,7 +51,7 @@ class Guild {
   int mfaLevel;
 
   /// A timestamp for when the guild was created.
-  double createdAt;
+  DateTime createdAt;
 
   /// If the guild's widget is enabled.
   bool embedEnabled;
@@ -85,7 +85,7 @@ class Guild {
       this.mfaLevel = this.map['mfaLevel'] = data['mfa_level'];
       this.embedEnabled = this.map['embedEnabled'] = data['embed_enabled'];
       this.ownerID = this.map['ownerID'] = data['owner_id'];
-      this.createdAt = this.map['createdAt'] = (int.parse(this.id) / 4194304) + 1420070400000;
+      this.createdAt = this.map['createdAt'] = getDate(this.id);
 
 
       if (guildCreate) {

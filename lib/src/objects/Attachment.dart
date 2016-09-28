@@ -27,7 +27,7 @@ class Attachment {
   int width;
 
   /// A timestamp for when the message was created.
-  double createdAt;
+  DateTime createdAt;
 
   /// Constructs a new [Attachment].
   Attachment(Map<String, dynamic> data) {
@@ -38,6 +38,6 @@ class Attachment {
     this.size = this.map['size'] = data['size'];
     this.height = this.map['height'] = data['height'];
     this.width = this.map['width'] = data['width'];
-    this.createdAt = this.map['createdAt'] = (int.parse(this.id) / 4194304) + 1420070400000;
+    this.createdAt = this.map['createdAt'] = getDate(this.id);
   }
 }

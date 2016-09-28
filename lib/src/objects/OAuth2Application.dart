@@ -18,7 +18,7 @@ class OAuth2Application {
   List<String> rpcOrigins;
 
   /// A timestamp for when the app was created.
-  double createdAt;
+  DateTime createdAt;
 
   /// Constructs a new [OAuth2Application].
   OAuth2Application(Map<String, dynamic> data) {
@@ -27,7 +27,7 @@ class OAuth2Application {
     this.id = data['id'];
     this.name = data['name'];
     this.rpcOrigins = data['rpcOrigins'];
-    this.createdAt = (int.parse(this.id) / 4194304) + 1420070400000;
+    this.createdAt = getDate(this.id);
   }
 
   /// Returns a string representation of this object.

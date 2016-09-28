@@ -45,7 +45,8 @@ class Client extends events.Events {
   /// The client's WS manager, this is for use internally.
   WS ws;
 
-  /// The client's SS manager.
+  /// The client's SS manager, null if the client is not sharded, [SSServer] if
+  /// the current shard is 0, [SSClient] otherwise.
   dynamic ss;
 
   /// Creates and logs in a new client.

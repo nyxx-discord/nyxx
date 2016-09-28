@@ -21,7 +21,7 @@ class ClientUser {
   String mention;
 
   /// A timestamp for when the client user was created.
-  double createdAt;
+  DateTime createdAt;
 
   /// Weather or not the client user is a bot.
   bool bot = false;
@@ -40,7 +40,7 @@ class ClientUser {
     this.avatar = data['avatar'];
     this.email = data['email'];
     this.mention = "<@${this.id}>";
-    this.createdAt = (int.parse(this.id) / 4194304) + 1420070400000;
+    this.createdAt = getDate(this.id);
     this.verified = data['verified'];
     this.mfa = data['mfa_enabled'];
 

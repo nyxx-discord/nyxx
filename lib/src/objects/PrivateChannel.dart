@@ -18,21 +18,16 @@ class PrivateChannel {
   bool isPrivate = true;
 
   /// A timestamp for when the channel was created.
-  double createdAt;
+  DateTime createdAt;
 
   /// The recipients.
   Collection recipients;
 
   /// Constructs a new [PrivateChannel].
   PrivateChannel(this.client, Map<String, dynamic> data) {
-    this.id = data['id'];
-    this.map['id'] = this.id;
-
-    this.createdAt = (int.parse(this.id) / 4194304) + 1420070400000;
-    this.map['createdAt'] = this.createdAt;
-
-    this.lastMessageID = data['last_message_id'];
-    this.map['lastMessageID'] = this.lastMessageID;
+    this.id = this.map['id'] = data['id'];
+    this.createdAt = this.map['createdAt'] = getDate(this.id);
+    this.lastMessageID = this.map['lastMessageID'] = data['last_message_id'];
 
     this.recipients = new Collection();
     data['recipients'].forEach((Map<String, dynamic> o) {

@@ -27,7 +27,7 @@ class ClientOAuth2Application {
   User owner;
 
   /// A timestamp for when the app was created
-  double createdAt;
+  DateTime createdAt;
 
   /// Constructs a new [ClientOAuth2Application].
   ClientOAuth2Application(this.client, Map<String, dynamic> data) {
@@ -38,7 +38,7 @@ class ClientOAuth2Application {
     this.rpcOrigins = data['rpcOrigins'];
     this.flags = data['flags'];
     this.owner = new User(client, data['owner']);
-    this.createdAt = (int.parse(this.id) / 4194304) + 1420070400000;
+    this.createdAt = getDate(this.id);
   }
 
   /// Returns a string representation of this object.

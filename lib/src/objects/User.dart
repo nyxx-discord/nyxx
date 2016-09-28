@@ -27,7 +27,7 @@ class User {
   String mention;
 
   /// A timestamp of when the user was created.
-  double createdAt;
+  DateTime createdAt;
 
   /// Whether or not the user is a bot.
   bool bot = false;
@@ -40,7 +40,7 @@ class User {
     this.avatar = this.map['avatar'] = data['avatar'];
     this.avatarURL = this.map['avatarURL'] = "https://discordapp.com/api/v6/users/${this.id}/avatars/${this.avatar}.jpg";
     this.mention = this.map['mention'] = "<@${this.id}>";
-    this.createdAt = this.map['createdAt'] = (int.parse(this.id) / 4194304) + 1420070400000;
+    this.createdAt = this.map['createdAt'] = getDate(this.id);
 
     if (data['bot']) {
       this.bot = this.map['bot'] = data['bot'];
