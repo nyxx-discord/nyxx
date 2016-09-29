@@ -43,7 +43,8 @@ class User {
     this.mention = this.map['mention'] = "<@${this.id}>";
     this.createdAt = this.map['createdAt'] = getDate(this.id);
 
-    if (data['bot']) {
+    // This will not be set at all in some cases.
+    if (data['bot'] == true) {
       this.bot = this.map['bot'] = data['bot'];
     } else {
       this.map['bot'] = false;
