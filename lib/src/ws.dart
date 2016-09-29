@@ -36,18 +36,18 @@ class WS {
     if (this.socket != null) {
       this.socket.close();
     }
-    WebSocket.connect('${this.gateway}?v=6&encoding=json').then((WebSocket socket) {
+    WebSocket
+        .connect('${this.gateway}?v=6&encoding=json')
+        .then((WebSocket socket) {
       this.socket = socket;
-      this.socket.listen((String msg) => this._handleMsg(msg, resume), onDone: () => this._handleErr());
+      this.socket.listen((String msg) => this._handleMsg(msg, resume),
+          onDone: () => this._handleErr());
     });
   }
 
   /// Sends WS data.
   void send(int op, dynamic d) {
-    this.socket.add(JSON.encode(<String, dynamic>{
-      "op": op,
-      "d": d
-    }));
+    this.socket.add(JSON.encode(<String, dynamic>{"op": op, "d": d}));
   }
 
   /// Sends a heartbeat packet.
@@ -56,7 +56,7 @@ class WS {
   }
 
   Future<Null> _handleMsg(String msg, bool resume) async {
-    final Map<String, dynamic> json = JSON.decode(msg);
+    final json = JSON.decode(msg) as Map<String, dynamic>;
 
     if (json['s'] != null) {
       this.sequence = json['s'];
@@ -70,12 +70,13 @@ class WS {
         this.client.ready = false;
         this.send(2, <String, dynamic>{
           "token": this.client.token,
-          "properties": <String, dynamic>{
-            "\$browser": "Discord Dart"
-          },
+          "properties": <String, dynamic>{"\$browser": "Discord Dart"},
           "large_threshold": 100,
           "compress": false,
-          "shard": <int>[this.client.options.shardId, this.client.options.shardCount]
+          "shard": <int>[
+            this.client.options.shardId,
+            this.client.options.shardCount
+          ]
         });
       } else if (resume) {
         this.send(6, <String, dynamic>{
@@ -84,16 +85,13 @@ class WS {
           "seq": this.sequence
         });
       }
-    }
-
-    else if (json["op"] == 9) {
+    } else if (json["op"] == 9) {
       this.connect(false);
-    }
-
-    else if (json["op"] == 0) {
+    } else if (json["op"] == 0) {
       if (json['t'] == "READY") {
         this.sessionID = json['d']['session_id'];
-        this.client.user = new ClientUser(json['d']['user']);
+        this.client.user =
+            new ClientUser(json['d']['user'] as Map<String, dynamic>);
 
         json['d']['guilds'].forEach((Map<String, dynamic> o) {
           this.client.guilds.map[o['id']] = null;
@@ -104,10 +102,12 @@ class WS {
         });
 
         if (this.client.user.bot) {
-          this.client.http.headers['Authorization'] = "Bot ${this.client.token}";
+          this.client.http.headers['Authorization'] =
+              "Bot ${this.client.token}";
 
-          final http.Response r = await this.client.http.get('oauth2/applications/@me');
-          final Map<String, dynamic> res = JSON.decode(r.body);
+          final http.Response r =
+              await this.client.http.get('oauth2/applications/@me');
+          final res = JSON.decode(r.body) as Map<String, dynamic>;
 
           if (r.statusCode == 200) {
             this.client.app = new ClientOAuth2Application(client, res);
@@ -120,13 +120,11 @@ class WS {
       switch (json['t']) {
         case 'MESSAGE_CREATE':
           MessageEvent msgEvent = new MessageEvent(this.client, json);
-          if (msgEvent.message.channel.isPrivate && this.client.ss is SSServer) {
+          if (msgEvent.message.channel.isPrivate &&
+              this.client.ss is SSServer) {
             for (Socket socket in this.client.ss.sockets) {
-              socket.write(JSON.encode(<String, dynamic>{
-                "op": 3,
-                "t": client.token,
-                "d": json
-              }));
+              socket.write(JSON.encode(
+                  <String, dynamic>{"op": 3, "t": client.token, "d": json}));
             }
           }
           break;

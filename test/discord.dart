@@ -1,13 +1,21 @@
+import 'dart:async';
 import 'dart:io';
+
 import 'package:discord/discord.dart' as discord;
 
-main() {
+void main() {
   var env = Platform.environment;
   var bot = new discord.Client(env['DISCORD_TOKEN']);
 
+  new Timer(const Duration(seconds: 60), () {
+    print('Timed out waiting for messages');
+    exit(1);
+  });
+
   bot.on('ready', (e) async {
     var channel = bot.channels.get('228308788954791939');
-    channel.sendMessage("Testing new Travis CI build `#${env['TRAVIS_BUILD_NUMBER']}` from commit `${env['TRAVIS_COMMIT']}` on branch `${env['TRAVIS_BRANCH']}`");
+    channel.sendMessage(
+        "Testing new Travis CI build `#${env['TRAVIS_BUILD_NUMBER']}` from commit `${env['TRAVIS_COMMIT']}` on branch `${env['TRAVIS_BRANCH']}`");
 
     var m = await channel.sendMessage("Message test.");
     await m.edit("Edit test.");
@@ -18,7 +26,9 @@ main() {
   bot.on('message', (e) async {
     var m = e.message;
 
-    if (m.channel.id == "228308788954791939" && m.author.id == bot.user.id && m.content == "--trigger-test") {
+    if (m.channel.id == "228308788954791939" &&
+        m.author.id == bot.user.id &&
+        m.content == "--trigger-test") {
       await m.delete();
       await m.channel.sendMessage("Tests completed successfully!");
       print("Discord tests completed successfully!");

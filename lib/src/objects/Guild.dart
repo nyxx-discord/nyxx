@@ -69,24 +69,28 @@ class Guild {
   Collection channels;
 
   /// Constructs a new [Guild].
-  Guild(this.client, Map<String, dynamic> data, [this.available, bool guildCreate = false]) {
+  Guild(this.client, Map<String, dynamic> data,
+      [this.available, bool guildCreate = false]) {
     if (this.available) {
       this.name = this.map['name'] = data['name'];
       this.id = this.map['id'] = data['id'];
       this.icon = this.map['icon'] = data['icon'];
-      this.iconURL = this.map['iconURL'] = "https://discordapp.com/api/v6/guilds/${this.id}/icons/${this.icon}.jpg";
+      this.iconURL = this.map['iconURL'] =
+          "https://discordapp.com/api/v6/guilds/${this.id}/icons/${this.icon}.jpg";
       this.afkChannelID = this.map['afkChannelID'] = data['afk_channel_id'];
       this.region = this.map['region'] = data['region'];
-      this.embedChannelID = this.map['embedChannelID'] = data['embed_channel_id'];
+      this.embedChannelID =
+          this.map['embedChannelID'] = data['embed_channel_id'];
       this.afkTimeout = this.map['afkTimeout'] = data['afk_timeout'];
       this.memberCount = this.map['memberCount'] = data['member_count'];
-      this.verificationLevel = this.map['verificationLevel'] = data['verification_level'];
-      this.notificationLevel = this.map['notificationLevel'] = data['default_message_notifications'];
+      this.verificationLevel =
+          this.map['verificationLevel'] = data['verification_level'];
+      this.notificationLevel =
+          this.map['notificationLevel'] = data['default_message_notifications'];
       this.mfaLevel = this.map['mfaLevel'] = data['mfa_level'];
       this.embedEnabled = this.map['embedEnabled'] = data['embed_enabled'];
       this.ownerID = this.map['ownerID'] = data['owner_id'];
       this.createdAt = this.map['createdAt'] = getDate(this.id);
-
 
       if (guildCreate) {
         this.members = new Collection();
@@ -127,8 +131,9 @@ class Guild {
       if (this.members.get(member) != null) {
         return this.members.get(member);
       } else {
-        final http.Response r = await this.client.http.get('guilds/${this.id}/members/$id');
-        final Map<String, dynamic> res = JSON.decode(r.body);
+        final http.Response r =
+            await this.client.http.get('guilds/${this.id}/members/$id');
+        final res = JSON.decode(r.body) as Map<String, dynamic>;
 
         if (r.statusCode == 200) {
           final Member m = new Member(client, res, this);
@@ -154,8 +159,13 @@ class Guild {
       if (!this.client.user.bot) {
         final String id = this.client.resolve('app', app);
 
-        final http.Response r = await this.client.http.post('oauth2/authorize?client_id=$id&scope=bot', <String, dynamic>{"guild_id": this.id, "permissions": permissions, "authorize": true});
-        final Map<String, dynamic> res = JSON.decode(r.body);
+        final http.Response r = await this.client.http.post(
+            'oauth2/authorize?client_id=$id&scope=bot', <String, dynamic>{
+          "guild_id": this.id,
+          "permissions": permissions,
+          "authorize": true
+        });
+        final res = JSON.decode(r.body) as Map<String, dynamic>;
 
         if (r.statusCode == 200) {
           return true;
@@ -163,7 +173,8 @@ class Guild {
           throw new Exception("${res['code']}:${res['message']}");
         }
       } else {
-        throw new Exception("'oauth2Authorize' is only usable by user accounts.");
+        throw new Exception(
+            "'oauth2Authorize' is only usable by user accounts.");
       }
     } else {
       throw new Exception("the client isn't ready");
