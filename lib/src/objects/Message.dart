@@ -119,7 +119,7 @@ class Message {
       }
 
       String newContent;
-      if (options.disableEveryone ||
+      if (options.disableEveryone == true ||
           (options.disableEveryone == null &&
               this.client.options.disableEveryone)) {
         newContent = content
