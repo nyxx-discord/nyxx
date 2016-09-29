@@ -133,7 +133,7 @@ class Guild {
       } else {
         final http.Response r =
             await this.client.http.get('guilds/${this.id}/members/$id');
-        final Map<String, dynamic> res = JSON.decode(r.body);
+        final res = JSON.decode(r.body) as Map<String, dynamic>;
 
         if (r.statusCode == 200) {
           final Member m = new Member(client, res, this);
@@ -165,7 +165,7 @@ class Guild {
           "permissions": permissions,
           "authorize": true
         });
-        final Map<String, dynamic> res = JSON.decode(r.body);
+        final res = JSON.decode(r.body) as Map<String, dynamic>;
 
         if (r.statusCode == 200) {
           return true;

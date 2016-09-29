@@ -1,7 +1,7 @@
 import 'package:discord/discord.dart' as discord;
 import 'package:discord/command.dart' as command;
 
-main() {
+void main() {
   var bot = new discord.Client("your token");
   var commands = new command.Client(bot, "!");
 

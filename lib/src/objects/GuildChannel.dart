@@ -93,7 +93,7 @@ class GuildChannel {
         "tts": newOptions.tts,
         "nonce": newOptions.nonce
       });
-      final Map<String, dynamic> res = JSON.decode(r.body);
+      final res = JSON.decode(r.body) as Map<String, dynamic>;
 
       if (r.statusCode == 200) {
         return new Message(this.client, res);
@@ -117,7 +117,7 @@ class GuildChannel {
 
         final http.Response r =
             await this.client.http.get('channels/${this.id}/messages/$id');
-        final Map<String, dynamic> res = JSON.decode(r.body);
+        final res = JSON.decode(r.body) as Map<String, dynamic>;
 
         if (r.statusCode == 200) {
           return new Message(this.client, res);

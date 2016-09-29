@@ -65,12 +65,12 @@ class Message {
     this.id = data['id'];
     this.nonce = data['nonce'];
     this.timestamp = DateTime.parse(data['timestamp']);
-    this.author = new User(client, data['author']);
+    this.author = new User(client, data['author'] as Map<String, dynamic>);
     this.channel = this.client.channels.map[data['channel_id']];
     this.pinned = data['pinned'];
     this.tts = data['tts'];
     this.mentionEveryone = data['mention_everyone'];
-    this.roleMentions = data['mention_roles'];
+    this.roleMentions = data['mention_roles'] as List<String>;
     this.createdAt = getDate(this.id);
 
     if (this.channel is GuildChannel) {
@@ -132,7 +132,7 @@ class Message {
       final http.Response r = await this.client.http.patch(
           'channels/${this.channel.id}/messages/${this.id}',
           <String, dynamic>{"content": newContent});
-      final Map<String, dynamic> res = JSON.decode(r.body);
+      final res = JSON.decode(r.body) as Map<String, dynamic>;
 
       if (r.statusCode == 200) {
         return new Message(this.client, res);

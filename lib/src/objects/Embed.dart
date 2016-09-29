@@ -27,10 +27,12 @@ class Embed {
     this.description = data['description'];
 
     if (data.containsKey('thumbnail')) {
-      this.thumbnail = new EmbedThumbnail(data['thumbnail']);
+      this.thumbnail =
+          new EmbedThumbnail(data['thumbnail'] as Map<String, dynamic>);
     }
     if (data.containsKey('provider')) {
-      this.provider = new EmbedProvider(data['provider']);
+      this.provider =
+          new EmbedProvider(data['provider'] as Map<String, dynamic>);
     }
   }
 

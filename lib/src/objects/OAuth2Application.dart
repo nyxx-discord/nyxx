@@ -26,7 +26,7 @@ class OAuth2Application {
     this.icon = data['icon'];
     this.id = data['id'];
     this.name = data['name'];
-    this.rpcOrigins = data['rpcOrigins'];
+    this.rpcOrigins = data['rpcOrigins'] as List<String>;
     this.createdAt = getDate(this.id);
   }
 
