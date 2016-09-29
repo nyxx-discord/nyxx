@@ -13,6 +13,9 @@ then
 fi
 echo "PASSED"
 
+# Lazy newlines
+echo ""
+
 # Make sure we pass the analyzer
 echo "Checking dartanalyzer..."
 FAILS_ANALYZER="$(find example lib test -name "*.dart" | xargs dartanalyzer --options analysis_options.yaml)"
@@ -24,8 +27,14 @@ then
 fi
 echo "PASSED"
 
+# Lazy newlines
+echo ""
+
 # 2nd check for errors and bad practices.
 dartanalyzer --fatal-warnings --fatal-hints --fatal-lints  lib/
+
+# Lazy newlines
+echo ""
 
 if [ "$DISCORD_TOKEN" ]; then
   dart -c test/discord.dart
