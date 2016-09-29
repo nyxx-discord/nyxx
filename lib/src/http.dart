@@ -17,7 +17,11 @@ class HTTP {
   /// Makes a new HTTP manager.
   HTTP(Client client) {
     this.client = new http.Client();
-    this.headers = <String, String>{'User-Agent': 'Discord Dart (https://github.com/Hackzzila/Discord-Dart, ${client.version})', 'Content-Type': 'application/json'};
+    this.headers = <String, String>{
+      'User-Agent':
+          'Discord Dart (https://github.com/Hackzzila/Discord-Dart, ${client.version})',
+      'Content-Type': 'application/json'
+    };
   }
 
   /// Sends a GET request.
@@ -27,12 +31,14 @@ class HTTP {
 
   /// Sends a POST request.
   Future<http.Response> post(String uri, Object content) async {
-    return await this.client.post("${this.host}/$uri", body: JSON.encode(content), headers: this.headers);
+    return await this.client.post("${this.host}/$uri",
+        body: JSON.encode(content), headers: this.headers);
   }
 
   /// Sends a PATCH request.
   Future<http.Response> patch(String uri, Object content) async {
-    return await this.client.patch("${this.host}/$uri", body: JSON.encode(content), headers: this.headers);
+    return await this.client.patch("${this.host}/$uri",
+        body: JSON.encode(content), headers: this.headers);
   }
 
   /// Sends a DELETE request.

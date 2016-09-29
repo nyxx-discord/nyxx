@@ -23,10 +23,7 @@ class SSServer extends events.Events {
   /// Sends a message to all shards.
   void send(String msg) {
     for (Socket socket in this.sockets) {
-      socket.write(JSON.encode(<String, dynamic>{
-        "op": 4,
-        "d": msg
-      }));
+      socket.write(JSON.encode(<String, dynamic>{"op": 4, "d": msg}));
     }
   }
 
@@ -34,7 +31,9 @@ class SSServer extends events.Events {
     this.serverSocket = await ServerSocket.bind('0.0.0.0', 10048);
     await for (Socket socket in serverSocket) {
       this.sockets.add(socket);
-      socket.transform(UTF8.decoder).listen((String msg) => this._handleMsg(socket, msg), onDone: () => this.sockets.remove(socket));
+      socket.transform(UTF8.decoder).listen(
+          (String msg) => this._handleMsg(socket, msg),
+          onDone: () => this.sockets.remove(socket));
     }
   }
 
@@ -87,7 +86,8 @@ class SSClient extends events.Events {
     Socket.connect(this.address, 10048).then((Socket socket) {
       this.socket = socket;
       this.socket.transform(UTF8.decoder).listen(this._handleMsg);
-      this.socket.write(JSON.encode(<String, dynamic>{"op": 1, "d": null, "t": this.client.token}));
+      this.socket.write(JSON.encode(
+          <String, dynamic>{"op": 1, "d": null, "t": this.client.token}));
     });
   }
 
@@ -96,7 +96,7 @@ class SSClient extends events.Events {
     socket.write(JSON.encode(<String, dynamic>{
       "op": 4,
       "t": this.client.token,
-      "d": msg
+      "d": msg,
     }));
   }
 

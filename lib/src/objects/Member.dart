@@ -26,7 +26,8 @@ class Member extends User {
   Guild guild;
 
   /// Constructs a new [Member].
-  Member(Client client, Map<String, dynamic> data, Guild guild) : super(client, data['user']) {
+  Member(Client client, Map<String, dynamic> data, Guild guild)
+      : super(client, data['user']) {
     this.nickname = this.map['nickname'] = data['nick'];
     this.joinedAt = this.map['joinedAt'] = DateTime.parse(data['joined_at']);
     this.deaf = this.map['deaf'] = data['deaf'];

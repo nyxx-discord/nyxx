@@ -119,13 +119,19 @@ class Message {
       }
 
       String newContent;
-      if (options.disableEveryone || (options.disableEveryone == null && this.client.options.disableEveryone)) {
-        newContent = content.replaceAll("@everyone", "@\u200Beveryone").replaceAll("@here", "@\u200Bhere");
+      if (options.disableEveryone ||
+          (options.disableEveryone == null &&
+              this.client.options.disableEveryone)) {
+        newContent = content
+            .replaceAll("@everyone", "@\u200Beveryone")
+            .replaceAll("@here", "@\u200Bhere");
       } else {
         newContent = content;
       }
 
-      final http.Response r = await this.client.http.patch('channels/${this.channel.id}/messages/${this.id}', <String, dynamic>{"content": newContent});
+      final http.Response r = await this.client.http.patch(
+          'channels/${this.channel.id}/messages/${this.id}',
+          <String, dynamic>{"content": newContent});
       final Map<String, dynamic> res = JSON.decode(r.body);
 
       if (r.statusCode == 200) {
@@ -144,7 +150,10 @@ class Message {
   ///     Message.delete();
   Future<bool> delete() async {
     if (this.client.ready) {
-      final http.Response r = await this.client.http.delete('channels/${this.channel.id}/messages/${this.id}');
+      final http.Response r = await this
+          .client
+          .http
+          .delete('channels/${this.channel.id}/messages/${this.id}');
 
       if (r.statusCode == 204) {
         return true;
