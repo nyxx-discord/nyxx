@@ -77,7 +77,7 @@ class GuildChannel {
       }
 
       String newContent;
-      if (newOptions.disableEveryone ||
+      if (newOptions.disableEveryone == true ||
           (newOptions.disableEveryone == null &&
               this.client.options.disableEveryone)) {
         newContent = content
