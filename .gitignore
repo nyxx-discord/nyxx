@@ -1,6 +1,7 @@
 # Custom files
 local/
-.atom
+.atom/
+.vscode/
 
 # See https://github.com/matanlurey/gitignore
 
