@@ -30,9 +30,6 @@ echo "PASSED"
 # Lazy newlines
 echo ""
 
-# 2nd check for errors and bad practices.
-dartanalyzer --fatal-warnings --fatal-hints --fatal-lints  lib/
-
 # Lazy newlines
 echo ""
 
