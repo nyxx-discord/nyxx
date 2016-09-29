@@ -65,12 +65,12 @@ class Message {
     this.id = data['id'];
     this.nonce = data['nonce'];
     this.timestamp = DateTime.parse(data['timestamp']);
-    this.author = new User(client, data['author']);
+    this.author = new User(client, data['author'] as Map<String, dynamic>);
     this.channel = this.client.channels.map[data['channel_id']];
     this.pinned = data['pinned'];
     this.tts = data['tts'];
     this.mentionEveryone = data['mention_everyone'];
-    this.roleMentions = data['mention_roles'];
+    this.roleMentions = data['mention_roles'] as List<String>;
     this.createdAt = getDate(this.id);
 
     if (this.channel is GuildChannel) {
@@ -119,14 +119,20 @@ class Message {
       }
 
       String newContent;
-      if (options.disableEveryone || (options.disableEveryone == null && this.client.options.disableEveryone)) {
-        newContent = content.replaceAll("@everyone", "@\u200Beveryone").replaceAll("@here", "@\u200Bhere");
+      if (options.disableEveryone ||
+          (options.disableEveryone == null &&
+              this.client.options.disableEveryone)) {
+        newContent = content
+            .replaceAll("@everyone", "@\u200Beveryone")
+            .replaceAll("@here", "@\u200Bhere");
       } else {
         newContent = content;
       }
 
-      final http.Response r = await this.client.http.patch('channels/${this.channel.id}/messages/${this.id}', <String, dynamic>{"content": newContent});
-      final Map<String, dynamic> res = JSON.decode(r.body);
+      final http.Response r = await this.client.http.patch(
+          'channels/${this.channel.id}/messages/${this.id}',
+          <String, dynamic>{"content": newContent});
+      final res = JSON.decode(r.body) as Map<String, dynamic>;
 
       if (r.statusCode == 200) {
         return new Message(this.client, res);
@@ -144,7 +150,10 @@ class Message {
   ///     Message.delete();
   Future<bool> delete() async {
     if (this.client.ready) {
-      final http.Response r = await this.client.http.delete('channels/${this.channel.id}/messages/${this.id}');
+      final http.Response r = await this
+          .client
+          .http
+          .delete('channels/${this.channel.id}/messages/${this.id}');
 
       if (r.statusCode == 204) {
         return true;

@@ -9,12 +9,14 @@ class ChannelCreateEvent {
   ChannelCreateEvent(Client client, Map<String, dynamic> json) {
     if (client.ready) {
       if (json['d']['type'] == 1) {
-        this.channel = new PrivateChannel(client, json['d']);
+        this.channel =
+            new PrivateChannel(client, json['d'] as Map<String, dynamic>);
         client.channels.map[channel.id] = channel;
         client.emit('channelCreate', this);
       } else {
         final Guild guild = client.guilds.map[json['d']['guild_id']];
-        this.channel = new GuildChannel(client, json['d'], guild);
+        this.channel =
+            new GuildChannel(client, json['d'] as Map<String, dynamic>, guild);
         client.channels.map[channel.id] = channel;
         client.emit('channelCreate', this);
       }

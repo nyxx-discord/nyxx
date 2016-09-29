@@ -35,9 +35,9 @@ class ClientOAuth2Application {
     this.icon = data['icon'];
     this.id = data['id'];
     this.name = data['name'];
-    this.rpcOrigins = data['rpcOrigins'];
+    this.rpcOrigins = data['rpcOrigins'] as List<String>;
     this.flags = data['flags'];
-    this.owner = new User(client, data['owner']);
+    this.owner = new User(client, data['owner'] as Map<String, dynamic>);
     this.createdAt = getDate(this.id);
   }
 

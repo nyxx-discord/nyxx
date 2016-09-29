@@ -38,11 +38,13 @@ class User {
     this.id = this.map['id'] = data['id'];
     this.discriminator = this.map['discriminator'] = data['discriminator'];
     this.avatar = this.map['avatar'] = data['avatar'];
-    this.avatarURL = this.map['avatarURL'] = "https://discordapp.com/api/v6/users/${this.id}/avatars/${this.avatar}.jpg";
+    this.avatarURL = this.map['avatarURL'] =
+        "https://discordapp.com/api/v6/users/${this.id}/avatars/${this.avatar}.jpg";
     this.mention = this.map['mention'] = "<@${this.id}>";
     this.createdAt = this.map['createdAt'] = getDate(this.id);
 
-    if (data['bot']) {
+    // This will not be set at all in some cases.
+    if (data['bot'] == true) {
       this.bot = this.map['bot'] = data['bot'];
     } else {
       this.map['bot'] = false;
