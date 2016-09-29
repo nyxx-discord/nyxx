@@ -27,7 +27,8 @@ class Client extends events.Events {
   Client(this.client, this.prefix) {
     this.client.on('message', (discord.MessageEvent e) {
       if (e.message.content.startsWith(this.prefix)) {
-        final String command = e.message.content.split(" ")[0].replaceFirst(this.prefix, "");
+        final String command =
+            e.message.content.split(" ")[0].replaceFirst(this.prefix, "");
         final List<String> args = e.message.content.split(" ");
         args.remove(this.prefix + command);
         new CommandEvent(this, command, args, e.message);

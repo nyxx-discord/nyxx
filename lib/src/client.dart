@@ -97,17 +97,13 @@ class Client extends events.Events {
       } else {
         return object.toString();
       }
-    }
-
-    else if (to == "message") {
+    } else if (to == "message") {
       if (object is Message) {
         return object.id;
       } else {
         return object.toString();
       }
-    }
-
-    else if (to == "guild") {
+    } else if (to == "guild") {
       if (object is Message) {
         return object.guild.id;
       } else if (object is GuildChannel) {
@@ -117,9 +113,7 @@ class Client extends events.Events {
       } else {
         return object.toString();
       }
-    }
-
-    else if (to == "user") {
+    } else if (to == "user") {
       if (object is Message) {
         return object.author.id;
       } else if (object is User) {
@@ -129,9 +123,7 @@ class Client extends events.Events {
       } else {
         return object.toString();
       }
-    }
-
-    else if (to == "member") {
+    } else if (to == "member") {
       if (object is Message) {
         return object.author.id;
       } else if (object is User) {
@@ -141,9 +133,7 @@ class Client extends events.Events {
       } else {
         return object.toString();
       }
-    }
-
-    else if (to == "app") {
+    } else if (to == "app") {
       if (object is User) {
         return object.id;
       } else if (object is Member) {
@@ -151,9 +141,7 @@ class Client extends events.Events {
       } else {
         return object.toString();
       }
-    }
-
-    else {
+    } else {
       return null;
     }
   }
@@ -206,7 +194,8 @@ class Client extends events.Events {
     if (this.ready) {
       final String id = this.resolve('app', app);
 
-      final http.Response r = await this.http.get('oauth2/authorize?client_id=$id&scope=bot');
+      final http.Response r =
+          await this.http.get('oauth2/authorize?client_id=$id&scope=bot');
       final Map<String, dynamic> res = JSON.decode(r.body);
 
       if (r.statusCode == 200) {

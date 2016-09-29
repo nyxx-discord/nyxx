@@ -77,13 +77,22 @@ class GuildChannel {
       }
 
       String newContent;
-      if (newOptions.disableEveryone || (newOptions.disableEveryone == null && this.client.options.disableEveryone)) {
-        newContent = content.replaceAll("@everyone", "@\u200Beveryone").replaceAll("@here", "@\u200Bhere");
+      if (newOptions.disableEveryone ||
+          (newOptions.disableEveryone == null &&
+              this.client.options.disableEveryone)) {
+        newContent = content
+            .replaceAll("@everyone", "@\u200Beveryone")
+            .replaceAll("@here", "@\u200Bhere");
       } else {
         newContent = content;
       }
 
-      final http.Response r = await this.client.http.post('channels/${this.id}/messages', <String, dynamic>{"content": newContent, "tts": newOptions.tts, "nonce": newOptions.nonce});
+      final http.Response r = await this.client.http.post(
+          'channels/${this.id}/messages', <String, dynamic>{
+        "content": newContent,
+        "tts": newOptions.tts,
+        "nonce": newOptions.nonce
+      });
       final Map<String, dynamic> res = JSON.decode(r.body);
 
       if (r.statusCode == 200) {
@@ -106,7 +115,8 @@ class GuildChannel {
       if (this.client.user.bot) {
         final String id = this.client.resolve('message', message);
 
-        final http.Response r = await this.client.http.get('channels/${this.id}/messages/$id');
+        final http.Response r =
+            await this.client.http.get('channels/${this.id}/messages/$id');
         final Map<String, dynamic> res = JSON.decode(r.body);
 
         if (r.statusCode == 200) {
