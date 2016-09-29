@@ -4,7 +4,7 @@ set -e
 # Make sure dartfmt is run on everything
 # This assumes you have dart_style as a dev_dependency
 echo "Checking dartfmt..."
-NEEDS_DARTFMT="$(find bin lib test -name "*.dart" | xargs pub run dart_style:format -n)"
+NEEDS_DARTFMT="$(find example lib test -name "*.dart" | xargs pub run dart_style:format -n)"
 if [[ ${NEEDS_DARTFMT} != "" ]]
 then
   echo "FAILED"
@@ -15,7 +15,7 @@ echo "PASSED"
 
 # Make sure we pass the analyzer
 echo "Checking dartanalyzer..."
-FAILS_ANALYZER="$(find bin lib test -name "*.dart" | xargs dartanalyzer --options analysis_options.yaml)"
+FAILS_ANALYZER="$(find example lib test -name "*.dart" | xargs dartanalyzer --options analysis_options.yaml)"
 if [[ $FAILS_ANALYZER == *"[error]"* ]]
 then
   echo "FAILED"
@@ -28,7 +28,7 @@ echo "PASSED"
 dartanalyzer --fatal-warnings --fatal-hints --fatal-lints  lib/
 
 if [ "$DISCORD_TOKEN" ]; then
-  timeout 60 dart -c test/discord.dart
+  dart -c test/discord.dart
 else
   echo "Discord token not present, skipping Discord tests"
 fi
