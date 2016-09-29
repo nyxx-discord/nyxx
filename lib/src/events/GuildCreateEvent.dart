@@ -7,7 +7,8 @@ class GuildCreateEvent {
 
   /// Constructs a new [GuildCreateEvent].
   GuildCreateEvent(Client client, Map<String, dynamic> json) {
-    this.guild = new Guild(client, json['d'], true, true);
+    this.guild =
+        new Guild(client, json['d'] as Map<String, dynamic>, true, true);
     client.guilds.add(guild);
 
     guild.channels.list.forEach((GuildChannel v) {

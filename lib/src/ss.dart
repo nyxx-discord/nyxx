@@ -38,13 +38,12 @@ class SSServer extends events.Events {
   }
 
   Future<Null> _handleMsg(Socket socket, String msg) async {
-    Map<String, dynamic> data = JSON.decode(msg);
+    final data = JSON.decode(msg) as Map<String, dynamic>;
 
     if (data['t'] != this.client.token) {
       socket.write(JSON.encode(<String, dynamic>{"op": 0, "d": 0}));
       socket.destroy();
     }
-
     switch (data['op']) {
       case 1:
         if (data['t'] == this.client.token) {
@@ -101,14 +100,14 @@ class SSClient extends events.Events {
   }
 
   Future<Null> _handleMsg(String msg) async {
-    Map<String, dynamic> data = JSON.decode(msg);
+    final data = JSON.decode(msg) as Map<String, dynamic>;
     switch (data['op']) {
       case 2:
         this.emit('ready', null);
         break;
 
       case 3:
-        new MessageEvent(this.client, data['d']);
+        new MessageEvent(this.client, data['d'] as Map<String, dynamic>);
         break;
 
       case 4:

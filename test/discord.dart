@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'package:discord/discord.dart' as discord;
 
-main() {
+void main() {
   var env = Platform.environment;
   var bot = new discord.Client(env['DISCORD_TOKEN']);
 

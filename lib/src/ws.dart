@@ -56,7 +56,7 @@ class WS {
   }
 
   Future<Null> _handleMsg(String msg, bool resume) async {
-    final Map<String, dynamic> json = JSON.decode(msg);
+    final json = JSON.decode(msg) as Map<String, dynamic>;
 
     if (json['s'] != null) {
       this.sequence = json['s'];
@@ -90,7 +90,8 @@ class WS {
     } else if (json["op"] == 0) {
       if (json['t'] == "READY") {
         this.sessionID = json['d']['session_id'];
-        this.client.user = new ClientUser(json['d']['user']);
+        this.client.user =
+            new ClientUser(json['d']['user'] as Map<String, dynamic>);
 
         json['d']['guilds'].forEach((Map<String, dynamic> o) {
           this.client.guilds.map[o['id']] = null;
@@ -106,7 +107,7 @@ class WS {
 
           final http.Response r =
               await this.client.http.get('oauth2/applications/@me');
-          final Map<String, dynamic> res = JSON.decode(r.body);
+          final res = JSON.decode(r.body) as Map<String, dynamic>;
 
           if (r.statusCode == 200) {
             this.client.app = new ClientOAuth2Application(client, res);

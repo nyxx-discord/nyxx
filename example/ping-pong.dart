@@ -1,6 +1,6 @@
 import 'package:discord/discord.dart' as discord;
 
-main() {
+void main() {
   var bot = new discord.Client("your token");
 
   bot.on('ready', (e) {
