@@ -28,7 +28,7 @@ class Client extends events.Events {
 
   /// All of the channels the bot is in. Either a [GuildChannel] or
   /// [PrivateChannel].
-  Collection<Channel> channels;
+  Collection<dynamic> channels;
 
   /// All of the users the bot can see. Does not always have offline users
   /// without forceFetchUsers enabled.
