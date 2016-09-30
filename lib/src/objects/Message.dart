@@ -36,7 +36,7 @@ class Message {
   Member member;
 
   /// The mentions in the message.
-  Collection mentions;
+  Collection<User> mentions;
 
   /// A list of IDs for the role mentions in the message.
   List<String> roleMentions = <String>[];
@@ -45,7 +45,7 @@ class Message {
   List<Embed> embeds = <Embed>[];
 
   /// The attachments in the message.
-  Collection attachments;
+  Collection<Attachment> attachments;
 
   /// When the message was created, redundant of `timestamp`.
   DateTime createdAt;
@@ -82,7 +82,7 @@ class Message {
       this.editedTimestamp = DateTime.parse(data['edited_timestamp']);
     }
 
-    this.mentions = new Collection();
+    this.mentions = new Collection<User>();
     data['mentions'].forEach((Map<String, dynamic> o) {
       final User user = new User(client, o);
       this.mentions.map[user.id] = user;
@@ -92,7 +92,7 @@ class Message {
       this.embeds.add(new Embed(o));
     });
 
-    this.attachments = new Collection();
+    this.attachments = new Collection<Attachment>();
     data['attachments'].forEach((Map<String, dynamic> o) {
       final Attachment attachment = new Attachment(o);
       this.attachments.map[attachment.id] = attachment;
