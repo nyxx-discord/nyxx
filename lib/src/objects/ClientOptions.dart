@@ -1,11 +1,14 @@
 /// The options for `Client`.
 class ClientOptions {
   /// Whether or not to disable @everyone and @here mentions at a global level.
-  bool disableEveryone = false;
+  bool disableEveryone;
 
   /// The current shard, starting at 0.
-  int shardId = 0;
+  int shardId;
 
   /// The total number of shards.
-  int shardCount = 1;
+  int shardCount;
+
+  /// Makes a new `ClientOptions` object.
+  ClientOptions({this.disableEveryone: false, this.shardId: 0, this.shardCount: 1});
 }
