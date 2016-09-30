@@ -71,9 +71,9 @@ class Client extends events.Events {
       this.options = new ClientOptions();
     }
 
-    this.guilds = new Collection();
-    this.channels = new Collection();
-    this.users = new Collection();
+    this.guilds = new Collection<Guild>();
+    this.channels = new Collection<dynamic>();
+    this.users = new Collection<User>();
 
     this.http = new HTTP(this);
     this.ws = new WS(this);
