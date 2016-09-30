@@ -3,6 +3,7 @@ import 'dart:async';
 import 'http.dart';
 import 'ws.dart';
 import 'ss.dart';
+import 'eventcontroller.dart';
 import '../discord.dart';
 import 'package:events/events.dart' as events;
 import 'package:http/http.dart' as http;
@@ -45,9 +46,24 @@ class Client extends events.Events {
   /// The client's WS manager, this is for use internally.
   WS ws;
 
+  /// The client's event controller, this is for use internally.
+  EventController events;
+
   /// The client's SS manager, null if the client is not sharded, [SSServer] if
   /// the current shard is 0, [SSClient] otherwise.
   dynamic ss;
+
+  /// Emitted when the client is ready.
+  Stream<ReadyEvent> onReady;
+
+  /// Emitted when a message is received.
+  Stream<MessageEvent> onMessage;
+
+  /// Emitted when a message is edited.
+  Stream<MessageUpdateEvent> onMessageUpdate;
+
+  /// Emitted when a message is deleted.
+  Stream<MessageDeleteEvent> onMessageDelete;
 
   /// Creates and logs in a new client.
   Client(this.token, [this.options]) {
@@ -61,6 +77,7 @@ class Client extends events.Events {
 
     this.http = new HTTP(this);
     this.ws = new WS(this);
+    this.events = new EventController(this);
 
     if (this.options.shardCount > 1) {
       if (this.options.shardId == 0) {
