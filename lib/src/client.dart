@@ -88,10 +88,11 @@ class Client extends events.Events {
     }
   }
 
-  /// Destroys the websocket connection.
+  /// Destroys the websocket connection, SS connection or server, and all streams.
   Future<Null> destroy() async {
     await this.ws.socket.close();
     this.http.client.close();
+    await this.events.destroy();
     if (this.ss is SSServer) {
       await this.ss.close();
     } else if (this.ss is SSClient) {
