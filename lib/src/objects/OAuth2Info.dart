@@ -16,7 +16,7 @@ class OAuth2Info {
   User me;
 
   /// Mini guild objects with permissions for every guild you are on.
-  Collection guilds;
+  Collection<Guild> guilds;
 
   /// Constructs a new [OAuth2Info].
   OAuth2Info(this.client, Map<String, dynamic> data) {
@@ -25,7 +25,7 @@ class OAuth2Info {
     this.bot = new User(client, data['bot'] as Map<String, dynamic>);
     this.me = new User(client, data['user'] as Map<String, dynamic>);
 
-    this.guilds = new Collection();
+    this.guilds = new Collection<Guild>();
     data['guilds'].forEach((Map<String, dynamic> v) {
       final OAuth2Guild g = new OAuth2Guild(v);
       this.guilds.map[g.id] = g;

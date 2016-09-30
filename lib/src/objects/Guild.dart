@@ -63,10 +63,10 @@ class Guild {
   String ownerID;
 
   /// The guild's members.
-  Collection members;
+  Collection<Member> members;
 
   /// The guild's channels.
-  Collection channels;
+  Collection<GuildChannel> channels;
 
   /// Constructs a new [Guild].
   Guild(this.client, Map<String, dynamic> data,
@@ -93,8 +93,8 @@ class Guild {
       this.createdAt = this.map['createdAt'] = getDate(this.id);
 
       if (guildCreate) {
-        this.members = new Collection();
-        this.channels = new Collection();
+        this.members = new Collection<Member>();
+        this.channels = new Collection<GuildChannel>();
 
         //this.roles = JSON.decode(data['roles']);
         data['members'].forEach((Map<String, dynamic> o) {
