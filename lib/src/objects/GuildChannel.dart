@@ -69,14 +69,12 @@ class GuildChannel {
   ///     Channel.sendMessage("My content!");
   Future<Message> sendMessage(String content, [MessageOptions options]) async {
     if (this.client.ready) {
-      print(options.nonce);
       MessageOptions newOptions;
       if (options == null) {
         newOptions = new MessageOptions();
       } else {
         newOptions = options;
       }
-      print(newOptions.nonce);
 
       String newContent;
       if (newOptions.disableEveryone == true ||

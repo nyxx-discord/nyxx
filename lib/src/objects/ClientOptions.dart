@@ -10,5 +10,6 @@ class ClientOptions {
   int shardCount;
 
   /// Makes a new `ClientOptions` object.
-  ClientOptions({this.disableEveryone: false, this.shardId: 0, this.shardCount: 1});
+  ClientOptions(
+      {this.disableEveryone: false, this.shardId: 0, this.shardCount: 1});
 }
