@@ -17,16 +17,24 @@ class EventController {
 
   /// Makes a new `EventController`.
   EventController(Client client) {
-    this.onReady = new StreamController();
+    this.onReady = new StreamController.broadcast();
     client.onReady = this.onReady.stream;
 
-    this.onMessage = new StreamController();
+    this.onMessage = new StreamController.broadcast();
     client.onMessage = this.onMessage.stream;
 
-    this.onMessageUpdate = new StreamController();
+    this.onMessageUpdate = new StreamController.broadcast();
     client.onMessageUpdate = this.onMessageUpdate.stream;
 
-    this.onMessageDelete = new StreamController();
+    this.onMessageDelete = new StreamController.broadcast();
     client.onMessageDelete = this.onMessageDelete.stream;
+  }
+
+  Future<Null> destroy() async {
+    await this.onReady.close();
+    await this.onMessage.close();
+    await this.onMessageUpdate.close();
+    await this.onMessageDelete.close();
+    return null;
   }
 }
