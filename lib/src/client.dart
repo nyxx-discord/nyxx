@@ -24,15 +24,15 @@ class Client extends events.Events {
   ClientOAuth2Application app;
 
   /// All of the guilds the bot is in.
-  Collection guilds;
+  Collection<Guild> guilds;
 
   /// All of the channels the bot is in. Either a [GuildChannel] or
   /// [PrivateChannel].
-  Collection channels;
+  Collection<Channel> channels;
 
   /// All of the users the bot can see. Does not always have offline users
   /// without forceFetchUsers enabled.
-  Collection users;
+  Collection<User> users;
 
   /// Whether or not the client is ready.
   bool ready = false;
