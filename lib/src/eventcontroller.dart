@@ -30,6 +30,7 @@ class EventController {
     client.onMessageDelete = this.onMessageDelete.stream;
   }
 
+  /// Closes all streams.
   Future<Null> destroy() async {
     await this.onReady.close();
     await this.onMessage.close();
