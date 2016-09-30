@@ -9,7 +9,7 @@ class MessageEvent {
   MessageEvent(Client client, Map<String, dynamic> json) {
     if (client.ready) {
       this.message = new Message(client, json['d'] as Map<String, dynamic>);
-      client.emit('message', this);
+      client.events.onMessage.add(this);
     }
   }
 }
