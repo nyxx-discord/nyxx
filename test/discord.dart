@@ -23,7 +23,7 @@ void main() {
     await channel.sendMessage("--trigger-test");
   });
 
-  bot.on('message', (e) async {
+  bot.onMessage.listen((e) async {
     var m = e.message;
 
     if (m.channel.id == "228308788954791939" &&
