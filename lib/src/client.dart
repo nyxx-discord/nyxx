@@ -126,7 +126,7 @@ class Client extends events.Events {
       } else if (object is User) {
         return object.id;
       } else if (object is Member) {
-        return object.user.id;
+        return object.id;
       } else {
         return object.toString();
       }
@@ -136,7 +136,7 @@ class Client extends events.Events {
       } else if (object is User) {
         return object.id;
       } else if (object is Member) {
-        return object.user.id;
+        return object.id;
       } else {
         return object.toString();
       }
@@ -144,7 +144,7 @@ class Client extends events.Events {
       if (object is User) {
         return object.id;
       } else if (object is Member) {
-        return object.user.id;
+        return object.id;
       } else {
         return object.toString();
       }

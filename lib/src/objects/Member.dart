@@ -19,9 +19,6 @@ class Member extends User {
   /// A list of role IDs the member has.
   List<String> roles;
 
-  /// The [User] object for the member.
-  User user;
-
   /// The guild that the member is a part of.
   Guild guild;
 
