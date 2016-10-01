@@ -11,7 +11,7 @@ class InternalClient {
 
   /// The WS manager.
   WS ws;
-  
+
   /// The event controller.
   EventController events;
 
@@ -22,8 +22,8 @@ class InternalClient {
   InternalClient(Client client) {
     client.internal = this;
     this.http = new HTTP(client);
-    this.events = new EventController(client);   
-    this.util = new Util(); 
+    this.events = new EventController(client);
+    this.util = new Util();
     this.ws = new WS(client);
   }
 }

@@ -17,7 +17,9 @@ class Invite {
   /// Constructs a new [Invite].
   Invite(this.client, Map<String, dynamic> data) {
     this.code = data['code'];
-    this.guild = new InviteGuild(this.client, data['guild'] as Map<String, dynamic>);
-    this.channel = new InviteChannel(this.client, data['channel'] as Map<String, dynamic>);
+    this.guild =
+        new InviteGuild(this.client, data['guild'] as Map<String, dynamic>);
+    this.channel =
+        new InviteChannel(this.client, data['channel'] as Map<String, dynamic>);
   }
 }

@@ -20,8 +20,8 @@ class OAuth2Info {
 
   /// Constructs a new [OAuth2Info].
   OAuth2Info(this.client, Map<String, dynamic> data) {
-    this.app =
-        new OAuth2Application(this.client ,data['application'] as Map<String, dynamic>);
+    this.app = new OAuth2Application(
+        this.client, data['application'] as Map<String, dynamic>);
     this.bot = new User(client, data['bot'] as Map<String, dynamic>);
     this.me = new User(client, data['user'] as Map<String, dynamic>);
 

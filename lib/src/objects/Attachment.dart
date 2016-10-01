@@ -41,6 +41,7 @@ class Attachment {
     this.size = this.map['size'] = data['size'];
     this.height = this.map['height'] = data['height'];
     this.width = this.map['width'] = data['width'];
-    this.createdAt = this.map['createdAt'] = this.client.internal.util.getDate(this.id);
+    this.createdAt =
+        this.map['createdAt'] = this.client.internal.util.getDate(this.id);
   }
 }

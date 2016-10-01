@@ -90,7 +90,8 @@ class Guild {
       this.mfaLevel = this.map['mfaLevel'] = data['mfa_level'];
       this.embedEnabled = this.map['embedEnabled'] = data['embed_enabled'];
       this.ownerID = this.map['ownerID'] = data['owner_id'];
-      this.createdAt = this.map['createdAt'] = this.client.internal.util.getDate(this.id);
+      this.createdAt =
+          this.map['createdAt'] = this.client.internal.util.getDate(this.id);
 
       if (guildCreate) {
         this.members = new Collection<Member>();
@@ -131,8 +132,11 @@ class Guild {
       if (this.members.get(member) != null) {
         return this.members.get(member);
       } else {
-        final http.Response r =
-            await this.client.internal.http.get('guilds/${this.id}/members/$id');
+        final http.Response r = await this
+            .client
+            .internal
+            .http
+            .get('guilds/${this.id}/members/$id');
         final res = JSON.decode(r.body) as Map<String, dynamic>;
 
         if (r.statusCode == 200) {

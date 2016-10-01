@@ -50,7 +50,8 @@ class GuildChannel {
     this.id = this.map['id'] = data['id'];
     this.type = this.map['type'] = data['type'];
     this.position = this.map['position'] = data['position'];
-    this.createdAt = this.map['createdAt'] = this.client.internal.util.getDate(this.id);
+    this.createdAt =
+        this.map['createdAt'] = this.client.internal.util.getDate(this.id);
     this.topic = this.map['topic'] = data['topic'];
     this.lastMessageID = this.map['lastMessageID'] = data['last_message_id'];
     this.bitrate = this.map['bitrate'] = data['bitrate'];
@@ -115,8 +116,11 @@ class GuildChannel {
       if (this.client.user.bot) {
         final String id = this.client.resolve('message', message);
 
-        final http.Response r =
-            await this.client.internal.http.get('channels/${this.id}/messages/$id');
+        final http.Response r = await this
+            .client
+            .internal
+            .http
+            .get('channels/${this.id}/messages/$id');
         final res = JSON.decode(r.body) as Map<String, dynamic>;
 
         if (r.statusCode == 200) {
