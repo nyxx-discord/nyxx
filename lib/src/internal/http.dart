@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'dart:async';
 import '../../discord.dart';
-import 'package:http/http.dart' as httpLib;
+import 'package:http/http.dart' as http_lib;
 
 /// The HTTP manager for the client.
 class HTTP {
@@ -12,11 +12,11 @@ class HTTP {
   Map<String, String> headers;
 
   /// The HTTP client.
-  httpLib.Client http;
+  http_lib.Client http;
 
   /// Makes a new HTTP manager.
   HTTP(Client client) {
-    this.http = new httpLib.Client();
+    this.http = new http_lib.Client();
     this.headers = <String, String>{
       'User-Agent':
           'Discord Dart (https://github.com/Hackzzila/Discord-Dart, ${client.version})',
@@ -25,24 +25,24 @@ class HTTP {
   }
 
   /// Sends a GET request.
-  Future<httpLib.Response> get(String uri) async {
+  Future<http_lib.Response> get(String uri) async {
     return await this.http.get("${this.host}/$uri", headers: this.headers);
   }
 
   /// Sends a POST request.
-  Future<httpLib.Response> post(String uri, Object content) async {
+  Future<http_lib.Response> post(String uri, Object content) async {
     return await this.http.post("${this.host}/$uri",
         body: JSON.encode(content), headers: this.headers);
   }
 
   /// Sends a PATCH request.
-  Future<httpLib.Response> patch(String uri, Object content) async {
+  Future<http_lib.Response> patch(String uri, Object content) async {
     return await this.http.patch("${this.host}/$uri",
         body: JSON.encode(content), headers: this.headers);
   }
 
   /// Sends a DELETE request.
-  Future<httpLib.Response> delete(String uri) async {
+  Future<http_lib.Response> delete(String uri) async {
     return await this.http.delete("${this.host}/$uri", headers: this.headers);
   }
 }
