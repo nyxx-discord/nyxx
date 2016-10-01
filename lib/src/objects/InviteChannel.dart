@@ -4,7 +4,7 @@ import '../../discord.dart';
 class InviteChannel {
   /// The client.
   Client client;
-  
+
   /// The channel's ID.
   String id;
 

@@ -151,7 +151,8 @@ class Message {
   Future<bool> delete() async {
     if (this.client.ready) {
       final http.Response r = await this
-          .client.internal
+          .client
+          .internal
           .http
           .delete('channels/${this.channel.id}/messages/${this.id}');
 

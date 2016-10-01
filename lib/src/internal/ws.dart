@@ -90,8 +90,8 @@ class WS {
     } else if (json["op"] == 0) {
       if (json['t'] == "READY") {
         this.sessionID = json['d']['session_id'];
-        this.client.user =
-            new ClientUser(this.client, json['d']['user'] as Map<String, dynamic>);
+        this.client.user = new ClientUser(
+            this.client, json['d']['user'] as Map<String, dynamic>);
 
         json['d']['guilds'].forEach((Map<String, dynamic> o) {
           this.client.guilds.map[o['id']] = null;
@@ -113,7 +113,8 @@ class WS {
             this.client.app = new ClientOAuth2Application(client, res);
           }
         } else {
-          this.client.internal.http.headers['Authorization'] = this.client.token;
+          this.client.internal.http.headers['Authorization'] =
+              this.client.token;
         }
       }
 
