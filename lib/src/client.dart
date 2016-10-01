@@ -1,10 +1,7 @@
 import 'dart:convert';
 import 'dart:async';
-import 'http.dart';
-import 'ws.dart';
-import 'ss.dart';
-import 'eventcontroller.dart';
 import '../discord.dart';
+import 'internal.dart';
 import 'package:events/events.dart' as events;
 import 'package:http/http.dart' as http;
 
@@ -40,14 +37,8 @@ class Client extends events.Events {
   /// The current version.
   String version = "0.10.5+dev";
 
-  /// The client's HTTP manager, this is for use internally.
-  HTTP http;
-
-  /// The client's WS manager, this is for use internally.
-  WS ws;
-
-  /// The client's event controller, this is for use internally.
-  EventController events;
+  /// The client's internals.
+  InternalClient internal;
 
   /// The client's SS manager, null if the client is not sharded, [SSServer] if
   /// the current shard is 0, [SSClient] otherwise.
@@ -75,9 +66,7 @@ class Client extends events.Events {
     this.channels = new Collection<dynamic>();
     this.users = new Collection<User>();
 
-    this.http = new HTTP(this);
-    this.ws = new WS(this);
-    this.events = new EventController(this);
+    new InternalClient(this);
 
     if (this.options.shardCount > 1) {
       if (this.options.shardId == 0) {
@@ -90,9 +79,9 @@ class Client extends events.Events {
 
   /// Destroys the websocket connection, SS connection or server, and all streams.
   Future<Null> destroy() async {
-    await this.ws.socket.close();
-    this.http.client.close();
-    await this.events.destroy();
+    await this.internal.ws.socket.close();
+    this.internal.http.http.close();
+    await this.internal.events.destroy();
     if (this.ss is SSServer) {
       await this.ss.close();
     } else if (this.ss is SSClient) {
@@ -172,7 +161,7 @@ class Client extends events.Events {
     if (this.ready) {
       final String id = this.resolve('user', user);
 
-      final http.Response r = await this.http.get('users/$id');
+      final http.Response r = await this.internal.http.get('users/$id');
       final res = JSON.decode(r.body) as Map<String, dynamic>;
 
       if (r.statusCode == 200) {
@@ -191,11 +180,11 @@ class Client extends events.Events {
   ///     Client.getInvite("invite code");
   Future<Invite> getInvite(String code) async {
     if (this.ready) {
-      final http.Response r = await this.http.get('invites/$code');
+      final http.Response r = await this.internal.http.get('invites/$code');
       final res = JSON.decode(r.body) as Map<String, dynamic>;
 
       if (r.statusCode == 200) {
-        return new Invite(res);
+        return new Invite(this, res);
       } else {
         throw new Exception("${res['code']}:${res['message']}");
       }
@@ -213,7 +202,7 @@ class Client extends events.Events {
       final String id = this.resolve('app', app);
 
       final http.Response r =
-          await this.http.get('oauth2/authorize?client_id=$id&scope=bot');
+          await this.internal.http.get('oauth2/authorize?client_id=$id&scope=bot');
       final res = JSON.decode(r.body) as Map<String, dynamic>;
 
       if (r.statusCode == 200) {

@@ -2,6 +2,9 @@ import '../../discord.dart';
 
 /// An invite.
 class Invite {
+  /// The client.
+  Client client;
+
   /// The invite's code.
   String code;
 
@@ -12,9 +15,9 @@ class Invite {
   InviteChannel channel;
 
   /// Constructs a new [Invite].
-  Invite(Map<String, dynamic> data) {
+  Invite(this.client, Map<String, dynamic> data) {
     this.code = data['code'];
-    this.guild = new InviteGuild(data['guild'] as Map<String, dynamic>);
-    this.channel = new InviteChannel(data['channel'] as Map<String, dynamic>);
+    this.guild = new InviteGuild(this.client, data['guild'] as Map<String, dynamic>);
+    this.channel = new InviteChannel(this.client, data['channel'] as Map<String, dynamic>);
   }
 }

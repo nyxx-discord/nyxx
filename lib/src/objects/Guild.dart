@@ -90,7 +90,7 @@ class Guild {
       this.mfaLevel = this.map['mfaLevel'] = data['mfa_level'];
       this.embedEnabled = this.map['embedEnabled'] = data['embed_enabled'];
       this.ownerID = this.map['ownerID'] = data['owner_id'];
-      this.createdAt = this.map['createdAt'] = getDate(this.id);
+      this.createdAt = this.map['createdAt'] = this.client.internal.util.getDate(this.id);
 
       if (guildCreate) {
         this.members = new Collection<Member>();
@@ -132,7 +132,7 @@ class Guild {
         return this.members.get(member);
       } else {
         final http.Response r =
-            await this.client.http.get('guilds/${this.id}/members/$id');
+            await this.client.internal.http.get('guilds/${this.id}/members/$id');
         final res = JSON.decode(r.body) as Map<String, dynamic>;
 
         if (r.statusCode == 200) {
@@ -159,7 +159,7 @@ class Guild {
       if (!this.client.user.bot) {
         final String id = this.client.resolve('app', app);
 
-        final http.Response r = await this.client.http.post(
+        final http.Response r = await this.client.internal.http.post(
             'oauth2/authorize?client_id=$id&scope=bot', <String, dynamic>{
           "guild_id": this.id,
           "permissions": permissions,

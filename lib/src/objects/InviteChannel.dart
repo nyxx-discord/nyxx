@@ -2,6 +2,9 @@ import '../../discord.dart';
 
 /// A mini channel object for invites.
 class InviteChannel {
+  /// The client.
+  Client client;
+  
   /// The channel's ID.
   String id;
 
@@ -15,11 +18,11 @@ class InviteChannel {
   DateTime createdAt;
 
   /// Constructs a new [InviteChannel].
-  InviteChannel(Map<String, dynamic> data) {
+  InviteChannel(this.client, Map<String, dynamic> data) {
     this.id = data['id'];
     this.name = data['name'];
     this.type = data['type'];
-    this.createdAt = getDate(this.id);
+    this.createdAt = this.client.internal.util.getDate(this.id);
   }
 
   /// Returns a string representation of this object.

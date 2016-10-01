@@ -4,6 +4,6 @@ import '../../discord.dart';
 class ReadyEvent {
   /// Sends a new ready event.
   ReadyEvent(Client client) {
-    client.events.onReady.add(this);
+    client.internal.events.onReady.add(this);
   }
 }

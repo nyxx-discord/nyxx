@@ -26,7 +26,7 @@ class PrivateChannel {
   /// Constructs a new [PrivateChannel].
   PrivateChannel(this.client, Map<String, dynamic> data) {
     this.id = this.map['id'] = data['id'];
-    this.createdAt = this.map['createdAt'] = getDate(this.id);
+    this.createdAt = this.map['createdAt'] = this.client.internal.util.getDate(this.id);
     this.lastMessageID = this.map['lastMessageID'] = data['last_message_id'];
 
     this.recipients = new Collection();

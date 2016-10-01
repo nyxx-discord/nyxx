@@ -38,7 +38,7 @@ class ClientOAuth2Application {
     this.rpcOrigins = data['rpcOrigins'] as List<String>;
     this.flags = data['flags'];
     this.owner = new User(client, data['owner'] as Map<String, dynamic>);
-    this.createdAt = getDate(this.id);
+    this.createdAt = this.client.internal.util.getDate(this.id);
   }
 
   /// Returns a string representation of this object.
