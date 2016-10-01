@@ -15,6 +15,15 @@ class EventController {
   /// Emitted when a message is edited.
   StreamController<MessageDeleteEvent> onMessageDelete;
 
+  /// Emitted when a channel is created.
+  StreamController<ChannelCreateEvent> onChannelCreate;
+
+  /// Emitted when a channel is updated.
+  StreamController<ChannelUpdateEvent> onChannelUpdate;
+
+  /// Emitted when a channel is deleted.
+  StreamController<ChannelDeleteEvent> onChannelDelete;
+
   /// Makes a new `EventController`.
   EventController(Client client) {
     this.onReady = new StreamController.broadcast();
@@ -28,6 +37,15 @@ class EventController {
 
     this.onMessageDelete = new StreamController.broadcast();
     client.onMessageDelete = this.onMessageDelete.stream;
+
+    this.onChannelCreate = new StreamController.broadcast();
+    client.onChannelCreate = this.onChannelCreate.stream;
+
+    this.onChannelUpdate = new StreamController.broadcast();
+    client.onChannelUpdate = this.onChannelUpdate.stream;
+
+    this.onChannelDelete = new StreamController.broadcast();
+    client.onChannelDelete = this.onChannelDelete.stream;
   }
 
   /// Closes all streams.
@@ -36,6 +54,7 @@ class EventController {
     await this.onMessage.close();
     await this.onMessageUpdate.close();
     await this.onMessageDelete.close();
+    await this.onChannelCreate.close();
     return null;
   }
 }

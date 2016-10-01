@@ -12,13 +12,13 @@ class ChannelDeleteEvent {
         this.channel =
             new PrivateChannel(client, json['d'] as Map<String, dynamic>);
         client.channels.map.remove(channel.id);
-        client.emit('channelDelete', this);
+        client.internal.events.onChannelDelete.add(this);
       } else {
         final Guild guild = client.guilds.map[json['d']['guild_id']];
         this.channel =
             new GuildChannel(client, json['d'] as Map<String, dynamic>, guild);
         client.channels.map.remove(channel.id);
-        client.emit('channelDelete', this);
+        client.internal.events.onChannelDelete.add(this);
       }
     }
   }

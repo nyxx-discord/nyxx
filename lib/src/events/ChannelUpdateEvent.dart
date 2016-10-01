@@ -16,7 +16,7 @@ class ChannelUpdateEvent {
       this.newChannel =
           new GuildChannel(client, json['d'] as Map<String, dynamic>, guild);
       client.channels.map[newChannel.id] = newChannel;
-      client.emit('channelUpdate', this);
+      client.internal.events.onChannelUpdate.add(this);
     }
   }
 }
