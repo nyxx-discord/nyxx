@@ -56,6 +56,15 @@ class Client extends events.Events {
   /// Emitted when a message is deleted.
   Stream<MessageDeleteEvent> onMessageDelete;
 
+  /// Emitted when a channel is created.
+  Stream<ChannelCreateEvent> onChannelCreate;
+
+  /// Emitted when a channel is updated.
+  Stream<ChannelUpdateEvent> onChannelUpdate;
+
+  /// Emitted when a channel is deleted.
+  Stream<ChannelDeleteEvent> onChannelDelete;
+
   /// Creates and logs in a new client.
   Client(this.token, [this.options]) {
     if (this.options == null) {

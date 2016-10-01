@@ -12,13 +12,13 @@ class ChannelCreateEvent {
         this.channel =
             new PrivateChannel(client, json['d'] as Map<String, dynamic>);
         client.channels.map[channel.id] = channel;
-        client.emit('channelCreate', this);
+        client.internal.events.onChannelCreate.add(this);
       } else {
         final Guild guild = client.guilds.map[json['d']['guild_id']];
         this.channel =
             new GuildChannel(client, json['d'] as Map<String, dynamic>, guild);
         client.channels.map[channel.id] = channel;
-        client.emit('channelCreate', this);
+        client.internal.events.onChannelCreate.add(this);
       }
     }
   }
