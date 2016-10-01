@@ -2,6 +2,9 @@ import '../../discord.dart';
 
 /// A message attachment.
 class Attachment {
+  /// The client.
+  Client client;
+
   /// A map of all of the properties.
   Map<String, dynamic> map = <String, dynamic>{};
 
@@ -30,7 +33,7 @@ class Attachment {
   DateTime createdAt;
 
   /// Constructs a new [Attachment].
-  Attachment(Map<String, dynamic> data) {
+  Attachment(this.client, Map<String, dynamic> data) {
     this.id = data['id'];
     this.filename = this.map['filename'] = data['filename'];
     this.url = this.map['url'] = data['url'];
@@ -38,6 +41,6 @@ class Attachment {
     this.size = this.map['size'] = data['size'];
     this.height = this.map['height'] = data['height'];
     this.width = this.map['width'] = data['width'];
-    this.createdAt = this.map['createdAt'] = getDate(this.id);
+    this.createdAt = this.map['createdAt'] = this.client.internal.util.getDate(this.id);
   }
 }

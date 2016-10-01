@@ -1,8 +1,5 @@
 export 'src/client.dart';
-export 'src/http.dart';
-export 'src/ws.dart';
 export 'src/ss.dart';
-export 'src/util.dart';
 
 export 'src/events/ChannelCreateEvent.dart';
 export 'src/events/ChannelDeleteEvent.dart';

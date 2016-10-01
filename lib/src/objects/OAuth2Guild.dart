@@ -2,6 +2,9 @@ import '../../discord.dart';
 
 /// A mini guild object with permissions for [OAuth2Info].
 class OAuth2Guild {
+  /// The client.
+  Client client;
+
   /// A map of all of the properties.
   Map<String, dynamic> map = <String, dynamic>{};
 
@@ -21,12 +24,12 @@ class OAuth2Guild {
   DateTime createdAt;
 
   /// Constructs a new [OAuth2Guild].
-  OAuth2Guild(Map<String, dynamic> data) {
+  OAuth2Guild(this.client, Map<String, dynamic> data) {
     this.permissions = this.map['permissions'] = data['permissions'];
     this.icon = this.map['icon'] = data['icon'];
     this.id = this.map['id'] = data['id'];
     this.name = this.map['name'] = data['name'];
-    this.createdAt = this.map['createdAt'] = getDate(this.id);
+    this.createdAt = this.map['createdAt'] = this.client.internal.util.getDate(this.id);
   }
 
   /// Returns a string representation of this object.

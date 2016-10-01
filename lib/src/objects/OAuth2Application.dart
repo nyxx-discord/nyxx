@@ -2,6 +2,9 @@ import '../../discord.dart';
 
 /// An OAuth2 application.
 class OAuth2Application {
+  /// The client.
+  Client client;
+
   /// The app's description.
   String description;
 
@@ -21,13 +24,13 @@ class OAuth2Application {
   DateTime createdAt;
 
   /// Constructs a new [OAuth2Application].
-  OAuth2Application(Map<String, dynamic> data) {
+  OAuth2Application(this.client, Map<String, dynamic> data) {
     this.description = data['description'];
     this.icon = data['icon'];
     this.id = data['id'];
     this.name = data['name'];
     this.rpcOrigins = data['rpcOrigins'] as List<String>;
-    this.createdAt = getDate(this.id);
+    this.createdAt = this.client.internal.util.getDate(this.id);
   }
 
   /// Returns a string representation of this object.

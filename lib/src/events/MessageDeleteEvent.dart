@@ -13,7 +13,7 @@ class MessageDeleteEvent {
     if (client.ready) {
       this.id = json['d']['id'];
       this.channel = client.channels.map[json['d']['channel_id']];
-      client.events.onMessageDelete.add(this);
+      client.internal.events.onMessageDelete.add(this);
     }
   }
 }

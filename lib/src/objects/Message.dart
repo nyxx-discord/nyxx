@@ -71,7 +71,7 @@ class Message {
     this.tts = data['tts'];
     this.mentionEveryone = data['mention_everyone'];
     this.roleMentions = data['mention_roles'] as List<String>;
-    this.createdAt = getDate(this.id);
+    this.createdAt = this.client.internal.util.getDate(this.id);
 
     if (this.channel is GuildChannel) {
       this.guild = this.channel.guild;
@@ -94,7 +94,7 @@ class Message {
 
     this.attachments = new Collection<Attachment>();
     data['attachments'].forEach((Map<String, dynamic> o) {
-      final Attachment attachment = new Attachment(o);
+      final Attachment attachment = new Attachment(this.client, o);
       this.attachments.map[attachment.id] = attachment;
     });
   }
@@ -129,7 +129,7 @@ class Message {
         newContent = content;
       }
 
-      final http.Response r = await this.client.http.patch(
+      final http.Response r = await this.client.internal.http.patch(
           'channels/${this.channel.id}/messages/${this.id}',
           <String, dynamic>{"content": newContent});
       final res = JSON.decode(r.body) as Map<String, dynamic>;
@@ -151,7 +151,7 @@ class Message {
   Future<bool> delete() async {
     if (this.client.ready) {
       final http.Response r = await this
-          .client
+          .client.internal
           .http
           .delete('channels/${this.channel.id}/messages/${this.id}');
 

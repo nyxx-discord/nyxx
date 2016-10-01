@@ -1,8 +1,8 @@
 import '../../discord.dart';
 
-/// Sent when a channel is created, can be a `PMChannel`.
+/// Sent when a channel is created, can be a [PrivateChannel].
 class ChannelCreateEvent {
-  /// The channel that was created, either a `GuildChannel` or `PMChannel`.
+  /// The channel that was created, either a [GuildChannel] or [PrivateChannel].
   dynamic channel;
 
   /// Constructs a new [ChannelCreateEvent].

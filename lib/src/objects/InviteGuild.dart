@@ -2,6 +2,9 @@ import '../../discord.dart';
 
 /// A mini guild object for invites.
 class InviteGuild {
+  /// The client.
+  Client client;
+
   /// The guild's ID.
   String id;
 
@@ -15,11 +18,11 @@ class InviteGuild {
   DateTime createdAt;
 
   /// Constructs a new [InviteGuild].
-  InviteGuild(Map<String, dynamic> data) {
+  InviteGuild(this.client, Map<String, dynamic> data) {
     this.id = data['id'];
     this.name = data['name'];
     this.spash = data['splash_hash'];
-    this.createdAt = getDate(this.id);
+    this.createdAt = this.client.internal.util.getDate(this.id);
   }
 
   /// Returns a string representation of this object.

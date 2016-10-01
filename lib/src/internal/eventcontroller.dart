@@ -1,5 +1,5 @@
 import 'dart:async';
-import '../discord.dart';
+import '../../discord.dart';
 
 /// A controller for all events.
 class EventController {

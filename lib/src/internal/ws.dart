@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'dart:async';
 import 'dart:io';
-import '../discord.dart';
+import '../../discord.dart';
 import 'package:http/http.dart' as http;
 
 /// The WS manager for the client.
@@ -23,7 +23,7 @@ class WS {
 
   /// Makes a new WS manager.
   WS(this.client) {
-    this.client.http.get('gateway').then((http.Response r) {
+    this.client.internal.http.get('gateway').then((http.Response r) {
       this.gateway = JSON.decode(r.body)['url'];
       this.connect();
     }).catchError((Error err) {
@@ -91,7 +91,7 @@ class WS {
       if (json['t'] == "READY") {
         this.sessionID = json['d']['session_id'];
         this.client.user =
-            new ClientUser(json['d']['user'] as Map<String, dynamic>);
+            new ClientUser(this.client, json['d']['user'] as Map<String, dynamic>);
 
         json['d']['guilds'].forEach((Map<String, dynamic> o) {
           this.client.guilds.map[o['id']] = null;
@@ -102,18 +102,18 @@ class WS {
         });
 
         if (this.client.user.bot) {
-          this.client.http.headers['Authorization'] =
+          this.client.internal.http.headers['Authorization'] =
               "Bot ${this.client.token}";
 
           final http.Response r =
-              await this.client.http.get('oauth2/applications/@me');
+              await this.client.internal.http.get('oauth2/applications/@me');
           final res = JSON.decode(r.body) as Map<String, dynamic>;
 
           if (r.statusCode == 200) {
             this.client.app = new ClientOAuth2Application(client, res);
           }
         } else {
-          this.client.http.headers['Authorization'] = this.client.token;
+          this.client.internal.http.headers['Authorization'] = this.client.token;
         }
       }
 

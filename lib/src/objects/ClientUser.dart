@@ -2,6 +2,9 @@ import '../../discord.dart';
 
 /// The client user.
 class ClientUser {
+  /// The client.
+  Client client;
+
   /// The client user's username.
   String username;
 
@@ -33,14 +36,14 @@ class ClientUser {
   bool mfa;
 
   /// Constructs a new [ClientUser].
-  ClientUser(Map<String, dynamic> data) {
+  ClientUser(this.client, Map<String, dynamic> data) {
     this.username = data['username'];
     this.id = data['id'];
     this.discriminator = data['discriminator'];
     this.avatar = data['avatar'];
     this.email = data['email'];
     this.mention = "<@${this.id}>";
-    this.createdAt = getDate(this.id);
+    this.createdAt = this.client.internal.util.getDate(this.id);
     this.verified = data['verified'];
     this.mfa = data['mfa_enabled'];
 
