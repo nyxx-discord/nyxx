@@ -55,6 +55,8 @@ class EventController {
     await this.onMessageUpdate.close();
     await this.onMessageDelete.close();
     await this.onChannelCreate.close();
+    await this.onChannelUpdate.close();
+    await this.onChannelDelete.close();    
     return null;
   }
 }
