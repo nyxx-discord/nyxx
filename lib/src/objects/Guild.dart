@@ -127,7 +127,7 @@ class Guild {
   ///     Guild.getMember("user id");
   Future<Member> getMember(dynamic member) async {
     if (this.client.ready) {
-      final String id = this.client.resolve('member', member);
+      final String id = this.client.internal.util.resolve('member', member);
 
       if (this.members.get(member) != null) {
         return this.members.get(member);
@@ -161,7 +161,7 @@ class Guild {
   Future<bool> oauth2Authorize(dynamic app, [int permissions = 0]) async {
     if (this.client.ready) {
       if (!this.client.user.bot) {
-        final String id = this.client.resolve('app', app);
+        final String id = this.client.internal.util.resolve('app', app);
 
         final http.Response r = await this.client.internal.http.post(
             'oauth2/authorize?client_id=$id&scope=bot', <String, dynamic>{
