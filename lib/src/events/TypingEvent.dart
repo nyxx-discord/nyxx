@@ -13,7 +13,7 @@ class TypingEvent {
     if (client.ready) {
       this.channel = client.channels.map[json['d']['channel_id']];
       this.user = client.users.map[json['d']['user_id']];
-      client.emit('typing', this);
+      client.internal.events.onTyping.add(this);
     }
   }
 }

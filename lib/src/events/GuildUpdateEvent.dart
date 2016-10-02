@@ -18,7 +18,7 @@ class GuildUpdateEvent {
 
       client.guilds.map[this.newGuild.id] = this.newGuild;
 
-      client.emit('guildCreate', this);
+      client.internal.events.onGuildUpdate.add(this);
     }
   }
 }

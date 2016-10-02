@@ -17,7 +17,7 @@ class GuildMemberUpdateEvent {
           new Member(client, json['d'] as Map<String, dynamic>, guild);
       guild.members.map[newMember.id] = newMember;
       client.users.map[newMember.id] = newMember.toUser();
-      client.emit('guildMemberUpdate', this);
+      client.internal.events.onGuildMemberUpdate.add(this);
     }
   }
 }

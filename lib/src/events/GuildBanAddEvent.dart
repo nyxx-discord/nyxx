@@ -14,7 +14,7 @@ class GuildBanAddEvent {
       this.guild = client.guilds.map[json['d']['guild_id']];
       this.user = new User(client, json['d']['user'] as Map<String, dynamic>);
       client.users.map[user.id] = user;
-      client.emit('guildBanAdd', this);
+      client.internal.events.onGuildBanAdd.add(this);
     }
   }
 }

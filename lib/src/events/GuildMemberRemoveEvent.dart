@@ -15,7 +15,7 @@ class GuildMemberRemoveEvent {
       this.user = new User(client, json['d']['user'] as Map<String, dynamic>);
       guild.members.map.remove(user.id);
       client.users.map[user.id] = user;
-      client.emit('guildMemberRemove', this);
+      client.internal.events.onGuildMemberRemove.add(this);
     }
   }
 }
