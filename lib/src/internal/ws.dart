@@ -104,14 +104,6 @@ class WS {
         if (this.client.user.bot) {
           this.client.internal.http.headers['Authorization'] =
               "Bot ${this.client.token}";
-
-          final http.Response r =
-              await this.client.internal.http.get('oauth2/applications/@me');
-          final res = JSON.decode(r.body) as Map<String, dynamic>;
-
-          if (r.statusCode == 200) {
-            this.client.app = new ClientOAuth2Application(client, res);
-          }
         } else {
           this.client.internal.http.headers['Authorization'] =
               this.client.token;

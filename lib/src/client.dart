@@ -34,7 +34,7 @@ class Client {
   bool ready = false;
 
   /// The current version.
-  String version = "0.11.0";
+  String version = "0.11.1";
 
   /// The client's internals.
   InternalClient internal;
