@@ -147,7 +147,11 @@ class WS {
           break;
 
         case 'GUILD_DELETE':
-          new GuildDeleteEvent(this.client, json);
+          if (json['d']['unavailable']) {
+            new GuildUnavailableEvent(this.client, json);
+          } else {
+            new GuildDeleteEvent(this.client, json);
+          }
           break;
 
         case 'GUILD_BAN_ADD':
@@ -203,17 +207,14 @@ class WS {
         throw new Exception("invalid shard");
 
       case 4007:
-        new WebSocketErrorEvent(this.client, this.socket.closeCode);
         this.connect(false);
         return;
 
       case 4009:
-        new WebSocketErrorEvent(this.client, this.socket.closeCode);
         this.connect(false);
         return;
 
       default:
-        new WebSocketErrorEvent(this.client, this.socket.closeCode);
         this.connect();
         return;
     }

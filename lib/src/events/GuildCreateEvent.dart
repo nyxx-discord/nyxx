@@ -32,7 +32,7 @@ class GuildCreateEvent {
         new ReadyEvent(client);
       }
     } else {
-      client.emit('guildCreate', this);
+      client.internal.events.onGuildCreate.add(this);
     }
   }
 }

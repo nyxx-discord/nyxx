@@ -11,13 +11,13 @@ export 'src/events/GuildDeleteEvent.dart';
 export 'src/events/GuildMemberAddEvent.dart';
 export 'src/events/GuildMemberRemoveEvent.dart';
 export 'src/events/GuildMemberUpdateEvent.dart';
+export 'src/events/GuildUnavailableEvent.dart';
 export 'src/events/GuildUpdateEvent.dart';
 export 'src/events/MessageDeleteEvent.dart';
 export 'src/events/MessageEvent.dart';
 export 'src/events/MessageUpdateEvent.dart';
 export 'src/events/ReadyEvent.dart';
 export 'src/events/TypingEvent.dart';
-export 'src/events/WebSocketErrorEvent.dart';
 
 export 'src/objects/Attachment.dart';
 export 'src/objects/ClientOAuth2Application.dart';

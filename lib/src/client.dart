@@ -2,12 +2,11 @@ import 'dart:convert';
 import 'dart:async';
 import '../discord.dart';
 import 'internal.dart';
-import 'package:events/events.dart' as events;
 import 'package:http/http.dart' as http;
 
 /// The base class.
 /// It contains all of the methods.
-class Client extends events.Events {
+class Client {
   /// The token passed into the constructor.
   String token;
 
@@ -64,6 +63,36 @@ class Client extends events.Events {
 
   /// Emitted when a channel is deleted.
   Stream<ChannelDeleteEvent> onChannelDelete;
+
+  /// Emitted when a member is banned.
+  Stream<GuildBanAddEvent> onGuildBanAdd;
+
+  /// Emitted when a user is unbanned.
+  Stream<GuildBanRemoveEvent> onGuildBanRemove;
+
+  /// Emitted when the client joins a guild.
+  Stream<GuildCreateEvent> onGuildCreate;
+
+  /// Emitted when a guild is updated..
+  Stream<GuildUpdateEvent> onGuildUpdate;
+
+  /// Emitted when the client leaves a guild.
+  Stream<GuildDeleteEvent> onGuildDelete;
+
+  /// Emitted when a guild becomes unavailable.
+  Stream<GuildUnavailableEvent> onGuildUnavailable;
+
+  /// Emitted when a member joins a guild.
+  Stream<GuildMemberAddEvent> onGuildMemberAdd;
+
+  /// Emitted when a member is updated.
+  Stream<GuildMemberUpdateEvent> onGuildMemberUpdate;
+
+  /// Emitted when a user leaves a guild.
+  Stream<GuildMemberRemoveEvent> onGuildMemberRemove;
+
+  /// Emitted when a user starts typing.
+  Stream<TypingEvent> onTyping;
 
   /// Creates and logs in a new client.
   Client(this.token, [this.options]) {
