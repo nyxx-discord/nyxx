@@ -99,76 +99,13 @@ class Client extends events.Events {
     return null;
   }
 
-  /// Resolves an object into a target object, this is for use internally.
-  String resolve(String to, dynamic object) {
-    if (to == "channel") {
-      if (object is Message) {
-        return object.channel.id;
-      } else if (object is GuildChannel) {
-        return object.id;
-      } else if (object is PrivateChannel) {
-        return object.id;
-      } else if (object is Guild) {
-        return object.defaultChannel.id;
-      } else {
-        return object.toString();
-      }
-    } else if (to == "message") {
-      if (object is Message) {
-        return object.id;
-      } else {
-        return object.toString();
-      }
-    } else if (to == "guild") {
-      if (object is Message) {
-        return object.guild.id;
-      } else if (object is GuildChannel) {
-        return object.guild.id;
-      } else if (object is Guild) {
-        return object.id;
-      } else {
-        return object.toString();
-      }
-    } else if (to == "user") {
-      if (object is Message) {
-        return object.author.id;
-      } else if (object is User) {
-        return object.id;
-      } else if (object is Member) {
-        return object.id;
-      } else {
-        return object.toString();
-      }
-    } else if (to == "member") {
-      if (object is Message) {
-        return object.author.id;
-      } else if (object is User) {
-        return object.id;
-      } else if (object is Member) {
-        return object.id;
-      } else {
-        return object.toString();
-      }
-    } else if (to == "app") {
-      if (object is User) {
-        return object.id;
-      } else if (object is Member) {
-        return object.id;
-      } else {
-        return object.toString();
-      }
-    } else {
-      return null;
-    }
-  }
-
   /// Gets a [User] object.
   ///
   /// Throws an [Exception] if the HTTP request errored.
   ///     Client.getUser("user id");
   Future<User> getUser(dynamic user) async {
     if (this.ready) {
-      final String id = this.resolve('user', user);
+      final String id = this.internal.util.resolve('user', user);
 
       final http.Response r = await this.internal.http.get('users/$id');
       final res = JSON.decode(r.body) as Map<String, dynamic>;
@@ -208,7 +145,7 @@ class Client extends events.Events {
   ///     Client.getOAuth2Info("app id");
   Future<OAuth2Info> getOAuth2Info(dynamic app) async {
     if (this.ready) {
-      final String id = this.resolve('app', app);
+      final String id = this.internal.util.resolve('app', app);
 
       final http.Response r = await this
           .internal

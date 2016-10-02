@@ -114,7 +114,7 @@ class GuildChannel {
   Future<Message> getMessage(dynamic message) async {
     if (this.client.ready) {
       if (this.client.user.bot) {
-        final String id = this.client.resolve('message', message);
+        final String id = this.client.internal.util.resolve('message', message);
 
         final http.Response r = await this
             .client
