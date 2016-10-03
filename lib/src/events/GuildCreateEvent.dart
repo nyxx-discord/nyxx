@@ -33,7 +33,7 @@ class GuildCreateEvent {
         client.ready = true;
         if (client.user.bot) {
           client.internal.http
-              .get('oauth2/applications/@me')
+              .get('/oauth2/applications/@me')
               .then((http.Response r) {
             final res = JSON.decode(r.body) as Map<String, dynamic>;
 

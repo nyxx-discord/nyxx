@@ -43,6 +43,7 @@ export 'src/objects/PrivateChannel.dart';
 export 'src/objects/TextChannel.dart';
 export 'src/objects/User.dart';
 export 'src/objects/VoiceChannel.dart';
+export 'src/objects/Webhook.dart';
 
 export 'src/errors/ClientNotReadyError.dart';
 export 'src/errors/HttpError.dart';

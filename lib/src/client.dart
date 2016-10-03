@@ -135,7 +135,7 @@ class Client {
     if (this.ready) {
       final String id = this.internal.util.resolve('user', user);
 
-      final http.Response r = await this.internal.http.get('users/$id');
+      final http.Response r = await this.internal.http.get('/users/$id');
       final res = JSON.decode(r.body) as Map<String, dynamic>;
 
       if (r.statusCode == 200) {
@@ -154,7 +154,7 @@ class Client {
   ///     Client.getInvite("invite code");
   Future<Invite> getInvite(String code) async {
     if (this.ready) {
-      final http.Response r = await this.internal.http.get('invites/$code');
+      final http.Response r = await this.internal.http.get('/invites/$code');
       final res = JSON.decode(r.body) as Map<String, dynamic>;
 
       if (r.statusCode == 200) {

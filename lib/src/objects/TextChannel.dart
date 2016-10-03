@@ -43,7 +43,7 @@ class TextChannel extends GuildChannel {
       }
 
       final http.Response r = await this.client.internal.http.post(
-          'channels/${this.id}/messages', <String, dynamic>{
+          '/channels/${this.id}/messages', <String, dynamic>{
         "content": newContent,
         "tts": newOptions.tts,
         "nonce": newOptions.nonce
