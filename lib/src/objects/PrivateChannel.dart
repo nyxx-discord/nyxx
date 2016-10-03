@@ -1,33 +1,16 @@
 import '../../discord.dart';
 
 /// A private channel.
-class PrivateChannel {
-  /// The client.
-  Client client;
-
-  /// A map of all of the properties.
-  Map<String, dynamic> map = <String, dynamic>{};
-
-  /// The channel's ID.
-  String id;
-
+class PrivateChannel extends Channel {
   /// The ID for the last message in the channel.
   String lastMessageID;
-
-  /// Always false representing that it is a PrivateChannel.
-  bool isPrivate = true;
-
-  /// A timestamp for when the channel was created.
-  DateTime createdAt;
 
   /// The recipients.
   Collection recipients;
 
   /// Constructs a new [PrivateChannel].
-  PrivateChannel(this.client, Map<String, dynamic> data) {
-    this.id = this.map['id'] = data['id'];
-    this.createdAt =
-        this.map['createdAt'] = this.client.internal.util.getDate(this.id);
+  PrivateChannel(Client client, Map<String, dynamic> data)
+      : super(client, data, "private") {
     this.lastMessageID = this.map['lastMessageID'] = data['last_message_id'];
 
     this.recipients = new Collection();

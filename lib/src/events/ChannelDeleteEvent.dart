@@ -15,8 +15,13 @@ class ChannelDeleteEvent {
         client.internal.events.onChannelDelete.add(this);
       } else {
         final Guild guild = client.guilds.map[json['d']['guild_id']];
-        this.channel =
-            new GuildChannel(client, json['d'] as Map<String, dynamic>, guild);
+        if (json['d']['type'] == 0) {
+          this.channel =
+              new TextChannel(client, json['d'] as Map<String, dynamic>, guild);
+        } else {
+          this.channel = new VoiceChannel(
+              client, json['d'] as Map<String, dynamic>, guild);
+        }
         client.channels.map.remove(channel.id);
         client.internal.events.onChannelDelete.add(this);
       }

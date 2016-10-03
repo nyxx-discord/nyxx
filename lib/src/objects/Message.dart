@@ -24,7 +24,7 @@ class Message {
   DateTime editedTimestamp;
 
   /// The message's channel.
-  GuildChannel channel;
+  dynamic channel;
 
   /// The message's guild.
   Guild guild;
