@@ -149,7 +149,7 @@ class Guild {
           this.map['members'] = this.members;
           return m;
         } else {
-          throw new Exception("${res['code']}:${res['message']}");
+          throw new HttpError(r);
         }
       }
     } else {
@@ -178,7 +178,7 @@ class Guild {
         if (r.statusCode == 200) {
           return true;
         } else {
-          throw new Exception("${res['code']}:${res['message']}");
+          throw new HttpError(r);
         }
       } else {
         throw new Exception(

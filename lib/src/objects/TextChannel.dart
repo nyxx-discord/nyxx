@@ -53,7 +53,7 @@ class TextChannel extends GuildChannel {
       if (r.statusCode == 200) {
         return new Message(this.client, res);
       } else {
-        throw new Exception("${res['code']}: ${res['message']}");
+        throw new HttpError(r);
       }
     } else {
       throw new Exception("the client isn't ready");
@@ -80,7 +80,7 @@ class TextChannel extends GuildChannel {
         if (r.statusCode == 200) {
           return new Message(this.client, res);
         } else {
-          throw new Exception("${res['code']}:${res['message']}");
+          throw new HttpError(r);
         }
       } else {
         throw new Exception("'getMessage' is only usable by bot accounts.");

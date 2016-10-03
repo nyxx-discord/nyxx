@@ -141,7 +141,7 @@ class Client {
       if (r.statusCode == 200) {
         return new User(this, res);
       } else {
-        throw new Exception("${res['code']}:${res['message']}");
+        throw new HttpError(r);
       }
     } else {
       throw new Exception("the client isn't ready");
@@ -160,7 +160,7 @@ class Client {
       if (r.statusCode == 200) {
         return new Invite(this, res);
       } else {
-        throw new Exception("${res['code']}:${res['message']}");
+        throw new HttpError(r);
       }
     } else {
       throw new Exception("the client isn't ready");
@@ -184,7 +184,7 @@ class Client {
       if (r.statusCode == 200) {
         return new OAuth2Info(this, res);
       } else {
-        throw new Exception("${res['code']}:${res['message']}");
+        throw new HttpError(r);
       }
     } else {
       throw new Exception("the client isn't ready");

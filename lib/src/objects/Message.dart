@@ -137,7 +137,7 @@ class Message {
       if (r.statusCode == 200) {
         return new Message(this.client, res);
       } else {
-        throw new Exception("${res['code']}:${res['message']}");
+        throw new HttpError(r);
       }
     } else {
       throw new Exception("the client isn't ready");
@@ -159,7 +159,7 @@ class Message {
       if (r.statusCode == 204) {
         return true;
       } else {
-        throw new Exception("'delete' error.");
+        throw new HttpError(r);
       }
     } else {
       throw new Exception("the client isn't ready");
