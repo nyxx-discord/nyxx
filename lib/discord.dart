@@ -30,6 +30,7 @@ export 'src/objects/EmbedProvider.dart';
 export 'src/objects/EmbedThumbnail.dart';
 export 'src/objects/Guild.dart';
 export 'src/objects/GuildChannel.dart';
+export 'src/objects/HttpError.dart';
 export 'src/objects/Invite.dart';
 export 'src/objects/InviteChannel.dart';
 export 'src/objects/InviteGuild.dart';
