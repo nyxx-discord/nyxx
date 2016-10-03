@@ -21,7 +21,7 @@ class Collection<T> {
   }
 
   /// Gets a item by ID.
-  dynamic operator[](String id) => this.map[id];
+  dynamic operator [](String id) => this.map[id];
 
   /// Adds a value to a collection.
   void add(dynamic value) {
