@@ -56,7 +56,7 @@ class TextChannel extends GuildChannel {
         throw new HttpError(r);
       }
     } else {
-      throw new Exception("the client isn't ready");
+      throw new ClientNotReadyError();
     }
   }
 
@@ -86,7 +86,7 @@ class TextChannel extends GuildChannel {
         throw new Exception("'getMessage' is only usable by bot accounts.");
       }
     } else {
-      throw new Exception("the client isn't ready");
+      throw new ClientNotReadyError();
     }
   }
 }
