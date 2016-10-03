@@ -154,7 +154,7 @@ class Message {
           .client
           .internal
           .http
-          .delete('channels/${this.channel.id}/messages/${this.id}');
+          .delete('/channels/${this.channel.id}/messages/${this.id}');
 
       if (r.statusCode == 204) {
         return true;
