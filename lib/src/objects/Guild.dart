@@ -104,7 +104,11 @@ class Guild {
         this.map['members'] = this.members;
 
         data['channels'].forEach((Map<String, dynamic> o) {
-          this.channels.add(new GuildChannel(client, o, this));
+          if (o['type'] == 0) {
+            this.channels.add(new TextChannel(client, o, this));
+          } else {
+            this.channels.add(new VoiceChannel(client, o, this));
+          }
         });
         this.map['channels'] = this.channels;
 

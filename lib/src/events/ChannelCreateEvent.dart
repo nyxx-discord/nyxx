@@ -15,8 +15,13 @@ class ChannelCreateEvent {
         client.internal.events.onChannelCreate.add(this);
       } else {
         final Guild guild = client.guilds.map[json['d']['guild_id']];
-        this.channel =
-            new GuildChannel(client, json['d'] as Map<String, dynamic>, guild);
+        if (json['d']['type'] == 0) {
+          this.channel =
+              new TextChannel(client, json['d'] as Map<String, dynamic>, guild);
+        } else {
+          this.channel = new VoiceChannel(
+              client, json['d'] as Map<String, dynamic>, guild);
+        }
         client.channels.map[channel.id] = channel;
         client.internal.events.onChannelCreate.add(this);
       }

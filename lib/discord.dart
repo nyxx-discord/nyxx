@@ -20,6 +20,7 @@ export 'src/events/ReadyEvent.dart';
 export 'src/events/TypingEvent.dart';
 
 export 'src/objects/Attachment.dart';
+export 'src/objects/Channel.dart';
 export 'src/objects/ClientOAuth2Application.dart';
 export 'src/objects/ClientOptions.dart';
 export 'src/objects/ClientUser.dart';
@@ -39,4 +40,6 @@ export 'src/objects/OAuth2Application.dart';
 export 'src/objects/OAuth2Guild.dart';
 export 'src/objects/OAuth2Info.dart';
 export 'src/objects/PrivateChannel.dart';
+export 'src/objects/TextChannel.dart';
 export 'src/objects/User.dart';
+export 'src/objects/VoiceChannel.dart';

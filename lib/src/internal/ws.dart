@@ -113,7 +113,7 @@ class WS {
       switch (json['t']) {
         case 'MESSAGE_CREATE':
           MessageEvent msgEvent = new MessageEvent(this.client, json);
-          if (msgEvent.message.channel.isPrivate &&
+          if (msgEvent.message.channel.type == "private" &&
               this.client.ss is SSServer) {
             for (Socket socket in this.client.ss.sockets) {
               socket.write(JSON.encode(
