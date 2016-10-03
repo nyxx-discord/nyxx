@@ -23,7 +23,7 @@ class WS {
 
   /// Makes a new WS manager.
   WS(this.client) {
-    this.client.internal.http.get('gateway').then((http.Response r) {
+    this.client.internal.http.get('/gateway').then((http.Response r) {
       this.gateway = JSON.decode(r.body)['url'];
       this.connect();
     }).catchError((Error err) {

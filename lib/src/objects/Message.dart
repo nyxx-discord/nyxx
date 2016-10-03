@@ -130,7 +130,7 @@ class Message {
       }
 
       final http.Response r = await this.client.internal.http.patch(
-          'channels/${this.channel.id}/messages/${this.id}',
+          '/channels/${this.channel.id}/messages/${this.id}',
           <String, dynamic>{"content": newContent});
       final res = JSON.decode(r.body) as Map<String, dynamic>;
 

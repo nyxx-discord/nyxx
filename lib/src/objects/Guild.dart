@@ -168,12 +168,11 @@ class Guild {
         final String id = this.client.internal.util.resolve('app', app);
 
         final http.Response r = await this.client.internal.http.post(
-            'oauth2/authorize?client_id=$id&scope=bot', <String, dynamic>{
+            '/oauth2/authorize?client_id=$id&scope=bot', <String, dynamic>{
           "guild_id": this.id,
           "permissions": permissions,
           "authorize": true
         });
-        final res = JSON.decode(r.body) as Map<String, dynamic>;
 
         if (r.statusCode == 200) {
           return true;
