@@ -22,8 +22,7 @@ class Client {
   /// All of the guilds the bot is in.
   Collection<Guild> guilds;
 
-  /// All of the channels the bot is in. Either a [GuildChannel] or
-  /// [PrivateChannel].
+  /// All of the channels the bot is in.
   Collection<dynamic> channels;
 
   /// All of the users the bot can see. Does not always have offline users
