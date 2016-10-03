@@ -30,7 +30,6 @@ export 'src/objects/EmbedProvider.dart';
 export 'src/objects/EmbedThumbnail.dart';
 export 'src/objects/Guild.dart';
 export 'src/objects/GuildChannel.dart';
-export 'src/objects/HttpError.dart';
 export 'src/objects/Invite.dart';
 export 'src/objects/InviteChannel.dart';
 export 'src/objects/InviteGuild.dart';
@@ -44,3 +43,6 @@ export 'src/objects/PrivateChannel.dart';
 export 'src/objects/TextChannel.dart';
 export 'src/objects/User.dart';
 export 'src/objects/VoiceChannel.dart';
+
+export 'src/errors/ClientNotReadyError.dart';
+export 'src/errors/HttpError.dart';

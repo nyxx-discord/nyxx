@@ -153,7 +153,7 @@ class Guild {
         }
       }
     } else {
-      throw new Exception("the client isn't ready");
+      throw new ClientNotReadyError();
     }
   }
 
@@ -185,7 +185,7 @@ class Guild {
             "'oauth2Authorize' is only usable by user accounts.");
       }
     } else {
-      throw new Exception("the client isn't ready");
+      throw new ClientNotReadyError();
     }
   }
 }
