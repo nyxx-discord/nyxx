@@ -1,4 +1,6 @@
+import 'dart:async';
 import '../../discord.dart';
+import 'package:http/http.dart' as http;
 
 /// A channel.
 class Channel {
@@ -22,5 +24,16 @@ class Channel {
     this.id = this.map['id'] = data['id'];
     this.createdAt =
         this.map['createdAt'] = this.client.internal.util.getDate(this.id);
+  }
+
+  /// Deletes the channel.
+  Future<Null> delete() async {
+    http.Response r =
+        await this.client.internal.http.delete("/channels/${this.id}");
+    if (r.statusCode == 200) {
+      return null;
+    } else {
+      throw new HttpError(r);
+    }
   }
 }

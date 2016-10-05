@@ -16,11 +16,6 @@ class Collection<T> {
   dynamic get last => this.list.last;
 
   /// Gets a item by ID.
-  dynamic get(String key) {
-    return this.map[key];
-  }
-
-  /// Gets a item by ID.
   dynamic operator [](String id) => this.map[id];
 
   /// Adds a value to a collection.
