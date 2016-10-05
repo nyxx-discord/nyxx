@@ -13,6 +13,6 @@ class Game {
   Game(Map<String, dynamic> data) {
     this.name = data['name'];
     this.type = data['type'];
-    this.url = data['url'];    
+    this.url = data['url'];
   }
 }

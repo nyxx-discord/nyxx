@@ -25,7 +25,8 @@ class GuildCreateEvent {
       Member member = guild.members[o['user']['id']];
       member.status = member.map['status'] = o['status'];
       if (o['game'] != null) {
-        member.game = member.map['game'] = new Game(o['game'] as Map<String, dynamic>);
+        member.game =
+            member.map['game'] = new Game(o['game'] as Map<String, dynamic>);
       }
     });
 
