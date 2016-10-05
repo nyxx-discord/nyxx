@@ -75,7 +75,7 @@ class Message {
 
     if (this.channel is GuildChannel) {
       this.guild = this.channel.guild;
-      this.member = guild.members.get(this.author.id);
+      this.member = guild.members[this.author.id];
     }
 
     if (data['edited_timestamp'] != null) {

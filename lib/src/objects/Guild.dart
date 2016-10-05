@@ -112,7 +112,7 @@ class Guild {
         });
         this.map['channels'] = this.channels;
 
-        this.defaultChannel = this.channels.get(this.id);
+        this.defaultChannel = this.channels[this.id];
         this.map['defaultChannel'] = this.defaultChannel;
       }
     }
@@ -133,8 +133,8 @@ class Guild {
     if (this.client.ready) {
       final String id = this.client.internal.util.resolve('member', member);
 
-      if (this.members.get(member) != null) {
-        return this.members.get(member);
+      if (this.members[member] != null) {
+        return this.members[member];
       } else {
         final http.Response r = await this
             .client
