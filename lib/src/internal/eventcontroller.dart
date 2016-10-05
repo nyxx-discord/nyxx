@@ -51,6 +51,8 @@ class EventController {
   /// Emitted when a user leaves a guild.
   StreamController<GuildMemberRemoveEvent> onGuildMemberRemove;
 
+  StreamController<PresenceUpdateEvent> onPresenceUpdate;
+
   /// Emitted when a user starts typing.
   StreamController<TypingEvent> onTyping;
 
@@ -104,6 +106,9 @@ class EventController {
     this.onGuildMemberRemove = new StreamController.broadcast();
     client.onGuildMemberRemove = this.onGuildMemberRemove.stream;
 
+    this.onPresenceUpdate = new StreamController.broadcast();
+    client.onPresenceUpdate = this.onPresenceUpdate.stream;
+
     this.onTyping = new StreamController.broadcast();
     client.onTyping = this.onTyping.stream;
   }
@@ -126,6 +131,7 @@ class EventController {
     await this.onGuildMemberAdd.close();
     await this.onGuildMemberUpdate.close();
     await this.onGuildMemberRemove.close();
+    await this.onPresenceUpdate.close();
     await this.onTyping.close();
     return null;
   }

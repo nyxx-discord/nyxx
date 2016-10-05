@@ -90,6 +90,9 @@ class Client {
   /// Emitted when a user leaves a guild.
   Stream<GuildMemberRemoveEvent> onGuildMemberRemove;
 
+  /// Emitted when a member's presence is changed.
+  Stream<PresenceUpdateEvent> onPresenceUpdate;
+
   /// Emitted when a user starts typing.
   Stream<TypingEvent> onTyping;
 
