@@ -51,6 +51,7 @@ class EventController {
   /// Emitted when a user leaves a guild.
   StreamController<GuildMemberRemoveEvent> onGuildMemberRemove;
 
+  /// Emitted when a member's presence is updated.
   StreamController<PresenceUpdateEvent> onPresenceUpdate;
 
   /// Emitted when a user starts typing.
