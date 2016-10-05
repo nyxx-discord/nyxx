@@ -16,6 +16,7 @@ export 'src/events/GuildUpdateEvent.dart';
 export 'src/events/MessageDeleteEvent.dart';
 export 'src/events/MessageEvent.dart';
 export 'src/events/MessageUpdateEvent.dart';
+export 'src/events/PresenceUpdateEvent.dart';
 export 'src/events/ReadyEvent.dart';
 export 'src/events/TypingEvent.dart';
 
@@ -28,6 +29,7 @@ export 'src/objects/Collection.dart';
 export 'src/objects/Embed.dart';
 export 'src/objects/EmbedProvider.dart';
 export 'src/objects/EmbedThumbnail.dart';
+export 'src/objects/Game.dart';
 export 'src/objects/Guild.dart';
 export 'src/objects/GuildChannel.dart';
 export 'src/objects/Invite.dart';

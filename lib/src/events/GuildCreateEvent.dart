@@ -21,6 +21,14 @@ class GuildCreateEvent {
       client.users.add(v.toUser());
     });
 
+    json['d']['presences'].forEach((Map<String, dynamic> o) {
+      Member member = guild.members[o['user']['id']];
+      member.status = member.map['status'] = o['status'];
+      if (o['game'] != null) {
+        member.game = member.map['game'] = new Game(o['game'] as Map<String, dynamic>);
+      }
+    });
+
     if (!client.ready) {
       bool match = true;
       client.guilds.forEach((Guild o) {

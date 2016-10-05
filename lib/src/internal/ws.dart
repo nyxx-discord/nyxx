@@ -181,6 +181,10 @@ class WS {
         case 'TYPING_START':
           new TypingEvent(this.client, json);
           break;
+
+        case 'PRESENCE_UPDATE':
+          new PresenceUpdateEvent(this.client, json);
+          break;
       }
     }
 

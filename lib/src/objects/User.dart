@@ -8,6 +8,9 @@ class User {
   /// A map of all of the properties.
   Map<String, dynamic> map = <String, dynamic>{};
 
+  /// The raw data provided by the Discord API.
+  Map<String, dynamic> raw;
+
   /// The user's username.
   String username;
 
@@ -34,6 +37,7 @@ class User {
 
   /// Constructs a new [User].
   User(this.client, Map<String, dynamic> data) {
+    this.raw = data;
     this.username = this.map['username'] = data['username'];
     this.id = this.map['id'] = data['id'];
     this.discriminator = this.map['discriminator'] = data['discriminator'];
