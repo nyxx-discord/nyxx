@@ -28,15 +28,14 @@ class Member extends User {
   /// The guild that the member is a part of.
   Guild guild;
 
-  /// Constructs a new [Member].
-  Member(Client client, Map<String, dynamic> data, [Guild guild])
-      : super(client, data['user'] as Map<String, dynamic>) {
+  Member._new(Client client, Map<String, dynamic> data, [Guild guild])
+      : super._new(client, data['user'] as Map<String, dynamic>) {
     this.nickname = this.map['nickname'] = data['nick'];
     this.deaf = this.map['deaf'] = data['deaf'];
     this.mute = this.map['mute'] = data['mute'];
     this.status = this.map['status'] = data['status'];
     this.roles = this.map['roles'] = data['roles'] as List<String>;
-    this._user = new User(client, data['user'] as Map<String, dynamic>);
+    this._user = new User._new(client, data['user'] as Map<String, dynamic>);
 
     if (guild == null) {
       this.guild = this.client.guilds[data['guild_id']];
@@ -49,8 +48,8 @@ class Member extends User {
     }
 
     if (data['game'] != null) {
-      this.game =
-          this.map['game'] = new Game(data['game'] as Map<String, dynamic>);
+      this.game = this.map['game'] =
+          new Game._new(data['game'] as Map<String, dynamic>);
     }
   }
 

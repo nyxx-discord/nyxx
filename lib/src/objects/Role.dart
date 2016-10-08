@@ -35,8 +35,7 @@ class Role {
   /// A timestamp for when the channel was created.
   DateTime createdAt;
 
-  /// Constructs a [Role] object.
-  Role(this.client, Map<String, dynamic> data) {
+  Role._new(this.client, Map<String, dynamic> data) {
     this.id = this.map['id'] = data['id'];
     this.name = this.map['name'] = data['name'];
     this.position = this.map['position'] = data['position'];

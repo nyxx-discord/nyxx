@@ -17,8 +17,7 @@ class InviteGuild {
   /// A timestamp for when the guild was created.
   DateTime createdAt;
 
-  /// Constructs a new [InviteGuild].
-  InviteGuild(this.client, Map<String, dynamic> data) {
+  InviteGuild._new(this.client, Map<String, dynamic> data) {
     this.id = data['id'];
     this.name = data['name'];
     this.spash = data['splash_hash'];

@@ -87,7 +87,7 @@ class _WS {
     } else if (json["op"] == _Constants.opCodes['DISPATCH']) {
       if (json['t'] == "READY") {
         this.sessionID = json['d']['session_id'];
-        this.client.user = new ClientUser(
+        this.client.user = new ClientUser._new(
             this.client, json['d']['user'] as Map<String, dynamic>);
 
         json['d']['guilds'].forEach((Map<String, dynamic> o) {
@@ -95,7 +95,7 @@ class _WS {
         });
 
         json['d']['private_channels'].forEach((Map<String, dynamic> o) {
-          this.client.channels.add(new PrivateChannel(client, o));
+          this.client.channels.add(new PrivateChannel._new(client, o));
         });
 
         if (this.client.user.bot) {
@@ -108,7 +108,7 @@ class _WS {
 
       switch (json['t']) {
         case 'MESSAGE_CREATE':
-          MessageEvent msgEvent = new MessageEvent(this.client, json);
+          MessageEvent msgEvent = new MessageEvent._new(this.client, json);
           if (msgEvent.message.channel.type == "private" &&
               this.client.ss is SSServer) {
             for (Socket socket in this.client.ss.sockets) {
@@ -119,67 +119,67 @@ class _WS {
           break;
 
         case 'MESSAGE_DELETE':
-          new MessageDeleteEvent(this.client, json);
+          new MessageDeleteEvent._new(this.client, json);
           break;
 
         case 'MESSAGE_UPDATE':
-          new MessageUpdateEvent(this.client, json);
+          new MessageUpdateEvent._new(this.client, json);
           break;
 
         case 'GUILD_CREATE':
-          new GuildCreateEvent(this.client, json);
+          new GuildCreateEvent._new(this.client, json);
           break;
 
         case 'GUILD_UPDATE':
-          new GuildUpdateEvent(this.client, json);
+          new GuildUpdateEvent._new(this.client, json);
           break;
 
         case 'GUILD_DELETE':
           if (json['d']['unavailable']) {
-            new GuildUnavailableEvent(this.client, json);
+            new GuildUnavailableEvent._new(this.client, json);
           } else {
-            new GuildDeleteEvent(this.client, json);
+            new GuildDeleteEvent._new(this.client, json);
           }
           break;
 
         case 'GUILD_BAN_ADD':
-          new GuildBanAddEvent(this.client, json);
+          new GuildBanAddEvent._new(this.client, json);
           break;
 
         case 'GUILD_BAN_REMOVE':
-          new GuildBanRemoveEvent(this.client, json);
+          new GuildBanRemoveEvent._new(this.client, json);
           break;
 
         case 'GUILD_MEMBER_ADD':
-          new GuildMemberAddEvent(this.client, json);
+          new GuildMemberAddEvent._new(this.client, json);
           break;
 
         case 'GUILD_MEMBER_REMOVE':
-          new GuildMemberRemoveEvent(this.client, json);
+          new GuildMemberRemoveEvent._new(this.client, json);
           break;
 
         case 'GUILD_MEMBER_UPDATE':
-          new GuildMemberUpdateEvent(this.client, json);
+          new GuildMemberUpdateEvent._new(this.client, json);
           break;
 
         case 'CHANNEL_CREATE':
-          new ChannelCreateEvent(this.client, json);
+          new ChannelCreateEvent._new(this.client, json);
           break;
 
         case 'CHANNEL_UPDATE':
-          new ChannelUpdateEvent(this.client, json);
+          new ChannelUpdateEvent._new(this.client, json);
           break;
 
         case 'CHANNEL_DELETE':
-          new ChannelDeleteEvent(this.client, json);
+          new ChannelDeleteEvent._new(this.client, json);
           break;
 
         case 'TYPING_START':
-          new TypingEvent(this.client, json);
+          new TypingEvent._new(this.client, json);
           break;
 
         case 'PRESENCE_UPDATE':
-          new PresenceUpdateEvent(this.client, json);
+          new PresenceUpdateEvent._new(this.client, json);
           break;
       }
     }

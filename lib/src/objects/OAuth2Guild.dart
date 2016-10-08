@@ -23,8 +23,7 @@ class OAuth2Guild {
   /// A timestamp for when the guild was created.
   DateTime createdAt;
 
-  /// Constructs a new [OAuth2Guild].
-  OAuth2Guild(this.client, Map<String, dynamic> data) {
+  OAuth2Guild._new(this.client, Map<String, dynamic> data) {
     this.permissions = this.map['permissions'] = data['permissions'];
     this.icon = this.map['icon'] = data['icon'];
     this.id = this.map['id'] = data['id'];

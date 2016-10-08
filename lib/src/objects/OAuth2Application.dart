@@ -23,8 +23,7 @@ class OAuth2Application {
   /// A timestamp for when the app was created.
   DateTime createdAt;
 
-  /// Constructs a new [OAuth2Application].
-  OAuth2Application(this.client, Map<String, dynamic> data) {
+  OAuth2Application._new(this.client, Map<String, dynamic> data) {
     this.description = data['description'];
     this.icon = data['icon'];
     this.id = data['id'];

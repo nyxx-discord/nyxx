@@ -35,8 +35,7 @@ class User {
   /// Whether or not the user is a bot.
   bool bot = false;
 
-  /// Constructs a new [User].
-  User(this.client, Map<String, dynamic> data) {
+  User._new(this.client, Map<String, dynamic> data) {
     this.raw = data;
     this.username = this.map['username'] = data['username'];
     this.id = this.map['id'] = data['id'];

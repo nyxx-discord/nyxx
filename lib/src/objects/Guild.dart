@@ -68,8 +68,7 @@ class Guild {
   /// The guild's roles.
   Collection<Role> roles;
 
-  /// Constructs a new [Guild].
-  Guild(this.client, Map<String, dynamic> data,
+  Guild._new(this.client, Map<String, dynamic> data,
       [this.available, bool guildCreate = false]) {
     if (this.available) {
       this.name = this.map['name'] = data['name'];
@@ -95,7 +94,7 @@ class Guild {
 
       this.roles = new Collection<Role>();
       data['roles'].forEach((Map<String, dynamic> o) {
-        this.roles.add(new Role(this.client, o));
+        this.roles.add(new Role._new(this.client, o));
       });
       this.map['roles'] = this.roles;
 
@@ -105,15 +104,15 @@ class Guild {
 
         //this.roles = JSON.decode(data['roles']);
         data['members'].forEach((Map<String, dynamic> o) {
-          this.members.add(new Member(client, o, this));
+          this.members.add(new Member._new(client, o, this));
         });
         this.map['members'] = this.members;
 
         data['channels'].forEach((Map<String, dynamic> o) {
           if (o['type'] == 0) {
-            this.channels.add(new TextChannel(client, o, this));
+            this.channels.add(new TextChannel._new(client, o, this));
           } else {
-            this.channels.add(new VoiceChannel(client, o, this));
+            this.channels.add(new VoiceChannel._new(client, o, this));
           }
         });
         this.map['channels'] = this.channels;
@@ -147,7 +146,7 @@ class Guild {
         final res = JSON.decode(r.body) as Map<String, dynamic>;
 
         if (r.statusCode == 200) {
-          final Member m = new Member(client, res, this);
+          final Member m = new Member._new(client, res, this);
           this.members.add(m);
           this.map['members'] = this.members;
           return m;

@@ -20,19 +20,18 @@ class Embed {
   /// The embed's provider, if any.
   EmbedProvider provider;
 
-  /// Constructs a new [Embed].
-  Embed(Map<String, dynamic> data) {
+  Embed._new(Map<String, dynamic> data) {
     this.url = data['url'];
     this.type = data['type'];
     this.description = data['description'];
 
     if (data.containsKey('thumbnail')) {
       this.thumbnail =
-          new EmbedThumbnail(data['thumbnail'] as Map<String, dynamic>);
+          new EmbedThumbnail._new(data['thumbnail'] as Map<String, dynamic>);
     }
     if (data.containsKey('provider')) {
       this.provider =
-          new EmbedProvider(data['provider'] as Map<String, dynamic>);
+          new EmbedProvider._new(data['provider'] as Map<String, dynamic>);
     }
   }
 

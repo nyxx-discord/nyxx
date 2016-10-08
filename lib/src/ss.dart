@@ -103,7 +103,7 @@ class SSClient extends events.Events {
         break;
 
       case 3:
-        new MessageEvent(this.client, data['d'] as Map<String, dynamic>);
+        new MessageEvent._new(this.client, data['d'] as Map<String, dynamic>);
         break;
 
       case 4:

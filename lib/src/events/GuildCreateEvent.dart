@@ -5,10 +5,9 @@ class GuildCreateEvent {
   /// The guild created.
   Guild guild;
 
-  /// Constructs a new [GuildCreateEvent].
-  GuildCreateEvent(Client client, Map<String, dynamic> json) {
+  GuildCreateEvent._new(Client client, Map<String, dynamic> json) {
     this.guild =
-        new Guild(client, json['d'] as Map<String, dynamic>, true, true);
+        new Guild._new(client, json['d'] as Map<String, dynamic>, true, true);
     client.guilds.add(guild);
 
     guild.channels.list.forEach((GuildChannel v) {
@@ -23,8 +22,8 @@ class GuildCreateEvent {
       Member member = guild.members[o['user']['id']];
       member.status = member.map['status'] = o['status'];
       if (o['game'] != null) {
-        member.game =
-            member.map['game'] = new Game(o['game'] as Map<String, dynamic>);
+        member.game = member.map['game'] =
+            new Game._new(o['game'] as Map<String, dynamic>);
       }
     });
 
@@ -43,10 +42,10 @@ class GuildCreateEvent {
             final res = JSON.decode(r.body) as Map<String, dynamic>;
 
             if (r.statusCode == 200) {
-              client.app = new ClientOAuth2Application(client, res);
+              client.app = new ClientOAuth2Application._new(client, res);
             }
 
-            new ReadyEvent(client);
+            new ReadyEvent._new(client);
           });
         }
       }

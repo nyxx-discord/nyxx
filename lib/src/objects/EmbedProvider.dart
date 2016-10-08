@@ -8,8 +8,7 @@ class EmbedProvider {
   /// The embed provider's URL.
   String url;
 
-  /// Constructs a new [EmbedProvider].
-  EmbedProvider(Map<String, dynamic> data) {
+  EmbedProvider._new(Map<String, dynamic> data) {
     this.name = data['name'];
     this.url = data['url'];
   }

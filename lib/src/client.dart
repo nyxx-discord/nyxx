@@ -139,7 +139,7 @@ class Client {
       final res = JSON.decode(r.body) as Map<String, dynamic>;
 
       if (r.statusCode == 200) {
-        return new User(this, res);
+        return new User._new(this, res);
       } else {
         throw new HttpError(r);
       }
@@ -158,7 +158,7 @@ class Client {
       final res = JSON.decode(r.body) as Map<String, dynamic>;
 
       if (r.statusCode == 200) {
-        return new Invite(this, res);
+        return new Invite._new(this, res);
       } else {
         throw new HttpError(r);
       }
@@ -180,7 +180,7 @@ class Client {
       final res = JSON.decode(r.body) as Map<String, dynamic>;
 
       if (r.statusCode == 200) {
-        return new OAuth2Info(this, res);
+        return new OAuth2Info._new(this, res);
       } else {
         throw new HttpError(r);
       }

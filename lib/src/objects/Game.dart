@@ -11,8 +11,7 @@ class Game {
   /// The game URL, if provided.
   String url;
 
-  /// Constructs a game object.
-  Game(Map<String, dynamic> data) {
+  Game._new(Map<String, dynamic> data) {
     this.name = data['name'];
     this.type = data['type'];
     this.url = data['url'];

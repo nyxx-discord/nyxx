@@ -8,11 +8,11 @@ class GuildMemberRemoveEvent {
   ///The user that left.
   User user;
 
-  /// Constructs a new [GuildMemberRemoveEvent].
-  GuildMemberRemoveEvent(Client client, Map<String, dynamic> json) {
+  GuildMemberRemoveEvent._new(Client client, Map<String, dynamic> json) {
     if (client.ready) {
       this.guild = client.guilds.map[json['d']['guild_id']];
-      this.user = new User(client, json['d']['user'] as Map<String, dynamic>);
+      this.user =
+          new User._new(client, json['d']['user'] as Map<String, dynamic>);
       guild.members.map.remove(user.id);
       client.users.map[user.id] = user;
       client._events.onGuildMemberRemove.add(this);
