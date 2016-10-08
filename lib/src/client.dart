@@ -117,7 +117,7 @@ class Client {
   /// Destroys the websocket connection, SS connection or server, and all streams.
   Future<Null> destroy() async {
     await this._ws.socket.close();
-    this._http.http.close();
+    this._http.client.close();
     await this._events.destroy();
     if (this.ss is SSServer) {
       await this.ss.close();
@@ -176,7 +176,7 @@ class Client {
       final String id = this._util.resolve('app', app);
 
       final http.Response r =
-          await this._http.get('oauth2/authorize?client_id=$id&scope=bot');
+          await this._http.get('/oauth2/authorize?client_id=$id&scope=bot');
       final res = JSON.decode(r.body) as Map<String, dynamic>;
 
       if (r.statusCode == 200) {
