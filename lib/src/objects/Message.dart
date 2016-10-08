@@ -1,7 +1,4 @@
-import 'dart:async';
-import 'dart:convert';
-import '../../discord.dart';
-import 'package:http/http.dart' as http;
+part of discord;
 
 /// A message.
 class Message {
@@ -71,7 +68,7 @@ class Message {
     this.tts = data['tts'];
     this.mentionEveryone = data['mention_everyone'];
     this.roleMentions = data['mention_roles'] as List<String>;
-    this.createdAt = this.client.internal.util.getDate(this.id);
+    this.createdAt = this.client._util.getDate(this.id);
 
     if (this.channel is GuildChannel) {
       this.guild = this.channel.guild;
@@ -121,7 +118,7 @@ class Message {
       String newContent;
       if (options.disableEveryone == true ||
           (options.disableEveryone == null &&
-              this.client.options.disableEveryone)) {
+              this.client._options.disableEveryone)) {
         newContent = content
             .replaceAll("@everyone", "@\u200Beveryone")
             .replaceAll("@here", "@\u200Bhere");
@@ -129,7 +126,7 @@ class Message {
         newContent = content;
       }
 
-      final http.Response r = await this.client.internal.http.patch(
+      final http.Response r = await this.client._http.patch(
           '/channels/${this.channel.id}/messages/${this.id}',
           <String, dynamic>{"content": newContent});
       final res = JSON.decode(r.body) as Map<String, dynamic>;
@@ -152,8 +149,7 @@ class Message {
     if (this.client.ready) {
       final http.Response r = await this
           .client
-          .internal
-          .http
+          ._http
           .delete('/channels/${this.channel.id}/messages/${this.id}');
 
       if (r.statusCode == 204) {

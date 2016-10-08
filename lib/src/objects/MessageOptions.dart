@@ -1,3 +1,5 @@
+part of discord;
+
 /// The options for message sending.
 class MessageOptions {
   /// Whether or not to send the message using TTS.

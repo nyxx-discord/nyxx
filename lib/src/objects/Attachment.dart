@@ -1,4 +1,4 @@
-import '../../discord.dart';
+part of discord;
 
 /// A message attachment.
 class Attachment {
@@ -42,6 +42,6 @@ class Attachment {
     this.height = this.map['height'] = data['height'];
     this.width = this.map['width'] = data['width'];
     this.createdAt =
-        this.map['createdAt'] = this.client.internal.util.getDate(this.id);
+        this.map['createdAt'] = this.client._util.getDate(this.id);
   }
 }

@@ -1,7 +1,4 @@
-import 'dart:async';
-import 'dart:convert';
-import '../../discord.dart';
-import 'package:http/http.dart' as http;
+part of discord;
 
 /// A guild.
 class Guild {
@@ -94,7 +91,7 @@ class Guild {
       this.embedEnabled = this.map['embedEnabled'] = data['embed_enabled'];
       this.ownerID = this.map['ownerID'] = data['owner_id'];
       this.createdAt =
-          this.map['createdAt'] = this.client.internal.util.getDate(this.id);
+          this.map['createdAt'] = this.client._util.getDate(this.id);
 
       this.roles = new Collection<Role>();
       data['roles'].forEach((Map<String, dynamic> o) {
@@ -140,15 +137,14 @@ class Guild {
   ///     Guild.getMember("user id");
   Future<Member> getMember(dynamic member) async {
     if (this.client.ready) {
-      final String id = this.client.internal.util.resolve('member', member);
+      final String id = this.client._util.resolve('member', member);
 
       if (this.members[member] != null) {
         return this.members[member];
       } else {
         final http.Response r = await this
             .client
-            .internal
-            .http
+            ._http
             .get('guilds/${this.id}/members/$id');
         final res = JSON.decode(r.body) as Map<String, dynamic>;
 
@@ -174,9 +170,9 @@ class Guild {
   Future<bool> oauth2Authorize(dynamic app, [int permissions = 0]) async {
     if (this.client.ready) {
       if (!this.client.user.bot) {
-        final String id = this.client.internal.util.resolve('app', app);
+        final String id = this.client._util.resolve('app', app);
 
-        final http.Response r = await this.client.internal.http.post(
+        final http.Response r = await this.client._http.post(
             '/oauth2/authorize?client_id=$id&scope=bot', <String, dynamic>{
           "guild_id": this.id,
           "permissions": permissions,

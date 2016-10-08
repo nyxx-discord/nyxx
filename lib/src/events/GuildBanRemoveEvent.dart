@@ -1,4 +1,4 @@
-import '../../discord.dart';
+part of discord;
 
 /// Sent when a user is unbanned from a guild.
 class GuildBanRemoveEvent {
@@ -14,7 +14,7 @@ class GuildBanRemoveEvent {
       this.guild = client.guilds.map[json['d']['guild_id']];
       this.user = new User(client, json['d']['user'] as Map<String, dynamic>);
       client.users.map[user.id] = user;
-      client.internal.events.onGuildBanRemove.add(this);
+      client._events.onGuildBanRemove.add(this);
     }
   }
 }

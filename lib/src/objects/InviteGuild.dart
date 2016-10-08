@@ -1,4 +1,4 @@
-import '../../discord.dart';
+part of discord;
 
 /// A mini guild object for invites.
 class InviteGuild {
@@ -22,7 +22,7 @@ class InviteGuild {
     this.id = data['id'];
     this.name = data['name'];
     this.spash = data['splash_hash'];
-    this.createdAt = this.client.internal.util.getDate(this.id);
+    this.createdAt = this.client._util.getDate(this.id);
   }
 
   /// Returns a string representation of this object.

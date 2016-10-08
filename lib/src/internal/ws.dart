@@ -1,12 +1,7 @@
-import 'dart:convert';
-import 'dart:async';
-import 'dart:io';
-import '../../discord.dart';
-import 'constants.dart';
-import 'package:http/http.dart' as http;
+part of discord;
 
 /// The WS manager for the client.
-class WS {
+class _WS {
   /// The base websocket URL.
   String gateway;
 
@@ -23,8 +18,8 @@ class WS {
   String sessionID;
 
   /// Makes a new WS manager.
-  WS(this.client) {
-    this.client.internal.http.get('/gateway').then((http.Response r) {
+  _WS(this.client) {
+    this.client._http.get('/gateway').then((http.Response r) {
       this.gateway = JSON.decode(r.body)['url'];
       this.connect();
     }).catchError((Error err) {
@@ -49,7 +44,7 @@ class WS {
   /// Sends WS data.
   void send(String op, dynamic d) {
     this.socket.add(
-        JSON.encode(<String, dynamic>{"op": Constants.opCodes[op], "d": d}));
+        JSON.encode(<String, dynamic>{"op": _Constants.opCodes[op], "d": d}));
   }
 
   /// Sends a heartbeat packet.
@@ -64,32 +59,32 @@ class WS {
       this.sequence = json['s'];
     }
 
-    if (json["op"] == Constants.opCodes['HELLO']) {
+    if (json["op"] == _Constants.opCodes['HELLO']) {
       const Duration heartbeatInterval = const Duration(milliseconds: 41250);
       new Timer.periodic(heartbeatInterval, (Timer t) => this.heartbeat());
 
       if (this.sessionID == null || !resume) {
         this.client.ready = false;
         this.send("IDENTIFY", <String, dynamic>{
-          "token": this.client.token,
+          "token": this.client._token,
           "properties": <String, dynamic>{"\$browser": "Discord Dart"},
           "large_threshold": 100,
           "compress": false,
           "shard": <int>[
-            this.client.options.shardId,
-            this.client.options.shardCount
+            this.client._options.shardId,
+            this.client._options.shardCount
           ]
         });
       } else if (resume) {
         this.send("RESUME", <String, dynamic>{
-          "token": this.client.token,
+          "token": this.client._token,
           "session_id": this.sessionID,
           "seq": this.sequence
         });
       }
-    } else if (json["op"] == Constants.opCodes['INVALID_SESSION']) {
+    } else if (json["op"] == _Constants.opCodes['INVALID_SESSION']) {
       this.connect(false);
-    } else if (json["op"] == Constants.opCodes['DISPATCH']) {
+    } else if (json["op"] == _Constants.opCodes['DISPATCH']) {
       if (json['t'] == "READY") {
         this.sessionID = json['d']['session_id'];
         this.client.user = new ClientUser(
@@ -104,11 +99,11 @@ class WS {
         });
 
         if (this.client.user.bot) {
-          this.client.internal.http.headers['Authorization'] =
-              "Bot ${this.client.token}";
+          this.client._http.headers['Authorization'] =
+              "Bot ${this.client._token}";
         } else {
-          this.client.internal.http.headers['Authorization'] =
-              this.client.token;
+          this.client._http.headers['Authorization'] =
+              this.client._token;
         }
       }
 
@@ -119,7 +114,7 @@ class WS {
               this.client.ss is SSServer) {
             for (Socket socket in this.client.ss.sockets) {
               socket.write(JSON.encode(
-                  <String, dynamic>{"op": 3, "t": client.token, "d": json}));
+                  <String, dynamic>{"op": 3, "t": client._token, "d": json}));
             }
           }
           break;

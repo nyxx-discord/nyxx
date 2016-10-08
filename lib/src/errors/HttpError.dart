@@ -1,5 +1,4 @@
-import 'dart:convert';
-import 'package:http/http.dart' as http;
+part of discord;
 
 /// An HTTP error.
 class HttpError implements Exception {

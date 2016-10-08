@@ -1,4 +1,4 @@
-import '../../discord.dart';
+part of discord;
 
 /// Sent when a message is updated.
 class MessageUpdateEvent {
@@ -9,7 +9,7 @@ class MessageUpdateEvent {
   MessageUpdateEvent(Client client, Map<String, dynamic> json) {
     if (client.ready) {
       this.message = new Message(client, json['d'] as Map<String, dynamic>);
-      client.internal.events.onMessageUpdate.add(this);
+      client._events.onMessageUpdate.add(this);
     }
   }
 }

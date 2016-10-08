@@ -1,4 +1,4 @@
-import '../../discord.dart';
+part of discord;
 
 /// Sent when a channel is created, can be a [PrivateChannel].
 class ChannelCreateEvent {
@@ -12,7 +12,7 @@ class ChannelCreateEvent {
         this.channel =
             new PrivateChannel(client, json['d'] as Map<String, dynamic>);
         client.channels.map[channel.id] = channel;
-        client.internal.events.onChannelCreate.add(this);
+        client._events.onChannelCreate.add(this);
       } else {
         final Guild guild = client.guilds.map[json['d']['guild_id']];
         if (json['d']['type'] == 0) {
@@ -23,7 +23,7 @@ class ChannelCreateEvent {
               client, json['d'] as Map<String, dynamic>, guild);
         }
         client.channels.map[channel.id] = channel;
-        client.internal.events.onChannelCreate.add(this);
+        client._events.onChannelCreate.add(this);
       }
     }
   }

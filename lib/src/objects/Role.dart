@@ -1,4 +1,4 @@
-import '../../discord.dart';
+part of discord;
 
 /// A role.
 class Role {
@@ -46,7 +46,7 @@ class Role {
     this.permissions =
         this.map['permissions'] = new Permissions.fromInt(data['permissions']);
     this.createdAt =
-        this.map['createdAt'] = this.client.internal.util.getDate(this.id);
+        this.map['createdAt'] = this.client._util.getDate(this.id);
 
     if (data['color'] == 0) {
       this.color = this.map['color'] = null;

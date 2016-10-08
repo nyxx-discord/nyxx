@@ -1,17 +1,14 @@
-import 'dart:convert';
-import 'dart:async';
-import '../discord.dart';
-import 'internal.dart';
-import 'package:http/http.dart' as http;
+part of discord;
 
 /// The base class.
 /// It contains all of the methods.
 class Client {
-  /// The token passed into the constructor.
-  String token;
-
-  /// The client's options.
-  ClientOptions options;
+  String _token;
+  ClientOptions _options;
+  _Http _http;
+  _WS _ws;
+  _EventController _events;
+  _Util _util;
 
   /// The logged in user.
   ClientUser user;
@@ -34,9 +31,6 @@ class Client {
 
   /// The current version.
   String version = "0.11.1+dev";
-
-  /// The client's internals.
-  InternalClient internal;
 
   /// The client's SS manager, null if the client is not sharded, [SSServer] if
   /// the current shard is 0, [SSClient] otherwise.
@@ -97,19 +91,22 @@ class Client {
   Stream<TypingEvent> onTyping;
 
   /// Creates and logs in a new client.
-  Client(this.token, [this.options]) {
-    if (this.options == null) {
-      this.options = new ClientOptions();
+  Client(this._token, [this._options]) {
+    if (this._options == null) {
+      this._options = new ClientOptions();
     }
 
     this.guilds = new Collection<Guild>();
     this.channels = new Collection<dynamic>();
     this.users = new Collection<User>();
 
-    new InternalClient(this);
+    this._http = new _Http(this);
+    this._events = new _EventController(this);
+    this._util = new _Util();
+    this._ws = new _WS(this);
 
-    if (this.options.shardCount > 1) {
-      if (this.options.shardId == 0) {
+    if (this._options.shardCount > 1) {
+      if (this._options.shardId == 0) {
         this.ss = new SSServer(this);
       } else {
         this.ss = new SSClient(this);
@@ -119,9 +116,9 @@ class Client {
 
   /// Destroys the websocket connection, SS connection or server, and all streams.
   Future<Null> destroy() async {
-    await this.internal.ws.socket.close();
-    this.internal.http.http.close();
-    await this.internal.events.destroy();
+    await this._ws.socket.close();
+    this._http.http.close();
+    await this._events.destroy();
     if (this.ss is SSServer) {
       await this.ss.close();
     } else if (this.ss is SSClient) {
@@ -136,9 +133,9 @@ class Client {
   ///     Client.getUser("user id");
   Future<User> getUser(dynamic user) async {
     if (this.ready) {
-      final String id = this.internal.util.resolve('user', user);
+      final String id = this._util.resolve('user', user);
 
-      final http.Response r = await this.internal.http.get('/users/$id');
+      final http.Response r = await this._http.get('/users/$id');
       final res = JSON.decode(r.body) as Map<String, dynamic>;
 
       if (r.statusCode == 200) {
@@ -157,7 +154,7 @@ class Client {
   ///     Client.getInvite("invite code");
   Future<Invite> getInvite(String code) async {
     if (this.ready) {
-      final http.Response r = await this.internal.http.get('/invites/$code');
+      final http.Response r = await this._http.get('/invites/$code');
       final res = JSON.decode(r.body) as Map<String, dynamic>;
 
       if (r.statusCode == 200) {
@@ -176,11 +173,10 @@ class Client {
   ///     Client.getOAuth2Info("app id");
   Future<OAuth2Info> getOAuth2Info(dynamic app) async {
     if (this.ready) {
-      final String id = this.internal.util.resolve('app', app);
+      final String id = this._util.resolve('app', app);
 
       final http.Response r = await this
-          .internal
-          .http
+          ._http
           .get('oauth2/authorize?client_id=$id&scope=bot');
       final res = JSON.decode(r.body) as Map<String, dynamic>;
 

@@ -1,4 +1,4 @@
-import '../../discord.dart';
+part of discord;
 
 /// Sent when a guild is updated.
 class GuildUpdateEvent {
@@ -18,7 +18,7 @@ class GuildUpdateEvent {
 
       client.guilds.map[this.newGuild.id] = this.newGuild;
 
-      client.internal.events.onGuildUpdate.add(this);
+      client._events.onGuildUpdate.add(this);
     }
   }
 }

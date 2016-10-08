@@ -1,4 +1,4 @@
-import '../../discord.dart';
+part of discord;
 
 /// The client's OAuth2 app, if the client is a bot.
 class ClientOAuth2Application extends OAuth2Application {

@@ -1,4 +1,4 @@
-import '../../discord.dart';
+part of discord;
 
 /// Sent when a member is banned.
 class GuildBanAddEvent {
@@ -14,7 +14,7 @@ class GuildBanAddEvent {
       this.guild = client.guilds.map[json['d']['guild_id']];
       this.user = new User(client, json['d']['user'] as Map<String, dynamic>);
       client.users.map[user.id] = user;
-      client.internal.events.onGuildBanAdd.add(this);
+      client._events.onGuildBanAdd.add(this);
     }
   }
 }

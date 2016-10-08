@@ -1,4 +1,4 @@
-import '../../discord.dart';
+part of discord;
 
 /// A guild channel.
 class GuildChannel extends Channel {

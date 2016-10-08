@@ -1,3 +1,5 @@
+part of discord;
+
 /// A game.
 class Game {
   /// The game name.

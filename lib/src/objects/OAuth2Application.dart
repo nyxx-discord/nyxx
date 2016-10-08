@@ -1,4 +1,4 @@
-import '../../discord.dart';
+part of discord;
 
 /// An OAuth2 application.
 class OAuth2Application {
@@ -30,7 +30,7 @@ class OAuth2Application {
     this.id = data['id'];
     this.name = data['name'];
     this.rpcOrigins = data['rpcOrigins'] as List<String>;
-    this.createdAt = this.client.internal.util.getDate(this.id);
+    this.createdAt = this.client._util.getDate(this.id);
   }
 
   /// Returns a string representation of this object.

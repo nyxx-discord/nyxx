@@ -1,4 +1,4 @@
-import '../../discord.dart';
+part of discord;
 
 /// Sent when a message is deleted.
 class MessageDeleteEvent {
@@ -13,7 +13,7 @@ class MessageDeleteEvent {
     if (client.ready) {
       this.id = json['d']['id'];
       this.channel = client.channels.map[json['d']['channel_id']];
-      client.internal.events.onMessageDelete.add(this);
+      client._events.onMessageDelete.add(this);
     }
   }
 }

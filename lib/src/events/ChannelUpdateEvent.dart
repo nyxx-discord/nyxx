@@ -1,4 +1,4 @@
-import '../../discord.dart';
+part of discord;
 
 /// Sent when a channel is updated.
 class ChannelUpdateEvent {
@@ -21,7 +21,7 @@ class ChannelUpdateEvent {
             new VoiceChannel(client, json['d'] as Map<String, dynamic>, guild);
       }
       client.channels.map[newChannel.id] = newChannel;
-      client.internal.events.onChannelUpdate.add(this);
+      client._events.onChannelUpdate.add(this);
     }
   }
 }

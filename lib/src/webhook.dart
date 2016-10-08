@@ -1,4 +1,4 @@
-import 'dart:async';
+/*import 'dart:async';
 import 'dart:convert';
 import '../discord.dart';
 import 'internal/util.dart';
@@ -160,3 +160,4 @@ class Client {
     }
   }
 }
+*/

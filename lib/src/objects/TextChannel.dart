@@ -1,7 +1,4 @@
-import 'dart:async';
-import 'dart:convert';
-import '../../discord.dart';
-import 'package:http/http.dart' as http;
+part of discord;
 
 /// A text channel.
 class TextChannel extends GuildChannel {
@@ -34,7 +31,7 @@ class TextChannel extends GuildChannel {
       String newContent;
       if (newOptions.disableEveryone == true ||
           (newOptions.disableEveryone == null &&
-              this.client.options.disableEveryone)) {
+              this.client._options.disableEveryone)) {
         newContent = content
             .replaceAll("@everyone", "@\u200Beveryone")
             .replaceAll("@here", "@\u200Bhere");
@@ -42,7 +39,7 @@ class TextChannel extends GuildChannel {
         newContent = content;
       }
 
-      final http.Response r = await this.client.internal.http.post(
+      final http.Response r = await this.client._http.post(
           '/channels/${this.id}/messages', <String, dynamic>{
         "content": newContent,
         "tts": newOptions.tts,
@@ -68,12 +65,11 @@ class TextChannel extends GuildChannel {
   Future<Message> getMessage(dynamic message) async {
     if (this.client.ready) {
       if (this.client.user.bot) {
-        final String id = this.client.internal.util.resolve('message', message);
+        final String id = this.client._util.resolve('message', message);
 
         final http.Response r = await this
             .client
-            .internal
-            .http
+            ._http
             .get('channels/${this.id}/messages/$id');
         final res = JSON.decode(r.body) as Map<String, dynamic>;
 

@@ -1,4 +1,4 @@
-import '../../discord.dart';
+part of discord;
 
 /// Sent when you leave a guild.
 class GuildDeleteEvent {
@@ -10,7 +10,7 @@ class GuildDeleteEvent {
     if (client.ready) {
       this.guild = client.guilds.map[json['d']['id']];
       client.guilds.map.remove(json['d']['id']);
-      client.internal.events.onGuildDelete.add(this);
+      client._events.onGuildDelete.add(this);
     }
   }
 }

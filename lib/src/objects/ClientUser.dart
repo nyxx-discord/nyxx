@@ -1,4 +1,4 @@
-import '../../discord.dart';
+part of discord;
 
 /// The client user.
 class ClientUser extends User {

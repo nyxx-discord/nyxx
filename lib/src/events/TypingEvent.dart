@@ -1,4 +1,4 @@
-import '../../discord.dart';
+part of discord;
 
 /// Sent when a user starts typing.
 class TypingEvent {
@@ -13,7 +13,7 @@ class TypingEvent {
     if (client.ready) {
       this.channel = client.channels.map[json['d']['channel_id']];
       this.user = client.users.map[json['d']['user_id']];
-      client.internal.events.onTyping.add(this);
+      client._events.onTyping.add(this);
     }
   }
 }
