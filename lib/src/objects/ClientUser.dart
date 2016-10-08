@@ -11,8 +11,8 @@ class ClientUser extends User {
   /// Weather or not the client user has MFA enabled.
   bool mfa;
 
-  /// Constructs a new [ClientUser].
-  ClientUser(Client client, Map<String, dynamic> data) : super(client, data) {
+  ClientUser._new(Client client, Map<String, dynamic> data)
+      : super._new(client, data) {
     this.email = this.map['email'] = data['email'];
     this.verified = this.map['verified'] = data['verified'];
     this.mfa = this.map['mfa'] = data['mfa_enabled'];

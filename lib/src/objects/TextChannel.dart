@@ -8,9 +8,8 @@ class TextChannel extends GuildChannel {
   /// The ID for the last message in the channel.
   String lastMessageID;
 
-  /// Constructs a new [TextChannel].
-  TextChannel(Client client, Map<String, dynamic> data, Guild guild)
-      : super(client, data, guild, "text") {
+  TextChannel._new(Client client, Map<String, dynamic> data, Guild guild)
+      : super._new(client, data, guild, "text") {
     this.topic = this.map['topic'] = data['topic'];
     this.lastMessageID = this.map['lastMessageID'] = data['last_message_id'];
   }
@@ -48,7 +47,7 @@ class TextChannel extends GuildChannel {
       final res = JSON.decode(r.body) as Map<String, dynamic>;
 
       if (r.statusCode == 200) {
-        return new Message(this.client, res);
+        return new Message._new(this.client, res);
       } else {
         throw new HttpError(r);
       }
@@ -72,7 +71,7 @@ class TextChannel extends GuildChannel {
         final res = JSON.decode(r.body) as Map<String, dynamic>;
 
         if (r.statusCode == 200) {
-          return new Message(this.client, res);
+          return new Message._new(this.client, res);
         } else {
           throw new HttpError(r);
         }

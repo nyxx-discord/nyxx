@@ -56,13 +56,12 @@ class Message {
   /// Whether or @everyone was mentioned in the message.
   bool mentionEveryone;
 
-  /// Constructs a new [Message].
-  Message(this.client, Map<String, dynamic> data) {
+  Message._new(this.client, Map<String, dynamic> data) {
     this.content = data['content'];
     this.id = data['id'];
     this.nonce = data['nonce'];
     this.timestamp = DateTime.parse(data['timestamp']);
-    this.author = new User(client, data['author'] as Map<String, dynamic>);
+    this.author = new User._new(client, data['author'] as Map<String, dynamic>);
     this.channel = this.client.channels.map[data['channel_id']];
     this.pinned = data['pinned'];
     this.tts = data['tts'];
@@ -81,17 +80,17 @@ class Message {
 
     this.mentions = new Collection<User>();
     data['mentions'].forEach((Map<String, dynamic> o) {
-      final User user = new User(client, o);
+      final User user = new User._new(client, o);
       this.mentions.map[user.id] = user;
     });
 
     data['embeds'].forEach((Map<String, dynamic> o) {
-      this.embeds.add(new Embed(o));
+      this.embeds.add(new Embed._new(o));
     });
 
     this.attachments = new Collection<Attachment>();
     data['attachments'].forEach((Map<String, dynamic> o) {
-      final Attachment attachment = new Attachment(this.client, o);
+      final Attachment attachment = new Attachment._new(this.client, o);
       this.attachments.map[attachment.id] = attachment;
     });
   }
@@ -132,7 +131,7 @@ class Message {
       final res = JSON.decode(r.body) as Map<String, dynamic>;
 
       if (r.statusCode == 200) {
-        return new Message(this.client, res);
+        return new Message._new(this.client, res);
       } else {
         throw new HttpError(r);
       }

@@ -11,10 +11,9 @@ class GuildChannel extends Channel {
   /// The channel's position in the channel list.
   int position;
 
-  /// Constructs a new [GuildChannel].
-  GuildChannel(
+  GuildChannel._new(
       Client client, Map<String, dynamic> data, this.guild, String type)
-      : super(client, data, type) {
+      : super._new(client, data, type) {
     this.name = this.map['name'] = data['name'];
     this.position = this.map['position'] = data['position'];
   }

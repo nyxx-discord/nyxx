@@ -17,8 +17,7 @@ class Channel {
   /// A timestamp for when the channel was created.
   DateTime createdAt;
 
-  /// Constructs a new [Channel].
-  Channel(this.client, Map<String, dynamic> data, this.type) {
+  Channel._new(this.client, Map<String, dynamic> data, this.type) {
     this.id = this.map['id'] = data['id'];
     this.createdAt = this.map['createdAt'] = this.client._util.getDate(this.id);
   }

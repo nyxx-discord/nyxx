@@ -5,10 +5,10 @@ class MessageEvent {
   /// The new message.
   Message message;
 
-  /// Constucts a new [MessageEvent].
-  MessageEvent(Client client, Map<String, dynamic> json) {
+  MessageEvent._new(Client client, Map<String, dynamic> json) {
     if (client.ready) {
-      this.message = new Message(client, json['d'] as Map<String, dynamic>);
+      this.message =
+          new Message._new(client, json['d'] as Map<String, dynamic>);
       client._events.onMessage.add(this);
     }
   }

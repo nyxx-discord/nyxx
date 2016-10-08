@@ -14,12 +14,11 @@ class Invite {
   /// A mini channel object for the invite's channel.
   InviteChannel channel;
 
-  /// Constructs a new [Invite].
-  Invite(this.client, Map<String, dynamic> data) {
+  Invite._new(this.client, Map<String, dynamic> data) {
     this.code = data['code'];
-    this.guild =
-        new InviteGuild(this.client, data['guild'] as Map<String, dynamic>);
-    this.channel =
-        new InviteChannel(this.client, data['channel'] as Map<String, dynamic>);
+    this.guild = new InviteGuild._new(
+        this.client, data['guild'] as Map<String, dynamic>);
+    this.channel = new InviteChannel._new(
+        this.client, data['channel'] as Map<String, dynamic>);
   }
 }

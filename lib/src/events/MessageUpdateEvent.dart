@@ -5,10 +5,10 @@ class MessageUpdateEvent {
   /// The updated message.
   Message message;
 
-  /// Constructs a new [MessageUpdateEvent].
-  MessageUpdateEvent(Client client, Map<String, dynamic> json) {
+  MessageUpdateEvent._new(Client client, Map<String, dynamic> json) {
     if (client.ready) {
-      this.message = new Message(client, json['d'] as Map<String, dynamic>);
+      this.message =
+          new Message._new(client, json['d'] as Map<String, dynamic>);
       client._events.onMessageUpdate.add(this);
     }
   }

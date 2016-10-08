@@ -14,8 +14,7 @@ class EmbedThumbnail {
   /// The embed thumbnal's width.
   int width;
 
-  /// Constructs a new [EmbedThumbnail].
-  EmbedThumbnail(Map<String, dynamic> data) {
+  EmbedThumbnail._new(Map<String, dynamic> data) {
     this.url = data['url'];
     this.proxyUrl = data['proxy_url'];
     this.height = data['height'];

@@ -8,14 +8,13 @@ class PrivateChannel extends Channel {
   /// The recipients.
   Collection recipients;
 
-  /// Constructs a new [PrivateChannel].
-  PrivateChannel(Client client, Map<String, dynamic> data)
-      : super(client, data, "private") {
+  PrivateChannel._new(Client client, Map<String, dynamic> data)
+      : super._new(client, data, "private") {
     this.lastMessageID = this.map['lastMessageID'] = data['last_message_id'];
 
     this.recipients = new Collection();
     data['recipients'].forEach((Map<String, dynamic> o) {
-      final User user = new User(client, o);
+      final User user = new User._new(client, o);
       this.recipients.map[user.id] = user;
     });
     this.map['recipients'] = this.recipients;
