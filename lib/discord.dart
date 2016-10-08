@@ -15,7 +15,6 @@ part 'src/internal/http.dart';
 part 'src/internal/util.dart';
 part 'src/internal/ws.dart';
 
-
 part 'src/events/ChannelCreateEvent.dart';
 part 'src/events/ChannelDeleteEvent.dart';
 part 'src/events/ChannelUpdateEvent.dart';

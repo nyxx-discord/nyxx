@@ -102,8 +102,7 @@ class _WS {
           this.client._http.headers['Authorization'] =
               "Bot ${this.client._token}";
         } else {
-          this.client._http.headers['Authorization'] =
-              this.client._token;
+          this.client._http.headers['Authorization'] = this.client._token;
         }
       }
 

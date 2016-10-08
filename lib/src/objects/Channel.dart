@@ -20,14 +20,12 @@ class Channel {
   /// Constructs a new [Channel].
   Channel(this.client, Map<String, dynamic> data, this.type) {
     this.id = this.map['id'] = data['id'];
-    this.createdAt =
-        this.map['createdAt'] = this.client._util.getDate(this.id);
+    this.createdAt = this.map['createdAt'] = this.client._util.getDate(this.id);
   }
 
   /// Deletes the channel.
   Future<Null> delete() async {
-    http.Response r =
-        await this.client._http.delete("/channels/${this.id}");
+    http.Response r = await this.client._http.delete("/channels/${this.id}");
     if (r.statusCode == 200) {
       return null;
     } else {

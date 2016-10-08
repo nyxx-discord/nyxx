@@ -45,8 +45,7 @@ class Role {
     this.mentionable = this.map['mentionable'] = data['mentionable'];
     this.permissions =
         this.map['permissions'] = new Permissions.fromInt(data['permissions']);
-    this.createdAt =
-        this.map['createdAt'] = this.client._util.getDate(this.id);
+    this.createdAt = this.map['createdAt'] = this.client._util.getDate(this.id);
 
     if (data['color'] == 0) {
       this.color = this.map['color'] = null;

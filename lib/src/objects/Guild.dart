@@ -142,10 +142,8 @@ class Guild {
       if (this.members[member] != null) {
         return this.members[member];
       } else {
-        final http.Response r = await this
-            .client
-            ._http
-            .get('guilds/${this.id}/members/$id');
+        final http.Response r =
+            await this.client._http.get('guilds/${this.id}/members/$id');
         final res = JSON.decode(r.body) as Map<String, dynamic>;
 
         if (r.statusCode == 200) {
