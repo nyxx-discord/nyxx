@@ -1,7 +1,7 @@
-import '../../discord.dart';
+part of discord;
 
 /// The utility functions for the client.
-class Util {
+class _Util {
   /// Gets a DateTime from a snowflake ID.
   DateTime getDate(String id) {
     return new DateTime.fromMillisecondsSinceEpoch(

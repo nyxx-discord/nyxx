@@ -1,4 +1,4 @@
-import '../../discord.dart';
+part of discord;
 
 /// Sent when a member joins a guild.
 class GuildMemberAddEvent {
@@ -13,7 +13,7 @@ class GuildMemberAddEvent {
           new Member(client, json['d'] as Map<String, dynamic>, guild);
       guild.members.map[member.id] = member;
       client.users.map[member.id] = member.toUser();
-      client.internal.events.onGuildMemberAdd.add(this);
+      client._events.onGuildMemberAdd.add(this);
     }
   }
 }

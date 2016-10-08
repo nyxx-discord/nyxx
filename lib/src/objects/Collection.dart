@@ -1,3 +1,5 @@
+part of discord;
+
 /// A collection of objects, easily searchable.
 class Collection<T> {
   /// The collection's internal map of objects.

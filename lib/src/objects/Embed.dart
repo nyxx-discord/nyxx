@@ -1,4 +1,4 @@
-import '../../discord.dart';
+part of discord;
 
 /// A message embed.
 class Embed {

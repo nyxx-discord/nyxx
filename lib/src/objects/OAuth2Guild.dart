@@ -1,4 +1,4 @@
-import '../../discord.dart';
+part of discord;
 
 /// A mini guild object with permissions for [OAuth2Info].
 class OAuth2Guild {
@@ -30,7 +30,7 @@ class OAuth2Guild {
     this.id = this.map['id'] = data['id'];
     this.name = this.map['name'] = data['name'];
     this.createdAt =
-        this.map['createdAt'] = this.client.internal.util.getDate(this.id);
+        this.map['createdAt'] = this.client._util.getDate(this.id);
   }
 
   /// Returns a string representation of this object.

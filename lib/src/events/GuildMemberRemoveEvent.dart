@@ -1,4 +1,4 @@
-import '../../discord.dart';
+part of discord;
 
 /// Sent when a user leaves a guild, can be a leave, kick, or ban.
 class GuildMemberRemoveEvent {
@@ -15,7 +15,7 @@ class GuildMemberRemoveEvent {
       this.user = new User(client, json['d']['user'] as Map<String, dynamic>);
       guild.members.map.remove(user.id);
       client.users.map[user.id] = user;
-      client.internal.events.onGuildMemberRemove.add(this);
+      client._events.onGuildMemberRemove.add(this);
     }
   }
 }

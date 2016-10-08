@@ -1,5 +1,7 @@
+part of discord;
+
 /// The client constants.
-class Constants {
+class _Constants {
   /// The gateway OP codes.
   static Map<String, int> opCodes = <String, int>{
     "DISPATCH": 0,

@@ -1,8 +1,7 @@
-import 'dart:async';
-import '../../discord.dart';
+part of discord;
 
 /// A controller for all events.
-class EventController {
+class _EventController {
   /// Emitted when the client is ready.
   StreamController<ReadyEvent> onReady;
 
@@ -58,7 +57,7 @@ class EventController {
   StreamController<TypingEvent> onTyping;
 
   /// Makes a new `EventController`.
-  EventController(Client client) {
+  _EventController(Client client) {
     this.onReady = new StreamController.broadcast();
     client.onReady = this.onReady.stream;
 

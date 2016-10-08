@@ -1,4 +1,4 @@
-import '../../discord.dart';
+part of discord;
 
 /// A private channel.
 class PrivateChannel extends Channel {

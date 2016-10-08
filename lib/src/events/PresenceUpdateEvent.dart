@@ -1,4 +1,4 @@
-import '../../discord.dart';
+part of discord;
 
 /// Sent when a member's presence updates.
 class PresenceUpdateEvent {
@@ -23,6 +23,6 @@ class PresenceUpdateEvent {
 
     this.newMember.guild.members.add(this.newMember);
     client.users.add(this.newMember.toUser());
-    client.internal.events.onPresenceUpdate.add(this);
+    client._events.onPresenceUpdate.add(this);
   }
 }

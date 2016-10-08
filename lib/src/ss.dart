@@ -1,8 +1,4 @@
-import 'dart:convert';
-import 'dart:async';
-import 'dart:io';
-import '../discord.dart';
-import 'package:events/events.dart' as events;
+part of discord;
 
 /// The SS server for the client.
 class SSServer extends events.Events {
@@ -40,13 +36,13 @@ class SSServer extends events.Events {
   Future<Null> _handleMsg(Socket socket, String msg) async {
     final data = JSON.decode(msg) as Map<String, dynamic>;
 
-    if (data['t'] != this.client.token) {
+    if (data['t'] != this.client._token) {
       socket.write(JSON.encode(<String, dynamic>{"op": 0, "d": 0}));
       socket.destroy();
     }
     switch (data['op']) {
       case 1:
-        if (data['t'] == this.client.token) {
+        if (data['t'] == this.client._token) {
           socket.write(JSON.encode(<String, dynamic>{"op": 2, "d": null}));
         } else {
           socket.write(JSON.encode(<String, dynamic>{"op": 0, "d": 0}));
@@ -86,7 +82,7 @@ class SSClient extends events.Events {
       this.socket = socket;
       this.socket.transform(UTF8.decoder).listen(this._handleMsg);
       this.socket.write(JSON.encode(
-          <String, dynamic>{"op": 1, "d": null, "t": this.client.token}));
+          <String, dynamic>{"op": 1, "d": null, "t": this.client._token}));
     });
   }
 
@@ -94,7 +90,7 @@ class SSClient extends events.Events {
   void send(String msg) {
     socket.write(JSON.encode(<String, dynamic>{
       "op": 4,
-      "t": this.client.token,
+      "t": this.client._token,
       "d": msg,
     }));
   }

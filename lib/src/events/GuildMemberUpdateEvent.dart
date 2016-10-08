@@ -1,4 +1,4 @@
-import '../../discord.dart';
+part of discord;
 
 /// Sent when a member is updated.
 class GuildMemberUpdateEvent {
@@ -17,7 +17,7 @@ class GuildMemberUpdateEvent {
           new Member(client, json['d'] as Map<String, dynamic>, guild);
       guild.members.map[newMember.id] = newMember;
       client.users.map[newMember.id] = newMember.toUser();
-      client.internal.events.onGuildMemberUpdate.add(this);
+      client._events.onGuildMemberUpdate.add(this);
     }
   }
 }

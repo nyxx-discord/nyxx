@@ -1,4 +1,4 @@
-import '../../discord.dart';
+part of discord;
 
 /// Sent when you leave a guild or it becomes unavailable.
 class GuildUnavailableEvent {
@@ -10,7 +10,7 @@ class GuildUnavailableEvent {
     if (client.ready) {
       this.guild = new Guild(client, null, false);
       client.guilds.map[json['d']['id']] = guild;
-      client.internal.events.onGuildUnavailable.add(this);
+      client._events.onGuildUnavailable.add(this);
     }
   }
 }

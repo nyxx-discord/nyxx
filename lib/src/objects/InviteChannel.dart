@@ -1,4 +1,4 @@
-import '../../discord.dart';
+part of discord;
 
 /// A mini channel object for invites.
 class InviteChannel {
@@ -22,7 +22,7 @@ class InviteChannel {
     this.id = data['id'];
     this.name = data['name'];
     this.type = data['type'];
-    this.createdAt = this.client.internal.util.getDate(this.id);
+    this.createdAt = this.client._util.getDate(this.id);
   }
 
   /// Returns a string representation of this object.

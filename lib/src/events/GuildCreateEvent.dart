@@ -1,6 +1,4 @@
-import 'dart:convert';
-import '../../discord.dart';
-import 'package:http/http.dart' as http;
+part of discord;
 
 /// Sent when the bot joins a guild.
 class GuildCreateEvent {
@@ -41,7 +39,7 @@ class GuildCreateEvent {
       if (match == true) {
         client.ready = true;
         if (client.user.bot) {
-          client.internal.http
+          client._http
               .get('/oauth2/applications/@me')
               .then((http.Response r) {
             final res = JSON.decode(r.body) as Map<String, dynamic>;
@@ -55,7 +53,7 @@ class GuildCreateEvent {
         }
       }
     } else {
-      client.internal.events.onGuildCreate.add(this);
+      client._events.onGuildCreate.add(this);
     }
   }
 }
