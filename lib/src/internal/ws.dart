@@ -48,7 +48,8 @@ class WS {
 
   /// Sends WS data.
   void send(String op, dynamic d) {
-    this.socket.add(JSON.encode(<String, dynamic>{"op": Constants.opCodes[op], "d": d}));
+    this.socket.add(
+        JSON.encode(<String, dynamic>{"op": Constants.opCodes[op], "d": d}));
   }
 
   /// Sends a heartbeat packet.
