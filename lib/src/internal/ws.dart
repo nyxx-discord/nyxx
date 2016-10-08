@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:async';
 import 'dart:io';
 import '../../discord.dart';
+import 'constants.dart';
 import 'package:http/http.dart' as http;
 
 /// The WS manager for the client.
@@ -46,13 +47,13 @@ class WS {
   }
 
   /// Sends WS data.
-  void send(int op, dynamic d) {
-    this.socket.add(JSON.encode(<String, dynamic>{"op": op, "d": d}));
+  void send(String op, dynamic d) {
+    this.socket.add(JSON.encode(<String, dynamic>{"op": Constants.opCodes[op], "d": d}));
   }
 
   /// Sends a heartbeat packet.
   void heartbeat() {
-    this.send(1, this.sequence);
+    this.send("HEARTBEAT", this.sequence);
   }
 
   Future<Null> _handleMsg(String msg, bool resume) async {
@@ -62,13 +63,13 @@ class WS {
       this.sequence = json['s'];
     }
 
-    if (json["op"] == 10) {
+    if (json["op"] == Constants.opCodes['HELLO']) {
       const Duration heartbeatInterval = const Duration(milliseconds: 41250);
       new Timer.periodic(heartbeatInterval, (Timer t) => this.heartbeat());
 
       if (this.sessionID == null || !resume) {
         this.client.ready = false;
-        this.send(2, <String, dynamic>{
+        this.send("IDENTIFY", <String, dynamic>{
           "token": this.client.token,
           "properties": <String, dynamic>{"\$browser": "Discord Dart"},
           "large_threshold": 100,
@@ -79,15 +80,15 @@ class WS {
           ]
         });
       } else if (resume) {
-        this.send(6, <String, dynamic>{
+        this.send("RESUME", <String, dynamic>{
           "token": this.client.token,
           "session_id": this.sessionID,
           "seq": this.sequence
         });
       }
-    } else if (json["op"] == 9) {
+    } else if (json["op"] == Constants.opCodes['INVALID_SESSION']) {
       this.connect(false);
-    } else if (json["op"] == 0) {
+    } else if (json["op"] == Constants.opCodes['DISPATCH']) {
       if (json['t'] == "READY") {
         this.sessionID = json['d']['session_id'];
         this.client.user = new ClientUser(

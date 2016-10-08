@@ -7,7 +7,7 @@ class Member extends User {
   /// The member's nickname, null if not set.
   String nickname;
 
-  /// The member's status, `offline`, `online`, `idle`, `invisible`, or `dnd`.
+  /// The member's status, `offline`, `online`, `idle`, or `dnd`.
   String status;
 
   /// When the member joined the guild.
