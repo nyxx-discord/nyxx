@@ -24,7 +24,6 @@ class Constants {
     "ADMINISTRATOR": 1 << 3,
     "MANAGE_CHANNELS": 1 << 4,
     "MANAGE_GUILD": 1 << 5,
-
     "READ_MESSAGES": 1 << 10,
     "SEND_MESSAGES": 1 << 11,
     "SEND_TTS_MESSAGES": 1 << 12,
@@ -34,18 +33,16 @@ class Constants {
     "READ_MESSAGE_HISTORY": 1 << 16,
     "MENTION_EVERYONE": 1 << 17,
     "EXTERNAL_EMOJIS": 1 << 18,
-
     "CONNECT": 1 << 20,
     "SPEAK": 1 << 21,
     "MUTE_MEMBERS": 1 << 22,
     "DEAFEN_MEMBERS": 1 << 23,
     "MOVE_MEMBERS": 1 << 24,
     "USE_VAD": 1 << 25,
-
     "CHANGE_NICKNAME": 1 << 26,
     "MANAGE_NICKNAMES": 1 << 27,
     "MANAGE_ROLES_OR_PERMISSIONS": 1 << 28,
-
+    "MANAGE_WEBHOOKS": 1 << 29,
     "MANAGE_EMOJIS": 1 << 30
   };
 }
