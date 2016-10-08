@@ -29,8 +29,7 @@ class OAuth2Guild {
     this.icon = this.map['icon'] = data['icon'];
     this.id = this.map['id'] = data['id'];
     this.name = this.map['name'] = data['name'];
-    this.createdAt =
-        this.map['createdAt'] = this.client._util.getDate(this.id);
+    this.createdAt = this.map['createdAt'] = this.client._util.getDate(this.id);
   }
 
   /// Returns a string representation of this object.

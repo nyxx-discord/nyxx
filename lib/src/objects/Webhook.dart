@@ -39,8 +39,7 @@ class Webhook {
     this.token = this.map['token'] = data['token'];
     this.channelId = this.map['channelId'] = data['channel_id'];
     this.guildId = this.map['guildId'] = data['guild_id'];
-    this.createdAt =
-        this.map['createdAt'] = this.client._util.getDate(this.id);
+    this.createdAt = this.map['createdAt'] = this.client._util.getDate(this.id);
 
     this.channel = this.client.channels[this.channelId];
     this.guild = this.client.guilds[this.guildId];

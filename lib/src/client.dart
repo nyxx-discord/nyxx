@@ -175,9 +175,8 @@ class Client {
     if (this.ready) {
       final String id = this._util.resolve('app', app);
 
-      final http.Response r = await this
-          ._http
-          .get('oauth2/authorize?client_id=$id&scope=bot');
+      final http.Response r =
+          await this._http.get('oauth2/authorize?client_id=$id&scope=bot');
       final res = JSON.decode(r.body) as Map<String, dynamic>;
 
       if (r.statusCode == 200) {

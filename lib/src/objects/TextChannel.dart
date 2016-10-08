@@ -67,10 +67,8 @@ class TextChannel extends GuildChannel {
       if (this.client.user.bot) {
         final String id = this.client._util.resolve('message', message);
 
-        final http.Response r = await this
-            .client
-            ._http
-            .get('channels/${this.id}/messages/$id');
+        final http.Response r =
+            await this.client._http.get('channels/${this.id}/messages/$id');
         final res = JSON.decode(r.body) as Map<String, dynamic>;
 
         if (r.statusCode == 200) {

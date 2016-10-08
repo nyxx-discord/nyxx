@@ -45,8 +45,7 @@ class User {
     this.avatarURL = this.map['avatarURL'] =
         "https://discordapp.com/api/v6/users/${this.id}/avatars/${this.avatar}.jpg";
     this.mention = this.map['mention'] = "<@${this.id}>";
-    this.createdAt =
-        this.map['createdAt'] = this.client._util.getDate(this.id);
+    this.createdAt = this.map['createdAt'] = this.client._util.getDate(this.id);
 
     // This will not be set at all in some cases.
     if (data['bot'] == true) {

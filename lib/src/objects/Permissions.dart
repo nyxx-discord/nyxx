@@ -43,8 +43,10 @@ class Permissions {
     this.manageChannels =
         (this.raw & _Constants.permissions['MANAGE_CHANNELS']) > 0;
     this.manageGuild = (this.raw & _Constants.permissions['MANAGE_GUILD']) > 0;
-    this.readMessages = (this.raw & _Constants.permissions['READ_MESSAGES']) > 0;
-    this.sendMessages = (this.raw & _Constants.permissions['SEND_MESSAGES']) > 0;
+    this.readMessages =
+        (this.raw & _Constants.permissions['READ_MESSAGES']) > 0;
+    this.sendMessages =
+        (this.raw & _Constants.permissions['SEND_MESSAGES']) > 0;
     this.sendTtsMessages =
         (this.raw & _Constants.permissions['SEND_TTS_MESSAGES']) > 0;
     this.manageMessages =
