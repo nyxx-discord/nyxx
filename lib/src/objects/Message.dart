@@ -35,8 +35,8 @@ class Message extends _BaseObj {
   /// A list of IDs for the role mentions in the message.
   List<String> roleMentions = <String>[];
 
-  /// A list of the embeds in the message.
-  List<Embed> embeds = <Embed>[];
+  /// A collection of the embeds in the message.
+  Collection<Embed> embeds;
 
   /// The attachments in the message.
   Collection<Attachment> attachments;
@@ -88,6 +88,7 @@ class Message extends _BaseObj {
     });
     this._map['mentions'] = this.mentions;
 
+    this.embeds = new Collection<Embed>();
     data['embeds'].forEach((Map<String, dynamic> o) {
       this.embeds.add(new Embed._new(this._client, o));
     });
