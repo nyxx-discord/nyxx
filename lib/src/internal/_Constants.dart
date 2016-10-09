@@ -2,6 +2,8 @@ part of discord;
 
 /// The client constants.
 class _Constants {
+  static String host = "https://discordapp.com/api";
+
   /// The gateway OP codes.
   static Map<String, int> opCodes = <String, int>{
     "DISPATCH": 0,
