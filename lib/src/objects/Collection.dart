@@ -28,7 +28,7 @@ class Collection<T> {
   /// Finds a single item where `item.property == value`.
   dynamic find(String property, dynamic value) {
     for (dynamic o in this.map.values) {
-      if (o.map[property] == value) {
+      if (o._map[property] == value) {
         return o;
       }
     }
@@ -39,7 +39,7 @@ class Collection<T> {
   List<dynamic> findAll(String property, dynamic value) {
     List<dynamic> matches = <dynamic>[];
     for (dynamic o in this.map.values) {
-      if (o.map[property] == value) {
+      if (o._map[property] == value) {
         matches.add(o);
       }
     }

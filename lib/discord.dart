@@ -9,6 +9,7 @@ import 'package:events/events.dart' as events;
 part 'src/Client.dart';
 part 'src/ss.dart';
 
+part 'src/internal/_BaseObj.dart';
 part 'src/internal/_Constants.dart';
 part 'src/internal/_EventController.dart';
 part 'src/internal/_Http.dart';

@@ -20,10 +20,10 @@ class GuildCreateEvent {
 
     json['d']['presences'].forEach((Map<String, dynamic> o) {
       Member member = guild.members[o['user']['id']];
-      member.status = member.map['status'] = o['status'];
+      member.status = member._map['status'] = o['status'];
       if (o['game'] != null) {
-        member.game = member.map['game'] =
-            new Game._new(o['game'] as Map<String, dynamic>);
+        member.game = member._map['game'] =
+            new Game._new(client, o['game'] as Map<String, dynamic>);
       }
     });
 

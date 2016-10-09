@@ -1,13 +1,7 @@
 part of discord;
 
 /// A guild.
-class Guild {
-  /// The client.
-  Client client;
-
-  /// A map of all of the properties.
-  Map<String, dynamic> map = <String, dynamic>{};
-
+class Guild extends _BaseObj {
   /// The guild's name.
   String name;
 
@@ -68,35 +62,36 @@ class Guild {
   /// The guild's roles.
   Collection<Role> roles;
 
-  Guild._new(this.client, Map<String, dynamic> data,
-      [this.available, bool guildCreate = false]) {
+  Guild._new(Client client, Map<String, dynamic> data,
+      [this.available, bool guildCreate = false])
+      : super(client) {
     if (this.available) {
-      this.name = this.map['name'] = data['name'];
-      this.id = this.map['id'] = data['id'];
-      this.icon = this.map['icon'] = data['icon'];
-      this.iconURL = this.map['iconURL'] =
+      this.name = this._map['name'] = data['name'];
+      this.id = this._map['id'] = data['id'];
+      this.icon = this._map['icon'] = data['icon'];
+      this.iconURL = this._map['iconURL'] =
           "https://discordapp.com/api/v6/guilds/${this.id}/icons/${this.icon}.jpg";
-      this.afkChannelID = this.map['afkChannelID'] = data['afk_channel_id'];
-      this.region = this.map['region'] = data['region'];
+      this.afkChannelID = this._map['afkChannelID'] = data['afk_channel_id'];
+      this.region = this._map['region'] = data['region'];
       this.embedChannelID =
-          this.map['embedChannelID'] = data['embed_channel_id'];
-      this.afkTimeout = this.map['afkTimeout'] = data['afk_timeout'];
-      this.memberCount = this.map['memberCount'] = data['member_count'];
+          this._map['embedChannelID'] = data['embed_channel_id'];
+      this.afkTimeout = this._map['afkTimeout'] = data['afk_timeout'];
+      this.memberCount = this._map['memberCount'] = data['member_count'];
       this.verificationLevel =
-          this.map['verificationLevel'] = data['verification_level'];
-      this.notificationLevel =
-          this.map['notificationLevel'] = data['default_message_notifications'];
-      this.mfaLevel = this.map['mfaLevel'] = data['mfa_level'];
-      this.embedEnabled = this.map['embedEnabled'] = data['embed_enabled'];
-      this.ownerID = this.map['ownerID'] = data['owner_id'];
+          this._map['verificationLevel'] = data['verification_level'];
+      this.notificationLevel = this._map['notificationLevel'] =
+          data['default_message_notifications'];
+      this.mfaLevel = this._map['mfaLevel'] = data['mfa_level'];
+      this.embedEnabled = this._map['embedEnabled'] = data['embed_enabled'];
+      this.ownerID = this._map['ownerID'] = data['owner_id'];
       this.createdAt =
-          this.map['createdAt'] = this.client._util.getDate(this.id);
+          this._map['createdAt'] = this._client._util.getDate(this.id);
 
       this.roles = new Collection<Role>();
       data['roles'].forEach((Map<String, dynamic> o) {
-        this.roles.add(new Role._new(this.client, o));
+        this.roles.add(new Role._new(this._client, o));
       });
-      this.map['roles'] = this.roles;
+      this._map['roles'] = this.roles;
 
       if (guildCreate) {
         this.members = new Collection<Member>();
@@ -106,7 +101,7 @@ class Guild {
         data['members'].forEach((Map<String, dynamic> o) {
           this.members.add(new Member._new(client, o, this));
         });
-        this.map['members'] = this.members;
+        this._map['members'] = this.members;
 
         data['channels'].forEach((Map<String, dynamic> o) {
           if (o['type'] == 0) {
@@ -115,10 +110,10 @@ class Guild {
             this.channels.add(new VoiceChannel._new(client, o, this));
           }
         });
-        this.map['channels'] = this.channels;
+        this._map['channels'] = this.channels;
 
         this.defaultChannel = this.channels[this.id];
-        this.map['defaultChannel'] = this.defaultChannel;
+        this._map['defaultChannel'] = this.defaultChannel;
       }
     }
   }
@@ -135,20 +130,20 @@ class Guild {
   /// Throws an [Exception] if the HTTP request errored.
   ///     Guild.getMember("user id");
   Future<Member> getMember(dynamic member) async {
-    if (this.client.ready) {
-      final String id = this.client._util.resolve('member', member);
+    if (this._client.ready) {
+      final String id = this._client._util.resolve('member', member);
 
       if (this.members[member] != null) {
         return this.members[member];
       } else {
         final http.Response r =
-            await this.client._http.get('/guilds/${this.id}/members/$id');
+            await this._client._http.get('/guilds/${this.id}/members/$id');
         final res = JSON.decode(r.body) as Map<String, dynamic>;
 
         if (r.statusCode == 200) {
-          final Member m = new Member._new(client, res, this);
+          final Member m = new Member._new(this._client, res, this);
           this.members.add(m);
-          this.map['members'] = this.members;
+          this._map['members'] = this.members;
           return m;
         } else {
           throw new HttpError(r);
@@ -165,11 +160,11 @@ class Guild {
   /// is a bot.
   ///     Guild.oauth2Authorize("app id");
   Future<bool> oauth2Authorize(dynamic app, [int permissions = 0]) async {
-    if (this.client.ready) {
-      if (!this.client.user.bot) {
-        final String id = this.client._util.resolve('app', app);
+    if (this._client.ready) {
+      if (!this._client.user.bot) {
+        final String id = this._client._util.resolve('app', app);
 
-        final http.Response r = await this.client._http.post(
+        final http.Response r = await this._client._http.post(
             '/oauth2/authorize?client_id=$id&scope=bot', <String, dynamic>{
           "guild_id": this.id,
           "permissions": permissions,

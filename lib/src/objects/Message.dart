@@ -1,10 +1,7 @@
 part of discord;
 
 /// A message.
-class Message {
-  /// The client.
-  Client client;
-
+class Message extends _BaseObj {
   /// The message's content.
   String content;
 
@@ -56,43 +53,52 @@ class Message {
   /// Whether or @everyone was mentioned in the message.
   bool mentionEveryone;
 
-  Message._new(this.client, Map<String, dynamic> data) {
-    this.content = data['content'];
-    this.id = data['id'];
-    this.nonce = data['nonce'];
-    this.timestamp = DateTime.parse(data['timestamp']);
-    this.author = new User._new(client, data['author'] as Map<String, dynamic>);
-    this.channel = this.client.channels.map[data['channel_id']];
-    this.pinned = data['pinned'];
-    this.tts = data['tts'];
-    this.mentionEveryone = data['mention_everyone'];
-    this.roleMentions = data['mention_roles'] as List<String>;
-    this.createdAt = this.client._util.getDate(this.id);
+  Message._new(Client client, Map<String, dynamic> data) : super(client) {
+    this.content = this._map['content'] = data['content'];
+    this.id = this._map['id'] = data['id'];
+    this.nonce = this._map['nonce'] = data['nonce'];
+    this.timestamp = this._map['timestamp'] = DateTime.parse(data['timestamp']);
+    this.author = this._map['author'] =
+        new User._new(this._client, data['author'] as Map<String, dynamic>);
+    this.channel =
+        this._map['channel'] = this._client.channels.map[data['channel_id']];
+    this.pinned = this._map['pinned'] = data['pinned'];
+    this.tts = this._map['tts'] = data['tts'];
+    this.mentionEveryone =
+        this._map['mentionEveryone'] = data['mention_everyone'];
+    this.roleMentions =
+        this._map['roleMentions'] = data['mention_roles'] as List<String>;
+    this.createdAt =
+        this._map['createdAt'] = this._client._util.getDate(this.id);
 
     if (this.channel is GuildChannel) {
-      this.guild = this.channel.guild;
-      this.member = guild.members[this.author.id];
+      this.guild = this._map['guild'] = this.channel.guild;
+      this.member = this._map['member'] = guild.members[this.author.id];
     }
 
     if (data['edited_timestamp'] != null) {
-      this.editedTimestamp = DateTime.parse(data['edited_timestamp']);
+      this.editedTimestamp = this._map['editedTimestamp'] =
+          DateTime.parse(data['edited_timestamp']);
     }
 
     this.mentions = new Collection<User>();
     data['mentions'].forEach((Map<String, dynamic> o) {
       final User user = new User._new(client, o);
-      this.mentions.map[user.id] = user;
+      this.mentions.add(user);
     });
+    this._map['mentions'] = this.mentions;
 
     data['embeds'].forEach((Map<String, dynamic> o) {
-      this.embeds.add(new Embed._new(o));
+      this.embeds.add(new Embed._new(this._client, o));
     });
+    this._map['embeds'] = this.embeds;
 
     this.attachments = new Collection<Attachment>();
     data['attachments'].forEach((Map<String, dynamic> o) {
-      final Attachment attachment = new Attachment._new(this.client, o);
-      this.attachments.map[attachment.id] = attachment;
+      final Attachment attachment = new Attachment._new(this._client, o);
+      this.attachments.add(attachment);
     });
+    this._map['attachments'] = this.attachments;
   }
 
   /// Returns a string representation of this object.
@@ -106,7 +112,7 @@ class Message {
   /// Throws an [Exception] if the HTTP request errored.
   ///     Message.edit("My edited content!");
   Future<Message> edit(String content, [MessageOptions msgOptions]) async {
-    if (this.client.ready) {
+    if (this._client.ready) {
       MessageOptions options;
       if (msgOptions == null) {
         options = new MessageOptions();
@@ -117,7 +123,7 @@ class Message {
       String newContent;
       if (options.disableEveryone == true ||
           (options.disableEveryone == null &&
-              this.client._options.disableEveryone)) {
+              this._client._options.disableEveryone)) {
         newContent = content
             .replaceAll("@everyone", "@\u200Beveryone")
             .replaceAll("@here", "@\u200Bhere");
@@ -125,13 +131,13 @@ class Message {
         newContent = content;
       }
 
-      final http.Response r = await this.client._http.patch(
+      final http.Response r = await this._client._http.patch(
           '/channels/${this.channel.id}/messages/${this.id}',
           <String, dynamic>{"content": newContent});
       final res = JSON.decode(r.body) as Map<String, dynamic>;
 
       if (r.statusCode == 200) {
-        return new Message._new(this.client, res);
+        return new Message._new(this._client, res);
       } else {
         throw new HttpError(r);
       }
@@ -145,9 +151,9 @@ class Message {
   /// Throws an [Exception] if the HTTP request errored.
   ///     Message.delete();
   Future<bool> delete() async {
-    if (this.client.ready) {
+    if (this._client.ready) {
       final http.Response r = await this
-          .client
+          ._client
           ._http
           .delete('/channels/${this.channel.id}/messages/${this.id}');
 

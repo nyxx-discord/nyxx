@@ -1,7 +1,7 @@
 part of discord;
 
 /// A message embed.
-class Embed {
+class Embed extends _BaseObj {
   /// The embed's URL
   String url;
 
@@ -20,18 +20,18 @@ class Embed {
   /// The embed's provider, if any.
   EmbedProvider provider;
 
-  Embed._new(Map<String, dynamic> data) {
-    this.url = data['url'];
-    this.type = data['type'];
-    this.description = data['description'];
+  Embed._new(Client client, Map<String, dynamic> data) : super(client) {
+    this.url = this._map['url'] = data['url'];
+    this.type = this._map['type'] = data['type'];
+    this.description = this._map['description'] = data['description'];
 
     if (data.containsKey('thumbnail')) {
-      this.thumbnail =
-          new EmbedThumbnail._new(data['thumbnail'] as Map<String, dynamic>);
+      this.thumbnail = this._map['thumbnail'] = new EmbedThumbnail._new(
+          this._client, data['thumbnail'] as Map<String, dynamic>);
     }
     if (data.containsKey('provider')) {
-      this.provider =
-          new EmbedProvider._new(data['provider'] as Map<String, dynamic>);
+      this.provider = this._map['provider'] = new EmbedProvider._new(
+          this._client, data['provider'] as Map<String, dynamic>);
     }
   }
 

@@ -1,7 +1,7 @@
 part of discord;
 
 /// A message embed thumbnail.
-class EmbedThumbnail {
+class EmbedThumbnail extends _BaseObj {
   /// The embed thumbnail's URL.
   String url;
 
@@ -14,10 +14,11 @@ class EmbedThumbnail {
   /// The embed thumbnal's width.
   int width;
 
-  EmbedThumbnail._new(Map<String, dynamic> data) {
-    this.url = data['url'];
-    this.proxyUrl = data['proxy_url'];
-    this.height = data['height'];
-    this.width = data['width'];
+  EmbedThumbnail._new(Client client, Map<String, dynamic> data)
+      : super(client) {
+    this.url = this._map['url'] = data['url'];
+    this.proxyUrl = this._map['proxyUrl'] = data['proxy_url'];
+    this.height = this._map['height'] = data['height'];
+    this.width = this._map['width'] = data['width'];
   }
 }

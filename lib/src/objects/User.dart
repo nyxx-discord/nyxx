@@ -1,15 +1,8 @@
 part of discord;
 
 /// A user.
-class User {
-  /// The client.
-  Client client;
-
-  /// A map of all of the properties.
-  Map<String, dynamic> map = <String, dynamic>{};
-
-  /// The raw data provided by the Discord API.
-  Map<String, dynamic> raw;
+class User extends _BaseObj {
+  Map<String, dynamic> _raw;
 
   /// The user's username.
   String username;
@@ -35,22 +28,23 @@ class User {
   /// Whether or not the user is a bot.
   bool bot = false;
 
-  User._new(this.client, Map<String, dynamic> data) {
-    this.raw = data;
-    this.username = this.map['username'] = data['username'];
-    this.id = this.map['id'] = data['id'];
-    this.discriminator = this.map['discriminator'] = data['discriminator'];
-    this.avatar = this.map['avatar'] = data['avatar'];
-    this.avatarURL = this.map['avatarURL'] =
+  User._new(Client client, Map<String, dynamic> data) : super(client) {
+    this._raw = data;
+    this.username = this._map['username'] = data['username'];
+    this.id = this._map['id'] = data['id'];
+    this.discriminator = this._map['discriminator'] = data['discriminator'];
+    this.avatar = this._map['avatar'] = data['avatar'];
+    this.avatarURL = this._map['avatarURL'] =
         "https://discordapp.com/api/v6/users/${this.id}/avatars/${this.avatar}.jpg";
-    this.mention = this.map['mention'] = "<@${this.id}>";
-    this.createdAt = this.map['createdAt'] = this.client._util.getDate(this.id);
+    this.mention = this._map['mention'] = "<@${this.id}>";
+    this.createdAt =
+        this._map['createdAt'] = this._client._util.getDate(this.id);
 
     // This will not be set at all in some cases.
     if (data['bot'] == true) {
-      this.bot = this.map['bot'] = data['bot'];
+      this.bot = this._map['bot'] = data['bot'];
     } else {
-      this.map['bot'] = false;
+      this._map['bot'] = false;
     }
   }
 

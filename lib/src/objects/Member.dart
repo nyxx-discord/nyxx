@@ -30,26 +30,26 @@ class Member extends User {
 
   Member._new(Client client, Map<String, dynamic> data, [Guild guild])
       : super._new(client, data['user'] as Map<String, dynamic>) {
-    this.nickname = this.map['nickname'] = data['nick'];
-    this.deaf = this.map['deaf'] = data['deaf'];
-    this.mute = this.map['mute'] = data['mute'];
-    this.status = this.map['status'] = data['status'];
-    this.roles = this.map['roles'] = data['roles'] as List<String>;
+    this.nickname = this._map['nickname'] = data['nick'];
+    this.deaf = this._map['deaf'] = data['deaf'];
+    this.mute = this._map['mute'] = data['mute'];
+    this.status = this._map['status'] = data['status'];
+    this.roles = this._map['roles'] = data['roles'] as List<String>;
     this._user = new User._new(client, data['user'] as Map<String, dynamic>);
 
     if (guild == null) {
-      this.guild = this.client.guilds[data['guild_id']];
+      this.guild = this._client.guilds[data['guild_id']];
     } else {
-      this.guild = this.map['guild'] = guild;
+      this.guild = this._map['guild'] = guild;
     }
 
     if (data['joined_at'] != null) {
-      this.joinedAt = this.map['joinedAt'] = DateTime.parse(data['joined_at']);
+      this.joinedAt = this._map['joinedAt'] = DateTime.parse(data['joined_at']);
     }
 
     if (data['game'] != null) {
-      this.game = this.map['game'] =
-          new Game._new(data['game'] as Map<String, dynamic>);
+      this.game = this._map['game'] =
+          new Game._new(this._client, ['game'] as Map<String, dynamic>);
     }
   }
 

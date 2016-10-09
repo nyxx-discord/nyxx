@@ -10,8 +10,8 @@ class TextChannel extends GuildChannel {
 
   TextChannel._new(Client client, Map<String, dynamic> data, Guild guild)
       : super._new(client, data, guild, "text") {
-    this.topic = this.map['topic'] = data['topic'];
-    this.lastMessageID = this.map['lastMessageID'] = data['last_message_id'];
+    this.topic = this._map['topic'] = data['topic'];
+    this.lastMessageID = this._map['lastMessageID'] = data['last_message_id'];
   }
 
   /// Sends a message.
@@ -19,7 +19,7 @@ class TextChannel extends GuildChannel {
   /// Throws an [Exception] if the HTTP request errored.
   ///     Channel.sendMessage("My content!");
   Future<Message> sendMessage(String content, [MessageOptions options]) async {
-    if (this.client.ready) {
+    if (this._client.ready) {
       MessageOptions newOptions;
       if (options == null) {
         newOptions = new MessageOptions();
@@ -30,7 +30,7 @@ class TextChannel extends GuildChannel {
       String newContent;
       if (newOptions.disableEveryone == true ||
           (newOptions.disableEveryone == null &&
-              this.client._options.disableEveryone)) {
+              this._client._options.disableEveryone)) {
         newContent = content
             .replaceAll("@everyone", "@\u200Beveryone")
             .replaceAll("@here", "@\u200Bhere");
@@ -38,7 +38,7 @@ class TextChannel extends GuildChannel {
         newContent = content;
       }
 
-      final http.Response r = await this.client._http.post(
+      final http.Response r = await this._client._http.post(
           '/channels/${this.id}/messages', <String, dynamic>{
         "content": newContent,
         "tts": newOptions.tts,
@@ -47,7 +47,7 @@ class TextChannel extends GuildChannel {
       final res = JSON.decode(r.body) as Map<String, dynamic>;
 
       if (r.statusCode == 200) {
-        return new Message._new(this.client, res);
+        return new Message._new(this._client, res);
       } else {
         throw new HttpError(r);
       }
@@ -62,16 +62,16 @@ class TextChannel extends GuildChannel {
   /// is not a bot.
   ///     Channel.getMessage("message id");
   Future<Message> getMessage(dynamic message) async {
-    if (this.client.ready) {
-      if (this.client.user.bot) {
-        final String id = this.client._util.resolve('message', message);
+    if (this._client.ready) {
+      if (this._client.user.bot) {
+        final String id = this._client._util.resolve('message', message);
 
         final http.Response r =
-            await this.client._http.get('/channels/${this.id}/messages/$id');
+            await this._client._http.get('/channels/${this.id}/messages/$id');
         final res = JSON.decode(r.body) as Map<String, dynamic>;
 
         if (r.statusCode == 200) {
-          return new Message._new(this.client, res);
+          return new Message._new(this._client, res);
         } else {
           throw new HttpError(r);
         }
