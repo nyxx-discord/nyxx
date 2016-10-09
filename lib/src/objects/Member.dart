@@ -49,7 +49,7 @@ class Member extends User {
 
     if (data['game'] != null) {
       this.game = this._map['game'] =
-          new Game._new(this._client, ['game'] as Map<String, dynamic>);
+          new Game._new(this._client, data['game'] as Map<String, dynamic>);
     }
   }
 
