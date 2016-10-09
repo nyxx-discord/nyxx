@@ -6,14 +6,14 @@ import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:events/events.dart' as events;
 
-part 'src/client.dart';
+part 'src/Client.dart';
 part 'src/ss.dart';
 
-part 'src/internal/constants.dart';
-part 'src/internal/eventcontroller.dart';
-part 'src/internal/http.dart';
-part 'src/internal/util.dart';
-part 'src/internal/ws.dart';
+part 'src/internal/_Constants.dart';
+part 'src/internal/_EventController.dart';
+part 'src/internal/_Http.dart';
+part 'src/internal/_Util.dart';
+part 'src/internal/_WS.dart';
 
 part 'src/events/ChannelCreateEvent.dart';
 part 'src/events/ChannelDeleteEvent.dart';
