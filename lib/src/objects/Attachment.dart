@@ -1,13 +1,7 @@
 part of discord;
 
 /// A message attachment.
-class Attachment {
-  /// The client.
-  Client client;
-
-  /// A map of all of the properties.
-  Map<String, dynamic> map = <String, dynamic>{};
-
+class Attachment extends _BaseObj {
   /// The attachment's ID
   String id;
 
@@ -32,14 +26,15 @@ class Attachment {
   /// A timestamp for when the message was created.
   DateTime createdAt;
 
-  Attachment._new(this.client, Map<String, dynamic> data) {
+  Attachment._new(Client client, Map<String, dynamic> data) : super(client) {
     this.id = data['id'];
-    this.filename = this.map['filename'] = data['filename'];
-    this.url = this.map['url'] = data['url'];
-    this.proxyUrl = this.map['proxyUrl'] = data['proxyUrl'];
-    this.size = this.map['size'] = data['size'];
-    this.height = this.map['height'] = data['height'];
-    this.width = this.map['width'] = data['width'];
-    this.createdAt = this.map['createdAt'] = this.client._util.getDate(this.id);
+    this.filename = this._map['filename'] = data['filename'];
+    this.url = this._map['url'] = data['url'];
+    this.proxyUrl = this._map['proxyUrl'] = data['proxyUrl'];
+    this.size = this._map['size'] = data['size'];
+    this.height = this._map['height'] = data['height'];
+    this.width = this._map['width'] = data['width'];
+    this.createdAt =
+        this._map['createdAt'] = this._client._util.getDate(this.id);
   }
 }

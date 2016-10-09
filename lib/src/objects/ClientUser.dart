@@ -13,8 +13,8 @@ class ClientUser extends User {
 
   ClientUser._new(Client client, Map<String, dynamic> data)
       : super._new(client, data) {
-    this.email = this.map['email'] = data['email'];
-    this.verified = this.map['verified'] = data['verified'];
-    this.mfa = this.map['mfa'] = data['mfa_enabled'];
+    this.email = this._map['email'] = data['email'];
+    this.verified = this._map['verified'] = data['verified'];
+    this.mfa = this._map['mfa'] = data['mfa_enabled'];
   }
 }

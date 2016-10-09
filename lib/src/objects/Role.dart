@@ -1,13 +1,7 @@
 part of discord;
 
 /// A role.
-class Role {
-  /// The client.
-  Client client;
-
-  /// A map of all of the properties.
-  Map<String, dynamic> map = <String, dynamic>{};
-
+class Role extends _BaseObj {
   /// The role's name.
   String name;
 
@@ -35,21 +29,22 @@ class Role {
   /// A timestamp for when the channel was created.
   DateTime createdAt;
 
-  Role._new(this.client, Map<String, dynamic> data) {
-    this.id = this.map['id'] = data['id'];
-    this.name = this.map['name'] = data['name'];
-    this.position = this.map['position'] = data['position'];
-    this.hoist = this.map['hoist'] = data['hoist'];
-    this.managed = this.map['managed'] = data['managed'];
-    this.mentionable = this.map['mentionable'] = data['mentionable'];
-    this.permissions =
-        this.map['permissions'] = new Permissions.fromInt(data['permissions']);
-    this.createdAt = this.map['createdAt'] = this.client._util.getDate(this.id);
+  Role._new(Client client, Map<String, dynamic> data) : super(client) {
+    this.id = this._map['id'] = data['id'];
+    this.name = this._map['name'] = data['name'];
+    this.position = this._map['position'] = data['position'];
+    this.hoist = this._map['hoist'] = data['hoist'];
+    this.managed = this._map['managed'] = data['managed'];
+    this.mentionable = this._map['mentionable'] = data['mentionable'];
+    this.permissions = this._map['permissions'] =
+        new Permissions.fromInt(this._client, data['permissions']);
+    this.createdAt =
+        this._map['createdAt'] = this._client._util.getDate(this.id);
 
     if (data['color'] == 0) {
-      this.color = this.map['color'] = null;
+      this.color = this._map['color'] = null;
     } else {
-      this.color = this.map['color'] = data['color'];
+      this.color = this._map['color'] = data['color'];
     }
   }
 }

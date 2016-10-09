@@ -1,13 +1,7 @@
 part of discord;
 
 /// A channel.
-class Channel {
-  /// The client.
-  Client client;
-
-  /// A map of all of the properties.
-  Map<String, dynamic> map = <String, dynamic>{};
-
+class Channel extends _BaseObj {
   /// The channel's ID.
   String id;
 
@@ -17,14 +11,16 @@ class Channel {
   /// A timestamp for when the channel was created.
   DateTime createdAt;
 
-  Channel._new(this.client, Map<String, dynamic> data, this.type) {
-    this.id = this.map['id'] = data['id'];
-    this.createdAt = this.map['createdAt'] = this.client._util.getDate(this.id);
+  Channel._new(Client client, Map<String, dynamic> data, this.type)
+      : super(client) {
+    this.id = this._map['id'] = data['id'];
+    this.createdAt =
+        this._map['createdAt'] = this._client._util.getDate(this.id);
   }
 
   /// Deletes the channel.
   Future<Null> delete() async {
-    http.Response r = await this.client._http.delete("/channels/${this.id}");
+    http.Response r = await this._client._http.delete("/channels/${this.id}");
     if (r.statusCode == 200) {
       return null;
     } else {

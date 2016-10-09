@@ -14,8 +14,8 @@ class GuildChannel extends Channel {
   GuildChannel._new(
       Client client, Map<String, dynamic> data, this.guild, String type)
       : super._new(client, data, type) {
-    this.name = this.map['name'] = data['name'];
-    this.position = this.map['position'] = data['position'];
+    this.name = this._map['name'] = data['name'];
+    this.position = this._map['position'] = data['position'];
   }
 
   /// Returns a string representation of this object.

@@ -1,10 +1,7 @@
 part of discord;
 
 /// A mini guild object for invites.
-class InviteGuild {
-  /// The client.
-  Client client;
-
+class InviteGuild extends _BaseObj {
   /// The guild's ID.
   String id;
 
@@ -17,11 +14,12 @@ class InviteGuild {
   /// A timestamp for when the guild was created.
   DateTime createdAt;
 
-  InviteGuild._new(this.client, Map<String, dynamic> data) {
-    this.id = data['id'];
-    this.name = data['name'];
-    this.spash = data['splash_hash'];
-    this.createdAt = this.client._util.getDate(this.id);
+  InviteGuild._new(Client client, Map<String, dynamic> data) : super(client) {
+    this.id = this._map['id'] = data['id'];
+    this.name = this._map['name'] = data['name'];
+    this.spash = this._map['spash'] = data['splash_hash'];
+    this.createdAt =
+        this._map['createdAt'] = this._client._util.getDate(this.id);
   }
 
   /// Returns a string representation of this object.

@@ -1,7 +1,7 @@
 part of discord;
 
 /// A game.
-class Game {
+class Game extends _BaseObj {
   /// The game name.
   String name;
 
@@ -11,9 +11,9 @@ class Game {
   /// The game URL, if provided.
   String url;
 
-  Game._new(Map<String, dynamic> data) {
-    this.name = data['name'];
-    this.type = data['type'];
-    this.url = data['url'];
+  Game._new(Client client, Map<String, dynamic> data) : super(client) {
+    this.name = this._map['name'] = data['name'];
+    this.type = this._map['type'] = data['type'];
+    this.url = this._map['url'] = data['url'];
   }
 }
