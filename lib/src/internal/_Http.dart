@@ -80,7 +80,7 @@ class _Bucket {
         if (r.statusCode == 429) {
           new Timer(
               new Duration(
-                  milliseconds: int.parse(r.headers['retry-after']) + 500),
+                  milliseconds: int.parse(r.headers['retry-after']) + 100),
               () => this.execute(request));
         } else {
           this.waiting = false;
@@ -94,7 +94,7 @@ class _Bucket {
       final Duration waitTime =
           this.ratelimitReset.difference(new DateTime.now().toUtc()) +
               this.timeDifference +
-              new Duration(seconds: 1);
+              new Duration(milliseconds: 100);
       if (waitTime.isNegative) {
         this.ratelimitRemaining = 1;
         this.execute(request);
