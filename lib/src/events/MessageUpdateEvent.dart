@@ -2,7 +2,7 @@ part of discord;
 
 /// Sent when a message is updated.
 class MessageUpdateEvent {
-  /// The updated message.
+  /// The updated message, if cached.
   Message message;
 
   MessageUpdateEvent._new(Client client, Map<String, dynamic> json) {
