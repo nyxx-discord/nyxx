@@ -193,10 +193,10 @@ class _WS {
         return;
 
       case 4004:
-        throw new Exception("invalid token");
+        throw new InvalidTokenError();
 
       case 4010:
-        throw new Exception("invalid shard");
+        throw new InvalidShardError();
 
       case 4007:
         this.connect(false);
