@@ -46,7 +46,7 @@ class _Bucket {
   DateTime ratelimitReset;
   Duration timeDifference;
   List<_HttpRequest> requests = <_HttpRequest>[];
-  bool waiting;
+  bool waiting = false;
 
   _Bucket(this.uri);
 
