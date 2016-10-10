@@ -37,8 +37,8 @@ class _WS {
         .connect('${this.gateway}?v=6&encoding=json')
         .then((WebSocket socket) {
       this.socket = socket;
-      this.socket.listen((String msg) => this._handleMsg(msg, resume),
-          onDone: () => this._handleErr());
+      this.socket.listen((String msg) => this.handleMsg(msg, resume),
+          onDone: () => this.handleErr());
     });
   }
 
@@ -53,7 +53,7 @@ class _WS {
     this.send("HEARTBEAT", this.sequence);
   }
 
-  Future<Null> _handleMsg(String msg, bool resume) async {
+  Future<Null> handleMsg(String msg, bool resume) async {
     final json = JSON.decode(msg) as Map<String, dynamic>;
 
     if (json['s'] != null) {
@@ -187,7 +187,7 @@ class _WS {
     return null;
   }
 
-  void _handleErr() {
+  void handleErr() {
     switch (this.socket.closeCode) {
       case 1005:
         return;
