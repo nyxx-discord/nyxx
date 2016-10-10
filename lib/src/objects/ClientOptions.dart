@@ -17,5 +17,8 @@ class ClientOptions {
 
   /// Makes a new `ClientOptions` object.
   ClientOptions(
-      {this.disableEveryone: false, this.shardId: 0, this.shardCount: 1, this.disabledEvents: const []});
+      {this.disableEveryone: false,
+      this.shardId: 0,
+      this.shardCount: 1,
+      this.disabledEvents: const []});
 }
