@@ -22,7 +22,8 @@ class _WS {
     this.client._http.get('/gateway').then((http.Response r) {
       this.gateway = JSON.decode(r.body)['url'];
       this.connect();
-    });/*.catchError((Error err) {
+    });
+    /*.catchError((Error err) {
       throw new Exception("could not get '/gateway'");
     });*/
   }
