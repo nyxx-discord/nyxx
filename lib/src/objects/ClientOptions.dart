@@ -11,7 +11,11 @@ class ClientOptions {
   /// The total number of shards.
   int shardCount;
 
+  /// A list of discord formatted events to be disabled. Note: some of these events
+  /// can be dangerous to disable. Ex: `TYPING_START`
+  List<String> disabledEvents;
+
   /// Makes a new `ClientOptions` object.
   ClientOptions(
-      {this.disableEveryone: false, this.shardId: 0, this.shardCount: 1});
+      {this.disableEveryone: false, this.shardId: 0, this.shardCount: 1, this.disabledEvents: const []});
 }
