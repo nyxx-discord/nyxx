@@ -86,28 +86,27 @@ class _WS {
     } else if (json["op"] == _Constants.opCodes['INVALID_SESSION']) {
       this.connect(false);
     } else if (json["op"] == _Constants.opCodes['DISPATCH']) {
-      if (json['t'] == "READY") {
-        this.sessionID = json['d']['session_id'];
-        this.client.user = new ClientUser._new(
-            this.client, json['d']['user'] as Map<String, dynamic>);
-
-        json['d']['guilds'].forEach((Map<String, dynamic> o) {
-          this.client.guilds.map[o['id']] = null;
-        });
-
-        json['d']['private_channels'].forEach((Map<String, dynamic> o) {
-          this.client.channels.add(new PrivateChannel._new(client, o));
-        });
-
-        if (this.client.user.bot) {
-          this.client._http.headers['Authorization'] =
-              "Bot ${this.client._token}";
-        } else {
-          this.client._http.headers['Authorization'] = this.client._token;
-        }
-      }
-
       switch (json['t']) {
+        case 'READY':
+          this.sessionID = json['d']['session_id'];
+          this.client.user = new ClientUser._new(
+              this.client, json['d']['user'] as Map<String, dynamic>);
+
+          json['d']['guilds'].forEach((Map<String, dynamic> o) {
+            this.client.guilds.map[o['id']] = null;
+          });
+
+          json['d']['private_channels'].forEach((Map<String, dynamic> o) {
+            this.client.channels.add(new PrivateChannel._new(client, o));
+          });
+
+          if (this.client.user.bot) {
+            this.client._http.headers['Authorization'] =
+                "Bot ${this.client._token}";
+          } else {
+            this.client._http.headers['Authorization'] = this.client._token;
+          }
+          break;
         case 'MESSAGE_CREATE':
           MessageEvent msgEvent = new MessageEvent._new(this.client, json);
           if (msgEvent.message.channel.type == "private" &&
