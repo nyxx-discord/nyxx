@@ -32,7 +32,8 @@ class Role extends _BaseObj {
   /// A timestamp for when the channel was created.
   DateTime createdAt;
 
-  Role._new(Client client, Map<String, dynamic> data, this.guild) : super(client) {
+  Role._new(Client client, Map<String, dynamic> data, this.guild)
+      : super(client) {
     this.id = this._map['id'] = data['id'];
     this.name = this._map['name'] = data['name'];
     this.position = this._map['position'] = data['position'];
