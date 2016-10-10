@@ -23,9 +23,6 @@ class _WS {
       this.gateway = JSON.decode(r.body)['url'];
       this.connect();
     });
-    /*.catchError((Error err) {
-      throw new Exception("could not get '/gateway'");
-    });*/
   }
 
   /// COnnects to the websocket.
