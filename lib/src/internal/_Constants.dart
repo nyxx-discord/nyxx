@@ -1,11 +1,26 @@
 part of discord;
 
+class _OPCodes {
+  static const int dispatch = 0;
+  static const int heartbeat = 1;
+  static const int identify = 2;
+  static const int statusUpdate = 3;
+  static const int voiceStateUpdate = 4;
+  static const int voiceGuildPing = 5;
+  static const int resume = 6;
+  static const int reconnect = 7;
+  static const int requesGuildMembers = 8;
+  static const int invalidSession = 9;
+  static const int hello = 10;
+  static const int heartbeatAck = 11;  
+}
+
 /// The client constants.
 class _Constants {
-  static String host = "https://discordapp.com/api";
+  static const String host = "https://discordapp.com/api";
 
   /// The gateway OP codes.
-  static Map<String, int> opCodes = <String, int>{
+  static const Map<String, int> opCodes = const <String, int>{
     "DISPATCH": 0,
     "HEARTBEAT": 1,
     "IDENTIFY": 2,
@@ -21,7 +36,7 @@ class _Constants {
   };
 
   /// The permission bits.
-  static Map<String, int> permissions = <String, int>{
+  static const Map<String, int> permissions = const <String, int>{
     "CREATE_INSTANT_INVITE": 1 << 0,
     "KICK_MEMBERS": 1 << 1,
     "BAN_MEMBERS": 1 << 2,
