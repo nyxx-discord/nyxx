@@ -22,8 +22,6 @@ class _WS {
     this.client._http.get('/gateway').then((http.Response r) {
       this.gateway = JSON.decode(r.body)['url'];
       this.connect();
-    }).catchError((Error err) {
-      throw new Exception("could not get '/gateway'");
     });
   }
 
@@ -36,8 +34,8 @@ class _WS {
         .connect('${this.gateway}?v=6&encoding=json')
         .then((WebSocket socket) {
       this.socket = socket;
-      this.socket.listen((String msg) => this._handleMsg(msg, resume),
-          onDone: () => this._handleErr());
+      this.socket.listen((String msg) => this.handleMsg(msg, resume),
+          onDone: () => this.handleErr());
     });
   }
 
@@ -52,7 +50,7 @@ class _WS {
     this.send("HEARTBEAT", this.sequence);
   }
 
-  Future<Null> _handleMsg(String msg, bool resume) async {
+  Future<Null> handleMsg(String msg, bool resume) async {
     final json = JSON.decode(msg) as Map<String, dynamic>;
 
     if (json['s'] != null) {
@@ -85,28 +83,27 @@ class _WS {
     } else if (json["op"] == _Constants.opCodes['INVALID_SESSION']) {
       this.connect(false);
     } else if (json["op"] == _Constants.opCodes['DISPATCH']) {
-      if (json['t'] == "READY") {
-        this.sessionID = json['d']['session_id'];
-        this.client.user = new ClientUser._new(
-            this.client, json['d']['user'] as Map<String, dynamic>);
-
-        json['d']['guilds'].forEach((Map<String, dynamic> o) {
-          this.client.guilds.map[o['id']] = null;
-        });
-
-        json['d']['private_channels'].forEach((Map<String, dynamic> o) {
-          this.client.channels.add(new PrivateChannel._new(client, o));
-        });
-
-        if (this.client.user.bot) {
-          this.client._http.headers['Authorization'] =
-              "Bot ${this.client._token}";
-        } else {
-          this.client._http.headers['Authorization'] = this.client._token;
-        }
-      }
-
       switch (json['t']) {
+        case 'READY':
+          this.sessionID = json['d']['session_id'];
+          this.client.user = new ClientUser._new(
+              this.client, json['d']['user'] as Map<String, dynamic>);
+
+          json['d']['guilds'].forEach((Map<String, dynamic> o) {
+            this.client.guilds.map[o['id']] = null;
+          });
+
+          json['d']['private_channels'].forEach((Map<String, dynamic> o) {
+            this.client.channels.add(new PrivateChannel._new(client, o));
+          });
+
+          if (this.client.user.bot) {
+            this.client._http.headers['Authorization'] =
+                "Bot ${this.client._token}";
+          } else {
+            this.client._http.headers['Authorization'] = this.client._token;
+          }
+          break;
         case 'MESSAGE_CREATE':
           MessageEvent msgEvent = new MessageEvent._new(this.client, json);
           if (msgEvent.message.channel.type == "private" &&
@@ -187,16 +184,16 @@ class _WS {
     return null;
   }
 
-  void _handleErr() {
+  void handleErr() {
     switch (this.socket.closeCode) {
       case 1005:
         return;
 
       case 4004:
-        throw new Exception("invalid token");
+        throw new InvalidTokenError();
 
       case 4010:
-        throw new Exception("invalid shard");
+        throw new InvalidShardError();
 
       case 4007:
         this.connect(false);
