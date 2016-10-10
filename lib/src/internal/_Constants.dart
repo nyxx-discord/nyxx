@@ -12,7 +12,7 @@ class _OPCodes {
   static const int requesGuildMembers = 8;
   static const int invalidSession = 9;
   static const int hello = 10;
-  static const int heartbeatAck = 11;  
+  static const int heartbeatAck = 11;
 }
 
 /// The client constants.

@@ -89,7 +89,7 @@ class _WS {
 
       case _OPCodes.dispatch:
         if (this.client._options.disabledEvents.contains(json['t'])) break;
-        
+
         switch (json['t']) {
           case 'READY':
             this.sessionID = json['d']['session_id'];
