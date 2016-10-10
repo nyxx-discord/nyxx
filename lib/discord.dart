@@ -67,3 +67,5 @@ part 'src/objects/Webhook.dart';
 
 part 'src/errors/ClientNotReadyError.dart';
 part 'src/errors/HttpError.dart';
+part 'src/errors/InvalidTokenError.dart';
+part 'src/errors/InvalidShardError.dart';
