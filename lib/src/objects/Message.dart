@@ -71,6 +71,9 @@ class Message extends _BaseObj {
     this.createdAt =
         this._map['createdAt'] = this._client._util.getDate(this.id);
 
+    this.channel._cacheMessage(this);
+    this.channel.lastMessageID = this.id;
+
     if (this.channel is GuildChannel) {
       this.guild = this._map['guild'] = this.channel.guild;
       this.member = this._map['member'] = guild.members[this.author.id];

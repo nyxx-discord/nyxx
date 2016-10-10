@@ -56,6 +56,15 @@ class _EventController {
   /// Emitted when a user starts typing.
   StreamController<TypingEvent> onTyping;
 
+  /// Emitted when a role is updated.
+  StreamController<RoleCreateEvent> onRoleCreate;
+
+  /// Emitted when a role is created.
+  StreamController<RoleUpdateEvent> onRoleUpdate;
+
+  /// Emitted when a role is deleted.
+  StreamController<RoleDeleteEvent> onRoleDelete;
+
   /// Makes a new `EventController`.
   _EventController(Client client) {
     this.onReady = new StreamController.broadcast();
@@ -111,6 +120,15 @@ class _EventController {
 
     this.onTyping = new StreamController.broadcast();
     client.onTyping = this.onTyping.stream;
+
+    this.onRoleCreate = new StreamController.broadcast();
+    client.onRoleCreate = this.onRoleCreate.stream;
+
+    this.onRoleUpdate = new StreamController.broadcast();
+    client.onRoleUpdate = this.onRoleUpdate.stream;
+
+    this.onRoleDelete = new StreamController.broadcast();
+    client.onRoleDelete = this.onRoleDelete.stream;
   }
 
   /// Closes all streams.
@@ -133,6 +151,9 @@ class _EventController {
     await this.onGuildMemberRemove.close();
     await this.onPresenceUpdate.close();
     await this.onTyping.close();
+    await this.onRoleCreate.close();
+    await this.onRoleUpdate.close();
+    await this.onRoleDelete.close();
     return null;
   }
 }

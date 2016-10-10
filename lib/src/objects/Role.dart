@@ -23,13 +23,16 @@ class Role extends _BaseObj {
   /// Whether or not the role is mentionable.
   bool mentionable;
 
+  /// The role's guild.
+  Guild guild;
+
   /// The role's permissions.
   Permissions permissions;
 
   /// A timestamp for when the channel was created.
   DateTime createdAt;
 
-  Role._new(Client client, Map<String, dynamic> data) : super(client) {
+  Role._new(Client client, Map<String, dynamic> data, this.guild) : super(client) {
     this.id = this._map['id'] = data['id'];
     this.name = this._map['name'] = data['name'];
     this.position = this._map['position'] = data['position'];
@@ -47,4 +50,8 @@ class Role extends _BaseObj {
       this.color = this._map['color'] = data['color'];
     }
   }
+
+  /// Returns a string representation of this object.
+  @override
+  String toString() => this.name;
 }

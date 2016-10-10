@@ -21,6 +21,7 @@ class ChannelDeleteEvent {
           this.channel = new VoiceChannel._new(
               client, json['d'] as Map<String, dynamic>, guild);
         }
+        guild.channels.map.remove(channel.id);
         client.channels.map.remove(channel.id);
         client._events.onChannelDelete.add(this);
       }

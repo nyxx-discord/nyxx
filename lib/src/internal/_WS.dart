@@ -186,6 +186,18 @@ class _WS {
           case 'PRESENCE_UPDATE':
             new PresenceUpdateEvent._new(this.client, json);
             break;
+
+          case 'GUILD_ROLE_CREATE':
+            new RoleCreateEvent._new(this.client, json);
+            break;
+
+          case 'GUILD_ROLE_UPDATE':
+            new RoleUpdateEvent._new(this.client, json);
+            break;
+
+          case 'GUILD_ROLE_DELETE':
+            new RoleDeleteEvent._new(this.client, json);
+            break;
         }
         break;
     }

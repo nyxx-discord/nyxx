@@ -19,6 +19,7 @@ class ChannelUpdateEvent {
         this.newChannel = new VoiceChannel._new(
             client, json['d'] as Map<String, dynamic>, guild);
       }
+      guild.channels.map[newChannel.id] = newChannel;
       client.channels.map[newChannel.id] = newChannel;
       client._events.onChannelUpdate.add(this);
     }

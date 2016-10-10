@@ -21,6 +21,7 @@ class ChannelCreateEvent {
           this.channel = new VoiceChannel._new(
               client, json['d'] as Map<String, dynamic>, guild);
         }
+        guild.channels.map[channel.id] = channel;
         client.channels.map[channel.id] = channel;
         client._events.onChannelCreate.add(this);
       }

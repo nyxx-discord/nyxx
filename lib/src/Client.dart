@@ -90,6 +90,15 @@ class Client {
   /// Emitted when a user starts typing.
   Stream<TypingEvent> onTyping;
 
+  /// Emitted when a role is created.
+  Stream<RoleCreateEvent> onRoleCreate;
+
+  /// Emitted when a role is updated.
+  Stream<RoleUpdateEvent> onRoleUpdate;
+
+  /// Emitted when a role is deleted.
+  Stream<RoleDeleteEvent> onRoleDelete;
+
   /// Creates and logs in a new client.
   Client(this._token, [this._options]) {
     if (this._options == null) {

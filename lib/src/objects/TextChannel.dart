@@ -5,6 +5,9 @@ class TextChannel extends GuildChannel {
   /// The channel's topic.
   String topic;
 
+  /// A collection of messages sent to this channel.
+  Collection<Message> messages;
+
   /// The ID for the last message in the channel.
   String lastMessageID;
 
@@ -12,6 +15,14 @@ class TextChannel extends GuildChannel {
       : super._new(client, data, guild, "text") {
     this.topic = this._map['topic'] = data['topic'];
     this.lastMessageID = this._map['lastMessageID'] = data['last_message_id'];
+    this.messages = new Collection<Message>();
+  }
+
+  void _cacheMessage(Message message) {
+    if (this.messages.size >= this._client._options.messageCacheSize) {
+      this.messages.map.remove(this.messages.first.id);
+    }
+    this.messages.add(message);
   }
 
   /// Sends a message.

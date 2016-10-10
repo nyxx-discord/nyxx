@@ -34,6 +34,9 @@ part 'src/events/MessageEvent.dart';
 part 'src/events/MessageUpdateEvent.dart';
 part 'src/events/PresenceUpdateEvent.dart';
 part 'src/events/ReadyEvent.dart';
+part 'src/events/RoleCreateEvent.dart';
+part 'src/events/RoleDeleteEvent.dart';
+part 'src/events/RoleUpdateEvent.dart';
 part 'src/events/TypingEvent.dart';
 
 part 'src/objects/Attachment.dart';
