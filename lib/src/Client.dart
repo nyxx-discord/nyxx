@@ -30,7 +30,7 @@ class Client {
   bool ready = false;
 
   /// The current version.
-  String version = "0.11.1+dev";
+  String version = "0.12.0";
 
   /// The client's SS manager, null if the client is not sharded, [SSServer] if
   /// the current shard is 0, [SSClient] otherwise.
