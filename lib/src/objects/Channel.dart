@@ -20,7 +20,7 @@ class Channel extends _BaseObj {
 
   /// Deletes the channel.
   Future<Null> delete() async {
-    http.Response r = await this._client._http.delete("/channels/${this.id}");
+    await this._client._http.delete("/channels/${this.id}");
     return null;
   }
 }
