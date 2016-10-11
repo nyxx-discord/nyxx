@@ -149,7 +149,8 @@ class _Http {
   }
 
   /// Sends a POST request.
-  Future<http.Response> post(String uri, Object content, [bool beforeReady = false]) async {
+  Future<http.Response> post(String uri, Object content,
+      [bool beforeReady = false]) async {
     if (!this.client.ready && !beforeReady) throw new ClientNotReadyError();
     if (buckets[uri] == null) buckets[uri] = new _Bucket(uri);
 
@@ -167,7 +168,8 @@ class _Http {
   }
 
   /// Sends a PATCH request.
-  Future<http.Response> patch(String uri, Object content, [bool beforeReady = false]) async {
+  Future<http.Response> patch(String uri, Object content,
+      [bool beforeReady = false]) async {
     if (!this.client.ready && !beforeReady) throw new ClientNotReadyError();
     if (buckets[uri] == null) buckets[uri] = new _Bucket(uri);
 
