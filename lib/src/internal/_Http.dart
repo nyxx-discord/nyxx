@@ -22,8 +22,14 @@ class _HttpRequest {
       };
     } else if (this.method == "POST") {
       this.execute = () async {
-        return await this.client.post("${_Constants.host}$uri",
+        http.Response r = await this.client.post("${_Constants.host}$uri",
             body: JSON.encode(this.body), headers: this.headers);
+
+        if (http_utils.ResponseStatus.fromStatusCode(r.statusCode).family == http_utils.ResponseStatusFamily.SUCCESSFUL) {
+          return r;
+        } else {
+          print(r.statusCode);
+        }
       };
     } else if (this.method == "PATCH") {
       this.execute = () async {
@@ -75,7 +81,7 @@ class _Bucket {
                 isUtc: true)
             : null;
         this.timeDifference = new DateTime.now()
-            .difference(http_parser.parseHttpDate(r.headers['date']));
+            .difference(new http_utils.DateUtils().parseRfc822Date(r.headers['date']));
 
         if (r.statusCode == 429) {
           new Timer(
