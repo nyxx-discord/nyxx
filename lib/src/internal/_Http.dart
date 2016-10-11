@@ -109,6 +109,17 @@ class _Bucket {
   }
 }
 
+class _HttpResponse {
+  http.Response response;
+  Map<String, dynamic> json;
+
+  _HttpResponse(this.response) {
+    if (this.response.headers['content-type'] == "application/json") {
+      this.json = JSON.decode(this.response.body) as Map<String, dynamic>;
+    }
+  }
+}
+
 /// The HTTP manager for the client.
 class _Http {
   Client client;
@@ -131,7 +142,7 @@ class _Http {
   }
 
   /// Sends a GET request.
-  Future<http.Response> get(String uri, [bool beforeReady = false]) async {
+  Future<_HttpResponse> get(String uri, [bool beforeReady = false]) async {
     if (!this.client.ready && !beforeReady) throw new ClientNotReadyError();
     if (buckets[uri] == null) buckets[uri] = new _Bucket(uri);
 
@@ -140,7 +151,7 @@ class _Http {
       http_utils.ResponseStatus status =
           http_utils.ResponseStatus.fromStatusCode(r.statusCode);
       if (status.family == http_utils.ResponseStatusFamily.SUCCESSFUL) {
-        return r;
+        return new _HttpResponse(r);
       } else {
         throw new HttpError._new(r);
       }
@@ -149,7 +160,7 @@ class _Http {
   }
 
   /// Sends a POST request.
-  Future<http.Response> post(String uri, Object content,
+  Future<_HttpResponse> post(String uri, Object content,
       [bool beforeReady = false]) async {
     if (!this.client.ready && !beforeReady) throw new ClientNotReadyError();
     if (buckets[uri] == null) buckets[uri] = new _Bucket(uri);
@@ -159,7 +170,7 @@ class _Http {
       http_utils.ResponseStatus status =
           http_utils.ResponseStatus.fromStatusCode(r.statusCode);
       if (status.family == http_utils.ResponseStatusFamily.SUCCESSFUL) {
-        return r;
+        return new _HttpResponse(r);
       } else {
         throw new HttpError._new(r);
       }
@@ -168,7 +179,7 @@ class _Http {
   }
 
   /// Sends a PATCH request.
-  Future<http.Response> patch(String uri, Object content,
+  Future<_HttpResponse> patch(String uri, Object content,
       [bool beforeReady = false]) async {
     if (!this.client.ready && !beforeReady) throw new ClientNotReadyError();
     if (buckets[uri] == null) buckets[uri] = new _Bucket(uri);
@@ -178,7 +189,7 @@ class _Http {
       http_utils.ResponseStatus status =
           http_utils.ResponseStatus.fromStatusCode(r.statusCode);
       if (status.family == http_utils.ResponseStatusFamily.SUCCESSFUL) {
-        return r;
+        return new _HttpResponse(r);
       } else {
         throw new HttpError._new(r);
       }
@@ -187,7 +198,7 @@ class _Http {
   }
 
   /// Sends a DELETE request.
-  Future<http.Response> delete(String uri, [bool beforeReady = false]) async {
+  Future<_HttpResponse> delete(String uri, [bool beforeReady = false]) async {
     if (!this.client.ready && !beforeReady) throw new ClientNotReadyError();
     if (buckets[uri] == null) buckets[uri] = new _Bucket(uri);
 
@@ -196,7 +207,7 @@ class _Http {
       http_utils.ResponseStatus status =
           http_utils.ResponseStatus.fromStatusCode(r.statusCode);
       if (status.family == http_utils.ResponseStatusFamily.SUCCESSFUL) {
-        return r;
+        return new _HttpResponse(r);
       } else {
         throw new HttpError._new(r);
       }

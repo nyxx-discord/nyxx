@@ -143,9 +143,8 @@ class Client {
   Future<User> getUser(dynamic user) async {
     final String id = this._util.resolve('user', user);
 
-    final http.Response r = await this._http.get('/users/$id');
-    final res = JSON.decode(r.body) as Map<String, dynamic>;
-    return new User._new(this, res);
+    final _HttpResponse r = await this._http.get('/users/$id');
+    return new User._new(this, r.json);
   }
 
   /// Gets an [Invite] object.
@@ -153,9 +152,8 @@ class Client {
   /// Throws an [Exception] if the HTTP request errored.
   ///     Client.getInvite("invite code");
   Future<Invite> getInvite(String code) async {
-    final http.Response r = await this._http.get('/invites/$code');
-    final res = JSON.decode(r.body) as Map<String, dynamic>;
-    return new Invite._new(this, res);
+    final _HttpResponse r = await this._http.get('/invites/$code');
+    return new Invite._new(this, r.json);
   }
 
   /// Gets an [OAuth2Info] object.
@@ -165,9 +163,8 @@ class Client {
   Future<OAuth2Info> getOAuth2Info(dynamic app) async {
     final String id = this._util.resolve('app', app);
 
-    final http.Response r =
+    final _HttpResponse r =
         await this._http.get('/oauth2/authorize?client_id=$id&scope=bot');
-    final res = JSON.decode(r.body) as Map<String, dynamic>;
-    return new OAuth2Info._new(this, res);
+    return new OAuth2Info._new(this, r.json);
   }
 }
