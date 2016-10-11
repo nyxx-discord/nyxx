@@ -130,23 +130,19 @@ class Guild extends _BaseObj {
   /// Throws an [Exception] if the HTTP request errored.
   ///     Guild.getMember("user id");
   Future<Member> getMember(dynamic member) async {
-    if (this._client.ready) {
-      final String id = this._client._util.resolve('member', member);
+    final String id = this._client._util.resolve('member', member);
 
-      if (this.members[member] != null) {
-        return this.members[member];
-      } else {
-        final http.Response r =
-            await this._client._http.get('/guilds/${this.id}/members/$id');
-        final res = JSON.decode(r.body) as Map<String, dynamic>;
-
-        final Member m = new Member._new(this._client, res, this);
-        this.members.add(m);
-        this._map['members'] = this.members;
-        return m;
-      }
+    if (this.members[member] != null) {
+      return this.members[member];
     } else {
-      throw new ClientNotReadyError();
+      final http.Response r =
+          await this._client._http.get('/guilds/${this.id}/members/$id');
+      final res = JSON.decode(r.body) as Map<String, dynamic>;
+
+      final Member m = new Member._new(this._client, res, this);
+      this.members.add(m);
+      this._map['members'] = this.members;
+      return m;
     }
   }
 
@@ -156,24 +152,19 @@ class Guild extends _BaseObj {
   /// is a bot.
   ///     Guild.oauth2Authorize("app id");
   Future<Null> oauth2Authorize(dynamic app, [int permissions = 0]) async {
-    if (this._client.ready) {
-      if (!this._client.user.bot) {
-        final String id = this._client._util.resolve('app', app);
+    if (!this._client.user.bot) {
+      final String id = this._client._util.resolve('app', app);
 
-        await this._client._http.post(
-            '/oauth2/authorize?client_id=$id&scope=bot', <String, dynamic>{
-          "guild_id": this.id,
-          "permissions": permissions,
-          "authorize": true
-        });
+      await this._client._http.post(
+          '/oauth2/authorize?client_id=$id&scope=bot', <String, dynamic>{
+        "guild_id": this.id,
+        "permissions": permissions,
+        "authorize": true
+      });
 
-        return null;
-      } else {
-        throw new Exception(
-            "'oauth2Authorize' is only usable by user accounts.");
-      }
+      return null;
     } else {
-      throw new ClientNotReadyError();
+      throw new Exception("'oauth2Authorize' is only usable by user accounts.");
     }
   }
 }

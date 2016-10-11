@@ -116,33 +116,29 @@ class Message extends _BaseObj {
   /// Throws an [Exception] if the HTTP request errored.
   ///     Message.edit("My edited content!");
   Future<Message> edit(String content, [MessageOptions msgOptions]) async {
-    if (this._client.ready) {
-      MessageOptions options;
-      if (msgOptions == null) {
-        options = new MessageOptions();
-      } else {
-        options = msgOptions;
-      }
-
-      String newContent;
-      if (options.disableEveryone == true ||
-          (options.disableEveryone == null &&
-              this._client._options.disableEveryone)) {
-        newContent = content
-            .replaceAll("@everyone", "@\u200Beveryone")
-            .replaceAll("@here", "@\u200Bhere");
-      } else {
-        newContent = content;
-      }
-
-      final http.Response r = await this._client._http.patch(
-          '/channels/${this.channel.id}/messages/${this.id}',
-          <String, dynamic>{"content": newContent});
-      final res = JSON.decode(r.body) as Map<String, dynamic>;
-      return new Message._new(this._client, res);
+    MessageOptions options;
+    if (msgOptions == null) {
+      options = new MessageOptions();
     } else {
-      throw new ClientNotReadyError();
+      options = msgOptions;
     }
+
+    String newContent;
+    if (options.disableEveryone == true ||
+        (options.disableEveryone == null &&
+            this._client._options.disableEveryone)) {
+      newContent = content
+          .replaceAll("@everyone", "@\u200Beveryone")
+          .replaceAll("@here", "@\u200Bhere");
+    } else {
+      newContent = content;
+    }
+
+    final http.Response r = await this._client._http.patch(
+        '/channels/${this.channel.id}/messages/${this.id}',
+        <String, dynamic>{"content": newContent});
+    final res = JSON.decode(r.body) as Map<String, dynamic>;
+    return new Message._new(this._client, res);
   }
 
   /// Deletes the message.
@@ -150,15 +146,10 @@ class Message extends _BaseObj {
   /// Throws an [Exception] if the HTTP request errored.
   ///     Message.delete();
   Future<Null> delete() async {
-    if (this._client.ready) {
-      await this
-          ._client
-          ._http
-          .delete('/channels/${this.channel.id}/messages/${this.id}');
-
-      return null;
-    } else {
-      throw new ClientNotReadyError();
-    }
+    await this
+        ._client
+        ._http
+        .delete('/channels/${this.channel.id}/messages/${this.id}');
+    return null;
   }
 }

@@ -38,7 +38,7 @@ class GuildCreateEvent {
       if (match == true) {
         client.ready = true;
         if (client.user.bot) {
-          client._http.get('/oauth2/applications/@me').then((http.Response r) {
+          client._http.get('/oauth2/applications/@me', true).then((http.Response r) {
             final res = JSON.decode(r.body) as Map<String, dynamic>;
 
             if (r.statusCode == 200) {
