@@ -139,12 +139,7 @@ class Message extends _BaseObj {
           '/channels/${this.channel.id}/messages/${this.id}',
           <String, dynamic>{"content": newContent});
       final res = JSON.decode(r.body) as Map<String, dynamic>;
-
-      if (r.statusCode == 200) {
-        return new Message._new(this._client, res);
-      } else {
-        throw new HttpError(r);
-      }
+      return new Message._new(this._client, res);
     } else {
       throw new ClientNotReadyError();
     }
@@ -161,11 +156,7 @@ class Message extends _BaseObj {
           ._http
           .delete('/channels/${this.channel.id}/messages/${this.id}');
 
-      if (r.statusCode == 204) {
-        return true;
-      } else {
-        throw new HttpError(r);
-      }
+      return true;
     } else {
       throw new ClientNotReadyError();
     }

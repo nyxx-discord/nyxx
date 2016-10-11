@@ -22,14 +22,8 @@ class _HttpRequest {
       };
     } else if (this.method == "POST") {
       this.execute = () async {
-        http.Response r = await this.client.post("${_Constants.host}$uri",
+        return await this.client.post("${_Constants.host}$uri",
             body: JSON.encode(this.body), headers: this.headers);
-
-        if (http_utils.ResponseStatus.fromStatusCode(r.statusCode).family == http_utils.ResponseStatusFamily.SUCCESSFUL) {
-          return r;
-        } else {
-          print(r.statusCode);
-        }
       };
     } else if (this.method == "PATCH") {
       this.execute = () async {
@@ -80,8 +74,8 @@ class _Bucket {
                 int.parse(r.headers['x-ratelimit-reset']) * 1000,
                 isUtc: true)
             : null;
-        this.timeDifference = new DateTime.now()
-            .difference(new http_utils.DateUtils().parseRfc822Date(r.headers['date']));
+        this.timeDifference = new DateTime.now().difference(
+            new http_utils.DateUtils().parseRfc822Date(r.headers['date']));
 
         if (r.statusCode == 429) {
           new Timer(
@@ -142,7 +136,13 @@ class _Http {
 
     await for (http.Response r in buckets[uri]
         .push(new _HttpRequest(this.client, uri, "GET", this.headers, null))) {
-      return r;
+      http_utils.ResponseStatus status =
+          http_utils.ResponseStatus.fromStatusCode(r.statusCode);
+      if (status.family == http_utils.ResponseStatusFamily.SUCCESSFUL) {
+        return r;
+      } else {
+        throw new HttpError._new(r);
+      }
     }
     return null;
   }
@@ -157,7 +157,13 @@ class _Http {
 
     await for (http.Response r in buckets[uri].push(
         new _HttpRequest(this.client, uri, "POST", this.headers, content))) {
-      return r;
+      http_utils.ResponseStatus status =
+          http_utils.ResponseStatus.fromStatusCode(r.statusCode);
+      if (status.family == http_utils.ResponseStatusFamily.SUCCESSFUL) {
+        return r;
+      } else {
+        throw new HttpError._new(r);
+      }
     }
     return null;
   }
@@ -172,7 +178,13 @@ class _Http {
 
     await for (http.Response r in buckets[uri].push(
         new _HttpRequest(this.client, uri, "PATCH", this.headers, content))) {
-      return r;
+      http_utils.ResponseStatus status =
+          http_utils.ResponseStatus.fromStatusCode(r.statusCode);
+      if (status.family == http_utils.ResponseStatusFamily.SUCCESSFUL) {
+        return r;
+      } else {
+        throw new HttpError._new(r);
+      }
     }
     return null;
   }
@@ -186,7 +198,13 @@ class _Http {
 
     await for (http.Response r in buckets[uri].push(
         new _HttpRequest(this.client, uri, "DELETE", this.headers, null))) {
-      return r;
+      http_utils.ResponseStatus status =
+          http_utils.ResponseStatus.fromStatusCode(r.statusCode);
+      if (status.family == http_utils.ResponseStatusFamily.SUCCESSFUL) {
+        return r;
+      } else {
+        throw new HttpError._new(r);
+      }
     }
     return null;
   }

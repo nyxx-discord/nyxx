@@ -12,10 +12,15 @@ class HttpError implements Exception {
   int message;
 
   /// Constructs a new [HttpError].
-  HttpError(http.Response r) {
+  HttpError._new(http.Response r) {
     final body = JSON.decode(r.body) as Map<String, dynamic>;
     this.statusCode = r.statusCode;
     this.code = body['code'];
     this.message = body['message'];
   }
+
+  /// Returns a string representation of this object.
+  @override
+  String toString() =>
+      http_utils.ResponseStatus.fromStatusCode(this.statusCode).reason;
 }

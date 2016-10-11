@@ -140,14 +140,10 @@ class Guild extends _BaseObj {
             await this._client._http.get('/guilds/${this.id}/members/$id');
         final res = JSON.decode(r.body) as Map<String, dynamic>;
 
-        if (r.statusCode == 200) {
-          final Member m = new Member._new(this._client, res, this);
-          this.members.add(m);
-          this._map['members'] = this.members;
-          return m;
-        } else {
-          throw new HttpError(r);
-        }
+        final Member m = new Member._new(this._client, res, this);
+        this.members.add(m);
+        this._map['members'] = this.members;
+        return m;
       }
     } else {
       throw new ClientNotReadyError();
@@ -171,11 +167,7 @@ class Guild extends _BaseObj {
           "authorize": true
         });
 
-        if (r.statusCode == 200) {
-          return true;
-        } else {
-          throw new HttpError(r);
-        }
+        return true;
       } else {
         throw new Exception(
             "'oauth2Authorize' is only usable by user accounts.");
