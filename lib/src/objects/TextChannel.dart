@@ -48,14 +48,13 @@ class TextChannel extends GuildChannel {
       newContent = content;
     }
 
-    final http.Response r = await this._client._http.post(
+    final _HttpResponse r = await this._client._http.post(
         '/channels/${this.id}/messages', <String, dynamic>{
       "content": newContent,
       "tts": newOptions.tts,
       "nonce": newOptions.nonce
     });
-    final res = JSON.decode(r.body) as Map<String, dynamic>;
-    return new Message._new(this._client, res);
+    return new Message._new(this._client, r.json);
   }
 
   /// Gets a [Message] object. Only usable by bot accounts.
@@ -67,10 +66,9 @@ class TextChannel extends GuildChannel {
     if (this._client.user.bot) {
       final String id = this._client._util.resolve('message', message);
 
-      final http.Response r =
+      final _HttpResponse r =
           await this._client._http.get('/channels/${this.id}/messages/$id');
-      final res = JSON.decode(r.body) as Map<String, dynamic>;
-      return new Message._new(this._client, res);
+      return new Message._new(this._client, r.json);
     } else {
       throw new Exception("'getMessage' is only usable by bot accounts.");
     }

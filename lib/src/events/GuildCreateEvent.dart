@@ -40,13 +40,8 @@ class GuildCreateEvent {
         if (client.user.bot) {
           client._http
               .get('/oauth2/applications/@me', true)
-              .then((http.Response r) {
-            final res = JSON.decode(r.body) as Map<String, dynamic>;
-
-            if (r.statusCode == 200) {
-              client.app = new ClientOAuth2Application._new(client, res);
-            }
-
+              .then((_HttpResponse r) {
+            client.app = new ClientOAuth2Application._new(client, r.json);
             new ReadyEvent._new(client);
           });
         }
