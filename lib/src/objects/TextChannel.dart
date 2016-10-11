@@ -56,12 +56,7 @@ class TextChannel extends GuildChannel {
         "nonce": newOptions.nonce
       });
       final res = JSON.decode(r.body) as Map<String, dynamic>;
-
-      if (r.statusCode == 200) {
-        return new Message._new(this._client, res);
-      } else {
-        throw new HttpError(r);
-      }
+      return new Message._new(this._client, res);
     } else {
       throw new ClientNotReadyError();
     }
@@ -80,12 +75,7 @@ class TextChannel extends GuildChannel {
         final http.Response r =
             await this._client._http.get('/channels/${this.id}/messages/$id');
         final res = JSON.decode(r.body) as Map<String, dynamic>;
-
-        if (r.statusCode == 200) {
-          return new Message._new(this._client, res);
-        } else {
-          throw new HttpError(r);
-        }
+        return new Message._new(this._client, res);
       } else {
         throw new Exception("'getMessage' is only usable by bot accounts.");
       }

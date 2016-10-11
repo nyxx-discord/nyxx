@@ -146,12 +146,7 @@ class Client {
 
       final http.Response r = await this._http.get('/users/$id');
       final res = JSON.decode(r.body) as Map<String, dynamic>;
-
-      if (r.statusCode == 200) {
-        return new User._new(this, res);
-      } else {
-        throw new HttpError(r);
-      }
+      return new User._new(this, res);
     } else {
       throw new ClientNotReadyError();
     }
@@ -165,12 +160,7 @@ class Client {
     if (this.ready) {
       final http.Response r = await this._http.get('/invites/$code');
       final res = JSON.decode(r.body) as Map<String, dynamic>;
-
-      if (r.statusCode == 200) {
-        return new Invite._new(this, res);
-      } else {
-        throw new HttpError(r);
-      }
+      return new Invite._new(this, res);
     } else {
       throw new ClientNotReadyError();
     }
@@ -187,12 +177,7 @@ class Client {
       final http.Response r =
           await this._http.get('/oauth2/authorize?client_id=$id&scope=bot');
       final res = JSON.decode(r.body) as Map<String, dynamic>;
-
-      if (r.statusCode == 200) {
-        return new OAuth2Info._new(this, res);
-      } else {
-        throw new HttpError(r);
-      }
+      return new OAuth2Info._new(this, res);
     } else {
       throw new ClientNotReadyError();
     }
