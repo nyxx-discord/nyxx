@@ -126,7 +126,7 @@ class Client {
   /// Destroys the websocket connection, SS connection or server, and all streams.
   Future<Null> destroy() async {
     await this._ws.socket.close();
-    this._http.client.close();
+    this._http.httpClient.close();
     await this._events.destroy();
     if (this.ss is SSServer) {
       await this.ss.close();
@@ -141,15 +141,11 @@ class Client {
   /// Throws an [Exception] if the HTTP request errored.
   ///     Client.getUser("user id");
   Future<User> getUser(dynamic user) async {
-    if (this.ready) {
-      final String id = this._util.resolve('user', user);
+    final String id = this._util.resolve('user', user);
 
-      final http.Response r = await this._http.get('/users/$id');
-      final res = JSON.decode(r.body) as Map<String, dynamic>;
-      return new User._new(this, res);
-    } else {
-      throw new ClientNotReadyError();
-    }
+    final http.Response r = await this._http.get('/users/$id');
+    final res = JSON.decode(r.body) as Map<String, dynamic>;
+    return new User._new(this, res);
   }
 
   /// Gets an [Invite] object.
@@ -157,13 +153,9 @@ class Client {
   /// Throws an [Exception] if the HTTP request errored.
   ///     Client.getInvite("invite code");
   Future<Invite> getInvite(String code) async {
-    if (this.ready) {
-      final http.Response r = await this._http.get('/invites/$code');
-      final res = JSON.decode(r.body) as Map<String, dynamic>;
-      return new Invite._new(this, res);
-    } else {
-      throw new ClientNotReadyError();
-    }
+    final http.Response r = await this._http.get('/invites/$code');
+    final res = JSON.decode(r.body) as Map<String, dynamic>;
+    return new Invite._new(this, res);
   }
 
   /// Gets an [OAuth2Info] object.
@@ -171,15 +163,11 @@ class Client {
   /// Throws an [Exception] if the HTTP request errored
   ///     Client.getOAuth2Info("app id");
   Future<OAuth2Info> getOAuth2Info(dynamic app) async {
-    if (this.ready) {
-      final String id = this._util.resolve('app', app);
+    final String id = this._util.resolve('app', app);
 
-      final http.Response r =
-          await this._http.get('/oauth2/authorize?client_id=$id&scope=bot');
-      final res = JSON.decode(r.body) as Map<String, dynamic>;
-      return new OAuth2Info._new(this, res);
-    } else {
-      throw new ClientNotReadyError();
-    }
+    final http.Response r =
+        await this._http.get('/oauth2/authorize?client_id=$id&scope=bot');
+    final res = JSON.decode(r.body) as Map<String, dynamic>;
+    return new OAuth2Info._new(this, res);
   }
 }

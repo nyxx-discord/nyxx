@@ -19,7 +19,7 @@ class _WS {
 
   /// Makes a new WS manager.
   _WS(this.client) {
-    this.client._http.get('/gateway').then((http.Response r) {
+    this.client._http.get('/gateway', true).then((http.Response r) {
       this.gateway = JSON.decode(r.body)['url'];
       this.connect();
     });

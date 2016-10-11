@@ -30,36 +30,32 @@ class TextChannel extends GuildChannel {
   /// Throws an [Exception] if the HTTP request errored.
   ///     Channel.sendMessage("My content!");
   Future<Message> sendMessage(String content, [MessageOptions options]) async {
-    if (this._client.ready) {
-      MessageOptions newOptions;
-      if (options == null) {
-        newOptions = new MessageOptions();
-      } else {
-        newOptions = options;
-      }
-
-      String newContent;
-      if (newOptions.disableEveryone == true ||
-          (newOptions.disableEveryone == null &&
-              this._client._options.disableEveryone)) {
-        newContent = content
-            .replaceAll("@everyone", "@\u200Beveryone")
-            .replaceAll("@here", "@\u200Bhere");
-      } else {
-        newContent = content;
-      }
-
-      final http.Response r = await this._client._http.post(
-          '/channels/${this.id}/messages', <String, dynamic>{
-        "content": newContent,
-        "tts": newOptions.tts,
-        "nonce": newOptions.nonce
-      });
-      final res = JSON.decode(r.body) as Map<String, dynamic>;
-      return new Message._new(this._client, res);
+    MessageOptions newOptions;
+    if (options == null) {
+      newOptions = new MessageOptions();
     } else {
-      throw new ClientNotReadyError();
+      newOptions = options;
     }
+
+    String newContent;
+    if (newOptions.disableEveryone == true ||
+        (newOptions.disableEveryone == null &&
+            this._client._options.disableEveryone)) {
+      newContent = content
+          .replaceAll("@everyone", "@\u200Beveryone")
+          .replaceAll("@here", "@\u200Bhere");
+    } else {
+      newContent = content;
+    }
+
+    final http.Response r = await this._client._http.post(
+        '/channels/${this.id}/messages', <String, dynamic>{
+      "content": newContent,
+      "tts": newOptions.tts,
+      "nonce": newOptions.nonce
+    });
+    final res = JSON.decode(r.body) as Map<String, dynamic>;
+    return new Message._new(this._client, res);
   }
 
   /// Gets a [Message] object. Only usable by bot accounts.
@@ -68,19 +64,15 @@ class TextChannel extends GuildChannel {
   /// is not a bot.
   ///     Channel.getMessage("message id");
   Future<Message> getMessage(dynamic message) async {
-    if (this._client.ready) {
-      if (this._client.user.bot) {
-        final String id = this._client._util.resolve('message', message);
+    if (this._client.user.bot) {
+      final String id = this._client._util.resolve('message', message);
 
-        final http.Response r =
-            await this._client._http.get('/channels/${this.id}/messages/$id');
-        final res = JSON.decode(r.body) as Map<String, dynamic>;
-        return new Message._new(this._client, res);
-      } else {
-        throw new Exception("'getMessage' is only usable by bot accounts.");
-      }
+      final http.Response r =
+          await this._client._http.get('/channels/${this.id}/messages/$id');
+      final res = JSON.decode(r.body) as Map<String, dynamic>;
+      return new Message._new(this._client, res);
     } else {
-      throw new ClientNotReadyError();
+      throw new Exception("'getMessage' is only usable by bot accounts.");
     }
   }
 }
