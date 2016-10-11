@@ -155,19 +155,19 @@ class Guild extends _BaseObj {
   /// Throws an [Exception] if the HTTP request errored or if the client user
   /// is a bot.
   ///     Guild.oauth2Authorize("app id");
-  Future<bool> oauth2Authorize(dynamic app, [int permissions = 0]) async {
+  Future<Null> oauth2Authorize(dynamic app, [int permissions = 0]) async {
     if (this._client.ready) {
       if (!this._client.user.bot) {
         final String id = this._client._util.resolve('app', app);
 
-        final http.Response r = await this._client._http.post(
+        await this._client._http.post(
             '/oauth2/authorize?client_id=$id&scope=bot', <String, dynamic>{
           "guild_id": this.id,
           "permissions": permissions,
           "authorize": true
         });
 
-        return true;
+        return null;
       } else {
         throw new Exception(
             "'oauth2Authorize' is only usable by user accounts.");

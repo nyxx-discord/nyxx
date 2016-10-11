@@ -64,7 +64,7 @@ class _Bucket {
   }
 
   void execute(_HttpRequest request) {
-    if (this.ratelimitRemaining > 0) {
+    if (this.ratelimitRemaining == null || this.ratelimitRemaining > 0) {
       request.execute().then((http.Response r) {
         this.ratelimitRemaining = r.headers['x-ratelimit-remaining'] != null
             ? int.parse(r.headers['x-ratelimit-remaining'])

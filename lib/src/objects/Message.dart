@@ -149,14 +149,14 @@ class Message extends _BaseObj {
   ///
   /// Throws an [Exception] if the HTTP request errored.
   ///     Message.delete();
-  Future<bool> delete() async {
+  Future<Null> delete() async {
     if (this._client.ready) {
-      final http.Response r = await this
+      await this
           ._client
           ._http
           .delete('/channels/${this.channel.id}/messages/${this.id}');
 
-      return true;
+      return null;
     } else {
       throw new ClientNotReadyError();
     }
