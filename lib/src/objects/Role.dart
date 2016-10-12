@@ -44,6 +44,7 @@ class Role extends _BaseObj {
         new Permissions.fromInt(this._client, data['permissions']);
     this.createdAt =
         this._map['createdAt'] = this._client._util.getDate(this.id);
+    this._map['key'] = this.id;
 
     if (data['color'] == 0) {
       this.color = this._map['color'] = null;

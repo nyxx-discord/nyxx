@@ -36,5 +36,6 @@ class Attachment extends _BaseObj {
     this.width = this._map['width'] = data['width'];
     this.createdAt =
         this._map['createdAt'] = this._client._util.getDate(this.id);
+    this._map['key'] = this.id;
   }
 }

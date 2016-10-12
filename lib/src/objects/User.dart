@@ -39,6 +39,7 @@ class User extends _BaseObj {
     this.mention = this._map['mention'] = "<@${this.id}>";
     this.createdAt =
         this._map['createdAt'] = this._client._util.getDate(this.id);
+    this._map['key'] = this.id;
 
     // This will not be set at all in some cases.
     if (data['bot'] == true) {

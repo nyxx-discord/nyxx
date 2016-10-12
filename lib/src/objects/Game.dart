@@ -15,5 +15,6 @@ class Game extends _BaseObj {
     this.name = this._map['name'] = data['name'];
     this.type = this._map['type'] = data['type'];
     this.url = this._map['url'] = data['url'];
+    this._map['key'] = this.name;
   }
 }

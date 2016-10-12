@@ -11,6 +11,7 @@ class EmbedProvider extends _BaseObj {
   EmbedProvider._new(Client client, Map<String, dynamic> data) : super(client) {
     this.name = this._map['name'] = data['name'];
     this.url = this._map['url'] = data['url'];
+    this._map['key'] = this.url;
   }
 
   /// Returns a string representation of this object.

@@ -86,6 +86,7 @@ class Guild extends _BaseObj {
       this.ownerID = this._map['ownerID'] = data['owner_id'];
       this.createdAt =
           this._map['createdAt'] = this._client._util.getDate(this.id);
+      this._map['key'] = this.id;
 
       this.roles = new Collection<Role>();
       data['roles'].forEach((Map<String, dynamic> o) {

@@ -20,6 +20,7 @@ class InviteGuild extends _BaseObj {
     this.spash = this._map['spash'] = data['splash_hash'];
     this.createdAt =
         this._map['createdAt'] = this._client._util.getDate(this.id);
+    this._map['key'] = this.id;
   }
 
   /// Returns a string representation of this object.
