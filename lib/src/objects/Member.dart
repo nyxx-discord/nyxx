@@ -57,4 +57,16 @@ class Member extends User {
   User toUser() {
     return this._user;
   }
+
+  /// Bans the member and optionally deletes [deleteMessageDays] days worth of messages.
+  Future<Null> ban([int deleteMessageDays = 0]) async {
+    await this._client._http.put("/guilds/${this.guild.id}/bans/${this.id}", {"delete-message-days": deleteMessageDays});
+    return null;
+  }
+
+  /// Kicks the member
+  Future<Null> kick() async {
+    await this._client._http.delete("/guilds/${this.guild.id}/members/${this.id}");
+    return null;
+  }
 }
