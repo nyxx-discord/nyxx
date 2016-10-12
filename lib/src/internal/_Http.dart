@@ -31,6 +31,11 @@ class _HttpRequest {
         return await this.httpClient.patch("${_Constants.host}$uri",
             body: JSON.encode(this.body), headers: this.headers);
       };
+    } else if (this.method == "PUT") {
+      this.execute = () async {
+        return await this.httpClient.put("${_Constants.host}$uri",
+            body: JSON.encode(this.body), headers: this.headers);
+      };
     } else if (this.method == "DELETE") {
       this.execute = () async {
         return await this
@@ -186,6 +191,25 @@ class _Http {
 
     await for (http.Response r in buckets[uri].push(new _HttpRequest(
         this.httpClient, uri, "PATCH", this.headers, content))) {
+      http_utils.ResponseStatus status =
+          http_utils.ResponseStatus.fromStatusCode(r.statusCode);
+      if (status.family == http_utils.ResponseStatusFamily.SUCCESSFUL) {
+        return new _HttpResponse(r);
+      } else {
+        throw new HttpError._new(r);
+      }
+    }
+    return null;
+  }
+
+  /// Sends a PUT request.
+  Future<_HttpResponse> put(String uri, Object content,
+      [bool beforeReady = false]) async {
+    if (!this.client.ready && !beforeReady) throw new ClientNotReadyError();
+    if (buckets[uri] == null) buckets[uri] = new _Bucket(uri);
+
+    await for (http.Response r in buckets[uri].push(new _HttpRequest(
+        this.httpClient, uri, "PUT", this.headers, content))) {
       http_utils.ResponseStatus status =
           http_utils.ResponseStatus.fromStatusCode(r.statusCode);
       if (status.family == http_utils.ResponseStatusFamily.SUCCESSFUL) {
