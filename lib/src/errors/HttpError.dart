@@ -22,5 +22,7 @@ class HttpError implements Exception {
   /// Returns a string representation of this object.
   @override
   String toString() =>
+      this.statusCode.toString() +
+      ": " +
       http_utils.ResponseStatus.fromStatusCode(this.statusCode).reason;
 }
