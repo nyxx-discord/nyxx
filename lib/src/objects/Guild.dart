@@ -124,7 +124,7 @@ class Guild extends _BaseObj {
     return this.name;
   }
 
-  /// Gets a [Member] object. Adds it to `Client.guilds["guild id"].members` if
+  /// Gets a [Member] object. Adds it to `Guild.members` if
   /// not already there.
   ///
   /// Throws an [Exception] if the HTTP request errored.
