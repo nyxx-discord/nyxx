@@ -84,9 +84,10 @@ class _Bucket {
             new http_utils.DateUtils().parseRfc822Date(r.headers['date']));
 
         if (r.statusCode == 429) {
+          print("429 ${this.uri}");
           new Timer(
               new Duration(
-                  milliseconds: int.parse(r.headers['retry-after']) + 100),
+                  milliseconds: int.parse(r.headers['retry-after']) + 500),
               () => this.execute(request));
         } else {
           this.waiting = false;
@@ -100,7 +101,7 @@ class _Bucket {
       final Duration waitTime =
           this.ratelimitReset.difference(new DateTime.now().toUtc()) +
               this.timeDifference +
-              new Duration(milliseconds: 100);
+              new Duration(milliseconds: 1000);
       if (waitTime.isNegative) {
         this.ratelimitRemaining = 1;
         this.execute(request);

@@ -11,7 +11,7 @@ class GuildUpdateEvent {
   GuildUpdateEvent._new(Client client, Map<String, dynamic> json) {
     if (client.ready) {
       this.newGuild = new Guild._new(client, json['d'] as Map<String, dynamic>);
-      this.oldGuild = client.guilds.map[this.newGuild.id];
+      this.oldGuild = client.guilds[this.newGuild.id];
       this.newGuild.channels = this.oldGuild.channels;
       this.newGuild.members = this.oldGuild.members;
 
