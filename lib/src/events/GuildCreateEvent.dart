@@ -5,7 +5,7 @@ class GuildCreateEvent {
   /// The guild created.
   Guild guild;
 
-  GuildCreateEvent._new(Client client, Map<String, dynamic> json) {
+  GuildCreateEvent._new(Client client, Map<String, dynamic> json, _WS ws) {
     this.guild =
         new Guild._new(client, json['d'] as Map<String, dynamic>, true, true);
     client.guilds.add(guild);
@@ -30,12 +30,15 @@ class GuildCreateEvent {
     if (!client.ready) {
       bool match = true;
       client.guilds.forEach((Guild o) {
-        if (o == null) {
-          match = false;
-        }
+        if (o == null) match = false;
       });
 
-      if (match == true) {
+      bool match2 = true;
+      ws.shards.forEach((_Shard s) {
+        if (!s.ready) match = false;
+      });
+
+      if (match && match2) {
         client.ready = true;
         if (client.user.bot) {
           client._http
@@ -44,6 +47,8 @@ class GuildCreateEvent {
             client.app = new ClientOAuth2Application._new(client, r.json);
             new ReadyEvent._new(client);
           });
+        } else {
+          new ReadyEvent._new(client);
         }
       }
     } else {
