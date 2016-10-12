@@ -208,8 +208,8 @@ class _Http {
     if (!this.client.ready && !beforeReady) throw new ClientNotReadyError();
     if (buckets[uri] == null) buckets[uri] = new _Bucket(uri);
 
-    await for (http.Response r in buckets[uri].push(new _HttpRequest(
-        this.httpClient, uri, "PUT", this.headers, content))) {
+    await for (http.Response r in buckets[uri].push(
+        new _HttpRequest(this.httpClient, uri, "PUT", this.headers, content))) {
       http_utils.ResponseStatus status =
           http_utils.ResponseStatus.fromStatusCode(r.statusCode);
       if (status.family == http_utils.ResponseStatusFamily.SUCCESSFUL) {
