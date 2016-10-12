@@ -6,3 +6,5 @@ class _BaseObj {
 
   _BaseObj(this._client);
 }
+
+class _UnsetString implements String {}

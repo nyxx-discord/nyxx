@@ -13,4 +13,19 @@ class VoiceChannel extends GuildChannel {
     this.bitrate = this._map['bitrate'] = data['bitrate'];
     this.userLimit = this._map['userLimit'] = data['user_limit'];
   }
+
+  /// Edits the channel.
+  Future<TextChannel> edit(
+      {String name: null,
+      int bitrate: null,
+      int position: null,
+      int userLimit: null}) async {
+    _HttpResponse r = await this._client._http.patch("/channels/${this.id}", {
+      "name": name != null ? name : this.name,
+      "bitrate": bitrate != null ? bitrate : this.bitrate,
+      "user_limit": userLimit != null ? userLimit : this.userLimit,
+      "position": position != null ? position : this.position
+    });
+    return new TextChannel._new(this._client, r.json, this.guild);
+  }
 }

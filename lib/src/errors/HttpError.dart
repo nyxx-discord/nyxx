@@ -11,9 +11,12 @@ class HttpError implements Exception {
   /// Discord's message, if provided.
   int message;
 
+  /// The response body.
+  Map<String, dynamic> body;
+
   /// Constructs a new [HttpError].
   HttpError._new(http.Response r) {
-    final body = JSON.decode(r.body) as Map<String, dynamic>;
+    this.body = JSON.decode(r.body) as Map<String, dynamic>;
     this.statusCode = r.statusCode;
     this.code = body['code'];
     this.message = body['message'];

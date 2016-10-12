@@ -57,6 +57,20 @@ class TextChannel extends GuildChannel {
     return new Message._new(this._client, r.json);
   }
 
+  /// Edits the channel.
+  Future<TextChannel> edit({
+    String name: null,
+    String topic: null,
+    int position: null,
+  }) async {
+    _HttpResponse r = await this._client._http.patch("/channels/${this.id}", {
+      "name": name != null ? name : this.name,
+      "topic": topic != null ? topic : this.topic,
+      "position": position != null ? position : this.position
+    });
+    return new TextChannel._new(this._client, r.json, this.guild);
+  }
+
   /// Gets a [Message] object. Only usable by bot accounts.
   ///
   /// Throws an [Exception] if the HTTP request errored or if the client user

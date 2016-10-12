@@ -15,7 +15,7 @@ class Guild extends _BaseObj {
   String iconURL;
 
   /// The guild's afk channel ID, null if not set.
-  String afkChannelID;
+  VoiceChannel afkChannel;
 
   /// The guild's voice region.
   String region;
@@ -48,7 +48,7 @@ class Guild extends _BaseObj {
   bool embedEnabled;
 
   /// Whether or not the guild is available.
-  bool available = true;
+  bool available;
 
   /// The guild owner's ID
   String ownerID;
@@ -63,7 +63,7 @@ class Guild extends _BaseObj {
   Collection<Role> roles;
 
   Guild._new(Client client, Map<String, dynamic> data,
-      [this.available, bool guildCreate = false])
+      [this.available = true, bool guildCreate = false])
       : super(client) {
     if (this.available) {
       this.name = this._map['name'] = data['name'];
@@ -71,7 +71,6 @@ class Guild extends _BaseObj {
       this.icon = this._map['icon'] = data['icon'];
       this.iconURL = this._map['iconURL'] =
           "https://discordapp.com/api/v6/guilds/${this.id}/icons/${this.icon}.jpg";
-      this.afkChannelID = this._map['afkChannelID'] = data['afk_channel_id'];
       this.region = this._map['region'] = data['region'];
       this.embedChannelID =
           this._map['embedChannelID'] = data['embed_channel_id'];
@@ -116,6 +115,9 @@ class Guild extends _BaseObj {
         this.defaultChannel = this.channels[this.id];
         this._map['defaultChannel'] = this.defaultChannel;
       }
+
+      this.afkChannel =
+          this._map['afkChannel'] = this.channels[data['afk_channel_id']];
     }
   }
 
@@ -123,6 +125,42 @@ class Guild extends _BaseObj {
   @override
   String toString() {
     return this.name;
+  }
+
+  /// Bans a user by ID.
+  Future<Null> ban(String id, [int deleteMessageDays = 0]) async {
+    await this._client._http.put("/guilds/${this.id}/bans/$id",
+        {"delete-message-days": deleteMessageDays});
+    return null;
+  }
+
+  /// Unbans a user by ID.
+  Future<Null> unban(String id) async {
+    await this._client._http.delete("/guilds/${this.id}/bans/$id");
+    return null;
+  }
+
+  /// Edits the guild.
+  Future<Guild> edit(
+      {String name: null,
+      int verificationLevel: null,
+      int notificationLevel: null,
+      VoiceChannel afkChannel: null,
+      int afkTimeout: null,
+      String icon: null}) async {
+    _HttpResponse r = await this._client._http.patch("/guilds/${this.id}", {
+      "name": name != null ? name : this.name,
+      "verification_level": verificationLevel != null
+          ? verificationLevel
+          : this.verificationLevel,
+      "default_message_notifications": notificationLevel != null
+          ? notificationLevel
+          : this.notificationLevel,
+      "afk_channel_id": afkChannel != null ? afkChannel : this.afkChannel,
+      "afk_timeout": afkTimeout != null ? afkTimeout : this.afkTimeout,
+      "icon": icon != null ? icon : this.icon
+    });
+    return new Guild._new(this._client, r.json);
   }
 
   /// Gets a [Member] object. Adds it to `Guild.members` if
