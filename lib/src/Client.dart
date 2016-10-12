@@ -115,7 +115,7 @@ class Client {
     this._ws = new _WS(this);
 
     if (this._options.shardCount > 1) {
-      if (this._options.shardId == 0) {
+      if (this._options.shardIds.contains(0)) {
         this.ss = new SSServer(this);
       } else {
         this.ss = new SSClient(this);
@@ -125,7 +125,7 @@ class Client {
 
   /// Destroys the websocket connection, SS connection or server, and all streams.
   Future<Null> destroy() async {
-    await this._ws.socket.close();
+    await this._ws.close();
     this._http.httpClient.close();
     await this._events.destroy();
     if (this.ss is SSServer) {

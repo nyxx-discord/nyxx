@@ -5,8 +5,8 @@ class ClientOptions {
   /// Whether or not to disable @everyone and @here mentions at a global level.
   bool disableEveryone;
 
-  /// The current shard, starting at 0.
-  int shardId;
+  /// A list of shards for the client to run.
+  List<int> shardIds;
 
   /// The total number of shards.
   int shardCount;
@@ -25,7 +25,7 @@ class ClientOptions {
   /// Makes a new `ClientOptions` object.
   ClientOptions(
       {this.disableEveryone: false,
-      this.shardId: 0,
+      this.shardIds: const [0],
       this.shardCount: 1,
       this.disabledEvents: const [],
       this.messageCacheSize: 200,

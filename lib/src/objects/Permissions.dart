@@ -84,7 +84,7 @@ class Permissions extends _BaseObj {
         (this.raw & _Constants.permissions['MANAGE_ROLES_OR_PERMISSIONS']) > 0;
     this.manageWebhooks = this._map['manageWebhooks'] =
         (this.raw & _Constants.permissions['MANAGE_WEBHOOKS']) > 0;
-    
+
     this._map['key'] = this.raw;
   }
 }
