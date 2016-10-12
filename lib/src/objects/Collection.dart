@@ -22,7 +22,7 @@ class Collection<T> {
 
   /// Adds a value to a collection.
   void add(dynamic value) {
-    this.map[value.id] = value;
+    this.map[value['key']] = value;
   }
 
   /// Finds a single item where `item.property == value`.
