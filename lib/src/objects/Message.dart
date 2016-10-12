@@ -70,6 +70,7 @@ class Message extends _BaseObj {
         this._map['roleMentions'] = data['mention_roles'] as List<String>;
     this.createdAt =
         this._map['createdAt'] = this._client._util.getDate(this.id);
+    this._map['key'] = this.id;
 
     this.channel._cacheMessage(this);
     this.channel.lastMessageID = this.id;

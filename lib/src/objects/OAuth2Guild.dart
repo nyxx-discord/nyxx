@@ -24,6 +24,7 @@ class OAuth2Guild extends _BaseObj {
     this.name = this._map['name'] = data['name'];
     this.createdAt =
         this._map['createdAt'] = this._client._util.getDate(this.id);
+    this._map['key'] = this.id;
   }
 
   /// Returns a string representation of this object.

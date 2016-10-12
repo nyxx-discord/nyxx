@@ -30,6 +30,7 @@ class OAuth2Application extends _BaseObj {
         this._map['rpcOrigins'] = data['rpcOrigins'] as List<String>;
     this.createdAt =
         this._map['createdAt'] = this._client._util.getDate(this.id);
+    this._map['key'] = this.id;
   }
 
   /// Returns a string representation of this object.

@@ -20,5 +20,6 @@ class EmbedThumbnail extends _BaseObj {
     this.proxyUrl = this._map['proxyUrl'] = data['proxy_url'];
     this.height = this._map['height'] = data['height'];
     this.width = this._map['width'] = data['width'];
+    this._map['key'] = this.url;
   }
 }

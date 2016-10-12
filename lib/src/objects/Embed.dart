@@ -24,6 +24,7 @@ class Embed extends _BaseObj {
     this.url = this._map['url'] = data['url'];
     this.type = this._map['type'] = data['type'];
     this.description = this._map['description'] = data['description'];
+    this._map['key'] = this.url;
 
     if (data.containsKey('thumbnail')) {
       this.thumbnail = this._map['thumbnail'] = new EmbedThumbnail._new(

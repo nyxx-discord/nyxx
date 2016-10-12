@@ -22,6 +22,7 @@ class OAuth2Info extends _BaseObj {
         new User._new(client, data['bot'] as Map<String, dynamic>);
     this.me = this._map['me'] =
         new User._new(client, data['user'] as Map<String, dynamic>);
+    this._map['key'] = this.app.id;
 
     this.guilds = new Collection<Guild>();
     data['guilds'].forEach((Map<String, dynamic> v) {

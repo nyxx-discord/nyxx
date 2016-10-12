@@ -16,6 +16,7 @@ class Channel extends _BaseObj {
     this.id = this._map['id'] = data['id'];
     this.createdAt =
         this._map['createdAt'] = this._client._util.getDate(this.id);
+    this._map['key'] = this.id;
   }
 
   /// Deletes the channel.
