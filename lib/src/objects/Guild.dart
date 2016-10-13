@@ -127,6 +127,23 @@ class Guild extends _BaseObj {
     return this.name;
   }
 
+  /// Creates a channel.
+  Future<dynamic> createChannel(String name, String type,
+      {int bitrate: 64000, int userLimit: 0}) async {
+    _HttpResponse r = await this._client._http.post("/guilds/$id/channels", {
+      "name": name,
+      "type": type,
+      "bitrate": bitrate,
+      "user_limit": userLimit
+    });
+
+    if (r.json['type'] == 0) {
+      return new TextChannel._new(_client, r.json, this);
+    } else {
+      return new VoiceChannel._new(_client, r.json, this);
+    }
+  }
+
   /// Bans a user by ID.
   Future<Null> ban(String id, [int deleteMessageDays = 0]) async {
     await this._client._http.put("/guilds/${this.id}/bans/$id",
