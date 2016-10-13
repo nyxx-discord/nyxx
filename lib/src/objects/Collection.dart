@@ -18,7 +18,7 @@ class Collection<T> {
   T get last => this.list.last;
 
   /// Gets a item by it's key.
-  T operator [](String key) => this.map[key];
+  T operator [](String key) => this.map[key.toString()];
 
   /// Adds a value to a collection.
   void add(dynamic value) {
