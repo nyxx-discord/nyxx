@@ -13,8 +13,7 @@ class PresenceUpdateEvent {
     if (data['user'].length > 1) {
       data['user'] = data['user'] as Map<String, dynamic>;
     } else {
-      data['user'] =
-          client.users[data['user']['id']]._raw;
+      data['user'] = client.users[data['user']['id']]._raw;
     }
 
     this.newMember = new Member._new(client, data);
