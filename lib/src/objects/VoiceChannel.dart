@@ -15,7 +15,7 @@ class VoiceChannel extends GuildChannel {
   }
 
   /// Edits the channel.
-  Future<TextChannel> edit(
+  Future<VoiceChannel> edit(
       {String name: null,
       int bitrate: null,
       int position: null,
@@ -26,6 +26,6 @@ class VoiceChannel extends GuildChannel {
       "user_limit": userLimit != null ? userLimit : this.userLimit,
       "position": position != null ? position : this.position
     });
-    return new TextChannel._new(this._client, r.json, this.guild);
+    return new VoiceChannel._new(this._client, r.json, this.guild);
   }
 }
