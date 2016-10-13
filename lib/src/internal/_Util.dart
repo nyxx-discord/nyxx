@@ -13,9 +13,7 @@ class _Util {
     if (to == "channel") {
       if (object is Message) {
         return object.channel.id;
-      } else if (object is GuildChannel) {
-        return object.id;
-      } else if (object is PrivateChannel) {
+      } else if (object is Channel) {
         return object.id;
       } else if (object is Guild) {
         return object.defaultChannel.id;

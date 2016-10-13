@@ -1,15 +1,20 @@
 part of discord;
 
-/// Sent when a channel is created, can be a [PrivateChannel].
+/// Sent when a channel is created..
 class ChannelCreateEvent {
-  /// The channel that was created, either a [GuildChannel] or [PrivateChannel].
+  /// The channel that was created, either a [GuildChannel], [DMChannel], or [GroupDMChannel].
   dynamic channel;
 
   ChannelCreateEvent._new(Client client, Map<String, dynamic> json) {
     if (client.ready) {
       if (json['d']['type'] == 1) {
         this.channel =
-            new PrivateChannel._new(client, json['d'] as Map<String, dynamic>);
+            new DMChannel._new(client, json['d'] as Map<String, dynamic>);
+        client.channels.map[channel.id] = channel;
+        client._events.onChannelCreate.add(this);
+      } else if (json['d']['type'] == 3) {
+        this.channel =
+            new GroupDMChannel._new(client, json['d'] as Map<String, dynamic>);
         client.channels.map[channel.id] = channel;
         client._events.onChannelCreate.add(this);
       } else {

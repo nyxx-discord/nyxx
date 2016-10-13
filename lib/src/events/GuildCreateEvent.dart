@@ -34,7 +34,7 @@ class GuildCreateEvent {
       });
 
       bool match2 = true;
-      ws.shards.forEach((_Shard s) {
+      ws.client.shards.forEach((Shard s) {
         if (!s.ready) match = false;
       });
 

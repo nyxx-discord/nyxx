@@ -36,6 +36,9 @@ class Client {
   /// the current shard is 0, [SSClient] otherwise.
   dynamic ss;
 
+  /// The client's internal shards.
+  Collection<Shard> shards;
+
   /// Emitted when the client is ready.
   Stream<ReadyEvent> onReady;
 
@@ -108,6 +111,7 @@ class Client {
     this.guilds = new Collection<Guild>();
     this.channels = new Collection<dynamic>();
     this.users = new Collection<User>();
+    this.shards = new Collection<Shard>();
 
     this._http = new _Http(this);
     this._events = new _EventController(this);
