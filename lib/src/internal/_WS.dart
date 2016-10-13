@@ -2,6 +2,7 @@ part of discord;
 
 class _Shard {
   int id;
+  int heartbeatInterval;
   _WS ws;
   WebSocket socket;
   int sequence;
@@ -41,6 +42,7 @@ class _Shard {
   /// Sends a heartbeat packet.
   void heartbeat() {
     this.send("HEARTBEAT", this.sequence);
+    new Timer(heartbeatInterval, (Timer t) => heartbeat());
   }
 
   Future<Null> handleMsg(String msg, bool resume) async {
@@ -50,11 +52,10 @@ class _Shard {
       this.sequence = json['s'];
     }
 
+    if (json['op'] == 11) print(11);
+
     switch (json['op']) {
       case _OPCodes.hello:
-        const Duration heartbeatInterval = const Duration(milliseconds: 41250);
-        new Timer.periodic(heartbeatInterval, (Timer t) => this.heartbeat());
-
         if (this.sessionId == null || !resume) {
           this.send("IDENTIFY", <String, dynamic>{
             "token": this.ws.client._token,
@@ -70,6 +71,9 @@ class _Shard {
             "seq": this.sequence
           });
         }
+        this.heartbeatInterval =
+            new Duration(milliseconds: json['d']['heartbeat_interval']);
+        new Timer.periodic(heartbeatInterval, (Timer t) => this.heartbeat());
         break;
 
       case _OPCodes.invalidSession:
