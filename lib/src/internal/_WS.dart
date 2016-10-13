@@ -2,7 +2,7 @@ part of discord;
 
 class _Shard {
   int id;
-  int heartbeatInterval;
+  Duration heartbeatInterval;
   _WS ws;
   WebSocket socket;
   int sequence;
@@ -42,7 +42,7 @@ class _Shard {
   /// Sends a heartbeat packet.
   void heartbeat() {
     this.send("HEARTBEAT", this.sequence);
-    new Timer(heartbeatInterval, (Timer t) => heartbeat());
+    new Timer(heartbeatInterval, heartbeat);
   }
 
   Future<Null> handleMsg(String msg, bool resume) async {
