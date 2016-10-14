@@ -5,6 +5,10 @@ class ClientOptions {
   /// Whether or not to disable @everyone and @here mentions at a global level.
   bool disableEveryone;
 
+  /// Whether or not to automatically shard the client if the default shard
+  /// values are untouched.
+  bool autoShard;
+
   /// A list of shards for the client to run.
   List<int> shardIds;
 
@@ -25,6 +29,7 @@ class ClientOptions {
   /// Makes a new `ClientOptions` object.
   ClientOptions(
       {this.disableEveryone: false,
+      this.autoShard: true,
       this.shardIds: const [0],
       this.shardCount: 1,
       this.disabledEvents: const [],
