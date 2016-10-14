@@ -96,7 +96,8 @@ class Guild extends _BaseObj {
       });
       this._map['roles'] = this.roles;
 
-      this.shard = this._client.shards["${(int.parse(this.id) >> 22) % this._client._options.shardCount}"];
+      this.shard = this._client.shards[
+          "${(int.parse(this.id) >> 22) % this._client._options.shardCount}"];
 
       if (guildCreate) {
         this.members = new Collection<Member>();
