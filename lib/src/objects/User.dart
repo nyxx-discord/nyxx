@@ -2,6 +2,7 @@ part of discord;
 
 /// A user.
 class User extends _BaseObj {
+  Timer _typing;
   Map<String, dynamic> _raw;
 
   /// The user's username.
@@ -111,6 +112,27 @@ class User extends _BaseObj {
     } else {
       throw new Exception("'getMessage' is only usable by bot accounts.");
     }
+  }
+
+  /// Starts typing.
+  Future<Null> startTyping() async {
+    await this
+        ._client
+        ._http
+        .post("/channels/${await _getChannel()}/typing", {});
+    return null;
+  }
+
+  /// Loops `startTyping` until `stopTypingLoop` is called.
+  void startTypingLoop() {
+    startTyping();
+    this._typing = new Timer.periodic(
+        const Duration(seconds: 7), (Timer t) => startTyping());
+  }
+
+  /// Stops a typing loop if one is running.
+  void stopTypingLoop() {
+    this._typing?.cancel();
   }
 
   /// Returns a string representation of this object.

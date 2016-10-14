@@ -2,6 +2,8 @@ part of discord;
 
 /// A text channel.
 class TextChannel extends GuildChannel {
+  Timer _typing;
+
   /// The channel's topic.
   String topic;
 
@@ -86,5 +88,23 @@ class TextChannel extends GuildChannel {
     } else {
       throw new Exception("'getMessage' is only usable by bot accounts.");
     }
+  }
+
+  /// Starts typing.
+  Future<Null> startTyping() async {
+    await this._client._http.post("/channels/$id/typing", {});
+    return null;
+  }
+
+  /// Loops `startTyping` until `stopTypingLoop` is called.
+  void startTypingLoop() {
+    startTyping();
+    this._typing = new Timer.periodic(
+        const Duration(seconds: 7), (Timer t) => startTyping());
+  }
+
+  /// Stops a typing loop if one is running.
+  void stopTypingLoop() {
+    this._typing?.cancel();
   }
 }
