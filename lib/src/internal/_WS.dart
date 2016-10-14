@@ -16,8 +16,15 @@ class _WS {
     this.client._http.get("/gateway/bot", true).then((_HttpResponse r) {
       this.gateway = r.json['url'];
       this.shardCount = r.json['shards'];
-      for (int i = 0; i < shardCount; i++) {
-        setupShard(i);
+      if (this.client._options.shardCount == 1 &&
+          this.client._options.shardIds == const [0]) {
+        for (int i = 0; i < shardCount; i++) {
+          setupShard(i);
+        }
+      } else {
+        for (int shardId in this.client._options.shardIds) {
+          setupShard(shardId);
+        }
       }
       this.connectShard(0);
     }).catchError((err) {
