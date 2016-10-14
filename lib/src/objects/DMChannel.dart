@@ -20,10 +20,10 @@ class DMChannel extends Channel {
 
     if (data['recipients'] != null) {
       this.recipient =
-        new User._new(client, data['recipients'][0] as Map<String, dynamic>);
+          new User._new(client, data['recipients'][0] as Map<String, dynamic>);
     } else {
       this.recipient =
-        new User._new(client, data['recipient'] as Map<String, dynamic>);
+          new User._new(client, data['recipient'] as Map<String, dynamic>);
     }
   }
 

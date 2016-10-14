@@ -51,9 +51,8 @@ class User extends _BaseObj {
   /// Gets the [DMChannel] for the user.
   Future<DMChannel> getChannel() async {
     try {
-      return _client.channels.values
-          .firstWhere(
-              (dynamic c) => c is DMChannel && c.recipient.id == this.id);
+      return _client.channels.values.firstWhere(
+          (dynamic c) => c is DMChannel && c.recipient.id == this.id);
     } catch (err) {
       _HttpResponse r = await _client._http
           .post("/users/@me/channels", {"recipient_id": this.id});
@@ -107,10 +106,8 @@ class User extends _BaseObj {
       DMChannel channel = await getChannel();
       String channelId = channel.id;
 
-      final _HttpResponse r = await this
-          ._client
-          ._http
-          .get('/channels/$channelId/messages/$id');
+      final _HttpResponse r =
+          await this._client._http.get('/channels/$channelId/messages/$id');
       return new Message._new(this._client, r.json);
     } else {
       throw new Exception("'getMessage' is only usable by bot accounts.");
@@ -122,10 +119,7 @@ class User extends _BaseObj {
     DMChannel channel = await getChannel();
     String channelId = channel.id;
 
-    await this
-        ._client
-        ._http
-        .post("/channels/$channelId/typing", {});
+    await this._client._http.post("/channels/$channelId/typing", {});
     return null;
   }
 
