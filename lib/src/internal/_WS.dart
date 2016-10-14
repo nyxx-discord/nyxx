@@ -2,7 +2,7 @@ part of discord;
 
 /// The WS manager for the client.
 class _WS {
-  bool bot;
+  bool bot = false;
 
   /// The base websocket URL.
   String gateway;
