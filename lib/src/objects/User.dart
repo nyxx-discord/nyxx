@@ -48,6 +48,8 @@ class User extends _BaseObj {
     } else {
       this._map['bot'] = false;
     }
+
+    client.users.add(this);
   }
 
   Future<DMChannel> _getChannel() async {

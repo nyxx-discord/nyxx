@@ -19,9 +19,6 @@ class PresenceUpdateEvent {
 
       this.newMember = new Member._new(client, data);
       this.oldMember = newMember.guild.members[newMember.id];
-
-      this.newMember.guild.members.add(this.newMember);
-      client.users.add(this.newMember.toUser());
       client._events.onPresenceUpdate.add(this);
     }
   }

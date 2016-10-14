@@ -10,7 +10,6 @@ class RoleCreateEvent {
       final Guild guild = client.guilds[json['d']['guild_id']];
       this.role = new Role._new(
           client, json['d']['role'] as Map<String, dynamic>, guild);
-      guild.roles.add(role);
       client._events.onRoleCreate.add(this);
     }
   }

@@ -13,7 +13,6 @@ class GuildBanRemoveEvent {
       this.guild = client.guilds.map[json['d']['guild_id']];
       this.user =
           new User._new(client, json['d']['user'] as Map<String, dynamic>);
-      client.users.map[user.id] = user;
       client._events.onGuildBanRemove.add(this);
     }
   }

@@ -14,7 +14,6 @@ class RoleUpdateEvent {
       this.oldRole = guild.roles[json['d']['role']['id']];
       this.newRole = new Role._new(
           client, json['d']['role'] as Map<String, dynamic>, guild);
-      guild.roles.map[newRole.id] = newRole;
       client._events.onRoleUpdate.add(this);
     }
   }

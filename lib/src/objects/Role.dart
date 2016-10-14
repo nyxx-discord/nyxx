@@ -51,6 +51,8 @@ class Role extends _BaseObj {
     } else {
       this.color = this._map['color'] = data['color'];
     }
+
+    this.guild.roles.add(this);
   }
 
   /// Returns a string representation of this object.
