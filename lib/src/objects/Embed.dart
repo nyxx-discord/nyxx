@@ -21,17 +21,16 @@ class Embed extends _BaseObj {
   EmbedProvider provider;
 
   Embed._new(Client client, Map<String, dynamic> data) : super(client) {
-    this.url = this._map['url'] = data['url'];
-    this.type = this._map['type'] = data['type'];
-    this.description = this._map['description'] = data['description'];
-    this._map['key'] = this.url;
+    this.url = data['url'];
+    this.type = data['type'];
+    this.description = data['description'];
 
     if (data.containsKey('thumbnail')) {
-      this.thumbnail = this._map['thumbnail'] = new EmbedThumbnail._new(
+      this.thumbnail = new EmbedThumbnail._new(
           this._client, data['thumbnail'] as Map<String, dynamic>);
     }
     if (data.containsKey('provider')) {
-      this.provider = this._map['provider'] = new EmbedProvider._new(
+      this.provider = new EmbedProvider._new(
           this._client, data['provider'] as Map<String, dynamic>);
     }
   }

@@ -43,17 +43,17 @@ class _WS {
 
   void setupShard(int shardId) {
     Shard shard = new Shard._new(this, shardId);
-    this.client.shards.add(shard);
+    this.client.shards[shard.id] = shard;
 
     shard.onReady.stream.listen((Shard s) {
       if (!client.ready) {
         bool match = true;
-        client.guilds.forEach((Guild o) {
+        client.guilds.forEach((String id, Guild o) {
           if (o == null) match = false;
         });
 
         bool match2 = true;
-        client.shards.forEach((Shard s) {
+        client.shards.forEach((int id, Shard s) {
           if (!s.ready) match = false;
         });
 
@@ -77,14 +77,14 @@ class _WS {
   }
 
   Future<Null> close() async {
-    this.client.shards.forEach((Shard shard) async {
+    this.client.shards.forEach((int id, Shard shard) async {
       await shard._socket.close();
     });
     return null;
   }
 
   void connectShard(int index) {
-    this.client.shards.list[index]._connect();
+    this.client.shards.values.toList()[index]._connect();
     if (index + 1 != this.client._options.shardIds.length)
       new Timer(new Duration(seconds: 6), () => connectShard(index + 1));
   }

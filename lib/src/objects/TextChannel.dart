@@ -8,23 +8,23 @@ class TextChannel extends GuildChannel {
   String topic;
 
   /// A collection of messages sent to this channel.
-  Collection<Message> messages;
+  LinkedHashMap<String, Message> messages;
 
   /// The ID for the last message in the channel.
   String lastMessageID;
 
   TextChannel._new(Client client, Map<String, dynamic> data, Guild guild)
       : super._new(client, data, guild, "text") {
-    this.topic = this._map['topic'] = data['topic'];
-    this.lastMessageID = this._map['lastMessageID'] = data['last_message_id'];
-    this.messages = new Collection<Message>();
+    this.topic = data['topic'];
+    this.lastMessageID = data['last_message_id'];
+    this.messages = new Map<String, Message>();
   }
 
   void _cacheMessage(Message message) {
-    if (this.messages.size >= this._client._options.messageCacheSize) {
-      this.messages.map.remove(this.messages.first.id);
+    if (this.messages.length >= this._client._options.messageCacheSize) {
+      this.messages.remove(this.messages.values.toList().first.id);
     }
-    this.messages.add(message);
+    this.messages[message.id] = message;
   }
 
   /// Sends a message.

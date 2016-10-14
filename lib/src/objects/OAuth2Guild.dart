@@ -18,13 +18,11 @@ class OAuth2Guild extends _BaseObj {
   DateTime createdAt;
 
   OAuth2Guild._new(Client client, Map<String, dynamic> data) : super(client) {
-    this.permissions = this._map['permissions'] = data['permissions'];
-    this.icon = this._map['icon'] = data['icon'];
-    this.id = this._map['id'] = data['id'];
-    this.name = this._map['name'] = data['name'];
-    this.createdAt =
-        this._map['createdAt'] = this._client._util.getDate(this.id);
-    this._map['key'] = this.id;
+    this.permissions = data['permissions'];
+    this.icon = data['icon'];
+    this.id = data['id'];
+    this.name = data['name'];
+    this.createdAt = this._client._util.getDate(this.id);
   }
 
   /// Returns a string representation of this object.

@@ -7,8 +7,8 @@ class GuildDeleteEvent {
 
   GuildDeleteEvent._new(Client client, Map<String, dynamic> json) {
     if (client.ready) {
-      this.guild = client.guilds.map[json['d']['id']];
-      client.guilds.map.remove(json['d']['id']);
+      this.guild = client.guilds[json['d']['id']];
+      client.guilds.remove(json['d']['id']);
       client._events.onGuildDelete.add(this);
     }
   }

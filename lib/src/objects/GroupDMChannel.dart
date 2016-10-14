@@ -8,29 +8,28 @@ class GroupDMChannel extends Channel {
   String lastMessageID;
 
   /// A collection of messages sent to this channel.
-  Collection<Message> messages;
+  LinkedHashMap<String, Message> messages;
 
   /// The recipients.
-  Collection recipients;
+  Map<String, User> recipients;
 
   GroupDMChannel._new(Client client, Map<String, dynamic> data)
       : super._new(client, data, "private") {
-    this.lastMessageID = this._map['lastMessageID'] = data['last_message_id'];
-    this.messages = new Collection<Message>();
+    this.lastMessageID = data['last_message_id'];
+    this.messages = new Map<String, Message>();
 
-    this.recipients = new Collection();
+    this.recipients = new Map<String, User>();
     data['recipients'].forEach((Map<String, dynamic> o) {
       final User user = new User._new(client, o);
-      this.recipients.map[user.id] = user;
+      this.recipients[user.id] = user;
     });
-    this._map['recipients'] = this.recipients;
   }
 
   void _cacheMessage(Message message) {
-    if (this.messages.size >= this._client._options.messageCacheSize) {
-      this.messages.map.remove(this.messages.first.id);
+    if (this.messages.length >= this._client._options.messageCacheSize) {
+      this.messages.remove(this.messages.values.toList().first.id);
     }
-    this.messages.add(message);
+    this.messages[message.id] = message;
   }
 
   /// Sends a message.

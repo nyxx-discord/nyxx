@@ -7,26 +7,26 @@ class DMChannel extends Channel {
   /// The ID for the last message in the channel.
   String lastMessageID;
 
-  /// A collection of messages sent to this channel.
-  Collection<Message> messages;
+  /// A map of messages sent to this channel.
+  LinkedHashMap<String, Message> messages;
 
   /// The recipient.
   User recipient;
 
   DMChannel._new(Client client, Map<String, dynamic> data)
       : super._new(client, data, "private") {
-    this.lastMessageID = this._map['lastMessageID'] = data['last_message_id'];
-    this.messages = new Collection<Message>();
+    this.lastMessageID = data['last_message_id'];
+    this.messages = new Map<String, Message>();
 
-    this.recipient = this._map['recipient'] =
+    this.recipient =
         new User._new(client, data['recipients'][0] as Map<String, dynamic>);
   }
 
   void _cacheMessage(Message message) {
-    if (this.messages.size >= this._client._options.messageCacheSize) {
-      this.messages.map.remove(this.messages.first.id);
+    if (this.messages.length >= this._client._options.messageCacheSize) {
+      this.messages.remove(this.messages.values.toList().first.id);
     }
-    this.messages.add(message);
+    this.messages[message.id] = message;
   }
 
   /// Sends a message.

@@ -9,7 +9,7 @@ class RoleDeleteEvent {
     if (client.ready) {
       final Guild guild = client.guilds[json['d']['guild_id']];
       this.role = guild.roles[json['d']['role_id']];
-      guild.roles.map.remove(role.id);
+      guild.roles.remove(role.id);
       client._events.onRoleDelete.add(this);
     }
   }

@@ -12,11 +12,10 @@ class Invite extends _BaseObj {
   InviteChannel channel;
 
   Invite._new(Client client, Map<String, dynamic> data) : super(client) {
-    this.code = this._map['code'] = data['code'];
-    this.guild = this._map['guild'] = new InviteGuild._new(
+    this.code = data['code'];
+    this.guild = new InviteGuild._new(
         this._client, data['guild'] as Map<String, dynamic>);
-    this.channel = this._map['channel'] = new InviteChannel._new(
+    this.channel = new InviteChannel._new(
         this._client, data['channel'] as Map<String, dynamic>);
-    this._map['key'] = this.code;
   }
 }

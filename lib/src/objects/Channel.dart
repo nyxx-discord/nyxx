@@ -13,12 +13,10 @@ class Channel extends _BaseObj {
 
   Channel._new(Client client, Map<String, dynamic> data, this.type)
       : super(client) {
-    this.id = this._map['id'] = data['id'];
-    this.createdAt =
-        this._map['createdAt'] = this._client._util.getDate(this.id);
-    this._map['key'] = this.id;
+    this.id = data['id'];
+    this.createdAt = this._client._util.getDate(this.id);
 
-    client.channels.add(this);
+    client.channels[this.id] = this;
   }
 
   /// Deletes the channel.

@@ -34,25 +34,23 @@ class Role extends _BaseObj {
 
   Role._new(Client client, Map<String, dynamic> data, this.guild)
       : super(client) {
-    this.id = this._map['id'] = data['id'];
-    this.name = this._map['name'] = data['name'];
-    this.position = this._map['position'] = data['position'];
-    this.hoist = this._map['hoist'] = data['hoist'];
-    this.managed = this._map['managed'] = data['managed'];
-    this.mentionable = this._map['mentionable'] = data['mentionable'];
-    this.permissions = this._map['permissions'] =
+    this.id = data['id'];
+    this.name = data['name'];
+    this.position = data['position'];
+    this.hoist = data['hoist'];
+    this.managed = data['managed'];
+    this.mentionable = data['mentionable'];
+    this.permissions =
         new Permissions.fromInt(this._client, data['permissions']);
-    this.createdAt =
-        this._map['createdAt'] = this._client._util.getDate(this.id);
-    this._map['key'] = this.id;
+    this.createdAt = this._client._util.getDate(this.id);
 
     if (data['color'] == 0) {
-      this.color = this._map['color'] = null;
+      this.color = null;
     } else {
-      this.color = this._map['color'] = data['color'];
+      this.color = data['color'];
     }
 
-    this.guild.roles.add(this);
+    this.guild.roles[this.id] = this;
   }
 
   /// Returns a string representation of this object.

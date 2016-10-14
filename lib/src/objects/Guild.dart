@@ -54,13 +54,13 @@ class Guild extends _BaseObj {
   String ownerID;
 
   /// The guild's members.
-  Collection<Member> members;
+  Map<String, Member> members;
 
   /// The guild's channels.
-  Collection<GuildChannel> channels;
+  Map<String, GuildChannel> channels;
 
   /// The guild's roles.
-  Collection<Role> roles;
+  Map<String, Role> roles;
 
   /// The shard that the guild is on.
   Shard shard;
@@ -69,44 +69,40 @@ class Guild extends _BaseObj {
       [this.available = true, bool guildCreate = false])
       : super(client) {
     if (this.available) {
-      this.name = this._map['name'] = data['name'];
-      this.id = this._map['id'] = data['id'];
-      this.icon = this._map['icon'] = data['icon'];
-      this.iconURL = this._map['iconURL'] =
+      this.name = data['name'];
+      this.id = data['id'];
+      this.icon = data['icon'];
+      this.iconURL =
           "https://discordapp.com/api/v6/guilds/${this.id}/icons/${this.icon}.jpg";
-      this.region = this._map['region'] = data['region'];
-      this.embedChannelID =
-          this._map['embedChannelID'] = data['embed_channel_id'];
-      this.afkTimeout = this._map['afkTimeout'] = data['afk_timeout'];
-      this.memberCount = this._map['memberCount'] = data['member_count'];
-      this.verificationLevel =
-          this._map['verificationLevel'] = data['verification_level'];
-      this.notificationLevel = this._map['notificationLevel'] =
-          data['default_message_notifications'];
-      this.mfaLevel = this._map['mfaLevel'] = data['mfa_level'];
-      this.embedEnabled = this._map['embedEnabled'] = data['embed_enabled'];
-      this.ownerID = this._map['ownerID'] = data['owner_id'];
-      this.createdAt =
-          this._map['createdAt'] = this._client._util.getDate(this.id);
-      this._map['key'] = this.id;
+      this.region = data['region'];
+      this.embedChannelID = data['embed_channel_id'];
+      this.afkTimeout = data['afk_timeout'];
+      this.memberCount = data['member_count'];
+      this.verificationLevel = data['verification_level'];
+      this.notificationLevel = data['default_message_notifications'];
+      this.mfaLevel = data['mfa_level'];
+      this.embedEnabled = data['embed_enabled'];
+      this.ownerID = data['owner_id'];
+      this.createdAt = this._client._util.getDate(this.id);
+      this.id;
 
-      this.roles = new Collection<Role>();
+      this.roles = new Map<String, Role>();
       data['roles'].forEach((Map<String, dynamic> o) {
         new Role._new(this._client, o, this);
       });
-      this._map['roles'] = this.roles;
+      this.roles;
 
       this.shard = this._client.shards[
           "${(int.parse(this.id) >> 22) % this._client._options.shardCount}"];
 
       if (guildCreate) {
-        this.members = new Collection<Member>();
-        this.channels = new Collection<GuildChannel>();
+        this.members = new Map<String, Member>();
+        this.channels = new Map<String, GuildChannel>();
 
         data['members'].forEach((Map<String, dynamic> o) {
           new Member._new(client, o, this);
         });
-        this._map['members'] = this.members;
+        this.members;
 
         data['channels'].forEach((Map<String, dynamic> o) {
           if (o['type'] == 0) {
@@ -115,25 +111,24 @@ class Guild extends _BaseObj {
             new VoiceChannel._new(client, o, this);
           }
         });
-        this._map['channels'] = this.channels;
+        this.channels;
 
         data['presences'].forEach((Map<String, dynamic> o) {
           Member member = this.members[o['user']['id']];
-          member.status = member._map['status'] = o['status'];
+          member.status = o['status'];
           if (o['game'] != null) {
-            member.game = member._map['game'] =
+            member.game =
                 new Game._new(client, o['game'] as Map<String, dynamic>);
           }
         });
 
         this.defaultChannel = this.channels[this.id];
-        this._map['defaultChannel'] = this.defaultChannel;
+        this.defaultChannel;
       }
 
-      this.afkChannel =
-          this._map['afkChannel'] = this.channels[data['afk_channel_id']];
+      this.afkChannel = this.channels[data['afk_channel_id']];
 
-      client.guilds.add(this);
+      client.guilds[this.id] = this;
     }
   }
 
@@ -211,8 +206,8 @@ class Guild extends _BaseObj {
           await this._client._http.get('/guilds/${this.id}/members/$id');
 
       final Member m = new Member._new(this._client, r.json, this);
-      this.members.add(m);
-      this._map['members'] = this.members;
+      this.members[m.id] = m;
+      this.members;
       return m;
     }
   }

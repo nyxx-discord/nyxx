@@ -16,10 +16,9 @@ class EmbedThumbnail extends _BaseObj {
 
   EmbedThumbnail._new(Client client, Map<String, dynamic> data)
       : super(client) {
-    this.url = this._map['url'] = data['url'];
-    this.proxyUrl = this._map['proxyUrl'] = data['proxy_url'];
-    this.height = this._map['height'] = data['height'];
-    this.width = this._map['width'] = data['width'];
-    this._map['key'] = this.url;
+    this.url = data['url'];
+    this.proxyUrl = data['proxy_url'];
+    this.height = data['height'];
+    this.width = data['width'];
   }
 }

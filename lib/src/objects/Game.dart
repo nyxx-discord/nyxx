@@ -12,9 +12,8 @@ class Game extends _BaseObj {
   String url;
 
   Game._new(Client client, Map<String, dynamic> data) : super(client) {
-    this.name = this._map['name'] = data['name'];
-    this.type = this._map['type'] = data['type'];
-    this.url = this._map['url'] = data['url'];
-    this._map['key'] = this.name;
+    this.name = data['name'];
+    this.type = data['type'];
+    this.url = data['url'];
   }
 }

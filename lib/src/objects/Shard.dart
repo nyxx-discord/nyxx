@@ -21,16 +21,13 @@ class Shard extends _BaseObj {
   StreamController<Shard> onError;
 
   Shard._new(_WS ws, this.id) : super(ws.client) {
-    this._map['id'] = this._map['key'] = this.id;
     this._ws = ws;
-    this.onReady =
-        this._map['onReady'] = new StreamController<Shard>.broadcast();
-    this.onError =
-        this._map['onError'] = new StreamController<Shard>.broadcast();
+    this.onReady = new StreamController<Shard>.broadcast();
+    this.onError = new StreamController<Shard>.broadcast();
   }
 
   void _connect([bool resume = true]) {
-    this.ready = this._map['ready'] = false;
+    this.ready = false;
     if (this._socket != null) {
       this._socket.close();
     }
@@ -115,7 +112,7 @@ class Shard extends _BaseObj {
 
             json['d']['guilds'].forEach((Map<String, dynamic> o) {
               if (this._ws.client.user.bot) {
-                this._ws.client.guilds.map[o['id']] = null;
+                this._ws.client.guilds[o['id']] = null;
               } else {
                 new Guild._new(this._ws.client, o, true, true);
               }
@@ -129,7 +126,7 @@ class Shard extends _BaseObj {
               }
             });
 
-            this.ready = this._map['ready'] = true;
+            this.ready = true;
             this.onReady.add(this);
             break;
 

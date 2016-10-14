@@ -2,14 +2,32 @@ part of discord;
 
 /// Sent when a message is updated.
 class MessageUpdateEvent {
+  /// The old message, if cached.
+  Message oldMessage;
+
   /// The updated message, if cached.
-  Message message;
+  Message newMessage;
+
+  /// The message's ID.
+  String id;
 
   MessageUpdateEvent._new(Client client, Map<String, dynamic> json) {
     if (client.ready) {
-      this.message =
-          new Message._new(client, json['d'] as Map<String, dynamic>);
-      client._events.onMessageUpdate.add(this);
+      if (client.channels[json['d']['channel_id']].messages[json['d']['id']] !=
+          null) {
+        this.oldMessage =
+            client.channels[json['d']['channel_id']].messages[json['d']['id']];
+        Map<String, dynamic> data = oldMessage._data;
+        data.addAll(json['d'] as Map<String, dynamic>);
+        this.newMessage = new Message._new(client, data);
+        this.id = newMessage.id;
+        client._events.onMessageUpdate.add(this);
+      } else {
+        this.id = json['d']['id'];
+        if (!client._options.ignoreUncachedEvents) {
+          client._events.onMessageUpdate.add(this);
+        }
+      }
     }
   }
 }
