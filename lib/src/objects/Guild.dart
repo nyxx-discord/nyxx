@@ -92,7 +92,7 @@ class Guild extends _BaseObj {
 
       this.roles = new Collection<Role>();
       data['roles'].forEach((Map<String, dynamic> o) {
-        this.roles.add(new Role._new(this._client, o, this));
+        new Role._new(this._client, o, this);
       });
       this._map['roles'] = this.roles;
 
