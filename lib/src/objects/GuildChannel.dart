@@ -16,6 +16,8 @@ class GuildChannel extends Channel {
       : super._new(client, data, type) {
     this.name = this._map['name'] = data['name'];
     this.position = this._map['position'] = data['position'];
+
+    this.guild.channels.add(this);
   }
 
   /// Returns a string representation of this object.

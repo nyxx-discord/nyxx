@@ -8,7 +8,6 @@ class GuildCreateEvent {
   GuildCreateEvent._new(Client client, Map<String, dynamic> json, _WS ws) {
     this.guild =
         new Guild._new(client, json['d'] as Map<String, dynamic>, true, true);
-    client.guilds.add(guild);
 
     if (!client.ready) {
       bool match = true;

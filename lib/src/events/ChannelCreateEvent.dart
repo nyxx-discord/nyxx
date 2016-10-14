@@ -10,12 +10,10 @@ class ChannelCreateEvent {
       if (json['d']['type'] == 1) {
         this.channel =
             new DMChannel._new(client, json['d'] as Map<String, dynamic>);
-        client.channels.map[channel.id] = channel;
         client._events.onChannelCreate.add(this);
       } else if (json['d']['type'] == 3) {
         this.channel =
             new GroupDMChannel._new(client, json['d'] as Map<String, dynamic>);
-        client.channels.map[channel.id] = channel;
         client._events.onChannelCreate.add(this);
       } else {
         final Guild guild = client.guilds.map[json['d']['guild_id']];
@@ -26,8 +24,6 @@ class ChannelCreateEvent {
           this.channel = new VoiceChannel._new(
               client, json['d'] as Map<String, dynamic>, guild);
         }
-        guild.channels.map[channel.id] = channel;
-        client.channels.map[channel.id] = channel;
         client._events.onChannelCreate.add(this);
       }
     }

@@ -103,28 +103,19 @@ class Guild extends _BaseObj {
         this.members = new Collection<Member>();
         this.channels = new Collection<GuildChannel>();
 
-        //this.roles = JSON.decode(data['roles']);
         data['members'].forEach((Map<String, dynamic> o) {
-          this.members.add(new Member._new(client, o, this));
+          new Member._new(client, o, this);
         });
         this._map['members'] = this.members;
 
         data['channels'].forEach((Map<String, dynamic> o) {
           if (o['type'] == 0) {
-            this.channels.add(new TextChannel._new(client, o, this));
+            new TextChannel._new(client, o, this);
           } else {
-            this.channels.add(new VoiceChannel._new(client, o, this));
+            new VoiceChannel._new(client, o, this);
           }
         });
         this._map['channels'] = this.channels;
-
-        this.channels.list.forEach((GuildChannel v) {
-          client.channels.add(v);
-        });
-
-        this.members.list.forEach((Member v) {
-          client.users.add(v.toUser());
-        });
 
         data['presences'].forEach((Map<String, dynamic> o) {
           Member member = this.members[o['user']['id']];
@@ -141,6 +132,8 @@ class Guild extends _BaseObj {
 
       this.afkChannel =
           this._map['afkChannel'] = this.channels[data['afk_channel_id']];
+
+      client.guilds.add(this);
     }
   }
 
