@@ -48,16 +48,16 @@ class User extends _BaseObj {
     client.users[this.id] = this;
   }
 
-  Future<DMChannel> _getChannel() async {
+  /// Gets the [DMChannel] for the user.
+  Future<DMChannel> getChannel() async {
     try {
       return _client.channels.values
           .firstWhere(
-              (dynamic c) => c is DMChannel && c.recipient.id == this.id)
-          .id;
+              (dynamic c) => c is DMChannel && c.recipient.id == this.id);
     } catch (err) {
       _HttpResponse r = await _client._http
           .post("/users/@me/channels", {"recipient_id": this.id});
-      return r.json['id'];
+      return new DMChannel._new(_client, r.json);
     }
   }
 
@@ -84,8 +84,11 @@ class User extends _BaseObj {
       newContent = content;
     }
 
+    DMChannel channel = await getChannel();
+    String channelId = channel.id;
+
     final _HttpResponse r = await this._client._http.post(
-        '/channels/${await _getChannel()}/messages', <String, dynamic>{
+        '/channels/$channelId/messages', <String, dynamic>{
       "content": newContent,
       "tts": newOptions.tts,
       "nonce": newOptions.nonce
@@ -101,11 +104,13 @@ class User extends _BaseObj {
   Future<Message> getMessage(dynamic message) async {
     if (this._client.user.bot) {
       final String id = this._client._util.resolve('message', message);
+      DMChannel channel = await getChannel();
+      String channelId = channel.id;
 
       final _HttpResponse r = await this
           ._client
           ._http
-          .get('/channels/${await _getChannel()}/messages/$id');
+          .get('/channels/$channelId/messages/$id');
       return new Message._new(this._client, r.json);
     } else {
       throw new Exception("'getMessage' is only usable by bot accounts.");
@@ -114,10 +119,13 @@ class User extends _BaseObj {
 
   /// Starts typing.
   Future<Null> startTyping() async {
+    DMChannel channel = await getChannel();
+    String channelId = channel.id;
+
     await this
         ._client
         ._http
-        .post("/channels/${await _getChannel()}/typing", {});
+        .post("/channels/$channelId/typing", {});
     return null;
   }
 
