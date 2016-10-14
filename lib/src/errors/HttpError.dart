@@ -9,7 +9,7 @@ class HttpError implements Exception {
   int code;
 
   /// Discord's message, if provided.
-  int message;
+  String message;
 
   /// The response body decoded, if it is JSON.
   Map<String, dynamic> json;
