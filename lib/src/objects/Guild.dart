@@ -62,6 +62,9 @@ class Guild extends _BaseObj {
   /// The guild's roles.
   Collection<Role> roles;
 
+  /// The shard that the guild is on.
+  Shard shard;
+
   Guild._new(Client client, Map<String, dynamic> data,
       [this.available = true, bool guildCreate = false])
       : super(client) {
@@ -92,6 +95,8 @@ class Guild extends _BaseObj {
         this.roles.add(new Role._new(this._client, o, this));
       });
       this._map['roles'] = this.roles;
+
+      this.shard = this._client.shards["${(int.parse(this.id) >> 22) % this._client._options.shardCount}"];
 
       if (guildCreate) {
         this.members = new Collection<Member>();
