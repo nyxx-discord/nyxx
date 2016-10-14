@@ -2,6 +2,8 @@ part of discord;
 
 /// The WS manager for the client.
 class _WS {
+  bool bot;
+
   /// The base websocket URL.
   String gateway;
 
@@ -12,6 +14,7 @@ class _WS {
   _WS(this.client) {
     this.client._http.headers['Authorization'] = "Bot ${client._token}";
     this.client._http.get("/gateway/bot", true).then((_HttpResponse r) {
+      this.bot = true;
       this.gateway = r.json['url'];
       if (this.client._options.shardCount == 1 &&
           this.client._options.shardIds == const [0]) {
@@ -53,6 +56,8 @@ class _WS {
         client.shards.forEach((Shard s) {
           if (!s.ready) match = false;
         });
+
+        print(match.toString() + ":" + match2.toString());
 
         if (match && match2) {
           client.ready = true;

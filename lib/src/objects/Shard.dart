@@ -58,6 +58,8 @@ class Shard extends _BaseObj {
   Future<Null> _handleMsg(String msg, bool resume) async {
     final json = JSON.decode(msg) as Map<String, dynamic>;
 
+    //print(json['op']);
+
     if (json['s'] != null) {
       this._sequence = json['s'];
     }
@@ -65,13 +67,14 @@ class Shard extends _BaseObj {
     switch (json['op']) {
       case _OPCodes.hello:
         if (this._sessionId == null || !resume) {
-          this._send("IDENTIFY", <String, dynamic>{
+          Map<String, dynamic> identifyMsg = <String, dynamic>{
             "token": this._ws.client._token,
             "properties": <String, dynamic>{"\$browser": "Discord Dart"},
             "large_threshold": 100,
-            "compress": false,
-            "shard": <int>[this.id, this._ws.client._options.shardCount]
-          });
+            "compress": false
+          };
+          if (this._ws.bot) identifyMsg['shard'] = <int>[this.id, this._ws.client._options.shardCount];
+          this._send("IDENTIFY", identifyMsg);
         } else if (resume) {
           this._send("RESUME", <String, dynamic>{
             "token": this._ws.client._token,
@@ -107,7 +110,11 @@ class Shard extends _BaseObj {
             }
 
             json['d']['guilds'].forEach((Map<String, dynamic> o) {
-              this._ws.client.guilds.map[o['id']] = null;
+              if (this._ws.client.user.bot) {
+                this._ws.client.guilds.map[o['id']] = null;                
+              } else {
+                this._ws.client.guilds.add(new Guild._new(this._ws.client, o, true, true));
+              }
             });
 
             json['d']['private_channels'].forEach((Map<String, dynamic> o) {
@@ -133,7 +140,7 @@ class Shard extends _BaseObj {
           case 'MESSAGE_CREATE':
             MessageEvent msgEvent =
                 new MessageEvent._new(this._ws.client, json);
-            if (msgEvent.message.channel.type == "private" &&
+            if (this._ws.client.ready && msgEvent.message.channel.type == "private" &&
                 this._ws.client.ss is SSServer) {
               for (Socket socket in this._ws.client.ss.sockets) {
                 socket.write(JSON.encode(<String, dynamic>{

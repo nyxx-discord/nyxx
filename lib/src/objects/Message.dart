@@ -61,7 +61,7 @@ class Message extends _BaseObj {
     this.author = this._map['author'] =
         new User._new(this._client, data['author'] as Map<String, dynamic>);
     this.channel =
-        this._map['channel'] = this._client.channels.map[data['channel_id']];
+        this._map['channel'] = this._client.channels[data['channel_id']];
     this.pinned = this._map['pinned'] = data['pinned'];
     this.tts = this._map['tts'] = data['tts'];
     this.mentionEveryone =
