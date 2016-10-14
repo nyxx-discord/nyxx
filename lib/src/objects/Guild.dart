@@ -118,6 +118,23 @@ class Guild extends _BaseObj {
         });
         this._map['channels'] = this.channels;
 
+        this.channels.list.forEach((GuildChannel v) {
+          client.channels.add(v);
+        });
+
+        this.members.list.forEach((Member v) {
+          client.users.add(v.toUser());
+        });
+
+        data['presences'].forEach((Map<String, dynamic> o) {
+          Member member = this.members[o['user']['id']];
+          member.status = member._map['status'] = o['status'];
+          if (o['game'] != null) {
+            member.game = member._map['game'] =
+                new Game._new(client, o['game'] as Map<String, dynamic>);
+          }
+        });
+
         this.defaultChannel = this.channels[this.id];
         this._map['defaultChannel'] = this.defaultChannel;
       }
