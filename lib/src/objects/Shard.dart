@@ -73,7 +73,11 @@ class Shard extends _BaseObj {
             "large_threshold": 100,
             "compress": false
           };
-          if (this._ws.bot) identifyMsg['shard'] = <int>[this.id, this._ws.client._options.shardCount];
+          if (this._ws.bot)
+            identifyMsg['shard'] = <int>[
+              this.id,
+              this._ws.client._options.shardCount
+            ];
           this._send("IDENTIFY", identifyMsg);
         } else if (resume) {
           this._send("RESUME", <String, dynamic>{
@@ -111,9 +115,13 @@ class Shard extends _BaseObj {
 
             json['d']['guilds'].forEach((Map<String, dynamic> o) {
               if (this._ws.client.user.bot) {
-                this._ws.client.guilds.map[o['id']] = null;                
+                this._ws.client.guilds.map[o['id']] = null;
               } else {
-                this._ws.client.guilds.add(new Guild._new(this._ws.client, o, true, true));
+                this
+                    ._ws
+                    .client
+                    .guilds
+                    .add(new Guild._new(this._ws.client, o, true, true));
               }
             });
 
@@ -140,7 +148,8 @@ class Shard extends _BaseObj {
           case 'MESSAGE_CREATE':
             MessageEvent msgEvent =
                 new MessageEvent._new(this._ws.client, json);
-            if (this._ws.client.ready && msgEvent.message.channel.type == "private" &&
+            if (this._ws.client.ready &&
+                msgEvent.message.channel.type == "private" &&
                 this._ws.client.ss is SSServer) {
               for (Socket socket in this._ws.client.ss.sockets) {
                 socket.write(JSON.encode(<String, dynamic>{
