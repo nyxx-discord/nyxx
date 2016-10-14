@@ -18,8 +18,13 @@ class DMChannel extends Channel {
     this.lastMessageID = data['last_message_id'];
     this.messages = new Map<String, Message>();
 
-    this.recipient =
+    if (data['recipients'] != null) {
+      this.recipient =
         new User._new(client, data['recipients'][0] as Map<String, dynamic>);
+    } else {
+      this.recipient =
+        new User._new(client, data['recipient'] as Map<String, dynamic>);
+    }
   }
 
   void _cacheMessage(Message message) {
