@@ -30,16 +30,16 @@ class Message extends _BaseObj {
   Member member;
 
   /// The mentions in the message.
-  Collection<User> mentions;
+  Map<String, User> mentions;
 
   /// A list of IDs for the role mentions in the message.
-  List<String> roleMentions = <String>[];
+  Map<String, Role> roleMentions;
 
   /// A collection of the embeds in the message.
-  Collection<Embed> embeds;
+  Map<String, Embed> embeds;
 
   /// The attachments in the message.
-  Collection<Attachment> attachments;
+  Map<String, Attachment> attachments;
 
   /// When the message was created, redundant of `timestamp`.
   DateTime createdAt;
@@ -53,57 +53,54 @@ class Message extends _BaseObj {
   /// Whether or @everyone was mentioned in the message.
   bool mentionEveryone;
 
-  Message._new(Client client, Map<String, dynamic> data) : super(client) {
-    this.content = this._map['content'] = data['content'];
-    this.id = this._map['id'] = data['id'];
-    this.nonce = this._map['nonce'] = data['nonce'];
-    this.timestamp = this._map['timestamp'] = DateTime.parse(data['timestamp']);
-    this.author = this._map['author'] =
+  Message._new(Client client, Map<String, dynamic> data) : super(client, data) {
+    this.content = data['content'];
+    this.id = data['id'];
+    this.nonce = data['nonce'];
+    this.timestamp = DateTime.parse(data['timestamp']);
+    this.author =
         new User._new(this._client, data['author'] as Map<String, dynamic>);
-    this.channel =
-        this._map['channel'] = this._client.channels[data['channel_id']];
-    this.pinned = this._map['pinned'] = data['pinned'];
-    this.tts = this._map['tts'] = data['tts'];
-    this.mentionEveryone =
-        this._map['mentionEveryone'] = data['mention_everyone'];
-    this.roleMentions =
-        this._map['roleMentions'] = data['mention_roles'] as List<String>;
-    this.createdAt =
-        this._map['createdAt'] = this._client._util.getDate(this.id);
-    this._map['key'] = this.id;
+    this.channel = this._client.channels[data['channel_id']];
+    this.pinned = data['pinned'];
+    this.tts = data['tts'];
+    this.mentionEveryone = data['mention_everyone'];
+    this.createdAt = this._client._util.getDate(this.id);
 
     this.channel._cacheMessage(this);
     this.channel.lastMessageID = this.id;
 
     if (this.channel is GuildChannel) {
-      this.guild = this._map['guild'] = this.channel.guild;
-      this.member = this._map['member'] = guild.members[this.author.id];
+      this.guild = this.channel.guild;
+      this.member = guild.members[this.author.id];
+      data['mention_roles'].forEach((String o) {
+        this.roleMentions[guild.roles[o].id] = guild.roles[o];
+      });
     }
 
     if (data['edited_timestamp'] != null) {
-      this.editedTimestamp = this._map['editedTimestamp'] =
-          DateTime.parse(data['edited_timestamp']);
+      this.editedTimestamp = DateTime.parse(data['edited_timestamp']);
     }
 
-    this.mentions = new Collection<User>();
+    this.mentions = new Map<String, User>();
     data['mentions'].forEach((Map<String, dynamic> o) {
       final User user = new User._new(client, o);
-      this.mentions.add(user);
+      this.mentions[user.id] = user;
     });
-    this._map['mentions'] = this.mentions;
+    this.mentions;
 
-    this.embeds = new Collection<Embed>();
+    this.embeds = new Map<String, Embed>();
     data['embeds'].forEach((Map<String, dynamic> o) {
-      this.embeds.add(new Embed._new(this._client, o));
+      Embed embed = new Embed._new(this._client, o);
+      this.embeds[embed.url] = embed;
     });
-    this._map['embeds'] = this.embeds;
+    this.embeds;
 
-    this.attachments = new Collection<Attachment>();
+    this.attachments = new Map<String, Attachment>();
     data['attachments'].forEach((Map<String, dynamic> o) {
       final Attachment attachment = new Attachment._new(this._client, o);
-      this.attachments.add(attachment);
+      this.attachments[attachment.id] = attachment;
     });
-    this._map['attachments'] = this.attachments;
+    this.attachments;
   }
 
   /// Returns a string representation of this object.

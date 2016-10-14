@@ -8,7 +8,7 @@ class GuildUnavailableEvent {
   GuildUnavailableEvent._new(Client client, Map<String, dynamic> json) {
     if (client.ready) {
       this.guild = new Guild._new(client, null, false);
-      client.guilds.map[json['d']['id']] = guild;
+      client.guilds[json['d']['id']] = guild;
       client._events.onGuildUnavailable.add(this);
     }
   }

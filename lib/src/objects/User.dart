@@ -31,30 +31,26 @@ class User extends _BaseObj {
 
   User._new(Client client, Map<String, dynamic> data) : super(client) {
     this._raw = data;
-    this.username = this._map['username'] = data['username'];
-    this.id = this._map['id'] = data['id'];
-    this.discriminator = this._map['discriminator'] = data['discriminator'];
-    this.avatar = this._map['avatar'] = data['avatar'];
-    this.avatarURL = this._map['avatarURL'] =
+    this.username = data['username'];
+    this.id = data['id'];
+    this.discriminator = data['discriminator'];
+    this.avatar = data['avatar'];
+    this.avatarURL =
         "https://discordapp.com/api/v6/users/${this.id}/avatars/${this.avatar}.jpg";
-    this.mention = this._map['mention'] = "<@${this.id}>";
-    this.createdAt =
-        this._map['createdAt'] = this._client._util.getDate(this.id);
-    this._map['key'] = this.id;
+    this.mention = "<@${this.id}>";
+    this.createdAt = this._client._util.getDate(this.id);
 
     // This will not be set at all in some cases.
     if (data['bot'] == true) {
-      this.bot = this._map['bot'] = data['bot'];
-    } else {
-      this._map['bot'] = false;
+      this.bot = data['bot'];
     }
 
-    client.users.add(this);
+    client.users[this.id] = this;
   }
 
   Future<DMChannel> _getChannel() async {
     try {
-      return _client.channels.list
+      return _client.channels.values
           .firstWhere(
               (dynamic c) => c is DMChannel && c.recipient.id == this.id)
           .id;

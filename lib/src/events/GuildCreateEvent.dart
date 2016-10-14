@@ -11,12 +11,12 @@ class GuildCreateEvent {
 
     if (!client.ready) {
       bool match = true;
-      client.guilds.forEach((Guild o) {
+      client.guilds.forEach((String id, Guild o) {
         if (o == null) match = false;
       });
 
       bool match2 = true;
-      ws.client.shards.forEach((Shard s) {
+      ws.client.shards.forEach((int id, Shard s) {
         if (!s.ready) match = false;
       });
 

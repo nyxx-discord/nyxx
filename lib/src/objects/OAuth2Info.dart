@@ -13,22 +13,19 @@ class OAuth2Info extends _BaseObj {
   User me;
 
   /// Mini guild objects with permissions for every guild you are on.
-  Collection<Guild> guilds;
+  Map<String, OAuth2Guild> guilds;
 
   OAuth2Info._new(Client client, Map<String, dynamic> data) : super(client) {
-    this.app = this._map['app'] = new OAuth2Application._new(
+    this.app = new OAuth2Application._new(
         this._client, data['application'] as Map<String, dynamic>);
-    this.bot = this._map['bot'] =
-        new User._new(client, data['bot'] as Map<String, dynamic>);
-    this.me = this._map['me'] =
-        new User._new(client, data['user'] as Map<String, dynamic>);
-    this._map['key'] = this.app.id;
+    this.bot = new User._new(client, data['bot'] as Map<String, dynamic>);
+    this.me = new User._new(client, data['user'] as Map<String, dynamic>);
 
-    this.guilds = new Collection<Guild>();
+    this.guilds = new Map<String, OAuth2Guild>();
     data['guilds'].forEach((Map<String, dynamic> v) {
       final OAuth2Guild g = new OAuth2Guild._new(this._client, v);
-      this.guilds.add(g);
+      this.guilds[g.id] = g;
     });
-    this._map['guild'] = this.guilds;
+    this.guilds;
   }
 }

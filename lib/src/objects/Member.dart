@@ -30,30 +30,30 @@ class Member extends User {
 
   Member._new(Client client, Map<String, dynamic> data, [Guild guild])
       : super._new(client, data['user'] as Map<String, dynamic>) {
-    this.nickname = this._map['nickname'] = data['nick'];
-    this.deaf = this._map['deaf'] = data['deaf'];
-    this.mute = this._map['mute'] = data['mute'];
-    this.status = this._map['status'] = data['status'];
-    this.roles = this._map['roles'] = data['roles'] as List<String>;
+    this.nickname = data['nick'];
+    this.deaf = data['deaf'];
+    this.mute = data['mute'];
+    this.status = data['status'];
+    this.roles = data['roles'] as List<String>;
     this._user = new User._new(client, data['user'] as Map<String, dynamic>);
 
     if (guild == null) {
       this.guild = this._client.guilds[data['guild_id']];
     } else {
-      this.guild = this._map['guild'] = guild;
+      this.guild = guild;
     }
 
     if (data['joined_at'] != null) {
-      this.joinedAt = this._map['joinedAt'] = DateTime.parse(data['joined_at']);
+      this.joinedAt = DateTime.parse(data['joined_at']);
     }
 
     if (data['game'] != null) {
-      this.game = this._map['game'] =
+      this.game =
           new Game._new(this._client, data['game'] as Map<String, dynamic>);
     }
 
-    this.guild.members.add(this);
-    client.users.add(this.toUser());
+    this.guild.members[this.id] = this;
+    client.users[this.toUser().id] = this.toUser();
   }
 
   /// Returns a user from the member.

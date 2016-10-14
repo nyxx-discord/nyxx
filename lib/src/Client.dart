@@ -17,14 +17,14 @@ class Client {
   ClientOAuth2Application app;
 
   /// All of the guilds the bot is in.
-  Collection<Guild> guilds;
+  Map<String, Guild> guilds;
 
   /// All of the channels the bot is in.
-  Collection<dynamic> channels;
+  Map<String, dynamic> channels;
 
   /// All of the users the bot can see. Does not always have offline users
   /// without forceFetchUsers enabled.
-  Collection<User> users;
+  Map<String, User> users;
 
   /// Whether or not the client is ready.
   bool ready = false;
@@ -37,7 +37,7 @@ class Client {
   dynamic ss;
 
   /// The client's internal shards.
-  Collection<Shard> shards;
+  Map<int, Shard> shards;
 
   /// Emitted when the client is ready.
   Stream<ReadyEvent> onReady;
@@ -108,10 +108,10 @@ class Client {
       this._options = new ClientOptions();
     }
 
-    this.guilds = new Collection<Guild>();
-    this.channels = new Collection<dynamic>();
-    this.users = new Collection<User>();
-    this.shards = new Collection<Shard>();
+    this.guilds = new Map<String, Guild>();
+    this.channels = new Map<String, dynamic>();
+    this.users = new Map<String, User>();
+    this.shards = new Map<int, Shard>();
 
     this._http = new _Http(this);
     this._events = new _EventController(this);

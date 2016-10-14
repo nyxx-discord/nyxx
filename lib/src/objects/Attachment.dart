@@ -28,14 +28,12 @@ class Attachment extends _BaseObj {
 
   Attachment._new(Client client, Map<String, dynamic> data) : super(client) {
     this.id = data['id'];
-    this.filename = this._map['filename'] = data['filename'];
-    this.url = this._map['url'] = data['url'];
-    this.proxyUrl = this._map['proxyUrl'] = data['proxyUrl'];
-    this.size = this._map['size'] = data['size'];
-    this.height = this._map['height'] = data['height'];
-    this.width = this._map['width'] = data['width'];
-    this.createdAt =
-        this._map['createdAt'] = this._client._util.getDate(this.id);
-    this._map['key'] = this.id;
+    this.filename = data['filename'];
+    this.url = data['url'];
+    this.proxyUrl = data['proxyUrl'];
+    this.size = data['size'];
+    this.height = data['height'];
+    this.width = data['width'];
+    this.createdAt = this._client._util.getDate(this.id);
   }
 }
