@@ -10,8 +10,8 @@ class ChannelUpdateEvent {
 
   ChannelUpdateEvent._new(Client client, Map<String, dynamic> json) {
     if (client.ready) {
-      final Guild guild = client.guilds.map[json['d']['guild_id']];
-      this.oldChannel = client.channels.map[json['d']['id']];
+      final Guild guild = client.guilds[json['d']['guild_id']];
+      this.oldChannel = client.channels[json['d']['id']];
       if (json['d']['type'] == 0) {
         this.newChannel = new TextChannel._new(
             client, json['d'] as Map<String, dynamic>, guild);
@@ -19,8 +19,6 @@ class ChannelUpdateEvent {
         this.newChannel = new VoiceChannel._new(
             client, json['d'] as Map<String, dynamic>, guild);
       }
-      guild.channels.map[newChannel.id] = newChannel;
-      client.channels.map[newChannel.id] = newChannel;
       client._events.onChannelUpdate.add(this);
     }
   }

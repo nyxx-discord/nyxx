@@ -15,8 +15,6 @@ class GuildUpdateEvent {
       this.newGuild.channels = this.oldGuild.channels;
       this.newGuild.members = this.oldGuild.members;
 
-      client.guilds.map[this.newGuild.id] = this.newGuild;
-
       client._events.onGuildUpdate.add(this);
     }
   }

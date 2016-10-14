@@ -51,6 +51,9 @@ class Member extends User {
       this.game = this._map['game'] =
           new Game._new(this._client, data['game'] as Map<String, dynamic>);
     }
+
+    this.guild.members.add(this);
+    client.users.add(this.toUser());
   }
 
   /// Returns a user from the member.

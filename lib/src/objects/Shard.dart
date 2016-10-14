@@ -117,27 +117,15 @@ class Shard extends _BaseObj {
               if (this._ws.client.user.bot) {
                 this._ws.client.guilds.map[o['id']] = null;
               } else {
-                this
-                    ._ws
-                    .client
-                    .guilds
-                    .add(new Guild._new(this._ws.client, o, true, true));
+                new Guild._new(this._ws.client, o, true, true);
               }
             });
 
             json['d']['private_channels'].forEach((Map<String, dynamic> o) {
               if (o['type'] == 1) {
-                this
-                    ._ws
-                    .client
-                    .channels
-                    .add(new DMChannel._new(this._ws.client, o));
+                new DMChannel._new(this._ws.client, o);
               } else {
-                this
-                    ._ws
-                    .client
-                    .channels
-                    .add(new GroupDMChannel._new(this._ws.client, o));
+                new GroupDMChannel._new(this._ws.client, o);
               }
             });
 
