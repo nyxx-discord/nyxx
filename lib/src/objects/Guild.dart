@@ -138,10 +138,35 @@ class Guild extends _BaseObj {
     return this.name;
   }
 
+  /// Prunes the guild, returns the amount of members pruned.
+  Future<int> prune(int days) async {
+    _HttpResponse r =
+        await this._client._http.post("/guilds/$id/prune", {"days": days});
+    return r.json as int;
+  }
+
+  /// Get's the guild's bans.
+  Future<Map<String, User>> getBans() async {
+    _HttpResponse r = await this._client._http.get("/guilds/$id/bans");
+    Map<String, dynamic> map = <String, dynamic>{};
+    r.json.forEach((Map<String, dynamic> o) {
+      final User user =
+          new User._new(_client, o['user'] as Map<String, dynamic>);
+      map[user.id] = user;
+    });
+    return map;
+  }
+
+  /// Leaves the guild.
+  Future<Null> leave() async {
+    await this._client._http.delete("/users/@me/guilds/$id");
+    return null;
+  }
+
   /// Creates an empty role.
   Future<Role> createRole() async {
     _HttpResponse r = await this._client._http.post("/guilds/$id/roles", {});
-    return new Role._new(_client, r.json, this);
+    return new Role._new(_client, r.json as Map<String, dynamic>, this);
   }
 
   /// Creates a channel.
@@ -155,9 +180,11 @@ class Guild extends _BaseObj {
     });
 
     if (r.json['type'] == 0) {
-      return new TextChannel._new(_client, r.json, this);
+      return new TextChannel._new(
+          _client, r.json as Map<String, dynamic>, this);
     } else {
-      return new VoiceChannel._new(_client, r.json, this);
+      return new VoiceChannel._new(
+          _client, r.json as Map<String, dynamic>, this);
     }
   }
 
@@ -194,7 +221,7 @@ class Guild extends _BaseObj {
       "afk_timeout": afkTimeout != null ? afkTimeout : this.afkTimeout,
       "icon": icon != null ? icon : this.icon
     });
-    return new Guild._new(this._client, r.json);
+    return new Guild._new(this._client, r.json as Map<String, dynamic>);
   }
 
   /// Gets a [Member] object. Adds it to `Guild.members` if
@@ -211,9 +238,8 @@ class Guild extends _BaseObj {
       final _HttpResponse r =
           await this._client._http.get('/guilds/${this.id}/members/$id');
 
-      final Member m = new Member._new(this._client, r.json, this);
-      this.members[m.id] = m;
-      this.members;
+      final Member m =
+          new Member._new(this._client, r.json as Map<String, dynamic>, this);
       return m;
     }
   }

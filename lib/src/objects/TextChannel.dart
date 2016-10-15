@@ -56,7 +56,7 @@ class TextChannel extends GuildChannel {
       "tts": newOptions.tts,
       "nonce": newOptions.nonce
     });
-    return new Message._new(this._client, r.json);
+    return new Message._new(this._client, r.json as Map<String, dynamic>);
   }
 
   /// Edits the channel.
@@ -70,7 +70,8 @@ class TextChannel extends GuildChannel {
       "topic": topic != null ? topic : this.topic,
       "position": position != null ? position : this.position
     });
-    return new TextChannel._new(this._client, r.json, this.guild);
+    return new TextChannel._new(
+        this._client, r.json as Map<String, dynamic>, this.guild);
   }
 
   /// Gets a [Message] object. Only usable by bot accounts.
@@ -84,7 +85,7 @@ class TextChannel extends GuildChannel {
 
       final _HttpResponse r =
           await this._client._http.get('/channels/${this.id}/messages/$id');
-      return new Message._new(this._client, r.json);
+      return new Message._new(this._client, r.json as Map<String, dynamic>);
     } else {
       throw new Exception("'getMessage' is only usable by bot accounts.");
     }

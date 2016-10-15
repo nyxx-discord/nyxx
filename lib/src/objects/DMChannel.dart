@@ -63,7 +63,7 @@ class DMChannel extends Channel {
       "tts": newOptions.tts,
       "nonce": newOptions.nonce
     });
-    return new Message._new(this._client, r.json);
+    return new Message._new(this._client, r.json as Map<String, dynamic>);
   }
 
   /// Gets a [Message] object. Only usable by bot accounts.
@@ -77,7 +77,7 @@ class DMChannel extends Channel {
 
       final _HttpResponse r =
           await this._client._http.get('/channels/${this.id}/messages/$id');
-      return new Message._new(this._client, r.json);
+      return new Message._new(this._client, r.json as Map<String, dynamic>);
     } else {
       throw new Exception("'getMessage' is only usable by bot accounts.");
     }

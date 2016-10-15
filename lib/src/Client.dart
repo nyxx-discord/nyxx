@@ -30,7 +30,7 @@ class Client {
   bool ready = false;
 
   /// The current version.
-  String version = "0.13.0";
+  String version = "0.13.1";
 
   /// The client's SS manager, null if the client is not sharded, [SSServer] if
   /// the current shard is 0, [SSClient] otherwise.
@@ -148,7 +148,7 @@ class Client {
     final String id = this._util.resolve('user', user);
 
     final _HttpResponse r = await this._http.get('/users/$id');
-    return new User._new(this, r.json);
+    return new User._new(this, r.json as Map<String, dynamic>);
   }
 
   /// Gets an [Invite] object.
@@ -157,7 +157,7 @@ class Client {
   ///     Client.getInvite("invite code");
   Future<Invite> getInvite(String code) async {
     final _HttpResponse r = await this._http.get('/invites/$code');
-    return new Invite._new(this, r.json);
+    return new Invite._new(this, r.json as Map<String, dynamic>);
   }
 
   /// Gets an [OAuth2Info] object.
@@ -169,6 +169,6 @@ class Client {
 
     final _HttpResponse r =
         await this._http.get('/oauth2/authorize?client_id=$id&scope=bot');
-    return new OAuth2Info._new(this, r.json);
+    return new OAuth2Info._new(this, r.json as Map<String, dynamic>);
   }
 }

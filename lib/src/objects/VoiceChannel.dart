@@ -26,6 +26,7 @@ class VoiceChannel extends GuildChannel {
       "user_limit": userLimit != null ? userLimit : this.userLimit,
       "position": position != null ? position : this.position
     });
-    return new VoiceChannel._new(this._client, r.json, this.guild);
+    return new VoiceChannel._new(
+        this._client, r.json as Map<String, dynamic>, this.guild);
   }
 }

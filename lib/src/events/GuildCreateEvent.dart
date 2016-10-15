@@ -26,7 +26,8 @@ class GuildCreateEvent {
           client._http
               .get('/oauth2/applications/@me', true)
               .then((_HttpResponse r) {
-            client.app = new ClientOAuth2Application._new(client, r.json);
+            client.app = new ClientOAuth2Application._new(
+                client, r.json as Map<String, dynamic>);
             new ReadyEvent._new(client);
           });
         } else {
