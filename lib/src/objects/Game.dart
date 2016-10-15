@@ -13,7 +13,6 @@ class Game extends _BaseObj {
 
   Game._new(Client client, Map<String, dynamic> data) : super(client) {
     this.name = data['name'];
-    print(data['type']);
     this.type = data['type'];
     this.url = data['url'];
   }
