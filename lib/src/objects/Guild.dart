@@ -138,6 +138,12 @@ class Guild extends _BaseObj {
     return this.name;
   }
 
+  /// Creates an empty role.
+  Future<Role> createRole() async {
+    _HttpResponse r = await this._client._http.post("/guilds/$id/roles", {});
+    return new Role._new(_client, r.json, this);
+  }
+
   /// Creates a channel.
   Future<dynamic> createChannel(String name, String type,
       {int bitrate: 64000, int userLimit: 0}) async {

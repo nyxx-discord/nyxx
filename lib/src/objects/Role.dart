@@ -53,6 +53,32 @@ class Role extends _BaseObj {
     this.guild.roles[this.id] = this;
   }
 
+  /// Edits the role.
+  Future<Role> edit(
+      {String name: null,
+      int permissions: null,
+      int position: null,
+      int color: null,
+      bool mentionable: null,
+      bool hoist: null}) async {
+    _HttpResponse r =
+        await this._client._http.patch("/guilds/${this.guild.id}/roles/$id", {
+      "name": name != null ? name : this.name,
+      "permissions": permissions != null ? permissions : this.permissions.raw,
+      "position": position != null ? position : this.position,
+      "color": color != null ? color : this.color,
+      "hoist": hoist != null ? hoist : this.hoist,
+      "mentionable": mentionable != null ? mentionable : this.mentionable
+    });
+    return new Role._new(this._client, r.json, this.guild);
+  }
+
+  /// Deletes the role.
+  Future<Null> delete() async {
+    await this._client._http.delete("/guilds/${this.guild.id}/roles/$id");
+    return null;
+  }
+
   /// Returns a string representation of this object.
   @override
   String toString() => this.name;
