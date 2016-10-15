@@ -17,7 +17,7 @@ class _OPCodes {
 
 /// The client constants.
 class _Constants {
-  static const String host = "https://discordapp.com/api";
+  static const String host = "https://discordapp.com/api/v6";
 
   /// The gateway OP codes.
   static const Map<String, int> opCodes = const <String, int>{
