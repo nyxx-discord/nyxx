@@ -56,7 +56,7 @@ class User extends _BaseObj {
     } catch (err) {
       _HttpResponse r = await _client._http
           .post("/users/@me/channels", {"recipient_id": this.id});
-      return new DMChannel._new(_client, r.json);
+      return new DMChannel._new(_client, r.json as Map<String, dynamic>);
     }
   }
 
@@ -92,7 +92,7 @@ class User extends _BaseObj {
       "tts": newOptions.tts,
       "nonce": newOptions.nonce
     });
-    return new Message._new(this._client, r.json);
+    return new Message._new(this._client, r.json as Map<String, dynamic>);
   }
 
   /// Gets a [Message] object. Only usable by bot accounts.
@@ -108,7 +108,7 @@ class User extends _BaseObj {
 
       final _HttpResponse r =
           await this._client._http.get('/channels/$channelId/messages/$id');
-      return new Message._new(this._client, r.json);
+      return new Message._new(this._client, r.json as Map<String, dynamic>);
     } else {
       throw new Exception("'getMessage' is only usable by bot accounts.");
     }

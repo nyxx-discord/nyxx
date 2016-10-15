@@ -70,7 +70,8 @@ class Role extends _BaseObj {
       "hoist": hoist != null ? hoist : this.hoist,
       "mentionable": mentionable != null ? mentionable : this.mentionable
     });
-    return new Role._new(this._client, r.json, this.guild);
+    return new Role._new(
+        this._client, r.json as Map<String, dynamic>, this.guild);
   }
 
   /// Deletes the role.

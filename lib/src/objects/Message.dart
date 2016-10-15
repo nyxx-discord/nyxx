@@ -135,7 +135,7 @@ class Message extends _BaseObj {
     final _HttpResponse r = await this._client._http.patch(
         '/channels/${this.channel.id}/messages/${this.id}',
         <String, dynamic>{"content": newContent});
-    return new Message._new(this._client, r.json);
+    return new Message._new(this._client, r.json as Map<String, dynamic>);
   }
 
   /// Deletes the message.

@@ -117,11 +117,11 @@ class _Bucket {
 
 class _HttpResponse {
   http.Response response;
-  Map<String, dynamic> json;
+  dynamic json;
 
   _HttpResponse(this.response) {
     if (this.response.headers['content-type'] == "application/json") {
-      this.json = JSON.decode(this.response.body) as Map<String, dynamic>;
+      this.json = JSON.decode(this.response.body);
     }
   }
 }
