@@ -72,6 +72,8 @@ class Message extends _BaseObj {
     if (this.channel is GuildChannel) {
       this.guild = this.channel.guild;
       this.member = guild.members[this.author.id];
+
+      this.roleMentions = new Map<String, Role>();
       data['mention_roles'].forEach((String o) {
         this.roleMentions[guild.roles[o].id] = guild.roles[o];
       });
