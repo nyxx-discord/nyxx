@@ -57,8 +57,6 @@ class _WS {
           if (!s.ready) match = false;
         });
 
-        print(match.toString() + ":" + match2.toString());
-
         if (match && match2) {
           client.ready = true;
           if (client.user.bot) {

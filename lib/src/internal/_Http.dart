@@ -84,7 +84,6 @@ class _Bucket {
             new http_utils.DateUtils().parseRfc822Date(r.headers['date']));
 
         if (r.statusCode == 429) {
-          print("429 ${this.uri}");
           new Timer(
               new Duration(
                   milliseconds: int.parse(r.headers['retry-after']) + 500),

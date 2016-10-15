@@ -55,8 +55,6 @@ class Shard extends _BaseObj {
   Future<Null> _handleMsg(String msg, bool resume) async {
     final json = JSON.decode(msg) as Map<String, dynamic>;
 
-    //print(json['op']);
-
     if (json['s'] != null) {
       this._sequence = json['s'];
     }
