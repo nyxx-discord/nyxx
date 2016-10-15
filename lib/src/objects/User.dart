@@ -36,7 +36,7 @@ class User extends _BaseObj {
     this.discriminator = data['discriminator'];
     this.avatar = data['avatar'];
     this.avatarURL =
-        "https://discordapp.com/api/v6/users/${this.id}/avatars/${this.avatar}.jpg";
+        "${_Constants.host}/users/${this.id}/avatars/${this.avatar}.jpg";
     this.mention = "<@${this.id}>";
     this.createdAt = this._client._util.getDate(this.id);
 

@@ -73,7 +73,7 @@ class Guild extends _BaseObj {
       this.id = data['id'];
       this.icon = data['icon'];
       this.iconURL =
-          "https://discordapp.com/api/v6/guilds/${this.id}/icons/${this.icon}.jpg";
+          "${_Constants.host}/guilds/${this.id}/icons/${this.icon}.jpg";
       this.region = data['region'];
       this.embedChannelID = data['embed_channel_id'];
       this.afkTimeout = data['afk_timeout'];
