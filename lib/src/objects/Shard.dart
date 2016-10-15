@@ -110,6 +110,9 @@ class Shard extends _BaseObj {
                   this._ws.client._token;
             }
 
+            this._ws.client._http.headers['User-Agent'] =
+                "${this._ws.client.user.username} (https://github.com/Hackzzila/Discord-Dart, ${this._ws.client.version})";
+
             json['d']['guilds'].forEach((Map<String, dynamic> o) {
               if (this._ws.client.user.bot) {
                 this._ws.client.guilds[o['id']] = null;

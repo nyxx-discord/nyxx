@@ -84,13 +84,11 @@ class Guild extends _BaseObj {
       this.embedEnabled = data['embed_enabled'];
       this.ownerID = data['owner_id'];
       this.createdAt = this._client._util.getDate(this.id);
-      this.id;
 
       this.roles = new Map<String, Role>();
       data['roles'].forEach((Map<String, dynamic> o) {
         new Role._new(this._client, o, this);
       });
-      this.roles;
 
       this.shard = this._client.shards[
           "${(int.parse(this.id) >> 22) % this._client._options.shardCount}"];
@@ -102,7 +100,6 @@ class Guild extends _BaseObj {
         data['members'].forEach((Map<String, dynamic> o) {
           new Member._new(client, o, this);
         });
-        this.members;
 
         data['channels'].forEach((Map<String, dynamic> o) {
           if (o['type'] == 0) {
@@ -111,7 +108,6 @@ class Guild extends _BaseObj {
             new VoiceChannel._new(client, o, this);
           }
         });
-        this.channels;
 
         data['presences'].forEach((Map<String, dynamic> o) {
           Member member = this.members[o['user']['id']];
@@ -123,10 +119,8 @@ class Guild extends _BaseObj {
         });
 
         this.defaultChannel = this.channels[this.id];
-        this.defaultChannel;
+        this.afkChannel = this.channels[data['afk_channel_id']];
       }
-
-      this.afkChannel = this.channels[data['afk_channel_id']];
 
       client.guilds[this.id] = this;
     }
