@@ -113,7 +113,6 @@ class Guild extends _BaseObj {
           Member member = this.members[o['user']['id']];
           member.status = o['status'];
           if (o['game'] != null) {
-            print(o['game']);
             member.game =
                 new Game._new(client, o['game'] as Map<String, dynamic>);
           }
