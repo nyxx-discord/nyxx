@@ -18,8 +18,8 @@ class Game extends _BaseObj {
       this.type = data['type'];
     } else if (data['type'] is String) {
       try {
-        this.type = int.parse(data['type']);        
-      } catch(err) {
+        this.type = int.parse(data['type']);
+      } catch (err) {
         this.type = null;
       }
     }
