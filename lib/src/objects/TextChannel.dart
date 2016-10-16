@@ -21,10 +21,12 @@ class TextChannel extends GuildChannel {
   }
 
   void _cacheMessage(Message message) {
-    if (this.messages.length >= this._client._options.messageCacheSize) {
-      this.messages.remove(this.messages.values.toList().first.id);
+    if (this._client._options.messageCacheSize > 0) {
+      if (this.messages.length >= this._client._options.messageCacheSize) {
+        this.messages.remove(this.messages.values.toList().first.id);
+      }
+      this.messages[message.id] = message;
     }
-    this.messages[message.id] = message;
   }
 
   /// Sends a message.
