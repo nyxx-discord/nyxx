@@ -106,6 +106,7 @@ class Shard extends _BaseObj {
             } else {
               this._ws.client._http.headers['Authorization'] =
                   this._ws.client._token;
+              this._ws.client._options.forceFetchMembers = false;
             }
 
             this._ws.client._http.headers['User-Agent'] =
