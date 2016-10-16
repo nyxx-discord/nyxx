@@ -26,7 +26,7 @@ class Message extends _BaseObj {
   /// The message's author.
   User author;
 
-  /// The message's author in a member form.
+  /// The message's author in a member form. Very rarely can be null if `forceFetchMembers` is disabled.
   Member member;
 
   /// The mentions in the message.
