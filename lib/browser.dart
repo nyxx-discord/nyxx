@@ -115,15 +115,19 @@ class _HttpClient {
 
   Future<http.Response> get(String url, {Map<String, String> headers}) async =>
       await this.client.get(url, headers: headers);
+
   Future<http.Response> post(String url,
           {dynamic body, Map<String, String> headers}) async =>
       await this.client.post(url, body: body, headers: headers);
+
   Future<http.Response> put(String url,
           {dynamic body, Map<String, String> headers}) async =>
       await this.client.put(url, body: body, headers: headers);
+
   Future<http.Response> patch(String url,
           {dynamic body, Map<String, String> headers}) async =>
       await this.client.patch(url, body: body, headers: headers);
+
   Future<http.Response> delete(String url,
           {Map<String, String> headers}) async =>
       await this.client.delete(url, headers: headers);
