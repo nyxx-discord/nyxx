@@ -80,9 +80,14 @@ class _Bucket {
                 int.parse(r.headers['x-ratelimit-reset']) * 1000,
                 isUtc: true)
             : null;
-        /*this.timeDifference = new DateTime.now()
-            .toUtc()
-            .difference(http_parser.parseHttpDate(r.headers['date']).toUtc());*/
+        try {
+          this.timeDifference = new DateTime.now()
+              .toUtc()
+              .difference(http_parser.parseHttpDate(r.headers['date']).toUtc());
+        } catch (err) {
+          this.timeDifference = new Duration();
+        }
+        print(r.headers);
 
         if (r.statusCode == 429) {
           new Timer(
@@ -140,11 +145,11 @@ class _Http {
   /// Makes a new HTTP manager.
   _Http(this.client) {
     this.httpClient = new _HttpClient();
-    this.headers = <String, String>{
-      'User-Agent':
-          'Discord Dart (https://github.com/Hackzzila/Discord-Dart, ${client.version})',
-      'Content-Type': 'application/json'
-    };
+    this.headers = <String, String>{'Content-Type': 'application/json'};
+
+    if (!httpClient.browser)
+      this.headers['User-Agent'] =
+          'Discord Dart (https://github.com/Hackzzila/Discord-Dart, ${client.version})';
   }
 
   /// Sends a GET request.
