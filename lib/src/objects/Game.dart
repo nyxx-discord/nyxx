@@ -26,7 +26,7 @@ class Game {
     } catch (err) {
       this.url = null;
     }
-    
+
     if (data['type'] is int) {
       this.type = data['type'];
     } else if (data['type'] is String) {

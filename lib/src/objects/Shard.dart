@@ -10,7 +10,7 @@ class Shard extends _BaseObj {
 
   Duration _heartbeatInterval;
   _WS _ws;
-  WebSocket _socket;
+  _WebSocket _socket;
   int _sequence;
   String _sessionId;
 
@@ -31,18 +31,17 @@ class Shard extends _BaseObj {
     if (this._socket != null) {
       this._socket.close();
     }
-    WebSocket
-        .connect('${this._ws.gateway}?v=6&encoding=json')
-        .then((WebSocket socket) {
+    new _WebSocket()
+        .connect('${this._ws.gateway}?v=6&encoding=json',
+            (String msg) => this._handleMsg(msg, resume), this._handleErr)
+        .then((_WebSocket socket) {
       this._socket = socket;
-      this._socket.listen((String msg) => this._handleMsg(msg, resume),
-          onDone: () => this._handleErr());
     });
   }
 
   /// Sends WS data.
   void _send(String op, dynamic d) {
-    this._socket.add(
+    this._socket.send(
         JSON.encode(<String, dynamic>{"op": _Constants.opCodes[op], "d": d}));
   }
 
@@ -145,7 +144,7 @@ class Shard extends _BaseObj {
           case 'MESSAGE_CREATE':
             MessageEvent msgEvent =
                 new MessageEvent._new(this._ws.client, json);
-            if (this._ws.client.ready &&
+            /*if (this._ws.client.ready &&
                 msgEvent.message.channel.type == "private" &&
                 this._ws.client.ss is SSServer) {
               for (Socket socket in this._ws.client.ss.sockets) {
@@ -155,7 +154,7 @@ class Shard extends _BaseObj {
                   "d": json
                 }));
               }
-            }
+            }*/
             break;
 
           case 'MESSAGE_DELETE':
@@ -240,8 +239,8 @@ class Shard extends _BaseObj {
     return null;
   }
 
-  void _handleErr() {
-    switch (this._socket.closeCode) {
+  void _handleErr(int closeCode) {
+    switch (closeCode) {
       case 1005:
         return;
 

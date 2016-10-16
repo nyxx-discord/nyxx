@@ -1,7 +1,7 @@
 part of discord;
 
 class _HttpRequest {
-  http.Client httpClient;
+  _HttpClient httpClient;
   String uri;
   String method;
   Map<String, String> headers;
@@ -135,11 +135,11 @@ class _Http {
   Map<String, String> headers;
 
   /// The HTTP client.
-  http.Client httpClient;
+  _HttpClient httpClient;
 
   /// Makes a new HTTP manager.
   _Http(this.client) {
-    this.httpClient = new http.Client();
+    this.httpClient = new _HttpClient();
     this.headers = <String, String>{
       'User-Agent':
           'Discord Dart (https://github.com/Hackzzila/Discord-Dart, ${client.version})',

@@ -40,9 +40,6 @@ class Client {
   /// The client's internal shards.
   Map<int, Shard> shards;
 
-  /// The client's uptime.
-  Duration get uptime => new DateTime.now().difference(_startTime);
-
   /// Emitted when the client is ready.
   Stream<ReadyEvent> onReady;
 
@@ -122,25 +119,28 @@ class Client {
     this._util = new _Util();
     this._ws = new _WS(this);
 
-    if (this._options.shardCount > 1) {
+    /*if (this._options.shardCount > 1) {
       if (this._options.shardIds.contains(0)) {
         this.ss = new SSServer(this);
       } else {
         this.ss = new SSClient(this);
       }
-    }
+    }*/
   }
+
+  /// The client's uptime.
+  Duration get uptime => new DateTime.now().difference(_startTime);
 
   /// Destroys the websocket connection, SS connection or server, and all streams.
   Future<Null> destroy() async {
     await this._ws.close();
     this._http.httpClient.close();
     await this._events.destroy();
-    if (this.ss is SSServer) {
+    /*if (this.ss is SSServer) {
       await this.ss.close();
     } else if (this.ss is SSClient) {
       this.ss.destroy();
-    }
+    }*/
     return null;
   }
 
