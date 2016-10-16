@@ -24,7 +24,7 @@ class ClientOptions {
 
   /// Whether or not to force fetch all of the members the client can see.
   /// Can slow down ready times but is recommended if you rely on `Message.member`
-  /// or the member cache.
+  /// or the member cache. Bots only, will break userbots.
   bool forceFetchMembers;
 
   /// A list of discord formatted events to be disabled. Note: some of these events

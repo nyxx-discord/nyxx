@@ -13,6 +13,7 @@ class _OPCodes {
   static const int invalidSession = 9;
   static const int hello = 10;
   static const int heartbeatAck = 11;
+  static const int guildSync = 12;
 }
 
 /// The client constants.
@@ -32,7 +33,8 @@ class _Constants {
     "REQUEST_GUILD_MEMBERS": 8,
     "INVALID_SESSION": 9,
     "HELLO": 10,
-    "HEARTBEAT_ACK": 11
+    "HEARTBEAT_ACK": 11,
+    "GUILD_SYNC": 12
   };
 
   /// The permission bits.
