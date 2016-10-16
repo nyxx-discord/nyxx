@@ -2,15 +2,15 @@ library discord;
 
 import 'dart:async';
 import 'dart:convert';
-import 'dart:io';
+import 'dart:html' as html;
 import 'dart:collection';
 import 'package:http_utils/http_utils.dart' as http_utils;
 import 'package:http_parser/http_parser.dart' as http_parser;
 import 'package:http/http.dart' as http;
-import 'package:events/events.dart' as events;
+import 'package:http/browser_client.dart' as http_browser;
+//import 'package:events/events.dart' as events;
 
 part 'src/Client.dart';
-part 'src/ss.dart';
 
 part 'src/internal/_BaseObj.dart';
 part 'src/internal/_Constants.dart';
@@ -77,31 +77,36 @@ part 'src/errors/InvalidTokenError.dart';
 part 'src/errors/InvalidShardError.dart';
 
 class _WebSocket {
-  WebSocket _socket;
+  html.WebSocket _socket;
 
   _WebSocket();
 
   Future<_WebSocket> connect(
       String url, void onData(dynamic data), void onDone(int closeCode)) async {
-    this._socket = await WebSocket.connect(url);
-    this._socket.listen(onData, onDone: () => onDone(_socket.closeCode));
+    this._socket = new html.WebSocket(url);
+    this._socket.onMessage.listen((html.MessageEvent e) {
+      onData(e.data);
+    });
+    this._socket.onClose.listen((html.CloseEvent e) {
+      onData(e.code);
+    });
     return this;
   }
 
   void send(dynamic data) {
-    this._socket.add(data);
+    this._socket.send(data);
   }
 
   Future close([int code]) async {
-    await this._socket.close(code);
+    this._socket.close(code);
   }
 }
 
 class _HttpClient {
-  http.Client client;
+  http_browser.BrowserClient client;
 
   _HttpClient() {
-    this.client = new http.Client();
+    this.client = new http_browser.BrowserClient();
   }
 
   void close() => this.client.close();
