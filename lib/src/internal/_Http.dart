@@ -80,9 +80,9 @@ class _Bucket {
                 int.parse(r.headers['x-ratelimit-reset']) * 1000,
                 isUtc: true)
             : null;
-        this.timeDifference = new DateTime.now()
+        /*this.timeDifference = new DateTime.now()
             .toUtc()
-            .difference(http_parser.parseHttpDate(r.headers['date']).toUtc());
+            .difference(http_parser.parseHttpDate(r.headers['date']).toUtc());*/
 
         if (r.statusCode == 429) {
           new Timer(
