@@ -47,30 +47,7 @@ class _WS {
 
     shard.onReady.stream.listen((Shard s) {
       if (!client.ready) {
-        bool match = true;
-        client.guilds.forEach((String id, Guild o) {
-          if (o == null) match = false;
-        });
-
-        bool match2 = true;
-        client.shards.forEach((int id, Shard s) {
-          if (!s.ready) match = false;
-        });
-
-        if (match && match2) {
-          client.ready = true;
-          if (client.user.bot) {
-            client._http
-                .get('/oauth2/applications/@me', true)
-                .then((_HttpResponse r) {
-              client.app = new ClientOAuth2Application._new(
-                  client, r.json as Map<String, dynamic>);
-              new ReadyEvent._new(client);
-            });
-          } else {
-            new ReadyEvent._new(client);
-          }
-        }
+        testReady();
       }
     });
   }
@@ -86,5 +63,36 @@ class _WS {
     this.client.shards.values.toList()[index]._connect();
     if (index + 1 != this.client._options.shardIds.length)
       new Timer(new Duration(seconds: 6), () => connectShard(index + 1));
+  }
+
+  void testReady() {
+    bool match = true;
+    client.guilds.forEach((String id, Guild o) {
+      if (client._options.forceFetchMembers) {
+        if (o == null || o.members.length != o.memberCount) match = false;
+      } else {
+        if (o == null) match = false;
+      }
+    });
+
+    bool match2 = true;
+    this.client.shards.forEach((int id, Shard s) {
+      if (!s.ready) match = false;
+    });
+
+    if (match && match2) {
+      client.ready = true;
+      if (client.user.bot) {
+        client._http
+            .get('/oauth2/applications/@me', true)
+            .then((_HttpResponse r) {
+          client.app = new ClientOAuth2Application._new(
+              client, r.json as Map<String, dynamic>);
+          new ReadyEvent._new(client);
+        });
+      } else {
+        new ReadyEvent._new(client);
+      }
+    }
   }
 }

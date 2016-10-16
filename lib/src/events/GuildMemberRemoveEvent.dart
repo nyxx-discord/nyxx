@@ -11,6 +11,7 @@ class GuildMemberRemoveEvent {
   GuildMemberRemoveEvent._new(Client client, Map<String, dynamic> json) {
     if (client.ready && json['d']['user']['id'] != client.user.id) {
       this.guild = client.guilds[json['d']['guild_id']];
+      guild.memberCount--;
       this.user =
           new User._new(client, json['d']['user'] as Map<String, dynamic>);
       guild.members.remove(user.id);
