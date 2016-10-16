@@ -5,6 +5,7 @@ part of discord;
 class Client {
   String _token;
   ClientOptions _options;
+  DateTime _startTime;
   _Http _http;
   _WS _ws;
   _EventController _events;
@@ -38,6 +39,9 @@ class Client {
 
   /// The client's internal shards.
   Map<int, Shard> shards;
+
+  /// The client's uptime.
+  Duration get uptime => new DateTime.now().difference(_startTime);
 
   /// Emitted when the client is ready.
   Stream<ReadyEvent> onReady;

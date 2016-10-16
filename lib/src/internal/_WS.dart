@@ -82,6 +82,7 @@ class _WS {
 
     if (match && match2) {
       client.ready = true;
+      client._startTime = new DateTime.now();
       if (client.user.bot) {
         client._http
             .get('/oauth2/applications/@me', true)
