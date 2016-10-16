@@ -131,6 +131,16 @@ class Shard extends _BaseObj {
             this.onReady.add(this);
             break;
 
+          case 'GUILD_MEMBERS_CHUNK':
+            json['d']['members'].forEach((Map<String, dynamic> o) {
+              new Member._new(this._ws.client, o,
+                  this._ws.client.guilds[json['d']['guild_id']]);
+            });
+            if (!_ws.client.ready) {
+              _ws.testReady();
+            }
+            break;
+
           case 'MESSAGE_CREATE':
             MessageEvent msgEvent =
                 new MessageEvent._new(this._ws.client, json);
@@ -156,7 +166,7 @@ class Shard extends _BaseObj {
             break;
 
           case 'GUILD_CREATE':
-            new GuildCreateEvent._new(this._ws.client, json, this._ws);
+            new GuildCreateEvent._new(this._ws.client, json, this);
             break;
 
           case 'GUILD_UPDATE':

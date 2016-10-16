@@ -22,6 +22,11 @@ class ClientOptions {
   /// Ex: `onMessageUpdate`.
   bool ignoreUncachedEvents;
 
+  /// Whether or not to force fetch all of the members the client can see.
+  /// Can slow down ready times but is recommended if you rely on `Message.member`
+  /// or the member cache.
+  bool forceFetchMembers;
+
   /// A list of discord formatted events to be disabled. Note: some of these events
   /// can be dangerous to disable. Ex: `TYPING_START`
   List<String> disabledEvents;
@@ -34,5 +39,6 @@ class ClientOptions {
       this.shardCount: 1,
       this.disabledEvents: const [],
       this.messageCacheSize: 200,
-      this.ignoreUncachedEvents: true});
+      this.ignoreUncachedEvents: true,
+      this.forceFetchMembers: true});
 }
