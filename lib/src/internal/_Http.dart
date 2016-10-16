@@ -87,7 +87,6 @@ class _Bucket {
         } catch (err) {
           this.timeDifference = new Duration();
         }
-        print(r.headers);
 
         if (r.statusCode == 429) {
           new Timer(
