@@ -78,6 +78,7 @@ part 'src/errors/InvalidShardError.dart';
 
 class _WebSocket {
   WebSocket _socket;
+  bool browser = false;
 
   _WebSocket();
 
@@ -99,6 +100,7 @@ class _WebSocket {
 
 class _HttpClient {
   http.Client client;
+  bool browser = false;
 
   _HttpClient() {
     this.client = new http.Client();
