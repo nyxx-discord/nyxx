@@ -1,7 +1,7 @@
 part of discord;
 
 class _HttpRequest {
-  _HttpClient httpClient;
+  _Http http;
   String uri;
   String method;
   Map<String, String> headers;
@@ -10,35 +10,36 @@ class _HttpRequest {
   StreamController<http.Response> streamController;
   Stream<http.Response> stream;
 
-  _HttpRequest(
-      this.httpClient, this.uri, this.method, this.headers, this.body) {
+  _HttpRequest(this.http, this.uri, this.method, this.headers, this.body) {
     this.streamController = new StreamController<http.Response>();
     this.stream = streamController.stream;
 
     if (this.method == "GET") {
       this.execute = () async {
         return await this
+            .http
             .httpClient
-            .get("${_Constants.host}$uri", headers: this.headers);
+            .get("${this.http.host}$uri", headers: this.headers);
       };
     } else if (this.method == "POST") {
       this.execute = () async {
-        return await this.httpClient.post("${_Constants.host}$uri",
+        return await this.http.httpClient.post("${this.http.host}$uri",
             body: JSON.encode(this.body), headers: this.headers);
       };
     } else if (this.method == "PATCH") {
       this.execute = () async {
-        return await this.httpClient.patch("${_Constants.host}$uri",
+        return await this.http.httpClient.patch("${this.http.host}$uri",
             body: JSON.encode(this.body), headers: this.headers);
       };
     } else if (this.method == "PUT") {
       this.execute = () async {
-        return await this.httpClient.put("${_Constants.host}$uri",
+        return await this.http.httpClient.put("${this.http.host}$uri",
             body: JSON.encode(this.body), headers: this.headers);
       };
     } else if (this.method == "DELETE") {
       this.execute = () async {
         return await this
+            .http
             .httpClient
             .delete("${_Constants.host}$uri", headers: this.headers);
       };
@@ -70,7 +71,7 @@ class _Bucket {
   }
 
   void execute(_HttpRequest request) {
-    if (request.httpClient.browser ||
+    if (_browser ||
         (this.ratelimitRemaining == null || this.ratelimitRemaining > 0)) {
       request.execute().then((http.Response r) {
         this.ratelimitRemaining = r.headers['x-ratelimit-remaining'] != null
@@ -133,7 +134,8 @@ class _HttpResponse {
 
 /// The HTTP manager for the client.
 class _Http {
-  Client client;
+  dynamic client;
+  String host;
   Map<String, _Bucket> buckets = <String, _Bucket>{};
 
   /// A map of headers that get sent on each HTTP request.
@@ -143,22 +145,23 @@ class _Http {
   _HttpClient httpClient;
 
   /// Makes a new HTTP manager.
-  _Http(this.client) {
+  _Http(this.client, [this.host = _Constants.host]) {
     this.httpClient = new _HttpClient();
     this.headers = <String, String>{'Content-Type': 'application/json'};
 
-    if (!httpClient.browser)
+    if (!_browser)
       this.headers['User-Agent'] =
           'Discord Dart (https://github.com/Hackzzila/Discord-Dart, ${client.version})';
   }
 
   /// Sends a GET request.
   Future<_HttpResponse> get(String uri, [bool beforeReady = false]) async {
-    if (!this.client.ready && !beforeReady) throw new ClientNotReadyError();
+    if (client is Client && !this.client.ready && !beforeReady)
+      throw new ClientNotReadyError();
     if (buckets[uri] == null) buckets[uri] = new _Bucket(uri);
 
-    await for (http.Response r in buckets[uri].push(
-        new _HttpRequest(this.httpClient, uri, "GET", this.headers, null))) {
+    await for (http.Response r in buckets[uri]
+        .push(new _HttpRequest(this, uri, "GET", this.headers, null))) {
       http_utils.ResponseStatus status =
           http_utils.ResponseStatus.fromStatusCode(r.statusCode);
       if (status.family == http_utils.ResponseStatusFamily.SUCCESSFUL) {
@@ -173,11 +176,12 @@ class _Http {
   /// Sends a POST request.
   Future<_HttpResponse> post(String uri, Object content,
       [bool beforeReady = false]) async {
-    if (!this.client.ready && !beforeReady) throw new ClientNotReadyError();
+    if (client is Client && !this.client.ready && !beforeReady)
+      throw new ClientNotReadyError();
     if (buckets[uri] == null) buckets[uri] = new _Bucket(uri);
 
-    await for (http.Response r in buckets[uri].push(new _HttpRequest(
-        this.httpClient, uri, "POST", this.headers, content))) {
+    await for (http.Response r in buckets[uri]
+        .push(new _HttpRequest(this, uri, "POST", this.headers, content))) {
       http_utils.ResponseStatus status =
           http_utils.ResponseStatus.fromStatusCode(r.statusCode);
       if (status.family == http_utils.ResponseStatusFamily.SUCCESSFUL) {
@@ -192,11 +196,12 @@ class _Http {
   /// Sends a PATCH request.
   Future<_HttpResponse> patch(String uri, Object content,
       [bool beforeReady = false]) async {
-    if (!this.client.ready && !beforeReady) throw new ClientNotReadyError();
+    if (client is Client && !this.client.ready && !beforeReady)
+      throw new ClientNotReadyError();
     if (buckets[uri] == null) buckets[uri] = new _Bucket(uri);
 
-    await for (http.Response r in buckets[uri].push(new _HttpRequest(
-        this.httpClient, uri, "PATCH", this.headers, content))) {
+    await for (http.Response r in buckets[uri]
+        .push(new _HttpRequest(this, uri, "PATCH", this.headers, content))) {
       http_utils.ResponseStatus status =
           http_utils.ResponseStatus.fromStatusCode(r.statusCode);
       if (status.family == http_utils.ResponseStatusFamily.SUCCESSFUL) {
@@ -211,11 +216,12 @@ class _Http {
   /// Sends a PUT request.
   Future<_HttpResponse> put(String uri, Object content,
       [bool beforeReady = false]) async {
-    if (!this.client.ready && !beforeReady) throw new ClientNotReadyError();
+    if (client is Client && !this.client.ready && !beforeReady)
+      throw new ClientNotReadyError();
     if (buckets[uri] == null) buckets[uri] = new _Bucket(uri);
 
-    await for (http.Response r in buckets[uri].push(
-        new _HttpRequest(this.httpClient, uri, "PUT", this.headers, content))) {
+    await for (http.Response r in buckets[uri]
+        .push(new _HttpRequest(this, uri, "PUT", this.headers, content))) {
       http_utils.ResponseStatus status =
           http_utils.ResponseStatus.fromStatusCode(r.statusCode);
       if (status.family == http_utils.ResponseStatusFamily.SUCCESSFUL) {
@@ -229,11 +235,12 @@ class _Http {
 
   /// Sends a DELETE request.
   Future<_HttpResponse> delete(String uri, [bool beforeReady = false]) async {
-    if (!this.client.ready && !beforeReady) throw new ClientNotReadyError();
+    if (client is Client && !this.client.ready && !beforeReady)
+      throw new ClientNotReadyError();
     if (buckets[uri] == null) buckets[uri] = new _Bucket(uri);
 
-    await for (http.Response r in buckets[uri].push(
-        new _HttpRequest(this.httpClient, uri, "DELETE", this.headers, null))) {
+    await for (http.Response r in buckets[uri]
+        .push(new _HttpRequest(this, uri, "DELETE", this.headers, null))) {
       http_utils.ResponseStatus status =
           http_utils.ResponseStatus.fromStatusCode(r.statusCode);
       if (status.family == http_utils.ResponseStatusFamily.SUCCESSFUL) {

@@ -9,7 +9,6 @@ class Client {
   _Http _http;
   _WS _ws;
   _EventController _events;
-  _Util _util;
 
   /// The logged in user.
   ClientUser user;
@@ -31,11 +30,7 @@ class Client {
   bool ready = false;
 
   /// The current version.
-  String version = "0.13.3";
-
-  /// The client's SS manager, null if the client is not sharded, [SSServer] if
-  /// the current shard is 0, [SSClient] otherwise.
-  dynamic ss;
+  String version = _Constants.version;
 
   /// The client's internal shards.
   Map<int, Shard> shards;
@@ -116,16 +111,7 @@ class Client {
 
     this._http = new _Http(this);
     this._events = new _EventController(this);
-    this._util = new _Util();
     this._ws = new _WS(this);
-
-    /*if (this._options.shardCount > 1) {
-      if (this._options.shardIds.contains(0)) {
-        this.ss = new SSServer(this);
-      } else {
-        this.ss = new SSClient(this);
-      }
-    }*/
   }
 
   /// The client's uptime.
@@ -136,11 +122,6 @@ class Client {
     await this._ws.close();
     this._http.httpClient.close();
     await this._events.destroy();
-    /*if (this.ss is SSServer) {
-      await this.ss.close();
-    } else if (this.ss is SSClient) {
-      this.ss.destroy();
-    }*/
     return null;
   }
 
@@ -149,7 +130,7 @@ class Client {
   /// Throws an [Exception] if the HTTP request errored.
   ///     Client.getUser("user id");
   Future<User> getUser(dynamic user) async {
-    final String id = this._util.resolve('user', user);
+    final String id = _Util.resolve('user', user);
 
     final _HttpResponse r = await this._http.get('/users/$id');
     return new User._new(this, r.json as Map<String, dynamic>);
@@ -169,7 +150,7 @@ class Client {
   /// Throws an [Exception] if the HTTP request errored
   ///     Client.getOAuth2Info("app id");
   Future<OAuth2Info> getOAuth2Info(dynamic app) async {
-    final String id = this._util.resolve('app', app);
+    final String id = _Util.resolve('app', app);
 
     final _HttpResponse r =
         await this._http.get('/oauth2/authorize?client_id=$id&scope=bot');

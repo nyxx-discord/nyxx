@@ -77,7 +77,7 @@ class DMChannel extends Channel {
   ///     Channel.getMessage("message id");
   Future<Message> getMessage(dynamic message) async {
     if (this._client.user.bot) {
-      final String id = this._client._util.resolve('message', message);
+      final String id = _Util.resolve('message', message);
 
       final _HttpResponse r =
           await this._client._http.get('/channels/${this.id}/messages/$id');

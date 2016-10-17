@@ -1,163 +1,64 @@
-/*import 'dart:async';
-import 'dart:convert';
-import '../discord.dart';
-import 'internal/util.dart';
-import 'package:http/http.dart' as http_lib;
-
-/// The HTTP manager for the client.
-class HTTP {
-  /// The base API URL.
-  String host;
-
-  /// A map of headers that get sent on each HTTP request.
-  Map<String, String> headers;
-
-  /// The HTTP client.
-  http_lib.Client http;
-
-  /// Makes a new HTTP manager.
-  HTTP(Client client) {
-    this.http = new http_lib.Client();
-    this.headers = <String, String>{
-      'User-Agent':
-          'Discord Dart Webhooks (https://github.com/Hackzzila/Discord-Dart, ${client.version})',
-      'Content-Type': 'application/json'
-    };
-  }
-
-  /// Sends a GET request.
-  Future<http_lib.Response> get() async {
-    return await this.http.get(this.host, headers: this.headers);
-  }
-
-  /// Sends a POST request.
-  Future<http_lib.Response> post(Object content) async {
-    return await this
-        .http
-        .post(this.host, body: JSON.encode(content), headers: this.headers);
-  }
-
-  /// Sends a PATCH request.
-  Future<http_lib.Response> patch(Object content) async {
-    return await this
-        .http
-        .patch(this.host, body: JSON.encode(content), headers: this.headers);
-  }
-
-  /// Sends a DELETE request.
-  Future<http_lib.Response> delete() async {
-    return await this.http.delete(this.host, headers: this.headers);
-  }
-}
+part of discord;
 
 /// A webhook client.
-class Client {
+class WebhookClient {
   /// The HTTP client.
-  HTTP http;
+  _Http http;
 
   /// The version.
-  String version = "0.11.1+dev";
+  String version = _Constants.version;
 
   /// Emitted when data is received about the webhook and all properties are filled.
-  Stream<Null> onReady;
+  Stream<Webhook> onReady;
 
-  /// The webhook's name.
-  String name;
-
-  /// The webhook's id.
-  String id;
-
-  /// The webhook's token.
-  String token;
-
-  /// The webhook's channel id.
-  String channelId;
-
-  /// The webhook's guild id.
-  String guildId;
-
-  /// When the webhook was created;
-  DateTime createdAt;
+  /// The webhook;
+  Webhook webhook;
 
   /// Sets up a new webhook client.
-  Client({url, id, token}) {
-    StreamController<Null> onReady = new StreamController.broadcast();
+  WebhookClient({url, id, token}) {
+    StreamController<Webhook> onReady = new StreamController.broadcast();
     this.onReady = onReady.stream;
-    this.http = new HTTP(this);
+    this.http = new _Http(this);
     if (url == null) {
       this.http.host = "https://discordapp.com/api/webhooks/$id/$token";
     } else {
       this.http.host = url;
     }
 
-    this.http.get().then((http_lib.Response r) {
-      if (r.statusCode == 200) {
-        dynamic data = JSON.decode(r.body);
-        this.name = data['name'];
-        this.id = data['id'];
-        this.token = data['token'];
-        this.channelId = data['channel_id'];
-        this.guildId = data['guild_id'];
-
-        Util util = new Util();
-        this.createdAt = util.getDate(this.id);
-        onReady.add(null);
-      } else {
-        throw new HttpError(r);
-      }
+    this.http.get("").then((_HttpResponse r) {
+      this.webhook = new Webhook._new(null, r.json as Map<String, dynamic>);
+      onReady.add(this.webhook);
     });
   }
 
   /// Sends a message with the webhook.
   Future<Null> sendMessage(
       {String content,
-      Null file,
       List<Map<String, dynamic>> embeds,
       String username,
       String avatarUrl,
       bool tts}) async {
-    http_lib.Response r = await this.http.post({
+    await this.http.post("", {
       "content": content,
       "username": username,
       "avatar_url": avatarUrl,
       "tts": tts,
       "embeds": embeds
     });
-    if (r.statusCode == 204) {
-      return null;
-    } else {
-      throw new HttpError(r);
-    }
+    return null;
   }
 
   /// Deletes the webhook.
   Future<Null> delete() async {
-    http_lib.Response r = await this.http.delete();
-    if (r.statusCode == 204) {
-      return null;
-    } else {
-      throw new HttpError(r);
-    }
+    await this.http.delete("");
+    return null;
   }
 
   /// Edits the webhook.
-  Future<Null> edit({String name, List<int> avatar}) async {
-    http_lib.Response r =
-        await this.http.patch({"name": name, "avatar": avatar});
-
-    if (r.statusCode == 200) {
-      dynamic data = JSON.decode(r.body);
-      this.name = data['name'];
-      this.id = data['id'];
-      this.token = data['token'];
-      this.channelId = data['channel_id'];
-      this.guildId = data['guild_id'];
-
-      Util util = new Util();
-      this.createdAt = util.getDate(this.id);
-    } else {
-      throw new HttpError(r);
-    }
+  Future<Webhook> edit({String name, List<int> avatar}) async {
+    _HttpResponse r =
+        await this.http.patch("", {"name": name, "avatar": avatar});
+    this.webhook = new Webhook._new(null, r.json as Map<String, dynamic>);
+    return this.webhook;
   }
 }
-*/

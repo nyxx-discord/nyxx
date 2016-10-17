@@ -27,7 +27,7 @@ class OAuth2Application extends _BaseObj {
     this.id = data['id'];
     this.name = data['name'];
     this.rpcOrigins = data['rpcOrigins'] as List<String>;
-    this.createdAt = this._client._util.getDate(this.id);
+    this.createdAt = _Util.getDate(this.id);
   }
 
   /// Returns a string representation of this object.
