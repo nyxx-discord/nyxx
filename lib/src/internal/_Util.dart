@@ -3,13 +3,13 @@ part of discord;
 /// The utility functions for the client.
 class _Util {
   /// Gets a DateTime from a snowflake ID.
-  DateTime getDate(String id) {
+  static DateTime getDate(String id) {
     return new DateTime.fromMillisecondsSinceEpoch(
         ((int.parse(id) / 4194304) + 1420070400000).toInt());
   }
 
   /// Resolves an object into a target object.
-  String resolve(String to, dynamic object) {
+  static String resolve(String to, dynamic object) {
     if (to == "channel") {
       if (object is Message) {
         return object.channel.id;

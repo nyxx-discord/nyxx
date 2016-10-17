@@ -38,7 +38,7 @@ class User extends _BaseObj {
     this.avatarURL =
         "${_Constants.host}/users/${this.id}/avatars/${this.avatar}.jpg";
     this.mention = "<@${this.id}>";
-    this.createdAt = this._client._util.getDate(this.id);
+    this.createdAt = _Util.getDate(this.id);
 
     // This will not be set at all in some cases.
     if (data['bot'] == true) {
@@ -102,7 +102,7 @@ class User extends _BaseObj {
   ///     Channel.getMessage("message id");
   Future<Message> getMessage(dynamic message) async {
     if (this._client.user.bot) {
-      final String id = this._client._util.resolve('message', message);
+      final String id = _Util.resolve('message', message);
       DMChannel channel = await getChannel();
       String channelId = channel.id;
 

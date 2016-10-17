@@ -8,9 +8,9 @@ import 'package:http_utils/http_utils.dart' as http_utils;
 import 'package:http_parser/http_parser.dart' as http_parser;
 import 'package:http/http.dart' as http;
 import 'package:http/browser_client.dart' as http_browser;
-//import 'package:events/events.dart' as events;
 
 part 'src/Client.dart';
+part 'src/webhook.dart';
 
 part 'src/internal/_BaseObj.dart';
 part 'src/internal/_Constants.dart';
@@ -76,9 +76,10 @@ part 'src/errors/HttpError.dart';
 part 'src/errors/InvalidTokenError.dart';
 part 'src/errors/InvalidShardError.dart';
 
+final bool _browser = true;
+
 class _WebSocket {
   html.WebSocket _socket;
-  bool browser = true;
 
   _WebSocket();
 
@@ -105,7 +106,6 @@ class _WebSocket {
 
 class _HttpClient {
   http_browser.BrowserClient client;
-  bool browser = true;
 
   _HttpClient() {
     this.client = new http_browser.BrowserClient();

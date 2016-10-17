@@ -79,7 +79,7 @@ class Message extends _BaseObj {
     this.pinned = data['pinned'];
     this.tts = data['tts'];
     this.mentionEveryone = data['mention_everyone'];
-    this.createdAt = this._client._util.getDate(this.id);
+    this.createdAt = _Util.getDate(this.id);
 
     this.channel._cacheMessage(this);
     this.channel.lastMessageID = this.id;

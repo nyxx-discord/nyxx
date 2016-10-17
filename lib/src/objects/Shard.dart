@@ -108,7 +108,7 @@ class Shard extends _BaseObj {
               this._ws.client._options.forceFetchMembers = false;
             }
 
-            if (!this._ws.client._http.httpClient.browser)
+            if (!_browser)
               this._ws.client._http.headers['User-Agent'] =
                   "${this._ws.client.user.username} (https://github.com/Hackzzila/Discord-Dart, ${this._ws.client.version})";
 
@@ -143,19 +143,7 @@ class Shard extends _BaseObj {
             break;
 
           case 'MESSAGE_CREATE':
-            MessageEvent msgEvent =
-                new MessageEvent._new(this._ws.client, json);
-            /*if (this._ws.client.ready &&
-                msgEvent.message.channel.type == "private" &&
-                this._ws.client.ss is SSServer) {
-              for (Socket socket in this._ws.client.ss.sockets) {
-                socket.write(JSON.encode(<String, dynamic>{
-                  "op": 3,
-                  "t": _ws.client._token,
-                  "d": json
-                }));
-              }
-            }*/
+            new MessageEvent._new(this._ws.client, json);
             break;
 
           case 'MESSAGE_DELETE':
