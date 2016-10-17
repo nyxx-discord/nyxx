@@ -70,7 +70,7 @@ class _Bucket {
   }
 
   void execute(_HttpRequest request) {
-    if (this.ratelimitRemaining == null || this.ratelimitRemaining > 0) {
+    if (request.httpClient.browser || (this.ratelimitRemaining == null || this.ratelimitRemaining > 0)) {
       request.execute().then((http.Response r) {
         this.ratelimitRemaining = r.headers['x-ratelimit-remaining'] != null
             ? int.parse(r.headers['x-ratelimit-remaining'])
@@ -91,7 +91,7 @@ class _Bucket {
         if (r.statusCode == 429) {
           new Timer(
               new Duration(
-                  milliseconds: int.parse(r.headers['retry-after']) + 500),
+                  milliseconds: JSON.decode(r.body)['retry_after'] + 500),
               () => this.execute(request));
         } else {
           this.waiting = false;
