@@ -2,6 +2,9 @@ part of discord;
 
 /// A message.
 class Message extends _BaseObj {
+  StreamController<MessageUpdateEvent> _onUpdate;
+  StreamController<MessageDeleteEvent> _onDelete;
+
   /// The message's content.
   String content;
 
@@ -53,7 +56,19 @@ class Message extends _BaseObj {
   /// Whether or @everyone was mentioned in the message.
   bool mentionEveryone;
 
+  /// Emitted when the message is edited, if it is in the channel cache.
+  Stream<MessageUpdateEvent> onUpdate;
+
+  /// Emitted when the message is deleted, if it is in the channel cache.
+  Stream<MessageDeleteEvent> onDelete;
+
   Message._new(Client client, Map<String, dynamic> data) : super(client, data) {
+    this._onUpdate = new StreamController.broadcast();
+    this.onUpdate = this._onUpdate.stream;
+
+    this._onDelete = new StreamController.broadcast();
+    this.onDelete = this._onDelete.stream;
+
     this.content = data['content'];
     this.id = data['id'];
     this.nonce = data['nonce'];
