@@ -21,6 +21,7 @@ class MessageUpdateEvent {
         data.addAll(json['d'] as Map<String, dynamic>);
         this.newMessage = new Message._new(client, data);
         this.id = newMessage.id;
+        this.oldMessage._onUpdate.add(this);
         client._events.onMessageUpdate.add(this);
       } else {
         this.id = json['d']['id'];

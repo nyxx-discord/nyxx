@@ -15,6 +15,7 @@ class MessageDeleteEvent {
         this.message =
             client.channels[json['d']['channel_id']].messages[json['d']['id']];
         this.id = message.id;
+        this.message._onDelete.add(this);
         client._events.onMessageDelete.add(this);
       } else {
         this.id = json['d']['id'];
