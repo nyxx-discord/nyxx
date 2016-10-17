@@ -24,7 +24,7 @@ class TextChannel extends GuildChannel {
     if (this._client._options.messageCacheSize > 0) {
       if (this.messages.length >= this._client._options.messageCacheSize) {
         this.messages.values.toList().first._onUpdate.close();
-        this.messages.values.toList().first._onDelete.close(); 
+        this.messages.values.toList().first._onDelete.close();
         this.messages.remove(this.messages.values.toList().first.id);
       }
       this.messages[message.id] = message;
