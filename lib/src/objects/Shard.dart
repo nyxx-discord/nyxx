@@ -26,10 +26,12 @@ class Shard extends _BaseObj {
     this.onError = new StreamController<Shard>.broadcast();
   }
 
-  void _connect([bool resume = true]) {
+  void _connect([bool resume = true, bool init = false]) {
     this.ready = false;
-    if (this._socket != null) {
-      this._socket.close();
+    if (this._socket != null) this._socket.close();
+    if (!init) {
+      new Timer(new Duration(seconds: 2), () => _connect(resume));
+      return;
     }
     new _WebSocket()
         .connect('${this._ws.gateway}?v=6&encoding=json',
