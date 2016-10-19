@@ -111,10 +111,12 @@ class Guild extends _BaseObj {
 
         data['presences'].forEach((Map<String, dynamic> o) {
           Member member = this.members[o['user']['id']];
-          member.status = o['status'];
-          if (o['game'] != null) {
-            member.game =
-                new Game._new(client, o['game'] as Map<String, dynamic>);
+          if (member != null) {
+            member.status = o['status'];
+            if (o['game'] != null) {
+              member.game =
+                  new Game._new(client, o['game'] as Map<String, dynamic>);
+            }
           }
         });
 
