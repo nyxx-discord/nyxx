@@ -64,18 +64,11 @@ class User extends _BaseObj {
   ///
   /// Throws an [Exception] if the HTTP request errored.
   ///     Channel.sendMessage("My content!");
-  Future<Message> sendMessage(String content, [MessageOptions options]) async {
-    MessageOptions newOptions;
-    if (options == null) {
-      newOptions = new MessageOptions();
-    } else {
-      newOptions = options;
-    }
-
+  Future<Message> sendMessage(String content,
+      {bool tts: false, String nonce, bool disableEveryone}) async {
     String newContent;
-    if (newOptions.disableEveryone == true ||
-        (newOptions.disableEveryone == null &&
-            this._client._options.disableEveryone)) {
+    if (disableEveryone == true ||
+        (disableEveryone == null && this._client._options.disableEveryone)) {
       newContent = content
           .replaceAll("@everyone", "@\u200Beveryone")
           .replaceAll("@here", "@\u200Bhere");
@@ -87,11 +80,8 @@ class User extends _BaseObj {
     String channelId = channel.id;
 
     final _HttpResponse r = await this._client._http.post(
-        '/channels/$channelId/messages', <String, dynamic>{
-      "content": newContent,
-      "tts": newOptions.tts,
-      "nonce": newOptions.nonce
-    });
+        '/channels/$channelId/messages',
+        <String, dynamic>{"content": newContent, "tts": tts, "nonce": nonce});
     return new Message._new(this._client, r.json as Map<String, dynamic>);
   }
 

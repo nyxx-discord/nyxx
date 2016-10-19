@@ -130,18 +130,11 @@ class Message extends _BaseObj {
   ///
   /// Throws an [Exception] if the HTTP request errored.
   ///     Message.edit("My edited content!");
-  Future<Message> edit(String content, [MessageOptions msgOptions]) async {
-    MessageOptions options;
-    if (msgOptions == null) {
-      options = new MessageOptions();
-    } else {
-      options = msgOptions;
-    }
-
+  Future<Message> edit(String content,
+      {bool tts: false, String nonce, bool disableEveryone}) async {
     String newContent;
-    if (options.disableEveryone == true ||
-        (options.disableEveryone == null &&
-            this._client._options.disableEveryone)) {
+    if (disableEveryone == true ||
+        (disableEveryone == null && this._client._options.disableEveryone)) {
       newContent = content
           .replaceAll("@everyone", "@\u200Beveryone")
           .replaceAll("@here", "@\u200Bhere");
