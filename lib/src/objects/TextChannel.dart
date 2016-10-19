@@ -112,4 +112,24 @@ class TextChannel extends GuildChannel {
   void stopTypingLoop() {
     this._typing?.cancel();
   }
+
+  /// Gets all of the webhooks for this channel.
+  Future<Map<String, Webhook>> getWebhooks() async {
+    _HttpResponse r = await this._client._http.get("/channels/$id/webhooks");
+    Map<String, dynamic> map = <String, dynamic>{};
+    r.json.forEach((Map<String, dynamic> o) {
+      Webhook webhook = new Webhook._fromApi(this._client, o);
+      map[webhook.id] = webhook;
+    });
+    return map;
+  }
+
+  /// Creates a webhook.
+  Future<Webhook> createWebhook({String name}) async {
+    _HttpResponse r = await this
+        ._client
+        ._http
+        .post("/channels/$id/webhooks", {"name": "Spidey Bot"});
+    return new Webhook._fromApi(this._client, r.json as Map<String, dynamic>);
+  }
 }
