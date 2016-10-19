@@ -31,6 +31,9 @@ class ClientOptions {
   /// can be dangerous to disable. Ex: `TYPING_START`
   List<String> disabledEvents;
 
+  /// The prefix for the command client. The command client will not run if this is null.
+  String prefix;
+
   /// Makes a new `ClientOptions` object.
   ClientOptions(
       {this.disableEveryone: false,
@@ -40,5 +43,6 @@ class ClientOptions {
       this.disabledEvents: const [],
       this.messageCacheSize: 200,
       this.ignoreUncachedEvents: true,
-      this.forceFetchMembers: true});
+      this.forceFetchMembers: true,
+      this.prefix: null});
 }

@@ -7,8 +7,10 @@ import 'dart:collection';
 import 'package:http_utils/http_utils.dart' as http_utils;
 import 'package:http_parser/http_parser.dart' as http_parser;
 import 'package:http/http.dart' as http;
+import 'package:args/args.dart' as args;
 
 part 'src/Client.dart';
+part 'src/CommandClient.dart';
 
 part 'src/internal/_BaseObj.dart';
 part 'src/internal/_Constants.dart';
@@ -39,11 +41,13 @@ part 'src/events/RoleDeleteEvent.dart';
 part 'src/events/RoleUpdateEvent.dart';
 part 'src/events/TypingEvent.dart';
 
+part 'src/objects/Argument.dart';
 part 'src/objects/Attachment.dart';
 part 'src/objects/Channel.dart';
 part 'src/objects/ClientOAuth2Application.dart';
 part 'src/objects/ClientOptions.dart';
 part 'src/objects/ClientUser.dart';
+part 'src/objects/Command.dart';
 part 'src/objects/DMChannel.dart';
 part 'src/objects/Embed.dart';
 part 'src/objects/EmbedProvider.dart';

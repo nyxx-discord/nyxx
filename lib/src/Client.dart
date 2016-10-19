@@ -32,6 +32,9 @@ class Client {
   /// The current version.
   String version = _Constants.version;
 
+  /// The command client.
+  CommandClient commands;
+
   /// The client's internal shards.
   Map<int, Shard> shards;
 
@@ -112,6 +115,9 @@ class Client {
     this._http = new _Http(this);
     this._events = new _EventController(this);
     this._ws = new _WS(this);
+
+    if (this._options.prefix != null)
+      this.commands = new CommandClient._new(this);
   }
 
   /// The client's uptime.
