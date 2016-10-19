@@ -60,7 +60,6 @@ part 'src/objects/Invite.dart';
 part 'src/objects/InviteChannel.dart';
 part 'src/objects/InviteGuild.dart';
 part 'src/objects/Member.dart';
-part 'src/objects/MessageOptions.dart';
 part 'src/objects/Message.dart';
 part 'src/objects/OAuth2Application.dart';
 part 'src/objects/OAuth2Guild.dart';
