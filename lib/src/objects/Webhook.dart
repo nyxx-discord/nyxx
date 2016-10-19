@@ -108,7 +108,7 @@ class Webhook extends _BaseObj {
       "embeds": embeds
     };
 
-    _HttpResponse r = await this._http.post("/$id/$token", payload, false,
+    await this._http.post("/$id/$token", payload, false,
         "https://discordapp.com/api/v6/webhooks");
     return null;
   }
