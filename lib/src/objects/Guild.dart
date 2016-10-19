@@ -261,4 +261,15 @@ class Guild extends _BaseObj {
       throw new Exception("'oauth2Authorize' is only usable by user accounts.");
     }
   }
+
+  /// Gets all of the webhooks for this guild.
+  Future<Map<String, Webhook>> getWebhooks() async {
+    _HttpResponse r = await this._client._http.get("/guilds/$id/webhooks");
+    Map<String, dynamic> map = <String, dynamic>{};
+    r.json.forEach((Map<String, dynamic> o) {
+      Webhook webhook = new Webhook._fromApi(this._client, o);
+      map[webhook.id] = webhook;
+    });
+    return map;
+  }
 }

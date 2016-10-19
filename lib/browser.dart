@@ -4,13 +4,13 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:html' as html;
 import 'dart:collection';
+import 'dart:isolate';
 import 'package:http_utils/http_utils.dart' as http_utils;
 import 'package:http_parser/http_parser.dart' as http_parser;
 import 'package:http/http.dart' as http;
 import 'package:http/browser_client.dart' as http_browser;
 
 part 'src/Client.dart';
-part 'src/webhook.dart';
 
 part 'src/internal/_BaseObj.dart';
 part 'src/internal/_Constants.dart';
