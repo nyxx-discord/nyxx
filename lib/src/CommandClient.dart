@@ -15,7 +15,10 @@ class CommandClient {
       Command command = commands[e.message.content
           .replaceFirst(_client._options.prefix, "")
           .split(" ")[0]];
-      if (command == null) onInvalidCommand(e.message);
+      if (command == null) {
+        onInvalidCommand(e.message);
+        return;
+      }
       if (command.enabled == false) return;
       if (command.guildOnly && e.message.guild == null) return;
 
