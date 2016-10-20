@@ -22,7 +22,7 @@ class OAuth2Guild extends _BaseObj {
     this.icon = data['icon'];
     this.id = data['id'];
     this.name = data['name'];
-    this.createdAt = _Util.getDate(this.id);
+    this.createdAt = Util.getDate(this.id);
   }
 
   /// Returns a string representation of this object.

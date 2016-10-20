@@ -16,7 +16,7 @@ part 'src/internal/_BaseObj.dart';
 part 'src/internal/_Constants.dart';
 part 'src/internal/_EventController.dart';
 part 'src/internal/_Http.dart';
-part 'src/internal/_Util.dart';
+part 'src/internal/Util.dart';
 part 'src/internal/_WS.dart';
 
 part 'src/events/ChannelCreateEvent.dart';

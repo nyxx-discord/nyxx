@@ -83,7 +83,7 @@ class Guild extends _BaseObj {
       this.mfaLevel = data['mfa_level'];
       this.embedEnabled = data['embed_enabled'];
       this.ownerID = data['owner_id'];
-      this.createdAt = _Util.getDate(this.id);
+      this.createdAt = Util.getDate(this.id);
 
       this.roles = new Map<String, Role>();
       data['roles'].forEach((Map<String, dynamic> o) {
@@ -226,7 +226,7 @@ class Guild extends _BaseObj {
   /// Throws an [Exception] if the HTTP request errored.
   ///     Guild.getMember("user id");
   Future<Member> getMember(dynamic member) async {
-    final String id = _Util.resolve('member', member);
+    final String id = Util.resolve('member', member);
 
     if (this.members[member] != null) {
       return this.members[member];
@@ -247,7 +247,7 @@ class Guild extends _BaseObj {
   ///     Guild.oauth2Authorize("app id");
   Future<Null> oauth2Authorize(dynamic app, [int permissions = 0]) async {
     if (!this._client.user.bot) {
-      final String id = _Util.resolve('app', app);
+      final String id = Util.resolve('app', app);
 
       await this._client._http.post(
           '/oauth2/authorize?client_id=$id&scope=bot', <String, dynamic>{

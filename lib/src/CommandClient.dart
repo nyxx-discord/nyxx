@@ -135,11 +135,10 @@ class _Help implements Command {
 
   @override
   void run(Client bot, Message msg, Map<String, dynamic> args) {
-    List<String> message = ["```", "Command - Discription - Usage"];
+    List<List<String>> table = [["Command", "Discription", "Usage"]];
     bot.commands.commands.forEach((String name, Command command) {
-      message.add("$name - ${command.description} - ${command.usage}");
+      table.add([name, command.description, command.usage]);
     });
-    message.add("```");
-    msg.channel.sendMessage(message.join("\n"));
+    msg.channel.sendMessage("```" + Util.textTable(table) + "```");
   }
 }

@@ -75,7 +75,7 @@ class TextChannel extends GuildChannel {
   ///     Channel.getMessage("message id");
   Future<Message> getMessage(dynamic message) async {
     if (this._client.user.bot) {
-      final String id = _Util.resolve('message', message);
+      final String id = Util.resolve('message', message);
 
       final _HttpResponse r =
           await this._client._http.get('/channels/${this.id}/messages/$id');

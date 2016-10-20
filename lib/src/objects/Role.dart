@@ -42,7 +42,7 @@ class Role extends _BaseObj {
     this.mentionable = data['mentionable'];
     this.permissions =
         new Permissions.fromInt(this._client, data['permissions']);
-    this.createdAt = _Util.getDate(this.id);
+    this.createdAt = Util.getDate(this.id);
 
     if (data['color'] == 0) {
       this.color = null;

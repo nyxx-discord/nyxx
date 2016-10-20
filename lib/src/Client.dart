@@ -136,7 +136,7 @@ class Client {
   /// Throws an [Exception] if the HTTP request errored.
   ///     Client.getUser("user id");
   Future<User> getUser(dynamic user) async {
-    final String id = _Util.resolve('user', user);
+    final String id = Util.resolve('user', user);
 
     final _HttpResponse r = await this._http.get('/users/$id');
     return new User._new(this, r.json as Map<String, dynamic>);
@@ -156,7 +156,7 @@ class Client {
   /// Throws an [Exception] if the HTTP request errored
   ///     Client.getOAuth2Info("app id");
   Future<OAuth2Info> getOAuth2Info(dynamic app) async {
-    final String id = _Util.resolve('app', app);
+    final String id = Util.resolve('app', app);
 
     final _HttpResponse r =
         await this._http.get('/oauth2/authorize?client_id=$id&scope=bot');
