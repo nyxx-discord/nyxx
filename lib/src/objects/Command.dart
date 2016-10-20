@@ -23,5 +23,6 @@ abstract class Command {
   /// Args for the command.
   List<Argument> args;
 
+  /// What to execute when the command is received.
   void run(Client bot, Message msg, Map<String, dynamic> args);
 }
