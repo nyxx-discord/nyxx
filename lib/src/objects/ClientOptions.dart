@@ -32,6 +32,7 @@ class ClientOptions {
   List<String> disabledEvents;
 
   /// The prefix for the command client. The command client will not run if this is null.
+  /// It can be `<@mention>` for a mention.
   String prefix;
 
   /// Makes a new `ClientOptions` object.
