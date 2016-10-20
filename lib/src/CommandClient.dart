@@ -15,7 +15,7 @@ class CommandClient {
       Command command = commands[e.message.content
           .replaceFirst(_client._options.prefix, "")
           .split(" ")[0]];
-      if (command == null) return;
+      if (command == null) onInvalidCommand(e.message);
       if (command.enabled == false) return;
       if (command.guildOnly && e.message.guild == null) return;
 
@@ -99,6 +99,11 @@ class CommandClient {
   /// Called when the parser encounters an error.
   void onParserException(Message msg, Command cmd, err) {
     msg.channel.sendMessage(err.message);
+  }
+
+  /// Called when an invalid command is received.
+  void onInvalidCommand(Message msg) {
+    return;
   }
 
   /// Adds a command.
