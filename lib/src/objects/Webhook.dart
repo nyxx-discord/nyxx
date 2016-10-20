@@ -40,7 +40,7 @@ class Webhook extends _BaseObj {
     this.token = data['token'];
     this.channelId = data['channel_id'];
     this.guildId = data['guild_id'];
-    this.createdAt = _Util.getDate(this.id);
+    this.createdAt = Util.getDate(this.id);
     this.channel = this._client.channels[this.channelId];
     this.guild = this._client.guilds[this.guildId];
     this.user = new User._new(_client, data['user'] as Map<String, dynamic>);
@@ -53,7 +53,7 @@ class Webhook extends _BaseObj {
     this.token = data['token'];
     this.channelId = data['channel_id'];
     this.guildId = data['guild_id'];
-    this.createdAt = _Util.getDate(this.id);
+    this.createdAt = Util.getDate(this.id);
   }
 
   /// Gets a webhook from its URL.

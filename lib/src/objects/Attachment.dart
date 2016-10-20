@@ -34,6 +34,6 @@ class Attachment extends _BaseObj {
     this.size = data['size'];
     this.height = data['height'];
     this.width = data['width'];
-    this.createdAt = _Util.getDate(this.id);
+    this.createdAt = Util.getDate(this.id);
   }
 }

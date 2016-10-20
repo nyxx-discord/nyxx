@@ -18,7 +18,7 @@ class InviteGuild extends _BaseObj {
     this.id = data['id'];
     this.name = data['name'];
     this.spash = data['splash_hash'];
-    this.createdAt = _Util.getDate(this.id);
+    this.createdAt = Util.getDate(this.id);
   }
 
   /// Returns a string representation of this object.
