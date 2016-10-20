@@ -131,16 +131,30 @@ class _Help implements Command {
   bool guildOnly = false;
 
   @override
-  List<Argument> args = [];
+  List<Argument> args = [
+    new Argument.positional("command", required: false)
+  ];
 
   @override
   void run(Client bot, Message msg, Map<String, dynamic> args) {
-    List<List<String>> table = [
-      ["Command", "Discription", "Usage"]
-    ];
-    bot.commands.commands.forEach((String name, Command command) {
-      table.add([name, command.description, command.usage]);
-    });
-    msg.channel.sendMessage("```" + Util.textTable(table) + "```");
+    if (bot.commands.commands[args['command']] != null) {
+      Command command = bot.commands.commands[args['command']];
+      msg.channel.sendMessage([
+        "```",
+        "       Name: ${command.name}",
+        "Description: ${command.description}",
+        "      Usage: ${command.usage}",
+        "     Aliaes: ${command.aliases.join(', ')}",
+        "```"
+      ].join("\n"));
+    } else {
+      List<List<String>> table = [
+        ["Command", "Discription", "Usage"]
+      ];
+      bot.commands.commands.forEach((String name, Command command) {
+        table.add([name, command.description, command.usage]);
+      });
+      msg.channel.sendMessage("```" + Util.textTable(table) + "```");
+    }
   }
 }
