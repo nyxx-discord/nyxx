@@ -83,18 +83,18 @@ class Util {
         cellCount++;
       });
     });
-    
+
     int colCount = 0;
     cols.forEach((List<String> col) {
       int maxLen = 0;
       col.forEach((String cell) {
         if (cell.length > maxLen) maxLen = cell.length;
       });
-      
+
       int cellCount = 0;
       col.forEach((String cell) {
         cols[colCount][cellCount] = cell + (" " * (maxLen - cell.length));
-        cellCount++; 
+        cellCount++;
       });
 
       cols[colCount].insert(1, "-" * maxLen);

@@ -135,7 +135,9 @@ class _Help implements Command {
 
   @override
   void run(Client bot, Message msg, Map<String, dynamic> args) {
-    List<List<String>> table = [["Command", "Discription", "Usage"]];
+    List<List<String>> table = [
+      ["Command", "Discription", "Usage"]
+    ];
     bot.commands.commands.forEach((String name, Command command) {
       table.add([name, command.description, command.usage]);
     });
