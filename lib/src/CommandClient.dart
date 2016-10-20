@@ -131,9 +131,7 @@ class _Help implements Command {
   bool guildOnly = false;
 
   @override
-  List<Argument> args = [
-    new Argument.positional("command", required: false)
-  ];
+  List<Argument> args = [new Argument.positional("command", required: false)];
 
   @override
   void run(Client bot, Message msg, Map<String, dynamic> args) {
