@@ -10,8 +10,8 @@ class CommandClient {
   CommandClient._new(this._client) {
     this.addCommand(new _Help());
     this._client.onMessage.listen((MessageEvent e) {
-      if (_client._options.prefix.toLowerCase().trim() == "<@mention>")
-        _client._options.prefix = _client.user.mention + " ";
+      if (_client._options.prefix is String && _client._options.prefix.toLowerCase().trim() == "<@mention>")
+        _client._options.prefix = new RegExp(r'<@!?' + _client.user.id + r'> ');
       if (!e.message.content.startsWith(_client._options.prefix)) return;
 
       Command command = commands[e.message.content
