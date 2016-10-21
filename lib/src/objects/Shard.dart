@@ -10,7 +10,7 @@ class Shard extends _BaseObj {
 
   Duration _heartbeatInterval;
   _WS _ws;
-  _WebSocket _socket;
+  w_transport.WSocket _socket;
   int _sequence;
   String _sessionId;
 
@@ -33,17 +33,18 @@ class Shard extends _BaseObj {
       new Timer(new Duration(seconds: 2), () => _connect(resume));
       return;
     }
-    new _WebSocket()
-        .connect('${this._ws.gateway}?v=6&encoding=json',
-            (String msg) => this._handleMsg(msg, resume), this._handleErr)
-        .then((_WebSocket socket) {
+    w_transport.WSocket
+        .connect(Uri.parse('${this._ws.gateway}?v=6&encoding=json'))
+        .then((w_transport.WSocket socket) {
       this._socket = socket;
+      this._socket.listen((String msg) => this._handleMsg(msg, resume),
+          onDone: this._handleErr);
     });
   }
 
   /// Sends WS data.
   void _send(String op, dynamic d) {
-    this._socket.send(
+    this._socket.add(
         JSON.encode(<String, dynamic>{"op": _Constants.opCodes[op], "d": d}));
   }
 
@@ -110,9 +111,8 @@ class Shard extends _BaseObj {
               this._ws.client._options.forceFetchMembers = false;
             }
 
-            if (!_browser)
-              this._ws.client._http.headers['User-Agent'] =
-                  "${this._ws.client.user.username} (https://github.com/Hackzzila/Discord-Dart, ${this._ws.client.version})";
+            this._ws.client._http.headers['User-Agent'] =
+                "${this._ws.client.user.username} (https://github.com/Hackzzila/Discord-Dart, ${this._ws.client.version})";
 
             json['d']['guilds'].forEach((Map<String, dynamic> o) {
               if (this._ws.client.user.bot) {
@@ -230,8 +230,8 @@ class Shard extends _BaseObj {
     return null;
   }
 
-  void _handleErr(int closeCode) {
-    switch (closeCode) {
+  void _handleErr() {
+    switch (this._socket.closeCode) {
       case 1005:
         return;
 

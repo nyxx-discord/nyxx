@@ -47,10 +47,14 @@ class TextChannel extends GuildChannel {
       newContent = content;
     }
 
-    final _HttpResponse r = await this._client._http.post(
-        '/channels/${this.id}/messages',
-        <String, dynamic>{"content": newContent, "tts": tts, "nonce": nonce});
-    return new Message._new(this._client, r.json as Map<String, dynamic>);
+    final w_transport.Response r = await this._client._http.send(
+        'POST', '/channels/${this.id}/messages', body: <String, dynamic>{
+      "content": newContent,
+      "tts": tts,
+      "nonce": nonce
+    });
+    return new Message._new(
+        this._client, r.body.asJson() as Map<String, dynamic>);
   }
 
   /// Edits the channel.
@@ -59,13 +63,14 @@ class TextChannel extends GuildChannel {
     String topic: null,
     int position: null,
   }) async {
-    _HttpResponse r = await this._client._http.patch("/channels/${this.id}", {
+    w_transport.Response r =
+        await this._client._http.send('PATCH', "/channels/${this.id}", body: {
       "name": name != null ? name : this.name,
       "topic": topic != null ? topic : this.topic,
       "position": position != null ? position : this.position
     });
     return new TextChannel._new(
-        this._client, r.json as Map<String, dynamic>, this.guild);
+        this._client, r.body.asJson() as Map<String, dynamic>, this.guild);
   }
 
   /// Gets a [Message] object. Only usable by bot accounts.
@@ -77,9 +82,12 @@ class TextChannel extends GuildChannel {
     if (this._client.user.bot) {
       final String id = Util.resolve('message', message);
 
-      final _HttpResponse r =
-          await this._client._http.get('/channels/${this.id}/messages/$id');
-      return new Message._new(this._client, r.json as Map<String, dynamic>);
+      final w_transport.Response r = await this
+          ._client
+          ._http
+          .send('GET', '/channels/${this.id}/messages/$id');
+      return new Message._new(
+          this._client, r.body.asJson() as Map<String, dynamic>);
     } else {
       throw new Exception("'getMessage' is only usable by bot accounts.");
     }
@@ -87,7 +95,7 @@ class TextChannel extends GuildChannel {
 
   /// Starts typing.
   Future<Null> startTyping() async {
-    await this._client._http.post("/channels/$id/typing", {});
+    await this._client._http.send('POST', "/channels/$id/typing");
     return null;
   }
 
@@ -105,9 +113,10 @@ class TextChannel extends GuildChannel {
 
   /// Gets all of the webhooks for this channel.
   Future<Map<String, Webhook>> getWebhooks() async {
-    _HttpResponse r = await this._client._http.get("/channels/$id/webhooks");
+    w_transport.Response r =
+        await this._client._http.send('GET', "/channels/$id/webhooks");
     Map<String, dynamic> map = <String, dynamic>{};
-    r.json.forEach((Map<String, dynamic> o) {
+    r.body.asJson().forEach((Map<String, dynamic> o) {
       Webhook webhook = new Webhook._fromApi(this._client, o);
       map[webhook.id] = webhook;
     });
@@ -115,11 +124,12 @@ class TextChannel extends GuildChannel {
   }
 
   /// Creates a webhook.
-  Future<Webhook> createWebhook({String name}) async {
-    _HttpResponse r = await this
+  Future<Webhook> createWebhook(String name) async {
+    w_transport.Response r = await this
         ._client
         ._http
-        .post("/channels/$id/webhooks", {"name": "Spidey Bot"});
-    return new Webhook._fromApi(this._client, r.json as Map<String, dynamic>);
+        .send('POST', "/channels/$id/webhooks", body: {"name": name});
+    return new Webhook._fromApi(
+        this._client, r.body.asJson() as Map<String, dynamic>);
   }
 }

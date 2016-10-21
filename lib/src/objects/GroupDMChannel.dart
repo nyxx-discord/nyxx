@@ -52,10 +52,14 @@ class GroupDMChannel extends Channel {
       newContent = content;
     }
 
-    final _HttpResponse r = await this._client._http.post(
-        '/channels/${this.id}/messages',
-        <String, dynamic>{"content": newContent, "tts": tts, "nonce": nonce});
-    return new Message._new(this._client, r.json as Map<String, dynamic>);
+    final w_transport.Response r = await this._client._http.send(
+        'POST', '/channels/${this.id}/messages', body: <String, dynamic>{
+      "content": newContent,
+      "tts": tts,
+      "nonce": nonce
+    });
+    return new Message._new(
+        this._client, r.body.asJson() as Map<String, dynamic>);
   }
 
   /// Gets a [Message] object. Only usable by bot accounts.
@@ -67,9 +71,12 @@ class GroupDMChannel extends Channel {
     if (this._client.user.bot) {
       final String id = Util.resolve('message', message);
 
-      final _HttpResponse r =
-          await this._client._http.get('/channels/${this.id}/messages/$id');
-      return new Message._new(this._client, r.json as Map<String, dynamic>);
+      final w_transport.Response r = await this
+          ._client
+          ._http
+          .send('GET', '/channels/${this.id}/messages/$id');
+      return new Message._new(
+          this._client, r.body.asJson() as Map<String, dynamic>);
     } else {
       throw new Exception("'getMessage' is only usable by bot accounts.");
     }
@@ -77,7 +84,7 @@ class GroupDMChannel extends Channel {
 
   /// Starts typing.
   Future<Null> startTyping() async {
-    await this._client._http.post("/channels/$id/typing", {});
+    await this._client._http.send('POST', "/channels/$id/typing");
     return null;
   }
 

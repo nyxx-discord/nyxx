@@ -63,8 +63,9 @@ class Member extends User {
 
   /// Bans the member and optionally deletes [deleteMessageDays] days worth of messages.
   Future<Null> ban([int deleteMessageDays = 0]) async {
-    await this._client._http.put("/guilds/${this.guild.id}/bans/${this.id}",
-        {"delete-message-days": deleteMessageDays});
+    await this._client._http.send(
+        'PUT', "/guilds/${this.guild.id}/bans/${this.id}",
+        body: {"delete-message-days": deleteMessageDays});
     return null;
   }
 
@@ -73,7 +74,7 @@ class Member extends User {
     await this
         ._client
         ._http
-        .delete("/guilds/${this.guild.id}/members/${this.id}");
+        .send('DELETE', "/guilds/${this.guild.id}/members/${this.id}");
     return null;
   }
 }

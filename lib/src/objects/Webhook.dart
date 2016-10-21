@@ -3,7 +3,6 @@ part of discord;
 /// A user.
 class Webhook extends _BaseObj {
   _Http _http;
-  bool _token = false;
 
   /// The webhook's name.
   String name;
@@ -47,7 +46,6 @@ class Webhook extends _BaseObj {
   }
 
   Webhook._fromToken(this._http, Map<String, dynamic> data) : super(null) {
-    this._token = true;
     this.name = data['name'];
     this.id = data['id'];
     this.token = data['token'];
@@ -56,40 +54,26 @@ class Webhook extends _BaseObj {
     this.createdAt = Util.getDate(this.id);
   }
 
-  /// Gets a webhook from its URL.
-  static Future<Webhook> fromUrl(String url) async {
-    _Http http = new _Http(null, url);
-    _HttpResponse r = await http.get("");
-    return new Webhook._fromToken(http, r.json as Map<String, dynamic>);
-  }
-
   /// Gets a webhook by its ID and token.
   static Future<Webhook> fromToken(String id, String token) async {
-    _Http http =
-        new _Http(null, "https://discordapp.com/api/v6/webhooks/$id/$token");
-    _HttpResponse r = await http.get("");
-    return new Webhook._fromToken(http, r.json as Map<String, dynamic>);
+    _Http http = new _Http();
+    w_transport.Response r = await http.send('GET', "/webhooks/$id/$token");
+    return new Webhook._fromToken(
+        http, r.body.asJson() as Map<String, dynamic>);
   }
 
   /// Edits the webhook.
   Future<Webhook> edit({String name}) async {
-    _HttpResponse r;
-    if (this._token) {
-      r = await this._http.patch("", {"name": name});
-    } else {
-      r = await this._http.patch("/webhooks/$id", {"name": name});
-    }
-    this.name = r.json['name'];
+    w_transport.Response r = await this
+        ._http
+        .send('PATCH', "/webhooks/$id/$token", body: {"name": name});
+    this.name = r.body.asJson()['name'];
     return this;
   }
 
   /// Deletes the webhook.
   Future<Null> delete() async {
-    if (this._token) {
-      await this._http.delete("");
-    } else {
-      await this._http.delete("/webhooks/$id");
-    }
+    await this._http.send('DELETE', "/webhooks/$id/$token");
     return null;
   }
 
@@ -108,8 +92,7 @@ class Webhook extends _BaseObj {
       "embeds": embeds
     };
 
-    await this._http.post("/$id/$token", payload, false,
-        "https://discordapp.com/api/v6/webhooks");
+    await this._http.send('POST', "webhooks/$id/$token", body: payload);
     return null;
   }
 

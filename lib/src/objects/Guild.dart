@@ -136,16 +136,19 @@ class Guild extends _BaseObj {
 
   /// Prunes the guild, returns the amount of members pruned.
   Future<int> prune(int days) async {
-    _HttpResponse r =
-        await this._client._http.post("/guilds/$id/prune", {"days": days});
-    return r.json as int;
+    w_transport.Response r = await this
+        ._client
+        ._http
+        .send('POST', "/guilds/$id/prune", body: {"days": days});
+    return r.body.asJson() as int;
   }
 
   /// Get's the guild's bans.
   Future<Map<String, User>> getBans() async {
-    _HttpResponse r = await this._client._http.get("/guilds/$id/bans");
+    w_transport.Response r =
+        await this._client._http.send('GET', "/guilds/$id/bans");
     Map<String, dynamic> map = <String, dynamic>{};
-    r.json.forEach((Map<String, dynamic> o) {
+    r.body.asJson().forEach((Map<String, dynamic> o) {
       final User user =
           new User._new(_client, o['user'] as Map<String, dynamic>);
       map[user.id] = user;
@@ -155,45 +158,48 @@ class Guild extends _BaseObj {
 
   /// Leaves the guild.
   Future<Null> leave() async {
-    await this._client._http.delete("/users/@me/guilds/$id");
+    await this._client._http.send('DELETE', "/users/@me/guilds/$id");
     return null;
   }
 
   /// Creates an empty role.
   Future<Role> createRole() async {
-    _HttpResponse r = await this._client._http.post("/guilds/$id/roles", {});
-    return new Role._new(_client, r.json as Map<String, dynamic>, this);
+    w_transport.Response r =
+        await this._client._http.send('POST', "/guilds/$id/roles");
+    return new Role._new(
+        _client, r.body.asJson() as Map<String, dynamic>, this);
   }
 
   /// Creates a channel.
   Future<dynamic> createChannel(String name, String type,
       {int bitrate: 64000, int userLimit: 0}) async {
-    _HttpResponse r = await this._client._http.post("/guilds/$id/channels", {
+    w_transport.Response r = await this._client._http.send(
+        'POST', "/guilds/$id/channels", body: {
       "name": name,
       "type": type,
       "bitrate": bitrate,
       "user_limit": userLimit
     });
 
-    if (r.json['type'] == 0) {
+    if (r.body.asJson()['type'] == 0) {
       return new TextChannel._new(
-          _client, r.json as Map<String, dynamic>, this);
+          _client, r.body.asJson() as Map<String, dynamic>, this);
     } else {
       return new VoiceChannel._new(
-          _client, r.json as Map<String, dynamic>, this);
+          _client, r.body.asJson() as Map<String, dynamic>, this);
     }
   }
 
   /// Bans a user by ID.
   Future<Null> ban(String id, [int deleteMessageDays = 0]) async {
-    await this._client._http.put("/guilds/${this.id}/bans/$id",
-        {"delete-message-days": deleteMessageDays});
+    await this._client._http.send('PUT', "/guilds/${this.id}/bans/$id",
+        body: {"delete-message-days": deleteMessageDays});
     return null;
   }
 
   /// Unbans a user by ID.
   Future<Null> unban(String id) async {
-    await this._client._http.delete("/guilds/${this.id}/bans/$id");
+    await this._client._http.send('DELETE', "/guilds/${this.id}/bans/$id");
     return null;
   }
 
@@ -205,7 +211,8 @@ class Guild extends _BaseObj {
       VoiceChannel afkChannel: null,
       int afkTimeout: null,
       String icon: null}) async {
-    _HttpResponse r = await this._client._http.patch("/guilds/${this.id}", {
+    w_transport.Response r =
+        await this._client._http.send('PATCH', "/guilds/${this.id}", body: {
       "name": name != null ? name : this.name,
       "verification_level": verificationLevel != null
           ? verificationLevel
@@ -217,7 +224,8 @@ class Guild extends _BaseObj {
       "afk_timeout": afkTimeout != null ? afkTimeout : this.afkTimeout,
       "icon": icon != null ? icon : this.icon
     });
-    return new Guild._new(this._client, r.json as Map<String, dynamic>);
+    return new Guild._new(
+        this._client, r.body.asJson() as Map<String, dynamic>);
   }
 
   /// Gets a [Member] object. Adds it to `Guild.members` if
@@ -231,11 +239,13 @@ class Guild extends _BaseObj {
     if (this.members[member] != null) {
       return this.members[member];
     } else {
-      final _HttpResponse r =
-          await this._client._http.get('/guilds/${this.id}/members/$id');
+      final w_transport.Response r = await this
+          ._client
+          ._http
+          .send('GET', '/guilds/${this.id}/members/$id');
 
-      final Member m =
-          new Member._new(this._client, r.json as Map<String, dynamic>, this);
+      final Member m = new Member._new(
+          this._client, r.body.asJson() as Map<String, dynamic>, this);
       return m;
     }
   }
@@ -249,12 +259,13 @@ class Guild extends _BaseObj {
     if (!this._client.user.bot) {
       final String id = Util.resolve('app', app);
 
-      await this._client._http.post(
-          '/oauth2/authorize?client_id=$id&scope=bot', <String, dynamic>{
-        "guild_id": this.id,
-        "permissions": permissions,
-        "authorize": true
-      });
+      await this._client._http.send(
+          'POST', '/oauth2/authorize?client_id=$id&scope=bot',
+          body: <String, dynamic>{
+            "guild_id": this.id,
+            "permissions": permissions,
+            "authorize": true
+          });
 
       return null;
     } else {
@@ -264,9 +275,10 @@ class Guild extends _BaseObj {
 
   /// Gets all of the webhooks for this guild.
   Future<Map<String, Webhook>> getWebhooks() async {
-    _HttpResponse r = await this._client._http.get("/guilds/$id/webhooks");
+    w_transport.Response r =
+        await this._client._http.send('GET', "/guilds/$id/webhooks");
     Map<String, dynamic> map = <String, dynamic>{};
-    r.json.forEach((Map<String, dynamic> o) {
+    r.body.asJson().forEach((Map<String, dynamic> o) {
       Webhook webhook = new Webhook._fromApi(this._client, o);
       map[webhook.id] = webhook;
     });

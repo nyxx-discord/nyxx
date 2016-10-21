@@ -2,6 +2,8 @@ part of discord;
 
 /// An HTTP error.
 class HttpError implements Exception {
+  w_transport.Response _r;
+
   /// The HTTP status code.
   int statusCode;
 
@@ -15,23 +17,19 @@ class HttpError implements Exception {
   Map<String, dynamic> json;
 
   /// The raw response body.
-  String body;
+  w_transport.HttpBody body;
 
   /// Constructs a new [HttpError].
-  HttpError._new(http.Response r) {
-    if (r.headers['content-type'] == "application/json") {
-      this.json = JSON.decode(r.body) as Map<String, dynamic>;
+  HttpError._new(this._r) {
+    if (_r.headers['content-type'] == "application/json") {
       this.code = json['code'];
       this.message = json['message'];
     }
-    this.body = r.body;
-    this.statusCode = r.statusCode;
+    this.body = _r.body;
+    this.statusCode = _r.status;
   }
 
   /// Returns a string representation of this object.
   @override
-  String toString() =>
-      this.statusCode.toString() +
-      ": " +
-      http_utils.ResponseStatus.fromStatusCode(this.statusCode).reason;
+  String toString() => this.statusCode.toString() + ": " + _r.statusText;
 }

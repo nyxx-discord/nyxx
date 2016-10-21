@@ -13,13 +13,17 @@ class _WS {
   /// Makes a new WS manager.
   _WS(this.client) {
     this.client._http.headers['Authorization'] = "Bot ${client._token}";
-    this.client._http.get("/gateway/bot", true).then((_HttpResponse r) {
+    this
+        .client
+        ._http
+        .send("GET", "/gateway/bot", beforeReady: true)
+        .then((w_transport.Response r) {
       this.bot = true;
-      this.gateway = r.json['url'];
+      this.gateway = r.body.asJson()['url'];
       if (this.client._options.shardCount == 1 &&
           this.client._options.shardIds == const [0]) {
         this.client._options.shardIds = [];
-        this.client._options.shardCount = r.json['shards'];
+        this.client._options.shardCount = r.body.asJson()['shards'];
         for (int i = 0; i < client._options.shardCount; i++) {
           this.client._options.shardIds.add(i);
           setupShard(i);
@@ -31,8 +35,12 @@ class _WS {
       }
       this.connectShard(0);
     }).catchError((err) {
-      this.client._http.get('/gateway', true).then((_HttpResponse r) {
-        this.gateway = r.json['url'];
+      this
+          .client
+          ._http
+          .send('GET', '/gateway', beforeReady: true)
+          .then((w_transport.Response r) {
+        this.gateway = r.body.asJson()['url'];
         for (int shardId in this.client._options.shardIds) {
           setupShard(shardId);
         }
@@ -85,10 +93,10 @@ class _WS {
       client._startTime = new DateTime.now();
       if (client.user.bot) {
         client._http
-            .get('/oauth2/applications/@me', true)
-            .then((_HttpResponse r) {
+            .send('GET', '/oauth2/applications/@me', beforeReady: true)
+            .then((w_transport.Response r) {
           client.app = new ClientOAuth2Application._new(
-              client, r.json as Map<String, dynamic>);
+              client, r.body.asJson() as Map<String, dynamic>);
           new ReadyEvent._new(client);
         });
       } else {

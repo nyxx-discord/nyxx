@@ -2,12 +2,10 @@ library discord;
 
 import 'dart:async';
 import 'dart:convert';
-import 'dart:io';
 import 'dart:collection';
-import 'package:http_utils/http_utils.dart' as http_utils;
 import 'package:http_parser/http_parser.dart' as http_parser;
-import 'package:http/http.dart' as http;
 import 'package:args/args.dart' as args;
+import 'package:w_transport/w_transport.dart' as w_transport;
 
 part 'src/Client.dart';
 part 'src/CommandClient.dart';
@@ -76,55 +74,3 @@ part 'src/errors/ClientNotReadyError.dart';
 part 'src/errors/HttpError.dart';
 part 'src/errors/InvalidTokenError.dart';
 part 'src/errors/InvalidShardError.dart';
-
-final bool _browser = false;
-
-class _WebSocket {
-  WebSocket _socket;
-
-  _WebSocket();
-
-  Future<_WebSocket> connect(
-      String url, void onData(dynamic data), void onDone(int closeCode)) async {
-    this._socket = await WebSocket.connect(url);
-    this._socket.listen(onData, onDone: () => onDone(_socket.closeCode));
-    return this;
-  }
-
-  void send(dynamic data) {
-    this._socket.add(data);
-  }
-
-  Future close([int code]) async {
-    await this._socket.close(code);
-  }
-}
-
-class _HttpClient {
-  http.Client client;
-
-  _HttpClient() {
-    this.client = new http.Client();
-  }
-
-  void close() => this.client.close();
-
-  Future<http.Response> get(String url, {Map<String, String> headers}) async =>
-      await this.client.get(url, headers: headers);
-
-  Future<http.Response> post(String url,
-          {dynamic body, Map<String, String> headers}) async =>
-      await this.client.post(url, body: body, headers: headers);
-
-  Future<http.Response> put(String url,
-          {dynamic body, Map<String, String> headers}) async =>
-      await this.client.put(url, body: body, headers: headers);
-
-  Future<http.Response> patch(String url,
-          {dynamic body, Map<String, String> headers}) async =>
-      await this.client.patch(url, body: body, headers: headers);
-
-  Future<http.Response> delete(String url,
-          {Map<String, String> headers}) async =>
-      await this.client.delete(url, headers: headers);
-}
