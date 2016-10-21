@@ -35,6 +35,7 @@ void main() {
       await m.delete();
       await m.channel.sendMessage("Tests completed successfully!");
       print("Discord tests completed successfully!");
+      await bot.destroy();
       exit(0);
     }
   });
