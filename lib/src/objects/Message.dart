@@ -142,10 +142,11 @@ class Message extends _BaseObj {
       newContent = content;
     }
 
-    final _HttpResponse r = await this._client._http.patch(
-        '/channels/${this.channel.id}/messages/${this.id}',
-        <String, dynamic>{"content": newContent});
-    return new Message._new(this._client, r.json as Map<String, dynamic>);
+    final w_transport.Response r = await this._client._http.send(
+        'PATCH', '/channels/${this.channel.id}/messages/${this.id}',
+        body: <String, dynamic>{"content": newContent});
+    return new Message._new(
+        this._client, r.body.asJson() as Map<String, dynamic>);
   }
 
   /// Deletes the message.
@@ -156,7 +157,7 @@ class Message extends _BaseObj {
     await this
         ._client
         ._http
-        .delete('/channels/${this.channel.id}/messages/${this.id}');
+        .send('DELETE', '/channels/${this.channel.id}/messages/${this.id}');
     return null;
   }
 }

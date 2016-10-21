@@ -54,9 +54,10 @@ class User extends _BaseObj {
       return _client.channels.values.firstWhere(
           (dynamic c) => c is DMChannel && c.recipient.id == this.id);
     } catch (err) {
-      _HttpResponse r = await _client._http
-          .post("/users/@me/channels", {"recipient_id": this.id});
-      return new DMChannel._new(_client, r.json as Map<String, dynamic>);
+      w_transport.Response r = await _client._http
+          .send('POST', "/users/@me/channels", body: {"recipient_id": this.id});
+      return new DMChannel._new(
+          _client, r.body.asJson() as Map<String, dynamic>);
     }
   }
 
@@ -79,10 +80,14 @@ class User extends _BaseObj {
     DMChannel channel = await getChannel();
     String channelId = channel.id;
 
-    final _HttpResponse r = await this._client._http.post(
-        '/channels/$channelId/messages',
-        <String, dynamic>{"content": newContent, "tts": tts, "nonce": nonce});
-    return new Message._new(this._client, r.json as Map<String, dynamic>);
+    final w_transport.Response r = await this._client._http.send(
+        'POST', '/channels/$channelId/messages', body: <String, dynamic>{
+      "content": newContent,
+      "tts": tts,
+      "nonce": nonce
+    });
+    return new Message._new(
+        this._client, r.body.asJson() as Map<String, dynamic>);
   }
 
   /// Gets a [Message] object. Only usable by bot accounts.
@@ -96,9 +101,12 @@ class User extends _BaseObj {
       DMChannel channel = await getChannel();
       String channelId = channel.id;
 
-      final _HttpResponse r =
-          await this._client._http.get('/channels/$channelId/messages/$id');
-      return new Message._new(this._client, r.json as Map<String, dynamic>);
+      final w_transport.Response r = await this
+          ._client
+          ._http
+          .send('GET', '/channels/$channelId/messages/$id');
+      return new Message._new(
+          this._client, r.body.asJson() as Map<String, dynamic>);
     } else {
       throw new Exception("'getMessage' is only usable by bot accounts.");
     }
@@ -109,7 +117,7 @@ class User extends _BaseObj {
     DMChannel channel = await getChannel();
     String channelId = channel.id;
 
-    await this._client._http.post("/channels/$channelId/typing", {});
+    await this._client._http.send('POST', "/channels/$channelId/typing");
     return null;
   }
 

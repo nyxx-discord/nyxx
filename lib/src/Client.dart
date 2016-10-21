@@ -126,7 +126,6 @@ class Client {
   /// Destroys the websocket connection, SS connection or server, and all streams.
   Future<Null> destroy() async {
     await this._ws.close();
-    this._http.httpClient.close();
     await this._events.destroy();
     return null;
   }
@@ -138,8 +137,8 @@ class Client {
   Future<User> getUser(dynamic user) async {
     final String id = Util.resolve('user', user);
 
-    final _HttpResponse r = await this._http.get('/users/$id');
-    return new User._new(this, r.json as Map<String, dynamic>);
+    final w_transport.Response r = await this._http.send('GET', '/users/$id');
+    return new User._new(this, r.body.asJson() as Map<String, dynamic>);
   }
 
   /// Gets an [Invite] object.
@@ -147,8 +146,9 @@ class Client {
   /// Throws an [Exception] if the HTTP request errored.
   ///     Client.getInvite("invite code");
   Future<Invite> getInvite(String code) async {
-    final _HttpResponse r = await this._http.get('/invites/$code');
-    return new Invite._new(this, r.json as Map<String, dynamic>);
+    final w_transport.Response r =
+        await this._http.send('GET', '/invites/$code');
+    return new Invite._new(this, r.body.asJson() as Map<String, dynamic>);
   }
 
   /// Gets an [OAuth2Info] object.
@@ -158,8 +158,9 @@ class Client {
   Future<OAuth2Info> getOAuth2Info(dynamic app) async {
     final String id = Util.resolve('app', app);
 
-    final _HttpResponse r =
-        await this._http.get('/oauth2/authorize?client_id=$id&scope=bot');
-    return new OAuth2Info._new(this, r.json as Map<String, dynamic>);
+    final w_transport.Response r = await this
+        ._http
+        .send('GET', '/oauth2/authorize?client_id=$id&scope=bot');
+    return new OAuth2Info._new(this, r.body.asJson() as Map<String, dynamic>);
   }
 }

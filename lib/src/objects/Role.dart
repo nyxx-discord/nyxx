@@ -61,8 +61,10 @@ class Role extends _BaseObj {
       int color: null,
       bool mentionable: null,
       bool hoist: null}) async {
-    _HttpResponse r =
-        await this._client._http.patch("/guilds/${this.guild.id}/roles/$id", {
+    w_transport.Response r = await this
+        ._client
+        ._http
+        .send('PATCH', "/guilds/${this.guild.id}/roles/$id", body: {
       "name": name != null ? name : this.name,
       "permissions": permissions != null ? permissions : this.permissions.raw,
       "position": position != null ? position : this.position,
@@ -71,12 +73,15 @@ class Role extends _BaseObj {
       "mentionable": mentionable != null ? mentionable : this.mentionable
     });
     return new Role._new(
-        this._client, r.json as Map<String, dynamic>, this.guild);
+        this._client, r.body.asJson() as Map<String, dynamic>, this.guild);
   }
 
   /// Deletes the role.
   Future<Null> delete() async {
-    await this._client._http.delete("/guilds/${this.guild.id}/roles/$id");
+    await this
+        ._client
+        ._http
+        .send('DELETE', "/guilds/${this.guild.id}/roles/$id");
     return null;
   }
 

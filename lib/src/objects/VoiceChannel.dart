@@ -20,13 +20,14 @@ class VoiceChannel extends GuildChannel {
       int bitrate: null,
       int position: null,
       int userLimit: null}) async {
-    _HttpResponse r = await this._client._http.patch("/channels/${this.id}", {
+    w_transport.Response r =
+        await this._client._http.send('PATCH', "/channels/${this.id}", body: {
       "name": name != null ? name : this.name,
       "bitrate": bitrate != null ? bitrate : this.bitrate,
       "user_limit": userLimit != null ? userLimit : this.userLimit,
       "position": position != null ? position : this.position
     });
     return new VoiceChannel._new(
-        this._client, r.json as Map<String, dynamic>, this.guild);
+        this._client, r.body.asJson() as Map<String, dynamic>, this.guild);
   }
 }

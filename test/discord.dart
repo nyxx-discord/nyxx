@@ -2,8 +2,11 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:discord/discord.dart' as discord;
+import 'package:discord/discord_vm.dart' as discord;
 
 void main() {
+  discord.configureDiscordForVM();
+
   var env = Platform.environment;
   var bot = new discord.Client(env['DISCORD_TOKEN']);
 
