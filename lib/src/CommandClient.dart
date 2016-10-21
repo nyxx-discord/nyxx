@@ -153,7 +153,7 @@ class _Help implements Command {
         "       Name: ${command.name}",
         "Description: ${command.description}",
         "      Usage: ${command.usage}",
-        "     Aliases: ${command.aliases.join(', ')}",
+        "    Aliases: ${command.aliases.join(', ')}",
         "```"
       ].join("\n"));
     } else {
