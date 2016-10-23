@@ -51,7 +51,6 @@ class Shard extends _BaseObj {
   /// Sends a heartbeat packet.
   void _heartbeat() {
     this._send("HEARTBEAT", _sequence);
-    new Timer(_heartbeatInterval, _heartbeat);
   }
 
   Future<Null> _handleMsg(String msg, bool resume) async {
