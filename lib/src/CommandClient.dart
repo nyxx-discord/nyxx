@@ -1,6 +1,6 @@
 part of discord;
 
-/// The command client.
+/// The command client. This is not fully ready for production.
 class CommandClient {
   Client _client;
 
