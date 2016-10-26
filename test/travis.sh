@@ -30,9 +30,6 @@ echo "PASSED"
 # Lazy newlines
 echo ""
 
-# Lazy newlines
-echo ""
-
 if [ "$DISCORD_TOKEN" ]; then
   dart -c test/discord.dart
 else
