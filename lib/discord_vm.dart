@@ -1,4 +1,4 @@
-library discord.discord_vw;
+library discord.discord_vm;
 
 import 'package:w_transport/w_transport.dart' as w_transport;
 import 'package:w_transport/vm.dart'
