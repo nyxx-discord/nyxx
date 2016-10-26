@@ -10,7 +10,7 @@ class Shard extends _BaseObj {
 
   Duration _heartbeatInterval;
   _WS _ws;
-  w_transport.WSocket _socket;
+  w_transport.WebSocket _socket;
   int _sequence;
   String _sessionId;
 
@@ -33,9 +33,9 @@ class Shard extends _BaseObj {
       new Timer(new Duration(seconds: 2), () => _connect(resume));
       return;
     }
-    w_transport.WSocket
+    w_transport.WebSocket
         .connect(Uri.parse('${this._ws.gateway}?v=6&encoding=json'))
-        .then((w_transport.WSocket socket) {
+        .then((w_transport.WebSocket socket) {
       this._socket = socket;
       this._socket.listen((String msg) => this._handleMsg(msg, resume),
           onDone: this._handleErr);

@@ -1,8 +1,10 @@
-library discord.discord_vm;
+library discord.discord_browser;
 
-import 'package:w_transport/w_transport_vm.dart' show configureWTransportForVM;
+import 'package:w_transport/w_transport.dart' as w_transport;
+import 'package:w_transport/vm.dart'
+    show vmTransportPlatform;
 
-/// Configures the client to run in Dart VM.
+/// Configures the client to run in a VM.
 void configureDiscordForVM() {
-  configureWTransportForVM();
+  w_transport.globalTransportPlatform = vmTransportPlatform;
 }
