@@ -20,10 +20,19 @@ class Shard extends _BaseObj {
   /// Emitted when the shard encounters an error.
   StreamController<Shard> onError;
 
+  /// A map of guilds the shard is on.
+  Map<String, Guild> guilds = {};
+
   Shard._new(_WS ws, this.id) : super(ws.client) {
     this._ws = ws;
     this.onReady = new StreamController<Shard>.broadcast();
     this.onError = new StreamController<Shard>.broadcast();
+  }
+
+  /// Syncs all guild, is automatically called every 30 seconds.
+  /// Users only.
+  void guildSync() {
+    this._send("GUILD_SYNC", this.guilds.keys.toList());
   }
 
   void _connect([bool resume = true, bool init = false]) {
@@ -48,7 +57,6 @@ class Shard extends _BaseObj {
         JSON.encode(<String, dynamic>{"op": _Constants.opCodes[op], "d": d}));
   }
 
-  /// Sends a heartbeat packet.
   void _heartbeat() {
     this._send("HEARTBEAT", _sequence);
   }
@@ -108,17 +116,15 @@ class Shard extends _BaseObj {
               this._ws.client._http.headers['Authorization'] =
                   this._ws.client._token;
               this._ws.client._options.forceFetchMembers = false;
+              new Timer.periodic(
+                  new Duration(seconds: 30), (Timer t) => guildSync());
             }
 
             this._ws.client._http.headers['User-Agent'] =
                 "${this._ws.client.user.username} (https://github.com/Hackzzila/Discord-Dart, ${this._ws.client.version})";
 
             json['d']['guilds'].forEach((Map<String, dynamic> o) {
-              if (this._ws.client.user.bot) {
-                this._ws.client.guilds[o['id']] = null;
-              } else {
-                new Guild._new(this._ws.client, o, true, true);
-              }
+              this._ws.client.guilds[o['id']] = null;
             });
 
             json['d']['private_channels'].forEach((Map<String, dynamic> o) {
@@ -167,7 +173,7 @@ class Shard extends _BaseObj {
             if (json['d']['unavailable']) {
               new GuildUnavailableEvent._new(this._ws.client, json);
             } else {
-              new GuildDeleteEvent._new(this._ws.client, json);
+              new GuildDeleteEvent._new(this._ws.client, json, this);
             }
             break;
 
