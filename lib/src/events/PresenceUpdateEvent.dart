@@ -17,6 +17,7 @@ class PresenceUpdateEvent {
         data['user'] = client.users[data['user']['id']]?._raw;
       }
       if (data['user'] == null) return;
+      if (data['guild_id'] == null) return;
 
       this.newMember = new Member._new(client, data);
       this.oldMember = newMember.guild.members[newMember.id];

@@ -91,7 +91,7 @@ class Guild extends _BaseObj {
       });
 
       this.shard = this._client.shards[
-          "${(int.parse(this.id) >> 22) % this._client._options.shardCount}"];
+          (int.parse(this.id) >> 22) % this._client._options.shardCount];
 
       if (guildCreate) {
         this.members = new Map<String, Member>();
@@ -125,6 +125,7 @@ class Guild extends _BaseObj {
       }
 
       client.guilds[this.id] = this;
+      shard.guilds[this.id] = this;
     }
   }
 
