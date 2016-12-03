@@ -123,7 +123,7 @@ class Client {
   /// The client's uptime.
   Duration get uptime => new DateTime.now().difference(_startTime);
 
-  /// Destroys the websocket connection, SS connection or server, and all streams.
+  /// Destroys the websocket connection, and all streams.
   Future<Null> destroy() async {
     await this._ws.close();
     await this._events.destroy();
