@@ -124,7 +124,11 @@ class Shard extends _BaseObj {
                 "${this._ws.client.user.username} (https://github.com/Hackzzila/Discord-Dart, ${this._ws.client.version})";
 
             json['d']['guilds'].forEach((Map<String, dynamic> o) {
-              this._ws.client.guilds[o['id']] = null;
+              if (this._ws.client.user.bot)
+                this._ws.client.guilds[o['id']] = null;
+              else
+                this._ws.client.guilds[o['id']] =
+                    new Guild._new(this._ws.client, o, true, true);
             });
 
             json['d']['private_channels'].forEach((Map<String, dynamic> o) {
@@ -137,6 +141,13 @@ class Shard extends _BaseObj {
 
             this.ready = true;
             this.onReady.add(this);
+
+            if (!this._ws.client.user.bot) {
+              this._ws.client.ready = true;
+              this._ws.client._startTime = new DateTime.now();
+              new ReadyEvent._new(this._ws.client);
+            }
+
             break;
 
           case 'GUILD_MEMBERS_CHUNK':
