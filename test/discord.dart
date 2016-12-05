@@ -18,12 +18,13 @@ void main() {
   bot.onReady.listen((e) async {
     var channel = bot.channels['228308788954791939'];
     channel.sendMessage(
-        "Testing new Travis CI build `#${env['TRAVIS_BUILD_NUMBER']}` from commit `${env['TRAVIS_COMMIT']}` on branch `${env['TRAVIS_BRANCH']}`");
+        content:
+            "Testing new Travis CI build `#${env['TRAVIS_BUILD_NUMBER']}` from commit `${env['TRAVIS_COMMIT']}` on branch `${env['TRAVIS_BRANCH']}`");
 
-    var m = await channel.sendMessage("Message test.");
-    await m.edit("Edit test.");
+    var m = await channel.sendMessage(content: "Message test.");
+    await m.edit(content: "Edit test.");
     await m.delete();
-    await channel.sendMessage("--trigger-test");
+    await channel.sendMessage(content: "--trigger-test");
   });
 
   bot.onMessage.listen((e) async {
@@ -33,7 +34,7 @@ void main() {
         m.author.id == bot.user.id &&
         m.content == "--trigger-test") {
       await m.delete();
-      await m.channel.sendMessage("Tests completed successfully!");
+      await m.channel.sendMessage(content: "Tests completed successfully!");
       print("Discord tests completed successfully!");
       await bot.destroy();
       exit(0);
