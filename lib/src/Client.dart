@@ -103,6 +103,8 @@ class Client {
 
   /// Creates and logs in a new client.
   Client(this._token, [this._options]) {
+    if (!setup) throw new NotSetupError();
+
     if (this._options == null) {
       this._options = new ClientOptions();
     }
