@@ -99,7 +99,7 @@ class CommandClient {
 
   /// Called when an argument is missing.
   void onMissingArg(Message msg, Command cmd, Argument arg) {
-    msg.channel.sendMessage("You are missing the argument `${arg.name}`!");
+    msg.channel.sendMessage(content: "You are missing the argument `${arg.name}`!");
   }
 
   /// Called when the parser encounters an error.
@@ -163,7 +163,7 @@ class _Help implements Command {
       bot.commands.commands.forEach((String name, Command command) {
         table.add([name, command.description, command.usage]);
       });
-      msg.channel.sendMessage("```" + Util.textTable(table) + "```");
+      msg.channel.sendMessage(content: "```" + Util.textTable(table) + "```");
     }
   }
 }

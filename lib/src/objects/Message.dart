@@ -130,11 +130,11 @@ class Message extends _BaseObj {
   ///
   /// Throws an [Exception] if the HTTP request errored.
   ///     Message.edit("My edited content!");
-  Future<Message> edit(String content,
-      {bool tts: false, String nonce, bool disableEveryone}) async {
+  Future<Message> edit({String content, Map<dynamic, dynamic> embed,
+      bool tts: false, String nonce, bool disableEveryone}) async {
     String newContent;
-    if (disableEveryone == true ||
-        (disableEveryone == null && this._client._options.disableEveryone)) {
+    if (content != null && (disableEveryone == true ||
+        (disableEveryone == null && this._client._options.disableEveryone))) {
       newContent = content
           .replaceAll("@everyone", "@\u200Beveryone")
           .replaceAll("@here", "@\u200Bhere");
@@ -144,7 +144,7 @@ class Message extends _BaseObj {
 
     final w_transport.Response r = await this._client._http.send(
         'PATCH', '/channels/${this.channel.id}/messages/${this.id}',
-        body: <String, dynamic>{"content": newContent});
+        body: <String, dynamic>{"content": newContent, "embed": embed});
     return new Message._new(
         this._client, r.body.asJson() as Map<String, dynamic>);
   }
