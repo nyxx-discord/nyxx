@@ -53,7 +53,7 @@ class TextChannel extends GuildChannel {
       newContent = content;
     }
 
-    final w_transport.Response r = await this._client._http.send(
+    final w_transport.Response r = await this._client.http.send(
         'POST', '/channels/${this.id}/messages', body: <String, dynamic>{
       "content": newContent,
       "tts": tts,
@@ -71,7 +71,7 @@ class TextChannel extends GuildChannel {
     int position: null,
   }) async {
     w_transport.Response r =
-        await this._client._http.send('PATCH', "/channels/${this.id}", body: {
+        await this._client.http.send('PATCH', "/channels/${this.id}", body: {
       "name": name != null ? name : this.name,
       "topic": topic != null ? topic : this.topic,
       "position": position != null ? position : this.position
@@ -91,7 +91,7 @@ class TextChannel extends GuildChannel {
 
       final w_transport.Response r = await this
           ._client
-          ._http
+          .http
           .send('GET', '/channels/${this.id}/messages/$id');
       return new Message._new(
           this._client, r.body.asJson() as Map<String, dynamic>);
@@ -102,7 +102,7 @@ class TextChannel extends GuildChannel {
 
   /// Starts typing.
   Future<Null> startTyping() async {
-    await this._client._http.send('POST', "/channels/$id/typing");
+    await this._client.http.send('POST', "/channels/$id/typing");
     return null;
   }
 
@@ -121,7 +121,7 @@ class TextChannel extends GuildChannel {
   /// Gets all of the webhooks for this channel.
   Future<Map<String, Webhook>> getWebhooks() async {
     w_transport.Response r =
-        await this._client._http.send('GET', "/channels/$id/webhooks");
+        await this._client.http.send('GET', "/channels/$id/webhooks");
     Map<String, dynamic> map = <String, dynamic>{};
     r.body.asJson().forEach((Map<String, dynamic> o) {
       Webhook webhook = new Webhook._fromApi(this._client, o);
@@ -134,7 +134,7 @@ class TextChannel extends GuildChannel {
   Future<Webhook> createWebhook(String name) async {
     w_transport.Response r = await this
         ._client
-        ._http
+        .http
         .send('POST', "/channels/$id/webhooks", body: {"name": name});
     return new Webhook._fromApi(
         this._client, r.body.asJson() as Map<String, dynamic>);

@@ -12,10 +12,10 @@ class _WS {
 
   /// Makes a new WS manager.
   _WS(this.client) {
-    this.client._http.headers['Authorization'] = "Bot ${client._token}";
+    this.client.http.headers['Authorization'] = "Bot ${client._token}";
     this
         .client
-        ._http
+        .http
         .send("GET", "/gateway/bot", beforeReady: true)
         .then((w_transport.Response r) {
       this.bot = true;
@@ -37,7 +37,7 @@ class _WS {
     }).catchError((err) {
       this
           .client
-          ._http
+          .http
           .send('GET', '/gateway', beforeReady: true)
           .then((w_transport.Response r) {
         this.gateway = r.body.asJson()['url'];
@@ -92,7 +92,7 @@ class _WS {
       client.ready = true;
       client._startTime = new DateTime.now();
       if (client.user.bot) {
-        client._http
+        client.http
             .send('GET', '/oauth2/applications/@me', beforeReady: true)
             .then((w_transport.Response r) {
           client.app = new ClientOAuth2Application._new(

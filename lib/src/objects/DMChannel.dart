@@ -60,7 +60,7 @@ class DMChannel extends Channel {
       newContent = content;
     }
 
-    final w_transport.Response r = await this._client._http.send(
+    final w_transport.Response r = await this._client.http.send(
         'POST', '/channels/${this.id}/messages', body: <String, dynamic>{
       "content": newContent,
       "tts": tts,
@@ -82,7 +82,7 @@ class DMChannel extends Channel {
 
       final w_transport.Response r = await this
           ._client
-          ._http
+          .http
           .send('GET', '/channels/${this.id}/messages/$id');
       return new Message._new(
           this._client, r.body.asJson() as Map<String, dynamic>);
@@ -93,7 +93,7 @@ class DMChannel extends Channel {
 
   /// Starts typing.
   Future<Null> startTyping() async {
-    await this._client._http.send('POST', "/channels/$id/typing");
+    await this._client.http.send('POST', "/channels/$id/typing");
     return null;
   }
 

@@ -148,7 +148,7 @@ class Message extends _BaseObj {
       newContent = content;
     }
 
-    final w_transport.Response r = await this._client._http.send(
+    final w_transport.Response r = await this._client.http.send(
         'PATCH', '/channels/${this.channel.id}/messages/${this.id}',
         body: <String, dynamic>{"content": newContent, "embed": embed});
     return new Message._new(
@@ -162,7 +162,7 @@ class Message extends _BaseObj {
   Future<Null> delete() async {
     await this
         ._client
-        ._http
+        .http
         .send('DELETE', '/channels/${this.channel.id}/messages/${this.id}');
     return null;
   }

@@ -10,7 +10,7 @@ class GuildCreateEvent {
         new Guild._new(client, json['d'] as Map<String, dynamic>, true, true);
 
     if (shard._ws.client._options.forceFetchMembers)
-      shard._send("REQUEST_GUILD_MEMBERS",
+      shard.send("REQUEST_GUILD_MEMBERS",
           {"guild_id": guild.id, "query": "", "limit": 0});
 
     if (!client.ready) {

@@ -44,6 +44,6 @@ class ClientOptions {
       this.disabledEvents: const [],
       this.messageCacheSize: 200,
       this.ignoreUncachedEvents: true,
-      this.forceFetchMembers: true,
+      this.forceFetchMembers: false,
       this.prefix: null});
 }

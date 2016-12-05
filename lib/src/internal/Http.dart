@@ -1,7 +1,7 @@
 part of discord;
 
 class _HttpRequest {
-  _Http http;
+  Http http;
   Uri uri;
   String method;
   Map<String, String> headers;
@@ -104,12 +104,15 @@ class _Bucket {
   }
 }
 
-class _Http {
-  dynamic client;
-  Map<String, _Bucket> buckets = <String, _Bucket>{};
+/// The client's HTTP client.
+class Http {
+  dynamic _client;
+  Map<String, _Bucket> _buckets = <String, _Bucket>{};
+
+  /// Headers sent on every request.
   Map<String, String> headers;
 
-  _Http([this.client]) {
+  Http._new([this._client]) {
     this.headers = <String, String>{
       'Content-Type': 'application/json',
       'User-Agent':
@@ -117,22 +120,22 @@ class _Http {
     };
   }
 
-  /// Sends a POST request.
+  /// Sends a HTTP request.
   Future<w_transport.Response> send(String method, String path,
       {dynamic body,
       Map<String, String> queryParams,
       bool beforeReady: false,
       Map<String, String> headers: const {}}) async {
-    if (client is Client && !this.client.ready && !beforeReady)
+    if (_client is Client && !this._client.ready && !beforeReady)
       throw new ClientNotReadyError();
 
     Uri uri =
         new Uri.https(_Constants.host, _Constants.baseUri + path, queryParams);
 
-    if (buckets[uri.toString()] == null)
-      buckets[uri.toString()] = new _Bucket(uri.toString());
+    if (_buckets[uri.toString()] == null)
+      _buckets[uri.toString()] = new _Bucket(uri.toString());
 
-    await for (w_transport.Response r in buckets[uri.toString()].push(
+    await for (w_transport.Response r in _buckets[uri.toString()].push(
         new _HttpRequest(this, uri, method,
             new Map.from(this.headers)..addAll(headers), body))) {
       if (r.status.toString().startsWith("2")) {

@@ -6,9 +6,11 @@ class Client {
   String _token;
   ClientOptions _options;
   DateTime _startTime;
-  _Http _http;
   _WS _ws;
   _EventController _events;
+
+  /// The HTTP client.
+  Http http;
 
   /// The logged in user.
   ClientUser user;
@@ -37,6 +39,9 @@ class Client {
 
   /// The client's internal shards.
   Map<int, Shard> shards;
+
+  /// Emitted when a raw packet is received from the websocket connection.
+  Stream<RawEvent> onRaw;
 
   /// Emitted when the client is ready.
   Stream<ReadyEvent> onReady;
@@ -114,7 +119,7 @@ class Client {
     this.users = new Map<String, User>();
     this.shards = new Map<int, Shard>();
 
-    this._http = new _Http(this);
+    this.http = new Http._new(this);
     this._events = new _EventController(this);
     this._ws = new _WS(this);
 
@@ -139,7 +144,7 @@ class Client {
   Future<User> getUser(dynamic user) async {
     final String id = Util.resolve('user', user);
 
-    final w_transport.Response r = await this._http.send('GET', '/users/$id');
+    final w_transport.Response r = await this.http.send('GET', '/users/$id');
     return new User._new(this, r.body.asJson() as Map<String, dynamic>);
   }
 
@@ -149,7 +154,7 @@ class Client {
   ///     Client.getInvite("invite code");
   Future<Invite> getInvite(String code) async {
     final w_transport.Response r =
-        await this._http.send('GET', '/invites/$code');
+        await this.http.send('GET', '/invites/$code');
     return new Invite._new(this, r.body.asJson() as Map<String, dynamic>);
   }
 
@@ -161,7 +166,7 @@ class Client {
     final String id = Util.resolve('app', app);
 
     final w_transport.Response r = await this
-        ._http
+        .http
         .send('GET', '/oauth2/authorize?client_id=$id&scope=bot');
     return new OAuth2Info._new(this, r.body.asJson() as Map<String, dynamic>);
   }
