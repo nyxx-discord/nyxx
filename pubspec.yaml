@@ -2,7 +2,7 @@ name: discord
 version: 0.15.0
 description: A Discord library for Dart
 author: Hackzzila <admin@hackzzila.com>
-homepage: https://hackzzila.github.io/Discord-Dart/
+homepage: https://hackzzila.github.io/nyx/
 dependencies:
   intl: ">=0.14.0 <0.15.0"
   http_parser: ">=3.0.2 <4.0.0"
