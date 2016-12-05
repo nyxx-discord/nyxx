@@ -74,3 +74,7 @@ part 'src/errors/ClientNotReadyError.dart';
 part 'src/errors/HttpError.dart';
 part 'src/errors/InvalidTokenError.dart';
 part 'src/errors/InvalidShardError.dart';
+part 'src/errors/NotSetupError.dart';
+
+/// Used internally. DO NOT EDIT IT'S VALUE.
+bool setup = false;
