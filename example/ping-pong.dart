@@ -13,7 +13,7 @@ void main() {
     var m = e.message;
 
     if (m.content == "!ping") {
-      m.channel.sendMessage("Pong!");
+      m.channel.sendMessage(content: "Pong!");
     }
   });
 }
