@@ -2,6 +2,9 @@ part of discord;
 
 /// A controller for all events.
 class _EventController {
+  /// Emitted when a raw packet is received from the websocket connection.
+  StreamController<RawEvent> onRaw;
+
   /// Emitted when the client is ready.
   StreamController<ReadyEvent> onReady;
 
@@ -67,6 +70,9 @@ class _EventController {
 
   /// Makes a new `EventController`.
   _EventController(Client client) {
+    this.onRaw = new StreamController.broadcast();
+    client.onRaw = this.onRaw.stream;
+
     this.onReady = new StreamController.broadcast();
     client.onReady = this.onReady.stream;
 
@@ -133,6 +139,7 @@ class _EventController {
 
   /// Closes all streams.
   Future<Null> destroy() async {
+    await this.onRaw.close();
     await this.onReady.close();
     await this.onMessage.close();
     await this.onMessageUpdate.close();

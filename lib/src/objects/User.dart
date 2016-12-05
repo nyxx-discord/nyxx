@@ -54,7 +54,7 @@ class User extends _BaseObj {
       return _client.channels.values.firstWhere(
           (dynamic c) => c is DMChannel && c.recipient.id == this.id);
     } catch (err) {
-      w_transport.Response r = await _client._http
+      w_transport.Response r = await _client.http
           .send('POST', "/users/@me/channels", body: {"recipient_id": this.id});
       return new DMChannel._new(
           _client, r.body.asJson() as Map<String, dynamic>);
@@ -86,7 +86,7 @@ class User extends _BaseObj {
     DMChannel channel = await getChannel();
     String channelId = channel.id;
 
-    final w_transport.Response r = await this._client._http.send(
+    final w_transport.Response r = await this._client.http.send(
         'POST', '/channels/$channelId/messages', body: <String, dynamic>{
       "content": newContent,
       "tts": tts,
@@ -110,7 +110,7 @@ class User extends _BaseObj {
 
       final w_transport.Response r = await this
           ._client
-          ._http
+          .http
           .send('GET', '/channels/$channelId/messages/$id');
       return new Message._new(
           this._client, r.body.asJson() as Map<String, dynamic>);
@@ -124,7 +124,7 @@ class User extends _BaseObj {
     DMChannel channel = await getChannel();
     String channelId = channel.id;
 
-    await this._client._http.send('POST', "/channels/$channelId/typing");
+    await this._client.http.send('POST', "/channels/$channelId/typing");
     return null;
   }
 

@@ -1,8 +1,8 @@
 part of discord;
 
-/// A user.
+/// A webhook.
 class Webhook extends _BaseObj {
-  _Http _http;
+  Http http;
 
   /// The webhook's name.
   String name;
@@ -32,7 +32,7 @@ class Webhook extends _BaseObj {
   DateTime createdAt;
 
   Webhook._fromApi(Client client, Map<String, dynamic> data) : super(client) {
-    this._http = _client._http;
+    this.http = _client.http;
 
     this.name = data['name'];
     this.id = data['id'];
@@ -45,7 +45,7 @@ class Webhook extends _BaseObj {
     this.user = new User._new(_client, data['user'] as Map<String, dynamic>);
   }
 
-  Webhook._fromToken(this._http, Map<String, dynamic> data) : super(null) {
+  Webhook._fromToken(this.http, Map<String, dynamic> data) : super(null) {
     this.name = data['name'];
     this.id = data['id'];
     this.token = data['token'];
@@ -56,7 +56,7 @@ class Webhook extends _BaseObj {
 
   /// Gets a webhook by its ID and token.
   static Future<Webhook> fromToken(String id, String token) async {
-    _Http http = new _Http();
+    Http http = new Http._new();
     w_transport.Response r = await http.send('GET', "/webhooks/$id/$token");
     return new Webhook._fromToken(
         http, r.body.asJson() as Map<String, dynamic>);
@@ -65,7 +65,7 @@ class Webhook extends _BaseObj {
   /// Edits the webhook.
   Future<Webhook> edit({String name}) async {
     w_transport.Response r = await this
-        ._http
+        .http
         .send('PATCH', "/webhooks/$id/$token", body: {"name": name});
     this.name = r.body.asJson()['name'];
     return this;
@@ -73,7 +73,7 @@ class Webhook extends _BaseObj {
 
   /// Deletes the webhook.
   Future<Null> delete() async {
-    await this._http.send('DELETE', "/webhooks/$id/$token");
+    await this.http.send('DELETE', "/webhooks/$id/$token");
     return null;
   }
 
@@ -92,7 +92,7 @@ class Webhook extends _BaseObj {
       "embeds": embeds
     };
 
-    await this._http.send('POST', "webhooks/$id/$token", body: payload);
+    await this.http.send('POST', "webhooks/$id/$token", body: payload);
     return null;
   }
 

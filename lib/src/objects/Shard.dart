@@ -32,7 +32,7 @@ class Shard extends _BaseObj {
   /// Syncs all guild, is automatically called every 30 seconds.
   /// Users only.
   void guildSync() {
-    this._send("GUILD_SYNC", this.guilds.keys.toList());
+    this.send("GUILD_SYNC", this.guilds.keys.toList());
   }
 
   void _connect([bool resume = true, bool init = false]) {
@@ -52,17 +52,19 @@ class Shard extends _BaseObj {
   }
 
   /// Sends WS data.
-  void _send(String op, dynamic d) {
+  void send(String op, dynamic d) {
     this._socket.add(
         JSON.encode(<String, dynamic>{"op": _Constants.opCodes[op], "d": d}));
   }
 
   void _heartbeat() {
-    this._send("HEARTBEAT", _sequence);
+    this.send("HEARTBEAT", _sequence);
   }
 
   Future<Null> _handleMsg(String msg, bool resume) async {
     final json = JSON.decode(msg) as Map<String, dynamic>;
+
+    new RawEvent._new(this._ws.client, this, json);
 
     if (json['s'] != null) {
       this._sequence = json['s'];
@@ -82,9 +84,9 @@ class Shard extends _BaseObj {
               this.id,
               this._ws.client._options.shardCount
             ];
-          this._send("IDENTIFY", identifyMsg);
+          this.send("IDENTIFY", identifyMsg);
         } else if (resume) {
-          this._send("RESUME", <String, dynamic>{
+          this.send("RESUME", <String, dynamic>{
             "token": this._ws.client._token,
             "session_id": this._sessionId,
             "seq": this._sequence
@@ -110,17 +112,17 @@ class Shard extends _BaseObj {
                 this._ws.client, json['d']['user'] as Map<String, dynamic>);
 
             if (this._ws.client.user.bot) {
-              this._ws.client._http.headers['Authorization'] =
+              this._ws.client.http.headers['Authorization'] =
                   "Bot ${this._ws.client._token}";
             } else {
-              this._ws.client._http.headers['Authorization'] =
+              this._ws.client.http.headers['Authorization'] =
                   this._ws.client._token;
               this._ws.client._options.forceFetchMembers = false;
               new Timer.periodic(
                   new Duration(seconds: 30), (Timer t) => guildSync());
             }
 
-            this._ws.client._http.headers['User-Agent'] =
+            this._ws.client.http.headers['User-Agent'] =
                 "${this._ws.client.user.username} (https://github.com/Hackzzila/Discord-Dart, ${this._ws.client.version})";
 
             json['d']['guilds'].forEach((Map<String, dynamic> o) {

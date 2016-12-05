@@ -63,7 +63,7 @@ class Role extends _BaseObj {
       bool hoist: null}) async {
     w_transport.Response r = await this
         ._client
-        ._http
+        .http
         .send('PATCH', "/guilds/${this.guild.id}/roles/$id", body: {
       "name": name != null ? name : this.name,
       "permissions": permissions != null ? permissions : this.permissions.raw,
@@ -80,7 +80,7 @@ class Role extends _BaseObj {
   Future<Null> delete() async {
     await this
         ._client
-        ._http
+        .http
         .send('DELETE', "/guilds/${this.guild.id}/roles/$id");
     return null;
   }

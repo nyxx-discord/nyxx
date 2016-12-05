@@ -21,7 +21,7 @@ class VoiceChannel extends GuildChannel {
       int position: null,
       int userLimit: null}) async {
     w_transport.Response r =
-        await this._client._http.send('PATCH', "/channels/${this.id}", body: {
+        await this._client.http.send('PATCH', "/channels/${this.id}", body: {
       "name": name != null ? name : this.name,
       "bitrate": bitrate != null ? bitrate : this.bitrate,
       "user_limit": userLimit != null ? userLimit : this.userLimit,

@@ -139,7 +139,7 @@ class Guild extends _BaseObj {
   Future<int> prune(int days) async {
     w_transport.Response r = await this
         ._client
-        ._http
+        .http
         .send('POST', "/guilds/$id/prune", body: {"days": days});
     return r.body.asJson() as int;
   }
@@ -147,7 +147,7 @@ class Guild extends _BaseObj {
   /// Get's the guild's bans.
   Future<Map<String, User>> getBans() async {
     w_transport.Response r =
-        await this._client._http.send('GET', "/guilds/$id/bans");
+        await this._client.http.send('GET', "/guilds/$id/bans");
     Map<String, dynamic> map = <String, dynamic>{};
     r.body.asJson().forEach((Map<String, dynamic> o) {
       final User user =
@@ -159,14 +159,14 @@ class Guild extends _BaseObj {
 
   /// Leaves the guild.
   Future<Null> leave() async {
-    await this._client._http.send('DELETE', "/users/@me/guilds/$id");
+    await this._client.http.send('DELETE', "/users/@me/guilds/$id");
     return null;
   }
 
   /// Creates an empty role.
   Future<Role> createRole() async {
     w_transport.Response r =
-        await this._client._http.send('POST', "/guilds/$id/roles");
+        await this._client.http.send('POST', "/guilds/$id/roles");
     return new Role._new(
         _client, r.body.asJson() as Map<String, dynamic>, this);
   }
@@ -174,7 +174,7 @@ class Guild extends _BaseObj {
   /// Creates a channel.
   Future<dynamic> createChannel(String name, String type,
       {int bitrate: 64000, int userLimit: 0}) async {
-    w_transport.Response r = await this._client._http.send(
+    w_transport.Response r = await this._client.http.send(
         'POST', "/guilds/$id/channels", body: {
       "name": name,
       "type": type,
@@ -193,14 +193,14 @@ class Guild extends _BaseObj {
 
   /// Bans a user by ID.
   Future<Null> ban(String id, [int deleteMessageDays = 0]) async {
-    await this._client._http.send('PUT', "/guilds/${this.id}/bans/$id",
+    await this._client.http.send('PUT', "/guilds/${this.id}/bans/$id",
         body: {"delete-message-days": deleteMessageDays});
     return null;
   }
 
   /// Unbans a user by ID.
   Future<Null> unban(String id) async {
-    await this._client._http.send('DELETE', "/guilds/${this.id}/bans/$id");
+    await this._client.http.send('DELETE', "/guilds/${this.id}/bans/$id");
     return null;
   }
 
@@ -213,7 +213,7 @@ class Guild extends _BaseObj {
       int afkTimeout: null,
       String icon: null}) async {
     w_transport.Response r =
-        await this._client._http.send('PATCH', "/guilds/${this.id}", body: {
+        await this._client.http.send('PATCH', "/guilds/${this.id}", body: {
       "name": name != null ? name : this.name,
       "verification_level": verificationLevel != null
           ? verificationLevel
@@ -240,10 +240,8 @@ class Guild extends _BaseObj {
     if (this.members[member] != null) {
       return this.members[member];
     } else {
-      final w_transport.Response r = await this
-          ._client
-          ._http
-          .send('GET', '/guilds/${this.id}/members/$id');
+      final w_transport.Response r =
+          await this._client.http.send('GET', '/guilds/${this.id}/members/$id');
 
       final Member m = new Member._new(
           this._client, r.body.asJson() as Map<String, dynamic>, this);
@@ -260,7 +258,7 @@ class Guild extends _BaseObj {
     if (!this._client.user.bot) {
       final String id = Util.resolve('app', app);
 
-      await this._client._http.send(
+      await this._client.http.send(
           'POST', '/oauth2/authorize?client_id=$id&scope=bot',
           body: <String, dynamic>{
             "guild_id": this.id,
@@ -277,7 +275,7 @@ class Guild extends _BaseObj {
   /// Gets all of the webhooks for this guild.
   Future<Map<String, Webhook>> getWebhooks() async {
     w_transport.Response r =
-        await this._client._http.send('GET', "/guilds/$id/webhooks");
+        await this._client.http.send('GET', "/guilds/$id/webhooks");
     Map<String, dynamic> map = <String, dynamic>{};
     r.body.asJson().forEach((Map<String, dynamic> o) {
       Webhook webhook = new Webhook._fromApi(this._client, o);
