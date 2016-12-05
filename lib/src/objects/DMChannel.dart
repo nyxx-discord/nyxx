@@ -42,11 +42,17 @@ class DMChannel extends Channel {
   ///
   /// Throws an [Exception] if the HTTP request errored.
   ///     Channel.sendMessage(content: "My content!");
-  Future<Message> sendMessage({String content, Map<dynamic, dynamic> embed,
-      bool tts: false, String nonce, bool disableEveryone}) async {
+  Future<Message> sendMessage(
+      {String content,
+      Map<dynamic, dynamic> embed,
+      bool tts: false,
+      String nonce,
+      bool disableEveryone}) async {
     String newContent;
-    if (content != null && (disableEveryone == true ||
-        (disableEveryone == null && this._client._options.disableEveryone))) {
+    if (content != null &&
+        (disableEveryone == true ||
+            (disableEveryone == null &&
+                this._client._options.disableEveryone))) {
       newContent = content
           .replaceAll("@everyone", "@\u200Beveryone")
           .replaceAll("@here", "@\u200Bhere");
