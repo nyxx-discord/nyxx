@@ -116,7 +116,7 @@ class Http {
     this.headers = <String, String>{
       'Content-Type': 'application/json',
       'User-Agent':
-          'Discord Dart (https://github.com/Hackzzila/Discord-Dart, ${_Constants.version})'
+          'nyx (https://github.com/Hackzzila/nyx, ${_Constants.version})'
     };
   }
 
