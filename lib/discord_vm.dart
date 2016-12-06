@@ -8,6 +8,6 @@ import 'package:w_transport/vm.dart' show vmTransportPlatform;
 /// Configures the client to run in Dart VM.
 void configureDiscordForVM() {
   w_transport.globalTransportPlatform = vmTransportPlatform;
-  discord.operatingSystem = Platform.operatingSystem;
-  discord.setup = true;
+  discord.internals['operatingSystem'] = Platform.operatingSystem;
+  discord.internals['setup'] = true;
 }
