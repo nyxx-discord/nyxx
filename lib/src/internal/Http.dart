@@ -2,33 +2,46 @@ part of discord;
 
 class _HttpRequest {
   Http http;
+  _Bucket bucket;
+  String path;
+  Map<String, String> queryParams;
   Uri uri;
   String method;
   Map<String, String> headers;
   dynamic body;
-  Function execute;
   StreamController<w_transport.Response> streamController;
   Stream<w_transport.Response> stream;
 
-  _HttpRequest(this.http, this.uri, this.method, this.headers, this.body) {
+  _HttpRequest(this.http, this.method, this.path, this.queryParams, this.headers, this.body) {
+    this.uri = new Uri.https(_Constants.host, _Constants.baseUri + path, queryParams);
+    
+    if (http._buckets[uri.toString()] == null)
+      http._buckets[uri.toString()] = new _Bucket(uri.toString());
+      
+    this.bucket = http._buckets[uri.toString()];
+    
     this.streamController = new StreamController<w_transport.Response>();
     this.stream = streamController.stream;
-
-    this.execute = () async {
-      try {
-        if (this.body != null) {
-          w_transport.JsonRequest r = new w_transport.JsonRequest()
-            ..body = this.body;
-          return await r.send(this.method,
-              uri: this.uri, headers: this.headers);
-        } else {
-          return await w_transport.Http
-              .send(this.method, this.uri, headers: this.headers);
-        }
-      } on w_transport.RequestException catch (err) {
-        return err.response;
+    
+    this.run();
+  }
+  
+  void run() => this.bucket.push(this);
+  
+  Future<w_transport.Response> execute() async {
+    try {
+      if (this.body != null) {
+        w_transport.JsonRequest r = new w_transport.JsonRequest()
+          ..body = this.body;
+        return await r.send(this.method,
+            uri: this.uri, headers: this.headers);
+      } else {
+        return await w_transport.Http
+            .send(this.method, this.uri, headers: this.headers);
       }
-    };
+    } on w_transport.RequestException catch (err) {
+      return err.response;
+    }
   }
 }
 
@@ -129,15 +142,8 @@ class Http {
     if (_client is Client && !this._client.ready && !beforeReady)
       throw new ClientNotReadyError();
 
-    Uri uri =
-        new Uri.https(_Constants.host, _Constants.baseUri + path, queryParams);
-
-    if (_buckets[uri.toString()] == null)
-      _buckets[uri.toString()] = new _Bucket(uri.toString());
-
-    await for (w_transport.Response r in _buckets[uri.toString()].push(
-        new _HttpRequest(this, uri, method,
-            new Map.from(this.headers)..addAll(headers), body))) {
+    await for (w_transport.Response r in new _HttpRequest(this, method, path, queryParams,
+            new Map.from(this.headers)..addAll(headers), body).stream) {
       if (r.status >= 200 && r.status < 300) {
         return r;
       } else {
