@@ -1,40 +1,63 @@
 part of discord;
 
-class _HttpRequest {
+/// A HTTP request.
+class HttpRequest {
+  StreamController<w_transport.Response> _streamController;
+
+  /// The HTTP client.
   Http http;
-  _Bucket bucket;
+
+  /// The bucket the request will go into.
+  HttpBucket bucket;
+
+  /// The path the request is being made to.
   String path;
+
+  /// The query params.
   Map<String, String> queryParams;
+
+  /// The final URI that the request is being made to.
   Uri uri;
+
+  /// The HTTP method used.
   String method;
+
+  /// Headers to be sent.
   Map<String, String> headers;
+
+  /// The request body.
   dynamic body;
-  StreamController<w_transport.Response> streamController;
+
+  /// A stream that sends the response when received. Immediately closed after
+  /// a value is sent.
   Stream<w_transport.Response> stream;
 
-  _HttpRequest(this.http, this.method, this.path, this.queryParams, this.headers, this.body) {
-    this.uri = new Uri.https(_Constants.host, _Constants.baseUri + path, queryParams);
-    
-    if (http._buckets[uri.toString()] == null)
-      http._buckets[uri.toString()] = new _Bucket(uri.toString());
-      
-    this.bucket = http._buckets[uri.toString()];
-    
-    this.streamController = new StreamController<w_transport.Response>();
-    this.stream = streamController.stream;
-    
+  HttpRequest._new(this.http, this.method, this.path, this.queryParams,
+      this.headers, this.body) {
+    this.uri =
+        new Uri.https(_Constants.host, _Constants.baseUri + path, queryParams);
+
+    if (http.buckets[uri.toString()] == null)
+      http.buckets[uri.toString()] = new HttpBucket._new(uri.toString());
+
+    this.bucket = http.buckets[uri.toString()];
+
+    this._streamController =
+        new StreamController<w_transport.Response>.broadcast();
+    this.stream = _streamController.stream;
+
     this.run();
   }
-  
-  void run() => this.bucket.push(this);
-  
-  Future<w_transport.Response> execute() async {
+
+  /// Sends the request off to the bucket to be processed and sent.
+  void run() => this.bucket._push(this);
+
+  Future<w_transport.Response> _execute() async {
     try {
       if (this.body != null) {
         w_transport.JsonRequest r = new w_transport.JsonRequest()
           ..body = this.body;
-        return await r.send(this.method,
-            uri: this.uri, headers: this.headers);
+        return await r.send(this.method, uri: this.uri, headers: this.headers);
       } else {
         return await w_transport.Http
             .send(this.method, this.uri, headers: this.headers);
@@ -45,32 +68,44 @@ class _HttpRequest {
   }
 }
 
-class _Bucket {
+/// A bucket for managing ratelimits.
+class HttpBucket {
+  /// The url that this bucket is handling requests for.
   String url;
+
+  /// How many requests remain before ratelimits take affect.
   int ratelimitRemaining = 1;
+
+  /// When the ratelimits reset.
   DateTime ratelimitReset;
+
+  /// The time difference between you and Discord.
   Duration timeDifference;
-  List<_HttpRequest> requests = <_HttpRequest>[];
+
+  /// A queue of requests waiting to be sent.
+  List<HttpRequest> requests = <HttpRequest>[];
+
+  /// Whether or not the bucket is waiting for a request to complete
+  /// before continuing.
   bool waiting = false;
 
-  _Bucket(this.url);
+  HttpBucket._new(this.url);
 
-  Stream<w_transport.Response> push(_HttpRequest request) {
+  void _push(HttpRequest request) {
     this.requests.add(request);
-    this.handle();
-    return request.stream;
+    this._handle();
   }
 
-  void handle() {
+  void _handle() {
     if (this.waiting || this.requests.length == 0) return;
     this.waiting = true;
 
-    this.execute(this.requests[0]);
+    this._execute(this.requests[0]);
   }
 
-  void execute(_HttpRequest request) {
+  void _execute(HttpRequest request) {
     if (this.ratelimitRemaining == null || this.ratelimitRemaining > 0) {
-      request.execute().then((w_transport.Response r) {
+      request._execute().then((w_transport.Response r) {
         this.ratelimitRemaining = r.headers['x-ratelimit-remaining'] != null
             ? int.parse(r.headers['x-ratelimit-remaining'])
             : null;
@@ -90,13 +125,13 @@ class _Bucket {
         if (r.status == 429) {
           new Timer(
               new Duration(milliseconds: r.body.asJson()['retry_after'] + 500),
-              () => this.execute(request));
+              () => this._execute(request));
         } else {
           this.waiting = false;
           this.requests.remove(request);
-          request.streamController.add(r);
-          request.streamController.close();
-          this.handle();
+          request._streamController.add(r);
+          request._streamController.close();
+          this._handle();
         }
       });
     } else {
@@ -106,11 +141,11 @@ class _Bucket {
               new Duration(milliseconds: 1000);
       if (waitTime.isNegative) {
         this.ratelimitRemaining = 1;
-        this.execute(request);
+        this._execute(request);
       } else {
         new Timer(waitTime, () {
           this.ratelimitRemaining = 1;
-          this.execute(request);
+          this._execute(request);
         });
       }
     }
@@ -119,8 +154,10 @@ class _Bucket {
 
 /// The client's HTTP client.
 class Http {
-  dynamic _client;
-  Map<String, _Bucket> _buckets = <String, _Bucket>{};
+  Client _client;
+
+  /// The buckets.
+  Map<String, HttpBucket> buckets = <String, HttpBucket>{};
 
   /// Headers sent on every request.
   Map<String, String> headers;
@@ -142,11 +179,15 @@ class Http {
     if (_client is Client && !this._client.ready && !beforeReady)
       throw new ClientNotReadyError();
 
-    await for (w_transport.Response r in new _HttpRequest(this, method, path, queryParams,
-            new Map.from(this.headers)..addAll(headers), body).stream) {
+    HttpRequest request = new HttpRequest._new(this, method, path, queryParams,
+        new Map.from(this.headers)..addAll(headers), body);
+
+    await for (w_transport.Response r in request.stream) {
       if (r.status >= 200 && r.status < 300) {
+        if (_client != null) new HttpResponseEvent._new(_client, request, r);
         return r;
       } else {
+        if (_client != null) new HttpErrorEvent._new(_client, request, r);
         throw new HttpError._new(r);
       }
     }

@@ -13,20 +13,25 @@ class Shard {
   w_transport.WebSocket _socket;
   int _sequence;
   String _sessionId;
+  StreamController<Shard> _onReady;
+  StreamController<Shard> _onDisconnect;
 
   /// Emitted when the shard is ready.
-  StreamController<Shard> onReady;
+  Stream<Shard> onReady;
 
   /// Emitted when the shard encounters an error.
-  StreamController<Shard> onError;
+  Stream<Shard> onDisconnect;
 
   /// A map of guilds the shard is on.
   Map<String, Guild> guilds = {};
 
   Shard._new(_WS ws, this.id) {
     this._ws = ws;
-    this.onReady = new StreamController<Shard>.broadcast();
-    this.onError = new StreamController<Shard>.broadcast();
+    this._onReady = new StreamController<Shard>.broadcast();
+    this.onReady = this._onReady.stream;
+
+    this._onDisconnect = new StreamController<Shard>.broadcast();
+    this.onDisconnect = this._onDisconnect.stream;
   }
 
   /// Syncs all guild, is automatically called every 30 seconds.
@@ -149,7 +154,7 @@ class Shard {
             });
 
             this.ready = true;
-            this.onReady.add(this);
+            this._onReady.add(this);
 
             if (!this._ws.client.user.bot) {
               this._ws.client.ready = true;
@@ -268,18 +273,17 @@ class Shard {
 
       case 4007:
         this._connect(false);
-        this.onError.add(this);
-        return;
+        break;
 
       case 4009:
         this._connect(false);
-        this.onError.add(this);
-        return;
+        break;
 
       default:
         this._connect();
-        this.onError.add(this);
-        return;
+        break;
     }
+    new DisconnectEvent._new(this._ws.client, this, this._socket.closeCode);
+    this._onDisconnect.add(this);
   }
 }
