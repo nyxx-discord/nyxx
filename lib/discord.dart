@@ -78,3 +78,6 @@ part 'src/errors/NotSetupError.dart';
 
 /// Used internally. DO NOT EDIT IT'S VALUE.
 bool setup = false;
+
+/// Used internally. DO NOT EDIT IT'S VALUE.
+String operatingSystem;
