@@ -14,7 +14,7 @@ class PresenceUpdateEvent {
       if (data['user'].length > 1) {
         data['user'] = data['user'] as Map<String, dynamic>;
       } else {
-        data['user'] = client.users[data['user']['id']]?._raw;
+        data['user'] = client.users[data['user']['id']]?.raw;
       }
       if (data['user'] == null) return;
       if (data['guild_id'] == null) return;

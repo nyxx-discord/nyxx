@@ -1,7 +1,12 @@
 part of discord;
 
 /// A role.
-class Role extends _BaseObj {
+class Role {
+  Client _client;
+
+  /// The raw object returned by the API
+  Map<String, dynamic> raw;
+
   /// The role's name.
   String name;
 
@@ -32,22 +37,21 @@ class Role extends _BaseObj {
   /// A timestamp for when the channel was created.
   DateTime createdAt;
 
-  Role._new(Client client, Map<String, dynamic> data, this.guild)
-      : super(client) {
-    this.id = data['id'];
-    this.name = data['name'];
-    this.position = data['position'];
-    this.hoist = data['hoist'];
-    this.managed = data['managed'];
-    this.mentionable = data['mentionable'];
+  Role._new(this._client, this.raw, this.guild) {
+    this.id = raw['id'];
+    this.name = raw['name'];
+    this.position = raw['position'];
+    this.hoist = raw['hoist'];
+    this.managed = raw['managed'];
+    this.mentionable = raw['mentionable'];
     this.permissions =
-        new Permissions.fromInt(this._client, data['permissions']);
+        new Permissions.fromInt(this._client, raw['permissions']);
     this.createdAt = Util.getDate(this.id);
 
-    if (data['color'] == 0) {
+    if (raw['color'] == 0) {
       this.color = null;
     } else {
-      this.color = data['color'];
+      this.color = raw['color'];
     }
 
     this.guild.roles[this.id] = this;

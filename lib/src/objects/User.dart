@@ -1,9 +1,12 @@
 part of discord;
 
 /// A user.
-class User extends _BaseObj {
+class User {
+  Client _client;
   Timer _typing;
-  Map<String, dynamic> _raw;
+
+  /// The raw object returned by the API
+  Map<String, dynamic> raw;
 
   /// The user's username.
   String username;
@@ -29,23 +32,22 @@ class User extends _BaseObj {
   /// Whether or not the user is a bot.
   bool bot = false;
 
-  User._new(Client client, Map<String, dynamic> data) : super(client) {
-    this._raw = data;
-    this.username = data['username'];
-    this.id = data['id'];
-    this.discriminator = data['discriminator'];
-    this.avatar = data['avatar'];
+  User._new(this._client, this.raw) {
+    this.username = raw['username'];
+    this.id = raw['id'];
+    this.discriminator = raw['discriminator'];
+    this.avatar = raw['avatar'];
     this.avatarURL =
         "${_Constants.host}/users/${this.id}/avatars/${this.avatar}.jpg";
     this.mention = "<@${this.id}>";
     this.createdAt = Util.getDate(this.id);
 
     // This will not be set at all in some cases.
-    if (data['bot'] == true) {
-      this.bot = data['bot'];
+    if (raw['bot'] == true) {
+      this.bot = raw['bot'];
     }
 
-    client.users[this.id] = this;
+    _client.users[this.id] = this;
   }
 
   /// Gets the [DMChannel] for the user.

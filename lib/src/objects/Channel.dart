@@ -1,7 +1,12 @@
 part of discord;
 
 /// A channel.
-class Channel extends _BaseObj {
+class Channel {
+  Client _client;
+
+  /// The raw object returned by the API
+  Map<String, dynamic> raw;
+
   /// The channel's ID.
   String id;
 
@@ -11,12 +16,11 @@ class Channel extends _BaseObj {
   /// A timestamp for when the channel was created.
   DateTime createdAt;
 
-  Channel._new(Client client, Map<String, dynamic> data, this.type)
-      : super(client) {
-    this.id = data['id'];
+  Channel._new(this._client, this.raw, this.type) {
+    this.id = raw['id'];
     this.createdAt = Util.getDate(this.id);
 
-    client.channels[this.id] = this;
+    _client.channels[this.id] = this;
   }
 
   /// Deletes the channel.

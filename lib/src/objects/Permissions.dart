@@ -1,7 +1,9 @@
 part of discord;
 
 /// Permissions for a role or channel override.
-class Permissions extends _BaseObj {
+class Permissions {
+  Client _client;
+
   /// The raw permission code.
   int raw;
 
@@ -32,7 +34,7 @@ class Permissions extends _BaseObj {
   bool manageWebhooks;
 
   /// Makes a [Permissions] object from a raw permission code.
-  Permissions.fromInt(Client client, int permissions) : super(client) {
+  Permissions.fromInt(this._client, int permissions) {
     this.raw = permissions;
     this.createInstantInvite =
         (this.raw & _Constants.permissions['CREATE_INSTANT_INVITE']) > 0;

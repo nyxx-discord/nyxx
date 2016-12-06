@@ -1,7 +1,7 @@
 part of discord;
 
 /// An internal shard.
-class Shard extends _BaseObj {
+class Shard {
   /// The shard id.
   int id;
 
@@ -23,7 +23,7 @@ class Shard extends _BaseObj {
   /// A map of guilds the shard is on.
   Map<String, Guild> guilds = {};
 
-  Shard._new(_WS ws, this.id) : super(ws.client) {
+  Shard._new(_WS ws, this.id) {
     this._ws = ws;
     this.onReady = new StreamController<Shard>.broadcast();
     this.onError = new StreamController<Shard>.broadcast();

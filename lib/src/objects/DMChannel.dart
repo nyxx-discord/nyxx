@@ -15,15 +15,15 @@ class DMChannel extends Channel {
 
   DMChannel._new(Client client, Map<String, dynamic> data)
       : super._new(client, data, "private") {
-    this.lastMessageID = data['last_message_id'];
+    this.lastMessageID = raw['last_message_id'];
     this.messages = new Map<String, Message>();
 
-    if (data['recipients'] != null) {
+    if (raw['recipients'] != null) {
       this.recipient =
-          new User._new(client, data['recipients'][0] as Map<String, dynamic>);
+          new User._new(client, raw['recipients'][0] as Map<String, dynamic>);
     } else {
       this.recipient =
-          new User._new(client, data['recipient'] as Map<String, dynamic>);
+          new User._new(client, raw['recipient'] as Map<String, dynamic>);
     }
   }
 
