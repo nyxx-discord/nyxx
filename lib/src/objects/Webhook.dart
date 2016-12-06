@@ -1,7 +1,13 @@
 part of discord;
 
 /// A webhook.
-class Webhook extends _BaseObj {
+class Webhook {
+  Client _client;
+
+  /// The raw object returned by the API
+  Map<String, dynamic> raw;
+
+  /// The HTTP client.
   Http http;
 
   /// The webhook's name.
@@ -31,26 +37,26 @@ class Webhook extends _BaseObj {
   /// When the webhook was created;
   DateTime createdAt;
 
-  Webhook._fromApi(Client client, Map<String, dynamic> data) : super(client) {
+  Webhook._fromApi(this._client, this.raw) {
     this.http = _client.http;
 
-    this.name = data['name'];
-    this.id = data['id'];
-    this.token = data['token'];
-    this.channelId = data['channel_id'];
-    this.guildId = data['guild_id'];
+    this.name = raw['name'];
+    this.id = raw['id'];
+    this.token = raw['token'];
+    this.channelId = raw['channel_id'];
+    this.guildId = raw['guild_id'];
     this.createdAt = Util.getDate(this.id);
     this.channel = this._client.channels[this.channelId];
     this.guild = this._client.guilds[this.guildId];
-    this.user = new User._new(_client, data['user'] as Map<String, dynamic>);
+    this.user = new User._new(_client, raw['user'] as Map<String, dynamic>);
   }
 
-  Webhook._fromToken(this.http, Map<String, dynamic> data) : super(null) {
-    this.name = data['name'];
-    this.id = data['id'];
-    this.token = data['token'];
-    this.channelId = data['channel_id'];
-    this.guildId = data['guild_id'];
+  Webhook._fromToken(this.http, Map<String, dynamic> raw) {
+    this.name = raw['name'];
+    this.id = raw['id'];
+    this.token = raw['token'];
+    this.channelId = raw['channel_id'];
+    this.guildId = raw['guild_id'];
     this.createdAt = Util.getDate(this.id);
   }
 

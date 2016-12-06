@@ -1,7 +1,12 @@
 part of discord;
 
 /// A mini channel object for invites.
-class InviteChannel extends _BaseObj {
+class InviteChannel {
+  Client _client;
+
+  /// The raw object returned by the API
+  Map<String, dynamic> raw;
+
   /// The channel's ID.
   String id;
 
@@ -14,10 +19,10 @@ class InviteChannel extends _BaseObj {
   /// A timestamp for the channel was created.
   DateTime createdAt;
 
-  InviteChannel._new(Client client, Map<String, dynamic> data) : super(client) {
-    this.id = data['id'];
-    this.name = data['name'];
-    this.type = data['type'];
+  InviteChannel._new(this._client, this.raw) {
+    this.id = raw['id'];
+    this.name = raw['name'];
+    this.type = raw['type'];
     this.createdAt = Util.getDate(this.id);
   }
 

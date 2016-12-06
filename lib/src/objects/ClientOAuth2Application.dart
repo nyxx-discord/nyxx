@@ -10,8 +10,8 @@ class ClientOAuth2Application extends OAuth2Application {
 
   ClientOAuth2Application._new(Client client, Map<String, dynamic> data)
       : super._new(client, data) {
-    this.flags = data['flags'];
-    this.owner = new User._new(client, data['owner'] as Map<String, dynamic>);
+    this.flags = raw['flags'];
+    this.owner = new User._new(client, raw['owner'] as Map<String, dynamic>);
   }
 
   /// Creates an OAuth2 URL with the specified permissions.

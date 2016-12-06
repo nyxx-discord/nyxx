@@ -1,9 +1,13 @@
 part of discord;
 
 /// A message.
-class Message extends _BaseObj {
+class Message {
+  Client _client;
   StreamController<MessageUpdateEvent> _onUpdate;
   StreamController<MessageDeleteEvent> _onDelete;
+
+  /// The raw object returned by the API
+  Map<String, dynamic> raw;
 
   /// The message's content.
   String content;
@@ -62,23 +66,23 @@ class Message extends _BaseObj {
   /// Emitted when the message is deleted, if it is in the channel cache.
   Stream<MessageDeleteEvent> onDelete;
 
-  Message._new(Client client, Map<String, dynamic> data) : super(client, data) {
+  Message._new(this._client, this.raw) {
     this._onUpdate = new StreamController.broadcast();
     this.onUpdate = this._onUpdate.stream;
 
     this._onDelete = new StreamController.broadcast();
     this.onDelete = this._onDelete.stream;
 
-    this.content = data['content'];
-    this.id = data['id'];
-    this.nonce = data['nonce'];
-    this.timestamp = DateTime.parse(data['timestamp']);
+    this.content = raw['content'];
+    this.id = raw['id'];
+    this.nonce = raw['nonce'];
+    this.timestamp = DateTime.parse(raw['timestamp']);
     this.author =
-        new User._new(this._client, data['author'] as Map<String, dynamic>);
-    this.channel = this._client.channels[data['channel_id']];
-    this.pinned = data['pinned'];
-    this.tts = data['tts'];
-    this.mentionEveryone = data['mention_everyone'];
+        new User._new(this._client, raw['author'] as Map<String, dynamic>);
+    this.channel = this._client.channels[raw['channel_id']];
+    this.pinned = raw['pinned'];
+    this.tts = raw['tts'];
+    this.mentionEveryone = raw['mention_everyone'];
     this.createdAt = Util.getDate(this.id);
 
     this.channel._cacheMessage(this);
@@ -89,31 +93,31 @@ class Message extends _BaseObj {
       this.member = guild.members[this.author.id];
 
       this.roleMentions = new Map<String, Role>();
-      data['mention_roles'].forEach((String o) {
+      raw['mention_roles'].forEach((String o) {
         this.roleMentions[guild.roles[o].id] = guild.roles[o];
       });
     }
 
-    if (data['edited_timestamp'] != null) {
-      this.editedTimestamp = DateTime.parse(data['edited_timestamp']);
+    if (raw['edited_timestamp'] != null) {
+      this.editedTimestamp = DateTime.parse(raw['edited_timestamp']);
     }
 
     this.mentions = new Map<String, User>();
-    data['mentions'].forEach((Map<String, dynamic> o) {
-      final User user = new User._new(client, o);
+    raw['mentions'].forEach((Map<String, dynamic> o) {
+      final User user = new User._new(_client, o);
       this.mentions[user.id] = user;
     });
     this.mentions;
 
     this.embeds = new Map<String, Embed>();
-    data['embeds'].forEach((Map<String, dynamic> o) {
+    raw['embeds'].forEach((Map<String, dynamic> o) {
       Embed embed = new Embed._new(this._client, o);
       this.embeds[embed.url] = embed;
     });
     this.embeds;
 
     this.attachments = new Map<String, Attachment>();
-    data['attachments'].forEach((Map<String, dynamic> o) {
+    raw['attachments'].forEach((Map<String, dynamic> o) {
       final Attachment attachment = new Attachment._new(this._client, o);
       this.attachments[attachment.id] = attachment;
     });

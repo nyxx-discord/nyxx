@@ -1,7 +1,12 @@
 part of discord;
 
 /// A message attachment.
-class Attachment extends _BaseObj {
+class Attachment {
+  Client _client;
+
+  /// The raw object returned by the API
+  Map<String, dynamic> raw;
+
   /// The attachment's ID
   String id;
 
@@ -26,14 +31,14 @@ class Attachment extends _BaseObj {
   /// A timestamp for when the message was created.
   DateTime createdAt;
 
-  Attachment._new(Client client, Map<String, dynamic> data) : super(client) {
-    this.id = data['id'];
-    this.filename = data['filename'];
-    this.url = data['url'];
-    this.proxyUrl = data['proxyUrl'];
-    this.size = data['size'];
-    this.height = data['height'];
-    this.width = data['width'];
+  Attachment._new(this._client, this.raw) {
+    this.id = raw['id'];
+    this.filename = raw['filename'];
+    this.url = raw['url'];
+    this.proxyUrl = raw['proxyUrl'];
+    this.size = raw['size'];
+    this.height = raw['height'];
+    this.width = raw['width'];
     this.createdAt = Util.getDate(this.id);
   }
 }

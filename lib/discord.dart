@@ -10,7 +10,6 @@ import 'package:w_transport/w_transport.dart' as w_transport;
 part 'src/Client.dart';
 part 'src/CommandClient.dart';
 
-part 'src/internal/_BaseObj.dart';
 part 'src/internal/_Constants.dart';
 part 'src/internal/_EventController.dart';
 part 'src/internal/_WS.dart';

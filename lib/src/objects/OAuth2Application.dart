@@ -1,7 +1,12 @@
 part of discord;
 
 /// An OAuth2 application.
-class OAuth2Application extends _BaseObj {
+class OAuth2Application {
+  Client _client;
+
+  /// The raw object returned by the API
+  Map<String, dynamic> raw;
+
   /// The app's description.
   String description;
 
@@ -20,13 +25,12 @@ class OAuth2Application extends _BaseObj {
   /// A timestamp for when the app was created.
   DateTime createdAt;
 
-  OAuth2Application._new(Client client, Map<String, dynamic> data)
-      : super(client) {
-    this.description = data['description'];
-    this.icon = data['icon'];
-    this.id = data['id'];
-    this.name = data['name'];
-    this.rpcOrigins = data['rpcOrigins'] as List<String>;
+  OAuth2Application._new(this._client, this.raw) {
+    this.description = raw['description'];
+    this.icon = raw['icon'];
+    this.id = raw['id'];
+    this.name = raw['name'];
+    this.rpcOrigins = raw['rpcOrigins'] as List<String>;
     this.createdAt = Util.getDate(this.id);
   }
 

@@ -15,11 +15,11 @@ class GroupDMChannel extends Channel {
 
   GroupDMChannel._new(Client client, Map<String, dynamic> data)
       : super._new(client, data, "private") {
-    this.lastMessageID = data['last_message_id'];
+    this.lastMessageID = raw['last_message_id'];
     this.messages = new Map<String, Message>();
 
     this.recipients = new Map<String, User>();
-    data['recipients'].forEach((Map<String, dynamic> o) {
+    raw['recipients'].forEach((Map<String, dynamic> o) {
       final User user = new User._new(client, o);
       this.recipients[user.id] = user;
     });

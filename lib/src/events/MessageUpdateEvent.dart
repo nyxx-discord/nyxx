@@ -17,7 +17,7 @@ class MessageUpdateEvent {
           null) {
         this.oldMessage =
             client.channels[json['d']['channel_id']].messages[json['d']['id']];
-        Map<String, dynamic> data = oldMessage._data;
+        Map<String, dynamic> data = oldMessage.raw;
         data.addAll(json['d'] as Map<String, dynamic>);
         this.newMessage = new Message._new(client, data);
         this.id = newMessage.id;

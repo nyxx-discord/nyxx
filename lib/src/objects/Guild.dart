@@ -1,7 +1,12 @@
 part of discord;
 
 /// A guild.
-class Guild extends _BaseObj {
+class Guild {
+  Client _client;
+
+  /// The raw object returned by the API
+  Map<String, dynamic> raw;
+
   /// The guild's name.
   String name;
 
@@ -65,28 +70,27 @@ class Guild extends _BaseObj {
   /// The shard that the guild is on.
   Shard shard;
 
-  Guild._new(Client client, Map<String, dynamic> data,
-      [this.available = true, bool guildCreate = false])
-      : super(client) {
+  Guild._new(this._client, this.raw,
+      [this.available = true, bool guildCreate = false]) {
     if (this.available) {
-      this.name = data['name'];
-      this.id = data['id'];
-      this.icon = data['icon'];
+      this.name = raw['name'];
+      this.id = raw['id'];
+      this.icon = raw['icon'];
       this.iconURL =
           "${_Constants.host}/guilds/${this.id}/icons/${this.icon}.jpg";
-      this.region = data['region'];
-      this.embedChannelID = data['embed_channel_id'];
-      this.afkTimeout = data['afk_timeout'];
-      this.memberCount = data['member_count'];
-      this.verificationLevel = data['verification_level'];
-      this.notificationLevel = data['default_message_notifications'];
-      this.mfaLevel = data['mfa_level'];
-      this.embedEnabled = data['embed_enabled'];
-      this.ownerID = data['owner_id'];
+      this.region = raw['region'];
+      this.embedChannelID = raw['embed_channel_id'];
+      this.afkTimeout = raw['afk_timeout'];
+      this.memberCount = raw['member_count'];
+      this.verificationLevel = raw['verification_level'];
+      this.notificationLevel = raw['default_message_notifications'];
+      this.mfaLevel = raw['mfa_level'];
+      this.embedEnabled = raw['embed_enabled'];
+      this.ownerID = raw['owner_id'];
       this.createdAt = Util.getDate(this.id);
 
       this.roles = new Map<String, Role>();
-      data['roles'].forEach((Map<String, dynamic> o) {
+      raw['roles'].forEach((Map<String, dynamic> o) {
         new Role._new(this._client, o, this);
       });
 
@@ -97,34 +101,34 @@ class Guild extends _BaseObj {
         this.members = new Map<String, Member>();
         this.channels = new Map<String, GuildChannel>();
 
-        data['members'].forEach((Map<String, dynamic> o) {
-          new Member._new(client, o, this);
+        raw['members'].forEach((Map<String, dynamic> o) {
+          new Member._new(_client, o, this);
         });
 
-        data['channels'].forEach((Map<String, dynamic> o) {
+        raw['channels'].forEach((Map<String, dynamic> o) {
           if (o['type'] == 0) {
-            new TextChannel._new(client, o, this);
+            new TextChannel._new(_client, o, this);
           } else {
-            new VoiceChannel._new(client, o, this);
+            new VoiceChannel._new(_client, o, this);
           }
         });
 
-        data['presences'].forEach((Map<String, dynamic> o) {
+        raw['presences'].forEach((Map<String, dynamic> o) {
           Member member = this.members[o['user']['id']];
           if (member != null) {
             member.status = o['status'];
             if (o['game'] != null) {
               member.game =
-                  new Game._new(client, o['game'] as Map<String, dynamic>);
+                  new Game._new(_client, o['game'] as Map<String, dynamic>);
             }
           }
         });
 
         this.defaultChannel = this.channels[this.id];
-        this.afkChannel = this.channels[data['afk_channel_id']];
+        this.afkChannel = this.channels[raw['afk_channel_id']];
       }
 
-      client.guilds[this.id] = this;
+      _client.guilds[this.id] = this;
       shard.guilds[this.id] = this;
     }
   }

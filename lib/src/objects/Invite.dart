@@ -1,7 +1,12 @@
 part of discord;
 
 /// An invite.
-class Invite extends _BaseObj {
+class Invite {
+  Client _client;
+
+  /// The raw object returned by the API
+  Map<String, dynamic> raw;
+
   /// The invite's code.
   String code;
 
@@ -11,11 +16,11 @@ class Invite extends _BaseObj {
   /// A mini channel object for the invite's channel.
   InviteChannel channel;
 
-  Invite._new(Client client, Map<String, dynamic> data) : super(client) {
-    this.code = data['code'];
+  Invite._new(this._client, this.raw) {
+    this.code = raw['code'];
     this.guild = new InviteGuild._new(
-        this._client, data['guild'] as Map<String, dynamic>);
+        this._client, raw['guild'] as Map<String, dynamic>);
     this.channel = new InviteChannel._new(
-        this._client, data['channel'] as Map<String, dynamic>);
+        this._client, raw['channel'] as Map<String, dynamic>);
   }
 }
