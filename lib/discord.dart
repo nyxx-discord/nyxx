@@ -76,8 +76,9 @@ part 'src/errors/InvalidTokenError.dart';
 part 'src/errors/InvalidShardError.dart';
 part 'src/errors/NotSetupError.dart';
 
-/// Used internally. DO NOT EDIT IT'S VALUE.
-bool setup = false;
-
-/// Used internally. DO NOT EDIT IT'S VALUE.
-String operatingSystem;
+/// Used internally. DO NOT EDIT THIS
+Map<String, dynamic> internals = {
+  "setup": false,
+  "browser": false,
+  "operatingSystem": null,
+};

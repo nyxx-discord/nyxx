@@ -113,11 +113,11 @@ class Http {
   Map<String, String> headers;
 
   Http._new([this._client]) {
-    this.headers = <String, String>{
-      'Content-Type': 'application/json',
-      'User-Agent':
-          'nyx (https://github.com/Hackzzila/nyx, ${_Constants.version})'
-    };
+    this.headers = <String, String>{'Content-Type': 'application/json'};
+
+    if (!internals['browser'])
+      headers['User-Agent'] =
+          'nyx (https://github.com/Hackzzila/nyx, ${_Constants.version})';
   }
 
   /// Sends a HTTP request.
@@ -138,7 +138,7 @@ class Http {
     await for (w_transport.Response r in _buckets[uri.toString()].push(
         new _HttpRequest(this, uri, method,
             new Map.from(this.headers)..addAll(headers), body))) {
-      if (r.status.toString().startsWith("2")) {
+      if (r.status >= 200 && r.status < 300) {
         return r;
       } else {
         throw new HttpError._new(r);
