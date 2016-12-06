@@ -75,7 +75,13 @@ class Shard {
         if (this._sessionId == null || !resume) {
           Map<String, dynamic> identifyMsg = <String, dynamic>{
             "token": this._ws.client._token,
-            "properties": <String, dynamic>{"\$browser": "Discord Dart"},
+            "properties": <String, dynamic>{
+              "\$os": operatingSystem,
+              "\$browser": "nyx",
+              "\$device": "nyx",
+              "\$referrer": "",
+              "\$referring_domain": ""
+            },
             "large_threshold": 100,
             "compress": false
           };
@@ -123,7 +129,7 @@ class Shard {
             }
 
             this._ws.client.http.headers['User-Agent'] =
-                "${this._ws.client.user.username} (https://github.com/Hackzzila/Discord-Dart, ${this._ws.client.version})";
+                "${this._ws.client.user.username} (https://github.com/Hackzzila/nyx, ${this._ws.client.version})";
 
             json['d']['guilds'].forEach((Map<String, dynamic> o) {
               if (this._ws.client.user.bot)
