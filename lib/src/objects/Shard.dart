@@ -129,7 +129,7 @@ class Shard {
             }
 
             this._ws.client.http.headers['User-Agent'] =
-                "${this._ws.client.user.username} (https://github.com/Hackzzila/nyx, ${this._ws.client.version})";
+                "${this._ws.client.user.username} (https://github.com/Hackzzila/nyx, ${_Constants.version})";
 
             json['d']['guilds'].forEach((Map<String, dynamic> o) {
               if (this._ws.client.user.bot)
