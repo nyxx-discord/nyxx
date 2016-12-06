@@ -53,7 +53,7 @@ class _WS {
     Shard shard = new Shard._new(this, shardId);
     this.client.shards[shard.id] = shard;
 
-    shard.onReady.stream.listen((Shard s) {
+    shard.onReady.listen((Shard s) {
       if (!client.ready) {
         testReady();
       }

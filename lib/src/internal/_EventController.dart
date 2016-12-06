@@ -5,6 +5,15 @@ class _EventController {
   /// Emitted when a raw packet is received from the websocket connection.
   StreamController<RawEvent> onRaw;
 
+  /// Emitted when a shard is disconnected from the websocket.
+  StreamController<DisconnectEvent> onDisconnect;
+
+  /// Emitted when a successful HTTP response is received.
+  StreamController<HttpResponseEvent> onHttpResponse;
+
+  /// Emitted when a HTTP request failed.
+  StreamController<HttpErrorEvent> onHttpError;
+
   /// Emitted when the client is ready.
   StreamController<ReadyEvent> onReady;
 
@@ -73,6 +82,15 @@ class _EventController {
     this.onRaw = new StreamController.broadcast();
     client.onRaw = this.onRaw.stream;
 
+    this.onDisconnect = new StreamController.broadcast();
+    client.onDisconnect = this.onDisconnect.stream;
+
+    this.onHttpResponse = new StreamController.broadcast();
+    client.onHttpResponse = this.onHttpResponse.stream;
+
+    this.onHttpError = new StreamController.broadcast();
+    client.onHttpError = this.onHttpError.stream;
+
     this.onReady = new StreamController.broadcast();
     client.onReady = this.onReady.stream;
 
@@ -140,6 +158,9 @@ class _EventController {
   /// Closes all streams.
   Future<Null> destroy() async {
     await this.onRaw.close();
+    await this.onDisconnect.close();
+    await this.onHttpResponse.close();
+    await this.onGuildUpdate.close();
     await this.onReady.close();
     await this.onMessage.close();
     await this.onMessageUpdate.close();

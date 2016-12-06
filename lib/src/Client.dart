@@ -43,6 +43,15 @@ class Client {
   /// Emitted when a raw packet is received from the websocket connection.
   Stream<RawEvent> onRaw;
 
+  /// Emitted when a shard is disconnected from the websocket.
+  Stream<DisconnectEvent> onDisconnect;
+
+  /// Emitted when a successful HTTP response is received.
+  Stream<HttpResponseEvent> onHttpResponse;
+
+  /// Emitted when a HTTP request failed.
+  Stream<HttpErrorEvent> onHttpError;
+
   /// Emitted when the client is ready.
   Stream<ReadyEvent> onReady;
 
