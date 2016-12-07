@@ -53,7 +53,7 @@ class TextChannel extends GuildChannel {
       newContent = content;
     }
 
-    final w_transport.Response r = await this._client.http.send(
+    final HttpResponse r = await this._client.http.send(
         'POST', '/channels/${this.id}/messages', body: <String, dynamic>{
       "content": newContent,
       "tts": tts,
@@ -70,7 +70,7 @@ class TextChannel extends GuildChannel {
     String topic: null,
     int position: null,
   }) async {
-    w_transport.Response r =
+    HttpResponse r =
         await this._client.http.send('PATCH', "/channels/${this.id}", body: {
       "name": name != null ? name : this.name,
       "topic": topic != null ? topic : this.topic,
@@ -89,7 +89,7 @@ class TextChannel extends GuildChannel {
     if (this._client.user.bot) {
       final String id = Util.resolve('message', message);
 
-      final w_transport.Response r = await this
+      final HttpResponse r = await this
           ._client
           .http
           .send('GET', '/channels/${this.id}/messages/$id');
@@ -120,7 +120,7 @@ class TextChannel extends GuildChannel {
 
   /// Gets all of the webhooks for this channel.
   Future<Map<String, Webhook>> getWebhooks() async {
-    w_transport.Response r =
+    HttpResponse r =
         await this._client.http.send('GET', "/channels/$id/webhooks");
     Map<String, dynamic> map = <String, dynamic>{};
     r.body.asJson().forEach((Map<String, dynamic> o) {
@@ -132,7 +132,7 @@ class TextChannel extends GuildChannel {
 
   /// Creates a webhook.
   Future<Webhook> createWebhook(String name) async {
-    w_transport.Response r = await this
+    HttpResponse r = await this
         ._client
         .http
         .send('POST', "/channels/$id/webhooks", body: {"name": name});

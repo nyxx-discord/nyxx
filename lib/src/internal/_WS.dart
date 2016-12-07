@@ -17,7 +17,7 @@ class _WS {
         .client
         .http
         .send("GET", "/gateway/bot", beforeReady: true)
-        .then((w_transport.Response r) {
+        .then((HttpResponse r) {
       this.bot = true;
       this.gateway = r.body.asJson()['url'];
       if (this.client._options.shardCount == 1 &&
@@ -39,7 +39,7 @@ class _WS {
           .client
           .http
           .send('GET', '/gateway', beforeReady: true)
-          .then((w_transport.Response r) {
+          .then((HttpResponse r) {
         this.gateway = r.body.asJson()['url'];
         for (int shardId in this.client._options.shardIds) {
           setupShard(shardId);
@@ -94,7 +94,7 @@ class _WS {
       if (client.user.bot) {
         client.http
             .send('GET', '/oauth2/applications/@me', beforeReady: true)
-            .then((w_transport.Response r) {
+            .then((HttpResponse r) {
           client.app = new ClientOAuth2Application._new(
               client, r.body.asJson() as Map<String, dynamic>);
           new ReadyEvent._new(client);

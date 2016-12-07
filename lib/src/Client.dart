@@ -159,7 +159,7 @@ class Client {
   Future<User> getUser(dynamic user) async {
     final String id = Util.resolve('user', user);
 
-    final w_transport.Response r = await this.http.send('GET', '/users/$id');
+    final HttpResponse r = await this.http.send('GET', '/users/$id');
     return new User._new(this, r.body.asJson() as Map<String, dynamic>);
   }
 
@@ -168,7 +168,7 @@ class Client {
   /// Throws an [Exception] if the HTTP request errored.
   ///     Client.getInvite("invite code");
   Future<Invite> getInvite(String code) async {
-    final w_transport.Response r =
+    final HttpResponse r =
         await this.http.send('GET', '/invites/$code');
     return new Invite._new(this, r.body.asJson() as Map<String, dynamic>);
   }
@@ -180,7 +180,7 @@ class Client {
   Future<OAuth2Info> getOAuth2Info(dynamic app) async {
     final String id = Util.resolve('app', app);
 
-    final w_transport.Response r = await this
+    final HttpResponse r = await this
         .http
         .send('GET', '/oauth2/authorize?client_id=$id&scope=bot');
     return new OAuth2Info._new(this, r.body.asJson() as Map<String, dynamic>);

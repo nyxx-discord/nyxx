@@ -6,7 +6,7 @@ class HttpResponseEvent {
   HttpRequest request;
 
   /// The HTTP response.
-  w_transport.Response response;
+  HttpResponse response;
 
   HttpResponseEvent._new(Client client, this.request, this.response) {
     client._events.onHttpResponse.add(this);

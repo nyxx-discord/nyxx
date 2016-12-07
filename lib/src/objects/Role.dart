@@ -65,7 +65,7 @@ class Role {
       int color: null,
       bool mentionable: null,
       bool hoist: null}) async {
-    w_transport.Response r = await this
+    HttpResponse r = await this
         ._client
         .http
         .send('PATCH', "/guilds/${this.guild.id}/roles/$id", body: {

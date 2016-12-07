@@ -58,7 +58,7 @@ class GroupDMChannel extends Channel {
       newContent = content;
     }
 
-    final w_transport.Response r = await this._client.http.send(
+    final HttpResponse r = await this._client.http.send(
         'POST', '/channels/${this.id}/messages', body: <String, dynamic>{
       "content": newContent,
       "tts": tts,
@@ -78,7 +78,7 @@ class GroupDMChannel extends Channel {
     if (this._client.user.bot) {
       final String id = Util.resolve('message', message);
 
-      final w_transport.Response r = await this
+      final HttpResponse r = await this
           ._client
           .http
           .send('GET', '/channels/${this.id}/messages/$id');
