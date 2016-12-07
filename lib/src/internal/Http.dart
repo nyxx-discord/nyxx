@@ -55,6 +55,11 @@ class HttpRequest {
   /// Sends the request off to the bucket to be processed and sent.
   void send() => this.bucket._push(this);
 
+  /// Destroys the request.
+  void abort() {
+    this._streamController.close();
+  }
+
   Future<w_transport.Response> _execute() async {
     try {
       if (this.body != null) {
