@@ -2,7 +2,7 @@ part of discord;
 
 /// A HTTP request.
 class HttpRequest {
-  StreamController<w_transport.Response> _streamController;
+  StreamController<HttpResponse> _streamController;
 
   /// The HTTP client.
   Http http;
@@ -30,7 +30,7 @@ class HttpRequest {
 
   /// A stream that sends the response when received. Immediately closed after
   /// a value is sent.
-  Stream<w_transport.Response> stream;
+  Stream<HttpResponse> stream;
 
   HttpRequest._new(this.http, this.method, this.path, this.queryParams,
       this.headers, this.body) {
@@ -42,8 +42,7 @@ class HttpRequest {
 
     this.bucket = http.buckets[uri.toString()];
 
-    this._streamController =
-        new StreamController<w_transport.Response>.broadcast();
+    this._streamController = new StreamController<HttpResponse>.broadcast();
     this.stream = _streamController.stream;
 
     new BeforeHttpRequestSendEvent._new(this.http._client, this);
@@ -57,22 +56,47 @@ class HttpRequest {
 
   /// Destroys the request.
   void abort() {
+    this._streamController.add(new HttpResponse._aborted(this));
     this._streamController.close();
   }
 
-  Future<w_transport.Response> _execute() async {
+  Future<HttpResponse> _execute() async {
     try {
       if (this.body != null) {
         w_transport.JsonRequest r = new w_transport.JsonRequest()
           ..body = this.body;
-        return await r.send(this.method, uri: this.uri, headers: this.headers);
+        return HttpResponse._fromResponse(this,
+            await r.send(this.method, uri: this.uri, headers: this.headers));
       } else {
-        return await w_transport.Http
-            .send(this.method, this.uri, headers: this.headers);
+        return HttpResponse._fromResponse(this, await w_transport.Http
+            .send(this.method, this.uri, headers: this.headers));
       }
     } on w_transport.RequestException catch (err) {
-      return err.response;
+      return HttpResponse._fromResponse(this, err.response);
     }
+  }
+}
+
+/// A HTTP response. More documentation can be found at the
+/// [w_transport docs](https://www.dartdocs.org/documentation/w_transport/3.0.0/w_transport/Response-class.html)
+class HttpResponse extends w_transport.Response {
+  /// The HTTP request.
+  HttpRequest request;
+
+  /// Whether or not the request was aborted. If true, all other fields will be null.
+  bool aborted;
+
+  HttpResponse._new(this.request,
+      int status, String statusText, Map<String, String> headers, String body,
+      [this.aborted = false])
+      : super.fromString(status, statusText, headers, body);
+
+  HttpResponse._aborted(this.request, [this.aborted = true])
+      : super.fromString(0, "ABORTED", {}, null);
+
+  static HttpResponse _fromResponse(HttpRequest request, w_transport.Response r) {
+    return new HttpResponse._new(request,
+        r.status, r.statusText, r.headers, r.body.asString());
   }
 }
 
@@ -113,7 +137,7 @@ class HttpBucket {
 
   void _execute(HttpRequest request) {
     if (this.ratelimitRemaining == null || this.ratelimitRemaining > 0) {
-      request._execute().then((w_transport.Response r) {
+      request._execute().then((HttpResponse r) {
         this.ratelimitRemaining = r.headers['x-ratelimit-remaining'] != null
             ? int.parse(r.headers['x-ratelimit-remaining'])
             : null;
@@ -179,7 +203,7 @@ class Http {
   }
 
   /// Sends a HTTP request.
-  Future<w_transport.Response> send(String method, String path,
+  Future<HttpResponse> send(String method, String path,
       {dynamic body,
       Map<String, String> queryParams,
       bool beforeReady: false,
@@ -190,8 +214,8 @@ class Http {
     HttpRequest request = new HttpRequest._new(this, method, path, queryParams,
         new Map.from(this.headers)..addAll(headers), body);
 
-    await for (w_transport.Response r in request.stream) {
-      if (r.status >= 200 && r.status < 300) {
+    await for (HttpResponse r in request.stream) {
+      if (!r.aborted && r.status >= 200 && r.status < 300) {
         if (_client != null) new HttpResponseEvent._new(_client, request, r);
         return r;
       } else {

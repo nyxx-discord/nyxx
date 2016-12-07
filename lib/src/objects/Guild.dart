@@ -141,7 +141,7 @@ class Guild {
 
   /// Prunes the guild, returns the amount of members pruned.
   Future<int> prune(int days) async {
-    w_transport.Response r = await this
+    HttpResponse r = await this
         ._client
         .http
         .send('POST', "/guilds/$id/prune", body: {"days": days});
@@ -150,7 +150,7 @@ class Guild {
 
   /// Get's the guild's bans.
   Future<Map<String, User>> getBans() async {
-    w_transport.Response r =
+    HttpResponse r =
         await this._client.http.send('GET', "/guilds/$id/bans");
     Map<String, dynamic> map = <String, dynamic>{};
     r.body.asJson().forEach((Map<String, dynamic> o) {
@@ -169,7 +169,7 @@ class Guild {
 
   /// Creates an empty role.
   Future<Role> createRole() async {
-    w_transport.Response r =
+    HttpResponse r =
         await this._client.http.send('POST', "/guilds/$id/roles");
     return new Role._new(
         _client, r.body.asJson() as Map<String, dynamic>, this);
@@ -178,7 +178,7 @@ class Guild {
   /// Creates a channel.
   Future<dynamic> createChannel(String name, String type,
       {int bitrate: 64000, int userLimit: 0}) async {
-    w_transport.Response r = await this._client.http.send(
+    HttpResponse r = await this._client.http.send(
         'POST', "/guilds/$id/channels", body: {
       "name": name,
       "type": type,
@@ -216,7 +216,7 @@ class Guild {
       VoiceChannel afkChannel: null,
       int afkTimeout: null,
       String icon: null}) async {
-    w_transport.Response r =
+    HttpResponse r =
         await this._client.http.send('PATCH', "/guilds/${this.id}", body: {
       "name": name != null ? name : this.name,
       "verification_level": verificationLevel != null
@@ -244,7 +244,7 @@ class Guild {
     if (this.members[member] != null) {
       return this.members[member];
     } else {
-      final w_transport.Response r =
+      final HttpResponse r =
           await this._client.http.send('GET', '/guilds/${this.id}/members/$id');
 
       final Member m = new Member._new(
@@ -278,7 +278,7 @@ class Guild {
 
   /// Gets all of the webhooks for this guild.
   Future<Map<String, Webhook>> getWebhooks() async {
-    w_transport.Response r =
+    HttpResponse r =
         await this._client.http.send('GET', "/guilds/$id/webhooks");
     Map<String, dynamic> map = <String, dynamic>{};
     r.body.asJson().forEach((Map<String, dynamic> o) {

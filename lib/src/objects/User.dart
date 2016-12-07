@@ -56,7 +56,7 @@ class User {
       return _client.channels.values.firstWhere(
           (dynamic c) => c is DMChannel && c.recipient.id == this.id);
     } catch (err) {
-      w_transport.Response r = await _client.http
+      HttpResponse r = await _client.http
           .send('POST', "/users/@me/channels", body: {"recipient_id": this.id});
       return new DMChannel._new(
           _client, r.body.asJson() as Map<String, dynamic>);
@@ -88,7 +88,7 @@ class User {
     DMChannel channel = await getChannel();
     String channelId = channel.id;
 
-    final w_transport.Response r = await this._client.http.send(
+    final HttpResponse r = await this._client.http.send(
         'POST', '/channels/$channelId/messages', body: <String, dynamic>{
       "content": newContent,
       "tts": tts,
@@ -110,7 +110,7 @@ class User {
       DMChannel channel = await getChannel();
       String channelId = channel.id;
 
-      final w_transport.Response r = await this
+      final HttpResponse r = await this
           ._client
           .http
           .send('GET', '/channels/$channelId/messages/$id');

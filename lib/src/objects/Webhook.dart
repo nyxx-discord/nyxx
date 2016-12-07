@@ -63,14 +63,14 @@ class Webhook {
   /// Gets a webhook by its ID and token.
   static Future<Webhook> fromToken(String id, String token) async {
     Http http = new Http._new();
-    w_transport.Response r = await http.send('GET', "/webhooks/$id/$token");
+    HttpResponse r = await http.send('GET', "/webhooks/$id/$token");
     return new Webhook._fromToken(
         http, r.body.asJson() as Map<String, dynamic>);
   }
 
   /// Edits the webhook.
   Future<Webhook> edit({String name}) async {
-    w_transport.Response r = await this
+    HttpResponse r = await this
         .http
         .send('PATCH', "/webhooks/$id/$token", body: {"name": name});
     this.name = r.body.asJson()['name'];

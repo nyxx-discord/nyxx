@@ -152,7 +152,7 @@ class Message {
       newContent = content;
     }
 
-    final w_transport.Response r = await this._client.http.send(
+    final HttpResponse r = await this._client.http.send(
         'PATCH', '/channels/${this.channel.id}/messages/${this.id}',
         body: <String, dynamic>{"content": newContent, "embed": embed});
     return new Message._new(

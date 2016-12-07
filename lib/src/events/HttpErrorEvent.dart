@@ -6,7 +6,7 @@ class HttpErrorEvent {
   HttpRequest request;
 
   /// The HTTP response.
-  w_transport.Response response;
+  HttpResponse response;
 
   HttpErrorEvent._new(Client client, this.request, this.response) {
     client._events.onHttpError.add(this);
