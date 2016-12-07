@@ -46,11 +46,14 @@ class HttpRequest {
         new StreamController<w_transport.Response>.broadcast();
     this.stream = _streamController.stream;
 
-    this.run();
+    new BeforeHttpRequestSendEvent._new(this.http._client, this);
+
+    if (!this.http._client._events.beforeHttpRequestSend.hasListener)
+      this.send();
   }
 
   /// Sends the request off to the bucket to be processed and sent.
-  void run() => this.bucket._push(this);
+  void send() => this.bucket._push(this);
 
   Future<w_transport.Response> _execute() async {
     try {

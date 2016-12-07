@@ -46,6 +46,12 @@ class Client {
   /// Emitted when a shard is disconnected from the websocket.
   Stream<DisconnectEvent> onDisconnect;
 
+  /// Emitted before all HTTP requests are sent. (You can edit them)
+  ///
+  /// **WARNING:** Once you listen to this stream, all requests
+  /// will be halted until you call `request.send()`
+  Stream<BeforeHttpRequestSendEvent> beforeHttpRequestSend;
+
   /// Emitted when a successful HTTP response is received.
   Stream<HttpResponseEvent> onHttpResponse;
 
