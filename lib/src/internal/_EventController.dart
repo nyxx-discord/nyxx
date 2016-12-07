@@ -8,6 +8,12 @@ class _EventController {
   /// Emitted when a shard is disconnected from the websocket.
   StreamController<DisconnectEvent> onDisconnect;
 
+  /// Emitted before all HTTP requests are sent. (You can edit them)
+  ///
+  /// **WARNING:** Once you listen to this stream, all requests
+  /// will be halted until you call `request.send()`
+  StreamController<BeforeHttpRequestSendEvent> beforeHttpRequestSend;
+
   /// Emitted when a successful HTTP response is received.
   StreamController<HttpResponseEvent> onHttpResponse;
 
@@ -85,6 +91,9 @@ class _EventController {
     this.onDisconnect = new StreamController.broadcast();
     client.onDisconnect = this.onDisconnect.stream;
 
+    this.beforeHttpRequestSend = new StreamController.broadcast();
+    client.beforeHttpRequestSend = this.beforeHttpRequestSend.stream;
+
     this.onHttpResponse = new StreamController.broadcast();
     client.onHttpResponse = this.onHttpResponse.stream;
 
@@ -159,6 +168,7 @@ class _EventController {
   Future<Null> destroy() async {
     await this.onRaw.close();
     await this.onDisconnect.close();
+    await this.beforeHttpRequestSend.close();
     await this.onHttpResponse.close();
     await this.onGuildUpdate.close();
     await this.onReady.close();
