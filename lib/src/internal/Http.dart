@@ -68,8 +68,10 @@ class HttpRequest {
         return HttpResponse._fromResponse(this,
             await r.send(this.method, uri: this.uri, headers: this.headers));
       } else {
-        return HttpResponse._fromResponse(this, await w_transport.Http
-            .send(this.method, this.uri, headers: this.headers));
+        return HttpResponse._fromResponse(
+            this,
+            await w_transport.Http
+                .send(this.method, this.uri, headers: this.headers));
       }
     } on w_transport.RequestException catch (err) {
       return HttpResponse._fromResponse(this, err.response);
@@ -86,17 +88,18 @@ class HttpResponse extends w_transport.Response {
   /// Whether or not the request was aborted. If true, all other fields will be null.
   bool aborted;
 
-  HttpResponse._new(this.request,
-      int status, String statusText, Map<String, String> headers, String body,
+  HttpResponse._new(this.request, int status, String statusText,
+      Map<String, String> headers, String body,
       [this.aborted = false])
       : super.fromString(status, statusText, headers, body);
 
   HttpResponse._aborted(this.request, [this.aborted = true])
       : super.fromString(0, "ABORTED", {}, null);
 
-  static HttpResponse _fromResponse(HttpRequest request, w_transport.Response r) {
-    return new HttpResponse._new(request,
-        r.status, r.statusText, r.headers, r.body.asString());
+  static HttpResponse _fromResponse(
+      HttpRequest request, w_transport.Response r) {
+    return new HttpResponse._new(
+        request, r.status, r.statusText, r.headers, r.body.asString());
   }
 }
 

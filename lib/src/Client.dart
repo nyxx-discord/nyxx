@@ -168,8 +168,7 @@ class Client {
   /// Throws an [Exception] if the HTTP request errored.
   ///     Client.getInvite("invite code");
   Future<Invite> getInvite(String code) async {
-    final HttpResponse r =
-        await this.http.send('GET', '/invites/$code');
+    final HttpResponse r = await this.http.send('GET', '/invites/$code');
     return new Invite._new(this, r.body.asJson() as Map<String, dynamic>);
   }
 

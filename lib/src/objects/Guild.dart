@@ -150,8 +150,7 @@ class Guild {
 
   /// Get's the guild's bans.
   Future<Map<String, User>> getBans() async {
-    HttpResponse r =
-        await this._client.http.send('GET', "/guilds/$id/bans");
+    HttpResponse r = await this._client.http.send('GET', "/guilds/$id/bans");
     Map<String, dynamic> map = <String, dynamic>{};
     r.body.asJson().forEach((Map<String, dynamic> o) {
       final User user =
@@ -169,8 +168,7 @@ class Guild {
 
   /// Creates an empty role.
   Future<Role> createRole() async {
-    HttpResponse r =
-        await this._client.http.send('POST', "/guilds/$id/roles");
+    HttpResponse r = await this._client.http.send('POST', "/guilds/$id/roles");
     return new Role._new(
         _client, r.body.asJson() as Map<String, dynamic>, this);
   }
