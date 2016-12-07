@@ -76,7 +76,7 @@ class HttpBucket {
   /// The url that this bucket is handling requests for.
   String url;
 
-  /// How many requests remain before ratelimits take affect.
+  /// How many requests remain before ratelimits take affect. May not always be accurate.
   int ratelimitRemaining = 1;
 
   /// When the ratelimits reset.
