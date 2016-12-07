@@ -36,6 +36,7 @@ part 'src/events/MessageDeleteEvent.dart';
 part 'src/events/MessageEvent.dart';
 part 'src/events/MessageUpdateEvent.dart';
 part 'src/events/PresenceUpdateEvent.dart';
+part 'src/events/RatelimitEvent.dart';
 part 'src/events/RawEvent.dart';
 part 'src/events/ReadyEvent.dart';
 part 'src/events/RoleCreateEvent.dart';

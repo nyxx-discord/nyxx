@@ -108,7 +108,10 @@ class HttpBucket {
   /// The url that this bucket is handling requests for.
   String url;
 
-  /// How many requests remain before ratelimits take affect. May not always be accurate.
+  /// The number of requests that can be made.
+  int limit;
+
+  /// The number of remaining requests that can be made. May not always be accurate.
   int ratelimitRemaining = 1;
 
   /// When the ratelimits reset.
@@ -141,6 +144,9 @@ class HttpBucket {
   void _execute(HttpRequest request) {
     if (this.ratelimitRemaining == null || this.ratelimitRemaining > 0) {
       request._execute().then((HttpResponse r) {
+        this.limit = r.headers['x-ratelimit-limit'] != null
+            ? int.parse(r.headers['x-ratelimit-limit'])
+            : null;
         this.ratelimitRemaining = r.headers['x-ratelimit-remaining'] != null
             ? int.parse(r.headers['x-ratelimit-remaining'])
             : null;
@@ -158,6 +164,7 @@ class HttpBucket {
         }
 
         if (r.status == 429) {
+          new RatelimitEvent._new(request.http._client, request, false, r);
           new Timer(
               new Duration(milliseconds: r.body.asJson()['retry_after'] + 500),
               () => this._execute(request));
@@ -178,6 +185,7 @@ class HttpBucket {
         this.ratelimitRemaining = 1;
         this._execute(request);
       } else {
+        new RatelimitEvent._new(request.http._client, request, true);
         new Timer(waitTime, () {
           this.ratelimitRemaining = 1;
           this._execute(request);
@@ -219,10 +227,10 @@ class Http {
 
     await for (HttpResponse r in request.stream) {
       if (!r.aborted && r.status >= 200 && r.status < 300) {
-        if (_client != null) new HttpResponseEvent._new(_client, request, r);
+        if (_client != null) new HttpResponseEvent._new(_client, r);
         return r;
       } else {
-        if (_client != null) new HttpErrorEvent._new(_client, request, r);
+        if (_client != null) new HttpErrorEvent._new(_client, r);
         throw new HttpError._new(r);
       }
     }
