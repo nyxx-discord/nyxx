@@ -20,6 +20,10 @@ class _EventController {
   /// Emitted when a HTTP request failed.
   StreamController<HttpErrorEvent> onHttpError;
 
+  /// Sent when the client is ratelimited, either by the ratelimit handler itself,
+  /// or when a 429 is received.
+  StreamController<RatelimitEvent> onRatelimited;
+
   /// Emitted when the client is ready.
   StreamController<ReadyEvent> onReady;
 
@@ -100,6 +104,9 @@ class _EventController {
     this.onHttpError = new StreamController.broadcast();
     client.onHttpError = this.onHttpError.stream;
 
+    this.onRatelimited = new StreamController.broadcast();
+    client.onRatelimited = this.onRatelimited.stream;
+
     this.onReady = new StreamController.broadcast();
     client.onReady = this.onReady.stream;
 
@@ -170,6 +177,8 @@ class _EventController {
     await this.onDisconnect.close();
     await this.beforeHttpRequestSend.close();
     await this.onHttpResponse.close();
+    await this.onHttpError.close();
+    await this.onRatelimited.close();
     await this.onGuildUpdate.close();
     await this.onReady.close();
     await this.onMessage.close();

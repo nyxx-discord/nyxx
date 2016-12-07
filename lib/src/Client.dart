@@ -58,6 +58,10 @@ class Client {
   /// Emitted when a HTTP request failed.
   Stream<HttpErrorEvent> onHttpError;
 
+  /// Sent when the client is ratelimited, either by the ratelimit handler itself,
+  /// or when a 429 is received.
+  Stream<RatelimitEvent> onRatelimited;
+
   /// Emitted when the client is ready.
   Stream<ReadyEvent> onReady;
 
