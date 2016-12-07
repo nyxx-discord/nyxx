@@ -8,7 +8,7 @@ nyx works on the command line, browser, mobile, and can be transpiled to JavaScr
 ### Fine Control
 nyx allows you to control every outgoing HTTP request or websocket message.
 
-### Internal Sharding.
+### Internal Sharding
 nyx automatically spawns shards for your bot, but you can override this and spawn a custom
 number of shards. Internal sharding means that all of your bots servers are managed in one script,
 no need for communication between shards.
