@@ -3,6 +3,7 @@ library discord;
 import 'dart:async';
 import 'dart:convert';
 import 'dart:collection';
+import 'src/internals.dart' as internals;
 import 'package:http_parser/http_parser.dart' as http_parser;
 import 'package:w_transport/w_transport.dart' as w_transport;
 
@@ -76,10 +77,3 @@ part 'src/main/errors/HttpError.dart';
 part 'src/main/errors/InvalidTokenError.dart';
 part 'src/main/errors/InvalidShardError.dart';
 part 'src/main/errors/NotSetupError.dart';
-
-/// Used internally. DO NOT EDIT THIS
-Map<String, dynamic> internals = {
-  "setup": false,
-  "browser": false,
-  "operatingSystem": null,
-};

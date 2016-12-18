@@ -81,7 +81,7 @@ class Shard {
           Map<String, dynamic> identifyMsg = <String, dynamic>{
             "token": this._ws.client._token,
             "properties": <String, dynamic>{
-              "\$os": internals['operatingSystem'],
+              "\$os": internals.operatingSystem,
               "\$browser": "nyx",
               "\$device": "nyx",
               "\$referrer": "",
@@ -133,7 +133,7 @@ class Shard {
                   new Duration(seconds: 30), (Timer t) => guildSync());
             }
 
-            if (!internals['browser'])
+            if (!internals.browser)
               this._ws.client.http.headers['User-Agent'] =
                   "${this._ws.client.user.username} (https://github.com/Hackzzila/nyx, ${_Constants.version})";
 

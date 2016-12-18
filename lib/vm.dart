@@ -1,13 +1,13 @@
 library discord.discord_vm;
 
 import 'dart:io';
-import 'discord.dart' as discord;
+import 'src/internals.dart' as internals;
 import 'package:w_transport/w_transport.dart' as w_transport;
 import 'package:w_transport/vm.dart' show vmTransportPlatform;
 
 /// Configures the client to run in Dart VM.
 void configureDiscordForVM() {
   w_transport.globalTransportPlatform = vmTransportPlatform;
-  discord.internals['operatingSystem'] = Platform.operatingSystem;
-  discord.internals['setup'] = true;
+  internals.operatingSystem = Platform.operatingSystem;
+  internals.setup = true;
 }
