@@ -42,7 +42,6 @@ part 'src/main/events/RoleDeleteEvent.dart';
 part 'src/main/events/RoleUpdateEvent.dart';
 part 'src/main/events/TypingEvent.dart';
 
-part 'src/main/objects/Argument.dart';
 part 'src/main/objects/Attachment.dart';
 part 'src/main/objects/Channel.dart';
 part 'src/main/objects/ClientOAuth2Application.dart';
