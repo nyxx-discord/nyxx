@@ -208,7 +208,7 @@ class Http {
   Http._new([this._client]) {
     this.headers = <String, String>{'Content-Type': 'application/json'};
 
-    if (!internals['browser'])
+    if (!internals.browser)
       headers['User-Agent'] =
           'nyx (https://github.com/Hackzzila/nyx, ${_Constants.version})';
   }

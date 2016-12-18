@@ -1,5 +1,5 @@
 import 'package:discord/discord.dart' as discord;
-import 'package:discord/discord_vm.dart' as discord;
+import 'package:discord/vm.dart' as discord;
 
 void main() {
   discord.configureDiscordForVM();
