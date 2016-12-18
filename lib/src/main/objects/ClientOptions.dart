@@ -31,10 +31,6 @@ class ClientOptions {
   /// can be dangerous to disable. Ex: `TYPING_START`
   List<String> disabledEvents;
 
-  /// The prefix for the command client. The command client will not run if this is null.
-  /// It can be `<@mention>` for a mention. Can be RegExp or a string.
-  dynamic prefix;
-
   /// Makes a new `ClientOptions` object.
   ClientOptions(
       {this.disableEveryone: false,
@@ -44,6 +40,5 @@ class ClientOptions {
       this.disabledEvents: const [],
       this.messageCacheSize: 200,
       this.ignoreUncachedEvents: true,
-      this.forceFetchMembers: false,
-      this.prefix: null});
+      this.forceFetchMembers: false});
 }
