@@ -3,7 +3,6 @@ local/
 .atom/
 .vscode/
 index.html
-browser.dart
 
 # See https://github.com/matanlurey/gitignore
 
