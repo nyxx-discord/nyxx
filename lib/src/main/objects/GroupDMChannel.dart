@@ -16,7 +16,7 @@ class GroupDMChannel extends Channel {
   GroupDMChannel._new(Client client, Map<String, dynamic> data)
       : super._new(client, data, "private") {
     this.lastMessageID = raw['last_message_id'];
-    this.messages = new Map<String, Message>();
+    this.messages = new LinkedHashMap<String, Message>();
 
     this.recipients = new Map<String, User>();
     raw['recipients'].forEach((Map<String, dynamic> o) {
@@ -87,6 +87,37 @@ class GroupDMChannel extends Channel {
     } else {
       throw new Exception("'getMessage' is only usable by bot accounts.");
     }
+  }
+
+  /// Gets several [Message] objects.
+  ///
+  /// Throws an [Exception] if the HTTP request errored.
+  ///     Channel.getMessages(limit: 100, after: "222078108977594368");
+  Future<LinkedHashMap<String, Message>> getMessages({
+    int limit: 50,
+    String after: null,
+    String before: null,
+    String around: null,
+  }) async {
+    Map<String, dynamic> query = {"limit": limit.toString()};
+
+    if (after != null) query['after'] = after;
+    if (before != null) query['before'] = before;
+    if (around != null) query['around'] = around;
+
+    final HttpResponse r = await this
+        ._client
+        .http
+        .send('GET', '/channels/${this.id}/messages', queryParams: query);
+
+    LinkedHashMap<String, Message> response =
+        new LinkedHashMap<String, Message>();
+
+    for (Map<String, dynamic> val in r.body.asJson()) {
+      response[val["id"]] = new Message._new(this._client, val);
+    }
+
+    return response;
   }
 
   /// Starts typing.
