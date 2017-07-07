@@ -47,7 +47,8 @@ class HttpRequest {
 
     new BeforeHttpRequestSendEvent._new(this.http._client, this);
 
-    if (!this.http._client._events.beforeHttpRequestSend.hasListener)
+    if (this.http._client == null ||
+        !this.http._client._events.beforeHttpRequestSend.hasListener)
       this.send();
   }
 

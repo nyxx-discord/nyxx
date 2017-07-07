@@ -9,6 +9,6 @@ class BeforeHttpRequestSendEvent {
   HttpRequest request;
 
   BeforeHttpRequestSendEvent._new(Client client, this.request) {
-    client._events.beforeHttpRequestSend.add(this);
+    if (client != null) client._events.beforeHttpRequestSend.add(this);
   }
 }
