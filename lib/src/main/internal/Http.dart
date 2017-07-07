@@ -211,7 +211,7 @@ class Http {
 
     if (!internals.browser)
       headers['User-Agent'] =
-          'nyx (https://github.com/Hackzzila/nyx, ${_Constants.version})';
+          'DiscordBot (https://github.com/Hackzzila/nyx, ${_Constants.version})';
   }
 
   /// Sends a HTTP request.
