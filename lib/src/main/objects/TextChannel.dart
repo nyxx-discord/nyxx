@@ -13,11 +13,15 @@ class TextChannel extends GuildChannel {
   /// The ID for the last message in the channel.
   String lastMessageID;
 
+  /// The channel's mention string.
+  String mention;
+
   TextChannel._new(Client client, Map<String, dynamic> data, Guild guild)
       : super._new(client, data, guild, "text") {
     this.topic = raw['topic'];
     this.lastMessageID = raw['last_message_id'];
     this.messages = new Map<String, Message>();
+    this.mention = "<#${this.id}>";
   }
 
   void _cacheMessage(Message message) {

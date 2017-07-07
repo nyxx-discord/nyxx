@@ -98,7 +98,7 @@ class Webhook {
       "embeds": embeds
     };
 
-    await this.http.send('POST', "webhooks/$id/$token", body: payload);
+    await this.http.send('POST', "/webhooks/$id/$token", body: payload);
     return null;
   }
 
