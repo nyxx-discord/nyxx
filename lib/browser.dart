@@ -1,4 +1,4 @@
-library discord.discord_browser;
+library discord.browser;
 
 import 'dart:html';
 import 'src/internals.dart' as internals;
