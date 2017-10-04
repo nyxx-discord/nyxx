@@ -195,7 +195,7 @@ class Shard {
             break;
 
           case 'GUILD_DELETE':
-            if (json['d']['unavailable']) {
+            if (json['d']['unavailable'] == true) {
               new GuildUnavailableEvent._new(this._ws.client, json);
             } else {
               new GuildDeleteEvent._new(this._ws.client, json, this);

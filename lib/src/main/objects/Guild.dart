@@ -285,4 +285,10 @@ class Guild {
     });
     return map;
   }
+
+  /// Deletes the guild.
+  Future<Null> delete() async {
+    await this._client.http.send('DELETE', "/guilds/${this.id}");
+    return null;
+  }
 }
