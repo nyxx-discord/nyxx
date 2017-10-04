@@ -38,7 +38,7 @@ class User {
     this.discriminator = raw['discriminator'];
     this.avatar = raw['avatar'];
     this.avatarURL =
-        "${_Constants.host}/users/${this.id}/avatars/${this.avatar}.jpg";
+        "https://${_Constants.host}/users/${this.id}/avatars/${this.avatar}.jpg";
     this.mention = "<@${this.id}>";
     this.createdAt = Util.getDate(this.id);
 

@@ -1,4 +1,4 @@
-library discord.discord_vm;
+library discord.vm;
 
 import 'dart:io';
 import 'src/internals.dart' as internals;
