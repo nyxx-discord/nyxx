@@ -6,7 +6,6 @@ class Client {
   String _token;
   ClientOptions _options;
   DateTime _startTime;
-  _WS _ws;
   _EventController _events;
 
   /// The HTTP client.
@@ -137,7 +136,6 @@ class Client {
 
     this.http = new Http._new(this);
     this._events = new _EventController(this);
-    this._ws = new _WS(this);
   }
 
   /// The client's uptime.
@@ -145,7 +143,6 @@ class Client {
 
   /// Destroys the websocket connection, and all streams.
   Future<Null> destroy() async {
-    await this._ws.close();
     await this._events.destroy();
     return null;
   }
