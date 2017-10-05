@@ -2,11 +2,13 @@ part of discord;
 
 /// A message.
 class Message {
-  Client _client;
   StreamController<MessageUpdateEvent> _onUpdate;
   StreamController<MessageDeleteEvent> _onDelete;
 
-  /// The raw object returned by the API
+  /// The [Client] object.
+  Client client;
+
+  /// The raw object returned by the API.
   Map<String, dynamic> raw;
 
   /// The message's content.
@@ -66,7 +68,7 @@ class Message {
   /// Emitted when the message is deleted, if it is in the channel cache.
   Stream<MessageDeleteEvent> onDelete;
 
-  Message._new(this._client, this.raw) {
+  Message._new(this.client, this.raw) {
     this._onUpdate = new StreamController.broadcast();
     this.onUpdate = this._onUpdate.stream;
 
@@ -78,8 +80,8 @@ class Message {
     this.nonce = raw['nonce'];
     this.timestamp = DateTime.parse(raw['timestamp']);
     this.author =
-        new User._new(this._client, raw['author'] as Map<String, dynamic>);
-    this.channel = this._client.channels[raw['channel_id']];
+        new User._new(this.client, raw['author'] as Map<String, dynamic>);
+    this.channel = this.client.channels[raw['channel_id']];
     this.pinned = raw['pinned'];
     this.tts = raw['tts'];
     this.mentionEveryone = raw['mention_everyone'];
@@ -104,21 +106,21 @@ class Message {
 
     this.mentions = new Map<String, User>();
     raw['mentions'].forEach((Map<String, dynamic> o) {
-      final User user = new User._new(_client, o);
+      final User user = new User._new(this.client, o);
       this.mentions[user.id] = user;
     });
     this.mentions;
 
     this.embeds = new Map<String, Embed>();
     raw['embeds'].forEach((Map<String, dynamic> o) {
-      Embed embed = new Embed._new(this._client, o);
+      Embed embed = new Embed._new(this.client, o);
       this.embeds[embed.url] = embed;
     });
     this.embeds;
 
     this.attachments = new Map<String, Attachment>();
     raw['attachments'].forEach((Map<String, dynamic> o) {
-      final Attachment attachment = new Attachment._new(this._client, o);
+      final Attachment attachment = new Attachment._new(this.client, o);
       this.attachments[attachment.id] = attachment;
     });
     this.attachments;
@@ -144,7 +146,7 @@ class Message {
     if (content != null &&
         (disableEveryone == true ||
             (disableEveryone == null &&
-                this._client._options.disableEveryone))) {
+                this.client._options.disableEveryone))) {
       newContent = content
           .replaceAll("@everyone", "@\u200Beveryone")
           .replaceAll("@here", "@\u200Bhere");
@@ -152,11 +154,11 @@ class Message {
       newContent = content;
     }
 
-    final HttpResponse r = await this._client.http.send(
+    final HttpResponse r = await this.client.http.send(
         'PATCH', '/channels/${this.channel.id}/messages/${this.id}',
         body: <String, dynamic>{"content": newContent, "embed": embed});
     return new Message._new(
-        this._client, r.body.asJson() as Map<String, dynamic>);
+        this.client, r.body.asJson() as Map<String, dynamic>);
   }
 
   /// Deletes the message.
@@ -165,7 +167,7 @@ class Message {
   ///     Message.delete();
   Future<Null> delete() async {
     await this
-        ._client
+        .client
         .http
         .send('DELETE', '/channels/${this.channel.id}/messages/${this.id}');
     return null;

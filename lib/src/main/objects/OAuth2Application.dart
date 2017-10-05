@@ -2,7 +2,8 @@ part of discord;
 
 /// An OAuth2 application.
 class OAuth2Application {
-  Client _client;
+  /// The [Client] object.
+  Client client;
 
   /// The raw object returned by the API
   Map<String, dynamic> raw;
@@ -25,7 +26,7 @@ class OAuth2Application {
   /// A timestamp for when the app was created.
   DateTime createdAt;
 
-  OAuth2Application._new(this._client, this.raw) {
+  OAuth2Application._new(this.client, this.raw) {
     this.description = raw['description'];
     this.icon = raw['icon'];
     this.id = raw['id'];

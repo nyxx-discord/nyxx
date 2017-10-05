@@ -34,7 +34,30 @@ class Shard {
     this.onDisconnect = this._onDisconnect.stream;
   }
 
-  /// Syncs all guild, is automatically called every 30 seconds.
+  /// Updates the presence for this shard.
+  void setPresence({String status: null, bool afk: false, activity: null}) {
+    if (activity == null)
+      activity = {
+        'name': null,
+        'type': 0,
+        'url': null,
+      };
+
+    Map<String, dynamic> packet = {
+      'afk': afk,
+      'since': null,
+      'status': status,
+      'game': {
+        'name': activity != null ? activity['name'] : null,
+        'type': activity != null ? activity['type'] : 0,
+        'url': activity != null ? activity['url'] : null
+      }
+    };
+
+    this.send("STATUS_UPDATE", packet);
+  }
+
+  /// Syncs all guilds; this is automatically called every 30 seconds.
   /// Users only.
   void guildSync() {
     this.send("GUILD_SYNC", this.guilds.keys.toList());

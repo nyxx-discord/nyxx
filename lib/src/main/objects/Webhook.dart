@@ -2,7 +2,8 @@ part of discord;
 
 /// A webhook.
 class Webhook {
-  Client _client;
+  /// The [Client] object.
+  Client client;
 
   /// The raw object returned by the API
   Map<String, dynamic> raw;
@@ -37,8 +38,8 @@ class Webhook {
   /// When the webhook was created;
   DateTime createdAt;
 
-  Webhook._fromApi(this._client, this.raw) {
-    this.http = _client.http;
+  Webhook._fromApi(this.client, this.raw) {
+    this.http = client.http;
 
     this.name = raw['name'];
     this.id = raw['id'];
@@ -46,9 +47,9 @@ class Webhook {
     this.channelId = raw['channel_id'];
     this.guildId = raw['guild_id'];
     this.createdAt = Util.getDate(this.id);
-    this.channel = this._client.channels[this.channelId];
-    this.guild = this._client.guilds[this.guildId];
-    this.user = new User._new(_client, raw['user'] as Map<String, dynamic>);
+    this.channel = this.client.channels[this.channelId];
+    this.guild = this.client.guilds[this.guildId];
+    this.user = new User._new(client, raw['user'] as Map<String, dynamic>);
   }
 
   Webhook._fromToken(this.http, Map<String, dynamic> raw) {

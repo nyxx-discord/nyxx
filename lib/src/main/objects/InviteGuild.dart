@@ -2,7 +2,8 @@ part of discord;
 
 /// A mini guild object for invites.
 class InviteGuild {
-  Client _client;
+  /// The [Client] object.
+  Client client;
 
   /// The raw object returned by the API
   Map<String, dynamic> raw;
@@ -19,7 +20,7 @@ class InviteGuild {
   /// A timestamp for when the guild was created.
   DateTime createdAt;
 
-  InviteGuild._new(this._client, this.raw) {
+  InviteGuild._new(this.client, this.raw) {
     this.id = raw['id'];
     this.name = raw['name'];
     this.spash = raw['splash_hash'];
