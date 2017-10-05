@@ -16,9 +16,6 @@ class Guild {
   /// The guild's icon hash.
   String icon;
 
-  /// The guild's icon URL.
-  String iconURL;
-
   /// The guild's afk channel ID, null if not set.
   VoiceChannel afkChannel;
 
@@ -76,8 +73,6 @@ class Guild {
       this.name = raw['name'];
       this.id = raw['id'];
       this.icon = raw['icon'];
-      this.iconURL =
-          "${_Constants.host}/guilds/${this.id}/icons/${this.icon}.jpg";
       this.region = raw['region'];
       this.embedChannelID = raw['embed_channel_id'];
       this.afkTimeout = raw['afk_timeout'];
@@ -131,6 +126,11 @@ class Guild {
       _client.guilds[this.id] = this;
       shard.guilds[this.id] = this;
     }
+  }
+
+  /// The guild's icon, represented as URL.
+  String iconURL({String format: 'webp', int size: 128}) {
+    return 'https://cdn.${_Constants.host}/icons/${this.id}/${this.icon}.$format?size=$size';
   }
 
   /// Returns a string representation of this object.
