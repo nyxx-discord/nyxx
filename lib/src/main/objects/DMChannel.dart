@@ -41,8 +41,8 @@ class DMChannel extends Channel {
   /// Sends a message.
   ///
   /// Throws an [Exception] if the HTTP request errored.
-  ///     Channel.sendMessage(content: "My content!");
-  Future<Message> sendMessage(
+  ///     Channel.send(content: "My content!");
+  Future<Message> send(
       {String content,
       Map<dynamic, dynamic> embed,
       bool tts: false,
@@ -69,6 +69,25 @@ class DMChannel extends Channel {
     });
     return new Message._new(
         this._client, r.body.asJson() as Map<String, dynamic>);
+  }
+
+  @deprecated
+  /// Sends a message.
+  ///
+  /// Throws an [Exception] if the HTTP request errored.
+  ///     Channel.sendMessage(content: "My content!");
+  Future<Message> sendMessage(
+      {String content,
+      Map<dynamic, dynamic> embed,
+      bool tts: false,
+      String nonce,
+      bool disableEveryone}) async {
+    return this.send(
+        content: content,
+        embed: embed,
+        tts: tts,
+        nonce: nonce,
+        disableEveryone: disableEveryone);
   }
 
   /// Gets a [Message] object. Only usable by bot accounts.
