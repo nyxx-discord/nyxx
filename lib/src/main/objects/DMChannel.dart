@@ -72,6 +72,7 @@ class DMChannel extends Channel {
   }
 
   @deprecated
+
   /// Sends a message.
   ///
   /// Throws an [Exception] if the HTTP request errored.

@@ -103,6 +103,7 @@ class Webhook {
   }
 
   @deprecated
+
   /// Sends a message with the webhook.
   Future<Message> sendMessage(
       {String content,
