@@ -20,9 +20,6 @@ class User {
   /// The user's avatar hash.
   String avatar;
 
-  /// The user's avatar URL.
-  String avatarURL;
-
   /// The string to mention the user.
   String mention;
 
@@ -37,8 +34,6 @@ class User {
     this.id = raw['id'];
     this.discriminator = raw['discriminator'];
     this.avatar = raw['avatar'];
-    this.avatarURL =
-        "https://${_Constants.host}/users/${this.id}/avatars/${this.avatar}.jpg";
     this.mention = "<@${this.id}>";
     this.createdAt = Util.getDate(this.id);
 
@@ -48,6 +43,11 @@ class User {
     }
 
     _client.users[this.id] = this;
+  }
+
+  /// The user's avatar, represented as URL.
+  String avatarURL({String format: 'webp', int size: 128}) {
+    return 'https://cdn.${_Constants.host}/avatars/${this.id}/${this.avatar}.$format?size=$size';
   }
 
   /// Gets the [DMChannel] for the user.
