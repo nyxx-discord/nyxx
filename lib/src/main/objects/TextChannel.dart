@@ -69,6 +69,7 @@ class TextChannel extends GuildChannel {
   }
 
   @deprecated
+
   /// Sends a message.
   ///
   /// Throws an [Exception] if the HTTP request errored.
