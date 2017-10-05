@@ -2,7 +2,8 @@ part of discord;
 
 /// A channel.
 class Channel {
-  Client _client;
+  /// The [Client] object.
+  Client client;
 
   /// The raw object returned by the API
   Map<String, dynamic> raw;
@@ -16,16 +17,16 @@ class Channel {
   /// A timestamp for when the channel was created.
   DateTime createdAt;
 
-  Channel._new(this._client, this.raw, this.type) {
+  Channel._new(this.client, this.raw, this.type) {
     this.id = raw['id'];
     this.createdAt = Util.getDate(this.id);
 
-    _client.channels[this.id] = this;
+    client.channels[this.id] = this;
   }
 
   /// Deletes the channel.
   Future<Null> delete() async {
-    await this._client.http.send('DELETE', "/channels/${this.id}");
+    await this.client.http.send('DELETE', "/channels/${this.id}");
     return null;
   }
 }

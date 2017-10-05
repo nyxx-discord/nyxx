@@ -26,8 +26,8 @@ class GroupDMChannel extends Channel {
   }
 
   void _cacheMessage(Message message) {
-    if (this._client._options.messageCacheSize > 0) {
-      if (this.messages.length >= this._client._options.messageCacheSize) {
+    if (this.client._options.messageCacheSize > 0) {
+      if (this.messages.length >= this.client._options.messageCacheSize) {
         this.messages.values.toList().first._onUpdate.close();
         this.messages.values.toList().first._onDelete.close();
         this.messages.remove(this.messages.values.toList().first.id);
@@ -50,7 +50,7 @@ class GroupDMChannel extends Channel {
     if (content != null &&
         (disableEveryone == true ||
             (disableEveryone == null &&
-                this._client._options.disableEveryone))) {
+                this.client._options.disableEveryone))) {
       newContent = content
           .replaceAll("@everyone", "@\u200Beveryone")
           .replaceAll("@here", "@\u200Bhere");
@@ -58,7 +58,7 @@ class GroupDMChannel extends Channel {
       newContent = content;
     }
 
-    final HttpResponse r = await this._client.http.send(
+    final HttpResponse r = await this.client.http.send(
         'POST', '/channels/${this.id}/messages', body: <String, dynamic>{
       "content": newContent,
       "tts": tts,
@@ -66,7 +66,7 @@ class GroupDMChannel extends Channel {
       "embed": embed
     });
     return new Message._new(
-        this._client, r.body.asJson() as Map<String, dynamic>);
+        this.client, r.body.asJson() as Map<String, dynamic>);
   }
 
   @deprecated
@@ -95,15 +95,15 @@ class GroupDMChannel extends Channel {
   /// is not a bot.
   ///     Channel.getMessage("message id");
   Future<Message> getMessage(dynamic message) async {
-    if (this._client.user.bot) {
+    if (this.client.user.bot) {
       final String id = Util.resolve('message', message);
 
       final HttpResponse r = await this
-          ._client
+          .client
           .http
           .send('GET', '/channels/${this.id}/messages/$id');
       return new Message._new(
-          this._client, r.body.asJson() as Map<String, dynamic>);
+          this.client, r.body.asJson() as Map<String, dynamic>);
     } else {
       throw new Exception("'getMessage' is only usable by bot accounts.");
     }
@@ -126,7 +126,7 @@ class GroupDMChannel extends Channel {
     if (around != null) query['around'] = around;
 
     final HttpResponse r = await this
-        ._client
+        .client
         .http
         .send('GET', '/channels/${this.id}/messages', queryParams: query);
 
@@ -134,7 +134,7 @@ class GroupDMChannel extends Channel {
         new LinkedHashMap<String, Message>();
 
     for (Map<String, dynamic> val in r.body.asJson()) {
-      response[val["id"]] = new Message._new(this._client, val);
+      response[val["id"]] = new Message._new(this.client, val);
     }
 
     return response;
@@ -142,7 +142,7 @@ class GroupDMChannel extends Channel {
 
   /// Starts typing.
   Future<Null> startTyping() async {
-    await this._client.http.send('POST', "/channels/$id/typing");
+    await this.client.http.send('POST', "/channels/$id/typing");
     return null;
   }
 

@@ -38,7 +38,7 @@ class Member extends User {
     this._user = new User._new(client, data['user'] as Map<String, dynamic>);
 
     if (guild == null) {
-      this.guild = this._client.guilds[data['guild_id']];
+      this.guild = this.client.guilds[data['guild_id']];
     } else {
       this.guild = guild;
     }
@@ -49,7 +49,7 @@ class Member extends User {
 
     if (data['game'] != null) {
       this.game =
-          new Game._new(this._client, data['game'] as Map<String, dynamic>);
+          new Game._new(this.client, data['game'] as Map<String, dynamic>);
     }
 
     if (guild != null) this.guild.members[this.id] = this;
@@ -63,7 +63,7 @@ class Member extends User {
 
   /// Bans the member and optionally deletes [deleteMessageDays] days worth of messages.
   Future<Null> ban([int deleteMessageDays = 0]) async {
-    await this._client.http.send(
+    await this.client.http.send(
         'PUT', "/guilds/${this.guild.id}/bans/${this.id}",
         body: {"delete-message-days": deleteMessageDays});
     return null;
@@ -72,7 +72,7 @@ class Member extends User {
   /// Kicks the member
   Future<Null> kick() async {
     await this
-        ._client
+        .client
         .http
         .send('DELETE', "/guilds/${this.guild.id}/members/${this.id}");
     return null;

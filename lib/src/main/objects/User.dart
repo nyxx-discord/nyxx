@@ -2,8 +2,10 @@ part of discord;
 
 /// A user.
 class User {
-  Client _client;
   Timer _typing;
+
+  /// The [Client] object.
+  Client client;
 
   /// The raw object returned by the API
   Map<String, dynamic> raw;
@@ -29,7 +31,7 @@ class User {
   /// Whether or not the user is a bot.
   bool bot = false;
 
-  User._new(this._client, this.raw) {
+  User._new(this.client, this.raw) {
     this.username = raw['username'];
     this.id = raw['id'];
     this.discriminator = raw['discriminator'];
@@ -42,7 +44,7 @@ class User {
       this.bot = raw['bot'];
     }
 
-    _client.users[this.id] = this;
+    client.users[this.id] = this;
   }
 
   /// The user's avatar, represented as URL.
@@ -53,13 +55,13 @@ class User {
   /// Gets the [DMChannel] for the user.
   Future<DMChannel> getChannel() async {
     try {
-      return _client.channels.values.firstWhere(
+      return client.channels.values.firstWhere(
           (dynamic c) => c is DMChannel && c.recipient.id == this.id);
     } catch (err) {
-      HttpResponse r = await _client.http
+      HttpResponse r = await client.http
           .send('POST', "/users/@me/channels", body: {"recipient_id": this.id});
       return new DMChannel._new(
-          _client, r.body.asJson() as Map<String, dynamic>);
+          client, r.body.asJson() as Map<String, dynamic>);
     }
   }
 
@@ -77,7 +79,7 @@ class User {
     if (content != null &&
         (disableEveryone == true ||
             (disableEveryone == null &&
-                this._client._options.disableEveryone))) {
+                this.client._options.disableEveryone))) {
       newContent = content
           .replaceAll("@everyone", "@\u200Beveryone")
           .replaceAll("@here", "@\u200Bhere");
@@ -88,7 +90,7 @@ class User {
     DMChannel channel = await getChannel();
     String channelId = channel.id;
 
-    final HttpResponse r = await this._client.http.send(
+    final HttpResponse r = await this.client.http.send(
         'POST', '/channels/$channelId/messages', body: <String, dynamic>{
       "content": newContent,
       "tts": tts,
@@ -96,7 +98,7 @@ class User {
       "embed": embed
     });
     return new Message._new(
-        this._client, r.body.asJson() as Map<String, dynamic>);
+        this.client, r.body.asJson() as Map<String, dynamic>);
   }
 
   @deprecated
@@ -125,17 +127,17 @@ class User {
   /// is not a bot.
   ///     Channel.getMessage("message id");
   Future<Message> getMessage(dynamic message) async {
-    if (this._client.user.bot) {
+    if (this.client.user.bot) {
       final String id = Util.resolve('message', message);
       DMChannel channel = await getChannel();
       String channelId = channel.id;
 
       final HttpResponse r = await this
-          ._client
+          .client
           .http
           .send('GET', '/channels/$channelId/messages/$id');
       return new Message._new(
-          this._client, r.body.asJson() as Map<String, dynamic>);
+          this.client, r.body.asJson() as Map<String, dynamic>);
     } else {
       throw new Exception("'getMessage' is only usable by bot accounts.");
     }
@@ -146,7 +148,7 @@ class User {
     DMChannel channel = await getChannel();
     String channelId = channel.id;
 
-    await this._client.http.send('POST', "/channels/$channelId/typing");
+    await this.client.http.send('POST', "/channels/$channelId/typing");
     return null;
   }
 

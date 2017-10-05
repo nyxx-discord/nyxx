@@ -2,7 +2,8 @@ part of discord;
 
 /// An invite.
 class Invite {
-  Client _client;
+  /// The [Client] object.
+  Client client;
 
   /// The raw object returned by the API
   Map<String, dynamic> raw;
@@ -16,11 +17,11 @@ class Invite {
   /// A mini channel object for the invite's channel.
   InviteChannel channel;
 
-  Invite._new(this._client, this.raw) {
+  Invite._new(this.client, this.raw) {
     this.code = raw['code'];
-    this.guild = new InviteGuild._new(
-        this._client, raw['guild'] as Map<String, dynamic>);
+    this.guild =
+        new InviteGuild._new(this.client, raw['guild'] as Map<String, dynamic>);
     this.channel = new InviteChannel._new(
-        this._client, raw['channel'] as Map<String, dynamic>);
+        this.client, raw['channel'] as Map<String, dynamic>);
   }
 }

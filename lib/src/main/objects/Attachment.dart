@@ -2,7 +2,8 @@ part of discord;
 
 /// A message attachment.
 class Attachment {
-  Client _client;
+  /// The [Client] object.
+  Client client;
 
   /// The raw object returned by the API
   Map<String, dynamic> raw;
@@ -31,7 +32,7 @@ class Attachment {
   /// A timestamp for when the message was created.
   DateTime createdAt;
 
-  Attachment._new(this._client, this.raw) {
+  Attachment._new(this.client, this.raw) {
     this.id = raw['id'];
     this.filename = raw['filename'];
     this.url = raw['url'];
