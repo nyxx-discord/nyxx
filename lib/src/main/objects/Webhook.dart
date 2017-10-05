@@ -84,7 +84,7 @@ class Webhook {
   }
 
   /// Sends a message with the webhook.
-  Future<Null> sendMessage(
+  Future<Null> send(
       {String content,
       List<Map<String, dynamic>> embeds,
       String username,
@@ -100,6 +100,22 @@ class Webhook {
 
     await this.http.send('POST', "/webhooks/$id/$token", body: payload);
     return null;
+  }
+
+  @deprecated
+  /// Sends a message with the webhook.
+  Future<Message> sendMessage(
+      {String content,
+      List<Map<String, dynamic>> embeds,
+      String username,
+      String avatarUrl,
+      bool tts}) async {
+    return this.send(
+        content: content,
+        embeds: embeds,
+        tts: tts,
+        username: username,
+        avatarUrl: avatarUrl);
   }
 
   /// Returns a string representation of this object.
