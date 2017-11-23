@@ -8,7 +8,7 @@ class Shard {
   /// Whether or not the shard is ready.
   bool ready;
 
-  Duration _heartbeatInterval;
+  Timer _heartbeatTimer;
   _WS _ws;
   w_transport.WebSocket _socket;
   int _sequence;
@@ -86,6 +86,7 @@ class Shard {
   }
 
   void _heartbeat() {
+    if (this._socket.closeCode != null) return;
     this.send("HEARTBEAT", _sequence);
   }
 
@@ -126,9 +127,10 @@ class Shard {
             "seq": this._sequence
           });
         }
-        this._heartbeatInterval =
-            new Duration(milliseconds: json['d']['heartbeat_interval']);
-        new Timer.periodic(_heartbeatInterval, (Timer t) => this._heartbeat());
+
+        this._heartbeatTimer = new Timer.periodic(
+            new Duration(milliseconds: json['d']['heartbeat_interval']),
+            (Timer t) => this._heartbeat());
         break;
 
       case _OPCodes.invalidSession:
@@ -284,6 +286,8 @@ class Shard {
   }
 
   void _handleErr() {
+    this._heartbeatTimer.cancel();
+
     switch (this._socket.closeCode) {
       case 1005:
         return;
