@@ -20,8 +20,10 @@ class Commands {
 
   /// Dispatches onMessage event to framework.
   void dispatch(MessageEvent e) {
+    // Match help specially to shadow user defined help commands.
     if (e.message.content.startsWith('!help'))
       e.message.channel.sendMessage(content: _createHelp());
+    // Search for matching command in registry. If registry contains multiple commands with identical name - run first one.
     else if (e.message.content.startsWith(prefix)) {
       var matched_commands = _commands
         .where((i) => e.message.content.startsWith((_prefix + i.name))).first;
