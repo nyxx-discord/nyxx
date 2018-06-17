@@ -16,7 +16,7 @@ void main() {
   });
 
   bot.onReady.listen((e) async {
-    var channel = bot.channels['228308788954791939'];
+    var channel = bot.channels['422285619952222208'];
     channel.sendMessage(
         content:
             "Testing new Travis CI build `#${env['TRAVIS_BUILD_NUMBER']}` from commit `${env['TRAVIS_COMMIT']}` on branch `${env['TRAVIS_BRANCH']}`");
@@ -30,7 +30,7 @@ void main() {
   bot.onMessage.listen((e) async {
     var m = e.message;
 
-    if (m.channel.id == "228308788954791939" &&
+    if (m.channel.id == "422285619952222208" &&
         m.author.id == bot.user.id &&
         m.content == "--trigger-test") {
       await m.delete();
