@@ -1,9 +1,12 @@
-import 'package:discord/discord.dart' as discord;
-import 'package:discord/vm.dart' as discord;
+import 'package:nyxx/discord.dart' as discord;
+import 'package:nyxx/vm.dart' as discord;
+
+import 'dart:io';
 
 void main() {
   discord.configureDiscordForVM();
-  discord.Client bot = new discord.Client("TOKEN");
+  discord.Client bot =
+      new discord.Client(Platform.environment['DISCORD_TOKEN']);
 
   var commands = new discord.Commands('!');
   commands.add(new PongCommand());
