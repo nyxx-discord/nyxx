@@ -24,4 +24,10 @@ class Invite {
     this.channel = new InviteChannel._new(
         this.client, raw['channel'] as Map<String, dynamic>);
   }
+
+  /// Deletes this Invite.
+  Future<Null> delete() async {
+    await this.client.http.send('DELETE', '/invites/$code');
+    return null;
+  }
 }
