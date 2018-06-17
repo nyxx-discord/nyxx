@@ -1,8 +1,8 @@
-name: discord
-version: 0.15.0
-description: A Discord library for Dart
-author: Hackzzila <admin@hackzzila.com>
-homepage: https://hackzzila.github.io/nyx/
+name: nyxx
+version: 0.16.0
+description: A Discord library for Dart. For of hackzzila's nyx.
+author: Szymon 'l7ssha' Uglis, <szymon.uglis@tuta.io>
+homepage: https://github.com/l7ssha/nyxx
 dependencies:
   http_parser: ">=3.0.0 <4.0.0"
   w_transport: ">=3.0.0 <4.0.0"
