@@ -34,3 +34,6 @@ pubspec.lock
 
 *.iml
 .idea
+
+*~
+#~
