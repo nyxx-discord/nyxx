@@ -2,7 +2,7 @@
 
 Simple, robust framework for creating discord bots for Dart. Fork of [Hackzzila's](https://github.com/Hackzzila) [nyx](https://github.com/Hackzzila/nyx) - extended with new functionality, few bug fixes, applied pending pull requests.
 
-Library will be published in next few weeks - command framework isn't finished yet.
+~~Library will be published in next few weeks - command framework isn't finished yet.~~ Done faster than I expected :D
 
 ### Features
 
