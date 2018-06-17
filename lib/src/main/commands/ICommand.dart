@@ -1,5 +1,5 @@
 part of discord;
 
 abstract class ICommand {
-  void run(Message message);
+  Future run(Message message);
 }

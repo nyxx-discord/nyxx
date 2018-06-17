@@ -10,32 +10,32 @@ class Commands {
   Commands(this._prefix, Client client) {
     _commands = [];
 
-    client.onMessage.listen((MessageEvent e) {
-      if (!e.message.author.bot)
-        dispatch(e);
+    client.onMessage.listen((MessageEvent e) async {
+      if (!e.message.author.bot) await dispatch(e);
     });
 
     client.onReady.listen((ReadyEvent e) => print("[INFO] Bot started!"));
   }
 
   /// Dispatches onMessage event to framework.
-  void dispatch(MessageEvent e) {
+  Future dispatch(MessageEvent e) async {
     // Match help specially to shadow user defined help commands.
     if (e.message.content.startsWith('!help'))
       e.message.channel.sendMessage(content: _createHelp());
     // Search for matching command in registry. If registry contains multiple commands with identical name - run first one.
     else if (e.message.content.startsWith(prefix)) {
       var matched_commands = _commands
-        .where((i) => e.message.content.startsWith((_prefix + i.name))).first;
-      matched_commands.run(e.message);
+          .where((i) => e.message.content.startsWith((_prefix + i.name)))
+          .first;
+      await matched_commands.run(e.message);
     }
-    print("[INFO] Dispatched command successfully!");    
+    print("[INFO] Dispatched command successfully!");
   }
 
-  /// Creates help String based on registred commands metadata. 
+  /// Creates help String based on registred commands metadata.
   String _createHelp() {
     var buffer = new StringBuffer();
-    
+
     buffer.writeln("\n**Available commands:**");
 
     _commands.forEach((item) {
@@ -47,7 +47,7 @@ class Commands {
   }
 
   /// Register new [Command] object.
-  void add(ICommand command) {
+  void add(Command command) {
     _commands.add(command);
     print("[INFO] Registred command: ${command.name}");
   }

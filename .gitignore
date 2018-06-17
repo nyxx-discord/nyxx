@@ -39,3 +39,5 @@ pubspec.lock
 #~
 .dart_tool/
 /README.html
+/log.txt
+/nyxx.wiki/
