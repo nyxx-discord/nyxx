@@ -38,3 +38,4 @@ pubspec.lock
 *~
 #~
 .dart_tool/
+/README.html
