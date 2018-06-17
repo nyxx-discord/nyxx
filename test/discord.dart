@@ -1,8 +1,8 @@
-import 'dart:async';
 import 'dart:io';
+import 'dart:async';
 
-import 'package:discord/discord.dart' as discord;
-import 'package:discord/vm.dart' as discord;
+import 'package:nyxx/discord.dart' as discord;
+import 'package:nyxx/vm.dart' as discord;
 
 void main() {
   discord.configureDiscordForVM();
