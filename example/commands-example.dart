@@ -4,11 +4,11 @@ import 'package:discord/vm.dart' as discord;
 void main() {
   discord.configureDiscordForVM();
   discord.Client bot = new discord.Client("TOKEN");
-  
+
   var commands = new discord.Commands('!');
   commands.add(new PongCommand());
   commands.add(new EchoCommand());
-  
+
   bot.onMessage.listen((discord.MessageEvent e) {
     commands.dispatch(e);
   });
@@ -20,7 +20,7 @@ void main() {
 
 class PongCommand extends discord.Command {
   PongCommand() : super("ping", "Checks if bot is connected!", "!ping");
-  
+
   override run(Message message) {
     message.channel.sendMessage(content: "Pong!");
   }
