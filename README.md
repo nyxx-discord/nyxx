@@ -17,5 +17,11 @@ Library will be published in next few weeks - command framework isn't finished y
 
 ## Documentation and examples
 
-Documentation and examples is in progress. In near feature I'll upload dartdocs to my website also.
+#### [Dartdocs](https://l7ssha.pl/nyxx)
+Dartdocs of most recent version of library.
+
+#### [Wiki](https://github.com/l7ssha/nyxx/wiki)
+Wiki privides examples and descriptions.
+
+~~Documentation and examples is in progress. In near feature I'll upload dartdocs to my website also.~~
 
