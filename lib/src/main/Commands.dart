@@ -6,35 +6,51 @@ class Commands {
 
   List<Command> _commands;
 
-  Commands(this._prefix) {
+  /// Creates commands framework handler. Requires prefix to handle commands.
+  Commands(this._prefix, Client client) {
     _commands = [];
+
+    client.onMessage.listen((MessageEvent e) {
+      if (!e.message.author.bot)
+        dispatch(e);
+    });
+
+    client.onReady.listen((ReadyEvent e) => print("[INFO] Bot started!"));
   }
 
+  /// Dispatches onMessage event to framework.
   void dispatch(MessageEvent e) {
-    if (!e.message.author.bot) {
-      if (e.message.content.startsWith('!help'))
-        e.message.channel.sendMessage(content: _createHelp());
-      else if (e.message.content.startsWith(prefix)) {
-        var matched_commands = _commands
-            .where((i) => e.message.content.startsWith((_prefix + i.name)));
-        matched_commands.first.run(e.message);
-      }
+    if (e.message.content.startsWith('!help'))
+      e.message.channel.sendMessage(content: _createHelp());
+    else if (e.message.content.startsWith(prefix)) {
+      var matched_commands = _commands
+        .where((i) => e.message.content.startsWith((_prefix + i.name))).first;
+      matched_commands.run(e.message);
     }
+    print("[INFO] Dispatched command successfully!");    
   }
 
+  /// Creates help String based on registred commands metadata. 
   String _createHelp() {
     var buffer = new StringBuffer();
-
-    buffer.writeln("Available commands:");
+    
+    buffer.writeln("\n**Available commands:**");
 
     _commands.forEach((item) {
-      buffer.writeln("${item.name} - ${item.help}");
+      buffer.writeln("* ${item.name} - ${item.help}");
       buffer.writeln("\t Usage: ${item.usage}");
     });
+
+    return buffer.toString();
   }
 
+  /// Register new [Command] object.
   void add(ICommand command) {
     _commands.add(command);
-    print(_commands);
+    print("[INFO] Registred command: ${command.name}");
+  }
+
+  void addMany(List<ICommand> commands) {
+    commands.forEach((c) => add(c));
   }
 }
