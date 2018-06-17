@@ -21,7 +21,7 @@ void main() {
 class PongCommand extends discord.Command {
   PongCommand() : super("ping", "Checks if bot is connected!", "!ping");
 
-  override run(Message message) {
+  override run(discord.Message message) {
     message.channel.sendMessage(content: "Pong!");
   }
 }
@@ -29,7 +29,7 @@ class PongCommand extends discord.Command {
 class EchoCommand extends discord.Command {
   EchoCommand() : super("echo", "Echoes bot message!", "!echo <message>");
 
-  override run(Message message) {
+  override run(discord.Message message) {
     message.channel.sendMessage(content: message.content);
   }
 }
