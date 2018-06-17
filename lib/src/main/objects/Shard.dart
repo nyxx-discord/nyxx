@@ -74,7 +74,7 @@ class Shard {
         .connect(Uri.parse('${this._ws.gateway}?v=6&encoding=json'))
         .then((w_transport.WebSocket socket) {
       this._socket = socket;
-      this._socket.listen((String msg) => this._handleMsg(msg, resume),
+      this._socket.listen((dynamic msg) => this._handleMsg(msg, resume),
           onDone: this._handleErr);
     });
   }

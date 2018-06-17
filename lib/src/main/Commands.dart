@@ -2,7 +2,6 @@ part of discord;
 
 class Commands {
   String _prefix;
-
   String get prefix => _prefix;
 
   List<Command> _commands;
