@@ -1,5 +1,7 @@
 part of discord;
 
+/// Handler for commands framwork.
+/// This class matches and dispatches commands to best matchig contexts.
 class Commands {
   String _prefix;
   String get prefix => _prefix;
