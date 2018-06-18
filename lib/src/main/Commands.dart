@@ -6,10 +6,12 @@ class Commands {
   String _prefix;
   String get prefix => _prefix;
 
+  List<String> _admins;
+
   List<Command> _commands;
 
   /// Creates commands framework handler. Requires prefix to handle commands.
-  Commands(this._prefix, Client client) {
+  Commands(this._prefix, Client client, [this._admins]) {
     _commands = [];
 
     client.onMessage.listen((MessageEvent e) async {
@@ -29,7 +31,12 @@ class Commands {
       var matched_commands = _commands
           .where((i) => e.message.content.startsWith((_prefix + i.name)))
           .first;
-      await matched_commands.run(e.message);
+
+      if (matched_commands.isAdmin) {
+        if (_admins.isNotEmpty && _admins.any((i) => i == e.message.author.id))
+          await matched_commands.run(e.message);
+      } else
+        await matched_commands.run(e.message);
     }
     print("[INFO] Dispatched command successfully!");
   }

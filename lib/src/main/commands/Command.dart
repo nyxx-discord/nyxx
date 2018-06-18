@@ -11,6 +11,9 @@ abstract class Command implements ICommand {
   /// Example usage of command
   String _usage;
 
+  /// Indicates if commands is restricted to admins.
+  bool _isAdmin;
+
   /// Name of command. Text which will trigger execution
   String get name => _name;
 
@@ -20,5 +23,8 @@ abstract class Command implements ICommand {
   /// Example usage of command
   String get usage => _usage;
 
-  Command(this._name, this._help, this._usage);
+  /// Indicates if commands is restricted to admins.  
+  bool get isAdmin => _isAdmin;
+
+  Command(this._name, this._help, this._usage, [this._isAdmin = false]);
 }
