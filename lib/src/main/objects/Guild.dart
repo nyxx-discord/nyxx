@@ -194,13 +194,13 @@ class Guild {
     }
   }
 
-  /// Moves channel 
+  /// Moves channel
   Future<Null> moveGuildChannel(String channelId, int newPosition) async {
     await this.client.http.send('PATCH', "/guilds/${this.id}/channels",
         body: {"id": id, "position": newPosition});
     return null;
   }
-  
+
   /// Bans a user by ID.
   Future<Null> ban(String id, [int deleteMessageDays = 0]) async {
     await this.client.http.send('PUT', "/guilds/${this.id}/bans/$id",
