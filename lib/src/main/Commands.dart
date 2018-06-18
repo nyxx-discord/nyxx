@@ -33,7 +33,7 @@ class Commands {
           .first;
 
       if (matched_commands.isAdmin) {
-        if (_admins.isNotEmpty && _admins.any((i) => i == e.message.author.id))
+        if (_admins != null && _admins.any((i) => i == e.message.author.id))
           await matched_commands.run(e.message);
       } else
         await matched_commands.run(e.message);
