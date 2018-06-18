@@ -8,7 +8,7 @@ void main() {
   discord.Client bot =
       new discord.Client(Platform.environment['DISCORD_TOKEN']);
 
-  var commands = new discord.Commands('!', bot)
+  var commands = new discord.Commands('!', bot, ["302359032612651009"])
     ..addMany([new PongCommand(), new EchoCommand()]);
 
   bot.onReady.listen((discord.ReadyEvent e) {
@@ -26,7 +26,7 @@ class PongCommand extends discord.Command {
 }
 
 class EchoCommand extends discord.Command {
-  EchoCommand() : super("echo", "Echoes bot message!", "!echo <message>");
+  EchoCommand() : super("echo", "Echoes bot message!", "!echo <message>", true);
 
   @override
   run(discord.Message message) async {
