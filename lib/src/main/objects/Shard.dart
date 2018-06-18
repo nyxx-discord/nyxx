@@ -220,11 +220,10 @@ class Shard {
             break;
 
           case 'GUILD_DELETE':
-            if (json['d']['unavailable'] == true) {
+            if (json['d']['unavailable'] == true)
               new GuildUnavailableEvent._new(this._ws.client, json);
-            } else {
+            else
               new GuildDeleteEvent._new(this._ws.client, json, this);
-            }
             break;
 
           case 'GUILD_BAN_ADD':
