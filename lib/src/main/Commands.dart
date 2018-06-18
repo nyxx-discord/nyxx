@@ -26,21 +26,24 @@ class Commands {
 
   /// Dispatches onMessage event to framework.
   Future dispatch(MessageEvent e) async {
+    if (!e.message.content.startsWith(prefix)) return;
+
     // Match help specially to shadow user defined help commands.
     if (e.message.content.startsWith('!help'))
       e.message.channel.sendMessage(content: _createHelp());
-    // Search for matching command in registry. If registry contains multiple commands with identical name - run first one.
-    else if (e.message.content.startsWith(prefix)) {
-      var matchedCommands = _commands
-          .where((i) => e.message.content.startsWith((_prefix + i.name)))
-          .first;
 
-      if (matchedCommands.isAdmin) {
-        if (_admins != null && _admins.any((i) => i == e.message.author.id))
-          await matchedCommands.run(e.message);
-      } else
-        await matchedCommands.run(e.message);
-    }
+    // Search for matching command in registry. If registry contains multiple commands with identical name - run first one.
+    var matchedCommand = _commands
+        .where((i) => e.message.content.startsWith((_prefix + i.name)))
+        .first;
+
+    if (matchedCommand.isAdmin)
+      if(_admins != null && _admins.any((i) => i == e.message.author.id)) { }
+    else
+      return;
+
+    await matchedCommand.run(e.message);
+
     print("[INFO] Dispatched command successfully!");
   }
 
