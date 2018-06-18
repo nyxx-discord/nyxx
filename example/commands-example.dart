@@ -10,10 +10,6 @@ void main() {
 
   var commands = new discord.Commands('!', bot, ["302359032612651009"])
     ..addMany([new PongCommand(), new EchoCommand()]);
-
-  bot.onReady.listen((discord.ReadyEvent e) {
-    print("Ready!");
-  });
 }
 
 class PongCommand extends discord.Command {
