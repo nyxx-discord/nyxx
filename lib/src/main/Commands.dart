@@ -3,17 +3,20 @@ part of discord;
 /// Handler for commands framwork.
 /// This class matches and dispatches commands to best matchig contexts.
 class Commands {
-  String _prefix;
-  String get prefix => _prefix;
-
   List<String> _admins;
-
   List<Command> _commands;
+
+  String _prefix;
+
+  /// Prefix needed to dispatch a commands.
+  /// All messages without this prefix will be ignored
+  String get prefix => _prefix;
 
   /// Creates commands framework handler. Requires prefix to handle commands.
   Commands(this._prefix, Client client, [this._admins]) {
     _commands = [];
 
+    // Listen to incoming messages and ignore all from bots
     client.onMessage.listen((MessageEvent e) async {
       if (!e.message.author.bot) await dispatch(e);
     });
@@ -28,15 +31,15 @@ class Commands {
       e.message.channel.sendMessage(content: _createHelp());
     // Search for matching command in registry. If registry contains multiple commands with identical name - run first one.
     else if (e.message.content.startsWith(prefix)) {
-      var matched_commands = _commands
+      var matchedCommands = _commands
           .where((i) => e.message.content.startsWith((_prefix + i.name)))
           .first;
 
-      if (matched_commands.isAdmin) {
+      if (matchedCommands.isAdmin) {
         if (_admins != null && _admins.any((i) => i == e.message.author.id))
-          await matched_commands.run(e.message);
+          await matchedCommands.run(e.message);
       } else
-        await matched_commands.run(e.message);
+        await matchedCommands.run(e.message);
     }
     print("[INFO] Dispatched command successfully!");
   }
@@ -61,6 +64,7 @@ class Commands {
     print("[INFO] Registred command: ${command.name}");
   }
 
+  /// Register many commands by passing list
   void addMany(List<ICommand> commands) {
     commands.forEach((c) => add(c));
   }

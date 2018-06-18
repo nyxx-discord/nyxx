@@ -14,6 +14,9 @@ abstract class Command implements ICommand {
   /// Indicates if commands is restricted to admins.
   bool _isAdmin;
 
+  /// Basic constructor to create new instance of command.
+  Command(this._name, this._help, this._usage, [this._isAdmin = false]);
+
   /// Name of command. Text which will trigger execution
   String get name => _name;
 
@@ -25,6 +28,4 @@ abstract class Command implements ICommand {
 
   /// Indicates if commands is restricted to admins.
   bool get isAdmin => _isAdmin;
-
-  Command(this._name, this._help, this._usage, [this._isAdmin = false]);
 }
