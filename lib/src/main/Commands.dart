@@ -37,9 +37,9 @@ class Commands {
         .where((i) => e.message.content.startsWith((_prefix + i.name)))
         .first;
 
-    if (matchedCommand.isAdmin)
-      if(_admins != null && _admins.any((i) => i == e.message.author.id)) { }
-    else
+    if (matchedCommand.isAdmin) if (_admins != null &&
+        _admins.any((i) => i == e.message.author.id)) {
+    } else
       return;
 
     await matchedCommand.run(e.message);
