@@ -1,8 +1,8 @@
 # nyxx [![Build Status](https://travis-ci.org/l7ssha/nyxx.svg?branch=master)](https://travis-ci.org/l7ssha/nyxx) [![Pub](https://img.shields.io/pub/v/nyxx.svg)](https://pub.dartlang.org/packages/nyxx)
 
-Simple, robust framework for creating discord bots for Dart. Fork of [Hackzzila's](https://github.com/Hackzzila) [nyx](https://github.com/Hackzzila/nyx) - extended with new functionality, few bug fixes, applied pending pull requests.
+Simple, robust framework for creating discord bots for Dart.
 
-~~Library will be published in next few weeks - command framework isn't finished yet.~~ Done faster than I expected :D
+Fork of [Hackzzila's](https://github.com/Hackzzila) [nyx](https://github.com/Hackzzila/nyx) - extended with new functionality, few bug fixes, applied pending pull requests.
 
 ### Features
 
@@ -17,11 +17,9 @@ Simple, robust framework for creating discord bots for Dart. Fork of [Hackzzila'
 
 ## Documentation and examples
 
-#### [Dartdocs](https://l7ssha.pl/nyxx)
-Dartdocs of most recent version of library.
+#### [Dartdocs](https://pub.dartlang.org/documentation/nyxx/0.16.0/)
+Dartdocs of most recent version of library. It follows `https://pub.dartlang.org/documentation/nyxx/{library-verison}/` to get latest docs version.
 
 #### [Wiki](https://github.com/l7ssha/nyxx/wiki)
 Wiki privides examples and descriptions.
-
-~~Documentation and examples is in progress. In near feature I'll upload dartdocs to my website also.~~
 
