@@ -18,8 +18,17 @@ Fork of [Hackzzila's](https://github.com/Hackzzila) [nyx](https://github.com/Hac
 ## Documentation and examples
 
 #### [Dartdocs](https://pub.dartlang.org/documentation/nyxx/0.16.0/)
+
 Dartdocs of most recent version of library. It follows `https://pub.dartlang.org/documentation/nyxx/{library-verison}/` to get latest docs version.
 
 #### [Wiki](https://github.com/l7ssha/nyxx/wiki)
+
 Wiki privides examples and descriptions.
 
+## Roadmap
+ - Better dartdocs documentation
+ - More examples at wiki/more tutorial/Video tutorial 
+ - Bigger bot written in nyxx for example
+ - Fix `lint` errors from `dartanalyzer`
+ - Annotation driver flow for CommandsFramework?
+ - Recheck all code and fix styling/small logic bugs
