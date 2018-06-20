@@ -13,8 +13,10 @@ class Commands {
   String get prefix => _prefix;
 
   /// Creates commands framework handler. Requires prefix to handle commands.
-  Commands(this._prefix, Client client, [this._admins]) {
+  Commands(this._prefix, Client client, [this._admins, String gameName]) {
     _commands = [];
+
+    if (gameName != null) client.user.setGame(name: gameName);
 
     // Listen to incoming messages and ignore all from bots
     client.onMessage.listen((MessageEvent e) async {
