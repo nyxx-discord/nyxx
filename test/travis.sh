@@ -33,7 +33,6 @@ echo ""
 
 if [ "$DISCORD_TOKEN" ]; then
     dart -c test/discord.dart
-    dart -c test/commands.dart
 else
   echo "Discord token not present, skipping Discord tests"
 fi
