@@ -23,8 +23,7 @@ class PongCommand extends discord.Command {
 
 class EchoCommand extends discord.Command {
   EchoCommand()
-      : super(
-            "echo", "Echoes bot message!", "!echo <message>", false);
+      : super("echo", "Echoes bot message!", "!echo <message>", false);
 
   @override
   run(discord.Message message) async {
