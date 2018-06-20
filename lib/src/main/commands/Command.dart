@@ -16,7 +16,8 @@ abstract class Command implements ICommand {
 
   /// List of roles required to execute commmand
   List<String> requiredRoles;
-  
+
   /// Basic constructor to create new instance of command.
-  Command(this.name, this.help, this.usage, [this.isAdmin = false, this.requiredRoles = null]);
+  Command(this.name, this.help, this.usage,
+      [this.isAdmin = false, this.requiredRoles = null]);
 }
