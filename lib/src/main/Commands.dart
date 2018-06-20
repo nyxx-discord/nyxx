@@ -5,8 +5,10 @@ part of discord;
 class Commands {
   List<String> _admins;
   List<Command> _commands;
-
   String _prefix;
+
+  /// Indicator if you want to ignore all bot messages, even if messages is corrent command.
+  bool ignoreBots = true;
 
   /// Prefix needed to dispatch a commands.
   /// All messages without this prefix will be ignored
@@ -18,9 +20,11 @@ class Commands {
 
     if (gameName != null) client.user.setGame(name: gameName);
 
-    // Listen to incoming messages and ignore all from bots
+    // Listen to incoming messages and ignore all from bots (if set)
     client.onMessage.listen((MessageEvent e) async {
-      if (!e.message.author.bot) await dispatch(e);
+      if (ignoreBots && e.message.author.bot) return;
+
+      await dispatch(e);
     });
 
     client.onReady.listen((ReadyEvent e) => print("[INFO] Bot started!"));
