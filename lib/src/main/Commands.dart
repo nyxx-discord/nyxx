@@ -5,7 +5,7 @@ part of discord;
 class Commands {
   List<String> _admins;
   List<Command> _commands;
-  
+
   String _prefix;
 
   /// Prefix needed to dispatch a commands.
@@ -36,26 +36,30 @@ class Commands {
     var matchedCommand = _commands
         .where((i) => e.message.content.startsWith((_prefix + i.name)))
         .first;
-    
+
     if (matchedCommand.isAdmin) {
-      if (_admins != null && _admins.any((i) => i == e.message.author.id)) {
+      if (_admins != null && _admins.any((i) => i == e.message.author.id))
         await matchedCommand.run(e.message);
-        return;
-      }
+
+      print("[INFO] Dispatched command successfully!");
       return;
     }
-    
-    if(matchedCommand.requiredRoles != null) {
+
+    if (matchedCommand.requiredRoles != null) {
       var guild = e.message.guild;
       var author = e.message.author;
       var member = await guild.getMember(author);
-      
-      var hasRoles = matchedCommand.requiredRoles.where((i) => member.roles.contains(i)).toList();
-      
-      if(hasRoles == null || hasRoles.isEmpty)
+
+      var hasRoles = matchedCommand.requiredRoles
+          .where((i) => member.roles.contains(i))
+          .toList();
+
+      if (hasRoles == null || hasRoles.isEmpty) {
+        print("[INFO] Dispatched command successfully!");
         return;
+      }
     }
-    
+
     await matchedCommand.run(e.message);
 
     print("[INFO] Dispatched command successfully!");
