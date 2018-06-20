@@ -51,10 +51,6 @@ class Commands {
       var member = await guild.getMember(author);
       
       var hasRoles = matchedCommand.requiredRoles.where((i) => member.roles.contains(i)).toList();
-
-      print(member.roles);
-      print(matchedCommand.requiredRoles);
-      print(hasRoles);
       
       if(hasRoles == null || hasRoles.isEmpty)
         return;
