@@ -19,7 +19,7 @@ void main() {
     var channel = bot.channels['422285619952222208'];
     channel.sendMessage(
         content:
-            "Testing new Travis CI build `#${env['TRAVIS_BUILD_NUMBER']}` from commit `${env['TRAVIS_COMMIT']}` on branch `${env['TRAVIS_BRANCH']}`");
+            "Testing new Travis CI build `#${env['TRAVIS_BUILD_NUMBER']}` from commit `${env['TRAVIS_COMMIT']}` on branch `${env['TRAVIS_BRANCH']}` for Listeners");
 
     var m = await channel.sendMessage(content: "Message test.");
     await m.edit(content: "Edit test.");
@@ -35,7 +35,7 @@ void main() {
         m.content == "--trigger-test") {
       await m.delete();
       await m.channel.sendMessage(content: "Tests completed successfully!");
-      print("Discord tests completed successfully!");
+      print("Nyxx Listener tests completed successfully!");
       await bot.destroy();
       exit(0);
     }
