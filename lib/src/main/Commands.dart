@@ -1,7 +1,7 @@
 part of discord;
 
-/// Handler for commands framework.
-/// This class matches and dispatches commands to best matchingcontexts.
+/// Main handler for CommandFramework.
+///   This class matches and dispatches commands to best matching contexts.
 class Commands {
   List<String> _admins;
   List<Command> _commands;
