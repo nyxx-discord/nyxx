@@ -1,13 +1,13 @@
 part of discord;
 
-/// Handler for commands framwork.
-/// This class matches and dispatches commands to best matchig contexts.
+/// Handler for commands framework.
+/// This class matches and dispatches commands to best matchingcontexts.
 class Commands {
   List<String> _admins;
   List<Command> _commands;
   String _prefix;
 
-  /// Indicator if you want to ignore all bot messages, even if messages is corrent command.
+  /// Indicator if you want to ignore all bot messages, even if messages is current command.
   bool ignoreBots = true;
 
   /// Prefix needed to dispatch a commands.
@@ -71,7 +71,7 @@ class Commands {
     print("[INFO] Dispatched command successfully!");
   }
 
-  /// Creates help String based on registred commands metadata.
+  /// Creates help String based on registered commands metadata.
   String _createHelp() {
     var buffer = new StringBuffer();
 
@@ -91,8 +91,7 @@ class Commands {
     print("[INFO] Registred command: ${command.name}");
   }
 
-  /// Register many commands by passing list
-  void addMany(List<ICommand> commands) {
+  void addMany(List<Command> commands) {
     commands.forEach((c) => add(c));
   }
 }
