@@ -17,7 +17,7 @@ Fork of [Hackzzila's](https://github.com/Hackzzila) [nyx](https://github.com/Hac
 
 ## Documentation and examples
 
-#### [Dartdocs](https://pub.dartlang.org/documentation/nyxx/0.16.0/)
+#### [Dartdocs](https://www.dartdocs.org/documentation/nyxx/latest/)
 
 Dartdocs of most recent version of library. It follows `https://pub.dartlang.org/documentation/nyxx/{library-verison}/` to get latest docs version.
 
