@@ -14,7 +14,7 @@ abstract class Command {
   /// Indicates if commands is restricted to admins.
   bool isAdmin;
 
-  /// List of roles required to execute commmand
+  /// List of roles required to execute command
   List<String> requiredRoles;
 
   /// Basic constructor to create new instance of command.
