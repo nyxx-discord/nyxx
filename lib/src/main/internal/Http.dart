@@ -113,10 +113,10 @@ class HttpBucket {
   int limit;
 
   /// The number of remaining requests that can be made. May not always be accurate.
-  int ratelimitRemaining = 1;
+  int rateLimitRemaining = 1;
 
   /// When the ratelimits reset.
-  DateTime ratelimitReset;
+  DateTime rateLimitReset;
 
   /// The time difference between you and Discord.
   Duration timeDifference;
@@ -143,15 +143,15 @@ class HttpBucket {
   }
 
   void _execute(HttpRequest request) {
-    if (this.ratelimitRemaining == null || this.ratelimitRemaining > 0) {
+    if (this.rateLimitRemaining == null || this.rateLimitRemaining > 0) {
       request._execute().then((HttpResponse r) {
         this.limit = r.headers['x-ratelimit-limit'] != null
             ? int.parse(r.headers['x-ratelimit-limit'])
             : null;
-        this.ratelimitRemaining = r.headers['x-ratelimit-remaining'] != null
+        this.rateLimitRemaining = r.headers['x-ratelimit-remaining'] != null
             ? int.parse(r.headers['x-ratelimit-remaining'])
             : null;
-        this.ratelimitReset = r.headers['x-ratelimit-reset'] != null
+        this.rateLimitReset = r.headers['x-ratelimit-reset'] != null
             ? new DateTime.fromMillisecondsSinceEpoch(
                 int.parse(r.headers['x-ratelimit-reset']) * 1000,
                 isUtc: true)
@@ -179,16 +179,16 @@ class HttpBucket {
       });
     } else {
       final Duration waitTime =
-          this.ratelimitReset.difference(new DateTime.now().toUtc()) +
+          this.rateLimitReset.difference(new DateTime.now().toUtc()) +
               this.timeDifference +
               new Duration(milliseconds: 1000);
       if (waitTime.isNegative) {
-        this.ratelimitRemaining = 1;
+        this.rateLimitRemaining = 1;
         this._execute(request);
       } else {
         new RatelimitEvent._new(request.http._client, request, true);
         new Timer(waitTime, () {
-          this.ratelimitRemaining = 1;
+          this.rateLimitRemaining = 1;
           this._execute(request);
         });
       }
