@@ -24,19 +24,16 @@ index.html
 *.js.deps
 *.js.map
 *.info.json
-
 # Directory created by dartdoc
 doc/api/
-
 # Don't commit pubspec lock file
 # (Library packages only! Remove pattern if developing an application package)
 pubspec.lock
-
 *.iml
 .idea
-
 *~
-#~
+*#
+.#*
 .dart_tool/
 /README.html
 /log.txt
