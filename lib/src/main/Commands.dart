@@ -6,6 +6,7 @@ class Commands {
   List<String> _admins;
   List<Command> _commands;
   String _prefix;
+  bool _helpDirect;
 
   /// Indicator if you want to ignore all bot messages, even if messages is current command.
   bool ignoreBots = true;
@@ -15,7 +16,8 @@ class Commands {
   String get prefix => _prefix;
 
   /// Creates commands framework handler. Requires prefix to handle commands.
-  Commands(this._prefix, Client client, [this._admins, String gameName]) {
+  Commands(this._prefix, Client client,
+      [this._admins, String gameName, this._helpDirect]) {
     _commands = [];
 
     if (gameName != null) client.user.setGame(name: gameName);
@@ -35,8 +37,15 @@ class Commands {
     if (!e.message.content.startsWith(prefix)) return;
 
     // Match help specially to shadow user defined help commands.
-    if (e.message.content.startsWith('!help'))
-      e.message.channel.sendMessage(content: _createHelp());
+    if (e.message.content.startsWith(new RegExp('(help)'))) {
+      if (_helpDirect) {
+        e.message.author.send(content: _createHelp());
+        return;
+      }
+
+      await e.message.channel.sendMessage(content: _createHelp());
+      return;
+    }
 
     // Search for matching command in registry. If registry contains multiple commands with identical name - run first one.
     var matchedCommand = _commands
@@ -75,7 +84,7 @@ class Commands {
   String _createHelp() {
     var buffer = new StringBuffer();
 
-    buffer.writeln("\n**Available commands:**");
+    buffer.writeln("**Available commands:**");
 
     _commands.forEach((item) {
       buffer.writeln("* ${item.name} - ${item.help}");
