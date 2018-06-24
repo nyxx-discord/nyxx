@@ -17,7 +17,7 @@ class Commands {
 
   /// Creates commands framework handler. Requires prefix to handle commands.
   Commands(this._prefix, Client client,
-      [this._admins, String gameName, this._helpDirect]) {
+      [this._admins, String gameName, this._helpDirect = true]) {
     _commands = [];
 
     if (gameName != null) client.user.setGame(name: gameName);
@@ -37,9 +37,9 @@ class Commands {
     if (!e.message.content.startsWith(prefix)) return;
 
     // Match help specially to shadow user defined help commands.
-    if (e.message.content.startsWith(new RegExp('(help)'))) {
+    if (e.message.content.startsWith((prefix + 'help'))) {
       if (_helpDirect) {
-        e.message.author.send(content: _createHelp());
+        e.message.author.send(content: _createHelp(e.message.author.id));
         return;
       }
 
@@ -99,14 +99,20 @@ class Commands {
   }
 
   /// Creates help String based on registered commands metadata.
-  String _createHelp() {
+  String _createHelp(String requestedUserId) {
     var buffer = new StringBuffer();
 
     buffer.writeln("**Available commands:**");
 
     _commands.forEach((item) {
-      buffer.writeln("* ${item.name} - ${item.help}");
-      buffer.writeln("\t Usage: ${item.usage}");
+      if(item.isAdmin && _isUserAdmin(requestedUserId, item)) {
+        buffer.writeln("* ${item.name} - ${item.help} **ADMIN** ");
+        buffer.writeln("\t Usage: ${item.usage}");
+      }
+      else if (!item.isAdmin) {
+        buffer.writeln("* ${item.name} - ${item.help}");
+        buffer.writeln("\t Usage: ${item.usage}"); 
+      }
     });
 
     return buffer.toString();
