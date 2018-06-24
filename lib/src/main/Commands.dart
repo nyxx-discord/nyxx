@@ -105,13 +105,12 @@ class Commands {
     buffer.writeln("**Available commands:**");
 
     _commands.forEach((item) {
-      if(item.isAdmin && _isUserAdmin(requestedUserId, item)) {
+      if (item.isAdmin && _isUserAdmin(requestedUserId, item)) {
         buffer.writeln("* ${item.name} - ${item.help} **ADMIN** ");
         buffer.writeln("\t Usage: ${item.usage}");
-      }
-      else if (!item.isAdmin) {
+      } else if (!item.isAdmin) {
         buffer.writeln("* ${item.name} - ${item.help}");
-        buffer.writeln("\t Usage: ${item.usage}"); 
+        buffer.writeln("\t Usage: ${item.usage}");
       }
     });
 
