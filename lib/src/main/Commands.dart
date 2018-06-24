@@ -43,7 +43,7 @@ class Commands {
         return;
       }
 
-      await e.message.channel.sendMessage(content: _createHelp());
+      await e.message.channel.sendMessage(content: _createHelp(e.message.author.id));
       return;
     }
 
