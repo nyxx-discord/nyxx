@@ -53,16 +53,6 @@ class Commands {
         .where((i) => e.message.content.startsWith((_prefix + i.name)))
         .first;
 
-    if (_isUserAdmin(e.message.author.id, matchedCommand)) {
-      await matchedCommand.run(e.message);
-      print("[INFO] Dispatched command successfully!");
-      return;
-    } else {
-      print("[INFO] Dispatched command successfully!");
-      return;
-    }
-
-    /*
     if (matchedCommand.isAdmin) {
       if (_admins != null && _admins.any((i) => i == e.message.author.id))
         await matchedCommand.run(e.message);
@@ -70,7 +60,6 @@ class Commands {
       print("[INFO] Dispatched command successfully!");
       return;
     }
-    */
 
     if (matchedCommand.requiredRoles != null) {
       var guild = e.message.guild;
@@ -92,16 +81,16 @@ class Commands {
     print("[INFO] Dispatched command successfully!");
   }
 
-  bool _isUserAdmin(String authorId, Command command) {
-    if (command.isAdmin) if (_admins != null &&
-        _admins.any((i) => i == authorId)) return true;
-
-    return false;
-  }
-
   /// Creates help String based on registered commands metadata.
   String _createHelp(String requestedUserId) {
     var buffer = new StringBuffer();
+
+    bool _isUserAdmin(String authorId, Command command) {
+      if (command.isAdmin) if (_admins != null &&
+          _admins.any((i) => i == authorId)) return true;
+
+      return false;
+    }
 
     buffer.writeln("**Available commands:**");
 
