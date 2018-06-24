@@ -6,7 +6,9 @@ class Commands {
   List<String> _admins;
   List<Command> _commands;
   String _prefix;
-  bool _helpDirect;
+
+  /// Indicates if bots help message is sent to user via PM. True by default.xc
+  bool helpDirect = true;
 
   /// Indicator if you want to ignore all bot messages, even if messages is current command.
   bool ignoreBots = true;
@@ -16,8 +18,7 @@ class Commands {
   String get prefix => _prefix;
 
   /// Creates commands framework handler. Requires prefix to handle commands.
-  Commands(this._prefix, Client client,
-      [this._admins, String gameName, this._helpDirect = true]) {
+  Commands(this._prefix, Client client, [this._admins, String gameName]) {
     _commands = [];
 
     if (gameName != null) client.user.setGame(name: gameName);
@@ -38,7 +39,7 @@ class Commands {
 
     // Match help specially to shadow user defined help commands.
     if (e.message.content.startsWith((prefix + 'help'))) {
-      if (_helpDirect) {
+      if (helpDirect) {
         e.message.author.send(content: _createHelp(e.message.author.id));
         return;
       }
@@ -54,7 +55,7 @@ class Commands {
         .first;
 
     if (matchedCommand.isAdmin) {
-      if (_admins != null && _admins.any((i) => i == e.message.author.id))
+      if (_isUserAdmin(e.message.author.id))
         await matchedCommand.run(e.message);
 
       print("[INFO] Dispatched command successfully!");
@@ -81,21 +82,20 @@ class Commands {
     print("[INFO] Dispatched command successfully!");
   }
 
+  bool _isUserAdmin(String authorId) {
+    if (_admins != null && _admins.any((i) => i == authorId)) return true;
+
+    return false;
+  }
+
   /// Creates help String based on registered commands metadata.
   String _createHelp(String requestedUserId) {
     var buffer = new StringBuffer();
 
-    bool _isUserAdmin(String authorId, Command command) {
-      if (command.isAdmin) if (_admins != null &&
-          _admins.any((i) => i == authorId)) return true;
-
-      return false;
-    }
-
     buffer.writeln("**Available commands:**");
 
     _commands.forEach((item) {
-      if (item.isAdmin && _isUserAdmin(requestedUserId, item)) {
+      if (item.isAdmin && _isUserAdmin(requestedUserId)) {
         buffer.writeln("* ${item.name} - ${item.help} **ADMIN** ");
         buffer.writeln("\t Usage: ${item.usage}");
       } else if (!item.isAdmin) {
