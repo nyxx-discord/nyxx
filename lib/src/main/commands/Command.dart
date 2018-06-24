@@ -11,7 +11,7 @@ abstract class Command {
   /// Example usage of command
   String usage;
 
-  /// Indicates if commands is restricted to admins.
+  /// Indicates if commands is restricted to admins
   bool isAdmin;
 
   /// List of roles required to execute command
