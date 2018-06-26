@@ -16,12 +16,30 @@ class Commands {
   /// Indicator if you want to ignore all bot messages, even if messages is current command.
   bool ignoreBots = true;
 
-  /// Object for handling command events like 'command not found'.
-  EventHandler eventHandler = new DefaultEventHandler();
+  StreamController<Message> _commandNotFoundEventController;
+  StreamController<Message> _requiredPermissionEventController;
+  StreamController<Message> _forAdminOnlyEventController;
+
+  /// Fires when invoked command dont exists in registry
+  Stream<Message> commandNotFoundEvent;
+
+  /// Invoked when non-admin user uses admin-only command.
+  Stream<Message> forAdminOnlyEvent;
+
+  /// Invoked when user didn't have enough permissions.
+  Stream<Message> requiredPermissionEvent;
 
   /// Creates commands framework handler. Requires prefix to handle commands.
   Commands(this.prefix, Client client, [this._admins, String gameName]) {
     _commands = [];
+
+    _commandNotFoundEventController = new StreamController<Message>();
+    _requiredPermissionEventController = new StreamController<Message>();
+    _forAdminOnlyEventController = new StreamController<Message>();
+
+    commandNotFoundEvent = _commandNotFoundEventController.stream;
+    forAdminOnlyEvent = _forAdminOnlyEventController.stream;
+    requiredPermissionEvent = _forAdminOnlyEventController.stream;
 
     if (gameName != null) client.user.setGame(name: gameName);
 
@@ -57,7 +75,7 @@ class Commands {
 
     // If there is no command - return
     if (commandCollection.isEmpty) {
-      await eventHandler.commandNotFound(e.message);
+      _commandNotFoundEventController.add(e.message);
       return;
     }
 
@@ -83,10 +101,10 @@ class Commands {
     // Switch between execution codes
     switch (executionCode) {
       case 0:
-        await eventHandler.forAdminOnly(e.message);
+        _forAdminOnlyEventController.add(e.message);
         break;
       case 1:
-        await eventHandler.requiredPermission(e.message);
+        _requiredPermissionEventController.add(e.message);
         break;
       case -1:
       case 100:
