@@ -1,12 +1,21 @@
 part of discord;
 
-class CooldownController {
+/// Handles caching of cooldown
+class CooldownCache {
   List<CacheEntry> _cache;
 
-  CooldownController() {
+  /// Constructor sets up empty cache and starts garbage collector.
+  CooldownCache() {
     _cache = [];
+
+    new Timer.periodic(const Duration(minutes:30), (Timer t) {
+      int now = new DateTime.now().millisecondsSinceEpoch;
+
+      _cache.removeWhere((item) => now - item.lastUsed >= 1800000);
+    });
   }
 
+  /// Checks if user can execute given command at given time
   Future<bool> canExecute(
       String userId, String commandName, int desiredCooldown) async {
     int now = new DateTime.now().millisecondsSinceEpoch;

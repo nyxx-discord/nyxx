@@ -11,7 +11,7 @@ part 'src/main/Client.dart';
 
 part 'src/main/Commands.dart';
 part 'src/main/commands/Command.dart';
-part 'src/main/commands/CooldownController.dart';
+part 'src/main/commands/CooldownCache.dart';
 
 part 'src/main/internal/_Constants.dart';
 part 'src/main/internal/_EventController.dart';
