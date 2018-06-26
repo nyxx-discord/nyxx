@@ -11,7 +11,7 @@ class Commands {
   StreamController<Message> _requiredPermissionEventController;
   StreamController<Message> _forAdminOnlyEventController;
 
-  CooldownController _cooldownCache;
+  CooldownCache _cooldownCache;
 
   /// Prefix needed to dispatch a commands.
   /// All messages without this prefix will be ignored
@@ -38,7 +38,7 @@ class Commands {
   /// Creates commands framework handler. Requires prefix to handle commands.
   Commands(this.prefix, Client client, [this._admins, String gameName]) {
     _commands = [];
-    _cooldownCache = new CooldownController();
+    _cooldownCache = new CooldownCache();
 
     _commandNotFoundEventController = new StreamController<Message>();
     _requiredPermissionEventController = new StreamController<Message>();
