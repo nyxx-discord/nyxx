@@ -6,6 +6,13 @@ class Commands {
   List<String> _admins;
   List<Command> _commands;
 
+  StreamController<Message> _cooldownEventController;
+  StreamController<Message> _commandNotFoundEventController;
+  StreamController<Message> _requiredPermissionEventController;
+  StreamController<Message> _forAdminOnlyEventController;
+
+  CooldownController _cooldownCache;
+
   /// Prefix needed to dispatch a commands.
   /// All messages without this prefix will be ignored
   String prefix;
@@ -16,10 +23,6 @@ class Commands {
   /// Indicator if you want to ignore all bot messages, even if messages is current command.
   bool ignoreBots = true;
 
-  StreamController<Message> _commandNotFoundEventController;
-  StreamController<Message> _requiredPermissionEventController;
-  StreamController<Message> _forAdminOnlyEventController;
-
   /// Fires when invoked command dont exists in registry
   Stream<Message> commandNotFoundEvent;
 
@@ -29,17 +32,23 @@ class Commands {
   /// Invoked when user didn't have enough permissions.
   Stream<Message> requiredPermissionEvent;
 
+  /// Invoked when user hits command rate limit.
+  Stream<Message> cooldownEvent;
+
   /// Creates commands framework handler. Requires prefix to handle commands.
   Commands(this.prefix, Client client, [this._admins, String gameName]) {
     _commands = [];
+    _cooldownCache = new CooldownController();
 
     _commandNotFoundEventController = new StreamController<Message>();
     _requiredPermissionEventController = new StreamController<Message>();
     _forAdminOnlyEventController = new StreamController<Message>();
+    _cooldownEventController = new StreamController<Message>();
 
     commandNotFoundEvent = _commandNotFoundEventController.stream;
     forAdminOnlyEvent = _forAdminOnlyEventController.stream;
     requiredPermissionEvent = _forAdminOnlyEventController.stream;
+    cooldownEvent = _cooldownEventController.stream;
 
     if (gameName != null) client.user.setGame(name: gameName);
 
@@ -98,6 +107,12 @@ class Commands {
       if (hasRoles == null || hasRoles.isEmpty) executionCode = 1;
     }
 
+    //Check if user is on cooldown
+    if (executionCode == -1 &&
+        !(await _cooldownCache.canExecute(
+            e.message.author.id, matchedCommand.name, 10000)))
+      executionCode = 2;
+
     // Switch between execution codes
     switch (executionCode) {
       case 0:
@@ -105,6 +120,9 @@ class Commands {
         break;
       case 1:
         _requiredPermissionEventController.add(e.message);
+        break;
+      case 2:
+        _cooldownEventController.add(e.message);
         break;
       case -1:
       case 100:
