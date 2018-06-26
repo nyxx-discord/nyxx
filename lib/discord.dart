@@ -11,8 +11,6 @@ part 'src/main/Client.dart';
 
 part 'src/main/Commands.dart';
 part 'src/main/commands/Command.dart';
-part 'src/main/commands/EventHandler.dart';
-part 'src/main/commands/DefaultEventHandler.dart';
 
 part 'src/main/internal/_Constants.dart';
 part 'src/main/internal/_EventController.dart';
