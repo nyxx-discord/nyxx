@@ -5,12 +5,21 @@ import 'package:nyxx/discord.dart' as discord;
 import 'package:nyxx/vm.dart' as discord;
 
 class TestCommand extends discord.Command {
-  TestCommand() : super("test", "Checks if everything is running", "!test");
+  TestCommand() : super("test", "Checks if everything is running", "~~test");
 
   @override
   run(discord.Message message) async {
     await message.channel.sendMessage(content: "\~~test is working correctly");
   }
+}
+
+class CooldownCommand extends discord.Command {
+  CooldownCommand() : super("cooldown", "Checks if cooldown is working", "~~cooldown") {
+    cooldown = 10;
+  }
+
+  @override
+  run(discord.Message message) async { }
 }
 
 void main() {
@@ -21,8 +30,12 @@ void main() {
 
   var commandsListener = new discord.Commands('~~', bot)
     ..add(new TestCommand())
+    ..add(new CooldownCommand())
     ..commandNotFoundEvent.listen((m) {
       m.channel.sendMessage(content: "Command '${m.content}' not found!");
+    })
+    ..cooldownEvent.listen((m) {
+      m.channel.sendMessage(content: "Command is on cooldown!. Wait a few seconds!");
     })
     ..ignoreBots = false;
 
@@ -47,6 +60,11 @@ void main() {
 
     var mmm = await channel.sendMessage(content: "~~notFound");
     await mmm.delete();
+
+    var c = await channel.sendMessage(content: "~~cooldown");
+    var cc = await channel.sendMessage(content: "~~cooldown");
+    await c.delete();
+    await cc.delete();
   });
 
   bot.onMessage.listen((e) async {
@@ -67,6 +85,12 @@ void main() {
     if (m.channel.id == "422285619952222208" &&
         m.author.id == bot.user.id &&
         m.content == "Command '~~notFound' not found!") {
+      await m.delete();
+    }
+
+    if (m.channel.id == "422285619952222208" &&
+        m.author.id == bot.user.id &&
+        m.content == "Command is on cooldown!. Wait a few seconds!") {
       await m.delete();
       await m.channel.sendMessage(content: "Tests completed successfully!");
       print("Nyxx tests completed successfully!");
