@@ -17,9 +17,12 @@ abstract class Command {
   /// List of roles required to execute command
   List<String> requiredRoles;
 
+  /// Cooldown for command in seconds
+  int cooldown;
+
   /// Basic constructor to create new instance of command.
   Command(this.name, this.help, this.usage,
-      [this.isAdmin = false, this.requiredRoles = null]);
+      [this.isAdmin = false, this.requiredRoles = null, this.cooldown = 0]);
 
   /// Function which will be invoked when command triggers
   Future run(Message message);
