@@ -5,7 +5,10 @@ part of discord;
 class Commands {
   List<String> _admins;
   List<Command> _commands;
-  String _prefix;
+
+  /// Prefix needed to dispatch a commands.
+  /// All messages without this prefix will be ignored
+  String prefix;
 
   /// Indicates if bots help message is sent to user via PM. True by default.xc
   bool helpDirect = true;
@@ -13,12 +16,11 @@ class Commands {
   /// Indicator if you want to ignore all bot messages, even if messages is current command.
   bool ignoreBots = true;
 
-  /// Prefix needed to dispatch a commands.
-  /// All messages without this prefix will be ignored
-  String get prefix => _prefix;
+  /// Object for handling command events like 'command not found'.
+  EventHandler eventHandler = new DefaultEventHandler();
 
   /// Creates commands framework handler. Requires prefix to handle commands.
-  Commands(this._prefix, Client client, [this._admins, String gameName]) {
+  Commands(this.prefix, Client client, [this._admins, String gameName]) {
     _commands = [];
 
     if (gameName != null) client.user.setGame(name: gameName);
@@ -50,36 +52,49 @@ class Commands {
     }
 
     // Search for matching command in registry. If registry contains multiple commands with identical name - run first one.
-    var matchedCommand = _commands
-        .where((i) => e.message.content.startsWith((_prefix + i.name)))
-        .first;
+    var commandCollection = _commands
+        .where((i) => e.message.content.startsWith((prefix + i.name)));
 
-    if (matchedCommand.isAdmin) {
-      if (_isUserAdmin(e.message.author.id))
-        await matchedCommand.run(e.message);
-
-      print("[INFO] Dispatched command successfully!");
+    // If there is no command - return
+    if(commandCollection.isEmpty) {
+      await eventHandler.commandNotFound(e.message);
       return;
     }
 
-    if (matchedCommand.requiredRoles != null) {
-      var guild = e.message.guild;
-      var author = e.message.author;
-      var member = await guild.getMember(author);
+    // Get command and set execution code to default value;
+    var matchedCommand = commandCollection.first;
+    var executionCode = -1;
+
+    // Check for admin command and if user is admin
+    if (matchedCommand.isAdmin)
+      executionCode = _isUserAdmin(e.message.author.id) ? 100 : 0;
+
+    // Check if there is need to check user roles
+    if (matchedCommand.requiredRoles != null && executionCode == -1) {
+      var member = await e.message.guild.getMember(e.message.author);
 
       var hasRoles = matchedCommand.requiredRoles
           .where((i) => member.roles.contains(i))
           .toList();
 
-      if (hasRoles == null || hasRoles.isEmpty) {
-        print("[INFO] Dispatched command successfully!");
-        return;
-      }
+      if (hasRoles == null || hasRoles.isEmpty)
+        executionCode = 1;
     }
 
-    await matchedCommand.run(e.message);
-
-    print("[INFO] Dispatched command successfully!");
+    // Switch between execution codes
+    switch(executionCode) {
+      case 0:
+        await eventHandler.forAdminOnly(e.message);
+        break;
+      case 1:
+        await eventHandler.requiredPermission(e.message);
+        break;
+      case -1:
+      case 100:
+        await matchedCommand.run(e.message);
+        print("[INFO] Dispatched command successfully!");
+        break;
+    }
   }
 
   bool _isUserAdmin(String authorId) {
