@@ -20,9 +20,12 @@ abstract class Command {
   /// Cooldown for command in seconds
   int cooldown;
 
+  /// Indicated if command is hidden from help
+  bool isHidden;
+
   /// Basic constructor to create new instance of command.
   Command(this.name, this.help, this.usage,
-      [this.isAdmin = false, this.requiredRoles = null, this.cooldown = 0]);
+      [this.isAdmin = false, this.requiredRoles = null, this.cooldown = 0, this.isHidden = false]);
 
   /// Function which will be invoked when command triggers
   Future run(Message message);

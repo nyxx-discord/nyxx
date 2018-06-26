@@ -56,14 +56,14 @@ class Commands {
     client.onMessage.listen((MessageEvent e) async {
       if (ignoreBots && e.message.author.bot) return;
 
-      await dispatch(e);
+      await _dispatch(e);
     });
 
     client.onReady.listen((ReadyEvent e) => print("[INFO] Bot started!"));
   }
 
   /// Dispatches onMessage event to framework.
-  Future dispatch(MessageEvent e) async {
+  Future _dispatch(MessageEvent e) async {
     if (!e.message.content.startsWith(prefix)) return;
 
     // Match help specially to shadow user defined help commands.
@@ -145,13 +145,14 @@ class Commands {
     buffer.writeln("**Available commands:**");
 
     _commands.forEach((item) {
-      if (item.isAdmin && _isUserAdmin(requestedUserId)) {
-        buffer.writeln("* ${item.name} - ${item.help} **ADMIN** ");
-        buffer.writeln("\t Usage: ${item.usage}");
-      } else if (!item.isAdmin) {
-        buffer.writeln("* ${item.name} - ${item.help}");
-        buffer.writeln("\t Usage: ${item.usage}");
-      }
+      if(!item.isHidden)
+        if (item.isAdmin && _isUserAdmin(requestedUserId)) {
+          buffer.writeln("* ${item.name} - ${item.help} **ADMIN** ");
+          buffer.writeln("\t Usage: ${item.usage}");
+        } else if (!item.isAdmin) {
+          buffer.writeln("* ${item.name} - ${item.help}");
+          buffer.writeln("\t Usage: ${item.usage}");
+        }
     });
 
     return buffer.toString();
