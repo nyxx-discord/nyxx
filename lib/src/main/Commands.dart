@@ -108,9 +108,12 @@ class Commands {
     }
 
     //Check if user is on cooldown
-    if (executionCode == -1 && matchedCommand.cooldown > 0)
-      if(!(await _cooldownCache.canExecute(e.message.author.id, matchedCommand.name, matchedCommand.cooldown * 1000)))
-        executionCode = 2;
+    if (executionCode == -1 &&
+        matchedCommand.cooldown >
+            0) if (!(await _cooldownCache.canExecute(
+        e.message.author.id,
+        matchedCommand.name,
+        matchedCommand.cooldown * 1000))) executionCode = 2;
 
     // Switch between execution codes
     switch (executionCode) {

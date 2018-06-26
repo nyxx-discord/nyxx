@@ -14,12 +14,13 @@ class TestCommand extends discord.Command {
 }
 
 class CooldownCommand extends discord.Command {
-  CooldownCommand() : super("cooldown", "Checks if cooldown is working", "~~cooldown") {
+  CooldownCommand()
+      : super("cooldown", "Checks if cooldown is working", "~~cooldown") {
     cooldown = 10;
   }
 
   @override
-  run(discord.Message message) async { }
+  run(discord.Message message) async {}
 }
 
 void main() {
@@ -35,7 +36,8 @@ void main() {
       m.channel.sendMessage(content: "Command '${m.content}' not found!");
     })
     ..cooldownEvent.listen((m) {
-      m.channel.sendMessage(content: "Command is on cooldown!. Wait a few seconds!");
+      m.channel
+          .sendMessage(content: "Command is on cooldown!. Wait a few seconds!");
     })
     ..ignoreBots = false;
 
