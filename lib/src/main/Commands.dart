@@ -52,11 +52,11 @@ class Commands {
     }
 
     // Search for matching command in registry. If registry contains multiple commands with identical name - run first one.
-    var commandCollection = _commands
-        .where((i) => e.message.content.startsWith((prefix + i.name)));
+    var commandCollection =
+        _commands.where((i) => e.message.content.startsWith((prefix + i.name)));
 
     // If there is no command - return
-    if(commandCollection.isEmpty) {
+    if (commandCollection.isEmpty) {
       await eventHandler.commandNotFound(e.message);
       return;
     }
@@ -77,12 +77,11 @@ class Commands {
           .where((i) => member.roles.contains(i))
           .toList();
 
-      if (hasRoles == null || hasRoles.isEmpty)
-        executionCode = 1;
+      if (hasRoles == null || hasRoles.isEmpty) executionCode = 1;
     }
 
     // Switch between execution codes
-    switch(executionCode) {
+    switch (executionCode) {
       case 0:
         await eventHandler.forAdminOnly(e.message);
         break;
@@ -100,7 +99,6 @@ class Commands {
   bool _isUserAdmin(String authorId) {
     return (_admins != null && _admins.any((i) => i == authorId));
   }
-
 
   /// Creates help String based on registered commands metadata.
   String _createHelp(String requestedUserId) {
