@@ -13,20 +13,6 @@ class TestCommand extends discord.Command {
   }
 }
 
-class CustomEventHandler implements discord.EventHandler {
-  @override
-  Future commandNotFound(discord.Message message) {
-    message.channel
-        .sendMessage(content: "Command '${message.content}' not found!");
-  }
-
-  @override
-  Future forAdminOnly(discord.Message message) {}
-
-  @override
-  Future requiredPermission(discord.Message message) {}
-}
-
 void main() {
   discord.configureDiscordForVM();
 
@@ -35,7 +21,9 @@ void main() {
 
   var commandsListener = new discord.Commands('~~', bot)
     ..add(new TestCommand())
-    ..eventHandler = new CustomEventHandler()
+    ..commandNotFoundEvent.listen((m) {
+      m.channel.sendMessage(content: "Command '${m.content}' not found!");
+    })
     ..ignoreBots = false;
 
   new Timer(const Duration(seconds: 60), () {
