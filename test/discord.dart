@@ -13,6 +13,20 @@ class TestCommand extends discord.Command {
   }
 }
 
+class CustomEventHandler implements discord.EventHandler {
+  @override
+  Future commandNotFound(discord.Message message) {
+    message.channel
+        .sendMessage(content: "Command '${message.content}' not found!");
+  }
+
+  @override
+  Future forAdminOnly(discord.Message message) {}
+
+  @override
+  Future requiredPermission(discord.Message message) {}
+}
+
 void main() {
   discord.configureDiscordForVM();
 
@@ -21,6 +35,7 @@ void main() {
 
   var commandsListener = new discord.Commands('~~', bot)
     ..add(new TestCommand())
+    ..eventHandler = new CustomEventHandler()
     ..ignoreBots = false;
 
   new Timer(const Duration(seconds: 60), () {
@@ -40,7 +55,10 @@ void main() {
     await channel.sendMessage(content: "--trigger-test");
 
     var mm = await channel.sendMessage(content: "~~test");
-    mm.delete();
+    await mm.delete();
+
+    var mmm = await channel.sendMessage(content: "~~notFound");
+    await mmm.delete();
   });
 
   bot.onMessage.listen((e) async {
@@ -55,6 +73,12 @@ void main() {
     if (m.channel.id == "422285619952222208" &&
         m.author.id == bot.user.id &&
         m.content == "\~~test is working correctly") {
+      await m.delete();
+    }
+
+    if (m.channel.id == "422285619952222208" &&
+        m.author.id == bot.user.id &&
+        m.content == "Command '~~notFound' not found!") {
       await m.delete();
       await m.channel.sendMessage(content: "Tests completed successfully!");
       print("Nyxx tests completed successfully!");
