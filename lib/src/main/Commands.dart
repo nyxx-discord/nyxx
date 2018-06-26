@@ -83,10 +83,9 @@ class Commands {
   }
 
   bool _isUserAdmin(String authorId) {
-    if (_admins != null && _admins.any((i) => i == authorId)) return true;
-
-    return false;
+    return (_admins != null && _admins.any((i) => i == authorId));
   }
+
 
   /// Creates help String based on registered commands metadata.
   String _createHelp(String requestedUserId) {
@@ -113,6 +112,7 @@ class Commands {
     print("[INFO] Registred command: ${command.name}");
   }
 
+  /// Register many [Command] instances.
   void addMany(List<Command> commands) {
     commands.forEach((c) => add(c));
   }
