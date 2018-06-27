@@ -1,5 +1,6 @@
 part of discord;
 
+/// Emoji object. Handles Unicode emojis and custom ones. Unicode emoji dont have [id] and [name] is emoji.
 class Emoji {
   /// The [Client] object
   Client client;
@@ -19,9 +20,6 @@ class Emoji {
   /// Roles this emoji is whitelisted to
   List<String> rolesIds;
 
-  /// User that created this emoji
-  //User user;
-
   /// whether this emoji must be wrapped in colons
   bool requireColons;
 
@@ -31,12 +29,12 @@ class Emoji {
   /// whether this emoji is animated
   bool animated;
 
+  /// Creates full emoji object
   Emoji._new(this.client, this.raw, this.guild) {
     print(this.raw);
 
     this.id = raw['id'];
     this.name = raw['name'];
-    //this.user = new User._new(this.client, raw['user'] as Map<String, dynamic>);
     this.requireColons = raw['require_colons'];
     this.managed = raw['managed'];
     this.animated = raw['animated'];
@@ -45,5 +43,11 @@ class Emoji {
       this.rolesIds = raw['roles'] as List<String>;
 
     this.guild.emojis[this.id] = this;
-  }  
+  }
+
+  /// Creates partial object - onlu [id] and [name]
+  Emoji._partial(this.raw) {
+    this.id = raw['id'];
+    this.name = raw['name'];
+  }
 }
