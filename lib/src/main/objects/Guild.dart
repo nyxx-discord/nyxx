@@ -165,6 +165,17 @@ class Guild {
     return map;
   }
 
+  /// Change guild owner
+  Future<Guild> changeOwner(String id) {
+    HttpResponse = r await this.client.http.send('PATCH', "/guilds/$id",
+        body: {
+          "owner_id": id
+        });
+    final Guild g = new Guild._new(client, r.body.asJson() as Map<String, dynamic>);
+
+    return g;
+  }
+  
   /// Leaves the guild.
   Future<Null> leave() async {
     await this.client.http.send('DELETE', "/users/@me/guilds/$id");
@@ -196,7 +207,7 @@ class Guild {
           client, r.body.asJson() as Map<String, dynamic>, this);
     }
   }
-
+  
   /// Moves channel
   Future<Null> moveGuildChannel(String channelId, int newPosition) async {
     await this.client.http.send('PATCH', "/guilds/${this.id}/channels",
