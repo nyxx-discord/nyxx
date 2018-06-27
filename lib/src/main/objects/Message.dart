@@ -26,8 +26,9 @@ class Message {
   /// The timestamp of when the message was last edited, null if not edited.
   DateTime editedTimestamp;
 
+  // Message has to have [TextChannel] instance
   /// The message's channel.
-  dynamic channel;
+  TextChannel channel;
 
   /// The message's guild.
   Guild guild;
@@ -62,6 +63,9 @@ class Message {
   /// Whether or @everyone was mentioned in the message.
   bool mentionEveryone;
 
+  /// List of message reactions
+  List<Reaction> reactions;
+
   /// Emitted when the message is edited, if it is in the channel cache.
   Stream<MessageUpdateEvent> onUpdate;
 
@@ -90,6 +94,7 @@ class Message {
     this.channel._cacheMessage(this);
     this.channel.lastMessageID = this.id;
 
+    /// Safe cast to [GuildChannel]
     if (this.channel is GuildChannel) {
       this.guild = this.channel.guild;
       this.member = guild.members[this.author.id];
@@ -124,6 +129,14 @@ class Message {
       this.attachments[attachment.id] = attachment;
     });
     this.attachments;
+
+    this.reactions = new List<Reaction>();
+    if(raw['reactions'] != null) {
+      raw['reactions'].forEach((Map<String, dynamic> o) {
+        this.reactions.add(new Reaction._new(o));
+      });
+    }
+    this.reactions;
   }
 
   /// Returns a string representation of this object.
@@ -161,6 +174,31 @@ class Message {
         this.client, r.body.asJson() as Map<String, dynamic>);
   }
 
+  /// Add reaction to message. Emoji as ':emoji_name:'
+  Future<Null> createReaction(String emoji) async {
+    await this.client.http.send(
+      'PUT', "/channels/${this.channel.id}/messages/${this.id}/reactions/$emoji/@me");
+    return null;
+  }
+
+  Future<Null> deleteReaction(String emoji) async {
+    await this.client.http.send(
+      'DELETE', "/channels/${this.channel.id}/messages/${this.id}/reactions/$emoji/@me");
+    return null;
+  }
+
+  Future<Null> deleteUserReaction(String emoji, String userId) async {
+      await this.client.http.send(
+        'DELETE', "/channels/${this.channel.id}/messages/${this.id}/reactions/$emoji/$userId");
+      return null;
+  }
+
+  Future<Null> deleteAllReactions() async {
+    await this.client.http.send(
+        'DELETE', "/channels/${this.channel.id}/messages/${this.id}/reactions");
+    return null;
+  }
+
   /// Deletes the message.
   ///
   /// Throws an [Exception] if the HTTP request errored.
@@ -170,6 +208,18 @@ class Message {
         .client
         .http
         .send('DELETE', '/channels/${this.channel.id}/messages/${this.id}');
+    return null;
+  }
+
+  /// Pins [Message] in channel
+  Future<Null> pinMessage() async {
+    await this.client.http.send('PUT', "/channels/${channel.id}/pins/$id");
+    return null;
+  }
+
+  /// Unpins [Message] in channel
+  Future<Null> unpinMessage() async {
+    await this.client.http.send('DELETE', "/channels/${channel.id}/pins/$id");
     return null;
   }
 
