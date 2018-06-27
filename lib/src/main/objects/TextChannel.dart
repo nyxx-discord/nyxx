@@ -174,9 +174,8 @@ class TextChannel extends GuildChannel {
   }
 
   Future<Null> bulkRemoveMessages(List<String> messagesIds) async {
-    await this.client.http.send('POST', "/channels/$id/messages/bulk-delete", body: {
-      "messages": messagesIds
-    });
+    await this.client.http.send('POST', "/channels/$id/messages/bulk-delete",
+        body: {"messages": messagesIds});
 
     return null;
   }
@@ -205,7 +204,8 @@ class TextChannel extends GuildChannel {
 
   /// Returns all [Channel]s [Invite]s
   Future<Map<String, Invite>> getChannelInvites() async {
-    final HttpResponse r = await this.client.http.send('GET', "/channels/$id/invites");
+    final HttpResponse r =
+        await this.client.http.send('GET', "/channels/$id/invites");
 
     Map<String, Invite> invites = new Map();
     for (Map<String, dynamic> val in r.body.asJson()) {
@@ -216,7 +216,11 @@ class TextChannel extends GuildChannel {
   }
 
   /// Creates new [Invite] for [Channel] and returns it
-  Future<Invite> createInvite({int maxAge: 0, int maxUses: 0, bool temporary: false, bool unique: false}) async {
+  Future<Invite> createInvite(
+      {int maxAge: 0,
+      int maxUses: 0,
+      bool temporary: false,
+      bool unique: false}) async {
     Map<String, dynamic> params = new Map<String, dynamic>();
 
     params['max_age'] = maxAge;
@@ -224,13 +228,19 @@ class TextChannel extends GuildChannel {
     params['temporary'] = temporary;
     params['unique'] = unique;
 
-    final HttpResponse r = await this.client.http.send('POST', "/channels/$id/invites", body: params);
+    final HttpResponse r = await this
+        .client
+        .http
+        .send('POST', "/channels/$id/invites", body: params);
 
-    return new Invite._new(this.client, r.body.asJson() as Map<String, dynamic>);
+    return new Invite._new(
+        this.client, r.body.asJson() as Map<String, dynamic>);
   }
+
   /// Returns pinned [Message]s for [Channel]
   Future<Map<String, Message>> getPinnedMessages() async {
-    final HttpResponse r = await this.client.http.send('GET', "/channels/$id/pins");
+    final HttpResponse r =
+        await this.client.http.send('GET', "/channels/$id/pins");
 
     Map<String, Message> messages = new Map();
     for (Map<String, dynamic> val in r.body.asJson()) {

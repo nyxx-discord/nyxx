@@ -131,7 +131,7 @@ class Message {
     this.attachments;
 
     this.reactions = new List<Reaction>();
-    if(raw['reactions'] != null) {
+    if (raw['reactions'] != null) {
       raw['reactions'].forEach((Map<String, dynamic> o) {
         this.reactions.add(new Reaction._new(o));
       });
@@ -176,21 +176,21 @@ class Message {
 
   /// Add reaction to message. Emoji as ':emoji_name:'
   Future<Null> createReaction(String emoji) async {
-    await this.client.http.send(
-      'PUT', "/channels/${this.channel.id}/messages/${this.id}/reactions/$emoji/@me");
+    await this.client.http.send('PUT',
+        "/channels/${this.channel.id}/messages/${this.id}/reactions/$emoji/@me");
     return null;
   }
 
   Future<Null> deleteReaction(String emoji) async {
-    await this.client.http.send(
-      'DELETE', "/channels/${this.channel.id}/messages/${this.id}/reactions/$emoji/@me");
+    await this.client.http.send('DELETE',
+        "/channels/${this.channel.id}/messages/${this.id}/reactions/$emoji/@me");
     return null;
   }
 
   Future<Null> deleteUserReaction(String emoji, String userId) async {
-      await this.client.http.send(
-        'DELETE', "/channels/${this.channel.id}/messages/${this.id}/reactions/$emoji/$userId");
-      return null;
+    await this.client.http.send('DELETE',
+        "/channels/${this.channel.id}/messages/${this.id}/reactions/$emoji/$userId");
+    return null;
   }
 
   Future<Null> deleteAllReactions() async {
@@ -222,6 +222,4 @@ class Message {
     await this.client.http.send('DELETE', "/channels/${channel.id}/pins/$id");
     return null;
   }
-
-  
 }

@@ -25,7 +25,10 @@ abstract class Command {
 
   /// Basic constructor to create new instance of command.
   Command(this.name, this.help, this.usage,
-      [this.isAdmin = false, this.requiredRoles = null, this.cooldown = 0, this.isHidden = false]);
+      [this.isAdmin = false,
+      this.requiredRoles = null,
+      this.cooldown = 0,
+      this.isHidden = false]);
 
   /// Function which will be invoked when command triggers
   Future run(Message message);
