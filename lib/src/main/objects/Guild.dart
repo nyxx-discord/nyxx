@@ -151,6 +151,14 @@ class Guild {
     return this.name;
   }
 
+  /// Gets emoji based on Id
+  Future<Emoji> getEmoji(String emojiId) async {
+    HttpResponse r = await this.client.http
+        .send('GET', "/guilds/$id/emojis/$emojiId");
+
+    return new Emoji._new(this.client, r.body.asJson as Map<String, dynamic>, this);
+  }
+
   /// Prunes the guild, returns the amount of members pruned.
   Future<int> prune(int days) async {
     HttpResponse r = await this
