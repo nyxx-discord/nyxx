@@ -173,6 +173,14 @@ class TextChannel extends GuildChannel {
     this._typing?.cancel();
   }
 
+  Future<Null> bulkRemoveMessages(List<String> messagesIds) async {
+    await this.client.http.send('POST', "/channels/$id/messages/bulk-delete", body: {
+      "messages": messagesIds
+    });
+
+    return null;
+  }
+
   /// Gets all of the webhooks for this channel.
   Future<Map<String, Webhook>> getWebhooks() async {
     HttpResponse r =
@@ -193,5 +201,42 @@ class TextChannel extends GuildChannel {
         .send('POST', "/channels/$id/webhooks", body: {"name": name});
     return new Webhook._fromApi(
         this.client, r.body.asJson() as Map<String, dynamic>);
+  }
+
+  /// Returns all [Channel]s [Invite]s
+  Future<Map<String, Invite>> getChannelInvites() async {
+    final HttpResponse r = await this.client.http.send('GET', "/channels/$id/invites");
+
+    Map<String, Invite> invites = new Map();
+    for (Map<String, dynamic> val in r.body.asJson()) {
+      invites[val["code"]] = new Invite._new(this.client, val);
+    }
+
+    return invites;
+  }
+
+  /// Creates new [Invite] for [Channel] and returns it
+  Future<Invite> createInvite({int maxAge: 0, int maxUses: 0, bool temporary: false, bool unique: false}) async {
+    Map<String, dynamic> params = new Map<String, dynamic>();
+
+    params['max_age'] = maxAge;
+    params['maxUses'] = maxUses;
+    params['temporary'] = temporary;
+    params['unique'] = unique;
+
+    final HttpResponse r = await this.client.http.send('POST', "/channels/$id/invites", body: params);
+
+    return new Invite._new(this.client, r.body.asJson() as Map<String, dynamic>);
+  }
+  /// Returns pinned [Message]s for [Channel]
+  Future<Map<String, Message>> getPinnedMessages() async {
+    final HttpResponse r = await this.client.http.send('GET', "/channels/$id/pins");
+
+    Map<String, Message> messages = new Map();
+    for (Map<String, dynamic> val in r.body.asJson()) {
+      messages[val["id"]] = new Message._new(this.client, val);
+    }
+
+    return messages;
   }
 }
