@@ -211,13 +211,13 @@ class Message {
     return null;
   }
 
-  /// Pins [Message] in channel
+  /// Pins [Message] in current [Channel]
   Future<Null> pinMessage() async {
     await this.client.http.send('PUT', "/channels/${channel.id}/pins/$id");
     return null;
   }
 
-  /// Unpins [Message] in channel
+  /// Unpins [Message] in current [Channel]
   Future<Null> unpinMessage() async {
     await this.client.http.send('DELETE', "/channels/${channel.id}/pins/$id");
     return null;
