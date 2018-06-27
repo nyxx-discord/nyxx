@@ -65,6 +65,8 @@ class Guild {
   /// The guild's roles.
   Map<String, Role> roles;
 
+  Map<String, Emoji> emojis;
+  
   /// The shard that the guild is on.
   Shard shard;
 
@@ -85,6 +87,11 @@ class Guild {
       this.ownerID = raw['owner_id'];
       this.createdAt = Util.getDate(this.id);
 
+      this.emojis = new Map<String, Emoji>();
+      raw['emojis'].forEach((Map<String, dynamic> o) {
+        new Emoji._new(this.client, o, this);
+      });
+      
       this.roles = new Map<String, Role>();
       raw['roles'].forEach((Map<String, dynamic> o) {
         new Role._new(this.client, o, this);
@@ -166,8 +173,8 @@ class Guild {
   }
 
   /// Change guild owner
-  Future<Guild> changeOwner(String id) {
-    HttpResponse = r await this.client.http.send('PATCH', "/guilds/$id",
+  Future<Guild> changeOwner(String id) async {
+    HttpResponse r = await this.client.http.send('PATCH', "/guilds/$id",
         body: {
           "owner_id": id
         });
