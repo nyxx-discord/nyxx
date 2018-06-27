@@ -14,6 +14,7 @@ part 'src/main/commands/Command.dart';
 part 'src/main/commands/CooldownCache.dart';
 
 part 'src/main/objects/Emoji.dart';
+part 'src/main/objects/Reaction.dart';
 
 part 'src/main/internal/_Constants.dart';
 part 'src/main/internal/_EventController.dart';
