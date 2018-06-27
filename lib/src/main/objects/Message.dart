@@ -172,4 +172,6 @@ class Message {
         .send('DELETE', '/channels/${this.channel.id}/messages/${this.id}');
     return null;
   }
+
+  
 }

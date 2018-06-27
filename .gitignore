@@ -38,3 +38,4 @@ pubspec.lock
 /README.html
 /log.txt
 /nyxx.wiki/
+/test/private.dart
