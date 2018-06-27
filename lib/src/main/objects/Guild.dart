@@ -66,7 +66,7 @@ class Guild {
   Map<String, Role> roles;
 
   Map<String, Emoji> emojis;
-  
+
   /// The shard that the guild is on.
   Shard shard;
 
@@ -91,7 +91,7 @@ class Guild {
       raw['emojis'].forEach((Map<String, dynamic> o) {
         new Emoji._new(this.client, o, this);
       });
-      
+
       this.roles = new Map<String, Role>();
       raw['roles'].forEach((Map<String, dynamic> o) {
         new Role._new(this.client, o, this);
@@ -153,10 +153,11 @@ class Guild {
 
   /// Gets emoji based on Id
   Future<Emoji> getEmoji(String emojiId) async {
-    HttpResponse r = await this.client.http
-        .send('GET', "/guilds/$id/emojis/$emojiId");
+    HttpResponse r =
+        await this.client.http.send('GET', "/guilds/$id/emojis/$emojiId");
 
-    return new Emoji._new(this.client, r.body.asJson as Map<String, dynamic>, this);
+    return new Emoji._new(
+        this.client, r.body.asJson as Map<String, dynamic>, this);
   }
 
   /// Prunes the guild, returns the amount of members pruned.
@@ -182,15 +183,16 @@ class Guild {
 
   /// Change guild owner
   Future<Guild> changeOwner(String id) async {
-    HttpResponse r = await this.client.http.send('PATCH', "/guilds/$id",
-        body: {
-          "owner_id": id
-        });
-    final Guild g = new Guild._new(client, r.body.asJson() as Map<String, dynamic>);
+    HttpResponse r = await this
+        .client
+        .http
+        .send('PATCH', "/guilds/$id", body: {"owner_id": id});
+    final Guild g =
+        new Guild._new(client, r.body.asJson() as Map<String, dynamic>);
 
     return g;
   }
-  
+
   /// Leaves the guild.
   Future<Null> leave() async {
     await this.client.http.send('DELETE', "/users/@me/guilds/$id");
@@ -222,7 +224,7 @@ class Guild {
           client, r.body.asJson() as Map<String, dynamic>, this);
     }
   }
-  
+
   /// Moves channel
   Future<Null> moveGuildChannel(String channelId, int newPosition) async {
     await this.client.http.send('PATCH', "/guilds/${this.id}/channels",

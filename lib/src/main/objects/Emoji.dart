@@ -16,7 +16,7 @@ class Emoji {
 
   /// Name of emoji
   String name;
-  
+
   /// Roles this emoji is whitelisted to
   List<String> rolesIds;
 
@@ -39,8 +39,7 @@ class Emoji {
     this.managed = raw['managed'];
     this.animated = raw['animated'];
 
-    if(raw['roles'] != null)
-      this.rolesIds = raw['roles'] as List<String>;
+    if (raw['roles'] != null) this.rolesIds = raw['roles'] as List<String>;
 
     this.guild.emojis[this.id] = this;
   }
