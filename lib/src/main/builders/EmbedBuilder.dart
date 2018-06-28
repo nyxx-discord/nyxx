@@ -58,44 +58,32 @@ class EmbedBuilder {
   Map<String, dynamic> build() {
     Map<String, dynamic> tmp = new Map();
 
-    if(title != null)
-      tmp["title"] = title;
+    if (title != null) tmp["title"] = title;
 
-    if(type != null)
-      tmp["type"] = type;
+    if (type != null) tmp["type"] = type;
 
-    if(description != null)
-      tmp["description"] = description;
+    if (description != null) tmp["description"] = description;
 
-    if(url != null)
-      tmp["url"] = url;
+    if (url != null) tmp["url"] = url;
 
-    if(timestamp != null)
-      tmp["timestamp"] = timestamp.toIso8601String();
+    if (timestamp != null) tmp["timestamp"] = timestamp.toIso8601String();
 
-    if(color != null)
-      tmp["color"] = color;
+    if (color != null) tmp["color"] = color;
 
-    if(footer != null)
-      tmp["footer"] = footer.build();
+    if (footer != null) tmp["footer"] = footer.build();
 
-    if(imageUrl != null)
-      tmp["image"] = <String, dynamic> { "url": imageUrl };
+    if (imageUrl != null) tmp["image"] = <String, dynamic>{"url": imageUrl};
 
-    if(thumbnailUrl != null)
-      tmp["thumbnail"] = <String, dynamic> { "url": thumbnailUrl };
+    if (thumbnailUrl != null)
+      tmp["thumbnail"] = <String, dynamic>{"url": thumbnailUrl};
 
-    if(videoUrl != null)
-      tmp["video"] = <String, dynamic> { "url": videoUrl };
+    if (videoUrl != null) tmp["video"] = <String, dynamic>{"url": videoUrl};
 
-    if(provider != null)
-      tmp["provider"] = provider.build();
+    if (provider != null) tmp["provider"] = provider.build();
 
-    if(author != null)
-      tmp["author"] = author.build();
+    if (author != null) tmp["author"] = author.build();
 
-    if(_fields.length > 0)
-      tmp["fields"] = _fields;
+    if (_fields.length > 0) tmp["fields"] = _fields;
 
     return tmp;
   }
@@ -118,13 +106,11 @@ class EmbedFieldBuilder {
   Map<String, dynamic> build() {
     Map<String, dynamic> tmp = new Map();
 
-    if(name != null)
-      tmp["name"] = name;
+    if (name != null) tmp["name"] = name;
 
-    if(content != null)
-      tmp["value"] = content;
+    if (content != null) tmp["value"] = content;
 
-    if(inline != null)
+    if (inline != null)
       tmp["inline"] = inline;
     else
       tmp["inline"] = false;
@@ -144,11 +130,9 @@ class EmbedFooterBuilder {
   Map<String, dynamic> build() {
     Map<String, dynamic> tmp = new Map();
 
-    if (text != null)
-      tmp["text"] = text;
+    if (text != null) tmp["text"] = text;
 
-    if (iconUrl != null)
-      tmp["icon_url"] = iconUrl;
+    if (iconUrl != null) tmp["icon_url"] = iconUrl;
 
     return tmp;
   }
@@ -165,11 +149,9 @@ class EmbedProviderBuilder {
   Map<String, dynamic> build() {
     Map<String, dynamic> tmp = new Map();
 
-    if (name != null)
-      tmp["name"] = name;
+    if (name != null) tmp["name"] = name;
 
-    if (url != null)
-      tmp["url"] = url;
+    if (url != null) tmp["url"] = url;
 
     return tmp;
   }
@@ -189,14 +171,11 @@ class EmbedAuthorBuilder {
   Map<String, dynamic> build() {
     Map<String, dynamic> tmp = new Map();
 
-    if (name != null)
-      tmp["name"] = name;
+    if (name != null) tmp["name"] = name;
 
-    if (url != null)
-      tmp["url"] = url;
+    if (url != null) tmp["url"] = url;
 
-    if (iconUrl != null)
-      tmp["icon_url"] = iconUrl;
+    if (iconUrl != null) tmp["icon_url"] = iconUrl;
 
     return tmp;
   }

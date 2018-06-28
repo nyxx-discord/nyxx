@@ -2,7 +2,6 @@ part of discord;
 
 /// Single instance of Embed's field. Can contain null elements.
 class EmbedField {
-
   /// Field name
   String name;
 

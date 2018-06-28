@@ -57,8 +57,10 @@ class TextChannel extends GuildChannel {
       newContent = content;
     }
 
-    final HttpResponse r = await this.client.http.send(
-        'POST', '/channels/${this.id}/messages', body: <String, dynamic>{
+    final HttpResponse r = await this
+        .client
+        .http
+        .send('POST', '/channels/${this.id}/messages', body: <String, dynamic>{
       "content": newContent,
       "tts": tts,
       "nonce": nonce,
@@ -69,6 +71,7 @@ class TextChannel extends GuildChannel {
   }
 
   @deprecated
+
   /// Sends a message.
   ///
   /// Throws an [Exception] if the HTTP request errored.

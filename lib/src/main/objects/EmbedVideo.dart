@@ -1,7 +1,7 @@
 part of discord;
 
 /// Video attached to embed. Can contain null elements.
-class EmbedVideo  {
+class EmbedVideo {
   /// The embed video's URL.
   String url;
 
