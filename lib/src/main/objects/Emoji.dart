@@ -31,8 +31,6 @@ class Emoji {
 
   /// Creates full emoji object
   Emoji._new(this.client, this.raw, this.guild) {
-    print(this.raw);
-
     this.id = raw['id'];
     this.name = raw['name'];
     this.requireColons = raw['require_colons'];
