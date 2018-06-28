@@ -62,14 +62,13 @@ class TextChannel extends GuildChannel {
       "content": newContent,
       "tts": tts,
       "nonce": nonce,
-      "embed": embed.build()
+      "embed": embed != null ? embed.build() : ""
     });
     return new Message._new(
         this.client, r.body.asJson() as Map<String, dynamic>);
   }
 
   @deprecated
-
   /// Sends a message.
   ///
   /// Throws an [Exception] if the HTTP request errored.
