@@ -17,7 +17,7 @@ void configureDiscordForVM() {
 /// Configures the client to run in a browser.
 void configureDiscordForBrowser() {
   w_transport.globalTransportPlatform = browserTransportPlatform;
-  internals.operatingSystem = web.window.navigator.userAgent;
+  internals.operatingSystem = "generic web browser";
   internals.browser = true;
   internals.setup = true;
 }
