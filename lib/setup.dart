@@ -1,7 +1,6 @@
 library nyxx.setup;
 
 import 'dart:io' as vm;
-import 'dart:html' as web;
 import 'src/internals.dart' as internals;
 import 'package:w_transport/w_transport.dart' as w_transport;
 import 'package:w_transport/vm.dart' show vmTransportPlatform;
