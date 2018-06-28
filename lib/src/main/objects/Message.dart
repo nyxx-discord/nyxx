@@ -119,7 +119,7 @@ class Message {
     this.embeds = new Map<String, Embed>();
     raw['embeds'].forEach((Map<String, dynamic> o) {
       Embed embed = new Embed._new(this.client, o);
-      this.embeds[embed.url] = embed;
+      this.embeds[embed.title] = embed;
     });
     this.embeds;
 
