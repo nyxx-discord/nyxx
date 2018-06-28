@@ -5,8 +5,7 @@ import 'dart:io';
 
 void main() {
   setup.configureDiscordForVM();
-  nyxx.Client bot =
-      new nyxx.Client(Platform.environment['DISCORD_TOKEN']);
+  nyxx.Client bot = new nyxx.Client(Platform.environment['DISCORD_TOKEN']);
 
   bot.onReady.listen((nyxx.ReadyEvent e) {
     print("Ready!");

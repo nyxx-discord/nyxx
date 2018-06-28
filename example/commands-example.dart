@@ -6,8 +6,7 @@ import 'dart:io';
 
 void main() {
   setup.configureDiscordForVM();
-  nyxx.Client bot =
-      new nyxx.Client(Platform.environment['DISCORD_TOKEN']);
+  nyxx.Client bot = new nyxx.Client(Platform.environment['DISCORD_TOKEN']);
 
   var commands = new command.Commands('!', bot, ["302359032612651009"])
     ..addMany([new PongCommand(), new EchoCommand()]);
