@@ -21,7 +21,7 @@ class Embed {
   /// The embed's URL
   String url;
 
-  /// Timestamp of embed content 
+  /// Timestamp of embed content
   DateTime timestamp;
 
   /// Color of embed
@@ -54,7 +54,7 @@ class Embed {
     this.type = raw['type'];
     this.description = raw['description'];
 
-    if(raw['timestamp'] != null)
+    if (raw['timestamp'] != null)
       this.timestamp = DateTime.parse(raw['timestamp']);
 
     this.color = raw['color'];
@@ -66,16 +66,19 @@ class Embed {
       this.video = new EmbedVideo._new(raw['video'] as Map<String, dynamic>);
 
     if (raw.containsKey('image'))
-      this.image = new EmbedThumbnail._new(raw['image'] as Map<String, dynamic>);
+      this.image =
+          new EmbedThumbnail._new(raw['image'] as Map<String, dynamic>);
 
-    if(raw.containsKey('footer'))
+    if (raw.containsKey('footer'))
       this.footer = new EmbedFooter._new(raw['footer'] as Map<String, dynamic>);
 
     if (raw.containsKey('thumbnail'))
-      this.thumbnail = new EmbedThumbnail._new(raw['thumbnail'] as Map<String, dynamic>);
+      this.thumbnail =
+          new EmbedThumbnail._new(raw['thumbnail'] as Map<String, dynamic>);
 
     if (raw.containsKey('provider'))
-      this.provider = new EmbedProvider._new(raw['provider'] as Map<String, dynamic>);
+      this.provider =
+          new EmbedProvider._new(raw['provider'] as Map<String, dynamic>);
 
     fields = new Map();
     raw['fields'].forEach((Map<String, dynamic> o) {

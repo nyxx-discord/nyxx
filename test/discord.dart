@@ -36,8 +36,7 @@ void main() {
       m.channel.send(content: "Command '${m.content}' not found!");
     })
     ..cooldownEvent.listen((m) {
-      m.channel
-          .send(content: "Command is on cooldown!. Wait a few seconds!");
+      m.channel.send(content: "Command is on cooldown!. Wait a few seconds!");
     })
     ..ignoreBots = false;
 
@@ -48,7 +47,7 @@ void main() {
 
   discord.EmbedBuilder createTestEmbed() {
     return new discord.EmbedBuilder("Test title")
-        ..addField(name: "Test field", value: "Test value");
+      ..addField(name: "Test field", value: "Test value");
   }
 
   bot.onReady.listen((e) async {
@@ -78,7 +77,8 @@ void main() {
     await cc.delete();
 
     print("TESTING EMBEDS");
-    var e = await channel.send(content: "Testing embed!", embed: createTestEmbed());
+    var e =
+        await channel.send(content: "Testing embed!", embed: createTestEmbed());
     await e.delete();
   });
 
@@ -112,12 +112,14 @@ void main() {
     if (m.channel.id == "422285619952222208" &&
         m.author.id == bot.user.id &&
         m.content == "Testing embed!") {
-      if(m.embeds.length > 0) {
+      if (m.embeds.length > 0) {
         var embed = m.embeds.values.toList()[0];
-        if(embed.title == "Test title" && embed.fields.length > 0) {
+        if (embed.title == "Test title" && embed.fields.length > 0) {
           var field = embed.fields.values.toList()[0];
 
-          if(field.name == "Test field" && field.content == "Test value" && !field.inline) {
+          if (field.name == "Test field" &&
+              field.content == "Test value" &&
+              !field.inline) {
             await m.channel.send(content: "Tests completed successfully!");
             print("Nyxx tests completed successfully!");
             await bot.destroy();
