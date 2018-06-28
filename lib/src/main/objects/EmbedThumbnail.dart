@@ -2,9 +2,6 @@ part of discord;
 
 /// A message embed thumbnail.
 class EmbedThumbnail {
-  /// The [Client] object.
-  Client client;
-
   /// The raw object returned by the API
   Map<String, dynamic> raw;
 
@@ -20,7 +17,7 @@ class EmbedThumbnail {
   /// The embed thumbnal's width.
   int width;
 
-  EmbedThumbnail._new(this.client, this.raw) {
+  EmbedThumbnail._new(this.raw) {
     this.url = raw['url'];
     this.proxyUrl = raw['proxy_url'];
     this.height = raw['height'];
