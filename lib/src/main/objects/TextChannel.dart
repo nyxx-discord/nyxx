@@ -41,7 +41,7 @@ class TextChannel extends GuildChannel {
   ///     Channel.send(content: "My content!");
   Future<Message> send(
       {String content,
-      Map<dynamic, dynamic> embed,
+      EmbedBuilder embed,
       bool tts: false,
       String nonce,
       bool disableEveryone}) async {
@@ -62,7 +62,7 @@ class TextChannel extends GuildChannel {
       "content": newContent,
       "tts": tts,
       "nonce": nonce,
-      "embed": embed
+      "embed": embed.build()
     });
     return new Message._new(
         this.client, r.body.asJson() as Map<String, dynamic>);
@@ -76,7 +76,7 @@ class TextChannel extends GuildChannel {
   ///     Channel.sendMessage(content: "My content!");
   Future<Message> sendMessage(
       {String content,
-      Map<dynamic, dynamic> embed,
+      EmbedBuilder embed,
       bool tts: false,
       String nonce,
       bool disableEveryone}) async {
