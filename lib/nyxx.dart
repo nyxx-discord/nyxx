@@ -15,15 +15,15 @@ part 'src/internal/Util.dart';
 
 part 'src/Client.dart';
 
-part 'src/objects/Emoji.dart';
-part 'src/objects/Reaction.dart';
-
 part 'src/builders/EmbedBuilder.dart';
 
-part 'src/objects/EmbedField.dart';
-part 'src/objects/EmbedAuthor.dart';
-part 'src/objects/EmbedFooter.dart';
-part 'src/objects/EmbedVideo.dart';
+part 'src/objects/embed/EmbedField.dart';
+part 'src/objects/embed/EmbedAuthor.dart';
+part 'src/objects/embed/EmbedFooter.dart';
+part 'src/objects/embed/EmbedVideo.dart';
+part 'src/objects/embed/Embed.dart';
+part 'src/objects/embed/EmbedProvider.dart';
+part 'src/objects/embed/EmbedThumbnail.dart';
 
 part 'src/events/BeforeHttpRequestSendEvent.dart';
 part 'src/events/ChannelCreateEvent.dart';
@@ -53,33 +53,34 @@ part 'src/events/RoleDeleteEvent.dart';
 part 'src/events/RoleUpdateEvent.dart';
 part 'src/events/TypingEvent.dart';
 
-part 'src/objects/Attachment.dart';
-part 'src/objects/Channel.dart';
+part 'src/objects/message/Emoji.dart';
+part 'src/objects/message/Reaction.dart';
+part 'src/objects/message/Message.dart';
+part 'src/objects/message/Attachment.dart';
+
+part 'src/objects/channel/VoiceChannel.dart';
+part 'src/objects/channel/TextChannel.dart';
+part 'src/objects/channel/GuildChannel.dart';
+part 'src/objects/channel/GroupDMChannel.dart';
+part 'src/objects/channel/DMChannel.dart';
+part 'src/objects/channel/Channel.dart';
+
 part 'src/objects/ClientOAuth2Application.dart';
 part 'src/objects/ClientOptions.dart';
 part 'src/objects/ClientUser.dart';
-part 'src/objects/DMChannel.dart';
-part 'src/objects/Embed.dart';
-part 'src/objects/EmbedProvider.dart';
-part 'src/objects/EmbedThumbnail.dart';
 part 'src/objects/Game.dart';
-part 'src/objects/GroupDMChannel.dart';
 part 'src/objects/Guild.dart';
-part 'src/objects/GuildChannel.dart';
 part 'src/objects/Invite.dart';
 part 'src/objects/InviteChannel.dart';
 part 'src/objects/InviteGuild.dart';
 part 'src/objects/Member.dart';
-part 'src/objects/Message.dart';
 part 'src/objects/OAuth2Application.dart';
 part 'src/objects/OAuth2Guild.dart';
 part 'src/objects/OAuth2Info.dart';
 part 'src/objects/Permissions.dart';
 part 'src/objects/Role.dart';
 part 'src/objects/Shard.dart';
-part 'src/objects/TextChannel.dart';
 part 'src/objects/User.dart';
-part 'src/objects/VoiceChannel.dart';
 part 'src/objects/Webhook.dart';
 
 part 'src/errors/ClientNotReadyError.dart';
