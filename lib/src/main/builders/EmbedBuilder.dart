@@ -1,8 +1,8 @@
 part of discord;
 
-/// Builds up embed object
+/// Builds up embed object.
+/// All fields are optional except of [title]
 class EmbedBuilder {
-
   /// Embed title
   String title;
 
@@ -42,6 +42,7 @@ class EmbedBuilder {
   /// Embed custom fields;
   List<Map<String, dynamic>> _fields;
 
+  /// Bootstraper for [EmbedBuilder], takes title as required property
   EmbedBuilder(this.title) {
     _fields = new List();
   }
@@ -97,6 +98,7 @@ class EmbedBuilder {
   }
 }
 
+/// Builder for embed Field.
 class EmbedFieldBuilder {
   /// Field name/title
   String name;
@@ -107,6 +109,7 @@ class EmbedFieldBuilder {
   /// Whether or not this field should display inline
   bool inline;
 
+  /// Constructs new instance of Field
   EmbedFieldBuilder(this.name, this.content, this.inline);
 
   Map<String, dynamic> build() {
@@ -127,6 +130,7 @@ class EmbedFieldBuilder {
   }
 }
 
+/// Build new instance of Embed's footer
 class EmbedFooterBuilder {
   /// Fotter text
   String text;
@@ -147,6 +151,7 @@ class EmbedFooterBuilder {
   }
 }
 
+/// Builds new instance of provider
 class EmbedProviderBuilder {
   /// Name of provider
   String name;
@@ -167,6 +172,7 @@ class EmbedProviderBuilder {
   }
 }
 
+/// Build new instance of Author
 class EmbedAuthorBuilder {
   /// Author name
   String name;
