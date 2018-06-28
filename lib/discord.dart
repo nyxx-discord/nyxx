@@ -18,6 +18,11 @@ part 'src/main/objects/Reaction.dart';
 
 part 'src/main/builders/EmbedBuilder.dart';
 
+part 'src/main/objects/EmbedField.dart';
+part 'src/main/objects/EmbedAuthor.dart';
+part 'src/main/objects/EmbedFooter.dart';
+part 'src/main/objects/EmbedVideo.dart';
+
 part 'src/main/internal/_Constants.dart';
 part 'src/main/internal/_EventController.dart';
 part 'src/main/internal/_WS.dart';
