@@ -19,7 +19,7 @@ class EmbedBuilder {
   int color;
 
   /// Timestamp of embed content
-  int timestamp;
+  DateTime timestamp;
 
   /// Embed Footer
   EmbedFooterBuilder footer;
@@ -69,6 +69,9 @@ class EmbedBuilder {
 
     if(url != null)
       tmp["url"] = url;
+
+    if(timestamp != null)
+      tmp["timestamp"] = timestamp.toIso8601String();
 
     if(color != null)
       tmp["color"] = color;
