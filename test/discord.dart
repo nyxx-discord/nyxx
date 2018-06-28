@@ -3,7 +3,7 @@ import 'dart:async';
 
 import 'package:nyxx/nyxx.dart' as nyxx;
 import 'package:nyxx/commands.dart' as command;
-import 'package:nyxx/setup.dart' as setup;
+import 'package:nyxx/setup.wm.dart' as setup;
 
 class TestCommand extends command.Command {
   TestCommand() : super("test", "Checks if everything is running", "~~test");

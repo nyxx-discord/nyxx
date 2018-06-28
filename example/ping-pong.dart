@@ -1,5 +1,5 @@
 import 'package:nyxx/nyxx.dart' as nyxx;
-import 'package:nyxx/setup.dart' as setup;
+import 'package:nyxx/setup.wm.dart' as setup;
 
 import 'dart:io';
 
