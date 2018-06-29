@@ -1,35 +1,37 @@
 import 'dart:io';
 import 'dart:async';
 
-import 'package:nyxx/discord.dart' as discord;
-import 'package:nyxx/vm.dart' as discord;
+import 'package:nyxx/nyxx.dart' as nyxx;
+import 'package:nyxx/commands.dart' as command;
+import 'package:nyxx/setup.wm.dart' as setup;
 
-class TestCommand extends discord.Command {
+class TestCommand extends command.Command {
   TestCommand() : super("test", "Checks if everything is running", "~~test");
 
   @override
-  run(discord.Message message) async {
+  run(nyxx.Message message) async {
     await message.channel.sendMessage(content: "test is working correctly");
   }
 }
 
-class CooldownCommand extends discord.Command {
+class CooldownCommand extends command.Command {
   CooldownCommand()
-      : super("cooldown", "Checks if cooldown is working", "~~cooldown") {
+      : super("cooldown", "Checks if cooldown is working", "~~cooldown",
+            aliases: ["culdown"]) {
     cooldown = 10;
   }
 
   @override
-  run(discord.Message message) async {}
+  run(nyxx.Message message) async {}
 }
 
 void main() {
-  discord.configureDiscordForVM();
+  setup.configureDiscordForVM();
 
   var env = Platform.environment;
-  var bot = new discord.Client(env['DISCORD_TOKEN']);
+  var bot = new nyxx.Client(env['DISCORD_TOKEN']);
 
-  var commandsListener = new discord.Commands('~~', bot)
+  var commandsListener = new command.Commands('~~', bot)
     ..add(new TestCommand())
     ..add(new CooldownCommand())
     ..commandNotFoundEvent.listen((m) {
@@ -45,8 +47,8 @@ void main() {
     exit(1);
   });
 
-  discord.EmbedBuilder createTestEmbed() {
-    return new discord.EmbedBuilder("Test title")
+  nyxx.EmbedBuilder createTestEmbed() {
+    return new nyxx.EmbedBuilder("Test title")
       ..addField(name: "Test field", value: "Test value");
   }
 
@@ -70,9 +72,9 @@ void main() {
     var mmm = await channel.sendMessage(content: "~~notFound");
     await mmm.delete();
 
-    print("TESTING COMMAND - COOLDOWN");
-    var c = await channel.sendMessage(content: "~~cooldown");
-    var cc = await channel.sendMessage(content: "~~cooldown");
+    print("TESTING COMMAND - COOLDOWN | ALIASES");
+    var c = await channel.sendMessage(content: "~~culdown");
+    var cc = await channel.sendMessage(content: "~~culdown");
     await c.delete();
     await cc.delete();
 
