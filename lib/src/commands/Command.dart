@@ -23,12 +23,16 @@ abstract class Command {
   /// Indicated if command is hidden from help
   bool isHidden;
 
+  /// List of aliases for command
+  List<String> aliases;
+
   /// Basic constructor to create new instance of command.
   Command(this.name, this.help, this.usage,
-      [this.isAdmin = false,
+      {this.isAdmin = false,
       this.requiredRoles = null,
       this.cooldown = 0,
-      this.isHidden = false]);
+      this.isHidden = false,
+      this.aliases = null});
 
   /// Function which will be invoked when command triggers
   Future run(Message message);

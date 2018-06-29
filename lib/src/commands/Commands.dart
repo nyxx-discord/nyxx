@@ -79,8 +79,7 @@ class Commands {
     }
 
     // Search for matching command in registry. If registry contains multiple commands with identical name - run first one.
-    var commandCollection =
-        _commands.where((i) => e.message.content.startsWith((prefix + i.name)));
+    var commandCollection = _getCommand(e.message.content);
 
     // If there is no command - return
     if (commandCollection.isEmpty) {
@@ -132,6 +131,16 @@ class Commands {
         print("[INFO] Dispatched command successfully!");
         break;
     }
+  }
+
+  // Searches for command in registry.
+  // Splits up command and gets first word (command). Then searchies in command registry and command's aliases list
+  Iterable<Command> _getCommand(String msg) {
+    var command = msg.split(' ')[0].replaceFirst(prefix, "");
+
+    return _commands.where((i) =>
+        command == i.name ||
+        (i.aliases != null && i.aliases.contains(command)));
   }
 
   bool _isUserAdmin(String authorId) {
