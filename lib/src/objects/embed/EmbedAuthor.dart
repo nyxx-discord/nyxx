@@ -9,7 +9,7 @@ class EmbedAuthor {
   String url;
 
   /// Url to author's url
-  String icon_url;
+  String iconUrl;
 
   /// Proxied icon url
   String iconProxyUrl;
@@ -20,7 +20,7 @@ class EmbedAuthor {
   EmbedAuthor._new(this.raw) {
     this.name = raw['name'];
     this.url = raw['url'];
-    this.icon_url = raw['icon_url'];
+    this.iconUrl = raw['icon_url'];
     this.iconProxyUrl = raw['iconProxyUrl'];
   }
 }
