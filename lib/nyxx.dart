@@ -16,6 +16,10 @@ part 'src/internal/Util.dart';
 part 'src/Client.dart';
 
 part 'src/builders/EmbedBuilder.dart';
+part 'src/builders/EmbedAuthorBuilder.dart';
+part 'src/builders/EmbedFieldBuilder.dart';
+part 'src/builders/EmbedFooterBuilder.dart';
+part 'src/builders/EmbedProviderBuilder.dart';
 
 part 'src/objects/embed/EmbedField.dart';
 part 'src/objects/embed/EmbedAuthor.dart';
