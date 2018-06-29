@@ -56,6 +56,7 @@ class EmbedBuilder {
   void addFieldBuilder(EmbedFieldBuilder field) {
     _fields.add(field.build());
   }
+
   /// Builds object to Map() instance;
   Map<String, dynamic> build() {
     Map<String, dynamic> tmp = new Map();
