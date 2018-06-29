@@ -175,6 +175,7 @@ class TextChannel extends GuildChannel {
     this._typing?.cancel();
   }
 
+  /// Bulk removes many messages by its ids. [messagesIds] is list of messages ids to delete.
   Future<Null> bulkRemoveMessages(List<String> messagesIds) async {
     await this.client.http.send('POST', "/channels/$id/messages/bulk-delete",
         body: {"messages": messagesIds});

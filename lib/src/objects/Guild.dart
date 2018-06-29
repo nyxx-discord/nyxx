@@ -65,6 +65,7 @@ class Guild {
   /// The guild's roles.
   Map<String, Role> roles;
 
+  /// Guild custom emojis
   Map<String, Emoji> emojis;
 
   /// The shard that the guild is on.
