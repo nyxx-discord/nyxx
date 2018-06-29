@@ -16,7 +16,8 @@ class TestCommand extends command.Command {
 
 class CooldownCommand extends command.Command {
   CooldownCommand()
-      : super("cooldown", "Checks if cooldown is working", "~~cooldown") {
+      : super("cooldown", "Checks if cooldown is working", "~~cooldown",
+            aliases: ["culdown"]) {
     cooldown = 10;
   }
 
@@ -71,9 +72,9 @@ void main() {
     var mmm = await channel.sendMessage(content: "~~notFound");
     await mmm.delete();
 
-    print("TESTING COMMAND - COOLDOWN");
-    var c = await channel.sendMessage(content: "~~cooldown");
-    var cc = await channel.sendMessage(content: "~~cooldown");
+    print("TESTING COMMAND - COOLDOWN | ALIASES");
+    var c = await channel.sendMessage(content: "~~culdown");
+    var cc = await channel.sendMessage(content: "~~culdown");
     await c.delete();
     await cc.delete();
 
