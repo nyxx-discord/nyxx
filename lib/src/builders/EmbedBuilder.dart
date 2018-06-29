@@ -47,14 +47,16 @@ class EmbedBuilder {
     _fields = new List();
   }
 
+  /// Adds field to embed. [name] and [value] fields are required. Inline is set to false by default.
   void addField({String name, String value, bool inline = false}) {
     _fields.add(new EmbedFieldBuilder(name, value, inline).build());
   }
 
+  /// Added field to embed using [EmbedFieldBuilder]
   void addFieldBuilder(EmbedFieldBuilder field) {
     _fields.add(field.build());
   }
-
+  /// Builds object to Map() instance;
   Map<String, dynamic> build() {
     Map<String, dynamic> tmp = new Map();
 
@@ -84,98 +86,6 @@ class EmbedBuilder {
     if (author != null) tmp["author"] = author.build();
 
     if (_fields.length > 0) tmp["fields"] = _fields;
-
-    return tmp;
-  }
-}
-
-/// Builder for embed Field.
-class EmbedFieldBuilder {
-  /// Field name/title
-  String name;
-
-  /// Field content
-  String content;
-
-  /// Whether or not this field should display inline
-  bool inline;
-
-  /// Constructs new instance of Field
-  EmbedFieldBuilder(this.name, this.content, this.inline);
-
-  Map<String, dynamic> build() {
-    Map<String, dynamic> tmp = new Map();
-
-    if (name != null) tmp["name"] = name;
-
-    if (content != null) tmp["value"] = content;
-
-    if (inline != null)
-      tmp["inline"] = inline;
-    else
-      tmp["inline"] = false;
-
-    return tmp;
-  }
-}
-
-/// Build new instance of Embed's footer
-class EmbedFooterBuilder {
-  /// Fotter text
-  String text;
-
-  /// Url of footer icon. Supports only http(s) for now
-  String iconUrl;
-
-  Map<String, dynamic> build() {
-    Map<String, dynamic> tmp = new Map();
-
-    if (text != null) tmp["text"] = text;
-
-    if (iconUrl != null) tmp["icon_url"] = iconUrl;
-
-    return tmp;
-  }
-}
-
-/// Builds new instance of provider
-class EmbedProviderBuilder {
-  /// Name of provider
-  String name;
-
-  /// Url of provider
-  String url;
-
-  Map<String, dynamic> build() {
-    Map<String, dynamic> tmp = new Map();
-
-    if (name != null) tmp["name"] = name;
-
-    if (url != null) tmp["url"] = url;
-
-    return tmp;
-  }
-}
-
-/// Build new instance of Author
-class EmbedAuthorBuilder {
-  /// Author name
-  String name;
-
-  /// Author url
-  String url;
-
-  /// Author icon url
-  String iconUrl;
-
-  Map<String, dynamic> build() {
-    Map<String, dynamic> tmp = new Map();
-
-    if (name != null) tmp["name"] = name;
-
-    if (url != null) tmp["url"] = url;
-
-    if (iconUrl != null) tmp["icon_url"] = iconUrl;
 
     return tmp;
   }
