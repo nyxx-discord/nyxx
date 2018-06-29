@@ -39,3 +39,4 @@ pubspec.lock
 /log.txt
 /nyxx.wiki/
 /test/private.dart
+/publish_docs.sh
