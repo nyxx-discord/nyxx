@@ -3,7 +3,7 @@ part of nyxx;
 /// Sent when a user starts typing.
 class TypingEvent {
   /// The channel that the user is typing in.
-  GuildChannel channel;
+  Channel channel;
 
   /// The user that is typing.
   User user;
