@@ -1,5 +1,3 @@
-library nyxx.setup;
-
 import 'dart:html';
 import 'src/internals.dart' as internals;
 import 'package:w_transport/w_transport.dart' as w_transport;
