@@ -1,8 +1,7 @@
 part of nyxx;
 
-/// Provides basic abstraction for sending messages. 
+/// Provides basic abstraction for sending messages.
 abstract class MessageChannel {
-
   /// Sends new message to channel
   Future<Message> send(
       {String content,

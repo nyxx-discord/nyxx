@@ -22,8 +22,7 @@ class PongCommand extends command.Command {
 }
 
 class EchoCommand extends command.Command {
-  EchoCommand()
-      : super("echo", "Echoes bot message!", "!echo <message>");
+  EchoCommand() : super("echo", "Echoes bot message!", "!echo <message>");
 
   @override
   run(nyxx.Message message) async {
@@ -31,10 +30,10 @@ class EchoCommand extends command.Command {
   }
 }
 
-
 class AliasCommand extends command.Command {
   AliasCommand()
-  : super("alias", "Example of aliases", "!alias or !aaa", aliases: ["aaa"]);
+      : super("alias", "Example of aliases", "!alias or !aaa",
+            aliases: ["aaa"]);
 
   @override
   run(nyxx.Message message) async {
