@@ -1,7 +1,7 @@
 part of nyxx;
 
 /// A group DM channel.
-class GroupDMChannel extends Channel {
+class GroupDMChannel extends Channel implements MessageChannel {
   Timer _typing;
 
   /// The ID for the last message in the channel.
@@ -40,9 +40,10 @@ class GroupDMChannel extends Channel {
   ///
   /// Throws an [Exception] if the HTTP request errored.
   ///     Channel.send(content: "My content!");
+  @override
   Future<Message> send(
       {String content,
-      Map<dynamic, dynamic> embed,
+      EmbedBuilder embed,
       bool tts: false,
       String nonce,
       bool disableEveryone}) async {
@@ -63,7 +64,7 @@ class GroupDMChannel extends Channel {
       "content": newContent,
       "tts": tts,
       "nonce": nonce,
-      "embed": embed
+      "embed": embed.build()
     });
     return new Message._new(
         this.client, r.body.asJson() as Map<String, dynamic>);
