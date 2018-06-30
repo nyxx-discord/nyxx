@@ -1,7 +1,7 @@
 part of nyxx;
 
 /// A private channel.
-class DMChannel extends Channel implements MessageChannel {
+class DMChannel extends Channel {
   Timer _typing;
 
   /// The ID for the last message in the channel.

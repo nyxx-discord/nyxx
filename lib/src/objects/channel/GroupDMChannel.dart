@@ -1,7 +1,7 @@
 part of nyxx;
 
 /// A group DM channel.
-class GroupDMChannel extends Channel implements MessageChannel {
+class GroupDMChannel extends Channel {
   Timer _typing;
 
   /// The ID for the last message in the channel.
