@@ -26,9 +26,9 @@ class Message {
   /// The timestamp of when the message was last edited, null if not edited.
   DateTime editedTimestamp;
 
-  /// The message's channel. Due many possible channel types This is instance of [MessageChannel] interface
-  /// which has only `send()` signature. If you want future informations about Channel cast it.
-  MessageChannel channel;
+  // For now it is dynamic - have to fix this
+  /// Channel in which message was sent
+  dynamic channel;
 
   /// The message's guild.
   Guild guild;
