@@ -1,7 +1,7 @@
 part of nyxx;
 
 /// A text channel.
-class TextChannel extends GuildChannel {
+class TextChannel extends GuildChannel implements MessageChannel {
   Timer _typing;
 
   /// The channel's topic.
@@ -39,6 +39,7 @@ class TextChannel extends GuildChannel {
   ///
   /// Throws an [Exception] if the HTTP request errored.
   ///     Channel.send(content: "My content!");
+  @override
   Future<Message> send(
       {String content,
       EmbedBuilder embed,
