@@ -40,3 +40,4 @@ pubspec.lock
 /nyxx.wiki/
 /test/private.dart
 /publish_docs.sh
+/test/mirrors.dart
