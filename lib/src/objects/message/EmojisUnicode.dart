@@ -921,12 +921,3 @@ class EmojisUnicode {
   static final UnicodeEmoji registered = new UnicodeEmoji._new("00ae", ":registered:");
   static final UnicodeEmoji tm = new UnicodeEmoji._new("2122", ":tm:");
 }
-
-class UnicodeEmoji extends Emoji {
-  String code;
-
-  UnicodeEmoji._new(this.code, String name) : super(name);
-  UnicodeEmoji._partial(this.code) : super("");
-  
-  String encode() => new String.fromCharCode(int.parse(code, radix: 16)); 
-}

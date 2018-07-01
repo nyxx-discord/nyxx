@@ -50,4 +50,7 @@ class GuildEmoji extends Emoji {
 
   @override
   String encode() => "$name:$id";
+
+  /// Returns encoded string ready to send via message.
+  String toString() => encode();
 }
