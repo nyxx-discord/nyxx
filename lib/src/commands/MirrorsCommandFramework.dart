@@ -9,6 +9,26 @@ class MirrorsCommandFramework extends Commands {
     return null;
   }
 
+  @override
+  /// Creates help String based on registered commands metadata.
+  String createHelp(String requestedUserId) {
+    var buffer = new StringBuffer();
+    
+    buffer.writeln("**Available commands:**");
+
+    _commands.forEach((item) {
+      if (!item.isHidden) if (item.isAdmin && _isUserAdmin(requestedUserId)) {
+          buffer.writeln("* ${item.name} - ${item.help} **ADMIN** ");
+          buffer.writeln("\t Usage: ${item.usage}");
+        } else if (!item.isAdmin) {
+          buffer.writeln("* ${item.name} - ${item.help}");
+          buffer.writeln("\t Usage: ${item.usage}");
+        }
+    });
+
+    return buffer.toString();
+  }
+  
   // Searches for command in registry.
   // Splits up command and gets first word (command). Then searchies in command registry and command's aliases list
   Iterable<Command> _getCommand(String msg) {

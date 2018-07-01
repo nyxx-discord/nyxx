@@ -69,12 +69,12 @@ abstract class Commands {
     // Match help specially to shadow user defined help commands.
     if (e.message.content.startsWith((prefix + 'help'))) {
       if (helpDirect) {
-        e.message.author.send(content: _createHelp(e.message.author.id));
+        e.message.author.send(content: createHelp(e.message.author.id));
         return;
       }
 
       await e.message.channel
-          .sendMessage(content: _createHelp(e.message.author.id));
+          .sendMessage(content: createHelp(e.message.author.id));
       return;
     }
 
@@ -150,23 +150,7 @@ abstract class Commands {
   }
 
   /// Creates help String based on registered commands metadata.
-  String _createHelp(String requestedUserId) {
-    var buffer = new StringBuffer();
-
-    buffer.writeln("**Available commands:**");
-
-    _commands.forEach((item) {
-      if (!item.isHidden) if (item.isAdmin && _isUserAdmin(requestedUserId)) {
-        buffer.writeln("* ${item.name} - ${item.help} **ADMIN** ");
-        buffer.writeln("\t Usage: ${item.usage}");
-      } else if (!item.isAdmin) {
-        buffer.writeln("* ${item.name} - ${item.help}");
-        buffer.writeln("\t Usage: ${item.usage}");
-      }
-    });
-
-    return buffer.toString();
-  }
+  String createHelp(String requestedUserId);
 
   /// Register new [Command] object.
   void add(Command command) {
