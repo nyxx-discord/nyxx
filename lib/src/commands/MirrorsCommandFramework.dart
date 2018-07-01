@@ -102,13 +102,13 @@ class MirrorsCommandFramework extends Commands {
     }
 
     methods.forEach((k, v) {
-      if(v is MethodMirror) {
-        if(v.simpleName == new Symbol(subcommand))
+      if(v is MethodMirror) {        
+        var meta = getAnnotation(v, Subcommand) as Subcommand;
+
+        if(meta != null && meta.cmd == subcommand)
           matched = v;
       }
     });
-
-    print(matched);
     
     if(matched == null) {
       await command.run(msg);
@@ -119,15 +119,21 @@ class MirrorsCommandFramework extends Commands {
     return null;
   }
   
-  T _getAnnotation<T>(DeclarationMirror declaration) {
+  Object getAnnotation(DeclarationMirror declaration, Type annotation) {
     for (var instance in declaration.metadata) {
       if (instance.hasReflectee) {
         var reflectee = instance.reflectee;
-        if (reflectee.runtimeType == T) {
+        if (reflectee.runtimeType == annotation) {
           return reflectee;
         }
       }
     }
     return null;
   }
+}
+
+class Subcommand {
+  final String cmd;
+
+  const Subcommand(this.cmd);
 }
