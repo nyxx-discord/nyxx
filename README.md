@@ -16,23 +16,27 @@ Fork of [Hackzzila's](https://github.com/Hackzzila) [nyx](https://github.com/Hac
 ### Features
 
 - *Commands framework* <br>
-  Faster way of creating commands for bot. You only have to implement one class, and initialize framework. Everything is done automatically. 
+  Faster way of creating commands for bot. You just  have to implement one class, and initialize framework. Everything is done automatically. 
 - *Cross Platform* <br>
-  nyx works on the command line, browser, mobile, and can be transpiled to JavaScript.
+  Nyxx works on the command line, browser, mobile, and can be transpiled to JavaScript.
 - *Fine Control* <br>
-  nyx allows you to control every outgoing HTTP request or websocket messages.
+  Nyxx allows you to control every outgoing HTTP request or websocket messages.
 - *Internal Sharding* <br>
-  nyx(Nyxx) automatically spawns shards for your bot, but you can override this and spawn a custom number of shards. Internal sharding means that all of your bots servers are managed in one script, no need for communication between shards.
+  Nyxx automatically spawns shards for your bot, but you can override this and spawn a custom number of shards. Internal sharding means that all of your bots servers are managed in one script, no need for communication between shards.
+- *Complete* <br>
+  Nyxx support nearly all DiscordAPI endpoints.
 
 ## Documentation and examples
 
 #### [Dartdocs](https://www.dartdocs.org/documentation/nyxx/latest/)
+Latest docs for newest release.
 
-Dartdocs of most recent version of library. It follows `https://pub.dartlang.org/documentation/nyxx/{library-verison}/` to get latest docs version.
+#### [Dev docs](https://l7ssha.pl/nyxx)
+My website has docs for latests commits - You can read about incoming changes
 
 #### [Wiki](https://github.com/l7ssha/nyxx/wiki)
+Wiki docs are designed to match latest release.
 
-Wiki privides examples and descriptions.
 
 ## Roadmap
  - Better dartdocs documentation
