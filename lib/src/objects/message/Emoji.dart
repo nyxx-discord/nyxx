@@ -4,7 +4,7 @@ part of nyxx;
 abstract class Emoji {
   /// Emojis name.
   String name;
-  
+
   Emoji(this.name);
 
   String encode();
