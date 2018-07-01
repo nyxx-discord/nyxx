@@ -151,7 +151,7 @@ class Message {
   ///     Message.edit("My edited content!");
   Future<Message> edit(
       {String content,
-      Map<dynamic, dynamic> embed,
+      EmbedBuilder embed,
       bool tts: false,
       String nonce,
       bool disableEveryone}) async {
@@ -169,29 +169,31 @@ class Message {
 
     final HttpResponse r = await this.client.http.send(
         'PATCH', '/channels/${this.channel.id}/messages/${this.id}',
-        body: <String, dynamic>{"content": newContent, "embed": embed});
+        body: <String, dynamic>{"content": newContent, "embed": embed.build()});
     return new Message._new(
         this.client, r.body.asJson() as Map<String, dynamic>);
   }
 
-  /// Add reaction to message. Emoji as ':emoji_name:'
-  Future<Null> createReaction(String emoji) async {
+  /// Add reaction to message.
+  Future<Null> createReaction(Emoji emoji) async {
+    print(emoji.encode());
+    
     await this.client.http.send('PUT',
-        "/channels/${this.channel.id}/messages/${this.id}/reactions/$emoji/@me");
+        "/channels/${this.channel.id}/messages/${this.id}/reactions/${emoji.encode()}/@me");
     return null;
   }
-
+  
   /// Deletes reaction of bot. Emoji as ':emoji_name:'
-  Future<Null> deleteReaction(String emoji) async {
+  Future<Null> deleteReaction(Emoji emoji) async {
     await this.client.http.send('DELETE',
-        "/channels/${this.channel.id}/messages/${this.id}/reactions/$emoji/@me");
+        "/channels/${this.channel.id}/messages/${this.id}/reactions/${emoji.encode()}/@me");
     return null;
   }
-
-  /// Deletes reaction of given user. Emoji as ':emoji_name:'
-  Future<Null> deleteUserReaction(String emoji, String userId) async {
+  
+  /// Deletes reaction of given user.
+  Future<Null> deleteUserReaction(Emoji emoji, String userId) async {
     await this.client.http.send('DELETE',
-        "/channels/${this.channel.id}/messages/${this.id}/reactions/$emoji/$userId");
+        "/channels/${this.channel.id}/messages/${this.id}/reactions/${emoji.encode()}/$userId");
     return null;
   }
 
