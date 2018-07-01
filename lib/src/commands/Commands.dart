@@ -61,7 +61,7 @@ abstract class Commands {
 
     client.onReady.listen((ReadyEvent e) => print("[INFO] Bot started!"));
   }
-  
+
   /// Dispatches onMessage event to framework.
   Future _dispatch(MessageEvent e) async {
     if (!e.message.content.startsWith(prefix)) return;
@@ -133,6 +133,7 @@ abstract class Commands {
     }
   }
 
+  /// Executes command. Left abstract to implement by subclasess wich provides different context.
   Future<Null> executeCommand(Message msg, Command matchedCommand);
 
   // Searches for command in registry.
@@ -144,7 +145,7 @@ abstract class Commands {
         command == i.name ||
         (i.aliases != null && i.aliases.contains(command)));
   }
-  
+
   bool _isUserAdmin(String authorId) {
     return (_admins != null && _admins.any((i) => i == authorId));
   }
