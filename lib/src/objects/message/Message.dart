@@ -158,7 +158,7 @@ class Message {
     String newContent;
     if (content != null &&
         (disableEveryone == true ||
-            (disableEveryone == null &&
+            (disableEveryone == null &&72
                 this.client._options.disableEveryone))) {
       newContent = content
           .replaceAll("@everyone", "@\u200Beveryone")
@@ -169,7 +169,7 @@ class Message {
 
     final HttpResponse r = await this.client.http.send(
         'PATCH', '/channels/${this.channel.id}/messages/${this.id}',
-        body: <String, dynamic>{"content": newContent, "embed": embed.build()});
+        body: <String, dynamic>{"content": newContent, "embed": embed != null ? embed.build() : ""});
     return new Message._new(
         this.client, r.body.asJson() as Map<String, dynamic>);
   }
