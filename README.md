@@ -1,8 +1,17 @@
-# nyxx [![Build Status](https://travis-ci.org/l7ssha/nyxx.svg?branch=master)](https://travis-ci.org/l7ssha/nyxx) [![Pub](https://img.shields.io/pub/v/nyxx.svg)](https://pub.dartlang.org/packages/nyxx)
+<div align="center">
+<br />
+<p> <img width="600" src="https://l7ssha.pl/nyxx0.png" />
+<br />
 
-Simple, robust framework for creating discord bots for Dart.
+[![Build Status](https://travis-ci.org/l7ssha/nyxx.svg?branch=master)](https://travis-ci.org/l7ssha/nyxx)
+[![Pub](https://img.shields.io/pub/v/nyxx.svg)](https://pub.dartlang.org/packages/nyxx)
 
+Simple, robust framework for creating discord bots for Dart. <br />
 Fork of [Hackzzila's](https://github.com/Hackzzila) [nyx](https://github.com/Hackzzila/nyx) - extended with new functionality, few bug fixes, applied pending pull requests.
+
+<hr />
+
+</div>
 
 ### Features
 
