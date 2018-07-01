@@ -8,8 +8,9 @@ void main() {
   setup.configureDiscordForVM();
   nyxx.Client bot = new nyxx.Client(Platform.environment['DISCORD_TOKEN']);
 
-  var commands = new command.InstanceCommandFramework('!', bot, ["302359032612651009"])
-    ..addMany([new PongCommand(), new EchoCommand(), new AliasCommand()]);
+  var commands =
+      new command.InstanceCommandFramework('!', bot, ["302359032612651009"])
+        ..addMany([new PongCommand(), new EchoCommand(), new AliasCommand()]);
 }
 
 class PongCommand extends command.Command {
