@@ -177,19 +177,19 @@ class Message {
   /// Add reaction to message.
   Future<Null> createReaction(Emoji emoji) async {
     print(emoji.encode());
-    
+
     await this.client.http.send('PUT',
         "/channels/${this.channel.id}/messages/${this.id}/reactions/${emoji.encode()}/@me");
     return null;
   }
-  
+
   /// Deletes reaction of bot. Emoji as ':emoji_name:'
   Future<Null> deleteReaction(Emoji emoji) async {
     await this.client.http.send('DELETE',
         "/channels/${this.channel.id}/messages/${this.id}/reactions/${emoji.encode()}/@me");
     return null;
   }
-  
+
   /// Deletes reaction of given user.
   Future<Null> deleteUserReaction(Emoji emoji, String userId) async {
     await this.client.http.send('DELETE',
