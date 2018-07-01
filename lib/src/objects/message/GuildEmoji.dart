@@ -43,7 +43,7 @@ class GuildEmoji extends Emoji {
   }
 
   /// Creates partial object - only [id] and [name]
-  GuildEmoji._partial(this.raw) {
+  GuildEmoji._partial(this.raw) : super("") {
     this.id = raw['id'];
     this.name = raw['name'];
   }
