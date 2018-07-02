@@ -3,6 +3,7 @@ library nyxx;
 import 'dart:async';
 import 'dart:convert';
 import 'dart:collection';
+import 'dart:io';
 import 'src/internals.dart' as internals;
 import 'package:http_parser/http_parser.dart' as http_parser;
 import 'package:w_transport/w_transport.dart' as w_transport;
