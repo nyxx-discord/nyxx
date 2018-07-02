@@ -56,4 +56,14 @@ class Snowflake {
   }
 
   String toString() => id;
+
+  bool operator == (other) {
+    if(other is Snowflake)
+      return other.id == id;
+
+    if(other is String)
+      return other == id;
+
+    return false;
+  }
 }
