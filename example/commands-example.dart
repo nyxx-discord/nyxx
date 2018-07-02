@@ -14,7 +14,11 @@ void main() {
 }
 
 class PongCommand extends command.Command {
-  PongCommand() : super("ping", "Checks if bot is connected!", "!ping");
+  PongCommand() {
+    this.name = "ping";
+    this.help = "Checks if bot is connected!";
+    this.usage = "!ping";
+  }
 
   @override
   run(nyxx.Message message) async {
@@ -23,7 +27,11 @@ class PongCommand extends command.Command {
 }
 
 class EchoCommand extends command.Command {
-  EchoCommand() : super("echo", "Echoes bot message!", "!echo <message>");
+  EchoCommand() {
+    this.name = "echo";
+    this.help = "Echoes bot message!";
+    this.usage = "!echo <message>";
+  }
 
   @override
   run(nyxx.Message message) async {
@@ -32,9 +40,12 @@ class EchoCommand extends command.Command {
 }
 
 class AliasCommand extends command.Command {
-  AliasCommand()
-      : super("alias", "Example of aliases", "!alias or !aaa",
-            aliases: ["aaa"]);
+  AliasCommand() {
+    this.name = "alias";
+    this.help = "Example of aliases";
+    this.usage = "!alias or !aaa";
+    this.aliases =  ["aaa"];
+  }
 
   @override
   run(nyxx.Message message) async {
