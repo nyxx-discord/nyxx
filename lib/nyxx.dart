@@ -14,6 +14,7 @@ part 'src/internal/Http.dart';
 part 'src/internal/Util.dart';
 
 part 'src/Client.dart';
+part 'src/objects/Snowflake.dart';
 
 part 'src/builders/EmbedBuilder.dart';
 part 'src/builders/EmbedAuthorBuilder.dart';
