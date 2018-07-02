@@ -32,6 +32,9 @@ abstract class Command {
   MessageEvent context;
 
   Future<MessageEvent> awaitFor({String prefix: ""}) async {
-    return await context.message.client.onMessage.firstWhere((i) => i.message.content.startsWith(prefix)).timeout(const Duration(seconds:5), onTimeout: () => print("Timed out"));
+    return await context.message.client.onMessage
+        .firstWhere((i) => i.message.content.startsWith(prefix))
+        .timeout(const Duration(seconds: 5),
+            onTimeout: () => print("Timed out"));
   }
 }

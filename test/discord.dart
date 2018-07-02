@@ -8,13 +8,14 @@ import 'package:nyxx/setup.wm.dart' as setup;
 class TestCommand extends command.Command {
   TestCommand() {
     this.name = "test";
-    this.help= "Checks if everything is running";
+    this.help = "Checks if everything is running";
     this.usage = "~~test";
   }
 
   @override
-  run(nyxx.Message message) async {
-    await message.channel.sendMessage(content: "test is working correctly");
+  run() async {
+    await context.message.channel
+        .sendMessage(content: "test is working correctly");
   }
 }
 
@@ -24,8 +25,7 @@ class CooldownCommand extends command.Command {
     this.help = "Checks if cooldown is working";
     this.usage = "~~cooldown";
     this.aliases = ["culdown"];
-  }
-    cooldown = 10;
+    this.cooldown = 10;
   }
 
   @override
