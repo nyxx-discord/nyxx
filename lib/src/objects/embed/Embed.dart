@@ -49,10 +49,13 @@ class Embed {
   Map<String, EmbedField> fields;
 
   Embed._new(this.client, this.raw) {
-    this.title = raw['title'];
-    this.url = raw['url'];
-    this.type = raw['type'];
-    this.description = raw['description'];
+    if (raw['title'] != null) this.title = raw['title'];
+
+    if (raw['url'] != null) this.url = raw['url'];
+
+    if (raw['type'] != null) this.type = raw['type'];
+
+    if (raw['description'] != null) this.description = raw['description'];
 
     if (raw['timestamp'] != null)
       this.timestamp = DateTime.parse(raw['timestamp']);
@@ -80,10 +83,12 @@ class Embed {
       this.provider =
           new EmbedProvider._new(raw['provider'] as Map<String, dynamic>);
 
-    fields = new Map();
-    raw['fields'].forEach((Map<String, dynamic> o) {
-      new EmbedField._new(o, this);
-    });
+    if (raw['fields'] != null) {
+      fields = new Map();
+      raw['fields'].forEach((Map<String, dynamic> o) {
+        new EmbedField._new(o, this);
+      });
+    }
   }
 
   /// Returns a string representation of this object.
