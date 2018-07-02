@@ -91,10 +91,10 @@ abstract class Commands {
     var matchedCommand = commandCollection.first;
 
     print(matchedCommand.name);
-    
+
     // Inject context into command;
     matchedCommand.context = e;
-    
+
     var executionCode = -1;
 
     // Check for admin command and if user is admin

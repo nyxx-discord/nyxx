@@ -21,7 +21,7 @@ class PongCommand extends command.Command {
   }
 
   @override
-  run(nyxx.Message message) async {
+  run() async {
     await message.channel.sendMessage(content: "Pong!");
   }
 }
@@ -34,7 +34,7 @@ class EchoCommand extends command.Command {
   }
 
   @override
-  run(nyxx.Message message) async {
+  run() async {
     await message.channel.sendMessage(content: message.content);
   }
 }
@@ -44,11 +44,11 @@ class AliasCommand extends command.Command {
     this.name = "alias";
     this.help = "Example of aliases";
     this.usage = "!alias or !aaa";
-    this.aliases =  ["aaa"];
+    this.aliases = ["aaa"];
   }
 
   @override
-  run(nyxx.Message message) async {
+  run() async {
     await message.channel.sendMessage(content: message.content);
   }
 }
