@@ -111,11 +111,12 @@ class Guild {
         });
 
         raw['channels'].forEach((Map<String, dynamic> o) {
-          if (o['type'] == 0) {
+          if (o['type'] == 0)
             new TextChannel._new(client, o, this);
-          } else {
+          else if (o['type'] == 2)
             new VoiceChannel._new(client, o, this);
-          }
+          else
+            new GuildChannel._new(client, o, this, "4");
         });
 
         raw['presences'].forEach((Map<String, dynamic> o) {
@@ -140,7 +141,7 @@ class Guild {
 
   /// The guild's icon, represented as URL.
   String iconURL({String format: 'webp', int size: 128}) {
-    if (this.icon == null)
+    if (this.icon != null)
       return 'https://cdn.${_Constants.host}/icons/${this.id}/${this.icon}.$format?size=$size';
 
     return null;
@@ -152,12 +153,12 @@ class Guild {
     return this.name;
   }
 
-  /// Gets emoji based on Id
+  /// Gets Guild Emoji based on Id
   Future<Emoji> getEmoji(String emojiId) async {
     HttpResponse r =
         await this.client.http.send('GET', "/guilds/$id/emojis/$emojiId");
 
-    return new Emoji._new(
+    return new GuildEmoji._new(
         this.client, r.body.asJson as Map<String, dynamic>, this);
   }
 
@@ -188,10 +189,8 @@ class Guild {
         .client
         .http
         .send('PATCH', "/guilds/$id", body: {"owner_id": id});
-    final Guild g =
-        new Guild._new(client, r.body.asJson() as Map<String, dynamic>);
 
-    return g;
+    return new Guild._new(client, r.body.asJson() as Map<String, dynamic>);
   }
 
   /// Leaves the guild.
