@@ -152,7 +152,7 @@ class Guild {
   String toString() {
     return this.name;
   }
-  
+
   /// Gets Guild Emoji based on Id
   Future<Emoji> getEmoji(String emojiId) async {
     HttpResponse r =
