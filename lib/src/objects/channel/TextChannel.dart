@@ -45,7 +45,8 @@ class TextChannel extends GuildChannel {
     Directory current = Directory.current;
 
     final HttpResponse r = await this.client.http.sendMultipart(
-        'POST', '/channels/${this.id}/messages', "${current.path}/$filepath", data: "{ content: $content }");
+        'POST', '/channels/${this.id}/messages', "${current.path}/$filepath",
+        data: "{ content: $content }");
 
     return new Message._new(
         this.client, r.body.asJson() as Map<String, dynamic>);
