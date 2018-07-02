@@ -2,7 +2,7 @@ part of nyxx.commands;
 
 /// Main handler for CommandFramework.
 ///   This class matches and dispatches commands to best matching contexts.
-class Commands {
+abstract class Commands {
   List<String> _admins;
   List<Command> _commands;
 
@@ -69,12 +69,12 @@ class Commands {
     // Match help specially to shadow user defined help commands.
     if (e.message.content.startsWith((prefix + 'help'))) {
       if (helpDirect) {
-        e.message.author.send(content: _createHelp(e.message.author.id));
+        e.message.author.send(content: createHelp(e.message.author.id));
         return;
       }
 
       await e.message.channel
-          .sendMessage(content: _createHelp(e.message.author.id));
+          .sendMessage(content: createHelp(e.message.author.id));
       return;
     }
 
@@ -89,6 +89,9 @@ class Commands {
 
     // Get command and set execution code to default value;
     var matchedCommand = commandCollection.first;
+    // Inject context into command;
+    matchedCommand.context = e;
+
     var executionCode = -1;
 
     // Check for admin command and if user is admin
@@ -127,11 +130,14 @@ class Commands {
         break;
       case -1:
       case 100:
-        await matchedCommand.run(e.message);
+        await executeCommand(e.message, matchedCommand);
         print("[INFO] Dispatched command successfully!");
         break;
     }
   }
+
+  /// Executes command. Left abstract to implement by subclasess wich provides different context.
+  Future<Null> executeCommand(Message msg, Command matchedCommand);
 
   // Searches for command in registry.
   // Splits up command and gets first word (command). Then searchies in command registry and command's aliases list
@@ -148,23 +154,7 @@ class Commands {
   }
 
   /// Creates help String based on registered commands metadata.
-  String _createHelp(String requestedUserId) {
-    var buffer = new StringBuffer();
-
-    buffer.writeln("**Available commands:**");
-
-    _commands.forEach((item) {
-      if (!item.isHidden) if (item.isAdmin && _isUserAdmin(requestedUserId)) {
-        buffer.writeln("* ${item.name} - ${item.help} **ADMIN** ");
-        buffer.writeln("\t Usage: ${item.usage}");
-      } else if (!item.isAdmin) {
-        buffer.writeln("* ${item.name} - ${item.help}");
-        buffer.writeln("\t Usage: ${item.usage}");
-      }
-    });
-
-    return buffer.toString();
-  }
+  String createHelp(String requestedUserId);
 
   /// Register new [Command] object.
   void add(Command command) {
