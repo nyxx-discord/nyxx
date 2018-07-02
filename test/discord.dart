@@ -6,7 +6,11 @@ import 'package:nyxx/commands.dart' as command;
 import 'package:nyxx/setup.wm.dart' as setup;
 
 class TestCommand extends command.Command {
-  TestCommand() : super("test", "Checks if everything is running", "~~test");
+  TestCommand() {
+    this.name = "test";
+    this.help= "Checks if everything is running";
+    this.usage = "~~test";
+  }
 
   @override
   run(nyxx.Message message) async {
@@ -15,14 +19,17 @@ class TestCommand extends command.Command {
 }
 
 class CooldownCommand extends command.Command {
-  CooldownCommand()
-      : super("cooldown", "Checks if cooldown is working", "~~cooldown",
-            aliases: ["culdown"]) {
+  CooldownCommand() {
+    this.name = "cooldown";
+    this.help = "Checks if cooldown is working";
+    this.usage = "~~cooldown";
+    this.aliases = ["culdown"];
+  }
     cooldown = 10;
   }
 
   @override
-  run(nyxx.Message message) async {}
+  run() async {}
 }
 
 void main() {
