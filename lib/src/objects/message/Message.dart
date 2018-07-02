@@ -114,8 +114,8 @@ class Message {
       final User user = new User._new(this.client, o);
       this.mentions[user.id] = user;
     });
-    this.mentions;
 
+    this.mentions;
     this.embeds = new Map<String, Embed>();
     raw['embeds'].forEach((Map<String, dynamic> o) {
       Embed embed = new Embed._new(this.client, o);

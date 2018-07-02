@@ -82,18 +82,21 @@ class HttpBase {
 }
 
 class HttpMultipartRequest extends HttpBase {
-  w_transport.MultipartFile file;
+  List<w_transport.MultipartFile> files = new List();
   Map<String, String> fields;
-  String filepath;
-  String filename;
+  List<String> filepaths;
+  List<String> filenames;
 
   HttpMultipartRequest._new(Http http, String method, String path,
-      this.filename, this.filepath, this.fields, Map<String, String> headers)
+      this.filenames, this.filepaths, this.fields, Map<String, String> headers)
       : super._new(http, method, path, null, headers, null) {
-    var f = new File(filepath);
-    var contents = f.openRead();
-    file = new w_transport.MultipartFile(contents, f.lengthSync(),
-        filename: filename);
+    new Map.fromIterables(filenames, filepaths).forEach((name, path) {
+      var f = new File(path);
+      var contents = f.openRead();
+
+      files.add(new w_transport.MultipartFile(contents, f.lengthSync(),
+          filename: name));
+    });
 
     super.finish();
   }
@@ -101,10 +104,10 @@ class HttpMultipartRequest extends HttpBase {
   @override
   Future<HttpResponse> _execute() async {
     try {
-      if (this.file != null) {
+      if (this.files != null && this.files.length > 0) {
         w_transport.MultipartRequest r = new w_transport.MultipartRequest()
           ..fields = this.fields
-          ..files[this.filename] = file;
+          ..files = new Map.fromIterables(this.filenames, this.files);
 
         return HttpResponse._fromResponse(this,
             await r.send(this.method, uri: this.uri, headers: this.headers));
@@ -151,8 +154,7 @@ class HttpResponse extends w_transport.Response {
   HttpResponse._aborted(this.request, [this.aborted = true])
       : super.fromString(0, "ABORTED", {}, null);
 
-  static HttpResponse _fromResponse(
-      HttpBase request, w_transport.Response r) {
+  static HttpResponse _fromResponse(HttpBase request, w_transport.Response r) {
     return new HttpResponse._new(
         request, r.status, r.statusText, r.headers, r.body.asString());
   }
@@ -292,20 +294,31 @@ class Http {
     return null;
   }
 
+  String expandAttachments(String payload) {
+    return payload.replaceAllMapped(new RegExp(r'\{(.+)\}'), (match) {
+      print(match.group(0));
+      return "attachment://${match.group(0)}";
+    });
+  }
+
   Future<HttpResponse> sendMultipart(
-      String method, String path, String filePath,
+      String method, String path, List<String> filenames,
       {String data, bool beforeReady: false}) async {
     if (_client is Client && !this._client.ready && !beforeReady)
       throw new ClientNotReadyError();
 
-    var f = filePath.split("/").last;
+    Directory current = Directory.current;
+    List<String> filepaths = new List();
+
+    for (var name in filenames) filepaths.add("${current.path}/$name");
+
     HttpMultipartRequest request = new HttpMultipartRequest._new(
         this,
         method,
         path,
-        filePath,
-        f,
-        <String, String>{"payload_json": data.replaceAll('{filename}', f)},
+        filenames,
+        filepaths,
+        <String, String>{"payload_json": expandAttachments(data)},
         new Map.from(this.headers)..addAll(headers));
 
     await for (HttpResponse r in request.stream) {
