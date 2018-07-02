@@ -1,7 +1,7 @@
 part of nyxx;
 
 class Snowflake {
-  /// Full snowflake id 
+  /// Full snowflake id
   String id;
 
   /// Time when id was created.
@@ -34,14 +34,21 @@ class Snowflake {
 
     int _epoch = 1420070400000;
     int tmpId = int.parse(id);
-    
-    var tmp = ((tmpId & _diode(_unusedBits, _timestampBits)) >> _timestampShift);
+
+    var tmp =
+        ((tmpId & _diode(_unusedBits, _timestampBits)) >> _timestampShift);
     timestamp = new DateTime.fromMillisecondsSinceEpoch(tmp + _epoch);
-    workerId  = (tmpId & _diode(_unusedBits + _timestampBits, _workerIdBits)) >> _workerIdShift;
-    processId = (tmpId & _diode(_unusedBits + _timestampBits + _workerIdBits, _processIdBits)) >> _processShift;
-    sequence = (tmpId & _diode(_unusedBits + _timestampBits + _workerIdBits + _processIdBits, _sequenceBits));
+    workerId = (tmpId & _diode(_unusedBits + _timestampBits, _workerIdBits)) >>
+        _workerIdShift;
+    processId = (tmpId &
+            _diode(_unusedBits + _timestampBits + _workerIdBits,
+                _processIdBits)) >>
+        _processShift;
+    sequence = (tmpId &
+        _diode(_unusedBits + _timestampBits + _workerIdBits + _processIdBits,
+            _sequenceBits));
   }
-  
+
   int _diode(int offset, int length) {
     int lb = 64 - offset;
     int rb = 64 - (offset + length);
