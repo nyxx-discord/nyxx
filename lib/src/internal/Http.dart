@@ -31,10 +31,12 @@ class HttpBase {
   /// a value is sent.
   Stream<HttpResponse> stream;
 
-  HttpBase._new(this.http, this.method, this.path, this.queryParams, this.headers, this.body);
+  HttpBase._new(this.http, this.method, this.path, this.queryParams,
+      this.headers, this.body);
 
   void finish() {
-    this.uri = new Uri.https(_Constants.host, _Constants.baseUri + path, queryParams);
+    this.uri =
+        new Uri.https(_Constants.host, _Constants.baseUri + path, queryParams);
 
     if (http.buckets[uri.toString()] == null)
       http.buckets[uri.toString()] = new HttpBucket._new(uri.toString());
@@ -85,7 +87,8 @@ class HttpMultipartRequest extends HttpBase {
   String filepath;
   String filename;
 
-  HttpMultipartRequest._new(Http http, String method, String path, this.filename, this.filepath, this.fields, Map<String, String> headers)
+  HttpMultipartRequest._new(Http http, String method, String path,
+      this.filename, this.filepath, this.fields, Map<String, String> headers)
       : super._new(http, method, path, null, headers, null) {
     var f = new File(filepath);
     var contents = f.openRead();
@@ -119,8 +122,13 @@ class HttpMultipartRequest extends HttpBase {
 
 /// A HTTP request.
 class HttpRequest extends HttpBase {
-  HttpRequest._new(Http http, String method, String path, Map<String, String> queryParams,
-      Map<String, String> headers, dynamic body)
+  HttpRequest._new(
+      Http http,
+      String method,
+      String path,
+      Map<String, String> queryParams,
+      Map<String, String> headers,
+      dynamic body)
       : super._new(http, method, path, queryParams, headers, body) {
     super.finish();
   }
@@ -285,14 +293,20 @@ class Http {
   }
 
   Future<HttpResponse> sendMultipart(
-      String method, String path, String filePath, {String data, bool beforeReady: false}) async {
+      String method, String path, String filePath,
+      {String data, bool beforeReady: false}) async {
     if (_client is Client && !this._client.ready && !beforeReady)
       throw new ClientNotReadyError();
 
     var f = filePath.split("/").last;
     HttpMultipartRequest request = new HttpMultipartRequest._new(
-        this, method, path, filePath, f,  <String, String> {"payload_json": data.replaceAll('{filename}', f)},
-                                                                 new Map.from(this.headers)..addAll(headers));
+        this,
+        method,
+        path,
+        filePath,
+        f,
+        <String, String>{"payload_json": data.replaceAll('{filename}', f)},
+        new Map.from(this.headers)..addAll(headers));
 
     await for (HttpResponse r in request.stream) {
       if (!r.aborted && r.status >= 200 && r.status < 300) {
