@@ -11,7 +11,7 @@ class TextChannel extends GuildChannel {
   LinkedHashMap<String, Message> messages;
 
   /// The ID for the last message in the channel.
-  String lastMessageID;
+  Snowflake lastMessageID;
 
   /// The channel's mention string.
   String mention;
@@ -19,7 +19,10 @@ class TextChannel extends GuildChannel {
   TextChannel._new(Client client, Map<String, dynamic> data, Guild guild)
       : super._new(client, data, guild, "text") {
     this.topic = raw['topic'];
-    this.lastMessageID = raw['last_message_id'];
+
+    if(raw.containsKey('last_message_id'))
+      this.lastMessageID = new Snowflake(raw['last_message_id']);
+    
     this.messages = new LinkedHashMap<String, Message>();
     this.mention = "<#${this.id}>";
   }
