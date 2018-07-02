@@ -66,7 +66,7 @@ class Guild {
   Map<String, Role> roles;
 
   /// Guild custom emojis
-  Map<String, Emoji> emojis;
+  Map<String, GuildEmoji> emojis;
 
   /// The shard that the guild is on.
   Shard shard;
@@ -88,9 +88,9 @@ class Guild {
       this.ownerID = raw['owner_id'];
       this.createdAt = Util.getDate(this.id);
 
-      this.emojis = new Map<String, Emoji>();
+      this.emojis = new Map<String, GuildEmoji>();
       raw['emojis'].forEach((Map<String, dynamic> o) {
-        new Emoji._new(this.client, o, this);
+        new GuildEmoji._new(this.client, o, this);
       });
 
       this.roles = new Map<String, Role>();
@@ -152,7 +152,7 @@ class Guild {
   String toString() {
     return this.name;
   }
-
+  
   /// Gets Guild Emoji based on Id
   Future<Emoji> getEmoji(String emojiId) async {
     HttpResponse r =

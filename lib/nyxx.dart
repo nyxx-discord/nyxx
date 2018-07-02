@@ -57,7 +57,10 @@ part 'src/events/RoleDeleteEvent.dart';
 part 'src/events/RoleUpdateEvent.dart';
 part 'src/events/TypingEvent.dart';
 
+part 'src/objects/message/UnicodeEmoji.dart';
+part 'src/objects/message/GuildEmoji.dart';
 part 'src/objects/message/Emoji.dart';
+part 'src/objects/message/EmojisUnicode.dart';
 part 'src/objects/message/Reaction.dart';
 part 'src/objects/message/Message.dart';
 part 'src/objects/message/Attachment.dart';
