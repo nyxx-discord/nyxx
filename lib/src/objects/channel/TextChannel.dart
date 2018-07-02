@@ -20,9 +20,9 @@ class TextChannel extends GuildChannel {
       : super._new(client, data, guild, "text") {
     this.topic = raw['topic'];
 
-    if(raw.containsKey('last_message_id'))
+    if (raw.containsKey('last_message_id'))
       this.lastMessageID = new Snowflake(raw['last_message_id']);
-    
+
     this.messages = new LinkedHashMap<String, Message>();
     this.mention = "<#${this.id}>";
   }
