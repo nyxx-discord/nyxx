@@ -6,23 +6,30 @@ import 'package:nyxx/commands.dart' as command;
 import 'package:nyxx/setup.wm.dart' as setup;
 
 class TestCommand extends command.Command {
-  TestCommand() : super("test", "Checks if everything is running", "~~test");
+  TestCommand() {
+    this.name = "test";
+    this.help = "Checks if everything is running";
+    this.usage = "~~test";
+  }
 
   @override
-  run(nyxx.Message message) async {
-    await message.channel.sendMessage(content: "test is working correctly");
+  run() async {
+    await context.message.channel
+        .sendMessage(content: "test is working correctly");
   }
 }
 
 class CooldownCommand extends command.Command {
-  CooldownCommand()
-      : super("cooldown", "Checks if cooldown is working", "~~cooldown",
-            aliases: ["culdown"]) {
-    cooldown = 10;
+  CooldownCommand() {
+    this.name = "cooldown";
+    this.help = "Checks if cooldown is working";
+    this.usage = "~~cooldown";
+    this.aliases = ["culdown"];
+    this.cooldown = 10;
   }
 
   @override
-  run(nyxx.Message message) async {}
+  run() async {}
 }
 
 void main() {
@@ -31,7 +38,7 @@ void main() {
   var env = Platform.environment;
   var bot = new nyxx.Client(env['DISCORD_TOKEN']);
 
-  var commandsListener = new command.Commands('~~', bot)
+  var commandsListener = new command.InstanceCommandFramework('~~', bot)
     ..add(new TestCommand())
     ..add(new CooldownCommand())
     ..commandNotFoundEvent.listen((m) {

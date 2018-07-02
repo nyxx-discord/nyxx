@@ -11,11 +11,21 @@ class GuildChannel extends Channel {
   /// The channel's position in the channel list.
   int position;
 
+  /// Parent channel id;
+  String parentId;
+
+  /// Indicates if channel is NSFW
+  bool nsfw;
+
   GuildChannel._new(
       Client client, Map<String, dynamic> data, this.guild, String type)
       : super._new(client, data, type) {
     this.name = raw['name'];
     this.position = raw['position'];
+
+    this.id = raw['id'];
+    this.parentId = raw['parent_id'];
+    this.nsfw = raw['nsfw'];
 
     this.guild.channels[this.id] = this;
   }
