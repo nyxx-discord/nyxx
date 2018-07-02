@@ -26,8 +26,8 @@ class GuildChannel extends Channel {
     //this.id = raw['id'];
     if (raw.containsKey('parent_id'))
       this.parentId = new Snowflake(raw['parent_id']);
-    this.nsfw = raw['nsfw'];
 
+    this.nsfw = raw['nsfw'];
     this.guild.channels[this.id.toString()] = this;
   }
 

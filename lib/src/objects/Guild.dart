@@ -119,7 +119,7 @@ class Guild {
           else if (o['type'] == 2)
             new VoiceChannel._new(client, o, this);
           else
-            new GuildChannel._new(client, o, this, o['type']);
+            new GuildChannel._new(client, o, this, o['type'].toString());
         });
 
         raw['presences'].forEach((Map<String, dynamic> o) {
