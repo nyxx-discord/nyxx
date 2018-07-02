@@ -12,28 +12,26 @@ abstract class Command {
   String usage;
 
   /// Indicates if commands is restricted to admins
-  bool isAdmin;
+  bool isAdmin = false;
 
   /// List of roles required to execute command
-  List<String> requiredRoles;
+  List<String> requiredRoles = null;
 
   /// Cooldown for command in seconds
-  int cooldown;
+  int cooldown = 0;
 
   /// Indicated if command is hidden from help
-  bool isHidden;
+  bool isHidden = false;
 
   /// List of aliases for command
-  List<String> aliases;
-
-  /// Basic constructor to create new instance of command.
-  Command(this.name, this.help, this.usage,
-      {this.isAdmin = false,
-      this.requiredRoles = null,
-      this.cooldown = 0,
-      this.isHidden = false,
-      this.aliases = null});
+  List<String> aliases = null;
 
   /// Function which will be invoked when command triggers
-  Future run(Message message);
+  Future run();
+
+  MessageEvent context;
+
+  Future<MessageEvent> awaitFor({String prefix: ""}) async {
+    return await context.message.client.onMessage.firstWhere((i) => i.message.content.startsWith(prefix)).timeout(const Duration(seconds:5), onTimeout: () => print("Timed out"));
+  }
 }

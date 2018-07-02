@@ -89,6 +89,12 @@ abstract class Commands {
 
     // Get command and set execution code to default value;
     var matchedCommand = commandCollection.first;
+
+    print(matchedCommand.name);
+    
+    // Inject context into command;
+    matchedCommand.context = e;
+    
     var executionCode = -1;
 
     // Check for admin command and if user is admin

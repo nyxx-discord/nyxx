@@ -9,7 +9,7 @@ class InstanceCommandFramework extends Commands {
 
   @override
   Future<Null> executeCommand(Message msg, Command matchedCommand) async {
-    await matchedCommand.run(msg);
+    await matchedCommand.run();
     return null;
   }
 
