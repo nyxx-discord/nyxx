@@ -88,7 +88,9 @@ class Guild {
       this.notificationLevel = raw['default_message_notifications'];
       this.mfaLevel = raw['mfa_level'];
       this.embedEnabled = raw['embed_enabled'];
-      this.ownerID = raw['owner_id'];
+      
+      this.ownerID = new Snowflake(raw['owner_id']);
+
       this.createdAt = id.timestamp;
 
       this.emojis = new Map<String, GuildEmoji>();
