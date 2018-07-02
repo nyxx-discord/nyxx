@@ -34,7 +34,7 @@ class DMChannel extends Channel {
         this.messages.values.toList().first._onDelete.close();
         this.messages.remove(this.messages.values.toList().first.id);
       }
-      this.messages[message.id] = message;
+      this.messages[message.id.toString()] = message;
     }
   }
 

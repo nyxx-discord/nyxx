@@ -12,55 +12,55 @@ class Util {
   static String resolve(String to, dynamic object) {
     if (to == "channel") {
       if (object is Message) {
-        return object.channel.id;
+        return object.channel.id.toString();
       } else if (object is Channel) {
-        return object.id;
+        return object.id.toString();
       } else if (object is Guild) {
-        return object.defaultChannel.id;
+        return object.defaultChannel.id.toString();
       } else {
         return object.toString();
       }
     } else if (to == "message") {
       if (object is Message) {
-        return object.id;
+        return object.id.toString();
       } else {
         return object.toString();
       }
     } else if (to == "guild") {
       if (object is Message) {
-        return object.guild.id;
+        return object.guild.id.toString();
       } else if (object is GuildChannel) {
-        return object.guild.id;
+        return object.guild.id.toString();
       } else if (object is Guild) {
-        return object.id;
+        return object.id.toString();
       } else {
         return object.toString();
       }
     } else if (to == "user") {
       if (object is Message) {
-        return object.author.id;
+        return object.author.id.toString();
       } else if (object is User) {
-        return object.id;
+        return object.id.toString();
       } else if (object is Member) {
-        return object.id;
+        return object.id.toString();
       } else {
         return object.toString();
       }
     } else if (to == "member") {
       if (object is Message) {
-        return object.author.id;
+        return object.author.id.toString();
       } else if (object is User) {
-        return object.id;
+        return object.id.toString();
       } else if (object is Member) {
-        return object.id;
+        return object.id.toString();
       } else {
         return object.toString();
       }
     } else if (to == "app") {
       if (object is User) {
-        return object.id;
+        return object.id.toString();
       } else if (object is Member) {
-        return object.id;
+        return object.id.toString();
       } else {
         return object.toString();
       }

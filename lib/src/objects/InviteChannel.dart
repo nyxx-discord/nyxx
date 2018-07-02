@@ -9,7 +9,7 @@ class InviteChannel {
   Map<String, dynamic> raw;
 
   /// The channel's ID.
-  String id;
+  Snowflake id;
 
   /// The channel's name.
   String name;
@@ -21,10 +21,10 @@ class InviteChannel {
   DateTime createdAt;
 
   InviteChannel._new(this.client, this.raw) {
-    this.id = raw['id'];
+    this.id = new Snowflake(raw['id']);
     this.name = raw['name'];
     this.type = raw['type'];
-    this.createdAt = Util.getDate(this.id);
+    this.createdAt = id.timestamp;
   }
 
   /// Returns a string representation of this object.

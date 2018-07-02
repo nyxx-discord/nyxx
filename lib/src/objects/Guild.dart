@@ -12,7 +12,7 @@ class Guild {
   String name;
 
   /// The guild's ID.
-  String id;
+  Snowflake id;
 
   /// The guild's icon hash.
   String icon;
@@ -24,7 +24,7 @@ class Guild {
   String region;
 
   /// The channel ID for the guild's widget if enabled.
-  String embedChannelID;
+  Snowflake embedChannelID;
 
   /// The guild's default channel.
   GuildChannel defaultChannel;
@@ -54,7 +54,7 @@ class Guild {
   bool available;
 
   /// The guild owner's ID
-  String ownerID;
+  Snowflake ownerID;
 
   /// The guild's members.
   Map<String, Member> members;
@@ -75,10 +75,13 @@ class Guild {
       [this.available = true, bool guildCreate = false]) {
     if (this.available) {
       this.name = raw['name'];
-      this.id = raw['id'];
+      this.id = new Snowflake(raw['id']);
       this.icon = raw['icon'];
       this.region = raw['region'];
-      this.embedChannelID = raw['embed_channel_id'];
+
+      if (raw.containsKey('embed_channel_id'))
+        this.embedChannelID = new Snowflake(raw['embed_channel_id']);
+
       this.afkTimeout = raw['afk_timeout'];
       this.memberCount = raw['member_count'];
       this.verificationLevel = raw['verification_level'];
@@ -86,7 +89,7 @@ class Guild {
       this.mfaLevel = raw['mfa_level'];
       this.embedEnabled = raw['embed_enabled'];
       this.ownerID = raw['owner_id'];
-      this.createdAt = Util.getDate(this.id);
+      this.createdAt = id.timestamp;
 
       this.emojis = new Map<String, GuildEmoji>();
       raw['emojis'].forEach((Map<String, dynamic> o) {
@@ -98,9 +101,8 @@ class Guild {
         new Role._new(this.client, o, this);
       });
 
-      this.shard = this
-          .client
-          .shards[(int.parse(this.id) >> 22) % this.client._options.shardCount];
+      this.shard = this.client.shards[(int.parse(this.id.toString()) >> 22) %
+          this.client._options.shardCount];
 
       if (guildCreate) {
         this.members = new Map<String, Member>();
@@ -134,8 +136,8 @@ class Guild {
         this.afkChannel = this.channels[raw['afk_channel_id']];
       }
 
-      client.guilds[this.id] = this;
-      shard.guilds[this.id] = this;
+      client.guilds[this.id.toString()] = this;
+      shard.guilds[this.id.toString()] = this;
     }
   }
 
@@ -318,7 +320,7 @@ class Guild {
     Map<String, dynamic> map = <String, dynamic>{};
     r.body.asJson().forEach((Map<String, dynamic> o) {
       Webhook webhook = new Webhook._fromApi(this.client, o);
-      map[webhook.id] = webhook;
+      map[webhook.id.toString()] = webhook;
     });
     return map;
   }

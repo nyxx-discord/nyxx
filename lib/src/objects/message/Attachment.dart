@@ -9,7 +9,7 @@ class Attachment {
   Map<String, dynamic> raw;
 
   /// The attachment's ID
-  String id;
+  Snowflake id;
 
   /// The attachment's filename.
   String filename;
@@ -33,13 +33,15 @@ class Attachment {
   DateTime createdAt;
 
   Attachment._new(this.client, this.raw) {
-    this.id = raw['id'];
+    this.id = new Snowflake(raw['id']);
     this.filename = raw['filename'];
     this.url = raw['url'];
     this.proxyUrl = raw['proxyUrl'];
     this.size = raw['size'];
     this.height = raw['height'];
     this.width = raw['width'];
-    this.createdAt = Util.getDate(this.id);
+    this.createdAt = id.timestamp;
   }
+
+  String toString() => url;
 }

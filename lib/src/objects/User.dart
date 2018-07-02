@@ -88,7 +88,7 @@ class User {
     }
 
     DMChannel channel = await getChannel();
-    String channelId = channel.id;
+    String channelId = channel.id.toString();
 
     final HttpResponse r = await this.client.http.send(
         'POST', '/channels/$channelId/messages', body: <String, dynamic>{
@@ -130,7 +130,7 @@ class User {
     if (this.client.user.bot) {
       final String id = Util.resolve('message', message);
       DMChannel channel = await getChannel();
-      String channelId = channel.id;
+      String channelId = channel.id.toString();
 
       final HttpResponse r = await this
           .client
@@ -146,7 +146,7 @@ class User {
   /// Starts typing.
   Future<Null> startTyping() async {
     DMChannel channel = await getChannel();
-    String channelId = channel.id;
+    String channelId = channel.id.toString();
 
     await this.client.http.send('POST', "/channels/$channelId/typing");
     return null;

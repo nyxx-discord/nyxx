@@ -9,7 +9,7 @@ class MessageUpdateEvent {
   Message newMessage;
 
   /// The message's ID.
-  String id;
+  Snowflake id;
 
   MessageUpdateEvent._new(Client client, Map<String, dynamic> json) {
     if (client.ready) {
