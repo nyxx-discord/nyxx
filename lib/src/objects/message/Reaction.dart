@@ -1,6 +1,6 @@
 part of nyxx;
 
-/// Reaction object, has partial [Emoji] object (only id, and name (for unicode emoji 'id' is null))
+/// Reaction object, has partial [GuildEmoji] object (only id, and name (for unicode emoji 'id' is null))
 class Reaction {
   /// Time this emoji has ben used to react
   int count;
@@ -17,6 +17,11 @@ class Reaction {
   Reaction._new(this.raw) {
     count = raw['count'];
     me = raw['me'];
-    emoji = new Emoji._partial(raw['emoji'] as Map<String, dynamic>);
+
+    var rawEmoji = raw['emoji'] as Map<String, dynamic>;
+    if (rawEmoji['id'] == null)
+      emoji = new UnicodeEmoji._partial(rawEmoji['name']);
+    else
+      emoji = new GuildEmoji._partial(rawEmoji);
   }
 }
