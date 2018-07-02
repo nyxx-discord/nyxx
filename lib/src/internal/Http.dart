@@ -138,7 +138,7 @@ class HttpRequest extends HttpBase {
 /// [w_transport docs](https://www.dartdocs.org/documentation/w_transport/3.0.0/w_transport/Response-class.html)
 class HttpResponse extends w_transport.Response {
   /// The HTTP request.
-  HttpRequest request;
+  HttpBase request;
 
   /// Whether or not the request was aborted. If true, all other fields will be null.
   bool aborted;
@@ -152,7 +152,7 @@ class HttpResponse extends w_transport.Response {
       : super.fromString(0, "ABORTED", {}, null);
 
   static HttpResponse _fromResponse(
-      HttpRequest request, w_transport.Response r) {
+      HttpBase request, w_transport.Response r) {
     return new HttpResponse._new(
         request, r.status, r.statusText, r.headers, r.body.asString());
   }
