@@ -31,10 +31,10 @@ abstract class Command {
 
   MessageEvent context;
 
-  Future<MessageEvent> awaitFor({String prefix: ""}) async {
+  Future<MessageEvent> awaitFor({String prefix: "", int timeout: 5}) async {
     return await context.message.client.onMessage
         .firstWhere((i) => i.message.content.startsWith(prefix))
-        .timeout(const Duration(seconds: 5),
+        .timeout(const Duration(seconds: timeout),
             onTimeout: () => print("Timed out"));
   }
 }
