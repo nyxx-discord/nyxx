@@ -12,7 +12,7 @@ class GuildChannel extends Channel {
   int position;
 
   /// Parent channel id;
-  String parentId;
+  Snowflake parentId;
 
   /// Indicates if channel is NSFW
   bool nsfw;
@@ -24,7 +24,7 @@ class GuildChannel extends Channel {
     this.position = raw['position'];
 
     //this.id = raw['id'];
-    if(raw.containsKey('parent_id'))
+    if (raw.containsKey('parent_id'))
       this.parentId = new Snowflake(raw['parent_id']);
     this.nsfw = raw['nsfw'];
 
