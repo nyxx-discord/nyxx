@@ -38,6 +38,19 @@ class TextChannel extends GuildChannel {
     }
   }
 
+  /// Sends file to channel and optional [content]. [filepath] is relative to project root.
+  /// Throws an [Exception] if the HTTP request errored.
+  ///     Channel.send(content: "My content!");
+  Future<Message> sendFile(String filepath, {String content = ""}) async {
+    Directory current = Directory.current;
+
+    final HttpResponse r = await this.client.http.sendMultipart(
+        'POST', '/channels/${this.id}/messages', "${current.path}/$filepath", data: "{ content: $content }");
+
+    return new Message._new(
+        this.client, r.body.asJson() as Map<String, dynamic>);
+  }
+
   /// Sends a message.
   ///
   /// Throws an [Exception] if the HTTP request errored.
