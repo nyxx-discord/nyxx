@@ -27,7 +27,7 @@ class GuildChannel extends Channel {
     this.parentId = raw['parent_id'];
     this.nsfw = raw['nsfw'];
 
-    this.guild.channels[this.id] = this;
+    this.guild.channels[this.id.toString()] = this;
   }
 
   /// Returns a string representation of this object.

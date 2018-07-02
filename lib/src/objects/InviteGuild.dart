@@ -9,7 +9,7 @@ class InviteGuild {
   Map<String, dynamic> raw;
 
   /// The guild's ID.
-  String id;
+  Snowflake id;
 
   /// The guild's name.
   String name;
@@ -21,10 +21,10 @@ class InviteGuild {
   DateTime createdAt;
 
   InviteGuild._new(this.client, this.raw) {
-    this.id = raw['id'];
+    this.id = new Snowflake(raw['id']);
     this.name = raw['name'];
     this.spash = raw['splash_hash'];
-    this.createdAt = Util.getDate(this.id);
+    this.createdAt = id.timestamp;
   }
 
   /// Returns a string representation of this object.

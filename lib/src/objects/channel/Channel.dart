@@ -9,7 +9,7 @@ class Channel {
   Map<String, dynamic> raw;
 
   /// The channel's ID.
-  String id;
+  Snowflake id;
 
   /// The channel's type.
   String type;
@@ -18,10 +18,10 @@ class Channel {
   DateTime createdAt;
 
   Channel._new(this.client, this.raw, this.type) {
-    this.id = raw['id'];
-    this.createdAt = Util.getDate(this.id);
+    this.id = new Snowflake(raw['id']);
+    this.createdAt = id.timestamp;
 
-    client.channels[this.id] = this;
+    client.channels[this.id.toString()] = this;
   }
 
   /// Deletes the channel.

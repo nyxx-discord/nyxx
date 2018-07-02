@@ -15,19 +15,19 @@ class Webhook {
   String name;
 
   /// The webhook's id.
-  String id;
+  Snowflake id;
 
   /// The webhook's token.
   String token;
 
   /// The webhook's channel id.
-  String channelId;
+  Snowflake channelId;
 
   /// The webhook's channel, if this is accessed using a normal client and the client has that channel in it's cache.
   TextChannel channel;
 
   /// The webhook's guild id.
-  String guildId;
+  Snowflake guildId;
 
   /// The webhook's guild, if this is accessed using a normal client and the client has that guild in it's cache.
   Guild guild;
@@ -42,13 +42,20 @@ class Webhook {
     this.http = client.http;
 
     this.name = raw['name'];
-    this.id = raw['id'];
+    this.id = new Snowflake(raw['id']);
     this.token = raw['token'];
-    this.channelId = raw['channel_id'];
-    this.guildId = raw['guild_id'];
-    this.createdAt = Util.getDate(this.id);
-    this.channel = this.client.channels[this.channelId];
-    this.guild = this.client.guilds[this.guildId];
+
+    if (raw.containsKey('channel_id')) {
+      this.channel = this.client.channels[this.channelId];
+      this.channelId = new Snowflake(raw['channel_id']);
+    }
+
+    if (raw.containsKey('guild_id')) {
+      this.guildId = new Snowflake(raw['guild_id']);
+      this.guild = this.client.guilds[this.guildId];
+    }
+
+    this.createdAt = id.timestamp;
     this.user = new User._new(client, raw['user'] as Map<String, dynamic>);
   }
 
@@ -58,7 +65,7 @@ class Webhook {
     this.token = raw['token'];
     this.channelId = raw['channel_id'];
     this.guildId = raw['guild_id'];
-    this.createdAt = Util.getDate(this.id);
+    this.createdAt = id.timestamp;
   }
 
   /// Gets a webhook by its ID and token.

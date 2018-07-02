@@ -31,7 +31,7 @@ class TextChannel extends GuildChannel {
         this.messages.values.toList().first._onDelete.close();
         this.messages.remove(this.messages.values.toList().first.id);
       }
-      this.messages[message.id] = message;
+      this.messages[message.id.toString()] = message;
     }
   }
 
@@ -190,7 +190,7 @@ class TextChannel extends GuildChannel {
     Map<String, dynamic> map = <String, dynamic>{};
     r.body.asJson().forEach((Map<String, dynamic> o) {
       Webhook webhook = new Webhook._fromApi(this.client, o);
-      map[webhook.id] = webhook;
+      map[webhook.id.toString()] = webhook;
     });
     return map;
   }
