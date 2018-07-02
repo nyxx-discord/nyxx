@@ -31,10 +31,19 @@ abstract class Command {
 
   MessageEvent context;
 
-  Future<MessageEvent> awaitFor({String prefix: "", int timeout: 5}) async {
+  Future<MessageEvent> awaitFor({String prefix: "", int timeout: 5, bool ensureUser = false}) async {
     return await context.message.client.onMessage
-        .firstWhere((i) => i.message.content.startsWith(prefix))
-        .timeout(const Duration(seconds: timeout),
+    .firstWhere((i) {
+      if(!i.message.content.startsWith(prefix))
+        return false;
+
+      if(ensureUser)
+        return i.message.author.id == context.message.author.id;
+
+      return true;       
+    }).timeout(const Duration(seconds: timeout),
             onTimeout: () => print("Timed out"));
   }
+
+  bool _checkIfCanExecute(bool one, bool two, bool )
 }
