@@ -29,8 +29,10 @@ abstract class Command {
   /// Function which will be invoked when command triggers
   Future run();
 
+  /// Execution context of command. [MessageEvent] class contains [Message] instance.
   MessageEvent context;
 
+  /// Delays execution of command and waits for nex matching command based on [prefix]. Has static timemout of 30 seconds
   Future<MessageEvent> delay(
       {String prefix: "", bool ensureUser = false}) async {
     return await context.message.client.onMessage.firstWhere((i) {
