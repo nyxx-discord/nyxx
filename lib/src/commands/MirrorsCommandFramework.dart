@@ -48,7 +48,7 @@ class MirrorsCommandFramework extends Commands {
     if (splitted.length > 1)
       subcommand = splitted[1];
     else {
-      await command.run(msg);
+      await command.run();
       return null;
     }
 
@@ -61,11 +61,11 @@ class MirrorsCommandFramework extends Commands {
     });
 
     if (matched == null) {
-      await command.run(msg);
+      await command.run();
       return null;
     }
 
-    instanceMirror.invoke(matched.simpleName, [msg]);
+    instanceMirror.invoke(matched.simpleName, []);
     return null;
   }
 
