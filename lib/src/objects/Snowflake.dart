@@ -17,7 +17,7 @@ class Snowflake {
   int sequence;
 
   /// Creates new instance of [Snowflake].
-  Snowflaked(this.id) {
+  Snowflake(this.id) {
     int _unusedBits = 0;
     int _timestampBits = 42;
     int _workerIdBits = 5;
