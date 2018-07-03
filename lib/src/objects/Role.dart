@@ -87,7 +87,10 @@ class Role {
   }
 
   Future<Null> addToUser(User user) async {
-    await this.client.http.send('PUT', '/guilds/${guild.id}/members/${user.id}/roles/$id');
+    await this
+        .client
+        .http
+        .send('PUT', '/guilds/${guild.id}/members/${user.id}/roles/$id');
     return null;
   }
 
