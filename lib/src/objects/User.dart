@@ -49,7 +49,10 @@ class User {
 
   /// The user's avatar, represented as URL.
   String avatarURL({String format: 'webp', int size: 128}) {
-    return 'https://cdn.${_Constants.host}/avatars/${this.id}/${this.avatar}.$format?size=$size';
+    if (this.id != null)
+      return 'https://cdn.${_Constants.host}/avatars/${this.id}/${this.avatar}.$format?size=$size';
+
+    return null;
   }
 
   /// Gets the [DMChannel] for the user.
@@ -88,7 +91,7 @@ class User {
     }
 
     DMChannel channel = await getChannel();
-    String channelId = channel.id;
+    String channelId = channel.id.toString();
 
     final HttpResponse r = await this.client.http.send(
         'POST', '/channels/$channelId/messages', body: <String, dynamic>{
@@ -130,7 +133,7 @@ class User {
     if (this.client.user.bot) {
       final String id = Util.resolve('message', message);
       DMChannel channel = await getChannel();
-      String channelId = channel.id;
+      String channelId = channel.id.toString();
 
       final HttpResponse r = await this
           .client
@@ -146,7 +149,7 @@ class User {
   /// Starts typing.
   Future<Null> startTyping() async {
     DMChannel channel = await getChannel();
-    String channelId = channel.id;
+    String channelId = channel.id.toString();
 
     await this.client.http.send('POST', "/channels/$channelId/typing");
     return null;

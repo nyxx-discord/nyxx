@@ -30,7 +30,7 @@ class OAuth2Info {
     this.guilds = new Map<String, OAuth2Guild>();
     raw['guilds'].forEach((Map<String, dynamic> v) {
       final OAuth2Guild g = new OAuth2Guild._new(this.client, v);
-      this.guilds[g.id] = g;
+      this.guilds[g.id.toString()] = g;
     });
     this.guilds;
   }

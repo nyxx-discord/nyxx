@@ -15,7 +15,7 @@ class OAuth2Application {
   String icon;
 
   /// The app's ID.
-  String id;
+  Snowflake id;
 
   /// The app's name.
   String name;
@@ -29,10 +29,10 @@ class OAuth2Application {
   OAuth2Application._new(this.client, this.raw) {
     this.description = raw['description'];
     this.icon = raw['icon'];
-    this.id = raw['id'];
+    this.id = new Snowflake(raw['id']);
     this.name = raw['name'];
     this.rpcOrigins = raw['rpcOrigins'] as List<String>;
-    this.createdAt = Util.getDate(this.id);
+    this.createdAt = id.timestamp;
   }
 
   /// Returns a string representation of this object.

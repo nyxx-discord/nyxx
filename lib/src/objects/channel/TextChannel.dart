@@ -11,7 +11,7 @@ class TextChannel extends GuildChannel {
   LinkedHashMap<String, Message> messages;
 
   /// The ID for the last message in the channel.
-  String lastMessageID;
+  Snowflake lastMessageID;
 
   /// The channel's mention string.
   String mention;
@@ -19,7 +19,10 @@ class TextChannel extends GuildChannel {
   TextChannel._new(Client client, Map<String, dynamic> data, Guild guild)
       : super._new(client, data, guild, "text") {
     this.topic = raw['topic'];
-    this.lastMessageID = raw['last_message_id'];
+
+    if (raw.containsKey('last_message_id'))
+      this.lastMessageID = new Snowflake(raw['last_message_id']);
+
     this.messages = new LinkedHashMap<String, Message>();
     this.mention = "<#${this.id}>";
   }
@@ -31,8 +34,24 @@ class TextChannel extends GuildChannel {
         this.messages.values.toList().first._onDelete.close();
         this.messages.remove(this.messages.values.toList().first.id);
       }
-      this.messages[message.id] = message;
+      this.messages[message.id.toString()] = message;
     }
+  }
+
+  /// Sends file to channel and optional [content]. [filepath] is relative to project root.
+  /// Throws an [Exception] if the HTTP request errored.
+  ///     Channel.send(content: "My content!");
+  Future<Message> sendFile(List<String> filepaths,
+      {String content = "", EmbedBuilder embed = null}) async {
+    final HttpResponse r = await this.client.http.sendMultipart(
+        'POST', '/channels/${this.id}/messages', filepaths,
+        data: JSON.encode(<String, dynamic>{
+          "content": content,
+          "embed": embed != null ? embed.build() : ""
+        }));
+
+    return new Message._new(
+        this.client, r.body.asJson() as Map<String, dynamic>);
   }
 
   /// Sends a message.
@@ -190,7 +209,7 @@ class TextChannel extends GuildChannel {
     Map<String, dynamic> map = <String, dynamic>{};
     r.body.asJson().forEach((Map<String, dynamic> o) {
       Webhook webhook = new Webhook._fromApi(this.client, o);
-      map[webhook.id] = webhook;
+      map[webhook.id.toString()] = webhook;
     });
     return map;
   }

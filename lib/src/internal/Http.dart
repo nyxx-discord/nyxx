@@ -1,7 +1,6 @@
 part of nyxx;
 
-/// A HTTP request.
-class HttpRequest {
+class HttpBase {
   StreamController<HttpResponse> _streamController;
 
   /// The HTTP client.
@@ -32,8 +31,10 @@ class HttpRequest {
   /// a value is sent.
   Stream<HttpResponse> stream;
 
-  HttpRequest._new(this.http, this.method, this.path, this.queryParams,
-      this.headers, this.body) {
+  HttpBase._new(this.http, this.method, this.path, this.queryParams,
+      this.headers, this.body);
+
+  void finish() {
     this.uri =
         new Uri.https(_Constants.host, _Constants.baseUri + path, queryParams);
 
@@ -80,11 +81,67 @@ class HttpRequest {
   }
 }
 
+class HttpMultipartRequest extends HttpBase {
+  List<w_transport.MultipartFile> files = new List();
+  Map<String, String> fields;
+  List<String> filepaths;
+  List<String> filenames;
+
+  HttpMultipartRequest._new(Http http, String method, String path,
+      this.filenames, this.filepaths, this.fields, Map<String, String> headers)
+      : super._new(http, method, path, null, headers, null) {
+    new Map.fromIterables(filenames, filepaths).forEach((name, path) {
+      var f = new File(path);
+      var contents = f.openRead();
+
+      files.add(new w_transport.MultipartFile(contents, f.lengthSync(),
+          filename: name));
+    });
+
+    super.finish();
+  }
+
+  @override
+  Future<HttpResponse> _execute() async {
+    try {
+      if (this.files != null && this.files.length > 0) {
+        w_transport.MultipartRequest r = new w_transport.MultipartRequest()
+          ..fields = this.fields
+          ..files = new Map.fromIterables(this.filenames, this.files);
+
+        return HttpResponse._fromResponse(this,
+            await r.send(this.method, uri: this.uri, headers: this.headers));
+      } else {
+        return HttpResponse._fromResponse(
+            this,
+            await w_transport.Http
+                .send(this.method, this.uri, headers: this.headers));
+      }
+    } on w_transport.RequestException catch (err) {
+      return HttpResponse._fromResponse(this, err.response);
+    }
+  }
+}
+
+/// A HTTP request.
+class HttpRequest extends HttpBase {
+  HttpRequest._new(
+      Http http,
+      String method,
+      String path,
+      Map<String, String> queryParams,
+      Map<String, String> headers,
+      dynamic body)
+      : super._new(http, method, path, queryParams, headers, body) {
+    super.finish();
+  }
+}
+
 /// A HTTP response. More documentation can be found at the
 /// [w_transport docs](https://www.dartdocs.org/documentation/w_transport/3.0.0/w_transport/Response-class.html)
 class HttpResponse extends w_transport.Response {
   /// The HTTP request.
-  HttpRequest request;
+  HttpBase request;
 
   /// Whether or not the request was aborted. If true, all other fields will be null.
   bool aborted;
@@ -97,8 +154,7 @@ class HttpResponse extends w_transport.Response {
   HttpResponse._aborted(this.request, [this.aborted = true])
       : super.fromString(0, "ABORTED", {}, null);
 
-  static HttpResponse _fromResponse(
-      HttpRequest request, w_transport.Response r) {
+  static HttpResponse _fromResponse(HttpBase request, w_transport.Response r) {
     return new HttpResponse._new(
         request, r.status, r.statusText, r.headers, r.body.asString());
   }
@@ -122,7 +178,7 @@ class HttpBucket {
   Duration timeDifference;
 
   /// A queue of requests waiting to be sent.
-  List<HttpRequest> requests = <HttpRequest>[];
+  List<HttpBase> requests = <HttpBase>[];
 
   /// Whether or not the bucket is waiting for a request to complete
   /// before continuing.
@@ -130,7 +186,7 @@ class HttpBucket {
 
   HttpBucket._new(this.url);
 
-  void _push(HttpRequest request) {
+  void _push(dynamic request) {
     this.requests.add(request);
     this._handle();
   }
@@ -142,7 +198,7 @@ class HttpBucket {
     this._execute(this.requests[0]);
   }
 
-  void _execute(HttpRequest request) {
+  void _execute(HttpBase request) {
     if (this.rateLimitRemaining == null || this.rateLimitRemaining > 0) {
       request._execute().then((HttpResponse r) {
         this.limit = r.headers['x-ratelimit-limit'] != null
@@ -225,6 +281,45 @@ class Http {
 
     HttpRequest request = new HttpRequest._new(this, method, path, queryParams,
         new Map.from(this.headers)..addAll(headers), body);
+
+    await for (HttpResponse r in request.stream) {
+      if (!r.aborted && r.status >= 200 && r.status < 300) {
+        if (_client != null) new HttpResponseEvent._new(_client, r);
+        return r;
+      } else {
+        if (_client != null) new HttpErrorEvent._new(_client, r);
+        throw new HttpError._new(r);
+      }
+    }
+    return null;
+  }
+
+  String expandAttachments(String payload) {
+    return payload.replaceAllMapped(new RegExp(r'\{(.+)\}'), (match) {
+      print(match.group(0));
+      return "attachment://${match.group(0)}";
+    });
+  }
+
+  Future<HttpResponse> sendMultipart(
+      String method, String path, List<String> filenames,
+      {String data, bool beforeReady: false}) async {
+    if (_client is Client && !this._client.ready && !beforeReady)
+      throw new ClientNotReadyError();
+
+    Directory current = Directory.current;
+    List<String> filepaths = new List();
+
+    for (var name in filenames) filepaths.add("${current.path}/$name");
+
+    HttpMultipartRequest request = new HttpMultipartRequest._new(
+        this,
+        method,
+        path,
+        filenames,
+        filepaths,
+        <String, String>{"payload_json": expandAttachments(data)},
+        new Map.from(this.headers)..addAll(headers));
 
     await for (HttpResponse r in request.stream) {
       if (!r.aborted && r.status >= 200 && r.status < 300) {

@@ -12,7 +12,7 @@ class Guild {
   String name;
 
   /// The guild's ID.
-  String id;
+  Snowflake id;
 
   /// The guild's icon hash.
   String icon;
@@ -24,7 +24,7 @@ class Guild {
   String region;
 
   /// The channel ID for the guild's widget if enabled.
-  String embedChannelID;
+  Snowflake embedChannelID;
 
   /// The guild's default channel.
   GuildChannel defaultChannel;
@@ -54,7 +54,7 @@ class Guild {
   bool available;
 
   /// The guild owner's ID
-  String ownerID;
+  Snowflake ownerID;
 
   /// The guild's members.
   Map<String, Member> members;
@@ -75,18 +75,22 @@ class Guild {
       [this.available = true, bool guildCreate = false]) {
     if (this.available) {
       this.name = raw['name'];
-      this.id = raw['id'];
+      this.id = new Snowflake(raw['id']);
       this.icon = raw['icon'];
       this.region = raw['region'];
-      this.embedChannelID = raw['embed_channel_id'];
+
+      if (raw.containsKey('embed_channel_id'))
+        this.embedChannelID = new Snowflake(raw['embed_channel_id']);
+
       this.afkTimeout = raw['afk_timeout'];
       this.memberCount = raw['member_count'];
       this.verificationLevel = raw['verification_level'];
       this.notificationLevel = raw['default_message_notifications'];
       this.mfaLevel = raw['mfa_level'];
       this.embedEnabled = raw['embed_enabled'];
-      this.ownerID = raw['owner_id'];
-      this.createdAt = Util.getDate(this.id);
+
+      this.ownerID = new Snowflake(raw['owner_id']);
+      this.createdAt = id.timestamp;
 
       this.emojis = new Map<String, GuildEmoji>();
       raw['emojis'].forEach((Map<String, dynamic> o) {
@@ -98,9 +102,8 @@ class Guild {
         new Role._new(this.client, o, this);
       });
 
-      this.shard = this
-          .client
-          .shards[(int.parse(this.id) >> 22) % this.client._options.shardCount];
+      this.shard = this.client.shards[(int.parse(this.id.toString()) >> 22) %
+          this.client._options.shardCount];
 
       if (guildCreate) {
         this.members = new Map<String, Member>();
@@ -116,7 +119,7 @@ class Guild {
           else if (o['type'] == 2)
             new VoiceChannel._new(client, o, this);
           else
-            new GuildChannel._new(client, o, this, "4");
+            new GuildChannel._new(client, o, this, o['type'].toString());
         });
 
         raw['presences'].forEach((Map<String, dynamic> o) {
@@ -134,8 +137,8 @@ class Guild {
         this.afkChannel = this.channels[raw['afk_channel_id']];
       }
 
-      client.guilds[this.id] = this;
-      shard.guilds[this.id] = this;
+      client.guilds[this.id.toString()] = this;
+      shard.guilds[this.id.toString()] = this;
     }
   }
 
@@ -199,10 +202,59 @@ class Guild {
     return null;
   }
 
+  Future<List<Invite>> getGuildInvites() async {
+    HttpResponse r = await this.client.http.send('GET', "/guilds/$id/invites");
+
+    var raw = r.body.asJson() as List<dynamic>;
+    List<Invite> tmp = new List();
+    raw.forEach((v) {
+      tmp.add(new Invite._new(this.client, v as Map<String, dynamic>));
+    });
+
+    return tmp;
+  }
+
+  /// Get Guil's embed object
+  Future<Embed> getGuildEmbed() async {
+    HttpResponse r = await this.client.http.send('GET', "/guilds/$id/embed");
+    return new Embed._new(this.client, r.body.asJson() as Map<String, dynamic>);
+  }
+
+  /// Modify guild embed object
+  Future<Embed> editGuildEmbed(EmbedBuilder embed) async {
+    HttpResponse r = await this
+        .client
+        .http
+        .send('PATCH', "/guilds/$id/embed", body: embed.build());
+    return new Embed._new(this.client, r.body.asJson() as Map<String, dynamic>);
+  }
+
   /// Creates an empty role.
   Future<Role> createRole() async {
     HttpResponse r = await this.client.http.send('POST', "/guilds/$id/roles");
     return new Role._new(client, r.body.asJson() as Map<String, dynamic>, this);
+  }
+
+  /// Adds [Role] to [User]
+  Future<Null> addRole(User user, Role role) async {
+    await this
+        .client
+        .http
+        .send('PUT', '/guilds/$id/members/$user.id/roles/$role.id');
+    return null;
+  }
+
+  /// Returns list of available [VoiceChannel]s
+  Future<List<VoiceRegion>> getVoiceRegions() async {
+    var r = await this.client.http.send('GET', "/guilds/$id/regions");
+
+    var raw = r.body.asJson() as List<dynamic>;
+    List<VoiceRegion> tmp = new List();
+    raw.forEach((v) {
+      tmp.add(new VoiceRegion._new(v as Map<String, dynamic>));
+    });
+
+    return tmp;
   }
 
   /// Creates a channel.
@@ -318,7 +370,7 @@ class Guild {
     Map<String, dynamic> map = <String, dynamic>{};
     r.body.asJson().forEach((Map<String, dynamic> o) {
       Webhook webhook = new Webhook._fromApi(this.client, o);
-      map[webhook.id] = webhook;
+      map[webhook.id.toString()] = webhook;
     });
     return map;
   }

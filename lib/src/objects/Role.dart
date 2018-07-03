@@ -12,7 +12,7 @@ class Role {
   String name;
 
   /// The role's ID.
-  String id;
+  Snowflake id;
 
   /// The role's color, null if no color.
   int color;
@@ -39,14 +39,14 @@ class Role {
   DateTime createdAt;
 
   Role._new(this.client, this.raw, this.guild) {
-    this.id = raw['id'];
+    this.id = new Snowflake(raw['id']);
     this.name = raw['name'];
     this.position = raw['position'];
     this.hoist = raw['hoist'];
     this.managed = raw['managed'];
     this.mentionable = raw['mentionable'];
     this.permissions = new Permissions.fromInt(this.client, raw['permissions']);
-    this.createdAt = Util.getDate(this.id);
+    this.createdAt = id.timestamp;
 
     if (raw['color'] == 0) {
       this.color = null;
@@ -54,7 +54,7 @@ class Role {
       this.color = raw['color'];
     }
 
-    this.guild.roles[this.id] = this;
+    this.guild.roles[this.id.toString()] = this;
   }
 
   /// Edits the role.
@@ -83,6 +83,14 @@ class Role {
   /// Deletes the role.
   Future<Null> delete() async {
     await this.client.http.send('DELETE', "/guilds/${this.guild.id}/roles/$id");
+    return null;
+  }
+
+  Future<Null> addToUser(User user) async {
+    await this
+        .client
+        .http
+        .send('PUT', '/guilds/${guild.id}/members/${user.id}/roles/$id');
     return null;
   }
 
