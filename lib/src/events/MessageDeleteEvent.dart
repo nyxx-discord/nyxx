@@ -6,7 +6,7 @@ class MessageDeleteEvent {
   Message message;
 
   /// The ID of the message.
-  String id;
+  Snowflake id;
 
   MessageDeleteEvent._new(Client client, Map<String, dynamic> json) {
     if (client.ready) {

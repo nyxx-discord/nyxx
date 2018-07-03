@@ -15,7 +15,7 @@ class OAuth2Guild {
   String icon;
 
   /// The guild's ID.
-  String id;
+  Snowflake id;
 
   /// The guild's name
   String name;
@@ -26,9 +26,9 @@ class OAuth2Guild {
   OAuth2Guild._new(this.client, this.raw) {
     this.permissions = new Permissions.fromInt(client, raw['permissions']);
     this.icon = raw['icon'];
-    this.id = raw['id'];
+    this.id = new Snowflake(raw['id']);
     this.name = raw['name'];
-    this.createdAt = Util.getDate(this.id);
+    this.createdAt = id.timestamp;
   }
 
   /// Returns a string representation of this object.

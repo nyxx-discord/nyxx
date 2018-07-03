@@ -3,6 +3,7 @@ library nyxx;
 import 'dart:async';
 import 'dart:convert';
 import 'dart:collection';
+import 'dart:io';
 import 'src/internals.dart' as internals;
 import 'package:http_parser/http_parser.dart' as http_parser;
 import 'package:w_transport/w_transport.dart' as w_transport;
@@ -14,6 +15,7 @@ part 'src/internal/Http.dart';
 part 'src/internal/Util.dart';
 
 part 'src/Client.dart';
+part 'src/objects/Snowflake.dart';
 
 part 'src/builders/EmbedBuilder.dart';
 part 'src/builders/EmbedAuthorBuilder.dart';
@@ -72,6 +74,7 @@ part 'src/objects/channel/GroupDMChannel.dart';
 part 'src/objects/channel/DMChannel.dart';
 part 'src/objects/channel/Channel.dart';
 
+part 'src/objects/VoiceRegion.dart';
 part 'src/objects/ClientOAuth2Application.dart';
 part 'src/objects/ClientOptions.dart';
 part 'src/objects/ClientUser.dart';

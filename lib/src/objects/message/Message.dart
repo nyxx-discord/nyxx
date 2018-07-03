@@ -15,7 +15,7 @@ class Message {
   String content;
 
   /// The message's ID.
-  String id;
+  Snowflake id;
 
   /// The message's nonce, null if not set.
   String nonce;
@@ -80,7 +80,7 @@ class Message {
     this.onDelete = this._onDelete.stream;
 
     this.content = raw['content'];
-    this.id = raw['id'];
+    this.id = new Snowflake(raw['id']);
     this.nonce = raw['nonce'];
     this.timestamp = DateTime.parse(raw['timestamp']);
     this.author =
@@ -89,7 +89,7 @@ class Message {
     this.pinned = raw['pinned'];
     this.tts = raw['tts'];
     this.mentionEveryone = raw['mention_everyone'];
-    this.createdAt = Util.getDate(this.id);
+    this.createdAt = id.timestamp;
 
     this.channel._cacheMessage(this);
     this.channel.lastMessageID = this.id;
@@ -101,7 +101,7 @@ class Message {
 
       this.roleMentions = new Map<String, Role>();
       raw['mention_roles'].forEach((String o) {
-        this.roleMentions[guild.roles[o].id] = guild.roles[o];
+        this.roleMentions[guild.roles[o].id.toString()] = guild.roles[o];
       });
     }
 
@@ -114,8 +114,8 @@ class Message {
       final User user = new User._new(this.client, o);
       this.mentions[user.id] = user;
     });
-    this.mentions;
 
+    this.mentions;
     this.embeds = new Map<String, Embed>();
     raw['embeds'].forEach((Map<String, dynamic> o) {
       Embed embed = new Embed._new(this.client, o);
@@ -126,7 +126,7 @@ class Message {
     this.attachments = new Map<String, Attachment>();
     raw['attachments'].forEach((Map<String, dynamic> o) {
       final Attachment attachment = new Attachment._new(this.client, o);
-      this.attachments[attachment.id] = attachment;
+      this.attachments[attachment.id.toString()] = attachment;
     });
     this.attachments;
 
