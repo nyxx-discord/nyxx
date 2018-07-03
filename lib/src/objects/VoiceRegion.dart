@@ -21,7 +21,7 @@ class VoiceRegion {
 
   /// Raw content returned by API
   Map<String, dynamic> raw;
-  
+
   VoiceRegion._new(this.raw) {
     this.id = raw['id'];
     this.name = raw['name'];

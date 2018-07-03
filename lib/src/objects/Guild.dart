@@ -203,12 +203,12 @@ class Guild {
   }
 
   Future<List<Invite>> getGuildInvites() async {
-     HttpResponse r = await this.client.http.send('GET', "/guilds/$id/invites");
+    HttpResponse r = await this.client.http.send('GET', "/guilds/$id/invites");
 
-     var raw = r.body.asJson() as List<dynamic>;
-     List<Invite> tmp = new List();
-     raw.forEach((v) {
-       tmp.add(new Invite._new(this.client, v as Map<String, dynamic>));
+    var raw = r.body.asJson() as List<dynamic>;
+    List<Invite> tmp = new List();
+    raw.forEach((v) {
+      tmp.add(new Invite._new(this.client, v as Map<String, dynamic>));
     });
 
     return tmp;
@@ -222,10 +222,13 @@ class Guild {
 
   /// Modify guild embed object
   Future<Embed> editGuildEmbed(EmbedBuilder embed) async {
-    var r = HttpResponse r = await this.client.http.send('PATCH', "/guilds/$id/embed", body: embed.build());
+    HttpResponse r = await this
+        .client
+        .http
+        .send('PATCH', "/guilds/$id/embed", body: embed.build());
     return new Embed._new(this.client, r.body.asJson() as Map<String, dynamic>);
   }
-  
+
   /// Creates an empty role.
   Future<Role> createRole() async {
     HttpResponse r = await this.client.http.send('POST', "/guilds/$id/roles");
@@ -234,7 +237,10 @@ class Guild {
 
   /// Adds [Role] to [User]
   Future<Null> addRole(User user, Role role) async {
-    await this.client.http.send('PUT', '/guilds/$id/members/$user.id/roles/$role.id');
+    await this
+        .client
+        .http
+        .send('PUT', '/guilds/$id/members/$user.id/roles/$role.id');
     return null;
   }
 
@@ -250,7 +256,7 @@ class Guild {
 
     return tmp;
   }
-  
+
   /// Creates a channel.
   Future<dynamic> createChannel(String name, String type,
       {int bitrate: 64000, int userLimit: 0}) async {
