@@ -74,6 +74,7 @@ part 'src/objects/channel/GroupDMChannel.dart';
 part 'src/objects/channel/DMChannel.dart';
 part 'src/objects/channel/Channel.dart';
 
+part 'src/objects/VoiceRegion.dart';
 part 'src/objects/ClientOAuth2Application.dart';
 part 'src/objects/ClientOptions.dart';
 part 'src/objects/ClientUser.dart';
