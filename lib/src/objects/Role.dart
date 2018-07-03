@@ -86,6 +86,11 @@ class Role {
     return null;
   }
 
+  Future<Null> addToUser(User user) async {
+    await this.client.http.send('PUT', '/guilds/${guild.id}/members/${user.id}/roles/$id');
+    return null;
+  }
+
   /// Returns a string representation of this object.
   @override
   String toString() => this.name;
