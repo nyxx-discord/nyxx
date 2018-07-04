@@ -32,6 +32,21 @@ abstract class Command {
   /// Execution context of command. [MessageEvent] class contains [Message] instance.
   MessageEvent context;
 
+  /// Reply to messsage which fires command.
+  Future<Message> reply(
+      {String content,
+      EmbedBuilder embed,
+      bool tts: false,
+      String nonce,
+      bool disableEveryone}) async {
+    return await context.message.channel.send(
+        content: content,
+        embed: embed,
+        tts: tts,
+        nonce: nonce,
+        disableEveryone: disableEveryone);
+  }
+
   /// Delays execution of command and waits for nex matching command based on [prefix]. Has static timemout of 30 seconds
   Future<MessageEvent> delay(
       {String prefix: "", bool ensureUser = false}) async {
