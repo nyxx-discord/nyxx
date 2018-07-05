@@ -118,7 +118,8 @@ class Guild {
             new TextChannel._new(client, o, this);
           else if (o['type'] == 2)
             new VoiceChannel._new(client, o, this);
-          else if (o['type'] == 4) new Channel._new(client, o, "group");
+          else if (o['type'] == 4)
+            new GroupChannel._new(client, o, this);
         });
 
         raw['presences'].forEach((Map<String, dynamic> o) {
@@ -325,12 +326,14 @@ class Guild {
   ///
   /// Throws an [Exception] if the HTTP request errored.
   ///     Guild.getMember("user id");
-  Future<Member> getMember(String  userId) async {
+  Future<Member> getMember(String userId) async {
     if (this.members[userId] != null) {
       return this.members[userId];
     } else {
-      final HttpResponse r =
-          await this.client.http.send('GET', '/guilds/${this.id}/members/$userId');
+      final HttpResponse r = await this
+          .client
+          .http
+          .send('GET', '/guilds/${this.id}/members/$userId');
 
       final Member m = new Member._new(
           this.client, r.body.asJson() as Map<String, dynamic>, this);
