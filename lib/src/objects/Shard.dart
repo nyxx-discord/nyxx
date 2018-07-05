@@ -199,6 +199,18 @@ class Shard {
             }
             break;
 
+          case 'MESSAGE_DELETE_BULK':
+            new MessageDeleteBulkEvent._new(this._ws.client, json);
+            break;
+
+          case 'CHANNEL_PINS_UPDATE':
+            new ChannelPinsUpdateEvent._new(this._ws.client, json);
+            break;
+
+          case 'GUILD_EMOJIS_UPDATE':
+            new GuildEmojisUpdateEvent._new(this._ws.client, json);
+            break;
+
           case 'MESSAGE_CREATE':
             new MessageEvent._new(this._ws.client, json);
             break;
