@@ -7,7 +7,7 @@ class Util {
     return new DateTime.fromMillisecondsSinceEpoch(
         ((int.parse(id) / 4194304) + 1420070400000).toInt());
   }
-
+  /*
   /// Resolves an object into a target object.
   static String resolve(String to, dynamic object) {
     if (to == "channel") {
@@ -68,7 +68,7 @@ class Util {
       return null;
     }
   }
-
+  */
   /// Creates a text table.
   static String textTable(List<List<String>> rows) {
     List<List<String>> cols = [];

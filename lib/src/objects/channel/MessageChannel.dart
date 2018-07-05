@@ -120,15 +120,15 @@ class MessageChannel extends Channel {
   ///     Channel.getMessages(limit: 100, after: "222078108977594368");
   Future<LinkedHashMap<String, Message>> getMessages({
     int limit: 50,
-    String after: null,
-    String before: null,
-    String around: null,
+    Snowflake after: null,
+    Snowflake before: null,
+    Snowflake around: null,
   }) async {
     Map<String, dynamic> query = {"limit": limit.toString()};
 
-    if (after != null) query['after'] = after;
-    if (before != null) query['before'] = before;
-    if (around != null) query['around'] = around;
+    if (after != null) query['after'] = after.toString();
+    if (before != null) query['before'] = before.toString();
+    if (around != null) query['around'] = around.toString();
 
     final HttpResponse r = await this
         .client

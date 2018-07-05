@@ -22,7 +22,7 @@ class PongCommand extends command.Command {
 
   @override
   run() async {
-    await context.message.channel.sendMessage(content: "Pong!");
+    await context.message.channel.send(content: "Pong!");
   }
 }
 
@@ -35,7 +35,7 @@ class EchoCommand extends command.Command {
 
   @override
   run() async {
-    await context.message.channel.sendMessage(content: context.message.content);
+    await context.message.channel.send(content: context.message.content);
   }
 }
 
@@ -49,6 +49,6 @@ class AliasCommand extends command.Command {
 
   @override
   run() async {
-    await context.message.channel.sendMessage(content: context.message.content);
+    await context.message.channel.send(content: context.message.content);
   }
 }

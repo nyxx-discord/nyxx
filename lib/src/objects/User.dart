@@ -129,16 +129,15 @@ class User {
   /// Throws an [Exception] if the HTTP request errored or if the client user
   /// is not a bot.
   ///     Channel.getMessage("message id");
-  Future<Message> getMessage(dynamic message) async {
+  Future<Message> getMessage(String messageId) async {
     if (this.client.user.bot) {
-      final String id = Util.resolve('message', message);
       DMChannel channel = await getChannel();
       String channelId = channel.id.toString();
 
       final HttpResponse r = await this
           .client
           .http
-          .send('GET', '/channels/$channelId/messages/$id');
+          .send('GET', '/channels/$channelId/messages/$messageId');
       return new Message._new(
           this.client, r.body.asJson() as Map<String, dynamic>);
     } else {

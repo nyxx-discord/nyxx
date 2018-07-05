@@ -154,10 +154,8 @@ class Client {
   ///
   /// Throws an [Exception] if the HTTP request errored.
   ///     Client.getUser("user id");
-  Future<User> getUser(dynamic user) async {
-    final String id = Util.resolve('user', user);
-
-    final HttpResponse r = await this.http.send('GET', '/users/$id');
+  Future<User> getUser(String userId) async {
+    final HttpResponse r = await this.http.send('GET', '/users/userId');
     return new User._new(this, r.body.asJson() as Map<String, dynamic>);
   }
 
@@ -174,12 +172,10 @@ class Client {
   ///
   /// Throws an [Exception] if the HTTP request errored
   ///     Client.getOAuth2Info("app id");
-  Future<OAuth2Info> getOAuth2Info(dynamic app) async {
-    final String id = Util.resolve('app', app);
-
+  Future<OAuth2Info> getOAuth2Info(String userId) async {
     final HttpResponse r = await this
         .http
-        .send('GET', '/oauth2/authorize?client_id=$id&scope=bot');
+        .send('GET', '/oauth2/authorize?client_id=$userId&scope=bot');
     return new OAuth2Info._new(this, r.body.asJson() as Map<String, dynamic>);
   }
 }
