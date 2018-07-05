@@ -73,8 +73,7 @@ abstract class Commands {
         return;
       }
 
-      await e.message.channel
-          .sendMessage(content: createHelp(e.message.author.id));
+      await e.message.channel.send(content: createHelp(e.message.author.id));
       return;
     }
 

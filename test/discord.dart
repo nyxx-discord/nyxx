@@ -14,8 +14,7 @@ class TestCommand extends command.Command {
 
   @override
   run() async {
-    await context.message.channel
-        .sendMessage(content: "test is working correctly");
+    await context.message.channel.send(content: "test is working correctly");
   }
 }
 
@@ -61,27 +60,27 @@ void main() {
 
   bot.onReady.listen((e) async {
     var channel = bot.channels['422285619952222208'];
-    channel.sendMessage(
+    channel.send(
         content:
             "Testing new Travis CI build `#${env['TRAVIS_BUILD_NUMBER']}` from commit `${env['TRAVIS_COMMIT']}` on branch `${env['TRAVIS_BRANCH']}`");
 
     print("TESTING BASIC FUNCTIONALITY!");
-    var m = await channel.sendMessage(content: "Message test.");
+    var m = await channel.send(content: "Message test.");
     await m.edit(content: "Edit test.");
     await m.delete();
-    await channel.sendMessage(content: "--trigger-test");
+    await channel.send(content: "--trigger-test");
 
     print("TESTING COMMANDS!");
-    var mm = await channel.sendMessage(content: "~~test");
+    var mm = await channel.send(content: "~~test");
     await mm.delete();
 
     print("TESTING COMMAND - NOT FOUND!");
-    var mmm = await channel.sendMessage(content: "~~notFound");
+    var mmm = await channel.send(content: "~~notFound");
     await mmm.delete();
 
     print("TESTING COMMAND - COOLDOWN | ALIASES");
-    var c = await channel.sendMessage(content: "~~culdown");
-    var cc = await channel.sendMessage(content: "~~culdown");
+    var c = await channel.send(content: "~~culdown");
+    var cc = await channel.send(content: "~~culdown");
     await c.delete();
     await cc.delete();
 

@@ -28,7 +28,7 @@ class Message {
 
   // For now it is dynamic - have to fix this
   /// Channel in which message was sent
-  dynamic channel;
+  MessageChannel channel;
 
   /// The message's guild.
   Guild guild;
@@ -96,7 +96,7 @@ class Message {
 
     /// Safe cast to [GuildChannel]
     if (this.channel is GuildChannel) {
-      this.guild = this.channel.guild;
+      this.guild = (this.channel as GuildChannel).guild;
       this.member = guild.members[this.author.id];
 
       this.roleMentions = new Map<String, Role>();
