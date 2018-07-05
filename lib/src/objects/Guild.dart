@@ -118,8 +118,7 @@ class Guild {
             new TextChannel._new(client, o, this);
           else if (o['type'] == 2)
             new VoiceChannel._new(client, o, this);
-          else if (o['type'] == 4)
-            new GroupChannel._new(client, o, this);
+          else if (o['type'] == 4) new GroupChannel._new(client, o, this);
         });
 
         raw['presences'].forEach((Map<String, dynamic> o) {

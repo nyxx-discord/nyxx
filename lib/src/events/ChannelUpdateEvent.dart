@@ -11,7 +11,7 @@ class ChannelUpdateEvent {
   ChannelUpdateEvent._new(Client client, Map<String, dynamic> json) {
     if (client.ready) {
       final Guild guild = client.guilds[json['d']['guild_id']];
-      this.oldChannel = client.channels[json['d']['id']];
+      this.oldChannel = client.channels[json['d']['id']] as GuildChannel;
       if (json['d']['type'] == 0) {
         this.newChannel = new TextChannel._new(
             client, json['d'] as Map<String, dynamic>, guild);

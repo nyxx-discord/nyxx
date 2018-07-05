@@ -61,7 +61,13 @@ part 'src/events/TypingEvent.dart';
 part 'src/events/ChannelPinsUpdateEvent.dart';
 part 'src/events/GuildEmojisUpdateEvent.dart';
 part 'src/events/MessageDeleteBulkEvent.dart';
-part 'src/events/MessageReactionAddedEvent.dart';
+part 'src/events/MessageReactionEvent.dart';
+part 'src/events/MessageReactionsRemovedEvent.dart';
+part 'src/events/VoiceServerUpdateEvent.dart';
+part 'src/events/VoiceStateUpdateEvent.dart';
+part 'src/events/WebhookUpdateEvent.dart';
+
+part 'src/objects/VoiceState.dart';
 
 part 'src/objects/message/UnicodeEmoji.dart';
 part 'src/objects/message/GuildEmoji.dart';

@@ -11,7 +11,8 @@ class MessageDeleteBulkEvent {
   MessageDeleteBulkEvent._new(Client client, Map<String, dynamic> json) {
     this.channel = client.channels[json['d']['channel_id']];
 
-    json['d']['ids'].forEach((String i) => deletedMessages.add(new Snowflake(i)));
+    json['d']['ids']
+        .forEach((String i) => deletedMessages.add(new Snowflake(i)));
     client._events.onMessageDeleteBulk.add(this);
   }
 }

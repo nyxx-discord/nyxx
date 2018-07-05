@@ -53,4 +53,6 @@ class GuildEmoji extends Emoji {
 
   /// Returns encoded string ready to send via message.
   String toString() => encode();
+
+  bool operator ==(other) => other is Emoji && other.name == this.name;
 }

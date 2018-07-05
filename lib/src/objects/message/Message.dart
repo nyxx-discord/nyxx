@@ -4,6 +4,9 @@ part of nyxx;
 class Message {
   StreamController<MessageUpdateEvent> _onUpdate;
   StreamController<MessageDeleteEvent> _onDelete;
+  StreamController<MessageReactionEvent> _onReactionAdded;
+  StreamController<MessageReactionEvent> _onReactionRemove;
+  StreamController<MessageReactionsRemovedEvent> _onReactionsRemoved;
 
   /// The [Client] object.
   Client client;
@@ -72,12 +75,30 @@ class Message {
   /// Emitted when the message is deleted, if it is in the channel cache.
   Stream<MessageDeleteEvent> onDelete;
 
+  /// Emitted when a user adds a reaction to a message.
+  Stream<MessageReactionEvent> onReactionAdded;
+
+  /// Emitted when a user adds a reaction to a message.
+  Stream<MessageReactionEvent> onReactionRemove;
+
+  /// Emitted when a user explicitly removes all reactions from a message.
+  Stream<MessageReactionsRemovedEvent> onReactionsRemoved;
+
   Message._new(this.client, this.raw) {
     this._onUpdate = new StreamController.broadcast();
     this.onUpdate = this._onUpdate.stream;
 
     this._onDelete = new StreamController.broadcast();
     this.onDelete = this._onDelete.stream;
+
+    this._onReactionRemove = new StreamController.broadcast();
+    this.onReactionRemove = this._onReactionRemove.stream;
+
+    this._onReactionAdded = new StreamController.broadcast();
+    this.onReactionAdded = this._onReactionAdded.stream;
+
+    this._onReactionsRemoved = new StreamController.broadcast();
+    this.onReactionsRemoved = this._onReactionsRemoved.stream;
 
     this.content = raw['content'];
     this.id = new Snowflake(raw['id']);
@@ -179,8 +200,6 @@ class Message {
 
   /// Add reaction to message.
   Future<Null> createReaction(Emoji emoji) async {
-    print(emoji.encode());
-
     await this.client.http.send('PUT',
         "/channels/${this.channel.id}/messages/${this.id}/reactions/${emoji.encode()}/@me");
     return null;

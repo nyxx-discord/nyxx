@@ -96,6 +96,24 @@ class _EventController {
   /// Emitted when many messages are deleted at once
   StreamController<MessageDeleteBulkEvent> onMessageDeleteBulk;
 
+  /// Emitted when a user adds a reaction to a message.
+  StreamController<MessageReactionEvent> onMessageReactionAdded;
+
+  /// Emitted when a user deletes a reaction to a message.
+  StreamController<MessageReactionEvent> onMessageReactionRemove;
+
+  /// Emitted when a user explicitly removes all reactions from a message.
+  StreamController<MessageReactionsRemovedEvent> onMessageReactionsRemoved;
+
+  /// Emitted when someone joins/leaves/moves voice channels.
+  StreamController<VoiceStateUpdateEvent> onVoiceStateUpdate;
+
+  /// Emitted when a guild's voice server is updated. This is sent when initially connecting to voice, and when the current voice instance fails over to a new server.
+  StreamController<VoiceServerUpdateEvent> onVoiceServerUpdate;
+
+  /// Emitted when a guild channel's webhook is created, updated, or deleted.
+  StreamController<WebhookUpdateEvent> onWebhookUpdate;
+
   /// Makes a new `EventController`.
   _EventController(Client client) {
     this.onRaw = new StreamController.broadcast();
@@ -187,8 +205,26 @@ class _EventController {
 
     this.onMessageDeleteBulk = new StreamController.broadcast();
     client.onMessageDeleteBulk = this.onMessageDeleteBulk.stream;
+
+    this.onMessageReactionAdded = new StreamController.broadcast();
+    client.onMessageReactionAdded = this.onMessageReactionAdded.stream;
+
+    this.onMessageReactionRemove = new StreamController.broadcast();
+    client.onMessageReactionRemove = this.onMessageReactionRemove.stream;
+
+    this.onMessageReactionsRemoved = new StreamController.broadcast();
+    client.onMessageReactionsRemoved = this.onMessageReactionsRemoved.stream;
+
+    this.onVoiceStateUpdate = new StreamController.broadcast();
+    client.onVoiceStateUpdate = this.onVoiceStateUpdate.stream;
+
+    this.onVoiceServerUpdate = new StreamController.broadcast();
+    client.onVoiceServerUpdate = this.onVoiceServerUpdate.stream;
+
+    this.onWebhookUpdate = new StreamController.broadcast();
+    client.onWebhookUpdate = this.onWebhookUpdate.stream;
   }
-  
+
   /// Closes all streams.
   Future<Null> destroy() async {
     await this.onRaw.close();
@@ -222,6 +258,14 @@ class _EventController {
 
     await this.onChannelPinsUpdate.close();
     await this.onGuildEmojisUpdate.close();
+
+    await this.onMessageDeleteBulk.close();
+    await this.onMessageReactionAdded.close();
+    await this.onMessageReactionRemove.close();
+    await this.onMessageReactionsRemoved.close();
+    await this.onVoiceStateUpdate.close();
+    await this.onVoiceServerUpdate.close();
+    await this.onWebhookUpdate.close();
 
     return null;
   }
