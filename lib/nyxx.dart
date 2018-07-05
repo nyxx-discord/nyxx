@@ -73,6 +73,7 @@ part 'src/objects/channel/GuildChannel.dart';
 part 'src/objects/channel/GroupDMChannel.dart';
 part 'src/objects/channel/DMChannel.dart';
 part 'src/objects/channel/Channel.dart';
+part 'src/objects/channel/MessageChannel.dart';
 
 part 'src/objects/VoiceRegion.dart';
 part 'src/objects/ClientOAuth2Application.dart';
