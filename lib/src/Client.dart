@@ -65,6 +65,12 @@ class Client {
   /// Emitted when a message is received.
   Stream<MessageEvent> onMessage;
 
+  /// Emitted when channel's pins are updated.
+  Stream<ChannelPinsUpdateEvent> onChannelPinsUpdate;
+
+  /// Emitted when guild's emojis are changed.
+  Stream<GuildEmojisUpdateEvent> onGuildEmojisUpdate;
+  
   /// Emitted when a message is edited.
   Stream<MessageUpdateEvent> onMessageUpdate;
 
@@ -121,6 +127,9 @@ class Client {
 
   /// Emitted when a role is deleted.
   Stream<RoleDeleteEvent> onRoleDelete;
+
+  /// Emitted when many messages are deleted at once
+  Stream<MessageDeleteBulkEvent> onMessageDeleteBulk;
 
   /// Creates and logs in a new client.
   Client(this._token, [this._options]) {

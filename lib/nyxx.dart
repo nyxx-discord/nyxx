@@ -58,6 +58,10 @@ part 'src/events/RoleCreateEvent.dart';
 part 'src/events/RoleDeleteEvent.dart';
 part 'src/events/RoleUpdateEvent.dart';
 part 'src/events/TypingEvent.dart';
+part 'src/events/ChannelPinsUpdateEvent.dart';
+part 'src/events/GuildEmojisUpdateEvent.dart';
+part 'src/events/MessageDeleteBulkEvent.dart';
+part 'src/events/MessageReactionAddedEvent.dart';
 
 part 'src/objects/message/UnicodeEmoji.dart';
 part 'src/objects/message/GuildEmoji.dart';

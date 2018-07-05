@@ -30,6 +30,12 @@ class _EventController {
   /// Emitted when a message is received.
   StreamController<MessageEvent> onMessage;
 
+  /// Emitted when channel's pins are updated.
+  StreamController<ChannelPinsUpdateEvent> onChannelPinsUpdate;
+
+  /// Emitted when guild's emojis are changed.
+  StreamController<GuildEmojisUpdateEvent> onGuildEmojisUpdate;
+
   /// Emitted when a message is edited.
   StreamController<MessageUpdateEvent> onMessageUpdate;
 
@@ -86,6 +92,9 @@ class _EventController {
 
   /// Emitted when a role is deleted.
   StreamController<RoleDeleteEvent> onRoleDelete;
+
+  /// Emitted when many messages are deleted at once
+  StreamController<MessageDeleteBulkEvent> onMessageDeleteBulk;
 
   /// Makes a new `EventController`.
   _EventController(Client client) {
@@ -169,8 +178,17 @@ class _EventController {
 
     this.onRoleDelete = new StreamController.broadcast();
     client.onRoleDelete = this.onRoleDelete.stream;
-  }
 
+    this.onChannelPinsUpdate = new StreamController.broadcast();
+    client.onChannelPinsUpdate = this.onChannelPinsUpdate.stream;
+
+    this.onGuildEmojisUpdate = new StreamController.broadcast();
+    client.onGuildEmojisUpdate = this.onGuildEmojisUpdate.stream;
+
+    this.onMessageDeleteBulk = new StreamController.broadcast();
+    client.onMessageDeleteBulk = this.onMessageDeleteBulk.stream;
+  }
+  
   /// Closes all streams.
   Future<Null> destroy() async {
     await this.onRaw.close();
@@ -201,6 +219,10 @@ class _EventController {
     await this.onRoleCreate.close();
     await this.onRoleUpdate.close();
     await this.onRoleDelete.close();
+
+    await this.onChannelPinsUpdate.close();
+    await this.onGuildEmojisUpdate.close();
+
     return null;
   }
 }
