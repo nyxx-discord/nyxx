@@ -27,7 +27,7 @@ class Guild {
   Snowflake embedChannelID;
 
   /// The guild's default channel.
-  GuildChannel defaultChannel;
+  Channel defaultChannel;
 
   /// The guild's AFK timeout.
   int afkTimeout;
@@ -60,7 +60,7 @@ class Guild {
   Map<String, Member> members;
 
   /// The guild's channels.
-  Map<String, GuildChannel> channels;
+  Map<String, Channel> channels;
 
   /// The guild's roles.
   Map<String, Role> roles;
@@ -107,7 +107,7 @@ class Guild {
 
       if (guildCreate) {
         this.members = new Map<String, Member>();
-        this.channels = new Map<String, GuildChannel>();
+        this.channels = new Map<String, Channel>();
 
         raw['members'].forEach((Map<String, dynamic> o) {
           new Member._new(client, o, this);
@@ -118,8 +118,8 @@ class Guild {
             new TextChannel._new(client, o, this);
           else if (o['type'] == 2)
             new VoiceChannel._new(client, o, this);
-          else
-            new GuildChannel._new(client, o, this, o['type'].toString());
+          else if (o['type'] == 4)
+            new GroupChannel._new(client, o, this);
         });
 
         raw['presences'].forEach((Map<String, dynamic> o) {
@@ -326,14 +326,14 @@ class Guild {
   ///
   /// Throws an [Exception] if the HTTP request errored.
   ///     Guild.getMember("user id");
-  Future<Member> getMember(dynamic member) async {
-    final String id = Util.resolve('member', member);
-
-    if (this.members[member] != null) {
-      return this.members[member];
+  Future<Member> getMember(String userId) async {
+    if (this.members[userId] != null) {
+      return this.members[userId];
     } else {
-      final HttpResponse r =
-          await this.client.http.send('GET', '/guilds/${this.id}/members/$id');
+      final HttpResponse r = await this
+          .client
+          .http
+          .send('GET', '/guilds/${this.id}/members/$userId');
 
       final Member m = new Member._new(
           this.client, r.body.asJson() as Map<String, dynamic>, this);
@@ -346,12 +346,10 @@ class Guild {
   /// Throws an [Exception] if the HTTP request errored or if the client user
   /// is a bot.
   ///     Guild.oauth2Authorize("app id");
-  Future<Null> oauth2Authorize(dynamic app, [int permissions = 0]) async {
+  Future<Null> oauth2Authorize(String userId, [int permissions = 0]) async {
     if (!this.client.user.bot) {
-      final String id = Util.resolve('app', app);
-
       await this.client.http.send(
-          'POST', '/oauth2/authorize?client_id=$id&scope=bot',
+          'POST', '/oauth2/authorize?client_id=$userId&scope=bot',
           body: <String, dynamic>{
             "guild_id": this.id,
             "permissions": permissions,

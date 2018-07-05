@@ -72,11 +72,13 @@ part 'src/objects/message/Message.dart';
 part 'src/objects/message/Attachment.dart';
 
 part 'src/objects/channel/VoiceChannel.dart';
+part 'src/objects/channel/GroupChannel.dart';
 part 'src/objects/channel/TextChannel.dart';
 part 'src/objects/channel/GuildChannel.dart';
 part 'src/objects/channel/GroupDMChannel.dart';
 part 'src/objects/channel/DMChannel.dart';
 part 'src/objects/channel/Channel.dart';
+part 'src/objects/channel/MessageChannel.dart';
 
 part 'src/objects/VoiceRegion.dart';
 part 'src/objects/ClientOAuth2Application.dart';
