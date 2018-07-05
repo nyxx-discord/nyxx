@@ -73,8 +73,7 @@ abstract class Commands {
         return;
       }
 
-      await e.message.channel
-          .sendMessage(content: createHelp(e.message.author.id));
+      await e.message.channel.send(content: createHelp(e.message.author.id));
       return;
     }
 
@@ -100,7 +99,7 @@ abstract class Commands {
 
     // Check if there is need to check user roles
     if (matchedCommand.requiredRoles != null && executionCode == -1) {
-      var member = await e.message.guild.getMember(e.message.author);
+      var member = await e.message.guild.getMember(e.message.author.id);
 
       var hasRoles = matchedCommand.requiredRoles
           .where((i) => member.roles.contains(i))

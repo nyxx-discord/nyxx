@@ -1,7 +1,6 @@
 part of nyxx;
 
-/// A guild channel.
-class VoiceChannel extends GuildChannel {
+class VoiceChannel extends Channel with GuildChannel {
   /// The channel's bitrate.
   int bitrate;
 
@@ -9,9 +8,13 @@ class VoiceChannel extends GuildChannel {
   int userLimit;
 
   VoiceChannel._new(Client client, Map<String, dynamic> data, Guild guild)
-      : super._new(client, data, guild, "voice") {
+      : super._new(client, data, "voice") {
+    initialize(data);
+    this.guild = guild;
+
     this.bitrate = raw['bitrate'];
     this.userLimit = raw['user_limit'];
+    this.guild.channels[this.id.toString()] = this;
   }
 
   /// Edits the channel.
