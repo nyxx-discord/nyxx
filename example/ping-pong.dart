@@ -13,7 +13,7 @@ void main() {
 
   bot.onMessage.listen((nyxx.MessageEvent e) {
     if (e.message.content == "!ping") {
-      e.message.channel.sendMessage(content: "Pong!");
+      e.message.channel.send(content: "Pong!");
     }
   });
 }
