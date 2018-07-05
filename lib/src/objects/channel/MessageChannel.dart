@@ -53,6 +53,9 @@ class MessageChannel extends Channel {
         this.client, r.body.asJson() as Map<String, dynamic>);
   }
 
+  Message getMessage(String id) =>
+      messages.values.toList().firstWhere((i) => i.id.toString() == id);
+
   /// Sends a message.
   ///
   /// Throws an [Exception] if the HTTP request errored.

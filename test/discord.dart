@@ -59,7 +59,7 @@ void main() {
   }
 
   bot.onReady.listen((e) async {
-    var channel = bot.channels['422285619952222208'];
+    var channel = bot.channels['422285619952222208'] as nyxx.TextChannel;
     channel.send(
         content:
             "Testing new Travis CI build `#${env['TRAVIS_BUILD_NUMBER']}` from commit `${env['TRAVIS_COMMIT']}` on branch `${env['TRAVIS_BRANCH']}`");

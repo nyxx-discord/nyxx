@@ -22,7 +22,7 @@ class Client {
   Map<String, Guild> guilds;
 
   /// All of the channels the bot is in.
-  Map<String, dynamic> channels;
+  Map<String, Channel> channels;
 
   /// All of the users the bot can see. Does not always have offline users
   /// without forceFetchUsers enabled.
@@ -70,7 +70,7 @@ class Client {
 
   /// Emitted when guild's emojis are changed.
   Stream<GuildEmojisUpdateEvent> onGuildEmojisUpdate;
-  
+
   /// Emitted when a message is edited.
   Stream<MessageUpdateEvent> onMessageUpdate;
 
@@ -130,6 +130,24 @@ class Client {
 
   /// Emitted when many messages are deleted at once
   Stream<MessageDeleteBulkEvent> onMessageDeleteBulk;
+
+  /// Emitted when a user adds a reaction to a message.
+  Stream<MessageReactionEvent> onMessageReactionAdded;
+
+  /// Emitted when a user deletes a reaction to a message.
+  Stream<MessageReactionEvent> onMessageReactionRemove;
+
+  /// Emitted when a user explicitly removes all reactions from a message.
+  Stream<MessageReactionsRemovedEvent> onMessageReactionsRemoved;
+
+  /// Emittedwhen someone joins/leaves/moves voice channels.
+  Stream<VoiceStateUpdateEvent> onVoiceStateUpdate;
+
+  /// Emitted when a guild channel's webhook is created, updated, or deleted.
+  Stream<WebhookUpdateEvent> onWebhookUpdate;
+
+  /// Emitted when a guild's voice server is updated. This is sent when initially connecting to voice, and when the current voice instance fails over to a new server.
+  Stream<VoiceServerUpdateEvent> onVoiceServerUpdate;
 
   /// Creates and logs in a new client.
   Client(this._token, [this._options]) {

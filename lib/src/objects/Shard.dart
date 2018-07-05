@@ -199,6 +199,18 @@ class Shard {
             }
             break;
 
+          case 'MESSAGE_REACTION_REMOVE_ALL':
+            new MessageReactionsRemovedEvent._new(this._ws.client, json);
+            break;
+
+          case 'MESSAGE_REACTION_ADD':
+            new MessageReactionEvent._new(this._ws.client, json, true);
+            break;
+
+          case 'MESSAGE_REACTION_REMOVE':
+            new MessageReactionEvent._new(this._ws.client, json, false);
+            break;
+
           case 'MESSAGE_DELETE_BULK':
             new MessageDeleteBulkEvent._new(this._ws.client, json);
             break;
@@ -207,8 +219,16 @@ class Shard {
             new ChannelPinsUpdateEvent._new(this._ws.client, json);
             break;
 
+          case 'VOICE_STATE_UPDATE':
+            new VoiceStateUpdateEvent._new(this._ws.client, json);
+            break;
+
           case 'GUILD_EMOJIS_UPDATE':
             new GuildEmojisUpdateEvent._new(this._ws.client, json);
+            break;
+
+          case 'VOICE_SERVER_UPDATE':
+            new VoiceServerUpdateEvent._new(this._ws.client, json);
             break;
 
           case 'MESSAGE_CREATE':

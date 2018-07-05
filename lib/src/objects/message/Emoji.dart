@@ -8,4 +8,6 @@ abstract class Emoji {
   Emoji(this.name);
 
   String encode();
+
+  bool operator ==(other) => other is Emoji && other.name == this.name;
 }
