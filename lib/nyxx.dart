@@ -68,6 +68,7 @@ part 'src/objects/message/Message.dart';
 part 'src/objects/message/Attachment.dart';
 
 part 'src/objects/channel/VoiceChannel.dart';
+part 'src/objects/channel/GroupChannel.dart';
 part 'src/objects/channel/TextChannel.dart';
 part 'src/objects/channel/GuildChannel.dart';
 part 'src/objects/channel/GroupDMChannel.dart';
