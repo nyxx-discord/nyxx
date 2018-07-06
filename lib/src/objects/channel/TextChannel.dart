@@ -3,16 +3,16 @@ part of nyxx;
 class TextChannel extends MessageChannel with GuildChannel {
   /// The channel's topic.
   String topic;
-  
+
   /// The channel's mention string.
   String mention;
-  
+
   TextChannel._new(Client client, Map<String, dynamic> data, Guild guild)
       : super._new(client, data, "text") {
     initialize(data);
     this.topic = raw['topic'];
     this.guild = guild;
-    
+
     this.mention = "<#${this.id}>";
     this.guild.channels[this.id.toString()] = this;
   }
