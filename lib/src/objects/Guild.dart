@@ -21,7 +21,7 @@ class Guild {
   String splash;
 
   /// System channel where system messages are sent
-  Snowflake systemChannel;
+  Channel systemChannel;
 
   /// enabled guild features
   List<String> features;
