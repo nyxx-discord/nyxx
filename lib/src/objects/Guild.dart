@@ -17,6 +17,15 @@ class Guild {
   /// The guild's icon hash.
   String icon;
 
+  /// Splash hash
+  String splash;
+
+  /// System channel where system messages are sent
+  Snowflake systemChannel;
+
+  /// enabled guild features
+  List<String> features;
+
   /// The guild's afk channel ID, null if not set.
   VoiceChannel afkChannel;
 
@@ -88,7 +97,7 @@ class Guild {
       this.notificationLevel = raw['default_message_notifications'];
       this.mfaLevel = raw['mfa_level'];
       this.embedEnabled = raw['embed_enabled'];
-
+      this.splash = raw['splash'];
       this.ownerID = new Snowflake(raw['owner_id']);
       this.createdAt = id.timestamp;
 
@@ -136,6 +145,9 @@ class Guild {
         this.afkChannel = this.channels[raw['afk_channel_id']];
       }
 
+      this.systemChannel = this.channels[raw['system_channel_id']];
+      this.features = raw['features'] as List<String>;
+
       client.guilds[this.id.toString()] = this;
       shard.guilds[this.id.toString()] = this;
     }
@@ -145,6 +157,13 @@ class Guild {
   String iconURL({String format: 'webp', int size: 128}) {
     if (this.icon != null)
       return 'https://cdn.${_Constants.host}/icons/${this.id}/${this.icon}.$format?size=$size';
+
+    return null;
+  }
+
+  String splashURL({String format: 'webp', int size: 128}) {
+    if (this.splash != null)
+      return 'https://cdn.discordapp.com/splashes/${this.id}/${this.splash}.$format?size=$size';
 
     return null;
   }
