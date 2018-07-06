@@ -2,28 +2,19 @@ part of nyxx;
 
 class MessageChannel extends Channel {
   Timer _typing;
-
-  /// The channel's topic.
-  String topic;
-
+  
   /// A collection of messages sent to this channel.
   LinkedHashMap<String, Message> messages;
 
   /// The ID for the last message in the channel.
   Snowflake lastMessageID;
 
-  /// The channel's mention string.
-  String mention;
-
   MessageChannel._new(Client client, Map<String, dynamic> data, String type)
       : super._new(client, data, type) {
-    this.topic = raw['topic'];
-
     if (raw.containsKey('last_message_id'))
       this.lastMessageID = new Snowflake(raw['last_message_id']);
-
+    
     this.messages = new LinkedHashMap<String, Message>();
-    this.mention = "<#${this.id}>";
   }
 
   void _cacheMessage(Message message) {
