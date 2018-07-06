@@ -24,8 +24,8 @@ class Guild {
   bool embedEnabled;
 
   /// System channel where system messages are sent
-  Snowflake systemChannel
-  
+  Snowflake systemChannel;
+
   /// enabled guild features
   List<String> features;
 
@@ -103,7 +103,7 @@ class Guild {
 
       this.splash = raw['splash'];
       this.embedEnabled = raw['embed_enabled'];
-      
+
       this.ownerID = new Snowflake(raw['owner_id']);
       this.createdAt = id.timestamp;
 
@@ -133,8 +133,7 @@ class Guild {
             new TextChannel._new(client, o, this);
           else if (o['type'] == 2)
             new VoiceChannel._new(client, o, this);
-          else if (o['type'] == 4)
-            new GroupChannel._new(client, o, this);
+          else if (o['type'] == 4) new GroupChannel._new(client, o, this);
         });
 
         raw['presences'].forEach((Map<String, dynamic> o) {
@@ -169,7 +168,7 @@ class Guild {
   }
 
   String splashURL({String format: 'webp', int size: 128}) {
-    if(this.splash != null)
+    if (this.splash != null)
       return 'https://cdn.discordapp.com/splashes/${this.id}/${this.splash}.$format?size=$size';
 
     return null;
