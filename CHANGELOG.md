@@ -1,4 +1,13 @@
-## [0.21.1](https://github.com/l7ssha/nyxx/compare/0.20.0...0.21.1)
+## [0.21.2](https://github.com/l7ssha/nyxx/compare/0.21.1...0.21.2)
+_Fri 06.07.2018_
+
+- **Bug fixes**
+  * Added overrides
+  * Implemented hashCode
+  * Fixed return type for `delay()` in Command class
+
+
+## [0.21.1](https://github.com/l7ssha/nyxx/compare/0.21.0...0.21.1)
 _Fri 06.07.2018_
 
 - **Bug fixes**

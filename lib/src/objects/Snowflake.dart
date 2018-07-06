@@ -55,13 +55,28 @@ class Snowflake {
     return (-1 << lb) ^ (-1 << rb);
   }
 
+  @override
   String toString() => id;
 
+  @override
   bool operator ==(other) {
     if (other is Snowflake) return other.id == id;
 
     if (other is String) return other == id;
 
     return false;
+  }
+
+  @override
+  int get hashCode {
+    int result = 17;
+    result = 37 * result + id.hashCode;
+    result = 37 * result + timestamp.hashCode;
+    result = 37 * result + timestamp.hashCode;
+    result = 37 * result + workerId.hashCode;
+    result = 37 * result + processId.hashCode;
+    result = 37 * result + sequence.hashCode;
+
+    return result;
   }
 }

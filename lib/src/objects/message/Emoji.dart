@@ -10,4 +10,6 @@ abstract class Emoji {
   String encode();
 
   bool operator ==(other) => other is Emoji && other.name == this.name;
+
+  int get hashCode => 17 * 37 + name.hashCode;
 }
