@@ -20,9 +20,6 @@ class Guild {
   /// Splash hash
   String splash;
 
-  /// True if guild is embedable (eg widget)
-  bool embedEnabled;
-
   /// System channel where system messages are sent
   Snowflake systemChannel;
 
@@ -100,10 +97,7 @@ class Guild {
       this.notificationLevel = raw['default_message_notifications'];
       this.mfaLevel = raw['mfa_level'];
       this.embedEnabled = raw['embed_enabled'];
-
       this.splash = raw['splash'];
-      this.embedEnabled = raw['embed_enabled'];
-
       this.ownerID = new Snowflake(raw['owner_id']);
       this.createdAt = id.timestamp;
 
