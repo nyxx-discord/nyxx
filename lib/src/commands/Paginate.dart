@@ -8,10 +8,8 @@ class Paginate {
   Emoji prev = UnicodeEmoji.track_previous;
 
   int _current = 0;
-  
+
   Paginate(this._paginateData, this._channel);
 
-  Future<Message> create() async {
-    
-  }
+  Future<Message> create() async {}
 }
