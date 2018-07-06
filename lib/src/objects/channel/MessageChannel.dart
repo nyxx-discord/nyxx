@@ -2,7 +2,7 @@ part of nyxx;
 
 class MessageChannel extends Channel {
   Timer _typing;
-  
+
   /// A collection of messages sent to this channel.
   LinkedHashMap<String, Message> messages;
 
@@ -13,7 +13,7 @@ class MessageChannel extends Channel {
       : super._new(client, data, type) {
     if (raw.containsKey('last_message_id'))
       this.lastMessageID = new Snowflake(raw['last_message_id']);
-    
+
     this.messages = new LinkedHashMap<String, Message>();
   }
 

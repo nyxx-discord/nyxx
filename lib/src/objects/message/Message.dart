@@ -120,7 +120,7 @@ class Message {
       this.guild = (this.channel as TextChannel).guild;
       this.member = guild.members[this.author.id];
 
-      if(raw['mention_roles'] != null) {
+      if (raw['mention_roles'] != null) {
         this.roleMentions = new Map<String, Role>();
         raw['mention_roles'].forEach((String o) {
           this.roleMentions[guild.roles[o].id.toString()] = guild.roles[o];
