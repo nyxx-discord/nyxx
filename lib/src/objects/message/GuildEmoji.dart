@@ -15,6 +15,7 @@ class GuildEmoji extends Emoji {
   Snowflake id;
 
   /// Name of emoji
+  @override
   String name;
 
   /// Roles this emoji is whitelisted to
@@ -52,7 +53,12 @@ class GuildEmoji extends Emoji {
   String encode() => "$name:$id";
 
   /// Returns encoded string ready to send via message.
+  @override
   String toString() => encode();
 
+  @override
   bool operator ==(other) => other is Emoji && other.name == this.name;
+
+  @override
+  int get hashCode => ((super.hashCode * 37 + id.hashCode) * 37 + name.hashCode);
 }

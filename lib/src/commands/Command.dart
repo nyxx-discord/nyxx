@@ -57,6 +57,9 @@ abstract class Command {
 
       return true;
     }).timeout(const Duration(seconds: 30),
-        onTimeout: () => print("Timed out"));
+        onTimeout: () {
+      print("Timed out");
+        return null;
+    });
   }
 }

@@ -9,9 +9,16 @@ class UnicodeEmoji extends Emoji {
   UnicodeEmoji._partial(this.code) : super("");
 
   /// Encodes Emoji so that can be used in messages.
+  @override
   String encode() => new String.fromCharCode(int.parse(code, radix: 16));
 
   /// Returns encoded string ready to send via message.
+  @override
   String toString() => encode();
+
+  @override
   bool operator ==(other) => other is Emoji && other.name == this.name;
+
+  @override
+  int get hashCode => super.hashCode * 37 + code.hashCode;
 }
