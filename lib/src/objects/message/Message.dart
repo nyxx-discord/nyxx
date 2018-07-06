@@ -116,14 +116,16 @@ class Message {
     this.channel.lastMessageID = this.id;
 
     /// Safe cast to [GuildChannel]
-    if (this.channel is GuildChannel) {
-      this.guild = (this.channel as GuildChannel).guild;
+    if (this.channel is TextChannel) {
+      this.guild = (this.channel as TextChannel).guild;
       this.member = guild.members[this.author.id];
 
-      this.roleMentions = new Map<String, Role>();
-      raw['mention_roles'].forEach((String o) {
-        this.roleMentions[guild.roles[o].id.toString()] = guild.roles[o];
-      });
+      if(raw['mention_roles'] != null) {
+        this.roleMentions = new Map<String, Role>();
+        raw['mention_roles'].forEach((String o) {
+          this.roleMentions[guild.roles[o].id.toString()] = guild.roles[o];
+        });
+      }
     }
 
     if (raw['edited_timestamp'] != null) {
