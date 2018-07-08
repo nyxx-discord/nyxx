@@ -275,12 +275,20 @@ class Http {
       {dynamic body,
       Map<String, String> queryParams,
       bool beforeReady: false,
-      Map<String, String> headers: const {}}) async {
+      Map<String, String> headers: const {},
+      String reason}) async {
     if (_client is Client && !this._client.ready && !beforeReady)
       throw new ClientNotReadyError();
 
-    HttpRequest request = new HttpRequest._new(this, method, path, queryParams,
-        new Map.from(this.headers)..addAll(headers), body);
+    HttpRequest request = new HttpRequest._new(
+        this,
+        method,
+        path,
+        queryParams,
+        new Map.from(this.headers)
+          ..addAll(headers)
+          ..addAll(addAuditReason(reason)),
+        body);
 
     await for (HttpResponse r in request.stream) {
       if (!r.aborted && r.status >= 200 && r.status < 300) {
@@ -301,9 +309,12 @@ class Http {
     });
   }
 
+  Map<String, dynamic> addAuditReason(String reason) =>
+      <String, dynamic>{"X-Audit-Log-Reason": "$reason"};
+
   Future<HttpResponse> sendMultipart(
       String method, String path, List<String> filenames,
-      {String data, bool beforeReady: false}) async {
+      {String data, bool beforeReady: false, String reason}) async {
     if (_client is Client && !this._client.ready && !beforeReady)
       throw new ClientNotReadyError();
 
@@ -319,7 +330,9 @@ class Http {
         filenames,
         filepaths,
         <String, String>{"payload_json": expandAttachments(data)},
-        new Map.from(this.headers)..addAll(headers));
+        new Map.from(this.headers)
+          ..addAll(headers)
+          ..addAll(addAuditReason(reason)));
 
     await for (HttpResponse r in request.stream) {
       if (!r.aborted && r.status >= 200 && r.status < 300) {

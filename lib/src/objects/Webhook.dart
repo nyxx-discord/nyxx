@@ -77,17 +77,17 @@ class Webhook {
   }
 
   /// Edits the webhook.
-  Future<Webhook> edit({String name}) async {
+  Future<Webhook> edit({String name, String auditReason: ""}) async {
     HttpResponse r = await this
         .http
-        .send('PATCH', "/webhooks/$id/$token", body: {"name": name});
+    .send('PATCH', "/webhooks/$id/$token", body: {"name": name}, reason: auditReason);
     this.name = r.body.asJson()['name'];
     return this;
   }
 
   /// Deletes the webhook.
-  Future<Null> delete() async {
-    await this.http.send('DELETE', "/webhooks/$id/$token");
+  Future<Null> delete({String auditReason: ""}) async {
+    await this.http.send('DELETE', "/webhooks/$id/$token", reason: auditReason);
     return null;
   }
 
@@ -109,24 +109,7 @@ class Webhook {
     await this.http.send('POST', "/webhooks/$id/$token", body: payload);
     return null;
   }
-
-  @deprecated
-
-  /// Sends a message with the webhook.
-  Future<Message> sendMessage(
-      {String content,
-      List<Map<String, dynamic>> embeds,
-      String username,
-      String avatarUrl,
-      bool tts}) async {
-    return this.send(
-        content: content,
-        embeds: embeds,
-        tts: tts,
-        username: username,
-        avatarUrl: avatarUrl);
-  }
-
+  
   /// Returns a string representation of this object.
   @override
   String toString() {

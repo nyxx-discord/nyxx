@@ -25,8 +25,11 @@ class Channel {
   }
 
   /// Deletes the channel.
-  Future<Null> delete() async {
-    await this.client.http.send('DELETE', "/channels/${this.id}");
+  Future<Null> delete({String auditReason: ""}) async {
+    await this
+        .client
+        .http
+        .send('DELETE', "/channels/${this.id}", reason: auditReason);
     return null;
   }
 }
