@@ -64,7 +64,7 @@ class Role {
       int position: null,
       int color: null,
       bool mentionable: null,
-      bool hoist: null}) async {
+        bool hoist: null, String auditReason: ""}) async {
     HttpResponse r = await this
         .client
         .http
@@ -75,22 +75,22 @@ class Role {
       "color": color != null ? color : this.color,
       "hoist": hoist != null ? hoist : this.hoist,
       "mentionable": mentionable != null ? mentionable : this.mentionable
-    });
+        }, reason: auditReason);
     return new Role._new(
         this.client, r.body.asJson() as Map<String, dynamic>, this.guild);
   }
 
   /// Deletes the role.
-  Future<Null> delete() async {
-    await this.client.http.send('DELETE', "/guilds/${this.guild.id}/roles/$id");
+  Future<Null> delete({String auditReason: ""}) async {
+    await this.client.http.send('DELETE', "/guilds/${this.guild.id}/roles/$id", reason: auditReason);
     return null;
   }
 
-  Future<Null> addToUser(User user) async {
+  Future<Null> addToUser(User user, {String auditReason: ""}) async {
     await this
         .client
         .http
-        .send('PUT', '/guilds/${guild.id}/members/${user.id}/roles/$id');
+    .send('PUT', '/guilds/${guild.id}/members/${user.id}/roles/$id', reason: auditReason);
     return null;
   }
 

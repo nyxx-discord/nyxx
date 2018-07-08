@@ -62,19 +62,19 @@ class Member extends User {
   }
 
   /// Bans the member and optionally deletes [deleteMessageDays] days worth of messages.
-  Future<Null> ban([int deleteMessageDays = 0]) async {
+  Future<Null> ban({int deleteMessageDays = 0, String auditReason: ""}) async {
     await this.client.http.send(
         'PUT', "/guilds/${this.guild.id}/bans/${this.id}",
-        body: {"delete-message-days": deleteMessageDays});
+        body: {"delete-message-days": deleteMessageDays}, reason: auditReason);
     return null;
   }
 
   /// Kicks the member
-  Future<Null> kick() async {
+  Future<Null> kick({String auditReason: ""}) async {
     await this
         .client
         .http
-        .send('DELETE', "/guilds/${this.guild.id}/members/${this.id}");
+    .send('DELETE', "/guilds/${this.guild.id}/members/${this.id}", reason: auditReason);
     return null;
   }
 }

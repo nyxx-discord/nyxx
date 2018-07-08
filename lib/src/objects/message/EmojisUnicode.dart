@@ -8,15 +8,14 @@ class EmojisUnicode {
   UnicodeEmoji fromShortCode(String shortCode) {
     var mirror = reflectClass(EmojisUnicode);
 
-    for(var v in mirror.declarations.values) {
-      if(v is UnicodeEmoji) {
+    for (var v in mirror.declarations.values) {
+      if (v is UnicodeEmoji) {
         var emoji = v as UnicodeEmoji;
-        if(emoji.code == shortCode)
-          return emoji;
+        if (emoji.code == shortCode) return emoji;
       }
     }
   }
-  
+
   static final UnicodeEmoji joy = new UnicodeEmoji._new("1f602", ":joy:");
   static final UnicodeEmoji heart = new UnicodeEmoji._new("2764", ":heart:");
   static final UnicodeEmoji heart_eyes =

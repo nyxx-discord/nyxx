@@ -1,6 +1,6 @@
 part of nyxx;
 
-/// Emoji object. Handles Unicode emojis and custom ones. 
+/// Emoji object. Handles Unicode emojis and custom ones.
 class GuildEmoji extends Emoji {
   /// The [Client] object
   Client client;

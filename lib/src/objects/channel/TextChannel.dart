@@ -48,11 +48,11 @@ class TextChannel extends MessageChannel with GuildChannel {
   }
 
   /// Creates a webhook.
-  Future<Webhook> createWebhook(String name) async {
+  Future<Webhook> createWebhook(String name, {String auditReason: ""}) async {
     HttpResponse r = await this
         .client
         .http
-        .send('POST', "/channels/$id/webhooks", body: {"name": name});
+    .send('POST', "/channels/$id/webhooks", body: {"name": name}, reason: auditReason);
     return new Webhook._fromApi(
         this.client, r.body.asJson() as Map<String, dynamic>);
   }
@@ -75,7 +75,8 @@ class TextChannel extends MessageChannel with GuildChannel {
       {int maxAge: 0,
       int maxUses: 0,
       bool temporary: false,
-      bool unique: false}) async {
+      bool unique: false.
+        String auditReason: ""}) async {
     Map<String, dynamic> params = new Map<String, dynamic>();
 
     params['max_age'] = maxAge;
@@ -86,7 +87,7 @@ class TextChannel extends MessageChannel with GuildChannel {
     final HttpResponse r = await this
         .client
         .http
-        .send('POST', "/channels/$id/invites", body: params);
+    .send('POST', "/channels/$id/invites", body: params, reason: auditReason);
 
     return new Invite._new(
         this.client, r.body.asJson() as Map<String, dynamic>);
