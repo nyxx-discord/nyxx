@@ -60,26 +60,27 @@ class Embed {
     if (raw['timestamp'] != null)
       this.timestamp = DateTime.parse(raw['timestamp']);
 
-    this.color = raw['color'];
+    if(raw['color'] != null)
+      this.color = raw['color'];
 
-    if (raw.containsKey('author'))
+    if (raw['author'] != null)
       this.author = new EmbedAuthor._new(raw['author'] as Map<String, dynamic>);
 
-    if (raw.containsKey('video'))
+    if (raw['video'] != null)
       this.video = new EmbedVideo._new(raw['video'] as Map<String, dynamic>);
 
-    if (raw.containsKey('image'))
+    if (raw['image'] != null)
       this.image =
           new EmbedThumbnail._new(raw['image'] as Map<String, dynamic>);
 
-    if (raw.containsKey('footer'))
+    if (raw['footer'] != null)
       this.footer = new EmbedFooter._new(raw['footer'] as Map<String, dynamic>);
 
-    if (raw.containsKey('thumbnail'))
+    if (raw['thumbnail'] != null)
       this.thumbnail =
           new EmbedThumbnail._new(raw['thumbnail'] as Map<String, dynamic>);
 
-    if (raw.containsKey('provider'))
+    if (raw['provider'] != null)
       this.provider =
           new EmbedProvider._new(raw['provider'] as Map<String, dynamic>);
 
