@@ -1,6 +1,8 @@
 part of nyxx;
 
-/// A message.
+/// [Message] class represents single message. It contains it's Event [Stream]s.
+/// [Message] among all it's poperties has also backreference to [Channel] from which it was sent, [Guild] and [User] which sent this message.
+/// Supports sending files via `sendFile()` - method can send file or file and use it in embed. Read how to use it [here](https://github.com/l7ssha/nyxx/wiki/Embeds)
 class Message {
   StreamController<MessageUpdateEvent> _onUpdate;
   StreamController<MessageDeleteEvent> _onDelete;
@@ -69,10 +71,10 @@ class Message {
   /// List of message reactions
   List<Reaction> reactions;
 
-  /// Emitted when the message is edited, if it is in the channel cache.
+  /// Emitted when the message is edited.
   Stream<MessageUpdateEvent> onUpdate;
 
-  /// Emitted when the message is deleted, if it is in the channel cache.
+  /// Emitted when the message is deleted.
   Stream<MessageDeleteEvent> onDelete;
 
   /// Emitted when a user adds a reaction to a message.
