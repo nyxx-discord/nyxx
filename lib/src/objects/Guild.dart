@@ -1,6 +1,13 @@
 part of nyxx;
 
-/// A guild.
+/// [Guild] object represents single `Discord Server` instance.
+/// Based on bots permissions - can preform operations of [Guild], [User]s [Role]s and many more.
+///
+/// [channels] property is Map of [Channel]s but i can be cast to specific Channel subclasses. Example with getting all [TextChannel]s in [Guild]:
+/// ```dart
+/// var textChannels = channels.where((channel) => channel is ITextChannel) as List<TextChannel>;
+/// ```
+/// If you want to get [icon] or [splash] of [Guild] use `iconURL()` method - [icon] property returns only hash, same as [splash] property.
 class Guild {
   /// The [Client] object.
   Client client;

@@ -1,7 +1,13 @@
 part of nyxx;
 
-/// The base class.
-/// It contains all of the methods.
+/// Class representing client - it's place to start with.
+/// From there you can subscribe to varius [Stream]s to listen to [Events](https://github.com/l7ssha/nyxx/wiki/EventList)
+/// Rememeber to close [Client] before terminating program:
+/// ```dart
+///  bot.destroy();
+/// ```
+/// It closes bot connections to discord servers and makes sure that everything is terminated correctly.
+/// [Client] is also used when creating instance of [Commands] - Commands Framework. 
 class Client {
   String _token;
   ClientOptions _options;
