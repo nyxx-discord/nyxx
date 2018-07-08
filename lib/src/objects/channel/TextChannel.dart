@@ -1,5 +1,7 @@
 part of nyxx;
 
+/// [TextChannel] represents single text channel on [Guild].
+/// Inhertits from [MessageChannel] and mixes [GuildChannel].
 class TextChannel extends MessageChannel with GuildChannel {
   /// The channel's topic.
   String topic;

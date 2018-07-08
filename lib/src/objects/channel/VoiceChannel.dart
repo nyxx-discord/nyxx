@@ -1,5 +1,6 @@
 part of nyxx;
 
+/// Represents VoiceChannel within [Guild]
 class VoiceChannel extends Channel with GuildChannel {
   /// The channel's bitrate.
   int bitrate;

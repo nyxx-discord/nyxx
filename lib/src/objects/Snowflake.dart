@@ -1,5 +1,7 @@
 part of nyxx;
 
+/// [Snowflake] represents id structure which is used by discord.
+/// [id] is actual id of entity which holds [Snowflake]
 class Snowflake {
   /// Full snowflake id
   String id;

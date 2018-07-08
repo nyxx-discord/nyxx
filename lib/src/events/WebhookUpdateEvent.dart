@@ -1,7 +1,11 @@
 part of nyxx;
 
+/// Emitted when webhook is edited (add, delete. modify)
 class WebhookUpdateEvent {
+  /// Channel on which event occured
   TextChannel channel;
+
+  /// Guild on which event occured
   Guild guild;
 
   WebhookUpdateEvent._new(Client client, Map<String, dynamic> json) {

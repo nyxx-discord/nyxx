@@ -1,5 +1,7 @@
 part of nyxx;
 
+/// Provides abstraction of messages for [TextChannel], [DMChannel] and [DMGroupChannel].
+/// Caches message to avoid abusing API.
 class MessageChannel extends Channel {
   Timer _typing;
 
