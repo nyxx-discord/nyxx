@@ -4,7 +4,6 @@ part of nyxx;
 ///
 /// [Look here for more](https://discordapp.com/developers/docs/resources/audit-log)
 class AuditLog {
-
   Client client;
 
   /// List of webhooks found in the audit log
@@ -22,15 +21,16 @@ class AuditLog {
     webhooks = new Map();
     users = new Map();
     entries = new Map();
-    
+
     raw['webhooks'].forEach((Map<String, dynamic> o) {
-      webhooks[o['id']] = new Webhook._fromApi(client, o as Map<String, dynamic>);
+      webhooks[o['id']] =
+          new Webhook._fromApi(client, o as Map<String, dynamic>);
     });
-  
+
     raw['users'].forEach((Map<String, dynamic> o) {
       users[o['id']] = new User._new(client, o);
     });
-    
+
     raw['audit_log_entries'].forEach((Map<String, dynamic> o) {
       entries[o['id']] = new AuditLogEntry._new(client, o);
     });
@@ -64,21 +64,21 @@ class AuditLogEntry {
 
   /// Raw data from API
   Map<String, dynamic> raw;
-  
+
   AuditLogEntry._new(Client client, this.raw) {
     targetId = raw['targetId'];
 
     changes = new List();
-    if(raw['changes'] != null)
-      raw['changes'].forEach((Map<String, dynamic> o) => changes.add(new AuditLogChange._new(o)));
-    
+    if (raw['changes'] != null)
+      raw['changes'].forEach(
+          (Map<String, dynamic> o) => changes.add(new AuditLogChange._new(o)));
+
     user = client.users[raw['user_id']];
     id = new Snowflake(raw['id']);
     type = raw['action_type'];
 
-    if(raw['options'] != null)
-      options = raw['options'];
-    
+    if (raw['options'] != null) options = raw['options'];
+
     reason = raw['reason'];
   }
 }
@@ -97,14 +97,12 @@ class AuditLogChange {
   String key;
 
   Map<String, dynamic> raw;
-  
-  AuditLogChange._new(this.raw) {
-    if(raw['new_value'] != null)
-      newValue = raw['new_value'];
 
-    if(raw['old_value'] != null)
-      oldValue = raw['old_value'];
-    
+  AuditLogChange._new(this.raw) {
+    if (raw['new_value'] != null) newValue = raw['new_value'];
+
+    if (raw['old_value'] != null) oldValue = raw['old_value'];
+
     key = raw['key'];
   }
 }
