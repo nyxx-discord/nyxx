@@ -235,6 +235,30 @@ class Guild {
     return tmp;
   }
 
+  Future<AuditLog> getAuditLogs(
+      {Snowflake userId,
+      String actionType,
+      Snowflake before,
+      int limit}) async {
+    var query = new Map<String, String>();
+
+    if (userId != null) query['user_id'] = userId.toString();
+
+    if (actionType != null) query['action_type'] = actionType;
+
+    if (before != null) query['before'] = before.toString();
+
+    if (limit != null) query['limit'] = limit.toString();
+
+    HttpResponse r = await this
+        .client
+        .http
+        .send('GET', '/guilds/${this.id}/audit-logs', queryParams: query);
+
+    return new AuditLog._new(
+        this.client, r.body.asJson() as Map<String, dynamic>);
+  }
+
   /// Get Guil's embed object
   Future<Embed> getGuildEmbed() async {
     HttpResponse r = await this.client.http.send('GET', "/guilds/$id/embed");
@@ -242,12 +266,14 @@ class Guild {
   }
 
   /// Modify guild embed object
-  Future<Embed> editGuildEmbed(EmbedBuilder embed, {String auditReason = ""}) async {
-    HttpResponse r = await this
-        .client
-        .http
-    .send('PATCH', "/guilds/$id/embed", body: embed.build(), reason: auditReason);
-    return new Embed._new(this.client, r.body.asJson() as Map<String, dynamic>,);
+  Future<Embed> editGuildEmbed(EmbedBuilder embed,
+      {String auditReason = ""}) async {
+    HttpResponse r = await this.client.http.send('PATCH', "/guilds/$id/embed",
+        body: embed.build(), reason: auditReason);
+    return new Embed._new(
+      this.client,
+      r.body.asJson() as Map<String, dynamic>,
+    );
   }
 
   /// Creates an empty role.

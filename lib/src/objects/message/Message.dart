@@ -235,10 +235,9 @@ class Message {
   /// Throws an [Exception] if the HTTP request errored.
   ///     Message.delete();
   Future<Null> delete({String auditReason: ""}) async {
-    await this
-        .client
-        .http
-    .send('DELETE', '/channels/${this.channel.id}/messages/${this.id}', reason: auditReason);
+    await this.client.http.send(
+        'DELETE', '/channels/${this.channel.id}/messages/${this.id}',
+        reason: auditReason);
     return null;
   }
 

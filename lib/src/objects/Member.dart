@@ -71,10 +71,9 @@ class Member extends User {
 
   /// Kicks the member
   Future<Null> kick({String auditReason: ""}) async {
-    await this
-        .client
-        .http
-    .send('DELETE', "/guilds/${this.guild.id}/members/${this.id}", reason: auditReason);
+    await this.client.http.send(
+        'DELETE', "/guilds/${this.guild.id}/members/${this.id}",
+        reason: auditReason);
     return null;
   }
 }

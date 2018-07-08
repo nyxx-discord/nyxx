@@ -78,9 +78,8 @@ class Webhook {
 
   /// Edits the webhook.
   Future<Webhook> edit({String name, String auditReason: ""}) async {
-    HttpResponse r = await this
-        .http
-    .send('PATCH', "/webhooks/$id/$token", body: {"name": name}, reason: auditReason);
+    HttpResponse r = await this.http.send('PATCH', "/webhooks/$id/$token",
+        body: {"name": name}, reason: auditReason);
     this.name = r.body.asJson()['name'];
     return this;
   }
@@ -109,7 +108,7 @@ class Webhook {
     await this.http.send('POST', "/webhooks/$id/$token", body: payload);
     return null;
   }
-  
+
   /// Returns a string representation of this object.
   @override
   String toString() {
