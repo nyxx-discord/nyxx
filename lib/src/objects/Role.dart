@@ -64,33 +64,35 @@ class Role {
       int position: null,
       int color: null,
       bool mentionable: null,
-        bool hoist: null, String auditReason: ""}) async {
-    HttpResponse r = await this
-        .client
-        .http
-        .send('PATCH', "/guilds/${this.guild.id}/roles/$id", body: {
-      "name": name != null ? name : this.name,
-      "permissions": permissions != null ? permissions : this.permissions.raw,
-      "position": position != null ? position : this.position,
-      "color": color != null ? color : this.color,
-      "hoist": hoist != null ? hoist : this.hoist,
-      "mentionable": mentionable != null ? mentionable : this.mentionable
-        }, reason: auditReason);
+      bool hoist: null,
+      String auditReason: ""}) async {
+    HttpResponse r = await this.client.http.send(
+        'PATCH', "/guilds/${this.guild.id}/roles/$id",
+        body: {
+          "name": name != null ? name : this.name,
+          "permissions":
+              permissions != null ? permissions : this.permissions.raw,
+          "position": position != null ? position : this.position,
+          "color": color != null ? color : this.color,
+          "hoist": hoist != null ? hoist : this.hoist,
+          "mentionable": mentionable != null ? mentionable : this.mentionable
+        },
+        reason: auditReason);
     return new Role._new(
         this.client, r.body.asJson() as Map<String, dynamic>, this.guild);
   }
 
   /// Deletes the role.
   Future<Null> delete({String auditReason: ""}) async {
-    await this.client.http.send('DELETE', "/guilds/${this.guild.id}/roles/$id", reason: auditReason);
+    await this.client.http.send('DELETE', "/guilds/${this.guild.id}/roles/$id",
+        reason: auditReason);
     return null;
   }
 
   Future<Null> addToUser(User user, {String auditReason: ""}) async {
-    await this
-        .client
-        .http
-    .send('PUT', '/guilds/${guild.id}/members/${user.id}/roles/$id', reason: auditReason);
+    await this.client.http.send(
+        'PUT', '/guilds/${guild.id}/members/${user.id}/roles/$id',
+        reason: auditReason);
     return null;
   }
 
