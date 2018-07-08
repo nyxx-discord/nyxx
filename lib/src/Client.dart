@@ -7,7 +7,7 @@ part of nyxx;
 ///  bot.destroy();
 /// ```
 /// It closes bot connections to discord servers and makes sure that everything is terminated correctly.
-/// [Client] is also used when creating instance of [Commands] - Commands Framework. 
+/// [Client] is also used when creating instance of [Commands] - Commands Framework.
 class Client {
   String _token;
   ClientOptions _options;

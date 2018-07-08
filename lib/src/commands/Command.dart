@@ -56,10 +56,9 @@ abstract class Command {
       if (ensureUser) return i.message.author.id == context.message.author.id;
 
       return true;
-    }).timeout(const Duration(seconds: 30),
-        onTimeout: () {
+    }).timeout(const Duration(seconds: 30), onTimeout: () {
       print("Timed out");
-        return null;
+      return null;
     });
   }
 }

@@ -60,5 +60,6 @@ class GuildEmoji extends Emoji {
   bool operator ==(other) => other is Emoji && other.name == this.name;
 
   @override
-  int get hashCode => ((super.hashCode * 37 + id.hashCode) * 37 + name.hashCode);
+  int get hashCode =>
+      ((super.hashCode * 37 + id.hashCode) * 37 + name.hashCode);
 }
