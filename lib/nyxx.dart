@@ -12,6 +12,7 @@ library nyxx;
 
 import 'dart:async';
 import 'dart:convert';
+import 'dart:mirrors';
 import 'dart:collection';
 import 'dart:io';
 import 'src/internals.dart' as internals;

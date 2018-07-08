@@ -1,5 +1,6 @@
 part of nyxx;
 
+/// Emitted when guild's voice server changes
 class VoiceServerUpdateEvent {
   String token;
   Guild guild;

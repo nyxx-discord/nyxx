@@ -5,7 +5,7 @@ part of nyxx;
 ///
 /// [channels] property is Map of [Channel]s but i can be cast to specific Channel subclasses. Example with getting all [TextChannel]s in [Guild]:
 /// ```dart
-/// var textChannels = channels.where((channel) => channel is ITextChannel) as List<TextChannel>;
+/// var textChannels = channels.where((channel) => channel is MessageChannel) as List<TextChannel>;
 /// ```
 /// If you want to get [icon] or [splash] of [Guild] use `iconURL()` method - [icon] property returns only hash, same as [splash] property.
 class Guild {

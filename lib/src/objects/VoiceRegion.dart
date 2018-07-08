@@ -1,5 +1,6 @@
 part of nyxx;
 
+/// Represents voice region on which discord guild takes place
 class VoiceRegion {
   /// Unique id for region
   String id;
