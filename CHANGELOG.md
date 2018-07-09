@@ -1,5 +1,12 @@
+## [0.21.4](https://github.com/l7ssha/nyxx/compare/0.21.3...0.21.4)
+_Fri 09.07.2018_
+
+- **Bug fixes**
+  * Fixed embed serialization
+  
+  
 ## [0.21.3](https://github.com/l7ssha/nyxx/compare/0.21.2...0.21.3)
-_Fri 06.07.2018_
+_Fri 08.07.2018_
 
 - **Bug fixes**
   * Fixed embed serialization
@@ -21,6 +28,7 @@ _Fri 06.07.2018_
 - **Bug fixes**
   * Fixed constructors in MessageChannel and TextChannel
 
+
 ## [0.21.0](https://github.com/l7ssha/nyxx/compare/0.20.0...0.21.0)
 _Fri 06.07.2018_
 
@@ -29,3 +37,4 @@ _Fri 06.07.2018_
   * Added missing gateway events
   * Replaced String ids with `Snowflake` type
 - **Bug fixes**
+
