@@ -1,3 +1,9 @@
+## [0.21.5](https://github.com/l7ssha/nyxx/compare/0.21.4...0.21.5)
+_Fri 09.07.2018_
+
+- **Bug fixes**
+  * Fixed embed serialization
+  
 ## [0.21.4](https://github.com/l7ssha/nyxx/compare/0.21.3...0.21.4)
 _Fri 09.07.2018_
 
