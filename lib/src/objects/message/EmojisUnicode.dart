@@ -4,19 +4,19 @@ part of nyxx;
 /// Class contains 1200+ emojis which has unicode hex value and shortcode.
 class EmojisUnicode {
   /// Returns [Emoji] based on shortcode (eg. ":smile:")
-  /// This method can be slow, because it uses mirrors to lookup for matching property in class.
+  /// This method can be slow(extremely slow), because it uses mirrors to lookup for matching property in class.
+  /// In future it will be rewritten to map.
   UnicodeEmoji fromShortCode(String shortCode) {
     var mirror = reflectClass(EmojisUnicode);
-
-    for(var v in mirror.declarations.values) {
-      if(v is UnicodeEmoji) {
+    
+    for (var v in mirror.declarations.values) {
+      if (v is UnicodeEmoji) {
         var emoji = v as UnicodeEmoji;
-        if(emoji.code == shortCode)
-          return emoji;
+        if (emoji.code == shortCode) return emoji;
       }
     }
   }
-  
+
   static final UnicodeEmoji joy = new UnicodeEmoji._new("1f602", ":joy:");
   static final UnicodeEmoji heart = new UnicodeEmoji._new("2764", ":heart:");
   static final UnicodeEmoji heart_eyes =
