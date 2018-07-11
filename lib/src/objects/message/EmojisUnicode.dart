@@ -12,7 +12,7 @@ class EmojisUnicode {
         if (s.startsWith(":") && s.endsWith(":")) return s;
         return ":$s:";
       }
-      
+
       shortCode = normalize(shortCode);
       var mirror = reflectClass(EmojisUnicode);
       for (var v in mirror.declarations.values) {
