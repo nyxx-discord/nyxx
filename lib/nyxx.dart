@@ -1,13 +1,15 @@
 /// Nyxx DISCORD API wrapper for Dart
 ///
 /// Library consists of 2 modules [nyxx] and [nyxx.commands].
+///
 /// This module (aka library) contains all main nyxx logic:
-/// `/internal` - contains internal things like Http and Websocket stack needed for library to work
-/// `/` - root path has generic models/objects/stuff which is used everywhere
-/// `/builders` - contains classes used to build [Embed]s
-/// `/objects` - directory which groups all data classes
-/// `/events` - classes used in event dispatching
-/// `/errors` - Few errors to report weird behavior
+///
+///  - `/internal` - contains internal things like Http and Websocket stack needed for library to work
+///  - `/` - root path has generic models/objects/stuff which is used everywhere
+///  - `/builders` - contains classes used to build [Embed]s
+///  - `/objects` - directory which groups all data classes
+///  - `/events` - classes used in event dispatching
+///  - `/errors` - Few errors to report weird behavior
 library nyxx;
 
 import 'dart:async';
@@ -24,6 +26,8 @@ part 'src/internal/_EventController.dart';
 part 'src/internal/_WS.dart';
 part 'src/internal/Http.dart';
 part 'src/internal/Util.dart';
+
+part 'src/objects/auditlogs/AuditLog.dart';
 
 part 'src/Client.dart';
 part 'src/objects/Snowflake.dart';

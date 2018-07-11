@@ -191,11 +191,9 @@ class Guild {
   }
 
   /// Prunes the guild, returns the amount of members pruned.
-  Future<int> prune(int days) async {
-    HttpResponse r = await this
-        .client
-        .http
-        .send('POST', "/guilds/$id/prune", body: {"days": days});
+  Future<int> prune(int days, {String auditReason = ""}) async {
+    HttpResponse r = await this.client.http.send('POST', "/guilds/$id/prune",
+        body: {"days": days}, reason: auditReason);
     return r.body.asJson() as int;
   }
 
@@ -212,11 +210,9 @@ class Guild {
   }
 
   /// Change guild owner
-  Future<Guild> changeOwner(String id) async {
-    HttpResponse r = await this
-        .client
-        .http
-        .send('PATCH', "/guilds/$id", body: {"owner_id": id});
+  Future<Guild> changeOwner(String id, {String auditReason = ""}) async {
+    HttpResponse r = await this.client.http.send('PATCH', "/guilds/$id",
+        body: {"owner_id": id}, reason: auditReason);
 
     return new Guild._new(client, r.body.asJson() as Map<String, dynamic>);
   }
@@ -239,6 +235,30 @@ class Guild {
     return tmp;
   }
 
+  Future<AuditLog> getAuditLogs(
+      {Snowflake userId,
+      String actionType,
+      Snowflake before,
+      int limit}) async {
+    var query = new Map<String, String>();
+
+    if (userId != null) query['user_id'] = userId.toString();
+
+    if (actionType != null) query['action_type'] = actionType;
+
+    if (before != null) query['before'] = before.toString();
+
+    if (limit != null) query['limit'] = limit.toString();
+
+    HttpResponse r = await this
+        .client
+        .http
+        .send('GET', '/guilds/${this.id}/audit-logs', queryParams: query);
+
+    return new AuditLog._new(
+        this.client, r.body.asJson() as Map<String, dynamic>);
+  }
+
   /// Get Guil's embed object
   Future<Embed> getGuildEmbed() async {
     HttpResponse r = await this.client.http.send('GET', "/guilds/$id/embed");
@@ -246,17 +266,22 @@ class Guild {
   }
 
   /// Modify guild embed object
-  Future<Embed> editGuildEmbed(EmbedBuilder embed) async {
-    HttpResponse r = await this
-        .client
-        .http
-        .send('PATCH', "/guilds/$id/embed", body: embed.build());
-    return new Embed._new(this.client, r.body.asJson() as Map<String, dynamic>);
+  Future<Embed> editGuildEmbed(EmbedBuilder embed,
+      {String auditReason = ""}) async {
+    HttpResponse r = await this.client.http.send('PATCH', "/guilds/$id/embed",
+        body: embed.build(), reason: auditReason);
+    return new Embed._new(
+      this.client,
+      r.body.asJson() as Map<String, dynamic>,
+    );
   }
 
   /// Creates an empty role.
-  Future<Role> createRole() async {
-    HttpResponse r = await this.client.http.send('POST', "/guilds/$id/roles");
+  Future<Role> createRole({String auditReason = ""}) async {
+    HttpResponse r = await this
+        .client
+        .http
+        .send('POST', "/guilds/$id/roles", reason: auditReason);
     return new Role._new(client, r.body.asJson() as Map<String, dynamic>, this);
   }
 
@@ -284,14 +309,15 @@ class Guild {
 
   /// Creates a channel.
   Future<dynamic> createChannel(String name, String type,
-      {int bitrate: 64000, int userLimit: 0}) async {
+      {int bitrate: 64000, int userLimit: 0, String auditReason = ""}) async {
     HttpResponse r = await this.client.http.send('POST', "/guilds/$id/channels",
         body: {
           "name": name,
           "type": type,
           "bitrate": bitrate,
           "user_limit": userLimit
-        });
+        },
+        reason: auditReason);
 
     if (r.body.asJson()['type'] == 0) {
       return new TextChannel._new(
@@ -303,16 +329,18 @@ class Guild {
   }
 
   /// Moves channel
-  Future<Null> moveGuildChannel(String channelId, int newPosition) async {
+  Future<Null> moveGuildChannel(String channelId, int newPosition,
+      {String auditReason = ""}) async {
     await this.client.http.send('PATCH', "/guilds/${this.id}/channels",
-        body: {"id": id, "position": newPosition});
+        body: {"id": id, "position": newPosition}, reason: auditReason);
     return null;
   }
 
   /// Bans a user by ID.
-  Future<Null> ban(String id, [int deleteMessageDays = 0]) async {
+  Future<Null> ban(String id,
+      {int deleteMessageDays = 0, String auditReason}) async {
     await this.client.http.send('PUT', "/guilds/${this.id}/bans/$id",
-        body: {"delete-message-days": deleteMessageDays});
+        body: {"delete-message-days": deleteMessageDays}, reason: auditReason);
     return null;
   }
 
@@ -329,20 +357,22 @@ class Guild {
       int notificationLevel: null,
       VoiceChannel afkChannel: null,
       int afkTimeout: null,
-      String icon: null}) async {
-    HttpResponse r =
-        await this.client.http.send('PATCH', "/guilds/${this.id}", body: {
-      "name": name != null ? name : this.name,
-      "verification_level": verificationLevel != null
-          ? verificationLevel
-          : this.verificationLevel,
-      "default_message_notifications": notificationLevel != null
-          ? notificationLevel
-          : this.notificationLevel,
-      "afk_channel_id": afkChannel != null ? afkChannel : this.afkChannel,
-      "afk_timeout": afkTimeout != null ? afkTimeout : this.afkTimeout,
-      "icon": icon != null ? icon : this.icon
-    });
+      String icon: null,
+      String auditReason}) async {
+    HttpResponse r = await this.client.http.send('PATCH', "/guilds/${this.id}",
+        body: {
+          "name": name != null ? name : this.name,
+          "verification_level": verificationLevel != null
+              ? verificationLevel
+              : this.verificationLevel,
+          "default_message_notifications": notificationLevel != null
+              ? notificationLevel
+              : this.notificationLevel,
+          "afk_channel_id": afkChannel != null ? afkChannel : this.afkChannel,
+          "afk_timeout": afkTimeout != null ? afkTimeout : this.afkTimeout,
+          "icon": icon != null ? icon : this.icon
+        },
+        reason: auditReason);
     return new Guild._new(this.client, r.body.asJson() as Map<String, dynamic>);
   }
 
