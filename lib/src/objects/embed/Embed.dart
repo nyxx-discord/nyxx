@@ -60,8 +60,7 @@ class Embed {
     if (raw['timestamp'] != null)
       this.timestamp = DateTime.parse(raw['timestamp']);
 
-    if(raw['color'] != null)
-      this.color = raw['color'];
+    if (raw['color'] != null) this.color = raw['color'];
 
     if (raw['author'] != null)
       this.author = new EmbedAuthor._new(raw['author'] as Map<String, dynamic>);
