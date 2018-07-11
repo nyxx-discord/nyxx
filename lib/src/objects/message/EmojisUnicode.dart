@@ -8,7 +8,6 @@ class EmojisUnicode {
   /// In future it will be rewritten to map.
   UnicodeEmoji fromShortCode(String shortCode) {
     var mirror = reflectClass(EmojisUnicode);
-    
     for (var v in mirror.declarations.values) {
       if (v is UnicodeEmoji) {
         var emoji = v as UnicodeEmoji;

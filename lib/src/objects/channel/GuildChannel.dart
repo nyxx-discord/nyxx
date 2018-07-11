@@ -21,7 +21,7 @@ abstract class GuildChannel {
     this.position = raw['position'];
 
     //this.id = raw['id'];
-    if (raw.containsKey('parent_id'))
+    if (raw['parent_id'] != null)
       this.parentId = new Snowflake(raw['parent_id']);
 
     this.nsfw = raw['nsfw'];
