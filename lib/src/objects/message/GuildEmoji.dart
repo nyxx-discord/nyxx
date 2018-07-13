@@ -45,17 +45,27 @@ class GuildEmoji extends Emoji {
 
   /// Creates partial object - only [id] and [name]
   GuildEmoji._partial(this.raw) : super("") {
-    this.id = raw['id'];
+    this.id = new Snowflake(raw['id']);
     this.name = raw['name'];
   }
 
+  /// Encodes Emoji to API format
   @override
-  String encode() => "$name:$id";
+    String encode() => "$name:$id";
+
+  /// Formats Emoji to message format
+  String format() =>  animated? "<a:$name:$id>" : "<:$name:$id>";
 
   /// Returns encoded string ready to send via message.
   @override
-  String toString() => encode();
+  String toString() => format();
 
+  String cdnUrl() {
+    String format = animated ? ".gif" : ".png";
+
+    return "https://cdn.discordapp.com/emojis/${this.id}.$format";
+  }
+  
   @override
   bool operator ==(other) => other is Emoji && other.name == this.name;
 

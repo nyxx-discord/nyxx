@@ -7,6 +7,7 @@ abstract class Emoji {
 
   Emoji(this.name);
 
+  /// Encodes Emoji to API format
   String encode();
 
   bool operator ==(other) => other is Emoji && other.name == this.name;
