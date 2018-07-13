@@ -57,9 +57,8 @@ class Role {
       this.color = raw['color'];
     }
 
-    if(mentionable)
-       this.mention = "<@&${this.id}>";
-    
+    if (mentionable) this.mention = "<@&${this.id}>";
+
     this.guild.roles[this.id.toString()] = this;
   }
 
@@ -104,5 +103,5 @@ class Role {
 
   /// Returns a mention of role. Empty string if role inn't mentionable
   @override
-    String toString() => mentionable ? this.mention : "";
+  String toString() => mentionable ? this.mention : "";
 }
