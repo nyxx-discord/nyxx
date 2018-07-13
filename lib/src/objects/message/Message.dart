@@ -164,10 +164,10 @@ class Message {
     this.reactions;
   }
 
-  /// Returns a string representation of this object.
+  /// Returns mention of message
   @override
   String toString() {
-    return this.content;
+    return this.mention;
   }
 
   /// Edits the message.

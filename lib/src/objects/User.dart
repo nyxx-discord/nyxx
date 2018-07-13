@@ -25,6 +25,9 @@ class User {
   /// The string to mention the user.
   String mention;
 
+  /// The string to mention the user by nickname
+  String mentionNickname;
+
   /// A timestamp of when the user was created.
   DateTime createdAt;
 
@@ -37,6 +40,7 @@ class User {
     this.discriminator = raw['discriminator'];
     this.avatar = raw['avatar'];
     this.mention = "<@${this.id}>";
+    this.mentionNickname = "<@!${this.id}>";
     this.createdAt = Util.getDate(this.id);
 
     // This will not be set at all in some cases.
@@ -146,9 +150,7 @@ class User {
     this._typing?.cancel();
   }
 
-  /// Returns a string representation of this object.
+  /// Returns a mention of user
   @override
-  String toString() {
-    return this.username;
-  }
+    String toString() => this.mention;
 }

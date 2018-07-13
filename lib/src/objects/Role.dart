@@ -35,6 +35,9 @@ class Role {
   /// The role's permissions.
   Permissions permissions;
 
+  /// Mention of role
+  String mention;
+
   /// A timestamp for when the channel was created.
   DateTime createdAt;
 
@@ -54,6 +57,9 @@ class Role {
       this.color = raw['color'];
     }
 
+    if(mentionable)
+       this.mention = "<@&${this.id}>";
+    
     this.guild.roles[this.id.toString()] = this;
   }
 
@@ -96,7 +102,7 @@ class Role {
     return null;
   }
 
-  /// Returns a string representation of this object.
+  /// Returns a mention of role. Empty string if role inn't mentionable
   @override
-  String toString() => this.name;
+    String toString() => mentionable ? this.mention : "";
 }
