@@ -6,14 +6,24 @@ class EmojisUnicode {
   /// Returns [Emoji] based on shortcode (eg. ":smile:")
   /// This method can be slow(extremely slow), because it uses mirrors to lookup for matching property in class.
   /// In future it will be rewritten to map.
-  UnicodeEmoji fromShortCode(String shortCode) {
-    var mirror = reflectClass(EmojisUnicode);
-    for (var v in mirror.declarations.values) {
-      if (v is UnicodeEmoji) {
-        var emoji = v as UnicodeEmoji;
-        if (emoji.code == shortCode) return emoji;
+  Future<UnicodeEmoji> fromShortCode(String shortCode) {
+    return new Future(() {
+      String normalize(String s) {
+        if (s.startsWith(":") && s.endsWith(":")) return s;
+        return ":$s:";
       }
-    }
+
+      shortCode = normalize(shortCode);
+      var mirror = reflectClass(EmojisUnicode);
+      for (var v in mirror.declarations.values) {
+        if (v is UnicodeEmoji) {
+          var emoji = v as UnicodeEmoji;
+          if (emoji.code == shortCode) return emoji;
+        }
+      }
+
+      return null;
+    });
   }
 
   static final UnicodeEmoji joy = new UnicodeEmoji._new("1f602", ":joy:");
