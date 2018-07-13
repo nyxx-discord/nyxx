@@ -167,7 +167,7 @@ class Message {
   /// Returns mention of message
   @override
   String toString() {
-    return this.mention;
+    return this.content;
   }
 
   /// Edits the message.
