@@ -1,3 +1,12 @@
+## [0.22.1](https://github.com/l7ssha/nyxx/compare/0.22.0...0.22.1)
+_Wed 11.07.2018_
+
+- **Bug fixes**
+  * Fixed bug with sending Emoji. `toString()` now return proper representation ready to send via message
+- **New features**
+  * Searching in `EmojisUnicode` is now handled by future.
+  * toString() in `User`, `Channel`, `Role` now returns mention instead of content, name etc.
+
 ## [0.22.0](https://github.com/l7ssha/nyxx/compare/0.21.5...0.22.0)
 _Wed 11.07.2018_
 
