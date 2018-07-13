@@ -13,7 +13,7 @@ _Wed 11.07.2018_
 - **Bug fixes**
   * Next serialization bug fixes
 - **New features**
-  * Added support for [audit logs]()
+  * Added support for [audit logs](https://discordapp.com/developers/docs/resources/audit-log)
   * Searching in `EmojisUnicode` based on shortcode
   
 ## [0.21.5](https://github.com/l7ssha/nyxx/compare/0.21.4...0.21.5)
