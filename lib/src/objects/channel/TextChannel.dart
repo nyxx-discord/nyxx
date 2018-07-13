@@ -105,6 +105,7 @@ class TextChannel extends MessageChannel with GuildChannel {
   }
 
   @override
+
   /// Returns mention to channel
   String toString() => this.mention;
 }

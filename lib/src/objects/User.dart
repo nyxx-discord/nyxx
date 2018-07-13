@@ -152,5 +152,5 @@ class User {
 
   /// Returns a mention of user
   @override
-    String toString() => this.mention;
+  String toString() => this.mention;
 }

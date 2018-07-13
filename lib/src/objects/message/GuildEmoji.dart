@@ -51,10 +51,10 @@ class GuildEmoji extends Emoji {
 
   /// Encodes Emoji to API format
   @override
-    String encode() => "$name:$id";
+  String encode() => "$name:$id";
 
   /// Formats Emoji to message format
-  String format() =>  animated? "<a:$name:$id>" : "<:$name:$id>";
+  String format() => animated ? "<a:$name:$id>" : "<:$name:$id>";
 
   /// Returns encoded string ready to send via message.
   @override
@@ -65,7 +65,7 @@ class GuildEmoji extends Emoji {
 
     return "https://cdn.discordapp.com/emojis/${this.id}.$format";
   }
-  
+
   @override
   bool operator ==(other) => other is Emoji && other.name == this.name;
 
