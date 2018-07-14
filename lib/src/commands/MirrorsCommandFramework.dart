@@ -12,9 +12,9 @@ class MirrorsCommandFramework extends Commands {
   List<Object> services = new List();
 
   void registerServices(List<Object> services) => this.services = services;
-  
+
   @override
-  Future<Null> executeCommand(Message msg, Command matchedCommand) async {
+  Future<Null> executeCommand(Message msg, AbstractCommand matchedCommand) async {
     await _reflectCommand(msg, matchedCommand);
     return null;
   }
@@ -40,7 +40,7 @@ class MirrorsCommandFramework extends Commands {
     return buffer.toString();
   }
 
-  Future<Null> _reflectCommand(Message msg, Command command) async {
+  Future<Null> _reflectCommand(Message msg, AbstractCommand command) async {
     var instanceMirror = reflect(command);
     var classMirror = instanceMirror.type;
     var methods = classMirror.declarations;
@@ -78,10 +78,10 @@ class MirrorsCommandFramework extends Commands {
       });
     }
 
-    if(matched == null) return null;
-    
+    if (matched == null) return null;
+
     //print("PASSED MATCHING");
-    
+
     var params = _collectParams(matched, splitted);
     //return null;
     //if (params == null) return null;
@@ -90,7 +90,8 @@ class MirrorsCommandFramework extends Commands {
     try {
       instanceMirror.invoke(matched.simpleName, params);
     } catch (e) {
-      throw new Exception("Cannot invoke method while parameters isn't satisfied!");
+      throw new Exception(
+          "Cannot invoke method while parameters isn't satisfied!");
     }
     return null;
   }
@@ -101,20 +102,18 @@ class MirrorsCommandFramework extends Commands {
 
     List<Object> colllected = new List();
     var index = -1;
-    
+
     params.forEach((e) {
       var type = e.type.reflectedType;
-      if(type == String) {
+      if (type == String) {
         index++;
 
         try {
           colllected.add(splitted[index]);
-        }
-        catch (e) {
-        }
+        } catch (e) {}
       } else {
         services.forEach((s) {
-          if(s.runtimeType == type) {
+          if (s.runtimeType == type) {
             colllected.add(s);
           }
         });
