@@ -9,6 +9,10 @@ class MirrorsCommandFramework extends Commands {
       [List<String> admins, String gameName])
       : super(prefix, client, admins, gameName);
 
+  List<Object> services = new List();
+
+  void registerServices(List<Object> services) => this.services = services;
+  
   @override
   Future<Null> executeCommand(Message msg, Command matchedCommand) async {
     await _reflectCommand(msg, matchedCommand);
@@ -45,36 +49,83 @@ class MirrorsCommandFramework extends Commands {
     var subcommand = null;
     var splitted = msg.content.split(' ');
 
-    if (splitted.length > 1)
+    if (splitted.length > 1) {
       subcommand = splitted[1];
-    else {
-      await command.run();
-      return null;
+      methods.forEach((k, v) {
+        if (v is MethodMirror) {
+          var meta = _getCmdAnnot(v, Subcommand) as Subcommand;
+
+          if (meta != null && meta.cmd == subcommand) {
+            matched = v;
+            splitted.removeRange(0, 2);
+            return;
+          }
+        }
+      });
     }
-
-    methods.forEach((k, v) {
-      if (v is MethodMirror) {
-        var meta = _getCmdAnnot(v);
-
-        if (meta != null && meta.cmd == subcommand) matched = v;
-      }
-    });
 
     if (matched == null) {
-      await command.run();
-      return null;
+      methods.forEach((k, v) {
+        if (v is MethodMirror) {
+          var meta = _getCmdAnnot(v, Maincommand);
+
+          if (meta != null) {
+            matched = v;
+            splitted.removeAt(0);
+            return;
+          }
+        }
+      });
     }
 
-    instanceMirror.invoke(matched.simpleName, []);
+    if(matched == null) return null;
+    
+    print("PASSED MATCHING");
+    
+    var params = _collectParams(matched, splitted);
+    //return null;
+    //if (params == null) return null;
+    //print("PASSED MATCHING");
+    
+    instanceMirror.invoke(matched.simpleName, params);
     return null;
   }
 
-  Subcommand _getCmdAnnot(DeclarationMirror declaration) {
+  List<String> _collectParams(MethodMirror method, List<String> splitted) {
+    var params = method.parameters;
+    print(params);
+
+    List<Object> colllected = new List();
+    var index = -1;
+    
+    params.forEach((e) {
+      var type = e.type.reflectedType;
+      if(type == String) {
+        index++;
+
+        try {
+          colllected.add(splitted[index]);
+        }
+        catch (e) {
+        }
+      } else {
+        services.forEach((s) {
+          if(s.runtimeType == type) {
+            colllected.add(s);
+          }
+        });
+      }
+    });
+
+    return colllected;
+  }
+
+  Object _getCmdAnnot(DeclarationMirror declaration, Type type) {
     for (var instance in declaration.metadata) {
       if (instance.hasReflectee) {
         var reflectee = instance.reflectee;
-        if (reflectee.runtimeType == Subcommand) {
-          return reflectee as Subcommand;
+        if (reflectee.runtimeType == type) {
+          return reflectee;
         }
       }
     }
