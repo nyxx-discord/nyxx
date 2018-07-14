@@ -80,20 +80,24 @@ class MirrorsCommandFramework extends Commands {
 
     if(matched == null) return null;
     
-    print("PASSED MATCHING");
+    //print("PASSED MATCHING");
     
     var params = _collectParams(matched, splitted);
     //return null;
     //if (params == null) return null;
     //print("PASSED MATCHING");
-    
-    instanceMirror.invoke(matched.simpleName, params);
+
+    try {
+      instanceMirror.invoke(matched.simpleName, params);
+    } catch (e) {
+      throw new Exception("Cannot invoke method while parameters isn't satisfied!");
+    }
     return null;
   }
 
   List<String> _collectParams(MethodMirror method, List<String> splitted) {
     var params = method.parameters;
-    print(params);
+    //print(params);
 
     List<Object> colllected = new List();
     var index = -1;
