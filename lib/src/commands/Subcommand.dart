@@ -8,3 +8,7 @@ class Subcommand {
   //// Const constructor
   const Subcommand(this.cmd);
 }
+
+class Maincommand {
+  const Maincommand();
+}

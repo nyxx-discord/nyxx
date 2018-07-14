@@ -26,11 +26,23 @@ abstract class Command {
   /// List of aliases for command
   List<String> aliases = null;
 
-  /// Function which will be invoked when command triggers
-  Future run();
-
   /// Execution context of command. [MessageEvent] class contains [Message] instance.
   MessageEvent context;
+
+  /// Channel from where message come from
+  Channel channel;
+
+  /// Author of message
+  User author;
+
+  /// Message that was sent
+  Message message;
+
+  /// Guild in which message was sent
+  Guild guild;
+
+  /// Function which will be invoked when command triggers
+  Future run();
 
   /// Reply to messsage which fires command.
   Future<Message> reply(
