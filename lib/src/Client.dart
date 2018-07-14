@@ -160,8 +160,8 @@ class Client {
     if (!internals.setup) throw new NotSetupError();
 
     if (this._token == null || this._token == "")
-      throw new Error("Token cannot be null or empty");
-    
+      throw new Exception("Token cannot be null or empty");
+
     if (this._options == null) {
       this._options = new ClientOptions();
     }
