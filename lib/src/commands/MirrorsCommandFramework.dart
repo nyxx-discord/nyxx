@@ -14,7 +14,8 @@ class MirrorsCommandFramework extends Commands {
   void registerServices(List<Object> services) => this.services = services;
 
   @override
-  Future<Null> executeCommand(Message msg, AbstractCommand matchedCommand) async {
+  Future<Null> executeCommand(
+      Message msg, AbstractCommand matchedCommand) async {
     await _reflectCommand(msg, matchedCommand);
     return null;
   }
