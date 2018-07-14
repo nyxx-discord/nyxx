@@ -8,8 +8,8 @@ class InstanceCommandFramework extends Commands {
       : super(prefix, client, admins, gameName);
 
   @override
-  Future<Null> executeCommand(Message msg, Command matchedCommand) async {
-    await matchedCommand.run();
+  Future<Null> executeCommand(Message msg, AbstractCommand matchedCommand) async {
+    await (matchedCommand as Command).run();
     return null;
   }
 
