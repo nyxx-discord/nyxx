@@ -4,7 +4,7 @@ part of nyxx.commands;
 ///   This class matches and dispatches commands to best matching contexts.
 abstract class Commands {
   List<String> _admins;
-  List<Command> _commands;
+  List<AbstractCommand> _commands;
 
   StreamController<Message> _cooldownEventController;
   StreamController<Message> _commandNotFoundEventController;
@@ -32,7 +32,7 @@ abstract class Commands {
   /// Invoked when user didn't have enough permissions.
   Stream<Message> requiredPermissionEvent;
 
-  /// Invoked when user hits command rate limit.
+  /// Invoked when user hits command ratelimit.
   Stream<Message> cooldownEvent;
 
   /// Creates commands framework handler. Requires prefix to handle commands.
@@ -136,7 +136,7 @@ abstract class Commands {
   }
 
   /// Executes command. Left abstract to implement by subclasess wich provides different context.
-  Future<Null> executeCommand(Message msg, Command matchedCommand);
+  Future<Null> executeCommand(Message msg, AbstractCommand matchedCommand);
 
   // Searches for command in registry.
   // Splits up command and gets first word (command). Then searchies in command registry and command's aliases list
@@ -156,13 +156,13 @@ abstract class Commands {
   String createHelp(String requestedUserId);
 
   /// Register new [Command] object.
-  void add(Command command) {
+  void add(AbstractCommand command) {
     _commands.add(command);
     print("[INFO] Registred command: ${command.name}");
   }
 
   /// Register many [Command] instances.
-  void addMany(List<Command> commands) {
+  void addMany(List<AbstractCommand> commands) {
     commands.forEach((c) => add(c));
   }
 }

@@ -1,7 +1,7 @@
 part of nyxx.commands;
 
 /// Absctract class to factory new command
-abstract class Command {
+abstract class AbstractCommand {
   /// Name of command. Text which will trigger execution
   String name;
 
@@ -41,9 +41,6 @@ abstract class Command {
   /// Guild in which message was sent
   Guild guild;
 
-  /// Function which will be invoked when command triggers
-  Future run();
-
   /// Reply to messsage which fires command.
   Future<Message> reply(
       {String content,
@@ -74,3 +71,11 @@ abstract class Command {
     });
   }
 }
+
+/// Absctract class to factory new command
+abstract class Command extends AbstractCommand {
+  /// Function which will be invoked when command triggers
+  Future run();
+}
+
+abstract class MirrorsCommand extends AbstractCommand {}
