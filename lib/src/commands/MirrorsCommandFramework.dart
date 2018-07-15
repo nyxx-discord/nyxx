@@ -8,10 +8,10 @@ class MirrorsCommandFramework extends Commands {
   MirrorsCommandFramework(String prefix, Client client,
       [List<String> admins, String gameName])
       : super(prefix, client, admins, gameName);
+  
+  List<Object> _services = new List();
 
-  List<Object> services = new List();
-
-  void registerServices(List<Object> services) => this.services = services;
+  void registerServices(List<Object> services) => this.services = _services;
 
   @override
   Future<Null> executeCommand(
@@ -92,7 +92,7 @@ class MirrorsCommandFramework extends Commands {
       instanceMirror.invoke(matched.simpleName, params);
     } catch (e) {
       throw new Exception(
-          "Cannot invoke method while parameters isn't satisfied!");
+          "Cannot invoke method while parameters aren't satisfied!");
     }
     return null;
   }
@@ -121,7 +121,7 @@ class MirrorsCommandFramework extends Commands {
           colllected.add(d);
         } catch (e) { }
       } else {
-        services.forEach((s) {
+        _services.forEach((s) {
           if (s.runtimeType == type) {
             colllected.add(s);
           }
