@@ -8,10 +8,10 @@ class MirrorsCommandFramework extends Commands {
   MirrorsCommandFramework(String prefix, Client client,
       [List<String> admins, String gameName])
       : super(prefix, client, admins, gameName);
-  
+
   List<Object> _services = new List();
 
-  void registerServices(List<Object> services) => this.services = _services;
+  void registerServices(List<Object> services) => this._services = services;
 
   @override
   Future<Null> executeCommand(
@@ -97,9 +97,40 @@ class MirrorsCommandFramework extends Commands {
     return null;
   }
 
+  List<String> groupParams(List<String> splitted) {
+    var tmpList = new List();
+    var isInto = false;
+
+    var finalList = new List();
+
+    for (var item in splitted) {
+      if (isInto) {
+        tmpList.add(item);
+        if (item.contains("\"")) {
+          isInto = false;
+          finalList.add(tmpList.join(" ").replaceAll("\"", ""));
+          tmpList.clear();
+        }
+        continue;
+      }
+
+      if (item.contains("\"") && !isInto) {
+        isInto = true;
+        tmpList.add(item);
+        continue;
+      }
+
+      finalList.add(item);
+    }
+
+    return finalList;
+  }
+
   List<String> _collectParams(MethodMirror method, List<String> splitted) {
     var params = method.parameters;
     //print(params);
+
+    splitted = groupParams(splitted);
 
     List<Object> colllected = new List();
     var index = -1;
@@ -111,15 +142,14 @@ class MirrorsCommandFramework extends Commands {
 
         try {
           colllected.add(splitted[index]);
-        } catch (e) { }
-      }
-      else if (type == int) {
+        } catch (e) {}
+      } else if (type == int) {
         index++;
-        
+
         try {
           var d = int.parse(splitted[index]);
           colllected.add(d);
-        } catch (e) { }
+        } catch (e) {}
       } else {
         _services.forEach((s) {
           if (s.runtimeType == type) {
