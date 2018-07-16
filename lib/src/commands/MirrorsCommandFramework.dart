@@ -150,6 +150,13 @@ class MirrorsCommandFramework extends Commands {
           var d = int.parse(splitted[index]);
           colllected.add(d);
         } catch (e) {}
+      } else if (type == double) {
+        index++;
+        
+         try {
+          var d = double.parse(splitted[index]);
+          colllected.add(d);
+        } catch (e) {}
       } else {
         _services.forEach((s) {
           if (s.runtimeType == type) {
