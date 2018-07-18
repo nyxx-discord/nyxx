@@ -2,7 +2,6 @@ part of nyxx.commands;
 
 /// Emitted when command execution fails
 class CommandExecutionFailEvent {
-
   /// Message which caused error
   Message message;
 
@@ -35,40 +34,38 @@ class MirrorsCommandFramework extends Commands {
   void registerLibraryCommands() {
     var superClass = reflectClass(MirrorsCommand);
     var mirrorSystem = currentMirrorSystem();
-    
+
     mirrorSystem.libraries.forEach((uri, lib) {
       lib.declarations.forEach((s, decl) {
-        if(decl is ClassMirror) {
+        if (decl is ClassMirror) {
           var cm = decl as ClassMirror;
           if (cm.isSubclassOf(superClass) && !cm.isAbstract) {
-            //cm.declarations.values.toList().forEach((i) => print(i.simpleName));
-            
             var ctor = cm.declarations.values.toList().firstWhere((m) {
-              if(m is MethodMirror) {
+              if (m is MethodMirror) {
                 var method = m as MethodMirror;
 
                 return method.isConstructor;
               }
               return false;
             }) as MethodMirror;
-            
+
             var params = ctor.parameters;
-            
             var toInject = new List<dynamic>();
 
             for (var param in params) {
               var type = param.type.reflectedType;
 
-              for(var service in _services) {
-                if (service.runtimeType == type)
-                  toInject.add(service);
+              for (var service in _services) {
+                if (service.runtimeType == type) toInject.add(service);
               }
             }
 
             print(toInject);
 
             try {
-              super._commands.add(cm.newInstance(new Symbol(''), toInject).reflectee);
+              super
+                  ._commands
+                  .add(cm.newInstance(new Symbol(''), toInject).reflectee);
             } catch (e) {
               throw new Exception("Command constructor not satisfied!");
             }
@@ -77,7 +74,7 @@ class MirrorsCommandFramework extends Commands {
       });
     });
   }
-  
+
   @override
   Future<Null> executeCommand(
       Message msg, AbstractCommand matchedCommand) async {
