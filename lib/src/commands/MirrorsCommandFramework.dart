@@ -66,7 +66,12 @@ class MirrorsCommandFramework extends Commands {
             }
 
             print(toInject);
-            super._commands.add(cm.newInstance(new Symbol(''), toInject).reflectee);
+
+            try {
+              super._commands.add(cm.newInstance(new Symbol(''), toInject).reflectee);
+            } catch (e) {
+              throw new Exception("Command constructor not satisfied!");
+            }
           }
         }
       });
