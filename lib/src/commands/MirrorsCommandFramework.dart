@@ -1,5 +1,17 @@
 part of nyxx.commands;
 
+/// Emitted when command execution fails
+class CommandExecutionFailEvent {
+
+  /// Message which caused error
+  Message message;
+
+  /// Error object
+  Exception exception;
+
+  CommandExecutionFailEvent._new(this.message, this.exception);
+}
+
 /// Uses 'dart:mirrors' to find and dispatch commands. First searches in normal mode for matching command and next with 'mirros'
 /// searches if command has subcommand and possibly runs it. Uses [Subcommand] to annotate subcommand function.
 class MirrorsCommandFramework extends Commands {
@@ -8,15 +20,15 @@ class MirrorsCommandFramework extends Commands {
   MirrorsCommandFramework(String prefix, Client client,
       [List<String> admins, String gameName])
       : super(prefix, client, admins, gameName) {
-    _commandExecutionFail = new StreamCOntroller();
+    _commandExecutionFail = new StreamController<CommandExecutionFailEvent>();
     commandExecutionFail = _commandExecutionFail.stream;
   }
 
   List<Object> _services = new List();
-  StreamController _commandExecutionFail;
+  StreamController<CommandExecutionFailEvent> _commandExecutionFail;
 
   /// Emmited when command execution fails
-  Stream<Exception> commandExecutionFail;
+  Stream<CommandExecutionFailEvent> commandExecutionFail;
 
   void registerServices(List<Object> services) => this._services = services;
 
@@ -92,7 +104,7 @@ class MirrorsCommandFramework extends Commands {
     try {
       instanceMirror.invoke(matched.simpleName, params);
     } catch (e) {
-      _commandExecutionFail.add(e);
+      _commandExecutionFail.add(new CommandExecutionFailEvent._new(msg, e));
     }
     return null;
   }
