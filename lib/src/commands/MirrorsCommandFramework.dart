@@ -1,16 +1,5 @@
 part of nyxx.commands;
 
-/// Emitted when command execution fails
-class CommandExecutionFailEvent {
-  /// Message which caused error
-  Message message;
-
-  /// Error object
-  Exception exception;
-
-  CommandExecutionFailEvent._new(this.message, this.exception);
-}
-
 /// Uses 'dart:mirrors' to find and dispatch commands. First searches in normal mode for matching command and next with 'mirros'
 /// searches if command has subcommand and possibly runs it. Uses [Subcommand] to annotate subcommand function.
 class MirrorsCommandFramework extends Commands {
@@ -29,8 +18,12 @@ class MirrorsCommandFramework extends Commands {
   /// Emmited when command execution fails
   Stream<CommandExecutionFailEvent> commandExecutionFail;
 
+  /// Register services to injected into commands modules. Has to be executed before registering commands.
+  /// There cannot be more than 1 dependency with single type. Only first will be injected.
   void registerServices(List<Object> services) => this._services = services;
 
+  /// Register commands in current Isolate's libraries. Basically loads all classes as commnads with [MirrorsCommand] superclass.
+  /// Performs dependency injection when instantiate commands. And throws [Exception] when there are missing services
   void registerLibraryCommands() {
     var superClass = reflectClass(MirrorsCommand);
     var mirrorSystem = currentMirrorSystem();
@@ -59,8 +52,6 @@ class MirrorsCommandFramework extends Commands {
                 if (service.runtimeType == type) toInject.add(service);
               }
             }
-
-            print(toInject);
 
             try {
               super
@@ -152,7 +143,7 @@ class MirrorsCommandFramework extends Commands {
     return null;
   }
 
-  List<String> groupParams(List<String> splitted) {
+  List<String> _groupParams(List<String> splitted) {
     var tmpList = new List();
     var isInto = false;
 
@@ -183,9 +174,8 @@ class MirrorsCommandFramework extends Commands {
 
   List<String> _collectParams(MethodMirror method, List<String> splitted) {
     var params = method.parameters;
-    //print(params);
 
-    splitted = groupParams(splitted);
+    splitted = _groupParams(splitted);
 
     List<Object> colllected = new List();
     var index = -1;
