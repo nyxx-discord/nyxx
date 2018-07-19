@@ -9,7 +9,7 @@ class MessageChannel extends Channel {
   Stream<MessageEvent> onMessage;
 
   StreamController<MessageEvent> _onMessage;
-  
+
   /// A collection of messages sent to this channel.
   LinkedHashMap<String, Message> messages;
 

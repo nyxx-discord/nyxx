@@ -54,8 +54,11 @@ class MirrorsCommandFramework extends Commands {
             }
 
             try {
-              super.add(cm.newInstance(new Symbol(''), toInject).reflectee);
+              var cmd = cm.newInstance(new Symbol(''), toInject).reflectee;
+              cmd.logger = new Logger._detached("Command: ${cmd.name}");
+              super.add(cmd);
             } catch (e) {
+              print(e);
               throw new Exception("Command constructor not satisfied!");
             }
           }
@@ -200,7 +203,7 @@ class MirrorsCommandFramework extends Commands {
           var d = double.parse(splitted[index]);
           colllected.add(d);
         } catch (e) {}
-      } else if(type == DateTime) {
+      } else if (type == DateTime) {
         index++;
 
         var d = DateTime.parse(splitted[index]);

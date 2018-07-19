@@ -6,7 +6,7 @@ class CommandExecutionFailEvent {
   Message message;
 
   /// Error object
-  Exception exception;
+  dynamic exception;
 
   CommandExecutionFailEvent._new(this.message, this.exception);
 }
