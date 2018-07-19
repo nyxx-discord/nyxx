@@ -55,7 +55,7 @@ class MirrorsCommandFramework extends Commands {
 
             try {
               var cmd = cm.newInstance(new Symbol(''), toInject).reflectee;
-              cmd.logger = new Logger._detached("Command: ${cmd.name}");
+              cmd.logger = new Logger.detached("Command: ${cmd.name}");
               super.add(cmd);
             } catch (e) {
               print(e);

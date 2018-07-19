@@ -24,7 +24,7 @@ class Shard {
 
   /// A map of guilds the shard is on.
   Map<String, Guild> guilds = {};
-  
+
   Shard._new(_WS ws, this.id) {
     this._ws = ws;
     this._onReady = new StreamController<Shard>.broadcast();
@@ -186,7 +186,7 @@ class Shard {
               this._ws.client._startTime = new DateTime.now();
               new ReadyEvent._new(this._ws.client);
             }
-            
+
             break;
 
           case 'GUILD_MEMBERS_CHUNK':
