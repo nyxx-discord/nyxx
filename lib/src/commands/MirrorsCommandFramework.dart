@@ -54,9 +54,7 @@ class MirrorsCommandFramework extends Commands {
             }
 
             try {
-              super
-                  ._commands
-                  .add(cm.newInstance(new Symbol(''), toInject).reflectee);
+              super.add(cm.newInstance(new Symbol(''), toInject).reflectee);
             } catch (e) {
               throw new Exception("Command constructor not satisfied!");
             }
