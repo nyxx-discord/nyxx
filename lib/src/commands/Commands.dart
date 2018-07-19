@@ -35,11 +35,15 @@ abstract class Commands {
   /// Invoked when user hits command rate limit.
   Stream<Message> cooldownEvent;
 
+  final Logger _logger;
+  
   /// Creates commands framework handler. Requires prefix to handle commands.
   Commands(this.prefix, Client client, [this._admins, String gameName]) {
     _commands = [];
     _cooldownCache = new CooldownCache();
 
+    _logger = new Logger("Commands");
+    
     _commandNotFoundEventController = new StreamController<Message>();
     _requiredPermissionEventController = new StreamController<Message>();
     _forAdminOnlyEventController = new StreamController<Message>();
@@ -58,8 +62,6 @@ abstract class Commands {
 
       await _dispatch(e);
     });
-
-    client.onReady.listen((ReadyEvent e) => print("[INFO] Bot started!"));
   }
 
   /// Dispatches onMessage event to framework.
@@ -130,7 +132,7 @@ abstract class Commands {
       case -1:
       case 100:
         await executeCommand(e.message, matchedCommand);
-        print("[INFO] Dispatched command successfully!");
+        _logger.fine("Command executed");
         break;
     }
   }
@@ -158,7 +160,7 @@ abstract class Commands {
   /// Register new [Command] object.
   void add(Command command) {
     _commands.add(command);
-    print("[INFO] Registred command: ${command.name}");
+    _logger.info("Command [${command.name}] added to registry");
   }
 
   /// Register many [Command] instances.

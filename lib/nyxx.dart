@@ -20,6 +20,7 @@ import 'dart:io';
 import 'src/internals.dart' as internals;
 import 'package:http_parser/http_parser.dart' as http_parser;
 import 'package:w_transport/w_transport.dart' as w_transport;
+import 'package:logging/logging.dart';
 
 part 'src/internal/_Constants.dart';
 part 'src/internal/_EventController.dart';

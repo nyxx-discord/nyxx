@@ -10,6 +10,8 @@ class _WS {
   /// The client that the WS manager belongs to.
   Client client;
 
+  final Logger logger = new Logger("Client");
+  
   /// Makes a new WS manager.
   _WS(this.client) {
     this.client.http.headers['Authorization'] = "Bot ${client._token}";
@@ -102,6 +104,8 @@ class _WS {
       } else {
         new ReadyEvent._new(client);
       }
+
+      logger.info("Connected and ready!");
     }
   }
 }
