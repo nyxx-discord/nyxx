@@ -202,6 +202,11 @@ class MirrorsCommandFramework extends Commands {
           var d = double.parse(splitted[index]);
           colllected.add(d);
         } catch (e) {}
+      } else if(type == DateTime) {
+        index++;
+
+        var d = DateTime.parse(splitted[index]);
+        colllected.add(d);
       } else {
         _services.forEach((s) {
           if (s.runtimeType == type) {
