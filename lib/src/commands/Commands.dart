@@ -88,8 +88,6 @@ abstract class Commands {
 
     // Get command and set execution code to default value;
     var matchedCommand = commandCollection.first;
-    // Inject context into command;
-    matchedCommand.context = e;
 
     var executionCode = -1;
 
@@ -129,6 +127,9 @@ abstract class Commands {
         break;
       case -1:
       case 100:
+        // Inject context into command only when command is being executed
+        matchedCommand.context = new CommandContext._new(
+            e.message.channel, e.message.author, e.message, e.message.guild);
         await executeCommand(e.message, matchedCommand);
         print("[INFO] Dispatched command successfully!");
         break;

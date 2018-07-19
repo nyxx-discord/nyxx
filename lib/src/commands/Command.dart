@@ -1,5 +1,22 @@
 part of nyxx.commands;
 
+/// Execution context of command.
+class CommandContext {
+  /// Channel from where message come from
+  Channel channel;
+
+  /// Author of message
+  User author;
+
+  /// Message that was sent
+  Message message;
+
+  /// Guild in which message was sent
+  Guild guild;
+
+  CommandContext._new(this.channel, this.author, this.message, this.guild);
+}
+
 /// Absctract class to factory new command
 abstract class AbstractCommand {
   /// Name of command. Text which will trigger execution
@@ -26,21 +43,12 @@ abstract class AbstractCommand {
   /// List of aliases for command
   List<String> aliases = null;
 
-  /// Execution context of command. [MessageEvent] class contains [Message] instance.
-  MessageEvent context;
+  /// Execution context of command.
+  CommandContext context;
 
-  /// Channel from where message come from
-  Channel channel;
-
-  /// Author of message
-  User author;
-
-  /// Message that was sent
-  Message message;
-
-  /// Guild in which message was sent
-  Guild guild;
-
+  /// Logger for instance of command
+  Logger logger;
+  
   /// Reply to messsage which fires command.
   Future<Message> reply(
       {String content,
@@ -48,7 +56,7 @@ abstract class AbstractCommand {
       bool tts: false,
       String nonce,
       bool disableEveryone}) async {
-    return await context.message.channel.send(
+    return await context.channel.send(
         content: content,
         embed: embed,
         tts: tts,
@@ -66,9 +74,21 @@ abstract class AbstractCommand {
 
       return true;
     }).timeout(const Duration(seconds: 30), onTimeout: () {
-      print("Timed out");
+      //print("Timed out");
       return null;
     });
+  }
+
+  /// Gets next [num] number of any messages sent within one context (same channel) with optional timeout
+  Future<List<Message>> nextMessages(int num,
+      {Duration timeout = const Duration(seconds: 30)}) async {
+    List<Message> tmpData = new List();
+
+    var tmp = await context.channel.onMessage.take(num).forEach((i) {
+      tmpData.add(i.message);
+    }).timeout(timeout);
+
+    return tmpData;
   }
 }
 
