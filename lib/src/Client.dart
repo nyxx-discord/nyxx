@@ -171,6 +171,11 @@ class Client {
     this.http = new Http._new(this);
     this._events = new _EventController(this);
     this._ws = new _WS(this);
+
+    Logger.root.level = Level.ALL;
+    Logger.root.onRecord.listen((LogRecord rec) {
+      print('[${rec.level.name}] {${rec.loggerName}} - ${rec.time}: ${rec.message}');
+    });
   }
 
   /// The client's uptime.
