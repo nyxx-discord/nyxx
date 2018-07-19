@@ -37,12 +37,12 @@ abstract class Commands {
 
   /// Logger instance
   final Logger logger = new Logger.detached("Commands");
-  
+
   /// Creates commands framework handler. Requires prefix to handle commands.
   Commands(this.prefix, Client client, [this._admins, String gameName]) {
     _commands = [];
     _cooldownCache = new CooldownCache();
-    
+
     _commandNotFoundEventController = new StreamController<Message>();
     _requiredPermissionEventController = new StreamController<Message>();
     _forAdminOnlyEventController = new StreamController<Message>();

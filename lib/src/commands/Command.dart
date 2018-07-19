@@ -48,7 +48,7 @@ abstract class AbstractCommand {
 
   /// Logger for instance of command
   Logger logger;
-  
+
   /// Reply to messsage which fires command.
   Future<Message> reply(
       {String content,

@@ -11,7 +11,7 @@ class _WS {
   Client client;
 
   final Logger logger = new Logger("Client");
-  
+
   /// Makes a new WS manager.
   _WS(this.client) {
     this.client.http.headers['Authorization'] = "Bot ${client._token}";

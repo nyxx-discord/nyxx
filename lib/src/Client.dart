@@ -177,7 +177,8 @@ class Client {
 
     Logger.root.level = Level.ALL;
     Logger.root.onRecord.listen((LogRecord rec) {
-      print('[${rec.level.name}] {${rec.loggerName}} - ${rec.time}: ${rec.message}');
+      print(
+          '[${rec.level.name}] {${rec.loggerName}} - ${rec.time}: ${rec.message}');
     });
   }
 
