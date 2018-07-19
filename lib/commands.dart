@@ -10,6 +10,8 @@ import "dart:mirrors";
 import 'dart:async';
 import 'nyxx.dart';
 
+import 'package:logging/logging.dart';
+
 part 'src/commands/CommandExecutionFailEvent.dart';
 part 'src/commands/Commands.dart';
 part 'src/commands/Subcommand.dart';

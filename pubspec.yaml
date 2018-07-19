@@ -11,5 +11,6 @@ environment:
 dependencies:
   http_parser: ">=3.0.0 <4.0.0"
   w_transport: ">=3.0.0 <4.0.0"
+  logging: "^0.11.3+2"
 dev_dependencies:
   dart_style:
