@@ -5,6 +5,11 @@ part of nyxx;
 class MessageChannel extends Channel {
   Timer _typing;
 
+  /// Sent when a new message is received.
+  Stream<MessageEvent> onMessage;
+
+  StreamController<MessageEvent> _onMessage;
+  
   /// A collection of messages sent to this channel.
   LinkedHashMap<String, Message> messages;
 
@@ -17,6 +22,9 @@ class MessageChannel extends Channel {
       this.lastMessageID = new Snowflake(raw['last_message_id']);
 
     this.messages = new LinkedHashMap<String, Message>();
+
+    _onMessage = new StreamController();
+    onMessage = _onMessage.stream;
   }
 
   void _cacheMessage(Message message) {

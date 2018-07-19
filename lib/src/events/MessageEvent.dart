@@ -10,6 +10,7 @@ class MessageEvent {
       this.message =
           new Message._new(client, json['d'] as Map<String, dynamic>);
       client._events.onMessage.add(this);
+      message.channel._onMessage.add(this);
     }
   }
 }
