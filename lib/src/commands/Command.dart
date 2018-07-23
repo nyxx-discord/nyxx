@@ -79,7 +79,7 @@ abstract class AbstractCommand {
     });
   }
 
-  /// Gets next [num] number of any messages sent within one context (same channel) with optional timeout
+  /// Gets next [num] number of any messages sent within one context (same channel) with optional timeout(default 30 sec)
   Future<List<Message>> nextMessages(int num,
       {Duration timeout = const Duration(seconds: 30)}) async {
     List<Message> tmpData = new List();
