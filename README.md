@@ -25,7 +25,27 @@ Fork of [Hackzzila's](https://github.com/Hackzzila) [nyx](https://github.com/Hac
 - *Internal Sharding* <br>
   Nyxx automatically spawns shards for your bot, but you can override this and spawn a custom number of shards. Internal sharding means that all of your bots servers are managed in one script, no need for communication between shards.
 - *Complete* <br>
-  Nyxx support nearly all DiscordAPI endpoints.
+  Nyxx supports nearly all DiscordAPI endpoints.
+
+### Sample
+
+``` dart
+void main() {
+  discord.configureDiscordForVM();
+  discord.Client bot =
+      new discord.Client(Platform.environment['DISCORD_TOKEN']);
+
+  bot.onReady.listen((discord.ReadyEvent e) {
+    print("Ready!");
+  });
+
+  bot.onMessage.listen((discord.MessageEvent e) {
+    if (e.message.content == "!ping") {
+      e.message.channel.sendMessage(content: "Pong!");
+    }
+  });
+}
+```
 
 ## Documentation and examples
 
@@ -38,11 +58,11 @@ My website has docs for latests commits - You can read about incoming changes
 #### [Wiki](https://github.com/l7ssha/nyxx/wiki)
 Wiki docs are designed to match latest release.
 
-
 ## Roadmap
- - Better dartdocs documentation
- - More examples at wiki/more tutorial/Video tutorial 
- - Bigger bot written in nyxx for example
- - Fix `lint` errors from `dartanalyzer`
- - Annotation driver flow for CommandsFramework?
- - Recheck all code and fix styling/small logic bugs
+ - [ ] Better dartdocs documentation
+ - [ ] More examples at wiki/more tutorial/Video tutorial 
+ - [ ] Bigger bot written in nyxx for example
+ - [ ] Fix `lint` errors from `dartanalyzer`
+ - [x] Annotation driver flow for CommandsFramework?
+ - [x] Recheck all code and fix styling/small logic bugs
+ - [ ] Support for Voice connection
