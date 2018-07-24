@@ -20,12 +20,10 @@ class MirrorsCommandFramework extends Commands {
 
   /// Register services to injected into commands modules. Has to be executed before registering commands.
   /// There cannot be more than 1 dependency with single type. Only first will be injected.
-  void registerServices(List<Object> services) => this._services = services;
+  void registerServices(List<Object> services) => this._services.addAll(services);
 
-  /// Register commands in current Isolate's libraries. Basically loads all classes as commnads with [MirrorsCommand] superclass.
-  /// Performs dependency injection when instantiate commands. And throws [Exception] when there are missing services
-  void registerLibraryCommands() {
-    var superClass = reflectClass(MirrorsCommand);
+  void _registerLibrary(Type type, Function(List<dynamic>, ClassMirror) func) {
+    var superClass = reflectClass(type);
     var mirrorSystem = currentMirrorSystem();
 
     mirrorSystem.libraries.forEach((uri, lib) {
@@ -53,17 +51,38 @@ class MirrorsCommandFramework extends Commands {
               }
             }
 
-            try {
-              var cmd = cm.newInstance(new Symbol(''), toInject).reflectee;
-              cmd.logger = new Logger.detached("Command: ${cmd.name}");
-              super.add(cmd);
-            } catch (e) {
-              print(e);
-              throw new Exception("Command constructor not satisfied!");
-            }
+            func(toInject, cm);
           }
         }
       });
+    });
+  }
+
+  /// Register all services in current isolate. It captures all classes which inherits from [Service] class and performs dependency injection if possible.
+  void registerLibraryServices() {
+    _registerLibrary(Service, (toInject, cm) {
+       try {
+        var serv = cm.newInstance(new Symbol(''), toInject).reflectee;
+        _services.add(serv);
+      } catch (e) {
+        print(e);
+        throw new Exception("Service constructor not satisfied!");
+      }
+    });
+  }
+  
+  /// Register commands in current Isolate's libraries. Basically loads all classes as commnads with [MirrorsCommand] superclass.
+  /// Performs dependency injection when instantiate commands. And throws [Exception] when there are missing services
+  void registerLibraryCommands() {
+    _registerLibrary(MirrorsCommand, (toInject, cm) {
+      try {
+        var cmd = cm.newInstance(new Symbol(''), toInject).reflectee;
+        cmd.logger = new Logger.detached("Command: ${cmd.name}");
+        super.add(cmd);
+      } catch (e) {
+        print(e);
+        throw new Exception("Command constructor not satisfied!");
+      }
     });
   }
 
