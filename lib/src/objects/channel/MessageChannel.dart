@@ -18,7 +18,6 @@ class MessageChannel extends Channel {
 
   MessageChannel._new(Client client, Map<String, dynamic> data, String type)
       : super._new(client, data, type) {
-    
     if (raw.containsKey('last_message_id') && raw['last_message_id'] != null)
       this.lastMessageID = new Snowflake(raw['last_message_id']);
 

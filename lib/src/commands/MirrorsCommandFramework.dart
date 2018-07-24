@@ -20,7 +20,8 @@ class MirrorsCommandFramework extends Commands {
 
   /// Register services to injected into commands modules. Has to be executed before registering commands.
   /// There cannot be more than 1 dependency with single type. Only first will be injected.
-  void registerServices(List<Object> services) => this._services.addAll(services);
+  void registerServices(List<Object> services) =>
+      this._services.addAll(services);
 
   void _registerLibrary(Type type, Function(List<dynamic>, ClassMirror) func) {
     var superClass = reflectClass(type);
@@ -61,7 +62,7 @@ class MirrorsCommandFramework extends Commands {
   /// Register all services in current isolate. It captures all classes which inherits from [Service] class and performs dependency injection if possible.
   void registerLibraryServices() {
     _registerLibrary(Service, (toInject, cm) {
-       try {
+      try {
         var serv = cm.newInstance(new Symbol(''), toInject).reflectee;
         _services.add(serv);
       } catch (e) {
@@ -70,7 +71,7 @@ class MirrorsCommandFramework extends Commands {
       }
     });
   }
-  
+
   /// Register commands in current Isolate's libraries. Basically loads all classes as commnads with [MirrorsCommand] superclass.
   /// Performs dependency injection when instantiate commands. And throws [Exception] when there are missing services
   void registerLibraryCommands() {

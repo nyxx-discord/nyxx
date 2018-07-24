@@ -48,7 +48,7 @@ class AliasCommand extends command.MirrorsCommand {
   }
 
   // This command features `nextMessages()` method. Reade more here:
-  // 
+  //
   @command.Subcommand("witam")
   witam() async {
     var messages = await nextMessages(2);

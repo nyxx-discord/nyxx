@@ -19,7 +19,7 @@ abstract class GuildChannel {
   void initialize(Map<String, dynamic> raw) {
     this.name = raw['name'];
     this.position = raw['position'];
-    
+
     //this.id = raw['id'];
     if (raw['parent_id'] != null) {
       this.parentId = new Snowflake(raw['parent_id']);
