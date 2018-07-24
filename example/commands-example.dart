@@ -4,15 +4,22 @@ import 'package:nyxx/setup.wm.dart' as setup;
 
 import 'dart:io';
 
+// Main function
 void main() {
+  // Setup bot for VM
   setup.configureDiscordForVM();
+
+  // Create new bot instance
   nyxx.Client bot = new nyxx.Client(Platform.environment['DISCORD_TOKEN']);
 
+  // Creating new InstnceCommandFramework object and registering commands.
   var commands =
       new command.InstanceCommandFramework('!', bot, ["302359032612651009"])
         ..addMany([new PongCommand(), new EchoCommand(), new AliasCommand()]);
 }
 
+// Command have to extends Command class and override run() method.
+// Run method is main point of command
 class PongCommand extends command.Command {
   PongCommand() {
     this.name = "ping";
@@ -22,7 +29,7 @@ class PongCommand extends command.Command {
 
   @override
   run() async {
-    await context.message.channel.send(content: "Pong!");
+    await reply(content: "Pong!");
   }
 }
 
@@ -35,7 +42,7 @@ class EchoCommand extends command.Command {
 
   @override
   run() async {
-    await context.message.channel.send(content: context.message.content);
+    await reply(content: context.message.content);
   }
 }
 
@@ -49,6 +56,6 @@ class AliasCommand extends command.Command {
 
   @override
   run() async {
-    await context.message.channel.send(content: context.message.content);
+    await reply(content: context.message.content);
   }
 }
