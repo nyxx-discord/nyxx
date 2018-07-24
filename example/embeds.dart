@@ -22,13 +22,13 @@ void main() {
       // Build embed with `..Builder` classes.
 
       // Create author section of embed.
-      var author = new EmbedAuthorBuilder()
+      var author = new nyxx.EmbedAuthorBuilder()
         ..name = e.message.author.username
         ..iconUrl = e.message.author.avatarURL();
 
       // Create embed with previously created author section.
       // Only field which is required to create is `title`.
-      var embed = new EmbedBuilder("Example Title")
+      var embed = new nyxx.EmbedBuilder("Example Title")
         ..addField(name: "Example field title", value: "Example value")
         ..author = author;
 

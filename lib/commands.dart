@@ -16,6 +16,7 @@ part 'src/commands/CommandExecutionFailEvent.dart';
 part 'src/commands/Commands.dart';
 part 'src/commands/Subcommand.dart';
 part 'src/commands/Command.dart';
+part 'src/commands/CommandContext.dart';
 part 'src/commands/Service.dart';
 part 'src/commands/CooldownCache.dart';
 part 'src/commands/InstanceCommandFramework.dart';
