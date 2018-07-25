@@ -28,16 +28,13 @@ class MirrorsCommandFramework extends Commands {
     var mirrorSystem = currentMirrorSystem();
 
     mirrorSystem.libraries.forEach((uri, lib) {
-      lib.declarations.forEach((s, decl) {
-        if (decl is ClassMirror) {
-          var cm = decl as ClassMirror;
+      lib.declarations.forEach((s, cm) {
+        if (cm is ClassMirror) {
           if (cm.isSubclassOf(superClass) && !cm.isAbstract) {
             var ctor = cm.declarations.values.toList().firstWhere((m) {
-              if (m is MethodMirror) {
-                var method = m as MethodMirror;
+              if (m is MethodMirror)
+                return m.isConstructor;
 
-                return method.isConstructor;
-              }
               return false;
             }) as MethodMirror;
 
