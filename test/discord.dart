@@ -5,20 +5,31 @@ import 'package:nyxx/nyxx.dart' as nyxx;
 import 'package:nyxx/commands.dart' as command;
 import 'package:nyxx/setup.wm.dart' as setup;
 
-class TestCommand extends command.Command {
+class StringService extends command.Service {
+  String data = "Example data";
+
+  StringService();
+}
+
+class TestCommand extends command.MirrorsCommand {
   TestCommand() {
     this.name = "test";
     this.help = "Checks if everything is running";
     this.usage = "~~test";
   }
 
-  @override
-  run() async {
-    await context.message.channel.send(content: "test is working correctly");
+  @command.Maincommand()
+  Future<Null> run() async {
+    await reply(content: "test is working correctly");
+  }
+
+  @command.Subcommand("ttest")
+  Future<Null> test(int param, StringService service) async {
+    await reply(content: "$param, ${service.data}");
   }
 }
 
-class CooldownCommand extends command.Command {
+class CooldownCommand extends command.MirrorsCommand {
   CooldownCommand() {
     this.name = "cooldown";
     this.help = "Checks if cooldown is working";
@@ -27,7 +38,7 @@ class CooldownCommand extends command.Command {
     this.cooldown = 10;
   }
 
-  @override
+  @command.Maincommand()
   run() async {}
 }
 
@@ -37,9 +48,9 @@ void main() {
   var env = Platform.environment;
   var bot = new nyxx.Client(env['DISCORD_TOKEN']);
 
-  var commandsListener = new command.InstanceCommandFramework('~~', bot)
-    ..add(new TestCommand())
-    ..add(new CooldownCommand())
+  var commandsListener = new command.MirrorsCommandFramework('~~', bot)
+    ..registerLibraryServices()
+    ..registerLibraryCommands()
     ..commandNotFoundEvent.listen((m) {
       m.channel.send(content: "Command '${m.content}' not found!");
     })
@@ -84,6 +95,10 @@ void main() {
     await c.delete();
     await cc.delete();
 
+    print("TESTING COMMAND - SUBCOMMAND");
+    var d = await channel.send(content: "~~test ttest 14");
+    await d.delete();
+
     print("TESTING EMBEDS");
     var e =
         await channel.send(content: "Testing embed!", embed: createTestEmbed());
@@ -114,6 +129,12 @@ void main() {
     if (m.channel.id == "422285619952222208" &&
         m.author.id == bot.user.id &&
         m.content == "Command is on cooldown!. Wait a few seconds!") {
+      await m.delete();
+    }
+
+    if (m.channel.id == "422285619952222208" &&
+        m.author.id == bot.user.id &&
+        m.content == "14 Example data") {
       await m.delete();
     }
 
