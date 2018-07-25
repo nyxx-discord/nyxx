@@ -32,8 +32,7 @@ class MirrorsCommandFramework extends Commands {
         if (cm is ClassMirror) {
           if (cm.isSubclassOf(superClass) && !cm.isAbstract) {
             var ctor = cm.declarations.values.toList().firstWhere((m) {
-              if (m is MethodMirror)
-                return m.isConstructor;
+              if (m is MethodMirror) return m.isConstructor;
 
               return false;
             }) as MethodMirror;
