@@ -24,7 +24,7 @@ class CooldownCache {
 
       /// Search for entry
       var entryList = _cache.where(
-              (item) => item.userId == userId && item.commandName == commandName);
+          (item) => item.userId == userId && item.commandName == commandName);
 
       /// If not found crete new, insert it and return
       if (entryList.isEmpty) {
