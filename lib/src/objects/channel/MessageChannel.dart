@@ -23,7 +23,7 @@ class MessageChannel extends Channel {
 
     this.messages = new LinkedHashMap<String, Message>();
 
-    _onMessage = new StreamController();
+    _onMessage = new StreamController.broadcast();
     onMessage = _onMessage.stream;
   }
 
