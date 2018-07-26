@@ -85,8 +85,9 @@ class Permissions {
    _construct(permissions);
   }
 
-  Permissions.fromOverwrite(int permissions, int overwrite) {
-    int applied = permissions | overwrite;
+  Permissions.fromOverwrite(int permissions, int allow, int deny) {
+    int applied = permissions | allow;
+    applied &= ~deny;
 
     _construct(applied);
   }
