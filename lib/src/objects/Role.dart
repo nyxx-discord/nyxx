@@ -48,7 +48,7 @@ class Role {
     this.hoist = raw['hoist'];
     this.managed = raw['managed'];
     this.mentionable = raw['mentionable'];
-    this.permissions = new Permissions.fromInt(this.client, raw['permissions']);
+    this.permissions = new Permissions.fromInt(raw['permissions']);
     this.createdAt = id.timestamp;
 
     if (raw['color'] == 0) {
