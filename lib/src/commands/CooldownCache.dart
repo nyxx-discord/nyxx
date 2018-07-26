@@ -17,34 +17,34 @@ class CooldownCache {
 
   /// Checks if user can execute given command at given time
   Future<bool> canExecute(
-      String userId, String commandName, int desiredCooldown) async {
-    /// current date
-    int now = new DateTime.now().millisecondsSinceEpoch;
+      String userId, String commandName, int desiredCooldown) {
+    return new Future<bool>(() {
+      /// current date
+      int now = new DateTime.now().millisecondsSinceEpoch;
 
-    /// Search for entry
-    var entryList = _cache.where(
-        (item) => item.userId == userId && item.commandName == commandName);
+      /// Search for entry
+      var entryList = _cache.where(
+              (item) => item.userId == userId && item.commandName == commandName);
 
-    /// If not found crete new, insert it and return
-    if (entryList.isEmpty) {
-      var newEntry = new CacheEntry(userId, commandName, now);
-      _cache.add(newEntry);
-      return true;
-    }
+      /// If not found crete new, insert it and return
+      if (entryList.isEmpty) {
+        var newEntry = new CacheEntry(userId, commandName, now);
+        _cache.add(newEntry);
+        return true;
+      }
 
-    /// If found check if user can execute command
-    var entry = entryList.first;
-    if (entry.lastUsed + desiredCooldown < now) {
-      entry.lastUsed = now;
-      var pos = _cache.indexOf(entry);
-      //_cache.removeAt(pos);
-      //_cache.add(entry);
+      /// If found check if user can execute command
+      var entry = entryList.first;
+      if (entry.lastUsed + desiredCooldown < now) {
+        entry.lastUsed = now;
+        var pos = _cache.indexOf(entry);
 
-      _cache[pos] = entry;
-      return true;
-    }
+        _cache[pos] = entry;
+        return true;
+      }
 
-    return false;
+      return false;
+    });
   }
 }
 
