@@ -2,8 +2,6 @@ part of nyxx;
 
 /// Permissions for a role or channel override.
 class Permissions {
-  Client _client;
-
   /// The raw permission code.
   int raw;
 
@@ -67,7 +65,7 @@ class Permissions {
   /// True if user can move members
   bool moveMembers;
 
-  /// UNKNKOWN
+  /// Allows for using voice-activity-detection in a voice channel
   bool useVad;
 
   /// True if user can change nick
@@ -83,7 +81,17 @@ class Permissions {
   bool manageWebhooks;
 
   /// Makes a [Permissions] object from a raw permission code.
-  Permissions.fromInt(this._client, int permissions) {
+  Permissions.fromInt(int permissions) {
+   _construct(permissions);
+  }
+
+  Permissions.fromOverwrite(int permissions, int overwrite) {
+    int applied = permissions | overwrite;
+
+    _construct(applied);
+  }
+
+  void _construct(int permissions) {
     this.raw = permissions;
     this.createInstantInvite =
         (this.raw & _Constants.permissions['CREATE_INSTANT_INVITE']) > 0;
