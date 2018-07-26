@@ -16,6 +16,9 @@ abstract class GuildChannel {
   /// Indicates if channel is NSFW
   bool nsfw;
 
+  /// Permissions for channel
+  List<ChannelPermissions> permissions;
+
   void initialize(Map<String, dynamic> raw) {
     this.name = raw['name'];
     this.position = raw['position'];
@@ -26,5 +29,12 @@ abstract class GuildChannel {
     }
 
     this.nsfw = raw['nsfw'];
+
+    if(raw['permission_overwrites'] != null) {
+      permissions = new List();
+      raw['permission_overwrites'].forEach((Map<String, dynamic> o) {
+        permissions.add(new ChannelPermissions._new(o));
+      });
+    }
   }
 }
