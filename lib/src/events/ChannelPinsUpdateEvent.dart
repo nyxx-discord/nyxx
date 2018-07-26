@@ -2,7 +2,7 @@ part of nyxx;
 
 /// Fired when channel's pinned messages are updated
 class ChannelPinsUpdateEvent {
-  /// Id of channel where change occured
+  /// Id of channel where change occurred
   Snowflake channelId;
 
   /// the time at which the most recent pinned message was pinned

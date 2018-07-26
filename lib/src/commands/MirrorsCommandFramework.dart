@@ -8,7 +8,7 @@ class MirrorsCommandFramework extends Commands {
   MirrorsCommandFramework(String prefix, Client client,
       [List<String> admins, String gameName])
       : super(prefix, client, admins, gameName) {
-    _commandExecutionFail = new StreamController<CommandExecutionFailEvent>();
+    _commandExecutionFail = new StreamController.broadcast();
     commandExecutionFail = _commandExecutionFail.stream;
   }
 
