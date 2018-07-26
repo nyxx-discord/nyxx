@@ -25,7 +25,8 @@ class TestCommand extends command.MirrorsCommand {
 
   @command.Subcommand("ttest")
   Future<Null> test(int param, StringService service) async {
-    await reply(content: "$param, ${service.data}");
+    var msg = await reply(content: "$param, ${service.data}");
+    await msg.delete();
   }
 }
 
