@@ -11,13 +11,8 @@ class StringService extends command.Service {
   StringService();
 }
 
-class TestCommand extends command.MirrorsCommand {
-  TestCommand() {
-    this.name = "test";
-    this.help = "Checks if everything is running";
-    this.usage = "~~test";
-  }
-
+@command.Command("test", "Checks if everything is running", "~~test", null)
+class TestCommand extends command.CommandContext {
   @command.Maincommand()
   Future<Null> run() async {
     await reply(content: "test is working correctly");
@@ -29,16 +24,9 @@ class TestCommand extends command.MirrorsCommand {
   }
 }
 
-class CooldownCommand extends command.MirrorsCommand {
-  CooldownCommand() {
-    this.name = "cooldown";
-    this.help = "Checks if cooldown is working";
-    this.usage = "~~cooldown";
-    this.aliases = ["culdown"];
-    this.cooldown = 10;
-  }
-
-  @command.Maincommand()
+@command.Command("cooldown", "Checks if cooldown is working", "~~cooldown", const ["culdown"])
+class CooldownCommand extends command.CommandContext {
+  @command.Maincommand(cooldown: 10)
   run() async {}
 }
 
@@ -48,7 +36,7 @@ void main() {
   var env = Platform.environment;
   var bot = new nyxx.Client(env['DISCORD_TOKEN']);
 
-  var commandsListener = new command.MirrorsCommandFramework('~~', bot)
+  var commandsListener = new command.CommandsFramework('~~', bot)
     ..registerLibraryServices()
     ..registerLibraryCommands()
     ..commandNotFoundEvent.listen((m) {
