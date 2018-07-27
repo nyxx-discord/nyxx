@@ -14,7 +14,7 @@ class User {
   String username;
 
   /// The user's ID.
-  String id;
+  Snowflake id;
 
   /// The user's discriminator.
   String discriminator;
@@ -36,19 +36,19 @@ class User {
 
   User._new(this.client, this.raw) {
     this.username = raw['username'];
-    this.id = raw['id'];
+    this.id = new Snowflake(raw['id']);
     this.discriminator = raw['discriminator'];
     this.avatar = raw['avatar'];
     this.mention = "<@${this.id}>";
     this.mentionNickname = "<@!${this.id}>";
-    this.createdAt = Util.getDate(this.id);
+    this.createdAt = id.timestamp;
 
     // This will not be set at all in some cases.
     if (raw['bot'] == true) {
       this.bot = raw['bot'];
     }
 
-    client.users[this.id] = this;
+    client.users[this.id.toString()] = this;
   }
 
   /// The user's avatar, represented as URL.

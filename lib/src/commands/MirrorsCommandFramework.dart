@@ -93,7 +93,7 @@ class MirrorsCommandFramework extends Commands {
   @override
 
   /// Creates help String based on registered commands metadata.
-  String createHelp(String requestedUserId) {
+  String createHelp(Snowflake requestedUserId) {
     var buffer = new StringBuffer();
 
     buffer.writeln("**Available commands:**");
