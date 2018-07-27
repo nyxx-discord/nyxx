@@ -33,7 +33,7 @@ abstract class CommandContext {
   /// Logger for instance of command
   Logger logger;
 
-  /// Reply to messsage which fires command.
+  /// Reply to message which fires command.
   Future<Message> reply(
       {String content,
       EmbedBuilder embed,
@@ -48,6 +48,54 @@ abstract class CommandContext {
         disableEveryone: disableEveryone);
   }
 
+  Future<Message> replyTemp(
+      Duration duration,
+      {String content,
+        EmbedBuilder embed,
+        bool tts: false,
+        String nonce,
+        bool disableEveryone}) async {
+    var msg =  await channel.send(
+        content: content,
+        embed: embed,
+        tts: tts,
+        nonce: nonce,
+        disableEveryone: disableEveryone);
+
+    new Timer(duration, () async => await msg.delete());
+    return msg;
+  }
+
+  Future<Message> replyDelyed(
+      Duration duration,
+      {String content,
+        EmbedBuilder embed,
+        bool tts: false,
+        String nonce,
+        bool disableEveryone}) async {
+    return new Future.delayed(duration, () async => await channel.send(
+        content: content,
+        embed: embed,
+        tts: tts,
+        nonce: nonce,
+        disableEveryone: disableEveryone));
+  }
+
+  Future<Map<Emoji, int>> collectEmojis(Message msg, Duration duration) async {
+    var m = new Map<Emoji, int>();
+
+    return new Future<Map<Emoji, int>>(() async {
+      await for(var r in msg.onReactionAdded) {
+        if(!m.containsKey(r.emoji))
+          m[r.emoji] = 1;
+
+        print("ELO");
+        m[r.emoji] = ++m[r.emoji];
+      }
+    }).timeout(duration, onTimeout: () => m);
+  }
+
+
   /// Delays execution of command and waits for nex matching command based on [prefix]. Has static timemout of 30 seconds
   Future<MessageEvent> delay(
       {String prefix: "", bool ensureUser = false}) async {
@@ -58,17 +106,16 @@ abstract class CommandContext {
 
       return true;
     }).timeout(const Duration(seconds: 30), onTimeout: () {
-      //print("Timed out");
       return null;
     });
   }
 
-  /// Gets next [num] number of any messages sent within one context (same channel) with optional timeout(default 30 sec)
+  /// Gets next [num] number of any messages sent within one context (same channel) with optional [timeout](default 30 sec)
   Future<List<Message>> nextMessages(int num,
       {Duration timeout = const Duration(seconds: 30)}) async {
     List<Message> tmpData = new List();
 
-    var tmp = await channel.onMessage.take(num).forEach((i) {
+    await channel.onMessage.take(num).forEach((i) {
       tmpData.add(i.message);
     }).timeout(timeout);
 
