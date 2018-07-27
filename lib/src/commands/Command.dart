@@ -13,7 +13,7 @@ class Command {
   /// List of aliases for command
   final List<String> aliases;
 
-  const Command(this.name, this.help, this.usage, this.aliases);
+  const Command(this.name, this.help, this.usage, {this.aliases});
 }
 
 /// Abstract class to factory new command
