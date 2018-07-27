@@ -164,7 +164,7 @@ class CommandsFramework {
 
     // Check if there is need to check user roles
     if (annot.requiredRoles != null && executionCode == -1) {
-      var member = await e.message.guild.getMember(e.message.author.id);
+      var member = await e.message.guild.getMember(e.message.author);
 
       var hasRoles = annot.requiredRoles
           .where((i) => member.roles.contains(i))

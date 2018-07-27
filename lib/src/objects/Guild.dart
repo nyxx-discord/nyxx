@@ -381,19 +381,17 @@ class Guild {
   ///
   /// Throws an [Exception] if the HTTP request errored.
   ///     Guild.getMember("user id");
-  Future<Member> getMember(String userId) async {
-    if (this.members[userId] != null) {
-      return this.members[userId];
-    } else {
-      final HttpResponse r = await this
-          .client
-          .http
-          .send('GET', '/guilds/${this.id}/members/$userId');
+  Future<Member> getMember(User user) async {
+    if (this.members[user.id.toString()] != null)
+      return this.members[user.id.toString()];
 
-      final Member m = new Member._new(
-          this.client, r.body.asJson() as Map<String, dynamic>, this);
-      return m;
-    }
+    final HttpResponse r = await this
+        .client
+        .http
+        .send('GET', '/guilds/${this.id}/members/${user.id.toString()}');
+
+    return new Member._new(
+        this.client, r.body.asJson() as Map<String, dynamic>, this);
   }
 
   /// Invites a bot to a guild. Only usable by user accounts.
