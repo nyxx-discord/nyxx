@@ -137,7 +137,7 @@ class Message {
     this.mentions = new Map<String, User>();
     raw['mentions'].forEach((Map<String, dynamic> o) {
       final User user = new User._new(this.client, o);
-      this.mentions[user.id] = user;
+      this.mentions[user.id.toString()] = user;
     });
     this.mentions;
 

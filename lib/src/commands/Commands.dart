@@ -150,12 +150,12 @@ abstract class Commands {
         (i.aliases != null && i.aliases.contains(command)));
   }
 
-  bool _isUserAdmin(String authorId) {
-    return (_admins != null && _admins.any((i) => i == authorId));
+  bool _isUserAdmin(Snowflake authorId) {
+    return (_admins != null && _admins.any((i) => i == authorId.toString()));
   }
 
   /// Creates help String based on registered commands metadata.
-  String createHelp(String requestedUserId);
+  String createHelp(Snowflake requestedUserId);
 
   /// Register new [Command] object.
   void add(AbstractCommand command) {

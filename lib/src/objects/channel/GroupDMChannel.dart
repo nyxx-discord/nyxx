@@ -12,7 +12,7 @@ class GroupDMChannel extends MessageChannel {
     this.recipients = new Map<String, User>();
     raw['recipients'].forEach((Map<String, dynamic> o) {
       final User user = new User._new(client, o);
-      this.recipients[user.id] = user;
+      this.recipients[user.id.toString()] = user;
     });
   }
 

@@ -204,7 +204,7 @@ class Guild {
     r.body.asJson().forEach((Map<String, dynamic> o) {
       final User user =
           new User._new(client, o['user'] as Map<String, dynamic>);
-      map[user.id] = user;
+      map[user.id.toString()] = user;
     });
     return map;
   }
@@ -276,12 +276,20 @@ class Guild {
     );
   }
 
-  /// Creates an empty role.
-  Future<Role> createRole({String auditReason = ""}) async {
+  /// Creates new role
+  Future<Role> createRole(String name, {PermissionsBuilder permissions, String color, bool hoist, bool mentionable, String auditReason = ""}) async {
+    var tmp = <String, dynamic> {
+      "name": name,
+      "permissions": permissions._build()._build(),
+      "color": color,
+      "hoist": hoist,
+      "mentionable": mentionable
+    };
+
     HttpResponse r = await this
         .client
         .http
-        .send('POST', "/guilds/$id/roles", reason: auditReason);
+        .send('POST', "/guilds/$id/roles", body: tmp, reason: auditReason);
     return new Role._new(client, r.body.asJson() as Map<String, dynamic>, this);
   }
 
@@ -309,13 +317,14 @@ class Guild {
 
   /// Creates a channel.
   Future<dynamic> createChannel(String name, String type,
-      {int bitrate: 64000, int userLimit: 0, String auditReason = ""}) async {
+      {int bitrate: 64000, int userLimit: 0, String auditReason = "", PermissionsBuilder permissions}) async {
     HttpResponse r = await this.client.http.send('POST', "/guilds/$id/channels",
         body: {
           "name": name,
           "type": type,
           "bitrate": bitrate,
-          "user_limit": userLimit
+          "user_limit": userLimit,
+          "permissions": permissions._build()._build()
         },
         reason: auditReason);
 
@@ -381,14 +390,14 @@ class Guild {
   ///
   /// Throws an [Exception] if the HTTP request errored.
   ///     Guild.getMember("user id");
-  Future<Member> getMember(String userId) async {
+  Future<Member> getMember(Snowflake userId) async {
     if (this.members[userId] != null) {
       return this.members[userId];
     } else {
       final HttpResponse r = await this
           .client
           .http
-          .send('GET', '/guilds/${this.id}/members/$userId');
+          .send('GET', '/guilds/${this.id}/members/${userId.toString()}');
 
       final Member m = new Member._new(
           this.client, r.body.asJson() as Map<String, dynamic>, this);

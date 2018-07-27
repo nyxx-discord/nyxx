@@ -23,7 +23,7 @@ class Member extends User {
   Game game;
 
   /// A list of role IDs the member has.
-  List<String> roles;
+  List<Role> roles;
 
   /// The guild that the member is a part of.
   Guild guild;
@@ -34,7 +34,12 @@ class Member extends User {
     this.deaf = data['deaf'];
     this.mute = data['mute'];
     this.status = data['status'];
-    this.roles = data['roles'] as List<String>;
+
+    roles = new List();
+    data['roles'].forEach((String id) {
+      roles.add(guild.roles.values.firstWhere((i) => i.id == id));
+    });
+
     this._user = new User._new(client, data['user'] as Map<String, dynamic>);
 
     if (guild == null) {
@@ -52,8 +57,8 @@ class Member extends User {
           new Game._new(this.client, data['game'] as Map<String, dynamic>);
     }
 
-    if (guild != null) this.guild.members[this.id] = this;
-    client.users[this.toUser().id] = this.toUser();
+    if (guild != null) this.guild.members[this.id.toString()] = this;
+    client.users[this.toUser().id.toString()] = this.toUser();
   }
 
   /// Returns a user from the member.

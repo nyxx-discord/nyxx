@@ -8,6 +8,14 @@ class Util {
         ((int.parse(id) / 4194304) + 1420070400000).toInt());
   }
 
+  static int RGBtoInt(String RGB) {
+    int R = int.parse(RGB.substring(0, 3), radix: 16);
+    int G = int.parse(RGB.substring(3, 5), radix: 16);
+    int B = int.parse(RGB.substring(5), radix: 16);
+
+    return B * 65536 + G * 256 + R;
+  }
+
   /*
   /// Resolves an object into a target object.
   static String resolve(String to, dynamic object) {

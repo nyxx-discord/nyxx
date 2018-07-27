@@ -65,7 +65,7 @@ class Role {
   /// Edits the role.
   Future<Role> edit(
       {String name: null,
-      int permissions: null,
+      PermissionsBuilder permissions,
       int position: null,
       int color: null,
       bool mentionable: null,
@@ -76,7 +76,7 @@ class Role {
         body: {
           "name": name != null ? name : this.name,
           "permissions":
-              permissions != null ? permissions : this.permissions.raw,
+              permissions != null ? permissions._build()._build() : this.permissions.raw,
           "position": position != null ? position : this.position,
           "color": color != null ? color : this.color,
           "hoist": hoist != null ? hoist : this.hoist,
