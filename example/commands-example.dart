@@ -3,6 +3,7 @@ import 'package:nyxx/commands.dart' as command;
 import 'package:nyxx/setup.wm.dart' as setup;
 
 import 'dart:io';
+import 'dart:async';
 
 // Main function
 void main() {
@@ -12,50 +13,39 @@ void main() {
   // Create new bot instance
   nyxx.Client bot = new nyxx.Client(Platform.environment['DISCORD_TOKEN']);
 
-  // Creating new InstnceCommandFramework object and registering commands.
+  // Creating new CommandsFramework object and registering commands.
   var commands =
-      new command.InstanceCommandFramework('!', bot, ["302359032612651009"])
-        ..addMany([new PongCommand(), new EchoCommand(), new AliasCommand()]);
+      new command.CommandsFramework('!', bot, ["302359032612651009"])
+        ..registerLibraryCommands();
 }
 
-// Command have to extends Command class and override run() method.
-// Run method is main point of command
-class PongCommand extends command.Command {
-  PongCommand() {
-    this.name = "ping";
-    this.help = "Checks if bot is connected!";
-    this.usage = "!ping";
-  }
+// Command have to extends CommandXintext class and have @Command annotation.
+// Method with @Maincommand is main point of command object
+// Methods annotated with @Subcommand are defined as subcommands
+@command.Command("ping", "Checks if bot is connected", "!ping")
+class PongCommand extends command.CommandContext {
 
-  @override
-  run() async {
+  @command.Maincommand()
+  Future run() async {
     await reply(content: "Pong!");
   }
 }
 
-class EchoCommand extends command.Command {
-  EchoCommand() {
-    this.name = "echo";
-    this.help = "Echoes bot message!";
-    this.usage = "!echo <message>";
-  }
+@command.Command("echo", "Echoes bot message!", "!echo <message>")
+class EchoCommand extends command.CommandContext {
 
-  @override
-  run() async {
-    await reply(content: context.message.content);
+  @command.Maincommand()
+  Future run() async {
+    await reply(content: message.content);
   }
 }
 
-class AliasCommand extends command.Command {
-  AliasCommand() {
-    this.name = "alias";
-    this.help = "Example of aliases";
-    this.usage = "!alias or !aaa";
-    this.aliases = ["aaa"];
-  }
+/// Alises have to be `const`
+@command.Command("alias", "Example of aliases", "!alias or !aaa", aliases: const ["aaa"])
+class AliasCommand extends command.CommandContext {
 
-  @override
-  run() async {
-    await reply(content: context.message.content);
+  @command.Maincommand()
+  Future run() async {
+    await reply(content: message.content);
   }
 }
