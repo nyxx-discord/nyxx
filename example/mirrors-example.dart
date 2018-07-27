@@ -23,22 +23,18 @@ void main() {
   // Register new command handler.
   // It registers your services and adds command to registry.
   var commands =
-      new command.MirrorsCommandFramework('!', bot, ["302359032612651009"])
+      new command.CommandsFramework('!', bot, ["302359032612651009"])
         ..registerServices([new Service("Siema")])
         ..registerLibraryCommands();
 }
 
 // Example command with alias and subcommands.
-class AliasCommand extends command.MirrorsCommand {
+@command.Command("alias", "Example of aliases", "!alias or !aaa", aliases: const ["aaa"])
+class AliasCommand extends command.CommandContext {
   Service _service;
 
-  // Setting up basic bot info
-  AliasCommand(this._service) {
-    this.name = "alias";
-    this.help = "Example of aliases";
-    this.usage = "!alias or !aaa";
-    this.aliases = ["aaa"];
-  }
+  // Injecting services into command handler
+  AliasCommand(this._service);
 
   // Maincommand annotation specifies main command handler
   @command.Maincommand()
@@ -48,9 +44,8 @@ class AliasCommand extends command.MirrorsCommand {
   }
 
   // This command features `nextMessages()` method. Reade more here:
-  //
   @command.Subcommand("witam")
-  witam() async {
+  Future witam() async {
     var messages = await nextMessages(2);
     print(messages);
   }
