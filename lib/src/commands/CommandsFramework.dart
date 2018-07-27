@@ -1,0 +1,456 @@
+part of nyxx.commands;
+
+/// Main handler for CommandFramework.
+///   This class matches and dispatches commands to best matching contexts.
+class CommandsFramework {
+  List<String> _admins;
+  List<CommandContext> _commands;
+  List<Object> _services = new List();
+
+  StreamController<Message> _cooldownEventController;
+  StreamController<Message> _commandNotFoundEventController;
+  StreamController<Message> _requiredPermissionEventController;
+  StreamController<Message> _forAdminOnlyEventController;
+  StreamController<CommandExecutionFailEvent> _commandExecutionFailController;
+
+  CooldownCache _cooldownCache;
+
+  /// Prefix needed to dispatch a commands.
+  /// All messages without this prefix will be ignored
+  String prefix;
+
+  /// Indicates if bots help message is sent to user via PM. True by default.xc
+  bool helpDirect = true;
+
+  /// Indicator if you want to ignore all bot messages, even if messages is current command.
+  bool ignoreBots = true;
+
+  /// Fires when invoked command dont exists in registry
+  Stream<Message> commandNotFoundEvent;
+
+  /// Invoked when non-admin user uses admin-only command.
+  Stream<Message> forAdminOnlyEvent;
+
+  /// Invoked when user didn't have enough permissions.
+  Stream<Message> requiredPermissionEvent;
+
+  /// Invoked when user hits command ratelimit.
+  Stream<Message> cooldownEvent;
+
+  /// Emmited when command execution fails
+  Stream<CommandExecutionFailEvent> commandExecutionFail;
+
+  /// Logger instance
+  final Logger logger = new Logger.detached("Commands");
+
+  /// Creates commands framework handler. Requires prefix to handle commands.
+  CommandsFramework(this.prefix, Client client, [this._admins, String gameName]) {
+    _commands = [];
+    _cooldownCache = new CooldownCache();
+
+    _commandNotFoundEventController = new StreamController.broadcast();
+    _requiredPermissionEventController = new StreamController.broadcast();
+    _forAdminOnlyEventController = new StreamController.broadcast();
+    _cooldownEventController = new StreamController.broadcast();
+    _commandExecutionFailController = new StreamController.broadcast();
+
+    commandNotFoundEvent = _commandNotFoundEventController.stream;
+    forAdminOnlyEvent = _forAdminOnlyEventController.stream;
+    requiredPermissionEvent = _forAdminOnlyEventController.stream;
+    cooldownEvent = _cooldownEventController.stream;
+    commandExecutionFail = _commandExecutionFailController.stream;
+
+    if (gameName != null) client.user.setGame(name: gameName);
+
+    // Listen to incoming messages and ignore all from bots (if set)
+    client.onMessage.listen((MessageEvent e) async {
+      if (ignoreBots && e.message.author.bot) return;
+
+      await _dispatch(e);
+    });
+  }
+
+  /// Dispatches onMessage event to framework.
+  Future _dispatch(MessageEvent e) async {
+    var stopwatch = new Stopwatch()..start();
+
+    if (!e.message.content.startsWith(prefix)) return;
+
+    // Match help specially to shadow user defined help commands.
+    if (e.message.content.startsWith((prefix + 'help'))) {
+      if (helpDirect) {
+        e.message.author.send(content: createHelp(e.message.author.id));
+        return;
+      }
+
+      await e.message.channel.send(content: createHelp(e.message.author.id));
+      return;
+    }
+
+    ClassMirror classMirror;
+    Command command;
+    var commandContext;
+
+    var splittedCommand = e.message.content.split(' ');
+    var splCommand = splittedCommand[0].replaceFirst(prefix, "");
+
+    for(var cmd in _commands) {
+      var tmpInstMirror = reflect(cmd);
+      var tmpClassMirror = tmpInstMirror.type;
+      var tmpCommand = _getCmdAnnot(tmpClassMirror, Command) as Command;
+
+      if(tmpCommand.name == splCommand || (tmpCommand.aliases != null && tmpCommand.aliases.contains(splCommand))) {
+        classMirror = tmpClassMirror;
+        command = tmpCommand;
+        commandContext = cmd;
+
+        break;
+      }
+    }
+
+    // If there is no command - return
+    if (classMirror == null || command == null) {
+      _commandNotFoundEventController.add(e.message);
+      return;
+    }
+
+    var executionCode = -1;
+
+    var matched;
+    var subcommand;
+    var methods = classMirror.declarations;
+
+    if (splittedCommand.length > 1) {
+      subcommand = splittedCommand[1];
+      methods.forEach((k, v) {
+        if (v is MethodMirror) {
+          var meta = _getCmdAnnot(v, Subcommand) as Subcommand;
+
+          if (meta != null && meta.cmd == subcommand) {
+            matched = v;
+            splittedCommand.removeRange(0, 2);
+            return;
+          }
+        }
+      });
+    }
+
+    if (matched == null) {
+      methods.forEach((k, v) {
+        if (v is MethodMirror) {
+          var meta = _getCmdAnnot(v, Maincommand);
+
+          if (meta != null) {
+            matched = v;
+            splittedCommand.removeAt(0);
+            return;
+          }
+        }
+      });
+    }
+
+    if (matched == null) {
+      _commandNotFoundEventController.add(e.message);
+      return;
+    }
+
+    var annot = _getCmdAnnot(matched, Maincommand) as AnnotCommand;
+    if(annot == null)
+      annot = _getCmdAnnot(matched, Subcommand) as AnnotCommand;
+
+    // Check for admin command and if user is admin
+    if (annot.isAdmin != null && annot.isAdmin)
+      executionCode = _isUserAdmin(e.message.author.id) ? 100 : 0;
+
+    // Check if there is need to check user roles
+    if (annot.requiredRoles != null && executionCode == -1) {
+      var member = await e.message.guild.getMember(e.message.author.id);
+
+      var hasRoles = annot.requiredRoles
+          .where((i) => member.roles.contains(i))
+          .toList();
+
+      if (hasRoles == null || hasRoles.isEmpty) executionCode = 1;
+    }
+
+    //Check if user is on cooldown
+    if (executionCode == -1 &&
+        annot.cooldown != null &&
+        annot.cooldown >
+            0) if (!(await _cooldownCache.canExecute(
+        e.message.author.id,
+        command.name,
+        annot.cooldown * 1000))) executionCode = 2;
+
+    // Switch between execution codes
+    switch (executionCode) {
+      case 0:
+        _forAdminOnlyEventController.add(e.message);
+        break;
+      case 1:
+        _requiredPermissionEventController.add(e.message);
+        break;
+      case 2:
+        _cooldownEventController.add(e.message);
+        break;
+      case -1:
+      case 100:
+        var params = _collectParams(matched, splittedCommand);
+
+        try {
+          commandContext.guild = e.message.guild;
+          commandContext.message = e.message;
+          commandContext.author = e.message.author;
+          commandContext.channel = e.message.channel;
+
+          var newInstance = reflect(commandContext);
+          newInstance.invoke(matched.simpleName, params);
+        } catch (err) {
+          _commandExecutionFailController.add(new CommandExecutionFailEvent._new(e.message, err));
+        }
+
+        logger.fine("Command executed");
+        break;
+    }
+
+    e.message.channel.send(content: "Execution time: ${stopwatch.elapsedMicroseconds} um");
+  }
+
+  /// Register services to injected into commands modules. Has to be executed before registering commands.
+  /// There cannot be more than 1 dependency with single type. Only first will be injected.
+  void registerServices(List<Object> services) =>
+      this._services.addAll(services);
+
+  void _registerLibrary(Type type, Function(List<dynamic>, ClassMirror) func) {
+    var superClass = reflectClass(type);
+    var mirrorSystem = currentMirrorSystem();
+
+    mirrorSystem.libraries.forEach((uri, lib) {
+      lib.declarations.forEach((s, cm) {
+        if (cm is ClassMirror) {
+          if (cm.isSubclassOf(superClass) && !cm.isAbstract) {
+            var ctor = cm.declarations.values.toList().firstWhere((m) {
+              if (m is MethodMirror) return m.isConstructor;
+
+              return false;
+            }) as MethodMirror;
+
+            var params = ctor.parameters;
+            var toInject = new List<dynamic>();
+
+            for (var param in params) {
+              var type = param.type.reflectedType;
+
+              for (var service in _services) {
+                if (service.runtimeType == type) toInject.add(service);
+              }
+            }
+
+            func(toInject, cm);
+          }
+        }
+      });
+    });
+  }
+
+  /// Register all services in current isolate. It captures all classes which inherits from [Service] class and performs dependency injection if possible.
+  void registerLibraryServices() {
+    _registerLibrary(Service, (toInject, cm) {
+      try {
+        var serv = cm.newInstance(new Symbol(''), toInject).reflectee;
+        _services.add(serv);
+      } catch (e) {
+        print(e);
+        throw new Exception("Service constructor not satisfied!");
+      }
+    });
+  }
+
+  /// Register commands in current Isolate's libraries. Basically loads all classes as commnads with [MirrorsCommand] superclass.
+  /// Performs dependency injection when instantiate commands. And throws [Exception] when there are missing services
+  void registerLibraryCommands() {
+    _registerLibrary(CommandContext, (toInject, cm) {
+      try {
+        var cmd = cm.newInstance(new Symbol(''), toInject).reflectee;
+        cmd.logger = new Logger.detached("Command");
+        add(cmd);
+      } catch (e) {
+        print(e);
+        throw new Exception("Command constructor not satisfied!");
+      }
+    });
+  }
+
+  @override
+
+  /// Creates help String based on registered commands metadata.
+  String createHelp(String requestedUserId) {
+    var buffer = new StringBuffer();
+
+    buffer.writeln("**Available commands:**");
+    /*
+    _commands.forEach((item) {
+      if (!item.isHidden) if (item.isAdmin && _isUserAdmin(requestedUserId)) {
+        buffer.writeln("* ${item.name} - ${item.help} **ADMIN** ");
+        buffer.writeln("\t Usage: ${item.usage}");
+      } else if (!item.isAdmin) {
+        buffer.writeln("* ${item.name} - ${item.help}");
+        buffer.writeln("\t Usage: ${item.usage}");
+      }
+    });
+  */
+    return buffer.toString();
+  }
+
+  Future<Null> _reflectCommand(Message msg, Command command) async {
+    var instanceMirror = reflect(command);
+    var classMirror = instanceMirror.type;
+    var methods = classMirror.declarations;
+
+    var matched = null;
+    var subcommand = null;
+    var splitted = msg.content.split(' ');
+
+    if (splitted.length > 1) {
+      subcommand = splitted[1];
+      methods.forEach((k, v) {
+        if (v is MethodMirror) {
+          var meta = _getCmdAnnot(v, Subcommand) as Subcommand;
+
+          if (meta != null && meta.cmd == subcommand) {
+            matched = v;
+            splitted.removeRange(0, 2);
+            return;
+          }
+        }
+      });
+    }
+
+    if (matched == null) {
+      methods.forEach((k, v) {
+        if (v is MethodMirror) {
+          var meta = _getCmdAnnot(v, Maincommand);
+
+          if (meta != null) {
+            matched = v;
+            splitted.removeAt(0);
+            return;
+          }
+        }
+      });
+    }
+
+    if (matched == null) return null;
+    var params = _collectParams(matched, splitted);
+
+    try {
+      instanceMirror.invoke(matched.simpleName, params);
+    } catch (e) {
+      _commandExecutionFailController.add(new CommandExecutionFailEvent._new(msg, e));
+    }
+    return null;
+  }
+
+  List<String> _groupParams(List<String> splitted) {
+    var tmpList = new List();
+    var isInto = false;
+
+    var finalList = new List();
+
+    for (var item in splitted) {
+      if (isInto) {
+        tmpList.add(item);
+        if (item.contains("\"")) {
+          isInto = false;
+          finalList.add(tmpList.join(" ").replaceAll("\"", ""));
+          tmpList.clear();
+        }
+        continue;
+      }
+
+      if (item.contains("\"") && !isInto) {
+        isInto = true;
+        tmpList.add(item);
+        continue;
+      }
+
+      finalList.add(item);
+    }
+
+    return finalList;
+  }
+
+  List<String> _collectParams(MethodMirror method, List<String> splitted) {
+    var params = method.parameters;
+
+    splitted = _groupParams(splitted);
+
+    List<Object> collected = new List();
+    var index = -1;
+
+    params.forEach((e) {
+      var type = e.type.reflectedType;
+      if (type == String) {
+        index++;
+
+        try {
+          collected.add(splitted[index]);
+        } catch (e) {}
+      } else if (type == int) {
+        index++;
+
+        try {
+          var d = int.parse(splitted[index]);
+          collected.add(d);
+        } catch (e) {}
+      } else if (type == double) {
+        index++;
+
+        try {
+          var d = double.parse(splitted[index]);
+          collected.add(d);
+        } catch (e) {}
+      } else if (type == DateTime) {
+        index++;
+
+        var d = DateTime.parse(splitted[index]);
+        collected.add(d);
+      } else {
+        _services.forEach((s) {
+          if (s.runtimeType == type) {
+            collected.add(s);
+          }
+        });
+      }
+    });
+
+    return collected;
+  }
+
+  Object _getCmdAnnot(DeclarationMirror declaration, Type type) {
+    for (var instance in declaration.metadata) {
+      if (instance.hasReflectee) {
+        var reflectee = instance.reflectee;
+        if (reflectee.runtimeType == type) {
+          return reflectee;
+        }
+      }
+    }
+    return null;
+  }
+
+  bool _isUserAdmin(String authorId) {
+    return (_admins != null && _admins.any((i) => i == authorId));
+  }
+
+  /// Register new [Command] object.
+  void add(CommandContext command) {
+    _commands.add(command);
+    logger.info("Command added to registry");
+  }
+
+  /// Register many [Command] instances.
+  void addMany(List<CommandContext> commands) {
+    commands.forEach((c) => add(c));
+  }
+}

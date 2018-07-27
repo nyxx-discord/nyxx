@@ -1,33 +1,34 @@
 part of nyxx.commands;
 
-/// Absctract class to factory new command
-abstract class AbstractCommand {
+class Command {
   /// Name of command. Text which will trigger execution
-  String name;
+  final String name;
 
   /// Help message
-  String help;
+  final String help;
 
   /// Example usage of command
-  String usage;
-
-  /// Indicates if commands is restricted to admins
-  bool isAdmin = false;
-
-  /// List of roles required to execute command
-  List<String> requiredRoles = null;
-
-  /// Cooldown for command in seconds
-  int cooldown = 0;
-
-  /// Indicated if command is hidden from help
-  bool isHidden = false;
+  final String usage;
 
   /// List of aliases for command
-  List<String> aliases = null;
+  final List<String> aliases;
 
-  /// Execution context of command.
-  CommandContext context;
+  const Command(this.name, this.help, this.usage, this.aliases);
+}
+
+/// Abstract class to factory new command
+abstract class CommandContext {
+  /// Channel from where message come from
+  MessageChannel channel;
+
+  /// Author of message
+  User author;
+
+  /// Message that was sent
+  Message message;
+
+  /// Guild in which message was sent
+  Guild guild;
 
   /// Logger for instance of command
   Logger logger;
@@ -39,7 +40,7 @@ abstract class AbstractCommand {
       bool tts: false,
       String nonce,
       bool disableEveryone}) async {
-    return await context.channel.send(
+    return await channel.send(
         content: content,
         embed: embed,
         tts: tts,
@@ -50,10 +51,10 @@ abstract class AbstractCommand {
   /// Delays execution of command and waits for nex matching command based on [prefix]. Has static timemout of 30 seconds
   Future<MessageEvent> delay(
       {String prefix: "", bool ensureUser = false}) async {
-    return await context.message.client.onMessage.firstWhere((i) {
+    return await message.client.onMessage.firstWhere((i) {
       if (!i.message.content.startsWith(prefix)) return false;
 
-      if (ensureUser) return i.message.author.id == context.message.author.id;
+      if (ensureUser) return i.message.author.id == message.author.id;
 
       return true;
     }).timeout(const Duration(seconds: 30), onTimeout: () {
@@ -67,18 +68,10 @@ abstract class AbstractCommand {
       {Duration timeout = const Duration(seconds: 30)}) async {
     List<Message> tmpData = new List();
 
-    var tmp = await context.channel.onMessage.take(num).forEach((i) {
+    var tmp = await channel.onMessage.take(num).forEach((i) {
       tmpData.add(i.message);
     }).timeout(timeout);
 
     return tmpData;
   }
 }
-
-/// Absctract class to factory new command
-abstract class Command extends AbstractCommand {
-  /// Function which will be invoked when command triggers
-  Future run();
-}
-
-abstract class MirrorsCommand extends AbstractCommand {}
