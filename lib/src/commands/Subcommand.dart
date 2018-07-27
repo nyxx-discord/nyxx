@@ -35,3 +35,8 @@ class Maincommand extends AnnotCommand {
       : super(null, isAdmin, requiredRoles,
       cooldown, isHidden);
 }
+
+/// Captures all remaining text into `List<String>`
+class Remainder {
+  const Remainder();
+}

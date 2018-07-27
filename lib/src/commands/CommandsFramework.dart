@@ -302,55 +302,6 @@ class CommandsFramework {
     return buffer.toString();
   }
 
-  Future<Null> _reflectCommand(Message msg, Command command) async {
-    var instanceMirror = reflect(command);
-    var classMirror = instanceMirror.type;
-    var methods = classMirror.declarations;
-
-    var matched = null;
-    var subcommand = null;
-    var splitted = msg.content.split(' ');
-
-    if (splitted.length > 1) {
-      subcommand = splitted[1];
-      methods.forEach((k, v) {
-        if (v is MethodMirror) {
-          var meta = _getCmdAnnot(v, Subcommand) as Subcommand;
-
-          if (meta != null && meta.cmd == subcommand) {
-            matched = v;
-            splitted.removeRange(0, 2);
-            return;
-          }
-        }
-      });
-    }
-
-    if (matched == null) {
-      methods.forEach((k, v) {
-        if (v is MethodMirror) {
-          var meta = _getCmdAnnot(v, Maincommand);
-
-          if (meta != null) {
-            matched = v;
-            splitted.removeAt(0);
-            return;
-          }
-        }
-      });
-    }
-
-    if (matched == null) return null;
-    var params = _collectParams(matched, splitted);
-
-    try {
-      instanceMirror.invoke(matched.simpleName, params);
-    } catch (e) {
-      _commandExecutionFailController.add(new CommandExecutionFailEvent._new(msg, e));
-    }
-    return null;
-  }
-
   List<String> _groupParams(List<String> splitted) {
     var tmpList = new List();
     var isInto = false;
@@ -388,41 +339,56 @@ class CommandsFramework {
     List<Object> collected = new List();
     var index = -1;
 
-    params.forEach((e) {
+    for(var e in params) {
       var type = e.type.reflectedType;
-      if (type == String) {
+
+      if(_getCmdAnnot(e, Remainder) != null) {
         index++;
 
-        try {
-          collected.add(splitted[index]);
-        } catch (e) {}
-      } else if (type == int) {
-        index++;
-
-        try {
-          var d = int.parse(splitted[index]);
-          collected.add(d);
-        } catch (e) {}
-      } else if (type == double) {
-        index++;
-
-        try {
-          var d = double.parse(splitted[index]);
-          collected.add(d);
-        } catch (e) {}
-      } else if (type == DateTime) {
-        index++;
-
-        var d = DateTime.parse(splitted[index]);
-        collected.add(d);
-      } else {
-        _services.forEach((s) {
-          if (s.runtimeType == type) {
-            collected.add(s);
-          }
-        });
+        collected.add(splitted.getRange(index, splitted.length).toList());
+        break;
       }
-    });
+
+      switch(type) {
+        case String:
+          index++;
+
+          try {
+            collected.add(splitted[index]);
+          } catch (e) {}
+          break;
+        case int:
+          index++;
+
+          try {
+            var d = int.parse(splitted[index]);
+            collected.add(d);
+          } catch (e) {}
+          break;
+        case double:
+          index++;
+
+          try {
+            var d = double.parse(splitted[index]);
+            collected.add(d);
+          } catch (e) {}
+          break;
+        case DateTime:
+          try {
+            index++;
+
+            var d = DateTime.parse(splitted[index]);
+            collected.add(d);
+          } catch (e) {}
+          break;
+        default:
+          _services.forEach((s) {
+            if (s.runtimeType == type) {
+              collected.add(s);
+            }
+          });
+      }
+    }
 
     return collected;
   }
