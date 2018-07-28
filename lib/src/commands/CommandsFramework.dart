@@ -74,8 +74,6 @@ class CommandsFramework {
 
   /// Dispatches onMessage event to framework.
   Future _dispatch(MessageEvent e) async {
-    var stopwatch = new Stopwatch()..start();
-
     if (!e.message.content.startsWith(prefix)) return;
 
     // Match help specially to shadow user defined help commands.
@@ -214,9 +212,22 @@ class CommandsFramework {
         logger.fine("Command executed");
         break;
     }
-
-    e.message.channel.send(content: "Execution time: ${stopwatch.elapsedMicroseconds} um");
   }
+
+  /// Register new [CommandContext] object.
+  void add(CommandContext command) {
+    var inst = reflect(command);
+    var cls = inst.type;
+    var cmd = _getCmdAnnot(cls, Command) as Command;
+
+    command.logger = new Logger.detached("Command[${cmd.name}]");
+
+    _commands.add(command);
+    logger.info("Command[${cmd.name}] added to registry");
+  }
+
+  /// Register many [CommandContext] instances.
+  void addMany(List<CommandContext> commands) => commands.forEach((c) => add(c));
 
   /// Allows to register new converters for custom type
   void registerTypeConverters(List<TypeConverter> converters) => _typeConverters = converters;
@@ -440,13 +451,4 @@ class CommandsFramework {
   bool _isUserAdmin(String authorId) {
     return (_admins != null && _admins.any((i) => i == authorId));
   }
-
-  /// Register new [CommandContext] object.
-  void add(CommandContext command) {
-    _commands.add(command);
-    logger.info("Command added to registry");
-  }
-
-  /// Register many [CommandContext] instances.
-  void addMany(List<CommandContext> commands) => commands.forEach((c) => add(c));
 }
