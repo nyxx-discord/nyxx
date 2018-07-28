@@ -1,5 +1,15 @@
 part of nyxx.commands;
 
+class Command {
+  /// Name of command. Text which will trigger execution
+  final String name;
+
+  /// List of aliases for command
+  final List<String> aliases;
+
+  const Command(this.name, {this.aliases});
+}
+
 class AnnotCommand {
   /// Name of command
   final String cmd;

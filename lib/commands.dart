@@ -14,7 +14,9 @@ import 'package:logging/logging.dart';
 
 part 'src/commands/CommandExecutionFailEvent.dart';
 part 'src/commands/CommandsFramework.dart';
-part 'src/commands/Subcommand.dart';
+part 'src/commands/Annotations.dart';
 part 'src/commands/Command.dart';
 part 'src/commands/Service.dart';
 part 'src/commands/CooldownCache.dart';
+
+part 'src/commands/TypeConverter.dart';
