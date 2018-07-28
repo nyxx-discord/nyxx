@@ -116,6 +116,7 @@ part 'src/objects/OAuth2Application.dart';
 part 'src/objects/OAuth2Guild.dart';
 part 'src/objects/OAuth2Info.dart';
 part 'src/objects/Permissions.dart';
+part 'src/objects/PermissionsConstants.dart';
 part 'src/objects/Role.dart';
 part 'src/objects/Shard.dart';
 part 'src/objects/User.dart';
