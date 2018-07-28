@@ -1,21 +1,5 @@
 part of nyxx.commands;
 
-class Command {
-  /// Name of command. Text which will trigger execution
-  final String name;
-
-  /// Help message
-  final String help;
-
-  /// Example usage of command
-  final String usage;
-
-  /// List of aliases for command
-  final List<String> aliases;
-
-  const Command(this.name, this.help, this.usage, {this.aliases});
-}
-
 /// Abstract class to factory new command
 abstract class CommandContext {
   /// Channel from where message come from
@@ -95,8 +79,7 @@ abstract class CommandContext {
     }).timeout(duration, onTimeout: () => m);
   }
 
-
-  /// Delays execution of command and waits for nex matching command based on [prefix]. Has static timemout of 30 seconds
+  /// Delays execution of command and waits for nex matching command based on [prefix]. Has static timeout of 30 seconds
   Future<MessageEvent> delay(
       {String prefix: "", bool ensureUser = false}) async {
     return await message.client.onMessage.firstWhere((i) {
@@ -120,5 +103,9 @@ abstract class CommandContext {
     }).timeout(timeout);
 
     return tmpData;
+  }
+
+  void getHelp(bool isAdmin, StringBuffer buffer) {
+
   }
 }

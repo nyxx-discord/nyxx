@@ -29,7 +29,7 @@ void main() {
 }
 
 // Example command with alias and subcommands.
-@command.Command("alias", "Example of aliases", "!alias or !aaa", aliases: const ["aaa"])
+@command.Command("alias", aliases: const ["aaa"])
 class AliasCommand extends command.CommandContext {
   Service _service;
 

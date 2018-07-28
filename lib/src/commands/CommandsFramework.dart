@@ -5,6 +5,8 @@ part of nyxx.commands;
 class CommandsFramework {
   List<String> _admins;
   List<CommandContext> _commands;
+  List<TypeConverter> _typeConverters;
+
   List<Object> _services = new List();
 
   StreamController<Message> _cooldownEventController;
@@ -79,11 +81,11 @@ class CommandsFramework {
     // Match help specially to shadow user defined help commands.
     if (e.message.content.startsWith((prefix + 'help'))) {
       if (helpDirect) {
-        e.message.author.send(content: createHelp(e.message.author.id));
+        e.message.author.send(content: _createHelp(e.message.author.id));
         return;
       }
 
-      await e.message.channel.send(content: createHelp(e.message.author.id));
+      await e.message.channel.send(content: _createHelp(e.message.author.id));
       return;
     }
 
@@ -195,7 +197,7 @@ class CommandsFramework {
         break;
       case -1:
       case 100:
-        var params = _collectParams(matched, splittedCommand);
+        var params = _collectParams(matched, splittedCommand, e.message);
 
         try {
           commandContext.guild = e.message.guild;
@@ -215,6 +217,9 @@ class CommandsFramework {
 
     e.message.channel.send(content: "Execution time: ${stopwatch.elapsedMicroseconds} um");
   }
+
+  /// Allows to register new converters for custom type
+  void registerTypeConverters(List<TypeConverter> converters) => _typeConverters = converters;
 
   /// Register services to injected into commands modules. Has to be executed before registering commands.
   /// There cannot be more than 1 dependency with single type. Only first will be injected.
@@ -281,24 +286,15 @@ class CommandsFramework {
     });
   }
 
-  @override
-
   /// Creates help String based on registered commands metadata.
-  String createHelp(String requestedUserId) {
+  String _createHelp(String requestedUserId) {
     var buffer = new StringBuffer();
 
     buffer.writeln("**Available commands:**");
-    /*
-    _commands.forEach((item) {
-      if (!item.isHidden) if (item.isAdmin && _isUserAdmin(requestedUserId)) {
-        buffer.writeln("* ${item.name} - ${item.help} **ADMIN** ");
-        buffer.writeln("\t Usage: ${item.usage}");
-      } else if (!item.isAdmin) {
-        buffer.writeln("* ${item.name} - ${item.help}");
-        buffer.writeln("\t Usage: ${item.usage}");
-      }
-    });
-  */
+
+    for(var cmd in _commands)
+      cmd.getHelp(_isUserAdmin(requestedUserId), buffer);
+
     return buffer.toString();
   }
 
@@ -331,13 +327,81 @@ class CommandsFramework {
     return finalList;
   }
 
-  List<String> _collectParams(MethodMirror method, List<String> splitted) {
-    var params = method.parameters;
+  RegExp entityRegex = new RegExp(r"<(@|@!|@&|#|a?:(.+):)([0-9]+)>");
 
+  List<String> _collectParams(MethodMirror method, List<String> splitted, Message e) {
+    var params = method.parameters;
     splitted = _groupParams(splitted);
 
     List<Object> collected = new List();
     var index = -1;
+
+    bool parsePrimitives(Type type) {
+      index++;
+      switch(type) {
+        case String:
+          try {
+            collected.add(splitted[index]);
+          } catch (e) {}
+          break;
+        case int:
+          try {
+            var d = int.parse(splitted[index]);
+            collected.add(d);
+          } catch (e) {}
+          break;
+        case double:
+          try {
+            var d = double.parse(splitted[index]);
+            collected.add(d);
+          } catch (e) {}
+          break;
+        case DateTime:
+          try {
+            var d = DateTime.parse(splitted[index]);
+            collected.add(d);
+          } catch (e) {}
+          break;
+        case TextChannel:
+          try {
+            var id = entityRegex.firstMatch(splitted[index]).group(2);
+            collected.add(e.guild.channels[id]);
+          } catch (e) {}
+          break;
+        case User:
+          try {
+            var id = entityRegex.firstMatch(splitted[index]).group(2);
+            collected.add(e.guild.client.users[id]);
+          } catch (e) {}
+          break;
+        case Role:
+          try {
+            var id = entityRegex.firstMatch(splitted[index]).group(2);
+            collected.add(e.guild.roles[id]);
+          } catch (e) {}
+          break;
+        case GuildEmoji:
+          try {
+            var id = entityRegex.firstMatch(splitted[index]).group(3);
+            collected.add(e.guild.emojis[id]);
+          } catch (e) {}
+          break;
+        default:
+          if(_typeConverters == null) return false;
+
+          for(var converter in _typeConverters) {
+            var t = converter.parse(splitted[index], e);
+            if(t != null) {
+              collected.add(t);
+              return true;
+            }
+          }
+
+          return false;
+      }
+
+      return true;
+    }
 
     for(var e in params) {
       var type = e.type.reflectedType;
@@ -349,44 +413,12 @@ class CommandsFramework {
         break;
       }
 
-      switch(type) {
-        case String:
-          index++;
-
-          try {
-            collected.add(splitted[index]);
-          } catch (e) {}
-          break;
-        case int:
-          index++;
-
-          try {
-            var d = int.parse(splitted[index]);
-            collected.add(d);
-          } catch (e) {}
-          break;
-        case double:
-          index++;
-
-          try {
-            var d = double.parse(splitted[index]);
-            collected.add(d);
-          } catch (e) {}
-          break;
-        case DateTime:
-          try {
-            index++;
-
-            var d = DateTime.parse(splitted[index]);
-            collected.add(d);
-          } catch (e) {}
-          break;
-        default:
-          _services.forEach((s) {
-            if (s.runtimeType == type) {
-              collected.add(s);
-            }
-          });
+      if(!parsePrimitives(type)) {
+        _services.forEach((s) {
+          if (s.runtimeType == type) {
+            collected.add(s);
+          }
+        });
       }
     }
 
@@ -409,14 +441,12 @@ class CommandsFramework {
     return (_admins != null && _admins.any((i) => i == authorId));
   }
 
-  /// Register new [Command] object.
+  /// Register new [CommandContext] object.
   void add(CommandContext command) {
     _commands.add(command);
     logger.info("Command added to registry");
   }
 
-  /// Register many [Command] instances.
-  void addMany(List<CommandContext> commands) {
-    commands.forEach((c) => add(c));
-  }
+  /// Register many [CommandContext] instances.
+  void addMany(List<CommandContext> commands) => commands.forEach((c) => add(c));
 }

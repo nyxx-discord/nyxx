@@ -11,7 +11,7 @@ class StringService extends command.Service {
   StringService();
 }
 
-@command.Command("test", "Checks if everything is running", "~~test")
+@command.Command("test")
 class TestCommand extends command.CommandContext {
   @command.Maincommand()
   Future<Null> run() async {
@@ -24,7 +24,7 @@ class TestCommand extends command.CommandContext {
   }
 }
 
-@command.Command("cooldown", "Checks if cooldown is working", "~~cooldown", aliases: const ["culdown"])
+@command.Command("cooldown", aliases: const ["culdown"])
 class CooldownCommand extends command.CommandContext {
   @command.Maincommand(cooldown: 10)
   run() async {}
