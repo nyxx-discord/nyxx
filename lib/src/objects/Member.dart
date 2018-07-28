@@ -23,7 +23,7 @@ class Member extends User {
   Game game;
 
   /// A list of role IDs the member has.
-  List<String> roles;
+  List<Role> roles;
 
   /// The guild that the member is a part of.
   Guild guild;
@@ -34,32 +34,32 @@ class Member extends User {
     this.deaf = data['deaf'];
     this.mute = data['mute'];
     this.status = data['status'];
-    this.roles = data['roles'] as List<String>;
+
     this._user = new User._new(client, data['user'] as Map<String, dynamic>);
 
-    if (guild == null) {
+    if (guild == null)
       this.guild = this.client.guilds[data['guild_id']];
-    } else {
+    else
       this.guild = guild;
-    }
 
-    if (data['joined_at'] != null) {
+    roles = new List();
+    data['roles'].forEach((String i) {
+      roles.add(this.guild.roles[i]);
+    });
+
+    if (data['joined_at'] != null)
       this.joinedAt = DateTime.parse(data['joined_at']);
-    }
 
-    if (data['game'] != null) {
+    if (data['game'] != null)
       this.game =
           new Game._new(this.client, data['game'] as Map<String, dynamic>);
-    }
 
     if (guild != null) this.guild.members[this.id] = this;
     client.users[this.toUser().id] = this.toUser();
   }
 
   /// Returns a user from the member.
-  User toUser() {
-    return this._user;
-  }
+  User toUser() => this._user;
 
   /// Bans the member and optionally deletes [deleteMessageDays] days worth of messages.
   Future<Null> ban({int deleteMessageDays = 0, String auditReason: ""}) async {
@@ -75,5 +75,16 @@ class Member extends User {
         'DELETE', "/guilds/${this.guild.id}/members/${this.id}",
         reason: auditReason);
     return null;
+  }
+
+  Future<Permissions> getTotalPermissions() {
+    return new Future(() {
+      var total = 0;
+
+      for(var role in roles)
+        total |= role.permissions.raw;
+
+      return new Permissions.fromInt(total);
+    });
   }
 }
