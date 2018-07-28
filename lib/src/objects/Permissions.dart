@@ -82,7 +82,7 @@ class Permissions {
 
   /// Makes a [Permissions] object from a raw permission code.
   Permissions.fromInt(int permissions) {
-   _construct(permissions);
+    _construct(permissions);
   }
 
   Permissions.fromOverwrite(int permissions, int overwrite) {

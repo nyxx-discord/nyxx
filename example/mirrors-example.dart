@@ -22,10 +22,9 @@ void main() {
 
   // Register new command handler.
   // It registers your services and adds command to registry.
-  var commands =
-      new command.CommandsFramework('!', bot, ["302359032612651009"])
-        ..registerServices([new Service("Siema")])
-        ..registerLibraryCommands();
+  var commands = new command.CommandsFramework('!', bot, ["302359032612651009"])
+    ..registerServices([new Service("Siema")])
+    ..registerLibraryCommands();
 }
 
 // Example command with alias and subcommands.

@@ -46,7 +46,8 @@ class CommandsFramework {
   final Logger logger = new Logger.detached("Commands");
 
   /// Creates commands framework handler. Requires prefix to handle commands.
-  CommandsFramework(this.prefix, Client client, [this._admins, String gameName]) {
+  CommandsFramework(this.prefix, Client client,
+      [this._admins, String gameName]) {
     _commands = [];
     _cooldownCache = new CooldownCache();
 
@@ -94,12 +95,14 @@ class CommandsFramework {
     var splittedCommand = e.message.content.split(' ');
     var splCommand = splittedCommand[0].replaceFirst(prefix, "");
 
-    for(var cmd in _commands) {
+    for (var cmd in _commands) {
       var tmpInstMirror = reflect(cmd);
       var tmpClassMirror = tmpInstMirror.type;
       var tmpCommand = _getCmdAnnot(tmpClassMirror, Command) as Command;
 
-      if(tmpCommand.name == splCommand || (tmpCommand.aliases != null && tmpCommand.aliases.contains(splCommand))) {
+      if (tmpCommand.name == splCommand ||
+          (tmpCommand.aliases != null &&
+              tmpCommand.aliases.contains(splCommand))) {
         classMirror = tmpClassMirror;
         command = tmpCommand;
         commandContext = cmd;
@@ -155,7 +158,7 @@ class CommandsFramework {
     }
 
     var annot = _getCmdAnnot(matched, Maincommand) as AnnotCommand;
-    if(annot == null)
+    if (annot == null)
       annot = _getCmdAnnot(matched, Subcommand) as AnnotCommand;
 
     // Check for admin command and if user is admin
@@ -166,9 +169,8 @@ class CommandsFramework {
     if (annot.requiredRoles != null && executionCode == -1) {
       var member = await e.message.guild.getMember(e.message.author);
 
-      var hasRoles = annot.requiredRoles
-          .where((i) => member.roles.contains(i))
-          .toList();
+      var hasRoles =
+          annot.requiredRoles.where((i) => member.roles.contains(i)).toList();
 
       if (hasRoles == null || hasRoles.isEmpty) executionCode = 1;
     }
@@ -178,9 +180,8 @@ class CommandsFramework {
         annot.cooldown != null &&
         annot.cooldown >
             0) if (!(await _cooldownCache.canExecute(
-        e.message.author.id,
-        command.name,
-        annot.cooldown * 1000))) executionCode = 2;
+        e.message.author.id, command.name, annot.cooldown * 1000)))
+      executionCode = 2;
 
     // Switch between execution codes
     switch (executionCode) {
@@ -206,7 +207,8 @@ class CommandsFramework {
           var newInstance = reflect(commandContext);
           newInstance.invoke(matched.simpleName, params);
         } catch (err) {
-          _commandExecutionFailController.add(new CommandExecutionFailEvent._new(e.message, err));
+          _commandExecutionFailController
+              .add(new CommandExecutionFailEvent._new(e.message, err));
         }
 
         logger.fine("Command executed");
@@ -227,10 +229,12 @@ class CommandsFramework {
   }
 
   /// Register many [CommandContext] instances.
-  void addMany(List<CommandContext> commands) => commands.forEach((c) => add(c));
+  void addMany(List<CommandContext> commands) =>
+      commands.forEach((c) => add(c));
 
   /// Allows to register new converters for custom type
-  void registerTypeConverters(List<TypeConverter> converters) => _typeConverters = converters;
+  void registerTypeConverters(List<TypeConverter> converters) =>
+      _typeConverters = converters;
 
   /// Register services to injected into commands modules. Has to be executed before registering commands.
   /// There cannot be more than 1 dependency with single type. Only first will be injected.
@@ -303,7 +307,7 @@ class CommandsFramework {
 
     buffer.writeln("**Available commands:**");
 
-    for(var cmd in _commands)
+    for (var cmd in _commands)
       cmd.getHelp(_isUserAdmin(requestedUserId), buffer);
 
     return buffer.toString();
@@ -340,7 +344,8 @@ class CommandsFramework {
 
   RegExp entityRegex = new RegExp(r"<(@|@!|@&|#|a?:(.+):)([0-9]+)>");
 
-  List<String> _collectParams(MethodMirror method, List<String> splitted, Message e) {
+  List<String> _collectParams(
+      MethodMirror method, List<String> splitted, Message e) {
     var params = method.parameters;
     splitted = _groupParams(splitted);
 
@@ -349,7 +354,7 @@ class CommandsFramework {
 
     bool parsePrimitives(Type type) {
       index++;
-      switch(type) {
+      switch (type) {
         case String:
           try {
             collected.add(splitted[index]);
@@ -398,11 +403,11 @@ class CommandsFramework {
           } catch (e) {}
           break;
         default:
-          if(_typeConverters == null) return false;
+          if (_typeConverters == null) return false;
 
-          for(var converter in _typeConverters) {
+          for (var converter in _typeConverters) {
             var t = converter.parse(splitted[index], e);
-            if(t != null) {
+            if (t != null) {
               collected.add(t);
               return true;
             }
@@ -414,17 +419,17 @@ class CommandsFramework {
       return true;
     }
 
-    for(var e in params) {
+    for (var e in params) {
       var type = e.type.reflectedType;
 
-      if(_getCmdAnnot(e, Remainder) != null) {
+      if (_getCmdAnnot(e, Remainder) != null) {
         index++;
 
         collected.add(splitted.getRange(index, splitted.length).toList());
         break;
       }
 
-      if(!parsePrimitives(type)) {
+      if (!parsePrimitives(type)) {
         _services.forEach((s) {
           if (s.runtimeType == type) {
             collected.add(s);
