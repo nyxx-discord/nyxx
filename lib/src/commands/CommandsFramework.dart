@@ -165,14 +165,25 @@ class CommandsFramework {
     if (annot.isAdmin != null && annot.isAdmin)
       executionCode = _isUserAdmin(e.message.author.id) ? 100 : 0;
 
+    var member = await e.message.guild.getMember(e.message.author);
+
     // Check if there is need to check user roles
     if (annot.requiredRoles != null && executionCode == -1) {
-      var member = await e.message.guild.getMember(e.message.author);
-
       var hasRoles =
           annot.requiredRoles.where((i) => member.roles.contains(i)).toList();
 
       if (hasRoles == null || hasRoles.isEmpty) executionCode = 1;
+    }
+
+    // Check if user has required permissions
+    if(annot.requiredPermissions != null && executionCode == -1) {
+      var total = await member.getTotalPermissions();
+      for(var perm in annot.requiredPermissions) {
+        if((total.raw | perm) == 0) {
+          executionCode = 1;
+          break;
+        }
+      }
     }
 
     //Check if user is on cooldown
@@ -342,7 +353,7 @@ class CommandsFramework {
     return finalList;
   }
 
-  RegExp entityRegex = new RegExp(r"<(@|@!|@&|#|a?:(.+):)([0-9]+)>");
+  RegExp _entityRegex = new RegExp(r"<(@|@!|@&|#|a?:(.+):)([0-9]+)>");
 
   List<String> _collectParams(
       MethodMirror method, List<String> splitted, Message e) {
@@ -380,25 +391,25 @@ class CommandsFramework {
           break;
         case TextChannel:
           try {
-            var id = entityRegex.firstMatch(splitted[index]).group(2);
+            var id = _entityRegex.firstMatch(splitted[index]).group(3);
             collected.add(e.guild.channels[id]);
           } catch (e) {}
           break;
         case User:
           try {
-            var id = entityRegex.firstMatch(splitted[index]).group(2);
+            var id = _entityRegex.firstMatch(splitted[index]).group(3);
             collected.add(e.guild.client.users[id]);
           } catch (e) {}
           break;
         case Role:
           try {
-            var id = entityRegex.firstMatch(splitted[index]).group(2);
+            var id = _entityRegex.firstMatch(splitted[index]).group(3);
             collected.add(e.guild.roles[id]);
           } catch (e) {}
           break;
         case GuildEmoji:
           try {
-            var id = entityRegex.firstMatch(splitted[index]).group(3);
+            var id = _entityRegex.firstMatch(splitted[index]).group(3);
             collected.add(e.guild.emojis[id]);
           } catch (e) {}
           break;
