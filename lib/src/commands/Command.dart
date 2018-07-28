@@ -32,14 +32,13 @@ abstract class CommandContext {
         disableEveryone: disableEveryone);
   }
 
-  Future<Message> replyTemp(
-      Duration duration,
+  Future<Message> replyTemp(Duration duration,
       {String content,
-        EmbedBuilder embed,
-        bool tts: false,
-        String nonce,
-        bool disableEveryone}) async {
-    var msg =  await channel.send(
+      EmbedBuilder embed,
+      bool tts: false,
+      String nonce,
+      bool disableEveryone}) async {
+    var msg = await channel.send(
         content: content,
         embed: embed,
         tts: tts,
@@ -50,28 +49,28 @@ abstract class CommandContext {
     return msg;
   }
 
-  Future<Message> replyDelyed(
-      Duration duration,
+  Future<Message> replyDelyed(Duration duration,
       {String content,
-        EmbedBuilder embed,
-        bool tts: false,
-        String nonce,
-        bool disableEveryone}) async {
-    return new Future.delayed(duration, () async => await channel.send(
-        content: content,
-        embed: embed,
-        tts: tts,
-        nonce: nonce,
-        disableEveryone: disableEveryone));
+      EmbedBuilder embed,
+      bool tts: false,
+      String nonce,
+      bool disableEveryone}) async {
+    return new Future.delayed(
+        duration,
+        () async => await channel.send(
+            content: content,
+            embed: embed,
+            tts: tts,
+            nonce: nonce,
+            disableEveryone: disableEveryone));
   }
 
   Future<Map<Emoji, int>> collectEmojis(Message msg, Duration duration) async {
     var m = new Map<Emoji, int>();
 
     return new Future<Map<Emoji, int>>(() async {
-      await for(var r in msg.onReactionAdded) {
-        if(!m.containsKey(r.emoji))
-          m[r.emoji] = 1;
+      await for (var r in msg.onReactionAdded) {
+        if (!m.containsKey(r.emoji)) m[r.emoji] = 1;
 
         print("ELO");
         m[r.emoji] = ++m[r.emoji];
@@ -105,7 +104,5 @@ abstract class CommandContext {
     return tmpData;
   }
 
-  void getHelp(bool isAdmin, StringBuffer buffer) {
-
-  }
+  void getHelp(bool isAdmin, StringBuffer buffer) {}
 }

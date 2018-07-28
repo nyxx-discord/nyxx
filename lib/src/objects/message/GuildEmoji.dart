@@ -54,7 +54,8 @@ class GuildEmoji extends Emoji {
   String encode() => "$name:$id";
 
   /// Formats Emoji to message format
-  String format() => animated != null && animated ? "<a:$name:$id>" : "<:$name:$id>";
+  String format() =>
+      animated != null && animated ? "<a:$name:$id>" : "<:$name:$id>";
 
   /// Returns encoded string ready to send via message.
   @override
