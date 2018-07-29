@@ -79,15 +79,15 @@ abstract class CommandContext {
   }
 
   /// Delays execution of command and waits for nex matching command based on [prefix]. Has static timeout of 30 seconds
-  Future<MessageEvent> delay(
-      {String prefix: "", bool ensureUser = false}) async {
+  Future<MessageEvent> nextMessage(
+      {String prefix: "", bool ensureUser = false, Duration timeout: const Duration(seconds: 30)}) async {
     return await message.client.onMessage.firstWhere((i) {
       if (!i.message.content.startsWith(prefix)) return false;
 
       if (ensureUser) return i.message.author.id == message.author.id;
 
       return true;
-    }).timeout(const Duration(seconds: 30), onTimeout: () {
+    }).timeout(timeout, onTimeout: () {
       return null;
     });
   }
