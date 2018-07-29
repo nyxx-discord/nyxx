@@ -6,6 +6,7 @@ class CommandsFramework {
   List<String> _admins;
   List<CommandContext> _commands;
   List<TypeConverter> _typeConverters;
+  CooldownCache _cooldownCache;
 
   List<Object> _services = new List();
 
@@ -17,8 +18,6 @@ class CommandsFramework {
   StreamController<Message> _wrongContextController;
   StreamController<Message> _unauthorizedNsfwAccess;
   StreamController<Message> _requiredTopicError;
-
-  CooldownCache _cooldownCache;
 
   /// Prefix needed to dispatch a commands.
   /// All messages without this prefix will be ignored
@@ -59,8 +58,9 @@ class CommandsFramework {
 
   /// Creates commands framework handler. Requires prefix to handle commands.
   CommandsFramework(this.prefix, Client client,
-      [this._admins, String gameName]) {
-    _commands = [];
+    {List<String> admins, String gameName}) {
+    this._commands = new List();
+    this._admins = admins;
     _cooldownCache = new CooldownCache();
 
     _commandNotFoundEventController = new StreamController.broadcast();

@@ -14,11 +14,11 @@ void main() {
   nyxx.Client bot = new nyxx.Client(Platform.environment['DISCORD_TOKEN']);
 
   // Creating new CommandsFramework object and registering commands.
-  new command.CommandsFramework('!', bot, ["302359032612651009"])
+  new command.CommandsFramework('!', bot, admins: ["302359032612651009"])
     ..registerLibraryCommands();
 }
 
-// Command have to extends CommandXintext class and have @Command annotation.
+// Command have to extends CommandContext class and have @Command annotation.
 // Method with @Maincommand is main point of command object
 // Methods annotated with @Subcommand are defined as subcommands
 @command.Command("ping")
