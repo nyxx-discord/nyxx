@@ -194,10 +194,10 @@ class CommandsFramework {
     }
 
     // Check if user has required permissions
-    if(annot.requiredPermissions != null && executionCode == -1) {
+    if (annot.requiredPermissions != null && executionCode == -1) {
       var total = await member.getTotalPermissions();
-      for(var perm in annot.requiredPermissions) {
-        if((total.raw | perm) == 0) {
+      for (var perm in annot.requiredPermissions) {
+        if ((total.raw | perm) == 0) {
           executionCode = 1;
           break;
         }
@@ -205,34 +205,40 @@ class CommandsFramework {
     }
 
     // Check for channel compatibility
-    if(annot.guildOnly != null && executionCode == -1) {
-      if((annot.guildOnly == GuildOnly.DM && e.message.channel is TextChannel)
-          || (annot.guildOnly == GuildOnly.GUILD && (e.message.channel is DMChannel
-              || e.message.channel is GroupDMChannel))) {
+    if (annot.guildOnly != null && executionCode == -1) {
+      if ((annot.guildOnly == GuildOnly.DM &&
+              e.message.channel is TextChannel) ||
+          (annot.guildOnly == GuildOnly.GUILD &&
+              (e.message.channel is DMChannel ||
+                  e.message.channel is GroupDMChannel))) {
         executionCode = 3;
       }
     }
 
     // Check for channel nsfw
-    if(annot.isNsfw != null && annot.isNsfw && executionCode == -1)
-      if(!(e.message.channel is DMChannel) || !(e.message.channel is GroupDMChannel) || !(e.message.channel as TextChannel).nsfw)
-        executionCode = 4;
+    if (annot.isNsfw != null && annot.isNsfw && executionCode == -1) if (!(e
+            .message.channel is DMChannel) ||
+        !(e.message.channel is GroupDMChannel) ||
+        !(e.message.channel as TextChannel).nsfw) executionCode = 4;
 
     // Check for channel topics
-    if(annot.topics != null && e.message.channel is TextChannel && executionCode == -1) {
+    if (annot.topics != null &&
+        e.message.channel is TextChannel &&
+        executionCode == -1) {
       var topic = (e.message.channel as TextChannel).topic;
-      var list = topic.substring(topic.indexOf("[") + 1, topic.indexOf("]")).split(",");
+      var list = topic
+          .substring(topic.indexOf("[") + 1, topic.indexOf("]"))
+          .split(",");
 
       var total = false;
-      for(var topic in annot.topics) {
-        if(list.contains(topic)) {
+      for (var topic in annot.topics) {
+        if (list.contains(topic)) {
           total = true;
           break;
         }
       }
 
-      if(!total)
-        executionCode = 5;
+      if (!total) executionCode = 5;
     }
 
     //Check if user is on cooldown

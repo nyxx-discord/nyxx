@@ -53,15 +53,31 @@ class AnnotCommand {
 /// Defines new subcommand.
 class Subcommand extends AnnotCommand {
   const Subcommand(String cmd,
-      {bool isAdmin, List<Role> requiredRoles, int cooldown, bool isHidden, List<int> requiredPermissions, int guildOnly, bool isNsfw, List<String> topics})
-      : super(cmd, isAdmin, requiredRoles, cooldown, isHidden, requiredPermissions, guildOnly, isNsfw, topics);
+      {bool isAdmin,
+      List<Role> requiredRoles,
+      int cooldown,
+      bool isHidden,
+      List<int> requiredPermissions,
+      int guildOnly,
+      bool isNsfw,
+      List<String> topics})
+      : super(cmd, isAdmin, requiredRoles, cooldown, isHidden,
+            requiredPermissions, guildOnly, isNsfw, topics);
 }
 
 /// Creates main execution command
 class Maincommand extends AnnotCommand {
   const Maincommand(
-      {bool isAdmin, List<Role> requiredRoles, int cooldown, bool isHidden, List<int> requiredPermissions, int guildOnly, bool isNsfw, List<String> topics})
-      : super("", isAdmin, requiredRoles, cooldown, isHidden, requiredPermissions, guildOnly, isNsfw, topics);
+      {bool isAdmin,
+      List<Role> requiredRoles,
+      int cooldown,
+      bool isHidden,
+      List<int> requiredPermissions,
+      int guildOnly,
+      bool isNsfw,
+      List<String> topics})
+      : super("", isAdmin, requiredRoles, cooldown, isHidden,
+            requiredPermissions, guildOnly, isNsfw, topics);
 }
 
 /// Captures all remaining text into `List<String>`
