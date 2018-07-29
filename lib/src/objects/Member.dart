@@ -35,17 +35,17 @@ class Member extends User {
     this.mute = data['mute'];
     this.status = data['status'];
 
-    roles = new List();
-    data['roles'].forEach((String id) {
-      roles.add(guild.roles.values.firstWhere((i) => i.id == id));
-    });
-
-    this._user = new User._new(client, data['user'] as Map<String, dynamic>);
-
     if (guild == null)
       this.guild = this.client.guilds[data['guild_id']];
     else
       this.guild = guild;
+
+    roles = new List();
+    data['roles'].forEach((String id) {
+      roles.add(this.guild.roles.values.firstWhere((i) => i.id == id));
+    });
+
+    this._user = new User._new(client, data['user'] as Map<String, dynamic>);
 
     roles = new List();
     data['roles'].forEach((String i) {
