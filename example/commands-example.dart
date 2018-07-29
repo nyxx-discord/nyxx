@@ -14,7 +14,7 @@ void main() {
   nyxx.Client bot = new nyxx.Client(Platform.environment['DISCORD_TOKEN']);
 
   // Creating new CommandsFramework object and registering commands.
-  var commands = new command.CommandsFramework('!', bot, ["302359032612651009"])
+  new command.CommandsFramework('!', bot, ["302359032612651009"])
     ..registerLibraryCommands();
 }
 

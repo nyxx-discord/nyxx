@@ -39,10 +39,10 @@ void main() {
   new command.CommandsFramework('~~', bot)
     ..registerLibraryServices()
     ..registerLibraryCommands()
-    ..commandNotFoundEvent.listen((m) {
+    ..onCommandNotFound.listen((m) {
       m.channel.send(content: "Command '${m.content}' not found!");
     })
-    ..cooldownEvent.listen((m) {
+    ..onCooldown.listen((m) {
       m.channel.send(content: "Command is on cooldown!. Wait a few seconds!");
     })
     ..ignoreBots = false;

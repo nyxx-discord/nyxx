@@ -22,7 +22,7 @@ void main() {
 
   // Register new command handler.
   // It registers your services and adds command to registry.
-  var commands = new command.CommandsFramework('!', bot, ["302359032612651009"])
+  new command.CommandsFramework('!', bot, ["302359032612651009"])
     ..registerServices([new Service("Siema")])
     ..registerLibraryCommands();
 }
@@ -37,7 +37,7 @@ class AliasCommand extends command.CommandContext {
 
   // Maincommand annotation specifies main command handler
   @command.Maincommand()
-  main(String name) async {
+  Future main(String name) async {
     await reply(content: name);
     await reply(content: _service.data);
   }
