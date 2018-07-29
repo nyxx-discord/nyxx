@@ -26,9 +26,9 @@ class Snowflake {
     int _processIdBits = 5;
     int _sequenceBits = 12;
 
-    int _maxWorkerId = -1 ^ (-1 << _workerIdBits); // 2^5-1
-    int _maxProcessId = -1 ^ (-1 << _processIdBits); // 2^5-1
-    int _maxSequence = -1 ^ (-1 << _sequenceBits); // 2^12-1
+    //int _maxWorkerId = -1 ^ (-1 << _workerIdBits); // 2^5-1
+    //int _maxProcessId = -1 ^ (-1 << _processIdBits); // 2^5-1
+    //int _maxSequence = -1 ^ (-1 << _sequenceBits); // 2^12-1
 
     int _timestampShift = _sequenceBits + _workerIdBits + _processIdBits;
     int _workerIdShift = _sequenceBits + _processIdBits;
