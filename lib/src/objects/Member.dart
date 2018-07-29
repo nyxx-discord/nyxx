@@ -81,8 +81,7 @@ class Member extends User {
     return new Future(() {
       var total = 0;
 
-      for(var role in roles)
-        total |= role.permissions.raw;
+      for (var role in roles) total |= role.permissions.raw;
 
       return new Permissions.fromInt(total);
     });
