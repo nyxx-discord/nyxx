@@ -40,6 +40,7 @@ part 'src/builders/EmbedAuthorBuilder.dart';
 part 'src/builders/EmbedFieldBuilder.dart';
 part 'src/builders/EmbedFooterBuilder.dart';
 part 'src/builders/EmbedProviderBuilder.dart';
+part 'src/builders/PermissionsBuilder.dart';
 
 part 'src/objects/embed/EmbedField.dart';
 part 'src/objects/embed/EmbedAuthor.dart';
@@ -118,11 +119,13 @@ part 'src/objects/OAuth2Application.dart';
 part 'src/objects/OAuth2Guild.dart';
 part 'src/objects/OAuth2Info.dart';
 part 'src/objects/Permissions.dart';
-part 'src/objects/PermissionsConstants.dart';
 part 'src/objects/Role.dart';
 part 'src/objects/Shard.dart';
 part 'src/objects/User.dart';
 part 'src/objects/Webhook.dart';
+part 'src/objects/AbstractPermissions.dart';
+part 'src/objects/ChannelPermissions.dart';
+part 'src/objects/PermissionsConstants.dart';
 
 part 'src/errors/ClientNotReadyError.dart';
 part 'src/errors/HttpError.dart';

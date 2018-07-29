@@ -20,7 +20,8 @@ class TestCommand extends command.CommandContext {
 
   @command.Subcommand("ttest")
   Future<Null> test(int param, StringService service) async {
-    await reply(content: "$param, ${service.data}");
+    var msg = await reply(content: "$param, ${service.data}");
+    await msg.delete();
   }
 }
 

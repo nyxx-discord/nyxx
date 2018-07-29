@@ -377,7 +377,7 @@ class CommandsFramework {
   }
 
   /// Creates help String based on registered commands metadata.
-  String _createHelp(String requestedUserId) {
+  String _createHelp(Snowflake requestedUserId) {
     var buffer = new StringBuffer();
 
     buffer.writeln("**Available commands:**");
@@ -528,7 +528,7 @@ class CommandsFramework {
     return null;
   }
 
-  bool _isUserAdmin(String authorId) {
+  bool _isUserAdmin(Snowflake authorId) {
     return (_admins != null && _admins.any((i) => i == authorId));
   }
 }

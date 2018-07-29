@@ -17,7 +17,7 @@ class CooldownCache {
 
   /// Checks if user can execute given command at given time
   Future<bool> canExecute(
-      String userId, String commandName, int desiredCooldown) {
+      Snowflake userId, String commandName, int desiredCooldown) {
     return new Future<bool>(() {
       /// current date
       int now = new DateTime.now().millisecondsSinceEpoch;
@@ -51,7 +51,7 @@ class CooldownCache {
 /// Single Command Cooldown Cache entry.
 class CacheEntry {
   /// Id of user which requested command
-  String userId;
+  Snowflake userId;
 
   /// Name of requested command
   String commandName;
