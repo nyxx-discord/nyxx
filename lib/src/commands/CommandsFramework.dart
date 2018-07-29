@@ -14,6 +14,7 @@ class CommandsFramework {
   StreamController<Message> _requiredPermissionEventController;
   StreamController<Message> _forAdminOnlyEventController;
   StreamController<CommandExecutionFailEvent> _commandExecutionFailController;
+  StreamController<Message> _onWrongContextController;
 
   CooldownCache _cooldownCache;
 
@@ -28,22 +29,25 @@ class CommandsFramework {
   bool ignoreBots = true;
 
   /// Fires when invoked command dont exists in registry
-  Stream<Message> commandNotFoundEvent;
+  Stream<Message> onCommandNotFound;
 
   /// Invoked when non-admin user uses admin-only command.
-  Stream<Message> forAdminOnlyEvent;
+  Stream<Message> onAdminOnlyError;
 
   /// Invoked when user didn't have enough permissions.
-  Stream<Message> requiredPermissionEvent;
+  Stream<Message> onRequiredPermissionError;
 
   /// Invoked when user hits command ratelimit.
-  Stream<Message> cooldownEvent;
+  Stream<Message> onCooldown;
 
   /// Emmited when command execution fails
-  Stream<CommandExecutionFailEvent> commandExecutionFail;
+  Stream<CommandExecutionFailEvent> onCommandExecutionFail;
+
+  /// Emitted when command is only for DM and is invoked on Guild etc
+  Stream<Message> onWrongContext;
 
   /// Logger instance
-  final Logger logger = new Logger.detached("Commands");
+  final Logger logger = new Logger.detached("CommandsFramework");
 
   /// Creates commands framework handler. Requires prefix to handle commands.
   CommandsFramework(this.prefix, Client client,
@@ -56,12 +60,14 @@ class CommandsFramework {
     _forAdminOnlyEventController = new StreamController.broadcast();
     _cooldownEventController = new StreamController.broadcast();
     _commandExecutionFailController = new StreamController.broadcast();
+    _onWrongContextController = new StreamController.broadcast();
 
-    commandNotFoundEvent = _commandNotFoundEventController.stream;
-    forAdminOnlyEvent = _forAdminOnlyEventController.stream;
-    requiredPermissionEvent = _forAdminOnlyEventController.stream;
-    cooldownEvent = _cooldownEventController.stream;
-    commandExecutionFail = _commandExecutionFailController.stream;
+    onCommandNotFound = _commandNotFoundEventController.stream;
+    onAdminOnlyError = _forAdminOnlyEventController.stream;
+    onRequiredPermissionError = _forAdminOnlyEventController.stream;
+    onCooldown = _cooldownEventController.stream;
+    onCommandExecutionFail = _commandExecutionFailController.stream;
+    onWrongContext = _onWrongContextController.stream;
 
     if (gameName != null) client.user.setGame(name: gameName);
 
@@ -186,6 +192,15 @@ class CommandsFramework {
       }
     }
 
+    // Check for channel compatibility
+    if(annot.guildOnly != null && executionCode == -1) {
+      if((annot.guildOnly == GuildOnly.DM && e.message.channel is TextChannel)
+          || (annot.guildOnly == GuildOnly.GUILD && (e.message.channel is DMChannel
+              || e.message.channel is GroupDMChannel))) {
+        executionCode = 3;
+      }
+    }
+
     //Check if user is on cooldown
     if (executionCode == -1 &&
         annot.cooldown != null &&
@@ -204,6 +219,9 @@ class CommandsFramework {
         break;
       case 2:
         _cooldownEventController.add(e.message);
+        break;
+      case 3:
+        _onWrongContextController.add(e.message);
         break;
       case -1:
       case 100:
