@@ -29,6 +29,8 @@ part 'src/internal/Http.dart';
 part 'src/internal/Util.dart';
 
 part 'src/objects/auditlogs/AuditLog.dart';
+part 'src/objects/auditlogs/AuditLogEntry.dart';
+part 'src/objects/auditlogs/AuditLogChange.dart';
 
 part 'src/Client.dart';
 part 'src/objects/Snowflake.dart';
