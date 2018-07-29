@@ -1,7 +1,7 @@
 part of nyxx;
 
 /// Set of permissions ints
-class PermissionsSet {
+class _PermissionsSet {
   int allow = 0;
   int deny = 0;
 
@@ -10,8 +10,8 @@ class PermissionsSet {
 
 /// Builder for permissions.
 class PermissionsBuilder extends AbstractPermissions {
-  PermissionsSet _build() {
-    var tmp = new PermissionsSet();
+  _PermissionsSet _build() {
+    var tmp = new _PermissionsSet();
 
     _apply(tmp, this.createInstantInvite, PermissionsConstants.CREATE_INSTANT_INVITE);
     _apply(tmp, this.kickMembers, PermissionsConstants.KICK_MEMBERS);
@@ -47,7 +47,7 @@ class PermissionsBuilder extends AbstractPermissions {
     return tmp;
   }
 
-  void _apply(PermissionsSet perm, bool canApply, int constant) {
+  void _apply(_PermissionsSet perm, bool canApply, int constant) {
     if(canApply == null)
       return;
 
