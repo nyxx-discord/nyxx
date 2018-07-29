@@ -14,7 +14,9 @@ class CommandsFramework {
   StreamController<Message> _requiredPermissionEventController;
   StreamController<Message> _forAdminOnlyEventController;
   StreamController<CommandExecutionFailEvent> _commandExecutionFailController;
-  StreamController<Message> _onWrongContextController;
+  StreamController<Message> _wrongContextController;
+  StreamController<Message> _unauthorizedNsfwAccess;
+  StreamController<Message> _requiredTopicError;
 
   CooldownCache _cooldownCache;
 
@@ -40,11 +42,17 @@ class CommandsFramework {
   /// Invoked when user hits command ratelimit.
   Stream<Message> onCooldown;
 
-  /// Emmited when command execution fails
+  /// Emitted when command execution fails
   Stream<CommandExecutionFailEvent> onCommandExecutionFail;
 
   /// Emitted when command is only for DM and is invoked on Guild etc
   Stream<Message> onWrongContext;
+
+  /// Emitted  when nsfw command is invoked in non nsfw context;
+  Stream<Message> onUnauthorizedNsfwAccess;
+
+  /// Emitted when command is invoked in channel without required topic
+  Stream<Message> onRequiredTopicError;
 
   /// Logger instance
   final Logger logger = new Logger.detached("CommandsFramework");
@@ -60,14 +68,18 @@ class CommandsFramework {
     _forAdminOnlyEventController = new StreamController.broadcast();
     _cooldownEventController = new StreamController.broadcast();
     _commandExecutionFailController = new StreamController.broadcast();
-    _onWrongContextController = new StreamController.broadcast();
+    _wrongContextController = new StreamController.broadcast();
+    _unauthorizedNsfwAccess = new StreamController.broadcast();
+    _requiredTopicError = new StreamController.broadcast();
 
     onCommandNotFound = _commandNotFoundEventController.stream;
     onAdminOnlyError = _forAdminOnlyEventController.stream;
     onRequiredPermissionError = _forAdminOnlyEventController.stream;
     onCooldown = _cooldownEventController.stream;
     onCommandExecutionFail = _commandExecutionFailController.stream;
-    onWrongContext = _onWrongContextController.stream;
+    onWrongContext = _wrongContextController.stream;
+    onUnauthorizedNsfwAccess = _unauthorizedNsfwAccess.stream;
+    onRequiredTopicError = _requiredTopicError.stream;
 
     if (gameName != null) client.user.setGame(name: gameName);
 
@@ -201,6 +213,28 @@ class CommandsFramework {
       }
     }
 
+    // Check for channel nsfw
+    if(annot.isNsfw != null && annot.isNsfw && executionCode == -1)
+      if(!(e.message.channel is DMChannel) || !(e.message.channel is GroupDMChannel) || !(e.message.channel as TextChannel).nsfw)
+        executionCode = 4;
+
+    // Check for channel topics
+    if(annot.topics != null && e.message.channel is TextChannel && executionCode == -1) {
+      var topic = (e.message.channel as TextChannel).topic;
+      var list = topic.substring(topic.indexOf("[") + 1, topic.indexOf("]")).split(",");
+
+      var total = false;
+      for(var topic in annot.topics) {
+        if(list.contains(topic)) {
+          total = true;
+          break;
+        }
+      }
+
+      if(!total)
+        executionCode = 5;
+    }
+
     //Check if user is on cooldown
     if (executionCode == -1 &&
         annot.cooldown != null &&
@@ -221,7 +255,13 @@ class CommandsFramework {
         _cooldownEventController.add(e.message);
         break;
       case 3:
-        _onWrongContextController.add(e.message);
+        _wrongContextController.add(e.message);
+        break;
+      case 4:
+        _unauthorizedNsfwAccess.add(e.message);
+        break;
+      case 5:
+        _requiredTopicError.add(e.message);
         break;
       case -1:
       case 100:
