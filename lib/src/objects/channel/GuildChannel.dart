@@ -16,7 +16,8 @@ abstract class GuildChannel {
   /// Indicates if channel is NSFW
   bool nsfw;
 
-  void initialize(Map<String, dynamic> raw) {
+  void initialize(Map<String, dynamic> raw, Guild guild) {
+    this.guild = guild;
     this.name = raw['name'];
     this.position = raw['position'];
 
