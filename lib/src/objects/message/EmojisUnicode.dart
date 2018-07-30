@@ -16,11 +16,12 @@ class EmojisUnicode {
       shortCode = normalize(shortCode);
 
       var mirror = reflectClass(EmojisUnicode);
-      var variables = mirror.declarations.values.where((i) => i is VariableMirror);
-      for(var variable in variables) {
-        var emo = mirror.getField(variable.simpleName).reflectee as UnicodeEmoji;
-        if(emo.name == shortCode)
-          return emo;
+      var variables =
+          mirror.declarations.values.where((i) => i is VariableMirror);
+      for (var variable in variables) {
+        var emo =
+            mirror.getField(variable.simpleName).reflectee as UnicodeEmoji;
+        if (emo.name == shortCode) return emo;
       }
 
       return null;
@@ -31,11 +32,12 @@ class EmojisUnicode {
   static Future<UnicodeEmoji> fromHexCode(String hexCode) {
     return new Future(() {
       var mirror = reflectClass(EmojisUnicode);
-      var variables = mirror.declarations.values.where((i) => i is VariableMirror);
-      for(var variable in variables) {
-        var emo = mirror.getField(variable.simpleName).reflectee as UnicodeEmoji;
-        if(emo.code == hexCode)
-          return emo;
+      var variables =
+          mirror.declarations.values.where((i) => i is VariableMirror);
+      for (var variable in variables) {
+        var emo =
+            mirror.getField(variable.simpleName).reflectee as UnicodeEmoji;
+        if (emo.code == hexCode) return emo;
       }
 
       return null;

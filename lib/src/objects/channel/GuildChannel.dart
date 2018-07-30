@@ -35,7 +35,7 @@ abstract class GuildChannel {
 
     this.nsfw = raw['nsfw'];
 
-    if(raw['permission_overwrites'] != null) {
+    if (raw['permission_overwrites'] != null) {
       permissions = new List();
       raw['permission_overwrites'].forEach((Map<String, dynamic> o) {
         permissions.add(new ChannelPermissions._new(o));
@@ -44,13 +44,17 @@ abstract class GuildChannel {
   }
 
   /// Allows to set permissions for channel. [id] param is ID of User or Role
-  Future<Null> editChannelPermission(PermissionsBuilder perms, Snowflake id, {String auditReason: ""}) async {
+  Future<Null> editChannelPermission(PermissionsBuilder perms, Snowflake id,
+      {String auditReason: ""}) async {
     await this._client.http.send("PUT", "/channels/${this._id}/permissions/$id",
         body: perms._build()._build(), reason: auditReason);
   }
 
   /// Deletes permission overwrite for given User or Role id
-  Future<Null> deleteChannelPermission(Snowflake id, {String auditReason: ""}) async {
-    await this._client.http.send("POST", "/channels/${this._id}/permissions/$id", reason: auditReason);
+  Future<Null> deleteChannelPermission(Snowflake id,
+      {String auditReason: ""}) async {
+    await this._client.http.send(
+        "POST", "/channels/${this._id}/permissions/$id",
+        reason: auditReason);
   }
 }

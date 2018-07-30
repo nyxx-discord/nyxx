@@ -19,7 +19,7 @@ void main() {
   // Register new command handler.
   // It registers your services and adds command to registry.
   new command.CommandsFramework('!', bot)
-    .. admins = ["302359032612651009"]
+    ..admins = ["302359032612651009"]
     ..registerServices([new Service("Siema")])
     ..registerLibraryCommands();
 }

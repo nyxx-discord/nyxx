@@ -75,8 +75,9 @@ class Role {
         'PATCH', "/guilds/${this.guild.id}/roles/$id",
         body: {
           "name": name != null ? name : this.name,
-          "permissions":
-              permissions != null ? permissions._build()._build() : this.permissions.raw,
+          "permissions": permissions != null
+              ? permissions._build()._build()
+              : this.permissions.raw,
           "position": position != null ? position : this.position,
           "color": color != null ? color : this.color,
           "hoist": hoist != null ? hoist : this.hoist,

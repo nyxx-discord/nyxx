@@ -277,8 +277,13 @@ class Guild {
   }
 
   /// Creates new role
-  Future<Role> createRole(String name, {PermissionsBuilder permissions, String color, bool hoist, bool mentionable, String auditReason = ""}) async {
-    var tmp = <String, dynamic> {
+  Future<Role> createRole(String name,
+      {PermissionsBuilder permissions,
+      String color,
+      bool hoist,
+      bool mentionable,
+      String auditReason = ""}) async {
+    var tmp = <String, dynamic>{
       "name": name,
       "permissions": permissions._build()._build(),
       "color": color,
@@ -317,7 +322,10 @@ class Guild {
 
   /// Creates a channel.
   Future<dynamic> createChannel(String name, String type,
-      {int bitrate: 64000, int userLimit: 0, String auditReason = "", PermissionsBuilder permissions}) async {
+      {int bitrate: 64000,
+      int userLimit: 0,
+      String auditReason = "",
+      PermissionsBuilder permissions}) async {
     HttpResponse r = await this.client.http.send('POST', "/guilds/$id/channels",
         body: {
           "name": name,
