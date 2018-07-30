@@ -359,12 +359,12 @@ class CommandsFramework {
         _services.add(serv);
       } catch (e) {
         print(e);
-        throw new Exception("Service constructor not satisfied!");
+        throw new Exception("Service [${cm.simpleName}] constructor not satisfied!");
       }
     });
   }
 
-  /// Register commands in current Isolate's libraries. Basically loads all classes as commnads with [MirrorsCommand] superclass.
+  /// Register commands in current Isolate's libraries. Basically loads all classes as commnads with [CommandContext] superclass.
   /// Performs dependency injection when instantiate commands. And throws [Exception] when there are missing services
   void registerLibraryCommands() {
     _registerLibrary(CommandContext, (toInject, cm) {
@@ -374,11 +374,25 @@ class CommandsFramework {
         add(cmd);
       } catch (e) {
         print(e);
-        throw new Exception("Command constructor not satisfied!");
+        throw new Exception("Command [${cm.simpleName}] constructor not satisfied!");
       }
     });
   }
 
+  /*
+  /// Register all TypeConverters in current isolate
+  void registerLibraryTypeConverters() {
+    _registerLibrary(TypeConverter, (toInject, cm) {
+      try {
+        var tp = cm.newInstance(new Symbol(''), toInject).reflectee;
+        _typeConverters.add(tp);
+      } catch (e) {
+        print(e);
+        throw new Exception("Type converter [${cm.simpleName}] cosntructor not satisfied.");
+      }
+    });
+  }
+*/
   /// Creates help String based on registered commands metadata.
   String _createHelp(Snowflake requestedUserId) {
     var buffer = new StringBuffer();
