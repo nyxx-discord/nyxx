@@ -13,6 +13,8 @@ class Ex {
 
 // Example converter
 class ExConverter extends command.TypeConverter<Ex> {
+  ExConverter();
+
   // For now converter must implement method which returns a type of converter.
   // Working on high performance fix for this
   @override
@@ -34,6 +36,7 @@ void main() {
   // Creating new CommandsFramework object and registering commands.
   new command.CommandsFramework('!', bot)
     ..admins = ["302359032612651009"]
+    // You can register type converter by hand
     ..registerTypeConverters([new ExConverter()])
     ..registerLibraryCommands();
 }
