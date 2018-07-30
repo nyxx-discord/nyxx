@@ -1,20 +1,17 @@
 import 'package:nyxx/nyxx.dart' as nyxx;
 import 'package:nyxx/commands.dart' as command;
-import 'package:nyxx/setup.wm.dart' as setup;
 
 import 'dart:io';
 import 'dart:async';
 
 // Main function
 void main() {
-  // Setup bot for VM
-  setup.configureDiscordForVM();
-
   // Create new bot instance
   nyxx.Client bot = new nyxx.Client(Platform.environment['DISCORD_TOKEN']);
 
   // Creating new CommandsFramework object and registering commands.
-  new command.CommandsFramework('!', bot, admins: ["302359032612651009"])
+  new command.CommandsFramework('!', bot)
+    .. admins = ["302359032612651009"]
     ..registerLibraryCommands();
 }
 
@@ -46,7 +43,7 @@ class EchoCommand extends command.CommandContext {
   }
 }
 
-/// Alises have to be `const`
+// Aliases have to be `const`
 @command.Command("alias", aliases: const ["aaa"])
 class AliasCommand extends command.CommandContext {
   @command.Maincommand()

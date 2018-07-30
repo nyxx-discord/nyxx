@@ -49,7 +49,7 @@ abstract class CommandContext {
     return msg;
   }
 
-  Future<Message> replyDelyed(Duration duration,
+  Future<Message> replyDelayed(Duration duration,
       {String content,
       EmbedBuilder embed,
       bool tts: false,

@@ -264,9 +264,7 @@ class Http {
 
   Http._new([this._client]) {
     this.headers = <String, String>{'Content-Type': 'application/json'};
-
-    if (!internals.browser)
-      headers['User-Agent'] =
+    this.headers['User-Agent'] =
           'DiscordBot (https://github.com/l7ssha/nyxx, ${_Constants.version})';
   }
 

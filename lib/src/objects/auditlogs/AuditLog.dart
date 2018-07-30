@@ -24,7 +24,7 @@ class AuditLog {
 
     raw['webhooks'].forEach((Map<String, dynamic> o) {
       webhooks[o['id']] =
-          new Webhook._fromApi(client, o as Map<String, dynamic>);
+          new Webhook._fromApi(client, o);
     });
 
     raw['users'].forEach((Map<String, dynamic> o) {

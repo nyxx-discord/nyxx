@@ -157,7 +157,7 @@ class Client {
 
   /// Creates and logs in a new client.
   Client(this._token, [this._options]) {
-    if (!internals.setup) throw new NotSetupError();
+    w_transport.globalTransportPlatform = vmTransportPlatform;
 
     if (this._token == null || this._token == "")
       throw new Exception("Token cannot be null or empty");
