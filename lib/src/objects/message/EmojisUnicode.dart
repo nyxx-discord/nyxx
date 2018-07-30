@@ -6,7 +6,7 @@ class EmojisUnicode {
   /// Returns [Emoji] based on shortcode (eg. ":smile:")
   /// This method can be slow(extremely slow), because it uses mirrors to lookup for matching property in class.
   /// In future it will be rewritten to map.
-  Future<UnicodeEmoji> fromShortCode(String shortCode) {
+  static Future<UnicodeEmoji> fromShortCode(String shortCode) {
     return new Future(() {
       String normalize(String s) {
         if (s.startsWith(":") && s.endsWith(":")) return s;
@@ -14,12 +14,28 @@ class EmojisUnicode {
       }
 
       shortCode = normalize(shortCode);
+
       var mirror = reflectClass(EmojisUnicode);
-      for (var v in mirror.declarations.values) {
-        if (v is UnicodeEmoji) {
-          var emoji = v as UnicodeEmoji;
-          if (emoji.code == shortCode) return emoji;
-        }
+      var variables = mirror.declarations.values.where((i) => i is VariableMirror);
+      for(var variable in variables) {
+        var emo = mirror.getField(variable.simpleName).reflectee as UnicodeEmoji;
+        if(emo.name == shortCode)
+          return emo;
+      }
+
+      return null;
+    });
+  }
+
+  /// Allows to find emojis based on its hex code.
+  static Future<UnicodeEmoji> fromHexCode(String hexCode) {
+    return new Future(() {
+      var mirror = reflectClass(EmojisUnicode);
+      var variables = mirror.declarations.values.where((i) => i is VariableMirror);
+      for(var variable in variables) {
+        var emo = mirror.getField(variable.simpleName).reflectee as UnicodeEmoji;
+        if(emo.code == hexCode)
+          return emo;
       }
 
       return null;

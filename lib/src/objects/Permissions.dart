@@ -8,6 +8,7 @@ class Permissions extends AbstractPermissions {
     _construct(permissions);
   }
 
+  /// Makes a [Permissions] object from overwrite object
   Permissions.fromOverwrite(int permissions, int allow, int deny) {
     int applied = permissions | allow;
     applied &= ~deny;

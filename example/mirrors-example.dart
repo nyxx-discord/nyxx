@@ -1,6 +1,5 @@
 import 'package:nyxx/nyxx.dart' as nyxx;
 import 'package:nyxx/commands.dart' as command;
-import 'package:nyxx/setup.wm.dart' as setup;
 
 import 'dart:io';
 import 'dart:async';
@@ -14,15 +13,13 @@ class Service {
 
 // Main function
 void main() {
-  // Setup bot for VM
-  setup.configureDiscordForVM();
-
   // Create new bot instance
   nyxx.Client bot = new nyxx.Client(Platform.environment['DISCORD_TOKEN']);
 
   // Register new command handler.
   // It registers your services and adds command to registry.
-  new command.CommandsFramework('!', bot, admins: ["302359032612651009"])
+  new command.CommandsFramework('!', bot)
+    .. admins = ["302359032612651009"]
     ..registerServices([new Service("Siema")])
     ..registerLibraryCommands();
 }

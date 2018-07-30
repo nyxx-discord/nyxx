@@ -20,7 +20,7 @@ class AnnotCommand {
   /// List of roles required to execute command
   final List<Role> requiredRoles;
 
-  /// List of
+  /// List of required permissions to invoke command
   final List<int> requiredPermissions;
 
   /// Cooldown for command in seconds

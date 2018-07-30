@@ -3,7 +3,6 @@ import 'dart:async';
 
 import 'package:nyxx/nyxx.dart' as nyxx;
 import 'package:nyxx/commands.dart' as command;
-import 'package:nyxx/setup.wm.dart' as setup;
 
 class StringService extends command.Service {
   String data = "Example data";
@@ -32,8 +31,6 @@ class CooldownCommand extends command.CommandContext {
 }
 
 void main() {
-  setup.configureDiscordForVM();
-
   var env = Platform.environment;
   var bot = new nyxx.Client(env['DISCORD_TOKEN']);
 

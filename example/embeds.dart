@@ -1,13 +1,9 @@
 import 'package:nyxx/nyxx.dart' as nyxx;
-import 'package:nyxx/setup.wm.dart' as setup;
 
 import 'dart:io';
 
 // Main function
 void main() {
-  // Setup bot for VM
-  setup.configureDiscordForVM();
-
   // Create new bot instance
   nyxx.Client bot = new nyxx.Client(Platform.environment['DISCORD_TOKEN']);
 

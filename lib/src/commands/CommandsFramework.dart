@@ -3,12 +3,13 @@ part of nyxx.commands;
 /// Main handler for CommandFramework.
 ///   This class matches and dispatches commands to best matching contexts.
 class CommandsFramework {
-  List<String> _admins;
   List<CommandContext> _commands;
   List<TypeConverter> _typeConverters;
   CooldownCache _cooldownCache;
 
   List<Object> _services = new List();
+
+  Client _client;
 
   StreamController<Message> _cooldownEventController;
   StreamController<Message> _commandNotFoundEventController;
@@ -23,11 +24,17 @@ class CommandsFramework {
   /// All messages without this prefix will be ignored
   String prefix;
 
-  /// Indicates if bots help message is sent to user via PM. True by default.xc
+  /// Specifies list of admins which can access commands annotated as admin
+  List<String> admins;
+
+  /// Indicates if bots help message is sent to user via PM. True by default.
   bool helpDirect = true;
 
-  /// Indicator if you want to ignore all bot messages, even if messages is current command.
+  /// Indicator if you want to ignore all bot messages, even if messages is current command. True by default.
   bool ignoreBots = true;
+
+  /// Sets default bots game
+  set game(String gameName) => _client.user.setGame(name: gameName);
 
   /// Fires when invoked command dont exists in registry
   Stream<Message> onCommandNotFound;
@@ -57,10 +64,8 @@ class CommandsFramework {
   final Logger logger = new Logger.detached("CommandsFramework");
 
   /// Creates commands framework handler. Requires prefix to handle commands.
-  CommandsFramework(this.prefix, Client client,
-    {List<String> admins, String gameName}) {
+  CommandsFramework(this.prefix, this._client) {
     this._commands = new List();
-    this._admins = admins;
     _cooldownCache = new CooldownCache();
 
     _commandNotFoundEventController = new StreamController.broadcast();
@@ -81,10 +86,8 @@ class CommandsFramework {
     onUnauthorizedNsfwAccess = _unauthorizedNsfwAccess.stream;
     onRequiredTopicError = _requiredTopicError.stream;
 
-    if (gameName != null) client.user.setGame(name: gameName);
-
     // Listen to incoming messages and ignore all from bots (if set)
-    client.onMessage.listen((MessageEvent e) async {
+    _client.onMessage.listen((MessageEvent e) async {
       if (ignoreBots && e.message.author.bot) return;
 
       await _dispatch(e);
@@ -271,7 +274,7 @@ class CommandsFramework {
         break;
       case -1:
       case 100:
-        var params = _collectParams(matched, splittedCommand, e.message);
+        var params = await _collectParams(matched, splittedCommand, e.message);
 
         try {
           commandContext.guild = e.message.guild;
@@ -419,15 +422,15 @@ class CommandsFramework {
 
   RegExp _entityRegex = new RegExp(r"<(@|@!|@&|#|a?:(.+):)([0-9]+)>");
 
-  List<String> _collectParams(
-      MethodMirror method, List<String> splitted, Message e) {
+  Future<List<String>> _collectParams(
+      MethodMirror method, List<String> splitted, Message e) async {
     var params = method.parameters;
     splitted = _groupParams(splitted);
 
     List<Object> collected = new List();
     var index = -1;
 
-    bool parsePrimitives(Type type) {
+    Future<bool> parsePrimitives(Type type) async {
       index++;
       switch (type) {
         case String:
@@ -477,14 +480,23 @@ class CommandsFramework {
             collected.add(e.guild.emojis[id]);
           } catch (e) {}
           break;
+        case UnicodeEmoji:
+          try {
+            var code = splitted[index].codeUnits[0].toRadixString(16);
+            //print(code);
+            collected.add(await EmojisUnicode.fromHexCode(code));
+          } catch (e) {}
+          break;
         default:
           if (_typeConverters == null) return false;
 
-          for (var converter in _typeConverters) {
-            var t = converter.parse(splitted[index], e);
-            if (t != null) {
-              collected.add(t);
-              return true;
+          for(var converter in _typeConverters) {
+            if(type == converter.getType()) {
+              var t = converter.parse(splitted[index], e);
+              if (t != null) {
+                collected.add(t);
+                return true;
+              }
             }
           }
 
@@ -504,7 +516,7 @@ class CommandsFramework {
         break;
       }
 
-      if (!parsePrimitives(type)) {
+      if (!(await parsePrimitives(type))) {
         _services.forEach((s) {
           if (s.runtimeType == type) {
             collected.add(s);
@@ -529,6 +541,6 @@ class CommandsFramework {
   }
 
   bool _isUserAdmin(Snowflake authorId) {
-    return (_admins != null && _admins.any((i) => i == authorId));
+    return (admins != null && admins.any((i) => i == authorId));
   }
 }
