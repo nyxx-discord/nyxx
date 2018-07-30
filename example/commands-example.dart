@@ -37,6 +37,23 @@ class EchoCommand extends command.CommandContext {
     await reply(content: message.content);
   }
 
+  @command.Subcommand("perm")
+  Future perms() async {
+    print((channel as nyxx.GuildChannel).permissions);
+
+    await (channel as nyxx.GuildChannel).editChannelPermission(
+        new nyxx.PermissionsBuilder()
+          ..sendMessages = true
+          ..sendTtsMessages = false,
+        new nyxx.Snowflake("471349482307715102"));
+
+    for (var perm in (channel as nyxx.GuildChannel).permissions) {
+      var role = guild.roles.values.firstWhere((i) => i.id == perm.entityId);
+      print(
+          "Entity: ${perm.entityId} with ${perm.type} as ${role.name} can?: ${perm.permissions.viewChannel}");
+    }
+  }
+
   @override
   void getHelp(bool isAdmin, StringBuffer buffer) {
     buffer.writeln("* echo - Echoes yor message");
