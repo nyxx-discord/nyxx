@@ -371,7 +371,6 @@ class CommandsFramework {
     _registerLibrary(CommandContext, (toInject, cm) {
       try {
         var cmd = cm.newInstance(new Symbol(''), toInject).reflectee;
-        cmd.logger = new Logger.detached("Command");
         add(cmd);
       } catch (e) {
         print(e);
