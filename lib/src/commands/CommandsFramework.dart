@@ -359,7 +359,8 @@ class CommandsFramework {
         _services.add(serv);
       } catch (e) {
         print(e);
-        throw new Exception("Service [${cm.simpleName}] constructor not satisfied!");
+        throw new Exception(
+            "Service [${cm.simpleName}] constructor not satisfied!");
       }
     });
   }
@@ -374,7 +375,8 @@ class CommandsFramework {
         add(cmd);
       } catch (e) {
         print(e);
-        throw new Exception("Command [${cm.simpleName}] constructor not satisfied!");
+        throw new Exception(
+            "Command [${cm.simpleName}] constructor not satisfied!");
       }
     });
   }
