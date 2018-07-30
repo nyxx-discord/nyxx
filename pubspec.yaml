@@ -1,8 +1,8 @@
 name: nyxx
-version: 0.22.1
+version: 0.23.0
 description: A Discord library for Dart. For of hackzzila's nyx.
 authors:
-- Szymon 'l7ssha' Uglis <szymon.uglis@tuta.io>
+- Szymon Uglis <szymon.uglis@tuta.io>
 - Hackzzila <admin@hackzzila.com>
 homepage: https://github.com/l7ssha/nyxx
 documentation: https://github.com/l7ssha/nyxx

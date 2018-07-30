@@ -1,3 +1,27 @@
+## [0.23.0](https://github.com/l7ssha/nyxx/compare/0.22.1...0.23.0)
+_Mon 30.07.2018_
+
+- **New features**
+  * Support for services - DEPENDENCY INJECTION
+  * Support for type parsing
+  * Logging support
+  * Listener for messages for channel
+  * Automatic registering Services and Commands
+  * `Remainder` annotation which captures all remaining text
+  * Permissions are now **READ/WRITE** - added PermissionsBuilder
+  * Checking for topics and if channel is nsfw for commands
+- **Bug fixes**
+  * Fixed error throwing
+  * Text in quotes is one String
+  * Fixed StreamControllers to be broadcast
+  * Removed unnecessary fields from DMChannel and GroupDMChannel
+  * Big performance improvement of CommandFramework
+  * Fixed Permissions opcode
+  * `delay()` changed to `nextMessage()`
+- **Deprecations**
+  * Deprecated browser target  
+  * Removed MirrorsCommandFramework and InstanceCommandFramework
+
 ## [0.22.1](https://github.com/l7ssha/nyxx/compare/0.22.0...0.22.1)
 _Wed 11.07.2018_
 
