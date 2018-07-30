@@ -13,7 +13,6 @@ class Ex {
 
 // Example converter
 class ExConverter extends command.TypeConverter<Ex> {
-
   // For now converter must implement method which returns a type of converter.
   // Working on high performance fix for this
   @override
@@ -34,7 +33,7 @@ void main() {
 
   // Creating new CommandsFramework object and registering commands.
   new command.CommandsFramework('!', bot)
-    .. admins = ["302359032612651009"]
+    ..admins = ["302359032612651009"]
     ..registerTypeConverters([new ExConverter()])
     ..registerLibraryCommands();
 }
@@ -44,7 +43,6 @@ void main() {
 // Methods annotated with @Subcommand are defined as subcommands
 @command.Command("ping")
 class PongCommand extends command.CommandContext {
-
   // Accepting Ex instance as parameter. Argument will be converter to Ex.
   @command.Maincommand()
   Future run(Ex ex) async {

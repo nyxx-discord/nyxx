@@ -2,7 +2,6 @@ part of nyxx;
 
 /// Holds permissions for channel
 class ChannelPermissions {
-
   /// Id of user or role
   Snowflake entityId;
 

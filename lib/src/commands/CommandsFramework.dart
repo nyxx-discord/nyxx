@@ -490,8 +490,8 @@ class CommandsFramework {
         default:
           if (_typeConverters == null) return false;
 
-          for(var converter in _typeConverters) {
-            if(type == converter.getType()) {
+          for (var converter in _typeConverters) {
+            if (type == converter.getType()) {
               var t = converter.parse(splitted[index], e);
               if (t != null) {
                 collected.add(t);

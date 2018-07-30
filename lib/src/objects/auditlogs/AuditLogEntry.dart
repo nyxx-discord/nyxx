@@ -34,7 +34,7 @@ class AuditLogEntry {
     changes = new List();
     if (raw['changes'] != null)
       raw['changes'].forEach(
-              (Map<String, dynamic> o) => changes.add(new AuditLogChange._new(o)));
+          (Map<String, dynamic> o) => changes.add(new AuditLogChange._new(o)));
 
     user = client.users[raw['user_id']];
     id = new Snowflake(raw['id']);

@@ -2,7 +2,6 @@ part of nyxx;
 
 /// Permissions for a role or channel override.
 class Permissions extends AbstractPermissions {
-
   /// Makes a [Permissions] object from a raw permission code.
   Permissions.fromInt(int permissions) {
     _construct(permissions);
