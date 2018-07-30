@@ -16,22 +16,21 @@ Fork of [Hackzzila's](https://github.com/Hackzzila) [nyx](https://github.com/Hac
 
 ### Features
 
-- *Commands framework* <br>
+- **Commands framework** <br>
   Faster way of creating commands for bot. You just  have to implement one class, and initialize framework. Everything is done automatically. 
-- *Cross Platform* <br>
-  Nyxx works on the command line, browser, mobile, and can be transpiled to JavaScript.
-- *Fine Control* <br>
+- **Cross Platform** <br>
+  Nyxx works on the command line, browser, mobile.
+- **Fine Control** <br>
   Nyxx allows you to control every outgoing HTTP request or websocket messages.
-- *Internal Sharding* <br>
+- **Internal Sharding** <br>
   Nyxx automatically spawns shards for your bot, but you can override this and spawn a custom number of shards. Internal sharding means that all of your bots servers are managed in one script, no need for communication between shards.
-- *Complete* <br>
+- **Complete** <br>
   Nyxx supports nearly all DiscordAPI endpoints.
 
 ### Sample
 
 ``` dart
 void main() {
-  discord.configureDiscordForVM();
   discord.Client bot =
       new discord.Client(Platform.environment['DISCORD_TOKEN']);
 
@@ -60,7 +59,7 @@ Wiki docs are designed to match latest release.
 
 ## Roadmap
  - [ ] Better dartdocs documentation
- - [ ] More examples at wiki/more tutorial/Video tutorial 
+ - [x] More examples at wiki/more tutorial/Video tutorial 
  - [ ] Bigger bot written in nyxx for example
  - [ ] Fix `lint` errors from `dartanalyzer`
  - [x] Annotation driver flow for CommandsFramework?

@@ -20,7 +20,7 @@ class _OPCodes {
 class _Constants {
   static const String host = "discordapp.com";
   static const String baseUri = "/api/v6";
-  static const String version = "0.22.0";
+  static const String version = "0.23.0";
 
   /// The gateway OP codes.
   static const Map<String, int> opCodes = const <String, int>{
