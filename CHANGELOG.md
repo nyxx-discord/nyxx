@@ -1,3 +1,10 @@
+## [0.23.1](https://github.com/l7ssha/nyxx/compare/0.23.0...0.23.1)
+_Tue 31.07.2018_
+
+- **Bug fixes**
+  * Fixed `MessageDeleteEvent` deserializing error
+  * Fixed checking for channel nsfw for CommandsFramework
+
 ## [0.23.0](https://github.com/l7ssha/nyxx/compare/0.22.1...0.23.0)
 _Mon 30.07.2018_
 
