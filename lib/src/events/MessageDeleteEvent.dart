@@ -20,7 +20,7 @@ class MessageDeleteEvent {
         this.message._onDelete.add(this);
         client._events.onMessageDelete.add(this);
       } else {
-        this.id = json['d']['id'];
+        this.id = new Snowflake(json['d']['id']);
         if (!client._options.ignoreUncachedEvents) {
           client._events.onMessageDelete.add(this);
         }
