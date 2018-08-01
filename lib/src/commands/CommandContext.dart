@@ -70,10 +70,10 @@ abstract class CommandContext {
 
     return new Future<Map<Emoji, int>>(() async {
       await for (var r in msg.onReactionAdded) {
-        if (!m.containsKey(r.emoji)) m[r.emoji] = 1;
-
-        print("ELO");
-        m[r.emoji] = ++m[r.emoji];
+        if(m.containsKey(r.emoji))
+          m[r.emoji] = m[r.emoji] += 1;
+        else
+          m[r.emoji] = 1;
       }
     }).timeout(duration, onTimeout: () => m);
   }
@@ -92,6 +92,25 @@ abstract class CommandContext {
     }).timeout(timeout, onTimeout: () {
       return null;
     });
+  }
+
+  /// Waits for first [TypingEvent] and returns it. If timed out returns null. Can listen to specific user
+  Future<TypingEvent> waitForTyping({User user, Duration timeout: const Duration(seconds: 30), bool everywhere: false}) async {
+    return new Future(() {
+      switch(everywhere) {
+        case true:
+          if(user != null)
+            return channel.client.onTyping.firstWhere((e) => e.user == user);
+
+          return channel.client.onTyping.first;
+        case false:
+          if(user != null)
+            return channel.onTyping.firstWhere((e) => e.user == user);
+
+          return channel.onTyping.first;
+          break;
+      }
+    }).timeout(timeout, onTimeout: () => null);
   }
 
   /// Gets all channel messages that satisfies test.
