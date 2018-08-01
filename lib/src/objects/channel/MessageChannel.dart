@@ -7,8 +7,10 @@ class MessageChannel extends Channel {
 
   /// Sent when a new message is received.
   Stream<MessageEvent> onMessage;
+  Stream<TypingEvent> onTyping;
 
   StreamController<MessageEvent> _onMessage;
+  StreamController<TypingEvent> _onTyping;
 
   /// A collection of messages sent to this channel.
   LinkedHashMap<String, Message> messages;
@@ -23,6 +25,9 @@ class MessageChannel extends Channel {
     this.messages = new LinkedHashMap<String, Message>();
 
     _onMessage = new StreamController.broadcast();
+    _onTyping = new StreamController.broadcast();
+
+    onTyping = _onTyping.stream;
     onMessage = _onMessage.stream;
   }
 
