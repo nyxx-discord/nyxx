@@ -10,7 +10,13 @@ class UnicodeEmoji extends Emoji {
 
   /// Encodes Emoji so that can be used in messages.
   @override
-  String encode() => new String.fromCharCode(int.parse(code, radix: 16));
+  String encode() {
+    try {
+      return new String.fromCharCode(int.parse(code, radix: 16));
+    } catch (e) {
+      return code;
+    }
+  }
 
   /// Returns encoded string ready to send via message.
   @override
