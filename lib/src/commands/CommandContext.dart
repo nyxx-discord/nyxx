@@ -94,6 +94,18 @@ abstract class CommandContext {
     });
   }
 
+  /// Gets all channel messages that satisfies test.
+  Future<List<Message>> nextMessagesWhere(bool func(Message msg), {Duration timeout: const Duration(seconds: 30)}) async {
+    List<Message> tmpData = new List();
+
+    await channel.onMessage.forEach((i) {
+      if(func(i.message))
+        tmpData.add(i.message);
+    }).timeout(timeout);
+
+    return tmpData;
+  }
+
   /// Gets next [num] number of any messages sent within one context (same channel) with optional [timeout](default 30 sec)
   Future<List<Message>> nextMessages(int num,
       {Duration timeout = const Duration(seconds: 30)}) async {
