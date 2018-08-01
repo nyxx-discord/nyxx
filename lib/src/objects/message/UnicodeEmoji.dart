@@ -17,6 +17,9 @@ class UnicodeEmoji extends Emoji {
   String toString() => encode();
 
   @override
+  String format() => encode();
+
+  @override
   bool operator ==(other) => other is Emoji && other.name == this.name;
 
   @override
