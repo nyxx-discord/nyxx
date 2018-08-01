@@ -2,16 +2,19 @@ part of nyxx.commands;
 
 /// Handles caching of cooldown
 class CooldownCache {
-  List<CacheEntry> _cache;
+  Map<_CacheKey, int> _cache;
 
   /// Constructor sets up empty cache and starts garbage collector.
   CooldownCache() {
-    _cache = [];
+    _cache = new Map();
 
     new Timer.periodic(const Duration(minutes: 30), (Timer t) {
       int now = new DateTime.now().millisecondsSinceEpoch;
 
-      _cache.removeWhere((item) => now - item.lastUsed >= 1800000);
+      _cache.forEach((k, v) {
+        if(now - v >= 1800000)
+          _cache.remove(k);
+      });
     });
   }
 
@@ -21,25 +24,22 @@ class CooldownCache {
     return new Future<bool>(() {
       /// current date
       int now = new DateTime.now().millisecondsSinceEpoch;
+      var node = new _CacheKey._new(userId, commandName);
 
+      bool found = false;
       /// Search for entry
-      var entryList = _cache.where(
-          (item) => item.userId == userId && item.commandName == commandName);
+      if (_cache.containsKey(node))
+        found = true;
 
       /// If not found crete new, insert it and return
-      if (entryList.isEmpty) {
-        var newEntry = new CacheEntry(userId, commandName, now);
-        _cache.add(newEntry);
+      if (!found) {
+        _cache[node] = now;
         return true;
       }
 
       /// If found check if user can execute command
-      var entry = entryList.first;
-      if (entry.lastUsed + desiredCooldown < now) {
-        entry.lastUsed = now;
-        var pos = _cache.indexOf(entry);
-
-        _cache[pos] = entry;
+      if (_cache[node] + desiredCooldown < now) {
+        _cache[node] = now;
         return true;
       }
 
@@ -48,17 +48,16 @@ class CooldownCache {
   }
 }
 
-/// Single Command Cooldown Cache entry.
-class CacheEntry {
-  /// Id of user which requested command
-  Snowflake userId;
+class _CacheKey {
+  Snowflake _id;
+  String _command;
 
-  /// Name of requested command
-  String commandName;
+  _CacheKey._new(this._id, this._command);
 
-  /// Timestamp user last used command
-  int lastUsed;
+  @override
+  bool operator ==(other) => other is _CacheKey && this._id == other._id && this._command == other._command;
 
-  /// Create cache entry
-  CacheEntry(this.userId, this.commandName, this.lastUsed);
+  @override
+  int get hashCode =>
+      ((17 * 37 + this._id.hashCode) * 37 + this._command.hashCode);
 }
