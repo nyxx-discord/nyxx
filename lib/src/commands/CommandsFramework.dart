@@ -280,18 +280,20 @@ class CommandsFramework {
       case 100:
         var params = await _collectParams(matched, splittedCommand, e.message);
 
-        try {
-          commandContext.guild = e.message.guild;
-          commandContext.message = e.message;
-          commandContext.author = e.message.author;
-          commandContext.channel = e.message.channel;
+        commandContext.guild = e.message.guild;
+        commandContext.message = e.message;
+        commandContext.author = e.message.author;
+        commandContext.channel = e.message.channel;
 
-          var newInstance = reflect(commandContext);
-          newInstance.invoke(matched.simpleName, params);
-        } catch (err) {
-          _commandExecutionFailController
+        new Future(() {
+          try {
+            var newInstance = reflect(commandContext);
+            newInstance.invoke(matched.simpleName, params);
+          } catch (err) {
+            _commandExecutionFailController
               .add(new CommandExecutionFailEvent._new(e.message, err));
-        }
+          }
+        });
 
         logger.fine("Command executed");
         break;
