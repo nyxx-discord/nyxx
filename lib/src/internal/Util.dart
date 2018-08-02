@@ -24,4 +24,13 @@ class Util {
 
     return B * 65536 + G * 256 + R;
   }
+
+  static Iterable<String> split(String str, int length) sync* {
+    int last = 0;
+    while(last < str.length && ((last + length) < str.length)) {
+      yield str.substring(last, last + length);
+      last += length;
+    }
+    yield str.substring(last, str.length);
+  }
 }
