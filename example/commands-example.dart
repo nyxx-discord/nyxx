@@ -7,10 +7,10 @@ import 'dart:async';
 // Main function
 void main() {
   // Create new bot instance
-  nyxx.Client bot = new nyxx.Client(Platform.environment['DISCORD_TOKEN']);
+  nyxx.Client bot = nyxx.Client(Platform.environment['DISCORD_TOKEN']);
 
   // Creating new CommandsFramework object and registering commands.
-  new command.CommandsFramework('!', bot)
+  command.CommandsFramework('!', bot)
     ..admins = ["302359032612651009"]
     ..registerLibraryCommands();
 }
