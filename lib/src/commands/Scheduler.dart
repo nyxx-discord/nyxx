@@ -21,10 +21,11 @@ class Scheduler {
 
   Future<Null> run() async {
     _client.onReady.listen((e) {
-      targets.forEach((s) => _targets.add(_client.channels[s] as MessageChannel));
+      targets
+          .forEach((s) => _targets.add(_client.channels[s] as MessageChannel));
 
       this._t = new Timer.periodic(runEvery, (Timer t) {
-        for(var target in _targets) {
+        for (var target in _targets) {
           func(target);
         }
       });
