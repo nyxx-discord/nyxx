@@ -22,16 +22,16 @@ class AuditLog {
     users = new Map();
     entries = new Map();
 
-    raw['webhooks'].forEach((Map<String, dynamic> o) {
-      webhooks[o['id'] as String] = new Webhook._fromApi(client, o);
+    raw['webhooks'].forEach((dynamic o) {
+      webhooks[o['id'] as String] = new Webhook._fromApi(client, o as Map<String, dynamic>);
     });
 
-    raw['users'].forEach((Map<String, dynamic> o) {
-      users[o['id'] as String] = new User._new(client, o);
+    raw['users'].forEach((dynamic o) {
+      users[o['id'] as String] = new User._new(client, o as Map<String, dynamic>);
     });
 
-    raw['audit_log_entries'].forEach((Map<String, dynamic> o) {
-      entries[o['id'] as String] = new AuditLogEntry._new(client, o);
+    raw['audit_log_entries'].forEach((dynamic o) {
+      entries[o['id'] as String] = new AuditLogEntry._new(client, o as Map<String, dynamic>);
     });
   }
 }

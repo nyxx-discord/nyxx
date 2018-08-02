@@ -40,8 +40,8 @@ class TextChannel extends MessageChannel with GuildChannel {
         await this.client.http.send('GET', "/channels/$id/webhooks");
     Map<String, Webhook> map = new Map();
 
-    r.body.asJson().forEach((Map<String, dynamic> o) {
-      Webhook webhook = new Webhook._fromApi(this.client, o);
+    r.body.asJson().forEach((dynamic o) {
+      Webhook webhook = new Webhook._fromApi(this.client, o as Map<String, dynamic>);
       map[webhook.id.toString()] = webhook;
     });
 

@@ -38,7 +38,11 @@ class GuildEmoji extends Emoji {
     this.managed = raw['managed'] as bool;
     this.animated = raw['animated'] as bool;
 
-    if (raw['roles'] != null) this.rolesIds = raw['roles'] as List<String>;
+    if (raw['roles'] != null) {
+      this.rolesIds = new List();
+
+      raw['roles'].forEach((o) => this.rolesIds.add(o.toString()));
+    }
 
     this.guild.emojis[this.id.toString()] = this;
   }

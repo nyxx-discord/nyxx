@@ -86,8 +86,8 @@ class Embed {
 
     if (raw['fields'] != null) {
       fields = new Map();
-      raw['fields'].forEach((Map<String, dynamic> o) {
-        new EmbedField._new(o, this);
+      raw['fields'].forEach((dynamic o) {
+        new EmbedField._new(o as Map<String, dynamic>, this);
       });
     }
   }

@@ -37,8 +37,8 @@ abstract class GuildChannel {
 
     if (raw['permission_overwrites'] != null) {
       permissions = new List();
-      raw['permission_overwrites'].forEach((Map<String, dynamic> o) {
-        permissions.add(new ChannelPermissions._new(o));
+      raw['permission_overwrites'].forEach((dynamic o) {
+        permissions.add(new ChannelPermissions._new(o as Map<String, dynamic>));
       });
     }
   }
