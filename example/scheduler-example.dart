@@ -4,7 +4,7 @@ import 'package:nyxx/commands.dart' as command;
 import 'dart:io';
 import 'dart:async';
 
-main() async {
+void main() async {
   nyxx.Client bot = new nyxx.Client(Platform.environment['DISCORD_TOKEN']);
 
   /// Create new scheduler and fill out all required fields
