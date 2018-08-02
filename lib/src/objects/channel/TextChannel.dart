@@ -41,7 +41,8 @@ class TextChannel extends MessageChannel with GuildChannel {
     Map<String, Webhook> map = new Map();
 
     r.body.asJson().forEach((dynamic o) {
-      Webhook webhook = new Webhook._fromApi(this.client, o as Map<String, dynamic>);
+      Webhook webhook =
+          new Webhook._fromApi(this.client, o as Map<String, dynamic>);
       map[webhook.id.toString()] = webhook;
     });
 

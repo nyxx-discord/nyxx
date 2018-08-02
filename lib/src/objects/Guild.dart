@@ -134,7 +134,8 @@ class Guild {
             new TextChannel._new(client, o as Map<String, dynamic>, this);
           else if (o['type'] == 2)
             new VoiceChannel._new(client, o as Map<String, dynamic>, this);
-          else if (o['type'] == 4) new GroupChannel._new(client, o as Map<String, dynamic>, this);
+          else if (o['type'] == 4)
+            new GroupChannel._new(client, o as Map<String, dynamic>, this);
         });
 
         raw['presences'].forEach((dynamic o) {
@@ -154,7 +155,7 @@ class Guild {
 
       this.systemChannel = this.channels[raw['system_channel_id']];
 
-      if(raw['features'] != null) {
+      if (raw['features'] != null) {
         this.features = new List();
         raw['features'].forEach((dynamic i) {
           this.features.add(i.toString());
@@ -443,7 +444,8 @@ class Guild {
     HttpResponse r = await this.client.http.send('GET', "/guilds/$id/webhooks");
     Map<String, Webhook> map = new Map();
     r.body.asJson().forEach((dynamic o) {
-      Webhook webhook = new Webhook._fromApi(this.client, o as Map<String, dynamic>);
+      Webhook webhook =
+          new Webhook._fromApi(this.client, o as Map<String, dynamic>);
       map[webhook.id.toString()] = webhook;
     });
     return map;
