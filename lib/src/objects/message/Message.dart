@@ -151,7 +151,8 @@ class Message {
 
     this.attachments = new Map<String, Attachment>();
     raw['attachments'].forEach((dynamic o) {
-      final Attachment attachment = new Attachment._new(this.client, o as Map<String, dynamic>);
+      final Attachment attachment =
+          new Attachment._new(this.client, o as Map<String, dynamic>);
       this.attachments[attachment.id.toString()] = attachment;
     });
     this.attachments;

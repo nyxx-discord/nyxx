@@ -167,15 +167,16 @@ class Shard {
               if (this._ws.client.user.bot)
                 this._ws.client.guilds[o['id'] as String] = null;
               else
-                this._ws.client.guilds[o['id'] as String] =
-                    new Guild._new(this._ws.client, o as Map<String, dynamic>, true, true);
+                this._ws.client.guilds[o['id'] as String] = new Guild._new(
+                    this._ws.client, o as Map<String, dynamic>, true, true);
             });
 
             json['d']['private_channels'].forEach((dynamic o) {
               if (o['type'] == 1) {
                 new DMChannel._new(this._ws.client, o as Map<String, dynamic>);
               } else {
-                new GroupDMChannel._new(this._ws.client, o as Map<String, dynamic>);
+                new GroupDMChannel._new(
+                    this._ws.client, o as Map<String, dynamic>);
               }
             });
 
