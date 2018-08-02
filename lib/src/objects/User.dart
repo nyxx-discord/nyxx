@@ -62,7 +62,9 @@ class User {
   /// Gets the [DMChannel] for the user.
   Future<DMChannel> getChannel() async {
     try {
-      return client.channels.values.firstWhere((Channel c) => c is DMChannel && c.recipient.id == this.id) as DMChannel;
+      return client.channels.values.firstWhere(
+              (Channel c) => c is DMChannel && c.recipient.id == this.id)
+          as DMChannel;
     } catch (err) {
       HttpResponse r = await client.http
           .send('POST', "/users/@me/channels", body: {"recipient_id": this.id});

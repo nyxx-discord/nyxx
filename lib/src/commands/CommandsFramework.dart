@@ -375,7 +375,8 @@ class CommandsFramework {
   void registerLibraryCommands() {
     _registerLibrary(CommandContext, (toInject, cm) {
       try {
-        var cmd = cm.newInstance(new Symbol(''), toInject).reflectee as CommandContext;
+        var cmd = cm.newInstance(new Symbol(''), toInject).reflectee
+            as CommandContext;
         add(cmd);
       } catch (e) {
         print(e);

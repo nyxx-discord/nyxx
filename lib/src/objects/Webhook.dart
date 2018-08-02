@@ -47,7 +47,7 @@ class Webhook {
 
     if (raw.containsKey('channel_id')) {
       this.channel = this.client.channels[this.channelId.id] as TextChannel;
-      this.channelId = new Snowflake(raw['channel_id']  as String);
+      this.channelId = new Snowflake(raw['channel_id'] as String);
     }
 
     if (raw.containsKey('guild_id')) {

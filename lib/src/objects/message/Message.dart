@@ -108,7 +108,8 @@ class Message {
     this.timestamp = DateTime.parse(raw['timestamp'] as String);
     this.author =
         new User._new(this.client, raw['author'] as Map<String, dynamic>);
-    this.channel = this.client.channels[raw['channel_id'] as String] as MessageChannel;
+    this.channel =
+        this.client.channels[raw['channel_id'] as String] as MessageChannel;
     this.pinned = raw['pinned'] as bool;
     this.tts = raw['tts'] as bool;
     this.mentionEveryone = raw['mention_everyone'] as bool;
