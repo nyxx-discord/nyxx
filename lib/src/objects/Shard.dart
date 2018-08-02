@@ -163,19 +163,19 @@ class Shard {
             this._ws.client.http.headers['User-Agent'] =
                 "${this._ws.client.user.username} (https://github.com/l7ssha/nyxx, ${_Constants.version})";
 
-            json['d']['guilds'].forEach((Map<String, dynamic> o) {
+            json['d']['guilds'].forEach((dynamic o) {
               if (this._ws.client.user.bot)
                 this._ws.client.guilds[o['id'] as String] = null;
               else
                 this._ws.client.guilds[o['id'] as String] =
-                    new Guild._new(this._ws.client, o, true, true);
+                    new Guild._new(this._ws.client, o as Map<String, dynamic>, true, true);
             });
 
-            json['d']['private_channels'].forEach((Map<String, dynamic> o) {
+            json['d']['private_channels'].forEach((dynamic o) {
               if (o['type'] == 1) {
-                new DMChannel._new(this._ws.client, o);
+                new DMChannel._new(this._ws.client, o as Map<String, dynamic>);
               } else {
-                new GroupDMChannel._new(this._ws.client, o);
+                new GroupDMChannel._new(this._ws.client, o as Map<String, dynamic>);
               }
             });
 
@@ -191,8 +191,8 @@ class Shard {
             break;
 
           case 'GUILD_MEMBERS_CHUNK':
-            json['d']['members'].forEach((Map<String, dynamic> o) {
-              new Member._new(this._ws.client, o,
+            json['d']['members'].forEach((dynamic o) {
+              new Member._new(this._ws.client, o as Map<String, dynamic>,
                   this._ws.client.guilds[json['d']['guild_id']]);
             });
             if (!_ws.client.ready) {

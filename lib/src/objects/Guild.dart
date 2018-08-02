@@ -109,13 +109,13 @@ class Guild {
       this.createdAt = id.timestamp;
 
       this.emojis = new Map<String, GuildEmoji>();
-      raw['emojis'].forEach((Map<String, dynamic> o) {
-        new GuildEmoji._new(this.client, o, this);
+      raw['emojis'].forEach((dynamic o) {
+        new GuildEmoji._new(this.client, o as Map<String, dynamic>, this);
       });
 
       this.roles = new Map<String, Role>();
-      raw['roles'].forEach((Map<String, dynamic> o) {
-        new Role._new(this.client, o, this);
+      raw['roles'].forEach((dynamic o) {
+        new Role._new(this.client, o as Map<String, dynamic>, this);
       });
 
       this.shard = this.client.shards[(int.parse(this.id.toString()) >> 22) %
@@ -125,19 +125,19 @@ class Guild {
         this.members = new Map<String, Member>();
         this.channels = new Map<String, Channel>();
 
-        raw['members'].forEach((Map<String, dynamic> o) {
-          new Member._new(client, o, this);
+        raw['members'].forEach((dynamic o) {
+          new Member._new(client, o as Map<String, dynamic>, this);
         });
 
-        raw['channels'].forEach((Map<String, dynamic> o) {
+        raw['channels'].forEach((dynamic o) {
           if (o['type'] == 0)
-            new TextChannel._new(client, o, this);
+            new TextChannel._new(client, o as Map<String, dynamic>, this);
           else if (o['type'] == 2)
-            new VoiceChannel._new(client, o, this);
-          else if (o['type'] == 4) new GroupChannel._new(client, o, this);
+            new VoiceChannel._new(client, o as Map<String, dynamic>, this);
+          else if (o['type'] == 4) new GroupChannel._new(client, o as Map<String, dynamic>, this);
         });
 
-        raw['presences'].forEach((Map<String, dynamic> o) {
+        raw['presences'].forEach((dynamic o) {
           Member member = this.members[o['user']['id']];
           if (member != null) {
             member.status = o['status'] as String;
@@ -153,7 +153,13 @@ class Guild {
       }
 
       this.systemChannel = this.channels[raw['system_channel_id']];
-      this.features = raw['features'] as List<String>;
+
+      if(raw['features'] != null) {
+        this.features = new List();
+        raw['features'].forEach((dynamic i) {
+          this.features.add(i.toString());
+        });
+      }
 
       client.guilds[this.id.toString()] = this;
       shard.guilds[this.id.toString()] = this;
@@ -201,7 +207,7 @@ class Guild {
   Future<Map<String, User>> getBans() async {
     HttpResponse r = await this.client.http.send('GET', "/guilds/$id/bans");
     Map<String, User> map = new Map();
-    r.body.asJson().forEach((Map<String, dynamic> o) {
+    r.body.asJson().forEach((dynamic o) {
       final User user =
           new User._new(client, o['user'] as Map<String, dynamic>);
       map[user.id.toString()] = user;
@@ -436,8 +442,8 @@ class Guild {
   Future<Map<String, Webhook>> getWebhooks() async {
     HttpResponse r = await this.client.http.send('GET', "/guilds/$id/webhooks");
     Map<String, Webhook> map = new Map();
-    r.body.asJson().forEach((Map<String, dynamic> o) {
-      Webhook webhook = new Webhook._fromApi(this.client, o);
+    r.body.asJson().forEach((dynamic o) {
+      Webhook webhook = new Webhook._fromApi(this.client, o as Map<String, dynamic>);
       map[webhook.id.toString()] = webhook;
     });
     return map;

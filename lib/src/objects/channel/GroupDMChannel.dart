@@ -10,8 +10,8 @@ class GroupDMChannel extends MessageChannel {
     this.messages = new LinkedHashMap<String, Message>();
 
     this.recipients = new Map<String, User>();
-    raw['recipients'].forEach((Map<String, dynamic> o) {
-      final User user = new User._new(client, o);
+    raw['recipients'].forEach((dynamic o) {
+      final User user = new User._new(client, o as Map<String, dynamic>);
       this.recipients[user.id.toString()] = user;
     });
   }
