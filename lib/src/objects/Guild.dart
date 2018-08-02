@@ -276,7 +276,7 @@ class Guild {
   Future<Embed> editGuildEmbed(EmbedBuilder embed,
       {String auditReason = ""}) async {
     HttpResponse r = await this.client.http.send('PATCH', "/guilds/$id/embed",
-        body: embed.build(), reason: auditReason);
+        body: embed._build(), reason: auditReason);
     return new Embed._new(
       this.client,
       r.body.asJson() as Map<String, dynamic>,

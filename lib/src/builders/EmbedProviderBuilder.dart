@@ -9,7 +9,7 @@ class EmbedProviderBuilder {
   String url;
 
   /// Builds object to Map() instance;
-  Map<String, dynamic> build() {
+  Map<String, dynamic> _build() {
     Map<String, dynamic> tmp = new Map();
 
     if (name != null) tmp["name"] = name;
