@@ -4,9 +4,8 @@ import 'package:nyxx/nyxx.dart' as nyxx;
 import 'package:nyxx/commands.dart' as command;
 
 import 'dart:io';
-import 'dart:async';
 
-main() async {
+void main() async {
   nyxx.Client bot = nyxx.Client(Platform.environment['DISCORD_TOKEN']);
 
   bot.onReady.listen((e) async {
