@@ -70,7 +70,7 @@ abstract class CommandContext {
 
     return new Future<Map<Emoji, int>>(() async {
       await for (var r in msg.onReactionAdded) {
-        if(m.containsKey(r.emoji))
+        if (m.containsKey(r.emoji))
           m[r.emoji] = m[r.emoji] += 1;
         else
           m[r.emoji] = 1;
@@ -95,16 +95,19 @@ abstract class CommandContext {
   }
 
   /// Waits for first [TypingEvent] and returns it. If timed out returns null. Can listen to specific user
-  Future<TypingEvent> waitForTyping({User user, Duration timeout: const Duration(seconds: 30), bool everywhere: false}) async {
+  Future<TypingEvent> waitForTyping(
+      {User user,
+      Duration timeout: const Duration(seconds: 30),
+      bool everywhere: false}) async {
     return new Future(() {
-      switch(everywhere) {
+      switch (everywhere) {
         case true:
-          if(user != null)
+          if (user != null)
             return channel.client.onTyping.firstWhere((e) => e.user == user);
 
           return channel.client.onTyping.first;
         case false:
-          if(user != null)
+          if (user != null)
             return channel.onTyping.firstWhere((e) => e.user == user);
 
           return channel.onTyping.first;
@@ -114,12 +117,12 @@ abstract class CommandContext {
   }
 
   /// Gets all channel messages that satisfies test.
-  Future<List<Message>> nextMessagesWhere(bool func(Message msg), {Duration timeout: const Duration(seconds: 30)}) async {
+  Future<List<Message>> nextMessagesWhere(bool func(Message msg),
+      {Duration timeout: const Duration(seconds: 30)}) async {
     List<Message> tmpData = new List();
 
     await channel.onMessage.forEach((i) {
-      if(func(i.message))
-        tmpData.add(i.message);
+      if (func(i.message)) tmpData.add(i.message);
     }).timeout(timeout);
 
     return tmpData;

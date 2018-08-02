@@ -220,12 +220,11 @@ class CommandsFramework {
 
     // Check for channel nsfw
     if (annot.isNsfw != null && annot.isNsfw && executionCode == -1) {
-      if(e.message.channel is TextChannel) {
+      if (e.message.channel is TextChannel) {
         var ch = e.message.channel as TextChannel;
-        if(!ch.nsfw) executionCode = 4;
-      }
-      else if (!(e.message.channel is DMChannel) || !(e.message.channel is GroupDMChannel))
-        executionCode = 4;
+        if (!ch.nsfw) executionCode = 4;
+      } else if (!(e.message.channel is DMChannel) ||
+          !(e.message.channel is GroupDMChannel)) executionCode = 4;
     }
 
     // Check for channel topics
@@ -291,7 +290,7 @@ class CommandsFramework {
             newInstance.invoke(matched.simpleName, params);
           } catch (err) {
             _commandExecutionFailController
-              .add(new CommandExecutionFailEvent._new(e.message, err));
+                .add(new CommandExecutionFailEvent._new(e.message, err));
           }
         });
 

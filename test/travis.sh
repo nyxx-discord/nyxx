@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 # Exit on errors
 set -e
 
@@ -32,7 +33,7 @@ echo "PASSED"
 echo ""
 
 if [ "$DISCORD_TOKEN" ]; then
-    dart -c test/discord.dart
+    dart -c test/travis.dart
 else
   echo "Discord token not present, skipping Discord tests"
 fi

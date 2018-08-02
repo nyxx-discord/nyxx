@@ -82,7 +82,7 @@ class Shard {
   /// Sends WS data.
   void send(String op, dynamic d) {
     this._socket.add(
-        JSON.encode(<String, dynamic>{"op": _Constants.opCodes[op], "d": d}));
+        jsonEncode(<String, dynamic>{"op": _Constants.opCodes[op], "d": d}));
   }
 
   void _heartbeat() {
@@ -91,7 +91,7 @@ class Shard {
   }
 
   Future<Null> _handleMsg(String msg, bool resume) async {
-    final json = JSON.decode(msg) as Map<String, dynamic>;
+    final json = jsonDecode(msg) as Map<String, dynamic>;
 
     new RawEvent._new(this._ws.client, this, json);
 
