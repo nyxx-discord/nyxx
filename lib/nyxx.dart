@@ -130,8 +130,4 @@ part 'src/objects/AbstractPermissions.dart';
 part 'src/objects/ChannelPermissions.dart';
 part 'src/objects/PermissionsConstants.dart';
 
-part 'src/errors/ClientNotReadyError.dart';
 part 'src/errors/HttpError.dart';
-part 'src/errors/InvalidTokenError.dart';
-part 'src/errors/InvalidShardError.dart';
-part 'src/errors/NotSetupError.dart';
