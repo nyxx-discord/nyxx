@@ -33,4 +33,10 @@ class Util {
     }
     yield str.substring(last, str.length);
   }
+
+  static Iterable<String> splitEqually(String str, int pieces) {
+    int len = (str.length / pieces).round();
+
+    return split(str, len);
+  }
 }
