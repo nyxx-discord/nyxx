@@ -55,7 +55,8 @@ class Embed {
 
     if (raw['type'] != null) this.type = raw['type'] as String;
 
-    if (raw['description'] != null) this.description = raw['description'] as String;
+    if (raw['description'] != null)
+      this.description = raw['description'] as String;
 
     if (raw['timestamp'] != null)
       this.timestamp = DateTime.parse(raw['timestamp'] as String);

@@ -13,7 +13,8 @@ class ChannelPermissions {
 
   ChannelPermissions._new(Map<String, dynamic> raw) {
     entityId = new Snowflake(raw['id'] as String);
-    permissions = new Permissions.fromOverwrite(0, raw['allow'] as int, raw['deny'] as int);
+    permissions = new Permissions.fromOverwrite(
+        0, raw['allow'] as int, raw['deny'] as int);
     type = raw['type'] as String;
   }
 }

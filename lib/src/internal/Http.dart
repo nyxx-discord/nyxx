@@ -76,7 +76,8 @@ class HttpBase {
                 .send(this.method, this.uri, headers: this.headers));
       }
     } on w_transport.RequestException catch (err) {
-      return HttpResponse._fromResponse(this, err.response as w_transport.Response);
+      return HttpResponse._fromResponse(
+          this, err.response as w_transport.Response);
     }
   }
 }
@@ -118,7 +119,8 @@ class HttpMultipartRequest extends HttpBase {
                 .send(this.method, this.uri, headers: this.headers));
       }
     } on w_transport.RequestException catch (err) {
-      return HttpResponse._fromResponse(this, err.response as w_transport.Response);
+      return HttpResponse._fromResponse(
+          this, err.response as w_transport.Response);
     }
   }
 }
@@ -221,9 +223,11 @@ class HttpBucket {
         }
 
         if (r.status == 429) {
-          new RatelimitEvent._new(request.http._client, request as HttpRequest, false, r);
+          new RatelimitEvent._new(
+              request.http._client, request as HttpRequest, false, r);
           new Timer(
-              new Duration(milliseconds: (r.body.asJson()['retry_after'] as int)+ 500),
+              new Duration(
+                  milliseconds: (r.body.asJson()['retry_after'] as int) + 500),
               () => this._execute(request));
         } else {
           this.waiting = false;
@@ -242,7 +246,8 @@ class HttpBucket {
         this.rateLimitRemaining = 1;
         this._execute(request);
       } else {
-        new RatelimitEvent._new(request.http._client, request as HttpRequest, true);
+        new RatelimitEvent._new(
+            request.http._client, request as HttpRequest, true);
         new Timer(waitTime, () {
           this.rateLimitRemaining = 1;
           this._execute(request);
