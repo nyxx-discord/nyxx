@@ -49,7 +49,7 @@ class MessageChannel extends Channel {
       {String content = "", EmbedBuilder embed = null}) async {
     final HttpResponse r = await this.client.http.sendMultipart(
         'POST', '/channels/${this.id}/messages', filepaths,
-        data: JSON.encode(<String, dynamic>{
+        data: jsonEncode(<String, dynamic>{
           "content": content,
           "embed": embed != null ? embed.build() : ""
         }));
