@@ -324,25 +324,21 @@ class Shard {
     switch (this._socket.closeCode) {
       case 1005:
         return;
-
       case 4004:
-        throw new InvalidTokenError();
-
+        throw new Exception("Invalid Shard Error");
       case 4010:
-        throw new InvalidShardError();
-
+        throw new Exception("Invalid Token Exception");
       case 4007:
         this._connect(false);
         break;
-
       case 4009:
         this._connect(false);
         break;
-
       default:
         this._connect();
         break;
     }
+
     new DisconnectEvent._new(this._ws.client, this, this._socket.closeCode);
     this._onDisconnect.add(this);
   }

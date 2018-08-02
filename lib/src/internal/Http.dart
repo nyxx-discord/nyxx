@@ -281,7 +281,7 @@ class Http {
       Map<String, String> headers: const {},
       String reason}) async {
     if (_client is Client && !this._client.ready && !beforeReady)
-      throw new ClientNotReadyError();
+      throw new Exception("Client isn't ready yet.");
 
     HttpRequest request = new HttpRequest._new(
         this,
@@ -319,7 +319,7 @@ class Http {
       String method, String path, List<String> filenames,
       {String data, bool beforeReady: false, String reason}) async {
     if (_client is Client && !this._client.ready && !beforeReady)
-      throw new ClientNotReadyError();
+      throw new Exception("Client isn't ready yet.");
 
     Directory current = Directory.current;
     List<String> filepaths = new List();
