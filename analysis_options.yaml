@@ -1,8 +1,6 @@
 analyzer:
   strong-mode:
     implicit-casts: false
-  exclude:
-    - lib/src/objects/message/EmojisUnicode.dart
 linter:
   rules:
     - avoid_empty_else
