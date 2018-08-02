@@ -27,7 +27,7 @@ class Util {
 
   static Iterable<String> split(String str, int length) sync* {
     int last = 0;
-    while(last < str.length && ((last + length) < str.length)) {
+    while (last < str.length && ((last + length) < str.length)) {
       yield str.substring(last, last + length);
       last += length;
     }
