@@ -19,7 +19,6 @@ class EmbedFieldBuilder {
     Map<String, dynamic> tmp = new Map();
 
     if (name != null) tmp["name"] = name;
-
     if (content != null) tmp["value"] = content;
 
     if (inline != null)

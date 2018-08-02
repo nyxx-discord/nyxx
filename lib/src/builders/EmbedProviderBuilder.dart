@@ -13,7 +13,6 @@ class EmbedProviderBuilder {
     Map<String, dynamic> tmp = new Map();
 
     if (name != null) tmp["name"] = name;
-
     if (url != null) tmp["url"] = url;
 
     return tmp;
