@@ -111,7 +111,6 @@ abstract class CommandContext {
             return channel.onTyping.firstWhere((e) => e.user == user);
 
           return channel.onTyping.first;
-          break;
       }
     }).timeout(timeout, onTimeout: () => null);
   }
