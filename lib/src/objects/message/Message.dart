@@ -198,7 +198,7 @@ class Message {
         'PATCH', '/channels/${this.channel.id}/messages/${this.id}',
         body: <String, dynamic>{
           "content": newContent,
-          "embed": (embed != null ? embed.build() : "")
+          "embed": (embed != null ? embed._build() : "")
         });
     return new Message._new(
         this.client, r.body.asJson() as Map<String, dynamic>);

@@ -51,7 +51,7 @@ class MessageChannel extends Channel {
         'POST', '/channels/${this.id}/messages', filepaths,
         data: jsonEncode(<String, dynamic>{
           "content": content,
-          "embed": embed != null ? embed.build() : ""
+          "embed": embed != null ? embed._build() : ""
         }));
 
     return new Message._new(
@@ -90,7 +90,7 @@ class MessageChannel extends Channel {
       "content": newContent,
       "tts": tts,
       "nonce": nonce,
-      "embed": embed != null ? embed.build() : ""
+      "embed": embed != null ? embed._build() : ""
     });
     return new Message._new(
         this.client, r.body.asJson() as Map<String, dynamic>);
