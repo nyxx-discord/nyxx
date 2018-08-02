@@ -20,3 +20,6 @@ part 'src/commands/Service.dart';
 part 'src/commands/CooldownCache.dart';
 
 part 'src/commands/TypeConverter.dart';
+
+part 'src/commands/Scheduler.dart';
+part 'src/commands/Interactivity.dart';
