@@ -7,6 +7,7 @@ import 'dart:async';
 // Main function
 void main() {
   // Create new bot instance
+  // Dart 2 introduces optional new keyword, so we can leave it
   nyxx.Client bot = nyxx.Client(Platform.environment['DISCORD_TOKEN']);
 
   // Creating new CommandsFramework object and registering commands.
