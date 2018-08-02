@@ -32,11 +32,11 @@ class GuildEmoji extends Emoji {
 
   /// Creates full emoji object
   GuildEmoji._new(this.client, this.raw, this.guild) : super("") {
-    this.id = new Snowflake(raw['id']);
-    this.name = raw['name'];
-    this.requireColons = raw['require_colons'];
-    this.managed = raw['managed'];
-    this.animated = raw['animated'];
+    this.id = new Snowflake(raw['id'] as String);
+    this.name = raw['name'] as String;
+    this.requireColons = raw['require_colons'] as bool;
+    this.managed = raw['managed'] as bool;
+    this.animated = raw['animated'] as bool;
 
     if (raw['roles'] != null) this.rolesIds = raw['roles'] as List<String>;
 
@@ -45,8 +45,8 @@ class GuildEmoji extends Emoji {
 
   /// Creates partial object - only [id] and [name]
   GuildEmoji._partial(this.raw) : super("") {
-    this.id = new Snowflake(raw['id']);
-    this.name = raw['name'];
+    this.id = new Snowflake(raw['id'] as String);
+    this.name = raw['name'] as String;
   }
 
   /// Encodes Emoji to API format

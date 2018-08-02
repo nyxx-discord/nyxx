@@ -49,18 +49,18 @@ class Embed {
   Map<String, EmbedField> fields;
 
   Embed._new(this.client, this.raw) {
-    if (raw['title'] != null) this.title = raw['title'];
+    if (raw['title'] != null) this.title = raw['title'] as String;
 
-    if (raw['url'] != null) this.url = raw['url'];
+    if (raw['url'] != null) this.url = raw['url'] as String;
 
-    if (raw['type'] != null) this.type = raw['type'];
+    if (raw['type'] != null) this.type = raw['type'] as String;
 
-    if (raw['description'] != null) this.description = raw['description'];
+    if (raw['description'] != null) this.description = raw['description'] as String;
 
     if (raw['timestamp'] != null)
-      this.timestamp = DateTime.parse(raw['timestamp']);
+      this.timestamp = DateTime.parse(raw['timestamp'] as String);
 
-    if (raw['color'] != null) this.color = raw['color'];
+    if (raw['color'] != null) this.color = raw['color'] as int;
 
     if (raw['author'] != null)
       this.author = new EmbedAuthor._new(raw['author'] as Map<String, dynamic>);

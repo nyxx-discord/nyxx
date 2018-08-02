@@ -18,7 +18,7 @@ class Channel {
   DateTime createdAt;
 
   Channel._new(this.client, this.raw, this.type) {
-    this.id = new Snowflake(raw['id']);
+    this.id = new Snowflake(raw['id'] as String);
     this.createdAt = id.timestamp;
 
     client.channels[this.id.toString()] = this;

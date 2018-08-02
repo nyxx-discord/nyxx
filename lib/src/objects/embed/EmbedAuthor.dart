@@ -18,9 +18,9 @@ class EmbedAuthor {
   Map<String, dynamic> raw;
 
   EmbedAuthor._new(this.raw) {
-    this.name = raw['name'];
-    this.url = raw['url'];
-    this.iconUrl = raw['icon_url'];
-    this.iconProxyUrl = raw['iconProxyUrl'];
+    this.name = raw['name'] as String;
+    this.url = raw['url'] as String;
+    this.iconUrl = raw['icon_url'] as String;
+    this.iconProxyUrl = raw['iconProxyUrl'] as String;
   }
 }

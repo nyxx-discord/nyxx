@@ -23,15 +23,15 @@ class AuditLog {
     entries = new Map();
 
     raw['webhooks'].forEach((Map<String, dynamic> o) {
-      webhooks[o['id']] = new Webhook._fromApi(client, o);
+      webhooks[o['id'] as String] = new Webhook._fromApi(client, o);
     });
 
     raw['users'].forEach((Map<String, dynamic> o) {
-      users[o['id']] = new User._new(client, o);
+      users[o['id'] as String] = new User._new(client, o);
     });
 
     raw['audit_log_entries'].forEach((Map<String, dynamic> o) {
-      entries[o['id']] = new AuditLogEntry._new(client, o);
+      entries[o['id'] as String] = new AuditLogEntry._new(client, o);
     });
   }
 }

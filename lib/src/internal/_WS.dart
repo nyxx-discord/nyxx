@@ -21,11 +21,11 @@ class _WS {
         .send("GET", "/gateway/bot", beforeReady: true)
         .then((HttpResponse r) {
       this.bot = true;
-      this.gateway = r.body.asJson()['url'];
+      this.gateway = r.body.asJson()['url'] as String;
       if (this.client._options.shardCount == 1 &&
           this.client._options.shardIds == const [0]) {
         this.client._options.shardIds = [];
-        this.client._options.shardCount = r.body.asJson()['shards'];
+        this.client._options.shardCount = r.body.asJson()['shards'] as int;
         for (int i = 0; i < client._options.shardCount; i++) {
           this.client._options.shardIds.add(i);
           setupShard(i);
@@ -42,7 +42,7 @@ class _WS {
           .http
           .send('GET', '/gateway', beforeReady: true)
           .then((HttpResponse r) {
-        this.gateway = r.body.asJson()['url'];
+        this.gateway = r.body.asJson()['url'] as String;
         for (int shardId in this.client._options.shardIds) {
           setupShard(shardId);
         }

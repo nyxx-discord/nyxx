@@ -42,19 +42,19 @@ class Role {
   DateTime createdAt;
 
   Role._new(this.client, this.raw, this.guild) {
-    this.id = new Snowflake(raw['id']);
-    this.name = raw['name'];
-    this.position = raw['position'];
-    this.hoist = raw['hoist'];
-    this.managed = raw['managed'];
-    this.mentionable = raw['mentionable'];
-    this.permissions = new Permissions.fromInt(raw['permissions']);
+    this.id = new Snowflake(raw['id'] as String);
+    this.name = raw['name'] as String;
+    this.position = raw['position'] as int;
+    this.hoist = raw['hoist'] as bool;
+    this.managed = raw['managed'] as bool;
+    this.mentionable = raw['mentionable'] as bool;
+    this.permissions = new Permissions.fromInt(raw['permissions'] as int);
     this.createdAt = id.timestamp;
 
     if (raw['color'] == 0) {
       this.color = null;
     } else {
-      this.color = raw['color'];
+      this.color = raw['color'] as int;
     }
 
     if (mentionable) this.mention = "<@&${this.id}>";

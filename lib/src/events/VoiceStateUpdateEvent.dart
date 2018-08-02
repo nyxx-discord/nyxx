@@ -6,7 +6,7 @@ class VoiceStateUpdateEvent {
   VoiceState state;
 
   VoiceStateUpdateEvent._new(Client client, Map<String, dynamic> json) {
-    state = new VoiceState._new(client, json['d']);
+    state = new VoiceState._new(client, json['d'] as Map<String, dynamic>);
 
     client._events.onVoiceStateUpdate.add(this);
   }

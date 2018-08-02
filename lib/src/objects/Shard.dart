@@ -74,8 +74,9 @@ class Shard {
         .connect(Uri.parse('${this._ws.gateway}?v=6&encoding=json'))
         .then((w_transport.WebSocket socket) {
       this._socket = socket;
-      this._socket.listen((dynamic msg) => this._handleMsg(msg, resume),
-          onDone: this._handleErr);
+      this._socket.listen((dynamic msg) async {
+        await this._handleMsg(msg as String, resume);
+      }, onDone: this._handleErr);
     });
   }
 
@@ -96,10 +97,10 @@ class Shard {
     new RawEvent._new(this._ws.client, this, json);
 
     if (json['s'] != null) {
-      this._sequence = json['s'];
+      this._sequence = json['s'] as int;
     }
 
-    switch (json['op']) {
+    switch (json['op'] as int) {
       case _OPCodes.hello:
         if (this._sessionId == null || !resume) {
           Map<String, dynamic> identifyMsg = <String, dynamic>{
@@ -129,7 +130,7 @@ class Shard {
         }
 
         this._heartbeatTimer = new Timer.periodic(
-            new Duration(milliseconds: json['d']['heartbeat_interval']),
+            new Duration(milliseconds: json['d']['heartbeat_interval'] as int),
             (Timer t) => this._heartbeat());
         break;
 
@@ -140,9 +141,10 @@ class Shard {
       case _OPCodes.dispatch:
         if (this._ws.client._options.disabledEvents.contains(json['t'])) break;
 
-        switch (json['t']) {
+        var j = json['t'] as String;
+        switch (j) {
           case 'READY':
-            this._sessionId = json['d']['session_id'];
+            this._sessionId = json['d']['session_id'] as String;
 
             this._ws.client.user = new ClientUser._new(
                 this._ws.client, json['d']['user'] as Map<String, dynamic>);
@@ -163,9 +165,9 @@ class Shard {
 
             json['d']['guilds'].forEach((Map<String, dynamic> o) {
               if (this._ws.client.user.bot)
-                this._ws.client.guilds[o['id']] = null;
+                this._ws.client.guilds[o['id'] as String] = null;
               else
-                this._ws.client.guilds[o['id']] =
+                this._ws.client.guilds[o['id'] as String] =
                     new Guild._new(this._ws.client, o, true, true);
             });
 

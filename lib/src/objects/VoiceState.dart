@@ -29,10 +29,10 @@ class VoiceState {
   VoiceState._new(Client client, this.raw) {
     this.channel = client.channels[raw['channel_id']] as VoiceChannel;
     this.user = client.users[raw['user_id']];
-    this.sessionId = raw['session_id'];
-    this.deaf = raw['deaf'];
-    this.selfDeaf = raw['self_deaf'];
-    this.selfMute = raw['self_mute'];
-    this.suppress = raw['suppress'];
+    this.sessionId = raw['session_id'] as String;
+    this.deaf = raw['deaf'] as bool;
+    this.selfDeaf = raw['self_deaf'] as bool;
+    this.selfMute = raw['self_mute'] as bool;
+    this.suppress = raw['suppress'] as bool;
   }
 }

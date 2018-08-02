@@ -18,7 +18,7 @@ class Invite {
   InviteChannel channel;
 
   Invite._new(this.client, this.raw) {
-    this.code = raw['code'];
+    this.code = raw['code'] as String;
     this.guild =
         new InviteGuild._new(this.client, raw['guild'] as Map<String, dynamic>);
     this.channel = new InviteChannel._new(
