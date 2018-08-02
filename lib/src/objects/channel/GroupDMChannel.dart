@@ -6,7 +6,7 @@ class GroupDMChannel extends MessageChannel {
 
   GroupDMChannel._new(Client client, Map<String, dynamic> data)
       : super._new(client, data, "private") {
-    this.lastMessageID = raw['last_message_id'];
+    this.lastMessageID = new Snowflake(raw['last_message_id'] as String);
     this.messages = new LinkedHashMap<String, Message>();
 
     this.recipients = new Map<String, User>();

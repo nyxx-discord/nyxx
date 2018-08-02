@@ -26,7 +26,7 @@ class MessageUpdateEvent {
         this.oldMessage._onUpdate.add(this);
         client._events.onMessageUpdate.add(this);
       } else {
-        this.id = json['d']['id'];
+        this.id = new Snowflake(json['d']['id'] as String);
         if (!client._options.ignoreUncachedEvents) {
           client._events.onMessageUpdate.add(this);
         }

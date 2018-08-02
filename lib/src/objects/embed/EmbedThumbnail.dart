@@ -18,9 +18,9 @@ class EmbedThumbnail {
   int width;
 
   EmbedThumbnail._new(this.raw) {
-    this.url = raw['url'];
-    this.proxyUrl = raw['proxy_url'];
-    this.height = raw['height'];
-    this.width = raw['width'];
+    this.url = raw['url'] as String;
+    this.proxyUrl = raw['proxy_url'] as String;
+    this.height = raw['height'] as int ;
+    this.width = raw['width'] as int;
   }
 }

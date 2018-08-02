@@ -140,7 +140,7 @@ class CommandsFramework {
 
     var executionCode = -1;
 
-    var matched;
+    MethodMirror matched;
     var subcommand;
     var methods = classMirror.declarations;
 
@@ -375,7 +375,7 @@ class CommandsFramework {
   void registerLibraryCommands() {
     _registerLibrary(CommandContext, (toInject, cm) {
       try {
-        var cmd = cm.newInstance(new Symbol(''), toInject).reflectee;
+        var cmd = cm.newInstance(new Symbol(''), toInject).reflectee as CommandContext;
         add(cmd);
       } catch (e) {
         print(e);
@@ -412,10 +412,10 @@ class CommandsFramework {
   }
 
   List<String> _groupParams(List<String> splitted) {
-    var tmpList = new List();
+    var tmpList = new List<String>();
     var isInto = false;
 
-    var finalList = new List();
+    var finalList = new List<String>();
 
     for (var item in splitted) {
       if (isInto) {
@@ -442,7 +442,7 @@ class CommandsFramework {
 
   RegExp _entityRegex = new RegExp(r"<(@|@!|@&|#|a?:(.+):)([0-9]+)>");
 
-  Future<List<String>> _collectParams(
+  Future<List<Object>> _collectParams(
       MethodMirror method, List<String> splitted, Message e) async {
     var params = method.parameters;
     splitted = _groupParams(splitted);

@@ -27,10 +27,10 @@ class OAuth2Application {
   DateTime createdAt;
 
   OAuth2Application._new(this.client, this.raw) {
-    this.description = raw['description'];
-    this.icon = raw['icon'];
-    this.id = new Snowflake(raw['id']);
-    this.name = raw['name'];
+    this.description = raw['description'] as String;
+    this.icon = raw['icon'] as String;
+    this.id = new Snowflake(raw['id'] as String);
+    this.name = raw['name'] as String;
     this.rpcOrigins = raw['rpcOrigins'] as List<String>;
     this.createdAt = id.timestamp;
   }

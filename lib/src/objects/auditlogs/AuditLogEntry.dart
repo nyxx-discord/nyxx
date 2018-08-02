@@ -29,7 +29,7 @@ class AuditLogEntry {
   Map<String, dynamic> raw;
 
   AuditLogEntry._new(Client client, this.raw) {
-    targetId = raw['targetId'];
+    targetId = raw['targetId'] as String;
 
     changes = new List();
     if (raw['changes'] != null)
@@ -37,11 +37,11 @@ class AuditLogEntry {
           (Map<String, dynamic> o) => changes.add(new AuditLogChange._new(o)));
 
     user = client.users[raw['user_id']];
-    id = new Snowflake(raw['id']);
-    type = raw['action_type'];
+    id = new Snowflake(raw['id'] as String);
+    type = raw['action_type'] as int;
 
     if (raw['options'] != null) options = raw['options'];
 
-    reason = raw['reason'];
+    reason = raw['reason'] as String;
   }
 }

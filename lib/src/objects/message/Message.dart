@@ -102,16 +102,16 @@ class Message {
     this._onReactionsRemoved = new StreamController.broadcast();
     this.onReactionsRemoved = this._onReactionsRemoved.stream;
 
-    this.content = raw['content'];
-    this.id = new Snowflake(raw['id']);
-    this.nonce = raw['nonce'];
-    this.timestamp = DateTime.parse(raw['timestamp']);
+    this.content = raw['content'] as String;
+    this.id = new Snowflake(raw['id'] as String);
+    this.nonce = raw['nonce'] as String;
+    this.timestamp = DateTime.parse(raw['timestamp'] as String);
     this.author =
         new User._new(this.client, raw['author'] as Map<String, dynamic>);
-    this.channel = this.client.channels[raw['channel_id']];
-    this.pinned = raw['pinned'];
-    this.tts = raw['tts'];
-    this.mentionEveryone = raw['mention_everyone'];
+    this.channel = this.client.channels[raw['channel_id'] as String] as MessageChannel;
+    this.pinned = raw['pinned'] as bool;
+    this.tts = raw['tts'] as bool;
+    this.mentionEveryone = raw['mention_everyone'] as bool;
     this.createdAt = id.timestamp;
 
     this.channel._cacheMessage(this);
@@ -131,7 +131,7 @@ class Message {
     }
 
     if (raw['edited_timestamp'] != null) {
-      this.editedTimestamp = DateTime.parse(raw['edited_timestamp']);
+      this.editedTimestamp = DateTime.parse(raw['edited_timestamp'] as String);
     }
 
     this.mentions = new Map<String, User>();

@@ -21,9 +21,9 @@ class InviteGuild {
   DateTime createdAt;
 
   InviteGuild._new(this.client, this.raw) {
-    this.id = new Snowflake(raw['id']);
-    this.name = raw['name'];
-    this.spash = raw['splash_hash'];
+    this.id = new Snowflake(raw['id'] as String);
+    this.name = raw['name'] as String;
+    this.spash = raw['splash_hash'] as String;
     this.createdAt = id.timestamp;
   }
 

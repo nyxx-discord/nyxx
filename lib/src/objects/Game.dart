@@ -33,10 +33,10 @@ class Game {
     }
 
     if (raw['type'] is int) {
-      this.type = raw['type'];
+      this.type = raw['type'] as int;
     } else if (raw['type'] is String) {
       try {
-        this.type = int.parse(raw['type']);
+        this.type = int.parse(raw['type'] as String);
       } catch (err) {
         this.type = null;
       }

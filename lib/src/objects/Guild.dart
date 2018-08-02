@@ -90,22 +90,22 @@ class Guild {
   Guild._new(this.client, this.raw,
       [this.available = true, bool guildCreate = false]) {
     if (this.available) {
-      this.name = raw['name'];
-      this.id = new Snowflake(raw['id']);
-      this.icon = raw['icon'];
-      this.region = raw['region'];
+      this.name = raw['name'] as String;
+      this.id = new Snowflake(raw['id'] as String);
+      this.icon = raw['icon'] as String;
+      this.region = raw['region'] as String;
 
       if (raw.containsKey('embed_channel_id'))
-        this.embedChannelID = new Snowflake(raw['embed_channel_id']);
+        this.embedChannelID = new Snowflake(raw['embed_channel_id'] as String);
 
-      this.afkTimeout = raw['afk_timeout'];
-      this.memberCount = raw['member_count'];
-      this.verificationLevel = raw['verification_level'];
-      this.notificationLevel = raw['default_message_notifications'];
-      this.mfaLevel = raw['mfa_level'];
-      this.embedEnabled = raw['embed_enabled'];
-      this.splash = raw['splash'];
-      this.ownerID = new Snowflake(raw['owner_id']);
+      this.afkTimeout = raw['afk_timeout'] as int;
+      this.memberCount = raw['member_count'] as int;
+      this.verificationLevel = raw['verification_level'] as int;
+      this.notificationLevel = raw['default_message_notifications'] as int;
+      this.mfaLevel = raw['mfa_level'] as int;
+      this.embedEnabled = raw['embed_enabled'] as bool;
+      this.splash = raw['splash'] as String;
+      this.ownerID = new Snowflake(raw['owner_id'] as String);
       this.createdAt = id.timestamp;
 
       this.emojis = new Map<String, GuildEmoji>();
@@ -140,7 +140,7 @@ class Guild {
         raw['presences'].forEach((Map<String, dynamic> o) {
           Member member = this.members[o['user']['id']];
           if (member != null) {
-            member.status = o['status'];
+            member.status = o['status'] as String;
             if (o['game'] != null) {
               member.game =
                   new Game._new(client, o['game'] as Map<String, dynamic>);
@@ -149,7 +149,7 @@ class Guild {
         });
 
         this.defaultChannel = this.channels[this.id];
-        this.afkChannel = this.channels[raw['afk_channel_id']];
+        this.afkChannel = this.channels[raw['afk_channel_id']] as VoiceChannel;
       }
 
       this.systemChannel = this.channels[raw['system_channel_id']];
@@ -200,7 +200,7 @@ class Guild {
   /// Get's the guild's bans.
   Future<Map<String, User>> getBans() async {
     HttpResponse r = await this.client.http.send('GET', "/guilds/$id/bans");
-    Map<String, dynamic> map = <String, dynamic>{};
+    Map<String, User> map = new Map();
     r.body.asJson().forEach((Map<String, dynamic> o) {
       final User user =
           new User._new(client, o['user'] as Map<String, dynamic>);
@@ -435,7 +435,7 @@ class Guild {
   /// Gets all of the webhooks for this guild.
   Future<Map<String, Webhook>> getWebhooks() async {
     HttpResponse r = await this.client.http.send('GET', "/guilds/$id/webhooks");
-    Map<String, dynamic> map = <String, dynamic>{};
+    Map<String, Webhook> map = new Map();
     r.body.asJson().forEach((Map<String, dynamic> o) {
       Webhook webhook = new Webhook._fromApi(this.client, o);
       map[webhook.id.toString()] = webhook;

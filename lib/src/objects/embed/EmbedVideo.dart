@@ -15,8 +15,8 @@ class EmbedVideo {
   Map<String, dynamic> raw;
 
   EmbedVideo._new(this.raw) {
-    this.url = raw['url'];
-    this.height = raw['height'];
-    this.width = raw['width'];
+    this.url = raw['url'] as String;
+    this.height = raw['height'] as int;
+    this.width = raw['width'] as int;
   }
 }
