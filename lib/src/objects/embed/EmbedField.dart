@@ -18,9 +18,9 @@ class EmbedField {
   Embed embed;
 
   EmbedField._new(this.raw, this.embed) {
-    this.name = raw['name'];
-    this.content = raw['value'];
-    this.inline = raw['inline'];
+    this.name = raw['name'] as String;
+    this.content = raw['value'] as String;
+    this.inline = raw['inline'] as bool;
 
     this.embed.fields[name] = this;
   }

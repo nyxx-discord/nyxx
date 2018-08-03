@@ -15,8 +15,8 @@ class EmbedFooter {
   Map<String, dynamic> raw;
 
   EmbedFooter._new(this.raw) {
-    text = raw['text'];
-    iconUrl = raw['icon_url'];
-    iconProxyUrl = raw['icon_proxy_url'];
+    text = raw['text'] as String;
+    iconUrl = raw['icon_url'] as String;
+    iconProxyUrl = raw['icon_proxy_url'] as String;
   }
 }

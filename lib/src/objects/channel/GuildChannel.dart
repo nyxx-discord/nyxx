@@ -24,21 +24,21 @@ abstract class GuildChannel {
 
   void initialize(Map<String, dynamic> raw, Client client, Guild guild) {
     this._client = client;
-    this.name = raw['name'];
-    this.position = raw['position'];
+    this.name = raw['name'] as String;
+    this.position = raw['position'] as int;
     this.guild = guild;
 
-    this._id = raw['id'];
+    this._id = raw['id'] as String;
     if (raw['parent_id'] != null) {
-      this.parentId = new Snowflake(raw['parent_id']);
+      this.parentId = new Snowflake(raw['parent_id'] as String);
     }
 
-    this.nsfw = raw['nsfw'];
+    this.nsfw = raw['nsfw'] as bool;
 
     if (raw['permission_overwrites'] != null) {
       permissions = new List();
-      raw['permission_overwrites'].forEach((Map<String, dynamic> o) {
-        permissions.add(new ChannelPermissions._new(o));
+      raw['permission_overwrites'].forEach((dynamic o) {
+        permissions.add(new ChannelPermissions._new(o as Map<String, dynamic>));
       });
     }
   }

@@ -74,15 +74,16 @@ class Shard {
         .connect(Uri.parse('${this._ws.gateway}?v=6&encoding=json'))
         .then((w_transport.WebSocket socket) {
       this._socket = socket;
-      this._socket.listen((dynamic msg) => this._handleMsg(msg, resume),
-          onDone: this._handleErr);
+      this._socket.listen((dynamic msg) async {
+        await this._handleMsg(msg as String, resume);
+      }, onDone: this._handleErr);
     });
   }
 
   /// Sends WS data.
   void send(String op, dynamic d) {
     this._socket.add(
-        JSON.encode(<String, dynamic>{"op": _Constants.opCodes[op], "d": d}));
+        jsonEncode(<String, dynamic>{"op": _Constants.opCodes[op], "d": d}));
   }
 
   void _heartbeat() {
@@ -91,15 +92,15 @@ class Shard {
   }
 
   Future<Null> _handleMsg(String msg, bool resume) async {
-    final json = JSON.decode(msg) as Map<String, dynamic>;
+    final json = jsonDecode(msg) as Map<String, dynamic>;
 
     new RawEvent._new(this._ws.client, this, json);
 
     if (json['s'] != null) {
-      this._sequence = json['s'];
+      this._sequence = json['s'] as int;
     }
 
-    switch (json['op']) {
+    switch (json['op'] as int) {
       case _OPCodes.hello:
         if (this._sessionId == null || !resume) {
           Map<String, dynamic> identifyMsg = <String, dynamic>{
@@ -129,7 +130,7 @@ class Shard {
         }
 
         this._heartbeatTimer = new Timer.periodic(
-            new Duration(milliseconds: json['d']['heartbeat_interval']),
+            new Duration(milliseconds: json['d']['heartbeat_interval'] as int),
             (Timer t) => this._heartbeat());
         break;
 
@@ -140,9 +141,10 @@ class Shard {
       case _OPCodes.dispatch:
         if (this._ws.client._options.disabledEvents.contains(json['t'])) break;
 
-        switch (json['t']) {
+        var j = json['t'] as String;
+        switch (j) {
           case 'READY':
-            this._sessionId = json['d']['session_id'];
+            this._sessionId = json['d']['session_id'] as String;
 
             this._ws.client.user = new ClientUser._new(
                 this._ws.client, json['d']['user'] as Map<String, dynamic>);
@@ -161,19 +163,20 @@ class Shard {
             this._ws.client.http.headers['User-Agent'] =
                 "${this._ws.client.user.username} (https://github.com/l7ssha/nyxx, ${_Constants.version})";
 
-            json['d']['guilds'].forEach((Map<String, dynamic> o) {
+            json['d']['guilds'].forEach((dynamic o) {
               if (this._ws.client.user.bot)
-                this._ws.client.guilds[o['id']] = null;
+                this._ws.client.guilds[o['id'] as String] = null;
               else
-                this._ws.client.guilds[o['id']] =
-                    new Guild._new(this._ws.client, o, true, true);
+                this._ws.client.guilds[o['id'] as String] = new Guild._new(
+                    this._ws.client, o as Map<String, dynamic>, true, true);
             });
 
-            json['d']['private_channels'].forEach((Map<String, dynamic> o) {
+            json['d']['private_channels'].forEach((dynamic o) {
               if (o['type'] == 1) {
-                new DMChannel._new(this._ws.client, o);
+                new DMChannel._new(this._ws.client, o as Map<String, dynamic>);
               } else {
-                new GroupDMChannel._new(this._ws.client, o);
+                new GroupDMChannel._new(
+                    this._ws.client, o as Map<String, dynamic>);
               }
             });
 
@@ -189,8 +192,8 @@ class Shard {
             break;
 
           case 'GUILD_MEMBERS_CHUNK':
-            json['d']['members'].forEach((Map<String, dynamic> o) {
-              new Member._new(this._ws.client, o,
+            json['d']['members'].forEach((dynamic o) {
+              new Member._new(this._ws.client, o as Map<String, dynamic>,
                   this._ws.client.guilds[json['d']['guild_id']]);
             });
             if (!_ws.client.ready) {
@@ -321,25 +324,21 @@ class Shard {
     switch (this._socket.closeCode) {
       case 1005:
         return;
-
       case 4004:
-        throw new InvalidTokenError();
-
+        throw new Exception("Invalid Shard Error");
       case 4010:
-        throw new InvalidShardError();
-
+        throw new Exception("Invalid Token Exception");
       case 4007:
         this._connect(false);
         break;
-
       case 4009:
         this._connect(false);
         break;
-
       default:
         this._connect();
         break;
     }
+
     new DisconnectEvent._new(this._ws.client, this, this._socket.closeCode);
     this._onDisconnect.add(this);
   }

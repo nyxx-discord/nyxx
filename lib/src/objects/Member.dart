@@ -30,10 +30,10 @@ class Member extends User {
 
   Member._new(Client client, Map<String, dynamic> data, [Guild guild])
       : super._new(client, data['user'] as Map<String, dynamic>) {
-    this.nickname = data['nick'];
-    this.deaf = data['deaf'];
-    this.mute = data['mute'];
-    this.status = data['status'];
+    this.nickname = data['nick'] as String;
+    this.deaf = data['deaf'] as bool;
+    this.mute = data['mute'] as bool;
+    this.status = data['status'] as String;
 
     if (guild == null)
       this.guild = this.client.guilds[data['guild_id']];
@@ -41,19 +41,19 @@ class Member extends User {
       this.guild = guild;
 
     roles = new List();
-    data['roles'].forEach((String id) {
+    data['roles'].forEach((dynamic id) {
       roles.add(this.guild.roles.values.firstWhere((i) => i.id == id));
     });
 
     this._user = new User._new(client, data['user'] as Map<String, dynamic>);
 
     roles = new List();
-    data['roles'].forEach((String i) {
+    data['roles'].forEach((dynamic i) {
       roles.add(this.guild.roles[i]);
     });
 
     if (data['joined_at'] != null)
-      this.joinedAt = DateTime.parse(data['joined_at']);
+      this.joinedAt = DateTime.parse(data['joined_at'] as String);
 
     if (data['game'] != null)
       this.game =

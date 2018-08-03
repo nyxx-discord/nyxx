@@ -167,7 +167,7 @@ class Client {
     }
 
     this.guilds = new Map<String, Guild>();
-    this.channels = new Map<String, dynamic>();
+    this.channels = new Map<String, Channel>();
     this.users = new Map<String, User>();
     this.shards = new Map<int, Shard>();
 

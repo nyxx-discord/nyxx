@@ -12,7 +12,7 @@ class TextChannel extends MessageChannel with GuildChannel {
   TextChannel._new(Client client, Map<String, dynamic> data, Guild guild)
       : super._new(client, data, "text") {
     initialize(data, client, guild);
-    this.topic = raw['topic'];
+    this.topic = raw['topic'] as String;
 
     this.mention = "<#${this.id}>";
     this.guild.channels[this.id.toString()] = this;
@@ -38,11 +38,14 @@ class TextChannel extends MessageChannel with GuildChannel {
   Future<Map<String, Webhook>> getWebhooks() async {
     HttpResponse r =
         await this.client.http.send('GET', "/channels/$id/webhooks");
-    Map<String, dynamic> map = <String, dynamic>{};
-    r.body.asJson().forEach((Map<String, dynamic> o) {
-      Webhook webhook = new Webhook._fromApi(this.client, o);
+    Map<String, Webhook> map = new Map();
+
+    r.body.asJson().forEach((dynamic o) {
+      Webhook webhook =
+          new Webhook._fromApi(this.client, o as Map<String, dynamic>);
       map[webhook.id.toString()] = webhook;
     });
+
     return map;
   }
 
@@ -62,7 +65,7 @@ class TextChannel extends MessageChannel with GuildChannel {
 
     Map<String, Invite> invites = new Map();
     for (Map<String, dynamic> val in r.body.asJson()) {
-      invites[val["code"]] = new Invite._new(this.client, val);
+      invites[val["code"] as String] = new Invite._new(this.client, val);
     }
 
     return invites;
@@ -97,7 +100,7 @@ class TextChannel extends MessageChannel with GuildChannel {
 
     Map<String, Message> messages = new Map();
     for (Map<String, dynamic> val in r.body.asJson()) {
-      messages[val["id"]] = new Message._new(this.client, val);
+      messages[val["id"] as String] = new Message._new(this.client, val);
     }
 
     return messages;

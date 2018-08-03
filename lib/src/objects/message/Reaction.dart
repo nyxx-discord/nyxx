@@ -15,12 +15,12 @@ class Reaction {
   Map<String, dynamic> raw;
 
   Reaction._new(this.raw) {
-    count = raw['count'];
-    me = raw['me'];
+    count = raw['count'] as int;
+    me = raw['me'] as bool;
 
     var rawEmoji = raw['emoji'] as Map<String, dynamic>;
     if (rawEmoji['id'] == null)
-      emoji = new UnicodeEmoji._partial(rawEmoji['name']);
+      emoji = new UnicodeEmoji._partial(rawEmoji['name'] as String);
     else
       emoji = new GuildEmoji._partial(rawEmoji);
   }

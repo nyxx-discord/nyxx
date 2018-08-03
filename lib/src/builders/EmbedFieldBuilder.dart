@@ -15,11 +15,10 @@ class EmbedFieldBuilder {
   EmbedFieldBuilder(this.name, this.content, this.inline);
 
   /// Builds object to Map() instance;
-  Map<String, dynamic> build() {
+  Map<String, dynamic> _build() {
     Map<String, dynamic> tmp = new Map();
 
     if (name != null) tmp["name"] = name;
-
     if (content != null) tmp["value"] = content;
 
     if (inline != null)

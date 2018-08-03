@@ -41,17 +41,17 @@ class Webhook {
   Webhook._fromApi(this.client, this.raw) {
     this.http = client.http;
 
-    this.name = raw['name'];
-    this.id = new Snowflake(raw['id']);
-    this.token = raw['token'];
+    this.name = raw['name'] as String;
+    this.id = new Snowflake(raw['id'] as String);
+    this.token = raw['token'] as String;
 
     if (raw.containsKey('channel_id')) {
-      this.channel = this.client.channels[this.channelId];
-      this.channelId = new Snowflake(raw['channel_id']);
+      this.channel = this.client.channels[this.channelId.id] as TextChannel;
+      this.channelId = new Snowflake(raw['channel_id'] as String);
     }
 
     if (raw.containsKey('guild_id')) {
-      this.guildId = new Snowflake(raw['guild_id']);
+      this.guildId = new Snowflake(raw['guild_id'] as String);
       this.guild = this.client.guilds[this.guildId];
     }
 
@@ -60,11 +60,11 @@ class Webhook {
   }
 
   Webhook._fromToken(this.http, Map<String, dynamic> raw) {
-    this.name = raw['name'];
-    this.id = raw['id'];
-    this.token = raw['token'];
-    this.channelId = raw['channel_id'];
-    this.guildId = raw['guild_id'];
+    this.name = raw['name'] as String;
+    this.id = new Snowflake(raw['id'] as String);
+    this.token = raw['token'] as String;
+    this.channelId = new Snowflake(raw['channel_id'] as String);
+    this.guildId = new Snowflake(raw['guild_id'] as String);
     this.createdAt = id.timestamp;
   }
 
@@ -80,7 +80,7 @@ class Webhook {
   Future<Webhook> edit({String name, String auditReason: ""}) async {
     HttpResponse r = await this.http.send('PATCH', "/webhooks/$id/$token",
         body: {"name": name}, reason: auditReason);
-    this.name = r.body.asJson()['name'];
+    this.name = r.body.asJson()['name'] as String;
     return this;
   }
 

@@ -12,8 +12,8 @@ class VoiceChannel extends Channel with GuildChannel {
       : super._new(client, data, "voice") {
     initialize(data, client, guild);
 
-    this.bitrate = raw['bitrate'];
-    this.userLimit = raw['user_limit'];
+    this.bitrate = raw['bitrate'] as int;
+    this.userLimit = raw['user_limit'] as int;
     this.guild.channels[this.id.toString()] = this;
   }
 

@@ -24,10 +24,10 @@ class OAuth2Guild {
   DateTime createdAt;
 
   OAuth2Guild._new(this.client, this.raw) {
-    this.permissions = new Permissions.fromInt(raw['permissions']);
-    this.icon = raw['icon'];
-    this.id = new Snowflake(raw['id']);
-    this.name = raw['name'];
+    this.permissions = new Permissions.fromInt(raw['permissions'] as int);
+    this.icon = raw['icon'] as String;
+    this.id = new Snowflake(raw['id'] as String);
+    this.name = raw['name'] as String;
     this.createdAt = id.timestamp;
   }
 

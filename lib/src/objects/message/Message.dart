@@ -102,16 +102,17 @@ class Message {
     this._onReactionsRemoved = new StreamController.broadcast();
     this.onReactionsRemoved = this._onReactionsRemoved.stream;
 
-    this.content = raw['content'];
-    this.id = new Snowflake(raw['id']);
-    this.nonce = raw['nonce'];
-    this.timestamp = DateTime.parse(raw['timestamp']);
+    this.content = raw['content'] as String;
+    this.id = new Snowflake(raw['id'] as String);
+    this.nonce = raw['nonce'] as String;
+    this.timestamp = DateTime.parse(raw['timestamp'] as String);
     this.author =
         new User._new(this.client, raw['author'] as Map<String, dynamic>);
-    this.channel = this.client.channels[raw['channel_id']];
-    this.pinned = raw['pinned'];
-    this.tts = raw['tts'];
-    this.mentionEveryone = raw['mention_everyone'];
+    this.channel =
+        this.client.channels[raw['channel_id'] as String] as MessageChannel;
+    this.pinned = raw['pinned'] as bool;
+    this.tts = raw['tts'] as bool;
+    this.mentionEveryone = raw['mention_everyone'] as bool;
     this.createdAt = id.timestamp;
 
     this.channel._cacheMessage(this);
@@ -124,41 +125,42 @@ class Message {
 
       if (raw['mention_roles'] != null) {
         this.roleMentions = new Map<String, Role>();
-        raw['mention_roles'].forEach((String o) {
+        raw['mention_roles'].forEach((dynamic o) {
           this.roleMentions[guild.roles[o].id.toString()] = guild.roles[o];
         });
       }
     }
 
     if (raw['edited_timestamp'] != null) {
-      this.editedTimestamp = DateTime.parse(raw['edited_timestamp']);
+      this.editedTimestamp = DateTime.parse(raw['edited_timestamp'] as String);
     }
 
     this.mentions = new Map<String, User>();
-    raw['mentions'].forEach((Map<String, dynamic> o) {
-      final User user = new User._new(this.client, o);
+    raw['mentions'].forEach((dynamic o) {
+      final User user = new User._new(this.client, o as Map<String, dynamic>);
       this.mentions[user.id.toString()] = user;
     });
     this.mentions;
 
     this.embeds = new Map<String, Embed>();
-    raw['embeds'].forEach((Map<String, dynamic> o) {
-      Embed embed = new Embed._new(this.client, o);
+    raw['embeds'].forEach((dynamic o) {
+      Embed embed = new Embed._new(this.client, o as Map<String, dynamic>);
       this.embeds[embed.title] = embed;
     });
     this.embeds;
 
     this.attachments = new Map<String, Attachment>();
-    raw['attachments'].forEach((Map<String, dynamic> o) {
-      final Attachment attachment = new Attachment._new(this.client, o);
+    raw['attachments'].forEach((dynamic o) {
+      final Attachment attachment =
+          new Attachment._new(this.client, o as Map<String, dynamic>);
       this.attachments[attachment.id.toString()] = attachment;
     });
     this.attachments;
 
     this.reactions = new List<Reaction>();
     if (raw['reactions'] != null) {
-      raw['reactions'].forEach((Map<String, dynamic> o) {
-        this.reactions.add(new Reaction._new(o));
+      raw['reactions'].forEach((dynamic o) {
+        this.reactions.add(new Reaction._new(o as Map<String, dynamic>));
       });
     }
     this.reactions;
@@ -196,7 +198,7 @@ class Message {
         'PATCH', '/channels/${this.channel.id}/messages/${this.id}',
         body: <String, dynamic>{
           "content": newContent,
-          "embed": (embed != null ? embed.build() : "")
+          "embed": (embed != null ? embed._build() : "")
         });
     return new Message._new(
         this.client, r.body.asJson() as Map<String, dynamic>);
