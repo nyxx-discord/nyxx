@@ -18,116 +18,126 @@ import 'dart:mirrors';
 import 'dart:collection';
 import 'dart:io';
 
-//import 'src/internals.dart' as internals;
-
 import 'package:http_parser/http_parser.dart' as http_parser;
 import 'package:w_transport/w_transport.dart' as w_transport;
 import 'package:w_transport/vm.dart' show vmTransportPlatform;
 import 'package:logging/logging.dart';
 
-part 'src/internal/_Constants.dart';
-part 'src/internal/_EventController.dart';
-part 'src/internal/_WS.dart';
-part 'src/internal/Http.dart';
-part 'src/internal/Util.dart';
+part 'src/nyxx/Client.dart';
+part 'src/nyxx/ClientOptions.dart';
 
-part 'src/objects/auditlogs/AuditLog.dart';
-part 'src/objects/auditlogs/AuditLogEntry.dart';
-part 'src/objects/auditlogs/AuditLogChange.dart';
+// INTERNAL
 
-part 'src/Client.dart';
-part 'src/objects/Snowflake.dart';
+part 'src/nyxx/internal/_Constants.dart';
+part 'src/nyxx/internal/_EventController.dart';
+part 'src/nyxx/internal/_WS.dart';
+part 'src/nyxx/internal/Http.dart';
 
-part 'src/builders/EmbedBuilder.dart';
-part 'src/builders/EmbedAuthorBuilder.dart';
-part 'src/builders/EmbedFieldBuilder.dart';
-part 'src/builders/EmbedFooterBuilder.dart';
-part 'src/builders/EmbedProviderBuilder.dart';
-part 'src/builders/PermissionsBuilder.dart';
+// ERROR
 
-part 'src/objects/embed/EmbedField.dart';
-part 'src/objects/embed/EmbedAuthor.dart';
-part 'src/objects/embed/EmbedFooter.dart';
-part 'src/objects/embed/EmbedVideo.dart';
-part 'src/objects/embed/Embed.dart';
-part 'src/objects/embed/EmbedProvider.dart';
-part 'src/objects/embed/EmbedThumbnail.dart';
+part 'src/nyxx/errors/HttpError.dart';
+part 'src/nyxx/errors/InvalidTokenError.dart';
 
-part 'src/events/BeforeHttpRequestSendEvent.dart';
-part 'src/events/ChannelCreateEvent.dart';
-part 'src/events/ChannelDeleteEvent.dart';
-part 'src/events/ChannelUpdateEvent.dart';
-part 'src/events/DisconnectEvent.dart';
-part 'src/events/GuildBanAddEvent.dart';
-part 'src/events/GuildBanRemoveEvent.dart';
-part 'src/events/GuildCreateEvent.dart';
-part 'src/events/GuildDeleteEvent.dart';
-part 'src/events/GuildMemberAddEvent.dart';
-part 'src/events/GuildMemberRemoveEvent.dart';
-part 'src/events/GuildMemberUpdateEvent.dart';
-part 'src/events/GuildUnavailableEvent.dart';
-part 'src/events/GuildUpdateEvent.dart';
-part 'src/events/HttpErrorEvent.dart';
-part 'src/events/HttpResponseEvent.dart';
-part 'src/events/MessageDeleteEvent.dart';
-part 'src/events/MessageEvent.dart';
-part 'src/events/MessageUpdateEvent.dart';
-part 'src/events/PresenceUpdateEvent.dart';
-part 'src/events/RatelimitEvent.dart';
-part 'src/events/RawEvent.dart';
-part 'src/events/ReadyEvent.dart';
-part 'src/events/RoleCreateEvent.dart';
-part 'src/events/RoleDeleteEvent.dart';
-part 'src/events/RoleUpdateEvent.dart';
-part 'src/events/TypingEvent.dart';
-part 'src/events/ChannelPinsUpdateEvent.dart';
-part 'src/events/GuildEmojisUpdateEvent.dart';
-part 'src/events/MessageDeleteBulkEvent.dart';
-part 'src/events/MessageReactionEvent.dart';
-part 'src/events/MessageReactionsRemovedEvent.dart';
-part 'src/events/VoiceServerUpdateEvent.dart';
-part 'src/events/VoiceStateUpdateEvent.dart';
-part 'src/events/WebhookUpdateEvent.dart';
+// EVENTS
 
-part 'src/objects/VoiceState.dart';
+part 'src/nyxx/events/BeforeHttpRequestSendEvent.dart';
+part 'src/nyxx/events/ChannelCreateEvent.dart';
+part 'src/nyxx/events/ChannelDeleteEvent.dart';
+part 'src/nyxx/events/ChannelUpdateEvent.dart';
+part 'src/nyxx/events/DisconnectEvent.dart';
+part 'src/nyxx/events/GuildBanAddEvent.dart';
+part 'src/nyxx/events/GuildBanRemoveEvent.dart';
+part 'src/nyxx/events/GuildCreateEvent.dart';
+part 'src/nyxx/events/GuildDeleteEvent.dart';
+part 'src/nyxx/events/GuildMemberAddEvent.dart';
+part 'src/nyxx/events/GuildMemberRemoveEvent.dart';
+part 'src/nyxx/events/GuildMemberUpdateEvent.dart';
+part 'src/nyxx/events/GuildUnavailableEvent.dart';
+part 'src/nyxx/events/GuildUpdateEvent.dart';
+part 'src/nyxx/events/HttpErrorEvent.dart';
+part 'src/nyxx/events/HttpResponseEvent.dart';
+part 'src/nyxx/events/MessageDeleteEvent.dart';
+part 'src/nyxx/events/MessageEvent.dart';
+part 'src/nyxx/events/MessageUpdateEvent.dart';
+part 'src/nyxx/events/PresenceUpdateEvent.dart';
+part 'src/nyxx/events/RatelimitEvent.dart';
+part 'src/nyxx/events/RawEvent.dart';
+part 'src/nyxx/events/ReadyEvent.dart';
+part 'src/nyxx/events/RoleCreateEvent.dart';
+part 'src/nyxx/events/RoleDeleteEvent.dart';
+part 'src/nyxx/events/RoleUpdateEvent.dart';
+part 'src/nyxx/events/TypingEvent.dart';
+part 'src/nyxx/events/ChannelPinsUpdateEvent.dart';
+part 'src/nyxx/events/GuildEmojisUpdateEvent.dart';
+part 'src/nyxx/events/MessageDeleteBulkEvent.dart';
+part 'src/nyxx/events/MessageReactionEvent.dart';
+part 'src/nyxx/events/MessageReactionsRemovedEvent.dart';
+part 'src/nyxx/events/VoiceServerUpdateEvent.dart';
+part 'src/nyxx/events/VoiceStateUpdateEvent.dart';
+part 'src/nyxx/events/WebhookUpdateEvent.dart';
 
-part 'src/objects/message/UnicodeEmoji.dart';
-part 'src/objects/message/GuildEmoji.dart';
-part 'src/objects/message/Emoji.dart';
-part 'src/objects/message/EmojisUnicode.dart';
-part 'src/objects/message/Reaction.dart';
-part 'src/objects/message/Message.dart';
-part 'src/objects/message/Attachment.dart';
+// BUILDERS
 
-part 'src/objects/channel/VoiceChannel.dart';
-part 'src/objects/channel/GroupChannel.dart';
-part 'src/objects/channel/TextChannel.dart';
-part 'src/objects/channel/GuildChannel.dart';
-part 'src/objects/channel/GroupDMChannel.dart';
-part 'src/objects/channel/DMChannel.dart';
-part 'src/objects/channel/Channel.dart';
-part 'src/objects/channel/MessageChannel.dart';
+part 'src/nyxx/builders/PermissionsBuilder.dart';
+part 'src/nyxx/builders/EmbedBuilder.dart';
+part 'src/nyxx/builders/EmbedAuthorBuilder.dart';
+part 'src/nyxx/builders/EmbedFieldBuilder.dart';
+part 'src/nyxx/builders/EmbedFooterBuilder.dart';
+part 'src/nyxx/builders/EmbedProviderBuilder.dart';
 
-part 'src/objects/VoiceRegion.dart';
-part 'src/objects/ClientOAuth2Application.dart';
-part 'src/objects/ClientOptions.dart';
-part 'src/objects/ClientUser.dart';
-part 'src/objects/Game.dart';
-part 'src/objects/Guild.dart';
-part 'src/objects/Invite.dart';
-part 'src/objects/InviteChannel.dart';
-part 'src/objects/InviteGuild.dart';
-part 'src/objects/Member.dart';
-part 'src/objects/OAuth2Application.dart';
-part 'src/objects/OAuth2Guild.dart';
-part 'src/objects/OAuth2Info.dart';
-part 'src/objects/Permissions.dart';
-part 'src/objects/Role.dart';
-part 'src/objects/Shard.dart';
-part 'src/objects/User.dart';
-part 'src/objects/Webhook.dart';
-part 'src/objects/AbstractPermissions.dart';
-part 'src/objects/ChannelPermissions.dart';
-part 'src/objects/PermissionsConstants.dart';
+// OBJECTS
 
-part 'src/errors/HttpError.dart';
+part 'src/nyxx/objects/Snowflake.dart';
+part 'src/nyxx/objects/VoiceState.dart';
+part 'src/nyxx/objects/VoiceRegion.dart';
+part 'src/nyxx/objects/Game.dart';
+part 'src/nyxx/objects/Invite.dart';
+part 'src/nyxx/objects/InviteChannel.dart';
+part 'src/nyxx/objects/InviteGuild.dart';
+part 'src/nyxx/objects/Shard.dart';
+part 'src/nyxx/objects/Webhook.dart';
+
+part 'src/nyxx/objects/auditlogs/AuditLog.dart';
+part 'src/nyxx/objects/auditlogs/AuditLogEntry.dart';
+part 'src/nyxx/objects/auditlogs/AuditLogChange.dart';
+
+part 'src/nyxx/objects/channel/VoiceChannel.dart';
+part 'src/nyxx/objects/channel/GroupChannel.dart';
+part 'src/nyxx/objects/channel/TextChannel.dart';
+part 'src/nyxx/objects/channel/GuildChannel.dart';
+part 'src/nyxx/objects/channel/GroupDMChannel.dart';
+part 'src/nyxx/objects/channel/DMChannel.dart';
+part 'src/nyxx/objects/channel/Channel.dart';
+part 'src/nyxx/objects/channel/MessageChannel.dart';
+
+part 'src/nyxx/objects/embed/EmbedField.dart';
+part 'src/nyxx/objects/embed/EmbedAuthor.dart';
+part 'src/nyxx/objects/embed/EmbedFooter.dart';
+part 'src/nyxx/objects/embed/EmbedVideo.dart';
+part 'src/nyxx/objects/embed/Embed.dart';
+part 'src/nyxx/objects/embed/EmbedProvider.dart';
+part 'src/nyxx/objects/embed/EmbedThumbnail.dart';
+
+part 'src/nyxx/objects/guild/ClientUser.dart';
+part 'src/nyxx/objects/guild/Guild.dart';
+part 'src/nyxx/objects/guild/Member.dart';
+part 'src/nyxx/objects/guild/Role.dart';
+part 'src/nyxx/objects/guild/User.dart';
+
+part 'src/nyxx/objects/message/UnicodeEmoji.dart';
+part 'src/nyxx/objects/message/GuildEmoji.dart';
+part 'src/nyxx/objects/message/Emoji.dart';
+part 'src/nyxx/objects/message/EmojisUnicode.dart';
+part 'src/nyxx/objects/message/Reaction.dart';
+part 'src/nyxx/objects/message/Message.dart';
+part 'src/nyxx/objects/message/Attachment.dart';
+
+part 'src/nyxx/objects/OAuth/ClientOAuth2Application.dart';
+part 'src/nyxx/objects/OAuth/OAuth2Application.dart';
+part 'src/nyxx/objects/OAuth/OAuth2Guild.dart';
+part 'src/nyxx/objects/OAuth/OAuth2Info.dart';
+
+part 'src/nyxx/objects/permissions/Permissions.dart';
+part 'src/nyxx/objects/permissions/AbstractPermissions.dart';
+part 'src/nyxx/objects/permissions/ChannelPermissions.dart';
+part 'src/nyxx/objects/permissions/PermissionsConstants.dart';
