@@ -130,4 +130,5 @@ part 'src/objects/AbstractPermissions.dart';
 part 'src/objects/ChannelPermissions.dart';
 part 'src/objects/PermissionsConstants.dart';
 
+part 'src/errors/InvalidTokenError.dart';
 part 'src/errors/HttpError.dart';
