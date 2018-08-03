@@ -12,7 +12,11 @@ import 'dart:async';
 import 'dart:convert';
 
 part 'src/voice/VoiceManager.dart';
+part 'src/voice/Player.dart';
 
+part 'src/voice/events/PlayerUpdateEvent.dart';
+
+part 'src/voice/opcodes/OpStop.dart';
 part 'src/voice/opcodes/OpPause.dart';
 part 'src/voice/opcodes/OpPlay.dart';
 part 'src/voice/opcodes/OpVoiceUpdate.dart';
