@@ -6,6 +6,7 @@ import 'package:w_transport/w_transport.dart' as w_transport;
 import 'package:w_transport/vm.dart' show vmTransportPlatform;
 import 'package:logging/logging.dart';
 import 'package:yaml/yaml.dart';
+import 'src/Util.dart' as util;
 
 import 'dart:io';
 import 'dart:async';

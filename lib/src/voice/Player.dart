@@ -31,22 +31,60 @@ class Player {
 
     _guild.shard.send("VOICE_STATE_UPDATE", new Opcode4(_guild, channel, false, false)._build());
 
-    var stateUp = await _client.onVoiceStateUpdate.first;
-    var servUp = await _client.onVoiceServerUpdate.first;
-    _rawEvent = servUp.raw;
-    _currentState = stateUp.state;
+    var _rawEvent = (await _client.onVoiceServerUpdate.first).raw;
+    var _currentState = (await _client.onVoiceStateUpdate.first).state;
 
     _webSocket.add(jsonEncode(new OpVoiceUpdate(_guild.id.toString(), _currentState.sessionId, _rawEvent).build()));
 
+    var group = util.merge([_client.onVoiceServerUpdate, _client.onVoiceStateUpdate]);
+    await for (var e in group) {
+      print(e);
+
+      if(e is VoiceStateUpdateEvent) {
+        _currentState = e.state;
+        _webSocket.add(jsonEncode(new OpVoiceUpdate(_guild.id.toString(), _currentState.sessionId, _rawEvent).build()));
+      } else if(e is VoiceServerUpdateEvent) {
+        _rawEvent = e.raw;
+        _webSocket.add(jsonEncode(new OpVoiceUpdate(_guild.id.toString(), _currentState.sessionId, _rawEvent).build()));
+      }
+    }
+
+    /*
     sub1 = _client.onVoiceServerUpdate.listen((e) {
       _rawEvent = e.raw;
+      print(e);
       _webSocket.add(jsonEncode(new OpVoiceUpdate(_guild.id.toString(), _currentState.sessionId, _rawEvent).build()));
     });
 
     sub2 = _client.onVoiceStateUpdate.listen((e) {
       _currentState = e.state;
+      print(e);
       _webSocket.add(jsonEncode(new OpVoiceUpdate(_guild.id.toString(), _currentState.sessionId, _rawEvent).build()));
     });
+
+    print("sessions id: ${_currentState.sessionId}");
+*/
+
+/*
+    var stateUp = await _client.onVoiceStateUpdate.firstWhere((e) => e.state.channel.id.toString() == currentChannel.id.toString());
+    var servUp = await _client.onVoiceServerUpdate.firstWhere((e) => e.guild.id.toString() == _guild.id.toString());
+    _rawEvent = servUp.raw;
+    _currentState = stateUp.state;
+
+    print("sessions id: ${_currentState.sessionId}");
+
+    _webSocket.add(jsonEncode(new OpVoiceUpdate(_guild.id.toString(), _currentState.sessionId, _rawEvent).build()));
+
+    sub1 = _client.onVoiceServerUpdate.where((e) => e.guild.id.toString() == this._guild.id.toString).listen((e) {
+      _rawEvent = e.raw;
+      _webSocket.add(jsonEncode(new OpVoiceUpdate(_guild.id.toString(), _currentState.sessionId, _rawEvent).build()));
+    });
+
+    sub2 = _client.onVoiceStateUpdate.where((e) => e.state.channel.id.toString() == currentChannel.id.toString()).listen((e) {
+      _currentState = e.state;
+      _webSocket.add(jsonEncode(new OpVoiceUpdate(_guild.id.toString(), _currentState.sessionId, _rawEvent).build()));
+    });
+    */
   }
 
   Future<Null> changeChannel(VoiceChannel channel, {bool muted: false, bool deafen: false}) {
