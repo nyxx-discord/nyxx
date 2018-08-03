@@ -1,3 +1,16 @@
+## [0.24.0](https://github.com/l7ssha/nyxx/compare/0.23.1...0.24.0)
+_Tue 03.08.2018_
+
+- **Changes**
+  * nyxx now supports Dart 2.0
+  * Added Interactivity module
+  * Added few methods to `CommandContext`
+  * Rewritten `CooldownCache`
+
+- **Bug fixes**
+  * Fixed `Command` help generating error
+  * Fixed Emojis equals operator
+
 ## [0.23.1](https://github.com/l7ssha/nyxx/compare/0.23.0...0.23.1)
 _Tue 31.07.2018_
 
