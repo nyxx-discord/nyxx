@@ -82,12 +82,7 @@ class Shard {
 
   /// Sends WS data.
   void send(String op, dynamic d) {
-    var a = jsonEncode(<String, dynamic>{"op": _Constants.opCodes[op], "d": d});
-
-    if(op == "VOICE_STATE_UPDATE")
-      print(a);
-
-    this._socket.add(a);
+    this._socket.add(jsonEncode(<String, dynamic>{"op": _Constants.opCodes[op], "d": d}));
   }
 
   void _heartbeat() {
