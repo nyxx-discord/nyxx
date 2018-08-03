@@ -73,6 +73,7 @@ class VoiceManager {
 
   Future<Player> getPlayer(Guild guild) {
     return new Future<Player>.delayed(const Duration(seconds: 2), () {
+      print(_playersCache.length);
       if(_playersCache.containsKey(guild.id.toString()))
         return _playersCache[guild.id.toString()];
       else {
