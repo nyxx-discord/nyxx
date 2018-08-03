@@ -1,23 +1,27 @@
 part of nyxx.voice;
 
+VoiceManager _manager = null;
+
 class VoiceManager {
   Uri _wsPath;
   Uri _restPath;
   String _password;
   String _clientId;
-
   Client _client;
   w_transport.WebSocket _webSocket;
 
-  Guild _guild;
+  static Map<String, Player> _playersCache = new Map();
 
-  VoiceState currentState;
-  dynamic rawEvent;
+  static VoiceManager getManager({String clientId, Client client, String yamlConfigFile}) {
+    if(_manager == null) {
+      _manager = new VoiceManager._new(clientId, client, yamlConfigFile);
+      return _manager;
+    }
 
-  bool isPlaying = false;
-  VoiceChannel currentChannel;
+    return _manager;
+  }
 
-  VoiceManager(this._clientId, this._client, this._guild, String yamlConfigFile) {
+  VoiceManager._new(this._clientId, this._client, String yamlConfigFile) {
     var file = new File(yamlConfigFile);
     var contents = file.readAsStringSync();
     var config = loadYaml(contents);
@@ -29,7 +33,7 @@ class VoiceManager {
     _connect();
   }
 
-  Future _connect() {
+  Future<Null> _connect() {
     try {
       w_transport.WebSocket.connect(_wsPath, headers: {
         "Authorization": _password,
@@ -46,62 +50,8 @@ class VoiceManager {
     } on w_transport.WebSocketException {
       throw new Exception("Failed connect to websocket");
     }
-  }
 
-  Future<Null> connect(VoiceChannel channel) async {
-    currentChannel = channel;
-    _guild.shard.send("VOICE_STATE_UPDATE", new Opcode4(_guild, channel, false, false)._build());
-
-    var stateUp = await _client.onVoiceStateUpdate.first;
-    var servUp = await _client.onVoiceServerUpdate.first;
-    rawEvent = servUp.raw;
-    currentState = stateUp.state;
-
-    _webSocket.add(jsonEncode(new OpVoiceUpdate(_guild.id.toString(), currentState.sessionId, rawEvent).build()));
-
-    _client.onVoiceServerUpdate.listen((e) {
-      rawEvent = e.raw;
-      _webSocket.add(jsonEncode(new OpVoiceUpdate(_guild.id.toString(), currentState.sessionId, rawEvent).build()));
-    });
-
-    _client.onVoiceStateUpdate.listen((e) {
-      currentState = e.state;
-      _webSocket.add(jsonEncode(new OpVoiceUpdate(_guild.id.toString(), currentState.sessionId, rawEvent).build()));
-    });
-  }
-
-  Future<Null> changeChannel(VoiceChannel channel, {bool muted: false, bool deafen: false}) {
-    currentChannel = channel;
-    _guild.shard.send("VOICE_STATE_UPDATE", new Opcode4(_guild, channel, muted, deafen)._build());
-  }
-
-  Future<Null> play(String song) async {
-    var req = w_transport.JsonRequest()
-      ..uri = _restPath
-      ..path = "/loadtracks"
-      ..headers = { "Authorization": "password" }
-      ..queryParameters = { "identifier" : song };
-
-    var res = await req.send("GET");
-
-    if(res.status != 200)
-      throw new Exception("Cannot comunicate with lavalink wia http");
-
-    var r = res.body.asJson() as Map<String, dynamic>;
-    var track = new TrackResponse._new(r);
-
-    _webSocket.add(jsonEncode(new OpPlay(_guild, track.entity as Track).build()));
-    isPlaying = false;
-  }
-
-  Future<Null> disconnect() async {
-    _guild.shard.send("VOICE_STATE_UPDATE", new Opcode4(_guild, null, false, false)._build());
-    _webSocket.add(jsonEncode(new OpPause(_guild).build()));
-  }
-
-  Future<Null> stop() async {
-    //_guild.shard.send("VOICE_STATE_UPDATE", new Opcode4(_guild, null, false, false)._build());
-    _webSocket.add(jsonEncode(new OpPause(_guild).build()));
+    return null;
   }
 
   Future<Null> handleMsg(Map<String, dynamic> msg) async {
@@ -109,7 +59,8 @@ class VoiceManager {
 
     switch(op) {
       case 'playerUpdate':
-        print(msg);
+        var e = new PlayerUpdateEvent._new(msg);
+        _playersCache[e.guildId].isConnected? _playersCache[e.guildId]._onPlayerUpdate.add(e) : {};
         break;
       case 'stats':
         break;
@@ -118,5 +69,17 @@ class VoiceManager {
       default:
         print("Fault!");
     }
+  }
+
+  Future<Player> getPlayer(Guild guild) {
+    return new Future<Player>.delayed(const Duration(seconds: 2), () {
+      if(_playersCache.containsKey(guild.id.toString()))
+        return _playersCache[guild.id.toString()];
+      else {
+        var tmp = new Player._new(guild, _client, _webSocket, _restPath);
+        _playersCache[guild.id.toString()] = tmp;
+        return tmp;
+      }
+    });
   }
 }
