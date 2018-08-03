@@ -57,7 +57,7 @@ class EchoCommand extends command.CommandContext {
 
   @override
   void getHelp(bool isAdmin, StringBuffer buffer) {
-    buffer.writeln("* echo - Echoes yor message");
+    buffer.writeln("* echo - Echoes your message");
   }
 }
 
