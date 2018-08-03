@@ -21,9 +21,9 @@ class InviteChannel {
   DateTime createdAt;
 
   InviteChannel._new(this.client, this.raw) {
-    this.id = new Snowflake(raw['id']);
-    this.name = raw['name'];
-    this.type = raw['type'];
+    this.id = new Snowflake(raw['id'] as String);
+    this.name = raw['name'] as String;
+    this.type = raw['type'] as String;
     this.createdAt = id.timestamp;
   }
 

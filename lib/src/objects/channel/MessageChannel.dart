@@ -21,7 +21,7 @@ class MessageChannel extends Channel {
   MessageChannel._new(Client client, Map<String, dynamic> data, String type)
       : super._new(client, data, type) {
     if (raw.containsKey('last_message_id') && raw['last_message_id'] != null)
-      this.lastMessageID = new Snowflake(raw['last_message_id']);
+      this.lastMessageID = new Snowflake(raw['last_message_id'] as String);
     this.messages = new LinkedHashMap<String, Message>();
 
     _onMessage = new StreamController.broadcast();
@@ -49,9 +49,9 @@ class MessageChannel extends Channel {
       {String content = "", EmbedBuilder embed = null}) async {
     final HttpResponse r = await this.client.http.sendMultipart(
         'POST', '/channels/${this.id}/messages', filepaths,
-        data: JSON.encode(<String, dynamic>{
+        data: jsonEncode(<String, dynamic>{
           "content": content,
-          "embed": embed != null ? embed.build() : ""
+          "embed": embed != null ? embed._build() : ""
         }));
 
     return new Message._new(
@@ -90,7 +90,7 @@ class MessageChannel extends Channel {
       "content": newContent,
       "tts": tts,
       "nonce": nonce,
-      "embed": embed != null ? embed.build() : ""
+      "embed": embed != null ? embed._build() : ""
     });
     return new Message._new(
         this.client, r.body.asJson() as Map<String, dynamic>);
@@ -132,7 +132,7 @@ class MessageChannel extends Channel {
     Snowflake before: null,
     Snowflake around: null,
   }) async {
-    Map<String, dynamic> query = {"limit": limit.toString()};
+    Map<String, String> query = {"limit": limit.toString()};
 
     if (after != null) query['after'] = after.toString();
     if (before != null) query['before'] = before.toString();
@@ -147,7 +147,7 @@ class MessageChannel extends Channel {
         new LinkedHashMap<String, Message>();
 
     for (Map<String, dynamic> val in r.body.asJson()) {
-      response[val["id"]] = new Message._new(this.client, val);
+      response[val["id"] as String] = new Message._new(this.client, val);
     }
 
     return response;

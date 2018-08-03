@@ -12,8 +12,7 @@ class CooldownCache {
       int now = new DateTime.now().millisecondsSinceEpoch;
 
       _cache.forEach((k, v) {
-        if(now - v >= 1800000)
-          _cache.remove(k);
+        if (now - v >= 1800000) _cache.remove(k);
       });
     });
   }
@@ -27,9 +26,9 @@ class CooldownCache {
       var node = new _CacheKey._new(userId, commandName);
 
       bool found = false;
+
       /// Search for entry
-      if (_cache.containsKey(node))
-        found = true;
+      if (_cache.containsKey(node)) found = true;
 
       /// If not found crete new, insert it and return
       if (!found) {
@@ -55,7 +54,10 @@ class _CacheKey {
   _CacheKey._new(this._id, this._command);
 
   @override
-  bool operator ==(other) => other is _CacheKey && this._id == other._id && this._command == other._command;
+  bool operator ==(other) =>
+      other is _CacheKey &&
+      this._id == other._id &&
+      this._command == other._command;
 
   @override
   int get hashCode =>

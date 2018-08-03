@@ -20,6 +20,6 @@ class AuditLogChange {
 
     if (raw['old_value'] != null) oldValue = raw['old_value'];
 
-    key = raw['key'];
+    key = raw['key'] as String;
   }
 }

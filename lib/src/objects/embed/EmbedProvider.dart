@@ -12,9 +12,9 @@ class EmbedProvider {
   String url;
 
   EmbedProvider._new(this.raw) {
-    if (raw['name'] != null) this.name = raw['name'];
+    if (raw['name'] != null) this.name = raw['name'] as String;
 
-    if (raw['url'] != null) this.url = raw['url'];
+    if (raw['url'] != null) this.url = raw['url'] as String;
   }
 
   /// Returns a string representation of this object.

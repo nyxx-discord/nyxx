@@ -9,8 +9,9 @@ class GuildEmojisUpdateEvent {
     if (client.ready) {
       final Guild guild = client.guilds[json['d']['guild_id']];
       emojis = new Map();
-      json['d']['emojis'].forEach((Map<String, dynamic> o) {
-        emojis[o['id']] = new GuildEmoji._new(client, o, guild);
+      json['d']['emojis'].forEach((dynamic o) {
+        emojis[(o['id'] as String)] =
+            new GuildEmoji._new(client, o as Map<String, dynamic>, guild);
       });
       client._events.onGuildEmojisUpdate.add(this);
     }

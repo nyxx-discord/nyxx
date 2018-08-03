@@ -33,13 +33,13 @@ class Attachment {
   DateTime createdAt;
 
   Attachment._new(this.client, this.raw) {
-    this.id = new Snowflake(raw['id']);
-    this.filename = raw['filename'];
-    this.url = raw['url'];
-    this.proxyUrl = raw['proxyUrl'];
-    this.size = raw['size'];
-    this.height = raw['height'];
-    this.width = raw['width'];
+    this.id = new Snowflake(raw['id'] as String);
+    this.filename = raw['filename'] as String;
+    this.url = raw['url'] as String;
+    this.proxyUrl = raw['proxyUrl'] as String;
+    this.size = raw['size'] as int;
+    this.height = raw['height'] as int;
+    this.width = raw['width'] as int;
     this.createdAt = id.timestamp;
   }
 

@@ -24,11 +24,11 @@ class VoiceRegion {
   Map<String, dynamic> raw;
 
   VoiceRegion._new(this.raw) {
-    this.id = raw['id'];
-    this.name = raw['name'];
-    this.vip = raw['vip'];
-    this.optimal = raw['optimal'];
-    this.deprecated = raw['deprecated'];
-    this.custom = raw['custom'];
+    this.id = raw['id'] as String;
+    this.name = raw['name'] as String;
+    this.vip = raw['vip'] as bool;
+    this.optimal = raw['optimal'] as bool;
+    this.deprecated = raw['deprecated'] as bool;
+    this.custom = raw['custom'] as bool;
   }
 }

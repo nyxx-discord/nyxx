@@ -46,7 +46,7 @@ class HttpBase {
     this._streamController = new StreamController<HttpResponse>.broadcast();
     this.stream = _streamController.stream;
 
-    new BeforeHttpRequestSendEvent._new(this.http._client, this);
+    new BeforeHttpRequestSendEvent._new(this.http._client, this as HttpRequest);
 
     if (this.http._client == null ||
         !this.http._client._events.beforeHttpRequestSend.hasListener)
@@ -54,7 +54,7 @@ class HttpBase {
   }
 
   /// Sends the request off to the bucket to be processed and sent.
-  void send() => this.bucket._push(this);
+  void send() => this.bucket._push(this as HttpRequest);
 
   /// Destroys the request.
   void abort() {
@@ -76,7 +76,8 @@ class HttpBase {
                 .send(this.method, this.uri, headers: this.headers));
       }
     } on w_transport.RequestException catch (err) {
-      return HttpResponse._fromResponse(this, err.response);
+      return HttpResponse._fromResponse(
+          this, err.response as w_transport.Response);
     }
   }
 }
@@ -118,7 +119,8 @@ class HttpMultipartRequest extends HttpBase {
                 .send(this.method, this.uri, headers: this.headers));
       }
     } on w_transport.RequestException catch (err) {
-      return HttpResponse._fromResponse(this, err.response);
+      return HttpResponse._fromResponse(
+          this, err.response as w_transport.Response);
     }
   }
 }
@@ -186,7 +188,7 @@ class HttpBucket {
 
   HttpBucket._new(this.url);
 
-  void _push(dynamic request) {
+  void _push(HttpRequest request) {
     this.requests.add(request);
     this._handle();
   }
@@ -221,9 +223,11 @@ class HttpBucket {
         }
 
         if (r.status == 429) {
-          new RatelimitEvent._new(request.http._client, request, false, r);
+          new RatelimitEvent._new(
+              request.http._client, request as HttpRequest, false, r);
           new Timer(
-              new Duration(milliseconds: r.body.asJson()['retry_after'] + 500),
+              new Duration(
+                  milliseconds: (r.body.asJson()['retry_after'] as int) + 500),
               () => this._execute(request));
         } else {
           this.waiting = false;
@@ -242,7 +246,8 @@ class HttpBucket {
         this.rateLimitRemaining = 1;
         this._execute(request);
       } else {
-        new RatelimitEvent._new(request.http._client, request, true);
+        new RatelimitEvent._new(
+            request.http._client, request as HttpRequest, true);
         new Timer(waitTime, () {
           this.rateLimitRemaining = 1;
           this._execute(request);
@@ -276,7 +281,7 @@ class Http {
       Map<String, String> headers: const {},
       String reason}) async {
     if (_client is Client && !this._client.ready && !beforeReady)
-      throw new ClientNotReadyError();
+      throw new Exception("Client isn't ready yet.");
 
     HttpRequest request = new HttpRequest._new(
         this,
@@ -307,14 +312,14 @@ class Http {
     });
   }
 
-  Map<String, dynamic> addAuditReason(String reason) =>
-      <String, dynamic>{"X-Audit-Log-Reason": "$reason"};
+  Map<String, String> addAuditReason(String reason) =>
+      <String, String>{"X-Audit-Log-Reason": "$reason"};
 
   Future<HttpResponse> sendMultipart(
       String method, String path, List<String> filenames,
       {String data, bool beforeReady: false, String reason}) async {
     if (_client is Client && !this._client.ready && !beforeReady)
-      throw new ClientNotReadyError();
+      throw new Exception("Client isn't ready yet.");
 
     Directory current = Directory.current;
     List<String> filepaths = new List();

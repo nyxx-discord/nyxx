@@ -1,9 +1,8 @@
 /// Nyxx DISCORD API wrapper for Dart
 ///
-/// This module contains commands specific logic that this framework offers.
-/// There are 2 implementations of [Commands] handler: [InstanceCommandFramework] and [MirrorsCommandFramework].
-/// They are created to achieve same result but has different capabilities. [MirrorsCommandFramework] is more advanced and offers
-/// more functionality. In other hand [InstanceCommandFramework] is faster one, because has faster command resolution.
+/// Commands sublibrary provides tool for creating commands bots.
+/// It also provides more advanced tools for creating polls [createPoll]
+/// and paginated messages [Pagination].
 library nyxx.commands;
 
 import "dart:mirrors";
@@ -20,3 +19,6 @@ part 'src/commands/Service.dart';
 part 'src/commands/CooldownCache.dart';
 
 part 'src/commands/TypeConverter.dart';
+
+part 'src/commands/Scheduler.dart';
+part 'src/commands/Interactivity.dart';

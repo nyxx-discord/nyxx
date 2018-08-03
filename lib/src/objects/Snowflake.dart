@@ -26,10 +26,6 @@ class Snowflake {
     int _processIdBits = 5;
     int _sequenceBits = 12;
 
-    //int _maxWorkerId = -1 ^ (-1 << _workerIdBits); // 2^5-1
-    //int _maxProcessId = -1 ^ (-1 << _processIdBits); // 2^5-1
-    //int _maxSequence = -1 ^ (-1 << _sequenceBits); // 2^12-1
-
     int _timestampShift = _sequenceBits + _workerIdBits + _processIdBits;
     int _workerIdShift = _sequenceBits + _processIdBits;
     int _processShift = _sequenceBits;
@@ -62,23 +58,12 @@ class Snowflake {
 
   @override
   bool operator ==(other) {
-    if (other is Snowflake) return other.id == id;
-
-    if (other is String) return other == id;
+    if (other is Snowflake) return other.id == this.id;
+    if (other is String) return other == this.id;
 
     return false;
   }
 
   @override
-  int get hashCode {
-    int result = 17;
-    result = 37 * result + id.hashCode;
-    result = 37 * result + timestamp.hashCode;
-    result = 37 * result + timestamp.hashCode;
-    result = 37 * result + workerId.hashCode;
-    result = 37 * result + processId.hashCode;
-    result = 37 * result + sequence.hashCode;
-
-    return result;
-  }
+  int get hashCode => this.id.hashCode;
 }

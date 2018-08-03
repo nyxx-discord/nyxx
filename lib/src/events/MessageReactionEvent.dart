@@ -18,10 +18,10 @@ class MessageReactionEvent {
       Client client, Map<String, dynamic> json, bool added) {
     this.user = client.users[json['d']['user_id']];
     this.channel = client.channels[json['d']['channel_id']] as MessageChannel;
-    this.message = channel.getMessage(json['d']['message_id']);
+    this.message = channel.getMessage((json['d']['message_id'] as String));
 
     if (json['d']['emoji']['id'] == null)
-      emoji = new UnicodeEmoji._partial(json['d']['emoji']['name']);
+      emoji = new UnicodeEmoji._partial((json['d']['emoji']['name'] as String));
     else
       emoji =
           new GuildEmoji._partial(json['d']['emoji'] as Map<String, dynamic>);
