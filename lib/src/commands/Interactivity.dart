@@ -44,17 +44,17 @@ class Pagination {
 
   /// Generates pagination from String. It divides String into 250 char long pages.
   Pagination.fromString(String str, this.channel) {
-    this.pages = Util.split(str, 250).toList();
+    this.pages = util.split(str, 250).toList();
   }
 
   /// Generates pagination from String but with user specified size of single page.
   Pagination.fromStringLen(String str, int len, this.channel) {
-    this.pages = Util.split(str, len).toList();
+    this.pages = util.split(str, len).toList();
   }
 
   /// Generates pagination from String but with user specified number of pages..
   Pagination.fromStringEq(String str, int pieces, this.channel) {
-    this.pages = Util.splitEqually(str, pieces).toList();
+    this.pages = util.splitEqually(str, pieces).toList();
   }
 
   /// Generates new pagination from List of Strings. Each list element is single page.
@@ -76,7 +76,7 @@ class Pagination {
 
     new Future(() async {
       var currPage = 0;
-      var group = Util.merge([
+      var group = util.merge([
         channel.client.onMessageReactionAdded,
         channel.client.onMessageReactionRemove
       ]);

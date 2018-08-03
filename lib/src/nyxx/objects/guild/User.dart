@@ -67,7 +67,7 @@ class User {
           as DMChannel;
     } catch (err) {
       HttpResponse r = await client.http
-          .send('POST', "/users/@me/channels", body: {"recipient_id": this.id});
+          .send('POST', "/users/@me/channels", body: {"recipient_id": this.id.toString()});
       return new DMChannel._new(
           client, r.body.asJson() as Map<String, dynamic>);
     }

@@ -82,8 +82,12 @@ class Shard {
 
   /// Sends WS data.
   void send(String op, dynamic d) {
-    this._socket.add(
-        jsonEncode(<String, dynamic>{"op": _Constants.opCodes[op], "d": d}));
+    var a = jsonEncode(<String, dynamic>{"op": _Constants.opCodes[op], "d": d});
+
+    if(op == "VOICE_STATE_UPDATE")
+      print(a);
+
+    this._socket.add(a);
   }
 
   void _heartbeat() {
@@ -320,6 +324,8 @@ class Shard {
 
   void _handleErr() {
     this._heartbeatTimer.cancel();
+
+    print("Closing? ${this._socket.closeCode}");
 
     switch (this._socket.closeCode) {
       case 1005:
