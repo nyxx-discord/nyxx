@@ -12,6 +12,9 @@ class VoiceManager {
 
   static Map<String, Player> _playersCache = new Map();
 
+  StreamController<Stats> _onStats;
+  Stream<Stats> onStats;
+
   static VoiceManager getManager({String clientId, Client client, String yamlConfigFile}) {
     if(_manager == null) {
       _manager = new VoiceManager._new(clientId, client, yamlConfigFile);
@@ -26,6 +29,9 @@ class VoiceManager {
     var contents = file.readAsStringSync();
     var config = loadYaml(contents);
 
+    _onStats = new StreamController.broadcast();
+    onStats = _onStats.stream;
+
     this._wsPath = Uri.parse("ws://${config['lavalink']['server']['ws']['host']}:${config['lavalink']['server']['ws']['port']}");
     this._password = config['lavalink']['server']['password'] as String;
     this._restPath = Uri.parse("http://${config['server']['address']}:${config['server']['port']}");
@@ -33,7 +39,7 @@ class VoiceManager {
     _connect();
   }
 
-  Future<Null> _connect() {
+  Future<Null> _connect() async {
     try {
       w_transport.WebSocket.connect(_wsPath, headers: {
         "Authorization": _password,
@@ -42,27 +48,27 @@ class VoiceManager {
       }).then((wc) {
         this._webSocket = wc;
         _webSocket.listen((data) async {
-          await handleMsg(jsonDecode(data as String) as Map<String, dynamic>);
-        }).onError((err) {
-          print("Das ist eine katastrofe");
+          print("RAW WEBSOCKET: $data");
+          await _handleMsg(jsonDecode(data as String) as Map<String, dynamic>);
         });
       });
     } on w_transport.WebSocketException {
-      throw new Exception("Failed connect to websocket");
+      new Timer(const Duration(seconds: 2), () async => await _connect);
     }
 
     return null;
   }
 
-  Future<Null> handleMsg(Map<String, dynamic> msg) async {
+  Future<Null> _handleMsg(Map<String, dynamic> msg) async {
     var op = msg['op'] as String;
 
     switch(op) {
       case 'playerUpdate':
         var e = new PlayerUpdateEvent._new(msg);
-        _playersCache[e.guildId].isConnected? _playersCache[e.guildId]._onPlayerUpdate.add(e) : {};
+        _playersCache[e.guildId].isConnected ? _playersCache[e.guildId]._onPlayerUpdate.add(e) : {};
         break;
       case 'stats':
+        _onStats.add(new Stats._new(msg));
         break;
       case 'event':
         break;
@@ -73,7 +79,6 @@ class VoiceManager {
 
   Future<Player> getPlayer(Guild guild) {
     return new Future<Player>.delayed(const Duration(seconds: 2), () {
-      print(_playersCache.length);
       if(_playersCache.containsKey(guild.id.toString()))
         return _playersCache[guild.id.toString()];
       else {
