@@ -81,9 +81,8 @@ class Shard {
   }
 
   /// Sends WS data.
-  void send(String op, dynamic d) {
-    this._socket.add(jsonEncode(<String, dynamic>{"op": _Constants.opCodes[op], "d": d}));
-  }
+  void send(String op, dynamic d) => this._socket.
+    add(jsonEncode(<String, dynamic>{"op": _Constants.opCodes[op], "d": d}));
 
   void _heartbeat() {
     if (this._socket.closeCode != null) return;
@@ -155,8 +154,8 @@ class Shard {
               this._ws.client.http.headers['Authorization'] =
                   this._ws.client._token;
               this._ws.client._options.forceFetchMembers = false;
-              new Timer.periodic(
-                  new Duration(seconds: 30), (Timer t) => guildSync());
+              //new Timer.periodic(
+                  //new Duration(seconds: 30), (Timer t) => guildSync());
             }
 
             this._ws.client.http.headers['User-Agent'] =
@@ -224,12 +223,12 @@ class Shard {
             new VoiceStateUpdateEvent._new(this._ws.client, json);
             break;
 
-          case 'GUILD_EMOJIS_UPDATE':
-            new GuildEmojisUpdateEvent._new(this._ws.client, json);
-            break;
-
           case 'VOICE_SERVER_UPDATE':
             new VoiceServerUpdateEvent._new(this._ws.client, json);
+            break;
+
+          case 'GUILD_EMOJIS_UPDATE':
+            new GuildEmojisUpdateEvent._new(this._ws.client, json);
             break;
 
           case 'MESSAGE_CREATE':
@@ -319,8 +318,6 @@ class Shard {
 
   void _handleErr() {
     this._heartbeatTimer.cancel();
-
-    print("Closing? ${this._socket.closeCode}");
 
     switch (this._socket.closeCode) {
       case 1005:
