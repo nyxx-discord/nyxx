@@ -1,16 +1,27 @@
 part of nyxx.voice;
 
+/// Represents Lavalink playable track
 class Track extends Entity {
+  /// Internal id of track.
   String id;
+  /// Unique identifier
   String identifier;
+  /// True if track be seeked
   bool isSeekable;
+  /// Author of track
   String author;
+  /// Length of track in milliseconds
   int length;
+  /// True if track is stream of data
   bool isStream;
+  /// Track position in milliseconds
   int position;
+  /// Track title
   String title;
+  /// Url to track
   String uri;
 
+  /// Raw object returned by api
   Map<String, dynamic> raw;
 
   Track._new(this.raw) : super._new(0) {
@@ -24,6 +35,4 @@ class Track extends Entity {
     title = raw['info']['title'] as String;
     uri = raw['info']['uri'] as String;
   }
-
-
 }

@@ -1,19 +1,20 @@
 part of nyxx.voice;
 
-class Opcode4 {
-  bool deaf;
-  bool mute;
-  Guild guild;
-  VoiceChannel channel;
+/// Discord gateway opcode for sending voice state
+class _Opcode4 {
+  bool _deaf;
+  bool _mute;
+  Guild _guild;
+  VoiceChannel _channel;
 
-  Opcode4(this.guild, this.channel, this.mute, this.deaf);
+  _Opcode4(this._guild, this._channel, this._mute, this._deaf);
 
   Map<String, dynamic> _build() {
     return <String, dynamic> {
-      "guild_id": guild.id.toString(),
-      "channel_id": channel == null ? null : channel.id.toString(),
-      "self_mute": mute,
-      "self_deaf": deaf
+      "guild_id": _guild.id.toString(),
+      "channel_id": _channel == null ? null : _channel.id.toString(),
+      "self_mute": _mute,
+      "self_deaf": _deaf
     };
   }
 }

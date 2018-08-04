@@ -1,17 +1,18 @@
 part of nyxx.voice;
 
-class OpVolume {
-  String op = "volume";
-  Guild guild;
-  int volume;
+/// Opcode for volume
+class _OpVolume {
+  String _op = "volume";
+  Guild _guild;
+  int _volume;
 
-  OpVolume(this.guild, this.volume);
+  _OpVolume(this._guild, this._volume);
 
   Map<String, dynamic> build() {
     return {
-      "op": op,
-      "volume": volume,
-      "guildId": guild.id.toString()
+      "op": _op,
+      "volume": _volume,
+      "guildId": _guild.id.toString()
     };
   }
 }

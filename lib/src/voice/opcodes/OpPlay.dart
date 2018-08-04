@@ -1,21 +1,22 @@
 part of nyxx.voice;
 
-class OpPlay {
-  String op = "play";
-  Guild guildId;
-  Track track;
+/// Opcode for playing new track
+class _OpPlay {
+  String _op = "play";
+  Guild _guildId;
+  Track _track;
   String startTime;
   String endTime;
 
-  OpPlay(this.guildId, this.track, {this.startTime, this.endTime});
+  _OpPlay(this._guildId, this._track, {this.startTime, this.endTime});
 
   Map<String, dynamic> build() {
    return  {
-      "op": op,
-      "guildId": guildId.id.toString(),
-      "track": track.id,
+      "op": _op,
+      "guildId": _guildId.id.toString(),
+      "track": _track.id,
       "startTime": startTime != null ? startTime : 0,
-      "endTime": endTime != null ? endTime : track.length
+      "endTime": endTime != null ? endTime : _track.length
     };
   }
 }

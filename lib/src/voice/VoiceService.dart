@@ -1,5 +1,7 @@
 part of nyxx.voice;
 
+/// Inits voice service. [yamlConfigFile] is absolute path to lavalink config file.
+/// Returns instance of VoiceService
 VoiceService init(String clientId, Client client, String yamlConfigFile) {
   if(_manager != null)
     throw new Exception("Tried initialize VoiceService twice.");
@@ -8,6 +10,7 @@ VoiceService init(String clientId, Client client, String yamlConfigFile) {
   return _manager;
 }
 
+/// Returns instance of VoiceService
 VoiceService getVoiceService() {
   if(_manager == null)
     throw new Exception("Cannot get initialized VoiceService! Init voice service with VoiceService.init()");
@@ -15,17 +18,22 @@ VoiceService getVoiceService() {
   return _manager;
 }
 
+/// Gets [Player] instance for guild.
 Future<Player> getPlayer(Guild guild) async {
   return await _manager.getPlayer(guild);
 }
 
+/// Destroys player and removes all connections
 Future<Null> destroyPlayer(Player player) async {
-  _manager._removePlayer(player._guild.id.toString());
+  _manager.removePlayer(player._guild.id.toString());
   player = null;
 }
 
+// Singleton instance of voiceService
 VoiceService _manager = null;
 
+/// [VoiceService] managers all voice connections.
+/// There can be only one instance class.
 class VoiceService {
   Uri _wsPath;
   Uri _restPath;
@@ -54,6 +62,7 @@ class VoiceService {
     _connect();
   }
 
+  // Connects to main websocket. And starts dispatching messages.
   Future<Null> _connect() async {
     try {
       w_transport.WebSocket.connect(_wsPath, headers: {
@@ -75,6 +84,7 @@ class VoiceService {
     return null;
   }
 
+  // Handles incoming message. Tries to parse and takes actions
   Future<Null> _handleMsg(Map<String, dynamic> msg) async {
     var op = msg['op'] as String;
 
@@ -87,12 +97,27 @@ class VoiceService {
         _onStats.add(new Stats._new(msg));
         break;
       case 'event':
+        var player = _playersCache[ msg['guildId']];
+        TrackError evnt;
+        switch (msg['type'] as String) {
+          case 'TrackEndEvent':
+            evnt = new TrackEndEvent(msg);
+            break;
+          case 'TrackExceptionEvent':
+            evnt = new TrackExceptionEvent(msg);
+            break;
+          case 'TrackStuckEvent':
+            evnt = new TrackStuckEvent(msg);
+            break;
+        }
+        player._onTrackError.add(evnt);
         break;
       default:
         print("!");
     }
   }
 
+  /// Gets [Player] instance for guild.
   Future<Player> getPlayer(Guild guild) {
     return new Future<Player>.delayed(const Duration(seconds: 2), () {
       if(_playersCache.containsKey(guild.id.toString()))
@@ -105,8 +130,9 @@ class VoiceService {
     });
   }
 
-  Future<Null> _removePlayer(String guild) async {
-   await _playersCache[guild].finish();
+  /// Destroys player and removes all connections
+  Future<Null> removePlayer(String guild) async {
+   await _playersCache[guild]._finish();
    _playersCache.remove(guild);
   }
 }
