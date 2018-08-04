@@ -1,17 +1,24 @@
 part of nyxx;
 
 /// Used to represent a user's voice connection status.
-class VoiceState {
-  /// Channel id user is connected
-  VoiceChannel channel;
-
+class VoiceState extends UserVoiceState {
   /// User this voice state is for
   User user;
 
   /// Session id for this voice state
   String sessionId;
 
-  /// Whether this user is muted by the server
+  VoiceState._new(Client client, Map<String, dynamic> raw) : super(client, raw) {
+    this.user = client.users[raw['user_id']];
+    this.sessionId = raw['session_id'] as String;
+  }
+}
+
+class UserVoiceState {
+  /// Channel id user is connected
+  VoiceChannel channel;
+
+  // Whether this user is muted by the server
   bool deaf;
 
   /// Whether this user is locally deafened
@@ -26,10 +33,8 @@ class VoiceState {
   /// Raw object returned by API
   Map<String, dynamic> raw;
 
-  VoiceState._new(Client client, this.raw) {
+  UserVoiceState(Client client, this.raw) {
     this.channel = client.channels[raw['channel_id']] as VoiceChannel;
-    this.user = client.users[raw['user_id']];
-    this.sessionId = raw['session_id'] as String;
     this.deaf = raw['deaf'] as bool;
     this.selfDeaf = raw['self_deaf'] as bool;
     this.selfMute = raw['self_mute'] as bool;
