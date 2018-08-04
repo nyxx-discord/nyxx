@@ -1,10 +1,10 @@
 part of nyxx.voice;
 
-class OpPause {
-  String op = "pause";
+class SimpleOp {
+  String op;
   Guild guild;
 
-  OpPause(this.guild);
+  SimpleOp(this.op, this.guild);
 
   Map<String, dynamic> build() {
     return {
