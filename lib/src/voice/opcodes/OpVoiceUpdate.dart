@@ -1,19 +1,20 @@
 part of nyxx.voice;
 
-class OpVoiceUpdate {
-  String op = "voiceUpdate";
-  String guildId;
-  String sessionId;
-  dynamic event;
+/// Opcode for intercepting Voice events from discord to lavalink
+class _OpVoiceUpdate {
+  String _op = "voiceUpdate";
+  String _guildId;
+  String _sessionId;
+  dynamic _event;
 
-  OpVoiceUpdate(this.guildId, this.sessionId, this.event);
+  _OpVoiceUpdate(this._guildId, this._sessionId, this._event);
 
   dynamic build() {
     return {
-      "op": op,
-      "guildId": guildId,
-      "sessionId": sessionId,
-      "event": event['d']
+      "op": _op,
+      "guildId": _guildId,
+      "sessionId": _sessionId,
+      "event": _event['d']
     };
   }
 }

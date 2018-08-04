@@ -1,17 +1,18 @@
 part of nyxx.voice;
 
-class OpSeek {
-  String op = "seek";
-  Guild guild;
-  int seek;
+/// Opcode for seeking music
+class _OpSeek {
+  String _op = "seek";
+  Guild _guild;
+  int _seek;
 
-  OpSeek(this.guild, this.seek);
+  _OpSeek(this._guild, this._seek);
 
   Map<String, dynamic> build() {
     return {
-      "op": op,
-      "posistion": seek,
-      "guildId": guild.id.toString()
+      "op": _op,
+      "posistion": _seek,
+      "guildId": _guild.id.toString()
     };
   }
 }

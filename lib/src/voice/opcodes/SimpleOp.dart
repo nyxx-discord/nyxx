@@ -1,15 +1,16 @@
 part of nyxx.voice;
 
-class SimpleOp {
-  String op;
-  Guild guild;
+/// Base for simple opcodes
+class _SimpleOp {
+  String _op;
+  Guild _guild;
 
-  SimpleOp(this.op, this.guild);
+  _SimpleOp(this._op, this._guild);
 
-  Map<String, dynamic> build() {
+  Map<String, dynamic> _build() {
     return {
-      "op": op,
-      "guildId": guild.id.toString()
+      "op": _op,
+      "guildId": _guild.id.toString()
     };
   }
 }
