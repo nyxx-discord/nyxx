@@ -4,17 +4,19 @@ class Player {
   bool isConnected = false;
   bool isPlaying = false;
   VoiceChannel currentChannel;
+  Track currentTrack;
 
   Guild _guild;
   Client _client;
   Uri _restPath;
 
-  var sub1, sub2;
+  var _sub1, _sub2;
 
   dynamic _rawEvent;
   VoiceState _currentState;
 
   w_transport.WebSocket _webSocket;
+
 
   StreamController<PlayerUpdateEvent> _onPlayerUpdate;
   Stream<PlayerUpdateEvent> onPlayerUpdate;
@@ -37,12 +39,12 @@ class Player {
     print(s);
     _webSocket.add(s);
 
-    sub1 = _client.onVoiceServerUpdate.where((e) => e.guild.id.toString() == _guild.id.toString()).listen((e) {
+    _sub1 = _client.onVoiceServerUpdate.where((e) => e.guild.id.toString() == _guild.id.toString()).listen((e) {
       _rawEvent = e.raw;
       _webSocket.add(jsonEncode(new OpVoiceUpdate(_guild.id.toString(), _currentState.sessionId, _rawEvent).build()));
     });
 
-    sub2 = _client.onVoiceStateUpdate.where((e) {
+    _sub2 = _client.onVoiceStateUpdate.where((e) {
       if(e.state.channel != null)
         if(e.state.channel.id.toString() != currentChannel.id.toString())
           return false;
@@ -61,26 +63,26 @@ class Player {
     _guild.shard.send("VOICE_STATE_UPDATE", new Opcode4(_guild, channel, muted, deafen)._build());
   }
 
-  Future<Null> play(String song) async {
+  Future<TrackResponse> resolve(String hash) async {
     var req = w_transport.JsonRequest()
       ..uri = _restPath
       ..path = "/loadtracks"
       ..headers = { "Authorization": "password" }
-      ..queryParameters = { "identifier" : song };
+      ..queryParameters = { "identifier" : hash };
 
     var res = await req.send("GET");
     if(res.status != 200)
       throw new Exception("Cannot comunicate with lavalink via http");
 
     var r = res.body.asJson() as Map<String, dynamic>;
-    var track = new TrackResponse._new(r);
+    return new TrackResponse._new(r);
+  }
 
-    if(track.loadType == "TRACK_LOADED") {
-      var g = jsonEncode(new OpPlay(_guild, track.entity as Track).build());
-      print(g);
-      _webSocket.add(g);
-      isPlaying = true;
-    }
+  Future<bool> play(Track track) async {
+    currentTrack = track;
+    _webSocket.add(jsonEncode(new OpPlay(_guild, track).build()));
+    isPlaying = true;
+    return true;
   }
 
   Future<Null> disconnect() async {
@@ -89,11 +91,16 @@ class Player {
     _webSocket.add(jsonEncode(new SimpleOp("destroy", _guild).build()));
     isPlaying = false;
     isConnected = false;
-    sub1 == null ? {} : sub1.cancel();
-    sub2 == null ? {}:  sub2.cancel();
+    _sub1 == null ? {} : _sub1.cancel();
+    _sub2 == null ? {}:  _sub2.cancel();
   }
 
-  Future<Null> mute() async {
+  Future<Null> toggleMute() async {
+    if(_currentState.selfMute)
+      _webSocket.add(jsonEncode(new OpPause(_guild , false).build()));
+    else
+      _webSocket.add(jsonEncode(new OpPause(_guild , true).build()));
+
     _guild.shard.send("VOICE_STATE_UPDATE", new Opcode4(_guild, currentChannel, !_currentState.selfMute, _currentState.selfDeaf)._build());
   }
 

@@ -67,8 +67,9 @@ class VoiceService {
           await _handleMsg(jsonDecode(data as String) as Map<String, dynamic>);
         });
       });
-    } on w_transport.WebSocketException {
-      new Timer(const Duration(seconds: 2), () async => await _connect);
+    } catch (e) {
+      //print("FAILED TO CONNECT. TRYING AGAIN!");
+     // new Timer(const Duration(seconds: 2), () async => await _connect);
     }
 
     return null;
