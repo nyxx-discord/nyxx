@@ -10,7 +10,7 @@ import 'dart:io';
 import 'dart:async';
 import 'dart:convert';
 
-part 'src/voice/VoiceManager.dart';
+part 'src/voice/VoiceService.dart';
 part 'src/voice/Player.dart';
 
 part 'src/voice/events/PlayerUpdateEvent.dart';
