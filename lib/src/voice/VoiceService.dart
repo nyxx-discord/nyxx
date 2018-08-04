@@ -1,30 +1,45 @@
 part of nyxx.voice;
 
-VoiceManager _manager = null;
+VoiceService init(String clientId, Client client, String yamlConfigFile) {
+  if(_manager != null)
+    throw new Exception("Tried initialize VoiceService twice.");
 
-class VoiceManager {
+  _manager = new VoiceService._new(clientId, client, yamlConfigFile);
+  return _manager;
+}
+
+VoiceService getVoiceService() {
+  if(_manager == null)
+    throw new Exception("Cannot get initialized VoiceService! Init voice service with VoiceService.init()");
+
+  return _manager;
+}
+
+Future<Player> getPlayer(Guild guild) async {
+  return await _manager.getPlayer(guild);
+}
+
+Future<Null> destroyPlayer(Player player) async {
+  _manager._removePlayer(player._guild.id.toString());
+  player = null;
+}
+
+VoiceService _manager = null;
+
+class VoiceService {
   Uri _wsPath;
   Uri _restPath;
-  String _password;
-  String _clientId;
   Client _client;
   w_transport.WebSocket _webSocket;
+  String _password;
+  String _clientId;
 
   static Map<String, Player> _playersCache = new Map();
 
   StreamController<Stats> _onStats;
   Stream<Stats> onStats;
 
-  static VoiceManager getManager({String clientId, Client client, String yamlConfigFile}) {
-    if(_manager == null) {
-      _manager = new VoiceManager._new(clientId, client, yamlConfigFile);
-      return _manager;
-    }
-
-    return _manager;
-  }
-
-  VoiceManager._new(this._clientId, this._client, String yamlConfigFile) {
+  VoiceService._new(this._clientId, this._client, String yamlConfigFile) {
     var file = new File(yamlConfigFile);
     var contents = file.readAsStringSync();
     var config = loadYaml(contents);
@@ -73,7 +88,7 @@ class VoiceManager {
       case 'event':
         break;
       default:
-        print("Fault!");
+        print("!");
     }
   }
 
@@ -87,5 +102,10 @@ class VoiceManager {
         return tmp;
       }
     });
+  }
+
+  Future<Null> _removePlayer(String guild) async {
+   await _playersCache[guild].finish();
+   _playersCache.remove(guild);
   }
 }

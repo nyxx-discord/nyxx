@@ -93,6 +93,10 @@ class Player {
     sub2 == null ? {}:  sub2.cancel();
   }
 
+  Future<Null> mute() async {
+    _guild.shard.send("VOICE_STATE_UPDATE", new Opcode4(_guild, currentChannel, !_currentState.selfMute, _currentState.selfDeaf)._build());
+  }
+
   Future<Null> pause() async {
     isPlaying = false;
     _webSocket.add(jsonEncode(new SimpleOp("pause", _guild).build()));
@@ -109,5 +113,10 @@ class Player {
 
   Future<Null> setVolume(int volume) async {
     _webSocket.add(jsonEncode(new OpVolume(_guild, volume)));
+  }
+
+  Future<Null> finish() async {
+    if(isConnected)
+      await disconnect();
   }
 }
