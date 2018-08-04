@@ -15,7 +15,8 @@ part 'src/voice/Player.dart';
 
 part 'src/voice/events/PlayerUpdateEvent.dart';
 
-part 'src/voice//opcodes/SimpleOp.dart';
+part 'src/voice/opcodes/SimpleOp.dart';
+part 'src/voice/opcodes/OpPause.dart';
 part 'src/voice/opcodes/OpSeek.dart';
 part 'src/voice/opcodes/OpVolume.dart';
 part 'src/voice/opcodes/OpPlay.dart';
