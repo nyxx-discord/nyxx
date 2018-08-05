@@ -18,7 +18,7 @@ class UserVoiceState {
   /// Channel id user is connected
   VoiceChannel channel;
 
-  // Whether this user is muted by the server
+  /// Whether this user is muted by the server
   bool deaf;
 
   /// Whether this user is locally deafened
