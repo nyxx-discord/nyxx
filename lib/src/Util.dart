@@ -35,6 +35,7 @@ Iterable<String> split(String str, int length) sync* {
   yield str.substring(last, str.length);
 }
 
+/*
 /// Splits string bases on given lengt but it preserves words - splits
 /// only on whitespace.
 Iterable<String> split300iq(String str, int length) sync* {
@@ -49,8 +50,10 @@ Iterable<String> split300iq(String str, int length) sync* {
       last += nextWh;
     }
   }
-  yield str.substring(last, str.length);
+  if(last < str.length)
+    yield str.substring(last, str.length);
 }
+*/
 
 /// Splits string based on number of wanted substrings
 Iterable<String> splitEqually(String str, int pieces) {

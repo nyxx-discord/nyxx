@@ -52,10 +52,17 @@ class Pagination {
     this.pages = util.split(str, len).toList();
   }
 
-  /// Generates pagination from String but with user specified number of pages..
+  /// Generates pagination from String but with user specified number of pages.
   Pagination.fromStringEq(String str, int pieces, this.channel) {
     this.pages = util.splitEqually(str, pieces).toList();
   }
+
+  /*
+  /// Generates pagination based on given page size but don't split in middle of word
+  Pagination.fromStringSmart(String str, int len, this.channel) {
+    this.pages = util.split300iq(str, len).toList();
+  }
+  */
 
   /// Generates new pagination from List of Strings. Each list element is single page.
   Pagination.fromList(this.pages, this.channel);
