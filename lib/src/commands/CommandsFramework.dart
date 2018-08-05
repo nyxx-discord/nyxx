@@ -34,7 +34,7 @@ class CommandsFramework {
   bool ignoreBots = true;
 
   /// Sets default bots game
-  set game(String gameName) => _client.user.setGame(name: gameName);
+  set game(Game game) => _client.user.setGame(game: game);
 
   /// Fires when invoked command dont exists in registry
   Stream<Message> onCommandNotFound;
@@ -89,6 +89,7 @@ class CommandsFramework {
     // Listen to incoming messages and ignore all from bots (if set)
     _client.onMessage.listen((MessageEvent e) async {
       if (ignoreBots && e.message.author.bot) return;
+      if (!e.message.content.startsWith(prefix)) return;
 
       await _dispatch(e);
     });
@@ -96,7 +97,6 @@ class CommandsFramework {
 
   /// Dispatches onMessage event to framework.
   Future _dispatch(MessageEvent e) async {
-    if (!e.message.content.startsWith(prefix)) return;
 
     // Match help specially to shadow user defined help commands.
     if (e.message.content.startsWith((prefix + 'help'))) {
