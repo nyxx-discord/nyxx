@@ -74,6 +74,14 @@ class Member extends User {
     return null;
   }
 
+  /// Adds role to user
+  Future<Null> addRole(Role role, {String auditReason: ""}) async {
+    await this.client.http.send(
+        'PUT', '/guilds/${guild.id}/members/${this.id}/roles/${role.id}',
+        reason: auditReason);
+    return null;
+  }
+
   /// Kicks the member
   Future<Null> kick({String auditReason: ""}) async {
     await this.client.http.send(
@@ -88,4 +96,8 @@ class Member extends User {
 
     return new Permissions.fromInt(total);
   }
+
+  @override
+  String toString() => super.toString();
+
 }
