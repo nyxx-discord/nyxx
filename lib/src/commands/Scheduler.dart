@@ -19,6 +19,7 @@ class Scheduler {
     _targets = new List();
   }
 
+  /// Starts scheduler
   Future<Null> run() async {
     _client.onReady.listen((e) {
       targets
@@ -30,6 +31,8 @@ class Scheduler {
         }
       });
     });
+
+    return null;
   }
 
   /// Stops scheduler
