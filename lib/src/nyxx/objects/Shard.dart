@@ -25,6 +25,8 @@ class Shard {
   /// A map of guilds the shard is on.
   Map<String, Guild> guilds = {};
 
+  ZLibDecoder _zlib;
+
   Shard._new(_WS ws, this.id) {
     this._ws = ws;
     this._onReady = new StreamController<Shard>.broadcast();
@@ -32,33 +34,26 @@ class Shard {
 
     this._onDisconnect = new StreamController<Shard>.broadcast();
     this.onDisconnect = this._onDisconnect.stream;
+
+    _zlib = new ZLibDecoder();
   }
 
-  /// Updates the presence for this shard.
-  void setPresence({String status: null, bool afk: false, activity: null}) {
-    if (activity == null)
-      activity = {
-        'name': null,
-        'type': 0,
-        'url': null,
-      };
-
+  void setPresence({String status, bool afk, Game game}) {
     Map<String, dynamic> packet = {
-      'afk': afk,
-      'since': null,
-      'status': status,
-      'game': {
-        'name': activity != null ? activity['name'] : null,
-        'type': activity != null ? activity['type'] : 0,
-        'url': activity != null ? activity['url'] : null
+      "afk": afk,
+      "since": null,
+      "status": status,
+      "game": {
+        "name": game != null ? game.name : null,
+        "type":  game != null ? game.type : null,
+        "url":  game != null ? game.url : null
       }
     };
 
     this.send("STATUS_UPDATE", packet);
   }
 
-  /// Syncs all guilds; this is automatically called every 30 seconds.
-  /// Users only.
+  /// Syncs all guild
   void guildSync() {
     this.send("GUILD_SYNC", this.guilds.keys.toList());
   }
@@ -75,9 +70,19 @@ class Shard {
         .then((w_transport.WebSocket socket) {
       this._socket = socket;
       this._socket.listen((dynamic msg) async {
-        await this._handleMsg(msg as String, resume);
+        await this._handleMsg(_decodeBytes(msg), resume);
       }, onDone: this._handleErr);
     });
+  }
+
+  Map<String, dynamic> _decodeBytes(dynamic bytes) {
+    if (bytes is String) {
+      return jsonDecode(bytes as String) as Map<String, dynamic>;
+    } else {
+      var decoded = _zlib.convert(bytes as List<int>);
+      var rawStr = utf8.decode(decoded);
+      return jsonDecode(rawStr) as Map<String, dynamic>;
+    }
   }
 
   /// Sends WS data.
@@ -89,16 +94,13 @@ class Shard {
     this.send("HEARTBEAT", _sequence);
   }
 
-  Future<Null> _handleMsg(String msg, bool resume) async {
-    final json = jsonDecode(msg) as Map<String, dynamic>;
+  Future<Null> _handleMsg(Map<String, dynamic> msg, bool resume) async {
+    new RawEvent._new(this._ws.client, this, msg);
 
-    new RawEvent._new(this._ws.client, this, json);
+    if (msg['s'] != null)
+      this._sequence = msg['s'] as int;
 
-    if (json['s'] != null) {
-      this._sequence = json['s'] as int;
-    }
-
-    switch (json['op'] as int) {
+    switch (msg['op'] as int) {
       case _OPCodes.hello:
         if (this._sessionId == null || !resume) {
           Map<String, dynamic> identifyMsg = <String, dynamic>{
@@ -111,8 +113,9 @@ class Shard {
               "\$referring_domain": ""
             },
             "large_threshold": 100,
-            "compress": false
+            "compress": true
           };
+
           if (this._ws.bot)
             identifyMsg['shard'] = <int>[
               this.id,
@@ -128,7 +131,7 @@ class Shard {
         }
 
         this._heartbeatTimer = new Timer.periodic(
-            new Duration(milliseconds: json['d']['heartbeat_interval'] as int),
+            new Duration(milliseconds: msg['d']['heartbeat_interval'] as int),
             (Timer t) => this._heartbeat());
         break;
 
@@ -137,15 +140,15 @@ class Shard {
         break;
 
       case _OPCodes.dispatch:
-        if (this._ws.client._options.disabledEvents.contains(json['t'])) break;
+        if (this._ws.client._options.disabledEvents.contains(msg['t'])) break;
 
-        var j = json['t'] as String;
+        var j = msg['t'] as String;
         switch (j) {
           case 'READY':
-            this._sessionId = json['d']['session_id'] as String;
+            this._sessionId = msg['d']['session_id'] as String;
 
             this._ws.client.user = new ClientUser._new(
-                this._ws.client, json['d']['user'] as Map<String, dynamic>);
+                this._ws.client, msg['d']['user'] as Map<String, dynamic>);
 
             if (this._ws.client.user.bot) {
               this._ws.client.http.headers['Authorization'] =
@@ -154,14 +157,12 @@ class Shard {
               this._ws.client.http.headers['Authorization'] =
                   this._ws.client._token;
               this._ws.client._options.forceFetchMembers = false;
-              //new Timer.periodic(
-                  //new Duration(seconds: 30), (Timer t) => guildSync());
             }
 
             this._ws.client.http.headers['User-Agent'] =
                 "${this._ws.client.user.username} (https://github.com/l7ssha/nyxx, ${_Constants.version})";
 
-            json['d']['guilds'].forEach((dynamic o) {
+            msg['d']['guilds'].forEach((dynamic o) {
               if (this._ws.client.user.bot)
                 this._ws.client.guilds[o['id'] as String] = null;
               else
@@ -169,7 +170,7 @@ class Shard {
                     this._ws.client, o as Map<String, dynamic>, true, true);
             });
 
-            json['d']['private_channels'].forEach((dynamic o) {
+            msg['d']['private_channels'].forEach((dynamic o) {
               if (o['type'] == 1) {
                 new DMChannel._new(this._ws.client, o as Map<String, dynamic>);
               } else {
@@ -190,124 +191,124 @@ class Shard {
             break;
 
           case 'GUILD_MEMBERS_CHUNK':
-            json['d']['members'].forEach((dynamic o) {
+            msg['d']['members'].forEach((dynamic o) {
               new Member._new(this._ws.client, o as Map<String, dynamic>,
-                  this._ws.client.guilds[json['d']['guild_id']]);
+                  this._ws.client.guilds[msg['d']['guild_id']]);
             });
-            if (!_ws.client.ready) {
+
+            if (!_ws.client.ready)
               _ws.testReady();
-            }
             break;
 
           case 'MESSAGE_REACTION_REMOVE_ALL':
-            new MessageReactionsRemovedEvent._new(this._ws.client, json);
+            new MessageReactionsRemovedEvent._new(this._ws.client, msg);
             break;
 
           case 'MESSAGE_REACTION_ADD':
-            new MessageReactionEvent._new(this._ws.client, json, true);
+            new MessageReactionEvent._new(this._ws.client, msg, true);
             break;
 
           case 'MESSAGE_REACTION_REMOVE':
-            new MessageReactionEvent._new(this._ws.client, json, false);
+            new MessageReactionEvent._new(this._ws.client, msg, false);
             break;
 
           case 'MESSAGE_DELETE_BULK':
-            new MessageDeleteBulkEvent._new(this._ws.client, json);
+            new MessageDeleteBulkEvent._new(this._ws.client, msg);
             break;
 
           case 'CHANNEL_PINS_UPDATE':
-            new ChannelPinsUpdateEvent._new(this._ws.client, json);
+            new ChannelPinsUpdateEvent._new(this._ws.client, msg);
             break;
 
           case 'VOICE_STATE_UPDATE':
-            new VoiceStateUpdateEvent._new(this._ws.client, json);
+            new VoiceStateUpdateEvent._new(this._ws.client, msg);
             break;
 
           case 'VOICE_SERVER_UPDATE':
-            new VoiceServerUpdateEvent._new(this._ws.client, json);
+            new VoiceServerUpdateEvent._new(this._ws.client, msg);
             break;
 
           case 'GUILD_EMOJIS_UPDATE':
-            new GuildEmojisUpdateEvent._new(this._ws.client, json);
+            new GuildEmojisUpdateEvent._new(this._ws.client, msg);
             break;
 
           case 'MESSAGE_CREATE':
-            new MessageEvent._new(this._ws.client, json);
+            new MessageEvent._new(this._ws.client, msg);
             break;
 
           case 'MESSAGE_DELETE':
-            new MessageDeleteEvent._new(this._ws.client, json);
+            new MessageDeleteEvent._new(this._ws.client, msg);
             break;
 
           case 'MESSAGE_UPDATE':
-            new MessageUpdateEvent._new(this._ws.client, json);
+            new MessageUpdateEvent._new(this._ws.client, msg);
             break;
 
           case 'GUILD_CREATE':
-            new GuildCreateEvent._new(this._ws.client, json, this);
+            new GuildCreateEvent._new(this._ws.client, msg, this);
             break;
 
           case 'GUILD_UPDATE':
-            new GuildUpdateEvent._new(this._ws.client, json);
+            new GuildUpdateEvent._new(this._ws.client, msg);
             break;
 
           case 'GUILD_DELETE':
-            if (json['d']['unavailable'] == true)
-              new GuildUnavailableEvent._new(this._ws.client, json);
+            if (msg['d']['unavailable'] == true)
+              new GuildUnavailableEvent._new(this._ws.client, msg);
             else
-              new GuildDeleteEvent._new(this._ws.client, json, this);
+              new GuildDeleteEvent._new(this._ws.client, msg, this);
             break;
 
           case 'GUILD_BAN_ADD':
-            new GuildBanAddEvent._new(this._ws.client, json);
+            new GuildBanAddEvent._new(this._ws.client, msg);
             break;
 
           case 'GUILD_BAN_REMOVE':
-            new GuildBanRemoveEvent._new(this._ws.client, json);
+            new GuildBanRemoveEvent._new(this._ws.client, msg);
             break;
 
           case 'GUILD_MEMBER_ADD':
-            new GuildMemberAddEvent._new(this._ws.client, json);
+            new GuildMemberAddEvent._new(this._ws.client, msg);
             break;
 
           case 'GUILD_MEMBER_REMOVE':
-            new GuildMemberRemoveEvent._new(this._ws.client, json);
+            new GuildMemberRemoveEvent._new(this._ws.client, msg);
             break;
 
           case 'GUILD_MEMBER_UPDATE':
-            new GuildMemberUpdateEvent._new(this._ws.client, json);
+            new GuildMemberUpdateEvent._new(this._ws.client, msg);
             break;
 
           case 'CHANNEL_CREATE':
-            new ChannelCreateEvent._new(this._ws.client, json);
+            new ChannelCreateEvent._new(this._ws.client, msg);
             break;
 
           case 'CHANNEL_UPDATE':
-            new ChannelUpdateEvent._new(this._ws.client, json);
+            new ChannelUpdateEvent._new(this._ws.client, msg);
             break;
 
           case 'CHANNEL_DELETE':
-            new ChannelDeleteEvent._new(this._ws.client, json);
+            new ChannelDeleteEvent._new(this._ws.client, msg);
             break;
 
           case 'TYPING_START':
-            new TypingEvent._new(this._ws.client, json);
+            new TypingEvent._new(this._ws.client, msg);
             break;
 
           case 'PRESENCE_UPDATE':
-            new PresenceUpdateEvent._new(this._ws.client, json);
+            new PresenceUpdateEvent._new(this._ws.client, msg);
             break;
 
           case 'GUILD_ROLE_CREATE':
-            new RoleCreateEvent._new(this._ws.client, json);
+            new RoleCreateEvent._new(this._ws.client, msg);
             break;
 
           case 'GUILD_ROLE_UPDATE':
-            new RoleUpdateEvent._new(this._ws.client, json);
+            new RoleUpdateEvent._new(this._ws.client, msg);
             break;
 
           case 'GUILD_ROLE_DELETE':
-            new RoleDeleteEvent._new(this._ws.client, json);
+            new RoleDeleteEvent._new(this._ws.client, msg);
             break;
         }
         break;
@@ -321,14 +322,12 @@ class Shard {
 
     switch (this._socket.closeCode) {
       case 1005:
-        return;
+        throw new Exception("1005: No Status Recvd - 'No status code was provided even though one was expected.'");
       case 4004:
-        throw new Exception("Invalid Shard Error");
+        throw new Exception("4004: Authentication Failed - 'The account token sent with your identify payload is incorrect.'");
       case 4010:
-        throw new Exception("Invalid Token Exception");
+        throw new Exception("4010: Invalid Shard - 'You sent us an invalid shard when identifying.'");
       case 4007:
-        this._connect(false);
-        break;
       case 4009:
         this._connect(false);
         break;
