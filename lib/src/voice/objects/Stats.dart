@@ -35,7 +35,7 @@ class Stats {
   int avgFramesNull;
 
   /// Average number of frames deficit in minute
-  int avgFramesDeficic;
+  int avgFramesDeficit;
 
   /// Raw object returned by websocket
   Map<String, dynamic> raw;
@@ -54,7 +54,7 @@ class Stats {
     if(raw['frames'] != null) {
       avgFramesSent = raw['frames']['sent'] as int;
       avgFramesNull = raw['frames']['nulled'] as int;
-      avgFramesDeficic = raw['frames']['deficit'] as int;
+      avgFramesDeficit = raw['frames']['deficit'] as int;
     }
   }
 }
