@@ -217,9 +217,9 @@ class Guild {
   }
 
   /// Change guild owner
-  Future<Guild> changeOwner(String id, {String auditReason = ""}) async {
+  Future<Guild> changeOwner(Member member, {String auditReason = ""}) async {
     HttpResponse r = await this.client.http.send('PATCH', "/guilds/$id",
-        body: {"owner_id": id}, reason: auditReason);
+        body: {"owner_id": member.id}, reason: auditReason);
 
     return new Guild._new(client, r.body.asJson() as Map<String, dynamic>);
   }
@@ -248,13 +248,9 @@ class Guild {
       Snowflake before,
       int limit}) async {
     var query = new Map<String, String>();
-
     if (userId != null) query['user_id'] = userId.toString();
-
     if (actionType != null) query['action_type'] = actionType;
-
     if (before != null) query['before'] = before.toString();
-
     if (limit != null) query['limit'] = limit.toString();
 
     HttpResponse r = await this
@@ -305,8 +301,8 @@ class Guild {
     return new Role._new(client, r.body.asJson() as Map<String, dynamic>, this);
   }
 
-  /// Adds [Role] to [User]
-  Future<Null> addRole(User user, Role role) async {
+  /// Adds [Role] to [Member]
+  Future<Null> addRoleToMember(Member user, Role role) async {
     await this
         .client
         .http
