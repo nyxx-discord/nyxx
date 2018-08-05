@@ -6,8 +6,6 @@ class DMChannel extends MessageChannel {
 
   DMChannel._new(Client client, Map<String, dynamic> data)
       : super._new(client, data, "private") {
-    //this.lastMessageID = new raw['last_message_id'];
-    //this.messages = new LinkedHashMap<String, Message>();
 
     if (raw['recipients'] != null) {
       this.recipient =
