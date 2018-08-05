@@ -111,7 +111,5 @@ class Webhook {
 
   /// Returns a string representation of this object.
   @override
-  String toString() {
-    return this.name;
-  }
+  String toString() => this.name;
 }
