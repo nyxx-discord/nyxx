@@ -10,7 +10,7 @@ class Command {
   const Command(this.name, {this.aliases});
 }
 
-class AnnotCommand {
+class _AnnotCommand {
   /// Name of command
   final String cmd;
 
@@ -39,7 +39,7 @@ class AnnotCommand {
   /// Adding to channel topic `[games, PC]` will allow to only execute commands annotated with this phrases
   final List<String> topics;
 
-  const AnnotCommand(this.cmd,
+  const _AnnotCommand(this.cmd,
       [this.isAdmin = false,
       this.requiredRoles = null,
       this.cooldown,
@@ -51,7 +51,7 @@ class AnnotCommand {
 }
 
 /// Defines new subcommand.
-class Subcommand extends AnnotCommand {
+class Subcommand extends _AnnotCommand {
   const Subcommand(String cmd,
       {bool isAdmin,
       List<Role> requiredRoles,
@@ -66,7 +66,7 @@ class Subcommand extends AnnotCommand {
 }
 
 /// Creates main execution command
-class Maincommand extends AnnotCommand {
+class Maincommand extends _AnnotCommand {
   const Maincommand(
       {bool isAdmin,
       List<Role> requiredRoles,

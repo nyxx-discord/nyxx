@@ -178,9 +178,9 @@ class CommandsFramework {
       return;
     }
 
-    var annot = _getCmdAnnot(matched, Maincommand) as AnnotCommand;
+    var annot = _getCmdAnnot(matched, Maincommand) as _AnnotCommand;
     if (annot == null)
-      annot = _getCmdAnnot(matched, Subcommand) as AnnotCommand;
+      annot = _getCmdAnnot(matched, Subcommand) as _AnnotCommand;
 
     // Check for admin command and if user is admin
     if (annot.isAdmin != null && annot.isAdmin)
