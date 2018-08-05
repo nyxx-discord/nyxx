@@ -109,6 +109,26 @@ class Webhook {
     return null;
   }
 
+  Future<Null> sendFile(
+      {String content,
+      List<String> filepaths,
+      List<EmbedBuilder> embeds,
+      String username,
+      String avatarUrl,
+      bool tts}) async {
+      await this.client.http.sendMultipart(
+        "POST", "/webhooks/$id/$token", filepaths,
+        data: jsonEncode({
+          "content": content,
+          "username": username,
+          "avatar_url": avatarUrl,
+          "tts": tts,
+          "embeds": embeds.map((t) => t._build())
+        })
+      );
+      return null;
+    }
+
   /// Returns a string representation of this object.
   @override
   String toString() => this.name;
