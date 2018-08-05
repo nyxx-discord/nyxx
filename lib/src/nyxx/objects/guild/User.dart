@@ -60,7 +60,7 @@ class User {
   }
 
   /// Gets the [DMChannel] for the user.
-  Future<DMChannel> getChannel() async {
+  Future<DMChannel> getDMChannel() async {
     try {
       return client.channels.values.firstWhere(
               (Channel c) => c is DMChannel && c.recipient.id == this.id)
@@ -96,7 +96,7 @@ class User {
       newContent = content;
     }
 
-    DMChannel channel = await getChannel();
+    DMChannel channel = await getDMChannel();
 
     final HttpResponse r = await this.client.http.send(
         'POST', '/channels/${channel.id.toString()}/messages', body: <String, dynamic>{
@@ -116,7 +116,7 @@ class User {
   ///     Channel.getMessage("message id");
   Future<Message> getMessage(String messageId) async {
     if (this.client.user.bot) {
-      DMChannel channel = await getChannel();
+      DMChannel channel = await getDMChannel();
 
       final HttpResponse r = await this
           .client
@@ -127,27 +127,6 @@ class User {
     } else {
       throw new Exception("'getMessage' is only usable by bot accounts.");
     }
-  }
-
-  /// Starts typing.
-  Future<Null> startTyping() async {
-    DMChannel channel = await getChannel();
-    String channelId = channel.id.toString();
-
-    await this.client.http.send('POST', "/channels/$channelId/typing");
-    return null;
-  }
-
-  /// Loops `startTyping` until `stopTypingLoop` is called.
-  void startTypingLoop() {
-    startTyping();
-    this._typing = new Timer.periodic(
-        const Duration(seconds: 7), (Timer t) => startTyping());
-  }
-
-  /// Stops a typing loop if one is running.
-  void stopTypingLoop() {
-    this._typing?.cancel();
   }
 
   /// Returns a mention of user
