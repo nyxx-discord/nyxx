@@ -82,13 +82,10 @@ class Member extends User {
     return null;
   }
 
-  Future<Permissions> getTotalPermissions() {
-    return new Future(() {
-      var total = 0;
+  Future<Permissions> getTotalPermissions() async {
+    var total = 0;
+    for (var role in roles) total |= role.permissions.raw;
 
-      for (var role in roles) total |= role.permissions.raw;
-
-      return new Permissions.fromInt(total);
-    });
+    return new Permissions.fromInt(total);
   }
 }

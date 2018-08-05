@@ -83,6 +83,7 @@ class User {
       bool tts: false,
       String nonce,
       bool disableEveryone}) async {
+
     String newContent;
     if (content != null &&
         (disableEveryone == true ||
@@ -96,10 +97,9 @@ class User {
     }
 
     DMChannel channel = await getChannel();
-    String channelId = channel.id.toString();
 
     final HttpResponse r = await this.client.http.send(
-        'POST', '/channels/$channelId/messages', body: <String, dynamic>{
+        'POST', '/channels/${channel.id.toString()}/messages', body: <String, dynamic>{
       "content": newContent,
       "tts": tts,
       "nonce": nonce,
@@ -117,12 +117,11 @@ class User {
   Future<Message> getMessage(String messageId) async {
     if (this.client.user.bot) {
       DMChannel channel = await getChannel();
-      String channelId = channel.id.toString();
 
       final HttpResponse r = await this
           .client
           .http
-          .send('GET', '/channels/$channelId/messages/$messageId');
+          .send('GET', '/channels/${channel.id.toString()}/messages/$messageId');
       return new Message._new(
           this.client, r.body.asJson() as Map<String, dynamic>);
     } else {

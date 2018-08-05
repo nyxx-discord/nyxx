@@ -20,26 +20,8 @@ class Game {
   }
 
   Game._new(Client client, this.raw) {
-    try {
-      this.name = raw['name'].toString();
-    } catch (err) {
-      this.name = null;
-    }
-
-    try {
-      this.url = raw['url'].toString();
-    } catch (err) {
-      this.url = null;
-    }
-
-    if (raw['type'] is int) {
-      this.type = raw['type'] as int;
-    } else if (raw['type'] is String) {
-      try {
-        this.type = int.parse(raw['type'] as String);
-      } catch (err) {
-        this.type = null;
-      }
-    }
+    this.name = raw['name'] as String;
+    this.url = raw['name'] as String;
+    this.type = raw['type'] as int;
   }
 }
