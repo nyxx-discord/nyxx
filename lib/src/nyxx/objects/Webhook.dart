@@ -93,7 +93,7 @@ class Webhook {
   /// Sends a message with the webhook.
   Future<Null> send(
       {String content,
-      List<Map<String, dynamic>> embeds,
+      List<EmbedBuilder> embeds,
       String username,
       String avatarUrl,
       bool tts}) async {
@@ -102,7 +102,7 @@ class Webhook {
       "username": username,
       "avatar_url": avatarUrl,
       "tts": tts,
-      "embeds": embeds
+      "embeds": embeds.map((t) => t._build())
     };
 
     await this.http.send('POST', "/webhooks/$id/$token", body: payload);
