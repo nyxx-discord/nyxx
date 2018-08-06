@@ -2,7 +2,7 @@ part of nyxx;
 
 /// Provides abstraction of messages for [TextChannel], [DMChannel] and [DMGroupChannel].
 /// Caches message to avoid abusing API.
-class MessageChannel extends Channel {
+class MessageChannel extends Channel with IterableMixin<Message> {
   Timer _typing;
 
   /// Sent when a new message is received.
@@ -121,7 +121,7 @@ class MessageChannel extends Channel {
 
     return null;
   }
-  
+
   /// Gets several [Message] objects.
   ///
   /// Throws an [Exception] if the HTTP request errored.
@@ -152,4 +152,7 @@ class MessageChannel extends Channel {
 
     return response;
   }
+
+  @override
+  Iterator<Message> get iterator => messages.values.iterator;
 }
