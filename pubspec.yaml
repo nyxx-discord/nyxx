@@ -7,7 +7,7 @@ authors:
 homepage: https://github.com/l7ssha/nyxx
 documentation: https://github.com/l7ssha/nyxx
 environment:
-  sdk: '>=1.23.0 <3.0.0'
+  sdk: '>=2.0.0-dev.63.0 <3.0.0'
 dependencies:
   http_parser: ">=3.0.0 <4.0.0"
   w_transport: ">=3.0.0 <4.0.0"
