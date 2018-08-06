@@ -49,9 +49,9 @@ class EchoCommand extends command.CommandContext {
         new nyxx.Snowflake("471349482307715102"));
 
     for (var perm in (channel as nyxx.GuildChannel).permissions) {
-      var role = guild.roles.values.firstWhere((i) => i.id == perm.entityId);
+      var role = guild.roles.values.firstWhere((i) => i.id == perm.id);
       print(
-          "Entity: ${perm.entityId} with ${perm.type} as ${role.name} can?: ${perm.permissions.viewChannel}");
+          "Entity: ${perm.id} with ${perm.type} as ${role.name} can?: ${perm.permissions.viewChannel}");
     }
   }
 

@@ -10,7 +10,7 @@ void main() async {
   /// Create new scheduler and fill out all required fields
   var scheduler = new command.Scheduler(bot)
     ..runEvery = const Duration(seconds: 1)
-    ..targets = ["422285619952222208"]
+    ..targets = [const nyxx.Snowflake.static("422285619952222208")]
     ..func = (channel) {
       channel.send(content: "test");
     };
