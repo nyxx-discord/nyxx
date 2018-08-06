@@ -13,10 +13,10 @@ class TrackResponse {
   TrackResponse._new(this.raw) {
     loadType = raw['loadType'] as String;
 
-    if(raw['playlistInfo']['name'] == null) {
+    if(loadType == "TRACK_LOADED") {
       entity = new Track._new(raw['tracks'].first as Map<String, dynamic>);
     }
-    else {
+    else if(loadType == "PLAYLIST_LOADED"){
       entity = new Playlist._new(raw);
     }
   }
