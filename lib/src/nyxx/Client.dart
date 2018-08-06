@@ -15,6 +15,9 @@ class Client {
   _WS _ws;
   _EventController _events;
 
+  // Users state cache
+  Map<Snowflake, UserVoiceState> _voiceStates;
+
   /// The HTTP client.
   Http http;
 
@@ -166,6 +169,7 @@ class Client {
       this._options = new ClientOptions();
     }
 
+    this._voiceStates = new Map<Snowflake, UserVoiceState>();
     this.guilds = new Map<Snowflake, Guild>();
     this.channels = new Map<Snowflake, Channel>();
     this.users = new Map<Snowflake, User>();
@@ -179,7 +183,7 @@ class Client {
     Logger.root.onRecord.listen((LogRecord rec) {
       print(
           '[${rec.level.name}] {${rec.loggerName}} - '
-              '${rec.time.day}.${rec.time.month} '
+              '${rec.time.day}.${rec.time.month}.${rec.time.year}'
               '${rec.time.hour}:${rec.time.minute}:${rec.time.second}'
               ':${rec.time.millisecond} '
               '-- ${rec.message}');
