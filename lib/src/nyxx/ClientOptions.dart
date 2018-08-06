@@ -29,6 +29,7 @@ class ClientOptions {
 
   /// A list of discord formatted events to be disabled. Note: some of these events
   /// can be dangerous to disable. Ex: `TYPING_START`
+  @deprecated
   List<String> disabledEvents;
 
   /// Makes a new `ClientOptions` object.
