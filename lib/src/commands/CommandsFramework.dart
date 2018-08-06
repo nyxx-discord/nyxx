@@ -286,16 +286,14 @@ class CommandsFramework {
         commandContext.author = e.message.author;
         commandContext.channel = e.message.channel;
 
-        //print(params);
-
         new Future(() {
-          //try {
+          try {
             var newInstance = reflect(commandContext);
             newInstance.invoke(matched.simpleName, params);
-          //} catch (err) {
-            //_commandExecutionFailController
-                //.add(new CommandExecutionFailEvent._new(e.message, err));
-          //}
+          } catch (err) {
+            _commandExecutionFailController
+                .add(new CommandExecutionFailEvent._new(e.message, err));
+          }
         });
 
         logger.fine("Command executed");
@@ -303,16 +301,18 @@ class CommandsFramework {
     }
   }
 
+  String sTrim(String str) {
+    return str.substring(6).replaceAll("\"", "").replaceAll("(", "").replaceAll(")", "");
+  }
+
   /// Register new [CommandContext] object.
   void add(CommandContext command) {
-    var inst = reflect(command);
-    var cls = inst.type;
-    var cmd = _getCmdAnnot(cls, Command) as Command;
+    var cmd = sTrim(reflect(command).type.simpleName.toString());
 
-    //command.logger = new Logger.detached("Command[${cmd.name}]");
+    command.logger = new Logger.detached("Command[$cmd]");
 
     _commands.add(command);
-    //logger.info("Command[${cmd.name}] added to registry");
+    logger.info("Command[$cmd] added to registry");
   }
 
   /// Register many [CommandContext] instances.
@@ -346,7 +346,6 @@ class CommandsFramework {
             var toInject = new List<dynamic>();
 
             for (var param in params) {
-              //print(param.type.reflectedType.toString());
               var type = param.type.reflectedType;
 
               for (var service in _services) {
@@ -370,7 +369,7 @@ class CommandsFramework {
       } catch (e) {
         print(e);
         throw new Exception(
-            "Service [${cm.simpleName}] constructor not satisfied!");
+            "Service [${sTrim(cm.simpleName.toString())}] constructor not satisfied!");
       }
     });
   }
@@ -385,26 +384,12 @@ class CommandsFramework {
         add(cmd);
       } catch (e) {
         print(e);
-        //throw new Exception(
-            //"Command [${cm.simpleName}] constructor not satisfied!");
+        throw new Exception(
+            "Command [${sTrim(cm.simpleName.toString())}] constructor not satisfied!");
       }
     });
   }
 
-  /*
-  /// Register all TypeConverters in current isolate
-  void registerLibraryTypeConverters() {
-    _registerLibrary(TypeConverter, (toInject, cm) {
-      try {
-        var tp = cm.newInstance(new Symbol(''), toInject).reflectee;
-        _typeConverters.add(tp);
-      } catch (e) {
-        print(e);
-        throw new Exception("Type converter [${cm.simpleName}] cosntructor not satisfied.");
-      }
-    });
-  }
-*/
   /// Creates help String based on registered commands metadata.
   String _createHelp(Snowflake requestedUserId) {
     var buffer = new StringBuffer();
