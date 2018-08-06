@@ -36,7 +36,7 @@ class Member extends User {
     this.status = data['status'] as String;
 
     if (guild == null)
-      this.guild = this.client.guilds[data['guild_id']];
+      this.guild = this.client.guilds[new Snowflake(data['guild_id'] as String)];
     else
       this.guild = guild;
 
@@ -49,7 +49,7 @@ class Member extends User {
 
     roles = new List();
     data['roles'].forEach((dynamic i) {
-      roles.add(this.guild.roles[i]);
+      roles.add(this.guild.roles[new Snowflake(i as String)]);
     });
 
     if (data['joined_at'] != null)
@@ -59,8 +59,8 @@ class Member extends User {
       this.game =
           new Game._new(this.client, data['game'] as Map<String, dynamic>);
 
-    if (guild != null) this.guild.members[this.id.toString()] = this;
-    client.users[this.toUser().id.toString()] = this.toUser();
+    if (guild != null) this.guild.members[this.id] = this;
+    client.users[this.toUser().id] = this.toUser();
   }
 
   /// Returns a user from the member.

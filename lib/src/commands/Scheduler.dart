@@ -9,7 +9,7 @@ class Scheduler {
   void Function(MessageChannel channel) func;
 
   /// List of targeted channel
-  List<String> targets;
+  List<Snowflake> targets;
 
   List<MessageChannel> _targets;
   Client _client;

@@ -13,7 +13,7 @@ class MessageChannel extends Channel {
   StreamController<TypingEvent> _onTyping;
 
   /// A collection of messages sent to this channel.
-  LinkedHashMap<String, Message> messages;
+  LinkedHashMap<Snowflake, Message> messages;
 
   /// The ID for the last message in the channel.
   Snowflake lastMessageID;
@@ -22,7 +22,7 @@ class MessageChannel extends Channel {
       : super._new(client, data, type) {
     if (raw.containsKey('last_message_id') && raw['last_message_id'] != null)
       this.lastMessageID = new Snowflake(raw['last_message_id'] as String);
-    this.messages = new LinkedHashMap<String, Message>();
+    this.messages = new LinkedHashMap<Snowflake, Message>();
 
     _onMessage = new StreamController.broadcast();
     _onTyping = new StreamController.broadcast();
@@ -38,7 +38,7 @@ class MessageChannel extends Channel {
         this.messages.values.toList().first._onDelete.close();
         this.messages.remove(this.messages.values.toList().first.id);
       }
-      this.messages[message.id.toString()] = message;
+      this.messages[message.id] = message;
     }
   }
 
@@ -58,8 +58,8 @@ class MessageChannel extends Channel {
         this.client, r.body.asJson() as Map<String, dynamic>);
   }
 
-  Message getMessage(String id) =>
-      messages.values.toList().firstWhere((i) => i.id.toString() == id);
+  Message getMessage(Snowflake id) =>
+      messages.values.toList().firstWhere((i) => i.id == id);
 
   /// Sends a message.
   ///
@@ -121,7 +121,7 @@ class MessageChannel extends Channel {
 
     return null;
   }
-
+  
   /// Gets several [Message] objects.
   ///
   /// Throws an [Exception] if the HTTP request errored.

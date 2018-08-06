@@ -3,7 +3,7 @@ part of nyxx;
 /// [Message] class represents single message. It contains it's Event [Stream]s.
 /// [Message] among all it's poperties has also backreference to [Channel] from which it was sent, [Guild] and [User] which sent this message.
 /// Supports sending files via `sendFile()` - method can send file or file and use it in embed. Read how to use it [here](https://github.com/l7ssha/nyxx/wiki/Embeds)
-class Message {
+class Message extends SnowflakeEntity {
   StreamController<MessageUpdateEvent> _onUpdate;
   StreamController<MessageDeleteEvent> _onDelete;
   StreamController<MessageReactionEvent> _onReactionAdded;
@@ -19,19 +19,12 @@ class Message {
   /// The message's content.
   String content;
 
-  /// The message's ID.
-  Snowflake id;
-
   /// The message's nonce, null if not set.
   String nonce;
-
-  /// The timestamp of when the message was created.
-  DateTime timestamp;
 
   /// The timestamp of when the message was last edited, null if not edited.
   DateTime editedTimestamp;
 
-  // For now it is dynamic - have to fix this
   /// Channel in which message was sent
   MessageChannel channel;
 
@@ -45,19 +38,16 @@ class Message {
   Member member;
 
   /// The mentions in the message.
-  Map<String, User> mentions;
+  Map<Snowflake, User> mentions;
 
   /// A list of IDs for the role mentions in the message.
-  Map<String, Role> roleMentions;
+  Map<Snowflake, Role> roleMentions;
 
   /// A collection of the embeds in the message.
   Map<String, Embed> embeds;
 
   /// The attachments in the message.
-  Map<String, Attachment> attachments;
-
-  /// When the message was created, redundant of `timestamp`.
-  DateTime createdAt;
+  Map<Snowflake, Attachment> attachments;
 
   /// Whether or not the message is pinned.
   bool pinned;
@@ -86,7 +76,7 @@ class Message {
   /// Emitted when a user explicitly removes all reactions from a message.
   Stream<MessageReactionsRemovedEvent> onReactionsRemoved;
 
-  Message._new(this.client, this.raw) {
+  Message._new(this.client, this.raw) : super(new Snowflake(raw['id'] as String)) {
     this._onUpdate = new StreamController.broadcast();
     this.onUpdate = this._onUpdate.stream;
 
@@ -103,17 +93,14 @@ class Message {
     this.onReactionsRemoved = this._onReactionsRemoved.stream;
 
     this.content = raw['content'] as String;
-    this.id = new Snowflake(raw['id'] as String);
     this.nonce = raw['nonce'] as String;
-    this.timestamp = DateTime.parse(raw['timestamp'] as String);
     this.author =
         new User._new(this.client, raw['author'] as Map<String, dynamic>);
     this.channel =
-        this.client.channels[raw['channel_id'] as String] as MessageChannel;
+        this.client.channels[new Snowflake(raw['channel_id'] as String)] as MessageChannel;
     this.pinned = raw['pinned'] as bool;
     this.tts = raw['tts'] as bool;
     this.mentionEveryone = raw['mention_everyone'] as bool;
-    this.createdAt = id.timestamp;
 
     this.channel._cacheMessage(this);
     this.channel.lastMessageID = this.id;
@@ -124,9 +111,9 @@ class Message {
       this.member = guild.members[this.author.id];
 
       if (raw['mention_roles'] != null) {
-        this.roleMentions = new Map<String, Role>();
+        this.roleMentions = new Map<Snowflake, Role>();
         raw['mention_roles'].forEach((dynamic o) {
-          this.roleMentions[guild.roles[o].id.toString()] = guild.roles[o];
+          this.roleMentions[guild.roles[o].id] = guild.roles[o];
         });
       }
     }
@@ -135,10 +122,10 @@ class Message {
       this.editedTimestamp = DateTime.parse(raw['edited_timestamp'] as String);
     }
 
-    this.mentions = new Map<String, User>();
+    this.mentions = new Map<Snowflake, User>();
     raw['mentions'].forEach((dynamic o) {
       final User user = new User._new(this.client, o as Map<String, dynamic>);
-      this.mentions[user.id.toString()] = user;
+      this.mentions[user.id] = user;
     });
     this.mentions;
 
@@ -149,11 +136,11 @@ class Message {
     });
     this.embeds;
 
-    this.attachments = new Map<String, Attachment>();
+    this.attachments = new Map<Snowflake, Attachment>();
     raw['attachments'].forEach((dynamic o) {
       final Attachment attachment =
           new Attachment._new(this.client, o as Map<String, dynamic>);
-      this.attachments[attachment.id.toString()] = attachment;
+      this.attachments[attachment.id] = attachment;
     });
     this.attachments;
 

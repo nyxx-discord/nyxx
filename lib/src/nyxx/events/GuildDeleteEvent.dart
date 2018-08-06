@@ -7,9 +7,9 @@ class GuildDeleteEvent {
 
   GuildDeleteEvent._new(Client client, Map<String, dynamic> json, Shard shard) {
     if (client.ready) {
-      this.guild = client.guilds[json['d']['id']];
-      client.guilds.remove(json['d']['id']);
-      shard.guilds.remove(json['d']['id']);
+      this.guild = client.guilds[new Snowflake(json['d']['id'] as String)];
+      client.guilds.remove(new Snowflake(json['d']['id'] as String));
+      shard.guilds.remove(new Snowflake(json['d']['id'] as String));
       client._events.onGuildDelete.add(this);
     }
   }

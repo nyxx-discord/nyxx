@@ -305,6 +305,8 @@ class Http {
     return null;
   }
 
+  /// Expands shorten attachment string `{finename}`
+  /// to full format `attachment://filename`
   String expandAttachments(String payload) {
     return payload.replaceAllMapped(new RegExp(r'\{(.+)\}'), (match) {
       print(match.group(0));
@@ -312,9 +314,11 @@ class Http {
     });
   }
 
+  /// Adds AUDIT_LOG header to request
   Map<String, String> addAuditReason(String reason) =>
       <String, String>{"X-Audit-Log-Reason": "$reason"};
 
+  /// Sends mutlipart response
   Future<HttpResponse> sendMultipart(
       String method, String path, List<String> filenames,
       {String data, bool beforeReady: false, String reason}) async {

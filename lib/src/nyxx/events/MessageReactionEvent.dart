@@ -16,9 +16,9 @@ class MessageReactionEvent {
 
   MessageReactionEvent._new(
       Client client, Map<String, dynamic> json, bool added) {
-    this.user = client.users[json['d']['user_id']];
-    this.channel = client.channels[json['d']['channel_id']] as MessageChannel;
-    this.message = channel.getMessage((json['d']['message_id'] as String));
+    this.user = client.users[new Snowflake(json['d']['user_id'] as String)];
+    this.channel = client.channels[new Snowflake(json['d']['channel_id'] as String)] as MessageChannel;
+    this.message = channel.getMessage(new Snowflake(json['d']['message_id'] as String));
 
     if (json['d']['emoji']['id'] == null)
       emoji = new UnicodeEmoji._partial((json['d']['emoji']['name'] as String));

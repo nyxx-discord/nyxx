@@ -17,9 +17,7 @@ class AuditLogChange {
 
   AuditLogChange._new(this.raw) {
     if (raw['new_value'] != null) newValue = raw['new_value'];
-
     if (raw['old_value'] != null) oldValue = raw['old_value'];
-
     key = raw['key'] as String;
   }
 }

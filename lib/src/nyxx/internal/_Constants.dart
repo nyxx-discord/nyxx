@@ -1,19 +1,19 @@
 part of nyxx;
 
 class _OPCodes {
-  static const int dispatch = 0;
-  static const int heartbeat = 1;
-  static const int identify = 2;
-  static const int statusUpdate = 3;
-  static const int voiceStateUpdate = 4;
-  static const int voiceGuildPing = 5;
-  static const int resume = 6;
-  static const int reconnect = 7;
-  static const int requesGuildMembers = 8;
-  static const int invalidSession = 9;
-  static const int hello = 10;
-  static const int heartbeatAck = 11;
-  static const int guildSync = 12;
+  static const int DISPATCH = 0;
+  static const int HEARTBEAT = 1;
+  static const int IDENTIFY = 2;
+  static const int STATUS_UPDATE = 3;
+  static const int VOICE_STATE_UPDATE = 4;
+  static const int VOICE_GUILD_PING = 5;
+  static const int RESUME = 6;
+  static const int RECONNECT = 7;
+  static const int REQUEST_GUILD_MEMBER = 8;
+  static const int INVALID_SESSION = 9;
+  static const int HELLP = 10;
+  static const int HEARBEAT_ACK = 11;
+  static const int GUILD_SYNC = 12;
 }
 
 /// The client constants.

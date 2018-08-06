@@ -1,27 +1,18 @@
 part of nyxx;
 
 /// A channel.
-class Channel {
+class Channel extends SnowflakeEntity {
   /// The [Client] object.
   Client client;
 
   /// The raw object returned by the API
   Map<String, dynamic> raw;
 
-  /// The channel's ID.
-  Snowflake id;
-
   /// The channel's type.
   String type;
 
-  /// A timestamp for when the channel was created.
-  DateTime createdAt;
-
-  Channel._new(this.client, this.raw, this.type) {
-    this.id = new Snowflake(raw['id'] as String);
-    this.createdAt = id.timestamp;
-
-    client.channels[this.id.toString()] = this;
+  Channel._new(this.client, this.raw, this.type) : super(new Snowflake(raw['id'] as String)) {
+    client.channels[id] = this;
   }
 
   /// Deletes the channel.

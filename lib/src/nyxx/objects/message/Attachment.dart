@@ -1,15 +1,12 @@
 part of nyxx;
 
 /// A message attachment.
-class Attachment {
+class Attachment extends SnowflakeEntity {
   /// The [Client] object.
   Client client;
 
   /// The raw object returned by the API
   Map<String, dynamic> raw;
-
-  /// The attachment's ID
-  Snowflake id;
 
   /// The attachment's filename.
   String filename;
@@ -29,19 +26,15 @@ class Attachment {
   /// The attachment's width, if an image,
   int width;
 
-  /// A timestamp for when the message was created.
-  DateTime createdAt;
-
-  Attachment._new(this.client, this.raw) {
-    this.id = new Snowflake(raw['id'] as String);
+  Attachment._new(this.client, this.raw) : super(new Snowflake(raw['id'] as String)) {
     this.filename = raw['filename'] as String;
     this.url = raw['url'] as String;
     this.proxyUrl = raw['proxyUrl'] as String;
     this.size = raw['size'] as int;
     this.height = raw['height'] as int;
     this.width = raw['width'] as int;
-    this.createdAt = id.timestamp;
   }
 
+  @override
   String toString() => url;
 }

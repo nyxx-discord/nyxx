@@ -7,7 +7,7 @@ class GuildEmojisUpdateEvent {
 
   GuildEmojisUpdateEvent._new(Client client, Map<String, dynamic> json) {
     if (client.ready) {
-      final Guild guild = client.guilds[json['d']['guild_id']];
+      final Guild guild = client.guilds[new Snowflake(json['d']['guild_id'] as String)];
       emojis = new Map();
       json['d']['emojis'].forEach((dynamic o) {
         emojis[(o['id'] as String)] =

@@ -77,7 +77,7 @@ class _WS {
 
   void testReady() {
     bool match = true;
-    client.guilds.forEach((String id, Guild o) {
+    client.guilds.forEach((Snowflake id, Guild o) {
       if (client._options.forceFetchMembers) {
         if (o == null || o.members.length != o.memberCount) match = false;
       } else {

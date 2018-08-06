@@ -7,13 +7,13 @@ class AuditLog {
   Client client;
 
   /// List of webhooks found in the audit log
-  Map<String, Webhook> webhooks;
+  Map<Snowflake, Webhook> webhooks;
 
   /// List of users found in the audit log
-  Map<String, User> users;
+  Map<Snowflake, User> users;
 
   /// List of audit log entires
-  Map<String, AuditLogEntry> entries;
+  Map<Snowflake, AuditLogEntry> entries;
 
   Map<String, dynamic> raw;
 
@@ -23,17 +23,17 @@ class AuditLog {
     entries = new Map();
 
     raw['webhooks'].forEach((dynamic o) {
-      webhooks[o['id'] as String] =
+      webhooks[new Snowflake(o['id'] as String)] =
           new Webhook._fromApi(client, o as Map<String, dynamic>);
     });
 
     raw['users'].forEach((dynamic o) {
-      users[o['id'] as String] =
+      users[new Snowflake(o['id'] as String)] =
           new User._new(client, o as Map<String, dynamic>);
     });
 
     raw['audit_log_entries'].forEach((dynamic o) {
-      entries[o['id'] as String] =
+      entries[new Snowflake(o['id'] as String)] =
           new AuditLogEntry._new(client, o as Map<String, dynamic>);
     });
   }

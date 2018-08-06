@@ -25,14 +25,14 @@ class Client {
   ClientOAuth2Application app;
 
   /// All of the guilds the bot is in.
-  Map<String, Guild> guilds;
+  Map<Snowflake, Guild> guilds;
 
   /// All of the channels the bot is in.
-  Map<String, Channel> channels;
+  Map<Snowflake, Channel> channels;
 
   /// All of the users the bot can see. Does not always have offline users
   /// without forceFetchUsers enabled.
-  Map<String, User> users;
+  Map<Snowflake, User> users;
 
   /// Whether or not the client is ready.
   bool ready = false;
@@ -166,9 +166,9 @@ class Client {
       this._options = new ClientOptions();
     }
 
-    this.guilds = new Map<String, Guild>();
-    this.channels = new Map<String, Channel>();
-    this.users = new Map<String, User>();
+    this.guilds = new Map<Snowflake, Guild>();
+    this.channels = new Map<Snowflake, Channel>();
+    this.users = new Map<Snowflake, User>();
     this.shards = new Map<int, Shard>();
 
     this.http = new Http._new(this);

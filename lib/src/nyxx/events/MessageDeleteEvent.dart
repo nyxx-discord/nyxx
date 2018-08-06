@@ -10,12 +10,12 @@ class MessageDeleteEvent {
 
   MessageDeleteEvent._new(Client client, Map<String, dynamic> json) {
     if (client.ready) {
-      if ((client.channels[json['d']['channel_id']] as MessageChannel)
-              .messages[json['d']['id']] !=
+      if ((client.channels[new Snowflake(json['d']['channel_id'] as String)] as MessageChannel)
+              .messages[new Snowflake(json['d']['id'] as String)] !=
           null) {
         this.message =
-            (client.channels[json['d']['channel_id']] as MessageChannel)
-                .messages[json['d']['id']];
+            (client.channels[new Snowflake(json['d']['channel_id'] as String)] as MessageChannel)
+                .messages[new Snowflake(json['d']['id'] as String)];
         this.id = message.id;
         this.message._onDelete.add(this);
         client._events.onMessageDelete.add(this);
