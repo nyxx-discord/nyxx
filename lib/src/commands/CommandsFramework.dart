@@ -95,6 +95,62 @@ class CommandsFramework {
     });
   }
 
+  Future<List> matchCommand(List<String> splittedCommand) async {
+    var sanitizedCommand = splittedCommand[0].replaceFirst(prefix, "");
+
+    MethodMirror matched;
+    CommandContext commandContext;
+    Command _meta;
+    bool found = false;
+
+    void find(Iterable<DeclarationMirror> tmpMethods, CommandContext cmd, bool first, bool Function(Command) f) {
+      for(var v in tmpMethods) {
+        if (v is MethodMirror) {
+          var meta = _getCmdAnnot(v, Command) as Command;
+
+          if (f(meta)) {
+            matched = v;
+            _meta = meta;
+            commandContext = cmd;
+            if(!first)
+              splittedCommand.removeRange(0, 2);
+            else splittedCommand.removeAt(0);
+            found = true;
+            break;
+          }
+        }
+      }
+    }
+
+    for (var cmd in _commands) {
+      if(found)
+        break;
+
+      var tmpInstMirror = reflect(cmd);
+      var tmpClassMirror = tmpInstMirror.type;
+      var tmpMethods = tmpClassMirror.declarations;
+      var tmpCommand = _getCmdAnnot(tmpClassMirror, Command) as Command;
+
+      if(tmpCommand != null) {
+        if (tmpCommand.name == sanitizedCommand || (tmpCommand.aliases != null && tmpCommand.aliases.contains(sanitizedCommand))) {
+          if(splittedCommand.length > 1) {
+            find(tmpMethods.values, cmd, false, (meta) => meta != null && meta.name != null && meta.name == splittedCommand[1]);
+          } else {
+            find(tmpMethods.values, cmd, true, (meta) => meta != null && meta.name != null && meta.name == sanitizedCommand);
+          }
+        }
+
+        if(!found)
+          find(tmpMethods.values, cmd, true, (meta) => meta != null && meta.main != null && meta.main);
+      }
+      else {
+        find(tmpMethods.values, cmd, true, (meta) => meta != null && meta.name != null && meta.name  == sanitizedCommand);
+      }
+    }
+
+    return [matched, commandContext, _meta, splittedCommand];
+  }
+
   /// Dispatches onMessage event to framework.
   Future _dispatch(MessageEvent e) async {
 
@@ -109,95 +165,40 @@ class CommandsFramework {
       return;
     }
 
-    ClassMirror classMirror;
-    Command command;
-    var commandContext;
-
     var splittedCommand = e.message.content.split(' ');
-    var splCommand = splittedCommand[0].replaceFirst(prefix, "");
+    int executionCode = -1;
 
-    for (var cmd in _commands) {
-      var tmpInstMirror = reflect(cmd);
-      var tmpClassMirror = tmpInstMirror.type;
-      var tmpCommand = _getCmdAnnot(tmpClassMirror, Command) as Command;
-
-      if (tmpCommand.name == splCommand ||
-          (tmpCommand.aliases != null &&
-              tmpCommand.aliases.contains(splCommand))) {
-        classMirror = tmpClassMirror;
-        command = tmpCommand;
-        commandContext = cmd;
-
-        break;
-      }
-    }
-
-    // If there is no command - return
-    if (classMirror == null || command == null) {
-      _commandNotFoundEventController.add(e.message);
-      return;
-    }
-
-    var executionCode = -1;
-
-    MethodMirror matched;
-    var subcommand;
-    var methods = classMirror.declarations;
-
-    if (splittedCommand.length > 1) {
-      subcommand = splittedCommand[1];
-      methods.forEach((k, v) {
-        if (v is MethodMirror) {
-          var meta = _getCmdAnnot(v, Subcommand) as Subcommand;
-
-          if (meta != null && meta.cmd == subcommand) {
-            matched = v;
-            splittedCommand.removeRange(0, 2);
-            return;
-          }
-        }
-      });
-    }
-
-    if (matched == null) {
-      methods.forEach((k, v) {
-        if (v is MethodMirror) {
-          var meta = _getCmdAnnot(v, Maincommand);
-
-          if (meta != null) {
-            matched = v;
-            splittedCommand.removeAt(0);
-            return;
-          }
-        }
-      });
-    }
+    var ret = await matchCommand(splittedCommand);
+    MethodMirror matched = ret[0] as DeclarationMirror;
+    CommandContext commandContext = ret[1] as CommandContext;
+    Command _meta = ret[2] as Command;
+    splittedCommand = ret[3] as List<String>;
 
     if (matched == null) {
       _commandNotFoundEventController.add(e.message);
       return;
     }
 
-    var annot = _getCmdAnnot(matched, Maincommand) as _AnnotCommand;
-    if (annot == null)
-      annot = _getCmdAnnot(matched, Subcommand) as _AnnotCommand;
+    Cons annot = _getCmdAnnot(matched, Cons) as Cons;
+    if(annot == null)
+      executionCode = -2;
 
     // Check for admin command and if user is admin
-    if (annot.isAdmin != null && annot.isAdmin)
+    if (executionCode == -1 && annot.isAdmin != null && annot.isAdmin)
       executionCode = _isUserAdmin(e.message.author.id) ? 100 : 0;
 
     var member = await e.message.guild.getMember(e.message.author);
 
     // Check if there is need to check user roles
-    if (annot.requiredRoles != null && executionCode == -1) {
+    if (executionCode == -1 && annot.requiredRoles != null) {
       var hasRoles =
-          annot.requiredRoles.where((i) => member.roles.contains(i)).toList();
+      annot.requiredRoles.where((i) => member.roles.contains(i)).toList();
 
       if (hasRoles == null || hasRoles.isEmpty) executionCode = 1;
     }
 
     // Check if user has required permissions
-    if (annot.requiredPermissions != null && executionCode == -1) {
+    if (executionCode == -1 && annot.requiredPermissions != null) {
       var total = await member.getTotalPermissions();
       for (var perm in annot.requiredPermissions) {
         if ((total.raw | perm) == 0) {
@@ -208,9 +209,9 @@ class CommandsFramework {
     }
 
     // Check for channel compatibility
-    if (annot.guildOnly != null && executionCode == -1) {
+    if (executionCode == -1 && annot.guildOnly != null) {
       if ((annot.guildOnly == GuildOnly.DM &&
-              e.message.channel is TextChannel) ||
+          e.message.channel is TextChannel) ||
           (annot.guildOnly == GuildOnly.GUILD &&
               (e.message.channel is DMChannel ||
                   e.message.channel is GroupDMChannel))) {
@@ -219,18 +220,18 @@ class CommandsFramework {
     }
 
     // Check for channel nsfw
-    if (annot.isNsfw != null && annot.isNsfw && executionCode == -1) {
+    if (executionCode == -1 && annot.isNsfw != null && annot.isNsfw) {
       if (e.message.channel is TextChannel) {
         var ch = e.message.channel as TextChannel;
-        if (!ch.nsfw) executionCode = 4;
+        if(ch.nsfw == null) executionCode = 4;
+          else if (!ch.nsfw) executionCode = 4;
       } else if (!(e.message.channel is DMChannel) ||
           !(e.message.channel is GroupDMChannel)) executionCode = 4;
     }
 
     // Check for channel topics
-    if (annot.topics != null &&
-        e.message.channel is TextChannel &&
-        executionCode == -1) {
+    if (executionCode == -1 && annot.topics != null &&
+        e.message.channel is TextChannel) {
       var topic = (e.message.channel as TextChannel).topic;
       var list = topic
           .substring(topic.indexOf("[") + 1, topic.indexOf("]"))
@@ -252,7 +253,7 @@ class CommandsFramework {
         annot.cooldown != null &&
         annot.cooldown >
             0) if (!(await _cooldownCache.canExecute(
-        e.message.author.id, command.name, annot.cooldown * 1000)))
+        e.message.author.id, _meta.name, annot.cooldown * 1000)))
       executionCode = 2;
 
     // Switch between execution codes
@@ -276,6 +277,7 @@ class CommandsFramework {
         _requiredTopicError.add(e.message);
         break;
       case -1:
+      case -2:
       case 100:
         var params = await _collectParams(matched, splittedCommand, e.message);
 
@@ -284,14 +286,16 @@ class CommandsFramework {
         commandContext.author = e.message.author;
         commandContext.channel = e.message.channel;
 
+        //print(params);
+
         new Future(() {
-          try {
+          //try {
             var newInstance = reflect(commandContext);
             newInstance.invoke(matched.simpleName, params);
-          } catch (err) {
-            _commandExecutionFailController
-                .add(new CommandExecutionFailEvent._new(e.message, err));
-          }
+          //} catch (err) {
+            //_commandExecutionFailController
+                //.add(new CommandExecutionFailEvent._new(e.message, err));
+          //}
         });
 
         logger.fine("Command executed");
@@ -305,10 +309,10 @@ class CommandsFramework {
     var cls = inst.type;
     var cmd = _getCmdAnnot(cls, Command) as Command;
 
-    command.logger = new Logger.detached("Command[${cmd.name}]");
+    //command.logger = new Logger.detached("Command[${cmd.name}]");
 
     _commands.add(command);
-    logger.info("Command[${cmd.name}] added to registry");
+    //logger.info("Command[${cmd.name}] added to registry");
   }
 
   /// Register many [CommandContext] instances.
@@ -342,6 +346,7 @@ class CommandsFramework {
             var toInject = new List<dynamic>();
 
             for (var param in params) {
+              //print(param.type.reflectedType.toString());
               var type = param.type.reflectedType;
 
               for (var service in _services) {
@@ -380,8 +385,8 @@ class CommandsFramework {
         add(cmd);
       } catch (e) {
         print(e);
-        throw new Exception(
-            "Command [${cm.simpleName}] constructor not satisfied!");
+        //throw new Exception(
+            //"Command [${cm.simpleName}] constructor not satisfied!");
       }
     });
   }
@@ -480,25 +485,25 @@ class CommandsFramework {
         case TextChannel:
           try {
             var id = _entityRegex.firstMatch(splitted[index]).group(3);
-            collected.add(e.guild.channels[id]);
+            collected.add(e.guild.channels[new Snowflake(id)]);
           } catch (e) {}
           break;
         case User:
           try {
             var id = _entityRegex.firstMatch(splitted[index]).group(3);
-            collected.add(e.guild.client.users[id]);
+            collected.add(e.guild.client.users[new Snowflake(id)]);
           } catch (e) {}
           break;
         case Role:
           try {
             var id = _entityRegex.firstMatch(splitted[index]).group(3);
-            collected.add(e.guild.roles[id]);
+            collected.add(e.guild.roles[new Snowflake(id)]);
           } catch (e) {}
           break;
         case GuildEmoji:
           try {
             var id = _entityRegex.firstMatch(splitted[index]).group(3);
-            collected.add(e.guild.emojis[id]);
+            collected.add(e.guild.emojis[new Snowflake(id)]);
           } catch (e) {}
           break;
         case UnicodeEmoji:
