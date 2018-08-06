@@ -10,7 +10,7 @@ class GuildBanAddEvent {
 
   GuildBanAddEvent._new(Client client, Map<String, dynamic> json) {
     if (client.ready) {
-      this.guild = client.guilds[json['d']['guild_id']];
+      this.guild = client.guilds[new Snowflake(json['d']['guild_id'] as String)];
       this.user =
           new User._new(client, json['d']['user'] as Map<String, dynamic>);
       client._events.onGuildBanAdd.add(this);

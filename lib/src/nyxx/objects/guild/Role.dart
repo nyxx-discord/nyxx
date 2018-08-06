@@ -1,7 +1,7 @@
 part of nyxx;
 
 /// A role.
-class Role {
+class Role extends SnowflakeEntity {
   /// The [Client] object.
   Client client;
 
@@ -11,8 +11,6 @@ class Role {
   /// The role's name.
   String name;
 
-  /// The role's ID.
-  Snowflake id;
 
   /// The role's color, null if no color.
   int color;
@@ -38,18 +36,14 @@ class Role {
   /// Mention of role
   String mention;
 
-  /// A timestamp for when the channel was created.
-  DateTime createdAt;
 
-  Role._new(this.client, this.raw, this.guild) {
-    this.id = new Snowflake(raw['id'] as String);
+  Role._new(this.client, this.raw, this.guild) : super(new Snowflake(raw['id'] as String)) {
     this.name = raw['name'] as String;
     this.position = raw['position'] as int;
     this.hoist = raw['hoist'] as bool;
     this.managed = raw['managed'] as bool;
     this.mentionable = raw['mentionable'] as bool;
     this.permissions = new Permissions.fromInt(raw['permissions'] as int);
-    this.createdAt = id.timestamp;
 
     if (raw['color'] == 0) {
       this.color = null;
@@ -59,7 +53,7 @@ class Role {
 
     if (mentionable) this.mention = "<@&${this.id}>";
 
-    this.guild.roles[this.id.toString()] = this;
+    this.guild.roles[this.id] = this;
   }
 
   /// Edits the role.

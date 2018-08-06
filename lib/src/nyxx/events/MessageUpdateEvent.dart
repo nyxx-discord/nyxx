@@ -13,12 +13,12 @@ class MessageUpdateEvent {
 
   MessageUpdateEvent._new(Client client, Map<String, dynamic> json) {
     if (client.ready) {
-      if ((client.channels[json['d']['channel_id']] as MessageChannel)
-              .messages[json['d']['id']] !=
+      if ((client.channels[new Snowflake(json['d']['channel_id'] as String)] as MessageChannel)
+              .messages[new Snowflake(json['d']['id'] as String)] !=
           null) {
         this.oldMessage =
-            (client.channels[json['d']['channel_id']] as MessageChannel)
-                .messages[json['d']['id']];
+            (client.channels[new Snowflake(json['d']['channel_id'] as String)] as MessageChannel)
+                .messages[new Snowflake(json['d']['id'] as String)];
         Map<String, dynamic> data = oldMessage.raw;
         data.addAll(json['d'] as Map<String, dynamic>);
         this.newMessage = new Message._new(client, data);

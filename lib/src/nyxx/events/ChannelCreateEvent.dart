@@ -16,7 +16,7 @@ class ChannelCreateEvent {
             new GroupDMChannel._new(client, json['d'] as Map<String, dynamic>);
         client._events.onChannelCreate.add(this);
       } else {
-        final Guild guild = client.guilds[json['d']['guild_id']];
+        final Guild guild = client.guilds[new Snowflake(json['d']['guild_id'] as String)];
         if (json['d']['type'] == 0) {
           this.channel = new TextChannel._new(
               client, json['d'] as Map<String, dynamic>, guild);

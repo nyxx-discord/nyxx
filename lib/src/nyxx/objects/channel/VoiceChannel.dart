@@ -14,7 +14,7 @@ class VoiceChannel extends Channel with GuildChannel {
 
     this.bitrate = raw['bitrate'] as int;
     this.userLimit = raw['user_limit'] as int;
-    this.guild.channels[this.id.toString()] = this;
+    this.guild.channels[this.id] = this;
   }
 
   /// Edits the channel.

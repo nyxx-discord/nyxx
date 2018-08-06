@@ -44,7 +44,7 @@ class GuildEmoji extends Emoji {
       raw['roles'].forEach((o) => this.rolesIds.add(o.toString()));
     }
 
-    this.guild.emojis[this.id.toString()] = this;
+    this.guild.emojis[this.id] = this;
   }
 
   /// Creates partial object - only [id] and [name]

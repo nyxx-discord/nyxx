@@ -8,7 +8,7 @@ part of nyxx;
 /// var textChannels = channels.where((channel) => channel is MessageChannel) as List<TextChannel>;
 /// ```
 /// If you want to get [icon] or [splash] of [Guild] use `iconURL()` method - [icon] property returns only hash, same as [splash] property.
-class Guild {
+class Guild extends SnowflakeEntity {
   /// The [Client] object.
   Client client;
 
@@ -17,9 +17,6 @@ class Guild {
 
   /// The guild's name.
   String name;
-
-  /// The guild's ID.
-  Snowflake id;
 
   /// The guild's icon hash.
   String icon;
@@ -60,9 +57,6 @@ class Guild {
   /// The guild's MFA level.
   int mfaLevel;
 
-  /// A timestamp for when the guild was created.
-  DateTime createdAt;
-
   /// If the guild's widget is enabled.
   bool embedEnabled;
 
@@ -73,25 +67,24 @@ class Guild {
   Snowflake ownerID;
 
   /// The guild's members.
-  Map<String, Member> members;
+  Map<Snowflake, Member> members;
 
   /// The guild's channels.
-  Map<String, Channel> channels;
+  Map<Snowflake, Channel> channels;
 
   /// The guild's roles.
-  Map<String, Role> roles;
+  Map<Snowflake, Role> roles;
 
   /// Guild custom emojis
-  Map<String, GuildEmoji> emojis;
+  Map<Snowflake, GuildEmoji> emojis;
 
   /// The shard that the guild is on.
   Shard shard;
 
   Guild._new(this.client, this.raw,
-      [this.available = true, bool guildCreate = false]) {
+      [this.available = true, bool guildCreate = false]) : super(new Snowflake(raw['id'] as String)) {
     if (this.available) {
       this.name = raw['name'] as String;
-      this.id = new Snowflake(raw['id'] as String);
       this.icon = raw['icon'] as String;
       this.region = raw['region'] as String;
 
@@ -106,14 +99,13 @@ class Guild {
       this.embedEnabled = raw['embed_enabled'] as bool;
       this.splash = raw['splash'] as String;
       this.ownerID = new Snowflake(raw['owner_id'] as String);
-      this.createdAt = id.timestamp;
 
-      this.emojis = new Map<String, GuildEmoji>();
+      this.emojis = new Map<Snowflake, GuildEmoji>();
       raw['emojis'].forEach((dynamic o) {
         new GuildEmoji._new(this.client, o as Map<String, dynamic>, this);
       });
 
-      this.roles = new Map<String, Role>();
+      this.roles = new Map<Snowflake, Role>();
       raw['roles'].forEach((dynamic o) {
         new Role._new(this.client, o as Map<String, dynamic>, this);
       });
@@ -122,8 +114,8 @@ class Guild {
           this.client._options.shardCount];
 
       if (guildCreate) {
-        this.members = new Map<String, Member>();
-        this.channels = new Map<String, Channel>();
+        this.members = new Map<Snowflake, Member>();
+        this.channels = new Map<Snowflake, Channel>();
 
         raw['members'].forEach((dynamic o) {
           new Member._new(client, o as Map<String, dynamic>, this);
@@ -150,10 +142,10 @@ class Guild {
         });
 
         this.defaultChannel = this.channels[this.id];
-        this.afkChannel = this.channels[raw['afk_channel_id']] as VoiceChannel;
+        this.afkChannel = this.channels[new Snowflake(raw['afk_channel_id'] as String)] as VoiceChannel;
       }
 
-      this.systemChannel = this.channels[raw['system_channel_id']];
+      this.systemChannel = this.channels[new Snowflake(raw['system_channel_id'] as String)];
 
       if (raw['features'] != null) {
         this.features = new List();
@@ -162,8 +154,8 @@ class Guild {
         });
       }
 
-      client.guilds[this.id.toString()] = this;
-      shard.guilds[this.id.toString()] = this;
+      client.guilds[this.id] = this;
+      shard.guilds[this.id] = this;
     }
   }
 
@@ -189,9 +181,9 @@ class Guild {
   }
 
   /// Gets Guild Emoji based on Id
-  Future<Emoji> getEmoji(String emojiId) async {
+  Future<Emoji> getEmoji(Snowflake emojiId) async {
     HttpResponse r =
-        await this.client.http.send('GET', "/guilds/$id/emojis/$emojiId");
+        await this.client.http.send('GET', "/guilds/$id/emojis/${emojiId.toString()}");
 
     return new GuildEmoji._new(
         this.client, r.body.asJson as Map<String, dynamic>, this);
@@ -230,6 +222,7 @@ class Guild {
     return null;
   }
 
+  /// Returns list of Guilds invites
   Future<List<Invite>> getGuildInvites() async {
     HttpResponse r = await this.client.http.send('GET', "/guilds/$id/invites");
 
@@ -242,6 +235,7 @@ class Guild {
     return tmp;
   }
 
+  /// Returns Audit logs.
   Future<AuditLog> getAuditLogs(
       {Snowflake userId,
       String actionType,
@@ -349,24 +343,24 @@ class Guild {
   }
 
   /// Moves channel
-  Future<Null> moveGuildChannel(String channelId, int newPosition,
+  Future<Null> moveGuildChannel(Channel channel, int newPosition,
       {String auditReason = ""}) async {
     await this.client.http.send('PATCH', "/guilds/${this.id}/channels",
-        body: {"id": id, "position": newPosition}, reason: auditReason);
+        body: {"id": channel.id.toString(), "position": newPosition}, reason: auditReason);
     return null;
   }
 
   /// Bans a user by ID.
-  Future<Null> ban(String id,
+  Future<Null> ban(Member member,
       {int deleteMessageDays = 0, String auditReason}) async {
-    await this.client.http.send('PUT', "/guilds/${this.id}/bans/$id",
+    await this.client.http.send('PUT', "/guilds/${this.id}/bans/${member.id.toString()}",
         body: {"delete-message-days": deleteMessageDays}, reason: auditReason);
     return null;
   }
 
   /// Unbans a user by ID.
-  Future<Null> unban(String id) async {
-    await this.client.http.send('DELETE', "/guilds/${this.id}/bans/$id");
+  Future<Null> unban(Snowflake id) async {
+    await this.client.http.send('DELETE', "/guilds/${this.id}/bans/${id.toString()}");
     return null;
   }
 

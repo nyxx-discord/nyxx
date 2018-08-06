@@ -2,15 +2,15 @@ part of nyxx;
 
 class GroupDMChannel extends MessageChannel {
   /// The recipients.
-  Map<String, User> recipients;
+  Map<Snowflake, User> recipients;
 
   GroupDMChannel._new(Client client, Map<String, dynamic> data)
       : super._new(client, data, "private") {
 
-    this.recipients = new Map<String, User>();
+    this.recipients = new Map<Snowflake, User>();
     raw['recipients'].forEach((dynamic o) {
       final User user = new User._new(client, o as Map<String, dynamic>);
-      this.recipients[user.id.toString()] = user;
+      this.recipients[user.id] = user;
     });
   }
 

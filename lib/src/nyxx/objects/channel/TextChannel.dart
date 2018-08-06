@@ -15,7 +15,7 @@ class TextChannel extends MessageChannel with GuildChannel {
     this.topic = raw['topic'] as String;
 
     this.mention = "<#${this.id}>";
-    this.guild.channels[this.id.toString()] = this;
+    this.guild.channels[this.id] = this;
   }
 
   /// Edits the channel.

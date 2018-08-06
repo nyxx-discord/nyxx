@@ -1,7 +1,7 @@
 part of nyxx;
 
 /// A user.
-class User {
+class User extends SnowflakeEntity {
   Timer _typing;
 
   /// The [Client] object.
@@ -12,9 +12,6 @@ class User {
 
   /// The user's username.
   String username;
-
-  /// The user's ID.
-  Snowflake id;
 
   /// The user's discriminator.
   String discriminator;
@@ -27,28 +24,22 @@ class User {
 
   /// The string to mention the user by nickname
   String mentionNickname;
-
-  /// A timestamp of when the user was created.
-  DateTime createdAt;
-
   /// Whether or not the user is a bot.
   bool bot = false;
 
-  User._new(this.client, this.raw) {
+  User._new(this.client, this.raw) : super(new Snowflake(raw['id'] as String)) {
     this.username = raw['username'] as String;
-    this.id = new Snowflake(raw['id'] as String);
     this.discriminator = raw['discriminator'] as String;
     this.avatar = raw['avatar'] as String;
     this.mention = "<@${this.id}>";
     this.mentionNickname = "<@!${this.id}>";
-    this.createdAt = id.timestamp;
 
     // This will not be set at all in some cases.
     if (raw['bot'] == true) {
       this.bot = raw['bot'] as bool;
     }
 
-    client.users[this.id.toString()] = this;
+    client.users[this.id] = this;
   }
 
   /// The user's avatar, represented as URL.
@@ -107,26 +98,6 @@ class User {
     });
     return new Message._new(
         this.client, r.body.asJson() as Map<String, dynamic>);
-  }
-
-  /// Gets a [Message] object. Only usable by bot accounts.
-  ///
-  /// Throws an [Exception] if the HTTP request errored or if the client user
-  /// is not a bot.
-  ///     Channel.getMessage("message id");
-  Future<Message> getMessage(String messageId) async {
-    if (this.client.user.bot) {
-      DMChannel channel = await getDMChannel();
-
-      final HttpResponse r = await this
-          .client
-          .http
-          .send('GET', '/channels/${channel.id.toString()}/messages/$messageId');
-      return new Message._new(
-          this.client, r.body.asJson() as Map<String, dynamic>);
-    } else {
-      throw new Exception("'getMessage' is only usable by bot accounts.");
-    }
   }
 
   /// Returns a mention of user

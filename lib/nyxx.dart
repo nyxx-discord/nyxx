@@ -87,15 +87,17 @@ part 'src/nyxx/builders/EmbedProviderBuilder.dart';
 
 // OBJECTS
 
+part 'src/nyxx/objects/SnowflakeEntity.dart';
 part 'src/nyxx/objects/Snowflake.dart';
-part 'src/nyxx/objects/VoiceState.dart';
-part 'src/nyxx/objects/VoiceRegion.dart';
-part 'src/nyxx/objects/Game.dart';
-part 'src/nyxx/objects/Invite.dart';
-part 'src/nyxx/objects/InviteChannel.dart';
-part 'src/nyxx/objects/InviteGuild.dart';
 part 'src/nyxx/objects/Shard.dart';
 part 'src/nyxx/objects/Webhook.dart';
+
+part 'src/nyxx/objects/voice/VoiceState.dart';
+part 'src/nyxx/objects/voice/VoiceRegion.dart';
+
+part 'src/nyxx/objects/invite/Invite.dart';
+part 'src/nyxx/objects/invite/InviteChannel.dart';
+part 'src/nyxx/objects/invite/InviteGuild.dart';
 
 part 'src/nyxx/objects/auditlogs/AuditLog.dart';
 part 'src/nyxx/objects/auditlogs/AuditLogEntry.dart';
@@ -120,6 +122,7 @@ part 'src/nyxx/objects/embed/EmbedThumbnail.dart';
 
 part 'src/nyxx/objects/guild/ClientUser.dart';
 part 'src/nyxx/objects/guild/Guild.dart';
+part 'src/nyxx/objects/guild/Game.dart';
 part 'src/nyxx/objects/guild/Member.dart';
 part 'src/nyxx/objects/guild/Role.dart';
 part 'src/nyxx/objects/guild/User.dart';

@@ -23,7 +23,7 @@ class Shard {
   Stream<Shard> onDisconnect;
 
   /// A map of guilds the shard is on.
-  Map<String, Guild> guilds = {};
+  Map<Snowflake, Guild> guilds = {};
 
   ZLibDecoder _zlib;
 
@@ -101,7 +101,7 @@ class Shard {
       this._sequence = msg['s'] as int;
 
     switch (msg['op'] as int) {
-      case _OPCodes.hello:
+      case _OPCodes.HELLP:
         if (this._sessionId == null || !resume) {
           Map<String, dynamic> identifyMsg = <String, dynamic>{
             "token": this._ws.client._token,
@@ -135,11 +135,11 @@ class Shard {
             (Timer t) => this._heartbeat());
         break;
 
-      case _OPCodes.invalidSession:
+      case _OPCodes.INVALID_SESSION:
         this._connect(false);
         break;
 
-      case _OPCodes.dispatch:
+      case _OPCodes.DISPATCH:
         if (this._ws.client._options.disabledEvents.contains(msg['t'])) break;
 
         var j = msg['t'] as String;
@@ -163,10 +163,11 @@ class Shard {
                 "${this._ws.client.user.username} (https://github.com/l7ssha/nyxx, ${_Constants.version})";
 
             msg['d']['guilds'].forEach((dynamic o) {
+              var snow = new Snowflake(o['id'] as String);
               if (this._ws.client.user.bot)
-                this._ws.client.guilds[o['id'] as String] = null;
+                this._ws.client.guilds[snow] = null;
               else
-                this._ws.client.guilds[o['id'] as String] = new Guild._new(
+                this._ws.client.guilds[snow] = new Guild._new(
                     this._ws.client, o as Map<String, dynamic>, true, true);
             });
 

@@ -10,8 +10,8 @@ class ChannelUpdateEvent {
 
   ChannelUpdateEvent._new(Client client, Map<String, dynamic> json) {
     if (client.ready) {
-      final Guild guild = client.guilds[json['d']['guild_id']];
-      this.oldChannel = client.channels[json['d']['id']] as GuildChannel;
+      final Guild guild = client.guilds[new Snowflake(json['d']['guild_id'] as String )];
+      this.oldChannel = client.channels[new Snowflake(json['d']['id'] as String)] as GuildChannel;
       if (json['d']['type'] == 0) {
         this.newChannel = new TextChannel._new(
             client, json['d'] as Map<String, dynamic>, guild);

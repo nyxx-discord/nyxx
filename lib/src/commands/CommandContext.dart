@@ -32,6 +32,7 @@ abstract class CommandContext {
         disableEveryone: disableEveryone);
   }
 
+  /// Replys to messages then deletes it when duration expires
   Future<Message> replyTemp(Duration duration,
       {String content,
       EmbedBuilder embed,
@@ -49,6 +50,7 @@ abstract class CommandContext {
     return msg;
   }
 
+  /// Replies to messages after specified Duration
   Future<Message> replyDelayed(Duration duration,
       {String content,
       EmbedBuilder embed,
@@ -65,6 +67,7 @@ abstract class CommandContext {
             disableEveryone: disableEveryone));
   }
 
+  /// Collects messages emojis.
   Future<Map<Emoji, int>> collectEmojis(Message msg, Duration duration) async {
     var m = new Map<Emoji, int>();
 
@@ -139,5 +142,6 @@ abstract class CommandContext {
     return tmpData;
   }
 
+  /// Allows to create help String for command
   void getHelp(bool isAdmin, StringBuffer buffer) {}
 }

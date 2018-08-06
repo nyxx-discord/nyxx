@@ -2,56 +2,18 @@ part of nyxx;
 
 /// [Snowflake] represents id structure which is used by discord.
 /// [id] is actual id of entity which holds [Snowflake]
-class Snowflake {
+class Snowflake implements Comparable<Snowflake> {
   /// Full snowflake id
-  String id;
-
-  /// Time when id was created.
-  DateTime timestamp;
-
-  /// Internal worker id
-  int workerId;
-
-  /// Internal process id
-  int processId;
-
-  /// For every ID that is generated on that process, this number is incremented
-  int sequence;
+  final String id;
 
   /// Creates new instance of [Snowflake].
-  Snowflake(this.id) {
-    int _unusedBits = 0;
-    int _timestampBits = 42;
-    int _workerIdBits = 5;
-    int _processIdBits = 5;
-    int _sequenceBits = 12;
+  Snowflake(this.id);
 
-    int _timestampShift = _sequenceBits + _workerIdBits + _processIdBits;
-    int _workerIdShift = _sequenceBits + _processIdBits;
-    int _processShift = _sequenceBits;
+  /// Creates const instance of Snowflake
+  const Snowflake.static(this.id);
 
-    int _epoch = 1420070400000;
-    int tmpId = int.parse(id);
-
-    var tmp =
-        ((tmpId & _diode(_unusedBits, _timestampBits)) >> _timestampShift);
-    timestamp = new DateTime.fromMillisecondsSinceEpoch(tmp + _epoch);
-    workerId = (tmpId & _diode(_unusedBits + _timestampBits, _workerIdBits)) >>
-        _workerIdShift;
-    processId = (tmpId &
-            _diode(_unusedBits + _timestampBits + _workerIdBits,
-                _processIdBits)) >>
-        _processShift;
-    sequence = (tmpId &
-        _diode(_unusedBits + _timestampBits + _workerIdBits + _processIdBits,
-            _sequenceBits));
-  }
-
-  int _diode(int offset, int length) {
-    int lb = 64 - offset;
-    int rb = 64 - (offset + length);
-    return (-1 << lb) ^ (-1 << rb);
-  }
+  DateTime get timestamp => new DateTime.fromMillisecondsSinceEpoch(
+      ((int.parse(id) / 4194304) + 1420070400000).toInt());
 
   @override
   String toString() => id;
@@ -66,4 +28,11 @@ class Snowflake {
 
   @override
   int get hashCode => this.id.hashCode;
+
+  @override
+  int compareTo(Snowflake other) {
+    if (other.id == this.id) return 1;
+
+    return 0;
+  }
 }
