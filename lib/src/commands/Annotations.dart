@@ -7,13 +7,13 @@ class Command {
   /// List of aliases for command
   final List<String> aliases;
 
-  const Command(this.name, {this.aliases});
+  /// True if command should be main
+  final bool main;
+
+  const Command ({this.name, this.aliases, this.main});
 }
 
-class _AnnotCommand {
-  /// Name of command
-  final String cmd;
-
+class Cons {
   /// Indicates if commands is restricted to admins
   final bool isAdmin;
 
@@ -39,45 +39,14 @@ class _AnnotCommand {
   /// Adding to channel topic `[games, PC]` will allow to only execute commands annotated with this phrases
   final List<String> topics;
 
-  const _AnnotCommand(this.cmd,
-      [this.isAdmin = false,
+  const Cons({this.isAdmin = false,
       this.requiredRoles = null,
       this.cooldown,
       this.isHidden = false,
       this.requiredPermissions = null,
       this.guildOnly,
       this.isNsfw,
-      this.topics]);
-}
-
-/// Defines new subcommand.
-class Subcommand extends _AnnotCommand {
-  const Subcommand(String cmd,
-      {bool isAdmin,
-      List<Role> requiredRoles,
-      int cooldown,
-      bool isHidden,
-      List<int> requiredPermissions,
-      int guildOnly,
-      bool isNsfw,
-      List<String> topics})
-      : super(cmd, isAdmin, requiredRoles, cooldown, isHidden,
-            requiredPermissions, guildOnly, isNsfw, topics);
-}
-
-/// Creates main execution command
-class Maincommand extends _AnnotCommand {
-  const Maincommand(
-      {bool isAdmin,
-      List<Role> requiredRoles,
-      int cooldown,
-      bool isHidden,
-      List<int> requiredPermissions,
-      int guildOnly,
-      bool isNsfw,
-      List<String> topics})
-      : super("", isAdmin, requiredRoles, cooldown, isHidden,
-            requiredPermissions, guildOnly, isNsfw, topics);
+      this.topics});
 }
 
 /// Captures all remaining text into `List<String>`

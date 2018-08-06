@@ -25,7 +25,7 @@ void main() {
 }
 
 // Example command with alias and subcommands.
-@command.Command("alias", aliases: ["aaa"])
+@command.Command(name: "alias", aliases: ["aaa"])
 class AliasCommand extends command.CommandContext {
   Service _service;
 
@@ -33,21 +33,21 @@ class AliasCommand extends command.CommandContext {
   AliasCommand(this._service);
 
   // Maincommand annotation specifies main command handler
-  @command.Maincommand()
+  @command.Command(main: true)
   Future main(String name) async {
     await reply(content: name);
     await reply(content: _service.data);
   }
 
   // This command features `nextMessages()` method. Reade more here:
-  @command.Subcommand("witam")
+  @command.Command(name: "witam")
   Future witam() async {
     var messages = await nextMessages(2);
     print(messages);
   }
 
   // You can use customized logger instance
-  @command.Subcommand("yyy")
+  @command.Command(name: "yyy")
   Future yyy(String siema, int witam) {
     logger.fine(siema);
     logger.severe(witam);

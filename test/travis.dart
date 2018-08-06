@@ -10,23 +10,24 @@ class StringService extends command.Service {
   StringService();
 }
 
-@command.Command("test")
+@command.Command(name: "test")
 class TestCommand extends command.CommandContext {
-  @command.Maincommand()
+  @command.Command(main: true)
   Future<Null> run() async {
     await reply(content: "test is working correctly");
   }
 
-  @command.Subcommand("ttest")
+  @command.Command(name: "ttest")
   Future<Null> test(int param, StringService service) async {
     var msg = await reply(content: "$param, ${service.data}");
     await msg.delete();
   }
 }
 
-@command.Command("cooldown", aliases: const ["culdown"])
+@command.Command(name: "cooldown", aliases: const ["culdown"])
 class CooldownCommand extends command.CommandContext {
-  @command.Maincommand(cooldown: 10)
+  @command.Command(main: true)
+  @command.Cons(cooldown: 10)
   run() async {}
 }
 

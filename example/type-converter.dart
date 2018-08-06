@@ -44,10 +44,10 @@ void main() {
 // Command have to extends CommandContext class and have @Command annotation.
 // Method with @Maincommand is main point of command object
 // Methods annotated with @Subcommand are defined as subcommands
-@command.Command("ping")
+@command.Command(name: "ping")
 class PongCommand extends command.CommandContext {
   // Accepting Ex instance as parameter. Argument will be converter to Ex.
-  @command.Maincommand()
+  @command.Command(main: true)
   Future run(Ex ex) async {
     await reply(content: ex.gg);
   }

@@ -19,9 +19,9 @@ void main() {
 // Command have to extends CommandContext class and have @Command annotation.
 // Method with @Maincommand is main point of command object
 // Methods annotated with @Subcommand are defined as subcommands
-@command.Command("ping")
+@command.Command(name: "ping")
 class PongCommand extends command.CommandContext {
-  @command.Maincommand()
+  @command.Command(main: true)
   Future run() async {
     await reply(content: "Pong!");
   }
@@ -31,14 +31,14 @@ class PongCommand extends command.CommandContext {
       buffer.writeln("* ping - Checks if bot is working");
 }
 
-@command.Command("echo")
+@command.Command(name: "echo")
 class EchoCommand extends command.CommandContext {
-  @command.Maincommand()
+  @command.Command(main: true)
   Future run() async {
     await reply(content: message.content);
   }
 
-  @command.Subcommand("perm")
+  @command.Command(name: "perm")
   Future perms() async {
     print((channel as nyxx.GuildChannel).permissions);
 
@@ -62,9 +62,9 @@ class EchoCommand extends command.CommandContext {
 }
 
 // Aliases have to be `const`
-@command.Command("alias", aliases: const ["aaa"])
+@command.Command(name: "alias", aliases: const ["aaa"])
 class AliasCommand extends command.CommandContext {
-  @command.Maincommand()
+  @command.Command(main: true)
   Future run() async {
     await reply(content: message.content);
   }
