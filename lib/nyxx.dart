@@ -144,3 +144,5 @@ part 'src/nyxx/objects/permissions/Permissions.dart';
 part 'src/nyxx/objects/permissions/AbstractPermissions.dart';
 part 'src/nyxx/objects/permissions/ChannelPermissions.dart';
 part 'src/nyxx/objects/permissions/PermissionsConstants.dart';
+
+Snowflake snow(String id) => new Snowflake(id);
