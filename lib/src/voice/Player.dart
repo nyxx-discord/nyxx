@@ -96,9 +96,12 @@ class Player {
   }
 
   /// Plays track on currently connected channel
-  Future<bool> play(Track track) async {
-    currentTrack = track;
-    _webSocket.add(jsonEncode(new _OpPlay(_guild, track).build()));
+  Future<bool> play(Entity track) async {
+    if(track is Track)
+      currentTrack = track;
+    else if(track is Playlist) currentTrack = track.tracks.first;
+
+    _webSocket.add(jsonEncode(new _OpPlay(_guild, currentTrack).build()));
     isPlaying = true;
     return true;
   }
