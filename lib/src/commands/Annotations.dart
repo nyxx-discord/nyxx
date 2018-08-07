@@ -40,10 +40,10 @@ class Cons {
   final List<String> topics;
 
   const Cons({this.isAdmin = false,
-      this.requiredRoles = null,
+      this.requiredRoles,
       this.cooldown,
       this.isHidden = false,
-      this.requiredPermissions = null,
+      this.requiredPermissions,
       this.guildOnly,
       this.isNsfw,
       this.topics});
