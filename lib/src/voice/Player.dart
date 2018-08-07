@@ -5,7 +5,7 @@ class Player {
   /// True if player is connecte
   bool isConnected = false;
   /// True if player is playing something
-  bool isPlaying = false;
+  //bool isPlaying = false;
   /// Current [VoiceChannel] player is in
   VoiceChannel currentChannel;
   /// Current playing track
@@ -102,7 +102,7 @@ class Player {
     else if(track is Playlist) currentTrack = track.tracks.first;
 
     _webSocket.add(jsonEncode(new _OpPlay(_guild, currentTrack).build()));
-    isPlaying = true;
+    //isPlaying = true;
     return true;
   }
 
@@ -111,7 +111,7 @@ class Player {
     _guild.shard.send("VOICE_STATE_UPDATE", new _Opcode4(_guild, null, false, false)._build());
     await stop();
     _webSocket.add(jsonEncode(new _SimpleOp("destroy", _guild)._build()));
-    isPlaying = false;
+    //isPlaying = false;
     isConnected = false;
     _sub1 == null ? {} : _sub1.cancel();
     _sub2 == null ? {}:  _sub2.cancel();
@@ -119,23 +119,23 @@ class Player {
 
   /// Toggles mute status.
   Future<Null> toggleMute() async {
+    var op;
     if(_currentState.selfMute)
-      _webSocket.add(jsonEncode(new _OpPause(_guild , false).build()));
+      op = new _OpPause(_guild , false).build();
     else
-      _webSocket.add(jsonEncode(new _OpPause(_guild , true).build()));
+      op = new _OpPause(_guild , true).build();
 
+    _webSocket.add(jsonEncode(op));
     _guild.shard.send("VOICE_STATE_UPDATE", new _Opcode4(_guild, currentChannel, !_currentState.selfMute, _currentState.selfDeaf)._build());
   }
 
   /// Pauses currently played track
   Future<Null> pause() async {
-    isPlaying = false;
     _webSocket.add(jsonEncode(new _SimpleOp("pause", _guild)._build()));
   }
 
   /// Stops track playback
   Future<Null> stop() async {
-    isPlaying = false;
     _webSocket.add(jsonEncode(new _SimpleOp("stop", _guild)._build()));
   }
 
