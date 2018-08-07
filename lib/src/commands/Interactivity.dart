@@ -63,16 +63,16 @@ class Pagination {
   /// Paginates a list of Strings - each String is different page.
   Future<Message> paginate(
       {Duration timeout: const Duration(seconds: 30)}) async {
-    var nextEmoji = EmojisUnicode.arrow_forward;
-    var backEmoji = EmojisUnicode.arrow_backward;
-    var firstEmoji = EmojisUnicode.track_previous;
-    var lastEmoji = EmojisUnicode.track_next;
+    var nextEmoji = util.EmojisUnicode.arrow_forward;
+    var backEmoji = util.EmojisUnicode.arrow_backward;
+    var firstEmoji = util.EmojisUnicode.track_previous;
+    var lastEmoji = util.EmojisUnicode.track_next;
 
     var msg = await channel.send(content: pages[0]);
-    await msg.createReaction(firstEmoji);
-    await msg.createReaction(backEmoji);
-    await msg.createReaction(nextEmoji);
-    await msg.createReaction(lastEmoji);
+    await msg.createReaction(firstEmoji as Emoji);
+    await msg.createReaction(backEmoji as Emoji);
+    await msg.createReaction(nextEmoji as Emoji);
+    await msg.createReaction(lastEmoji as Emoji);
 
     new Future(() async {
       var currPage = 0;

@@ -2,6 +2,7 @@ library test;
 
 import 'package:nyxx/nyxx.dart' as nyxx;
 import 'package:nyxx/commands.dart' as command;
+import 'package:nyxx/utils.dart' as utils;
 
 import 'dart:io';
 
@@ -29,8 +30,8 @@ void main() async {
         ch,
         "Ttul",
         {
-          nyxx.EmojisUnicode.stopwatch: "Stopwatch",
-          nyxx.EmojisUnicode.abcd: "abcd"
+          utils.EmojisUnicode.stopwatch: "Stopwatch",
+          utils.EmojisUnicode.abcd: "abcd"
         },
         timeout: const Duration(seconds: 10));
 
