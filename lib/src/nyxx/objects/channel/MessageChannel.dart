@@ -66,7 +66,7 @@ class MessageChannel extends Channel with IterableMixin<Message> {
   /// Throws an [Exception] if the HTTP request errored.
   ///     Channel.send(content: "My content!");
   Future<Message> send(
-      {String content,
+      {Object content,
       EmbedBuilder embed,
       bool tts: false,
       String nonce,
@@ -76,11 +76,11 @@ class MessageChannel extends Channel with IterableMixin<Message> {
         (disableEveryone == true ||
             (disableEveryone == null &&
                 this.client._options.disableEveryone))) {
-      newContent = content
+      newContent = content.toString()
           .replaceAll("@everyone", "@\u200Beveryone")
           .replaceAll("@here", "@\u200Bhere");
     } else {
-      newContent = content;
+      newContent = content.toString();
     }
 
     final HttpResponse r = await this
