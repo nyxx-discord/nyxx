@@ -146,7 +146,7 @@ class Player {
 
   /// Set player volume. Volume may range from 0 to 1000. 100 is default.
   Future<Null> setVolume(int volume) async {
-    _webSocket.add(jsonEncode(new _OpVolume(_guild, volume).build());
+    _webSocket.add(jsonEncode(new _OpVolume(_guild, volume).build()));
   }
 
   Future<Null> _finish() async {
