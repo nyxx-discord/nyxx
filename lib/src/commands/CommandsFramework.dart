@@ -495,7 +495,7 @@ class CommandsFramework {
           try {
             var code = splitted[index].codeUnits[0].toRadixString(16);
             //print(code);
-            collected.add(await EmojisUnicode.fromHexCode(code));
+            collected.add(await util.EmojisUnicode.fromHexCode(code));
           } catch (e) {}
           break;
         default:

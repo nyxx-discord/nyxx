@@ -14,7 +14,6 @@ library nyxx;
 
 import 'dart:async';
 import 'dart:convert';
-import 'dart:mirrors';
 import 'dart:collection';
 import 'dart:io';
 
@@ -130,7 +129,6 @@ part 'src/nyxx/objects/guild/User.dart';
 part 'src/nyxx/objects/message/UnicodeEmoji.dart';
 part 'src/nyxx/objects/message/GuildEmoji.dart';
 part 'src/nyxx/objects/message/Emoji.dart';
-part 'src/nyxx/objects/message/EmojisUnicode.dart';
 part 'src/nyxx/objects/message/Reaction.dart';
 part 'src/nyxx/objects/message/Message.dart';
 part 'src/nyxx/objects/message/Attachment.dart';
