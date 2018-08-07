@@ -19,7 +19,7 @@ abstract class CommandContext {
 
   /// Reply to message which fires command.
   Future<Message> reply(
-      {String content,
+      {Object content,
       EmbedBuilder embed,
       bool tts: false,
       String nonce,
@@ -34,7 +34,7 @@ abstract class CommandContext {
 
   /// Replys to messages then deletes it when duration expires
   Future<Message> replyTemp(Duration duration,
-      {String content,
+      {Object content,
       EmbedBuilder embed,
       bool tts: false,
       String nonce,
@@ -52,7 +52,7 @@ abstract class CommandContext {
 
   /// Replies to messages after specified Duration
   Future<Message> replyDelayed(Duration duration,
-      {String content,
+      {Object content,
       EmbedBuilder embed,
       bool tts: false,
       String nonce,
