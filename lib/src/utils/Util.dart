@@ -32,3 +32,11 @@ Iterable<String> splitEqually(String str, int pieces) {
 
   return split(str, len);
 }
+
+/// Gets [Symbol]s 'name'
+String getSymbolName(Symbol symbol) {
+  return symbol.toString().substring(6)
+      .replaceAll("\"", "")
+      .replaceAll("(", "")
+      .replaceAll(")", "");
+}

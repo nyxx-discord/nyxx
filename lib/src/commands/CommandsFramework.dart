@@ -301,13 +301,9 @@ class CommandsFramework {
     }
   }
 
-  String sTrim(String str) {
-    return str.substring(6).replaceAll("\"", "").replaceAll("(", "").replaceAll(")", "");
-  }
-
   /// Register new [CommandContext] object.
   void add(CommandContext command) {
-    var cmd = sTrim(reflect(command).type.simpleName.toString());
+    var cmd = util.getSymbolName(reflect(command).type.simpleName);
 
     command.logger = new Logger.detached("Command[$cmd]");
 
@@ -369,7 +365,7 @@ class CommandsFramework {
       } catch (e) {
         print(e);
         throw new Exception(
-            "Service [${sTrim(cm.simpleName.toString())}] constructor not satisfied!");
+            "Service [${util.getSymbolName(cm.simpleName)}] constructor not satisfied!");
       }
     });
   }
@@ -385,7 +381,7 @@ class CommandsFramework {
       } catch (e) {
         print(e);
         throw new Exception(
-            "Command [${sTrim(cm.simpleName.toString())}] constructor not satisfied!");
+            "Command [${util.getSymbolName(cm.simpleName)}] constructor not satisfied!");
       }
     });
   }
