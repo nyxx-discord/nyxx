@@ -1,5 +1,7 @@
 part of nyxx.voice;
 
+Logger _logger = new Logger.detached("Voice Service");
+
 /// Inits voice service. [yamlConfigFile] is absolute path to lavalink config file.
 /// Returns instance of VoiceService
 VoiceService init(String clientId, Client client, String yamlConfigFile) {
@@ -7,6 +9,7 @@ VoiceService init(String clientId, Client client, String yamlConfigFile) {
     throw new Exception("Tried initialize VoiceService twice.");
 
   _manager = new VoiceService._new(clientId, client, yamlConfigFile);
+  _logger.info("Voice service intitailized!");
   return _manager;
 }
 
@@ -20,11 +23,13 @@ VoiceService getVoiceService() {
 
 /// Gets [Player] instance for guild.
 Future<Player> getPlayer(Guild guild) async {
+  _logger.fine("Node for guild -${guild.id}- connected!");
   return await _manager.getPlayer(guild);
 }
 
 /// Destroys player and removes all connections
 Future<Null> destroyPlayer(Player player) async {
+  _logger.fine("Node for guild -${player._guild.id}- disconnected!");
   _manager.removePlayer(player._guild.id.toString());
   player = null;
 }
@@ -72,7 +77,6 @@ class VoiceService {
       }).then((wc) {
         this._webSocket = wc;
         _webSocket.listen((data) async {
-          print("RAW WEBSOCKET: $data");
           await _handleMsg(jsonDecode(data as String) as Map<String, dynamic>);
         });
       });
