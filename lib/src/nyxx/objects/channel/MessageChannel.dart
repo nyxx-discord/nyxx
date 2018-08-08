@@ -58,8 +58,7 @@ class MessageChannel extends Channel with IterableMixin<Message> {
         this.client, r.body.asJson() as Map<String, dynamic>);
   }
 
-  Message getMessage(Snowflake id) =>
-      messages.values.toList().firstWhere((i) => i.id == id);
+  Message getMessage(Snowflake id) => messages[id];
 
   /// Sends a message.
   ///
