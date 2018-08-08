@@ -200,6 +200,9 @@ class Client {
     return null;
   }
 
+  /// Block isolate until client is ready
+  Future<ReadyEvent> blockToReady() async => await onReady.first;
+
   /// Gets a [User] object.
   ///
   /// Throws an [Exception] if the HTTP request errored.
