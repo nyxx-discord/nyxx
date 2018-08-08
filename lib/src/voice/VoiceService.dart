@@ -6,7 +6,7 @@ Logger _logger = new Logger.detached("Voice Service");
 /// Inits voice service. [yamlConfigFile] is absolute path to lavalink config file.
 /// Returns instance of VoiceService
 VoiceService init(String clientId, Client client, String yamlConfigFile) {
-  if(_manager != null)
+  if (_manager != null)
     throw new Exception("Tried initialize VoiceService twice.");
 
   _manager = new VoiceService._new(clientId, client, yamlConfigFile);
@@ -16,8 +16,9 @@ VoiceService init(String clientId, Client client, String yamlConfigFile) {
 
 /// Returns instance of VoiceService
 VoiceService getVoiceService() {
-  if(_manager == null)
-    throw new Exception("Cannot get initialized VoiceService! Init voice service with VoiceService.init()");
+  if (_manager == null)
+    throw new Exception(
+        "Cannot get initialized VoiceService! Init voice service with VoiceService.init()");
 
   return _manager;
 }
@@ -61,9 +62,11 @@ class VoiceService {
     _onStats = new StreamController.broadcast();
     onStats = _onStats.stream;
 
-    this._wsPath = Uri.parse("ws://${config['lavalink']['server']['ws']['host']}:${config['lavalink']['server']['ws']['port']}");
+    this._wsPath = Uri.parse(
+        "ws://${config['lavalink']['server']['ws']['host']}:${config['lavalink']['server']['ws']['port']}");
     this._password = config['lavalink']['server']['password'] as String;
-    this._restPath = Uri.parse("http://${config['server']['address']}:${config['server']['port']}");
+    this._restPath = Uri.parse(
+        "http://${config['server']['address']}:${config['server']['port']}");
 
     _connect();
   }
@@ -83,7 +86,7 @@ class VoiceService {
       });
     } catch (e) {
       //print("FAILED TO CONNECT. TRYING AGAIN!");
-     // new Timer(const Duration(seconds: 2), () async => await _connect);
+      // new Timer(const Duration(seconds: 2), () async => await _connect);
     }
 
     return null;
@@ -93,16 +96,17 @@ class VoiceService {
   Future<Null> _handleMsg(Map<String, dynamic> msg) async {
     var op = msg['op'] as String;
 
-    switch(op) {
+    switch (op) {
       case 'playerUpdate':
         var e = new PlayerUpdateEvent._new(msg);
-        if (_playersCache[e.guildId].isConnected) _playersCache[e.guildId]._onPlayerUpdate.add(e);
+        if (_playersCache[e.guildId].isConnected)
+          _playersCache[e.guildId]._onPlayerUpdate.add(e);
         break;
       case 'stats':
         _onStats.add(new Stats._new(msg));
         break;
       case 'event':
-        var player = _playersCache[ msg['guildId']];
+        var player = _playersCache[msg['guildId']];
         TrackError evnt;
         switch (msg['type'] as String) {
           case 'TrackEndEvent':
@@ -125,7 +129,7 @@ class VoiceService {
   /// Gets [Player] instance for guild.
   Future<Player> getPlayer(Guild guild) {
     return new Future<Player>.delayed(const Duration(seconds: 2), () {
-      if(_playersCache.containsKey(guild.id.toString()))
+      if (_playersCache.containsKey(guild.id.toString()))
         return _playersCache[guild.id.toString()];
       else {
         var tmp = new Player._new(guild, _client, _webSocket, _restPath);
@@ -137,7 +141,7 @@ class VoiceService {
 
   /// Destroys player and removes all connections
   Future<Null> removePlayer(String guild) async {
-   await _playersCache[guild]._finish();
-   _playersCache.remove(guild);
+    await _playersCache[guild]._finish();
+    _playersCache.remove(guild);
   }
 }

@@ -9,10 +9,6 @@ class _OpPause {
   _OpPause(this._guild, this._pause);
 
   Map<String, dynamic> build() {
-    return {
-      "op": _op,
-      "guildId": _guild.id.toString(),
-      "pause": _pause
-    };
+    return {"op": _op, "guildId": _guild.id.toString(), "pause": _pause};
   }
 }

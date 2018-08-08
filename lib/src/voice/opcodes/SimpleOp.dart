@@ -8,9 +8,6 @@ class _SimpleOp {
   _SimpleOp(this._op, this._guild);
 
   Map<String, dynamic> _build() {
-    return {
-      "op": _op,
-      "guildId": _guild.id.toString()
-    };
+    return {"op": _op, "guildId": _guild.id.toString()};
   }
 }

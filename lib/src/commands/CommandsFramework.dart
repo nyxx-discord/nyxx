@@ -101,8 +101,9 @@ class CommandsFramework {
     Command _meta;
     bool found = false;
 
-    void find(Iterable<DeclarationMirror> tmpMethods, CommandContext cmd, bool first, bool Function(Command) f) {
-      for(var v in tmpMethods) {
+    void find(Iterable<DeclarationMirror> tmpMethods, CommandContext cmd,
+        bool first, bool Function(Command) f) {
+      for (var v in tmpMethods) {
         if (v is MethodMirror) {
           var meta = _getCmdAnnot(v, Command) as Command;
 
@@ -110,9 +111,10 @@ class CommandsFramework {
             matched = v;
             _meta = meta;
             commandContext = cmd;
-            if(!first)
+            if (!first)
               splittedCommand.removeRange(0, 2);
-            else splittedCommand.removeAt(0);
+            else
+              splittedCommand.removeAt(0);
             found = true;
             break;
           }
@@ -121,29 +123,44 @@ class CommandsFramework {
     }
 
     for (var cmd in _commands) {
-      if(found)
-        break;
+      if (found) break;
 
       var tmpInstMirror = reflect(cmd);
       var tmpClassMirror = tmpInstMirror.type;
       var tmpMethods = tmpClassMirror.declarations;
       var tmpCommand = _getCmdAnnot(tmpClassMirror, Command) as Command;
 
-      if(tmpCommand != null) {
-        if (tmpCommand.name == splittedCommand[0] || (tmpCommand.aliases != null && tmpCommand.aliases.contains(splittedCommand[0]))) {
-          if(splittedCommand.length > 1) {
-            find(tmpMethods.values, cmd, false, (meta) => meta != null && meta.name != null && meta.name == splittedCommand[1]);
+      if (tmpCommand != null) {
+        if (tmpCommand.name == splittedCommand[0] ||
+            (tmpCommand.aliases != null &&
+                tmpCommand.aliases.contains(splittedCommand[0]))) {
+          if (splittedCommand.length > 1) {
+            find(
+                tmpMethods.values,
+                cmd,
+                false,
+                (meta) =>
+                    meta != null &&
+                    meta.name != null &&
+                    meta.name == splittedCommand[1]);
           } else {
-            find(tmpMethods.values, cmd, true, (meta) => meta != null && meta.main != null && meta.main);
+            find(tmpMethods.values, cmd, true,
+                (meta) => meta != null && meta.main != null && meta.main);
             //find(tmpMethods.values, cmd, true, (meta) => meta != null && meta.name != null && meta.name == splittedCommand[0]);
           }
         }
 
         //if(!found)
-          //find(tmpMethods.values, cmd, true, (meta) => meta != null && meta.main != null && meta.main);
-      }
-      else {
-        find(tmpMethods.values, cmd, true, (meta) => meta != null && meta.name != null && meta.name  == splittedCommand[0]);
+        //find(tmpMethods.values, cmd, true, (meta) => meta != null && meta.main != null && meta.main);
+      } else {
+        find(
+            tmpMethods.values,
+            cmd,
+            true,
+            (meta) =>
+                meta != null &&
+                meta.name != null &&
+                meta.name == splittedCommand[0]);
       }
     }
 
@@ -152,7 +169,6 @@ class CommandsFramework {
 
   /// Dispatches onMessage event to framework.
   Future _dispatch(MessageEvent e) async {
-
     // Match help specially to shadow user defined help commands.
     if (e.message.content.startsWith((prefix + 'help'))) {
       if (helpDirect) {
@@ -164,7 +180,8 @@ class CommandsFramework {
       return;
     }
 
-    var splittedCommand = e.message.content.replaceFirst(prefix, "").trim().split(' ');
+    var splittedCommand =
+        e.message.content.replaceFirst(prefix, "").trim().split(' ');
     int executionCode = -1;
 
     var ret = await matchCommand(splittedCommand);
@@ -180,8 +197,7 @@ class CommandsFramework {
     }
 
     Cons annot = _getCmdAnnot(matched, Cons) as Cons;
-    if(annot == null)
-      executionCode = -2;
+    if (annot == null) executionCode = -2;
 
     // Check for admin command and if user is admin
     if (executionCode == -1 && annot.isAdmin != null && annot.isAdmin)
@@ -192,7 +208,7 @@ class CommandsFramework {
     // Check if there is need to check user roles
     if (executionCode == -1 && annot.requiredRoles != null) {
       var hasRoles =
-      annot.requiredRoles.where((i) => member.roles.contains(i)).toList();
+          annot.requiredRoles.where((i) => member.roles.contains(i)).toList();
 
       if (hasRoles == null || hasRoles.isEmpty) executionCode = 1;
     }
@@ -211,7 +227,7 @@ class CommandsFramework {
     // Check for channel compatibility
     if (executionCode == -1 && annot.guildOnly != null) {
       if ((annot.guildOnly == GuildOnly.DM &&
-          e.message.channel is TextChannel) ||
+              e.message.channel is TextChannel) ||
           (annot.guildOnly == GuildOnly.GUILD &&
               (e.message.channel is DMChannel ||
                   e.message.channel is GroupDMChannel))) {
@@ -223,14 +239,16 @@ class CommandsFramework {
     if (executionCode == -1 && annot.isNsfw != null && annot.isNsfw) {
       if (e.message.channel is TextChannel) {
         var ch = e.message.channel as TextChannel;
-        if(ch.nsfw == null) executionCode = 4;
-          else if (!ch.nsfw) executionCode = 4;
+        if (ch.nsfw == null)
+          executionCode = 4;
+        else if (!ch.nsfw) executionCode = 4;
       } else if (!(e.message.channel is DMChannel) ||
           !(e.message.channel is GroupDMChannel)) executionCode = 4;
     }
 
     // Check for channel topics
-    if (executionCode == -1 && annot.topics != null &&
+    if (executionCode == -1 &&
+        annot.topics != null &&
         e.message.channel is TextChannel) {
       var topic = (e.message.channel as TextChannel).topic;
       var list = topic

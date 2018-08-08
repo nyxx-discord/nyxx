@@ -76,7 +76,8 @@ class Message extends SnowflakeEntity {
   /// Emitted when a user explicitly removes all reactions from a message.
   Stream<MessageReactionsRemovedEvent> onReactionsRemoved;
 
-  Message._new(this.client, this.raw) : super(new Snowflake(raw['id'] as String)) {
+  Message._new(this.client, this.raw)
+      : super(new Snowflake(raw['id'] as String)) {
     this._onUpdate = new StreamController.broadcast();
     this.onUpdate = this._onUpdate.stream;
 
@@ -96,8 +97,9 @@ class Message extends SnowflakeEntity {
     this.nonce = raw['nonce'] as String;
     this.author =
         new User._new(this.client, raw['author'] as Map<String, dynamic>);
-    this.channel =
-        this.client.channels[new Snowflake(raw['channel_id'] as String)] as MessageChannel;
+    this.channel = this
+        .client
+        .channels[new Snowflake(raw['channel_id'] as String)] as MessageChannel;
     this.pinned = raw['pinned'] as bool;
     this.tts = raw['tts'] as bool;
     this.mentionEveryone = raw['mention_everyone'] as bool;

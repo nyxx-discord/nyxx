@@ -4,8 +4,10 @@ part of nyxx.voice;
 class Stats {
   /// Number of players connected
   int players;
+
   /// Number of currenlty playing players
   int playingPlayers;
+
   /// Lavalink uptime
   int uptime;
 
@@ -17,6 +19,7 @@ class Stats {
 
   /// Total amount of memory allocated for Lavalink
   int memoryAllocated;
+
   /// Amout of memory which can be reserved
   int memoryReservable;
 
@@ -25,6 +28,7 @@ class Stats {
 
   /// Whole system load
   double systemLoad;
+
   /// Load of lavalink
   double lavalinkLoad;
 
@@ -51,7 +55,7 @@ class Stats {
     systemLoad = raw['cpu']['systemLoad'] as double;
     lavalinkLoad = raw['cpu']['reservable'] as double;
 
-    if(raw['frames'] != null) {
+    if (raw['frames'] != null) {
       avgFramesSent = raw['frames']['sent'] as int;
       avgFramesNull = raw['frames']['nulled'] as int;
       avgFramesDeficit = raw['frames']['deficit'] as int;

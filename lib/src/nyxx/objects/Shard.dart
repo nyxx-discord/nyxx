@@ -44,8 +44,8 @@ class Shard {
       "status": status,
       "game": {
         "name": game != null ? game.name : null,
-        "type":  game != null ? game.type : null,
-        "url":  game != null ? game.url : null
+        "type": game != null ? game.type : null,
+        "url": game != null ? game.url : null
       }
     };
 
@@ -85,8 +85,9 @@ class Shard {
   }
 
   /// Sends WS data.
-  void send(String op, dynamic d) => this._socket.
-    add(jsonEncode(<String, dynamic>{"op": _Constants.opCodes[op], "d": d}));
+  void send(String op, dynamic d) => this
+      ._socket
+      .add(jsonEncode(<String, dynamic>{"op": _Constants.opCodes[op], "d": d}));
 
   void _heartbeat() {
     if (this._socket.closeCode != null) return;
@@ -96,8 +97,7 @@ class Shard {
   Future<Null> _handleMsg(Map<String, dynamic> msg, bool resume) async {
     new RawEvent._new(this._ws.client, this, msg);
 
-    if (msg['s'] != null)
-      this._sequence = msg['s'] as int;
+    if (msg['s'] != null) this._sequence = msg['s'] as int;
 
     switch (msg['op'] as int) {
       case _OPCodes.HELLP:
@@ -196,8 +196,7 @@ class Shard {
                   this._ws.client.guilds[msg['d']['guild_id']]);
             });
 
-            if (!_ws.client.ready)
-              _ws.testReady();
+            if (!_ws.client.ready) _ws.testReady();
             break;
 
           case 'MESSAGE_REACTION_REMOVE_ALL':
@@ -322,11 +321,14 @@ class Shard {
 
     switch (this._socket.closeCode) {
       case 1005:
-        throw new Exception("1005: No Status Recvd - 'No status code was provided even though one was expected.'");
+        throw new Exception(
+            "1005: No Status Recvd - 'No status code was provided even though one was expected.'");
       case 4004:
-        throw new Exception("4004: Authentication Failed - 'The account token sent with your identify payload is incorrect.'");
+        throw new Exception(
+            "4004: Authentication Failed - 'The account token sent with your identify payload is incorrect.'");
       case 4010:
-        throw new Exception("4010: Invalid Shard - 'You sent us an invalid shard when identifying.'");
+        throw new Exception(
+            "4010: Invalid Shard - 'You sent us an invalid shard when identifying.'");
       case 4007:
       case 4009:
         this._connect(false);

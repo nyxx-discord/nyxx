@@ -20,8 +20,10 @@ class EmbedFieldBuilder {
 
     if (name != null) tmp["name"] = name;
     if (content != null) tmp["value"] = content;
-    if (inline != null) tmp["inline"] = inline;
-    else tmp["inline"] = false;
+    if (inline != null)
+      tmp["inline"] = inline;
+    else
+      tmp["inline"] = false;
 
     return tmp;
   }

@@ -9,10 +9,6 @@ class _OpVolume {
   _OpVolume(this._guild, this._volume);
 
   Map<String, dynamic> build() {
-    return {
-      "op": _op,
-      "volume": _volume,
-      "guildId": _guild.id.toString()
-    };
+    return {"op": _op, "volume": _volume, "guildId": _guild.id.toString()};
   }
 }

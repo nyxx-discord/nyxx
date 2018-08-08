@@ -27,10 +27,9 @@ class User extends SnowflakeEntity {
   bool bot = false;
 
   /// Voice state
-  UserVoiceState get voiceState =>
-      client._voiceStates.containsKey(this.id)
-          ? client._voiceStates[this.id]
-          : null;
+  UserVoiceState get voiceState => client._voiceStates.containsKey(this.id)
+      ? client._voiceStates[this.id]
+      : null;
 
   User._new(this.client, this.raw) : super(new Snowflake(raw['id'] as String)) {
     this.username = raw['username'] as String;
@@ -62,8 +61,8 @@ class User extends SnowflakeEntity {
               (Channel c) => c is DMChannel && c.recipient.id == this.id)
           as DMChannel;
     } catch (err) {
-      HttpResponse r = await client.http
-          .send('POST', "/users/@me/channels", body: {"recipient_id": this.id.toString()});
+      HttpResponse r = await client.http.send('POST', "/users/@me/channels",
+          body: {"recipient_id": this.id.toString()});
       return new DMChannel._new(
           client, r.body.asJson() as Map<String, dynamic>);
     }
@@ -76,7 +75,6 @@ class User extends SnowflakeEntity {
       bool tts: false,
       String nonce,
       bool disableEveryone}) async {
-
     String newContent;
     if (content != null &&
         (disableEveryone == true ||
@@ -92,12 +90,13 @@ class User extends SnowflakeEntity {
     DMChannel channel = await getDMChannel();
 
     final HttpResponse r = await this.client.http.send(
-        'POST', '/channels/${channel.id.toString()}/messages', body: <String, dynamic>{
-      "content": newContent,
-      "tts": tts,
-      "nonce": nonce,
-      "embed": embed
-    });
+        'POST', '/channels/${channel.id.toString()}/messages',
+        body: <String, dynamic>{
+          "content": newContent,
+          "tts": tts,
+          "nonce": nonce,
+          "embed": embed
+        });
     return new Message._new(
         this.client, r.body.asJson() as Map<String, dynamic>);
   }

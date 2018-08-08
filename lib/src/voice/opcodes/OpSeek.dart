@@ -9,10 +9,6 @@ class _OpSeek {
   _OpSeek(this._guild, this._seek);
 
   Map<String, dynamic> build() {
-    return {
-      "op": _op,
-      "posistion": _seek,
-      "guildId": _guild.id.toString()
-    };
+    return {"op": _op, "posistion": _seek, "guildId": _guild.id.toString()};
   }
 }

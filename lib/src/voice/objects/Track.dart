@@ -4,20 +4,28 @@ part of nyxx.voice;
 class Track extends Entity {
   /// Internal id of track.
   String id;
+
   /// Unique identifier
   String identifier;
+
   /// True if track be seeked
   bool isSeekable;
+
   /// Author of track
   String author;
+
   /// Length of track in milliseconds
   int length;
+
   /// True if track is stream of data
   bool isStream;
+
   /// Track position in milliseconds
   int position;
+
   /// Track title
   String title;
+
   /// Url to track
   String uri;
 

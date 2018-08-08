@@ -82,7 +82,8 @@ class Guild extends SnowflakeEntity {
   Shard shard;
 
   Guild._new(this.client, this.raw,
-      [this.available = true, bool guildCreate = false]) : super(new Snowflake(raw['id'] as String)) {
+      [this.available = true, bool guildCreate = false])
+      : super(new Snowflake(raw['id'] as String)) {
     if (this.available) {
       this.name = raw['name'] as String;
       this.icon = raw['icon'] as String;
@@ -142,10 +143,13 @@ class Guild extends SnowflakeEntity {
         });
 
         this.defaultChannel = this.channels[this.id];
-        this.afkChannel = this.channels[new Snowflake(raw['afk_channel_id'] as String)] as VoiceChannel;
+        this.afkChannel =
+            this.channels[new Snowflake(raw['afk_channel_id'] as String)]
+                as VoiceChannel;
       }
 
-      this.systemChannel = this.channels[new Snowflake(raw['system_channel_id'] as String)];
+      this.systemChannel =
+          this.channels[new Snowflake(raw['system_channel_id'] as String)];
 
       if (raw['features'] != null) {
         this.features = new List();
@@ -180,8 +184,10 @@ class Guild extends SnowflakeEntity {
 
   /// Gets Guild Emoji based on Id
   Future<Emoji> getEmoji(Snowflake emojiId) async {
-    HttpResponse r =
-        await this.client.http.send('GET', "/guilds/$id/emojis/${emojiId.toString()}");
+    HttpResponse r = await this
+        .client
+        .http
+        .send('GET', "/guilds/$id/emojis/${emojiId.toString()}");
 
     return new GuildEmoji._new(
         this.client, r.body.asJson as Map<String, dynamic>, this);
@@ -344,21 +350,26 @@ class Guild extends SnowflakeEntity {
   Future<Null> moveGuildChannel(Channel channel, int newPosition,
       {String auditReason = ""}) async {
     await this.client.http.send('PATCH', "/guilds/${this.id}/channels",
-        body: {"id": channel.id.toString(), "position": newPosition}, reason: auditReason);
+        body: {"id": channel.id.toString(), "position": newPosition},
+        reason: auditReason);
     return null;
   }
 
   /// Bans a user by ID.
   Future<Null> ban(Member member,
       {int deleteMessageDays = 0, String auditReason}) async {
-    await this.client.http.send('PUT', "/guilds/${this.id}/bans/${member.id.toString()}",
+    await this.client.http.send(
+        'PUT', "/guilds/${this.id}/bans/${member.id.toString()}",
         body: {"delete-message-days": deleteMessageDays}, reason: auditReason);
     return null;
   }
 
   /// Unbans a user by ID.
   Future<Null> unban(Snowflake id) async {
-    await this.client.http.send('DELETE', "/guilds/${this.id}/bans/${id.toString()}");
+    await this
+        .client
+        .http
+        .send('DELETE', "/guilds/${this.id}/bans/${id.toString()}");
     return null;
   }
 

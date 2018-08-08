@@ -77,7 +77,8 @@ class MessageChannel extends Channel with IterableMixin<Message> {
         (disableEveryone == true ||
             (disableEveryone == null &&
                 this.client._options.disableEveryone))) {
-      newContent = content.toString()
+      newContent = content
+          .toString()
           .replaceAll("@everyone", "@\u200Beveryone")
           .replaceAll("@here", "@\u200Bhere");
     } else {

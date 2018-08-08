@@ -13,9 +13,7 @@ import 'package:watcher/watcher.dart';
 Future<HotReloader> hotReload({List<String> paths}) async {
   final reloader = new HotReloader();
 
-  if(paths != null)
-    for(var path in paths)
-      reloader.addPath(path);
+  if (paths != null) for (var path in paths) reloader.addPath(path);
   await reloader.addPackageDependencies();
 
   await reloader.go();
@@ -89,14 +87,14 @@ class HotReloader {
   /// Stream controller to fire events when any of the file being listened to
   /// changes
   final StreamController<WatchEvent> _onChange =
-  new StreamController<WatchEvent>.broadcast();
+      new StreamController<WatchEvent>.broadcast();
 
   /// Stream that is fired when any of the file being listened to changes
   Stream<WatchEvent> get onChange => _onChange.stream;
 
   /// Stream controller to fire events when the application is reloaded
   final StreamController<DateTime> _onReload =
-  new StreamController<DateTime>.broadcast();
+      new StreamController<DateTime>.broadcast();
 
   /// Stream that is fired after the application is reloaded
   Stream<DateTime> get onReload => _onReload.stream;
@@ -118,24 +116,26 @@ class HotReloader {
 
   /// Store for built [HotReloaderPath]s
   final Map<String, HotReloaderPath> _builtPaths =
-  new Map<String, HotReloaderPath>();
+      new Map<String, HotReloaderPath>();
 
   /// Creates a [HotReloader] with given [vmServiceUrl]
   ///
   /// By default, [vmServiceUrl] uses `ws://localhost:8181/ws`
   HotReloader(
       {this.vmServiceUrl: _kVmServiceUrl,
-        this.debounceInterval: const Duration(seconds: 1)}) {
+      this.debounceInterval: const Duration(seconds: 1)}) {
     if (!isHotReloadable) throw notHotReloadable;
 
     _onChangeSub = onChange
         .transform(new _FoldedDebounce(debounceInterval))
         .listen((List<WatchEvent> events) async {
-
       final sb = new StringBuffer();
-      var f = events.where((WatchEvent e) => !e.path.contains("__jb_tmp__") && !e.path.contains("__jb_old"))
-          .map((WatchEvent event) => event.path).join(', ');
-      if(f.codeUnits.isNotEmpty) {
+      var f = events
+          .where((WatchEvent e) =>
+              !e.path.contains("__jb_tmp__") && !e.path.contains("__jb_old"))
+          .map((WatchEvent event) => event.path)
+          .join(', ');
+      if (f.codeUnits.isNotEmpty) {
         sb.write('Paths ');
         sb.write(f);
         sb.write(' changed!');
@@ -159,7 +159,7 @@ class HotReloader {
   /// More information can be found at: https://www.dartlang.org/dart-vm/tools/dart-vm
   static bool get isHotReloadable =>
       Platform.executableArguments.contains('--observe') ||
-          Platform.executableArguments.contains('--enable-vm-service');
+      Platform.executableArguments.contains('--enable-vm-service');
 
   /// Go! Start listening for changes to files in registered paths
   ///
@@ -171,8 +171,7 @@ class HotReloader {
     if (_onChange.isClosed) throw alreadyKilled;
 
     // If currently running, restart
-    if (_isRunning)
-      await stop();
+    if (_isRunning) await stop();
 
     final hps = <String, HotReloaderPath>{};
 
@@ -194,8 +193,7 @@ class HotReloader {
 
   /// Stops listening for file system changes
   Future stop() async {
-    for (HotReloaderPath hp in _builtPaths.values)
-      await hp._stop();
+    for (HotReloaderPath hp in _builtPaths.values) await hp._stop();
 
     _builtPaths.clear();
   }
@@ -310,7 +308,7 @@ class HotReloader {
 
   /// Exception thrown when hot reloader is already killed
   static final alreadyKilled =
-  new Exception('Hot reloader killed! Create new one!');
+      new Exception('Hot reloader killed! Create new one!');
 
   static final notHotReloadable = new Exception(_msg);
 
@@ -391,8 +389,7 @@ class _FoldedDebounce
       return values;
     }).where((List<WatchEvent> value) {
       final now = new DateTime.now();
-      if (now.isBefore(next))
-        return false;
+      if (now.isBefore(next)) return false;
 
       next = now.add(this.interval);
       values = <WatchEvent>[];
@@ -407,5 +404,5 @@ class _FoldedDebounce
   }
 
   @override
-  StreamTransformer<RS, RT> cast<RS, RT>() { }
+  StreamTransformer<RS, RT> cast<RS, RT>() {}
 }

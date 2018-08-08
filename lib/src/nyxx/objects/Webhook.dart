@@ -29,7 +29,8 @@ class Webhook extends SnowflakeEntity {
   /// The user, if this is accessed using a normal client.
   User user;
 
-  Webhook._fromApi(this.client, this.raw) : super(new Snowflake(raw['id'] as String)) {
+  Webhook._fromApi(this.client, this.raw)
+      : super(new Snowflake(raw['id'] as String)) {
     this.name = raw['name'] as String;
     this.token = raw['token'] as String;
 
@@ -46,7 +47,8 @@ class Webhook extends SnowflakeEntity {
     this.user = new User._new(client, raw['user'] as Map<String, dynamic>);
   }
 
-  Webhook._fromToken(this.client, Map<String, dynamic> raw) : super(new Snowflake(raw['id'] as String)) {
+  Webhook._fromToken(this.client, Map<String, dynamic> raw)
+      : super(new Snowflake(raw['id'] as String)) {
     this.name = raw['name'] as String;
     this.token = raw['token'] as String;
     this.channelId = new Snowflake(raw['channel_id'] as String);
@@ -55,7 +57,8 @@ class Webhook extends SnowflakeEntity {
 
   /// Edits the webhook.
   Future<Webhook> edit({String name, String auditReason: ""}) async {
-    HttpResponse r = await this.client.http.send('PATCH', "/webhooks/$id/$token",
+    HttpResponse r = await this.client.http.send(
+        'PATCH', "/webhooks/$id/$token",
         body: {"name": name}, reason: auditReason);
     this.name = r.body.asJson()['name'] as String;
     return this;
@@ -63,7 +66,10 @@ class Webhook extends SnowflakeEntity {
 
   /// Deletes the webhook.
   Future<Null> delete({String auditReason: ""}) async {
-    await this.client.http.send('DELETE', "/webhooks/$id/$token", reason: auditReason);
+    await this
+        .client
+        .http
+        .send('DELETE', "/webhooks/$id/$token", reason: auditReason);
     return null;
   }
 
@@ -94,18 +100,19 @@ class Webhook extends SnowflakeEntity {
       String username,
       String avatarUrl,
       bool tts}) async {
-      await this.client.http.sendMultipart(
-        "POST", "/webhooks/$id/$token", filepaths,
-        data: jsonEncode({
-          "content": content,
-          "username": username,
-          "avatar_url": avatarUrl,
-          "tts": tts,
-          "embeds": embeds.map((t) => t._build())
-        })
-      );
-      return null;
-    }
+    await this
+        .client
+        .http
+        .sendMultipart("POST", "/webhooks/$id/$token", filepaths,
+            data: jsonEncode({
+              "content": content,
+              "username": username,
+              "avatar_url": avatarUrl,
+              "tts": tts,
+              "embeds": embeds.map((t) => t._build())
+            }));
+    return null;
+  }
 
   /// Returns a string representation of this object.
   @override
