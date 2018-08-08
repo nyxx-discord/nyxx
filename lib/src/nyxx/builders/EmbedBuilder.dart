@@ -42,8 +42,8 @@ class EmbedBuilder {
   /// Embed custom fields;
   List<Map<String, dynamic>> _fields;
 
-  /// Bootstraper for [EmbedBuilder], takes title as required property
-  EmbedBuilder(this.title) {
+  /// Bootstraper for [EmbedBuilder].
+  EmbedBuilder() {
     _fields = new List();
   }
 

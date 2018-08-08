@@ -52,7 +52,8 @@ void main() {
   });
 
   nyxx.EmbedBuilder createTestEmbed() {
-    return new nyxx.EmbedBuilder("Test title")
+    return new nyxx.EmbedBuilder()
+      ..title = "Test title"
       ..addField(name: "Test field", value: "Test value");
   }
 
