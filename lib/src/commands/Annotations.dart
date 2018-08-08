@@ -10,7 +10,7 @@ class Command {
   /// True if command should be main
   final bool main;
 
-  const Command ({this.name, this.aliases, this.main});
+  const Command({this.name, this.aliases, this.main});
 }
 
 class Cons {
@@ -39,7 +39,8 @@ class Cons {
   /// Adding to channel topic `[games, PC]` will allow to only execute commands annotated with this phrases
   final List<String> topics;
 
-  const Cons({this.isAdmin = false,
+  const Cons(
+      {this.isAdmin = false,
       this.requiredRoles,
       this.cooldown,
       this.isHidden = false,

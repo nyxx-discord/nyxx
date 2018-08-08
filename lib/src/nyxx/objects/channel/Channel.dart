@@ -11,7 +11,8 @@ class Channel extends SnowflakeEntity {
   /// The channel's type.
   String type;
 
-  Channel._new(this.client, this.raw, this.type) : super(new Snowflake(raw['id'] as String)) {
+  Channel._new(this.client, this.raw, this.type)
+      : super(new Snowflake(raw['id'] as String)) {
     client.channels[id] = this;
   }
 

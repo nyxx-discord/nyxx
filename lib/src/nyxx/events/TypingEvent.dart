@@ -10,7 +10,9 @@ class TypingEvent {
 
   TypingEvent._new(Client client, Map<String, dynamic> json) {
     if (client.ready) {
-      this.channel = client.channels[new Snowflake(json['d']['channel_id'] as String)] as MessageChannel;
+      this.channel =
+          client.channels[new Snowflake(json['d']['channel_id'] as String)]
+              as MessageChannel;
       this.user = client.users[json['d']['user_id']];
       client._events.onTyping.add(this);
       channel._onTyping.add(this);

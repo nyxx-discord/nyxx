@@ -21,7 +21,8 @@ void main() {
       var player = await voice.getPlayer(e.message.guild);
 
       // Get first voice channel
-      var channel = e.message.guild.channels.values.firstWhere((ch) => ch is nyxx.VoiceChannel) as nyxx.VoiceChannel;
+      var channel = e.message.guild.channels.values
+          .firstWhere((ch) => ch is nyxx.VoiceChannel) as nyxx.VoiceChannel;
 
       // Resolve url to Lavalink track
       // Read here: https://github.com/Frederikam/Lavalink
@@ -29,7 +30,7 @@ void main() {
 
       // Play track
       await player.play(track.entity as voice.Track);
-    } else if(e.message.content == "!stop") {
+    } else if (e.message.content == "!stop") {
       // Always stop music and disconned
       // Player instance is cached, so invoking this method has no cost
       var player = await voice.getPlayer(e.message.guild);

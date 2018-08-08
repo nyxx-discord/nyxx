@@ -1,9 +1,8 @@
-
 /// Provides color utilities
 class Color {
   /// Converts RGB values to int
-  static int RGBtoInt(int red, int green, int blue)
-    => (red << 16) | (green << 8) | blue;
+  static int RGBtoInt(int red, int green, int blue) =>
+      (red << 16) | (green << 8) | blue;
 
   /// Converts RGB hex string into int value
   static int HEXtoInt(String hex) {

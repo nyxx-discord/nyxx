@@ -165,8 +165,7 @@ class Client {
     if (this._token == null || this._token == "")
       throw new Exception("Token cannot be null or empty");
 
-    if (this._options == null)
-      this._options = new ClientOptions();
+    if (this._options == null) this._options = new ClientOptions();
 
     this._voiceStates = new Map<Snowflake, UserVoiceState>();
     this.guilds = new Map<Snowflake, Guild>();
@@ -180,12 +179,11 @@ class Client {
 
     Logger.root.level = Level.ALL;
     Logger.root.onRecord.listen((LogRecord rec) {
-      print(
-          '[${rec.level.name}] {${rec.loggerName}} - '
-              '${rec.time.day}.${rec.time.month}.${rec.time.year}'
-              '${rec.time.hour}:${rec.time.minute}:${rec.time.second}'
-              ':${rec.time.millisecond} '
-              '-- ${rec.message}');
+      print('[${rec.level.name}] {${rec.loggerName}} - '
+          '${rec.time.day}.${rec.time.month}.${rec.time.year}'
+          '${rec.time.hour}:${rec.time.minute}:${rec.time.second}'
+          ':${rec.time.millisecond} '
+          '-- ${rec.message}');
     });
   }
 

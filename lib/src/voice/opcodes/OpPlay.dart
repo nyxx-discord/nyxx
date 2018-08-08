@@ -11,7 +11,7 @@ class _OpPlay {
   _OpPlay(this._guildId, this._track, {this.startTime, this.endTime});
 
   Map<String, dynamic> build() {
-   return  {
+    return {
       "op": _op,
       "guildId": _guildId.id.toString(),
       "track": _track.id,

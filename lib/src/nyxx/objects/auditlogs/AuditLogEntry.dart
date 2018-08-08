@@ -28,7 +28,8 @@ class AuditLogEntry extends SnowflakeEntity {
   /// Raw data from API
   Map<String, dynamic> raw;
 
-  AuditLogEntry._new(Client client, this.raw) : super(new Snowflake(raw['id'] as String)) {
+  AuditLogEntry._new(Client client, this.raw)
+      : super(new Snowflake(raw['id'] as String)) {
     targetId = raw['targetId'] as String;
 
     changes = new List();

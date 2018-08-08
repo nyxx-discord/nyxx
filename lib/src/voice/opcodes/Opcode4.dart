@@ -10,7 +10,7 @@ class _Opcode4 {
   _Opcode4(this._guild, this._channel, this._mute, this._deaf);
 
   Map<String, dynamic> _build() {
-    return <String, dynamic> {
+    return <String, dynamic>{
       "guild_id": _guild.id.toString(),
       "channel_id": _channel == null ? null : _channel.id.toString(),
       "self_mute": _mute,

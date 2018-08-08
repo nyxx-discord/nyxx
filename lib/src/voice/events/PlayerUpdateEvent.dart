@@ -4,8 +4,10 @@ part of nyxx.voice;
 class PlayerUpdateEvent {
   /// Actual song position in millis
   int position;
+
   /// Total length of track
   int time;
+
   /// Guild for track is playing for
   String guildId;
 

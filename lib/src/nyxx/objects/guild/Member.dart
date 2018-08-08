@@ -36,7 +36,8 @@ class Member extends User {
     this.status = data['status'] as String;
 
     if (guild == null)
-      this.guild = this.client.guilds[new Snowflake(data['guild_id'] as String)];
+      this.guild =
+          this.client.guilds[new Snowflake(data['guild_id'] as String)];
     else
       this.guild = guild;
 
@@ -100,5 +101,4 @@ class Member extends User {
 
   @override
   String toString() => super.toString();
-
 }

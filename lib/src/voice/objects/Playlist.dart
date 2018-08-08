@@ -4,6 +4,7 @@ part of nyxx.voice;
 class Playlist extends Entity {
   /// Playlist name
   String name;
+
   /// Current track
   int selectedTrack;
 

@@ -14,7 +14,8 @@ class InviteGuild extends SnowflakeEntity {
   /// The guild's spash if any.
   String spash;
 
-  InviteGuild._new(this.client, this.raw) : super(new Snowflake(raw['id'] as String)) {
+  InviteGuild._new(this.client, this.raw)
+      : super(new Snowflake(raw['id'] as String)) {
     this.name = raw['name'] as String;
     this.spash = raw['splash_hash'] as String;
   }

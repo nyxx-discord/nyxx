@@ -8,7 +8,8 @@ class VoiceState extends UserVoiceState {
   /// Session id for this voice state
   String sessionId;
 
-  VoiceState._new(Client client, Map<String, dynamic> raw) : super(client, raw) {
+  VoiceState._new(Client client, Map<String, dynamic> raw)
+      : super(client, raw) {
     this.user = client.users[new Snowflake(raw['user_id'] as String)];
     this.sessionId = raw['session_id'] as String;
   }
@@ -35,7 +36,8 @@ class UserVoiceState {
   Map<String, dynamic> raw;
 
   UserVoiceState(Client client, this.raw) {
-    this.channel = client.channels[new Snowflake(raw['channel_id'] as String)] as VoiceChannel;
+    this.channel = client.channels[new Snowflake(raw['channel_id'] as String)]
+        as VoiceChannel;
     this.deaf = raw['deaf'] as bool;
     this.selfDeaf = raw['self_deaf'] as bool;
     this.selfMute = raw['self_mute'] as bool;

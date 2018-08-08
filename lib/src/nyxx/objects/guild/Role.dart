@@ -35,7 +35,8 @@ class Role extends SnowflakeEntity {
   /// Mention of role
   String mention;
 
-  Role._new(this.client, this.raw, this.guild) : super(new Snowflake(raw['id'] as String)) {
+  Role._new(this.client, this.raw, this.guild)
+      : super(new Snowflake(raw['id'] as String)) {
     this.name = raw['name'] as String;
     this.position = raw['position'] as int;
     this.hoist = raw['hoist'] as bool;
@@ -43,8 +44,10 @@ class Role extends SnowflakeEntity {
     this.mentionable = raw['mentionable'] as bool;
     this.permissions = new Permissions.fromInt(raw['permissions'] as int);
 
-    if (raw['color'] == 0) this.color = null;
-    else this.color = raw['color'] as int;
+    if (raw['color'] == 0)
+      this.color = null;
+    else
+      this.color = raw['color'] as int;
 
     if (mentionable) this.mention = "<@&${this.id}>";
     this.guild.roles[this.id] = this;
