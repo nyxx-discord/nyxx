@@ -91,7 +91,7 @@ class VoiceService {
     switch(op) {
       case 'playerUpdate':
         var e = new PlayerUpdateEvent._new(msg);
-        _playersCache[e.guildId].isConnected ? _playersCache[e.guildId]._onPlayerUpdate.add(e) : {};
+        if (_playersCache[e.guildId].isConnected) _playersCache[e.guildId]._onPlayerUpdate.add(e);
         break;
       case 'stats':
         _onStats.add(new Stats._new(msg));
