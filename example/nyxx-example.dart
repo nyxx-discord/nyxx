@@ -32,7 +32,7 @@ class AliasCommand extends command.CommandContext {
   // Injecting services into command handler
   AliasCommand(this._service);
 
-  // Maincommand annotation specifies main command handler
+  // @Command annotation creates command handler
   @command.Command(main: true)
   Future main(String name) async {
     await reply(content: name);

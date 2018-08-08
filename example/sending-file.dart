@@ -26,7 +26,8 @@ void main() {
       // Files can be used within embeds as custom images
 
       // Use `{file-name}` to embed sent file into embed.
-      var embed = new nyxx.EmbedBuilder("Example Title")
+      var embed = new nyxx.EmbedBuilder()
+        ..title = "Example Title"
         ..thumbnailUrl = "{example_file.jpg}";
 
       // Sent all together

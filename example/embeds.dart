@@ -23,8 +23,7 @@ void main() {
         ..iconUrl = e.message.author.avatarURL();
 
       // Create embed with previously created author section.
-      // Only field which is required to create is `title`.
-      var embed = new nyxx.EmbedBuilder("Example Title")
+      var embed = new nyxx.EmbedBuilder()
         ..addField(name: "Example field title", value: "Example value")
         ..author = author;
 
