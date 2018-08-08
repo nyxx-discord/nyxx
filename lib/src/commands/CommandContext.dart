@@ -103,17 +103,17 @@ abstract class CommandContext {
       Duration timeout: const Duration(seconds: 30),
       bool everywhere: false}) async {
     return new Future(() {
-      switch (everywhere) {
-        case true:
-          if (user != null)
-            return channel.client.onTyping.firstWhere((e) => e.user == user);
+      if(everywhere) {
+        if (user != null)
+          return channel.client.onTyping.firstWhere((e) => e.user == user);
 
-          return channel.client.onTyping.first;
-        case false:
-          if (user != null)
-            return channel.onTyping.firstWhere((e) => e.user == user);
+        return channel.client.onTyping.first;
+      }
+      else {
+        if (user != null)
+          return channel.onTyping.firstWhere((e) => e.user == user);
 
-          return channel.onTyping.first;
+        return channel.onTyping.first;
       }
     }).timeout(timeout, onTimeout: () => null);
   }

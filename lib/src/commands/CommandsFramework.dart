@@ -132,14 +132,15 @@ class CommandsFramework {
       if(tmpCommand != null) {
         if (tmpCommand.name == splittedCommand[0] || (tmpCommand.aliases != null && tmpCommand.aliases.contains(splittedCommand[0]))) {
           if(splittedCommand.length > 1) {
-            find(tmpMethods.values, cmd, false, (meta) => meta != null && meta.name != null && meta.name == splittedCommand[0][1]);
+            find(tmpMethods.values, cmd, false, (meta) => meta != null && meta.name != null && meta.name == splittedCommand[1]);
           } else {
-            find(tmpMethods.values, cmd, true, (meta) => meta != null && meta.name != null && meta.name == splittedCommand[0]);
+            find(tmpMethods.values, cmd, true, (meta) => meta != null && meta.main != null && meta.main);
+            //find(tmpMethods.values, cmd, true, (meta) => meta != null && meta.name != null && meta.name == splittedCommand[0]);
           }
         }
 
-        if(!found)
-          find(tmpMethods.values, cmd, true, (meta) => meta != null && meta.main != null && meta.main);
+        //if(!found)
+          //find(tmpMethods.values, cmd, true, (meta) => meta != null && meta.main != null && meta.main);
       }
       else {
         find(tmpMethods.values, cmd, true, (meta) => meta != null && meta.name != null && meta.name  == splittedCommand[0]);
