@@ -42,3 +42,5 @@ pubspec.lock
 /publish_docs.sh
 /test/mirrors.dart
 /private/
+
+[Rr]pc*
