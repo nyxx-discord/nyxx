@@ -296,7 +296,7 @@ class CommandsFramework {
           }
         });
 
-        logger.fine("Command executed");
+        logger.fine("Command -${_meta.name}- executed");
         break;
     }
   }
