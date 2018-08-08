@@ -86,6 +86,7 @@ class Webhook extends SnowflakeEntity {
     return null;
   }
 
+  /// Sends message to webhook with files
   Future<Null> sendFile(
       {String content,
       List<String> filepaths,

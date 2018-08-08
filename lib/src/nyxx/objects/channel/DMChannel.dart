@@ -1,5 +1,6 @@
 part of nyxx;
 
+/// Represents channel with user.
 class DMChannel extends MessageChannel {
   /// The recipient.
   User recipient;

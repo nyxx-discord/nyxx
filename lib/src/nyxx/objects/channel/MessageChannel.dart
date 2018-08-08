@@ -7,6 +7,8 @@ class MessageChannel extends Channel with IterableMixin<Message> {
 
   /// Sent when a new message is received.
   Stream<MessageEvent> onMessage;
+
+  /// Emitted when user starts typing
   Stream<TypingEvent> onTyping;
 
   StreamController<MessageEvent> _onMessage;
@@ -109,9 +111,7 @@ class MessageChannel extends Channel with IterableMixin<Message> {
   }
 
   /// Stops a typing loop if one is running.
-  void stopTypingLoop() {
-    this._typing?.cancel();
-  }
+  void stopTypingLoop() => this._typing?.cancel();
 
   /// Bulk removes many messages by its ids. [messagesIds] is list of messages ids to delete.
   Future<Null> bulkRemoveMessages(List<String> messagesIds) async {

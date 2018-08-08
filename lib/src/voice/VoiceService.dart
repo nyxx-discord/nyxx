@@ -1,5 +1,6 @@
 part of nyxx.voice;
 
+// Logger instance for `Voice Service`
 Logger _logger = new Logger.detached("Voice Service");
 
 /// Inits voice service. [yamlConfigFile] is absolute path to lavalink config file.

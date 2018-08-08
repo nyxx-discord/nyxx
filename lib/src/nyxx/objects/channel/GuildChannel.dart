@@ -1,5 +1,6 @@
 part of nyxx;
 
+/// Represents channel which is part of guild
 abstract class GuildChannel {
   /// The channel's name.
   String name;
@@ -19,10 +20,17 @@ abstract class GuildChannel {
   /// Permissions for channel
   List<ChannelPermissions> permissions;
 
+  Stream<ChannelUpdateEvent> onUpdate;
+
+  StreamController<ChannelUpdateEvent> _onUpdate;
   String _id;
   Client _client;
 
-  void initialize(Map<String, dynamic> raw, Client client, Guild guild) {
+  // Initializes Guild channel
+  void _initialize(Map<String, dynamic> raw, Client client, Guild guild) {
+    _onUpdate = new StreamController.broadcast();
+    onUpdate = _onUpdate.stream;
+
     this._client = client;
     this.name = raw['name'] as String;
     this.position = raw['position'] as int;
