@@ -74,7 +74,7 @@ abstract class CommandContext {
     return new Future<Map<Emoji, int>>(() async {
       await for (var r in msg.onReactionAdded) {
         if (m.containsKey(r.emoji))
-          m[r.emoji] = m[r.emoji] += 1;
+          m[r.emoji] += 1;
         else
           m[r.emoji] = 1;
       }
