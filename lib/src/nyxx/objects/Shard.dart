@@ -15,6 +15,7 @@ class Shard {
   String _sessionId;
   StreamController<Shard> _onReady;
   StreamController<Shard> _onDisconnect;
+  ZLibDecoder _zlib;
 
   /// Emitted when the shard is ready.
   Stream<Shard> onReady;
@@ -24,8 +25,6 @@ class Shard {
 
   /// A map of guilds the shard is on.
   Map<Snowflake, Guild> guilds = {};
-
-  ZLibDecoder _zlib;
 
   Shard._new(_WS ws, this.id) {
     this._ws = ws;
@@ -54,10 +53,9 @@ class Shard {
   }
 
   /// Syncs all guild
-  void guildSync() {
-    this.send("GUILD_SYNC", this.guilds.keys.toList());
-  }
+  void guildSync() => this.send("GUILD_SYNC", this.guilds.keys.toList());
 
+  // Attempts to connect to ws
   void _connect([bool resume = true, bool init = false]) {
     this.ready = false;
     if (this._socket != null) this._socket.close();
@@ -75,6 +73,7 @@ class Shard {
     });
   }
 
+  // Docodes zlib compresses string into string json
   Map<String, dynamic> _decodeBytes(dynamic bytes) {
     if (bytes is String) {
       return jsonDecode(bytes as String) as Map<String, dynamic>;

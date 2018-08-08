@@ -53,9 +53,7 @@ class EmbedBuilder {
   }
 
   /// Added field to embed using [EmbedFieldBuilder]
-  void addFieldBuilder(EmbedFieldBuilder field) {
-    _fields.add(field._build());
-  }
+  void addFieldBuilder(EmbedFieldBuilder field) => _fields.add(field._build());
 
   /// Builds object to Map() instance;
   Map<String, dynamic> _build() {
