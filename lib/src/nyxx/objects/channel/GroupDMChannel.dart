@@ -1,5 +1,6 @@
 part of nyxx;
 
+/// Represents group DM channel
 class GroupDMChannel extends MessageChannel {
   /// The recipients.
   Map<Snowflake, User> recipients;
@@ -14,6 +15,7 @@ class GroupDMChannel extends MessageChannel {
     });
   }
 
+  /// Removes recipient from channel
   Future<Null> removeRecipient(Snowflake userId) async {
     await this
         .client

@@ -11,17 +11,6 @@ class Player {
   /// Current playing track
   Track currentTrack;
 
-  Guild _guild;
-  Client _client;
-  Uri _restPath;
-
-  var _sub1, _sub2;
-
-  dynamic _rawEvent;
-  VoiceState _currentState;
-
-  w_transport.WebSocket _webSocket;
-
   StreamController<TrackError> _onTrackError;
   /// Emitted when Lavalink TrackError occurs.
   /// [Read here](https://github.com/Frederikam/Lavalink/blob/master/IMPLEMENTATION.md#incoming-messages)
@@ -30,6 +19,14 @@ class Player {
   StreamController<PlayerUpdateEvent> _onPlayerUpdate;
   /// Emits Position information about a player. Includes unix timestamp.
   Stream<PlayerUpdateEvent> onPlayerUpdate;
+
+  Guild _guild;
+  Client _client;
+  Uri _restPath;
+  var _sub1, _sub2;
+  dynamic _rawEvent;
+  VoiceState _currentState;
+  w_transport.WebSocket _webSocket;
 
   Player._new(this._guild, this._client, this._webSocket, this._restPath);
 

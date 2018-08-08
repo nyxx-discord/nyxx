@@ -90,6 +90,7 @@ class Member extends User {
     return null;
   }
 
+  /// Returns total permissions of user.
   Future<Permissions> getTotalPermissions() async {
     var total = 0;
     for (var role in roles) total |= role.permissions.raw;

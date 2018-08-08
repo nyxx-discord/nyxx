@@ -12,6 +12,8 @@ class Snowflake implements Comparable<Snowflake> {
   /// Creates const instance of Snowflake
   const Snowflake.static(this.id);
 
+  /// Returns timestamp included in [Snowflake]
+  /// [Snowflake reference](https://discordapp.com/developers/docs/reference#snowflakes)
   DateTime get timestamp => new DateTime.fromMillisecondsSinceEpoch(
       ((int.parse(id) / 4194304) + 1420070400000).toInt());
 
