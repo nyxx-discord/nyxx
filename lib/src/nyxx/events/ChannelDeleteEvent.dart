@@ -2,8 +2,9 @@ part of nyxx;
 
 /// Sent when a channel is deleted.
 class ChannelDeleteEvent {
-  /// The channel that was deleted, either a [GuildChannel], [DMChannel] or [GroupDMChannel].
-  dynamic channel;
+  /// The channel that was deleted, either a
+  /// [TextChannel], [DMChannel] or [GroupDMChannel] or [VoiceChannel].
+  Channel channel;
 
   ChannelDeleteEvent._new(Client client, Map<String, dynamic> json) {
     if (client.ready) {
