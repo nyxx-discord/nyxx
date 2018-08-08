@@ -20,11 +20,15 @@ class MessageReactionEvent {
     this.channel = client.channels[new Snowflake(json['d']['channel_id'] as String)] as MessageChannel;
     this.message = channel.getMessage(new Snowflake(json['d']['message_id'] as String));
 
+    if(message == null)
+      return;
+
     if (json['d']['emoji']['id'] == null)
       emoji = new UnicodeEmoji._partial((json['d']['emoji']['name'] as String));
     else
       emoji =
           new GuildEmoji._partial(json['d']['emoji'] as Map<String, dynamic>);
+
     if (added) {
       this.message._onReactionAdded.add(this);
       client._events.onMessageReactionAdded.add(this);
