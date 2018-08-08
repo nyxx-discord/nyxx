@@ -1,21 +1,15 @@
 part of nyxx;
 
 /// A webhook.
-class Webhook {
+class Webhook extends SnowflakeEntity {
   /// The [Client] object.
   Client client;
 
   /// The raw object returned by the API
   Map<String, dynamic> raw;
 
-  /// The HTTP client.
-  Http http;
-
   /// The webhook's name.
   String name;
-
-  /// The webhook's id.
-  Snowflake id;
 
   /// The webhook's token.
   String token;
@@ -35,50 +29,33 @@ class Webhook {
   /// The user, if this is accessed using a normal client.
   User user;
 
-  /// When the webhook was created;
-  DateTime createdAt;
-
-  Webhook._fromApi(this.client, this.raw) {
-    this.http = client.http;
-
+  Webhook._fromApi(this.client, this.raw) : super(new Snowflake(raw['id'] as String)) {
     this.name = raw['name'] as String;
-    this.id = new Snowflake(raw['id'] as String);
     this.token = raw['token'] as String;
 
-    if (raw.containsKey('channel_id')) {
+    if (raw['channel_id'] != null) {
       this.channel = this.client.channels[this.channelId.id] as TextChannel;
       this.channelId = new Snowflake(raw['channel_id'] as String);
     }
 
-    if (raw.containsKey('guild_id')) {
+    if (raw['guild_id'] != null) {
       this.guildId = new Snowflake(raw['guild_id'] as String);
       this.guild = this.client.guilds[this.guildId];
     }
 
-    this.createdAt = id.timestamp;
     this.user = new User._new(client, raw['user'] as Map<String, dynamic>);
   }
 
-  Webhook._fromToken(this.http, Map<String, dynamic> raw) {
+  Webhook._fromToken(this.client, Map<String, dynamic> raw) : super(new Snowflake(raw['id'] as String)) {
     this.name = raw['name'] as String;
-    this.id = new Snowflake(raw['id'] as String);
     this.token = raw['token'] as String;
     this.channelId = new Snowflake(raw['channel_id'] as String);
     this.guildId = new Snowflake(raw['guild_id'] as String);
-    this.createdAt = id.timestamp;
-  }
-
-  /// Gets a webhook by its ID and token.
-  static Future<Webhook> fromToken(String id, String token) async {
-    Http http = new Http._new();
-    HttpResponse r = await http.send('GET', "/webhooks/$id/$token");
-    return new Webhook._fromToken(
-        http, r.body.asJson() as Map<String, dynamic>);
   }
 
   /// Edits the webhook.
   Future<Webhook> edit({String name, String auditReason: ""}) async {
-    HttpResponse r = await this.http.send('PATCH', "/webhooks/$id/$token",
+    HttpResponse r = await this.client.http.send('PATCH', "/webhooks/$id/$token",
         body: {"name": name}, reason: auditReason);
     this.name = r.body.asJson()['name'] as String;
     return this;
@@ -86,7 +63,7 @@ class Webhook {
 
   /// Deletes the webhook.
   Future<Null> delete({String auditReason: ""}) async {
-    await this.http.send('DELETE', "/webhooks/$id/$token", reason: auditReason);
+    await this.client.http.send('DELETE', "/webhooks/$id/$token", reason: auditReason);
     return null;
   }
 
@@ -105,7 +82,7 @@ class Webhook {
       "embeds": embeds.map((t) => t._build())
     };
 
-    await this.http.send('POST', "/webhooks/$id/$token", body: payload);
+    await this.client.http.send('POST', "/webhooks/$id/$token", body: payload);
     return null;
   }
 
