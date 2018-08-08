@@ -200,6 +200,13 @@ class Client {
     return null;
   }
 
+  /// Gets a webhook by its ID and token.
+  Future<Webhook> getWebhook(String id, String token) async {
+    HttpResponse r = await http.send('GET', "/webhooks/$id/$token");
+    return new Webhook._fromToken(
+        this, r.body.asJson() as Map<String, dynamic>);
+  }
+
   /// Block isolate until client is ready
   Future<ReadyEvent> blockToReady() async => await onReady.first;
 
