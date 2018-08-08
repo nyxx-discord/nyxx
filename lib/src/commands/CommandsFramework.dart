@@ -96,8 +96,6 @@ class CommandsFramework {
   }
 
   Future<List> matchCommand(List<String> splittedCommand) async {
-    var sanitizedCommand = splittedCommand[0].replaceFirst(prefix, "");
-
     MethodMirror matched;
     CommandContext commandContext;
     Command _meta;
@@ -132,11 +130,11 @@ class CommandsFramework {
       var tmpCommand = _getCmdAnnot(tmpClassMirror, Command) as Command;
 
       if(tmpCommand != null) {
-        if (tmpCommand.name == sanitizedCommand || (tmpCommand.aliases != null && tmpCommand.aliases.contains(sanitizedCommand))) {
+        if (tmpCommand.name == splittedCommand[0] || (tmpCommand.aliases != null && tmpCommand.aliases.contains(splittedCommand[0]))) {
           if(splittedCommand.length > 1) {
-            find(tmpMethods.values, cmd, false, (meta) => meta != null && meta.name != null && meta.name == splittedCommand[1]);
+            find(tmpMethods.values, cmd, false, (meta) => meta != null && meta.name != null && meta.name == splittedCommand[0][1]);
           } else {
-            find(tmpMethods.values, cmd, true, (meta) => meta != null && meta.name != null && meta.name == sanitizedCommand);
+            find(tmpMethods.values, cmd, true, (meta) => meta != null && meta.name != null && meta.name == splittedCommand[0]);
           }
         }
 
@@ -144,7 +142,7 @@ class CommandsFramework {
           find(tmpMethods.values, cmd, true, (meta) => meta != null && meta.main != null && meta.main);
       }
       else {
-        find(tmpMethods.values, cmd, true, (meta) => meta != null && meta.name != null && meta.name  == sanitizedCommand);
+        find(tmpMethods.values, cmd, true, (meta) => meta != null && meta.name != null && meta.name  == splittedCommand[0]);
       }
     }
 
@@ -165,10 +163,11 @@ class CommandsFramework {
       return;
     }
 
-    var splittedCommand = e.message.content.split(' ');
+    var splittedCommand = e.message.content.replaceFirst(prefix, "").trim().split(' ');
     int executionCode = -1;
 
     var ret = await matchCommand(splittedCommand);
+
     MethodMirror matched = ret[0] as DeclarationMirror;
     CommandContext commandContext = ret[1] as CommandContext;
     Command _meta = ret[2] as Command;
