@@ -53,9 +53,7 @@ class PermissionsBuilder extends AbstractPermissions {
   void _apply(_PermissionsSet perm, bool canApply, int constant) {
     if (canApply == null) return;
 
-    if (canApply)
-      perm.allow |= constant;
-    else
-      perm.deny |= constant;
+    if (canApply) perm.allow |= constant;
+    else perm.deny |= constant;
   }
 }

@@ -176,9 +176,7 @@ class Guild extends SnowflakeEntity {
 
   /// Returns a string representation of this object.
   @override
-  String toString() {
-    return this.name;
-  }
+  String toString() => this.name;
 
   /// Gets Guild Emoji based on Id
   Future<Emoji> getEmoji(Snowflake emojiId) async {

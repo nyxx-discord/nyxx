@@ -165,9 +165,8 @@ class Client {
     if (this._token == null || this._token == "")
       throw new Exception("Token cannot be null or empty");
 
-    if (this._options == null) {
+    if (this._options == null)
       this._options = new ClientOptions();
-    }
 
     this._voiceStates = new Map<Snowflake, UserVoiceState>();
     this.guilds = new Map<Snowflake, Guild>();

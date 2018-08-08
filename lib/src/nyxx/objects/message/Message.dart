@@ -118,23 +118,20 @@ class Message extends SnowflakeEntity {
       }
     }
 
-    if (raw['edited_timestamp'] != null) {
+    if (raw['edited_timestamp'] != null)
       this.editedTimestamp = DateTime.parse(raw['edited_timestamp'] as String);
-    }
 
     this.mentions = new Map<Snowflake, User>();
     raw['mentions'].forEach((dynamic o) {
       final User user = new User._new(this.client, o as Map<String, dynamic>);
       this.mentions[user.id] = user;
     });
-    this.mentions;
 
     this.embeds = new Map<String, Embed>();
     raw['embeds'].forEach((dynamic o) {
       Embed embed = new Embed._new(this.client, o as Map<String, dynamic>);
       this.embeds[embed.title] = embed;
     });
-    this.embeds;
 
     this.attachments = new Map<Snowflake, Attachment>();
     raw['attachments'].forEach((dynamic o) {
@@ -142,7 +139,6 @@ class Message extends SnowflakeEntity {
           new Attachment._new(this.client, o as Map<String, dynamic>);
       this.attachments[attachment.id] = attachment;
     });
-    this.attachments;
 
     this.reactions = new List<Reaction>();
     if (raw['reactions'] != null) {
@@ -150,14 +146,11 @@ class Message extends SnowflakeEntity {
         this.reactions.add(new Reaction._new(o as Map<String, dynamic>));
       });
     }
-    this.reactions;
   }
 
   /// Returns mention of message
   @override
-  String toString() {
-    return this.content;
-  }
+  String toString() => this.content;
 
   /// Edits the message.
   ///
