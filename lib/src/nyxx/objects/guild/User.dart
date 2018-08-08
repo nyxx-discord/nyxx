@@ -2,8 +2,6 @@ part of nyxx;
 
 /// A user.
 class User extends SnowflakeEntity {
-  Timer _typing;
-
   /// The [Client] object.
   Client client;
 
@@ -72,9 +70,6 @@ class User extends SnowflakeEntity {
   }
 
   /// Sends a message.
-  ///
-  /// Throws an [Exception] if the HTTP request errored.
-  ///     Channel.send(content: "My content!");
   Future<Message> send(
       {String content,
       Map<dynamic, dynamic> embed,
