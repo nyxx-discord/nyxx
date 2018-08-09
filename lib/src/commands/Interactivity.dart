@@ -4,7 +4,7 @@ part of nyxx.commands;
 Future<Map<Emoji, int>> createPoll(
     TextChannel channel, String title, Map<Emoji, String> options,
     {Duration timeout: const Duration(minutes: 10),
-    String message: null,
+    String message,
     bool delete: false}) async {
   StringBuffer buffer = new StringBuffer();
 
@@ -69,10 +69,10 @@ class Pagination {
     var lastEmoji = util.EmojisUnicode.track_next;
 
     var msg = await channel.send(content: pages[0]);
-    await msg.createReaction(firstEmoji as Emoji);
-    await msg.createReaction(backEmoji as Emoji);
-    await msg.createReaction(nextEmoji as Emoji);
-    await msg.createReaction(lastEmoji as Emoji);
+    await msg.createReaction(firstEmoji);
+    await msg.createReaction(backEmoji);
+    await msg.createReaction(nextEmoji);
+    await msg.createReaction(lastEmoji);
 
     new Future(() async {
       var currPage = 0;

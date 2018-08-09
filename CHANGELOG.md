@@ -1,3 +1,27 @@
+## [1.0.0](https://github.com/l7ssha/nyxx/compare/0.23.1...1.0.0)
+_Tue xx.xx.2018_
+
+*This version drops support for Dart SDK 1.x due Dart 2.0 is stable.*
+
+- **Features added**
+  * **SUPPORT FOR DART 2.0**
+  * **ADDED SUPPORT FOR VOICE via Lavalink**
+  * Changed internal library structure
+  * Implemented Iterable for Channel to query messages
+  * Added typing event per channel
+  * Added support for zlib compressed gateway payload
+- **Bug fixes**
+  * Rewritten
+  * Fixed Emijis comparing
+  * Fixed searchin in Emojis unicode
+  * Code cleanup and style fixes
+- **Changes**
+  * Snowflakes are default id entities
+  * Internal nyxx API changes
+  * Internal command API changes
+  * Cooldown cache rewritten
+  * title is not required for EmbedBuilder
+
 ## [0.23.1](https://github.com/l7ssha/nyxx/compare/0.23.0...0.23.1)
 _Tue 31.07.2018_
 

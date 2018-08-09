@@ -88,6 +88,8 @@ class Player {
     currentChannel = channel;
     _guild.shard.send("VOICE_STATE_UPDATE",
         new _Opcode4(_guild, channel, muted, deafen)._build());
+
+    return null;
   }
 
   /// Resolves url to Lavalink Track

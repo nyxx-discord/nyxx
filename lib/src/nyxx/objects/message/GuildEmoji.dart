@@ -14,10 +14,6 @@ class GuildEmoji extends Emoji {
   /// Snowflake id of emoji
   Snowflake id;
 
-  /// Name of emoji
-  @override
-  String name;
-
   /// Roles this emoji is whitelisted to
   List<String> rolesIds;
 

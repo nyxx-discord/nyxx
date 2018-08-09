@@ -37,7 +37,7 @@ Future<Null> destroyPlayer(Player player) async {
 }
 
 // Singleton instance of voiceService
-VoiceService _manager = null;
+VoiceService _manager;
 
 /// [VoiceService] managers all voice connections.
 /// There can be only one instance class.

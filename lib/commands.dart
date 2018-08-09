@@ -1,7 +1,7 @@
 /// Nyxx DISCORD API wrapper for Dart
 ///
 /// Commands sublibrary provides tool for creating commands bots.
-/// It also provides more advanced tools for creating polls [createPoll]
+/// It also provides more advanced tools for creating polls.
 /// and paginated messages [Pagination].
 library nyxx.commands;
 
