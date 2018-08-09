@@ -8,15 +8,6 @@ class Shard {
   /// Whether or not the shard is ready.
   bool ready;
 
-  Timer _heartbeatTimer;
-  _WS _ws;
-  w_transport.WebSocket _socket;
-  int _sequence;
-  String _sessionId;
-  StreamController<Shard> _onReady;
-  StreamController<Shard> _onDisconnect;
-  ZLibDecoder _zlib;
-
   /// Emitted when the shard is ready.
   Stream<Shard> onReady;
 
@@ -25,6 +16,15 @@ class Shard {
 
   /// A map of guilds the shard is on.
   Map<Snowflake, Guild> guilds = {};
+
+  Timer _heartbeatTimer;
+  _WS _ws;
+  w_transport.WebSocket _socket;
+  int _sequence;
+  String _sessionId;
+  StreamController<Shard> _onReady;
+  StreamController<Shard> _onDisconnect;
+  ZLibDecoder _zlib;
 
   Shard._new(_WS ws, this.id) {
     this._ws = ws;
@@ -75,17 +75,15 @@ class Shard {
 
   // Docodes zlib compresses string into string json
   Map<String, dynamic> _decodeBytes(dynamic bytes) {
-    if (bytes is String) {
-      return jsonDecode(bytes as String) as Map<String, dynamic>;
-    } else {
-      var decoded = _zlib.convert(bytes as List<int>);
-      var rawStr = utf8.decode(decoded);
-      return jsonDecode(rawStr) as Map<String, dynamic>;
-    }
+    if (bytes is String) return jsonDecode(bytes) as Map<String, dynamic>;
+
+    var decoded = _zlib.convert(bytes as List<int>);
+    var rawStr = utf8.decode(decoded);
+    return jsonDecode(rawStr) as Map<String, dynamic>;
   }
 
   /// Sends WS data.
-  void send(String op, dynamic d) => this
+  void send(String op, d) => this
       ._socket
       .add(jsonEncode(<String, dynamic>{"op": _Constants.opCodes[op], "d": d}));
 
@@ -139,7 +137,7 @@ class Shard {
         break;
 
       case _OPCodes.DISPATCH:
-        if (this._ws.client._options.disabledEvents.contains(msg['t'])) break;
+        //if (this._ws.client._options.disabledEvents.contains(msg['t'])) break;
 
         var j = msg['t'] as String;
         switch (j) {

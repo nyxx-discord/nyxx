@@ -13,7 +13,9 @@ abstract class Emoji {
   /// Created message ready Emoji
   String format();
 
+  @override
   bool operator ==(other) => other is Emoji && other.name == this.name;
 
+  @override
   int get hashCode => 17 * 37 + name.hashCode;
 }

@@ -25,7 +25,7 @@ class CommandsFramework {
   String prefix;
 
   /// Specifies list of admins which can access commands annotated as admin
-  List<String> admins;
+  List<Snowflake> admins;
 
   /// Indicates if bots help message is sent to user via PM. True by default.
   bool helpDirect = true;
@@ -169,6 +169,8 @@ class CommandsFramework {
 
   /// Dispatches onMessage event to framework.
   Future _dispatch(MessageEvent e) async {
+    var stopwatch = new Stopwatch()..start();
+
     // Match help specially to shadow user defined help commands.
     if (e.message.content.startsWith((prefix + 'help'))) {
       if (helpDirect) {
@@ -317,6 +319,9 @@ class CommandsFramework {
         logger.fine("Command -${_meta.name}- executed");
         break;
     }
+
+    e.message.channel
+        .send(content: "Time elapsed: ${stopwatch.elapsedMicroseconds} us");
   }
 
   /// Register new [CommandContext] object.
@@ -416,6 +421,7 @@ class CommandsFramework {
     return buffer.toString();
   }
 
+  // Groups params into
   List<String> _groupParams(List<String> splitted) {
     var tmpList = new List<String>();
     var isInto = false;
@@ -508,7 +514,6 @@ class CommandsFramework {
         case UnicodeEmoji:
           try {
             var code = splitted[index].codeUnits[0].toRadixString(16);
-            //print(code);
             collected.add(await util.EmojisUnicode.fromHexCode(code));
           } catch (e) {}
           break;

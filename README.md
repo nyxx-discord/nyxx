@@ -14,6 +14,10 @@ Fork of [Hackzzila's](https://github.com/Hackzzila) [nyx](https://github.com/Hac
 
 </div>
 
+### Stable release
+
+`nyxx 1.0.0` is first stable release. It uses Dart 2.0 stable and has many rewritten and improved features.
+
 ### Features
 
 - **Commands framework** <br>
