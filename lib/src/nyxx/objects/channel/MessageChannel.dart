@@ -67,7 +67,7 @@ class MessageChannel extends Channel with IterableMixin<Message> {
   /// Throws an [Exception] if the HTTP request errored.
   ///     Channel.send(content: "My content!");
   Future<Message> send(
-      {Object content,
+      {Object content: "",
       EmbedBuilder embed,
       bool tts: false,
       String nonce,
@@ -126,11 +126,11 @@ class MessageChannel extends Channel with IterableMixin<Message> {
   ///
   /// Throws an [Exception] if the HTTP request errored.
   ///     Channel.getMessages(limit: 100, after: "222078108977594368");
-  Future<LinkedHashMap<String, Message>> getMessages({
+  Future<LinkedHashMap<Snowflake, Message>> getMessages({
     int limit: 50,
-    Snowflake after: null,
-    Snowflake before: null,
-    Snowflake around: null,
+    Snowflake after,
+    Snowflake before,
+    Snowflake around,
   }) async {
     Map<String, String> query = {"limit": limit.toString()};
 
@@ -143,11 +143,12 @@ class MessageChannel extends Channel with IterableMixin<Message> {
         .http
         .send('GET', '/channels/${this.id}/messages', queryParams: query);
 
-    LinkedHashMap<String, Message> response =
-        new LinkedHashMap<String, Message>();
+    var response =
+        new LinkedHashMap<Snowflake, Message>();
 
     for (Map<String, dynamic> val in r.body.asJson()) {
-      response[val["id"] as String] = new Message._new(this.client, val);
+      var msg = new Message._new(this.client, val);
+      response[msg.id] = msg;
     }
 
     return response;
