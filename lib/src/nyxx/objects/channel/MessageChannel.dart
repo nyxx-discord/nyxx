@@ -48,7 +48,7 @@ class MessageChannel extends Channel with IterableMixin<Message> {
   /// Throws an [Exception] if the HTTP request errored.
   ///     Channel.send(content: "My content!");
   Future<Message> sendFile(List<String> filepaths,
-      {String content = "", EmbedBuilder embed = null}) async {
+      {String content = "", EmbedBuilder embed}) async {
     final HttpResponse r = await this.client.http.sendMultipart(
         'POST', '/channels/${this.id}/messages', filepaths,
         data: jsonEncode(<String, dynamic>{
@@ -115,11 +115,13 @@ class MessageChannel extends Channel with IterableMixin<Message> {
   void stopTypingLoop() => this._typing?.cancel();
 
   /// Bulk removes many messages by its ids. [messagesIds] is list of messages ids to delete.
-  Future<Null> bulkRemoveMessages(List<String> messagesIds) async {
-    await this.client.http.send('POST', "/channels/$id/messages/bulk-delete",
-        body: {"messages": messagesIds});
+  Future<Null> bulkRemoveMessages(Iterable<Snowflake> messagesIds) async {
+    if(messages.isEmpty)
+      return null;
 
-    return null;
+    await this.client.http.send('POST', "/channels/${id.toString()}/messages/bulk-delete",
+        body: {"messages": messagesIds.take(99)});
+    return await bulkRemoveMessages(messagesIds.skip(99));
   }
 
   /// Gets several [Message] objects.
