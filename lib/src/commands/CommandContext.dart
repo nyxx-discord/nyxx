@@ -153,11 +153,8 @@ abstract class CommandContext {
    var regex = new RegExp(r"```(\w+)?(\s)?(((.+)(\s)?)+)```");
 
    var matches = regex.allMatches(message.content);
-   print(message.content);
-   for(var m in matches) {
-     print(m.group(3));
+   for(var m in matches)
      yield m.group(3);
-   }
  }
 
   /// Allows to create help String for command
