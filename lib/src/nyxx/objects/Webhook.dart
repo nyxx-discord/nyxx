@@ -12,7 +12,7 @@ class Webhook extends SnowflakeEntity {
   String name;
 
   /// The webhook's token.
-  String token;
+  String token = "";
 
   /// The webhook's channel id.
   Snowflake channelId;
@@ -29,7 +29,7 @@ class Webhook extends SnowflakeEntity {
   /// The user, if this is accessed using a normal client.
   User user;
 
-  Webhook._fromApi(this.client, this.raw)
+  Webhook._new(this.client, this.raw)
       : super(new Snowflake(raw['id'] as String)) {
     this.name = raw['name'] as String;
     this.token = raw['token'] as String;
@@ -45,14 +45,6 @@ class Webhook extends SnowflakeEntity {
     }
 
     this.user = new User._new(client, raw['user'] as Map<String, dynamic>);
-  }
-
-  Webhook._fromToken(this.client, Map<String, dynamic> raw)
-      : super(new Snowflake(raw['id'] as String)) {
-    this.name = raw['name'] as String;
-    this.token = raw['token'] as String;
-    this.channelId = new Snowflake(raw['channel_id'] as String);
-    this.guildId = new Snowflake(raw['guild_id'] as String);
   }
 
   /// Edits the webhook.
