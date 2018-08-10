@@ -335,10 +335,10 @@ class Guild extends SnowflakeEntity {
     if (r.body.asJson()['type'] == 0) {
       return new TextChannel._new(
           client, r.body.asJson() as Map<String, dynamic>, this);
-    } else {
-      return new VoiceChannel._new(
-          client, r.body.asJson() as Map<String, dynamic>, this);
     }
+    
+    return new VoiceChannel._new(
+        client, r.body.asJson() as Map<String, dynamic>, this);
   }
 
   /// Moves channel
