@@ -1,13 +1,14 @@
 part of nyxx;
 
 /// Build new instance of Embed's footer
-class EmbedFooterBuilder {
+class EmbedFooterBuilder implements Builder {
   /// Fotter text
   String text;
 
   /// Url of footer icon. Supports only http(s) for now
   String iconUrl;
 
+  @override
   /// Builds object to Map() instance;
   Map<String, dynamic> _build() {
     Map<String, dynamic> tmp = new Map();
