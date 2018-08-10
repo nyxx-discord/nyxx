@@ -23,9 +23,7 @@ class ExConverter extends command.TypeConverter<Ex> {
   // Logic for converting String message to your type.
   // Return null if converting isn't successful.
   @override
-  Ex parse(String from, nyxx.Message msg) {
-    return new Ex(from);
-  }
+  Ex parse(String from, nyxx.Message msg) => new Ex(from);
 }
 
 // Main function
@@ -35,7 +33,7 @@ void main() {
 
   // Creating new CommandsFramework object and registering commands.
   new command.CommandsFramework('!', bot)
-    ..admins = ["302359032612651009"]
+    ..admins = [const nyxx.Snowflake.static("302359032612651009")]
     // You can register type converter by hand
     ..registerTypeConverters([new ExConverter()])
     ..registerLibraryCommands();
@@ -48,9 +46,7 @@ void main() {
 class PongCommand extends command.CommandContext {
   // Accepting Ex instance as parameter. Argument will be converter to Ex.
   @command.Command(main: true)
-  Future run(Ex ex) async {
-    await reply(content: ex.gg);
-  }
+  Future run(Ex ex) async => await reply(content: ex.gg);
 
   @override
   void getHelp(bool isAdmin, StringBuffer buffer) =>
