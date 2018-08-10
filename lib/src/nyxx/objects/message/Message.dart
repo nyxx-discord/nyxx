@@ -115,7 +115,8 @@ class Message extends SnowflakeEntity {
       if (raw['mention_roles'] != null) {
         this.roleMentions = new Map<Snowflake, Role>();
         raw['mention_roles'].forEach((dynamic o) {
-          this.roleMentions[guild.roles[o].id] = guild.roles[o];
+          var s = new Snowflake(o as String);
+          this.roleMentions[s] = guild.roles[s];
         });
       }
     }
@@ -123,27 +124,27 @@ class Message extends SnowflakeEntity {
     if (raw['edited_timestamp'] != null)
       this.editedTimestamp = DateTime.parse(raw['edited_timestamp'] as String);
 
-    this.mentions = new Map<Snowflake, User>();
     raw['mentions'].forEach((dynamic o) {
+      this.mentions = new Map<Snowflake, User>();
       final User user = new User._new(this.client, o as Map<String, dynamic>);
       this.mentions[user.id] = user;
     });
 
-    this.embeds = new Map<String, Embed>();
     raw['embeds'].forEach((dynamic o) {
+      this.embeds = new Map<String, Embed>();
       Embed embed = new Embed._new(this.client, o as Map<String, dynamic>);
       this.embeds[embed.title] = embed;
     });
 
-    this.attachments = new Map<Snowflake, Attachment>();
     raw['attachments'].forEach((dynamic o) {
+      this.attachments = new Map<Snowflake, Attachment>();
       final Attachment attachment =
           new Attachment._new(this.client, o as Map<String, dynamic>);
       this.attachments[attachment.id] = attachment;
     });
 
-    this.reactions = new List<Reaction>();
     if (raw['reactions'] != null) {
+      this.reactions = new List<Reaction>();
       raw['reactions'].forEach((dynamic o) {
         this.reactions.add(new Reaction._new(o as Map<String, dynamic>));
       });

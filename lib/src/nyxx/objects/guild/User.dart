@@ -39,9 +39,8 @@ class User extends SnowflakeEntity {
     this.mentionNickname = "<@!${this.id}>";
 
     // This will not be set at all in some cases.
-    if (raw['bot'] == true) {
+    if (raw['bot'] == true)
       this.bot = raw['bot'] as bool;
-    }
 
     client.users[this.id] = this;
   }
@@ -70,7 +69,7 @@ class User extends SnowflakeEntity {
 
   /// Sends a message.
   Future<Message> send(
-      {String content,
+      {Object content: "",
       Map<dynamic, dynamic> embed,
       bool tts: false,
       String nonce,
@@ -80,11 +79,11 @@ class User extends SnowflakeEntity {
         (disableEveryone == true ||
             (disableEveryone == null &&
                 this.client._options.disableEveryone))) {
-      newContent = content
+      newContent = content.toString()
           .replaceAll("@everyone", "@\u200Beveryone")
           .replaceAll("@here", "@\u200Bhere");
     } else {
-      newContent = content;
+      newContent = content.toString();
     }
 
     DMChannel channel = await getDMChannel();
