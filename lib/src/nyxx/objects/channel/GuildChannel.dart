@@ -20,6 +20,7 @@ abstract class GuildChannel {
   /// Permissions for channel
   List<ChannelPermissions> permissions;
 
+  /// Emitted on channel update.
   Stream<ChannelUpdateEvent> onUpdate;
 
   StreamController<ChannelUpdateEvent> _onUpdate;
