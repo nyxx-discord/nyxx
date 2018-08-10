@@ -13,6 +13,8 @@ import 'utils.dart' as util;
 import 'package:logging/logging.dart';
 
 part 'src/commands/CommandExecutionFailEvent.dart';
+part 'src/commands/CommandParsingFail.dart';
+
 part 'src/commands/CommandsFramework.dart';
 part 'src/commands/Annotations.dart';
 part 'src/commands/CommandContext.dart';

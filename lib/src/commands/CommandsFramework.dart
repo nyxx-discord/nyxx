@@ -1,14 +1,13 @@
 part of nyxx.commands;
 
-/// Main handler for CommandFramework.
-///   This class matches and dispatches commands to best matching contexts.
+/// Main point of commands in nyx.
+/// It gets all sent messages and matches to registered command and invokes
+/// its action.
 class CommandsFramework {
   List<CommandContext> _commands;
   List<TypeConverter> _typeConverters;
   CooldownCache _cooldownCache;
-
   List<Object> _services = new List();
-
   Client _client;
 
   StreamController<Message> _cooldownEventController;
@@ -19,6 +18,7 @@ class CommandsFramework {
   StreamController<Message> _wrongContextController;
   StreamController<Message> _unauthorizedNsfwAccess;
   StreamController<Message> _requiredTopicError;
+  //StreamController<CommandParsingFail> _commandParsingFail;
 
   /// Prefix needed to dispatch a commands.
   /// All messages without this prefix will be ignored
@@ -60,6 +60,9 @@ class CommandsFramework {
   /// Emitted when command is invoked in channel without required topic
   Stream<Message> onRequiredTopicError;
 
+  /// Emitted when command fails to parse. Eg. Wrong arguments
+  //Stream<CommandParsingFail> onCommandParsingFail;
+
   /// Logger instance
   final Logger logger = new Logger.detached("CommandsFramework");
 
@@ -76,6 +79,7 @@ class CommandsFramework {
     _wrongContextController = new StreamController.broadcast();
     _unauthorizedNsfwAccess = new StreamController.broadcast();
     _requiredTopicError = new StreamController.broadcast();
+    //_commandParsingFail = new StreamController.broadcast();
 
     onCommandNotFound = _commandNotFoundEventController.stream;
     onAdminOnlyError = _forAdminOnlyEventController.stream;
@@ -85,17 +89,23 @@ class CommandsFramework {
     onWrongContext = _wrongContextController.stream;
     onUnauthorizedNsfwAccess = _unauthorizedNsfwAccess.stream;
     onRequiredTopicError = _requiredTopicError.stream;
+    //onCommandParsingFail = _commandParsingFail.stream;
 
     // Listen to incoming messages and ignore all from bots (if set)
     _client.onMessage.listen((MessageEvent e) async {
       if (ignoreBots && e.message.author.bot) return;
       if (!e.message.content.startsWith(prefix)) return;
 
-      await _dispatch(e);
+      try {
+          await _dispatch(e);
+      }
+      catch (e) {
+        print(e);
+      }
     });
   }
 
-  Future<List> matchCommand(List<String> splittedCommand) async {
+  Future<List> _matchCommand(List<String> splittedCommand) async {
     MethodMirror matched;
     CommandContext commandContext;
     Command _meta;
@@ -169,8 +179,6 @@ class CommandsFramework {
 
   /// Dispatches onMessage event to framework.
   Future _dispatch(MessageEvent e) async {
-    var stopwatch = new Stopwatch()..start();
-
     // Match help specially to shadow user defined help commands.
     if (e.message.content.startsWith((prefix + 'help'))) {
       if (helpDirect) {
@@ -186,7 +194,7 @@ class CommandsFramework {
         e.message.content.replaceFirst(prefix, "").trim().split(' ');
     int executionCode = -1;
 
-    var ret = await matchCommand(splittedCommand);
+    var ret = await _matchCommand(splittedCommand);
 
     MethodMirror matched = ret[0] as DeclarationMirror;
     CommandContext commandContext = ret[1] as CommandContext;
@@ -319,9 +327,6 @@ class CommandsFramework {
         logger.fine("Command -${_meta.name}- executed");
         break;
     }
-
-    e.message.channel
-        .send(content: "Time elapsed: ${stopwatch.elapsedMicroseconds} us");
   }
 
   /// Register new [CommandContext] object.
