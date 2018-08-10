@@ -189,6 +189,31 @@ class Client {
   /// The client's uptime.
   Duration get uptime => new DateTime.now().difference(_startTime);
 
+  /// Get user instance with specified id.
+  Future<User> getUser(Snowflake id) async {
+    if(this.users.containsKey(id))
+      return this.users[id];
+
+    var r = await this.http.send("GET", "/users/${id.toString()}");
+    return new User._new(this, r.body.asJson() as Map<String, dynamic>);
+  }
+
+  /// Gets Guild with specified id.
+  Future<Guild> getGuild(Snowflake id) async {
+    if(this.guilds.containsKey(id))
+      return this.guilds[id];
+
+    var r = await this.http.send("GET", "/guilds/${id.toString()}");
+    return new Guild._new(this, r.body.asJson() as Map<String, dynamic>);
+  }
+
+  /// Creates new guild with provided builder.
+  Future<Guild> createGuild(GuildBuilder builder) async {
+    var r = await this.http.send("POST", "/guilds", body: builder._build());
+
+    return new Guild._new(this, r.body.asJson() as Map<String, dynamic>);
+  }
+
   /// Destroys the websocket connection, and all streams.
   Future<Null> destroy() async {
     await this._ws.close();
@@ -197,23 +222,14 @@ class Client {
   }
 
   /// Gets a webhook by its ID and token.
-  Future<Webhook> getWebhook(String id, String token) async {
+  Future<Webhook> getWebhook(String id, {String token: ""}) async {
     HttpResponse r = await http.send('GET', "/webhooks/$id/$token");
-    return new Webhook._fromToken(
+    return new Webhook._new(
         this, r.body.asJson() as Map<String, dynamic>);
   }
 
   /// Block isolate until client is ready
   Future<ReadyEvent> blockToReady() async => await onReady.first;
-
-  /// Gets a [User] object.
-  ///
-  /// Throws an [Exception] if the HTTP request errored.
-  ///     Client.getUser("user id");
-  Future<User> getUser(String userId) async {
-    final HttpResponse r = await this.http.send('GET', '/users/userId');
-    return new User._new(this, r.body.asJson() as Map<String, dynamic>);
-  }
 
   /// Gets an [Invite] object.
   ///
