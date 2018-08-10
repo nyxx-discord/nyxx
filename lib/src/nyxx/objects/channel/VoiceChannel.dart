@@ -19,10 +19,10 @@ class VoiceChannel extends Channel with GuildChannel {
 
   /// Edits the channel.
   Future<VoiceChannel> edit(
-      {String name: null,
-      int bitrate: null,
-      int position: null,
-      int userLimit: null,
+      {String name,
+      int bitrate,
+      int position,
+      int userLimit,
       String auditReason}) async {
     HttpResponse r =
         await this.client.http.send('PATCH', "/channels/${this.id}",
