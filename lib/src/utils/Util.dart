@@ -42,3 +42,8 @@ String getSymbolName(Symbol symbol) {
       .replaceAll("(", "")
       .replaceAll(")", "");
 }
+
+Iterable<List<T>> partition<T>(List<T> lst, int len) sync* {
+  for (var i = 0; i < lst.length; i += len)
+    yield lst.sublist(i, i + len);
+}
