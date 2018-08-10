@@ -1,6 +1,7 @@
 part of nyxx.commands;
 
-/// Abstract class to factory new command
+/// All command have to inhertit from this class.
+/// This class provides variuos helper methods to access discord world more easly
 abstract class CommandContext {
   /// Channel from where message come from
   MessageChannel channel;

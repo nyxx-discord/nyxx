@@ -317,7 +317,7 @@ class Guild extends SnowflakeEntity {
   }
 
   /// Creates a channel.
-  Future<dynamic> createChannel(String name, String type,
+  Future<dynamic> createChannel(String name, ChannelType type,
       {int bitrate: 64000,
       int userLimit: 0,
       String auditReason = "",
@@ -325,7 +325,7 @@ class Guild extends SnowflakeEntity {
     HttpResponse r = await this.client.http.send('POST', "/guilds/$id/channels",
         body: {
           "name": name,
-          "type": type,
+          "type": _matchChannelType(type),
           "bitrate": bitrate,
           "user_limit": userLimit,
           "permissions": permissions._build()._build()
@@ -370,12 +370,12 @@ class Guild extends SnowflakeEntity {
 
   /// Edits the guild.
   Future<Guild> edit(
-      {String name: null,
-      int verificationLevel: null,
-      int notificationLevel: null,
-      VoiceChannel afkChannel: null,
-      int afkTimeout: null,
-      String icon: null,
+      {String name,
+      int verificationLevel,
+      int notificationLevel,
+      VoiceChannel afkChannel,
+      int afkTimeout,
+      String icon,
       String auditReason}) async {
     HttpResponse r = await this.client.http.send('PATCH', "/guilds/${this.id}",
         body: {
@@ -428,5 +428,28 @@ class Guild extends SnowflakeEntity {
   Future<Null> delete() async {
     await this.client.http.send('DELETE', "/guilds/${this.id}");
     return null;
+  }
+}
+
+enum ChannelType {
+  text,
+  voice,
+  group,
+  dm,
+  groupDm
+}
+
+int _matchChannelType(ChannelType type) {
+  switch(type) {
+    case ChannelType.text:
+      return 0;
+    case ChannelType.voice:
+      return 2;
+    case ChannelType.group:
+      return 4;
+    case ChannelType.dm:
+      return 1;
+    case ChannelType.groupDm:
+      return 3;
   }
 }
