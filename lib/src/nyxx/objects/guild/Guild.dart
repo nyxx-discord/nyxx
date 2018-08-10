@@ -142,14 +142,20 @@ class Guild extends SnowflakeEntity {
           }
         });
 
-        this.defaultChannel = this.channels[this.id];
-        this.afkChannel =
-            this.channels[new Snowflake(raw['afk_channel_id'] as String)]
-                as VoiceChannel;
+        //this.defaultChannel = this.channels[this.id];
+
+        if(raw['afk_channel_id'] != null) {
+          var snow = new Snowflake(raw['afk_channel_id'] as String);
+          if(this.channels.containsKey(snow))
+            this.afkChannel = this.channels[snow] as VoiceChannel;
+        }
       }
 
-      this.systemChannel =
-          this.channels[new Snowflake(raw['system_channel_id'] as String)];
+      if(raw['system_channel_id'] != null) {
+        var snow = new Snowflake(raw['system_channel_id'] as String);
+        if(this.channels.containsKey(snow))
+          this.systemChannel = this.channels[snow] as TextChannel;
+      }
 
       if (raw['features'] != null) {
         this.features = new List();
@@ -173,7 +179,7 @@ class Guild extends SnowflakeEntity {
 
   String splashURL({String format: 'webp', int size: 128}) {
     if (this.splash != null)
-      return 'https://cdn.discordapp.com/splashes/${this.id}/${this.splash}.$format?size=$size';
+      return 'https://cdn.${_Constants.host}/splashes/${this.id}/${this.splash}.$format?size=$size';
 
     return null;
   }
@@ -278,24 +284,13 @@ class Guild extends SnowflakeEntity {
   }
 
   /// Creates new role
-  Future<Role> createRole(String name,
-      {PermissionsBuilder permissions,
-      String color,
-      bool hoist,
-      bool mentionable,
+  Future<Role> createRole({
+      RoleBuilder roleBuilder,
       String auditReason = ""}) async {
-    var tmp = <String, dynamic>{
-      "name": name,
-      "permissions": permissions._build()._build(),
-      "color": color,
-      "hoist": hoist,
-      "mentionable": mentionable
-    };
-
     HttpResponse r = await this
         .client
         .http
-        .send('POST', "/guilds/$id/roles", body: tmp, reason: auditReason);
+        .send('POST', "/guilds/$id/roles", body: roleBuilder._build(), reason: auditReason);
     return new Role._new(client, r.body.asJson() as Map<String, dynamic>, this);
   }
 
@@ -417,34 +412,13 @@ class Guild extends SnowflakeEntity {
         this.client, r.body.asJson() as Map<String, dynamic>, this);
   }
 
-  /// Invites a bot to a guild. Only usable by user accounts.
-  ///
-  /// Throws an [Exception] if the HTTP request errored or if the client user
-  /// is a bot.
-  ///     Guild.oauth2Authorize("app id");
-  Future<Null> oauth2Authorize(String userId, [int permissions = 0]) async {
-    if (!this.client.user.bot) {
-      await this.client.http.send(
-          'POST', '/oauth2/authorize?client_id=$userId&scope=bot',
-          body: <String, dynamic>{
-            "guild_id": this.id,
-            "permissions": permissions,
-            "authorize": true
-          });
-
-      return null;
-    } else {
-      throw new Exception("'oauth2Authorize' is only usable by user accounts.");
-    }
-  }
-
   /// Gets all of the webhooks for this guild.
   Future<Map<String, Webhook>> getWebhooks() async {
     HttpResponse r = await this.client.http.send('GET', "/guilds/$id/webhooks");
     Map<String, Webhook> map = new Map();
     r.body.asJson().forEach((dynamic o) {
       Webhook webhook =
-          new Webhook._fromApi(this.client, o as Map<String, dynamic>);
+          new Webhook._new(this.client, o as Map<String, dynamic>);
       map[webhook.id.toString()] = webhook;
     });
     return map;

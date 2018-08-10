@@ -20,9 +20,9 @@ class TextChannel extends MessageChannel with GuildChannel {
 
   /// Edits the channel.
   Future<TextChannel> edit({
-    String name: null,
-    String topic: null,
-    int position: null,
+    String name,
+    String topic,
+    int position,
   }) async {
     HttpResponse r =
         await this.client.http.send('PATCH', "/channels/${this.id}", body: {
@@ -42,7 +42,7 @@ class TextChannel extends MessageChannel with GuildChannel {
 
     r.body.asJson().forEach((dynamic o) {
       Webhook webhook =
-          new Webhook._fromApi(this.client, o as Map<String, dynamic>);
+          new Webhook._new(this.client, o as Map<String, dynamic>);
       map[webhook.id.toString()] = webhook;
     });
 
@@ -54,7 +54,7 @@ class TextChannel extends MessageChannel with GuildChannel {
     HttpResponse r = await this.client.http.send(
         'POST', "/channels/$id/webhooks",
         body: {"name": name}, reason: auditReason);
-    return new Webhook._fromApi(
+    return new Webhook._new(
         this.client, r.body.asJson() as Map<String, dynamic>);
   }
 

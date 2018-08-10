@@ -24,7 +24,7 @@ class AuditLog {
 
     raw['webhooks'].forEach((dynamic o) {
       webhooks[new Snowflake(o['id'] as String)] =
-          new Webhook._fromApi(client, o as Map<String, dynamic>);
+          new Webhook._new(client, o as Map<String, dynamic>);
     });
 
     raw['users'].forEach((dynamic o) {
