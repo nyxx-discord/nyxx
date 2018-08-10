@@ -1,7 +1,7 @@
 part of nyxx;
 
 /// Build new instance of Author
-class EmbedAuthorBuilder {
+class EmbedAuthorBuilder implements Builder {
   /// Author name
   String name;
 
@@ -11,6 +11,7 @@ class EmbedAuthorBuilder {
   /// Author icon url
   String iconUrl;
 
+  @override
   /// Builds object to Map() instance;
   Map<String, dynamic> _build() {
     Map<String, dynamic> tmp = new Map();

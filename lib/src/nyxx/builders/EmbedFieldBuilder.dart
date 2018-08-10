@@ -1,7 +1,7 @@
 part of nyxx;
 
 /// Builder for embed Field.
-class EmbedFieldBuilder {
+class EmbedFieldBuilder implements Builder {
   /// Field name/title
   String name;
 
@@ -14,6 +14,7 @@ class EmbedFieldBuilder {
   /// Constructs new instance of Field
   EmbedFieldBuilder(this.name, this.content, this.inline);
 
+  @override
   /// Builds object to Map() instance;
   Map<String, dynamic> _build() {
     Map<String, dynamic> tmp = new Map();

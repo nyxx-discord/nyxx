@@ -1,13 +1,14 @@
 part of nyxx;
 
 /// Builds new instance of provider
-class EmbedProviderBuilder {
+class EmbedProviderBuilder implements Builder {
   /// Name of provider
   String name;
 
   /// Url of provider
   String url;
 
+  @override
   /// Builds object to Map() instance;
   Map<String, dynamic> _build() {
     Map<String, dynamic> tmp = new Map();
