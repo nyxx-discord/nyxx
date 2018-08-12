@@ -14,6 +14,39 @@ class _OPCodes {
   static const int HELLP = 10;
   static const int HEARBEAT_ACK = 11;
   static const int GUILD_SYNC = 12;
+
+  static int matchOpCode(String op) {
+    switch(op) {
+      case "DISPATCH":
+        return DISPATCH;
+      case "HEARTBEAT":
+        return HEARTBEAT;
+      case "IDENTIFY":
+        return IDENTIFY;
+      case "STATUS_UPDATE":
+        return STATUS_UPDATE;
+      case "VOICE_STATE_UPDATE":
+        return VOICE_STATE_UPDATE;
+      case "VOICE_GUILD_PING":
+        return VOICE_GUILD_PING;
+      case "RESUME":
+        return RESUME;
+      case "RECONNECT":
+        return RECONNECT;
+      case "REQUEST_GUILD_MEMBERS":
+        return REQUEST_GUILD_MEMBER;
+      case "INVALID_SESSION":
+        return INVALID_SESSION;
+      case "HELLO":
+        return HELLP;
+      case "HEARTBEAT_ACK":
+        return HEARBEAT_ACK;
+      case "GUILD_SYNC":
+        return GUILD_SYNC;
+      default:
+        throw new Exception("Invalid opCode: $op");
+    }
+  }
 }
 
 /// The client constants.
@@ -21,21 +54,5 @@ class _Constants {
   static const String host = "discordapp.com";
   static const String baseUri = "/api/v7";
   static const String version = "1.0.0";
-
-  /// The gateway OP codes.
-  static const Map<String, int> opCodes = const <String, int>{
-    "DISPATCH": 0,
-    "HEARTBEAT": 1,
-    "IDENTIFY": 2,
-    "STATUS_UPDATE": 3,
-    "VOICE_STATE_UPDATE": 4,
-    "VOICE_GUILD_PING": 5,
-    "RESUME": 6,
-    "RECONNECT": 7,
-    "REQUEST_GUILD_MEMBERS": 8,
-    "INVALID_SESSION": 9,
-    "HELLO": 10,
-    "HEARTBEAT_ACK": 11,
-    "GUILD_SYNC": 12
-  };
+  static const String repoUrl = "https://github.com/l7ssha/nyxx";
 }
