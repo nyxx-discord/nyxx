@@ -85,7 +85,7 @@ class Shard {
   /// Sends WS data.
   void send(String op, d) => this
       ._socket
-      .add(jsonEncode(<String, dynamic>{"op": _Constants.opCodes[op], "d": d}));
+      .add(jsonEncode(<String, dynamic>{"op": _OPCodes.matchOpCode(op), "d": d}));
 
   void _heartbeat() {
     if (this._socket.closeCode != null) return;
@@ -137,8 +137,6 @@ class Shard {
         break;
 
       case _OPCodes.DISPATCH:
-        //if (this._ws.client._options.disabledEvents.contains(msg['t'])) break;
-
         var j = msg['t'] as String;
         switch (j) {
           case 'READY':
@@ -157,7 +155,7 @@ class Shard {
             }
 
             this._ws.client.http.headers['User-Agent'] =
-                "${this._ws.client.user.username} (https://github.com/l7ssha/nyxx, ${_Constants.version})";
+                "${this._ws.client.user.username} (${_Constants.repoUrl}, ${_Constants.version})";
 
             msg['d']['guilds'].forEach((dynamic o) {
               var snow = new Snowflake(o['id'] as String);
