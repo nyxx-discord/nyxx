@@ -336,13 +336,13 @@ class Guild extends SnowflakeEntity {
       return new TextChannel._new(
           client, r.body.asJson() as Map<String, dynamic>, this);
     }
-    
+
     return new VoiceChannel._new(
         client, r.body.asJson() as Map<String, dynamic>, this);
   }
 
   /// Moves channel
-  Future<Null> moveGuildChannel(Channel channel, int newPosition,
+  Future<Null> moveGuildChannel(GuildChannel channel, int newPosition,
       {String auditReason = ""}) async {
     await this.client.http.send('PATCH', "/guilds/${this.id}/channels",
         body: {"id": channel.id.toString(), "position": newPosition},

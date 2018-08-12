@@ -14,6 +14,8 @@ import 'package:logging/logging.dart';
 part 'src/nyxx/Client.dart';
 part 'src/nyxx/ClientOptions.dart';
 
+part 'src/nyxx/objects/ISend.dart';
+
 // INTERNAL
 
 part 'src/nyxx/internal/_Constants.dart';

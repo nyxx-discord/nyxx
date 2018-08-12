@@ -11,9 +11,9 @@ class TextChannel extends MessageChannel with GuildChannel {
 
   TextChannel._new(Client client, Map<String, dynamic> data, Guild guild)
       : super._new(client, data, "text") {
-    _initialize(data, client, guild);
+    _initialize(data, guild);
+    
     this.topic = raw['topic'] as String;
-
     this.mention = "<#${this.id}>";
     this.guild.channels[this.id] = this;
   }

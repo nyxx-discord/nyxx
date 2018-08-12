@@ -1,8 +1,8 @@
 part of nyxx;
 
-/// Provides abstraction of messages for [TextChannel], [DMChannel] and [DMGroupChannel].
+/// Provides abstraction of messages for [TextChannel], [DMChannel] and [GroupDMChannel].
 /// Caches message to avoid abusing API.
-class MessageChannel extends Channel with IterableMixin<Message> {
+class MessageChannel extends Channel with IterableMixin<Message>, ISend {
   Timer _typing;
 
   /// Sent when a new message is received.
@@ -44,9 +44,9 @@ class MessageChannel extends Channel with IterableMixin<Message> {
     }
   }
 
-  /// Sends file to channel and optional [content]. [filepath] is relative to project root.
+  /// Sends file to channel and optional [content].
+  /// [filepaths] are path to files - relative to project root.
   /// Throws an [Exception] if the HTTP request errored.
-  ///     Channel.send(content: "My content!");
   Future<Message> sendFile(List<String> filepaths,
       {String content = "", EmbedBuilder embed}) async {
     final HttpResponse r = await this.client.http.sendMultipart(
@@ -62,6 +62,7 @@ class MessageChannel extends Channel with IterableMixin<Message> {
 
   Message getMessage(Snowflake id) => messages[id];
 
+  @override
   /// Sends a message.
   ///
   /// Throws an [Exception] if the HTTP request errored.
