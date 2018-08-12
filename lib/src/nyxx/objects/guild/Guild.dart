@@ -1,7 +1,7 @@
 part of nyxx;
 
 /// [Guild] object represents single `Discord Server` instance.
-/// Based on bots permissions - can preform operations of [Guild], [User]s [Role]s and many more.
+/// Based on bots permissions - can preform operations on [Guild], [User]s [Role]s and many more.
 ///
 /// [channels] property is Map of [Channel]s but i can be cast to specific Channel subclasses. Example with getting all [TextChannel]s in [Guild]:
 /// ```dart
@@ -319,29 +319,63 @@ class Guild extends SnowflakeEntity {
     return tmp;
   }
 
-  /// Creates a channel.
-  Future<dynamic> createChannel(String name, ChannelType type,
-      {int bitrate: 64000,
-      int userLimit: 0,
-      String auditReason = "",
-      PermissionsBuilder permissions}) async {
+  /// Creates a channel. Returns null when [type] is DM or GroupDM.
+  /// Also can be null if [type] is Guild Group channel and parent is specified.
+  Future<Channel> createChannel(String name, ChannelType type,
+      {int bitrate,
+      String topic,
+      GuildChannel parent,
+      bool nsfw,
+      int userLimit,
+      PermissionsBuilder permissions,
+      String auditReason = ""}) async {
+
+    // Checks to avoid API panic
+    if(type == ChannelType.dm || type == ChannelType.groupDm)
+      return null;
+
+    if(type == ChannelType.group && parent != null)
+      return null;
+
+    // Construct body
+    var body = <String, dynamic> {
+      "name": name,
+      "type": _matchChannelType(type)
+    };
+
+    if(bitrate != null)
+      body['bitrate'] = bitrate;
+
+    if(topic != null)
+      body['topic'] = topic;
+
+    if(parent != null)
+      body['parent_id'] = parent.id.toString();
+
+    if(nsfw != null)
+      body['nsfw'] = nsfw;
+
+    if(userLimit != null)
+      body['user_limit'] = userLimit;
+
+    if(permissions != null)
+      body['permission_overwrites'] = permissions;
+
+    // Send request
     HttpResponse r = await this.client.http.send('POST', "/guilds/$id/channels",
-        body: {
-          "name": name,
-          "type": _matchChannelType(type),
-          "bitrate": bitrate,
-          "user_limit": userLimit,
-          "permissions": permissions._build()._build()
-        },
-        reason: auditReason);
+        body: body, reason: auditReason);
+    var raw = r.body.asJson() as Map<String, dynamic>;
 
-    if (r.body.asJson()['type'] == 0) {
-      return new TextChannel._new(
-          client, r.body.asJson() as Map<String, dynamic>, this);
+    switch(type) {
+      case ChannelType.text:
+        return new TextChannel._new(this.client, raw, this);
+      case ChannelType.group:
+        return new GroupChannel._new(this.client, raw, this);
+      case ChannelType.voice:
+        return new VoiceChannel._new(this.client, raw, this);
+      default:
+      return null;
     }
-
-    return new VoiceChannel._new(
-        client, r.body.asJson() as Map<String, dynamic>, this);
   }
 
   /// Moves channel
@@ -403,8 +437,8 @@ class Guild extends SnowflakeEntity {
   /// Throws an [Exception] if the HTTP request errored.
   ///     Guild.getMember("user id");
   Future<Member> getMember(User user) async {
-    if (this.members[user.id.toString()] != null)
-      return this.members[user.id.toString()];
+    if (this.members.containsKey(user.id))
+      return this.members[user.id];
 
     final HttpResponse r = await this
         .client
