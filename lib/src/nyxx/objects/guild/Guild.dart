@@ -78,6 +78,9 @@ class Guild extends SnowflakeEntity {
   /// Guild custom emojis
   Map<Snowflake, GuildEmoji> emojis;
 
+  /// Cached guild webhookds. It's null until `getWebhooks` is called.
+  Map<Snowflake, Webhook> webhooks;
+
   /// The shard that the guild is on.
   Shard shard;
 
@@ -413,14 +416,18 @@ class Guild extends SnowflakeEntity {
   }
 
   /// Gets all of the webhooks for this guild.
-  Future<Map<String, Webhook>> getWebhooks() async {
+  Future<Map<Snowflake, Webhook>> getWebhooks({bool force: false}) async {
+    if(this.webhooks != null && !force)
+      return webhooks;
+
     HttpResponse r = await this.client.http.send('GET', "/guilds/$id/webhooks");
-    Map<String, Webhook> map = new Map();
+    Map<Snowflake, Webhook> map = new Map();
     r.body.asJson().forEach((dynamic o) {
       Webhook webhook =
           new Webhook._new(this.client, o as Map<String, dynamic>);
-      map[webhook.id.toString()] = webhook;
+      map[webhook.id] = webhook;
     });
+    this.webhooks = map;
     return map;
   }
 
@@ -451,5 +458,7 @@ int _matchChannelType(ChannelType type) {
       return 1;
     case ChannelType.groupDm:
       return 3;
+    default:
+      return 0;
   }
 }
