@@ -1,7 +1,7 @@
 part of nyxx;
 
 /// Represents channel which is part of guild
-abstract class GuildChannel {
+abstract class GuildChannel implements Channel {
   /// The channel's name.
   String name;
 
@@ -24,20 +24,16 @@ abstract class GuildChannel {
   Stream<ChannelUpdateEvent> onUpdate;
 
   StreamController<ChannelUpdateEvent> _onUpdate;
-  String _id;
-  Client _client;
 
   // Initializes Guild channel
-  void _initialize(Map<String, dynamic> raw, Client client, Guild guild) {
+  void _initialize(Map<String, dynamic> raw, Guild guild) {
     _onUpdate = new StreamController.broadcast();
     onUpdate = _onUpdate.stream;
 
-    this._client = client;
     this.name = raw['name'] as String;
     this.position = raw['position'] as int;
     this.guild = guild;
 
-    this._id = raw['id'] as String;
     if (raw['parent_id'] != null) {
       this.parentId = new Snowflake(raw['parent_id'] as String);
     }
@@ -55,15 +51,15 @@ abstract class GuildChannel {
   /// Allows to set permissions for channel. [id] param is ID of User or Role
   Future<Null> editChannelPermission(PermissionsBuilder perms, Snowflake id,
       {String auditReason: ""}) async {
-    await this._client.http.send("PUT", "/channels/${this._id}/permissions/$id",
+    await this.client.http.send("PUT", "/channels/${this.id}/permissions/$id",
         body: perms._build()._build(), reason: auditReason);
   }
 
   /// Deletes permission overwrite for given User or Role id
   Future<Null> deleteChannelPermission(Snowflake id,
       {String auditReason: ""}) async {
-    await this._client.http.send(
-        "POST", "/channels/${this._id}/permissions/$id",
+    await this.client.http.send(
+        "POST", "/channels/${this.id}/permissions/$id",
         reason: auditReason);
   }
 }

@@ -1,7 +1,7 @@
 part of nyxx;
 
 /// A user.
-class User extends SnowflakeEntity {
+class User extends SnowflakeEntity with ISend {
   /// The [Client] object.
   Client client;
 
@@ -67,10 +67,11 @@ class User extends SnowflakeEntity {
     }
   }
 
+  @override
   /// Sends a message.
   Future<Message> send(
       {Object content: "",
-      Map<dynamic, dynamic> embed,
+      EmbedBuilder embed,
       bool tts: false,
       String nonce,
       bool disableEveryone}) async {

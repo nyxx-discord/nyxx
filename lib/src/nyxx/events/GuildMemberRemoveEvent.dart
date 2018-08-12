@@ -14,7 +14,7 @@ class GuildMemberRemoveEvent {
           client.guilds[new Snowflake(json['d']['guild_id'] as String)];
       guild.memberCount--;
       this.user =
-          new User._new(client, json['d']['user'] as Map<String, dynamic>);
+          new Member._new(client, json['d']['user'] as Map<String, dynamic>);
       guild.members.remove(user.id);
       client._events.onGuildMemberRemove.add(this);
     }

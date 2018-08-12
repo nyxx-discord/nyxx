@@ -2,8 +2,6 @@ part of nyxx;
 
 /// A guild member.
 class Member extends User {
-  User _user;
-
   /// The member's nickname, null if not set.
   String nickname;
 
@@ -46,8 +44,6 @@ class Member extends User {
       roles.add(this.guild.roles.values.firstWhere((i) => i.id == id));
     });
 
-    this._user = new User._new(client, data['user'] as Map<String, dynamic>);
-
     roles = new List();
     data['roles'].forEach((dynamic i) {
       roles.add(this.guild.roles[new Snowflake(i as String)]);
@@ -61,11 +57,8 @@ class Member extends User {
           new Game._new(this.client, data['game'] as Map<String, dynamic>);
 
     if (guild != null) this.guild.members[this.id] = this;
-    client.users[this.toUser().id] = this.toUser();
+    client.users[this.id] = this;
   }
-
-  /// Returns a user from the member.
-  User toUser() => this._user;
 
   /// Bans the member and optionally deletes [deleteMessageDays] days worth of messages.
   Future<Null> ban({int deleteMessageDays = 0, String auditReason: ""}) async {
