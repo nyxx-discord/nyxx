@@ -314,19 +314,19 @@ class Shard {
     return null;
   }
 
+  Exception _throw(String msg) => new Exception(
+      "${this._socket.closeCode}: ${this._socket.closeReason} - '$msg'");
+
   void _handleErr() {
     this._heartbeatTimer.cancel();
 
     switch (this._socket.closeCode) {
       case 1005:
-        throw new Exception(
-            "1005: No Status Recvd - 'No status code was provided even though one was expected.'");
+        throw _throw('No status code was provided even though one was expected.');
       case 4004:
-        throw new Exception(
-            "4004: Authentication Failed - 'The account token sent with your identify payload is incorrect.'");
+        throw _throw('The account token sent with your identify payload is incorrect.');
       case 4010:
-        throw new Exception(
-            "4010: Invalid Shard - 'You sent us an invalid shard when identifying.'");
+        throw _throw('You sent us an invalid shard when identifying.');
       case 4007:
       case 4009:
         this._connect(false);

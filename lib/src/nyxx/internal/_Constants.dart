@@ -19,7 +19,7 @@ class _OPCodes {
 /// The client constants.
 class _Constants {
   static const String host = "discordapp.com";
-  static const String baseUri = "/api/v6";
+  static const String baseUri = "/api/v7";
   static const String version = "1.0.0";
 
   /// The gateway OP codes.
