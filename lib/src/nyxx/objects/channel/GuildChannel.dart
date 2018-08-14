@@ -49,14 +49,14 @@ abstract class GuildChannel implements Channel {
   }
 
   /// Allows to set permissions for channel. [id] param is ID of User or Role
-  Future<Null> editChannelPermission(PermissionsBuilder perms, Snowflake id,
+  Future<void> editChannelPermission(PermissionsBuilder perms, Snowflake id,
       {String auditReason: ""}) async {
     await this.client.http.send("PUT", "/channels/${this.id}/permissions/$id",
         body: perms._build()._build(), reason: auditReason);
   }
 
   /// Deletes permission overwrite for given User or Role id
-  Future<Null> deleteChannelPermission(Snowflake id,
+  Future<void> deleteChannelPermission(Snowflake id,
       {String auditReason: ""}) async {
     await this.client.http.send(
         "POST", "/channels/${this.id}/permissions/$id",

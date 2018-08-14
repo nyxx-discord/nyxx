@@ -188,53 +188,46 @@ class Message extends SnowflakeEntity {
   }
 
   /// Add reaction to message.
-  Future<Null> createReaction(Emoji emoji) async {
+  Future<void> createReaction(Emoji emoji) async {
     await this.client.http.send('PUT',
         "/channels/${this.channel.id}/messages/${this.id}/reactions/${emoji.encode()}/@me");
-    return null;
   }
 
   /// Deletes reaction of bot. Emoji as ':emoji_name:'
-  Future<Null> deleteReaction(Emoji emoji) async {
+  Future<void> deleteReaction(Emoji emoji) async {
     await this.client.http.send('DELETE',
         "/channels/${this.channel.id}/messages/${this.id}/reactions/${emoji.encode()}/@me");
-    return null;
   }
 
   /// Deletes reaction of given user.
-  Future<Null> deleteUserReaction(Emoji emoji, String userId) async {
+  Future<void> deleteUserReaction(Emoji emoji, String userId) async {
     await this.client.http.send('DELETE',
         "/channels/${this.channel.id}/messages/${this.id}/reactions/${emoji.encode()}/$userId");
-    return null;
   }
 
   /// Deletes all reactions
-  Future<Null> deleteAllReactions() async {
+  Future<void> deleteAllReactions() async {
     await this.client.http.send(
         'DELETE', "/channels/${this.channel.id}/messages/${this.id}/reactions");
-    return null;
   }
 
   /// Deletes the message.
   ///
   /// Throws an [Exception] if the HTTP request errored.
   ///     Message.delete();
-  Future<Null> delete({String auditReason: ""}) async {
+  Future<void> delete({String auditReason: ""}) async {
     await this.client.http.send(
         'DELETE', '/channels/${this.channel.id}/messages/${this.id}',
         reason: auditReason);
-    return null;
   }
 
   /// Pins [Message] in current [Channel]
-  Future<Null> pinMessage() async {
+  Future<void> pinMessage() async {
     await this.client.http.send('PUT', "/channels/${channel.id}/pins/$id");
-    return null;
   }
 
   /// Unpins [Message] in current [Channel]
-  Future<Null> unpinMessage() async {
+  Future<void> unpinMessage() async {
     await this.client.http.send('DELETE', "/channels/${channel.id}/pins/$id");
-    return null;
   }
 }

@@ -17,11 +17,10 @@ class Channel extends SnowflakeEntity {
   }
 
   /// Deletes the channel.
-  Future<Null> delete({String auditReason: ""}) async {
+  Future<void> delete({String auditReason: ""}) async {
     await this
         .client
         .http
         .send('DELETE', "/channels/${this.id}", reason: auditReason);
-    return null;
   }
 }

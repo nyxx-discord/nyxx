@@ -61,15 +61,14 @@ class Member extends User {
   }
 
   /// Bans the member and optionally deletes [deleteMessageDays] days worth of messages.
-  Future<Null> ban({int deleteMessageDays = 0, String auditReason: ""}) async {
+  Future<void> ban({int deleteMessageDays = 0, String auditReason: ""}) async {
     await this.client.http.send(
         'PUT', "/guilds/${this.guild.id}/bans/${this.id}",
         body: {"delete-message-days": deleteMessageDays}, reason: auditReason);
-    return null;
   }
 
   /// Adds role to user
-  Future<Null> addRole(Role role, {String auditReason: ""}) async {
+  Future<void> addRole(Role role, {String auditReason: ""}) async {
     await this.client.http.send(
         'PUT', '/guilds/${guild.id}/members/${this.id}/roles/${role.id}',
         reason: auditReason);
@@ -77,11 +76,10 @@ class Member extends User {
   }
 
   /// Kicks the member
-  Future<Null> kick({String auditReason: ""}) async {
+  Future<void> kick({String auditReason: ""}) async {
     await this.client.http.send(
         'DELETE', "/guilds/${this.guild.id}/members/${this.id}",
         reason: auditReason);
-    return null;
   }
 
   /// Returns total permissions of user.

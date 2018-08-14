@@ -36,7 +36,7 @@ class Player {
 
   /// Connects to channel.
   /// Remember to await this methods - thread can be locked forever.
-  Future<Null> connect(VoiceChannel channel) async {
+  Future<void> connect(VoiceChannel channel) async {
     isConnected = true;
     currentChannel = channel;
 
@@ -78,18 +78,14 @@ class Player {
               _guild.id.toString(), _currentState.sessionId, _rawEvent)
           .build()));
     });
-
-    return null;
   }
 
   /// Changes channel to other. Allows to optionally set mute and deafen.
-  Future<Null> changeChannel(VoiceChannel channel,
+  Future<void> changeChannel(VoiceChannel channel,
       {bool muted: false, bool deafen: false}) {
     currentChannel = channel;
     _guild.shard.send("VOICE_STATE_UPDATE",
         new _Opcode4(_guild, channel, muted, deafen)._build());
-
-    return null;
   }
 
   /// Resolves url to Lavalink Track
@@ -120,7 +116,7 @@ class Player {
   }
 
   /// Disconnect from channel. Closes all unneeded connections.
-  Future<Null> disconnect() async {
+  Future<void> disconnect() async {
     _guild.shard.send("VOICE_STATE_UPDATE",
         new _Opcode4(_guild, null, false, false)._build());
     await stop();
@@ -132,7 +128,7 @@ class Player {
   }
 
   /// Toggles mute status.
-  Future<Null> toggleMute() async {
+  Future<void> toggleMute() async {
     var op;
     if (_currentState.selfMute)
       op = new _OpPause(_guild, false).build();
@@ -148,26 +144,26 @@ class Player {
   }
 
   /// Pauses currently played track
-  Future<Null> pause() async {
+  Future<void> pause() async {
     _webSocket.add(jsonEncode(new _SimpleOp("pause", _guild)._build()));
   }
 
   /// Stops track playback
-  Future<Null> stop() async {
+  Future<void> stop() async {
     _webSocket.add(jsonEncode(new _SimpleOp("stop", _guild)._build()));
   }
 
   /// Seeks track to position in milliseconds
-  Future<Null> seek(int position) async {
+  Future<void> seek(int position) async {
     _webSocket.add(jsonEncode(new _OpSeek(_guild, position)));
   }
 
   /// Set player volume. Volume may range from 0 to 1000. 100 is default.
-  Future<Null> setVolume(int volume) async {
+  Future<void> setVolume(int volume) async {
     _webSocket.add(jsonEncode(new _OpVolume(_guild, volume).build()));
   }
 
-  Future<Null> _finish() async {
+  Future<void> _finish() async {
     if (isConnected) await disconnect();
   }
 }

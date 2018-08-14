@@ -15,12 +15,10 @@ class GroupDMChannel extends MessageChannel {
   }
 
   /// Removes recipient from channel
-  Future<Null> removeRecipient(Snowflake userId) async {
+  Future<void> removeRecipient(Snowflake userId) async {
     await this
         .client
         .http
         .send("DELETE", "/channels/${this.id}/recipients/${userId.toString()}");
-
-    return null;
   }
 }
