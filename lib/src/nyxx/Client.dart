@@ -157,9 +157,18 @@ class Client {
   /// Emitted when a guild's voice server is updated. This is sent when initially connecting to voice, and when the current voice instance fails over to a new server.
   Stream<VoiceServerUpdateEvent> onVoiceServerUpdate;
 
+  Logger logger = new Logger.detached("Client");
+
   /// Creates and logs in a new client.
   Client(this._token, [this._options]) {
     w_transport.globalTransportPlatform = vmTransportPlatform;
+
+    Isolate.current.setErrorsFatal(false);
+    ReceivePort errorsPort = new ReceivePort();
+    errorsPort.listen((err) {
+      logger.severe("ERROR: ${err[0]} \n ${err[1]}");
+    });
+    Isolate.current.addErrorListener(errorsPort.sendPort);
 
     if (this._token == null || this._token == "")
       throw new Exception("Token cannot be null or empty");
