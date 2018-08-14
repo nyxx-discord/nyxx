@@ -26,6 +26,8 @@ class Shard {
   StreamController<Shard> _onDisconnect;
   ZLibDecoder _zlib;
 
+  Logger _logger = new Logger.detached("Websocket");
+
   Shard._new(_WS ws, this.id) {
     this._ws = ws;
     this._onReady = new StreamController<Shard>.broadcast();
@@ -57,18 +59,29 @@ class Shard {
 
   // Attempts to connect to ws
   void _connect([bool resume = true, bool init = false]) {
+    if(!resume)
+      _logger.warning("DISCONNECTED. Trying to reconnect...");
+
     this.ready = false;
     if (this._socket != null) this._socket.close();
     if (!init) {
       new Timer(new Duration(seconds: 2), () => _connect(resume));
       return;
     }
+
     w_transport.WebSocket
         .connect(Uri.parse('${this._ws.gateway}?v=6&encoding=json'))
         .then((w_transport.WebSocket socket) {
+      if(!resume)
+        _logger.severe("RECONNECTED");
+
       this._socket = socket;
       this._socket.listen((dynamic msg) async {
-        await this._handleMsg(_decodeBytes(msg), resume);
+        try {
+          await this._handleMsg(_decodeBytes(msg), resume);
+        } catch (err) {
+          _logger.warning("ERROR OCCURED WHEN HANDLING MESSAGE", this, StackTrace.current);
+        }
       }, onDone: this._handleErr);
     });
   }
