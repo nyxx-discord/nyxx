@@ -26,6 +26,9 @@ abstract class AbstractPermissions {
   /// Allows to add reactions
   bool addReactions;
 
+  /// Allows for using priority speaker in a voice channel
+  bool prioritySpeaker;
+
   /// Allow to view audit logs
   bool viewAuditLog;
 
