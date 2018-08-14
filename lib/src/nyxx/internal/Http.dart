@@ -301,8 +301,7 @@ class Http {
         return r;
       } else {
         if (_client != null) new HttpErrorEvent._new(_client, r);
-        //throw new HttpError._new(r);
-        _logger.warning("HTTP ERROR OCCURED [${r.status}, $method ${path}] \n\t `${r.body.asString()}`");
+        throw new HttpError._new(r);
       }
     }
     return null;
