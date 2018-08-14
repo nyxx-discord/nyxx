@@ -24,6 +24,9 @@ void main() {
       var channel = e.message.guild.channels.values
           .firstWhere((ch) => ch is nyxx.VoiceChannel) as nyxx.VoiceChannel;
 
+      // Connect to channel
+      await player.connect(channel);
+
       // Resolve url to Lavalink track
       // Read here: https://github.com/Frederikam/Lavalink
       var track = await player.resolve("oMRZp7cp79g");
