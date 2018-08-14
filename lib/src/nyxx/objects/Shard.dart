@@ -105,7 +105,7 @@ class Shard {
     this.send("HEARTBEAT", _sequence);
   }
 
-  Future<Null> _handleMsg(Map<String, dynamic> msg, bool resume) async {
+  Future<void> _handleMsg(Map<String, dynamic> msg, bool resume) async {
     new RawEvent._new(this._ws.client, this, msg);
 
     if (msg['s'] != null) this._sequence = msg['s'] as int;
@@ -321,8 +321,6 @@ class Shard {
         }
         break;
     }
-
-    return null;
   }
 
   Exception _throw(String msg) => new Exception(

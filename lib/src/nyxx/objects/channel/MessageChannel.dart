@@ -100,9 +100,8 @@ class MessageChannel extends Channel with IterableMixin<Message>, ISend {
   }
 
   /// Starts typing.
-  Future<Null> startTyping() async {
+  Future<void> startTyping() async {
     await this.client.http.send('POST', "/channels/$id/typing");
-    return null;
   }
 
   /// Loops `startTyping` until `stopTypingLoop` is called.
@@ -116,13 +115,14 @@ class MessageChannel extends Channel with IterableMixin<Message>, ISend {
   void stopTypingLoop() => this._typing?.cancel();
 
   /// Bulk removes many messages by its ids. [messagesIds] is list of messages ids to delete.
-  Future<Null> bulkRemoveMessages(Iterable<Snowflake> messagesIds) async {
+  Future<void> bulkRemoveMessages(Iterable<Snowflake> messagesIds) async {
     if(messages.isEmpty)
       return null;
 
     await this.client.http.send('POST', "/channels/${id.toString()}/messages/bulk-delete",
         body: {"messages": messagesIds.take(99)});
-    return await bulkRemoveMessages(messagesIds.skip(99));
+    
+    await bulkRemoveMessages(messagesIds.skip(99));
   }
 
   /// Gets several [Message] objects.

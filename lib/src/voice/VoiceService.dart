@@ -30,7 +30,7 @@ Future<Player> getPlayer(Guild guild) async {
 }
 
 /// Destroys player and removes all connections
-Future<Null> destroyPlayer(Player player) async {
+Future<void> destroyPlayer(Player player) async {
   _logger.fine("Node for guild -${player._guild.id}- disconnected!");
   _manager.removePlayer(player._guild.id.toString());
   player = null;
@@ -72,7 +72,7 @@ class VoiceService {
   }
 
   // Connects to main websocket. And starts dispatching messages.
-  Future<Null> _connect() async {
+  Future<void> _connect() async {
     try {
       w_transport.WebSocket.connect(_wsPath, headers: {
         "Authorization": _password,
@@ -88,12 +88,10 @@ class VoiceService {
       //print("FAILED TO CONNECT. TRYING AGAIN!");
       // new Timer(const Duration(seconds: 2), () async => await _connect);
     }
-
-    return null;
   }
 
   // Handles incoming message. Tries to parse and takes actions
-  Future<Null> _handleMsg(Map<String, dynamic> msg) async {
+  Future<void> _handleMsg(Map<String, dynamic> msg) async {
     var op = msg['op'] as String;
 
     switch (op) {
@@ -140,7 +138,7 @@ class VoiceService {
   }
 
   /// Destroys player and removes all connections
-  Future<Null> removePlayer(String guild) async {
+  Future<void> removePlayer(String guild) async {
     await _playersCache[guild]._finish();
     _playersCache.remove(guild);
   }

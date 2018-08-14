@@ -57,16 +57,15 @@ class Webhook extends SnowflakeEntity {
   }
 
   /// Deletes the webhook.
-  Future<Null> delete({String auditReason: ""}) async {
+  Future<void> delete({String auditReason: ""}) async {
     await this
         .client
         .http
         .send('DELETE', "/webhooks/$id/$token", reason: auditReason);
-    return null;
   }
 
   /// Sends a message with the webhook.
-  Future<Null> send(
+  Future<void> send(
       {String content,
       List<EmbedBuilder> embeds,
       String username,
@@ -81,11 +80,10 @@ class Webhook extends SnowflakeEntity {
     };
 
     await this.client.http.send('POST', "/webhooks/$id/$token", body: payload);
-    return null;
   }
 
   /// Sends message to webhook with files
-  Future<Null> sendFile(
+  Future<void> sendFile(
       {String content,
       List<String> filepaths,
       List<EmbedBuilder> embeds,
@@ -103,7 +101,6 @@ class Webhook extends SnowflakeEntity {
               "tts": tts,
               "embeds": embeds.map((t) => t._build())
             }));
-    return null;
   }
 
   /// Returns a string representation of this object.

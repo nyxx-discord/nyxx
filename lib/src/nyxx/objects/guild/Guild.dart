@@ -228,7 +228,7 @@ class Guild extends SnowflakeEntity {
   }
 
   /// Leaves the guild.
-  Future<Null> leave() async {
+  Future<void> leave() async {
     await this.client.http.send('DELETE', "/users/@me/guilds/$id");
     return null;
   }
@@ -296,12 +296,11 @@ class Guild extends SnowflakeEntity {
   }
 
   /// Adds [Role] to [Member]
-  Future<Null> addRoleToMember(Member user, Role role) async {
+  Future<void> addRoleToMember(Member user, Role role) async {
     await this
         .client
         .http
         .send('PUT', '/guilds/$id/members/$user.id/roles/$role.id');
-    return null;
   }
 
   /// Returns list of available [VoiceChannel]s
@@ -377,16 +376,15 @@ class Guild extends SnowflakeEntity {
   }
 
   /// Moves channel
-  Future<Null> moveGuildChannel(GuildChannel channel, int newPosition,
+  Future<void> moveGuildChannel(GuildChannel channel, int newPosition,
       {String auditReason = ""}) async {
     await this.client.http.send('PATCH', "/guilds/${this.id}/channels",
         body: {"id": channel.id.toString(), "position": newPosition},
         reason: auditReason);
-    return null;
   }
 
   /// Bans a user by ID.
-  Future<Null> ban(Member member,
+  Future<void> ban(Member member,
       {int deleteMessageDays = 0, String auditReason}) async {
     await this.client.http.send(
         'PUT', "/guilds/${this.id}/bans/${member.id.toString()}",
@@ -395,12 +393,11 @@ class Guild extends SnowflakeEntity {
   }
 
   /// Unbans a user by ID.
-  Future<Null> unban(Snowflake id) async {
+  Future<void> unban(Snowflake id) async {
     await this
         .client
         .http
         .send('DELETE', "/guilds/${this.id}/bans/${id.toString()}");
-    return null;
   }
 
   /// Edits the guild.
@@ -464,7 +461,7 @@ class Guild extends SnowflakeEntity {
   }
 
   /// Deletes the guild.
-  Future<Null> delete() async {
+  Future<void> delete() async {
     await this.client.http.send('DELETE', "/guilds/${this.id}");
     return null;
   }

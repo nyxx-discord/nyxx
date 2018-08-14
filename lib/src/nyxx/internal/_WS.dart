@@ -62,11 +62,10 @@ class _WS {
     });
   }
 
-  Future<Null> close() async {
+  Future<void> close() async {
     this.client.shards.forEach((int id, Shard shard) async {
       await shard._socket.close();
     });
-    return null;
   }
 
   void connectShard(int index) {

@@ -26,11 +26,10 @@ class Invite {
   }
 
   /// Deletes this Invite.
-  Future<Null> delete({String auditReason = ""}) async {
+  Future<void> delete({String auditReason = ""}) async {
     await this
         .client
         .http
         .send('DELETE', '/invites/$code', reason: auditReason);
-    return null;
   }
 }

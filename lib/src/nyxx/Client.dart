@@ -224,10 +224,9 @@ class Client {
   }
 
   /// Destroys the websocket connection, and all streams.
-  Future<Null> destroy() async {
+  Future<void> destroy() async {
     await this._ws.close();
     await this._events.destroy();
-    return null;
   }
 
   /// Gets a webhook by its ID and token.
