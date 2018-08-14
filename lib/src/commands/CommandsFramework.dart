@@ -516,7 +516,6 @@ class CommandsFramework {
               }
             }
           }
-
           return false;
       }
 
@@ -528,8 +527,14 @@ class CommandsFramework {
 
       if (_getCmdAnnot(e, Remainder) != null) {
         index++;
+        var range = splitted.getRange(index, splitted.length).toList();
 
-        collected.add(splitted.getRange(index, splitted.length).toList());
+        if(type == String) {
+          collected.add(range.join(" "));
+          break;
+        }
+
+        collected.add(range);
         break;
       }
 
@@ -540,13 +545,12 @@ class CommandsFramework {
         pp = false;
       }
 
-      if (!pp) {
-        _services.forEach((s) {
-          if (s.runtimeType == type) {
-            collected.add(s);
-          }
-        });
-      }
+      if (pp)
+        continue;
+
+      try {
+        collected.add(_services.firstWhere((s) => s.runtimeType== type));
+      } catch (e) {}
     }
 
     return collected;
