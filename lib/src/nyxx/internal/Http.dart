@@ -267,6 +267,8 @@ class Http {
   /// Headers sent on every request.
   Map<String, String> headers;
 
+  Logger _logger = new Logger.detached("Http");
+
   Http._new([this._client]) {
     this.headers = <String, String>{'Content-Type': 'application/json'};
     this.headers['User-Agent'] =
@@ -299,7 +301,8 @@ class Http {
         return r;
       } else {
         if (_client != null) new HttpErrorEvent._new(_client, r);
-        throw new HttpError._new(r);
+        //throw new HttpError._new(r);
+        _logger.warning("HTTP ERROR OCCURED [${r.status}, $method ${path}] \n\t `${r.body.asString()}`");
       }
     }
     return null;
@@ -309,7 +312,6 @@ class Http {
   /// to full format `attachment://filename`
   String expandAttachments(String payload) {
     return payload.replaceAllMapped(new RegExp(r'\{(.+)\}'), (match) {
-      print(match.group(0));
       return "attachment://${match.group(0)}";
     });
   }
