@@ -44,7 +44,7 @@ class Cons {
   final bool isAdmin;
 
   /// List of roles required to execute command
-  final List<Role> requiredRoles;
+  final List<Snowflake> requiredRoles;
 
   /// List of required permissions to invoke command
   final List<int> requiredPermissions;
