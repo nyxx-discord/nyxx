@@ -55,25 +55,11 @@ class Role extends SnowflakeEntity {
 
   /// Edits the role.
   Future<Role> edit(
-      {String name: null,
-      PermissionsBuilder permissions,
-      int position: null,
-      int color: null,
-      bool mentionable: null,
-      bool hoist: null,
+      {RoleBuilder role,
       String auditReason: ""}) async {
     HttpResponse r = await this.client.http.send(
         'PATCH', "/guilds/${this.guild.id}/roles/$id",
-        body: {
-          "name": name != null ? name : this.name,
-          "permissions": permissions != null
-              ? permissions._build()._build()
-              : this.permissions.raw,
-          "position": position != null ? position : this.position,
-          "color": color != null ? color : this.color,
-          "hoist": hoist != null ? hoist : this.hoist,
-          "mentionable": mentionable != null ? mentionable : this.mentionable
-        },
+        body: role._build(),
         reason: auditReason);
     return new Role._new(
         this.client, r.body.asJson() as Map<String, dynamic>, this.guild);
@@ -95,5 +81,5 @@ class Role extends SnowflakeEntity {
 
   /// Returns a mention of role. Empty string if role inn't mentionable
   @override
-  String toString() => mentionable ? this.mention : "";
+  String toString() => mentionable ? this.mention : "@$name";
 }

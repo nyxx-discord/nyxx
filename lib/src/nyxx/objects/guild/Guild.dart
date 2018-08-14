@@ -145,8 +145,6 @@ class Guild extends SnowflakeEntity {
           }
         });
 
-        //this.defaultChannel = this.channels[this.id];
-
         if(raw['afk_channel_id'] != null) {
           var snow = new Snowflake(raw['afk_channel_id'] as String);
           if(this.channels.containsKey(snow))
