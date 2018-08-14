@@ -48,7 +48,7 @@ class AliasCommand extends command.CommandContext {
 
   // You can use customized logger instance
   @command.Command(name: "yyy")
-  Future yyy(String siema, int witam) {
+  void yy(String siema, int witam) {
     logger.fine(siema);
     logger.severe(witam);
   }
