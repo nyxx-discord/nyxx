@@ -228,8 +228,8 @@ class CommandsFramework {
 
       // Check if there is need to check user roles
       if (annot.requiredRoles != null) {
-        var hasRoles =
-            annot.requiredRoles.where((i) => member.roles.contains(i)).toList();
+        var hasRoles = member.roles.map((f) => f.id)
+          .where((t) => annot.requiredRoles.contains(t));
 
         if (hasRoles == null || hasRoles.isEmpty) executionCode = 1;
       }
