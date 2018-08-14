@@ -25,6 +25,9 @@ class PermissionsConstants {
   /// Allows for viewing of audit logs
   static const int VIEW_AUDIT_LOG = 1 << 7;
 
+  /// Allows for using priority speaker in a voice channel
+  static const int PRIORITY_SPEAKER = 1 << 8;
+
   /// Allows guild members to view a channel, which includes reading messages in text channels
   static const int VIEW_CHANNEL = 1 << 10;
 
