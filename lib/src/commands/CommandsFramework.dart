@@ -393,7 +393,6 @@ class CommandsFramework {
         var serv = cm.newInstance(new Symbol(''), toInject).reflectee;
         _services.add(serv);
       } catch (e) {
-        print(e);
         throw new Exception(
             "Service [${util.getSymbolName(cm.simpleName)}] constructor not satisfied!");
       }
@@ -409,7 +408,6 @@ class CommandsFramework {
             as CommandContext;
         add(cmd);
       } catch (e) {
-        print(e);
         throw new Exception(
             "Command [${util.getSymbolName(cm.simpleName)}] constructor not satisfied!");
       }
@@ -472,57 +470,39 @@ class CommandsFramework {
       index++;
       switch (type) {
         case String:
-          try {
-            collected.add(splitted[index]);
-          } catch (e) {}
+          collected.add(splitted[index]);
           break;
         case int:
-          try {
-            var d = int.parse(splitted[index]);
-            collected.add(d);
-          } catch (e) {}
+          var d = int.parse(splitted[index]);
+          collected.add(d);
           break;
         case double:
-          try {
-            var d = double.parse(splitted[index]);
-            collected.add(d);
-          } catch (e) {}
+          var d = double.parse(splitted[index]);
+          collected.add(d);
           break;
         case DateTime:
-          try {
-            var d = DateTime.parse(splitted[index]);
-            collected.add(d);
-          } catch (e) {}
+          var d = DateTime.parse(splitted[index]);
+          collected.add(d);
           break;
         case TextChannel:
-          try {
-            var id = _entityRegex.firstMatch(splitted[index]).group(3);
-            collected.add(e.guild.channels[new Snowflake(id)]);
-          } catch (e) {}
+          var id = _entityRegex.firstMatch(splitted[index]).group(3);
+          collected.add(e.guild.channels[new Snowflake(id)]);
           break;
         case User:
-          try {
-            var id = _entityRegex.firstMatch(splitted[index]).group(3);
-            collected.add(e.guild.client.users[new Snowflake(id)]);
-          } catch (e) {}
+          var id = _entityRegex.firstMatch(splitted[index]).group(3);
+          collected.add(e.guild.client.users[new Snowflake(id)]);
           break;
         case Role:
-          try {
-            var id = _entityRegex.firstMatch(splitted[index]).group(3);
-            collected.add(e.guild.roles[new Snowflake(id)]);
-          } catch (e) {}
+          var id = _entityRegex.firstMatch(splitted[index]).group(3);
+          collected.add(e.guild.roles[new Snowflake(id)]);
           break;
         case GuildEmoji:
-          try {
-            var id = _entityRegex.firstMatch(splitted[index]).group(3);
-            collected.add(e.guild.emojis[new Snowflake(id)]);
-          } catch (e) {}
+          var id = _entityRegex.firstMatch(splitted[index]).group(3);
+          collected.add(e.guild.emojis[new Snowflake(id)]);
           break;
         case UnicodeEmoji:
-          try {
-            var code = splitted[index].codeUnits[0].toRadixString(16);
-            collected.add(await util.EmojisUnicode.fromHexCode(code));
-          } catch (e) {}
+          var code = splitted[index].codeUnits[0].toRadixString(16);
+          collected.add(await util.EmojisUnicode.fromHexCode(code));
           break;
         default:
           if (_typeConverters == null) return false;
@@ -553,7 +533,14 @@ class CommandsFramework {
         break;
       }
 
-      if (!(await parsePrimitives(type))) {
+      bool pp;
+      try {
+        pp = await parsePrimitives(type);
+      } catch (e) {
+        pp = false;
+      }
+
+      if (!pp) {
         _services.forEach((s) {
           if (s.runtimeType == type) {
             collected.add(s);
