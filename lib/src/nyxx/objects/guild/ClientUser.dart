@@ -21,15 +21,11 @@ class ClientUser extends User {
 
   /// Updates the client's status.
   ///     ClientUser.setStatus(status: 'dnd');
-  ClientUser setStatus({String status}) {
-    return this.setPresence(status: status);
-  }
+  ClientUser setStatus({String status}) => this.setPresence(status: status);
 
   /// Updates the client's game.
   ///     ClientUser.setGame(name: '<3');
-  ClientUser setGame({Game game}) {
-    return this.setPresence(game: game);
-  }
+  ClientUser setGame({Game game}) => this.setPresence(game: game);
 
   /// Updates the client's presence.
   ///     ClientUser.setPresence(status: s, activity: { 'name': args.join(' ') });
