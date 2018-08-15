@@ -39,8 +39,7 @@ class User extends SnowflakeEntity with ISend {
     this.mentionNickname = "<@!${this.id}>";
 
     // This will not be set at all in some cases.
-    if (raw['bot'] != null)
-      this.bot = raw['bot'] as bool;
+    if (raw['bot'] != null) this.bot = raw['bot'] as bool;
 
     client.users[this.id] = this;
   }
@@ -68,6 +67,7 @@ class User extends SnowflakeEntity with ISend {
   }
 
   @override
+
   /// Sends a message.
   Future<Message> send(
       {Object content: "",
@@ -80,7 +80,8 @@ class User extends SnowflakeEntity with ISend {
         (disableEveryone == true ||
             (disableEveryone == null &&
                 this.client._options.disableEveryone))) {
-      newContent = content.toString()
+      newContent = content
+          .toString()
           .replaceAll("@everyone", "@\u200Beveryone")
           .replaceAll("@here", "@\u200Bhere");
     } else {

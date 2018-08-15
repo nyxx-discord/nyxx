@@ -102,7 +102,6 @@ class CommandsFramework {
 
   List<Object> find(Iterable<DeclarationMirror> tmpMethods, CommandContext cmd,
       bool first, List<String> splStr, bool Function(Command) f) {
-
     for (var v in tmpMethods) {
       if (v is MethodMirror) {
         var meta = _getCmdAnnot(v, Command) as Command;
@@ -149,15 +148,12 @@ class CommandsFramework {
                     meta.name != null &&
                     meta.name == splittedCommand[1]);
 
-            if(matched != null)
-              break;
-
+            if (matched != null) break;
           } else {
             matched = find(tmpMethods.values, cmd, true, splittedCommand,
                 (meta) => meta != null && meta.main != null && meta.main);
 
-            if(matched != null)
-              break;
+            if (matched != null) break;
           }
         }
       } else {
@@ -171,13 +167,11 @@ class CommandsFramework {
                 meta.name != null &&
                 meta.name == splittedCommand[0]);
 
-        if(matched != null)
-          break;
-        }
+        if (matched != null) break;
       }
+    }
 
-    if(matched == null)
-      return null;
+    if (matched == null) return null;
 
     return [matched[0], matched[1], splittedCommand, tmpInstMirror];
   }
@@ -216,7 +210,7 @@ class CommandsFramework {
     // Check for admin command and if user is admin
     if (executionCode == -1 && annot.isAdmin != null && annot.isAdmin)
       executionCode = _isUserAdmin(e.message.author.id) ? 100 : 0;
-    if(executionCode == -1) {
+    if (executionCode == -1) {
       //Check if user is on cooldown
       if (annot.cooldown != null &&
           annot.cooldown >
@@ -228,8 +222,9 @@ class CommandsFramework {
 
       // Check if there is need to check user roles
       if (annot.requiredRoles != null) {
-        var hasRoles = member.roles.map((f) => f.id)
-          .where((t) => annot.requiredRoles.contains(t));
+        var hasRoles = member.roles
+            .map((f) => f.id)
+            .where((t) => annot.requiredRoles.contains(t));
 
         if (hasRoles == null || hasRoles.isEmpty) executionCode = 1;
       }
@@ -268,8 +263,7 @@ class CommandsFramework {
       }
 
       // Check for channel topics
-      if (annot.topics != null &&
-          e.message.channel is TextChannel) {
+      if (annot.topics != null && e.message.channel is TextChannel) {
         var topic = (e.message.channel as TextChannel).topic;
         var list = topic
             .substring(topic.indexOf("[") + 1, topic.indexOf("]"))
@@ -312,13 +306,14 @@ class CommandsFramework {
       case 100:
         new Future(() async {
           try {
-            var params = await _collectParams(matched, splittedCommand, e.message);
+            var params =
+                await _collectParams(matched, splittedCommand, e.message);
 
             instMirror.setField(new Symbol("guild"), e.message.guild);
             instMirror.setField(new Symbol("message"), e.message);
             instMirror.setField(new Symbol("author"), e.message.author);
             instMirror.setField(new Symbol("channel"), e.message.channel);
-              instMirror.invoke(matched.simpleName, params);
+            instMirror.invoke(matched.simpleName, params);
           } catch (err, stacktrace) {
             _commandExecutionFailController
                 .add(new CommandExecutionFailEvent._new(e.message, err));
@@ -529,7 +524,7 @@ class CommandsFramework {
         index++;
         var range = splitted.getRange(index, splitted.length).toList();
 
-        if(type == String) {
+        if (type == String) {
           collected.add(range.join(" "));
           break;
         }
@@ -545,11 +540,10 @@ class CommandsFramework {
         pp = false;
       }
 
-      if (pp)
-        continue;
+      if (pp) continue;
 
       try {
-        collected.add(_services.firstWhere((s) => s.runtimeType== type));
+        collected.add(_services.firstWhere((s) => s.runtimeType == type));
       } catch (e) {}
     }
 

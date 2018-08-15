@@ -59,8 +59,7 @@ class Shard {
 
   // Attempts to connect to ws
   void _connect([bool resume = true, bool init = false]) {
-    if(!resume)
-      _logger.warning("DISCONNECTED. Trying to reconnect...");
+    if (!resume) _logger.warning("DISCONNECTED. Trying to reconnect...");
 
     this.ready = false;
     if (this._socket != null) this._socket.close();
@@ -72,15 +71,15 @@ class Shard {
     w_transport.WebSocket
         .connect(Uri.parse('${this._ws.gateway}?v=6&encoding=json'))
         .then((w_transport.WebSocket socket) {
-      if(!resume)
-        _logger.severe("RECONNECTED");
+      if (!resume) _logger.severe("RECONNECTED");
 
       this._socket = socket;
       this._socket.listen((dynamic msg) async {
         try {
           await this._handleMsg(_decodeBytes(msg), resume);
         } catch (err) {
-          _logger.warning("ERROR OCCURED WHEN HANDLING MESSAGE", this, StackTrace.current);
+          _logger.warning(
+              "ERROR OCCURED WHEN HANDLING MESSAGE", this, StackTrace.current);
         }
       }, onDone: this._handleErr);
     });
@@ -96,9 +95,8 @@ class Shard {
   }
 
   /// Sends WS data.
-  void send(String op, d) => this
-      ._socket
-      .add(jsonEncode(<String, dynamic>{"op": _OPCodes.matchOpCode(op), "d": d}));
+  void send(String op, d) => this._socket.add(
+      jsonEncode(<String, dynamic>{"op": _OPCodes.matchOpCode(op), "d": d}));
 
   void _heartbeat() {
     if (this._socket.closeCode != null) return;
@@ -331,9 +329,11 @@ class Shard {
 
     switch (this._socket.closeCode) {
       case 1005:
-        throw _throw('No status code was provided even though one was expected.');
+        throw _throw(
+            'No status code was provided even though one was expected.');
       case 4004:
-        throw _throw('The account token sent with your identify payload is incorrect.');
+        throw _throw(
+            'The account token sent with your identify payload is incorrect.');
       case 4010:
         throw _throw('You sent us an invalid shard when identifying.');
       case 4007:

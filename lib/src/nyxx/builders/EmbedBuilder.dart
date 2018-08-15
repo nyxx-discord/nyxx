@@ -2,7 +2,7 @@ part of nyxx;
 
 /// Builds up embed object.
 /// All fields are optional except of [title]
-class EmbedBuilder implements Builder{
+class EmbedBuilder implements Builder {
   /// Embed title
   String title;
 
@@ -56,6 +56,7 @@ class EmbedBuilder implements Builder{
   void addFieldBuilder(EmbedFieldBuilder field) => _fields.add(field._build());
 
   @override
+
   /// Builds object to Map() instance;
   Map<String, dynamic> _build() {
     Map<String, dynamic> tmp = new Map();

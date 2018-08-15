@@ -16,7 +16,7 @@ class _OPCodes {
   static const int GUILD_SYNC = 12;
 
   static int matchOpCode(String op) {
-    switch(op) {
+    switch (op) {
       case "DISPATCH":
         return DISPATCH;
       case "HEARTBEAT":

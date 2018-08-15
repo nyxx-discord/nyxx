@@ -200,8 +200,7 @@ class Client {
 
   /// Get user instance with specified id.
   Future<User> getUser(Snowflake id) async {
-    if(this.users.containsKey(id))
-      return this.users[id];
+    if (this.users.containsKey(id)) return this.users[id];
 
     var r = await this.http.send("GET", "/users/${id.toString()}");
     return new User._new(this, r.body.asJson() as Map<String, dynamic>);
@@ -209,8 +208,7 @@ class Client {
 
   /// Gets Guild with specified id.
   Future<Guild> getGuild(Snowflake id) async {
-    if(this.guilds.containsKey(id))
-      return this.guilds[id];
+    if (this.guilds.containsKey(id)) return this.guilds[id];
 
     var r = await this.http.send("GET", "/guilds/${id.toString()}");
     return new Guild._new(this, r.body.asJson() as Map<String, dynamic>);
@@ -232,8 +230,7 @@ class Client {
   /// Gets a webhook by its ID and token.
   Future<Webhook> getWebhook(String id, {String token: ""}) async {
     HttpResponse r = await http.send('GET', "/webhooks/$id/$token");
-    return new Webhook._new(
-        this, r.body.asJson() as Map<String, dynamic>);
+    return new Webhook._new(this, r.body.asJson() as Map<String, dynamic>);
   }
 
   /// Block isolate until client is ready

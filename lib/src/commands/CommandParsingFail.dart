@@ -4,6 +4,7 @@ part of nyxx.commands;
 class CommandParsingFail {
   /// Error of exception
   Exception exception;
+
   /// Command string on which error occurs
   String commandStr;
 

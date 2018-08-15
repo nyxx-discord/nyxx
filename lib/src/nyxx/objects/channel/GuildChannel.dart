@@ -58,8 +58,7 @@ abstract class GuildChannel implements Channel {
   /// Deletes permission overwrite for given User or Role id
   Future<void> deleteChannelPermission(Snowflake id,
       {String auditReason: ""}) async {
-    await this.client.http.send(
-        "POST", "/channels/${this.id}/permissions/$id",
+    await this.client.http.send("POST", "/channels/${this.id}/permissions/$id",
         reason: auditReason);
   }
 }
