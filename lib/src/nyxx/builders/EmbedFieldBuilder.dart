@@ -15,6 +15,7 @@ class EmbedFieldBuilder implements Builder {
   EmbedFieldBuilder(this.name, this.content, this.inline);
 
   @override
+
   /// Builds object to Map() instance;
   Map<String, dynamic> _build() {
     Map<String, dynamic> tmp = new Map();

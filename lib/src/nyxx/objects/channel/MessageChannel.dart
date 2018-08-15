@@ -63,6 +63,7 @@ class MessageChannel extends Channel with IterableMixin<Message>, ISend {
   Message getMessage(Snowflake id) => messages[id];
 
   @override
+
   /// Sends a message.
   ///
   /// Throws an [Exception] if the HTTP request errored.
@@ -116,12 +117,12 @@ class MessageChannel extends Channel with IterableMixin<Message>, ISend {
 
   /// Bulk removes many messages by its ids. [messagesIds] is list of messages ids to delete.
   Future<void> bulkRemoveMessages(Iterable<Snowflake> messagesIds) async {
-    if(messages.isEmpty)
-      return null;
+    if (messages.isEmpty) return null;
 
-    await this.client.http.send('POST', "/channels/${id.toString()}/messages/bulk-delete",
+    await this.client.http.send(
+        'POST', "/channels/${id.toString()}/messages/bulk-delete",
         body: {"messages": messagesIds.take(99)});
-    
+
     await bulkRemoveMessages(messagesIds.skip(99));
   }
 
@@ -146,8 +147,7 @@ class MessageChannel extends Channel with IterableMixin<Message>, ISend {
         .http
         .send('GET', '/channels/${this.id}/messages', queryParams: query);
 
-    var response =
-        new LinkedHashMap<Snowflake, Message>();
+    var response = new LinkedHashMap<Snowflake, Message>();
 
     for (Map<String, dynamic> val in r.body.asJson()) {
       var msg = new Message._new(this.client, val);

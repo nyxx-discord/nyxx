@@ -28,7 +28,8 @@ class Permissions extends AbstractPermissions {
     this.viewAuditLog = (this.raw & PermissionsConstants.VIEW_AUDIT_LOG) > 0;
     this.viewChannel = (this.raw & PermissionsConstants.VIEW_CHANNEL) > 0;
     this.sendMessages = (this.raw & PermissionsConstants.SEND_MESSAGES) > 0;
-    this.prioritySpeaker = (this.raw & PermissionsConstants.PRIORITY_SPEAKER) > 0;
+    this.prioritySpeaker =
+        (this.raw & PermissionsConstants.PRIORITY_SPEAKER) > 0;
     this.sendTtsMessages =
         (this.raw & PermissionsConstants.SEND_TTS_MESSAGES) > 0;
     this.manageMessages = (this.raw & PermissionsConstants.MANAGE_MESSAGES) > 0;

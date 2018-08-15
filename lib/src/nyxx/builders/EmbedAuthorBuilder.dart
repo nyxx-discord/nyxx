@@ -12,6 +12,7 @@ class EmbedAuthorBuilder implements Builder {
   String iconUrl;
 
   @override
+
   /// Builds object to Map() instance;
   Map<String, dynamic> _build() {
     Map<String, dynamic> tmp = new Map();

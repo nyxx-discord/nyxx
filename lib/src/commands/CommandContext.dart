@@ -142,21 +142,20 @@ abstract class CommandContext {
     return tmpData;
   }
 
-/// Returns stream of all code blocks in message
-/// For now it only parses codeblock which starts in first line
-/// Language string `dart, java` will be ignored and not included
-/// """
-/// n> eval ```(dart)?
-///   await reply(content: 'no to elo');
-/// ```
-/// """
- Stream<String> getCodeBlocks() async* {
-   var regex = new RegExp(r"```(\w+)?(\s)?(((.+)(\s)?)+)```");
+  /// Returns stream of all code blocks in message
+  /// For now it only parses codeblock which starts in first line
+  /// Language string `dart, java` will be ignored and not included
+  /// """
+  /// n> eval ```(dart)?
+  ///   await reply(content: 'no to elo');
+  /// ```
+  /// """
+  Stream<String> getCodeBlocks() async* {
+    var regex = new RegExp(r"```(\w+)?(\s)?(((.+)(\s)?)+)```");
 
-   var matches = regex.allMatches(message.content);
-   for(var m in matches)
-     yield m.group(3);
- }
+    var matches = regex.allMatches(message.content);
+    for (var m in matches) yield m.group(3);
+  }
 
   /// Allows to create help String for command
   void getHelp(bool isAdmin, StringBuffer buffer) {}

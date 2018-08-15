@@ -145,16 +145,16 @@ class Guild extends SnowflakeEntity {
           }
         });
 
-        if(raw['afk_channel_id'] != null) {
+        if (raw['afk_channel_id'] != null) {
           var snow = new Snowflake(raw['afk_channel_id'] as String);
-          if(this.channels.containsKey(snow))
+          if (this.channels.containsKey(snow))
             this.afkChannel = this.channels[snow] as VoiceChannel;
         }
       }
 
-      if(raw['system_channel_id'] != null) {
+      if (raw['system_channel_id'] != null) {
         var snow = new Snowflake(raw['system_channel_id'] as String);
-        if(this.channels.containsKey(snow))
+        if (this.channels.containsKey(snow))
           this.systemChannel = this.channels[snow] as TextChannel;
       }
 
@@ -285,13 +285,10 @@ class Guild extends SnowflakeEntity {
   }
 
   /// Creates new role
-  Future<Role> createRole({
-      RoleBuilder roleBuilder,
-      String auditReason = ""}) async {
-    HttpResponse r = await this
-        .client
-        .http
-        .send('POST', "/guilds/$id/roles", body: roleBuilder._build(), reason: auditReason);
+  Future<Role> createRole(
+      {RoleBuilder roleBuilder, String auditReason = ""}) async {
+    HttpResponse r = await this.client.http.send('POST', "/guilds/$id/roles",
+        body: roleBuilder._build(), reason: auditReason);
     return new Role._new(client, r.body.asJson() as Map<String, dynamic>, this);
   }
 
@@ -326,44 +323,34 @@ class Guild extends SnowflakeEntity {
       int userLimit,
       PermissionsBuilder permissions,
       String auditReason = ""}) async {
-
     // Checks to avoid API panic
-    if(type == ChannelType.dm || type == ChannelType.groupDm)
-      return null;
+    if (type == ChannelType.dm || type == ChannelType.groupDm) return null;
 
-    if(type == ChannelType.group && parent != null)
-      return null;
+    if (type == ChannelType.group && parent != null) return null;
 
     // Construct body
-    var body = <String, dynamic> {
-      "name": name,
-      "type": _matchChannelType(type)
-    };
+    var body = <String, dynamic>{"name": name, "type": _matchChannelType(type)};
 
-    if(bitrate != null)
-      body['bitrate'] = bitrate;
+    if (bitrate != null) body['bitrate'] = bitrate;
 
-    if(topic != null)
-      body['topic'] = topic;
+    if (topic != null) body['topic'] = topic;
 
-    if(parent != null)
-      body['parent_id'] = parent.id.toString();
+    if (parent != null) body['parent_id'] = parent.id.toString();
 
-    if(nsfw != null)
-      body['nsfw'] = nsfw;
+    if (nsfw != null) body['nsfw'] = nsfw;
 
-    if(userLimit != null)
-      body['user_limit'] = userLimit;
+    if (userLimit != null) body['user_limit'] = userLimit;
 
-    if(permissions != null)
-      body['permission_overwrites'] = permissions;
+    if (permissions != null) body['permission_overwrites'] = permissions;
 
     // Send request
-    HttpResponse r = await this.client.http.send('POST', "/guilds/$id/channels",
-        body: body, reason: auditReason);
+    HttpResponse r = await this
+        .client
+        .http
+        .send('POST', "/guilds/$id/channels", body: body, reason: auditReason);
     var raw = r.body.asJson() as Map<String, dynamic>;
 
-    switch(type) {
+    switch (type) {
       case ChannelType.text:
         return new TextChannel._new(this.client, raw, this);
       case ChannelType.group:
@@ -371,7 +358,7 @@ class Guild extends SnowflakeEntity {
       case ChannelType.voice:
         return new VoiceChannel._new(this.client, raw, this);
       default:
-      return null;
+        return null;
     }
   }
 
@@ -432,8 +419,7 @@ class Guild extends SnowflakeEntity {
   /// Throws an [Exception] if the HTTP request errored.
   ///     Guild.getMember("user id");
   Future<Member> getMember(User user) async {
-    if (this.members.containsKey(user.id))
-      return this.members[user.id];
+    if (this.members.containsKey(user.id)) return this.members[user.id];
 
     final HttpResponse r = await this
         .client
@@ -446,8 +432,7 @@ class Guild extends SnowflakeEntity {
 
   /// Gets all of the webhooks for this guild.
   Future<Map<Snowflake, Webhook>> getWebhooks({bool force: false}) async {
-    if(this.webhooks != null && !force)
-      return webhooks;
+    if (this.webhooks != null && !force) return webhooks;
 
     HttpResponse r = await this.client.http.send('GET', "/guilds/$id/webhooks");
     Map<Snowflake, Webhook> map = new Map();
@@ -467,16 +452,10 @@ class Guild extends SnowflakeEntity {
   }
 }
 
-enum ChannelType {
-  text,
-  voice,
-  group,
-  dm,
-  groupDm
-}
+enum ChannelType { text, voice, group, dm, groupDm }
 
 int _matchChannelType(ChannelType type) {
-  switch(type) {
+  switch (type) {
     case ChannelType.text:
       return 0;
     case ChannelType.voice:

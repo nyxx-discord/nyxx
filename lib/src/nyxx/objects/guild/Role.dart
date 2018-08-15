@@ -54,13 +54,10 @@ class Role extends SnowflakeEntity {
   }
 
   /// Edits the role.
-  Future<Role> edit(
-      {RoleBuilder role,
-      String auditReason: ""}) async {
+  Future<Role> edit({RoleBuilder role, String auditReason: ""}) async {
     HttpResponse r = await this.client.http.send(
         'PATCH', "/guilds/${this.guild.id}/roles/$id",
-        body: role._build(),
-        reason: auditReason);
+        body: role._build(), reason: auditReason);
     return new Role._new(
         this.client, r.body.asJson() as Map<String, dynamic>, this.guild);
   }

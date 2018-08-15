@@ -30,21 +30,23 @@ class GuildBuilder implements Builder {
   Map<String, dynamic> _build() {
     Map<String, dynamic> tmp = new Map();
 
-    if(name != null) tmp['name'] = name;
-    if(region != null) tmp['region'] = region;
-    if(icon != null) tmp['icon'] = icon;
-    if(verificationLevel != null) tmp['verification_level'] = verificationLevel;
-    if(defaultMessageNotifications != null) tmp['default_message_notifications'] = defaultMessageNotifications;
-    if(explicitContentFilter != null) tmp['explicit_content_filter'] = explicitContentFilter;
-    if(roles != null) tmp['roles'] = _gen(roles);
-    if(channels != null) tmp['channels'] = _gen(channels);
+    if (name != null) tmp['name'] = name;
+    if (region != null) tmp['region'] = region;
+    if (icon != null) tmp['icon'] = icon;
+    if (verificationLevel != null)
+      tmp['verification_level'] = verificationLevel;
+    if (defaultMessageNotifications != null)
+      tmp['default_message_notifications'] = defaultMessageNotifications;
+    if (explicitContentFilter != null)
+      tmp['explicit_content_filter'] = explicitContentFilter;
+    if (roles != null) tmp['roles'] = _gen(roles);
+    if (channels != null) tmp['channels'] = _gen(channels);
 
     return tmp;
   }
 
   Iterable<Map<String, dynamic>> _gen(List<Builder> lst) sync* {
-    for (var e in lst)
-      yield e._build();
+    for (var e in lst) yield e._build();
   }
 }
 
@@ -52,14 +54,19 @@ class GuildBuilder implements Builder {
 class RoleBuilder implements Builder {
   /// Name of role
   String name;
+
   /// integer representation of hexadecimal color code
   int color;
+
   /// if this role is pinned in the user listing
   bool hoist;
+
   /// Position of role
   int position;
+
   /// Permission object for role
   PermissionsBuilder permission;
+
   /// Whether role is mentionable
   bool mentionable;
 
@@ -70,11 +77,11 @@ class RoleBuilder implements Builder {
     Map<String, dynamic> tmp = new Map();
 
     tmp['name'] = name;
-    if(color != null) tmp['color'] = color;
-    if(hoist != null) tmp['hoist'] = hoist;
-    if(position != null) tmp['position'] = position;
-    if(permission != null) tmp['permission'] = permission._build()._build();
-    if(mentionable != null) tmp['mentionable'] = mentionable;
+    if (color != null) tmp['color'] = color;
+    if (hoist != null) tmp['hoist'] = hoist;
+    if (position != null) tmp['position'] = position;
+    if (permission != null) tmp['permission'] = permission._build()._build();
+    if (mentionable != null) tmp['mentionable'] = mentionable;
 
     return tmp;
   }
@@ -92,9 +99,6 @@ class ChannelBuilder implements Builder {
 
   @override
   Map<String, dynamic> _build() {
-    return {
-      "name": name,
-      "type": type
-    };
+    return {"name": name, "type": type};
   }
 }
