@@ -62,7 +62,7 @@ class User extends SnowflakeEntity with ISend {
       HttpResponse r = await client.http.send('POST', "/users/@me/channels",
           body: {"recipient_id": this.id.toString()});
       return new DMChannel._new(
-          client, r.body.asJson() as Map<String, dynamic>);
+          client, r.body);
     }
   }
 
@@ -99,7 +99,7 @@ class User extends SnowflakeEntity with ISend {
           "embed": embed
         });
     return new Message._new(
-        this.client, r.body.asJson() as Map<String, dynamic>);
+        this.client, r.body);
   }
 
   /// Returns a mention of user

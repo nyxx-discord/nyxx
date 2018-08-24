@@ -59,7 +59,7 @@ class Role extends SnowflakeEntity {
         'PATCH', "/guilds/${this.guild.id}/roles/$id",
         body: role._build(), reason: auditReason);
     return new Role._new(
-        this.client, r.body.asJson() as Map<String, dynamic>, this.guild);
+        this.client, r.body, this.guild);
   }
 
   /// Deletes the role.

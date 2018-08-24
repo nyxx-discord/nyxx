@@ -63,27 +63,32 @@ class HttpBase {
   }
 
   Future<HttpResponse> _execute() async {
+    print(headers);
+    print(uri.toString());
+    
     try {
+      HttpClientRequest r = await new HttpClient().openUrl(method, uri);
+      r.headers.contentType = new ContentType("application", "json", charset: "utf-8");
       if (this.body != null) {
-        w_transport.JsonRequest r = new w_transport.JsonRequest()
-          ..body = this.body;
+        this.headers.forEach((k, v) => r..headers.add(k, v));
+        r..write(jsonEncode(this.body));
+
         return HttpResponse._fromResponse(this,
-            await r.send(this.method, uri: this.uri, headers: this.headers));
+            await r.close());
       } else {
         return HttpResponse._fromResponse(
             this,
-            await w_transport.Http
-                .send(this.method, this.uri, headers: this.headers));
+            await r.close());
       }
-    } on w_transport.RequestException catch (err) {
+    } on Exception {
       return HttpResponse._fromResponse(
-          this, err.response as w_transport.Response);
+          this, null);
     }
   }
 }
 
 class HttpMultipartRequest extends HttpBase {
-  List<w_transport.MultipartFile> files = new List();
+  List<Stream<List<int>>> files = new List();
   Map<String, String> fields;
   List<String> filepaths;
   List<String> filenames;
@@ -95,8 +100,7 @@ class HttpMultipartRequest extends HttpBase {
       var f = new File(path);
       var contents = f.openRead();
 
-      files.add(new w_transport.MultipartFile(contents, f.lengthSync(),
-          filename: name));
+      files.add(contents);
     });
 
     super.finish();
@@ -104,24 +108,31 @@ class HttpMultipartRequest extends HttpBase {
 
   @override
   Future<HttpResponse> _execute() async {
+    print(uri.toString());
+    print(this.headers);
+
     try {
-      if (this.files != null && this.files.length > 0) {
-        w_transport.MultipartRequest r = new w_transport.MultipartRequest()
-          ..fields = this.fields
-          ..files = new Map.fromIterables(this.filenames, this.files);
+      HttpClientRequest r = await new HttpClient().openUrl(method, uri);
+      this.headers.forEach((k, v) => r.headers.add(k, v));
+
+      if (this.body != null) {
+
+        r..write(jsonEncode(this.fields));
+        
+        this.files.forEach((f) => r.addStream(f));
 
         return HttpResponse._fromResponse(this,
-            await r.send(this.method, uri: this.uri, headers: this.headers));
+            await r.close());
       } else {
         return HttpResponse._fromResponse(
             this,
-            await w_transport.Http
-                .send(this.method, this.uri, headers: this.headers));
+            await r.close());
       }
-    } on w_transport.RequestException catch (err) {
+    } on Exception {
       return HttpResponse._fromResponse(
-          this, err.response as w_transport.Response);
+          this, null);
     }
+
   }
 }
 
@@ -141,24 +152,35 @@ class HttpRequest extends HttpBase {
 
 /// A HTTP response. More documentation can be found at the
 /// [w_transport docs](https://www.dartdocs.org/documentation/w_transport/3.0.0/w_transport/Response-class.html)
-class HttpResponse extends w_transport.Response {
+class HttpResponse {
   /// The HTTP request.
   HttpBase request;
 
   /// Whether or not the request was aborted. If true, all other fields will be null.
   bool aborted;
 
-  HttpResponse._new(this.request, int status, String statusText,
-      Map<String, String> headers, String body,
-      [this.aborted = false])
-      : super.fromString(status, statusText, headers, body);
+  String statusText;
 
-  HttpResponse._aborted(this.request, [this.aborted = true])
-      : super.fromString(0, "ABORTED", {}, null);
+  int status;
 
-  static HttpResponse _fromResponse(HttpBase request, w_transport.Response r) {
+  HttpHeaders headers;
+
+  Map<String, dynamic> body;
+
+  HttpResponse._new(this.request, this.status, this.statusText,
+      this.headers, this.body,
+      [this.aborted = false]);
+
+  HttpResponse._aborted(this.request, [this.aborted = true]) {
+        this.status = 0;
+        this.statusText = "ABORTED";
+        this.headers = null;
+        this.body = null;
+  }
+
+  static Future<HttpResponse> _fromResponse(HttpBase request, HttpClientResponse r) async {
     return new HttpResponse._new(
-        request, r.status, r.statusText, r.headers, r.body.asString());
+        request, r.statusCode, "", r.headers, jsonDecode(await r.transform(utf8.decoder).first) as Map<String, dynamic>);
   }
 }
 
@@ -203,21 +225,21 @@ class HttpBucket {
   void _execute(HttpBase request) {
     if (this.rateLimitRemaining == null || this.rateLimitRemaining > 0) {
       request._execute().then((HttpResponse r) {
-        this.limit = r.headers['x-ratelimit-limit'] != null
-            ? int.parse(r.headers['x-ratelimit-limit'])
+        this.limit = r.headers.value('x-ratelimit-limit') != null
+            ? int.parse(r.headers.value('x-ratelimit-limit'))
             : null;
-        this.rateLimitRemaining = r.headers['x-ratelimit-remaining'] != null
-            ? int.parse(r.headers['x-ratelimit-remaining'])
+        this.rateLimitRemaining = r.headers.value('x-ratelimit-remaining') != null
+            ? int.parse(r.headers.value('x-ratelimit-remaining'))
             : null;
-        this.rateLimitReset = r.headers['x-ratelimit-reset'] != null
+        this.rateLimitReset = r.headers.value('x-ratelimit-reset') != null
             ? new DateTime.fromMillisecondsSinceEpoch(
-                int.parse(r.headers['x-ratelimit-reset']) * 1000,
+                int.parse(r.headers.value('x-ratelimit-reset')) * 1000,
                 isUtc: true)
             : null;
         try {
           this.timeDifference = new DateTime.now()
               .toUtc()
-              .difference(http_parser.parseHttpDate(r.headers['date']).toUtc());
+              .difference(http_parser.parseHttpDate(r.headers.value('date')).toUtc());
         } catch (err) {
           this.timeDifference = new Duration();
         }
@@ -227,7 +249,7 @@ class HttpBucket {
               request.http._client, request as HttpRequest, false, r);
           new Timer(
               new Duration(
-                  milliseconds: (r.body.asJson()['retry_after'] as int) + 500),
+                  milliseconds: (r.body['retry_after'] as int) + 500),
               () => this._execute(request));
         } else {
           this.waiting = false;

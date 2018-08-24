@@ -100,7 +100,7 @@ class Player {
     if (res.status != 200)
       throw new Exception("Cannot comunicate with lavalink via http");
 
-    var r = res.body.asJson() as Map<String, dynamic>;
+    var r = res.body;
     return new TrackResponse._new(r);
   }
 

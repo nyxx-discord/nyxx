@@ -52,7 +52,7 @@ class Webhook extends SnowflakeEntity {
     HttpResponse r = await this.client.http.send(
         'PATCH', "/webhooks/$id/$token",
         body: {"name": name}, reason: auditReason);
-    this.name = r.body.asJson()['name'] as String;
+    this.name = r.body['name'] as String;
     return this;
   }
 

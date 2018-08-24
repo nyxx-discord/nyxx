@@ -31,7 +31,7 @@ class TextChannel extends MessageChannel with GuildChannel {
       "position": position != null ? position : this.position
     });
     return new TextChannel._new(
-        this.client, r.body.asJson() as Map<String, dynamic>, this.guild);
+        this.client, r.body, this.guild);
   }
 
   /// Gets all of the webhooks for this channel.
@@ -40,7 +40,7 @@ class TextChannel extends MessageChannel with GuildChannel {
         await this.client.http.send('GET', "/channels/$id/webhooks");
     Map<String, Webhook> map = new Map();
 
-    r.body.asJson().forEach((dynamic o) {
+    r.body.forEach((k, o) {
       Webhook webhook =
           new Webhook._new(this.client, o as Map<String, dynamic>);
       map[webhook.id.toString()] = webhook;
@@ -55,7 +55,7 @@ class TextChannel extends MessageChannel with GuildChannel {
         'POST', "/channels/$id/webhooks",
         body: {"name": name}, reason: auditReason);
     return new Webhook._new(
-        this.client, r.body.asJson() as Map<String, dynamic>);
+        this.client, r.body);
   }
 
   /// Returns all [Channel]s [Invite]s
@@ -64,7 +64,7 @@ class TextChannel extends MessageChannel with GuildChannel {
         await this.client.http.send('GET', "/channels/$id/invites");
 
     Map<String, Invite> invites = new Map();
-    for (Map<String, dynamic> val in r.body.asJson()) {
+    for (Map<String, dynamic> val in r.body.values.first) {
       invites[val["code"] as String] = new Invite._new(this.client, val);
     }
 
@@ -90,7 +90,7 @@ class TextChannel extends MessageChannel with GuildChannel {
         body: params, reason: auditReason);
 
     return new Invite._new(
-        this.client, r.body.asJson() as Map<String, dynamic>);
+        this.client, r.body);
   }
 
   /// Returns pinned [Message]s for [Channel]
@@ -99,7 +99,7 @@ class TextChannel extends MessageChannel with GuildChannel {
         await this.client.http.send('GET', "/channels/$id/pins");
 
     Map<String, Message> messages = new Map();
-    for (Map<String, dynamic> val in r.body.asJson()) {
+    for (Map<String, dynamic> val in r.body.values.first) {
       messages[val["id"] as String] = new Message._new(this.client, val);
     }
 

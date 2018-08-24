@@ -184,7 +184,7 @@ class Message extends SnowflakeEntity {
           "embed": (embed != null ? embed._build() : "")
         });
     return new Message._new(
-        this.client, r.body.asJson() as Map<String, dynamic>);
+        this.client, r.body);
   }
 
   /// Add reaction to message.
