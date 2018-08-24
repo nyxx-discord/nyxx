@@ -6,7 +6,7 @@ part of nyxx;
 /// will be halted until you call `request.send()`
 class BeforeHttpRequestSendEvent {
   /// The request about to be sent.
-  HttpRequest request;
+  HttpBase request;
 
   BeforeHttpRequestSendEvent._new(Client client, this.request) {
     if (client != null) client._events.beforeHttpRequestSend.add(this);

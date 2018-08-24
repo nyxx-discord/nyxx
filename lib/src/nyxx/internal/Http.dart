@@ -46,7 +46,7 @@ class HttpBase {
     this._streamController = new StreamController<HttpResponse>.broadcast();
     this.stream = _streamController.stream;
 
-    new BeforeHttpRequestSendEvent._new(this.http._client, this as HttpRequest);
+    new BeforeHttpRequestSendEvent._new(this.http._client, this);
 
     if (this.http._client == null ||
         !this.http._client._events.beforeHttpRequestSend.hasListener)
@@ -54,7 +54,7 @@ class HttpBase {
   }
 
   /// Sends the request off to the bucket to be processed and sent.
-  void send() => this.bucket._push(this as HttpRequest);
+  void send() => this.bucket._push(this);
 
   /// Destroys the request.
   void abort() {
@@ -63,22 +63,17 @@ class HttpBase {
   }
 
   Future<HttpResponse> _execute() async {
-    print(headers);
-    print(uri.toString());
-    
+    var r = new Request(this.method, this.uri);
     try {
-      HttpClientRequest r = await new HttpClient().openUrl(method, uri);
-      r.headers.contentType = new ContentType("application", "json", charset: "utf-8");
+      this.headers.forEach((k, v) => r.headers[k] = v);
       if (this.body != null) {
-        this.headers.forEach((k, v) => r..headers.add(k, v));
-        r..write(jsonEncode(this.body));
-
+        r.body = jsonEncode(this.body);
         return HttpResponse._fromResponse(this,
-            await r.close());
+            await r.send());
       } else {
         return HttpResponse._fromResponse(
             this,
-            await r.close());
+            await r.send());
       }
     } on Exception {
       return HttpResponse._fromResponse(
@@ -88,7 +83,7 @@ class HttpBase {
 }
 
 class HttpMultipartRequest extends HttpBase {
-  List<Stream<List<int>>> files = new List();
+  List<MultipartFile> files = new List();
   Map<String, String> fields;
   List<String> filepaths;
   List<String> filenames;
@@ -100,7 +95,7 @@ class HttpMultipartRequest extends HttpBase {
       var f = new File(path);
       var contents = f.openRead();
 
-      files.add(contents);
+      files.add(new MultipartFile(name, contents, f.lengthSync()));
     });
 
     super.finish();
@@ -108,31 +103,24 @@ class HttpMultipartRequest extends HttpBase {
 
   @override
   Future<HttpResponse> _execute() async {
-    print(uri.toString());
-    print(this.headers);
-
+    var r = new MultipartRequest(this.method, this.uri);
     try {
-      HttpClientRequest r = await new HttpClient().openUrl(method, uri);
-      this.headers.forEach((k, v) => r.headers.add(k, v));
-
-      if (this.body != null) {
-
-        r..write(jsonEncode(this.fields));
-        
-        this.files.forEach((f) => r.addStream(f));
+      this.headers.forEach((k, v) => r.headers[k] = v);
+      if (this.files != null) {
+        this.fields.forEach((k, v) => r.fields[k] = v);
+        r.files.addAll(this.files);
 
         return HttpResponse._fromResponse(this,
-            await r.close());
+            await r.send());
       } else {
         return HttpResponse._fromResponse(
             this,
-            await r.close());
+            await r.send());
       }
-    } on Exception {
+    } on Exception catch (err) {
       return HttpResponse._fromResponse(
           this, null);
     }
-
   }
 }
 
@@ -163,7 +151,7 @@ class HttpResponse {
 
   int status;
 
-  HttpHeaders headers;
+  Map<String, String> headers;
 
   Map<String, dynamic> body;
 
@@ -178,9 +166,9 @@ class HttpResponse {
         this.body = null;
   }
 
-  static Future<HttpResponse> _fromResponse(HttpBase request, HttpClientResponse r) async {
+  static Future<HttpResponse> _fromResponse(HttpBase request, StreamedResponse r) async {
     return new HttpResponse._new(
-        request, r.statusCode, "", r.headers, jsonDecode(await r.transform(utf8.decoder).first) as Map<String, dynamic>);
+        request, r.statusCode, "", r.headers, jsonDecode(await r.stream.bytesToString()) as Map<String, dynamic>);
   }
 }
 
@@ -210,7 +198,7 @@ class HttpBucket {
 
   HttpBucket._new(this.url);
 
-  void _push(HttpRequest request) {
+  void _push(HttpBase request) {
     this.requests.add(request);
     this._handle();
   }
@@ -225,21 +213,21 @@ class HttpBucket {
   void _execute(HttpBase request) {
     if (this.rateLimitRemaining == null || this.rateLimitRemaining > 0) {
       request._execute().then((HttpResponse r) {
-        this.limit = r.headers.value('x-ratelimit-limit') != null
-            ? int.parse(r.headers.value('x-ratelimit-limit'))
+        this.limit = r.headers['x-ratelimit-limit'] != null
+            ? int.parse(r.headers['x-ratelimit-limit'])
             : null;
-        this.rateLimitRemaining = r.headers.value('x-ratelimit-remaining') != null
-            ? int.parse(r.headers.value('x-ratelimit-remaining'))
+        this.rateLimitRemaining = r.headers['x-ratelimit-remaining'] != null
+            ? int.parse(r.headers['x-ratelimit-remaining'])
             : null;
-        this.rateLimitReset = r.headers.value('x-ratelimit-reset') != null
+        this.rateLimitReset = r.headers['x-ratelimit-reset'] != null
             ? new DateTime.fromMillisecondsSinceEpoch(
-                int.parse(r.headers.value('x-ratelimit-reset')) * 1000,
+                int.parse(r.headers['x-ratelimit-reset']) * 1000,
                 isUtc: true)
             : null;
         try {
           this.timeDifference = new DateTime.now()
               .toUtc()
-              .difference(http_parser.parseHttpDate(r.headers.value('date')).toUtc());
+              .difference(http_parser.parseHttpDate(r.headers['date']).toUtc());
         } catch (err) {
           this.timeDifference = new Duration();
         }
@@ -292,7 +280,7 @@ class Http {
   Logger _logger = new Logger.detached("Http");
 
   Http._new([this._client]) {
-    this.headers = <String, String>{'Content-Type': 'application/json'};
+    //this.headers = <String, String>{'Content-Type': 'application/json'};
     this.headers['User-Agent'] =
         'DiscordBot (https://github.com/l7ssha/nyxx, ${_Constants.version})';
   }
@@ -369,6 +357,7 @@ class Http {
         if (_client != null) new HttpResponseEvent._new(_client, r);
         return r;
       } else {
+        print(r.body);
         if (_client != null) new HttpErrorEvent._new(_client, r);
         throw new HttpError._new(r);
       }
