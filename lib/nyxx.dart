@@ -8,9 +8,8 @@ import 'dart:io';
 import 'dart:isolate';
 
 import 'package:http_parser/http_parser.dart' as http_parser;
-import 'package:w_transport/w_transport.dart' as w_transport;
-import 'package:w_transport/vm.dart' show vmTransportPlatform;
 import 'package:logging/logging.dart';
+import 'package:http/http.dart';
 
 part 'src/nyxx/Client.dart';
 part 'src/nyxx/ClientOptions.dart';
