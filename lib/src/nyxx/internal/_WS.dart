@@ -21,11 +21,11 @@ class _WS {
         .send("GET", "/gateway/bot", beforeReady: true)
         .then((HttpResponse r) {
       this.bot = true;
-      this.gateway = r.body.asJson()['url'] as String;
+      this.gateway = r.body['url'] as String;
       if (this.client._options.shardCount == 1 &&
           this.client._options.shardIds == const [0]) {
         this.client._options.shardIds = [];
-        this.client._options.shardCount = r.body.asJson()['shards'] as int;
+        this.client._options.shardCount = r.body['shards'] as int;
         for (int i = 0; i < client._options.shardCount; i++) {
           this.client._options.shardIds.add(i);
           setupShard(i);
@@ -42,7 +42,7 @@ class _WS {
           .http
           .send('GET', '/gateway', beforeReady: true)
           .then((HttpResponse r) {
-        this.gateway = r.body.asJson()['url'] as String;
+        this.gateway = r.body['url'] as String;
         for (int shardId in this.client._options.shardIds) {
           setupShard(shardId);
         }
@@ -93,13 +93,13 @@ class _WS {
       client.ready = true;
       client._startTime = new DateTime.now();
       if (client.user.bot) {
-        client.http
+        /*client.http
             .send('GET', '/oauth2/applications/@me', beforeReady: true)
             .then((HttpResponse r) {
           client.app = new ClientOAuth2Application._new(
-              client, r.body.asJson() as Map<String, dynamic>);
+              client, r.body);*/
           new ReadyEvent._new(client);
-        });
+        //});
       } else {
         new ReadyEvent._new(client);
       }

@@ -161,8 +161,6 @@ class Client {
 
   /// Creates and logs in a new client.
   Client(this._token, [this._options]) {
-    w_transport.globalTransportPlatform = vmTransportPlatform;
-
     Isolate.current.setErrorsFatal(false);
     ReceivePort errorsPort = new ReceivePort();
     errorsPort.listen((err) {
@@ -203,7 +201,7 @@ class Client {
     if (this.users.containsKey(id)) return this.users[id];
 
     var r = await this.http.send("GET", "/users/${id.toString()}");
-    return new User._new(this, r.body.asJson() as Map<String, dynamic>);
+    return new User._new(this, r.body);
   }
 
   /// Gets Guild with specified id.
@@ -211,14 +209,14 @@ class Client {
     if (this.guilds.containsKey(id)) return this.guilds[id];
 
     var r = await this.http.send("GET", "/guilds/${id.toString()}");
-    return new Guild._new(this, r.body.asJson() as Map<String, dynamic>);
+    return new Guild._new(this, r.body);
   }
 
   /// Creates new guild with provided builder.
   Future<Guild> createGuild(GuildBuilder builder) async {
     var r = await this.http.send("POST", "/guilds", body: builder._build());
 
-    return new Guild._new(this, r.body.asJson() as Map<String, dynamic>);
+    return new Guild._new(this, r.body);
   }
 
   /// Destroys the websocket connection, and all streams.
@@ -230,7 +228,7 @@ class Client {
   /// Gets a webhook by its ID and token.
   Future<Webhook> getWebhook(String id, {String token: ""}) async {
     HttpResponse r = await http.send('GET', "/webhooks/$id/$token");
-    return new Webhook._new(this, r.body.asJson() as Map<String, dynamic>);
+    return new Webhook._new(this, r.body);
   }
 
   /// Block isolate until client is ready
@@ -242,7 +240,7 @@ class Client {
   ///     Client.getInvite("invite code");
   Future<Invite> getInvite(String code) async {
     final HttpResponse r = await this.http.send('GET', '/invites/$code');
-    return new Invite._new(this, r.body.asJson() as Map<String, dynamic>);
+    return new Invite._new(this, r.body);
   }
 
   /// Gets an [OAuth2Info] object.
@@ -253,6 +251,6 @@ class Client {
     final HttpResponse r = await this
         .http
         .send('GET', '/oauth2/authorize?client_id=$userId&scope=bot');
-    return new OAuth2Info._new(this, r.body.asJson() as Map<String, dynamic>);
+    return new OAuth2Info._new(this, r.body);
   }
 }

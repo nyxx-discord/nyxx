@@ -197,21 +197,21 @@ class Guild extends SnowflakeEntity {
         .send('GET', "/guilds/$id/emojis/${emojiId.toString()}");
 
     return new GuildEmoji._new(
-        this.client, r.body.asJson as Map<String, dynamic>, this);
+        this.client, r.body, this);
   }
 
   /// Prunes the guild, returns the amount of members pruned.
   Future<int> prune(int days, {String auditReason = ""}) async {
     HttpResponse r = await this.client.http.send('POST', "/guilds/$id/prune",
         body: {"days": days}, reason: auditReason);
-    return r.body.asJson() as int;
+    return r.body as int;
   }
 
   /// Get's the guild's bans.
   Future<Map<String, User>> getBans() async {
     HttpResponse r = await this.client.http.send('GET', "/guilds/$id/bans");
     Map<String, User> map = new Map();
-    r.body.asJson().forEach((dynamic o) {
+    r.body.forEach((k, o) {
       final User user =
           new User._new(client, o['user'] as Map<String, dynamic>);
       map[user.id.toString()] = user;
@@ -224,7 +224,7 @@ class Guild extends SnowflakeEntity {
     HttpResponse r = await this.client.http.send('PATCH', "/guilds/$id",
         body: {"owner_id": member.id}, reason: auditReason);
 
-    return new Guild._new(client, r.body.asJson() as Map<String, dynamic>);
+    return new Guild._new(client, r.body);
   }
 
   /// Leaves the guild.
@@ -237,7 +237,7 @@ class Guild extends SnowflakeEntity {
   Future<List<Invite>> getGuildInvites() async {
     HttpResponse r = await this.client.http.send('GET', "/guilds/$id/invites");
 
-    var raw = r.body.asJson() as List<dynamic>;
+    var raw = r.body as List<dynamic>;
     List<Invite> tmp = new List();
     raw.forEach((v) {
       tmp.add(new Invite._new(this.client, v as Map<String, dynamic>));
@@ -264,13 +264,13 @@ class Guild extends SnowflakeEntity {
         .send('GET', '/guilds/${this.id}/audit-logs', queryParams: query);
 
     return new AuditLog._new(
-        this.client, r.body.asJson() as Map<String, dynamic>);
+        this.client, r.body);
   }
 
   /// Get Guil's embed object
   Future<Embed> getGuildEmbed() async {
     HttpResponse r = await this.client.http.send('GET', "/guilds/$id/embed");
-    return new Embed._new(this.client, r.body.asJson() as Map<String, dynamic>);
+    return new Embed._new(this.client, r.body);
   }
 
   /// Modify guild embed object
@@ -280,7 +280,7 @@ class Guild extends SnowflakeEntity {
         body: embed._build(), reason: auditReason);
     return new Embed._new(
       this.client,
-      r.body.asJson() as Map<String, dynamic>,
+      r.body
     );
   }
 
@@ -289,7 +289,7 @@ class Guild extends SnowflakeEntity {
       {RoleBuilder roleBuilder, String auditReason = ""}) async {
     HttpResponse r = await this.client.http.send('POST', "/guilds/$id/roles",
         body: roleBuilder._build(), reason: auditReason);
-    return new Role._new(client, r.body.asJson() as Map<String, dynamic>, this);
+    return new Role._new(client, r.body, this);
   }
 
   /// Adds [Role] to [Member]
@@ -304,7 +304,7 @@ class Guild extends SnowflakeEntity {
   Future<List<VoiceRegion>> getVoiceRegions() async {
     var r = await this.client.http.send('GET', "/guilds/$id/regions");
 
-    var raw = r.body.asJson() as List<dynamic>;
+    var raw = r.body as List<dynamic>;
     List<VoiceRegion> tmp = new List();
     raw.forEach((v) {
       tmp.add(new VoiceRegion._new(v as Map<String, dynamic>));
@@ -348,7 +348,7 @@ class Guild extends SnowflakeEntity {
         .client
         .http
         .send('POST', "/guilds/$id/channels", body: body, reason: auditReason);
-    var raw = r.body.asJson() as Map<String, dynamic>;
+    var raw = r.body;
 
     switch (type) {
       case ChannelType.text:
@@ -410,7 +410,7 @@ class Guild extends SnowflakeEntity {
           "icon": icon != null ? icon : this.icon
         },
         reason: auditReason);
-    return new Guild._new(this.client, r.body.asJson() as Map<String, dynamic>);
+    return new Guild._new(this.client, r.body);
   }
 
   /// Gets a [Member] object. Adds it to `Guild.members` if
@@ -427,7 +427,7 @@ class Guild extends SnowflakeEntity {
         .send('GET', '/guilds/${this.id}/members/${user.id.toString()}');
 
     return new Member._new(
-        this.client, r.body.asJson() as Map<String, dynamic>, this);
+        this.client, r.body, this);
   }
 
   /// Gets all of the webhooks for this guild.
@@ -436,7 +436,7 @@ class Guild extends SnowflakeEntity {
 
     HttpResponse r = await this.client.http.send('GET', "/guilds/$id/webhooks");
     Map<Snowflake, Webhook> map = new Map();
-    r.body.asJson().forEach((dynamic o) {
+    r.body.forEach((k, o) {
       Webhook webhook =
           new Webhook._new(this.client, o as Map<String, dynamic>);
       map[webhook.id] = webhook;

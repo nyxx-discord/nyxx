@@ -19,7 +19,7 @@ class Shard {
 
   Timer _heartbeatTimer;
   _WS _ws;
-  w_transport.WebSocket _socket;
+  WebSocket _socket;
   int _sequence;
   String _sessionId;
   StreamController<Shard> _onReady;
@@ -68,9 +68,9 @@ class Shard {
       return;
     }
 
-    w_transport.WebSocket
-        .connect(Uri.parse('${this._ws.gateway}?v=6&encoding=json'))
-        .then((w_transport.WebSocket socket) {
+    WebSocket
+        .connect('${this._ws.gateway}?v=6&encoding=json')
+        .then((WebSocket socket) {
       if (!resume) _logger.severe("RECONNECTED");
 
       this._socket = socket;

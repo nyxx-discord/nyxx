@@ -57,7 +57,7 @@ class MessageChannel extends Channel with IterableMixin<Message>, ISend {
         }));
 
     return new Message._new(
-        this.client, r.body.asJson() as Map<String, dynamic>);
+        this.client, r.body);
   }
 
   Message getMessage(Snowflake id) => messages[id];
@@ -97,7 +97,7 @@ class MessageChannel extends Channel with IterableMixin<Message>, ISend {
       "embed": embed != null ? embed._build() : ""
     });
     return new Message._new(
-        this.client, r.body.asJson() as Map<String, dynamic>);
+        this.client, r.body);
   }
 
   /// Starts typing.
@@ -149,7 +149,7 @@ class MessageChannel extends Channel with IterableMixin<Message>, ISend {
 
     var response = new LinkedHashMap<Snowflake, Message>();
 
-    for (Map<String, dynamic> val in r.body.asJson()) {
+    for (Map<String, dynamic> val in r.body.values.first) {
       var msg = new Message._new(this.client, val);
       response[msg.id] = msg;
     }
