@@ -5,6 +5,10 @@ abstract class ISend {
       {Object content: "",
       EmbedBuilder embed,
       bool tts: false,
-      String nonce,
       bool disableEveryone});
+
+  Future<Message> sendFile(List<File> files,
+      {String content = "", EmbedBuilder embed});
 }
+
+String expandAttachment(String filename) => "attachment://$filename";

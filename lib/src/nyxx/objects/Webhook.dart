@@ -85,7 +85,7 @@ class Webhook extends SnowflakeEntity {
   /// Sends message to webhook with files
   Future<void> sendFile(
       {String content,
-      List<String> filepaths,
+      List<File> files,
       List<EmbedBuilder> embeds,
       String username,
       String avatarUrl,
@@ -93,14 +93,14 @@ class Webhook extends SnowflakeEntity {
     await this
         .client
         .http
-        .sendMultipart("POST", "/webhooks/$id/$token", filepaths,
-            data: jsonEncode({
+        .sendMultipart("POST", "/webhooks/$id/$token", files,
+            data: {
               "content": content,
               "username": username,
               "avatar_url": avatarUrl,
               "tts": tts,
               "embeds": embeds.map((t) => t._build())
-            }));
+            });
   }
 
   /// Returns a string representation of this object.
