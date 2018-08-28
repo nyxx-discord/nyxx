@@ -63,7 +63,7 @@ class HttpBase {
   }
 
   Future<HttpResponse> _execute() async {
-    var r = new Request(this.method, this.uri);
+    var r = new httpreq.Request(this.method, this.uri);
     try {
       this.headers.forEach((k, v) => r.headers[k] = v);
       if (this.body != null) {
@@ -83,41 +83,42 @@ class HttpBase {
 }
 
 class HttpMultipartRequest extends HttpBase {
-  List<MultipartFile> files = new List();
-  Map<String, String> fields;
-  List<String> filepaths;
-  List<String> filenames;
+  List<httpreq.MultipartFile> files = new List();
+  Map<String, dynamic> fields;
 
   HttpMultipartRequest._new(Http http, String method, String path,
-      this.filenames, this.filepaths, this.fields, Map<String, String> headers)
+      List<File> files, this.fields, Map<String, String> headers)
       : super._new(http, method, path, null, headers, null) {
-    new Map.fromIterables(filenames, filepaths).forEach((name, path) {
-      var f = new File(path);
-      var contents = f.openRead();
-
-      files.add(new MultipartFile(name, contents, f.lengthSync()));
-    });
+    
+    for (var f in files) {
+      try {
+        var name = Uri.file(f.path).toString().split("/").last;
+        this.files.add(new httpreq.MultipartFile(name, f.openRead(), f.lengthSync(), filename: name));
+      } on FileSystemException catch (err) {
+        throw new Exception("Cannot find your file");
+      }
+    }
 
     super.finish();
   }
 
   @override
   Future<HttpResponse> _execute() async {
-    var r = new MultipartRequest(this.method, this.uri);
-    try {
-      this.headers.forEach((k, v) => r.headers[k] = v);
-      if (this.files != null) {
-        this.fields.forEach((k, v) => r.fields[k] = v);
-        r.files.addAll(this.files);
+    var r = new httpreq.MultipartRequest(this.method, this.uri);
+    r.files.addAll(this.files);
+    this.headers.forEach((k, v) => r.headers[k] = v);
 
-        return HttpResponse._fromResponse(this,
-            await r.send());
+    try {
+      if (this.fields != null) {
+        r.fields.addAll({"payload_json": jsonEncode(this.fields) });
+
+        return HttpResponse._fromResponse(this, await r.send());
       } else {
         return HttpResponse._fromResponse(
             this,
             await r.send());
       }
-    } on Exception catch (err) {
+    } on Exception {
       return HttpResponse._fromResponse(
           this, null);
     }
@@ -146,13 +147,9 @@ class HttpResponse {
 
   /// Whether or not the request was aborted. If true, all other fields will be null.
   bool aborted;
-
   String statusText;
-
   int status;
-
   Map<String, String> headers;
-
   Map<String, dynamic> body;
 
   HttpResponse._new(this.request, this.status, this.statusText,
@@ -162,13 +159,20 @@ class HttpResponse {
   HttpResponse._aborted(this.request, [this.aborted = true]) {
         this.status = 0;
         this.statusText = "ABORTED";
-        this.headers = null;
-        this.body = null;
+        this.headers = {};
+        this.body = {};
   }
 
-  static Future<HttpResponse> _fromResponse(HttpBase request, StreamedResponse r) async {
+  static Future<HttpResponse> _fromResponse(HttpBase request, httpreq.StreamedResponse r) async {
+    var res = await r.stream.bytesToString();
+    var json;
+
+    try {
+      json = jsonDecode(res);
+    } on FormatException catch (err) { }
+    
     return new HttpResponse._new(
-        request, r.statusCode, "", r.headers, jsonDecode(await r.stream.bytesToString()) as Map<String, dynamic>);
+        request, r.statusCode, "", r.headers, json as Map<String, dynamic>);
   }
 }
 
@@ -280,7 +284,7 @@ class Http {
   Logger _logger = new Logger.detached("Http");
 
   Http._new([this._client]) {
-    //this.headers = <String, String>{'Content-Type': 'application/json'};
+    this.headers = <String, String>{'Content-Type': 'application/json'};
     this.headers['User-Agent'] =
         'DiscordBot (https://github.com/l7ssha/nyxx, ${_Constants.version})';
   }
@@ -317,40 +321,30 @@ class Http {
     return null;
   }
 
-  /// Expands shorten attachment string `{finename}`
-  /// to full format `attachment://filename`
-  String expandAttachments(String payload) {
-    return payload.replaceAllMapped(new RegExp(r'\{(.+)\}'), (match) {
-      return "attachment://${match.group(0)}";
-    });
-  }
-
   /// Adds AUDIT_LOG header to request
   Map<String, String> addAuditReason(String reason) =>
       <String, String>{"X-Audit-Log-Reason": "$reason"};
 
   /// Sends mutlipart response
   Future<HttpResponse> sendMultipart(
-      String method, String path, List<String> filenames,
-      {String data, bool beforeReady: false, String reason}) async {
+      String method, String path, List<File> files,
+      {Map<String, dynamic> data, bool beforeReady: false, String reason}) async {
     if (_client is Client && !this._client.ready && !beforeReady)
       throw new Exception("Client isn't ready yet.");
 
-    Directory current = Directory.current;
-    List<String> filepaths = new List();
-
-    for (var name in filenames) filepaths.add("${current.path}/$name");
+    print("data $data");
 
     HttpMultipartRequest request = new HttpMultipartRequest._new(
         this,
         method,
         path,
-        filenames,
-        filepaths,
-        <String, String>{"payload_json": expandAttachments(data)},
+        files,
+        data,
         new Map.from(this.headers)
-          ..addAll(headers)
-          ..addAll(addAuditReason(reason)));
+          ..addAll(headers));
+
+    if(reason != "" || reason != null)
+      request.headers.addAll(addAuditReason(reason));
 
     await for (HttpResponse r in request.stream) {
       if (!r.aborted && r.status >= 200 && r.status < 300) {

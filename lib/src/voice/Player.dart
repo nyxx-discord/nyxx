@@ -27,12 +27,14 @@ class Player {
   Guild _guild;
   Client _client;
   Uri _restPath;
+  String _password;
+
   var _sub1, _sub2;
   dynamic _rawEvent;
   VoiceState _currentState;
-  w_transport.WebSocket _webSocket;
+  WebSocket _webSocket;
 
-  Player._new(this._guild, this._client, this._webSocket, this._restPath);
+  Player._new(this._guild, this._client, this._webSocket, this._restPath, this._password);
 
   /// Connects to channel.
   /// Remember to await this methods - thread can be locked forever.
@@ -48,7 +50,7 @@ class Player {
 
     _guild.shard.send("VOICE_STATE_UPDATE",
         new _Opcode4(_guild, channel, false, false)._build());
-
+    
     _currentState = (await _client.onVoiceStateUpdate.first).state;
     _rawEvent = (await _client.onVoiceServerUpdate.first).raw;
 
@@ -90,18 +92,22 @@ class Player {
 
   /// Resolves url to Lavalink Track
   Future<TrackResponse> resolve(String hash) async {
-    var req = w_transport.JsonRequest()
+    /*var req = w_transport.JsonRequest()
       ..uri = _restPath
       ..path = "/loadtracks"
       ..headers = {"Authorization": "password"}
-      ..queryParameters = {"identifier": hash};
+      ..queryParameters = {"identifier": hash};*/
 
-    var res = await req.send("GET");
-    if (res.status != 200)
+    var uri = _restPath.replace(path: "/loadtracks", queryParameters: {"identifier": hash});
+    var req = new http.Request("GET", uri);
+    req.headers["Authorization"] = this._password;
+
+    var res = await req.send();
+    if (res.statusCode != 200)
       throw new Exception("Cannot comunicate with lavalink via http");
 
-    var r = res.body;
-    return new TrackResponse._new(r);
+    var r = jsonDecode(await res.stream.bytesToString());
+    return new TrackResponse._new(r as Map<String, dynamic>);
   }
 
   /// Plays track on currently connected channel

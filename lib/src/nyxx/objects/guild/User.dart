@@ -68,6 +68,13 @@ class User extends SnowflakeEntity with ISend {
 
   @override
 
+  @override
+  /// Sends file to channel and optional [content] with [embed].
+  Future<Message> sendFile(List<File> files,
+      {String content = "", EmbedBuilder embed}) async {
+    throw new Exception("Not implemented!");
+  }
+
   /// Sends a message.
   Future<Message> send(
       {Object content: "",
