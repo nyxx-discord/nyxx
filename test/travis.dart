@@ -33,7 +33,7 @@ class CooldownCommand extends command.CommandContext {
 
 void main() {
   var env = Platform.environment;
-  var bot = new nyxx.Client(env['DISCORD_TOKEN']);
+  var bot = new nyxx.Client(env['DISCORD_TOKEN'], ignoreExceptions: false);
 
   new command.CommandsFramework('~~', bot)
     ..registerLibraryServices()
