@@ -183,8 +183,7 @@ class Message extends SnowflakeEntity {
           "content": newContent,
           "embed": (embed != null ? embed._build() : "")
         });
-    return new Message._new(
-        this.client, r.body);
+    return new Message._new(this.client, r.body);
   }
 
   /// Add reaction to message.

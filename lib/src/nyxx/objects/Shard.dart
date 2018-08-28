@@ -68,8 +68,7 @@ class Shard {
       return;
     }
 
-    WebSocket
-        .connect('${this._ws.gateway}?v=6&encoding=json')
+    WebSocket.connect('${this._ws.gateway}?v=6&encoding=json')
         .then((WebSocket socket) {
       if (!resume) _logger.severe("RECONNECTED");
 

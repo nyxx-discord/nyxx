@@ -45,24 +45,26 @@ class MessageChannel extends Channel with IterableMixin<Message>, ISend {
   }
 
   @override
+
   /// Sends file to channel and optional [content] with [embed].
   Future<Message> sendFile(List<File> files,
       {String content = "", EmbedBuilder embed}) async {
     final HttpResponse r = await this.client.http.sendMultipart(
-        'POST', '/channels/${this.id}/messages', files,
-        data: <String, dynamic>{
-          "content": content,
-          "embed": embed != null ? embed._build() : ""
-        });
+        'POST', '/channels/${this.id}/messages', files, data: <String, dynamic>{
+      "content": content,
+      "embed": embed != null ? embed._build() : ""
+    });
 
-    return new Message._new(
-        this.client, r.body);
+    return new Message._new(this.client, r.body);
   }
 
   /// Gets message woth given id.
   Future<Message> getMessage(Snowflake id, {bool force: false}) async {
-    if(force || !messages.containsKey(id)) {
-      var r = await this.client.http.send('GET', "/channels/${this.id.toString()}/messages/$id");
+    if (force || !messages.containsKey(id)) {
+      var r = await this
+          .client
+          .http
+          .send('GET', "/channels/${this.id.toString()}/messages/$id");
       var msg = new Message._new(this.client, r.body);
 
       messages[id] = msg;
@@ -93,16 +95,13 @@ class MessageChannel extends Channel with IterableMixin<Message>, ISend {
       newContent = content.toString();
     }
 
-    final HttpResponse r = await this
-        .client
-        .http
-        .send('POST', '/channels/${this.id}/messages', body: <String, dynamic>{
+    final HttpResponse r = await this.client.http.send(
+        'POST', '/channels/${this.id}/messages', body: <String, dynamic>{
       "content": newContent,
       "tts": tts,
       "embed": embed != null ? embed._build() : ""
     });
-    return new Message._new(
-        this.client, r.body);
+    return new Message._new(this.client, r.body);
   }
 
   /// Starts typing.

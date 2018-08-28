@@ -61,14 +61,13 @@ class User extends SnowflakeEntity with ISend {
     } catch (err) {
       HttpResponse r = await client.http.send('POST', "/users/@me/channels",
           body: {"recipient_id": this.id.toString()});
-      return new DMChannel._new(
-          client, r.body);
+      return new DMChannel._new(client, r.body);
     }
   }
 
   @override
-
   @override
+
   /// Sends file to channel and optional [content] with [embed].
   Future<Message> sendFile(List<File> files,
       {String content = "", EmbedBuilder embed}) async {
@@ -105,8 +104,7 @@ class User extends SnowflakeEntity with ISend {
           "nonce": nonce,
           "embed": embed
         });
-    return new Message._new(
-        this.client, r.body);
+    return new Message._new(this.client, r.body);
   }
 
   /// Returns a mention of user

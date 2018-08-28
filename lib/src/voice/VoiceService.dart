@@ -130,7 +130,8 @@ class VoiceService {
       if (_playersCache.containsKey(guild.id.toString()))
         return _playersCache[guild.id.toString()];
       else {
-        var tmp = new Player._new(guild, _client, _webSocket, _restPath, _password);
+        var tmp =
+            new Player._new(guild, _client, _webSocket, _restPath, _password);
         _playersCache[guild.id.toString()] = tmp;
         return tmp;
       }

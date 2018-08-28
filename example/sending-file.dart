@@ -31,7 +31,8 @@ void main() {
         ..thumbnailUrl = "${nyxx.expandAttachment('kitten.jpg')}";
 
       // Sent all together
-      e.message.channel.sendFile([new File("kitten.jpg")], embed: embed, content: "HEJKA!");
+      e.message.channel
+          .sendFile([new File("kitten.jpg")], embed: embed, content: "HEJKA!");
     }
   });
 }

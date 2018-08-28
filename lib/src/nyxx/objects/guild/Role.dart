@@ -58,8 +58,7 @@ class Role extends SnowflakeEntity {
     HttpResponse r = await this.client.http.send(
         'PATCH', "/guilds/${this.guild.id}/roles/$id",
         body: role._build(), reason: auditReason);
-    return new Role._new(
-        this.client, r.body, this.guild);
+    return new Role._new(this.client, r.body, this.guild);
   }
 
   /// Deletes the role.

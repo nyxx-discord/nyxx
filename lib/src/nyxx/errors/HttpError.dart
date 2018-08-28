@@ -14,8 +14,8 @@ class HttpError implements Exception {
   /// Constructs a new [HttpError].
   HttpError._new(this.response) {
     //if (response.headers['content-type'] == "application/json") {
-      //this.code = response.body['code'] as int;
-      //this.message = response.body.asJson()['message'] as String;
+    //this.code = response.body['code'] as int;
+    //this.message = response.body.asJson()['message'] as String;
     //}
   }
 
