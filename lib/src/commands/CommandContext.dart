@@ -23,13 +23,11 @@ abstract class CommandContext {
       {Object content,
       EmbedBuilder embed,
       bool tts: false,
-      String nonce,
       bool disableEveryone}) async {
     return await channel.send(
         content: content,
         embed: embed,
         tts: tts,
-        nonce: nonce,
         disableEveryone: disableEveryone);
   }
 
@@ -38,13 +36,11 @@ abstract class CommandContext {
       {Object content,
       EmbedBuilder embed,
       bool tts: false,
-      String nonce,
       bool disableEveryone}) async {
     var msg = await channel.send(
         content: content,
         embed: embed,
         tts: tts,
-        nonce: nonce,
         disableEveryone: disableEveryone);
 
     new Timer(duration, () async => await msg.delete());
@@ -56,7 +52,6 @@ abstract class CommandContext {
       {Object content,
       EmbedBuilder embed,
       bool tts: false,
-      String nonce,
       bool disableEveryone}) async {
     return new Future.delayed(
         duration,
@@ -64,7 +59,6 @@ abstract class CommandContext {
             content: content,
             embed: embed,
             tts: tts,
-            nonce: nonce,
             disableEveryone: disableEveryone));
   }
 

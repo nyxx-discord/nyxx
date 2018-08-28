@@ -45,7 +45,7 @@ class VoiceService {
   Uri _wsPath;
   Uri _restPath;
   Client _client;
-  w_transport.WebSocket _webSocket;
+  WebSocket _webSocket;
   String _password;
   String _clientId;
 
@@ -74,7 +74,7 @@ class VoiceService {
   // Connects to main websocket. And starts dispatching messages.
   Future<void> _connect() async {
     try {
-      w_transport.WebSocket.connect(_wsPath, headers: {
+      WebSocket.connect(_wsPath.toString(), headers: {
         "Authorization": _password,
         "Num-Shards": _client.shards.length,
         "User-Id": _clientId
@@ -130,7 +130,7 @@ class VoiceService {
       if (_playersCache.containsKey(guild.id.toString()))
         return _playersCache[guild.id.toString()];
       else {
-        var tmp = new Player._new(guild, _client, _webSocket, _restPath);
+        var tmp = new Player._new(guild, _client, _webSocket, _restPath, _password);
         _playersCache[guild.id.toString()] = tmp;
         return tmp;
       }

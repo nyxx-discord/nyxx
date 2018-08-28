@@ -4,10 +4,9 @@
 library nyxx.voice;
 
 import 'nyxx.dart';
-
-import 'package:w_transport/w_transport.dart' as w_transport;
 import 'package:logging/logging.dart';
 import 'package:yaml/yaml.dart';
+import 'package:http/http.dart' as http;
 
 import 'dart:io';
 import 'dart:async';

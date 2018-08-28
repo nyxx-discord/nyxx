@@ -44,35 +44,41 @@ class MessageChannel extends Channel with IterableMixin<Message>, ISend {
     }
   }
 
-  /// Sends file to channel and optional [content].
-  /// [filepaths] are path to files - relative to project root.
-  /// Throws an [Exception] if the HTTP request errored.
-  Future<Message> sendFile(List<String> filepaths,
+  @override
+  /// Sends file to channel and optional [content] with [embed].
+  Future<Message> sendFile(List<File> files,
       {String content = "", EmbedBuilder embed}) async {
     final HttpResponse r = await this.client.http.sendMultipart(
-        'POST', '/channels/${this.id}/messages', filepaths,
-        data: jsonEncode(<String, dynamic>{
+        'POST', '/channels/${this.id}/messages', files,
+        data: <String, dynamic>{
           "content": content,
           "embed": embed != null ? embed._build() : ""
-        }));
+        });
 
     return new Message._new(
         this.client, r.body);
   }
 
-  Message getMessage(Snowflake id) => messages[id];
+  /// Gets message woth given id.
+  Future<Message> getMessage(Snowflake id, {bool force: false}) async {
+    if(force || !messages.containsKey(id)) {
+      var r = await this.client.http.send('GET', "/channels/${this.id.toString()}/messages/$id");
+      var msg = new Message._new(this.client, r.body);
+
+      messages[id] = msg;
+      return msg;
+    }
+
+    return messages[id];
+  }
 
   @override
 
   /// Sends a message.
-  ///
-  /// Throws an [Exception] if the HTTP request errored.
-  ///     Channel.send(content: "My content!");
   Future<Message> send(
       {Object content: "",
       EmbedBuilder embed,
       bool tts: false,
-      String nonce,
       bool disableEveryone}) async {
     String newContent;
     if (content != null &&
@@ -93,7 +99,6 @@ class MessageChannel extends Channel with IterableMixin<Message>, ISend {
         .send('POST', '/channels/${this.id}/messages', body: <String, dynamic>{
       "content": newContent,
       "tts": tts,
-      "nonce": nonce,
       "embed": embed != null ? embed._build() : ""
     });
     return new Message._new(
