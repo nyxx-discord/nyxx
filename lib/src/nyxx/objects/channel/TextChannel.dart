@@ -30,8 +30,7 @@ class TextChannel extends MessageChannel with GuildChannel {
       "topic": topic != null ? topic : this.topic,
       "position": position != null ? position : this.position
     });
-    return new TextChannel._new(
-        this.client, r.body, this.guild);
+    return new TextChannel._new(this.client, r.body, this.guild);
   }
 
   /// Gets all of the webhooks for this channel.
@@ -54,8 +53,7 @@ class TextChannel extends MessageChannel with GuildChannel {
     HttpResponse r = await this.client.http.send(
         'POST', "/channels/$id/webhooks",
         body: {"name": name}, reason: auditReason);
-    return new Webhook._new(
-        this.client, r.body);
+    return new Webhook._new(this.client, r.body);
   }
 
   /// Returns all [Channel]s [Invite]s
@@ -89,8 +87,7 @@ class TextChannel extends MessageChannel with GuildChannel {
         'POST', "/channels/$id/invites",
         body: params, reason: auditReason);
 
-    return new Invite._new(
-        this.client, r.body);
+    return new Invite._new(this.client, r.body);
   }
 
   /// Returns pinned [Message]s for [Channel]

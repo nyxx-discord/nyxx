@@ -34,7 +34,8 @@ class Player {
   VoiceState _currentState;
   WebSocket _webSocket;
 
-  Player._new(this._guild, this._client, this._webSocket, this._restPath, this._password);
+  Player._new(this._guild, this._client, this._webSocket, this._restPath,
+      this._password);
 
   /// Connects to channel.
   /// Remember to await this methods - thread can be locked forever.
@@ -50,7 +51,7 @@ class Player {
 
     _guild.shard.send("VOICE_STATE_UPDATE",
         new _Opcode4(_guild, channel, false, false)._build());
-    
+
     _currentState = (await _client.onVoiceStateUpdate.first).state;
     _rawEvent = (await _client.onVoiceServerUpdate.first).raw;
 
@@ -98,7 +99,8 @@ class Player {
       ..headers = {"Authorization": "password"}
       ..queryParameters = {"identifier": hash};*/
 
-    var uri = _restPath.replace(path: "/loadtracks", queryParameters: {"identifier": hash});
+    var uri = _restPath
+        .replace(path: "/loadtracks", queryParameters: {"identifier": hash});
     var req = new http.Request("GET", uri);
     req.headers["Authorization"] = this._password;
 

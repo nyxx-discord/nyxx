@@ -196,8 +196,7 @@ class Guild extends SnowflakeEntity {
         .http
         .send('GET', "/guilds/$id/emojis/${emojiId.toString()}");
 
-    return new GuildEmoji._new(
-        this.client, r.body, this);
+    return new GuildEmoji._new(this.client, r.body, this);
   }
 
   /// Prunes the guild, returns the amount of members pruned.
@@ -263,8 +262,7 @@ class Guild extends SnowflakeEntity {
         .http
         .send('GET', '/guilds/${this.id}/audit-logs', queryParams: query);
 
-    return new AuditLog._new(
-        this.client, r.body);
+    return new AuditLog._new(this.client, r.body);
   }
 
   /// Get Guil's embed object
@@ -278,10 +276,7 @@ class Guild extends SnowflakeEntity {
       {String auditReason = ""}) async {
     HttpResponse r = await this.client.http.send('PATCH', "/guilds/$id/embed",
         body: embed._build(), reason: auditReason);
-    return new Embed._new(
-      this.client,
-      r.body
-    );
+    return new Embed._new(this.client, r.body);
   }
 
   /// Creates new role
@@ -426,8 +421,7 @@ class Guild extends SnowflakeEntity {
         .http
         .send('GET', '/guilds/${this.id}/members/${user.id.toString()}');
 
-    return new Member._new(
-        this.client, r.body, this);
+    return new Member._new(this.client, r.body, this);
   }
 
   /// Gets all of the webhooks for this guild.

@@ -93,14 +93,13 @@ class Webhook extends SnowflakeEntity {
     await this
         .client
         .http
-        .sendMultipart("POST", "/webhooks/$id/$token", files,
-            data: {
-              "content": content,
-              "username": username,
-              "avatar_url": avatarUrl,
-              "tts": tts,
-              "embeds": embeds.map((t) => t._build())
-            });
+        .sendMultipart("POST", "/webhooks/$id/$token", files, data: {
+      "content": content,
+      "username": username,
+      "avatar_url": avatarUrl,
+      "tts": tts,
+      "embeds": embeds.map((t) => t._build())
+    });
   }
 
   /// Returns a string representation of this object.

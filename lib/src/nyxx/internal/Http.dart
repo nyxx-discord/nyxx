@@ -68,16 +68,12 @@ class HttpBase {
       this.headers.forEach((k, v) => r.headers[k] = v);
       if (this.body != null) {
         r.body = jsonEncode(this.body);
-        return HttpResponse._fromResponse(this,
-            await r.send());
+        return HttpResponse._fromResponse(this, await r.send());
       } else {
-        return HttpResponse._fromResponse(
-            this,
-            await r.send());
+        return HttpResponse._fromResponse(this, await r.send());
       }
     } on Exception {
-      return HttpResponse._fromResponse(
-          this, null);
+      return HttpResponse._fromResponse(this, null);
     }
   }
 }
@@ -89,11 +85,12 @@ class HttpMultipartRequest extends HttpBase {
   HttpMultipartRequest._new(Http http, String method, String path,
       List<File> files, this.fields, Map<String, String> headers)
       : super._new(http, method, path, null, headers, null) {
-    
     for (var f in files) {
       try {
         var name = Uri.file(f.path).toString().split("/").last;
-        this.files.add(new httpreq.MultipartFile(name, f.openRead(), f.lengthSync(), filename: name));
+        this.files.add(new httpreq.MultipartFile(
+            name, f.openRead(), f.lengthSync(),
+            filename: name));
       } on FileSystemException catch (err) {
         throw new Exception("Cannot find your file");
       }
@@ -110,17 +107,14 @@ class HttpMultipartRequest extends HttpBase {
 
     try {
       if (this.fields != null) {
-        r.fields.addAll({"payload_json": jsonEncode(this.fields) });
+        r.fields.addAll({"payload_json": jsonEncode(this.fields)});
 
         return HttpResponse._fromResponse(this, await r.send());
       } else {
-        return HttpResponse._fromResponse(
-            this,
-            await r.send());
+        return HttpResponse._fromResponse(this, await r.send());
       }
     } on Exception {
-      return HttpResponse._fromResponse(
-          this, null);
+      return HttpResponse._fromResponse(this, null);
     }
   }
 }
@@ -152,25 +146,26 @@ class HttpResponse {
   Map<String, String> headers;
   Map<String, dynamic> body;
 
-  HttpResponse._new(this.request, this.status, this.statusText,
-      this.headers, this.body,
+  HttpResponse._new(
+      this.request, this.status, this.statusText, this.headers, this.body,
       [this.aborted = false]);
 
   HttpResponse._aborted(this.request, [this.aborted = true]) {
-        this.status = 0;
-        this.statusText = "ABORTED";
-        this.headers = {};
-        this.body = {};
+    this.status = 0;
+    this.statusText = "ABORTED";
+    this.headers = {};
+    this.body = {};
   }
 
-  static Future<HttpResponse> _fromResponse(HttpBase request, httpreq.StreamedResponse r) async {
+  static Future<HttpResponse> _fromResponse(
+      HttpBase request, httpreq.StreamedResponse r) async {
     var res = await r.stream.bytesToString();
     var json;
 
     try {
       json = jsonDecode(res);
-    } on FormatException catch (err) { }
-    
+    } on FormatException catch (err) {}
+
     return new HttpResponse._new(
         request, r.statusCode, "", r.headers, json as Map<String, dynamic>);
   }
@@ -240,8 +235,7 @@ class HttpBucket {
           new RatelimitEvent._new(
               request.http._client, request as HttpRequest, false, r);
           new Timer(
-              new Duration(
-                  milliseconds: (r.body['retry_after'] as int) + 500),
+              new Duration(milliseconds: (r.body['retry_after'] as int) + 500),
               () => this._execute(request));
         } else {
           this.waiting = false;
@@ -328,22 +322,18 @@ class Http {
   /// Sends mutlipart response
   Future<HttpResponse> sendMultipart(
       String method, String path, List<File> files,
-      {Map<String, dynamic> data, bool beforeReady: false, String reason}) async {
+      {Map<String, dynamic> data,
+      bool beforeReady: false,
+      String reason}) async {
     if (_client is Client && !this._client.ready && !beforeReady)
       throw new Exception("Client isn't ready yet.");
 
     print("data $data");
 
-    HttpMultipartRequest request = new HttpMultipartRequest._new(
-        this,
-        method,
-        path,
-        files,
-        data,
-        new Map.from(this.headers)
-          ..addAll(headers));
+    HttpMultipartRequest request = new HttpMultipartRequest._new(this, method,
+        path, files, data, new Map.from(this.headers)..addAll(headers));
 
-    if(reason != "" || reason != null)
+    if (reason != "" || reason != null)
       request.headers.addAll(addAuditReason(reason));
 
     await for (HttpResponse r in request.stream) {

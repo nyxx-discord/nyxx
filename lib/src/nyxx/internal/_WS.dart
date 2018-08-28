@@ -98,7 +98,7 @@ class _WS {
             .then((HttpResponse r) {
           client.app = new ClientOAuth2Application._new(
               client, r.body);*/
-          new ReadyEvent._new(client);
+        new ReadyEvent._new(client);
         //});
       } else {
         new ReadyEvent._new(client);
