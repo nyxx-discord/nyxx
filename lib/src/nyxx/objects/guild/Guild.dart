@@ -463,7 +463,8 @@ class Guild extends SnowflakeEntity {
   }
 
   /// Gets all of the webhooks for this guild. Webhooks won't be cached until method will be invoked with [cache] as true.
-  Future<Map<Snowflake, Webhook>> getWebhooks({bool force: false, bool cache: false}) async {
+  Future<Map<Snowflake, Webhook>> getWebhooks(
+      {bool force: false, bool cache: false}) async {
     if (this.webhooks != null && !force) return webhooks;
 
     HttpResponse r = await this.client.http.send('GET', "/guilds/$id/webhooks");
@@ -474,7 +475,7 @@ class Guild extends SnowflakeEntity {
       map[webhook.id] = webhook;
     });
 
-    if(cache) this.webhooks = map;
+    if (cache) this.webhooks = map;
     return map;
   }
 

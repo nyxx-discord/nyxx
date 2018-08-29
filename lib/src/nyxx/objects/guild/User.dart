@@ -18,7 +18,7 @@ class User extends SnowflakeEntity with ISend {
   String avatar;
 
   /// The string to mention the user.
-  String get mention =>  "<@${this.id}>";
+  String get mention => "<@${this.id}>";
 
   /// The string to mention the user by nickname
   String get mentionNickname => "<@!${this.id}>";

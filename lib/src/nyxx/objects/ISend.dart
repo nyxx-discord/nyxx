@@ -17,8 +17,7 @@ String _sanitizeMessage(Object content, bool disableEveryone, Client client) {
   var msg = content.toString();
   if (content != null &&
       ((disableEveryone != null && disableEveryone) ||
-          (disableEveryone == null &&
-              client._options.disableEveryone))) {
+          (disableEveryone == null && client._options.disableEveryone))) {
     return msg
         .replaceAll("@everyone", "@\u200Beveryone")
         .replaceAll("@here", "@\u200Bhere");
