@@ -32,8 +32,8 @@ class Role extends SnowflakeEntity {
   /// The role's permissions.
   Permissions permissions;
 
-  /// Mention of role
-  String mention;
+  /// Mention of role. If role cannot be mentioned it returns name of role.
+  String get mention => mentionable ? "<@&${this.id}>" : name;
 
   Role._new(this.client, this.raw, this.guild)
       : super(new Snowflake(raw['id'] as String)) {
@@ -43,13 +43,8 @@ class Role extends SnowflakeEntity {
     this.managed = raw['managed'] as bool;
     this.mentionable = raw['mentionable'] as bool;
     this.permissions = new Permissions.fromInt(raw['permissions'] as int);
+    this.color = raw['color'] as int;
 
-    if (raw['color'] == 0)
-      this.color = null;
-    else
-      this.color = raw['color'] as int;
-
-    if (mentionable) this.mention = "<@&${this.id}>";
     this.guild.roles[this.id] = this;
   }
 
@@ -67,13 +62,14 @@ class Role extends SnowflakeEntity {
         reason: auditReason);
   }
 
+  /// Adds role to user.
   Future<void> addToUser(User user, {String auditReason: ""}) async {
     await this.client.http.send(
         'PUT', '/guilds/${guild.id}/members/${user.id}/roles/$id',
         reason: auditReason);
   }
 
-  /// Returns a mention of role. Empty string if role inn't mentionable
+  /// Returns a mention of role. If role cannot be mentioned it returns name of role.
   @override
-  String toString() => mentionable ? this.mention : "@$name";
+  String toString() => mention;
 }

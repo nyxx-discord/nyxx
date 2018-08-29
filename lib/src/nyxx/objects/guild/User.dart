@@ -18,10 +18,10 @@ class User extends SnowflakeEntity with ISend {
   String avatar;
 
   /// The string to mention the user.
-  String mention;
+  String get mention =>  "<@${this.id}>";
 
   /// The string to mention the user by nickname
-  String mentionNickname;
+  String get mentionNickname => "<@!${this.id}>";
 
   /// Whether or not the user is a bot.
   bool bot = false;
@@ -35,8 +35,6 @@ class User extends SnowflakeEntity with ISend {
     this.username = raw['username'] as String;
     this.discriminator = raw['discriminator'] as String;
     this.avatar = raw['avatar'] as String;
-    this.mention = "<@${this.id}>";
-    this.mentionNickname = "<@!${this.id}>";
 
     // This will not be set at all in some cases.
     if (raw['bot'] != null) this.bot = raw['bot'] as bool;
@@ -80,21 +78,8 @@ class User extends SnowflakeEntity with ISend {
       {Object content: "",
       EmbedBuilder embed,
       bool tts: false,
-      String nonce,
       bool disableEveryone}) async {
-    String newContent;
-    if (content != null &&
-        (disableEveryone == true ||
-            (disableEveryone == null &&
-                this.client._options.disableEveryone))) {
-      newContent = content
-          .toString()
-          .replaceAll("@everyone", "@\u200Beveryone")
-          .replaceAll("@here", "@\u200Bhere");
-    } else {
-      newContent = content.toString();
-    }
-
+    String newContent = _sanitizeMessage(content, disableEveryone, client);
     DMChannel channel = await getDMChannel();
 
     final HttpResponse r = await this.client.http.send(
@@ -102,7 +87,6 @@ class User extends SnowflakeEntity with ISend {
         body: <String, dynamic>{
           "content": newContent,
           "tts": tts,
-          "nonce": nonce,
           "embed": embed
         });
     return new Message._new(this.client, r.body);
