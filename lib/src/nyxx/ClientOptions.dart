@@ -24,13 +24,8 @@ class ClientOptions {
 
   /// Whether or not to force fetch all of the members the client can see.
   /// Can slow down ready times but is recommended if you rely on `Message.member`
-  /// or the member cache. Bots only, will break userbots.
+  /// or the member cache.
   bool forceFetchMembers;
-
-  /// A list of discord formatted events to be disabled. Note: some of these events
-  /// can be dangerous to disable. Ex: `TYPING_START`
-  @deprecated
-  List<String> disabledEvents;
 
   /// Makes a new `ClientOptions` object.
   ClientOptions(
@@ -38,7 +33,6 @@ class ClientOptions {
       this.autoShard: true,
       this.shardIds: const [0],
       this.shardCount: 1,
-      this.disabledEvents: const [],
       this.messageCacheSize: 200,
       this.ignoreUncachedEvents: true,
       this.forceFetchMembers: false});

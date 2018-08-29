@@ -122,7 +122,7 @@ class _EventController {
     this.onDisconnect = new StreamController.broadcast();
     client.onDisconnect = this.onDisconnect.stream;
 
-    this.beforeHttpRequestSend = new StreamController.broadcast();
+    this.beforeHttpRequestSend = new StreamController();
     client.beforeHttpRequestSend = this.beforeHttpRequestSend.stream;
 
     this.onHttpResponse = new StreamController.broadcast();

@@ -2,6 +2,19 @@ part of nyxx;
 
 /// Class representing client - it's place to start with.
 /// From there you can subscribe to varius [Stream]s to listen to [Events](https://github.com/l7ssha/nyxx/wiki/EventList)
+/// 
+/// Creating new instance of bot:
+/// ```
+/// var bot = new Client("<TOKEN>");
+/// ```
+/// From this place bot will try to connect to gateway and listen to events:
+/// ```
+/// bot.onReady.listen((e) => print('Ready!'));
+/// 
+/// bot.onRoleCreate.listen((e) {
+///   print('Role createed with name: ${e.role.name});
+/// });
+/// ```
 /// Rememeber to close [Client] before terminating program:
 /// ```dart
 ///  bot.destroy();
@@ -9,6 +22,8 @@ part of nyxx;
 /// It closes bot connections to discord servers and makes sure that everything is terminated correctly.
 class Client {
   String _token;
+  String clientId;
+
   ClientOptions _options;
   DateTime _startTime;
   _WS _ws;
@@ -52,6 +67,7 @@ class Client {
   Stream<DisconnectEvent> onDisconnect;
 
   /// Emitted before all HTTP requests are sent. (You can edit them)
+  /// This is single subscription Stream.
   ///
   /// **WARNING:** Once you listen to this stream, all requests
   /// will be halted until you call `request.send()`
@@ -157,10 +173,11 @@ class Client {
   /// Emitted when a guild's voice server is updated. This is sent when initially connecting to voice, and when the current voice instance fails over to a new server.
   Stream<VoiceServerUpdateEvent> onVoiceServerUpdate;
 
+  /// Logger instance
   Logger logger = new Logger.detached("Client");
 
   /// Creates and logs in a new client.
-  Client(this._token, {ClientOptions options, bool ignoreExceptions: true}) {
+  Client(this._token, {String clientId, ClientOptions options, bool ignoreExceptions: true}) {
     if (ignoreExceptions) {
       Isolate.current.setErrorsFatal(false);
       ReceivePort errorsPort = new ReceivePort();
@@ -172,7 +189,7 @@ class Client {
 
     if (this._token == null || this._token == "")
       throw new Exception("Token cannot be null or empty");
-
+    this.clientId = clientId; 
     if (this._options == null) this._options = new ClientOptions();
 
     this._voiceStates = new Map<Snowflake, UserVoiceState>();
@@ -233,26 +250,20 @@ class Client {
     return new Webhook._new(this, r.body);
   }
 
-  /// Block isolate until client is ready
+  /// Block isolate until client is ready. 
   Future<ReadyEvent> blockToReady() async => await onReady.first;
 
-  /// Gets an [Invite] object.
-  ///
-  /// Throws an [Exception] if the HTTP request errored.
-  ///     Client.getInvite("invite code");
+  /// Gets an [Invite] object with given code.
   Future<Invite> getInvite(String code) async {
     final HttpResponse r = await this.http.send('GET', '/invites/$code');
     return new Invite._new(this, r.body);
   }
 
-  /// Gets an [OAuth2Info] object.
-  ///
-  /// Throws an [Exception] if the HTTP request errored
-  ///     Client.getOAuth2Info("app id");
-  Future<OAuth2Info> getOAuth2Info(String userId) async {
-    final HttpResponse r = await this
-        .http
-        .send('GET', '/oauth2/authorize?client_id=$userId&scope=bot');
-    return new OAuth2Info._new(this, r.body);
+  /// Gets an bot invite link. Null if [clientId] not present.
+  Future<String> getInviteLink() async {
+    if(clientId != null)
+      return "https://discordapp.com/oauth2/authorize?&client_id=${this.clientId}&scope=bot&permissions=0";
+    
+    return null;
   }
 }
