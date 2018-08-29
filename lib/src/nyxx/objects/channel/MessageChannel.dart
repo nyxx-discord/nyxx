@@ -87,10 +87,13 @@ class MessageChannel extends Channel with IterableMixin<Message>, ISend {
   ///   .sendFile([new File("kitten.jpg")], embed: embed, content: "HEJKA!");
   /// ```
   Future<Message> sendFile(List<File> files,
-      {String content = "", EmbedBuilder embed}) async {
+      {String content = "", EmbedBuilder embed,
+      bool disableEveryone}) async {
+    var newContent = _sanitizeMessage(content, disableEveryone, client);
+
     final HttpResponse r = await this.client.http.sendMultipart(
         'POST', '/channels/${this.id}/messages', files, data: <String, dynamic>{
-      "content": content,
+      "content": newContent,
       "embed": embed != null ? embed._build() : ""
     });
 
@@ -123,18 +126,7 @@ class MessageChannel extends Channel with IterableMixin<Message>, ISend {
       EmbedBuilder embed,
       bool tts: false,
       bool disableEveryone}) async {
-    String newContent;
-    if (content != null &&
-        (disableEveryone == true ||
-            (disableEveryone == null &&
-                this.client._options.disableEveryone))) {
-      newContent = content
-          .toString()
-          .replaceAll("@everyone", "@\u200Beveryone")
-          .replaceAll("@here", "@\u200Bhere");
-    } else {
-      newContent = content.toString();
-    }
+    var newContent = _sanitizeMessage(content, disableEveryone, client);
 
     final HttpResponse r = await this.client.http.send(
         'POST', '/channels/${this.id}/messages', body: <String, dynamic>{
@@ -160,15 +152,6 @@ class MessageChannel extends Channel with IterableMixin<Message>, ISend {
   /// Stops a typing loop if one is running.
   void stopTypingLoop() => this._typing?.cancel();
 
-  // Divides list into equal pieces
-  Stream<List<T>> _chunk<T>(List<T> list, int chunkSize) async* {
-    int len = list.length;
-    for (var i = 0; i < len; i += chunkSize) {
-      int size = i + chunkSize;
-      yield list.sublist(i, size > len ? len : size);
-    }
-  }
-
   /// Bulk removes many messages by its ids. [messagesIds] is list of messages ids to delete.
   ///
   /// ```
@@ -176,7 +159,7 @@ class MessageChannel extends Channel with IterableMixin<Message>, ISend {
   /// await chan.bulkRemoveMessages(toDelete);
   /// ```
   Future<void> bulkRemoveMessages(Iterable<Snowflake> messagesIds) async {
-    _chunk(messagesIds.toList(), 90).listen((data) async {
+    utils.chunk(messagesIds.toList(), 90).listen((data) async {
       await this.client.http.send(
           'POST', "/channels/${id.toString()}/messages/bulk-delete",
           body: {"messages": data});
