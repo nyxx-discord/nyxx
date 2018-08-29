@@ -80,6 +80,11 @@ void main() {
         content:
             "Testing new Travis CI build `#${env['TRAVIS_BUILD_NUMBER']}` from commit `${env['TRAVIS_COMMIT']}` on branch `${env['TRAVIS_BRANCH']}` with Dart version: `${env['TRAVIS_DART_VERSION']}`");
 
+    print("TESTING CLIENT INTERNALS");
+    assert(bot.app.id == "361949050016235520");
+    assert(bot.app.name == "Nataly");
+    assert(bot.app.owner.id == "302359032612651009");
+
     print("TESTING BASIC FUNCTIONALITY!");
     var m = await channel.send(content: "Message test.");
     await m.edit(content: "Edit test.");
