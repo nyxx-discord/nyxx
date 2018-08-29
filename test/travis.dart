@@ -75,7 +75,7 @@ void main() {
 
   bot.onReady.listen((e) async {
     var channel =
-        bot.channels[nyxx.snow('422285619952222208')] as nyxx.TextChannel;
+        bot.channels[nyxx.Snowflake('422285619952222208')] as nyxx.TextChannel;
     channel.send(
         content:
             "Testing new Travis CI build `#${env['TRAVIS_BUILD_NUMBER']}` from commit `${env['TRAVIS_COMMIT']}` on branch `${env['TRAVIS_BRANCH']}` with Dart version: `${env['TRAVIS_DART_VERSION']}`");
@@ -84,6 +84,15 @@ void main() {
     assert(bot.app.id == "361949050016235520");
     assert(bot.app.name == "Nataly");
     assert(bot.app.owner.id == "302359032612651009");
+
+    assert(bot.channels.length > 0);
+    assert(bot.users.length > 0);
+    assert(bot.shards.length == 1);
+    assert(bot.ready);
+    assert(bot.inviteLink != null);
+
+    assert(bot.user.voiceState == null);
+    assert(bot.user.discriminator == "4296");
 
     print("TESTING BASIC FUNCTIONALITY!");
     var m = await channel.send(content: "Message test.");
