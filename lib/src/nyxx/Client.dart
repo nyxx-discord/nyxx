@@ -161,7 +161,7 @@ class Client {
 
   /// Creates and logs in a new client.
   Client(this._token, {ClientOptions options, bool ignoreExceptions: true}) {
-    if(ignoreExceptions) {
+    if (ignoreExceptions) {
       Isolate.current.setErrorsFatal(false);
       ReceivePort errorsPort = new ReceivePort();
       errorsPort.listen((err) {

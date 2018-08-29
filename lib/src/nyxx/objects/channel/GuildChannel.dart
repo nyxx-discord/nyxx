@@ -50,12 +50,14 @@ abstract class GuildChannel implements Channel {
 
   /// Allows to set permissions for channel. [id] can be either User or Role
   /// Throws if [id] isn't [User] or [Role]
-  Future<void> editChannelPermission(PermissionsBuilder perms, SnowflakeEntity id,
+  Future<void> editChannelPermission(
+      PermissionsBuilder perms, SnowflakeEntity id,
       {String auditReason: ""}) async {
-    if(!(id is Role) || !(id is User))
+    if (!(id is Role) || !(id is User))
       throw new Exception("`id` property must be either Role or User");
-    
-    await this.client.http.send("PUT", "/channels/${this.id}/permissions/${id.toString()}",
+
+    await this.client.http.send(
+        "PUT", "/channels/${this.id}/permissions/${id.toString()}",
         body: perms._build()._build(), reason: auditReason);
   }
 
@@ -63,9 +65,9 @@ abstract class GuildChannel implements Channel {
   /// Throws if [id] isn't [User] or [Role]
   Future<void> deleteChannelPermission(SnowflakeEntity id,
       {String auditReason: ""}) async {
-    if(!(id is Role) || !(id is User))
+    if (!(id is Role) || !(id is User))
       throw new Exception("`id` property must be either Role or User");
-    
+
     await this.client.http.send("POST", "/channels/${this.id}/permissions/$id",
         reason: auditReason);
   }

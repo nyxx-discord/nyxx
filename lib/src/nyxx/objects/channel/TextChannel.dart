@@ -49,7 +49,7 @@ class TextChannel extends MessageChannel with GuildChannel {
   }
 
   /// Creates a webhook for channel.
-  /// 
+  ///
   /// ```
   /// var webhook = await chan.createWebhook("!a Send nudes kek6407");
   /// ```
@@ -61,7 +61,7 @@ class TextChannel extends MessageChannel with GuildChannel {
   }
 
   /// Fetches and returns all channel's [Invite]s
-  /// 
+  ///
   /// ```
   /// var invites = await chan.getChannelInvites();
   /// ```
@@ -78,7 +78,7 @@ class TextChannel extends MessageChannel with GuildChannel {
   }
 
   /// Creates new [Invite] for [Channel] and returns it's instance
-  /// 
+  ///
   /// ```
   /// var inv = await chan.createInvite(maxUses: 2137);
   /// ```

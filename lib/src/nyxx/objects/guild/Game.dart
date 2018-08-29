@@ -40,7 +40,7 @@ class Game {
 
   ///	Activity flags ORd together, describes what the payload includes
   int activityFlags;
-  
+
   /// The game URL, if provided.
   String url;
 
@@ -54,24 +54,26 @@ class Game {
     this.url = raw['name'] as String;
     this.type = raw['type'] as int;
 
-    if(raw['timestamps'] != null) {
-      start = new DateTime.fromMillisecondsSinceEpoch(raw['timestamps']['start'] as int);
-      end = new DateTime.fromMillisecondsSinceEpoch(raw['timestamps']['end'] as int);
+    if (raw['timestamps'] != null) {
+      start = new DateTime.fromMillisecondsSinceEpoch(
+          raw['timestamps']['start'] as int);
+      end = new DateTime.fromMillisecondsSinceEpoch(
+          raw['timestamps']['end'] as int);
     }
 
-    if(raw['application_id'] != null)
+    if (raw['application_id'] != null)
       applicationId = new Snowflake(raw['application_id'] as String);
 
     details = raw['details'] as String;
     state = raw['state'] as String;
 
-    if(raw['party'] != null)
+    if (raw['party'] != null)
       party = new GameParty._new(raw['party'] as Map<String, dynamic>);
 
-    if(raw['assets'] != null)
+    if (raw['assets'] != null)
       assets = new GameAssets._new(raw['assets'] as Map<String, dynamic>);
 
-    if(raw['secrets'] != null)
+    if (raw['secrets'] != null)
       secrets = new GameSecrets._new(raw['secrets'] as Map<String, dynamic>);
 
     instance = raw['instance'] as bool;
@@ -102,7 +104,6 @@ class GameParty {
 
 /// Presence's assets
 class GameAssets {
-
   /// The id for a large asset of the activity, usually a snowflake.
   String largeImage;
 
