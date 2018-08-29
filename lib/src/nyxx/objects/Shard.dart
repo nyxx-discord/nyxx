@@ -328,8 +328,8 @@ class Shard {
 
     switch (this._socket.closeCode) {
       case 1005:
-        throw _throw(
-            'No status code was provided even though one was expected.');
+        this._connect(false);
+        break;
       case 4004:
         throw _throw(
             'The account token sent with your identify payload is incorrect.');
