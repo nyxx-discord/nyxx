@@ -46,3 +46,12 @@ String getSymbolName(Symbol symbol) {
 Iterable<List<T>> partition<T>(List<T> lst, int len) sync* {
   for (var i = 0; i < lst.length; i += len) yield lst.sublist(i, i + len);
 }
+
+// Divides list into equal pieces
+Stream<List<T>> chunk<T>(List<T> list, int chunkSize) async* {
+  int len = list.length;
+  for (var i = 0; i < len; i += chunkSize) {
+    int size = i + chunkSize;
+    yield list.sublist(i, size > len ? len : size);
+  }
+}
