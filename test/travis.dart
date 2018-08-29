@@ -5,7 +5,7 @@ import 'package:nyxx/nyxx.dart' as nyxx;
 import 'package:nyxx/commands.dart' as command;
 
 // Messages on which we delete message
-var ddel = [
+const ddel = [
   "--trigger-test",
   "test is working correctly",
   "test is working correctly",
@@ -131,7 +131,7 @@ void main() {
         m.author.id != bot.user.id)
         return;
 
-    if(ddel.contains(m.content))
+    if(ddel.any((d) => d.startsWith(m.content)))
       await m.delete();
 
     if (m.content == "Testing embed!") {
