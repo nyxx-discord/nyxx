@@ -199,7 +199,12 @@ class Client {
 
     Logger.root.level = Level.ALL;
     Logger.root.onRecord.listen((LogRecord rec) {
-      print('[${rec.level.name}] {${rec.loggerName}} - '
+      String color;
+      if(rec.level == Level.WARNING) color = "\u001B[33m";
+      else if (rec.level == Level.SEVERE) color = "\u001B[31m";
+      else color = "\u001B[0m";
+
+      print('$color[${rec.level.name}] \u001B[0m {${rec.loggerName}} - '
           '${rec.time.day}.${rec.time.month}.${rec.time.year}'
           '${rec.time.hour}:${rec.time.minute}:${rec.time.second}'
           ':${rec.time.millisecond} '
