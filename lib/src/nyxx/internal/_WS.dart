@@ -86,8 +86,13 @@ class _WS {
     if (match && match2) {
       client.ready = true;
       client._startTime = new DateTime.now();
-      new ReadyEvent._new(client);
-      logger.info("Connected and ready!");
+
+      this.client.http.send("GET", "/oauth2/applications/@me").then((response) {
+        this.client.app = new ClientOAuth2Application._new(this.client, response.body);
+
+        new ReadyEvent._new(client);
+        logger.info("Connected and ready!");
+      });
     }
   }
 }

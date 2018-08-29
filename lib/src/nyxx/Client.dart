@@ -17,8 +17,6 @@ part of nyxx;
 /// ```
 class Client {
   String _token;
-  String clientId;
-
   ClientOptions _options;
   DateTime _startTime;
   _WS _ws;
@@ -171,9 +169,11 @@ class Client {
   /// Logger instance
   Logger logger = new Logger.detached("Client");
 
+  /// Gets an bot invite link. Null if [clientId] not present.
+  String get inviteLink => "https://discordapp.com/oauth2/authorize?&client_id=${this.app.id.toString()}&scope=bot&permissions=0";
+
   /// Creates and logs in a new client.
-  Client(this._token,
-      {String clientId, ClientOptions options, bool ignoreExceptions: true}) {
+  Client(this._token,{ClientOptions options, bool ignoreExceptions: true}) {
     if (ignoreExceptions) {
       Isolate.current.setErrorsFatal(false);
       ReceivePort errorsPort = new ReceivePort();
@@ -185,7 +185,6 @@ class Client {
 
     if (this._token == null || this._token == "")
       throw new Exception("Token cannot be null or empty");
-    this.clientId = clientId;
     if (this._options == null) this._options = new ClientOptions();
 
     this._voiceStates = new Map<Snowflake, UserVoiceState>();
@@ -247,13 +246,5 @@ class Client {
   Future<Invite> getInvite(String code) async {
     final HttpResponse r = await this.http.send('GET', '/invites/$code');
     return new Invite._new(this, r.body);
-  }
-
-  /// Gets an bot invite link. Null if [clientId] not present.
-  Future<String> getInviteLink() async {
-    if (clientId != null)
-      return "https://discordapp.com/oauth2/authorize?&client_id=${this.clientId}&scope=bot&permissions=0";
-
-    return null;
   }
 }
