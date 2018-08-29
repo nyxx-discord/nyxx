@@ -3,10 +3,10 @@ part of nyxx;
 /// Provides abstraction of messages for [TextChannel], [DMChannel] and [GroupDMChannel].
 /// Implements iterator which allows to use message object in for loops to access
 /// messages sequentially.
-/// 
+///
 /// ```
 /// var chan = client.channels.firstWhere((ch) => ch is TextChannel);
-/// 
+///
 /// for (var message in chan) {
 ///   print(message.author.id);
 /// }
@@ -71,9 +71,10 @@ class MessageChannel extends Channel with IterableMixin<Message>, ISend {
   }
 
   @override
+
   /// Sends file to channel and optional [content] with [embed].
-  /// Use `expandAttachment(String file)` method to expand file names in embed 
-  /// 
+  /// Use `expandAttachment(String file)` method to expand file names in embed
+  ///
   /// ```
   /// await chan.sendFile([new File("kitten.png"), new File("kitten.jpg")], content: "Kittens ^-^"]);
   /// ```
@@ -81,7 +82,7 @@ class MessageChannel extends Channel with IterableMixin<Message>, ISend {
   /// var embed = new nyxx.EmbedBuilder()
   ///   ..title = "Example Title"
   ///   ..thumbnailUrl = "${expandAttachment('kitten.jpg')}";
-  /// 
+  ///
   /// await e.message.channel
   ///   .sendFile([new File("kitten.jpg")], embed: embed, content: "HEJKA!");
   /// ```
@@ -99,22 +100,22 @@ class MessageChannel extends Channel with IterableMixin<Message>, ISend {
   @override
 
   /// Sends message to channel. Performs `toString()` on thing passed to [content]. Allows to send embeds with [embed] field.
-  /// 
+  ///
   /// ```
   /// await chan.send(content: "Very nice message!");
   /// ```
-  /// 
+  ///
   /// Can be used in combination with [Emoji]. Just run `toString()` on [Emoji] instance:
   /// ```
   /// var emoji = guild.emojis.values.firstWhere((e) => e.name.startsWith("dart"));
   /// await chan.send(content: "Dart is superb! ${emoji.toString()}");
-  /// ``` 
+  /// ```
   /// Embeds can be sent very easily:
   /// ```
   /// var embed = new EmbedBuilder()
   ///   ..title = "Example Title"
   ///   ..addField(name: "Memory usage", value: "${ProcessInfo.currentRss / 1024 / 1024}MB");
-  /// 
+  ///
   /// await chan.send(embed: embed);
   /// ```
   Future<Message> send(
@@ -163,13 +164,13 @@ class MessageChannel extends Channel with IterableMixin<Message>, ISend {
   Stream<List<T>> _chunk<T>(List<T> list, int chunkSize) async* {
     int len = list.length;
     for (var i = 0; i < len; i += chunkSize) {
-      int size = i+chunkSize;
+      int size = i + chunkSize;
       yield list.sublist(i, size > len ? len : size);
     }
   }
 
   /// Bulk removes many messages by its ids. [messagesIds] is list of messages ids to delete.
-  /// 
+  ///
   /// ```
   /// var toDelete = chan.messages.keys.take(5);
   /// await chan.bulkRemoveMessages(toDelete);
@@ -177,8 +178,8 @@ class MessageChannel extends Channel with IterableMixin<Message>, ISend {
   Future<void> bulkRemoveMessages(Iterable<Snowflake> messagesIds) async {
     _chunk(messagesIds.toList(), 90).listen((data) async {
       await this.client.http.send(
-        'POST', "/channels/${id.toString()}/messages/bulk-delete",
-        body: {"messages": data });
+          'POST', "/channels/${id.toString()}/messages/bulk-delete",
+          body: {"messages": data});
     });
   }
 
@@ -186,17 +187,16 @@ class MessageChannel extends Channel with IterableMixin<Message>, ISend {
   /// otherwise it'll throw.
   ///
   /// Messages will be cached if [cache] is set to true. Defaults to false.
-  /// 
+  ///
   /// ```
   /// var messages = await chan.getMessages(limit: 100, after: "222078108977594368");
   /// ```
-  Future<LinkedHashMap<Snowflake, Message>> getMessages({
-    int limit: 50,
-    Snowflake after,
-    Snowflake before,
-    Snowflake around,
-    bool cache
-  }) async {
+  Future<LinkedHashMap<Snowflake, Message>> getMessages(
+      {int limit: 50,
+      Snowflake after,
+      Snowflake before,
+      Snowflake around,
+      bool cache}) async {
     Map<String, String> query = {"limit": limit.toString()};
 
     if (after != null) query['after'] = after.toString();
@@ -215,7 +215,7 @@ class MessageChannel extends Channel with IterableMixin<Message>, ISend {
       response[msg.id] = msg;
     }
 
-    if(cache) messages.addAll(response);
+    if (cache) messages.addAll(response);
 
     return response;
   }

@@ -74,6 +74,7 @@ class User extends SnowflakeEntity with ISend {
   }
 
   @override
+
   /// Sends a message.
   Future<Message> send(
       {Object content: "",

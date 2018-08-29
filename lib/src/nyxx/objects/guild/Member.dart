@@ -72,7 +72,7 @@ class Member extends User {
   }
 
   /// Adds role to user
-  /// 
+  ///
   /// ```
   /// var r = guild.roles.values.first;
   /// await member.addRole(r);

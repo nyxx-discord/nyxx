@@ -1,6 +1,6 @@
 part of nyxx;
 
-/// A channel. 
+/// A channel.
 /// Abstract base class that defines the base methods and/or properties for all Discord channel types.
 class Channel extends SnowflakeEntity {
   /// The [Client] object.

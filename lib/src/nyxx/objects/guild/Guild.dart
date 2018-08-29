@@ -195,9 +195,9 @@ class Guild extends SnowflakeEntity {
   String toString() => this.name;
 
   /// Gets Guild Emoji based on Id
-  /// 
+  ///
   /// ```
-  /// var emoji = await guild.getEmoji(Snowflake("461449676218957824")); 
+  /// var emoji = await guild.getEmoji(Snowflake("461449676218957824"));
   /// ```
   Future<Emoji> getEmoji(Snowflake emojiId) async {
     HttpResponse r = await this
@@ -219,7 +219,7 @@ class Guild extends SnowflakeEntity {
   /// Get's the guild's bans.
   Future<Map<Snowflake, User>> getBans() async {
     HttpResponse r = await this.client.http.send('GET', "/guilds/$id/bans");
-    
+
     Map<Snowflake, User> map = new Map();
     r.body.forEach((k, o) {
       final User user =
@@ -230,7 +230,7 @@ class Guild extends SnowflakeEntity {
     return map;
   }
 
-  /// Change guild owner. 
+  /// Change guild owner.
   Future<Guild> changeOwner(Member member, {String auditReason = ""}) async {
     HttpResponse r = await this.client.http.send('PATCH', "/guilds/$id",
         body: {"owner_id": member.id}, reason: auditReason);
@@ -259,7 +259,7 @@ class Guild extends SnowflakeEntity {
 
   /// Returns Audit logs.
   /// https://discordapp.com/developers/docs/resources/audit-log
-  /// 
+  ///
   /// ```
   /// var logs = await guild.getAuditLogs(actionType: 1);
   /// ```
@@ -297,27 +297,28 @@ class Guild extends SnowflakeEntity {
   }
 
   /// Creates new role
-  /// 
+  ///
   /// ```
   /// var rb = new RoleBuilder()
   ///   ..name = "Dartyy"
   ///   ..color = utils.Color.HEXtoInt("#0175C2")
   ///   ..hoist = true;
-  /// 
+  ///
   /// var role = await guild.createRole(roleBuilder);
   /// ```
-  Future<Role> createRole(RoleBuilder roleBuilder, {String auditReason = ""}) async {
+  Future<Role> createRole(RoleBuilder roleBuilder,
+      {String auditReason = ""}) async {
     HttpResponse r = await this.client.http.send('POST', "/guilds/$id/roles",
         body: roleBuilder._build(), reason: auditReason);
     return new Role._new(client, r.body, this);
   }
 
   /// Adds [Role] to [Member]
-  /// 
+  ///
   /// ```
   /// var role = guild.roles.values.first;
   /// var mem = guild.members.values.first;
-  /// 
+  ///
   /// await guild.addRoleToMember(memm role);
   /// ```
   Future<void> addRoleToMember(Member user, Role role) async {
@@ -342,7 +343,7 @@ class Guild extends SnowflakeEntity {
 
   /// Creates a channel. Returns null when [type] is DM or GroupDM.
   /// Also can be null if [type] is Guild Group channel and parent is specified.
-  /// 
+  ///
   /// ```
   /// var chan = await guild.createChannel("Super duper channel", ChannelType.text, nsfw: true);
   /// ```
@@ -387,7 +388,7 @@ class Guild extends SnowflakeEntity {
   }
 
   /// Moves channel
-  /// 
+  ///
   /// ```
   /// await guild.moveChannel(chan, 8);
   /// ```
@@ -446,7 +447,7 @@ class Guild extends SnowflakeEntity {
   }
 
   /// Gets a [Member] object. Caches fetched member if not cached.
-  /// 
+  ///
   /// ```
   /// var member = guild.getMember(user);
   /// ```
