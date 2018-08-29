@@ -23,6 +23,7 @@ class Snowflake implements Comparable<Snowflake> {
   @override
   bool operator ==(other) {
     if (other is Snowflake) return other.id == this.id;
+    if (other is int) return other.toString() == this.id;
     if (other is String) return other == this.id;
 
     return false;
