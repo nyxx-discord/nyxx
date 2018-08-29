@@ -11,12 +11,10 @@ void main() {
   nyxx.Client bot = nyxx.Client(Platform.environment['DISCORD_TOKEN']);
 
   // Creating new CommandsFramework object and registering commands for first prefix.
-  command.CommandsFramework('!', bot)
-    ..add(PongCommand());
+  command.CommandsFramework('!', bot)..add(PongCommand());
 
   // Registering second CommandsFramework with different prefix
-  command.CommandsFramework(";;", bot)
-    ..add(EchoCommand());
+  command.CommandsFramework(";;", bot)..add(EchoCommand());
 }
 
 @command.Command(name: "ping")

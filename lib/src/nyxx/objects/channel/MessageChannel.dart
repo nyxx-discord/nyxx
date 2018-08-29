@@ -87,8 +87,7 @@ class MessageChannel extends Channel with IterableMixin<Message>, ISend {
   ///   .sendFile([new File("kitten.jpg")], embed: embed, content: "HEJKA!");
   /// ```
   Future<Message> sendFile(List<File> files,
-      {String content = "", EmbedBuilder embed,
-      bool disableEveryone}) async {
+      {String content = "", EmbedBuilder embed, bool disableEveryone}) async {
     var newContent = _sanitizeMessage(content, disableEveryone, client);
 
     final HttpResponse r = await this.client.http.sendMultipart(
