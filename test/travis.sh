@@ -33,7 +33,7 @@ echo "PASSED"
 echo ""
 
 if [ "$DISCORD_TOKEN" ]; then
-    dart -c test/travis.dart
+    dart --enable-asserts test/travis.dart
 else
   echo "Discord token not present, skipping Discord tests"
 fi
