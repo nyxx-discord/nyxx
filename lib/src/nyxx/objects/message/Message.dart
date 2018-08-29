@@ -30,12 +30,9 @@ class Message extends SnowflakeEntity {
 
   /// The message's guild.
   Guild guild;
-
-  /// The message's author.
+ 
+  /// The message's author. Can be [Member] if message sent in guild
   User author;
-
-  /// The message's author in a member form. Very rarely can be null if `forceFetchMembers` is disabled.
-  Member member;
 
   /// The mentions in the message.
   Map<Snowflake, User> mentions;
@@ -95,11 +92,11 @@ class Message extends SnowflakeEntity {
 
     this.content = raw['content'] as String;
     this.nonce = raw['nonce'] as String;
-    this.author =
-        new User._new(this.client, raw['author'] as Map<String, dynamic>);
+    
     this.channel = this
         .client
         .channels[new Snowflake(raw['channel_id'] as String)] as MessageChannel;
+    
     this.pinned = raw['pinned'] as bool;
     this.tts = raw['tts'] as bool;
     this.mentionEveryone = raw['mention_everyone'] as bool;
@@ -107,10 +104,10 @@ class Message extends SnowflakeEntity {
     this.channel._cacheMessage(this);
     this.channel.lastMessageID = this.id;
 
-    /// Safe cast to [GuildChannel]
     if (this.channel is TextChannel) {
+      var author = new User._new(this.client, raw['author'] as Map<String, dynamic>);
       this.guild = (this.channel as TextChannel).guild;
-      this.member = guild.members[this.author.id];
+      this.author = guild.members[author.id];
 
       if (raw['mention_roles'] != null) {
         this.roleMentions = new Map<Snowflake, Role>();
