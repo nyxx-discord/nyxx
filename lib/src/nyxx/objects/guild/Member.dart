@@ -30,6 +30,9 @@ class Member extends User {
   /// The guild that the member is a part of.
   Guild guild;
 
+  /// Returs highest role for member
+  Role get highestRole => roles.reduce((f, s) => f.position > s.position ? f : s); 
+
   Member._new(Client client, Map<String, dynamic> data, [Guild guild])
       : super._new(client, data['user'] as Map<String, dynamic>) {
     this.nickname = data['nick'] as String;
