@@ -213,7 +213,6 @@ class Message extends SnowflakeEntity {
   /// Deletes the message.
   ///
   /// Throws an [Exception] if the HTTP request errored.
-  ///     Message.delete();
   Future<void> delete({String auditReason: ""}) async {
     await this.client.http.send(
         'DELETE', '/channels/${this.channel.id}/messages/${this.id}',
