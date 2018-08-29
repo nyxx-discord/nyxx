@@ -1,6 +1,7 @@
 part of nyxx;
 
-/// A channel.
+/// A channel. 
+/// Abstract base class that defines the base methods and/or properties for all Discord channel types.
 class Channel extends SnowflakeEntity {
   /// The [Client] object.
   Client client;
@@ -9,7 +10,8 @@ class Channel extends SnowflakeEntity {
   Map<String, dynamic> raw;
 
   /// The channel's type.
-  String type;
+  /// https://discordapp.com/developers/docs/resources/channel#channel-object-channel-types
+  int type;
 
   Channel._new(this.client, this.raw, this.type)
       : super(new Snowflake(raw['id'] as String)) {
@@ -17,6 +19,7 @@ class Channel extends SnowflakeEntity {
   }
 
   /// Deletes the channel.
+  /// Throws if bot cannot perform operation
   Future<void> delete({String auditReason: ""}) async {
     await this
         .client

@@ -1,14 +1,23 @@
 part of nyxx;
 
 /// Provides abstraction of messages for [TextChannel], [DMChannel] and [GroupDMChannel].
-/// Caches message to avoid abusing API.
+/// Implements iterator which allows to use message object in for loops to access
+/// messages sequentially.
+/// 
+/// ```
+/// var chan = client.channels.firstWhere((ch) => ch is TextChannel);
+/// 
+/// for (var message in chan) {
+///   print(message.author.id);
+/// }
+/// ```
 class MessageChannel extends Channel with IterableMixin<Message>, ISend {
   Timer _typing;
 
   /// Sent when a new message is received.
   Stream<MessageEvent> onMessage;
 
-  /// Emitted when user starts typing
+  /// Emitted when user starts typing.
   Stream<TypingEvent> onTyping;
 
   StreamController<MessageEvent> _onMessage;
@@ -20,7 +29,7 @@ class MessageChannel extends Channel with IterableMixin<Message>, ISend {
   /// The ID for the last message in the channel.
   Snowflake lastMessageID;
 
-  MessageChannel._new(Client client, Map<String, dynamic> data, String type)
+  MessageChannel._new(Client client, Map<String, dynamic> data, int type)
       : super._new(client, data, type) {
     if (raw.containsKey('last_message_id') && raw['last_message_id'] != null)
       this.lastMessageID = new Snowflake(raw['last_message_id'] as String);
@@ -44,21 +53,8 @@ class MessageChannel extends Channel with IterableMixin<Message>, ISend {
     }
   }
 
-  @override
-
-  /// Sends file to channel and optional [content] with [embed].
-  Future<Message> sendFile(List<File> files,
-      {String content = "", EmbedBuilder embed}) async {
-    final HttpResponse r = await this.client.http.sendMultipart(
-        'POST', '/channels/${this.id}/messages', files, data: <String, dynamic>{
-      "content": content,
-      "embed": embed != null ? embed._build() : ""
-    });
-
-    return new Message._new(this.client, r.body);
-  }
-
-  /// Gets message woth given id.
+  /// Returs message with given [id]. Allows to force fatch message from api
+  /// with [force] propery. By default it checks if message is in cache and fatches if not.
   Future<Message> getMessage(Snowflake id, {bool force: false}) async {
     if (force || !messages.containsKey(id)) {
       var r = await this
@@ -75,8 +71,52 @@ class MessageChannel extends Channel with IterableMixin<Message>, ISend {
   }
 
   @override
+  /// Sends file to channel and optional [content] with [embed].
+  /// Use `expandAttachment(String file)` method to expand file names in embed 
+  /// 
+  /// ```
+  /// await chan.sendFile([new File("kitten.png"), new File("kitten.jpg")], content: "Kittens ^-^"]);
+  /// ```
+  /// ```
+  /// var embed = new nyxx.EmbedBuilder()
+  ///   ..title = "Example Title"
+  ///   ..thumbnailUrl = "${expandAttachment('kitten.jpg')}";
+  /// 
+  /// await e.message.channel
+  ///   .sendFile([new File("kitten.jpg")], embed: embed, content: "HEJKA!");
+  /// ```
+  Future<Message> sendFile(List<File> files,
+      {String content = "", EmbedBuilder embed}) async {
+    final HttpResponse r = await this.client.http.sendMultipart(
+        'POST', '/channels/${this.id}/messages', files, data: <String, dynamic>{
+      "content": content,
+      "embed": embed != null ? embed._build() : ""
+    });
 
-  /// Sends a message.
+    return new Message._new(this.client, r.body);
+  }
+
+  @override
+
+  /// Sends message to channel. Performs `toString()` on thing passed to [content]. Allows to send embeds with [embed] field.
+  /// 
+  /// ```
+  /// await chan.send(content: "Very nice message!");
+  /// ```
+  /// 
+  /// Can be used in combination with [Emoji]. Just run `toString()` on [Emoji] instance:
+  /// ```
+  /// var emoji = guild.emojis.values.firstWhere((e) => e.name.startsWith("dart"));
+  /// await chan.send(content: "Dart is superb! ${emoji.toString()}");
+  /// ``` 
+  /// Embeds can be sent very easily:
+  /// ```
+  /// var embed = new EmbedBuilder()
+  ///   ..title = "Example Title"
+  ///   ..addField(name: "Memory usage", value: "${ProcessInfo.currentRss / 1024 / 1024}MB");
+  /// 
+  /// await chan.send(embed: embed);
+  /// ```
   Future<Message> send(
       {Object content: "",
       EmbedBuilder embed,
@@ -119,26 +159,43 @@ class MessageChannel extends Channel with IterableMixin<Message>, ISend {
   /// Stops a typing loop if one is running.
   void stopTypingLoop() => this._typing?.cancel();
 
-  /// Bulk removes many messages by its ids. [messagesIds] is list of messages ids to delete.
-  Future<void> bulkRemoveMessages(Iterable<Snowflake> messagesIds) async {
-    if (messages.isEmpty) return null;
-
-    await this.client.http.send(
-        'POST', "/channels/${id.toString()}/messages/bulk-delete",
-        body: {"messages": messagesIds.take(99)});
-
-    await bulkRemoveMessages(messagesIds.skip(99));
+  // Divides list into equal pieces
+  Stream<List<T>> _chunk<T>(List<T> list, int chunkSize) async* {
+    int len = list.length;
+    for (var i = 0; i < len; i += chunkSize) {
+      int size = i+chunkSize;
+      yield list.sublist(i, size > len ? len : size);
+    }
   }
 
-  /// Gets several [Message] objects.
+  /// Bulk removes many messages by its ids. [messagesIds] is list of messages ids to delete.
+  /// 
+  /// ```
+  /// var toDelete = chan.messages.keys.take(5);
+  /// await chan.bulkRemoveMessages(toDelete);
+  /// ```
+  Future<void> bulkRemoveMessages(Iterable<Snowflake> messagesIds) async {
+    _chunk(messagesIds.toList(), 90).listen((data) async {
+      await this.client.http.send(
+        'POST', "/channels/${id.toString()}/messages/bulk-delete",
+        body: {"messages": data });
+    });
+  }
+
+  /// Gets several [Message] objects from API. Only one of [after], [before], [around] can be specified
+  /// otherwise it'll throw.
   ///
-  /// Throws an [Exception] if the HTTP request errored.
-  ///     Channel.getMessages(limit: 100, after: "222078108977594368");
+  /// Messages will be cached if [cache] is set to true. Defaults to false.
+  /// 
+  /// ```
+  /// var messages = await chan.getMessages(limit: 100, after: "222078108977594368");
+  /// ```
   Future<LinkedHashMap<Snowflake, Message>> getMessages({
     int limit: 50,
     Snowflake after,
     Snowflake before,
     Snowflake around,
+    bool cache
   }) async {
     Map<String, String> query = {"limit": limit.toString()};
 
@@ -157,6 +214,8 @@ class MessageChannel extends Channel with IterableMixin<Message>, ISend {
       var msg = new Message._new(this.client, val);
       response[msg.id] = msg;
     }
+
+    if(cache) messages.addAll(response);
 
     return response;
   }

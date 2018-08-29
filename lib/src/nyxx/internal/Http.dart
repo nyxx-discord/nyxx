@@ -92,7 +92,7 @@ class HttpMultipartRequest extends HttpBase {
             name, f.openRead(), f.lengthSync(),
             filename: name));
       } on FileSystemException catch (err) {
-        throw new Exception("Cannot find your file");
+        throw new Exception("Cannot find your file: ${err.path}");
       }
     }
 

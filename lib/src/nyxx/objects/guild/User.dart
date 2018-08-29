@@ -1,6 +1,6 @@
 part of nyxx;
 
-/// A user.
+/// Represents a single user of Discord, either a human or a bot, outside of any specific guild's context.
 class User extends SnowflakeEntity with ISend {
   /// The [Client] object.
   Client client;
@@ -66,7 +66,6 @@ class User extends SnowflakeEntity with ISend {
   }
 
   @override
-  @override
 
   /// Sends file to channel and optional [content] with [embed].
   Future<Message> sendFile(List<File> files,
@@ -74,6 +73,7 @@ class User extends SnowflakeEntity with ISend {
     throw new Exception("Not implemented!");
   }
 
+  @override
   /// Sends a message.
   Future<Message> send(
       {Object content: "",

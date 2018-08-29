@@ -8,6 +8,10 @@ class Member extends User {
   /// The member's status, `offline`, `online`, `idle`, or `dnd`.
   String status;
 
+  /// User's presence.
+  /// https://discordapp.com/developers/docs/topics/gateway#activity-object-activity-structure
+  Game presence;
+
   /// When the member joined the guild.
   DateTime joinedAt;
 
@@ -40,12 +44,12 @@ class Member extends User {
       this.guild = guild;
 
     roles = new List();
-    data['roles'].forEach((dynamic id) {
+    data['roles'].forEach((id) {
       roles.add(this.guild.roles.values.firstWhere((i) => i.id == id));
     });
 
     roles = new List();
-    data['roles'].forEach((dynamic i) {
+    data['roles'].forEach((i) {
       roles.add(this.guild.roles[new Snowflake(i as String)]);
     });
 
@@ -68,6 +72,11 @@ class Member extends User {
   }
 
   /// Adds role to user
+  /// 
+  /// ```
+  /// var r = guild.roles.values.first;
+  /// await member.addRole(r);
+  /// ```
   Future<void> addRole(Role role, {String auditReason: ""}) async {
     await this.client.http.send(
         'PUT', '/guilds/${guild.id}/members/${this.id}/roles/${role.id}',
@@ -93,3 +102,20 @@ class Member extends User {
   @override
   String toString() => super.toString();
 }
+
+/*
+class UserStatus {
+  final String _value;
+  const UserStatus._internal(this._value);
+
+  @override
+  String toString() => _value;
+
+  static const offline = const UserStatus._internal("offline");
+  static const online = const UserStatus._internal("online");
+  static const idle = const UserStatus._internal("idle");
+  static const dnd = const UserStatus._internal("dnd");
+
+  static UserStatus fromStrig(String status) => UserStatus._internal(status);
+}
+*/

@@ -313,6 +313,7 @@ class CommandsFramework {
             instMirror.setField(new Symbol("message"), e.message);
             instMirror.setField(new Symbol("author"), e.message.author);
             instMirror.setField(new Symbol("channel"), e.message.channel);
+            instMirror.setField(new Symbol("client"), this._client);
             instMirror.invoke(matched.simpleName, params);
           } catch (err, stacktrace) {
             _commandExecutionFailController

@@ -1,12 +1,12 @@
 part of nyxx;
 
-/// Represents group DM channel
+/// Represents group DM channel.
 class GroupDMChannel extends MessageChannel {
-  /// The recipients.
+  /// The recipients of channel.
   Map<Snowflake, User> recipients;
 
   GroupDMChannel._new(Client client, Map<String, dynamic> data)
-      : super._new(client, data, "private") {
+      : super._new(client, data, 3) {
     this.recipients = new Map<Snowflake, User>();
     raw['recipients'].forEach((dynamic o) {
       final User user = new User._new(client, o as Map<String, dynamic>);

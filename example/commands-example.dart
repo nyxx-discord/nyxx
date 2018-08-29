@@ -46,7 +46,7 @@ class EchoCommand extends command.CommandContext {
         new nyxx.PermissionsBuilder()
           ..sendMessages = true
           ..sendTtsMessages = false,
-        new nyxx.Snowflake("471349482307715102"));
+        client.users[new nyxx.Snowflake("471349482307715102")]);
 
     for (var perm in (channel as nyxx.GuildChannel).permissions) {
       var role = guild.roles.values.firstWhere((i) => i.id == perm.id);

@@ -92,18 +92,7 @@ class _WS {
     if (match && match2) {
       client.ready = true;
       client._startTime = new DateTime.now();
-      if (client.user.bot) {
-        /*client.http
-            .send('GET', '/oauth2/applications/@me', beforeReady: true)
-            .then((HttpResponse r) {
-          client.app = new ClientOAuth2Application._new(
-              client, r.body);*/
-        new ReadyEvent._new(client);
-        //});
-      } else {
-        new ReadyEvent._new(client);
-      }
-
+      new ReadyEvent._new(client);
       logger.info("Connected and ready!");
     }
   }
