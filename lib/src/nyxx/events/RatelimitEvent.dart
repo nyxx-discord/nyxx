@@ -9,7 +9,7 @@ class RatelimitEvent {
   bool handled;
 
   /// The request that was ratelimited.
-  HttpRequest request;
+  HttpBase request;
 
   /// The response received if the ratelimit handler did not stop
   /// the request (rare)
