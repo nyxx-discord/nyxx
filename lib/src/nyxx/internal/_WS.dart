@@ -62,12 +62,6 @@ class _WS {
     });
   }
 
-  Future<void> close() async {
-    this.client.shards.forEach((int id, Shard shard) async {
-      await shard._socket.close();
-    });
-  }
-
   void connectShard(int index) {
     this.client.shards.values.toList()[index]._connect(true, true);
     if (index + 1 != this.client._options.shardIds.length)

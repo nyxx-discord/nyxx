@@ -15,11 +15,6 @@ part of nyxx;
 ///   print('Role createed with name: ${e.role.name});
 /// });
 /// ```
-/// Rememeber to close [Client] before terminating program:
-/// ```dart
-///  bot.destroy();
-/// ```
-/// It closes bot connections to discord servers and makes sure that everything is terminated correctly.
 class Client {
   String _token;
   String clientId;
@@ -237,12 +232,6 @@ class Client {
     var r = await this.http.send("POST", "/guilds", body: builder._build());
 
     return new Guild._new(this, r.body);
-  }
-
-  /// Destroys the websocket connection, and all streams.
-  Future<void> destroy() async {
-    await this._ws.close();
-    await this._events.destroy();
   }
 
   /// Gets a webhook by its ID and token.
