@@ -78,7 +78,8 @@ class Shard {
           await this._handleMsg(_decodeBytes(msg), resume);
         } catch (err) {
           _logger.warning(
-              "ERROR OCCURED WHEN HANDLING MESSAGE", this, StackTrace.current);
+              "ERROR OCCURED WHEN HANDLING MESSAGE");
+          print(err.toString());
         }
       }, onDone: this._handleErr);
     });
