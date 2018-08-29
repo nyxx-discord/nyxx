@@ -140,7 +140,7 @@ void main() {
               !field.inline) {
             await m.channel.send(content: "Tests completed successfully!");
             print("Nyxx tests completed successfully!");
-            await bot.destroy();
+            //await bot.destroy();
             exit(0);
           }
         }
