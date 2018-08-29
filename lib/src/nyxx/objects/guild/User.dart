@@ -67,8 +67,10 @@ class User extends SnowflakeEntity with ISend {
 
   /// Sends file to channel and optional [content] with [embed].
   Future<Message> sendFile(List<File> files,
-      {String content = "", EmbedBuilder embed}) async {
-    throw new Exception("Not implemented!");
+      {String content = "", EmbedBuilder embed, bool disableEveryone}) async {
+    DMChannel channel = await getDMChannel();
+
+    return await channel.sendFile(files, content: content, embed: embed, disableEveryone: disableEveryone);
   }
 
   @override
@@ -79,17 +81,8 @@ class User extends SnowflakeEntity with ISend {
       EmbedBuilder embed,
       bool tts: false,
       bool disableEveryone}) async {
-    String newContent = _sanitizeMessage(content, disableEveryone, client);
     DMChannel channel = await getDMChannel();
-
-    final HttpResponse r = await this.client.http.send(
-        'POST', '/channels/${channel.id.toString()}/messages',
-        body: <String, dynamic>{
-          "content": newContent,
-          "tts": tts,
-          "embed": embed
-        });
-    return new Message._new(this.client, r.body);
+    return await channel.send(content: content, embed: embed, tts: tts, disableEveryone: disableEveryone);
   }
 
   /// Returns a mention of user

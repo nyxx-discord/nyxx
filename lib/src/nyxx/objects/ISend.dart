@@ -8,7 +8,7 @@ abstract class ISend {
       bool disableEveryone});
 
   Future<Message> sendFile(List<File> files,
-      {String content = "", EmbedBuilder embed});
+      {String content = "", EmbedBuilder embed, bool disableEveryone});
 }
 
 String expandAttachment(String filename) => "attachment://$filename";
