@@ -1,10 +1,12 @@
 part of nyxx;
 
-/// [Guild] object represents single `Discord Server` instance.
-/// Based on bots permissions - can preform operations on [Guild], [User]s [Role]s and many more.
+/// [Guild] object represents single `Discord Server`.
+/// Guilds are a collection of members, channels, and roles that represents one community.
 ///
-/// [channels] property is Map of [Channel]s but i can be cast to specific Channel subclasses. Example with getting all [TextChannel]s in [Guild]:
-/// ```dart
+/// ---------
+///
+/// [channels] property is Map of [Channel]s but it can be cast to specific Channel subclasses. Example with getting all [TextChannel]s in [Guild]:
+/// ```
 /// var textChannels = channels.where((channel) => channel is MessageChannel) as List<TextChannel>;
 /// ```
 /// If you want to get [icon] or [splash] of [Guild] use `iconURL()` method - [icon] property returns only hash, same as [splash] property.
@@ -25,7 +27,7 @@ class Guild extends SnowflakeEntity {
   String splash;
 
   /// System channel where system messages are sent
-  Channel systemChannel;
+  TextChannel systemChannel;
 
   /// enabled guild features
   List<String> features;
@@ -171,6 +173,7 @@ class Guild extends SnowflakeEntity {
   }
 
   /// The guild's icon, represented as URL.
+  /// If guild doesn't have icon it returns null.
   String iconURL({String format: 'webp', int size: 128}) {
     if (this.icon != null)
       return 'https://cdn.${_Constants.host}/icons/${this.id}/${this.icon}.$format?size=$size';
@@ -178,6 +181,8 @@ class Guild extends SnowflakeEntity {
     return null;
   }
 
+  /// URL to guild's splash.
+  /// If guild doesn't have splash it returns null.
   String splashURL({String format: 'webp', int size: 128}) {
     if (this.splash != null)
       return 'https://cdn.${_Constants.host}/splashes/${this.id}/${this.splash}.$format?size=$size';
@@ -185,11 +190,15 @@ class Guild extends SnowflakeEntity {
     return null;
   }
 
-  /// Returns a string representation of this object.
+  /// Returns a string representation of this object - Guild name.
   @override
   String toString() => this.name;
 
   /// Gets Guild Emoji based on Id
+  /// 
+  /// ```
+  /// var emoji = await guild.getEmoji(Snowflake("461449676218957824")); 
+  /// ```
   Future<Emoji> getEmoji(Snowflake emojiId) async {
     HttpResponse r = await this
         .client
@@ -200,6 +209,7 @@ class Guild extends SnowflakeEntity {
   }
 
   /// Prunes the guild, returns the amount of members pruned.
+  /// https://discordapp.com/developers/docs/resources/guild#begin-guild-prune
   Future<int> prune(int days, {String auditReason = ""}) async {
     HttpResponse r = await this.client.http.send('POST', "/guilds/$id/prune",
         body: {"days": days}, reason: auditReason);
@@ -207,18 +217,20 @@ class Guild extends SnowflakeEntity {
   }
 
   /// Get's the guild's bans.
-  Future<Map<String, User>> getBans() async {
+  Future<Map<Snowflake, User>> getBans() async {
     HttpResponse r = await this.client.http.send('GET', "/guilds/$id/bans");
-    Map<String, User> map = new Map();
+    
+    Map<Snowflake, User> map = new Map();
     r.body.forEach((k, o) {
       final User user =
           new User._new(client, o['user'] as Map<String, dynamic>);
-      map[user.id.toString()] = user;
+      map[user.id] = user;
     });
+
     return map;
   }
 
-  /// Change guild owner
+  /// Change guild owner. 
   Future<Guild> changeOwner(Member member, {String auditReason = ""}) async {
     HttpResponse r = await this.client.http.send('PATCH', "/guilds/$id",
         body: {"owner_id": member.id}, reason: auditReason);
@@ -246,14 +258,19 @@ class Guild extends SnowflakeEntity {
   }
 
   /// Returns Audit logs.
+  /// https://discordapp.com/developers/docs/resources/audit-log
+  /// 
+  /// ```
+  /// var logs = await guild.getAuditLogs(actionType: 1);
+  /// ```
   Future<AuditLog> getAuditLogs(
       {Snowflake userId,
-      String actionType,
+      int actionType,
       Snowflake before,
-      int limit}) async {
+      int limit: 50}) async {
     var query = new Map<String, String>();
     if (userId != null) query['user_id'] = userId.toString();
-    if (actionType != null) query['action_type'] = actionType;
+    if (actionType != null) query['action_type'] = actionType.toString();
     if (before != null) query['before'] = before.toString();
     if (limit != null) query['limit'] = limit.toString();
 
@@ -280,14 +297,29 @@ class Guild extends SnowflakeEntity {
   }
 
   /// Creates new role
-  Future<Role> createRole(
-      {RoleBuilder roleBuilder, String auditReason = ""}) async {
+  /// 
+  /// ```
+  /// var rb = new RoleBuilder()
+  ///   ..name = "Dartyy"
+  ///   ..color = utils.Color.HEXtoInt("#0175C2")
+  ///   ..hoist = true;
+  /// 
+  /// var role = await guild.createRole(roleBuilder);
+  /// ```
+  Future<Role> createRole(RoleBuilder roleBuilder, {String auditReason = ""}) async {
     HttpResponse r = await this.client.http.send('POST', "/guilds/$id/roles",
         body: roleBuilder._build(), reason: auditReason);
     return new Role._new(client, r.body, this);
   }
 
   /// Adds [Role] to [Member]
+  /// 
+  /// ```
+  /// var role = guild.roles.values.first;
+  /// var mem = guild.members.values.first;
+  /// 
+  /// await guild.addRoleToMember(memm role);
+  /// ```
   Future<void> addRoleToMember(Member user, Role role) async {
     await this
         .client
@@ -310,6 +342,10 @@ class Guild extends SnowflakeEntity {
 
   /// Creates a channel. Returns null when [type] is DM or GroupDM.
   /// Also can be null if [type] is Guild Group channel and parent is specified.
+  /// 
+  /// ```
+  /// var chan = await guild.createChannel("Super duper channel", ChannelType.text, nsfw: true);
+  /// ```
   Future<Channel> createChannel(String name, ChannelType type,
       {int bitrate,
       String topic,
@@ -320,22 +356,15 @@ class Guild extends SnowflakeEntity {
       String auditReason = ""}) async {
     // Checks to avoid API panic
     if (type == ChannelType.dm || type == ChannelType.groupDm) return null;
-
     if (type == ChannelType.group && parent != null) return null;
 
     // Construct body
     var body = <String, dynamic>{"name": name, "type": _matchChannelType(type)};
-
     if (bitrate != null) body['bitrate'] = bitrate;
-
     if (topic != null) body['topic'] = topic;
-
     if (parent != null) body['parent_id'] = parent.id.toString();
-
     if (nsfw != null) body['nsfw'] = nsfw;
-
     if (userLimit != null) body['user_limit'] = userLimit;
-
     if (permissions != null) body['permission_overwrites'] = permissions;
 
     // Send request
@@ -358,14 +387,22 @@ class Guild extends SnowflakeEntity {
   }
 
   /// Moves channel
-  Future<void> moveGuildChannel(GuildChannel channel, int newPosition,
+  /// 
+  /// ```
+  /// await guild.moveChannel(chan, 8);
+  /// ```
+  Future<void> moveChannel(GuildChannel channel, int newPosition,
       {String auditReason = ""}) async {
     await this.client.http.send('PATCH', "/guilds/${this.id}/channels",
         body: {"id": channel.id.toString(), "position": newPosition},
         reason: auditReason);
   }
 
-  /// Bans a user by ID.
+  /// Bans a user.
+  ///
+  /// ```
+  /// await guild.ban(member);
+  /// ```
   Future<void> ban(Member member,
       {int deleteMessageDays = 0, String auditReason}) async {
     await this.client.http.send(
@@ -408,11 +445,11 @@ class Guild extends SnowflakeEntity {
     return new Guild._new(this.client, r.body);
   }
 
-  /// Gets a [Member] object. Adds it to `Guild.members` if
-  /// not already there.
-  ///
-  /// Throws an [Exception] if the HTTP request errored.
-  ///     Guild.getMember("user id");
+  /// Gets a [Member] object. Caches fetched member if not cached.
+  /// 
+  /// ```
+  /// var member = guild.getMember(user);
+  /// ```
   Future<Member> getMember(User user) async {
     if (this.members.containsKey(user.id)) return this.members[user.id];
 
@@ -446,6 +483,7 @@ class Guild extends SnowflakeEntity {
   }
 }
 
+/// Enum for possible channel types
 enum ChannelType { text, voice, group, dm, groupDm }
 
 int _matchChannelType(ChannelType type) {

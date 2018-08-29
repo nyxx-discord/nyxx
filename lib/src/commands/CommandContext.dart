@@ -18,6 +18,9 @@ abstract class CommandContext {
   /// Logger for instance of command
   Logger logger;
 
+  /// Additional Client instance
+  Client client;
+
   /// Reply to message which fires command.
   Future<Message> reply(
       {Object content,

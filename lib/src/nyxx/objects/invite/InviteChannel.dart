@@ -6,7 +6,7 @@ class InviteChannel extends Channel {
   String name;
 
   InviteChannel._new(Client client, Map<String, dynamic> raw)
-      : super._new(client, raw, raw['type'] as String) {
+      : super._new(client, raw, raw['type'] as int) {
     this.name = raw['name'] as String;
   }
 

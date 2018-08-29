@@ -1,7 +1,7 @@
 part of nyxx;
 
-/// [Snowflake] represents id structure which is used by discord.
-/// [id] is actual id of entity which holds [Snowflake]
+/// [Snowflake] represents id system used by Discord.
+/// [id] property is actual id of entity which holds [Snowflake].
 class Snowflake implements Comparable<Snowflake> {
   /// Full snowflake id
   final String id;

@@ -1,6 +1,6 @@
 part of nyxx;
 
-/// The client user.
+/// ClientUser is bot's discord account. Allows to change bot's presence.
 class ClientUser extends User {
   /// The client user's email, null if the client user is a bot.
   String email;

@@ -9,7 +9,7 @@ class VoiceChannel extends Channel with GuildChannel {
   int userLimit;
 
   VoiceChannel._new(Client client, Map<String, dynamic> data, Guild guild)
-      : super._new(client, data, "voice") {
+      : super._new(client, data, 2) {
     _initialize(data, guild);
 
     this.bitrate = raw['bitrate'] as int;

@@ -10,7 +10,7 @@ class TextChannel extends MessageChannel with GuildChannel {
   String mention;
 
   TextChannel._new(Client client, Map<String, dynamic> data, Guild guild)
-      : super._new(client, data, "text") {
+      : super._new(client, data, 0) {
     _initialize(data, guild);
 
     this.topic = raw['topic'] as String;
@@ -48,7 +48,11 @@ class TextChannel extends MessageChannel with GuildChannel {
     return map;
   }
 
-  /// Creates a webhook.
+  /// Creates a webhook for channel.
+  /// 
+  /// ```
+  /// var webhook = await chan.createWebhook("!a Send nudes kek6407");
+  /// ```
   Future<Webhook> createWebhook(String name, {String auditReason: ""}) async {
     HttpResponse r = await this.client.http.send(
         'POST', "/channels/$id/webhooks",
@@ -56,7 +60,11 @@ class TextChannel extends MessageChannel with GuildChannel {
     return new Webhook._new(this.client, r.body);
   }
 
-  /// Returns all [Channel]s [Invite]s
+  /// Fetches and returns all channel's [Invite]s
+  /// 
+  /// ```
+  /// var invites = await chan.getChannelInvites();
+  /// ```
   Future<Map<String, Invite>> getChannelInvites() async {
     final HttpResponse r =
         await this.client.http.send('GET', "/channels/$id/invites");
@@ -69,7 +77,11 @@ class TextChannel extends MessageChannel with GuildChannel {
     return invites;
   }
 
-  /// Creates new [Invite] for [Channel] and returns it
+  /// Creates new [Invite] for [Channel] and returns it's instance
+  /// 
+  /// ```
+  /// var inv = await chan.createInvite(maxUses: 2137);
+  /// ```
   Future<Invite> createInvite(
       {int maxAge: 0,
       int maxUses: 0,
@@ -90,7 +102,7 @@ class TextChannel extends MessageChannel with GuildChannel {
     return new Invite._new(this.client, r.body);
   }
 
-  /// Returns pinned [Message]s for [Channel]
+  /// Returns pinned [Message]s for [Channel].
   Future<Map<String, Message>> getPinnedMessages() async {
     final HttpResponse r =
         await this.client.http.send('GET', "/channels/$id/pins");
