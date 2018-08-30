@@ -16,6 +16,11 @@ void main() {
     ..registerLibraryCommands();
 }
 
+@command.Command(name: "single")
+Future<void> single(command.CommandContext context) async {
+  await context.reply(content: "WORKING");
+}
+
 // Command have to extends CommandContext class and have @Command annotation.
 // Method with @Maincommand is main point of command object
 // Methods annotated with @Subcommand are defined as subcommands
