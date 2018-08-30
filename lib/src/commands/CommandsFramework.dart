@@ -382,7 +382,8 @@ class CommandsFramework {
       case 100:
         new Future(() async {
           try {
-            var params = await _injectParameters(
+            splittedCommand.removeRange(0, matchedMeta.commandString.length);
+            var methodInj = await _injectParameters(
                 matchedMeta.method, splittedCommand, e.message);
 
             if (matchedMeta.parent is ClassMirror) {
@@ -412,7 +413,7 @@ class CommandsFramework {
               instance.setField(new Symbol("author"), e.message.author);
               instance.setField(new Symbol("channel"), e.message.channel);
               instance.setField(new Symbol("client"), this._client);
-              instance.invoke(matchedMeta.method.simpleName, params);
+              instance.invoke(matchedMeta.method.simpleName, methodInj);
             }
 
             if (matchedMeta.parent is LibraryMirror) {
@@ -422,7 +423,7 @@ class CommandsFramework {
                   matchedMeta.method.simpleName,
                   new List()
                     ..add(context)
-                    ..addAll(params));
+                    ..addAll(methodInj));
             }
           } catch (err, stacktrace) {
             _commandExecutionFailController
