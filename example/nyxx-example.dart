@@ -45,11 +45,4 @@ class AliasCommand extends command.CommandContext {
     var messages = await nextMessages(2);
     print(messages);
   }
-
-  // You can use customized logger instance
-  @command.Command(name: "yyy")
-  void yy(String siema, int witam) {
-    logger.fine(siema);
-    logger.severe(witam);
-  }
 }
