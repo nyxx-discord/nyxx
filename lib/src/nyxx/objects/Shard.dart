@@ -74,13 +74,7 @@ class Shard {
 
       this._socket = socket;
       this._socket.listen((dynamic msg) async {
-        try {
-          await this._handleMsg(_decodeBytes(msg), resume);
-        } catch (err) {
-          _logger.warning(
-              "ERROR OCCURED WHEN HANDLING MESSAGE");
-          print(err.toString());
-        }
+        await this._handleMsg(_decodeBytes(msg), resume);
       }, onDone: this._handleErr);
     });
   }
