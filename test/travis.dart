@@ -127,12 +127,10 @@ void main() {
   bot.onMessage.listen((e) async {
     var m = e.message;
 
-    if(m.channel.id != "422285619952222208" &&
-        m.author.id != bot.user.id)
-        return;
+    if (m.channel.id != "422285619952222208" && m.author.id != bot.user.id)
+      return;
 
-    if(ddel.any((d) => d.startsWith(m.content)))
-      await m.delete();
+    if (ddel.any((d) => d.startsWith(m.content))) await m.delete();
 
     if (m.content == "Testing embed!") {
       if (m.embeds.length > 0) {

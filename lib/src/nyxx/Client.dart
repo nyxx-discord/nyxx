@@ -170,10 +170,11 @@ class Client {
   Logger logger = new Logger.detached("Client");
 
   /// Gets an bot invite link. Null if [clientId] not present.
-  String get inviteLink => "https://discordapp.com/oauth2/authorize?&client_id=${this.app.id.toString()}&scope=bot&permissions=0";
+  String get inviteLink =>
+      "https://discordapp.com/oauth2/authorize?&client_id=${this.app.id.toString()}&scope=bot&permissions=0";
 
   /// Creates and logs in a new client.
-  Client(this._token,{ClientOptions options, bool ignoreExceptions: true}) {
+  Client(this._token, {ClientOptions options, bool ignoreExceptions: true}) {
     if (ignoreExceptions) {
       Isolate.current.setErrorsFatal(false);
       ReceivePort errorsPort = new ReceivePort();
@@ -200,9 +201,12 @@ class Client {
     Logger.root.level = Level.ALL;
     Logger.root.onRecord.listen((LogRecord rec) {
       String color;
-      if(rec.level == Level.WARNING) color = "\u001B[33m";
-      else if (rec.level == Level.SEVERE) color = "\u001B[31m";
-      else color = "\u001B[0m";
+      if (rec.level == Level.WARNING)
+        color = "\u001B[33m";
+      else if (rec.level == Level.SEVERE)
+        color = "\u001B[31m";
+      else
+        color = "\u001B[0m";
 
       print('$color[${rec.level.name}] \u001B[0m {${rec.loggerName}} - '
           '${rec.time.day}.${rec.time.month}.${rec.time.year} '

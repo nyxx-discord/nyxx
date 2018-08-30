@@ -30,7 +30,7 @@ class Message extends SnowflakeEntity {
 
   /// The message's guild.
   Guild guild;
- 
+
   /// The message's author. Can be [Member] if message sent in guild
   User author;
 
@@ -95,11 +95,11 @@ class Message extends SnowflakeEntity {
 
     this.content = raw['content'] as String;
     this.nonce = raw['nonce'] as String;
-    
+
     this.channel = this
         .client
         .channels[new Snowflake(raw['channel_id'] as String)] as MessageChannel;
-    
+
     this.pinned = raw['pinned'] as bool;
     this.tts = raw['tts'] as bool;
     this.mentionEveryone = raw['mention_everyone'] as bool;
@@ -107,7 +107,8 @@ class Message extends SnowflakeEntity {
     this.channel._cacheMessage(this);
     this.channel.lastMessageID = this.id;
 
-    this.author = new User._new(this.client, raw['author'] as Map<String, dynamic>);
+    this.author =
+        new User._new(this.client, raw['author'] as Map<String, dynamic>);
     if (this.channel is TextChannel) {
       this.guild = (this.channel as TextChannel).guild;
       this.member = guild.members[author.id];

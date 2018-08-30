@@ -70,7 +70,8 @@ class User extends SnowflakeEntity with ISend {
       {String content = "", EmbedBuilder embed, bool disableEveryone}) async {
     DMChannel channel = await getDMChannel();
 
-    return await channel.sendFile(files, content: content, embed: embed, disableEveryone: disableEveryone);
+    return await channel.sendFile(files,
+        content: content, embed: embed, disableEveryone: disableEveryone);
   }
 
   @override
@@ -82,7 +83,11 @@ class User extends SnowflakeEntity with ISend {
       bool tts: false,
       bool disableEveryone}) async {
     DMChannel channel = await getDMChannel();
-    return await channel.send(content: content, embed: embed, tts: tts, disableEveryone: disableEveryone);
+    return await channel.send(
+        content: content,
+        embed: embed,
+        tts: tts,
+        disableEveryone: disableEveryone);
   }
 
   /// Returns a mention of user

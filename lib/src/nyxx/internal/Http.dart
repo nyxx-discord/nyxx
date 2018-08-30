@@ -232,9 +232,9 @@ class HttpBucket {
         }
 
         if (r.status == 429) {
-          new RatelimitEvent._new(
-              request.http._client, request, false, r);
-          request.http._logger.warning("Rate limitted on endpoint: ${request.path}. Trying to send request again after timeout...");
+          new RatelimitEvent._new(request.http._client, request, false, r);
+          request.http._logger.warning(
+              "Rate limitted on endpoint: ${request.path}. Trying to send request again after timeout...");
           new Timer(
               new Duration(milliseconds: (r.body['retry_after'] as int) + 500),
               () => this._execute(request));
