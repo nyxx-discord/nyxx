@@ -13,7 +13,7 @@ class MessageDeleteBulkEvent {
         client.channels[new Snowflake(json['d']['channel_id'] as String)];
 
     json['d']['ids']
-        .forEach((String i) => deletedMessages.add(new Snowflake(i)));
+        .forEach((i) => deletedMessages.add(new Snowflake(i.toString())));
     client._events.onMessageDeleteBulk.add(this);
   }
 }
