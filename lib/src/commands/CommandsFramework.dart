@@ -92,11 +92,13 @@ class CommandsFramework {
     //onCommandParsingFail = _commandParsingFail.stream;
 
     // Listen to incoming messages and ignore all from bots (if set)
-    _client.onMessage.listen((MessageEvent e) async {
-      if (ignoreBots && e.message.author.bot) return;
-      if (!e.message.content.startsWith(prefix)) return;
+    _client.onReady.listen((_) {
+      _client.onMessage.listen((MessageEvent e) async {
+        if (ignoreBots && e.message.author.bot) return;
+        if (!e.message.content.startsWith(prefix)) return;
 
-      await _dispatch(e);
+        await _dispatch(e);
+      });
     });
   }
 
