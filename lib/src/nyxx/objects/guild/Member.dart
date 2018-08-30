@@ -46,15 +46,12 @@ class Member extends User {
     else
       this.guild = guild;
 
-    roles = new List();
-    data['roles'].forEach((id) {
-      roles.add(this.guild.roles.values.firstWhere((i) => i.id == id));
-    });
-
-    roles = new List();
-    data['roles'].forEach((i) {
-      roles.add(this.guild.roles[new Snowflake(i as String)]);
-    });
+    if(data['roles'] != null) {
+      roles = new List();
+      data['roles'].forEach((i) {
+        roles.add(this.guild.roles[new Snowflake(i as String)]);
+      });
+    }
 
     if (data['joined_at'] != null)
       this.joinedAt = DateTime.parse(data['joined_at'] as String);

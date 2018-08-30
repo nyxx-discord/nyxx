@@ -103,8 +103,10 @@ class GameParty {
   GameParty._new(this.raw) {
     id = raw['id'] as String;
 
-    currentSize = raw['current_size'].first as int;
-    maxSize = raw['max_size'].last as int;
+    if(raw['size'] != null) {
+      currentSize = raw['size'].first as int;
+      maxSize = raw['size'].last as int;
+    }
   }
 }
 
