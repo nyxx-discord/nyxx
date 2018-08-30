@@ -31,7 +31,8 @@ class Member extends User {
   Guild guild;
 
   /// Returs highest role for member
-  Role get highestRole => roles.reduce((f, s) => f.position > s.position ? f : s); 
+  Role get highestRole =>
+      roles.reduce((f, s) => f.position > s.position ? f : s);
 
   Member._new(Client client, Map<String, dynamic> data, [Guild guild])
       : super._new(client, data) {
@@ -46,7 +47,7 @@ class Member extends User {
     else
       this.guild = guild;
 
-    if(data['roles'] != null) {
+    if (data['roles'] != null) {
       roles = new List();
       data['roles'].forEach((i) {
         roles.add(this.guild.roles[new Snowflake(i as String)]);

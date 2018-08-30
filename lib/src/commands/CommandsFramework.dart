@@ -10,15 +10,19 @@ class CommandMetadata {
   Restrict methodRestrict;
   Command methodCommand;
 
-  CommandMetadata(this.method, this.parent, this.classRestrict, this.classCommand, this.methodCommand, this.methodRestrict);
+  CommandMetadata(this.method, this.parent, this.classRestrict,
+      this.classCommand, this.methodCommand, this.methodRestrict);
 
   bool get _classEnclosed => parent is ClassMirror;
   List<List<String>> get commandString {
-    if(classCommand != null)
-      if(methodCommand.main != null && methodCommand.main)
-        return [List.from(classCommand.aliases)..add(classCommand.name)];
-      else
-        return [List.from(classCommand.aliases)..add(classCommand.name), List.from(methodCommand.aliases)..add(methodCommand.name)];
+    if (classCommand != null) if (methodCommand.main != null &&
+        methodCommand.main)
+      return [List.from(classCommand.aliases)..add(classCommand.name)];
+    else
+      return [
+        List.from(classCommand.aliases)..add(classCommand.name),
+        List.from(methodCommand.aliases)..add(methodCommand.name)
+      ];
 
     return [List.from(methodCommand.aliases)..add(methodCommand.name)];
   }
@@ -190,7 +194,7 @@ class CommandsFramework {
               }
             }
 
-             try {
+            try {
               var serv = cm.newInstance(new Symbol(''), toInject).reflectee;
               _services.add(serv);
             } catch (e) {
@@ -212,35 +216,37 @@ class CommandsFramework {
       library.declarations.values.forEach((d) {
         var commandAnnot = _getCmdAnnot<Command>(d);
 
-        if(commandAnnot != null) {
-          if(d is ClassMirror) {
+        if (commandAnnot != null) {
+          if (d is ClassMirror) {
             d.declarations.values.forEach((f) {
-              if(f is MethodMirror) {
+              if (f is MethodMirror) {
                 var methodCommandAnnot = _getCmdAnnot<Command>(f);
 
-                if(methodCommandAnnot != null) {
+                if (methodCommandAnnot != null) {
                   var classRestrict = _getCmdAnnot<Restrict>(d);
                   var methodRestrict = _getCmdAnnot<Restrict>(f);
 
-                  _commands.add(new CommandMetadata(f, d, classRestrict, commandAnnot, methodCommandAnnot, methodRestrict));
+                  _commands.add(new CommandMetadata(f, d, classRestrict,
+                      commandAnnot, methodCommandAnnot, methodRestrict));
                 }
               }
             });
-
           } else if (d is MethodMirror) {
             var commandAnnot = _getCmdAnnot<Command>(d);
 
-            if(commandAnnot != null) {
+            if (commandAnnot != null) {
               var methodRestrict = _getCmdAnnot<Restrict>(d);
 
-              _commands.add(new CommandMetadata(d, library, null, null, commandAnnot, methodRestrict));
+              _commands.add(new CommandMetadata(
+                  d, library, null, null, commandAnnot, methodRestrict));
             }
           }
         }
       });
     });
 
-    _commands.sort((first, second) => -first.commandString.length.compareTo(second.commandString.length));
+    _commands.sort((first, second) =>
+        -first.commandString.length.compareTo(second.commandString.length));
 
     print(_commands.map((f) => f.commandString.length));
   }
@@ -258,40 +264,54 @@ class CommandsFramework {
   }
 
   Restrict _patchRestrictions(Restrict top, Restrict meth) {
-    if(top == null && meth == null)
+    if (top == null && meth == null)
       return new Restrict();
-    else if (top == null) top = new Restrict();
+    else if (top == null)
+      top = new Restrict();
     else if (meth == null) meth = new Restrict();
 
     var admin = meth.admin != null ? meth.admin : top.admin;
     var owner = meth.owner != null ? meth.owner : top.owner;
-    
+
     List<Snowflake> roles;
     if (meth.roles != null) {
-      if(top.roles != null)
+      if (top.roles != null)
         roles = new List.from(top.roles)..addAll(meth.roles);
-      else roles = meth.roles;
+      else
+        roles = meth.roles;
     }
 
     List<int> userPermissions;
     if (meth.userPermissions != null) {
-      if(top.userPermissions != null)
-        userPermissions = new List.from(top.userPermissions)..addAll(meth.userPermissions);
-      else userPermissions = meth.userPermissions;
+      if (top.userPermissions != null)
+        userPermissions = new List.from(top.userPermissions)
+          ..addAll(meth.userPermissions);
+      else
+        userPermissions = meth.userPermissions;
     }
 
     List<int> botPermissions;
     if (meth.botPermissions != null) {
-      if(top.botPermissions != null)
-        botPermissions = new List.from(top.botPermissions)..addAll(meth.botPermissions);
-      else botPermissions = meth.botPermissions;
+      if (top.botPermissions != null)
+        botPermissions = new List.from(top.botPermissions)
+          ..addAll(meth.botPermissions);
+      else
+        botPermissions = meth.botPermissions;
     }
 
-    var cooldown = meth.cooldown != null ? meth.cooldown : top.cooldown; 
+    var cooldown = meth.cooldown != null ? meth.cooldown : top.cooldown;
     var guild = meth.guild != null ? meth.guild : top.guild;
     var nsfw = meth.nsfw != null ? meth.nsfw : top.nsfw;
 
-    return new Restrict(admin: admin, owner: owner, roles: roles, userPermissions: userPermissions, botPermissions: botPermissions, cooldown: cooldown, guild: guild, nsfw: nsfw);
+    return new Restrict(
+        admin: admin,
+        owner: owner,
+        roles: roles,
+        userPermissions: userPermissions,
+        botPermissions: botPermissions,
+        cooldown: cooldown,
+        guild: guild,
+        nsfw: nsfw);
   }
 
   /// Dispatches onMessage event to framework.
@@ -317,19 +337,18 @@ class CommandsFramework {
       matchedMeta = _commands.firstWhere((test) {
         var cmdstr = test.commandString;
 
-        if(cmdstr.length == 2) {
-          if(cmdstr.first.contains(splittedCommand.first) && (splittedCommand.length > 1 && cmdstr.last.contains(splittedCommand[1])))
-            return true;
-          
+        if (cmdstr.length == 2) {
+          if (cmdstr.first.contains(splittedCommand.first) &&
+              (splittedCommand.length > 1 &&
+                  cmdstr.last.contains(splittedCommand[1]))) return true;
+
           return false;
         } else {
-          if(cmdstr.first.contains(splittedCommand.first))
-            return true;
+          if (cmdstr.first.contains(splittedCommand.first)) return true;
 
           return false;
         }
       });
-
     } catch (err) {
       _commandNotFoundEventController.add(e.message);
     }
@@ -363,10 +382,10 @@ class CommandsFramework {
       case 100:
         new Future(() async {
           try {
-            var params =
-                await _injectParameters(matchedMeta.method, splittedCommand, e.message);
+            var params = await _injectParameters(
+                matchedMeta.method, splittedCommand, e.message);
 
-            if(matchedMeta.parent is ClassMirror) {
+            if (matchedMeta.parent is ClassMirror) {
               var cm = matchedMeta.parent as ClassMirror;
 
               var ctor = cm.declarations.values.toList().firstWhere((m) {
@@ -396,9 +415,14 @@ class CommandsFramework {
               instance.invoke(matchedMeta.method.simpleName, params);
             }
 
-            if(matchedMeta.parent is LibraryMirror) {
-              var context = new CommandContext._new(e.message.channel, e.message.author, e.message.guild, _client);
-              matchedMeta.parent.invoke(matchedMeta.method.simpleName, new List()..add(context)..addAll(params));
+            if (matchedMeta.parent is LibraryMirror) {
+              var context = new CommandContext._new(e.message.channel,
+                  e.message.author, e.message.guild, _client);
+              matchedMeta.parent.invoke(
+                  matchedMeta.method.simpleName,
+                  new List()
+                    ..add(context)
+                    ..addAll(params));
             }
           } catch (err) {
             _commandExecutionFailController
@@ -407,23 +431,24 @@ class CommandsFramework {
           }
         });
 
-        logger.fine("Command -${matchedMeta?.classCommand?.name?.toString()} ${matchedMeta?.methodCommand?.name?.toString()}- executed");
+        logger.fine(
+            "Command -${matchedMeta?.classCommand?.name?.toString()} ${matchedMeta?.methodCommand?.name?.toString()}- executed");
         break;
     }
-    
+
     print("${s.elapsedMilliseconds} ms, ${s.elapsedMicroseconds} us");
   }
 
   Future<int> checkPermissions(CommandMetadata meta, Message e) async {
     int executionCode = -1;
     var annot = _patchRestrictions(meta.classRestrict, meta.methodRestrict);
-    
+
     // Check if command requires admin
     if (executionCode == -1 && annot.admin != null && annot.admin)
       executionCode = _isUserAdmin(e.author.id) ? 100 : 0;
 
     // Check if command requires server owner
-    if(executionCode == -1 && annot.owner != null && annot.owner)
+    if (executionCode == -1 && annot.owner != null && annot.owner)
       executionCode = e.guild.ownerID == e.author.id ? 100 : 0;
 
     //Check if user is on cooldown
@@ -431,17 +456,17 @@ class CommandsFramework {
       if (annot.cooldown != null &&
           annot.cooldown >
               0) if (!(await _cooldownCache.canExecute(
-          e.author.id, "${meta.classCommand.name}${meta.methodCommand.name}", annot.cooldown * 1000)))
-        executionCode = 2;
+          e.author.id,
+          "${meta.classCommand.name}${meta.methodCommand.name}",
+          annot.cooldown * 1000))) executionCode = 2;
     }
 
     var member = await e.guild.getMember(e.author);
 
     // Check if there is need to check user roles
     if (executionCode == -1 && annot.roles != null) {
-      var hasRoles = member.roles
-          .map((f) => f.id)
-          .where((t) => annot.roles.contains(t));
+      var hasRoles =
+          member.roles.map((f) => f.id).where((t) => annot.roles.contains(t));
 
       if (hasRoles == null || hasRoles.isEmpty) executionCode = 1;
     }
@@ -459,8 +484,7 @@ class CommandsFramework {
 
     // Check for channel compatibility
     if (executionCode == -1 && annot.guild != null && annot.guild) {
-      if (!(e.channel is TextChannel))
-        executionCode = 3;
+      if (!(e.channel is TextChannel)) executionCode = 3;
     }
 
     // Check for channel nsfw
@@ -470,16 +494,19 @@ class CommandsFramework {
         if (ch.nsfw == null)
           executionCode = 4;
         else if (!ch.nsfw) executionCode = 4;
-      } else if (!(e.channel is DMChannel) ||
-          !(e.channel is GroupDMChannel)) executionCode = 4;
+      } else if (!(e.channel is DMChannel) || !(e.channel is GroupDMChannel))
+        executionCode = 4;
     }
 
     // Check for channel topics
-    if (executionCode == -1 && annot.topics != null && e.channel is TextChannel) {
+    if (executionCode == -1 &&
+        annot.topics != null &&
+        e.channel is TextChannel) {
       var topic = (e.channel as TextChannel).topic;
       var list = topic
           .substring(topic.indexOf("[") + 1, topic.indexOf("]"))
-          .split(",").map((f) => f.trim());
+          .split(",")
+          .map((f) => f.trim());
 
       var total = false;
       for (var topic in annot.topics) {
@@ -494,7 +521,8 @@ class CommandsFramework {
 
     // Check if bot has required permissions
     if (executionCode == -1 && annot.userPermissions != null) {
-      var total = await (await e.guild.getMember(_client.user)).getTotalPermissions();
+      var total =
+          await (await e.guild.getMember(_client.user)).getTotalPermissions();
       for (var perm in annot.userPermissions) {
         if ((total.raw | perm) == 0) {
           executionCode = 6;
@@ -504,7 +532,7 @@ class CommandsFramework {
     }
 
     // Run check
-    if(executionCode == -1 && annot.check != null && !annot.check(e))
+    if (executionCode == -1 && annot.check != null && !annot.check(e))
       executionCode = 7;
 
     return executionCode;

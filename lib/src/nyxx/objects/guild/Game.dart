@@ -55,14 +55,14 @@ class Game {
     this.type = raw['type'] as int;
 
     if (raw['timestamps'] != null) {
-      if(raw['timestamps']['start'] != null) {
+      if (raw['timestamps']['start'] != null) {
         start = new DateTime.fromMillisecondsSinceEpoch(
-          raw['timestamps']['start'] as int);
+            raw['timestamps']['start'] as int);
       }
 
-      if(raw['timestamps']['end'] != null) {
-         end = new DateTime.fromMillisecondsSinceEpoch(
-          raw['timestamps']['end'] as int);
+      if (raw['timestamps']['end'] != null) {
+        end = new DateTime.fromMillisecondsSinceEpoch(
+            raw['timestamps']['end'] as int);
       }
     }
 
@@ -103,7 +103,7 @@ class GameParty {
   GameParty._new(this.raw) {
     id = raw['id'] as String;
 
-    if(raw['size'] != null) {
+    if (raw['size'] != null) {
       currentSize = raw['size'].first as int;
       maxSize = raw['size'].last as int;
     }
