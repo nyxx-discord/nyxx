@@ -55,10 +55,15 @@ class Game {
     this.type = raw['type'] as int;
 
     if (raw['timestamps'] != null) {
-      start = new DateTime.fromMillisecondsSinceEpoch(
+      if(raw['timestamps']['start'] != null) {
+        start = new DateTime.fromMillisecondsSinceEpoch(
           raw['timestamps']['start'] as int);
-      end = new DateTime.fromMillisecondsSinceEpoch(
+      }
+
+      if(raw['timestamps']['end'] != null) {
+         end = new DateTime.fromMillisecondsSinceEpoch(
           raw['timestamps']['end'] as int);
+      }
     }
 
     if (raw['application_id'] != null)
