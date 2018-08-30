@@ -353,7 +353,9 @@ class CommandsFramework {
       return;
     }
 
-    var executionCode = await checkPermissions(matchedMeta, e.message);
+    var executionCode = -1;
+    if(matchedMeta.methodRestrict != null && matchedMeta.classRestrict != null)
+       executionCode = await checkPermissions(matchedMeta, e.message);
 
     // Switch between execution codes
     switch (executionCode) {
