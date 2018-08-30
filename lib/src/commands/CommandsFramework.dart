@@ -245,10 +245,9 @@ class CommandsFramework {
       });
     });
 
+    // Insert 2 keyword messages first
     _commands.sort((first, second) =>
         -first.commandString.length.compareTo(second.commandString.length));
-
-    print(_commands.map((f) => f.commandString.length));
   }
 
   /// Creates help String based on registered commands metadata.
@@ -351,6 +350,7 @@ class CommandsFramework {
       });
     } catch (err) {
       _commandNotFoundEventController.add(e.message);
+      return;
     }
 
     var executionCode = await checkPermissions(matchedMeta, e.message);
@@ -405,7 +405,7 @@ class CommandsFramework {
                 }
               }
 
-              var instance = cm.newInstance(new Symbol(""), toInject);
+              var instance = cm.newInstance(new Symbol(''), toInject);
 
               instance.setField(new Symbol("guild"), e.message.guild);
               instance.setField(new Symbol("message"), e.message);
@@ -424,10 +424,10 @@ class CommandsFramework {
                     ..add(context)
                     ..addAll(params));
             }
-          } catch (err) {
+          } catch (err, stacktrace) {
             _commandExecutionFailController
                 .add(new CommandExecutionFailEvent._new(e.message, err));
-            logger.severe("ERROR OCCURED WHEN INVOKING COMMAND");
+            logger.severe("ERROR OCCURED WHEN INVOKING COMMAND \n $stacktrace");
           }
         });
 
@@ -435,8 +435,6 @@ class CommandsFramework {
             "Command -${matchedMeta?.classCommand?.name?.toString()} ${matchedMeta?.methodCommand?.name?.toString()}- executed");
         break;
     }
-
-    print("${s.elapsedMilliseconds} ms, ${s.elapsedMicroseconds} us");
   }
 
   Future<int> checkPermissions(CommandMetadata meta, Message e) async {
