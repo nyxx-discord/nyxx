@@ -34,57 +34,55 @@ class Command {
   /// True if command should be main
   final bool main;
 
-  const Command({this.name, this.aliases, this.main});
+  const Command({this.name, this.aliases: const [], this.main});
 }
 
 /// Defines additional properties which will restrict user access to command
 /// All fields are optional and wont affect command execution of not set.
-class Cons {
+class Restrict {
   /// Checks if user is in admins list provided at creating CommandsFramework
-  final bool isAdmin;
+  final bool admin;
+
+  final bool owner;
 
   /// List of roles required to execute command
-  final List<Snowflake> requiredRoles;
+  final List<Snowflake> roles;
 
   /// List of required permissions to invoke command
-  final List<int> requiredPermissions;
+  final List<int> userPermissions;
+
+  final List<int> botPermissions;
 
   /// Cooldown for command in seconds
   final int cooldown;
 
   /// Allows to restrict command to be used only on guild or only in DM or both
-  final int guildOnly;
+  final bool guild;
 
   /// If command is nfsw it wont be invoked in no nsfw channels
-  final bool isNsfw;
+  final bool nsfw;
 
   /// Topic of command. Can only execute this command if channel has specific topics indicated
   /// Adding to channel topic `[games, PC]` will allow to only execute commands annotated with this phrases
   final List<String> topics;
 
-  const Cons(
-      {this.isAdmin = false,
-      this.requiredRoles,
+  /// This property overrides module check if present on method.
+  final bool Function(Message msg) check;
+
+  const Restrict(
+      {this.admin,
+      this.owner,
+      this.check,
+      this.roles,
       this.cooldown,
-      this.requiredPermissions,
-      this.guildOnly,
-      this.isNsfw,
+      this.userPermissions,
+      this.botPermissions,
+      this.guild,
+      this.nsfw,
       this.topics});
 }
 
 /// Captures all remaining text into `List<String>` or `String`
 class Remainder {
   const Remainder();
-}
-
-/// Allows to specify destination of command.
-class GuildOnly {
-  /// Allows commands to be used only in DM
-  static const int DM = 1 << 0;
-
-  /// Allows commands to be used only in Guild
-  static const int GUILD = 1 << 1;
-
-  /// Allows commands to be used in both DM and Guild
-  static const int BOTH = 1 << 2;
 }

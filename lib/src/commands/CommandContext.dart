@@ -2,7 +2,7 @@ part of nyxx.commands;
 
 /// All command have to inhertit from this class.
 /// This class provides variuos helper methods to access discord world more easly
-abstract class CommandContext {
+class CommandContext {
   /// Channel from where message come from
   MessageChannel channel;
 
@@ -15,11 +15,12 @@ abstract class CommandContext {
   /// Guild in which message was sent
   Guild guild;
 
-  /// Logger for instance of command
-  Logger logger;
-
   /// Additional Client instance
   Client client;
+
+  CommandContext();
+
+  CommandContext._new(this.channel, this.author, this.guild, this.client);
 
   /// Reply to message which fires command.
   Future<Message> reply(
