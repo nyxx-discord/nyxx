@@ -34,7 +34,7 @@ class Member extends User {
   Role get highestRole => roles.reduce((f, s) => f.position > s.position ? f : s); 
 
   Member._new(Client client, Map<String, dynamic> data, [Guild guild])
-      : super._new(client, data['user'] as Map<String, dynamic>) {
+      : super._new(client, data) {
     this.nickname = data['nick'] as String;
     this.deaf = data['deaf'] as bool;
     this.mute = data['mute'] as bool;

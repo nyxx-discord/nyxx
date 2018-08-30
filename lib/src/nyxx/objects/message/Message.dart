@@ -34,6 +34,9 @@ class Message extends SnowflakeEntity {
   /// The message's author. Can be [Member] if message sent in guild
   User author;
 
+  /// Guild member if context is guild.
+  Member member;
+
   /// The mentions in the message.
   Map<Snowflake, User> mentions;
 
@@ -104,10 +107,10 @@ class Message extends SnowflakeEntity {
     this.channel._cacheMessage(this);
     this.channel.lastMessageID = this.id;
 
+    this.author = new User._new(this.client, raw['author'] as Map<String, dynamic>);
     if (this.channel is TextChannel) {
-      var author = new User._new(this.client, raw['author'] as Map<String, dynamic>);
       this.guild = (this.channel as TextChannel).guild;
-      this.author = guild.members[author.id];
+      this.member = guild.members[author.id];
 
       if (raw['mention_roles'] != null) {
         this.roleMentions = new Map<Snowflake, Role>();
