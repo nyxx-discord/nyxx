@@ -1,17 +1,19 @@
 part of nyxx.commands;
 
-class CommandMetadata {
+class _CommandMetadata {
   MethodMirror method;
   ObjectMirror parent;
 
   Restrict classRestrict;
-  Command classCommand;
+  Module classCommand;
 
   Restrict methodRestrict;
   Command methodCommand;
 
-  CommandMetadata(this.method, this.parent, this.classRestrict,
-      this.classCommand, this.methodCommand, this.methodRestrict);
+  Help methodHelp;
+
+  _CommandMetadata(this.method, this.parent, this.classRestrict,
+      this.classCommand, this.methodCommand, this.methodRestrict, this.methodHelp);
 
   bool get _classEnclosed => parent is ClassMirror;
   List<List<String>> get commandString {
@@ -44,7 +46,7 @@ T _getCmdAnnot<T>(DeclarationMirror declaration) {
 /// It gets all sent messages and matches to registered command and invokes
 /// its action.
 class CommandsFramework {
-  List<CommandMetadata> _commands;
+  List<_CommandMetadata> _commands;
 
   List<TypeConverter> _typeConverters;
   CooldownCache _cooldownCache;
@@ -198,8 +200,8 @@ class CommandsFramework {
     return toInject;
   }
 
-  String _createLog(Command classCmd, Command methodCmd) =>
-      "[${classCmd != null ? classCmd.name : ""} ${methodCmd != null && !methodCmd.main ? methodCmd.name : ""}]";
+  String _createLog(Module classCmd, Command methodCmd) =>
+      "[${classCmd != null ? classCmd.name : ""}${methodCmd != null && (methodCmd.main == null || !methodCmd.main) ? " ${methodCmd.name}" : ""}]";
 
   /// Register commands in current Isolate's libraries. Basically loads all classes as commnads with [CommandContext] superclass.
   /// Performs dependency injection when instantiate commands. And throws [Exception] when there are missing services
@@ -208,7 +210,7 @@ class CommandsFramework {
 
     mirrorSystem.libraries.forEach((_, library) {
       library.declarations.values.forEach((d) {
-        var commandAnnot = _getCmdAnnot<Command>(d);
+        var commandAnnot = _getCmdAnnot<Module>(d);
 
         if (commandAnnot != null) {
           if (d is ClassMirror) {
@@ -219,9 +221,10 @@ class CommandsFramework {
                 if (methodCommandAnnot != null) {
                   var classRestrict = _getCmdAnnot<Restrict>(d);
                   var methodRestrict = _getCmdAnnot<Restrict>(f);
+                  var methodHelp = _getCmdAnnot<Help>(f);
 
-                  _commands.add(CommandMetadata(f, d, classRestrict,
-                      commandAnnot, methodCommandAnnot, methodRestrict));
+                  _commands.add(_CommandMetadata(f, d, classRestrict,
+                      commandAnnot, methodCommandAnnot, methodRestrict, methodHelp));
                   logger.fine(
                       "Command ${_createLog(commandAnnot, methodCommandAnnot)} has been registered");
                 }
@@ -232,9 +235,10 @@ class CommandsFramework {
 
             if (commandAnnot != null) {
               var methodRestrict = _getCmdAnnot<Restrict>(d);
+              var methodHelp = _getCmdAnnot<Help>(d);
 
-              _commands.add(CommandMetadata(
-                  d, library, null, null, commandAnnot, methodRestrict));
+              _commands.add(_CommandMetadata(
+                  d, library, null, null, commandAnnot, methodRestrict, methodHelp));
               logger.fine(
                   "Command [${commandAnnot.name.toString()}] has been registered");
             }
@@ -243,19 +247,36 @@ class CommandsFramework {
       });
     });
 
-    // Insert 2 keyword messages first
+    //Insert 2 keyword messages first
     _commands.sort((first, second) =>
         -first.commandString.length.compareTo(second.commandString.length));
   }
 
   /// Creates help String based on registered commands metadata.
-  String _createHelp(Snowflake requestedUserId) {
+  String _createHelp(Snowflake requestedUserId, Guild guild) {
     var buffer = StringBuffer();
-
     buffer.writeln("**Available commands:**");
 
-    //for (var cmd in _commands)
-    //  cmd.getHelp(_isUserAdmin(requestedUserId), buffer);
+    var isAdmin = _isUserAdmin(requestedUserId, guild);
+    for (var meta in _commands) {
+      if(meta.methodHelp == null)
+        continue;
+
+      if((meta.classRestrict != null && meta.classRestrict.hidden && isAdmin) ||
+         (meta.methodRestrict != null && meta.methodRestrict.hidden && isAdmin))
+        continue;
+
+      StringBuffer commandName = new StringBuffer();
+
+      if(meta.classCommand != null)
+        commandName.write("${meta.classCommand.name} ${meta.methodCommand.main != null ? "[main]" : meta.methodCommand.name}");
+      commandName.write("${meta.methodCommand.name} ${meta.methodCommand.aliases}");
+
+      buffer.write("\n **$commandName** \n\t ${meta.methodHelp.description}");
+
+      if(meta.methodHelp.usage != null)
+        buffer.write("\n\t *Usage:* ${this.prefix}${meta.methodHelp.usage}");
+    }
 
     return buffer.toString();
   }
@@ -314,20 +335,20 @@ class CommandsFramework {
   /// Dispatches onMessage event to framework.
   Future _dispatch(MessageEvent e) async {
     // Match help specially to shadow user defined help commands.
-    if (e.message.content.startsWith((prefix + 'help'))) {
+    if (e.message.content.startsWith("${prefix}help")) {
       if (helpDirect) {
-        e.message.author.send(content: _createHelp(e.message.author.id));
+        e.message.author.send(content: _createHelp(e.message.author.id, e.message.guild));
         return;
       }
 
-      await e.message.channel.send(content: _createHelp(e.message.author.id));
+      await e.message.channel.send(content: _createHelp(e.message.author.id, e.message.guild));
       return;
     }
 
     var splittedCommand = _escapeParameters(
         e.message.content.replaceFirst(prefix, "").trim().split(' '));
 
-    CommandMetadata matchedMeta;
+    _CommandMetadata matchedMeta;
     try {
       matchedMeta = _commands.firstWhere((test) {
         var cmdstr = test.commandString;
@@ -421,13 +442,13 @@ class CommandsFramework {
     }
   }
 
-  Future<int> checkPermissions(CommandMetadata meta, Message e) async {
+  Future<int> checkPermissions(_CommandMetadata meta, Message e) async {
     int executionCode = -1;
     var annot = _patchRestrictions(meta.classRestrict, meta.methodRestrict);
 
     // Check if command requires admin
     if (executionCode == -1 && annot.admin != null && annot.admin)
-      executionCode = _isUserAdmin(e.author.id) ? 100 : 0;
+      executionCode = _isUserAdmin(e.author.id, e.guild) ? 100 : 0;
 
     // Check if command requires server owner
     if (executionCode == -1 && annot.owner != null && annot.owner)
@@ -644,7 +665,7 @@ class CommandsFramework {
     return collected;
   }
 
-  bool _isUserAdmin(Snowflake authorId) {
-    return (admins != null && admins.any((i) => i == authorId));
+  bool _isUserAdmin(Snowflake authorId, Guild guild) {
+    return (admins != null && admins.any((i) => i == authorId)) || guild.ownerID == authorId;
   }
 }
