@@ -15,9 +15,9 @@ class TrackResponse {
     loadType = raw['loadType'] as String;
 
     if (loadType == "TRACK_LOADED") {
-      entity = new Track._new(raw['tracks'].first as Map<String, dynamic>);
+      entity = Track._new(raw['tracks'].first as Map<String, dynamic>);
     } else if (loadType == "PLAYLIST_LOADED") {
-      entity = new Playlist._new(raw);
+      entity = Playlist._new(raw);
     }
   }
 }

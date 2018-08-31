@@ -29,11 +29,11 @@ class ClientOptions {
 
   /// Makes a new `ClientOptions` object.
   ClientOptions(
-      {this.disableEveryone: false,
-      this.autoShard: true,
-      this.shardIds: const [0],
-      this.shardCount: 1,
-      this.messageCacheSize: 200,
-      this.ignoreUncachedEvents: true,
-      this.forceFetchMembers: false});
+      {this.disableEveryone = false,
+      this.autoShard = true,
+      this.shardIds = const [0],
+      this.shardCount = 1,
+      this.messageCacheSize = 200,
+      this.ignoreUncachedEvents = true,
+      this.forceFetchMembers = false});
 }

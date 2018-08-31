@@ -3,10 +3,10 @@ part of nyxx.commands;
 /// Creates new poll, generates options and collects results. Returns `Map<Emoji, int` as result. [timeout] is set by default to 10 minutes
 Future<Map<Emoji, int>> createPoll(
     TextChannel channel, String title, Map<Emoji, String> options,
-    {Duration timeout: const Duration(minutes: 10),
+    {Duration timeout = const Duration(minutes: 10),
     String message,
-    bool delete: false}) async {
-  StringBuffer buffer = new StringBuffer();
+    bool delete = false}) async {
+  StringBuffer buffer = StringBuffer();
 
   buffer.writeln(title);
   options.forEach((k, v) {
@@ -21,8 +21,8 @@ Future<Map<Emoji, int>> createPoll(
   // Clean memory. Or just null it. Maybe GC will clean this.
   buffer = null;
 
-  var m = new Map<Emoji, int>();
-  return new Future<Map<Emoji, int>>(() async {
+  var m = Map<Emoji, int>();
+  return Future<Map<Emoji, int>>(() async {
     await for (var r in msg.onReactionAdded) {
       if (m.containsKey(r.emoji))
         m[r.emoji] = m[r.emoji] += 1;
@@ -62,7 +62,7 @@ class Pagination {
 
   /// Paginates a list of Strings - each String is different page.
   Future<Message> paginate(
-      {Duration timeout: const Duration(seconds: 30)}) async {
+      {Duration timeout = const Duration(seconds: 30)}) async {
     var nextEmoji = util.EmojisUnicode.arrow_forward;
     var backEmoji = util.EmojisUnicode.arrow_backward;
     var firstEmoji = util.EmojisUnicode.track_previous;
@@ -74,7 +74,7 @@ class Pagination {
     await msg.createReaction(nextEmoji);
     await msg.createReaction(lastEmoji);
 
-    new Future(() async {
+    Future(() async {
       var currPage = 0;
       var group = util.merge([
         channel.client.onMessageReactionAdded,

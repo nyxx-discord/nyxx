@@ -14,13 +14,13 @@ class Channel extends SnowflakeEntity {
   int type;
 
   Channel._new(this.client, this.raw, this.type)
-      : super(new Snowflake(raw['id'] as String)) {
+      : super(Snowflake(raw['id'] as String)) {
     client.channels[id] = this;
   }
 
   /// Deletes the channel.
   /// Throws if bot cannot perform operation
-  Future<void> delete({String auditReason: ""}) async {
+  Future<void> delete({String auditReason = ""}) async {
     await this
         .client
         .http

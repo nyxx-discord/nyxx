@@ -48,10 +48,10 @@ class EchoCommand extends command.CommandContext {
     print((channel as nyxx.GuildChannel).permissions);
 
     await (channel as nyxx.GuildChannel).editChannelPermission(
-        new nyxx.PermissionsBuilder()
+        nyxx.PermissionsBuilder()
           ..sendMessages = true
           ..sendTtsMessages = false,
-        client.users[new nyxx.Snowflake("471349482307715102")]);
+        client.users[nyxx.Snowflake("471349482307715102")]);
 
     for (var perm in (channel as nyxx.GuildChannel).permissions) {
       var role = guild.roles.values.firstWhere((i) => i.id == perm.id);
@@ -67,7 +67,7 @@ class EchoCommand extends command.CommandContext {
 }
 
 // Aliases have to be `const`
-@command.Command(name: "alias", aliases: const ["aaa"])
+@command.Command(name: "alias", aliases: ["aaa"])
 class AliasCommand extends command.CommandContext {
   @command.Command(main: true)
   Future run() async {

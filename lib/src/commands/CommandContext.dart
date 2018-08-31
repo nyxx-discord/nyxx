@@ -20,13 +20,14 @@ class CommandContext {
 
   CommandContext();
 
-  CommandContext._new(this.channel, this.author, this.guild, this.client, this.message);
+  CommandContext._new(
+      this.channel, this.author, this.guild, this.client, this.message);
 
   /// Reply to message which fires command.
   Future<Message> reply(
       {Object content,
       EmbedBuilder embed,
-      bool tts: false,
+      bool tts = false,
       bool disableEveryone}) async {
     return await channel.send(
         content: content,
@@ -39,7 +40,7 @@ class CommandContext {
   Future<Message> replyTemp(Duration duration,
       {Object content,
       EmbedBuilder embed,
-      bool tts: false,
+      bool tts = false,
       bool disableEveryone}) async {
     var msg = await channel.send(
         content: content,
@@ -47,7 +48,7 @@ class CommandContext {
         tts: tts,
         disableEveryone: disableEveryone);
 
-    new Timer(duration, () async => await msg.delete());
+    Timer(duration, () async => await msg.delete());
     return msg;
   }
 
@@ -55,9 +56,9 @@ class CommandContext {
   Future<Message> replyDelayed(Duration duration,
       {Object content,
       EmbedBuilder embed,
-      bool tts: false,
+      bool tts = false,
       bool disableEveryone}) async {
-    return new Future.delayed(
+    return Future.delayed(
         duration,
         () async => await channel.send(
             content: content,
@@ -68,9 +69,9 @@ class CommandContext {
 
   /// Collects messages emojis.
   Future<Map<Emoji, int>> collectEmojis(Message msg, Duration duration) async {
-    var m = new Map<Emoji, int>();
+    var m = Map<Emoji, int>();
 
-    return new Future<Map<Emoji, int>>(() async {
+    return Future<Map<Emoji, int>>(() async {
       await for (var r in msg.onReactionAdded) {
         if (m.containsKey(r.emoji))
           m[r.emoji] += 1;
@@ -82,9 +83,9 @@ class CommandContext {
 
   /// Delays execution of command and waits for nex matching command based on [prefix]. Has static timeout of 30 seconds
   Future<MessageEvent> nextMessage(
-      {String prefix: "",
+      {String prefix = "",
       bool ensureUser = false,
-      Duration timeout: const Duration(seconds: 30)}) async {
+      Duration timeout = const Duration(seconds: 30)}) async {
     return await message.client.onMessage.firstWhere((i) {
       if (!i.message.content.startsWith(prefix)) return false;
 
@@ -99,9 +100,9 @@ class CommandContext {
   /// Waits for first [TypingEvent] and returns it. If timed out returns null. Can listen to specific user
   Future<TypingEvent> waitForTyping(
       {User user,
-      Duration timeout: const Duration(seconds: 30),
-      bool everywhere: false}) async {
-    return new Future(() {
+      Duration timeout = const Duration(seconds: 30),
+      bool everywhere = false}) async {
+    return Future(() {
       if (everywhere) {
         if (user != null)
           return channel.client.onTyping.firstWhere((e) => e.user == user);
@@ -118,8 +119,8 @@ class CommandContext {
 
   /// Gets all channel messages that satisfies test.
   Future<List<Message>> nextMessagesWhere(bool func(Message msg),
-      {Duration timeout: const Duration(seconds: 30)}) async {
-    List<Message> tmpData = new List();
+      {Duration timeout = const Duration(seconds: 30)}) async {
+    List<Message> tmpData = List();
 
     await channel.onMessage.forEach((i) {
       if (func(i.message)) tmpData.add(i.message);
@@ -131,7 +132,7 @@ class CommandContext {
   /// Gets next [num] number of any messages sent within one context (same channel) with optional [timeout](default 30 sec)
   Future<List<Message>> nextMessages(int num,
       {Duration timeout = const Duration(seconds: 30)}) async {
-    List<Message> tmpData = new List();
+    List<Message> tmpData = List();
 
     await channel.onMessage.take(num).forEach((i) {
       tmpData.add(i.message);
@@ -149,7 +150,7 @@ class CommandContext {
   /// ```
   /// """
   Stream<String> getCodeBlocks() async* {
-    var regex = new RegExp(r"```(\w+)?(\s)?(((.+)(\s)?)+)```");
+    var regex = RegExp(r"```(\w+)?(\s)?(((.+)(\s)?)+)```");
 
     var matches = regex.allMatches(message.content);
     for (var m in matches) yield m.group(3);

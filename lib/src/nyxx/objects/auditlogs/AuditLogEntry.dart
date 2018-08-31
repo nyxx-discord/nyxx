@@ -29,15 +29,15 @@ class AuditLogEntry extends SnowflakeEntity {
   Map<String, dynamic> raw;
 
   AuditLogEntry._new(Client client, this.raw)
-      : super(new Snowflake(raw['id'] as String)) {
+      : super(Snowflake(raw['id'] as String)) {
     targetId = raw['targetId'] as String;
 
-    changes = new List();
+    changes = List();
     if (raw['changes'] != null)
       raw['changes'].forEach(
-          (Map<String, dynamic> o) => changes.add(new AuditLogChange._new(o)));
+          (Map<String, dynamic> o) => changes.add(AuditLogChange._new(o)));
 
-    user = client.users[new Snowflake(raw['user_id'] as String)];
+    user = client.users[Snowflake(raw['user_id'] as String)];
     type = raw['action_type'] as int;
     if (raw['options'] != null) options = raw['options'];
     reason = raw['reason'] as String;
