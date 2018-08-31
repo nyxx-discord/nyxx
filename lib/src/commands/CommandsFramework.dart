@@ -326,8 +326,6 @@ class CommandsFramework {
       return;
     }
 
-    var s = new Stopwatch()..start();
-
     var splittedCommand = _escapeParameters(
         e.message.content.replaceFirst(prefix, "").trim().split(' '));
 
