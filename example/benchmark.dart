@@ -20,13 +20,12 @@ void main() {
   new cmd.CommandsFramework("!", bot)..registerLibraryCommands();
 }
 
+
+// Commands banchmark.
 @cmd.Command(name: "bc")
-class Bench extends cmd.CommandContext {
-  @cmd.Command(main: true)
-  Future<void> benchmark() async {
-    var msg = await reply(content: "Pong!");
-    await msg.edit(
-        content:
-            "Total response time in 'command way': ${msg.createdAt.difference(message.createdAt).inMilliseconds} ms");
-  }
+Future<void> benchmark(cmd.CommandContext context) async {
+  var msg = await context.reply(content: "Pong!");
+  await msg.edit(
+      content:
+          "Total response time in 'command way': ${msg.createdAt.difference(context.message.createdAt).inMilliseconds} ms");
 }

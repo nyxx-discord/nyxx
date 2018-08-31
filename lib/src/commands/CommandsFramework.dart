@@ -420,10 +420,10 @@ class CommandsFramework {
 
             if (matchedMeta.parent is LibraryMirror) {
               var context = new CommandContext._new(e.message.channel,
-                  e.message.author, e.message.guild, _client);
+                  e.message.author, e.message.guild, _client, e.message);
+
               matchedMeta.parent.invoke(
-                  matchedMeta.method.simpleName,
-                  new List()
+                  matchedMeta.method.simpleName, List()
                     ..add(context)
                     ..addAll(methodInj));
             }
@@ -531,10 +531,6 @@ class CommandsFramework {
         }
       }
     }
-
-    // Run check
-    if (executionCode == -1 && annot.check != null && !annot.check(e))
-      executionCode = 7;
 
     return executionCode;
   }
