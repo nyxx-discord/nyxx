@@ -29,26 +29,25 @@ class Webhook extends SnowflakeEntity {
   /// The user, if this is accessed using a normal client.
   User user;
 
-  Webhook._new(this.client, this.raw)
-      : super(new Snowflake(raw['id'] as String)) {
+  Webhook._new(this.client, this.raw) : super(Snowflake(raw['id'] as String)) {
     this.name = raw['name'] as String;
     this.token = raw['token'] as String;
 
     if (raw['channel_id'] != null) {
       this.channel = this.client.channels[this.channelId.id] as TextChannel;
-      this.channelId = new Snowflake(raw['channel_id'] as String);
+      this.channelId = Snowflake(raw['channel_id'] as String);
     }
 
     if (raw['guild_id'] != null) {
-      this.guildId = new Snowflake(raw['guild_id'] as String);
+      this.guildId = Snowflake(raw['guild_id'] as String);
       this.guild = this.client.guilds[this.guildId];
     }
 
-    this.user = new User._new(client, raw['user'] as Map<String, dynamic>);
+    this.user = User._new(client, raw['user'] as Map<String, dynamic>);
   }
 
   /// Edits the webhook.
-  Future<Webhook> edit({String name, String auditReason: ""}) async {
+  Future<Webhook> edit({String name, String auditReason = ""}) async {
     HttpResponse r = await this.client.http.send(
         'PATCH', "/webhooks/$id/$token",
         body: {"name": name}, reason: auditReason);
@@ -57,7 +56,7 @@ class Webhook extends SnowflakeEntity {
   }
 
   /// Deletes the webhook.
-  Future<void> delete({String auditReason: ""}) async {
+  Future<void> delete({String auditReason = ""}) async {
     await this
         .client
         .http

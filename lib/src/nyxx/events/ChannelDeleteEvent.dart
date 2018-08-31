@@ -10,22 +10,22 @@ class ChannelDeleteEvent {
     if (client.ready) {
       if (json['d']['type'] == 1) {
         this.channel =
-            new DMChannel._new(client, json['d'] as Map<String, dynamic>);
+            DMChannel._new(client, json['d'] as Map<String, dynamic>);
         client.channels.remove(channel.id);
         client._events.onChannelDelete.add(this);
       } else if (json['d']['type'] == 3) {
         this.channel =
-            new GroupDMChannel._new(client, json['d'] as Map<String, dynamic>);
+            GroupDMChannel._new(client, json['d'] as Map<String, dynamic>);
         client.channels.remove(channel.id);
         client._events.onChannelDelete.add(this);
       } else {
         final Guild guild =
-            client.guilds[new Snowflake(json['d']['guild_id'] as String)];
+            client.guilds[Snowflake(json['d']['guild_id'] as String)];
         if (json['d']['type'] == 0) {
-          this.channel = new TextChannel._new(
+          this.channel = TextChannel._new(
               client, json['d'] as Map<String, dynamic>, guild);
         } else {
-          this.channel = new VoiceChannel._new(
+          this.channel = VoiceChannel._new(
               client, json['d'] as Map<String, dynamic>, guild);
         }
         guild.channels.remove(channel.id);

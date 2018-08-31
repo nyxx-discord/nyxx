@@ -3,7 +3,7 @@ import 'dart:async';
 /// Merges list of stream into one stream
 Stream<T> merge<T>(List<Stream<T>> streams) {
   int _open = streams.length;
-  var c = new StreamController<T>();
+  var c = StreamController<T>();
   for (var stream in streams) {
     stream.listen(c.add)
       ..onError(c.addError)

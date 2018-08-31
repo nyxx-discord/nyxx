@@ -10,7 +10,7 @@ class VoiceServerUpdateEvent {
 
   VoiceServerUpdateEvent._new(Client client, this.raw) {
     this.token = raw['d']['token'] as String;
-    this.guild = client.guilds[new Snowflake(raw['d']['guild_id'] as String)];
+    this.guild = client.guilds[Snowflake(raw['d']['guild_id'] as String)];
     this.endpoint = raw['d']['endpoint'] as String;
 
     client._events.onVoiceServerUpdate.add(this);

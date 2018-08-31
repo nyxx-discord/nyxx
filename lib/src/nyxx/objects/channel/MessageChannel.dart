@@ -32,11 +32,11 @@ class MessageChannel extends Channel with IterableMixin<Message>, ISend {
   MessageChannel._new(Client client, Map<String, dynamic> data, int type)
       : super._new(client, data, type) {
     if (raw.containsKey('last_message_id') && raw['last_message_id'] != null)
-      this.lastMessageID = new Snowflake(raw['last_message_id'] as String);
-    this.messages = new LinkedHashMap<Snowflake, Message>();
+      this.lastMessageID = Snowflake(raw['last_message_id'] as String);
+    this.messages = LinkedHashMap<Snowflake, Message>();
 
-    _onMessage = new StreamController.broadcast();
-    _onTyping = new StreamController.broadcast();
+    _onMessage = StreamController.broadcast();
+    _onTyping = StreamController.broadcast();
 
     onTyping = _onTyping.stream;
     onMessage = _onMessage.stream;
@@ -55,13 +55,13 @@ class MessageChannel extends Channel with IterableMixin<Message>, ISend {
 
   /// Returs message with given [id]. Allows to force fatch message from api
   /// with [force] propery. By default it checks if message is in cache and fatches if not.
-  Future<Message> getMessage(Snowflake id, {bool force: false}) async {
+  Future<Message> getMessage(Snowflake id, {bool force = false}) async {
     if (force || !messages.containsKey(id)) {
       var r = await this
           .client
           .http
           .send('GET', "/channels/${this.id.toString()}/messages/$id");
-      var msg = new Message._new(this.client, r.body);
+      var msg = Message._new(this.client, r.body);
 
       messages[id] = msg;
       return msg;
@@ -96,7 +96,7 @@ class MessageChannel extends Channel with IterableMixin<Message>, ISend {
       "embed": embed != null ? embed._build() : ""
     });
 
-    return new Message._new(this.client, r.body);
+    return Message._new(this.client, r.body);
   }
 
   @override
@@ -121,9 +121,9 @@ class MessageChannel extends Channel with IterableMixin<Message>, ISend {
   /// await chan.send(embed: embed);
   /// ```
   Future<Message> send(
-      {Object content: "",
+      {Object content = "",
       EmbedBuilder embed,
-      bool tts: false,
+      bool tts = false,
       bool disableEveryone}) async {
     var newContent = _sanitizeMessage(content, disableEveryone, client);
 
@@ -133,7 +133,7 @@ class MessageChannel extends Channel with IterableMixin<Message>, ISend {
       "tts": tts,
       "embed": embed != null ? embed._build() : ""
     });
-    return new Message._new(this.client, r.body);
+    return Message._new(this.client, r.body);
   }
 
   /// Starts typing.
@@ -144,8 +144,8 @@ class MessageChannel extends Channel with IterableMixin<Message>, ISend {
   /// Loops `startTyping` until `stopTypingLoop` is called.
   void startTypingLoop() {
     startTyping();
-    this._typing = new Timer.periodic(
-        const Duration(seconds: 7), (Timer t) => startTyping());
+    this._typing =
+        Timer.periodic(const Duration(seconds: 7), (Timer t) => startTyping());
   }
 
   /// Stops a typing loop if one is running.
@@ -174,7 +174,7 @@ class MessageChannel extends Channel with IterableMixin<Message>, ISend {
   /// var messages = await chan.getMessages(limit: 100, after: "222078108977594368");
   /// ```
   Future<LinkedHashMap<Snowflake, Message>> getMessages(
-      {int limit: 50,
+      {int limit = 50,
       Snowflake after,
       Snowflake before,
       Snowflake around,
@@ -190,10 +190,10 @@ class MessageChannel extends Channel with IterableMixin<Message>, ISend {
         .http
         .send('GET', '/channels/${this.id}/messages', queryParams: query);
 
-    var response = new LinkedHashMap<Snowflake, Message>();
+    var response = LinkedHashMap<Snowflake, Message>();
 
     for (Map<String, dynamic> val in r.body.values.first) {
-      var msg = new Message._new(this.client, val);
+      var msg = Message._new(this.client, val);
       response[msg.id] = msg;
     }
 

@@ -36,17 +36,17 @@ class HttpBase {
 
   void finish() {
     this.uri =
-        new Uri.https(_Constants.host, _Constants.baseUri + path, queryParams);
+        Uri.https(_Constants.host, _Constants.baseUri + path, queryParams);
 
     if (http.buckets[uri.toString()] == null)
-      http.buckets[uri.toString()] = new HttpBucket._new(uri.toString());
+      http.buckets[uri.toString()] = HttpBucket._new(uri.toString());
 
     this.bucket = http.buckets[uri.toString()];
 
-    this._streamController = new StreamController<HttpResponse>.broadcast();
+    this._streamController = StreamController<HttpResponse>.broadcast();
     this.stream = _streamController.stream;
 
-    new BeforeHttpRequestSendEvent._new(this.http._client, this);
+    BeforeHttpRequestSendEvent._new(this.http._client, this);
 
     if (this.http._client == null ||
         !this.http._client._events.beforeHttpRequestSend.hasListener)
@@ -58,12 +58,12 @@ class HttpBase {
 
   /// Destroys the request.
   void abort() {
-    this._streamController.add(new HttpResponse._aborted(this));
+    this._streamController.add(HttpResponse._aborted(this));
     this._streamController.close();
   }
 
   Future<HttpResponse> _execute() async {
-    var r = new httpreq.Request(this.method, this.uri);
+    var r = httpreq.Request(this.method, this.uri);
     try {
       this.headers.forEach((k, v) => r.headers[k] = v);
       if (this.body != null) {
@@ -79,7 +79,7 @@ class HttpBase {
 }
 
 class HttpMultipartRequest extends HttpBase {
-  List<httpreq.MultipartFile> files = new List();
+  List<httpreq.MultipartFile> files = List();
   Map<String, dynamic> fields;
 
   HttpMultipartRequest._new(Http http, String method, String path,
@@ -88,11 +88,10 @@ class HttpMultipartRequest extends HttpBase {
     for (var f in files) {
       try {
         var name = Uri.file(f.path).toString().split("/").last;
-        this.files.add(new httpreq.MultipartFile(
-            name, f.openRead(), f.lengthSync(),
+        this.files.add(httpreq.MultipartFile(name, f.openRead(), f.lengthSync(),
             filename: name));
       } on FileSystemException catch (err) {
-        throw new Exception("Cannot find your file: ${err.path}");
+        throw Exception("Cannot find your file: ${err.path}");
       }
     }
 
@@ -101,7 +100,7 @@ class HttpMultipartRequest extends HttpBase {
 
   @override
   Future<HttpResponse> _execute() async {
-    var r = new httpreq.MultipartRequest(this.method, this.uri);
+    var r = httpreq.MultipartRequest(this.method, this.uri);
     r.files.addAll(this.files);
     this.headers.forEach((k, v) => r.headers[k] = v);
 
@@ -166,7 +165,7 @@ class HttpResponse {
       json = jsonDecode(res);
     } on FormatException catch (err) {}
 
-    return new HttpResponse._new(
+    return HttpResponse._new(
         request, r.statusCode, "", r.headers, json as Map<String, dynamic>);
   }
 }
@@ -219,24 +218,23 @@ class HttpBucket {
             ? int.parse(r.headers['x-ratelimit-remaining'])
             : null;
         this.rateLimitReset = r.headers['x-ratelimit-reset'] != null
-            ? new DateTime.fromMillisecondsSinceEpoch(
+            ? DateTime.fromMillisecondsSinceEpoch(
                 int.parse(r.headers['x-ratelimit-reset']) * 1000,
                 isUtc: true)
             : null;
         try {
-          this.timeDifference = new DateTime.now()
+          this.timeDifference = DateTime.now()
               .toUtc()
               .difference(http_parser.parseHttpDate(r.headers['date']).toUtc());
         } catch (err) {
-          this.timeDifference = new Duration();
+          this.timeDifference = Duration();
         }
 
         if (r.status == 429) {
-          new RatelimitEvent._new(request.http._client, request, false, r);
+          RatelimitEvent._new(request.http._client, request, false, r);
           request.http._logger.warning(
               "Rate limitted on endpoint: ${request.path}. Trying to send request again after timeout...");
-          new Timer(
-              new Duration(milliseconds: (r.body['retry_after'] as int) + 500),
+          Timer(Duration(milliseconds: (r.body['retry_after'] as int) + 500),
               () => this._execute(request));
         } else {
           this.waiting = false;
@@ -248,16 +246,15 @@ class HttpBucket {
       });
     } else {
       final Duration waitTime =
-          this.rateLimitReset.difference(new DateTime.now().toUtc()) +
+          this.rateLimitReset.difference(DateTime.now().toUtc()) +
               this.timeDifference +
-              new Duration(milliseconds: 1000);
+              Duration(milliseconds: 1000);
       if (waitTime.isNegative) {
         this.rateLimitRemaining = 1;
         this._execute(request);
       } else {
-        new RatelimitEvent._new(
-            request.http._client, request as HttpRequest, true);
-        new Timer(waitTime, () {
+        RatelimitEvent._new(request.http._client, request as HttpRequest, true);
+        Timer(waitTime, () {
           this.rateLimitRemaining = 1;
           this._execute(request);
         });
@@ -276,7 +273,7 @@ class Http {
   /// Headers sent on every request.
   Map<String, String> headers;
 
-  Logger _logger = new Logger.detached("Http");
+  Logger _logger = Logger.detached("Http");
 
   Http._new([this._client]) {
     this.headers = <String, String>{'Content-Type': 'application/json'};
@@ -288,29 +285,27 @@ class Http {
   Future<HttpResponse> send(String method, String path,
       {dynamic body,
       Map<String, String> queryParams,
-      bool beforeReady: false,
-      Map<String, String> headers: const {},
+      bool beforeReady = false,
+      Map<String, String> headers = const {},
       String reason}) async {
     if (_client is Client && !this._client.ready && !beforeReady)
-      throw new Exception("Client isn't ready yet.");
+      throw Exception("Client isn't ready yet.");
 
-    HttpRequest request = new HttpRequest._new(
+    HttpRequest request = HttpRequest._new(
         this,
         method,
         path,
         queryParams,
-        new Map.from(this.headers)
-          ..addAll(headers)
-          ..addAll(addAuditReason(reason)),
+        Map.from(this.headers)..addAll(headers)..addAll(addAuditReason(reason)),
         body);
 
     await for (HttpResponse r in request.stream) {
       if (!r.aborted && r.status >= 200 && r.status < 300) {
-        if (_client != null) new HttpResponseEvent._new(_client, r);
+        if (_client != null) HttpResponseEvent._new(_client, r);
         return r;
       } else {
-        if (_client != null) new HttpErrorEvent._new(_client, r);
-        throw new HttpError._new(r);
+        if (_client != null) HttpErrorEvent._new(_client, r);
+        throw HttpError._new(r);
       }
     }
     return null;
@@ -324,27 +319,27 @@ class Http {
   Future<HttpResponse> sendMultipart(
       String method, String path, List<File> files,
       {Map<String, dynamic> data,
-      bool beforeReady: false,
+      bool beforeReady = false,
       String reason}) async {
     if (_client is Client && !this._client.ready && !beforeReady)
-      throw new Exception("Client isn't ready yet.");
+      throw Exception("Client isn't ready yet.");
 
     print("data $data");
 
-    HttpMultipartRequest request = new HttpMultipartRequest._new(this, method,
-        path, files, data, new Map.from(this.headers)..addAll(headers));
+    HttpMultipartRequest request = HttpMultipartRequest._new(this, method, path,
+        files, data, Map.from(this.headers)..addAll(headers));
 
     if (reason != "" || reason != null)
       request.headers.addAll(addAuditReason(reason));
 
     await for (HttpResponse r in request.stream) {
       if (!r.aborted && r.status >= 200 && r.status < 300) {
-        if (_client != null) new HttpResponseEvent._new(_client, r);
+        if (_client != null) HttpResponseEvent._new(_client, r);
         return r;
       } else {
         print(r.body);
-        if (_client != null) new HttpErrorEvent._new(_client, r);
-        throw new HttpError._new(r);
+        if (_client != null) HttpErrorEvent._new(_client, r);
+        throw HttpError._new(r);
       }
     }
     return null;

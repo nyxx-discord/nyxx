@@ -7,8 +7,8 @@ class GuildUnavailableEvent {
 
   GuildUnavailableEvent._new(Client client, Map<String, dynamic> json) {
     if (client.ready) {
-      this.guild = new Guild._new(client, null, false);
-      client.guilds[new Snowflake(json['d']['id'] as String)] = guild;
+      this.guild = Guild._new(client, null, false);
+      client.guilds[Snowflake(json['d']['id'] as String)] = guild;
       client._events.onGuildUnavailable.add(this);
     }
   }

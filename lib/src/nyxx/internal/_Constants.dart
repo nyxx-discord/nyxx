@@ -44,7 +44,7 @@ class _OPCodes {
       case "GUILD_SYNC":
         return GUILD_SYNC;
       default:
-        throw new Exception("Invalid opCode: $op");
+        throw Exception("Invalid opCode: $op");
     }
   }
 }

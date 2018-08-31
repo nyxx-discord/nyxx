@@ -31,7 +31,7 @@ class User extends SnowflakeEntity with ISend {
       ? client._voiceStates[this.id]
       : null;
 
-  User._new(this.client, this.raw) : super(new Snowflake(raw['id'] as String)) {
+  User._new(this.client, this.raw) : super(Snowflake(raw['id'] as String)) {
     this.username = raw['username'] as String;
     this.discriminator = raw['discriminator'] as String;
     this.avatar = raw['avatar'] as String;
@@ -43,7 +43,7 @@ class User extends SnowflakeEntity with ISend {
   }
 
   /// The user's avatar, represented as URL.
-  String avatarURL({String format: 'webp', int size: 128}) {
+  String avatarURL({String format = 'webp', int size = 128}) {
     if (this.id != null)
       return 'https://cdn.${_Constants.host}/avatars/${this.id}/${this.avatar}.$format?size=$size';
 
@@ -59,7 +59,7 @@ class User extends SnowflakeEntity with ISend {
     } catch (err) {
       HttpResponse r = await client.http.send('POST', "/users/@me/channels",
           body: {"recipient_id": this.id.toString()});
-      return new DMChannel._new(client, r.body);
+      return DMChannel._new(client, r.body);
     }
   }
 
@@ -78,9 +78,9 @@ class User extends SnowflakeEntity with ISend {
 
   /// Sends a message.
   Future<Message> send(
-      {Object content: "",
+      {Object content = "",
       EmbedBuilder embed,
-      bool tts: false,
+      bool tts = false,
       bool disableEveryone}) async {
     DMChannel channel = await getDMChannel();
     return await channel.send(

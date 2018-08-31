@@ -18,23 +18,23 @@ class AuditLog {
   Map<String, dynamic> raw;
 
   AuditLog._new(Client client, this.raw) {
-    webhooks = new Map();
-    users = new Map();
-    entries = new Map();
+    webhooks = Map();
+    users = Map();
+    entries = Map();
 
     raw['webhooks'].forEach((dynamic o) {
-      webhooks[new Snowflake(o['id'] as String)] =
-          new Webhook._new(client, o as Map<String, dynamic>);
+      webhooks[Snowflake(o['id'] as String)] =
+          Webhook._new(client, o as Map<String, dynamic>);
     });
 
     raw['users'].forEach((dynamic o) {
-      users[new Snowflake(o['id'] as String)] =
-          new User._new(client, o as Map<String, dynamic>);
+      users[Snowflake(o['id'] as String)] =
+          User._new(client, o as Map<String, dynamic>);
     });
 
     raw['audit_log_entries'].forEach((dynamic o) {
-      entries[new Snowflake(o['id'] as String)] =
-          new AuditLogEntry._new(client, o as Map<String, dynamic>);
+      entries[Snowflake(o['id'] as String)] =
+          AuditLogEntry._new(client, o as Map<String, dynamic>);
     });
   }
 }

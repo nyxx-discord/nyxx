@@ -43,21 +43,21 @@ class Player {
     isConnected = true;
     currentChannel = channel;
 
-    _onPlayerUpdate = new StreamController.broadcast();
+    _onPlayerUpdate = StreamController.broadcast();
     onPlayerUpdate = _onPlayerUpdate.stream;
 
-    _onTrackError = new StreamController.broadcast();
+    _onTrackError = StreamController.broadcast();
     onTrackError = _onTrackError.stream;
 
-    _guild.shard.send("VOICE_STATE_UPDATE",
-        new _Opcode4(_guild, channel, false, false)._build());
+    _guild.shard.send(
+        "VOICE_STATE_UPDATE", _Opcode4(_guild, channel, false, false)._build());
 
     _currentState = (await _client.onVoiceStateUpdate.first).state;
     _rawEvent = (await _client.onVoiceServerUpdate.first).raw;
 
-    var s = jsonEncode(new _OpVoiceUpdate(
-            _guild.id.toString(), _currentState.sessionId, _rawEvent)
-        .build());
+    var s = jsonEncode(
+        _OpVoiceUpdate(_guild.id.toString(), _currentState.sessionId, _rawEvent)
+            .build());
     print(s);
     _webSocket.add(s);
 
@@ -65,7 +65,7 @@ class Player {
         .where((e) => e.guild.id.toString() == _guild.id.toString())
         .listen((e) {
       _rawEvent = e.raw;
-      _webSocket.add(jsonEncode(new _OpVoiceUpdate(
+      _webSocket.add(jsonEncode(_OpVoiceUpdate(
               _guild.id.toString(), _currentState.sessionId, _rawEvent)
           .build()));
     });
@@ -77,7 +77,7 @@ class Player {
       return e.state.user.id.toString() == _client.user.id.toString();
     }).listen((e) {
       _currentState = e.state;
-      _webSocket.add(jsonEncode(new _OpVoiceUpdate(
+      _webSocket.add(jsonEncode(_OpVoiceUpdate(
               _guild.id.toString(), _currentState.sessionId, _rawEvent)
           .build()));
     });
@@ -85,10 +85,10 @@ class Player {
 
   /// Changes channel to other. Allows to optionally set mute and deafen.
   Future<void> changeChannel(VoiceChannel channel,
-      {bool muted: false, bool deafen: false}) {
+      {bool muted = false, bool deafen = false}) {
     currentChannel = channel;
     _guild.shard.send("VOICE_STATE_UPDATE",
-        new _Opcode4(_guild, channel, muted, deafen)._build());
+        _Opcode4(_guild, channel, muted, deafen)._build());
   }
 
   /// Resolves url to Lavalink Track
@@ -101,15 +101,15 @@ class Player {
 
     var uri = _restPath
         .replace(path: "/loadtracks", queryParameters: {"identifier": hash});
-    var req = new http.Request("GET", uri);
+    var req = http.Request("GET", uri);
     req.headers["Authorization"] = this._password;
 
     var res = await req.send();
     if (res.statusCode != 200)
-      throw new Exception("Cannot comunicate with lavalink via http");
+      throw Exception("Cannot comunicate with lavalink via http");
 
     var r = jsonDecode(await res.stream.bytesToString());
-    return new TrackResponse._new(r as Map<String, dynamic>);
+    return TrackResponse._new(r as Map<String, dynamic>);
   }
 
   /// Plays track on currently connected channel
@@ -118,17 +118,17 @@ class Player {
       currentTrack = track;
     else if (track is Playlist) currentTrack = track.tracks.first;
 
-    _webSocket.add(jsonEncode(new _OpPlay(_guild, currentTrack).build()));
+    _webSocket.add(jsonEncode(_OpPlay(_guild, currentTrack).build()));
     //isPlaying = true;
     return true;
   }
 
   /// Disconnect from channel. Closes all unneeded connections.
   Future<void> disconnect() async {
-    _guild.shard.send("VOICE_STATE_UPDATE",
-        new _Opcode4(_guild, null, false, false)._build());
+    _guild.shard.send(
+        "VOICE_STATE_UPDATE", _Opcode4(_guild, null, false, false)._build());
     await stop();
-    _webSocket.add(jsonEncode(new _SimpleOp("destroy", _guild)._build()));
+    _webSocket.add(jsonEncode(_SimpleOp("destroy", _guild)._build()));
     //isPlaying = false;
     isConnected = false;
     _sub1 == null ? {} : _sub1.cancel();
@@ -139,36 +139,36 @@ class Player {
   Future<void> toggleMute() async {
     var op;
     if (_currentState.selfMute)
-      op = new _OpPause(_guild, false).build();
+      op = _OpPause(_guild, false).build();
     else
-      op = new _OpPause(_guild, true).build();
+      op = _OpPause(_guild, true).build();
 
     _webSocket.add(jsonEncode(op));
     _guild.shard.send(
         "VOICE_STATE_UPDATE",
-        new _Opcode4(_guild, currentChannel, !_currentState.selfMute,
+        _Opcode4(_guild, currentChannel, !_currentState.selfMute,
                 _currentState.selfDeaf)
             ._build());
   }
 
   /// Pauses currently played track
   Future<void> pause() async {
-    _webSocket.add(jsonEncode(new _SimpleOp("pause", _guild)._build()));
+    _webSocket.add(jsonEncode(_SimpleOp("pause", _guild)._build()));
   }
 
   /// Stops track playback
   Future<void> stop() async {
-    _webSocket.add(jsonEncode(new _SimpleOp("stop", _guild)._build()));
+    _webSocket.add(jsonEncode(_SimpleOp("stop", _guild)._build()));
   }
 
   /// Seeks track to position in milliseconds
   Future<void> seek(int position) async {
-    _webSocket.add(jsonEncode(new _OpSeek(_guild, position)));
+    _webSocket.add(jsonEncode(_OpSeek(_guild, position)));
   }
 
   /// Set player volume. Volume may range from 0 to 1000. 100 is default.
   Future<void> setVolume(int volume) async {
-    _webSocket.add(jsonEncode(new _OpVolume(_guild, volume).build()));
+    _webSocket.add(jsonEncode(_OpVolume(_guild, volume).build()));
   }
 
   Future<void> _finish() async {

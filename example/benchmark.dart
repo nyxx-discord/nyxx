@@ -5,7 +5,7 @@ import 'dart:io';
 import 'dart:async';
 
 void main() {
-  nyxx.Client bot = new nyxx.Client(Platform.environment['DISCORD_TOKEN']);
+  nyxx.Client bot = nyxx.Client(Platform.environment['DISCORD_TOKEN']);
 
   // Manual banchmark
   bot.onMessage.listen((nyxx.MessageEvent e) async {
@@ -17,9 +17,8 @@ void main() {
     }
   });
 
-  new cmd.CommandsFramework("!", bot)..registerLibraryCommands();
+  cmd.CommandsFramework("!", bot)..registerLibraryCommands();
 }
-
 
 // Commands banchmark.
 @cmd.Command(name: "bc")

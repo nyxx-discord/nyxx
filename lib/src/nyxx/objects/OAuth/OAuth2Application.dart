@@ -29,7 +29,7 @@ class OAuth2Application {
   OAuth2Application._new(this.client, this.raw) {
     this.description = raw['description'] as String;
     this.icon = raw['icon'] as String;
-    this.id = new Snowflake(raw['id'] as String);
+    this.id = Snowflake(raw['id'] as String);
     this.name = raw['name'] as String;
     this.rpcOrigins = raw['rpcOrigins'] as List<String>;
     this.createdAt = id.timestamp;

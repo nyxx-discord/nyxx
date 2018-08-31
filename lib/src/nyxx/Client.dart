@@ -167,17 +167,17 @@ class Client {
   Stream<VoiceServerUpdateEvent> onVoiceServerUpdate;
 
   /// Logger instance
-  Logger logger = new Logger.detached("Client");
+  Logger logger = Logger.detached("Client");
 
   /// Gets an bot invite link. Null if [clientId] not present.
   String get inviteLink =>
       "https://discordapp.com/oauth2/authorize?&client_id=${this.app.id.toString()}&scope=bot&permissions=0";
 
   /// Creates and logs in a new client.
-  Client(this._token, {ClientOptions options, bool ignoreExceptions: true}) {
+  Client(this._token, {ClientOptions options, bool ignoreExceptions = true}) {
     if (ignoreExceptions) {
       Isolate.current.setErrorsFatal(false);
-      ReceivePort errorsPort = new ReceivePort();
+      ReceivePort errorsPort = ReceivePort();
       errorsPort.listen((err) {
         logger.severe("ERROR: ${err[0]} \n ${err[1]}");
       });
@@ -185,18 +185,18 @@ class Client {
     }
 
     if (this._token == null || this._token == "")
-      throw new Exception("Token cannot be null or empty");
-    if (this._options == null) this._options = new ClientOptions();
+      throw Exception("Token cannot be null or empty");
+    if (this._options == null) this._options = ClientOptions();
 
-    this._voiceStates = new Map<Snowflake, UserVoiceState>();
-    this.guilds = new Map<Snowflake, Guild>();
-    this.channels = new Map<Snowflake, Channel>();
-    this.users = new Map<Snowflake, User>();
-    this.shards = new Map<int, Shard>();
+    this._voiceStates = Map<Snowflake, UserVoiceState>();
+    this.guilds = Map<Snowflake, Guild>();
+    this.channels = Map<Snowflake, Channel>();
+    this.users = Map<Snowflake, User>();
+    this.shards = Map<int, Shard>();
 
-    this.http = new Http._new(this);
-    this._events = new _EventController(this);
-    this._ws = new _WS(this);
+    this.http = Http._new(this);
+    this._events = _EventController(this);
+    this._ws = _WS(this);
 
     Logger.root.level = Level.ALL;
     Logger.root.onRecord.listen((LogRecord rec) {
@@ -217,14 +217,14 @@ class Client {
   }
 
   /// The client's uptime.
-  Duration get uptime => new DateTime.now().difference(_startTime);
+  Duration get uptime => DateTime.now().difference(_startTime);
 
   /// Get user instance with specified id.
   Future<User> getUser(Snowflake id) async {
     if (this.users.containsKey(id)) return this.users[id];
 
     var r = await this.http.send("GET", "/users/${id.toString()}");
-    return new User._new(this, r.body);
+    return User._new(this, r.body);
   }
 
   /// Gets Guild with specified id.
@@ -232,20 +232,20 @@ class Client {
     if (this.guilds.containsKey(id)) return this.guilds[id];
 
     var r = await this.http.send("GET", "/guilds/${id.toString()}");
-    return new Guild._new(this, r.body);
+    return Guild._new(this, r.body);
   }
 
   /// Creates new guild with provided builder.
   Future<Guild> createGuild(GuildBuilder builder) async {
     var r = await this.http.send("POST", "/guilds", body: builder._build());
 
-    return new Guild._new(this, r.body);
+    return Guild._new(this, r.body);
   }
 
   /// Gets a webhook by its ID and token.
-  Future<Webhook> getWebhook(String id, {String token: ""}) async {
+  Future<Webhook> getWebhook(String id, {String token = ""}) async {
     HttpResponse r = await http.send('GET', "/webhooks/$id/$token");
-    return new Webhook._new(this, r.body);
+    return Webhook._new(this, r.body);
   }
 
   /// Block isolate until client is ready.
@@ -254,6 +254,6 @@ class Client {
   /// Gets an [Invite] object with given code.
   Future<Invite> getInvite(String code) async {
     final HttpResponse r = await this.http.send('GET', '/invites/$code');
-    return new Invite._new(this, r.body);
+    return Invite._new(this, r.body);
   }
 }

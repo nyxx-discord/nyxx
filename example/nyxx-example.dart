@@ -14,13 +14,13 @@ class Service {
 // Main function
 void main() {
   // Create new bot instance
-  nyxx.Client bot = new nyxx.Client(Platform.environment['DISCORD_TOKEN']);
+  nyxx.Client bot = nyxx.Client(Platform.environment['DISCORD_TOKEN']);
 
   // Register new command handler.
   // It registers your services and adds command to registry.
-  new command.CommandsFramework('!', bot)
+  command.CommandsFramework('!', bot)
     ..admins = [const nyxx.Snowflake.static("302359032612651009")]
-    ..registerServices([new Service("Siema")])
+    ..registerServices([Service("Siema")])
     ..registerLibraryCommands();
 }
 

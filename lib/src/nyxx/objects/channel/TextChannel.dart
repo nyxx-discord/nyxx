@@ -30,18 +30,17 @@ class TextChannel extends MessageChannel with GuildChannel {
       "topic": topic != null ? topic : this.topic,
       "position": position != null ? position : this.position
     });
-    return new TextChannel._new(this.client, r.body, this.guild);
+    return TextChannel._new(this.client, r.body, this.guild);
   }
 
   /// Gets all of the webhooks for this channel.
   Future<Map<String, Webhook>> getWebhooks() async {
     HttpResponse r =
         await this.client.http.send('GET', "/channels/$id/webhooks");
-    Map<String, Webhook> map = new Map();
+    Map<String, Webhook> map = Map();
 
     r.body.forEach((k, o) {
-      Webhook webhook =
-          new Webhook._new(this.client, o as Map<String, dynamic>);
+      Webhook webhook = Webhook._new(this.client, o as Map<String, dynamic>);
       map[webhook.id.toString()] = webhook;
     });
 
@@ -53,11 +52,11 @@ class TextChannel extends MessageChannel with GuildChannel {
   /// ```
   /// var webhook = await chan.createWebhook("!a Send nudes kek6407");
   /// ```
-  Future<Webhook> createWebhook(String name, {String auditReason: ""}) async {
+  Future<Webhook> createWebhook(String name, {String auditReason = ""}) async {
     HttpResponse r = await this.client.http.send(
         'POST', "/channels/$id/webhooks",
         body: {"name": name}, reason: auditReason);
-    return new Webhook._new(this.client, r.body);
+    return Webhook._new(this.client, r.body);
   }
 
   /// Fetches and returns all channel's [Invite]s
@@ -69,9 +68,9 @@ class TextChannel extends MessageChannel with GuildChannel {
     final HttpResponse r =
         await this.client.http.send('GET', "/channels/$id/invites");
 
-    Map<String, Invite> invites = new Map();
+    Map<String, Invite> invites = Map();
     for (Map<String, dynamic> val in r.body.values.first) {
-      invites[val["code"] as String] = new Invite._new(this.client, val);
+      invites[val["code"] as String] = Invite._new(this.client, val);
     }
 
     return invites;
@@ -83,12 +82,12 @@ class TextChannel extends MessageChannel with GuildChannel {
   /// var inv = await chan.createInvite(maxUses: 2137);
   /// ```
   Future<Invite> createInvite(
-      {int maxAge: 0,
-      int maxUses: 0,
-      bool temporary: false,
-      bool unique: false,
-      String auditReason: ""}) async {
-    Map<String, dynamic> params = new Map<String, dynamic>();
+      {int maxAge = 0,
+      int maxUses = 0,
+      bool temporary = false,
+      bool unique = false,
+      String auditReason = ""}) async {
+    Map<String, dynamic> params = Map<String, dynamic>();
 
     params['max_age'] = maxAge;
     params['maxUses'] = maxUses;
@@ -99,7 +98,7 @@ class TextChannel extends MessageChannel with GuildChannel {
         'POST', "/channels/$id/invites",
         body: params, reason: auditReason);
 
-    return new Invite._new(this.client, r.body);
+    return Invite._new(this.client, r.body);
   }
 
   /// Returns pinned [Message]s for [Channel].
@@ -107,9 +106,9 @@ class TextChannel extends MessageChannel with GuildChannel {
     final HttpResponse r =
         await this.client.http.send('GET', "/channels/$id/pins");
 
-    Map<String, Message> messages = new Map();
+    Map<String, Message> messages = Map();
     for (Map<String, dynamic> val in r.body.values.first) {
-      messages[val["id"] as String] = new Message._new(this.client, val);
+      messages[val["id"] as String] = Message._new(this.client, val);
     }
 
     return messages;

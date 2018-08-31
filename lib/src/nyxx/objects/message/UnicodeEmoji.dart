@@ -13,7 +13,7 @@ class UnicodeEmoji extends Emoji {
   @override
   String encode() {
     try {
-      return new String.fromCharCode(int.parse(code, radix: 16));
+      return String.fromCharCode(int.parse(code, radix: 16));
     } catch (e) {
       return code;
     }

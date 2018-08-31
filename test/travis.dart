@@ -36,7 +36,7 @@ class TestCommand extends command.CommandContext {
   }
 }
 
-@command.Command(name: "cooldown", aliases: const ["culdown"])
+@command.Command(name: "cooldown", aliases: ["culdown"])
 class CooldownCommand extends command.CommandContext {
   @command.Command(main: true)
   @command.Restrict(cooldown: 10)
@@ -46,7 +46,7 @@ class CooldownCommand extends command.CommandContext {
 // -------------------------------------------------------
 
 nyxx.EmbedBuilder createTestEmbed() {
-  return new nyxx.EmbedBuilder()
+  return nyxx.EmbedBuilder()
     ..title = "Test title"
     ..addField(name: "Test field", value: "Test value");
 }
@@ -55,9 +55,9 @@ nyxx.EmbedBuilder createTestEmbed() {
 
 void main() {
   var env = Platform.environment;
-  var bot = new nyxx.Client(env['DISCORD_TOKEN'], ignoreExceptions: false);
+  var bot = nyxx.Client(env['DISCORD_TOKEN'], ignoreExceptions: false);
 
-  new command.CommandsFramework('~~', bot)
+  command.CommandsFramework('~~', bot)
     ..registerLibraryServices()
     ..registerLibraryCommands()
     ..onCommandNotFound.listen((m) {
@@ -68,7 +68,7 @@ void main() {
     })
     ..ignoreBots = false;
 
-  new Timer(const Duration(seconds: 60), () {
+  Timer(const Duration(seconds: 60), () {
     print('Timed out waiting for messages');
     exit(1);
   });

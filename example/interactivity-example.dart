@@ -13,7 +13,7 @@ void main() async {
     var ch = bot.channels["422285619952222208"] as nyxx.TextChannel;
 
     // Create and send paginated message. After 15 minutes message will be deactivated.
-    var pagination = new command.Pagination.fromString(
+    var pagination = command.Pagination.fromString(
         "Siema siema co tam. "
         "To bedzie bardzo dlugi paragraf poniewaz potrzebuje duzo tesktu. "
         "Nie wiem co tu napisac ale mam nadzieje ze nikt tego nie przeczyta "

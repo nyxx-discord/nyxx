@@ -34,7 +34,7 @@ class Command {
   /// True if command should be main
   final bool main;
 
-  const Command({this.name, this.aliases: const [], this.main});
+  const Command({this.name, this.aliases = const [], this.main});
 }
 
 /// Defines additional properties which will restrict user access to command

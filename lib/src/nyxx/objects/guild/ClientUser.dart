@@ -29,7 +29,7 @@ class ClientUser extends User {
 
   /// Updates the client's presence.
   ///     ClientUser.setPresence(status: s, activity: { 'name': args.join(' ') });
-  ClientUser setPresence({String status, bool afk: false, Game game}) {
+  ClientUser setPresence({String status, bool afk = false, Game game}) {
     this.client.shards.forEach((int id, Shard shard) {
       shard.setPresence(status: status, afk: afk, game: game);
     });
