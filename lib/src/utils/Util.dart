@@ -43,6 +43,18 @@ String getSymbolName(Symbol symbol) {
       .replaceAll(")", "");
 }
 
+/// Simple foramt function implementation
+/// %0% will be replaced with first list element, %1% with second...
+/// 
+/// ```
+/// var str = "Hello %0%!";
+/// 
+/// print(format(str, ["Janusz"]))
+/// ```
+String format(String format, List<Object> formatters) =>
+  format.replaceFirstMapped(r"%([0-9]+)%", (match) => formatters[int.parse(match.group(1))].toString());
+
+/// Partition list into chunks
 Iterable<List<T>> partition<T>(List<T> lst, int len) sync* {
   for (var i = 0; i < lst.length; i += len) yield lst.sublist(i, i + len);
 }
