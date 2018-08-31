@@ -155,7 +155,4 @@ class CommandContext {
     var matches = regex.allMatches(message.content);
     for (var m in matches) yield m.group(3);
   }
-
-  /// Allows to create help String for command
-  void getHelp(bool isAdmin, StringBuffer buffer) {}
 }
