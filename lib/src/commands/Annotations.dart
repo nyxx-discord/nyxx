@@ -43,6 +43,7 @@ class Restrict {
   /// Checks if user is in admins list provided at creating CommandsFramework
   final bool admin;
 
+  /// Checks if user is server owner
   final bool owner;
 
   /// List of roles required to execute command
@@ -66,13 +67,9 @@ class Restrict {
   /// Adding to channel topic `[games, PC]` will allow to only execute commands annotated with this phrases
   final List<String> topics;
 
-  /// This property overrides module check if present on method.
-  final bool Function(Message msg) check;
-
   const Restrict(
       {this.admin,
       this.owner,
-      this.check,
       this.roles,
       this.cooldown,
       this.userPermissions,

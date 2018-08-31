@@ -20,7 +20,7 @@ class CommandContext {
 
   CommandContext();
 
-  CommandContext._new(this.channel, this.author, this.guild, this.client);
+  CommandContext._new(this.channel, this.author, this.guild, this.client, this.message);
 
   /// Reply to message which fires command.
   Future<Message> reply(
