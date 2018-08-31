@@ -174,25 +174,11 @@ class CommandsFramework {
     var mirrorSystem = currentMirrorSystem();
 
     mirrorSystem.libraries.forEach((uri, lib) {
-      lib.declarations.forEach((s, cm) {
+      for (var cm in lib.declarations.values) {
         if (cm is ClassMirror) {
           if (cm.isSubclassOf(superClass) && !cm.isAbstract) {
-            var ctor = cm.declarations.values.toList().firstWhere((m) {
-              if (m is MethodMirror) return m.isConstructor;
-
-              return false;
-            }) as MethodMirror;
-
-            var params = ctor.parameters;
-            var toInject = new List<dynamic>();
-
-            for (var param in params) {
-              var type = param.type.reflectedType;
-
-              for (var service in _services) {
-                if (service.runtimeType == type) toInject.add(service);
-              }
-            }
+            
+            var toInject = _createConstuctorInjections(cm);
 
             try {
               var serv = cm.newInstance(new Symbol(''), toInject).reflectee;
@@ -201,10 +187,32 @@ class CommandsFramework {
               throw new Exception(
                   "Service [${util.getSymbolName(cm.simpleName)}] constructor not satisfied!");
             }
+
+            break;
           }
         }
-      });
+      }
     });
+  }
+
+  List<Object> _createConstuctorInjections(ClassMirror service) {
+    var ctor = service.declarations.values.toList().firstWhere((m) {
+      if (m is MethodMirror) return m.isConstructor;
+
+      return false;
+    }) as MethodMirror;
+
+    var params = ctor.parameters;
+    var toInject = new List<dynamic>();
+
+    for (var param in params) {
+      var type = param.type.reflectedType;
+
+      for (var service in _services) {
+        if (service.runtimeType == type) toInject.add(service);
+      }
+    }
+    return toInject;
   }
 
   /// Register commands in current Isolate's libraries. Basically loads all classes as commnads with [CommandContext] superclass.
@@ -388,23 +396,7 @@ class CommandsFramework {
 
             if (matchedMeta.parent is ClassMirror) {
               var cm = matchedMeta.parent as ClassMirror;
-
-              var ctor = cm.declarations.values.toList().firstWhere((m) {
-                if (m is MethodMirror) return m.isConstructor;
-
-                return false;
-              }) as MethodMirror;
-
-              var params = ctor.parameters;
-              var toInject = new List<dynamic>();
-
-              for (var param in params) {
-                var type = param.type.reflectedType;
-
-                for (var service in _services) {
-                  if (service.runtimeType == type) toInject.add(service);
-                }
-              }
+              var toInject = _createConstuctorInjections(cm);
 
               var instance = cm.newInstance(new Symbol(''), toInject);
 
