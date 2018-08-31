@@ -158,9 +158,15 @@ class HttpResponse {
 
   static Future<HttpResponse> _fromResponse(
       HttpBase request, httpreq.StreamedResponse r) async {
-    var res = await r.stream.bytesToString();
-    var json;
+    
+    String res;
+    try {
+      res = await r.stream.bytesToString();
+    } catch (err, stacktrace){
+      throw new Exception("You're probably not connected to internet. If not report this issue \n $stacktrace");
+    }
 
+    var json;
     try {
       json = jsonDecode(res);
     } on FormatException catch (err) {}
