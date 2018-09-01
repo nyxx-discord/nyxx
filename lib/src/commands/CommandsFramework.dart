@@ -1,45 +1,18 @@
 part of nyxx.commands;
 
-class _CommandMetadata {
-  MethodMirror method;
-  ObjectMirror parent;
-
-  Restrict classRestrict;
-  Module classCommand;
-
-  Restrict methodRestrict;
-  Command methodCommand;
-
-  Help methodHelp;
-
-  _CommandMetadata(this.method, this.parent, this.classRestrict,
-      this.classCommand, this.methodCommand, this.methodRestrict, this.methodHelp);
-
-  bool get _classEnclosed => parent is ClassMirror;
-  List<List<String>> get commandString {
-    if (classCommand != null) if (methodCommand.main != null &&
-        methodCommand.main)
-      return [List.from(classCommand.aliases)..add(classCommand.name)];
-    else
-      return [
-        List.from(classCommand.aliases)..add(classCommand.name),
-        List.from(methodCommand.aliases)..add(methodCommand.name)
-      ];
-
-    return [List.from(methodCommand.aliases)..add(methodCommand.name)];
-  }
+T _getCmdAnnot<T>(DeclarationMirror declaration) {
+  Iterable<T> fs = _getCmdAnnots<T>(declaration);
+  if(fs.isEmpty) return null;
+  return fs.first;
 }
 
-T _getCmdAnnot<T>(DeclarationMirror declaration) {
-  for (var instance in declaration.metadata) {
+Iterable<T> _getCmdAnnots<T>(DeclarationMirror declaration) sync* {
+  for (var instance in declaration.metadata)
     if (instance.hasReflectee) {
       var reflectee = instance.reflectee;
-      if (reflectee.runtimeType == T) {
-        return reflectee as T;
-      }
+      if (reflectee is T)
+        yield reflectee;
     }
-  }
-  return null;
 }
 
 /// Main point of commands in nyx.
@@ -222,9 +195,14 @@ class CommandsFramework {
                   var classRestrict = _getCmdAnnot<Restrict>(d);
                   var methodRestrict = _getCmdAnnot<Restrict>(f);
                   var methodHelp = _getCmdAnnot<Help>(f);
+                  var classPre = _getCmdAnnots<Preprocessor>(d);
+                  var methodPre = _getCmdAnnots<Preprocessor>(f);
+
+                  var prepro = List<Preprocessor>.from(classPre)..addAll(methodPre)..removeWhere((e) => e == null);
+                  print(prepro);
 
                   _commands.add(_CommandMetadata(f, d, classRestrict,
-                      commandAnnot, methodCommandAnnot, methodRestrict, methodHelp));
+                      commandAnnot, methodCommandAnnot, methodRestrict, methodHelp, prepro));
                   logger.fine(
                       "Command ${_createLog(commandAnnot, methodCommandAnnot)} has been registered");
                 }
@@ -291,31 +269,11 @@ class CommandsFramework {
     var admin = meth.admin != null ? meth.admin : top.admin;
     var owner = meth.owner != null ? meth.owner : top.owner;
 
-    List<Snowflake> roles;
-    if (meth.roles != null) {
-      if (top.roles != null)
-        roles = List.from(top.roles)..addAll(meth.roles);
-      else
-        roles = meth.roles;
-    }
+    List<Snowflake> roles = List.from(top.roles)..addAll(meth.roles);
 
-    List<int> userPermissions;
-    if (meth.userPermissions != null) {
-      if (top.userPermissions != null)
-        userPermissions = List.from(top.userPermissions)
-          ..addAll(meth.userPermissions);
-      else
-        userPermissions = meth.userPermissions;
-    }
-
-    List<int> botPermissions;
-    if (meth.botPermissions != null) {
-      if (top.botPermissions != null)
-        botPermissions = List.from(top.botPermissions)
-          ..addAll(meth.botPermissions);
-      else
-        botPermissions = meth.botPermissions;
-    }
+    List<int> userPermissions = List.from(top.userPermissions)..addAll(meth.userPermissions);
+    List<int> botPermissions = List.from(top.botPermissions)..addAll(meth.botPermissions);
+    List<String> topics = List.from(top.topics)..addAll(meth.topics);
 
     var cooldown = meth.cooldown != null ? meth.cooldown : top.cooldown;
     var guild = meth.guild != null ? meth.guild : top.guild;
@@ -329,7 +287,8 @@ class CommandsFramework {
         botPermissions: botPermissions,
         cooldown: cooldown,
         guild: guild,
-        nsfw: nsfw);
+        nsfw: nsfw,
+        topics: topics);
   }
 
   /// Dispatches onMessage event to framework.
@@ -371,6 +330,10 @@ class CommandsFramework {
     }
 
     var executionCode = -1;
+    
+    if(matchedMeta.preprocessors.length > 0 && !matchedMeta.preprocessors.every((pre) => pre.execute(_services, e.message)))
+      executionCode = 8;
+
     if (matchedMeta.methodRestrict != null && matchedMeta.classRestrict != null)
       executionCode = await checkPermissions(matchedMeta, e.message);
 

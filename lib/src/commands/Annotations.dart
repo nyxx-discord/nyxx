@@ -77,13 +77,13 @@ class Restrict {
   const Restrict(
       {this.admin,
       this.owner,
-      this.roles,
+      this.roles = const [],
       this.cooldown,
-      this.userPermissions,
-      this.botPermissions,
+      this.userPermissions = const [],
+      this.botPermissions = const [],
       this.guild,
       this.nsfw,
-      this.topics,
+      this.topics = const [],
       this.hidden});
 }
 

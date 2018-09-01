@@ -16,6 +16,15 @@ void main() {
     ..registerLibraryCommands();
 }
 
+class IsGuildProcessor implements command.Preprocessor {
+  const IsGuildProcessor();
+
+  @override
+  bool execute(List<Object> services, nyxx.Message message) {
+    return message.guild != null;
+  }
+}
+
 @command.Command(name: "single")
 Future<void> single(command.CommandContext context) async {
   await context.reply(content: "WORKING");
@@ -28,6 +37,7 @@ Future<void> single(command.CommandContext context) async {
 class PongCommand extends command.CommandContext {
   @command.Command(main: true)
   @command.Help("Pong!", usage: "ping")
+  @IsGuildProcessor()
   Future run() async {
     await reply(content: "Pong!");
   }
