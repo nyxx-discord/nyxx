@@ -109,11 +109,11 @@ class CommandsFramework {
 
     // Listen to incoming messages and ignore all from bots (if set)
     _client.onReady.listen((_) {
-      _client.onMessage.listen((MessageEvent e) async {
+      _client.onMessage.listen((MessageEvent e) {
         if (ignoreBots && e.message.author.bot) return;
         if (!e.message.content.startsWith(prefix)) return;
 
-        await _dispatch(e);
+        Future.microtask(() => _dispatch(e));
       });
     });
   }
@@ -176,6 +176,25 @@ class CommandsFramework {
   String _createLog(Module classCmd, Command methodCmd) =>
       "[${classCmd != null ? classCmd.name : ""}${methodCmd != null && (methodCmd.main == null || !methodCmd.main) ? " ${methodCmd.name}" : ""}]";
 
+
+  List<List> _getProcessors(ClassMirror classMirror, DeclarationMirror methodMirror) {
+    var classPre = <Preprocessor>[];
+    var classPost = <Postprocessor>[];
+
+    if(classMirror != null) {
+      classPre.addAll(_getCmdAnnots<Preprocessor>(classMirror));
+      classPost.addAll(_getCmdAnnots<Postprocessor>(classMirror));
+    }
+
+    var methodPre = _getCmdAnnots<Preprocessor>(methodMirror);
+    var methodPost = _getCmdAnnots<Postprocessor>(methodMirror);
+
+    var prepro = List<Preprocessor>.from(classPre)..addAll(methodPre)..removeWhere((e) => e == null);
+    var postPro = List<Postprocessor>.from(classPost)..addAll(methodPost)..removeWhere((e) => e == null);
+
+    return [prepro, postPro];
+  }
+
   /// Register commands in current Isolate's libraries. Basically loads all classes as commnads with [CommandContext] superclass.
   /// Performs dependency injection when instantiate commands. And throws [Exception] when there are missing services
   void registerLibraryCommands() {
@@ -195,14 +214,11 @@ class CommandsFramework {
                   var classRestrict = _getCmdAnnot<Restrict>(d);
                   var methodRestrict = _getCmdAnnot<Restrict>(f);
                   var methodHelp = _getCmdAnnot<Help>(f);
-                  var classPre = _getCmdAnnots<Preprocessor>(d);
-                  var methodPre = _getCmdAnnots<Preprocessor>(f);
-
-                  var prepro = List<Preprocessor>.from(classPre)..addAll(methodPre)..removeWhere((e) => e == null);
-                  print(prepro);
+                  var processors = _getProcessors(d, f);
+                  print(processors);
 
                   _commands.add(_CommandMetadata(f, d, classRestrict,
-                      commandAnnot, methodCommandAnnot, methodRestrict, methodHelp, prepro));
+                      commandAnnot, methodCommandAnnot, methodRestrict, methodHelp, processors.first as List<Preprocessor>, processors.last as List<Postprocessor>));
                   logger.fine(
                       "Command ${_createLog(commandAnnot, methodCommandAnnot)} has been registered");
                 }
@@ -214,9 +230,11 @@ class CommandsFramework {
             if (commandAnnot != null) {
               var methodRestrict = _getCmdAnnot<Restrict>(d);
               var methodHelp = _getCmdAnnot<Help>(d);
+              var processors = _getProcessors(null, d);
+              print(processors);
 
               _commands.add(_CommandMetadata(
-                  d, library, null, null, commandAnnot, methodRestrict, methodHelp));
+                  d, library, null, null, commandAnnot, methodRestrict, methodHelp, processors.first as List<Preprocessor>, processors.last as List<Postprocessor>));
               logger.fine(
                   "Command [${commandAnnot.name.toString()}] has been registered");
             }
@@ -293,6 +311,8 @@ class CommandsFramework {
 
   /// Dispatches onMessage event to framework.
   Future _dispatch(MessageEvent e) async {
+    Stopwatch s = new Stopwatch()..start();
+
     // Match help specially to shadow user defined help commands.
     if (e.message.content.startsWith("${prefix}help")) {
       if (helpDirect) {
@@ -362,42 +382,49 @@ class CommandsFramework {
       case -1:
       case -2:
       case 100:
-        Future(() async {
-          try {
-            splittedCommand.removeRange(0, matchedMeta.commandString.length);
-            var methodInj = await _injectParameters(
-                matchedMeta.method, splittedCommand, e.message);
+        try {
+          InstanceMirror res;
+          splittedCommand.removeRange(0, matchedMeta.commandString.length);
+          var methodInj = await _injectParameters(
+              matchedMeta.method, splittedCommand, e.message);
 
-            if (matchedMeta.parent is ClassMirror) {
-              var cm = matchedMeta.parent as ClassMirror;
-              var toInject = _createConstuctorInjections(cm);
+          if (matchedMeta.parent is ClassMirror) {
+            var cm = matchedMeta.parent as ClassMirror;
+            var toInject = _createConstuctorInjections(cm);
 
-              var instance = cm.newInstance(Symbol(''), toInject);
+            var instance = cm.newInstance(Symbol(''), toInject);
 
-              instance.setField(Symbol("guild"), e.message.guild);
-              instance.setField(Symbol("message"), e.message);
-              instance.setField(Symbol("author"), e.message.author);
-              instance.setField(Symbol("channel"), e.message.channel);
-              instance.setField(Symbol("client"), this._client);
-              instance.invoke(matchedMeta.method.simpleName, methodInj);
-            }
-
-            if (matchedMeta.parent is LibraryMirror) {
-              var context = CommandContext._new(e.message.channel,
-                  e.message.author, e.message.guild, _client, e.message);
-
-              matchedMeta.parent.invoke(
-                  matchedMeta.method.simpleName,
-                  List()
-                    ..add(context)
-                    ..addAll(methodInj));
-            }
-          } catch (err, stacktrace) {
-            _commandExecutionFailController
-                .add(CommandExecutionFailEvent._new(e.message, err));
-            logger.severe("ERROR OCCURED WHEN INVOKING COMMAND \n $stacktrace");
+            instance.setField(Symbol("guild"), e.message.guild);
+            instance.setField(Symbol("message"), e.message);
+            instance.setField(Symbol("author"), e.message.author);
+            instance.setField(Symbol("channel"), e.message.channel);
+            instance.setField(Symbol("client"), this._client);
+            res = instance.invoke(matchedMeta.method.simpleName, methodInj);
           }
-        });
+
+          if (matchedMeta.parent is LibraryMirror) {
+            var context = CommandContext._new(e.message.channel,
+                e.message.author, e.message.guild, _client, e.message);
+
+            res = matchedMeta.parent.invoke(
+                matchedMeta.method.simpleName,
+                List()
+                  ..add(context)
+                  ..addAll(methodInj));
+          }
+
+          print(matchedMeta.postprocessors);
+          if(matchedMeta.postprocessors.length > 0) {
+            for (var post in matchedMeta.postprocessors)
+              post.execute(_services, res.hasReflectee ? res.reflectee : null, e.message);
+          }
+        } catch (err, stacktrace) {
+          _commandExecutionFailController
+              .add(CommandExecutionFailEvent._new(e.message, err));
+          logger.severe("ERROR OCCURED WHEN INVOKING COMMAND \n $stacktrace");
+        }
+
+        print(s.elapsedMicroseconds);
 
         logger.fine(
             "Command ${_createLog(matchedMeta.classCommand, matchedMeta.methodCommand)} executed");

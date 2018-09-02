@@ -16,12 +16,24 @@ void main() {
     ..registerLibraryCommands();
 }
 
+/// Example command preprocessor. 
 class IsGuildProcessor implements command.Preprocessor {
   const IsGuildProcessor();
 
   @override
   bool execute(List<Object> services, nyxx.Message message) {
+    print("ELO");
     return message.guild != null;
+  }
+}
+
+class PrintString implements command.Postprocessor {
+  final void str;
+  const PrintString(this.str);
+
+  @override
+  void execute(List<Object> services, returns, nyxx.Message message) {
+    print("From postProcessor: $str");
   }
 }
 
@@ -38,6 +50,7 @@ class PongCommand extends command.CommandContext {
   @command.Command(main: true)
   @command.Help("Pong!", usage: "ping")
   @IsGuildProcessor()
+  @PrintString("WITAM SERDECZNIE")
   Future run() async {
     await reply(content: "Pong!");
   }
@@ -46,7 +59,7 @@ class PongCommand extends command.CommandContext {
 @command.Module("echo")
 class EchoCommand extends command.CommandContext {
   @command.Command(main: true)
-  Future run() async {
+  Future<void> run() async {
     await reply(content: message.content);
   }
 
