@@ -311,8 +311,6 @@ class CommandsFramework {
 
   /// Dispatches onMessage event to framework.
   Future _dispatch(MessageEvent e) async {
-    Stopwatch s = new Stopwatch()..start();
-
     // Match help specially to shadow user defined help commands.
     if (e.message.content.startsWith("${prefix}help")) {
       if (helpDirect) {
@@ -413,7 +411,6 @@ class CommandsFramework {
                   ..addAll(methodInj));
           }
 
-          print(matchedMeta.postprocessors);
           if(matchedMeta.postprocessors.length > 0) {
             for (var post in matchedMeta.postprocessors)
               post.execute(_services, res.hasReflectee ? res.reflectee : null, e.message);
@@ -423,8 +420,6 @@ class CommandsFramework {
               .add(CommandExecutionFailEvent._new(e.message, err));
           logger.severe("ERROR OCCURED WHEN INVOKING COMMAND \n $stacktrace");
         }
-
-        print(s.elapsedMicroseconds);
 
         logger.fine(
             "Command ${_createLog(matchedMeta.classCommand, matchedMeta.methodCommand)} executed");
