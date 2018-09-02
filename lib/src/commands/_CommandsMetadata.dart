@@ -11,11 +11,12 @@ class _CommandMetadata {
   Command methodCommand;
 
   List<Preprocessor> preprocessors;
+  List<Postprocessor> postprocessors;
 
   Help methodHelp;
 
   _CommandMetadata(this.method, this.parent, this.classRestrict,
-      this.classCommand, this.methodCommand, this.methodRestrict, this.methodHelp, [this.preprocessors = const []]);
+      this.classCommand, this.methodCommand, this.methodRestrict, this.methodHelp, [this.preprocessors = const [], this.postprocessors = const []]);
 
   bool get _classEnclosed => parent is ClassMirror;
   
