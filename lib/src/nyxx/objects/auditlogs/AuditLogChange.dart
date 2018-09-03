@@ -13,6 +13,7 @@ class AuditLogChange {
   /// type of audit log change hey
   String key;
 
+  /// Raw data returned by API
   Map<String, dynamic> raw;
 
   AuditLogChange._new(this.raw) {
