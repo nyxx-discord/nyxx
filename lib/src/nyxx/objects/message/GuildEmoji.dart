@@ -50,6 +50,19 @@ class GuildEmoji extends Emoji {
     this.name = raw['name'] as String;
   }
 
+  Future<GuildEmoji> edit({String name, List<Snowflake> roles}) async {
+    var res = await client.http.send("PATCH", "/guilds/${guild.id.toString()}/emojis/${this.id.toString()}", body: {
+      "name": name,
+      roles: roles.map((r) => r.toString())
+    });
+
+    return new GuildEmoji._new(this.client, res.body as Map<String, dynamic>, guild);
+  }
+
+  Future<void> delete() async {
+    await this.client.http.send("DELETE", "/guilds/${this.guild.id.toString()}/emojis/${this.id.toString()}");
+  }
+
   /// Encodes Emoji to API format
   @override
   String encode() => "$name:$id";
