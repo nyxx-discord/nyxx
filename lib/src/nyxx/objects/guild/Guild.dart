@@ -199,13 +199,34 @@ class Guild extends SnowflakeEntity {
   /// ```
   /// var emoji = await guild.getEmoji(Snowflake("461449676218957824"));
   /// ```
-  Future<Emoji> getEmoji(Snowflake emojiId) async {
+  Future<GuildEmoji> getEmoji(Snowflake emojiId) async {
     HttpResponse r = await this
         .client
         .http
         .send('GET', "/guilds/$id/emojis/${emojiId.toString()}");
 
     return GuildEmoji._new(this.client, r.body as Map<String, dynamic>, this);
+  }
+
+  /// Allows to create new guild emoji. [name] is required and you have to specify one of two other parameters: [image] or [imageBytes].
+  /// [imageBytes] can be useful if you want to create image from url.
+  /// 
+  /// ```
+  /// var emojiFile = new File('weed.png');
+  /// vare emoji = await guild.createEmoji("weed, image: emojiFile");
+  /// ```
+  Future<GuildEmoji> createEmoji(String name, {List<Role> roles, File image, List<int> imageBytes}) async {
+    if(await image.length() > 256000)
+      throw new Exception("Emojis and animated emojis have a maximum file size of 256kb.");
+
+    var encoded = base64.encode(image == null ? imageBytes : await image.readAsBytes());
+    var res = await this.client.http.send("POST", "/guilds/${this.id.toString()}/emojis", body: {
+      "name": name,
+      "image": encoded,
+      "roles": roles != null ? roles.map((r) => r.id.toString()) : ""
+    });
+
+    return new GuildEmoji._new(this.client, res.body as Map<String, dynamic>, this);
   }
 
   /// Prunes the guild, returns the amount of members pruned.
