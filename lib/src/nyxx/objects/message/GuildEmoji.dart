@@ -28,16 +28,17 @@ class GuildEmoji extends Emoji {
 
   /// Creates full emoji object
   GuildEmoji._new(this.client, this.raw, this.guild) : super("") {
-    this.id = new Snowflake(raw['id'] as String);
+    this.id = Snowflake(raw['id'] as String);
     this.name = raw['name'] as String;
     this.requireColons = raw['require_colons'] as bool;
     this.managed = raw['managed'] as bool;
     this.animated = raw['animated'] as bool;
 
     if (raw['roles'] != null) {
-      this.rolesIds = new List();
+      this.rolesIds = List();
 
-      raw['roles'].forEach((o) => this.rolesIds.add(this.guild.roles[Snowflake(o as String)]));
+      raw['roles'].forEach(
+          (o) => this.rolesIds.add(this.guild.roles[Snowflake(o as String)]));
     }
 
     this.guild.emojis[this.id] = this;
@@ -45,7 +46,7 @@ class GuildEmoji extends Emoji {
 
   /// Creates partial object - only [id] and [name]
   GuildEmoji._partial(this.raw) : super("") {
-    this.id = new Snowflake(raw['id'] as String);
+    this.id = Snowflake(raw['id'] as String);
     this.name = raw['name'] as String;
   }
 
@@ -59,7 +60,8 @@ class GuildEmoji extends Emoji {
       animated != null && animated ? "<a:$name:$id>" : "<:$name:$id>";
 
   /// Returns cdn url to emoji
-  String get cdnUrl => "https://cdn.discordapp.com/emojis/${this.id}.${animated ? ".gif" : ".png"}";
+  String get cdnUrl =>
+      "https://cdn.discordapp.com/emojis/${this.id}.${animated ? ".gif" : ".png"}";
 
   /// Returns encoded string ready to send via message.
   @override

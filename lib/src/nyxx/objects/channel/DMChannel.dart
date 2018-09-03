@@ -9,10 +9,10 @@ class DMChannel extends MessageChannel {
       : super._new(client, data, 4) {
     if (raw['recipients'] != null) {
       this.recipient =
-          new User._new(client, raw['recipients'][0] as Map<String, dynamic>);
+          User._new(client, raw['recipients'][0] as Map<String, dynamic>);
     } else {
       this.recipient =
-          new User._new(client, raw['recipient'] as Map<String, dynamic>);
+          User._new(client, raw['recipient'] as Map<String, dynamic>);
     }
   }
 }

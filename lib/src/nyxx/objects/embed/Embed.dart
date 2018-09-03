@@ -58,24 +58,23 @@ class Embed {
       this.timestamp = DateTime.parse(raw['timestamp'] as String);
     if (raw['color'] != null) this.color = raw['color'] as int;
     if (raw['author'] != null)
-      this.author = new EmbedAuthor._new(raw['author'] as Map<String, dynamic>);
+      this.author = EmbedAuthor._new(raw['author'] as Map<String, dynamic>);
     if (raw['video'] != null)
-      this.video = new EmbedVideo._new(raw['video'] as Map<String, dynamic>);
+      this.video = EmbedVideo._new(raw['video'] as Map<String, dynamic>);
     if (raw['image'] != null)
-      this.image =
-          new EmbedThumbnail._new(raw['image'] as Map<String, dynamic>);
+      this.image = EmbedThumbnail._new(raw['image'] as Map<String, dynamic>);
     if (raw['footer'] != null)
-      this.footer = new EmbedFooter._new(raw['footer'] as Map<String, dynamic>);
+      this.footer = EmbedFooter._new(raw['footer'] as Map<String, dynamic>);
     if (raw['thumbnail'] != null)
       this.thumbnail =
-          new EmbedThumbnail._new(raw['thumbnail'] as Map<String, dynamic>);
+          EmbedThumbnail._new(raw['thumbnail'] as Map<String, dynamic>);
     if (raw['provider'] != null)
       this.provider =
-          new EmbedProvider._new(raw['provider'] as Map<String, dynamic>);
+          EmbedProvider._new(raw['provider'] as Map<String, dynamic>);
     if (raw['fields'] != null) {
-      fields = new Map();
+      fields = Map();
       raw['fields'].forEach((dynamic o) {
-        new EmbedField._new(o as Map<String, dynamic>, this);
+        EmbedField._new(o as Map<String, dynamic>, this);
       });
     }
   }

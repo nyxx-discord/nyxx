@@ -116,112 +116,112 @@ class _EventController {
 
   /// Makes a new `EventController`.
   _EventController(Client client) {
-    this.onRaw = new StreamController.broadcast();
+    this.onRaw = StreamController.broadcast();
     client.onRaw = this.onRaw.stream;
 
-    this.onDisconnect = new StreamController.broadcast();
+    this.onDisconnect = StreamController.broadcast();
     client.onDisconnect = this.onDisconnect.stream;
 
-    this.beforeHttpRequestSend = new StreamController();
+    this.beforeHttpRequestSend = StreamController();
     client.beforeHttpRequestSend = this.beforeHttpRequestSend.stream;
 
-    this.onHttpResponse = new StreamController.broadcast();
+    this.onHttpResponse = StreamController.broadcast();
     client.onHttpResponse = this.onHttpResponse.stream;
 
-    this.onHttpError = new StreamController.broadcast();
+    this.onHttpError = StreamController.broadcast();
     client.onHttpError = this.onHttpError.stream;
 
-    this.onRatelimited = new StreamController.broadcast();
+    this.onRatelimited = StreamController.broadcast();
     client.onRatelimited = this.onRatelimited.stream;
 
-    this.onReady = new StreamController.broadcast();
+    this.onReady = StreamController.broadcast();
     client.onReady = this.onReady.stream;
 
-    this.onMessage = new StreamController.broadcast();
+    this.onMessage = StreamController.broadcast();
     client.onMessage = this.onMessage.stream;
 
-    this.onMessageUpdate = new StreamController.broadcast();
+    this.onMessageUpdate = StreamController.broadcast();
     client.onMessageUpdate = this.onMessageUpdate.stream;
 
-    this.onMessageDelete = new StreamController.broadcast();
+    this.onMessageDelete = StreamController.broadcast();
     client.onMessageDelete = this.onMessageDelete.stream;
 
-    this.onChannelCreate = new StreamController.broadcast();
+    this.onChannelCreate = StreamController.broadcast();
     client.onChannelCreate = this.onChannelCreate.stream;
 
-    this.onChannelUpdate = new StreamController.broadcast();
+    this.onChannelUpdate = StreamController.broadcast();
     client.onChannelUpdate = this.onChannelUpdate.stream;
 
-    this.onChannelDelete = new StreamController.broadcast();
+    this.onChannelDelete = StreamController.broadcast();
     client.onChannelDelete = this.onChannelDelete.stream;
 
-    this.onGuildBanAdd = new StreamController.broadcast();
+    this.onGuildBanAdd = StreamController.broadcast();
     client.onGuildBanAdd = this.onGuildBanAdd.stream;
 
-    this.onGuildBanRemove = new StreamController.broadcast();
+    this.onGuildBanRemove = StreamController.broadcast();
     client.onGuildBanRemove = this.onGuildBanRemove.stream;
 
-    this.onGuildCreate = new StreamController.broadcast();
+    this.onGuildCreate = StreamController.broadcast();
     client.onGuildCreate = this.onGuildCreate.stream;
 
-    this.onGuildUpdate = new StreamController.broadcast();
+    this.onGuildUpdate = StreamController.broadcast();
     client.onGuildUpdate = this.onGuildUpdate.stream;
 
-    this.onGuildDelete = new StreamController.broadcast();
+    this.onGuildDelete = StreamController.broadcast();
     client.onGuildDelete = this.onGuildDelete.stream;
 
-    this.onGuildUnavailable = new StreamController.broadcast();
+    this.onGuildUnavailable = StreamController.broadcast();
     client.onGuildUnavailable = this.onGuildUnavailable.stream;
 
-    this.onGuildMemberAdd = new StreamController.broadcast();
+    this.onGuildMemberAdd = StreamController.broadcast();
     client.onGuildMemberAdd = this.onGuildMemberAdd.stream;
 
-    this.onGuildMemberUpdate = new StreamController.broadcast();
+    this.onGuildMemberUpdate = StreamController.broadcast();
     client.onGuildMemberUpdate = this.onGuildMemberUpdate.stream;
 
-    this.onGuildMemberRemove = new StreamController.broadcast();
+    this.onGuildMemberRemove = StreamController.broadcast();
     client.onGuildMemberRemove = this.onGuildMemberRemove.stream;
 
-    this.onPresenceUpdate = new StreamController.broadcast();
+    this.onPresenceUpdate = StreamController.broadcast();
     client.onPresenceUpdate = this.onPresenceUpdate.stream;
 
-    this.onTyping = new StreamController.broadcast();
+    this.onTyping = StreamController.broadcast();
     client.onTyping = this.onTyping.stream;
 
-    this.onRoleCreate = new StreamController.broadcast();
+    this.onRoleCreate = StreamController.broadcast();
     client.onRoleCreate = this.onRoleCreate.stream;
 
-    this.onRoleUpdate = new StreamController.broadcast();
+    this.onRoleUpdate = StreamController.broadcast();
     client.onRoleUpdate = this.onRoleUpdate.stream;
 
-    this.onRoleDelete = new StreamController.broadcast();
+    this.onRoleDelete = StreamController.broadcast();
     client.onRoleDelete = this.onRoleDelete.stream;
 
-    this.onChannelPinsUpdate = new StreamController.broadcast();
+    this.onChannelPinsUpdate = StreamController.broadcast();
     client.onChannelPinsUpdate = this.onChannelPinsUpdate.stream;
 
-    this.onGuildEmojisUpdate = new StreamController.broadcast();
+    this.onGuildEmojisUpdate = StreamController.broadcast();
     client.onGuildEmojisUpdate = this.onGuildEmojisUpdate.stream;
 
-    this.onMessageDeleteBulk = new StreamController.broadcast();
+    this.onMessageDeleteBulk = StreamController.broadcast();
     client.onMessageDeleteBulk = this.onMessageDeleteBulk.stream;
 
-    this.onMessageReactionAdded = new StreamController.broadcast();
+    this.onMessageReactionAdded = StreamController.broadcast();
     client.onMessageReactionAdded = this.onMessageReactionAdded.stream;
 
-    this.onMessageReactionRemove = new StreamController.broadcast();
+    this.onMessageReactionRemove = StreamController.broadcast();
     client.onMessageReactionRemove = this.onMessageReactionRemove.stream;
 
-    this.onMessageReactionsRemoved = new StreamController.broadcast();
+    this.onMessageReactionsRemoved = StreamController.broadcast();
     client.onMessageReactionsRemoved = this.onMessageReactionsRemoved.stream;
 
-    this.onVoiceStateUpdate = new StreamController.broadcast();
+    this.onVoiceStateUpdate = StreamController.broadcast();
     client.onVoiceStateUpdate = this.onVoiceStateUpdate.stream;
 
-    this.onVoiceServerUpdate = new StreamController.broadcast();
+    this.onVoiceServerUpdate = StreamController.broadcast();
     client.onVoiceServerUpdate = this.onVoiceServerUpdate.stream;
 
-    this.onWebhookUpdate = new StreamController.broadcast();
+    this.onWebhookUpdate = StreamController.broadcast();
     client.onWebhookUpdate = this.onWebhookUpdate.stream;
   }
 

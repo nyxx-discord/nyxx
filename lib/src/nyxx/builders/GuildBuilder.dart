@@ -28,7 +28,7 @@ class GuildBuilder implements Builder {
 
   @override
   Map<String, dynamic> _build() {
-    Map<String, dynamic> tmp = new Map();
+    Map<String, dynamic> tmp = Map();
 
     if (name != null) tmp['name'] = name;
     if (region != null) tmp['region'] = region;
@@ -74,7 +74,7 @@ class RoleBuilder implements Builder {
 
   @override
   Map<String, dynamic> _build() {
-    Map<String, dynamic> tmp = new Map();
+    Map<String, dynamic> tmp = Map();
 
     tmp['name'] = name;
     if (color != null) tmp['color'] = color;

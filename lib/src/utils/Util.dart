@@ -3,7 +3,7 @@ import 'dart:async';
 /// Merges list of stream into one stream
 Stream<T> merge<T>(List<Stream<T>> streams) {
   int _open = streams.length;
-  var c = new StreamController<T>();
+  var c = StreamController<T>();
   for (var stream in streams) {
     stream.listen(c.add)
       ..onError(c.addError)
@@ -45,14 +45,15 @@ String getSymbolName(Symbol symbol) {
 
 /// Simple foramt function implementation
 /// %0% will be replaced with first list element, %1% with second...
-/// 
+///
 /// ```
 /// var str = "Hello %0%!";
-/// 
+///
 /// print(format(str, ["Janusz"]))
 /// ```
 String format(String format, List<Object> formatters) =>
-  format.replaceFirstMapped(r"%([0-9]+)%", (match) => formatters[int.parse(match.group(1))].toString());
+    format.replaceFirstMapped(r"%([0-9]+)%",
+        (match) => formatters[int.parse(match.group(1))].toString());
 
 /// Partition list into chunks
 Iterable<List<T>> partition<T>(List<T> lst, int len) sync* {

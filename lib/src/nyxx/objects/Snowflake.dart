@@ -14,7 +14,7 @@ class Snowflake implements Comparable<Snowflake> {
 
   /// Returns timestamp included in [Snowflake]
   /// [Snowflake reference](https://discordapp.com/developers/docs/reference#snowflakes)
-  DateTime get timestamp => new DateTime.fromMillisecondsSinceEpoch(
+  DateTime get timestamp => DateTime.fromMillisecondsSinceEpoch(
       ((int.parse(id) / 4194304) + 1420070400000).toInt());
 
   @override

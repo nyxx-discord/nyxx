@@ -1,15 +1,14 @@
 part of nyxx.voice;
 
 // Logger instance for `Voice Service`
-Logger _logger = new Logger.detached("Voice Service");
+Logger _logger = Logger.detached("Voice Service");
 
 /// Inits voice service. [yamlConfigFile] is absolute path to lavalink config file.
 /// Returns instance of VoiceService
 VoiceService init(String clientId, Client client, String yamlConfigFile) {
-  if (_manager != null)
-    throw new Exception("Tried initialize VoiceService twice.");
+  if (_manager != null) throw Exception("Tried initialize VoiceService twice.");
 
-  _manager = new VoiceService._new(clientId, client, yamlConfigFile);
+  _manager = VoiceService._new(clientId, client, yamlConfigFile);
   _logger.info("Voice service intitailized!");
   return _manager;
 }
@@ -17,7 +16,7 @@ VoiceService init(String clientId, Client client, String yamlConfigFile) {
 /// Returns instance of VoiceService
 VoiceService getVoiceService() {
   if (_manager == null)
-    throw new Exception(
+    throw Exception(
         "Cannot get initialized VoiceService! Init voice service with VoiceService.init()");
 
   return _manager;
@@ -49,17 +48,17 @@ class VoiceService {
   String _password;
   String _clientId;
 
-  static Map<String, Player> _playersCache = new Map();
+  static Map<String, Player> _playersCache = Map();
 
   StreamController<Stats> _onStats;
   Stream<Stats> onStats;
 
   VoiceService._new(this._clientId, this._client, String yamlConfigFile) {
-    var file = new File(yamlConfigFile);
+    var file = File(yamlConfigFile);
     var contents = file.readAsStringSync();
     var config = loadYaml(contents);
 
-    _onStats = new StreamController.broadcast();
+    _onStats = StreamController.broadcast();
     onStats = _onStats.stream;
 
     this._wsPath = Uri.parse(
@@ -96,25 +95,25 @@ class VoiceService {
 
     switch (op) {
       case 'playerUpdate':
-        var e = new PlayerUpdateEvent._new(msg);
+        var e = PlayerUpdateEvent._new(msg);
         if (_playersCache[e.guildId].isConnected)
           _playersCache[e.guildId]._onPlayerUpdate.add(e);
         break;
       case 'stats':
-        _onStats.add(new Stats._new(msg));
+        _onStats.add(Stats._new(msg));
         break;
       case 'event':
         var player = _playersCache[msg['guildId']];
         TrackError evnt;
         switch (msg['type'] as String) {
           case 'TrackEndEvent':
-            evnt = new TrackEndEvent(msg);
+            evnt = TrackEndEvent(msg);
             break;
           case 'TrackExceptionEvent':
-            evnt = new TrackExceptionEvent(msg);
+            evnt = TrackExceptionEvent(msg);
             break;
           case 'TrackStuckEvent':
-            evnt = new TrackStuckEvent(msg);
+            evnt = TrackStuckEvent(msg);
             break;
         }
         player._onTrackError.add(evnt);
@@ -126,12 +125,11 @@ class VoiceService {
 
   /// Gets [Player] instance for guild.
   Future<Player> getPlayer(Guild guild) {
-    return new Future<Player>.delayed(const Duration(seconds: 2), () {
+    return Future<Player>.delayed(const Duration(seconds: 2), () {
       if (_playersCache.containsKey(guild.id.toString()))
         return _playersCache[guild.id.toString()];
       else {
-        var tmp =
-            new Player._new(guild, _client, _webSocket, _restPath, _password);
+        var tmp = Player._new(guild, _client, _webSocket, _restPath, _password);
         _playersCache[guild.id.toString()] = tmp;
         return tmp;
       }

@@ -5,7 +5,7 @@ import 'dart:io';
 // Main function
 void main() {
   // Create new bot instance
-  nyxx.Client bot = new nyxx.Client(Platform.environment['DISCORD_TOKEN']);
+  nyxx.Client bot = nyxx.Client(Platform.environment['DISCORD_TOKEN']);
 
   // Listen to ready event. Invoked when bot started listening to events.
   bot.onReady.listen((nyxx.ReadyEvent e) {
@@ -18,12 +18,12 @@ void main() {
       // Build embed with `..Builder` classes.
 
       // Create author section of embed.
-      var author = new nyxx.EmbedAuthorBuilder()
+      var author = nyxx.EmbedAuthorBuilder()
         ..name = e.message.author.username
         ..iconUrl = e.message.author.avatarURL();
 
       // Create embed with previously created author section.
-      var embed = new nyxx.EmbedBuilder()
+      var embed = nyxx.EmbedBuilder()
         ..addField(name: "Example field title", value: "Example value")
         ..author = author;
 

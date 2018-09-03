@@ -8,10 +8,9 @@ class VoiceStateUpdateEvent {
   Map<String, dynamic> json;
 
   VoiceStateUpdateEvent._new(Client client, this.json) {
-    this.state = new VoiceState._new(client, json['d'] as Map<String, dynamic>);
+    this.state = VoiceState._new(client, json['d'] as Map<String, dynamic>);
 
-    if(state.user != null)
-      client._voiceStates[state.user.id] = state;
+    if (state.user != null) client._voiceStates[state.user.id] = state;
 
     client._events.onVoiceStateUpdate.add(this);
   }

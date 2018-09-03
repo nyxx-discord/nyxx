@@ -17,9 +17,9 @@ class Playlist extends Entity {
     name = raw['playlistInfo']['name'] as String;
     selectedTrack = raw['playlistInfo']['selectedTrack'] as int;
 
-    tracks = new List();
+    tracks = List();
     raw['tracks'].forEach((dynamic o) {
-      tracks.add(new Track._new(o as Map<String, dynamic>));
+      tracks.add(Track._new(o as Map<String, dynamic>));
     });
   }
 }

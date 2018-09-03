@@ -30,7 +30,7 @@ class Message extends SnowflakeEntity {
 
   /// The message's guild.
   Guild guild;
- 
+
   /// The message's author. Can be [Member] if message sent in guild
   User author;
 
@@ -76,30 +76,28 @@ class Message extends SnowflakeEntity {
   /// Emitted when a user explicitly removes all reactions from a message.
   Stream<MessageReactionsRemovedEvent> onReactionsRemoved;
 
-  Message._new(this.client, this.raw)
-      : super(new Snowflake(raw['id'] as String)) {
-    this._onUpdate = new StreamController.broadcast();
+  Message._new(this.client, this.raw) : super(Snowflake(raw['id'] as String)) {
+    this._onUpdate = StreamController.broadcast();
     this.onUpdate = this._onUpdate.stream;
 
-    this._onDelete = new StreamController.broadcast();
+    this._onDelete = StreamController.broadcast();
     this.onDelete = this._onDelete.stream;
 
-    this._onReactionRemove = new StreamController.broadcast();
+    this._onReactionRemove = StreamController.broadcast();
     this.onReactionRemove = this._onReactionRemove.stream;
 
-    this._onReactionAdded = new StreamController.broadcast();
+    this._onReactionAdded = StreamController.broadcast();
     this.onReactionAdded = this._onReactionAdded.stream;
 
-    this._onReactionsRemoved = new StreamController.broadcast();
+    this._onReactionsRemoved = StreamController.broadcast();
     this.onReactionsRemoved = this._onReactionsRemoved.stream;
 
     this.content = raw['content'] as String;
     this.nonce = raw['nonce'] as String;
-    
-    this.channel = this
-        .client
-        .channels[new Snowflake(raw['channel_id'] as String)] as MessageChannel;
-    
+
+    this.channel = this.client.channels[Snowflake(raw['channel_id'] as String)]
+        as MessageChannel;
+
     this.pinned = raw['pinned'] as bool;
     this.tts = raw['tts'] as bool;
     this.mentionEveryone = raw['mention_everyone'] as bool;
@@ -107,15 +105,15 @@ class Message extends SnowflakeEntity {
     this.channel._cacheMessage(this);
     this.channel.lastMessageID = this.id;
 
-    this.author = new User._new(this.client, raw['author'] as Map<String, dynamic>);
+    this.author = User._new(this.client, raw['author'] as Map<String, dynamic>);
     if (this.channel is TextChannel) {
       this.guild = (this.channel as TextChannel).guild;
       this.member = guild.members[author.id];
 
       if (raw['mention_roles'] != null) {
-        this.roleMentions = new Map<Snowflake, Role>();
+        this.roleMentions = Map<Snowflake, Role>();
         raw['mention_roles'].forEach((dynamic o) {
-          var s = new Snowflake(o as String);
+          var s = Snowflake(o as String);
           this.roleMentions[s] = guild.roles[s];
         });
       }
@@ -125,28 +123,28 @@ class Message extends SnowflakeEntity {
       this.editedTimestamp = DateTime.parse(raw['edited_timestamp'] as String);
 
     raw['mentions'].forEach((dynamic o) {
-      this.mentions = new Map<Snowflake, User>();
-      final User user = new User._new(this.client, o as Map<String, dynamic>);
+      this.mentions = Map<Snowflake, User>();
+      final User user = User._new(this.client, o as Map<String, dynamic>);
       this.mentions[user.id] = user;
     });
 
     raw['embeds'].forEach((dynamic o) {
-      this.embeds = new Map<String, Embed>();
-      Embed embed = new Embed._new(this.client, o as Map<String, dynamic>);
+      this.embeds = Map<String, Embed>();
+      Embed embed = Embed._new(this.client, o as Map<String, dynamic>);
       this.embeds[embed.title] = embed;
     });
 
     raw['attachments'].forEach((dynamic o) {
-      this.attachments = new Map<Snowflake, Attachment>();
+      this.attachments = Map<Snowflake, Attachment>();
       final Attachment attachment =
-          new Attachment._new(this.client, o as Map<String, dynamic>);
+          Attachment._new(this.client, o as Map<String, dynamic>);
       this.attachments[attachment.id] = attachment;
     });
 
     if (raw['reactions'] != null) {
-      this.reactions = new List<Reaction>();
+      this.reactions = List<Reaction>();
       raw['reactions'].forEach((dynamic o) {
-        this.reactions.add(new Reaction._new(o as Map<String, dynamic>));
+        this.reactions.add(Reaction._new(o as Map<String, dynamic>));
       });
     }
   }
@@ -162,7 +160,7 @@ class Message extends SnowflakeEntity {
   Future<Message> edit(
       {String content,
       EmbedBuilder embed,
-      bool tts: false,
+      bool tts = false,
       String nonce,
       bool disableEveryone}) async {
     String newContent;
@@ -183,7 +181,7 @@ class Message extends SnowflakeEntity {
           "content": newContent,
           "embed": (embed != null ? embed._build() : "")
         });
-    return new Message._new(this.client, r.body as Map<String, dynamic>);
+    return Message._new(this.client, r.body as Map<String, dynamic>);
   }
 
   /// Add reaction to message.
@@ -213,7 +211,7 @@ class Message extends SnowflakeEntity {
   /// Deletes the message.
   ///
   /// Throws an [Exception] if the HTTP request errored.
-  Future<void> delete({String auditReason: ""}) async {
+  Future<void> delete({String auditReason = ""}) async {
     await this.client.http.send(
         'DELETE', '/channels/${this.channel.id}/messages/${this.id}',
         reason: auditReason);

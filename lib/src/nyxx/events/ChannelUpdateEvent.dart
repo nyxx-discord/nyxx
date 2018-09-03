@@ -11,21 +11,21 @@ class ChannelUpdateEvent {
   ChannelUpdateEvent._new(Client client, Map<String, dynamic> json) {
     if (client.ready) {
       final Guild guild =
-          client.guilds[new Snowflake(json['d']['guild_id'] as String)];
-      this.oldChannel = client
-          .channels[new Snowflake(json['d']['id'] as String)] as GuildChannel;
+          client.guilds[Snowflake(json['d']['guild_id'] as String)];
+      this.oldChannel =
+          client.channels[Snowflake(json['d']['id'] as String)] as GuildChannel;
 
       var type = json['d']['type'] as int;
 
       if (type == 0) {
-        this.newChannel = new TextChannel._new(
-            client, json['d'] as Map<String, dynamic>, guild);
+        this.newChannel =
+            TextChannel._new(client, json['d'] as Map<String, dynamic>, guild);
       } else if (type == 2) {
-        this.newChannel = new VoiceChannel._new(
-            client, json['d'] as Map<String, dynamic>, guild);
+        this.newChannel =
+            VoiceChannel._new(client, json['d'] as Map<String, dynamic>, guild);
       } else if (type == 4) {
-        this.newChannel = new GroupChannel._new(
-            client, json['d'] as Map<String, dynamic>, guild);
+        this.newChannel =
+            GroupChannel._new(client, json['d'] as Map<String, dynamic>, guild);
       }
 
       oldChannel._onUpdate.add(this);

@@ -45,7 +45,7 @@ class Game {
   String url;
 
   /// Makes a new game object.
-  Game.of(this.name, {this.type: 0, this.url}) {
+  Game.of(this.name, {this.type = 0, this.url}) {
     this.raw = {"name": name, "type": type, "url": url};
   }
 
@@ -55,31 +55,31 @@ class Game {
     this.type = raw['type'] as int;
 
     if (raw['timestamps'] != null) {
-      if(raw['timestamps']['start'] != null) {
-        start = new DateTime.fromMillisecondsSinceEpoch(
-          raw['timestamps']['start'] as int);
+      if (raw['timestamps']['start'] != null) {
+        start = DateTime.fromMillisecondsSinceEpoch(
+            raw['timestamps']['start'] as int);
       }
 
-      if(raw['timestamps']['end'] != null) {
-         end = new DateTime.fromMillisecondsSinceEpoch(
-          raw['timestamps']['end'] as int);
+      if (raw['timestamps']['end'] != null) {
+        end = DateTime.fromMillisecondsSinceEpoch(
+            raw['timestamps']['end'] as int);
       }
     }
 
     if (raw['application_id'] != null)
-      applicationId = new Snowflake(raw['application_id'] as String);
+      applicationId = Snowflake(raw['application_id'] as String);
 
     details = raw['details'] as String;
     state = raw['state'] as String;
 
     if (raw['party'] != null)
-      party = new GameParty._new(raw['party'] as Map<String, dynamic>);
+      party = GameParty._new(raw['party'] as Map<String, dynamic>);
 
     if (raw['assets'] != null)
-      assets = new GameAssets._new(raw['assets'] as Map<String, dynamic>);
+      assets = GameAssets._new(raw['assets'] as Map<String, dynamic>);
 
     if (raw['secrets'] != null)
-      secrets = new GameSecrets._new(raw['secrets'] as Map<String, dynamic>);
+      secrets = GameSecrets._new(raw['secrets'] as Map<String, dynamic>);
 
     instance = raw['instance'] as bool;
     activityFlags = raw['flags'] as int;
@@ -103,7 +103,7 @@ class GameParty {
   GameParty._new(this.raw) {
     id = raw['id'] as String;
 
-    if(raw['size'] != null) {
+    if (raw['size'] != null) {
       currentSize = raw['size'].first as int;
       maxSize = raw['size'].last as int;
     }

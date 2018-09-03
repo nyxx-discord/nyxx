@@ -36,37 +36,36 @@ class Role extends SnowflakeEntity {
   String get mention => mentionable ? "<@&${this.id}>" : name;
 
   Role._new(this.client, this.raw, this.guild)
-      : super(new Snowflake(raw['id'] as String)) {
+      : super(Snowflake(raw['id'] as String)) {
     this.name = raw['name'] as String;
     this.position = raw['position'] as int;
     this.hoist = raw['hoist'] as bool;
     this.managed = raw['managed'] as bool;
     this.mentionable = raw['mentionable'] as bool;
-    this.permissions = new Permissions.fromInt(raw['permissions'] as int);
-    
+    this.permissions = Permissions.fromInt(raw['permissions'] as int);
+
     this.color = raw['color'] as int;
-    if (this.color == 0)
-      this.color = null;
+    if (this.color == 0) this.color = null;
 
     this.guild.roles[this.id] = this;
   }
 
   /// Edits the role.
-  Future<Role> edit({RoleBuilder role, String auditReason: ""}) async {
+  Future<Role> edit({RoleBuilder role, String auditReason = ""}) async {
     HttpResponse r = await this.client.http.send(
         'PATCH', "/guilds/${this.guild.id}/roles/$id",
         body: role._build(), reason: auditReason);
-    return new Role._new(this.client, r.body as Map<String, dynamic>, this.guild);
+    return Role._new(this.client, r.body as Map<String, dynamic>, this.guild);
   }
 
   /// Deletes the role.
-  Future<void> delete({String auditReason: ""}) async {
+  Future<void> delete({String auditReason = ""}) async {
     await this.client.http.send('DELETE', "/guilds/${this.guild.id}/roles/$id",
         reason: auditReason);
   }
 
   /// Adds role to user.
-  Future<void> addToUser(User user, {String auditReason: ""}) async {
+  Future<void> addToUser(User user, {String auditReason = ""}) async {
     await this.client.http.send(
         'PUT', '/guilds/${guild.id}/members/${user.id}/roles/$id',
         reason: auditReason);
