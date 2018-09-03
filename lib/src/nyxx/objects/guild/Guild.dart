@@ -205,7 +205,7 @@ class Guild extends SnowflakeEntity {
         .http
         .send('GET', "/guilds/$id/emojis/${emojiId.toString()}");
 
-    return new GuildEmoji._new(this.client, r.body, this);
+    return new GuildEmoji._new(this.client, r.body as Map<String, dynamic>, this);
   }
 
   /// Prunes the guild, returns the amount of members pruned.
@@ -235,7 +235,7 @@ class Guild extends SnowflakeEntity {
     HttpResponse r = await this.client.http.send('PATCH', "/guilds/$id",
         body: {"owner_id": member.id}, reason: auditReason);
 
-    return new Guild._new(client, r.body);
+    return new Guild._new(client, r.body as Map<String, dynamic>);
   }
 
   /// Leaves the guild.
@@ -279,13 +279,13 @@ class Guild extends SnowflakeEntity {
         .http
         .send('GET', '/guilds/${this.id}/audit-logs', queryParams: query);
 
-    return new AuditLog._new(this.client, r.body);
+    return new AuditLog._new(this.client, r.body as Map<String, dynamic>);
   }
 
   /// Get Guil's embed object
   Future<Embed> getGuildEmbed() async {
     HttpResponse r = await this.client.http.send('GET', "/guilds/$id/embed");
-    return new Embed._new(this.client, r.body);
+    return new Embed._new(this.client, r.body as Map<String, dynamic>);
   }
 
   /// Modify guild embed object
@@ -293,7 +293,7 @@ class Guild extends SnowflakeEntity {
       {String auditReason = ""}) async {
     HttpResponse r = await this.client.http.send('PATCH', "/guilds/$id/embed",
         body: embed._build(), reason: auditReason);
-    return new Embed._new(this.client, r.body);
+    return new Embed._new(this.client, r.body as Map<String, dynamic>);
   }
 
   /// Creates new role
@@ -310,7 +310,7 @@ class Guild extends SnowflakeEntity {
       {String auditReason = ""}) async {
     HttpResponse r = await this.client.http.send('POST', "/guilds/$id/roles",
         body: roleBuilder._build(), reason: auditReason);
-    return new Role._new(client, r.body, this);
+    return new Role._new(client, r.body as Map<String, dynamic>, this);
   }
 
   /// Adds [Role] to [Member]
@@ -332,9 +332,8 @@ class Guild extends SnowflakeEntity {
   Future<List<VoiceRegion>> getVoiceRegions() async {
     var r = await this.client.http.send('GET', "/guilds/$id/regions");
 
-    var raw = r.body as List<dynamic>;
     List<VoiceRegion> tmp = new List();
-    raw.forEach((v) {
+    r.body.forEach((v) {
       tmp.add(new VoiceRegion._new(v as Map<String, dynamic>));
     });
 
@@ -347,10 +346,10 @@ class Guild extends SnowflakeEntity {
   /// ```
   /// var chan = await guild.createChannel("Super duper channel", ChannelType.text, nsfw: true);
   /// ```
-  Future<Channel> createChannel(String name, ChannelType type,
+  Future<GuildChannel> createChannel(String name, ChannelType type,
       {int bitrate,
       String topic,
-      GuildChannel parent,
+      GroupChannel parent,
       bool nsfw,
       int userLimit,
       PermissionsBuilder permissions,
@@ -377,11 +376,11 @@ class Guild extends SnowflakeEntity {
 
     switch (type) {
       case ChannelType.text:
-        return new TextChannel._new(this.client, raw, this);
+        return new TextChannel._new(this.client, raw as Map<String, dynamic>, this);
       case ChannelType.group:
-        return new GroupChannel._new(this.client, raw, this);
+        return new GroupChannel._new(this.client, raw as Map<String, dynamic>, this);
       case ChannelType.voice:
-        return new VoiceChannel._new(this.client, raw, this);
+        return new VoiceChannel._new(this.client, raw as Map<String, dynamic>, this);
       default:
         return null;
     }
@@ -443,7 +442,7 @@ class Guild extends SnowflakeEntity {
           "icon": icon != null ? icon : this.icon
         },
         reason: auditReason);
-    return new Guild._new(this.client, r.body);
+    return new Guild._new(this.client, r.body as Map<String, dynamic>);
   }
 
   /// Gets a [Member] object. Caches fetched member if not cached.
@@ -459,7 +458,7 @@ class Guild extends SnowflakeEntity {
         .http
         .send('GET', '/guilds/${this.id}/members/${user.id.toString()}');
 
-    return new Member._new(this.client, r.body, this);
+    return new Member._new(this.client, r.body as Map<String, dynamic>, this);
   }
 
   /// Gets all of the webhooks for this guild. Webhooks won't be cached until method will be invoked with [cache] as true.
@@ -502,6 +501,6 @@ int _matchChannelType(ChannelType type) {
     case ChannelType.groupDm:
       return 3;
     default:
-      return 0;
+      return null;
   }
 }

@@ -144,7 +144,7 @@ class HttpResponse {
   String statusText;
   int status;
   Map<String, String> headers;
-  Map<String, dynamic> body;
+  dynamic body;
 
   HttpResponse._new(
       this.request, this.status, this.statusText, this.headers, this.body,
@@ -167,7 +167,7 @@ class HttpResponse {
     } on FormatException catch (err) {}
 
     return new HttpResponse._new(
-        request, r.statusCode, "", r.headers, json as Map<String, dynamic>);
+        request, r.statusCode, "", r.headers, json);
   }
 }
 
@@ -226,7 +226,7 @@ class HttpBucket {
         try {
           this.timeDifference = new DateTime.now()
               .toUtc()
-              .difference(http_parser.parseHttpDate(r.headers['date']).toUtc());
+              .difference(DateTime.parse(r.headers['date']));
         } catch (err) {
           this.timeDifference = new Duration();
         }

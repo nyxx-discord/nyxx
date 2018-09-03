@@ -88,7 +88,7 @@ class _WS {
       client._startTime = new DateTime.now();
 
       this.client.http.send("GET", "/oauth2/applications/@me").then((response) {
-        this.client.app = new ClientOAuth2Application._new(this.client, response.body);
+        this.client.app = new ClientOAuth2Application._new(this.client, response.body as Map<String, dynamic>);
 
         new ReadyEvent._new(client);
         logger.info("Connected and ready!");

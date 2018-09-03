@@ -45,7 +45,7 @@ class Game {
   String url;
 
   /// Makes a new game object.
-  Game(this.name, {this.type: 0, this.url}) {
+  Game.of(this.name, {this.type: 0, this.url}) {
     this.raw = {"name": name, "type": type, "url": url};
   }
 

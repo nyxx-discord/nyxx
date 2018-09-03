@@ -34,7 +34,7 @@ class CommandsFramework {
   bool ignoreBots = true;
 
   /// Sets default bots game
-  set game(Game game) => _client.user.setGame(game: game);
+  set game(Game game) => _client.user.setGame(game);
 
   /// Fires when invoked command dont exists in registry
   Stream<Message> onCommandNotFound;

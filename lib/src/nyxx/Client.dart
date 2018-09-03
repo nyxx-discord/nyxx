@@ -220,7 +220,7 @@ class Client {
     if (this.users.containsKey(id)) return this.users[id];
 
     var r = await this.http.send("GET", "/users/${id.toString()}");
-    return new User._new(this, r.body);
+    return new User._new(this, r.body as Map<String, dynamic>);
   }
 
   /// Gets Guild with specified id.
@@ -228,20 +228,20 @@ class Client {
     if (this.guilds.containsKey(id)) return this.guilds[id];
 
     var r = await this.http.send("GET", "/guilds/${id.toString()}");
-    return new Guild._new(this, r.body);
+    return new Guild._new(this, r.body as Map<String, dynamic>);
   }
 
   /// Creates new guild with provided builder.
   Future<Guild> createGuild(GuildBuilder builder) async {
     var r = await this.http.send("POST", "/guilds", body: builder._build());
 
-    return new Guild._new(this, r.body);
+    return new Guild._new(this, r.body as Map<String, dynamic>);
   }
 
   /// Gets a webhook by its ID and token.
   Future<Webhook> getWebhook(String id, {String token: ""}) async {
     HttpResponse r = await http.send('GET', "/webhooks/$id/$token");
-    return new Webhook._new(this, r.body);
+    return new Webhook._new(this, r.body as Map<String, dynamic>);
   }
 
   /// Block isolate until client is ready.
@@ -250,6 +250,6 @@ class Client {
   /// Gets an [Invite] object with given code.
   Future<Invite> getInvite(String code) async {
     final HttpResponse r = await this.http.send('GET', '/invites/$code');
-    return new Invite._new(this, r.body);
+    return new Invite._new(this, r.body as Map<String, dynamic>);
   }
 }
