@@ -4,6 +4,9 @@ part of nyxx;
 ///
 /// /// [Look here for more](https://discordapp.com/developers/docs/resources/audit-log)
 class AuditLogEntry extends SnowflakeEntity {
+  /// Id of the entry
+  Snowflake id;
+  
   /// Id of the affected entity (webhook, user, role, etc.)
   String targetId;
 
@@ -12,9 +15,6 @@ class AuditLogEntry extends SnowflakeEntity {
 
   /// The user who made the changes
   User user;
-
-  /// Id of the entry
-  Snowflake id;
 
   /// Type of action that occured
   int type;

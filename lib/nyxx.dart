@@ -7,7 +7,6 @@ import 'dart:collection';
 import 'dart:io';
 import 'dart:isolate';
 
-import 'package:http_parser/http_parser.dart' as http_parser;
 import 'package:logging/logging.dart';
 import 'package:http/http.dart' as httpreq;
 

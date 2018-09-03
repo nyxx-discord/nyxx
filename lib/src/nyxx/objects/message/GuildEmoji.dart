@@ -15,7 +15,7 @@ class GuildEmoji extends Emoji {
   Snowflake id;
 
   /// Roles this emoji is whitelisted to
-  List<String> rolesIds;
+  List<Role> rolesIds;
 
   /// whether this emoji must be wrapped in colons
   bool requireColons;
@@ -37,7 +37,7 @@ class GuildEmoji extends Emoji {
     if (raw['roles'] != null) {
       this.rolesIds = new List();
 
-      raw['roles'].forEach((o) => this.rolesIds.add(o.toString()));
+      raw['roles'].forEach((o) => this.rolesIds.add(this.guild.roles[Snowflake(o as String)]));
     }
 
     this.guild.emojis[this.id] = this;
@@ -58,15 +58,12 @@ class GuildEmoji extends Emoji {
   String format() =>
       animated != null && animated ? "<a:$name:$id>" : "<:$name:$id>";
 
+  /// Returns cdn url to emoji
+  String get cdnUrl => "https://cdn.discordapp.com/emojis/${this.id}.${animated ? ".gif" : ".png"}";
+
   /// Returns encoded string ready to send via message.
   @override
   String toString() => format();
-
-  String cdnUrl() {
-    String format = animated ? ".gif" : ".png";
-
-    return "https://cdn.discordapp.com/emojis/${this.id}.$format";
-  }
 
   @override
   bool operator ==(other) => other is Emoji && other.name == this.name;

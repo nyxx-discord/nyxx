@@ -61,7 +61,7 @@ class MessageChannel extends Channel with IterableMixin<Message>, ISend {
           .client
           .http
           .send('GET', "/channels/${this.id.toString()}/messages/$id");
-      var msg = new Message._new(this.client, r.body);
+      var msg = new Message._new(this.client, r.body as Map<String, dynamic>);
 
       messages[id] = msg;
       return msg;
@@ -96,7 +96,7 @@ class MessageChannel extends Channel with IterableMixin<Message>, ISend {
       "embed": embed != null ? embed._build() : ""
     });
 
-    return new Message._new(this.client, r.body);
+    return new Message._new(this.client, r.body as Map<String, dynamic>);
   }
 
   @override
@@ -133,7 +133,7 @@ class MessageChannel extends Channel with IterableMixin<Message>, ISend {
       "tts": tts,
       "embed": embed != null ? embed._build() : ""
     });
-    return new Message._new(this.client, r.body);
+    return new Message._new(this.client, r.body as Map<String, dynamic>);
   }
 
   /// Starts typing.
