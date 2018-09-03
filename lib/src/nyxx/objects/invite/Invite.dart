@@ -12,17 +12,18 @@ class Invite {
   String code;
 
   /// A mini guild object for the invite's guild.
-  InviteGuild guild;
+  Guild guild;
 
   /// A mini channel object for the invite's channel.
-  InviteChannel channel;
+  GuildChannel channel;
+
+  /// Returns url invite
+  String get url => "https://discord.gg/$code";
 
   Invite._new(this.client, this.raw) {
     this.code = raw['code'] as String;
-    this.guild =
-        InviteGuild._new(this.client, raw['guild'] as Map<String, dynamic>);
-    this.channel =
-        InviteChannel._new(this.client, raw['channel'] as Map<String, dynamic>);
+    this.guild = client.guilds[Snowflake(raw['guild']['id'] as String)];
+    this.channel = client.channels[Snowflake(raw['channel']['id'] as String)] as GuildChannel;
   }
 
   /// Deletes this Invite.
