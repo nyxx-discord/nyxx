@@ -48,11 +48,10 @@ String getSymbolName(Symbol symbol) {
 ///
 /// ```
 /// var str = "Hello %0%!";
-///
 /// print(format(str, ["Janusz"]))
 /// ```
 String format(String format, List<Object> formatters) =>
-    format.replaceFirstMapped(r"%([0-9]+)%",
+    format.replaceAllMapped(r"%([0-9]+)%",
         (match) => formatters[int.parse(match.group(1))].toString());
 
 /// Partition list into chunks
