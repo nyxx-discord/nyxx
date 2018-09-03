@@ -7,7 +7,7 @@ class CommandsFramework {
   List<CommandContext> _commands;
   List<TypeConverter> _typeConverters;
   CooldownCache _cooldownCache;
-  List<Object> _services = new List();
+  List<Object> _services = List();
   Client _client;
 
   StreamController<Message> _cooldownEventController;
@@ -64,21 +64,21 @@ class CommandsFramework {
   //Stream<CommandParsingFail> onCommandParsingFail;
 
   /// Logger instance
-  final Logger logger = new Logger.detached("CommandsFramework");
+  final Logger logger = Logger.detached("CommandsFramework");
 
   /// Creates commands framework handler. Requires prefix to handle commands.
   CommandsFramework(this.prefix, this._client) {
-    this._commands = new List();
-    _cooldownCache = new CooldownCache();
+    this._commands = List();
+    _cooldownCache = CooldownCache();
 
-    _commandNotFoundEventController = new StreamController.broadcast();
-    _requiredPermissionEventController = new StreamController.broadcast();
-    _forAdminOnlyEventController = new StreamController.broadcast();
-    _cooldownEventController = new StreamController.broadcast();
-    _commandExecutionFailController = new StreamController.broadcast();
-    _wrongContextController = new StreamController.broadcast();
-    _unauthorizedNsfwAccess = new StreamController.broadcast();
-    _requiredTopicError = new StreamController.broadcast();
+    _commandNotFoundEventController = StreamController.broadcast();
+    _requiredPermissionEventController = StreamController.broadcast();
+    _forAdminOnlyEventController = StreamController.broadcast();
+    _cooldownEventController = StreamController.broadcast();
+    _commandExecutionFailController = StreamController.broadcast();
+    _wrongContextController = StreamController.broadcast();
+    _unauthorizedNsfwAccess = StreamController.broadcast();
+    _requiredTopicError = StreamController.broadcast();
     //_commandParsingFail = new StreamController.broadcast();
 
     onCommandNotFound = _commandNotFoundEventController.stream;
@@ -306,20 +306,20 @@ class CommandsFramework {
       case -1:
       case -2:
       case 100:
-        new Future(() async {
+        Future(() async {
           try {
             var params =
                 await _collectParams(matched, splittedCommand, e.message);
 
-            instMirror.setField(new Symbol("guild"), e.message.guild);
-            instMirror.setField(new Symbol("message"), e.message);
-            instMirror.setField(new Symbol("author"), e.message.author);
-            instMirror.setField(new Symbol("channel"), e.message.channel);
-            instMirror.setField(new Symbol("client"), this._client);
+            instMirror.setField(Symbol("guild"), e.message.guild);
+            instMirror.setField(Symbol("message"), e.message);
+            instMirror.setField(Symbol("author"), e.message.author);
+            instMirror.setField(Symbol("channel"), e.message.channel);
+            instMirror.setField(Symbol("client"), this._client);
             instMirror.invoke(matched.simpleName, params);
           } catch (err, stacktrace) {
             _commandExecutionFailController
-                .add(new CommandExecutionFailEvent._new(e.message, err));
+                .add(CommandExecutionFailEvent._new(e.message, err));
             logger.severe("ERROR OCCURED WHEN INVOKING COMMAND \n $stacktrace");
           }
         });
@@ -333,7 +333,7 @@ class CommandsFramework {
   void add(CommandContext command) {
     var cmd = util.getSymbolName(reflect(command).type.simpleName);
 
-    command.logger = new Logger.detached("Command[$cmd]");
+    command.logger = Logger.detached("Command[$cmd]");
 
     _commands.add(command);
     logger.info("Command[$cmd] added to registry");
@@ -367,7 +367,7 @@ class CommandsFramework {
             }) as MethodMirror;
 
             var params = ctor.parameters;
-            var toInject = new List<dynamic>();
+            var toInject = List<dynamic>();
 
             for (var param in params) {
               var type = param.type.reflectedType;
@@ -388,10 +388,10 @@ class CommandsFramework {
   void registerLibraryServices() {
     _registerLibrary(Service, (toInject, cm) {
       try {
-        var serv = cm.newInstance(new Symbol(''), toInject).reflectee;
+        var serv = cm.newInstance(Symbol(''), toInject).reflectee;
         _services.add(serv);
       } catch (e) {
-        throw new Exception(
+        throw Exception(
             "Service [${util.getSymbolName(cm.simpleName)}] constructor not satisfied!");
       }
     });
@@ -402,11 +402,11 @@ class CommandsFramework {
   void registerLibraryCommands() {
     _registerLibrary(CommandContext, (toInject, cm) {
       try {
-        var cmd = cm.newInstance(new Symbol(''), toInject).reflectee
-            as CommandContext;
+        var cmd =
+            cm.newInstance(Symbol(''), toInject).reflectee as CommandContext;
         add(cmd);
       } catch (e) {
-        throw new Exception(
+        throw Exception(
             "Command [${util.getSymbolName(cm.simpleName)}] constructor not satisfied!");
       }
     });
@@ -414,7 +414,7 @@ class CommandsFramework {
 
   /// Creates help String based on registered commands metadata.
   String _createHelp(Snowflake requestedUserId) {
-    var buffer = new StringBuffer();
+    var buffer = StringBuffer();
 
     buffer.writeln("**Available commands:**");
 
@@ -426,10 +426,10 @@ class CommandsFramework {
 
   // Groups params into
   List<String> _groupParams(List<String> splitted) {
-    var tmpList = new List<String>();
+    var tmpList = List<String>();
     var isInto = false;
 
-    var finalList = new List<String>();
+    var finalList = List<String>();
 
     for (var item in splitted) {
       if (isInto) {
@@ -454,14 +454,14 @@ class CommandsFramework {
     return finalList;
   }
 
-  RegExp _entityRegex = new RegExp(r"<(@|@!|@&|#|a?:(.+):)([0-9]+)>");
+  RegExp _entityRegex = RegExp(r"<(@|@!|@&|#|a?:(.+):)([0-9]+)>");
 
   Future<List<Object>> _collectParams(
       MethodMirror method, List<String> splitted, Message e) async {
     var params = method.parameters;
     splitted = _groupParams(splitted);
 
-    List<Object> collected = new List();
+    List<Object> collected = List();
     var index = -1;
 
     Future<bool> parsePrimitives(Type type) async {
@@ -484,19 +484,19 @@ class CommandsFramework {
           break;
         case TextChannel:
           var id = _entityRegex.firstMatch(splitted[index]).group(3);
-          collected.add(e.guild.channels[new Snowflake(id)]);
+          collected.add(e.guild.channels[Snowflake(id)]);
           break;
         case User:
           var id = _entityRegex.firstMatch(splitted[index]).group(3);
-          collected.add(e.guild.client.users[new Snowflake(id)]);
+          collected.add(e.guild.client.users[Snowflake(id)]);
           break;
         case Role:
           var id = _entityRegex.firstMatch(splitted[index]).group(3);
-          collected.add(e.guild.roles[new Snowflake(id)]);
+          collected.add(e.guild.roles[Snowflake(id)]);
           break;
         case GuildEmoji:
           var id = _entityRegex.firstMatch(splitted[index]).group(3);
-          collected.add(e.guild.emojis[new Snowflake(id)]);
+          collected.add(e.guild.emojis[Snowflake(id)]);
           break;
         case UnicodeEmoji:
           var code = splitted[index].codeUnits[0].toRadixString(16);

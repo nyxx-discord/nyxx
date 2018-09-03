@@ -44,12 +44,12 @@ class EmbedBuilder implements Builder {
 
   /// Bootstraper for [EmbedBuilder].
   EmbedBuilder() {
-    _fields = new List();
+    _fields = List();
   }
 
   /// Adds field to embed. [name] and [value] fields are required. Inline is set to false by default.
   void addField({String name, String value, bool inline = false}) {
-    _fields.add(new EmbedFieldBuilder(name, value, inline)._build());
+    _fields.add(EmbedFieldBuilder(name, value, inline)._build());
   }
 
   /// Added field to embed using [EmbedFieldBuilder]
@@ -59,7 +59,7 @@ class EmbedBuilder implements Builder {
 
   /// Builds object to Map() instance;
   Map<String, dynamic> _build() {
-    Map<String, dynamic> tmp = new Map();
+    Map<String, dynamic> tmp = Map();
 
     if (title != null) tmp["title"] = title;
     if (type != null) tmp["type"] = type;

@@ -10,7 +10,7 @@ class _WS {
   /// The client that the WS manager belongs to.
   Client client;
 
-  final Logger logger = new Logger("Client");
+  final Logger logger = Logger("Client");
 
   /// Makes a new WS manager.
   _WS(this.client) {
@@ -52,7 +52,7 @@ class _WS {
   }
 
   void setupShard(int shardId) {
-    Shard shard = new Shard._new(this, shardId);
+    Shard shard = Shard._new(this, shardId);
     this.client.shards[shard.id] = shard;
 
     shard.onReady.listen((Shard s) {
@@ -65,7 +65,7 @@ class _WS {
   void connectShard(int index) {
     this.client.shards.values.toList()[index]._connect(true, true);
     if (index + 1 != this.client._options.shardIds.length)
-      new Timer(new Duration(seconds: 6), () => connectShard(index + 1));
+      Timer(Duration(seconds: 6), () => connectShard(index + 1));
   }
 
   void testReady() {
@@ -85,12 +85,13 @@ class _WS {
 
     if (match && match2) {
       client.ready = true;
-      client._startTime = new DateTime.now();
+      client._startTime = DateTime.now();
 
       this.client.http.send("GET", "/oauth2/applications/@me").then((response) {
-        this.client.app = new ClientOAuth2Application._new(this.client, response.body as Map<String, dynamic>);
+        this.client.app = ClientOAuth2Application._new(
+            this.client, response.body as Map<String, dynamic>);
 
-        new ReadyEvent._new(client);
+        ReadyEvent._new(client);
         logger.info("Connected and ready!");
       });
     }

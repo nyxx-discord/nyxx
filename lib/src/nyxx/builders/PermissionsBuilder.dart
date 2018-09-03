@@ -11,7 +11,7 @@ class _PermissionsSet {
 /// Builder for permissions.
 class PermissionsBuilder extends AbstractPermissions {
   _PermissionsSet _build() {
-    var tmp = new _PermissionsSet();
+    var tmp = _PermissionsSet();
 
     _apply(tmp, this.createInstantInvite,
         PermissionsConstants.CREATE_INSTANT_INVITE);

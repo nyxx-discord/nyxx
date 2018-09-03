@@ -12,7 +12,7 @@ class EmbedFooterBuilder implements Builder {
 
   /// Builds object to Map() instance;
   Map<String, dynamic> _build() {
-    Map<String, dynamic> tmp = new Map();
+    Map<String, dynamic> tmp = Map();
 
     if (text != null) tmp["text"] = text;
     if (iconUrl != null) tmp["icon_url"] = iconUrl;

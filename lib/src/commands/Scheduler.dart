@@ -16,7 +16,7 @@ class Scheduler {
   Timer _t;
 
   Scheduler(this._client) {
-    _targets = new List();
+    _targets = List();
   }
 
   /// Starts scheduler
@@ -25,7 +25,7 @@ class Scheduler {
       targets
           .forEach((s) => _targets.add(_client.channels[s] as MessageChannel));
 
-      this._t = new Timer.periodic(runEvery, (Timer t) {
+      this._t = Timer.periodic(runEvery, (Timer t) {
         for (var target in _targets) {
           func(target);
         }

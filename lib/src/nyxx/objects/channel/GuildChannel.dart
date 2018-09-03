@@ -27,7 +27,7 @@ abstract class GuildChannel implements Channel {
 
   // Initializes Guild channel
   void _initialize(Map<String, dynamic> raw, Guild guild) {
-    _onUpdate = new StreamController.broadcast();
+    _onUpdate = StreamController.broadcast();
     onUpdate = _onUpdate.stream;
 
     this.name = raw['name'] as String;
@@ -35,15 +35,15 @@ abstract class GuildChannel implements Channel {
     this.guild = guild;
 
     if (raw['parent_id'] != null) {
-      this.parentId = new Snowflake(raw['parent_id'] as String);
+      this.parentId = Snowflake(raw['parent_id'] as String);
     }
 
     this.nsfw = raw['nsfw'] as bool;
 
     if (raw['permission_overwrites'] != null) {
-      permissions = new List();
+      permissions = List();
       raw['permission_overwrites'].forEach((dynamic o) {
-        permissions.add(new ChannelPermissions._new(o as Map<String, dynamic>));
+        permissions.add(ChannelPermissions._new(o as Map<String, dynamic>));
       });
     }
   }
@@ -52,9 +52,9 @@ abstract class GuildChannel implements Channel {
   /// Throws if [id] isn't [User] or [Role]
   Future<void> editChannelPermission(
       PermissionsBuilder perms, SnowflakeEntity id,
-      {String auditReason: ""}) async {
+      {String auditReason = ""}) async {
     if (!(id is Role) || !(id is User))
-      throw new Exception("`id` property must be either Role or User");
+      throw Exception("`id` property must be either Role or User");
 
     await this.client.http.send(
         "PUT", "/channels/${this.id}/permissions/${id.toString()}",
@@ -64,9 +64,9 @@ abstract class GuildChannel implements Channel {
   /// Deletes permission overwrite for given User or Role [id]
   /// Throws if [id] isn't [User] or [Role]
   Future<void> deleteChannelPermission(SnowflakeEntity id,
-      {String auditReason: ""}) async {
+      {String auditReason = ""}) async {
     if (!(id is Role) || !(id is User))
-      throw new Exception("`id` property must be either Role or User");
+      throw Exception("`id` property must be either Role or User");
 
     await this.client.http.send("POST", "/channels/${this.id}/permissions/$id",
         reason: auditReason);

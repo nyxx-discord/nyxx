@@ -33,6 +33,7 @@ class VoiceChannel extends Channel with GuildChannel {
               "position": position != null ? position : this.position
             },
             reason: auditReason);
-    return new VoiceChannel._new(this.client, r.body as Map<String, dynamic>, this.guild);
+    return VoiceChannel._new(
+        this.client, r.body as Map<String, dynamic>, this.guild);
   }
 }

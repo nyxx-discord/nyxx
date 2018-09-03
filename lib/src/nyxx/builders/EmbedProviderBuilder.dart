@@ -12,7 +12,7 @@ class EmbedProviderBuilder implements Builder {
 
   /// Builds object to Map() instance;
   Map<String, dynamic> _build() {
-    Map<String, dynamic> tmp = new Map();
+    Map<String, dynamic> tmp = Map();
 
     if (name != null) tmp["name"] = name;
     if (url != null) tmp["url"] = url;

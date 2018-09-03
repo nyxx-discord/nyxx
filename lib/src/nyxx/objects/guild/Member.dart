@@ -31,10 +31,12 @@ class Member extends User {
   Guild guild;
 
   /// Returs highest role for member
-  Role get highestRole => roles.reduce((f, s) => f.position > s.position ? f : s);
+  Role get highestRole =>
+      roles.reduce((f, s) => f.position > s.position ? f : s);
 
-  Role get color => 
-    roles.where((r) => r.color != null).reduce((f, s) => f.position > s.position ? f : s);
+  Role get color => roles
+      .where((r) => r.color != null)
+      .reduce((f, s) => f.position > s.position ? f : s);
 
   Member._new(Client client, Map<String, dynamic> data, [Guild guild])
       : super._new(client, data) {
@@ -44,15 +46,14 @@ class Member extends User {
     this.status = data['status'] as String;
 
     if (guild == null)
-      this.guild =
-          this.client.guilds[new Snowflake(data['guild_id'] as String)];
+      this.guild = this.client.guilds[Snowflake(data['guild_id'] as String)];
     else
       this.guild = guild;
 
-    if(data['roles'] != null) {
-      roles = new List();
+    if (data['roles'] != null) {
+      roles = List();
       data['roles'].forEach((i) {
-        roles.add(this.guild.roles[new Snowflake(i as String)]);
+        roles.add(this.guild.roles[Snowflake(i as String)]);
       });
     }
 
@@ -60,15 +61,14 @@ class Member extends User {
       this.joinedAt = DateTime.parse(data['joined_at'] as String);
 
     if (data['game'] != null)
-      this.game =
-          new Game._new(this.client, data['game'] as Map<String, dynamic>);
+      this.game = Game._new(this.client, data['game'] as Map<String, dynamic>);
 
     if (guild != null) this.guild.members[this.id] = this;
     client.users[this.id] = this;
   }
 
   /// Bans the member and optionally deletes [deleteMessageDays] days worth of messages.
-  Future<void> ban({int deleteMessageDays = 0, String auditReason: ""}) async {
+  Future<void> ban({int deleteMessageDays = 0, String auditReason = ""}) async {
     await this.client.http.send(
         'PUT', "/guilds/${this.guild.id}/bans/${this.id}",
         body: {"delete-message-days": deleteMessageDays}, reason: auditReason);
@@ -80,7 +80,7 @@ class Member extends User {
   /// var r = guild.roles.values.first;
   /// await member.addRole(r);
   /// ```
-  Future<void> addRole(Role role, {String auditReason: ""}) async {
+  Future<void> addRole(Role role, {String auditReason = ""}) async {
     await this.client.http.send(
         'PUT', '/guilds/${guild.id}/members/${this.id}/roles/${role.id}',
         reason: auditReason);
@@ -88,7 +88,7 @@ class Member extends User {
   }
 
   /// Kicks the member
-  Future<void> kick({String auditReason: ""}) async {
+  Future<void> kick({String auditReason = ""}) async {
     await this.client.http.send(
         'DELETE', "/guilds/${this.guild.id}/members/${this.id}",
         reason: auditReason);
@@ -99,7 +99,7 @@ class Member extends User {
     var total = 0;
     for (var role in roles) total |= role.permissions.raw;
 
-    return new Permissions.fromInt(total);
+    return Permissions.fromInt(total);
   }
 
   @override

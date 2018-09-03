@@ -6,10 +6,10 @@ class CooldownCache {
 
   /// Constructor sets up empty cache and starts garbage collector.
   CooldownCache() {
-    _cache = new Map();
+    _cache = Map();
 
-    new Timer.periodic(const Duration(minutes: 30), (Timer t) {
-      int now = new DateTime.now().millisecondsSinceEpoch;
+    Timer.periodic(const Duration(minutes: 30), (Timer t) {
+      int now = DateTime.now().millisecondsSinceEpoch;
 
       _cache.forEach((k, v) {
         if (now - v >= 1800000) _cache.remove(k);
@@ -20,10 +20,10 @@ class CooldownCache {
   /// Checks if user can execute given command at given time
   Future<bool> canExecute(
       Snowflake userId, String commandName, int desiredCooldown) {
-    return new Future<bool>(() {
+    return Future<bool>(() {
       /// current date
-      int now = new DateTime.now().millisecondsSinceEpoch;
-      var node = new _CacheKey._new(userId, commandName);
+      int now = DateTime.now().millisecondsSinceEpoch;
+      var node = _CacheKey._new(userId, commandName);
 
       bool found = false;
 

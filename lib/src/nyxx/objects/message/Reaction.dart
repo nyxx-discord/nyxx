@@ -20,8 +20,8 @@ class Reaction {
 
     var rawEmoji = raw['emoji'] as Map<String, dynamic>;
     if (rawEmoji['id'] == null)
-      emoji = new UnicodeEmoji._partial(rawEmoji['name'] as String);
+      emoji = UnicodeEmoji._partial(rawEmoji['name'] as String);
     else
-      emoji = new GuildEmoji._partial(rawEmoji);
+      emoji = GuildEmoji._partial(rawEmoji);
   }
 }
