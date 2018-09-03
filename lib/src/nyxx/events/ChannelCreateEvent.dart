@@ -1,6 +1,6 @@
 part of nyxx;
 
-/// Sent when a channel is created..
+/// Sent when a channel is created.
 class ChannelCreateEvent {
   /// The channel that was created, either a [GuildChannel], [DMChannel], or [GroupDMChannel].
   Channel channel;
