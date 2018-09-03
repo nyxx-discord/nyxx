@@ -60,23 +60,6 @@ class TextChannel extends MessageChannel with GuildChannel {
     return Webhook._new(this.client, r.body as Map<String, dynamic>);
   }
 
-  /// Fetches and returns all channel's [Invite]s
-  ///
-  /// ```
-  /// var invites = await chan.getChannelInvites();
-  /// ```
-  Future<Map<String, Invite>> getChannelInvites() async {
-    final HttpResponse r =
-        await this.client.http.send('GET', "/channels/$id/invites");
-
-    Map<String, Invite> invites = Map();
-    for (Map<String, dynamic> val in r.body.values.first) {
-      invites[val["code"] as String] = Invite._new(this.client, val);
-    }
-
-    return invites;
-  }
-
   /// Returns pinned [Message]s for [Channel].
   Future<Map<String, Message>> getPinnedMessages() async {
     final HttpResponse r =
