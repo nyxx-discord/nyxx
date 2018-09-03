@@ -3,6 +3,11 @@ part of nyxx;
 /// [TextChannel] represents single text channel on [Guild].
 /// Inhertits from [MessageChannel] and mixes [GuildChannel].
 class TextChannel extends MessageChannel with GuildChannel {
+  /// Emitted when channel pins are updated.
+  Stream<ChannelPinsUpdateEvent> pinsUpdated;
+
+  StreamController<ChannelPinsUpdateEvent> _pinsUpdated;
+
   /// The channel's topic.
   String topic;
 
@@ -16,6 +21,9 @@ class TextChannel extends MessageChannel with GuildChannel {
     this.topic = raw['topic'] as String;
     this.mention = "<#${this.id}>";
     this.guild.channels[this.id] = this;
+
+    _pinsUpdated = new StreamController.broadcast();
+    pinsUpdated = _pinsUpdated.stream;
   }
 
   /// Edits the channel.

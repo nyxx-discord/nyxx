@@ -5,13 +5,12 @@ class VoiceStateUpdateEvent {
   /// Voices state
   VoiceState state;
 
+  // Raw Gatway reponse
   Map<String, dynamic> json;
 
   VoiceStateUpdateEvent._new(Client client, this.json) {
     this.state = VoiceState._new(client, json['d'] as Map<String, dynamic>);
-
     if (state.user != null) client._voiceStates[state.user.id] = state;
-
     client._events.onVoiceStateUpdate.add(this);
   }
 }
