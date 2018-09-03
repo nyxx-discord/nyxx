@@ -30,6 +30,9 @@ class Member extends User {
   /// The guild that the member is a part of.
   Guild guild;
 
+  /// Returns user instance of member
+  User get user => client.users[id];
+
   /// Returs highest role for member
   Role get highestRole =>
       roles.reduce((f, s) => f.position > s.position ? f : s);
@@ -68,10 +71,14 @@ class Member extends User {
   }
 
   /// Bans the member and optionally deletes [deleteMessageDays] days worth of messages.
-  Future<void> ban({int deleteMessageDays = 0, String auditReason = ""}) async {
+  Future<void> ban(
+      {int deleteMessageDays = 0,
+      String reason,
+      String auditReason = ""}) async {
     await this.client.http.send(
         'PUT', "/guilds/${this.guild.id}/bans/${this.id}",
-        body: {"delete-message-days": deleteMessageDays}, reason: auditReason);
+        body: {"delete-message-days": deleteMessageDays, "reason": reason},
+        reason: auditReason);
   }
 
   /// Adds role to user
@@ -85,6 +92,12 @@ class Member extends User {
         'PUT', '/guilds/${guild.id}/members/${this.id}/roles/${role.id}',
         reason: auditReason);
     return null;
+  }
+
+  Future<void> removeRole(Role role, {String auditReason = ""}) async {
+    await this.client.http.send("DELETE",
+        "/guilds/${this.guild.id.toString()}/members/${this.id.toString()}/roles/${role.id.toString()}",
+        reason: auditReason);
   }
 
   /// Kicks the member
@@ -102,23 +115,25 @@ class Member extends User {
     return Permissions.fromInt(total);
   }
 
+  Future<void> edit(
+      {String nick,
+      List<Role> roles,
+      bool mute,
+      bool deaf,
+      VoiceChannel channel,
+      String auditReason = ""}) async {
+    var req = Map<String, dynamic>();
+    if (nick != null) req["nick"] = nick;
+    if (roles != null) req['roles'] = roles.map((f) => f.id.toString());
+    if (mute != null) req['mute'] = mute;
+    if (deaf != null) req['deaf'] = deaf;
+    if (deaf != null) req['channel_id'] = channel.id.toString();
+
+    await this.client.http.send("PATCH",
+        "/guilds/${this.guild.id.toString()}/members/${this.id.toString()}",
+        body: req, reason: auditReason);
+  }
+
   @override
   String toString() => super.toString();
 }
-
-/*
-class UserStatus {
-  final String _value;
-  const UserStatus._internal(this._value);
-
-  @override
-  String toString() => _value;
-
-  static const offline = const UserStatus._internal("offline");
-  static const online = const UserStatus._internal("online");
-  static const idle = const UserStatus._internal("idle");
-  static const dnd = const UserStatus._internal("dnd");
-
-  static UserStatus fromStrig(String status) => UserStatus._internal(status);
-}
-*/
