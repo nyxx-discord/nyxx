@@ -62,7 +62,7 @@ class Player {
     _webSocket.add(s);
 
     _sub1 = _client.onVoiceServerUpdate
-        .where((e) => e.guild.id.toString() == _guild.id.toString())
+        .where((e) => e.guild.id == _guild.id)
         .listen((e) {
       _rawEvent = e.raw;
       _webSocket.add(jsonEncode(_OpVoiceUpdate(
@@ -71,10 +71,10 @@ class Player {
     });
 
     _sub2 = _client.onVoiceStateUpdate.where((e) {
-      if (e.state.channel != null) if (e.state.channel.id.toString() !=
-          currentChannel.id.toString()) return false;
+      if (e.state.channel != null) if (e.state.channel.id !=
+          currentChannel.id) return false;
 
-      return e.state.user.id.toString() == _client.user.id.toString();
+      return e.state.user.id == _client.user.id;
     }).listen((e) {
       _currentState = e.state;
       _webSocket.add(jsonEncode(_OpVoiceUpdate(

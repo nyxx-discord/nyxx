@@ -12,10 +12,10 @@ import 'package:http/http.dart' as httpreq;
 
 import 'utils.dart' as utils;
 
+// BASE 
+
 part 'src/nyxx/Client.dart';
 part 'src/nyxx/ClientOptions.dart';
-
-part 'src/nyxx/objects/ISend.dart';
 
 // INTERNAL
 
@@ -27,7 +27,6 @@ part 'src/nyxx/internal/Http.dart';
 // ERROR
 
 part 'src/nyxx/errors/HttpError.dart';
-part 'src/nyxx/errors/InvalidTokenError.dart';
 
 // EVENTS
 
@@ -80,6 +79,8 @@ part 'src/nyxx/builders/EmbedProviderBuilder.dart';
 part 'src/nyxx/builders/GuildBuilder.dart';
 
 // OBJECTS
+
+part 'src/nyxx/objects/ISend.dart';
 
 part 'src/nyxx/objects/SnowflakeEntity.dart';
 part 'src/nyxx/objects/Snowflake.dart';
