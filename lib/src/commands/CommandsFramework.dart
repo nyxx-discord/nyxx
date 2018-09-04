@@ -215,7 +215,6 @@ class CommandsFramework {
                   var methodRestrict = _getCmdAnnot<Restrict>(f);
                   var methodHelp = _getCmdAnnot<Help>(f);
                   var processors = _getProcessors(d, f);
-                  print(processors);
 
                   _commands.add(_CommandMetadata(f, d, classRestrict,
                       commandAnnot, methodCommandAnnot, methodRestrict, methodHelp, processors.first as List<Preprocessor>, processors.last as List<Postprocessor>));
@@ -231,7 +230,6 @@ class CommandsFramework {
               var methodRestrict = _getCmdAnnot<Restrict>(d);
               var methodHelp = _getCmdAnnot<Help>(d);
               var processors = _getProcessors(null, d);
-              print(processors);
 
               _commands.add(_CommandMetadata(
                   d, library, null, null, commandAnnot, methodRestrict, methodHelp, processors.first as List<Preprocessor>, processors.last as List<Postprocessor>));
@@ -627,7 +625,7 @@ class CommandsFramework {
 
       try {
         collected.add(_services.firstWhere((s) => s.runtimeType == type));
-      } catch (e) {}
+      } catch {}
     }
 
     return collected;
