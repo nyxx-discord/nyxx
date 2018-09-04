@@ -11,8 +11,9 @@ class ChannelPinsUpdateEvent {
   ChannelPinsUpdateEvent._new(Client client, Map<String, dynamic> json) {
     this.lastPingTimestamp =
         DateTime.parse(json['d']['last_pin_timestamp'] as String);
-    this.channel = client.channels[Snowflake(json['d']['channel_id'] as String)] as TextChannel;
-    
+    this.channel = client.channels[Snowflake(json['d']['channel_id'] as String)]
+        as TextChannel;
+
     channel._pinsUpdated.add(this);
     client._events.onChannelPinsUpdate.add(this);
   }

@@ -158,12 +158,12 @@ class HttpResponse {
 
   static Future<HttpResponse> _fromResponse(
       HttpBase request, httpreq.StreamedResponse r) async {
-    
     String res;
     try {
       res = await r.stream.bytesToString();
-    } catch (err, stacktrace){
-      throw new Exception("You're probably not connected to internet. If not report this issue \n $stacktrace");
+    } catch (err, stacktrace) {
+      throw Exception(
+          "You're probably not connected to internet. If not report this issue \n $stacktrace");
     }
 
     var json;

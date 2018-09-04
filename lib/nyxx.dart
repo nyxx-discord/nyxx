@@ -12,7 +12,7 @@ import 'package:http/http.dart' as httpreq;
 
 import 'utils.dart' as utils;
 
-// BASE 
+// BASE
 
 part 'src/nyxx/Client.dart';
 part 'src/nyxx/ClientOptions.dart';

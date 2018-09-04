@@ -1,7 +1,7 @@
 part of nyxx.commands;
 
 /// Creates new poll, generates options and collects results. Returns `Map<Emoji, int` as result. [timeout] is set by default to 10 minutes
-/// 
+///
 /// ```
 /// Future<void> examplePoll(CommandContext ctx) async {
 ///   var results = createPoll(ctx.channel, "This is awesome poll", {UnicodeEmoji(""): "One option", UnicodeEmoji(""): "second option"});
@@ -12,10 +12,11 @@ Future<Map<Emoji, int>> createPoll(
     {Duration timeout = const Duration(minutes: 10),
     String message,
     bool delete = false,
-    Object Function(Map<Emoji, String> options, String message) messageFactory}) async {
+    Object Function(Map<Emoji, String> options, String message)
+        messageFactory}) async {
   var toSend;
 
-  if(messageFactory == null) {
+  if (messageFactory == null) {
     StringBuffer buffer = StringBuffer();
 
     buffer.writeln(title);
@@ -31,11 +32,12 @@ Future<Map<Emoji, int>> createPoll(
   }
 
   Message msg;
-  if(toSend is String)
+  if (toSend is String)
     msg = await channel.send(content: toSend);
   else if (toSend is EmbedBuilder)
     msg = await channel.send(embed: toSend);
-  else return null;
+  else
+    return null;
 
   for (var emoji in options.keys) await msg.createReaction(emoji);
 
@@ -54,11 +56,11 @@ Future<Map<Emoji, int>> createPoll(
   });
 }
 
-/// Handles pagination interactivity. Allows to create pagnated messages from List<String> 
+/// Handles pagination interactivity. Allows to create pagnated messages from List<String>
 /// Factory constructors allows to create message from String directly.
-/// 
-/// Pagination is sent by [paginate] method. And returns [Message] instance of sent message. 
-/// 
+///
+/// Pagination is sent by [paginate] method. And returns [Message] instance of sent message.
+///
 /// ```
 /// var pagination = new Pagination(["This is simple paginated", "data. Use it if you", "want to partition text by yourself"], ctx,channel);
 /// // It generated 2 equal (possibly) pages.
@@ -76,17 +78,19 @@ class Pagination {
 
   /// Generates pagination from String. It divides String into 250 char long pages.
   factory Pagination.fromString(String str, MessageChannel channel) {
-    return new Pagination(util.split(str, 250).toList(), channel);
+    return Pagination(util.split(str, 250).toList(), channel);
   }
 
   /// Generates pagination from String but with user specified size of single page.
-  factory Pagination.fromStringLen(String str, int len, MessageChannel channel) {
-    return new Pagination(util.split(str, len).toList(), channel);
+  factory Pagination.fromStringLen(
+      String str, int len, MessageChannel channel) {
+    return Pagination(util.split(str, len).toList(), channel);
   }
 
   /// Generates pagination from String but with user specified number of pages.
-  factory Pagination.fromStringEq(String str, int pieces, MessageChannel channel) {
-    return new Pagination(util.splitEqually(str, pieces).toList(), channel);
+  factory Pagination.fromStringEq(
+      String str, int pieces, MessageChannel channel) {
+    return Pagination(util.splitEqually(str, pieces).toList(), channel);
   }
 
   /// Paginates a list of Strings - each String is different page.

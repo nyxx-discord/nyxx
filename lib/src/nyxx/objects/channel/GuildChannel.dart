@@ -73,7 +73,6 @@ abstract class GuildChannel implements Channel {
     return Invite._new(this.client, r.body as Map<String, dynamic>);
   }
 
-
   /// Fetches and returns all channel's [Invite]s
   ///
   /// ```

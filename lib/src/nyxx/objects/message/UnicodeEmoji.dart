@@ -7,7 +7,7 @@ class UnicodeEmoji extends Emoji {
 
   UnicodeEmoji(this.code, String name) : super(name);
   UnicodeEmoji.from(this.code) : super("");
-  
+
   UnicodeEmoji._new(this.code, String name) : super(name);
   UnicodeEmoji._partial(this.code) : super("");
 

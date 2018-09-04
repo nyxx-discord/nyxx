@@ -1,7 +1,5 @@
-
 /// Converts RGB values to int
-int RGBtoInt(int red, int green, int blue) =>
-    (red << 16) | (green << 8) | blue;
+int RGBtoInt(int red, int green, int blue) => (red << 16) | (green << 8) | blue;
 
 /// Converts RGB hex string into int value
 int HEXtoInt(String hex) {
