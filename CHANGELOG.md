@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 ## [1.0.0](https://github.com/l7ssha/nyxx/compare/0.23.1...1.0.0)
 _Tue xx.xx.2018_
 
@@ -31,7 +30,7 @@ _Tue xx.xx.2018_
   * Internal nyxx API changes
   * Cooldown cache rewritten
   * Title is not required for EmbedBuilder
-=======
+
 ## [0.24.0](https://github.com/l7ssha/nyxx/compare/0.23.1...0.24.0)
 _Tue 03.08.2018_
 
@@ -44,7 +43,6 @@ _Tue 03.08.2018_
 - **Bug fixes**
   * Fixed `Command` help generating error
   * Fixed Emojis equals operator
->>>>>>> fb46baac964e5119e5c5751cb958375b7f9f884f
 
 ## [0.23.1](https://github.com/l7ssha/nyxx/compare/0.23.0...0.23.1)
 _Tue 31.07.2018_
