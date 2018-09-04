@@ -625,7 +625,7 @@ class CommandsFramework {
 
       try {
         collected.add(_services.firstWhere((s) => s.runtimeType == type));
-      } catch {}
+      } on Exception {}
     }
 
     return collected;
