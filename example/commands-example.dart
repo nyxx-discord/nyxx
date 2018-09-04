@@ -16,7 +16,7 @@ void main() {
     ..registerLibraryCommands();
 }
 
-/// Example command preprocessor. 
+/// Example command preprocessor.
 class IsGuildProcessor implements command.Preprocessor {
   const IsGuildProcessor();
 

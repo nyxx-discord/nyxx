@@ -2,7 +2,7 @@ part of nyxx.commands;
 
 T _getCmdAnnot<T>(DeclarationMirror declaration) {
   Iterable<T> fs = _getCmdAnnots<T>(declaration);
-  if(fs.isEmpty) return null;
+  if (fs.isEmpty) return null;
   return fs.first;
 }
 
@@ -10,8 +10,7 @@ Iterable<T> _getCmdAnnots<T>(DeclarationMirror declaration) sync* {
   for (var instance in declaration.metadata)
     if (instance.hasReflectee) {
       var reflectee = instance.reflectee;
-      if (reflectee is T)
-        yield reflectee;
+      if (reflectee is T) yield reflectee;
     }
 }
 
@@ -176,12 +175,12 @@ class CommandsFramework {
   String _createLog(Module classCmd, Command methodCmd) =>
       "[${classCmd != null ? classCmd.name : ""}${methodCmd != null && (methodCmd.main == null || !methodCmd.main) ? " ${methodCmd.name}" : ""}]";
 
-
-  List<List> _getProcessors(ClassMirror classMirror, DeclarationMirror methodMirror) {
+  List<List> _getProcessors(
+      ClassMirror classMirror, DeclarationMirror methodMirror) {
     var classPre = <Preprocessor>[];
     var classPost = <Postprocessor>[];
 
-    if(classMirror != null) {
+    if (classMirror != null) {
       classPre.addAll(_getCmdAnnots<Preprocessor>(classMirror));
       classPost.addAll(_getCmdAnnots<Postprocessor>(classMirror));
     }
@@ -189,8 +188,12 @@ class CommandsFramework {
     var methodPre = _getCmdAnnots<Preprocessor>(methodMirror);
     var methodPost = _getCmdAnnots<Postprocessor>(methodMirror);
 
-    var prepro = List<Preprocessor>.from(classPre)..addAll(methodPre)..removeWhere((e) => e == null);
-    var postPro = List<Postprocessor>.from(classPost)..addAll(methodPost)..removeWhere((e) => e == null);
+    var prepro = List<Preprocessor>.from(classPre)
+      ..addAll(methodPre)
+      ..removeWhere((e) => e == null);
+    var postPro = List<Postprocessor>.from(classPost)
+      ..addAll(methodPost)
+      ..removeWhere((e) => e == null);
 
     return [prepro, postPro];
   }
@@ -216,8 +219,16 @@ class CommandsFramework {
                   var methodHelp = _getCmdAnnot<Help>(f);
                   var processors = _getProcessors(d, f);
 
-                  _commands.add(_CommandMetadata(f, d, classRestrict,
-                      commandAnnot, methodCommandAnnot, methodRestrict, methodHelp, processors.first as List<Preprocessor>, processors.last as List<Postprocessor>));
+                  _commands.add(_CommandMetadata(
+                      f,
+                      d,
+                      classRestrict,
+                      commandAnnot,
+                      methodCommandAnnot,
+                      methodRestrict,
+                      methodHelp,
+                      processors.first as List<Preprocessor>,
+                      processors.last as List<Postprocessor>));
                   logger.fine(
                       "Command ${_createLog(commandAnnot, methodCommandAnnot)} has been registered");
                 }
@@ -232,7 +243,15 @@ class CommandsFramework {
               var processors = _getProcessors(null, d);
 
               _commands.add(_CommandMetadata(
-                  d, library, null, null, commandAnnot, methodRestrict, methodHelp, processors.first as List<Preprocessor>, processors.last as List<Postprocessor>));
+                  d,
+                  library,
+                  null,
+                  null,
+                  commandAnnot,
+                  methodRestrict,
+                  methodHelp,
+                  processors.first as List<Preprocessor>,
+                  processors.last as List<Postprocessor>));
               logger.fine(
                   "Command [${commandAnnot.name.toString()}] has been registered");
             }
@@ -253,22 +272,26 @@ class CommandsFramework {
 
     var isAdmin = _isUserAdmin(requestedUserId, guild);
     for (var meta in _commands) {
-      if(meta.methodHelp == null)
-        continue;
+      if (meta.methodHelp == null) continue;
 
-      if((meta.classRestrict != null && meta.classRestrict.hidden && isAdmin) ||
-         (meta.methodRestrict != null && meta.methodRestrict.hidden && isAdmin))
-        continue;
+      if ((meta.classRestrict != null &&
+              meta.classRestrict.hidden &&
+              isAdmin) ||
+          (meta.methodRestrict != null &&
+              meta.methodRestrict.hidden &&
+              isAdmin)) continue;
 
-      StringBuffer commandName = new StringBuffer();
+      StringBuffer commandName = StringBuffer();
 
-      if(meta.classCommand != null)
-        commandName.write("${meta.classCommand.name} ${meta.methodCommand.main != null ? "[main]" : meta.methodCommand.name}");
-      commandName.write("${meta.methodCommand.name} ${meta.methodCommand.aliases}");
+      if (meta.classCommand != null)
+        commandName.write(
+            "${meta.classCommand.name} ${meta.methodCommand.main != null ? "[main]" : meta.methodCommand.name}");
+      commandName
+          .write("${meta.methodCommand.name} ${meta.methodCommand.aliases}");
 
       buffer.write("\n **$commandName** \n\t ${meta.methodHelp.description}");
 
-      if(meta.methodHelp.usage != null)
+      if (meta.methodHelp.usage != null)
         buffer.write("\n\t *Usage:* ${this.prefix}${meta.methodHelp.usage}");
     }
 
@@ -287,8 +310,10 @@ class CommandsFramework {
 
     List<Snowflake> roles = List.from(top.roles)..addAll(meth.roles);
 
-    List<int> userPermissions = List.from(top.userPermissions)..addAll(meth.userPermissions);
-    List<int> botPermissions = List.from(top.botPermissions)..addAll(meth.botPermissions);
+    List<int> userPermissions = List.from(top.userPermissions)
+      ..addAll(meth.userPermissions);
+    List<int> botPermissions = List.from(top.botPermissions)
+      ..addAll(meth.botPermissions);
     List<String> topics = List.from(top.topics)..addAll(meth.topics);
 
     var cooldown = meth.cooldown != null ? meth.cooldown : top.cooldown;
@@ -312,11 +337,13 @@ class CommandsFramework {
     // Match help specially to shadow user defined help commands.
     if (e.message.content.startsWith("${prefix}help")) {
       if (helpDirect) {
-        e.message.author.send(content: _createHelp(e.message.author.id, e.message.guild));
+        e.message.author
+            .send(content: _createHelp(e.message.author.id, e.message.guild));
         return;
       }
 
-      await e.message.channel.send(content: _createHelp(e.message.author.id, e.message.guild));
+      await e.message.channel
+          .send(content: _createHelp(e.message.author.id, e.message.guild));
       return;
     }
 
@@ -346,8 +373,10 @@ class CommandsFramework {
     }
 
     var executionCode = -1;
-    
-    if(matchedMeta.preprocessors.length > 0 && !matchedMeta.preprocessors.every((pre) => pre.execute(_services, e.message)))
+
+    if (matchedMeta.preprocessors.length > 0 &&
+        !matchedMeta.preprocessors
+            .every((pre) => pre.execute(_services, e.message)))
       executionCode = 8;
 
     if (matchedMeta.methodRestrict != null && matchedMeta.classRestrict != null)
@@ -409,9 +438,10 @@ class CommandsFramework {
                   ..addAll(methodInj));
           }
 
-          if(matchedMeta.postprocessors.length > 0) {
+          if (matchedMeta.postprocessors.length > 0) {
             for (var post in matchedMeta.postprocessors)
-              post.execute(_services, res.hasReflectee ? res.reflectee : null, e.message);
+              post.execute(_services, res.hasReflectee ? res.reflectee : null,
+                  e.message);
           }
         } catch (err, stacktrace) {
           _commandExecutionFailController
@@ -632,6 +662,7 @@ class CommandsFramework {
   }
 
   bool _isUserAdmin(Snowflake authorId, Guild guild) {
-    return (admins != null && admins.any((i) => i == authorId)) || guild.ownerID == authorId;
+    return (admins != null && admins.any((i) => i == authorId)) ||
+        guild.ownerID == authorId;
   }
 }

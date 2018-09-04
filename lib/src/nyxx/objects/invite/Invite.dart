@@ -23,7 +23,8 @@ class Invite {
   Invite._new(this.client, this.raw) {
     this.code = raw['code'] as String;
     this.guild = client.guilds[Snowflake(raw['guild']['id'] as String)];
-    this.channel = client.channels[Snowflake(raw['channel']['id'] as String)] as GuildChannel;
+    this.channel = client.channels[Snowflake(raw['channel']['id'] as String)]
+        as GuildChannel;
   }
 
   /// Deletes this Invite.

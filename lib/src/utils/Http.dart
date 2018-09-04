@@ -5,15 +5,16 @@ import 'dart:convert';
 import 'dart:io';
 
 /// Sends regular request. Returns decoded message body
-Future<dynamic> sendRequest(String method, Uri uri, {dynamic body, Map<String, String> headers}) async {
-  var req = new http.Request(method, uri);
+Future<dynamic> sendRequest(String method, Uri uri,
+    {dynamic body, Map<String, String> headers}) async {
+  var req = http.Request(method, uri);
 
-  if(body != null) req.body = jsonEncode(body);
-  if(headers != null) req.headers.addAll(headers);
+  if (body != null) req.body = jsonEncode(body);
+  if (headers != null) req.headers.addAll(headers);
 
   var r = await req.send();
   var res = await r.stream.bytesToString();
-  
+
   try {
     return jsonDecode(res);
   } on FormatException {
@@ -22,13 +23,16 @@ Future<dynamic> sendRequest(String method, Uri uri, {dynamic body, Map<String, S
 }
 
 /// Sends mulipart request. Returns decoded message body
-Future<dynamic> sendMultipart(String method, Uri uri, {List<File> files, Map<String, String> fields, Map<String, String> headers}) async {
-  var req = new http.MultipartRequest(method, uri);
-  if(headers != null) req.headers.addAll(headers);
-  if(fields != null) req.fields.addAll(fields);
+Future<dynamic> sendMultipart(String method, Uri uri,
+    {List<File> files,
+    Map<String, String> fields,
+    Map<String, String> headers}) async {
+  var req = http.MultipartRequest(method, uri);
+  if (headers != null) req.headers.addAll(headers);
+  if (fields != null) req.fields.addAll(fields);
 
-  if(files != null) {
-    for(var file in files) {
+  if (files != null) {
+    for (var file in files) {
       var name = Uri.file(file.path).toString().split("/").last;
       var s = await file.readAsBytes();
 
@@ -38,7 +42,7 @@ Future<dynamic> sendMultipart(String method, Uri uri, {List<File> files, Map<Str
 
   var r = await req.send();
   var res = await r.stream.bytesToString();
-  
+
   try {
     return jsonDecode(res);
   } on FormatException {

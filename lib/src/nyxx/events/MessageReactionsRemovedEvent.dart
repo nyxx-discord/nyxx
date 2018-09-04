@@ -4,6 +4,7 @@ part of nyxx;
 class MessageReactionsRemovedEvent {
   /// Channel where reactions are removed
   MessageChannel channel;
+
   /// Message on which messages are removed
   Message message;
 
@@ -14,7 +15,7 @@ class MessageReactionsRemovedEvent {
     channel
         .getMessage(Snowflake(json['d']['message_id'] as String))
         .then((msg) => message = msg);
-    
+
     client._events.onMessageReactionsRemoved.add(this);
   }
 }

@@ -27,7 +27,7 @@ class ChannelUpdateEvent {
         this.newChannel =
             GroupChannel._new(client, json['d'] as Map<String, dynamic>, guild);
       }
-      
+
       // Nwm if I need this
       newChannel._onUpdate.add(this);
       oldChannel._onUpdate.add(this);

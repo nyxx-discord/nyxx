@@ -71,8 +71,8 @@ class Player {
     });
 
     _sub2 = _client.onVoiceStateUpdate.where((e) {
-      if (e.state.channel != null) if (e.state.channel.id !=
-          currentChannel.id) return false;
+      if (e.state.channel != null) if (e.state.channel.id != currentChannel.id)
+        return false;
 
       return e.state.user.id == _client.user.id;
     }).listen((e) {

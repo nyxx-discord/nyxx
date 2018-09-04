@@ -15,11 +15,19 @@ class _CommandMetadata {
 
   Help methodHelp;
 
-  _CommandMetadata(this.method, this.parent, this.classRestrict,
-      this.classCommand, this.methodCommand, this.methodRestrict, this.methodHelp, [this.preprocessors = const [], this.postprocessors = const []]);
+  _CommandMetadata(
+      this.method,
+      this.parent,
+      this.classRestrict,
+      this.classCommand,
+      this.methodCommand,
+      this.methodRestrict,
+      this.methodHelp,
+      [this.preprocessors = const [],
+      this.postprocessors = const []]);
 
   bool get _classEnclosed => parent is ClassMirror;
-  
+
   List<List<String>> get commandString {
     if (classCommand != null) if (methodCommand.main != null &&
         methodCommand.main)

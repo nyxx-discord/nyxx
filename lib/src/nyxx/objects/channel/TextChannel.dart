@@ -22,7 +22,7 @@ class TextChannel extends MessageChannel with GuildChannel {
     this.mention = "<#${this.id}>";
     this.guild.channels[this.id] = this;
 
-    _pinsUpdated = new StreamController.broadcast();
+    _pinsUpdated = StreamController.broadcast();
     pinsUpdated = _pinsUpdated.stream;
   }
 

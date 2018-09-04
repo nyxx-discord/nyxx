@@ -3,7 +3,7 @@ part of nyxx.commands;
 /// All command have to inhertit from this class.
 /// This class provides variuos helper methods to access discord world more easly
 /// Can be overrriden to create groups of commands (modules) or injected into top-level method commands.
-/// 
+///
 /// Top-level method commands
 /// ```
 /// @Command(name: "cmd")
@@ -11,7 +11,7 @@ part of nyxx.commands;
 ///   // Command body
 /// }
 /// ```
-/// 
+///
 /// Modules:
 /// ```
 /// class ExModule extends CommandContext {
@@ -39,8 +39,8 @@ class CommandContext {
   CommandContext._new(
       this.channel, this.author, this.guild, this.client, this.message);
 
-  /// Reply to message. It allows to send regular message, Embed or both.  
-  /// 
+  /// Reply to message. It allows to send regular message, Embed or both.
+  ///
   /// ```
   /// /// Class body
   /// @Command()
@@ -61,7 +61,7 @@ class CommandContext {
   }
 
   /// Reply to messages, then delete it [duration] expieres.
-  /// 
+  ///
   /// ```
   /// @Command()
   /// Future<void> getAv(User user) async {
@@ -105,7 +105,7 @@ class CommandContext {
   }
 
   /// Gather emojis of message in given time
-  /// 
+  ///
   /// ```
   /// @Command()
   /// Future<void> getAv(User user) async {
@@ -126,8 +126,8 @@ class CommandContext {
     }).timeout(duration, onTimeout: () => m);
   }
 
-  /// Waits for first [TypingEvent] and returns it. If timed out returns null. 
-  /// Can listen to specific user by specifying [user] 
+  /// Waits for first [TypingEvent] and returns it. If timed out returns null.
+  /// Can listen to specific user by specifying [user]
   Future<TypingEvent> waitForTyping(
       {User user,
       Duration timeout = const Duration(seconds: 30),
@@ -148,7 +148,7 @@ class CommandContext {
   }
 
   /// Gets all context channel messages that satisfies test. Has default timeout of 30 seconds.
-  /// 
+  ///
   /// ```
   /// @Command()
   /// Future<void> getAv(User user) async {
@@ -167,7 +167,7 @@ class CommandContext {
   }
 
   /// Gets next [num] number of any messages sent within one context (same channel) with optional [timeout](default 30 sec)
-  /// 
+  ///
   /// ```
   /// @Command()
   /// Future<void> getAv(User user) async {

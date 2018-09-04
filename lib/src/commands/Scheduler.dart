@@ -1,7 +1,7 @@
 part of nyxx.commands;
 
 /// Runs specific code on every target periodically.
-/// 
+///
 /// ```
 /// // Create new scheduler and fill out all required fields
 ///  var scheduler = command.Scheduler(bot)
@@ -21,18 +21,18 @@ class Scheduler {
   /// Action will be run every [runEvery] amount of time.
   Duration _runEvery;
   set runEvery(Duration duration) {
-    if(duration.inMinutes < 1)
-      throw new Exception("Scheduler cannot send message under 1/minute");
-    
+    if (duration.inMinutes < 1)
+      throw Exception("Scheduler cannot send message under 1/minute");
+
     _runEvery = _runEvery;
-  } 
+  }
 
   /// Funtion to run on every targeted channel
   void Function(MessageChannel channel) func;
 
   /// List of targeted channel
   List<Snowflake> targets;
-  
+
   Client _client;
   Timer _t;
 
