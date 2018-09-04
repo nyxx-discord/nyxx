@@ -1,10 +1,26 @@
 part of nyxx.commands;
 
+T _getCmdAnnot<T>(DeclarationMirror declaration) {
+  Iterable<T> fs = _getCmdAnnots<T>(declaration);
+  if(fs.isEmpty) return null;
+  return fs.first;
+}
+
+Iterable<T> _getCmdAnnots<T>(DeclarationMirror declaration) sync* {
+  for (var instance in declaration.metadata)
+    if (instance.hasReflectee) {
+      var reflectee = instance.reflectee;
+      if (reflectee is T)
+        yield reflectee;
+    }
+}
+
 /// Main point of commands in nyx.
 /// It gets all sent messages and matches to registered command and invokes
 /// its action.
 class CommandsFramework {
-  List<CommandContext> _commands;
+  List<_CommandMetadata> _commands;
+
   List<TypeConverter> _typeConverters;
   CooldownCache _cooldownCache;
   List<Object> _services = List();
@@ -93,195 +109,251 @@ class CommandsFramework {
 
     // Listen to incoming messages and ignore all from bots (if set)
     _client.onReady.listen((_) {
-      _client.onMessage.listen((MessageEvent e) async {
+      _client.onMessage.listen((MessageEvent e) {
         if (ignoreBots && e.message.author.bot) return;
         if (!e.message.content.startsWith(prefix)) return;
 
-        await _dispatch(e);
+        Future.microtask(() => _dispatch(e));
       });
     });
   }
 
-  List<Object> find(Iterable<DeclarationMirror> tmpMethods, CommandContext cmd,
-      bool first, List<String> splStr, bool Function(Command) f) {
-    for (var v in tmpMethods) {
-      if (v is MethodMirror) {
-        var meta = _getCmdAnnot(v, Command) as Command;
+  /// Allows to register new converters for custom type
+  void registerTypeConverters(List<TypeConverter> converters) =>
+      _typeConverters = converters;
 
-        if (f(meta)) {
-          if (!first)
-            splStr.removeRange(0, 2);
-          else
-            splStr.removeAt(0);
+  /// Register services to injected into commands modules. Has to be executed before registering commands.
+  /// There cannot be more than 1 dependency with single type. Only first will be injected.
+  void registerServices(List<Object> services) =>
+      this._services.addAll(services);
 
-          return [v, meta];
-        }
-      }
-    }
+  /// Register all services in current isolate. It captures all classes which inherits from [Service] class and performs dependency injection if possible.
+  void registerLibraryServices() {
+    var superClass = reflectClass(Service);
+    var mirrorSystem = currentMirrorSystem();
 
-    return null;
-  }
+    mirrorSystem.libraries.forEach((uri, lib) {
+      for (var cm in lib.declarations.values) {
+        if (cm is ClassMirror) {
+          if (cm.isSubclassOf(superClass) && !cm.isAbstract) {
+            var toInject = _createConstuctorInjections(cm);
 
-  Future<List> _matchCommand(List<String> splittedCommand) async {
-    List<Object> matched;
+            try {
+              var serv = cm.newInstance(Symbol(''), toInject).reflectee;
+              _services.add(serv);
+            } catch (e) {
+              throw Exception(
+                  "Service [${util.getSymbolName(cm.simpleName)}] constructor not satisfied!");
+            }
 
-    InstanceMirror tmpInstMirror;
-    ClassMirror tmpClassMirror;
-    Map<Symbol, DeclarationMirror> tmpMethods;
-
-    for (var cmd in _commands) {
-      tmpInstMirror = reflect(cmd);
-      tmpClassMirror = tmpInstMirror.type;
-      tmpMethods = tmpClassMirror.declarations;
-      var tmpCommand = _getCmdAnnot(tmpClassMirror, Command) as Command;
-
-      if (tmpCommand != null) {
-        if (tmpCommand.name == splittedCommand[0] ||
-            (tmpCommand.aliases != null &&
-                tmpCommand.aliases.contains(splittedCommand[0]))) {
-          if (splittedCommand.length > 1) {
-            matched = find(
-                tmpMethods.values,
-                cmd,
-                false,
-                splittedCommand,
-                (meta) =>
-                    meta != null &&
-                    meta.name != null &&
-                    meta.name == splittedCommand[1]);
-
-            if (matched != null) break;
-          } else {
-            matched = find(tmpMethods.values, cmd, true, splittedCommand,
-                (meta) => meta != null && meta.main != null && meta.main);
-
-            if (matched != null) break;
+            break;
           }
         }
-      } else {
-        matched = find(
-            tmpMethods.values,
-            cmd,
-            true,
-            splittedCommand,
-            (meta) =>
-                meta != null &&
-                meta.name != null &&
-                meta.name == splittedCommand[0]);
+      }
+    });
+  }
 
-        if (matched != null) break;
+  List<Object> _createConstuctorInjections(ClassMirror service) {
+    var ctor = service.declarations.values.toList().firstWhere((m) {
+      if (m is MethodMirror) return m.isConstructor;
+
+      return false;
+    }) as MethodMirror;
+
+    var params = ctor.parameters;
+    var toInject = List<dynamic>();
+
+    for (var param in params) {
+      var type = param.type.reflectedType;
+
+      for (var service in _services) {
+        if (service.runtimeType == type) toInject.add(service);
       }
     }
+    return toInject;
+  }
 
-    if (matched == null) return null;
+  String _createLog(Module classCmd, Command methodCmd) =>
+      "[${classCmd != null ? classCmd.name : ""}${methodCmd != null && (methodCmd.main == null || !methodCmd.main) ? " ${methodCmd.name}" : ""}]";
 
-    return [matched[0], matched[1], splittedCommand, tmpInstMirror];
+
+  List<List> _getProcessors(ClassMirror classMirror, DeclarationMirror methodMirror) {
+    var classPre = <Preprocessor>[];
+    var classPost = <Postprocessor>[];
+
+    if(classMirror != null) {
+      classPre.addAll(_getCmdAnnots<Preprocessor>(classMirror));
+      classPost.addAll(_getCmdAnnots<Postprocessor>(classMirror));
+    }
+
+    var methodPre = _getCmdAnnots<Preprocessor>(methodMirror);
+    var methodPost = _getCmdAnnots<Postprocessor>(methodMirror);
+
+    var prepro = List<Preprocessor>.from(classPre)..addAll(methodPre)..removeWhere((e) => e == null);
+    var postPro = List<Postprocessor>.from(classPost)..addAll(methodPost)..removeWhere((e) => e == null);
+
+    return [prepro, postPro];
+  }
+
+  /// Register commands in current Isolate's libraries. Basically loads all classes as commnads with [CommandContext] superclass.
+  /// Performs dependency injection when instantiate commands. And throws [Exception] when there are missing services
+  void registerLibraryCommands() {
+    var mirrorSystem = currentMirrorSystem();
+
+    mirrorSystem.libraries.forEach((_, library) {
+      library.declarations.values.forEach((d) {
+        var commandAnnot = _getCmdAnnot<Module>(d);
+
+        if (commandAnnot != null) {
+          if (d is ClassMirror) {
+            d.declarations.values.forEach((f) {
+              if (f is MethodMirror) {
+                var methodCommandAnnot = _getCmdAnnot<Command>(f);
+
+                if (methodCommandAnnot != null) {
+                  var classRestrict = _getCmdAnnot<Restrict>(d);
+                  var methodRestrict = _getCmdAnnot<Restrict>(f);
+                  var methodHelp = _getCmdAnnot<Help>(f);
+                  var processors = _getProcessors(d, f);
+                  print(processors);
+
+                  _commands.add(_CommandMetadata(f, d, classRestrict,
+                      commandAnnot, methodCommandAnnot, methodRestrict, methodHelp, processors.first as List<Preprocessor>, processors.last as List<Postprocessor>));
+                  logger.fine(
+                      "Command ${_createLog(commandAnnot, methodCommandAnnot)} has been registered");
+                }
+              }
+            });
+          } else if (d is MethodMirror) {
+            var commandAnnot = _getCmdAnnot<Command>(d);
+
+            if (commandAnnot != null) {
+              var methodRestrict = _getCmdAnnot<Restrict>(d);
+              var methodHelp = _getCmdAnnot<Help>(d);
+              var processors = _getProcessors(null, d);
+              print(processors);
+
+              _commands.add(_CommandMetadata(
+                  d, library, null, null, commandAnnot, methodRestrict, methodHelp, processors.first as List<Preprocessor>, processors.last as List<Postprocessor>));
+              logger.fine(
+                  "Command [${commandAnnot.name.toString()}] has been registered");
+            }
+          }
+        }
+      });
+    });
+
+    //Insert 2 keyword messages first
+    _commands.sort((first, second) =>
+        -first.commandString.length.compareTo(second.commandString.length));
+  }
+
+  /// Creates help String based on registered commands metadata.
+  String _createHelp(Snowflake requestedUserId, Guild guild) {
+    var buffer = StringBuffer();
+    buffer.writeln("**Available commands:**");
+
+    var isAdmin = _isUserAdmin(requestedUserId, guild);
+    for (var meta in _commands) {
+      if(meta.methodHelp == null)
+        continue;
+
+      if((meta.classRestrict != null && meta.classRestrict.hidden && isAdmin) ||
+         (meta.methodRestrict != null && meta.methodRestrict.hidden && isAdmin))
+        continue;
+
+      StringBuffer commandName = new StringBuffer();
+
+      if(meta.classCommand != null)
+        commandName.write("${meta.classCommand.name} ${meta.methodCommand.main != null ? "[main]" : meta.methodCommand.name}");
+      commandName.write("${meta.methodCommand.name} ${meta.methodCommand.aliases}");
+
+      buffer.write("\n **$commandName** \n\t ${meta.methodHelp.description}");
+
+      if(meta.methodHelp.usage != null)
+        buffer.write("\n\t *Usage:* ${this.prefix}${meta.methodHelp.usage}");
+    }
+
+    return buffer.toString();
+  }
+
+  Restrict _patchRestrictions(Restrict top, Restrict meth) {
+    if (top == null && meth == null)
+      return Restrict();
+    else if (top == null)
+      top = Restrict();
+    else if (meth == null) meth = Restrict();
+
+    var admin = meth.admin != null ? meth.admin : top.admin;
+    var owner = meth.owner != null ? meth.owner : top.owner;
+
+    List<Snowflake> roles = List.from(top.roles)..addAll(meth.roles);
+
+    List<int> userPermissions = List.from(top.userPermissions)..addAll(meth.userPermissions);
+    List<int> botPermissions = List.from(top.botPermissions)..addAll(meth.botPermissions);
+    List<String> topics = List.from(top.topics)..addAll(meth.topics);
+
+    var cooldown = meth.cooldown != null ? meth.cooldown : top.cooldown;
+    var guild = meth.guild != null ? meth.guild : top.guild;
+    var nsfw = meth.nsfw != null ? meth.nsfw : top.nsfw;
+
+    return Restrict(
+        admin: admin,
+        owner: owner,
+        roles: roles,
+        userPermissions: userPermissions,
+        botPermissions: botPermissions,
+        cooldown: cooldown,
+        guild: guild,
+        nsfw: nsfw,
+        topics: topics);
   }
 
   /// Dispatches onMessage event to framework.
   Future _dispatch(MessageEvent e) async {
     // Match help specially to shadow user defined help commands.
-    if (e.message.content.startsWith((prefix + 'help'))) {
+    if (e.message.content.startsWith("${prefix}help")) {
       if (helpDirect) {
-        e.message.author.send(content: _createHelp(e.message.author.id));
+        e.message.author.send(content: _createHelp(e.message.author.id, e.message.guild));
         return;
       }
 
-      await e.message.channel.send(content: _createHelp(e.message.author.id));
+      await e.message.channel.send(content: _createHelp(e.message.author.id, e.message.guild));
       return;
     }
 
-    var splittedCommand =
-        e.message.content.replaceFirst(prefix, "").trim().split(' ');
-    int executionCode = -1;
-    var ret = await _matchCommand(splittedCommand);
+    var splittedCommand = _escapeParameters(
+        e.message.content.replaceFirst(prefix, "").trim().split(' '));
 
-    if (ret == null) {
+    _CommandMetadata matchedMeta;
+    try {
+      matchedMeta = _commands.firstWhere((test) {
+        var cmdstr = test.commandString;
+
+        if (cmdstr.length == 2) {
+          if (cmdstr.first.contains(splittedCommand.first) &&
+              (splittedCommand.length > 1 &&
+                  cmdstr.last.contains(splittedCommand[1]))) return true;
+
+          return false;
+        } else {
+          if (cmdstr.first.contains(splittedCommand.first)) return true;
+
+          return false;
+        }
+      });
+    } catch (err) {
       _commandNotFoundEventController.add(e.message);
       return;
     }
 
-    MethodMirror matched = ret[0] as MethodMirror;
-    Command _meta = ret[1] as Command;
-    splittedCommand = ret[2] as List<String>;
-    InstanceMirror instMirror = ret[3] as InstanceMirror;
+    var executionCode = -1;
+    
+    if(matchedMeta.preprocessors.length > 0 && !matchedMeta.preprocessors.every((pre) => pre.execute(_services, e.message)))
+      executionCode = 8;
 
-    Cons annot = _getCmdAnnot(matched, Cons) as Cons;
-    if (annot == null) executionCode = -2;
-
-    // Check for admin command and if user is admin
-    if (executionCode == -1 && annot.isAdmin != null && annot.isAdmin)
-      executionCode = _isUserAdmin(e.message.author.id) ? 100 : 0;
-    if (executionCode == -1) {
-      //Check if user is on cooldown
-      if (annot.cooldown != null &&
-          annot.cooldown >
-              0) if (!(await _cooldownCache.canExecute(
-          e.message.author.id, _meta.name, annot.cooldown * 1000)))
-        executionCode = 2;
-
-      var member = await e.message.guild.getMember(e.message.author);
-
-      // Check if there is need to check user roles
-      if (annot.requiredRoles != null) {
-        var hasRoles = member.roles
-            .map((f) => f.id)
-            .where((t) => annot.requiredRoles.contains(t));
-
-        if (hasRoles == null || hasRoles.isEmpty) executionCode = 1;
-      }
-
-      // Check if user has required permissions
-      if (annot.requiredPermissions != null) {
-        var total = await member.getTotalPermissions();
-        for (var perm in annot.requiredPermissions) {
-          if ((total.raw | perm) == 0) {
-            executionCode = 1;
-            break;
-          }
-        }
-      }
-
-      // Check for channel compatibility
-      if (annot.guildOnly != null) {
-        if ((annot.guildOnly == GuildOnly.DM &&
-                e.message.channel is TextChannel) ||
-            (annot.guildOnly == GuildOnly.GUILD &&
-                (e.message.channel is DMChannel ||
-                    e.message.channel is GroupDMChannel))) {
-          executionCode = 3;
-        }
-      }
-
-      // Check for channel nsfw
-      if (annot.isNsfw != null && annot.isNsfw) {
-        if (e.message.channel is TextChannel) {
-          var ch = e.message.channel as TextChannel;
-          if (ch.nsfw == null)
-            executionCode = 4;
-          else if (!ch.nsfw) executionCode = 4;
-        } else if (!(e.message.channel is DMChannel) ||
-            !(e.message.channel is GroupDMChannel)) executionCode = 4;
-      }
-
-      // Check for channel topics
-      if (annot.topics != null && e.message.channel is TextChannel) {
-        var topic = (e.message.channel as TextChannel).topic;
-        var list = topic
-            .substring(topic.indexOf("[") + 1, topic.indexOf("]"))
-            .split(",");
-
-        var total = false;
-        for (var topic in annot.topics) {
-          if (list.contains(topic)) {
-            total = true;
-            break;
-          }
-        }
-
-        if (!total) executionCode = 5;
-      }
-    }
+    if (matchedMeta.methodRestrict != null && matchedMeta.classRestrict != null)
+      executionCode = await checkPermissions(matchedMeta, e.message);
 
     // Switch between execution codes
     switch (executionCode) {
@@ -289,6 +361,7 @@ class CommandsFramework {
         _forAdminOnlyEventController.add(e.message);
         break;
       case 1:
+      case 6:
         _requiredPermissionEventController.add(e.message);
         break;
       case 2:
@@ -301,131 +374,139 @@ class CommandsFramework {
         _unauthorizedNsfwAccess.add(e.message);
         break;
       case 5:
+      case 7:
         _requiredTopicError.add(e.message);
         break;
       case -1:
       case -2:
       case 100:
-        Future(() async {
-          try {
-            var params =
-                await _collectParams(matched, splittedCommand, e.message);
+        try {
+          InstanceMirror res;
+          splittedCommand.removeRange(0, matchedMeta.commandString.length);
+          var methodInj = await _injectParameters(
+              matchedMeta.method, splittedCommand, e.message);
 
-            instMirror.setField(Symbol("guild"), e.message.guild);
-            instMirror.setField(Symbol("message"), e.message);
-            instMirror.setField(Symbol("author"), e.message.author);
-            instMirror.setField(Symbol("channel"), e.message.channel);
-            instMirror.setField(Symbol("client"), this._client);
-            instMirror.invoke(matched.simpleName, params);
-          } catch (err, stacktrace) {
-            _commandExecutionFailController
-                .add(CommandExecutionFailEvent._new(e.message, err));
-            logger.severe("ERROR OCCURED WHEN INVOKING COMMAND \n $stacktrace");
+          if (matchedMeta.parent is ClassMirror) {
+            var cm = matchedMeta.parent as ClassMirror;
+            var toInject = _createConstuctorInjections(cm);
+
+            var instance = cm.newInstance(Symbol(''), toInject);
+
+            instance.setField(Symbol("guild"), e.message.guild);
+            instance.setField(Symbol("message"), e.message);
+            instance.setField(Symbol("author"), e.message.author);
+            instance.setField(Symbol("channel"), e.message.channel);
+            instance.setField(Symbol("client"), this._client);
+            res = instance.invoke(matchedMeta.method.simpleName, methodInj);
           }
-        });
 
-        logger.fine("Command -${_meta.name}- executed");
+          if (matchedMeta.parent is LibraryMirror) {
+            var context = CommandContext._new(e.message.channel,
+                e.message.author, e.message.guild, _client, e.message);
+
+            res = matchedMeta.parent.invoke(
+                matchedMeta.method.simpleName,
+                List()
+                  ..add(context)
+                  ..addAll(methodInj));
+          }
+
+          if(matchedMeta.postprocessors.length > 0) {
+            for (var post in matchedMeta.postprocessors)
+              post.execute(_services, res.hasReflectee ? res.reflectee : null, e.message);
+          }
+        } catch (err, stacktrace) {
+          _commandExecutionFailController
+              .add(CommandExecutionFailEvent._new(e.message, err));
+          logger.severe("ERROR OCCURED WHEN INVOKING COMMAND \n $stacktrace");
+        }
+
+        logger.fine(
+            "Command ${_createLog(matchedMeta.classCommand, matchedMeta.methodCommand)} executed");
         break;
     }
   }
 
-  /// Register new [CommandContext] object.
-  void add(CommandContext command) {
-    var cmd = util.getSymbolName(reflect(command).type.simpleName);
+  Future<int> checkPermissions(_CommandMetadata meta, Message e) async {
+    int executionCode = -1;
+    var annot = _patchRestrictions(meta.classRestrict, meta.methodRestrict);
 
-    command.logger = Logger.detached("Command[$cmd]");
+    // Check if command requires admin
+    if (executionCode == -1 && annot.admin != null && annot.admin)
+      executionCode = _isUserAdmin(e.author.id, e.guild) ? 100 : 0;
 
-    _commands.add(command);
-    logger.info("Command[$cmd] added to registry");
-  }
+    // Check if command requires server owner
+    if (executionCode == -1 && annot.owner != null && annot.owner)
+      executionCode = e.guild.ownerID == e.author.id ? 100 : 0;
 
-  /// Register many [CommandContext] instances.
-  void addMany(List<CommandContext> commands) =>
-      commands.forEach((c) => add(c));
+    //Check if user is on cooldown
+    if (executionCode == -1) {
+      if (annot.cooldown != null &&
+          annot.cooldown >
+              0) if (!(await _cooldownCache.canExecute(
+          e.author.id,
+          "${meta.classCommand.name}${meta.methodCommand.name}",
+          annot.cooldown * 1000))) executionCode = 2;
+    }
 
-  /// Allows to register new converters for custom type
-  void registerTypeConverters(List<TypeConverter> converters) =>
-      _typeConverters = converters;
+    var member = await e.guild.getMember(e.author);
 
-  /// Register services to injected into commands modules. Has to be executed before registering commands.
-  /// There cannot be more than 1 dependency with single type. Only first will be injected.
-  void registerServices(List<Object> services) =>
-      this._services.addAll(services);
+    // Check if there is need to check user roles
+    if (executionCode == -1 && annot.roles != null) {
+      var hasRoles =
+          member.roles.map((f) => f.id).where((t) => annot.roles.contains(t));
 
-  void _registerLibrary(Type type, Function(List<dynamic>, ClassMirror) func) {
-    var superClass = reflectClass(type);
-    var mirrorSystem = currentMirrorSystem();
+      if (hasRoles == null || hasRoles.isEmpty) executionCode = 1;
+    }
 
-    mirrorSystem.libraries.forEach((uri, lib) {
-      lib.declarations.forEach((s, cm) {
-        if (cm is ClassMirror) {
-          if (cm.isSubclassOf(superClass) && !cm.isAbstract) {
-            var ctor = cm.declarations.values.toList().firstWhere((m) {
-              if (m is MethodMirror) return m.isConstructor;
-
-              return false;
-            }) as MethodMirror;
-
-            var params = ctor.parameters;
-            var toInject = List<dynamic>();
-
-            for (var param in params) {
-              var type = param.type.reflectedType;
-
-              for (var service in _services) {
-                if (service.runtimeType == type) toInject.add(service);
-              }
-            }
-
-            func(toInject, cm);
-          }
+    // Check if user has required permissions
+    if (executionCode == -1 && annot.userPermissions != null) {
+      var total = await member.getTotalPermissions();
+      for (var perm in annot.userPermissions) {
+        if ((total.raw | perm) == 0) {
+          executionCode = 1;
+          break;
         }
-      });
-    });
-  }
-
-  /// Register all services in current isolate. It captures all classes which inherits from [Service] class and performs dependency injection if possible.
-  void registerLibraryServices() {
-    _registerLibrary(Service, (toInject, cm) {
-      try {
-        var serv = cm.newInstance(Symbol(''), toInject).reflectee;
-        _services.add(serv);
-      } catch (e) {
-        throw Exception(
-            "Service [${util.getSymbolName(cm.simpleName)}] constructor not satisfied!");
       }
-    });
-  }
+    }
 
-  /// Register commands in current Isolate's libraries. Basically loads all classes as commnads with [CommandContext] superclass.
-  /// Performs dependency injection when instantiate commands. And throws [Exception] when there are missing services
-  void registerLibraryCommands() {
-    _registerLibrary(CommandContext, (toInject, cm) {
-      try {
-        var cmd =
-            cm.newInstance(Symbol(''), toInject).reflectee as CommandContext;
-        add(cmd);
-      } catch (e) {
-        throw Exception(
-            "Command [${util.getSymbolName(cm.simpleName)}] constructor not satisfied!");
+    // Check for channel topics
+    if (executionCode == -1 &&
+        annot.topics != null &&
+        e.channel is TextChannel) {
+      var topic = (e.channel as TextChannel).topic;
+      var list = topic
+          .substring(topic.indexOf("[") + 1, topic.indexOf("]"))
+          .split(",")
+          .map((f) => f.trim());
+
+      var total = false;
+      for (var topic in annot.topics) {
+        if (list.contains(topic)) {
+          total = true;
+        }
       }
-    });
-  }
 
-  /// Creates help String based on registered commands metadata.
-  String _createHelp(Snowflake requestedUserId) {
-    var buffer = StringBuffer();
+      if (!total) executionCode = 5;
+    }
 
-    buffer.writeln("**Available commands:**");
+    // Check if bot has required permissions
+    if (executionCode == -1 && annot.userPermissions != null) {
+      var total =
+          await (await e.guild.getMember(_client.user)).getTotalPermissions();
+      for (var perm in annot.userPermissions) {
+        if ((total.raw | perm) == 0) {
+          executionCode = 6;
+          break;
+        }
+      }
+    }
 
-    for (var cmd in _commands)
-      cmd.getHelp(_isUserAdmin(requestedUserId), buffer);
-
-    return buffer.toString();
+    return executionCode;
   }
 
   // Groups params into
-  List<String> _groupParams(List<String> splitted) {
+  List<String> _escapeParameters(List<String> splitted) {
     var tmpList = List<String>();
     var isInto = false;
 
@@ -456,10 +537,9 @@ class CommandsFramework {
 
   RegExp _entityRegex = RegExp(r"<(@|@!|@&|#|a?:(.+):)([0-9]+)>");
 
-  Future<List<Object>> _collectParams(
+  Future<List<Object>> _injectParameters(
       MethodMirror method, List<String> splitted, Message e) async {
     var params = method.parameters;
-    splitted = _groupParams(splitted);
 
     List<Object> collected = List();
     var index = -1;
@@ -523,7 +603,7 @@ class CommandsFramework {
     for (var e in params) {
       var type = e.type.reflectedType;
 
-      if (_getCmdAnnot(e, Remainder) != null) {
+      if (_getCmdAnnot<Remainder>(e) != null) {
         index++;
         var range = splitted.getRange(index, splitted.length).toList();
 
@@ -553,19 +633,7 @@ class CommandsFramework {
     return collected;
   }
 
-  Object _getCmdAnnot(DeclarationMirror declaration, Type type) {
-    for (var instance in declaration.metadata) {
-      if (instance.hasReflectee) {
-        var reflectee = instance.reflectee;
-        if (reflectee.runtimeType == type) {
-          return reflectee;
-        }
-      }
-    }
-    return null;
-  }
-
-  bool _isUserAdmin(Snowflake authorId) {
-    return (admins != null && admins.any((i) => i == authorId));
+  bool _isUserAdmin(Snowflake authorId, Guild guild) {
+    return (admins != null && admins.any((i) => i == authorId)) || guild.ownerID == authorId;
   }
 }

@@ -16,25 +16,50 @@ void main() {
     ..registerLibraryCommands();
 }
 
+/// Example command preprocessor. 
+class IsGuildProcessor implements command.Preprocessor {
+  const IsGuildProcessor();
+
+  @override
+  bool execute(List<Object> services, nyxx.Message message) {
+    print("ELO");
+    return message.guild != null;
+  }
+}
+
+class PrintString implements command.Postprocessor {
+  final void str;
+  const PrintString(this.str);
+
+  @override
+  void execute(List<Object> services, returns, nyxx.Message message) {
+    print("From postProcessor: $str");
+  }
+}
+
+@command.Command(name: "single")
+Future<void> single(command.CommandContext context) async {
+  await context.reply(content: "WORKING");
+}
+
 // Command have to extends CommandContext class and have @Command annotation.
 // Method with @Maincommand is main point of command object
 // Methods annotated with @Subcommand are defined as subcommands
-@command.Command(name: "ping")
+@command.Module("ping")
 class PongCommand extends command.CommandContext {
   @command.Command(main: true)
+  @command.Help("Pong!", usage: "ping")
+  @IsGuildProcessor()
+  @PrintString("WITAM SERDECZNIE")
   Future run() async {
     await reply(content: "Pong!");
   }
-
-  @override
-  void getHelp(bool isAdmin, StringBuffer buffer) =>
-      buffer.writeln("* ping - Checks if bot is working");
 }
 
-@command.Command(name: "echo")
+@command.Module("echo")
 class EchoCommand extends command.CommandContext {
   @command.Command(main: true)
-  Future run() async {
+  Future<void> run() async {
     await reply(content: message.content);
   }
 
@@ -54,15 +79,10 @@ class EchoCommand extends command.CommandContext {
           "Entity: ${perm.id} with ${perm.type} as ${role.name} can?: ${perm.permissions.viewChannel}");
     }
   }
-
-  @override
-  void getHelp(bool isAdmin, StringBuffer buffer) {
-    buffer.writeln("* echo - Echoes yor message");
-  }
 }
 
 // Aliases have to be `const`
-@command.Command(name: "alias", aliases: ["aaa"])
+@command.Module("alias", aliases: ["aaa"])
 class AliasCommand extends command.CommandContext {
   @command.Command(main: true)
   Future run() async {

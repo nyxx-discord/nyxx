@@ -1,26 +1,35 @@
 ## [1.0.0](https://github.com/l7ssha/nyxx/compare/0.23.1...1.0.0)
 _Tue xx.xx.2018_
 
-*This version drops support for Dart SDK 1.x due Dart 2.0 is stable.*
+*This version drops support for Dart SDK 1.x; Nyxx now only supports Dart 2.0+ including dev sdk.*
 
 - **Features added**
   * **SUPPORT FOR DART 2.0**
   * **ADDED SUPPORT FOR VOICE via Lavalink**
+  * **COMMANDS FRAMEWORK REWRITTEN**
+    - Dispatch pipe is completly rewritten. Bot should operate about 2-8x faster
+    - Allowed to declare single method commands without using classes
+    - Added support for specify custom restrictions to commands handlers
+    - Classes now have to be annotated with `Module` instead of `Command`
+    - `Remainder` can now colled data to `List<String>` or `String`
   * Changed internal library structure
   * Implemented Iterable for Channel to query messages
   * Added typing event per channel
+  * Using `v7` api endpoint
   * Added support for zlib compressed gateway payload
+  * Added enpoints for Guild, Emoji, Role, Member
+  * Added utils module
 - **Bug fixes**
-  * Rewritten
   * Fixed Emijis comparing
   * Fixed searchin in Emojis unicode
   * Code cleanup and style fixes
 - **Changes**
+  * **Docs are rewritten**
+  * Every object which has id is now subclass of `SnowflakeEntity`.
   * Snowflakes are default id entities
   * Internal nyxx API changes
-  * Internal command API changes
   * Cooldown cache rewritten
-  * title is not required for EmbedBuilder
+  * Title is not required for EmbedBuilder
 
 ## [0.23.1](https://github.com/l7ssha/nyxx/compare/0.23.0...0.23.1)
 _Tue 31.07.2018_
