@@ -13,13 +13,14 @@ class HttpError implements Exception {
 
   /// Constructs a new [HttpError].
   HttpError._new(this.response) {
-    //if (response.headers['content-type'] == "application/json") {
-    //this.code = response.body['code'] as int;
-    //this.message = response.body.asJson()['message'] as String;
-    //}
+    if (response.headers['content-type'] == "application/json") {
+      this.code = response.body['code'] as int;
+      this.message = response.body['message'] as String;
+    }
   }
 
   /// Returns a string representation of this object.
   @override
-  String toString() => response.status.toString() + ": " + response.statusText;
+  String toString() =>
+      "${response.status} \t \u001B[35m${code} ${message}\u001B[0m";
 }

@@ -43,7 +43,6 @@ class Role extends SnowflakeEntity {
     this.managed = raw['managed'] as bool;
     this.mentionable = raw['mentionable'] as bool;
     this.permissions = Permissions.fromInt(raw['permissions'] as int);
-
     this.color = raw['color'] as int;
     if (this.color == 0) this.color = null;
 

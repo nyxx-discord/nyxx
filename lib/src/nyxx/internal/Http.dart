@@ -158,12 +158,18 @@ class HttpResponse {
 
   static Future<HttpResponse> _fromResponse(
       HttpBase request, httpreq.StreamedResponse r) async {
-    var res = await r.stream.bytesToString();
-    var json;
+    
+    String res;
+    try {
+      res = await r.stream.bytesToString();
+    } catch (err, stacktrace){
+      throw new Exception("You're probably not connected to internet. If not report this issue \n $stacktrace");
+    }
 
+    var json;
     try {
       json = jsonDecode(res);
-    } on FormatException catch (err) {}
+    } on FormatException {}
 
     return HttpResponse._new(request, r.statusCode, "", r.headers, json);
   }
@@ -322,8 +328,6 @@ class Http {
       String reason}) async {
     if (_client is Client && !this._client.ready && !beforeReady)
       throw Exception("Client isn't ready yet.");
-
-    print("data $data");
 
     HttpMultipartRequest request = HttpMultipartRequest._new(this, method, path,
         files, data, Map.from(this.headers)..addAll(headers));

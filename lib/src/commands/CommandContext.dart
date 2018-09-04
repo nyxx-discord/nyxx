@@ -2,7 +2,23 @@ part of nyxx.commands;
 
 /// All command have to inhertit from this class.
 /// This class provides variuos helper methods to access discord world more easly
-abstract class CommandContext {
+/// Can be overrriden to create groups of commands (modules) or injected into top-level method commands.
+/// 
+/// Top-level method commands
+/// ```
+/// @Command(name: "cmd")
+/// Future<void> cmd(CommandContext ctx) async {
+///   // Command body
+/// }
+/// ```
+/// 
+/// Modules:
+/// ```
+/// class ExModule extends CommandContext {
+///   // Class body
+/// }
+/// ```
+class CommandContext {
   /// Channel from where message come from
   MessageChannel channel;
 
@@ -15,13 +31,23 @@ abstract class CommandContext {
   /// Guild in which message was sent
   Guild guild;
 
-  /// Logger for instance of command
-  Logger logger;
-
   /// Additional Client instance
   Client client;
 
-  /// Reply to message which fires command.
+  CommandContext();
+
+  CommandContext._new(
+      this.channel, this.author, this.guild, this.client, this.message);
+
+  /// Reply to message. It allows to send regular message, Embed or both.  
+  /// 
+  /// ```
+  /// /// Class body
+  /// @Command()
+  /// Future<void> getAv(User user) async {
+  ///   await reply(content: uset.avatarURL());
+  /// }
+  /// ```
   Future<Message> reply(
       {Object content,
       EmbedBuilder embed,
@@ -34,7 +60,14 @@ abstract class CommandContext {
         disableEveryone: disableEveryone);
   }
 
-  /// Replys to messages then deletes it when duration expires
+  /// Reply to messages, then delete it [duration] expieres.
+  /// 
+  /// ```
+  /// @Command()
+  /// Future<void> getAv(User user) async {
+  ///   await replyTemp(content: uset.avatarURL());
+  /// }
+  /// ```
   Future<Message> replyTemp(Duration duration,
       {Object content,
       EmbedBuilder embed,
@@ -50,7 +83,13 @@ abstract class CommandContext {
     return msg;
   }
 
-  /// Replies to messages after specified Duration
+  /// Replies to messages after specified [duration]
+  /// ```
+  /// @Command()
+  /// Future<void> getAv(User user) async {
+  ///   await replyDelayed(content: uset.avatarURL());
+  /// }
+  /// ```
   Future<Message> replyDelayed(Duration duration,
       {Object content,
       EmbedBuilder embed,
@@ -65,7 +104,15 @@ abstract class CommandContext {
             disableEveryone: disableEveryone));
   }
 
-  /// Collects messages emojis.
+  /// Gather emojis of message in given time
+  /// 
+  /// ```
+  /// @Command()
+  /// Future<void> getAv(User user) async {
+  ///   var msg = await replyDelayed(content: uset.avatarURL());
+  ///   var emojis = await collectEmojis(msg, Duration(seconds: 15));
+  /// }
+  /// ```
   Future<Map<Emoji, int>> collectEmojis(Message msg, Duration duration) async {
     var m = Map<Emoji, int>();
 
@@ -79,23 +126,8 @@ abstract class CommandContext {
     }).timeout(duration, onTimeout: () => m);
   }
 
-  /// Delays execution of command and waits for nex matching command based on [prefix]. Has static timeout of 30 seconds
-  Future<MessageEvent> nextMessage(
-      {String prefix = "",
-      bool ensureUser = false,
-      Duration timeout = const Duration(seconds: 30)}) async {
-    return await message.client.onMessage.firstWhere((i) {
-      if (!i.message.content.startsWith(prefix)) return false;
-
-      if (ensureUser) return i.message.author.id == message.author.id;
-
-      return true;
-    }).timeout(timeout, onTimeout: () {
-      return null;
-    });
-  }
-
-  /// Waits for first [TypingEvent] and returns it. If timed out returns null. Can listen to specific user
+  /// Waits for first [TypingEvent] and returns it. If timed out returns null. 
+  /// Can listen to specific user by specifying [user] 
   Future<TypingEvent> waitForTyping(
       {User user,
       Duration timeout = const Duration(seconds: 30),
@@ -115,7 +147,14 @@ abstract class CommandContext {
     }).timeout(timeout, onTimeout: () => null);
   }
 
-  /// Gets all channel messages that satisfies test.
+  /// Gets all context channel messages that satisfies test. Has default timeout of 30 seconds.
+  /// 
+  /// ```
+  /// @Command()
+  /// Future<void> getAv(User user) async {
+  ///   var messages = await nextMessagesWhere((msg) => msg.content.startsWith("fuck"));
+  /// }
+  /// ```
   Future<List<Message>> nextMessagesWhere(bool func(Message msg),
       {Duration timeout = const Duration(seconds: 30)}) async {
     List<Message> tmpData = List();
@@ -128,6 +167,14 @@ abstract class CommandContext {
   }
 
   /// Gets next [num] number of any messages sent within one context (same channel) with optional [timeout](default 30 sec)
+  /// 
+  /// ```
+  /// @Command()
+  /// Future<void> getAv(User user) async {
+  ///   // gets next 10 messages
+  ///   var messages = await nextMessages(10);
+  /// }
+  /// ```
   Future<List<Message>> nextMessages(int num,
       {Duration timeout = const Duration(seconds: 30)}) async {
     List<Message> tmpData = List();
@@ -153,7 +200,4 @@ abstract class CommandContext {
     var matches = regex.allMatches(message.content);
     for (var m in matches) yield m.group(3);
   }
-
-  /// Allows to create help String for command
-  void getHelp(bool isAdmin, StringBuffer buffer) {}
 }

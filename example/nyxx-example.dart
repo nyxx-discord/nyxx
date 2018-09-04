@@ -25,7 +25,7 @@ void main() {
 }
 
 // Example command with alias and subcommands.
-@command.Command(name: "alias", aliases: ["aaa"])
+@command.Module("alias", aliases: ["aaa"])
 class AliasCommand extends command.CommandContext {
   Service _service;
 
@@ -44,12 +44,5 @@ class AliasCommand extends command.CommandContext {
   Future witam() async {
     var messages = await nextMessages(2);
     print(messages);
-  }
-
-  // You can use customized logger instance
-  @command.Command(name: "yyy")
-  void yy(String siema, int witam) {
-    logger.fine(siema);
-    logger.severe(witam);
   }
 }

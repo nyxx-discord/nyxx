@@ -352,8 +352,9 @@ class Guild extends SnowflakeEntity {
   Future<List<VoiceRegion>> getVoiceRegions() async {
     var r = await this.client.http.send('GET', "/guilds/$id/regions");
 
+    var raw = r.body as List<dynamic>;
     List<VoiceRegion> tmp = List();
-    r.body.forEach((v) {
+    raw.forEach((v) {
       tmp.add(VoiceRegion._new(v as Map<String, dynamic>));
     });
 

@@ -39,7 +39,7 @@ class TestCommand extends command.CommandContext {
 @command.Command(name: "cooldown", aliases: ["culdown"])
 class CooldownCommand extends command.CommandContext {
   @command.Command(main: true)
-  @command.Cons(cooldown: 10)
+  @command.Restrict(cooldown: 10)
   run() async {}
 }
 
