@@ -60,12 +60,3 @@ You can read about upcoming changes to the library on my website.
 
 #### [Wiki](https://github.com/l7ssha/nyxx/wiki)
 Wiki documentation are designed to match the latest Nyxx release.
-
-## Roadmap
- - [ ] Better dartdocs documentation
- - [x] More examples at wiki/more tutorial/Video tutorial 
- - [ ] Bigger bot written in nyxx for example
- - [ ] Fix `lint` errors from `dartanalyzer`
- - [x] Annotation driver flow for CommandsFramework?
- - [x] Recheck all code and fix styling/small logic bugs
- - [ ] Support for Voice connection
