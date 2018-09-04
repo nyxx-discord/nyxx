@@ -15,11 +15,6 @@ class Ex {
 class ExConverter extends command.TypeConverter<Ex> {
   ExConverter();
 
-  // For now converter must implement method which returns a type of converter.
-  // Working on high performance fix for this
-  @override
-  Type getType() => Ex;
-
   // Logic for converting String message to your type.
   // Return null if converting isn't successful.
   @override
