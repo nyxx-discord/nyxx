@@ -20,16 +20,16 @@ Fork of [Hackzzila's](https://github.com/Hackzzila) [nyx](https://github.com/Hac
 
 ### Features
 
-- **Commands framework** <br>
-  Faster way of creating commands for bot. You just  have to implement one class, and initialize framework. Everything is done automatically. 
+- **Commands framework included** <br>
+  A fast way to create a bot with command support. Implementing the framework is simple - and everything is done automatically.
 - **Cross Platform** <br>
-  Nyxx works on the command line, browser, mobile.
+  Nyxx works on the command line, in the browser, and on mobile devices.
 - **Fine Control** <br>
-  Nyxx allows you to control every outgoing HTTP request or websocket messages.
+  Nyxx allows you to control every outgoing HTTP request or WebSocket message.
 - **Internal Sharding** <br>
-  Nyxx automatically spawns shards for your bot, but you can override this and spawn a custom number of shards. Internal sharding means that all of your bots servers are managed in one script, no need for communication between shards.
+  Nyxx automatically spawns shards for your bot, but you can override this and spawn a custom number of shards. Internal sharding means that all of your bots shards are managed in one script, and there is no need for communication between shards.
 - **Complete** <br>
-  Nyxx supports nearly all DiscordAPI endpoints.
+  Nyxx supports nearly all Discord API endpoints.
 
 ### Sample
 
@@ -53,13 +53,13 @@ void main() {
 ## Documentation and examples
 
 #### [Dartdocs](https://www.dartdocs.org/documentation/nyxx/latest/)
-Latest docs for newest release.
+The dartdocs page will always have the documentation for the latest release.
 
 #### [Dev docs](https://l7ssha.pl/nyxx)
-My website has docs for latests commits - You can read about incoming changes
+You can read about upcoming changes to the library on my website.
 
 #### [Wiki](https://github.com/l7ssha/nyxx/wiki)
-Wiki docs are designed to match latest release.
+Wiki documentation are designed to match the latest Nyxx release.
 
 ## Roadmap
  - [ ] Better dartdocs documentation
