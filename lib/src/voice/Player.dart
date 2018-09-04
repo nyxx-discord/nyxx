@@ -93,12 +93,6 @@ class Player {
 
   /// Resolves url to Lavalink Track
   Future<TrackResponse> resolve(String hash) async {
-    /*var req = w_transport.JsonRequest()
-      ..uri = _restPath
-      ..path = "/loadtracks"
-      ..headers = {"Authorization": "password"}
-      ..queryParameters = {"identifier": hash};*/
-
     var uri = _restPath
         .replace(path: "/loadtracks", queryParameters: {"identifier": hash});
     var req = http.Request("GET", uri);
@@ -119,7 +113,6 @@ class Player {
     else if (track is Playlist) currentTrack = track.tracks.first;
 
     _webSocket.add(jsonEncode(_OpPlay(_guild, currentTrack).build()));
-    //isPlaying = true;
     return true;
   }
 
@@ -129,10 +122,9 @@ class Player {
         "VOICE_STATE_UPDATE", _Opcode4(_guild, null, false, false)._build());
     await stop();
     _webSocket.add(jsonEncode(_SimpleOp("destroy", _guild)._build()));
-    //isPlaying = false;
     isConnected = false;
-    _sub1 == null ? {} : _sub1.cancel();
-    _sub2 == null ? {} : _sub2.cancel();
+    if (_sub1 == null) _sub1.cancel();
+    if (_sub2 == null) _sub2.cancel();
   }
 
   /// Toggles mute status.
