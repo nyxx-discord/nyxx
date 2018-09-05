@@ -15,6 +15,7 @@ class CommandExecutionFailEvent {
 class PreprocessorErrorEvent {
   /// Message on which preprocessor fails
   Message message;
+
   /// Failed preprocessor;
   Preprocessor preprocessor;
 
