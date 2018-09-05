@@ -72,7 +72,8 @@ class CommandsFramework {
   final Logger logger = Logger.detached("CommandsFramework");
 
   /// Creates commands framework handler. Requires prefix to handle commands.
-  CommandsFramework(this.prefix, this._client, {Duration roundupTime = const Duration(minutes: 2)}) {
+  CommandsFramework(this.prefix, this._client,
+      {Duration roundupTime = const Duration(minutes: 2)}) {
     this._commands = List();
     _cooldownCache = CooldownCache(roundupTime);
 
@@ -437,7 +438,9 @@ class CommandsFramework {
 
         if (matchedMeta.postprocessors.length > 0) {
           for (var post in matchedMeta.postprocessors)
-            post.execute(_services, res is InstanceMirror && res.hasReflectee ? res.reflectee : res,
+            post.execute(
+                _services,
+                res is InstanceMirror && res.hasReflectee ? res.reflectee : res,
                 e.message);
         }
 
