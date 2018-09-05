@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:mirrors';
 
 /// Merges list of stream into one stream
 Stream<T> merge<T>(List<Stream<T>> streams) {
@@ -66,4 +67,18 @@ Stream<List<T>> chunk<T>(List<T> list, int chunkSize) async* {
     int size = i + chunkSize;
     yield list.sublist(i, size > len ? len : size);
   }
+}
+
+T getCmdAnnot<T>(DeclarationMirror declaration) {
+  Iterable<T> fs = getCmdAnnots<T>(declaration);
+  if (fs.isEmpty) return null;
+  return fs.first;
+}
+
+Iterable<T> getCmdAnnots<T>(DeclarationMirror declaration) sync* {
+  for (var instance in declaration.metadata)
+    if (instance.hasReflectee) {
+      var reflectee = instance.reflectee;
+      if (reflectee is T) yield reflectee;
+    }
 }
