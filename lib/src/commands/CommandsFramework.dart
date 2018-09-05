@@ -1,29 +1,5 @@
 part of nyxx.commands;
 
-T _getCmdAnnot<T>(DeclarationMirror declaration) {
-  Iterable<T> fs = _getCmdAnnots<T>(declaration);
-  if (fs.isEmpty) return null;
-  return fs.first;
-}
-
-Iterable<T> _getCmdAnnots<T>(DeclarationMirror declaration) sync* {
-  for (var instance in declaration.metadata)
-    if (instance.hasReflectee) {
-      var reflectee = instance.reflectee;
-      if (reflectee is T) yield reflectee;
-    }
-}
-
-/// Emitted when dispatch function fails when checking preprocessors
-class PreprocessorErrorEvent {
-  /// Message on which preprocessor fails
-  Message message;
-  /// Failed preprocessor;
-  Preprocessor preprocessor;
-
-  PreprocessorErrorEvent._new(this.message, this.preprocessor);
-}
-
 /// Main point of commands in nyx.
 /// It gets all sent messages and matches to registered command and invokes
 /// its action.
@@ -96,9 +72,9 @@ class CommandsFramework {
   final Logger logger = Logger.detached("CommandsFramework");
 
   /// Creates commands framework handler. Requires prefix to handle commands.
-  CommandsFramework(this.prefix, this._client) {
+  CommandsFramework(this.prefix, this._client, {Duration roundupTime = const Duration(minutes: 2)}) {
     this._commands = List();
-    _cooldownCache = CooldownCache();
+    _cooldownCache = CooldownCache(roundupTime);
 
     _commandNotFoundEvent = StreamController.broadcast();
     _requiredPermissionEvent = StreamController.broadcast();
@@ -197,12 +173,12 @@ class CommandsFramework {
     var classPost = <Postprocessor>[];
 
     if (classMirror != null) {
-      classPre.addAll(_getCmdAnnots<Preprocessor>(classMirror));
-      classPost.addAll(_getCmdAnnots<Postprocessor>(classMirror));
+      classPre.addAll(util.getCmdAnnots<Preprocessor>(classMirror));
+      classPost.addAll(util.getCmdAnnots<Postprocessor>(classMirror));
     }
 
-    var methodPre = _getCmdAnnots<Preprocessor>(methodMirror);
-    var methodPost = _getCmdAnnots<Postprocessor>(methodMirror);
+    var methodPre = util.getCmdAnnots<Preprocessor>(methodMirror);
+    var methodPost = util.getCmdAnnots<Postprocessor>(methodMirror);
 
     var prepro = List<Preprocessor>.from(classPre)
       ..addAll(methodPre)
@@ -221,18 +197,18 @@ class CommandsFramework {
 
     mirrorSystem.libraries.forEach((_, library) {
       library.declarations.values.forEach((d) {
-        var commandAnnot = _getCmdAnnot<Module>(d);
+        var commandAnnot = util.getCmdAnnot<Module>(d);
 
         if (commandAnnot != null) {
           if (d is ClassMirror) {
             d.declarations.values.forEach((f) {
               if (f is MethodMirror) {
-                var methodCommandAnnot = _getCmdAnnot<Command>(f);
+                var methodCommandAnnot = util.getCmdAnnot<Command>(f);
 
                 if (methodCommandAnnot != null) {
-                  var classRestrict = _getCmdAnnot<Restrict>(d);
-                  var methodRestrict = _getCmdAnnot<Restrict>(f);
-                  var methodHelp = _getCmdAnnot<Help>(f);
+                  var classRestrict = util.getCmdAnnot<Restrict>(d);
+                  var methodRestrict = util.getCmdAnnot<Restrict>(f);
+                  var methodHelp = util.getCmdAnnot<Help>(f);
                   var processors = _getProcessors(d, f);
 
                   _commands.add(_CommandMetadata(
@@ -251,11 +227,11 @@ class CommandsFramework {
               }
             });
           } else if (d is MethodMirror) {
-            var commandAnnot = _getCmdAnnot<Command>(d);
+            var commandAnnot = util.getCmdAnnot<Command>(d);
 
             if (commandAnnot != null) {
-              var methodRestrict = _getCmdAnnot<Restrict>(d);
-              var methodHelp = _getCmdAnnot<Help>(d);
+              var methodRestrict = util.getCmdAnnot<Restrict>(d);
+              var methodHelp = util.getCmdAnnot<Help>(d);
               var processors = _getProcessors(null, d);
 
               _commands.add(_CommandMetadata(
@@ -647,7 +623,7 @@ class CommandsFramework {
     for (var e in params) {
       var type = e.type.reflectedType;
 
-      if (_getCmdAnnot<Remainder>(e) != null) {
+      if (util.getCmdAnnot<Remainder>(e) != null) {
         index++;
         var range = splitted.getRange(index, splitted.length).toList();
 

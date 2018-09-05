@@ -15,8 +15,7 @@ import 'package:logging/logging.dart';
 part 'src/commands/_CommandsMetadata.dart';
 part 'src/commands/Processors.dart';
 
-part 'src/commands/CommandExecutionFailEvent.dart';
-part 'src/commands/CommandParsingFail.dart';
+part 'src/commands/Events.dart';
 
 part 'src/commands/CommandsFramework.dart';
 part 'src/commands/Annotations.dart';

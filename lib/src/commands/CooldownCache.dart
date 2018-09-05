@@ -5,10 +5,10 @@ class CooldownCache {
   Map<_CacheKey, int> _cache;
 
   /// Constructor sets up empty cache and starts garbage collector.
-  CooldownCache() {
+  CooldownCache(Duration roundupTime) {
     _cache = Map();
 
-    Timer.periodic(const Duration(minutes: 30), (Timer t) {
+    Timer.periodic(roundupTime, (_) {
       int now = DateTime.now().millisecondsSinceEpoch;
 
       _cache.forEach((k, v) {
