@@ -2,8 +2,8 @@ part of nyxx;
 
 /// Represents a Discord guild role, which is used to assign priority, permissions, and a color to guild members
 class Role extends SnowflakeEntity {
-  /// The [Client] object.
-  Client client;
+  /// The [Nyxx] object.
+  Nyxx client;
 
   /// The raw object returned by the API
   Map<String, dynamic> raw;

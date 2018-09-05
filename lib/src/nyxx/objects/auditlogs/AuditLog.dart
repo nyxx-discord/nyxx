@@ -5,7 +5,7 @@ part of nyxx;
 /// [Look here for more](https://discordapp.com/developers/docs/resources/audit-log)
 class AuditLog {
   /// Client instance
-  Client client;
+  Nyxx client;
 
   /// List of webhooks found in the audit log
   Map<Snowflake, Webhook> webhooks;
@@ -19,7 +19,7 @@ class AuditLog {
   /// Raw data returned by API
   Map<String, dynamic> raw;
 
-  AuditLog._new(Client client, this.raw) {
+  AuditLog._new(Nyxx client, this.raw) {
     webhooks = Map();
     users = Map();
     entries = Map();

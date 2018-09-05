@@ -5,7 +5,7 @@ class RoleDeleteEvent {
   /// The role that was deleted.
   Role role;
 
-  RoleDeleteEvent._new(Client client, Map<String, dynamic> json) {
+  RoleDeleteEvent._new(Nyxx client, Map<String, dynamic> json) {
     if (client.ready) {
       final Guild guild =
           client.guilds[Snowflake(json['d']['guild_id'] as String)];

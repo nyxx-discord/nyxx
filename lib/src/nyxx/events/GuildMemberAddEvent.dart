@@ -5,7 +5,7 @@ class GuildMemberAddEvent {
   /// The member that joined.
   Member member;
 
-  GuildMemberAddEvent._new(Client client, Map<String, dynamic> json) {
+  GuildMemberAddEvent._new(Nyxx client, Map<String, dynamic> json) {
     if (client.ready) {
       final Guild guild =
           client.guilds[Snowflake(json['d']['guild_id'] as String)];

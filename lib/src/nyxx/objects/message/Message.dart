@@ -10,8 +10,8 @@ class Message extends SnowflakeEntity {
   StreamController<MessageReactionEvent> _onReactionRemove;
   StreamController<MessageReactionsRemovedEvent> _onReactionsRemoved;
 
-  /// The [Client] object.
-  Client client;
+  /// The [Nyxx] object.
+  Nyxx client;
 
   /// The raw object returned by the API.
   Map<String, dynamic> raw;

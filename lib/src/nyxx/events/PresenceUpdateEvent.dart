@@ -8,7 +8,7 @@ class PresenceUpdateEvent {
   /// The new member.
   Member newMember;
 
-  PresenceUpdateEvent._new(Client client, Map<String, dynamic> json) {
+  PresenceUpdateEvent._new(Nyxx client, Map<String, dynamic> json) {
     if (client.ready) {
       Map<String, dynamic> data = json['d'] as Map<String, dynamic>;
 

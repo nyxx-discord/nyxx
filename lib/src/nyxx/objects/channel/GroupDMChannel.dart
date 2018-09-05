@@ -5,7 +5,7 @@ class GroupDMChannel extends MessageChannel {
   /// The recipients of channel.
   Map<Snowflake, User> recipients;
 
-  GroupDMChannel._new(Client client, Map<String, dynamic> data)
+  GroupDMChannel._new(Nyxx client, Map<String, dynamic> data)
       : super._new(client, data, 3) {
     this.recipients = Map<Snowflake, User>();
     raw['recipients'].forEach((dynamic o) {

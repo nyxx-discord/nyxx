@@ -5,7 +5,7 @@ import 'dart:io';
 // Main function
 void main() {
   // Create new bot instance
-  nyxx.Client bot = nyxx.Client("<TOKEN>");
+  nyxx.Nyxx bot = nyxx.Nyxx("<TOKEN>");
 
   // Listen to ready event. Invoked when bot started listening to events.
   bot.onReady.listen((nyxx.ReadyEvent e) {

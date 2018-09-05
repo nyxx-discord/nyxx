@@ -32,7 +32,7 @@ class CommandContext {
   Guild guild;
 
   /// Additional Client instance
-  Client client;
+  Nyxx client;
 
   CommandContext();
 

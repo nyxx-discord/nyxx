@@ -5,7 +5,7 @@ import 'dart:io';
 import 'dart:async';
 
 void main() {
-  nyxx.Client bot = nyxx.Client(Platform.environment['DISCORD_TOKEN']);
+  nyxx.Nyxx bot = nyxx.Nyxx(Platform.environment['DISCORD_TOKEN']);
 
   // Manual banchmark
   bot.onMessage.listen((nyxx.MessageEvent e) async {

@@ -5,7 +5,7 @@ Logger _logger = Logger.detached("Voice Service");
 
 /// Inits voice service. [yamlConfigFile] is absolute path to lavalink config file.
 /// Returns instance of VoiceService
-VoiceService init(String clientId, Client client, String yamlConfigFile) {
+VoiceService init(String clientId, Nyxx client, String yamlConfigFile) {
   if (_manager != null) throw Exception("Tried initialize VoiceService twice.");
 
   _manager = VoiceService._new(clientId, client, yamlConfigFile);
@@ -43,7 +43,7 @@ VoiceService _manager;
 class VoiceService {
   Uri _wsPath;
   Uri _restPath;
-  Client _client;
+  Nyxx _client;
   WebSocket _webSocket;
   String _password;
   String _clientId;

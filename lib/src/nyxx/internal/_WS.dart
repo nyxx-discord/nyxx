@@ -8,7 +8,7 @@ class _WS {
   String gateway;
 
   /// The client that the WS manager belongs to.
-  Client client;
+  Nyxx client;
 
   final Logger logger = Logger("Client");
 

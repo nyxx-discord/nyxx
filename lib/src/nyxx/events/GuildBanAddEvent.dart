@@ -8,7 +8,7 @@ class GuildBanAddEvent {
   /// The user that was banned.
   User user;
 
-  GuildBanAddEvent._new(Client client, Map<String, dynamic> json) {
+  GuildBanAddEvent._new(Nyxx client, Map<String, dynamic> json) {
     if (client.ready) {
       this.guild = client.guilds[Snowflake(json['d']['guild_id'] as String)];
       this.user = User._new(client, json['d']['user'] as Map<String, dynamic>);

@@ -24,7 +24,7 @@ class ExConverter extends command.TypeConverter<Ex> {
 // Main function
 void main() {
   // Create new bot instance
-  nyxx.Client bot = nyxx.Client(Platform.environment['DISCORD_TOKEN']);
+  nyxx.Nyxx bot = nyxx.Nyxx(Platform.environment['DISCORD_TOKEN']);
 
   // Creating new CommandsFramework object and registering commands.
   command.CommandsFramework('!', bot)

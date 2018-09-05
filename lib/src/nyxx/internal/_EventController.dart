@@ -115,7 +115,7 @@ class _EventController {
   StreamController<WebhookUpdateEvent> onWebhookUpdate;
 
   /// Makes a new `EventController`.
-  _EventController(Client client) {
+  _EventController(Nyxx client) {
     this.onRaw = StreamController.broadcast();
     client.onRaw = this.onRaw.stream;
 

@@ -5,7 +5,7 @@ class HttpErrorEvent {
   /// The HTTP response.
   HttpResponse response;
 
-  HttpErrorEvent._new(Client client, this.response) {
+  HttpErrorEvent._new(Nyxx client, this.response) {
     client._events.onHttpError.add(this);
   }
 }

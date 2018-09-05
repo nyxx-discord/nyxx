@@ -8,7 +8,7 @@ class ClientOAuth2Application extends OAuth2Application {
   /// The app's owner.
   User owner;
 
-  ClientOAuth2Application._new(Client client, Map<String, dynamic> data)
+  ClientOAuth2Application._new(Nyxx client, Map<String, dynamic> data)
       : super._new(client, data) {
     this.flags = raw['flags'] as int;
     this.owner = User._new(client, raw['owner'] as Map<String, dynamic>);

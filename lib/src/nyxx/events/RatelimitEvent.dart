@@ -15,7 +15,7 @@ class RatelimitEvent {
   /// the request (rare)
   HttpResponse response;
 
-  RatelimitEvent._new(Client client, this.request, this.handled,
+  RatelimitEvent._new(Nyxx client, this.request, this.handled,
       [this.response]) {
     client._events.onRatelimited.add(this);
   }

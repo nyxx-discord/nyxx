@@ -55,7 +55,7 @@ nyxx.EmbedBuilder createTestEmbed() {
 
 void main() {
   var env = Platform.environment;
-  var bot = nyxx.Client(env['DISCORD_TOKEN'], ignoreExceptions: false);
+  var bot = nyxx.Nyxx(env['DISCORD_TOKEN'], ignoreExceptions: false);
 
   command.CommandsFramework('~~', bot)
     ..registerLibraryServices()

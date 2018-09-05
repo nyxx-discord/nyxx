@@ -8,7 +8,7 @@ class MessageUpdateEvent {
   /// The updated message, if cached.
   Message newMessage;
 
-  MessageUpdateEvent._new(Client client, Map<String, dynamic> json) {
+  MessageUpdateEvent._new(Nyxx client, Map<String, dynamic> json) {
     var channelId = Snowflake(json['d']['channel_id'] as String);
     var messageId = Snowflake(json['d']['id'] as String);
 

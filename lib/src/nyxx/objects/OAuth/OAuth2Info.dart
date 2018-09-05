@@ -3,8 +3,8 @@ part of nyxx;
 /// Info about a OAuth2 app, bot, user, and possible guilds that that bot can
 /// be invited to.
 class OAuth2Info {
-  /// The [Client] object.
-  Client client;
+  /// The [Nyxx] object.
+  Nyxx client;
 
   /// The raw object returned by the API
   Map<String, dynamic> raw;

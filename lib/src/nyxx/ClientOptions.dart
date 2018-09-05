@@ -1,8 +1,10 @@
 part of nyxx;
 
-/// The options for [Client]
+/// Optional `nyxx` client options which cna be used when creating new instance
+/// of client. It allows to tune up client to your needs.
 class ClientOptions {
   /// Whether or not to disable @everyone and @here mentions at a global level.
+  /// *It means client won't send any of these. It doesn't mean filtering guild messages.
   bool disableEveryone;
 
   /// Whether or not to automatically shard the client if the default shard
