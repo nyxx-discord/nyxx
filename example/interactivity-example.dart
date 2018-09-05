@@ -7,7 +7,7 @@ import 'package:nyxx/utils.dart' as utils;
 import 'dart:io';
 
 void main() async {
-  nyxx.Client bot = nyxx.Client(Platform.environment['DISCORD_TOKEN']);
+  nyxx.Nyxx bot = nyxx.Nyxx(Platform.environment['DISCORD_TOKEN']);
 
   bot.onReady.listen((e) async {
     var ch = bot.channels["422285619952222208"] as nyxx.TextChannel;

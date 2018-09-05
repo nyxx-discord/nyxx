@@ -8,7 +8,7 @@ class BeforeHttpRequestSendEvent {
   /// The request about to be sent.
   HttpBase request;
 
-  BeforeHttpRequestSendEvent._new(Client client, this.request) {
+  BeforeHttpRequestSendEvent._new(Nyxx client, this.request) {
     if (client != null) client._events.beforeHttpRequestSend.add(this);
   }
 }

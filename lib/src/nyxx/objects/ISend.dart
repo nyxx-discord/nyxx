@@ -13,7 +13,7 @@ abstract class ISend {
 
 String expandAttachment(String filename) => "attachment://$filename";
 
-String _sanitizeMessage(Object content, bool disableEveryone, Client client) {
+String _sanitizeMessage(Object content, bool disableEveryone, Nyxx client) {
   var msg = content.toString();
   if (content != null &&
       ((disableEveryone != null && disableEveryone) ||

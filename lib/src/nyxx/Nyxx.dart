@@ -1,7 +1,7 @@
 part of nyxx;
 
 /// Class representing client - it's place to start with.
-/// From there you can subscribe to varius [Stream]s to listen to [Events](https://github.com/l7ssha/nyxx/wiki/EventList)
+/// From there you can subscribe to various [Stream]s to listen to [Events](https://github.com/l7ssha/nyxx/wiki/EventList)
 ///
 /// Creating new instance of bot:
 /// ```
@@ -12,10 +12,10 @@ part of nyxx;
 /// bot.onReady.listen((e) => print('Ready!'));
 ///
 /// bot.onRoleCreate.listen((e) {
-///   print('Role createed with name: ${e.role.name});
+///   print('Role created with name: ${e.role.name});
 /// });
 /// ```
-class Client {
+class Nyxx {
   String _token;
   ClientOptions _options;
   DateTime _startTime;
@@ -174,7 +174,7 @@ class Client {
       "https://discordapp.com/oauth2/authorize?&client_id=${this.app.id.toString()}&scope=bot&permissions=0";
 
   /// Creates and logs in a new client.
-  Client(this._token, {ClientOptions options, bool ignoreExceptions = true}) {
+  Nyxx(this._token, {ClientOptions options, bool ignoreExceptions = true}) {
     if (ignoreExceptions) {
       Isolate.current.setErrorsFatal(false);
       ReceivePort errorsPort = ReceivePort();
@@ -220,6 +220,12 @@ class Client {
   Duration get uptime => DateTime.now().difference(_startTime);
 
   /// Get user instance with specified id.
+  /// If [id] is present in cache it'll be got from cache, otherwise API
+  /// will be called.
+  ///
+  /// ```
+  /// var user = client.getClient(Snowflake("302359032612651009"));
+  /// ``
   Future<User> getUser(Snowflake id) async {
     if (this.users.containsKey(id)) return this.users[id];
 
@@ -228,6 +234,11 @@ class Client {
   }
 
   /// Gets Guild with specified id.
+  /// If the [id] will be in cache - it will be taken from it, otherwise API will be called.
+  ///
+  /// ```
+  /// var guild = client.getGuild(Snowflake("302360552993456135"));
+  /// ```
   Future<Guild> getGuild(Snowflake id) async {
     if (this.guilds.containsKey(id)) return this.guilds[id];
 
@@ -236,6 +247,14 @@ class Client {
   }
 
   /// Creates new guild with provided builder.
+  /// If the [id] will be in cache - it will be taken from it, otherwise API will be called.
+  ///
+  /// ```
+  /// var guildBuilder = GuildBuilder()
+  ///                       ..name = "Example Guild"
+  ///                       ..roles = [RoleBuilder()..name = "Example Role]
+  /// var newGuild = await client.createGuild(guildBuilder);
+  /// ```
   Future<Guild> createGuild(GuildBuilder builder) async {
     var r = await this.http.send("POST", "/guilds", body: builder._build());
 
@@ -243,6 +262,7 @@ class Client {
   }
 
   /// Gets a webhook by its ID and token.
+  /// If the [id] will be in cache - it will be taken from it, otherwise API will be called.
   Future<Webhook> getWebhook(String id, {String token = ""}) async {
     HttpResponse r = await http.send('GET', "/webhooks/$id/$token");
     return Webhook._new(this, r.body as Map<String, dynamic>);
@@ -252,6 +272,11 @@ class Client {
   Future<ReadyEvent> blockToReady() async => await onReady.first;
 
   /// Gets an [Invite] object with given code.
+  /// If the [id] will be in cache - it will be taken from it, otherwise API will be called.
+  ///
+  /// ```
+  /// var inv = client.getInvite("YMgffU8");
+  /// ```
   Future<Invite> getInvite(String code) async {
     final HttpResponse r = await this.http.send('GET', '/invites/$code');
     return Invite._new(this, r.body as Map<String, dynamic>);

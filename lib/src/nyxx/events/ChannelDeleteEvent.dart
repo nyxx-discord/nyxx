@@ -6,7 +6,7 @@ class ChannelDeleteEvent {
   /// [TextChannel], [DMChannel] or [GroupDMChannel] or [VoiceChannel].
   Channel channel;
 
-  ChannelDeleteEvent._new(Client client, Map<String, dynamic> json) {
+  ChannelDeleteEvent._new(Nyxx client, Map<String, dynamic> json) {
     if (client.ready) {
       if (json['d']['type'] == 1) {
         this.channel =

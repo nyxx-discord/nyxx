@@ -5,7 +5,7 @@ class RoleCreateEvent {
   /// The role that was created.
   Role role;
 
-  RoleCreateEvent._new(Client client, Map<String, dynamic> json) {
+  RoleCreateEvent._new(Nyxx client, Map<String, dynamic> json) {
     if (client.ready) {
       final Guild guild =
           client.guilds[Snowflake(json['d']['guild_id'] as String)];

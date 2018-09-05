@@ -2,8 +2,8 @@ part of nyxx;
 
 /// Represents a single user of Discord, either a human or a bot, outside of any specific guild's context.
 class User extends SnowflakeEntity with ISend {
-  /// The [Client] object.
-  Client client;
+  /// The [Nyxx] object.
+  Nyxx client;
 
   /// The raw object returned by the API
   Map<String, dynamic> raw;

@@ -2,8 +2,8 @@ part of nyxx;
 
 /// A message attachment.
 class Attachment extends SnowflakeEntity {
-  /// The [Client] object.
-  Client client;
+  /// The [Nyxx] object.
+  Nyxx client;
 
   /// The raw object returned by the API
   Map<String, dynamic> raw;

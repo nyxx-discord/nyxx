@@ -5,7 +5,7 @@ class ChannelCreateEvent {
   /// The channel that was created, either a [GuildChannel], [DMChannel], or [GroupDMChannel].
   Channel channel;
 
-  ChannelCreateEvent._new(Client client, Map<String, dynamic> json) {
+  ChannelCreateEvent._new(Nyxx client, Map<String, dynamic> json) {
     if (client.ready) {
       if (json['d']['type'] == 1) {
         this.channel =

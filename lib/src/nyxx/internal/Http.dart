@@ -270,7 +270,7 @@ class HttpBucket {
 
 /// The client's HTTP client.
 class Http {
-  Client _client;
+  Nyxx _client;
 
   /// The buckets.
   Map<String, HttpBucket> buckets = <String, HttpBucket>{};
@@ -293,7 +293,7 @@ class Http {
       bool beforeReady = false,
       Map<String, String> headers = const {},
       String reason}) async {
-    if (_client is Client && !this._client.ready && !beforeReady)
+    if (_client is Nyxx && !this._client.ready && !beforeReady)
       throw Exception("Client isn't ready yet.");
 
     HttpRequest request = HttpRequest._new(
@@ -326,7 +326,7 @@ class Http {
       {Map<String, dynamic> data,
       bool beforeReady = false,
       String reason}) async {
-    if (_client is Client && !this._client.ready && !beforeReady)
+    if (_client is Nyxx && !this._client.ready && !beforeReady)
       throw Exception("Client isn't ready yet.");
 
     HttpMultipartRequest request = HttpMultipartRequest._new(this, method, path,

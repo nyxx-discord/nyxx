@@ -8,7 +8,7 @@ class MessageReactionsRemovedEvent {
   /// Message on which messages are removed
   Message message;
 
-  MessageReactionsRemovedEvent._new(Client client, Map<String, dynamic> json) {
+  MessageReactionsRemovedEvent._new(Nyxx client, Map<String, dynamic> json) {
     this.channel = client.channels[Snowflake(json['d']['channel_id'] as String)]
         as MessageChannel;
 

@@ -49,7 +49,7 @@ class Game {
     this.raw = {"name": name, "type": type, "url": url};
   }
 
-  Game._new(Client client, this.raw) {
+  Game._new(Nyxx client, this.raw) {
     this.name = raw['name'] as String;
     this.url = raw['name'] as String;
     this.type = raw['type'] as int;

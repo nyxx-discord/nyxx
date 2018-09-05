@@ -14,7 +14,7 @@ import 'utils.dart' as utils;
 
 // BASE
 
-part 'src/nyxx/Client.dart';
+part 'src/nyxx/Nyxx.dart';
 part 'src/nyxx/ClientOptions.dart';
 
 // INTERNAL

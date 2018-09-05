@@ -3,8 +3,8 @@ part of nyxx;
 /// A message embed.
 /// Can contain null elements.
 class Embed {
-  /// The [Client] object.
-  Client client;
+  /// The [Nyxx] object.
+  Nyxx client;
 
   /// The raw object returned by the API
   Map<String, dynamic> raw;

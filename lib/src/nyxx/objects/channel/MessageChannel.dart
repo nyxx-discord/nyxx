@@ -29,7 +29,7 @@ class MessageChannel extends Channel with IterableMixin<Message>, ISend {
   /// The ID for the last message in the channel.
   Snowflake lastMessageID;
 
-  MessageChannel._new(Client client, Map<String, dynamic> data, int type)
+  MessageChannel._new(Nyxx client, Map<String, dynamic> data, int type)
       : super._new(client, data, type) {
     if (raw.containsKey('last_message_id') && raw['last_message_id'] != null)
       this.lastMessageID = Snowflake(raw['last_message_id'] as String);

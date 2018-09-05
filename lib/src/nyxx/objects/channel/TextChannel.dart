@@ -14,7 +14,7 @@ class TextChannel extends MessageChannel with GuildChannel {
   /// The channel's mention string.
   String mention;
 
-  TextChannel._new(Client client, Map<String, dynamic> data, Guild guild)
+  TextChannel._new(Nyxx client, Map<String, dynamic> data, Guild guild)
       : super._new(client, data, 0) {
     _initialize(data, guild);
 

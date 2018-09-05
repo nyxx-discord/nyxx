@@ -8,7 +8,7 @@ class VoiceChannel extends Channel with GuildChannel {
   /// The channel's user limit.
   int userLimit;
 
-  VoiceChannel._new(Client client, Map<String, dynamic> data, Guild guild)
+  VoiceChannel._new(Nyxx client, Map<String, dynamic> data, Guild guild)
       : super._new(client, data, 2) {
     _initialize(data, guild);
 

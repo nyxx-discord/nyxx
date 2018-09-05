@@ -25,7 +25,7 @@ class Player {
   Stream<PlayerUpdateEvent> onPlayerUpdate;
 
   Guild _guild;
-  Client _client;
+  Nyxx _client;
   Uri _restPath;
   String _password;
 

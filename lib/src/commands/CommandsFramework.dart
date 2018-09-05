@@ -14,6 +14,16 @@ Iterable<T> _getCmdAnnots<T>(DeclarationMirror declaration) sync* {
     }
 }
 
+/// Emitted when dispatch function fails when checking preprocessors
+class PreprocessorErrorEvent {
+  /// Message on which preprocessor fails
+  Message message;
+  /// Failed preprocessor;
+  Preprocessor preprocessor;
+
+  PreprocessorErrorEvent._new(this.message, this.preprocessor);
+}
+
 /// Main point of commands in nyx.
 /// It gets all sent messages and matches to registered command and invokes
 /// its action.
@@ -23,16 +33,17 @@ class CommandsFramework {
   List<TypeConverter> _typeConverters;
   CooldownCache _cooldownCache;
   List<Object> _services = List();
-  Client _client;
+  Nyxx _client;
 
-  StreamController<Message> _cooldownEventController;
-  StreamController<Message> _commandNotFoundEventController;
-  StreamController<Message> _requiredPermissionEventController;
-  StreamController<Message> _forAdminOnlyEventController;
-  StreamController<CommandExecutionFailEvent> _commandExecutionFailController;
-  StreamController<Message> _wrongContextController;
+  StreamController<Message> _cooldownEvent;
+  StreamController<Message> _commandNotFoundEvent;
+  StreamController<Message> _requiredPermissionEvent;
+  StreamController<Message> _forAdminOnlyEvent;
+  StreamController<CommandExecutionFailEvent> _commandExecutionFail;
+  StreamController<Message> _wrongContext;
   StreamController<Message> _unauthorizedNsfwAccess;
   StreamController<Message> _requiredTopicError;
+  StreamController<PreprocessorErrorEvent> _preprocessorFail;
   //StreamController<CommandParsingFail> _commandParsingFail;
 
   /// Prefix needed to dispatch a commands.
@@ -75,6 +86,9 @@ class CommandsFramework {
   /// Emitted when command is invoked in channel without required topic
   Stream<Message> onRequiredTopicError;
 
+  /// Emitted when dispatch function fails when checking preprocessors
+  Stream<PreprocessorErrorEvent> preprocessorFail;
+
   /// Emitted when command fails to parse. Eg. Wrong arguments
   //Stream<CommandParsingFail> onCommandParsingFail;
 
@@ -86,24 +100,26 @@ class CommandsFramework {
     this._commands = List();
     _cooldownCache = CooldownCache();
 
-    _commandNotFoundEventController = StreamController.broadcast();
-    _requiredPermissionEventController = StreamController.broadcast();
-    _forAdminOnlyEventController = StreamController.broadcast();
-    _cooldownEventController = StreamController.broadcast();
-    _commandExecutionFailController = StreamController.broadcast();
-    _wrongContextController = StreamController.broadcast();
+    _commandNotFoundEvent = StreamController.broadcast();
+    _requiredPermissionEvent = StreamController.broadcast();
+    _forAdminOnlyEvent = StreamController.broadcast();
+    _cooldownEvent = StreamController.broadcast();
+    _commandExecutionFail = StreamController.broadcast();
+    _wrongContext = StreamController.broadcast();
     _unauthorizedNsfwAccess = StreamController.broadcast();
     _requiredTopicError = StreamController.broadcast();
+    _preprocessorFail = StreamController.broadcast();
     //_commandParsingFail = new StreamController.broadcast();
 
-    onCommandNotFound = _commandNotFoundEventController.stream;
-    onAdminOnlyError = _forAdminOnlyEventController.stream;
-    onRequiredPermissionError = _forAdminOnlyEventController.stream;
-    onCooldown = _cooldownEventController.stream;
-    onCommandExecutionFail = _commandExecutionFailController.stream;
-    onWrongContext = _wrongContextController.stream;
+    onCommandNotFound = _commandNotFoundEvent.stream;
+    onAdminOnlyError = _forAdminOnlyEvent.stream;
+    onRequiredPermissionError = _forAdminOnlyEvent.stream;
+    onCooldown = _cooldownEvent.stream;
+    onCommandExecutionFail = _commandExecutionFail.stream;
+    onWrongContext = _wrongContext.stream;
     onUnauthorizedNsfwAccess = _unauthorizedNsfwAccess.stream;
     onRequiredTopicError = _requiredTopicError.stream;
+    preprocessorFail = _preprocessorFail.stream;
     //onCommandParsingFail = _commandParsingFail.stream;
 
     // Listen to incoming messages and ignore all from bots (if set)
@@ -368,7 +384,7 @@ class CommandsFramework {
         }
       });
     } catch (err) {
-      _commandNotFoundEventController.add(e.message);
+      _commandNotFoundEvent.add(e.message);
       return;
     }
 
@@ -385,30 +401,29 @@ class CommandsFramework {
     // Switch between execution codes
     switch (executionCode) {
       case 0:
-        _forAdminOnlyEventController.add(e.message);
+        _forAdminOnlyEvent.add(e.message);
         break;
       case 1:
       case 6:
-        _requiredPermissionEventController.add(e.message);
+        _requiredPermissionEvent.add(e.message);
         break;
       case 2:
-        _cooldownEventController.add(e.message);
+        _cooldownEvent.add(e.message);
         break;
       case 3:
-        _wrongContextController.add(e.message);
+        _wrongContext.add(e.message);
         break;
       case 4:
         _unauthorizedNsfwAccess.add(e.message);
         break;
       case 5:
-      case 7:
         _requiredTopicError.add(e.message);
         break;
       case -1:
       case -2:
       case 100:
+        dynamic res;
         try {
-          InstanceMirror res;
           splittedCommand.removeRange(0, matchedMeta.commandString.length);
           var methodInj = await _injectParameters(
               matchedMeta.method, splittedCommand, e.message);
@@ -437,16 +452,17 @@ class CommandsFramework {
                   ..add(context)
                   ..addAll(methodInj));
           }
-
-          if (matchedMeta.postprocessors.length > 0) {
-            for (var post in matchedMeta.postprocessors)
-              post.execute(_services, res.hasReflectee ? res.reflectee : null,
-                  e.message);
-          }
         } catch (err, stacktrace) {
-          _commandExecutionFailController
+          _commandExecutionFail
               .add(CommandExecutionFailEvent._new(e.message, err));
+          res = err;
           logger.severe("ERROR OCCURED WHEN INVOKING COMMAND \n $stacktrace");
+        }
+
+        if (matchedMeta.postprocessors.length > 0) {
+          for (var post in matchedMeta.postprocessors)
+            post.execute(_services, res is InstanceMirror && res.hasReflectee ? res.reflectee : res,
+                e.message);
         }
 
         logger.fine(

@@ -14,7 +14,7 @@ class Service {
 // Main function
 void main() {
   // Create new bot instance
-  nyxx.Client bot = nyxx.Client(Platform.environment['DISCORD_TOKEN']);
+  nyxx.Nyxx bot = nyxx.Nyxx(Platform.environment['DISCORD_TOKEN']);
 
   // Register new command handler.
   // It registers your services and adds command to registry.

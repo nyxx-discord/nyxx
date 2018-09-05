@@ -11,7 +11,7 @@ class ClientUser extends User {
   /// Weather or not the client user has MFA enabled.
   bool mfa;
 
-  ClientUser._new(Client client, Map<String, dynamic> data)
+  ClientUser._new(Nyxx client, Map<String, dynamic> data)
       : super._new(client, data) {
     this.email = raw['email'] as String;
     this.verified = raw['verified'] as bool;

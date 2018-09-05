@@ -2,8 +2,8 @@ part of nyxx;
 
 /// A mini guild object with permissions for [OAuth2Info].
 class OAuth2Guild {
-  /// The [Client] object.
-  Client client;
+  /// The [Nyxx] object.
+  Nyxx client;
 
   /// The raw object returned by the API
   Map<String, dynamic> raw;

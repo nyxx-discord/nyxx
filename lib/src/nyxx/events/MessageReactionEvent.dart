@@ -15,7 +15,7 @@ class MessageReactionEvent {
   Emoji emoji;
 
   MessageReactionEvent._new(
-      Client client, Map<String, dynamic> json, bool added) {
+      Nyxx client, Map<String, dynamic> json, bool added) {
     this.user = client.users[Snowflake(json['d']['user_id'] as String)];
     this.channel = client.channels[Snowflake(json['d']['channel_id'] as String)]
         as MessageChannel;

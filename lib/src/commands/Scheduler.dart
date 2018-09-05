@@ -33,7 +33,7 @@ class Scheduler {
   /// List of targeted channel
   List<Snowflake> targets;
 
-  Client _client;
+  Nyxx _client;
   Timer _t;
 
   Scheduler(this._client);

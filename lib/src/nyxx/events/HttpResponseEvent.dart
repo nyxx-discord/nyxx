@@ -5,7 +5,7 @@ class HttpResponseEvent {
   /// The HTTP response.
   HttpResponse response;
 
-  HttpResponseEvent._new(Client client, this.response) {
+  HttpResponseEvent._new(Nyxx client, this.response) {
     client._events.onHttpResponse.add(this);
   }
 }

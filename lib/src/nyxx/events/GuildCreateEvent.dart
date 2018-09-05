@@ -5,7 +5,7 @@ class GuildCreateEvent {
   /// The guild created.
   Guild guild;
 
-  GuildCreateEvent._new(Client client, Map<String, dynamic> json, Shard shard) {
+  GuildCreateEvent._new(Nyxx client, Map<String, dynamic> json, Shard shard) {
     this.guild =
         Guild._new(client, json['d'] as Map<String, dynamic>, true, true);
 
