@@ -97,10 +97,10 @@ class _EventController {
   StreamController<MessageDeleteBulkEvent> onMessageDeleteBulk;
 
   /// Emitted when a user adds a reaction to a message.
-  StreamController<MessageReactionEvent> onMessageReactionAdded;
+  StreamController<MessageReactionAddEvent> onMessageReactionAdded;
 
   /// Emitted when a user deletes a reaction to a message.
-  StreamController<MessageReactionEvent> onMessageReactionRemove;
+  StreamController<MessageReactionRemoveEvent> onMessageReactionRemove;
 
   /// Emitted when a user explicitly removes all reactions from a message.
   StreamController<MessageReactionsRemovedEvent> onMessageReactionsRemoved;

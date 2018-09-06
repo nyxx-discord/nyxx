@@ -149,10 +149,10 @@ class Nyxx {
   Stream<MessageDeleteBulkEvent> onMessageDeleteBulk;
 
   /// Emitted when a user adds a reaction to a message.
-  Stream<MessageReactionEvent> onMessageReactionAdded;
+  Stream<MessageReactionAddEvent> onMessageReactionAdded;
 
   /// Emitted when a user deletes a reaction to a message.
-  Stream<MessageReactionEvent> onMessageReactionRemove;
+  Stream<MessageReactionRemoveEvent> onMessageReactionRemove;
 
   /// Emitted when a user explicitly removes all reactions from a message.
   Stream<MessageReactionsRemovedEvent> onMessageReactionsRemoved;

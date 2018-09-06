@@ -6,8 +6,8 @@ part of nyxx;
 class Message extends SnowflakeEntity {
   StreamController<MessageUpdateEvent> _onUpdate;
   StreamController<MessageDeleteEvent> _onDelete;
-  StreamController<MessageReactionEvent> _onReactionAdded;
-  StreamController<MessageReactionEvent> _onReactionRemove;
+  StreamController<MessageReactionAddEvent> _onReactionAdded;
+  StreamController<MessageReactionRemoveEvent> _onReactionRemove;
   StreamController<MessageReactionsRemovedEvent> _onReactionsRemoved;
 
   /// The [Nyxx] object.
@@ -68,10 +68,10 @@ class Message extends SnowflakeEntity {
   Stream<MessageDeleteEvent> onDelete;
 
   /// Emitted when a user adds a reaction to a message.
-  Stream<MessageReactionEvent> onReactionAdded;
+  Stream<MessageReactionAddEvent> onReactionAdded;
 
   /// Emitted when a user adds a reaction to a message.
-  Stream<MessageReactionEvent> onReactionRemove;
+  Stream<MessageReactionRemoveEvent> onReactionRemove;
 
   /// Emitted when a user explicitly removes all reactions from a message.
   Stream<MessageReactionsRemovedEvent> onReactionsRemoved;

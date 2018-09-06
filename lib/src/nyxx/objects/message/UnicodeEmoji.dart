@@ -2,24 +2,14 @@ part of nyxx;
 
 /// Represents unicode emoji. Contains only emoji code.
 class UnicodeEmoji extends Emoji {
-  /// Emoji's unicode code. Hexadecimal number;
+  /// Emoji itself.
   String code;
 
-  UnicodeEmoji(this.code, String name) : super(name);
-  UnicodeEmoji.from(this.code) : super("");
-
-  UnicodeEmoji._new(this.code, String name) : super(name);
-  UnicodeEmoji._partial(this.code) : super("");
+  UnicodeEmoji(this.code) : super("");
 
   /// Encodes Emoji so that can be used in messages.
   @override
-  String encode() {
-    try {
-      return String.fromCharCode(int.parse(code, radix: 16));
-    } catch (e) {
-      return code;
-    }
-  }
+  String encode() => code;
 
   /// Returns encoded string ready to send via message.
   @override

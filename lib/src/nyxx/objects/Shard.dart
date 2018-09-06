@@ -204,11 +204,11 @@ class Shard {
             break;
 
           case 'MESSAGE_REACTION_ADD':
-            MessageReactionEvent._new(this._ws.client, msg, true);
+            MessageReactionAddEvent._new(this._ws.client, msg);
             break;
 
           case 'MESSAGE_REACTION_REMOVE':
-            MessageReactionEvent._new(this._ws.client, msg, false);
+            MessageReactionRemoveEvent._new(this._ws.client, msg);
             break;
 
           case 'MESSAGE_DELETE_BULK':

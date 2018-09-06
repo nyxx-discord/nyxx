@@ -14,12 +14,12 @@ void main() async {
 
     // Create and send paginated message. After 15 minutes message will be deactivated.
     var pagination = command.Pagination.fromString(
-        "Siema siema co tam. "
-        "To bedzie bardzo dlugi paragraf poniewaz potrzebuje duzo tesktu. "
-        "Nie wiem co tu napisac ale mam nadzieje ze nikt tego nie przeczyta "
-        "(a przynajmniej ze zrozumieniem). Jesli jednak przeczytasz to ze "
-        "zrozumieniem to napisz do mnie na priv to powiem ci cos milego. "
-        "Nie no zartowalem ja nie jestem mily.",
+        "Mi scias, kio estas. "
+            "Ci tio estos tre longa alineo car mi bezonas multan tekston. "
+            "Mi ne scias, kion skribi ci tie, sed mi esperas, ke neniu ĝin legos (au almenau kun kompreno) "
+            "Sed se vi legis gin de komprenu ci tion, "
+            "skribu al mi en priv, mi diros al vi ion belan. "
+            "Mi ŝercis, mi ne estas bela. ",
         ch);
 
     await pagination.paginate(timeout: const Duration(minutes: 15));
@@ -30,8 +30,8 @@ void main() async {
         ch,
         "Ttul",
         {
-          utils.EmojisUnicode.stopwatch: "Stopwatch",
-          utils.EmojisUnicode.abcd: "abcd"
+          nyxx.UnicodeEmoji(utils.emojisUnicode['stopwatch']): "Stopwatch",
+          nyxx.UnicodeEmoji(utils.emojisUnicode['abcd']): "abcd"
         },
         timeout: const Duration(seconds: 10));
 
