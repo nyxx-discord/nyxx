@@ -169,7 +169,7 @@ class Nyxx {
   /// Logger instance
   Logger logger = Logger.detached("Client");
 
-  /// Gets an bot invite link. Null if [clientId] not present.
+  /// Gets an bot invite link
   String get inviteLink =>
       "https://discordapp.com/oauth2/authorize?&client_id=${this.app.id.toString()}&scope=bot&permissions=0";
 
