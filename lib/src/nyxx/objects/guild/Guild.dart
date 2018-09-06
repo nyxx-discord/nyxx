@@ -106,14 +106,14 @@ class Guild extends SnowflakeEntity {
       this.splash = raw['splash'] as String;
       this.ownerID = Snowflake(raw['owner_id'] as String);
 
-      this.emojis = Map<Snowflake, GuildEmoji>();
-      raw['emojis'].forEach((dynamic o) {
-        GuildEmoji._new(this.client, o as Map<String, dynamic>, this);
-      });
-
       this.roles = Map<Snowflake, Role>();
       raw['roles'].forEach((dynamic o) {
         Role._new(this.client, o as Map<String, dynamic>, this);
+      });
+
+      this.emojis = Map<Snowflake, GuildEmoji>();
+      raw['emojis'].forEach((dynamic o) {
+        GuildEmoji._new(this.client, o as Map<String, dynamic>, this);
       });
 
       this.shard = this.client.shards[(int.parse(this.id.toString()) >> 22) %
