@@ -45,9 +45,8 @@ class GuildEmoji extends Emoji {
   }
 
   /// Creates partial object - only [id] and [name]
-  GuildEmoji._partial(this.raw) : super("") {
+  GuildEmoji._partial(this.raw) : super(raw['name'] as String) {
     this.id = Snowflake(raw['id'] as String);
-    this.name = raw['name'] as String;
   }
 
   Future<GuildEmoji> edit({String name, List<Snowflake> roles}) async {

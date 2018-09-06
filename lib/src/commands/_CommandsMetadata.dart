@@ -26,8 +26,6 @@ class _CommandMetadata {
       [this.preprocessors = const [],
       this.postprocessors = const []]);
 
-  bool get _classEnclosed => parent is ClassMirror;
-
   List<List<String>> get commandString {
     if (classCommand != null) if (methodCommand.main != null &&
         methodCommand.main)
