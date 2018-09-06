@@ -36,7 +36,7 @@ class CommandsFramework {
   bool ignoreBots = true;
 
   /// Sets default bots game
-  set game(Game game) => _client.user.setGame(game);
+  set game(Presence game) => _client.user.setGame(game);
 
   /// Fires when invoked command dont exists in registry
   Stream<Message> onCommandNotFound;
@@ -460,7 +460,7 @@ class CommandsFramework {
 
     // Check if command requires server owner
     if (executionCode == -1 && annot.owner != null && annot.owner)
-      executionCode = e.guild.ownerID == e.author.id ? 100 : 0;
+      executionCode = e.guild.owner.id == e.author.id ? 100 : 0;
 
     //Check if user is on cooldown
     if (executionCode == -1) {
@@ -658,6 +658,6 @@ class CommandsFramework {
 
   bool _isUserAdmin(Snowflake authorId, Guild guild) {
     return (admins != null && admins.any((i) => i == authorId)) ||
-        guild.ownerID == authorId;
+        guild.owner.id == authorId;
   }
 }

@@ -66,7 +66,7 @@ class Guild extends SnowflakeEntity {
   bool available;
 
   /// The guild owner's ID
-  Snowflake ownerID;
+  User owner;
 
   /// The guild's members.
   Map<Snowflake, Member> members;
@@ -82,6 +82,9 @@ class Guild extends SnowflakeEntity {
 
   /// Cached guild webhookds. It's null until `getWebhooks` is called.
   Map<Snowflake, Webhook> webhooks;
+
+  /// Permission of current(bot) user in this guild
+  Permissions currentUserPermissions;
 
   /// The shard that the guild is on.
   Shard shard;
@@ -104,7 +107,6 @@ class Guild extends SnowflakeEntity {
       this.mfaLevel = raw['mfa_level'] as int;
       this.embedEnabled = raw['embed_enabled'] as bool;
       this.splash = raw['splash'] as String;
-      this.ownerID = Snowflake(raw['owner_id'] as String);
 
       this.roles = Map<Snowflake, Role>();
       raw['roles'].forEach((dynamic o) {
@@ -142,10 +144,24 @@ class Guild extends SnowflakeEntity {
             member.status = o['status'] as String;
             if (o['game'] != null) {
               member.game =
-                  Game._new(client, o['game'] as Map<String, dynamic>);
+                  Presence._new(client, o['game'] as Map<String, dynamic>);
             }
           }
         });
+
+        this.owner = this.members[Snowflake(raw['owner_id'] as String)];
+
+        if(raw['permissions'] != null)
+          this.currentUserPermissions = Permissions.fromInt(raw['permissions'] as int);
+
+        if(raw['voice_states'] != null) {
+          raw['voice_states'].forEach((o) {
+            var state = VoiceState._new(this.client, o as Map<String, dynamic>);
+
+            if(state != null && state.user != null)
+              this.client._voiceStates[state.user.id] = state;
+          });
+        }
 
         if (raw['afk_channel_id'] != null) {
           var snow = Snowflake(raw['afk_channel_id'] as String);

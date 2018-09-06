@@ -39,7 +39,7 @@ class Shard {
     _zlib = ZLibDecoder();
   }
 
-  void setPresence({String status, bool afk, Game game}) {
+  void setPresence({String status, bool afk, Presence game}) {
     Map<String, dynamic> packet = {
       "afk": afk,
       "since": null,
