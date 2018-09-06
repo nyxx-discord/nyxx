@@ -1,3 +1,9 @@
+import 'package:nyxx/nyxx.dart';
+
+
+UnicodeEmoji getEmoji(String name) => UnicodeEmoji(emojisUnicode[name]);
+
+/// Map of all emojis which discord uses. Key is unicode name of emoji.
 Map<String, String> emojisUnicode = {
   "grinning": "😀",
   "grimacing": "😬",

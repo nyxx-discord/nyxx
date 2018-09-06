@@ -19,7 +19,12 @@ class UnicodeEmoji extends Emoji {
   String format() => encode();
 
   @override
-  bool operator ==(other) => other is Emoji && other.name == this.name;
+  bool operator ==(other) {
+    if(other is UnicodeEmoji) return other.code == this.code;
+    if(other is String) return other == this.code;
+
+    return false;
+  }
 
   @override
   int get hashCode => super.hashCode * 37 + code.hashCode;

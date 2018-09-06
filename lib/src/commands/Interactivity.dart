@@ -96,43 +96,41 @@ class Pagination {
   /// Paginates a list of Strings - each String is different page.
   Future<Message> paginate(
       {Duration timeout = const Duration(minutes: 2)}) async {
-    var nextEmoji = util.emojisUnicode['arrow_forward'];
-    var backEmoji = util.emojisUnicode['arrow_backward'];
-    var firstEmoji = util.emojisUnicode['track_previous'];
-    var lastEmoji = util.emojisUnicode['track_next'];
+    var nextEmoji = util.getEmoji('arrow_forward');
+    var backEmoji = util.getEmoji('arrow_backward');
+    var firstEmoji = util.getEmoji('track_previous');
+    var lastEmoji = util.getEmoji('track_next');
 
     var msg = await channel.send(content: pages[0]);
-    await msg.createReaction(UnicodeEmoji(firstEmoji));
-    await msg.createReaction(UnicodeEmoji(backEmoji));
-    await msg.createReaction(UnicodeEmoji(nextEmoji));
-    await msg.createReaction(UnicodeEmoji(lastEmoji));
+    await msg.createReaction(firstEmoji);
+    await msg.createReaction(backEmoji);
+    await msg.createReaction(nextEmoji);
+    await msg.createReaction(lastEmoji);
 
     Future(() async {
       var currPage = 0;
       var group = util.merge([
-        msg.onReactionAdded,
-        msg.onReactionRemove
+        msg.client.onMessageReactionAdded,
+        msg.client.onMessageReactionsRemoved
       ]);
 
       await for (var event in group) {
         var emoji = (event as dynamic).emoji as UnicodeEmoji;
 
-        print("ELO: ${emoji.code}");
-
-        if (emoji.code == nextEmoji) {
+        if (emoji == nextEmoji) {
           if (currPage <= pages.length - 2) {
             ++currPage;
             await msg.edit(content: pages[currPage]);
           }
-        } else if (emoji.code == backEmoji) {
+        } else if (emoji == backEmoji) {
           if (currPage >= 1) {
             --currPage;
             await msg.edit(content: pages[currPage]);
           }
-        } else if (emoji.code == firstEmoji) {
+        } else if (emoji == firstEmoji) {
           await msg.edit(content: pages.first);
           currPage = 0;
-        } else if (emoji.code == lastEmoji) {
+        } else if (emoji == lastEmoji) {
           await msg.edit(content: pages.last);
           currPage = pages.length;
         }

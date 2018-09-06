@@ -602,7 +602,7 @@ class CommandsFramework {
           collected.add(e.guild.emojis[Snowflake(id)]);
           break;
         case UnicodeEmoji:
-          collected.add(util.emojisUnicode[splitted[index]]);
+          collected.add(util.emojisUnicode[splitted[index]..replaceAll(":", "")]);
           break;
         default:
           if (_typeConverters == null) return false;
