@@ -31,10 +31,10 @@ class ClientUser extends User {
   ///```
   ///user.setGame(Game.of("<3"))
   ///```
-  ClientUser setGame(Game game) => this.setPresence(game: game);
+  ClientUser setGame(Presence game) => this.setPresence(game: game);
 
   /// Updates the client's presence
-  ClientUser setPresence({String status, bool afk = false, Game game}) {
+  ClientUser setPresence({String status, bool afk = false, Presence game}) {
     this.client.shards.forEach((int id, Shard shard) {
       shard.setPresence(status: status, afk: afk, game: game);
     });

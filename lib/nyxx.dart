@@ -117,7 +117,7 @@ part 'src/nyxx/objects/embed/EmbedThumbnail.dart';
 
 part 'src/nyxx/objects/guild/ClientUser.dart';
 part 'src/nyxx/objects/guild/Guild.dart';
-part 'src/nyxx/objects/guild/Game.dart';
+part 'src/nyxx/objects/guild/Presence.dart';
 part 'src/nyxx/objects/guild/Member.dart';
 part 'src/nyxx/objects/guild/Role.dart';
 part 'src/nyxx/objects/guild/User.dart';

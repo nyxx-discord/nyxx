@@ -10,7 +10,7 @@ class Member extends User {
 
   /// User's presence.
   /// https://discordapp.com/developers/docs/topics/gateway#activity-object-activity-structure
-  Game presence;
+  Presence presence;
 
   /// When the member joined the guild.
   DateTime joinedAt;
@@ -22,7 +22,7 @@ class Member extends User {
   bool mute;
 
   /// The member's game.
-  Game game;
+  Presence game;
 
   /// A list of role IDs the member has.
   List<Role> roles;
@@ -64,7 +64,7 @@ class Member extends User {
       this.joinedAt = DateTime.parse(data['joined_at'] as String);
 
     if (data['game'] != null)
-      this.game = Game._new(this.client, data['game'] as Map<String, dynamic>);
+      this.game = Presence._new(this.client, data['game'] as Map<String, dynamic>);
 
     if (guild != null) this.guild.members[this.id] = this;
     client.users[this.id] = this;

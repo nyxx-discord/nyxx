@@ -1,7 +1,7 @@
 part of nyxx;
 
 /// A game.
-class Game {
+class Presence {
   /// The raw object returned by the API
   Map<String, dynamic> raw;
 
@@ -45,13 +45,13 @@ class Game {
   String url;
 
   /// Makes a new game object.
-  Game.of(this.name, {this.type = 0, this.url}) {
+  Presence.of(this.name, {this.type = 0, this.url}) {
     this.raw = {"name": name, "type": type, "url": url};
   }
 
-  Game._new(Nyxx client, this.raw) {
+  Presence._new(Nyxx client, this.raw) {
     this.name = raw['name'] as String;
-    this.url = raw['name'] as String;
+    this.url = raw['url'] as String;
     this.type = raw['type'] as int;
 
     if (raw['timestamps'] != null) {
