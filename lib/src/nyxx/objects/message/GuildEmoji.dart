@@ -15,7 +15,7 @@ class GuildEmoji extends Emoji {
   Snowflake id;
 
   /// Roles this emoji is whitelisted to
-  List<Role> rolesIds;
+  List<Role> roles;
 
   /// whether this emoji must be wrapped in colons
   bool requireColons;
@@ -35,10 +35,10 @@ class GuildEmoji extends Emoji {
     this.animated = raw['animated'] as bool;
 
     if (raw['roles'] != null) {
-      this.rolesIds = List();
+      this.roles = List();
 
       raw['roles'].forEach(
-          (o) => this.rolesIds.add(this.guild.roles[Snowflake(o as String)]));
+          (o) => this.roles.add(this.guild.roles[Snowflake(o as String)]));
     }
 
     this.guild.emojis[this.id] = this;
