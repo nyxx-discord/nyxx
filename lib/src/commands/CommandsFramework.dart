@@ -602,8 +602,7 @@ class CommandsFramework {
           collected.add(e.guild.emojis[Snowflake(id)]);
           break;
         case UnicodeEmoji:
-          var code = splitted[index].codeUnits[0].toRadixString(16);
-          collected.add(await util.EmojisUnicode.fromHexCode(code));
+          collected.add(util.emojisUnicode[splitted[index]]);
           break;
         default:
           if (_typeConverters == null) return false;
