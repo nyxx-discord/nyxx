@@ -19,7 +19,7 @@ void main() {
   // Register new command handler.
   // It registers your services and adds command to registry.
   command.CommandsFramework('!', bot)
-    ..admins = [const nyxx.Snowflake.static("302359032612651009")]
+    ..admins = [nyxx.Snowflake("302359032612651009")]
     ..registerServices([Service("Siema")])
     ..registerLibraryCommands();
 }
