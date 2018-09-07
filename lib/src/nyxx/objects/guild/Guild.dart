@@ -143,7 +143,7 @@ class Guild extends SnowflakeEntity {
           if (member != null) {
             member.status = o['status'] as String;
             if (o['game'] != null) {
-              member.game =
+              member.presence =
                   Presence._new(client, o['game'] as Map<String, dynamic>);
             }
           }
