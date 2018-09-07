@@ -9,9 +9,12 @@ class RoleDeleteEvent {
     if (client.ready) {
       final Guild guild =
           client.guilds[Snowflake(json['d']['guild_id'] as String)];
-      this.role = guild.roles[Snowflake(json['d']['role_id'] as String)];
-      guild.roles.remove(role.id);
-      client._events.onRoleDelete.add(this);
+
+      if(guild != null) {
+        this.role = guild.roles[Snowflake(json['d']['role_id'] as String)];
+        guild.roles.remove(role.id);
+        client._events.onRoleDelete.add(this);
+      }
     }
   }
 }
