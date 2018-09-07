@@ -12,7 +12,8 @@ part of nyxx.commands;
 /// @Module("cmd")
 /// class ExampleCommand {
 ///   // Invoked when message == `!cmd`
-///   @Command(main: true)
+///   // main command is implicit, so you can leave 'main: true'
+///   @Command()
 ///   Future main() async {
 ///    await reply(content: "Some reply");
 ///   }
