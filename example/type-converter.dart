@@ -28,7 +28,7 @@ void main() {
 
   // Creating new CommandsFramework object and registering commands.
   command.CommandsFramework('!', bot)
-    ..admins = [const nyxx.Snowflake.static("302359032612651009")]
+    ..admins = [nyxx.Snowflake("302359032612651009")]
     // You can register type converter by hand
     ..registerTypeConverters([ExConverter()])
     ..registerLibraryCommands();
