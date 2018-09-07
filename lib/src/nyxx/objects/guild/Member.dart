@@ -8,10 +8,6 @@ class Member extends User {
   /// The member's status, `offline`, `online`, `idle`, or `dnd`.
   String status;
 
-  /// User's presence.
-  /// https://discordapp.com/developers/docs/topics/gateway#activity-object-activity-structure
-  Presence presence;
-
   /// When the member joined the guild.
   DateTime joinedAt;
 
@@ -22,7 +18,7 @@ class Member extends User {
   bool mute;
 
   /// The member's game.
-  Presence game;
+  Presence presence;
 
   /// A list of role IDs the member has.
   List<Role> roles;
@@ -41,8 +37,16 @@ class Member extends User {
       .where((r) => r.color != null)
       .reduce((f, s) => f.position > s.position ? f : s);
 
+  /// Returns total permissions of user.
+  Permissions get totalPermissions {
+    var total = 0;
+    for (var role in roles) total |= role.permissions.raw;
+
+    return Permissions.fromInt(total);
+  }
+
   Member._new(Nyxx client, Map<String, dynamic> data, [Guild guild])
-      : super._new(client, data) {
+      : super._new(client, data['user'] as Map<String, dynamic>) {
     this.nickname = data['nick'] as String;
     this.deaf = data['deaf'] as bool;
     this.mute = data['mute'] as bool;
@@ -64,7 +68,7 @@ class Member extends User {
       this.joinedAt = DateTime.parse(data['joined_at'] as String);
 
     if (data['game'] != null)
-      this.game = Presence._new(this.client, data['game'] as Map<String, dynamic>);
+      this.presence = Presence._new(this.client, data['game'] as Map<String, dynamic>);
 
     if (guild != null) this.guild.members[this.id] = this;
     client.users[this.id] = this;
@@ -105,14 +109,6 @@ class Member extends User {
     await this.client.http.send(
         'DELETE', "/guilds/${this.guild.id}/members/${this.id}",
         reason: auditReason);
-  }
-
-  /// Returns total permissions of user.
-  Future<Permissions> getTotalPermissions() async {
-    var total = 0;
-    for (var role in roles) total |= role.permissions.raw;
-
-    return Permissions.fromInt(total);
   }
 
   Future<void> edit(
