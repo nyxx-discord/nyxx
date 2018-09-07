@@ -1,6 +1,9 @@
 part of nyxx;
 
-/// An internal shard.
+ZLibDecoder _zlib = new ZLibDecoder();
+
+/// Discord gateways implement a method of user-controlled guild sharding which allows for splitting events across a number of gateway connections.
+/// Guild sharding is entirely user controlled, and requires no state-sharing between separate connections to operate.
 class Shard {
   /// The shard id.
   int id;
@@ -24,7 +27,6 @@ class Shard {
   String _sessionId;
   StreamController<Shard> _onReady;
   StreamController<Shard> _onDisconnect;
-  ZLibDecoder _zlib;
 
   Logger _logger = Logger.detached("Websocket");
 
@@ -35,8 +37,6 @@ class Shard {
 
     this._onDisconnect = StreamController<Shard>.broadcast();
     this.onDisconnect = this._onDisconnect.stream;
-
-    _zlib = ZLibDecoder();
   }
 
   void setPresence({String status, bool afk, Presence game}) {

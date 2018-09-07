@@ -10,7 +10,7 @@ class Snowflake implements Comparable<Snowflake> {
   DateTime _timestamp;
 
   /// Full snowflake id
-  String get id => id;
+  String get id => _id;
 
   /// Returns timestamp included in [Snowflake]
   /// [Snowflake reference](https://discordapp.com/developers/docs/reference#snowflakes)
