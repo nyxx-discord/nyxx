@@ -1,6 +1,6 @@
 part of nyxx;
 
-/// Represents [Guild]s audit log.
+/// Whenever an admin action is performed on the API, an entry is added to the respective guild's audit log.
 ///
 /// [Look here for more](https://discordapp.com/developers/docs/resources/audit-log)
 class AuditLog {
@@ -13,7 +13,7 @@ class AuditLog {
   /// List of users found in the audit log
   Map<Snowflake, User> users;
 
-  /// List of audit log entires
+  /// List of audit log entries
   Map<Snowflake, AuditLogEntry> entries;
 
   /// Raw data returned by API
