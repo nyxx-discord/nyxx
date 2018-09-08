@@ -91,8 +91,6 @@ part 'src/nyxx/objects/voice/VoiceState.dart';
 part 'src/nyxx/objects/voice/VoiceRegion.dart';
 
 part 'src/nyxx/objects/invite/Invite.dart';
-part 'src/nyxx/objects/invite/InviteChannel.dart';
-part 'src/nyxx/objects/invite/InviteGuild.dart';
 
 part 'src/nyxx/objects/auditlogs/AuditLog.dart';
 part 'src/nyxx/objects/auditlogs/AuditLogEntry.dart';
