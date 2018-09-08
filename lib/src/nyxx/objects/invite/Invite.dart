@@ -20,11 +20,32 @@ class Invite {
   /// Returns url invite
   String get url => "https://discord.gg/$code";
 
+  /// Date when invite was created
+  DateTime createdAt;
+
+  /// True if invite is temporary
+  bool temporary;
+
+  /// Number of uses of this invite
+  int uses;
+
+  /// Max number of uses of this invite
+  int maxUses;
+
+  /// User who created this invite
+  User inviter;
+  
   Invite._new(this.client, this.raw) {
     this.code = raw['code'] as String;
     this.guild = client.guilds[Snowflake(raw['guild']['id'] as String)];
     this.channel = client.channels[Snowflake(raw['channel']['id'] as String)]
         as GuildChannel;
+
+    this.createdAt = DateTime.parse(raw['created_at'] as String);
+    this.temporary = raw['temporary'] as bool;
+    this.uses = raw['uses'] as int;
+    this.maxUses = raw['max_uses'] as int;
+    this.inviter = client.users[Snowflake(raw['inviter']['id'] as String)];
   }
 
   /// Deletes this Invite.
