@@ -48,7 +48,7 @@ class CooldownCommand extends command.CommandContext {
 nyxx.EmbedBuilder createTestEmbed() {
   return nyxx.EmbedBuilder()
     ..title = "Test title"
-    ..addField(name: "Test field", value: "Test value");
+    ..addField(name: "Test field", content: "Test value");
 }
 
 // -------------------------------------------------------
