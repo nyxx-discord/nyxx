@@ -1,7 +1,7 @@
 part of nyxx;
 
 /// [Message] class represents single message. It contains it's Event [Stream]s.
-/// [Message] among all it's properties has also backreference to [Channel] from which it was sent, [Guild] and [User] which sent this message.
+/// [Message] among all it's poperties has also backreference to [Channel] from which it was sent, [Guild] and [User] which sent this message.
 /// Supports sending files via `sendFile()` - method can send file or file and use it in embed. Read how to use it [here](https://github.com/l7ssha/nyxx/wiki/Embeds)
 class Message extends SnowflakeEntity {
   StreamController<MessageUpdateEvent> _onUpdate;
@@ -24,9 +24,6 @@ class Message extends SnowflakeEntity {
 
   /// The timestamp of when the message was last edited, null if not edited.
   DateTime editedTimestamp;
-
-  /// The timestamp when message was sent.
-  DateTime sendTimestamp;
 
   /// Channel in which message was sent
   MessageChannel channel;
@@ -60,9 +57,6 @@ class Message extends SnowflakeEntity {
 
   /// Whether or @everyone was mentioned in the message.
   bool mentionEveryone;
-
-  /// Message type. See: https://discordapp.com/developers/docs/resources/channel#message-object-message-types
-  int type;
 
   /// List of message reactions
   List<Reaction> reactions;
@@ -107,10 +101,6 @@ class Message extends SnowflakeEntity {
     this.pinned = raw['pinned'] as bool;
     this.tts = raw['tts'] as bool;
     this.mentionEveryone = raw['mention_everyone'] as bool;
-
-    this.type = raw['type'] as int;
-
-    this.sendTimestamp = DateTime.parse(raw['timestamp'] as String);
 
     this.channel._cacheMessage(this);
     this.channel.lastMessageID = this.id;

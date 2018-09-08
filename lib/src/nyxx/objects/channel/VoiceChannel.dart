@@ -17,12 +17,6 @@ class VoiceChannel extends Channel with GuildChannel {
     this.guild.channels[this.id] = this;
   }
 
-  Future<Iterable<User>> getChannelMembers() async {
-    return client._voiceStates.values
-        .where((t) => t.channel != null && t.channel.id == this.id)
-        .map((f) => f.user);
-  }
-
   /// Edits the channel.
   Future<VoiceChannel> edit(
       {String name,
