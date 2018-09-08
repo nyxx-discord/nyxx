@@ -15,7 +15,6 @@ class ClientOAuth2Application extends OAuth2Application {
   }
 
   /// Creates an OAuth2 URL with the specified permissions.
-  String makeOAuth2Url([int permissions = 0]) {
-    return "https://discordapp.com/oauth2/authorize?client_id=$id&scope=bot&permissions=$permissions";
-  }
+  String makeOAuth2Url([int permissions = 0]) =>
+      "https://discordapp.com/oauth2/authorize?client_id=$id&scope=bot&permissions=$permissions";
 }

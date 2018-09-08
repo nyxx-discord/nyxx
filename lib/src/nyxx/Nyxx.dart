@@ -1,7 +1,8 @@
 part of nyxx;
 
-/// Class representing client - it's place to start with.
+/// The main hub for interacting with the Discord API, and the starting point for any bot.
 /// From there you can subscribe to various [Stream]s to listen to [Events](https://github.com/l7ssha/nyxx/wiki/EventList)
+/// and fetch data provided and collected by bot.
 ///
 /// Creating new instance of bot:
 /// ```
@@ -169,9 +170,8 @@ class Nyxx {
   /// Logger instance
   Logger logger = Logger.detached("Client");
 
-  /// Gets an bot invite link
-  String get inviteLink =>
-      "https://discordapp.com/oauth2/authorize?&client_id=${this.app.id.toString()}&scope=bot&permissions=0";
+  /// Gets an bot invite link with zero permissions
+  String get inviteLink => app.makeOAuth2Url();
 
   /// Creates and logs in a new client.
   Nyxx(this._token, {ClientOptions options, bool ignoreExceptions = true}) {
