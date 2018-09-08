@@ -484,7 +484,7 @@ class CommandsFramework {
 
     // Check if user has required permissions
     if (executionCode == -1 && annot.userPermissions != null) {
-      var total = await member.getTotalPermissions();
+      var total = member.totalPermissions;
       for (var perm in annot.userPermissions) {
         if ((total.raw | perm) == 0) {
           executionCode = 1;
@@ -502,11 +502,11 @@ class CommandsFramework {
           .substring(topic.indexOf("[") + 1, topic.indexOf("]"))
           .split(",")
           .map((f) => f.trim());
-
       var total = false;
       for (var topic in annot.topics) {
         if (list.contains(topic)) {
           total = true;
+          break;
         }
       }
 
@@ -516,7 +516,7 @@ class CommandsFramework {
     // Check if bot has required permissions
     if (executionCode == -1 && annot.userPermissions != null) {
       var total =
-          await (await e.guild.getMember(_client.user)).getTotalPermissions();
+        (await e.guild.getMember(_client.user)).totalPermissions;
       for (var perm in annot.userPermissions) {
         if ((total.raw | perm) == 0) {
           executionCode = 6;
