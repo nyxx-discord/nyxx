@@ -24,7 +24,7 @@ class Nyxx {
   _EventController _events;
 
   // Users state cache
-  Map<Snowflake, VoiceState> _voiceStates;
+  Map<Snowflake, UserVoiceState> _voiceStates;
 
   /// The HTTP client.
   Http http;
@@ -188,7 +188,7 @@ class Nyxx {
       throw Exception("Token cannot be null or empty");
     if (this._options == null) this._options = ClientOptions();
 
-    this._voiceStates = Map<Snowflake, VoiceState>();
+    this._voiceStates = Map<Snowflake, UserVoiceState>();
     this.guilds = Map<Snowflake, Guild>();
     this.channels = Map<Snowflake, Channel>();
     this.users = Map<Snowflake, User>();
@@ -245,7 +245,7 @@ class Nyxx {
     var r = await this.http.send("GET", "/guilds/${id.toString()}");
     return Guild._new(this, r.body as Map<String, dynamic>);
   }
-
+  
   /// Creates new guild with provided builder.
   /// If the [id] will be in cache - it will be taken from it, otherwise API will be called.
   ///
