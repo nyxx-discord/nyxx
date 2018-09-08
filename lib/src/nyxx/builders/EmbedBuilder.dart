@@ -42,14 +42,13 @@ class EmbedBuilder implements Builder {
   /// Embed custom fields;
   List<Map<String, dynamic>> _fields;
 
-  /// Bootstraper for [EmbedBuilder].
   EmbedBuilder() {
     _fields = List();
   }
 
-  /// Adds field to embed. [name] and [value] fields are required. Inline is set to false by default.
-  void addField({String name, String value, bool inline = false}) {
-    _fields.add(EmbedFieldBuilder(name, value, inline)._build());
+  /// Adds field to embed. [name] and [content] fields are required. Inline is set to false by default.
+  void addField({String name, String content, bool inline = false}) {
+    _fields.add(EmbedFieldBuilder(name, content, inline)._build());
   }
 
   /// Added field to embed using [EmbedFieldBuilder]

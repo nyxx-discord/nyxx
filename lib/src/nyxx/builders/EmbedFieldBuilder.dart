@@ -12,7 +12,7 @@ class EmbedFieldBuilder implements Builder {
   bool inline;
 
   /// Constructs new instance of Field
-  EmbedFieldBuilder(this.name, this.content, this.inline);
+  EmbedFieldBuilder([this.name, this.content, this.inline]);
 
   @override
 
@@ -20,8 +20,16 @@ class EmbedFieldBuilder implements Builder {
   Map<String, dynamic> _build() {
     Map<String, dynamic> tmp = Map();
 
-    if (name != null) tmp["name"] = name;
-    if (content != null) tmp["value"] = content;
+    if(name != null)
+      tmp["name"] = name;
+    else
+      tmp["name"] = "\u200B";
+
+    if(content != null)
+      tmp["value"] = content;
+    else
+      tmp["value"] = "\u200B";
+
     if (inline != null)
       tmp["inline"] = inline;
     else
