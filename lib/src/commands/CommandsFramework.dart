@@ -254,8 +254,6 @@ class CommandsFramework {
     //Insert 2 keyword messages first
     _commands.sort((first, second) =>
         -first.commandString.length.compareTo(second.commandString.length));
-
-    print(_commands.map((d) => d.commandString));
   }
 
   /// Creates help String based on registered commands metadata.
