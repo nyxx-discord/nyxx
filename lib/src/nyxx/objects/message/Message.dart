@@ -31,11 +31,8 @@ class Message extends SnowflakeEntity {
   /// The message's guild.
   Guild guild;
 
-  /// The message's author. Can be [Member] if message sent in guild
+  /// The message's author. Can be instance of member
   User author;
-
-  /// Guild member if context is guild.
-  Member member;
 
   /// The mentions in the message.
   Map<Snowflake, User> mentions;
@@ -105,10 +102,13 @@ class Message extends SnowflakeEntity {
     this.channel._cacheMessage(this);
     this.channel.lastMessageID = this.id;
 
-    this.author = User._new(this.client, raw['author'] as Map<String, dynamic>);
+    //this.author = User._new(this.client, raw['author'] as Map<String, dynamic>);
     if (this.channel is TextChannel) {
       this.guild = (this.channel as TextChannel).guild;
-      this.member = guild.members[author.id];
+      this.author = this.guild.members[Snowflake(raw['author']['id'] as String)];
+
+      if(this.author == null)
+        this.author = User._new(this.client, raw['author'] as Map<String, dynamic>);
 
       if (raw['mention_roles'] != null) {
         this.roleMentions = Map<Snowflake, Role>();
@@ -122,27 +122,27 @@ class Message extends SnowflakeEntity {
     if (raw['edited_timestamp'] != null)
       this.editedTimestamp = DateTime.parse(raw['edited_timestamp'] as String);
 
+    this.mentions = Map<Snowflake, User>();
     raw['mentions'].forEach((dynamic o) {
-      this.mentions = Map<Snowflake, User>();
       final User user = User._new(this.client, o as Map<String, dynamic>);
       this.mentions[user.id] = user;
     });
 
+    this.embeds = Map<String, Embed>();
     raw['embeds'].forEach((dynamic o) {
-      this.embeds = Map<String, Embed>();
       Embed embed = Embed._new(this.client, o as Map<String, dynamic>);
       this.embeds[embed.title] = embed;
     });
 
+    this.attachments = Map<Snowflake, Attachment>();
     raw['attachments'].forEach((dynamic o) {
-      this.attachments = Map<Snowflake, Attachment>();
       final Attachment attachment =
           Attachment._new(this.client, o as Map<String, dynamic>);
       this.attachments[attachment.id] = attachment;
     });
 
+    this.reactions = List<Reaction>();
     if (raw['reactions'] != null) {
-      this.reactions = List<Reaction>();
       raw['reactions'].forEach((dynamic o) {
         this.reactions.add(Reaction._new(o as Map<String, dynamic>));
       });

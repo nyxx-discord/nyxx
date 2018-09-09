@@ -495,13 +495,20 @@ class Guild extends SnowflakeEntity {
   /// ```
   /// var member = guild.getMember(user);
   /// ```
-  Future<Member> getMember(User user) async {
-    if (this.members.containsKey(user.id)) return this.members[user.id];
+  Future<Member> getMember(User user) async => getMemberById(user.id);
+
+  /// Gets a [Member] object by id. Caches fetched member if not cached.
+  ///
+  /// ```
+  /// var member = guild.getMember(Snowflake('302359795648954380'));
+  /// ```
+  Future<Member> getMemberById(Snowflake id) async {
+    if (this.members.containsKey(id)) return this.members[id];
 
     final HttpResponse r = await this
         .client
         .http
-        .send('GET', '/guilds/${this.id}/members/${user.id.toString()}');
+        .send('GET', '/guilds/${this.id}/members/${id.toString()}');
 
     return Member._new(this.client, r.body as Map<String, dynamic>, this);
   }
