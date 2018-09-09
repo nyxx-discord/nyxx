@@ -46,7 +46,7 @@ class Member extends User {
   }
 
   Member._new(Nyxx client, Map<String, dynamic> data, [Guild guild])
-      : super._new(client, data['user'] as Map<String, dynamic>) {
+      : super._new(client, data['user'] as Map<String, dynamic>, false) {
     this.nickname = data['nick'] as String;
     this.deaf = data['deaf'] as bool;
     this.mute = data['mute'] as bool;

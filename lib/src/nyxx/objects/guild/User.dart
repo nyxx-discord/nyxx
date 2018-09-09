@@ -31,7 +31,7 @@ class User extends SnowflakeEntity with ISend {
       ? client._voiceStates[this.id]
       : null;
 
-  User._new(this.client, this.raw) : super(Snowflake(raw['id'] as String)) {
+  User._new(this.client, this.raw, [bool cache = true]) : super(Snowflake(raw['id'] as String)) {
     this.username = raw['username'] as String;
     this.discriminator = raw['discriminator'] as String;
     this.avatar = raw['avatar'] as String;
@@ -39,7 +39,8 @@ class User extends SnowflakeEntity with ISend {
     // This will not be set at all in some cases.
     if (raw['bot'] != null) this.bot = raw['bot'] as bool;
 
-    client.users[this.id] = this;
+    if(cache)
+      client.users[this.id] = this;
   }
 
   /// The user's avatar, represented as URL.
