@@ -24,7 +24,7 @@ void main() {
 
       // Create embed with previously created author section.
       var embed = nyxx.EmbedBuilder()
-        ..addField(name: "Example field title", value: "Example value")
+        ..addField(name: "Example field title", content: "Example value")
         ..author = author;
 
       // Sent an embed

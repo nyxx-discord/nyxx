@@ -156,10 +156,8 @@ class CommandsFramework {
     var toInject = List<dynamic>();
 
     for (var param in params) {
-      var type = param.type.reflectedType;
-
       for (var service in _services) {
-        if (service.runtimeType == type) toInject.add(service);
+        if (param.type.reflectedType == service.runtimeType || param.type.isAssignableTo(reflectType(service.runtimeType))) toInject.add(service);
       }
     }
     return toInject;
@@ -256,6 +254,8 @@ class CommandsFramework {
     //Insert 2 keyword messages first
     _commands.sort((first, second) =>
         -first.commandString.length.compareTo(second.commandString.length));
+
+    print(_commands.map((d) => d.commandString));
   }
 
   /// Creates help String based on registered commands metadata.
@@ -400,7 +400,7 @@ class CommandsFramework {
       case -2:
       case 100:
         dynamic res;
-        try {
+        //try {
           splittedCommand.removeRange(0, matchedMeta.commandString.length);
           var methodInj = await _injectParameters(
               matchedMeta.method, splittedCommand, e.message);
@@ -429,12 +429,12 @@ class CommandsFramework {
                   ..add(context)
                   ..addAll(methodInj));
           }
-        } catch (err, stacktrace) {
-          _commandExecutionFail
-              .add(CommandExecutionFailEvent._new(e.message, err));
-          res = err;
-          logger.severe("ERROR OCCURED WHEN INVOKING COMMAND \n $stacktrace");
-        }
+        //} catch (err, stacktrace) {
+        //  _commandExecutionFail
+        //      .add(CommandExecutionFailEvent._new(e.message, err));
+        //  res = err;
+        //  logger.severe("ERROR OCCURED WHEN INVOKING COMMAND \n $err \n $stacktrace");
+        //}
 
         if (matchedMeta.postprocessors.length > 0) {
           for (var post in matchedMeta.postprocessors)

@@ -56,6 +56,19 @@ class PongCommand extends command.CommandContext {
   }
 }
 
+@command.Module("kk")
+class SomeThings extends command.CommandContext {
+  @command.Command()
+  Future<void> main(String str) async {
+    await reply(content: str);
+  }
+
+  @command.Command(name: "elo")
+  Future<void> siema(String witam, @command.Remainder() List<String> rest) async {
+    await reply(content: [witam, rest]);
+  }
+}
+
 @command.Module("echo")
 class EchoCommand extends command.CommandContext {
   @command.Command(main: true)
