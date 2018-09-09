@@ -10,8 +10,8 @@ class GuildMemberAddEvent {
       final Guild guild =
           client.guilds[Snowflake(json['d']['guild_id'] as String)];
       guild.memberCount++;
-      this.member =
-          Member._new(client, json['d'] as Map<String, dynamic>, guild);
+
+      this.member = Member._new(client, json['d'] as Map<String, dynamic>);
       client._events.onGuildMemberAdd.add(this);
     }
   }
