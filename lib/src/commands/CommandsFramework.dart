@@ -400,7 +400,7 @@ class CommandsFramework {
       case -2:
       case 100:
         dynamic res;
-        //try {
+        try {
           splittedCommand.removeRange(0, matchedMeta.commandString.length);
           var methodInj = await _injectParameters(
               matchedMeta.method, splittedCommand, e.message);
@@ -429,12 +429,12 @@ class CommandsFramework {
                   ..add(context)
                   ..addAll(methodInj));
           }
-        //} catch (err, stacktrace) {
-        //  _commandExecutionFail
-        //      .add(CommandExecutionFailEvent._new(e.message, err));
-        //  res = err;
-        //  logger.severe("ERROR OCCURED WHEN INVOKING COMMAND \n $err \n $stacktrace");
-        //}
+        } catch (err, stacktrace) {
+          _commandExecutionFail
+              .add(CommandExecutionFailEvent._new(e.message, err));
+          res = err;
+          logger.severe("ERROR OCCURED WHEN INVOKING COMMAND \n $err \n $stacktrace");
+        }
 
         if (matchedMeta.postprocessors.length > 0) {
           for (var post in matchedMeta.postprocessors)
