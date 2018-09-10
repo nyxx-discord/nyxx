@@ -41,4 +41,30 @@ class ClientUser extends User {
 
     return this;
   }
+
+  /// Allows to get [Member] objects for all guilds for bot user.
+  Map<Guild, Member> getMembership() {
+    var tmp = Map<Guild, Member>();
+    for (var guild in client.guilds.values)
+      tmp[guild] = guild.members[this.id];
+
+    return tmp;
+  }
+
+  /// Edits current user. This changes user's username - not per guild nickname.
+  Future<User> edit({String username, File avatar}) async {
+    if(username == null && avatar == null)
+      return null;
+
+    var req = Map<String, dynamic>();
+
+    if(username != null)
+      req['username'] = username;
+
+    if(avatar != null)
+      req['avatar'] = "data:image/jpeg;base64,${base64Encode(await avatar.readAsBytes())}";
+
+    var res = await this.client.http.send("PATCh", "/users/@me", body: req);
+    return User._new(this.client, res.body as Map<String, dynamic>);
+  }
 }
