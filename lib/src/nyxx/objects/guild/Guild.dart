@@ -251,25 +251,43 @@ class Guild extends SnowflakeEntity {
     return GuildEmoji._new(this.client, res.body as Map<String, dynamic>, this);
   }
 
+  /// Returns [int] indicating the number of members that would be removed in a prune operation.
+  Future<int> pruneCount(int days) async {
+    HttpResponse r = await this.client.http.send('GET', "/guilds/$id/prune",
+        body: {"days": days});
+    return r.body['pruned'] as int;
+  }
+
   /// Prunes the guild, returns the amount of members pruned.
-  /// https://discordapp.com/developers/docs/resources/guild#begin-guild-prune
+  /// https://discordapp.com/developers/docs/resources/guild#get-guild-prune-count
   Future<int> prune(int days, {String auditReason = ""}) async {
     HttpResponse r = await this.client.http.send('POST', "/guilds/$id/prune",
         body: {"days": days}, reason: auditReason);
-    return r.body as int;
+    return r.body['pruned'] as int;
   }
 
   /// Get's the guild's bans.
-  Future<Map<Snowflake, User>> getBans() async {
+  Future<List<Ban>> getBans() async {
     HttpResponse r = await this.client.http.send('GET', "/guilds/$id/bans");
 
-    Map<Snowflake, User> map = Map();
-    r.body.forEach((k, o) {
-      final User user = User._new(client, o['user'] as Map<String, dynamic>);
-      map[user.id] = user;
+    List<Ban> lst = List();
+    r.body.forEach((o) {
+     lst.add(Ban._new(client, o as Map<String, dynamic>));
     });
 
-    return map;
+    return lst;
+  }
+
+  /// Change self nickname in guild
+  Future<void> changeSelfNick(String nick) async {
+    await this.client.http.send("PATCH", "/guilds/${this.id.toString()}/members/@me/nick",
+      body: { "nick": nick });
+  }
+
+  /// Gets single [Ban] object for given [id]
+  Future<Ban> getBan(Snowflake id) async {
+    var r = await this.client.http.send("GET", "/guilds/${this.id.toString()}/bans/${id.toString()}");
+    return Ban._new(client, r.body as Map<String, dynamic>);
   }
 
   /// Change guild owner.
@@ -453,7 +471,17 @@ class Guild extends SnowflakeEntity {
     await this.client.http.send(
         'PUT', "/guilds/${this.id}/bans/${member.id.toString()}",
         body: {"delete-message-days": deleteMessageDays}, reason: auditReason);
-    return null;
+  }
+
+  /// Kicks user from guild. Member is removed from guild and he is able to rejoin
+  ///
+  /// ```
+  /// await guild.kick(member);
+  /// ```
+  Future<void> kick(Member member, {String auditReason}) async {
+    await this.client.http.send(
+        "DELETE",
+        "/guilds/${this.id.toString()}/members/${member.id.toString()}");
   }
 
   /// Unbans a user by ID.

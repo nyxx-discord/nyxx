@@ -119,6 +119,7 @@ part 'src/nyxx/objects/guild/Presence.dart';
 part 'src/nyxx/objects/guild/Member.dart';
 part 'src/nyxx/objects/guild/Role.dart';
 part 'src/nyxx/objects/guild/User.dart';
+part 'src/nyxx/objects/guild/Ban.dart';
 
 part 'src/nyxx/objects/message/UnicodeEmoji.dart';
 part 'src/nyxx/objects/message/GuildEmoji.dart';
