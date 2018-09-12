@@ -1,9 +1,9 @@
 part of nyxx;
 
-/// Ban object. Has attached reason of ban and user who was banned
+/// Ban object. Has attached reason of ban and user who was banned.
 class Ban {
 
-  /// Ban reason
+  /// Reason of ban
   String reason;
 
   /// Banned user
