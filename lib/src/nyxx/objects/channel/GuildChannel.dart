@@ -14,7 +14,7 @@ abstract class GuildChannel implements Channel {
   /// Parent channel id
   Snowflake parentId;
 
-  /// Indicates if channel is NSFW
+  /// Indicates if channel is nsfw
   bool nsfw;
 
   /// Permissions overwrites for channel.
