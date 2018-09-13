@@ -157,7 +157,9 @@ class CommandsFramework {
 
     for (var param in params) {
       for (var service in _services) {
-        if (param.type.reflectedType == service.runtimeType || param.type.isAssignableTo(reflectType(service.runtimeType))) toInject.add(service);
+        if (param.type.reflectedType == service.runtimeType ||
+            param.type.isAssignableTo(reflectType(service.runtimeType)))
+          toInject.add(service);
       }
     }
     return toInject;
@@ -431,7 +433,8 @@ class CommandsFramework {
           _commandExecutionFail
               .add(CommandExecutionFailEvent._new(e.message, err));
           res = err;
-          logger.severe("ERROR OCCURED WHEN INVOKING COMMAND \n $err \n $stacktrace");
+          logger.severe(
+              "ERROR OCCURED WHEN INVOKING COMMAND \n $err \n $stacktrace");
         }
 
         if (matchedMeta.postprocessors.length > 0) {
@@ -513,8 +516,7 @@ class CommandsFramework {
 
     // Check if bot has required permissions
     if (executionCode == -1 && annot.userPermissions != null) {
-      var total =
-        (await e.guild.getMember(_client.user)).totalPermissions;
+      var total = (await e.guild.getMember(_client.user)).totalPermissions;
       for (var perm in annot.userPermissions) {
         if ((total.raw | perm) == 0) {
           executionCode = 6;
@@ -600,7 +602,8 @@ class CommandsFramework {
           collected.add(e.guild.emojis[Snowflake(id)]);
           break;
         case UnicodeEmoji:
-          collected.add(util.emojisUnicode[splitted[index]..replaceAll(":", "")]);
+          collected
+              .add(util.emojisUnicode[splitted[index]..replaceAll(":", "")]);
           break;
         default:
           if (_typeConverters == null) return false;

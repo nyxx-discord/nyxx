@@ -20,8 +20,8 @@ class UnicodeEmoji extends Emoji {
 
   @override
   bool operator ==(other) {
-    if(other is UnicodeEmoji) return other.code == this.code;
-    if(other is String) return other == this.code;
+    if (other is UnicodeEmoji) return other.code == this.code;
+    if (other is String) return other == this.code;
 
     return false;
   }

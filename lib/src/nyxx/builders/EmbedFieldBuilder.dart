@@ -20,12 +20,12 @@ class EmbedFieldBuilder implements Builder {
   Map<String, dynamic> _build() {
     Map<String, dynamic> tmp = Map();
 
-    if(name != null)
+    if (name != null)
       tmp["name"] = name;
     else
       tmp["name"] = "\u200B";
 
-    if(content != null)
+    if (content != null)
       tmp["value"] = content;
     else
       tmp["value"] = "\u200B";

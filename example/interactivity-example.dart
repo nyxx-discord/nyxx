@@ -15,11 +15,11 @@ void main() async {
     // Create and send paginated message. After 15 minutes message will be deactivated.
     var pagination = command.Pagination.fromString(
         "Mi scias, kio estas. "
-            "Ci tio estos tre longa alineo car mi bezonas multan tekston. "
-            "Mi ne scias, kion skribi ci tie, sed mi esperas, ke neniu ĝin legos (au almenau kun kompreno) "
-            "Sed se vi legis gin de komprenu ci tion, "
-            "skribu al mi en priv, mi diros al vi ion belan. "
-            "Mi ŝercis, mi ne estas bela. ",
+        "Ci tio estos tre longa alineo car mi bezonas multan tekston. "
+        "Mi ne scias, kion skribi ci tie, sed mi esperas, ke neniu ĝin legos (au almenau kun kompreno) "
+        "Sed se vi legis gin de komprenu ci tion, "
+        "skribu al mi en priv, mi diros al vi ion belan. "
+        "Mi ŝercis, mi ne estas bela. ",
         ch);
 
     await pagination.paginate(timeout: const Duration(minutes: 15));

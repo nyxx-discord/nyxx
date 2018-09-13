@@ -15,7 +15,7 @@ class Snowflake implements Comparable<Snowflake> {
   /// Returns timestamp included in [Snowflake]
   /// [Snowflake reference](https://discordapp.com/developers/docs/reference#snowflakes)
   DateTime get timestamp {
-    if(_timestamp == null) {
+    if (_timestamp == null) {
       _timestamp = DateTime.fromMillisecondsSinceEpoch(
           ((int.parse(_id) / snowflakeDateOffset) + discordEpoch).toInt());
       return _timestamp;
@@ -46,12 +46,13 @@ class Snowflake implements Comparable<Snowflake> {
   }
 
   /// Returns true if [first] Snowflake was created is before [second].
-  static bool compareDates(Snowflake first, Snowflake second)
-    => first.timestamp.compareTo(second._timestamp) == -1;
+  static bool compareDates(Snowflake first, Snowflake second) =>
+      first.timestamp.compareTo(second._timestamp) == -1;
 
   //  Parses id from dateTime
   static String _parseId(DateTime timestamp) =>
-    ((timestamp.millisecondsSinceEpoch - discordEpoch) * snowflakeDateOffset).toString();
+      ((timestamp.millisecondsSinceEpoch - discordEpoch) * snowflakeDateOffset)
+          .toString();
 
   @override
   String toString() => _id;

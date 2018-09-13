@@ -36,8 +36,7 @@ class OAuth2Application {
   }
 
   String iconUrl({String format = "png", int size = 128}) {
-    if(icon == null)
-      return null;
+    if (icon == null) return null;
 
     return "https://cdn.discordapp.com/app-icons/${this.id}/$icon.$format?size=$size";
   }

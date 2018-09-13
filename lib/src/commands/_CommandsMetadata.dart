@@ -27,8 +27,8 @@ class _CommandMetadata {
       this.postprocessors = const []]);
 
   List<List<String>> get commandString {
-    if (classCommand != null)
-      if (methodCommand.name == null && methodCommand.main)
+    if (classCommand != null) if (methodCommand.name == null &&
+        methodCommand.main)
       return [List.from(classCommand.aliases)..add(classCommand.name)];
     else
       return [
