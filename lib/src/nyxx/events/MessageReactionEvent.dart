@@ -14,11 +14,10 @@ class MessageReactionRemoveEvent {
   /// Emoji object.
   Emoji emoji;
 
-  MessageReactionRemoveEvent._new(
-      Nyxx client, Map<String, dynamic> json) {
+  MessageReactionRemoveEvent._new(Nyxx client, Map<String, dynamic> json) {
     this.user = client.users[Snowflake(json['d']['user_id'] as String)];
     this.channel = client.channels[Snowflake(json['d']['channel_id'] as String)]
-    as MessageChannel;
+        as MessageChannel;
 
     channel
         .getMessage(Snowflake(json['d']['message_id'] as String))
@@ -50,11 +49,10 @@ class MessageReactionAddEvent {
   /// Emoji object.
   Emoji emoji;
 
-  MessageReactionAddEvent._new(
-      Nyxx client, Map<String, dynamic> json) {
+  MessageReactionAddEvent._new(Nyxx client, Map<String, dynamic> json) {
     this.user = client.users[Snowflake(json['d']['user_id'] as String)];
     this.channel = client.channels[Snowflake(json['d']['channel_id'] as String)]
-    as MessageChannel;
+        as MessageChannel;
 
     channel
         .getMessage(Snowflake(json['d']['message_id'] as String))
@@ -71,4 +69,3 @@ class MessageReactionAddEvent {
     });
   }
 }
-

@@ -68,7 +68,8 @@ class Member extends User {
       this.joinedAt = DateTime.parse(data['joined_at'] as String);
 
     if (data['game'] != null)
-      this.presence = Presence._new(this.client, data['game'] as Map<String, dynamic>);
+      this.presence =
+          Presence._new(this.client, data['game'] as Map<String, dynamic>);
 
     if (guild != null) this.guild.members[this.id] = this;
     client.users[this.id] = this;

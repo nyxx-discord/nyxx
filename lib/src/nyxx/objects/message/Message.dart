@@ -105,10 +105,12 @@ class Message extends SnowflakeEntity {
     //this.author = User._new(this.client, raw['author'] as Map<String, dynamic>);
     if (this.channel is TextChannel) {
       this.guild = (this.channel as TextChannel).guild;
-      this.author = this.guild.members[Snowflake(raw['author']['id'] as String)];
+      this.author =
+          this.guild.members[Snowflake(raw['author']['id'] as String)];
 
-      if(this.author == null)
-        this.author = User._new(this.client, raw['author'] as Map<String, dynamic>);
+      if (this.author == null)
+        this.author =
+            User._new(this.client, raw['author'] as Map<String, dynamic>);
 
       if (raw['mention_roles'] != null) {
         this.roleMentions = Map<Snowflake, Role>();

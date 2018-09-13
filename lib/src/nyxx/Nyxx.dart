@@ -245,7 +245,7 @@ class Nyxx {
     var r = await this.http.send("GET", "/guilds/${id.toString()}");
     return Guild._new(this, r.body as Map<String, dynamic>);
   }
-  
+
   /// Creates new guild with provided builder.
   /// If the [id] will be in cache - it will be taken from it, otherwise API will be called.
   ///

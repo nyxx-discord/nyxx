@@ -2,7 +2,6 @@ part of nyxx;
 
 /// Ban object. Has attached reason of ban and user who was banned.
 class Ban {
-
   /// Reason of ban
   String reason;
 
@@ -16,7 +15,7 @@ class Ban {
     this.reason = raw['reason'] as String;
 
     var userFlake = Snowflake(raw['user']['id'] as String);
-    if(client.users.containsKey(userFlake))
+    if (client.users.containsKey(userFlake))
       this.user = client.users[userFlake];
     else
       this.user = User._new(client, raw['user'] as Map<String, dynamic>);

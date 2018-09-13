@@ -151,14 +151,15 @@ class Guild extends SnowflakeEntity {
 
         this.owner = this.members[Snowflake(raw['owner_id'] as String)];
 
-        if(raw['permissions'] != null)
-          this.currentUserPermissions = Permissions.fromInt(raw['permissions'] as int);
+        if (raw['permissions'] != null)
+          this.currentUserPermissions =
+              Permissions.fromInt(raw['permissions'] as int);
 
-        if(raw['voice_states'] != null) {
+        if (raw['voice_states'] != null) {
           raw['voice_states'].forEach((o) {
             var state = VoiceState._new(this.client, o as Map<String, dynamic>);
 
-            if(state != null && state.user != null)
+            if (state != null && state.user != null)
               this.client._voiceStates[state.user.id] = state;
           });
         }
@@ -253,8 +254,10 @@ class Guild extends SnowflakeEntity {
 
   /// Returns [int] indicating the number of members that would be removed in a prune operation.
   Future<int> pruneCount(int days) async {
-    HttpResponse r = await this.client.http.send('GET', "/guilds/$id/prune",
-        body: {"days": days});
+    HttpResponse r = await this
+        .client
+        .http
+        .send('GET', "/guilds/$id/prune", body: {"days": days});
     return r.body['pruned'] as int;
   }
 
@@ -272,7 +275,7 @@ class Guild extends SnowflakeEntity {
 
     List<Ban> lst = List();
     r.body.forEach((o) {
-     lst.add(Ban._new(client, o as Map<String, dynamic>));
+      lst.add(Ban._new(client, o as Map<String, dynamic>));
     });
 
     return lst;
@@ -280,13 +283,17 @@ class Guild extends SnowflakeEntity {
 
   /// Change self nickname in guild
   Future<void> changeSelfNick(String nick) async {
-    await this.client.http.send("PATCH", "/guilds/${this.id.toString()}/members/@me/nick",
-      body: { "nick": nick });
+    await this.client.http.send(
+        "PATCH", "/guilds/${this.id.toString()}/members/@me/nick",
+        body: {"nick": nick});
   }
 
   /// Gets single [Ban] object for given [id]
   Future<Ban> getBan(Snowflake id) async {
-    var r = await this.client.http.send("GET", "/guilds/${this.id.toString()}/bans/${id.toString()}");
+    var r = await this
+        .client
+        .http
+        .send("GET", "/guilds/${this.id.toString()}/bans/${id.toString()}");
     return Ban._new(client, r.body as Map<String, dynamic>);
   }
 
@@ -479,8 +486,7 @@ class Guild extends SnowflakeEntity {
   /// await guild.kick(member);
   /// ```
   Future<void> kick(Member member, {String auditReason}) async {
-    await this.client.http.send(
-        "DELETE",
+    await this.client.http.send("DELETE",
         "/guilds/${this.id.toString()}/members/${member.id.toString()}");
   }
 

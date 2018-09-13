@@ -64,7 +64,8 @@ class SomeThings extends command.CommandContext {
   }
 
   @command.Command(name: "elo")
-  Future<void> siema(String witam, @command.Remainder() List<String> rest) async {
+  Future<void> siema(
+      String witam, @command.Remainder() List<String> rest) async {
     await reply(content: [witam, rest]);
   }
 }
