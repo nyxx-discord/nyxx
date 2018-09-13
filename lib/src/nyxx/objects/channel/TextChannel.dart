@@ -14,6 +14,9 @@ class TextChannel extends MessageChannel with GuildChannel {
   /// The channel's mention string.
   String mention;
 
+  /// Channel's slowmode rate limit in seconds. This must be between 0 and 120.
+  int slowModeThreshold;
+
   TextChannel._new(Nyxx client, Map<String, dynamic> data, Guild guild)
       : super._new(client, data, 0) {
     _initialize(data, guild);
@@ -21,6 +24,7 @@ class TextChannel extends MessageChannel with GuildChannel {
     this.topic = raw['topic'] as String;
     this.mention = "<#${this.id}>";
     this.guild.channels[this.id] = this;
+    this.slowModeThreshold = raw['rate_limit_per_user'] as int ?? 0;
 
     _pinsUpdated = StreamController.broadcast();
     pinsUpdated = _pinsUpdated.stream;
@@ -31,12 +35,14 @@ class TextChannel extends MessageChannel with GuildChannel {
     String name,
     String topic,
     int position,
+    int slowModeTreshold
   }) async {
     HttpResponse r =
         await this.client.http.send('PATCH', "/channels/${this.id}", body: {
-      "name": name != null ? name : this.name,
-      "topic": topic != null ? topic : this.topic,
-      "position": position != null ? position : this.position
+      "name": name ?? this.name,
+      "topic": topic ?? this.topic,
+      "position": position ?? this.position,
+      "rate_limit_per_user": slowModeTreshold ?? slowModeTreshold
     });
     return TextChannel._new(
         this.client, r.body as Map<String, dynamic>, this.guild);
