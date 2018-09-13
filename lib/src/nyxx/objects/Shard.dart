@@ -1,6 +1,6 @@
 part of nyxx;
 
-ZLibDecoder _zlib = new ZLibDecoder();
+//ZLibDecoder _zlib = new ZLibDecoder();
 
 /// Discord gateways implement a method of user-controlled guild sharding which allows for splitting events across a number of gateway connections.
 /// Guild sharding is entirely user controlled, and requires no state-sharing between separate connections to operate.
@@ -79,11 +79,11 @@ class Shard {
     });
   }
 
-  // Docodes zlib compresses string into string json
+  // Decodes zlib compresses string into string json
   Map<String, dynamic> _decodeBytes(dynamic bytes) {
     if (bytes is String) return jsonDecode(bytes) as Map<String, dynamic>;
 
-    var decoded = _zlib.convert(bytes as List<int>);
+    var decoded = zlib.decoder.convert(bytes as List<int>);
     var rawStr = utf8.decode(decoded);
     return jsonDecode(rawStr) as Map<String, dynamic>;
   }
