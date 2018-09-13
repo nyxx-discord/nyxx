@@ -640,13 +640,13 @@ class CommandsFramework {
       }
 
       try {
-        await parsePrimitives(type);
-        continue;
-      } on Exception {
-        try {
-          collected.add(_services.firstWhere((s) => s.runtimeType == type));
-        } on Exception {}
-      }
+        var res = await parsePrimitives(type);
+        if(res) continue;
+      } on Exception {}
+
+      try {
+        collected.add(_services.firstWhere((s) => s.runtimeType == type));
+      } on Exception {}
     }
 
     return collected;
