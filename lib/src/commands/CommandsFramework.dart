@@ -636,18 +636,14 @@ class CommandsFramework {
         break;
       }
 
-      bool pp;
       try {
-        pp = await parsePrimitives(type);
-      } catch (e) {
-        pp = false;
+        await parsePrimitives(type);
+        continue;
+      } on Exception {
+        try {
+          collected.add(_services.firstWhere((s) => s.runtimeType == type));
+        } on Exception {}
       }
-
-      if (pp) continue;
-
-      try {
-        collected.add(_services.firstWhere((s) => s.runtimeType == type));
-      } on Exception {}
     }
 
     return collected;
