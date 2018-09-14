@@ -68,7 +68,7 @@ class Shard {
       return;
     }
 
-    WebSocket.connect('${this._ws.gateway}?v=6&encoding=json')
+    WebSocket.connect('${this._ws.gateway}?v=7&encoding=json')
         .then((WebSocket socket) {
       if (!resume) _logger.severe("RECONNECTED");
 
@@ -147,10 +147,10 @@ class Shard {
           case 'READY':
             this._sessionId = msg['d']['session_id'] as String;
 
-            this._ws.client.user = ClientUser._new(
+            this._ws.client.self = ClientUser._new(
                 this._ws.client, msg['d']['user'] as Map<String, dynamic>);
 
-            if (this._ws.client.user.bot) {
+            if (this._ws.client.self.bot) {
               this._ws.client.http.headers['Authorization'] =
                   "Bot ${this._ws.client._token}";
             } else {
@@ -160,11 +160,11 @@ class Shard {
             }
 
             this._ws.client.http.headers['User-Agent'] =
-                "${this._ws.client.user.username} (${_Constants.repoUrl}, ${_Constants.version})";
+                "${this._ws.client.self.username} (${_Constants.repoUrl}, ${_Constants.version})";
 
             msg['d']['guilds'].forEach((dynamic o) {
               var snow = Snowflake(o['id'] as String);
-              if (this._ws.client.user.bot)
+              if (this._ws.client.self.bot)
                 this._ws.client.guilds[snow] = null;
               else
                 this._ws.client.guilds[snow] = Guild._new(
@@ -182,7 +182,7 @@ class Shard {
             this.ready = true;
             this._onReady.add(this);
 
-            if (!this._ws.client.user.bot) {
+            if (!this._ws.client.self.bot) {
               this._ws.client.ready = true;
               this._ws.client._startTime = DateTime.now();
               ReadyEvent._new(this._ws.client);
@@ -204,11 +204,11 @@ class Shard {
             break;
 
           case 'MESSAGE_REACTION_ADD':
-            MessageReactionAddEvent._new(this._ws.client, msg);
+            MessageReactionEvent._new(this._ws.client, msg, false);
             break;
 
           case 'MESSAGE_REACTION_REMOVE':
-            MessageReactionRemoveEvent._new(this._ws.client, msg);
+            MessageReactionEvent._new(this._ws.client, msg, true);
             break;
 
           case 'MESSAGE_DELETE_BULK':

@@ -74,7 +74,7 @@ class Player {
       if (e.state.channel != null) if (e.state.channel.id != currentChannel.id)
         return false;
 
-      return e.state.user.id == _client.user.id;
+      return e.state.user.id == _client.self.id;
     }).listen((e) {
       _currentState = e.state;
       _webSocket.add(jsonEncode(_OpVoiceUpdate(
