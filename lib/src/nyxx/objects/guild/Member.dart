@@ -34,7 +34,7 @@ class Member extends User {
       roles.reduce((f, s) => f.position > s.position ? f : s);
 
   Role get color => roles
-      .where((r) => r.color != null)
+      .where((r) => r.color > 0)
       .reduce((f, s) => f.position > s.position ? f : s);
 
   /// Returns total permissions of user.
@@ -45,8 +45,17 @@ class Member extends User {
     return Permissions.fromInt(total);
   }
 
+  Member._reverse(Nyxx client, Map<String, dynamic> data, [Guild guild])
+      : super._new(client, data, false) {
+    _cons(data['member'] as Map<String, dynamic>, guild);
+  }
+
   Member._new(Nyxx client, Map<String, dynamic> data, [Guild guild])
       : super._new(client, data['user'] as Map<String, dynamic>, false) {
+   _cons(data, guild);
+  }
+
+  void _cons(Map<String, dynamic> data, [Guild guild]) {
     this.nickname = data['nick'] as String;
     this.deaf = data['deaf'] as bool;
     this.mute = data['mute'] as bool;

@@ -11,7 +11,7 @@ class Role extends SnowflakeEntity {
   /// The role's name.
   String name;
 
-  /// The role's color, null if no color.
+  /// The role's color, 0 if no color.
   int color;
 
   /// The role's position.
@@ -43,7 +43,7 @@ class Role extends SnowflakeEntity {
     this.managed = raw['managed'] as bool;
     this.mentionable = raw['mentionable'] as bool;
     this.permissions = Permissions.fromInt(raw['permissions'] as int);
-    this.color = raw['color'] as int;
+    this.color = raw['color'] as int ?? 0;
 
     this.guild.roles[this.id] = this;
   }

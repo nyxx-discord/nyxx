@@ -36,7 +36,7 @@ class CommandsFramework {
   bool ignoreBots = true;
 
   /// Sets default bots game
-  set game(Presence game) => _client.user.setGame(game);
+  set game(Presence game) => _client.self.setGame(game);
 
   /// Fires when invoked command dont exists in registry
   Stream<Message> onCommandNotFound;
@@ -516,7 +516,7 @@ class CommandsFramework {
 
     // Check if bot has required permissions
     if (executionCode == -1 && annot.userPermissions != null) {
-      var total = (await e.guild.getMember(_client.user)).totalPermissions;
+      var total = (await e.guild.getMember(_client.self)).totalPermissions;
       for (var perm in annot.userPermissions) {
         if ((total.raw | perm) == 0) {
           executionCode = 6;

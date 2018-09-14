@@ -91,8 +91,8 @@ void main() {
     assert(bot.ready);
     assert(bot.inviteLink != null);
 
-    assert(bot.user.voiceState == null);
-    assert(bot.user.discriminator == "4296");
+    assert(bot.self.voiceState == null);
+    assert(bot.self.discriminator == "4296");
 
     print("TESTING BASIC FUNCTIONALITY!");
     var m = await channel.send(content: "Message test.");
@@ -127,7 +127,7 @@ void main() {
   bot.onMessage.listen((e) async {
     var m = e.message;
 
-    if (m.channel.id != "422285619952222208" && m.author.id != bot.user.id)
+    if (m.channel.id != "422285619952222208" && m.author.id != bot.self.id)
       return;
 
     if (ddel.any((d) => d.startsWith(m.content))) await m.delete();

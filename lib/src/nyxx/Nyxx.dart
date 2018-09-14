@@ -30,7 +30,7 @@ class Nyxx {
   Http http;
 
   /// The logged in user.
-  ClientUser user;
+  ClientUser self;
 
   /// The bot's OAuth2 app.
   ClientOAuth2Application app;
@@ -150,10 +150,10 @@ class Nyxx {
   Stream<MessageDeleteBulkEvent> onMessageDeleteBulk;
 
   /// Emitted when a user adds a reaction to a message.
-  Stream<MessageReactionAddEvent> onMessageReactionAdded;
+  Stream<MessageReactionEvent> onMessageReactionAdded;
 
   /// Emitted when a user deletes a reaction to a message.
-  Stream<MessageReactionRemoveEvent> onMessageReactionRemove;
+  Stream<MessageReactionEvent> onMessageReactionRemove;
 
   /// Emitted when a user explicitly removes all reactions from a message.
   Stream<MessageReactionsRemovedEvent> onMessageReactionsRemoved;
