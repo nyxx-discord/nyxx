@@ -7,8 +7,9 @@
 [![Pub](https://img.shields.io/pub/v/nyxx.svg)](https://pub.dartlang.org/packages/nyxx)
 [![documentation](https://img.shields.io/badge/Documentation-nyxx-yellow.svg)](https://www.dartdocs.org/documentation/nyxx/latest/)
 
-Simple, robust framework for creating discord bots for Dart. <br />
-Fork of [Hackzzila's](https://github.com/Hackzzila) [nyx](https://github.com/Hackzzila/nyx) - extended with new functionality, few bug fixes, applied pending pull requests.
+Simple, robust framework for creating discord bots for Dart language. <br />
+This repo is fork of [Hackzzila's](https://github.com/Hackzzila) [nyx](https://github.com/Hackzzila/nyx) - 
+extended with new functionality, rewritten backend, many bug fixes and  applied pending pull requests.
 
 <hr />
 
@@ -16,7 +17,7 @@ Fork of [Hackzzila's](https://github.com/Hackzzila) [nyx](https://github.com/Hac
 
 ### Stable release
 
-`nyxx 1.0.0` is first stable release. It uses Dart 2.0 stable and has many rewritten and improved features.
+Starting from version `1.0.0` of nyxx, library requires `Dart 2.0+`. You can use stable release or dev sdk.
 
 ### Features
 
@@ -33,7 +34,8 @@ Fork of [Hackzzila's](https://github.com/Hackzzila) [nyx](https://github.com/Hac
 
 ### Sample
 
-``` dart
+Basic usage:
+```dart
 void main() {
   discord.Client bot =
       new discord.Client(Platform.environment['DISCORD_TOKEN']);
@@ -50,7 +52,42 @@ void main() {
 }
 ```
 
-## Documentation and examples
+Commands:
+```dart
+void main() {
+  nyxx.Nyxx bot = nyxx.Nyxx(Platform.environment['DISCORD_TOKEN']);
+  command.CommandsFramework('!', bot)
+    ..admins = [nyxx.Snowflake("302359032612651009")]
+    ..registerLibraryCommands();
+}
+
+@command.Command(name: "single")
+Future<void> single(command.CommandContext context) async {
+  await context.reply(content: "WORKING");
+}
+
+@command.Module("ping")
+class PongCommand extends command.CommandContext {
+  @command.Command()
+  @command.Help("Pong!", usage: "ping")
+  Future<void> run() async {
+    await reply(content: "Pong!");
+  }
+  
+  @command.Command(name: "subcommand")
+  Future<void> run() async {
+   await reply(content: "\\cmd");
+  }
+}
+```
+
+## Documentation, help and examples
+
+#### [Discord API docs](https://discordapp.com/developers/docs/intro)
+Discord API documentation features rich descriptions about all topics that nyxx covers.
+
+#### [Discord API Guild](https://discord.gg/discord-api)
+Unofficial guild for Discord Bot developers. To get help with nyxx check `#dart_nyxx` channel.
 
 #### [Dartdocs](https://www.dartdocs.org/documentation/nyxx/latest/)
 The dartdocs page will always have the documentation for the latest release.
