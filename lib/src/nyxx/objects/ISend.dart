@@ -3,12 +3,10 @@ part of nyxx;
 abstract class ISend {
   Future<Message> send(
       {Object content = "",
+      List<File> files,
       EmbedBuilder embed,
       bool tts = false,
       bool disableEveryone});
-
-  Future<Message> sendFile(List<File> files,
-      {String content = "", EmbedBuilder embed, bool disableEveryone});
 }
 
 String expandAttachment(String filename) => "attachment://$filename";

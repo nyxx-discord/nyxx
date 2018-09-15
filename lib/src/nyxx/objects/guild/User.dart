@@ -63,26 +63,17 @@ class User extends SnowflakeEntity with ISend {
 
   @override
 
-  /// Sends file to channel and optional [content] with [embed].
-  Future<Message> sendFile(List<File> files,
-      {String content = "", EmbedBuilder embed, bool disableEveryone}) async {
-    DMChannel channel = await getDMChannel();
-
-    return await channel.sendFile(files,
-        content: content, embed: embed, disableEveryone: disableEveryone);
-  }
-
-  @override
-
   /// Sends a message.
   Future<Message> send(
       {Object content = "",
+        List<File> files,
       EmbedBuilder embed,
       bool tts = false,
       bool disableEveryone}) async {
     DMChannel channel = await getDMChannel();
     return await channel.send(
         content: content,
+        files: files,
         embed: embed,
         tts: tts,
         disableEveryone: disableEveryone);
