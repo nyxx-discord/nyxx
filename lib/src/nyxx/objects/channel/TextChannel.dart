@@ -17,6 +17,10 @@ class TextChannel extends MessageChannel with GuildChannel {
   /// Channel's slowmode rate limit in seconds. This must be between 0 and 120.
   int slowModeThreshold;
 
+  /// Returns url to this channel.
+  String get url => "https://discordapp.com/channels/${this.guild.id.toString()}"
+      "/${this.id.toString()}";
+
   TextChannel._new(Nyxx client, Map<String, dynamic> data, Guild guild)
       : super._new(client, data, 0) {
     _initialize(data, guild);
