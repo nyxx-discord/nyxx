@@ -42,7 +42,7 @@ class MessageChannel extends Channel with IterableMixin<Message>, ISend {
     onMessage = _onMessage.stream;
   }
 
-  void _cacheMessage(Message message) {
+  Message _cacheMessage(Message message) {
     if (this.client._options.messageCacheSize > 0) {
       if (this.messages.length >= this.client._options.messageCacheSize) {
         this.messages.values.toList().first._onUpdate.close();
@@ -51,10 +51,12 @@ class MessageChannel extends Channel with IterableMixin<Message>, ISend {
       }
       this.messages[message.id] = message;
     }
+
+    return message;
   }
 
   /// Returs message with given [id]. Allows to force fatch message from api
-  /// with [force] propery. By default it checks if message is in cache and fatches if not.
+  /// with [force] propery. By default it checks if message is in cache and fetches from api if not.
   Future<Message> getMessage(Snowflake id, {bool force = false}) async {
     if (force || !messages.containsKey(id)) {
       var r = await this
@@ -63,40 +65,10 @@ class MessageChannel extends Channel with IterableMixin<Message>, ISend {
           .send('GET', "/channels/${this.id.toString()}/messages/$id");
       var msg = Message._new(this.client, r.body as Map<String, dynamic>);
 
-      messages[id] = msg;
-      return msg;
+     return _cacheMessage(msg);
     }
 
     return messages[id];
-  }
-
-  @override
-
-  /// Sends file to channel and optional [content] with [embed].
-  /// Use `expandAttachment(String file)` method to expand file names in embed
-  ///
-  /// ```
-  /// await chan.sendFile([new File("kitten.png"), new File("kitten.jpg")], content: "Kittens ^-^"]);
-  /// ```
-  /// ```
-  /// var embed = new nyxx.EmbedBuilder()
-  ///   ..title = "Example Title"
-  ///   ..thumbnailUrl = "${expandAttachment('kitten.jpg')}";
-  ///
-  /// await e.message.channel
-  ///   .sendFile([new File("kitten.jpg")], embed: embed, content: "HEJKA!");
-  /// ```
-  Future<Message> sendFile(List<File> files,
-      {String content = "", EmbedBuilder embed, bool disableEveryone}) async {
-    var newContent = _sanitizeMessage(content, disableEveryone, client);
-
-    final HttpResponse r = await this.client.http.sendMultipart(
-        'POST', '/channels/${this.id}/messages', files, data: <String, dynamic>{
-      "content": newContent,
-      "embed": embed != null ? embed._build() : ""
-    });
-
-    return Message._new(this.client, r.body as Map<String, dynamic>);
   }
 
   @override
@@ -120,19 +92,45 @@ class MessageChannel extends Channel with IterableMixin<Message>, ISend {
   ///
   /// await chan.send(embed: embed);
   /// ```
+  ///
+  ///
+  ///
+  /// Method also allows to send file and optional [content] with [embed].
+  /// Use `expandAttachment(String file)` method to expand file names in embed
+  ///
+  /// ```
+  /// await chan.sendFile([new File("kitten.png"), new File("kitten.jpg")], content: "Kittens ^-^"]);
+  /// ```
+  /// ```
+  /// var embed = new nyxx.EmbedBuilder()
+  ///   ..title = "Example Title"
+  ///   ..thumbnailUrl = "${expandAttachment('kitten.jpg')}";
+  ///
+  /// await e.message.channel
+  ///   .sendFile([new File("kitten.jpg")], embed: embed, content: "HEJKA!");
+  /// ```
   Future<Message> send(
       {Object content = "",
+        List<File> files,
       EmbedBuilder embed,
       bool tts = false,
       bool disableEveryone}) async {
     var newContent = _sanitizeMessage(content, disableEveryone, client);
 
-    final HttpResponse r = await this.client.http.send(
-        'POST', '/channels/${this.id}/messages', body: <String, dynamic>{
+    Map<String, dynamic> reqBody = {
       "content": newContent,
-      "tts": tts,
       "embed": embed != null ? embed._build() : ""
-    });
+    };
+
+    HttpResponse r;
+    if(files != null && files.isNotEmpty) {
+      r = await this.client.http.sendMultipart(
+          'POST', '/channels/${this.id}/messages', files, data: reqBody);
+    } else {
+      r = await this.client.http.send(
+          'POST', '/channels/${this.id}/messages', body: reqBody..addAll({"tts": tts}));
+    }
+
     return Message._new(this.client, r.body as Map<String, dynamic>);
   }
 
@@ -171,7 +169,7 @@ class MessageChannel extends Channel with IterableMixin<Message>, ISend {
   /// Messages will be cached if [cache] is set to true. Defaults to false.
   ///
   /// ```
-  /// var messages = await chan.getMessages(limit: 100, after: "222078108977594368");
+  /// var messages = await chan.getMessages(limit: 100, after: Snowflake("222078108977594368"));
   /// ```
   Future<LinkedHashMap<Snowflake, Message>> getMessages(
       {int limit = 50,
