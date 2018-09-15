@@ -73,6 +73,10 @@ class Message extends SnowflakeEntity {
   /// Emitted when a user explicitly removes all reactions from a message.
   Stream<MessageReactionsRemovedEvent> onReactionsRemoved;
 
+  /// Returns url to this message.
+  String get url => "https://discordapp.com/channels/${this.guild.id.toString()}"
+      "/${this.channel.id.toString()}/${this.id.toString()}";
+
   Message._new(this.client, this.raw) : super(Snowflake(raw['id'] as String)) {
     this._onUpdate = StreamController.broadcast();
     this.onUpdate = this._onUpdate.stream;

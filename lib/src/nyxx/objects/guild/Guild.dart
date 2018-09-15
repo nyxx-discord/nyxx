@@ -89,6 +89,9 @@ class Guild extends SnowflakeEntity {
   /// The shard that the guild is on.
   Shard shard;
 
+  /// Returns url to this guild.
+  String get url => "https://discordapp.com/channels/${this.id.toString()}";
+
   Guild._new(this.client, this.raw,
       [this.available = true, bool guildCreate = false])
       : super(Snowflake(raw['id'] as String)) {
