@@ -58,25 +58,27 @@ class Shard {
   void guildSync() => this.send("GUILD_SYNC", this.guilds.keys.toList());
 
   // Attempts to connect to ws
-  void _connect([bool resume = true, bool init = false]) {
-    if (!resume) _logger.warning("DISCONNECTED. Trying to reconnect...");
+  void _connect([bool resume = false, bool init = false]) {
+    if(resume)
+      _logger.severe("DISCONNECTED. Trying to reconnect...");
 
     this.ready = false;
     if (this._socket != null) this._socket.close();
-    if (!init) {
+
+    if (!init && resume) {
       Timer(Duration(seconds: 2), () => _connect(resume));
       return;
     }
 
     WebSocket.connect('${this._ws.gateway}?v=7&encoding=json')
         .then((WebSocket socket) {
-      if (!resume) _logger.severe("RECONNECTED");
+      socket.pingInterval = const Duration(seconds: 2);
 
       this._socket = socket;
       this._socket.listen((dynamic msg) async {
         await this._handleMsg(_decodeBytes(msg), resume);
       }, onDone: this._handleErr);
-    });
+    }, onError: (_) => this._handleErr);
   }
 
   // Decodes zlib compresses string into string json
@@ -331,7 +333,10 @@ class Shard {
         throw _throw('You sent an invalid shard when identifying.');
       case 4007:
       case 4009:
-        this._connect(false);
+        this._connect(true);
+        break;
+      case 1001:
+        this._connect(true);
         break;
       default:
         this._connect();
