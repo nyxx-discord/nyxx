@@ -108,11 +108,20 @@ class Message extends SnowflakeEntity {
 
     this.guild = client.guilds[Snowflake(raw['guild_id'] as String)];
     if (this.guild != null) {
+      print(jsonEncode(raw));
+
       this.author =
           this.guild.members[Snowflake(raw['author']['id'] as String)];
 
       if (this.author == null) {
-        var tMap = raw['member'] as Map<String, dynamic>;
+        Map<String, dynamic> tMap;
+
+        if(raw['webhook_id'] != null) {
+          tMap = new Map();
+        } else {
+          tMap = raw['member'] as Map<String, dynamic>;
+        }
+
         tMap['user'] = raw['author'];
         this.author = Member._new(this.client, tMap);
       }
