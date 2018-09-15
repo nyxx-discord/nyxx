@@ -72,8 +72,6 @@ class Shard {
 
     WebSocket.connect('${this._ws.gateway}?v=7&encoding=json')
         .then((WebSocket socket) {
-      socket.pingInterval = const Duration(seconds: 2);
-
       this._socket = socket;
       this._socket.listen((dynamic msg) async {
         await this._handleMsg(_decodeBytes(msg), resume);
@@ -100,7 +98,7 @@ class Shard {
   }
 
   Future<void> _handleMsg(Map<String, dynamic> msg, bool resume) async {
-    RawEvent._new(this._ws.client, this, msg);
+    RawEvent._new(this, msg);
 
     if (msg['s'] != null) this._sequence = msg['s'] as int;
 
@@ -108,7 +106,7 @@ class Shard {
       case _OPCodes.HELLP:
         if (this._sessionId == null || !resume) {
           Map<String, dynamic> identifyMsg = <String, dynamic>{
-            "token": this._ws.client._token,
+            "token": _client._token,
             "properties": <String, dynamic>{
               "\$os": Platform.operatingSystem,
               "\$browser": "nyxx",
@@ -123,12 +121,12 @@ class Shard {
           if (this._ws.bot)
             identifyMsg['shard'] = <int>[
               this.id,
-              this._ws.client._options.shardCount
+              _client._options.shardCount
             ];
           this.send("IDENTIFY", identifyMsg);
         } else if (resume) {
           this.send("RESUME", <String, dynamic>{
-            "token": this._ws.client._token,
+            "token":_client._token,
             "session_id": this._sessionId,
             "seq": this._sequence
           });
@@ -149,167 +147,169 @@ class Shard {
           case 'READY':
             this._sessionId = msg['d']['session_id'] as String;
 
-            this._ws.client.self = ClientUser._new(
-                this._ws.client, msg['d']['user'] as Map<String, dynamic>);
+            _client.self = ClientUser._new(
+                msg['d']['user'] as Map<String, dynamic>);
 
-            if (this._ws.client.self.bot) {
-              this._ws.client.http.headers['Authorization'] =
-                  "Bot ${this._ws.client._token}";
+            if (_client.self.bot) {
+              _client.http.headers['Authorization'] =
+                  "Bot ${_client._token}";
             } else {
-              this._ws.client.http.headers['Authorization'] =
-                  this._ws.client._token;
-              this._ws.client._options.forceFetchMembers = false;
+              _client.http.headers['Authorization'] =
+                  _client._token;
+              _client._options.forceFetchMembers = false;
             }
 
-            this._ws.client.http.headers['User-Agent'] =
-                "${this._ws.client.self.username} (${_Constants.repoUrl}, ${_Constants.version})";
+            _client.http.headers['User-Agent'] =
+                "${_client.self.username} (${_Constants.repoUrl}, ${_Constants.version})";
 
             msg['d']['guilds'].forEach((dynamic o) {
               var snow = Snowflake(o['id'] as String);
-              if (this._ws.client.self.bot)
-                this._ws.client.guilds[snow] = null;
-              else
-                this._ws.client.guilds[snow] = Guild._new(
-                    this._ws.client, o as Map<String, dynamic>, true, true);
+              if(o['unavailable'] as bool != true) {
+                _client.guilds[snow] = Guild._new(o as Map<String, dynamic>, true, true);
+              }
             });
 
-            msg['d']['private_channels'].forEach((dynamic o) {
+            msg['d']['private_channels'].forEach((o) {
               if (o['type'] == 1) {
-                DMChannel._new(this._ws.client, o as Map<String, dynamic>);
+                var ch = DMChannel._new(o as Map<String, dynamic>);
+                client.channels[ch.id] = ch;
               } else {
-                GroupDMChannel._new(this._ws.client, o as Map<String, dynamic>);
+                var ch = GroupDMChannel._new(o as Map<String, dynamic>);
+                client.channels[ch.id] = ch;
               }
             });
 
             this.ready = true;
             this._onReady.add(this);
 
-            if (!this._ws.client.self.bot) {
-              this._ws.client.ready = true;
-              this._ws.client._startTime = DateTime.now();
-              ReadyEvent._new(this._ws.client);
+            if (!_client.self.bot) {
+              _client.ready = true;
+              _client._startTime = DateTime.now();
+              ReadyEvent._new();
             }
 
             break;
 
           case 'GUILD_MEMBERS_CHUNK':
             msg['d']['members'].forEach((dynamic o) {
-              Member._new(this._ws.client, o as Map<String, dynamic>,
-                  this._ws.client.guilds[msg['d']['guild_id']]);
+              var mem = Member._new(o as Map<String, dynamic>,
+                  _client.guilds[msg['d']['guild_id']]);
+              client.users[mem.id] = mem;
+              mem.guild.members[mem.id] = mem;
             });
 
-            if (!_ws.client.ready) _ws.testReady();
+            if (!_client.ready) _ws.testReady();
             break;
 
           case 'MESSAGE_REACTION_REMOVE_ALL':
-            MessageReactionsRemovedEvent._new(this._ws.client, msg);
+            MessageReactionsRemovedEvent._new(msg);
             break;
 
           case 'MESSAGE_REACTION_ADD':
-            MessageReactionEvent._new(this._ws.client, msg, false);
+            MessageReactionEvent._new(msg, false);
             break;
 
           case 'MESSAGE_REACTION_REMOVE':
-            MessageReactionEvent._new(this._ws.client, msg, true);
+            MessageReactionEvent._new(msg, true);
             break;
 
           case 'MESSAGE_DELETE_BULK':
-            MessageDeleteBulkEvent._new(this._ws.client, msg);
+            MessageDeleteBulkEvent._new(msg);
             break;
 
           case 'CHANNEL_PINS_UPDATE':
-            ChannelPinsUpdateEvent._new(this._ws.client, msg);
+            ChannelPinsUpdateEvent._new(msg);
             break;
 
           case 'VOICE_STATE_UPDATE':
-            VoiceStateUpdateEvent._new(this._ws.client, msg);
+            VoiceStateUpdateEvent._new(msg);
             break;
 
           case 'VOICE_SERVER_UPDATE':
-            VoiceServerUpdateEvent._new(this._ws.client, msg);
+            VoiceServerUpdateEvent._new(msg);
             break;
 
           case 'GUILD_EMOJIS_UPDATE':
-            GuildEmojisUpdateEvent._new(this._ws.client, msg);
+            GuildEmojisUpdateEvent._new(msg);
             break;
 
           case 'MESSAGE_CREATE':
-            MessageEvent._new(this._ws.client, msg);
+            MessageEvent._new(msg);
             break;
 
           case 'MESSAGE_DELETE':
-            MessageDeleteEvent._new(this._ws.client, msg);
+            MessageDeleteEvent._new(msg);
             break;
 
           case 'MESSAGE_UPDATE':
-            MessageUpdateEvent._new(this._ws.client, msg);
+            MessageUpdateEvent._new(msg);
             break;
 
           case 'GUILD_CREATE':
-            GuildCreateEvent._new(this._ws.client, msg, this);
+            GuildCreateEvent._new(msg, this);
             break;
 
           case 'GUILD_UPDATE':
-            GuildUpdateEvent._new(this._ws.client, msg);
+            GuildUpdateEvent._new(msg);
             break;
 
           case 'GUILD_DELETE':
             if (msg['d']['unavailable'] == true)
-              GuildUnavailableEvent._new(this._ws.client, msg);
+              GuildUnavailableEvent._new(msg);
             else
-              GuildDeleteEvent._new(this._ws.client, msg, this);
+              GuildDeleteEvent._new(msg, this);
             break;
 
           case 'GUILD_BAN_ADD':
-            GuildBanAddEvent._new(this._ws.client, msg);
+            GuildBanAddEvent._new(msg);
             break;
 
           case 'GUILD_BAN_REMOVE':
-            GuildBanRemoveEvent._new(this._ws.client, msg);
+            GuildBanRemoveEvent._new(msg);
             break;
 
           case 'GUILD_MEMBER_ADD':
-            GuildMemberAddEvent._new(this._ws.client, msg);
+            GuildMemberAddEvent._new(msg);
             break;
 
           case 'GUILD_MEMBER_REMOVE':
-            GuildMemberRemoveEvent._new(this._ws.client, msg);
+            GuildMemberRemoveEvent._new(msg);
             break;
 
           case 'GUILD_MEMBER_UPDATE':
-            GuildMemberUpdateEvent._new(this._ws.client, msg);
+            GuildMemberUpdateEvent._new(msg);
             break;
 
           case 'CHANNEL_CREATE':
-            ChannelCreateEvent._new(this._ws.client, msg);
+            ChannelCreateEvent._new(msg);
             break;
 
           case 'CHANNEL_UPDATE':
-            ChannelUpdateEvent._new(this._ws.client, msg);
+            ChannelUpdateEvent._new(msg);
             break;
 
           case 'CHANNEL_DELETE':
-            ChannelDeleteEvent._new(this._ws.client, msg);
+            ChannelDeleteEvent._new(msg);
             break;
 
           case 'TYPING_START':
-            TypingEvent._new(this._ws.client, msg);
+            TypingEvent._new(msg);
             break;
 
           case 'PRESENCE_UPDATE':
-            PresenceUpdateEvent._new(this._ws.client, msg);
+            PresenceUpdateEvent._new(msg);
             break;
 
           case 'GUILD_ROLE_CREATE':
-            RoleCreateEvent._new(this._ws.client, msg);
+            RoleCreateEvent._new(msg);
             break;
 
           case 'GUILD_ROLE_UPDATE':
-            RoleUpdateEvent._new(this._ws.client, msg);
+            RoleUpdateEvent._new(msg);
             break;
 
           case 'GUILD_ROLE_DELETE':
-            RoleDeleteEvent._new(this._ws.client, msg);
+            RoleDeleteEvent._new(msg);
             break;
         }
         break;
@@ -343,7 +343,7 @@ class Shard {
         break;
     }
 
-    DisconnectEvent._new(this._ws.client, this, this._socket.closeCode);
+    DisconnectEvent._new(this, this._socket.closeCode);
     this._onDisconnect.add(this);
   }
 }

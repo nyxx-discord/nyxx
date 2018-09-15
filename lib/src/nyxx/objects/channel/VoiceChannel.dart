@@ -8,13 +8,12 @@ class VoiceChannel extends Channel with GuildChannel {
   /// The channel's user limit.
   int userLimit;
 
-  VoiceChannel._new(Nyxx client, Map<String, dynamic> data, Guild guild)
-      : super._new(client, data, 2) {
+  VoiceChannel._new(Map<String, dynamic> data, Guild guild)
+      : super._new(data, 2) {
     _initialize(data, guild);
 
     this.bitrate = raw['bitrate'] as int;
     this.userLimit = raw['user_limit'] as int;
-    this.guild.channels[this.id] = this;
   }
 
   /// Edits the channel.
@@ -25,7 +24,7 @@ class VoiceChannel extends Channel with GuildChannel {
       int userLimit,
       String auditReason}) async {
     HttpResponse r =
-        await this.client.http.send('PATCH', "/channels/${this.id}",
+        await _client.http.send('PATCH', "/channels/${this.id}",
             body: {
               "name": name != null ? name : this.name,
               "bitrate": bitrate != null ? bitrate : this.bitrate,
@@ -33,7 +32,6 @@ class VoiceChannel extends Channel with GuildChannel {
               "position": position != null ? position : this.position
             },
             reason: auditReason);
-    return VoiceChannel._new(
-        this.client, r.body as Map<String, dynamic>, this.guild);
+    return VoiceChannel._new(r.body as Map<String, dynamic>, this.guild);
   }
 }

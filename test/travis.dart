@@ -57,7 +57,7 @@ void main() {
   var env = Platform.environment;
   var bot = nyxx.Nyxx(env['DISCORD_TOKEN'], ignoreExceptions: false);
 
-  command.CommandsFramework('~~', bot)
+  command.CommandsFramework('~~')
     ..registerLibraryServices()
     ..registerLibraryCommands()
     ..onCommandNotFound.listen((m) {

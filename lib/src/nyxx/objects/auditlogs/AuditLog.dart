@@ -4,9 +4,6 @@ part of nyxx;
 ///
 /// [Look here for more](https://discordapp.com/developers/docs/resources/audit-log)
 class AuditLog {
-  /// Client instance
-  Nyxx client;
-
   /// List of webhooks found in the audit log
   Map<Snowflake, Webhook> webhooks;
 
@@ -19,19 +16,19 @@ class AuditLog {
   /// Raw data returned by API
   Map<String, dynamic> raw;
 
-  AuditLog._new(Nyxx client, this.raw) {
+  AuditLog._new(this.raw) {
     webhooks = Map();
     users = Map();
     entries = Map();
 
     raw['webhooks'].forEach((o) {
       webhooks[Snowflake(o['id'] as String)] =
-          Webhook._new(client, o as Map<String, dynamic>);
+          Webhook._new(o as Map<String, dynamic>);
     });
 
     raw['users'].forEach((o) {
       users[Snowflake(o['id'] as String)] =
-          User._new(client, o as Map<String, dynamic>);
+          User._new(o as Map<String, dynamic>);
     });
 
     raw['audit_log_entries'].forEach((o) {

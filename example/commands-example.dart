@@ -11,7 +11,7 @@ void main() {
   nyxx.Nyxx bot = nyxx.Nyxx(Platform.environment['DISCORD_TOKEN']);
 
   // Creating new CommandsFramework object and registering commands.
-  command.CommandsFramework('!', bot)
+  command.CommandsFramework('!')
     ..admins = [nyxx.Snowflake("302359032612651009")]
     ..registerLibraryCommands();
 }
@@ -85,7 +85,7 @@ class EchoCommand extends command.CommandContext {
         nyxx.PermissionsBuilder()
           ..sendMessages = true
           ..sendTtsMessages = false,
-        client.users[nyxx.Snowflake("471349482307715102")]);
+        nyxx.client.users[nyxx.Snowflake("471349482307715102")]);
 
     for (var perm in (channel as nyxx.GuildChannel).permissions) {
       var role = guild.roles.values.firstWhere((i) => i.id == perm.id);

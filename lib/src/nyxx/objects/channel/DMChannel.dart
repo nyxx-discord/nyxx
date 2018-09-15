@@ -5,14 +5,14 @@ class DMChannel extends MessageChannel {
   /// The recipient.
   User recipient;
 
-  DMChannel._new(Nyxx client, Map<String, dynamic> data)
-      : super._new(client, data, 4) {
+  DMChannel._new(Map<String, dynamic> data)
+      : super._new(data, 4) {
     if (raw['recipients'] != null) {
       this.recipient =
-          User._new(client, raw['recipients'][0] as Map<String, dynamic>);
+          User._new(raw['recipients'][0] as Map<String, dynamic>);
     } else {
       this.recipient =
-          User._new(client, raw['recipient'] as Map<String, dynamic>);
+          User._new(raw['recipient'] as Map<String, dynamic>);
     }
   }
 }

@@ -2,9 +2,6 @@ part of nyxx;
 
 /// A webhook.
 class Webhook extends SnowflakeEntity {
-  /// The [Nyxx] object.
-  Nyxx client;
-
   /// The raw object returned by the API
   Map<String, dynamic> raw;
 
@@ -29,26 +26,26 @@ class Webhook extends SnowflakeEntity {
   /// The user, if this is accessed using a normal client.
   User user;
 
-  Webhook._new(this.client, this.raw) : super(Snowflake(raw['id'] as String)) {
+  Webhook._new( this.raw) : super(Snowflake(raw['id'] as String)) {
     this.name = raw['name'] as String;
     this.token = raw['token'] as String;
 
     if (raw['channel_id'] != null) {
-      this.channel = this.client.channels[this.channelId.id] as TextChannel;
+      this.channel = _client.channels[this.channelId.id] as TextChannel;
       this.channelId = Snowflake(raw['channel_id'] as String);
     }
 
     if (raw['guild_id'] != null) {
       this.guildId = Snowflake(raw['guild_id'] as String);
-      this.guild = this.client.guilds[this.guildId];
+      this.guild = _client.guilds[this.guildId];
     }
 
-    this.user = User._new(client, raw['user'] as Map<String, dynamic>);
+    this.user = User._new(raw['user'] as Map<String, dynamic>);
   }
 
   /// Edits the webhook.
   Future<Webhook> edit({String name, String auditReason = ""}) async {
-    HttpResponse r = await this.client.http.send(
+    HttpResponse r = await _client.http.send(
         'PATCH', "/webhooks/$id/$token",
         body: {"name": name}, reason: auditReason);
     this.name = r.body['name'] as String;
@@ -57,8 +54,7 @@ class Webhook extends SnowflakeEntity {
 
   /// Deletes the webhook.
   Future<void> delete({String auditReason = ""}) async {
-    await this
-        .client
+    await _client
         .http
         .send('DELETE', "/webhooks/$id/$token", reason: auditReason);
   }
@@ -78,7 +74,7 @@ class Webhook extends SnowflakeEntity {
       "embeds": embeds.map((t) => t._build())
     };
 
-    await this.client.http.send('POST', "/webhooks/$id/$token", body: payload);
+    await _client.http.send('POST', "/webhooks/$id/$token", body: payload);
   }
 
   /// Sends message to webhook with files
@@ -89,8 +85,7 @@ class Webhook extends SnowflakeEntity {
       String username,
       String avatarUrl,
       bool tts}) async {
-    await this
-        .client
+    await _client
         .http
         .sendMultipart("POST", "/webhooks/$id/$token", files, data: {
       "content": content,

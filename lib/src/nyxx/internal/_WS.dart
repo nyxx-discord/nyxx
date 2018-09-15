@@ -7,43 +7,38 @@ class _WS {
   /// The base websocket URL.
   String gateway;
 
-  /// The client that the WS manager belongs to.
-  Nyxx client;
-
   final Logger logger = Logger("Client");
 
   /// Makes a new WS manager.
-  _WS(this.client) {
-    this.client.http.headers['Authorization'] = "Bot ${client._token}";
-    this
-        .client
+  _WS() {
+    _client.http.headers['Authorization'] = "Bot ${client._token}";
+    _client
         .http
         .send("GET", "/gateway/bot", beforeReady: true)
         .then((HttpResponse r) {
       this.bot = true;
       this.gateway = r.body['url'] as String;
-      if (this.client._options.shardCount == 1 &&
-          this.client._options.shardIds == const [0]) {
-        this.client._options.shardIds = [];
-        this.client._options.shardCount = r.body['shards'] as int;
+      if (_client._options.shardCount == 1 &&
+          _client._options.shardIds == const [0]) {
+        _client._options.shardIds = [];
+        _client._options.shardCount = r.body['shards'] as int;
         for (int i = 0; i < client._options.shardCount; i++) {
-          this.client._options.shardIds.add(i);
+          _client._options.shardIds.add(i);
           setupShard(i);
         }
       } else {
-        for (int shardId in this.client._options.shardIds) {
+        for (int shardId in _client._options.shardIds) {
           setupShard(shardId);
         }
       }
       this.connectShard(0);
     }).catchError((err) {
-      this
-          .client
+      _client
           .http
           .send('GET', '/gateway', beforeReady: true)
           .then((HttpResponse r) {
         this.gateway = r.body['url'] as String;
-        for (int shardId in this.client._options.shardIds) {
+        for (int shardId in _client._options.shardIds) {
           setupShard(shardId);
         }
         this.connectShard(0);
@@ -53,7 +48,7 @@ class _WS {
 
   void setupShard(int shardId) {
     Shard shard = Shard._new(this, shardId);
-    this.client.shards[shard.id] = shard;
+    _client.shards[shard.id] = shard;
 
     shard.onReady.listen((Shard s) {
       if (!client.ready) {
@@ -63,35 +58,42 @@ class _WS {
   }
 
   void connectShard(int index) {
-    this.client.shards.values.toList()[index]._connect(false, true);
-    if (index + 1 != this.client._options.shardIds.length)
+    _client.shards.values.toList()[index]._connect(false, true);
+    if (index + 1 != _client._options.shardIds.length)
       Timer(Duration(seconds: 6), () => connectShard(index + 1));
   }
 
   void testReady() {
     bool match = true;
-    client.guilds.forEach((Snowflake id, Guild o) {
-      if (client._options.forceFetchMembers) {
-        if (o == null || o.members.length != o.memberCount) match = false;
-      } else {
-        if (o == null) match = false;
+    for(var o in _client.guilds.values) {
+      if(o == null) {
+        match = false;
+        break;
       }
-    });
+
+      if (client._options.forceFetchMembers)
+        if (o.members.length != o.memberCount) {
+          match = false;
+          break;
+        }
+    }
 
     bool match2 = true;
-    this.client.shards.forEach((int id, Shard s) {
-      if (!s.ready) match = false;
-    });
+    for(var shard in _client.shards.values) {
+      if (!shard.ready){
+        match2 = false;
+        break;
+      }
+    }
 
     if (match && match2) {
       client.ready = true;
       client._startTime = DateTime.now();
 
-      this.client.http.send("GET", "/oauth2/applications/@me").then((response) {
-        this.client.app = ClientOAuth2Application._new(
-            this.client, response.body as Map<String, dynamic>);
+      _client.http.send("GET", "/oauth2/applications/@me").then((response) {
+        _client.app = ClientOAuth2Application._new(response.body as Map<String, dynamic>);
 
-        ReadyEvent._new(client);
+        ReadyEvent._new();
         logger.info("Connected and ready!");
       });
     }

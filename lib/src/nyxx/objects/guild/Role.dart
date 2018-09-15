@@ -2,9 +2,6 @@ part of nyxx;
 
 /// Represents a Discord guild role, which is used to assign priority, permissions, and a color to guild members
 class Role extends SnowflakeEntity {
-  /// The [Nyxx] object.
-  Nyxx client;
-
   /// The raw object returned by the API
   Map<String, dynamic> raw;
 
@@ -35,7 +32,7 @@ class Role extends SnowflakeEntity {
   /// Mention of role. If role cannot be mentioned it returns name of role.
   String get mention => mentionable ? "<@&${this.id}>" : name;
 
-  Role._new(this.client, this.raw, this.guild)
+  Role._new( this.raw, this.guild)
       : super(Snowflake(raw['id'] as String)) {
     this.name = raw['name'] as String;
     this.position = raw['position'] as int;
@@ -50,21 +47,21 @@ class Role extends SnowflakeEntity {
 
   /// Edits the role.
   Future<Role> edit({RoleBuilder role, String auditReason = ""}) async {
-    HttpResponse r = await this.client.http.send(
+    HttpResponse r = await _client.http.send(
         'PATCH', "/guilds/${this.guild.id}/roles/$id",
         body: role._build(), reason: auditReason);
-    return Role._new(this.client, r.body as Map<String, dynamic>, this.guild);
+    return Role._new( r.body as Map<String, dynamic>, this.guild);
   }
 
   /// Deletes the role.
   Future<void> delete({String auditReason = ""}) async {
-    await this.client.http.send('DELETE', "/guilds/${this.guild.id}/roles/$id",
+    await _client.http.send('DELETE', "/guilds/${this.guild.id}/roles/$id",
         reason: auditReason);
   }
 
   /// Adds role to user.
   Future<void> addToUser(User user, {String auditReason = ""}) async {
-    await this.client.http.send(
+    await _client.http.send(
         'PUT', '/guilds/${guild.id}/members/${user.id}/roles/$id',
         reason: auditReason);
   }

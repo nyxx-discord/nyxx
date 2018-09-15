@@ -8,8 +8,8 @@ class VoiceStateUpdateEvent {
   // Raw Gatway reponse
   Map<String, dynamic> json;
 
-  VoiceStateUpdateEvent._new(Nyxx client, this.json) {
-    this.state = VoiceState._new(client, json['d'] as Map<String, dynamic>);
+  VoiceStateUpdateEvent._new( this.json) {
+    this.state = VoiceState._new(json['d'] as Map<String, dynamic>);
     if (state.user != null) client._voiceStates[state.user.id] = state;
     client._events.onVoiceStateUpdate.add(this);
   }

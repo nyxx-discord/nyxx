@@ -3,9 +3,6 @@ part of nyxx;
 /// A message embed.
 /// Can contain null elements.
 class Embed {
-  /// The [Nyxx] object.
-  Nyxx client;
-
   /// The raw object returned by the API
   Map<String, dynamic> raw;
 
@@ -48,7 +45,7 @@ class Embed {
   /// Map of fields of embed. Map(name, field)
   Map<String, EmbedField> fields;
 
-  Embed._new(this.client, this.raw) {
+  Embed._new( this.raw) {
     if (raw['title'] != null) this.title = raw['title'] as String;
     if (raw['url'] != null) this.url = raw['url'] as String;
     if (raw['type'] != null) this.type = raw['type'] as String;

@@ -8,7 +8,7 @@ class MessageUpdateEvent {
   /// The updated message, if cached.
   Message newMessage;
 
-  MessageUpdateEvent._new(Nyxx client, Map<String, dynamic> json) {
+  MessageUpdateEvent._new( Map<String, dynamic> json) {
     var channelId = Snowflake(json['d']['channel_id'] as String);
     var messageId = Snowflake(json['d']['id'] as String);
 
@@ -18,7 +18,7 @@ class MessageUpdateEvent {
           (client.channels[channelId] as MessageChannel).messages[messageId];
       Map<String, dynamic> data = oldMessage.raw;
       data.addAll(json['d'] as Map<String, dynamic>);
-      this.newMessage = Message._new(client, data);
+      this.newMessage = Message._new(data);
       this.oldMessage._onUpdate.add(this);
       client._events.onMessageUpdate.add(this);
     } else {
