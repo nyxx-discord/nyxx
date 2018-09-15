@@ -8,15 +8,16 @@ class GuildMemberRemoveEvent {
   ///The user that left.
   User user;
 
-  GuildMemberRemoveEvent._new(Nyxx client, Map<String, dynamic> json) {
+  GuildMemberRemoveEvent._new( Map<String, dynamic> json) {
     if (client.ready && json['d']['user']['id'] != client.self.id) {
       this.guild = client.guilds[Snowflake(json['d']['guild_id'] as String)];
 
       if (guild != null) {
         guild.memberCount--;
         this.user =
-            User._new(client, json['d']['user'] as Map<String, dynamic>);
+            User._new(json['d']['user'] as Map<String, dynamic>);
         guild.members.remove(user.id);
+        client.users.remove(user.id);
         client._events.onGuildMemberRemove.add(this);
       }
     }

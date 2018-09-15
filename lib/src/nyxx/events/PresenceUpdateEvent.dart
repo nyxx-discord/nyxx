@@ -8,7 +8,7 @@ class PresenceUpdateEvent {
   /// The new member.
   Member newMember;
 
-  PresenceUpdateEvent._new(Nyxx client, Map<String, dynamic> json) {
+  PresenceUpdateEvent._new(Map<String, dynamic> json) {
     if (client.ready) {
       Map<String, dynamic> data = json['d'] as Map<String, dynamic>;
 
@@ -21,8 +21,9 @@ class PresenceUpdateEvent {
       if (data['user'] == null) return;
       if (data['guild_id'] == null) return;
 
-      this.newMember = Member._new(client, data);
+      this.newMember = Member._new(data);
       this.oldMember = newMember.guild.members[newMember.id];
+      client.users[newMember.id] = newMember;
       client._events.onPresenceUpdate.add(this);
     }
   }

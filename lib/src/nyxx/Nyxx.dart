@@ -1,5 +1,8 @@
 part of nyxx;
 
+Nyxx _client;
+Nyxx get client => _client;
+
 /// The main hub for interacting with the Discord API, and the starting point for any bot.
 /// From there you can subscribe to various [Stream]s to listen to [Events](https://github.com/l7ssha/nyxx/wiki/EventList)
 /// and fetch data provided and collected by bot.
@@ -184,20 +187,6 @@ class Nyxx {
       Isolate.current.addErrorListener(errorsPort.sendPort);
     }
 
-    if (this._token == null || this._token == "")
-      throw Exception("Token cannot be null or empty");
-    if (this._options == null) this._options = ClientOptions();
-
-    this._voiceStates = Map<Snowflake, UserVoiceState>();
-    this.guilds = Map<Snowflake, Guild>();
-    this.channels = Map<Snowflake, Channel>();
-    this.users = Map<Snowflake, User>();
-    this.shards = Map<int, Shard>();
-
-    this.http = Http._new(this);
-    this._events = _EventController(this);
-    this._ws = _WS(this);
-
     Logger.root.level = Level.ALL;
     Logger.root.onRecord.listen((LogRecord rec) {
       String color;
@@ -214,6 +203,22 @@ class Nyxx {
           ':${rec.time.millisecond} '
           '-- ${rec.message}');
     });
+
+    if (this._token == null || this._token == "")
+      throw Exception("Token cannot be null or empty");
+    if (this._options == null) this._options = ClientOptions();
+
+    this._voiceStates = Map<Snowflake, UserVoiceState>();
+    this.guilds = Map<Snowflake, Guild>();
+    this.channels = Map<Snowflake, Channel>();
+    this.users = Map<Snowflake, User>();
+    this.shards = Map<int, Shard>();
+
+    _client = this;
+
+    this.http = Http._new();
+    this._events = _EventController();
+    this._ws = _WS();
   }
 
   /// The client's uptime.
@@ -230,7 +235,7 @@ class Nyxx {
     if (this.users.containsKey(id)) return this.users[id];
 
     var r = await this.http.send("GET", "/users/${id.toString()}");
-    return User._new(this, r.body as Map<String, dynamic>);
+    return User._new(r.body as Map<String, dynamic>);
   }
 
   /// Gets Guild with specified id.
@@ -243,7 +248,7 @@ class Nyxx {
     if (this.guilds.containsKey(id)) return this.guilds[id];
 
     var r = await this.http.send("GET", "/guilds/${id.toString()}");
-    return Guild._new(this, r.body as Map<String, dynamic>);
+    return Guild._new(r.body as Map<String, dynamic>);
   }
 
   /// Creates new guild with provided builder.
@@ -258,14 +263,14 @@ class Nyxx {
   Future<Guild> createGuild(GuildBuilder builder) async {
     var r = await this.http.send("POST", "/guilds", body: builder._build());
 
-    return Guild._new(this, r.body as Map<String, dynamic>);
+    return Guild._new(r.body as Map<String, dynamic>);
   }
 
   /// Gets a webhook by its ID and token.
   /// If the [id] will be in cache - it will be taken from it, otherwise API will be called.
   Future<Webhook> getWebhook(String id, {String token = ""}) async {
     HttpResponse r = await http.send('GET', "/webhooks/$id/$token");
-    return Webhook._new(this, r.body as Map<String, dynamic>);
+    return Webhook._new(r.body as Map<String, dynamic>);
   }
 
   /// Block isolate until client is ready.
@@ -279,6 +284,6 @@ class Nyxx {
   /// ```
   Future<Invite> getInvite(String code) async {
     final HttpResponse r = await this.http.send('GET', '/invites/$code');
-    return Invite._new(this, r.body as Map<String, dynamic>);
+    return Invite._new(r.body as Map<String, dynamic>);
   }
 }

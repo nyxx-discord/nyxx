@@ -2,9 +2,6 @@ part of nyxx;
 
 /// An OAuth2 application.
 class OAuth2Application {
-  /// The [Nyxx] object.
-  Nyxx client;
-
   /// The raw object returned by the API
   Map<String, dynamic> raw;
 
@@ -26,7 +23,7 @@ class OAuth2Application {
   /// A timestamp for when the app was created.
   DateTime createdAt;
 
-  OAuth2Application._new(this.client, this.raw) {
+  OAuth2Application._new(this.raw) {
     this.description = raw['description'] as String;
     this.icon = raw['icon'] as String;
     this.id = Snowflake(raw['id'] as String);

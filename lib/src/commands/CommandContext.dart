@@ -31,13 +31,9 @@ class CommandContext {
   /// Guild in which message was sent
   Guild guild;
 
-  /// Additional Client instance
-  Nyxx client;
-
   CommandContext();
-
   CommandContext._new(
-      this.channel, this.author, this.guild, this.client, this.message);
+      this.channel, this.author, this.guild,  this.message);
 
   /// Reply to message. It allows to send regular message, Embed or both.
   ///
@@ -135,9 +131,9 @@ class CommandContext {
     return Future(() {
       if (everywhere) {
         if (user != null)
-          return channel.client.onTyping.firstWhere((e) => e.user == user);
+          return client.onTyping.firstWhere((e) => e.user == user);
 
-        return channel.client.onTyping.first;
+        return client.onTyping.first;
       } else {
         if (user != null)
           return channel.onTyping.firstWhere((e) => e.user == user);

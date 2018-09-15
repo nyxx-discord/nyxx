@@ -45,13 +45,13 @@ class Member extends User {
     return Permissions.fromInt(total);
   }
 
-  Member._reverse(Nyxx client, Map<String, dynamic> data, [Guild guild])
-      : super._new(client, data, false) {
+  Member._reverse(Map<String, dynamic> data, [Guild guild])
+      : super._new(data) {
     _cons(data['member'] as Map<String, dynamic>, guild);
   }
 
-  Member._new(Nyxx client, Map<String, dynamic> data, [Guild guild])
-      : super._new(client, data['user'] as Map<String, dynamic>, false) {
+  Member._new(Map<String, dynamic> data, [Guild guild])
+      : super._new(data['user'] as Map<String, dynamic>) {
    _cons(data, guild);
   }
 
@@ -62,7 +62,7 @@ class Member extends User {
     this.status = data['status'] as String;
 
     if (guild == null)
-      this.guild = this.client.guilds[Snowflake(data['guild_id'] as String)];
+      this.guild = _client.guilds[Snowflake(data['guild_id'] as String)];
     else
       this.guild = guild;
 
@@ -78,10 +78,7 @@ class Member extends User {
 
     if (data['game'] != null)
       this.presence =
-          Presence._new(this.client, data['game'] as Map<String, dynamic>);
-
-    if (guild != null) this.guild.members[this.id] = this;
-    client.users[this.id] = this;
+          Presence._new(_client, data['game'] as Map<String, dynamic>);
   }
 
   /// Bans the member and optionally deletes [deleteMessageDays] days worth of messages.
@@ -89,7 +86,7 @@ class Member extends User {
       {int deleteMessageDays = 0,
       String reason,
       String auditReason = ""}) async {
-    await this.client.http.send(
+    await _client.http.send(
         'PUT', "/guilds/${this.guild.id}/bans/${this.id}",
         body: {"delete-message-days": deleteMessageDays, "reason": reason},
         reason: auditReason);
@@ -102,21 +99,21 @@ class Member extends User {
   /// await member.addRole(r);
   /// ```
   Future<void> addRole(Role role, {String auditReason = ""}) async {
-    await this.client.http.send(
+    await _client.http.send(
         'PUT', '/guilds/${guild.id}/members/${this.id}/roles/${role.id}',
         reason: auditReason);
     return null;
   }
 
   Future<void> removeRole(Role role, {String auditReason = ""}) async {
-    await this.client.http.send("DELETE",
+    await _client.http.send("DELETE",
         "/guilds/${this.guild.id.toString()}/members/${this.id.toString()}/roles/${role.id.toString()}",
         reason: auditReason);
   }
 
   /// Kicks the member
   Future<void> kick({String auditReason = ""}) async {
-    await this.client.http.send(
+    await _client.http.send(
         'DELETE', "/guilds/${this.guild.id}/members/${this.id}",
         reason: auditReason);
   }
@@ -135,7 +132,7 @@ class Member extends User {
     if (deaf != null) req['deaf'] = deaf;
     if (deaf != null) req['channel_id'] = channel.id.toString();
 
-    await this.client.http.send("PATCH",
+    await _client.http.send("PATCH",
         "/guilds/${this.guild.id.toString()}/members/${this.id.toString()}",
         body: req, reason: auditReason);
   }

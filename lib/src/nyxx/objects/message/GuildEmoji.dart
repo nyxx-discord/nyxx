@@ -2,9 +2,6 @@ part of nyxx;
 
 /// Emoji object. Handles Unicode emojis and custom ones.
 class GuildEmoji extends Emoji {
-  /// The [Nyxx] object
-  Nyxx client;
-
   /// The raw object returned by the API
   Map<String, dynamic> raw;
 
@@ -27,7 +24,7 @@ class GuildEmoji extends Emoji {
   bool animated;
 
   /// Creates full emoji object
-  GuildEmoji._new(this.client, this.raw, this.guild) : super("") {
+  GuildEmoji._new( this.raw, this.guild) : super("") {
     this.id = Snowflake(raw['id'] as String);
     this.name = raw['name'] as String;
     this.requireColons = raw['require_colons'] as bool;
@@ -40,8 +37,6 @@ class GuildEmoji extends Emoji {
       raw['roles'].forEach(
           (o) => this.roles.add(this.guild.roles[Snowflake(o as String)]));
     }
-
-    this.guild.emojis[this.id] = this;
   }
 
   /// Creates partial object - only [id] and [name]
@@ -55,11 +50,11 @@ class GuildEmoji extends Emoji {
         body: {"name": name, roles: roles.map((r) => r.toString())});
 
     return GuildEmoji._new(
-        this.client, res.body as Map<String, dynamic>, guild);
+         res.body as Map<String, dynamic>, guild);
   }
 
   Future<void> delete() async {
-    await this.client.http.send("DELETE",
+    await _client.http.send("DELETE",
         "/guilds/${this.guild.id.toString()}/emojis/${this.id.toString()}");
   }
 

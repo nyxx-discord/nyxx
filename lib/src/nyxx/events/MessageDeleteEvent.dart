@@ -8,7 +8,7 @@ class MessageDeleteEvent {
   /// The ID of the message.
   Snowflake id;
 
-  MessageDeleteEvent._new(Nyxx client, Map<String, dynamic> json) {
+  MessageDeleteEvent._new(Map<String, dynamic> json) {
     if (client.ready) {
       if ((client.channels[Snowflake(json['d']['channel_id'] as String)]
                   as MessageChannel)

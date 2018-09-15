@@ -45,7 +45,7 @@ class Snowflake implements Comparable<Snowflake> {
     this._id = _parseId(_timestamp);
   }
 
-  /// Returns true if [first] Snowflake was created is before [second].
+  /// Returns true if [first] Snowflake was created before [second].
   static bool compareDates(Snowflake first, Snowflake second) =>
       first.timestamp.compareTo(second._timestamp) == -1;
 

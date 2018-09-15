@@ -2,9 +2,6 @@ part of nyxx;
 
 /// A mini guild object with permissions for [OAuth2Info].
 class OAuth2Guild {
-  /// The [Nyxx] object.
-  Nyxx client;
-
   /// The raw object returned by the API
   Map<String, dynamic> raw;
 
@@ -23,7 +20,7 @@ class OAuth2Guild {
   /// A timestamp for when the guild was created.
   DateTime createdAt;
 
-  OAuth2Guild._new(this.client, this.raw) {
+  OAuth2Guild._new(this.raw) {
     this.permissions = Permissions.fromInt(raw['permissions'] as int);
     this.icon = raw['icon'] as String;
     this.id = Snowflake(raw['id'] as String);

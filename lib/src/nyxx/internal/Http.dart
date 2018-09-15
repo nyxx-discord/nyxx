@@ -46,10 +46,10 @@ class HttpBase {
     this._streamController = StreamController<HttpResponse>.broadcast();
     this.stream = _streamController.stream;
 
-    BeforeHttpRequestSendEvent._new(this.http._client, this);
+    BeforeHttpRequestSendEvent._new(this);
 
-    if (this.http._client == null ||
-        !this.http._client._events.beforeHttpRequestSend.hasListener)
+    if (_client == null ||
+        !_client._events.beforeHttpRequestSend.hasListener)
       this.send();
   }
 
@@ -236,7 +236,7 @@ class HttpBucket {
         }
 
         if (r.status == 429) {
-          RatelimitEvent._new(request.http._client, request, false, r);
+          RatelimitEvent._new(request, false, r);
           request.http._logger.warning(
               "Rate limitted on endpoint: ${request.path}. Trying to send request again after timeout...");
           Timer(Duration(milliseconds: (r.body['retry_after'] as int) + 100),
@@ -258,7 +258,7 @@ class HttpBucket {
         this.rateLimitRemaining = 1;
         this._execute(request);
       } else {
-        RatelimitEvent._new(request.http._client, request as HttpRequest, true);
+        RatelimitEvent._new(request as HttpRequest, true);
         Timer(waitTime, () {
           this.rateLimitRemaining = 1;
           this._execute(request);
@@ -270,7 +270,6 @@ class HttpBucket {
 
 /// The client's HTTP client.
 class Http {
-  Nyxx _client;
 
   /// The buckets.
   Map<String, HttpBucket> buckets = <String, HttpBucket>{};
@@ -280,7 +279,7 @@ class Http {
 
   Logger _logger = Logger.detached("Http");
 
-  Http._new([this._client]) {
+  Http._new() {
     this.headers = <String, String>{'Content-Type': 'application/json'};
     this.headers['User-Agent'] =
         'DiscordBot (https://github.com/l7ssha/nyxx, ${_Constants.version})';
@@ -293,7 +292,7 @@ class Http {
       bool beforeReady = false,
       Map<String, String> headers = const {},
       String reason}) async {
-    if (_client is Nyxx && !this._client.ready && !beforeReady)
+    if (_client is Nyxx && !_client.ready && !beforeReady)
       throw Exception("Client isn't ready yet.");
 
     HttpRequest request = HttpRequest._new(
@@ -306,10 +305,10 @@ class Http {
 
     await for (HttpResponse r in request.stream) {
       if (!r.aborted && r.status >= 200 && r.status < 300) {
-        if (_client != null) HttpResponseEvent._new(_client, r);
+        if (_client != null) HttpResponseEvent._new(r);
         return r;
       } else {
-        if (_client != null) HttpErrorEvent._new(_client, r);
+        if (_client != null) HttpErrorEvent._new(r);
         throw HttpError._new(r);
       }
     }
@@ -326,7 +325,7 @@ class Http {
       {Map<String, dynamic> data,
       bool beforeReady = false,
       String reason}) async {
-    if (_client is Nyxx && !this._client.ready && !beforeReady)
+    if (_client is Nyxx && !_client.ready && !beforeReady)
       throw Exception("Client isn't ready yet.");
 
     HttpMultipartRequest request = HttpMultipartRequest._new(this, method, path,
@@ -337,11 +336,11 @@ class Http {
 
     await for (HttpResponse r in request.stream) {
       if (!r.aborted && r.status >= 200 && r.status < 300) {
-        if (_client != null) HttpResponseEvent._new(_client, r);
+        if (_client != null) HttpResponseEvent._new(r);
         return r;
       } else {
         print(r.body);
-        if (_client != null) HttpErrorEvent._new(_client, r);
+        if (_client != null) HttpErrorEvent._new(r);
         throw HttpError._new(r);
       }
     }

@@ -2,9 +2,6 @@ part of nyxx;
 
 /// A message attachment.
 class Attachment extends SnowflakeEntity {
-  /// The [Nyxx] object.
-  Nyxx client;
-
   /// The raw object returned by the API
   Map<String, dynamic> raw;
 
@@ -26,7 +23,7 @@ class Attachment extends SnowflakeEntity {
   /// The attachment's width, if an image,
   int width;
 
-  Attachment._new(this.client, this.raw)
+  Attachment._new( this.raw)
       : super(Snowflake(raw['id'] as String)) {
     this.filename = raw['filename'] as String;
     this.url = raw['url'] as String;

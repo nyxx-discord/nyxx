@@ -8,8 +8,8 @@ class VoiceState extends UserVoiceState {
   /// Session id for this voice state
   String sessionId;
 
-  VoiceState._new(Nyxx client, Map<String, dynamic> raw) : super(client, raw) {
-    this.user = client.users[Snowflake(raw['user_id'] as String)];
+  VoiceState._new(Map<String, dynamic> raw) : super(client, raw) {
+    this.user = _client.users[Snowflake(raw['user_id'] as String)];
     this.sessionId = raw['session_id'] as String;
   }
 }

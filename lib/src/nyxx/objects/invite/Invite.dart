@@ -2,9 +2,6 @@ part of nyxx;
 
 /// An invite.
 class Invite {
-  /// The [Nyxx] object.
-  Nyxx client;
-
   /// The raw object returned by the API
   Map<String, dynamic> raw;
 
@@ -35,7 +32,7 @@ class Invite {
   /// User who created this invite
   User inviter;
 
-  Invite._new(this.client, this.raw) {
+  Invite._new( this.raw) {
     this.code = raw['code'] as String;
     this.guild = client.guilds[Snowflake(raw['guild']['id'] as String)];
     this.channel = client.channels[Snowflake(raw['channel']['id'] as String)]
@@ -50,8 +47,7 @@ class Invite {
 
   /// Deletes this Invite.
   Future<void> delete({String auditReason = ""}) async {
-    await this
-        .client
+    await _client
         .http
         .send('DELETE', '/invites/$code', reason: auditReason);
   }
