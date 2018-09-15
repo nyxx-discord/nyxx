@@ -13,9 +13,9 @@ class ClientUser extends User {
 
   ClientUser._new(Nyxx client, Map<String, dynamic> data)
       : super._new(client, data) {
-    this.email = raw['email'] as String;
-    this.verified = raw['verified'] as bool;
-    this.mfa = raw['mfa_enabled'] as bool;
+    this.email = data['email'] as String;
+    this.verified = data['verified'] as bool;
+    this.mfa = data['mfa_enabled'] as bool;
     this.client = client;
   }
 
