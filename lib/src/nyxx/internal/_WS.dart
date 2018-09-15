@@ -63,7 +63,7 @@ class _WS {
   }
 
   void connectShard(int index) {
-    this.client.shards.values.toList()[index]._connect(true, true);
+    this.client.shards.values.toList()[index]._connect(false, true);
     if (index + 1 != this.client._options.shardIds.length)
       Timer(Duration(seconds: 6), () => connectShard(index + 1));
   }
