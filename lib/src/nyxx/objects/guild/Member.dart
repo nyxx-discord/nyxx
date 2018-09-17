@@ -78,7 +78,7 @@ class Member extends User {
 
     if (data['game'] != null)
       this.presence =
-          Presence._new(_client, data['game'] as Map<String, dynamic>);
+          Presence._new(data['game'] as Map<String, dynamic>);
   }
 
   /// Bans the member and optionally deletes [deleteMessageDays] days worth of messages.

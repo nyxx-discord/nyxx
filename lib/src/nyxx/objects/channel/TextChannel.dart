@@ -21,9 +21,9 @@ class TextChannel extends MessageChannel with GuildChannel {
   String get url => "https://discordapp.com/channels/${this.guild.id.toString()}"
       "/${this.id.toString()}";
 
-  TextChannel._new(Map<String, dynamic> data, Guild guild)
-      : super._new(data, 0) {
-    _initialize(data, guild);
+  TextChannel._new(Map<String, dynamic> raw, Guild guild)
+      : super._new(raw, 0) {
+    _initialize(raw, guild);
 
     this.topic = raw['topic'] as String;
     this.mention = "<#${this.id}>";

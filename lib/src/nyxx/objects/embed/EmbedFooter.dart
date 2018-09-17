@@ -11,10 +11,7 @@ class EmbedFooter {
   /// Proxied url of icon url
   String iconProxyUrl;
 
-  /// The raw object returned by the API
-  Map<String, dynamic> raw;
-
-  EmbedFooter._new(this.raw) {
+  EmbedFooter._new(Map<String, dynamic> raw) {
     text = raw['text'] as String;
     iconUrl = raw['icon_url'] as String;
     iconProxyUrl = raw['icon_proxy_url'] as String;

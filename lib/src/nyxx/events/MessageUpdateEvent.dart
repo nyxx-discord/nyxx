@@ -5,8 +5,8 @@ class MessageUpdateEvent {
   /// The old message, if cached.
   Message oldMessage;
 
-  /// The updated message, if cached.
-  Message newMessage;
+  /// Raw event data
+  dynamic newMessage;
 
   MessageUpdateEvent._new( Map<String, dynamic> json) {
     var channelId = Snowflake(json['d']['channel_id'] as String);
@@ -16,9 +16,7 @@ class MessageUpdateEvent {
         null) {
       this.oldMessage =
           (client.channels[channelId] as MessageChannel).messages[messageId];
-      Map<String, dynamic> data = oldMessage.raw;
-      data.addAll(json['d'] as Map<String, dynamic>);
-      this.newMessage = Message._new(data);
+      this.newMessage = json['d'];
       this.oldMessage._onUpdate.add(this);
       client._events.onMessageUpdate.add(this);
     } else {

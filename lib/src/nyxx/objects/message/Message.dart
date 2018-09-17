@@ -11,7 +11,7 @@ class Message extends SnowflakeEntity {
   StreamController<MessageReactionsRemovedEvent> _onReactionsRemoved;
 
   /// The raw object returned by the API.
-  Map<String, dynamic> raw;
+  //Map<String, dynamic> raw;
 
   /// The message's content.
   String content;
@@ -74,7 +74,7 @@ class Message extends SnowflakeEntity {
   String get url => "https://discordapp.com/channels/${this.guild.id.toString()}"
       "/${this.channel.id.toString()}/${this.id.toString()}";
 
-  Message._new( this.raw) : super(Snowflake(raw['id'] as String)) {
+  Message._new(Map<String, dynamic> raw) : super(Snowflake(raw['id'] as String)) {
     this._onUpdate = StreamController.broadcast();
     this.onUpdate = this._onUpdate.stream;
 
@@ -109,9 +109,7 @@ class Message extends SnowflakeEntity {
           this.guild.members[Snowflake(raw['author']['id'] as String)];
 
       if (this.author == null) {
-        var tMap = raw['member'] as Map<String, dynamic>;
-        tMap['user'] = raw['author'];
-        this.author = Member._new( tMap);
+        this.author = _client.users[Snowflake(raw['author']['id'] as String)] ?? User._new(raw['author']['id'] as Map<String, dynamic>);
       }
 
       if (raw['mention_roles'] != null) {
@@ -128,7 +126,8 @@ class Message extends SnowflakeEntity {
 
     this.mentions = Map<Snowflake, Member>();
     raw['mentions'].forEach((o) {
-      final user = Member._reverse( o as Map<String, dynamic>, this.guild);
+      print("SIEMA: ${jsonEncode(o)}");
+      final user = Member._reverse(o as Map<String, dynamic>, this.guild);
       this.mentions[user.id] = user;
     });
 
@@ -165,8 +164,10 @@ class Message extends SnowflakeEntity {
       {String content,
       EmbedBuilder embed,
       bool tts = false,
-      String nonce,
       bool disableEveryone}) async {
+    if(this.id != _client.self.id)
+      return null;
+
     String newContent;
     if (content != null &&
         (disableEveryone == true ||

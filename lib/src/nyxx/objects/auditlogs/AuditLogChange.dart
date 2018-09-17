@@ -13,10 +13,7 @@ class AuditLogChange {
   /// type of audit log change hey
   String key;
 
-  /// Raw data returned by API
-  Map<String, dynamic> raw;
-
-  AuditLogChange._new(this.raw) {
+  AuditLogChange._new(Map<String, dynamic> raw) {
     if (raw['new_value'] != null) newValue = raw['new_value'];
     if (raw['old_value'] != null) oldValue = raw['old_value'];
     key = raw['key'] as String;
