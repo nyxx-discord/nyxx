@@ -2,9 +2,6 @@ part of nyxx;
 
 /// Emoji object. Handles Unicode emojis and custom ones.
 class GuildEmoji extends Emoji {
-  /// The raw object returned by the API
-  Map<String, dynamic> raw;
-
   /// Emoji guild
   Guild guild;
 
@@ -24,7 +21,7 @@ class GuildEmoji extends Emoji {
   bool animated;
 
   /// Creates full emoji object
-  GuildEmoji._new( this.raw, this.guild) : super("") {
+  GuildEmoji._new(Map<String, dynamic> raw, this.guild) : super("") {
     this.id = Snowflake(raw['id'] as String);
     this.name = raw['name'] as String;
     this.requireColons = raw['require_colons'] as bool;
@@ -40,7 +37,7 @@ class GuildEmoji extends Emoji {
   }
 
   /// Creates partial object - only [id] and [name]
-  GuildEmoji._partial(this.raw) : super(raw['name'] as String) {
+  GuildEmoji._partial(Map<String, dynamic> raw) : super(raw['name'] as String) {
     this.id = Snowflake(raw['id'] as String);
   }
 

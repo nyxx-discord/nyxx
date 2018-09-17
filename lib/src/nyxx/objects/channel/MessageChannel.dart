@@ -29,8 +29,8 @@ class MessageChannel extends Channel with IterableMixin<Message>, ISend {
   /// The ID for the last message in the channel.
   Snowflake lastMessageID;
 
-  MessageChannel._new(Map<String, dynamic> data, int type)
-      : super._new(data, type) {
+  MessageChannel._new(Map<String, dynamic> raw, int type)
+      : super._new(raw, type) {
     if (raw['last_message_id'] != null)
       this.lastMessageID = Snowflake(raw['last_message_id'] as String);
     this.messages = LinkedHashMap<Snowflake, Message>();
@@ -175,7 +175,7 @@ class MessageChannel extends Channel with IterableMixin<Message>, ISend {
       Snowflake after,
       Snowflake before,
       Snowflake around,
-      bool cache}) async {
+      bool cache = false}) async {
     Map<String, String> query = {"limit": limit.toString()};
 
     if (after != null) query['after'] = after.toString();
@@ -189,7 +189,7 @@ class MessageChannel extends Channel with IterableMixin<Message>, ISend {
 
     var response = LinkedHashMap<Snowflake, Message>();
 
-    for (Map<String, dynamic> val in r.body.values.first) {
+    for (Map<String, dynamic> val in r.body as List<dynamic>) {
       var msg = Message._new( val);
       response[msg.id] = msg;
     }

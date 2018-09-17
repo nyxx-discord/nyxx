@@ -2,9 +2,6 @@ part of nyxx;
 
 /// A message embed thumbnail.
 class EmbedThumbnail {
-  /// The raw object returned by the API
-  Map<String, dynamic> raw;
-
   /// The embed thumbnail's URL.
   String url;
 
@@ -17,7 +14,7 @@ class EmbedThumbnail {
   /// The embed thumbnal's width.
   int width;
 
-  EmbedThumbnail._new(this.raw) {
+  EmbedThumbnail._new(Map<String, dynamic> raw) {
     this.url = raw['url'] as String;
     this.proxyUrl = raw['proxy_url'] as String;
     this.height = raw['height'] as int;

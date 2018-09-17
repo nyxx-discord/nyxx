@@ -11,9 +11,6 @@ part of nyxx;
 /// ```
 /// If you want to get [icon] or [splash] of [Guild] use `iconURL()` method - [icon] property returns only hash, same as [splash] property.
 class Guild extends SnowflakeEntity {
-  /// The raw object returned by the API
-  Map<String, dynamic> raw;
-
   /// The guild's name.
   String name;
 
@@ -89,7 +86,7 @@ class Guild extends SnowflakeEntity {
   /// Returns url to this guild.
   String get url => "https://discordapp.com/channels/${this.id.toString()}";
 
-  Guild._new(this.raw,
+  Guild._new(Map<String, dynamic> raw,
       [this.available = true, bool guildCreate = false])
       : super(Snowflake(raw['id'] as String)) {
     if (this.available) {
@@ -131,13 +128,13 @@ class Guild extends SnowflakeEntity {
         this.members = Map<Snowflake, Member>();
         this.channels = Map<Snowflake, Channel>();
 
-        raw['members'].forEach((dynamic o) {
+        raw['members'].forEach((o) {
           var member = Member._new(o as Map<String, dynamic>, this);
           this.members[member.id] = member;
           client.users[member.id] = member;
         });
 
-        raw['channels'].forEach((dynamic o) {
+        raw['channels'].forEach((o) {
           GuildChannel channel;
 
           if (o['type'] == 0)
@@ -151,13 +148,13 @@ class Guild extends SnowflakeEntity {
           client.channels[channel.id] = channel;
         });
 
-        raw['presences'].forEach((dynamic o) {
+        raw['presences'].forEach((o) {
           Member member = this.members[Snowflake(o['user']['id'] as String)];
           if (member != null) {
             member.status = o['status'] as String;
             if (o['game'] != null) {
               member.presence =
-                  Presence._new(client, o['game'] as Map<String, dynamic>);
+                  Presence._new(o['game'] as Map<String, dynamic>);
             }
           }
         });

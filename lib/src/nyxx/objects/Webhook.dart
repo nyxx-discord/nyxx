@@ -2,9 +2,6 @@ part of nyxx;
 
 /// A webhook.
 class Webhook extends SnowflakeEntity {
-  /// The raw object returned by the API
-  Map<String, dynamic> raw;
-
   /// The webhook's name.
   String name;
 
@@ -26,7 +23,7 @@ class Webhook extends SnowflakeEntity {
   /// The user, if this is accessed using a normal client.
   User user;
 
-  Webhook._new( this.raw) : super(Snowflake(raw['id'] as String)) {
+  Webhook._new(Map<String, dynamic> raw) : super(Snowflake(raw['id'] as String)) {
     this.name = raw['name'] as String;
     this.token = raw['token'] as String;
 

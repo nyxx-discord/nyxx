@@ -14,10 +14,7 @@ class EmbedAuthor {
   /// Proxied icon url
   String iconProxyUrl;
 
-  /// The raw object returned by the API
-  Map<String, dynamic> raw;
-
-  EmbedAuthor._new(this.raw) {
+  EmbedAuthor._new(Map<String, dynamic> raw) {
     this.name = raw['name'] as String;
     this.url = raw['url'] as String;
     this.iconUrl = raw['icon_url'] as String;

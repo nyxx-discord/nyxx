@@ -2,9 +2,6 @@ part of nyxx;
 
 /// An invite.
 class Invite {
-  /// The raw object returned by the API
-  Map<String, dynamic> raw;
-
   /// The invite's code.
   String code;
 
@@ -32,7 +29,7 @@ class Invite {
   /// User who created this invite
   User inviter;
 
-  Invite._new( this.raw) {
+  Invite._new(Map<String, dynamic> raw) {
     this.code = raw['code'] as String;
     this.guild = client.guilds[Snowflake(raw['guild']['id'] as String)];
     this.channel = client.channels[Snowflake(raw['channel']['id'] as String)]

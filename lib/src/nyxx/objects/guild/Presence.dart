@@ -2,9 +2,6 @@ part of nyxx;
 
 /// A game.
 class Presence {
-  /// The raw object returned by the API
-  Map<String, dynamic> raw;
-
   /// The game name.
   String name;
 
@@ -45,11 +42,9 @@ class Presence {
   String url;
 
   /// Makes a new game object.
-  Presence.of(this.name, {this.type = 0, this.url}) {
-    this.raw = {"name": name, "type": type, "url": url};
-  }
+  Presence.of(this.name, {this.type = 0, this.url});
 
-  Presence._new(Nyxx client, this.raw) {
+  Presence._new(Map<String, dynamic> raw) {
     this.name = raw['name'] as String;
     this.url = raw['url'] as String;
     this.type = raw['type'] as int;
@@ -97,10 +92,7 @@ class GameParty {
   /// Max size of party.
   int maxSize;
 
-  /// Raw object returned by API.
-  Map<String, dynamic> raw;
-
-  GameParty._new(this.raw) {
+  GameParty._new(Map<String, dynamic> raw) {
     id = raw['id'] as String;
 
     if (raw['size'] != null) {
@@ -124,10 +116,7 @@ class GameAssets {
   /// Text displayed when hovering over the small image of the activity
   String smallText;
 
-  /// Raw object returned by API.
-  Map<String, dynamic> raw;
-
-  GameAssets._new(this.raw) {
+  GameAssets._new(Map<String, dynamic> raw) {
     largeImage = raw['large_image'] as String;
     largeText = raw['large_text'] as String;
     smallImage = raw['small_image'] as String;
@@ -146,10 +135,7 @@ class GameSecrets {
   /// Match secret
   String match;
 
-  /// Raw object returned by API.
-  Map<String, dynamic> raw;
-
-  GameSecrets._new(this.raw) {
+  GameSecrets._new(Map<String, dynamic> raw) {
     join = raw['join'] as String;
     spectate = raw['spectate'] as String;
     match = raw['match'] as String;

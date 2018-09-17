@@ -13,10 +13,7 @@ class AuditLog {
   /// List of audit log entries
   Map<Snowflake, AuditLogEntry> entries;
 
-  /// Raw data returned by API
-  Map<String, dynamic> raw;
-
-  AuditLog._new(this.raw) {
+  AuditLog._new(Map<String, dynamic> raw) {
     webhooks = Map();
     users = Map();
     entries = Map();
@@ -33,7 +30,7 @@ class AuditLog {
 
     raw['audit_log_entries'].forEach((o) {
       entries[Snowflake(o['id'] as String)] =
-          AuditLogEntry._new(client, o as Map<String, dynamic>);
+          AuditLogEntry._new(o as Map<String, dynamic>);
     });
   }
 }

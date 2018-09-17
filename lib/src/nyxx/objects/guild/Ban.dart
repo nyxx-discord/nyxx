@@ -8,10 +8,7 @@ class Ban {
   /// Banned user
   User user;
 
-  /// Raw data returned from API
-  Map<String, dynamic> raw;
-
-  Ban._new(this.raw) {
+  Ban._new(Map<String, dynamic> raw) {
     this.reason = raw['reason'] as String;
 
     var userFlake = Snowflake(raw['user']['id'] as String);

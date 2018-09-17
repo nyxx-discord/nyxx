@@ -38,7 +38,7 @@ class Nyxx {
   /// The bot's OAuth2 app.
   ClientOAuth2Application app;
 
-  /// All of the guilds the bot is in.
+  /// All of the guilds the bot is in. Can be empty or can miss guilds on (READY_EVENT).
   Map<Snowflake, Guild> guilds;
 
   /// All of the channels the bot is in.

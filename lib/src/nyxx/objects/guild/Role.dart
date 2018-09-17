@@ -2,9 +2,6 @@ part of nyxx;
 
 /// Represents a Discord guild role, which is used to assign priority, permissions, and a color to guild members
 class Role extends SnowflakeEntity {
-  /// The raw object returned by the API
-  Map<String, dynamic> raw;
-
   /// The role's name.
   String name;
 
@@ -32,7 +29,7 @@ class Role extends SnowflakeEntity {
   /// Mention of role. If role cannot be mentioned it returns name of role.
   String get mention => mentionable ? "<@&${this.id}>" : name;
 
-  Role._new( this.raw, this.guild)
+  Role._new(Map<String, dynamic> raw, this.guild)
       : super(Snowflake(raw['id'] as String)) {
     this.name = raw['name'] as String;
     this.position = raw['position'] as int;
