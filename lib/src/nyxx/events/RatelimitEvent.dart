@@ -3,9 +3,8 @@ part of nyxx;
 /// Sent when the client is ratelimited, either by the ratelimit handler itself,
 /// or when a 429 is received.
 class RatelimitEvent {
-  /// true if ratelimit handler stopped the request preventatively
-  ///
-  /// false if the client received a 429
+  /// True if ratelimit handler stopped the request
+  /// False if the client received a 429
   bool handled;
 
   /// The request that was ratelimited.

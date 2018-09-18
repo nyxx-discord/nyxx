@@ -109,7 +109,12 @@ class Message extends SnowflakeEntity {
           this.guild.members[Snowflake(raw['author']['id'] as String)];
 
       if (this.author == null) {
-        this.author = _client.users[Snowflake(raw['author']['id'] as String)] ?? User._new(raw['author']['id'] as Map<String, dynamic>);
+        this.author = _client.users[Snowflake(raw['author']['id'] as String)];
+
+        if(this.author == null) {
+          this.author = User._new(raw['author'] as Map<String, dynamic>);
+          _client.users[author.id] = author;
+        }
       }
 
       if (raw['mention_roles'] != null) {
@@ -126,7 +131,6 @@ class Message extends SnowflakeEntity {
 
     this.mentions = Map<Snowflake, Member>();
     raw['mentions'].forEach((o) {
-      print("SIEMA: ${jsonEncode(o)}");
       final user = Member._reverse(o as Map<String, dynamic>, this.guild);
       this.mentions[user.id] = user;
     });

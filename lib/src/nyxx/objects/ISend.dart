@@ -9,9 +9,9 @@ abstract class ISend {
       bool disableEveryone});
 }
 
-String expandAttachment(String filename) => "attachment://$filename";
+String attach(String filename) => "attachment://$filename";
 
-String _sanitizeMessage(Object content, bool disableEveryone, Nyxx client) {
+String _sanitizeMessage(Object content, bool disableEveryone) {
   var msg = content.toString();
   if (content != null &&
       ((disableEveryone != null && disableEveryone) ||

@@ -29,6 +29,7 @@ class ChannelUpdateEvent {
       }
 
       oldChannel._onUpdate.add(this);
+
       guild.channels[oldChannel.id] = newChannel;
       client.channels[oldChannel.id] = newChannel;
       client._events.onChannelUpdate.add(this);
