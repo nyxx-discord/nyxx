@@ -26,6 +26,9 @@ class MessageChannel extends Channel with IterableMixin<Message>, ISend {
   /// A collection of messages sent to this channel.
   LinkedHashMap<Snowflake, Message> messages;
 
+  /// Returns list witch chronologically sorted messages
+  List<Message> get sortedMessages => messages.values.toList()..sort((m1, m2) => m1.createdAt.compareTo(m2.createdAt));
+
   /// The ID for the last message in the channel.
   Snowflake lastMessageID;
 
@@ -55,8 +58,8 @@ class MessageChannel extends Channel with IterableMixin<Message>, ISend {
     return message;
   }
 
-  /// Returs message with given [id]. Allows to force fatch message from api
-  /// with [force] propery. By default it checks if message is in cache and fetches from api if not.
+  /// Returns message with given [id]. Allows to force fetch message from api
+  /// with [force] property. By default it checks if message is in cache and fetches from api if not.
   Future<Message> getMessage(Snowflake id, {bool force = false}) async {
     if (force || !messages.containsKey(id)) {
       var r = await _client
@@ -93,20 +96,19 @@ class MessageChannel extends Channel with IterableMixin<Message>, ISend {
   /// ```
   ///
   ///
-  ///
   /// Method also allows to send file and optional [content] with [embed].
   /// Use `expandAttachment(String file)` method to expand file names in embed
   ///
   /// ```
-  /// await chan.sendFile([new File("kitten.png"), new File("kitten.jpg")], content: "Kittens ^-^"]);
+  /// await chan.send(files: [new File("kitten.png"), new File("kitten.jpg")], content: "Kittens ^-^"]);
   /// ```
   /// ```
   /// var embed = new nyxx.EmbedBuilder()
   ///   ..title = "Example Title"
-  ///   ..thumbnailUrl = "${expandAttachment('kitten.jpg')}";
+  ///   ..thumbnailUrl = "${attach('kitten.jpg')}";
   ///
   /// await e.message.channel
-  ///   .sendFile([new File("kitten.jpg")], embed: embed, content: "HEJKA!");
+  ///   .send(files: [new File("kitten.jpg")], embed: embed, content: "HEJKA!");
   /// ```
   Future<Message> send(
       {Object content = "",
@@ -114,7 +116,7 @@ class MessageChannel extends Channel with IterableMixin<Message>, ISend {
       EmbedBuilder embed,
       bool tts = false,
       bool disableEveryone}) async {
-    var newContent = _sanitizeMessage(content, disableEveryone, client);
+    var newContent = _sanitizeMessage(content, disableEveryone);
 
     Map<String, dynamic> reqBody = {
       "content": newContent,
@@ -194,7 +196,11 @@ class MessageChannel extends Channel with IterableMixin<Message>, ISend {
       response[msg.id] = msg;
     }
 
-    if (cache) messages.addAll(response);
+    if(cache) {
+      for(var m in response.values) {
+        _cacheMessage(m);
+      }
+    }
 
     return response;
   }

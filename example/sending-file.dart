@@ -28,7 +28,7 @@ void main() {
       // Use `{file-name}` to embed sent file into embed.
       var embed = nyxx.EmbedBuilder()
         ..title = "Example Title"
-        ..thumbnailUrl = "${nyxx.expandAttachment('kitten.jpeg')}";
+        ..thumbnailUrl = "${nyxx.attach('kitten.jpeg')}";
 
       // Sent all together
       e.message.channel
