@@ -10,7 +10,10 @@ class PresenceUpdateEvent {
 
   PresenceUpdateEvent._new(Map<String, dynamic> json) {
     if (client.ready) {
-      this.member = client.guilds[Snowflake(json['d']['guild_id'] as String)].members[Snowflake(json['d']['user']['id'] as String)];
+      var guild = client.guilds[Snowflake(json['d']['guild_id'] as String)];
+
+      if(guild != null)
+        this.member = guild.members[Snowflake(json['d']['user']['id'] as String)];
 
       if(json['d']['game'] != null)
         this.presence = Presence._new(json['d']['game'] as Map<String, dynamic>);
