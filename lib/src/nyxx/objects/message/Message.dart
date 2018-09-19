@@ -75,6 +75,8 @@ class Message extends SnowflakeEntity {
       "/${this.channel.id.toString()}/${this.id.toString()}";
 
   Message._new(Map<String, dynamic> raw) : super(Snowflake(raw['id'] as String)) {
+    print(jsonEncode(raw));
+
     this._onUpdate = StreamController.broadcast();
     this.onUpdate = this._onUpdate.stream;
 
@@ -105,15 +107,20 @@ class Message extends SnowflakeEntity {
 
     this.guild = _client.guilds[Snowflake(raw['guild_id'] as String)];
     if (this.guild != null) {
-      this.author =
-          this.guild.members[Snowflake(raw['author']['id'] as String)];
 
-      if (this.author == null) {
-        this.author = _client.users[Snowflake(raw['author']['id'] as String)];
+      if(raw['author'] != null) {
+        this.author = this.guild.members[Snowflake(raw['author']['id'] as String)];
 
-        if(this.author == null) {
-          this.author = User._new(raw['author'] as Map<String, dynamic>);
-          _client.users[author.id] = author;
+        if (this.author == null) {
+          this.author = _client.users[Snowflake(raw['author']['id'] as String)];
+
+          if(this.author == null) {
+            raw['author']['member'] = raw['member'];
+            var author  = Member._reverse(raw['author'] as Map<String, dynamic>);
+            _client.users[author.id] = author;
+            guild.members[author.id] = author;
+            this.author = author;
+          }
         }
       }
 
@@ -129,27 +136,38 @@ class Message extends SnowflakeEntity {
     if (raw['edited_timestamp'] != null)
       this.editedTimestamp = DateTime.parse(raw['edited_timestamp'] as String);
 
-    this.mentions = Map<Snowflake, Member>();
-    raw['mentions'].forEach((o) {
-      final user = Member._reverse(o as Map<String, dynamic>, this.guild);
-      this.mentions[user.id] = user;
-    });
+    if(raw['mentions'] != null) {
+      this.mentions = Map<Snowflake, Member>();
+      raw['mentions'].forEach((o) {
+        if(o['member'] == null) {
+          final user = User._new(o as Map<String, dynamic>);
+          this.mentions[user.id] = user;
+        } else {
+          final user = Member._reverse(o as Map<String, dynamic>, this.guild);
+          this.mentions[user.id] = user;
+        }
+      });
+    }
 
-    this.embeds = Map<String, Embed>();
-    raw['embeds'].forEach((o) {
-      Embed embed = Embed._new( o as Map<String, dynamic>);
-      this.embeds[embed.title] = embed;
-    });
+    if(raw['embeds'] != null) {
+      this.embeds = Map<String, Embed>();
+      raw['embeds'].forEach((o) {
+        Embed embed = Embed._new( o as Map<String, dynamic>);
+        this.embeds[embed.title] = embed;
+      });
+    }
 
-    this.attachments = Map<Snowflake, Attachment>();
-    raw['attachments'].forEach((o) {
-      final Attachment attachment =
-          Attachment._new( o as Map<String, dynamic>);
-      this.attachments[attachment.id] = attachment;
-    });
+    if(raw['attachments'] != null) {
+      this.attachments = Map<Snowflake, Attachment>();
+      raw['attachments'].forEach((o) {
+        final Attachment attachment =
+            Attachment._new( o as Map<String, dynamic>);
+        this.attachments[attachment.id] = attachment;
+      });
+    }
 
-    this.reactions = List<Reaction>();
     if (raw['reactions'] != null) {
+      this.reactions = List();
       raw['reactions'].forEach((o) {
         this.reactions.add(Reaction._new(o as Map<String, dynamic>));
       });
