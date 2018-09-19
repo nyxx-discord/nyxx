@@ -17,6 +17,7 @@ class GuildCreateEvent {
       shard._ws.testReady();
     } else {
       client.guilds[guild.id] = guild;
+      shard.guilds[guild.id] = guild;
       client._events.onGuildCreate.add(this);
     }
   }
