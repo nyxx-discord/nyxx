@@ -10,6 +10,9 @@ class PresenceUpdateEvent {
 
   PresenceUpdateEvent._new(Map<String, dynamic> json) {
     if (client.ready) {
+      //print("JSON: ${jsonEncode(json)}");
+      //print("CURRENT GUILD LIST: ${client.guilds}");
+
       var guild = client.guilds[Snowflake(json['d']['guild_id'] as String)];
 
       if(guild != null)
@@ -23,7 +26,15 @@ class PresenceUpdateEvent {
         member.guild.members[member.id] = member;
         client.users[member.id] = member;
       } else if(member != null && ['invisible', 'offline'].contains(json['d']['status'])) {
-        member.guild.members.remove(member.id);
+
+
+        try {
+          member.guild.members.remove(member.id);
+        } on Exception catch (e, stacktrace){
+          print("$e \n $stacktrace");
+          print(jsonEncode(json));
+        }
+
         client.users.remove(member.id);
       } else {
         if(member != null) {
