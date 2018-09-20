@@ -73,6 +73,7 @@ class Shard {
     WebSocket.connect('${this._ws.gateway}?v=7&encoding=json')
         .then((WebSocket socket) {
       this._socket = socket;
+      this._socket.pingInterval = const Duration(seconds: 3);
       this._socket.listen((dynamic msg) async {
         await this._handleMsg(_decodeBytes(msg), resume);
       }, onDone: this._handleErr);

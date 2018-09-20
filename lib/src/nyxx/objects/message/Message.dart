@@ -31,7 +31,7 @@ class Message extends SnowflakeEntity {
   /// The message's author. Can be instance of member
   User author;
 
-  /// The mentions in the message.
+  /// The mentions in the message. [User] value of this map can be [Member]
   Map<Snowflake, User> mentions;
 
   /// A list of IDs for the role mentions in the message.
@@ -75,8 +75,6 @@ class Message extends SnowflakeEntity {
       "/${this.channel.id.toString()}/${this.id.toString()}";
 
   Message._new(Map<String, dynamic> raw) : super(Snowflake(raw['id'] as String)) {
-    print(jsonEncode(raw));
-
     this._onUpdate = StreamController.broadcast();
     this.onUpdate = this._onUpdate.stream;
 
@@ -111,16 +109,13 @@ class Message extends SnowflakeEntity {
       if(raw['author'] != null) {
         this.author = this.guild.members[Snowflake(raw['author']['id'] as String)];
 
-        if (this.author == null) {
-          this.author = _client.users[Snowflake(raw['author']['id'] as String)];
-
-          if(this.author == null) {
-            raw['author']['member'] = raw['member'];
-            var author  = Member._reverse(raw['author'] as Map<String, dynamic>);
-            _client.users[author.id] = author;
-            guild.members[author.id] = author;
-            this.author = author;
-          }
+        if(this.author == null) {
+          var r = raw['author'];
+          r['member'] = raw['member'];
+          var author  = Member._reverse(r as Map<String, dynamic>, client.guilds[Snowflake(raw['guild_id'] as String)]);
+          _client.users[author.id] = author;
+          guild.members[author.id] = author;
+          this.author = author;
         }
       }
 
@@ -137,7 +132,7 @@ class Message extends SnowflakeEntity {
       this.editedTimestamp = DateTime.parse(raw['edited_timestamp'] as String);
 
     if(raw['mentions'] != null) {
-      this.mentions = Map<Snowflake, Member>();
+      this.mentions = Map<Snowflake, User>();
       raw['mentions'].forEach((o) {
         if(o['member'] == null) {
           final user = User._new(o as Map<String, dynamic>);
