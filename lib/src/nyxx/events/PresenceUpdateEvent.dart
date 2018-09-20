@@ -21,12 +21,12 @@ class PresenceUpdateEvent {
       if(json['d']['game'] != null)
         this.presence = Presence._new(json['d']['game'] as Map<String, dynamic>);
 
-      if(member == null && ['online', 'dnd', 'idle'].contains(json['d']['status'])) {
-        print(jsonEncode(json));
-        this.member = Member._new(json['d'] as Map<String, dynamic>, client.guilds[Snowflake(json['d']['guild_id'] as String)]);
-        member.guild.members[member.id] = member;
-        client.users[member.id] = member;
-      } else if(member != null && ['invisible', 'offline'].contains(json['d']['status'])) {
+      /*if(member == null && ['online', 'dnd', 'idle'].contains(json['d']['status'])) {
+        if(this.member != null) {
+          member.guild.members[member.id] = member;
+          client.users[member.id] = member;
+        }*/
+      if(member != null && ['invisible', 'offline'].contains(json['d']['status'])) {
         member.guild.members.remove(member.id);
         client.users.remove(member.id);
       } else {
