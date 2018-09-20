@@ -61,15 +61,12 @@ class Member extends User {
     this.mute = data['mute'] as bool;
     this.status = data['status'] as String;
 
-    if (guild == null)
-      this.guild = _client.guilds[Snowflake(data['guild_id'] as String)];
-    else
-      this.guild = guild;
+    this.guild = guild;
 
-    if (data['roles'] != null) {
-      roles = List();
+    if (data['roles'] != null && this.guild.roles != null) {
+      this.roles = List();
       data['roles'].forEach((i) {
-        roles.add(this.guild.roles[Snowflake(i as String)]);
+        this.roles.add(this.guild.roles[Snowflake(i as String)]);
       });
     }
 
