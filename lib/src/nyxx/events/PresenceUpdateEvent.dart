@@ -10,9 +10,6 @@ class PresenceUpdateEvent {
 
   PresenceUpdateEvent._new(Map<String, dynamic> json) {
     if (client.ready) {
-      //print("JSON: ${jsonEncode(json)}");
-      //print("CURRENT GUILD LIST: ${client.guilds}");
-
       var guild = client.guilds[Snowflake(json['d']['guild_id'] as String)];
 
       if(guild != null)
@@ -21,19 +18,16 @@ class PresenceUpdateEvent {
       if(json['d']['game'] != null)
         this.presence = Presence._new(json['d']['game'] as Map<String, dynamic>);
 
-      /*if(member == null && ['online', 'dnd', 'idle'].contains(json['d']['status'])) {
-        if(this.member != null) {
-          member.guild.members[member.id] = member;
-          client.users[member.id] = member;
-        }*/
-      if(member != null && ['invisible', 'offline'].contains(json['d']['status'])) {
+      if(member == null && ['online', 'dnd', 'idle'].contains(json['d']['status'])) {
+        this.member = Member._new(json['d'] as Map<String, dynamic>, guild);
+        member.guild.members[member.id] = member;
+        client.users[member.id] = member;
+      } else if(member != null && 'offline' == json['d']['status'].toString()) {
         member.guild.members.remove(member.id);
         client.users.remove(member.id);
-      } else {
-        if(member != null) {
-          this.member.status = json['d']['status'] as String;
-          this.member.presence = presence;
-        }
+      } else if(member != null) {
+        this.member.status = json['d']['status'] as String;
+        this.member.presence = presence;
       }
 
       client._events.onPresenceUpdate.add(this);
