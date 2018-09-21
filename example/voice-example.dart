@@ -1,5 +1,5 @@
 import 'package:nyxx/nyxx.dart' as nyxx;
-import 'package:nyxx/voice.dart' as voice;
+import 'package:nyxx/lavalink.dart' as voice;
 
 import 'dart:io';
 
