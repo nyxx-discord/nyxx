@@ -1,7 +1,7 @@
 ///  Nyxx DISCORD API wrapper for Dart
 ///  Voice sublibrary wrapps all tool and logic needed to interact with voice.
 ///  Allows to connect to channel and play music using [Lavalink](https://github.com/Frederikam/Lavalink)
-library nyxx.voice;
+library nyxx.lavalink;
 
 import 'nyxx.dart';
 import 'package:logging/logging.dart';
@@ -12,8 +12,8 @@ import 'dart:io';
 import 'dart:async';
 import 'dart:convert';
 
-part 'src/lavalink/VoiceService.dart';
-part 'src/lavalink/Player.dart';
+part 'src/lavalink/LavalinkManager.dart';
+part 'src/lavalink/LavalinkPlayer.dart';
 
 part 'src/lavalink/events/TrackError.dart';
 part 'src/lavalink/events/TrackEndEvent.dart';

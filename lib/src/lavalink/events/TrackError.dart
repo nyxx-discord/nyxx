@@ -1,4 +1,4 @@
-part of nyxx.voice;
+part of nyxx.lavalink;
 
 /// Provides abstraction for TrakcErrors
 class TrackError {

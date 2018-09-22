@@ -17,7 +17,7 @@ Stream<T> merge<T>(List<Stream<T>> streams) {
   return c.stream;
 }
 
-/// Splits string based on desied lenght
+/// Splits string based on desired length
 Iterable<String> split(String str, int length) sync* {
   int last = 0;
   while (last < str.length && ((last + length) < str.length)) {
@@ -51,7 +51,7 @@ String getSymbolName(Symbol symbol) {
 /// var str = "Hello %0%!";
 /// print(format(str, ["Janusz"]))
 /// ```
-String format(String format, List<Object> formatters) =>
+String format(String format, List formatters) =>
     format.replaceAllMapped(r"%([0-9]+)%",
         (match) => formatters[int.parse(match.group(1))].toString());
 

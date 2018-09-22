@@ -1,4 +1,4 @@
-part of nyxx.voice;
+part of nyxx.lavalink;
 
 // Logger instance for `Voice Service`
 Logger _logger = Logger.detached("Voice Service");
@@ -55,7 +55,7 @@ class VoiceService {
   String _password;
   String _clientId;
 
-  static Map<String, Player> _playersCache = Map();
+  static Map<Snowflake, Player> _playersCache = Map();
 
   StreamController<Stats> _onStats;
   Stream<Stats> onStats;
@@ -133,11 +133,11 @@ class VoiceService {
   /// Gets [Player] instance for guild.
   Future<Player> getPlayer(Guild guild) {
     return Future<Player>.delayed(const Duration(seconds: 2), () {
-      if (_playersCache.containsKey(guild.id.toString()))
-        return _playersCache[guild.id.toString()];
+      if (_playersCache.containsKey(guild.id))
+        return _playersCache[guild.id];
       else {
         var tmp = Player._new(guild, _client, _webSocket, _restPath, _password);
-        _playersCache[guild.id.toString()] = tmp;
+        _playersCache[guild.id] = tmp;
         return tmp;
       }
     });

@@ -1,4 +1,4 @@
-part of nyxx.voice;
+part of nyxx.lavalink;
 
 /// Represents Lavalink playable track
 class Track extends Entity {
