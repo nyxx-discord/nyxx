@@ -22,7 +22,7 @@ Future<dynamic> sendRequest(String method, Uri uri,
   }
 }
 
-/// Sends mulipart request. Returns decoded message body
+/// Sends multipart request. Returns decoded message body
 Future<dynamic> sendMultipart(String method, Uri uri,
     {List<File> files,
     Map<String, String> fields,

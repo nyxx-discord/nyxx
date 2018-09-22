@@ -1,4 +1,4 @@
-part of nyxx.voice;
+part of nyxx.lavalink;
 
 /// Emitted when track generates exception
 class TrackExceptionEvent extends TrackError {

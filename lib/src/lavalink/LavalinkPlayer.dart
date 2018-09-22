@@ -1,4 +1,4 @@
-part of nyxx.voice;
+part of nyxx.lavalink;
 
 /// Manages voice connection for guild. There can be only one player for [Guild]
 class Player {

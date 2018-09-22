@@ -1,4 +1,4 @@
-part of nyxx.voice;
+part of nyxx.lavalink;
 
 /// Represents player update incoming from Lavalink
 class PlayerUpdateEvent {
