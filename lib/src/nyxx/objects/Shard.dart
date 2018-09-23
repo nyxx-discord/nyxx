@@ -66,14 +66,14 @@ class Shard {
     if (this._socket != null) this._socket.close();
 
     if (!init && resume) {
-      Timer(Duration(seconds: 2), () => _connect(resume));
+      Timer(Duration(seconds: 2), () => _connect(false));
       return;
     }
 
     WebSocket.connect('${this._ws.gateway}?v=7&encoding=json')
         .then((WebSocket socket) {
       this._socket = socket;
-      this._socket.pingInterval = const Duration(seconds: 3);
+     // this._socket.pingInterval = const Duration(seconds: 3);
       this._socket.listen((dynamic msg) async {
         await this._handleMsg(_decodeBytes(msg), resume);
       }, onDone: this._handleErr);
@@ -325,8 +325,10 @@ class Shard {
 
     switch (this._socket.closeCode) {
       case 1005:
-        throw _throw(
-            'No status code was provided even though one was expected.');
+        this._connect(true);
+        break;
+        //throw _throw(
+        //    'No status code was provided even though one was expected.');
       case 4004:
         throw _throw(
             'The account token sent with your identify payload is incorrect.');

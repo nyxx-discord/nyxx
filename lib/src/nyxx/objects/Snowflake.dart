@@ -7,47 +7,36 @@ class Snowflake implements Comparable<Snowflake> {
   static final snowflakeDateOffset = 4194304;
 
   String _id;
-  DateTime _timestamp;
 
   /// Full snowflake id
   String get id => _id;
 
   /// Returns timestamp included in [Snowflake]
   /// [Snowflake reference](https://discordapp.com/developers/docs/reference#snowflakes)
-  DateTime get timestamp {
-    if (_timestamp == null) {
-      _timestamp = DateTime.fromMillisecondsSinceEpoch(
-          ((int.parse(_id) / snowflakeDateOffset) + discordEpoch).toInt());
-      return _timestamp;
-    }
-
-    return _timestamp;
-  }
+  DateTime get timestamp => DateTime.fromMillisecondsSinceEpoch(
+      ((int.parse(_id) / snowflakeDateOffset) + discordEpoch).toInt());
 
   /// Creates new instance of [Snowflake] from String value.
   Snowflake(this._id);
 
   /// Creates synthetic snowflake based on current time
   Snowflake.fromNow() {
-    this._timestamp = DateTime.now();
-    this._id = _parseId(_timestamp);
+    this._id = _parseId(DateTime.now());
   }
 
   /// Creates first snowflake which can be deleted by `bulk-delete messages`
   Snowflake.bulk() {
-    this._timestamp = DateTime.now().subtract(Duration(days: 14));
-    this._id = _parseId(_timestamp);
+    this._id = _parseId(DateTime.now().subtract(Duration(days: 14)));
   }
 
   /// Creates synthetic snowflake based on given [date].
   Snowflake.fromDateTime(DateTime date) {
-    this._timestamp = date;
-    this._id = _parseId(_timestamp);
+    this._id = _parseId(date);
   }
 
   /// Returns true if [first] Snowflake was created before [second].
   static bool compareDates(Snowflake first, Snowflake second) =>
-      first.timestamp.compareTo(second._timestamp) == -1;
+      first.timestamp.compareTo(second.timestamp) == -1;
 
   //  Parses id from dateTime
   static String _parseId(DateTime timestamp) =>

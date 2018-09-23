@@ -91,7 +91,6 @@ void main() {
     assert(bot.ready);
     assert(bot.inviteLink != null);
 
-    assert(bot.self.voiceState == null);
     assert(bot.self.discriminator == "4296");
 
     print("TESTING BASIC FUNCTIONALITY!");

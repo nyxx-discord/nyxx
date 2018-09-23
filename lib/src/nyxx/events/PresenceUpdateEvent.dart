@@ -18,7 +18,7 @@ class PresenceUpdateEvent {
       if(json['d']['game'] != null)
         this.presence = Presence._new(json['d']['game'] as Map<String, dynamic>);
 
-      if(member == null && ['online', 'dnd', 'idle'].contains(json['d']['status'])) {
+      if(member == null && 'online' == json['d']['status'].toString()) {
         this.member = Member._new(json['d'] as Map<String, dynamic>, guild);
         member.guild.members[member.id] = member;
         client.users[member.id] = member;

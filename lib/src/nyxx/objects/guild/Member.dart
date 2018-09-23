@@ -37,6 +37,11 @@ class Member extends User {
       .where((r) => r.color > 0)
       .reduce((f, s) => f.position > s.position ? f : s);
 
+  /// Voice state
+  UserVoiceState get voiceState => guild.voiceStates.containsKey(this.id)
+      ? guild.voiceStates[this.id]
+      : null;
+
   /// Returns total permissions of user.
   Permissions get totalPermissions {
     var total = 0;

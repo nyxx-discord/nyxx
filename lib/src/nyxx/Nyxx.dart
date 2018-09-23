@@ -26,9 +26,6 @@ class Nyxx {
   _WS _ws;
   _EventController _events;
 
-  // Users state cache
-  Map<Snowflake, UserVoiceState> _voiceStates;
-
   /// The HTTP client.
   Http http;
 
@@ -208,7 +205,6 @@ class Nyxx {
       throw Exception("Token cannot be null or empty");
     if (this._options == null) this._options = ClientOptions();
 
-    this._voiceStates = Map<Snowflake, UserVoiceState>();
     this.guilds = Map<Snowflake, Guild>();
     this.channels = Map<Snowflake, Channel>();
     this.users = Map<Snowflake, User>();

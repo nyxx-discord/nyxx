@@ -20,11 +20,6 @@ class User extends SnowflakeEntity with ISend {
   /// Whether or not the user is a bot.
   bool bot = false;
 
-  /// Voice state
-  UserVoiceState get voiceState => client._voiceStates.containsKey(this.id)
-      ? client._voiceStates[this.id]
-      : null;
-
   User._new(Map<String, dynamic> raw)
       : super(Snowflake(raw['id'] as String)) {
     this.username = raw['username'] as String;
