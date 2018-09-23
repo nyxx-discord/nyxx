@@ -33,9 +33,9 @@ class Member extends User {
   Role get highestRole =>
       roles.reduce((f, s) => f.position > s.position ? f : s);
 
-  Role get color => roles
+  int get color => roles
       .where((r) => r.color > 0)
-      .reduce((f, s) => f.position > s.position ? f : s);
+      .reduce((f, s) => f.position > s.position ? f : s).color;
 
   /// Voice state
   UserVoiceState get voiceState => guild.voiceStates.containsKey(this.id)
