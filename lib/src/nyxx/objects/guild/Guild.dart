@@ -187,12 +187,8 @@ class Guild extends SnowflakeEntity {
           this.systemChannel = this.channels[snow] as TextChannel;
       }
 
-      if (raw['features'] != null) {
-        this.features = List();
-        raw['features'].forEach((dynamic i) {
-          this.features.add(i.toString());
-        });
-      }
+      if (raw['features'] != null)
+        this.features = (raw['features'] as List<dynamic>).cast<String>();
     }
   }
 

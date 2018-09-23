@@ -1,8 +1,9 @@
-/// Nyxx DISCORD API wrapper for Dart
+/// Nyxx - Discord API wrapper for Dart
+/// Commands sublibrary
 ///
-/// Commands sublibrary provides tool for creating commands bots.
-/// It also provides more advanced tools for creating polls.
-/// and paginated messages [Pagination].
+/// `nyxx.commands` provides useful tools for fast bot creation.
+/// Allows to catch-up messages and create actions to respond to them.
+/// Provides tools to adapt other apis and 3-party services to your bot.
 library nyxx.commands;
 
 import "dart:mirrors";

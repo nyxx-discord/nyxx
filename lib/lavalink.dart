@@ -1,6 +1,8 @@
-///  Nyxx DISCORD API wrapper for Dart
-///  Voice sublibrary wrapps all tool and logic needed to interact with voice.
-///  Allows to connect to channel and play music using [Lavalink](https://github.com/Frederikam/Lavalink)
+///  Nyxx Discord API for Dart
+///  Lavalink sublibrary
+///
+///  Lavalink sublibrary wraps all tools and logic needed to interact with voice.
+///  Allows to connect to channel and play music via [Lavalink](https://github.com/Frederikam/Lavalink)
 library nyxx.lavalink;
 
 import 'nyxx.dart';
