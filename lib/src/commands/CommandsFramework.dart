@@ -624,6 +624,9 @@ class CommandsFramework {
     for (var e in params) {
       var type = e.type.reflectedType;
 
+      if(type == CommandContext)
+        continue;
+
       if (util.getCmdAnnot<Remainder>(e) != null) {
         index++;
         var range = splitted.getRange(index, splitted.length).toList();

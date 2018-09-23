@@ -100,12 +100,10 @@ class Message extends SnowflakeEntity {
     this.tts = raw['tts'] as bool;
     this.mentionEveryone = raw['mention_everyone'] as bool;
 
-    this.channel._cacheMessage(this);
-    this.channel.lastMessageID = this.id;
+    if(this.channel is GuildChannel)
+      this.guild = (this.channel as GuildChannel).guild;
 
-    this.guild = _client.guilds[Snowflake(raw['guild_id'] as String)];
     if (this.guild != null) {
-
       if(raw['author'] != null) {
         this.author = this.guild.members[Snowflake(raw['author']['id'] as String)];
 
@@ -125,6 +123,16 @@ class Message extends SnowflakeEntity {
           var s = Snowflake(o as String);
           this.roleMentions[s] = guild.roles[s];
         });
+      }
+    } else {
+      this.author = client.users[Snowflake(raw['author']['id'] as String)];
+
+      if(this.author == null) {
+        var r = raw['author'];
+        r['member'] = raw['member'];
+        var author = Member._reverse(r as Map<String, dynamic>, client.guilds[Snowflake(raw['guild_id'] as String)]);
+        _client.users[author.id] = author;
+        this.author = author;
       }
     }
 
@@ -167,6 +175,9 @@ class Message extends SnowflakeEntity {
         this.reactions.add(Reaction._new(o as Map<String, dynamic>));
       });
     }
+
+    this.channel._cacheMessage(this);
+    this.channel.lastMessageID = this.id;
   }
 
   /// Returns mention of message
@@ -182,7 +193,7 @@ class Message extends SnowflakeEntity {
       EmbedBuilder embed,
       bool tts = false,
       bool disableEveryone}) async {
-    if(this.id != _client.self.id)
+    if(this.author.id != _client.self.id)
       return null;
 
     String newContent;
