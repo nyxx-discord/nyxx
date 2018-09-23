@@ -8,8 +8,16 @@ class VoiceState extends UserVoiceState {
   /// Session id for this voice state
   String sessionId;
 
-  VoiceState._new(Map<String, dynamic> raw) : super(client, raw) {
-    this.user = _client.users[Snowflake(raw['user_id'] as String)];
+  /// Guild this voice state update is
+  Guild guild;
+
+  VoiceState._new(Map<String, dynamic> raw, [Guild guild]) : super(client, raw) {
+    if(guild != null)
+      this.guild = guild;
+    else
+      this.guild = client.guilds[Snowflake(raw['guild_id'] as String)];
+
+    this.user = guild.members[Snowflake(raw['user_id'] as String)];
     this.sessionId = raw['session_id'] as String;
   }
 }

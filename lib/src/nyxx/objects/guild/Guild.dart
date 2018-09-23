@@ -83,12 +83,18 @@ class Guild extends SnowflakeEntity {
   /// The shard that the guild is on.
   Shard shard;
 
+  /// Users state cache
+  Map<Snowflake, UserVoiceState> voiceStates;
+
   /// Returns url to this guild.
   String get url => "https://discordapp.com/channels/${this.id.toString()}";
 
   Guild._new(Map<String, dynamic> raw,
       [this.available = true, bool guildCreate = false])
       : super(Snowflake(raw['id'] as String)) {
+
+    voiceStates = new Map();
+
     if (this.available) {
       this.name = raw['name'] as String;
       this.icon = raw['icon'] as String;
@@ -167,10 +173,10 @@ class Guild extends SnowflakeEntity {
 
         if (raw['voice_states'] != null) {
           raw['voice_states'].forEach((o) {
-            var state = VoiceState._new(o as Map<String, dynamic>);
+            var state = VoiceState._new(o as Map<String, dynamic>, this);
 
             if (state != null && state.user != null)
-              _client._voiceStates[state.user.id] = state;
+              this.voiceStates[state.user.id] = state;
           });
         }
 

@@ -13,12 +13,8 @@ class GuildCreateEvent {
       shard.send("REQUEST_GUILD_MEMBERS",
           {"guild_id": guild.id.toString(), "query": "", "limit": 0});
 
-    if (!client.ready) {
-      shard._ws.testReady();
-    } else {
-      client.guilds[guild.id] = guild;
-      shard.guilds[guild.id] = guild;
-      client._events.onGuildCreate.add(this);
-    }
+    client.guilds[guild.id] = guild;
+    shard.guilds[guild.id] = guild;
+    client._events.onGuildCreate.add(this);
   }
 }
