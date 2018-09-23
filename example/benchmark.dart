@@ -11,7 +11,6 @@ void main() {
   bot.onMessage.listen((nyxx.MessageEvent e) async {
     if (e.message.content == "!bm") {
       var msg = await e.message.channel.send(content: "Pong!");
-      print(msg.author.id);
       await msg.edit(
           content:
               "Total response time in 'manual way': ${msg.createdAt.difference(e.message.createdAt).inMilliseconds} ms");
