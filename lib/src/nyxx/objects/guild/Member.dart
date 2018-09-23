@@ -45,23 +45,21 @@ class Member extends User {
     return Permissions.fromInt(total);
   }
 
-  Member._reverse(Map<String, dynamic> data, [Guild guild])
+  Member._reverse(Map<String, dynamic> data, this.guild)
       : super._new(data) {
-    _cons(data['member'] as Map<String, dynamic>, guild);
+    _cons(data['member'] as Map<String, dynamic>);
   }
 
-  Member._new(Map<String, dynamic> data, [Guild guild])
+  Member._new(Map<String, dynamic> data, this.guild)
       : super._new(data['user'] as Map<String, dynamic>) {
-   _cons(data, guild);
+   _cons(data);
   }
 
-  void _cons(Map<String, dynamic> data, [Guild guild]) {
+  void _cons(Map<String, dynamic> data) {
     this.nickname = data['nick'] as String;
     this.deaf = data['deaf'] as bool;
     this.mute = data['mute'] as bool;
     this.status = data['status'] as String;
-
-    this.guild = guild;
 
     if (data['roles'] != null && this.guild.roles != null) {
       this.roles = List();

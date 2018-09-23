@@ -132,7 +132,7 @@ class MessageChannel extends Channel with IterableMixin<Message>, ISend {
           'POST', '/channels/${this.id}/messages', body: reqBody..addAll({"tts": tts}));
     }
 
-    return Message._new( r.body as Map<String, dynamic>);
+    return Message._new(r.body as Map<String, dynamic>);
   }
 
   /// Starts typing.
