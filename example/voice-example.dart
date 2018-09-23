@@ -10,8 +10,8 @@ void main() {
 
   // Listen to ready event. Invoked when bot started listening to events.
   bot.onReady.listen((nyxx.ReadyEvent e) {
-    // Init voice service with client id, Client instance and abolute path to lavalink config.
-    voice.init("361949050016235520", bot, "/tmp/lavalink/application.yml");
+    // Init voice service with client id, Client instance and absolute path to lavalink config.
+    voice.init("/tmp/lavalink/application.yml");
   });
 
   // Listen to all incoming messages via Dart Stream
@@ -34,7 +34,7 @@ void main() {
       // Play track
       await player.play(track.entity as voice.Track);
     } else if (e.message.content == "!stop") {
-      // Always stop music and disconned
+      // Always stops music and disconnects from channel
       // Player instance is cached, so invoking this method has no cost
       var player = await voice.getPlayer(e.message.guild);
 
