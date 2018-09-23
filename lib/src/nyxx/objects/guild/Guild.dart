@@ -33,7 +33,7 @@ class Guild extends SnowflakeEntity {
   String region;
 
   /// The channel ID for the guild's widget if enabled.
-  Snowflake embedChannelID;
+  Channel embedChannel;
 
   /// The guild's default channel.
   Channel defaultChannel;
@@ -99,9 +99,6 @@ class Guild extends SnowflakeEntity {
       this.name = raw['name'] as String;
       this.icon = raw['icon'] as String;
       this.region = raw['region'] as String;
-
-      if (raw.containsKey('embed_channel_id'))
-        this.embedChannelID = Snowflake(raw['embed_channel_id'] as String);
 
       this.afkTimeout = raw['afk_timeout'] as int;
       this.memberCount = raw['member_count'] as int;
@@ -186,6 +183,9 @@ class Guild extends SnowflakeEntity {
             this.afkChannel = this.channels[snow] as VoiceChannel;
         }
       }
+
+      if (raw.containsKey('embed_channel_id'))
+        this.embedChannel = client.channels[Snowflake(raw['embed_channel_id'] as String)];
 
       if (raw['system_channel_id'] != null) {
         var snow = Snowflake(raw['system_channel_id'] as String);
