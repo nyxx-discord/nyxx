@@ -25,7 +25,6 @@ class Player {
   Stream<PlayerUpdateEvent> onPlayerUpdate;
 
   Guild _guild;
-  Nyxx _client;
   Uri _restPath;
   String _password;
 
@@ -34,7 +33,7 @@ class Player {
   VoiceState _currentState;
   WebSocket _webSocket;
 
-  Player._new(this._guild, this._client, this._webSocket, this._restPath,
+  Player._new(this._guild, this._webSocket, this._restPath,
       this._password);
 
   /// Connects to channel.
@@ -52,8 +51,8 @@ class Player {
     _guild.shard.send(
         "VOICE_STATE_UPDATE", _Opcode4(_guild, channel, false, false)._build());
 
-    _currentState = (await _client.onVoiceStateUpdate.first).state;
-    _rawEvent = (await _client.onVoiceServerUpdate.first).raw;
+    _currentState = (await client.onVoiceStateUpdate.first).state;
+    _rawEvent = (await client.onVoiceServerUpdate.first).raw;
 
     var s = jsonEncode(
         _OpVoiceUpdate(_guild.id.toString(), _currentState.sessionId, _rawEvent)
@@ -61,7 +60,7 @@ class Player {
     print(s);
     _webSocket.add(s);
 
-    _sub1 = _client.onVoiceServerUpdate
+    _sub1 = client.onVoiceServerUpdate
         .where((e) => e.guild.id == _guild.id)
         .listen((e) {
       _rawEvent = e.raw;
@@ -70,11 +69,11 @@ class Player {
           .build()));
     });
 
-    _sub2 = _client.onVoiceStateUpdate.where((e) {
+    _sub2 = client.onVoiceStateUpdate.where((e) {
       if (e.state.channel != null) if (e.state.channel.id != currentChannel.id)
         return false;
 
-      return e.state.user.id == _client.self.id;
+      return e.state.user.id == client.self.id;
     }).listen((e) {
       _currentState = e.state;
       _webSocket.add(jsonEncode(_OpVoiceUpdate(
