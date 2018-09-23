@@ -1,6 +1,6 @@
 name: nyxx
 version: 1.0.0
-description: A Discord library for Dart. For of hackzzila's nyx.
+description: A Discord library for Dart.
 authors:
 - Szymon Uglis <szymon.uglis@tuta.io>
 - Hackzzila <admin@hackzzila.com>
