@@ -29,9 +29,9 @@ class MessageChannel extends Channel with IterableMixin<Message>, ISend {
   /// The ID for the last message in the channel.
   Snowflake lastMessageID;
 
-  MessageChannel._new(Nyxx client, Map<String, dynamic> data, int type)
-      : super._new(client, data, type) {
-    if (raw.containsKey('last_message_id') && raw['last_message_id'] != null)
+  MessageChannel._new(Map<String, dynamic> raw, int type)
+      : super._new(raw, type) {
+    if (raw['last_message_id'] != null)
       this.lastMessageID = Snowflake(raw['last_message_id'] as String);
     this.messages = LinkedHashMap<Snowflake, Message>();
 
@@ -43,8 +43,8 @@ class MessageChannel extends Channel with IterableMixin<Message>, ISend {
   }
 
   Message _cacheMessage(Message message) {
-    if (this.client._options.messageCacheSize > 0) {
-      if (this.messages.length >= this.client._options.messageCacheSize) {
+    if (_client._options.messageCacheSize > 0) {
+      if (this.messages.length >= _client._options.messageCacheSize) {
         this.messages.values.toList().first._onUpdate.close();
         this.messages.values.toList().first._onDelete.close();
         this.messages.remove(this.messages.values.toList().first.id);
@@ -55,15 +55,14 @@ class MessageChannel extends Channel with IterableMixin<Message>, ISend {
     return message;
   }
 
-  /// Returs message with given [id]. Allows to force fatch message from api
-  /// with [force] propery. By default it checks if message is in cache and fetches from api if not.
+  /// Returns message with given [id]. Allows to force fetch message from api
+  /// with [force] property. By default it checks if message is in cache and fetches from api if not.
   Future<Message> getMessage(Snowflake id, {bool force = false}) async {
     if (force || !messages.containsKey(id)) {
-      var r = await this
-          .client
+      var r = await _client
           .http
           .send('GET', "/channels/${this.id.toString()}/messages/$id");
-      var msg = Message._new(this.client, r.body as Map<String, dynamic>);
+      var msg = Message._new( r.body as Map<String, dynamic>);
 
      return _cacheMessage(msg);
     }
@@ -94,20 +93,19 @@ class MessageChannel extends Channel with IterableMixin<Message>, ISend {
   /// ```
   ///
   ///
-  ///
   /// Method also allows to send file and optional [content] with [embed].
   /// Use `expandAttachment(String file)` method to expand file names in embed
   ///
   /// ```
-  /// await chan.sendFile([new File("kitten.png"), new File("kitten.jpg")], content: "Kittens ^-^"]);
+  /// await chan.send(files: [new File("kitten.png"), new File("kitten.jpg")], content: "Kittens ^-^"]);
   /// ```
   /// ```
   /// var embed = new nyxx.EmbedBuilder()
   ///   ..title = "Example Title"
-  ///   ..thumbnailUrl = "${expandAttachment('kitten.jpg')}";
+  ///   ..thumbnailUrl = "${attach('kitten.jpg')}";
   ///
   /// await e.message.channel
-  ///   .sendFile([new File("kitten.jpg")], embed: embed, content: "HEJKA!");
+  ///   .send(files: [new File("kitten.jpg")], embed: embed, content: "HEJKA!");
   /// ```
   Future<Message> send(
       {Object content = "",
@@ -115,7 +113,7 @@ class MessageChannel extends Channel with IterableMixin<Message>, ISend {
       EmbedBuilder embed,
       bool tts = false,
       bool disableEveryone}) async {
-    var newContent = _sanitizeMessage(content, disableEveryone, client);
+    var newContent = _sanitizeMessage(content, disableEveryone);
 
     Map<String, dynamic> reqBody = {
       "content": newContent,
@@ -124,19 +122,19 @@ class MessageChannel extends Channel with IterableMixin<Message>, ISend {
 
     HttpResponse r;
     if(files != null && files.isNotEmpty) {
-      r = await this.client.http.sendMultipart(
+      r = await _client.http.sendMultipart(
           'POST', '/channels/${this.id}/messages', files, data: reqBody);
     } else {
-      r = await this.client.http.send(
+      r = await _client.http.send(
           'POST', '/channels/${this.id}/messages', body: reqBody..addAll({"tts": tts}));
     }
 
-    return Message._new(this.client, r.body as Map<String, dynamic>);
+    return Message._new(r.body as Map<String, dynamic>);
   }
 
   /// Starts typing.
   Future<void> startTyping() async {
-    await this.client.http.send('POST', "/channels/$id/typing");
+    await _client.http.send('POST', "/channels/$id/typing");
   }
 
   /// Loops `startTyping` until `stopTypingLoop` is called.
@@ -157,7 +155,7 @@ class MessageChannel extends Channel with IterableMixin<Message>, ISend {
   /// ```
   Future<void> bulkRemoveMessages(Iterable<Snowflake> messagesIds) async {
     utils.chunk(messagesIds.toList(), 90).listen((data) async {
-      await this.client.http.send(
+      await _client.http.send(
           'POST', "/channels/${id.toString()}/messages/bulk-delete",
           body: {"messages": data});
     });
@@ -176,26 +174,30 @@ class MessageChannel extends Channel with IterableMixin<Message>, ISend {
       Snowflake after,
       Snowflake before,
       Snowflake around,
-      bool cache}) async {
+      bool cache = false}) async {
     Map<String, String> query = {"limit": limit.toString()};
 
     if (after != null) query['after'] = after.toString();
     if (before != null) query['before'] = before.toString();
     if (around != null) query['around'] = around.toString();
 
-    final HttpResponse r = await this
-        .client
+    final HttpResponse r = await
+        _client
         .http
         .send('GET', '/channels/${this.id}/messages', queryParams: query);
 
     var response = LinkedHashMap<Snowflake, Message>();
 
-    for (Map<String, dynamic> val in r.body.values.first) {
-      var msg = Message._new(this.client, val);
+    for (Map<String, dynamic> val in r.body as List<dynamic>) {
+      var msg = Message._new( val);
       response[msg.id] = msg;
     }
 
-    if (cache) messages.addAll(response);
+    if(cache) {
+      for(var m in response.values) {
+        _cacheMessage(m);
+      }
+    }
 
     return response;
   }

@@ -1,4 +1,7 @@
-/// Nyxx DISCORD API wrapper for Dart
+/// Nyxx Discord API wrapper for Dart
+///
+/// Main sublibrary of nyxx provices basic functionality like access to http endpoints
+/// of api or Websocket connectivity to interact with realtime events.
 library nyxx;
 
 import 'dart:async';
@@ -117,6 +120,7 @@ part 'src/nyxx/objects/guild/ClientUser.dart';
 part 'src/nyxx/objects/guild/Guild.dart';
 part 'src/nyxx/objects/guild/Presence.dart';
 part 'src/nyxx/objects/guild/Member.dart';
+part 'src/nyxx/objects/guild/Status.dart';
 part 'src/nyxx/objects/guild/Role.dart';
 part 'src/nyxx/objects/guild/User.dart';
 part 'src/nyxx/objects/guild/Ban.dart';

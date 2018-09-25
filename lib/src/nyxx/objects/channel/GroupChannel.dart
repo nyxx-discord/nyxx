@@ -2,9 +2,8 @@ part of nyxx;
 
 /// Represents guild group channel.
 class GroupChannel extends Channel with GuildChannel {
-  GroupChannel._new(Nyxx client, Map<String, dynamic> data, Guild guild)
-      : super._new(client, data, 4) {
-    _initialize(data, guild);
-    this.guild.channels[this.id] = this;
+  GroupChannel._new(Map<String, dynamic> raw, Guild guild)
+      : super._new(raw, 4) {
+    _initialize(raw, guild);
   }
 }

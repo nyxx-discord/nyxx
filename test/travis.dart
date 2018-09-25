@@ -57,14 +57,14 @@ void main() {
   var env = Platform.environment;
   var bot = nyxx.Nyxx(env['DISCORD_TOKEN'], ignoreExceptions: false);
 
-  command.CommandsFramework('~~', bot)
+  command.CommandsFramework('~~')
     ..registerLibraryServices()
     ..registerLibraryCommands()
-    ..onCommandNotFound.listen((m) {
-      m.channel.send(content: "Command '${m.content}' not found!");
+    ..onCommandNotFound.listen((m) async {
+      await m.channel.send(content: "Command '${m.content}' not found!");
     })
-    ..onCooldown.listen((m) {
-      m.channel.send(content: "Command is on cooldown!. Wait a few seconds!");
+    ..onCooldown.listen((m) async {
+      await m.channel.send(content: "Command is on cooldown!. Wait a few seconds!");
     })
     ..ignoreBots = false;
 
@@ -91,7 +91,6 @@ void main() {
     assert(bot.ready);
     assert(bot.inviteLink != null);
 
-    assert(bot.self.voiceState == null);
     assert(bot.self.discriminator == "4296");
 
     print("TESTING BASIC FUNCTIONALITY!");
@@ -118,6 +117,10 @@ void main() {
     var d = await channel.send(content: "~~test ttest 14");
     await d.delete();
 
+    print("TESTING SENDING FILES");
+    var f = await channel.send(content: "PLIK SIEMA", files: [new File("test/kitty.webp")]);
+    await f.delete();
+
     print("TESTING EMBEDS");
     var e =
         await channel.send(content: "Testing embed!", embed: createTestEmbed());
@@ -131,6 +134,14 @@ void main() {
       return;
 
     if (ddel.any((d) => d.startsWith(m.content))) await m.delete();
+
+    if(m.content == "PLIK SIEMA" && m.attachments.values.length > 0) {
+      var att = m.attachments.values.first;
+
+      if(att.filename != "kitty.webp") {
+        exit(1);
+      }
+    }
 
     if (m.content == "Testing embed!") {
       if (m.embeds.length > 0) {

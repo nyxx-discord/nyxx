@@ -21,13 +21,12 @@ class TextChannel extends MessageChannel with GuildChannel {
   String get url => "https://discordapp.com/channels/${this.guild.id.toString()}"
       "/${this.id.toString()}";
 
-  TextChannel._new(Nyxx client, Map<String, dynamic> data, Guild guild)
-      : super._new(client, data, 0) {
-    _initialize(data, guild);
+  TextChannel._new(Map<String, dynamic> raw, Guild guild)
+      : super._new(raw, 0) {
+    _initialize(raw, guild);
 
     this.topic = raw['topic'] as String;
     this.mention = "<#${this.id}>";
-    this.guild.channels[this.id] = this;
     this.slowModeThreshold = raw['rate_limit_per_user'] as int ?? 0;
 
     _pinsUpdated = StreamController.broadcast();
@@ -42,24 +41,24 @@ class TextChannel extends MessageChannel with GuildChannel {
     int slowModeTreshold
   }) async {
     HttpResponse r =
-        await this.client.http.send('PATCH', "/channels/${this.id}", body: {
+        await _client.http.send('PATCH', "/channels/${this.id}", body: {
       "name": name ?? this.name,
       "topic": topic ?? this.topic,
       "position": position ?? this.position,
       "rate_limit_per_user": slowModeTreshold ?? slowModeTreshold
     });
     return TextChannel._new(
-        this.client, r.body as Map<String, dynamic>, this.guild);
+         r.body as Map<String, dynamic>, this.guild);
   }
 
   /// Gets all of the webhooks for this channel.
   Future<Map<String, Webhook>> getWebhooks() async {
     HttpResponse r =
-        await this.client.http.send('GET', "/channels/$id/webhooks");
+        await _client.http.send('GET', "/channels/$id/webhooks");
     Map<String, Webhook> map = Map();
 
     r.body.forEach((k, o) {
-      Webhook webhook = Webhook._new(this.client, o as Map<String, dynamic>);
+      Webhook webhook = Webhook._new( o as Map<String, dynamic>);
       map[webhook.id.toString()] = webhook;
     });
 
@@ -72,10 +71,10 @@ class TextChannel extends MessageChannel with GuildChannel {
   /// var webhook = await chan.createWebhook("!a Send nudes kek6407");
   /// ```
   Future<Webhook> createWebhook(String name, {String auditReason = ""}) async {
-    HttpResponse r = await this.client.http.send(
+    HttpResponse r = await _client.http.send(
         'POST', "/channels/$id/webhooks",
         body: {"name": name}, reason: auditReason);
-    return Webhook._new(this.client, r.body as Map<String, dynamic>);
+    return Webhook._new( r.body as Map<String, dynamic>);
   }
 
   /// Fetches and returns all channel's [Invite]s
@@ -85,11 +84,11 @@ class TextChannel extends MessageChannel with GuildChannel {
   /// ```
   Future<Map<String, Invite>> getChannelInvites() async {
     final HttpResponse r =
-        await this.client.http.send('GET', "/channels/$id/invites");
+        await _client.http.send('GET', "/channels/$id/invites");
 
     Map<String, Invite> invites = Map();
     for (Map<String, dynamic> val in r.body.values.first) {
-      invites[val["code"] as String] = Invite._new(this.client, val);
+      invites[val["code"] as String] = Invite._new( val);
     }
 
     return invites;
@@ -113,21 +112,21 @@ class TextChannel extends MessageChannel with GuildChannel {
     params['temporary'] = temporary;
     params['unique'] = unique;
 
-    final HttpResponse r = await this.client.http.send(
+    final HttpResponse r = await _client.http.send(
         'POST', "/channels/$id/invites",
         body: params, reason: auditReason);
 
-    return Invite._new(this.client, r.body as Map<String, dynamic>);
+    return Invite._new( r.body as Map<String, dynamic>);
   }
 
   /// Returns pinned [Message]s for [Channel].
   Future<Map<String, Message>> getPinnedMessages() async {
     final HttpResponse r =
-        await this.client.http.send('GET', "/channels/$id/pins");
+        await _client.http.send('GET', "/channels/$id/pins");
 
     Map<String, Message> messages = Map();
     for (Map<String, dynamic> val in r.body.values.first) {
-      messages[val["id"] as String] = Message._new(this.client, val);
+      messages[val["id"] as String] = Message._new( val);
     }
 
     return messages;

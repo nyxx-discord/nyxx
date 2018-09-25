@@ -1,4 +1,4 @@
-part of nyxx.voice;
+part of nyxx.lavalink;
 
 /// Discord gateway opcode for sending voice state
 class _Opcode4 {

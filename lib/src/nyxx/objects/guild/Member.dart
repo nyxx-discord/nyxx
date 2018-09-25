@@ -6,7 +6,7 @@ class Member extends User {
   String nickname;
 
   /// The member's status, `offline`, `online`, `idle`, or `dnd`.
-  String status;
+  MemberStatus status;
 
   /// When the member joined the guild.
   DateTime joinedAt;
@@ -29,13 +29,18 @@ class Member extends User {
   /// Returns user instance of member
   User get user => client.users[id];
 
-  /// Returs highest role for member
+  /// Returns highest role for member
   Role get highestRole =>
       roles.reduce((f, s) => f.position > s.position ? f : s);
 
-  Role get color => roles
+  int get color => roles
       .where((r) => r.color > 0)
-      .reduce((f, s) => f.position > s.position ? f : s);
+      .reduce((f, s) => f.position > s.position ? f : s).color;
+
+  /// Voice state
+  VoiceState get voiceState => guild.voiceStates.containsKey(this.id)
+      ? guild.voiceStates[this.id]
+      : null;
 
   /// Returns total permissions of user.
   Permissions get totalPermissions {
@@ -45,31 +50,26 @@ class Member extends User {
     return Permissions.fromInt(total);
   }
 
-  Member._reverse(Nyxx client, Map<String, dynamic> data, [Guild guild])
-      : super._new(client, data, false) {
-    _cons(data['member'] as Map<String, dynamic>, guild);
+  Member._reverse(Map<String, dynamic> data, this.guild)
+      : super._new(data) {
+    _cons(data['member'] as Map<String, dynamic>);
   }
 
-  Member._new(Nyxx client, Map<String, dynamic> data, [Guild guild])
-      : super._new(client, data['user'] as Map<String, dynamic>, false) {
-   _cons(data, guild);
+  Member._new(Map<String, dynamic> data, this.guild)
+      : super._new(data['user'] as Map<String, dynamic>) {
+   _cons(data);
   }
 
-  void _cons(Map<String, dynamic> data, [Guild guild]) {
+  void _cons(Map<String, dynamic> data) {
     this.nickname = data['nick'] as String;
     this.deaf = data['deaf'] as bool;
     this.mute = data['mute'] as bool;
-    this.status = data['status'] as String;
+    this.status = MemberStatus.from(data['status'] as String);
 
-    if (guild == null)
-      this.guild = this.client.guilds[Snowflake(data['guild_id'] as String)];
-    else
-      this.guild = guild;
-
-    if (data['roles'] != null) {
-      roles = List();
+    if (data['roles'] != null && this.guild.roles != null) {
+      this.roles = List();
       data['roles'].forEach((i) {
-        roles.add(this.guild.roles[Snowflake(i as String)]);
+        this.roles.add(this.guild.roles[Snowflake(i as String)]);
       });
     }
 
@@ -78,18 +78,18 @@ class Member extends User {
 
     if (data['game'] != null)
       this.presence =
-          Presence._new(this.client, data['game'] as Map<String, dynamic>);
-
-    if (guild != null) this.guild.members[this.id] = this;
-    client.users[this.id] = this;
+          Presence._new(data['game'] as Map<String, dynamic>);
   }
+
+  /// Checks if member has specified role
+  bool hasRole(Role role) => this.roles.contains(role);
 
   /// Bans the member and optionally deletes [deleteMessageDays] days worth of messages.
   Future<void> ban(
       {int deleteMessageDays = 0,
       String reason,
       String auditReason = ""}) async {
-    await this.client.http.send(
+    await _client.http.send(
         'PUT', "/guilds/${this.guild.id}/bans/${this.id}",
         body: {"delete-message-days": deleteMessageDays, "reason": reason},
         reason: auditReason);
@@ -102,21 +102,21 @@ class Member extends User {
   /// await member.addRole(r);
   /// ```
   Future<void> addRole(Role role, {String auditReason = ""}) async {
-    await this.client.http.send(
+    await _client.http.send(
         'PUT', '/guilds/${guild.id}/members/${this.id}/roles/${role.id}',
         reason: auditReason);
     return null;
   }
 
   Future<void> removeRole(Role role, {String auditReason = ""}) async {
-    await this.client.http.send("DELETE",
+    await _client.http.send("DELETE",
         "/guilds/${this.guild.id.toString()}/members/${this.id.toString()}/roles/${role.id.toString()}",
         reason: auditReason);
   }
 
   /// Kicks the member
   Future<void> kick({String auditReason = ""}) async {
-    await this.client.http.send(
+    await _client.http.send(
         'DELETE', "/guilds/${this.guild.id}/members/${this.id}",
         reason: auditReason);
   }
@@ -135,7 +135,7 @@ class Member extends User {
     if (deaf != null) req['deaf'] = deaf;
     if (deaf != null) req['channel_id'] = channel.id.toString();
 
-    await this.client.http.send("PATCH",
+    await _client.http.send("PATCH",
         "/guilds/${this.guild.id.toString()}/members/${this.id.toString()}",
         body: req, reason: auditReason);
   }

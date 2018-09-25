@@ -1,4 +1,4 @@
-part of nyxx.voice;
+part of nyxx.lavalink;
 
 /// Represents basic lavalink object: [Track] or [Playlist]
 class Entity {

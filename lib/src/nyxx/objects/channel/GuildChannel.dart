@@ -12,7 +12,7 @@ abstract class GuildChannel implements Channel {
   int position;
 
   /// Parent channel id
-  Snowflake parentId;
+  GroupChannel parentChannel;
 
   /// Indicates if channel is nsfw
   bool nsfw;
@@ -35,7 +35,7 @@ abstract class GuildChannel implements Channel {
     this.guild = guild;
 
     if (raw['parent_id'] != null) {
-      this.parentId = Snowflake(raw['parent_id'] as String);
+      this.parentChannel = client.channels[Snowflake(raw['parent_id'] as String)] as GroupChannel;
     }
 
     this.nsfw = raw['nsfw'] as bool;
@@ -66,11 +66,11 @@ abstract class GuildChannel implements Channel {
     params['temporary'] = temporary;
     params['unique'] = unique;
 
-    final HttpResponse r = await this.client.http.send(
+    final HttpResponse r = await _client.http.send(
         'POST', "/channels/$id/invites",
         body: params, reason: auditReason);
 
-    return Invite._new(this.client, r.body as Map<String, dynamic>);
+    return Invite._new( r.body as Map<String, dynamic>);
   }
 
   /// Fetches and returns all channel's [Invite]s
@@ -80,11 +80,11 @@ abstract class GuildChannel implements Channel {
   /// ```
   Future<Map<String, Invite>> getChannelInvites() async {
     final HttpResponse r =
-        await this.client.http.send('GET', "/channels/$id/invites");
+        await _client.http.send('GET', "/channels/$id/invites");
 
     Map<String, Invite> invites = Map();
     for (Map<String, dynamic> val in r.body.values.first) {
-      invites[val["code"] as String] = Invite._new(this.client, val);
+      invites[val["code"] as String] = Invite._new( val);
     }
 
     return invites;
@@ -98,7 +98,7 @@ abstract class GuildChannel implements Channel {
     if (!(id is Role) || !(id is User))
       throw Exception("The `id` property must be either Role or User");
 
-    await this.client.http.send(
+    await _client.http.send(
         "PUT", "/channels/${this.id}/permissions/${id.toString()}",
         body: perms._build()._build(), reason: auditReason);
   }
@@ -110,7 +110,7 @@ abstract class GuildChannel implements Channel {
     if (!(id is Role) || !(id is User))
       throw Exception("`id` property must be either Role or User");
 
-    await this.client.http.send("POST", "/channels/${this.id}/permissions/$id",
+    await _client.http.send("POST", "/channels/${this.id}/permissions/$id",
         reason: auditReason);
   }
 }

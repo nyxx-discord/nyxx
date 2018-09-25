@@ -110,8 +110,8 @@ class Pagination {
     Future(() async {
       var currPage = 0;
       var group = util.merge([
-        msg.client.onMessageReactionAdded,
-        msg.client.onMessageReactionsRemoved
+        client.onMessageReactionAdded,
+        client.onMessageReactionsRemoved
       ]);
 
       await for (var event in group) {

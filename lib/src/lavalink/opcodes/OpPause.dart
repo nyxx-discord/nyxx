@@ -1,4 +1,4 @@
-part of nyxx.voice;
+part of nyxx.lavalink;
 
 /// Opcode for pausing playback
 class _OpPause {

@@ -27,7 +27,7 @@ class Scheduler {
     _runEvery = _runEvery;
   }
 
-  /// Funtion to run on every targeted channel
+  /// Function to run on every targeted channel
   void Function(MessageChannel channel) func;
 
   /// List of targeted channel

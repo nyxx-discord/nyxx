@@ -1,4 +1,4 @@
-part of nyxx.voice;
+part of nyxx.lavalink;
 
 /// Emitted when track is stuck
 class TrackStuckEvent extends TrackError {

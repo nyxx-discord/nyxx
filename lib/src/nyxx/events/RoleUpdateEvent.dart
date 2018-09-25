@@ -8,13 +8,15 @@ class RoleUpdateEvent {
   /// The role after the update.
   Role newRole;
 
-  RoleUpdateEvent._new(Nyxx client, Map<String, dynamic> json) {
+  RoleUpdateEvent._new(Map<String, dynamic> json) {
     if (client.ready) {
       final Guild guild =
           client.guilds[Snowflake(json['d']['guild_id'] as String)];
       this.oldRole = guild.roles[Snowflake(json['d']['role']['id'] as String)];
       this.newRole =
-          Role._new(client, json['d']['role'] as Map<String, dynamic>, guild);
+          Role._new(json['d']['role'] as Map<String, dynamic>, guild);
+
+      oldRole.guild.roles[oldRole.id] = newRole;
       client._events.onRoleUpdate.add(this);
     }
   }

@@ -8,7 +8,7 @@ class DisconnectEvent {
   /// The close code.
   int closeCode;
 
-  DisconnectEvent._new(Nyxx client, this.shard, this.closeCode) {
+  DisconnectEvent._new( this.shard, this.closeCode) {
     client._events.onDisconnect.add(this);
   }
 }

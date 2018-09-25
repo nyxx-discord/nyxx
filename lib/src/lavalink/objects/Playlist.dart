@@ -1,4 +1,4 @@
-part of nyxx.voice;
+part of nyxx.lavalink;
 
 /// Playlist contains list of track and basic info about itself.
 class Playlist extends Entity {

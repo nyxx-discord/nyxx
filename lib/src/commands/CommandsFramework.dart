@@ -9,7 +9,6 @@ class CommandsFramework {
   List<TypeConverter> _typeConverters;
   CooldownCache _cooldownCache;
   List<Object> _services = List();
-  Nyxx _client;
 
   StreamController<Message> _cooldownEvent;
   StreamController<Message> _commandNotFoundEvent;
@@ -36,7 +35,7 @@ class CommandsFramework {
   bool ignoreBots = true;
 
   /// Sets default bots game
-  set game(Presence game) => _client.self.setGame(game);
+  set game(Presence game) => client.self.setGame(game);
 
   /// Fires when invoked command dont exists in registry
   Stream<Message> onCommandNotFound;
@@ -72,7 +71,7 @@ class CommandsFramework {
   final Logger logger = Logger.detached("CommandsFramework");
 
   /// Creates commands framework handler. Requires prefix to handle commands.
-  CommandsFramework(this.prefix, this._client,
+  CommandsFramework(this.prefix,
       {Duration roundupTime = const Duration(minutes: 2)}) {
     this._commands = List();
     _cooldownCache = CooldownCache(roundupTime);
@@ -100,8 +99,8 @@ class CommandsFramework {
     //onCommandParsingFail = _commandParsingFail.stream;
 
     // Listen to incoming messages and ignore all from bots (if set)
-    _client.onReady.listen((_) {
-      _client.onMessage.listen((MessageEvent e) {
+    client.onReady.listen((_) {
+      client.onMessage.listen((MessageEvent e) {
         if (ignoreBots && e.message.author.bot) return;
         if (!e.message.content.startsWith(prefix)) return;
 
@@ -415,13 +414,12 @@ class CommandsFramework {
             instance.setField(Symbol("message"), e.message);
             instance.setField(Symbol("author"), e.message.author);
             instance.setField(Symbol("channel"), e.message.channel);
-            instance.setField(Symbol("client"), this._client);
             res = instance.invoke(matchedMeta.method.simpleName, methodInj);
           }
 
           if (matchedMeta.parent is LibraryMirror) {
             var context = CommandContext._new(e.message.channel,
-                e.message.author, e.message.guild, _client, e.message);
+                e.message.author, e.message.guild, e.message);
 
             res = matchedMeta.parent.invoke(
                 matchedMeta.method.simpleName,
@@ -516,7 +514,7 @@ class CommandsFramework {
 
     // Check if bot has required permissions
     if (executionCode == -1 && annot.userPermissions != null) {
-      var total = (await e.guild.getMember(_client.self)).totalPermissions;
+      var total = (await e.guild.getMember(client.self)).totalPermissions;
       for (var perm in annot.userPermissions) {
         if ((total.raw | perm) == 0) {
           executionCode = 6;
@@ -591,7 +589,7 @@ class CommandsFramework {
           break;
         case User:
           var id = _entityRegex.firstMatch(splitted[index]).group(3);
-          collected.add(e.guild.client.users[Snowflake(id)]);
+          collected.add(client.users[Snowflake(id)]);
           break;
         case Role:
           var id = _entityRegex.firstMatch(splitted[index]).group(3);
@@ -625,6 +623,9 @@ class CommandsFramework {
 
     for (var e in params) {
       var type = e.type.reflectedType;
+
+      if(type == CommandContext)
+        continue;
 
       if (util.getCmdAnnot<Remainder>(e) != null) {
         index++;
