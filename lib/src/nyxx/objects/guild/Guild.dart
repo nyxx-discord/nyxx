@@ -89,12 +89,7 @@ class Guild extends SnowflakeEntity {
   /// Returns url to this guild.
   String get url => "https://discordapp.com/channels/${this.id.toString()}";
 
-  Role get everyoneRole {
-    if(roles.values.first.name == "@everyone")
-      return roles.values.first;
-
-    return roles.values.skip(1).firstWhere((r) => r.name == "@everyone");
-  }
+  Role get everyoneRole => roles.values.skip(1).firstWhere((r) => r.name == "@everyone");
 
   Guild._new(Map<String, dynamic> raw,
       [this.available = true, bool guildCreate = false])
