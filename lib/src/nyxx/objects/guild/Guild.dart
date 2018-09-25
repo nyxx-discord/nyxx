@@ -93,7 +93,7 @@ class Guild extends SnowflakeEntity {
     if(roles.values.first.name == "@everyone")
       return roles.values.first;
 
-    return roles.values.firstWhere((r) => r.name == "@everyone");
+    return roles.values.skip(1).firstWhere((r) => r.name == "@everyone");
   }
 
   Guild._new(Map<String, dynamic> raw,
