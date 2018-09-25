@@ -2,12 +2,6 @@ part of nyxx;
 
 /// Represents a single user of Discord, either a human or a bot, outside of any specific guild's context.
 class User extends SnowflakeEntity with ISend {
-  /// The [Nyxx] object.
-  Nyxx client;
-
-  /// The raw object returned by the API
-  Map<String, dynamic> raw;
-
   /// The user's username.
   String username;
 
@@ -20,24 +14,15 @@ class User extends SnowflakeEntity with ISend {
   /// The string to mention the user.
   String get mention => "<@${this.id}>";
 
-  /// The string to mention the user by nickname
-  String get mentionNickname => "<@!${this.id}>";
-
   /// Whether or not the user is a bot.
   bool bot = false;
 
-  /// Voice state
-  UserVoiceState get voiceState => client._voiceStates.containsKey(this.id)
-      ? client._voiceStates[this.id]
-      : null;
-
-  User._new(this.client, dynamic raw, [bool cache = true])
+  User._new(Map<String, dynamic> raw)
       : super(Snowflake(raw['id'] as String)) {
     this.username = raw['username'] as String;
     this.discriminator = raw['discriminator'] as String;
     this.avatar = raw['avatar'] as String;
-    this.bot = raw['bot'] as bool;
-    if (cache) client.users[this.id] = this;
+    this.bot = raw['bot'] as bool ?? false;
   }
 
   /// The user's avatar, represented as URL.
@@ -57,7 +42,7 @@ class User extends SnowflakeEntity with ISend {
     } catch (err) {
       HttpResponse r = await client.http.send('POST', "/users/@me/channels",
           body: {"recipient_id": this.id.toString()});
-      return DMChannel._new(client, r.body as Map<String, dynamic>);
+      return DMChannel._new(r.body as Map<String, dynamic>);
     }
   }
 

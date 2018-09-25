@@ -17,7 +17,7 @@ void main() {
     }
   });
 
-  cmd.CommandsFramework("!", bot)..registerLibraryCommands();
+  cmd.CommandsFramework("!")..registerLibraryCommands();
 }
 
 // Commands banchmark.

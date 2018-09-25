@@ -1,4 +1,4 @@
-part of nyxx.voice;
+part of nyxx.lavalink;
 
 // Logger instance for `Voice Service`
 Logger _logger = Logger.detached("Voice Service");
@@ -12,10 +12,10 @@ Future<void> sendFakeOp4(Nyxx client, VoiceChannel channel,
 
 /// Inits voice service. [yamlConfigFile] is absolute path to lavalink config file.
 /// Returns instance of VoiceService
-VoiceService init(String clientId, Nyxx client, String yamlConfigFile) {
+VoiceService init(String yamlConfigFile) {
   if (_manager != null) throw Exception("Tried initialize VoiceService twice.");
 
-  _manager = VoiceService._new(clientId, client, yamlConfigFile);
+  _manager = VoiceService._new(yamlConfigFile);
   _logger.info("Voice service intitailized!");
   return _manager;
 }
@@ -50,17 +50,15 @@ VoiceService _manager;
 class VoiceService {
   Uri _wsPath;
   Uri _restPath;
-  Nyxx _client;
   WebSocket _webSocket;
   String _password;
-  String _clientId;
 
-  static Map<String, Player> _playersCache = Map();
+  static Map<Snowflake, Player> _playersCache = Map();
 
   StreamController<Stats> _onStats;
   Stream<Stats> onStats;
 
-  VoiceService._new(this._clientId, this._client, String yamlConfigFile) {
+  VoiceService._new(String yamlConfigFile) {
     var file = File(yamlConfigFile);
     var contents = file.readAsStringSync();
     var config = loadYaml(contents);
@@ -82,8 +80,8 @@ class VoiceService {
     try {
       WebSocket.connect(_wsPath.toString(), headers: {
         "Authorization": _password,
-        "Num-Shards": _client.shards.length,
-        "User-Id": _clientId
+        "Num-Shards": client.shards.length,
+        "User-Id": client.app.id.toString()
       }).then((wc) {
         this._webSocket = wc;
         _webSocket.listen((data) async {
@@ -133,11 +131,11 @@ class VoiceService {
   /// Gets [Player] instance for guild.
   Future<Player> getPlayer(Guild guild) {
     return Future<Player>.delayed(const Duration(seconds: 2), () {
-      if (_playersCache.containsKey(guild.id.toString()))
-        return _playersCache[guild.id.toString()];
+      if (_playersCache.containsKey(guild.id))
+        return _playersCache[guild.id];
       else {
-        var tmp = Player._new(guild, _client, _webSocket, _restPath, _password);
-        _playersCache[guild.id.toString()] = tmp;
+        var tmp = Player._new(guild, _webSocket, _restPath, _password);
+        _playersCache[guild.id] = tmp;
         return tmp;
       }
     });

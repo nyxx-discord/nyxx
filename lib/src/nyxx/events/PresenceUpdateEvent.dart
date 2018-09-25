@@ -2,27 +2,34 @@ part of nyxx;
 
 /// Sent when a member's presence updates.
 class PresenceUpdateEvent {
-  /// The old member, may be null.
-  Member oldMember;
+  /// Member object, may be null.
+  Member member;
 
   /// The new member.
-  Member newMember;
+  Presence presence;
 
-  PresenceUpdateEvent._new(Nyxx client, Map<String, dynamic> json) {
+  PresenceUpdateEvent._new(Map<String, dynamic> json) {
     if (client.ready) {
-      Map<String, dynamic> data = json['d'] as Map<String, dynamic>;
+      var guild = client.guilds[Snowflake(json['d']['guild_id'] as String)];
 
-      if ((data['user'] as Map<String, dynamic>).length > 1) {
-        data['user'] = data['user'] as Map<String, dynamic>;
-      } else {
-        data['user'] = client.users[data['user']['id']]?.raw;
+      if(guild != null)
+        this.member = guild.members[Snowflake(json['d']['user']['id'] as String)];
+
+      if(json['d']['game'] != null)
+        this.presence = Presence._new(json['d']['game'] as Map<String, dynamic>);
+
+      if(member == null && 'online' == json['d']['status'].toString()) {
+        this.member = Member._new(json['d'] as Map<String, dynamic>, guild);
+        member.guild.members[member.id] = member;
+        client.users[member.id] = member;
+      } else if(member != null && 'offline' == json['d']['status'].toString()) {
+        member.guild.members.remove(member.id);
+        client.users.remove(member.id);
+      } else if(member != null) {
+        this.member.status = MemberStatus.from(json['d']['status'] as String);
+        this.member.presence = presence;
       }
 
-      if (data['user'] == null) return;
-      if (data['guild_id'] == null) return;
-
-      this.newMember = Member._new(client, data);
-      this.oldMember = newMember.guild.members[newMember.id];
       client._events.onPresenceUpdate.add(this);
     }
   }

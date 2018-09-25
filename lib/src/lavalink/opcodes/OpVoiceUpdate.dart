@@ -1,4 +1,4 @@
-part of nyxx.voice;
+part of nyxx.lavalink;
 
 /// Opcode for intercepting Voice events from discord to lavalink
 class _OpVoiceUpdate {

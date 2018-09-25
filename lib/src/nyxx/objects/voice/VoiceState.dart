@@ -1,21 +1,16 @@
 part of nyxx;
 
 /// Used to represent a user's voice connection status.
-class VoiceState extends UserVoiceState {
+class VoiceState {
   /// User this voice state is for
   User user;
 
   /// Session id for this voice state
   String sessionId;
 
-  VoiceState._new(Nyxx client, Map<String, dynamic> raw) : super(client, raw) {
-    this.user = client.users[Snowflake(raw['user_id'] as String)];
-    this.sessionId = raw['session_id'] as String;
-  }
-}
+  /// Guild this voice state update is
+  Guild guild;
 
-/// Represents voice State for user
-class UserVoiceState {
   /// Channel id user is connected
   VoiceChannel channel;
 
@@ -31,15 +26,19 @@ class UserVoiceState {
   /// Whether this user is muted by the current user
   bool suppress;
 
-  /// Raw object returned by API
-  Map<String, dynamic> raw;
-
-  UserVoiceState(Nyxx client, this.raw) {
-    this.channel =
-        client.channels[Snowflake(raw['channel_id'] as String)] as VoiceChannel;
+  VoiceState._new(Map<String, dynamic> raw, [Guild guild]) {
+    this.channel = client.channels[Snowflake(raw['channel_id'] as String)] as VoiceChannel;
     this.deaf = raw['deaf'] as bool;
     this.selfDeaf = raw['self_deaf'] as bool;
     this.selfMute = raw['self_mute'] as bool;
     this.suppress = raw['suppress'] as bool;
+
+    if(guild != null)
+      this.guild = guild;
+    else
+      this.guild = client.guilds[Snowflake(raw['guild_id'] as String)];
+
+    this.user = this.guild.members[Snowflake(raw['user_id'] as String)];
+    this.sessionId = raw['session_id'] as String;
   }
 }

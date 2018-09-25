@@ -8,7 +8,7 @@ class MessageDeleteBulkEvent {
   /// Channel on which messages was deleted.
   Channel channel;
 
-  MessageDeleteBulkEvent._new(Nyxx client, Map<String, dynamic> json) {
+  MessageDeleteBulkEvent._new( Map<String, dynamic> json) {
     this.channel =
         client.channels[Snowflake(json['d']['channel_id'] as String)];
 

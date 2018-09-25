@@ -1,4 +1,4 @@
-part of nyxx.voice;
+part of nyxx.lavalink;
 
 /// Event emitted when track ends/stop/etc
 class TrackEndEvent extends TrackError {

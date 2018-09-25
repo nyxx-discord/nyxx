@@ -10,11 +10,8 @@ class Message extends SnowflakeEntity {
   StreamController<MessageReactionEvent> _onReactionRemove;
   StreamController<MessageReactionsRemovedEvent> _onReactionsRemoved;
 
-  /// The [Nyxx] object.
-  Nyxx client;
-
   /// The raw object returned by the API.
-  Map<String, dynamic> raw;
+  //Map<String, dynamic> raw;
 
   /// The message's content.
   String content;
@@ -34,7 +31,7 @@ class Message extends SnowflakeEntity {
   /// The message's author. Can be instance of member
   User author;
 
-  /// The mentions in the message.
+  /// The mentions in the message. [User] value of this map can be [Member]
   Map<Snowflake, User> mentions;
 
   /// A list of IDs for the role mentions in the message.
@@ -77,7 +74,7 @@ class Message extends SnowflakeEntity {
   String get url => "https://discordapp.com/channels/${this.guild.id.toString()}"
       "/${this.channel.id.toString()}/${this.id.toString()}";
 
-  Message._new(this.client, this.raw) : super(Snowflake(raw['id'] as String)) {
+  Message._new(Map<String, dynamic> raw) : super(Snowflake(raw['id'] as String)) {
     this._onUpdate = StreamController.broadcast();
     this.onUpdate = this._onUpdate.stream;
 
@@ -96,34 +93,32 @@ class Message extends SnowflakeEntity {
     this.content = raw['content'] as String;
     this.nonce = raw['nonce'] as String;
 
-    this.channel = this.client.channels[Snowflake(raw['channel_id'] as String)]
+    this.channel = _client.channels[Snowflake(raw['channel_id'] as String)]
         as MessageChannel;
 
     this.pinned = raw['pinned'] as bool;
     this.tts = raw['tts'] as bool;
     this.mentionEveryone = raw['mention_everyone'] as bool;
 
-    this.channel._cacheMessage(this);
-    this.channel.lastMessageID = this.id;
+    if(this.channel is GuildChannel)
+      this.guild = (this.channel as GuildChannel).guild;
 
-    this.guild = client.guilds[Snowflake(raw['guild_id'] as String)];
     if (this.guild != null) {
-      print(jsonEncode(raw));
+      if(raw['author'] != null) {
+        this.author = this.guild.members[Snowflake(raw['author']['id'] as String)];
 
-      this.author =
-          this.guild.members[Snowflake(raw['author']['id'] as String)];
-
-      if (this.author == null) {
-        Map<String, dynamic> tMap;
-
-        if(raw['webhook_id'] != null) {
-          tMap = new Map();
-        } else {
-          tMap = raw['member'] as Map<String, dynamic>;
+        if(this.author == null) {
+          if(raw['member'] == null) {
+            this.author = User._new(raw['author'] as Map<String, dynamic>);
+          } else {
+            var r = raw['author'];
+            r['member'] = raw['member'];
+            var author  = Member._reverse(r as Map<String, dynamic>, client.guilds[Snowflake(raw['guild_id'] as String)]);
+            _client.users[author.id] = author;
+            guild.members[author.id] = author;
+            this.author = author;
+          }
         }
-
-        tMap['user'] = raw['author'];
-        this.author = Member._new(this.client, tMap);
       }
 
       if (raw['mention_roles'] != null) {
@@ -133,36 +128,60 @@ class Message extends SnowflakeEntity {
           this.roleMentions[s] = guild.roles[s];
         });
       }
+    } else {
+      this.author = client.users[Snowflake(raw['author']['id'] as String)];
+
+      if(this.author == null) {
+        var r = raw['author'];
+        r['member'] = raw['member'];
+        var author = Member._reverse(r as Map<String, dynamic>, client.guilds[Snowflake(raw['guild_id'] as String)]);
+        _client.users[author.id] = author;
+        this.author = author;
+      }
     }
 
     if (raw['edited_timestamp'] != null)
       this.editedTimestamp = DateTime.parse(raw['edited_timestamp'] as String);
 
-    this.mentions = Map<Snowflake, Member>();
-    raw['mentions'].forEach((o) {
-      final user = Member._reverse(this.client, o as Map<String, dynamic>, this.guild);
-      this.mentions[user.id] = user;
-    });
+    if(raw['mentions'] != null) {
+      this.mentions = Map<Snowflake, User>();
+      raw['mentions'].forEach((o) {
+        if(o['member'] == null) {
+          final user = User._new(o as Map<String, dynamic>);
+          this.mentions[user.id] = user;
+        } else {
+          final user = Member._reverse(o as Map<String, dynamic>, this.guild);
+          this.mentions[user.id] = user;
+        }
+      });
+    }
 
-    this.embeds = Map<String, Embed>();
-    raw['embeds'].forEach((o) {
-      Embed embed = Embed._new(this.client, o as Map<String, dynamic>);
-      this.embeds[embed.title] = embed;
-    });
+    if(raw['embeds'] != null) {
+      this.embeds = Map<String, Embed>();
+      raw['embeds'].forEach((o) {
+        Embed embed = Embed._new( o as Map<String, dynamic>);
+        this.embeds[embed.title] = embed;
+      });
+    }
 
-    this.attachments = Map<Snowflake, Attachment>();
-    raw['attachments'].forEach((o) {
-      final Attachment attachment =
-          Attachment._new(this.client, o as Map<String, dynamic>);
-      this.attachments[attachment.id] = attachment;
-    });
+    if(raw['attachments'] != null) {
+      this.attachments = Map<Snowflake, Attachment>();
+      raw['attachments'].forEach((o) {
+        final Attachment attachment =
+            Attachment._new( o as Map<String, dynamic>);
+        this.attachments[attachment.id] = attachment;
+      });
+    }
 
-    this.reactions = List<Reaction>();
     if (raw['reactions'] != null) {
+      this.reactions = List();
       raw['reactions'].forEach((o) {
         this.reactions.add(Reaction._new(o as Map<String, dynamic>));
       });
     }
+
+    this.channel._cacheMessage(this);
+    this.channel.lastMessageID = this.id;
   }
 
   /// Returns mention of message
@@ -177,13 +196,15 @@ class Message extends SnowflakeEntity {
       {String content,
       EmbedBuilder embed,
       bool tts = false,
-      String nonce,
       bool disableEveryone}) async {
+    if(this.author.id != _client.self.id)
+      return null;
+
     String newContent;
     if (content != null &&
         (disableEveryone == true ||
             (disableEveryone == null &&
-                this.client._options.disableEveryone))) {
+                _client._options.disableEveryone))) {
       newContent = content
           .replaceAll("@everyone", "@\u200Beveryone")
           .replaceAll("@here", "@\u200Bhere");
@@ -191,36 +212,36 @@ class Message extends SnowflakeEntity {
       newContent = content;
     }
 
-    final HttpResponse r = await this.client.http.send(
+    final HttpResponse r = await _client.http.send(
         'PATCH', '/channels/${this.channel.id}/messages/${this.id}',
         body: <String, dynamic>{
           "content": newContent,
           "embed": (embed != null ? embed._build() : "")
         });
-    return Message._new(this.client, r.body as Map<String, dynamic>);
+    return Message._new( r.body as Map<String, dynamic>);
   }
 
   /// Add reaction to message.
   Future<void> createReaction(Emoji emoji) async {
-    await this.client.http.send('PUT',
+    await _client.http.send('PUT',
         "/channels/${this.channel.id}/messages/${this.id}/reactions/${emoji.encode()}/@me");
   }
 
   /// Deletes reaction of bot. Emoji as ':emoji_name:'
   Future<void> deleteReaction(Emoji emoji) async {
-    await this.client.http.send('DELETE',
+    await _client.http.send('DELETE',
         "/channels/${this.channel.id}/messages/${this.id}/reactions/${emoji.encode()}/@me");
   }
 
   /// Deletes reaction of given user.
   Future<void> deleteUserReaction(Emoji emoji, String userId) async {
-    await this.client.http.send('DELETE',
+    await _client.http.send('DELETE',
         "/channels/${this.channel.id}/messages/${this.id}/reactions/${emoji.encode()}/$userId");
   }
 
   /// Deletes all reactions
   Future<void> deleteAllReactions() async {
-    await this.client.http.send(
+    await _client.http.send(
         'DELETE', "/channels/${this.channel.id}/messages/${this.id}/reactions");
   }
 
@@ -228,18 +249,18 @@ class Message extends SnowflakeEntity {
   ///
   /// Throws an [Exception] if the HTTP request errored.
   Future<void> delete({String auditReason = ""}) async {
-    await this.client.http.send(
+    await _client.http.send(
         'DELETE', '/channels/${this.channel.id}/messages/${this.id}',
         reason: auditReason);
   }
 
   /// Pins [Message] in current [Channel]
   Future<void> pinMessage() async {
-    await this.client.http.send('PUT', "/channels/${channel.id}/pins/$id");
+    await _client.http.send('PUT', "/channels/${channel.id}/pins/$id");
   }
 
   /// Unpins [Message] in current [Channel]
   Future<void> unpinMessage() async {
-    await this.client.http.send('DELETE', "/channels/${channel.id}/pins/$id");
+    await _client.http.send('DELETE', "/channels/${channel.id}/pins/$id");
   }
 }

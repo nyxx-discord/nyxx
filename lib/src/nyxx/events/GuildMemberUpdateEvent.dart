@@ -8,14 +8,20 @@ class GuildMemberUpdateEvent {
   /// The member after the update.
   Member newMember;
 
-  GuildMemberUpdateEvent._new(Nyxx client, Map<String, dynamic> json) {
+  GuildMemberUpdateEvent._new( Map<String, dynamic> json) {
     if (client.ready) {
       final Guild guild =
           client.guilds[Snowflake(json['d']['guild_id'] as String)];
       this.oldMember =
           guild.members[Snowflake(json['d']['user']['id'] as String)];
       this.newMember =
-          Member._new(client, json['d'] as Map<String, dynamic>, guild);
+          Member._new(json['d'] as Map<String, dynamic>, guild);
+
+      if(oldMember != null) {
+        guild.members[oldMember.id] = newMember;
+        client.users[oldMember.id] = newMember;
+      }
+
       client._events.onGuildMemberUpdate.add(this);
     }
   }

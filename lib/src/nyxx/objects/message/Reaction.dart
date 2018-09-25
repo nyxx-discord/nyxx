@@ -11,10 +11,7 @@ class Reaction {
   /// Emoji information
   Emoji emoji;
 
-  /// Raw response data
-  Map<String, dynamic> raw;
-
-  Reaction._new(this.raw) {
+  Reaction._new(Map<String, dynamic> raw) {
     count = raw['count'] as int;
     me = raw['me'] as bool;
 

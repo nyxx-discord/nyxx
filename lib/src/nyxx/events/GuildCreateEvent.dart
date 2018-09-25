@@ -5,18 +5,16 @@ class GuildCreateEvent {
   /// The guild created.
   Guild guild;
 
-  GuildCreateEvent._new(Nyxx client, Map<String, dynamic> json, Shard shard) {
+  GuildCreateEvent._new( Map<String, dynamic> json, Shard shard) {
     this.guild =
-        Guild._new(client, json['d'] as Map<String, dynamic>, true, true);
+        Guild._new(json['d'] as Map<String, dynamic>, true, true);
 
-    if (shard._ws.client._options.forceFetchMembers)
+    if (_client._options.forceFetchMembers)
       shard.send("REQUEST_GUILD_MEMBERS",
           {"guild_id": guild.id.toString(), "query": "", "limit": 0});
 
-    if (!client.ready) {
-      shard._ws.testReady();
-    } else {
-      client._events.onGuildCreate.add(this);
-    }
+    client.guilds[guild.id] = guild;
+    shard.guilds[guild.id] = guild;
+    client._events.onGuildCreate.add(this);
   }
 }

@@ -8,7 +8,7 @@ class ChannelUpdateEvent {
   /// The channel after the update.
   GuildChannel newChannel;
 
-  ChannelUpdateEvent._new(Nyxx client, Map<String, dynamic> json) {
+  ChannelUpdateEvent._new( Map<String, dynamic> json) {
     if (client.ready) {
       final Guild guild =
           client.guilds[Snowflake(json['d']['guild_id'] as String)];
@@ -19,18 +19,19 @@ class ChannelUpdateEvent {
 
       if (type == 0) {
         this.newChannel =
-            TextChannel._new(client, json['d'] as Map<String, dynamic>, guild);
+            TextChannel._new(json['d'] as Map<String, dynamic>, guild);
       } else if (type == 2) {
         this.newChannel =
-            VoiceChannel._new(client, json['d'] as Map<String, dynamic>, guild);
+            VoiceChannel._new(json['d'] as Map<String, dynamic>, guild);
       } else if (type == 4) {
         this.newChannel =
-            GroupChannel._new(client, json['d'] as Map<String, dynamic>, guild);
+            GroupChannel._new(json['d'] as Map<String, dynamic>, guild);
       }
 
-      // Nwm if I need this
-      newChannel._onUpdate.add(this);
       oldChannel._onUpdate.add(this);
+
+      guild.channels[oldChannel.id] = newChannel;
+      client.channels[oldChannel.id] = newChannel;
       client._events.onChannelUpdate.add(this);
     }
   }
