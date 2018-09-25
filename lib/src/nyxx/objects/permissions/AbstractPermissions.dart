@@ -17,7 +17,7 @@ abstract class AbstractPermissions {
   /// True if user is administrator
   bool administrator;
 
-  /// True if user can mamanger channels
+  /// True if user can manager channels
   bool manageChannels;
 
   /// True if user can manager guilds

@@ -6,7 +6,7 @@ class Member extends User {
   String nickname;
 
   /// The member's status, `offline`, `online`, `idle`, or `dnd`.
-  String status;
+  MemberStatus status;
 
   /// When the member joined the guild.
   DateTime joinedAt;
@@ -29,7 +29,7 @@ class Member extends User {
   /// Returns user instance of member
   User get user => client.users[id];
 
-  /// Returs highest role for member
+  /// Returns highest role for member
   Role get highestRole =>
       roles.reduce((f, s) => f.position > s.position ? f : s);
 
@@ -38,7 +38,7 @@ class Member extends User {
       .reduce((f, s) => f.position > s.position ? f : s).color;
 
   /// Voice state
-  UserVoiceState get voiceState => guild.voiceStates.containsKey(this.id)
+  VoiceState get voiceState => guild.voiceStates.containsKey(this.id)
       ? guild.voiceStates[this.id]
       : null;
 
@@ -64,7 +64,7 @@ class Member extends User {
     this.nickname = data['nick'] as String;
     this.deaf = data['deaf'] as bool;
     this.mute = data['mute'] as bool;
-    this.status = data['status'] as String;
+    this.status = MemberStatus.from(data['status'] as String);
 
     if (data['roles'] != null && this.guild.roles != null) {
       this.roles = List();
@@ -80,6 +80,9 @@ class Member extends User {
       this.presence =
           Presence._new(data['game'] as Map<String, dynamic>);
   }
+
+  /// Checks if member has specified role
+  bool hasRole(Role role) => this.roles.contains(role);
 
   /// Bans the member and optionally deletes [deleteMessageDays] days worth of messages.
   Future<void> ban(

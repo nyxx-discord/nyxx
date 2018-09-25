@@ -14,9 +14,6 @@ class User extends SnowflakeEntity with ISend {
   /// The string to mention the user.
   String get mention => "<@${this.id}>";
 
-  /// The string to mention the user by nickname
-  String get mentionNickname => "<@!${this.id}>";
-
   /// Whether or not the user is a bot.
   bool bot = false;
 
