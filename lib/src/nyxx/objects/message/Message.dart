@@ -108,12 +108,16 @@ class Message extends SnowflakeEntity {
         this.author = this.guild.members[Snowflake(raw['author']['id'] as String)];
 
         if(this.author == null) {
-          var r = raw['author'];
-          r['member'] = raw['member'];
-          var author  = Member._reverse(r as Map<String, dynamic>, client.guilds[Snowflake(raw['guild_id'] as String)]);
-          _client.users[author.id] = author;
-          guild.members[author.id] = author;
-          this.author = author;
+          if(raw['member'] == null) {
+            this.author = User._new(raw['author'] as Map<String, dynamic>);
+          } else {
+            var r = raw['author'];
+            r['member'] = raw['member'];
+            var author  = Member._reverse(r as Map<String, dynamic>, client.guilds[Snowflake(raw['guild_id'] as String)]);
+            _client.users[author.id] = author;
+            guild.members[author.id] = author;
+            this.author = author;
+          }
         }
       }
 
