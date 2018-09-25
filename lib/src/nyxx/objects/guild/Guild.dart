@@ -84,10 +84,17 @@ class Guild extends SnowflakeEntity {
   Shard shard;
 
   /// Users state cache
-  Map<Snowflake, UserVoiceState> voiceStates;
+  Map<Snowflake, VoiceState> voiceStates;
 
   /// Returns url to this guild.
   String get url => "https://discordapp.com/channels/${this.id.toString()}";
+
+  Role get everyoneRole {
+    if(roles.values.first.name == "@everyone")
+      return roles.values.first;
+
+    return roles.values.firstWhere((r) => r.name == "@everyone");
+  }
 
   Guild._new(Map<String, dynamic> raw,
       [this.available = true, bool guildCreate = false])
@@ -154,7 +161,7 @@ class Guild extends SnowflakeEntity {
         raw['presences'].forEach((o) {
           Member member = this.members[Snowflake(o['user']['id'] as String)];
           if (member != null) {
-            member.status = o['status'] as String;
+            member.status = MemberStatus.from(o['status'] as String);
             if (o['game'] != null) {
               member.presence =
                   Presence._new(o['game'] as Map<String, dynamic>);
@@ -169,6 +176,8 @@ class Guild extends SnowflakeEntity {
               Permissions.fromInt(raw['permissions'] as int);
 
         if (raw['voice_states'] != null) {
+          voiceStates = Map();
+
           raw['voice_states'].forEach((o) {
             var state = VoiceState._new(o as Map<String, dynamic>, this);
 

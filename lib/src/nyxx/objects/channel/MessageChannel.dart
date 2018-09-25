@@ -26,9 +26,6 @@ class MessageChannel extends Channel with IterableMixin<Message>, ISend {
   /// A collection of messages sent to this channel.
   LinkedHashMap<Snowflake, Message> messages;
 
-  /// Returns list witch chronologically sorted messages
-  List<Message> get sortedMessages => messages.values.toList()..sort((m1, m2) => m1.createdAt.compareTo(m2.createdAt));
-
   /// The ID for the last message in the channel.
   Snowflake lastMessageID;
 

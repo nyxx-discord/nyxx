@@ -17,8 +17,11 @@ class GuildMemberUpdateEvent {
       this.newMember =
           Member._new(json['d'] as Map<String, dynamic>, guild);
 
-      guild.members[oldMember.id] = newMember;
-      client.users[oldMember.id] = newMember;
+      if(oldMember != null) {
+        guild.members[oldMember.id] = newMember;
+        client.users[oldMember.id] = newMember;
+      }
+
       client._events.onGuildMemberUpdate.add(this);
     }
   }

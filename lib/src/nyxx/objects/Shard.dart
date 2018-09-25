@@ -1,7 +1,5 @@
 part of nyxx;
 
-//ZLibDecoder _zlib = new ZLibDecoder();
-
 /// Discord gateways implement a method of user-controlled guild sharding which allows for splitting events across a number of gateway connections.
 /// Guild sharding is entirely user controlled, and requires no state-sharing between separate connections to operate.
 class Shard {

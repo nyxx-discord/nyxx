@@ -34,9 +34,9 @@ class Snowflake implements Comparable<Snowflake> {
     this._id = _parseId(date);
   }
 
-  /// Returns true if [first] Snowflake was created before [second].
-  static bool compareDates(Snowflake first, Snowflake second) =>
-      first.timestamp.compareTo(second.timestamp) == -1;
+  /// Compares two Snowflakes based on creation date
+  static int compareDates(Snowflake first, Snowflake second) =>
+      first.timestamp.compareTo(second.timestamp);
 
   //  Parses id from dateTime
   static String _parseId(DateTime timestamp) =>
@@ -61,5 +61,5 @@ class Snowflake implements Comparable<Snowflake> {
   int get hashCode => this._id.hashCode;
 
   @override
-  int compareTo(Snowflake other) => other.id == this._id ? 0 : -1;
+  int compareTo(Snowflake other) => compareDates(this, other);
 }
