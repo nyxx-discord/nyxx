@@ -14,7 +14,7 @@ part of nyxx.commands;
 ///  /// Disable scheduler after 5 seconds
 ///  Timer(const Duration(seconds: 5), () => scheduler.stop());
 ///
-///  /// Run schduler
+///  /// Run scheduler
 ///  await scheduler.run();
 /// ```
 class Scheduler {

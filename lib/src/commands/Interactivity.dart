@@ -56,7 +56,7 @@ Future<Map<Emoji, int>> createPoll(
   });
 }
 
-/// Handles pagination interactivity. Allows to create pagnated messages from List<String>
+/// Handles pagination interactivity. Allows to create paginated messages from List<String>
 /// Factory constructors allows to create message from String directly.
 ///
 /// Pagination is sent by [paginate] method. And returns [Message] instance of sent message.

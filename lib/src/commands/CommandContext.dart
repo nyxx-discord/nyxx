@@ -1,8 +1,8 @@
 part of nyxx.commands;
 
-/// All command have to inhertit from this class.
-/// This class provides variuos helper methods to access discord world more easly
-/// Can be overrriden to create groups of commands (modules) or injected into top-level method commands.
+/// All command have to inherit from this class.
+/// This class provides various helper methods to access discord world more easly
+/// Can be overridden to create groups of commands (modules) or injected into top-level method commands.
 ///
 /// Top-level method commands
 /// ```

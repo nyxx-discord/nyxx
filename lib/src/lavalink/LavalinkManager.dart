@@ -10,7 +10,7 @@ Future<void> sendFakeOp4(Nyxx client, VoiceChannel channel,
       _Opcode4(channel.guild, channel, mute, deafen)._build());
 }
 
-/// Inits voice service. [yamlConfigFile] is absolute path to lavalink config file.
+/// Creates voice service. [yamlConfigFile] is absolute path to lavalink config file.
 /// Returns instance of VoiceService
 VoiceService init(String yamlConfigFile) {
   if (_manager != null) throw Exception("Tried initialize VoiceService twice.");

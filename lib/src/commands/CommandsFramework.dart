@@ -1,8 +1,7 @@
 part of nyxx.commands;
 
 /// Main point of commands in nyx.
-/// It gets all sent messages and matches to registered command and invokes
-/// its action.
+/// It gets all sent messages and matches to registered command and invokes its action.
 class CommandsFramework {
   List<_CommandMetadata> _commands;
 
