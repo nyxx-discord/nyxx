@@ -3,7 +3,7 @@ part of nyxx.commands;
 /// Defines command. Can be placed above method.
 /// It defines command handler for specified command.
 ///
-/// Code above cretaes new command group with name `cmd` and subcommand `check`.
+/// Code above creates new command group with name `cmd` and subcommand `check`.
 /// Group also has default command handler if only `cmd` invoked
 /// ```
 /// @Command(name: "elo")

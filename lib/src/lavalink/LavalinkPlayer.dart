@@ -2,7 +2,7 @@ part of nyxx.lavalink;
 
 /// Manages voice connection for guild. There can be only one player for [Guild]
 class Player {
-  /// True if player is connecte
+  /// True if player is connected
   bool isConnected = false;
 
   /// True if player is playing something
