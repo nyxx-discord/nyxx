@@ -114,6 +114,9 @@ class _EventController {
   /// Emitted when a guild channel's webhook is created, updated, or deleted.
   StreamController<WebhookUpdateEvent> onWebhookUpdate;
 
+  /// Emitted when user was updated
+  StreamController<UserUpdateEvent> onUserUpdate;
+
   /// Makes a new `EventController`.
   _EventController() {
     this.onRaw = StreamController.broadcast();
@@ -223,10 +226,13 @@ class _EventController {
 
     this.onWebhookUpdate = StreamController.broadcast();
     _client.onWebhookUpdate = this.onWebhookUpdate.stream;
+
+    this.onUserUpdate = StreamController.broadcast();
+    _client.onUserUpdate = this.onUserUpdate.stream;
   }
 
   /// Closes all streams.
-  Future<Null> destroy() async {
+  Future<void> destroy() async {
     await this.onRaw.close();
     await this.onDisconnect.close();
     await this.beforeHttpRequestSend.close();
@@ -267,6 +273,6 @@ class _EventController {
     await this.onVoiceServerUpdate.close();
     await this.onWebhookUpdate.close();
 
-    return null;
+    await this.onUserUpdate.close();
   }
 }

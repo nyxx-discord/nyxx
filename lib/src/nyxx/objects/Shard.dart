@@ -310,6 +310,9 @@ class Shard {
           case 'GUILD_ROLE_DELETE':
             RoleDeleteEvent._new(msg);
             break;
+
+          case 'USER_UPDATE':
+            UserUpdateEvent._new(msg);
         }
         break;
     }
