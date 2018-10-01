@@ -11,7 +11,7 @@ class VoiceStateUpdateEvent {
   VoiceStateUpdateEvent._new(this.json) {
     this.state = VoiceState._new(json['d'] as Map<String, dynamic>);
     if (state.user != null) {
-      if(state.channel != null)
+      if (state.channel != null)
         state.guild.voiceStates[state.user.id] = state;
       else {
         state.guild.voiceStates.remove(state.user.id);

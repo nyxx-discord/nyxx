@@ -11,7 +11,7 @@ class MessageReactionsRemovedEvent {
   /// Guild where event occurs
   Guild guild;
 
-  MessageReactionsRemovedEvent._new( Map<String, dynamic> json) {
+  MessageReactionsRemovedEvent._new(Map<String, dynamic> json) {
     this.channel = client.channels[Snowflake(json['d']['channel_id'] as String)]
         as MessageChannel;
 

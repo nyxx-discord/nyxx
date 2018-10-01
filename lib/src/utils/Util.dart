@@ -51,9 +51,8 @@ String getSymbolName(Symbol symbol) {
 /// var str = "Hello %0%!";
 /// print(format(str, ["Janusz"]))
 /// ```
-String format(String format, List formatters) =>
-    format.replaceAllMapped(r"%([0-9]+)%",
-        (match) => formatters[int.parse(match.group(1))].toString());
+String format(String format, List formatters) => format.replaceAllMapped(
+    r"%([0-9]+)%", (match) => formatters[int.parse(match.group(1))].toString());
 
 /// Partition list into chunks
 Iterable<List<T>> partition<T>(List<T> lst, int len) sync* {

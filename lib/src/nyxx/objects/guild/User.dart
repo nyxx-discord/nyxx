@@ -12,14 +12,14 @@ class User extends SnowflakeEntity with ISend, IMentionable {
   String avatar;
 
   @override
+
   /// The string to mention the user.
   String get mention => "<@${this.id}>";
 
   /// Whether or not the user is a bot.
   bool bot = false;
 
-  User._new(Map<String, dynamic> raw)
-      : super(Snowflake(raw['id'] as String)) {
+  User._new(Map<String, dynamic> raw) : super(Snowflake(raw['id'] as String)) {
     this.username = raw['username'] as String;
     this.discriminator = raw['discriminator'] as String;
     this.avatar = raw['avatar'] as String;
@@ -52,7 +52,7 @@ class User extends SnowflakeEntity with ISend, IMentionable {
   /// Sends a message.
   Future<Message> send(
       {Object content = "",
-        List<File> files,
+      List<File> files,
       EmbedBuilder embed,
       bool tts = false,
       bool disableEveryone}) async {

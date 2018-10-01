@@ -59,12 +59,11 @@ class MessageChannel extends Channel with IterableMixin<Message>, ISend {
   /// with [force] property. By default it checks if message is in cache and fetches from api if not.
   Future<Message> getMessage(Snowflake id, {bool force = false}) async {
     if (force || !messages.containsKey(id)) {
-      var r = await _client
-          .http
+      var r = await _client.http
           .send('GET', "/channels/${this.id.toString()}/messages/$id");
-      var msg = Message._new( r.body as Map<String, dynamic>);
+      var msg = Message._new(r.body as Map<String, dynamic>);
 
-     return _cacheMessage(msg);
+      return _cacheMessage(msg);
     }
 
     return messages[id];
@@ -109,7 +108,7 @@ class MessageChannel extends Channel with IterableMixin<Message>, ISend {
   /// ```
   Future<Message> send(
       {Object content = "",
-        List<File> files,
+      List<File> files,
       EmbedBuilder embed,
       bool tts = false,
       bool disableEveryone}) async {
@@ -121,12 +120,13 @@ class MessageChannel extends Channel with IterableMixin<Message>, ISend {
     };
 
     HttpResponse r;
-    if(files != null && files.isNotEmpty) {
+    if (files != null && files.isNotEmpty) {
       r = await _client.http.sendMultipart(
-          'POST', '/channels/${this.id}/messages', files, data: reqBody);
+          'POST', '/channels/${this.id}/messages', files,
+          data: reqBody);
     } else {
-      r = await _client.http.send(
-          'POST', '/channels/${this.id}/messages', body: reqBody..addAll({"tts": tts}));
+      r = await _client.http.send('POST', '/channels/${this.id}/messages',
+          body: reqBody..addAll({"tts": tts}));
     }
 
     return Message._new(r.body as Map<String, dynamic>);
@@ -181,20 +181,18 @@ class MessageChannel extends Channel with IterableMixin<Message>, ISend {
     if (before != null) query['before'] = before.toString();
     if (around != null) query['around'] = around.toString();
 
-    final HttpResponse r = await
-        _client
-        .http
+    final HttpResponse r = await _client.http
         .send('GET', '/channels/${this.id}/messages', queryParams: query);
 
     var response = LinkedHashMap<Snowflake, Message>();
 
     for (Map<String, dynamic> val in r.body as List<dynamic>) {
-      var msg = Message._new( val);
+      var msg = Message._new(val);
       response[msg.id] = msg;
     }
 
-    if(cache) {
-      for(var m in response.values) {
+    if (cache) {
+      for (var m in response.values) {
         _cacheMessage(m);
       }
     }

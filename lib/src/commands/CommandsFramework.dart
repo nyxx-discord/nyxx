@@ -623,8 +623,7 @@ class CommandsFramework {
     for (var e in params) {
       var type = e.type.reflectedType;
 
-      if(type == CommandContext)
-        continue;
+      if (type == CommandContext) continue;
 
       if (util.getCmdAnnot<Remainder>(e) != null) {
         index++;
@@ -641,7 +640,7 @@ class CommandsFramework {
 
       try {
         var res = await parsePrimitives(type);
-        if(res) continue;
+        if (res) continue;
       } on Exception {}
 
       try {

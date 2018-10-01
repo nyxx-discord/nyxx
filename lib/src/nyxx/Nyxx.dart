@@ -224,22 +224,23 @@ class Nyxx {
   Duration get uptime => DateTime.now().difference(_startTime);
 
   Future<T> getChannel<T>(Snowflake id, {Guild guild}) async {
-    if(this.channels.containsKey(id)) return this.channels[id] as T;
-    
-    var raw = (await this.http.send("GET", "/channels/${id.toString()}")).body as Map<String, dynamic>;
+    if (this.channels.containsKey(id)) return this.channels[id] as T;
+
+    var raw = (await this.http.send("GET", "/channels/${id.toString()}")).body
+        as Map<String, dynamic>;
 
     Channel channel;
-    if(T == MessageChannel)
+    if (T == MessageChannel)
       channel = MessageChannel._new(raw, raw['type'] as int);
-    else if(T == DMChannel)
+    else if (T == DMChannel)
       channel = DMChannel._new(raw);
-    else if(T == GroupDMChannel)
+    else if (T == GroupDMChannel)
       channel = GroupDMChannel._new(raw);
-    else if(T == TextChannel)
+    else if (T == TextChannel)
       channel = TextChannel._new(raw, guild);
-    else if(T == VoiceChannel)
+    else if (T == VoiceChannel)
       channel = VoiceChannel._new(raw, guild);
-    else if(T == GroupChannel)
+    else if (T == GroupChannel)
       channel = GroupChannel._new(raw, guild);
     else
       return null;
@@ -312,7 +313,7 @@ class Nyxx {
 
   /// Closes websocket connections and cleans everything up.
   Future<void> close() async {
-    for(var shard in this.shards.values) {
+    for (var shard in this.shards.values) {
       await shard._socket.close(1000);
     }
 

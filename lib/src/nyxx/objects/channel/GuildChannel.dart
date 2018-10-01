@@ -35,7 +35,8 @@ abstract class GuildChannel implements Channel {
     this.guild = guild;
 
     if (raw['parent_id'] != null) {
-      this.parentChannel = client.channels[Snowflake(raw['parent_id'] as String)] as GroupChannel;
+      this.parentChannel = client
+          .channels[Snowflake(raw['parent_id'] as String)] as GroupChannel;
     }
 
     this.nsfw = raw['nsfw'] as bool;
@@ -70,7 +71,7 @@ abstract class GuildChannel implements Channel {
         'POST', "/channels/$id/invites",
         body: params, reason: auditReason);
 
-    return Invite._new( r.body as Map<String, dynamic>);
+    return Invite._new(r.body as Map<String, dynamic>);
   }
 
   /// Fetches and returns all channel's [Invite]s
@@ -84,7 +85,7 @@ abstract class GuildChannel implements Channel {
 
     Map<String, Invite> invites = Map();
     for (Map<String, dynamic> val in r.body.values.first) {
-      invites[val["code"] as String] = Invite._new( val);
+      invites[val["code"] as String] = Invite._new(val);
     }
 
     return invites;

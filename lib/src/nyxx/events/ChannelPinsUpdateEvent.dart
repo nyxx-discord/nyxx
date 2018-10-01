@@ -8,7 +8,7 @@ class ChannelPinsUpdateEvent {
   /// the time at which the most recent pinned message was pinned
   DateTime lastPingTimestamp;
 
-  ChannelPinsUpdateEvent._new( Map<String, dynamic> json) {
+  ChannelPinsUpdateEvent._new(Map<String, dynamic> json) {
     this.lastPingTimestamp =
         DateTime.parse(json['d']['last_pin_timestamp'] as String);
     this.channel = client.channels[Snowflake(json['d']['channel_id'] as String)]

@@ -48,8 +48,7 @@ class GuildEmoji extends Emoji {
         "PATCH", "/guilds/${guild.id.toString()}/emojis/${this.id.toString()}",
         body: {"name": name, roles: roles.map((r) => r.toString())});
 
-    return GuildEmoji._new(
-         res.body as Map<String, dynamic>, guild);
+    return GuildEmoji._new(res.body as Map<String, dynamic>, guild);
   }
 
   Future<void> delete() async {

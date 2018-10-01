@@ -5,9 +5,8 @@ class GuildCreateEvent {
   /// The guild created.
   Guild guild;
 
-  GuildCreateEvent._new( Map<String, dynamic> json, Shard shard) {
-    this.guild =
-        Guild._new(json['d'] as Map<String, dynamic>, true, true);
+  GuildCreateEvent._new(Map<String, dynamic> json, Shard shard) {
+    this.guild = Guild._new(json['d'] as Map<String, dynamic>, true, true);
 
     if (_client._options.forceFetchMembers)
       shard.send("REQUEST_GUILD_MEMBERS",

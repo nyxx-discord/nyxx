@@ -27,6 +27,7 @@ class Role extends SnowflakeEntity implements IMentionable {
   Permissions permissions;
 
   @override
+
   /// Mention of role. If role cannot be mentioned it returns name of role.
   String get mention => mentionable ? "<@&${this.id}>" : name;
 
@@ -48,7 +49,7 @@ class Role extends SnowflakeEntity implements IMentionable {
     HttpResponse r = await _client.http.send(
         'PATCH', "/guilds/${this.guild.id}/roles/$id",
         body: role._build(), reason: auditReason);
-    return Role._new( r.body as Map<String, dynamic>, this.guild);
+    return Role._new(r.body as Map<String, dynamic>, this.guild);
   }
 
   /// Deletes the role.

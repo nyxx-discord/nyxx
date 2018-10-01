@@ -8,7 +8,7 @@ class GuildUpdateEvent {
   /// The guild after the update.
   Guild newGuild;
 
-  GuildUpdateEvent._new( Map<String, dynamic> json) {
+  GuildUpdateEvent._new(Map<String, dynamic> json) {
     if (client.ready) {
       this.newGuild = Guild._new(json['d'] as Map<String, dynamic>);
       this.oldGuild = client.guilds[this.newGuild.id];

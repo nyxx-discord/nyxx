@@ -13,10 +13,10 @@ class MessageReactionEvent {
   /// Emoji object.
   Emoji emoji;
 
-  MessageReactionEvent._new( Map<String, dynamic> json, bool remove) {
+  MessageReactionEvent._new(Map<String, dynamic> json, bool remove) {
     this.user = client.users[Snowflake(json['d']['user_id'] as String)];
     this.channel = client.channels[Snowflake(json['d']['channel_id'] as String)]
-    as MessageChannel;
+        as MessageChannel;
 
     channel
         .getMessage(Snowflake(json['d']['message_id'] as String))
@@ -28,7 +28,7 @@ class MessageReactionEvent {
       else
         emoji = GuildEmoji._partial(json['d']['emoji'] as Map<String, dynamic>);
 
-      if(remove) {
+      if (remove) {
         this.message._onReactionRemove.add(this);
         client._events.onMessageReactionRemove.add(this);
       } else {

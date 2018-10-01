@@ -8,7 +8,7 @@ class WebhookUpdateEvent {
   /// Guild on which event occured
   Guild guild;
 
-  WebhookUpdateEvent._new( Map<String, dynamic> json) {
+  WebhookUpdateEvent._new(Map<String, dynamic> json) {
     this.channel = client.channels[Snowflake(json['d']['channel_id'] as String)]
         as TextChannel;
     this.guild = client.guilds[Snowflake(json['d']['guild_id'] as String)];

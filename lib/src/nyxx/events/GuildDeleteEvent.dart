@@ -5,7 +5,7 @@ class GuildDeleteEvent {
   /// The guild.
   Guild guild;
 
-  GuildDeleteEvent._new( Map<String, dynamic> json, Shard shard) {
+  GuildDeleteEvent._new(Map<String, dynamic> json, Shard shard) {
     if (client.ready) {
       this.guild = client.guilds[Snowflake(json['d']['id'] as String)];
 

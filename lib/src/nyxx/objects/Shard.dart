@@ -57,8 +57,7 @@ class Shard {
 
   // Attempts to connect to ws
   void _connect([bool resume = false, bool init = false]) {
-    if(resume)
-      _logger.severe("DISCONNECTED. Trying to reconnect...");
+    if (resume) _logger.severe("DISCONNECTED. Trying to reconnect...");
 
     this.ready = false;
     if (this._socket != null) this._socket.close();
@@ -68,10 +67,10 @@ class Shard {
       return;
     }
 
-    WebSocket.connect('${this._ws.gateway}?v=7&encoding=json')
-        .then((WebSocket socket) {
+    WebSocket.connect('${this._ws.gateway}?v=7&encoding=json').then(
+        (WebSocket socket) {
       this._socket = socket;
-     // this._socket.pingInterval = const Duration(seconds: 3);
+      // this._socket.pingInterval = const Duration(seconds: 3);
       this._socket.listen((dynamic msg) async {
         await this._handleMsg(_decodeBytes(msg), resume);
       }, onDone: this._handleErr);
@@ -118,14 +117,11 @@ class Shard {
           };
 
           if (this._ws.bot)
-            identifyMsg['shard'] = <int>[
-              this.id,
-              _client._options.shardCount
-            ];
+            identifyMsg['shard'] = <int>[this.id, _client._options.shardCount];
           this.send("IDENTIFY", identifyMsg);
         } else if (resume) {
           this.send("RESUME", <String, dynamic>{
-            "token":_client._token,
+            "token": _client._token,
             "session_id": this._sessionId,
             "seq": this._sequence
           });
@@ -146,15 +142,13 @@ class Shard {
           case 'READY':
             this._sessionId = msg['d']['session_id'] as String;
 
-            _client.self = ClientUser._new(
-                msg['d']['user'] as Map<String, dynamic>);
+            _client.self =
+                ClientUser._new(msg['d']['user'] as Map<String, dynamic>);
 
             if (_client.self.bot) {
-              _client.http.headers['Authorization'] =
-                  "Bot ${_client._token}";
+              _client.http.headers['Authorization'] = "Bot ${_client._token}";
             } else {
-              _client.http.headers['Authorization'] =
-                  _client._token;
+              _client.http.headers['Authorization'] = _client._token;
               _client._options.forceFetchMembers = false;
             }
 
@@ -163,8 +157,9 @@ class Shard {
 
             msg['d']['guilds'].forEach((dynamic o) {
               var snow = Snowflake(o['id'] as String);
-              if(o['unavailable'] as bool != true) {
-                _client.guilds[snow] = Guild._new(o as Map<String, dynamic>, true, true);
+              if (o['unavailable'] as bool != true) {
+                _client.guilds[snow] =
+                    Guild._new(o as Map<String, dynamic>, true, true);
               }
             });
 
@@ -328,8 +323,8 @@ class Shard {
       case 1005:
         this._connect(true);
         break;
-        //throw _throw(
-        //    'No status code was provided even though one was expected.');
+      //throw _throw(
+      //    'No status code was provided even though one was expected.');
       case 4004:
         throw _throw(
             'The account token sent with your identify payload is incorrect.');

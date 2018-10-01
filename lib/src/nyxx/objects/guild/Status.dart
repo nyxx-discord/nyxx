@@ -20,9 +20,9 @@ class MemberStatus {
 
   @override
   bool operator ==(other) {
-   if(other is MemberStatus || other is String)
-     return other.toString() == _value;
+    if (other is MemberStatus || other is String)
+      return other.toString() == _value;
 
-   return false;
+    return false;
   }
 }

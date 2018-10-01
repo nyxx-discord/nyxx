@@ -12,8 +12,7 @@ class _WS {
   /// Makes a new WS manager.
   _WS() {
     _client.http.headers['Authorization'] = "Bot ${client._token}";
-    _client
-        .http
+    _client.http
         .send("GET", "/gateway/bot", beforeReady: true)
         .then((HttpResponse r) {
       this.bot = true;
@@ -33,8 +32,7 @@ class _WS {
       }
       this.connectShard(0);
     }).catchError((err) {
-      _client
-          .http
+      _client.http
           .send('GET', '/gateway', beforeReady: true)
           .then((HttpResponse r) {
         this.gateway = r.body['url'] as String;
@@ -65,22 +63,22 @@ class _WS {
 
   void testReady() {
     bool match = true;
-    for(var o in _client.guilds.values) {
-      if(o == null) {
+    for (var o in _client.guilds.values) {
+      if (o == null) {
         match = false;
         break;
       }
 
-      if (client._options.forceFetchMembers)
-        if (o.members.length != o.memberCount) {
-          match = false;
-          break;
-        }
+      if (client._options.forceFetchMembers) if (o.members.length !=
+          o.memberCount) {
+        match = false;
+        break;
+      }
     }
 
     bool match2 = true;
-    for(var shard in _client.shards.values) {
-      if (!shard.ready){
+    for (var shard in _client.shards.values) {
+      if (!shard.ready) {
         match2 = false;
         break;
       }
@@ -91,7 +89,8 @@ class _WS {
       client._startTime = DateTime.now();
 
       _client.http.send("GET", "/oauth2/applications/@me").then((response) {
-        _client.app = ClientOAuth2Application._new(response.body as Map<String, dynamic>);
+        _client.app =
+            ClientOAuth2Application._new(response.body as Map<String, dynamic>);
 
         ReadyEvent._new();
         logger.info("Connected and ready!");
