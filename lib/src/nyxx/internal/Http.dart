@@ -48,8 +48,7 @@ class HttpBase {
 
     BeforeHttpRequestSendEvent._new(this);
 
-    if (_client == null ||
-        !_client._events.beforeHttpRequestSend.hasListener)
+    if (_client == null || !_client._events.beforeHttpRequestSend.hasListener)
       this.send();
   }
 
@@ -270,7 +269,6 @@ class HttpBucket {
 
 /// The client's HTTP client.
 class Http {
-
   /// The buckets.
   Map<String, HttpBucket> buckets = <String, HttpBucket>{};
 

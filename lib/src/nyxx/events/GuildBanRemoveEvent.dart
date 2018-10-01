@@ -8,7 +8,7 @@ class GuildBanRemoveEvent {
   /// The user that was unbanned.
   User user;
 
-  GuildBanRemoveEvent._new( Map<String, dynamic> json) {
+  GuildBanRemoveEvent._new(Map<String, dynamic> json) {
     if (client.ready) {
       this.guild = client.guilds[Snowflake(json['d']['guild_id'] as String)];
       this.user = User._new(json['d']['user'] as Map<String, dynamic>);

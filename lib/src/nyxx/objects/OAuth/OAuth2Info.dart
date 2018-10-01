@@ -16,14 +16,14 @@ class OAuth2Info {
   Map<Snowflake, OAuth2Guild> guilds;
 
   OAuth2Info._new(Map<String, dynamic> raw) {
-    this.app = OAuth2Application._new(
-         raw['application'] as Map<String, dynamic>);
+    this.app =
+        OAuth2Application._new(raw['application'] as Map<String, dynamic>);
     this.bot = User._new(raw['bot'] as Map<String, dynamic>);
     this.me = User._new(raw['user'] as Map<String, dynamic>);
 
     this.guilds = Map<Snowflake, OAuth2Guild>();
     raw['guilds'].forEach((Map<String, dynamic> v) {
-      final OAuth2Guild g = OAuth2Guild._new( v);
+      final OAuth2Guild g = OAuth2Guild._new(v);
       this.guilds[Snowflake(g.id as String)] = g;
     });
     this.guilds;

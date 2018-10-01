@@ -13,8 +13,7 @@ class Channel extends SnowflakeEntity {
   /// Deletes the channel.
   /// Throws if bot cannot perform operation
   Future<void> delete({String auditReason = ""}) async {
-    await _client
-        .http
+    await _client.http
         .send('DELETE', "/channels/${this.id}", reason: auditReason);
   }
 }

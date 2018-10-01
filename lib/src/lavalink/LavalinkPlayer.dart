@@ -33,8 +33,7 @@ class Player {
   VoiceState _currentState;
   WebSocket _webSocket;
 
-  Player._new(this._guild, this._webSocket, this._restPath,
-      this._password);
+  Player._new(this._guild, this._webSocket, this._restPath, this._password);
 
   /// Connects to channel.
   /// Remember to await this methods - thread can be locked forever.

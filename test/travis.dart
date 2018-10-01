@@ -64,7 +64,8 @@ void main() {
       await m.channel.send(content: "Command '${m.content}' not found!");
     })
     ..onCooldown.listen((m) async {
-      await m.channel.send(content: "Command is on cooldown!. Wait a few seconds!");
+      await m.channel
+          .send(content: "Command is on cooldown!. Wait a few seconds!");
     })
     ..ignoreBots = false;
 
@@ -118,7 +119,8 @@ void main() {
     await d.delete();
 
     print("TESTING SENDING FILES");
-    var f = await channel.send(content: "PLIK SIEMA", files: [new File("test/kitty.webp")]);
+    var f = await channel
+        .send(content: "PLIK SIEMA", files: [new File("test/kitty.webp")]);
     await f.delete();
 
     print("TESTING EMBEDS");
@@ -135,10 +137,10 @@ void main() {
 
     if (ddel.any((d) => d.startsWith(m.content))) await m.delete();
 
-    if(m.content == "PLIK SIEMA" && m.attachments.values.length > 0) {
+    if (m.content == "PLIK SIEMA" && m.attachments.values.length > 0) {
       var att = m.attachments.values.first;
 
-      if(att.filename != "kitty.webp") {
+      if (att.filename != "kitty.webp") {
         exit(1);
       }
     }

@@ -2,7 +2,9 @@ part of nyxx;
 
 /// [TextChannel] represents single text channel on [Guild].
 /// Inhertits from [MessageChannel] and mixes [GuildChannel].
-class TextChannel extends MessageChannel with GuildChannel implements IMentionable {
+class TextChannel extends MessageChannel
+    with GuildChannel
+    implements IMentionable {
   /// Emitted when channel pins are updated.
   Stream<ChannelPinsUpdateEvent> pinsUpdated;
 
@@ -12,6 +14,7 @@ class TextChannel extends MessageChannel with GuildChannel implements IMentionab
   String topic;
 
   @override
+
   /// The channel's mention string.
   String get mention => "<#${this.id}>";
 
@@ -19,11 +22,11 @@ class TextChannel extends MessageChannel with GuildChannel implements IMentionab
   int slowModeThreshold;
 
   /// Returns url to this channel.
-  String get url => "https://discordapp.com/channels/${this.guild.id.toString()}"
+  String get url =>
+      "https://discordapp.com/channels/${this.guild.id.toString()}"
       "/${this.id.toString()}";
 
-  TextChannel._new(Map<String, dynamic> raw, Guild guild)
-      : super._new(raw, 0) {
+  TextChannel._new(Map<String, dynamic> raw, Guild guild) : super._new(raw, 0) {
     _initialize(raw, guild);
 
     this.topic = raw['topic'] as String;
@@ -34,12 +37,8 @@ class TextChannel extends MessageChannel with GuildChannel implements IMentionab
   }
 
   /// Edits the channel.
-  Future<TextChannel> edit({
-    String name,
-    String topic,
-    int position,
-    int slowModeTreshold
-  }) async {
+  Future<TextChannel> edit(
+      {String name, String topic, int position, int slowModeTreshold}) async {
     HttpResponse r =
         await _client.http.send('PATCH', "/channels/${this.id}", body: {
       "name": name ?? this.name,
@@ -47,18 +46,16 @@ class TextChannel extends MessageChannel with GuildChannel implements IMentionab
       "position": position ?? this.position,
       "rate_limit_per_user": slowModeTreshold ?? slowModeTreshold
     });
-    return TextChannel._new(
-         r.body as Map<String, dynamic>, this.guild);
+    return TextChannel._new(r.body as Map<String, dynamic>, this.guild);
   }
 
   /// Gets all of the webhooks for this channel.
   Future<Map<String, Webhook>> getWebhooks() async {
-    HttpResponse r =
-        await _client.http.send('GET', "/channels/$id/webhooks");
+    HttpResponse r = await _client.http.send('GET', "/channels/$id/webhooks");
     Map<String, Webhook> map = Map();
 
     r.body.forEach((k, o) {
-      Webhook webhook = Webhook._new( o as Map<String, dynamic>);
+      Webhook webhook = Webhook._new(o as Map<String, dynamic>);
       map[webhook.id.toString()] = webhook;
     });
 
@@ -71,20 +68,18 @@ class TextChannel extends MessageChannel with GuildChannel implements IMentionab
   /// var webhook = await chan.createWebhook("!a Send nudes kek6407");
   /// ```
   Future<Webhook> createWebhook(String name, {String auditReason = ""}) async {
-    HttpResponse r = await _client.http.send(
-        'POST', "/channels/$id/webhooks",
+    HttpResponse r = await _client.http.send('POST', "/channels/$id/webhooks",
         body: {"name": name}, reason: auditReason);
-    return Webhook._new( r.body as Map<String, dynamic>);
+    return Webhook._new(r.body as Map<String, dynamic>);
   }
 
   /// Returns pinned [Message]s for [Channel].
   Future<Map<String, Message>> getPinnedMessages() async {
-    final HttpResponse r =
-        await _client.http.send('GET', "/channels/$id/pins");
+    final HttpResponse r = await _client.http.send('GET', "/channels/$id/pins");
 
     Map<String, Message> messages = Map();
     for (Map<String, dynamic> val in r.body.values.first) {
-      messages[val["id"] as String] = Message._new( val);
+      messages[val["id"] as String] = Message._new(val);
     }
 
     return messages;

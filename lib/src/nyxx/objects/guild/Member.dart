@@ -32,7 +32,8 @@ class Member extends User {
 
   int get color => roles
       .where((r) => r.color > 0)
-      .reduce((f, s) => f.position > s.position ? f : s).color;
+      .reduce((f, s) => f.position > s.position ? f : s)
+      .color;
 
   /// Voice state
   VoiceState get voiceState => guild.voiceStates.containsKey(this.id)
@@ -47,14 +48,13 @@ class Member extends User {
     return Permissions.fromInt(total);
   }
 
-  Member._reverse(Map<String, dynamic> data, this.guild)
-      : super._new(data) {
+  Member._reverse(Map<String, dynamic> data, this.guild) : super._new(data) {
     _cons(data['member'] as Map<String, dynamic>);
   }
 
   Member._new(Map<String, dynamic> data, this.guild)
       : super._new(data['user'] as Map<String, dynamic>) {
-   _cons(data);
+    _cons(data);
   }
 
   void _cons(Map<String, dynamic> data) {
@@ -74,23 +74,22 @@ class Member extends User {
       this.joinedAt = DateTime.parse(data['joined_at'] as String).toUtc();
 
     if (data['game'] != null)
-      this.presence =
-          Presence._new(data['game'] as Map<String, dynamic>);
+      this.presence = Presence._new(data['game'] as Map<String, dynamic>);
   }
 
   /// Checks if member has specified role
   bool hasRole(Role role) => this.roles.contains(role);
 
   /// Checks if member has specified role by id of role
-  Role hasRoleById(Snowflake roleId) => this.roles.firstWhere((role) => role.id == roleId);
+  Role hasRoleById(Snowflake roleId) =>
+      this.roles.firstWhere((role) => role.id == roleId);
 
   /// Bans the member and optionally deletes [deleteMessageDays] days worth of messages.
   Future<void> ban(
       {int deleteMessageDays = 0,
       String reason,
       String auditReason = ""}) async {
-    await _client.http.send(
-        'PUT', "/guilds/${this.guild.id}/bans/${this.id}",
+    await _client.http.send('PUT', "/guilds/${this.guild.id}/bans/${this.id}",
         body: {"delete-message-days": deleteMessageDays, "reason": reason},
         reason: auditReason);
   }

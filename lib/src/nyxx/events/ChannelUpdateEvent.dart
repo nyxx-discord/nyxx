@@ -8,7 +8,7 @@ class ChannelUpdateEvent {
   /// The channel after the update.
   GuildChannel newChannel;
 
-  ChannelUpdateEvent._new( Map<String, dynamic> json) {
+  ChannelUpdateEvent._new(Map<String, dynamic> json) {
     if (client.ready) {
       final Guild guild =
           client.guilds[Snowflake(json['d']['guild_id'] as String)];

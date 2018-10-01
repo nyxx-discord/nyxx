@@ -109,10 +109,8 @@ class Pagination {
 
     Future(() async {
       var currPage = 0;
-      var group = util.merge([
-        client.onMessageReactionAdded,
-        client.onMessageReactionsRemoved
-      ]);
+      var group = util.merge(
+          [client.onMessageReactionAdded, client.onMessageReactionsRemoved]);
 
       await for (var event in group) {
         var emoji = (event as dynamic).emoji as UnicodeEmoji;

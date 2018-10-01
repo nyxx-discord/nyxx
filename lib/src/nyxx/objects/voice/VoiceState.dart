@@ -27,13 +27,14 @@ class VoiceState {
   bool suppress;
 
   VoiceState._new(Map<String, dynamic> raw, [Guild guild]) {
-    this.channel = client.channels[Snowflake(raw['channel_id'] as String)] as VoiceChannel;
+    this.channel =
+        client.channels[Snowflake(raw['channel_id'] as String)] as VoiceChannel;
     this.deaf = raw['deaf'] as bool;
     this.selfDeaf = raw['self_deaf'] as bool;
     this.selfMute = raw['self_mute'] as bool;
     this.suppress = raw['suppress'] as bool;
 
-    if(guild != null)
+    if (guild != null)
       this.guild = guild;
     else
       this.guild = client.guilds[Snowflake(raw['guild_id'] as String)];

@@ -23,7 +23,8 @@ class Webhook extends SnowflakeEntity {
   /// The user, if this is accessed using a normal client.
   User user;
 
-  Webhook._new(Map<String, dynamic> raw) : super(Snowflake(raw['id'] as String)) {
+  Webhook._new(Map<String, dynamic> raw)
+      : super(Snowflake(raw['id'] as String)) {
     this.name = raw['name'] as String;
     this.token = raw['token'] as String;
 
@@ -42,8 +43,7 @@ class Webhook extends SnowflakeEntity {
 
   /// Edits the webhook.
   Future<Webhook> edit({String name, String auditReason = ""}) async {
-    HttpResponse r = await _client.http.send(
-        'PATCH', "/webhooks/$id/$token",
+    HttpResponse r = await _client.http.send('PATCH', "/webhooks/$id/$token",
         body: {"name": name}, reason: auditReason);
     this.name = r.body['name'] as String;
     return this;
@@ -51,8 +51,7 @@ class Webhook extends SnowflakeEntity {
 
   /// Deletes the webhook.
   Future<void> delete({String auditReason = ""}) async {
-    await _client
-        .http
+    await _client.http
         .send('DELETE', "/webhooks/$id/$token", reason: auditReason);
   }
 
@@ -82,8 +81,7 @@ class Webhook extends SnowflakeEntity {
       String username,
       String avatarUrl,
       bool tts}) async {
-    await _client
-        .http
+    await _client.http
         .sendMultipart("POST", "/webhooks/$id/$token", files, data: {
       "content": content,
       "username": username,

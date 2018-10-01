@@ -71,10 +71,12 @@ class Message extends SnowflakeEntity {
   Stream<MessageReactionsRemovedEvent> onReactionsRemoved;
 
   /// Returns url to this message.
-  String get url => "https://discordapp.com/channels/${this.guild.id.toString()}"
+  String get url =>
+      "https://discordapp.com/channels/${this.guild.id.toString()}"
       "/${this.channel.id.toString()}/${this.id.toString()}";
 
-  Message._new(Map<String, dynamic> raw) : super(Snowflake(raw['id'] as String)) {
+  Message._new(Map<String, dynamic> raw)
+      : super(Snowflake(raw['id'] as String)) {
     this._onUpdate = StreamController.broadcast();
     this.onUpdate = this._onUpdate.stream;
 
@@ -100,20 +102,22 @@ class Message extends SnowflakeEntity {
     this.tts = raw['tts'] as bool;
     this.mentionEveryone = raw['mention_everyone'] as bool;
 
-    if(this.channel is GuildChannel)
+    if (this.channel is GuildChannel)
       this.guild = (this.channel as GuildChannel).guild;
 
     if (this.guild != null) {
-      if(raw['author'] != null) {
-        this.author = this.guild.members[Snowflake(raw['author']['id'] as String)];
+      if (raw['author'] != null) {
+        this.author =
+            this.guild.members[Snowflake(raw['author']['id'] as String)];
 
-        if(this.author == null) {
-          if(raw['member'] == null) {
+        if (this.author == null) {
+          if (raw['member'] == null) {
             this.author = User._new(raw['author'] as Map<String, dynamic>);
           } else {
             var r = raw['author'];
             r['member'] = raw['member'];
-            var author  = Member._reverse(r as Map<String, dynamic>, client.guilds[Snowflake(raw['guild_id'] as String)]);
+            var author = Member._reverse(r as Map<String, dynamic>,
+                client.guilds[Snowflake(raw['guild_id'] as String)]);
             _client.users[author.id] = author;
             guild.members[author.id] = author;
             this.author = author;
@@ -131,22 +135,24 @@ class Message extends SnowflakeEntity {
     } else {
       this.author = client.users[Snowflake(raw['author']['id'] as String)];
 
-      if(this.author == null) {
+      if (this.author == null) {
         var r = raw['author'];
         r['member'] = raw['member'];
-        var author = Member._reverse(r as Map<String, dynamic>, client.guilds[Snowflake(raw['guild_id'] as String)]);
+        var author = Member._reverse(r as Map<String, dynamic>,
+            client.guilds[Snowflake(raw['guild_id'] as String)]);
         _client.users[author.id] = author;
         this.author = author;
       }
     }
 
     if (raw['edited_timestamp'] != null)
-      this.editedTimestamp = DateTime.parse(raw['edited_timestamp'] as String).toUtc();
+      this.editedTimestamp =
+          DateTime.parse(raw['edited_timestamp'] as String).toUtc();
 
-    if(raw['mentions'] != null) {
+    if (raw['mentions'] != null) {
       this.mentions = Map<Snowflake, User>();
       raw['mentions'].forEach((o) {
-        if(o['member'] == null) {
+        if (o['member'] == null) {
           final user = User._new(o as Map<String, dynamic>);
           this.mentions[user.id] = user;
         } else {
@@ -156,19 +162,19 @@ class Message extends SnowflakeEntity {
       });
     }
 
-    if(raw['embeds'] != null) {
+    if (raw['embeds'] != null) {
       this.embeds = Map<String, Embed>();
       raw['embeds'].forEach((o) {
-        Embed embed = Embed._new( o as Map<String, dynamic>);
+        Embed embed = Embed._new(o as Map<String, dynamic>);
         this.embeds[embed.title] = embed;
       });
     }
 
-    if(raw['attachments'] != null) {
+    if (raw['attachments'] != null) {
       this.attachments = Map<Snowflake, Attachment>();
       raw['attachments'].forEach((o) {
         final Attachment attachment =
-            Attachment._new( o as Map<String, dynamic>);
+            Attachment._new(o as Map<String, dynamic>);
         this.attachments[attachment.id] = attachment;
       });
     }
@@ -197,14 +203,12 @@ class Message extends SnowflakeEntity {
       EmbedBuilder embed,
       bool tts = false,
       bool disableEveryone}) async {
-    if(this.author.id != _client.self.id)
-      return null;
+    if (this.author.id != _client.self.id) return null;
 
     String newContent;
     if (content != null &&
         (disableEveryone == true ||
-            (disableEveryone == null &&
-                _client._options.disableEveryone))) {
+            (disableEveryone == null && _client._options.disableEveryone))) {
       newContent = content
           .replaceAll("@everyone", "@\u200Beveryone")
           .replaceAll("@here", "@\u200Bhere");
@@ -218,7 +222,7 @@ class Message extends SnowflakeEntity {
           "content": newContent,
           "embed": (embed != null ? embed._build() : "")
         });
-    return Message._new( r.body as Map<String, dynamic>);
+    return Message._new(r.body as Map<String, dynamic>);
   }
 
   /// Add reaction to message.

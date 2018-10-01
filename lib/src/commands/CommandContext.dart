@@ -32,8 +32,7 @@ class CommandContext {
   Guild guild;
 
   CommandContext();
-  CommandContext._new(
-      this.channel, this.author, this.guild,  this.message);
+  CommandContext._new(this.channel, this.author, this.guild, this.message);
 
   /// Reply to message. It allows to send regular message, Embed or both.
   ///
