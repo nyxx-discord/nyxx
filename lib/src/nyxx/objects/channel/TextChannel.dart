@@ -2,7 +2,7 @@ part of nyxx;
 
 /// [TextChannel] represents single text channel on [Guild].
 /// Inhertits from [MessageChannel] and mixes [GuildChannel].
-class TextChannel extends MessageChannel with GuildChannel {
+class TextChannel extends MessageChannel with GuildChannel implements IMentionable {
   /// Emitted when channel pins are updated.
   Stream<ChannelPinsUpdateEvent> pinsUpdated;
 
@@ -11,8 +11,9 @@ class TextChannel extends MessageChannel with GuildChannel {
   /// The channel's topic.
   String topic;
 
+  @override
   /// The channel's mention string.
-  String mention;
+  String get mention => "<#${this.id}>";
 
   /// Channel's slowmode rate limit in seconds. This must be between 0 and 120.
   int slowModeThreshold;
@@ -26,7 +27,6 @@ class TextChannel extends MessageChannel with GuildChannel {
     _initialize(raw, guild);
 
     this.topic = raw['topic'] as String;
-    this.mention = "<#${this.id}>";
     this.slowModeThreshold = raw['rate_limit_per_user'] as int ?? 0;
 
     _pinsUpdated = StreamController.broadcast();
@@ -75,48 +75,6 @@ class TextChannel extends MessageChannel with GuildChannel {
         'POST', "/channels/$id/webhooks",
         body: {"name": name}, reason: auditReason);
     return Webhook._new( r.body as Map<String, dynamic>);
-  }
-
-  /// Fetches and returns all channel's [Invite]s
-  ///
-  /// ```
-  /// var invites = await chan.getChannelInvites();
-  /// ```
-  Future<Map<String, Invite>> getChannelInvites() async {
-    final HttpResponse r =
-        await _client.http.send('GET', "/channels/$id/invites");
-
-    Map<String, Invite> invites = Map();
-    for (Map<String, dynamic> val in r.body.values.first) {
-      invites[val["code"] as String] = Invite._new( val);
-    }
-
-    return invites;
-  }
-
-  /// Creates new [Invite] for [Channel] and returns it's instance
-  ///
-  /// ```
-  /// var inv = await chan.createInvite(maxUses: 2137);
-  /// ```
-  Future<Invite> createInvite(
-      {int maxAge = 0,
-      int maxUses = 0,
-      bool temporary = false,
-      bool unique = false,
-      String auditReason = ""}) async {
-    Map<String, dynamic> params = Map<String, dynamic>();
-
-    params['max_age'] = maxAge;
-    params['maxUses'] = maxUses;
-    params['temporary'] = temporary;
-    params['unique'] = unique;
-
-    final HttpResponse r = await _client.http.send(
-        'POST', "/channels/$id/invites",
-        body: params, reason: auditReason);
-
-    return Invite._new( r.body as Map<String, dynamic>);
   }
 
   /// Returns pinned [Message]s for [Channel].

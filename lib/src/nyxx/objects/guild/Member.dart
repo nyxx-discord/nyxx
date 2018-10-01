@@ -26,9 +26,6 @@ class Member extends User {
   /// The guild that the member is a part of.
   Guild guild;
 
-  /// Returns user instance of member
-  User get user => client.users[id];
-
   /// Returns highest role for member
   Role get highestRole =>
       roles.reduce((f, s) => f.position > s.position ? f : s);
@@ -74,7 +71,7 @@ class Member extends User {
     }
 
     if (data['joined_at'] != null)
-      this.joinedAt = DateTime.parse(data['joined_at'] as String);
+      this.joinedAt = DateTime.parse(data['joined_at'] as String).toUtc();
 
     if (data['game'] != null)
       this.presence =
@@ -83,6 +80,9 @@ class Member extends User {
 
   /// Checks if member has specified role
   bool hasRole(Role role) => this.roles.contains(role);
+
+  /// Checks if member has specified role by id of role
+  Role hasRoleById(Snowflake roleId) => this.roles.firstWhere((role) => role.id == roleId);
 
   /// Bans the member and optionally deletes [deleteMessageDays] days worth of messages.
   Future<void> ban(
