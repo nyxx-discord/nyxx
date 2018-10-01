@@ -141,7 +141,7 @@ class Message extends SnowflakeEntity {
     }
 
     if (raw['edited_timestamp'] != null)
-      this.editedTimestamp = DateTime.parse(raw['edited_timestamp'] as String);
+      this.editedTimestamp = DateTime.parse(raw['edited_timestamp'] as String).toUtc();
 
     if(raw['mentions'] != null) {
       this.mentions = Map<Snowflake, User>();
