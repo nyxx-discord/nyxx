@@ -167,6 +167,9 @@ class Nyxx {
   /// Emitted when a guild's voice server is updated. This is sent when initially connecting to voice, and when the current voice instance fails over to a new server.
   Stream<VoiceServerUpdateEvent> onVoiceServerUpdate;
 
+  //Emitted when user was updated
+  Stream<UserUpdateEvent> onUserUpdate;
+
   /// Logger instance
   Logger logger = Logger.detached("Client");
 
@@ -219,6 +222,30 @@ class Nyxx {
 
   /// The client's uptime.
   Duration get uptime => DateTime.now().difference(_startTime);
+
+  Future<T> getChannel<T>(Snowflake id, {Guild guild}) async {
+    if(this.channels.containsKey(id)) return this.channels[id] as T;
+    
+    var raw = (await this.http.send("GET", "/channels/${id.toString()}")).body as Map<String, dynamic>;
+
+    Channel channel;
+    if(T == MessageChannel)
+      channel = MessageChannel._new(raw, raw['type'] as int);
+    else if(T == DMChannel)
+      channel = DMChannel._new(raw);
+    else if(T == GroupDMChannel)
+      channel = GroupDMChannel._new(raw);
+    else if(T == TextChannel)
+      channel = TextChannel._new(raw, guild);
+    else if(T == VoiceChannel)
+      channel = VoiceChannel._new(raw, guild);
+    else if(T == GroupChannel)
+      channel = GroupChannel._new(raw, guild);
+    else
+      return null;
+
+    return channel as T;
+  }
 
   /// Get user instance with specified id.
   /// If [id] is present in cache it'll be got from cache, otherwise API
@@ -281,5 +308,14 @@ class Nyxx {
   Future<Invite> getInvite(String code) async {
     final HttpResponse r = await this.http.send('GET', '/invites/$code');
     return Invite._new(r.body as Map<String, dynamic>);
+  }
+
+  /// Closes websocket connections and cleans everything up.
+  Future<void> close() async {
+    for(var shard in this.shards.values) {
+      await shard._socket.close(1000);
+    }
+
+    await this._events.destroy();
   }
 }

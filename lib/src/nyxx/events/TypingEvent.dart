@@ -9,10 +9,14 @@ class TypingEvent {
   User user;
 
   TypingEvent._new( Map<String, dynamic> json) {
-    this.channel = client.channels[Snowflake(json['d']['channel_id'] as String)]
-        as MessageChannel;
-    this.user = client.users[json['d']['user_id']];
-    client._events.onTyping.add(this);
-    channel._onTyping.add(this);
+    client.getChannel<MessageChannel>(Snowflake(json['d']['channel_id'] as String)).then((chan) {
+      if(chan == null)
+        return;
+
+      this.channel = chan;
+      this.user = client.users[Snowflake(json['d']['user_id'] as String)];
+      client._events.onTyping.add(this);
+      channel._onTyping.add(this);
+    });
   }
 }

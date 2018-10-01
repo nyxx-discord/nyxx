@@ -68,6 +68,7 @@ part 'src/nyxx/events/MessageReactionsRemovedEvent.dart';
 part 'src/nyxx/events/VoiceServerUpdateEvent.dart';
 part 'src/nyxx/events/VoiceStateUpdateEvent.dart';
 part 'src/nyxx/events/WebhookUpdateEvent.dart';
+part 'src/nyxx/events/UserUpdateEvent.dart';
 
 // BUILDERS
 
@@ -84,6 +85,7 @@ part 'src/nyxx/builders/GuildBuilder.dart';
 // OBJECTS
 
 part 'src/nyxx/objects/ISend.dart';
+part 'src/nyxx/objects/IMentionable.dart';
 
 part 'src/nyxx/objects/SnowflakeEntity.dart';
 part 'src/nyxx/objects/Snowflake.dart';
