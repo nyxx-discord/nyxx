@@ -167,8 +167,11 @@ class Nyxx {
   /// Emitted when a guild's voice server is updated. This is sent when initially connecting to voice, and when the current voice instance fails over to a new server.
   Stream<VoiceServerUpdateEvent> onVoiceServerUpdate;
 
-  //Emitted when user was updated
+  /// Emitted when user was updated
   Stream<UserUpdateEvent> onUserUpdate;
+
+  /// Emitted when bot is mentioned
+  Stream<MessageEvent> selfMention;
 
   /// Logger instance
   Logger logger = Logger.detached("Client");
@@ -217,6 +220,7 @@ class Nyxx {
 
     this.http = Http._new();
     this._events = _EventController();
+    this.selfMention = this.onMessage.where((event) => event.message.mentions.containsKey(this.self.id));
     this._ws = _WS();
   }
 
