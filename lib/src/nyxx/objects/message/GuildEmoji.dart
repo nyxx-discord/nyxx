@@ -34,6 +34,8 @@ class GuildEmoji extends Emoji {
       raw['roles'].forEach(
           (o) => this.roles.add(this.guild.roles[Snowflake(o as String)]));
     }
+
+    guild.emojis[id] = this;
   }
 
   /// Creates partial object - only [id] and [name]

@@ -230,6 +230,9 @@ class Guild extends SnowflakeEntity {
   /// var emoji = await guild.getEmoji(Snowflake("461449676218957824"));
   /// ```
   Future<GuildEmoji> getEmoji(Snowflake emojiId) async {
+    if(emojis.containsKey(emojiId))
+      return emojis[emojiId];
+
     HttpResponse r = await _client
         .http
         .send('GET', "/guilds/$id/emojis/${emojiId.toString()}");
