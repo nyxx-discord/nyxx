@@ -4,7 +4,7 @@ part of nyxx;
 /// [id] property is actual id of entity which holds [Snowflake].
 class Snowflake implements Comparable<Snowflake> {
   static final discordEpoch = 1420070400000;
-  static final snowflakeDateOffset = 4194304;
+  static final snowflakeDateOffset = 1 >> 22;
 
   String _id;
 
@@ -13,8 +13,7 @@ class Snowflake implements Comparable<Snowflake> {
 
   /// Returns timestamp included in [Snowflake]
   /// [Snowflake reference](https://discordapp.com/developers/docs/reference#snowflakes)
-  DateTime get timestamp => DateTime.fromMillisecondsSinceEpoch(
-      ((int.parse(_id) / snowflakeDateOffset) + discordEpoch).toInt());
+  DateTime get timestamp => DateTime.fromMillisecondsSinceEpoch((int.parse(_id) >> 22) + discordEpoch).toUtc();
 
   /// Creates new instance of [Snowflake] from String value.
   Snowflake(this._id);
