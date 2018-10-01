@@ -20,4 +20,7 @@ class GroupDMChannel extends MessageChannel {
         .http
         .send("DELETE", "/channels/${this.id}/recipients/${userId.toString()}");
   }
+
+  @override
+  String toString() => "Group DM Channel: ${recipients.values.map((f) => f.toString()).join(", ")}";
 }

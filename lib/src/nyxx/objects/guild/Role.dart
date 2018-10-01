@@ -1,7 +1,7 @@
 part of nyxx;
 
 /// Represents a Discord guild role, which is used to assign priority, permissions, and a color to guild members
-class Role extends SnowflakeEntity {
+class Role extends SnowflakeEntity implements IMentionable {
   /// The role's name.
   String name;
 
@@ -26,6 +26,7 @@ class Role extends SnowflakeEntity {
   /// The role's permissions.
   Permissions permissions;
 
+  @override
   /// Mention of role. If role cannot be mentioned it returns name of role.
   String get mention => mentionable ? "<@&${this.id}>" : name;
 

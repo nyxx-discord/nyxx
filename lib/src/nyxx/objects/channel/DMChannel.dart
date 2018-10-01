@@ -15,4 +15,7 @@ class DMChannel extends MessageChannel {
           User._new(raw['recipient'] as Map<String, dynamic>);
     }
   }
+
+  @override
+  String toString() => "DM CHANNEL: ${recipient.toString()}";
 }
