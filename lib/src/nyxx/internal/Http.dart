@@ -270,16 +270,16 @@ class HttpBucket {
 /// The client's HTTP client.
 class Http {
   /// The buckets.
-  Map<String, HttpBucket> buckets = <String, HttpBucket>{};
+  Map<String, HttpBucket> buckets = Map();
 
   /// Headers sent on every request.
-  Map<String, String> headers;
+  Map<String, String> _headers;
 
   Logger _logger = Logger.detached("Http");
 
   Http._new() {
-    this.headers = <String, String>{'Content-Type': 'application/json'};
-    this.headers['User-Agent'] =
+    this._headers = <String, String>{'Content-Type': 'application/json'};
+    this._headers['User-Agent'] =
         'DiscordBot (https://github.com/l7ssha/nyxx, ${_Constants.version})';
   }
 
@@ -298,7 +298,7 @@ class Http {
         method,
         path,
         queryParams,
-        Map.from(this.headers)..addAll(headers)..addAll(addAuditReason(reason)),
+        Map.from(this._headers)..addAll(headers)..addAll(_addAuditReason(reason)),
         body);
 
     await for (HttpResponse r in request.stream) {
@@ -314,7 +314,7 @@ class Http {
   }
 
   /// Adds AUDIT_LOG header to request
-  Map<String, String> addAuditReason(String reason) =>
+  Map<String, String> _addAuditReason(String reason) =>
       <String, String>{"X-Audit-Log-Reason": "$reason"};
 
   /// Sends mutlipart response
@@ -327,10 +327,10 @@ class Http {
       throw Exception("Client isn't ready yet.");
 
     HttpMultipartRequest request = HttpMultipartRequest._new(this, method, path,
-        files, data, Map.from(this.headers)..addAll(headers));
+        files, data, Map.from(this._headers)..addAll(_headers));
 
     if (reason != "" || reason != null)
-      request.headers.addAll(addAuditReason(reason));
+      request.headers.addAll(_addAuditReason(reason));
 
     await for (HttpResponse r in request.stream) {
       if (!r.aborted && r.status >= 200 && r.status < 300) {

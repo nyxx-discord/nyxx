@@ -11,7 +11,7 @@ class _WS {
 
   /// Makes a new WS manager.
   _WS() {
-    _client.http.headers['Authorization'] = "Bot ${client._token}";
+    _client.http._headers['Authorization'] = "Bot ${client._token}";
     _client.http
         .send("GET", "/gateway/bot", beforeReady: true)
         .then((HttpResponse r) {
