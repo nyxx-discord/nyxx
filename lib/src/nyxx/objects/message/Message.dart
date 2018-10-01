@@ -194,6 +194,16 @@ class Message extends SnowflakeEntity {
   @override
   String toString() => this.content;
 
+  /// Replies to message. By default it mentions user who sends message.
+  Future<Message> reply({Object content = "",
+      List<File> files,
+      EmbedBuilder embed,
+      bool tts = false,
+      bool disableEveryone,
+      bool mention = true}) async => this.channel.send(
+      content: "${mention ? this.author.mention : ""} $content", files: files,
+  embed: embed, tts: tts, disableEveryone: disableEveryone);
+
   /// Edits the message.
   ///
   /// Throws an [Exception] if the HTTP request errored.
