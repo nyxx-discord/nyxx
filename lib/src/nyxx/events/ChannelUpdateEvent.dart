@@ -25,7 +25,7 @@ class ChannelUpdateEvent {
             VoiceChannel._new(json['d'] as Map<String, dynamic>, guild);
       } else if (type == 4) {
         this.newChannel =
-            GroupChannel._new(json['d'] as Map<String, dynamic>, guild);
+            CategoryChannel._new(json['d'] as Map<String, dynamic>, guild);
       }
 
       oldChannel._onUpdate.add(this);

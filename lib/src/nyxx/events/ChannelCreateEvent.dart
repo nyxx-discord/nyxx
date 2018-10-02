@@ -29,7 +29,7 @@ class ChannelCreateEvent {
         } else if (json['d']['type'] == 2) {
           chan = VoiceChannel._new(json['d'] as Map<String, dynamic>, guild);
         } else if (json['d']['type'] == 4) {
-          chan = GroupChannel._new(json['d'] as Map<String, dynamic>, guild);
+          chan = CategoryChannel._new(json['d'] as Map<String, dynamic>, guild);
         }
 
         client.channels[chan.id] = chan;

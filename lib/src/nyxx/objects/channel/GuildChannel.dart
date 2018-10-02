@@ -12,7 +12,7 @@ abstract class GuildChannel implements Channel {
   int position;
 
   /// Parent channel id
-  GroupChannel parentChannel;
+  CategoryChannel parentChannel;
 
   /// Indicates if channel is nsfw
   bool nsfw;
@@ -36,7 +36,7 @@ abstract class GuildChannel implements Channel {
 
     if (raw['parent_id'] != null) {
       this.parentChannel = client
-          .channels[Snowflake(raw['parent_id'] as String)] as GroupChannel;
+          .channels[Snowflake(raw['parent_id'] as String)] as CategoryChannel;
     }
 
     this.nsfw = raw['nsfw'] as bool;
