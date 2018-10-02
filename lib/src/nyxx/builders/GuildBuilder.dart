@@ -1,6 +1,6 @@
 part of nyxx;
 
-/// Allows to build guild object for creating new one or modifing existing
+/// Allows to build guild object for creating new one or modifying existing
 class GuildBuilder implements Builder {
   /// Name of Guild
   String name;
@@ -11,13 +11,13 @@ class GuildBuilder implements Builder {
   /// Base64 encoded 128x128 image
   String icon;
 
-  /// Verfication level
+  /// Verification level
   int verificationLevel;
 
-  // Default message notification level
+  /// Default message notification level
   int defaultMessageNotifications;
 
-  // Explicit content filter level
+  /// Explicit content filter level
   int explicitContentFilter;
 
   /// List of roles to create at guild creation

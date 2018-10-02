@@ -322,5 +322,6 @@ class Nyxx {
     }
 
     await this._events.destroy();
+    _client = null;
   }
 }
