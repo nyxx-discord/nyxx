@@ -26,10 +26,12 @@ class Role extends SnowflakeEntity implements IMentionable {
   /// The role's permissions.
   Permissions permissions;
 
-  @override
+  /// Returns all members which have this role assigned
+  Iterable<Member> get members => guild.members.values.where((m) => m.roles.contains(this));
 
+  @override
   /// Mention of role. If role cannot be mentioned it returns name of role.
-  String get mention => mentionable ? "<@&${this.id}>" : name;
+  String get mention => mentionable ? "<@&${this.id}>" : "@$name";
 
   Role._new(Map<String, dynamic> raw, this.guild)
       : super(Snowflake(raw['id'] as String)) {
