@@ -46,6 +46,16 @@ class EmbedBuilder implements Builder {
     _fields = List();
   }
 
+  void addAuthor(Function(EmbedAuthorBuilder author) func) {
+    this.author = EmbedAuthorBuilder();
+    func(this.author);
+  }
+
+  void addFooter(Function(EmbedFooterBuilder footer) func) {
+    this.footer = EmbedFooterBuilder();
+    func(this.footer);
+  }
+
   /// Adds field to embed. [name] and [content] fields are required. Inline is set to false by default.
   void addField({String name, String content, bool inline = false}) {
     _fields.add(EmbedFieldBuilder(name, content, inline)._build());

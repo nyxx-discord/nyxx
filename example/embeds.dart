@@ -17,15 +17,18 @@ void main() {
     if (e.message.content == "!embed") {
       // Build embed with `..Builder` classes.
 
-      // Create author section of embed.
-      var author = nyxx.EmbedAuthorBuilder()
-        ..name = e.message.author.username
-        ..iconUrl = e.message.author.avatarURL();
 
-      // Create embed with previously created author section.
+      // Create embed with author and footer section.
       var embed = nyxx.EmbedBuilder()
         ..addField(name: "Example field title", content: "Example value")
-        ..author = author;
+        ..addAuthor((author) {
+          author.name = e.message.author.username;
+          author.iconUrl = e.message.author.avatarURL();
+        })
+        ..addFooter((footer) {
+          footer.text = "Footer example, good";
+        })
+        ..color = (e.message.author as nyxx.Member).color;
 
       // Sent an embed
       e.message.channel.send(embed: embed);
