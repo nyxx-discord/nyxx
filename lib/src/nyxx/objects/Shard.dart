@@ -70,10 +70,10 @@ class Shard {
     WebSocket.connect('${this._ws.gateway}?v=7&encoding=json').then(
         (WebSocket socket) {
       this._socket = socket;
-      // this._socket.pingInterval = const Duration(seconds: 3);
+      this._socket.pingInterval = const Duration(seconds: 3);
       this._socket.listen((dynamic msg) async {
         await this._handleMsg(_decodeBytes(msg), resume);
-      }, onDone: this._handleErr);
+      }, onDone: this._handleErr, onError: (_) => this._handleErr);
     }, onError: (_) => this._handleErr);
   }
 
@@ -146,16 +146,16 @@ class Shard {
                 ClientUser._new(msg['d']['user'] as Map<String, dynamic>);
 
             if (_client.self.bot) {
-              _client.http.headers['Authorization'] = "Bot ${_client._token}";
+              _client.http._headers['Authorization'] = "Bot ${_client._token}";
             } else {
-              _client.http.headers['Authorization'] = _client._token;
+              _client.http._headers['Authorization'] = _client._token;
               _client._options.forceFetchMembers = false;
             }
 
-            _client.http.headers['User-Agent'] =
+            _client.http._headers['User-Agent'] =
                 "${_client.self.username} (${_Constants.repoUrl}, ${_Constants.version})";
 
-            msg['d']['guilds'].forEach((dynamic o) {
+            msg['d']['guilds'].forEach((o) {
               var snow = Snowflake(o['id'] as String);
               if (o['unavailable'] as bool != true) {
                 _client.guilds[snow] =
@@ -317,6 +317,8 @@ class Shard {
       "${this._socket.closeCode}: ${this._socket.closeReason} - '$msg'");
 
   void _handleErr() {
+    _socket.close(1001);
+
     this._heartbeatTimer.cancel();
 
     switch (this._socket.closeCode) {
