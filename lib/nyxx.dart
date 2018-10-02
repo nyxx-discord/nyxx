@@ -101,7 +101,7 @@ part 'src/nyxx/objects/auditlogs/AuditLogEntry.dart';
 part 'src/nyxx/objects/auditlogs/AuditLogChange.dart';
 
 part 'src/nyxx/objects/channel/VoiceChannel.dart';
-part 'src/nyxx/objects/channel/GroupChannel.dart';
+part 'src/nyxx/objects/channel/CategoryChannel.dart';
 part 'src/nyxx/objects/channel/TextChannel.dart';
 part 'src/nyxx/objects/channel/GuildChannel.dart';
 part 'src/nyxx/objects/channel/GroupDMChannel.dart';

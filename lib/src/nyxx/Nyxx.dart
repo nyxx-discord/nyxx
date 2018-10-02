@@ -244,8 +244,8 @@ class Nyxx {
       channel = TextChannel._new(raw, guild);
     else if (T == VoiceChannel)
       channel = VoiceChannel._new(raw, guild);
-    else if (T == GroupChannel)
-      channel = GroupChannel._new(raw, guild);
+    else if (T == CategoryChannel)
+      channel = CategoryChannel._new(raw, guild);
     else
       return null;
 

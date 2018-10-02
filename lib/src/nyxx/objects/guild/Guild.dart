@@ -147,7 +147,7 @@ class Guild extends SnowflakeEntity {
           else if (o['type'] == 2)
             channel = VoiceChannel._new(o as Map<String, dynamic>, this);
           else if (o['type'] == 4)
-            channel = GroupChannel._new(o as Map<String, dynamic>, this);
+            channel = CategoryChannel._new(o as Map<String, dynamic>, this);
 
           this.channels[channel.id] = channel;
           client.channels[channel.id] = channel;
@@ -421,7 +421,7 @@ class Guild extends SnowflakeEntity {
   Future<GuildChannel> createChannel(String name, ChannelType type,
       {int bitrate,
       String topic,
-      GroupChannel parent,
+      CategoryChannel parent,
       bool nsfw,
       int userLimit,
       PermissionsBuilder permissions,
@@ -448,7 +448,7 @@ class Guild extends SnowflakeEntity {
       case ChannelType.text:
         return TextChannel._new(raw as Map<String, dynamic>, this);
       case ChannelType.group:
-        return GroupChannel._new(raw as Map<String, dynamic>, this);
+        return CategoryChannel._new(raw as Map<String, dynamic>, this);
       case ChannelType.voice:
         return VoiceChannel._new(raw as Map<String, dynamic>, this);
       default:

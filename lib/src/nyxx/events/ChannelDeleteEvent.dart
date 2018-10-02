@@ -25,7 +25,7 @@ class ChannelDeleteEvent {
               VoiceChannel._new(json['d'] as Map<String, dynamic>, guild);
         } else if (json['d']['type'] == 4) {
           this.channel =
-              GroupChannel._new(json['d'] as Map<String, dynamic>, guild);
+              CategoryChannel._new(json['d'] as Map<String, dynamic>, guild);
         }
         guild.channels.remove(channel.id);
       }

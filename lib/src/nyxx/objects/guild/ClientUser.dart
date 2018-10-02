@@ -40,6 +40,18 @@ class ClientUser extends User {
     return this;
   }
 
+  /// Allows to set status for each shard based on shard state.
+  ///
+  /// ```
+  /// client.setPresenceForShard((shard) {
+  ///   shard.setPresence(status: "Shard id: ${shard.id}");
+  /// });
+  /// ```
+  void setPresenceForShard(Function(Shard shard) func) {
+    for(var shard in client.shards.values)
+      func(shard);
+  }
+
   /// Allows to get [Member] objects for all guilds for bot user.
   Map<Guild, Member> getMembership() {
     var tmp = Map<Guild, Member>();
