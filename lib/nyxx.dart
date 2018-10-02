@@ -79,7 +79,6 @@ part 'src/nyxx/builders/EmbedBuilder.dart';
 part 'src/nyxx/builders/EmbedAuthorBuilder.dart';
 part 'src/nyxx/builders/EmbedFieldBuilder.dart';
 part 'src/nyxx/builders/EmbedFooterBuilder.dart';
-part 'src/nyxx/builders/EmbedProviderBuilder.dart';
 part 'src/nyxx/builders/GuildBuilder.dart';
 
 // OBJECTS

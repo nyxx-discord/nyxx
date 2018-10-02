@@ -30,12 +30,6 @@ class EmbedBuilder implements Builder {
   /// Thumbnail Url
   String thumbnailUrl;
 
-  /// Video url
-  String videoUrl;
-
-  /// Author aka provider
-  EmbedProviderBuilder provider;
-
   /// Author of embed
   EmbedAuthorBuilder author;
 
@@ -57,12 +51,21 @@ class EmbedBuilder implements Builder {
   }
 
   /// Adds field to embed. [name] and [content] fields are required. Inline is set to false by default.
-  void addField({String name, String content, bool inline = false}) {
+  void addField({String name, String content, bool inline = false, Function(EmbedFieldBuilder field) builder, EmbedFieldBuilder field}) {
+    if(field != null) {
+      _fields.add(field._build());
+      return;
+    }
+
+    if(builder != null) {
+      var tmp = EmbedFieldBuilder();
+      builder(tmp);
+      _fields.add(tmp._build());
+      return;
+    }
+
     _fields.add(EmbedFieldBuilder(name, content, inline)._build());
   }
-
-  /// Added field to embed using [EmbedFieldBuilder]
-  void addFieldBuilder(EmbedFieldBuilder field) => _fields.add(field._build());
 
   @override
 
@@ -80,8 +83,6 @@ class EmbedBuilder implements Builder {
     if (imageUrl != null) tmp["image"] = <String, dynamic>{"url": imageUrl};
     if (thumbnailUrl != null)
       tmp["thumbnail"] = <String, dynamic>{"url": thumbnailUrl};
-    if (videoUrl != null) tmp["video"] = <String, dynamic>{"url": videoUrl};
-    if (provider != null) tmp["provider"] = provider._build();
     if (author != null) tmp["author"] = author._build();
     if (_fields.length > 0) tmp["fields"] = _fields;
 

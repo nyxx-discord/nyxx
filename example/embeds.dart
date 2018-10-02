@@ -17,10 +17,13 @@ void main() {
     if (e.message.content == "!embed") {
       // Build embed with `..Builder` classes.
 
-
       // Create embed with author and footer section.
       var embed = nyxx.EmbedBuilder()
         ..addField(name: "Example field title", content: "Example value")
+        ..addField(builder: (field) {
+          field.content = "Hi";
+          field.name = "Example Filed";
+        })
         ..addAuthor((author) {
           author.name = e.message.author.username;
           author.iconUrl = e.message.author.avatarURL();
