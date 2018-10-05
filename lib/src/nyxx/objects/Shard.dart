@@ -16,7 +16,7 @@ class Shard {
   Stream<Shard> onDisconnect;
 
   /// A map of guilds the shard is on.
-  Map<Snowflake, Guild> guilds = {};
+  Map<Snowflake, Guild> guilds;
 
   Timer _heartbeatTimer;
   _WS _ws;
@@ -29,6 +29,8 @@ class Shard {
   Logger _logger = Logger.detached("Websocket");
 
   Shard._new(_WS ws, this.id) {
+    guilds = Map();
+
     this._ws = ws;
     this._onReady = StreamController<Shard>.broadcast();
     this.onReady = this._onReady.stream;
@@ -77,11 +79,14 @@ class Shard {
     }, onError: (_) => this._handleErr);
   }
 
+  int transfer = 0;
+
   // Decodes zlib compresses string into string json
   Map<String, dynamic> _decodeBytes(dynamic bytes) {
     if (bytes is String) return jsonDecode(bytes) as Map<String, dynamic>;
 
     var decoded = zlib.decoder.convert(bytes as List<int>);
+    transfer += decoded.length;
     var rawStr = utf8.decode(decoded);
     return jsonDecode(rawStr) as Map<String, dynamic>;
   }
@@ -187,7 +192,7 @@ class Shard {
           case 'GUILD_MEMBERS_CHUNK':
             msg['d']['members'].forEach((dynamic o) {
               var mem = Member._new(o as Map<String, dynamic>,
-                  _client.guilds[msg['d']['guild_id']]);
+                  _client.guilds[Snowflake(msg['d']['guild_id'])]);
               client.users[mem.id] = mem;
               mem.guild.members[mem.id] = mem;
             });
@@ -308,6 +313,10 @@ class Shard {
 
           case 'USER_UPDATE':
             UserUpdateEvent._new(msg);
+            break;
+
+          default:
+            print("UNKNOWN OPCODE: ${jsonEncode(msg)}");
         }
         break;
     }
@@ -318,13 +327,15 @@ class Shard {
 
   void _handleErr() {
     _socket.close(1001);
-
     this._heartbeatTimer.cancel();
 
+    // Invalidate cache on error
+    client.guilds.invalidate();
+    client.users.invalidate();
+    client.channels.invalidate();
+    this.guilds.clear();
+
     switch (this._socket.closeCode) {
-      case 1005:
-        this._connect(true);
-        break;
       //throw _throw(
       //    'No status code was provided even though one was expected.');
       case 4004:
@@ -334,9 +345,8 @@ class Shard {
         throw _throw('You sent an invalid shard when identifying.');
       case 4007:
       case 4009:
-        this._connect(true);
-        break;
       case 1001:
+      case 1005:
         this._connect(true);
         break;
       default:

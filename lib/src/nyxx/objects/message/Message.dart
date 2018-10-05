@@ -10,9 +10,6 @@ class Message extends SnowflakeEntity {
   StreamController<MessageReactionEvent> _onReactionRemove;
   StreamController<MessageReactionsRemovedEvent> _onReactionsRemoved;
 
-  /// The raw object returned by the API.
-  //Map<String, dynamic> raw;
-
   /// The message's content.
   String content;
 
@@ -149,7 +146,7 @@ class Message extends SnowflakeEntity {
       this.editedTimestamp =
           DateTime.parse(raw['edited_timestamp'] as String).toUtc();
 
-    if (raw['mentions'] != null) {
+    if (raw['mentions'] != null && raw['mentions'].isNotEmpty as bool) {
       this.mentions = Map<Snowflake, User>();
       raw['mentions'].forEach((o) {
         if (o['member'] == null) {
@@ -162,7 +159,7 @@ class Message extends SnowflakeEntity {
       });
     }
 
-    if (raw['embeds'] != null) {
+    if (raw['embeds'] != null && raw['embeds'].isNotEmpty as bool) {
       this.embeds = Map<String, Embed>();
       raw['embeds'].forEach((o) {
         Embed embed = Embed._new(o as Map<String, dynamic>);
@@ -170,7 +167,7 @@ class Message extends SnowflakeEntity {
       });
     }
 
-    if (raw['attachments'] != null) {
+    if (raw['attachments'] != null && raw['attachments'].isNotEmpty as bool) {
       this.attachments = Map<Snowflake, Attachment>();
       raw['attachments'].forEach((o) {
         final Attachment attachment =
@@ -179,14 +176,14 @@ class Message extends SnowflakeEntity {
       });
     }
 
-    if (raw['reactions'] != null) {
+    if (raw['reactions'] != null && raw['reactions'].isNotEmpty as bool) {
       this.reactions = List();
       raw['reactions'].forEach((o) {
         this.reactions.add(Reaction._new(o as Map<String, dynamic>));
       });
     }
 
-    this.channel._cacheMessage(this);
+    this.channel.messages._cacheMessage(this);
     this.channel.lastMessageID = this.id;
   }
 

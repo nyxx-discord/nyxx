@@ -24,7 +24,7 @@ class MessageChannel extends Channel with IterableMixin<Message>, ISend {
   StreamController<TypingEvent> _onTyping;
 
   /// A collection of messages sent to this channel.
-  LinkedHashMap<Snowflake, Message> messages;
+  IMessageCache messages;
 
   /// The ID for the last message in the channel.
   Snowflake lastMessageID;
@@ -33,7 +33,7 @@ class MessageChannel extends Channel with IterableMixin<Message>, ISend {
       : super._new(raw, type) {
     if (raw['last_message_id'] != null)
       this.lastMessageID = Snowflake(raw['last_message_id'] as String);
-    this.messages = LinkedHashMap<Snowflake, Message>();
+    this.messages = _MessageCache();
 
     _onMessage = StreamController.broadcast();
     _onTyping = StreamController.broadcast();
@@ -42,28 +42,15 @@ class MessageChannel extends Channel with IterableMixin<Message>, ISend {
     onMessage = _onMessage.stream;
   }
 
-  Message _cacheMessage(Message message) {
-    if (_client._options.messageCacheSize > 0) {
-      if (this.messages.length >= _client._options.messageCacheSize) {
-        this.messages.values.toList().first._onUpdate.close();
-        this.messages.values.toList().first._onDelete.close();
-        this.messages.remove(this.messages.values.toList().first.id);
-      }
-      this.messages[message.id] = message;
-    }
-
-    return message;
-  }
-
   /// Returns message with given [id]. Allows to force fetch message from api
   /// with [force] property. By default it checks if message is in cache and fetches from api if not.
   Future<Message> getMessage(Snowflake id, {bool force = false}) async {
-    if (force || !messages.containsKey(id)) {
+    if (force || !messages.hasKey(id)) {
       var r = await _client.http
           .send('GET', "/channels/${this.id.toString()}/messages/$id");
       var msg = Message._new(r.body as Map<String, dynamic>);
 
-      return _cacheMessage(msg);
+      return messages._cacheMessage(msg);
     }
 
     return messages[id];
@@ -153,11 +140,11 @@ class MessageChannel extends Channel with IterableMixin<Message>, ISend {
   /// var toDelete = chan.messages.keys.take(5);
   /// await chan.bulkRemoveMessages(toDelete);
   /// ```
-  Future<void> bulkRemoveMessages(Iterable<Snowflake> messagesIds) async {
+  Future<void> bulkRemoveMessages(Iterable<Message> messagesIds) async {
     utils.chunk(messagesIds.toList(), 90).listen((data) async {
       await _client.http.send(
           'POST', "/channels/${id.toString()}/messages/bulk-delete",
-          body: {"messages": data});
+          body: {"messages": data.map((f) => f.id.toString()).toList()});
     });
   }
 
@@ -193,7 +180,7 @@ class MessageChannel extends Channel with IterableMixin<Message>, ISend {
 
     if (cache) {
       for (var m in response.values) {
-        _cacheMessage(m);
+       messages._cacheMessage(m);
       }
     }
 
