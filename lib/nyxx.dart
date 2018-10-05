@@ -26,6 +26,7 @@ part 'src/nyxx/internal/_Constants.dart';
 part 'src/nyxx/internal/_EventController.dart';
 part 'src/nyxx/internal/_WS.dart';
 part 'src/nyxx/internal/Http.dart';
+part 'src/nyxx/internal/Cache.dart';
 
 // ERROR
 

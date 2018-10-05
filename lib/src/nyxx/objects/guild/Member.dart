@@ -36,7 +36,7 @@ class Member extends User {
       .color;
 
   /// Voice state
-  VoiceState get voiceState => guild.voiceStates.containsKey(this.id)
+  VoiceState get voiceState => guild.voiceStates.hasKey(this.id)
       ? guild.voiceStates[this.id]
       : null;
 
@@ -78,11 +78,7 @@ class Member extends User {
   }
 
   /// Checks if member has specified role
-  bool hasRole(Role role) => this.roles.contains(role);
-
-  /// Checks if member has specified role by id of role
-  Role hasRoleById(Snowflake roleId) =>
-      this.roles.firstWhere((role) => role.id == roleId);
+  bool hasRole(bool Function(Role role) func) => this.roles.any(func);
 
   /// Bans the member and optionally deletes [deleteMessageDays] days worth of messages.
   Future<void> ban(

@@ -86,8 +86,8 @@ void main() {
     assert(bot.app.name == "Nataly");
     assert(bot.app.owner.id == "302359032612651009");
 
-    assert(bot.channels.length > 0);
-    assert(bot.users.length > 0);
+    assert(bot.channels.count > 0);
+    assert(bot.users.count > 0);
     assert(bot.shards.length == 1);
     assert(bot.ready);
     assert(bot.inviteLink != null);

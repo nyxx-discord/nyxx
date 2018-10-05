@@ -12,7 +12,7 @@ class Ban {
     this.reason = raw['reason'] as String;
 
     var userFlake = Snowflake(raw['user']['id'] as String);
-    if (client.users.containsKey(userFlake))
+    if (client.users.hasKey(userFlake))
       this.user = client.users[userFlake];
     else
       this.user = User._new(raw['user'] as Map<String, dynamic>);

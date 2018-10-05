@@ -4,10 +4,10 @@ part of nyxx.lavalink;
 Logger _logger = Logger.detached("Voice Service");
 
 /// Sends Op4 and connects to voice channel but without starting voice service
-Future<void> sendFakeOp4(Nyxx client, VoiceChannel channel,
-    {bool mute = false, bool deafen = false}) async {
+Future<void> sendFakeOp4(VoiceChannel channel,
+    {bool mute = false, bool deafen = false, Guild guild}) async {
   channel.guild.shard.send("VOICE_STATE_UPDATE",
-      _Opcode4(channel.guild, channel, mute, deafen)._build());
+      _Opcode4(channel == null ? guild : channel.guild, channel, mute, deafen)._build());
 }
 
 /// Creates voice service. [yamlConfigFile] is absolute path to lavalink config file.

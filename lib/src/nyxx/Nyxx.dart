@@ -36,14 +36,14 @@ class Nyxx {
   ClientOAuth2Application app;
 
   /// All of the guilds the bot is in. Can be empty or can miss guilds on (READY_EVENT).
-  Map<Snowflake, Guild> guilds;
+  Cache<Snowflake, Guild> guilds;
 
   /// All of the channels the bot is in.
-  Map<Snowflake, Channel> channels;
+  IChannelCache channels;
 
   /// All of the users the bot can see. Does not always have offline users
   /// without forceFetchUsers enabled.
-  Map<Snowflake, User> users;
+  Cache<Snowflake, User> users;
 
   /// Whether or not the client is ready.
   bool ready = false;
@@ -211,16 +211,16 @@ class Nyxx {
       throw Exception("Token cannot be null or empty");
     if (this._options == null) this._options = ClientOptions();
 
-    this.guilds = Map<Snowflake, Guild>();
-    this.channels = Map<Snowflake, Channel>();
-    this.users = Map<Snowflake, User>();
+    this.guilds = _SnowflakeCache();
+    this.channels = _ChannelCache();
+    this.users = _SnowflakeCache();
     this.shards = Map<int, Shard>();
 
     _client = this;
 
     this.http = Http._new();
     this._events = _EventController();
-    this.selfMention = this.onMessage.where((event) => event.message.mentions.containsKey(this.self.id));
+    this.selfMention = this.onMessage.where((event) => event.message.mentions?.containsKey(this.self.id));
     this._ws = _WS();
   }
 
@@ -228,7 +228,7 @@ class Nyxx {
   Duration get uptime => DateTime.now().difference(_startTime);
 
   Future<T> getChannel<T>(Snowflake id, {Guild guild}) async {
-    if (this.channels.containsKey(id)) return this.channels[id] as T;
+    if (this.channels.hasKey(id)) return this.channels[id] as T;
 
     var raw = (await this.http.send("GET", "/channels/${id.toString()}")).body
         as Map<String, dynamic>;
@@ -260,7 +260,7 @@ class Nyxx {
   /// var user = client.getClient(Snowflake("302359032612651009"));
   /// ``
   Future<User> getUser(Snowflake id) async {
-    if (this.users.containsKey(id)) return this.users[id];
+    if (this.users.hasKey(id)) return this.users[id];
 
     var r = await this.http.send("GET", "/users/${id.toString()}");
     return User._new(r.body as Map<String, dynamic>);
@@ -273,7 +273,7 @@ class Nyxx {
   /// var guild = client.getGuild(Snowflake("302360552993456135"));
   /// ```
   Future<Guild> getGuild(Snowflake id) async {
-    if (this.guilds.containsKey(id)) return this.guilds[id];
+    if (this.guilds.hasKey(id)) return this.guilds[id];
 
     var r = await this.http.send("GET", "/guilds/${id.toString()}");
     return Guild._new(r.body as Map<String, dynamic>);

@@ -69,7 +69,7 @@ class _WS {
         break;
       }
 
-      if (client._options.forceFetchMembers) if (o.members.length !=
+      if (client._options.forceFetchMembers) if (o.members.count !=
           o.memberCount) {
         match = false;
         break;

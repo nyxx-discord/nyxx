@@ -18,7 +18,9 @@ class Snowflake implements Comparable<Snowflake> {
           .toUtc();
 
   /// Creates new instance of [Snowflake] from String value.
-  Snowflake(this._id);
+  Snowflake(dynamic id) {
+    _id = id.toString();
+  }
 
   /// Creates synthetic snowflake based on current time
   Snowflake.fromNow() {

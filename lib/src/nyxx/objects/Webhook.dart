@@ -29,7 +29,7 @@ class Webhook extends SnowflakeEntity {
     this.token = raw['token'] as String;
 
     if (raw['channel_id'] != null) {
-      this.channel = _client.channels[this.channelId.id] as TextChannel;
+      this.channel = _client.channels[this.channelId] as TextChannel;
       this.channelId = Snowflake(raw['channel_id'] as String);
     }
 

@@ -17,6 +17,6 @@ class MessageUpdateEvent {
     if (oldMessage != null) this.oldMessage._onUpdate.add(this);
     client._events.onMessageUpdate.add(this);
 
-    channel._cacheMessage(newMessage);
+    channel.messages._cacheMessage(newMessage);
   }
 }
