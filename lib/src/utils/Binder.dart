@@ -10,7 +10,6 @@ void bindEvents() {
 
   for(var lib in currentMirrorSystem().libraries.values) {
     for(var decl in lib.declarations.values.whereType<MethodMirror>()) {
-      //if(decl is MethodMirror) {
       var meta = utils.getCmdAnnot<Bind>(decl);
 
       if(meta != null) {
@@ -23,7 +22,6 @@ void bindEvents() {
           }
         }
       }
-      //}
     }
   }
 }
