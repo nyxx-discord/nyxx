@@ -63,16 +63,14 @@ class ClientUser extends User {
   /// Edits current user. This changes user's username - not per guild nickname.
   Future<User> edit({String username, File avatar}) async {
     if (username == null && avatar == null) return null;
-
     var req = Map<String, dynamic>();
 
     if (username != null) req['username'] = username;
-
     if (avatar != null)
       req['avatar'] =
           "data:image/jpeg;base64,${base64Encode(await avatar.readAsBytes())}";
 
-    var res = await _client.http.send("PATCh", "/users/@me", body: req);
+    var res = await _client.http.send("PATCH", "/users/@me", body: req);
     return User._new(res.body as Map<String, dynamic>);
   }
 }

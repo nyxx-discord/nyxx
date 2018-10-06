@@ -5,7 +5,7 @@ abstract class AbstractPermissions {
   /// The raw permission code.
   int raw;
 
-  /// True if user can craete InstantInvite
+  /// True if user can create InstantInvite
   bool createInstantInvite;
 
   /// True if user can kick members
