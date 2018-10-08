@@ -20,23 +20,15 @@ abstract class GuildChannel implements Channel {
   /// Permissions overwrites for channel.
   List<ChannelPermissions> permissions;
 
-  /// Emitted when channel is updated.
-  Stream<ChannelUpdateEvent> onUpdate;
-
-  StreamController<ChannelUpdateEvent> _onUpdate;
-
   // Initializes Guild channel
   void _initialize(Map<String, dynamic> raw, Guild guild) {
-    _onUpdate = StreamController.broadcast();
-    onUpdate = _onUpdate.stream;
-
     this.name = raw['name'] as String;
     this.position = raw['position'] as int;
     this.guild = guild;
 
     if (raw['parent_id'] != null) {
       this.parentChannel = client
-          .channels[Snowflake(raw['parent_id'] as String)] as CategoryChannel;
+          .channels[Snowflake(raw['parent_id'])] as CategoryChannel;
     }
 
     this.nsfw = raw['nsfw'] as bool;

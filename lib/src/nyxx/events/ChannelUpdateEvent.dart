@@ -28,8 +28,6 @@ class ChannelUpdateEvent {
             CategoryChannel._new(json['d'] as Map<String, dynamic>, guild);
       }
 
-      oldChannel._onUpdate.add(this);
-
       guild.channels[oldChannel.id] = newChannel;
       client.channels[oldChannel.id] = newChannel;
       client._events.onChannelUpdate.add(this);

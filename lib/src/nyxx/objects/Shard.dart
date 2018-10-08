@@ -74,6 +74,7 @@ class Shard {
       this._socket = socket;
       this._socket.pingInterval = const Duration(seconds: 3);
       this._socket.listen((dynamic msg) async {
+        this.transfer += msg.length as int;
         await this._handleMsg(_decodeBytes(msg), resume);
       }, onDone: this._handleErr, onError: (_) => this._handleErr);
     }, onError: (_) => this._handleErr);
@@ -86,7 +87,6 @@ class Shard {
     if (bytes is String) return jsonDecode(bytes) as Map<String, dynamic>;
 
     var decoded = zlib.decoder.convert(bytes as List<int>);
-    transfer += decoded.length;
     var rawStr = utf8.decode(decoded);
     return jsonDecode(rawStr) as Map<String, dynamic>;
   }

@@ -4,22 +4,21 @@ import 'Util.dart' as utils;
 import 'dart:async';
 import 'dart:mirrors';
 
-void bindEvents() {
+void bindEvents(String libname) {
   var instanceThis = reflect(client);
   var classRefl = instanceThis.type;
+  var lib = currentMirrorSystem().findLibrary(Symbol(libname));
 
-  for(var lib in currentMirrorSystem().libraries.values) {
-    for(var decl in lib.declarations.values.whereType<MethodMirror>()) {
-      var meta = utils.getCmdAnnot<Bind>(decl);
+  for(var decl in lib.declarations.values.whereType<MethodMirror>()) {
+    var meta = utils.getCmdAnnot<Bind>(decl);
 
-      if(meta != null) {
-        for(var incl in classRefl.declarations.values.whereType<VariableMirror>()) {
-          if(meta.streamName == incl.simpleName) {
-            print("REGISTERED HANDLER: ${decl.simpleName}");
-            instanceThis.getField(incl.simpleName).reflectee.listen((evnt) {
-              Future.microtask(() => lib.invoke(decl.simpleName, [evnt]));
-            });
-          }
+    if(meta != null) {
+      for(var incl in classRefl.declarations.values.whereType<VariableMirror>()) {
+        if(meta.streamName == incl.simpleName.toString()) {
+          print("REGISTERED HANDLER: ${decl.simpleName}");
+          instanceThis.getField(incl.simpleName).reflectee.listen((evnt) {
+            Future.microtask(() => lib.invoke(decl.simpleName, [evnt]));
+          });
         }
       }
     }
@@ -27,7 +26,6 @@ void bindEvents() {
 }
 
 class Bind {
-  final Symbol streamName;
-
-  const Bind(this.streamName);
+  final String streamName;
+  const Bind(String name): streamName = "Symbol(\"$name\")";
 }
