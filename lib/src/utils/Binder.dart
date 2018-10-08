@@ -15,7 +15,6 @@ void bindEvents(String libname) {
     if(meta != null) {
       for(var incl in classRefl.declarations.values.whereType<VariableMirror>()) {
         if(meta.streamName == incl.simpleName.toString()) {
-          print("REGISTERED HANDLER: ${decl.simpleName}");
           instanceThis.getField(incl.simpleName).reflectee.listen((evnt) {
             Future.microtask(() => lib.invoke(decl.simpleName, [evnt]));
           });
