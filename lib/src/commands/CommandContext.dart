@@ -14,6 +14,7 @@ part of nyxx.commands;
 ///
 /// Modules:
 /// ```
+/// @Module("mod")
 /// class ExModule extends CommandContext {
 ///   // Class body
 /// }
