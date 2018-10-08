@@ -267,17 +267,11 @@ class Nyxx {
   }
 
   /// Gets Guild with specified id.
-  /// If the [id] will be in cache - it will be taken from it, otherwise API will be called.
   ///
   /// ```
   /// var guild = client.getGuild(Snowflake("302360552993456135"));
   /// ```
-  Future<Guild> getGuild(Snowflake id) async {
-    if (this.guilds.hasKey(id)) return this.guilds[id];
-
-    var r = await this.http.send("GET", "/guilds/${id.toString()}");
-    return Guild._new(r.body as Map<String, dynamic>);
-  }
+  Guild getGuild(Snowflake id) => this.guilds[id];
 
   /// Creates new guild with provided builder.
   /// If the [id] will be in cache - it will be taken from it, otherwise API will be called.
