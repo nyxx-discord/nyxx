@@ -25,10 +25,10 @@ class VoiceChannel extends Channel with GuildChannel {
       String auditReason}) async {
     HttpResponse r = await _client.http.send('PATCH', "/channels/${this.id}",
         body: {
-          "name": name != null ? name : this.name,
-          "bitrate": bitrate != null ? bitrate : this.bitrate,
-          "user_limit": userLimit != null ? userLimit : this.userLimit,
-          "position": position != null ? position : this.position
+          "name": name ?? this.name,
+          "bitrate": bitrate ?? this.bitrate,
+          "user_limit": userLimit ?? this.userLimit,
+          "position": position ?? this.position
         },
         reason: auditReason);
     return VoiceChannel._new(r.body as Map<String, dynamic>, this.guild);

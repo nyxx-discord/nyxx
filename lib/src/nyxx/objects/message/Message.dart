@@ -211,17 +211,7 @@ class Message extends SnowflakeEntity {
       bool tts = false,
       bool disableEveryone}) async {
     if (this.author.id != _client.self.id) return null;
-
-    String newContent;
-    if (content != null &&
-        (disableEveryone == true ||
-            (disableEveryone == null && _client._options.disableEveryone))) {
-      newContent = content
-          .replaceAll("@everyone", "@\u200Beveryone")
-          .replaceAll("@here", "@\u200Bhere");
-    } else {
-      newContent = content;
-    }
+    String newContent = _sanitizeMessage(content, disableEveryone);
 
     final HttpResponse r = await _client.http.send(
         'PATCH', '/channels/${this.channel.id}/messages/${this.id}',

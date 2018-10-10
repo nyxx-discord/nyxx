@@ -68,12 +68,14 @@ Stream<List<T>> chunk<T>(List<T> list, int chunkSize) async* {
   }
 }
 
+/// Gets single annotation with type [T] from [declaration]
 T getCmdAnnot<T>(DeclarationMirror declaration) {
   Iterable<T> fs = getCmdAnnots<T>(declaration);
   if (fs.isEmpty) return null;
   return fs.first;
 }
 
+/// Gets all annotations with type [T] from [declaration]
 Iterable<T> getCmdAnnots<T>(DeclarationMirror declaration) sync* {
   for (var instance in declaration.metadata)
     if (instance.hasReflectee) {

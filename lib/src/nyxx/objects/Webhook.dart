@@ -1,7 +1,8 @@
 part of nyxx;
 
-/// A webhook.
-class Webhook extends SnowflakeEntity {
+///Webhooks are a low-effort way to post messages to channels in Discord.
+///They do not require a bot user or authentication to use.
+class Webhook extends SnowflakeEntity implements ISend {
   /// The webhook's name.
   String name;
 
@@ -55,40 +56,32 @@ class Webhook extends SnowflakeEntity {
         .send('DELETE', "/webhooks/$id/$token", reason: auditReason);
   }
 
-  /// Sends a message with the webhook.
-  Future<void> send(
-      {String content,
-      List<EmbedBuilder> embeds,
-      String username,
-      String avatarUrl,
-      bool tts}) async {
-    Map<String, dynamic> payload = {
-      "content": content,
-      "username": username,
-      "avatar_url": avatarUrl,
-      "tts": tts,
-      "embeds": embeds.map((t) => t._build())
+  @override
+  /// Allows to send message via webhook
+  Future<Message> send(
+      {Object content = "",
+        List<File> files,
+        EmbedBuilder embed,
+        bool tts = false,
+        bool disableEveryone}) async {
+    var newContent = _sanitizeMessage(content, disableEveryone);
+
+    Map<String, dynamic> reqBody = {
+      "content": newContent,
+      "embed": embed != null ? embed._build() : ""
     };
 
-    await _client.http.send('POST', "/webhooks/$id/$token", body: payload);
-  }
+    HttpResponse r;
+    if (files != null && files.isNotEmpty) {
+      r = await _client.http.sendMultipart(
+          'POST', '/channels/${this.id}/messages', files,
+          data: reqBody);
+    } else {
+      r = await _client.http.send('POST', '/channels/${this.channel.id}/messages',
+          body: reqBody..addAll({"tts": tts}));
+    }
 
-  /// Sends message to webhook with files
-  Future<void> sendFile(
-      {String content,
-      List<File> files,
-      List<EmbedBuilder> embeds,
-      String username,
-      String avatarUrl,
-      bool tts}) async {
-    await _client.http
-        .sendMultipart("POST", "/webhooks/$id/$token", files, data: {
-      "content": content,
-      "username": username,
-      "avatar_url": avatarUrl,
-      "tts": tts,
-      "embeds": embeds.map((t) => t._build())
-    });
+    return Message._new(r.body as Map<String, dynamic>);
   }
 
   /// Returns a string representation of this object.

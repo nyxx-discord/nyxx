@@ -1,6 +1,6 @@
 part of nyxx;
 
-/// A guild member.
+/// A user with [Guild] context.
 class Member extends User {
   /// The member's nickname, null if not set.
   String nickname;
@@ -116,6 +116,8 @@ class Member extends User {
         reason: auditReason);
   }
 
+  /// Edits the user.
+  /// Allows to move user in voice channel, mute or deaf, change nick, roles.
   Future<void> edit(
       {String nick,
       List<Role> roles,
