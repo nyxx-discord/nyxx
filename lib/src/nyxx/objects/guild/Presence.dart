@@ -1,11 +1,12 @@
 part of nyxx;
 
-/// A game.
+/// Presence is game or activity which user is playing/user participate.
+/// Can be game, eg. Dota 2, VS Code or activity like Listening to song on Spotify.
 class Presence {
-  /// The game name.
+  /// The activity name.
   String name;
 
-  /// The game type. 0 if not streamed, 1 if being streamed.
+  /// The activity type. 0 if not streamed, 1 if being streamed.
   int type;
 
   /// DateTime when activity started

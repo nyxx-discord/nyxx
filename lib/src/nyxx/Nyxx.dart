@@ -158,7 +158,7 @@ class Nyxx {
   /// Emitted when a user explicitly removes all reactions from a message.
   Stream<MessageReactionsRemovedEvent> onMessageReactionsRemoved;
 
-  /// Emittedwhen someone joins/leaves/moves voice channels.
+  /// Emitted when someone joins/leaves/moves voice channel.
   Stream<VoiceStateUpdateEvent> onVoiceStateUpdate;
 
   /// Emitted when a guild channel's webhook is created, updated, or deleted.
@@ -179,7 +179,8 @@ class Nyxx {
   /// Gets an bot invite link with zero permissions
   String get inviteLink => app.makeOAuth2Url();
 
-  /// Creates and logs in a new client.
+  /// Creates and logs in a new client. If [ignoreExceptions] is true (by default is)
+  /// isolate will ignore all exceptions and continue to work.
   Nyxx(this._token, {ClientOptions options, bool ignoreExceptions = true}) {
     if (ignoreExceptions) {
       Isolate.current.setErrorsFatal(false);
@@ -227,6 +228,8 @@ class Nyxx {
   /// The client's uptime.
   Duration get uptime => DateTime.now().difference(_startTime);
 
+  /// Returns channel with specified id.
+  /// If channel is in cache - will be taken from it, or got via API otherwise.
   Future<T> getChannel<T>(Snowflake id, {Guild guild}) async {
     if (this.channels.hasKey(id)) return this.channels[id] as T;
 

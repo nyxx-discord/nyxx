@@ -1,6 +1,6 @@
 part of nyxx;
 
-/// An invite.
+/// An invite to guild.
 class Invite {
   /// The invite's code.
   String code;

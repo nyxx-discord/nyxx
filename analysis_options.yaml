@@ -1,6 +1,8 @@
 analyzer:
   strong-mode:
     implicit-casts: false
+  exclude:
+    - example/sqlite/**
 linter:
   rules:
     - avoid_empty_else

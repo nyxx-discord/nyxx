@@ -4,6 +4,7 @@ import 'Util.dart' as utils;
 import 'dart:async';
 import 'dart:mirrors';
 
+/// Binds all methods with [Bind] annotation to Client's streams.
 void bindEvents(String libname) {
   var instanceThis = reflect(client);
   var classRefl = instanceThis.type;
@@ -24,7 +25,9 @@ void bindEvents(String libname) {
   }
 }
 
+/// Class used to bind method to Stream
 class Bind {
+  /// Name of stream to bind
   final String streamName;
   const Bind(String name): streamName = "Symbol(\"$name\")";
 }
