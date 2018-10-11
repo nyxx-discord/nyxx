@@ -1,4 +1,9 @@
-part of nyxx.commands;
+import 'dart:async';
+
+import 'package:nyxx/nyxx.dart';
+import 'EmojisUnicode.dart' as util;
+import 'Util.dart' as util;
+
 
 /// Creates new poll, generates options and collects results. Returns `Map<Emoji, int` as result. [timeout] is set by default to 10 minutes
 ///

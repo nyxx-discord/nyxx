@@ -2,3 +2,5 @@ export 'src/utils/EmojisUnicode.dart';
 export 'src/utils/Util.dart';
 export 'src/utils/Http.dart';
 export 'src/utils/Binder.dart';
+export 'src/utils/Scheduler.dart';
+export 'src/utils/Interactivity.dart';
