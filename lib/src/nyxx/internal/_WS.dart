@@ -2,8 +2,6 @@ part of nyxx;
 
 /// The WS manager for the client.
 class _WS {
-  bool bot = false;
-
   /// The base websocket URL.
   String gateway;
 
@@ -15,14 +13,12 @@ class _WS {
     _client.http
         .send("GET", "/gateway/bot", beforeReady: true)
         .then((HttpResponse r) {
-      this.bot = true;
       this.gateway = r.body['url'] as String;
-      if (_client._options.shardCount == 1 &&
-          _client._options.shardIds == const [0]) {
+      if (client._options.autoShard) {
         _client._options.shardIds = [];
         _client._options.shardCount = r.body['shards'] as int;
         for (int i = 0; i < client._options.shardCount; i++) {
-          _client._options.shardIds.add(i);
+          //_client._options.shardIds.add(i);
           setupShard(i);
         }
       } else {
@@ -48,7 +44,7 @@ class _WS {
   void connectShard(int index) {
     _client.shards.values.toList()[index]._connect(false, true);
     if (index + 1 != _client._options.shardIds.length)
-      /*Timer(Duration(seconds: 6), () => */connectShard(index + 1)/*)*/;
+      Timer(Duration(seconds: 6), () => connectShard(index + 1));
   }
 
   void testReady() {

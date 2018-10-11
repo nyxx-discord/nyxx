@@ -7,7 +7,7 @@ class Shard {
   int id;
 
   /// Whether or not the shard is ready.
-  bool ready;
+  bool ready = false;
 
   /// Emitted when the shard is ready.
   Stream<Shard> onReady;
@@ -76,8 +76,14 @@ class Shard {
       this._socket.listen((dynamic msg) async {
         this.transfer += msg.length as int;
         await this._handleMsg(_decodeBytes(msg), resume);
-      }, onDone: this._handleErr, onError: (_) => this._handleErr);
-    }, onError: (_) => this._handleErr);
+      }, onDone: this._handleErr, onError: (err) {
+        print(err);
+        this._handleErr();
+      });
+    }, onError: (err) {
+      print(err);
+      this._handleErr();
+    });
   }
 
   int transfer = 0;
@@ -121,8 +127,7 @@ class Shard {
             "compress": true
           };
 
-          if (this._ws.bot)
-            identifyMsg['shard'] = <int>[this.id, _client._options.shardCount];
+          identifyMsg['shard'] = <int>[this.id, _client._options.shardCount];
           this.send("IDENTIFY", identifyMsg);
         } else if (resume) {
           this.send("RESUME", <String, dynamic>{
