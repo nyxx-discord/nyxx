@@ -5,7 +5,7 @@ import 'dart:io';
 import 'dart:async';
 
 void main() async {
-  nyxx.Nyxx bot = nyxx.Nyxx(Platform.environment['DISCORD_TOKEN']);
+  nyxx.Nyxx(Platform.environment['DISCORD_TOKEN']);
 
   /// Create new scheduler and fill out all required fields
   var scheduler = util.Scheduler()
