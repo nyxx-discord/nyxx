@@ -181,12 +181,6 @@ class Shard {
             this.ready = true;
             this._onReady.add(this);
 
-            if (!_client.self.bot) {
-              _client.ready = true;
-              _client._startTime = DateTime.now();
-              ReadyEvent._new();
-            }
-
             break;
 
           case 'GUILD_MEMBERS_CHUNK':
