@@ -29,11 +29,8 @@ class OAuth2Application {
     this.createdAt = id.timestamp;
   }
 
-  String iconUrl({String format = "png", int size = 128}) {
-    if (icon == null) return null;
-
-    return "https://cdn.discordapp.com/app-icons/${this.id}/$icon.$format?size=$size";
-  }
+  String iconUrl({String format = "png", int size = 512}) =>
+      icon == null ? null : "https://cdn.discordapp.com/app-icons/${this.id}/$icon.$format?size=$size";
 
   /// Returns a string representation of this object.
   @override

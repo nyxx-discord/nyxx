@@ -1,8 +1,7 @@
 part of nyxx;
 
 /// [Message] class represents single message. It contains it's Event [Stream]s.
-/// [Message] among all it's poperties has also backreference to [Channel] from which it was sent, [Guild] and [User] which sent this message.
-/// Supports sending files via `sendFile()` - method can send file or file and use it in embed. Read how to use it [here](https://github.com/l7ssha/nyxx/wiki/Embeds)
+/// [Message] among all it's properties has also back-reference to [MessageChannel] from which it was sent, [Guild] and [User] properties which are associated with this message.
 class Message extends SnowflakeEntity {
   StreamController<MessageUpdateEvent> _onUpdate;
   StreamController<MessageDeleteEvent> _onDelete;
@@ -67,7 +66,7 @@ class Message extends SnowflakeEntity {
   /// Emitted when a user explicitly removes all reactions from a message.
   Stream<MessageReactionsRemovedEvent> onReactionsRemoved;
 
-  /// Returns url to this message.
+  /// Returns clickable url to this message.
   String get url =>
       "https://discordapp.com/channels/${this.guild.id.toString()}"
       "/${this.channel.id.toString()}/${this.id.toString()}";
