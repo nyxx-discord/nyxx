@@ -290,8 +290,8 @@ class Http {
       bool beforeReady = false,
       Map<String, String> headers = const {},
       String reason}) async {
-    if (_client is Nyxx && !_client.ready && !beforeReady)
-      throw Exception("Client isn't ready yet.");
+    //if (!_client.ready && !beforeReady)
+      //throw Exception("Client isn't ready yet.");
 
     HttpRequest request = HttpRequest._new(
         this,

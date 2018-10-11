@@ -20,10 +20,6 @@ class ClientOptions {
   /// The number of messages to cache for each channel.
   int messageCacheSize;
 
-  /// Whether or not to skip events if their object is not cached.
-  /// Ex: `onMessageUpdate`.
-  bool ignoreUncachedEvents;
-
   /// Whether or not to force fetch all of the members the client can see.
   /// Can slow down ready times but is recommended if you rely on `Message.member`
   /// or the member cache.
@@ -32,10 +28,13 @@ class ClientOptions {
   /// Makes a new `ClientOptions` object.
   ClientOptions(
       {this.disableEveryone = false,
-      this.autoShard = true,
-      this.shardIds = const [0],
+      this.autoShard = false,
       this.shardCount = 1,
-      this.messageCacheSize = 200,
-      this.ignoreUncachedEvents = true,
-      this.forceFetchMembers = false});
+      this.messageCacheSize = 400,
+      this.forceFetchMembers = false}) {
+    if(!autoShard && shardCount > 1)
+      this.shardIds = Iterable.generate(shardCount, (i) => i).toList();
+    else
+      this.shardIds = const [0];
+  }
 }

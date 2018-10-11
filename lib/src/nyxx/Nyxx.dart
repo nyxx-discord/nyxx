@@ -191,6 +191,8 @@ class Nyxx {
       Isolate.current.addErrorListener(errorsPort.sendPort);
     }
 
+    this._options = options;
+
     Logger.root.level = Level.ALL;
     Logger.root.onRecord.listen((LogRecord rec) {
       String color;
