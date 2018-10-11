@@ -177,7 +177,7 @@ class Nyxx {
   Logger logger = Logger.detached("Client");
 
   /// Gets an bot invite link with zero permissions
-  String get inviteLink => app.makeOAuth2Url();
+  String get inviteLink => app.getInviteUrl();
 
   /// Creates and logs in a new client. If [ignoreExceptions] is true (by default is)
   /// isolate will ignore all exceptions and continue to work.
