@@ -1,4 +1,5 @@
-part of nyxx.commands;
+import 'dart:async';
+import 'package:nyxx/nyxx.dart';
 
 /// Runs specific code on every target periodically.
 ///
@@ -19,37 +20,26 @@ part of nyxx.commands;
 /// ```
 class Scheduler {
   /// Action will be run every [runEvery] amount of time.
-  Duration _runEvery;
-  set runEvery(Duration duration) {
-    if (duration.inMinutes < 1)
-      throw Exception("Scheduler cannot send message under 1/minute");
-
-    _runEvery = _runEvery;
-  }
+  Duration runEvery;
 
   /// Function to run on every targeted channel
-  void Function(MessageChannel channel) func;
+  void Function(MessageChannel, Timer) action;
 
   /// List of targeted channel
   List<Snowflake> targets;
 
-  Nyxx _client;
   Timer _t;
 
-  Scheduler(this._client);
+  Scheduler([this.runEvery, this.action, this.targets]);
 
   /// Starts scheduler
   Future<Null> run() async {
-    _client.onReady.listen((e) {
+    client.onReady.listen((e) {
       List<MessageChannel> _targets;
       targets
-          .forEach((s) => _targets.add(_client.channels[s] as MessageChannel));
+          .forEach((s) => _targets.add(client.channels[s] as MessageChannel));
 
-      this._t = Timer.periodic(_runEvery, (Timer t) {
-        for (var target in _targets) {
-          func(target);
-        }
-      });
+      this._t = Timer.periodic(runEvery, (Timer t) => _targets.forEach((chan) => action));
     });
 
     return null;
