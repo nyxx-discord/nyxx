@@ -34,25 +34,7 @@ part 'src/nyxx/errors/HttpError.dart';
 
 // EVENTS
 
-part 'src/nyxx/events/BeforeHttpRequestSendEvent.dart';
-part 'src/nyxx/events/ChannelCreateEvent.dart';
-part 'src/nyxx/events/ChannelDeleteEvent.dart';
-part 'src/nyxx/events/ChannelUpdateEvent.dart';
 part 'src/nyxx/events/DisconnectEvent.dart';
-part 'src/nyxx/events/GuildBanAddEvent.dart';
-part 'src/nyxx/events/GuildBanRemoveEvent.dart';
-part 'src/nyxx/events/GuildCreateEvent.dart';
-part 'src/nyxx/events/GuildDeleteEvent.dart';
-part 'src/nyxx/events/GuildMemberAddEvent.dart';
-part 'src/nyxx/events/GuildMemberRemoveEvent.dart';
-part 'src/nyxx/events/GuildMemberUpdateEvent.dart';
-part 'src/nyxx/events/GuildUnavailableEvent.dart';
-part 'src/nyxx/events/GuildUpdateEvent.dart';
-part 'src/nyxx/events/HttpErrorEvent.dart';
-part 'src/nyxx/events/HttpResponseEvent.dart';
-part 'src/nyxx/events/MessageDeleteEvent.dart';
-part 'src/nyxx/events/MessageEvent.dart';
-part 'src/nyxx/events/MessageUpdateEvent.dart';
 part 'src/nyxx/events/PresenceUpdateEvent.dart';
 part 'src/nyxx/events/RatelimitEvent.dart';
 part 'src/nyxx/events/RawEvent.dart';
@@ -61,15 +43,16 @@ part 'src/nyxx/events/RoleCreateEvent.dart';
 part 'src/nyxx/events/RoleDeleteEvent.dart';
 part 'src/nyxx/events/RoleUpdateEvent.dart';
 part 'src/nyxx/events/TypingEvent.dart';
-part 'src/nyxx/events/ChannelPinsUpdateEvent.dart';
-part 'src/nyxx/events/GuildEmojisUpdateEvent.dart';
-part 'src/nyxx/events/MessageDeleteBulkEvent.dart';
-part 'src/nyxx/events/MessageReactionEvent.dart';
-part 'src/nyxx/events/MessageReactionsRemovedEvent.dart';
+
 part 'src/nyxx/events/VoiceServerUpdateEvent.dart';
 part 'src/nyxx/events/VoiceStateUpdateEvent.dart';
 part 'src/nyxx/events/WebhookUpdateEvent.dart';
 part 'src/nyxx/events/UserUpdateEvent.dart';
+
+part 'src/nyxx/events/MessageEvents.dart';
+part 'src/nyxx/events/HttpEvents.dart';
+part 'src/nyxx/events/ChannelEvents.dart';
+part 'src/nyxx/events/GuildEvents.dart';
 
 // BUILDERS
 
