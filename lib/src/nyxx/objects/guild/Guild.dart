@@ -66,7 +66,7 @@ class Guild extends SnowflakeEntity {
   Cache<Snowflake, Member> members;
 
   /// The guild's channels.
-  IChannelCache channels;
+  ChannelCache channels;
 
   /// The guild's roles.
   Map<Snowflake, Role> roles;
@@ -90,7 +90,7 @@ class Guild extends SnowflakeEntity {
   String get url => "https://discordapp.com/channels/${this.id.toString()}";
 
   Role get everyoneRole =>
-      roles.values.skip(1).firstWhere((r) => r.name == "@everyone");
+      roles.values.firstWhere((r) => r.name == "@everyone");
 
   Guild._new(Map<String, dynamic> raw,
       [this.available = true, bool guildCreate = false])
@@ -131,7 +131,7 @@ class Guild extends SnowflakeEntity {
 
       if (guildCreate) {
         this.members = _SnowflakeCache();
-        this.channels = _ChannelCache();
+        this.channels = ChannelCache._new();
 
         raw['members'].forEach((o) {
           var member = Member._new(o as Map<String, dynamic>, this);

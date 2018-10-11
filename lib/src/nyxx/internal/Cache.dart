@@ -92,51 +92,23 @@ class _SnowflakeCache<T> extends Cache<Snowflake, T> {
 }
 
 /// Cache for Channels
-abstract class IChannelCache implements Cache<Snowflake, Channel> {
-  /// Allows to get channel and cast to [E] in one operation.
-  E get<E>(Snowflake id);
-}
-
-class _ChannelCache extends Cache<Snowflake, Channel> implements IChannelCache {
-  _ChannelCache() {
+class ChannelCache extends Cache<Snowflake, Channel> {
+  ChannelCache._new() {
     this._cache = Map();
   }
 
-  @override
+  /// Allows to get channel and cast to [E] in one operation.
   E get<E>(Snowflake id) => _cache[id] as E;
 }
 
 /// Cache for messages. Provides few utilities methods to facilitate interaction with messages.
 /// []= operator throws - use put() instead.
-abstract class IMessageCache implements Cache<Snowflake, Message> {
-  /// Caches message
-  Message _cacheMessage(Message message);
-
-  /// Allows to put message into cache
-  Message put(Message message);
-
-  /// Returns messages which were sent by [user]
-  Iterable<Message> fromUser(User user);
-
-  /// Returns messages which were sent by [users]
-  Iterable<Message> fromUsers(Iterable<User> users);
-
-  /// Returns messages which were created before [date]
-  Iterable<Message> beforeDate(DateTime date);
-
-  /// Returns messages which were created before [date]
-  Iterable<Message> afterDate(DateTime date);
-
-  /// Returns messages which were sent by bots
-  Iterable<Message> get byBot;
-}
-
-class _MessageCache extends Cache<Snowflake, Message> implements IMessageCache {
-  _MessageCache() {
+class MessageCache extends Cache<Snowflake, Message> {
+  MessageCache._new() {
     this._cache = LinkedHashMap();
   }
 
-  @override
+  /// Caches message
   Message _cacheMessage(Message message) {
     if (_client._options.messageCacheSize > 0) {
       if (this._cache.length >= _client._options.messageCacheSize) {
@@ -150,24 +122,25 @@ class _MessageCache extends Cache<Snowflake, Message> implements IMessageCache {
     return message;
   }
 
-  @override
+  /// Allows to put message into cache
   Message put(Message message) => _cacheMessage(message);
 
-  @override
+  /// Returns messages which were sent by [user]
   Iterable<Message> fromUser(User user) => values.where((m) => m.author == user);
 
-  @override
+  /// Returns messages which were sent by [users]
   Iterable<Message> fromUsers(Iterable<User> users) => values.where((m) => users.contains(m.author));
 
-  @override
+  /// Returns messages which were created before [date]
   Iterable<Message> beforeDate(DateTime date) => values.where((m) => m.createdAt.isBefore(date));
 
-  @override
+  /// Returns messages which were created before [date]
   Iterable<Message> afterDate(DateTime date) => values.where((m) => m.createdAt.isAfter(date));
 
-  @override
+  /// Returns messages which were sent by bots
   Iterable<Message> get byBot => values.where((m) => m.author.bot);
 
+  /// Unsupported
   @override
   void operator []=(Snowflake key, Message item) {
     throw new Exception("Dont do this. Use put() instead!");
