@@ -24,7 +24,7 @@ class MessageChannel extends Channel with IterableMixin<Message>, ISend {
   StreamController<TypingEvent> _onTyping;
 
   /// A collection of messages sent to this channel.
-  IMessageCache messages;
+  MessageCache messages;
 
   /// The ID for the last message in the channel.
   Snowflake lastMessageID;
@@ -33,7 +33,7 @@ class MessageChannel extends Channel with IterableMixin<Message>, ISend {
       : super._new(raw, type) {
     if (raw['last_message_id'] != null)
       this.lastMessageID = Snowflake(raw['last_message_id'] as String);
-    this.messages = _MessageCache();
+    this.messages = MessageCache._new();
 
     _onMessage = StreamController.broadcast();
     _onTyping = StreamController.broadcast();

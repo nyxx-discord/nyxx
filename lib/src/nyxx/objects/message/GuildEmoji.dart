@@ -1,7 +1,7 @@
 part of nyxx;
 
 /// Emoji object. Handles Unicode emojis and custom ones.
-class GuildEmoji extends Emoji {
+class GuildEmoji extends Emoji implements SnowflakeEntity {
   /// Emoji guild
   Guild guild;
 
@@ -79,4 +79,7 @@ class GuildEmoji extends Emoji {
   @override
   int get hashCode =>
       ((super.hashCode * 37 + id.hashCode) * 37 + name.hashCode);
+
+  @override
+  DateTime get createdAt => id.timestamp;
 }

@@ -39,7 +39,7 @@ class Nyxx {
   Cache<Snowflake, Guild> guilds;
 
   /// All of the channels the bot is in.
-  IChannelCache channels;
+  ChannelCache channels;
 
   /// All of the users the bot can see. Does not always have offline users
   /// without forceFetchUsers enabled.
@@ -213,7 +213,7 @@ class Nyxx {
     if (this._options == null) this._options = ClientOptions();
 
     this.guilds = _SnowflakeCache();
-    this.channels = _ChannelCache();
+    this.channels = ChannelCache._new();
     this.users = _SnowflakeCache();
     this.shards = Map<int, Shard>();
 

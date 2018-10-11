@@ -2,9 +2,6 @@ part of nyxx;
 
 /// ClientUser is bot's discord account. Allows to change bot's presence.
 class ClientUser extends User {
-  /// The client user's email, null if the client user is a bot.
-  String email;
-
   /// Weather or not the client user's account is verified.
   bool verified;
 
@@ -12,7 +9,6 @@ class ClientUser extends User {
   bool mfa;
 
   ClientUser._new(Map<String, dynamic> data) : super._new(data) {
-    this.email = data['email'] as String;
     this.verified = data['verified'] as bool;
     this.mfa = data['mfa_enabled'] as bool;
   }
