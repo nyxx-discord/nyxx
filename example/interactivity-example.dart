@@ -1,7 +1,6 @@
 library test;
 
 import 'package:nyxx/nyxx.dart' as nyxx;
-import 'package:nyxx/commands.dart' as command;
 import 'package:nyxx/utils.dart' as utils;
 
 import 'dart:io';
@@ -13,7 +12,7 @@ void main() async {
     var ch = bot.channels[nyxx.Snowflake("422285619952222208")] as nyxx.TextChannel;
 
     // Create and send paginated message. After 15 minutes message will be deactivated.
-    var pagination = command.Pagination.fromString(
+    var pagination = utils.Pagination.fromString(
         "Mi scias, kio estas. "
         "Ci tio estos tre longa alineo car mi bezonas multan tekston. "
         "Mi ne scias, kion skribi ci tie, sed mi esperas, ke neniu ĝin legos (au almenau kun kompreno) "
@@ -26,7 +25,7 @@ void main() async {
 
     // To create poll you need channel, title and map of emojis and Names of options.
     // Result is returned after timeout.
-    var res = await command.createPoll(
+    var res = await utils.createPoll(
         ch,
         "Ttul",
         {

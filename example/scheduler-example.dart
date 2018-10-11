@@ -1,5 +1,5 @@
 import 'package:nyxx/nyxx.dart' as nyxx;
-import 'package:nyxx/commands.dart' as command;
+import 'package:nyxx/utils.dart' as util;
 
 import 'dart:io';
 import 'dart:async';
@@ -8,16 +8,16 @@ void main() async {
   nyxx.Nyxx bot = nyxx.Nyxx(Platform.environment['DISCORD_TOKEN']);
 
   /// Create new scheduler and fill out all required fields
-  var scheduler = command.Scheduler(bot)
+  var scheduler = util.Scheduler()
     ..runEvery = const Duration(seconds: 1)
     ..targets = [nyxx.Snowflake("422285619952222208")]
-    ..func = (channel) {
+    ..action = (channel, t) {
       channel.send(content: "test");
     };
 
   /// Disable scheduler after 5 seconds
   Timer(const Duration(seconds: 5), () => scheduler.stop());
 
-  /// Run schduler
+  /// Run scheduler
   await scheduler.run();
 }
