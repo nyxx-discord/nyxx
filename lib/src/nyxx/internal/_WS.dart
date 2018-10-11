@@ -31,16 +31,6 @@ class _WS {
         }
       }
       this.connectShard(0);
-    }).catchError((err) {
-      _client.http
-          .send('GET', '/gateway', beforeReady: true)
-          .then((HttpResponse r) {
-        this.gateway = r.body['url'] as String;
-        for (int shardId in _client._options.shardIds) {
-          setupShard(shardId);
-        }
-        this.connectShard(0);
-      });
     });
   }
 
@@ -58,7 +48,7 @@ class _WS {
   void connectShard(int index) {
     _client.shards.values.toList()[index]._connect(false, true);
     if (index + 1 != _client._options.shardIds.length)
-      Timer(Duration(seconds: 6), () => connectShard(index + 1));
+      /*Timer(Duration(seconds: 6), () => */connectShard(index + 1)/*)*/;
   }
 
   void testReady() {
@@ -69,11 +59,11 @@ class _WS {
         break;
       }
 
-      if (client._options.forceFetchMembers) if (o.members.count !=
-          o.memberCount) {
-        match = false;
-        break;
-      }
+      if (client._options.forceFetchMembers)
+        if (o.members.count != o.memberCount) {
+          match = false;
+          break;
+        }
     }
 
     bool match2 = true;
