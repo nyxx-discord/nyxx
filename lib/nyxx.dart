@@ -39,9 +39,6 @@ part 'src/nyxx/events/PresenceUpdateEvent.dart';
 part 'src/nyxx/events/RatelimitEvent.dart';
 part 'src/nyxx/events/RawEvent.dart';
 part 'src/nyxx/events/ReadyEvent.dart';
-part 'src/nyxx/events/RoleCreateEvent.dart';
-part 'src/nyxx/events/RoleDeleteEvent.dart';
-part 'src/nyxx/events/RoleUpdateEvent.dart';
 part 'src/nyxx/events/TypingEvent.dart';
 
 part 'src/nyxx/events/VoiceServerUpdateEvent.dart';
