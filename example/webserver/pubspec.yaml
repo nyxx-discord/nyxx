@@ -1,0 +1,8 @@
+name: webserver_nyxx
+version: 0.0.1
+
+dependencies:
+  shelf:
+  nyxx:
+    git:
+      url: git://github.com/l7ssha/nyxx.git
