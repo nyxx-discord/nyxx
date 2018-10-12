@@ -13,7 +13,7 @@ void main() {
   });
 
   // Listen to all incoming messages via Dart Stream
-  bot.onMessage.listen((nyxx.MessageEvent e) {
+  bot.onMessageReceived.listen((nyxx.MessageReceivedEvent e) {
     // When receive specific message send new file to channel
     if (e.message.content == "!give-me-file") {
       // Send file via `sendFile()`. File path must be in list, so we have there `[]` syntax.

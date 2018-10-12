@@ -15,7 +15,7 @@ void main() {
   });
 
   // Listen to all incoming messages via Dart Stream
-  bot.onMessage.listen((nyxx.MessageEvent e) async {
+  bot.onMessageReceived.listen((nyxx.MessageReceivedEvent e) async {
     if (e.message.content == "!play") {
       // Get player for guild.
       var player = await voice.getPlayer(e.message.guild);
