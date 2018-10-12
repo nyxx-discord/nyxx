@@ -3,6 +3,7 @@ analyzer:
     implicit-casts: false
   exclude:
     - example/sqlite/**
+    - example/webserver/**
 linter:
   rules:
     - avoid_empty_else
