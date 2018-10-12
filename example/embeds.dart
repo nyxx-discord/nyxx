@@ -13,7 +13,7 @@ void main() {
   });
 
   // Listen to all incoming messages via Dart Stream
-  bot.onMessage.listen((nyxx.MessageEvent e) {
+  bot.onMessageReceived.listen((nyxx.MessageReceivedEvent e) {
     if (e.message.content == "!embed") {
       // Build embed with `..Builder` classes.
 

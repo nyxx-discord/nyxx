@@ -54,6 +54,9 @@ class Nyxx {
   /// The client's internal shards.
   Map<int, Shard> shards;
 
+  /// Emitted on any message event
+  Stream<MessageEvent> onMessage;
+
   /// Emitted when a raw packet is received from the websocket connection.
   Stream<RawEvent> onRaw;
 
@@ -81,7 +84,7 @@ class Nyxx {
   Stream<ReadyEvent> onReady;
 
   /// Emitted when a message is received.
-  Stream<MessageEvent> onMessage;
+  Stream<MessageReceivedEvent> onMessageReceived;
 
   /// Emitted when channel's pins are updated.
   Stream<ChannelPinsUpdateEvent> onChannelPinsUpdate;
@@ -171,7 +174,7 @@ class Nyxx {
   Stream<UserUpdateEvent> onUserUpdate;
 
   /// Emitted when bot is mentioned
-  Stream<MessageEvent> selfMention;
+  Stream<MessageReceivedEvent> selfMention;
 
   /// Logger instance
   Logger logger = Logger.detached("Client");
@@ -223,7 +226,7 @@ class Nyxx {
 
     this.http = Http._new();
     this._events = _EventController();
-    this.selfMention = this.onMessage.where((event) => event.message.mentions?.containsKey(this.self.id));
+    this.selfMention = this.onMessageReceived.where((event) => event.message.mentions?.containsKey(this.self.id));
     this._ws = _WS();
   }
 

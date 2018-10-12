@@ -8,7 +8,7 @@ void main() {
   nyxx.Nyxx bot = nyxx.Nyxx(Platform.environment['DISCORD_TOKEN']);
 
   // Manual banchmark
-  bot.onMessage.listen((nyxx.MessageEvent e) async {
+  bot.onMessageReceived.listen((nyxx.MessageReceivedEvent e) async {
     if (e.message.content == "!bm") {
       var msg = await e.message.channel.send(content: "Pong!");
       await msg.edit(

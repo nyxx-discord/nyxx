@@ -129,7 +129,7 @@ void main() {
     await e.delete();
   });
 
-  bot.onMessage.listen((e) async {
+  bot.onMessageReceived.listen((e) async {
     var m = e.message;
 
     if (m.channel.id != "422285619952222208" && m.author.id != bot.self.id)

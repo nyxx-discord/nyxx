@@ -99,7 +99,7 @@ class CommandsFramework {
 
     // Listen to incoming messages and ignore all from bots (if set)
     client.onReady.listen((_) {
-      client.onMessage.listen((MessageEvent e) {
+      client.onMessageReceived.listen((MessageReceivedEvent e) {
         if (ignoreBots && e.message.author.bot) return;
         if (!e.message.content.startsWith(prefix)) return;
 
@@ -324,7 +324,7 @@ class CommandsFramework {
   }
 
   /// Dispatches onMessage event to framework.
-  Future _dispatch(MessageEvent e) async {
+  Future _dispatch(MessageReceivedEvent e) async {
     // Match help specially to shadow user defined help commands.
     if (e.message.content.startsWith("${prefix}help")) {
       if (helpDirect) {

@@ -11,7 +11,7 @@ void main() {
   });
 
   // Listen to all incoming messages via Dart Stream
-  bot.onMessage.listen((nyxx.MessageEvent e) {
+  bot.onMessageReceived.listen((nyxx.MessageReceivedEvent e) {
     if (e.message.content == "!ping") {
       e.message.channel.send(content: "Pong!");
     }

@@ -28,7 +28,7 @@ class _EventController {
   StreamController<ReadyEvent> onReady;
 
   /// Emitted when a message is received.
-  StreamController<MessageEvent> onMessage;
+  StreamController<MessageReceivedEvent> onMessageReceived;
 
   /// Emitted when channel's pins are updated.
   StreamController<ChannelPinsUpdateEvent> onChannelPinsUpdate;
@@ -117,6 +117,9 @@ class _EventController {
   /// Emitted when user was updated
   StreamController<UserUpdateEvent> onUserUpdate;
 
+  /// Emitted on any message related event
+  StreamController<MessageEvent> onMessage;
+
   /// Makes a new `EventController`.
   _EventController() {
     this.onRaw = StreamController.broadcast();
@@ -140,8 +143,8 @@ class _EventController {
     this.onReady = StreamController.broadcast();
     _client.onReady = this.onReady.stream;
 
-    this.onMessage = StreamController.broadcast();
-    _client.onMessage = this.onMessage.stream;
+    this.onMessageReceived = StreamController.broadcast();
+    _client.onMessageReceived = this.onMessageReceived.stream;
 
     this.onMessageUpdate = StreamController.broadcast();
     _client.onMessageUpdate = this.onMessageUpdate.stream;
@@ -229,6 +232,9 @@ class _EventController {
 
     this.onUserUpdate = StreamController.broadcast();
     _client.onUserUpdate = this.onUserUpdate.stream;
+
+    this.onMessage = StreamController.broadcast();
+    _client.onMessage = this.onMessage.stream;
   }
 
   /// Closes all streams.
@@ -241,7 +247,7 @@ class _EventController {
     await this.onRatelimited.close();
     await this.onGuildUpdate.close();
     await this.onReady.close();
-    await this.onMessage.close();
+    await this.onMessageReceived.close();
     await this.onMessageUpdate.close();
     await this.onMessageDelete.close();
     await this.onChannelCreate.close();

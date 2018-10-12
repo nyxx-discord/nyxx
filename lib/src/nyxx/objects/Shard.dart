@@ -232,7 +232,7 @@ class Shard {
             break;
 
           case 'MESSAGE_CREATE':
-            MessageEvent._new(msg);
+            MessageReceivedEvent._new(msg);
             break;
 
           case 'MESSAGE_DELETE':

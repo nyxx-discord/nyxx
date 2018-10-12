@@ -18,7 +18,7 @@ void setupBot(SendPort remotePort) {
   });
 
   // Listen to all incoming messages via Dart Stream
-  client.onMessage.listen((MessageEvent e) {
+  client.onMessageReceived.listen((MessageReceivedEvent e) {
     if (e.message.content == "!ping") {
       e.message.channel.send(content: "Pong!");
     }

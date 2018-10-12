@@ -15,12 +15,12 @@ class MessageChannel extends Channel with IterableMixin<Message>, ISend {
   Timer _typing;
 
   /// Sent when a new message is received.
-  Stream<MessageEvent> onMessage;
+  Stream<MessageReceivedEvent> onMessage;
 
   /// Emitted when user starts typing.
   Stream<TypingEvent> onTyping;
 
-  StreamController<MessageEvent> _onMessage;
+  StreamController<MessageReceivedEvent> _onMessage;
   StreamController<TypingEvent> _onTyping;
 
   /// A collection of messages sent to this channel.
