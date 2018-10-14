@@ -147,7 +147,7 @@ void main() {
 
     if (m.content == "Testing embed!") {
       if (m.embeds.length > 0) {
-        var embed = m.embeds.values.first;
+        var embed = m.embeds.first;
         if (embed.title == "Test title" && embed.fields.length > 0) {
           var field = embed.fields.values.first;
 

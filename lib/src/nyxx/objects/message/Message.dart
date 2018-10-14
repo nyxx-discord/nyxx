@@ -3,8 +3,6 @@ part of nyxx;
 /// [Message] class represents single message. It contains it's Event [Stream]s.
 /// [Message] among all it's properties has also back-reference to [MessageChannel] from which it was sent, [Guild] and [User] properties which are associated with this message.
 class Message extends SnowflakeEntity {
-  StreamController<MessageUpdateEvent> _onUpdate;
-  StreamController<MessageDeleteEvent> _onDelete;
   StreamController<MessageReactionEvent> _onReactionAdded;
   StreamController<MessageReactionEvent> _onReactionRemove;
   StreamController<MessageReactionsRemovedEvent> _onReactionsRemoved;
@@ -31,7 +29,7 @@ class Message extends SnowflakeEntity {
   Map<Snowflake, Role> roleMentions;
 
   /// A collection of the embeds in the message.
-  Map<String, Embed> embeds;
+  List<Embed> embeds;
 
   /// The attachments in the message.
   Map<Snowflake, Attachment> attachments;
@@ -68,14 +66,71 @@ class Message extends SnowflakeEntity {
       "https://discordapp.com/channels/${this.guild.id.toString()}"
       "/${this.channel.id.toString()}/${this.id.toString()}";
 
+  Message._combine(Message old, Map<String, dynamic> raw) : super(old.id) {
+    this.content = raw['content'] == null ? old.content : raw['content'] as String;
+    this.editedTimestamp = raw['edited_timestamp'] == null ? DateTime.now() : DateTime.parse(raw['edited_timestamp'] as String);
+    this.channel = old.channel;
+    this.guild = old.guild;
+    this.author = old.author;
+
+    if(raw['mentions'] != null) {
+      this.mentions = Map<Snowflake, User>();
+      raw['mentions'].forEach((o) {
+        if (o['member'] == null) {
+          final user = User._new(o as Map<String, dynamic>);
+          this.mentions[user.id] = user;
+        } else {
+          final user = Member._reverse(o as Map<String, dynamic>, this.guild);
+          this.mentions[user.id] = user;
+        }
+      });
+    } else {
+      this.mentions = old.mentions;
+    }
+
+    if(raw['mention_roles'] != null) {
+      this.roleMentions = Map<Snowflake, Role>();
+      raw['mention_roles'].forEach((o) {
+        var s = Snowflake(o as String);
+        this.roleMentions[s] = guild.roles[s];
+      });
+    } else
+      this.roleMentions = old.roleMentions;
+
+    if (raw['embeds'] != null && raw['embeds'].isNotEmpty as bool) {
+      this.embeds = List<Embed>();
+      raw['embeds'].forEach((o) {
+        Embed embed = Embed._new(o as Map<String, dynamic>);
+        this.embeds.add(embed);
+      });
+    } else {
+      this.embeds = old.embeds;
+    }
+
+    if (raw['attachments'] != null && raw['attachments'].isNotEmpty as bool) {
+      this.attachments = Map<Snowflake, Attachment>();
+      raw['attachments'].forEach((o) {
+        final Attachment attachment =
+        Attachment._new(o as Map<String, dynamic>);
+        this.attachments[attachment.id] = attachment;
+      });
+    } else
+      this.attachments = old.attachments;
+
+    if (raw['reactions'] != null && raw['reactions'].isNotEmpty as bool) {
+      this.reactions = List();
+      raw['reactions'].forEach((o) {
+        this.reactions.add(Reaction._new(o as Map<String, dynamic>));
+      });
+    } else
+      this.reactions = old.reactions;
+
+
+    this.channel.messages._cacheMessage(this);
+  }
+
   Message._new(Map<String, dynamic> raw)
       : super(Snowflake(raw['id'] as String)) {
-    this._onUpdate = StreamController.broadcast();
-    this.onUpdate = this._onUpdate.stream;
-
-    this._onDelete = StreamController.broadcast();
-    this.onDelete = this._onDelete.stream;
-
     this._onReactionRemove = StreamController.broadcast();
     this.onReactionRemove = this._onReactionRemove.stream;
 
@@ -155,10 +210,10 @@ class Message extends SnowflakeEntity {
     }
 
     if (raw['embeds'] != null && raw['embeds'].isNotEmpty as bool) {
-      this.embeds = Map<String, Embed>();
+      this.embeds = List<Embed>();
       raw['embeds'].forEach((o) {
         Embed embed = Embed._new(o as Map<String, dynamic>);
-        this.embeds[embed.title] = embed;
+        this.embeds.add(embed);
       });
     }
 

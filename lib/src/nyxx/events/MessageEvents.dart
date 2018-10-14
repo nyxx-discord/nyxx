@@ -46,7 +46,6 @@ class MessageDeleteEvent extends MessageEvent {
         as MessageChannel)
             .messages[Snowflake(json['d']['id'] as String)];
         this.id = message.id;
-        this.message._onDelete.add(this);
         client._events.onMessageDelete.add(this);
       } else {
         this.id = Snowflake((json['d']['id'] as String));
@@ -150,15 +149,17 @@ class MessageUpdateEvent {
   Message newMessage;
 
   MessageUpdateEvent._new(Map<String, dynamic> json) {
-    var channel = client.channels[Snowflake(json['d']['channel_id'] as String)]
-    as MessageChannel;
+    print(jsonEncode(json));
+
+    var channel = client.channels[Snowflake(json['d']['channel_id'] as String)] as MessageChannel;
     this.oldMessage = channel.messages[Snowflake(json['d']['id'] as String)];
-    this.newMessage = Message._new(json['d'] as Map<String, dynamic>);
 
-    if (oldMessage != null) this.oldMessage._onUpdate.add(this);
+    if (oldMessage != null) {
+      this.newMessage = Message._combine(oldMessage, json['d'] as Map<String, dynamic>);
+    }
+
     client._events.onMessageUpdate.add(this);
-
-    channel.messages._cacheMessage(newMessage);
+    //channel.messages._cacheMessage(newMessage);
   }
 }
 

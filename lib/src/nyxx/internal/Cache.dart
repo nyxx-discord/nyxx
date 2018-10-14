@@ -112,8 +112,6 @@ class MessageCache extends Cache<Snowflake, Message> {
   Message _cacheMessage(Message message) {
     if (_client._options.messageCacheSize > 0) {
       if (this._cache.length >= _client._options.messageCacheSize) {
-        this._cache.values.first._onUpdate.close();
-        this._cache.values.first._onDelete.close();
         this._cache.remove(this._cache.values.first.id);
       }
       this._cache[message.id] = message;
