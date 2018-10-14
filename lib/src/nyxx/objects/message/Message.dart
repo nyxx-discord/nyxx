@@ -12,9 +12,6 @@ class Message extends SnowflakeEntity {
   /// The message's content.
   String content;
 
-  /// The message's nonce, null if not set.
-  String nonce;
-
   /// The timestamp of when the message was last edited, null if not edited.
   DateTime editedTimestamp;
 
@@ -89,7 +86,6 @@ class Message extends SnowflakeEntity {
     this.onReactionsRemoved = this._onReactionsRemoved.stream;
 
     this.content = raw['content'] as String;
-    this.nonce = raw['nonce'] as String;
 
     this.channel = _client.channels[Snowflake(raw['channel_id'] as String)]
         as MessageChannel;
