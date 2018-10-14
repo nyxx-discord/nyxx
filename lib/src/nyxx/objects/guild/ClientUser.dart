@@ -28,9 +28,9 @@ class ClientUser extends User {
   ClientUser setGame(Presence game) => this.setPresence(game: game);
 
   /// Updates the client's presence
-  ClientUser setPresence({String status, bool afk = false, Presence game}) {
+  ClientUser setPresence({String status, bool afk = false, Presence game, DateTime since}) {
     _client.shards.forEach((int id, Shard shard) {
-      shard.setPresence(status: status, afk: afk, game: game);
+      shard.setPresence(status: status, afk: afk, game: game, since: since);
     });
 
     return this;

@@ -39,17 +39,29 @@ class Shard {
     this.onDisconnect = this._onDisconnect.stream;
   }
 
-  void setPresence({String status, bool afk, Presence game}) {
-    Map<String, dynamic> packet = {
-      "afk": afk,
-      "since": null,
-      "status": status,
-      "game": {
-        "name": game != null ? game.name : null,
-        "type": game != null ? game.type : null,
-        "url": game != null ? game.url : null
-      }
-    };
+  void setPresence({String status, bool afk, Presence game, DateTime since}) {
+    var packet = Map<String, dynamic>();
+
+    if(status != null)
+      packet['status'] = status;
+
+    if(afk != null)
+      packet['afk'] = afk;
+
+    if(game != null) {
+      var gameMap = Map<String, dynamic>();
+      gameMap['name'] = game.name;
+
+      if(game.type != null)
+        gameMap['type'] = game.type;
+
+      if(game.url != null)
+        gameMap['url'] = game.url;
+
+      packet['game'] = gameMap;
+    }
+    if(since != null)
+      packet['since'] = since.millisecondsSinceEpoch;
 
     this.send("STATUS_UPDATE", packet);
   }
