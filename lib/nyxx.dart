@@ -69,7 +69,7 @@ part 'src/nyxx/objects/IMentionable.dart';
 
 part 'src/nyxx/objects/SnowflakeEntity.dart';
 part 'src/nyxx/objects/Snowflake.dart';
-part 'src/nyxx/objects/Shard.dart';
+part 'package:nyxx/src/nyxx/Shard.dart';
 part 'src/nyxx/objects/guild/Webhook.dart';
 
 part 'src/nyxx/objects/voice/VoiceState.dart';

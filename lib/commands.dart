@@ -9,6 +9,7 @@ library nyxx.commands;
 import "dart:mirrors";
 import 'dart:async';
 import 'nyxx.dart';
+import 'dart:io';
 import 'utils.dart' as util;
 
 import 'package:logging/logging.dart';

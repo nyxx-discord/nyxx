@@ -293,8 +293,9 @@ class CommandsFramework {
     if (top == null && meth == null)
       return Restrict();
     else if (top == null)
-      top = Restrict();
-    else if (meth == null) meth = Restrict();
+      return meth;
+    else if (meth == null)
+      return top;
 
     var admin = meth.admin != null ? meth.admin : top.admin;
     var owner = meth.owner != null ? meth.owner : top.owner;
@@ -641,11 +642,13 @@ class CommandsFramework {
       try {
         var res = await parsePrimitives(type);
         if (res) continue;
-      } on Exception {}
+      } catch (_) { }
 
       try {
         collected.add(_services.firstWhere((s) => s.runtimeType == type));
-      } on Exception {}
+      } catch (_) {}
+
+      collected.add(null);
     }
 
     return collected;

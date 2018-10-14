@@ -1,6 +1,6 @@
 <div align="center">
 <br />
-<p> <img width="600" src="https://l7ssha.pl/nyxx0.png" />
+<p> <img width="600" src="https://l7ssha.github.io/nyxx0.png" />
 <br />
 
 [![Build Status](https://travis-ci.org/l7ssha/nyxx.svg?branch=master)](https://travis-ci.org/l7ssha/nyxx)
