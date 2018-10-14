@@ -59,7 +59,7 @@ class Shard {
 
   // Attempts to connect to ws
   void _connect([bool resume = false, bool init = false]) {
-    if (resume) _logger.severe("DISCONNECTED. Trying to reconnect...");
+    if (resume) _logger.severe("SHARD [${this.id}] DISCONNECTED. Trying to reconnect...");
 
     this.ready = false;
     if (this._socket != null) this._socket.close();
@@ -328,10 +328,12 @@ class Shard {
     _socket.close(1001);
     this._heartbeatTimer.cancel();
 
-    // Invalidate cache on error
-    client.guilds.invalidate();
-    client.users.invalidate();
-    client.channels.invalidate();
+    if(client.shards.length == 1) {
+      // Invalidate cache on error
+      client.guilds.invalidate();
+      client.users.invalidate();
+      client.channels.invalidate();
+    }
     this.guilds.clear();
 
     switch (this._socket.closeCode) {
