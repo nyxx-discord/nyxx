@@ -646,9 +646,9 @@ class CommandsFramework {
 
       try {
         collected.add(_services.firstWhere((s) => s.runtimeType == type));
-      } catch (_) {}
-
-      collected.add(null);
+      } catch (_) {
+        collected.add(null);
+      }
     }
 
     return collected;
