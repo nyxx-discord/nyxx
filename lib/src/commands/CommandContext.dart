@@ -56,26 +56,28 @@ class CommandContext {
         disableEveryone: disableEveryone);
   }
 
-  /// Reply to messages, then delete it [duration] expieres.
+  /// Reply to messages, then delete it [duration] expires.
   ///
   /// ```
   /// @Command()
   /// Future<void> getAv(User user) async {
-  ///   await replyTemp(content: uset.avatarURL());
+  ///   await replyTemp(content: user.avatarURL());
   /// }
   /// ```
   Future<Message> replyTemp(Duration duration,
       {Object content,
+      List<File> files,
       EmbedBuilder embed,
       bool tts = false,
       bool disableEveryone}) async {
     var msg = await channel.send(
         content: content,
         embed: embed,
+        files: files,
         tts: tts,
         disableEveryone: disableEveryone);
 
-    Timer(duration, () async => await msg.delete());
+    Timer(duration, () => msg.delete());
     return msg;
   }
 
@@ -88,6 +90,7 @@ class CommandContext {
   /// ```
   Future<Message> replyDelayed(Duration duration,
       {Object content,
+      List<File> files,
       EmbedBuilder embed,
       bool tts = false,
       bool disableEveryone}) async {
@@ -96,6 +99,7 @@ class CommandContext {
         () async => await channel.send(
             content: content,
             embed: embed,
+            files: files,
             tts: tts,
             disableEveryone: disableEveryone));
   }
