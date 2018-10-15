@@ -77,15 +77,18 @@ class Shard {
     if (this._socket != null) this._socket.close();
 
     if (!init && resume) {
-      Timer(Duration(seconds: 2), () => _connect(false));
+      Timer(Duration(seconds: 2), () => _connect(true));
       return;
     }
 
-    WebSocket.connect('${this._ws.gateway}?v=7&encoding=json').then(
+    WebSocket.connect('${this._ws.gateway}?v=6&encoding=json').then(
         (WebSocket socket) {
       this._socket = socket;
-      this._socket.pingInterval = const Duration(seconds: 3);
-      this._socket.listen((dynamic msg) async {
+      //this._socket.pingInterval = const Duration(seconds: 3);
+
+      print("$resume, $init");
+      this._socket.listen((msg) async {
+        //print("RAW: ${jsonEncode(msg)}");
         this.transfer += msg.length as int;
         await this._handleMsg(_decodeBytes(msg), resume);
       }, onDone: this._handleErr, onError: (err) {
@@ -110,8 +113,10 @@ class Shard {
   }
 
   /// Sends WS data.
-  void send(String op, d) => this._socket.add(
-      jsonEncode(<String, dynamic>{"op": _OPCodes.matchOpCode(op), "d": d}));
+  void send(String op, dynamic d) {
+    this._socket.add(
+          jsonEncode(<String, dynamic>{"op": _OPCodes.matchOpCode(op), "d": d}));
+  }
 
   void _heartbeat() {
     if (this._socket.closeCode != null) return;
@@ -152,9 +157,22 @@ class Shard {
         this._heartbeatTimer = Timer.periodic(
             Duration(milliseconds: msg['d']['heartbeat_interval'] as int),
             (Timer t) => this._heartbeat());
+
         break;
 
       case _OPCodes.INVALID_SESSION:
+        print("SESSION: ${jsonEncode(msg)}");
+
+        _logger.severe("Invalid session. Reconnecting...");
+        DisconnectEvent._new(this, 9);
+        this._onDisconnect.add(this);
+        if(msg['d'] as bool) {
+          this._socket = null;
+          Timer(Duration(seconds: 2), () => _connect(true));
+        } else {
+          Timer(Duration(seconds: 6), () => _connect(false, true));
+        }
+
         this._connect(false);
         break;
 
@@ -163,6 +181,7 @@ class Shard {
         switch (j) {
           case 'READY':
             this._sessionId = msg['d']['session_id'] as String;
+            //print("READY: ${jsonEncode(msg)}");
 
             _client.self =
                 ClientUser._new(msg['d']['user'] as Map<String, dynamic>);
@@ -197,6 +216,7 @@ class Shard {
 
             this.ready = true;
             this._onReady.add(this);
+            _logger.info("Shard [$id] connected");
 
             break;
 
@@ -333,12 +353,11 @@ class Shard {
     }
   }
 
-  Exception _throw(String msg) => Exception(
-      "${this._socket.closeCode}: ${this._socket.closeReason} - '$msg'");
-
   void _handleErr() {
     _socket.close(1001);
     this._heartbeatTimer.cancel();
+
+    _logger.severe("Shard [$id] disconnected. Error code: [${this._socket.closeCode}] | Error message: [${this._socket.closeReason}]");
 
     if(client.shards.length == 1) {
       // Invalidate cache on error
@@ -349,13 +368,15 @@ class Shard {
     this.guilds.clear();
 
     switch (this._socket.closeCode) {
-      //throw _throw(
-      //    'No status code was provided even though one was expected.');
       case 4004:
-        throw _throw(
-            'The account token sent with your identify payload is incorrect.');
+        //throw _throw(
+        //    'The account token sent with your identify payload is incorrect.');
+        exit(1);
+        break;
       case 4010:
-        throw _throw('You sent an invalid shard when identifying.');
+        //throw _throw('You sent an invalid shard when identifying.');
+        exit(1);
+        break;
       case 4007:
       case 4009:
       case 1001:
