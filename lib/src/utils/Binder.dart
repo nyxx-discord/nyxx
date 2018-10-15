@@ -29,5 +29,6 @@ void bindEvents(String libname) {
 class Bind {
   /// Name of stream to bind
   final String streamName;
+
   const Bind(String name): streamName = "Symbol(\"$name\")";
 }

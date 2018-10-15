@@ -83,10 +83,10 @@ class GuildMemberRemoveEvent {
     if (client.ready && json['d']['user']['id'] != client.self.id) {
       this.guild = client.guilds[Snowflake(json['d']['guild_id'] as String)];
 
-      if (guild != null) {
-        guild.memberCount--;
+      if (this.guild != null) {
+        this.guild.memberCount--;
         this.user = User._new(json['d']['user'] as Map<String, dynamic>);
-        guild.members.remove(user.id);
+        this.guild.members.remove(user.id);
         client.users.remove(user.id);
         client._events.onGuildMemberRemove.add(this);
       }
@@ -104,10 +104,8 @@ class GuildMemberUpdateEvent {
 
   GuildMemberUpdateEvent._new(Map<String, dynamic> json) {
     if (client.ready) {
-      final Guild guild =
-      client.guilds[Snowflake(json['d']['guild_id'] as String)];
-      this.oldMember =
-      guild.members[Snowflake(json['d']['user']['id'] as String)];
+      final guild = client.guilds[Snowflake(json['d']['guild_id'] as String)];
+      this.oldMember = guild.members[Snowflake(json['d']['user']['id'] as String)];
 
       if (oldMember != null && guild != null) {
         this.newMember = oldMember;
@@ -122,9 +120,8 @@ class GuildMemberUpdateEvent {
 
         guild.members[oldMember.id] = newMember;
         client.users[oldMember.id] = newMember;
+        client._events.onGuildMemberUpdate.add(this);
       }
-
-      client._events.onGuildMemberUpdate.add(this);
     }
   }
 }

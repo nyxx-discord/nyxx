@@ -46,12 +46,6 @@ class Message extends SnowflakeEntity {
   /// List of message reactions
   List<Reaction> reactions;
 
-  /// Emitted when the message is edited.
-  Stream<MessageUpdateEvent> onUpdate;
-
-  /// Emitted when the message is deleted.
-  Stream<MessageDeleteEvent> onDelete;
-
   /// Emitted when a user adds a reaction to a message.
   Stream<MessageReactionEvent> onReactionAdded;
 
