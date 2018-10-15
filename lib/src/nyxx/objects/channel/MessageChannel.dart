@@ -102,7 +102,7 @@ class MessageChannel extends Channel with IterableMixin<Message>, ISend {
     var newContent = _sanitizeMessage(content, disableEveryone);
 
     Map<String, dynamic> reqBody = {
-      "content": newContent,
+      "content": newContent ?? "",
       "embed": embed != null ? embed._build() : ""
     };
 

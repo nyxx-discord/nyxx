@@ -105,14 +105,14 @@ class ChannelCache extends Cache<Snowflake, Channel> {
 /// []= operator throws - use put() instead.
 class MessageCache extends Cache<Snowflake, Message> {
   MessageCache._new() {
-    this._cache = LinkedHashMap(equals: (key1, key2) => key1.timestamp.isAfter(key2.timestamp));
+    this._cache = LinkedHashMap();
   }
 
   /// Caches message
   Message _cacheMessage(Message message) {
     if (_client._options.messageCacheSize > 0) {
       if (this._cache.length >= _client._options.messageCacheSize) {
-        this._cache.remove(this._cache.values.first.id);
+        this._cache.remove(this._cache.values.last.id);
       }
       this._cache[message.id] = message;
     }
