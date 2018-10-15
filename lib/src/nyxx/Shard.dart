@@ -86,9 +86,7 @@ class Shard {
       this._socket = socket;
       //this._socket.pingInterval = const Duration(seconds: 3);
 
-      print("$resume, $init");
       this._socket.listen((msg) async {
-        //print("RAW: ${jsonEncode(msg)}");
         this.transfer += msg.length as int;
         await this._handleMsg(_decodeBytes(msg), resume);
       }, onDone: this._handleErr, onError: (err) {
