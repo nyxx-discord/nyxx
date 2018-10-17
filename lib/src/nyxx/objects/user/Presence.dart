@@ -6,8 +6,8 @@ class Presence {
   /// The activity name.
   String name;
 
-  /// The activity type. 0 if not streamed, 1 if being streamed.
-  int type;
+  /// The activity type.
+  PresenceType type;
 
   /// DateTime when activity started
   DateTime start;
@@ -43,12 +43,12 @@ class Presence {
   String url;
 
   /// Makes a new game object.
-  Presence.of(this.name, {this.type = 0, this.url});
+  Presence.of(this.name, {this.type = PresenceType.normal, this.url});
 
   Presence._new(Map<String, dynamic> raw) {
     this.name = raw['name'] as String;
     this.url = raw['url'] as String;
-    this.type = raw['type'] as int;
+    this.type = PresenceType(raw['type'] as int);
 
     if (raw['timestamps'] != null) {
       if (raw['timestamps']['start'] != null) {
@@ -80,6 +80,28 @@ class Presence {
     instance = raw['instance'] as bool;
     activityFlags = raw['flags'] as int;
   }
+}
+
+/// Represents type of presence activity
+class PresenceType {
+  static const PresenceType streaming = PresenceType._create(1);
+  static const PresenceType normal = PresenceType._create(0);
+
+  final int _value;
+
+  PresenceType(this._value);
+  const PresenceType._create(this._value);
+
+  @override
+  String toString() => _value.toString();
+
+  @override
+  int get hashCode => _value.hashCode;
+
+  @override
+  bool operator ==(other) => other is int && other == _value
+      || other is String && other == _value.toString();
+
 }
 
 /// Represents party of game.
