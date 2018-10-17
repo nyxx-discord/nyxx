@@ -164,7 +164,7 @@ class CommandsFramework {
   }
 
   String _createLog(Module classCmd, Command methodCmd) =>
-      "[${classCmd != null ? classCmd.name : ""}${methodCmd != null && (methodCmd.main == null || !methodCmd.main) ? " ${methodCmd.name}" : ""}]";
+      "[${classCmd != null ? classCmd.name : ""}${methodCmd != null && methodCmd.name != null ? " ${methodCmd.name}" : ""}]";
 
   List<List> _getProcessors(
       ClassMirror classMirror, DeclarationMirror methodMirror) {
@@ -276,7 +276,7 @@ class CommandsFramework {
 
       if (meta.classCommand != null)
         commandName.write(
-            "${meta.classCommand.name} ${meta.methodCommand.main != null ? "[main]" : meta.methodCommand.name}");
+            "${meta.classCommand.name} ${meta.methodCommand.name == null ? "[main]" : meta.methodCommand.name}");
       commandName
           .write("${meta.methodCommand.name} ${meta.methodCommand.aliases}");
 
