@@ -297,8 +297,7 @@ class CommandsFramework {
     else if (meth == null)
       return top;
 
-    var admin = meth.admin != null ? meth.admin : top.admin;
-    var owner = meth.owner != null ? meth.owner : top.owner;
+    var admin = meth.admin ?? top.admin;
 
     List<Snowflake> roles = List.from(top.roles)..addAll(meth.roles);
 
@@ -314,7 +313,6 @@ class CommandsFramework {
 
     return Restrict(
         admin: admin,
-        owner: owner,
         roles: roles,
         userPermissions: userPermissions,
         botPermissions: botPermissions,
@@ -371,7 +369,7 @@ class CommandsFramework {
             .every((pre) => pre.execute(_services, e.message)))
       executionCode = 8;
 
-    if (matchedMeta.methodRestrict != null && matchedMeta.classRestrict != null)
+    //if (matchedMeta.methodRestrict != null && matchedMeta.classRestrict != null)
       executionCode = await checkPermissions(matchedMeta, e.message);
 
     // Switch between execution codes
@@ -455,11 +453,7 @@ class CommandsFramework {
 
     // Check if command requires admin
     if (executionCode == -1 && annot.admin != null && annot.admin)
-      executionCode = _isUserAdmin(e.author.id, e.guild) ? 100 : 0;
-
-    // Check if command requires server owner
-    if (executionCode == -1 && annot.owner != null && annot.owner)
-      executionCode = e.guild.owner.id == e.author.id ? 100 : 0;
+      return _isUserAdmin(e.author.id, e.guild) ? 100 : 0;
 
     //Check if user is on cooldown
     if (executionCode == -1) {

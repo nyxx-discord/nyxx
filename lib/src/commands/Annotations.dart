@@ -60,9 +60,6 @@ class Restrict {
   /// Checks if user is in admins list provided at creating CommandsFramework
   final bool admin;
 
-  /// Checks if user is server owner
-  final bool owner;
-
   /// List of roles required to execute command
   final List<Snowflake> roles;
 
@@ -90,7 +87,6 @@ class Restrict {
 
   const Restrict(
       {this.admin,
-      this.owner,
       this.roles = const [],
       this.cooldown,
       this.userPermissions = const [],
