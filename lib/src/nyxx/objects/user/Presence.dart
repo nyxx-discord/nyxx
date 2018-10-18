@@ -43,7 +43,7 @@ class Presence {
   String url;
 
   /// Makes a new game object.
-  Presence.of(this.name, {this.type = PresenceType.normal, this.url});
+  Presence.of(this.name, {this.type = PresenceType.game, this.url});
 
   Presence._new(Map<String, dynamic> raw) {
     this.name = raw['name'] as String;
@@ -85,7 +85,8 @@ class Presence {
 /// Represents type of presence activity
 class PresenceType {
   static const PresenceType streaming = PresenceType._create(1);
-  static const PresenceType normal = PresenceType._create(0);
+  static const PresenceType game = PresenceType._create(0);
+  static const PresenceType listening = PresenceType._create(2);
 
   final int _value;
 
