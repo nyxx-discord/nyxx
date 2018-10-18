@@ -161,14 +161,15 @@ class HttpResponse {
     try {
       res = await r.stream.bytesToString();
     } catch (err, stacktrace) {
-      throw Exception(
-          "You're probably not connected to internet. If not report this issue \n $stacktrace");
+      return Future.error(err, stacktrace);
     }
 
     var json;
     try {
       json = jsonDecode(res);
-    } on FormatException {}
+    } catch (e, stacktrace) {
+      return Future.error(e, stacktrace);
+    }
 
     return HttpResponse._new(request, r.statusCode, "", r.headers, json);
   }
@@ -290,9 +291,6 @@ class Http {
       bool beforeReady = false,
       Map<String, String> headers = const {},
       String reason}) async {
-    //if (!_client.ready && !beforeReady)
-      //throw Exception("Client isn't ready yet.");
-
     HttpRequest request = HttpRequest._new(
         this,
         method,
@@ -303,28 +301,29 @@ class Http {
 
     await for (HttpResponse r in request.stream) {
       if (!r.aborted && r.status >= 200 && r.status < 300) {
-        if (_client != null) HttpResponseEvent._new(r);
+        _client ?? HttpResponseEvent._new(r);
         return r;
       } else {
-        if (_client != null) HttpErrorEvent._new(r);
-        throw HttpError._new(r);
+        _client ?? HttpErrorEvent._new(r);
+        return Future.error(r);
       }
     }
-    return null;
+
+    return Future.error(Exception("Didn't got any response"));
   }
 
   /// Adds AUDIT_LOG header to request
   Map<String, String> _addAuditReason(String reason) =>
       <String, String>{"X-Audit-Log-Reason": "$reason"};
 
-  /// Sends mutlipart response
+  /// Sends multipart request
   Future<HttpResponse> sendMultipart(
       String method, String path, List<File> files,
       {Map<String, dynamic> data,
       bool beforeReady = false,
       String reason}) async {
     if (_client is Nyxx && !_client.ready && !beforeReady)
-      throw Exception("Client isn't ready yet.");
+      return Future.error(Exception("Client isn't ready yet."));
 
     HttpMultipartRequest request = HttpMultipartRequest._new(this, method, path,
         files, data, Map.from(this._headers)..addAll(_headers));
@@ -334,14 +333,14 @@ class Http {
 
     await for (HttpResponse r in request.stream) {
       if (!r.aborted && r.status >= 200 && r.status < 300) {
-        if (_client != null) HttpResponseEvent._new(r);
+        _client ?? HttpResponseEvent._new(r);
         return r;
       } else {
-        print(r.body);
-        if (_client != null) HttpErrorEvent._new(r);
-        throw HttpError._new(r);
+        _client ?? HttpErrorEvent._new(r);
+        return Future.error(r);
       }
     }
-    return null;
+
+    return Future.error(Exception("Didn't got any response"));
   }
 }
