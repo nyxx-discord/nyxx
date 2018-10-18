@@ -370,7 +370,7 @@ class CommandsFramework {
       executionCode = 8;
 
     //if (matchedMeta.methodRestrict != null && matchedMeta.classRestrict != null)
-      executionCode = await checkPermissions(matchedMeta, e.message);
+    executionCode = await checkPermissions(matchedMeta, e.message);
 
     // Switch between execution codes
     switch (executionCode) {
@@ -450,7 +450,7 @@ class CommandsFramework {
   Future<int> checkPermissions(_CommandMetadata meta, Message e) async {
     int executionCode = -1;
     var annot = _patchRestrictions(meta.classRestrict, meta.methodRestrict);
-
+    
     // Check if command requires admin
     if (executionCode == -1 && annot.admin != null && annot.admin)
       return _isUserAdmin(e.author.id, e.guild) ? 100 : 0;
@@ -468,7 +468,7 @@ class CommandsFramework {
     var member = await e.guild.getMember(e.author);
 
     // Check if there is need to check user roles
-    if (executionCode == -1 && annot.roles != null) {
+    if (executionCode == -1 && annot.roles.isNotEmpty) {
       var hasRoles =
           member.roles.map((f) => f.id).where((t) => annot.roles.contains(t));
 
@@ -476,8 +476,10 @@ class CommandsFramework {
     }
 
     // Check if user has required permissions
-    if (executionCode == -1 && annot.userPermissions != null) {
+    if (executionCode == -1 && annot.userPermissions.isNotEmpty) {
       var total = member.totalPermissions;
+
+      print(annot.userPermissions);
       for (var perm in annot.userPermissions) {
         if ((total.raw | perm) == 0) {
           executionCode = 1;
@@ -488,7 +490,7 @@ class CommandsFramework {
 
     // Check for channel topics
     if (executionCode == -1 &&
-        annot.topics != null &&
+        annot.topics.isNotEmpty &&
         e.channel is TextChannel) {
       var topic = (e.channel as TextChannel).topic;
       var list = topic
@@ -507,9 +509,9 @@ class CommandsFramework {
     }
 
     // Check if bot has required permissions
-    if (executionCode == -1 && annot.userPermissions != null) {
+    if (executionCode == -1 && annot.botPermissions.isNotEmpty) {
       var total = (await e.guild.getMember(client.self)).totalPermissions;
-      for (var perm in annot.userPermissions) {
+      for (var perm in annot.botPermissions) {
         if ((total.raw | perm) == 0) {
           executionCode = 6;
           break;
