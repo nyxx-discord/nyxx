@@ -5,6 +5,7 @@ class GuildEmoji extends Emoji implements SnowflakeEntity {
   /// Emoji guild
   Guild guild;
 
+  @override
   /// Snowflake id of emoji
   Snowflake id;
 

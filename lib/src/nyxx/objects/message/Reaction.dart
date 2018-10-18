@@ -2,7 +2,7 @@ part of nyxx;
 
 /// Reaction object, has partial [GuildEmoji] object (only id, and name (for unicode emoji 'id' is null))
 class Reaction {
-  /// Time this emoji has ben used to react
+  /// Time this emoji has been used to react
   int count;
 
   ///	Whether the current user reacted using this emoji

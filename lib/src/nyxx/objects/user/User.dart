@@ -16,6 +16,9 @@ class User extends SnowflakeEntity with ISend, IMentionable {
   /// The string to mention the user.
   String get mention => "<@${this.id}>";
 
+  /// Returns String with username#discriminator
+  String get tag => "${this.username}#${this.discriminator}";
+
   /// Whether or not the user is a bot.
   bool bot = false;
 
@@ -28,16 +31,16 @@ class User extends SnowflakeEntity with ISend, IMentionable {
 
   /// The user's avatar, represented as URL.
   String avatarURL({String format = 'webp', int size = 128}) {
-    if (this.id != null)
+    if (this.avatar != null)
       return 'https://cdn.${_Constants.host}/avatars/${this.id}/${this.avatar}.$format?size=$size';
 
     return null;
   }
 
   /// Gets the [DMChannel] for the user.
-  Future<DMChannel> getDMChannel() async {
+  Future<DMChannel> get dmChannel async {
     try {
-      return client.channels.values.firstWhere(
+      return client.channels.findOne(
               (Channel c) => c is DMChannel && c.recipient.id == this.id)
           as DMChannel;
     } catch (err) {
@@ -56,8 +59,8 @@ class User extends SnowflakeEntity with ISend, IMentionable {
       EmbedBuilder embed,
       bool tts = false,
       bool disableEveryone}) async {
-    DMChannel channel = await getDMChannel();
-    return await channel.send(
+    DMChannel channel = await this.dmChannel;
+    return channel.send(
         content: content,
         files: files,
         embed: embed,

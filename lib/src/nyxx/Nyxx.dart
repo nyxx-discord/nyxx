@@ -194,8 +194,6 @@ class Nyxx {
       Isolate.current.addErrorListener(errorsPort.sendPort);
     }
 
-    this._options = options;
-
     Logger.root.level = Level.ALL;
     Logger.root.onRecord.listen((LogRecord rec) {
       String color;
@@ -203,19 +201,20 @@ class Nyxx {
         color = "\u001B[33m";
       else if (rec.level == Level.SEVERE)
         color = "\u001B[31m";
+      else if (rec.level == Level.INFO)
+        color = "\u001b[32m";
       else
         color = "\u001B[0m";
 
-      print('$color[${rec.level.name}] \u001B[0m [${rec.loggerName}] - '
-          '${rec.time.day}.${rec.time.month}.${rec.time.year} '
-          '${rec.time.hour}:${rec.time.minute}:${rec.time.second}'
-          ':${rec.time.millisecond} '
-          '| ${rec.message}');
+      print('[${DateTime.now()}] '
+          '$color[${rec.level.name}] [${rec.loggerName}]\u001B[0m: '
+          '${rec.message}');
     });
 
     if (this._token == null || this._token == "")
       throw Exception("Token cannot be null or empty");
-    if (this._options == null) this._options = ClientOptions();
+
+    this._options = options ?? ClientOptions();
 
     this.guilds = _SnowflakeCache();
     this.channels = ChannelCache._new();

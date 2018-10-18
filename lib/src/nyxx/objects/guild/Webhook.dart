@@ -75,7 +75,7 @@ class Webhook extends SnowflakeEntity implements ISend {
     if (files != null && files.isNotEmpty) {
       r = await _client.http.sendMultipart(
           'POST', '/channels/${this.id}/messages', files,
-          data: reqBody);
+          data: reqBody..addAll({"tts": tts}));
     } else {
       r = await _client.http.send('POST', '/channels/${this.channel.id}/messages',
           body: reqBody..addAll({"tts": tts}));

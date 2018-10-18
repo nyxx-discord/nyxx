@@ -119,6 +119,14 @@ class Message extends SnowflakeEntity {
     } else
       this.reactions = old.reactions;
 
+    this._onReactionRemove = StreamController.broadcast();
+    this.onReactionRemove = this._onReactionRemove.stream;
+
+    this._onReactionAdded = StreamController.broadcast();
+    this.onReactionAdded = this._onReactionAdded.stream;
+
+    this._onReactionsRemoved = StreamController.broadcast();
+    this.onReactionsRemoved = this._onReactionsRemoved.stream;
 
     this.channel.messages._cacheMessage(this);
   }
