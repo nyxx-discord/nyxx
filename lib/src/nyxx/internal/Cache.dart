@@ -72,7 +72,7 @@ abstract class Cache<T, S> {
   /// Loop over elements from cache
   void forEach(void f(T key, S value)) => _cache.forEach(f);
 
-  /// Take  [count] elements from cache. Returns Iterable of cache values
+  /// Take [count] elements from cache. Returns Iterable of cache values
   Iterable<S> take(int count) => values.take(count);
 
   /// Takes [count] last elements from cache. Returns Iterable of cache values
@@ -137,6 +137,14 @@ class MessageCache extends Cache<Snowflake, Message> {
 
   /// Returns messages which were sent by bots
   Iterable<Message> get byBot => values.where((m) => m.author.bot);
+
+  @override
+  /// Takes first [count] elements from cache. Returns Iterable of cache values
+  Iterable<Message> take(int count) => values.toList().sublist(values.length - count);
+
+  @override
+  /// Takes last [count] elements from cache. Returns Iterable of cache values
+  Iterable<Message> takeLast(int count) => values.take(count);
 
   /// Unsupported
   @override
