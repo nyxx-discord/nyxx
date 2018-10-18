@@ -206,11 +206,11 @@ class Nyxx {
       else
         color = "\u001B[0m";
 
-      print('$color[${rec.level.name}] \u001B[0m {${rec.loggerName}} - '
+      print('$color[${rec.level.name}] \u001B[0m [${rec.loggerName}] - '
           '${rec.time.day}.${rec.time.month}.${rec.time.year} '
           '${rec.time.hour}:${rec.time.minute}:${rec.time.second}'
           ':${rec.time.millisecond} '
-          '-- ${rec.message}');
+          '| ${rec.message}');
     });
 
     if (this._token == null || this._token == "")
