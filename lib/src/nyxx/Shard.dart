@@ -160,8 +160,6 @@ class Shard {
         break;
 
       case _OPCodes.INVALID_SESSION:
-        print("SESSION: ${jsonEncode(msg)}");
-
         _logger.severe("Invalid session. Reconnecting...");
         DisconnectEvent._new(this, 9);
         this._onDisconnect.add(this);
