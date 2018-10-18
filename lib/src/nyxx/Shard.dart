@@ -39,11 +39,10 @@ class Shard {
     this.onDisconnect = this._onDisconnect.stream;
   }
 
-  void setPresence({String status, bool afk, Presence game, DateTime since}) {
+  void setPresence({String status, bool afk = false, Presence game, DateTime since}) {
     var packet = Map<String, dynamic>();
 
-    if(status != null)
-      packet['status'] = status;
+    packet['status'] = status;
 
     if(afk != null)
       packet['afk'] = afk;
@@ -53,15 +52,17 @@ class Shard {
       gameMap['name'] = game.name;
 
       if(game.type != null)
-        gameMap['type'] = game.type;
+        gameMap['type'] = game.type._value;
 
       if(game.url != null)
         gameMap['url'] = game.url;
 
       packet['game'] = gameMap;
     }
+
     if(since != null)
       packet['since'] = since.millisecondsSinceEpoch;
+    else packet['since'] = null;
 
     this.send("STATUS_UPDATE", packet);
   }
@@ -164,6 +165,7 @@ class Shard {
         _logger.severe("Invalid session. Reconnecting...");
         DisconnectEvent._new(this, 9);
         this._onDisconnect.add(this);
+
         if(msg['d'] as bool) {
           this._socket = null;
           Timer(Duration(seconds: 2), () => _connect(true));
@@ -171,7 +173,6 @@ class Shard {
           Timer(Duration(seconds: 6), () => _connect(false, true));
         }
 
-        this._connect(false);
         break;
 
       case _OPCodes.DISPATCH:
@@ -179,8 +180,6 @@ class Shard {
         switch (j) {
           case 'READY':
             this._sessionId = msg['d']['session_id'] as String;
-            //print("READY: ${jsonEncode(msg)}");
-
             _client.self =
                 ClientUser._new(msg['d']['user'] as Map<String, dynamic>);
 
@@ -367,22 +366,18 @@ class Shard {
 
     switch (this._socket.closeCode) {
       case 4004:
-        //throw _throw(
-        //    'The account token sent with your identify payload is incorrect.');
         exit(1);
         break;
       case 4010:
-        //throw _throw('You sent an invalid shard when identifying.');
         exit(1);
         break;
       case 4007:
       case 4009:
       case 1001:
-      case 1005:
         this._connect(true);
         break;
       default:
-        this._connect();
+        this._connect(false, false);
         break;
     }
 
