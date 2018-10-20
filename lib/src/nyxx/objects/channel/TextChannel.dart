@@ -36,6 +36,8 @@ class TextChannel extends MessageChannel
     pinsUpdated = _pinsUpdated.stream;
   }
 
+  //T getRaw<T>(Map<String, dynamic> raw, String name) => raw[name] as T;
+
   /// Edits the channel.
   Future<TextChannel> edit(
       {String name, String topic, int position, int slowModeTreshold}) async {
