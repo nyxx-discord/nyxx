@@ -98,7 +98,7 @@ class Player {
 
     var res = await req.send();
     if (res.statusCode != 200)
-      throw Exception("Cannot comunicate with lavalink via http");
+      return Future.error(Exception("Cannot comunicate with lavalink via http"));
 
     var r = jsonDecode(await res.stream.bytesToString());
     return TrackResponse._new(r as Map<String, dynamic>);
@@ -142,26 +142,22 @@ class Player {
   }
 
   /// Pauses currently played track
-  Future<void> pause() async {
-    _webSocket.add(jsonEncode(_SimpleOp("pause", _guild)._build()));
-  }
+  Future<void> pause() async =>
+      _webSocket.add(jsonEncode(_SimpleOp("pause", _guild)._build()));
 
   /// Stops track playback
-  Future<void> stop() async {
-    _webSocket.add(jsonEncode(_SimpleOp("stop", _guild)._build()));
-  }
+  Future<void> stop() async =>
+      _webSocket.add(jsonEncode(_SimpleOp("stop", _guild)._build()));
 
   /// Seeks track to position in milliseconds
-  Future<void> seek(int position) async {
-    _webSocket.add(jsonEncode(_OpSeek(_guild, position)));
-  }
+  Future<void> seek(int position) async =>
+      _webSocket.add(jsonEncode(_OpSeek(_guild, position)));
 
   /// Set player volume. Volume may range from 0 to 1000. 100 is default.
-  Future<void> setVolume(int volume) async {
-    _webSocket.add(jsonEncode(_OpVolume(_guild, volume).build()));
-  }
+  Future<void> setVolume(int volume) async =>
+      _webSocket.add(jsonEncode(_OpVolume(_guild, volume).build()));
 
   Future<void> _finish() async {
-    if (isConnected) await disconnect();
+    if (isConnected) return disconnect();
   }
 }
