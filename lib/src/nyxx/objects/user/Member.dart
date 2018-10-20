@@ -5,7 +5,7 @@ class Member extends User {
   /// The member's nickname, null if not set.
   String nickname;
 
-  /// The member's status, `offline`, `online`, `idle`, or `dnd`.
+  /// The member's status. `offline`, `online`, `idle`, or `dnd`.
   MemberStatus status;
 
   /// When the member joined the guild.
@@ -22,9 +22,11 @@ class Member extends User {
 
   /// A list of role IDs the member has.
   List<Role> roles;
-
+  
+  Snowflake _guildId;
+  
   /// The guild that the member is a part of.
-  Guild guild;
+  Guild get guild => client.guilds[_guildId];
 
   /// Returns highest role for member
   Role get highestRole =>
@@ -36,9 +38,7 @@ class Member extends User {
       .color;
 
   /// Voice state
-  VoiceState get voiceState => guild.voiceStates.hasKey(this.id)
-      ? guild.voiceStates[this.id]
-      : null;
+  VoiceState get voiceState => guild.voiceStates[this.id];
 
   /// Returns total permissions of user.
   Permissions get totalPermissions {
@@ -48,25 +48,27 @@ class Member extends User {
     return Permissions.fromInt(total);
   }
 
-  Member._reverse(Map<String, dynamic> data, this.guild) : super._new(data) {
-    _cons(data['member'] as Map<String, dynamic>);
+  Member._reverse(Map<String, dynamic> data, Guild guild) : super._new(data) {
+    this._guildId = guild.id;
+    _cons(data['member'] as Map<String, dynamic>, guild);
   }
 
-  Member._new(Map<String, dynamic> data, this.guild)
+  Member._new(Map<String, dynamic> data, Guild guild)
       : super._new(data['user'] as Map<String, dynamic>) {
-    _cons(data);
+    this._guildId = guild.id;
+    _cons(data, guild);
   }
 
-  void _cons(Map<String, dynamic> data) {
+  void _cons(Map<String, dynamic> data, Guild guild) {
     this.nickname = data['nick'] as String;
     this.deaf = data['deaf'] as bool;
     this.mute = data['mute'] as bool;
     this.status = MemberStatus.from(data['status'] as String);
 
-    if (data['roles'] != null && this.guild.roles != null) {
+    if (data['roles'] != null && guild.roles != null) {
       this.roles = List();
       data['roles'].forEach((i) {
-        this.roles.add(this.guild.roles[Snowflake(i as String)]);
+        this.roles.add(guild.roles[Snowflake(i as String)]);
       });
     }
 
@@ -100,7 +102,6 @@ class Member extends User {
     await _client.http.send(
         'PUT', '/guilds/${guild.id}/members/${this.id}/roles/${role.id}',
         reason: auditReason);
-    return null;
   }
 
   Future<void> removeRole(Role role, {String auditReason = ""}) async {

@@ -4,7 +4,6 @@ import 'package:nyxx/nyxx.dart';
 import 'EmojisUnicode.dart' as util;
 import 'Util.dart' as util;
 
-
 /// Creates new poll, generates options and collects results. Returns `Map<Emoji, int` as result. [timeout] is set by default to 10 minutes
 ///
 /// ```
@@ -17,8 +16,7 @@ Future<Map<Emoji, int>> createPoll(
     {Duration timeout = const Duration(minutes: 10),
     String message,
     bool delete = false,
-    Object Function(Map<Emoji, String> options, String message)
-        messageFactory}) async {
+    dynamic messageFactory(Map<Emoji, String> options, String message)}) async {
   var toSend;
 
   if (messageFactory == null) {
@@ -42,7 +40,7 @@ Future<Map<Emoji, int>> createPoll(
   else if (toSend is EmbedBuilder)
     msg = await channel.send(embed: toSend);
   else
-    return null;
+    return Future.error(null);
 
   for (var emoji in options.keys) await msg.createReaction(emoji);
 

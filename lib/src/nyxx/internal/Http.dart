@@ -139,9 +139,17 @@ class HttpResponse {
 
   /// Whether or not the request was aborted. If true, all other fields will be null.
   bool aborted;
+
+  /// Status message
   String statusText;
+
+  /// Status code
   int status;
+
+  /// Response headers
   Map<String, String> headers;
+
+  /// Response body
   dynamic body;
 
   HttpResponse._new(
@@ -167,9 +175,7 @@ class HttpResponse {
     var json;
     try {
       json = jsonDecode(res);
-    } catch (e, stacktrace) {
-      return Future.error(e, stacktrace);
-    }
+    } catch (e) {}
 
     return HttpResponse._new(request, r.statusCode, "", r.headers, json);
   }
@@ -238,7 +244,7 @@ class HttpBucket {
         if (r.status == 429) {
           RatelimitEvent._new(request, false, r);
           request.http._logger.warning(
-              "Rate limitted on endpoint: ${request.path}. Trying to send request again after timeout...");
+              "Rate limitted via 429 on endpoint: ${request.path}. Trying to send request again after timeout...");
           Timer(Duration(milliseconds: (r.body['retry_after'] as int) + 100),
               () => this._execute(request));
         } else {
@@ -259,6 +265,8 @@ class HttpBucket {
         this._execute(request);
       } else {
         RatelimitEvent._new(request as HttpRequest, true);
+        request.http._logger.warning(
+            "Rate limitted internally on endpoint: ${request.path}. Trying to send request again after timeout...");
         Timer(waitTime, () {
           this.rateLimitRemaining = 1;
           this._execute(request);
@@ -301,10 +309,10 @@ class Http {
 
     await for (HttpResponse r in request.stream) {
       if (!r.aborted && r.status >= 200 && r.status < 300) {
-        _client ?? HttpResponseEvent._new(r);
+        if(_client != null) HttpResponseEvent._new(r);
         return r;
       } else {
-        _client ?? HttpErrorEvent._new(r);
+        if(_client != null) HttpErrorEvent._new(r);
         return Future.error(r);
       }
     }
@@ -333,10 +341,10 @@ class Http {
 
     await for (HttpResponse r in request.stream) {
       if (!r.aborted && r.status >= 200 && r.status < 300) {
-        _client ?? HttpResponseEvent._new(r);
+        if(_client != null) HttpResponseEvent._new(r);
         return r;
       } else {
-        _client ?? HttpErrorEvent._new(r);
+        if(_client != null) HttpErrorEvent._new(r);
         return Future.error(r);
       }
     }
