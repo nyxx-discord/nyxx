@@ -603,7 +603,7 @@ class CommandsFramework {
           if (_typeConverters == null) return false;
 
           for (var converter in _typeConverters) {
-            if (type == converter.getType()) {
+            if (type == converter._type) {
               var t = converter.parse(splitted[index], e);
               if (t != null) {
                 collected.add(t);

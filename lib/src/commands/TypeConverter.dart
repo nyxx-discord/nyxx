@@ -4,5 +4,5 @@ part of nyxx.commands;
 /// Overriding this class allows to later register it into [CommandsFramework]
 abstract class TypeConverter<T> {
   T parse(String from, Message msg);
-  Type getType() => T;
+  Type get _type => T;
 }

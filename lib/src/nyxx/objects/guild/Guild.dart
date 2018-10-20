@@ -240,7 +240,7 @@ class Guild extends SnowflakeEntity {
   }
 
   /// Allows to create new guild emoji. [name] is required and you have to specify one of two other parameters: [image] or [imageBytes].
-  /// [imageBytes] can be useful if you want to create image from url.
+  /// [imageBytes] can be useful if you want to create image from http response.
   ///
   /// ```
   /// var emojiFile = new File('weed.png');
@@ -249,8 +249,8 @@ class Guild extends SnowflakeEntity {
   Future<GuildEmoji> createEmoji(String name,
       {List<Role> roles, File image, List<int> imageBytes}) async {
     if (await image.length() > 256000)
-      throw Exception(
-          "Emojis and animated emojis have a maximum file size of 256kb.");
+      return Future.error(Exception(
+          "Emojis and animated emojis have a maximum file size of 256kb."));
 
     var encoded =
         base64.encode(image == null ? imageBytes : await image.readAsBytes());
@@ -316,7 +316,6 @@ class Guild extends SnowflakeEntity {
   /// Leaves the guild.
   Future<void> leave() async {
     await _client.http.send('DELETE', "/users/@me/guilds/$id");
-    return null;
   }
 
   /// Returns list of Guilds invites
@@ -392,7 +391,7 @@ class Guild extends SnowflakeEntity {
   /// var role = guild.roles.values.first;
   /// var mem = guild.members.values.first;
   ///
-  /// await guild.addRoleToMember(memm role);
+  /// await guild.addRoleToMember(member, role);
   /// ```
   Future<void> addRoleToMember(Member user, Role role) async {
     await _client.http
@@ -427,8 +426,8 @@ class Guild extends SnowflakeEntity {
       PermissionsBuilder permissions,
       String auditReason = ""}) async {
     // Checks to avoid API panic
-    if (type == ChannelType.dm || type == ChannelType.groupDm) return null;
-    if (type == ChannelType.group && parent != null) return null;
+    if (type == ChannelType.dm || type == ChannelType.groupDm) return Future.error("Cannot create DM channel.");
+    if (type == ChannelType.group && parent != null) return Future.error("Cannot create Category Channel which have parent channel.");
 
     // Construct body
     var body = <String, dynamic>{"name": name, "type": _matchChannelType(type)};
@@ -452,7 +451,7 @@ class Guild extends SnowflakeEntity {
       case ChannelType.voice:
         return VoiceChannel._new(raw as Map<String, dynamic>, this);
       default:
-        return null;
+        return Future.error("Cannot create DM channel.");
     }
   }
 
@@ -566,7 +565,6 @@ class Guild extends SnowflakeEntity {
   /// Deletes the guild.
   Future<void> delete() async {
     await _client.http.send('DELETE', "/guilds/${this.id}");
-    return null;
   }
 }
 
