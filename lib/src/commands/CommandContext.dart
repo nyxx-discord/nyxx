@@ -45,7 +45,7 @@ class CommandContext {
   /// }
   /// ```
   Future<Message> reply(
-      {Object content,
+      {Object content = "",
       EmbedBuilder embed,
       bool tts = false,
       bool disableEveryone}) async {
@@ -56,7 +56,7 @@ class CommandContext {
         disableEveryone: disableEveryone);
   }
 
-  /// Reply to messages, then delete it [duration] expires.
+  /// Reply to messages, then delete it when [duration] expires.
   ///
   /// ```
   /// @Command()
@@ -85,7 +85,7 @@ class CommandContext {
   /// ```
   /// @Command()
   /// Future<void> getAv(User user) async {
-  ///   await replyDelayed(content: uset.avatarURL());
+  ///   await replyDelayed(Duration(seconds: 2), content: uset.avatarURL());
   /// }
   /// ```
   Future<Message> replyDelayed(Duration duration,
