@@ -161,6 +161,7 @@ class Shard {
 
       case _OPCodes.INVALID_SESSION:
         _logger.severe("Invalid session. Reconnecting...");
+        _heartbeatTimer.cancel();
         DisconnectEvent._new(this, 9);
         this._onDisconnect.add(this);
 
@@ -181,33 +182,9 @@ class Shard {
             _client.self =
                 ClientUser._new(msg['d']['user'] as Map<String, dynamic>);
 
-            if (_client.self.bot) {
-              _client.http._headers['Authorization'] = "Bot ${_client._token}";
-            } else {
-              _client.http._headers['Authorization'] = _client._token;
-              _client._options.forceFetchMembers = false;
-            }
-
+            _client.http._headers['Authorization'] = "Bot ${_client._token}";
             _client.http._headers['User-Agent'] =
                 "${_client.self.username} (${_Constants.repoUrl}, ${_Constants.version})";
-
-            msg['d']['guilds'].forEach((o) {
-              var snow = Snowflake(o['id'] as String);
-              if (o['unavailable'] as bool != true) {
-                _client.guilds[snow] =
-                    Guild._new(o as Map<String, dynamic>, true, true);
-              }
-            });
-
-            msg['d']['private_channels'].forEach((o) {
-              if (o['type'] == 1) {
-                var ch = DMChannel._new(o as Map<String, dynamic>);
-                client.channels[ch.id] = ch;
-              } else {
-                var ch = GroupDMChannel._new(o as Map<String, dynamic>);
-                client.channels[ch.id] = ch;
-              }
-            });
 
             this.ready = true;
             this._onReady.add(this);
@@ -349,9 +326,9 @@ class Shard {
   }
 
   void _handleErr() {
-    _socket.close(1001);
-    this._heartbeatTimer.cancel();
+    //_socket.close(1001);
 
+    this._heartbeatTimer.cancel();
     _logger.severe("Shard [$id] disconnected. Error code: [${this._socket.closeCode}] | Error message: [${this._socket.closeReason}]");
 
     if(client.shards.length == 1) {
@@ -360,6 +337,7 @@ class Shard {
       client.users.invalidate();
       client.channels.invalidate();
     }
+
     this.guilds.clear();
 
     switch (this._socket.closeCode) {
@@ -371,7 +349,7 @@ class Shard {
         break;
       case 4007:
       case 4009:
-      case 1001:
+      //case 1001:
         this._connect(true);
         break;
       default:

@@ -196,13 +196,13 @@ class Nyxx {
 
     Logger.root.level = Level.ALL;
     Logger.root.onRecord.listen((LogRecord rec) {
-      String color;
+      String color = "";
       if (rec.level == Level.WARNING)
         color = "\u001B[33m";
       else if (rec.level == Level.SEVERE)
         color = "\u001B[31m";
       else if (rec.level == Level.INFO)
-        color = "\u001b[32m";
+        color = "\u001B[32m";
       else
         color = "\u001B[0m";
 
