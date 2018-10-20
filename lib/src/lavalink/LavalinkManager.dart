@@ -19,10 +19,10 @@ Future<void> sendFakeOp4(VoiceChannel channel,
 
 /// Creates voice service. [yamlConfigFile] is absolute path to lavalink config file.
 /// Returns instance of VoiceService
-VoiceService init(String yamlConfigFile) {
+VoiceService init(String ws, String rest, String password) {
   if (_manager != null) throw Exception("Tried initialize VoiceService twice.");
 
-  _manager = VoiceService._new(yamlConfigFile);
+  _manager = VoiceService._new(ws, rest, password);
   _logger.info("Voice service intitailized!");
   return _manager;
 }
@@ -65,19 +65,12 @@ class VoiceService {
   StreamController<Stats> _onStats;
   Stream<Stats> onStats;
 
-  VoiceService._new(String yamlConfigFile) {
-    var file = File(yamlConfigFile);
-    var contents = file.readAsStringSync();
-    var config = loadYaml(contents);
-
+  VoiceService._new(String ws, String rest, this._password) {
     _onStats = StreamController.broadcast();
     onStats = _onStats.stream;
 
-    this._wsPath = Uri.parse(
-        "ws://${config['lavalink']['server']['ws']['host']}:${config['lavalink']['server']['ws']['port']}");
-    this._password = config['lavalink']['server']['password'] as String;
-    this._restPath = Uri.parse(
-        "http://${config['server']['address']}:${config['server']['port']}");
+    this._wsPath = Uri.parse("ws://$ws");
+    this._restPath = Uri.parse("http://$rest");
 
     _connect();
   }
