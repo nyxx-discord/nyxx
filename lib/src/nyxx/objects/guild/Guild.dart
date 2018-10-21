@@ -74,9 +74,6 @@ class Guild extends SnowflakeEntity {
   /// Guild custom emojis
   Cache<Snowflake, GuildEmoji> emojis;
 
-  /// Cached guild webhookds. It's null until `getWebhooks` is called.
-  Cache<Snowflake, Webhook> webhooks;
-
   /// Permission of current(bot) user in this guild
   Permissions currentUserPermissions;
 
@@ -281,7 +278,7 @@ class Guild extends SnowflakeEntity {
 
   /// Get's the guild's bans.
   Future<List<Ban>> getBans() async {
-    HttpResponse r = await _client.http.send('GET', "/guilds/$id/bans");
+    final r = await _client.http.send('GET', "/guilds/$id/bans");
 
     List<Ban> lst = List();
     r.body.forEach((o) {
@@ -316,6 +313,20 @@ class Guild extends SnowflakeEntity {
   /// Leaves the guild.
   Future<void> leave() async {
     await _client.http.send('DELETE', "/users/@me/guilds/$id");
+  }
+
+  Future<Invite> createInvite({int maxAge = 0,
+      int maxUses = 0,
+      bool temporary = false,
+      bool unique = false,
+      String auditReason = ""}) async {
+    var chan = this.channels.first as GuildChannel;
+
+    if(chan == null)
+      return Future.error("Cannot get any channel to create invite to");
+
+    return chan.createInvite(maxUses: maxUses, maxAge: maxAge, temporary: temporary,
+      unique: unique, auditReason: auditReason);
   }
 
   /// Returns list of Guilds invites
@@ -373,7 +384,7 @@ class Guild extends SnowflakeEntity {
   /// ```
   /// var rb = new RoleBuilder()
   ///   ..name = "Dartyy"
-  ///   ..color = utils.Color.HEXtoInt("#0175C2")
+  ///   ..color = DiscordColor.fromInt(0xFF04F2)
   ///   ..hoist = true;
   ///
   /// var role = await guild.createRole(roleBuilder);
@@ -395,7 +406,7 @@ class Guild extends SnowflakeEntity {
   /// ```
   Future<void> addRoleToMember(Member user, Role role) async {
     await _client.http
-        .send('PUT', '/guilds/$id/members/$user.id/roles/$role.id');
+        .send('PUT', '/guilds/$id/members/${user.id}/roles/${role.id}');
   }
 
   /// Returns list of available [VoiceChannel]s
@@ -536,28 +547,21 @@ class Guild extends SnowflakeEntity {
   Future<Member> getMemberById(Snowflake id) async {
     if (this.members.hasKey(id)) return this.members[id];
 
-    final HttpResponse r = await _client.http
+    final r = await _client.http
         .send('GET', '/guilds/${this.id}/members/${id.toString()}');
 
     return Member._new(r.body as Map<String, dynamic>, this);
   }
 
   /// Gets all of the webhooks for this guild. Webhooks won't be cached until method will be invoked with [cache] as true.
-  Future<Map<Snowflake, Webhook>> getWebhooks(
-      {bool force = false, bool cache = false}) async {
-    if (this.webhooks != null && !force) return webhooks.asMap;
-
+  Future<Map<Snowflake, Webhook>> getWebhooks() async {
     HttpResponse r = await _client.http.send('GET', "/guilds/$id/webhooks");
+
     Map<Snowflake, Webhook> map = Map();
     r.body.forEach((k, o) {
       var webhook = Webhook._new(o as Map<String, dynamic>);
       map[webhook.id] = webhook;
     });
-
-    if (cache) {
-      this.webhooks = _SnowflakeCache();
-      this.webhooks.addMap(map);
-    }
 
     return map;
   }
