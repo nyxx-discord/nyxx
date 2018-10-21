@@ -7,51 +7,49 @@ class Permissions extends AbstractPermissions {
     _construct(permissions);
   }
 
+  Permissions.empty() {
+    _construct(0);
+  }
+
+  Permissions.all() {
+    _construct(PermissionsConstants.allPermissions);
+  }
+
   /// Makes a [Permissions] object from overwrite object
   Permissions.fromOverwrite(int permissions, int allow, int deny) {
-    int applied = permissions & ~deny;
-    applied |= allow;
-
-    _construct(applied);
+    _construct(utils.apply(permissions, allow, deny));
   }
 
   void _construct(int permissions) {
     this.raw = permissions;
-    this.createInstantInvite =
-        (this.raw & PermissionsConstants.createInstantInvite) > 0;
-    this.kickMembers = (this.raw & PermissionsConstants.kickMembers) > 0;
-    this.banMembers = (this.raw & PermissionsConstants.banMembers) > 0;
-    this.administrator = (this.raw & PermissionsConstants.administrator) > 0;
-    this.manageChannels = (this.raw & PermissionsConstants.manageChannels) > 0;
-    this.manageGuild = (this.raw & PermissionsConstants.manageGuild) > 0;
-    this.addReactions = (this.raw & PermissionsConstants.addReactions) > 0;
-    this.viewAuditLog = (this.raw & PermissionsConstants.viewAuditLog) > 0;
-    this.viewChannel = (this.raw & PermissionsConstants.viewChannel) > 0;
-    this.sendMessages = (this.raw & PermissionsConstants.sendMessages) > 0;
-    this.prioritySpeaker =
-        (this.raw & PermissionsConstants.prioritySpeaker) > 0;
-    this.sendTtsMessages =
-        (this.raw & PermissionsConstants.sendTtsMessages) > 0;
-    this.manageMessages = (this.raw & PermissionsConstants.manageMessages) > 0;
-    this.embedLinks = (this.raw & PermissionsConstants.embedLinks) > 0;
-    this.attachFiles = (this.raw & PermissionsConstants.attachFiles) > 0;
-    this.readMessageHistory =
-        (this.raw & PermissionsConstants.readMessageHistory) > 0;
-    this.mentionEveryone =
-        (this.raw & PermissionsConstants.mentionEveryone) > 0;
-    this.useExternalEmojis =
-        (this.raw & PermissionsConstants.externalEmojis) > 0;
-    this.connect = (this.raw & PermissionsConstants.connect) > 0;
-    this.speak = (this.raw & PermissionsConstants.speak) > 0;
-    this.muteMembers = (this.raw & PermissionsConstants.muteMembers) > 0;
-    this.deafenMembers = (this.raw & PermissionsConstants.deafenMembers) > 0;
-    this.moveMembers = (this.raw & PermissionsConstants.moveMembers) > 0;
-    this.useVad = (this.raw & PermissionsConstants.useVad) > 0;
-    this.changeNickname = (this.raw & PermissionsConstants.changeNickname) > 0;
-    this.manageNicknames =
-        (this.raw & PermissionsConstants.manageNicknames) > 0;
-    this.manageRoles =
-        (this.raw & PermissionsConstants.manageRolesOrPermissions) > 0;
-    this.manageWebhooks = (this.raw & PermissionsConstants.manageWebhooks) > 0;
+
+    this.createInstantInvite = utils.isApplied(permissions, PermissionsConstants.createInstantInvite);
+    this.kickMembers = utils.isApplied(permissions, PermissionsConstants.kickMembers);
+    this.banMembers = utils.isApplied(permissions, PermissionsConstants.banMembers);
+    this.administrator = utils.isApplied(permissions, PermissionsConstants.administrator);
+    this.manageChannels = utils.isApplied(permissions, PermissionsConstants.manageChannels);
+    this.manageGuild = utils.isApplied(permissions, PermissionsConstants.manageGuild);
+    this.addReactions = utils.isApplied(permissions, PermissionsConstants.addReactions);
+    this.viewAuditLog = utils.isApplied(permissions, PermissionsConstants.viewAuditLog);
+    this.viewChannel = utils.isApplied(permissions, PermissionsConstants.viewChannel);
+    this.sendMessages = utils.isApplied(permissions, PermissionsConstants.sendMessages);
+    this.prioritySpeaker = utils.isApplied(permissions, PermissionsConstants.prioritySpeaker);
+    this.sendTtsMessages = utils.isApplied(permissions, PermissionsConstants.sendTtsMessages);
+    this.manageMessages = utils.isApplied(permissions, PermissionsConstants.manageMessages);
+    this.embedLinks = utils.isApplied(permissions, PermissionsConstants.embedLinks);
+    this.attachFiles = utils.isApplied(permissions, PermissionsConstants.attachFiles);
+    this.readMessageHistory = utils.isApplied(permissions, PermissionsConstants.readMessageHistory);
+    this.mentionEveryone = utils.isApplied(permissions, PermissionsConstants.mentionEveryone);
+    this.useExternalEmojis = utils.isApplied(permissions, PermissionsConstants.externalEmojis);
+    this.connect = utils.isApplied(permissions, PermissionsConstants.connect);
+    this.speak = utils.isApplied(permissions, PermissionsConstants.speak);
+    this.muteMembers = utils.isApplied(permissions, PermissionsConstants.muteMembers);
+    this.deafenMembers = utils.isApplied(permissions, PermissionsConstants.deafenMembers);
+    this.moveMembers = utils.isApplied(permissions, PermissionsConstants.moveMembers);
+    this.useVad = utils.isApplied(permissions, PermissionsConstants.useVad);
+    this.changeNickname = utils.isApplied(permissions, PermissionsConstants.changeNickname);
+    this.manageNicknames = utils.isApplied(permissions, PermissionsConstants.manageNicknames);
+    this.manageRoles = utils.isApplied(permissions, PermissionsConstants.manageRolesOrPermissions);
+    this.manageWebhooks = utils.isApplied(permissions, PermissionsConstants.manageWebhooks);
   }
 }

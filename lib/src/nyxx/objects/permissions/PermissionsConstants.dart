@@ -88,4 +88,6 @@ class PermissionsConstants {
 
   /// Allows management and editing of emojis
   static const int manageEmojis = 1 << 30;
+
+  static const int allPermissions = 0x7FFFFFFF;
 }

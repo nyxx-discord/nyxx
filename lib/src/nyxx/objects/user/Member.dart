@@ -1,7 +1,7 @@
 part of nyxx;
 
 /// A user with [Guild] context.
-class Member extends User {
+class Member extends User implements GuildEntity {
   /// The member's nickname, null if not set.
   String nickname;
 
@@ -22,40 +22,42 @@ class Member extends User {
 
   /// A list of role IDs the member has.
   List<Role> roles;
-  
-  Snowflake _guildId;
-  
+
+  @override
   /// The guild that the member is a part of.
-  Guild get guild => client.guilds[_guildId];
+  Guild guild;
 
   /// Returns highest role for member
-  Role get highestRole =>
+  Role get highestRole => roles.isEmpty ? guild.everyoneRole :
       roles.reduce((f, s) => f.position > s.position ? f : s);
 
-  int get color => roles
-      .where((r) => r.color > 0)
-      .reduce((f, s) => f.position > s.position ? f : s)
-      .color;
+  DiscordColor get color => highestRole.color;
 
   /// Voice state
   VoiceState get voiceState => guild.voiceStates[this.id];
 
   /// Returns total permissions of user.
-  Permissions get totalPermissions {
-    var total = 0;
-    for (var role in roles) total |= role.permissions.raw;
+  Permissions get effectivePermissions {
+    if(this == guild.owner)
+      return Permissions.all();
+
+    var total = guild.everyoneRole.permissions.raw;
+    for (var role in roles) {
+      total |= role.permissions.raw;
+
+      if (utils.isApplied(total, PermissionsConstants.administrator))
+        return Permissions.fromInt(PermissionsConstants.allPermissions);
+    }
 
     return Permissions.fromInt(total);
   }
 
-  Member._reverse(Map<String, dynamic> data, Guild guild) : super._new(data) {
-    this._guildId = guild.id;
+  Member._reverse(Map<String, dynamic> data, this.guild) : super._new(data) {
     _cons(data['member'] as Map<String, dynamic>, guild);
   }
 
-  Member._new(Map<String, dynamic> data, Guild guild)
+  Member._new(Map<String, dynamic> data, this.guild)
       : super._new(data['user'] as Map<String, dynamic>) {
-    this._guildId = guild.id;
     _cons(data, guild);
   }
 

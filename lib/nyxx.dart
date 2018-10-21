@@ -66,6 +66,9 @@ part 'src/nyxx/builders/GuildBuilder.dart';
 
 part 'src/nyxx/objects/ISend.dart';
 part 'src/nyxx/objects/IMentionable.dart';
+part 'src/nyxx/objects/GuildEntity.dart';
+
+part 'src/nyxx/objects/DiscordColor.dart';
 
 part 'src/nyxx/objects/SnowflakeEntity.dart';
 part 'src/nyxx/objects/Snowflake.dart';
@@ -121,5 +124,5 @@ part 'src/nyxx/objects/OAuth/OAuth2Info.dart';
 
 part 'src/nyxx/objects/permissions/Permissions.dart';
 part 'src/nyxx/objects/permissions/AbstractPermissions.dart';
-part 'src/nyxx/objects/permissions/ChannelPermissions.dart';
+part 'src/nyxx/objects/permissions/PermissionOverrides.dart';
 part 'src/nyxx/objects/permissions/PermissionsConstants.dart';

@@ -2,7 +2,7 @@ part of nyxx;
 
 /// [Message] class represents single message. It contains it's Event [Stream]s.
 /// [Message] among all it's properties has also back-reference to [MessageChannel] from which it was sent, [Guild] and [User] properties which are associated with this message.
-class Message extends SnowflakeEntity {
+class Message extends SnowflakeEntity implements GuildEntity {
   StreamController<MessageReactionEvent> _onReactionAdded;
   StreamController<MessageReactionEvent> _onReactionRemove;
   StreamController<MessageReactionsRemovedEvent> _onReactionsRemoved;
@@ -16,6 +16,7 @@ class Message extends SnowflakeEntity {
   /// Channel in which message was sent
   MessageChannel channel;
 
+  @override
   /// The message's guild.
   Guild guild;
 

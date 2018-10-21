@@ -1,7 +1,9 @@
 part of nyxx;
 
 /// Emoji object. Handles Unicode emojis and custom ones.
-class GuildEmoji extends Emoji implements SnowflakeEntity {
+class GuildEmoji extends Emoji implements SnowflakeEntity, GuildEntity {
+
+  @override
   /// Emoji guild
   Guild guild;
 

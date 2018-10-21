@@ -1,10 +1,11 @@
 part of nyxx;
 
 /// Represents channel which is part of guild.
-abstract class GuildChannel implements Channel {
+abstract class GuildChannel implements Channel, GuildEntity{
   /// The channel's name.
   String name;
 
+  @override
   /// The guild that the channel is in.
   Guild guild;
 
@@ -35,10 +36,53 @@ abstract class GuildChannel implements Channel {
 
     if (raw['permission_overwrites'] != null) {
       permissions = List();
-      raw['permission_overwrites'].forEach((dynamic o) {
+      raw['permission_overwrites'].forEach((o) {
         permissions.add(ChannelPermissions._new(o as Map<String, dynamic>));
       });
     }
+  }
+
+  /// Returns effective permissions for [member] to this channel including channel overrides.
+  Permissions effectivePermissions(Member member) {
+    if (member.guild == null || member.guild != this.guild)
+      return Permissions.empty();
+
+    if (member.guild.owner == member)
+      return Permissions.fromInt(PermissionsConstants.allPermissions);
+
+    var rawMemberPerms = member.effectivePermissions.raw;
+
+    if(utils.isApplied(rawMemberPerms, PermissionsConstants.administrator))
+      return Permissions.fromInt(PermissionsConstants.allPermissions);
+
+    final overrides = utils.getOverrides(member, this);
+    rawMemberPerms = utils.apply(rawMemberPerms, overrides.first, overrides.last);
+
+    return utils.isApplied(rawMemberPerms, PermissionsConstants.viewChannel) ? Permissions.fromInt(rawMemberPerms) : Permissions.empty();
+  }
+
+  /// Returns effective permissions for [role] to this channel including channel overrides.
+  Permissions effectivePermissionForRole(Role role) {
+    if(role.guild == null || role.guild != this.guild)
+      return Permissions.empty();
+
+    var permissions = role.permissions.raw | guild.everyoneRole.permissions.raw;
+
+    try {
+      var over = this.permissions.firstWhere((f) => f.id == guild.everyoneRole.id);
+
+      permissions &= ~over.deny;
+      permissions |= over.allow;
+    } catch (e) {}
+
+    try {
+      var over = this.permissions.firstWhere((f) => f.id == role.id);
+
+      permissions &= ~over.deny;
+      permissions |= over.allow;
+    } catch (e) {}
+
+    return Permissions.fromInt(permissions);
   }
 
   /// Creates new [Invite] for [Channel] and returns it's instance
