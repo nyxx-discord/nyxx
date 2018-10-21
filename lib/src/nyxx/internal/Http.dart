@@ -179,6 +179,9 @@ class HttpResponse {
 
     return HttpResponse._new(request, r.statusCode, "", r.headers, json);
   }
+
+  @override
+  String toString() => "STATUS [$status], STATUS TEXT: [$statusText], RESPONSE: [$body]";
 }
 
 /// A bucket for managing ratelimits.
