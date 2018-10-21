@@ -78,6 +78,12 @@ abstract class Cache<T, S> {
   /// Takes [count] last elements from cache. Returns Iterable of cache values
   Iterable<S> takeLast(int count) => values.toList().sublist(values.length - count);
 
+  /// Get first element
+  S get first => _cache.values.first;
+
+  /// Get last element
+  S get last => _cache.values.last;
+
   /// Get number of elements from cache
   int get count => _cache.length;
 
@@ -145,6 +151,14 @@ class MessageCache extends Cache<Snowflake, Message> {
   @override
   /// Takes last [count] elements from cache. Returns Iterable of cache values
   Iterable<Message> takeLast(int count) => values.take(count);
+
+  /// Get first element
+  @override
+  Message get first => _cache.values.last;
+
+  /// Get last element
+  @override
+  Message get last => _cache.values.first;
 
   /// Unsupported
   @override
