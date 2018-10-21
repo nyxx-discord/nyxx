@@ -166,7 +166,6 @@ class Shard {
         this._onDisconnect.add(this);
 
         if(msg['d'] as bool) {
-          this._socket = null;
           Timer(Duration(seconds: 2), () => _connect(true));
         } else {
           Timer(Duration(seconds: 6), () => _connect(false, true));

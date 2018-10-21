@@ -187,6 +187,7 @@ class Nyxx {
   Nyxx(this._token, {ClientOptions options, bool ignoreExceptions = true}) {
     if (ignoreExceptions) {
       Isolate.current.setErrorsFatal(false);
+
       ReceivePort errorsPort = ReceivePort();
       errorsPort.listen((err) {
         logger.severe("ERROR: ${err[0]} \n ${err[1]}");
