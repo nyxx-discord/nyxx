@@ -164,7 +164,7 @@ class CommandsFramework {
   }
 
   String _createLog(Module classCmd, Command methodCmd) =>
-      "[${classCmd != null ? classCmd.name : ""}${methodCmd != null && methodCmd.name != null ? " ${methodCmd.name}" : ""}]";
+      "[${classCmd != null ? classCmd.name + " " : ""}${methodCmd != null && methodCmd.name != null ? "${methodCmd.name}" : ""}]";
 
   List<List> _getProcessors(
       ClassMirror classMirror, DeclarationMirror methodMirror) {
@@ -397,51 +397,51 @@ class CommandsFramework {
       case -2:
       case 100:
         dynamic res;
-        try {
-          splittedCommand.removeRange(0, matchedMeta.commandString.length);
-          var methodInj = await _injectParameters(
-              matchedMeta.method, splittedCommand, e.message);
+        splittedCommand.removeRange(0, matchedMeta.commandString.length);
+        var methodInj = await _injectParameters(
+            matchedMeta.method, splittedCommand, e.message);
 
-          if (matchedMeta.parent is ClassMirror) {
-            var cm = matchedMeta.parent as ClassMirror;
-            var toInject = _createConstuctorInjections(cm);
+        if (matchedMeta.parent is ClassMirror) {
+          var cm = matchedMeta.parent as ClassMirror;
+          var toInject = _createConstuctorInjections(cm);
 
-            var instance = cm.newInstance(Symbol(''), toInject);
+          var instance = cm.newInstance(Symbol(''), toInject);
 
-            instance.setField(Symbol("guild"), e.message.guild);
-            instance.setField(Symbol("message"), e.message);
-            instance.setField(Symbol("author"), e.message.author);
-            instance.setField(Symbol("channel"), e.message.channel);
-            res = instance.invoke(matchedMeta.method.simpleName, methodInj);
-          }
+          instance.setField(Symbol("guild"), e.message.guild);
+          instance.setField(Symbol("message"), e.message);
+          instance.setField(Symbol("author"), e.message.author);
+          instance.setField(Symbol("channel"), e.message.channel);
 
-          if (matchedMeta.parent is LibraryMirror) {
-            var context = CommandContext._new(e.message.channel,
-                e.message.author, e.message.guild, e.message);
 
-            res = matchedMeta.parent.invoke(
+          (instance.invoke(matchedMeta.method.simpleName, methodInj).reflectee as Future).catchError((err) {
+            res = err;
+            _commandExecutionFail.add(CommandExecutionFailEvent._new(e.message, err));
+          }).then((r) => res = r);
+        }
+
+        if (matchedMeta.parent is LibraryMirror) {
+          var context = CommandContext._new(e.message.channel,
+              e.message.author, e.message.guild, e.message);
+
+          (matchedMeta.parent.invoke(
                 matchedMeta.method.simpleName,
                 List()
                   ..add(context)
-                  ..addAll(methodInj));
-          }
-        } catch (err, stacktrace) {
-          _commandExecutionFail
-              .add(CommandExecutionFailEvent._new(e.message, err));
-          res = err;
-          logger.severe(
-              "ERROR OCCURED WHEN INVOKING COMMAND \n $err \n $stacktrace");
+                  ..addAll(methodInj)).reflectee as Future).catchError((err) {
+                    res = err;
+                    _commandExecutionFail.add(CommandExecutionFailEvent._new(e.message, err));
+          }).then((r) => res = r);
         }
 
         if (matchedMeta.postprocessors.length > 0) {
           for (var post in matchedMeta.postprocessors)
             post.execute(
                 _services,
-                res is InstanceMirror && res.hasReflectee ? res.reflectee : res,
+                res,
                 e.message);
         }
 
-        logger.fine(
+        logger.info(
             "Command ${_createLog(matchedMeta.classCommand, matchedMeta.methodCommand)} executed");
         break;
     }
@@ -477,7 +477,7 @@ class CommandsFramework {
 
     // Check if user has required permissions
     if (executionCode == -1 && annot.userPermissions.isNotEmpty) {
-      var total = member.totalPermissions;
+      var total = member.effectivePermissions;
 
       print(annot.userPermissions);
       for (var perm in annot.userPermissions) {
@@ -510,7 +510,7 @@ class CommandsFramework {
 
     // Check if bot has required permissions
     if (executionCode == -1 && annot.botPermissions.isNotEmpty) {
-      var total = (await e.guild.getMember(client.self)).totalPermissions;
+      var total = (await e.guild.getMember(client.self)).effectivePermissions;
       for (var perm in annot.botPermissions) {
         if ((total.raw | perm) == 0) {
           executionCode = 6;
@@ -579,6 +579,10 @@ class CommandsFramework {
           var d = DateTime.parse(splitted[index]);
           collected.add(d);
           break;
+        case Snowflake:
+          var id = _entityRegex.firstMatch(splitted[index]).group(3);
+          collected.add(Snowflake(id));
+          break;
         case TextChannel:
           var id = _entityRegex.firstMatch(splitted[index]).group(3);
           collected.add(e.guild.channels[Snowflake(id)]);
@@ -586,6 +590,10 @@ class CommandsFramework {
         case User:
           var id = _entityRegex.firstMatch(splitted[index]).group(3);
           collected.add(client.users[Snowflake(id)]);
+          break;
+        case Member:
+          var id = _entityRegex.firstMatch(splitted[index]).group(3);
+          collected.add(e.guild.members[Snowflake(id)]);
           break;
         case Role:
           var id = _entityRegex.firstMatch(splitted[index]).group(3);
