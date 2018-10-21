@@ -56,7 +56,7 @@ class RoleBuilder implements Builder {
   String name;
 
   /// integer representation of hexadecimal color code
-  int color;
+  DiscordColor color;
 
   /// if this role is pinned in the user listing
   bool hoist;
@@ -77,7 +77,7 @@ class RoleBuilder implements Builder {
     Map<String, dynamic> tmp = Map();
 
     tmp['name'] = name;
-    if (color != null) tmp['color'] = color;
+    if (color != null) tmp['color'] = color._value;
     if (hoist != null) tmp['hoist'] = hoist;
     if (position != null) tmp['position'] = position;
     if (permission != null) tmp['permission'] = permission._build()._build();

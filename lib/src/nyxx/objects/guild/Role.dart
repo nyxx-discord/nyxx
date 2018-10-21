@@ -1,12 +1,21 @@
 part of nyxx;
 
+void let<T>(T value, bool checker(T value), {onTrue(T value), onFalse(T value)}) {
+  if(checker(value))
+    if(onTrue != null)
+      onTrue(value);
+  else
+    if(onFalse != null)
+      onFalse(value);
+}
+
 /// Represents a Discord guild role, which is used to assign priority, permissions, and a color to guild members
-class Role extends SnowflakeEntity implements IMentionable {
+class Role extends SnowflakeEntity implements IMentionable, GuildEntity {
   /// The role's name.
   String name;
 
   /// The role's color, 0 if no color.
-  int color;
+  DiscordColor color;
 
   /// The role's position.
   int position;
@@ -20,6 +29,7 @@ class Role extends SnowflakeEntity implements IMentionable {
   /// Whether or not the role is mentionable.
   bool mentionable;
 
+  @override
   /// The role's guild.
   Guild guild;
 
@@ -41,7 +51,10 @@ class Role extends SnowflakeEntity implements IMentionable {
     this.managed = raw['managed'] as bool;
     this.mentionable = raw['mentionable'] as bool;
     this.permissions = Permissions.fromInt(raw['permissions'] as int);
-    this.color = raw['color'] as int ?? 0;
+
+    let<int>(raw['color'] as int, (v) => v != 0,
+        onTrue: (v) => this.color = DiscordColor.fromInt(v),
+        onFalse: (v) => this.color = DiscordColor.fromInt(null));
 
     this.guild.roles[this.id] = this;
   }

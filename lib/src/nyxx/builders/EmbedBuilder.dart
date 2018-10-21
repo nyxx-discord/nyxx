@@ -16,7 +16,7 @@ class EmbedBuilder implements Builder {
   String url;
 
   /// Color code of the embed
-  int color;
+  DiscordColor color;
 
   /// Timestamp of embed content
   DateTime timestamp;
@@ -78,7 +78,7 @@ class EmbedBuilder implements Builder {
     if (description != null) tmp["description"] = description;
     if (url != null) tmp["url"] = url;
     if (timestamp != null) tmp["timestamp"] = timestamp.toIso8601String();
-    if (color != null) tmp["color"] = color;
+    if (color != null) tmp["color"] = color._value;
     if (footer != null) tmp["footer"] = footer._build();
     if (imageUrl != null) tmp["image"] = <String, dynamic>{"url": imageUrl};
     if (thumbnailUrl != null)

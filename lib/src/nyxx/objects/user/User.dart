@@ -20,7 +20,7 @@ class User extends SnowflakeEntity with ISend, IMentionable {
   String get tag => "${this.username}#${this.discriminator}";
 
   /// Whether or not the user is a bot.
-  bool bot = false;
+  bool bot;
 
   User._new(Map<String, dynamic> raw) : super(Snowflake(raw['id'] as String)) {
     this.username = raw['username'] as String;

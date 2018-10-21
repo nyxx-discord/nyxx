@@ -44,9 +44,6 @@ class PermissionsBuilder extends AbstractPermissions {
         PermissionsConstants.manageRolesOrPermissions);
     _apply(tmp, this.manageWebhooks, PermissionsConstants.manageWebhooks);
 
-    print(tmp.allow);
-    print(tmp.deny);
-
     return tmp;
   }
 
