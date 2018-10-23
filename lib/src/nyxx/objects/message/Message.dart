@@ -2,7 +2,7 @@ part of nyxx;
 
 /// [Message] class represents single message. It contains it's Event [Stream]s.
 /// [Message] among all it's properties has also back-reference to [MessageChannel] from which it was sent, [Guild] and [User] properties which are associated with this message.
-class Message extends SnowflakeEntity implements GuildEntity {
+class Message extends SnowflakeEntity implements GuildEntity, Disposable {
   StreamController<MessageReactionEvent> _onReactionAdded;
   StreamController<MessageReactionEvent> _onReactionRemove;
   StreamController<MessageReactionsRemovedEvent> _onReactionsRemoved;
@@ -105,8 +105,7 @@ class Message extends SnowflakeEntity implements GuildEntity {
     if (raw['attachments'] != null && raw['attachments'].isNotEmpty as bool) {
       this.attachments = Map<Snowflake, Attachment>();
       raw['attachments'].forEach((o) {
-        final Attachment attachment =
-        Attachment._new(o as Map<String, dynamic>);
+        final Attachment attachment = Attachment._new(o as Map<String, dynamic>);
         this.attachments[attachment.id] = attachment;
       });
     } else
@@ -316,5 +315,32 @@ class Message extends SnowflakeEntity implements GuildEntity {
   /// Unpins [Message] in current [Channel]
   Future<void> unpinMessage() async {
     await _client.http.send('DELETE', "/channels/${channel.id}/pins/$id");
+  }
+
+  @override
+  Future<void> dispose() {
+    _onReactionAdded.close();
+    _onReactionRemove.close();
+    _onReactionsRemoved.close();
+
+    if(embeds != null) {
+      embeds.clear();
+      embeds = null;
+    }
+
+    if(mentions != null) {
+      mentions.clear();
+      mentions = null;
+    }
+
+    if(roleMentions != null) {
+      roleMentions.clear();
+      roleMentions = null;
+    }
+
+    if(attachments != null) {
+      attachments.clear();
+      attachments = null;
+    }
   }
 }

@@ -2,7 +2,7 @@ part of nyxx;
 
 /// Generic interface for caching entities.
 /// Wraps [Map] interface and provides utilities for manipulating cache.
-abstract class Cache<T, S> {
+abstract class Cache<T, S> implements Disposable {
   Map<T, S> _cache;
 
   /// Returns values of cache
@@ -89,12 +89,27 @@ abstract class Cache<T, S> {
 
   /// Returns cache as Map
   Map<T, S> get asMap => this._cache;
+
+  @override
+  Future<void> dispose() => Future(() {
+    this._cache.clear();
+  });
 }
 
 class _SnowflakeCache<T> extends Cache<Snowflake, T> {
   _SnowflakeCache() {
     this._cache = Map();
   }
+
+  @override
+  Future<void> dispose() => Future(() {
+    if(T is Disposable) {
+      _cache.forEach((_, v) => (v as Disposable).dispose());
+    }
+
+    _cache.clear();
+  });
+
 }
 
 /// Cache for Channels
@@ -105,6 +120,19 @@ class ChannelCache extends Cache<Snowflake, Channel> {
 
   /// Allows to get channel and cast to [E] in one operation.
   E get<E>(Snowflake id) => _cache[id] as E;
+
+  @override
+  Future<Function> dispose() => Future(() {
+    _cache.forEach((_, v) {
+      if(v is MessageChannel)
+        v.dispose();
+
+      v = null;
+    });
+
+    _cache.clear();
+  });
+
 }
 
 /// Cache for messages. Provides few utilities methods to facilitate interaction with messages.

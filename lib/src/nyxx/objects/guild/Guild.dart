@@ -10,7 +10,7 @@ part of nyxx;
 /// var textChannels = channels.where((channel) => channel is MessageChannel) as List<TextChannel>;
 /// ```
 /// If you want to get [icon] or [splash] of [Guild] use `iconURL()` method - [icon] property returns only hash, same as [splash] property.
-class Guild extends SnowflakeEntity {
+class Guild extends SnowflakeEntity implements Disposable {
   /// The guild's name.
   String name;
 
@@ -69,7 +69,7 @@ class Guild extends SnowflakeEntity {
   ChannelCache channels;
 
   /// The guild's roles.
-  Map<Snowflake, Role> roles;
+  Cache<Snowflake, Role> roles;
 
   /// Guild custom emojis
   Cache<Snowflake, GuildEmoji> emojis;
@@ -108,7 +108,7 @@ class Guild extends SnowflakeEntity {
       this.splash = raw['splash'] as String;
 
       if (raw['roles'] != null) {
-        this.roles = Map<Snowflake, Role>();
+        this.roles = _SnowflakeCache<Role>();
         raw['roles'].forEach((o) {
           var role = Role._new(o as Map<String, dynamic>, this);
           this.roles[role.id] = role;
@@ -261,6 +261,12 @@ class Guild extends SnowflakeEntity {
     return GuildEmoji._new(res.body as Map<String, dynamic>, this);
   }
 
+  /// Allows to download [Guild] widget aka advert png
+  /// Possible options for [style]: shield (default), banner1, banner2, banner3, banner4
+  Future<List<int>> downloadGuildWidget([String style]) async {
+      return utils.downloadFile(Uri.parse("${_Constants.host}${_Constants.baseUri}/guilds/${this.id.toString()}/widget.png?style=${style ?? "shield"}"));
+  }
+
   /// Returns [int] indicating the number of members that would be removed in a prune operation.
   Future<int> pruneCount(int days) async {
     HttpResponse r = await _client.http
@@ -365,7 +371,7 @@ class Guild extends SnowflakeEntity {
     return AuditLog._new(r.body as Map<String, dynamic>);
   }
 
-  /// Get Guil's embed object
+  /// Get Guild's embed object
   Future<Embed> getGuildEmbed() async {
     HttpResponse r = await _client.http.send('GET', "/guilds/$id/embed");
     return Embed._new(r.body as Map<String, dynamic>);
@@ -441,7 +447,7 @@ class Guild extends SnowflakeEntity {
     if (type == ChannelType.group && parent != null) return Future.error("Cannot create Category Channel which have parent channel.");
 
     // Construct body
-    var body = <String, dynamic>{"name": name, "type": _matchChannelType(type)};
+    var body = <String, dynamic>{"name": name, "type": type._value};
     if (bitrate != null) body['bitrate'] = bitrate;
     if (topic != null) body['topic'] = topic;
     if (parent != null) body['parent_id'] = parent.id.toString();
@@ -570,24 +576,38 @@ class Guild extends SnowflakeEntity {
   Future<void> delete() async {
     await _client.http.send('DELETE', "/guilds/${this.id}");
   }
+
+  @override
+  Future<void> dispose() => Future(() {
+    channels.dispose().then((_) => channels = null);
+    members.dispose().then((_) => members = null);
+    roles.dispose().then((_) => roles = null);
+    emojis.dispose().then((_) => emojis = null);
+    voiceStates.dispose().then((_) => emojis = null);
+  });
 }
 
 /// Enum for possible channel types
-enum ChannelType { text, voice, group, dm, groupDm }
+class ChannelType {
+  final int _value;
 
-int _matchChannelType(ChannelType type) {
-  switch (type) {
-    case ChannelType.text:
-      return 0;
-    case ChannelType.voice:
-      return 2;
-    case ChannelType.group:
-      return 4;
-    case ChannelType.dm:
-      return 1;
-    case ChannelType.groupDm:
-      return 3;
-    default:
-      return null;
-  }
+  ChannelType(this._value);
+  const ChannelType._create(this._value);
+
+  @override
+  String toString() => _value.toString();
+
+  @override
+  int get hashCode => _value.hashCode;
+
+  //@override
+  //bool operator ==(other) =>
+  //    other is ChannelType && other._value == this._value;
+
+  static const ChannelType text = ChannelType._create(0);
+  static const ChannelType voice = ChannelType._create(2);
+  static const ChannelType group = ChannelType._create(4);
+
+  static const ChannelType dm = ChannelType._create(1);
+  static const ChannelType groupDm = ChannelType._create(3);
 }

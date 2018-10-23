@@ -11,7 +11,7 @@ part of nyxx;
 ///   print(message.author.id);
 /// }
 /// ```
-class MessageChannel extends Channel with IterableMixin<Message>, ISend {
+class MessageChannel extends Channel with IterableMixin<Message>, ISend, Disposable {
   Timer _typing;
 
   /// Sent when a new message is received.
@@ -189,4 +189,11 @@ class MessageChannel extends Channel with IterableMixin<Message>, ISend {
 
   @override
   Iterator<Message> get iterator => messages.values.iterator;
+
+  @override
+  Future<void> dispose() => Future(() {
+    _onMessage.close();
+    _onTyping.close();
+    messages.dispose();
+  });
 }

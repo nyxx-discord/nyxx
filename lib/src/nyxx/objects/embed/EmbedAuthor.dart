@@ -1,7 +1,7 @@
 part of nyxx;
 
 /// Author of embed. Can contain null elements.
-class EmbedAuthor {
+class EmbedAuthor implements Downloadable {
   /// Name of embed author
   String name;
 
@@ -20,4 +20,11 @@ class EmbedAuthor {
     this.iconUrl = raw['icon_url'] as String;
     this.iconProxyUrl = raw['iconProxyUrl'] as String;
   }
+
+  @override
+  Future<List<int>> download() => utils.downloadFile(Uri.parse(url));
+
+  @override
+  Future<File> downloadFile(File file) async =>
+      file.writeAsBytes(await download());
 }

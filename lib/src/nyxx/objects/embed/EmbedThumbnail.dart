@@ -1,7 +1,7 @@
 part of nyxx;
 
 /// A message embed thumbnail.
-class EmbedThumbnail {
+class EmbedThumbnail implements Downloadable {
   /// The embed thumbnail's URL.
   String url;
 
@@ -20,4 +20,11 @@ class EmbedThumbnail {
     this.height = raw['height'] as int;
     this.width = raw['width'] as int;
   }
+
+  @override
+  Future<List<int>> download() => utils.downloadFile(Uri.parse(url));
+
+  @override
+  Future<File> downloadFile(File file) async =>
+      file.writeAsBytes(await download());
 }
