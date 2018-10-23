@@ -233,6 +233,9 @@ class Nyxx {
   /// The client's uptime.
   Duration get uptime => DateTime.now().difference(_startTime);
 
+  /// When client was started
+  DateTime get startTime => _startTime;
+
   /// Returns channel with specified id.
   /// If channel is in cache - will be taken from it, or got via API otherwise.
   Future<T> getChannel<T>(Snowflake id, {Guild guild}) async {
