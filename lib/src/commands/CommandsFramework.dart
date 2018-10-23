@@ -372,6 +372,17 @@ class CommandsFramework {
     //if (matchedMeta.methodRestrict != null && matchedMeta.classRestrict != null)
     executionCode = await checkPermissions(matchedMeta, e.message);
 
+    /// Submethod to invoke postprocessors
+    void invokePost(res) {
+      if (matchedMeta.postprocessors.length > 0) {
+        for (var post in matchedMeta.postprocessors)
+          post.execute(
+              _services,
+              res,
+              e.message);
+      }
+    }
+
     // Switch between execution codes
     switch (executionCode) {
       case 0:
@@ -396,7 +407,6 @@ class CommandsFramework {
       case -1:
       case -2:
       case 100:
-        dynamic res;
         splittedCommand.removeRange(0, matchedMeta.commandString.length);
         var methodInj = await _injectParameters(
             matchedMeta.method, splittedCommand, e.message);
@@ -412,11 +422,13 @@ class CommandsFramework {
           instance.setField(Symbol("author"), e.message.author);
           instance.setField(Symbol("channel"), e.message.channel);
 
-
-          (instance.invoke(matchedMeta.method.simpleName, methodInj).reflectee as Future).catchError((err) {
-            res = err;
+          (instance.invoke(matchedMeta.method.simpleName, methodInj)
+              .reflectee as Future).then((r) {
+            invokePost(r);
+          }).catchError((err, stack) {
+            invokePost([err, stack]);
             _commandExecutionFail.add(CommandExecutionFailEvent._new(e.message, err));
-          }).then((r) => res = r);
+          });
         }
 
         if (matchedMeta.parent is LibraryMirror) {
@@ -427,18 +439,12 @@ class CommandsFramework {
                 matchedMeta.method.simpleName,
                 List()
                   ..add(context)
-                  ..addAll(methodInj)).reflectee as Future).catchError((err) {
-                    res = err;
-                    _commandExecutionFail.add(CommandExecutionFailEvent._new(e.message, err));
-          }).then((r) => res = r);
-        }
-
-        if (matchedMeta.postprocessors.length > 0) {
-          for (var post in matchedMeta.postprocessors)
-            post.execute(
-                _services,
-                res,
-                e.message);
+                  ..addAll(methodInj)).reflectee as Future).then((r) {
+            invokePost(r);
+          }).catchError((err, stack) {
+            invokePost([err, stack]);
+            _commandExecutionFail.add(CommandExecutionFailEvent._new(e.message, err));
+          });
         }
 
         logger.info(
@@ -465,14 +471,28 @@ class CommandsFramework {
           annot.cooldown * 1000))) executionCode = 2;
     }
 
+    if(e.channel is! TextChannel)
+      return executionCode;
+
     var member = await e.guild.getMember(e.author);
 
     // Check if there is need to check user roles
     if (executionCode == -1 && annot.roles.isNotEmpty) {
       var hasRoles =
-          member.roles.map((f) => f.id).where((t) => annot.roles.contains(t));
+          member.roles.map((f) => f.id).any((t) => annot.roles.contains(t));
 
-      if (hasRoles == null || hasRoles.isEmpty) executionCode = 1;
+      if (hasRoles) executionCode = 1;
+    }
+
+    // Check for channel topics
+    if (executionCode == -1 &&
+        annot.topics.isNotEmpty &&
+        e.channel is TextChannel) {
+      var topic = (e.channel as TextChannel).topic;
+      var list = topic.split(" ");
+
+      var total = list.any((s) => annot.topics.contains(s));
+      if (!total) executionCode = 5;
     }
 
     // Check if user has required permissions
@@ -488,34 +508,13 @@ class CommandsFramework {
       }
     }
 
-    // Check for channel topics
-    if (executionCode == -1 &&
-        annot.topics.isNotEmpty &&
-        e.channel is TextChannel) {
-      var topic = (e.channel as TextChannel).topic;
-      var list = topic
-          .substring(topic.indexOf("[") + 1, topic.indexOf("]"))
-          .split(",")
-          .map((f) => f.trim());
-      var total = false;
-      for (var topic in annot.topics) {
-        if (list.contains(topic)) {
-          total = true;
-          break;
-        }
-      }
-
-      if (!total) executionCode = 5;
-    }
-
     // Check if bot has required permissions
     if (executionCode == -1 && annot.botPermissions.isNotEmpty) {
       var total = (await e.guild.getMember(client.self)).effectivePermissions;
       for (var perm in annot.botPermissions) {
-        if ((total.raw | perm) == 0) {
+        if(!util.isApplied(perm, total.raw))
           executionCode = 6;
           break;
-        }
       }
     }
 
@@ -605,7 +604,7 @@ class CommandsFramework {
           break;
         case UnicodeEmoji:
           collected
-              .add(util.emojisUnicode[splitted[index]..replaceAll(":", "")]);
+              .add(util.emojisUnicode[splitted[index]..replaceAll(":", "")] ?? UnicodeEmoji(splitted[index]));
           break;
         default:
           if (_typeConverters == null) return false;
@@ -627,7 +626,6 @@ class CommandsFramework {
 
     for (var e in params) {
       var type = e.type.reflectedType;
-
       if (type == CommandContext) continue;
 
       if (util.getCmdAnnot<Remainder>(e) != null) {
@@ -659,6 +657,9 @@ class CommandsFramework {
   }
 
   bool _isUserAdmin(Snowflake authorId, Guild guild) {
+    if(guild == null)
+      return true;
+
     return (admins != null && admins.any((i) => i == authorId)) ||
         guild.owner.id == authorId;
   }
