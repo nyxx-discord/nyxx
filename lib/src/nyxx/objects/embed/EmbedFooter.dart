@@ -1,7 +1,7 @@
 part of nyxx;
 
 /// Embed's footer. Can contain null elements.
-class EmbedFooter {
+class EmbedFooter implements Downloadable {
   /// Text inside footer
   String text;
 
@@ -16,4 +16,11 @@ class EmbedFooter {
     iconUrl = raw['icon_url'] as String;
     iconProxyUrl = raw['icon_proxy_url'] as String;
   }
+
+  @override
+  Future<List<int>> download() => utils.downloadFile(Uri.parse(iconUrl));
+
+  @override
+  Future<File> downloadFile(File file) async =>
+      file.writeAsBytes(await download());
 }

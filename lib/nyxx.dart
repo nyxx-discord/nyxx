@@ -67,6 +67,8 @@ part 'src/nyxx/builders/GuildBuilder.dart';
 part 'src/nyxx/objects/ISend.dart';
 part 'src/nyxx/objects/IMentionable.dart';
 part 'src/nyxx/objects/GuildEntity.dart';
+part 'src/nyxx/objects/Disposable.dart';
+part 'src/nyxx/objects/Downloadable.dart';
 
 part 'src/nyxx/objects/DiscordColor.dart';
 

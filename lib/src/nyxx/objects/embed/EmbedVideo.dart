@@ -1,7 +1,7 @@
 part of nyxx;
 
 /// Video attached to embed. Can contain null elements.
-class EmbedVideo {
+class EmbedVideo implements Downloadable {
   /// The embed video's URL.
   String url;
 
@@ -16,4 +16,11 @@ class EmbedVideo {
     this.height = raw['height'] as int;
     this.width = raw['width'] as int;
   }
+
+  @override
+  Future<List<int>> download() => utils.downloadFile(Uri.parse(url));
+
+  @override
+  Future<File> downloadFile(File file) async =>
+      file.writeAsBytes(await download());
 }

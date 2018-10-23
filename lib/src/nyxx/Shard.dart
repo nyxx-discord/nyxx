@@ -330,14 +330,10 @@ class Shard {
     this._heartbeatTimer.cancel();
     _logger.severe("Shard [$id] disconnected. Error code: [${this._socket.closeCode}] | Error message: [${this._socket.closeReason}]");
 
-    if(client.shards.length == 1) {
-      // Invalidate cache on error
-      client.guilds.invalidate();
-      client.users.invalidate();
-      client.channels.invalidate();
+    /// Dispose on error
+    for (var guild in this.guilds.values) {
+      guild.dispose();
     }
-
-    this.guilds.clear();
 
     switch (this._socket.closeCode) {
       case 4004:
