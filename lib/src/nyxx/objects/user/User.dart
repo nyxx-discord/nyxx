@@ -1,7 +1,7 @@
 part of nyxx;
 
 /// Represents a single user of Discord, either a human or a bot, outside of any specific guild's context.
-class User extends SnowflakeEntity with ISend, IMentionable {
+class User extends SnowflakeEntity with ISend, IMentionable, Nameable {
   /// The user's username.
   String username;
 
@@ -44,7 +44,7 @@ class User extends SnowflakeEntity with ISend, IMentionable {
               (Channel c) => c is DMChannel && c.recipient.id == this.id)
           as DMChannel;
     } catch (err) {
-      HttpResponse r = await client.http.send('POST', "/users/@me/channels",
+      HttpResponse r = await client._http.send('POST', "/users/@me/channels",
           body: {"recipient_id": this.id.toString()});
       return DMChannel._new(r.body as Map<String, dynamic>);
     }
@@ -52,7 +52,7 @@ class User extends SnowflakeEntity with ISend, IMentionable {
 
   @override
 
-  /// Sends a message.
+  /// Sends a message to user.
   Future<Message> send(
       {Object content = "",
       List<File> files,
@@ -71,4 +71,7 @@ class User extends SnowflakeEntity with ISend, IMentionable {
   /// Returns a mention of user
   @override
   String toString() => this.mention;
+
+  @override
+  String get nameString => "User ${this.tag} [${this.id}]";
 }

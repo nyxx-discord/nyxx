@@ -42,7 +42,7 @@ class TextChannel extends MessageChannel
   Future<TextChannel> edit(
       {String name, String topic, int position, int slowModeTreshold}) async {
     HttpResponse r =
-        await _client.http.send('PATCH', "/channels/${this.id}", body: {
+        await _client._http.send('PATCH', "/channels/${this.id}", body: {
       "name": name ?? this.name,
       "topic": topic ?? this.topic,
       "position": position ?? this.position,
@@ -53,7 +53,7 @@ class TextChannel extends MessageChannel
 
   /// Gets all of the webhooks for this channel.
   Future<Map<String, Webhook>> getWebhooks() async {
-    HttpResponse r = await _client.http.send('GET', "/channels/$id/webhooks");
+    HttpResponse r = await _client._http.send('GET', "/channels/$id/webhooks");
     Map<String, Webhook> map = Map();
 
     r.body.forEach((k, o) {
@@ -70,14 +70,14 @@ class TextChannel extends MessageChannel
   /// var webhook = await chan.createWebhook("!a Send nudes kek6407");
   /// ```
   Future<Webhook> createWebhook(String name, {String auditReason = ""}) async {
-    HttpResponse r = await _client.http.send('POST', "/channels/$id/webhooks",
+    HttpResponse r = await _client._http.send('POST', "/channels/$id/webhooks",
         body: {"name": name}, reason: auditReason);
     return Webhook._new(r.body as Map<String, dynamic>);
   }
 
   /// Returns pinned [Message]s for [Channel].
   Future<Map<String, Message>> getPinnedMessages() async {
-    final HttpResponse r = await _client.http.send('GET', "/channels/$id/pins");
+    final HttpResponse r = await _client._http.send('GET', "/channels/$id/pins");
 
     Map<String, Message> messages = Map();
     for (Map<String, dynamic> val in r.body.values.first) {
@@ -86,6 +86,9 @@ class TextChannel extends MessageChannel
 
     return messages;
   }
+
+  @override
+  String get nameString => "[${this.guild.name}] Text Channel [${this.id}]";
 
   @override
 

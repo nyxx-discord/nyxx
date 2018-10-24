@@ -89,7 +89,7 @@ class Member extends User implements GuildEntity {
       {int deleteMessageDays = 0,
       String reason,
       String auditReason = ""}) async {
-    await _client.http.send('PUT', "/guilds/${this.guild.id}/bans/${this.id}",
+    await _client._http.send('PUT', "/guilds/${this.guild.id}/bans/${this.id}",
         body: {"delete-message-days": deleteMessageDays, "reason": reason},
         reason: auditReason);
   }
@@ -101,20 +101,20 @@ class Member extends User implements GuildEntity {
   /// await member.addRole(r);
   /// ```
   Future<void> addRole(Role role, {String auditReason = ""}) async {
-    await _client.http.send(
+    await _client._http.send(
         'PUT', '/guilds/${guild.id}/members/${this.id}/roles/${role.id}',
         reason: auditReason);
   }
 
   Future<void> removeRole(Role role, {String auditReason = ""}) async {
-    await _client.http.send("DELETE",
+    await _client._http.send("DELETE",
         "/guilds/${this.guild.id.toString()}/members/${this.id.toString()}/roles/${role.id.toString()}",
         reason: auditReason);
   }
 
   /// Kicks the member
   Future<void> kick({String auditReason = ""}) async {
-    await _client.http.send(
+    await _client._http.send(
         'DELETE', "/guilds/${this.guild.id}/members/${this.id}",
         reason: auditReason);
   }
@@ -135,10 +135,13 @@ class Member extends User implements GuildEntity {
     if (deaf != null) req['deaf'] = deaf;
     if (deaf != null) req['channel_id'] = channel.id.toString();
 
-    await _client.http.send("PATCH",
+    await _client._http.send("PATCH",
         "/guilds/${this.guild.id.toString()}/members/${this.id.toString()}",
         body: req, reason: auditReason);
   }
+
+  @override
+  String get nameString => "Member ${this.tag} [${this.guild.name}] [${this.id}]";
 
   @override
   String toString() => super.toString();

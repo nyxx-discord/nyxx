@@ -1,6 +1,6 @@
 part of nyxx;
 
-/// An invite to guild.
+/// Represents invite to guild.
 class Invite {
   /// The invite's code.
   String code;
@@ -44,6 +44,6 @@ class Invite {
 
   /// Deletes this Invite.
   Future<void> delete({String auditReason = ""}) async {
-    await _client.http.send('DELETE', '/invites/$code', reason: auditReason);
+    await _client._http.send('DELETE', '/invites/$code', reason: auditReason);
   }
 }

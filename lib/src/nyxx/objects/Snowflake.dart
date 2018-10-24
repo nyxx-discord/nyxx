@@ -11,16 +11,8 @@ class Snowflake implements Comparable<Snowflake> {
   /// Full snowflake id
   String get id => _id;
 
-  /// Returns timestamp included in [Snowflake]
-  /// [Snowflake reference](https://discordapp.com/developers/docs/reference#snowflakes)
-  DateTime get timestamp =>
-      DateTime.fromMillisecondsSinceEpoch((int.parse(_id) >> 22) + discordEpoch)
-          .toUtc();
-
   /// Creates new instance of [Snowflake] from String value.
-  Snowflake(dynamic id) {
-    _id = id.toString();
-  }
+  Snowflake(dynamic id) : _id = id.toString();
 
   /// Creates synthetic snowflake based on current time
   Snowflake.fromNow() {
@@ -45,6 +37,12 @@ class Snowflake implements Comparable<Snowflake> {
   static String _parseId(DateTime timestamp) =>
       ((timestamp.millisecondsSinceEpoch - discordEpoch) * snowflakeDateOffset)
           .toString();
+
+  /// Returns timestamp included in [Snowflake]
+  /// [Snowflake reference](https://discordapp.com/developers/docs/reference#snowflakes)
+  DateTime get timestamp =>
+      DateTime.fromMillisecondsSinceEpoch((int.parse(_id) >> 22) + discordEpoch)
+          .toUtc();
 
   @override
   String toString() => _id;

@@ -18,4 +18,7 @@ class EmbedField {
 
     embed.fields[name] = this;
   }
+
+  @override
+  String toString() => "[$name] $content";
 }

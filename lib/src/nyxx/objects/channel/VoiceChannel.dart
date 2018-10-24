@@ -23,7 +23,7 @@ class VoiceChannel extends Channel with GuildChannel {
       int position,
       int userLimit,
       String auditReason}) async {
-    HttpResponse r = await _client.http.send('PATCH', "/channels/${this.id}",
+    HttpResponse r = await _client._http.send('PATCH', "/channels/${this.id}",
         body: {
           "name": name ?? this.name,
           "bitrate": bitrate ?? this.bitrate,
@@ -33,4 +33,7 @@ class VoiceChannel extends Channel with GuildChannel {
         reason: auditReason);
     return VoiceChannel._new(r.body as Map<String, dynamic>, this.guild);
   }
+
+  @override
+  String get nameString => "[${this.guild.name}] Voice Channel [${this.id}]";
 }

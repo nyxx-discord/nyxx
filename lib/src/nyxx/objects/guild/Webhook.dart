@@ -44,7 +44,7 @@ class Webhook extends SnowflakeEntity implements ISend {
 
   /// Edits the webhook.
   Future<Webhook> edit({String name, String auditReason = ""}) async {
-    HttpResponse r = await _client.http.send('PATCH', "/webhooks/$id/$token",
+    HttpResponse r = await _client._http.send('PATCH', "/webhooks/$id/$token",
         body: {"name": name}, reason: auditReason);
     this.name = r.body['name'] as String;
     return this;
@@ -52,7 +52,7 @@ class Webhook extends SnowflakeEntity implements ISend {
 
   /// Deletes the webhook.
   Future<void> delete({String auditReason = ""}) async {
-    await _client.http
+    await _client._http
         .send('DELETE', "/webhooks/$id/$token", reason: auditReason);
   }
 
@@ -73,11 +73,11 @@ class Webhook extends SnowflakeEntity implements ISend {
 
     HttpResponse r;
     if (files != null && files.isNotEmpty) {
-      r = await _client.http.sendMultipart(
+      r = await _client._http.sendMultipart(
           'POST', '/channels/${this.id}/messages', files,
           data: reqBody..addAll({"tts": tts}));
     } else {
-      r = await _client.http.send('POST', '/channels/${this.channel.id}/messages',
+      r = await _client._http.send('POST', '/channels/${this.channel.id}/messages',
           body: reqBody..addAll({"tts": tts}));
     }
 

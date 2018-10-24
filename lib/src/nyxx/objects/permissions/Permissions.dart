@@ -7,10 +7,12 @@ class Permissions extends AbstractPermissions {
     _construct(permissions);
   }
 
+  /// Permissions with value of 0
   Permissions.empty() {
     _construct(0);
   }
 
+  /// Permissions with max value
   Permissions.all() {
     _construct(PermissionsConstants.allPermissions);
   }

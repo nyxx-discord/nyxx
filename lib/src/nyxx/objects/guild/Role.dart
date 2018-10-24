@@ -1,6 +1,6 @@
 part of nyxx;
 
-void let<T>(T value, bool checker(T value), {onTrue(T value), onFalse(T value)}) {
+void _let<T>(T value, bool checker(T value), {onTrue(T value), onFalse(T value)}) {
   if(checker(value))
     if(onTrue != null)
       onTrue(value);
@@ -10,7 +10,7 @@ void let<T>(T value, bool checker(T value), {onTrue(T value), onFalse(T value)})
 }
 
 /// Represents a Discord guild role, which is used to assign priority, permissions, and a color to guild members
-class Role extends SnowflakeEntity implements IMentionable, GuildEntity {
+class Role extends SnowflakeEntity implements IMentionable, GuildEntity, Nameable {
   /// The role's name.
   String name;
 
@@ -52,7 +52,7 @@ class Role extends SnowflakeEntity implements IMentionable, GuildEntity {
     this.mentionable = raw['mentionable'] as bool;
     this.permissions = Permissions.fromInt(raw['permissions'] as int);
 
-    let<int>(raw['color'] as int, (v) => v != 0,
+    _let<int>(raw['color'] as int, (v) => v != 0,
         onTrue: (v) => this.color = DiscordColor.fromInt(v),
         onFalse: (v) => this.color = DiscordColor.fromInt(null));
 
@@ -61,7 +61,7 @@ class Role extends SnowflakeEntity implements IMentionable, GuildEntity {
 
   /// Edits the role.
   Future<Role> edit({RoleBuilder role, String auditReason = ""}) async {
-    HttpResponse r = await _client.http.send(
+    HttpResponse r = await _client._http.send(
         'PATCH', "/guilds/${this.guild.id}/roles/$id",
         body: role._build(), reason: auditReason);
     return Role._new(r.body as Map<String, dynamic>, this.guild);
@@ -69,13 +69,13 @@ class Role extends SnowflakeEntity implements IMentionable, GuildEntity {
 
   /// Deletes the role.
   Future<void> delete({String auditReason = ""}) async {
-    await _client.http.send('DELETE', "/guilds/${this.guild.id}/roles/$id",
+    await _client._http.send('DELETE', "/guilds/${this.guild.id}/roles/$id",
         reason: auditReason);
   }
 
   /// Adds role to user.
   Future<void> addToUser(User user, {String auditReason = ""}) async {
-    await _client.http.send(
+    await _client._http.send(
         'PUT', '/guilds/${guild.id}/members/${user.id}/roles/$id',
         reason: auditReason);
   }
@@ -83,4 +83,7 @@ class Role extends SnowflakeEntity implements IMentionable, GuildEntity {
   /// Returns a mention of role. If role cannot be mentioned it returns name of role.
   @override
   String toString() => mention;
+
+  @override
+  String get nameString => "Role ${this.name} [${this.guild.name}] [${this.id}]";
 }

@@ -27,4 +27,7 @@ class EmbedAuthor implements Downloadable {
   @override
   Future<File> downloadFile(File file) async =>
       file.writeAsBytes(await download());
+
+  @override
+  String toString() => name;
 }

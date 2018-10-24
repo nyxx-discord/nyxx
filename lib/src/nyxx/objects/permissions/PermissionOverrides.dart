@@ -1,18 +1,20 @@
 part of nyxx;
 
-/// Holds permissions for channel
-class ChannelPermissions extends SnowflakeEntity {
+/// Holds permissions overrides for channel
+class PermissionsOverrides extends SnowflakeEntity {
   /// Type of entity
   String type;
 
   /// Permissions
   Permissions permissions;
 
+  /// Value of permissions allowed
   int allow;
 
+  /// Value of permissions denied
   int deny;
 
-  ChannelPermissions._new(Map<String, dynamic> raw)
+  PermissionsOverrides._new(Map<String, dynamic> raw)
       : super(Snowflake(raw['id'] as String)) {
 
     this.allow = raw['allow'] as int;
@@ -23,7 +25,7 @@ class ChannelPermissions extends SnowflakeEntity {
     type = raw['type'] as String;
   }
 
-  ChannelPermissions._synthetic(int value, Snowflake id) : super(id) {
+  PermissionsOverrides._synthetic(int value, Snowflake id) : super(id) {
     this.permissions = Permissions.fromInt(value);
   }
 }

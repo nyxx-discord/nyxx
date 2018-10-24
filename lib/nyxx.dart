@@ -1,7 +1,11 @@
 /// Nyxx Discord API wrapper for Dart
 ///
-/// Main sublibrary of nyxx provices basic functionality like access to http endpoints
-/// of api or Websocket connectivity to interact with realtime events.
+/// Main library which contains all stuff needed to connect and interact with Discord API.
+/// If you want advanced command capabilities refer to `nyxx.command` library.
+///
+/// To get connected your bot to voice refer to `nyxx.lavalink` library.
+///
+/// Library creates global variable for [Nyxx] client. So there is no need to keep instance of client.
 library nyxx;
 
 import 'dart:async';
@@ -69,6 +73,7 @@ part 'src/nyxx/objects/IMentionable.dart';
 part 'src/nyxx/objects/GuildEntity.dart';
 part 'src/nyxx/objects/Disposable.dart';
 part 'src/nyxx/objects/Downloadable.dart';
+part 'src/nyxx/objects/Nameable.dart';
 
 part 'src/nyxx/objects/DiscordColor.dart';
 
