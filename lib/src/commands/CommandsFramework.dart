@@ -164,7 +164,7 @@ class CommandsFramework {
   }
 
   String _createLog(Module classCmd, Command methodCmd) =>
-      "[${classCmd != null ? classCmd.name + " " : ""}${methodCmd != null && methodCmd.name != null ? "${methodCmd.name}" : ""}]";
+      "[${classCmd != null ? classCmd.name : ""} ${methodCmd != null && methodCmd.name != null ? "${methodCmd.name}" : ""}]";
 
   List<List> _getProcessors(
       ClassMirror classMirror, DeclarationMirror methodMirror) {
