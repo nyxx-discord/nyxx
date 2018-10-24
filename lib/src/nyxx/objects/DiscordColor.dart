@@ -91,6 +91,15 @@ class DiscordColor {
   /// Very dark gray, or #666666.
   static final DiscordColor veryDarkGray = DiscordColor.fromInt(0x666666);
 
+  /// Flutter blue, or #02569B
+  static final DiscordColor flutterBlue = DiscordColor.fromInt(0x02569B);
+
+  /// Dart's primary blue color, or #0175C2
+  static final DiscordColor dartBlue = DiscordColor.fromInt(0x0175C2);
+
+  ///  Dart's secondary blue color, or #13B9FD
+  static final DiscordColor dartSecondary = DiscordColor.fromInt(0x13B9FD);
+
   /// Discord Blurple, or #7289DA.
   static final DiscordColor blurple = DiscordColor.fromInt(0x7289DA);
 
