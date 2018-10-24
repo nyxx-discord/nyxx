@@ -2,6 +2,8 @@ part of nyxx;
 
 /// Discord gateways implement a method of user-controlled guild sharding which allows for splitting events across a number of gateway connections.
 /// Guild sharding is entirely user controlled, and requires no state-sharing between separate connections to operate.
+///
+/// Shard is basically represents single websocket connection to gateway. Each shard can operate on up to 2500 guilds.
 class Shard {
   /// The shard id.
   int id;
@@ -26,7 +28,11 @@ class Shard {
   StreamController<Shard> _onReady;
   StreamController<Shard> _onDisconnect;
 
-  Logger _logger = Logger.detached("Websocket");
+  Logger _logger = Logger("Websocket");
+
+  int transfer = 0;
+  int messagesReceived = 0;
+  int get eventsSeen => _sequence;
 
   Shard._new(_WS ws, this.id) {
     guilds = Map();
@@ -39,6 +45,7 @@ class Shard {
     this.onDisconnect = this._onDisconnect.stream;
   }
 
+  /// Allows to set presence for current shard.
   void setPresence({String status, bool afk = false, Presence game, DateTime since}) {
     var packet = Map<String, dynamic>();
 
@@ -67,7 +74,7 @@ class Shard {
     this.send("STATUS_UPDATE", packet);
   }
 
-  /// Syncs all guild
+  /// Syncs all guilds
   void guildSync() => this.send("GUILD_SYNC", this.guilds.keys.toList());
 
   // Attempts to connect to ws
@@ -85,7 +92,7 @@ class Shard {
     WebSocket.connect('${this._ws.gateway}?v=6&encoding=json').then(
         (WebSocket socket) {
       this._socket = socket;
-      //this._socket.pingInterval = const Duration(seconds: 3);
+      this._socket.pingInterval = const Duration(seconds: 3);
 
       this._socket.listen((msg) async {
         this.transfer += msg.length as int;
@@ -99,8 +106,6 @@ class Shard {
       this._handleErr();
     });
   }
-
-  int transfer = 0;
 
   // Decodes zlib compresses string into string json
   Map<String, dynamic> _decodeBytes(dynamic bytes) {
@@ -136,10 +141,8 @@ class Shard {
               "\$os": Platform.operatingSystem,
               "\$browser": "nyxx",
               "\$device": "nyxx",
-              "\$referrer": "",
-              "\$referring_domain": ""
             },
-            "large_threshold": 100,
+            "large_threshold": _client._options.largeThreshold,
             "compress": true
           };
 
@@ -181,8 +184,8 @@ class Shard {
             _client.self =
                 ClientUser._new(msg['d']['user'] as Map<String, dynamic>);
 
-            _client.http._headers['Authorization'] = "Bot ${_client._token}";
-            _client.http._headers['User-Agent'] =
+            _client._http._headers['Authorization'] = "Bot ${_client._token}";
+            _client._http._headers['User-Agent'] =
                 "${_client.self.username} (${_Constants.repoUrl}, ${_Constants.version})";
 
             this.ready = true;
@@ -235,6 +238,7 @@ class Shard {
             break;
 
           case 'MESSAGE_CREATE':
+            messagesReceived++;
             MessageReceivedEvent._new(msg);
             break;
 
@@ -325,8 +329,6 @@ class Shard {
   }
 
   void _handleErr() {
-    //_socket.close(1001);
-
     this._heartbeatTimer.cancel();
     _logger.severe("Shard [$id] disconnected. Error code: [${this._socket.closeCode}] | Error message: [${this._socket.closeReason}]");
 

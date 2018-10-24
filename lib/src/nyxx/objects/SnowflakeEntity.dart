@@ -1,12 +1,13 @@
 part of nyxx;
 
-/// Provides identity for all entities with id as [Snowflake]
+/// Marks a snowflake entity. Snowflake entities are ones that have an id that uniquely identifies them.
 /// Includes only actual id of entity and [createdAt] which is timestamp when entity was created.
 class SnowflakeEntity {
-  /// Snowflake id
-  Snowflake id;
+  /// ID of entity as Snowflake
+  final Snowflake id;
 
-  SnowflakeEntity(this.id);
+  /// Creates new snowflake
+  const SnowflakeEntity(this.id);
 
   /// Gets creation timestamp included in [Snowflake]
   DateTime get createdAt => id.timestamp;

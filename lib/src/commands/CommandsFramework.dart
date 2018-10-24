@@ -369,7 +369,6 @@ class CommandsFramework {
             .every((pre) => pre.execute(_services, e.message)))
       executionCode = 8;
 
-    //if (matchedMeta.methodRestrict != null && matchedMeta.classRestrict != null)
     executionCode = await checkPermissions(matchedMeta, e.message);
 
     /// Submethod to invoke postprocessors

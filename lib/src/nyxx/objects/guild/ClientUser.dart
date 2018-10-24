@@ -66,7 +66,7 @@ class ClientUser extends User {
       req['avatar'] =
           "data:image/jpeg;base64,${base64Encode(await avatar.readAsBytes())}";
 
-    var res = await _client.http.send("PATCH", "/users/@me", body: req);
+    var res = await _client._http.send("PATCH", "/users/@me", body: req);
     return User._new(res.body as Map<String, dynamic>);
   }
 }

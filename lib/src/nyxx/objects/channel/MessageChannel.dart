@@ -46,7 +46,7 @@ class MessageChannel extends Channel with IterableMixin<Message>, ISend, Disposa
   /// with [force] property. By default it checks if message is in cache and fetches from api if not.
   Future<Message> getMessage(Snowflake id, {bool force = false}) async {
     if (force || !messages.hasKey(id)) {
-      var r = await _client.http
+      var r = await _client._http
           .send('GET', "/channels/${this.id.toString()}/messages/$id");
       var msg = Message._new(r.body as Map<String, dynamic>);
 
@@ -108,11 +108,11 @@ class MessageChannel extends Channel with IterableMixin<Message>, ISend, Disposa
 
     HttpResponse r;
     if (files != null && files.isNotEmpty) {
-      r = await _client.http.sendMultipart(
+      r = await _client._http.sendMultipart(
           'POST', '/channels/${this.id}/messages', files,
           data: reqBody);
     } else {
-      r = await _client.http.send('POST', '/channels/${this.id}/messages',
+      r = await _client._http.send('POST', '/channels/${this.id}/messages',
           body: reqBody..addAll({"tts": tts}));
     }
 
@@ -121,7 +121,7 @@ class MessageChannel extends Channel with IterableMixin<Message>, ISend, Disposa
 
   /// Starts typing.
   Future<void> startTyping() async {
-    await _client.http.send('POST', "/channels/$id/typing");
+    await _client._http.send('POST', "/channels/$id/typing");
   }
 
   /// Loops `startTyping` until `stopTypingLoop` is called.
@@ -142,7 +142,7 @@ class MessageChannel extends Channel with IterableMixin<Message>, ISend, Disposa
   /// ```
   Future<void> bulkRemoveMessages(Iterable<Message> messagesIds) async {
     utils.chunk(messagesIds.toList(), 90).listen((data) async {
-      await _client.http.send(
+      await _client._http.send(
           'POST', "/channels/${id.toString()}/messages/bulk-delete",
           body: {"messages": data.map((f) => f.id.toString()).toList()});
     });
@@ -168,7 +168,7 @@ class MessageChannel extends Channel with IterableMixin<Message>, ISend, Disposa
     if (before != null) query['before'] = before.toString();
     if (around != null) query['around'] = around.toString();
 
-    final HttpResponse r = await _client.http
+    final HttpResponse r = await _client._http
         .send('GET', '/channels/${this.id}/messages', queryParams: query);
 
     var response = LinkedHashMap<Snowflake, Message>();
@@ -189,6 +189,9 @@ class MessageChannel extends Channel with IterableMixin<Message>, ISend, Disposa
 
   @override
   Iterator<Message> get iterator => messages.values.iterator;
+
+  @override
+  String get nameString => "Message Channel [${this.id}]";
 
   @override
   Future<void> dispose() => Future(() {

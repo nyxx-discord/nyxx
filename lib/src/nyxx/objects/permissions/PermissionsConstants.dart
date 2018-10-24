@@ -1,6 +1,6 @@
 part of nyxx;
 
-/// Contains constants for permissions
+/// Permissions constants
 class PermissionsConstants {
   /// Allows to create instnt invite
   static const int createInstantInvite = 1 << 0;

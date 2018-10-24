@@ -1,7 +1,7 @@
 part of nyxx;
 
 /// A controller for all events.
-class _EventController {
+class _EventController implements Disposable {
   /// Emitted when a raw packet is received from the websocket connection.
   StreamController<RawEvent> onRaw;
 
@@ -237,48 +237,48 @@ class _EventController {
     _client.onMessage = this.onMessage.stream;
   }
 
-  /// Closes all streams.
-  Future<void> destroy() async {
-    await this.onRaw.close();
-    await this.onDisconnect.close();
-    await this.beforeHttpRequestSend.close();
-    await this.onHttpResponse.close();
-    await this.onHttpError.close();
-    await this.onRatelimited.close();
-    await this.onGuildUpdate.close();
-    await this.onReady.close();
-    await this.onMessageReceived.close();
-    await this.onMessageUpdate.close();
-    await this.onMessageDelete.close();
-    await this.onChannelCreate.close();
-    await this.onChannelUpdate.close();
-    await this.onChannelDelete.close();
-    await this.onGuildBanAdd.close();
-    await this.onGuildBanRemove.close();
-    await this.onGuildCreate.close();
-    await this.onGuildUpdate.close();
-    await this.onGuildDelete.close();
-    await this.onGuildUnavailable.close();
-    await this.onGuildMemberAdd.close();
-    await this.onGuildMemberUpdate.close();
-    await this.onGuildMemberRemove.close();
-    await this.onPresenceUpdate.close();
-    await this.onTyping.close();
-    await this.onRoleCreate.close();
-    await this.onRoleUpdate.close();
-    await this.onRoleDelete.close();
+  @override
+  Future<void> dispose() {
+    this.onRaw.close();
+    this.onDisconnect.close();
+    this.beforeHttpRequestSend.close();
+    this.onHttpResponse.close();
+    this.onHttpError.close();
+    this.onRatelimited.close();
+    this.onGuildUpdate.close();
+    this.onReady.close();
+    this.onMessageReceived.close();
+    this.onMessageUpdate.close();
+    this.onMessageDelete.close();
+    this.onChannelCreate.close();
+    this.onChannelUpdate.close();
+    this.onChannelDelete.close();
+    this.onGuildBanAdd.close();
+    this.onGuildBanRemove.close();
+    this.onGuildCreate.close();
+    this.onGuildUpdate.close();
+    this.onGuildDelete.close();
+    this.onGuildUnavailable.close();
+    this.onGuildMemberAdd.close();
+    this.onGuildMemberUpdate.close();
+    this.onGuildMemberRemove.close();
+    this.onPresenceUpdate.close();
+    this.onTyping.close();
+    this.onRoleCreate.close();
+    this.onRoleUpdate.close();
+    this.onRoleDelete.close();
 
-    await this.onChannelPinsUpdate.close();
-    await this.onGuildEmojisUpdate.close();
+    this.onChannelPinsUpdate.close();
+    this.onGuildEmojisUpdate.close();
 
-    await this.onMessageDeleteBulk.close();
-    await this.onMessageReactionAdded.close();
-    await this.onMessageReactionRemove.close();
-    await this.onMessageReactionsRemoved.close();
-    await this.onVoiceStateUpdate.close();
-    await this.onVoiceServerUpdate.close();
-    await this.onWebhookUpdate.close();
+    this.onMessageDeleteBulk.close();
+    this.onMessageReactionAdded.close();
+    this.onMessageReactionRemove.close();
+    this.onMessageReactionsRemoved.close();
+    this.onVoiceStateUpdate.close();
+    this.onVoiceServerUpdate.close();
+    this.onWebhookUpdate.close();
 
-    await this.onUserUpdate.close();
+    this.onUserUpdate.close();
   }
 }

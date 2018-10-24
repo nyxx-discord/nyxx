@@ -1,35 +1,36 @@
 part of nyxx;
 
 Nyxx _client;
+
+/// Current [Nyxx] instance.
 Nyxx get client => _client;
 
-/// The main hub for interacting with the Discord API, and the starting point for any bot.
+/// The main place to start with interacting with the Discord API and creating discord bot.
 /// From there you can subscribe to various [Stream]s to listen to [Events](https://github.com/l7ssha/nyxx/wiki/EventList)
-/// and fetch data provided and collected by bot.
+/// and fetch data from API with provided methods or get cached data.
 ///
 /// Creating new instance of bot:
 /// ```
-/// var bot = new Client("<TOKEN>");
+/// Nyxx('<TOKEN>');
 /// ```
-/// From this place bot will try to connect to gateway and listen to events:
+/// After initializing nyxx you can subscribe to events:
 /// ```
-/// bot.onReady.listen((e) => print('Ready!'));
+/// client.onReady.listen((e) => print('Ready!'));
 ///
-/// bot.onRoleCreate.listen((e) {
+/// client.onRoleCreate.listen((e) {
 ///   print('Role created with name: ${e.role.name});
 /// });
 /// ```
-class Nyxx {
+/// or setup `CommandsFramework` and `Voice`.
+class Nyxx implements Disposable {
   String _token;
   ClientOptions _options;
   DateTime _startTime;
   _WS _ws;
   _EventController _events;
+  Http _http;
 
-  /// The HTTP client.
-  Http http;
-
-  /// The logged in user.
+  /// The current bot user.
   ClientUser self;
 
   /// The bot's OAuth2 app.
@@ -38,33 +39,35 @@ class Nyxx {
   /// All of the guilds the bot is in. Can be empty or can miss guilds on (READY_EVENT).
   Cache<Snowflake, Guild> guilds;
 
-  /// All of the channels the bot is in.
+  /// All of the channels the bot can see.
   ChannelCache channels;
 
-  /// All of the users the bot can see. Does not always have offline users
-  /// without forceFetchUsers enabled.
+  /// All of the users the bot can see. Does not have offline users
+  /// without `forceFetchUsers` enabled.
   Cache<Snowflake, User> users;
 
-  /// Whether or not the client is ready.
+  /// True if client is ready.
   bool ready = false;
 
-  /// The current version.
+  /// The current version of `nyxx`
   String version = _Constants.version;
 
-  /// The client's internal shards.
+  /// The client's internal shards. By default shards are setup automatically by gateway,
+  /// however this can be changed by [ClientOptions]
   Map<int, Shard> shards;
 
-  /// Emitted on any message event
+  /// Generic Stream for message like events. It includes added reactions, and message deletions.
+  /// For received messages refer to [onMessageReceived]
   Stream<MessageEvent> onMessage;
 
-  /// Emitted when a raw packet is received from the websocket connection.
+  /// Emitted when packet is received from gateway.
   Stream<RawEvent> onRaw;
 
   /// Emitted when a shard is disconnected from the websocket.
   Stream<DisconnectEvent> onDisconnect;
 
   /// Emitted before all HTTP requests are sent. (You can edit them)
-  /// This is single subscription Stream.
+  /// This is single subscription Stream - only one listener.
   ///
   /// **WARNING:** Once you listen to this stream, all requests
   /// will be halted until you call `request.send()`
@@ -80,11 +83,14 @@ class Nyxx {
   /// or when a 429 is received.
   Stream<RatelimitEvent> onRatelimited;
 
-  /// Emitted when the client is ready.
+  /// Emitted when the client is ready. Should be sent only once.
   Stream<ReadyEvent> onReady;
 
-  /// Emitted when a message is received.
+  /// Emitted when a message is received. It includes private messages.
   Stream<MessageReceivedEvent> onMessageReceived;
+
+  /// Emitted when private message is received.
+  Stream<MessageReceivedEvent> onDmReceived;
 
   /// Emitted when channel's pins are updated.
   Stream<ChannelPinsUpdateEvent> onChannelPinsUpdate;
@@ -92,7 +98,7 @@ class Nyxx {
   /// Emitted when guild's emojis are changed.
   Stream<GuildEmojisUpdateEvent> onGuildEmojisUpdate;
 
-  /// Emitted when a message is edited.
+  /// Emitted when a message is edited. Old message can be null if isn't cached.
   Stream<MessageUpdateEvent> onMessageUpdate;
 
   /// Emitted when a message is deleted.
@@ -116,13 +122,13 @@ class Nyxx {
   /// Emitted when the client joins a guild.
   Stream<GuildCreateEvent> onGuildCreate;
 
-  /// Emitted when a guild is updated..
+  /// Emitted when a guild is updated.
   Stream<GuildUpdateEvent> onGuildUpdate;
 
   /// Emitted when the client leaves a guild.
   Stream<GuildDeleteEvent> onGuildDelete;
 
-  /// Emitted when a guild becomes unavailable.
+  /// Emitted when a guild becomes unavailable during a guild outage.
   Stream<GuildUnavailableEvent> onGuildUnavailable;
 
   /// Emitted when a member joins a guild.
@@ -167,17 +173,18 @@ class Nyxx {
   /// Emitted when a guild channel's webhook is created, updated, or deleted.
   Stream<WebhookUpdateEvent> onWebhookUpdate;
 
-  /// Emitted when a guild's voice server is updated. This is sent when initially connecting to voice, and when the current voice instance fails over to a new server.
+  /// Emitted when a guild's voice server is updated.
+  /// This is sent when initially connecting to voice, and when the current voice instance fails over to a new server.
   Stream<VoiceServerUpdateEvent> onVoiceServerUpdate;
 
   /// Emitted when user was updated
   Stream<UserUpdateEvent> onUserUpdate;
 
   /// Emitted when bot is mentioned
-  Stream<MessageReceivedEvent> selfMention;
+  Stream<MessageReceivedEvent> onSelfMention;
 
   /// Logger instance
-  Logger logger = Logger.detached("Client");
+  Logger _logger = Logger("Client");
 
   /// Gets an bot invite link with zero permissions
   String get inviteLink => app.getInviteUrl();
@@ -190,7 +197,7 @@ class Nyxx {
 
       ReceivePort errorsPort = ReceivePort();
       errorsPort.listen((err) {
-        logger.severe("ERROR: ${err[0]} \n ${err[1]}");
+        _logger.severe("ERROR: ${err[0]} \n ${err[1]}");
       });
       Isolate.current.addErrorListener(errorsPort.sendPort);
     }
@@ -224,43 +231,46 @@ class Nyxx {
 
     _client = this;
 
-    this.http = Http._new();
+    this._http = Http._new();
     this._events = _EventController();
-    this.selfMention = this.onMessageReceived.where((event) => event.message.mentions?.containsKey(this.self.id));
+    this.onSelfMention = this.onMessageReceived.where((event) => event.message.mentions?.containsKey(this.self.id));
+    this.onDmReceived = this.onMessageReceived.where((event) => event.message.channel is DMChannel || event.message.channel is GroupDMChannel);
     this._ws = _WS();
   }
 
   /// The client's uptime.
   Duration get uptime => DateTime.now().difference(_startTime);
 
-  /// When client was started
+  /// [DateTime] when client was started
   DateTime get startTime => _startTime;
 
   /// Returns channel with specified id.
-  /// If channel is in cache - will be taken from it, or got via API otherwise.
+  /// If channel is in cache - will be taken from it otherwise API will be called.
+  ///
+  /// ```
+  /// var channel = await client.getChannel<TextChannel>(Snowflake('473853847115137024'));
+  /// ```
   Future<T> getChannel<T>(Snowflake id, {Guild guild}) async {
     if (this.channels.hasKey(id)) return this.channels[id] as T;
 
-    var raw = (await this.http.send("GET", "/channels/${id.toString()}")).body
+    var raw = (await this._http.send("GET", "/channels/${id.toString()}")).body
         as Map<String, dynamic>;
 
-    Channel channel;
-    if (T == MessageChannel)
-      channel = MessageChannel._new(raw, raw['type'] as int);
-    else if (T == DMChannel)
-      channel = DMChannel._new(raw);
-    else if (T == GroupDMChannel)
-      channel = GroupDMChannel._new(raw);
-    else if (T == TextChannel)
-      channel = TextChannel._new(raw, guild);
-    else if (T == VoiceChannel)
-      channel = VoiceChannel._new(raw, guild);
-    else if (T == CategoryChannel)
-      channel = CategoryChannel._new(raw, guild);
-    else
-      return null;
-
-    return channel as T;
+    switch(T) {
+      case MessageChannel:
+        return MessageChannel._new(raw, raw['type'] as int) as T;
+      case DMChannel:
+        return DMChannel._new(raw) as T;
+      case GroupDMChannel:
+        return GroupDMChannel._new(raw) as T;
+      case TextChannel:
+        return TextChannel._new(raw, guild) as T;
+      case VoiceChannel:
+        return VoiceChannel._new(raw, guild) as T;
+      case CategoryChannel:
+        return CategoryChannel._new(raw, guild) as T;
+      default: return null;
+    }
   }
 
   /// Get user instance with specified id.
@@ -273,7 +283,7 @@ class Nyxx {
   Future<User> getUser(Snowflake id) async {
     if (this.users.hasKey(id)) return this.users[id];
 
-    var r = await this.http.send("GET", "/users/${id.toString()}");
+    var r = await this._http.send("GET", "/users/${id.toString()}");
     return User._new(r.body as Map<String, dynamic>);
   }
 
@@ -285,7 +295,7 @@ class Nyxx {
   Guild getGuild(Snowflake id) => this.guilds[id];
 
   /// Creates new guild with provided builder.
-  /// If the [id] will be in cache - it will be taken from it, otherwise API will be called.
+  /// Only for bots with less than 10 guilds otherwise it will return Future with error.
   ///
   /// ```
   /// var guildBuilder = GuildBuilder()
@@ -294,39 +304,46 @@ class Nyxx {
   /// var newGuild = await client.createGuild(guildBuilder);
   /// ```
   Future<Guild> createGuild(GuildBuilder builder) async {
-    var r = await this.http.send("POST", "/guilds", body: builder._build());
+    if(this.guilds.count >= 10)
+      return Future.error("Guild cannot be created if bot is in 10 or more guilds");
 
+    var r = await this._http.send("POST", "/guilds", body: builder._build());
     return Guild._new(r.body as Map<String, dynamic>);
   }
 
   /// Gets a webhook by its ID and token.
-  /// If the [id] will be in cache - it will be taken from it, otherwise API will be called.
   Future<Webhook> getWebhook(String id, {String token = ""}) async {
-    HttpResponse r = await http.send('GET', "/webhooks/$id/$token");
+    HttpResponse r = await _http.send('GET', "/webhooks/$id/$token");
     return Webhook._new(r.body as Map<String, dynamic>);
   }
 
+  @deprecated
   /// Block isolate until client is ready.
   Future<ReadyEvent> blockToReady() async => await onReady.first;
 
   /// Gets an [Invite] object with given code.
-  /// If the [id] will be in cache - it will be taken from it, otherwise API will be called.
+  /// If the [code] is in cache - it will be taken from it, otherwise API will be called.
   ///
   /// ```
   /// var inv = client.getInvite("YMgffU8");
   /// ```
   Future<Invite> getInvite(String code) async {
-    final HttpResponse r = await this.http.send('GET', '/invites/$code');
+    final HttpResponse r = await this._http.send('GET', '/invites/$code');
     return Invite._new(r.body as Map<String, dynamic>);
   }
 
   /// Closes websocket connections and cleans everything up.
-  Future<void> close() async {
-    for (var shard in this.shards.values) {
-      await shard._socket.close(1000);
-    }
+  Future<void> close() async => dispose();
 
-    await this._events.destroy();
+  @override
+  Future<void> dispose() async {
+    for (var shard in this.shards.values)
+      await shard._socket.close(1000);
+
+    await guilds.dispose();
+    await users.dispose();
+    await guilds.dispose();
+    await this._events.dispose();
     _client = null;
   }
 }

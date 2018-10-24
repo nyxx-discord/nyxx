@@ -2,14 +2,17 @@ part of nyxx;
 
 /// Represents unicode emoji. Contains only emoji code.
 class UnicodeEmoji extends Emoji {
-  /// Emoji itself.
-  String code;
+  UnicodeEmoji(String code) : super(code);
 
-  UnicodeEmoji(this.code) : super("");
+  /// Returns Emoji
+  String get code => this.name;
+
+  /// Returns runes of emoji
+  Runes get runes => this.name.runes;
 
   /// Encodes Emoji so that can be used in messages.
   @override
-  String encode() => code;
+  String encode() => this.name;
 
   /// Returns encoded string ready to send via message.
   @override
@@ -20,12 +23,12 @@ class UnicodeEmoji extends Emoji {
 
   @override
   bool operator ==(other) {
-    if (other is UnicodeEmoji) return other.code == this.code;
-    if (other is String) return other == this.code;
+    if (other is UnicodeEmoji) return other.name == this.name;
+    if (other is String) return other == this.name;
 
     return false;
   }
 
   @override
-  int get hashCode => super.hashCode * 37 + code.hashCode;
+  int get hashCode => super.hashCode * 37 + name.hashCode;
 }

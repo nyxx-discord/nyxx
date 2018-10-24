@@ -1,6 +1,7 @@
 part of nyxx;
 
 /// Used to represent a user's voice connection status.
+/// If [channel] is null, it means that user left channel.
 class VoiceState {
   /// User this voice state is for
   User user;

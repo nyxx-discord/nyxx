@@ -1,5 +1,6 @@
 part of nyxx;
 
+/// Marks entity to which message can be sent
 abstract class ISend {
   Future<Message> send(
       {Object content = "",
@@ -9,8 +10,10 @@ abstract class ISend {
       bool disableEveryone});
 }
 
+/// Generate Attachment string for [filename]
 String attach(String filename) => "attachment://$filename";
 
+// Sanitized message from @everyone and @here
 String _sanitizeMessage(Object content, bool disableEveryone) {
   var msg = content.toString();
   if (content != null &&

@@ -9,20 +9,20 @@ class _WS {
 
   /// Makes a new WS manager.
   _WS() {
-    _client.http._headers['Authorization'] = "Bot ${client._token}";
-    _client.http
+    _client._http._headers['Authorization'] = "Bot ${client._token}";
+    _client._http
         .send("GET", "/gateway/bot", beforeReady: true)
         .then((HttpResponse r) {
       this.gateway = r.body['url'] as String;
       if (client._options.autoShard) {
-        _client._options.shardIds = [];
+        _client._options._shardIds = [];
         _client._options.shardCount = r.body['shards'] as int;
         for (int i = 0; i < client._options.shardCount; i++) {
           //_client._options.shardIds.add(i);
           setupShard(i);
         }
       } else {
-        for (int shardId in _client._options.shardIds) {
+        for (int shardId in _client._options._shardIds) {
           setupShard(shardId);
         }
       }
@@ -43,7 +43,7 @@ class _WS {
 
   void connectShard(int index) {
     _client.shards.values.toList()[index]._connect(false, true);
-    if (index + 1 != _client._options.shardIds.length)
+    if (index + 1 != _client._options._shardIds.length)
       Timer(Duration(seconds: 6), () => connectShard(index + 1));
   }
 
@@ -74,7 +74,7 @@ class _WS {
       client.ready = true;
       client._startTime = DateTime.now();
 
-      _client.http.send("GET", "/oauth2/applications/@me").then((response) {
+      _client._http.send("GET", "/oauth2/applications/@me").then((response) {
         _client.app =
             ClientOAuth2Application._new(response.body as Map<String, dynamic>);
 

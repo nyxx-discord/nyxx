@@ -1,6 +1,6 @@
 part of nyxx;
 
-/// Reaction object, has partial [GuildEmoji] object (only id, and name (for unicode emoji 'id' is null))
+/// Reaction object. [emoji] field can be partial [GuildEmoji].
 class Reaction {
   /// Time this emoji has been used to react
   int count;

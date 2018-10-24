@@ -1,15 +1,29 @@
 part of nyxx;
 
+/// Wrapper for colors.
+///
+/// Simplifies creation and provides interface to interact with colors for nyxx.
+///
+/// Class also defines few
 class DiscordColor {
   int _value;
 
-  int get value => _value;
-
+  /// Construct color from int.
+  /// It allows to create color from hex number and decimal number
+  ///
+  /// ```
+  /// var color = DiscordColor.fromInt(43563);
+  /// var color2 = DiscordColor.fromInt(0xff0044);
+  /// ```
   DiscordColor.fromInt(this._value);
+
+  /// Construct color from individual color components
   DiscordColor.fromRgb(int r, int g, int b) {
     this._value = r << 16 | g << 8 | b;
   }
 
+  /// Construct color from individual color components with doubles
+  /// Values should be from 0.0 to 1.0
   DiscordColor.fromDouble(double r, double g, double b) {
     var rb = (r * 255).toInt();
     var gb = (g * 255).toInt();
@@ -18,14 +32,22 @@ class DiscordColor {
     this._value = rb << 16 | gb << 8 | bb;
   }
 
+  /// Construct color from hex String.
+  /// Leading # will be ignored in process.
   DiscordColor.fromHexString(String hexStr) {
     if(hexStr.isEmpty)
       throw new ArgumentError("Hex color String cannot be empty");
 
-    hexStr = hexStr.replaceAll("#", "");
+    // Apparently this is a lot faster than previous version
+    // https://hastebin.com/xajatuzofi
+    if(hexStr.startsWith("#"))
+      hexStr = hexStr.substring(1);
 
     this._value = int.parse(hexStr, radix: 16);
   }
+
+  /// Int value of color
+  int get value => _value;
 
   /// Gets the blue component of this color as an integer.
   int get r => ((this._value >> 16) & 0xFF);
@@ -45,7 +67,7 @@ class DiscordColor {
   @override
   bool operator ==(other) => other is DiscordColor && other._value == this._value;
 
-  // All colors got from Emzi's DiscordColor class.
+  // All colors got from DiscordColor class from DSharp+.
   // https://github.com/DSharpPlus/DSharpPlus/blob/a2f6eca7f5f675e83748b20b957ae8bdb8fd0cab/DSharpPlus/Entities/DiscordColor.Colors.cs
 
   /// Color of null, literally null.

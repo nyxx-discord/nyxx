@@ -26,10 +26,12 @@ class PresenceUpdateEvent {
           member.guild.members[member.id] = member;
           client.users[member.id] = member;
         } else {
-          guild.getMemberById(Snowflake(json['d']['user']['id'] as String)).then((member) {
-            member.guild.members[member.id] = member;
-            client.users[member.id] = member;
-          });
+          if(_client._options.cacheMembers) {
+            guild.getMemberById(Snowflake(json['d']['user']['id'] as String)).then((member) {
+              member.guild.members[member.id] = member;
+              client.users[member.id] = member;
+            });
+          }
         }
       } else if (member != null &&
           'offline' == json['d']['status'].toString()) {

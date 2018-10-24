@@ -265,7 +265,7 @@ class Message extends SnowflakeEntity implements GuildEntity, Disposable {
     if (this.author.id != _client.self.id) return null;
     String newContent = _sanitizeMessage(content, disableEveryone);
 
-    final HttpResponse r = await _client.http.send(
+    final HttpResponse r = await _client._http.send(
         'PATCH', '/channels/${this.channel.id}/messages/${this.id}',
         body: <String, dynamic>{
           "content": newContent,
@@ -276,25 +276,25 @@ class Message extends SnowflakeEntity implements GuildEntity, Disposable {
 
   /// Add reaction to message.
   Future<void> createReaction(Emoji emoji) async {
-    await _client.http.send('PUT',
+    await _client._http.send('PUT',
         "/channels/${this.channel.id}/messages/${this.id}/reactions/${emoji.encode()}/@me");
   }
 
   /// Deletes reaction of bot. Emoji as ':emoji_name:'
   Future<void> deleteReaction(Emoji emoji) async {
-    await _client.http.send('DELETE',
+    await _client._http.send('DELETE',
         "/channels/${this.channel.id}/messages/${this.id}/reactions/${emoji.encode()}/@me");
   }
 
   /// Deletes reaction of given user.
   Future<void> deleteUserReaction(Emoji emoji, String userId) async {
-    await _client.http.send('DELETE',
+    await _client._http.send('DELETE',
         "/channels/${this.channel.id}/messages/${this.id}/reactions/${emoji.encode()}/$userId");
   }
 
   /// Deletes all reactions
   Future<void> deleteAllReactions() async {
-    await _client.http.send(
+    await _client._http.send(
         'DELETE', "/channels/${this.channel.id}/messages/${this.id}/reactions");
   }
 
@@ -302,19 +302,19 @@ class Message extends SnowflakeEntity implements GuildEntity, Disposable {
   ///
   /// Throws an [Exception] if the HTTP request errored.
   Future<void> delete({String auditReason = ""}) async {
-    await _client.http.send(
+    await _client._http.send(
         'DELETE', '/channels/${this.channel.id}/messages/${this.id}',
         reason: auditReason);
   }
 
   /// Pins [Message] in current [Channel]
   Future<void> pinMessage() async {
-    await _client.http.send('PUT', "/channels/${channel.id}/pins/$id");
+    await _client._http.send('PUT', "/channels/${channel.id}/pins/$id");
   }
 
   /// Unpins [Message] in current [Channel]
   Future<void> unpinMessage() async {
-    await _client.http.send('DELETE', "/channels/${channel.id}/pins/$id");
+    await _client._http.send('DELETE', "/channels/${channel.id}/pins/$id");
   }
 
   @override

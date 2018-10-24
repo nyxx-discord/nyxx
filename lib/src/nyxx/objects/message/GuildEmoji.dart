@@ -1,7 +1,7 @@
 part of nyxx;
 
 /// Emoji object. Handles Unicode emojis and custom ones.
-class GuildEmoji extends Emoji implements SnowflakeEntity, GuildEntity {
+class GuildEmoji extends Emoji implements SnowflakeEntity, GuildEntity, Nameable {
 
   @override
   /// Emoji guild
@@ -47,7 +47,7 @@ class GuildEmoji extends Emoji implements SnowflakeEntity, GuildEntity {
   }
 
   Future<GuildEmoji> edit({String name, List<Snowflake> roles}) async {
-    var res = await client.http.send(
+    var res = await client._http.send(
         "PATCH", "/guilds/${guild.id.toString()}/emojis/${this.id.toString()}",
         body: {"name": name, roles: roles.map((r) => r.toString())});
 
@@ -55,7 +55,7 @@ class GuildEmoji extends Emoji implements SnowflakeEntity, GuildEntity {
   }
 
   Future<void> delete() async {
-    await _client.http.send("DELETE",
+    await _client._http.send("DELETE",
         "/guilds/${this.guild.id.toString()}/emojis/${this.id.toString()}");
   }
 
@@ -85,4 +85,7 @@ class GuildEmoji extends Emoji implements SnowflakeEntity, GuildEntity {
 
   @override
   DateTime get createdAt => id.timestamp;
+
+  @override
+  String get nameString => "Guild Emoji ${name} [${this.guild.name}] [${this.id}]";
 }
