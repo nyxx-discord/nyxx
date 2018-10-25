@@ -21,9 +21,8 @@ class IsGuildProcessor implements command.Preprocessor {
   const IsGuildProcessor();
 
   @override
-  bool execute(List<Object> services, nyxx.Message message) {
-    print("ELO");
-    return message.guild != null;
+  Future<command.PreprocessorResult> execute(List<Object> services, nyxx.Message message) async {
+    return message.guild != null ? command.PreprocessorResult.success() : command.PreprocessorResult.error("ERROR");
   }
 }
 

@@ -60,12 +60,14 @@ void main() {
   command.CommandsFramework('~~')
     ..registerLibraryServices()
     ..registerLibraryCommands()
-    ..onCommandNotFound.listen((m) async {
-      await m.channel.send(content: "Command '${m.content}' not found!");
-    })
-    ..onCooldown.listen((m) async {
-      await m.channel
-          .send(content: "Command is on cooldown!. Wait a few seconds!");
+    ..onError.listen((err) async {
+      if(err.type == command.ExecutionErrorType.commandNotFound)
+        await err.message.channel.send(content: "Command '${err.message.content}' not found!");
+
+      if(err.type == command.ExecutionErrorType.cooldown) {
+        await err.message.channel
+            .send(content: "Command is on cooldown!. Wait a few seconds!");
+      }
     })
     ..ignoreBots = false;
 
