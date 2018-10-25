@@ -9,16 +9,9 @@ class CommandsFramework {
   CooldownCache _cooldownCache;
   List<Object> _services = List();
 
-  StreamController<Message> _cooldownEvent;
-  StreamController<Message> _commandNotFoundEvent;
-  StreamController<Message> _requiredPermissionEvent;
-  StreamController<Message> _forAdminOnlyEvent;
-  StreamController<CommandExecutionFailEvent> _commandExecutionFail;
-  StreamController<Message> _wrongContext;
-  StreamController<Message> _unauthorizedNsfwAccess;
-  StreamController<Message> _requiredTopicError;
-  StreamController<PreprocessorErrorEvent> _preprocessorFail;
-  //StreamController<CommandParsingFail> _commandParsingFail;
+  StreamController<CommandExecutionError> _onError;
+
+  Stream<CommandExecutionError> onError;
 
   /// Prefix needed to dispatch a commands.
   /// All messages without this prefix will be ignored
@@ -36,36 +29,6 @@ class CommandsFramework {
   /// Sets default bots game
   set game(Presence game) => client.self.setGame(game);
 
-  /// Fires when invoked command dont exists in registry
-  Stream<Message> onCommandNotFound;
-
-  /// Invoked when non-admin user uses admin-only command.
-  Stream<Message> onAdminOnlyError;
-
-  /// Invoked when user didn't have enough permissions.
-  Stream<Message> onRequiredPermissionError;
-
-  /// Invoked when user hits command ratelimit.
-  Stream<Message> onCooldown;
-
-  /// Emitted when command execution fails
-  Stream<CommandExecutionFailEvent> onCommandExecutionFail;
-
-  /// Emitted when command is only for DM and is invoked on Guild etc
-  Stream<Message> onWrongContext;
-
-  /// Emitted  when nsfw command is invoked in non nsfw context;
-  Stream<Message> onUnauthorizedNsfwAccess;
-
-  /// Emitted when command is invoked in channel without required topic
-  Stream<Message> onRequiredTopicError;
-
-  /// Emitted when dispatch function fails when checking preprocessors
-  Stream<PreprocessorErrorEvent> preprocessorFail;
-
-  /// Emitted when command fails to parse. Eg. Wrong arguments
-  //Stream<CommandParsingFail> onCommandParsingFail;
-
   /// Logger instance
   final Logger logger = Logger.detached("CommandsFramework");
 
@@ -75,37 +38,18 @@ class CommandsFramework {
     this._commands = List();
     _cooldownCache = CooldownCache(roundupTime);
 
-    _commandNotFoundEvent = StreamController.broadcast();
-    _requiredPermissionEvent = StreamController.broadcast();
-    _forAdminOnlyEvent = StreamController.broadcast();
-    _cooldownEvent = StreamController.broadcast();
-    _commandExecutionFail = StreamController.broadcast();
-    _wrongContext = StreamController.broadcast();
-    _unauthorizedNsfwAccess = StreamController.broadcast();
-    _requiredTopicError = StreamController.broadcast();
-    _preprocessorFail = StreamController.broadcast();
-    //_commandParsingFail = new StreamController.broadcast();
-
-    onCommandNotFound = _commandNotFoundEvent.stream;
-    onAdminOnlyError = _forAdminOnlyEvent.stream;
-    onRequiredPermissionError = _forAdminOnlyEvent.stream;
-    onCooldown = _cooldownEvent.stream;
-    onCommandExecutionFail = _commandExecutionFail.stream;
-    onWrongContext = _wrongContext.stream;
-    onUnauthorizedNsfwAccess = _unauthorizedNsfwAccess.stream;
-    onRequiredTopicError = _requiredTopicError.stream;
-    preprocessorFail = _preprocessorFail.stream;
-    //onCommandParsingFail = _commandParsingFail.stream;
+    _onError = StreamController.broadcast();
+    onError = _onError.stream;
 
     // Listen to incoming messages and ignore all from bots (if set)
-    client.onReady.listen((_) {
+    //client.onReady.listen((_) {
       client.onMessageReceived.listen((MessageReceivedEvent e) {
         if (ignoreBots && e.message.author.bot) return;
         if (!e.message.content.startsWith(prefix)) return;
 
-        Future.microtask(() => _dispatch(e));
+        Future(() => _dispatch(e));
       });
-    });
+    //});
   }
 
   /// Allows to register new converters for custom type
@@ -358,18 +302,28 @@ class CommandsFramework {
         }
       });
     } catch (err) {
-      _commandNotFoundEvent.add(e.message);
+      _onError.add(CommandExecutionError(ExecutionErrorType.commandNotFound, e.message));
       return;
     }
 
     var executionCode = -1;
-
-    if (matchedMeta.preprocessors.length > 0 &&
-        !matchedMeta.preprocessors
-            .every((pre) => pre.execute(_services, e.message)))
-      executionCode = 8;
-
     executionCode = await checkPermissions(matchedMeta, e.message);
+
+    if(executionCode == -1 && matchedMeta.preprocessors.length > 0) {
+      for(var p in matchedMeta.preprocessors) {
+        try {
+          var res = await p.execute(_services, e.message);
+
+          if(!res.isSuccessful) {
+            _onError.add(CommandExecutionError(ExecutionErrorType.preprocessorFail, e.message, res.exception, res.message));
+            executionCode = 8;
+            break;
+          }
+        } catch (err) {
+          _onError.add(CommandExecutionError(ExecutionErrorType.preprocessorException, e.message, err as Exception));
+        }
+      }
+    }
 
     /// Submethod to invoke postprocessors
     void invokePost(res) {
@@ -385,24 +339,30 @@ class CommandsFramework {
     // Switch between execution codes
     switch (executionCode) {
       case 0:
-        _forAdminOnlyEvent.add(e.message);
+        _onError.add(CommandExecutionError(ExecutionErrorType.adminOnly, e.message));
         break;
       case 1:
+        _onError.add(CommandExecutionError(ExecutionErrorType.userPermissionsError, e.message));
+        break;
       case 6:
-        _requiredPermissionEvent.add(e.message);
+        _onError.add(CommandExecutionError(ExecutionErrorType.botPermissionError, e.message));
         break;
       case 2:
-        _cooldownEvent.add(e.message);
+        _onError.add(CommandExecutionError(ExecutionErrorType.cooldown, e.message));
         break;
       case 3:
-        _wrongContext.add(e.message);
+        _onError.add(CommandExecutionError(ExecutionErrorType.wrongContext, e.message));
         break;
       case 4:
-        _unauthorizedNsfwAccess.add(e.message);
+        _onError.add(CommandExecutionError(ExecutionErrorType.nfswAccess, e.message));
         break;
       case 5:
-        _requiredTopicError.add(e.message);
+        _onError.add(CommandExecutionError(ExecutionErrorType.requiredTopic, e.message));
         break;
+      case 7:
+        _onError.add(CommandExecutionError(ExecutionErrorType.roleRequired, e.message));
+        break;
+      case 8: break;
       case -1:
       case -2:
       case 100:
@@ -424,9 +384,9 @@ class CommandsFramework {
           (instance.invoke(matchedMeta.method.simpleName, methodInj)
               .reflectee as Future).then((r) {
             invokePost(r);
-          }).catchError((err, stack) {
+          }).catchError((Exception err, String stack) {
             invokePost([err, stack]);
-            _commandExecutionFail.add(CommandExecutionFailEvent._new(e.message, err));
+            _onError.add(CommandExecutionError(ExecutionErrorType.commandFailed, e.message, err, stack));
           });
         }
 
@@ -440,9 +400,9 @@ class CommandsFramework {
                   ..add(context)
                   ..addAll(methodInj)).reflectee as Future).then((r) {
             invokePost(r);
-          }).catchError((err, stack) {
+          }).catchError((Exception err, String stack) {
             invokePost([err, stack]);
-            _commandExecutionFail.add(CommandExecutionFailEvent._new(e.message, err));
+            _onError.add(CommandExecutionError(ExecutionErrorType.commandFailed, e.message, err, stack));
           });
         }
 
@@ -480,7 +440,7 @@ class CommandsFramework {
       var hasRoles =
           member.roles.map((f) => f.id).any((t) => annot.roles.contains(t));
 
-      if (hasRoles) executionCode = 1;
+      if (!hasRoles) executionCode = 7;
     }
 
     // Check for channel topics
@@ -500,7 +460,7 @@ class CommandsFramework {
 
       print(annot.userPermissions);
       for (var perm in annot.userPermissions) {
-        if ((total.raw | perm) == 0) {
+        if (!util.isApplied(perm, total.raw)) {
           executionCode = 1;
           break;
         }

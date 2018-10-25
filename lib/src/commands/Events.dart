@@ -1,34 +1,37 @@
 part of nyxx.commands;
 
-/// Emitted when command execution fails
-class CommandExecutionFailEvent {
-  /// Message which caused error
-  Message message;
-
-  /// Error object
-  dynamic exception;
-
-  CommandExecutionFailEvent._new(this.message, this.exception);
+enum ExecutionErrorType {
+  commandNotFound,
+  botPermissionError,
+  userPermissionsError,
+  wrongContext,
+  nfswAccess,
+  requiredTopic,
+  adminOnly,
+  cooldown,
+  roleRequired,
+  preprocessorFail,
+  preprocessorException,
+  commandFailed
 }
 
-/// Emitted when dispatch function fails when checking preprocessors
-class PreprocessorErrorEvent {
-  /// Message on which preprocessor fails
+class CommandExecutionError {
+  ExecutionErrorType type;
+
   Message message;
 
-  /// Failed preprocessor;
-  Preprocessor preprocessor;
-
-  PreprocessorErrorEvent._new(this.message, this.preprocessor);
-}
-
-/// Emitted when parsing error occurs
-class CommandParsingFail {
-  /// Error of exception
   Exception exception;
+  String additionalInfo;
 
-  /// Command string on which error occurs
-  String commandStr;
+  CommandExecutionError(this.type, this.message, [this.exception, this.additionalInfo]);
+}
 
-  CommandParsingFail(this.exception, this.commandStr);
+class PreprocessorResult {
+  Exception exception;
+  String message;
+
+  bool isSuccessful = false;
+
+  PreprocessorResult.success() : isSuccessful = true;
+  PreprocessorResult.error(this.message, [this.exception]);
 }

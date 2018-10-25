@@ -3,7 +3,7 @@ part of nyxx.commands;
 /// Preprocessor allows to run code block just after finding right command handler and before even checking for permission.
 /// It gives possibility to check if command can be run (or not) before even starting all the process.
 abstract class Preprocessor {
-  bool execute(List<Object> services, Message message);
+  Future<PreprocessorResult> execute(List<Object> services, Message message);
 }
 
 /// Preprocessor allows to run code block after successful command execution.
