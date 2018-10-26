@@ -7,7 +7,8 @@ abstract class ISend {
       List<File> files,
       EmbedBuilder embed,
       bool tts = false,
-      bool disableEveryone});
+      bool disableEveryone,
+      MessageBuilder builder});
 }
 
 /// Generate Attachment string for [filename]

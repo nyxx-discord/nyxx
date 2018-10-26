@@ -67,6 +67,7 @@ part 'src/nyxx/builders/EmbedAuthorBuilder.dart';
 part 'src/nyxx/builders/EmbedFieldBuilder.dart';
 part 'src/nyxx/builders/EmbedFooterBuilder.dart';
 part 'src/nyxx/builders/GuildBuilder.dart';
+part 'src/nyxx/builders/MessageBuilder.dart';
 
 // OBJECTS
 

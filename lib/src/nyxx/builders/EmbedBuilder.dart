@@ -51,7 +51,7 @@ class EmbedBuilder implements Builder {
   }
 
   /// Adds field to embed. [name] and [content] fields are required. Inline is set to false by default.
-  void addField({String name, String content, bool inline = false, Function(EmbedFieldBuilder field) builder, EmbedFieldBuilder field}) {
+  void addField({dynamic name, dynamic content, bool inline = false, Function(EmbedFieldBuilder field) builder, EmbedFieldBuilder field}) {
     if(field != null) {
       _fields.add(field._build());
       return;

@@ -3,10 +3,10 @@ part of nyxx;
 /// Builder for embed Field.
 class EmbedFieldBuilder implements Builder {
   /// Field name/title
-  String name;
+  dynamic name;
 
   /// Field content
-  String content;
+  dynamic content;
 
   /// Whether or not this field should display inline
   bool inline;
@@ -21,12 +21,12 @@ class EmbedFieldBuilder implements Builder {
     Map<String, dynamic> tmp = Map();
 
     if (name != null)
-      tmp["name"] = name;
+      tmp["name"] = name.toString();
     else
       tmp["name"] = "\u200B";
 
     if (content != null)
-      tmp["value"] = content;
+      tmp["value"] = content.toString();
     else
       tmp["value"] = "\u200B";
 
