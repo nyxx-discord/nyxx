@@ -7,8 +7,7 @@ library nyxx.lavalink;
 
 import 'nyxx.dart';
 import 'package:logging/logging.dart';
-import 'package:yaml/yaml.dart';
-import 'package:http/http.dart' as http;
+import 'package:w_transport/w_transport.dart' as transport;
 
 import 'dart:io';
 import 'dart:async';

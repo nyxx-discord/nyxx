@@ -55,30 +55,35 @@ class HttpBase {
   /// Sends the request off to the bucket to be processed and sent.
   void send() => this.bucket._push(this);
 
-  /// Destroys the request.
   void abort() {
     this._streamController.add(HttpResponse._aborted(this));
     this._streamController.close();
   }
 
   Future<HttpResponse> _execute() async {
-    var r = httpreq.Request(this.method, this.uri);
+    var req = transport.JsonRequest()
+        ..uri = this.uri
+        ..headers = this.headers;
+
     try {
-      this.headers.forEach((k, v) => r.headers[k] = v);
-      if (this.body != null) {
-        r.body = jsonEncode(this.body);
-        return HttpResponse._fromResponse(this, await r.send());
-      } else {
-        return HttpResponse._fromResponse(this, await r.send());
-      }
-    } on Exception {
+      if (this.body != null)
+        req.body = this.body;
+
+      if(this.queryParams != null)
+        req.queryParameters = this.queryParams;
+
+      var res = await req.send(this.method);
+
+      return HttpResponse._fromResponse(this, res);
+    } on Exception catch (e, stack) {
+      print("$e, \n $stack");
       return HttpResponse._fromResponse(this, null);
     }
   }
 }
 
 class HttpMultipartRequest extends HttpBase {
-  List<httpreq.MultipartFile> files = List();
+  Map<String, transport.MultipartFile> files = Map();
   Map<String, dynamic> fields;
 
   HttpMultipartRequest._new(Http http, String method, String path,
@@ -87,8 +92,8 @@ class HttpMultipartRequest extends HttpBase {
     for (var f in files) {
       try {
         var name = Uri.file(f.path).toString().split("/").last;
-        this.files.add(httpreq.MultipartFile(name, f.openRead(), f.lengthSync(),
-            filename: name));
+        this.files[name] = transport.MultipartFile(f.openRead(), f.lengthSync(),
+            filename: name);
       } on FileSystemException catch (err) {
         throw Exception("Cannot find your file: ${err.path}");
       }
@@ -99,19 +104,18 @@ class HttpMultipartRequest extends HttpBase {
 
   @override
   Future<HttpResponse> _execute() async {
-    var r = httpreq.MultipartRequest(this.method, this.uri);
-    r.files.addAll(this.files);
-    this.headers.forEach((k, v) => r.headers[k] = v);
+    var req = transport.MultipartRequest()
+      ..uri = this.uri
+      ..headers = this.headers
+      ..files = this.files;
 
     try {
-      if (this.fields != null) {
-        r.fields.addAll({"payload_json": jsonEncode(this.fields)});
+      if (this.fields != null)
+        req.fields.addAll({"payload_json": jsonEncode(this.fields)});
 
-        return HttpResponse._fromResponse(this, await r.send());
-      } else {
-        return HttpResponse._fromResponse(this, await r.send());
-      }
-    } on Exception {
+      return HttpResponse._fromResponse(this, await req.send(method));
+    } on Exception catch (e, stack) {
+      print("$e, \n $stack");
       return HttpResponse._fromResponse(this, null);
     }
   }
@@ -164,20 +168,12 @@ class HttpResponse {
   }
 
   static Future<HttpResponse> _fromResponse(
-      HttpBase request, httpreq.StreamedResponse r) async {
-    String res;
-    try {
-      res = await r.stream.bytesToString();
-    } catch (err, stacktrace) {
-      return Future.error(err, stacktrace);
-    }
+      HttpBase request, transport.Response r) async {
+    if(r == null)
+      return Future.error(request.toString());
 
-    var json;
-    try {
-      json = jsonDecode(res);
-    } catch (e) {}
-
-    return HttpResponse._new(request, r.statusCode, "", r.headers, json);
+    var json = r.body.asJson();
+    return HttpResponse._new(request, r.status, "", r.headers, json);
   }
 
   @override
@@ -325,7 +321,7 @@ class Http {
 
   /// Adds AUDIT_LOG header to request
   Map<String, String> _addAuditReason(String reason) =>
-      <String, String>{"X-Audit-Log-Reason": "$reason"};
+      <String, String>{"X-Audit-Log-Reason": "${reason == null ? "" : reason}"};
 
   /// Sends multipart request
   Future<HttpResponse> sendMultipart(

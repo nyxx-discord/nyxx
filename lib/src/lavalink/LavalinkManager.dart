@@ -57,7 +57,7 @@ VoiceService _manager;
 class VoiceService {
   Uri _wsPath;
   Uri _restPath;
-  WebSocket _webSocket;
+  transport.WebSocket _webSocket;
   String _password;
 
   static Map<Snowflake, Player> _playersCache = Map();
@@ -78,7 +78,7 @@ class VoiceService {
   // Connects to main websocket. And starts dispatching messages.
   Future<void> _connect() async {
     try {
-      WebSocket.connect(_wsPath.toString(), headers: {
+      transport.WebSocket.connect(_wsPath, headers: {
         "Authorization": _password,
         "Num-Shards": client.shards.length,
         "User-Id": client.app.id.toString()
@@ -134,7 +134,7 @@ class VoiceService {
       if (_playersCache.containsKey(guild.id))
         return _playersCache[guild.id];
       else {
-        var tmp = Player._new(guild, _webSocket, _restPath, _password);
+        var tmp = Player._new(guild);
         _playersCache[guild.id] = tmp;
         return tmp;
       }
