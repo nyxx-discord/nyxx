@@ -252,7 +252,7 @@ class CommandsFramework {
     List<String> topics = List.from(top.topics)..addAll(meth.topics);
 
     var cooldown = meth.cooldown != null ? meth.cooldown : top.cooldown;
-    var guild = meth.guild != null ? meth.guild : top.guild;
+    var context = meth.requiredContext != null ? meth.requiredContext: top.requiredContext;
     var nsfw = meth.nsfw != null ? meth.nsfw : top.nsfw;
 
     return Restrict(
@@ -261,7 +261,7 @@ class CommandsFramework {
         userPermissions: userPermissions,
         botPermissions: botPermissions,
         cooldown: cooldown,
-        guild: guild,
+        requiredContext: context,
         nsfw: nsfw,
         topics: topics);
   }
@@ -420,6 +420,61 @@ class CommandsFramework {
     if (executionCode == -1 && annot.admin != null && annot.admin)
       return _isUserAdmin(e.author.id, e.guild) ? 100 : 0;
 
+    // Check for reqired context
+    if(annot.requiredContext != null) {
+      if(annot.requiredContext == ContextType.Dm && !(e.channel is DMChannel || e.channel is GroupDMChannel))
+        return 3;
+
+      if(annot.requiredContext == ContextType.Guild && e.channel is! TextChannel)
+        return 3;
+    }
+
+    if(e.guild != null) {
+      var member = await e.guild.getMember(e.author);
+
+      // Check if there is need to check user roles
+      if (executionCode == -1 && annot.roles.isNotEmpty) {
+        var hasRoles =
+        member.roles.map((f) => f.id).any((t) => annot.roles.contains(t));
+
+        if (!hasRoles) executionCode = 7;
+      }
+
+      // Check for channel topics
+      if (executionCode == -1 &&
+          annot.topics.isNotEmpty &&
+          e.channel is TextChannel) {
+        var topic = (e.channel as TextChannel).topic;
+        var list = topic.split(" ");
+
+        var total = list.any((s) => annot.topics.contains(s));
+        if (!total) executionCode = 5;
+      }
+
+      // Check if user has required permissions
+      if (executionCode == -1 && annot.userPermissions.isNotEmpty) {
+        var total = member.effectivePermissions;
+
+        print(annot.userPermissions);
+        for (var perm in annot.userPermissions) {
+          if (!util.isApplied(perm, total.raw)) {
+            executionCode = 1;
+            break;
+          }
+        }
+      }
+
+      // Check if bot has required permissions
+      if (executionCode == -1 && annot.botPermissions.isNotEmpty) {
+        var total = (await e.guild.getMember(client.self)).effectivePermissions;
+        for (var perm in annot.botPermissions) {
+          if(!util.isApplied(perm, total.raw))
+            executionCode = 6;
+          break;
+        }
+      }
+    }
+
     //Check if user is on cooldown
     if (executionCode == -1) {
       if (annot.cooldown != null &&
@@ -428,53 +483,6 @@ class CommandsFramework {
           e.author.id,
           "${meta.classCommand.name}${meta.methodCommand.name}",
           annot.cooldown * 1000))) executionCode = 2;
-    }
-
-    if(e.channel is! TextChannel)
-      return executionCode;
-
-    var member = await e.guild.getMember(e.author);
-
-    // Check if there is need to check user roles
-    if (executionCode == -1 && annot.roles.isNotEmpty) {
-      var hasRoles =
-          member.roles.map((f) => f.id).any((t) => annot.roles.contains(t));
-
-      if (!hasRoles) executionCode = 7;
-    }
-
-    // Check for channel topics
-    if (executionCode == -1 &&
-        annot.topics.isNotEmpty &&
-        e.channel is TextChannel) {
-      var topic = (e.channel as TextChannel).topic;
-      var list = topic.split(" ");
-
-      var total = list.any((s) => annot.topics.contains(s));
-      if (!total) executionCode = 5;
-    }
-
-    // Check if user has required permissions
-    if (executionCode == -1 && annot.userPermissions.isNotEmpty) {
-      var total = member.effectivePermissions;
-
-      print(annot.userPermissions);
-      for (var perm in annot.userPermissions) {
-        if (!util.isApplied(perm, total.raw)) {
-          executionCode = 1;
-          break;
-        }
-      }
-    }
-
-    // Check if bot has required permissions
-    if (executionCode == -1 && annot.botPermissions.isNotEmpty) {
-      var total = (await e.guild.getMember(client.self)).effectivePermissions;
-      for (var perm in annot.botPermissions) {
-        if(!util.isApplied(perm, total.raw))
-          executionCode = 6;
-          break;
-      }
     }
 
     return executionCode;

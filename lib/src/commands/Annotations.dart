@@ -73,7 +73,7 @@ class Restrict {
   final int cooldown;
 
   /// Allows to restrict command to be used only on guild or only in DM or both
-  final bool guild;
+  final ContextType requiredContext;
 
   /// If command is nfsw it wont be invoked in no nsfw channels
   final bool nsfw;
@@ -91,7 +91,7 @@ class Restrict {
       this.cooldown,
       this.userPermissions = const [],
       this.botPermissions = const [],
-      this.guild,
+      this.requiredContext,
       this.nsfw,
       this.topics = const [],
       this.hidden});
@@ -112,4 +112,10 @@ class Help {
 /// Captures all remaining command text into `List<String>` or `String`
 class Remainder {
   const Remainder();
+}
+
+enum ContextType {
+  Guild,
+  Dm,
+  Both
 }
