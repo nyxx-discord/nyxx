@@ -15,7 +15,9 @@ import 'dart:io';
 import 'dart:isolate';
 
 import 'package:logging/logging.dart';
-import 'package:http/http.dart' as httpreq;
+
+import 'package:w_transport/w_transport.dart' as transport;
+import 'package:w_transport/vm.dart' as transport;
 
 import 'utils.dart' as utils;
 

@@ -22,7 +22,7 @@ class Shard {
 
   Timer _heartbeatTimer;
   _WS _ws;
-  WebSocket _socket;
+  transport.WebSocket _socket;
   int _sequence;
   String _sessionId;
   StreamController<Shard> _onReady;
@@ -79,8 +79,6 @@ class Shard {
 
   // Attempts to connect to ws
   void _connect([bool resume = false, bool init = false]) {
-    if (resume) _logger.severe("SHARD [${this.id}] DISCONNECTED. Trying to reconnect...");
-
     this.ready = false;
     if (this._socket != null) this._socket.close();
 
@@ -89,20 +87,17 @@ class Shard {
       return;
     }
 
-    WebSocket.connect('${this._ws.gateway}?v=6&encoding=json').then(
-        (WebSocket socket) {
-      this._socket = socket;
-      this._socket.pingInterval = const Duration(seconds: 3);
-
-      this._socket.listen((msg) async {
-        this.transfer += msg.length as int;
-        await this._handleMsg(_decodeBytes(msg), resume);
-      }, onDone: this._handleErr, onError: (err) {
-        print(err);
-        this._handleErr();
-      });
-    }, onError: (err) {
-      print(err);
+    transport.WebSocket.connect(Uri.parse("${this._ws.gateway}?v=6&encoding=json")).then((ws) {
+     _socket = ws;
+     _socket.done.then((_) => _handleErr());
+     _socket.listen((data) {
+       this.transfer += data.length as int;
+       this._handleMsg(_decodeBytes(data), resume);
+     }, onDone: this._handleErr, onError: (err) {
+       print(err);
+       this._handleErr();
+     });
+    }).catchError((_, __) {
       this._handleErr();
     });
   }
