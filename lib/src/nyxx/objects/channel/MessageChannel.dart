@@ -98,7 +98,16 @@ class MessageChannel extends Channel with IterableMixin<Message>, ISend, Disposa
       List<File> files,
       EmbedBuilder embed,
       bool tts = false,
-      bool disableEveryone}) async {
+      bool disableEveryone,
+      MessageBuilder builder}) async {
+    if(builder != null) {
+      content = builder._content;
+      files = builder.files;
+      embed = builder.embed;
+      tts = builder.tts ?? false;
+      disableEveryone = builder.disableEveryone;
+    }
+
     var newContent = _sanitizeMessage(content, disableEveryone);
 
     Map<String, dynamic> reqBody = {
