@@ -92,7 +92,7 @@ Unofficial guild for Discord Bot developers. To get help with nyxx check `#dart_
 #### [Dartdocs](https://www.dartdocs.org/documentation/nyxx/latest/)
 The dartdocs page will always have the documentation for the latest release.
 
-#### [Dev docs](https://l7ssha.pl/nyxx)
+#### [Dev docs](https://l7ssha.github.io/nyxx)
 You can read about upcoming changes to the library on my website.
 
 #### [Wiki](https://github.com/l7ssha/nyxx/wiki)
