@@ -34,7 +34,7 @@ class HttpBase {
   HttpBase._new(this.http, this.method, this.path, this.queryParams,
       this.headers, this.body);
 
-  void finish() {
+  void _finish() {
     this.uri =
         Uri.https(_Constants.host, _Constants.baseUri + path, queryParams);
 
@@ -75,9 +75,8 @@ class HttpBase {
       var res = await req.send(this.method);
 
       return HttpResponse._fromResponse(this, res);
-    } on Exception catch (e, stack) {
-      print("$e, \n $stack");
-      return HttpResponse._fromResponse(this, null);
+    } on transport.RequestException catch (e) {
+      return HttpResponse._fromResponse(this, e.response);
     }
   }
 }
@@ -99,7 +98,7 @@ class HttpMultipartRequest extends HttpBase {
       }
     }
 
-    super.finish();
+    super._finish();
   }
 
   @override
@@ -114,9 +113,8 @@ class HttpMultipartRequest extends HttpBase {
         req.fields.addAll({"payload_json": jsonEncode(this.fields)});
 
       return HttpResponse._fromResponse(this, await req.send(method));
-    } on Exception catch (e, stack) {
-      print("$e, \n $stack");
-      return HttpResponse._fromResponse(this, null);
+    }  on transport.RequestException catch (e) {
+      return HttpResponse._fromResponse(this, e.response);
     }
   }
 }
@@ -131,7 +129,7 @@ class HttpRequest extends HttpBase {
       Map<String, String> headers,
       dynamic body)
       : super._new(http, method, path, queryParams, headers, body) {
-    super.finish();
+    super._finish();
   }
 }
 
@@ -168,11 +166,12 @@ class HttpResponse {
   }
 
   static Future<HttpResponse> _fromResponse(
-      HttpBase request, transport.Response r) async {
-    if(r == null)
-      return Future.error(request.toString());
+      HttpBase request, transport.BaseResponse r) async {
+    var json;
+    try {
+      json = (r as transport.Response).body.asJson();
+    } on Exception {}
 
-    var json = r.body.asJson();
     return HttpResponse._new(request, r.status, "", r.headers, json);
   }
 
@@ -286,9 +285,8 @@ class Http {
   Logger _logger = Logger.detached("Http");
 
   Http._new() {
-    this._headers = <String, String>{'Content-Type': 'application/json'};
-    this._headers['User-Agent'] =
-        'DiscordBot (https://github.com/l7ssha/nyxx, ${_Constants.version})';
+    this._headers= {'User-Agent':
+        'DiscordBot (https://github.com/l7ssha/nyxx, ${_Constants.version})'};
   }
 
   /// Sends a HTTP request.

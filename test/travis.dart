@@ -57,9 +57,9 @@ void main() {
   var env = Platform.environment;
   var bot = nyxx.Nyxx(env['DISCORD_TOKEN'], ignoreExceptions: false);
 
-  command.CommandsFramework('~~')
-    ..registerLibraryServices()
-    ..registerLibraryCommands()
+  command.CommandsFramework('~~', ignoreBots: false)
+    ..discoverServices()
+    ..discoverCommands()
     ..onError.listen((err) async {
       if(err.type == command.ExecutionErrorType.commandNotFound)
         await err.message.channel.send(content: "Command '${err.message.content}' not found!");
@@ -68,8 +68,7 @@ void main() {
         await err.message.channel
             .send(content: "Command is on cooldown!. Wait a few seconds!");
       }
-    })
-    ..ignoreBots = false;
+    });
 
   Timer(const Duration(seconds: 60), () {
     print('Timed out waiting for messages');

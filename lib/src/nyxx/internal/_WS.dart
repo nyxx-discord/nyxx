@@ -11,7 +11,7 @@ class _WS {
   _WS() {
     _client._http._headers['Authorization'] = "Bot ${client._token}";
     _client._http
-        .send("GET", "/gateway/bot", beforeReady: true)
+        .send("GET", "/gateway/bot")
         .then((HttpResponse r) {
       this.gateway = r.body['url'] as String;
       if (client._options.autoShard) {

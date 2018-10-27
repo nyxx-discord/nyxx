@@ -12,7 +12,8 @@ enum ExecutionErrorType {
   roleRequired,
   preprocessorFail,
   preprocessorException,
-  commandFailed
+  commandFailed,
+  requiresVoice
 }
 
 class CommandExecutionError {
