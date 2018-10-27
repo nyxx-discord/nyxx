@@ -14,7 +14,7 @@ class User extends SnowflakeEntity with ISend, IMentionable, Nameable {
   @override
 
   /// The string to mention the user.
-  String get mention => "<@${this.id}>";
+  String get mention => "<@!${this.id}>";
 
   /// Returns String with username#discriminator
   String get tag => "${this.username}#${this.discriminator}";
