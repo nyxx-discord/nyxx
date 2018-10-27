@@ -11,9 +11,8 @@ void main() {
   nyxx.Nyxx bot = nyxx.Nyxx(Platform.environment['DISCORD_TOKEN']);
 
   // Creating new CommandsFramework object and registering commands.
-  command.CommandsFramework('!')
-    ..admins = [nyxx.Snowflake("302359032612651009")]
-    ..registerLibraryCommands();
+  command.CommandsFramework('!', admins: [nyxx.Snowflake("302359032612651009")])
+    ..discoverCommands();
 }
 
 /// Example command preprocessor.
@@ -47,7 +46,6 @@ Future<void> single(command.CommandContext context) async {
 @command.Module("ping")
 class PongCommand extends command.CommandContext {
   @command.Command(main: true)
-  @command.Help("Pong!", usage: "ping")
   @IsGuildProcessor()
   @PrintString("WITAM SERDECZNIE")
   Future run() async {
