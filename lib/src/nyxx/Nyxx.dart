@@ -221,8 +221,10 @@ class Nyxx implements Disposable {
           '${rec.message}');
     });
 
-    if (this._token == null || this._token == "")
-      throw Exception("Token cannot be null or empty");
+    if (this._token == null || this._token == "") {
+      print("Token cannot be null or empty");
+      exit(1);
+    }
 
     this._options = options ?? ClientOptions();
 

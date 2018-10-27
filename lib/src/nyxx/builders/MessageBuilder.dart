@@ -1,7 +1,7 @@
 part of nyxx;
 
 class MessageBuilder {
-  String _content;
+  String _content = "";
 
   set content(Object content) => _content = content.toString();
   EmbedBuilder embed;
@@ -14,5 +14,5 @@ class MessageBuilder {
     builder(embed);
   }
 
-  void append(String text) =>_content += text;
+  void append(String text) => _content += text;
 }
