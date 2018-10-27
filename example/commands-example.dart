@@ -26,7 +26,7 @@ class IsGuildProcessor implements command.Preprocessor {
 }
 
 class PrintString implements command.Postprocessor {
-  final void str;
+  final dynamic str;
   const PrintString(this.str);
 
   @override
