@@ -20,7 +20,7 @@ class CooldownCache {
   /// Checks if user can execute given command at given time
   Future<bool> canExecute(
       Snowflake userId, String commandName, int desiredCooldown) {
-    return Future.microtask<bool>(() {
+    return Future.microtask(() {
       /// current date
       int now = DateTime.now().millisecondsSinceEpoch;
       var node = _CacheKey._new(userId, commandName);
