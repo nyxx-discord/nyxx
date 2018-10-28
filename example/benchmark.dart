@@ -17,7 +17,7 @@ void main() {
     }
   });
 
-  cmd.CommandsFramework("!")
+  cmd.CommandsFramework(prefix: "!")
     ..discoverCommands();
 }
 
