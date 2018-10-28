@@ -54,4 +54,18 @@ class Permissions extends AbstractPermissions {
     this.manageRoles = utils.isApplied(permissions, PermissionsConstants.manageRolesOrPermissions);
     this.manageWebhooks = utils.isApplied(permissions, PermissionsConstants.manageWebhooks);
   }
+
+  @override
+  int get hashCode => raw.hashCode;
+
+  @override
+  bool operator ==(other) {
+    if (other is Permissions)
+      return other.raw == this.raw;
+
+    if(other is int)
+      return other == this.raw;
+
+    return false;
+  }
 }

@@ -237,7 +237,7 @@ class Nyxx implements Disposable {
 
     this._http = Http._new();
     this._events = _EventController();
-    this.onSelfMention = this.onMessageReceived.where((event) => event.message.mentions?.containsKey(this.self.id));
+    this.onSelfMention = this.onMessageReceived.where((event) => event.message.mentions != null && event.message.mentions.containsKey(client.self.id));
     this.onDmReceived = this.onMessageReceived.where((event) => event.message.channel is DMChannel || event.message.channel is GroupDMChannel);
     this._ws = _WS();
   }

@@ -20,8 +20,8 @@ class CommandsFramework {
   String prefix;
 
   /// Creates commands framework handler. Requires prefix to handle commands.
-  CommandsFramework(this.prefix,
-      {Duration roundupTime = const Duration(minutes: 2), bool ignoreBots = true, List<Snowflake> admins}) {
+  CommandsFramework({this.prefix,
+      Stream<MessageEvent> stream, Duration roundupTime = const Duration(minutes: 2), bool ignoreBots = true, List<Snowflake> admins}) {
     this._commands = List();
     _cooldownCache = CooldownCache(roundupTime);
     _admins = admins;
@@ -29,11 +29,24 @@ class CommandsFramework {
     _onError = StreamController.broadcast();
     onError = _onError.stream;
 
-    client.onMessageReceived.listen((MessageReceivedEvent e) {
-      if (ignoreBots && e.message.author.bot) return;
-      if (!e.message.content.startsWith(prefix)) return;
+    client.onReady.listen((_) {
+      if(prefix == null && stream == null) {
+        prefix = client.self.mention;
+        stream = client.onSelfMention;
+      }
+      else if(stream == null && prefix != null)
+        stream = client.onMessageReceived;
+      else {
+        _logger.severe("CANNOT CREATE FRAMEWORK WITHOUT PREFIX");
+        exit(1);
+      }
 
-      Future(() => _dispatch(e));
+      stream.listen((MessageEvent e) {
+        if (ignoreBots && e.message.author.bot) return;
+        if (!e.message.content.startsWith(prefix)) return;
+
+        Future(() => _dispatch(e));
+      });
     });
   }
 
@@ -209,7 +222,7 @@ class CommandsFramework {
   }
 
   /// Dispatches onMessage event to framework.
-  Future _dispatch(MessageReceivedEvent e) async {
+  Future _dispatch(MessageEvent e) async {
     var s = Stopwatch()..start();
 
     var splittedCommand = _escapeParameters(
@@ -364,10 +377,10 @@ class CommandsFramework {
 
     // Check for reqired context
     if(annot.requiredContext != null) {
-      if(annot.requiredContext == ContextType.Dm && !(e.channel is DMChannel || e.channel is GroupDMChannel))
+      if(annot.requiredContext == ContextType.dm && !(e.channel is DMChannel || e.channel is GroupDMChannel))
         return 3;
 
-      if(annot.requiredContext == ContextType.Guild && e.channel is! TextChannel)
+      if(annot.requiredContext == ContextType.guild && e.channel is! TextChannel)
         return 3;
     }
 
@@ -375,7 +388,7 @@ class CommandsFramework {
       var member = await e.guild.getMember(e.author);
 
       // Check if user is in any channel
-      if(annot.requireVoice && e.guild.voiceStates[member.id] == null)
+      if(annot.requireVoice != null && annot.requireVoice && e.guild.voiceStates[member.id] == null)
         return 9;
 
       // Check if there is need to check user roles
@@ -393,27 +406,38 @@ class CommandsFramework {
         var list = topic.split(" ");
 
         var total = list.any((s) => annot.topics.contains(s));
-        if (!total) return = 5;
+        if (!total) return 5;
       }
 
       // Check if user has required permissions
       if (annot.userPermissions.isNotEmpty) {
-        var total = member.effectivePermissions;
+        var total = (e.channel as TextChannel).effectivePermissions(member);
 
-        print(annot.userPermissions);
-        for (var perm in annot.userPermissions) {
-          if (!util.isApplied(perm, total.raw)) {
-            return 1;
+        if(total == Permissions.empty())
+          return 1;
+
+        if(total != Permissions.all() || _isUserAdmin(member.id, e.guild)) {
+          for (var perm in annot.userPermissions) {
+            if (!util.isApplied(perm, total.raw)) {
+              return 1;
+            }
           }
         }
       }
 
       // Check if bot has required permissions
       if (annot.botPermissions.isNotEmpty) {
-        var total = (await e.guild.getMember(client.self)).effectivePermissions;
-        for (var perm in annot.botPermissions) {
-          if(!util.isApplied(perm, total.raw))
-            return 6;
+        var self = await e.guild.getMember(client.self);
+        var total = (e.channel as TextChannel).effectivePermissions(self);
+        if(total == Permissions.empty())
+          return 6;
+
+        if(total != Permissions.all() || !_isUserAdmin(self.id, e.guild)) {
+          for (var perm in annot.userPermissions) {
+            if (!util.isApplied(perm, total.raw)) {
+              return 6;
+            }
+          }
         }
       }
     }

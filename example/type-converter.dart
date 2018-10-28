@@ -27,7 +27,7 @@ void main() {
   nyxx.Nyxx bot = nyxx.Nyxx(Platform.environment['DISCORD_TOKEN']);
 
   // Creating new CommandsFramework object and registering commands.
-  command.CommandsFramework('!', admins: [nyxx.Snowflake("302359032612651009")])
+  command.CommandsFramework(prefix: '!', admins: [nyxx.Snowflake("302359032612651009")])
     // You can register type converter by hand
     ..registerTypeConverters([ExConverter()])
     ..discoverCommands();
