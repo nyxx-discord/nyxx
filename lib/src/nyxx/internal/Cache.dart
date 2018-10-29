@@ -126,8 +126,6 @@ class ChannelCache extends Cache<Snowflake, Channel> {
     _cache.forEach((_, v) {
       if(v is MessageChannel)
         v.dispose();
-
-      v = null;
     });
 
     _cache.clear();
