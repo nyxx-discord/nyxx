@@ -33,10 +33,10 @@ class Guild extends SnowflakeEntity implements Disposable, Nameable {
   String region;
 
   /// The channel ID for the guild's widget if enabled.
-  Channel embedChannel;
+  GuildChannel embedChannel;
 
   /// The guild's default channel.
-  Channel defaultChannel;
+  GuildChannel defaultChannel;
 
   /// The guild's AFK timeout.
   int afkTimeout;
@@ -189,7 +189,7 @@ class Guild extends SnowflakeEntity implements Disposable, Nameable {
 
       if (raw.containsKey('embed_channel_id'))
         this.embedChannel =
-            client.channels[Snowflake(raw['embed_channel_id'] as String)];
+            client.channels[Snowflake(raw['embed_channel_id'] as String)] as GuildChannel;
 
       if (raw['system_channel_id'] != null) {
         var snow = Snowflake(raw['system_channel_id'] as String);
@@ -561,7 +561,7 @@ class Guild extends SnowflakeEntity implements Disposable, Nameable {
     return Member._new(r.body as Map<String, dynamic>, this);
   }
 
-  /// Gets all of the webhooks for this guild. Webhooks won't be cached until method will be invoked with [cache] as true.
+  /// Gets all of the webhooks for this guild.
   Future<Map<Snowflake, Webhook>> getWebhooks() async {
     HttpResponse r = await _client._http.send('GET', "/guilds/$id/webhooks");
 
@@ -581,11 +581,11 @@ class Guild extends SnowflakeEntity implements Disposable, Nameable {
 
   @override
   Future<void> dispose() => Future(() {
-    channels.dispose().then((_) => channels = null);
-    members.dispose().then((_) => members = null);
-    roles.dispose().then((_) => roles = null);
-    emojis.dispose().then((_) => emojis = null);
-    voiceStates.dispose().then((_) => emojis = null);
+    channels.dispose();
+    members.dispose();
+    roles.dispose();
+    emojis.dispose();
+    voiceStates.dispose();
   });
 
   @override

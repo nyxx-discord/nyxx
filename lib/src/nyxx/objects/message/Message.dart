@@ -318,29 +318,25 @@ class Message extends SnowflakeEntity implements GuildEntity, Disposable {
   }
 
   @override
-  Future<void> dispose() {
+  Future<void> dispose() async {
     _onReactionAdded.close();
     _onReactionRemove.close();
     _onReactionsRemoved.close();
 
     if(embeds != null) {
       embeds.clear();
-      embeds = null;
     }
 
     if(mentions != null) {
       mentions.clear();
-      mentions = null;
     }
 
     if(roleMentions != null) {
       roleMentions.clear();
-      roleMentions = null;
     }
 
     if(attachments != null) {
       attachments.clear();
-      attachments = null;
     }
   }
 }

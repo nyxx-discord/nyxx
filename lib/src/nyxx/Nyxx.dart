@@ -348,6 +348,5 @@ class Nyxx implements Disposable {
     await users.dispose();
     await guilds.dispose();
     await this._events.dispose();
-    _client = null;
   }
 }
