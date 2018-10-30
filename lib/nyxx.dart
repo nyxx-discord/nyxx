@@ -12,7 +12,6 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:collection';
 import 'dart:io';
-import 'dart:html' as html;
 import 'dart:isolate';
 
 import 'package:logging/logging.dart';
