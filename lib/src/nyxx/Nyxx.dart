@@ -192,7 +192,7 @@ class Nyxx implements Disposable {
   /// Creates and logs in a new client. If [ignoreExceptions] is true (by default is)
   /// isolate will ignore all exceptions and continue to work.
   Nyxx(this._token, {ClientOptions options, bool ignoreExceptions = true}) {
-    transport.configureWTransportForVM();
+    if (!setup) throw new NotSetupError();
 
     if (ignoreExceptions) {
       Isolate.current.setErrorsFatal(false);

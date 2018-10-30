@@ -29,8 +29,7 @@ class Shard {
   StreamController<Shard> _onDisconnect;
 
   Logger _logger = Logger("Websocket");
-
-  int transfer = 0;
+  
   int messagesReceived = 0;
   int get eventsSeen => _sequence;
 
@@ -91,7 +90,6 @@ class Shard {
      _socket = ws;
      _socket.done.then((_) => _handleErr());
      _socket.listen((data) {
-       this.transfer += data.length as int;
        this._handleMsg(_decodeBytes(data), resume);
      }, onDone: this._handleErr, onError: (err) {
        print(err);
@@ -105,7 +103,11 @@ class Shard {
   // Decodes zlib compresses string into string json
   Map<String, dynamic> _decodeBytes(dynamic bytes) {
     if (bytes is String) return jsonDecode(bytes) as Map<String, dynamic>;
-
+    
+    if (bytes is html.Blob) {
+      // TODO: Perform zlib decode on blob
+    }
+    
     var decoded = zlib.decoder.convert(bytes as List<int>);
     var rawStr = utf8.decode(decoded);
     return jsonDecode(rawStr) as Map<String, dynamic>;
@@ -133,12 +135,12 @@ class Shard {
           Map<String, dynamic> identifyMsg = <String, dynamic>{
             "token": _client._token,
             "properties": <String, dynamic>{
-              "\$os": Platform.operatingSystem,
+              "\$os": operatingSystem,
               "\$browser": "nyxx",
               "\$device": "nyxx",
             },
             "large_threshold": _client._options.largeThreshold,
-            "compress": true
+            "compress": browser ? false : true
           };
 
           identifyMsg['shard'] = <int>[this.id, _client._options.shardCount];
@@ -180,7 +182,8 @@ class Shard {
                 ClientUser._new(msg['d']['user'] as Map<String, dynamic>);
 
             _client._http._headers['Authorization'] = "Bot ${_client._token}";
-            _client._http._headers['User-Agent'] =
+            if(!browser)
+              _client._http._headers['User-Agent'] =
                 "${_client.self.username} (${_Constants.repoUrl}, ${_Constants.version})";
 
             this.ready = true;
