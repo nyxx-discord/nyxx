@@ -285,8 +285,11 @@ class Http {
   Logger _logger = Logger.detached("Http");
 
   Http._new() {
-    this._headers= {'User-Agent':
-        'DiscordBot (https://github.com/l7ssha/nyxx, ${_Constants.version})'};
+    if(!browser)
+      this._headers= {'User-Agent':
+          'DiscordBot (https://github.com/l7ssha/nyxx, ${_Constants.version})'};
+    else
+      this._headers = {};
   }
 
   /// Sends a HTTP request.
@@ -296,12 +299,15 @@ class Http {
       bool beforeReady = false,
       Map<String, String> headers = const {},
       String reason}) async {
+    final Map<String, String> _headers = Map.from(this._headers)..addAll(headers);
+    if(!browser)
+      _headers.addAll(_addAuditReason(reason));
     HttpRequest request = HttpRequest._new(
         this,
         method,
         path,
         queryParams,
-        Map.from(this._headers)..addAll(headers)..addAll(_addAuditReason(reason)),
+        _headers,
         body);
 
     await for (HttpResponse r in request.stream) {
@@ -333,7 +339,7 @@ class Http {
     HttpMultipartRequest request = HttpMultipartRequest._new(this, method, path,
         files, data, Map.from(this._headers)..addAll(_headers));
 
-    if (reason != "" || reason != null)
+    if (!browser && (reason != "" || reason != null))
       request.headers.addAll(_addAuditReason(reason));
 
     await for (HttpResponse r in request.stream) {
