@@ -104,10 +104,6 @@ class Shard {
   Map<String, dynamic> _decodeBytes(dynamic bytes) {
     if (bytes is String) return jsonDecode(bytes) as Map<String, dynamic>;
     
-    if (bytes is html.Blob) {
-      // TODO: Perform zlib decode on blob
-    }
-    
     var decoded = zlib.decoder.convert(bytes as List<int>);
     var rawStr = utf8.decode(decoded);
     return jsonDecode(rawStr) as Map<String, dynamic>;
