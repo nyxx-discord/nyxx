@@ -188,13 +188,13 @@ class HttpBucket {
   int limit;
 
   /// The number of remaining requests that can be made. May not always be accurate.
-  int rateLimitRemaining = 1;
+  int rateLimitRemaining = 2;
 
   /// When the ratelimits reset.
   DateTime rateLimitReset;
 
   /// The time difference between you and Discord.
-  Duration timeDifference;
+  //Duration timeDifference;
 
   /// A queue of requests waiting to be sent.
   List<HttpBase> requests = <HttpBase>[];
@@ -218,7 +218,7 @@ class HttpBucket {
   }
 
   void _execute(HttpBase request) {
-    if (this.rateLimitRemaining == null || this.rateLimitRemaining > 0) {
+    if (this.rateLimitRemaining == null || this.rateLimitRemaining > 1) {
       request._execute().then((HttpResponse r) {
         this.limit = r.headers['x-ratelimit-limit'] != null
             ? int.parse(r.headers['x-ratelimit-limit'])
@@ -231,13 +231,6 @@ class HttpBucket {
                 int.parse(r.headers['x-ratelimit-reset']) * 1000,
                 isUtc: true)
             : null;
-        try {
-          this.timeDifference = DateTime.now()
-              .toUtc()
-              .difference(DateTime.parse(r.headers['date']).toUtc());
-        } catch (err) {
-          this.timeDifference = Duration();
-        }
 
         if (r.status == 429) {
           RatelimitEvent._new(request, false, r);
@@ -256,17 +249,16 @@ class HttpBucket {
     } else {
       final Duration waitTime =
           this.rateLimitReset.difference(DateTime.now().toUtc()) +
-              this.timeDifference +
-              Duration(milliseconds: 1000);
+              Duration(milliseconds: 250);
       if (waitTime.isNegative) {
-        this.rateLimitRemaining = 1;
+        this.rateLimitRemaining = 2;
         this._execute(request);
       } else {
         RatelimitEvent._new(request as HttpRequest, true);
         request.http._logger.warning(
             "Rate limitted internally on endpoint: ${request.path}. Trying to send request again after timeout...");
         Timer(waitTime, () {
-          this.rateLimitRemaining = 1;
+          this.rateLimitRemaining = 2;
           this._execute(request);
         });
       }
