@@ -116,6 +116,9 @@ class MessageChannel extends Channel
       "embed": embed != null ? embed._build() : ""
     };
 
+    // Cancel typing if present
+    this._typing?.cancel();
+
     HttpResponse r;
     if (files != null && files.isNotEmpty) {
       r = await _client._http.sendMultipart(
