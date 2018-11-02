@@ -58,7 +58,8 @@ class User extends SnowflakeEntity with ISend, IMentionable, Nameable {
       List<File> files,
       EmbedBuilder embed,
       bool tts = false,
-      bool disableEveryone, MessageBuilder builder}) async {
+      bool disableEveryone,
+      MessageBuilder builder}) async {
     DMChannel channel = await this.dmChannel;
     return channel.send(
         content: content,

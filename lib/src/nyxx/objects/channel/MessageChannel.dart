@@ -11,7 +11,8 @@ part of nyxx;
 ///   print(message.author.id);
 /// }
 /// ```
-class MessageChannel extends Channel with IterableMixin<Message>, ISend, Disposable {
+class MessageChannel extends Channel
+    with IterableMixin<Message>, ISend, Disposable {
   Timer _typing;
 
   /// Sent when a new message is received.
@@ -100,7 +101,7 @@ class MessageChannel extends Channel with IterableMixin<Message>, ISend, Disposa
       bool tts = false,
       bool disableEveryone,
       MessageBuilder builder}) async {
-    if(builder != null) {
+    if (builder != null) {
       content = builder._content;
       files = builder.files;
       embed = builder.embed;
@@ -189,7 +190,7 @@ class MessageChannel extends Channel with IterableMixin<Message>, ISend, Disposa
 
     if (cache) {
       for (var m in response.values) {
-       messages._cacheMessage(m);
+        messages._cacheMessage(m);
       }
     }
 
@@ -204,8 +205,8 @@ class MessageChannel extends Channel with IterableMixin<Message>, ISend, Disposa
 
   @override
   Future<void> dispose() => Future(() {
-    _onMessage.close();
-    _onTyping.close();
-    messages.dispose();
-  });
+        _onMessage.close();
+        _onTyping.close();
+        messages.dispose();
+      });
 }

@@ -18,7 +18,6 @@ enum ExecutionErrorType {
 
 /// Exception which can occur when [CommandsFramework] isn't able to finish execution of command
 class CommandExecutionError implements Exception {
-
   /// Type of error
   ExecutionErrorType type;
 
@@ -31,10 +30,12 @@ class CommandExecutionError implements Exception {
   /// Additional info. Eg. Preprocessor error message
   String additionalInfo;
 
-  CommandExecutionError(this.type, this.message, [this.exception, this.additionalInfo]);
+  CommandExecutionError(this.type, this.message,
+      [this.exception, this.additionalInfo]);
 
   @override
-  String toString() => "[$type] [$message] ${additionalInfo ?? ""} ${exception ?? ""}";
+  String toString() =>
+      "[$type] [$message] ${additionalInfo ?? ""} ${exception ?? ""}";
 }
 
 /// Result of [Preprocessor] execution. Can be either success or error.
@@ -50,5 +51,6 @@ class PreprocessorResult {
   final bool isSuccessful;
 
   PreprocessorResult.success() : isSuccessful = true;
-  PreprocessorResult.error(this.message, [this.exception]) : isSuccessful = false;
+  PreprocessorResult.error(this.message, [this.exception])
+      : isSuccessful = false;
 }

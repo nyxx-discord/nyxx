@@ -11,8 +11,11 @@ main() async {
   Nyxx(Platform.environment['DISCORD_TOKEN']);
 
   client.onMessage.listen((msg) async {
-    if(msg.message.content.startsWith("?tag haha")) {
-      await msg.message.channel.send(content: (await (await db.query("SELECT * FROM tags WHERE name='haha'")).first)['content']);
+    if (msg.message.content.startsWith("?tag haha")) {
+      await msg.message.channel.send(
+          content:
+              (await (await db.query("SELECT * FROM tags WHERE name='haha'"))
+                  .first)['content']);
     }
   });
 

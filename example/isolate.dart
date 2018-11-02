@@ -25,10 +25,11 @@ void setupBot(SendPort remotePort) {
   });
 
   port.listen((msg) async {
-    var exChannel = client.channels[Snowflake("355365529369706509")] as TextChannel;
+    var exChannel =
+        client.channels[Snowflake("355365529369706509")] as TextChannel;
     var m = msg.toString();
 
-    if(m.startsWith("SEND")) {
+    if (m.startsWith("SEND")) {
       await exChannel.send(content: m.split(";").last);
     }
   });
@@ -36,7 +37,6 @@ void setupBot(SendPort remotePort) {
 
 // Main function
 void main() async {
-
   /// Create port
   var recPort = ReceivePort();
 
@@ -46,7 +46,7 @@ void main() async {
   var sendport = await recPort.first as SendPort;
 
   /// Wait for user input
-  while(true) {
+  while (true) {
     stdout.write("Send to channel >> ");
     var msg = stdin.readLineSync();
     sendport.send("SEND;$msg");

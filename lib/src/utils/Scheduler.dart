@@ -39,7 +39,8 @@ class Scheduler {
       targets
           .forEach((s) => _targets.add(client.channels[s] as MessageChannel));
 
-      this._t = Timer.periodic(runEvery, (Timer t) => _targets.forEach((chan) => action));
+      this._t = Timer.periodic(
+          runEvery, (Timer t) => _targets.forEach((chan) => action));
     });
 
     return null;

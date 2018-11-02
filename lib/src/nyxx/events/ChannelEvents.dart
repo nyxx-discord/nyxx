@@ -21,7 +21,7 @@ class ChannelCreateEvent {
         this.channel = tmp;
       } else {
         final Guild guild =
-        client.guilds[Snowflake(json['d']['guild_id'] as String)];
+            client.guilds[Snowflake(json['d']['guild_id'] as String)];
         GuildChannel chan;
 
         if (json['d']['type'] == 0) {
@@ -58,7 +58,7 @@ class ChannelDeleteEvent {
         this.channel = GroupDMChannel._new(json['d'] as Map<String, dynamic>);
       } else {
         final Guild guild =
-        client.guilds[Snowflake(json['d']['guild_id'] as String)];
+            client.guilds[Snowflake(json['d']['guild_id'] as String)];
         if (json['d']['type'] == 0) {
           this.channel =
               TextChannel._new(json['d'] as Map<String, dynamic>, guild);
@@ -78,7 +78,6 @@ class ChannelDeleteEvent {
   }
 }
 
-
 /// Fired when channel's pinned messages are updated
 class ChannelPinsUpdateEvent {
   /// Channel where pins were updated
@@ -91,7 +90,7 @@ class ChannelPinsUpdateEvent {
     this.lastPingTimestamp =
         DateTime.parse(json['d']['last_pin_timestamp'] as String);
     this.channel = client.channels[Snowflake(json['d']['channel_id'] as String)]
-    as TextChannel;
+        as TextChannel;
 
     channel._pinsUpdated.add(this);
     client._events.onChannelPinsUpdate.add(this);
@@ -109,9 +108,9 @@ class ChannelUpdateEvent {
   ChannelUpdateEvent._new(Map<String, dynamic> json) {
     if (client.ready) {
       final Guild guild =
-      client.guilds[Snowflake(json['d']['guild_id'] as String)];
+          client.guilds[Snowflake(json['d']['guild_id'] as String)];
       this.oldChannel =
-      client.channels[Snowflake(json['d']['id'] as String)] as GuildChannel;
+          client.channels[Snowflake(json['d']['id'] as String)] as GuildChannel;
 
       var type = json['d']['type'] as int;
 

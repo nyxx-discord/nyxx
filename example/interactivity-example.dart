@@ -9,7 +9,8 @@ void main() async {
   nyxx.Nyxx bot = nyxx.Nyxx(Platform.environment['DISCORD_TOKEN']);
 
   bot.onReady.listen((e) async {
-    var ch = bot.channels[nyxx.Snowflake("422285619952222208")] as nyxx.TextChannel;
+    var ch =
+        bot.channels[nyxx.Snowflake("422285619952222208")] as nyxx.TextChannel;
 
     // Create and send paginated message. After 15 minutes message will be deactivated.
     var pagination = utils.Pagination.fromString(

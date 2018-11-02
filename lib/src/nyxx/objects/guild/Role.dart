@@ -1,16 +1,15 @@
 part of nyxx;
 
-void _let<T>(T value, bool checker(T value), {onTrue(T value), onFalse(T value)}) {
-  if(checker(value))
-    if(onTrue != null)
-      onTrue(value);
-  else
-    if(onFalse != null)
-      onFalse(value);
+void _let<T>(T value, bool checker(T value),
+    {onTrue(T value), onFalse(T value)}) {
+  if (checker(value)) if (onTrue != null)
+    onTrue(value);
+  else if (onFalse != null) onFalse(value);
 }
 
 /// Represents a Discord guild role, which is used to assign priority, permissions, and a color to guild members
-class Role extends SnowflakeEntity implements IMentionable, GuildEntity, Nameable {
+class Role extends SnowflakeEntity
+    implements IMentionable, GuildEntity, Nameable {
   /// The role's name.
   String name;
 
@@ -30,6 +29,7 @@ class Role extends SnowflakeEntity implements IMentionable, GuildEntity, Nameabl
   bool mentionable;
 
   @override
+
   /// The role's guild.
   Guild guild;
 
@@ -37,9 +37,11 @@ class Role extends SnowflakeEntity implements IMentionable, GuildEntity, Nameabl
   Permissions permissions;
 
   /// Returns all members which have this role assigned
-  Iterable<Member> get members => guild.members.values.where((m) => m.roles.contains(this));
+  Iterable<Member> get members =>
+      guild.members.values.where((m) => m.roles.contains(this));
 
   @override
+
   /// Mention of role. If role cannot be mentioned it returns name of role.
   String get mention => mentionable ? "<@&${this.id}>" : "@$name";
 
@@ -85,5 +87,6 @@ class Role extends SnowflakeEntity implements IMentionable, GuildEntity, Nameabl
   String toString() => mention;
 
   @override
-  String get nameString => "Role ${this.name} [${this.guild.name}] [${this.id}]";
+  String get nameString =>
+      "Role ${this.name} [${this.guild.name}] [${this.id}]";
 }

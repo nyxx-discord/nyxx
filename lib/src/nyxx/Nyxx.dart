@@ -237,8 +237,12 @@ class Nyxx implements Disposable {
 
     this._http = Http._new();
     this._events = _EventController();
-    this.onSelfMention = this.onMessageReceived.where((event) => event.message.mentions != null && event.message.mentions.containsKey(client.self.id));
-    this.onDmReceived = this.onMessageReceived.where((event) => event.message.channel is DMChannel || event.message.channel is GroupDMChannel);
+    this.onSelfMention = this.onMessageReceived.where((event) =>
+        event.message.mentions != null &&
+        event.message.mentions.containsKey(client.self.id));
+    this.onDmReceived = this.onMessageReceived.where((event) =>
+        event.message.channel is DMChannel ||
+        event.message.channel is GroupDMChannel);
     this._ws = _WS();
   }
 
@@ -260,7 +264,7 @@ class Nyxx implements Disposable {
     var raw = (await this._http.send("GET", "/channels/${id.toString()}")).body
         as Map<String, dynamic>;
 
-    switch(T) {
+    switch (T) {
       case MessageChannel:
         return MessageChannel._new(raw, raw['type'] as int) as T;
       case DMChannel:
@@ -273,7 +277,8 @@ class Nyxx implements Disposable {
         return VoiceChannel._new(raw, guild) as T;
       case CategoryChannel:
         return CategoryChannel._new(raw, guild) as T;
-      default: return null;
+      default:
+        return null;
     }
   }
 
@@ -308,8 +313,9 @@ class Nyxx implements Disposable {
   /// var newGuild = await client.createGuild(guildBuilder);
   /// ```
   Future<Guild> createGuild(GuildBuilder builder) async {
-    if(this.guilds.count >= 10)
-      return Future.error("Guild cannot be created if bot is in 10 or more guilds");
+    if (this.guilds.count >= 10)
+      return Future.error(
+          "Guild cannot be created if bot is in 10 or more guilds");
 
     var r = await this._http.send("POST", "/guilds", body: builder._build());
     return Guild._new(r.body as Map<String, dynamic>);
@@ -322,6 +328,7 @@ class Nyxx implements Disposable {
   }
 
   @deprecated
+
   /// Block isolate until client is ready.
   Future<ReadyEvent> blockToReady() async => await onReady.first;
 
@@ -341,8 +348,7 @@ class Nyxx implements Disposable {
 
   @override
   Future<void> dispose() async {
-    for (var shard in this.shards.values)
-      await shard._socket.close(1000);
+    //for (var shard in this.shards.values) await shard._socket.close(1000);
 
     await guilds.dispose();
     await users.dispose();

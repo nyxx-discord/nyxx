@@ -39,7 +39,7 @@ class ClientOptions {
       this.forceFetchMembers = false,
       this.cacheMembers = true,
       this.largeThreshold = 50}) {
-    if(!autoShard && shardCount > 1)
+    if (!autoShard && shardCount > 1)
       this._shardIds = Iterable.generate(shardCount, (i) => i).toList();
     else
       this._shardIds = const [0];

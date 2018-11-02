@@ -16,12 +16,10 @@ class PermissionsOverrides extends SnowflakeEntity {
 
   PermissionsOverrides._new(Map<String, dynamic> raw)
       : super(Snowflake(raw['id'] as String)) {
-
     this.allow = raw['allow'] as int;
     this.deny = raw['deny'] as int;
 
-    permissions =
-        Permissions.fromOverwrite(0, allow, deny);
+    permissions = Permissions.fromOverwrite(0, allow, deny);
     type = raw['type'] as String;
   }
 

@@ -6,12 +6,11 @@ class Optional<T> {
   Optional.of(this._value);
 
   Optional.compute(T val, T computation(T value)) {
-    if(val != null) _value = computation(val);
+    if (val != null) _value = computation(val);
   }
 
   T get() {
-    if (_value == null)
-      throw ArgumentError("Cannot return null value.");
+    if (_value == null) throw ArgumentError("Cannot return null value.");
 
     return _value;
   }
@@ -19,15 +18,13 @@ class Optional<T> {
   T unsafe() => _value;
 
   T orElse(T computation()) {
-    if (_value == null)
-      return computation();
+    if (_value == null) return computation();
 
     return _value;
   }
 
   T or(T value) {
-    if(_value == null)
-      return value;
+    if (_value == null) return value;
 
     return _value;
   }

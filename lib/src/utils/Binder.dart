@@ -10,12 +10,13 @@ void bindEvents(String libname) {
   var classRefl = instanceThis.type;
   var lib = currentMirrorSystem().findLibrary(Symbol(libname));
 
-  for(var decl in lib.declarations.values.whereType<MethodMirror>()) {
+  for (var decl in lib.declarations.values.whereType<MethodMirror>()) {
     var meta = utils.getCmdAnnot<Bind>(decl);
 
-    if(meta != null) {
-      for(var incl in classRefl.declarations.values.whereType<VariableMirror>()) {
-        if(meta.streamName == incl.simpleName.toString()) {
+    if (meta != null) {
+      for (var incl
+          in classRefl.declarations.values.whereType<VariableMirror>()) {
+        if (meta.streamName == incl.simpleName.toString()) {
           instanceThis.getField(incl.simpleName).reflectee.listen((evnt) {
             Future.microtask(() => lib.invoke(decl.simpleName, [evnt]));
           });
@@ -30,5 +31,5 @@ class Bind {
   /// Name of stream to bind
   final String streamName;
 
-  const Bind(String name): streamName = "Symbol(\"$name\")";
+  const Bind(String name) : streamName = "Symbol(\"$name\")";
 }

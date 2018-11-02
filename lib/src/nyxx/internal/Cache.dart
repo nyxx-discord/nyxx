@@ -19,7 +19,7 @@ abstract class Cache<T, S> implements Disposable {
   Map<T, G> whereType<G>() {
     var tmp = Map<T, G>();
     _cache.forEach((k, v) {
-      if(v is G) tmp[k] = v;
+      if (v is G) tmp[k] = v;
     });
     return tmp;
   }
@@ -31,9 +31,8 @@ abstract class Cache<T, S> implements Disposable {
   void operator []=(T key, S item) => _cache[key] = item;
 
   /// Puts element to collection if [key] doesn't exist in cache
-  S addIfAbsent(T key, S item)  {
-    if(!_cache.containsKey(T))
-      return _cache[key] = item;
+  S addIfAbsent(T key, S item) {
+    if (!_cache.containsKey(T)) return _cache[key] = item;
     return _cache[key];
   }
 
@@ -52,10 +51,10 @@ abstract class Cache<T, S> implements Disposable {
   /// Combines [keys] with [values] - First elements with [keys] creates pair with first value from [values]
   /// Collection have to be same length
   void addMany(List<T> keys, List<S> values) {
-    if(keys.length != values.length)
+    if (keys.length != values.length)
       throw new Exception("Cannot combine Iterables with different length!");
 
-    for(var i = 0; i < keys.length; i++) {
+    for (var i = 0; i < keys.length; i++) {
       _cache[keys[i]] = values[i];
     }
   }
@@ -67,7 +66,8 @@ abstract class Cache<T, S> implements Disposable {
   void remove(T key) => _cache.remove(key);
 
   /// Remove everything where [predicate] is true
-  void removeWhere(bool predicate(T key, S value)) => _cache.removeWhere(predicate);
+  void removeWhere(bool predicate(T key, S value)) =>
+      _cache.removeWhere(predicate);
 
   /// Loop over elements from cache
   void forEach(void f(T key, S value)) => _cache.forEach(f);
@@ -76,7 +76,8 @@ abstract class Cache<T, S> implements Disposable {
   Iterable<S> take(int count) => values.take(count);
 
   /// Takes [count] last elements from cache. Returns Iterable of cache values
-  Iterable<S> takeLast(int count) => values.toList().sublist(values.length - count);
+  Iterable<S> takeLast(int count) =>
+      values.toList().sublist(values.length - count);
 
   /// Get first element
   S get first => _cache.values.first;
@@ -92,8 +93,8 @@ abstract class Cache<T, S> implements Disposable {
 
   @override
   Future<void> dispose() => Future(() {
-    this._cache.clear();
-  });
+        this._cache.clear();
+      });
 }
 
 class _SnowflakeCache<T> extends Cache<Snowflake, T> {
@@ -103,13 +104,12 @@ class _SnowflakeCache<T> extends Cache<Snowflake, T> {
 
   @override
   Future<void> dispose() => Future(() {
-    if(T is Disposable) {
-      _cache.forEach((_, v) => (v as Disposable).dispose());
-    }
+        if (T is Disposable) {
+          _cache.forEach((_, v) => (v as Disposable).dispose());
+        }
 
-    _cache.clear();
-  });
-
+        _cache.clear();
+      });
 }
 
 /// Cache for Channels
@@ -123,14 +123,12 @@ class ChannelCache extends Cache<Snowflake, Channel> {
 
   @override
   Future<Function> dispose() => Future(() {
-    _cache.forEach((_, v) {
-      if(v is MessageChannel)
-        v.dispose();
-    });
+        _cache.forEach((_, v) {
+          if (v is MessageChannel) v.dispose();
+        });
 
-    _cache.clear();
-  });
-
+        _cache.clear();
+      });
 }
 
 /// Cache for messages. Provides few utilities methods to facilitate interaction with messages.
@@ -156,25 +154,32 @@ class MessageCache extends Cache<Snowflake, Message> {
   Message put(Message message) => _cacheMessage(message);
 
   /// Returns messages which were sent by [user]
-  Iterable<Message> fromUser(User user) => values.where((m) => m.author == user);
+  Iterable<Message> fromUser(User user) =>
+      values.where((m) => m.author == user);
 
   /// Returns messages which were sent by [users]
-  Iterable<Message> fromUsers(Iterable<User> users) => values.where((m) => users.contains(m.author));
+  Iterable<Message> fromUsers(Iterable<User> users) =>
+      values.where((m) => users.contains(m.author));
 
   /// Returns messages which were created before [date]
-  Iterable<Message> beforeDate(DateTime date) => values.where((m) => m.createdAt.isBefore(date));
+  Iterable<Message> beforeDate(DateTime date) =>
+      values.where((m) => m.createdAt.isBefore(date));
 
   /// Returns messages which were created before [date]
-  Iterable<Message> afterDate(DateTime date) => values.where((m) => m.createdAt.isAfter(date));
+  Iterable<Message> afterDate(DateTime date) =>
+      values.where((m) => m.createdAt.isAfter(date));
 
   /// Returns messages which were sent by bots
   Iterable<Message> get byBot => values.where((m) => m.author.bot);
 
   @override
+
   /// Takes first [count] elements from cache. Returns Iterable of cache values
-  Iterable<Message> take(int count) => values.toList().sublist(values.length - count);
+  Iterable<Message> take(int count) =>
+      values.toList().sublist(values.length - count);
 
   @override
+
   /// Takes last [count] elements from cache. Returns Iterable of cache values
   Iterable<Message> takeLast(int count) => values.take(count);
 
@@ -200,8 +205,7 @@ class VoltCache<T, S> extends Cache<T, S> {
 
     Timer.periodic(duration, (t) {
       _cache.forEach((k, v) {
-        if(roundup(k, v, t))
-          _cache.remove(k);
+        if (roundup(k, v, t)) _cache.remove(k);
       });
     });
   }

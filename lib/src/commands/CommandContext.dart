@@ -137,8 +137,9 @@ class CommandContext {
   /// Waits for first [TypingEvent] and returns it. If timed out returns null.
   /// Can listen to specific user by specifying [user]
   Future<TypingEvent> waitForTyping(User user,
-  {Duration timeout = const Duration(seconds: 30)}) async {
-    return client.onTyping.firstWhere((e) => e.user == user)
+      {Duration timeout = const Duration(seconds: 30)}) async {
+    return client.onTyping
+        .firstWhere((e) => e.user == user)
         .timeout(timeout, onTimeout: () => null);
   }
 
@@ -150,7 +151,9 @@ class CommandContext {
   ///   var messages = await nextMessagesWhere((msg) => msg.content.startsWith("fuck"));
   /// }
   /// ```
-  Stream<MessageReceivedEvent> nextMessagesWhere(bool func(MessageReceivedEvent msg), {int limit = 100}) =>
+  Stream<MessageReceivedEvent> nextMessagesWhere(
+          bool func(MessageReceivedEvent msg),
+          {int limit = 100}) =>
       channel.onMessage.where(func).take(limit);
 
   /// Gets next [num] number of any messages sent within one context (same channel).
