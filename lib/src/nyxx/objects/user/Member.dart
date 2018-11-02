@@ -24,12 +24,14 @@ class Member extends User implements GuildEntity {
   List<Role> roles;
 
   @override
+
   /// The guild that the member is a part of.
   Guild guild;
 
   /// Returns highest role for member
-  Role get highestRole => roles.isEmpty ? guild.everyoneRole :
-      roles.reduce((f, s) => f.position > s.position ? f : s);
+  Role get highestRole => roles.isEmpty
+      ? guild.everyoneRole
+      : roles.reduce((f, s) => f.position > s.position ? f : s);
 
   DiscordColor get color => highestRole.color;
 
@@ -38,8 +40,7 @@ class Member extends User implements GuildEntity {
 
   /// Returns total permissions of user.
   Permissions get effectivePermissions {
-    if(this == guild.owner)
-      return Permissions.all();
+    if (this == guild.owner) return Permissions.all();
 
     var total = guild.everyoneRole.permissions.raw;
     for (var role in roles) {
@@ -141,7 +142,8 @@ class Member extends User implements GuildEntity {
   }
 
   @override
-  String get nameString => "Member ${this.tag} [${this.guild.name}] [${this.id}]";
+  String get nameString =>
+      "Member ${this.tag} [${this.guild.name}] [${this.id}]";
 
   @override
   String toString() => super.toString();

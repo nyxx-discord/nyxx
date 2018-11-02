@@ -17,6 +17,7 @@ class Message extends SnowflakeEntity implements GuildEntity, Disposable {
   MessageChannel channel;
 
   @override
+
   /// The message's guild.
   Guild guild;
 
@@ -62,13 +63,16 @@ class Message extends SnowflakeEntity implements GuildEntity, Disposable {
       "/${this.channel.id.toString()}/${this.id.toString()}";
 
   Message._combine(Message old, Map<String, dynamic> raw) : super(old.id) {
-    this.content = raw['content'] == null ? old.content : raw['content'] as String;
-    this.editedTimestamp = raw['edited_timestamp'] == null ? DateTime.now() : DateTime.parse(raw['edited_timestamp'] as String);
+    this.content =
+        raw['content'] == null ? old.content : raw['content'] as String;
+    this.editedTimestamp = raw['edited_timestamp'] == null
+        ? DateTime.now()
+        : DateTime.parse(raw['edited_timestamp'] as String);
     this.channel = old.channel;
     this.guild = old.guild;
     this.author = old.author;
 
-    if(raw['mentions'] != null) {
+    if (raw['mentions'] != null) {
       this.mentions = Map<Snowflake, User>();
       raw['mentions'].forEach((o) {
         if (o['member'] == null) {
@@ -83,7 +87,7 @@ class Message extends SnowflakeEntity implements GuildEntity, Disposable {
       this.mentions = old.mentions;
     }
 
-    if(raw['mention_roles'] != null) {
+    if (raw['mention_roles'] != null) {
       this.roleMentions = Map<Snowflake, Role>();
       raw['mention_roles'].forEach((o) {
         var s = Snowflake(o as String);
@@ -105,7 +109,8 @@ class Message extends SnowflakeEntity implements GuildEntity, Disposable {
     if (raw['attachments'] != null && raw['attachments'].isNotEmpty as bool) {
       this.attachments = Map<Snowflake, Attachment>();
       raw['attachments'].forEach((o) {
-        final Attachment attachment = Attachment._new(o as Map<String, dynamic>);
+        final Attachment attachment =
+            Attachment._new(o as Map<String, dynamic>);
         this.attachments[attachment.id] = attachment;
       });
     } else
@@ -244,14 +249,19 @@ class Message extends SnowflakeEntity implements GuildEntity, Disposable {
   String toString() => this.content;
 
   /// Replies to message. By default it mentions user who sends message.
-  Future<Message> reply({Object content = "",
-      List<File> files,
-      EmbedBuilder embed,
-      bool tts = false,
-      bool disableEveryone,
-      bool mention = true}) async => this.channel.send(
-      content: "${mention ? this.author.mention : ""} $content", files: files,
-  embed: embed, tts: tts, disableEveryone: disableEveryone);
+  Future<Message> reply(
+          {Object content = "",
+          List<File> files,
+          EmbedBuilder embed,
+          bool tts = false,
+          bool disableEveryone,
+          bool mention = true}) async =>
+      this.channel.send(
+          content: "${mention ? this.author.mention : ""} $content",
+          files: files,
+          embed: embed,
+          tts: tts,
+          disableEveryone: disableEveryone);
 
   /// Edits the message.
   ///
@@ -323,19 +333,19 @@ class Message extends SnowflakeEntity implements GuildEntity, Disposable {
     _onReactionRemove.close();
     _onReactionsRemoved.close();
 
-    if(embeds != null) {
+    if (embeds != null) {
       embeds.clear();
     }
 
-    if(mentions != null) {
+    if (mentions != null) {
       mentions.clear();
     }
 
-    if(roleMentions != null) {
+    if (roleMentions != null) {
       roleMentions.clear();
     }
 
-    if(attachments != null) {
+    if (attachments != null) {
       attachments.clear();
     }
   }

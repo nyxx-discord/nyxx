@@ -130,7 +130,7 @@ class Guild extends SnowflakeEntity implements Disposable, Nameable {
         this.members = _SnowflakeCache();
         this.channels = ChannelCache._new();
 
-        if(_client._options.cacheMembers) {
+        if (_client._options.cacheMembers) {
           raw['members'].forEach((o) {
             final member = Member._new(o as Map<String, dynamic>, this);
             this.members[member.id] = member;
@@ -189,7 +189,8 @@ class Guild extends SnowflakeEntity implements Disposable, Nameable {
 
       if (raw.containsKey('embed_channel_id'))
         this.embedChannel =
-            client.channels[Snowflake(raw['embed_channel_id'] as String)] as GuildChannel;
+            client.channels[Snowflake(raw['embed_channel_id'] as String)]
+                as GuildChannel;
 
       if (raw['system_channel_id'] != null) {
         var snow = Snowflake(raw['system_channel_id'] as String);
@@ -266,7 +267,8 @@ class Guild extends SnowflakeEntity implements Disposable, Nameable {
   /// Allows to download [Guild] widget aka advert png
   /// Possible options for [style]: shield (default), banner1, banner2, banner3, banner4
   Future<List<int>> downloadGuildWidget([String style]) async {
-      return utils.downloadFile(Uri.parse("${_Constants.host}${_Constants.baseUri}/guilds/${this.id.toString()}/widget.png?style=${style ?? "shield"}"));
+    return utils.downloadFile(Uri.parse(
+        "${_Constants.host}${_Constants.baseUri}/guilds/${this.id.toString()}/widget.png?style=${style ?? "shield"}"));
   }
 
   /// Returns [int] indicating the number of members that would be removed in a prune operation.
@@ -323,18 +325,23 @@ class Guild extends SnowflakeEntity implements Disposable, Nameable {
     await _client._http.send('DELETE', "/users/@me/guilds/$id");
   }
 
-  Future<Invite> createInvite({int maxAge = 0,
+  Future<Invite> createInvite(
+      {int maxAge = 0,
       int maxUses = 0,
       bool temporary = false,
       bool unique = false,
       String auditReason = ""}) async {
     var chan = this.channels.first as GuildChannel;
 
-    if(chan == null)
+    if (chan == null)
       return Future.error("Cannot get any channel to create invite to");
 
-    return chan.createInvite(maxUses: maxUses, maxAge: maxAge, temporary: temporary,
-      unique: unique, auditReason: auditReason);
+    return chan.createInvite(
+        maxUses: maxUses,
+        maxAge: maxAge,
+        temporary: temporary,
+        unique: unique,
+        auditReason: auditReason);
   }
 
   /// Returns list of Guilds invites
@@ -445,8 +452,11 @@ class Guild extends SnowflakeEntity implements Disposable, Nameable {
       PermissionsBuilder permissions,
       String auditReason = ""}) async {
     // Checks to avoid API panic
-    if (type == ChannelType.dm || type == ChannelType.groupDm) return Future.error("Cannot create DM channel.");
-    if (type == ChannelType.group && parent != null) return Future.error("Cannot create Category Channel which have parent channel.");
+    if (type == ChannelType.dm || type == ChannelType.groupDm)
+      return Future.error("Cannot create DM channel.");
+    if (type == ChannelType.group && parent != null)
+      return Future.error(
+          "Cannot create Category Channel which have parent channel.");
 
     // Construct body
     var body = <String, dynamic>{"name": name, "type": type._value};
@@ -581,12 +591,12 @@ class Guild extends SnowflakeEntity implements Disposable, Nameable {
 
   @override
   Future<void> dispose() => Future(() {
-    channels.dispose();
-    members.dispose();
-    roles.dispose();
-    emojis.dispose();
-    voiceStates.dispose();
-  });
+        channels.dispose();
+        members.dispose();
+        roles.dispose();
+        emojis.dispose();
+        voiceStates.dispose();
+      });
 
   @override
   String get nameString => "Guild ${this.name} [${this.id}]";

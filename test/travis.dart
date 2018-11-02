@@ -61,10 +61,11 @@ void main() {
     ..discoverServices()
     ..discoverCommands()
     ..onError.listen((err) async {
-      if(err.type == command.ExecutionErrorType.commandNotFound)
-        await err.message.channel.send(content: "Command '${err.message.content}' not found!");
+      if (err.type == command.ExecutionErrorType.commandNotFound)
+        await err.message.channel
+            .send(content: "Command '${err.message.content}' not found!");
 
-      if(err.type == command.ExecutionErrorType.cooldown) {
+      if (err.type == command.ExecutionErrorType.cooldown) {
         await err.message.channel
             .send(content: "Command is on cooldown!. Wait a few seconds!");
       }

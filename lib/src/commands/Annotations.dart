@@ -103,8 +103,4 @@ class Remainder {
 }
 
 /// Type of context required for command
-enum ContextType {
-  guild,
-  dm,
-  both
-}
+enum ContextType { guild, dm, both }

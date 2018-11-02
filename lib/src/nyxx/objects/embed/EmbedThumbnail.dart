@@ -30,5 +30,4 @@ class EmbedThumbnail implements Downloadable {
 
   @override
   String toString() => url;
-
 }

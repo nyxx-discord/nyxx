@@ -10,9 +10,7 @@ class _WS {
   /// Makes a new WS manager.
   _WS() {
     _client._http._headers['Authorization'] = "Bot ${client._token}";
-    _client._http
-        .send("GET", "/gateway/bot")
-        .then((HttpResponse r) {
+    _client._http.send("GET", "/gateway/bot").then((HttpResponse r) {
       this.gateway = r.body['url'] as String;
       if (client._options.autoShard) {
         _client._options._shardIds = [];
@@ -55,11 +53,11 @@ class _WS {
         break;
       }
 
-      if (client._options.forceFetchMembers)
-        if (o.members.count != o.memberCount) {
-          match = false;
-          break;
-        }
+      if (client._options.forceFetchMembers) if (o.members.count !=
+          o.memberCount) {
+        match = false;
+        break;
+      }
     }
 
     bool match2 = true;

@@ -57,15 +57,16 @@ class Webhook extends SnowflakeEntity implements ISend {
   }
 
   @override
+
   /// Allows to send message via webhook
   Future<Message> send(
       {Object content = "",
-        List<File> files,
-        EmbedBuilder embed,
-        bool tts = false,
-        bool disableEveryone,
-        MessageBuilder builder}) async {
-    if(builder != null) {
+      List<File> files,
+      EmbedBuilder embed,
+      bool tts = false,
+      bool disableEveryone,
+      MessageBuilder builder}) async {
+    if (builder != null) {
       content = builder._content;
       files = builder.files;
       embed = builder.embed;
@@ -86,7 +87,8 @@ class Webhook extends SnowflakeEntity implements ISend {
           'POST', '/channels/${this.id}/messages', files,
           data: reqBody..addAll({"tts": tts}));
     } else {
-      r = await _client._http.send('POST', '/channels/${this.channel.id}/messages',
+      r = await _client._http.send(
+          'POST', '/channels/${this.channel.id}/messages',
           body: reqBody..addAll({"tts": tts}));
     }
 

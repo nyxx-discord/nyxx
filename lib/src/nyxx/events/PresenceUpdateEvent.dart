@@ -21,13 +21,15 @@ class PresenceUpdateEvent {
             Presence._new(json['d']['game'] as Map<String, dynamic>);
 
       if (member == null && 'online' == json['d']['status'].toString()) {
-        if(json['d']['user']['username'] != null) {
+        if (json['d']['user']['username'] != null) {
           this.member = Member._new(json['d'] as Map<String, dynamic>, guild);
           member.guild.members[member.id] = member;
           client.users[member.id] = member;
         } else {
-          if(_client._options.cacheMembers) {
-            guild.getMemberById(Snowflake(json['d']['user']['id'] as String)).then((member) {
+          if (_client._options.cacheMembers) {
+            guild
+                .getMemberById(Snowflake(json['d']['user']['id'] as String))
+                .then((member) {
               member.guild.members[member.id] = member;
               client.users[member.id] = member;
             });

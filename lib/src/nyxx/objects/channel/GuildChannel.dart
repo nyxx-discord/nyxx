@@ -1,11 +1,12 @@
 part of nyxx;
 
 /// Represents channel which is part of guild.
-abstract class GuildChannel implements Channel, GuildEntity{
+abstract class GuildChannel implements Channel, GuildEntity {
   /// The channel's name.
   String name;
 
   @override
+
   /// The guild that the channel is in.
   Guild guild;
 
@@ -28,8 +29,8 @@ abstract class GuildChannel implements Channel, GuildEntity{
     this.guild = guild;
 
     if (raw['parent_id'] != null) {
-      this.parentChannel = client
-          .channels[Snowflake(raw['parent_id'])] as CategoryChannel;
+      this.parentChannel =
+          client.channels[Snowflake(raw['parent_id'])] as CategoryChannel;
     }
 
     this.nsfw = raw['nsfw'] as bool;
@@ -52,24 +53,28 @@ abstract class GuildChannel implements Channel, GuildEntity{
 
     var rawMemberPerms = member.effectivePermissions.raw;
 
-    if(utils.isApplied(rawMemberPerms, PermissionsConstants.administrator))
+    if (utils.isApplied(rawMemberPerms, PermissionsConstants.administrator))
       return Permissions.fromInt(PermissionsConstants.allPermissions);
 
     final overrides = utils.getOverrides(member, this);
-    rawMemberPerms = utils.apply(rawMemberPerms, overrides.first, overrides.last);
+    rawMemberPerms =
+        utils.apply(rawMemberPerms, overrides.first, overrides.last);
 
-    return utils.isApplied(rawMemberPerms, PermissionsConstants.viewChannel) ? Permissions.fromInt(rawMemberPerms) : Permissions.empty();
+    return utils.isApplied(rawMemberPerms, PermissionsConstants.viewChannel)
+        ? Permissions.fromInt(rawMemberPerms)
+        : Permissions.empty();
   }
 
   /// Returns effective permissions for [role] to this channel including channel overrides.
   Permissions effectivePermissionForRole(Role role) {
-    if(role.guild == null || role.guild != this.guild)
+    if (role.guild == null || role.guild != this.guild)
       return Permissions.empty();
 
     var permissions = role.permissions.raw | guild.everyoneRole.permissions.raw;
 
     try {
-      var over = this.permissions.firstWhere((f) => f.id == guild.everyoneRole.id);
+      var over =
+          this.permissions.firstWhere((f) => f.id == guild.everyoneRole.id);
 
       permissions &= ~over.deny;
       permissions |= over.allow;

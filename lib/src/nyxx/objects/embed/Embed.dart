@@ -50,7 +50,8 @@ class Embed {
       this.description = raw['description'] as String;
     if (raw['timestamp'] != null)
       this.timestamp = DateTime.parse(raw['timestamp'] as String);
-    if (raw['color'] != null) this.color = DiscordColor.fromInt(raw['color'] as int);
+    if (raw['color'] != null)
+      this.color = DiscordColor.fromInt(raw['color'] as int);
     if (raw['author'] != null)
       this.author = EmbedAuthor._new(raw['author'] as Map<String, dynamic>);
     if (raw['video'] != null)

@@ -90,14 +90,14 @@ class Player {
     var uri = _manager._restPath
         .replace(path: "/loadtracks", queryParameters: {"identifier": hash});
 
-    var req = transport.Request()
-      ..uri = uri;
+    var req = transport.Request()..uri = uri;
 
     req.headers["Authorization"] = _manager._password;
 
     var res = await req.send("GET");
     if (res.status != 200)
-      return Future.error(Exception("Cannot comunicate with lavalink via http"));
+      return Future.error(
+          Exception("Cannot comunicate with lavalink via http"));
 
     var r = res.body.asJson();
     return TrackResponse._new(r as Map<String, dynamic>);

@@ -27,8 +27,8 @@ class MessageReceivedEvent extends MessageEvent {
 
 /// Sent when a message is deleted.
 class MessageDeleteEvent extends MessageEvent {
-
   @override
+
   /// The message, if cached.
   Message message;
 
@@ -38,13 +38,13 @@ class MessageDeleteEvent extends MessageEvent {
   MessageDeleteEvent._new(Map<String, dynamic> json) : super._new() {
     if (client.ready) {
       if ((client.channels[Snowflake(json['d']['channel_id'] as String)]
-      as MessageChannel)
-          .messages[Snowflake(json['d']['id'] as String)] !=
+                  as MessageChannel)
+              .messages[Snowflake(json['d']['id'] as String)] !=
           null) {
         this.message =
-        (client.channels[Snowflake(json['d']['channel_id'] as String)]
-        as MessageChannel)
-            .messages[Snowflake(json['d']['id'] as String)];
+            (client.channels[Snowflake(json['d']['channel_id'] as String)]
+                    as MessageChannel)
+                .messages[Snowflake(json['d']['id'] as String)];
         this.id = message.id;
         client._events.onMessageDelete.add(this);
       } else {
@@ -63,16 +63,18 @@ class MessageReactionEvent extends MessageEvent {
   MessageChannel channel;
 
   @override
+
   /// Message to which emoji was added
   Message message;
 
   /// Emoji object.
   Emoji emoji;
 
-  MessageReactionEvent._new(Map<String, dynamic> json, bool remove) : super._new() {
+  MessageReactionEvent._new(Map<String, dynamic> json, bool remove)
+      : super._new() {
     this.user = client.users[Snowflake(json['d']['user_id'] as String)];
     this.channel = client.channels[Snowflake(json['d']['channel_id'] as String)]
-    as MessageChannel;
+        as MessageChannel;
 
     channel
         .getMessage(Snowflake(json['d']['message_id'] as String))
@@ -101,6 +103,7 @@ class MessageReactionsRemovedEvent extends MessageEvent {
   MessageChannel channel;
 
   @override
+
   /// Message on which messages are removed
   Message message;
 
@@ -109,7 +112,7 @@ class MessageReactionsRemovedEvent extends MessageEvent {
 
   MessageReactionsRemovedEvent._new(Map<String, dynamic> json) : super._new() {
     this.channel = client.channels[Snowflake(json['d']['channel_id'] as String)]
-    as MessageChannel;
+        as MessageChannel;
 
     this.guild = client.guilds[Snowflake(json['d']['guild_id'] as String)];
 
@@ -121,9 +124,8 @@ class MessageReactionsRemovedEvent extends MessageEvent {
   }
 }
 
-
 /// Emitted when multiple messages are deleted at once.
-class MessageDeleteBulkEvent  {
+class MessageDeleteBulkEvent {
   /// List of deleted messages
   List<Snowflake> deletedMessages = List();
 
@@ -132,7 +134,7 @@ class MessageDeleteBulkEvent  {
 
   MessageDeleteBulkEvent._new(Map<String, dynamic> json) {
     this.channel =
-    client.channels[Snowflake(json['d']['channel_id'] as String)];
+        client.channels[Snowflake(json['d']['channel_id'] as String)];
 
     json['d']['ids']
         .forEach((i) => deletedMessages.add(Snowflake(i.toString())));
@@ -149,13 +151,14 @@ class MessageUpdateEvent {
   Message newMessage;
 
   MessageUpdateEvent._new(Map<String, dynamic> json) {
-    var channel = client.channels[Snowflake(json['d']['channel_id'] as String)] as MessageChannel;
+    var channel = client.channels[Snowflake(json['d']['channel_id'] as String)]
+        as MessageChannel;
     this.oldMessage = channel.messages[Snowflake(json['d']['id'] as String)];
 
     if (oldMessage != null) {
-      this.newMessage = Message._combine(oldMessage, json['d'] as Map<String, dynamic>);
+      this.newMessage =
+          Message._combine(oldMessage, json['d'] as Map<String, dynamic>);
       client._events.onMessageUpdate.add(this);
     }
   }
 }
-

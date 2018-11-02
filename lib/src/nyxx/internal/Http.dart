@@ -62,15 +62,13 @@ class HttpBase {
 
   Future<HttpResponse> _execute() async {
     var req = transport.JsonRequest()
-        ..uri = this.uri
-        ..headers = this.headers;
+      ..uri = this.uri
+      ..headers = this.headers;
 
     try {
-      if (this.body != null)
-        req.body = this.body;
+      if (this.body != null) req.body = this.body;
 
-      if(this.queryParams != null)
-        req.queryParameters = this.queryParams;
+      if (this.queryParams != null) req.queryParameters = this.queryParams;
 
       var res = await req.send(this.method);
 
@@ -113,7 +111,7 @@ class HttpMultipartRequest extends HttpBase {
         req.fields.addAll({"payload_json": jsonEncode(this.fields)});
 
       return HttpResponse._fromResponse(this, await req.send(method));
-    }  on transport.RequestException catch (e) {
+    } on transport.RequestException catch (e) {
       return HttpResponse._fromResponse(this, e.response);
     }
   }
@@ -176,7 +174,8 @@ class HttpResponse {
   }
 
   @override
-  String toString() => "STATUS [$status], STATUS TEXT: [$statusText], RESPONSE: [$body]";
+  String toString() =>
+      "STATUS [$status], STATUS TEXT: [$statusText], RESPONSE: [$body]";
 }
 
 /// A bucket for managing ratelimits.
@@ -277,8 +276,10 @@ class Http {
   Logger _logger = Logger.detached("Http");
 
   Http._new() {
-    this._headers= {'User-Agent':
-        'DiscordBot (https://github.com/l7ssha/nyxx, ${_Constants.version})'};
+    this._headers = {
+      'User-Agent':
+          'DiscordBot (https://github.com/l7ssha/nyxx, ${_Constants.version})'
+    };
   }
 
   /// Sends a HTTP request.
@@ -293,15 +294,17 @@ class Http {
         method,
         path,
         queryParams,
-        Map.from(this._headers)..addAll(headers)..addAll(_addAuditReason(reason)),
+        Map.from(this._headers)
+          ..addAll(headers)
+          ..addAll(_addAuditReason(reason)),
         body);
 
     await for (HttpResponse r in request.stream) {
       if (!r.aborted && r.status >= 200 && r.status < 300) {
-        if(_client != null) HttpResponseEvent._new(r);
+        if (_client != null) HttpResponseEvent._new(r);
         return r;
       } else {
-        if(_client != null) HttpErrorEvent._new(r);
+        if (_client != null) HttpErrorEvent._new(r);
         return Future.error(r);
       }
     }
@@ -330,10 +333,10 @@ class Http {
 
     await for (HttpResponse r in request.stream) {
       if (!r.aborted && r.status >= 200 && r.status < 300) {
-        if(_client != null) HttpResponseEvent._new(r);
+        if (_client != null) HttpResponseEvent._new(r);
         return r;
       } else {
-        if(_client != null) HttpErrorEvent._new(r);
+        if (_client != null) HttpErrorEvent._new(r);
         return Future.error(r);
       }
     }

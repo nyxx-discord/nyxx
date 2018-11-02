@@ -77,7 +77,8 @@ class TextChannel extends MessageChannel
 
   /// Returns pinned [Message]s for [Channel].
   Future<Map<String, Message>> getPinnedMessages() async {
-    final HttpResponse r = await _client._http.send('GET', "/channels/$id/pins");
+    final HttpResponse r =
+        await _client._http.send('GET', "/channels/$id/pins");
 
     Map<String, Message> messages = Map();
     for (Map<String, dynamic> val in r.body.values.first) {

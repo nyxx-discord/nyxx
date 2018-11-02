@@ -14,13 +14,7 @@ class _CommandMetadata {
 
   List<List<String>> commandString;
 
-  _CommandMetadata(
-      this.commandString,
-      this.method,
-      this.parent,
-      this.parentCommand,
-      this.methodCommand,
-      this.restrict,
-      [this.preprocessors = const [],
-      this.postprocessors = const []]);
+  _CommandMetadata(this.commandString, this.method, this.parent,
+      this.parentCommand, this.methodCommand, this.restrict,
+      [this.preprocessors = const [], this.postprocessors = const []]);
 }

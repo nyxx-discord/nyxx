@@ -46,30 +46,29 @@ class Shard {
   }
 
   /// Allows to set presence for current shard.
-  void setPresence({String status, bool afk = false, Presence game, DateTime since}) {
+  void setPresence(
+      {String status, bool afk = false, Presence game, DateTime since}) {
     var packet = Map<String, dynamic>();
 
     packet['status'] = status;
 
-    if(afk != null)
-      packet['afk'] = afk;
+    if (afk != null) packet['afk'] = afk;
 
-    if(game != null) {
+    if (game != null) {
       var gameMap = Map<String, dynamic>();
       gameMap['name'] = game.name;
 
-      if(game.type != null)
-        gameMap['type'] = game.type._value;
+      if (game.type != null) gameMap['type'] = game.type._value;
 
-      if(game.url != null)
-        gameMap['url'] = game.url;
+      if (game.url != null) gameMap['url'] = game.url;
 
       packet['game'] = gameMap;
     }
 
-    if(since != null)
+    if (since != null)
       packet['since'] = since.millisecondsSinceEpoch;
-    else packet['since'] = null;
+    else
+      packet['since'] = null;
 
     this.send("STATUS_UPDATE", packet);
   }
@@ -83,20 +82,25 @@ class Shard {
     if (this._socket != null) this._socket.close();
 
     if (!init && resume) {
-      Timer(Duration(seconds: 2), () => _connect(true));
+      Timer(Duration(seconds: 2), () => _connect(true, true));
       return;
     }
 
-    transport.WebSocket.connect(Uri.parse("${this._ws.gateway}?v=6&encoding=json")).then((ws) {
-     _socket = ws;
-     _socket.done.then((_) => _handleErr());
-     _socket.listen((data) {
-       this.transfer += data.length as int;
-       this._handleMsg(_decodeBytes(data), resume);
-     }, onDone: this._handleErr, onError: (err) {
-       print(err);
-       this._handleErr();
-     });
+    transport.WebSocket.connect(
+            Uri.parse("${this._ws.gateway}?v=6&encoding=json"))
+        .then((ws) {
+      _socket = ws;
+      _socket.done.then((_) => _handleErr());
+      _socket.listen(
+          (data) {
+            this.transfer += data.length as int;
+            this._handleMsg(_decodeBytes(data), resume);
+          },
+          onDone: this._handleErr,
+          onError: (err) {
+            print(err);
+            this._handleErr();
+          });
     }).catchError((_, __) {
       this._handleErr();
     });
@@ -114,7 +118,7 @@ class Shard {
   /// Sends WS data.
   void send(String op, dynamic d) {
     this._socket.add(
-          jsonEncode(<String, dynamic>{"op": _OPCodes.matchOpCode(op), "d": d}));
+        jsonEncode(<String, dynamic>{"op": _OPCodes.matchOpCode(op), "d": d}));
   }
 
   void _heartbeat() {
@@ -163,7 +167,7 @@ class Shard {
         DisconnectEvent._new(this, 9);
         this._onDisconnect.add(this);
 
-        if(msg['d'] as bool) {
+        if (msg['d'] as bool) {
           Timer(Duration(seconds: 2), () => _connect(true));
         } else {
           Timer(Duration(seconds: 6), () => _connect(false, true));
@@ -325,7 +329,13 @@ class Shard {
 
   void _handleErr() {
     this._heartbeatTimer.cancel();
-    _logger.severe("Shard [$id] disconnected. Error code: [${this._socket.closeCode}] | Error message: [${this._socket.closeReason}]");
+    _logger.severe(
+        "Shard [$id] disconnected. Error code: [${this._socket.closeCode}] | Error message: [${this._socket.closeReason}]");
+
+    if (this._socket.closeCode == null) {
+      _logger.severe("Exitting. Null close code");
+      exit(1);
+    }
 
     /// Dispose on error
     for (var guild in this.guilds.values) {
@@ -334,18 +344,15 @@ class Shard {
 
     switch (this._socket.closeCode) {
       case 4004:
-        exit(1);
-        break;
       case 4010:
         exit(1);
         break;
       case 4007:
       case 4009:
-      //case 1001:
         this._connect(true);
         break;
       default:
-        this._connect(false, false);
+        Timer(const Duration(seconds: 2), () => this._connect(false, true));
         break;
     }
 

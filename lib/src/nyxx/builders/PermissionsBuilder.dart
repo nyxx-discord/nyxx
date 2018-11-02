@@ -28,8 +28,8 @@ class PermissionsBuilder extends AbstractPermissions {
     _apply(tmp, this.manageMessages, PermissionsConstants.manageMessages);
     _apply(tmp, this.embedLinks, PermissionsConstants.embedLinks);
     _apply(tmp, this.attachFiles, PermissionsConstants.attachFiles);
-    _apply(tmp, this.readMessageHistory,
-        PermissionsConstants.readMessageHistory);
+    _apply(
+        tmp, this.readMessageHistory, PermissionsConstants.readMessageHistory);
     _apply(tmp, this.mentionEveryone, PermissionsConstants.mentionEveryone);
     _apply(tmp, this.useExternalEmojis, PermissionsConstants.externalEmojis);
     _apply(tmp, this.connect, PermissionsConstants.connect);
@@ -40,8 +40,8 @@ class PermissionsBuilder extends AbstractPermissions {
     _apply(tmp, this.useVad, PermissionsConstants.useVad);
     _apply(tmp, this.changeNickname, PermissionsConstants.changeNickname);
     _apply(tmp, this.manageNicknames, PermissionsConstants.manageNicknames);
-    _apply(tmp, this.manageRoles,
-        PermissionsConstants.manageRolesOrPermissions);
+    _apply(
+        tmp, this.manageRoles, PermissionsConstants.manageRolesOrPermissions);
     _apply(tmp, this.manageWebhooks, PermissionsConstants.manageWebhooks);
 
     return tmp;

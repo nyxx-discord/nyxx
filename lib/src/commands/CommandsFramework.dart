@@ -20,8 +20,12 @@ class CommandsFramework {
   String prefix;
 
   /// Creates commands framework handler. Requires prefix to handle commands.
-  CommandsFramework({this.prefix,
-      Stream<MessageEvent> stream, Duration roundupTime = const Duration(minutes: 2), bool ignoreBots = true, List<Snowflake> admins}) {
+  CommandsFramework(
+      {this.prefix,
+      Stream<MessageEvent> stream,
+      Duration roundupTime = const Duration(minutes: 2),
+      bool ignoreBots = true,
+      List<Snowflake> admins}) {
     this._commands = List();
     _cooldownCache = CooldownCache(roundupTime);
     _admins = admins;
@@ -30,11 +34,10 @@ class CommandsFramework {
     onError = _onError.stream;
 
     client.onReady.listen((_) {
-      if(prefix == null && stream == null) {
+      if (prefix == null && stream == null) {
         prefix = client.self.mention;
         stream = client.onSelfMention;
-      }
-      else if(stream == null && prefix != null)
+      } else if (stream == null && prefix != null)
         stream = client.onMessageReceived;
       else {
         _logger.severe("CANNOT CREATE FRAMEWORK WITHOUT PREFIX");
@@ -106,11 +109,9 @@ class CommandsFramework {
   }
 
   String _createLog(Module classCmd, Command methodCmd) {
-    if(classCmd == null)
-      return "[${methodCmd.name}]";
+    if (classCmd == null) return "[${methodCmd.name}]";
 
-    if(methodCmd == null)
-      return "[${methodCmd.name}]";
+    if (methodCmd == null) return "[${methodCmd.name}]";
 
     return "[${classCmd.name} ${methodCmd.name != null ? methodCmd.name : "<MAIN>"}]";
   }
@@ -128,10 +129,8 @@ class CommandsFramework {
     var methodPre = util.getCmdAnnots<Preprocessor>(methodMirror);
     var methodPost = util.getCmdAnnots<Postprocessor>(methodMirror);
 
-    var prepro = List<Preprocessor>.from(classPre)
-      ..addAll(methodPre);
-    var postPro = List<Postprocessor>.from(classPost)
-      ..addAll(methodPost);
+    var prepro = List<Preprocessor>.from(classPre)..addAll(methodPre);
+    var postPro = List<Postprocessor>.from(classPost)..addAll(methodPost);
 
     return [prepro, postPro];
   }
@@ -142,50 +141,65 @@ class CommandsFramework {
     var mirrorSystem = currentMirrorSystem();
 
     mirrorSystem.libraries.forEach((_, library) {
-     for(var declaration in library.declarations.values) {
-       var commandAnnot = util.getCmdAnnot<Module>(declaration);
+      for (var declaration in library.declarations.values) {
+        var commandAnnot = util.getCmdAnnot<Module>(declaration);
 
-       if(commandAnnot == null)
-         continue;
+        if (commandAnnot == null) continue;
 
-       if(declaration is MethodMirror) {
-         var cmdAnnot = commandAnnot as Command;
-         var methodRestrict = util.getCmdAnnot<Restrict>(declaration);
-         var processors = _getProcessors(null, declaration);
+        if (declaration is MethodMirror) {
+          var cmdAnnot = commandAnnot as Command;
+          var methodRestrict = util.getCmdAnnot<Restrict>(declaration);
+          var processors = _getProcessors(null, declaration);
 
-         var meta = _CommandMetadata([[commandAnnot.name]..addAll(commandAnnot.aliases)], declaration, library, null, cmdAnnot, _patchRestrictions(null, methodRestrict),
-             processors.first as List<Preprocessor>, processors.last as List<Postprocessor>);
+          var meta = _CommandMetadata([
+            [commandAnnot.name]..addAll(commandAnnot.aliases)
+          ],
+              declaration,
+              library,
+              null,
+              cmdAnnot,
+              _patchRestrictions(null, methodRestrict),
+              processors.first as List<Preprocessor>,
+              processors.last as List<Postprocessor>);
 
-         _commands.add(meta);
-       } else if (declaration is ClassMirror) {
-         var classRestrict = util.getCmdAnnot<Restrict>(declaration);
+          _commands.add(meta);
+        } else if (declaration is ClassMirror) {
+          var classRestrict = util.getCmdAnnot<Restrict>(declaration);
 
-         for(var method in declaration.declarations.values.whereType<MethodMirror>()) {
-           var methodCmd = util.getCmdAnnot<Command>(method);
+          for (var method
+              in declaration.declarations.values.whereType<MethodMirror>()) {
+            var methodCmd = util.getCmdAnnot<Command>(method);
 
-           if(methodCmd == null)
-             continue;
+            if (methodCmd == null) continue;
 
-           var methodRestrict = util.getCmdAnnot<Restrict>(declaration);
-           var processors = _getProcessors(declaration, method);
+            var methodRestrict = util.getCmdAnnot<Restrict>(declaration);
+            var processors = _getProcessors(declaration, method);
 
-           List<List<String>> name = List();
-           name.add(List.of(commandAnnot.aliases)..add(commandAnnot.name));
+            List<List<String>> name = List();
+            name.add(List.of(commandAnnot.aliases)..add(commandAnnot.name));
 
-           if(methodCmd.name != null) {
-             name.add(List.from(methodCmd.aliases)..add(methodCmd.name));
-           }
+            if (methodCmd.name != null) {
+              name.add(List.from(methodCmd.aliases)..add(methodCmd.name));
+            }
 
-           var meta = _CommandMetadata(name, method, declaration, commandAnnot, methodCmd,
-               _patchRestrictions(classRestrict, methodRestrict), processors.first as List<Preprocessor>, processors.last as List<Postprocessor>);
+            var meta = _CommandMetadata(
+                name,
+                method,
+                declaration,
+                commandAnnot,
+                methodCmd,
+                _patchRestrictions(classRestrict, methodRestrict),
+                processors.first as List<Preprocessor>,
+                processors.last as List<Postprocessor>);
 
-           _commands.add(meta);
-         }
-       }
-     }
+            _commands.add(meta);
+          }
+        }
+      }
     });
     _logger.fine("Registered ${_commands.length} commands");
-    _commands.sort((first, second) => -first.commandString.length.compareTo(second.commandString.length));
+    _commands.sort((first, second) =>
+        -first.commandString.length.compareTo(second.commandString.length));
   }
 
   Restrict _patchRestrictions(Restrict top, Restrict meth) {
@@ -193,8 +207,7 @@ class CommandsFramework {
       return Restrict();
     else if (top == null)
       return meth;
-    else if (meth == null)
-      return top;
+    else if (meth == null) return top;
 
     var admin = meth.admin ?? top.admin;
 
@@ -208,7 +221,7 @@ class CommandsFramework {
 
     var cooldown = meth.cooldown ?? top.cooldown;
     var context = meth.requiredContext ?? top.requiredContext;
-    var nsfw =  meth.nsfw ?? top.nsfw;
+    var nsfw = meth.nsfw ?? top.nsfw;
 
     return Restrict(
         admin: admin,
@@ -232,42 +245,51 @@ class CommandsFramework {
     _CommandMetadata matchedMeta;
     try {
       matchedMeta = _commands.firstWhere((command) {
-        if(command.commandString.length == 2 && splittedCommand.length > 1) {
-          if(command.commandString.first.contains(splittedCommand.first) && command.commandString.last.contains(splittedCommand[1])) {
+        if (command.commandString.length == 2 && splittedCommand.length > 1) {
+          if (command.commandString.first.contains(splittedCommand.first) &&
+              command.commandString.last.contains(splittedCommand[1])) {
             single = false;
             return true;
           }
 
           return false;
         } else {
-          if(command.parent is ClassMirror && command.methodCommand.name != null)
-            return false;
+          if (command.parent is ClassMirror &&
+              command.methodCommand.name != null) return false;
 
-          if(command.commandString.first.contains(splittedCommand.first)) return true;
+          if (command.commandString.first.contains(splittedCommand.first))
+            return true;
           return false;
         }
       });
     } on Error {
-      _onError.add(CommandExecutionError(ExecutionErrorType.commandNotFound, e.message));
+      _onError.add(
+          CommandExecutionError(ExecutionErrorType.commandNotFound, e.message));
       return;
     }
-
 
     var executionCode = -1;
     executionCode = await checkPermissions(matchedMeta, e.message);
 
-    if(executionCode == -1 && matchedMeta.preprocessors.length > 0) {
-      for(var p in matchedMeta.preprocessors) {
+    if (executionCode == -1 && matchedMeta.preprocessors.length > 0) {
+      for (var p in matchedMeta.preprocessors) {
         try {
           var res = await p.execute(_services, e.message);
 
-          if(!res.isSuccessful) {
-            _onError.add(CommandExecutionError(ExecutionErrorType.preprocessorFail, e.message, res.exception, res.message));
+          if (!res.isSuccessful) {
+            _onError.add(CommandExecutionError(
+                ExecutionErrorType.preprocessorFail,
+                e.message,
+                res.exception,
+                res.message));
             executionCode = 8;
             break;
           }
         } catch (err) {
-          _onError.add(CommandExecutionError(ExecutionErrorType.preprocessorException, e.message, err as Exception));
+          _onError.add(CommandExecutionError(
+              ExecutionErrorType.preprocessorException,
+              e.message,
+              err as Exception));
         }
       }
     }
@@ -276,47 +298,54 @@ class CommandsFramework {
     void invokePost(res) {
       if (matchedMeta.postprocessors.length > 0) {
         for (var post in matchedMeta.postprocessors)
-          post.execute(
-              _services,
-              res,
-              e.message);
+          post.execute(_services, res, e.message);
       }
     }
 
     // Switch between execution codes
     switch (executionCode) {
       case 0:
-        _onError.add(CommandExecutionError(ExecutionErrorType.adminOnly, e.message));
+        _onError.add(
+            CommandExecutionError(ExecutionErrorType.adminOnly, e.message));
         break;
       case 1:
-        _onError.add(CommandExecutionError(ExecutionErrorType.userPermissionsError, e.message));
+        _onError.add(CommandExecutionError(
+            ExecutionErrorType.userPermissionsError, e.message));
         break;
       case 6:
-        _onError.add(CommandExecutionError(ExecutionErrorType.botPermissionError, e.message));
+        _onError.add(CommandExecutionError(
+            ExecutionErrorType.botPermissionError, e.message));
         break;
       case 2:
-        _onError.add(CommandExecutionError(ExecutionErrorType.cooldown, e.message));
+        _onError
+            .add(CommandExecutionError(ExecutionErrorType.cooldown, e.message));
         break;
       case 3:
-        _onError.add(CommandExecutionError(ExecutionErrorType.wrongContext, e.message));
+        _onError.add(
+            CommandExecutionError(ExecutionErrorType.wrongContext, e.message));
         break;
       case 4:
-        _onError.add(CommandExecutionError(ExecutionErrorType.nfswAccess, e.message));
+        _onError.add(
+            CommandExecutionError(ExecutionErrorType.nfswAccess, e.message));
         break;
       case 5:
-        _onError.add(CommandExecutionError(ExecutionErrorType.requiredTopic, e.message));
+        _onError.add(
+            CommandExecutionError(ExecutionErrorType.requiredTopic, e.message));
         break;
       case 7:
-        _onError.add(CommandExecutionError(ExecutionErrorType.roleRequired, e.message));
+        _onError.add(
+            CommandExecutionError(ExecutionErrorType.roleRequired, e.message));
         break;
       case 9:
-        _onError.add(CommandExecutionError(ExecutionErrorType.requiresVoice, e.message));
+        _onError.add(
+            CommandExecutionError(ExecutionErrorType.requiresVoice, e.message));
         break;
-      case 8: break;
+      case 8:
+        break;
       case -1:
       case -2:
       case 100:
-        if(single)
+        if (single)
           splittedCommand.removeRange(0, 1);
         else
           splittedCommand.removeRange(0, 2);
@@ -335,28 +364,34 @@ class CommandsFramework {
           instance.setField(Symbol("author"), e.message.author);
           instance.setField(Symbol("channel"), e.message.channel);
 
-          (instance.invoke(matchedMeta.method.simpleName, methodInj)
-              .reflectee as Future).then((r) {
+          (instance.invoke(matchedMeta.method.simpleName, methodInj).reflectee
+                  as Future)
+              .then((r) {
             invokePost(r);
           }).catchError((Exception err, String stack) {
             invokePost([err, stack]);
-            _onError.add(CommandExecutionError(ExecutionErrorType.commandFailed, e.message, err, stack));
+            _onError.add(CommandExecutionError(
+                ExecutionErrorType.commandFailed, e.message, err, stack));
           });
         }
 
         if (matchedMeta.parent is LibraryMirror) {
-          var context = CommandContext._new(e.message.channel,
-              e.message.author, e.message.guild, e.message);
+          var context = CommandContext._new(
+              e.message.channel, e.message.author, e.message.guild, e.message);
 
-          (matchedMeta.parent.invoke(
-                matchedMeta.method.simpleName,
-                List()
-                  ..add(context)
-                  ..addAll(methodInj)).reflectee as Future).then((r) {
+          (matchedMeta.parent
+                  .invoke(
+                      matchedMeta.method.simpleName,
+                      List()
+                        ..add(context)
+                        ..addAll(methodInj))
+                  .reflectee as Future)
+              .then((r) {
             invokePost(r);
           }).catchError((Exception err, String stack) {
             invokePost([err, stack]);
-            _onError.add(CommandExecutionError(ExecutionErrorType.commandFailed, e.message, err, stack));
+            _onError.add(CommandExecutionError(
+                ExecutionErrorType.commandFailed, e.message, err, stack));
           });
         }
 
@@ -370,38 +405,38 @@ class CommandsFramework {
 
   Future<int> checkPermissions(_CommandMetadata meta, Message e) async {
     var annot = meta.restrict;
-    
+
     // Check if command requires admin
     if (annot.admin != null && annot.admin)
       return _isUserAdmin(e.author.id, e.guild) ? 100 : 0;
 
     // Check for reqired context
-    if(annot.requiredContext != null) {
-      if(annot.requiredContext == ContextType.dm && !(e.channel is DMChannel || e.channel is GroupDMChannel))
-        return 3;
+    if (annot.requiredContext != null) {
+      if (annot.requiredContext == ContextType.dm &&
+          !(e.channel is DMChannel || e.channel is GroupDMChannel)) return 3;
 
-      if(annot.requiredContext == ContextType.guild && e.channel is! TextChannel)
-        return 3;
+      if (annot.requiredContext == ContextType.guild &&
+          e.channel is! TextChannel) return 3;
     }
 
-    if(e.guild != null) {
+    if (e.guild != null) {
       var member = await e.guild.getMember(e.author);
 
       // Check if user is in any channel
-      if(annot.requireVoice != null && annot.requireVoice && e.guild.voiceStates[member.id] == null)
-        return 9;
+      if (annot.requireVoice != null &&
+          annot.requireVoice &&
+          e.guild.voiceStates[member.id] == null) return 9;
 
       // Check if there is need to check user roles
       if (annot.roles.isNotEmpty) {
         var hasRoles =
-        member.roles.map((f) => f.id).any((t) => annot.roles.contains(t));
+            member.roles.map((f) => f.id).any((t) => annot.roles.contains(t));
 
         if (!hasRoles) return 7;
       }
 
       // Check for channel topics
-      if (annot.topics.isNotEmpty &&
-          e.channel is TextChannel) {
+      if (annot.topics.isNotEmpty && e.channel is TextChannel) {
         var topic = (e.channel as TextChannel).topic;
         var list = topic.split(" ");
 
@@ -413,10 +448,9 @@ class CommandsFramework {
       if (annot.userPermissions.isNotEmpty) {
         var total = (e.channel as TextChannel).effectivePermissions(member);
 
-        if(total == Permissions.empty())
-          return 1;
+        if (total == Permissions.empty()) return 1;
 
-        if(total != Permissions.all() || _isUserAdmin(member.id, e.guild)) {
+        if (total != Permissions.all() || _isUserAdmin(member.id, e.guild)) {
           for (var perm in annot.userPermissions) {
             if (!util.isApplied(perm, total.raw)) {
               return 1;
@@ -429,10 +463,9 @@ class CommandsFramework {
       if (annot.botPermissions.isNotEmpty) {
         var self = await e.guild.getMember(client.self);
         var total = (e.channel as TextChannel).effectivePermissions(self);
-        if(total == Permissions.empty())
-          return 6;
+        if (total == Permissions.empty()) return 6;
 
-        if(total != Permissions.all() || !_isUserAdmin(self.id, e.guild)) {
+        if (total != Permissions.all() || !_isUserAdmin(self.id, e.guild)) {
           for (var perm in annot.userPermissions) {
             if (!util.isApplied(perm, total.raw)) {
               return 6;
@@ -443,12 +476,11 @@ class CommandsFramework {
     }
 
     //Check if user is on cooldown
-    if (annot.cooldown != null &&
-        annot.cooldown >
-            0) if (!(await _cooldownCache.canExecute(
-        e.author.id,
-        "${meta.parentCommand.name}${meta.methodCommand.name}",
-        annot.cooldown * 1000))) return 2;
+    if (annot.cooldown != null && annot.cooldown > 0) if (!(await _cooldownCache
+        .canExecute(
+            e.author.id,
+            "${meta.parentCommand.name}${meta.methodCommand.name}",
+            annot.cooldown * 1000))) return 2;
 
     return -1;
   }
@@ -535,8 +567,9 @@ class CommandsFramework {
           collected.add(e.guild.emojis[Snowflake(id)]);
           break;
         case UnicodeEmoji:
-          collected
-              .add(util.emojisUnicode[splitted[index]..replaceAll(":", "")] ?? UnicodeEmoji(splitted[index]));
+          collected.add(
+              util.emojisUnicode[splitted[index]..replaceAll(":", "")] ??
+                  UnicodeEmoji(splitted[index]));
           break;
         default:
           if (_typeConverters == null) return false;
@@ -576,7 +609,7 @@ class CommandsFramework {
       try {
         var res = await parsePrimitives(type);
         if (res) continue;
-      } catch (_) { }
+      } catch (_) {}
 
       try {
         collected.add(_services.firstWhere((s) => s.runtimeType == type));
@@ -589,8 +622,7 @@ class CommandsFramework {
   }
 
   bool _isUserAdmin(Snowflake authorId, Guild guild) {
-    if(guild == null)
-      return true;
+    if (guild == null) return true;
 
     return (_admins != null && _admins.any((i) => i == authorId)) ||
         guild.owner.id == authorId;

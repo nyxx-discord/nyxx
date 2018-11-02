@@ -100,9 +100,9 @@ class PresenceType {
   int get hashCode => _value.hashCode;
 
   @override
-  bool operator ==(other) => other is int && other == _value
-      || other is String && other == _value.toString();
-
+  bool operator ==(other) =>
+      other is int && other == _value ||
+      other is String && other == _value.toString();
 }
 
 /// Represents party of game.
