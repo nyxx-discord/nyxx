@@ -27,10 +27,10 @@ abstract class Cache<T, S> implements Disposable {
   /// Returns element with key [key]
   S operator [](T key) => _cache[key];
 
-  /// Sets [value] for [key]
+  /// Sets [item] for [key]
   void operator []=(T key, S item) => _cache[key] = item;
 
-  /// Puts element to collection if [key] doesn't exist in cache
+  /// Puts [item] to collection if [key] doesn't exist in cache
   S addIfAbsent(T key, S item) {
     if (!_cache.containsKey(T)) return _cache[key] = item;
     return _cache[key];
@@ -172,6 +172,10 @@ class MessageCache extends Cache<Snowflake, Message> {
   /// Returns messages which were sent by bots
   Iterable<Message> get byBot => values.where((m) => m.author.bot);
 
+  /// Returns messages in chronological order
+  List<Message> get inOrder => _cache.values.toList()
+    ..sort((f, s) => f.createdAt.compareTo(s.createdAt));
+
   @override
 
   /// Takes first [count] elements from cache. Returns Iterable of cache values
@@ -193,9 +197,8 @@ class MessageCache extends Cache<Snowflake, Message> {
 
   /// Unsupported
   @override
-  void operator []=(Snowflake key, Message item) {
-    throw new Exception("Dont do this. Use put() instead!");
-  }
+  void operator []=(Snowflake key, Message item) =>
+      throw new Exception("Unsupported operation. Use put() instead");
 }
 
 /// Cache which is cleaned up.
