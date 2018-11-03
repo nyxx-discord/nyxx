@@ -9,7 +9,7 @@ void _let<T>(T value, bool checker(T value),
 
 /// Represents a Discord guild role, which is used to assign priority, permissions, and a color to guild members
 class Role extends SnowflakeEntity
-    implements IMentionable, GuildEntity, Nameable {
+    implements Mentionable, GuildEntity, Nameable {
   /// The role's name.
   String name;
 
