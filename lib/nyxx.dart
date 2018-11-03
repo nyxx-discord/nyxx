@@ -74,7 +74,7 @@ part 'src/nyxx/builders/MessageBuilder.dart';
 // OBJECTS
 
 part 'src/nyxx/objects/ISend.dart';
-part 'src/nyxx/objects/IMentionable.dart';
+part 'src/nyxx/objects/Mentionable.dart';
 part 'src/nyxx/objects/GuildEntity.dart';
 part 'src/nyxx/objects/Disposable.dart';
 part 'src/nyxx/objects/Downloadable.dart';

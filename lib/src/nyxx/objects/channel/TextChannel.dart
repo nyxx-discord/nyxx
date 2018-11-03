@@ -4,7 +4,7 @@ part of nyxx;
 /// Inhertits from [MessageChannel] and mixes [GuildChannel].
 class TextChannel extends MessageChannel
     with GuildChannel
-    implements IMentionable {
+    implements Mentionable {
   /// Emitted when channel pins are updated.
   Stream<ChannelPinsUpdateEvent> pinsUpdated;
 
