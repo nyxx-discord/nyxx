@@ -194,7 +194,7 @@ class Nyxx implements Disposable {
   Nyxx(this._token, {ClientOptions options, bool ignoreExceptions = true}) {
     if (!setup) throw new NotSetupError();
 
-    if (ignoreExceptions) {
+    if (ignoreExceptions && !browser) {
       Isolate.current.setErrorsFatal(false);
 
       ReceivePort errorsPort = ReceivePort();
