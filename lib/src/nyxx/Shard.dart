@@ -136,7 +136,7 @@ class Shard {
               "\$device": "nyxx",
             },
             "large_threshold": _client._options.largeThreshold,
-            "compress": browser ? false : true
+            "compress": !browser
           };
 
           identifyMsg['shard'] = <int>[this.id, _client._options.shardCount];
