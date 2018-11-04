@@ -1,3 +1,4 @@
+import 'package:nyxx/Vm.dart';
 import 'package:nyxx/nyxx.dart' as nyxx;
 import 'package:nyxx/commands.dart' as command;
 
@@ -23,6 +24,8 @@ class ExConverter extends command.TypeConverter<Ex> {
 
 // Main function
 void main() {
+  configureNyxxForVM();
+
   // Create new bot instance
   nyxx.Nyxx bot = nyxx.Nyxx(Platform.environment['DISCORD_TOKEN']);
 

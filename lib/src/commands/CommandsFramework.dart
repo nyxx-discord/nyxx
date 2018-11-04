@@ -1,5 +1,21 @@
 part of nyxx.commands;
 
+/// Gets single annotation with type [T] from [declaration]
+T getCmdAnnot<T>(DeclarationMirror declaration) {
+  Iterable<T> fs = getCmdAnnots<T>(declaration);
+  if (fs.isEmpty) return null;
+  return fs.first;
+}
+
+/// Gets all annotations with type [T] from [declaration]
+Iterable<T> getCmdAnnots<T>(DeclarationMirror declaration) sync* {
+  for (var instance in declaration.metadata)
+    if (instance.hasReflectee) {
+      var reflectee = instance.reflectee;
+      if (reflectee is T) yield reflectee;
+    }
+}
+
 /// Main point of commands in nyx.
 /// It gets all sent messages and matches to registered command and invokes its action.
 class CommandsFramework {
@@ -121,12 +137,12 @@ class CommandsFramework {
     var classPost = List<Postprocessor>();
 
     if (classMirror != null) {
-      classPre.addAll(util.getCmdAnnots<Preprocessor>(classMirror));
-      classPost.addAll(util.getCmdAnnots<Postprocessor>(classMirror));
+      classPre.addAll(getCmdAnnots<Preprocessor>(classMirror));
+      classPost.addAll(getCmdAnnots<Postprocessor>(classMirror));
     }
 
-    var methodPre = util.getCmdAnnots<Preprocessor>(methodMirror);
-    var methodPost = util.getCmdAnnots<Postprocessor>(methodMirror);
+    var methodPre = getCmdAnnots<Preprocessor>(methodMirror);
+    var methodPost = getCmdAnnots<Postprocessor>(methodMirror);
 
     var prepro = List<Preprocessor>.from(classPre)
       ..addAll(methodPre);
@@ -143,14 +159,14 @@ class CommandsFramework {
 
     mirrorSystem.libraries.forEach((_, library) {
      for(var declaration in library.declarations.values) {
-       var commandAnnot = util.getCmdAnnot<Module>(declaration);
+       var commandAnnot = getCmdAnnot<Module>(declaration);
 
        if(commandAnnot == null)
          continue;
 
        if(declaration is MethodMirror) {
          var cmdAnnot = commandAnnot as Command;
-         var methodRestrict = util.getCmdAnnot<Restrict>(declaration);
+         var methodRestrict = getCmdAnnot<Restrict>(declaration);
          var processors = _getProcessors(null, declaration);
 
          var meta = _CommandMetadata([[commandAnnot.name]..addAll(commandAnnot.aliases)], declaration, library, null, cmdAnnot, _patchRestrictions(null, methodRestrict),
@@ -158,15 +174,15 @@ class CommandsFramework {
 
          _commands.add(meta);
        } else if (declaration is ClassMirror) {
-         var classRestrict = util.getCmdAnnot<Restrict>(declaration);
+         var classRestrict = getCmdAnnot<Restrict>(declaration);
 
          for(var method in declaration.declarations.values.whereType<MethodMirror>()) {
-           var methodCmd = util.getCmdAnnot<Command>(method);
+           var methodCmd = getCmdAnnot<Command>(method);
 
            if(methodCmd == null)
              continue;
 
-           var methodRestrict = util.getCmdAnnot<Restrict>(declaration);
+           var methodRestrict = getCmdAnnot<Restrict>(declaration);
            var processors = _getProcessors(declaration, method);
 
            List<List<String>> name = List();
@@ -560,7 +576,7 @@ class CommandsFramework {
       var type = e.type.reflectedType;
       if (type == CommandContext) continue;
 
-      if (util.getCmdAnnot<Remainder>(e) != null) {
+      if (getCmdAnnot<Remainder>(e) != null) {
         index++;
         var range = splitted.getRange(index, splitted.length).toList();
 
