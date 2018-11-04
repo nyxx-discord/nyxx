@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:async';
 
+import 'package:nyxx/Vm.dart' as nyxx;
 import 'package:nyxx/nyxx.dart' as nyxx;
 import 'package:nyxx/commands.dart' as command;
 
@@ -54,6 +55,7 @@ nyxx.EmbedBuilder createTestEmbed() {
 // -------------------------------------------------------
 
 void main() {
+  nyxx.configureNyxxForVM();
   var env = Platform.environment;
   var bot = nyxx.Nyxx(env['DISCORD_TOKEN'], ignoreExceptions: false);
 
@@ -61,10 +63,11 @@ void main() {
     ..discoverServices()
     ..discoverCommands()
     ..onError.listen((err) async {
-      if(err.type == command.ExecutionErrorType.commandNotFound)
-        await err.message.channel.send(content: "Command '${err.message.content}' not found!");
+      if (err.type == command.ExecutionErrorType.commandNotFound)
+        await err.message.channel
+            .send(content: "Command '${err.message.content}' not found!");
 
-      if(err.type == command.ExecutionErrorType.cooldown) {
+      if (err.type == command.ExecutionErrorType.cooldown) {
         await err.message.channel
             .send(content: "Command is on cooldown!. Wait a few seconds!");
       }
@@ -78,6 +81,7 @@ void main() {
   bot.onReady.listen((e) async {
     var channel =
         bot.channels[nyxx.Snowflake('422285619952222208')] as nyxx.TextChannel;
+    assert(channel != null);
     channel.send(
         content:
             "Testing new Travis CI build `#${env['TRAVIS_BUILD_NUMBER']}` from commit `${env['TRAVIS_COMMIT']}` on branch `${env['TRAVIS_BRANCH']}` with Dart version: `${env['TRAVIS_DART_VERSION']}`");
