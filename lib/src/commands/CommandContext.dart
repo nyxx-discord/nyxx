@@ -32,6 +32,9 @@ class CommandContext {
   /// Guild in which message was sent
   Guild guild;
 
+  /// Returns author as guild member
+  Member get member => guild.members[author.id];
+
   CommandContext();
   CommandContext._new(this.channel, this.author, this.guild, this.message);
 
