@@ -6,5 +6,4 @@ dependencies:
     git:
       url: git://github.com/l7ssha/dart-sqlite2.git
   nyxx:
-    git:
-      url: git://github.com/l7ssha/nyxx.git
+    path: ../..

@@ -1,3 +1,4 @@
+import 'package:nyxx/Vm.dart';
 import 'package:nyxx/nyxx.dart' as nyxx;
 import 'package:nyxx/commands.dart' as command;
 
@@ -6,6 +7,7 @@ import 'dart:async';
 
 // Main function
 void main() {
+  configureNyxxForVM();
   // Create new bot instance
   // Dart 2 introduces optional new keyword, so we can leave it
   nyxx.Nyxx bot = nyxx.Nyxx(Platform.environment['DISCORD_TOKEN']);
