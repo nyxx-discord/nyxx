@@ -42,7 +42,9 @@ class PresenceUpdateEvent {
         this.member.presence = presence;
       }
 
-      client._events.onPresenceUpdate.add(this);
+      if(this.member != null && this.presence != null) {
+        client._events.onPresenceUpdate.add(this);
+      }
     }
   }
 }
