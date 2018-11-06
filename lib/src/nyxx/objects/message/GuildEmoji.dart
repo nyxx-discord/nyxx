@@ -70,7 +70,7 @@ class GuildEmoji extends Emoji implements SnowflakeEntity, GuildEntity, Nameable
 
   /// Returns cdn url to emoji
   String get cdnUrl =>
-      "https://cdn.discordapp.com/emojis/${this.id}.${animated ? ".gif" : ".png"}";
+      "https://cdn.discordapp.com/emojis/${this.id}${animated ? ".gif" : ".png"}";
 
   /// Returns encoded string ready to send via message.
   @override
