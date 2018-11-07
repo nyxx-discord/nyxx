@@ -43,8 +43,6 @@ class PresenceUpdateEvent {
         this.member.status = MemberStatus.from(json['d']['status'] as String);
         this.member.presence = presence;
       }
-
-      client._events.onPresenceUpdate.add(this);
     }
   }
 }

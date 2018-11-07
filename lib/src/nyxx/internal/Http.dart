@@ -46,7 +46,9 @@ class HttpBase {
     this._streamController = StreamController<HttpResponse>.broadcast();
     this.stream = _streamController.stream;
 
-    BeforeHttpRequestSendEvent._new(this);
+    if (_client != null)
+      _client._events.beforeHttpRequestSend
+          .add(BeforeHttpRequestSendEvent._new(this));
 
     if (_client == null || !_client._events.beforeHttpRequestSend.hasListener)
       this.send();
@@ -232,7 +234,8 @@ class HttpBucket {
             : null;
 
         if (r.status == 429) {
-          RatelimitEvent._new(request, false, r);
+          client._events.onRatelimited
+              .add(RatelimitEvent._new(request, false, r));
           request.http._logger.warning(
               "Rate limitted via 429 on endpoint: ${request.path}. Trying to send request again after timeout...");
           Timer(Duration(milliseconds: (r.body['retry_after'] as int) + 100),
@@ -253,7 +256,8 @@ class HttpBucket {
         this.rateLimitRemaining = 2;
         this._execute(request);
       } else {
-        RatelimitEvent._new(request as HttpRequest, true);
+        client._events.onRatelimited
+            .add(RatelimitEvent._new(request as HttpRequest, true));
         request.http._logger.warning(
             "Rate limitted internally on endpoint: ${request.path}. Trying to send request again after timeout...");
         Timer(waitTime, () {
@@ -301,10 +305,12 @@ class Http {
 
     await for (HttpResponse r in request.stream) {
       if (!r.aborted && r.status >= 200 && r.status < 300) {
-        if (_client != null) HttpResponseEvent._new(r);
+        if (_client != null)
+          client._events.onHttpResponse.add(HttpResponseEvent._new(r));
         return r;
       } else {
-        if (_client != null) HttpErrorEvent._new(r);
+        if (_client != null)
+          _client._events.onHttpError.add(HttpErrorEvent._new(r));
         return Future.error(r);
       }
     }
@@ -333,10 +339,12 @@ class Http {
 
     await for (HttpResponse r in request.stream) {
       if (!r.aborted && r.status >= 200 && r.status < 300) {
-        if (_client != null) HttpResponseEvent._new(r);
+        if (_client != null)
+          client._events.onHttpResponse.add(HttpResponseEvent._new(r));
         return r;
       } else {
-        if (_client != null) HttpErrorEvent._new(r);
+        if (_client != null)
+          _client._events.onHttpError.add(HttpErrorEvent._new(r));
         return Future.error(r);
       }
     }

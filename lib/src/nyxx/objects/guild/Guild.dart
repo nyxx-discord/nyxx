@@ -92,9 +92,8 @@ class Guild extends SnowflakeEntity implements Disposable, Nameable {
   Guild._new(Map<String, dynamic> raw,
       [this.available = true, bool guildCreate = false])
       : super(Snowflake(raw['id'] as String)) {
-    voiceStates = _SnowflakeCache();
-
     if (this.available) {
+      voiceStates = _SnowflakeCache();
       this.name = raw['name'] as String;
       this.icon = raw['icon'] as String;
       this.region = raw['region'] as String;

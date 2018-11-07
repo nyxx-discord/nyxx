@@ -4,6 +4,5 @@ part of nyxx;
 class ReadyEvent {
   ReadyEvent._new() {
     client.ready = true;
-    client._events.onReady.add(this);
   }
 }

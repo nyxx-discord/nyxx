@@ -11,7 +11,5 @@ class UserUpdateEvent {
   UserUpdateEvent._new(Map<String, dynamic> json) {
     this.oldUser = client.users[Snowflake(json['d']['id'] as String)];
     newUser = User._new(json['d'] as Map<String, dynamic>);
-
-    client._events.onUserUpdate.add(this);
   }
 }

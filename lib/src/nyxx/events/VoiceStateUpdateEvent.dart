@@ -17,7 +17,5 @@ class VoiceStateUpdateEvent {
         state.guild.voiceStates.remove(state.user.id);
       }
     }
-
-    client._events.onVoiceStateUpdate.add(this);
   }
 }

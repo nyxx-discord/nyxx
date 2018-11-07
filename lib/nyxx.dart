@@ -51,7 +51,6 @@ part 'src/nyxx/events/TypingEvent.dart';
 
 part 'src/nyxx/events/VoiceServerUpdateEvent.dart';
 part 'src/nyxx/events/VoiceStateUpdateEvent.dart';
-part 'src/nyxx/events/WebhookUpdateEvent.dart';
 part 'src/nyxx/events/UserUpdateEvent.dart';
 
 part 'src/nyxx/events/MessageEvents.dart';
