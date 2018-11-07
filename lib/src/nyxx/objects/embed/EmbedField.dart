@@ -11,12 +11,10 @@ class EmbedField {
   /// Indicates of field is inlined in embed
   bool inline;
 
-  EmbedField._new(Map<String, dynamic> raw, Embed embed) {
+  EmbedField._new(Map<String, dynamic> raw) {
     this.name = raw['name'] as String;
     this.content = raw['value'] as String;
     this.inline = raw['inline'] as bool;
-
-    embed.fields[name] = this;
   }
 
   @override

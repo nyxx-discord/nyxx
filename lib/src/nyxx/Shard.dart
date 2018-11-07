@@ -127,7 +127,7 @@ class Shard {
   }
 
   Future<void> _handleMsg(Map<String, dynamic> msg, bool resume) async {
-    RawEvent._new(this, msg);
+    client._events.onRaw.add(RawEvent._new(this, msg));
 
     if (msg['s'] != null) this._sequence = msg['s'] as int;
 
@@ -162,9 +162,9 @@ class Shard {
         break;
 
       case _OPCodes.INVALID_SESSION:
-        _logger.severe("Invalid session. Reconnecting...");
+        _logger.severe("Invalid session on shard [$id]. Reconnecting...");
         _heartbeatTimer.cancel();
-        DisconnectEvent._new(this, 9);
+        client._events.onDisconnect.add(DisconnectEvent._new(this, 9));
         this._onDisconnect.add(this);
 
         if (msg['d'] as bool) {
@@ -205,15 +205,23 @@ class Shard {
             break;
 
           case 'MESSAGE_REACTION_REMOVE_ALL':
-            MessageReactionsRemovedEvent._new(msg);
+            var m = MessageReactionsRemovedEvent._new(msg);
+            client._events.onMessageReactionsRemoved.add(m);
+            client._events.onMessage.add(m);
             break;
 
           case 'MESSAGE_REACTION_ADD':
-            MessageReactionEvent._new(msg, false);
+            var m = MessageReactionEvent._new(msg);
+            //m.message._onReactionAdded.add(m);
+            client._events.onMessageReactionAdded.add(m);
+            client._events.onMessage.add(m);
             break;
 
           case 'MESSAGE_REACTION_REMOVE':
-            MessageReactionEvent._new(msg, true);
+            var m = MessageReactionEvent._new(msg);
+
+            m.message._onReactionAdded.add(m);
+            client._events.onMessageReactionAdded.add(m);
             break;
 
           case 'MESSAGE_DELETE_BULK':
@@ -221,103 +229,124 @@ class Shard {
             break;
 
           case 'CHANNEL_PINS_UPDATE':
-            ChannelPinsUpdateEvent._new(msg);
+            var m = ChannelPinsUpdateEvent._new(msg);
+
+            m.channel._pinsUpdated.add(m);
+            client._events.onChannelPinsUpdate.add(m);
             break;
 
           case 'VOICE_STATE_UPDATE':
-            VoiceStateUpdateEvent._new(msg);
+            client._events.onVoiceStateUpdate
+                .add(VoiceStateUpdateEvent._new(msg));
             break;
 
           case 'VOICE_SERVER_UPDATE':
-            VoiceServerUpdateEvent._new(msg);
+            client._events.onVoiceServerUpdate
+                .add(VoiceServerUpdateEvent._new(msg));
             break;
 
           case 'GUILD_EMOJIS_UPDATE':
-            GuildEmojisUpdateEvent._new(msg);
+            client._events.onGuildEmojisUpdate
+                .add(GuildEmojisUpdateEvent._new(msg));
             break;
 
           case 'MESSAGE_CREATE':
             messagesReceived++;
-            MessageReceivedEvent._new(msg);
+            var m = MessageReceivedEvent._new(msg);
+            client._events.onMessage.add(m);
+            client._events.onMessageReceived.add(m);
+            m.message.channel._onMessage.add(m);
             break;
 
           case 'MESSAGE_DELETE':
-            MessageDeleteEvent._new(msg);
+            var m = MessageDeleteEvent._new(msg);
+            client._events.onMessage.add(m);
+            client._events.onMessageDelete.add(m);
             break;
 
           case 'MESSAGE_UPDATE':
-            MessageUpdateEvent._new(msg);
+            var m = MessageUpdateEvent._new(msg);
+
+            if (m.oldMessage != null) {
+              client._events.onMessageUpdate.add(m);
+            }
             break;
 
           case 'GUILD_CREATE':
-            GuildCreateEvent._new(msg, this);
+            client._events.onGuildCreate.add(GuildCreateEvent._new(msg, this));
             break;
 
           case 'GUILD_UPDATE':
-            GuildUpdateEvent._new(msg);
+            client._events.onGuildUpdate.add(GuildUpdateEvent._new(msg));
             break;
 
           case 'GUILD_DELETE':
-            if (msg['d']['unavailable'] == true)
-              GuildUnavailableEvent._new(msg);
+            if (msg['d']['unavailable'] == true) {
+            }
+            //client._events.onGuildUnavailable.add(GuildUnavailableEvent._new(msg));
             else
               GuildDeleteEvent._new(msg, this);
             break;
 
           case 'GUILD_BAN_ADD':
-            GuildBanAddEvent._new(msg);
+            client._events.onGuildBanAdd.add(GuildBanAddEvent._new(msg));
             break;
 
           case 'GUILD_BAN_REMOVE':
-            GuildBanRemoveEvent._new(msg);
+            client._events.onGuildBanRemove.add(GuildBanRemoveEvent._new(msg));
             break;
 
           case 'GUILD_MEMBER_ADD':
-            GuildMemberAddEvent._new(msg);
+            _client._events.onGuildMemberAdd.add(GuildMemberAddEvent._new(msg));
             break;
 
           case 'GUILD_MEMBER_REMOVE':
-            GuildMemberRemoveEvent._new(msg);
+            client._events.onGuildMemberRemove
+                .add(GuildMemberRemoveEvent._new(msg));
             break;
 
           case 'GUILD_MEMBER_UPDATE':
-            GuildMemberUpdateEvent._new(msg);
+            client._events.onGuildMemberUpdate
+                .add(GuildMemberUpdateEvent._new(msg));
             break;
 
           case 'CHANNEL_CREATE':
-            ChannelCreateEvent._new(msg);
+            client._events.onChannelCreate.add(ChannelCreateEvent._new(msg));
             break;
 
           case 'CHANNEL_UPDATE':
-            ChannelUpdateEvent._new(msg);
+            client._events.onChannelUpdate.add(ChannelUpdateEvent._new(msg));
             break;
 
           case 'CHANNEL_DELETE':
-            ChannelDeleteEvent._new(msg);
+            client._events.onChannelDelete.add(ChannelDeleteEvent._new(msg));
             break;
 
           case 'TYPING_START':
-            TypingEvent._new(msg);
+            var m = TypingEvent._new(msg);
+
+            client._events.onTyping.add(m);
+            //m.channel._onTyping.add(m);
             break;
 
           case 'PRESENCE_UPDATE':
-            PresenceUpdateEvent._new(msg);
+            client._events.onPresenceUpdate.add(PresenceUpdateEvent._new(msg));
             break;
 
           case 'GUILD_ROLE_CREATE':
-            RoleCreateEvent._new(msg);
+            client._events.onRoleCreate.add(RoleCreateEvent._new(msg));
             break;
 
           case 'GUILD_ROLE_UPDATE':
-            RoleUpdateEvent._new(msg);
+            client._events.onRoleUpdate.add(RoleUpdateEvent._new(msg));
             break;
 
           case 'GUILD_ROLE_DELETE':
-            RoleDeleteEvent._new(msg);
+            client._events.onRoleDelete.add(RoleDeleteEvent._new(msg));
             break;
 
           case 'USER_UPDATE':
-            UserUpdateEvent._new(msg);
+            client._events.onUserUpdate.add(UserUpdateEvent._new(msg));
             break;
 
           default:
@@ -332,10 +361,10 @@ class Shard {
     _logger.severe(
         "Shard [$id] disconnected. Error code: [${this._socket.closeCode}] | Error message: [${this._socket.closeReason}]");
 
-    if (this._socket.closeCode == null) {
+    /*if (this._socket.closeCode == null) {
       _logger.severe("Exitting. Null close code");
       exit(1);
-    }
+    }*/
 
     /// Dispose on error
     for (var guild in this.guilds.values) {
@@ -356,7 +385,8 @@ class Shard {
         break;
     }
 
-    DisconnectEvent._new(this, this._socket.closeCode);
+    client._events.onDisconnect
+        .add(DisconnectEvent._new(this, this._socket.closeCode));
     this._onDisconnect.add(this);
   }
 }

@@ -76,7 +76,7 @@ class _WS {
         _client.app =
             ClientOAuth2Application._new(response.body as Map<String, dynamic>);
 
-        ReadyEvent._new();
+        client._events.onReady.add(ReadyEvent._new());
         logger.info("Connected and ready!");
       });
     }

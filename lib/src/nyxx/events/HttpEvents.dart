@@ -5,9 +5,7 @@ class HttpErrorEvent {
   /// The HTTP response.
   HttpResponse response;
 
-  HttpErrorEvent._new(this.response) {
-    _client._events.onHttpError.add(this);
-  }
+  HttpErrorEvent._new(this.response);
 }
 
 /// Sent before all HTTP requests are sent. (You can edit them)
@@ -18,9 +16,7 @@ class BeforeHttpRequestSendEvent {
   /// The request about to be sent.
   HttpBase request;
 
-  BeforeHttpRequestSendEvent._new(this.request) {
-    if (_client != null) _client._events.beforeHttpRequestSend.add(this);
-  }
+  BeforeHttpRequestSendEvent._new(this.request);
 }
 
 /// Sent when a successful HTTP response is received.
@@ -28,7 +24,5 @@ class HttpResponseEvent {
   /// The HTTP response.
   HttpResponse response;
 
-  HttpResponseEvent._new(this.response) {
-    client._events.onHttpResponse.add(this);
-  }
+  HttpResponseEvent._new(this.response);
 }

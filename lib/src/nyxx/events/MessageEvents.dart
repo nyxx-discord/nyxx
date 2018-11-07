@@ -4,10 +4,6 @@ part of nyxx;
 abstract class MessageEvent {
   /// Message object associated with event
   Message message;
-
-  MessageEvent._new() {
-    client._events.onMessage.add(this);
-  }
 }
 
 /// Sent when a new message is received.
@@ -16,12 +12,9 @@ class MessageReceivedEvent extends MessageEvent {
   @override
   Message message;
 
-  MessageReceivedEvent._new(Map<String, dynamic> json) : super._new() {
-    if (client.ready) {
+  MessageReceivedEvent._new(Map<String, dynamic> json) {
+    if (client.ready)
       this.message = Message._new(json['d'] as Map<String, dynamic>);
-      client._events.onMessageReceived.add(this);
-      message.channel._onMessage.add(this);
-    }
   }
 }
 
@@ -35,7 +28,7 @@ class MessageDeleteEvent extends MessageEvent {
   /// The ID of the message.
   Snowflake id;
 
-  MessageDeleteEvent._new(Map<String, dynamic> json) : super._new() {
+  MessageDeleteEvent._new(Map<String, dynamic> json) {
     if (client.ready) {
       if ((client.channels[Snowflake(json['d']['channel_id'] as String)]
                   as MessageChannel)
@@ -46,10 +39,8 @@ class MessageDeleteEvent extends MessageEvent {
                     as MessageChannel)
                 .messages[Snowflake(json['d']['id'] as String)];
         this.id = message.id;
-        client._events.onMessageDelete.add(this);
       } else {
         this.id = Snowflake((json['d']['id'] as String));
-        client._events.onMessageDelete.add(this);
       }
     }
   }
@@ -70,8 +61,7 @@ class MessageReactionEvent extends MessageEvent {
   /// Emoji object.
   Emoji emoji;
 
-  MessageReactionEvent._new(Map<String, dynamic> json, bool remove)
-      : super._new() {
+  MessageReactionEvent._new(Map<String, dynamic> json) {
     this.user = client.users[Snowflake(json['d']['user_id'] as String)];
     this.channel = client.channels[Snowflake(json['d']['channel_id'] as String)]
         as MessageChannel;
@@ -85,14 +75,6 @@ class MessageReactionEvent extends MessageEvent {
         emoji = UnicodeEmoji((json['d']['emoji']['name'] as String));
       else
         emoji = GuildEmoji._partial(json['d']['emoji'] as Map<String, dynamic>);
-
-      if (remove) {
-        this.message._onReactionRemove.add(this);
-        client._events.onMessageReactionRemove.add(this);
-      } else {
-        this.message._onReactionAdded.add(this);
-        client._events.onMessageReactionAdded.add(this);
-      }
     });
   }
 }
@@ -110,7 +92,7 @@ class MessageReactionsRemovedEvent extends MessageEvent {
   /// Guild where event occurs
   Guild guild;
 
-  MessageReactionsRemovedEvent._new(Map<String, dynamic> json) : super._new() {
+  MessageReactionsRemovedEvent._new(Map<String, dynamic> json) {
     this.channel = client.channels[Snowflake(json['d']['channel_id'] as String)]
         as MessageChannel;
 
@@ -119,8 +101,6 @@ class MessageReactionsRemovedEvent extends MessageEvent {
     channel
         .getMessage(Snowflake(json['d']['message_id'] as String))
         .then((msg) => message = msg);
-
-    client._events.onMessageReactionsRemoved.add(this);
   }
 }
 
@@ -158,7 +138,6 @@ class MessageUpdateEvent {
     if (oldMessage != null) {
       this.newMessage =
           Message._combine(oldMessage, json['d'] as Map<String, dynamic>);
-      client._events.onMessageUpdate.add(this);
     }
   }
 }

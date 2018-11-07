@@ -17,8 +17,6 @@ class TypingEvent {
 
       this.channel = chan;
       this.user = client.users[Snowflake(json['d']['user_id'] as String)];
-      client._events.onTyping.add(this);
-      channel._onTyping.add(this);
     });
   }
 }

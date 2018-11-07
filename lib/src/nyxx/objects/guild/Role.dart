@@ -57,8 +57,6 @@ class Role extends SnowflakeEntity
     _let<int>(raw['color'] as int, (v) => v != 0,
         onTrue: (v) => this.color = DiscordColor.fromInt(v),
         onFalse: (v) => this.color = DiscordColor.fromInt(null));
-
-    this.guild.roles[this.id] = this;
   }
 
   /// Edits the role.

@@ -170,9 +170,6 @@ class Nyxx implements Disposable {
   /// Emitted when someone joins/leaves/moves voice channel.
   Stream<VoiceStateUpdateEvent> onVoiceStateUpdate;
 
-  /// Emitted when a guild channel's webhook is created, updated, or deleted.
-  Stream<WebhookUpdateEvent> onWebhookUpdate;
-
   /// Emitted when a guild's voice server is updated.
   /// This is sent when initially connecting to voice, and when the current voice instance fails over to a new server.
   Stream<VoiceServerUpdateEvent> onVoiceServerUpdate;

@@ -12,8 +12,6 @@ class ChannelCreateEvent {
 
         client.channels[tmp.id] = tmp;
         this.channel = tmp;
-
-        client._events.onChannelCreate.add(this);
       } else if (json['d']['type'] == 3) {
         var tmp = GroupDMChannel._new(json['d'] as Map<String, dynamic>);
 
@@ -37,8 +35,6 @@ class ChannelCreateEvent {
         this.channel = chan;
       }
     }
-
-    client._events.onChannelCreate.add(this);
   }
 }
 
@@ -52,8 +48,6 @@ class ChannelDeleteEvent {
     if (client.ready) {
       if (json['d']['type'] == 1) {
         this.channel = DMChannel._new(json['d'] as Map<String, dynamic>);
-        client.channels.remove(channel.id);
-        client._events.onChannelDelete.add(this);
       } else if (json['d']['type'] == 3) {
         this.channel = GroupDMChannel._new(json['d'] as Map<String, dynamic>);
       } else {
@@ -73,7 +67,6 @@ class ChannelDeleteEvent {
       }
 
       client.channels.remove(channel.id);
-      client._events.onChannelDelete.add(this);
     }
   }
 }
@@ -91,9 +84,6 @@ class ChannelPinsUpdateEvent {
         DateTime.parse(json['d']['last_pin_timestamp'] as String);
     this.channel = client.channels[Snowflake(json['d']['channel_id'] as String)]
         as TextChannel;
-
-    channel._pinsUpdated.add(this);
-    client._events.onChannelPinsUpdate.add(this);
   }
 }
 
@@ -127,7 +117,6 @@ class ChannelUpdateEvent {
 
       guild.channels[oldChannel.id] = newChannel;
       client.channels[oldChannel.id] = newChannel;
-      client._events.onChannelUpdate.add(this);
     }
   }
 }

@@ -14,7 +14,6 @@ class GuildCreateEvent {
 
     client.guilds[guild.id] = guild;
     shard.guilds[guild.id] = guild;
-    client._events.onGuildCreate.add(this);
   }
 }
 
@@ -27,15 +26,12 @@ class GuildUpdateEvent {
   Guild newGuild;
 
   GuildUpdateEvent._new(Map<String, dynamic> json) {
-    if (client.ready) {
-      this.newGuild = Guild._new(json['d'] as Map<String, dynamic>);
-      this.oldGuild = client.guilds[this.newGuild.id];
-      this.newGuild.channels = this.oldGuild.channels;
-      this.newGuild.members = this.oldGuild.members;
+    this.newGuild = Guild._new(json['d'] as Map<String, dynamic>);
+    this.oldGuild = client.guilds[this.newGuild.id];
+    this.newGuild.channels = this.oldGuild.channels;
+    this.newGuild.members = this.oldGuild.members;
 
-      client.guilds[oldGuild.id] = newGuild;
-      client._events.onGuildUpdate.add(this);
-    }
+    client.guilds[oldGuild.id] = newGuild;
   }
 }
 
@@ -55,17 +51,15 @@ class GuildDeleteEvent {
   }
 }
 
+// TODO: To rework. GuildUnavailableEvent makes no sense now
 /// Sent when you leave a guild or it becomes unavailable.
 class GuildUnavailableEvent {
   /// An unavailable guild object.
   Guild guild;
 
   GuildUnavailableEvent._new(Map<String, dynamic> json) {
-    if (client.ready) {
-      this.guild = Guild._new(null, false);
-      client.guilds[guild.id] = guild;
-      client._events.onGuildUnavailable.add(this);
-    }
+    this.guild = Guild._new(null, false);
+    client.guilds[guild.id] = guild;
   }
 }
 
@@ -86,7 +80,6 @@ class GuildMemberRemoveEvent {
         this.user = User._new(json['d']['user'] as Map<String, dynamic>);
         this.guild.members.remove(user.id);
         client.users.remove(user.id);
-        client._events.onGuildMemberRemove.add(this);
       }
     }
   }
@@ -119,7 +112,6 @@ class GuildMemberUpdateEvent {
 
         guild.members[oldMember.id] = newMember;
         client.users[oldMember.id] = newMember;
-        client._events.onGuildMemberUpdate.add(this);
       }
     }
   }
@@ -141,7 +133,6 @@ class GuildMemberAddEvent {
         this.member = Member._new(json['d'] as Map<String, dynamic>, guild);
         guild.members[member.id] = member;
         client.users[member.id] = member;
-        _client._events.onGuildMemberAdd.add(this);
       }
     }
   }
@@ -156,14 +147,11 @@ class GuildBanAddEvent {
   User user;
 
   GuildBanAddEvent._new(Map<String, dynamic> json) {
-    if (client.ready) {
-      this.guild = client.guilds[Snowflake(json['d']['guild_id'] as String)];
-      this.user = User._new(json['d']['user'] as Map<String, dynamic>);
+    this.guild = client.guilds[Snowflake(json['d']['guild_id'] as String)];
+    this.user = User._new(json['d']['user'] as Map<String, dynamic>);
 
-      guild.members.remove(user.id);
-      client.users.remove(user.id);
-      client._events.onGuildBanAdd.add(this);
-    }
+    guild.members.remove(user.id);
+    client.users.remove(user.id);
   }
 }
 
@@ -176,11 +164,8 @@ class GuildBanRemoveEvent {
   User user;
 
   GuildBanRemoveEvent._new(Map<String, dynamic> json) {
-    if (client.ready) {
-      this.guild = client.guilds[Snowflake(json['d']['guild_id'] as String)];
-      this.user = User._new(json['d']['user'] as Map<String, dynamic>);
-      client._events.onGuildBanRemove.add(this);
-    }
+    this.guild = client.guilds[Snowflake(json['d']['guild_id'] as String)];
+    this.user = User._new(json['d']['user'] as Map<String, dynamic>);
   }
 }
 
@@ -193,13 +178,13 @@ class GuildEmojisUpdateEvent {
     if (client.ready) {
       final Guild guild =
           client.guilds[Snowflake(json['d']['guild_id'] as String)];
+
       emojis = Map();
       json['d']['emojis'].forEach((o) {
         var emoji = GuildEmoji._new(o as Map<String, dynamic>, guild);
         guild.emojis[emoji.id] = emoji;
         emojis[emoji.id] = emoji;
       });
-      client._events.onGuildEmojisUpdate.add(this);
     }
   }
 }
@@ -216,7 +201,6 @@ class RoleCreateEvent {
       this.role = Role._new(json['d']['role'] as Map<String, dynamic>, guild);
 
       guild.roles[role.id] = role;
-      client._events.onRoleCreate.add(this);
     }
   }
 }
@@ -227,15 +211,12 @@ class RoleDeleteEvent {
   Role role;
 
   RoleDeleteEvent._new(Map<String, dynamic> json) {
-    if (client.ready) {
-      final Guild guild =
-          client.guilds[Snowflake(json['d']['guild_id'] as String)];
+    final Guild guild =
+        client.guilds[Snowflake(json['d']['guild_id'] as String)];
 
-      if (guild != null) {
-        this.role = guild.roles[Snowflake(json['d']['role_id'] as String)];
-        guild.roles.remove(role.id);
-        client._events.onRoleDelete.add(this);
-      }
+    if (guild != null) {
+      this.role = guild.roles[Snowflake(json['d']['role_id'] as String)];
+      guild.roles.remove(role.id);
     }
   }
 }
@@ -249,15 +230,11 @@ class RoleUpdateEvent {
   Role newRole;
 
   RoleUpdateEvent._new(Map<String, dynamic> json) {
-    if (client.ready) {
-      final Guild guild =
-          client.guilds[Snowflake(json['d']['guild_id'] as String)];
-      this.oldRole = guild.roles[Snowflake(json['d']['role']['id'] as String)];
-      this.newRole =
-          Role._new(json['d']['role'] as Map<String, dynamic>, guild);
+    final Guild guild =
+        client.guilds[Snowflake(json['d']['guild_id'] as String)];
+    this.oldRole = guild.roles[Snowflake(json['d']['role']['id'] as String)];
+    this.newRole = Role._new(json['d']['role'] as Map<String, dynamic>, guild);
 
-      oldRole.guild.roles[oldRole.id] = newRole;
-      client._events.onRoleUpdate.add(this);
-    }
+    oldRole.guild.roles[oldRole.id] = newRole;
   }
 }

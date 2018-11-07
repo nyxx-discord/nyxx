@@ -111,9 +111,6 @@ class _EventController implements Disposable {
   /// Emitted when a guild's voice server is updated. This is sent when initially connecting to voice, and when the current voice instance fails over to a new server.
   StreamController<VoiceServerUpdateEvent> onVoiceServerUpdate;
 
-  /// Emitted when a guild channel's webhook is created, updated, or deleted.
-  StreamController<WebhookUpdateEvent> onWebhookUpdate;
-
   /// Emitted when user was updated
   StreamController<UserUpdateEvent> onUserUpdate;
 
@@ -227,9 +224,6 @@ class _EventController implements Disposable {
     this.onVoiceServerUpdate = StreamController.broadcast();
     _client.onVoiceServerUpdate = this.onVoiceServerUpdate.stream;
 
-    this.onWebhookUpdate = StreamController.broadcast();
-    _client.onWebhookUpdate = this.onWebhookUpdate.stream;
-
     this.onUserUpdate = StreamController.broadcast();
     _client.onUserUpdate = this.onUserUpdate.stream;
 
@@ -277,7 +271,6 @@ class _EventController implements Disposable {
     this.onMessageReactionsRemoved.close();
     this.onVoiceStateUpdate.close();
     this.onVoiceServerUpdate.close();
-    this.onWebhookUpdate.close();
 
     this.onUserUpdate.close();
   }

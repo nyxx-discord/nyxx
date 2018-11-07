@@ -40,7 +40,7 @@ class Embed {
   EmbedAuthor author;
 
   /// Map of fields of embed. Map(name, field)
-  Map<String, EmbedField> fields;
+  List<EmbedField> fields;
 
   Embed._new(Map<String, dynamic> raw) {
     if (raw['title'] != null) this.title = raw['title'] as String;
@@ -67,9 +67,9 @@ class Embed {
       this.provider =
           EmbedProvider._new(raw['provider'] as Map<String, dynamic>);
     if (raw['fields'] != null) {
-      fields = Map();
+      fields = List();
       raw['fields'].forEach((dynamic o) {
-        EmbedField._new(o as Map<String, dynamic>, this);
+        fields.add(EmbedField._new(o as Map<String, dynamic>));
       });
     }
   }
