@@ -29,7 +29,9 @@ class Invite {
   /// User who created this invite
   User inviter;
 
-  Invite._new(Map<String, dynamic> raw) {
+  Nyxx client;
+
+  Invite._new(Map<String, dynamic> raw, this.client) {
     this.code = raw['code'] as String;
     this.guild = client.guilds[Snowflake(raw['guild']['id'] as String)];
     this.channel = client.channels[Snowflake(raw['channel']['id'] as String)]
@@ -44,6 +46,6 @@ class Invite {
 
   /// Deletes this Invite.
   Future<void> delete({String auditReason = ""}) async {
-    await _client._http.send('DELETE', '/invites/$code', reason: auditReason);
+    await client._http.send('DELETE', '/invites/$code', reason: auditReason);
   }
 }

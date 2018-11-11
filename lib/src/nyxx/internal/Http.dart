@@ -46,16 +46,16 @@ class HttpBase {
     this._streamController = StreamController<HttpResponse>.broadcast();
     this.stream = _streamController.stream;
 
-    if (_client != null)
-      _client._events.beforeHttpRequestSend
+    if (http._client != null)
+      http._client._events.beforeHttpRequestSend
           .add(BeforeHttpRequestSendEvent._new(this));
 
-    if (_client == null || !_client._events.beforeHttpRequestSend.hasListener)
+    if (http._client == null || !http._client._events.beforeHttpRequestSend.hasListener)
       this.send();
   }
 
   /// Sends the request off to the bucket to be processed and sent.
-  void send() => this.bucket._push(this);
+  void send() => this.bucket._push(this, http._client);
 
   void abort() {
     this._streamController.add(HttpResponse._aborted(this));
@@ -206,19 +206,19 @@ class HttpBucket {
 
   HttpBucket._new(this.url);
 
-  void _push(HttpBase request) {
+  void _push(HttpBase request, Nyxx client) {
     this.requests.add(request);
-    this._handle();
+    this._handle(client);
   }
 
-  void _handle() {
+  void _handle(Nyxx client) {
     if (this.waiting || this.requests.length == 0) return;
     this.waiting = true;
 
-    this._execute(this.requests[0]);
+    this._execute(this.requests[0], client);
   }
 
-  void _execute(HttpBase request) {
+  void _execute(HttpBase request, Nyxx client) {
     if (this.rateLimitRemaining == null || this.rateLimitRemaining > 1) {
       request._execute().then((HttpResponse r) {
         this.limit = r.headers['x-ratelimit-limit'] != null
@@ -239,13 +239,13 @@ class HttpBucket {
           request.http._logger.warning(
               "Rate limitted via 429 on endpoint: ${request.path}. Trying to send request again after timeout...");
           Timer(Duration(milliseconds: (r.body['retry_after'] as int) + 100),
-              () => this._execute(request));
+              () => this._execute(request, client));
         } else {
           this.waiting = false;
           this.requests.remove(request);
           request._streamController.add(r);
           request._streamController.close();
-          this._handle();
+          this._handle(client);
         }
       });
     } else {
@@ -254,7 +254,7 @@ class HttpBucket {
               Duration(milliseconds: 250);
       if (waitTime.isNegative) {
         this.rateLimitRemaining = 2;
-        this._execute(request);
+        this._execute(request, client);
       } else {
         client._events.onRatelimited
             .add(RatelimitEvent._new(request as HttpRequest, true));
@@ -262,7 +262,7 @@ class HttpBucket {
             "Rate limitted internally on endpoint: ${request.path}. Trying to send request again after timeout...");
         Timer(waitTime, () {
           this.rateLimitRemaining = 2;
-          this._execute(request);
+          this._execute(request, client);
         });
       }
     }
@@ -271,6 +271,8 @@ class HttpBucket {
 
 /// The client's HTTP client.
 class Http {
+  Nyxx _client;
+
   /// The buckets.
   Map<String, HttpBucket> buckets = Map();
 
@@ -279,7 +281,7 @@ class Http {
 
   Logger _logger = Logger.detached("Http");
 
-  Http._new() {
+  Http._new(this._client) {
     this._headers = {
       'User-Agent':
           'DiscordBot (https://github.com/l7ssha/nyxx, ${_Constants.version})'
@@ -306,7 +308,7 @@ class Http {
     await for (HttpResponse r in request.stream) {
       if (!r.aborted && r.status >= 200 && r.status < 300) {
         if (_client != null)
-          client._events.onHttpResponse.add(HttpResponseEvent._new(r));
+          _client._events.onHttpResponse.add(HttpResponseEvent._new(r));
         return r;
       } else {
         if (_client != null)
@@ -340,7 +342,7 @@ class Http {
     await for (HttpResponse r in request.stream) {
       if (!r.aborted && r.status >= 200 && r.status < 300) {
         if (_client != null)
-          client._events.onHttpResponse.add(HttpResponseEvent._new(r));
+          _client._events.onHttpResponse.add(HttpResponseEvent._new(r));
         return r;
       } else {
         if (_client != null)

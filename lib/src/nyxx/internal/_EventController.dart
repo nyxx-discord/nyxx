@@ -118,7 +118,7 @@ class _EventController implements Disposable {
   StreamController<MessageEvent> onMessage;
 
   /// Makes a new `EventController`.
-  _EventController() {
+  _EventController(Nyxx _client) {
     this.onRaw = StreamController.broadcast();
     _client.onRaw = this.onRaw.stream;
 

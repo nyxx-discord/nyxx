@@ -5,7 +5,7 @@ import 'dart:async';
 import 'dart:mirrors';
 
 /// Binds all methods with [Bind] annotation to Client's streams.
-void bindEvents(String libname) {
+void bindEvents(String libname, client) {
   var instanceThis = reflect(client);
   var classRefl = instanceThis.type;
   var lib = currentMirrorSystem().findLibrary(Symbol(libname));

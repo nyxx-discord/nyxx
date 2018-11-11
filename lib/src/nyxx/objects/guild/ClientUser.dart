@@ -8,7 +8,7 @@ class ClientUser extends User {
   /// Weather or not the client user has MFA enabled.
   bool mfa;
 
-  ClientUser._new(Map<String, dynamic> data) : super._new(data) {
+  ClientUser._new(Map<String, dynamic> data, Nyxx client) : super._new(data, client) {
     this.verified = data['verified'] as bool;
     this.mfa = data['mfa_enabled'] as bool;
   }
@@ -30,7 +30,7 @@ class ClientUser extends User {
   /// Updates the client's presence
   ClientUser setPresence(
       {String status, bool afk = false, Presence game, DateTime since}) {
-    _client.shards.forEach((int id, Shard shard) {
+    client.shards.forEach((int id, Shard shard) {
       shard.setPresence(status: status, afk: afk, game: game, since: since);
     });
 
@@ -66,7 +66,7 @@ class ClientUser extends User {
       req['avatar'] =
           "data:image/jpeg;base64,${base64Encode(await avatar.readAsBytes())}";
 
-    var res = await _client._http.send("PATCH", "/users/@me", body: req);
-    return User._new(res.body as Map<String, dynamic>);
+    var res = await client._http.send("PATCH", "/users/@me", body: req);
+    return User._new(res.body as Map<String, dynamic>, client);
   }
 }

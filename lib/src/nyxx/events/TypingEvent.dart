@@ -8,7 +8,7 @@ class TypingEvent {
   /// The user that is typing.
   User user;
 
-  TypingEvent._new(Map<String, dynamic> json) {
+  TypingEvent._new(Map<String, dynamic> json, Nyxx client) {
     client
         .getChannel<MessageChannel>(
             Snowflake(json['d']['channel_id'] as String))

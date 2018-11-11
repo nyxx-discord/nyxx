@@ -30,11 +30,11 @@ class MessageChannel extends Channel
   /// The ID for the last message in the channel.
   Snowflake lastMessageID;
 
-  MessageChannel._new(Map<String, dynamic> raw, int type)
-      : super._new(raw, type) {
+  MessageChannel._new(Map<String, dynamic> raw, int type, Nyxx client)
+      : super._new(raw, type, client) {
     if (raw['last_message_id'] != null)
       this.lastMessageID = Snowflake(raw['last_message_id'] as String);
-    this.messages = MessageCache._new();
+    this.messages = MessageCache._new(client._options);
 
     _onMessage = StreamController.broadcast();
     _onTyping = StreamController.broadcast();
@@ -47,9 +47,9 @@ class MessageChannel extends Channel
   /// with [force] property. By default it checks if message is in cache and fetches from api if not.
   Future<Message> getMessage(Snowflake id, {bool force = false}) async {
     if (force || !messages.hasKey(id)) {
-      var r = await _client._http
+      var r = await client._http
           .send('GET', "/channels/${this.id.toString()}/messages/$id");
-      var msg = Message._new(r.body as Map<String, dynamic>);
+      var msg = Message._new(r.body as Map<String, dynamic>, client);
 
       return messages._cacheMessage(msg);
     }
@@ -109,7 +109,7 @@ class MessageChannel extends Channel
       disableEveryone = builder.disableEveryone;
     }
 
-    var newContent = _sanitizeMessage(content, disableEveryone);
+    var newContent = _sanitizeMessage(content, disableEveryone, client);
 
     Map<String, dynamic> reqBody = {
       "content": newContent ?? "",
@@ -121,20 +121,20 @@ class MessageChannel extends Channel
 
     HttpResponse r;
     if (files != null && files.isNotEmpty) {
-      r = await _client._http.sendMultipart(
+      r = await client._http.sendMultipart(
           'POST', '/channels/${this.id}/messages', files,
           data: reqBody);
     } else {
-      r = await _client._http.send('POST', '/channels/${this.id}/messages',
+      r = await client._http.send('POST', '/channels/${this.id}/messages',
           body: reqBody..addAll({"tts": tts}));
     }
 
-    return Message._new(r.body as Map<String, dynamic>);
+    return Message._new(r.body as Map<String, dynamic>, client);
   }
 
   /// Starts typing.
   Future<void> startTyping() async {
-    await _client._http.send('POST', "/channels/$id/typing");
+    await client._http.send('POST', "/channels/$id/typing");
   }
 
   /// Loops `startTyping` until `stopTypingLoop` is called.
@@ -155,7 +155,7 @@ class MessageChannel extends Channel
   /// ```
   Future<void> bulkRemoveMessages(Iterable<Message> messagesIds) async {
     utils.chunk(messagesIds.toList(), 90).listen((data) async {
-      await _client._http.send(
+      await client._http.send(
           'POST', "/channels/${id.toString()}/messages/bulk-delete",
           body: {"messages": data.map((f) => f.id.toString()).toList()});
     });
@@ -181,13 +181,13 @@ class MessageChannel extends Channel
     if (before != null) query['before'] = before.toString();
     if (around != null) query['around'] = around.toString();
 
-    final HttpResponse r = await _client._http
+    final HttpResponse r = await client._http
         .send('GET', '/channels/${this.id}/messages', queryParams: query);
 
     var response = LinkedHashMap<Snowflake, Message>();
 
     for (Map<String, dynamic> val in r.body as List<dynamic>) {
-      var msg = Message._new(val);
+      var msg = Message._new(val, client);
       response[msg.id] = msg;
     }
 

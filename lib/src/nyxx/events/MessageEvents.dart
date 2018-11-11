@@ -12,9 +12,9 @@ class MessageReceivedEvent extends MessageEvent {
   @override
   Message message;
 
-  MessageReceivedEvent._new(Map<String, dynamic> json) {
+  MessageReceivedEvent._new(Map<String, dynamic> json, Nyxx client) {
     if (client.ready)
-      this.message = Message._new(json['d'] as Map<String, dynamic>);
+      this.message = Message._new(json['d'] as Map<String, dynamic>, client);
   }
 }
 
@@ -28,7 +28,7 @@ class MessageDeleteEvent extends MessageEvent {
   /// The ID of the message.
   Snowflake id;
 
-  MessageDeleteEvent._new(Map<String, dynamic> json) {
+  MessageDeleteEvent._new(Map<String, dynamic> json, Nyxx client) {
     if (client.ready) {
       if ((client.channels[Snowflake(json['d']['channel_id'] as String)]
                   as MessageChannel)
@@ -61,7 +61,7 @@ class MessageReactionEvent extends MessageEvent {
   /// Emoji object.
   Emoji emoji;
 
-  MessageReactionEvent._new(Map<String, dynamic> json) {
+  MessageReactionEvent._new(Map<String, dynamic> json, Nyxx client) {
     this.user = client.users[Snowflake(json['d']['user_id'] as String)];
     this.channel = client.channels[Snowflake(json['d']['channel_id'] as String)]
         as MessageChannel;
@@ -92,7 +92,7 @@ class MessageReactionsRemovedEvent extends MessageEvent {
   /// Guild where event occurs
   Guild guild;
 
-  MessageReactionsRemovedEvent._new(Map<String, dynamic> json) {
+  MessageReactionsRemovedEvent._new(Map<String, dynamic> json, Nyxx client) {
     this.channel = client.channels[Snowflake(json['d']['channel_id'] as String)]
         as MessageChannel;
 
@@ -112,7 +112,7 @@ class MessageDeleteBulkEvent {
   /// Channel on which messages was deleted.
   Channel channel;
 
-  MessageDeleteBulkEvent._new(Map<String, dynamic> json) {
+  MessageDeleteBulkEvent._new(Map<String, dynamic> json, Nyxx client) {
     this.channel =
         client.channels[Snowflake(json['d']['channel_id'] as String)];
 
@@ -130,7 +130,7 @@ class MessageUpdateEvent {
   /// Edited message
   Message newMessage;
 
-  MessageUpdateEvent._new(Map<String, dynamic> json) {
+  MessageUpdateEvent._new(Map<String, dynamic> json, Nyxx client) {
     var channel = client.channels[Snowflake(json['d']['channel_id'] as String)]
         as MessageChannel;
     this.oldMessage = channel.messages[Snowflake(json['d']['id'] as String)];

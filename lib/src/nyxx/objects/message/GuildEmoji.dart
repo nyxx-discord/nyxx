@@ -3,6 +3,8 @@ part of nyxx;
 /// Emoji object. Handles Unicode emojis and custom ones.
 class GuildEmoji extends Emoji
     implements SnowflakeEntity, GuildEntity, Nameable {
+  Nyxx client;
+
   @override
 
   /// Emoji guild
@@ -26,7 +28,7 @@ class GuildEmoji extends Emoji
   bool animated;
 
   /// Creates full emoji object
-  GuildEmoji._new(Map<String, dynamic> raw, this.guild) : super("") {
+  GuildEmoji._new(Map<String, dynamic> raw, this.guild, this.client) : super("") {
     this.id = Snowflake(raw['id'] as String);
     this.name = raw['name'] as String;
     this.requireColons = raw['require_colons'] as bool;
@@ -51,11 +53,11 @@ class GuildEmoji extends Emoji
         "PATCH", "/guilds/${guild.id.toString()}/emojis/${this.id.toString()}",
         body: {"name": name, roles: roles.map((r) => r.toString())});
 
-    return GuildEmoji._new(res.body as Map<String, dynamic>, guild);
+    return GuildEmoji._new(res.body as Map<String, dynamic>, guild, client);
   }
 
   Future<void> delete() async {
-    await _client._http.send("DELETE",
+    await client._http.send("DELETE",
         "/guilds/${this.guild.id.toString()}/emojis/${this.id.toString()}");
   }
 

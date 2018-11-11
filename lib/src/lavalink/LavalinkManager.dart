@@ -17,10 +17,10 @@ Future<void> sendFakeOp4(VoiceChannel channel,
 
 /// Creates voice service. [yamlConfigFile] is absolute path to lavalink config file.
 /// Returns instance of VoiceService
-VoiceService init(String ws, String rest, String password) {
+VoiceService init(String ws, String rest, String password, Nyxx client) {
   if (_manager != null) throw Exception("Tried initialize VoiceService twice.");
 
-  _manager = VoiceService._new(ws, rest, password);
+  _manager = VoiceService._new(ws, rest, password, client);
   _logger.info("Voice service intitailized!");
   return _manager;
 }
@@ -63,7 +63,9 @@ class VoiceService {
   StreamController<Stats> _onStats;
   Stream<Stats> onStats;
 
-  VoiceService._new(String ws, String rest, this._password) {
+  Nyxx client;
+
+  VoiceService._new(String ws, String rest, this._password, this.client) {
     _onStats = StreamController.broadcast();
     onStats = _onStats.stream;
 

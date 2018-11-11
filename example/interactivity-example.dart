@@ -22,7 +22,7 @@ void main() async {
         "Mi ŝercis, mi ne estas bela. ",
         ch);
 
-    await pagination.paginate(timeout: const Duration(minutes: 15));
+    await pagination.paginate(bot, timeout: const Duration(minutes: 15));
 
     // To create poll you need channel, title and map of emojis and Names of options.
     // Result is returned after timeout.

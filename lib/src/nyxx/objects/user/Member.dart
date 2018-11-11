@@ -53,12 +53,12 @@ class Member extends User implements GuildEntity {
     return Permissions.fromInt(total);
   }
 
-  Member._reverse(Map<String, dynamic> data, this.guild) : super._new(data) {
+  Member._reverse(Map<String, dynamic> data, this.guild, Nyxx client) : super._new(data, client) {
     _cons(data['member'] as Map<String, dynamic>, guild);
   }
 
-  Member._new(Map<String, dynamic> data, this.guild)
-      : super._new(data['user'] as Map<String, dynamic>) {
+  Member._new(Map<String, dynamic> data, this.guild, Nyxx client)
+      : super._new(data['user'] as Map<String, dynamic>, client) {
     _cons(data, guild);
   }
 
@@ -90,7 +90,7 @@ class Member extends User implements GuildEntity {
       {int deleteMessageDays = 0,
       String reason,
       String auditReason = ""}) async {
-    await _client._http.send('PUT', "/guilds/${this.guild.id}/bans/${this.id}",
+    await client._http.send('PUT', "/guilds/${this.guild.id}/bans/${this.id}",
         body: {"delete-message-days": deleteMessageDays, "reason": reason},
         reason: auditReason);
   }
@@ -102,20 +102,20 @@ class Member extends User implements GuildEntity {
   /// await member.addRole(r);
   /// ```
   Future<void> addRole(Role role, {String auditReason = ""}) async {
-    await _client._http.send(
+    await client._http.send(
         'PUT', '/guilds/${guild.id}/members/${this.id}/roles/${role.id}',
         reason: auditReason);
   }
 
   Future<void> removeRole(Role role, {String auditReason = ""}) async {
-    await _client._http.send("DELETE",
+    await client._http.send("DELETE",
         "/guilds/${this.guild.id.toString()}/members/${this.id.toString()}/roles/${role.id.toString()}",
         reason: auditReason);
   }
 
   /// Kicks the member
   Future<void> kick({String auditReason = ""}) async {
-    await _client._http.send(
+    await client._http.send(
         'DELETE', "/guilds/${this.guild.id}/members/${this.id}",
         reason: auditReason);
   }
@@ -136,7 +136,7 @@ class Member extends User implements GuildEntity {
     if (deaf != null) req['deaf'] = deaf;
     if (deaf != null) req['channel_id'] = channel.id.toString();
 
-    await _client._http.send("PATCH",
+    await client._http.send("PATCH",
         "/guilds/${this.guild.id.toString()}/members/${this.id.toString()}",
         body: req, reason: auditReason);
   }

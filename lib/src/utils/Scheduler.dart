@@ -30,7 +30,9 @@ class Scheduler {
 
   Timer _t;
 
-  Scheduler([this.runEvery, this.action, this.targets]);
+  Nyxx client;
+
+  Scheduler(this.client, [this.runEvery, this.action, this.targets]);
 
   /// Starts scheduler
   Future<Null> run() async {
