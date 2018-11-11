@@ -212,7 +212,8 @@ class Shard {
 
           case 'MESSAGE_REACTION_ADD':
             var m = MessageReactionEvent._new(msg, _ws._client);
-            //m.message._onReactionAdded.add(m);
+            if(m.message != null)
+              m.message._onReactionAdded.add(m);
             _ws._client._events.onMessageReactionAdded.add(m);
             _ws._client._events.onMessage.add(m);
             break;
@@ -231,7 +232,8 @@ class Shard {
           case 'CHANNEL_PINS_UPDATE':
             var m = ChannelPinsUpdateEvent._new(msg, _ws._client);
 
-            m.channel._pinsUpdated.add(m);
+            if(m.channel != null)
+              m.channel._pinsUpdated.add(m);
             _ws._client._events.onChannelPinsUpdate.add(m);
             break;
 
@@ -255,7 +257,10 @@ class Shard {
             var m = MessageReceivedEvent._new(msg, _ws._client);
             _ws._client._events.onMessage.add(m);
             _ws._client._events.onMessageReceived.add(m);
-            m.message.channel._onMessage.add(m);
+
+            if(m.message.channel != null) {
+              m.message.channel._onMessage.add(m);
+            }
             break;
 
           case 'MESSAGE_DELETE':
@@ -267,9 +272,8 @@ class Shard {
           case 'MESSAGE_UPDATE':
             var m = MessageUpdateEvent._new(msg, _ws._client);
 
-            if (m.oldMessage != null) {
+            if (m.oldMessage != null)
               _ws._client._events.onMessageUpdate.add(m);
-            }
             break;
 
           case 'GUILD_CREATE':
@@ -326,7 +330,8 @@ class Shard {
             var m = TypingEvent._new(msg, _ws._client);
 
             _ws._client._events.onTyping.add(m);
-            //m.channel._onTyping.add(m);
+            if(m.channel != null)
+              m.channel._onTyping.add(m);
             break;
 
           case 'PRESENCE_UPDATE':
