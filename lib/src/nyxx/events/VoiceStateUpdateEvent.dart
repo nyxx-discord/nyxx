@@ -8,8 +8,8 @@ class VoiceStateUpdateEvent {
   // Raw gateway response
   Map<String, dynamic> json;
 
-  VoiceStateUpdateEvent._new(this.json) {
-    this.state = VoiceState._new(json['d'] as Map<String, dynamic>);
+  VoiceStateUpdateEvent._new(this.json, Nyxx client) {
+    this.state = VoiceState._new(json['d'] as Map<String, dynamic>, client);
     if (state.user != null) {
       if (state.channel != null)
         state.guild.voiceStates[state.user.id] = state;

@@ -8,8 +8,8 @@ class UserUpdateEvent {
   /// User instance after update
   User newUser;
 
-  UserUpdateEvent._new(Map<String, dynamic> json) {
+  UserUpdateEvent._new(Map<String, dynamic> json, Nyxx client) {
     this.oldUser = client.users[Snowflake(json['d']['id'] as String)];
-    newUser = User._new(json['d'] as Map<String, dynamic>);
+    newUser = User._new(json['d'] as Map<String, dynamic>, client);
   }
 }

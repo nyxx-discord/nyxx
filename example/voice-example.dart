@@ -11,7 +11,7 @@ void main() {
   // Listen to ready event. Invoked when bot started listening to events.
   bot.onReady.listen((nyxx.ReadyEvent e) {
     // Init voice service with client id, Client instance and absolute path to lavalink config.
-    voice.init("127.0.0.1:3454", "127.0.0.1:4535", "PASS");
+    voice.init("127.0.0.1:3454", "127.0.0.1:4535", "PASS", bot);
   });
 
   // Listen to all incoming messages via Dart Stream

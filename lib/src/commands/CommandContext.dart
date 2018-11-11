@@ -35,8 +35,10 @@ class CommandContext {
   /// Returns author as guild member
   Member get member => guild.members[author.id];
 
+  Nyxx client;
+
   CommandContext();
-  CommandContext._new(this.channel, this.author, this.guild, this.message);
+  CommandContext._new(this.client, this.channel, this.author, this.guild, this.message);
 
   /// Reply to message. It allows to send regular message, Embed or both.
   ///

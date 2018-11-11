@@ -1,9 +1,9 @@
 part of nyxx;
 
-Nyxx _client;
+//Nyxx _client;
 
 /// Current [Nyxx] instance.
-Nyxx get client => _client;
+//Nyxx get client => _client;
 
 /// The main place to start with interacting with the Discord API and creating discord bot.
 /// From there you can subscribe to various [Stream]s to listen to [Events](https://github.com/l7ssha/nyxx/wiki/EventList)
@@ -230,17 +230,15 @@ class Nyxx implements Disposable {
     this.users = _SnowflakeCache();
     this.shards = Map<int, Shard>();
 
-    _client = this;
-
-    this._http = Http._new();
-    this._events = _EventController();
+    this._http = Http._new(this);
+    this._events = _EventController(this);
     this.onSelfMention = this.onMessageReceived.where((event) =>
         event.message.mentions != null &&
-        event.message.mentions.containsKey(client.self.id));
+        event.message.mentions.containsKey(this.self.id));
     this.onDmReceived = this.onMessageReceived.where((event) =>
         event.message.channel is DMChannel ||
         event.message.channel is GroupDMChannel);
-    this._ws = _WS();
+    this._ws = _WS(this);
   }
 
   /// The client's uptime.
@@ -263,17 +261,17 @@ class Nyxx implements Disposable {
 
     switch (T) {
       case MessageChannel:
-        return MessageChannel._new(raw, raw['type'] as int) as T;
+        return MessageChannel._new(raw, raw['type'] as int, this) as T;
       case DMChannel:
-        return DMChannel._new(raw) as T;
+        return DMChannel._new(raw, this) as T;
       case GroupDMChannel:
-        return GroupDMChannel._new(raw) as T;
+        return GroupDMChannel._new(raw, this) as T;
       case TextChannel:
-        return TextChannel._new(raw, guild) as T;
+        return TextChannel._new(raw, guild, this) as T;
       case VoiceChannel:
-        return VoiceChannel._new(raw, guild) as T;
+        return VoiceChannel._new(raw, guild, this) as T;
       case CategoryChannel:
-        return CategoryChannel._new(raw, guild) as T;
+        return CategoryChannel._new(raw, guild, this) as T;
       default:
         return null;
     }
@@ -290,7 +288,7 @@ class Nyxx implements Disposable {
     if (this.users.hasKey(id)) return this.users[id];
 
     var r = await this._http.send("GET", "/users/${id.toString()}");
-    return User._new(r.body as Map<String, dynamic>);
+    return User._new(r.body as Map<String, dynamic>, this);
   }
 
   /// Gets Guild with specified id.
@@ -315,13 +313,13 @@ class Nyxx implements Disposable {
           "Guild cannot be created if bot is in 10 or more guilds");
 
     var r = await this._http.send("POST", "/guilds", body: builder._build());
-    return Guild._new(r.body as Map<String, dynamic>);
+    return Guild._new(this, r.body as Map<String, dynamic>);
   }
 
   /// Gets a webhook by its ID and token.
   Future<Webhook> getWebhook(String id, {String token = ""}) async {
     HttpResponse r = await _http.send('GET', "/webhooks/$id/$token");
-    return Webhook._new(r.body as Map<String, dynamic>);
+    return Webhook._new(r.body as Map<String, dynamic>, this);
   }
 
   @deprecated
@@ -337,7 +335,7 @@ class Nyxx implements Disposable {
   /// ```
   Future<Invite> getInvite(String code) async {
     final HttpResponse r = await this._http.send('GET', '/invites/$code');
-    return Invite._new(r.body as Map<String, dynamic>);
+    return Invite._new(r.body as Map<String, dynamic>, this);
   }
 
   /// Closes websocket connections and cleans everything up.

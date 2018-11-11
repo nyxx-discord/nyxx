@@ -45,7 +45,9 @@ class Role extends SnowflakeEntity
   /// Mention of role. If role cannot be mentioned it returns name of role.
   String get mention => mentionable ? "<@&${this.id}>" : "@$name";
 
-  Role._new(Map<String, dynamic> raw, this.guild)
+  Nyxx client;
+
+  Role._new(Map<String, dynamic> raw, this.guild, this.client)
       : super(Snowflake(raw['id'] as String)) {
     this.name = raw['name'] as String;
     this.position = raw['position'] as int;
@@ -61,21 +63,21 @@ class Role extends SnowflakeEntity
 
   /// Edits the role.
   Future<Role> edit({RoleBuilder role, String auditReason = ""}) async {
-    HttpResponse r = await _client._http.send(
+    HttpResponse r = await client._http.send(
         'PATCH', "/guilds/${this.guild.id}/roles/$id",
         body: role._build(), reason: auditReason);
-    return Role._new(r.body as Map<String, dynamic>, this.guild);
+    return Role._new(r.body as Map<String, dynamic>, this.guild, client);
   }
 
   /// Deletes the role.
   Future<void> delete({String auditReason = ""}) async {
-    await _client._http.send('DELETE', "/guilds/${this.guild.id}/roles/$id",
+    await client._http.send('DELETE', "/guilds/${this.guild.id}/roles/$id",
         reason: auditReason);
   }
 
   /// Adds role to user.
   Future<void> addToUser(User user, {String auditReason = ""}) async {
-    await _client._http.send(
+    await client._http.send(
         'PUT', '/guilds/${guild.id}/members/${user.id}/roles/$id',
         reason: auditReason);
   }

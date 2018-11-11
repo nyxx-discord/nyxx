@@ -2,7 +2,7 @@ part of nyxx;
 
 /// Sent when the client is ready.
 class ReadyEvent {
-  ReadyEvent._new() {
+  ReadyEvent._new(Nyxx client) {
     client.ready = true;
   }
 }

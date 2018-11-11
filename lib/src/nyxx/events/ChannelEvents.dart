@@ -5,15 +5,15 @@ class ChannelCreateEvent {
   /// The channel that was created, either a [GuildChannel], [DMChannel], or [GroupDMChannel].
   Channel channel;
 
-  ChannelCreateEvent._new(Map<String, dynamic> json) {
+  ChannelCreateEvent._new(Map<String, dynamic> json, Nyxx client) {
     if (client.ready) {
       if (json['d']['type'] == 1) {
-        var tmp = DMChannel._new(json['d'] as Map<String, dynamic>);
+        var tmp = DMChannel._new(json['d'] as Map<String, dynamic>, client);
 
         client.channels[tmp.id] = tmp;
         this.channel = tmp;
       } else if (json['d']['type'] == 3) {
-        var tmp = GroupDMChannel._new(json['d'] as Map<String, dynamic>);
+        var tmp = GroupDMChannel._new(json['d'] as Map<String, dynamic>, client);
 
         client.channels[tmp.id] = tmp;
         this.channel = tmp;
@@ -23,11 +23,11 @@ class ChannelCreateEvent {
         GuildChannel chan;
 
         if (json['d']['type'] == 0) {
-          chan = TextChannel._new(json['d'] as Map<String, dynamic>, guild);
+          chan = TextChannel._new(json['d'] as Map<String, dynamic>, guild, client);
         } else if (json['d']['type'] == 2) {
-          chan = VoiceChannel._new(json['d'] as Map<String, dynamic>, guild);
+          chan = VoiceChannel._new(json['d'] as Map<String, dynamic>, guild, client);
         } else if (json['d']['type'] == 4) {
-          chan = CategoryChannel._new(json['d'] as Map<String, dynamic>, guild);
+          chan = CategoryChannel._new(json['d'] as Map<String, dynamic>, guild, client);
         }
 
         client.channels[chan.id] = chan;
@@ -44,24 +44,24 @@ class ChannelDeleteEvent {
   /// [TextChannel], [DMChannel] or [GroupDMChannel] or [VoiceChannel].
   Channel channel;
 
-  ChannelDeleteEvent._new(Map<String, dynamic> json) {
+  ChannelDeleteEvent._new(Map<String, dynamic> json, Nyxx client) {
     if (client.ready) {
       if (json['d']['type'] == 1) {
-        this.channel = DMChannel._new(json['d'] as Map<String, dynamic>);
+        this.channel = DMChannel._new(json['d'] as Map<String, dynamic>, client);
       } else if (json['d']['type'] == 3) {
-        this.channel = GroupDMChannel._new(json['d'] as Map<String, dynamic>);
+        this.channel = GroupDMChannel._new(json['d'] as Map<String, dynamic>, client);
       } else {
         final Guild guild =
             client.guilds[Snowflake(json['d']['guild_id'] as String)];
         if (json['d']['type'] == 0) {
           this.channel =
-              TextChannel._new(json['d'] as Map<String, dynamic>, guild);
+              TextChannel._new(json['d'] as Map<String, dynamic>, guild, client);
         } else if (json['d']['type'] == 2) {
           this.channel =
-              VoiceChannel._new(json['d'] as Map<String, dynamic>, guild);
+              VoiceChannel._new(json['d'] as Map<String, dynamic>, guild, client);
         } else if (json['d']['type'] == 4) {
           this.channel =
-              CategoryChannel._new(json['d'] as Map<String, dynamic>, guild);
+              CategoryChannel._new(json['d'] as Map<String, dynamic>, guild, client);
         }
         guild.channels.remove(channel.id);
       }
@@ -79,7 +79,7 @@ class ChannelPinsUpdateEvent {
   /// the time at which the most recent pinned message was pinned
   DateTime lastPingTimestamp;
 
-  ChannelPinsUpdateEvent._new(Map<String, dynamic> json) {
+  ChannelPinsUpdateEvent._new(Map<String, dynamic> json, Nyxx client) {
     this.lastPingTimestamp =
         DateTime.parse(json['d']['last_pin_timestamp'] as String);
     this.channel = client.channels[Snowflake(json['d']['channel_id'] as String)]
@@ -95,7 +95,7 @@ class ChannelUpdateEvent {
   /// The channel after the update.
   GuildChannel newChannel;
 
-  ChannelUpdateEvent._new(Map<String, dynamic> json) {
+  ChannelUpdateEvent._new(Map<String, dynamic> json, Nyxx client) {
     if (client.ready) {
       final Guild guild =
           client.guilds[Snowflake(json['d']['guild_id'] as String)];
@@ -106,13 +106,13 @@ class ChannelUpdateEvent {
 
       if (type == 0) {
         this.newChannel =
-            TextChannel._new(json['d'] as Map<String, dynamic>, guild);
+            TextChannel._new(json['d'] as Map<String, dynamic>, guild, client);
       } else if (type == 2) {
         this.newChannel =
-            VoiceChannel._new(json['d'] as Map<String, dynamic>, guild);
+            VoiceChannel._new(json['d'] as Map<String, dynamic>, guild, client);
       } else if (type == 4) {
         this.newChannel =
-            CategoryChannel._new(json['d'] as Map<String, dynamic>, guild);
+            CategoryChannel._new(json['d'] as Map<String, dynamic>, guild, client);
       }
 
       guild.channels[oldChannel.id] = newChannel;

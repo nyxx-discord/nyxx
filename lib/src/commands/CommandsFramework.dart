@@ -19,8 +19,10 @@ class CommandsFramework {
   /// All messages without this prefix will be ignored
   String prefix;
 
+  Nyxx client;
+
   /// Creates commands framework handler. Requires prefix to handle commands.
-  CommandsFramework(
+  CommandsFramework(this.client,
       {this.prefix,
       Stream<MessageEvent> stream,
       Duration roundupTime = const Duration(minutes: 2),
@@ -363,6 +365,7 @@ class CommandsFramework {
           instance.setField(Symbol("message"), e.message);
           instance.setField(Symbol("author"), e.message.author);
           instance.setField(Symbol("channel"), e.message.channel);
+          instance.setField(Symbol("client"), this.client);
 
           (instance.invoke(matchedMeta.method.simpleName, methodInj).reflectee
                   as Future)
@@ -376,7 +379,7 @@ class CommandsFramework {
         }
 
         if (matchedMeta.parent is LibraryMirror) {
-          var context = CommandContext._new(
+          var context = CommandContext._new(this.client,
               e.message.channel, e.message.author, e.message.guild, e.message);
 
           (matchedMeta.parent

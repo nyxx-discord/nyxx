@@ -7,13 +7,15 @@ abstract class Channel extends SnowflakeEntity implements Nameable {
   /// https://discordapp.com/developers/docs/resources/channel#channel-object-channel-types
   int type;
 
-  Channel._new(Map<String, dynamic> raw, this.type)
+  Nyxx client;
+
+  Channel._new(Map<String, dynamic> raw, this.type, this.client)
       : super(Snowflake(raw['id'] as String));
 
   /// Deletes the channel.
   /// Throws if bot cannot perform operation
   Future<void> delete({String auditReason = ""}) async {
-    await _client._http
+    await client._http
         .send('DELETE', "/channels/${this.id}", reason: auditReason);
   }
 

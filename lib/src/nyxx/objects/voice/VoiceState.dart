@@ -27,7 +27,7 @@ class VoiceState {
   /// Whether this user is muted by the current user
   bool suppress;
 
-  VoiceState._new(Map<String, dynamic> raw, [Guild guild]) {
+  VoiceState._new(Map<String, dynamic> raw, Nyxx client, [Guild guild]) {
     this.channel =
         client.channels[Snowflake(raw['channel_id'] as String)] as VoiceChannel;
     this.deaf = raw['deaf'] as bool;

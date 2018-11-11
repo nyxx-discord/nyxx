@@ -24,27 +24,29 @@ class Webhook extends SnowflakeEntity implements ISend {
   /// The user, if this is accessed using a normal client.
   User user;
 
-  Webhook._new(Map<String, dynamic> raw)
+  Nyxx client;
+
+  Webhook._new(Map<String, dynamic> raw, this.client)
       : super(Snowflake(raw['id'] as String)) {
     this.name = raw['name'] as String;
     this.token = raw['token'] as String;
 
     if (raw['channel_id'] != null) {
-      this.channel = _client.channels[this.channelId] as TextChannel;
+      this.channel = client.channels[this.channelId] as TextChannel;
       this.channelId = Snowflake(raw['channel_id'] as String);
     }
 
     if (raw['guild_id'] != null) {
       this.guildId = Snowflake(raw['guild_id'] as String);
-      this.guild = _client.guilds[this.guildId];
+      this.guild = client.guilds[this.guildId];
     }
 
-    this.user = User._new(raw['user'] as Map<String, dynamic>);
+    this.user = User._new(raw['user'] as Map<String, dynamic>, client);
   }
 
   /// Edits the webhook.
   Future<Webhook> edit({String name, String auditReason = ""}) async {
-    HttpResponse r = await _client._http.send('PATCH', "/webhooks/$id/$token",
+    HttpResponse r = await client._http.send('PATCH', "/webhooks/$id/$token",
         body: {"name": name}, reason: auditReason);
     this.name = r.body['name'] as String;
     return this;
@@ -52,7 +54,7 @@ class Webhook extends SnowflakeEntity implements ISend {
 
   /// Deletes the webhook.
   Future<void> delete({String auditReason = ""}) async {
-    await _client._http
+    await client._http
         .send('DELETE', "/webhooks/$id/$token", reason: auditReason);
   }
 
@@ -74,7 +76,7 @@ class Webhook extends SnowflakeEntity implements ISend {
       disableEveryone = builder.disableEveryone;
     }
 
-    var newContent = _sanitizeMessage(content, disableEveryone);
+    var newContent = _sanitizeMessage(content, disableEveryone, client);
 
     Map<String, dynamic> reqBody = {
       "content": newContent,
@@ -83,16 +85,16 @@ class Webhook extends SnowflakeEntity implements ISend {
 
     HttpResponse r;
     if (files != null && files.isNotEmpty) {
-      r = await _client._http.sendMultipart(
+      r = await client._http.sendMultipart(
           'POST', '/channels/${this.id}/messages', files,
           data: reqBody..addAll({"tts": tts}));
     } else {
-      r = await _client._http.send(
+      r = await client._http.send(
           'POST', '/channels/${this.channel.id}/messages',
           body: reqBody..addAll({"tts": tts}));
     }
 
-    return Message._new(r.body as Map<String, dynamic>);
+    return Message._new(r.body as Map<String, dynamic>, client);
   }
 
   /// Returns a string representation of this object.

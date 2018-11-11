@@ -97,7 +97,7 @@ class Pagination {
   }
 
   /// Paginates a list of Strings - each String is different page.
-  Future<Message> paginate(
+  Future<Message> paginate(Nyxx client,
       {Duration timeout = const Duration(minutes: 2)}) async {
     var nextEmoji = util.getEmoji('arrow_forward');
     var backEmoji = util.getEmoji('arrow_backward');

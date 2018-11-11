@@ -8,7 +8,7 @@ class PresenceUpdateEvent {
   /// The new member.
   Presence presence;
 
-  PresenceUpdateEvent._new(Map<String, dynamic> json) {
+  PresenceUpdateEvent._new(Map<String, dynamic> json, Nyxx client) {
     if (client.ready) {
       var guild = client.guilds[Snowflake(json['d']['guild_id'] as String)];
 
@@ -22,11 +22,11 @@ class PresenceUpdateEvent {
 
       if (member == null && 'online' == json['d']['status'].toString()) {
         if (json['d']['user']['username'] != null) {
-          this.member = Member._new(json['d'] as Map<String, dynamic>, guild);
+          this.member = Member._new(json['d'] as Map<String, dynamic>, guild, client);
           member.guild.members[member.id] = member;
           client.users[member.id] = member;
         } else {
-          if (_client._options.cacheMembers) {
+          if (client._options.cacheMembers) {
             guild
                 .getMemberById(Snowflake(json['d']['user']['id'] as String))
                 .then((member) {

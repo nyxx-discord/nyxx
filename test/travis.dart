@@ -57,7 +57,7 @@ void main() {
   var env = Platform.environment;
   var bot = nyxx.Nyxx(env['DISCORD_TOKEN'], ignoreExceptions: false);
 
-  command.CommandsFramework(prefix: '~~', ignoreBots: false)
+  command.CommandsFramework(bot, prefix: '~~', ignoreBots: false)
     ..discoverServices()
     ..discoverCommands()
     ..onError.listen((err) async {
@@ -151,7 +151,7 @@ void main() {
       if (m.embeds.length > 0) {
         var embed = m.embeds.first;
         if (embed.title == "Test title" && embed.fields.length > 0) {
-          var field = embed.fields.values.first;
+          var field = embed.fields.first;
 
           if (field.name == "Test field" &&
               field.content == "Test value" &&

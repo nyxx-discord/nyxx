@@ -134,14 +134,16 @@ class ChannelCache extends Cache<Snowflake, Channel> {
 /// Cache for messages. Provides few utilities methods to facilitate interaction with messages.
 /// []= operator throws - use put() instead.
 class MessageCache extends Cache<Snowflake, Message> {
-  MessageCache._new() {
+  ClientOptions _options;
+
+  MessageCache._new(this._options) {
     this._cache = LinkedHashMap();
   }
 
   /// Caches message
   Message _cacheMessage(Message message) {
-    if (_client._options.messageCacheSize > 0) {
-      if (this._cache.length >= _client._options.messageCacheSize) {
+    if (_options.messageCacheSize > 0) {
+      if (this._cache.length >= _options.messageCacheSize) {
         this._cache.remove(this._cache.values.last.id);
       }
       this._cache[message.id] = message;
