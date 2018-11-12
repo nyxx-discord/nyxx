@@ -553,6 +553,12 @@ class CommandsFramework {
           var id = _entityRegex.firstMatch(splitted[index]).group(3);
           collected.add(e.guild.channels[Snowflake(id)]);
           break;
+        case VoiceState:
+          collected.add((await e.guild.getMember(e.author)).voiceState);
+          break;
+        case VoiceChannel:
+          collected.add((await e.guild.getMember(e.author)).voiceState.channel);
+          break;
         case User:
           var id = _entityRegex.firstMatch(splitted[index]).group(3);
           collected.add(client.users[Snowflake(id)]);

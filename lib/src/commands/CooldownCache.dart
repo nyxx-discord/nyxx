@@ -28,10 +28,8 @@ class CooldownCache {
       bool found = false;
 
       /// Search for entry
-      if (_cache.containsKey(node)) found = true;
-
-      /// If not found crete new, insert it and return
-      if (!found) {
+      if (!_cache.containsKey(node))
+      {
         _cache[node] = now;
         return true;
       }
