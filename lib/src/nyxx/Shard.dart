@@ -206,23 +206,29 @@ class Shard {
 
           case 'MESSAGE_REACTION_REMOVE_ALL':
             var m = MessageReactionsRemovedEvent._new(msg, _ws._client);
-            _ws._client._events.onMessageReactionsRemoved.add(m);
-            _ws._client._events.onMessage.add(m);
+
+            if(m.message != null) {
+              _ws._client._events.onMessageReactionsRemoved.add(m);
+              _ws._client._events.onMessage.add(m);
+            }
             break;
 
           case 'MESSAGE_REACTION_ADD':
             var m = MessageReactionEvent._new(msg, _ws._client);
-            if(m.message != null)
+            if(m.message != null) {
+              _ws._client._events.onMessageReactionAdded.add(m);
+              _ws._client._events.onMessage.add(m);
               m.message._onReactionAdded.add(m);
-            _ws._client._events.onMessageReactionAdded.add(m);
-            _ws._client._events.onMessage.add(m);
+            }
             break;
 
           case 'MESSAGE_REACTION_REMOVE':
             var m = MessageReactionEvent._new(msg, _ws._client);
 
-            m.message._onReactionAdded.add(m);
-            _ws._client._events.onMessageReactionAdded.add(m);
+            if(m.message != null) {
+              m.message._onReactionAdded.add(m);
+              _ws._client._events.onMessageReactionAdded.add(m);
+            }
             break;
 
           case 'MESSAGE_DELETE_BULK':
