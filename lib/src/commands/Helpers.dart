@@ -54,3 +54,8 @@ class PreprocessorResult {
   PreprocessorResult.error(this.message, [this.exception])
       : isSuccessful = false;
 }
+
+
+/// [Service] is base class for services
+/// Overriding this class allows to auto-register your services.
+abstract class Service {}
