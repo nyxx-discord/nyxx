@@ -54,6 +54,8 @@ class _WS {
           return false;
         }
       }
+
+      return true;
     }
 
     bool match2() {
@@ -62,6 +64,8 @@ class _WS {
           return false;
         }
       }
+
+      return true;
     }
 
     if (match1() && match2()) {
