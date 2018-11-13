@@ -47,29 +47,24 @@ class _WS {
   }
 
   void testReady() {
-    bool match = true;
-    for (var o in _client.guilds.values) {
-      if (o == null) {
-        match = false;
-        break;
-      }
-
-      if (_client._options.forceFetchMembers) if (o.members.count !=
-          o.memberCount) {
-        match = false;
-        break;
+    bool match1() {
+      for (var o in _client.guilds.values) {
+        if (_client._options.forceFetchMembers && o.members.count !=
+            o.memberCount) {
+          return false;
+        }
       }
     }
 
-    bool match2 = true;
-    for (var shard in _client.shards.values) {
-      if (!shard.ready) {
-        match2 = false;
-        break;
+    bool match2() {
+      for (var shard in _client.shards.values) {
+        if (!shard.ready) {
+          return false;
+        }
       }
     }
 
-    if (match && match2) {
+    if (match1() && match2()) {
       _client.ready = true;
       _client._startTime = DateTime.now();
 
@@ -80,6 +75,9 @@ class _WS {
         _client._events.onReady.add(ReadyEvent._new(_client));
         logger.info("Connected and ready!");
       });
+    } else {
+      logger.severe("Cannot setup bot properly.");
+      exit(1);
     }
   }
 }
