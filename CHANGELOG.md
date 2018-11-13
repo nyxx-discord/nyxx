@@ -1,17 +1,21 @@
-## [1.0.0](https://github.com/l7ssha/nyxx/compare/0.23.1...1.0.0)
-_Tue xx.xx.2018_
+## [1.0.0](https://github.com/l7ssha/nyxx/compare/0.24.0...1.0.0)
+_Tue xx.xx.2019_
 
 *This version drops support for Dart SDK 1.x; Nyxx now only supports Dart 2.0+ including dev sdk.*
 
 - **Features added**
   * **SUPPORT FOR DART 2.0**
   * **ADDED SUPPORT FOR VOICE via Lavalink**
+  * **PERMISSIONS OVERHAUL**
+    - Proper permissing handling
   * **COMMANDS FRAMEWORK REWRITTEN**
     - Dispatch pipe is completly rewritten. Bot should operate about 2-8x faster
     - Allowed to declare single method commands without using classes
     - Added support for specify custom restrictions to commands handlers
     - Classes now have to be annotated with `Module` instead of `Command`
     - `Remainder` can now colled data to `List<String>` or `String`
+    - Added `Preprocessor` and `Posprocessor`
+    - Removed help system
   * Changed internal library structure
   * Implemented Iterable for Channel to query messages
   * Added typing event per channel
@@ -19,17 +23,30 @@ _Tue xx.xx.2018_
   * Added support for zlib compressed gateway payload
   * Added enpoints for Guild, Emoji, Role, Member
   * Added utils module
+  * Allowed to download attachments. (`Downloadable` interface)
+  * Implemented new Discord features (Priority speaker, Slowmode)
+  * Added `DiscordColor` class
+  * Added `Binder` util
+  * Added `Cache`
+  * Added interfaces `Downloadable`, `Mentionable`, `Nameable`, `Disposable`, `GuildEntity`
 - **Bug fixes**
   * Fixed Emijis comparing
   * Fixed searchin in Emojis unicode
   * Code cleanup and style fixes
+  * Proper error handling for `CommandsFramework`
+  * Gateway fixes
+  * Object deserializing fixes
+  * Memory and performance improvements
 - **Changes**
+  * **Global client instance**
   * **Docs are rewritten**
   * Every object which has id is now subclass of `SnowflakeEntity`.
   * Snowflakes are default id entities
   * Internal nyxx API changes
   * Cooldown cache rewritten
+  * Presence sending fixes
   * Title is not required for EmbedBuilder
+  * Removed uneccessary dependencies
 
 ## [0.24.0](https://github.com/l7ssha/nyxx/compare/0.23.1...0.24.0)
 _Tue 03.08.2018_
