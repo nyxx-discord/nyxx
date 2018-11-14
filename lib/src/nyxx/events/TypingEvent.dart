@@ -14,9 +14,13 @@ class TypingEvent {
             Snowflake(json['d']['channel_id'] as String))
         .then((chan) {
       if (chan == null) return;
-
       this.channel = chan;
+          
       this.user = client.users[Snowflake(json['d']['user_id'] as String)];
+      if(this.user == null) return;
+
+      client._events.onTyping.add(this);
+      channel._onTyping.add(this);
     });
   }
 }
