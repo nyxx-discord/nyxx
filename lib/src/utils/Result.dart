@@ -1,5 +1,3 @@
-import 'dart:async';
-
 class Optional<T> {
   T _value;
 
