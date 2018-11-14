@@ -2,23 +2,22 @@ part of nyxx;
 
 /// The WS manager for the client.
 class _WS {
+  Nyxx _client;
+
   /// The base websocket URL.
   String gateway;
 
   final Logger logger = Logger("Client");
 
   /// Makes a new WS manager.
-  _WS() {
-    _client._http._headers['Authorization'] = "Bot ${client._token}";
-    _client._http
-        .send("GET", "/gateway/bot")
-        .then((HttpResponse r) {
+  _WS(this._client) {
+    _client._http._headers['Authorization'] = "Bot ${_client._token}";
+    _client._http.send("GET", "/gateway/bot").then((HttpResponse r) {
       this.gateway = r.body['url'] as String;
-      if (client._options.autoShard) {
+      if (_client._options.autoShard) {
         _client._options._shardIds = [];
         _client._options.shardCount = r.body['shards'] as int;
-        for (int i = 0; i < client._options.shardCount; i++) {
-          //_client._options.shardIds.add(i);
+        for (int i = 0; i < _client._options.shardCount; i++) {
           setupShard(i);
         }
       } else {
@@ -35,7 +34,7 @@ class _WS {
     _client.shards[shard.id] = shard;
 
     shard.onReady.listen((Shard s) {
-      if (!client.ready) {
+      if (!_client.ready) {
         testReady();
       }
     });
@@ -48,39 +47,41 @@ class _WS {
   }
 
   void testReady() {
-    bool match = true;
-    for (var o in _client.guilds.values) {
-      if (o == null) {
-        match = false;
-        break;
-      }
-
-      if (client._options.forceFetchMembers)
-        if (o.members.count != o.memberCount) {
-          match = false;
-          break;
+    bool match1() {
+      for (var o in _client.guilds.values) {
+        if (_client._options.forceFetchMembers && o.members.count !=
+            o.memberCount) {
+          return false;
         }
-    }
-
-    bool match2 = true;
-    for (var shard in _client.shards.values) {
-      if (!shard.ready) {
-        match2 = false;
-        break;
       }
+
+      return true;
     }
 
-    if (match && match2) {
-      client.ready = true;
-      client._startTime = DateTime.now();
+    bool match2() {
+      for (var shard in _client.shards.values) {
+        if (!shard.ready) {
+          return false;
+        }
+      }
+
+      return true;
+    }
+
+    if (match1() && match2()) {
+      _client.ready = true;
+      _client._startTime = DateTime.now();
 
       _client._http.send("GET", "/oauth2/applications/@me").then((response) {
         _client.app =
-            ClientOAuth2Application._new(response.body as Map<String, dynamic>);
+            ClientOAuth2Application._new(response.body as Map<String, dynamic>, _client);
 
-        ReadyEvent._new();
+        _client._events.onReady.add(ReadyEvent._new(_client));
         logger.info("Connected and ready!");
       });
+    } else {
+      logger.severe("Cannot setup bot properly.");
+      exit(1);
     }
   }
 }

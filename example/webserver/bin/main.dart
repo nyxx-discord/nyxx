@@ -24,7 +24,8 @@ void setupBot(SendPort remotePort) {
 
   // Listen to all incoming messages via Dart Stream
   client.onMessage.listen((MessageEvent e) {
-    remotePort.send("${client.shards.length};${client.guilds.count};${client.uptime.inSeconds}");
+    remotePort.send(
+        "${client.shards.length};${client.guilds.count};${client.uptime.inSeconds}");
 
     if (e.message.content == "oofping") {
       e.message.channel.send(content: "Pong!");
@@ -40,7 +41,6 @@ int curUp = 1;
 
 // Main function
 void main() async {
-
   /// Create port
   var recPort = ReceivePort();
 
@@ -48,7 +48,7 @@ void main() async {
   await Isolate.spawn(setupBot, recPort.sendPort);
 
   recPort.listen((d) {
-    if(d is String) {
+    if (d is String) {
       var spl = d.split(';');
       curShard = int.parse(spl.first);
       curGuild = int.parse(spl[1]);
@@ -57,21 +57,23 @@ void main() async {
     }
   });
 
-  var handler = const shelf.Pipeline().addMiddleware(shelf.logRequests())
+  var handler = const shelf.Pipeline()
+      .addMiddleware(shelf.logRequests())
       .addHandler(_echoRequest);
 
   io.serve(handler, 'localhost', 9098).then((server) {
     print('Serving at http://${server.address.host}:${server.port}');
   });
-
 }
 
 shelf.Response _echoRequest(shelf.Request request) {
-  return new shelf.Response.ok('<html>'
+  return new shelf.Response.ok(
+      '<html>'
       '<body>'
       '<p>Number of shards: ${curShard} </p>'
       '<p>Number of guild connected: ${curGuild}</p>'
       '<p>Messages per second: ${count / curUp}</p>'
       '</body>'
-      '</html>', headers: {"Content-Type": "text/html"});
+      '</html>',
+      headers: {"Content-Type": "text/html"});
 }

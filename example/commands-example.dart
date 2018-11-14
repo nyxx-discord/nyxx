@@ -13,7 +13,8 @@ void main() {
   nyxx.Nyxx bot = nyxx.Nyxx(Platform.environment['DISCORD_TOKEN']);
 
   // Creating new CommandsFramework object and registering commands.
-  command.CommandsFramework('!', admins: [nyxx.Snowflake("302359032612651009")])
+  command.CommandsFramework(bot,
+      prefix: '!', admins: [nyxx.Snowflake("302359032612651009")])
     ..discoverCommands();
 }
 
@@ -22,8 +23,11 @@ class IsGuildProcessor implements command.Preprocessor {
   const IsGuildProcessor();
 
   @override
-  Future<command.PreprocessorResult> execute(List<Object> services, nyxx.Message message) async {
-    return message.guild != null ? command.PreprocessorResult.success() : command.PreprocessorResult.error("ERROR");
+  Future<command.PreprocessorResult> execute(
+      List<Object> services, nyxx.Message message) async {
+    return message.guild != null
+        ? command.PreprocessorResult.success()
+        : command.PreprocessorResult.error("ERROR");
   }
 }
 
@@ -84,7 +88,7 @@ class EchoCommand extends command.CommandContext {
         nyxx.PermissionsBuilder()
           ..sendMessages = true
           ..sendTtsMessages = false,
-        nyxx.client.users[nyxx.Snowflake("471349482307715102")]);
+        client.users[nyxx.Snowflake("471349482307715102")]);
 
     for (var perm in (channel as nyxx.GuildChannel).permissions) {
       var role = guild.roles.values.firstWhere((i) => i.id == perm.id);

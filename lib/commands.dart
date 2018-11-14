@@ -17,12 +17,11 @@ import 'package:logging/logging.dart';
 part 'src/commands/_CommandsMetadata.dart';
 part 'src/commands/Processors.dart';
 
-part 'src/commands/Events.dart';
+part 'src/commands/Annotations.dart';
+part 'src/commands/Helpers.dart';
 
 part 'src/commands/CommandsFramework.dart';
-part 'src/commands/Annotations.dart';
 part 'src/commands/CommandContext.dart';
-part 'src/commands/Service.dart';
 part 'src/commands/CooldownCache.dart';
 
 part 'src/commands/TypeConverter.dart';

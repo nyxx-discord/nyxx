@@ -13,24 +13,24 @@ class AuditLog {
   /// List of audit log entries
   Map<Snowflake, AuditLogEntry> entries;
 
-  AuditLog._new(Map<String, dynamic> raw) {
+  AuditLog._new(Map<String, dynamic> raw, Nyxx client) {
     webhooks = Map();
     users = Map();
     entries = Map();
 
     raw['webhooks'].forEach((o) {
       webhooks[Snowflake(o['id'] as String)] =
-          Webhook._new(o as Map<String, dynamic>);
+          Webhook._new(o as Map<String, dynamic>, client);
     });
 
     raw['users'].forEach((o) {
       users[Snowflake(o['id'] as String)] =
-          User._new(o as Map<String, dynamic>);
+          User._new(o as Map<String, dynamic>, client);
     });
 
     raw['audit_log_entries'].forEach((o) {
       entries[Snowflake(o['id'] as String)] =
-          AuditLogEntry._new(o as Map<String, dynamic>);
+          AuditLogEntry._new(o as Map<String, dynamic>, client);
     });
   }
 }

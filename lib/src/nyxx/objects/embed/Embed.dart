@@ -40,7 +40,7 @@ class Embed {
   EmbedAuthor author;
 
   /// Map of fields of embed. Map(name, field)
-  Map<String, EmbedField> fields;
+  List<EmbedField> fields;
 
   Embed._new(Map<String, dynamic> raw) {
     if (raw['title'] != null) this.title = raw['title'] as String;
@@ -50,7 +50,8 @@ class Embed {
       this.description = raw['description'] as String;
     if (raw['timestamp'] != null)
       this.timestamp = DateTime.parse(raw['timestamp'] as String);
-    if (raw['color'] != null) this.color = DiscordColor.fromInt(raw['color'] as int);
+    if (raw['color'] != null)
+      this.color = DiscordColor.fromInt(raw['color'] as int);
     if (raw['author'] != null)
       this.author = EmbedAuthor._new(raw['author'] as Map<String, dynamic>);
     if (raw['video'] != null)
@@ -66,9 +67,9 @@ class Embed {
       this.provider =
           EmbedProvider._new(raw['provider'] as Map<String, dynamic>);
     if (raw['fields'] != null) {
-      fields = Map();
+      fields = List();
       raw['fields'].forEach((dynamic o) {
-        EmbedField._new(o as Map<String, dynamic>, this);
+        fields.add(EmbedField._new(o as Map<String, dynamic>));
       });
     }
   }

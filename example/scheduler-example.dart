@@ -7,10 +7,10 @@ import 'dart:async';
 
 void main() async {
   configureNyxxForVM();
-  nyxx.Nyxx(Platform.environment['DISCORD_TOKEN']);
+  var bot = nyxx.Nyxx(Platform.environment['DISCORD_TOKEN']);
 
   /// Create new scheduler and fill out all required fields
-  var scheduler = util.Scheduler()
+  var scheduler = util.Scheduler(bot)
     ..runEvery = const Duration(seconds: 1)
     ..targets = [nyxx.Snowflake("422285619952222208")]
     ..action = (channel, t) {

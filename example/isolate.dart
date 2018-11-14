@@ -13,25 +13,26 @@ void setupBot(SendPort remotePort) {
   configureNyxxForVM();
 
   // Create new bot instance
-  Nyxx(Platform.environment['DISCORD_TOKEN']);
+  var bot = Nyxx(Platform.environment['DISCORD_TOKEN']);
 
   // Listen to ready event. Invoked when bot started listening to events.
-  client.onReady.listen((ReadyEvent e) {
+  bot.onReady.listen((ReadyEvent e) {
     print("Ready!");
   });
 
   // Listen to all incoming messages via Dart Stream
-  client.onMessageReceived.listen((MessageReceivedEvent e) {
+  bot.onMessageReceived.listen((MessageReceivedEvent e) {
     if (e.message.content == "!ping") {
       e.message.channel.send(content: "Pong!");
     }
   });
 
   port.listen((msg) async {
-    var exChannel = client.channels[Snowflake("355365529369706509")] as TextChannel;
+    var exChannel =
+        bot.channels[Snowflake("355365529369706509")] as TextChannel;
     var m = msg.toString();
 
-    if(m.startsWith("SEND")) {
+    if (m.startsWith("SEND")) {
       await exChannel.send(content: m.split(";").last);
     }
   });
@@ -39,7 +40,6 @@ void setupBot(SendPort remotePort) {
 
 // Main function
 void main() async {
-
   /// Create port
   var recPort = ReceivePort();
 
@@ -49,7 +49,7 @@ void main() async {
   var sendport = await recPort.first as SendPort;
 
   /// Wait for user input
-  while(true) {
+  while (true) {
     stdout.write("Send to channel >> ");
     var msg = stdin.readLineSync();
     sendport.send("SEND;$msg");

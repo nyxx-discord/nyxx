@@ -19,7 +19,7 @@ class ExConverter extends command.TypeConverter<Ex> {
   // Logic for converting String message to your type.
   // Return null if converting isn't successful.
   @override
-  Ex parse(String from, nyxx.Message msg) => Ex(from);
+  Future<Ex> parse(String from, nyxx.Message msg) async => Ex(from);
 }
 
 // Main function
@@ -30,7 +30,8 @@ void main() {
   nyxx.Nyxx bot = nyxx.Nyxx(Platform.environment['DISCORD_TOKEN']);
 
   // Creating new CommandsFramework object and registering commands.
-  command.CommandsFramework('!', admins: [nyxx.Snowflake("302359032612651009")])
+  command.CommandsFramework(bot,
+      prefix: '!', admins: [nyxx.Snowflake("302359032612651009")])
     // You can register type converter by hand
     ..registerTypeConverters([ExConverter()])
     ..discoverCommands();

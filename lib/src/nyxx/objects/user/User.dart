@@ -1,7 +1,9 @@
 part of nyxx;
 
 /// Represents a single user of Discord, either a human or a bot, outside of any specific guild's context.
-class User extends SnowflakeEntity with ISend, IMentionable, Nameable {
+class User extends SnowflakeEntity with ISend, Mentionable, Nameable {
+  Nyxx client;
+
   /// The user's username.
   String username;
 
@@ -14,7 +16,7 @@ class User extends SnowflakeEntity with ISend, IMentionable, Nameable {
   @override
 
   /// The string to mention the user.
-  String get mention => "<@${this.id}>";
+  String get mention => "<@!${this.id}>";
 
   /// Returns String with username#discriminator
   String get tag => "${this.username}#${this.discriminator}";
@@ -22,7 +24,7 @@ class User extends SnowflakeEntity with ISend, IMentionable, Nameable {
   /// Whether or not the user is a bot.
   bool bot;
 
-  User._new(Map<String, dynamic> raw) : super(Snowflake(raw['id'] as String)) {
+  User._new(Map<String, dynamic> raw, this.client) : super(Snowflake(raw['id'] as String)) {
     this.username = raw['username'] as String;
     this.discriminator = raw['discriminator'] as String;
     this.avatar = raw['avatar'] as String;
@@ -46,7 +48,7 @@ class User extends SnowflakeEntity with ISend, IMentionable, Nameable {
     } catch (err) {
       HttpResponse r = await client._http.send('POST', "/users/@me/channels",
           body: {"recipient_id": this.id.toString()});
-      return DMChannel._new(r.body as Map<String, dynamic>);
+      return DMChannel._new(r.body as Map<String, dynamic>, client);
     }
   }
 
@@ -58,7 +60,8 @@ class User extends SnowflakeEntity with ISend, IMentionable, Nameable {
       List<File> files,
       EmbedBuilder embed,
       bool tts = false,
-      bool disableEveryone, MessageBuilder builder}) async {
+      bool disableEveryone,
+      MessageBuilder builder}) async {
     DMChannel channel = await this.dmChannel;
     return channel.send(
         content: content,

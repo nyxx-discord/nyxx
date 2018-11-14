@@ -1,13 +1,17 @@
 part of nyxx;
 
 /// Emoji object. Handles Unicode emojis and custom ones.
-class GuildEmoji extends Emoji implements SnowflakeEntity, GuildEntity, Nameable {
+class GuildEmoji extends Emoji
+    implements SnowflakeEntity, GuildEntity, Nameable {
+  Nyxx client;
 
   @override
+
   /// Emoji guild
   Guild guild;
 
   @override
+
   /// Snowflake id of emoji
   Snowflake id;
 
@@ -24,7 +28,7 @@ class GuildEmoji extends Emoji implements SnowflakeEntity, GuildEntity, Nameable
   bool animated;
 
   /// Creates full emoji object
-  GuildEmoji._new(Map<String, dynamic> raw, this.guild) : super("") {
+  GuildEmoji._new(Map<String, dynamic> raw, this.guild, this.client) : super("") {
     this.id = Snowflake(raw['id'] as String);
     this.name = raw['name'] as String;
     this.requireColons = raw['require_colons'] as bool;
@@ -37,8 +41,6 @@ class GuildEmoji extends Emoji implements SnowflakeEntity, GuildEntity, Nameable
       raw['roles'].forEach(
           (o) => this.roles.add(this.guild.roles[Snowflake(o as String)]));
     }
-
-    guild.emojis[id] = this;
   }
 
   /// Creates partial object - only [id] and [name]
@@ -51,11 +53,11 @@ class GuildEmoji extends Emoji implements SnowflakeEntity, GuildEntity, Nameable
         "PATCH", "/guilds/${guild.id.toString()}/emojis/${this.id.toString()}",
         body: {"name": name, roles: roles.map((r) => r.toString())});
 
-    return GuildEmoji._new(res.body as Map<String, dynamic>, guild);
+    return GuildEmoji._new(res.body as Map<String, dynamic>, guild, client);
   }
 
   Future<void> delete() async {
-    await _client._http.send("DELETE",
+    await client._http.send("DELETE",
         "/guilds/${this.guild.id.toString()}/emojis/${this.id.toString()}");
   }
 
@@ -87,5 +89,6 @@ class GuildEmoji extends Emoji implements SnowflakeEntity, GuildEntity, Nameable
   DateTime get createdAt => id.timestamp;
 
   @override
-  String get nameString => "Guild Emoji ${name} [${this.guild.name}] [${this.id}]";
+  String get nameString =>
+      "Guild Emoji ${name} [${this.guild.name}] [${this.id}]";
 }

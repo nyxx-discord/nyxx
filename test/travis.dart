@@ -13,6 +13,7 @@ const ddel = [
   "Command '~~notFound' not found!",
   "Command is on cooldown!. Wait a few seconds!",
   "14 Example data",
+  "Converting successfull"
 ];
 
 // Example service
@@ -21,6 +22,18 @@ class StringService extends command.Service {
 
   StringService();
 }
+
+/*
+class CustomType {
+  String val;
+
+  CustomType(this.val);
+}
+
+class RunesConverter implements command.TypeConverter<CustomType> {
+  @override
+  Future<CustomType> parse(String from, nyxx.Message msg) async => CustomType(from);
+}*/
 
 // Somme commands to test CommandsFramework behaviour
 @command.Command(name: "test")
@@ -44,6 +57,15 @@ class CooldownCommand extends command.CommandContext {
   run() async {}
 }
 
+@command.Command(name: "runes")
+Future<void> getRunes(command.CommandContext ctx, Runes runes) async {
+    if(runes.length <= 0)
+      throw Exception("Converting error");
+
+    var msg = await ctx.reply(content: "Converting successfull");
+    await msg.delete(auditReason: "This is reason");
+}
+
 // -------------------------------------------------------
 
 nyxx.EmbedBuilder createTestEmbed() {
@@ -59,9 +81,10 @@ void main() {
   var env = Platform.environment;
   var bot = nyxx.Nyxx(env['DISCORD_TOKEN'], ignoreExceptions: false);
 
-  command.CommandsFramework('~~', ignoreBots: false)
+  command.CommandsFramework(bot, prefix: '~~', ignoreBots: false)
     ..discoverServices()
     ..discoverCommands()
+    //..registerTypeConverters([RunesConverter()])
     ..onError.listen((err) async {
       if (err.type == command.ExecutionErrorType.commandNotFound)
         await err.message.channel
@@ -138,6 +161,12 @@ void main() {
         .send(content: "PLIK SIEMA", files: [new File("test/kitty.webp")]);
     await f.delete();
 
+    /*
+    print("TESTING TYPECONVERTER");
+    var g = await channel.send(content: "~~runes SIEMA");
+    await g.delete(auditReason: "Reason on deleting");
+    */
+
     print("TESTING EMBEDS");
     var e =
         await channel.send(content: "Testing embed!", embed: createTestEmbed());
@@ -164,7 +193,7 @@ void main() {
       if (m.embeds.length > 0) {
         var embed = m.embeds.first;
         if (embed.title == "Test title" && embed.fields.length > 0) {
-          var field = embed.fields.values.first;
+          var field = embed.fields.first;
 
           if (field.name == "Test field" &&
               field.content == "Test value" &&
