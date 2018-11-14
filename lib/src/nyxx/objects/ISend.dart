@@ -15,7 +15,7 @@ abstract class ISend {
 String attach(String filename) => "attachment://$filename";
 
 // Sanitized message from @everyone and @here
-String _sanitizeMessage(Object content, bool disableEveryone) {
+String _sanitizeMessage(Object content, bool disableEveryone, Nyxx client) {
   var msg = content.toString();
   if (content != null &&
       ((disableEveryone != null && disableEveryone) ||

@@ -32,8 +32,13 @@ class CommandContext {
   /// Guild in which message was sent
   Guild guild;
 
+  /// Returns author as guild member
+  Member get member => guild.members[author.id];
+
+  Nyxx client;
+
   CommandContext();
-  CommandContext._new(this.channel, this.author, this.guild, this.message);
+  CommandContext._new(this.client, this.channel, this.author, this.guild, this.message);
 
   /// Reply to message. It allows to send regular message, Embed or both.
   ///
@@ -47,12 +52,16 @@ class CommandContext {
   Future<Message> reply(
       {Object content = "",
       EmbedBuilder embed,
+      List<File> files,
       bool tts = false,
-      bool disableEveryone}) async {
+      bool disableEveryone,
+      MessageBuilder builder}) async {
     return await channel.send(
         content: content,
         embed: embed,
         tts: tts,
+        files: files,
+        builder: builder,
         disableEveryone: disableEveryone);
   }
 
@@ -69,12 +78,14 @@ class CommandContext {
       List<File> files,
       EmbedBuilder embed,
       bool tts = false,
-      bool disableEveryone}) async {
+      bool disableEveryone,
+      MessageBuilder builder}) async {
     var msg = await channel.send(
         content: content,
         embed: embed,
         files: files,
         tts: tts,
+        builder: builder,
         disableEveryone: disableEveryone);
 
     Timer(duration, () => msg.delete());
@@ -93,7 +104,8 @@ class CommandContext {
       List<File> files,
       EmbedBuilder embed,
       bool tts = false,
-      bool disableEveryone}) async {
+      bool disableEveryone,
+      MessageBuilder builder}) async {
     return Future.delayed(
         duration,
         () async => await channel.send(
@@ -101,6 +113,7 @@ class CommandContext {
             embed: embed,
             files: files,
             tts: tts,
+            builder: builder,
             disableEveryone: disableEveryone));
   }
 
@@ -128,26 +141,14 @@ class CommandContext {
 
   /// Waits for first [TypingEvent] and returns it. If timed out returns null.
   /// Can listen to specific user by specifying [user]
-  Future<TypingEvent> waitForTyping(
-      {User user,
-      Duration timeout = const Duration(seconds: 30),
-      bool everywhere = false}) async {
-    return Future(() {
-      if (everywhere) {
-        if (user != null)
-          return client.onTyping.firstWhere((e) => e.user == user);
-
-        return client.onTyping.first;
-      } else {
-        if (user != null)
-          return channel.onTyping.firstWhere((e) => e.user == user);
-
-        return channel.onTyping.first;
-      }
-    }).timeout(timeout, onTimeout: () => null);
+  Future<TypingEvent> waitForTyping(User user,
+      {Duration timeout = const Duration(seconds: 30)}) async {
+    return client.onTyping
+        .firstWhere((e) => e.user == user)
+        .timeout(timeout, onTimeout: () => null);
   }
 
-  /// Gets all context channel messages that satisfies test. Has default timeout of 30 seconds.
+  /// Gets all context channel messages that satisfies test.
   ///
   /// ```
   /// @Command()
@@ -155,18 +156,12 @@ class CommandContext {
   ///   var messages = await nextMessagesWhere((msg) => msg.content.startsWith("fuck"));
   /// }
   /// ```
-  Future<List<Message>> nextMessagesWhere(bool func(Message msg),
-      {Duration timeout = const Duration(seconds: 30)}) async {
-    List<Message> tmpData = List();
+  Stream<MessageReceivedEvent> nextMessagesWhere(
+          bool func(MessageReceivedEvent msg),
+          {int limit = 100}) =>
+      channel.onMessage.where(func).take(limit);
 
-    await channel.onMessage.forEach((i) {
-      if (func(i.message)) tmpData.add(i.message);
-    }).timeout(timeout);
-
-    return tmpData;
-  }
-
-  /// Gets next [num] number of any messages sent within one context (same channel) with optional [timeout](default 30 sec)
+  /// Gets next [num] number of any messages sent within one context (same channel).
   ///
   /// ```
   /// @Command()
@@ -175,16 +170,8 @@ class CommandContext {
   ///   var messages = await nextMessages(10);
   /// }
   /// ```
-  Future<List<Message>> nextMessages(int num,
-      {Duration timeout = const Duration(seconds: 30)}) async {
-    List<Message> tmpData = List();
-
-    await channel.onMessage.take(num).forEach((i) {
-      tmpData.add(i.message);
-    }).timeout(timeout);
-
-    return tmpData;
-  }
+  Stream<MessageReceivedEvent> nextMessages(int num) =>
+      channel.onMessage.take(num);
 
   /// Returns stream of all code blocks in message
   /// For now it only parses codeblock which starts in first line

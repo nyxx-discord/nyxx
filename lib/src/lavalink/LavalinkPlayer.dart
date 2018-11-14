@@ -46,8 +46,8 @@ class Player {
     _guild.shard.send(
         "VOICE_STATE_UPDATE", _Opcode4(_guild, channel, false, false)._build());
 
-    _currentState = (await client.onVoiceStateUpdate.first).state;
-    _rawEvent = (await client.onVoiceServerUpdate.first).raw;
+    _currentState = (await _manager.client.onVoiceStateUpdate.first).state;
+    _rawEvent = (await _manager.client.onVoiceServerUpdate.first).raw;
 
     var s = jsonEncode(
         _OpVoiceUpdate(_guild.id.toString(), _currentState.sessionId, _rawEvent)
@@ -55,7 +55,7 @@ class Player {
     print(s);
     _manager._webSocket.add(s);
 
-    _sub1 = client.onVoiceServerUpdate
+    _sub1 = _manager.client.onVoiceServerUpdate
         .where((e) => e.guild.id == _guild.id)
         .listen((e) {
       _rawEvent = e.raw;
@@ -64,11 +64,11 @@ class Player {
           .build()));
     });
 
-    _sub2 = client.onVoiceStateUpdate.where((e) {
+    _sub2 = _manager.client.onVoiceStateUpdate.where((e) {
       if (e.state.channel != null) if (e.state.channel.id != currentChannel.id)
         return false;
 
-      return e.state.user.id == client.self.id;
+      return e.state.user.id == _manager.client.self.id;
     }).listen((e) {
       _currentState = e.state;
       _manager._webSocket.add(jsonEncode(_OpVoiceUpdate(
@@ -90,14 +90,14 @@ class Player {
     var uri = _manager._restPath
         .replace(path: "/loadtracks", queryParameters: {"identifier": hash});
 
-    var req = transport.Request()
-      ..uri = uri;
+    var req = transport.Request()..uri = uri;
 
     req.headers["Authorization"] = _manager._password;
 
     var res = await req.send("GET");
     if (res.status != 200)
-      return Future.error(Exception("Cannot comunicate with lavalink via http"));
+      return Future.error(
+          Exception("Cannot comunicate with lavalink via http"));
 
     var r = res.body.asJson();
     return TrackResponse._new(r as Map<String, dynamic>);

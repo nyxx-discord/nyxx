@@ -35,13 +35,12 @@ class DiscordColor {
   /// Construct color from hex String.
   /// Leading # will be ignored in process.
   DiscordColor.fromHexString(String hexStr) {
-    if(hexStr.isEmpty)
+    if (hexStr.isEmpty)
       throw new ArgumentError("Hex color String cannot be empty");
 
     // Apparently this is a lot faster than previous version
     // https://hastebin.com/xajatuzofi
-    if(hexStr.startsWith("#"))
-      hexStr = hexStr.substring(1);
+    if (hexStr.startsWith("#")) hexStr = hexStr.substring(1);
 
     this._value = int.parse(hexStr, radix: 16);
   }
@@ -65,7 +64,8 @@ class DiscordColor {
   int get hashCode => _value.hashCode;
 
   @override
-  bool operator ==(other) => other is DiscordColor && other._value == this._value;
+  bool operator ==(other) =>
+      other is DiscordColor && other._value == this._value;
 
   // All colors got from DiscordColor class from DSharp+.
   // https://github.com/DSharpPlus/DSharpPlus/blob/a2f6eca7f5f675e83748b20b957ae8bdb8fd0cab/DSharpPlus/Entities/DiscordColor.Colors.cs

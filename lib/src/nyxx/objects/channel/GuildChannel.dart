@@ -1,11 +1,12 @@
 part of nyxx;
 
 /// Represents channel which is part of guild.
-abstract class GuildChannel implements Channel, GuildEntity{
+abstract class GuildChannel implements Channel, GuildEntity {
   /// The channel's name.
   String name;
 
   @override
+
   /// The guild that the channel is in.
   Guild guild;
 
@@ -28,8 +29,8 @@ abstract class GuildChannel implements Channel, GuildEntity{
     this.guild = guild;
 
     if (raw['parent_id'] != null) {
-      this.parentChannel = client
-          .channels[Snowflake(raw['parent_id'])] as CategoryChannel;
+      this.parentChannel =
+          client.channels[Snowflake(raw['parent_id'])] as CategoryChannel;
     }
 
     this.nsfw = raw['nsfw'] as bool;
@@ -52,24 +53,28 @@ abstract class GuildChannel implements Channel, GuildEntity{
 
     var rawMemberPerms = member.effectivePermissions.raw;
 
-    if(utils.isApplied(rawMemberPerms, PermissionsConstants.administrator))
+    if (utils.isApplied(rawMemberPerms, PermissionsConstants.administrator))
       return Permissions.fromInt(PermissionsConstants.allPermissions);
 
     final overrides = utils.getOverrides(member, this);
-    rawMemberPerms = utils.apply(rawMemberPerms, overrides.first, overrides.last);
+    rawMemberPerms =
+        utils.apply(rawMemberPerms, overrides.first, overrides.last);
 
-    return utils.isApplied(rawMemberPerms, PermissionsConstants.viewChannel) ? Permissions.fromInt(rawMemberPerms) : Permissions.empty();
+    return utils.isApplied(rawMemberPerms, PermissionsConstants.viewChannel)
+        ? Permissions.fromInt(rawMemberPerms)
+        : Permissions.empty();
   }
 
   /// Returns effective permissions for [role] to this channel including channel overrides.
   Permissions effectivePermissionForRole(Role role) {
-    if(role.guild == null || role.guild != this.guild)
+    if (role.guild == null || role.guild != this.guild)
       return Permissions.empty();
 
     var permissions = role.permissions.raw | guild.everyoneRole.permissions.raw;
 
     try {
-      var over = this.permissions.firstWhere((f) => f.id == guild.everyoneRole.id);
+      var over =
+          this.permissions.firstWhere((f) => f.id == guild.everyoneRole.id);
 
       permissions &= ~over.deny;
       permissions |= over.allow;
@@ -103,11 +108,11 @@ abstract class GuildChannel implements Channel, GuildEntity{
     params['temporary'] = temporary;
     params['unique'] = unique;
 
-    final HttpResponse r = await _client._http.send(
+    final HttpResponse r = await client._http.send(
         'POST', "/channels/$id/invites",
         body: params, reason: auditReason);
 
-    return Invite._new(r.body as Map<String, dynamic>);
+    return Invite._new(r.body as Map<String, dynamic>, client);
   }
 
   /// Fetches and returns all channel's [Invite]s
@@ -117,11 +122,11 @@ abstract class GuildChannel implements Channel, GuildEntity{
   /// ```
   Future<Map<String, Invite>> getChannelInvites() async {
     final HttpResponse r =
-        await _client._http.send('GET', "/channels/$id/invites");
+        await client._http.send('GET', "/channels/$id/invites");
 
     Map<String, Invite> invites = Map();
     for (Map<String, dynamic> val in r.body.values.first) {
-      invites[val["code"] as String] = Invite._new(val);
+      invites[val["code"] as String] = Invite._new(val, client);
     }
 
     return invites;
@@ -135,7 +140,7 @@ abstract class GuildChannel implements Channel, GuildEntity{
     if (!(id is Role) || !(id is User))
       throw Exception("The `id` property must be either Role or User");
 
-    await _client._http.send(
+    await client._http.send(
         "PUT", "/channels/${this.id}/permissions/${id.toString()}",
         body: perms._build()._build(), reason: auditReason);
   }
@@ -147,7 +152,7 @@ abstract class GuildChannel implements Channel, GuildEntity{
     if (!(id is Role) || !(id is User))
       throw Exception("`id` property must be either Role or User");
 
-    await _client._http.send("POST", "/channels/${this.id}/permissions/$id",
+    await client._http.send("POST", "/channels/${this.id}/permissions/$id",
         reason: auditReason);
   }
 }

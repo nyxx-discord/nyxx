@@ -6,23 +6,21 @@ Logger _logger = Logger.detached("Voice Service");
 /// Sends Op4 and connects to voice channel but without starting voice service
 Future<void> sendFakeOp4(VoiceChannel channel,
     {bool mute = false, bool deafen = false, Guild guild}) async {
-
-  if(guild != null) {
-    guild.shard.send("VOICE_STATE_UPDATE",
-        _Opcode4(guild, channel, mute, deafen)._build());
+  if (guild != null) {
+    guild.shard.send(
+        "VOICE_STATE_UPDATE", _Opcode4(guild, channel, mute, deafen)._build());
   } else {
     channel.guild.shard.send("VOICE_STATE_UPDATE",
         _Opcode4(channel.guild, channel, mute, deafen)._build());
   }
-
 }
 
 /// Creates voice service. [yamlConfigFile] is absolute path to lavalink config file.
 /// Returns instance of VoiceService
-VoiceService init(String ws, String rest, String password) {
+VoiceService init(String ws, String rest, String password, Nyxx client) {
   if (_manager != null) throw Exception("Tried initialize VoiceService twice.");
 
-  _manager = VoiceService._new(ws, rest, password);
+  _manager = VoiceService._new(ws, rest, password, client);
   _logger.info("Voice service intitailized!");
   return _manager;
 }
@@ -65,7 +63,9 @@ class VoiceService {
   StreamController<Stats> _onStats;
   Stream<Stats> onStats;
 
-  VoiceService._new(String ws, String rest, this._password) {
+  Nyxx client;
+
+  VoiceService._new(String ws, String rest, this._password, this.client) {
     _onStats = StreamController.broadcast();
     onStats = _onStats.stream;
 

@@ -30,7 +30,9 @@ class Scheduler {
 
   Timer _t;
 
-  Scheduler([this.runEvery, this.action, this.targets]);
+  Nyxx client;
+
+  Scheduler(this.client, [this.runEvery, this.action, this.targets]);
 
   /// Starts scheduler
   Future<Null> run() async {
@@ -39,7 +41,8 @@ class Scheduler {
       targets
           .forEach((s) => _targets.add(client.channels[s] as MessageChannel));
 
-      this._t = Timer.periodic(runEvery, (Timer t) => _targets.forEach((chan) => action));
+      this._t = Timer.periodic(
+          runEvery, (Timer t) => _targets.forEach((chan) => action));
     });
 
     return null;

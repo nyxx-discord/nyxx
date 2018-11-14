@@ -7,6 +7,8 @@ class Message extends SnowflakeEntity implements GuildEntity, Disposable {
   StreamController<MessageReactionEvent> _onReactionRemove;
   StreamController<MessageReactionsRemovedEvent> _onReactionsRemoved;
 
+  Nyxx client;
+
   /// The message's content.
   String content;
 
@@ -17,6 +19,7 @@ class Message extends SnowflakeEntity implements GuildEntity, Disposable {
   MessageChannel channel;
 
   @override
+
   /// The message's guild.
   Guild guild;
 
@@ -62,20 +65,23 @@ class Message extends SnowflakeEntity implements GuildEntity, Disposable {
       "/${this.channel.id.toString()}/${this.id.toString()}";
 
   Message._combine(Message old, Map<String, dynamic> raw) : super(old.id) {
-    this.content = raw['content'] == null ? old.content : raw['content'] as String;
-    this.editedTimestamp = raw['edited_timestamp'] == null ? DateTime.now() : DateTime.parse(raw['edited_timestamp'] as String);
+    this.content =
+        raw['content'] == null ? old.content : raw['content'] as String;
+    this.editedTimestamp = raw['edited_timestamp'] == null
+        ? DateTime.now()
+        : DateTime.parse(raw['edited_timestamp'] as String);
     this.channel = old.channel;
     this.guild = old.guild;
     this.author = old.author;
 
-    if(raw['mentions'] != null) {
+    if (raw['mentions'] != null) {
       this.mentions = Map<Snowflake, User>();
       raw['mentions'].forEach((o) {
         if (o['member'] == null) {
-          final user = User._new(o as Map<String, dynamic>);
+          final user = User._new(o as Map<String, dynamic>, client);
           this.mentions[user.id] = user;
         } else {
-          final user = Member._reverse(o as Map<String, dynamic>, this.guild);
+          final user = Member._reverse(o as Map<String, dynamic>, this.guild, client);
           this.mentions[user.id] = user;
         }
       });
@@ -83,7 +89,7 @@ class Message extends SnowflakeEntity implements GuildEntity, Disposable {
       this.mentions = old.mentions;
     }
 
-    if(raw['mention_roles'] != null) {
+    if (raw['mention_roles'] != null) {
       this.roleMentions = Map<Snowflake, Role>();
       raw['mention_roles'].forEach((o) {
         var s = Snowflake(o as String);
@@ -105,7 +111,8 @@ class Message extends SnowflakeEntity implements GuildEntity, Disposable {
     if (raw['attachments'] != null && raw['attachments'].isNotEmpty as bool) {
       this.attachments = Map<Snowflake, Attachment>();
       raw['attachments'].forEach((o) {
-        final Attachment attachment = Attachment._new(o as Map<String, dynamic>);
+        final Attachment attachment =
+            Attachment._new(o as Map<String, dynamic>);
         this.attachments[attachment.id] = attachment;
       });
     } else
@@ -131,7 +138,7 @@ class Message extends SnowflakeEntity implements GuildEntity, Disposable {
     this.channel.messages._cacheMessage(this);
   }
 
-  Message._new(Map<String, dynamic> raw)
+  Message._new(Map<String, dynamic> raw, this.client)
       : super(Snowflake(raw['id'] as String)) {
     this._onReactionRemove = StreamController.broadcast();
     this.onReactionRemove = this._onReactionRemove.stream;
@@ -144,7 +151,7 @@ class Message extends SnowflakeEntity implements GuildEntity, Disposable {
 
     this.content = raw['content'] as String;
 
-    this.channel = _client.channels[Snowflake(raw['channel_id'] as String)]
+    this.channel = client.channels[Snowflake(raw['channel_id'] as String)]
         as MessageChannel;
 
     this.pinned = raw['pinned'] as bool;
@@ -161,13 +168,13 @@ class Message extends SnowflakeEntity implements GuildEntity, Disposable {
 
         if (this.author == null) {
           if (raw['member'] == null) {
-            this.author = User._new(raw['author'] as Map<String, dynamic>);
+            this.author = User._new(raw['author'] as Map<String, dynamic>, client);
           } else {
             var r = raw['author'];
             r['member'] = raw['member'];
             var author = Member._reverse(r as Map<String, dynamic>,
-                client.guilds[Snowflake(raw['guild_id'] as String)]);
-            _client.users[author.id] = author;
+                client.guilds[Snowflake(raw['guild_id'] as String)], client);
+            client.users[author.id] = author;
             guild.members[author.id] = author;
             this.author = author;
           }
@@ -188,8 +195,8 @@ class Message extends SnowflakeEntity implements GuildEntity, Disposable {
         var r = raw['author'];
         r['member'] = raw['member'];
         var author = Member._reverse(r as Map<String, dynamic>,
-            client.guilds[Snowflake(raw['guild_id'] as String)]);
-        _client.users[author.id] = author;
+            client.guilds[Snowflake(raw['guild_id'] as String)], client);
+        client.users[author.id] = author;
         this.author = author;
       }
     }
@@ -202,10 +209,10 @@ class Message extends SnowflakeEntity implements GuildEntity, Disposable {
       this.mentions = Map<Snowflake, User>();
       raw['mentions'].forEach((o) {
         if (o['member'] == null) {
-          final user = User._new(o as Map<String, dynamic>);
+          final user = User._new(o as Map<String, dynamic>, client);
           this.mentions[user.id] = user;
         } else {
-          final user = Member._reverse(o as Map<String, dynamic>, this.guild);
+          final user = Member._reverse(o as Map<String, dynamic>, this.guild, client);
           this.mentions[user.id] = user;
         }
       });
@@ -244,14 +251,19 @@ class Message extends SnowflakeEntity implements GuildEntity, Disposable {
   String toString() => this.content;
 
   /// Replies to message. By default it mentions user who sends message.
-  Future<Message> reply({Object content = "",
-      List<File> files,
-      EmbedBuilder embed,
-      bool tts = false,
-      bool disableEveryone,
-      bool mention = true}) async => this.channel.send(
-      content: "${mention ? this.author.mention : ""} $content", files: files,
-  embed: embed, tts: tts, disableEveryone: disableEveryone);
+  Future<Message> reply(
+          {Object content = "",
+          List<File> files,
+          EmbedBuilder embed,
+          bool tts = false,
+          bool disableEveryone,
+          bool mention = true}) async =>
+      this.channel.send(
+          content: "${mention ? this.author.mention : ""} $content",
+          files: files,
+          embed: embed,
+          tts: tts,
+          disableEveryone: disableEveryone);
 
   /// Edits the message.
   ///
@@ -262,39 +274,39 @@ class Message extends SnowflakeEntity implements GuildEntity, Disposable {
       EmbedBuilder embed,
       bool tts = false,
       bool disableEveryone}) async {
-    if (this.author.id != _client.self.id) return null;
-    String newContent = _sanitizeMessage(content, disableEveryone);
+    if (this.author.id != client.self.id) return null;
+    String newContent = _sanitizeMessage(content, disableEveryone, client);
 
-    final HttpResponse r = await _client._http.send(
+    final HttpResponse r = await client._http.send(
         'PATCH', '/channels/${this.channel.id}/messages/${this.id}',
         body: <String, dynamic>{
           "content": newContent,
           "embed": (embed != null ? embed._build() : "")
         });
-    return Message._new(r.body as Map<String, dynamic>);
+    return Message._new(r.body as Map<String, dynamic>, client);
   }
 
   /// Add reaction to message.
   Future<void> createReaction(Emoji emoji) async {
-    await _client._http.send('PUT',
+    await client._http.send('PUT',
         "/channels/${this.channel.id}/messages/${this.id}/reactions/${emoji.encode()}/@me");
   }
 
   /// Deletes reaction of bot. Emoji as ':emoji_name:'
   Future<void> deleteReaction(Emoji emoji) async {
-    await _client._http.send('DELETE',
+    await client._http.send('DELETE',
         "/channels/${this.channel.id}/messages/${this.id}/reactions/${emoji.encode()}/@me");
   }
 
   /// Deletes reaction of given user.
   Future<void> deleteUserReaction(Emoji emoji, String userId) async {
-    await _client._http.send('DELETE',
+    await client._http.send('DELETE',
         "/channels/${this.channel.id}/messages/${this.id}/reactions/${emoji.encode()}/$userId");
   }
 
   /// Deletes all reactions
   Future<void> deleteAllReactions() async {
-    await _client._http.send(
+    await client._http.send(
         'DELETE', "/channels/${this.channel.id}/messages/${this.id}/reactions");
   }
 
@@ -302,45 +314,41 @@ class Message extends SnowflakeEntity implements GuildEntity, Disposable {
   ///
   /// Throws an [Exception] if the HTTP request errored.
   Future<void> delete({String auditReason = ""}) async {
-    await _client._http.send(
+    await client._http.send(
         'DELETE', '/channels/${this.channel.id}/messages/${this.id}',
         reason: auditReason);
   }
 
   /// Pins [Message] in current [Channel]
   Future<void> pinMessage() async {
-    await _client._http.send('PUT', "/channels/${channel.id}/pins/$id");
+    await client._http.send('PUT', "/channels/${channel.id}/pins/$id");
   }
 
   /// Unpins [Message] in current [Channel]
   Future<void> unpinMessage() async {
-    await _client._http.send('DELETE', "/channels/${channel.id}/pins/$id");
+    await client._http.send('DELETE', "/channels/${channel.id}/pins/$id");
   }
 
   @override
-  Future<void> dispose() {
+  Future<void> dispose() async {
     _onReactionAdded.close();
     _onReactionRemove.close();
     _onReactionsRemoved.close();
 
-    if(embeds != null) {
+    if (embeds != null) {
       embeds.clear();
-      embeds = null;
     }
 
-    if(mentions != null) {
+    if (mentions != null) {
       mentions.clear();
-      mentions = null;
     }
 
-    if(roleMentions != null) {
+    if (roleMentions != null) {
       roleMentions.clear();
-      roleMentions = null;
     }
 
-    if(attachments != null) {
+    if (attachments != null) {
       attachments.clear();
-      attachments = null;
     }
   }
 }

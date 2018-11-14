@@ -9,9 +9,11 @@
 library nyxx;
 
 import 'dart:async';
+
 import 'dart:convert';
 import 'dart:collection';
 import 'dart:io';
+
 import 'dart:isolate';
 
 import 'package:logging/logging.dart';
@@ -51,7 +53,6 @@ part 'src/nyxx/events/TypingEvent.dart';
 
 part 'src/nyxx/events/VoiceServerUpdateEvent.dart';
 part 'src/nyxx/events/VoiceStateUpdateEvent.dart';
-part 'src/nyxx/events/WebhookUpdateEvent.dart';
 part 'src/nyxx/events/UserUpdateEvent.dart';
 
 part 'src/nyxx/events/MessageEvents.dart';
@@ -74,7 +75,7 @@ part 'src/nyxx/builders/MessageBuilder.dart';
 // OBJECTS
 
 part 'src/nyxx/objects/ISend.dart';
-part 'src/nyxx/objects/IMentionable.dart';
+part 'src/nyxx/objects/Mentionable.dart';
 part 'src/nyxx/objects/GuildEntity.dart';
 part 'src/nyxx/objects/Disposable.dart';
 part 'src/nyxx/objects/Downloadable.dart';
@@ -95,6 +96,7 @@ part 'src/nyxx/objects/Invite.dart';
 part 'src/nyxx/objects/auditlogs/AuditLog.dart';
 part 'src/nyxx/objects/auditlogs/AuditLogEntry.dart';
 part 'src/nyxx/objects/auditlogs/AuditLogChange.dart';
+part 'src/nyxx/objects/auditlogs/EntryType.dart';
 
 part 'src/nyxx/objects/channel/VoiceChannel.dart';
 part 'src/nyxx/objects/channel/CategoryChannel.dart';
