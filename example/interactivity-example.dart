@@ -1,11 +1,14 @@
 library test;
 
+import 'package:nyxx/Vm.dart';
 import 'package:nyxx/nyxx.dart' as nyxx;
 import 'package:nyxx/utils.dart' as utils;
 
 import 'dart:io';
 
 void main() async {
+  configureNyxxForVM();
+
   nyxx.Nyxx bot = nyxx.Nyxx(Platform.environment['DISCORD_TOKEN']);
 
   bot.onReady.listen((e) async {
