@@ -94,6 +94,7 @@ part 'src/nyxx/objects/Invite.dart';
 part 'src/nyxx/objects/auditlogs/AuditLog.dart';
 part 'src/nyxx/objects/auditlogs/AuditLogEntry.dart';
 part 'src/nyxx/objects/auditlogs/AuditLogChange.dart';
+part 'src/nyxx/objects/auditlogs/EntryType.dart';
 
 part 'src/nyxx/objects/channel/VoiceChannel.dart';
 part 'src/nyxx/objects/channel/CategoryChannel.dart';
