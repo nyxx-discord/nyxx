@@ -4,6 +4,22 @@ import 'Util.dart' as utils;
 import 'dart:async';
 import 'dart:mirrors';
 
+/// Gets single annotation with type [T] from [declaration]
+T getCmdAnnot<T>(DeclarationMirror declaration) {
+  Iterable<T> fs = getCmdAnnots<T>(declaration);
+  if (fs.isEmpty) return null;
+  return fs.first;
+}
+
+/// Gets all annotations with type [T] from [declaration]
+Iterable<T> getCmdAnnots<T>(DeclarationMirror declaration) sync* {
+  for (var instance in declaration.metadata)
+    if (instance.hasReflectee) {
+      var reflectee = instance.reflectee;
+      if (reflectee is T) yield reflectee;
+    }
+}
+
 /// Binds all methods with [Bind] annotation to Client's streams.
 void bindEvents(String libname, client) {
   var instanceThis = reflect(client);
@@ -11,7 +27,7 @@ void bindEvents(String libname, client) {
   var lib = currentMirrorSystem().findLibrary(Symbol(libname));
 
   for (var decl in lib.declarations.values.whereType<MethodMirror>()) {
-    var meta = utils.getCmdAnnot<Bind>(decl);
+    var meta = getCmdAnnot<Bind>(decl);
 
     if (meta != null) {
       for (var incl

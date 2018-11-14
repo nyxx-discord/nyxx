@@ -1,3 +1,4 @@
+import 'package:nyxx/Vm.dart';
 import 'package:nyxx/nyxx.dart' as nyxx;
 import 'package:nyxx/commands.dart' as cmd;
 
@@ -5,6 +6,7 @@ import 'dart:io';
 import 'dart:async';
 
 void main() {
+  configureNyxxForVM();
   nyxx.Nyxx bot = nyxx.Nyxx(Platform.environment['DISCORD_TOKEN']);
 
   // Manual banchmark

@@ -1,3 +1,4 @@
+import 'package:nyxx/Vm.dart';
 import 'package:nyxx/nyxx.dart';
 import 'package:sqlite2/sqlite.dart';
 
@@ -8,6 +9,7 @@ main() async {
   await db.execute("CREATE TABLE tags (name text, content text)");
   await db.execute("INSERT INTO tags VALUES ('haha', '😂')");
 
+  configureNyxxForVM();
   Nyxx(Platform.environment['DISCORD_TOKEN']);
 
   client.onMessage.listen((msg) async {

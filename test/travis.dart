@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:async';
 
+import 'package:nyxx/Vm.dart' as nyxx;
 import 'package:nyxx/nyxx.dart' as nyxx;
 import 'package:nyxx/commands.dart' as command;
 
@@ -12,6 +13,7 @@ const ddel = [
   "Command '~~notFound' not found!",
   "Command is on cooldown!. Wait a few seconds!",
   "14 Example data",
+  "Converting successfull"
 ];
 
 // Example service
@@ -20,6 +22,18 @@ class StringService extends command.Service {
 
   StringService();
 }
+
+/*
+class CustomType {
+  String val;
+
+  CustomType(this.val);
+}
+
+class RunesConverter implements command.TypeConverter<CustomType> {
+  @override
+  Future<CustomType> parse(String from, nyxx.Message msg) async => CustomType(from);
+}*/
 
 // Somme commands to test CommandsFramework behaviour
 @command.Command(name: "test")
@@ -43,6 +57,15 @@ class CooldownCommand extends command.CommandContext {
   run() async {}
 }
 
+@command.Command(name: "runes")
+Future<void> getRunes(command.CommandContext ctx, Runes runes) async {
+    if(runes.length <= 0)
+      throw Exception("Converting error");
+
+    var msg = await ctx.reply(content: "Converting successfull");
+    await msg.delete(auditReason: "This is reason");
+}
+
 // -------------------------------------------------------
 
 nyxx.EmbedBuilder createTestEmbed() {
@@ -54,12 +77,14 @@ nyxx.EmbedBuilder createTestEmbed() {
 // -------------------------------------------------------
 
 void main() {
+  nyxx.configureNyxxForVM();
   var env = Platform.environment;
   var bot = nyxx.Nyxx(env['DISCORD_TOKEN'], ignoreExceptions: false);
 
   command.CommandsFramework(bot, prefix: '~~', ignoreBots: false)
     ..discoverServices()
     ..discoverCommands()
+    //..registerTypeConverters([RunesConverter()])
     ..onError.listen((err) async {
       if (err.type == command.ExecutionErrorType.commandNotFound)
         await err.message.channel
@@ -79,22 +104,24 @@ void main() {
   bot.onReady.listen((e) async {
     var channel =
         bot.channels[nyxx.Snowflake('422285619952222208')] as nyxx.TextChannel;
-    channel.send(
-        content:
-            "Testing new Travis CI build `#${env['TRAVIS_BUILD_NUMBER']}` from commit `${env['TRAVIS_COMMIT']}` on branch `${env['TRAVIS_BRANCH']}` with Dart version: `${env['TRAVIS_DART_VERSION']}`");
+    assert(channel != null);
+    if (env['TRAVIS_BUILD_NUMBER'] != null) {
+      channel.send(
+          content:
+              "Testing new Travis CI build `#${env['TRAVIS_BUILD_NUMBER']}` from commit `${env['TRAVIS_COMMIT']}` on branch `${env['TRAVIS_BRANCH']}` with Dart version: `${env['TRAVIS_DART_VERSION']}`");
+    } else {
+      channel.send(
+          content:
+              "Testing new local build");
+    }
 
     print("TESTING CLIENT INTERNALS");
-    assert(bot.app.id == "361949050016235520");
-    assert(bot.app.name == "Nataly");
-    assert(bot.app.owner.id == "302359032612651009");
 
     assert(bot.channels.count > 0);
     assert(bot.users.count > 0);
     assert(bot.shards.length == 1);
     assert(bot.ready);
     assert(bot.inviteLink != null);
-
-    assert(bot.self.discriminator == "4296");
 
     print("TESTING BASIC FUNCTIONALITY!");
     var m = await channel.send(content: "Message test.");
@@ -124,6 +151,12 @@ void main() {
     var f = await channel
         .send(content: "PLIK SIEMA", files: [new File("test/kitty.webp")]);
     await f.delete();
+
+    /*
+    print("TESTING TYPECONVERTER");
+    var g = await channel.send(content: "~~runes SIEMA");
+    await g.delete(auditReason: "Reason on deleting");
+    */
 
     print("TESTING EMBEDS");
     var e =

@@ -19,9 +19,10 @@ import 'dart:isolate';
 import 'package:logging/logging.dart';
 
 import 'package:w_transport/w_transport.dart' as transport;
-import 'package:w_transport/vm.dart' as transport;
 
 import 'utils.dart' as utils;
+
+import 'src/_internals.dart';
 
 // BASE
 
@@ -39,6 +40,7 @@ part 'src/nyxx/internal/Cache.dart';
 // ERROR
 
 part 'src/nyxx/errors/HttpError.dart';
+part 'src/nyxx/errors/NotSetupError.dart';
 
 // EVENTS
 

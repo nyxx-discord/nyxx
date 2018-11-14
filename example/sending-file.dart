@@ -1,9 +1,12 @@
+import 'package:nyxx/Vm.dart';
 import 'package:nyxx/nyxx.dart' as nyxx;
 
 import 'dart:io';
 
 // Main function
 void main() {
+  configureNyxxForVM();
+
   // Create new bot instance
   nyxx.Nyxx bot = nyxx.Nyxx(Platform.environment['DISCORD_TOKEN']);
 

@@ -1,3 +1,4 @@
+import 'package:nyxx/Vm.dart';
 import 'package:nyxx/nyxx.dart' as nyxx;
 import 'package:nyxx/utils.dart' as util;
 
@@ -5,6 +6,7 @@ import 'dart:io';
 import 'dart:async';
 
 void main() async {
+  configureNyxxForVM();
   var bot = nyxx.Nyxx(Platform.environment['DISCORD_TOKEN']);
 
   /// Create new scheduler and fill out all required fields

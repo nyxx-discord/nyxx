@@ -1,3 +1,4 @@
+import 'package:nyxx/Vm.dart';
 import 'package:nyxx/nyxx.dart';
 import 'package:shelf/shelf.dart' as shelf;
 import 'package:shelf/shelf_io.dart' as io;
@@ -10,6 +11,8 @@ void setupBot(SendPort remotePort) {
   var port = ReceivePort();
   var sendPort = port.sendPort;
   remotePort.send(sendPort);
+
+  configureNyxxForVM();
 
   // Create new bot instance
   Nyxx(Platform.environment['DISCORD_TOKEN']);
