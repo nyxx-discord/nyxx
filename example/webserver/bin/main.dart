@@ -15,7 +15,7 @@ void setupBot(SendPort remotePort) {
   configureNyxxForVM();
 
   // Create new bot instance
-  Nyxx(Platform.environment['DISCORD_TOKEN']);
+  final client = Nyxx(Platform.environment['DISCORD_TOKEN']);
 
   // Listen to ready event. Invoked when bot started listening to events.
   client.onReady.listen((ReadyEvent e) {
