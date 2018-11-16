@@ -1,10 +1,5 @@
 part of nyxx;
 
-//Nyxx _client;
-
-/// Current [Nyxx] instance.
-//Nyxx get client => _client;
-
 /// The main place to start with interacting with the Discord API and creating discord bot.
 /// From there you can subscribe to various [Stream]s to listen to [Events](https://github.com/l7ssha/nyxx/wiki/EventList)
 /// and fetch data from API with provided methods or get cached data.
@@ -189,7 +184,7 @@ class Nyxx implements Disposable {
   /// Creates and logs in a new client. If [ignoreExceptions] is true (by default is)
   /// isolate will ignore all exceptions and continue to work.
   Nyxx(this._token, {ClientOptions options, bool ignoreExceptions = true}) {
-    if (!setup || (_token == null && _token == "")) throw NotSetupError();
+    if (!setup || (_token == null || _token == "")) throw NotSetupError();
 
     if (ignoreExceptions && !browser) {
       Isolate.current.setErrorsFatal(false);

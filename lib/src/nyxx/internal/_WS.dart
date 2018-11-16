@@ -80,8 +80,8 @@ class _WS {
         logger.info("Connected and ready!");
       });
     } else {
-      logger.severe("Cannot setup bot properly.");
-      exit(1);
+      //logger.severe("Cannot setup bot properly.");
+      //exit(1);
     }
   }
 }
