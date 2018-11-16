@@ -259,6 +259,9 @@ class Shard {
           case 'MESSAGE_CREATE':
             messagesReceived++;
             var m = MessageReceivedEvent._new(msg, _ws._client);
+            if(m.message == null)
+              break;
+
             _ws._client._events.onMessage.add(m);
             _ws._client._events.onMessageReceived.add(m);
 
