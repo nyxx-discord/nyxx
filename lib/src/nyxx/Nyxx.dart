@@ -189,7 +189,7 @@ class Nyxx implements Disposable {
   /// Creates and logs in a new client. If [ignoreExceptions] is true (by default is)
   /// isolate will ignore all exceptions and continue to work.
   Nyxx(this._token, {ClientOptions options, bool ignoreExceptions = true}) {
-    if (!setup) throw new NotSetupError();
+    if (!setup || (_token == null && _token == "")) throw NotSetupError();
 
     if (ignoreExceptions && !browser) {
       Isolate.current.setErrorsFatal(false);
@@ -217,11 +217,6 @@ class Nyxx implements Disposable {
           '$color[${rec.level.name}] [${rec.loggerName}]\u001B[0m: '
           '${rec.message}');
     });
-
-    if (this._token == null || this._token == "") {
-      print("Token cannot be null or empty");
-      exit(1);
-    }
 
     this._options = options ?? ClientOptions();
 
