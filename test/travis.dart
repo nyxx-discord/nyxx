@@ -120,11 +120,11 @@ void main() {
     nyxx.Snowflake a = nyxx.Snowflake.fromDateTime(new DateTime(2017));
     nyxx.Snowflake b = nyxx.Snowflake.fromDateTime(new DateTime(2018));
 
-    assert(a.compareTo(b) > 0);
-    assert(b.compareTo(a) < 0);
+    assert(a.timestamp.isBefore(b.timestamp));
+    assert(b.timestamp.isAfter(a.timestamp));
 
-    assert(a.timestamp == new DateTime(2017));
-    assert(b.timestamp == new DateTime(2018));
+    assert(a.timestamp.isAtSameMomentAs(DateTime(2017)));
+    assert(b.timestamp.isAtSameMomentAs(DateTime(2018)));
 
     assert(bot.channels.count > 0);
     assert(bot.users.count > 0);

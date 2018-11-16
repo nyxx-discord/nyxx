@@ -4,7 +4,7 @@ part of nyxx;
 /// [id] property is actual id of entity which holds [Snowflake].
 class Snowflake implements Comparable<Snowflake> {
   static final discordEpoch = 1420070400000;
-  static final snowflakeDateOffset = 1 >> 22;
+  static final snowflakeDateOffset = 1 << 22;
 
   String _id;
 
