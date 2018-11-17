@@ -25,7 +25,7 @@ void setupBot(SendPort remotePort) {
   // Listen to all incoming messages via Dart Stream
   client.onMessage.listen((MessageEvent e) {
     remotePort.send(
-        "${client.shards.length};${client.guilds.count};${client.uptime.inSeconds}");
+        "${client.shards};${client.guilds.count};${client.uptime.inSeconds}");
 
     if (e.message.content == "oofping") {
       e.message.channel.send(content: "Pong!");
