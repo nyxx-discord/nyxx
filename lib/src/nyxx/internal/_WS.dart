@@ -14,24 +14,14 @@ class _WS {
     _client._http._headers['Authorization'] = "Bot ${_client._token}";
     _client._http.send("GET", "/gateway/bot").then((HttpResponse r) {
       this.gateway = r.body['url'] as String;
-      if (_client._options.autoShard) {
-        _client._options._shardIds = [];
-        _client._options.shardCount = r.body['shards'] as int;
-        for (int i = 0; i < _client._options.shardCount; i++) {
-          setupShard(i);
-        }
-      } else {
-        for (int shardId in _client._options._shardIds) {
-          setupShard(shardId);
-        }
-      }
+      setupShard(_client._options.shardIndex);
       this.connectShard(0);
     });
   }
 
   void setupShard(int shardId) {
     Shard shard = Shard._new(this, shardId);
-    _client.shards[shard.id] = shard;
+    _client.shard = shard;
 
     shard.onReady.listen((Shard s) {
       if (!_client.ready) {
@@ -41,9 +31,7 @@ class _WS {
   }
 
   void connectShard(int index) {
-    _client.shards.values.toList()[index]._connect(false, true);
-    if (index + 1 != _client._options._shardIds.length)
-      Timer(Duration(seconds: 6), () => connectShard(index + 1));
+    _client.shard._connect(false, true);
   }
 
   void testReady() {
@@ -59,10 +47,8 @@ class _WS {
     }
 
     bool match2() {
-      for (var shard in _client.shards.values) {
-        if (!shard.ready) {
-          return false;
-        }
+      if (!_client.shard.ready) {
+        return false;
       }
 
       return true;

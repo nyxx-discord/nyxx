@@ -27,8 +27,6 @@ Starting from version `1.0.0` of nyxx, library requires `Dart 2.0+`. You can use
   Nyxx works on the command line, in the browser, and on mobile devices.
 - **Fine Control** <br>
   Nyxx allows you to control every outgoing HTTP request or WebSocket message.
-- **Internal Sharding** <br>
-  Nyxx automatically spawns shards for your bot, but you can override this and spawn a custom number of shards. Internal sharding means that all of your bots shards are managed in one script, and there is no need for communication between shards.
 - **Complete** <br>
   Nyxx supports nearly all Discord API endpoints.
 
