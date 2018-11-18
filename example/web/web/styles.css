@@ -16,3 +16,9 @@ form.bot-token-form {
   padding: 0.5em;
   text-align: center;
 }
+
+div.bot {
+  border: dashed;
+  border-width: 1px;
+  border-color: #2F3136;
+}
