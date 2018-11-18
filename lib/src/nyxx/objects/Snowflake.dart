@@ -6,28 +6,22 @@ class Snowflake implements Comparable<Snowflake> {
   static final discordEpoch = 1420070400000;
   static final snowflakeDateOffset = 1 << 22;
 
-  String _id;
-
-  /// Full snowflake id
-  String get id => _id;
+  final String _id;
 
   /// Creates new instance of [Snowflake] from String value.
   Snowflake(dynamic id) : _id = id.toString();
 
   /// Creates synthetic snowflake based on current time
-  Snowflake.fromNow() {
-    this._id = _parseId(DateTime.now());
-  }
+  Snowflake.fromNow() : _id = _parseId(DateTime.now());
 
   /// Creates first snowflake which can be deleted by `bulk-delete messages`
-  Snowflake.bulk() {
-    this._id = _parseId(DateTime.now().subtract(Duration(days: 14)));
-  }
+  Snowflake.bulk() : _id = _parseId(DateTime.now().subtract(Duration(days: 14)));
 
   /// Creates synthetic snowflake based on given [date].
-  Snowflake.fromDateTime(DateTime date) {
-    this._id = _parseId(date);
-  }
+  Snowflake.fromDateTime(DateTime date) : _id = _parseId(date);
+
+  /// Full snowflake id
+  String get id => _id;
 
   /// Compares two Snowflakes based on creation date
   static int compareDates(Snowflake first, Snowflake second) =>
