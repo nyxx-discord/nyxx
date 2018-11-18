@@ -43,7 +43,7 @@ class Player {
     _onTrackError = StreamController.broadcast();
     onTrackError = _onTrackError.stream;
 
-    _guild.shard.send(
+    _guild.client.shard.send(
         "VOICE_STATE_UPDATE", _Opcode4(_guild, channel, false, false)._build());
 
     _currentState = (await _manager.client.onVoiceStateUpdate.first).state;
@@ -81,7 +81,7 @@ class Player {
   Future<void> changeChannel(VoiceChannel channel,
       {bool muted = false, bool deafen = false}) {
     currentChannel = channel;
-    _guild.shard.send("VOICE_STATE_UPDATE",
+    _guild.client.shard.send("VOICE_STATE_UPDATE",
         _Opcode4(_guild, channel, muted, deafen)._build());
   }
 
@@ -115,7 +115,7 @@ class Player {
 
   /// Disconnect from channel. Closes all unneeded connections.
   Future<void> disconnect() async {
-    _guild.shard.send(
+    _guild.client.shard.send(
         "VOICE_STATE_UPDATE", _Opcode4(_guild, null, false, false)._build());
     await stop();
     _manager._webSocket.add(jsonEncode(_SimpleOp("destroy", _guild)._build()));
@@ -133,7 +133,7 @@ class Player {
       op = _OpPause(_guild, true).build();
 
     _manager._webSocket.add(jsonEncode(op));
-    _guild.shard.send(
+    _guild.client.shard.send(
         "VOICE_STATE_UPDATE",
         _Opcode4(_guild, currentChannel, !_currentState.selfMute,
                 _currentState.selfDeaf)

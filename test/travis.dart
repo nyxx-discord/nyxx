@@ -128,7 +128,7 @@ void main() {
 
     assert(bot.channels.count > 0);
     assert(bot.users.count > 0);
-    assert(bot.shards.length == 1);
+    assert(bot.shards == 1);
     assert(bot.ready);
     assert(bot.inviteLink != null);
 
