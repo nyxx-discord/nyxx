@@ -29,6 +29,7 @@ part 'src/lavalink/opcodes/OpVolume.dart';
 part 'src/lavalink/opcodes/OpPlay.dart';
 part 'src/lavalink/opcodes/OpVoiceUpdate.dart';
 part 'src/lavalink/opcodes/Opcode4.dart';
+part 'src/lavalink/opcodes/OpEqualizer.dart';
 
 part 'src/lavalink/objects/Stats.dart';
 part 'src/lavalink/objects/Track.dart';
