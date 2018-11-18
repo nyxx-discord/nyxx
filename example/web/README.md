@@ -1,4 +1,4 @@
-An absolute bare-bones web app.
+## Nyxx web example
 
-Created from templates made available by Stagehand under a BSD-style
-[license](https://github.com/dart-lang/stagehand/blob/master/LICENSE).
+Run this web app and insert your web token in the website.
+Incoming messages the bot receives are displayed on the webpage.

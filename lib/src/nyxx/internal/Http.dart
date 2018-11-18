@@ -4,25 +4,25 @@ class HttpBase {
   StreamController<HttpResponse> _streamController;
 
   /// The HTTP client.
-  Http http;
+  final Http http;
 
   /// The bucket the request will go into.
   HttpBucket bucket;
 
   /// The path the request is being made to.
-  String path;
+  final String path;
 
   /// The query params.
-  Map<String, String> queryParams;
+  final Map<String, String> queryParams;
 
   /// The final URI that the request is being made to.
   Uri uri;
 
   /// The HTTP method used.
-  String method;
+  final String method;
 
   /// Headers to be sent.
-  Map<String, String> headers;
+  final Map<String, String> headers;
 
   /// The request body.
   dynamic body;
@@ -62,21 +62,18 @@ class HttpBase {
     this._streamController.close();
   }
 
-  Future<HttpResponse> _execute() async {
+  Future _execute() async {
     var req = transport.JsonRequest()
       ..uri = this.uri
       ..headers = this.headers;
 
+    if (this.body != null) req.body = this.body;
+    if (this.queryParams != null) req.queryParameters = this.queryParams;
     try {
-      if (this.body != null) req.body = this.body;
-
-      if (this.queryParams != null) req.queryParameters = this.queryParams;
-
-      var res = await req.send(this.method);
-
-      return HttpResponse._fromResponse(this, res);
+      final r = await req.send(this.method);
+      return HttpResponse._fromResponse(this, r);
     } on transport.RequestException catch (e) {
-      return HttpResponse._fromResponse(this, e.response);
+      return new HttpResponse._new(this, e.response.status, e.response.statusText, e.response.headers, {});
     }
   }
 }
@@ -111,10 +108,9 @@ class HttpMultipartRequest extends HttpBase {
     try {
       if (this.fields != null)
         req.fields.addAll({"payload_json": jsonEncode(this.fields)});
-
       return HttpResponse._fromResponse(this, await req.send(method));
     } on transport.RequestException catch (e) {
-      return HttpResponse._fromResponse(this, e.response);
+      return new HttpResponse._new(this, e.response.status, e.response.statusText, e.response.headers, {});
     }
   }
 }
@@ -165,14 +161,9 @@ class HttpResponse {
     this.body = {};
   }
 
-  static Future<HttpResponse> _fromResponse(
-      HttpBase request, transport.BaseResponse r) async {
-    var json;
-    try {
-      json = (r as transport.Response).body.asJson();
-    } on Exception {}
-
-    return HttpResponse._new(request, r.status, "", r.headers, json);
+  static HttpResponse _fromResponse(HttpBase request, transport.Response r) {
+    var json = r.body.asJson();
+    return HttpResponse._new(request, r.status, r.statusText, r.headers, json);
   }
 
   @override
@@ -218,36 +209,36 @@ class HttpBucket {
     this._execute(this.requests[0], client);
   }
 
-  void _execute(HttpBase request, Nyxx client) {
+  void _execute(HttpBase request, Nyxx client) async {
     if (this.rateLimitRemaining == null || this.rateLimitRemaining > 1) {
-      request._execute().then((HttpResponse r) {
-        this.limit = r.headers['x-ratelimit-limit'] != null
-            ? int.parse(r.headers['x-ratelimit-limit'])
-            : null;
-        this.rateLimitRemaining = r.headers['x-ratelimit-remaining'] != null
-            ? int.parse(r.headers['x-ratelimit-remaining'])
-            : null;
-        this.rateLimitReset = r.headers['x-ratelimit-reset'] != null
-            ? DateTime.fromMillisecondsSinceEpoch(
-                int.parse(r.headers['x-ratelimit-reset']) * 1000,
-                isUtc: true)
-            : null;
 
-        if (r.status == 429) {
-          client._events.onRatelimited
-              .add(RatelimitEvent._new(request, false, r));
-          request.http._logger.warning(
-              "Rate limitted via 429 on endpoint: ${request.path}. Trying to send request again after timeout...");
-          Timer(Duration(milliseconds: (r.body['retry_after'] as int) + 100),
-              () => this._execute(request, client));
-        } else {
-          this.waiting = false;
-          this.requests.remove(request);
-          request._streamController.add(r);
-          request._streamController.close();
-          this._handle(client);
-        }
-      });
+      final HttpResponse r = await request._execute();
+      this.limit = r.headers['x-ratelimit-limit'] != null
+          ? int.parse(r.headers['x-ratelimit-limit'])
+          : null;
+      this.rateLimitRemaining = r.headers['x-ratelimit-remaining'] != null
+          ? int.parse(r.headers['x-ratelimit-remaining'])
+          : null;
+      this.rateLimitReset = r.headers['x-ratelimit-reset'] != null
+          ? DateTime.fromMillisecondsSinceEpoch(
+              int.parse(r.headers['x-ratelimit-reset']) * 1000,
+              isUtc: true)
+          : null;
+
+      if (r.status == 429) {
+        client._events.onRatelimited
+            .add(RatelimitEvent._new(request, false, r));
+        request.http._logger.warning(
+            "Rate limitted via 429 on endpoint: ${request.path}. Trying to send request again after timeout...");
+        Timer(Duration(milliseconds: (r.body['retry_after'] as int) + 100),
+            () => this._execute(request, client));
+      } else {
+        this.waiting = false;
+        this.requests.remove(request);
+        request._streamController.add(r);
+        request._streamController.close();
+        this._handle(client);
+      }
     } else {
       final Duration waitTime =
           this.rateLimitReset.difference(DateTime.now().toUtc()) +

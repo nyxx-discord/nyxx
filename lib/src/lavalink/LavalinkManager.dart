@@ -7,10 +7,10 @@ Logger _logger = Logger.detached("Voice Service");
 Future<void> sendFakeOp4(VoiceChannel channel,
     {bool mute = false, bool deafen = false, Guild guild}) async {
   if (guild != null) {
-    guild.shard.send(
+    guild.client.shard.send(
         "VOICE_STATE_UPDATE", _Opcode4(guild, channel, mute, deafen)._build());
   } else {
-    channel.guild.shard.send("VOICE_STATE_UPDATE",
+    channel.guild.client.shard.send("VOICE_STATE_UPDATE",
         _Opcode4(channel.guild, channel, mute, deafen)._build());
   }
 }
@@ -80,7 +80,7 @@ class VoiceService {
     try {
       transport.WebSocket.connect(_wsPath, headers: {
         "Authorization": _password,
-        "Num-Shards": client.shards.length,
+        "Num-Shards": client.shards,
         "User-Id": client.app.id.toString()
       }).then((wc) {
         this._webSocket = wc;

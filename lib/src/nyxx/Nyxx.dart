@@ -47,9 +47,7 @@ class Nyxx implements Disposable {
   /// The current version of `nyxx`
   String version = _Constants.version;
 
-  /// The client's internal shards. By default shards are setup automatically by gateway,
-  /// however this can be changed by [ClientOptions]
-  Map<int, Shard> shards;
+  Shard shard;
 
   /// Generic Stream for message like events. It includes added reactions, and message deletions.
   /// For received messages refer to [onMessageReceived]
@@ -218,7 +216,6 @@ class Nyxx implements Disposable {
     this.guilds = _SnowflakeCache();
     this.channels = ChannelCache._new();
     this.users = _SnowflakeCache();
-    this.shards = Map<int, Shard>();
 
     this._http = Http._new(this);
     this._events = _EventController(this);
@@ -329,12 +326,14 @@ class Nyxx implements Disposable {
   }
 
   /// Closes websocket connections and cleans everything up.
-  Future<void> close() async => dispose();
+  Future<void> close() async => await dispose();
+
+  int get shards => this._options.shardCount;
 
   @override
   Future<void> dispose() async {
-    //for (var shard in this.shards.values) await shard._socket.close(1000);
-
+    if(shard != null)
+      await shard.dispose();
     await guilds.dispose();
     await users.dispose();
     await guilds.dispose();

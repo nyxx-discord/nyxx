@@ -4,7 +4,7 @@ part of nyxx;
 /// Guild sharding is entirely user controlled, and requires no state-sharing between separate connections to operate.
 ///
 /// Shard is basically represents single websocket connection to gateway. Each shard can operate on up to 2500 guilds.
-class Shard {
+class Shard implements Disposable {
   /// The shard id.
   int id;
 
@@ -27,6 +27,7 @@ class Shard {
   String _sessionId;
   StreamController<Shard> _onReady;
   StreamController<Shard> _onDisconnect;
+  bool _reconnect = true;
 
   Logger _logger = Logger("Websocket");
   
@@ -372,12 +373,7 @@ class Shard {
     this._heartbeatTimer.cancel();
     _logger.severe(
         "Shard [$id] disconnected. Error code: [${this._socket.closeCode}] | Error message: [${this._socket.closeReason}]");
-
-    /*if (this._socket.closeCode == null) {
-      _logger.severe("Exitting. Null close code");
-      exit(1);
-    }*/
-
+    
     /// Dispose on error
     for (var guild in this.guilds.values) {
       guild.dispose();
@@ -390,15 +386,24 @@ class Shard {
         break;
       case 4007:
       case 4009:
-        this._connect(true);
+        if(this._reconnect)
+          this._connect(true);
         break;
       default:
-        Timer(const Duration(seconds: 2), () => this._connect(false, true));
+        if(this._reconnect)
+          Timer(const Duration(seconds: 2), () => this._connect(false, true));
         break;
     }
 
     _ws._client._events.onDisconnect
         .add(DisconnectEvent._new(this, this._socket.closeCode));
     this._onDisconnect.add(this);
+  }
+
+  @override
+  Future<void> dispose() async {
+    this._reconnect = false;
+    await this._socket.close(1000);
+    return Null;
   }
 }
