@@ -110,7 +110,7 @@ class HttpMultipartRequest extends HttpBase {
         req.fields.addAll({"payload_json": jsonEncode(this.fields)});
       return HttpResponse._fromResponse(this, await req.send(method));
     } on transport.RequestException catch (e) {
-      return new HttpResponse._new(this, e.response.status, e.response.statusText, e.response.headers, {});
+      return HttpResponse._fromResponse(this, e.response);
     }
   }
 }
@@ -161,9 +161,13 @@ class HttpResponse {
     this.body = {};
   }
 
-  static HttpResponse _fromResponse(HttpBase request, transport.Response r) {
-    var json = r.body.asJson();
-    return HttpResponse._new(request, r.status, r.statusText, r.headers, json);
+  static HttpResponse _fromResponse(HttpBase request, transport.BaseResponse r) {
+    var json;
+    try {
+      json = (r as transport.Response).body.asJson();
+    } on Exception {}
+
+    return HttpResponse._new(request, r.status, "", r.headers, json);
   }
 
   @override
