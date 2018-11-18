@@ -140,9 +140,18 @@ class Player {
             ._build());
   }
 
+  /// Sets equalizer for player. Map key is band and value is gain for given band.
+  Future<void> setEqualizer(Map<num, num> bands) async {
+    _manager._webSocket.add(jsonEncode(_OpEqualizer(_guild, bands).build()));
+  }
+
   /// Pauses currently played track
   Future<void> pause() async =>
-      _manager._webSocket.add(jsonEncode(_SimpleOp("pause", _guild)._build()));
+      _manager._webSocket.add(jsonEncode(_OpPause(_guild, true).build()));
+
+  /// Unpauses currently played track
+  Future<void> unPause() async =>
+      _manager._webSocket.add(jsonEncode(_OpPause(_guild, false).build()));
 
   /// Stops track playback
   Future<void> stop() async =>
