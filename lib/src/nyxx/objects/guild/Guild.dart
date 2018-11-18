@@ -79,9 +79,6 @@ class Guild extends SnowflakeEntity implements Disposable, Nameable {
   /// Permission of current(bot) user in this guild
   Permissions currentUserPermissions;
 
-  /// The shard that the guild is on.
-  Shard shard;
-
   /// Users state cache
   Cache<Snowflake, VoiceState> voiceStates;
 
@@ -123,9 +120,6 @@ class Guild extends SnowflakeEntity implements Disposable, Nameable {
           this.emojis[emoji.id] = emoji;
         });
       }
-
-      this.shard = client.shards[
-          (int.parse(this.id.toString()) >> 22) % client._options.shardCount];
 
       if (guildCreate) {
         this.members = _SnowflakeCache();
@@ -591,13 +585,14 @@ class Guild extends SnowflakeEntity implements Disposable, Nameable {
   }
 
   @override
-  Future<void> dispose() => Future(() {
-        channels.dispose();
-        members.dispose();
-        roles.dispose();
-        emojis.dispose();
-        voiceStates.dispose();
-      });
+  Future<Null> dispose() async {
+    await channels.dispose();
+    await members.dispose();
+    await roles.dispose();
+    await emojis.dispose();
+    await voiceStates.dispose();
+    return null;
+  }
 
   @override
   String get nameString => "Guild ${this.name} [${this.id}]";
