@@ -127,7 +127,7 @@ class Guild extends SnowflakeEntity implements Disposable, Nameable {
 
         if (client._options.cacheMembers) {
           raw['members'].forEach((o) {
-            final member = Member._new(o as Map<String, dynamic>, this, client);
+            final member = _StandardMember(o as Map<String, dynamic>, this, client);
             this.members[member.id] = member;
             client.users[member.id] = member;
           });
@@ -563,7 +563,7 @@ class Guild extends SnowflakeEntity implements Disposable, Nameable {
     final r = await client._http
         .send('GET', '/guilds/${this.id}/members/${id.toString()}');
 
-    return Member._new(r.body as Map<String, dynamic>, this, client);
+    return _StandardMember(r.body as Map<String, dynamic>, this, client);
   }
 
   /// Gets all of the webhooks for this guild.

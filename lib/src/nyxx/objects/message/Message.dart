@@ -81,7 +81,7 @@ class Message extends SnowflakeEntity implements GuildEntity, Disposable {
           final user = User._new(o as Map<String, dynamic>, client);
           this.mentions[user.id] = user;
         } else {
-          final user = Member._reverse(o as Map<String, dynamic>, this.guild, client);
+          final user = _ReverseMember(o as Map<String, dynamic>, this.guild, client);
           this.mentions[user.id] = user;
         }
       });
@@ -172,7 +172,7 @@ class Message extends SnowflakeEntity implements GuildEntity, Disposable {
           } else {
             var r = raw['author'];
             r['member'] = raw['member'];
-            var author = Member._reverse(r as Map<String, dynamic>,
+            var author = _ReverseMember(r as Map<String, dynamic>,
                 client.guilds[Snowflake(raw['guild_id'] as String)], client);
             client.users[author.id] = author;
             guild.members[author.id] = author;
@@ -194,7 +194,7 @@ class Message extends SnowflakeEntity implements GuildEntity, Disposable {
       if (this.author == null) {
         var r = raw['author'];
         r['member'] = raw['member'];
-        var author = Member._reverse(r as Map<String, dynamic>,
+        var author = _ReverseMember(r as Map<String, dynamic>,
             client.guilds[Snowflake(raw['guild_id'] as String)], client);
         client.users[author.id] = author;
         this.author = author;
@@ -212,7 +212,7 @@ class Message extends SnowflakeEntity implements GuildEntity, Disposable {
           final user = User._new(o as Map<String, dynamic>, client);
           this.mentions[user.id] = user;
         } else {
-          final user = Member._reverse(o as Map<String, dynamic>, this.guild, client);
+          final user = _ReverseMember(o as Map<String, dynamic>, this.guild, client);
           this.mentions[user.id] = user;
         }
       });

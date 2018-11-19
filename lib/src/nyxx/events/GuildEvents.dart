@@ -130,7 +130,7 @@ class GuildMemberAddEvent {
       if (guild != null) {
         guild.memberCount++;
 
-        this.member = Member._new(json['d'] as Map<String, dynamic>, guild, client);
+        this.member = _StandardMember(json['d'] as Map<String, dynamic>, guild, client);
         guild.members[member.id] = member;
         client.users[member.id] = member;
       }
