@@ -1,7 +1,19 @@
 part of nyxx;
 
+// Two classes to simplify Member class itself. Maybe it's over-engineered but at least there is no _cons method anymore
+
+class _StandardMember extends Member {
+  _StandardMember(Map<String, dynamic> data, Guild guild, Nyxx client) :
+        super._new(data, data['user'] as Map<String, dynamic>, guild, client);
+}
+
+class _ReverseMember extends Member {
+  _ReverseMember(Map<String, dynamic> data, Guild guild, Nyxx client) :
+        super._new(data['member'] as Map<String, dynamic>, data, guild, client);
+}
+
 /// A user with [Guild] context.
-class Member extends User implements GuildEntity {
+abstract class Member extends User implements GuildEntity {
   /// The member's nickname, null if not set.
   String nickname;
 
@@ -53,16 +65,7 @@ class Member extends User implements GuildEntity {
     return Permissions.fromInt(total);
   }
 
-  Member._reverse(Map<String, dynamic> data, this.guild, Nyxx client) : super._new(data, client) {
-    _cons(data['member'] as Map<String, dynamic>, guild);
-  }
-
-  Member._new(Map<String, dynamic> data, this.guild, Nyxx client)
-      : super._new(data['user'] as Map<String, dynamic>, client) {
-    _cons(data, guild);
-  }
-
-  void _cons(Map<String, dynamic> data, Guild guild) {
+  Member._new(Map<String, dynamic> data, Map<String, dynamic> user, this.guild, Nyxx client) : super._new(user, client) {
     this.nickname = data['nick'] as String;
     this.deaf = data['deaf'] as bool;
     this.mute = data['mute'] as bool;
@@ -90,6 +93,8 @@ class Member extends User implements GuildEntity {
       {int deleteMessageDays = 0,
       String reason,
       String auditReason = ""}) async {
+
+
     await client._http.send('PUT', "/guilds/${this.guild.id}/bans/${this.id}",
         body: {"delete-message-days": deleteMessageDays, "reason": reason},
         reason: auditReason);
