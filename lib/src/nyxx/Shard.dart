@@ -160,7 +160,7 @@ class Shard implements Disposable {
         break;
 
       case _OPCodes.INVALID_SESSION:
-        _logger.severe("Invalid session on shard [$id]. Reconnecting...");
+        _logger.severe("Invalid session. Reconnecting...");
         _heartbeatTimer.cancel();
         _ws._client._events.onDisconnect.add(DisconnectEvent._new(this, 9));
         this._onDisconnect.add(this);
@@ -188,7 +188,7 @@ class Shard implements Disposable {
 
             this.ready = true;
             this._onReady.add(this);
-            _logger.info("Shard [$id] connected");
+            _logger.info("Shard connected");
 
             break;
 
@@ -372,7 +372,7 @@ class Shard implements Disposable {
   void _handleErr() {
     this._heartbeatTimer.cancel();
     _logger.severe(
-        "Shard [$id] disconnected. Error code: [${this._socket.closeCode}] | Error message: [${this._socket.closeReason}]");
+        "Shard disconnected. Error code: [${this._socket.closeCode}] | Error message: [${this._socket.closeReason}]");
     
     /// Dispose on error
     for (var guild in this.guilds.values) {
@@ -404,6 +404,5 @@ class Shard implements Disposable {
   Future<void> dispose() async {
     this._reconnect = false;
     await this._socket.close(1000);
-    return Null;
   }
 }
