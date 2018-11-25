@@ -194,23 +194,6 @@ class Nyxx implements Disposable {
       Isolate.current.addErrorListener(errorsPort.sendPort);
     }
 
-    Logger.root.level = Level.ALL;
-    Logger.root.onRecord.listen((LogRecord rec) {
-      String color = "";
-      if (rec.level == Level.WARNING)
-        color = "\u001B[33m";
-      else if (rec.level == Level.SEVERE)
-        color = "\u001B[31m";
-      else if (rec.level == Level.INFO)
-        color = "\u001B[32m";
-      else
-        color = "\u001B[0m";
-
-      print('[${DateTime.now()}] '
-          '$color[${rec.level.name}] [${rec.loggerName}]\u001B[0m: '
-          '${rec.message}');
-    });
-
     this._options = options ?? ClientOptions();
 
     this.guilds = _SnowflakeCache();
@@ -309,11 +292,6 @@ class Nyxx implements Disposable {
     return Webhook._new(r.body as Map<String, dynamic>, this);
   }
 
-  @deprecated
-
-  /// Block isolate until client is ready.
-  Future<ReadyEvent> blockToReady() async => await onReady.first;
-
   /// Gets an [Invite] object with given code.
   /// If the [code] is in cache - it will be taken from it, otherwise API will be called.
   ///
@@ -339,4 +317,24 @@ class Nyxx implements Disposable {
     await guilds.dispose();
     await this._events.dispose();
   }
+}
+
+void setupDefaultLogging([Level loglevel]) {
+  Logger.root.level = loglevel ?? Level.ALL;
+
+  Logger.root.onRecord.listen((LogRecord rec) {
+    String color = "";
+    if (rec.level == Level.WARNING)
+      color = "\u001B[33m";
+    else if (rec.level == Level.SEVERE)
+      color = "\u001B[31m";
+    else if (rec.level == Level.INFO)
+      color = "\u001B[32m";
+    else
+      color = "\u001B[0m";
+
+    print('[${DateTime.now()}] '
+        '$color[${rec.level.name}] [${rec.loggerName}]\u001B[0m: '
+        '${rec.message}');
+  });
 }
