@@ -255,8 +255,6 @@ class CommandsFramework {
 
   /// Dispatches onMessage event to framework.
   Future _dispatch(MessageEvent e) async {
-    var s = Stopwatch()..start();
-
     var splittedCommand = _escapeParameters(
         e.message.content.replaceFirst(prefix, "").trim().split(' '));
 
@@ -418,7 +416,6 @@ class CommandsFramework {
         _logger.info(
             "Command ${_createLog(matchedMeta.parentCommand, matchedMeta.methodCommand)} executed");
 
-        print(s.elapsedMicroseconds);
         break;
     }
   }
