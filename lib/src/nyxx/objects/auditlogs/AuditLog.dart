@@ -13,6 +13,22 @@ class AuditLog {
   /// List of audit log entries
   Map<Snowflake, AuditLogEntry> entries;
 
+  Iterable<AuditLogEntry> filterBy({List<User> users, List<ChangeKeyType> changeType, List<AuditLogEntryType> entryType, List<Snowflake> targetId}) {
+    if(users != null)
+      return entries.values.where((entry) => users.contains(entry.user));
+
+    if(changeType != null)
+      return entries.values.where((entry) => entry.changes.any((t) => changeType.contains(t.key)));
+
+    if(entryType != null)
+      return entries.values.where((entry) => entryType.contains(entry.type));
+
+    if(targetId != null)
+      return entries.values.where((entry) => targetId.contains(entry.targetId));
+
+    return null;
+  }
+
   AuditLog._new(Map<String, dynamic> raw, Nyxx client) {
     webhooks = Map();
     users = Map();
