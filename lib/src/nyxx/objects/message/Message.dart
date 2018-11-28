@@ -64,6 +64,7 @@ class Message extends SnowflakeEntity implements GuildEntity, Disposable {
       "https://discordapp.com/channels/${this.guild.id.toString()}"
       "/${this.channel.id.toString()}/${this.id.toString()}";
 
+  // TODO: fix this shitty repetetive code
   Message._combine(Message old, Map<String, dynamic> raw) : super(old.id) {
     this.content =
         raw['content'] == null ? old.content : raw['content'] as String;

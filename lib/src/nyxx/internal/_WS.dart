@@ -19,7 +19,7 @@ class _WS {
       this.gateway = r.body['url'] as String;
 
       this.remaining = r.body['session_start_limit']['remaining'] as int;
-      this.resetAt = DateTime.now().add(Duration(milliseconds: r.body['session_start_limit']['remaining'] as int));
+      this.resetAt = DateTime.now().add(Duration(milliseconds: r.body['session_start_limit']['reset_after'] as int));
       logger.info("Remaining ${this.remaining} connections starts. Limit will reset at ${this.resetAt}");
 
       checkForConnections();
@@ -83,7 +83,7 @@ class _WS {
             ClientOAuth2Application._new(response.body as Map<String, dynamic>, _client);
 
         _client._events.onReady.add(ReadyEvent._new(_client));
-        logger.info("Connected and ready!");
+        logger.info("Connected and ready! Logged as `${_client.self.tag}`");
       });
     } else {
       //logger.severe("Cannot setup bot properly.");
