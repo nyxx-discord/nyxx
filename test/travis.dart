@@ -78,6 +78,9 @@ nyxx.EmbedBuilder createTestEmbed() {
 
 void main() {
   nyxx.configureNyxxForVM();
+
+  nyxx.setupDefaultLogging();
+
   var env = Platform.environment;
   var bot = nyxx.Nyxx(env['DISCORD_TOKEN'], ignoreExceptions: false);
 
