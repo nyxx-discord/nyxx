@@ -7,6 +7,9 @@ class _WS {
   /// The base websocket URL.
   String gateway;
 
+  int remaining;
+  DateTime resetAt;
+
   final Logger logger = Logger("Client");
 
   /// Makes a new WS manager.
@@ -14,9 +17,26 @@ class _WS {
     _client._http._headers['Authorization'] = "Bot ${_client._token}";
     _client._http.send("GET", "/gateway/bot").then((HttpResponse r) {
       this.gateway = r.body['url'] as String;
+
+      this.remaining = r.body['session_start_limit']['remaining'] as int;
+      this.resetAt = DateTime.now().add(Duration(milliseconds: r.body['session_start_limit']['remaining'] as int));
+      logger.info("Remaining ${this.remaining} connections starts. Limit will reset at ${this.resetAt}");
+
+      checkForConnections();
+
       setupShard(_client._options.shardIndex);
       this.connectShard(0);
     });
+  }
+
+  void checkForConnections() {
+    if(this.remaining < 50)
+      logger.warning("50 connection starts left.");
+
+    if(this.remaining < 10) {
+      logger.severe("Exiting to prevent API abuse. 10 connections starts left.");
+      exit(1);
+    }
   }
 
   void setupShard(int shardId) {

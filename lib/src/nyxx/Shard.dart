@@ -51,17 +51,13 @@ class Shard implements Disposable {
     var packet = Map<String, dynamic>();
 
     packet['status'] = status;
-
     if (afk != null) packet['afk'] = afk;
 
     if (game != null) {
       var gameMap = Map<String, dynamic>();
       gameMap['name'] = game.name;
-
       if (game.type != null) gameMap['type'] = game.type._value;
-
       if (game.url != null) gameMap['url'] = game.url;
-
       packet['game'] = gameMap;
     }
 
@@ -373,7 +369,13 @@ class Shard implements Disposable {
     this._heartbeatTimer.cancel();
     _logger.severe(
         "Shard disconnected. Error code: [${this._socket.closeCode}] | Error message: [${this._socket.closeReason}]");
-    
+
+    if(this._socket.closeCode == null) {
+      if(this._reconnect)
+        Timer(const Duration(seconds: 30), () => this._connect(false, true));
+      return;
+    }
+
     /// Dispose on error
     for (var guild in this.guilds.values) {
       guild.dispose();
