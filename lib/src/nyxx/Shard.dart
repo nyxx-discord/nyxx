@@ -78,7 +78,7 @@ class Shard implements Disposable {
     if (this._socket != null) this._socket.close();
 
     if (!init && resume) {
-      Timer(Duration(seconds: 2), () => _connect(true, true));
+      Future.delayed(const Duration(seconds: 2), () => _connect(true));
       return;
     }
 
@@ -162,9 +162,9 @@ class Shard implements Disposable {
         this._onDisconnect.add(this);
 
         if (msg['d'] as bool) {
-          Timer(Duration(seconds: 2), () => _connect(true));
+          Future.delayed(const Duration(seconds: 2), () => _connect(true));
         } else {
-          Timer(Duration(seconds: 6), () => _connect(false, true));
+          Future.delayed(const Duration(seconds: 6), () => _connect(true));
         }
 
         break;
@@ -372,7 +372,7 @@ class Shard implements Disposable {
 
     if(this._socket.closeCode == null) {
       if(this._reconnect)
-        Timer(const Duration(seconds: 30), () => this._connect(false, true));
+        Future.delayed(const Duration(seconds: 30), () => _connect(false, true));
       return;
     }
 
@@ -393,7 +393,7 @@ class Shard implements Disposable {
         break;
       default:
         if(this._reconnect)
-          Timer(const Duration(seconds: 2), () => this._connect(false, true));
+          Future.delayed(const Duration(seconds: 4), () => _connect(false, true));
         break;
     }
 
