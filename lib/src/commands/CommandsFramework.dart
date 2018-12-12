@@ -535,7 +535,7 @@ class CommandsFramework {
   RegExp _entityRegex = RegExp(r"<(@|@!|@&|#|a?:(.+):)([0-9]+)>");
 
   Future<List<Object>> _injectParameters(
-      MethodMirror method, List<String> splitted, Message e) async {
+      MethodMirror method, List<String> splitted, Message msg) async {
     var params = method.parameters;
 
     List<Object> collected = List();
@@ -565,13 +565,13 @@ class CommandsFramework {
           break;
         case TextChannel:
           var id = _entityRegex.firstMatch(splitted[index]).group(3);
-          collected.add(e.guild.channels[Snowflake(id)]);
+          collected.add(msg.guild.channels[Snowflake(id)]);
           break;
         case VoiceState:
-          collected.add((await e.guild.getMember(e.author)).voiceState);
+          collected.add((await msg.guild.getMember(msg.author)).voiceState);
           break;
         case VoiceChannel:
-          collected.add((await e.guild.getMember(e.author)).voiceState.channel);
+          collected.add((await msg.guild.getMember(msg.author)).voiceState.channel);
           break;
         case User:
           var id = _entityRegex.firstMatch(splitted[index]).group(3);
@@ -579,15 +579,15 @@ class CommandsFramework {
           break;
         case Member:
           var id = _entityRegex.firstMatch(splitted[index]).group(3);
-          collected.add(e.guild.members[Snowflake(id)]);
+          collected.add(msg.guild.members[Snowflake(id)]);
           break;
         case Role:
           var id = _entityRegex.firstMatch(splitted[index]).group(3);
-          collected.add(e.guild.roles[Snowflake(id)]);
+          collected.add(msg.guild.roles[Snowflake(id)]);
           break;
         case GuildEmoji:
           var id = _entityRegex.firstMatch(splitted[index]).group(3);
-          collected.add(e.guild.emojis[Snowflake(id)]);
+          collected.add(msg.guild.emojis[Snowflake(id)]);
           break;
         case UnicodeEmoji:
           collected.add(
@@ -595,12 +595,6 @@ class CommandsFramework {
                   UnicodeEmoji(splitted[index]));
           break;
         default:
-          /*for (var converter in _typeConverters) {
-            if (type == converter._type) {
-              collected.add(await converter.parse(splitted[index], e));
-              return true;
-            }
-          }*/
           return false;
       }
 
@@ -627,6 +621,14 @@ class CommandsFramework {
       try {
         if (await parsePrimitives(type)) continue;
       } catch (_) {}
+
+      if(_typeConverters.isNotEmpty) {
+        var converter = _typeConverters.firstWhere((t) => t._type == type, orElse: () => null);
+        if(converter != null) {
+          collected.add(await converter.parse(splitted[index], msg));
+          continue;
+        }
+      }
 
       try {
         collected.add(_services.firstWhere((s) => s.runtimeType == type));
