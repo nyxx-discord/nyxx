@@ -424,7 +424,7 @@ class CommandsFramework {
     var annot = meta.restrict;
 
     // Check if command requires admin
-    if (annot.admin != null && annot.admin)
+    if (annot.admin)
       return _isUserAdmin(e.author.id, e.guild) ? 100 : 0;
 
     // Check for reqired context
@@ -439,9 +439,11 @@ class CommandsFramework {
     if (e.guild != null) {
       var member = await e.guild.getMember(e.author);
 
+      if(annot.nsfw && !(e.channel as GuildChannel).nsfw)
+        return 4;
+
       // Check if user is in any channel
-      if (annot.requireVoice != null &&
-          annot.requireVoice &&
+      if (annot.requireVoice &&
           e.guild.voiceStates[member.id] == null) return 9;
 
       // Check if there is need to check user roles
@@ -493,7 +495,7 @@ class CommandsFramework {
     }
 
     //Check if user is on cooldown
-    if (annot.cooldown != null && annot.cooldown > 0) if (!(await _cooldownCache
+    if (annot.cooldown > 0) if (!(await _cooldownCache
         .canExecute(
             e.author.id,
             "${meta.parentCommand.name}${meta.methodCommand.name}",
