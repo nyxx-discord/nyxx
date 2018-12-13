@@ -47,6 +47,7 @@ class Nyxx implements Disposable {
   /// The current version of `nyxx`
   String version = _Constants.version;
 
+  /// Current client's shard
   Shard shard;
 
   /// Generic Stream for message like events. It includes added reactions, and message deletions.

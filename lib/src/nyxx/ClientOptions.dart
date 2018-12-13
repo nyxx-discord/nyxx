@@ -25,6 +25,7 @@ class ClientOptions {
   /// **It means client will collect members from other events**
   bool cacheMembers;
 
+  /// Maximum size of guild for which offline member will be sent
   int largeThreshold;
 
   /// Makes a new `ClientOptions` object.
