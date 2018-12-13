@@ -86,13 +86,13 @@ class Restrict {
   final List<String> topics;
 
   const Restrict(
-      {this.admin,
+      {this.admin = false,
       this.roles = const [],
-      this.cooldown,
+      this.cooldown = 0,
       this.userPermissions = const [],
       this.botPermissions = const [],
       this.requiredContext,
-      this.nsfw,
+      this.nsfw = false,
       this.requireVoice = false,
       this.topics = const []});
 }
