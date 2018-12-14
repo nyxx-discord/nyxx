@@ -9,5 +9,5 @@ abstract class Preprocessor {
 /// Preprocessor allows to run code block after successful command execution.
 /// It gives possibility to eg. send additional data or do stuff with databases
 abstract class Postprocessor {
-  void execute(List<Object> services, dynamic returns, Message message);
+  Future<void> execute(List<Object> services, dynamic returns, Message message);
 }
