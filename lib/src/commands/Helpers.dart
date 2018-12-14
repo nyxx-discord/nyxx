@@ -1,5 +1,6 @@
 part of nyxx.commands;
 
+/// Type of command execution error. Can be used to identify an error.
 enum ExecutionErrorType {
   commandNotFound,
   botPermissionError,

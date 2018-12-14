@@ -56,7 +56,7 @@ class CommandContext {
       bool tts = false,
       bool disableEveryone,
       MessageBuilder builder}) async {
-    return await channel.send(
+    return channel.send(
         content: content,
         embed: embed,
         tts: tts,
@@ -80,16 +80,15 @@ class CommandContext {
       bool tts = false,
       bool disableEveryone,
       MessageBuilder builder}) async {
-    var msg = await channel.send(
-        content: content,
-        embed: embed,
-        files: files,
-        tts: tts,
-        builder: builder,
-        disableEveryone: disableEveryone);
-
-    Timer(duration, () => msg.delete());
-    return msg;
+      return channel.send(
+          content: content,
+          embed: embed,
+          files: files,
+          tts: tts,
+          builder: builder,
+          disableEveryone: disableEveryone).then((msg) {
+        Timer(duration, () => msg.delete());
+      });
   }
 
   /// Replies to messages after specified [duration]
@@ -108,7 +107,7 @@ class CommandContext {
       MessageBuilder builder}) async {
     return Future.delayed(
         duration,
-        () async => await channel.send(
+        () => channel.send(
             content: content,
             embed: embed,
             files: files,

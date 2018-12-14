@@ -315,7 +315,7 @@ class CommandsFramework {
     void invokePost(res) {
       if (matchedMeta.postprocessors.length > 0) {
         for (var post in matchedMeta.postprocessors)
-          post.execute(_services, res, e.message);
+          Future.microtask(() => post.execute(_services, res, e.message));
       }
     }
 
@@ -362,10 +362,7 @@ class CommandsFramework {
       case -1:
       case -2:
       case 100:
-        if (single)
-          splittedCommand.removeRange(0, 1);
-        else
-          splittedCommand.removeRange(0, 2);
+        single ? splittedCommand.removeRange(0, 1) : splittedCommand.removeRange(0, 2);
 
         var methodInj = await _injectParameters(
             matchedMeta.method, splittedCommand, e.message);
