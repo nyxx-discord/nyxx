@@ -272,18 +272,20 @@ class Message extends SnowflakeEntity implements GuildEntity, Disposable {
   ///     Message.edit("My edited content!");
   Future<Message> edit(
       {String content,
-      EmbedBuilder embed,
-      bool tts = false,
-      bool disableEveryone}) async {
+        EmbedBuilder embed,
+        bool tts = false,
+        bool disableEveryone}) async {
     if (this.author.id != client.self.id) return null;
-    String newContent = _sanitizeMessage(content, disableEveryone, client);
+
+    var body = Map<String, dynamic>();
+    if(content != null)
+      body['content'] = _sanitizeMessage(content, disableEveryone, client);
+    if(embed != null)
+      body['embed'] = embed._build();
 
     final HttpResponse r = await client._http.send(
         'PATCH', '/channels/${this.channel.id}/messages/${this.id}',
-        body: <String, dynamic>{
-          "content": newContent,
-          "embed": (embed != null ? embed._build() : "")
-        });
+        body: body);
     return Message._new(r.body as Map<String, dynamic>, client);
   }
 
