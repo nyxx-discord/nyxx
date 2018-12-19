@@ -97,7 +97,7 @@ class VoiceService {
   // Handles incoming message. Tries to parse and takes actions
   Future<void> _handleMsg(Map<String, dynamic> msg) async {
     var op = msg['op'] as String;
-
+    
     switch (op) {
       case 'playerUpdate':
         var e = PlayerUpdateEvent._new(msg);
@@ -109,19 +109,22 @@ class VoiceService {
         break;
       case 'event':
         var player = _playersCache[msg['guildId']];
-        TrackError evnt;
-        switch (msg['type'] as String) {
-          case 'TrackEndEvent':
-            evnt = TrackEndEvent(msg);
+
+        if(player != null) {
+          TrackError evnt;
+          switch (msg['type'] as String) {
+            case 'TrackEndEvent':
+              evnt = TrackEndEvent(msg);
             break;
-          case 'TrackExceptionEvent':
-            evnt = TrackExceptionEvent(msg);
+            case 'TrackExceptionEvent':
+              evnt = TrackExceptionEvent(msg);
             break;
-          case 'TrackStuckEvent':
-            evnt = TrackStuckEvent(msg);
+            case 'TrackStuckEvent':
+              evnt = TrackStuckEvent(msg);
             break;
+          }
+          player._onTrackError.add(evnt);
         }
-        player._onTrackError.add(evnt);
         break;
       default:
         print("!");
