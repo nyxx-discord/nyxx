@@ -16,6 +16,7 @@ class VoiceChannel extends Channel with GuildChannel {
     this.userLimit = raw['user_limit'] as int;
   }
 
+  /// Allows to get [VoiceState]s of users connected to this channel
   Iterable<VoiceState> get connectedUsers => this.guild.voiceStates.values.where((e) => e.channel.id == this.id);
   
   /// Edits the channel.

@@ -88,6 +88,9 @@ class Guild extends SnowflakeEntity implements Disposable, Nameable {
   Role get everyoneRole =>
       roles.values.firstWhere((r) => r.name == "@everyone");
 
+  /// Returns member object for bot user
+  Member get selfMember => members[client.self.id];
+
   Guild._new(this.client, Map<String, dynamic> raw,
       [this.available = true, bool guildCreate = false])
       : super(Snowflake(raw['id'] as String)) {
