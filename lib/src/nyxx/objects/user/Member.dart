@@ -147,7 +147,7 @@ abstract class Member extends User implements GuildEntity {
   }
 
   @override
-  String get nameString =>
+  String get debugString =>
       "Member ${this.tag} [${this.guild.name}] [${this.id}]";
 
   @override

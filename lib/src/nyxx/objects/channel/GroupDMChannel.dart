@@ -20,7 +20,7 @@ class GroupDMChannel extends MessageChannel {
   }
 
   @override
-  String get nameString =>
+  String get debugString =>
       "Group DM Channel [${this.id}] [${recipients.values.map((f) => f.tag).join(", ")}]";
   //"Group DM Channel: ${recipients.values.map((f) => f.tag).join(", ")}";
 }
