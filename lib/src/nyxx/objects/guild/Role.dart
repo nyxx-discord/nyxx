@@ -1,15 +1,8 @@
 part of nyxx;
 
-void _let<T>(T value, bool checker(T value),
-    {onTrue(T value), onFalse(T value)}) {
-  if (checker(value)) if (onTrue != null)
-    onTrue(value);
-  else if (onFalse != null) onFalse(value);
-}
-
 /// Represents a Discord guild role, which is used to assign priority, permissions, and a color to guild members
 class Role extends SnowflakeEntity
-    implements Mentionable, GuildEntity, Nameable {
+    implements Mentionable, GuildEntity, Debugable {
   /// The role's name.
   String name;
 
@@ -42,7 +35,7 @@ class Role extends SnowflakeEntity
 
   @override
 
-  /// Mention of role. If role cannot be mentioned it returns name of role.
+  /// Mention of role. If role cannot be mentioned it returns name of role (@name)
   String get mention => mentionable ? "<@&${this.id}>" : "@$name";
 
   Nyxx client;
@@ -56,9 +49,10 @@ class Role extends SnowflakeEntity
     this.mentionable = raw['mentionable'] as bool;
     this.permissions = Permissions.fromInt(raw['permissions'] as int);
 
-    _let<int>(raw['color'] as int, (v) => v != 0,
-        onTrue: (v) => this.color = DiscordColor.fromInt(v),
-        onFalse: (v) => this.color = DiscordColor.fromInt(null));
+    var c = raw['color'] as int ?? 0;
+    if(c != 0)
+      this.color = DiscordColor.fromInt(c);
+    else this.color = DiscordColor.fromInt(null);
   }
 
   /// Edits the role.
@@ -87,6 +81,6 @@ class Role extends SnowflakeEntity
   String toString() => mention;
 
   @override
-  String get nameString =>
+  String get debugString =>
       "Role ${this.name} [${this.guild.name}] [${this.id}]";
 }

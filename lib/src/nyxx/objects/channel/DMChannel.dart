@@ -14,5 +14,5 @@ class DMChannel extends MessageChannel {
   }
 
   @override
-  String get nameString => "DM Channel [${this.id}] [${this.recipient.tag}]";
+  String get debugString => "DM Channel [${this.id}] [${this.recipient.tag}]";
 }

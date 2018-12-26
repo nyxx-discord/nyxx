@@ -2,7 +2,7 @@ part of nyxx;
 
 /// A channel.
 /// Abstract base class that defines the base methods and/or properties for all Discord channel types.
-abstract class Channel extends SnowflakeEntity implements Nameable {
+abstract class Channel extends SnowflakeEntity implements Debugable {
   /// The channel's type.
   /// https://discordapp.com/developers/docs/resources/channel#channel-object-channel-types
   int type;

@@ -204,7 +204,7 @@ class MessageChannel extends Channel
   Iterator<Message> get iterator => messages.values.iterator;
 
   @override
-  String get nameString => "Message Channel [${this.id}]";
+  String get debugString => "Message Channel [${this.id}]";
 
   @override
   Future<void> dispose() => Future(() {
