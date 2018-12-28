@@ -76,7 +76,6 @@ class MessageReactionEvent extends MessageEvent {
       else
         emoji = GuildEmoji._partial(json['d']['emoji'] as Map<String, dynamic>);
 
-
       if(added) {
         var r = message.reactions.indexWhere((r) => r.emoji == emoji);
 

@@ -107,8 +107,8 @@ class Message extends SnowflakeEntity implements GuildEntity, Disposable {
         }
       }
 
+      this.roleMentions = Map<Snowflake, Role>();
       if (raw['mention_roles'] != null) {
-        this.roleMentions = Map<Snowflake, Role>();
         raw['mention_roles'].forEach((o) {
           var s = Snowflake(o as String);
           this.roleMentions[s] = guild.roles[s];
@@ -131,8 +131,8 @@ class Message extends SnowflakeEntity implements GuildEntity, Disposable {
       this.editedTimestamp =
           DateTime.parse(raw['edited_timestamp'] as String).toUtc();
 
+    this.mentions = Map<Snowflake, User>();
     if (raw['mentions'] != null && raw['mentions'].isNotEmpty as bool) {
-      this.mentions = Map<Snowflake, User>();
       raw['mentions'].forEach((o) {
         if (o['member'] == null) {
           final user = User._new(o as Map<String, dynamic>, client);
@@ -144,16 +144,16 @@ class Message extends SnowflakeEntity implements GuildEntity, Disposable {
       });
     }
 
+    this.embeds = List<Embed>();
     if (raw['embeds'] != null && raw['embeds'].isNotEmpty as bool) {
-      this.embeds = List<Embed>();
       raw['embeds'].forEach((o) {
         Embed embed = Embed._new(o as Map<String, dynamic>);
         this.embeds.add(embed);
       });
     }
 
+    this.attachments = Map<Snowflake, Attachment>();
     if (raw['attachments'] != null && raw['attachments'].isNotEmpty as bool) {
-      this.attachments = Map<Snowflake, Attachment>();
       raw['attachments'].forEach((o) {
         final Attachment attachment =
             Attachment._new(o as Map<String, dynamic>);
@@ -161,8 +161,8 @@ class Message extends SnowflakeEntity implements GuildEntity, Disposable {
       });
     }
 
+    this.reactions = List();
     if (raw['reactions'] != null && raw['reactions'].isNotEmpty as bool) {
-      this.reactions = List();
       raw['reactions'].forEach((o) {
         this.reactions.add(Reaction._new(o as Map<String, dynamic>));
       });
