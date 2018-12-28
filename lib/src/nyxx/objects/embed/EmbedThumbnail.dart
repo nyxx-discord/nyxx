@@ -30,4 +30,10 @@ class EmbedThumbnail implements Downloadable {
 
   @override
   String toString() => url;
+
+  @override
+  int get hashCode => url.hashCode;
+
+  @override
+  bool operator ==(other) => other is EmbedThumbnail ? other.url == this.url : false;
 }

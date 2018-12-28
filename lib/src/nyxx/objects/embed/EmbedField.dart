@@ -19,4 +19,10 @@ class EmbedField {
 
   @override
   String toString() => "[$name] $content";
+
+  @override
+  int get hashCode => name.hashCode * 37 + content.hashCode * 37 + inline.hashCode * 37;
+
+  @override
+  bool operator ==(other) => other is EmbedField ? other.name== this.name && other.content == this.content && other.inline == this.inline : false;
 }

@@ -26,4 +26,10 @@ class EmbedVideo implements Downloadable {
 
   @override
   String toString() => url;
+
+  @override
+  int get hashCode => url.hashCode;
+
+  @override
+  bool operator ==(other) => other is EmbedVideo ? other.url == this.url : false;
 }

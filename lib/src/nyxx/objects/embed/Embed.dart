@@ -77,4 +77,21 @@ class Embed {
   /// Returns a string representation of this object.
   @override
   String toString() => this.title;
+
+  @override
+  int get hashCode => title.hashCode * 37 +
+      type.hashCode * 37 +
+      description.hashCode * 37 +
+      timestamp.hashCode * 37 +
+      color.hashCode * 37 +
+      footer.hashCode * 37 +
+      thumbnail.hashCode * 37 +
+      provider.hashCode * 37 +
+      image.hashCode * 37 +
+      video.hashCode * 37 +
+      author.hashCode * 37 +
+      fields.map((f) => f.hashCode * 37).reduce((f,s ) => f + s);
+
+  @override
+  bool operator ==(other) => other is EmbedVideo ? other.url == this.url : false;
 }
