@@ -73,7 +73,8 @@ class HttpBase {
       final r = await req.send(this.method);
       return HttpResponse._fromResponse(this, r);
     } on transport.RequestException catch (e) {
-      return new HttpResponse._new(this, e.response.status, e.response.statusText, e.response.headers, {});
+      if(e != null)
+        return new HttpResponse._new(this, e.response.status, e.response.statusText, e.response.headers, {});
     }
   }
 }
