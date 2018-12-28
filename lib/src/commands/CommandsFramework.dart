@@ -285,6 +285,9 @@ class CommandsFramework {
       return;
     }
 
+    if(matchedMeta.methodCommand.type)
+      e.message.channel.startTypingLoop();
+
     var executionCode = -1;
     executionCode = await checkPermissions(matchedMeta, e.message);
 
@@ -388,9 +391,7 @@ class CommandsFramework {
             _onError.add(CommandExecutionError(
                 ExecutionErrorType.commandFailed, e.message, err, stack));
           });
-        }
-
-        if (matchedMeta.parent is LibraryMirror) {
+        } else if (matchedMeta.parent is LibraryMirror) {
           var context = CommandContext._new(this.client,
               e.message.channel, e.message.author, e.message.guild, e.message);
 
@@ -409,6 +410,9 @@ class CommandsFramework {
                 ExecutionErrorType.commandFailed, e.message, err, stack));
           });
         }
+
+        if(matchedMeta.methodCommand.type)
+          e.message.channel.stopTypingLoop();
 
         _logger.info(
             "Command ${_createLog(matchedMeta.parentCommand, matchedMeta.methodCommand)} executed");
