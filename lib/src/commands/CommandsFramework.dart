@@ -285,7 +285,7 @@ class CommandsFramework {
       return;
     }
 
-    if(matchedMeta.methodCommand.type)
+    if(matchedMeta.methodCommand.typing)
       e.message.channel.startTypingLoop();
 
     var executionCode = -1;
@@ -411,7 +411,7 @@ class CommandsFramework {
           });
         }
 
-        if(matchedMeta.methodCommand.type)
+        if(matchedMeta.methodCommand.typing)
           e.message.channel.stopTypingLoop();
 
         _logger.info(
