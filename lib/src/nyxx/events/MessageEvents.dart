@@ -61,7 +61,7 @@ class MessageReactionEvent extends MessageEvent {
   /// Emoji object.
   Emoji emoji;
 
-  MessageReactionEvent._new(Map<String, dynamic> json, Nyxx client) {
+  MessageReactionEvent._new(Map<String, dynamic> json, Nyxx client, bool added) {
     this.user = client.users[Snowflake(json['d']['user_id'] as String)];
     this.channel = client.channels[Snowflake(json['d']['channel_id'] as String)]
         as MessageChannel;
@@ -75,6 +75,26 @@ class MessageReactionEvent extends MessageEvent {
         emoji = UnicodeEmoji((json['d']['emoji']['name'] as String));
       else
         emoji = GuildEmoji._partial(json['d']['emoji'] as Map<String, dynamic>);
+
+
+      if(added) {
+        var r = message.reactions.indexWhere((r) => r.emoji == emoji);
+
+        if(r == -1) {
+          var reaction = Reaction._event(emoji, user == client.self);
+          message.reactions.add(reaction);
+        } else
+          message.reactions[r].count++;
+      } else {
+        var r = message.reactions.indexWhere((r) => r.emoji == emoji);
+
+        if(r != -1) {
+          if(message.reactions[r].count == 1)
+            message.reactions.removeAt(r);
+          else
+            message.reactions[r].count--;
+        }
+      }
     });
   }
 }
@@ -122,6 +142,7 @@ class MessageDeleteBulkEvent {
   }
 }
 
+// TODO: Complete
 /// Sent when a message is updated.
 class MessageUpdateEvent {
   /// The old message, if cached.
@@ -134,10 +155,30 @@ class MessageUpdateEvent {
     var channel = client.channels[Snowflake(json['d']['channel_id'] as String)]
         as MessageChannel;
     this.oldMessage = channel.messages[Snowflake(json['d']['id'] as String)];
+    this.newMessage = Message._new(json['d'] as Map<String, dynamic>, client);
+   if (oldMessage != null) {
+    if(oldMessage.content != newMessage.content)
+      oldMessage.content = newMessage.content;
 
-    if (oldMessage != null) {
-      this.newMessage =
-          Message._combine(oldMessage, json['d'] as Map<String, dynamic>);
-    }
+    if(oldMessage.embeds != newMessage.embeds)
+      oldMessage.embeds = newMessage.embeds;
+
+    if(oldMessage.mentions != newMessage.mentions)
+      oldMessage.mentions = newMessage.mentions;
+
+    if(oldMessage.roleMentions != newMessage.roleMentions)
+      oldMessage.roleMentions = newMessage.roleMentions;
+
+    if(oldMessage.attachments != newMessage.attachments)
+      oldMessage.attachments = newMessage.attachments;
+
+    if(oldMessage.pinned != newMessage.pinned)
+      oldMessage.pinned = newMessage.pinned;
+
+    if(oldMessage.reactions != newMessage.reactions)
+      oldMessage.reactions = newMessage.reactions;
+
+    oldMessage.editedTimestamp = newMessage.editedTimestamp;
+   }
   }
 }
