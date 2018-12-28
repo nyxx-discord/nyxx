@@ -262,21 +262,9 @@ class Message extends SnowflakeEntity implements GuildEntity, Disposable {
     _onReactionAdded.close();
     _onReactionRemove.close();
     _onReactionsRemoved.close();
-
-    if (embeds != null) {
-      embeds.clear();
-    }
-
-    if (mentions != null) {
-      mentions.clear();
-    }
-
-    if (roleMentions != null) {
-      roleMentions.clear();
-    }
-
-    if (attachments != null) {
-      attachments.clear();
-    }
+    if (embeds != null) embeds.clear();
+    if (mentions != null) mentions.clear();
+    if (roleMentions != null) roleMentions.clear();
+    if (attachments != null) attachments.clear();
   }
 }
