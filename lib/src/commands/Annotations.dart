@@ -30,8 +30,11 @@ class Command extends Module {
   /// True if command should be main
   final bool main;
 
+  /// When command is executed bot will indicate 'typing'. Used for long running commands.
+  final bool type;
+
   const Command(
-      {String name, List<String> aliases = const [], this.main = true})
+      {String name, this.type = false, List<String> aliases = const [], this.main = true})
       : super(name, aliases: aliases);
 }
 
