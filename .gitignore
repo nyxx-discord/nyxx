@@ -3,6 +3,7 @@ local/
 .atom/
 .vscode/
 index.html
+docs/
 
 # See https://github.com/matanlurey/gitignore
 
