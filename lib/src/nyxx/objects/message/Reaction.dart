@@ -21,4 +21,8 @@ class Reaction {
     else
       emoji = GuildEmoji._partial(rawEmoji);
   }
+
+  Reaction._event(this.emoji, this.me) {
+    count = 1;
+  }
 }
