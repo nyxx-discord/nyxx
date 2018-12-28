@@ -17,9 +17,6 @@ abstract class Member extends User implements GuildEntity {
   /// The member's nickname, null if not set.
   String nickname;
 
-  /// The member's status. `offline`, `online`, `idle`, or `dnd`.
-  MemberStatus status;
-
   /// When the member joined the guild.
   DateTime joinedAt;
 
@@ -28,9 +25,6 @@ abstract class Member extends User implements GuildEntity {
 
   /// Weather or not the member is muted.
   bool mute;
-
-  /// The member's game.
-  Presence presence;
 
   /// A list of role IDs the member has.
   List<Role> roles;

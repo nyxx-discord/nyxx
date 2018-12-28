@@ -24,6 +24,12 @@ class User extends SnowflakeEntity with ISend, Mentionable, Debugable {
   /// Whether or not the user is a bot.
   bool bot;
 
+  /// The member's status. `offline`, `online`, `idle`, or `dnd`.
+  MemberStatus status;
+
+  /// The member's game.
+  Presence presence;
+
   User._new(Map<String, dynamic> raw, this.client) : super(Snowflake(raw['id'] as String)) {
     this.username = raw['username'] as String;
     this.discriminator = raw['discriminator'] as String;

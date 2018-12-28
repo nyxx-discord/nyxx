@@ -209,7 +209,7 @@ class Shard implements Disposable {
             break;
 
           case 'MESSAGE_REACTION_ADD':
-            var m = MessageReactionEvent._new(msg, _ws._client);
+            var m = MessageReactionEvent._new(msg, _ws._client, true);
             if(m.message != null) {
               _ws._client._events.onMessageReactionAdded.add(m);
               _ws._client._events.onMessage.add(m);
@@ -218,7 +218,7 @@ class Shard implements Disposable {
             break;
 
           case 'MESSAGE_REACTION_REMOVE':
-            var m = MessageReactionEvent._new(msg, _ws._client);
+            var m = MessageReactionEvent._new(msg, _ws._client, false);
 
             if(m.message != null) {
               m.message._onReactionAdded.add(m);
@@ -339,6 +339,7 @@ class Shard implements Disposable {
             break;
 
           case 'PRESENCE_UPDATE':
+            _ws._client._events.onPresenceUpdate.add(PresenceUpdateEvent._new(msg, _ws._client));
             _ws._client._events.onPresenceUpdate.add(PresenceUpdateEvent._new(msg, _ws._client));
             break;
 
