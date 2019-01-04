@@ -12,7 +12,7 @@ abstract class Cache<T, S> implements Disposable {
   Iterable<T> get keys => _cache.keys;
 
   /// Find one element in cache
-  S findOne(bool f(S item)) => values.firstWhere(f);
+  S findOne(bool f(S item)) => values.firstWhere(f, orElse: () => null);
 
   /// Find many elements of cache which satisfies [predicate]
   Iterable<S> find(bool predicate(S item)) => values.where(predicate);
