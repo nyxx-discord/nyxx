@@ -224,7 +224,7 @@ class Nyxx implements Disposable {
   /// ```
   /// var channel = await client.getChannel<TextChannel>(Snowflake('473853847115137024'));
   /// ```
-  Future<T> getChannel<T>(Snowflake id, {Guild guild}) async {
+  Future<T> getChannel<T extends Channel>(Snowflake id, {Guild guild}) async {
     if (this.channels.hasKey(id)) return this.channels[id] as T;
 
     var raw = (await this._http.send("GET", "/channels/${id.toString()}")).body
