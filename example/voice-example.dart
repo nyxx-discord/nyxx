@@ -27,6 +27,10 @@ void main() {
       var channel = e.message.guild.channels.values
           .firstWhere((ch) => ch is nyxx.VoiceChannel) as nyxx.VoiceChannel;
 
+      // or get channel of user. Cast author field to member, then fetch
+      // channel from VoiceState object.
+      channel = (e.message.author as nyxx.Member).voiceState.channel;
+
       // Connect to channel
       await player.connect(channel);
 
