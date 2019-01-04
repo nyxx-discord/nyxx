@@ -52,33 +52,33 @@ class Presence {
 
     if (raw['timestamps'] != null) {
       if (raw['timestamps']['start'] != null) {
-        start = DateTime.fromMillisecondsSinceEpoch(
+        this.start = DateTime.fromMillisecondsSinceEpoch(
             raw['timestamps']['start'] as int);
       }
 
       if (raw['timestamps']['end'] != null) {
-        end = DateTime.fromMillisecondsSinceEpoch(
+        this.end = DateTime.fromMillisecondsSinceEpoch(
             raw['timestamps']['end'] as int);
       }
     }
 
     if (raw['application_id'] != null)
-      applicationId = Snowflake(raw['application_id'] as String);
+      this.applicationId = Snowflake(raw['application_id'] as String);
 
-    details = raw['details'] as String;
-    state = raw['state'] as String;
+    this.details = raw['details'] as String;
+    this.state = raw['state'] as String;
 
     if (raw['party'] != null)
-      party = GameParty._new(raw['party'] as Map<String, dynamic>);
+      this.party = GameParty._new(raw['party'] as Map<String, dynamic>);
 
     if (raw['assets'] != null)
-      assets = GameAssets._new(raw['assets'] as Map<String, dynamic>);
+      this.assets = GameAssets._new(raw['assets'] as Map<String, dynamic>);
 
     if (raw['secrets'] != null)
-      secrets = GameSecrets._new(raw['secrets'] as Map<String, dynamic>);
+      this.secrets = GameSecrets._new(raw['secrets'] as Map<String, dynamic>);
 
-    instance = raw['instance'] as bool;
-    activityFlags = raw['flags'] as int;
+    this.instance = raw['instance'] as bool;
+    this.activityFlags = raw['flags'] as int;
   }
 }
 
@@ -117,11 +117,11 @@ class GameParty {
   int maxSize;
 
   GameParty._new(Map<String, dynamic> raw) {
-    id = raw['id'] as String;
+    this.id = raw['id'] as String;
 
     if (raw['size'] != null) {
-      currentSize = raw['size'].first as int;
-      maxSize = raw['size'].last as int;
+      this.currentSize = raw['size'].first as int;
+      this.maxSize = raw['size'].last as int;
     }
   }
 }
@@ -141,10 +141,10 @@ class GameAssets {
   String smallText;
 
   GameAssets._new(Map<String, dynamic> raw) {
-    largeImage = raw['large_image'] as String;
-    largeText = raw['large_text'] as String;
-    smallImage = raw['small_image'] as String;
-    smallText = raw['small_text'] as String;
+    this.largeImage = raw['large_image'] as String;
+    this.largeText = raw['large_text'] as String;
+    this.smallImage = raw['small_image'] as String;
+    this.smallText = raw['small_text'] as String;
   }
 }
 
@@ -160,8 +160,8 @@ class GameSecrets {
   String match;
 
   GameSecrets._new(Map<String, dynamic> raw) {
-    join = raw['join'] as String;
-    spectate = raw['spectate'] as String;
-    match = raw['match'] as String;
+    this.join = raw['join'] as String;
+    this.spectate = raw['spectate'] as String;
+    this.match = raw['match'] as String;
   }
 }
