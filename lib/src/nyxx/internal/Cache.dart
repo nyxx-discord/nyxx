@@ -13,16 +13,9 @@ abstract class Cache<T, S> implements Disposable {
 
   /// Find one element in cache
   S findOne(bool f(S item)) => values.firstWhere(f);
-  Iterable<S> find(bool f(S item)) => values.where(f);
 
-  /// Returns Map of keys and values where values are of type [G]
-  Map<T, G> whereType<G>() {
-    var tmp = Map<T, G>();
-    _cache.forEach((k, v) {
-      if (v is G) tmp[k] = v;
-    });
-    return tmp;
-  }
+  /// Find many elements of cache which satisfies [predicate]
+  Iterable<S> find(bool predicate(S item)) => values.where(predicate);
 
   /// Returns element with key [key]
   S operator [](T key) => _cache[key];
@@ -47,17 +40,6 @@ abstract class Cache<T, S> implements Disposable {
 
   /// Add to cache [value] associated with [key]
   void add(T key, S value) => _cache[key] = value;
-
-  /// Combines [keys] with [values] - First elements with [keys] creates pair with first value from [values]
-  /// Collection have to be same length
-  void addMany(List<T> keys, List<S> values) {
-    if (keys.length != values.length)
-      throw new Exception("Cannot combine Iterables with different length!");
-
-    for (var i = 0; i < keys.length; i++) {
-      _cache[keys[i]] = values[i];
-    }
-  }
 
   /// Add [Map] to cache.
   void addMap(Map<T, S> mp) => _cache.addAll(mp);
@@ -201,17 +183,4 @@ class MessageCache extends Cache<Snowflake, Message> {
   @override
   void operator []=(Snowflake key, Message item) =>
       throw new Exception("Unsupported operation. Use put() instead");
-}
-
-/// Cache which is cleaned up.
-class VoltCache<T, S> extends Cache<T, S> {
-  VoltCache(Duration duration, bool roundup(T key, S value, Timer t)) {
-    _cache = Map();
-
-    Timer.periodic(duration, (t) {
-      _cache.forEach((k, v) {
-        if (roundup(k, v, t)) _cache.remove(k);
-      });
-    });
-  }
 }
