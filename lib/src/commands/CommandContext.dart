@@ -88,14 +88,15 @@ class CommandContext {
           builder: builder,
           disableEveryone: disableEveryone).then((msg) {
         Timer(duration, () => msg.delete());
+        return msg;
       });
   }
 
-  /// Replies to messages after specified [duration]
+  /// Replies to message after delay specified with [duration]
   /// ```
   /// @Command()
   /// Future<void> getAv(User user) async {
-  ///   await replyDelayed(Duration(seconds: 2), content: uset.avatarURL());
+  ///   await replyDelayed(Duration(seconds: 2), content: user.avatarURL());
   /// }
   /// ```
   Future<Message> replyDelayed(Duration duration,
@@ -143,11 +144,11 @@ class CommandContext {
   Future<TypingEvent> waitForTyping(User user,
       {Duration timeout = const Duration(seconds: 30)}) async {
     return client.onTyping
-        .firstWhere((e) => e.user == user)
+        .firstWhere((e) => e.user == user && e.channel == this.channel)
         .timeout(timeout, onTimeout: () => null);
   }
 
-  /// Gets all context channel messages that satisfies test.
+  /// Gets all context channel messages that satisfies [predicate].
   ///
   /// ```
   /// @Command()
@@ -156,9 +157,9 @@ class CommandContext {
   /// }
   /// ```
   Stream<MessageReceivedEvent> nextMessagesWhere(
-          bool func(MessageReceivedEvent msg),
+          bool predicate(MessageReceivedEvent msg),
           {int limit = 100}) =>
-      channel.onMessage.where(func).take(limit);
+      channel.onMessage.where(predicate).take(limit);
 
   /// Gets next [num] number of any messages sent within one context (same channel).
   ///
