@@ -23,6 +23,12 @@ class Snowflake implements Comparable<Snowflake> {
   /// Full snowflake id
   String get id => _id;
 
+  /// Checks if given [Snowflake] [s] is created before this instance
+  bool isBefore(Snowflake s) => this.timestamp.isBefore(s.timestamp);
+
+  /// Checks if given [Snowflake] [s] is created after this instance
+  bool isAfter(Snowflake s) => this.timestamp.isAfter(s.timestamp);
+
   /// Compares two Snowflakes based on creation date
   static int compareDates(Snowflake first, Snowflake second) =>
       first.timestamp.compareTo(second.timestamp);
@@ -40,7 +46,8 @@ class Snowflake implements Comparable<Snowflake> {
   @override
   String toString() => _id;
 
-  num toNum() => int.parse(this._id);
+  /// Returns [Snowflake] as [int]
+  int toInt() => int.parse(this._id);
 
   @override
   bool operator ==(other) {
