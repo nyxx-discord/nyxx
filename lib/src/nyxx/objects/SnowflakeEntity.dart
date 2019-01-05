@@ -13,7 +13,7 @@ class SnowflakeEntity {
   DateTime get createdAt => id.timestamp;
 
   @override
-  int get hashCode => id.id.hashCode;
+  int get hashCode => id.hashCode;
 
   @override
   bool operator ==(other) {
