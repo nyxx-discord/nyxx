@@ -172,7 +172,7 @@ class Message extends SnowflakeEntity implements GuildEntity, Disposable {
     this.channel.lastMessageID = this.id;
   }
 
-  /// Returns mention of message
+  /// Returns content of message
   @override
   String toString() => this.content;
 

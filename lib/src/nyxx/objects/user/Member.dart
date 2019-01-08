@@ -41,7 +41,7 @@ abstract class Member extends User implements GuildEntity {
 
   DiscordColor get color => highestRole.color;
 
-  /// Voice state
+  /// Voice state of member
   VoiceState get voiceState => guild.voiceStates[this.id];
 
   /// Returns total permissions of user.
@@ -79,7 +79,7 @@ abstract class Member extends User implements GuildEntity {
       this.presence = Presence._new(data['game'] as Map<String, dynamic>);
   }
 
-  /// Checks if member has specified role
+  /// Checks if member has specified role. Returns true if user is assigned to giver [role].
   bool hasRole(bool Function(Role role) func) => this.roles.any(func);
 
   /// Bans the member and optionally deletes [deleteMessageDays] days worth of messages.
@@ -87,7 +87,6 @@ abstract class Member extends User implements GuildEntity {
       {int deleteMessageDays = 0,
       String reason,
       String auditReason = ""}) async {
-
 
     await client._http.send('PUT', "/guilds/${this.guild.id}/bans/${this.id}",
         body: {"delete-message-days": deleteMessageDays, "reason": reason},
@@ -106,21 +105,21 @@ abstract class Member extends User implements GuildEntity {
         reason: auditReason);
   }
 
+  /// Removes [role] from user.
   Future<void> removeRole(Role role, {String auditReason = ""}) async {
     await client._http.send("DELETE",
         "/guilds/${this.guild.id.toString()}/members/${this.id.toString()}/roles/${role.id.toString()}",
         reason: auditReason);
   }
 
-  /// Kicks the member
+  /// Kicks the member from guild
   Future<void> kick({String auditReason = ""}) async {
     await client._http.send(
         'DELETE', "/guilds/${this.guild.id}/members/${this.id}",
         reason: auditReason);
   }
 
-  /// Edits the user.
-  /// Allows to move user in voice channel, mute or deaf, change nick, roles.
+  /// Edits members. Allows to move user in voice channel, mute or deaf, change nick, roles.
   Future<void> edit(
       {String nick,
       List<Role> roles,
