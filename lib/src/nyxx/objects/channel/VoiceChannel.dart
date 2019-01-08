@@ -38,5 +38,5 @@ class VoiceChannel extends Channel with GuildChannel {
   }
   
   @override
-  String get debugString => "[${this.guild.name}] Voice Channel [${this.id}]";
+  String get debugString => "[${this.guild.name}] Voice Channel [${this.id} $name]";
 }

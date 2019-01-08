@@ -89,7 +89,7 @@ class TextChannel extends MessageChannel
   }
 
   @override
-  String get debugString => "[${this.guild.name}] Text Channel [${this.id}]";
+  String get debugString => "[${this.guild.name}] Text Channel [${this.id} $name]";
 
   @override
 
