@@ -1,9 +1,7 @@
 part of nyxx;
 
 class MessageBuilder {
-  String _content = "";
-
-  set content(Object content) => _content = content.toString();
+  Object _content = "";
   EmbedBuilder embed;
   bool tts;
   List<File> files;
@@ -14,5 +12,5 @@ class MessageBuilder {
     builder(embed);
   }
 
-  void append(String text) => _content += text;
+  void append(String text) => _content = "$_content$text";
 }
