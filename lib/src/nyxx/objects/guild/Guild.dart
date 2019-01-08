@@ -482,7 +482,7 @@ class Guild extends SnowflakeEntity implements Disposable, Debugable {
     }
   }
 
-  /// Moves channel
+  /// Moves channel. [newPosition] is absolute.
   ///
   /// ```
   /// await guild.moveChannel(chan, 8);
@@ -494,9 +494,9 @@ class Guild extends SnowflakeEntity implements Disposable, Debugable {
         reason: auditReason);
   }
 
-  /// Bans a user.
-  ///
+  /// Bans a user and allows to delete messages from [deleteMessageDays] number of days.
   /// ```
+  ///
   /// await guild.ban(member);
   /// ```
   Future<void> ban(Member member,
@@ -588,7 +588,7 @@ class Guild extends SnowflakeEntity implements Disposable, Debugable {
   }
 
   @override
-  Future<Null> dispose() async {
+  Future<void> dispose() async {
     await channels.dispose();
     await members.dispose();
     await roles.dispose();
