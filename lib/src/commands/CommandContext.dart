@@ -121,7 +121,7 @@ class CommandContext {
   /// ```
   /// @Command()
   /// Future<void> getAv(User user) async {
-  ///   var msg = await replyDelayed(content: uset.avatarURL());
+  ///   var msg = await replyDelayed(content: user.avatarURL());
   ///   var emojis = await collectEmojis(msg, Duration(seconds: 15));
   /// }
   /// ```
