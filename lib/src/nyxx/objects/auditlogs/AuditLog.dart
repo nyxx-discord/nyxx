@@ -26,7 +26,7 @@ class AuditLog {
     if(targetId != null)
       return entries.values.where((entry) => targetId.contains(entry.targetId));
 
-    return Iterable.empty();
+    return const Iterable.empty();
   }
 
   AuditLog._new(Map<String, dynamic> raw, Nyxx client) {
