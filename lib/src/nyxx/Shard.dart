@@ -126,7 +126,7 @@ class Shard implements Disposable {
     if (msg['s'] != null) this._sequence = msg['s'] as int;
 
     switch (msg['op'] as int) {
-      case _OPCodes.HELLP:
+      case _OPCodes.hello:
         if (this._sessionId == null || !resume) {
           Map<String, dynamic> identifyMsg = <String, dynamic>{
             "token": _ws._client._token,
@@ -155,7 +155,7 @@ class Shard implements Disposable {
 
         break;
 
-      case _OPCodes.INVALID_SESSION:
+      case _OPCodes.invalidSession:
         _logger.severe("Invalid session. Reconnecting...");
         _heartbeatTimer.cancel();
         _ws._client._events.onDisconnect.add(DisconnectEvent._new(this, 9));
@@ -169,7 +169,7 @@ class Shard implements Disposable {
 
         break;
 
-      case _OPCodes.DISPATCH:
+      case _OPCodes.dispatch:
         var j = msg['t'] as String;
         switch (j) {
           case 'READY':

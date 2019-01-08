@@ -15,7 +15,7 @@ Future<void> sendFakeOp4(VoiceChannel channel,
   }
 }
 
-/// Creates voice service. [yamlConfigFile] is absolute path to lavalink config file.
+/// Creates voice service and connects to lavalink. [ws] is websocket connection String, [rest] is rest lavalink connection string. [password] to lavalink instance.
 /// Returns instance of VoiceService
 VoiceService init(String ws, String rest, String password, Nyxx client) {
   if (_manager != null) throw Exception("Tried initialize VoiceService twice.");

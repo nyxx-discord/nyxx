@@ -79,7 +79,7 @@ class Player {
 
   /// Changes channel to other. Allows to optionally set mute and deafen.
   Future<void> changeChannel(VoiceChannel channel,
-      {bool muted = false, bool deafen = false}) {
+      {bool muted = false, bool deafen = false}) async {
     currentChannel = channel;
     _guild.client.shard.send("VOICE_STATE_UPDATE",
         _Opcode4(_guild, channel, muted, deafen)._build());

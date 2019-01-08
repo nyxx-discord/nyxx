@@ -25,8 +25,6 @@ class CooldownCache {
       int now = DateTime.now().millisecondsSinceEpoch;
       var node = _CacheKey._new(userId, commandName);
 
-      bool found = false;
-
       /// Search for entry
       if (!_cache.containsKey(node))
       {
