@@ -9,7 +9,6 @@ import 'nyxx.dart';
 import 'package:logging/logging.dart';
 import 'package:w_transport/w_transport.dart' as transport;
 
-import 'dart:io';
 import 'dart:async';
 import 'dart:convert';
 

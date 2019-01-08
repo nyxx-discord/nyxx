@@ -611,13 +611,6 @@ class ChannelType {
   @override
   String toString() => _value.toString();
 
-  @override
-  int get hashCode => _value.hashCode;
-
-  //@override
-  //bool operator ==(other) =>
-  //    other is ChannelType && other._value == this._value;
-
   static const ChannelType text = ChannelType._create(0);
   static const ChannelType voice = ChannelType._create(2);
   static const ChannelType group = ChannelType._create(4);

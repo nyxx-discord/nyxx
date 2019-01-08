@@ -37,7 +37,7 @@ class ChangeKeyType {
   static const ChangeKeyType $remove = ChangeKeyType._of("\$remove");
   static const ChangeKeyType pruneDeleteDays = ChangeKeyType._of("prune_delete_days");
   static const ChangeKeyType widgetEnabled = ChangeKeyType._of("widget_enabled");
-  static const ChangeKeyType widget_channel_id = ChangeKeyType._of("widget_channel_id");
+  static const ChangeKeyType widgetChannelId = ChangeKeyType._of("widget_channel_id");
   static const ChangeKeyType position = ChangeKeyType._of("position");
   static const ChangeKeyType topic = ChangeKeyType._of("topic");
   static const ChangeKeyType bitrate = ChangeKeyType._of("bitrate");

@@ -45,7 +45,7 @@ class AliasCommand extends command.CommandContext {
   // This command features `nextMessages()` method. Reade more here:
   @command.Command(name: "witam")
   Future witam() async {
-    var messages = await nextMessages(2);
+    var messages = await nextMessages(2).toList();
     print(messages);
   }
 }

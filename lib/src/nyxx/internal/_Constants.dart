@@ -1,48 +1,48 @@
 part of nyxx;
 
 class _OPCodes {
-  static const int DISPATCH = 0;
-  static const int HEARTBEAT = 1;
-  static const int IDENTIFY = 2;
-  static const int STATUS_UPDATE = 3;
-  static const int VOICE_STATE_UPDATE = 4;
-  static const int VOICE_GUILD_PING = 5;
-  static const int RESUME = 6;
-  static const int RECONNECT = 7;
-  static const int REQUEST_GUILD_MEMBER = 8;
-  static const int INVALID_SESSION = 9;
-  static const int HELLP = 10;
-  static const int HEARBEAT_ACK = 11;
-  static const int GUILD_SYNC = 12;
+  static const int dispatch = 0;
+  static const int heartbeat = 1;
+  static const int identify = 2;
+  static const int statusUpdate = 3;
+  static const int voiceStateUpdate = 4;
+  static const int voiceGuildPing = 5;
+  static const int resume = 6;
+  static const int reconnect = 7;
+  static const int requestGuildMember = 8;
+  static const int invalidSession = 9;
+  static const int hello = 10;
+  static const int heartbeatAck = 11;
+  static const int guildSync = 12;
 
   static int matchOpCode(String op) {
     switch (op) {
       case "DISPATCH":
-        return DISPATCH;
+        return dispatch;
       case "HEARTBEAT":
-        return HEARTBEAT;
+        return heartbeat;
       case "IDENTIFY":
-        return IDENTIFY;
+        return identify;
       case "STATUS_UPDATE":
-        return STATUS_UPDATE;
+        return statusUpdate;
       case "VOICE_STATE_UPDATE":
-        return VOICE_STATE_UPDATE;
+        return voiceStateUpdate;
       case "VOICE_GUILD_PING":
-        return VOICE_GUILD_PING;
+        return voiceGuildPing;
       case "RESUME":
-        return RESUME;
+        return resume;
       case "RECONNECT":
-        return RECONNECT;
+        return reconnect;
       case "REQUEST_GUILD_MEMBERS":
-        return REQUEST_GUILD_MEMBER;
+        return requestGuildMember;
       case "INVALID_SESSION":
-        return INVALID_SESSION;
+        return invalidSession;
       case "HELLO":
-        return HELLP;
+        return hello;
       case "HEARTBEAT_ACK":
-        return HEARBEAT_ACK;
+        return heartbeatAck;
       case "GUILD_SYNC":
-        return GUILD_SYNC;
+        return guildSync;
       default:
         throw Exception("Invalid opCode: $op");
     }

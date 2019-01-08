@@ -39,12 +39,12 @@ class RunesConverter implements command.TypeConverter<CustomType> {
 @command.Command(name: "test")
 class TestCommand extends command.CommandContext {
   @command.Command(main: true)
-  Future<Null> run() async {
+  Future<void> run() async {
     await reply(content: "test is working correctly");
   }
 
   @command.Command(name: "ttest")
-  Future<Null> test(int param, StringService service) async {
+  Future<void> test(int param, StringService service) async {
     var msg = await reply(content: "$param, ${service.data}");
     await msg.delete();
   }
@@ -54,7 +54,7 @@ class TestCommand extends command.CommandContext {
 class CooldownCommand extends command.CommandContext {
   @command.Command(main: true)
   @command.Restrict(cooldown: 10)
-  run() async {}
+  Future<void> run() async { }
 }
 
 @command.Command(name: "runes")
@@ -78,12 +78,10 @@ nyxx.EmbedBuilder createTestEmbed() {
 
 void main() {
   nyxx.configureNyxxForVM();
-
   nyxx.setupDefaultLogging();
 
   var env = Platform.environment;
   var bot = nyxx.Nyxx(env['DISCORD_TOKEN'], ignoreExceptions: false);
-
   command.CommandsFramework(bot, prefix: '~~', ignoreBots: false)
     ..discoverServices()
     ..discoverCommands()
@@ -179,7 +177,7 @@ void main() {
   bot.onMessageReceived.listen((e) async {
     var m = e.message;
 
-    if (m.channel.id != "422285619952222208" && m.author.id != bot.self.id)
+    if (m.channel.id != nyxx.Snowflake("422285619952222208") && m.author.id != bot.self.id)
       return;
 
     if (ddel.any((d) => d.startsWith(m.content))) await m.delete();

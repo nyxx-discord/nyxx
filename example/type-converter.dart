@@ -45,8 +45,4 @@ class PongCommand extends command.CommandContext {
   // Accepting Ex instance as parameter. Argument will be converter to Ex.
   @command.Command(main: true)
   Future run(Ex ex) async => await reply(content: ex.gg);
-
-  @override
-  void getHelp(bool isAdmin, StringBuffer buffer) =>
-      buffer.writeln("* ping - Returns ex.");
 }
