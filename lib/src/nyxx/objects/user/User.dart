@@ -27,7 +27,7 @@ class User extends SnowflakeEntity with ISend, Mentionable, Debugable {
   /// The member's status. `offline`, `online`, `idle`, or `dnd`.
   MemberStatus status;
 
-  /// The member's game.
+  /// The member's presence.
   Presence presence;
 
   User._new(Map<String, dynamic> raw, this.client) : super(Snowflake(raw['id'] as String)) {
