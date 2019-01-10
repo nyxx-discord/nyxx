@@ -1,4 +1,4 @@
-part of nyxx.parser;
+part of nyxx.commands;
 
 typedef Future<void> commandHandler(Message message, Member author, MessageChannel channel, List<String> args);
 
