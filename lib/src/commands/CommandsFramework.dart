@@ -10,10 +10,8 @@ T getCmdAnnot<T>(DeclarationMirror declaration) {
 /// Gets all annotations with type [T] from [declaration]
 Iterable<T> getCmdAnnots<T>(DeclarationMirror declaration) sync* {
   for (var instance in declaration.metadata)
-    if (instance.hasReflectee) {
-      var reflectee = instance.reflectee;
-      if (reflectee is T) yield reflectee;
-    }
+    if (instance.hasReflectee && instance.reflectee is T)
+      yield instance.reflectee as T;
 }
 
 /// Main point of commands in nyx.
@@ -43,13 +41,14 @@ class CommandsFramework {
       Stream<MessageEvent> stream,
       Duration roundupTime = const Duration(minutes: 2),
       bool ignoreBots = true,
-      List<Snowflake> admins}) {
+      List<Snowflake> admins = const []}) {
     this._commands = List();
     _cooldownCache = CooldownCache(roundupTime);
     _admins = admins;
 
     _onError = StreamController.broadcast();
     onError = _onError.stream;
+
     _typeConverters = List();
 
     client.onReady.listen((_) {
@@ -646,7 +645,7 @@ class CommandsFramework {
   bool _isUserAdmin(Snowflake authorId, Guild guild) {
     if (guild == null) return true;
 
-    return (_admins != null && _admins.any((i) => i == authorId)) ||
+    return (_admins.any((i) => i == authorId)) ||
         guild.owner.id == authorId;
   }
 }
