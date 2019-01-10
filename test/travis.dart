@@ -23,18 +23,6 @@ class StringService extends command.Service {
   StringService();
 }
 
-/*
-class CustomType {
-  String val;
-
-  CustomType(this.val);
-}
-
-class RunesConverter implements command.TypeConverter<CustomType> {
-  @override
-  Future<CustomType> parse(String from, nyxx.Message msg) async => CustomType(from);
-}*/
-
 // Somme commands to test CommandsFramework behaviour
 @command.Command(name: "test")
 class TestCommand extends command.CommandContext {
@@ -55,15 +43,6 @@ class CooldownCommand extends command.CommandContext {
   @command.Command(main: true)
   @command.Restrict(cooldown: 10)
   Future<void> run() async { }
-}
-
-@command.Command(name: "runes")
-Future<void> getRunes(command.CommandContext ctx, Runes runes) async {
-    if(runes.length <= 0)
-      throw Exception("Converting error");
-
-    var msg = await ctx.reply(content: "Converting successfull");
-    await msg.delete(auditReason: "This is reason");
 }
 
 // -------------------------------------------------------
@@ -136,6 +115,10 @@ void main() {
     print("TESTING BASIC FUNCTIONALITY!");
     var m = await channel.send(content: "Message test.");
     await m.edit(content: "Edit test.");
+
+    await m.createReaction(nyxx.UnicodeEmoji('😋'));
+    await m.deleteReaction(nyxx.UnicodeEmoji('😋'));
+
     await m.delete();
     await channel.send(content: "--trigger-test");
 
@@ -161,12 +144,6 @@ void main() {
     var f = await channel
         .send(content: "PLIK SIEMA", files: [new File("test/kitty.webp")]);
     await f.delete();
-
-    /*
-    print("TESTING TYPECONVERTER");
-    var g = await channel.send(content: "~~runes SIEMA");
-    await g.delete(auditReason: "Reason on deleting");
-    */
 
     print("TESTING EMBEDS");
     var e =
