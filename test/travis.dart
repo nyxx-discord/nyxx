@@ -23,27 +23,20 @@ class StringService extends command.Service {
   StringService();
 }
 
-// Somme commands to test CommandsFramework behaviour
-@command.Command(name: "test")
-class TestCommand extends command.CommandContext {
-  @command.Command(main: true)
-  Future<void> run() async {
-    await reply(content: "test is working correctly");
-  }
-
-  @command.Command(name: "ttest")
-  Future<void> test(int param, StringService service) async {
-    var msg = await reply(content: "$param, ${service.data}");
-    await msg.delete();
-  }
+@command.Command("test")
+Future<void> run(command.CommandContext ctx) async {
+  await ctx.reply(content: "test is working correctly");
 }
 
-@command.Command(name: "cooldown", aliases: ["culdown"])
-class CooldownCommand extends command.CommandContext {
-  @command.Command(main: true)
-  @command.Restrict(cooldown: 10)
-  Future<void> run() async { }
+@command.Command("test ttest")
+Future<void> run2(command.CommandContext ctx, StringService service, String param) async {
+  var msg = await ctx.reply(content: "$param, ${service.data}");
+  await msg.delete();
 }
+
+@command.Command("cooldown", aliases: ["culdown"])
+@command.Restrict(cooldown: 10)
+Future<void> cooldownRun() async { }
 
 // -------------------------------------------------------
 
