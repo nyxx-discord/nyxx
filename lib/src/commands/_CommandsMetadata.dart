@@ -4,7 +4,6 @@ class _CommandMetadata {
   MethodMirror method;
   ObjectMirror parent;
 
-  Module parentCommand;
   Command methodCommand;
 
   Restrict restrict;
@@ -12,9 +11,8 @@ class _CommandMetadata {
   List<Preprocessor> preprocessors;
   List<Postprocessor> postprocessors;
 
-  List<List<String>> commandString;
+  List<String> commandString;
 
-  _CommandMetadata(this.commandString, this.method, this.parent,
-      this.parentCommand, this.methodCommand, this.restrict,
+  _CommandMetadata(this.commandString, this.method, this.parent, this.methodCommand, this.restrict,
       [this.preprocessors = const [], this.postprocessors = const []]);
 }

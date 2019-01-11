@@ -52,6 +52,7 @@ class Presence {
 
     if (raw['timestamps'] != null) {
       if (raw['timestamps']['start'] != null) {
+        // TODO: 'start' can be String apparently.
         start = DateTime.fromMillisecondsSinceEpoch(
             raw['timestamps']['start'] as int);
       }

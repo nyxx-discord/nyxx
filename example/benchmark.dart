@@ -23,7 +23,7 @@ void main() {
 }
 
 // Commands banchmark.
-@cmd.Command(name: "bc")
+@cmd.Command("bc")
 Future<void> benchmark(cmd.CommandContext context) async {
   var msg = await context.reply(content: "Pong!");
   await msg.edit(

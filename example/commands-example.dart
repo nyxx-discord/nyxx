@@ -41,68 +41,7 @@ class PrintString implements command.Postprocessor {
   }
 }
 
-@command.Command(name: "single")
+@command.Command("single")
 Future<void> single(command.CommandContext context) async {
   await context.reply(content: "WORKING");
-}
-
-// Command have to extends CommandContext class and have @Command annotation.
-// Method with @Maincommand is main point of command object
-// Methods annotated with @Subcommand are defined as subcommands
-@command.Module("ping")
-class PongCommand extends command.CommandContext {
-  @command.Command(main: true)
-  @IsGuildProcessor()
-  @PrintString("WITAM SERDECZNIE")
-  Future run() async {
-    await reply(content: "Pong!");
-  }
-}
-
-@command.Module("kk")
-class SomeThings extends command.CommandContext {
-  @command.Command()
-  Future<void> main(String str) async {
-    await reply(content: str);
-  }
-
-  @command.Command(name: "elo")
-  Future<void> siema(
-      String witam, @command.Remainder() List<String> rest) async {
-    await reply(content: [witam, rest]);
-  }
-}
-
-@command.Module("echo")
-class EchoCommand extends command.CommandContext {
-  @command.Command(main: true)
-  Future<void> run() async {
-    await reply(content: message.content);
-  }
-
-  @command.Command(name: "perm")
-  Future perms() async {
-    print((channel as nyxx.GuildChannel).permissions);
-
-    await (channel as nyxx.GuildChannel).editChannelPermission(
-        nyxx.PermissionsBuilder()
-          ..sendMessages = true
-          ..sendTtsMessages = false,
-        client.users[nyxx.Snowflake("471349482307715102")]);
-
-    for (var perm in (channel as nyxx.GuildChannel).permissions) {
-      var role = guild.roles.values.firstWhere((i) => i.id == perm.id);
-      print(
-          "Entity: ${perm.id} with ${perm.type} as ${role.name} can?: ${perm.permissions.viewChannel}");
-    }
-  }
-}
-
-// Aliases have to be `const`
-@command.Module("alias", aliases: ["aaa"])
-class AliasCommand extends command.CommandContext {
-  @command.Command(main: true)
-  Future run() async {
-    await reply(content: message.content);
-  }
 }

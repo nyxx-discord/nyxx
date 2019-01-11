@@ -26,26 +26,7 @@ void main() {
     ..registerServices([Service("Siema")])
     ..discoverCommands();
 }
-
-// Example command with alias and subcommands.
-@command.Module("alias", aliases: ["aaa"])
-class AliasCommand extends command.CommandContext {
-  Service _service;
-
-  // Injecting services into command handler
-  AliasCommand(this._service);
-
-  // @Command annotation creates command handler
-  @command.Command(main: true)
-  Future main(String name) async {
-    await reply(content: name);
-    await reply(content: _service.data);
-  }
-
-  // This command features `nextMessages()` method. Reade more here:
-  @command.Command(name: "witam")
-  Future witam() async {
-    var messages = await nextMessages(2).toList();
-    print(messages);
-  }
+@command.Command("alias", aliases: ['aaa'])
+Future<void> aliasCmd(command.CommandContext ctx, String name) async {
+  await ctx.reply(content: name);
 }
