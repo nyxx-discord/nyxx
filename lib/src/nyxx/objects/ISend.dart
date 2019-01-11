@@ -2,6 +2,7 @@ part of nyxx;
 
 /// Marks entity to which message can be sent
 abstract class ISend {
+  /// Sends message
   Future<Message> send(
       {Object content = "",
       List<File> files,
@@ -11,7 +12,7 @@ abstract class ISend {
       MessageBuilder builder});
 }
 
-/// Generate Attachment string for [filename]
+/// Generate [Attachment] string for given [filename]
 String attach(String filename) => "attachment://$filename";
 
 // Sanitized message from @everyone and @here

@@ -1,16 +1,24 @@
 part of nyxx;
 
+/// Allows to create pre built custom messages which can be passed to classes which inherits from [ISend].
 class MessageBuilder {
-  Object _content = "";
+  StringBuffer _content = StringBuffer();
   EmbedBuilder embed;
   bool tts;
   List<File> files;
   bool disableEveryone;
 
+  set content(Object content) {
+    _content.clear();
+    _content.write(content);
+  }
+
+  /// Allows to add embed to message
   void setEmbed(void builder(EmbedBuilder embed)) {
     this.embed = EmbedBuilder();
     builder(embed);
   }
 
-  void append(String text) => _content = "$_content$text";
+  /// Allows to append
+  void append(Object text) => _content.write(text);
 }

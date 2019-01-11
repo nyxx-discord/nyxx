@@ -3,6 +3,7 @@ part of nyxx;
 /// Emoji object. Handles Unicode emojis and custom ones.
 class GuildEmoji extends Emoji
     implements SnowflakeEntity, GuildEntity, Debugable {
+  /// Reference to client instance
   Nyxx client;
 
   @override

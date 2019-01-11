@@ -35,6 +35,7 @@ class CommandContext {
   /// Returns author as guild member
   Member get member => guild.members[author.id];
 
+  /// Reference to bot instance
   Nyxx client;
 
   CommandContext();

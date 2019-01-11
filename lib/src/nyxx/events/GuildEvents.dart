@@ -73,6 +73,10 @@ class GuildMemberRemoveEvent {
   User user;
 
   GuildMemberRemoveEvent._new(Map<String, dynamic> json, Nyxx client) {
+    var siem = {
+      "siem,a": "siema"
+    };
+
     if (client.ready && json['d']['user']['id'] != client.self.id) {
       this.guild = client.guilds[Snowflake(json['d']['guild_id'] as String)];
 

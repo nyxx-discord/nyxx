@@ -7,6 +7,7 @@ abstract class Channel extends SnowflakeEntity implements Debugable {
   /// https://discordapp.com/developers/docs/resources/channel#channel-object-channel-types
   int type;
 
+  /// Reference to client instance
   Nyxx client;
 
   Channel._new(Map<String, dynamic> raw, this.type, this.client)
