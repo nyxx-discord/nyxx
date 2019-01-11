@@ -1,6 +1,6 @@
 part of nyxx;
 
-/// Marks entity which bound to guild
+/// Represents entity which bound to guild, eg. member, emoji, message, role.
 abstract class GuildEntity {
   Guild get guild;
 }

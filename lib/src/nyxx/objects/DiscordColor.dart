@@ -3,8 +3,6 @@ part of nyxx;
 /// Wrapper for colors.
 ///
 /// Simplifies creation and provides interface to interact with colors for nyxx.
-///
-/// Class also defines few
 class DiscordColor {
   int _value;
 

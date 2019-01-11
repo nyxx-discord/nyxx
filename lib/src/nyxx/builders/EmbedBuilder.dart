@@ -1,7 +1,6 @@
 part of nyxx;
 
 /// Builds up embed object.
-/// All fields are optional except of [title]
 class EmbedBuilder implements Builder {
   /// Embed title
   String title;
@@ -40,14 +39,16 @@ class EmbedBuilder implements Builder {
     _fields = List();
   }
 
-  void addAuthor(Function(EmbedAuthorBuilder author) func) {
+  /// Adds author to embed.
+  void addAuthor(void builder(EmbedAuthorBuilder author)) {
     this.author = EmbedAuthorBuilder();
-    func(this.author);
+    builder(this.author);
   }
 
-  void addFooter(Function(EmbedFooterBuilder footer) func) {
+  /// Adds footer to embed
+  void addFooter(void builder(EmbedFooterBuilder footer)) {
     this.footer = EmbedFooterBuilder();
-    func(this.footer);
+    builder(this.footer);
   }
 
   /// Adds field to embed. [name] and [content] fields are required. Inline is set to false by default.

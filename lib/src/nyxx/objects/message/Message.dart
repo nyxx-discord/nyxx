@@ -7,6 +7,7 @@ class Message extends SnowflakeEntity implements GuildEntity, Disposable {
   StreamController<MessageReactionEvent> _onReactionRemove;
   StreamController<MessageReactionsRemovedEvent> _onReactionsRemoved;
 
+  /// Reference to bot instance
   Nyxx client;
 
   /// The message's content.

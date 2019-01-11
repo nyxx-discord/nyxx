@@ -1,5 +1,6 @@
 part of nyxx;
 
+// TODO: Do something
 // Two classes to simplify Member class itself. Maybe it's over-engineered but at least there is no _cons method anymore
 
 class _StandardMember extends Member {

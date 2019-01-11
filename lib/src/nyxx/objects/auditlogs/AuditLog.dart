@@ -13,6 +13,7 @@ class AuditLog {
   /// List of audit log entries
   Map<Snowflake, AuditLogEntry> entries;
 
+  /// Allows to filter audit log based on given objects.
   Iterable<AuditLogEntry> filterBy(
       {List<User> users,
       List<ChangeKeyType> changeType,

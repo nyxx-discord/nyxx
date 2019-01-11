@@ -55,10 +55,10 @@ class RoleBuilder implements Builder {
   /// Name of role
   String name;
 
-  /// integer representation of hexadecimal color code
+  /// Integer representation of hexadecimal color code
   DiscordColor color;
 
-  /// if this role is pinned in the user listing
+  /// If this role is pinned in the user listing
   bool hoist;
 
   /// Position of role
