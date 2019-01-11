@@ -11,15 +11,15 @@ void main() async {
 
   /// Create new scheduler and fill out all required fields
   var scheduler = util.Scheduler(bot)
-    ..runEvery = const Duration(seconds: 1)
+    ..runEvery = const Duration(seconds: 2)
     ..targets = [nyxx.Snowflake("422285619952222208")]
     ..action = (channel, t) {
       channel.send(content: "test");
     };
 
   /// Disable scheduler after 5 seconds
-  Timer(const Duration(seconds: 5), () => scheduler.stop());
+  Timer(const Duration(seconds: 10), () => scheduler.stop());
 
   /// Run scheduler
-  await scheduler.run();
+  await scheduler.start();
 }
