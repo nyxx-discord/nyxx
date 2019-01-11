@@ -440,6 +440,9 @@ class CommandsFramework {
         case String:
           collected.add(splitted[index]);
           break;
+        case num:
+          collected.add(num.parse(splitted[index]));
+          break;
         case int:
           var d = int.parse(splitted[index]);
           collected.add(d);

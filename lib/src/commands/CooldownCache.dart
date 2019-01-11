@@ -26,8 +26,7 @@ class CooldownCache {
       var node = _CacheKey._new(userId, commandName);
 
       /// Search for entry
-      if (!_cache.containsKey(node))
-      {
+      if (!_cache.containsKey(node)) {
         _cache[node] = now;
         return true;
       }
