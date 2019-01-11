@@ -53,6 +53,6 @@ class _OPCodes {
 class _Constants {
   static const String host = "discordapp.com";
   static const String baseUri = "/api/v7";
-  static const String version = "1.0.0";
+  static const String version = "0.3.0";
   static const String repoUrl = "https://github.com/l7ssha/nyxx";
 }
