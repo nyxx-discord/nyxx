@@ -28,7 +28,8 @@ class GuildEmoji extends Emoji
   bool animated;
 
   /// Creates full emoji object
-  GuildEmoji._new(Map<String, dynamic> raw, this.guild, this.client) : super("") {
+  GuildEmoji._new(Map<String, dynamic> raw, this.guild, this.client)
+      : super("") {
     this.id = Snowflake(raw['id'] as String);
     this.name = raw['name'] as String;
     this.requireColons = raw['require_colons'] as bool;

@@ -42,7 +42,9 @@ class Attachment extends SnowflakeEntity {
   String toString() => url;
 
   @override
-  bool operator ==(other) => other is Attachment ? other.filename == this.filename && other.url == this.url : false;
+  bool operator ==(other) => other is Attachment
+      ? other.filename == this.filename && other.url == this.url
+      : false;
 
   @override
   int get hashCode => filename.hashCode * 37 + url.hashCode * 37;

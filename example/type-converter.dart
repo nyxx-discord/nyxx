@@ -38,4 +38,5 @@ void main() {
 }
 
 @command.Command("ping")
-Future<void> pingCmd(command.CommandContext ctx, Ex ex) async => await ctx.reply(content: ex.gg);
+Future<void> pingCmd(command.CommandContext ctx, Ex ex) async =>
+    await ctx.reply(content: ex.gg);

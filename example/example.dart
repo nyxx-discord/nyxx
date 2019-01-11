@@ -26,6 +26,7 @@ void main() {
     ..registerServices([Service("Siema")])
     ..discoverCommands();
 }
+
 @command.Command("alias", aliases: ['aaa'])
 Future<void> aliasCmd(command.CommandContext ctx, String name) async {
   await ctx.reply(content: name);

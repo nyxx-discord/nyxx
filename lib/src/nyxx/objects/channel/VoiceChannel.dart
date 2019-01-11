@@ -17,8 +17,9 @@ class VoiceChannel extends Channel with GuildChannel {
   }
 
   /// Allows to get [VoiceState]s of users connected to this channel
-  Iterable<VoiceState> get connectedUsers => this.guild.voiceStates.values.where((e) => e.channel.id == this.id);
-  
+  Iterable<VoiceState> get connectedUsers =>
+      this.guild.voiceStates.values.where((e) => e.channel.id == this.id);
+
   /// Edits the channel.
   Future<VoiceChannel> edit(
       {String name,
@@ -34,9 +35,11 @@ class VoiceChannel extends Channel with GuildChannel {
           "position": position ?? this.position
         },
         reason: auditReason);
-    return VoiceChannel._new(r.body as Map<String, dynamic>, this.guild, client);
+    return VoiceChannel._new(
+        r.body as Map<String, dynamic>, this.guild, client);
   }
-  
+
   @override
-  String get debugString => "[${this.guild.name}] Voice Channel [${this.id} $name]";
+  String get debugString =>
+      "[${this.guild.name}] Voice Channel [${this.id} $name]";
 }

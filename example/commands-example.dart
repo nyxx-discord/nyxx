@@ -36,7 +36,8 @@ class PrintString implements command.Postprocessor {
   const PrintString(this.str);
 
   @override
-  Future<void> execute(List<Object> services, returns, nyxx.Message message) async {
+  Future<void> execute(
+      List<Object> services, returns, nyxx.Message message) async {
     print("From postProcessor: $str");
   }
 }

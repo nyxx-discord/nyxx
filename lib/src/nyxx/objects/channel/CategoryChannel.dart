@@ -8,5 +8,6 @@ class CategoryChannel extends Channel with GuildChannel {
   }
 
   @override
-  String get debugString => "[${this.guild.name}] Category Channel [${this.id}]";
+  String get debugString =>
+      "[${this.guild.name}] Category Channel [${this.id}]";
 }

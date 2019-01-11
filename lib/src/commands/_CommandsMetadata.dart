@@ -13,6 +13,7 @@ class _CommandMetadata {
 
   List<String> commandString;
 
-  _CommandMetadata(this.commandString, this.method, this.parent, this.methodCommand, this.restrict,
+  _CommandMetadata(this.commandString, this.method, this.parent,
+      this.methodCommand, this.restrict,
       [this.preprocessors = const [], this.postprocessors = const []]);
 }

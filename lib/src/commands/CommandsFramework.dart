@@ -153,30 +153,30 @@ class CommandsFramework {
     var mirrorSystem = currentMirrorSystem();
 
     mirrorSystem.libraries.forEach((_, library) {
+      for (var declaration in library.declarations.values) {
+        var commandAnnot = getCmdAnnot<Command>(declaration);
 
-     for(var declaration in library.declarations.values) {
-       var commandAnnot = getCmdAnnot<Command>(declaration);
+        if (commandAnnot == null) continue;
 
-       if (commandAnnot == null) continue;
+        if (declaration is MethodMirror) {
+          var methodRestrict = getCmdAnnot<Restrict>(declaration);
+          var processors = _getProcessors(null, declaration);
 
-       if (declaration is MethodMirror) {
-         var methodRestrict = getCmdAnnot<Restrict>(declaration);
-         var processors = _getProcessors(null, declaration);
+          var meta = _CommandMetadata(
+              [commandAnnot.name]..addAll(commandAnnot.aliases),
+              declaration,
+              library,
+              commandAnnot,
+              methodRestrict,
+              processors.first as List<Preprocessor>,
+              processors.last as List<Postprocessor>);
 
-         var meta = _CommandMetadata(
-             [commandAnnot.name]..addAll(commandAnnot.aliases),
-             declaration,
-             library,
-             commandAnnot,
-             methodRestrict,
-             processors.first as List<Preprocessor>,
-             processors.last as List<Postprocessor>);
-
-         _commands.add(meta);
-       }
-     }
+          _commands.add(meta);
+        }
+      }
     });
-    _commands.sort((first, second) => -first.commandString.first.compareTo(second.commandString.first));
+    _commands.sort((first, second) =>
+        -first.commandString.first.compareTo(second.commandString.first));
     _logger.fine("Registered ${_commands.length} commands");
   }
 
@@ -187,7 +187,8 @@ class CommandsFramework {
     _CommandMetadata matchedMeta;
     try {
       matchedMeta = _commands.firstWhere((meta) {
-        return meta.commandString.any((str) => cmdWithoutPrefix.startsWith(str));
+        return meta.commandString
+            .any((str) => cmdWithoutPrefix.startsWith(str));
       });
     } on Error {
       _onError.add(
@@ -195,8 +196,7 @@ class CommandsFramework {
       return;
     }
 
-    if(matchedMeta.methodCommand.typing)
-      e.message.channel.startTypingLoop();
+    if (matchedMeta.methodCommand.typing) e.message.channel.startTypingLoop();
 
     var executionCode = -1;
     executionCode = await checkPermissions(matchedMeta, e.message);
@@ -275,35 +275,35 @@ class CommandsFramework {
       case -1:
       case -2:
       case 100:
-        for(var s in matchedMeta.commandString)
+        for (var s in matchedMeta.commandString)
           cmdWithoutPrefix = cmdWithoutPrefix.replaceFirst(s, "");
 
-        var methodInj = await _injectParameters(
-            matchedMeta.method, _escapeParameters(cmdWithoutPrefix.split(" ")), e.message);
+        var methodInj = await _injectParameters(matchedMeta.method,
+            _escapeParameters(cmdWithoutPrefix.split(" ")), e.message);
 
-          var context = CommandContext._new(this.client,
-              e.message.channel, e.message.author, e.message.guild, e.message);
+        var context = CommandContext._new(this.client, e.message.channel,
+            e.message.author, e.message.guild, e.message);
 
-          (matchedMeta.parent
-                  .invoke(
-                      matchedMeta.method.simpleName,
-                      List()
-                        ..add(context)
-                        ..addAll(methodInj))
-                  .reflectee as Future)
-              .then((r) {
-            invokePost(r);
-          }).catchError((Exception err, String stack) {
-            invokePost([err, stack]);
-            _onError.add(CommandExecutionError(
-                ExecutionErrorType.commandFailed, e.message, err, stack));
-          });
+        (matchedMeta.parent
+                .invoke(
+                    matchedMeta.method.simpleName,
+                    List()
+                      ..add(context)
+                      ..addAll(methodInj))
+                .reflectee as Future)
+            .then((r) {
+          invokePost(r);
+        }).catchError((Exception err, String stack) {
+          invokePost([err, stack]);
+          _onError.add(CommandExecutionError(
+              ExecutionErrorType.commandFailed, e.message, err, stack));
+        });
 
-        if(matchedMeta.methodCommand.typing)
+        if (matchedMeta.methodCommand.typing)
           e.message.channel.stopTypingLoop();
 
-        _logger.info(
-            "Command ${_createLog(matchedMeta.methodCommand)} executed");
+        _logger
+            .info("Command ${_createLog(matchedMeta.methodCommand)} executed");
 
         break;
     }
@@ -312,11 +312,10 @@ class CommandsFramework {
   Future<int> checkPermissions(_CommandMetadata meta, Message e) async {
     var annot = meta.restrict;
 
-    if(annot == null) return -1;
+    if (annot == null) return -1;
 
     // Check if command requires admin
-    if (annot.admin)
-      return _isUserAdmin(e.author.id, e.guild) ? 100 : 0;
+    if (annot.admin) return _isUserAdmin(e.author.id, e.guild) ? 100 : 0;
 
     // Check for reqired context
     if (annot.requiredContext != null) {
@@ -330,12 +329,11 @@ class CommandsFramework {
     if (e.guild != null) {
       var member = await e.guild.getMember(e.author);
 
-      if(annot.nsfw && !(e.channel as GuildChannel).nsfw)
-        return 4;
+      if (annot.nsfw && !(e.channel as GuildChannel).nsfw) return 4;
 
       // Check if user is in any channel
-      if (annot.requireVoice &&
-          e.guild.voiceStates[member.id] == null) return 9;
+      if (annot.requireVoice && e.guild.voiceStates[member.id] == null)
+        return 9;
 
       // Check if there is need to check user roles
       if (annot.roles.isNotEmpty) {
@@ -386,11 +384,9 @@ class CommandsFramework {
     }
 
     //Check if user is on cooldown
-    if (annot.cooldown > 0) if (!(await _cooldownCache
-        .canExecute(
-            e.author.id,
-            "${meta.methodCommand.name}",
-            annot.cooldown * 1000))) return 2;
+    if (annot.cooldown > 0) if (!(await _cooldownCache.canExecute(
+        e.author.id, "${meta.methodCommand.name}", annot.cooldown * 1000)))
+      return 2;
 
     return -1;
   }
@@ -467,7 +463,8 @@ class CommandsFramework {
           collected.add((await msg.guild.getMember(msg.author)).voiceState);
           break;
         case VoiceChannel:
-          collected.add((await msg.guild.getMember(msg.author)).voiceState.channel);
+          collected
+              .add((await msg.guild.getMember(msg.author)).voiceState.channel);
           break;
         case User:
           var id = _entityRegex.firstMatch(splitted[index]).group(3);
@@ -518,9 +515,10 @@ class CommandsFramework {
         if (await parsePrimitives(type)) continue;
       } catch (_) {}
 
-      if(_typeConverters.isNotEmpty) {
-        var converter = _typeConverters.firstWhere((t) => t._type == type, orElse: () => null);
-        if(converter != null) {
+      if (_typeConverters.isNotEmpty) {
+        var converter = _typeConverters.firstWhere((t) => t._type == type,
+            orElse: () => null);
+        if (converter != null) {
           collected.add(await converter.parse(splitted[index], msg));
           continue;
         }
@@ -539,7 +537,6 @@ class CommandsFramework {
   bool _isUserAdmin(Snowflake authorId, Guild guild) {
     if (guild == null) return true;
 
-    return (_admins.any((i) => i == authorId)) ||
-        guild.owner.id == authorId;
+    return (_admins.any((i) => i == authorId)) || guild.owner.id == authorId;
   }
 }

@@ -97,11 +97,12 @@ class VoiceService {
   // Handles incoming message. Tries to parse and takes actions
   Future<void> _handleMsg(Map<String, dynamic> msg) async {
     var op = msg['op'] as String;
-    
+
     switch (op) {
       case 'playerUpdate':
         var e = PlayerUpdateEvent._new(msg);
-        if (_playersCache[e.guildId] != null && _playersCache[e.guildId].isConnected)
+        if (_playersCache[e.guildId] != null &&
+            _playersCache[e.guildId].isConnected)
           _playersCache[e.guildId]._onPlayerUpdate.add(e);
         break;
       case 'stats':
@@ -110,18 +111,18 @@ class VoiceService {
       case 'event':
         var player = _playersCache[msg['guildId']];
 
-        if(player != null) {
+        if (player != null) {
           TrackError evnt;
           switch (msg['type'] as String) {
             case 'TrackEndEvent':
               evnt = TrackEndEvent(msg);
-            break;
+              break;
             case 'TrackExceptionEvent':
               evnt = TrackExceptionEvent(msg);
-            break;
+              break;
             case 'TrackStuckEvent':
               evnt = TrackStuckEvent(msg);
-            break;
+              break;
           }
           player._onTrackError.add(evnt);
         }
