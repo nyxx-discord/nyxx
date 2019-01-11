@@ -79,7 +79,8 @@ class Embed {
   String toString() => this.title;
 
   @override
-  int get hashCode => title.hashCode * 37 +
+  int get hashCode =>
+      title.hashCode * 37 +
       type.hashCode * 37 +
       description.hashCode * 37 +
       timestamp.hashCode * 37 +
@@ -90,8 +91,9 @@ class Embed {
       image.hashCode * 37 +
       video.hashCode * 37 +
       author.hashCode * 37 +
-      fields.map((f) => f.hashCode * 37).reduce((f,s ) => f + s);
+      fields.map((f) => f.hashCode * 37).reduce((f, s) => f + s);
 
   @override
-  bool operator ==(other) => other is EmbedVideo ? other.url == this.url : false;
+  bool operator ==(other) =>
+      other is EmbedVideo ? other.url == this.url : false;
 }

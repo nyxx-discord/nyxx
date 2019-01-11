@@ -22,5 +22,7 @@ class EmbedProvider {
   int get hashCode => url.hashCode * 37 + name.hashCode;
 
   @override
-  bool operator ==(other) => other is EmbedProvider ? other.url == this.url && other.name == this.name : false;
+  bool operator ==(other) => other is EmbedProvider
+      ? other.url == this.url && other.name == this.name
+      : false;
 }

@@ -130,7 +130,8 @@ class Guild extends SnowflakeEntity implements Disposable, Debugable {
 
         if (client._options.cacheMembers) {
           raw['members'].forEach((o) {
-            final member = _StandardMember(o as Map<String, dynamic>, this, client);
+            final member =
+                _StandardMember(o as Map<String, dynamic>, this, client);
             this.members[member.id] = member;
             client.users[member.id] = member;
           });
@@ -142,9 +143,11 @@ class Guild extends SnowflakeEntity implements Disposable, Debugable {
           if (o['type'] == 0)
             channel = TextChannel._new(o as Map<String, dynamic>, this, client);
           else if (o['type'] == 2)
-            channel = VoiceChannel._new(o as Map<String, dynamic>, this, client);
+            channel =
+                VoiceChannel._new(o as Map<String, dynamic>, this, client);
           else if (o['type'] == 4)
-            channel = CategoryChannel._new(o as Map<String, dynamic>, this, client);
+            channel =
+                CategoryChannel._new(o as Map<String, dynamic>, this, client);
 
           this.channels[channel.id] = channel;
           client.channels[channel.id] = channel;
@@ -171,7 +174,8 @@ class Guild extends SnowflakeEntity implements Disposable, Debugable {
           voiceStates = _SnowflakeCache();
 
           raw['voice_states'].forEach((o) {
-            var state = VoiceState._new(o as Map<String, dynamic>, client, this);
+            var state =
+                VoiceState._new(o as Map<String, dynamic>, client, this);
 
             if (state != null && state.user != null)
               this.voiceStates[state.user.id] = state;

@@ -40,7 +40,7 @@ class Nyxx implements Disposable {
   /// All of the users the bot can see. Does not have offline users
   /// without `forceFetchUsers` enabled.
   Cache<Snowflake, User> users;
-  
+
   /// True if client is ready.
   bool ready = false;
 
@@ -311,8 +311,7 @@ class Nyxx implements Disposable {
 
   @override
   Future<void> dispose() async {
-    if(shard != null)
-      await shard.dispose();
+    if (shard != null) await shard.dispose();
     await guilds.dispose();
     await users.dispose();
     await guilds.dispose();

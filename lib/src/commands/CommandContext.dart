@@ -38,7 +38,8 @@ class CommandContext {
   Nyxx client;
 
   CommandContext();
-  CommandContext._new(this.client, this.channel, this.author, this.guild, this.message);
+  CommandContext._new(
+      this.client, this.channel, this.author, this.guild, this.message);
 
   /// Reply to message. It allows to send regular message, Embed or both.
   ///
@@ -80,15 +81,17 @@ class CommandContext {
       bool tts = false,
       bool disableEveryone,
       MessageBuilder builder}) async {
-      return channel.send(
-          content: content,
-          embed: embed,
-          files: files,
-          tts: tts,
-          builder: builder,
-          disableEveryone: disableEveryone).then((msg) {
-        Timer(duration, () => msg.delete());
-      });
+    return channel
+        .send(
+            content: content,
+            embed: embed,
+            files: files,
+            tts: tts,
+            builder: builder,
+            disableEveryone: disableEveryone)
+        .then((msg) {
+      Timer(duration, () => msg.delete());
+    });
   }
 
   /// Replies to messages after specified [duration]

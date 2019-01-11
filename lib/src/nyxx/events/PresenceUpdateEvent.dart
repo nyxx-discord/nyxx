@@ -22,7 +22,8 @@ class PresenceUpdateEvent {
 
       if (member == null && 'online' == json['d']['status'].toString()) {
         if (json['d']['user']['username'] != null) {
-          this.member = _StandardMember(json['d'] as Map<String, dynamic>, guild, client);
+          this.member =
+              _StandardMember(json['d'] as Map<String, dynamic>, guild, client);
           member.guild.members[member.id] = member;
           client.users[member.id] = member;
         } else {
@@ -44,8 +45,8 @@ class PresenceUpdateEvent {
         this.member.status = MemberStatus.from(json['d']['status'] as String);
         this.member.presence = presence;
       }
-      
-      if(this.member != null && this.presence != null) {
+
+      if (this.member != null && this.presence != null) {
         client._events.onPresenceUpdate.add(this);
       }
     }

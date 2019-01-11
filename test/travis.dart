@@ -29,14 +29,15 @@ Future<void> run(command.CommandContext ctx) async {
 }
 
 @command.Command("test ttest")
-Future<void> run2(command.CommandContext ctx, StringService service, String param) async {
+Future<void> run2(
+    command.CommandContext ctx, StringService service, String param) async {
   var msg = await ctx.reply(content: "$param, ${service.data}");
   await msg.delete();
 }
 
 @command.Command("cooldown", aliases: ["culdown"])
 @command.Restrict(cooldown: 10)
-Future<void> cooldownRun(command.CommandContext ctx) async { }
+Future<void> cooldownRun(command.CommandContext ctx) async {}
 
 // -------------------------------------------------------
 
@@ -83,9 +84,7 @@ void main() {
           content:
               "Testing new Travis CI build `#${env['TRAVIS_BUILD_NUMBER']}` from commit `${env['TRAVIS_COMMIT']}` on branch `${env['TRAVIS_BRANCH']}` with Dart version: `${env['TRAVIS_DART_VERSION']}`");
     } else {
-      channel.send(
-          content:
-              "Testing new local build");
+      channel.send(content: "Testing new local build");
     }
 
     print("TESTING CLIENT INTERNALS");
@@ -147,8 +146,8 @@ void main() {
   bot.onMessageReceived.listen((e) async {
     var m = e.message;
 
-    if (m.channel.id != nyxx.Snowflake("422285619952222208") && m.author.id != bot.self.id)
-      return;
+    if (m.channel.id != nyxx.Snowflake("422285619952222208") &&
+        m.author.id != bot.self.id) return;
 
     if (ddel.any((d) => d.startsWith(m.content))) await m.delete();
 

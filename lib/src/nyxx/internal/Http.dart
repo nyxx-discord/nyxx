@@ -50,8 +50,8 @@ class HttpBase {
       http._client._events.beforeHttpRequestSend
           .add(BeforeHttpRequestSendEvent._new(this));
 
-    if (http._client == null || !http._client._events.beforeHttpRequestSend.hasListener)
-      this.send();
+    if (http._client == null ||
+        !http._client._events.beforeHttpRequestSend.hasListener) this.send();
   }
 
   /// Sends the request off to the bucket to be processed and sent.
@@ -73,8 +73,9 @@ class HttpBase {
       final r = await req.send(this.method);
       return HttpResponse._fromResponse(this, r);
     } on transport.RequestException catch (e) {
-      if(e != null)
-        return new HttpResponse._new(this, e.response.status, e.response.statusText, e.response.headers, {});
+      if (e != null)
+        return new HttpResponse._new(this, e.response.status,
+            e.response.statusText, e.response.headers, {});
     }
   }
 }
@@ -162,7 +163,8 @@ class HttpResponse {
     this.body = {};
   }
 
-  static HttpResponse _fromResponse(HttpBase request, transport.BaseResponse r) {
+  static HttpResponse _fromResponse(
+      HttpBase request, transport.BaseResponse r) {
     var json;
     try {
       json = (r as transport.Response).body.asJson();
@@ -216,7 +218,6 @@ class HttpBucket {
 
   void _execute(HttpBase request, Nyxx client) async {
     if (this.rateLimitRemaining == null || this.rateLimitRemaining > 1) {
-
       final HttpResponse r = await request._execute();
       this.limit = r.headers['x-ratelimit-limit'] != null
           ? int.parse(r.headers['x-ratelimit-limit'])
@@ -252,8 +253,7 @@ class HttpBucket {
         this.rateLimitRemaining = 2;
         this._execute(request, client);
       } else {
-        client._events.onRatelimited
-            .add(RatelimitEvent._new(request, true));
+        client._events.onRatelimited.add(RatelimitEvent._new(request, true));
         request.http._logger.warning(
             "Rate limitted internally on endpoint: ${request.path}. Trying to send request again after timeout...");
         Timer(waitTime, () {
@@ -278,9 +278,11 @@ class Http {
   Logger _logger = Logger.detached("Http");
 
   Http._new(this._client) {
-    if(!browser)
-      this._headers= {'User-Agent':
-          'DiscordBot (https://github.com/l7ssha/nyxx, ${_Constants.version})'};
+    if (!browser)
+      this._headers = {
+        'User-Agent':
+            'DiscordBot (https://github.com/l7ssha/nyxx, ${_Constants.version})'
+      };
     else
       this._headers = {};
   }
@@ -292,16 +294,11 @@ class Http {
       bool beforeReady = false,
       Map<String, String> headers = const {},
       String reason}) async {
-    final Map<String, String> _headers = Map.from(this._headers)..addAll(headers);
-    if(!browser)
-      _headers.addAll(_addAuditReason(reason));
-    HttpRequest request = HttpRequest._new(
-        this,
-        method,
-        path,
-        queryParams,
-        _headers,
-        body);
+    final Map<String, String> _headers = Map.from(this._headers)
+      ..addAll(headers);
+    if (!browser) _headers.addAll(_addAuditReason(reason));
+    HttpRequest request =
+        HttpRequest._new(this, method, path, queryParams, _headers, body);
 
     await for (HttpResponse r in request.stream) {
       if (!r.aborted && r.status >= 200 && r.status < 300) {

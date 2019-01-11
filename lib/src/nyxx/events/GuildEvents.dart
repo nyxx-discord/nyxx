@@ -6,7 +6,8 @@ class GuildCreateEvent {
   Guild guild;
 
   GuildCreateEvent._new(Map<String, dynamic> json, Shard shard, Nyxx client) {
-    this.guild = Guild._new(client, json['d'] as Map<String, dynamic>, true, true);
+    this.guild =
+        Guild._new(client, json['d'] as Map<String, dynamic>, true, true);
 
     if (client._options.forceFetchMembers)
       shard.send("REQUEST_GUILD_MEMBERS",
@@ -77,7 +78,8 @@ class GuildMemberRemoveEvent {
 
       if (this.guild != null) {
         this.guild.memberCount--;
-        this.user = User._new(json['d']['user'] as Map<String, dynamic>, client);
+        this.user =
+            User._new(json['d']['user'] as Map<String, dynamic>, client);
         this.guild.members.remove(user.id);
         client.users.remove(user.id);
       }
@@ -125,12 +127,13 @@ class GuildMemberAddEvent {
   GuildMemberAddEvent._new(Map<String, dynamic> json, Nyxx client) {
     if (client.ready) {
       final Guild guild =
-        client.guilds[Snowflake(json['d']['guild_id'] as String)];
+          client.guilds[Snowflake(json['d']['guild_id'] as String)];
 
       if (guild != null) {
         guild.memberCount++;
 
-        this.member = _StandardMember(json['d'] as Map<String, dynamic>, guild, client);
+        this.member =
+            _StandardMember(json['d'] as Map<String, dynamic>, guild, client);
         guild.members[member.id] = member;
         client.users[member.id] = member;
       }
@@ -198,7 +201,8 @@ class RoleCreateEvent {
     if (client.ready) {
       final Guild guild =
           client.guilds[Snowflake(json['d']['guild_id'] as String)];
-      this.role = Role._new(json['d']['role'] as Map<String, dynamic>, guild, client);
+      this.role =
+          Role._new(json['d']['role'] as Map<String, dynamic>, guild, client);
 
       guild.roles[role.id] = role;
     }
@@ -233,7 +237,8 @@ class RoleUpdateEvent {
     final Guild guild =
         client.guilds[Snowflake(json['d']['guild_id'] as String)];
     this.oldRole = guild.roles[Snowflake(json['d']['role']['id'] as String)];
-    this.newRole = Role._new(json['d']['role'] as Map<String, dynamic>, guild, client);
+    this.newRole =
+        Role._new(json['d']['role'] as Map<String, dynamic>, guild, client);
 
     oldRole.guild.roles[oldRole.id] = newRole;
   }
