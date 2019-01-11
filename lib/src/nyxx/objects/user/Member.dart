@@ -81,8 +81,8 @@ abstract class Member extends User implements GuildEntity {
       this.presence = Presence._new(data['game'] as Map<String, dynamic>);
   }
 
-  /// Checks if member has specified role. Returns true if user is assigned to giver [role].
-  bool hasRole(bool Function(Role role) func) => this.roles.any(func);
+  /// Checks if member has specified role. Returns true if user is assigned to given role.
+  bool hasRole(bool func(Role role)) => this.roles.any(func);
 
   /// Bans the member and optionally deletes [deleteMessageDays] days worth of messages.
   Future<void> ban(

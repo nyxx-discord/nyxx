@@ -1,10 +1,10 @@
 part of nyxx.commands;
 
-typedef Future<void> commandHandler(
+typedef Future<void> CommandHandler(
     Message message, Member author, MessageChannel channel, List<String> args);
 
 class CommandParser {
-  Map<String, commandHandler> _commands;
+  Map<String, CommandHandler> _commands;
 
   String prefix;
 
@@ -33,5 +33,5 @@ class CommandParser {
     });
   }
 
-  void bind(String cmd, commandHandler handler) => _commands[cmd] = handler;
+  void bind(String cmd, CommandHandler handler) => _commands[cmd] = handler;
 }
