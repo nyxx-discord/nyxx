@@ -235,7 +235,7 @@ class HttpBucket {
             .add(RatelimitEvent._new(request, false, r));
         request.http._logger.warning(
             "Rate limitted via 429 on endpoint: ${request.path}. Trying to send request again after timeout...");
-        Timer(Duration(milliseconds: (r.body['retry_after'] as int) + 100),
+        Timer(Duration(milliseconds: (r.body['retry_after'] as int) ?? 0 + 100),
             () => this._execute(request, client));
       } else {
         this.waiting = false;
@@ -253,7 +253,7 @@ class HttpBucket {
         this._execute(request, client);
       } else {
         client._events.onRatelimited
-            .add(RatelimitEvent._new(request as HttpRequest, true));
+            .add(RatelimitEvent._new(request, true));
         request.http._logger.warning(
             "Rate limitted internally on endpoint: ${request.path}. Trying to send request again after timeout...");
         Timer(waitTime, () {

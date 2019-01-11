@@ -36,7 +36,7 @@ Future<void> run2(command.CommandContext ctx, StringService service, String para
 
 @command.Command("cooldown", aliases: ["culdown"])
 @command.Restrict(cooldown: 10)
-Future<void> cooldownRun() async { }
+Future<void> cooldownRun(command.CommandContext ctx) async { }
 
 // -------------------------------------------------------
 
