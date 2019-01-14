@@ -281,14 +281,10 @@ class CommandsFramework {
         var methodInj = await _injectParameters(matchedMeta.method,
             _escapeParameters(cmdWithoutPrefix.split(" ")), e.message);
 
-        var context = CommandContext._new(this.client, e.message.channel,
-            e.message.author, e.message.guild, e.message);
-
         (matchedMeta.parent
                 .invoke(
                     matchedMeta.method.simpleName,
                     List()
-                      ..add(context)
                       ..addAll(methodInj))
                 .reflectee as Future)
             .then((r) {
@@ -496,7 +492,11 @@ class CommandsFramework {
 
     for (var e in params) {
       var type = e.type.reflectedType;
-      if (type == CommandContext) continue;
+      if (type == CommandContext) {
+        collected.add(CommandContext._new(this.client, msg.channel,
+            msg.author, msg.guild, msg));
+        continue;
+      }
 
       if (getCmdAnnot<Remainder>(e) != null) {
         index++;
@@ -527,7 +527,7 @@ class CommandsFramework {
       try {
         collected.add(_services.firstWhere((s) => s.runtimeType == type));
       } catch (_) {
-        collected.add(null);
+        //collected.add(null);
       }
     }
 
