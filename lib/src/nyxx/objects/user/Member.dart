@@ -66,7 +66,6 @@ abstract class Member extends User implements GuildEntity {
     this.nickname = data['nick'] as String;
     this.deaf = data['deaf'] as bool;
     this.mute = data['mute'] as bool;
-    //this.status = MemberStatus.from(data['status'] as String);
 
     if (data['roles'] != null && guild.roles != null) {
       this.roles = List();
