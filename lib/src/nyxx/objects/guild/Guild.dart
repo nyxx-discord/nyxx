@@ -156,7 +156,10 @@ class Guild extends SnowflakeEntity implements Disposable, Debugable {
         raw['presences'].forEach((o) {
           Member member = this.members[Snowflake(o['user']['id'] as String)];
           if (member != null) {
-            member.status = MemberStatus.from(o['status'] as String);
+            member.status = ClientStatus._new(
+                MemberStatus.from(o['client_status']['desktop'] as String),
+                MemberStatus.from(o['client_status']['web'] as String),
+                MemberStatus.from(o['client_status']['mobile'] as String));
             if (o['game'] != null) {
               member.presence =
                   Presence._new(o['game'] as Map<String, dynamic>);
