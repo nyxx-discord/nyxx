@@ -267,7 +267,7 @@ class CommandsFramework {
       case -2:
       case 100:
         for (var s in matchedMeta.commandString)
-          cmdWithoutPrefix = cmdWithoutPrefix.replaceFirst(s, "");
+          cmdWithoutPrefix = cmdWithoutPrefix.replaceFirst(s, "").trim();
 
         var methodInj = await _injectParameters(matchedMeta.method,
             _escapeParameters(cmdWithoutPrefix.split(" ")), e.message);
