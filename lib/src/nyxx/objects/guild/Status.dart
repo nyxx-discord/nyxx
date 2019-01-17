@@ -13,16 +13,25 @@ class MemberStatus {
   MemberStatus.from(this._value);
 
   @override
-  String toString() => _value;
+  String toString() => _value ?? "offline";
 
   @override
-  int get hashCode => _value.hashCode;
+  int get hashCode => (_value ?? "offline").hashCode;
 
   @override
   bool operator ==(other) {
     if (other is MemberStatus || other is String)
-      return other.toString() == _value;
+      return other.toString() == (_value ?? "offline");
 
     return false;
   }
+}
+
+/// Provides status of user on different devices
+class ClientStatus {
+  MemberStatus desktop;
+  MemberStatus web;
+  MemberStatus phone;
+
+  ClientStatus._new(this.desktop, this.web, this.phone);
 }

@@ -25,7 +25,7 @@ class User extends SnowflakeEntity with ISend, Mentionable, Debugable {
   bool bot;
 
   /// The member's status. `offline`, `online`, `idle`, or `dnd`.
-  MemberStatus status;
+  ClientStatus status;
 
   /// The member's presence.
   Presence presence;

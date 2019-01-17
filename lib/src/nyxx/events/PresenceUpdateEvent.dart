@@ -42,7 +42,10 @@ class PresenceUpdateEvent {
         member.guild.members.remove(member.id);
         client.users.remove(member.id);
       } else if (member != null) {
-        this.member.status = MemberStatus.from(json['d']['status'] as String);
+        this.member.status = ClientStatus._new(
+            MemberStatus.from(json['d']['client_status']['desktop'] as String),
+            MemberStatus.from(json['d']['client_status']['web'] as String),
+            MemberStatus.from(json['d']['client_status']['mobile'] as String));
         this.member.presence = presence;
       }
 
