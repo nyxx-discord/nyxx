@@ -274,9 +274,7 @@ class CommandsFramework {
 
         (matchedMeta.parent
                 .invoke(
-                    matchedMeta.method.simpleName,
-                    List()
-                      ..addAll(methodInj))
+                    matchedMeta.method.simpleName, List()..addAll(methodInj))
                 .reflectee as Future)
             .then((r) {
           invokePost(r);
@@ -483,8 +481,8 @@ class CommandsFramework {
     for (var e in params) {
       var type = e.type.reflectedType;
       if (type == CommandContext) {
-        collected.add(CommandContext._new(this.client, msg.channel,
-            msg.author, msg.guild, msg));
+        collected.add(CommandContext._new(
+            this.client, msg.channel, msg.author, msg.guild, msg));
         continue;
       }
 
