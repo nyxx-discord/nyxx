@@ -186,7 +186,7 @@ class MessageChannel extends Channel
 
     var response = LinkedHashMap<Snowflake, Message>();
 
-    for (Map<String, dynamic> val in r.body as List<dynamic>) {
+    for (Map<String, dynamic> val in r.body as List<Map<String, dynamic>>) {
       var msg = Message._new(val, client);
       response[msg.id] = msg;
     }
