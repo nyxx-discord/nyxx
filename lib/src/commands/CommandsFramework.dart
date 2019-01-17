@@ -128,23 +128,14 @@ class CommandsFramework {
 
   String _createLog(Command methodCmd) => "[${methodCmd.name}]";
 
-  List<List> _getProcessors(
-      ClassMirror classMirror, DeclarationMirror methodMirror) {
-    var classPre = List<Preprocessor>();
-    var classPost = List<Postprocessor>();
-
-    if (classMirror != null) {
-      classPre.addAll(getCmdAnnots<Preprocessor>(classMirror));
-      classPost.addAll(getCmdAnnots<Postprocessor>(classMirror));
-    }
-
+  List<List> _getProcessors(DeclarationMirror methodMirror) {
     var methodPre = getCmdAnnots<Preprocessor>(methodMirror);
     var methodPost = getCmdAnnots<Postprocessor>(methodMirror);
 
-    var prepro = List<Preprocessor>.from(classPre)..addAll(methodPre);
-    var postPro = List<Postprocessor>.from(classPost)..addAll(methodPost);
-
-    return [prepro, postPro];
+    return [
+      List<Preprocessor>.from(methodPre),
+      List<Postprocessor>.from(methodPost)
+    ];
   }
 
   /// Register commands in current Isolate's libraries. Basically loads all classes as commands with [CommandContext] superclass.
@@ -160,7 +151,7 @@ class CommandsFramework {
 
         if (declaration is MethodMirror) {
           var methodRestrict = getCmdAnnot<Restrict>(declaration);
-          var processors = _getProcessors(null, declaration);
+          var processors = _getProcessors(declaration);
 
           var meta = _CommandMetadata(
               [commandAnnot.name]..addAll(commandAnnot.aliases),
@@ -224,7 +215,7 @@ class CommandsFramework {
       }
     }
 
-    /// Submethod to invoke postprocessors
+    // Submethod to invoke postprocessors
     void invokePost(res) {
       if (matchedMeta.postprocessors.length > 0) {
         for (var post in matchedMeta.postprocessors)
@@ -307,7 +298,6 @@ class CommandsFramework {
 
   Future<int> checkPermissions(_CommandMetadata meta, Message e) async {
     var annot = meta.restrict;
-
     if (annot == null) return -1;
 
     // Check if command requires admin
