@@ -62,7 +62,7 @@ class HttpBase {
     this._streamController.close();
   }
 
-  Future _execute() async {
+  Future<HttpResponse> _execute() async {
     var req = transport.JsonRequest()
       ..uri = this.uri
       ..headers = this.headers;
@@ -77,6 +77,8 @@ class HttpBase {
         return new HttpResponse._new(this, e.response.status,
             e.response.statusText, e.response.headers, {});
     }
+
+    return null;
   }
 }
 
