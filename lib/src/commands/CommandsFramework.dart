@@ -274,7 +274,7 @@ class CommandsFramework {
 
         (matchedMeta.parent
                 .invoke(
-                    matchedMeta.method.simpleName, List()..addAll(methodInj))
+                    matchedMeta.method.simpleName, methodInj)
                 .reflectee as Future)
             .then((r) {
           invokePost(r);
@@ -487,14 +487,11 @@ class CommandsFramework {
       }
 
       if (getCmdAnnot<Remainder>(e) != null) {
-        index++;
         var range = splitted.getRange(index, splitted.length).toList();
-
         if (type == String) {
           collected.add(range.join(" "));
           break;
         }
-
         collected.add(range);
         break;
       }
