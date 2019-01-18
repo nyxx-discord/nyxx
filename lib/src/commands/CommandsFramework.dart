@@ -472,6 +472,8 @@ class CommandsFramework {
                   UnicodeEmoji(splitted[index]));
           break;
         default:
+          // Small hack to make parsing working properly. TODO: Improve indexing to avoid changing variable multiple times
+          index--;
           return false;
       }
 
