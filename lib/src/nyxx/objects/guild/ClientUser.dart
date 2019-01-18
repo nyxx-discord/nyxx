@@ -14,37 +14,11 @@ class ClientUser extends User {
     this.mfa = data['mfa_enabled'] as bool;
   }
 
-  /// Updates the client's status.
-  ///
-  ///```
-  ///user.setStatus('dnd');
-  ///```
-  ClientUser setStatus(String status) => this.setPresence(status: status);
-
-  /// Updates the client's game.
-  ///
-  ///```
-  ///user.setGame(Game.of("<3"))
-  ///```
-  ClientUser setGame(Presence game) => this.setPresence(game: game);
-
-  /// Updates the client's presence
-  ClientUser setPresence(
+  /// Updates the client's presence. All parameters are optional.
+  void setPresence(
       {String status, bool afk = false, Presence game, DateTime since}) {
     client.shard
         .setPresence(status: status, afk: afk, game: game, since: since);
-    return this;
-  }
-
-  /// Allows to set status for shard based on shard state.
-  ///
-  /// ```
-  /// client.setPresenceForShard((shard) {
-  ///   shard.setPresence(status: "Shard id: ${shard.id}");
-  /// });
-  /// ```
-  void setPresenceForShard(Function(Shard shard) func) {
-    func(client.shard);
   }
 
   /// Allows to get [Member] objects for all guilds for bot user.
@@ -56,14 +30,15 @@ class ClientUser extends User {
   }
 
   /// Edits current user. This changes user's username - not per guild nickname.
-  Future<User> edit({String username, File avatar}) async {
+  Future<User> edit({String username, File avatar, String encodedData}) async {
     if (username == null && avatar == null) return null;
     var req = Map<String, dynamic>();
 
+    var enc = avatar != null ? base64Encode(await avatar.readAsBytes()) : encodedData;
     if (username != null) req['username'] = username;
     if (avatar != null)
       req['avatar'] =
-          "data:image/jpeg;base64,${base64Encode(await avatar.readAsBytes())}";
+          "data:image/jpeg;base64,$enc";
 
     var res = await client._http.send("PATCH", "/users/@me", body: req);
     return User._new(res.body as Map<String, dynamic>, client);
