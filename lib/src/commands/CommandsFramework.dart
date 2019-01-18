@@ -412,10 +412,9 @@ class CommandsFramework {
     var params = method.parameters;
 
     List<Object> collected = List();
-    var index = -1;
+    var index = 0;
 
     Future<bool> parsePrimitives(Type type) async {
-      index++;
       switch (type) {
         case String:
           collected.add(splitted[index]);
@@ -472,11 +471,10 @@ class CommandsFramework {
                   UnicodeEmoji(splitted[index]));
           break;
         default:
-          // Small hack to make parsing working properly. TODO: Improve indexing to avoid changing variable multiple times
-          index--;
           return false;
       }
 
+      index++;
       return true;
     }
 
