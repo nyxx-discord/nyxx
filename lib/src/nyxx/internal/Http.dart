@@ -38,10 +38,10 @@ class HttpBase {
     this.uri =
         Uri.https(_Constants.host, _Constants.baseUri + path, queryParams);
 
-    if (http.buckets[uri.toString()] == null)
-      http.buckets[uri.toString()] = HttpBucket._new(uri.toString());
+    if (http.buckets[uri] == null)
+      http.buckets[uri] = HttpBucket._new(uri);
 
-    this.bucket = http.buckets[uri.toString()];
+    this.bucket = http.buckets[uri];
 
     this._streamController = StreamController<HttpResponse>.broadcast();
     this.stream = _streamController.stream;
@@ -159,7 +159,7 @@ class HttpResponse {
       [this.aborted = false]);
 
   HttpResponse._aborted(this.request, [this.aborted = true]) {
-    this.status = 0;
+    this.status = -1;
     this.statusText = "ABORTED";
     this.headers = {};
     this.body = {};
@@ -183,7 +183,7 @@ class HttpResponse {
 /// A bucket for managing ratelimits.
 class HttpBucket {
   /// The url that this bucket is handling requests for.
-  String url;
+  Uri url;
 
   /// The number of requests that can be made.
   int limit;
@@ -272,7 +272,7 @@ class Http {
   Nyxx _client;
 
   /// The buckets.
-  Map<String, HttpBucket> buckets = Map();
+  Map<Uri, HttpBucket> buckets = Map();
 
   /// Headers sent on every request.
   Map<String, String> _headers;
