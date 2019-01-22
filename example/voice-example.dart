@@ -1,5 +1,5 @@
 import 'package:nyxx/Vm.dart';
-import 'package:nyxx/nyxx.dart' as nyxx;
+import 'package:nyxx/nyxx.dart';
 import 'package:nyxx/lavalink.dart' as voice;
 
 import 'dart:io';
@@ -9,23 +9,23 @@ void main() {
   configureNyxxForVM();
 
   // Create new bot instance
-  nyxx.Nyxx bot = nyxx.Nyxx(Platform.environment['DISCORD_TOKEN']);
+  Nyxx bot = Nyxx(Platform.environment['DISCORD_TOKEN']);
 
   // Listen to ready event. Invoked when bot started listening to events.
-  bot.onReady.listen((nyxx.ReadyEvent e) {
-    // Init voice service with client id, Client instance and absolute path to lavalink config.
+  bot.onReady.listen((ReadyEvent e) {
+    // Init voice service
     voice.init("127.0.0.1:3454", "127.0.0.1:4535", "PASS", bot);
   });
 
   // Listen to all incoming messages via Dart Stream
-  bot.onMessageReceived.listen((nyxx.MessageReceivedEvent e) async {
+  bot.onMessageReceived.listen((MessageReceivedEvent e) async {
     if (e.message.content == "!play") {
       // Get player for guild.
       var player = await voice.getPlayer(e.message.guild);
 
       // Get first voice channel
       var channel = e.message.guild.channels.values
-          .firstWhere((ch) => ch is nyxx.VoiceChannel) as nyxx.VoiceChannel;
+          .firstWhere((ch) => ch is VoiceChannel) as VoiceChannel;
 
       // Connect to channel
       await player.connect(channel);
