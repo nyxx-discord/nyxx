@@ -1,5 +1,5 @@
 import 'package:nyxx/Vm.dart';
-import 'package:nyxx/nyxx.dart' as nyxx;
+import 'package:nyxx/nyxx.dart';
 
 import 'dart:io';
 
@@ -8,15 +8,15 @@ void main() {
   configureNyxxForVM();
 
   // Create new bot instance
-  nyxx.Nyxx bot = nyxx.Nyxx(Platform.environment['DISCORD_TOKEN']);
+  Nyxx bot = Nyxx(Platform.environment['DISCORD_TOKEN']);
 
   // Listen to ready event. Invoked when bot started listening to events.
-  bot.onReady.listen((nyxx.ReadyEvent e) {
+  bot.onReady.listen((ReadyEvent e) {
     print("Ready!");
   });
 
   // Listen to all incoming messages via Dart Stream
-  bot.onMessageReceived.listen((nyxx.MessageReceivedEvent e) {
+  bot.onMessageReceived.listen((MessageReceivedEvent e) {
     // When receive specific message send new file to channel
     if (e.message.content == "!give-me-file") {
       // Send file via `sendFile()`. File path must be in list, so we have there `[]` syntax.
@@ -29,9 +29,9 @@ void main() {
       // Files can be used within embeds as custom images
 
       // Use `{file-name}` to embed sent file into embed.
-      var embed = nyxx.EmbedBuilder()
+      var embed = EmbedBuilder()
         ..title = "Example Title"
-        ..thumbnailUrl = "${nyxx.attach('kitten.jpeg')}";
+        ..thumbnailUrl = "${attach('kitten.jpeg')}";
 
       // Sent all together
       e.message.channel
