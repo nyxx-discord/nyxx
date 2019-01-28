@@ -20,6 +20,8 @@ class Shard implements Disposable {
   /// A map of guilds the shard is on.
   Map<Snowflake, Guild> guilds;
 
+  bool _acked = false;
+
   Timer _heartbeatTimer;
   _WS _ws;
   transport.WebSocket _socket;
@@ -78,7 +80,7 @@ class Shard implements Disposable {
     if (this._socket != null) this._socket.close();
 
     if (!init && resume) {
-      Future.delayed(const Duration(seconds: 2), () => _connect(true));
+      Future.delayed(const Duration(seconds: 3), () => _connect(true));
       return;
     }
 
@@ -86,7 +88,6 @@ class Shard implements Disposable {
             Uri.parse("${this._ws.gateway}?v=6&encoding=json"))
         .then((ws) {
       _socket = ws;
-      _socket.done.then((_) => _handleErr());
       _socket.listen(
           (data) {
             this._handleMsg(_decodeBytes(data), resume);
@@ -96,9 +97,7 @@ class Shard implements Disposable {
             print(err);
             this._handleErr();
           });
-    }).catchError((_, __) {
-      this._handleErr();
-    });
+    }, onError: (_, __) => Future.delayed(const Duration(seconds: 6), () => this._connect()));
   }
 
   // Decodes zlib compresses string into string json
@@ -118,7 +117,10 @@ class Shard implements Disposable {
 
   void _heartbeat() {
     if (this._socket.closeCode != null) return;
+    if(!this._acked)
+      _logger.warning("No ACK received");
     this.send("HEARTBEAT", _sequence);
+    this._acked = false;
   }
 
   Future<void> _handleMsg(Map<String, dynamic> msg, bool resume) async {
@@ -127,6 +129,9 @@ class Shard implements Disposable {
     if (msg['s'] != null) this._sequence = msg['s'] as int;
 
     switch (msg['op'] as int) {
+      case _OPCodes.heartbeatAck:
+        this._acked = true;
+        break;
       case _OPCodes.hello:
         if (this._sessionId == null || !resume) {
           Map<String, dynamic> identifyMsg = <String, dynamic>{
@@ -166,9 +171,9 @@ class Shard implements Disposable {
         this._onDisconnect.add(this);
 
         if (msg['d'] as bool) {
-          Future.delayed(const Duration(seconds: 2), () => _connect(true));
+          Future.delayed(const Duration(seconds: 3), () => _connect(true));
         } else {
-          Future.delayed(const Duration(seconds: 6), () => _connect(true));
+          Future.delayed(const Duration(seconds: 6), () => _connect());
         }
 
         break;
@@ -388,18 +393,7 @@ class Shard implements Disposable {
     this._heartbeatTimer.cancel();
     _logger.severe(
         "Shard disconnected. Error code: [${this._socket.closeCode}] | Error message: [${this._socket.closeReason}]");
-
-    if (this._socket.closeCode == null) {
-      if (this._reconnect)
-        Future.delayed(
-            const Duration(seconds: 30), () => _connect(false, true));
-      return;
-    }
-
-    /// Dispose on error
-    for (var guild in this.guilds.values) {
-      guild.dispose();
-    }
+    this.dispose();
 
     switch (this._socket.closeCode) {
       case 4004:
@@ -408,12 +402,11 @@ class Shard implements Disposable {
         break;
       case 4007:
       case 4009:
-        if (this._reconnect) this._connect(true);
+        Future.delayed(const Duration(seconds: 3), () => this._connect(true));
         break;
       default:
-        if (this._reconnect)
           Future.delayed(
-              const Duration(seconds: 4), () => _connect(false, true));
+              const Duration(seconds: 6), () => _connect(false, true));
         break;
     }
 
