@@ -24,8 +24,8 @@ abstract class Cache<T, S> implements Disposable {
 
   /// Puts [item] to collection if [key] doesn't exist in cache
   S addIfAbsent(T key, S item) {
-    if (!_cache.containsKey(T)) return _cache[key] = item;
-    return _cache[key];
+    if (!_cache.containsKey(key)) return _cache[key] = item;
+    return item;
   }
 
   /// Returns true if cache contains [key]
@@ -182,17 +182,4 @@ class MessageCache extends Cache<Snowflake, Message> {
   @override
   void operator []=(Snowflake key, Message item) =>
       throw new UnsupportedError("Unsupported operation. Use put() instead");
-}
-
-/// Cache which is cleaned up.
-class VoltCache<T, S> extends Cache<T, S> {
-  VoltCache(Duration duration, bool roundup(T key, S value, Timer t)) {
-    _cache = Map();
-
-    Timer.periodic(duration, (t) {
-      _cache.forEach((k, v) {
-        if (roundup(k, v, t)) _cache.remove(k);
-      });
-    });
-  }
 }
