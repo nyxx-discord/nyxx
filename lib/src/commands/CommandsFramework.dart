@@ -273,8 +273,7 @@ class CommandsFramework {
             _escapeParameters(cmdWithoutPrefix.split(" ")), e.message);
 
         (matchedMeta.parent
-                .invoke(
-                    matchedMeta.method.simpleName, methodInj)
+                .invoke(matchedMeta.method.simpleName, methodInj)
                 .reflectee as Future)
             .then((r) {
           invokePost(r);

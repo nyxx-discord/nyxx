@@ -21,8 +21,7 @@ void main() {
 
   // Register new command handler.
   // It registers your services and adds command to registry.
-  CommandsFramework(bot,
-      prefix: '!', admins: [Snowflake("302359032612651009")])
+  CommandsFramework(bot, prefix: '!', admins: [Snowflake("302359032612651009")])
     ..registerServices([Service("Siema")])
     ..discoverCommands();
 }

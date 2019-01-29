@@ -34,11 +34,10 @@ class ClientUser extends User {
     if (username == null && avatar == null) return null;
     var req = Map<String, dynamic>();
 
-    var enc = avatar != null ? base64Encode(await avatar.readAsBytes()) : encodedData;
+    var enc =
+        avatar != null ? base64Encode(await avatar.readAsBytes()) : encodedData;
     if (username != null) req['username'] = username;
-    if (avatar != null)
-      req['avatar'] =
-          "data:image/jpeg;base64,$enc";
+    if (avatar != null) req['avatar'] = "data:image/jpeg;base64,$enc";
 
     var res = await client._http.send("PATCH", "/users/@me", body: req);
     return User._new(res.body as Map<String, dynamic>, client);

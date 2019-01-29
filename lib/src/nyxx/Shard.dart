@@ -93,7 +93,9 @@ class Shard implements Disposable {
             print(err);
             this._handleErr();
           });
-    }, onError: (_, __) => Future.delayed(const Duration(seconds: 6), () => this._connect()));
+    },
+            onError: (_, __) => Future.delayed(
+                const Duration(seconds: 6), () => this._connect()));
   }
 
   // Decodes zlib compresses string into string json
@@ -113,8 +115,7 @@ class Shard implements Disposable {
 
   void _heartbeat() {
     if (this._socket.closeCode != null) return;
-    if(!this._acked)
-      _logger.warning("No ACK received");
+    if (!this._acked) _logger.warning("No ACK received");
     this.send("HEARTBEAT", _sequence);
     this._acked = false;
   }
@@ -392,8 +393,7 @@ class Shard implements Disposable {
         Future.delayed(const Duration(seconds: 3), () => this._connect(true));
         break;
       default:
-          Future.delayed(
-              const Duration(seconds: 6), () => _connect(false, true));
+        Future.delayed(const Duration(seconds: 6), () => _connect(false, true));
         break;
     }
 
