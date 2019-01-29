@@ -14,7 +14,9 @@ void main() async {
     ..runEvery = const Duration(minutes: 15)
     ..targets = [Snowflake("422285619952222208")]
     ..action = (channel, t) {
-      channel.send(content: "This is example usage of Scheduler. Don't use it to abuse API tho");
+      channel.send(
+          content:
+              "This is example usage of Scheduler. Don't use it to abuse API tho");
     };
 
   /// Disable scheduler after 5 seconds

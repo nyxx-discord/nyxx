@@ -38,8 +38,7 @@ class HttpBase {
     this.uri =
         Uri.https(_Constants.host, _Constants.baseUri + path, queryParams);
 
-    if (http.buckets[uri] == null)
-      http.buckets[uri] = HttpBucket._new(uri);
+    if (http.buckets[uri] == null) http.buckets[uri] = HttpBucket._new(uri);
 
     this.bucket = http.buckets[uri];
 
@@ -283,7 +282,8 @@ class Http {
     this._headers['Authorization'] = "Bot ${this._client._token}";
 
     if (!browser)
-      this._headers['User-Agent'] = "Nyxx (${_Constants.repoUrl}, ${_Constants.version})";
+      this._headers['User-Agent'] =
+          "Nyxx (${_Constants.repoUrl}, ${_Constants.version})";
   }
 
   /// Sends a HTTP request.

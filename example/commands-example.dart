@@ -13,8 +13,7 @@ void main() {
   Nyxx bot = Nyxx(Platform.environment['DISCORD_TOKEN']);
 
   // Creating new CommandsFramework object and registering commands.
-  CommandsFramework(bot,
-      prefix: '!', admins: [Snowflake("302359032612651009")])
+  CommandsFramework(bot, prefix: '!', admins: [Snowflake("302359032612651009")])
     ..discoverCommands();
 }
 
@@ -36,8 +35,7 @@ class PrintString implements Postprocessor {
   const PrintString(this.str);
 
   @override
-  Future<void> execute(
-      List<Object> services, returns, Message message) async {
+  Future<void> execute(List<Object> services, returns, Message message) async {
     print("From postProcessor: $str");
   }
 }

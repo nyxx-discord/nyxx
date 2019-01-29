@@ -12,12 +12,10 @@ class PresenceUpdateEvent {
     var guild = client.guilds[Snowflake(json['d']['guild_id'] as String)];
 
     if (guild != null)
-      this.member =
-      guild.members[Snowflake(json['d']['user']['id'] as String)];
+      this.member = guild.members[Snowflake(json['d']['user']['id'] as String)];
 
     if (json['d']['game'] != null)
-      this.presence =
-          Presence._new(json['d']['game'] as Map<String, dynamic>);
+      this.presence = Presence._new(json['d']['game'] as Map<String, dynamic>);
 
     if (member == null && 'online' == json['d']['status'].toString()) {
       if (json['d']['user']['username'] != null) {
@@ -26,11 +24,13 @@ class PresenceUpdateEvent {
 
         try {
           this.member.status = ClientStatus._new(
-              MemberStatus.from(json['d']['client_status']['desktop'] as String),
+              MemberStatus.from(
+                  json['d']['client_status']['desktop'] as String),
               MemberStatus.from(json['d']['client_status']['web'] as String),
-              MemberStatus.from(json['d']['client_status']['mobile'] as String));
+              MemberStatus.from(
+                  json['d']['client_status']['mobile'] as String));
           this.member.presence = presence;
-        } catch (e)  {
+        } catch (e) {
           print(jsonEncode(json['d']));
         }
 
@@ -43,11 +43,13 @@ class PresenceUpdateEvent {
       } else if (member != null) {
         try {
           this.member.status = ClientStatus._new(
-              MemberStatus.from(json['d']['client_status']['desktop'] as String),
+              MemberStatus.from(
+                  json['d']['client_status']['desktop'] as String),
               MemberStatus.from(json['d']['client_status']['web'] as String),
-              MemberStatus.from(json['d']['client_status']['mobile'] as String));
+              MemberStatus.from(
+                  json['d']['client_status']['mobile'] as String));
           this.member.presence = presence;
-        } catch (e)  {
+        } catch (e) {
           print(jsonEncode(json['d']));
         }
       }
