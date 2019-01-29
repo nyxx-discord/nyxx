@@ -18,7 +18,7 @@ class Shard implements Disposable {
   Stream<Shard> onDisconnect;
 
   /// A map of guilds the shard is on.
-  Map<Snowflake, Guild> guilds;
+  Cache<Snowflake, Guild> get guilds => _ws._client.guilds;
 
   bool _acked = false;
 
@@ -29,17 +29,13 @@ class Shard implements Disposable {
   String _sessionId;
   StreamController<Shard> _onReady;
   StreamController<Shard> _onDisconnect;
-  bool _reconnect = true;
 
   Logger _logger = Logger("Websocket");
 
   int messagesReceived = 0;
   int get eventsSeen => _sequence;
 
-  Shard._new(_WS ws, this.id) {
-    guilds = Map();
-
-    this._ws = ws;
+  Shard._new(this._ws, this.id) {
     this._onReady = StreamController<Shard>.broadcast();
     this.onReady = this._onReady.stream;
 
@@ -186,12 +182,6 @@ class Shard implements Disposable {
             _ws._client.self = ClientUser._new(
                 msg['d']['user'] as Map<String, dynamic>, _ws._client);
 
-            _ws._client._http._headers['Authorization'] =
-                "Bot ${_ws._client._token}";
-            if (!browser)
-              _ws._client._http._headers['User-Agent'] =
-                  "${_ws._client.self.username} (${_Constants.repoUrl}, ${_Constants.version})";
-
             this.ready = true;
             this._onReady.add(this);
             _logger.info("Shard connected");
@@ -266,15 +256,14 @@ class Shard implements Disposable {
 
           case 'MESSAGE_CREATE':
             messagesReceived++;
+
             var m = MessageReceivedEvent._new(msg, _ws._client);
             if (m.message == null) break;
 
             _ws._client._events.onMessage.add(m);
             _ws._client._events.onMessageReceived.add(m);
 
-            if (m.message.channel != null) {
-              m.message.channel._onMessage.add(m);
-            }
+            m.message.channel?._onMessage?.add(m);
             break;
 
           case 'MESSAGE_DELETE':
@@ -352,12 +341,10 @@ class Shard implements Disposable {
             var m = TypingEvent._new(msg, _ws._client);
 
             _ws._client._events.onTyping.add(m);
-            if (m.channel != null) m.channel._onTyping.add(m);
+            m.channel?._onTyping?.add(m);
             break;
 
           case 'PRESENCE_UPDATE':
-            _ws._client._events.onPresenceUpdate
-                .add(PresenceUpdateEvent._new(msg, _ws._client));
             _ws._client._events.onPresenceUpdate
                 .add(PresenceUpdateEvent._new(msg, _ws._client));
             break;
@@ -417,7 +404,6 @@ class Shard implements Disposable {
 
   @override
   Future<void> dispose() async {
-    this._reconnect = false;
     await this._socket.close(1000);
   }
 }

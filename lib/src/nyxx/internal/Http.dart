@@ -275,18 +275,15 @@ class Http {
   Map<Uri, HttpBucket> buckets = Map();
 
   /// Headers sent on every request.
-  Map<String, String> _headers;
+  Map<String, String> _headers = Map();
 
   Logger _logger = Logger.detached("Http");
 
   Http._new(this._client) {
+    this._headers['Authorization'] = "Bot ${this._client._token}";
+
     if (!browser)
-      this._headers = {
-        'User-Agent':
-            'DiscordBot (https://github.com/l7ssha/nyxx, ${_Constants.version})'
-      };
-    else
-      this._headers = {};
+      this._headers['User-Agent'] = "Nyxx (${_Constants.repoUrl}, ${_Constants.version})";
   }
 
   /// Sends a HTTP request.
