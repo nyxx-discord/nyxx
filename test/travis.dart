@@ -5,6 +5,15 @@ import 'package:nyxx/Vm.dart' as nyxx;
 import 'package:nyxx/nyxx.dart' as nyxx;
 import 'package:nyxx/commands.dart' as command;
 
+// Replacement for assert. Throws if [test] isn't true.
+void test(bool test, [String name]) {
+  if(!test) {
+    throw new AssertionError();
+  } else {
+    print("Test ${name != null ? "[$name] " : ""}passed");
+  }
+}
+
 // Messages on which we delete message
 const ddel = [
   "--trigger-test",
@@ -78,7 +87,7 @@ void main() {
   bot.onReady.listen((e) async {
     var channel =
         bot.channels[nyxx.Snowflake('422285619952222208')] as nyxx.TextChannel;
-    assert(channel != null);
+    test(channel != null, "Channel cannot be null");
     if (env['TRAVIS_BUILD_NUMBER'] != null) {
       channel.send(
           content:
@@ -92,17 +101,17 @@ void main() {
     nyxx.Snowflake a = nyxx.Snowflake.fromDateTime(new DateTime(2017));
     nyxx.Snowflake b = nyxx.Snowflake.fromDateTime(new DateTime(2018));
 
-    assert(a.timestamp.isBefore(b.timestamp));
-    assert(b.timestamp.isAfter(a.timestamp));
+    test(a.timestamp.isBefore(b.timestamp), "Snowflake should be before timestamp");
+    test(b.timestamp.isAfter(a.timestamp), "Snowflake should be after timestamp");
 
-    assert(a.timestamp.isAtSameMomentAs(DateTime(2017)));
-    assert(b.timestamp.isAtSameMomentAs(DateTime(2018)));
+    test(a.timestamp.isAtSameMomentAs(DateTime(2017)), "Snowflake should repsresent proper date");
+    test(b.timestamp.isAtSameMomentAs(DateTime(2018)), "Snowflake should repsresent proper date");
 
-    assert(bot.channels.count > 0);
-    assert(bot.users.count > 0);
-    assert(bot.shards == 1);
-    assert(bot.ready);
-    assert(bot.inviteLink != null);
+    test(bot.channels.count > 0, "Channel count shouldn't be less or equal zero");
+    test(bot.users.count > 0, "Users coutn count should n't be less or equal zero");
+    test(bot.shards == 1, "Shard count should be one");
+    test(bot.ready, "Bot should be ready");
+    test(bot.inviteLink != null, "Bot's invite link shouldn't be null");
 
     print("TESTING BASIC FUNCTIONALITY!");
     var m = await channel.send(content: "Message test.");
