@@ -171,8 +171,8 @@ class Message extends SnowflakeEntity implements GuildEntity, Disposable {
       });
     }
 
-    this.channel.messages._cacheMessage(this);
-    this.channel.lastMessageID = this.id;
+    //this.channel.messages._cacheMessage(this);
+    //this.channel.lastMessageID = this.id;
   }
 
   /// Returns content of message
