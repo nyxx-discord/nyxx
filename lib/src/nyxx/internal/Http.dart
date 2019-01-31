@@ -286,6 +286,22 @@ class Http {
           "Nyxx (${_Constants.repoUrl}, ${_Constants.version})";
   }
 
+  /// Adds AUDIT_LOG header to request
+  Map<String, String> _addAuditReason(String reason) {
+    if(reason.length > 512)
+      throw new Exception("X-Audit-Log-Reason header cannot be longer than 512 characters");
+
+      return <String, String>{"X-Audit-Log-Reason": "${reason == null ? "" : reason}"};
+  }
+
+  /// Creates headers for request
+  void _addHeaders(HttpBase request, String reason) {
+    final Map<String, String> _headers = Map.from(this._headers);
+    if (!browser && reason != null && reason != "") _headers.addAll(_addAuditReason(reason));
+
+    request.headers.addAll(_headers);
+  }
+
   /// Sends a HTTP request.
   Future<HttpResponse> send(String method, String path,
       {dynamic body,
@@ -293,30 +309,12 @@ class Http {
       bool beforeReady = false,
       Map<String, String> headers = const {},
       String reason}) async {
-    final Map<String, String> _headers = Map.from(this._headers)
-      ..addAll(headers);
-    if (!browser) _headers.addAll(_addAuditReason(reason));
     HttpRequest request =
         HttpRequest._new(this, method, path, queryParams, _headers, body);
 
-    await for (HttpResponse r in request.stream) {
-      if (!r.aborted && r.status >= 200 && r.status < 300) {
-        if (_client != null)
-          _client._events.onHttpResponse.add(HttpResponseEvent._new(r));
-        return r;
-      } else {
-        if (_client != null)
-          _client._events.onHttpError.add(HttpErrorEvent._new(r));
-        return Future.error(r);
-      }
-    }
-
-    return Future.error(Exception("Didn't got any response"));
+    _addHeaders(request, reason);
+    return _executeRequest(request);
   }
-
-  /// Adds AUDIT_LOG header to request
-  Map<String, String> _addAuditReason(String reason) =>
-      <String, String>{"X-Audit-Log-Reason": "${reason == null ? "" : reason}"};
 
   /// Sends multipart request
   Future<HttpResponse> sendMultipart(
@@ -324,15 +322,14 @@ class Http {
       {Map<String, dynamic> data,
       bool beforeReady = false,
       String reason}) async {
-    if (_client is Nyxx && !_client.ready && !beforeReady)
-      return Future.error(Exception("Client isn't ready yet."));
-
     HttpMultipartRequest request = HttpMultipartRequest._new(this, method, path,
         files, data, Map.from(this._headers)..addAll(_headers));
 
-    if (!browser && (reason != "" || reason != null))
-      request.headers.addAll(_addAuditReason(reason));
+    _addHeaders(request, reason);
+    return _executeRequest(request);
+  }
 
+  Future<HttpResponse> _executeRequest(HttpBase request) async {
     await for (HttpResponse r in request.stream) {
       if (!r.aborted && r.status >= 200 && r.status < 300) {
         if (_client != null)
