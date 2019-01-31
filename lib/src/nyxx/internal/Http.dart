@@ -91,7 +91,12 @@ class HttpMultipartRequest extends HttpBase {
     for (var f in files) {
       try {
         var name = Uri.file(f.path).toString().split("/").last;
-        this.files[name] = transport.MultipartFile(f.openRead(), f.lengthSync(),
+
+        var length = f.lengthSync();
+        if(length > (8 * 1024 * 1024))
+          throw new Exception("File [${path}] is to big to be sent. (8MB file size limit)");
+
+        this.files[name] = transport.MultipartFile(f.openRead(), length,
             filename: name);
       } on FileSystemException catch (err) {
         throw Exception("Cannot find your file: ${err.path}");
