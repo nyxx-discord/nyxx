@@ -128,10 +128,10 @@ part 'src/nyxx/objects/message/Reaction.dart';
 part 'src/nyxx/objects/message/Message.dart';
 part 'src/nyxx/objects/message/Attachment.dart';
 
-part 'src/nyxx/objects/OAuth/ClientOAuth2Application.dart';
-part 'src/nyxx/objects/OAuth/OAuth2Application.dart';
-part 'src/nyxx/objects/OAuth/OAuth2Guild.dart';
-part 'src/nyxx/objects/OAuth/OAuth2Info.dart';
+part 'src/nyxx/objects/oauth/ClientOAuth2Application.dart';
+part 'src/nyxx/objects/oauth/OAuth2Application.dart';
+part 'src/nyxx/objects/oauth/OAuth2Guild.dart';
+part 'src/nyxx/objects/oauth/OAuth2Info.dart';
 
 part 'src/nyxx/objects/permissions/Permissions.dart';
 part 'src/nyxx/objects/permissions/AbstractPermissions.dart';
