@@ -26,7 +26,7 @@ abstract class Member extends User implements GuildEntity {
   /// Weather or not the member is muted.
   bool mute;
 
-  /// A list of role IDs the member has.
+  /// A list of [Role]s the member has.
   List<Role> roles;
 
   @override
