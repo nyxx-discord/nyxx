@@ -19,7 +19,6 @@ class EmbedFooterBuilder implements Builder {
       throw new Exception("Footer text is too long. (1024 characters limit)");
 
     Map<String, dynamic> tmp = Map();
-
     if (text != null) tmp["text"] = text;
     if (iconUrl != null) tmp["icon_url"] = iconUrl;
 

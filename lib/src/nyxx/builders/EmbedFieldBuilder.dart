@@ -29,21 +29,9 @@ class EmbedFieldBuilder implements Builder {
       throw new Exception("Field content is too long. (1024 characters limit)");
 
     Map<String, dynamic> tmp = Map();
-
-    if (name != null)
-      tmp["name"] = name.toString();
-    else
-      tmp["name"] = "\u200B";
-
-    if (content != null)
-      tmp["value"] = content.toString();
-    else
-      tmp["value"] = "\u200B";
-
-    if (inline != null)
-      tmp["inline"] = inline;
-    else
-      tmp["inline"] = false;
+    tmp["name"] = name != null ? name.toString() : "\u200B";
+    tmp["value"] = content != null ? content.toString() : "\u200B";
+    tmp["inline"] = inline != null? inline : false;
 
     return tmp;
   }

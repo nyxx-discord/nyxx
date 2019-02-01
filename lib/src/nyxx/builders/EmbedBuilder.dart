@@ -103,8 +103,7 @@ class EmbedBuilder implements Builder {
     if (color != null) tmp["color"] = color._value;
     if (footer != null) tmp["footer"] = footer._build();
     if (imageUrl != null) tmp["image"] = <String, dynamic>{"url": imageUrl};
-    if (thumbnailUrl != null)
-      tmp["thumbnail"] = <String, dynamic>{"url": thumbnailUrl};
+    if (thumbnailUrl != null) tmp["thumbnail"] = <String, dynamic>{"url": thumbnailUrl};
     if (author != null) tmp["author"] = author._build();
     if (_fields.length > 0) tmp["fields"] = _fields.map((builder) => builder._build()).toList();
 
