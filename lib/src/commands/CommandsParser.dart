@@ -3,6 +3,18 @@ part of nyxx.commands;
 typedef Future<void> CommandHandler(
     Message message, Member author, MessageChannel channel, List<String> args);
 
+bool _isCommandMatching(List<String> command, List<String> message) {
+  if(message.length < command.length)
+    return false;
+
+  for(var i = 0; i < command.length; i++) {
+    if(command[i] != message[i])
+      return false;
+  }
+
+  return true;
+}
+
 class CommandParser {
   Map<String, CommandHandler> _commands;
 
@@ -15,17 +27,18 @@ class CommandParser {
       client.onMessageReceived.listen((event) {
         if (!event.message.content.startsWith(prefix)) return;
 
-        var cont = event.message.content.replaceFirst(prefix, "");
+        var trimmedContent = event.message.content.replaceFirst(prefix, "");
+        var splittedContent = trimmedContent.split(" ");
 
-        _commands.forEach((str, cmd) async {
-          if (cont.startsWith(str)) {
-            await cmd(
+        _commands.forEach((commandConstraints, commandHandler) async {
+          if (_isCommandMatching(commandConstraints.split(" "), splittedContent)) {
+            await commandHandler(
                 event.message,
                 event.message.guild != null
                     ? event.message.guild.members[event.message.author.id]
                     : null,
                 event.message.channel,
-                event.message.content.replaceFirst(str, "").split(" "));
+                splittedContent);
             return;
           }
         });
