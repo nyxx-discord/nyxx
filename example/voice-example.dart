@@ -29,7 +29,7 @@ void main() {
 
       // or get channel of user. Cast author field to member, then fetch
       // channel from VoiceState object.
-      channel = (e.message.author as nyxx.Member).voiceState.channel;
+      channel = (e.message.author as Member).voiceState.channel;
 
       // Connect to channel
       await player.connect(channel);
