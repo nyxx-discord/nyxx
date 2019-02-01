@@ -601,7 +601,6 @@ class Guild extends SnowflakeEntity implements Disposable, Debugable {
     await roles.dispose();
     await emojis.dispose();
     await voiceStates.dispose();
-    return null;
   }
 
   @override
