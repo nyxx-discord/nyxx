@@ -7,6 +7,7 @@ class Message extends SnowflakeEntity implements GuildEntity, Disposable {
   StreamController<MessageReactionEvent> _onReactionRemove;
   StreamController<MessageReactionsRemovedEvent> _onReactionsRemoved;
 
+  /// Reference to bot instance
   Nyxx client;
 
   /// The message's content.
@@ -94,7 +95,8 @@ class Message extends SnowflakeEntity implements GuildEntity, Disposable {
 
         if (this.author == null) {
           if (raw['member'] == null) {
-            this.author = User._new(raw['author'] as Map<String, dynamic>, client);
+            this.author =
+                User._new(raw['author'] as Map<String, dynamic>, client);
           } else {
             var r = raw['author'];
             r['member'] = raw['member'];
@@ -138,7 +140,8 @@ class Message extends SnowflakeEntity implements GuildEntity, Disposable {
           final user = User._new(o as Map<String, dynamic>, client);
           this.mentions[user.id] = user;
         } else {
-          final user = _ReverseMember(o as Map<String, dynamic>, this.guild, client);
+          final user =
+              _ReverseMember(o as Map<String, dynamic>, this.guild, client);
           this.mentions[user.id] = user;
         }
       });
@@ -168,11 +171,11 @@ class Message extends SnowflakeEntity implements GuildEntity, Disposable {
       });
     }
 
-    this.channel.messages._cacheMessage(this);
-    this.channel.lastMessageID = this.id;
+    //this.channel.messages._cacheMessage(this);
+    //this.channel.lastMessageID = this.id;
   }
 
-  /// Returns mention of message
+  /// Returns content of message
   @override
   String toString() => this.content;
 
@@ -197,16 +200,15 @@ class Message extends SnowflakeEntity implements GuildEntity, Disposable {
   ///     Message.edit("My edited content!");
   Future<Message> edit(
       {String content,
-        EmbedBuilder embed,
-        bool tts = false,
-        bool disableEveryone}) async {
+      EmbedBuilder embed,
+      bool tts = false,
+      bool disableEveryone}) async {
     if (this.author.id != client.self.id) return null;
 
     var body = Map<String, dynamic>();
-    if(content != null)
+    if (content != null)
       body['content'] = _sanitizeMessage(content, disableEveryone, client);
-    if(embed != null)
-      body['embed'] = embed._build();
+    if (embed != null) body['embed'] = embed._build();
 
     final HttpResponse r = await client._http.send(
         'PATCH', '/channels/${this.channel.id}/messages/${this.id}',

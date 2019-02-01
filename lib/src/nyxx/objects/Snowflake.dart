@@ -8,14 +8,15 @@ class Snowflake implements Comparable<Snowflake> {
 
   final String _id;
 
-  /// Creates new instance of [Snowflake] from String value.
+  /// Creates new instance of [Snowflake].
   Snowflake(dynamic id) : _id = id.toString();
 
   /// Creates synthetic snowflake based on current time
   Snowflake.fromNow() : _id = _parseId(DateTime.now());
 
   /// Creates first snowflake which can be deleted by `bulk-delete messages`
-  Snowflake.bulk() : _id = _parseId(DateTime.now().subtract(Duration(days: 14)));
+  Snowflake.bulk()
+      : _id = _parseId(DateTime.now().subtract(Duration(days: 14)));
 
   /// Creates synthetic snowflake based on given [date].
   Snowflake.fromDateTime(DateTime date) : _id = _parseId(date);
@@ -40,8 +41,9 @@ class Snowflake implements Comparable<Snowflake> {
 
   /// Returns timestamp included in [Snowflake]
   /// [Snowflake reference](https://discordapp.com/developers/docs/reference#snowflakes)
-  DateTime get timestamp =>
-      DateTime.fromMillisecondsSinceEpoch((BigInt.parse(_id) >> 22).toInt() + discordEpoch, isUtc: true);
+  DateTime get timestamp => DateTime.fromMillisecondsSinceEpoch(
+      (BigInt.parse(_id) >> 22).toInt() + discordEpoch,
+      isUtc: true);
 
   @override
   String toString() => _id;

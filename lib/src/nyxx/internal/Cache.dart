@@ -12,9 +12,9 @@ abstract class Cache<T, S> implements Disposable {
   Iterable<T> get keys => _cache.keys;
 
   /// Find one element in cache
-  S findOne(bool f(S item)) => values.firstWhere(f, orElse: () => null);
+  S findOne(bool predicate(S item)) => values.firstWhere(predicate);
 
-  /// Find many elements of cache which satisfies [predicate]
+  /// Find matching items based of [predicate]
   Iterable<S> find(bool predicate(S item)) => values.where(predicate);
 
   /// Returns element with key [key]
@@ -25,8 +25,8 @@ abstract class Cache<T, S> implements Disposable {
 
   /// Puts [item] to collection if [key] doesn't exist in cache
   S addIfAbsent(T key, S item) {
-    if (!_cache.containsKey(T)) return _cache[key] = item;
-    return _cache[key];
+    if (!_cache.containsKey(key)) return _cache[key] = item;
+    return item;
   }
 
   /// Returns true if cache contains [key]
@@ -182,5 +182,5 @@ class MessageCache extends Cache<Snowflake, Message> {
   /// Unsupported
   @override
   void operator []=(Snowflake key, Message item) =>
-      throw new Exception("Unsupported operation. Use put() instead");
+      throw new UnsupportedError("Unsupported operation. Use put() instead");
 }

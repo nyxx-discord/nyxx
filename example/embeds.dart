@@ -1,5 +1,5 @@
 import 'package:nyxx/Vm.dart';
-import 'package:nyxx/nyxx.dart' as nyxx;
+import 'package:nyxx/nyxx.dart';
 
 import 'dart:io';
 
@@ -8,20 +8,20 @@ void main() {
   configureNyxxForVM();
 
   // Create new bot instance
-  nyxx.Nyxx bot = nyxx.Nyxx(Platform.environment['DISCORD_TOKEN']);
+  Nyxx bot = Nyxx(Platform.environment['DISCORD_TOKEN']);
 
   // Listen to ready event. Invoked when bot started listening to events.
-  bot.onReady.listen((nyxx.ReadyEvent e) {
+  bot.onReady.listen((ReadyEvent e) {
     print("Ready!");
   });
 
   // Listen to all incoming messages via Dart Stream
-  bot.onMessageReceived.listen((nyxx.MessageReceivedEvent e) {
+  bot.onMessageReceived.listen((MessageReceivedEvent e) {
     if (e.message.content == "!embed") {
       // Build embed with `..Builder` classes.
 
       // Create embed with author and footer section.
-      var embed = nyxx.EmbedBuilder()
+      var embed = EmbedBuilder()
         ..addField(name: "Example field title", content: "Example value")
         ..addField(builder: (field) {
           field.content = "Hi";
@@ -34,7 +34,7 @@ void main() {
         ..addFooter((footer) {
           footer.text = "Footer example, good";
         })
-        ..color = (e.message.author as nyxx.Member).color;
+        ..color = (e.message.author as Member).color;
 
       // Sent an embed
       e.message.channel.send(embed: embed);

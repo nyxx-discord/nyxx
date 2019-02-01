@@ -8,53 +8,18 @@ part of nyxx.commands;
 /// ```
 /// @Command(name: "elo")
 /// Future<void> elo(CommandContext ctx) async => await ctx.reply(content: "ELO");
-///
-/// @Module("cmd")
-/// class ExampleCommand {
-///   // Invoked when message == `!cmd`
-///   // main command is implicit, so you can leave 'main: true'
-///   @Command()
-///   Future main() async {
-///    await reply(content: "Some reply");
-///   }
-///
-///   // This is subcommand and will be invoked when message
-///   // is equal with `!cmd check`
-///   @Command(name: "check")
-///   Future main() async {
-///     await reply(content: "Checked!");
-///   }
-/// }
 /// ```
-class Command extends Module {
-  /// True if command should be main
-  final bool main;
-
-  /// When command is executed bot will indicate 'typing'. Used for long running commands.
-  final bool typing;
-
-  const Command(
-      {String name, this.typing = false, List<String> aliases = const [], this.main = true})
-      : super(name, aliases: aliases);
-}
-
-/// Can be places above class declaration and it means that class is group of commands and all
-/// commands will be have prefix with given name (so it just creates module).
-///
-/// ```
-/// @Module("cmd")
-/// class ExampleCommand {
-///   // Class body
-/// }
-/// ```
-class Module {
+class Command {
   /// Name of command. Text which will trigger execution
   final String name;
 
   /// List of aliases for command.
   final List<String> aliases;
 
-  const Module(this.name, {this.aliases = const []});
+  /// When command is executed bot will indicate 'typing'. Used for long running commands.
+  final bool typing;
+
+  const Command(this.name, {this.typing = false, this.aliases = const []});
 }
 
 /// Defines additional properties which will restrict user access to command

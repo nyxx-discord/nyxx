@@ -29,6 +29,7 @@ class Invite {
   /// User who created this invite
   User inviter;
 
+  /// Reference to bot instance
   Nyxx client;
 
   Invite._new(Map<String, dynamic> raw, this.client) {

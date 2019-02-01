@@ -13,7 +13,8 @@ class ChannelCreateEvent {
         client.channels[tmp.id] = tmp;
         this.channel = tmp;
       } else if (json['d']['type'] == 3) {
-        var tmp = GroupDMChannel._new(json['d'] as Map<String, dynamic>, client);
+        var tmp =
+            GroupDMChannel._new(json['d'] as Map<String, dynamic>, client);
 
         client.channels[tmp.id] = tmp;
         this.channel = tmp;
@@ -23,11 +24,14 @@ class ChannelCreateEvent {
         GuildChannel chan;
 
         if (json['d']['type'] == 0) {
-          chan = TextChannel._new(json['d'] as Map<String, dynamic>, guild, client);
+          chan = TextChannel._new(
+              json['d'] as Map<String, dynamic>, guild, client);
         } else if (json['d']['type'] == 2) {
-          chan = VoiceChannel._new(json['d'] as Map<String, dynamic>, guild, client);
+          chan = VoiceChannel._new(
+              json['d'] as Map<String, dynamic>, guild, client);
         } else if (json['d']['type'] == 4) {
-          chan = CategoryChannel._new(json['d'] as Map<String, dynamic>, guild, client);
+          chan = CategoryChannel._new(
+              json['d'] as Map<String, dynamic>, guild, client);
         }
 
         client.channels[chan.id] = chan;
@@ -46,28 +50,13 @@ class ChannelDeleteEvent {
 
   ChannelDeleteEvent._new(Map<String, dynamic> json, Nyxx client) {
     if (client.ready) {
-      if (json['d']['type'] == 1) {
-        this.channel = DMChannel._new(json['d'] as Map<String, dynamic>, client);
-      } else if (json['d']['type'] == 3) {
-        this.channel = GroupDMChannel._new(json['d'] as Map<String, dynamic>, client);
-      } else {
-        final Guild guild =
-            client.guilds[Snowflake(json['d']['guild_id'] as String)];
-        if (json['d']['type'] == 0) {
-          this.channel =
-              TextChannel._new(json['d'] as Map<String, dynamic>, guild, client);
-        } else if (json['d']['type'] == 2) {
-          this.channel =
-              VoiceChannel._new(json['d'] as Map<String, dynamic>, guild, client);
-        } else if (json['d']['type'] == 4) {
-          this.channel =
-              CategoryChannel._new(json['d'] as Map<String, dynamic>, guild, client);
-        }
-        guild.channels.remove(channel.id);
-      }
+      this.channel = client.channels[Snowflake(json['d']['id'])];
 
-      client.channels.remove(channel.id);
+      if (channel is GuildChannel)
+        (channel as GuildChannel).guild.channels.remove(channel.id);
     }
+
+    client.channels.remove(channel.id);
   }
 }
 
@@ -111,8 +100,8 @@ class ChannelUpdateEvent {
         this.newChannel =
             VoiceChannel._new(json['d'] as Map<String, dynamic>, guild, client);
       } else if (type == 4) {
-        this.newChannel =
-            CategoryChannel._new(json['d'] as Map<String, dynamic>, guild, client);
+        this.newChannel = CategoryChannel._new(
+            json['d'] as Map<String, dynamic>, guild, client);
       }
 
       guild.channels[oldChannel.id] = newChannel;

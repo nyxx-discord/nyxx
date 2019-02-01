@@ -27,13 +27,8 @@ class MessageChannel extends Channel
   /// A collection of messages sent to this channel.
   MessageCache messages;
 
-  /// The ID for the last message in the channel.
-  Snowflake lastMessageID;
-
   MessageChannel._new(Map<String, dynamic> raw, int type, Nyxx client)
       : super._new(raw, type, client) {
-    if (raw['last_message_id'] != null)
-      this.lastMessageID = Snowflake(raw['last_message_id'] as String);
     this.messages = MessageCache._new(client._options);
 
     _onMessage = StreamController.broadcast();
@@ -164,8 +159,6 @@ class MessageChannel extends Channel
   /// Gets several [Message] objects from API. Only one of [after], [before], [around] can be specified
   /// otherwise it'll throw.
   ///
-  /// Messages will be cached if [cache] is set to true. Defaults to false.
-  ///
   /// ```
   /// var messages = await chan.getMessages(limit: 100, after: Snowflake("222078108977594368"));
   /// ```
@@ -173,8 +166,7 @@ class MessageChannel extends Channel
       {int limit = 50,
       Snowflake after,
       Snowflake before,
-      Snowflake around,
-      bool cache = false}) async {
+      Snowflake around}) async {
     Map<String, String> query = {"limit": limit.toString()};
 
     if (after != null) query['after'] = after.toString();
@@ -185,16 +177,9 @@ class MessageChannel extends Channel
         .send('GET', '/channels/${this.id}/messages', queryParams: query);
 
     var response = LinkedHashMap<Snowflake, Message>();
-
-    for (Map<String, dynamic> val in r.body as List<dynamic>) {
+    for (Map<String, dynamic> val in r.body as List<Map<String, dynamic>>) {
       var msg = Message._new(val, client);
       response[msg.id] = msg;
-    }
-
-    if (cache) {
-      for (var m in response.values) {
-        messages._cacheMessage(m);
-      }
     }
 
     return response;

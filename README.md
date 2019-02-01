@@ -7,17 +7,12 @@
 [![Pub](https://img.shields.io/pub/v/nyxx.svg)](https://pub.dartlang.org/packages/nyxx)
 [![documentation](https://img.shields.io/badge/Documentation-nyxx-yellow.svg)](https://www.dartdocs.org/documentation/nyxx/latest/)
 
-Simple, robust framework for creating discord bots for Dart language. <br />
-This repo is fork of [Hackzzila's](https://github.com/Hackzzila) [nyx](https://github.com/Hackzzila/nyx) - 
-extended with new functionality, rewritten backend, many bug fixes and  applied pending pull requests.
+Simple, robust framework for creating discord bots for Dart language.
+This is fork of [Hackzzila's](https://github.com/Hackzzila) [nyx](https://github.com/Hackzzila/nyx).
 
 <hr />
 
 </div>
-
-### Stable release
-
-Starting from version `1.0.0` of nyxx, library requires `Dart 2.0+`. You can use stable release or dev sdk.
 
 ### Features
 
@@ -35,16 +30,11 @@ Starting from version `1.0.0` of nyxx, library requires `Dart 2.0+`. You can use
 Basic usage:
 ```dart
 void main() {
-  discord.Client bot =
-      new discord.Client(Platform.environment['DISCORD_TOKEN']);
+  var bot = Nyxx(Platform.environment['DISCORD_TOKEN']);
 
-  bot.onReady.listen((discord.ReadyEvent e) {
-    print("Ready!");
-  });
-
-  bot.onMessage.listen((discord.MessageEvent e) {
+  bot.onMessageReceived.listen((MessageEvent e) {
     if (e.message.content == "!ping") {
-      e.message.channel.sendMessage(content: "Pong!");
+      e.message.channel.send(content: "Pong!");
     }
   });
 }
@@ -59,23 +49,9 @@ void main() {
     ..registerLibraryCommands();
 }
 
-@command.Command(name: "single")
-Future<void> single(command.CommandContext context) async {
+@Command(name: "single")
+Future<void> single(CommandContext context) async {
   await context.reply(content: "WORKING");
-}
-
-@command.Module("ping")
-class PongCommand extends command.CommandContext {
-  @command.Command()
-  @command.Help("Pong!", usage: "ping")
-  Future<void> run() async {
-    await reply(content: "Pong!");
-  }
-  
-  @command.Command(name: "subcommand")
-  Future<void> run() async {
-   await reply(content: "\\cmd");
-  }
 }
 ```
 

@@ -20,6 +20,7 @@ part 'src/commands/Processors.dart';
 part 'src/commands/Annotations.dart';
 part 'src/commands/Helpers.dart';
 
+part 'src/commands/CommandsParser.dart';
 part 'src/commands/CommandsFramework.dart';
 part 'src/commands/CommandContext.dart';
 part 'src/commands/CooldownCache.dart';

@@ -28,14 +28,16 @@ class GuildEmoji extends Emoji
   bool animated;
 
   /// Creates full emoji object
-  GuildEmoji._new(Map<String, dynamic> raw, this.guild, this.client) : super(raw['name'] as String) {
+  GuildEmoji._new(Map<String, dynamic> raw, this.guild, this.client) : super("") {
     this.id = Snowflake(raw['id'] as String);
+    this.name = raw['name'] as String;
     this.requireColons = raw['require_colons'] as bool;
     this.managed = raw['managed'] as bool;
     this.animated = raw['animated'] as bool;
 
-    this.roles = List();
     if (raw['roles'] != null) {
+      this.roles = List();
+
       raw['roles'].forEach(
           (o) => this.roles.add(this.guild.roles[Snowflake(o as String)]));
     }

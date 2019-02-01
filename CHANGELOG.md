@@ -1,21 +1,25 @@
-## [1.0.0](https://github.com/l7ssha/nyxx/compare/0.24.0...1.0.0)
-_Tue xx.xx.2019_
+## [0.3.0](https://github.com/l7ssha/nyxx/compare/0.24.0...0.3.0)
+_Tue x.01.2019_
 
 *This version drops support for Dart SDK 1.x; Nyxx now only supports Dart 2.0+ including dev sdk.*
 
 - **Features added**
-  * **SUPPORT FOR DART 2.0**
+  * **SUPPORT FOR DART 2.0+**
   * **ADDED SUPPORT FOR VOICE via Lavalink**
   * **PERMISSIONS OVERHAUL**
     - Proper permissing handling
   * **COMMANDS FRAMEWORK REWRITTEN**
-    - Dispatch pipe is completly rewritten. Bot should operate about 2-8x faster
+    - Dispatch pipe is completely rewritten. Bot should operate about 2-8x faster
     - Allowed to declare single method commands without using classes
     - Added support for specify custom restrictions to commands handlers
     - Classes now have to be annotated with `Module` instead of `Command`
     - `Remainder` can now colled data to `List<String>` or `String`
     - Added `Preprocessor` and `Posprocessor`
     - Removed help system
+  * **COMMANDS PARSER**
+    - Allows to define simple commands handlers
+  * **Nyxx can be now used in browser**
+  * Many additions to `Member` and `User` classes
   * Changed internal library structure
   * Implemented Iterable for Channel to query messages
   * Added typing event per channel
@@ -28,8 +32,10 @@ _Tue xx.xx.2019_
   * Added `DiscordColor` class
   * Added `Binder` util
   * Added `Cache`
-  * Added interfaces `Downloadable`, `Mentionable`, `Nameable`, `Disposable`, `GuildEntity`
+  * Added `MessageBuilder`
+  * Added interfaces `Downloadable`, `Mentionable`, `Debugable`, `Disposable`, `GuildEntity`
 - **Bug fixes**
+  * **Lower memory usage**
   * Fixed Emijis comparing
   * Fixed searchin in Emojis unicode
   * Code cleanup and style fixes
@@ -37,9 +43,14 @@ _Tue xx.xx.2019_
   * Gateway fixes
   * Object deserializing fixes
   * Memory and performance improvements
+  * Random null exceptions
+  * Emojis CDN fixes
+  * Fixes ratelimitter
 - **Changes**
-  * **Global client instance**
   * **Docs are rewritten**
+  * **Faster deserialization**
+  * **Embed builders rewritten**
+  * Removed autosharding.
   * Every object which has id is now subclass of `SnowflakeEntity`.
   * Snowflakes are default id entities
   * Internal nyxx API changes

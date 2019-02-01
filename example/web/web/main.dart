@@ -7,7 +7,8 @@ void main() {
 
   final FormElement tokenForm = document.querySelector('form.bot-token-form');
   final InputElement tokenInput = document.querySelector('input[name="token"]');
-  final InputElement tokenSubmit = document.querySelector('input[type="submit"]');
+  final InputElement tokenSubmit =
+      document.querySelector('input[type="submit"]');
 
   final DivElement messages = document.querySelector('.messages');
   final DivElement bots = document.querySelector('div#bots');
@@ -26,11 +27,13 @@ void main() {
 
     final Nyxx client = Nyxx(tokenInput.value);
 
-    final DocumentFragment fragment = document.importNode(botTemplate.content, true);
+    final DocumentFragment fragment =
+        document.importNode(botTemplate.content, true);
     final DivElement bot = fragment.querySelector('.bot');
     final SpanElement nameElm = bot.querySelector('.bot-name');
     final SpanElement statusElm = bot.querySelector('.bot-status');
-    final ButtonElement disconnectButton = bot.querySelector('.disconnect-button');
+    final ButtonElement disconnectButton =
+        bot.querySelector('.disconnect-button');
     statusElm.text = client.ready ? "Ready" : "Not ready";
     client.onHttpError.listen((e) {
       statusElm.text = e.response.toString();
@@ -54,5 +57,4 @@ void main() {
     tokenInput.value = "";
     tokenSubmit.disabled = tokenInput.value.length < 1;
   });
-
 }

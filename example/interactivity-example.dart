@@ -1,22 +1,21 @@
 library test;
 
 import 'package:nyxx/Vm.dart';
-import 'package:nyxx/nyxx.dart' as nyxx;
-import 'package:nyxx/utils.dart' as utils;
+import 'package:nyxx/nyxx.dart';
+import 'package:nyxx/utils.dart';
 
 import 'dart:io';
 
 void main() async {
   configureNyxxForVM();
 
-  nyxx.Nyxx bot = nyxx.Nyxx(Platform.environment['DISCORD_TOKEN']);
+  Nyxx bot = Nyxx(Platform.environment['DISCORD_TOKEN']);
 
   bot.onReady.listen((e) async {
-    var ch =
-        bot.channels[nyxx.Snowflake("422285619952222208")] as nyxx.TextChannel;
+    var ch = bot.channels[Snowflake("422285619952222208")] as TextChannel;
 
     // Create and send paginated message. After 15 minutes message will be deactivated.
-    var pagination = utils.Pagination.fromString(
+    var pagination = Pagination.fromString(
         "Mi scias, kio estas. "
         "Ci tio estos tre longa alineo car mi bezonas multan tekston. "
         "Mi ne scias, kion skribi ci tie, sed mi esperas, ke neniu ĝin legos (au almenau kun kompreno) "
@@ -29,12 +28,12 @@ void main() async {
 
     // To create poll you need channel, title and map of emojis and Names of options.
     // Result is returned after timeout.
-    var res = await utils.createPoll(
+    var res = await createPoll(
         ch,
         "Ttul",
         {
-          nyxx.UnicodeEmoji(utils.emojisUnicode['stopwatch']): "Stopwatch",
-          nyxx.UnicodeEmoji(utils.emojisUnicode['abcd']): "abcd"
+          UnicodeEmoji(emojisUnicode['stopwatch']): "Stopwatch",
+          UnicodeEmoji(emojisUnicode['abcd']): "abcd"
         },
         timeout: const Duration(seconds: 10));
 

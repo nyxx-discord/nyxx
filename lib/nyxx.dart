@@ -4,8 +4,6 @@
 /// If you want advanced command capabilities refer to `nyxx.command` library.
 ///
 /// To get connected your bot to voice refer to `nyxx.lavalink` library.
-///
-/// Library creates global variable for [Nyxx] client. So there is no need to keep instance of client.
 library nyxx;
 
 import 'dart:async';
@@ -130,10 +128,10 @@ part 'src/nyxx/objects/message/Reaction.dart';
 part 'src/nyxx/objects/message/Message.dart';
 part 'src/nyxx/objects/message/Attachment.dart';
 
-part 'src/nyxx/objects/OAuth/ClientOAuth2Application.dart';
-part 'src/nyxx/objects/OAuth/OAuth2Application.dart';
-part 'src/nyxx/objects/OAuth/OAuth2Guild.dart';
-part 'src/nyxx/objects/OAuth/OAuth2Info.dart';
+part 'src/nyxx/objects/oauth/ClientOAuth2Application.dart';
+part 'src/nyxx/objects/oauth/OAuth2Application.dart';
+part 'src/nyxx/objects/oauth/OAuth2Guild.dart';
+part 'src/nyxx/objects/oauth/OAuth2Info.dart';
 
 part 'src/nyxx/objects/permissions/Permissions.dart';
 part 'src/nyxx/objects/permissions/AbstractPermissions.dart';

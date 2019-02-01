@@ -38,10 +38,9 @@ class HttpBase {
     this.uri =
         Uri.https(_Constants.host, _Constants.baseUri + path, queryParams);
 
-    if (http.buckets[uri.toString()] == null)
-      http.buckets[uri.toString()] = HttpBucket._new(uri.toString());
+    if (http.buckets[uri] == null) http.buckets[uri] = HttpBucket._new(uri);
 
-    this.bucket = http.buckets[uri.toString()];
+    this.bucket = http.buckets[uri];
 
     this._streamController = StreamController<HttpResponse>.broadcast();
     this.stream = _streamController.stream;
@@ -50,8 +49,8 @@ class HttpBase {
       http._client._events.beforeHttpRequestSend
           .add(BeforeHttpRequestSendEvent._new(this));
 
-    if (http._client == null || !http._client._events.beforeHttpRequestSend.hasListener)
-      this.send();
+    if (http._client == null ||
+        !http._client._events.beforeHttpRequestSend.hasListener) this.send();
   }
 
   /// Sends the request off to the bucket to be processed and sent.
@@ -62,7 +61,7 @@ class HttpBase {
     this._streamController.close();
   }
 
-  Future _execute() async {
+  Future<HttpResponse> _execute() async {
     var req = transport.JsonRequest()
       ..uri = this.uri
       ..headers = this.headers;
@@ -73,9 +72,12 @@ class HttpBase {
       final r = await req.send(this.method);
       return HttpResponse._fromResponse(this, r);
     } on transport.RequestException catch (e) {
-      if(e != null)
-        return new HttpResponse._new(this, e.response.status, e.response.statusText, e.response.headers, {});
+      if (e != null)
+        return new HttpResponse._new(this, e.response.status,
+            e.response.statusText, e.response.headers, {});
     }
+
+    return null;
   }
 }
 
@@ -89,7 +91,12 @@ class HttpMultipartRequest extends HttpBase {
     for (var f in files) {
       try {
         var name = Uri.file(f.path).toString().split("/").last;
-        this.files[name] = transport.MultipartFile(f.openRead(), f.lengthSync(),
+
+        var length = f.lengthSync();
+        if(length > (8 * 1024 * 1024))
+          throw new Exception("File [${path}] is to big to be sent. (8MB file size limit)");
+
+        this.files[name] = transport.MultipartFile(f.openRead(), length,
             filename: name);
       } on FileSystemException catch (err) {
         throw Exception("Cannot find your file: ${err.path}");
@@ -156,13 +163,14 @@ class HttpResponse {
       [this.aborted = false]);
 
   HttpResponse._aborted(this.request, [this.aborted = true]) {
-    this.status = 0;
+    this.status = -1;
     this.statusText = "ABORTED";
     this.headers = {};
     this.body = {};
   }
 
-  static HttpResponse _fromResponse(HttpBase request, transport.BaseResponse r) {
+  static HttpResponse _fromResponse(
+      HttpBase request, transport.BaseResponse r) {
     var json;
     try {
       json = (r as transport.Response).body.asJson();
@@ -179,7 +187,7 @@ class HttpResponse {
 /// A bucket for managing ratelimits.
 class HttpBucket {
   /// The url that this bucket is handling requests for.
-  String url;
+  Uri url;
 
   /// The number of requests that can be made.
   int limit;
@@ -216,7 +224,6 @@ class HttpBucket {
 
   void _execute(HttpBase request, Nyxx client) async {
     if (this.rateLimitRemaining == null || this.rateLimitRemaining > 1) {
-
       final HttpResponse r = await request._execute();
       this.limit = r.headers['x-ratelimit-limit'] != null
           ? int.parse(r.headers['x-ratelimit-limit'])
@@ -235,7 +242,7 @@ class HttpBucket {
             .add(RatelimitEvent._new(request, false, r));
         request.http._logger.warning(
             "Rate limitted via 429 on endpoint: ${request.path}. Trying to send request again after timeout...");
-        Timer(Duration(milliseconds: (r.body['retry_after'] as int) + 100),
+        Timer(Duration(milliseconds: (r.body['retry_after'] as int) ?? 0 + 100),
             () => this._execute(request, client));
       } else {
         this.waiting = false;
@@ -252,8 +259,7 @@ class HttpBucket {
         this.rateLimitRemaining = 2;
         this._execute(request, client);
       } else {
-        client._events.onRatelimited
-            .add(RatelimitEvent._new(request as HttpRequest, true));
+        client._events.onRatelimited.add(RatelimitEvent._new(request, true));
         request.http._logger.warning(
             "Rate limitted internally on endpoint: ${request.path}. Trying to send request again after timeout...");
         Timer(waitTime, () {
@@ -270,19 +276,35 @@ class Http {
   Nyxx _client;
 
   /// The buckets.
-  Map<String, HttpBucket> buckets = Map();
+  Map<Uri, HttpBucket> buckets = Map();
 
   /// Headers sent on every request.
-  Map<String, String> _headers;
+  Map<String, String> _headers = Map();
 
   Logger _logger = Logger.detached("Http");
 
   Http._new(this._client) {
-    if(!browser)
-      this._headers= {'User-Agent':
-          'DiscordBot (https://github.com/l7ssha/nyxx, ${_Constants.version})'};
-    else
-      this._headers = {};
+    this._headers['Authorization'] = "Bot ${this._client._token}";
+
+    if (!browser)
+      this._headers['User-Agent'] =
+          "Nyxx (${_Constants.repoUrl}, ${_Constants.version})";
+  }
+
+  /// Adds AUDIT_LOG header to request
+  Map<String, String> _addAuditReason(String reason) {
+    if(reason.length > 512)
+      throw new Exception("X-Audit-Log-Reason header cannot be longer than 512 characters");
+
+      return <String, String>{"X-Audit-Log-Reason": "${reason == null ? "" : reason}"};
+  }
+
+  /// Creates headers for request
+  void _addHeaders(HttpBase request, String reason) {
+    final Map<String, String> _headers = Map.from(this._headers);
+    if (!browser && reason != null && reason != "") _headers.addAll(_addAuditReason(reason));
+
+    request.headers.addAll(_headers);
   }
 
   /// Sends a HTTP request.
@@ -292,35 +314,12 @@ class Http {
       bool beforeReady = false,
       Map<String, String> headers = const {},
       String reason}) async {
-    final Map<String, String> _headers = Map.from(this._headers)..addAll(headers);
-    if(!browser)
-      _headers.addAll(_addAuditReason(reason));
-    HttpRequest request = HttpRequest._new(
-        this,
-        method,
-        path,
-        queryParams,
-        _headers,
-        body);
+    HttpRequest request =
+        HttpRequest._new(this, method, path, queryParams, _headers, body);
 
-    await for (HttpResponse r in request.stream) {
-      if (!r.aborted && r.status >= 200 && r.status < 300) {
-        if (_client != null)
-          _client._events.onHttpResponse.add(HttpResponseEvent._new(r));
-        return r;
-      } else {
-        if (_client != null)
-          _client._events.onHttpError.add(HttpErrorEvent._new(r));
-        return Future.error(r);
-      }
-    }
-
-    return Future.error(Exception("Didn't got any response"));
+    _addHeaders(request, reason);
+    return _executeRequest(request);
   }
-
-  /// Adds AUDIT_LOG header to request
-  Map<String, String> _addAuditReason(String reason) =>
-      <String, String>{"X-Audit-Log-Reason": "${reason == null ? "" : reason}"};
 
   /// Sends multipart request
   Future<HttpResponse> sendMultipart(
@@ -328,15 +327,14 @@ class Http {
       {Map<String, dynamic> data,
       bool beforeReady = false,
       String reason}) async {
-    if (_client is Nyxx && !_client.ready && !beforeReady)
-      return Future.error(Exception("Client isn't ready yet."));
-
     HttpMultipartRequest request = HttpMultipartRequest._new(this, method, path,
         files, data, Map.from(this._headers)..addAll(_headers));
 
-    if (!browser && (reason != "" || reason != null))
-      request.headers.addAll(_addAuditReason(reason));
+    _addHeaders(request, reason);
+    return _executeRequest(request);
+  }
 
+  Future<HttpResponse> _executeRequest(HttpBase request) async {
     await for (HttpResponse r in request.stream) {
       if (!r.aborted && r.status >= 200 && r.status < 300) {
         if (_client != null)
