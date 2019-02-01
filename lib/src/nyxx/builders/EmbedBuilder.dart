@@ -1,7 +1,6 @@
 part of nyxx;
 
 /// Builds up embed object.
-/// All fields are optional except of [title]
 class EmbedBuilder implements Builder {
   /// Embed title
   String title;
@@ -34,20 +33,22 @@ class EmbedBuilder implements Builder {
   EmbedAuthorBuilder author;
 
   /// Embed custom fields;
-  List<Map<String, dynamic>> _fields;
+  List<EmbedFieldBuilder> _fields;
 
   EmbedBuilder() {
     _fields = List();
   }
 
-  void addAuthor(Function(EmbedAuthorBuilder author) func) {
+  /// Adds author to embed.
+  void addAuthor(void builder(EmbedAuthorBuilder author)) {
     this.author = EmbedAuthorBuilder();
-    func(this.author);
+    builder(this.author);
   }
 
-  void addFooter(Function(EmbedFooterBuilder footer) func) {
+  /// Adds footer to embed
+  void addFooter(void builder(EmbedFooterBuilder footer)) {
     this.footer = EmbedFooterBuilder();
-    func(this.footer);
+    builder(this.footer);
   }
 
   /// Adds field to embed. [name] and [content] fields are required. Inline is set to false by default.
@@ -58,24 +59,40 @@ class EmbedBuilder implements Builder {
       Function(EmbedFieldBuilder field) builder,
       EmbedFieldBuilder field}) {
     if (field != null) {
-      _fields.add(field._build());
+      _fields.add(field);
       return;
     }
 
     if (builder != null) {
       var tmp = EmbedFieldBuilder();
       builder(tmp);
-      _fields.add(tmp._build());
+      _fields.add(tmp);
       return;
     }
 
-    _fields.add(EmbedFieldBuilder(name, content, inline)._build());
+    _fields.add(EmbedFieldBuilder(name, content, inline));
+  }
+
+  int get length {
+    return (this.title?.length ?? 0) + (this.description?.length ?? 0) + (this.footer?.length ?? 0) + (this.author?.length ?? 0) + _fields.map((embed) => embed.length).reduce((f, s) => f + s);
   }
 
   @override
 
   /// Builds object to Map() instance;
   Map<String, dynamic> _build() {
+    if(this.title != null && this.title.length > 256)
+      throw new Exception("Embed title is too long (256 characters limit)");
+
+    if(this.description != null && this.description.length > 2048)
+      throw new Exception("Embed description is too long (2048 characters limit)");
+
+    if(this._fields.length > 25)
+      throw new Exception("Embed cannot contain more than 25 fields");
+
+    if(this.length > 6000)
+      throw new Exception("Total length of embed cannot exceed 6000 characters");
+
     Map<String, dynamic> tmp = Map();
 
     if (title != null) tmp["title"] = title;
@@ -86,10 +103,9 @@ class EmbedBuilder implements Builder {
     if (color != null) tmp["color"] = color._value;
     if (footer != null) tmp["footer"] = footer._build();
     if (imageUrl != null) tmp["image"] = <String, dynamic>{"url": imageUrl};
-    if (thumbnailUrl != null)
-      tmp["thumbnail"] = <String, dynamic>{"url": thumbnailUrl};
+    if (thumbnailUrl != null) tmp["thumbnail"] = <String, dynamic>{"url": thumbnailUrl};
     if (author != null) tmp["author"] = author._build();
-    if (_fields.length > 0) tmp["fields"] = _fields;
+    if (_fields.length > 0) tmp["fields"] = _fields.map((builder) => builder._build()).toList();
 
     return tmp;
   }

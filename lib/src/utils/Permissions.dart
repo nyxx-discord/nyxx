@@ -29,6 +29,7 @@ bool canInteract(
   return false;
 }
 
+/// Returns List of [channel] permissions overrides for given [member].
 List<int> getOverrides(Member member, GuildChannel channel) {
   var allowRaw = 0;
   var denyRaw = 0;
@@ -69,6 +70,7 @@ List<int> getOverrides(Member member, GuildChannel channel) {
   return [allowRaw, denyRaw];
 }
 
+/// Apply [deny] and [allow] to [permissions].
 int apply(int permissions, int allow, int deny) {
   permissions &= ~deny;
   permissions |= allow;
@@ -76,5 +78,6 @@ int apply(int permissions, int allow, int deny) {
   return permissions;
 }
 
+/// Returns true if [permission] is applied to [permissions].
 bool isApplied(int permissions, int permission) =>
     (permissions & permission) == permission;

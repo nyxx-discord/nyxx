@@ -3,8 +3,6 @@ part of nyxx;
 /// Wrapper for colors.
 ///
 /// Simplifies creation and provides interface to interact with colors for nyxx.
-///
-/// Class also defines few
 class DiscordColor {
   int _value;
 
@@ -148,6 +146,7 @@ class DiscordColor {
   /// Gold, or #FFD700.
   static final DiscordColor gold = DiscordColor.fromInt(0xFFD700);
 
+  /// Goldenrod, or #DAA520
   static final DiscordColor goldenrod = DiscordColor.fromInt(0xDAA520);
 
   /// Azure, or #007FFF.

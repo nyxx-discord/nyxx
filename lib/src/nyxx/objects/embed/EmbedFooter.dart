@@ -28,8 +28,11 @@ class EmbedFooter implements Downloadable {
   String toString() => text;
 
   @override
-  int get hashCode => text.hashCode * 37 + iconUrl.hashCode * 37 + iconProxyUrl.hashCode * 37;
+  int get hashCode =>
+      text.hashCode * 37 + iconUrl.hashCode * 37 + iconProxyUrl.hashCode * 37;
 
   @override
-  bool operator ==(other) => other is EmbedFooter ? other.text == this.text && other.iconUrl == this.iconUrl : false;
+  bool operator ==(other) => other is EmbedFooter
+      ? other.text == this.text && other.iconUrl == this.iconUrl
+      : false;
 }

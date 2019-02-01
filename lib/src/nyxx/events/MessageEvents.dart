@@ -13,8 +13,8 @@ class MessageReceivedEvent extends MessageEvent {
   Message message;
 
   MessageReceivedEvent._new(Map<String, dynamic> json, Nyxx client) {
-    if (client.ready)
-      this.message = Message._new(json['d'] as Map<String, dynamic>, client);
+    this.message = Message._new(json['d'] as Map<String, dynamic>, client);
+    message.channel.messages.put(this.message);
   }
 }
 
@@ -29,20 +29,19 @@ class MessageDeleteEvent extends MessageEvent {
   Snowflake id;
 
   MessageDeleteEvent._new(Map<String, dynamic> json, Nyxx client) {
-    if (client.ready) {
-      if ((client.channels[Snowflake(json['d']['channel_id'] as String)]
-                  as MessageChannel)
-              .messages[Snowflake(json['d']['id'] as String)] !=
-          null) {
-        this.message =
-            (client.channels[Snowflake(json['d']['channel_id'] as String)]
-                    as MessageChannel)
-                .messages[Snowflake(json['d']['id'] as String)];
-        this.id = message.id;
-      } else {
-        this.id = Snowflake((json['d']['id'] as String));
-      }
+
+    if ((client.channels[Snowflake(json['d']['channel_id'] as String)] as MessageChannel)
+        .messages[Snowflake(json['d']['id'] as String)] !=
+        null) {
+      this.message = (client.channels[Snowflake(json['d']['channel_id'] as String)]
+      as MessageChannel)
+          .messages[Snowflake(json['d']['id'] as String)];
+      this.id = message.id;
+    } else {
+      this.id = Snowflake((json['d']['id'] as String));
     }
+
+    message?.channel?.messages?.remove(this.id);
   }
 }
 
@@ -61,40 +60,39 @@ class MessageReactionEvent extends MessageEvent {
   /// Emoji object.
   Emoji emoji;
 
-  MessageReactionEvent._new(Map<String, dynamic> json, Nyxx client, bool added) {
+  MessageReactionEvent._new(
+      Map<String, dynamic> json, Nyxx client, bool added) {
     this.user = client.users[Snowflake(json['d']['user_id'] as String)];
     this.channel = client.channels[Snowflake(json['d']['channel_id'] as String)]
         as MessageChannel;
 
-    channel
-        .getMessage(Snowflake(json['d']['message_id'] as String))
-        .then((msg) {
-      message = msg;
+    this.message = channel.messages[Snowflake(json['d']['message_id'] as String)];
+    if (message == null)
+      return;
 
-      if (json['d']['emoji']['id'] == null)
-        emoji = UnicodeEmoji((json['d']['emoji']['name'] as String));
-      else
-        emoji = GuildEmoji._partial(json['d']['emoji'] as Map<String, dynamic>);
+    if (json['d']['emoji']['id'] == null)
+      emoji = UnicodeEmoji((json['d']['emoji']['name'] as String));
+    else
+      emoji = GuildEmoji._partial(json['d']['emoji'] as Map<String, dynamic>);
 
-      if(added) {
-        var r = message.reactions.indexWhere((r) => r.emoji == emoji);
+    if (added) {
+      var r = message.reactions.indexWhere((r) => r.emoji == emoji);
 
-        if(r == -1) {
-          var reaction = Reaction._event(emoji, user == client.self);
-          message.reactions.add(reaction);
-        } else
-          message.reactions[r].count++;
-      } else {
-        var r = message.reactions.indexWhere((r) => r.emoji == emoji);
+      if (r == -1) {
+        var reaction = Reaction._event(emoji, user == client.self);
+        message.reactions.add(reaction);
+      } else
+        message.reactions[r].count++;
+    } else {
+      var r = message.reactions.indexWhere((r) => r.emoji == emoji);
 
-        if(r != -1) {
-          if(message.reactions[r].count == 1)
-            message.reactions.removeAt(r);
-          else
-            message.reactions[r].count--;
-        }
+      if (r != -1) {
+        if (message.reactions[r].count == 1)
+          message.reactions.removeAt(r);
+        else
+          message.reactions[r].count--;
       }
-    });
+    }
   }
 }
 
@@ -155,29 +153,29 @@ class MessageUpdateEvent {
         as MessageChannel;
     this.oldMessage = channel.messages[Snowflake(json['d']['id'] as String)];
     this.newMessage = Message._new(json['d'] as Map<String, dynamic>, client);
-   if (oldMessage != null) {
-    if(oldMessage.content != newMessage.content)
-      oldMessage.content = newMessage.content;
+    if (oldMessage != null) {
+      if (oldMessage.content != newMessage.content)
+        oldMessage.content = newMessage.content;
 
-    if(oldMessage.embeds != newMessage.embeds)
-      oldMessage.embeds = newMessage.embeds;
+      if (oldMessage.embeds != newMessage.embeds)
+        oldMessage.embeds = newMessage.embeds;
 
-    if(oldMessage.mentions != newMessage.mentions)
-      oldMessage.mentions = newMessage.mentions;
+      if (oldMessage.mentions != newMessage.mentions)
+        oldMessage.mentions = newMessage.mentions;
 
-    if(oldMessage.roleMentions != newMessage.roleMentions)
-      oldMessage.roleMentions = newMessage.roleMentions;
+      if (oldMessage.roleMentions != newMessage.roleMentions)
+        oldMessage.roleMentions = newMessage.roleMentions;
 
-    if(oldMessage.attachments != newMessage.attachments)
-      oldMessage.attachments = newMessage.attachments;
+      if (oldMessage.attachments != newMessage.attachments)
+        oldMessage.attachments = newMessage.attachments;
 
-    if(oldMessage.pinned != newMessage.pinned)
-      oldMessage.pinned = newMessage.pinned;
+      if (oldMessage.pinned != newMessage.pinned)
+        oldMessage.pinned = newMessage.pinned;
 
-    if(oldMessage.reactions != newMessage.reactions)
-      oldMessage.reactions = newMessage.reactions;
+      if (oldMessage.reactions != newMessage.reactions)
+        oldMessage.reactions = newMessage.reactions;
 
-    oldMessage.editedTimestamp = newMessage.editedTimestamp;
-   }
+      oldMessage.editedTimestamp = newMessage.editedTimestamp;
+    }
   }
 }

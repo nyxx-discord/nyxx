@@ -232,7 +232,7 @@ class _EventController implements Disposable {
   }
 
   @override
-  Future<void> dispose() {
+  Future<void> dispose() async {
     this.onRaw.close();
     this.onDisconnect.close();
     this.beforeHttpRequestSend.close();

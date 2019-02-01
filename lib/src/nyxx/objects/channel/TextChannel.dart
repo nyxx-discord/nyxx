@@ -26,7 +26,8 @@ class TextChannel extends MessageChannel
       "https://discordapp.com/channels/${this.guild.id.toString()}"
       "/${this.id.toString()}";
 
-  TextChannel._new(Map<String, dynamic> raw, Guild guild, Nyxx client) : super._new(raw, 0, client) {
+  TextChannel._new(Map<String, dynamic> raw, Guild guild, Nyxx client)
+      : super._new(raw, 0, client) {
     _initialize(raw, guild);
 
     this.topic = raw['topic'] as String;
@@ -77,8 +78,7 @@ class TextChannel extends MessageChannel
 
   /// Returns pinned [Message]s for [Channel].
   Future<Map<String, Message>> getPinnedMessages() async {
-    final HttpResponse r =
-        await client._http.send('GET', "/channels/$id/pins");
+    final HttpResponse r = await client._http.send('GET', "/channels/$id/pins");
 
     Map<String, Message> messages = Map();
     for (Map<String, dynamic> val in r.body.values.first) {
@@ -89,7 +89,8 @@ class TextChannel extends MessageChannel
   }
 
   @override
-  String get debugString => "[${this.guild.name}] Text Channel [${this.id}]";
+  String get debugString =>
+      "[${this.guild.name}] Text Channel [${this.id} $name]";
 
   @override
 

@@ -5,6 +5,15 @@ import 'package:nyxx/Vm.dart' as nyxx;
 import 'package:nyxx/nyxx.dart' as nyxx;
 import 'package:nyxx/commands.dart' as command;
 
+// Replacement for assert. Throws if [test] isn't true.
+void test(bool test, [String name]) {
+  if(!test) {
+    throw new AssertionError();
+  } else {
+    print("Test ${name != null ? "[$name] " : ""}passed");
+  }
+}
+
 // Messages on which we delete message
 const ddel = [
   "--trigger-test",
@@ -23,48 +32,21 @@ class StringService extends command.Service {
   StringService();
 }
 
-/*
-class CustomType {
-  String val;
-
-  CustomType(this.val);
+@command.Command("test")
+Future<void> run(command.CommandContext ctx) async {
+  await ctx.reply(content: "test is working correctly");
 }
 
-class RunesConverter implements command.TypeConverter<CustomType> {
-  @override
-  Future<CustomType> parse(String from, nyxx.Message msg) async => CustomType(from);
-}*/
-
-// Somme commands to test CommandsFramework behaviour
-@command.Command(name: "test")
-class TestCommand extends command.CommandContext {
-  @command.Command(main: true)
-  Future<Null> run() async {
-    await reply(content: "test is working correctly");
-  }
-
-  @command.Command(name: "ttest")
-  Future<Null> test(int param, StringService service) async {
-    var msg = await reply(content: "$param, ${service.data}");
-    await msg.delete();
-  }
+@command.Command("test ttest")
+Future<void> run2(
+    command.CommandContext ctx, StringService service, String param) async {
+  var msg = await ctx.reply(content: "$param, ${service.data}");
+  await msg.delete();
 }
 
-@command.Command(name: "cooldown", aliases: ["culdown"])
-class CooldownCommand extends command.CommandContext {
-  @command.Command(main: true)
-  @command.Restrict(cooldown: 10)
-  run() async {}
-}
-
-@command.Command(name: "runes")
-Future<void> getRunes(command.CommandContext ctx, Runes runes) async {
-    if(runes.length <= 0)
-      throw Exception("Converting error");
-
-    var msg = await ctx.reply(content: "Converting successfull");
-    await msg.delete(auditReason: "This is reason");
-}
+@command.Command("cooldown", aliases: ["culdown"])
+@command.Restrict(cooldown: 10)
+Future<void> cooldownRun(command.CommandContext ctx) async {}
 
 // -------------------------------------------------------
 
@@ -78,12 +60,10 @@ nyxx.EmbedBuilder createTestEmbed() {
 
 void main() {
   nyxx.configureNyxxForVM();
-
   nyxx.setupDefaultLogging();
 
   var env = Platform.environment;
   var bot = nyxx.Nyxx(env['DISCORD_TOKEN'], ignoreExceptions: false);
-
   command.CommandsFramework(bot, prefix: '~~', ignoreBots: false)
     ..discoverServices()
     ..discoverCommands()
@@ -107,15 +87,13 @@ void main() {
   bot.onReady.listen((e) async {
     var channel =
         bot.channels[nyxx.Snowflake('422285619952222208')] as nyxx.TextChannel;
-    assert(channel != null);
+    test(channel != null, "Channel cannot be null");
     if (env['TRAVIS_BUILD_NUMBER'] != null) {
       channel.send(
           content:
               "Testing new Travis CI build `#${env['TRAVIS_BUILD_NUMBER']}` from commit `${env['TRAVIS_COMMIT']}` on branch `${env['TRAVIS_BRANCH']}` with Dart version: `${env['TRAVIS_DART_VERSION']}`");
     } else {
-      channel.send(
-          content:
-              "Testing new local build");
+      channel.send(content: "Testing new local build");
     }
 
     print("TESTING CLIENT INTERNALS");
@@ -123,21 +101,25 @@ void main() {
     nyxx.Snowflake a = nyxx.Snowflake.fromDateTime(new DateTime(2017));
     nyxx.Snowflake b = nyxx.Snowflake.fromDateTime(new DateTime(2018));
 
-    assert(a.timestamp.isBefore(b.timestamp));
-    assert(b.timestamp.isAfter(a.timestamp));
+    test(a.timestamp.isBefore(b.timestamp), "Snowflake should be before timestamp");
+    test(b.timestamp.isAfter(a.timestamp), "Snowflake should be after timestamp");
 
-    assert(a.timestamp.isAtSameMomentAs(DateTime(2017)));
-    assert(b.timestamp.isAtSameMomentAs(DateTime(2018)));
+    test(a.timestamp.isAtSameMomentAs(DateTime(2017)), "Snowflake should repsresent proper date");
+    test(b.timestamp.isAtSameMomentAs(DateTime(2018)), "Snowflake should repsresent proper date");
 
-    assert(bot.channels.count > 0);
-    assert(bot.users.count > 0);
-    assert(bot.shards == 1);
-    assert(bot.ready);
-    assert(bot.inviteLink != null);
+    test(bot.channels.count > 0, "Channel count shouldn't be less or equal zero");
+    test(bot.users.count > 0, "Users coutn count should n't be less or equal zero");
+    test(bot.shards == 1, "Shard count should be one");
+    test(bot.ready, "Bot should be ready");
+    test(bot.inviteLink != null, "Bot's invite link shouldn't be null");
 
     print("TESTING BASIC FUNCTIONALITY!");
     var m = await channel.send(content: "Message test.");
     await m.edit(content: "Edit test.");
+
+    await m.createReaction(nyxx.UnicodeEmoji('😋'));
+    await m.deleteReaction(nyxx.UnicodeEmoji('😋'));
+
     await m.delete();
     await channel.send(content: "--trigger-test");
 
@@ -164,12 +146,6 @@ void main() {
         .send(content: "PLIK SIEMA", files: [new File("test/kitty.webp")]);
     await f.delete();
 
-    /*
-    print("TESTING TYPECONVERTER");
-    var g = await channel.send(content: "~~runes SIEMA");
-    await g.delete(auditReason: "Reason on deleting");
-    */
-
     print("TESTING EMBEDS");
     var e =
         await channel.send(content: "Testing embed!", embed: createTestEmbed());
@@ -179,8 +155,8 @@ void main() {
   bot.onMessageReceived.listen((e) async {
     var m = e.message;
 
-    if (m.channel.id != "422285619952222208" && m.author.id != bot.self.id)
-      return;
+    if (m.channel.id != nyxx.Snowflake("422285619952222208") &&
+        m.author.id != bot.self.id) return;
 
     if (ddel.any((d) => d.startsWith(m.content))) await m.delete();
 

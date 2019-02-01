@@ -19,8 +19,10 @@ class _WS {
       this.gateway = r.body['url'] as String;
 
       this.remaining = r.body['session_start_limit']['remaining'] as int;
-      this.resetAt = DateTime.now().add(Duration(milliseconds: r.body['session_start_limit']['reset_after'] as int));
-      logger.info("Remaining ${this.remaining} connections starts. Limit will reset at ${this.resetAt}");
+      this.resetAt = DateTime.now().add(Duration(
+          milliseconds: r.body['session_start_limit']['reset_after'] as int));
+      logger.info(
+          "Remaining ${this.remaining} connections starts. Limit will reset at ${this.resetAt}");
 
       checkForConnections();
 
@@ -30,11 +32,11 @@ class _WS {
   }
 
   void checkForConnections() {
-    if(this.remaining < 50)
-      logger.warning("50 connection starts left.");
+    if (this.remaining < 50) logger.warning("50 connection starts left.");
 
-    if(this.remaining < 10) {
-      logger.severe("Exiting to prevent API abuse. 10 connections starts left.");
+    if (this.remaining < 10) {
+      logger
+          .severe("Exiting to prevent API abuse. 10 connections starts left.");
       exit(1);
     }
   }
@@ -57,8 +59,8 @@ class _WS {
   void testReady() {
     bool match1() {
       for (var o in _client.guilds.values) {
-        if (_client._options.forceFetchMembers && o.members.count !=
-            o.memberCount) {
+        if (_client._options.forceFetchMembers &&
+            o.members.count != o.memberCount) {
           return false;
         }
       }
@@ -79,8 +81,8 @@ class _WS {
       _client._startTime = DateTime.now();
 
       _client._http.send("GET", "/oauth2/applications/@me").then((response) {
-        _client.app =
-            ClientOAuth2Application._new(response.body as Map<String, dynamic>, _client);
+        _client.app = ClientOAuth2Application._new(
+            response.body as Map<String, dynamic>, _client);
 
         _client._events.onReady.add(ReadyEvent._new(_client));
         logger.info("Connected and ready! Logged as `${_client.self.tag}`");

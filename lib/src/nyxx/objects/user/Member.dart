@@ -1,15 +1,16 @@
 part of nyxx;
 
+// TODO: Do something
 // Two classes to simplify Member class itself. Maybe it's over-engineered but at least there is no _cons method anymore
 
 class _StandardMember extends Member {
-  _StandardMember(Map<String, dynamic> data, Guild guild, Nyxx client) :
-        super._new(data, data['user'] as Map<String, dynamic>, guild, client);
+  _StandardMember(Map<String, dynamic> data, Guild guild, Nyxx client)
+      : super._new(data, data['user'] as Map<String, dynamic>, guild, client);
 }
 
 class _ReverseMember extends Member {
-  _ReverseMember(Map<String, dynamic> data, Guild guild, Nyxx client) :
-        super._new(data['member'] as Map<String, dynamic>, data, guild, client);
+  _ReverseMember(Map<String, dynamic> data, Guild guild, Nyxx client)
+      : super._new(data['member'] as Map<String, dynamic>, data, guild, client);
 }
 
 /// A user with [Guild] context.
@@ -41,7 +42,7 @@ abstract class Member extends User implements GuildEntity {
 
   DiscordColor get color => highestRole.color;
 
-  /// Voice state
+  /// Voice state of member
   VoiceState get voiceState => guild.voiceStates[this.id];
 
   /// Returns total permissions of user.
@@ -59,11 +60,12 @@ abstract class Member extends User implements GuildEntity {
     return Permissions.fromInt(total);
   }
 
-  Member._new(Map<String, dynamic> data, Map<String, dynamic> user, this.guild, Nyxx client) : super._new(user, client) {
+  Member._new(Map<String, dynamic> data, Map<String, dynamic> user, this.guild,
+      Nyxx client)
+      : super._new(user, client) {
     this.nickname = data['nick'] as String;
     this.deaf = data['deaf'] as bool;
     this.mute = data['mute'] as bool;
-    this.status = MemberStatus.from(data['status'] as String);
 
     if (data['roles'] != null && guild.roles != null) {
       this.roles = List();
@@ -79,16 +81,14 @@ abstract class Member extends User implements GuildEntity {
       this.presence = Presence._new(data['game'] as Map<String, dynamic>);
   }
 
-  /// Checks if member has specified role
-  bool hasRole(bool Function(Role role) func) => this.roles.any(func);
+  /// Checks if member has specified role. Returns true if user is assigned to given role.
+  bool hasRole(bool func(Role role)) => this.roles.any(func);
 
   /// Bans the member and optionally deletes [deleteMessageDays] days worth of messages.
   Future<void> ban(
       {int deleteMessageDays = 0,
       String reason,
       String auditReason = ""}) async {
-
-
     await client._http.send('PUT', "/guilds/${this.guild.id}/bans/${this.id}",
         body: {"delete-message-days": deleteMessageDays, "reason": reason},
         reason: auditReason);
@@ -106,21 +106,21 @@ abstract class Member extends User implements GuildEntity {
         reason: auditReason);
   }
 
+  /// Removes [role] from user.
   Future<void> removeRole(Role role, {String auditReason = ""}) async {
     await client._http.send("DELETE",
         "/guilds/${this.guild.id.toString()}/members/${this.id.toString()}/roles/${role.id.toString()}",
         reason: auditReason);
   }
 
-  /// Kicks the member
+  /// Kicks the member from guild
   Future<void> kick({String auditReason = ""}) async {
     await client._http.send(
         'DELETE', "/guilds/${this.guild.id}/members/${this.id}",
         reason: auditReason);
   }
 
-  /// Edits the user.
-  /// Allows to move user in voice channel, mute or deaf, change nick, roles.
+  /// Edits members. Allows to move user in voice channel, mute or deaf, change nick, roles.
   Future<void> edit(
       {String nick,
       List<Role> roles,

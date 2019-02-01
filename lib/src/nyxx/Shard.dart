@@ -18,7 +18,9 @@ class Shard implements Disposable {
   Stream<Shard> onDisconnect;
 
   /// A map of guilds the shard is on.
-  Map<Snowflake, Guild> guilds;
+  Cache<Snowflake, Guild> get guilds => _ws._client.guilds;
+
+  bool _acked = false;
 
   Timer _heartbeatTimer;
   _WS _ws;
@@ -27,17 +29,13 @@ class Shard implements Disposable {
   String _sessionId;
   StreamController<Shard> _onReady;
   StreamController<Shard> _onDisconnect;
-  bool _reconnect = true;
 
   Logger _logger = Logger("Websocket");
-  
+
   int messagesReceived = 0;
   int get eventsSeen => _sequence;
 
-  Shard._new(_WS ws, this.id) {
-    guilds = Map();
-
-    this._ws = ws;
+  Shard._new(this._ws, this.id) {
     this._onReady = StreamController<Shard>.broadcast();
     this.onReady = this._onReady.stream;
 
@@ -78,7 +76,7 @@ class Shard implements Disposable {
     if (this._socket != null) this._socket.close();
 
     if (!init && resume) {
-      Future.delayed(const Duration(seconds: 2), () => _connect(true));
+      Future.delayed(const Duration(seconds: 3), () => _connect(true));
       return;
     }
 
@@ -86,8 +84,8 @@ class Shard implements Disposable {
             Uri.parse("${this._ws.gateway}?v=6&encoding=json"))
         .then((ws) {
       _socket = ws;
-      _socket.done.then((_) => _handleErr());
-      _socket.listen((data) {
+      _socket.listen(
+          (data) {
             this._handleMsg(_decodeBytes(data), resume);
           },
           onDone: this._handleErr,
@@ -95,15 +93,15 @@ class Shard implements Disposable {
             print(err);
             this._handleErr();
           });
-    }).catchError((_, __) {
-      this._handleErr();
-    });
+    },
+            onError: (_, __) => Future.delayed(
+                const Duration(seconds: 6), () => this._connect()));
   }
 
   // Decodes zlib compresses string into string json
   Map<String, dynamic> _decodeBytes(dynamic bytes) {
     if (bytes is String) return jsonDecode(bytes) as Map<String, dynamic>;
-    
+
     var decoded = zlib.decoder.convert(bytes as List<int>);
     var rawStr = utf8.decode(decoded);
     return jsonDecode(rawStr) as Map<String, dynamic>;
@@ -117,7 +115,9 @@ class Shard implements Disposable {
 
   void _heartbeat() {
     if (this._socket.closeCode != null) return;
+    if (!this._acked) _logger.warning("No ACK received");
     this.send("HEARTBEAT", _sequence);
+    this._acked = false;
   }
 
   Future<void> _handleMsg(Map<String, dynamic> msg, bool resume) async {
@@ -126,7 +126,10 @@ class Shard implements Disposable {
     if (msg['s'] != null) this._sequence = msg['s'] as int;
 
     switch (msg['op'] as int) {
-      case _OPCodes.HELLP:
+      case _OPCodes.heartbeatAck:
+        this._acked = true;
+        break;
+      case _OPCodes.hello:
         if (this._sessionId == null || !resume) {
           Map<String, dynamic> identifyMsg = <String, dynamic>{
             "token": _ws._client._token,
@@ -139,7 +142,10 @@ class Shard implements Disposable {
             "compress": !browser
           };
 
-          identifyMsg['shard'] = <int>[this.id, _ws._client._options.shardCount];
+          identifyMsg['shard'] = <int>[
+            this.id,
+            _ws._client._options.shardCount
+          ];
           this.send("IDENTIFY", identifyMsg);
         } else if (resume) {
           this.send("RESUME", <String, dynamic>{
@@ -155,32 +161,27 @@ class Shard implements Disposable {
 
         break;
 
-      case _OPCodes.INVALID_SESSION:
+      case _OPCodes.invalidSession:
         _logger.severe("Invalid session. Reconnecting...");
         _heartbeatTimer.cancel();
         _ws._client._events.onDisconnect.add(DisconnectEvent._new(this, 9));
         this._onDisconnect.add(this);
 
         if (msg['d'] as bool) {
-          Future.delayed(const Duration(seconds: 2), () => _connect(true));
+          Future.delayed(const Duration(seconds: 3), () => _connect(true));
         } else {
-          Future.delayed(const Duration(seconds: 6), () => _connect(true));
+          Future.delayed(const Duration(seconds: 6), () => _connect());
         }
 
         break;
 
-      case _OPCodes.DISPATCH:
+      case _OPCodes.dispatch:
         var j = msg['t'] as String;
         switch (j) {
           case 'READY':
             this._sessionId = msg['d']['session_id'] as String;
-            _ws._client.self =
-                ClientUser._new(msg['d']['user'] as Map<String, dynamic>, _ws._client);
-
-            _ws._client._http._headers['Authorization'] = "Bot ${_ws._client._token}";
-            if(!browser)
-              _ws._client._http._headers['User-Agent'] =
-                "${_ws._client.self.username} (${_Constants.repoUrl}, ${_Constants.version})";
+            _ws._client.self = ClientUser._new(
+                msg['d']['user'] as Map<String, dynamic>, _ws._client);
 
             this.ready = true;
             this._onReady.add(this);
@@ -190,8 +191,10 @@ class Shard implements Disposable {
 
           case 'GUILD_MEMBERS_CHUNK':
             msg['d']['members'].forEach((dynamic o) {
-              var mem = _StandardMember(o as Map<String, dynamic>,
-                  _ws._client.guilds[Snowflake(msg['d']['guild_id'])], _ws._client);
+              var mem = _StandardMember(
+                  o as Map<String, dynamic>,
+                  _ws._client.guilds[Snowflake(msg['d']['guild_id'])],
+                  _ws._client);
               _ws._client.users[mem.id] = mem;
               mem.guild.members[mem.id] = mem;
             });
@@ -202,7 +205,7 @@ class Shard implements Disposable {
           case 'MESSAGE_REACTION_REMOVE_ALL':
             var m = MessageReactionsRemovedEvent._new(msg, _ws._client);
 
-            if(m.message != null) {
+            if (m.message != null) {
               _ws._client._events.onMessageReactionsRemoved.add(m);
               _ws._client._events.onMessage.add(m);
             }
@@ -210,7 +213,7 @@ class Shard implements Disposable {
 
           case 'MESSAGE_REACTION_ADD':
             var m = MessageReactionEvent._new(msg, _ws._client, true);
-            if(m.message != null) {
+            if (m.message != null) {
               _ws._client._events.onMessageReactionAdded.add(m);
               _ws._client._events.onMessage.add(m);
               m.message._onReactionAdded.add(m);
@@ -220,7 +223,7 @@ class Shard implements Disposable {
           case 'MESSAGE_REACTION_REMOVE':
             var m = MessageReactionEvent._new(msg, _ws._client, false);
 
-            if(m.message != null) {
+            if (m.message != null) {
               m.message._onReactionAdded.add(m);
               _ws._client._events.onMessageReactionAdded.add(m);
             }
@@ -233,8 +236,7 @@ class Shard implements Disposable {
           case 'CHANNEL_PINS_UPDATE':
             var m = ChannelPinsUpdateEvent._new(msg, _ws._client);
 
-            if(m.channel != null)
-              m.channel._pinsUpdated.add(m);
+            if (m.channel != null) m.channel._pinsUpdated.add(m);
             _ws._client._events.onChannelPinsUpdate.add(m);
             break;
 
@@ -255,16 +257,14 @@ class Shard implements Disposable {
 
           case 'MESSAGE_CREATE':
             messagesReceived++;
+
             var m = MessageReceivedEvent._new(msg, _ws._client);
-            if(m.message == null)
-              break;
+            if (m.message == null) break;
 
             _ws._client._events.onMessage.add(m);
             _ws._client._events.onMessageReceived.add(m);
 
-            if(m.message.channel != null) {
-              m.message.channel._onMessage.add(m);
-            }
+            m.message.channel?._onMessage?.add(m);
             break;
 
           case 'MESSAGE_DELETE':
@@ -281,31 +281,35 @@ class Shard implements Disposable {
             break;
 
           case 'GUILD_CREATE':
-            _ws._client._events.onGuildCreate.add(GuildCreateEvent._new(msg, this, _ws._client));
+            _ws._client._events.onGuildCreate
+                .add(GuildCreateEvent._new(msg, this, _ws._client));
             break;
 
           case 'GUILD_UPDATE':
-            _ws._client._events.onGuildUpdate.add(GuildUpdateEvent._new(msg, _ws._client));
+            _ws._client._events.onGuildUpdate
+                .add(GuildUpdateEvent._new(msg, _ws._client));
             break;
 
           case 'GUILD_DELETE':
-            if (msg['d']['unavailable'] == true) {
-            }
-            //_ws._client._events.onGuildUnavailable.add(GuildUnavailableEvent._new(msg));
+            if (msg['d']['unavailable'] == true)
+              _ws._client._events.onGuildUnavailable.add(GuildUnavailableEvent._new(msg, _ws._client));
             else
-              GuildDeleteEvent._new(msg, this, _ws._client);
+              _ws._client._events.onGuildDelete.add(GuildDeleteEvent._new(msg, this, _ws._client));
             break;
 
           case 'GUILD_BAN_ADD':
-            _ws._client._events.onGuildBanAdd.add(GuildBanAddEvent._new(msg, _ws._client));
+            _ws._client._events.onGuildBanAdd
+                .add(GuildBanAddEvent._new(msg, _ws._client));
             break;
 
           case 'GUILD_BAN_REMOVE':
-            _ws._client._events.onGuildBanRemove.add(GuildBanRemoveEvent._new(msg, _ws._client));
+            _ws._client._events.onGuildBanRemove
+                .add(GuildBanRemoveEvent._new(msg, _ws._client));
             break;
 
           case 'GUILD_MEMBER_ADD':
-            _ws._client._events.onGuildMemberAdd.add(GuildMemberAddEvent._new(msg, _ws._client));
+            _ws._client._events.onGuildMemberAdd
+                .add(GuildMemberAddEvent._new(msg, _ws._client));
             break;
 
           case 'GUILD_MEMBER_REMOVE':
@@ -319,44 +323,50 @@ class Shard implements Disposable {
             break;
 
           case 'CHANNEL_CREATE':
-            _ws._client._events.onChannelCreate.add(ChannelCreateEvent._new(msg, _ws._client));
+            _ws._client._events.onChannelCreate
+                .add(ChannelCreateEvent._new(msg, _ws._client));
             break;
 
           case 'CHANNEL_UPDATE':
-            _ws._client._events.onChannelUpdate.add(ChannelUpdateEvent._new(msg, _ws._client));
+            _ws._client._events.onChannelUpdate
+                .add(ChannelUpdateEvent._new(msg, _ws._client));
             break;
 
           case 'CHANNEL_DELETE':
-            _ws._client._events.onChannelDelete.add(ChannelDeleteEvent._new(msg, _ws._client));
+            _ws._client._events.onChannelDelete
+                .add(ChannelDeleteEvent._new(msg, _ws._client));
             break;
 
           case 'TYPING_START':
             var m = TypingEvent._new(msg, _ws._client);
 
             _ws._client._events.onTyping.add(m);
-            if(m.channel != null)
-              m.channel._onTyping.add(m);
+            m.channel?._onTyping?.add(m);
             break;
 
           case 'PRESENCE_UPDATE':
-            _ws._client._events.onPresenceUpdate.add(PresenceUpdateEvent._new(msg, _ws._client));
-            _ws._client._events.onPresenceUpdate.add(PresenceUpdateEvent._new(msg, _ws._client));
+            _ws._client._events.onPresenceUpdate
+                .add(PresenceUpdateEvent._new(msg, _ws._client));
             break;
 
           case 'GUILD_ROLE_CREATE':
-            _ws._client._events.onRoleCreate.add(RoleCreateEvent._new(msg, _ws._client));
+            _ws._client._events.onRoleCreate
+                .add(RoleCreateEvent._new(msg, _ws._client));
             break;
 
           case 'GUILD_ROLE_UPDATE':
-            _ws._client._events.onRoleUpdate.add(RoleUpdateEvent._new(msg, _ws._client));
+            _ws._client._events.onRoleUpdate
+                .add(RoleUpdateEvent._new(msg, _ws._client));
             break;
 
           case 'GUILD_ROLE_DELETE':
-            _ws._client._events.onRoleDelete.add(RoleDeleteEvent._new(msg, _ws._client));
+            _ws._client._events.onRoleDelete
+                .add(RoleDeleteEvent._new(msg, _ws._client));
             break;
 
           case 'USER_UPDATE':
-            _ws._client._events.onUserUpdate.add(UserUpdateEvent._new(msg, _ws._client));
+            _ws._client._events.onUserUpdate
+                .add(UserUpdateEvent._new(msg, _ws._client));
             break;
 
           default:
@@ -370,17 +380,7 @@ class Shard implements Disposable {
     this._heartbeatTimer.cancel();
     _logger.severe(
         "Shard disconnected. Error code: [${this._socket.closeCode}] | Error message: [${this._socket.closeReason}]");
-
-    if(this._socket.closeCode == null) {
-      if(this._reconnect)
-        Future.delayed(const Duration(seconds: 30), () => _connect(false, true));
-      return;
-    }
-
-    /// Dispose on error
-    for (var guild in this.guilds.values) {
-      guild.dispose();
-    }
+    this.dispose();
 
     switch (this._socket.closeCode) {
       case 4004:
@@ -389,12 +389,10 @@ class Shard implements Disposable {
         break;
       case 4007:
       case 4009:
-        if(this._reconnect)
-          this._connect(true);
+        Future.delayed(const Duration(seconds: 3), () => this._connect(true));
         break;
       default:
-        if(this._reconnect)
-          Future.delayed(const Duration(seconds: 4), () => _connect(false, true));
+        Future.delayed(const Duration(seconds: 6), () => _connect(false, true));
         break;
     }
 
@@ -405,7 +403,6 @@ class Shard implements Disposable {
 
   @override
   Future<void> dispose() async {
-    this._reconnect = false;
     await this._socket.close(1000);
   }
 }

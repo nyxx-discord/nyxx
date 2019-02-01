@@ -1,25 +1,27 @@
 import 'package:nyxx/Vm.dart';
-import 'package:nyxx/nyxx.dart' as nyxx;
-import 'package:nyxx/utils.dart' as util;
+import 'package:nyxx/nyxx.dart';
+import 'package:nyxx/utils.dart';
 
 import 'dart:io';
 import 'dart:async';
 
 void main() async {
   configureNyxxForVM();
-  var bot = nyxx.Nyxx(Platform.environment['DISCORD_TOKEN']);
+  var bot = Nyxx(Platform.environment['DISCORD_TOKEN']);
 
   /// Create new scheduler and fill out all required fields
-  var scheduler = util.Scheduler(bot)
-    ..runEvery = const Duration(seconds: 1)
-    ..targets = [nyxx.Snowflake("422285619952222208")]
+  var scheduler = Scheduler(bot)
+    ..runEvery = const Duration(minutes: 15)
+    ..targets = [Snowflake("422285619952222208")]
     ..action = (channel, t) {
-      channel.send(content: "test");
+      channel.send(
+          content:
+              "This is example usage of Scheduler. Don't use it to abuse API tho");
     };
 
   /// Disable scheduler after 5 seconds
-  Timer(const Duration(seconds: 5), () => scheduler.stop());
+  Timer(const Duration(seconds: 10), () => scheduler.stop());
 
   /// Run scheduler
-  await scheduler.run();
+  await scheduler.start();
 }

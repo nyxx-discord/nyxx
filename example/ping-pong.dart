@@ -1,20 +1,20 @@
 import 'package:nyxx/Vm.dart';
-import 'package:nyxx/nyxx.dart' as nyxx;
+import 'package:nyxx/nyxx.dart';
 
 // Main function
 void main() {
   configureNyxxForVM();
 
   // Create new bot instance
-  nyxx.Nyxx bot = nyxx.Nyxx("<TOKEN>");
+  Nyxx bot = Nyxx("<TOKEN>");
 
   // Listen to ready event. Invoked when bot started listening to events.
-  bot.onReady.listen((nyxx.ReadyEvent e) {
+  bot.onReady.listen((e) {
     print("Ready!");
   });
 
   // Listen to all incoming messages via Dart Stream
-  bot.onMessageReceived.listen((nyxx.MessageReceivedEvent e) {
+  bot.onMessageReceived.listen((e) {
     if (e.message.content == "!ping") {
       e.message.channel.send(content: "Pong!");
     }

@@ -130,7 +130,8 @@ class Guild extends SnowflakeEntity implements Disposable, Debugable {
 
         if (client._options.cacheMembers) {
           raw['members'].forEach((o) {
-            final member = _StandardMember(o as Map<String, dynamic>, this, client);
+            final member =
+                _StandardMember(o as Map<String, dynamic>, this, client);
             this.members[member.id] = member;
             client.users[member.id] = member;
           });
@@ -142,9 +143,11 @@ class Guild extends SnowflakeEntity implements Disposable, Debugable {
           if (o['type'] == 0)
             channel = TextChannel._new(o as Map<String, dynamic>, this, client);
           else if (o['type'] == 2)
-            channel = VoiceChannel._new(o as Map<String, dynamic>, this, client);
+            channel =
+                VoiceChannel._new(o as Map<String, dynamic>, this, client);
           else if (o['type'] == 4)
-            channel = CategoryChannel._new(o as Map<String, dynamic>, this, client);
+            channel =
+                CategoryChannel._new(o as Map<String, dynamic>, this, client);
 
           this.channels[channel.id] = channel;
           client.channels[channel.id] = channel;
@@ -153,7 +156,10 @@ class Guild extends SnowflakeEntity implements Disposable, Debugable {
         raw['presences'].forEach((o) {
           Member member = this.members[Snowflake(o['user']['id'] as String)];
           if (member != null) {
-            member.status = MemberStatus.from(o['status'] as String);
+            member.status = ClientStatus._new(
+                MemberStatus.from(o['client_status']['desktop'] as String),
+                MemberStatus.from(o['client_status']['web'] as String),
+                MemberStatus.from(o['client_status']['mobile'] as String));
             if (o['game'] != null) {
               member.presence =
                   Presence._new(o['game'] as Map<String, dynamic>);
@@ -171,7 +177,8 @@ class Guild extends SnowflakeEntity implements Disposable, Debugable {
           voiceStates = _SnowflakeCache();
 
           raw['voice_states'].forEach((o) {
-            var state = VoiceState._new(o as Map<String, dynamic>, client, this);
+            var state =
+                VoiceState._new(o as Map<String, dynamic>, client, this);
 
             if (state != null && state.user != null)
               this.voiceStates[state.user.id] = state;
@@ -482,7 +489,7 @@ class Guild extends SnowflakeEntity implements Disposable, Debugable {
     }
   }
 
-  /// Moves channel
+  /// Moves channel. [newPosition] is absolute.
   ///
   /// ```
   /// await guild.moveChannel(chan, 8);
@@ -494,9 +501,9 @@ class Guild extends SnowflakeEntity implements Disposable, Debugable {
         reason: auditReason);
   }
 
-  /// Bans a user.
-  ///
+  /// Bans a user and allows to delete messages from [deleteMessageDays] number of days.
   /// ```
+  ///
   /// await guild.ban(member);
   /// ```
   Future<void> ban(Member member,
@@ -588,13 +595,12 @@ class Guild extends SnowflakeEntity implements Disposable, Debugable {
   }
 
   @override
-  Future<Null> dispose() async {
+  Future<void> dispose() async {
     await channels.dispose();
     await members.dispose();
     await roles.dispose();
     await emojis.dispose();
     await voiceStates.dispose();
-    return null;
   }
 
   @override
@@ -610,13 +616,6 @@ class ChannelType {
 
   @override
   String toString() => _value.toString();
-
-  @override
-  int get hashCode => _value.hashCode;
-
-  //@override
-  //bool operator ==(other) =>
-  //    other is ChannelType && other._value == this._value;
 
   static const ChannelType text = ChannelType._create(0);
   static const ChannelType voice = ChannelType._create(2);

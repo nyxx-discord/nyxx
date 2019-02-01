@@ -89,7 +89,6 @@ class Permissions extends AbstractPermissions {
   @override
   bool operator ==(other) {
     if (other is Permissions) return other.raw == this.raw;
-
     if (other is int) return other == this.raw;
 
     return false;

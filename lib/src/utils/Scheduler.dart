@@ -30,12 +30,13 @@ class Scheduler {
 
   Timer _t;
 
+  /// Reference to client instance
   Nyxx client;
 
   Scheduler(this.client, [this.runEvery, this.action, this.targets]);
 
   /// Starts scheduler
-  Future<Null> run() async {
+  Future<Null> start() async {
     client.onReady.listen((e) {
       List<MessageChannel> _targets;
       targets
