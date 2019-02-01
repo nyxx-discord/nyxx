@@ -42,25 +42,21 @@ class GuildDeleteEvent {
   Guild guild;
 
   GuildDeleteEvent._new(Map<String, dynamic> json, Shard shard, Nyxx client) {
-    if (client.ready) {
       this.guild = client.guilds[Snowflake(json['d']['id'] as String)];
-
       client.guilds.remove(guild.id);
       shard.guilds.remove(guild.id);
-      client._events.onGuildDelete.add(this);
-    }
   }
 }
 
-// TODO: To rework. GuildUnavailableEvent makes no sense now
 /// Sent when you leave a guild or it becomes unavailable.
 class GuildUnavailableEvent {
   /// An unavailable guild object.
-  Guild guild;
+  Snowflake guildId;
 
   GuildUnavailableEvent._new(Map<String, dynamic> json, Nyxx client) {
-    this.guild = Guild._new(client, null, false);
-    client.guilds[guild.id] = guild;
+    this.guildId = Snowflake(json['d']['id'] as String);
+    client.guilds[guildId].dispose();
+    client.guilds.remove(guildId);
   }
 }
 

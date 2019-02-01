@@ -291,11 +291,10 @@ class Shard implements Disposable {
             break;
 
           case 'GUILD_DELETE':
-            if (msg['d']['unavailable'] == true) {
-            }
-            //_ws._client._events.onGuildUnavailable.add(GuildUnavailableEvent._new(msg));
+            if (msg['d']['unavailable'] == true)
+              _ws._client._events.onGuildUnavailable.add(GuildUnavailableEvent._new(msg, _ws._client));
             else
-              GuildDeleteEvent._new(msg, this, _ws._client);
+              _ws._client._events.onGuildDelete.add(GuildDeleteEvent._new(msg, this, _ws._client));
             break;
 
           case 'GUILD_BAN_ADD':
