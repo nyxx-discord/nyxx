@@ -5,7 +5,7 @@ abstract class ISend {
   /// Sends message
   Future<Message> send(
       {Object content = "",
-      List<File> files,
+      List<AttachmentBuilder> files,
       EmbedBuilder embed,
       bool tts = false,
       bool disableEveryone,

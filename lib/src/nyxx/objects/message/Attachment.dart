@@ -17,8 +17,11 @@ class Attachment extends SnowflakeEntity {
   /// The attachment's height, if an image.
   int height;
 
-  /// The attachment's width, if an image,
+  /// The attachment's width, if an image.
   int width;
+
+  /// Indicates if attachment is spoiler
+  bool get isSpoiler => filename.startsWith("SPOILER_");
 
   Attachment._new(Map<String, dynamic> raw)
       : super(Snowflake(raw['id'] as String)) {

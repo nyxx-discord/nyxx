@@ -86,21 +86,11 @@ class HttpMultipartRequest extends HttpBase {
   Map<String, dynamic> fields;
 
   HttpMultipartRequest._new(Http http, String method, String path,
-      List<File> files, this.fields, Map<String, String> headers)
+      List<AttachmentBuilder> files, this.fields, Map<String, String> headers)
       : super._new(http, method, path, null, headers, null) {
-    for (var f in files) {
-      try {
-        var name = Uri.file(f.path).toString().split("/").last;
 
-        var length = f.lengthSync();
-        if(length > (8 * 1024 * 1024))
-          throw new Exception("File [${path}] is to big to be sent. (8MB file size limit)");
-
-        this.files[name] = transport.MultipartFile(f.openRead(), length,
-            filename: name);
-      } on FileSystemException catch (err) {
-        throw Exception("Cannot find your file: ${err.path}");
-      }
+    for(final f in files) {
+      this.files[f.name] = f._asMultipartFile();
     }
 
     super._finish();
@@ -323,7 +313,7 @@ class Http {
 
   /// Sends multipart request
   Future<HttpResponse> sendMultipart(
-      String method, String path, List<File> files,
+      String method, String path, List<AttachmentBuilder> files,
       {Map<String, dynamic> data,
       bool beforeReady = false,
       String reason}) async {

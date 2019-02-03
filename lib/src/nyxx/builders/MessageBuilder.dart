@@ -5,7 +5,7 @@ class MessageBuilder {
   StringBuffer _content = StringBuffer();
   EmbedBuilder embed;
   bool tts;
-  List<File> files;
+  List<AttachmentBuilder> files;
   bool disableEveryone;
 
   set content(Object content) {

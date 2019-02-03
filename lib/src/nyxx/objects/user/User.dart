@@ -64,7 +64,7 @@ class User extends SnowflakeEntity with ISend, Mentionable, Debugable {
   /// Sends a message to user.
   Future<Message> send(
       {Object content = "",
-      List<File> files,
+      List<AttachmentBuilder> files,
       EmbedBuilder embed,
       bool tts = false,
       bool disableEveryone,
