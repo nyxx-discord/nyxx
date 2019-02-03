@@ -52,7 +52,7 @@ class CommandContext {
   Future<Message> reply(
       {Object content = "",
       EmbedBuilder embed,
-      List<File> files,
+      List<AttachmentBuilder> files,
       bool tts = false,
       bool disableEveryone,
       MessageBuilder builder}) async {
@@ -75,7 +75,7 @@ class CommandContext {
   /// ```
   Future<Message> replyTemp(Duration duration,
       {Object content,
-      List<File> files,
+      List<AttachmentBuilder> files,
       EmbedBuilder embed,
       bool tts = false,
       bool disableEveryone,
@@ -101,7 +101,7 @@ class CommandContext {
   /// ```
   Future<Message> replyDelayed(Duration duration,
       {Object content,
-      List<File> files,
+      List<AttachmentBuilder> files,
       EmbedBuilder embed,
       bool tts = false,
       bool disableEveryone,
