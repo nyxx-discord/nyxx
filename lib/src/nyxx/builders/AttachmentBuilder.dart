@@ -1,44 +1,50 @@
 part of nyxx;
 
+/// Helper for sending attachment in messages. Allows to create attachment from path, [File] or bytes.
 class AttachmentBuilder {
   File _file;
   List<int> _bytes;
   int _length = 0;
 
-  /// Attachment name
-  String name;
+  String _name;
+  bool _spoiler;
 
-  /// True if attachment should be treated as spoiler
-  bool spoiler;
-
+  /// Open file at [path] then read it's contents and prepare to send. Name will be automatically extracted from path if no name provided.
   AttachmentBuilder.path(String path, {String name, bool spoiler = false}) : this.file(File(path), name: name, spoiler: spoiler);
 
-  AttachmentBuilder.file(this._file, {this.name, this.spoiler = false}) {
+  /// Create attachment from specified file instance. Name will be automatically extracted from path if no name provided.
+  AttachmentBuilder.file(this._file, {String name, bool spoiler = false}) {
     this._length = this._file.lengthSync();
+    this._spoiler = spoiler;
 
     if(this._length > (8 * 1024 * 1024))
-      throw new Exception("File [${name}] is to big to be sent. (8MB file size limit)");
+      throw new Exception("File [${_name}] is to big to be sent. (8MB file size limit)");
 
-    if(this._file != null && this.name == null)
-      this.name = Uri.file(this._file.path).toString().split("/").last;
+    this._name = name != null && name.isEmpty ? "WHY-THE-FUCK-YOU-SET-EMPTY-NAME" : name;
 
-    if(this.spoiler)
-      this.name = "SPOILER_${this.name}";
+    if(this._file != null && this._name == null)
+      this._name = Uri.file(this._file.path).toString().split("/").last;
+
+    if(this._spoiler)
+      this._name = "SPOILER_${this._name}";
   }
 
-  AttachmentBuilder.bytes(this._bytes, this.name, {this.spoiler = false}) {
+  /// Creates
+  AttachmentBuilder.bytes(this._bytes, this._name, {bool spoiler = false}) {
     this._length = _bytes.length;
+    this._spoiler = spoiler;
 
     if(this._length > (8 * 1024 * 1024))
-      throw new Exception("File [${name}] is to big to be sent. (8MB file size limit)");
+      throw new Exception("File [${_name}] is to big to be sent. (8MB file size limit)");
 
-    if(this.spoiler)
-      this.name = "SPOILER_${this.name}";
+    if(this._spoiler)
+      this._name = "SPOILER_${this._name}";
   }
 
-  Stream<List<int>> _openRead() => this._file != null ? this._file.openRead() : Stream.fromIterable([this._bytes]);
+  Stream<List<int>> _openRead() =>
+      this._file != null ? this._file.openRead() : Stream.fromIterable([this._bytes]);
 
-  transport.MultipartFile _asMultipartFile() {
-    return transport.MultipartFile(_openRead(), this._length, filename: name ?? "WHY THE FUCK YOU PASS NULL AS FILENAME");
-  }
+  // creates instance of MultipartFile
+  transport.MultipartFile _asMultipartFile() =>
+      transport.MultipartFile(_openRead(), this._length, filename: _name);
 }

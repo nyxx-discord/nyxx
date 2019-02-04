@@ -90,7 +90,7 @@ class HttpMultipartRequest extends HttpBase {
       : super._new(http, method, path, null, headers, null) {
 
     for(final f in files) {
-      this.files[f.name] = f._asMultipartFile();
+      this.files[f._name] = f._asMultipartFile();
     }
 
     super._finish();
