@@ -74,7 +74,11 @@ class EmbedBuilder implements Builder {
   }
 
   int get length {
-    return (this.title?.length ?? 0) + (this.description?.length ?? 0) + (this.footer?.length ?? 0) + (this.author?.length ?? 0) + _fields.map((embed) => embed.length).reduce((f, s) => f + s);
+    return (this.title?.length ?? 0) +
+        (this.description?.length ?? 0) +
+        (this.footer?.length ?? 0) +
+        (this.author?.length ?? 0) +
+        (_fields.isEmpty ? 0 : _fields.map((embed) => embed.length).reduce((f, s) => f + s));
   }
 
   @override
