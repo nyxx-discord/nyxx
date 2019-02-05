@@ -22,14 +22,14 @@ class AttachmentBuilder {
 
     this._name = name != null && name.isEmpty ? "WHY-THE-FUCK-YOU-SET-EMPTY-NAME" : name;
 
-    if(this._file != null && this._name == null)
+    if(this._name == null)
       this._name = Uri.file(this._file.path).toString().split("/").last;
 
     if(this._spoiler)
       this._name = "SPOILER_${this._name}";
   }
 
-  /// Creates
+  /// Creates attachment from provided bytes
   AttachmentBuilder.bytes(this._bytes, this._name, {bool spoiler = false}) {
     this._length = _bytes.length;
     this._spoiler = spoiler;
