@@ -21,6 +21,8 @@ class Shard implements Disposable {
   Cache<Snowflake, Guild> get guilds => _ws._client.guilds;
 
   bool _acked = false;
+  Timer _guildTimer;
+  bool _waiting = true;
 
   Timer _heartbeatTimer;
   _WS _ws;
@@ -184,8 +186,8 @@ class Shard implements Disposable {
                 msg['d']['user'] as Map<String, dynamic>, _ws._client);
 
             this.ready = true;
-            this._onReady.add(this);
             _logger.info("Shard connected");
+            //_ws.testReady();
 
             break;
 
@@ -198,8 +200,6 @@ class Shard implements Disposable {
               _ws._client.users[mem.id] = mem;
               mem.guild.members[mem.id] = mem;
             });
-
-            if (!_ws._client.ready) _ws.testReady();
             break;
 
           case 'MESSAGE_REACTION_REMOVE_ALL':
@@ -283,6 +283,20 @@ class Shard implements Disposable {
           case 'GUILD_CREATE':
             _ws._client._events.onGuildCreate
                 .add(GuildCreateEvent._new(msg, this, _ws._client));
+
+            // TODO: hack? Nvm it works so it must be good quality code. Leave it alone.
+            if (_waiting) {
+              if(_guildTimer != null) {
+                _guildTimer.cancel();
+                _guildTimer = null;
+              }
+              _guildTimer = Timer(const Duration(seconds: 5), () {
+                _waiting = false;
+                _ws.propagateReady();
+                _guildTimer = null;
+              });
+            }
+
             break;
 
           case 'GUILD_UPDATE':
