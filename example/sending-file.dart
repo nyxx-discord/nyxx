@@ -22,7 +22,7 @@ void main() {
       // Send file via `sendFile()`. File path must be in list, so we have there `[]` syntax.
       // First argument is path to file. When no additional arguments specified file is sent as is.
       // File has to be in root project directory if path is relative.
-      e.message.channel.send(files: [File("kitten.jpeg")]);
+      e.message.channel.send(files: [AttachmentBuilder.path("kitten.jpeg")]);
     }
 
     if (e.message.content == "!give-me-embed") {
@@ -35,7 +35,7 @@ void main() {
 
       // Sent all together
       e.message.channel
-          .send(files: [File("kitten.jpeg")], embed: embed, content: "HEJKA!");
+          .send(files: [AttachmentBuilder.file(File("kitten.jpeg"))], embed: embed, content: "HEJKA!");
     }
   });
 }
