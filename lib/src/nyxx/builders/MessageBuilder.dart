@@ -96,6 +96,9 @@ class MessageDecoration {
   @override
   int get hashCode => _value.hashCode;
 
+  /// Creates formatted string
+  String create(Object text) => "$_value$text$_value";
+
   @override
   bool operator ==(other) => (other is String && other == this._value)
       || (other is MessageDecoration && other._value == this._value);
