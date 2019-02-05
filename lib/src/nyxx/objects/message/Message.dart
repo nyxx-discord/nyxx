@@ -85,10 +85,9 @@ class Message extends SnowflakeEntity implements GuildEntity, Disposable {
     this.tts = raw['tts'] as bool;
     this.mentionEveryone = raw['mention_everyone'] as bool;
 
-    if (this.channel is GuildChannel)
+    if (this.channel is GuildChannel) {
       this.guild = (this.channel as GuildChannel).guild;
 
-    if (this.guild != null) {
       if (raw['author'] != null) {
         this.author =
             this.guild.members[Snowflake(raw['author']['id'] as String)];
@@ -124,7 +123,6 @@ class Message extends SnowflakeEntity implements GuildEntity, Disposable {
         r['member'] = raw['member'];
         var author = _ReverseMember(r as Map<String, dynamic>,
             client.guilds[Snowflake(raw['guild_id'] as String)], client);
-        client.users[author.id] = author;
         this.author = author;
       }
     }
@@ -170,9 +168,6 @@ class Message extends SnowflakeEntity implements GuildEntity, Disposable {
         this.reactions.add(Reaction._new(o as Map<String, dynamic>));
       });
     }
-
-    //this.channel.messages._cacheMessage(this);
-    //this.channel.lastMessageID = this.id;
   }
 
   /// Returns content of message
@@ -182,13 +177,13 @@ class Message extends SnowflakeEntity implements GuildEntity, Disposable {
   /// Replies to message. By default it mentions user who sends message.
   Future<Message> reply(
           {Object content = "",
-          List<File> files,
+          List<AttachmentBuilder> files,
           EmbedBuilder embed,
           bool tts = false,
           bool disableEveryone,
           bool mention = true}) async =>
       this.channel.send(
-          content: "${mention ? this.author.mention : ""} $content",
+          content: "${mention ? "${this.author.mention} " : ""}$content",
           files: files,
           embed: embed,
           tts: tts,

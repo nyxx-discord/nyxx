@@ -142,9 +142,8 @@ void main() {
     await d.delete();
 
     print("TESTING SENDING FILES");
-    var f = await channel
-        .send(content: "PLIK SIEMA", files: [new File("test/kitty.webp")]);
-    await f.delete();
+    channel
+        .send(content: "PLIK SIEMA", files: [nyxx.AttachmentBuilder.path("test/kitty.webp", spoiler: true)]).then((message) async => await message.delete());
 
     print("TESTING EMBEDS");
     var e =
@@ -163,7 +162,7 @@ void main() {
     if (m.content == "PLIK SIEMA" && m.attachments.values.length > 0) {
       var att = m.attachments.values.first;
 
-      if (att.filename != "kitty.webp") {
+      if (att.filename != "SPOILER_kitty.webp") {
         exit(1);
       }
     }
