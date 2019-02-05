@@ -85,10 +85,9 @@ class Message extends SnowflakeEntity implements GuildEntity, Disposable {
     this.tts = raw['tts'] as bool;
     this.mentionEveryone = raw['mention_everyone'] as bool;
 
-    if (this.channel is GuildChannel)
+    if (this.channel is GuildChannel) {
       this.guild = (this.channel as GuildChannel).guild;
 
-    if (this.guild != null) {
       if (raw['author'] != null) {
         this.author =
             this.guild.members[Snowflake(raw['author']['id'] as String)];
@@ -184,7 +183,7 @@ class Message extends SnowflakeEntity implements GuildEntity, Disposable {
           bool disableEveryone,
           bool mention = true}) async =>
       this.channel.send(
-          content: "${mention ? this.author.mention : ""} $content",
+          content: "${mention ? "${this.author.mention} " : ""}$content",
           files: files,
           embed: embed,
           tts: tts,
