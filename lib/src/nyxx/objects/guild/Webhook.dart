@@ -63,7 +63,7 @@ class Webhook extends SnowflakeEntity implements ISend {
   /// Allows to send message via webhook
   Future<Message> send(
       {Object content = "",
-      List<File> files,
+      List<AttachmentBuilder> files,
       EmbedBuilder embed,
       bool tts = false,
       bool disableEveryone,
@@ -82,6 +82,7 @@ class Webhook extends SnowflakeEntity implements ISend {
       "content": newContent,
       "embed": embed != null ? embed._build() : ""
     };
+
 
     HttpResponse r;
     if (files != null && files.isNotEmpty) {

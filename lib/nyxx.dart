@@ -62,6 +62,7 @@ part 'src/nyxx/events/GuildEvents.dart';
 
 part 'src/nyxx/builders/Builder.dart';
 
+part 'src/nyxx/builders/AttachmentBuilder.dart';
 part 'src/nyxx/builders/PermissionsBuilder.dart';
 part 'src/nyxx/builders/EmbedBuilder.dart';
 part 'src/nyxx/builders/EmbedAuthorBuilder.dart';
