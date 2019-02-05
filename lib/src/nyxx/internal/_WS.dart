@@ -44,52 +44,22 @@ class _WS {
   void setupShard(int shardId) {
     Shard shard = Shard._new(this, shardId);
     _client.shard = shard;
-
-    shard.onReady.listen((Shard s) {
-      if (!_client.ready) {
-        testReady();
-      }
-    });
   }
 
   void connectShard(int index) {
     _client.shard._connect(false, true);
   }
 
-  void testReady() {
-    bool match1() {
-      for (var o in _client.guilds.values) {
-        if (_client._options.forceFetchMembers &&
-            o.members.count != o.memberCount) {
-          return false;
-        }
-      }
+  void propagateReady() {
+    _client.ready = true;
+    _client._startTime = DateTime.now();
 
-      return true;
-    }
+    _client._http.send("GET", "/oauth2/applications/@me").then((response) {
+      _client.app = ClientOAuth2Application._new(
+          response.body as Map<String, dynamic>, _client);
 
-    bool match2() {
-      if (!_client.shard.ready) {
-        return false;
-      }
-
-      return true;
-    }
-
-    if (match1() && match2()) {
-      _client.ready = true;
-      _client._startTime = DateTime.now();
-
-      _client._http.send("GET", "/oauth2/applications/@me").then((response) {
-        _client.app = ClientOAuth2Application._new(
-            response.body as Map<String, dynamic>, _client);
-
-        _client._events.onReady.add(ReadyEvent._new(_client));
-        logger.info("Connected and ready! Logged as `${_client.self.tag}`");
-      });
-    } else {
-      //logger.severe("Cannot setup bot properly.");
-      //exit(1);
-    }
+      _client._events.onReady.add(ReadyEvent._new(_client));
+      logger.info("Connected and ready! Logged as `${_client.self.tag}`");
+    });
   }
 }
