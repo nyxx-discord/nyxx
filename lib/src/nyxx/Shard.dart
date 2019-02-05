@@ -284,7 +284,7 @@ class Shard implements Disposable {
             _ws._client._events.onGuildCreate
                 .add(GuildCreateEvent._new(msg, this, _ws._client));
 
-            // TODO: hack? Nvm it works so it must be good quality code. Leave it alone.
+            // TODO: hack? Nvm, it works so it must be good quality code. Leave it alone.
             if (_waiting) {
               if(_guildTimer != null) {
                 _guildTimer.cancel();
