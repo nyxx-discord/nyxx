@@ -1,7 +1,9 @@
 ## [0.3.0](https://github.com/l7ssha/nyxx/compare/0.24.0...0.3.0)
-_Tue x.01.2019_
+_Tue 07.02.2019_
 
 *This version drops support for Dart SDK 1.x; Nyxx now only supports Dart 2.0+ including dev sdk.*
+
+*Changelog can be incomplete - it's hard to track changes across few months*
 
 - **Features added**
   * **SUPPORT FOR DART 2.0+**
@@ -35,7 +37,8 @@ _Tue x.01.2019_
   * Added `MessageBuilder`
   * Added interfaces `Downloadable`, `Mentionable`, `Debugable`, `Disposable`, `GuildEntity`
 - **Bug fixes**
-  * **Lower memory usage**
+  * **Lowered memory usage**
+  * **Websocket fixed**
   * Fixed Emijis comparing
   * Fixed searchin in Emojis unicode
   * Code cleanup and style fixes
