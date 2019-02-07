@@ -10,8 +10,8 @@ class RatelimitEvent {
   /// The request that was ratelimited.
   HttpBase request;
 
-  /// The response received if the ratelimit handler did not stop
-  /// the request (rare)
+  /// The error response received if the ratelimit handler did not stop
+  /// the request (aka hit 429)
   HttpResponse response;
 
   RatelimitEvent._new(this.request, this.handled, [this.response]);
