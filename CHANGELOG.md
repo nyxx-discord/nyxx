@@ -1,4 +1,4 @@
-## [0.3.0](https://github.com/l7ssha/nyxx/compare/0.24.0...0.3.0)
+## [0.30.0](https://github.com/l7ssha/nyxx/compare/0.24.0...0.30.0)
 _Tue 07.02.2019_
 
 *This version drops support for Dart SDK 1.x; Nyxx now only supports Dart 2.0+ including dev sdk.*
