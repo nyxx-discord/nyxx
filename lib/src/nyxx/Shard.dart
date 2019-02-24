@@ -290,7 +290,7 @@ class Shard implements Disposable {
                 _guildTimer.cancel();
                 _guildTimer = null;
               }
-              _guildTimer = Timer(const Duration(seconds: 5), () {
+              _guildTimer = Timer(const Duration(seconds: 6), () {
                 _waiting = false;
                 _ws.propagateReady();
                 _guildTimer = null;
