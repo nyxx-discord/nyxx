@@ -50,10 +50,10 @@ class DiscordColor {
   int get r => ((this._value >> 16) & 0xFF);
 
   /// Gets the green component of this color as an integer.
-  int get G => ((this._value >> 8) & 0xFF);
+  int get g => ((this._value >> 8) & 0xFF);
 
   /// Gets the blue component of this color as an integer.
-  int get B => (this._value & 0xFF);
+  int get b => (this._value & 0xFF);
 
   @override
   String toString() => "#${_value.toRadixString(16)}";
