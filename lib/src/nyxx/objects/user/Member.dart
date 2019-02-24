@@ -130,7 +130,7 @@ abstract class Member extends User implements GuildEntity {
       String auditReason = ""}) async {
     var req = Map<String, dynamic>();
     if (nick != null) req["nick"] = nick;
-    if (roles != null) req['roles'] = roles.map((f) => f.id.toString());
+    if (roles != null) req['roles'] = roles.map((f) => f.id.toString()).toList();
     if (mute != null) req['mute'] = mute;
     if (deaf != null) req['deaf'] = deaf;
     if (deaf != null) req['channel_id'] = channel.id.toString();
