@@ -274,10 +274,9 @@ class CommandsFramework {
 
         (matchedMeta.parent
                 .invoke(matchedMeta.method.simpleName, methodInj)
-                .reflectee as Future)
-            .then((r) {
+                .reflectee as Future)?.then((r) {
           invokePost(r);
-        }).catchError((Exception err, String stack) {
+        })?.catchError((Exception err, String stack) {
           invokePost([err, stack]);
           _onError.add(CommandExecutionError(
               ExecutionErrorType.commandFailed, e.message, err, stack));
