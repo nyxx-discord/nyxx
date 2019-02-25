@@ -149,11 +149,11 @@ class MessageChannel extends Channel
   /// await chan.bulkRemoveMessages(toDelete);
   /// ```
   Future<void> bulkRemoveMessages(Iterable<Message> messagesIds) async {
-    utils.chunk(messagesIds.toList(), 90).listen((data) async {
-      client._http.send(
+    await for(var chunk in utils.chunk(messagesIds.toList(), 90)) {
+      await client._http.send(
           'POST', "/channels/${id.toString()}/messages/bulk-delete",
-          body: {"messages": data.map((f) => f.id.toString()).toList()});
-    });
+          body: {"messages": chunk.map((f) => f.id.toString()).toList()});
+    }
   }
 
   /// Gets several [Message] objects from API. Only one of [after], [before], [around] can be specified
