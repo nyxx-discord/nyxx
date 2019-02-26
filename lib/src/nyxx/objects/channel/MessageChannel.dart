@@ -162,11 +162,11 @@ class MessageChannel extends Channel
   /// ```
   /// var messages = await chan.getMessages(limit: 100, after: Snowflake("222078108977594368"));
   /// ```
-  Future<LinkedHashMap<Snowflake, Message>> getMessages(
+  Stream<Message> getMessages(
       {int limit = 50,
       Snowflake after,
       Snowflake before,
-      Snowflake around}) async {
+      Snowflake around}) async* {
     Map<String, String> query = {"limit": limit.toString()};
 
     if (after != null) query['after'] = after.toString();
@@ -176,13 +176,9 @@ class MessageChannel extends Channel
     final HttpResponse r = await client._http
         .send('GET', '/channels/${this.id}/messages', queryParams: query);
 
-    var response = LinkedHashMap<Snowflake, Message>();
-    for (Map<String, dynamic> val in r.body as List<Map<String, dynamic>>) {
-      var msg = Message._new(val, client);
-      response[msg.id] = msg;
+    for (dynamic val in r.body) {
+      yield Message._new(val as Map<String, dynamic>, client);
     }
-
-    return response;
   }
 
   @override
