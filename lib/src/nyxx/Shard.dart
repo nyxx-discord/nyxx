@@ -187,6 +187,7 @@ class Shard implements Disposable {
 
             this.ready = true;
             _logger.info("Shard connected");
+            this._onReady.add(this);
             //_ws.testReady();
 
             break;
@@ -275,9 +276,7 @@ class Shard implements Disposable {
 
           case 'MESSAGE_UPDATE':
             var m = MessageUpdateEvent._new(msg, _ws._client);
-
-            if (m.oldMessage != null)
-              _ws._client._events.onMessageUpdate.add(m);
+            _ws._client._events.onMessageUpdate.add(m);
             break;
 
           case 'GUILD_CREATE':

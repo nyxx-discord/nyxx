@@ -151,31 +151,10 @@ class MessageUpdateEvent {
   MessageUpdateEvent._new(Map<String, dynamic> json, Nyxx client) {
     var channel = client.channels[Snowflake(json['d']['channel_id'] as String)]
         as MessageChannel;
+
     this.oldMessage = channel.messages[Snowflake(json['d']['id'] as String)];
     this.newMessage = Message._new(json['d'] as Map<String, dynamic>, client);
-    if (oldMessage != null) {
-      if (oldMessage.content != newMessage.content)
-        oldMessage.content = newMessage.content;
 
-      if (oldMessage.embeds != newMessage.embeds)
-        oldMessage.embeds = newMessage.embeds;
-
-      if (oldMessage.mentions != newMessage.mentions)
-        oldMessage.mentions = newMessage.mentions;
-
-      if (oldMessage.roleMentions != newMessage.roleMentions)
-        oldMessage.roleMentions = newMessage.roleMentions;
-
-      if (oldMessage.attachments != newMessage.attachments)
-        oldMessage.attachments = newMessage.attachments;
-
-      if (oldMessage.pinned != newMessage.pinned)
-        oldMessage.pinned = newMessage.pinned;
-
-      if (oldMessage.reactions != newMessage.reactions)
-        oldMessage.reactions = newMessage.reactions;
-
-      oldMessage.editedTimestamp = newMessage.editedTimestamp;
-    }
+    channel.messages._cacheMessage(newMessage);
   }
 }
