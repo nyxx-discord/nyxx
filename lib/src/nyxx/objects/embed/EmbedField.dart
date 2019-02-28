@@ -1,7 +1,7 @@
 part of nyxx;
 
 /// Single instance of Embed's field. Can contain null elements.
-class EmbedField {
+class EmbedField implements Convertable<EmbedFieldBuilder> {
   /// Field name
   String name;
 
@@ -30,4 +30,9 @@ class EmbedField {
           other.content == this.content &&
           other.inline == this.inline
       : false;
+
+  @override
+  EmbedFieldBuilder toBuilder() {
+    return EmbedFieldBuilder(this.name, this.content, this.inline);
+  }
 }
