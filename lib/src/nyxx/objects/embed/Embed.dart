@@ -2,7 +2,7 @@ part of nyxx;
 
 /// A message embed.
 /// Can contain null elements.
-class Embed {
+class Embed implements Convertable<EmbedBuilder> {
   /// The embed's title.
   String title;
 
@@ -92,6 +92,22 @@ class Embed {
       video.hashCode * 37 +
       author.hashCode * 37 +
       fields.map((f) => f.hashCode * 37).reduce((f, s) => f + s);
+
+  @override
+  EmbedBuilder toBuilder() {
+    return EmbedBuilder()
+        ..title = this.title
+        ..type = this.type
+        ..description = this.description
+        ..url = this.url
+        ..timestamp = this.timestamp
+        ..color = this.color
+        ..footer = this.footer.toBuilder()
+        ..thumbnailUrl = this.thumbnail?.url
+        ..imageUrl = this.image?.url
+        ..author = this.author.toBuilder()
+        .._fields = this.fields.map((field) => field.toBuilder()).toList();
+  }
 
   @override
   bool operator ==(other) =>

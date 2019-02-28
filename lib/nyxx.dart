@@ -73,6 +73,7 @@ part 'src/nyxx/builders/MessageBuilder.dart';
 
 // OBJECTS
 
+part 'src/nyxx/objects/Convertable.dart';
 part 'src/nyxx/objects/ISend.dart';
 part 'src/nyxx/objects/Mentionable.dart';
 part 'src/nyxx/objects/GuildEntity.dart';

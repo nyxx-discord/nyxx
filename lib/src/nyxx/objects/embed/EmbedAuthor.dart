@@ -1,7 +1,7 @@
 part of nyxx;
 
 /// Author of embed. Can contain null elements.
-class EmbedAuthor implements Downloadable {
+class EmbedAuthor implements Downloadable, Convertable<EmbedAuthorBuilder> {
   /// Name of embed author
   String name;
 
@@ -41,4 +41,12 @@ class EmbedAuthor implements Downloadable {
           other.name == this.name &&
           other.iconUrl == this.iconUrl
       : false;
+
+  @override
+  EmbedAuthorBuilder toBuilder() {
+      return EmbedAuthorBuilder()
+          ..url = this.url
+          ..name = this.name
+          ..iconUrl = this.iconUrl;
+  }
 }

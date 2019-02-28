@@ -1,11 +1,11 @@
 part of nyxx;
 
 /// Embed's footer. Can contain null elements.
-class EmbedFooter implements Downloadable {
+class EmbedFooter implements Downloadable, Convertable<EmbedFooterBuilder> {
   /// Text inside footer
   String text;
 
-  /// Url of icon whaich is next to text
+  /// Url of icon which is next to text
   String iconUrl;
 
   /// Proxied url of icon url
@@ -35,4 +35,11 @@ class EmbedFooter implements Downloadable {
   bool operator ==(other) => other is EmbedFooter
       ? other.text == this.text && other.iconUrl == this.iconUrl
       : false;
+
+  @override
+  EmbedFooterBuilder toBuilder() {
+    return EmbedFooterBuilder()
+        ..text = this.text
+        ..iconUrl = this.iconUrl;
+  }
 }
