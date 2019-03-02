@@ -213,21 +213,11 @@ class Shard implements Disposable {
             break;
 
           case 'MESSAGE_REACTION_ADD':
-            var m = MessageReactionEvent._new(msg, _ws._client, true);
-            if (m.message != null) {
-              _ws._client._events.onMessageReactionAdded.add(m);
-              _ws._client._events.onMessage.add(m);
-              m.message._onReactionAdded.add(m);
-            }
+            MessageReactionEvent._new(msg, _ws._client, true);
             break;
 
           case 'MESSAGE_REACTION_REMOVE':
-            var m = MessageReactionEvent._new(msg, _ws._client, false);
-
-            if (m.message != null) {
-              m.message._onReactionAdded.add(m);
-              _ws._client._events.onMessageReactionAdded.add(m);
-            }
+            MessageReactionEvent._new(msg, _ws._client, false);
             break;
 
           case 'MESSAGE_DELETE_BULK':

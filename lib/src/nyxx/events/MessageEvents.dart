@@ -66,33 +66,48 @@ class MessageReactionEvent extends MessageEvent {
     this.channel = client.channels[Snowflake(json['d']['channel_id'] as String)]
         as MessageChannel;
 
-    this.message = channel.messages[Snowflake(json['d']['message_id'] as String)];
-    if (message == null)
-      return;
+    channel.getMessage(Snowflake(json['d']['message_id'] as String)).then((msg) {
+      if (msg == null)
+        return;
 
-    if (json['d']['emoji']['id'] == null)
-      emoji = UnicodeEmoji((json['d']['emoji']['name'] as String));
-    else
-      emoji = GuildEmoji._partial(json['d']['emoji'] as Map<String, dynamic>);
+      this.message = msg;
 
-    if (added) {
-      var r = message.reactions.indexWhere((r) => r.emoji == emoji);
+      if (json['d']['emoji']['id'] == null)
+        emoji = UnicodeEmoji((json['d']['emoji']['name'] as String));
+      else
+        emoji = GuildEmoji._partial(json['d']['emoji'] as Map<String, dynamic>);
 
-      if (r == -1) {
-        var reaction = Reaction._event(emoji, user == client.self);
-        message.reactions.add(reaction);
-      } else
-        message.reactions[r].count++;
-    } else {
-      var r = message.reactions.indexWhere((r) => r.emoji == emoji);
+      if (added) {
+        var r = message.reactions.indexWhere((r) => r.emoji == emoji);
 
-      if (r != -1) {
-        if (message.reactions[r].count == 1)
-          message.reactions.removeAt(r);
-        else
-          message.reactions[r].count--;
+        if (r == -1) {
+          var reaction = Reaction._event(emoji, user == client.self);
+          message.reactions.add(reaction);
+        } else
+          message.reactions[r].count++;
+
+        if (this.message != null) {
+          client._events.onMessageReactionAdded.add(this);
+          client._events.onMessage.add(this);
+          message._onReactionAdded.add(this);
+        }
+      } else {
+        var r = message.reactions.indexWhere((r) => r.emoji == emoji);
+
+        if (r != -1) {
+          if (message.reactions[r].count == 1)
+            message.reactions.removeAt(r);
+          else
+            message.reactions[r].count--;
+        }
+
+        if (this.message != null) {
+          client._events.onMessageReactionRemove.add(this);
+          client._events.onMessage.add(this);
+          message._onReactionRemove.add(this);
+        }
       }
-    }
+    });
   }
 }
 
