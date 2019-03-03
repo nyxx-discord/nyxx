@@ -63,7 +63,7 @@ class Presence {
     }
 
     if (raw['application_id'] != null)
-      applicationId = Snowflake(raw['application_id'] as String);
+      applicationId = Snowflake(raw['application_id']);
 
     details = raw['details'] as String;
     state = raw['state'] as String;
