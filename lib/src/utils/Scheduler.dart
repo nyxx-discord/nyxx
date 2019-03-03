@@ -5,10 +5,10 @@ import 'package:nyxx/nyxx.dart';
 ///
 /// ```
 /// // Create new scheduler and fill out all required fields
-///  var scheduler = command.Scheduler(bot)
+///  var scheduler = Scheduler(bot)
 ///    ..runEvery = const Duration(seconds: 1)
-///    ..targets = [const nyxx.Snowflake.static("422285619952222208")]
-///    ..func = (channel) {
+///    ..targets = [Snowflake(422285619952222208)]
+///    ..action = (channel) {
 ///      channel.send(content: "test");
 ///  };
 ///
@@ -31,22 +31,22 @@ class Scheduler {
   Timer _t;
 
   /// Reference to client instance
-  Nyxx client;
+  Nyxx _client;
 
-  Scheduler(this.client, [this.runEvery, this.action, this.targets]);
+  Scheduler(this._client, [this.runEvery, this.action, this.targets]);
 
   /// Starts scheduler
-  Future<Null> start() async {
-    client.onReady.listen((e) {
-      List<MessageChannel> _targets;
+  Future<void> start() async {
+    _client.onReady.listen((e) {
+      List<MessageChannel> _targets = List();
       targets
-          .forEach((s) => _targets.add(client.channels[s] as MessageChannel));
+          .forEach((s) => _targets.add(_client.channels[s] as MessageChannel));
+
+      _targets.forEach((chan) => action(chan, null));
 
       this._t = Timer.periodic(
-          runEvery, (Timer t) => _targets.forEach((chan) => action));
+          runEvery, (Timer t) => _targets.forEach((chan) => action(chan, t)));
     });
-
-    return null;
   }
 
   /// Stops scheduler
