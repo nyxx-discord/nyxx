@@ -348,8 +348,9 @@ class Shard implements Disposable {
             break;
 
           case 'PRESENCE_UPDATE':
-            _ws._client._events.onPresenceUpdate
-                .add(PresenceUpdateEvent._new(msg, _ws._client));
+            var m = PresenceUpdateEvent._new(msg, _ws._client);
+            if(m.member != null)
+              _ws._client._events.onPresenceUpdate.add(m);
             break;
 
           case 'GUILD_ROLE_CREATE':
