@@ -46,9 +46,9 @@ Future<Map<Emoji, int>> createPoll(
 
   var m = Map<Emoji, int>();
   return Future<Map<Emoji, int>>(() async {
-    await for (var r in msg.onReactionAdded) {
+    await for (var r in channel.client.onMessageReactionAdded.where((evnt) => evnt.message.id == msg.id)) {
       if (m.containsKey(r.emoji))
-        m[r.emoji] = m[r.emoji] += 1;
+        m[r.emoji] += 1;
       else
         m[r.emoji] = 1;
     }

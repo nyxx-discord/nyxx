@@ -3,10 +3,6 @@ part of nyxx;
 /// [Message] class represents single message. It contains it's Event [Stream]s.
 /// [Message] among all it's properties has also back-reference to [MessageChannel] from which it was sent, [Guild] and [User] properties which are associated with this message.
 class Message extends SnowflakeEntity implements GuildEntity, Disposable {
-  StreamController<MessageReactionEvent> _onReactionAdded;
-  StreamController<MessageReactionEvent> _onReactionRemove;
-  StreamController<MessageReactionsRemovedEvent> _onReactionsRemoved;
-
   /// Reference to bot instance
   Nyxx client;
 
@@ -51,15 +47,6 @@ class Message extends SnowflakeEntity implements GuildEntity, Disposable {
   /// List of message reactions
   List<Reaction> reactions;
 
-  /// Emitted when a user adds a reaction to a message.
-  Stream<MessageReactionEvent> onReactionAdded;
-
-  /// Emitted when a user adds a reaction to a message.
-  Stream<MessageReactionEvent> onReactionRemove;
-
-  /// Emitted when a user explicitly removes all reactions from a message.
-  Stream<MessageReactionsRemovedEvent> onReactionsRemoved;
-
   /// Returns clickable url to this message.
   String get url =>
       "https://discordapp.com/channels/${this.guild.id.toString()}"
@@ -67,15 +54,6 @@ class Message extends SnowflakeEntity implements GuildEntity, Disposable {
 
   Message._new(Map<String, dynamic> raw, this.client)
       : super(Snowflake(raw['id'] as String)) {
-    this._onReactionRemove = StreamController.broadcast();
-    this.onReactionRemove = this._onReactionRemove.stream;
-
-    this._onReactionAdded = StreamController.broadcast();
-    this.onReactionAdded = this._onReactionAdded.stream;
-
-    this._onReactionsRemoved = StreamController.broadcast();
-    this.onReactionsRemoved = this._onReactionsRemoved.stream;
-
     this.content = raw['content'] as String;
 
     this.channel = client.channels[Snowflake(raw['channel_id'] as String)]
@@ -256,9 +234,6 @@ class Message extends SnowflakeEntity implements GuildEntity, Disposable {
 
   @override
   Future<void> dispose() async {
-    _onReactionAdded.close();
-    _onReactionRemove.close();
-    _onReactionsRemoved.close();
     if (embeds != null) embeds.clear();
     if (mentions != null) mentions.clear();
     if (roleMentions != null) roleMentions.clear();

@@ -89,7 +89,6 @@ class MessageReactionEvent extends MessageEvent {
         if (this.message != null) {
           client._events.onMessageReactionAdded.add(this);
           client._events.onMessage.add(this);
-          message._onReactionAdded.add(this);
         }
       } else {
         var r = message.reactions.indexWhere((r) => r.emoji == emoji);
@@ -104,7 +103,6 @@ class MessageReactionEvent extends MessageEvent {
         if (this.message != null) {
           client._events.onMessageReactionRemove.add(this);
           client._events.onMessage.add(this);
-          message._onReactionRemove.add(this);
         }
       }
     });
