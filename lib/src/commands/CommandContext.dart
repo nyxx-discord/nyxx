@@ -130,7 +130,7 @@ class CommandContext {
     var m = Map<Emoji, int>();
 
     return Future<Map<Emoji, int>>(() async {
-      await for (var r in msg.onReactionAdded) {
+      await for (var r in this.client.onMessageReactionAdded.where((evnt) => evnt.message.id == msg.id)) {
         if (m.containsKey(r.emoji))
           m[r.emoji] += 1;
         else
