@@ -46,14 +46,9 @@ class Role extends SnowflakeEntity
     this.position = raw['position'] as int;
     this.hoist = raw['hoist'] as bool;
     this.managed = raw['managed'] as bool;
-    this.mentionable = raw['mentionable'] as bool;
+    this.mentionable = raw['mentionable'] as bool ?? false;
     this.permissions = Permissions.fromInt(raw['permissions'] as int);
-
-    var c = raw['color'] as int ?? 0;
-    if (c != 0)
-      this.color = DiscordColor.fromInt(c);
-    else
-      this.color = DiscordColor.fromInt(null);
+    this.color = DiscordColor.fromInt(raw['color'] as int);
   }
 
   /// Edits the role.
