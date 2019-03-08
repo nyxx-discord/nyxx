@@ -22,6 +22,11 @@ abstract class GuildChannel implements Channel, GuildEntity {
   /// Permissions overwrites for channel.
   List<PermissionsOverrides> permissions;
 
+  /// Returns list of [Member] objects who can see this channel
+  Iterable<Member> get users =>
+      this.guild.members.values.where((member) =>
+          this.effectivePermissions(member).hasPermission(PermissionsConstants.viewChannel));
+
   // Initializes Guild channel
   void _initialize(Map<String, dynamic> raw, Guild guild) {
     this.name = raw['name'] as String;
