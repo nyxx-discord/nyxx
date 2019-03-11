@@ -23,7 +23,7 @@ class ChannelCreateEvent {
             client.guilds[Snowflake(json['d']['guild_id'] as String)];
         GuildChannel chan;
 
-        if (json['d']['type'] == 0) {
+        if (json['d']['type'] == 0 || json['d']['type'] == 5) {
           chan = TextChannel._new(
               json['d'] as Map<String, dynamic>, guild, client);
         } else if (json['d']['type'] == 2) {
