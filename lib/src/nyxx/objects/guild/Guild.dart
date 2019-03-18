@@ -254,8 +254,7 @@ class Guild extends SnowflakeEntity implements Disposable, Debugable {
   Future<GuildEmoji> createEmoji(String name,
       {List<Role> roles, File image, List<int> imageBytes}) async {
     if (await image.length() > 256000)
-      return Future.error(Exception(
-          "Emojis and animated emojis have a maximum file size of 256kb."));
+      return Future.error("Emojis and animated emojis have a maximum file size of 256kb.");
 
     var encoded =
         base64.encode(image == null ? imageBytes : await image.readAsBytes());
@@ -459,7 +458,7 @@ class Guild extends SnowflakeEntity implements Disposable, Debugable {
     // Checks to avoid API panic
     if (type == ChannelType.dm || type == ChannelType.groupDm)
       return Future.error("Cannot create DM channel.");
-    if (type == ChannelType.group && parent != null)
+    if (type == ChannelType.category && parent != null)
       return Future.error(
           "Cannot create Category Channel which have parent channel.");
 
@@ -477,25 +476,36 @@ class Guild extends SnowflakeEntity implements Disposable, Debugable {
         .send('POST', "/guilds/$id/channels", body: body, reason: auditReason);
     var raw = r.body;
 
-    switch (type) {
-      case ChannelType.text:
+    switch (type._value) {
+      case 0:
         return TextChannel._new(raw as Map<String, dynamic>, this, client);
-      case ChannelType.group:
+      case 4:
         return CategoryChannel._new(raw as Map<String, dynamic>, this, client);
-      case ChannelType.voice:
+      case 2:
         return VoiceChannel._new(raw as Map<String, dynamic>, this, client);
       default:
         return Future.error("Cannot create DM channel.");
     }
   }
 
-  /// Moves channel. [newPosition] is absolute.
+  /// Moves channel. Allows to move channel by absolute about with [absolute] or relatively with [relative] parameter.
   ///
   /// ```
-  /// await guild.moveChannel(chan, 8);
+  /// // This moves channel 2 places up
+  /// await guild.moveChannel(chan, relative: -2);
   /// ```
-  Future<void> moveChannel(GuildChannel channel, int newPosition,
-      {String auditReason = ""}) async {
+  Future<void> moveChannel(GuildChannel channel, {int absolute, int relative,
+      String auditReason = ""}) async {
+    int newPosition;
+
+    if(absolute != null)
+      newPosition = absolute;
+    else
+      newPosition = channel.position + relative;
+
+    if(newPosition == null)
+      return Future.error("Cannot move channel by zero places");
+
     await client._http.send('PATCH', "/guilds/${this.id}/channels",
         body: {"id": channel.id.toString(), "position": newPosition},
         reason: auditReason);
@@ -605,22 +615,4 @@ class Guild extends SnowflakeEntity implements Disposable, Debugable {
 
   @override
   String get debugString => "Guild ${this.name} [${this.id}]";
-}
-
-/// Enum for possible channel types
-class ChannelType {
-  final int _value;
-
-  ChannelType(this._value);
-  const ChannelType._create(this._value);
-
-  @override
-  String toString() => _value.toString();
-
-  static const ChannelType text = ChannelType._create(0);
-  static const ChannelType voice = ChannelType._create(2);
-  static const ChannelType group = ChannelType._create(4);
-
-  static const ChannelType dm = ChannelType._create(1);
-  static const ChannelType groupDm = ChannelType._create(3);
 }

@@ -40,7 +40,7 @@ Future<Map<Emoji, int>> createPoll(
   else if (toSend is EmbedBuilder)
     msg = await channel.send(embed: toSend);
   else
-    return Future.error(Exception("Cannot create poll"));
+    return Future.error("Cannot create poll");
 
   for (var emoji in options.keys) await msg.createReaction(emoji);
 
