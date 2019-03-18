@@ -224,27 +224,26 @@ class Nyxx implements Disposable {
   /// ```
   /// var channel = await client.getChannel<TextChannel>(Snowflake('473853847115137024'));
   /// ```
-  Future<T> getChannel<T extends Channel>(Snowflake id, {Guild guild}) async {
-    if (this.channels.hasKey(id)) return this.channels[id] as T;
+  Future<Channel> getChannel(Snowflake id, {Guild guild}) async {
+    if (this.channels.hasKey(id)) return this.channels[id];
 
     var raw = (await this._http.send("GET", "/channels/${id.toString()}")).body
         as Map<String, dynamic>;
 
-    switch (T) {
-      case MessageChannel:
-        return MessageChannel._new(raw, raw['type'] as int, this) as T;
-      case DMChannel:
-        return DMChannel._new(raw, this) as T;
-      case GroupDMChannel:
-        return GroupDMChannel._new(raw, this) as T;
-      case TextChannel:
-        return TextChannel._new(raw, guild, this) as T;
-      case VoiceChannel:
-        return VoiceChannel._new(raw, guild, this) as T;
-      case CategoryChannel:
-        return CategoryChannel._new(raw, guild, this) as T;
+    switch (raw['type'] as int) {
+      case 1:
+        return DMChannel._new(raw, this);
+      case 3:
+        return GroupDMChannel._new(raw, this);
+      case 0:
+      case 5:
+        return TextChannel._new(raw, guild, this);
+      case 2:
+        return VoiceChannel._new(raw, guild, this);
+      case 4:
+        return CategoryChannel._new(raw, guild, this);
       default:
-        return null;
+        return Future.error("Cannot create channel of type [${raw['type']}");
     }
   }
 

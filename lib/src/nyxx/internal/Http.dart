@@ -337,6 +337,6 @@ class Http {
       }
     }
 
-    return Future.error(Exception("Didn't got any response"));
+    return Future.error("Didn't got any response");
   }
 }
