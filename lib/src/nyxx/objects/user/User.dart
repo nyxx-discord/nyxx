@@ -1,7 +1,7 @@
 part of nyxx;
 
 /// Represents a single user of Discord, either a human or a bot, outside of any specific guild's context.
-class User extends SnowflakeEntity with ISend, Mentionable, Debugable {
+class User extends SnowflakeEntity with ISend, Mentionable {
   Nyxx client;
 
   /// The user's username.
@@ -82,7 +82,4 @@ class User extends SnowflakeEntity with ISend, Mentionable, Debugable {
   /// Returns a mention of user
   @override
   String toString() => this.mention;
-
-  @override
-  String get debugString => "User ${this.tag} [${this.id}]";
 }

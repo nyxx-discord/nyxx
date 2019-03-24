@@ -89,10 +89,6 @@ class TextChannel extends MessageChannel
   }
 
   @override
-  String get debugString =>
-      "[${this.guild.name}] Text Channel [${this.id} $name]";
-
-  @override
 
   /// Returns mention to channel
   String toString() => this.mention;

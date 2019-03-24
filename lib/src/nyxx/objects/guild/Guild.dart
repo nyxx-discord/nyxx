@@ -10,7 +10,7 @@ part of nyxx;
 /// var textChannels = channels.where((channel) => channel is MessageChannel) as List<TextChannel>;
 /// ```
 /// If you want to get [icon] or [splash] of [Guild] use `iconURL()` method - [icon] property returns only hash, same as [splash] property.
-class Guild extends SnowflakeEntity implements Disposable, Debugable {
+class Guild extends SnowflakeEntity implements Disposable {
   Nyxx client;
 
   /// The guild's name.
@@ -612,7 +612,4 @@ class Guild extends SnowflakeEntity implements Disposable, Debugable {
     await emojis.dispose();
     await voiceStates.dispose();
   }
-
-  @override
-  String get debugString => "Guild ${this.name} [${this.id}]";
 }

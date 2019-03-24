@@ -38,8 +38,4 @@ class VoiceChannel extends Channel with GuildChannel {
     return VoiceChannel._new(
         r.body as Map<String, dynamic>, this.guild, client);
   }
-
-  @override
-  String get debugString =>
-      "[${this.guild.name}] Voice Channel [${this.id} $name]";
 }

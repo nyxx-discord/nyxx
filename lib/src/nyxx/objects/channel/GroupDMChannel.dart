@@ -19,9 +19,4 @@ class GroupDMChannel extends MessageChannel {
     await client._http
         .send("DELETE", "/channels/${this.id}/recipients/${userId.toString()}");
   }
-
-  @override
-  String get debugString =>
-      "Group DM Channel [${this.id}] [${recipients.values.map((f) => f.tag).join(", ")}]";
-  //"Group DM Channel: ${recipients.values.map((f) => f.tag).join(", ")}";
 }
