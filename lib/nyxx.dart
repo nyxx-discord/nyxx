@@ -79,7 +79,6 @@ part 'src/nyxx/objects/Mentionable.dart';
 part 'src/nyxx/objects/GuildEntity.dart';
 part 'src/nyxx/objects/Disposable.dart';
 part 'src/nyxx/objects/Downloadable.dart';
-part 'src/nyxx/objects/Debugable.dart';
 
 part 'src/nyxx/objects/DiscordColor.dart';
 

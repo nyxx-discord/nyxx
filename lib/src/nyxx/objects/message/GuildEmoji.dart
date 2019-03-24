@@ -2,7 +2,7 @@ part of nyxx;
 
 /// Emoji object. Handles Unicode emojis and custom ones.
 class GuildEmoji extends Emoji
-    implements SnowflakeEntity, GuildEntity, Debugable {
+    implements SnowflakeEntity, GuildEntity {
   Nyxx client;
 
   @override
@@ -87,8 +87,4 @@ class GuildEmoji extends Emoji
 
   @override
   DateTime get createdAt => id.timestamp;
-
-  @override
-  String get debugString =>
-      "Guild Emoji ${name} [${this.guild.name}] [${this.id}]";
 }

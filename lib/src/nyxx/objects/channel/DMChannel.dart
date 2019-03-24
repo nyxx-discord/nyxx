@@ -15,7 +15,4 @@ class DMChannel extends MessageChannel {
           User._new(raw['recipient'] as Map<String, dynamic>, client);
     }
   }
-
-  @override
-  String get debugString => "DM Channel [${this.id}] [${this.recipient.tag}]";
 }

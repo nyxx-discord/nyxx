@@ -6,8 +6,4 @@ class CategoryChannel extends Channel with GuildChannel {
       : super._new(raw, 4, client) {
     _initialize(raw, guild);
   }
-
-  @override
-  String get debugString =>
-      "[${this.guild.name}] Category Channel [${this.id}]";
 }
