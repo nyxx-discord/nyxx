@@ -60,14 +60,14 @@ class Role extends SnowflakeEntity
   }
 
   /// Deletes the role.
-  Future<void> delete({String auditReason = ""}) async {
-    await client._http.send('DELETE', "/guilds/${this.guild.id}/roles/$id",
+  Future<void> delete({String auditReason = ""}) {
+    return client._http.send('DELETE', "/guilds/${this.guild.id}/roles/$id",
         reason: auditReason);
   }
 
   /// Adds role to user.
-  Future<void> addToUser(User user, {String auditReason = ""}) async {
-    await client._http.send(
+  Future<void> addToUser(User user, {String auditReason = ""}) {
+    return  client._http.send(
         'PUT', '/guilds/${guild.id}/members/${user.id}/roles/$id',
         reason: auditReason);
   }

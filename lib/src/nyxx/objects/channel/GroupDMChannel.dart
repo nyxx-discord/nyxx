@@ -15,8 +15,8 @@ class GroupDMChannel extends MessageChannel {
   }
 
   /// Removes recipient from channel
-  Future<void> removeRecipient(User userId) async {
-    await client._http
+  Future<void> removeRecipient(User userId) {
+    return client._http
         .send("DELETE", "/channels/${this.id}/recipients/${userId.toString()}");
   }
 }

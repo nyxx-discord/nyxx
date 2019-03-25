@@ -32,7 +32,5 @@ class EmbedField implements Convertable<EmbedFieldBuilder> {
       : false;
 
   @override
-  EmbedFieldBuilder toBuilder() {
-    return EmbedFieldBuilder(this.name, this.content, this.inline);
-  }
+  EmbedFieldBuilder toBuilder() => EmbedFieldBuilder(this.name, this.content, this.inline);
 }

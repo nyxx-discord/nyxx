@@ -159,7 +159,7 @@ class Message extends SnowflakeEntity implements GuildEntity, Disposable {
           EmbedBuilder embed,
           bool tts = false,
           bool disableEveryone,
-          bool mention = true}) async =>
+          bool mention = true}) =>
       this.channel.send(
           content: "${mention ? "${this.author.mention} " : ""}$content",
           files: files,
@@ -176,7 +176,7 @@ class Message extends SnowflakeEntity implements GuildEntity, Disposable {
       EmbedBuilder embed,
       bool tts = false,
       bool disableEveryone}) async {
-    if (this.author.id != client.self.id) return null;
+    if (this.author.id != client.self.id) return Future.error("Cannot edit someones message");
 
     var body = Map<String, dynamic>();
     if (content != null)
@@ -190,46 +190,46 @@ class Message extends SnowflakeEntity implements GuildEntity, Disposable {
   }
 
   /// Add reaction to message.
-  Future<void> createReaction(Emoji emoji) async {
-    await client._http.send('PUT',
+  Future<void> createReaction(Emoji emoji) {
+    return client._http.send('PUT',
         "/channels/${this.channel.id}/messages/${this.id}/reactions/${emoji.encode()}/@me");
   }
 
   /// Deletes reaction of bot. Emoji as ':emoji_name:'
-  Future<void> deleteReaction(Emoji emoji) async {
-    await client._http.send('DELETE',
+  Future<void> deleteReaction(Emoji emoji) {
+    return client._http.send('DELETE',
         "/channels/${this.channel.id}/messages/${this.id}/reactions/${emoji.encode()}/@me");
   }
 
   /// Deletes reaction of given user.
-  Future<void> deleteUserReaction(Emoji emoji, String userId) async {
-    await client._http.send('DELETE',
+  Future<void> deleteUserReaction(Emoji emoji, String userId) {
+    return client._http.send('DELETE',
         "/channels/${this.channel.id}/messages/${this.id}/reactions/${emoji.encode()}/$userId");
   }
 
   /// Deletes all reactions
-  Future<void> deleteAllReactions() async {
-    await client._http.send(
+  Future<void> deleteAllReactions() {
+    return client._http.send(
         'DELETE', "/channels/${this.channel.id}/messages/${this.id}/reactions");
   }
 
   /// Deletes the message.
   ///
   /// Throws an [Exception] if the HTTP request errored.
-  Future<void> delete({String auditReason = ""}) async {
-    await client._http.send(
+  Future<void> delete({String auditReason = ""}) {
+    return client._http.send(
         'DELETE', '/channels/${this.channel.id}/messages/${this.id}',
         reason: auditReason);
   }
 
   /// Pins [Message] in current [Channel]
-  Future<void> pinMessage() async {
-    await client._http.send('PUT', "/channels/${channel.id}/pins/$id");
+  Future<void> pinMessage() {
+    return client._http.send('PUT', "/channels/${channel.id}/pins/$id");
   }
 
   /// Unpins [Message] in current [Channel]
-  Future<void> unpinMessage() async {
-    await client._http.send('DELETE', "/channels/${channel.id}/pins/$id");
+  Future<void> unpinMessage() {
+    return client._http.send('DELETE', "/channels/${channel.id}/pins/$id");
   }
 
   @override
