@@ -124,78 +124,10 @@ class Guild extends SnowflakeEntity implements Disposable {
         });
       }
 
-      if (guildCreate) {
-        this.members = _SnowflakeCache();
-        this.channels = ChannelCache._new();
-
-        if (client._options.cacheMembers) {
-          raw['members'].forEach((o) {
-            final member =
-                _StandardMember(o as Map<String, dynamic>, this, client);
-            this.members[member.id] = member;
-            client.users[member.id] = member;
-          });
-        }
-
-        raw['channels'].forEach((o) {
-          GuildChannel channel;
-
-          if (o['type'] == 0)
-            channel = TextChannel._new(o as Map<String, dynamic>, this, client);
-          else if (o['type'] == 2)
-            channel =
-                VoiceChannel._new(o as Map<String, dynamic>, this, client);
-          else if (o['type'] == 4)
-            channel =
-                CategoryChannel._new(o as Map<String, dynamic>, this, client);
-
-          this.channels[channel.id] = channel;
-          client.channels[channel.id] = channel;
-        });
-
-        raw['presences'].forEach((o) {
-          Member member = this.members[Snowflake(o['user']['id'] as String)];
-          if (member != null) {
-            member.status = ClientStatus._new(
-                MemberStatus.from(o['client_status']['desktop'] as String),
-                MemberStatus.from(o['client_status']['web'] as String),
-                MemberStatus.from(o['client_status']['mobile'] as String));
-            if (o['game'] != null) {
-              member.presence =
-                  Presence._new(o['game'] as Map<String, dynamic>);
-            }
-          }
-        });
-
-        this.owner = this.members[Snowflake(raw['owner_id'] as String)];
-
-        if (raw['permissions'] != null)
-          this.currentUserPermissions =
-              Permissions.fromInt(raw['permissions'] as int);
-
-        if (raw['voice_states'] != null) {
-          voiceStates = _SnowflakeCache();
-
-          raw['voice_states'].forEach((o) {
-            var state =
-                VoiceState._new(o as Map<String, dynamic>, client, this);
-
-            if (state != null && state.user != null)
-              this.voiceStates[state.user.id] = state;
-          });
-        }
-
-        if (raw['afk_channel_id'] != null) {
-          var snow = Snowflake(raw['afk_channel_id'] as String);
-          if (this.channels.hasKey(snow))
-            this.afkChannel = this.channels[snow] as VoiceChannel;
-        }
-      }
-
       if (raw.containsKey('embed_channel_id'))
         this.embedChannel =
-            client.channels[Snowflake(raw['embed_channel_id'] as String)]
-                as GuildChannel;
+        client.channels[Snowflake(raw['embed_channel_id'] as String)]
+        as GuildChannel;
 
       if (raw['system_channel_id'] != null) {
         var snow = Snowflake(raw['system_channel_id'] as String);
@@ -205,6 +137,75 @@ class Guild extends SnowflakeEntity implements Disposable {
 
       if (raw['features'] != null)
         this.features = (raw['features'] as List<dynamic>).cast<String>();
+
+      if (!guildCreate)
+        return;
+
+      this.members = _SnowflakeCache();
+      this.channels = ChannelCache._new();
+
+      if (client._options.cacheMembers) {
+        raw['members'].forEach((o) {
+          final member =
+              _StandardMember(o as Map<String, dynamic>, this, client);
+          this.members[member.id] = member;
+          client.users[member.id] = member;
+        });
+      }
+
+      raw['channels'].forEach((o) {
+        GuildChannel channel;
+
+        if (o['type'] == 0)
+          channel = TextChannel._new(o as Map<String, dynamic>, this, client);
+        else if (o['type'] == 2)
+          channel =
+              VoiceChannel._new(o as Map<String, dynamic>, this, client);
+        else if (o['type'] == 4)
+          channel =
+              CategoryChannel._new(o as Map<String, dynamic>, this, client);
+
+        this.channels[channel.id] = channel;
+        client.channels[channel.id] = channel;
+      });
+
+      raw['presences'].forEach((o) {
+        Member member = this.members[Snowflake(o['user']['id'] as String)];
+        if (member != null) {
+          member.status = ClientStatus._new(
+              MemberStatus.from(o['client_status']['desktop'] as String),
+              MemberStatus.from(o['client_status']['web'] as String),
+              MemberStatus.from(o['client_status']['mobile'] as String));
+          if (o['game'] != null) {
+            member.presence =
+                Presence._new(o['game'] as Map<String, dynamic>);
+          }
+        }
+      });
+
+      this.owner = this.members[Snowflake(raw['owner_id'] as String)];
+
+      if (raw['permissions'] != null)
+        this.currentUserPermissions =
+            Permissions.fromInt(raw['permissions'] as int);
+
+      if (raw['voice_states'] != null) {
+        voiceStates = _SnowflakeCache();
+
+        raw['voice_states'].forEach((o) {
+          var state =
+              VoiceState._new(o as Map<String, dynamic>, client, this);
+
+          if (state != null && state.user != null)
+            this.voiceStates[state.user.id] = state;
+        });
+      }
+
+      if (raw['afk_channel_id'] != null) {
+        var snow = Snowflake(raw['afk_channel_id'] as String);
+        if (this.channels.hasKey(snow))
+          this.afkChannel = this.channels[snow] as VoiceChannel;
+      }
     }
   }
 

@@ -125,27 +125,23 @@ abstract class GuildChannel implements Channel, GuildEntity {
   /// ```
   /// var invites = await chan.getChannelInvites();
   /// ```
-  Future<Map<String, Invite>> getChannelInvites() async {
+  Stream<Invite> getChannelInvites() async* {
     final HttpResponse r =
         await client._http.send('GET', "/channels/$id/invites");
 
-    Map<String, Invite> invites = Map();
-    for (Map<String, dynamic> val in r.body.values.first) {
-      invites[val["code"] as String] = Invite._new(val, client);
-    }
-
-    return invites;
+    for (Map<String, dynamic> val in r.body.values.first)
+      yield Invite._new(val, client);
   }
 
   /// Allows to set permissions for channel. [id] can be either User or Role
   /// Throws if [id] isn't [User] or [Role]
   Future<void> editChannelPermission(
       PermissionsBuilder perms, SnowflakeEntity id,
-      {String auditReason = ""}) async {
-    if (!(id is Role) || !(id is User))
+      {String auditReason = ""}) {
+    if (id is! Role || id is! User)
       throw Exception("The `id` property must be either Role or User");
 
-    await client._http.send(
+    return  client._http.send(
         "PUT", "/channels/${this.id}/permissions/${id.toString()}",
         body: perms._build()._build(), reason: auditReason);
   }

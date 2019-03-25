@@ -261,13 +261,6 @@ class Nyxx implements Disposable {
     return User._new(r.body as Map<String, dynamic>, this);
   }
 
-  /// Gets Guild with specified id.
-  ///
-  /// ```
-  /// var guild = client.getGuild(Snowflake("302360552993456135"));
-  /// ```
-  Guild getGuild(Snowflake id) => this.guilds[id];
-
   /// Creates new guild with provided builder.
   /// Only for bots with less than 10 guilds otherwise it will return Future with error.
   ///
@@ -288,7 +281,7 @@ class Nyxx implements Disposable {
 
   /// Gets a webhook by its ID and token.
   Future<Webhook> getWebhook(String id, {String token = ""}) async {
-    HttpResponse r = await _http.send('GET', "/webhooks/$id/$token");
+    final r = await _http.send('GET', "/webhooks/$id/$token");
     return Webhook._new(r.body as Map<String, dynamic>, this);
   }
 
@@ -299,13 +292,14 @@ class Nyxx implements Disposable {
   /// var inv = client.getInvite("YMgffU8");
   /// ```
   Future<Invite> getInvite(String code) async {
-    final HttpResponse r = await this._http.send('GET', '/invites/$code');
+    final r = await this._http.send('GET', '/invites/$code');
     return Invite._new(r.body as Map<String, dynamic>, this);
   }
 
   /// Closes websocket connections and cleans everything up.
   Future<void> close() async => await dispose();
 
+  /// Returns number of shards
   int get shards => this._options.shardCount;
 
   @override

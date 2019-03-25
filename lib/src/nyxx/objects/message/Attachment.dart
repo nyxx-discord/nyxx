@@ -34,7 +34,7 @@ class Attachment extends SnowflakeEntity {
   }
 
   /// Download attachment and return it's bytes
-  Future<List<int>> download() async => utils.downloadFile(Uri.parse(url));
+  Future<List<int>> download() => utils.downloadFile(Uri.parse(url));
 
   /// Download attachment and write contents to [file].
   /// Returns updated [File] instance when completed.

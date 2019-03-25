@@ -53,8 +53,8 @@ class Webhook extends SnowflakeEntity implements ISend {
   }
 
   /// Deletes the webhook.
-  Future<void> delete({String auditReason = ""}) async {
-    await client._http
+  Future<void> delete({String auditReason = ""}) {
+    return client._http
         .send('DELETE', "/webhooks/$id/$token", reason: auditReason);
   }
 
@@ -82,7 +82,6 @@ class Webhook extends SnowflakeEntity implements ISend {
       "content": newContent,
       "embed": embed != null ? embed._build() : ""
     };
-
 
     HttpResponse r;
     if (files != null && files.isNotEmpty) {

@@ -100,15 +100,15 @@ abstract class Member extends User implements GuildEntity {
   /// var r = guild.roles.values.first;
   /// await member.addRole(r);
   /// ```
-  Future<void> addRole(Role role, {String auditReason = ""}) async {
-    await client._http.send(
+  Future<void> addRole(Role role, {String auditReason = ""})  {
+    return  client._http.send(
         'PUT', '/guilds/${guild.id}/members/${this.id}/roles/${role.id}',
         reason: auditReason);
   }
 
   /// Removes [role] from user.
-  Future<void> removeRole(Role role, {String auditReason = ""}) async {
-    await client._http.send("DELETE",
+  Future<void> removeRole(Role role, {String auditReason = ""}) {
+    return client._http.send("DELETE",
         "/guilds/${this.guild.id.toString()}/members/${this.id.toString()}/roles/${role.id.toString()}",
         reason: auditReason);
   }
@@ -127,7 +127,7 @@ abstract class Member extends User implements GuildEntity {
       bool mute,
       bool deaf,
       VoiceChannel channel,
-      String auditReason = ""}) async {
+      String auditReason = ""}) {
     var req = Map<String, dynamic>();
     if (nick != null) req["nick"] = nick;
     if (roles != null) req['roles'] = roles.map((f) => f.id.toString()).toList();
@@ -135,7 +135,7 @@ abstract class Member extends User implements GuildEntity {
     if (deaf != null) req['deaf'] = deaf;
     if (deaf != null) req['channel_id'] = channel.id.toString();
 
-    await client._http.send("PATCH",
+    return client._http.send("PATCH",
         "/guilds/${this.guild.id.toString()}/members/${this.id.toString()}",
         body: req, reason: auditReason);
   }
