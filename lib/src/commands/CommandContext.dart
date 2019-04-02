@@ -1,22 +1,12 @@
 part of nyxx.commands;
 
-/// All command have to inherit from this class.
-/// This class provides various helper methods to access discord world more easly
-/// Can be overridden to create groups of commands (modules) or injected into top-level method commands.
+/// CommandContext is used to provide context data for command handlers.
+/// This class provides various helper methods to access discord world more easily
 ///
-/// Top-level method commands
 /// ```
 /// @Command(name: "cmd")
 /// Future<void> cmd(CommandContext ctx) async {
 ///   // Command body
-/// }
-/// ```
-///
-/// Modules:
-/// ```
-/// @Module("mod")
-/// class ExModule extends CommandContext {
-///   // Class body
 /// }
 /// ```
 class CommandContext {
@@ -35,6 +25,7 @@ class CommandContext {
   /// Returns author as guild member
   Member get member => guild.members[author.id];
 
+  /// Reference to client
   Nyxx client;
 
   CommandContext();
@@ -55,7 +46,7 @@ class CommandContext {
       List<AttachmentBuilder> files,
       bool tts = false,
       bool disableEveryone,
-      MessageBuilder builder}) async {
+      MessageBuilder builder}) {
     return channel.send(
         content: content,
         embed: embed,
@@ -79,7 +70,7 @@ class CommandContext {
       EmbedBuilder embed,
       bool tts = false,
       bool disableEveryone,
-      MessageBuilder builder}) async {
+      MessageBuilder builder}) {
       return channel.send(
           content: content,
           embed: embed,
@@ -105,7 +96,7 @@ class CommandContext {
       EmbedBuilder embed,
       bool tts = false,
       bool disableEveryone,
-      MessageBuilder builder}) async {
+      MessageBuilder builder}) {
     return Future.delayed(
         duration,
         () => channel.send(
@@ -126,7 +117,7 @@ class CommandContext {
   ///   var emojis = await collectEmojis(msg, Duration(seconds: 15));
   /// }
   /// ```
-  Future<Map<Emoji, int>> collectEmojis(Message msg, Duration duration) async {
+  Future<Map<Emoji, int>> collectEmojis(Message msg, Duration duration) {
     var m = Map<Emoji, int>();
 
     return Future<Map<Emoji, int>>(() async {
@@ -142,7 +133,7 @@ class CommandContext {
   /// Waits for first [TypingEvent] and returns it. If timed out returns null.
   /// Can listen to specific user by specifying [user]
   Future<TypingEvent> waitForTyping(User user,
-      {Duration timeout = const Duration(seconds: 30)}) async {
+      {Duration timeout = const Duration(seconds: 30)}) {
     return client.onTyping
         .firstWhere((e) => e.user == user && e.channel == this.channel)
         .timeout(timeout, onTimeout: () => null);
