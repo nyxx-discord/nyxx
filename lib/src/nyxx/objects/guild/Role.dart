@@ -31,7 +31,7 @@ class Role extends SnowflakeEntity
 
   /// Returns all members which have this role assigned
   Iterable<Member> get members =>
-      guild.members.values.where((m) => m.roles.contains(this));
+      guild.members.find((m) => m.roles.contains(this));
 
   @override
 
