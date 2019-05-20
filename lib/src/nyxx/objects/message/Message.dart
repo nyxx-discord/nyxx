@@ -232,6 +232,16 @@ class Message extends SnowflakeEntity implements GuildEntity, Disposable {
     return client._http.send('DELETE', "/channels/${channel.id}/pins/$id");
   }
 
+
+  @override
+  bool operator ==(other) {
+    if(other is Message) {
+      return other.content == this.content || other.embeds.any((e) => this.embeds.any((f) => e == f));
+    }
+
+    return false;
+  }
+
   @override
   Future<void> dispose() async {
     if (embeds != null) embeds.clear();
