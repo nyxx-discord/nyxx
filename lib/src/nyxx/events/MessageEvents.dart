@@ -170,7 +170,7 @@ class MessageUpdateEvent {
 
     if(oldMessage != newMessage) {
       channel.messages._cacheMessage(newMessage);
-      _ws._client._events.onMessageUpdate.add(this);
+      client._events.onMessageUpdate.add(this);
     }
 
   }
