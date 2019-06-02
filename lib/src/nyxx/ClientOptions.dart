@@ -28,6 +28,9 @@ class ClientOptions {
   /// Maximum size of guild for which offline member will be sent
   int largeThreshold;
 
+  /// List of ignored events
+  List<String> ignoredEvents;
+
   /// Makes a new `ClientOptions` object.
   ClientOptions(
       {this.disableEveryone = false,
@@ -36,5 +39,6 @@ class ClientOptions {
       this.messageCacheSize = 400,
       this.forceFetchMembers = false,
       this.cacheMembers = true,
-      this.largeThreshold = 50});
+      this.largeThreshold = 50,
+      this.ignoredEvents = const []});
 }

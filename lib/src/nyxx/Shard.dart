@@ -123,6 +123,9 @@ class Shard implements Disposable {
   }
 
   Future<void> _handleMsg(Map<String, dynamic> msg, bool resume) async {
+    if(msg['op'] == _OPCodes.dispatch && this._ws._client._options.ignoredEvents.contains(msg['t'] as String))
+      return;
+
     _ws._client._events.onRaw.add(RawEvent._new(this, msg));
 
     if (msg['s'] != null) this._sequence = msg['s'] as int;
@@ -188,7 +191,6 @@ class Shard implements Disposable {
             this.ready = true;
             _logger.info("Shard connected");
             this._onReady.add(this);
-            //_ws.testReady();
 
             break;
 
