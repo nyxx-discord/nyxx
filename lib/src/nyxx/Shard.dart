@@ -268,7 +268,6 @@ class Shard implements Disposable {
 
           case 'MESSAGE_UPDATE':
             var m = MessageUpdateEvent._new(msg, _ws._client);
-            _ws._client._events.onMessageUpdate.add(m);
             break;
 
           case 'GUILD_CREATE':

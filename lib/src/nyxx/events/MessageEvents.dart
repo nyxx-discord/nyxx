@@ -161,8 +161,6 @@ class MessageUpdateEvent {
   /// Edited message
   Message newMessage;
 
-  bool _changed = false;
-
   MessageUpdateEvent._new(Map<String, dynamic> json, Nyxx client) {
     var channel = client.channels[Snowflake(json['d']['channel_id'] as String)]
         as MessageChannel;
@@ -172,7 +170,7 @@ class MessageUpdateEvent {
 
     if(oldMessage != newMessage) {
       channel.messages._cacheMessage(newMessage);
-      this._changed = true;
+      _ws._client._events.onMessageUpdate.add(this);
     }
 
   }
