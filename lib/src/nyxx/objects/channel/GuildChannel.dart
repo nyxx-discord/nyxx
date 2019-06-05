@@ -109,7 +109,7 @@ abstract class GuildChannel implements Channel, GuildEntity {
     Map<String, dynamic> params = Map<String, dynamic>();
 
     params['max_age'] = maxAge;
-    params['maxUses'] = maxUses;
+    params['max_uses'] = maxUses;
     params['temporary'] = temporary;
     params['unique'] = unique;
 
