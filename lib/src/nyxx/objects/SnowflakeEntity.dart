@@ -16,6 +16,9 @@ class SnowflakeEntity {
   int get hashCode => id.hashCode;
 
   @override
+  String toString() => id.toString();
+
+  @override
   bool operator ==(other) {
     if (other is SnowflakeEntity) return id == other.id;
     if (other is String) return id.id == other;

@@ -47,10 +47,12 @@ class Message extends SnowflakeEntity implements GuildEntity, Disposable {
   /// List of message reactions
   List<Reaction> reactions;
 
+  MessageType type;
+
   /// Returns clickable url to this message.
   String get url =>
-      "https://discordapp.com/channels/${this.guild.id.toString()}"
-      "/${this.channel.id.toString()}/${this.id.toString()}";
+      "https://discordapp.com/channels/${this.guild.id}"
+      "/${this.channel.id}/${this.id}";
 
   Message._new(Map<String, dynamic> raw, this.client)
       : super(Snowflake(raw['id'] as String)) {
@@ -249,4 +251,8 @@ class Message extends SnowflakeEntity implements GuildEntity, Disposable {
     if (roleMentions != null) roleMentions.clear();
     if (attachments != null) attachments.clear();
   }
+}
+
+class MessageType {
+
 }
