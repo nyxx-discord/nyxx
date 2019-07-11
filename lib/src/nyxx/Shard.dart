@@ -408,7 +408,6 @@ class Shard implements Disposable {
 
   @override
   Future<void> dispose() async {
-    await this._socket.drain();
     await this._socket.close(1000);
     this._socket = null;
   }
