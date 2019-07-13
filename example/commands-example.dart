@@ -1,5 +1,4 @@
 import 'package:nyxx/Vm.dart';
-import 'package:nyxx/nyxx.dart';
 import 'package:nyxx/commands.dart';
 
 import 'dart:io';
@@ -7,10 +6,9 @@ import 'dart:async';
 
 // Main function
 void main() {
-  configureNyxxForVM();
   // Create new bot instance
   // Dart 2 introduces optional new keyword, so we can leave it
-  Nyxx bot = Nyxx(Platform.environment['DISCORD_TOKEN']);
+  Nyxx bot = NyxxVm(Platform.environment['DISCORD_TOKEN']);
 
   // Creating new CommandsFramework object and registering commands.
   CommandsFramework(bot, prefix: '!', admins: [Snowflake("302359032612651009")])

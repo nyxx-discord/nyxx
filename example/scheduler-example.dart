@@ -6,8 +6,7 @@ import 'dart:io';
 import 'dart:async';
 
 void main() async {
-  configureNyxxForVM();
-  var bot = Nyxx(Platform.environment['DISCORD_TOKEN']);
+  Nyxx bot = NyxxVm(Platform.environment['DISCORD_TOKEN']);
 
   /// Create new scheduler and fill out all required fields
   var scheduler = Scheduler(bot)

@@ -24,10 +24,8 @@ class ExConverter extends TypeConverter<Ex> {
 
 // Main function
 void main() {
-  configureNyxxForVM();
-
   // Create new bot instance
-  Nyxx bot = Nyxx(Platform.environment['DISCORD_TOKEN']);
+  Nyxx bot = NyxxVm(Platform.environment['DISCORD_TOKEN']);
 
   // Creating new CommandsFramework object and registering commands.
   CommandsFramework(bot, prefix: '!', admins: [Snowflake("302359032612651009")])

@@ -3,8 +3,6 @@ import 'package:nyxx/Browser.dart';
 import 'package:nyxx/nyxx.dart';
 
 void main() {
-  configureNyxxForBrowser();
-
   final FormElement tokenForm = document.querySelector('form.bot-token-form');
   final InputElement tokenInput = document.querySelector('input[name="token"]');
   final InputElement tokenSubmit =
@@ -25,7 +23,7 @@ void main() {
   tokenForm.addEventListener('submit', (e) {
     e.preventDefault();
 
-    final Nyxx client = Nyxx(tokenInput.value);
+    final Nyxx client = NyxxBrowser(tokenInput.value);
 
     final DocumentFragment fragment =
         document.importNode(botTemplate.content, true);

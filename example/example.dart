@@ -1,5 +1,4 @@
 import 'package:nyxx/Vm.dart';
-import 'package:nyxx/nyxx.dart';
 import 'package:nyxx/commands.dart';
 
 import 'dart:io';
@@ -14,10 +13,8 @@ class Service {
 
 // Main function
 void main() {
-  configureNyxxForVM();
-
   // Create new bot instance
-  Nyxx bot = Nyxx(Platform.environment['DISCORD_TOKEN']);
+  Nyxx bot = NyxxVm(Platform.environment['DISCORD_TOKEN']);
 
   // Register new command handler.
   // It registers your services and adds command to registry.
