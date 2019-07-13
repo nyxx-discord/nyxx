@@ -10,10 +10,8 @@ void setupBot(SendPort remotePort) {
   var sendPort = port.sendPort;
   remotePort.send(sendPort);
 
-  configureNyxxForVM();
-
   // Create new bot instance
-  var bot = Nyxx(Platform.environment['DISCORD_TOKEN']);
+  Nyxx bot = NyxxVm(Platform.environment['DISCORD_TOKEN']);
 
   // Listen to ready event. Invoked when bot started listening to events.
   bot.onReady.listen((ReadyEvent e) {

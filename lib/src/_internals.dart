@@ -2,7 +2,7 @@
 bool setup = false;
 
 /// Whether or not it is running in a browser.
-bool browser;
+bool browser = false;
 
 /// The OS or browser name.
 String operatingSystem;

@@ -6,10 +6,8 @@ import 'dart:io';
 
 // Main function
 void main() {
-  configureNyxxForVM();
-
   // Create new bot instance
-  Nyxx bot = Nyxx(Platform.environment['DISCORD_TOKEN']);
+  Nyxx bot = NyxxVm(Platform.environment['DISCORD_TOKEN']);
 
   // Listen to ready event. Invoked when bot started listening to events.
   bot.onReady.listen((ReadyEvent e) {

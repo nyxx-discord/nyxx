@@ -7,9 +7,7 @@ import 'package:nyxx/utils.dart';
 import 'dart:io';
 
 void main() async {
-  configureNyxxForVM();
-
-  Nyxx bot = Nyxx(Platform.environment['DISCORD_TOKEN']);
+  Nyxx bot = NyxxVm(Platform.environment['DISCORD_TOKEN']);
 
   bot.onReady.listen((e) async {
     var ch = bot.channels[Snowflake("422285619952222208")] as TextChannel;
