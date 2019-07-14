@@ -30,8 +30,8 @@ This is fork of [Hackzzila's](https://github.com/Hackzzila) [nyx](https://github
 Basic usage:
 ```dart
 void main() {
-  var bot = Nyxx(Platform.environment['DISCORD_TOKEN']);
-
+  final bot = NyxxVm(Platform.environment['DISCORD_TOKEN']);
+  
   bot.onMessageReceived.listen((MessageEvent e) {
     if (e.message.content == "!ping") {
       e.message.channel.send(content: "Pong!");
@@ -43,8 +43,9 @@ void main() {
 Commands:
 ```dart
 void main() {
-  nyxx.Nyxx bot = nyxx.Nyxx(Platform.environment['DISCORD_TOKEN']);
-  command.CommandsFramework('!', bot)
+  final bot = NyxxVm(Platform.environment['DISCORD_TOKEN']);
+  
+  CommandsFramework('!', bot)
     ..admins = [nyxx.Snowflake("302359032612651009")]
     ..registerLibraryCommands();
 }

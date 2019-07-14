@@ -8,9 +8,11 @@ import 'nyxx.dart';
 
 export 'nyxx.dart';
 
+/// Subclass of Nyxx class intended to be used in browser environment
 class NyxxBrowser extends Nyxx {
   NyxxBrowser._private(String token, {ClientOptions options, bool ignoreExceptions = true}) : super(token, options: options, ignoreExceptions: ignoreExceptions);
 
+  /// Sets up nyxx for browser usage and returns new Nyxx instance
   factory NyxxBrowser(String token, {ClientOptions options, bool ignoreExceptions = true}) {
     configureWTransportForBrowser();
     setup = true;
