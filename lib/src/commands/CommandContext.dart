@@ -127,6 +127,8 @@ class CommandContext {
         else
           m[r.emoji] = 1;
       }
+
+      return m;
     }).timeout(duration, onTimeout: () => m);
   }
 
