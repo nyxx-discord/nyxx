@@ -6,7 +6,7 @@ abstract class Preprocessor {
   Future<PreprocessorResult> execute(List<Object> services, Message message);
 }
 
-/// Preprocessor allows to run code block after successful command execution.
+/// Postprocessor allows to run code block after successful command execution.
 /// It gives possibility to eg. send additional data or do stuff with databases
 abstract class Postprocessor {
   Future<void> execute(List<Object> services, dynamic returns, Message message);
