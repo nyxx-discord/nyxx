@@ -275,7 +275,7 @@ class Guild extends SnowflakeEntity implements Disposable {
   /// Allows to download [Guild] widget aka advert png
   /// Possible options for [style]: shield (default), banner1, banner2, banner3, banner4
   Future<List<int>> downloadGuildWidget([String style]) async {
-    return DownloadUtils.downloadFile(Uri.parse(
+    return DownloadUtils.downloadAsBytes(Uri.parse(
         "${_Constants.host}${_Constants.baseUri}/guilds/${this.id.toString()}/widget.png?style=${style ?? "shield"}"));
   }
 

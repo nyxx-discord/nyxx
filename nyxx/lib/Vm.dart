@@ -22,3 +22,28 @@ class NyxxVm extends Nyxx {
     return NyxxVm._private(token, options: options, ignoreExceptions: ignoreExceptions);
   }
 }
+
+extension EmbedAuthorDownload on EmbedAuthor {
+  Future<File> downloadFile(File file) =>
+      download().then((data) => file.writeAsBytes(data));
+}
+
+extension EmbedFooterDownload on EmbedFooter {
+  Future<File> downloadFile(File file) =>
+      download().then((data) => file.writeAsBytes(data));
+}
+
+extension EmbedThumbnailDownload on EmbedThumbnail {
+  Future<File> downloadFile(File file) =>
+      download().then((data) => file.writeAsBytes(data));
+}
+
+extension EmbedVideoDownload on EmbedVideo {
+  Future<File> downloadFile(File file) =>
+      download().then((data) => file.writeAsBytes(data));
+}
+
+extension AttachmentDownload on Attachment {
+  Future<File> downloadFile(File file) =>
+      download().then((data) => file.writeAsBytes(data));
+}

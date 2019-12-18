@@ -4,7 +4,4 @@ part of nyxx;
 abstract class Downloadable {
   /// Download object to [List] of bytes
   Future<List<int>> download();
-
-  /// Download object, and write downloaded contents to [file], then return updated [File] object.
-  Future<File> downloadFile(File file);
 }

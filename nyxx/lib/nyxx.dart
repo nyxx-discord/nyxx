@@ -73,6 +73,7 @@ part 'src/objects/ISend.dart';
 part 'src/objects/Mentionable.dart';
 part 'src/objects/GuildEntity.dart';
 part 'src/objects/Disposable.dart';
+part 'src/objects/Downloadable.dart';
 
 part 'src/objects/DiscordColor.dart';
 
