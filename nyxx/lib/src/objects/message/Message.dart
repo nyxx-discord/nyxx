@@ -50,8 +50,7 @@ class Message extends SnowflakeEntity implements GuildEntity, Disposable {
   MessageType type;
 
   /// Returns clickable url to this message.
-  String get url =>
-      "https://discordapp.com/channels/${this.guild.id}"
+  String get url => "https://discordapp.com/channels/${this.guild.id}"
       "/${this.channel.id}/${this.id}";
 
   Message._new(Map<String, dynamic> raw, this.client)
@@ -178,7 +177,8 @@ class Message extends SnowflakeEntity implements GuildEntity, Disposable {
       EmbedBuilder embed,
       bool tts = false,
       bool disableEveryone}) async {
-    if (this.author.id != client.self.id) return Future.error("Cannot edit someones message");
+    if (this.author.id != client.self.id)
+      return Future.error("Cannot edit someones message");
 
     var body = Map<String, dynamic>();
     if (content != null)
@@ -234,11 +234,11 @@ class Message extends SnowflakeEntity implements GuildEntity, Disposable {
     return client._http.send('DELETE', "/channels/${channel.id}/pins/$id");
   }
 
-
   @override
   bool operator ==(other) {
-    if(other is Message) {
-      return other.content == this.content || other.embeds.any((e) => this.embeds.any((f) => e == f));
+    if (other is Message) {
+      return other.content == this.content ||
+          other.embeds.any((e) => this.embeds.any((f) => e == f));
     }
 
     return false;
@@ -253,6 +253,4 @@ class Message extends SnowflakeEntity implements GuildEntity, Disposable {
   }
 }
 
-class MessageType {
-
-}
+class MessageType {}

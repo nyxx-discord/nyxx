@@ -123,7 +123,8 @@ class Shard implements Disposable {
   }
 
   Future<void> _handleMsg(Map<String, dynamic> msg, bool resume) async {
-    if(msg['op'] == _OPCodes.dispatch && this._ws._client._options.ignoredEvents.contains(msg['t'] as String))
+    if (msg['op'] == _OPCodes.dispatch &&
+        this._ws._client._options.ignoredEvents.contains(msg['t'] as String))
       return;
 
     _ws._client._events.onRaw.add(RawEvent._new(this, msg));
@@ -276,7 +277,7 @@ class Shard implements Disposable {
 
             // TODO: hack? Nvm, it works so it must be good quality code. Leave it alone.
             if (_waiting) {
-              if(_guildTimer != null) {
+              if (_guildTimer != null) {
                 _guildTimer.cancel();
                 _guildTimer = null;
               }
@@ -296,9 +297,11 @@ class Shard implements Disposable {
 
           case 'GUILD_DELETE':
             if (msg['d']['unavailable'] == true)
-              _ws._client._events.onGuildUnavailable.add(GuildUnavailableEvent._new(msg, _ws._client));
+              _ws._client._events.onGuildUnavailable
+                  .add(GuildUnavailableEvent._new(msg, _ws._client));
             else
-              _ws._client._events.onGuildDelete.add(GuildDeleteEvent._new(msg, this, _ws._client));
+              _ws._client._events.onGuildDelete
+                  .add(GuildDeleteEvent._new(msg, this, _ws._client));
             break;
 
           case 'GUILD_BAN_ADD':
@@ -350,8 +353,7 @@ class Shard implements Disposable {
 
           case 'PRESENCE_UPDATE':
             var m = PresenceUpdateEvent._new(msg, _ws._client);
-            if(m.member != null)
-              _ws._client._events.onPresenceUpdate.add(m);
+            if (m.member != null) _ws._client._events.onPresenceUpdate.add(m);
             break;
 
           case 'GUILD_ROLE_CREATE':

@@ -96,17 +96,17 @@ class Embed implements Convertable<EmbedBuilder> {
   @override
   EmbedBuilder toBuilder() {
     return EmbedBuilder()
-        ..title = this.title
-        ..type = this.type
-        ..description = this.description
-        ..url = this.url
-        ..timestamp = this.timestamp
-        ..color = this.color
-        ..footer = this.footer.toBuilder()
-        ..thumbnailUrl = this.thumbnail?.url
-        ..imageUrl = this.image?.url
-        ..author = this.author.toBuilder()
-        .._fields = this.fields.map((field) => field.toBuilder()).toList();
+      ..title = this.title
+      ..type = this.type
+      ..description = this.description
+      ..url = this.url
+      ..timestamp = this.timestamp
+      ..color = this.color
+      ..footer = this.footer.toBuilder()
+      ..thumbnailUrl = this.thumbnail?.url
+      ..imageUrl = this.image?.url
+      ..author = this.author.toBuilder()
+      .._fields = this.fields.map((field) => field.toBuilder()).toList();
   }
 
   @override

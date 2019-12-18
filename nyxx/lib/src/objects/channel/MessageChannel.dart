@@ -149,7 +149,7 @@ class MessageChannel extends Channel
   /// await chan.bulkRemoveMessages(toDelete);
   /// ```
   Future<void> bulkRemoveMessages(Iterable<Message> messagesIds) async {
-    await for(var chunk in Utils.chunk(messagesIds.toList(), 90)) {
+    await for (var chunk in Utils.chunk(messagesIds.toList(), 90)) {
       await client._http.send(
           'POST', "/channels/${id.toString()}/messages/bulk-delete",
           body: {"messages": chunk.map((f) => f.id.toString()).toList()});

@@ -40,9 +40,9 @@ class EmbedAuthor implements Downloadable, Convertable<EmbedAuthorBuilder> {
 
   @override
   EmbedAuthorBuilder toBuilder() {
-      return EmbedAuthorBuilder()
-          ..url = this.url
-          ..name = this.name
-          ..iconUrl = this.iconUrl;
+    return EmbedAuthorBuilder()
+      ..url = this.url
+      ..name = this.name
+      ..iconUrl = this.iconUrl;
   }
 }

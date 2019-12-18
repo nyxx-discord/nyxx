@@ -23,9 +23,9 @@ abstract class GuildChannel implements Channel, GuildEntity {
   List<PermissionsOverrides> permissions;
 
   /// Returns list of [Member] objects who can see this channel
-  Iterable<Member> get users =>
-      this.guild.members.values.where((member) =>
-          this.effectivePermissions(member).hasPermission(PermissionsConstants.viewChannel));
+  Iterable<Member> get users => this.guild.members.values.where((member) => this
+      .effectivePermissions(member)
+      .hasPermission(PermissionsConstants.viewChannel));
 
   // Initializes Guild channel
   void _initialize(Map<String, dynamic> raw, Guild guild) {
@@ -58,14 +58,16 @@ abstract class GuildChannel implements Channel, GuildEntity {
 
     var rawMemberPerms = member.effectivePermissions.raw;
 
-    if (PermissionsUtils.isApplied(rawMemberPerms, PermissionsConstants.administrator))
+    if (PermissionsUtils.isApplied(
+        rawMemberPerms, PermissionsConstants.administrator))
       return Permissions.fromInt(PermissionsConstants.allPermissions);
 
     final overrides = PermissionsUtils.getOverrides(member, this);
     rawMemberPerms =
         PermissionsUtils.apply(rawMemberPerms, overrides.first, overrides.last);
 
-    return PermissionsUtils.isApplied(rawMemberPerms, PermissionsConstants.viewChannel)
+    return PermissionsUtils.isApplied(
+            rawMemberPerms, PermissionsConstants.viewChannel)
         ? Permissions.fromInt(rawMemberPerms)
         : Permissions.empty();
   }
@@ -141,7 +143,7 @@ abstract class GuildChannel implements Channel, GuildEntity {
     if (id is! Role || id is! User)
       throw Exception("The `id` property must be either Role or User");
 
-    return  client._http.send(
+    return client._http.send(
         "PUT", "/channels/${this.id}/permissions/${id.toString()}",
         body: perms._build()._build(), reason: auditReason);
   }

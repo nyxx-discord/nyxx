@@ -100,8 +100,8 @@ abstract class Member extends User implements GuildEntity {
   /// var r = guild.roles.values.first;
   /// await member.addRole(r);
   /// ```
-  Future<void> addRole(Role role, {String auditReason = ""})  {
-    return  client._http.send(
+  Future<void> addRole(Role role, {String auditReason = ""}) {
+    return client._http.send(
         'PUT', '/guilds/${guild.id}/members/${this.id}/roles/${role.id}',
         reason: auditReason);
   }
@@ -130,7 +130,8 @@ abstract class Member extends User implements GuildEntity {
       String auditReason = ""}) {
     var req = Map<String, dynamic>();
     if (nick != null) req["nick"] = nick;
-    if (roles != null) req['roles'] = roles.map((f) => f.id.toString()).toList();
+    if (roles != null)
+      req['roles'] = roles.map((f) => f.id.toString()).toList();
     if (mute != null) req['mute'] = mute;
     if (deaf != null) req['deaf'] = deaf;
     if (deaf != null) req['channel_id'] = channel.id.toString();

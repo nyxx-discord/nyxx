@@ -10,8 +10,7 @@ class TypingEvent {
 
   TypingEvent._new(Map<String, dynamic> json, Nyxx client) {
     client
-        .getChannel(
-            Snowflake(json['d']['channel_id'] as String))
+        .getChannel(Snowflake(json['d']['channel_id'] as String))
         .then((chan) {
       if (chan == null) return;
       this.channel = chan as MessageChannel;

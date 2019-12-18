@@ -6,7 +6,7 @@ import 'package:nyxx/nyxx.dart' as nyxx;
 
 // Replacement for assert. Throws if [test] isn't true.
 void test(bool test, [String name]) {
-  if(!test) {
+  if (!test) {
     throw new AssertionError();
   } else {
     print("Test ${name != null ? "[$name] " : ""}passed");
@@ -62,14 +62,20 @@ void main() {
     nyxx.Snowflake a = nyxx.Snowflake.fromDateTime(new DateTime(2017));
     nyxx.Snowflake b = nyxx.Snowflake.fromDateTime(new DateTime(2018));
 
-    test(a.timestamp.isBefore(b.timestamp), "Snowflake should be before timestamp");
-    test(b.timestamp.isAfter(a.timestamp), "Snowflake should be after timestamp");
+    test(a.timestamp.isBefore(b.timestamp),
+        "Snowflake should be before timestamp");
+    test(b.timestamp.isAfter(a.timestamp),
+        "Snowflake should be after timestamp");
 
-    test(a.timestamp.isAtSameMomentAs(DateTime(2017)), "Snowflake should repsresent proper date");
-    test(b.timestamp.isAtSameMomentAs(DateTime(2018)), "Snowflake should repsresent proper date");
+    test(a.timestamp.isAtSameMomentAs(DateTime(2017)),
+        "Snowflake should repsresent proper date");
+    test(b.timestamp.isAtSameMomentAs(DateTime(2018)),
+        "Snowflake should repsresent proper date");
 
-    test(bot.channels.count > 0, "Channel count shouldn't be less or equal zero");
-    test(bot.users.count > 0, "Users coutn count should n't be less or equal zero");
+    test(bot.channels.count > 0,
+        "Channel count shouldn't be less or equal zero");
+    test(bot.users.count > 0,
+        "Users coutn count should n't be less or equal zero");
     test(bot.shards == 1, "Shard count should be one");
     test(bot.ready, "Bot should be ready");
     test(bot.inviteLink != null, "Bot's invite link shouldn't be null");
@@ -85,8 +91,9 @@ void main() {
     await channel.send(content: "--trigger-test");
 
     print("TESTING SENDING FILES");
-    channel
-        .send(content: "PLIK SIEMA", files: [nyxx.AttachmentBuilder.path("test/kitty.webp", spoiler: true)]).then((message) async => await message.delete());
+    channel.send(content: "PLIK SIEMA", files: [
+      nyxx.AttachmentBuilder.path("test/kitty.webp", spoiler: true)
+    ]).then((message) async => await message.delete());
 
     print("TESTING EMBEDS");
     var e =

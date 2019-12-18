@@ -29,13 +29,14 @@ class MessageDeleteEvent extends MessageEvent {
   Snowflake id;
 
   MessageDeleteEvent._new(Map<String, dynamic> json, Nyxx client) {
-
-    if ((client.channels[Snowflake(json['d']['channel_id'] as String)] as MessageChannel)
-        .messages[Snowflake(json['d']['id'] as String)] !=
+    if ((client.channels[Snowflake(json['d']['channel_id'] as String)]
+                as MessageChannel)
+            .messages[Snowflake(json['d']['id'] as String)] !=
         null) {
-      this.message = (client.channels[Snowflake(json['d']['channel_id'] as String)]
-      as MessageChannel)
-          .messages[Snowflake(json['d']['id'] as String)];
+      this.message =
+          (client.channels[Snowflake(json['d']['channel_id'] as String)]
+                  as MessageChannel)
+              .messages[Snowflake(json['d']['id'] as String)];
       this.id = message.id;
     } else {
       this.id = Snowflake((json['d']['id'] as String));
@@ -66,9 +67,10 @@ class MessageReactionEvent extends MessageEvent {
     this.channel = client.channels[Snowflake(json['d']['channel_id'] as String)]
         as MessageChannel;
 
-    channel.getMessage(Snowflake(json['d']['message_id'] as String)).then((msg) {
-      if (msg == null)
-        return;
+    channel
+        .getMessage(Snowflake(json['d']['message_id'] as String))
+        .then((msg) {
+      if (msg == null) return;
 
       this.message = msg;
 
@@ -168,10 +170,9 @@ class MessageUpdateEvent {
     this.oldMessage = channel.messages[Snowflake(json['d']['id'] as String)];
     this.newMessage = Message._new(json['d'] as Map<String, dynamic>, client);
 
-    if(oldMessage != newMessage) {
+    if (oldMessage != newMessage) {
       channel.messages._cacheMessage(newMessage);
       client._events.onMessageUpdate.add(this);
     }
-
   }
 }

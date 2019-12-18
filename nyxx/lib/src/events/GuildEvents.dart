@@ -42,9 +42,9 @@ class GuildDeleteEvent {
   Guild guild;
 
   GuildDeleteEvent._new(Map<String, dynamic> json, Shard shard, Nyxx client) {
-      this.guild = client.guilds[Snowflake(json['d']['id'] as String)];
-      client.guilds.remove(guild.id);
-      shard.guilds.remove(guild.id);
+    this.guild = client.guilds[Snowflake(json['d']['id'] as String)];
+    client.guilds.remove(guild.id);
+    shard.guilds.remove(guild.id);
   }
 }
 

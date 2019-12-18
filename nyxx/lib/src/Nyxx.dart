@@ -183,7 +183,7 @@ class Nyxx implements Disposable {
   /// Creates and logs in a new client. If [ignoreExceptions] is true (by default is)
   /// isolate will ignore all exceptions and continue to work.
   Nyxx(this._token, {ClientOptions options, bool ignoreExceptions = true}) {
-    if(!setup) {
+    if (!setup) {
       throw NoSetupError();
     }
 
@@ -206,7 +206,7 @@ class Nyxx implements Disposable {
     this.guilds = _SnowflakeCache();
     this.channels = ChannelCache._new();
     this.users = _SnowflakeCache();
-    
+
     this._http = Http._new(this);
     this._events = _EventController(this);
     this.onSelfMention = this.onMessageReceived.where((event) =>

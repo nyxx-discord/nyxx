@@ -19,7 +19,7 @@ String attach(String filename) => "attachment://$filename";
 String _sanitizeMessage(Object content, bool disableEveryone, Nyxx client) {
   var msg = content.toString();
 
-  if(msg.length > 2000)
+  if (msg.length > 2000)
     throw new Exception("Message is too long. (2000 characters limit)");
 
   if (content != null &&
