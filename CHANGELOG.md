@@ -1,4 +1,4 @@
-## [1.0.0](https://github.com/l7ssha/nyxx/compare/0.30.0...0.31.0)
+## [1.0.0](https://github.com/l7ssha/nyxx/compare/0.30.0...0.30.0)
 _ xx.xx.2020_
 
 **Stable release - breaks with previous versions**
