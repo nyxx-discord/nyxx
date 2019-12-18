@@ -1,9 +1,14 @@
-## [0.31.0](https://github.com/l7ssha/nyxx/compare/0.30.0...0.31.0)
-_ xx.11.2019_
+## [1.0.0](https://github.com/l7ssha/nyxx/compare/0.30.0...0.31.0)
+_ xx.xx.2020_
 
-**This version completely reorganizes project structure**
+**Stable release - breaks with previous versions**
  - `nyxx` package contains only basic functionality - everything else is getting own package
-
+   - `nyxx.commands` - contains commands specific code
+   - `nyxx.interacticity` - contains utils for interactive features and utils for emojis 
+ - Added ability to specify predicate in `CommandParser` from `nyxx.commands` [a3104e1](https://github.com/l7ssha/nyxx/pull/43/commits/a3104e19fc699ab273b9e48fbd871e6447a2a609) 
+ - Fixed setup errors to be more self explanatory [683ba12](https://github.com/l7ssha/nyxx/pull/43/commits/683ba12b4494b1f8b416d451333b179a7032ebe0)
+ - Implemented download functions to file as extension method to avoid misusing them in browser [50b57b6](https://github.com/l7ssha/nyxx/pull/43/commits/50b57b6de6ed35ac38e45c26ba540f8e5b0100c1)
+ 
 ## [0.30.0](https://github.com/l7ssha/nyxx/compare/0.24.0...0.30.0)
 _Tue 07.02.2019_
 
