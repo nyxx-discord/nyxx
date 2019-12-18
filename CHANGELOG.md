@@ -1,3 +1,9 @@
+## [0.31.0](https://github.com/l7ssha/nyxx/compare/0.30.0...0.31.0)
+_ xx.11.2019_
+
+**This version completely reorganizes project structure**
+ - `nyxx` package contains only basic functionality - everything else is getting own package
+
 ## [0.30.0](https://github.com/l7ssha/nyxx/compare/0.24.0...0.30.0)
 _Tue 07.02.2019_
 
@@ -9,13 +15,13 @@ _Tue 07.02.2019_
   * **SUPPORT FOR DART 2.0+**
   * **ADDED SUPPORT FOR VOICE via Lavalink**
   * **PERMISSIONS OVERHAUL**
-    - Proper permissing handling
+    - Proper permissions handling
   * **COMMANDS FRAMEWORK REWRITTEN**
     - Dispatch pipe is completely rewritten. Bot should operate about 2-8x faster
     - Allowed to declare single method commands without using classes
     - Added support for specify custom restrictions to commands handlers
     - Classes now have to be annotated with `Module` instead of `Command`
-    - `Remainder` can now colled data to `List<String>` or `String`
+    - `Remainder` can now called data to `List<String>` or `String`
     - Added `Preprocessor` and `Posprocessor`
     - Removed help system
   * **COMMANDS PARSER**
@@ -27,7 +33,7 @@ _Tue 07.02.2019_
   * Added typing event per channel
   * Using `v7` api endpoint
   * Added support for zlib compressed gateway payload
-  * Added enpoints for Guild, Emoji, Role, Member
+  * Added endpoints for Guild, Emoji, Role, Member
   * Added utils module
   * Allowed to download attachments. (`Downloadable` interface)
   * Implemented new Discord features (Priority speaker, Slowmode)
@@ -39,8 +45,8 @@ _Tue 07.02.2019_
 - **Bug fixes**
   * **Lowered memory usage**
   * **Websocket fixed**
-  * Fixed Emijis comparing
-  * Fixed searchin in Emojis unicode
+  * Fixed Emojis comparing
+  * Fixed searching in Emojis unicode
   * Code cleanup and style fixes
   * Proper error handling for `CommandsFramework`
   * Gateway fixes
@@ -48,7 +54,7 @@ _Tue 07.02.2019_
   * Memory and performance improvements
   * Random null exceptions
   * Emojis CDN fixes
-  * Fixes ratelimitter
+  * Few fixes for ratelimitter
 - **Changes**
   * **Docs are rewritten**
   * **Faster deserialization**
@@ -60,7 +66,7 @@ _Tue 07.02.2019_
   * Cooldown cache rewritten
   * Presence sending fixes
   * Title is not required for EmbedBuilder
-  * Removed uneccessary dependencies
+  * Removed unnecessary dependencies
 
 ## [0.24.0](https://github.com/l7ssha/nyxx/compare/0.23.1...0.24.0)
 _Tue 03.08.2018_
