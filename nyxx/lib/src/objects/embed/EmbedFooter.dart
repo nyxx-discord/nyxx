@@ -18,11 +18,7 @@ class EmbedFooter implements Downloadable, Convertable<EmbedFooterBuilder> {
   }
 
   @override
-  Future<List<int>> download() => DownloadUtils.downloadFile(Uri.parse(iconUrl));
-
-  @override
-  Future<File> downloadFile(File file) async =>
-      file.writeAsBytes(await download());
+  Future<List<int>> download() => DownloadUtils.downloadAsBytes(Uri.parse(iconUrl));
 
   @override
   String toString() => text;

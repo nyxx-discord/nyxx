@@ -1,7 +1,7 @@
 part of nyxx;
 
 /// A message attachment.
-class Attachment extends SnowflakeEntity {
+class Attachment extends SnowflakeEntity implements Downloadable {
   /// The attachment's filename.
   String filename;
 
@@ -33,13 +33,9 @@ class Attachment extends SnowflakeEntity {
     this.width = raw['width'] as int;
   }
 
+  @override
   /// Download attachment and return it's bytes
-  Future<List<int>> download() => DownloadUtils.downloadFile(Uri.parse(url));
-
-  /// Download attachment and write contents to [file].
-  /// Returns updated [File] instance when completed.
-  Future<File> downloadFile(File file) async =>
-      file.writeAsBytes(await download());
+  Future<List<int>> download() => DownloadUtils.downloadAsBytes(Uri.parse(url));
 
   @override
   String toString() => url;

@@ -22,11 +22,7 @@ class EmbedThumbnail implements Downloadable {
   }
 
   @override
-  Future<List<int>> download() => DownloadUtils.downloadFile(Uri.parse(url));
-
-  @override
-  Future<File> downloadFile(File file) async =>
-      file.writeAsBytes(await download());
+  Future<List<int>> download() => DownloadUtils.downloadAsBytes(Uri.parse(url));
 
   @override
   String toString() => url;
