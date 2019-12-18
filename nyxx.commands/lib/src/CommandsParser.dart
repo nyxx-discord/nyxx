@@ -1,8 +1,10 @@
 part of nyxx.commands;
 
+/// Handles command execution. [args] is list of all word after prefix and matched command name.
 typedef Future<void> CommandHandler(
     Message message, Member author, MessageChannel channel, List<String> args);
 
+/// Method to execute before any matched with prefix command.
 typedef FutureOr<bool> Predicate(Message message, Member author, MessageChannel channel);
 
 bool _isCommandMatching(List<String> command, List<String> message) {
@@ -17,13 +19,17 @@ bool _isCommandMatching(List<String> command, List<String> message) {
   return true;
 }
 
+/// Lighter version of [CommandsFramework]. It's bare wraper around messages and allows to avoid boilerplate.
+/// Does not offer powerful helper class and methods and is less powerful but is lighter and more perfomant.
 class CommandParser {
   Map<String, CommandHandler> _commands;
 
+  /// Prefix for commands
   String prefix;
 
   Predicate _predicate;
 
+  /// Constructs and stars [CommandParser]. Allows to set additional [_predicate] to execute before any matched with prefix message.
   CommandParser(this.prefix, Nyxx client, [this._predicate]) {
     _commands = Map();
 
@@ -55,5 +61,6 @@ class CommandParser {
     });
   }
 
-  void bind(String cmd, CommandHandler handler) => _commands[cmd] = handler;
+  /// Binds [command] to [handler] which is action that will be invoked when message matched prefix and specified [command].
+  void bind(String command, CommandHandler handler) => _commands[command] = handler;
 }

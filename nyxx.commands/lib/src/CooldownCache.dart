@@ -1,10 +1,10 @@
 part of nyxx.commands;
 
-/// Handles caching of cooldown
+/// Handles caching of command cooldowns
 class CooldownCache {
   Map<_CacheKey, int> _cache;
 
-  /// Constructor sets up empty cache and starts garbage collector.
+  /// Constructor sets up empty cache and starts 'garbage collector'.
   CooldownCache(Duration roundupTime) {
     _cache = Map();
 
@@ -21,17 +21,17 @@ class CooldownCache {
   Future<bool> canExecute(
       Snowflake userId, String commandName, int desiredCooldown) {
     return Future.microtask(() {
-      /// current date
+      // current date
       int now = DateTime.now().millisecondsSinceEpoch;
       var node = _CacheKey._new(userId, commandName);
 
-      /// Search for entry
+      // Search for entry
       if (!_cache.containsKey(node)) {
         _cache[node] = now;
         return true;
       }
 
-      /// If found check if user can execute command
+      // If found check if user can execute command
       if (_cache[node] + desiredCooldown < now) {
         _cache[node] = now;
         return true;
