@@ -1,0 +1,26 @@
+name: nyxx.commands
+version: 1.0.0
+description: A Discord library for Dart.
+authors:
+- Szymon Uglis <szymon.uglis@tuta.io>
+- Zach Vacura <admin@hackzzila.com>
+homepage: https://github.com/l7ssha/nyxx
+repository: https://github.com/l7ssha/nyxx
+documentation: https://github.com/l7ssha/nyxx/wiki
+issue_tracker: https://github.com/l7ssha/nyxx/issue
+
+environment:
+  sdk: '>=2.6.0 <3.0.0'
+
+dependencies:
+  nyxx: "^1.0.0"
+  logging: "^0.11.3+2"
+  w_transport: "^3.2.8"
+
+dependency_overrides:
+  nyxx:
+    path: "../nyxx"
+
+dev_dependencies:
+  dart_style:
+  analyzer:
