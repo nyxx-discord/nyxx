@@ -1,21 +1,7 @@
 part of nyxx.commands;
 
-/// Gets single annotation with type [T] from [declaration]
-T getCmdAnnot<T>(DeclarationMirror declaration) {
-  Iterable<T> fs = getCmdAnnots<T>(declaration);
-  if (fs.isEmpty) return null;
-  return fs.first;
-}
-
-/// Gets all annotations with type [T] from [declaration]
-Iterable<T> getCmdAnnots<T>(DeclarationMirror declaration) sync* {
-  for (var instance in declaration.metadata)
-    if (instance.hasReflectee && instance.reflectee is T)
-      yield instance.reflectee as T;
-}
-
-/// Main point of commands in nyx.
-/// It gets all sent messages and matches to registered command and invokes its action.
+/// Main point of commands in Nyxx.
+/// It gets all sent messages and matches to registered command and invokes its action based on registered commands.
 class CommandsFramework {
   List<_CommandMetadata> _commands;
 
@@ -98,7 +84,7 @@ class CommandsFramework {
               _services.add(serv);
             } catch (e) {
               throw Exception(
-                  "Service [${Utils.getSymbolName(cm.simpleName)}] constructor not satisfied!");
+                  "Service [${Utils._getSymbolName(cm.simpleName)}] constructor not satisfied!");
             }
 
             break;
@@ -131,8 +117,8 @@ class CommandsFramework {
   String _createLog(Command methodCmd) => "[${methodCmd.name}]";
 
   List<List> _getProcessors(DeclarationMirror methodMirror) {
-    var methodPre = getCmdAnnots<Preprocessor>(methodMirror);
-    var methodPost = getCmdAnnots<Postprocessor>(methodMirror);
+    var methodPre = Utils._getCmdAnnots<Preprocessor>(methodMirror);
+    var methodPost = Utils._getCmdAnnots<Postprocessor>(methodMirror);
 
     return [
       List<Preprocessor>.from(methodPre),
@@ -147,12 +133,12 @@ class CommandsFramework {
 
     mirrorSystem.libraries.forEach((_, library) {
       for (var declaration in library.declarations.values) {
-        var commandAnnot = getCmdAnnot<Command>(declaration);
+        var commandAnnot = Utils._getCmdAnnot<Command>(declaration);
 
         if (commandAnnot == null) continue;
 
         if (declaration is MethodMirror) {
-          var methodRestrict = getCmdAnnot<Restrict>(declaration);
+          var methodRestrict = Utils._getCmdAnnot<Restrict>(declaration);
           var processors = _getProcessors(declaration);
 
           var meta = _CommandMetadata(
@@ -484,7 +470,7 @@ class CommandsFramework {
         continue;
       }
 
-      if (getCmdAnnot<Remainder>(e) != null) {
+      if (Utils._getCmdAnnot<Remainder>(e) != null) {
         var range = splitted.getRange(index, splitted.length).toList();
         if (type == String) {
           collected.add(range.join(" "));

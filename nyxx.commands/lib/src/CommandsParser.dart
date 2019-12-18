@@ -20,7 +20,7 @@ bool _isCommandMatching(List<String> command, List<String> message) {
 }
 
 /// Lighter version of [CommandsFramework]. It's bare wraper around messages and allows to avoid boilerplate.
-/// Does not offer powerful helper class and methods and is less powerful but is lighter and more perfomant.
+/// Does not offer helper class and additional methods, it is less powerful but it is lighter and more performant.
 class CommandParser {
   Map<String, CommandHandler> _commands;
 
