@@ -2,4 +2,4 @@ language: dart
 dart:
   - dev
   - stable
-script: ./nyxx/test/travis.sh
+script: ./travis.sh
