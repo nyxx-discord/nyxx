@@ -183,7 +183,13 @@ class Nyxx implements Disposable {
   /// Creates and logs in a new client. If [ignoreExceptions] is true (by default is)
   /// isolate will ignore all exceptions and continue to work.
   Nyxx(this._token, {ClientOptions options, bool ignoreExceptions = true}) {
-    if (!setup || (_token == null || _token.isEmpty)) throw NotSetupError();
+    if(!setup) {
+      throw NoSetupError();
+    }
+
+    if (_token == null || _token.isEmpty) {
+      throw NoTokenError();
+    }
 
     if (ignoreExceptions && !browser) {
       Isolate.current.setErrorsFatal(false);

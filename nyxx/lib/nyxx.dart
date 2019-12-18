@@ -9,6 +9,7 @@ import 'dart:convert';
 import 'dart:collection';
 import 'dart:io';
 
+// Used to discard errors on vm to continue working even if error occured
 import 'dart:isolate';
 
 import 'package:logging/logging.dart';
@@ -32,7 +33,7 @@ part 'src/internal/Cache.dart';
 // ERROR
 
 part 'src/errors/HttpError.dart';
-part 'src/errors/NotSetupError.dart';
+part 'src/errors/SetupErrors.dart';
 
 // EVENTS
 
@@ -72,7 +73,6 @@ part 'src/objects/ISend.dart';
 part 'src/objects/Mentionable.dart';
 part 'src/objects/GuildEntity.dart';
 part 'src/objects/Disposable.dart';
-part 'src/objects/Downloadable.dart';
 
 part 'src/objects/DiscordColor.dart';
 
