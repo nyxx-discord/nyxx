@@ -29,6 +29,8 @@ class CommandsFramework {
   List<Snowflake> _admins;
   final Logger _logger = Logger("CommandsFramework");
 
+  RegExp _entityRegex = RegExp(r"<(@|@!|@&|#|a?:(.+):)([0-9]+)>");
+
   /// Prefix needed to dispatch a commands.
   /// All messages without this prefix will be ignored
   String prefix;
@@ -402,8 +404,6 @@ class CommandsFramework {
 
     return finalList;
   }
-
-  RegExp _entityRegex = RegExp(r"<(@|@!|@&|#|a?:(.+):)([0-9]+)>");
 
   Future<List<Object>> _injectParameters(
       MethodMirror method, List<String> splitted, Message msg) async {
