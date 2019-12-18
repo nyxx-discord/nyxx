@@ -7,6 +7,7 @@ set -e
 
 echo "Testing nyxx package..."
 cd nyxx/
+pub get
 
 echo "Checking dartfmt..."
 NEEDS_DARTFMT="$(find lib test -name "*.dart" | xargs pub run dart_style:format -n)"
