@@ -120,8 +120,6 @@ class Guild extends SnowflakeEntity implements Disposable {
       else if (o['type'] == 4)
         channel = CategoryChannel._new(o as Map<String, dynamic>, this, client);
 
-      print("CHUJ: " + o['type'].toString());
-
       this.channels[channel.id] = channel;
       client.channels[channel.id] = channel;
     });
