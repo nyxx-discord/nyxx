@@ -14,8 +14,7 @@ class DiscordColor {
   /// var color2 = DiscordColor.fromInt(0xff0044);
   /// ```
   DiscordColor.fromInt(int color) {
-    if(color != 0)
-      this._value = color;
+    if (color != 0) this._value = color;
   }
 
   /// Construct color from individual color components

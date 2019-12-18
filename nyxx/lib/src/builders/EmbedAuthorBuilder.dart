@@ -17,7 +17,7 @@ class EmbedAuthorBuilder implements Builder {
 
   /// Builds object to Map() instance;
   Map<String, dynamic> _build() {
-    if(this.length > 256)
+    if (this.length > 256)
       throw new Exception("Author name is too long. (256 characters limit)");
 
     Map<String, dynamic> tmp = Map();

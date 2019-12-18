@@ -11,7 +11,8 @@ abstract class Channel extends SnowflakeEntity {
   Nyxx client;
 
   Channel._new(Map<String, dynamic> raw, int type, this.client)
-      : this.type = ChannelType(type), super(Snowflake(raw['id'] as String));
+      : this.type = ChannelType(type),
+        super(Snowflake(raw['id'] as String));
 
   /// Deletes the channel.
   /// Throws if bot cannot perform operation
@@ -37,7 +38,7 @@ class ChannelType {
   @override
   bool operator ==(other) =>
       (other is ChannelType && other._value == this._value) ||
-          (other is int && other == this._value);
+      (other is int && other == this._value);
 
   @override
   int get hashCode => _value.hashCode;

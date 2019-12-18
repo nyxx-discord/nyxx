@@ -94,9 +94,8 @@ class Guild extends SnowflakeEntity implements Disposable {
   Guild._new(this.client, Map<String, dynamic> raw,
       [this.available = true, bool guildCreate = false])
       : super(Snowflake(raw['id'] as String)) {
-    if (!this.available)
-      return;
-    
+    if (!this.available) return;
+
     voiceStates = _SnowflakeCache();
     this.name = raw['name'] as String;
     this.icon = raw['icon'] as String;
@@ -117,11 +116,9 @@ class Guild extends SnowflakeEntity implements Disposable {
       if (o['type'] == 0 || o['type'] == 5 || o['type'] == 6)
         channel = TextChannel._new(o as Map<String, dynamic>, this, client);
       else if (o['type'] == 2)
-        channel =
-            VoiceChannel._new(o as Map<String, dynamic>, this, client);
+        channel = VoiceChannel._new(o as Map<String, dynamic>, this, client);
       else if (o['type'] == 4)
-        channel =
-            CategoryChannel._new(o as Map<String, dynamic>, this, client);
+        channel = CategoryChannel._new(o as Map<String, dynamic>, this, client);
 
       print("CHUJ: " + o['type'].toString());
 
@@ -147,8 +144,8 @@ class Guild extends SnowflakeEntity implements Disposable {
 
     if (raw.containsKey('embed_channel_id'))
       this.embedChannel =
-      client.channels[Snowflake(raw['embed_channel_id'] as String)]
-      as GuildChannel;
+          client.channels[Snowflake(raw['embed_channel_id'] as String)]
+              as GuildChannel;
 
     if (raw['system_channel_id'] != null) {
       var snow = Snowflake(raw['system_channel_id'] as String);
@@ -159,15 +156,13 @@ class Guild extends SnowflakeEntity implements Disposable {
     if (raw['features'] != null)
       this.features = (raw['features'] as List<dynamic>).cast<String>();
 
-    if (!guildCreate)
-      return;
+    if (!guildCreate) return;
 
     this.members = _SnowflakeCache();
 
     if (client._options.cacheMembers) {
       raw['members'].forEach((o) {
-        final member =
-        _StandardMember(o as Map<String, dynamic>, this, client);
+        final member = _StandardMember(o as Map<String, dynamic>, this, client);
         this.members[member.id] = member;
         client.users[member.id] = member;
       });
@@ -181,8 +176,7 @@ class Guild extends SnowflakeEntity implements Disposable {
             MemberStatus.from(o['client_status']['web'] as String),
             MemberStatus.from(o['client_status']['mobile'] as String));
         if (o['game'] != null) {
-          member.presence =
-              Presence._new(o['game'] as Map<String, dynamic>);
+          member.presence = Presence._new(o['game'] as Map<String, dynamic>);
         }
       }
     });
@@ -197,8 +191,7 @@ class Guild extends SnowflakeEntity implements Disposable {
       voiceStates = _SnowflakeCache();
 
       raw['voice_states'].forEach((o) {
-        var state =
-            VoiceState._new(o as Map<String, dynamic>, client, this);
+        var state = VoiceState._new(o as Map<String, dynamic>, client, this);
 
         if (state != null && state.user != null)
           this.voiceStates[state.user.id] = state;
@@ -258,7 +251,8 @@ class Guild extends SnowflakeEntity implements Disposable {
   Future<GuildEmoji> createEmoji(String name,
       {List<Role> roles, File image, List<int> imageBytes}) async {
     if (await image.length() > 256000)
-      return Future.error("Emojis and animated emojis have a maximum file size of 256kb.");
+      return Future.error(
+          "Emojis and animated emojis have a maximum file size of 256kb.");
 
     var encoded =
         base64.encode(image == null ? imageBytes : await image.readAsBytes());
@@ -498,16 +492,16 @@ class Guild extends SnowflakeEntity implements Disposable {
   /// // This moves channel 2 places up
   /// await guild.moveChannel(chan, relative: -2);
   /// ```
-  Future<void> moveChannel(GuildChannel channel, {int absolute, int relative,
-      String auditReason = ""}) async {
+  Future<void> moveChannel(GuildChannel channel,
+      {int absolute, int relative, String auditReason = ""}) async {
     int newPosition;
 
-    if(absolute != null)
+    if (absolute != null)
       newPosition = absolute;
     else
       newPosition = channel.position + relative;
 
-    if(newPosition == null)
+    if (newPosition == null)
       return Future.error("Cannot move channel by zero places");
 
     await client._http.send('PATCH', "/guilds/${this.id}/channels",

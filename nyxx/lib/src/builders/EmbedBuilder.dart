@@ -78,24 +78,28 @@ class EmbedBuilder implements Builder {
         (this.description?.length ?? 0) +
         (this.footer?.length ?? 0) +
         (this.author?.length ?? 0) +
-        (_fields.isEmpty ? 0 : _fields.map((embed) => embed.length).reduce((f, s) => f + s));
+        (_fields.isEmpty
+            ? 0
+            : _fields.map((embed) => embed.length).reduce((f, s) => f + s));
   }
 
   @override
 
   /// Builds object to Map() instance;
   Map<String, dynamic> _build() {
-    if(this.title != null && this.title.length > 256)
+    if (this.title != null && this.title.length > 256)
       throw new Exception("Embed title is too long (256 characters limit)");
 
-    if(this.description != null && this.description.length > 2048)
-      throw new Exception("Embed description is too long (2048 characters limit)");
+    if (this.description != null && this.description.length > 2048)
+      throw new Exception(
+          "Embed description is too long (2048 characters limit)");
 
-    if(this._fields.length > 25)
+    if (this._fields.length > 25)
       throw new Exception("Embed cannot contain more than 25 fields");
 
-    if(this.length > 6000)
-      throw new Exception("Total length of embed cannot exceed 6000 characters");
+    if (this.length > 6000)
+      throw new Exception(
+          "Total length of embed cannot exceed 6000 characters");
 
     Map<String, dynamic> tmp = Map();
 
@@ -107,9 +111,11 @@ class EmbedBuilder implements Builder {
     if (color != null) tmp["color"] = color._value;
     if (footer != null) tmp["footer"] = footer._build();
     if (imageUrl != null) tmp["image"] = <String, dynamic>{"url": imageUrl};
-    if (thumbnailUrl != null) tmp["thumbnail"] = <String, dynamic>{"url": thumbnailUrl};
+    if (thumbnailUrl != null)
+      tmp["thumbnail"] = <String, dynamic>{"url": thumbnailUrl};
     if (author != null) tmp["author"] = author._build();
-    if (_fields.length > 0) tmp["fields"] = _fields.map((builder) => builder._build()).toList();
+    if (_fields.length > 0)
+      tmp["fields"] = _fields.map((builder) => builder._build()).toList();
 
     return tmp;
   }

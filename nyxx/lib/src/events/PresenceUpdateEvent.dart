@@ -11,8 +11,7 @@ class PresenceUpdateEvent {
   PresenceUpdateEvent._new(Map<String, dynamic> json, Nyxx client) {
     var guild = client.guilds[Snowflake(json['d']['guild_id'] as String)];
 
-    if(guild == null)
-      return;
+    if (guild == null) return;
 
     if (guild != null)
       this.member = guild.members[Snowflake(json['d']['user']['id'] as String)];

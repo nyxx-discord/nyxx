@@ -89,8 +89,7 @@ class HttpMultipartRequest extends HttpBase {
   HttpMultipartRequest._new(Http http, String method, String path,
       List<AttachmentBuilder> files, this.fields, Map<String, String> headers)
       : super._new(http, method, path, null, headers, null) {
-
-    for(final f in files) {
+    for (final f in files) {
       this.files[f._name] = f._asMultipartFile();
     }
 
@@ -284,16 +283,20 @@ class Http {
 
   /// Adds AUDIT_LOG header to request
   Map<String, String> _addAuditReason(String reason) {
-    if(reason.length > 512)
-      throw new Exception("X-Audit-Log-Reason header cannot be longer than 512 characters");
+    if (reason.length > 512)
+      throw new Exception(
+          "X-Audit-Log-Reason header cannot be longer than 512 characters");
 
-      return <String, String>{"X-Audit-Log-Reason": "${reason == null ? "" : reason}"};
+    return <String, String>{
+      "X-Audit-Log-Reason": "${reason == null ? "" : reason}"
+    };
   }
 
   /// Creates headers for request
   void _addHeaders(HttpBase request, String reason) {
     final Map<String, String> _headers = Map.from(this._headers);
-    if (!browser && reason != null && reason != "") _headers.addAll(_addAuditReason(reason));
+    if (!browser && reason != null && reason != "")
+      _headers.addAll(_addAuditReason(reason));
 
     request.headers.addAll(_headers);
   }

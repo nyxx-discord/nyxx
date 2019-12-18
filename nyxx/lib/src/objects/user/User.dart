@@ -56,7 +56,10 @@ class User extends SnowflakeEntity with ISend, Mentionable {
       return chan;
     }
 
-    return (client.channels.findOne((Channel c) => c is DMChannel && c.recipient.id == this.id) as DMChannel) ?? await downloadChannel();
+    return (client.channels.findOne(
+                (Channel c) => c is DMChannel && c.recipient.id == this.id)
+            as DMChannel) ??
+        await downloadChannel();
   }
 
   @override

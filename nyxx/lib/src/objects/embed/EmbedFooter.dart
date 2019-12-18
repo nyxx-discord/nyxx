@@ -18,7 +18,8 @@ class EmbedFooter implements Downloadable, Convertable<EmbedFooterBuilder> {
   }
 
   @override
-  Future<List<int>> download() => DownloadUtils.downloadAsBytes(Uri.parse(iconUrl));
+  Future<List<int>> download() =>
+      DownloadUtils.downloadAsBytes(Uri.parse(iconUrl));
 
   @override
   String toString() => text;
@@ -35,7 +36,7 @@ class EmbedFooter implements Downloadable, Convertable<EmbedFooterBuilder> {
   @override
   EmbedFooterBuilder toBuilder() {
     return EmbedFooterBuilder()
-        ..text = this.text
-        ..iconUrl = this.iconUrl;
+      ..text = this.text
+      ..iconUrl = this.iconUrl;
   }
 }

@@ -1,8 +1,7 @@
 part of nyxx;
 
 /// Represents a Discord guild role, which is used to assign priority, permissions, and a color to guild members
-class Role extends SnowflakeEntity
-    implements Mentionable, GuildEntity {
+class Role extends SnowflakeEntity implements Mentionable, GuildEntity {
   /// The role's name.
   String name;
 
@@ -67,7 +66,7 @@ class Role extends SnowflakeEntity
 
   /// Adds role to user.
   Future<void> addToUser(User user, {String auditReason = ""}) {
-    return  client._http.send(
+    return client._http.send(
         'PUT', '/guilds/${guild.id}/members/${user.id}/roles/$id',
         reason: auditReason);
   }

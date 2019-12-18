@@ -4,9 +4,9 @@ class PermissionsUtils {
   /// Allows to check if [issueMember] or [issueRole] can interact with [targetMember] or [targetRole].
   static bool canInteract(
       {Member issueMember,
-        Role issueRole,
-        Member targetMember,
-        Role targetRole}) {
+      Role issueRole,
+      Member targetMember,
+      Role targetRole}) {
     bool canInter(Role role1, Role role2) => role1.position > role2.position;
 
     if (issueMember != null && targetMember != null) {
@@ -82,6 +82,4 @@ class PermissionsUtils {
   /// Returns true if [permission] is applied to [permissions].
   static bool isApplied(int permissions, int permission) =>
       (permissions & permission) == permission;
-
 }
-
