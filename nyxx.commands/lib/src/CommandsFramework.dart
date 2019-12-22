@@ -175,8 +175,6 @@ class CommandsFramework {
       return;
     }
 
-    if (matchedMeta.methodCommand.typing) e.message.channel.startTypingLoop();
-
     var executionCode = -1;
     executionCode = await checkPermissions(matchedMeta, e.message);
 
@@ -254,6 +252,8 @@ class CommandsFramework {
       case -1:
       case -2:
       case 100:
+        if (matchedMeta.methodCommand.typing) e.message.channel.startTypingLoop();
+
         for (var s in matchedMeta.commandString)
           cmdWithoutPrefix = cmdWithoutPrefix.replaceFirst(s, "").trim();
 
