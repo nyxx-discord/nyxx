@@ -95,7 +95,7 @@ class Message extends SnowflakeEntity implements GuildEntity, Disposable {
         });
       }
     } else {
-      if(raw['author'] != null)
+      if (raw['author'] != null)
         this.author = client.users[Snowflake(raw['author']['id'] as String)];
 
       if (this.author == null && raw['member'] != null) {
