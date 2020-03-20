@@ -23,12 +23,14 @@ class CommandsFramework {
 
   Nyxx client;
 
+  bool ignoreBots;
+
   /// Creates commands framework handler. Requires prefix to handle commands.
   CommandsFramework(this.client,
       {this.prefix,
       Stream<MessageEvent> stream,
       Duration roundupTime = const Duration(minutes: 2),
-      bool ignoreBots = true,
+      this.ignoreBots = true,
       List<Snowflake> admins = const []}) {
     this._commands = List();
     _cooldownCache = CooldownCache(roundupTime);
@@ -39,22 +41,29 @@ class CommandsFramework {
 
     _typeConverters = List();
 
-    client.onReady.listen((_) {
-      if (prefix == null && stream == null) {
-        prefix = client.self.mention;
-        stream = client.onSelfMention;
-      } else if (stream == null && prefix != null) {
-        stream = client.onMessageReceived;
-      } else if (stream != null && prefix == null) {
-        prefix = client.self.mention;
-      }
+    _streamListener(stream: stream);
+  }
 
-      stream.listen((MessageEvent e) {
-        if (ignoreBots && e.message.author.bot) return;
-        if (!e.message.content.startsWith(prefix)) return;
+  ///Listens to messages sent that contain the prefix and triggers the dispatching of the command.
+  void _streamListener({Stream<MessageEvent> stream}) async {
+    if(!client.ready) {
+      //Allows to start listening if onReady has already been recieved
+      await client.onReady.first;
+    }
+    if (prefix == null && stream == null) {
+      prefix = client.self.mention;
+      stream = client.onSelfMention;
+    } else if (stream == null && prefix != null) {
+      stream = client.onMessageReceived;
+    } else if (stream != null && prefix == null) {
+      prefix = client.self.mention;
+    }
 
-        Future(() => _dispatch(e));
-      });
+    stream.listen((MessageEvent e) {
+      if (ignoreBots && e.message.author.bot) return;
+      if (!e.message.content.startsWith(prefix)) return;
+
+      Future(() => dispatch(e));
     });
   }
 
@@ -159,8 +168,15 @@ class CommandsFramework {
   }
 
   /// Dispatches onMessage event to framework.
-  Future _dispatch(MessageEvent e) async {
-    var cmdWithoutPrefix = e.message.content.replaceFirst(prefix, "").trim();
+  /// 
+  /// Optionally takes a [prefix] to remove from the message recieved from MessageEvent [e].
+  Future dispatch(MessageEvent e, {String prefix}) async {
+    var cmdWithoutPrefix;
+    if(prefix == null) {
+      cmdWithoutPrefix = e.message.content.replaceFirst(this.prefix, "").trim();
+    } else {
+      cmdWithoutPrefix = e.message.content.replaceFirst(prefix, "").trim();
+    }
 
     _CommandMetadata matchedMeta;
     try {
