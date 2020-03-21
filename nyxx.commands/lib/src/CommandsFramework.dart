@@ -43,11 +43,10 @@ class CommandsFramework {
       if (prefix == null && stream == null) {
         prefix = client.self.mention;
         stream = client.onSelfMention;
-      } else if (stream == null && prefix != null)
+      } else if (stream == null && prefix != null) {
         stream = client.onMessageReceived;
-      else {
-        _logger.severe("CANNOT CREATE FRAMEWORK WITHOUT PREFIX");
-        exit(1);
+      } else if (stream != null && prefix == null) {
+        prefix = client.self.mention;
       }
 
       stream.listen((MessageEvent e) {
