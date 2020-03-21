@@ -3,10 +3,10 @@ part of nyxx;
 /// Sent when a user starts typing.
 class TypingEvent {
   /// The channel that the user is typing in.
-  MessageChannel channel;
+  late final MessageChannel channel;
 
   /// The user that is typing.
-  User user;
+  User? user;
 
   TypingEvent._new(Map<String, dynamic> json, Nyxx client) {
     client

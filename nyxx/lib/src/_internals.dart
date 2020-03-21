@@ -5,4 +5,4 @@ bool setup = false;
 bool browser = false;
 
 /// The OS or browser name.
-String operatingSystem;
+String? operatingSystem;

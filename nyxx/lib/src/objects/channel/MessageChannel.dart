@@ -13,19 +13,19 @@ part of nyxx;
 /// ```
 class MessageChannel extends Channel
     with IterableMixin<Message>, ISend, Disposable {
-  Timer _typing;
+  late Timer? _typing;
 
   /// Sent when a new message is received.
-  Stream<MessageReceivedEvent> onMessage;
+  late final Stream<MessageReceivedEvent> onMessage;
 
   /// Emitted when user starts typing.
-  Stream<TypingEvent> onTyping;
+  late final Stream<TypingEvent> onTyping;
 
-  StreamController<MessageReceivedEvent> _onMessage;
-  StreamController<TypingEvent> _onTyping;
+  late final StreamController<MessageReceivedEvent> _onMessage;
+  late final StreamController<TypingEvent> _onTyping;
 
   /// A collection of messages sent to this channel.
-  MessageCache messages;
+  late final MessageCache messages;
 
   MessageChannel._new(Map<String, dynamic> raw, int type, Nyxx client)
       : super._new(raw, type, client) {
@@ -40,7 +40,7 @@ class MessageChannel extends Channel
 
   /// Returns message with given [id]. Allows to force fetch message from api
   /// with [force] property. By default it checks if message is in cache and fetches from api if not.
-  Future<Message> getMessage(Snowflake id, {bool force = false}) async {
+  Future<Message?> getMessage(Snowflake id, {bool force = false}) async {
     if (force || !messages.hasKey(id)) {
       var r = await client._http
           .send('GET', "/channels/${this.id.toString()}/messages/$id");

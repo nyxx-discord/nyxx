@@ -1,22 +1,22 @@
 part of nyxx;
 
 class HttpBase {
-  StreamController<HttpResponse> _streamController;
+  late final StreamController<HttpResponse> _streamController;
 
   /// The HTTP client.
   final Http http;
 
   /// The bucket the request will go into.
-  HttpBucket bucket;
+  late final HttpBucket bucket;
 
   /// The path the request is being made to.
   final String path;
 
   /// The query params.
-  final Map<String, String> queryParams;
+  final Map<String, String>? queryParams;
 
   /// The final URI that the request is being made to.
-  Uri uri;
+  late final Uri uri;
 
   /// The HTTP method used.
   final String method;
@@ -29,7 +29,7 @@ class HttpBase {
 
   /// A stream that sends the response when received. Immediately closed after
   /// a value is sent.
-  Stream<HttpResponse> stream;
+  late final Stream<HttpResponse> stream;
 
   HttpBase._new(this.http, this.method, this.path, this.queryParams,
       this.headers, this.body);
@@ -45,12 +45,10 @@ class HttpBase {
     this._streamController = StreamController<HttpResponse>.broadcast();
     this.stream = _streamController.stream;
 
-    if (http._client != null)
-      http._client._events.beforeHttpRequestSend
+    http._client._events.beforeHttpRequestSend
           .add(BeforeHttpRequestSendEvent._new(this));
 
-    if (http._client == null ||
-        !http._client._events.beforeHttpRequestSend.hasListener) this.send();
+    if (!http._client._events.beforeHttpRequestSend.hasListener) this.send();
   }
 
   /// Sends the request off to the bucket to be processed and sent.
@@ -72,19 +70,15 @@ class HttpBase {
       final r = await req.send(this.method);
       return HttpResponse._fromResponse(this, r);
     } on transport.RequestException catch (e) {
-      if (e != null) {
-        return new HttpResponse._new(this, e.response?.status,
-            e.response?.statusText, e.response?.headers, {});
-      }
+      return new HttpResponse._new(this, e.response?.status!,
+          e.response?.statusText!, e.response?.headers!, {});
     }
-
-    return null;
   }
 }
 
 class HttpMultipartRequest extends HttpBase {
   Map<String, transport.MultipartFile> files = Map();
-  Map<String, dynamic> fields;
+  Map<String, dynamic>? fields;
 
   HttpMultipartRequest._new(Http http, String method, String path,
       List<AttachmentBuilder> files, this.fields, Map<String, String> headers)
@@ -119,7 +113,7 @@ class HttpRequest extends HttpBase {
       Http http,
       String method,
       String path,
-      Map<String, String> queryParams,
+      Map<String, String>? queryParams,
       Map<String, String> headers,
       dynamic body)
       : super._new(http, method, path, queryParams, headers, body) {
@@ -131,22 +125,22 @@ class HttpRequest extends HttpBase {
 /// [w_transport docs](https://www.dartdocs.org/documentation/w_transport/3.0.0/w_transport/Response-class.html)
 class HttpResponse {
   /// The HTTP request.
-  HttpBase request;
+  late HttpBase request;
 
   /// Whether or not the request was aborted. If true, all other fields will be null.
-  bool aborted;
+  late bool aborted;
 
   /// Status message
-  String statusText;
+  late String statusText;
 
   /// Status code
-  int status;
+  late int status;
 
   /// Response headers
-  Map<String, String> headers;
+  late Map<String, String> headers;
 
   /// Response body
-  dynamic body;
+  late dynamic body;
 
   HttpResponse._new(
       this.request, this.status, this.statusText, this.headers, this.body,
@@ -180,13 +174,13 @@ class HttpBucket {
   Uri url;
 
   /// The number of requests that can be made.
-  int limit;
+  late int limit;
 
   /// The number of remaining requests that can be made. May not always be accurate.
   int rateLimitRemaining = 2;
 
   /// When the ratelimits reset.
-  DateTime rateLimitReset;
+  late DateTime? rateLimitReset;
 
   /// The time difference between you and Discord.
   //Duration timeDifference;
@@ -243,8 +237,9 @@ class HttpBucket {
       }
     } else {
       final Duration waitTime =
-          this.rateLimitReset.difference(DateTime.now().toUtc()) +
-              Duration(milliseconds: 250);
+          this.rateLimitReset == null ? Duration.zero :
+            this.rateLimitReset!.difference(DateTime.now().toUtc()) +
+                Duration(milliseconds: 250);
       if (waitTime.isNegative) {
         this.rateLimitRemaining = 2;
         this._execute(request, client);
@@ -293,7 +288,7 @@ class Http {
   }
 
   /// Creates headers for request
-  void _addHeaders(HttpBase request, String reason) {
+  void _addHeaders(HttpBase request, String? reason) {
     final Map<String, String> _headers = Map.from(this._headers);
     if (!browser && reason != null && reason != "")
       _headers.addAll(_addAuditReason(reason));
@@ -304,10 +299,10 @@ class Http {
   /// Sends a HTTP request.
   Future<HttpResponse> send(String method, String path,
       {dynamic body,
-      Map<String, String> queryParams,
+      Map<String, String>? queryParams,
       bool beforeReady = false,
       Map<String, String> headers = const {},
-      String reason}) async {
+      String? reason}) async {
     HttpRequest request =
         HttpRequest._new(this, method, path, queryParams, _headers, body);
 
@@ -318,9 +313,9 @@ class Http {
   /// Sends multipart request
   Future<HttpResponse> sendMultipart(
       String method, String path, List<AttachmentBuilder> files,
-      {Map<String, dynamic> data,
+      {Map<String, dynamic>? data,
       bool beforeReady = false,
-      String reason}) async {
+      String? reason}) async {
     HttpMultipartRequest request = HttpMultipartRequest._new(this, method, path,
         files, data, Map.from(this._headers)..addAll(_headers));
 

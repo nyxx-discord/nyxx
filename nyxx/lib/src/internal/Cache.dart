@@ -3,7 +3,7 @@ part of nyxx;
 /// Generic interface for caching entities.
 /// Wraps [Map] interface and provides utilities for manipulating cache.
 abstract class Cache<T, S> implements Disposable {
-  Map<T, S> _cache;
+  late Map<T, S> _cache;
 
   /// Returns values of cache
   Iterable<S> get values => _cache.values;
@@ -12,14 +12,14 @@ abstract class Cache<T, S> implements Disposable {
   Iterable<T> get keys => _cache.keys;
 
   /// Find one element in cache
-  S findOne(bool predicate(S item)) =>
+  S? findOne(bool predicate(S item)) =>
       values.firstWhere(predicate, orElse: () => null);
 
   /// Find matching items based of [predicate]
   Iterable<S> find(bool predicate(S item)) => values.where(predicate);
 
   /// Returns element with key [key]
-  S operator [](T key) => _cache[key];
+  S? operator [](T key) => _cache.containsKey(key) ? _cache[key] : null;
 
   /// Sets [item] for [key]
   void operator []=(T key, S item) => _cache[key] = item;
@@ -63,7 +63,7 @@ abstract class Cache<T, S> implements Disposable {
       values.toList().sublist(values.length - count);
 
   /// Get first element
-  S get first => _cache.values.first;
+  S? get first => _cache.values.first;
 
   /// Get last element
   S get last => _cache.values.last;
@@ -105,7 +105,7 @@ class ChannelCache extends Cache<Snowflake, Channel> {
   E get<E>(Snowflake id) => _cache[id] as E;
 
   @override
-  Future<Function> dispose() => Future(() {
+  Future<void> dispose() => Future(() {
         _cache.forEach((_, v) {
           if (v is MessageChannel) v.dispose();
         });

@@ -2,9 +2,9 @@ part of nyxx;
 
 /// Emitted when guild's voice server changes
 class VoiceServerUpdateEvent {
-  String token;
-  Guild guild;
-  String endpoint;
+  late final String token;
+  Guild? guild;
+  late final String endpoint;
 
   Map<String, dynamic> raw;
 
