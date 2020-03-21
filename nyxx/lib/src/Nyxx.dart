@@ -18,161 +18,162 @@ part of nyxx;
 /// ```
 /// or setup `CommandsFramework` and `Voice`.
 class Nyxx implements Disposable {
-  String _token;
-  ClientOptions _options;
-  DateTime _startTime;
-  _WS _ws;
-  _EventController _events;
-  Http _http;
+  final String _token;
+  final DateTime _startTime = DateTime.now();
+
+  late final ClientOptions _options;
+  late final _WS _ws;
+  late final _EventController _events;
+  late final Http _http;
 
   /// The current bot user.
-  ClientUser self;
+  late ClientUser self;
 
   /// The bot's OAuth2 app.
-  ClientOAuth2Application app;
+  late ClientOAuth2Application app;
 
   /// All of the guilds the bot is in. Can be empty or can miss guilds on (READY_EVENT).
-  Cache<Snowflake, Guild> guilds;
+  late final Cache<Snowflake, Guild> guilds;
 
   /// All of the channels the bot can see.
-  ChannelCache channels;
+  late final ChannelCache channels;
 
   /// All of the users the bot can see. Does not have offline users
   /// without `forceFetchUsers` enabled.
-  Cache<Snowflake, User> users;
+  late final Cache<Snowflake, User> users;
 
   /// True if client is ready.
   bool ready = false;
 
   /// The current version of `nyxx`
-  String version = _Constants.version;
+  final String version = _Constants.version;
 
   /// Current client's shard
-  Shard shard;
+  late final Shard shard;
 
   /// Generic Stream for message like events. It includes added reactions, and message deletions.
   /// For received messages refer to [onMessageReceived]
-  Stream<MessageEvent> onMessage;
+  late Stream<MessageEvent> onMessage;
 
   /// Emitted when packet is received from gateway.
-  Stream<RawEvent> onRaw;
+  late Stream<RawEvent> onRaw;
 
   /// Emitted when a shard is disconnected from the websocket.
-  Stream<DisconnectEvent> onDisconnect;
+  late Stream<DisconnectEvent> onDisconnect;
 
   /// Emitted before all HTTP requests are sent. (You can edit them)
   /// This is single subscription Stream - only one listener.
   ///
   /// **WARNING:** Once you listen to this stream, all requests
   /// will be halted until you call `request.send()`
-  Stream<BeforeHttpRequestSendEvent> beforeHttpRequestSend;
+  late Stream<BeforeHttpRequestSendEvent> beforeHttpRequestSend;
 
   /// Emitted when a successful HTTP response is received.
-  Stream<HttpResponseEvent> onHttpResponse;
+  late Stream<HttpResponseEvent> onHttpResponse;
 
   /// Emitted when a HTTP request failed.
-  Stream<HttpErrorEvent> onHttpError;
+  late Stream<HttpErrorEvent> onHttpError;
 
   /// Sent when the client is ratelimited, either by the ratelimit handler itself,
   /// or when a 429 is received.
-  Stream<RatelimitEvent> onRatelimited;
+  late Stream<RatelimitEvent> onRatelimited;
 
   /// Emitted when the client is ready. Should be sent only once.
-  Stream<ReadyEvent> onReady;
+  late Stream<ReadyEvent> onReady;
 
   /// Emitted when a message is received. It includes private messages.
-  Stream<MessageReceivedEvent> onMessageReceived;
+  late Stream<MessageReceivedEvent> onMessageReceived;
 
   /// Emitted when private message is received.
-  Stream<MessageReceivedEvent> onDmReceived;
+  late Stream<MessageReceivedEvent> onDmReceived;
 
   /// Emitted when channel's pins are updated.
-  Stream<ChannelPinsUpdateEvent> onChannelPinsUpdate;
+  late Stream<ChannelPinsUpdateEvent> onChannelPinsUpdate;
 
   /// Emitted when guild's emojis are changed.
-  Stream<GuildEmojisUpdateEvent> onGuildEmojisUpdate;
+  late Stream<GuildEmojisUpdateEvent> onGuildEmojisUpdate;
 
   /// Emitted when a message is edited. Old message can be null if isn't cached.
-  Stream<MessageUpdateEvent> onMessageUpdate;
+  late Stream<MessageUpdateEvent> onMessageUpdate;
 
   /// Emitted when a message is deleted.
-  Stream<MessageDeleteEvent> onMessageDelete;
+  late Stream<MessageDeleteEvent> onMessageDelete;
 
   /// Emitted when a channel is created.
-  Stream<ChannelCreateEvent> onChannelCreate;
+  late Stream<ChannelCreateEvent> onChannelCreate;
 
   /// Emitted when a channel is updated.
-  Stream<ChannelUpdateEvent> onChannelUpdate;
+  late Stream<ChannelUpdateEvent> onChannelUpdate;
 
   /// Emitted when a channel is deleted.
-  Stream<ChannelDeleteEvent> onChannelDelete;
+  late Stream<ChannelDeleteEvent> onChannelDelete;
 
   /// Emitted when a member is banned.
-  Stream<GuildBanAddEvent> onGuildBanAdd;
+  late Stream<GuildBanAddEvent> onGuildBanAdd;
 
   /// Emitted when a user is unbanned.
-  Stream<GuildBanRemoveEvent> onGuildBanRemove;
+  late Stream<GuildBanRemoveEvent> onGuildBanRemove;
 
   /// Emitted when the client joins a guild.
-  Stream<GuildCreateEvent> onGuildCreate;
+  late Stream<GuildCreateEvent> onGuildCreate;
 
   /// Emitted when a guild is updated.
-  Stream<GuildUpdateEvent> onGuildUpdate;
+  late Stream<GuildUpdateEvent> onGuildUpdate;
 
   /// Emitted when the client leaves a guild.
-  Stream<GuildDeleteEvent> onGuildDelete;
+  late Stream<GuildDeleteEvent> onGuildDelete;
 
   /// Emitted when a guild becomes unavailable during a guild outage.
-  Stream<GuildUnavailableEvent> onGuildUnavailable;
+  late Stream<GuildUnavailableEvent> onGuildUnavailable;
 
   /// Emitted when a member joins a guild.
-  Stream<GuildMemberAddEvent> onGuildMemberAdd;
+  late Stream<GuildMemberAddEvent> onGuildMemberAdd;
 
   /// Emitted when a member is updated.
-  Stream<GuildMemberUpdateEvent> onGuildMemberUpdate;
+  late Stream<GuildMemberUpdateEvent> onGuildMemberUpdate;
 
   /// Emitted when a user leaves a guild.
-  Stream<GuildMemberRemoveEvent> onGuildMemberRemove;
+  late Stream<GuildMemberRemoveEvent> onGuildMemberRemove;
 
   /// Emitted when a member's presence is changed.
-  Stream<PresenceUpdateEvent> onPresenceUpdate;
+  late Stream<PresenceUpdateEvent> onPresenceUpdate;
 
   /// Emitted when a user starts typing.
-  Stream<TypingEvent> onTyping;
+  late Stream<TypingEvent> onTyping;
 
   /// Emitted when a role is created.
-  Stream<RoleCreateEvent> onRoleCreate;
+  late Stream<RoleCreateEvent> onRoleCreate;
 
   /// Emitted when a role is updated.
-  Stream<RoleUpdateEvent> onRoleUpdate;
+  late Stream<RoleUpdateEvent> onRoleUpdate;
 
   /// Emitted when a role is deleted.
-  Stream<RoleDeleteEvent> onRoleDelete;
+  late Stream<RoleDeleteEvent> onRoleDelete;
 
   /// Emitted when many messages are deleted at once
-  Stream<MessageDeleteBulkEvent> onMessageDeleteBulk;
+  late Stream<MessageDeleteBulkEvent> onMessageDeleteBulk;
 
   /// Emitted when a user adds a reaction to a message.
-  Stream<MessageReactionEvent> onMessageReactionAdded;
+  late Stream<MessageReactionEvent> onMessageReactionAdded;
 
   /// Emitted when a user deletes a reaction to a message.
-  Stream<MessageReactionEvent> onMessageReactionRemove;
+  late Stream<MessageReactionEvent> onMessageReactionRemove;
 
   /// Emitted when a user explicitly removes all reactions from a message.
-  Stream<MessageReactionsRemovedEvent> onMessageReactionsRemoved;
+  late Stream<MessageReactionsRemovedEvent> onMessageReactionsRemoved;
 
   /// Emitted when someone joins/leaves/moves voice channel.
-  Stream<VoiceStateUpdateEvent> onVoiceStateUpdate;
+  late Stream<VoiceStateUpdateEvent> onVoiceStateUpdate;
 
   /// Emitted when a guild's voice server is updated.
   /// This is sent when initially connecting to voice, and when the current voice instance fails over to a new server.
-  Stream<VoiceServerUpdateEvent> onVoiceServerUpdate;
+  late Stream<VoiceServerUpdateEvent> onVoiceServerUpdate;
 
   /// Emitted when user was updated
-  Stream<UserUpdateEvent> onUserUpdate;
+  late Stream<UserUpdateEvent> onUserUpdate;
 
   /// Emitted when bot is mentioned
-  Stream<MessageReceivedEvent> onSelfMention;
+  late Stream<MessageReceivedEvent> onSelfMention;
 
   /// Logger instance
   Logger _logger = Logger("Client");
@@ -182,12 +183,12 @@ class Nyxx implements Disposable {
 
   /// Creates and logs in a new client. If [ignoreExceptions] is true (by default is)
   /// isolate will ignore all exceptions and continue to work.
-  Nyxx(this._token, {ClientOptions options, bool ignoreExceptions = true}) {
+  Nyxx(this._token, {ClientOptions? options, bool ignoreExceptions = true}) {
     if (!setup) {
       throw NoSetupError();
     }
 
-    if (_token == null || _token.isEmpty) {
+    if (_token.isEmpty) {
       throw NoTokenError();
     }
 
@@ -202,7 +203,6 @@ class Nyxx implements Disposable {
     }
 
     this._options = options ?? ClientOptions();
-
     this.guilds = _SnowflakeCache();
     this.channels = ChannelCache._new();
     this.users = _SnowflakeCache();
@@ -210,11 +210,12 @@ class Nyxx implements Disposable {
     this._http = Http._new(this);
     this._events = _EventController(this);
     this.onSelfMention = this.onMessageReceived.where((event) =>
-        event.message.mentions != null &&
-        event.message.mentions.containsKey(this.self.id));
+        event.message?.mentions != null &&
+            // TODO: NNBD
+        event.message!.mentions.containsKey(this.self.id));
     this.onDmReceived = this.onMessageReceived.where((event) =>
-        event.message.channel is DMChannel ||
-        event.message.channel is GroupDMChannel);
+        event.message?.channel is DMChannel ||
+        event.message?.channel is GroupDMChannel);
     this._ws = _WS(this);
   }
 
@@ -230,7 +231,7 @@ class Nyxx implements Disposable {
   /// ```
   /// var channel = await client.getChannel<TextChannel>(Snowflake('473853847115137024'));
   /// ```
-  Future<Channel> getChannel(Snowflake id, {Guild guild}) async {
+  Future<Channel?> getChannel(Snowflake id, {Guild? guild}) async {
     if (this.channels.hasKey(id)) return this.channels[id];
 
     var raw = (await this._http.send("GET", "/channels/${id.toString()}")).body
@@ -243,11 +244,11 @@ class Nyxx implements Disposable {
         return GroupDMChannel._new(raw, this);
       case 0:
       case 5:
-        return TextChannel._new(raw, guild, this);
+        return TextChannel._new(raw, guild!, this);
       case 2:
-        return VoiceChannel._new(raw, guild, this);
+        return VoiceChannel._new(raw, guild!, this);
       case 4:
-        return CategoryChannel._new(raw, guild, this);
+        return CategoryChannel._new(raw, guild!, this);
       default:
         return Future.error("Cannot create channel of type [${raw['type']}");
     }
@@ -260,7 +261,7 @@ class Nyxx implements Disposable {
   /// ```
   /// var user = client.getClient(Snowflake("302359032612651009"));
   /// ``
-  Future<User> getUser(Snowflake id) async {
+  Future<User?> getUser(Snowflake id) async {
     if (this.users.hasKey(id)) return this.users[id];
 
     var r = await this._http.send("GET", "/users/${id.toString()}");
@@ -310,7 +311,7 @@ class Nyxx implements Disposable {
 
   @override
   Future<void> dispose() async {
-    if (shard != null) await shard.dispose();
+    await shard.dispose();
     await guilds.dispose();
     await users.dispose();
     await guilds.dispose();
@@ -318,7 +319,7 @@ class Nyxx implements Disposable {
   }
 }
 
-void setupDefaultLogging([Level loglevel]) {
+void setupDefaultLogging([Level? loglevel]) {
   Logger.root.level = loglevel ?? Level.ALL;
 
   Logger.root.onRecord.listen((LogRecord rec) {

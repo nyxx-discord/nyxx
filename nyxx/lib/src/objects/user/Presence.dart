@@ -4,43 +4,43 @@ part of nyxx;
 /// Can be game, eg. Dota 2, VS Code or activity like Listening to song on Spotify.
 class Presence {
   /// The activity name.
-  String name;
+  late final String name;
 
   /// The activity type.
-  PresenceType type;
+  late final PresenceType type;
 
   /// DateTime when activity started
-  DateTime start;
+  DateTime? start;
 
   /// DateTime when activity ends
-  DateTime end;
+  DateTime? end;
 
   /// Application id for the game
-  Snowflake applicationId;
+  Snowflake? applicationId;
 
   /// What the player is currently doing
-  String details;
+  String? details;
 
   /// The user's current party status
-  String state;
+  String? state;
 
   /// Information for the current party of the player
-  GameParty party;
+  GameParty? party;
 
   /// Images for the presence and their hover texts
-  GameAssets assets;
+  GameAssets? assets;
 
   /// Secrets for Rich Presence joining and spectating
-  GameSecrets secrets;
+  GameSecrets? secrets;
 
   /// Whether or not the activity is an instanced game session
-  bool instance;
+  bool? instance;
 
   ///	Activity flags ORd together, describes what the payload includes
-  int activityFlags;
+  int? activityFlags;
 
   /// The game URL, if provided.
-  String url;
+  String? url;
 
   /// Makes a new game object.
   Presence.of(this.name, {this.type = PresenceType.game, this.url});
@@ -108,13 +108,13 @@ class PresenceType {
 /// Represents party of game.
 class GameParty {
   /// Party id.
-  String id;
+  late final String id;
 
   /// Current size of party.
-  int currentSize;
+  int? currentSize;
 
   /// Max size of party.
-  int maxSize;
+  int? maxSize;
 
   GameParty._new(Map<String, dynamic> raw) {
     id = raw['id'] as String;
@@ -129,16 +129,16 @@ class GameParty {
 /// Presence's assets
 class GameAssets {
   /// The id for a large asset of the activity, usually a snowflake.
-  String largeImage;
+  late final String largeImage;
 
   /// Text displayed when hovering over the large image of the activity.
-  String largeText;
+  late final String largeText;
 
   /// The id for a small asset of the activity, usually a snowflake
-  String smallImage;
+  late final String smallImage;
 
   /// Text displayed when hovering over the small image of the activity
-  String smallText;
+  late final String smallText;
 
   GameAssets._new(Map<String, dynamic> raw) {
     largeImage = raw['large_image'] as String;
@@ -151,13 +151,13 @@ class GameAssets {
 /// Represents presence's secrets
 class GameSecrets {
   /// Join secret
-  String join;
+  late final String join;
 
   /// Spectate secret
-  String spectate;
+  late final String spectate;
 
   /// Match secret
-  String match;
+  late final String match;
 
   GameSecrets._new(Map<String, dynamic> raw) {
     join = raw['join'] as String;

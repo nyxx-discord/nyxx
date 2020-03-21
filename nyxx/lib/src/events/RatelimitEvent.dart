@@ -5,14 +5,14 @@ part of nyxx;
 class RatelimitEvent {
   /// True if ratelimit handler stopped the request
   /// False if the client received a 429
-  bool handled;
+  final bool handled;
 
   /// The request that was ratelimited.
-  HttpBase request;
+  final HttpBase request;
 
   /// The error response received if the ratelimit handler did not stop
   /// the request (aka hit 429)
-  HttpResponse response;
+  final HttpResponse? response;
 
   RatelimitEvent._new(this.request, this.handled, [this.response]);
 }

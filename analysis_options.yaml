@@ -38,7 +38,3 @@ linter:
     - type_init_formals
     - unnecessary_getters_setters
     - package_names
-    #- unnecessary_await_in_return
-    #- use_function_type_syntax_for_parameters
-    #- avoid_returning_null_for_future
-    #- avoid_shadowing_type_parameters
