@@ -46,7 +46,7 @@ class CommandsFramework {
 
   ///Listens to messages sent that contain the prefix and triggers the dispatching of the command.
   void _streamListener({Stream<MessageEvent> stream}) async {
-    if(!client.ready) {
+    if (!client.ready) {
       //Allows to start listening if onReady has already been recieved
       await client.onReady.first;
     }
@@ -168,11 +168,11 @@ class CommandsFramework {
   }
 
   /// Dispatches onMessage event to framework.
-  /// 
+  ///
   /// Optionally takes a [prefix] to remove from the message recieved from MessageEvent [e].
   Future dispatch(MessageEvent e, {String prefix}) async {
     var cmdWithoutPrefix;
-    if(prefix == null) {
+    if (prefix == null) {
       cmdWithoutPrefix = e.message.content.replaceFirst(this.prefix, "").trim();
     } else {
       cmdWithoutPrefix = e.message.content.replaceFirst(prefix, "").trim();
