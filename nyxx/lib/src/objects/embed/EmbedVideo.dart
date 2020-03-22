@@ -1,15 +1,16 @@
 part of nyxx;
 
+// TODO: NNBD - To consider
 /// Video attached to embed. Can contain null elements.
 class EmbedVideo implements Downloadable {
   /// The embed video's URL.
-  String url;
+  late final String? url;
 
   /// The embed video's height.
-  int height;
+  late final int? height;
 
   /// The embed video's width.
-  int width;
+  late final int? width;
 
   EmbedVideo._new(Map<String, dynamic> raw) {
     this.url = raw['url'] as String;
@@ -18,10 +19,16 @@ class EmbedVideo implements Downloadable {
   }
 
   @override
-  Future<List<int>> download() => DownloadUtils.downloadAsBytes(Uri.parse(url));
+  Future<List<int>?> download() {
+    if (url != null) {
+      return DownloadUtils.downloadAsBytes(Uri.parse(url));
+    }
+
+    return Future.value(null);
+  }
 
   @override
-  String toString() => url;
+  String toString() => url ?? "";
 
   @override
   int get hashCode => url.hashCode;

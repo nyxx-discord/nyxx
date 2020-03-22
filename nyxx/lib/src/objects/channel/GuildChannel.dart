@@ -20,7 +20,7 @@ abstract class GuildChannel implements Channel, GuildEntity {
   late bool nsfw;
 
   /// Permissions overwrites for channel.
-  List<PermissionsOverrides>? permissions;
+  late final List<PermissionsOverrides> permissions;
 
   /// Returns list of [Member] objects who can see this channel
   Iterable<Member> get users => this.guild.members.values.where((member) => this
@@ -40,10 +40,10 @@ abstract class GuildChannel implements Channel, GuildEntity {
 
     this.nsfw = raw['nsfw'] as bool? ?? false;
 
+    this.permissions = List();
     if (raw['permission_overwrites'] != null) {
-      permissions = List();
       raw['permission_overwrites'].forEach((o) {
-        permissions!.add(PermissionsOverrides._new(o as Map<String, dynamic>));
+        permissions.add(PermissionsOverrides._new(o as Map<String, dynamic>));
       });
     }
   }

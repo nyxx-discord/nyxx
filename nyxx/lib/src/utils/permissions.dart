@@ -58,7 +58,7 @@ class PermissionsUtils {
     allowRaw = (allowRaw & ~denyRole) | allowRole;
     denyRaw = (denyRaw & ~allowRole) | denyRole;
 
-    final memberOverride = channel.permissions
+    PermissionsOverrides? memberOverride = channel.permissions
         .firstWhere((g) => g.id == member.id, orElse: () => null);
 
     if (memberOverride != null) {
