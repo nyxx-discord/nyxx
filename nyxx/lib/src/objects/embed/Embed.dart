@@ -4,79 +4,105 @@ part of nyxx;
 /// Can contain null elements.
 class Embed implements Convertable<EmbedBuilder> {
   /// The embed's title.
-  String title;
+  late final String? title;
 
   /// The embed's type
-  String type;
+  late final String? type;
 
   /// The embed's description.
-  String description;
+  late final String? description;
 
   /// The embed's URL
-  String url;
+  late final String? url;
 
   /// Timestamp of embed content
-  DateTime timestamp;
+  late final DateTime? timestamp;
 
   /// Color of embed
-  DiscordColor color;
+  late final DiscordColor? color;
 
   /// Embed's footer
-  EmbedFooter footer;
+  late final EmbedFooter? footer;
 
   /// The embed's thumbnail, if any.
-  EmbedThumbnail thumbnail;
+  late final EmbedThumbnail? thumbnail;
 
   /// The embed's provider, if any.
-  EmbedProvider provider;
+  late final EmbedProvider? provider;
 
   /// Embed image
-  EmbedThumbnail image;
+  late final EmbedThumbnail? image;
 
   /// Embed video
-  EmbedVideo video;
+  late final EmbedVideo? video;
 
   /// Embed author
-  EmbedAuthor author;
+  late final EmbedAuthor? author;
 
   /// Map of fields of embed. Map(name, field)
-  List<EmbedField> fields;
+  late final List<EmbedField> fields;
 
   Embed._new(Map<String, dynamic> raw) {
-    if (raw['title'] != null) this.title = raw['title'] as String;
-    if (raw['url'] != null) this.url = raw['url'] as String;
-    if (raw['type'] != null) this.type = raw['type'] as String;
-    if (raw['description'] != null)
+    if (raw['title'] != null) {
+      this.title = raw['title'] as String;
+    }
+    if (raw['url'] != null) {
+      this.url = raw['url'] as String;
+    }
+
+    if (raw['type'] != null) {
+      this.type = raw['type'] as String;
+    }
+
+    if (raw['description'] != null) {
       this.description = raw['description'] as String;
-    if (raw['timestamp'] != null)
+    }
+
+    if (raw['timestamp'] != null) {
       this.timestamp = DateTime.parse(raw['timestamp'] as String);
-    if (raw['color'] != null)
+    }
+
+    if (raw['color'] != null) {
       this.color = DiscordColor.fromInt(raw['color'] as int);
-    if (raw['author'] != null)
+    }
+
+    if (raw['author'] != null) {
       this.author = EmbedAuthor._new(raw['author'] as Map<String, dynamic>);
-    if (raw['video'] != null)
+    }
+
+    if (raw['video'] != null) {
       this.video = EmbedVideo._new(raw['video'] as Map<String, dynamic>);
-    if (raw['image'] != null)
+    }
+
+    if (raw['image'] != null) {
       this.image = EmbedThumbnail._new(raw['image'] as Map<String, dynamic>);
-    if (raw['footer'] != null)
+    }
+
+    if (raw['footer'] != null) {
       this.footer = EmbedFooter._new(raw['footer'] as Map<String, dynamic>);
-    if (raw['thumbnail'] != null)
+    }
+
+    if (raw['thumbnail'] != null) {
       this.thumbnail =
           EmbedThumbnail._new(raw['thumbnail'] as Map<String, dynamic>);
-    if (raw['provider'] != null)
+    }
+
+    if (raw['provider'] != null) {
       this.provider =
           EmbedProvider._new(raw['provider'] as Map<String, dynamic>);
+    }
+
+    fields = List();
     if (raw['fields'] != null) {
-      fields = List();
       raw['fields'].forEach((dynamic o) {
-        fields.add(EmbedField._new(o as Map<String, dynamic>));
+        fields!.add(EmbedField._new(o as Map<String, dynamic>));
       });
     }
   }
 
   /// Returns a string representation of this object.
   @override
-  String toString() => this.title;
+  String toString() => this.title ?? "";
 
   @override
   int get hashCode =>
@@ -102,10 +128,10 @@ class Embed implements Convertable<EmbedBuilder> {
       ..url = this.url
       ..timestamp = this.timestamp
       ..color = this.color
-      ..footer = this.footer.toBuilder()
+      ..footer = this.footer?.toBuilder()
       ..thumbnailUrl = this.thumbnail?.url
       ..imageUrl = this.image?.url
-      ..author = this.author.toBuilder()
+      ..author = this.author?.toBuilder()
       .._fields = this.fields.map((field) => field.toBuilder()).toList();
   }
 

@@ -3,18 +3,18 @@ part of nyxx;
 /// Single instance of Embed's field. Can contain null elements.
 class EmbedField implements Convertable<EmbedFieldBuilder> {
   /// Field name
-  String name;
+  late final String name;
 
   /// Contents of field (aka value)
-  String content;
+  late final String content;
 
   /// Indicates of field is inlined in embed
-  bool inline;
+  late final bool? inline;
 
   EmbedField._new(Map<String, dynamic> raw) {
     this.name = raw['name'] as String;
     this.content = raw['value'] as String;
-    this.inline = raw['inline'] as bool;
+    this.inline = raw['inline'] as bool?;
   }
 
   @override

@@ -3,13 +3,13 @@ part of nyxx;
 /// Embed's footer. Can contain null elements.
 class EmbedFooter implements Downloadable, Convertable<EmbedFooterBuilder> {
   /// Text inside footer
-  String text;
+  late final String? text;
 
   /// Url of icon which is next to text
-  String iconUrl;
+  late final String? iconUrl;
 
   /// Proxied url of icon url
-  String iconProxyUrl;
+  late final String? iconProxyUrl;
 
   EmbedFooter._new(Map<String, dynamic> raw) {
     text = raw['text'] as String;
@@ -22,7 +22,7 @@ class EmbedFooter implements Downloadable, Convertable<EmbedFooterBuilder> {
       DownloadUtils.downloadAsBytes(Uri.parse(iconUrl));
 
   @override
-  String toString() => text;
+  String toString() => text ?? "";
 
   @override
   int get hashCode =>
