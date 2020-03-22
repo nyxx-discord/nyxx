@@ -5,22 +5,22 @@ part of nyxx;
 /// /// [Look here for more](https://discordapp.com/developers/docs/resources/audit-log)
 class AuditLogEntry extends SnowflakeEntity {
   /// Id of the affected entity (webhook, user, role, etc.)
-  String targetId;
+  late final String targetId;
 
   /// Changes made to the target_id
-  List<AuditLogChange> changes;
+  late final List<AuditLogChange> changes;
 
   /// The user who made the changes
-  User user;
+  User? user;
 
   /// Type of action that occurred
-  AuditLogEntryType type;
+  late final AuditLogEntryType type;
 
   /// Additional info for certain action types
-  String options;
+  String? options;
 
   /// The reason for the change
-  String reason;
+  String? reason;
 
   AuditLogEntry._new(Map<String, dynamic> raw, Nyxx client)
       : super(Snowflake(raw['id'] as String)) {

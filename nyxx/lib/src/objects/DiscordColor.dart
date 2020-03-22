@@ -4,7 +4,7 @@ part of nyxx;
 ///
 /// Simplifies creation and provides interface to interact with colors for nyxx.
 class DiscordColor {
-  int _value;
+  late final int _value;
 
   /// Construct color from int.
   /// It allows to create color from hex number and decimal number
@@ -14,7 +14,7 @@ class DiscordColor {
   /// var color2 = DiscordColor.fromInt(0xff0044);
   /// ```
   DiscordColor.fromInt(int color) {
-    if (color != 0) this._value = color;
+    this._value = color;
   }
 
   /// Construct color from individual color components
@@ -38,8 +38,6 @@ class DiscordColor {
     if (hexStr.isEmpty)
       throw new ArgumentError("Hex color String cannot be empty");
 
-    // Apparently this is a lot faster than previous version
-    // https://hastebin.com/xajatuzofi
     if (hexStr.startsWith("#")) hexStr = hexStr.substring(1);
 
     this._value = int.parse(hexStr, radix: 16);
@@ -71,7 +69,7 @@ class DiscordColor {
   // https://github.com/DSharpPlus/DSharpPlus/blob/a2f6eca7f5f675e83748b20b957ae8bdb8fd0cab/DSharpPlus/Entities/DiscordColor.Colors.cs
 
   /// Color of null, literally null.
-  static final DiscordColor none = null;
+  static final DiscordColor? none = null;
 
   /// A near-black color. Due to API limitations, the color is #010101, rather than #000000, as the latter is treated as no color.
   static final DiscordColor black = DiscordColor.fromInt(0x010101);

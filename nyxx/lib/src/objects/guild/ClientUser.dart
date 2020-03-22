@@ -3,10 +3,10 @@ part of nyxx;
 /// ClientUser is bot's discord account. Allows to change bot's presence.
 class ClientUser extends User {
   /// Weather or not the client user's account is verified.
-  bool verified;
+  bool? verified;
 
   /// Weather or not the client user has MFA enabled.
-  bool mfa;
+  bool? mfa;
 
   ClientUser._new(Map<String, dynamic> data, Nyxx client)
       : super._new(data, client) {
@@ -16,7 +16,7 @@ class ClientUser extends User {
 
   /// Updates the client's presence. All parameters are optional.
   void setPresence(
-      {String status, bool afk = false, Presence game, DateTime since}) {
+      {String? status, bool afk = false, Presence? game, DateTime? since}) {
     client.shard
         .setPresence(status: status, afk: afk, game: game, since: since);
   }
@@ -30,8 +30,8 @@ class ClientUser extends User {
   }
 
   /// Edits current user. This changes user's username - not per guild nickname.
-  Future<User> edit({String username, File avatar, String encodedData}) async {
-    if (username == null && avatar == null) return null;
+  Future<User?> edit({String? username, File? avatar, String? encodedData}) async {
+    if (username == null && avatar == null) return Future.error("Cannot edit user with null values");
     var req = Map<String, dynamic>();
 
     var enc =

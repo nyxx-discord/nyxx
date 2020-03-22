@@ -3,28 +3,28 @@ part of nyxx;
 /// Allows to build guild object for creating new one or modifying existing
 class GuildBuilder implements Builder {
   /// Name of Guild
-  String name;
+  String? name;
 
   /// Voice region id
-  String region;
+  String? region;
 
   /// Base64 encoded 128x128 image
-  String icon;
+  String? icon;
 
   /// Verification level
-  int verificationLevel;
+  int? verificationLevel;
 
   /// Default message notification level
-  int defaultMessageNotifications;
+  int? defaultMessageNotifications;
 
   /// Explicit content filter level
-  int explicitContentFilter;
+  int? explicitContentFilter;
 
   /// List of roles to create at guild creation
-  List<RoleBuilder> roles;
+  List<RoleBuilder>? roles;
 
   /// List of channel to create at guild creation
-  List<ChannelBuilder> channels;
+  List<ChannelBuilder>? channels;
 
   @override
   Map<String, dynamic> _build() {
@@ -39,8 +39,8 @@ class GuildBuilder implements Builder {
       tmp['default_message_notifications'] = defaultMessageNotifications;
     if (explicitContentFilter != null)
       tmp['explicit_content_filter'] = explicitContentFilter;
-    if (roles != null) tmp['roles'] = _gen(roles);
-    if (channels != null) tmp['channels'] = _gen(channels);
+    if (roles != null) tmp['roles'] = _gen(roles!);
+    if (channels != null) tmp['channels'] = _gen(channels!);
 
     return tmp;
   }
@@ -56,19 +56,19 @@ class RoleBuilder implements Builder {
   String name;
 
   /// Integer representation of hexadecimal color code
-  DiscordColor color;
+  DiscordColor? color;
 
   /// If this role is pinned in the user listing
-  bool hoist;
+  bool? hoist;
 
   /// Position of role
-  int position;
+  int? position;
 
   /// Permission object for role
-  PermissionsBuilder permission;
+  PermissionsBuilder? permission;
 
   /// Whether role is mentionable
-  bool mentionable;
+  bool? mentionable;
 
   RoleBuilder(this.name);
 
@@ -77,10 +77,10 @@ class RoleBuilder implements Builder {
     Map<String, dynamic> tmp = Map();
 
     tmp['name'] = name;
-    if (color != null) tmp['color'] = color._value;
+    if (color != null) tmp['color'] = color!._value;
     if (hoist != null) tmp['hoist'] = hoist;
     if (position != null) tmp['position'] = position;
-    if (permission != null) tmp['permission'] = permission._build()._build();
+    if (permission != null) tmp['permission'] = permission!._build()._build();
     if (mentionable != null) tmp['mentionable'] = mentionable;
 
     return tmp;

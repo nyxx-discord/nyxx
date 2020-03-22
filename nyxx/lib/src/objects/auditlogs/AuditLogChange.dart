@@ -5,13 +5,13 @@ part of nyxx;
 /// [Look here for more](https://discordapp.com/developers/docs/resources/audit-log)
 class AuditLogChange {
   /// New value
-  dynamic newValue;
+  dynamic? newValue;
 
   /// Old value
-  dynamic oldValue;
+  dynamic? oldValue;
 
   /// type of audit log change hey
-  ChangeKeyType key;
+  late final ChangeKeyType key;
 
   AuditLogChange._new(Map<String, dynamic> raw) {
     if (raw['new_value'] != null) newValue = raw['new_value'];

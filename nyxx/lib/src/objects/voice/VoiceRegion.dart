@@ -3,22 +3,22 @@ part of nyxx;
 /// Represents voice region on which discord guild takes place
 class VoiceRegion {
   /// Unique id for region
-  String id;
+  late final String id;
 
   /// Name of the region
-  String name;
+  late final String name;
 
   /// True if this is a vip-only server
-  bool vip;
+  late final bool vip;
 
   /// True for a single server that is closest to the current user's client
-  bool optimal;
+  late final bool optimal;
 
   /// Whether this is a deprecated voice region (avoid switching to these)
-  bool deprecated;
+  late final bool deprecated;
 
   /// Whether this is a custom voice region (used for events/etc)
-  bool custom;
+  late final bool custom;
 
   VoiceRegion._new(Map<String, dynamic> raw) {
     this.id = raw['id'] as String;

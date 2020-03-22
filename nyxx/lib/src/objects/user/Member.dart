@@ -16,19 +16,19 @@ class _ReverseMember extends Member {
 /// A user with [Guild] context.
 abstract class Member extends User implements GuildEntity {
   /// The member's nickname, null if not set.
-  String nickname;
+  String? nickname;
 
   /// When the member joined the guild.
-  DateTime joinedAt;
+  late final DateTime joinedAt;
 
   /// Weather or not the member is deafened.
-  bool deaf;
+  late final bool deaf;
 
   /// Weather or not the member is muted.
-  bool mute;
+  late final bool mute;
 
   /// A list of [Role]s the member has.
-  List<Role> roles;
+  late List<Role> roles;
 
   @override
 
@@ -43,7 +43,7 @@ abstract class Member extends User implements GuildEntity {
   DiscordColor get color => highestRole.color;
 
   /// Voice state of member
-  VoiceState get voiceState => guild.voiceStates[this.id];
+  VoiceState? get voiceState => guild.voiceStates[this.id];
 
   /// Returns total permissions of user.
   Permissions get effectivePermissions {
@@ -67,12 +67,10 @@ abstract class Member extends User implements GuildEntity {
     this.deaf = data['deaf'] as bool;
     this.mute = data['mute'] as bool;
 
-    if (data['roles'] != null && guild.roles != null) {
-      this.roles = List();
-      data['roles'].forEach((i) {
-        this.roles.add(guild.roles[Snowflake(i as String)]);
-      });
-    }
+    this.roles = List();
+    data['roles'].forEach((i) {
+      this.roles.add(guild.roles[Snowflake(i as String)]);
+    });
 
     if (data['joined_at'] != null)
       this.joinedAt = DateTime.parse(data['joined_at'] as String).toUtc();
@@ -87,7 +85,7 @@ abstract class Member extends User implements GuildEntity {
   /// Bans the member and optionally deletes [deleteMessageDays] days worth of messages.
   Future<void> ban(
       {int deleteMessageDays = 0,
-      String reason,
+      String? reason,
       String auditReason = ""}) async {
     await client._http.send('PUT', "/guilds/${this.guild.id}/bans/${this.id}",
         body: {"delete-message-days": deleteMessageDays, "reason": reason},
@@ -122,11 +120,11 @@ abstract class Member extends User implements GuildEntity {
 
   /// Edits members. Allows to move user in voice channel, mute or deaf, change nick, roles.
   Future<void> edit(
-      {String nick,
-      List<Role> roles,
-      bool mute,
-      bool deaf,
-      VoiceChannel channel,
+      {String? nick,
+      List<Role>? roles,
+      bool? mute,
+      bool? deaf,
+      VoiceChannel? channel,
       String auditReason = ""}) {
     var req = Map<String, dynamic>();
     if (nick != null) req["nick"] = nick;
@@ -134,7 +132,7 @@ abstract class Member extends User implements GuildEntity {
       req['roles'] = roles.map((f) => f.id.toString()).toList();
     if (mute != null) req['mute'] = mute;
     if (deaf != null) req['deaf'] = deaf;
-    if (deaf != null) req['channel_id'] = channel.id.toString();
+    if (channel != null) req['channel_id'] = channel.id.toString();
 
     return client._http.send("PATCH",
         "/guilds/${this.guild.id.toString()}/members/${this.id.toString()}",

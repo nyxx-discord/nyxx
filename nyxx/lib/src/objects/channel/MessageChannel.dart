@@ -91,11 +91,11 @@ class MessageChannel extends Channel
   /// ```
   Future<Message> send(
       {Object content = "",
-      List<AttachmentBuilder> files,
-      EmbedBuilder embed,
+      List<AttachmentBuilder>? files,
+      EmbedBuilder? embed,
       bool tts = false,
-      bool disableEveryone,
-      MessageBuilder builder}) async {
+      bool? disableEveryone,
+      MessageBuilder? builder}) async {
     if (builder != null) {
       content = builder._content;
       files = builder.files;
@@ -156,17 +156,17 @@ class MessageChannel extends Channel
     }
   }
 
-  /// Gets several [Message] objects from API. Only one of [after], [before], [around] can be specified
-  /// otherwise it'll throw.
+  /// Gets several [Message] objects from API. Only one of [after], [before], [around] can be specified,
+  /// otherwise, it'll throw.
   ///
   /// ```
   /// var messages = await chan.getMessages(limit: 100, after: Snowflake("222078108977594368"));
   /// ```
   Stream<Message> getMessages(
       {int limit = 50,
-      Snowflake after,
-      Snowflake before,
-      Snowflake around}) async* {
+      Snowflake? after,
+      Snowflake? before,
+      Snowflake? around}) async* {
     Map<String, String> query = {"limit": limit.toString()};
 
     if (after != null) query['after'] = after.toString();
