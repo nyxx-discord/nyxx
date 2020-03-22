@@ -6,10 +6,10 @@ class HttpError implements Exception {
   HttpResponse response;
 
   /// Discord's error code, if provided.
-  int code;
+  late int? code;
 
   /// Discord's message, if provided.
-  String message;
+  late String? message;
 
   /// Constructs a new [HttpError].
   HttpError._new(this.response) {

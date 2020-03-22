@@ -3,13 +3,13 @@ part of nyxx;
 /// Builder for embed Field.
 class EmbedFieldBuilder implements Builder {
   /// Field name/title
-  dynamic name;
+  dynamic? name;
 
   /// Field content
-  dynamic content;
+  dynamic? content;
 
   /// Whether or not this field should display inline
-  bool inline;
+  bool? inline;
 
   /// Constructs new instance of Field
   EmbedFieldBuilder([this.name, this.content, this.inline]);

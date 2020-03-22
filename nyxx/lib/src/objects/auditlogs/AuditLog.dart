@@ -5,20 +5,20 @@ part of nyxx;
 /// [Look here for more](https://discordapp.com/developers/docs/resources/audit-log)
 class AuditLog {
   /// List of webhooks found in the audit log
-  Map<Snowflake, Webhook> webhooks;
+  late final Map<Snowflake, Webhook> webhooks;
 
   /// List of users found in the audit log
-  Map<Snowflake, User> users;
+  late final Map<Snowflake, User> users;
 
   /// List of audit log entries
-  Map<Snowflake, AuditLogEntry> entries;
+  late final Map<Snowflake, AuditLogEntry> entries;
 
   /// Allows to filter audit log based on given objects.
   Iterable<AuditLogEntry> filterBy(
-      {List<User> users,
-      List<ChangeKeyType> changeType,
-      List<AuditLogEntryType> entryType,
-      List<Snowflake> targetId}) {
+      {List<User>? users,
+      List<ChangeKeyType>? changeType,
+      List<AuditLogEntryType>? entryType,
+      List<Snowflake>? targetId}) {
     if (users != null)
       return entries.values.where((entry) => users.contains(entry.user));
 

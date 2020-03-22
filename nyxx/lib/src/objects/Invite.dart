@@ -34,7 +34,7 @@ class Invite {
 
   Invite._new(Map<String, dynamic> raw, this.client) {
     this.code = raw['code'] as String;
-    this.guild = client.guilds[Snowflake(raw['guild']['id'] as String)];
+    this.guild = client.guilds[Snowflake(raw['guild']['id'] as String)] as Guild;
     this.channel = client.channels[Snowflake(raw['channel']['id'] as String)]
         as GuildChannel;
 
@@ -42,7 +42,7 @@ class Invite {
     this.temporary = raw['temporary'] as bool;
     this.uses = raw['uses'] as int;
     this.maxUses = raw['max_uses'] as int;
-    this.inviter = client.users[Snowflake(raw['inviter']['id'] as String)];
+    this.inviter = client.users[Snowflake(raw['inviter']['id'] as String)] as User;
   }
 
   /// Deletes this Invite.

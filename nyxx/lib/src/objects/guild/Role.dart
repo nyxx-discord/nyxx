@@ -3,30 +3,30 @@ part of nyxx;
 /// Represents a Discord guild role, which is used to assign priority, permissions, and a color to guild members
 class Role extends SnowflakeEntity implements Mentionable, GuildEntity {
   /// The role's name.
-  String name;
+  late final String name;
 
   /// The role's color, 0 if no color.
-  DiscordColor color;
+  late final DiscordColor color;
 
   /// The role's position.
-  int position;
+  late final int position;
 
   /// If the role is pinned in the user listing.
-  bool hoist;
+  late final bool hoist;
 
   /// Whether or not the role is managed by an integration.
-  bool managed;
+  late final bool managed;
 
   /// Whether or not the role is mentionable.
-  bool mentionable;
+  late final bool mentionable;
 
   @override
 
   /// The role's guild.
-  Guild guild;
+  late final Guild guild;
 
   /// The role's permissions.
-  Permissions permissions;
+  late final Permissions permissions;
 
   /// Returns all members which have this role assigned
   Iterable<Member> get members =>
@@ -51,7 +51,7 @@ class Role extends SnowflakeEntity implements Mentionable, GuildEntity {
   }
 
   /// Edits the role.
-  Future<Role> edit({RoleBuilder role, String auditReason = ""}) async {
+  Future<Role> edit(RoleBuilder role, {String auditReason = ""}) async {
     HttpResponse r = await client._http.send(
         'PATCH', "/guilds/${this.guild.id}/roles/$id",
         body: role._build(), reason: auditReason);

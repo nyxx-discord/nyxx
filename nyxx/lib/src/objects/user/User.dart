@@ -5,13 +5,13 @@ class User extends SnowflakeEntity with ISend, Mentionable {
   Nyxx client;
 
   /// The user's username.
-  String username;
+  late final String username;
 
   /// The user's discriminator.
-  String discriminator;
+  late final String discriminator;
 
   /// The user's avatar hash.
-  String avatar;
+  late final String? avatar;
 
   @override
 
@@ -22,24 +22,24 @@ class User extends SnowflakeEntity with ISend, Mentionable {
   String get tag => "${this.username}#${this.discriminator}";
 
   /// Whether or not the user is a bot.
-  bool bot;
+  late final bool bot;
 
   /// The member's status. `offline`, `online`, `idle`, or `dnd`.
-  ClientStatus status;
+  ClientStatus? status;
 
   /// The member's presence.
-  Presence presence;
+  Presence? presence;
 
   User._new(Map<String, dynamic> raw, this.client)
       : super(Snowflake(raw['id'] as String)) {
     this.username = raw['username'] as String;
     this.discriminator = raw['discriminator'] as String;
-    this.avatar = raw['avatar'] as String;
-    this.bot = raw['bot'] as bool ?? false;
+    this.avatar = raw['avatar'] as String?;
+    this.bot = raw['bot'] as bool? ?? false;
   }
 
   /// The user's avatar, represented as URL.
-  String avatarURL({String format = 'webp', int size = 128}) {
+  String? avatarURL({String format = 'webp', int size = 128}) {
     if (this.avatar != null)
       return 'https://cdn.${_Constants.host}/avatars/${this.id}/${this.avatar}.$format?size=$size';
 
@@ -58,7 +58,7 @@ class User extends SnowflakeEntity with ISend, Mentionable {
 
     return (client.channels.findOne(
                 (Channel c) => c is DMChannel && c.recipient.id == this.id)
-            as DMChannel) ??
+            as DMChannel?) ??
         await downloadChannel();
   }
 
@@ -67,11 +67,11 @@ class User extends SnowflakeEntity with ISend, Mentionable {
   /// Sends a message to user.
   Future<Message> send(
       {Object content = "",
-      List<AttachmentBuilder> files,
-      EmbedBuilder embed,
+      List<AttachmentBuilder>? files,
+      EmbedBuilder? embed,
       bool tts = false,
-      bool disableEveryone,
-      MessageBuilder builder}) async {
+      bool? disableEveryone,
+      MessageBuilder? builder}) async {
     DMChannel channel = await this.dmChannel;
     return channel.send(
         content: content,

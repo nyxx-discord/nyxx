@@ -6,12 +6,12 @@ class TextChannel extends MessageChannel
     with GuildChannel
     implements Mentionable {
   /// Emitted when channel pins are updated.
-  Stream<ChannelPinsUpdateEvent> pinsUpdated;
+  late final Stream<ChannelPinsUpdateEvent> pinsUpdated;
 
-  StreamController<ChannelPinsUpdateEvent> _pinsUpdated;
+  late final StreamController<ChannelPinsUpdateEvent> _pinsUpdated;
 
   /// The channel's topic.
-  String topic;
+  String? topic;
 
   @override
 
@@ -19,7 +19,7 @@ class TextChannel extends MessageChannel
   String get mention => "<#${this.id}>";
 
   /// Channel's slowmode rate limit in seconds. This must be between 0 and 120.
-  int slowModeThreshold;
+  late final int slowModeThreshold;
 
   /// Returns url to this channel.
   String get url =>
@@ -30,8 +30,8 @@ class TextChannel extends MessageChannel
       : super._new(raw, 0, client) {
     _initialize(raw, guild);
 
-    this.topic = raw['topic'] as String;
-    this.slowModeThreshold = raw['rate_limit_per_user'] as int ?? 0;
+    this.topic = raw['topic'] as String?;
+    this.slowModeThreshold = raw['rate_limit_per_user'] as int? ?? 0;
 
     _pinsUpdated = StreamController.broadcast();
     pinsUpdated = _pinsUpdated.stream;
@@ -41,7 +41,7 @@ class TextChannel extends MessageChannel
 
   /// Edits the channel.
   Future<TextChannel> edit(
-      {String name, String topic, int position, int slowModeTreshold}) async {
+      {String? name, String? topic, int? position, int? slowModeTreshold}) async {
     HttpResponse r =
         await client._http.send('PATCH', "/channels/${this.id}", body: {
       "name": name ?? this.name,
@@ -49,6 +49,7 @@ class TextChannel extends MessageChannel
       "position": position ?? this.position,
       "rate_limit_per_user": slowModeTreshold ?? slowModeTreshold
     });
+
     return TextChannel._new(r.body as Map<String, dynamic>, this.guild, client);
   }
 

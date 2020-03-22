@@ -3,7 +3,7 @@ part of nyxx;
 /// Represents group DM channel.
 class GroupDMChannel extends MessageChannel {
   /// The recipients of channel.
-  Map<Snowflake, User> recipients;
+  late Map<Snowflake, User> recipients;
 
   GroupDMChannel._new(Map<String, dynamic> raw, Nyxx client)
       : super._new(raw, 3, client) {

@@ -17,7 +17,7 @@ class Guild extends SnowflakeEntity implements Disposable {
   String name;
 
   /// The guild's icon hash.
-  String icon;
+  String? icon;
 
   /// Splash hash
   String splash;
@@ -29,7 +29,7 @@ class Guild extends SnowflakeEntity implements Disposable {
   List<String> features;
 
   /// The guild's afk channel ID, null if not set.
-  VoiceChannel afkChannel;
+  VoiceChannel? afkChannel;
 
   /// The guild's voice region.
   String region;
@@ -41,7 +41,7 @@ class Guild extends SnowflakeEntity implements Disposable {
   GuildChannel defaultChannel;
 
   /// The guild's AFK timeout.
-  int afkTimeout;
+  late final int afkTimeout;
 
   /// The guild's member count.
   int memberCount;
@@ -65,19 +65,19 @@ class Guild extends SnowflakeEntity implements Disposable {
   User owner;
 
   /// The guild's members.
-  Cache<Snowflake, Member> members;
+  late final Cache<Snowflake, Member> members;
 
   /// The guild's channels.
-  ChannelCache channels;
+  late final ChannelCache channels;
 
   /// The guild's roles.
-  Cache<Snowflake, Role> roles;
+  late final Cache<Snowflake, Role> roles;
 
   /// Guild custom emojis
-  Cache<Snowflake, GuildEmoji> emojis;
+  late final Cache<Snowflake, GuildEmoji> emojis;
 
   /// Permission of current(bot) user in this guild
-  Permissions currentUserPermissions;
+  Permissions? currentUserPermissions;
 
   /// Users state cache
   Cache<Snowflake, VoiceState> voiceStates;
@@ -89,7 +89,7 @@ class Guild extends SnowflakeEntity implements Disposable {
       roles.values.firstWhere((r) => r.name == "@everyone");
 
   /// Returns member object for bot user
-  Member get selfMember => members[client.self.id];
+  Member? get selfMember => members[client.self.id];
 
   Guild._new(this.client, Map<String, dynamic> raw,
       [this.available = true, bool guildCreate = false])
@@ -98,7 +98,7 @@ class Guild extends SnowflakeEntity implements Disposable {
 
     voiceStates = _SnowflakeCache();
     this.name = raw['name'] as String;
-    this.icon = raw['icon'] as String;
+    this.icon = raw['icon'] as String?;
     this.region = raw['region'] as String;
 
     this.afkTimeout = raw['afk_timeout'] as int;
@@ -111,7 +111,7 @@ class Guild extends SnowflakeEntity implements Disposable {
 
     this.channels = ChannelCache._new();
     raw['channels'].forEach((o) {
-      GuildChannel channel;
+      late GuildChannel channel;
 
       if (o['type'] == 0 || o['type'] == 5 || o['type'] == 6)
         channel = TextChannel._new(o as Map<String, dynamic>, this, client);
@@ -167,7 +167,7 @@ class Guild extends SnowflakeEntity implements Disposable {
     }
 
     raw['presences'].forEach((o) {
-      Member member = this.members[Snowflake(o['user']['id'] as String)];
+      var member = this.members[Snowflake(o['user']['id'] as String)];
       if (member != null) {
         member.status = ClientStatus._new(
             MemberStatus.from(o['client_status']['desktop'] as String),
@@ -179,7 +179,7 @@ class Guild extends SnowflakeEntity implements Disposable {
       }
     });
 
-    this.owner = this.members[Snowflake(raw['owner_id'] as String)];
+    this.owner = this.members[Snowflake(raw['owner_id'] as String)] as User;
 
     if (raw['permissions'] != null)
       this.currentUserPermissions =
@@ -191,8 +191,8 @@ class Guild extends SnowflakeEntity implements Disposable {
       raw['voice_states'].forEach((o) {
         var state = VoiceState._new(o as Map<String, dynamic>, client, this);
 
-        if (state != null && state.user != null)
-          this.voiceStates[state.user.id] = state;
+        if (state.user != null)
+          this.voiceStates[state.user!.id] = state;
       });
     }
 
