@@ -116,6 +116,7 @@ part 'src/objects/guild/Status.dart';
 part 'src/objects/guild/Role.dart';
 part 'src/objects/user/User.dart';
 part 'src/objects/guild/Ban.dart';
+part 'src/objects/guild/GuildEnums.dart';
 
 part 'src/objects/message/UnicodeEmoji.dart';
 part 'src/objects/message/GuildEmoji.dart';
