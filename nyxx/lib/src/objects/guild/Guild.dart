@@ -14,55 +14,58 @@ class Guild extends SnowflakeEntity implements Disposable {
   Nyxx client;
 
   /// The guild's name.
-  String name;
+  late final String name;
 
   /// The guild's icon hash.
-  String? icon;
+  late String? icon;
 
   /// Splash hash
-  String splash;
+  late String? splash;
+
+  /// Discovery splash hash
+  late String? discoverySplash;
 
   /// System channel where system messages are sent
-  TextChannel systemChannel;
+  late final TextChannel? systemChannel;
 
   /// enabled guild features
-  List<String> features;
+  late final List<String> features;
 
   /// The guild's afk channel ID, null if not set.
-  VoiceChannel? afkChannel;
+  late VoiceChannel? afkChannel;
 
   /// The guild's voice region.
-  String region;
+  late String region;
 
   /// The channel ID for the guild's widget if enabled.
-  GuildChannel embedChannel;
-
-  /// The guild's default channel.
-  GuildChannel defaultChannel;
+  late final GuildChannel? embedChannel;
 
   /// The guild's AFK timeout.
   late final int afkTimeout;
 
-  /// The guild's member count.
-  int memberCount;
-
   /// The guild's verification level.
-  int verificationLevel;
+  late final int verificationLevel;
 
   /// The guild's notification level.
-  int notificationLevel;
+  late final int notificationLevel;
 
   /// The guild's MFA level.
-  int mfaLevel;
+  late final int mfaLevel;
 
   /// If the guild's widget is enabled.
-  bool embedEnabled;
+  late final bool? embedEnabled;
 
   /// Whether or not the guild is available.
-  bool available;
+  late final bool available;
+
+  /// System Channel Flags
+  late final int systemChannelFlags;
+
+  /// Channel where "PUBLIC" guilds display rules and/or guidelines
+  late final GuildChannel? rulesChannel;
 
   /// The guild owner's ID
-  User owner;
+  late final User? owner;
 
   /// The guild's members.
   late final Cache<Snowflake, Member> members;
@@ -76,11 +79,25 @@ class Guild extends SnowflakeEntity implements Disposable {
   /// Guild custom emojis
   late final Cache<Snowflake, GuildEmoji> emojis;
 
+  /// Boost level of guild
+  late final PremiumTier premiumTier;
+
+  /// The number of boosts this server currently has
+  late final int? premiumSubscriptionCount;
+
+  /// the preferred locale of a "PUBLIC" guild used
+  /// in server discovery and notices from Discord; defaults to "en-US"
+  late final String preferredLocale;
+
+  /// the id of the channel where admins and moderators
+  /// of "PUBLIC" guilds receive notices from Discord
+  late final GuildChannel? publicUpdatesChannel;
+
   /// Permission of current(bot) user in this guild
   Permissions? currentUserPermissions;
 
   /// Users state cache
-  Cache<Snowflake, VoiceState> voiceStates;
+  late final Cache<Snowflake, VoiceState> voiceStates;
 
   /// Returns url to this guild.
   String get url => "https://discordapp.com/channels/${this.id.toString()}";
@@ -96,33 +113,17 @@ class Guild extends SnowflakeEntity implements Disposable {
       : super(Snowflake(raw['id'] as String)) {
     if (!this.available) return;
 
-    voiceStates = _SnowflakeCache();
     this.name = raw['name'] as String;
-    this.icon = raw['icon'] as String?;
     this.region = raw['region'] as String;
-
     this.afkTimeout = raw['afk_timeout'] as int;
-    this.memberCount = raw['member_count'] as int;
+    this.mfaLevel = raw['mfa_level'] as int;
     this.verificationLevel = raw['verification_level'] as int;
     this.notificationLevel = raw['default_message_notifications'] as int;
-    this.mfaLevel = raw['mfa_level'] as int;
-    this.embedEnabled = raw['embed_enabled'] as bool;
-    this.splash = raw['splash'] as String;
 
-    this.channels = ChannelCache._new();
-    raw['channels'].forEach((o) {
-      late GuildChannel channel;
-
-      if (o['type'] == 0 || o['type'] == 5 || o['type'] == 6)
-        channel = TextChannel._new(o as Map<String, dynamic>, this, client);
-      else if (o['type'] == 2)
-        channel = VoiceChannel._new(o as Map<String, dynamic>, this, client);
-      else if (o['type'] == 4)
-        channel = CategoryChannel._new(o as Map<String, dynamic>, this, client);
-
-      this.channels[channel.id] = channel;
-      client.channels[channel.id] = channel;
-    });
+    this.icon = raw['icon'] as String?;
+    this.discoverySplash = raw['discoverySplash'] as String?;
+    this.splash = raw['splash'] as String?;
+    this.embedEnabled = raw['embed_enabled'] as bool?;
 
     if (raw['roles'] != null) {
       this.roles = _SnowflakeCache<Role>();
@@ -151,13 +152,42 @@ class Guild extends SnowflakeEntity implements Disposable {
         this.systemChannel = this.channels[snow] as TextChannel;
     }
 
-    if (raw['features'] != null)
-      this.features = (raw['features'] as List<dynamic>).cast<String>();
+    this.features = (raw['features'] as List<dynamic>).cast<String>();
+
+    if (raw['permissions'] != null) {
+      this.currentUserPermissions =
+          Permissions.fromInt(raw['permissions'] as int);
+    }
+
+    if (raw['afk_channel_id'] != null) {
+      var snow = Snowflake(raw['afk_channel_id'] as String);
+      if (this.channels.hasKey(snow))
+        this.afkChannel = this.channels[snow] as VoiceChannel;
+    }
+
+    this.systemChannelFlags = raw['system_channel_flags'] as int;
+    this.premiumTier = PremiumTier.from(raw['premium_tier'] as int);
+    this.premiumSubscriptionCount = raw['premium_subscription_count'] as int?;
+    this.preferredLocale =  raw['preferred_locale'] as String;
 
     if (!guildCreate) return;
 
-    this.members = _SnowflakeCache();
+    this.channels = ChannelCache._new();
+    raw['channels'].forEach((o) {
+      late GuildChannel channel;
 
+      if (o['type'] == 0 || o['type'] == 5 || o['type'] == 6)
+        channel = TextChannel._new(o as Map<String, dynamic>, this, client);
+      else if (o['type'] == 2)
+        channel = VoiceChannel._new(o as Map<String, dynamic>, this, client);
+      else if (o['type'] == 4)
+        channel = CategoryChannel._new(o as Map<String, dynamic>, this, client);
+
+      this.channels[channel.id] = channel;
+      client.channels[channel.id] = channel;
+    });
+
+    this.members = _SnowflakeCache();
     if (client._options.cacheMembers) {
       raw['members'].forEach((o) {
         final member = _StandardMember(o as Map<String, dynamic>, this, client);
@@ -179,15 +209,10 @@ class Guild extends SnowflakeEntity implements Disposable {
       }
     });
 
-    this.owner = this.members[Snowflake(raw['owner_id'] as String)] as User;
+    this.owner = this.members[Snowflake(raw['owner_id'] as String)];
 
-    if (raw['permissions'] != null)
-      this.currentUserPermissions =
-          Permissions.fromInt(raw['permissions'] as int);
-
+    this.voiceStates = _SnowflakeCache();
     if (raw['voice_states'] != null) {
-      voiceStates = _SnowflakeCache();
-
       raw['voice_states'].forEach((o) {
         var state = VoiceState._new(o as Map<String, dynamic>, client, this);
 
@@ -196,16 +221,18 @@ class Guild extends SnowflakeEntity implements Disposable {
       });
     }
 
-    if (raw['afk_channel_id'] != null) {
-      var snow = Snowflake(raw['afk_channel_id'] as String);
-      if (this.channels.hasKey(snow))
-        this.afkChannel = this.channels[snow] as VoiceChannel;
+    if(raw['rules_channel_id'] != null) {
+      this.rulesChannel = this.channels[Snowflake(raw['rules_channel_id'])] as GuildChannel?;
+    }
+
+    if(raw['public_updates_channel_id'] != null) {
+      this.publicUpdatesChannel = this.channels[Snowflake(raw['public_updates_channel_id'])] as GuildChannel?;
     }
   }
 
   /// The guild's icon, represented as URL.
   /// If guild doesn't have icon it returns null.
-  String iconURL({String format = 'webp', int size = 128}) {
+  String? iconURL({String format = 'webp', int size = 128}) {
     if (this.icon != null)
       return 'https://cdn.${_Constants.host}/icons/${this.id}/${this.icon}.$format?size=$size';
 
@@ -214,7 +241,7 @@ class Guild extends SnowflakeEntity implements Disposable {
 
   /// URL to guild's splash.
   /// If guild doesn't have splash it returns null.
-  String splashURL({String format = 'webp', int size = 128}) {
+  String? splashURL({String format = 'webp', int size = 128}) {
     if (this.splash != null)
       return 'https://cdn.${_Constants.host}/splashes/${this.id}/${this.splash}.$format?size=$size';
 
@@ -231,7 +258,7 @@ class Guild extends SnowflakeEntity implements Disposable {
   /// var emoji = await guild.getEmoji(Snowflake("461449676218957824"));
   /// ```
   Future<GuildEmoji> getEmoji(Snowflake emojiId) async {
-    if (emojis.hasKey(emojiId)) return emojis[emojiId];
+    if (emojis.hasKey(emojiId)) return emojis[emojiId] as GuildEmoji;
 
     HttpResponse r = await client._http
         .send('GET', "/guilds/$id/emojis/${emojiId.toString()}");
@@ -247,8 +274,8 @@ class Guild extends SnowflakeEntity implements Disposable {
   /// vare emoji = await guild.createEmoji("weed, image: emojiFile");
   /// ```
   Future<GuildEmoji> createEmoji(String name,
-      {List<Role> roles, File image, List<int> imageBytes}) async {
-    if (await image.length() > 256000)
+      {List<Role>? roles, File? image, List<int>? imageBytes}) async {
+    if (image != null && await image.length() > 256000)
       return Future.error(
           "Emojis and animated emojis have a maximum file size of 256kb.");
 
@@ -266,9 +293,9 @@ class Guild extends SnowflakeEntity implements Disposable {
 
   /// Allows to download [Guild] widget aka advert png
   /// Possible options for [style]: shield (default), banner1, banner2, banner3, banner4
-  Future<List<int>> downloadGuildWidget([String style]) async {
+  Future<List<int>> downloadGuildWidget([String style = "shield"]) async {
     return DownloadUtils.downloadAsBytes(Uri.parse(
-        "${_Constants.host}${_Constants.baseUri}/guilds/${this.id.toString()}/widget.png?style=${style ?? "shield"}"));
+        "${_Constants.host}${_Constants.baseUri}/guilds/${this.id.toString()}/widget.png?style=${style}"));
   }
 
   /// Returns [int] indicating the number of members that would be removed in a prune operation.
@@ -364,15 +391,15 @@ class Guild extends SnowflakeEntity implements Disposable {
   /// var logs = await guild.getAuditLogs(actionType: 1);
   /// ```
   Future<AuditLog> getAuditLogs(
-      {Snowflake userId,
-      int actionType,
-      Snowflake before,
+      {Snowflake? userId,
+      int? actionType,
+      Snowflake? before,
       int limit = 50}) async {
     var query = Map<String, String>();
     if (userId != null) query['user_id'] = userId.toString();
     if (actionType != null) query['action_type'] = actionType.toString();
     if (before != null) query['before'] = before.toString();
-    if (limit != null) query['limit'] = limit.toString();
+    query['limit'] = limit.toString();
 
     HttpResponse r = await client._http
         .send('GET', '/guilds/${this.id}/audit-logs', queryParams: query);
@@ -444,19 +471,22 @@ class Guild extends SnowflakeEntity implements Disposable {
   /// var chan = await guild.createChannel("Super duper channel", ChannelType.text, nsfw: true);
   /// ```
   Future<GuildChannel> createChannel(String name, ChannelType type,
-      {int bitrate,
-      String topic,
-      CategoryChannel parent,
-      bool nsfw,
-      int userLimit,
-      PermissionsBuilder permissions,
+      {int? bitrate,
+      String? topic,
+      CategoryChannel? parent,
+      bool? nsfw,
+      int? userLimit,
+      PermissionsBuilder? permissions,
       String auditReason = ""}) async {
     // Checks to avoid API panic
-    if (type == ChannelType.dm || type == ChannelType.groupDm)
+    if (type == ChannelType.dm || type == ChannelType.groupDm) {
       return Future.error("Cannot create DM channel.");
-    if (type == ChannelType.category && parent != null)
+    }
+
+    if (type == ChannelType.category && parent != null) {
       return Future.error(
           "Cannot create Category Channel which have parent channel.");
+    }
 
     // Construct body
     var body = <String, dynamic>{"name": name, "type": type._value};
@@ -491,16 +521,16 @@ class Guild extends SnowflakeEntity implements Disposable {
   /// await guild.moveChannel(chan, relative: -2);
   /// ```
   Future<void> moveChannel(GuildChannel channel,
-      {int absolute, int relative, String auditReason = ""}) async {
-    int newPosition;
+      {int? absolute, int? relative, String auditReason = ""}) async {
 
-    if (absolute != null)
-      newPosition = absolute;
-    else
-      newPosition = channel.position + relative;
-
-    if (newPosition == null)
+    if (absolute == null && relative == null)
       return Future.error("Cannot move channel by zero places");
+
+    int newPosition = channel.position + relative;
+
+    if (absolute != null) {
+      newPosition = absolute;
+    }
 
     await client._http.send('PATCH', "/guilds/${this.id}/channels",
         body: {"id": channel.id.toString(), "position": newPosition},
@@ -513,7 +543,7 @@ class Guild extends SnowflakeEntity implements Disposable {
   /// await guild.ban(member);
   /// ```
   Future<void> ban(Member member,
-      {int deleteMessageDays = 0, String auditReason}) async {
+      {int deleteMessageDays = 0, String? auditReason}) async {
     await client._http.send(
         'PUT', "/guilds/${this.id}/bans/${member.id.toString()}",
         body: {"delete-message-days": deleteMessageDays}, reason: auditReason);
@@ -524,9 +554,10 @@ class Guild extends SnowflakeEntity implements Disposable {
   /// ```
   /// await guild.kick(member);
   /// ```
-  Future<void> kick(Member member, {String auditReason}) async {
+  Future<void> kick(Member member, {String? auditReason}) async {
     await client._http.send("DELETE",
-        "/guilds/${this.id.toString()}/members/${member.id.toString()}");
+        "/guilds/${this.id.toString()}/members/${member.id.toString()}",
+        reason: auditReason);
   }
 
   /// Unbans a user by ID.
@@ -537,13 +568,13 @@ class Guild extends SnowflakeEntity implements Disposable {
 
   /// Edits the guild.
   Future<Guild> edit(
-      {String name,
-      int verificationLevel,
-      int notificationLevel,
-      VoiceChannel afkChannel,
-      int afkTimeout,
-      String icon,
-      String auditReason}) async {
+      {String? name,
+      int? verificationLevel,
+      int? notificationLevel,
+      VoiceChannel? afkChannel,
+      int? afkTimeout,
+      String? icon,
+      String? auditReason}) async {
     HttpResponse r = await client._http.send('PATCH', "/guilds/${this.id}",
         body: {
           "name": name != null ? name : this.name,
@@ -574,7 +605,7 @@ class Guild extends SnowflakeEntity implements Disposable {
   /// var member = guild.getMember(Snowflake('302359795648954380'));
   /// ```
   Future<Member> getMemberById(Snowflake id) async {
-    if (this.members.hasKey(id)) return this.members[id];
+    if (this.members.hasKey(id)) return this.members[id] as Member;
 
     final r = await client._http
         .send('GET', '/guilds/${this.id}/members/${id.toString()}');

@@ -3,7 +3,7 @@ part of nyxx;
 /// Marks entity to which message can be sent
 abstract class ISend {
   /// Sends message
-  Future<Message> send(
+  Future<Message?> send(
       {Object content = "",
       List<AttachmentBuilder>? files,
       EmbedBuilder? embed,
