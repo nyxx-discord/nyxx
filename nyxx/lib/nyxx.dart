@@ -129,6 +129,7 @@ part 'src/objects/oauth/ClientOAuth2Application.dart';
 part 'src/objects/oauth/OAuth2Application.dart';
 part 'src/objects/oauth/OAuth2Guild.dart';
 part 'src/objects/oauth/OAuth2Info.dart';
+part 'src/objects/oauth/AppTeam.dart';
 
 part 'src/objects/permissions/Permissions.dart';
 part 'src/objects/permissions/AbstractPermissions.dart';

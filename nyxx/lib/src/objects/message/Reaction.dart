@@ -3,13 +3,13 @@ part of nyxx;
 /// Reaction object. [emoji] field can be partial [GuildEmoji].
 class Reaction {
   /// Time this emoji has been used to react
-  int count;
+  late final int count;
 
   ///	Whether the current user reacted using this emoji
-  bool me;
+  late final bool me;
 
   /// Emoji information
-  Emoji emoji;
+  late final Emoji emoji;
 
   Reaction._new(Map<String, dynamic> raw) {
     count = raw['count'] as int;

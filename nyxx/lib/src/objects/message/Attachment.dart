@@ -3,22 +3,22 @@ part of nyxx;
 /// A message attachment.
 class Attachment extends SnowflakeEntity implements Downloadable {
   /// The attachment's filename.
-  String filename;
+  late final String filename;
 
   /// The attachment's URL.
-  String url;
+  late final String url;
 
   /// The attachment's proxy URL.
-  String proxyUrl;
+  late final String proxyUrl;
 
   /// The attachment's file size.
-  int size;
+  late final int size;
 
   /// The attachment's height, if an image.
-  int height;
+  late final int? height;
 
   /// The attachment's width, if an image.
-  int width;
+  late final int? width;
 
   /// Indicates if attachment is spoiler
   bool get isSpoiler => filename.startsWith("SPOILER_");
@@ -29,8 +29,9 @@ class Attachment extends SnowflakeEntity implements Downloadable {
     this.url = raw['url'] as String;
     this.proxyUrl = raw['proxyUrl'] as String;
     this.size = raw['size'] as int;
-    this.height = raw['height'] as int;
-    this.width = raw['width'] as int;
+
+    this.height = raw['height'] as int?;
+    this.width = raw['width'] as int?;
   }
 
   @override
