@@ -1,28 +1,20 @@
 part of nyxx;
 
 /// A mini guild object with permissions for [OAuth2Info].
-class OAuth2Guild {
+class OAuth2Guild extends SnowflakeEntity{
   /// The permissions you have on that guild.
-  Permissions permissions;
+  late final Permissions permissions;
 
   /// The guild's icon hash.
-  String icon;
-
-  /// The guild's ID.
-  Snowflake id;
+  late final String icon;
 
   /// The guild's name
-  String name;
+  late final String name;
 
-  /// A timestamp for when the guild was created.
-  DateTime createdAt;
-
-  OAuth2Guild._new(Map<String, dynamic> raw) {
+  OAuth2Guild._new(Map<String, dynamic> raw) : super(Snowflake(raw['id'] as String)) {
     this.permissions = Permissions.fromInt(raw['permissions'] as int);
     this.icon = raw['icon'] as String;
-    this.id = Snowflake(raw['id'] as String);
     this.name = raw['name'] as String;
-    this.createdAt = id.timestamp;
   }
 
   /// Returns a string representation of this object.

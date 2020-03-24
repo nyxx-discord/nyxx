@@ -82,7 +82,6 @@ class GuildMemberRemoveEvent {
       this.guild = client.guilds[Snowflake(json['d']['guild_id'] as String)];
 
       if (this.guild != null) {
-        this.guild!.memberCount--;
         this.user =
             User._new(json['d']['user'] as Map<String, dynamic>, client);
         this.guild!.members.remove(user!.id);
@@ -137,8 +136,6 @@ class GuildMemberAddEvent {
           client.guilds[Snowflake(json['d']['guild_id'] as String)];
 
       if (guild != null) {
-        guild.memberCount++;
-
         this.member =
             _StandardMember(json['d'] as Map<String, dynamic>, guild, client);
         guild.members[member!.id] = member!;

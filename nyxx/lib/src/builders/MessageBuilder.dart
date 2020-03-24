@@ -79,7 +79,7 @@ class MessageBuilder {
   }
 
   /// Sends message
-  Future<Message> send(ISend entity) {
+  Future<Message?> send(ISend entity) {
     return entity.send(builder: this);
   }
 }
