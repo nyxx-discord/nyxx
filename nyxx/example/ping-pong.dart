@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:nyxx/Vm.dart';
+//TODO: NNBD - Rewrite examples to be more idiomatic
 
 // Main function
 void main() {
@@ -14,8 +15,8 @@ void main() {
 
   // Listen to all incoming messages via Dart Stream
   bot.onMessageReceived.listen((e) {
-    if (e.message.content == "!ping") {
-      e.message.channel.send(content: "Pong!");
+    if (e.message!.content == "!ping") {
+      e.message!.channel.send(content: "Pong!");
     }
   });
 }

@@ -74,6 +74,7 @@ part 'src/objects/Mentionable.dart';
 part 'src/objects/GuildEntity.dart';
 part 'src/objects/Disposable.dart';
 part 'src/objects/Downloadable.dart';
+part 'src/objects/IMessageAuthor.dart';
 
 part 'src/objects/DiscordColor.dart';
 

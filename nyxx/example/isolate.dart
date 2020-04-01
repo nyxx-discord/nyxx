@@ -4,6 +4,8 @@ import 'package:nyxx/Vm.dart';
 import 'dart:isolate';
 import 'dart:io';
 
+//TODO: NNBD - Rewrite examples to be more idiomatic
+
 void setupBot(SendPort remotePort) {
   /// Setup communication ports
   var port = ReceivePort();
@@ -20,8 +22,8 @@ void setupBot(SendPort remotePort) {
 
   // Listen to all incoming messages via Dart Stream
   bot.onMessageReceived.listen((MessageReceivedEvent e) {
-    if (e.message.content == "!ping") {
-      e.message.channel.send(content: "Pong!");
+    if (e.message!.content == "!ping") {
+      e.message!.channel.send(content: "Pong!");
     }
   });
 
