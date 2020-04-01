@@ -155,7 +155,7 @@ class MessageCache extends Cache<Snowflake, Message> {
       values.where((m) => m.createdAt.isAfter(date));
 
   /// Returns messages which were sent by bots
-  Iterable<Message> get byBot => values.where((m) => m.author.bot);
+  Iterable<Message> get byBot => values.where((m) => m.author is User && (m.author as User).bot);
 
   /// Returns messages in chronological order
   List<Message> get inOrder => _cache.values.toList()

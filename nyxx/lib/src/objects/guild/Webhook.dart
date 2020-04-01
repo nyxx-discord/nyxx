@@ -2,9 +2,9 @@ part of nyxx;
 
 ///Webhooks are a low-effort way to post messages to channels in Discord.
 ///They do not require a bot user or authentication to use.
-class Webhook extends SnowflakeEntity implements ISend {
+class Webhook extends SnowflakeEntity implements ISend, IMessageAuthor {
   /// The webhook's name.
-  late final String name;
+  late final String? name;
 
   /// The webhook's token.
   late final String? token;
@@ -18,12 +18,30 @@ class Webhook extends SnowflakeEntity implements ISend {
   /// The user, if this is accessed using a normal client.
   late final User? user;
 
+  // TODO: Create data class
+  /// Webhook type
+  late final int type;
+
+  // TODO: What's that and where it came from
+  /// Webhook avatar
+  late final String? avatar;
+
+  @override
+  String get username => this.name.toString();
+
+  // TODO: Implement properly
+  String? avatarURL({String format = 'webp', int size = 128}) {
+    return null;
+  }
+
   Nyxx client;
 
   Webhook._new(Map<String, dynamic> raw, this.client)
       : super(Snowflake(raw['id'] as String)) {
-    this.name = raw['name'] as String;
+    this.name = raw['name'] as String?;
     this.token = raw['token'] as String?;
+    this.avatar = raw['avatar'] as String?;
+    this.type = raw['type'] as int;
 
     if (raw['channel_id'] != null) {
       this.channel = client.channels[Snowflake(raw['channel_id'] as String)] as TextChannel?;
@@ -33,7 +51,9 @@ class Webhook extends SnowflakeEntity implements ISend {
       this.guild = client.guilds[Snowflake(raw['guild_id'] as String)];
     }
 
-    this.user = User._new(raw['user'] as Map<String, dynamic>, client);
+    if(raw['user'] != null) {
+      this.user = client.users[Snowflake(raw['user']['id'] as String)];
+    }
   }
 
   /// Edits the webhook.
@@ -95,5 +115,5 @@ class Webhook extends SnowflakeEntity implements ISend {
 
   /// Returns a string representation of this object.
   @override
-  String toString() => this.name;
+  String toString() => this.name.toString();
 }

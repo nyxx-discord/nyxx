@@ -1,7 +1,7 @@
 part of nyxx;
 
 /// Represents a single user of Discord, either a human or a bot, outside of any specific guild's context.
-class User extends SnowflakeEntity with ISend, Mentionable {
+class User extends SnowflakeEntity with ISend, Mentionable, IMessageAuthor {
   Nyxx client;
 
   /// The user's username.
