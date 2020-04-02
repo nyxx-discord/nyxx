@@ -10,7 +10,7 @@ class _WS {
   late int remaining;
   late DateTime resetAt;
 
-  final Logger logger = Logger("Client");
+  final Logger logger = Logger.detached("Client");
 
   /// Makes a new WS manager.
   _WS(this._client) {

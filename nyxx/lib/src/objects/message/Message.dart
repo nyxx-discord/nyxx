@@ -17,12 +17,13 @@ class Message extends SnowflakeEntity implements GuildEntity, Disposable {
 
   /// The message's guild.
   @override
-  late final Guild guild;
+  late final Guild? guild;
 
   /// The message's author. Can be instance of [Member]
   late final IMessageAuthor? author;
 
-  late final bool isByWebhook = false;
+  // TODO: Consider how to handle properly webhooks as message authors.
+  late final bool isByWebhook;
 
   /// The mentions in the message. [User] value of this map can be [Member]
   late final Map<Snowflake, User> mentions;
@@ -51,7 +52,7 @@ class Message extends SnowflakeEntity implements GuildEntity, Disposable {
   late final MessageType type;
 
   /// Returns clickable url to this message.
-  String get url => "https://discordapp.com/channels/${this.guild.id}"
+  String get url => "https://discordapp.com/channels/${this.guild!.id}"
       "/${this.channel.id}/${this.id}";
 
   Message._new(Map<String, dynamic> raw, this.client)
@@ -70,12 +71,13 @@ class Message extends SnowflakeEntity implements GuildEntity, Disposable {
 
       if(raw['webhook_id'] != null) {
         this.isByWebhook = true;
-
         this.author = Webhook._new(raw['author'] as Map<String, dynamic>, client);
 
       } else if (raw['author'] != null) {
+        this.isByWebhook = false;
+
         this.author =
-            this.guild.members[Snowflake(raw['author']['id'] as String)];
+            this.guild!.members[Snowflake(raw['author']['id'] as String)];
 
         if (this.author == null) {
           if (raw['member'] == null) {
@@ -88,7 +90,7 @@ class Message extends SnowflakeEntity implements GuildEntity, Disposable {
             var author = _ReverseMember(r as Map<String, dynamic>,
                 client.guilds[Snowflake(raw['guild_id'] as String)] as Guild, client);
             client.users[author.id] = author;
-            guild.members[author.id] = author;
+            guild!.members[author.id] = author;
             this.author = author;
           }
         }
@@ -98,7 +100,7 @@ class Message extends SnowflakeEntity implements GuildEntity, Disposable {
       if (raw['mention_roles'] != null) {
         raw['mention_roles'].forEach((o) {
           var s = Snowflake(o as String);
-          this.roleMentions[s] = guild.roles[s];
+          this.roleMentions[s] = guild!.roles[s];
         });
       }
     } else {
@@ -128,7 +130,7 @@ class Message extends SnowflakeEntity implements GuildEntity, Disposable {
           this.mentions[user.id] = user;
         } else {
           final user =
-              _ReverseMember(o as Map<String, dynamic>, this.guild, client);
+              _ReverseMember(o as Map<String, dynamic>, this.guild!, client);
           this.mentions[user.id] = user;
         }
       });

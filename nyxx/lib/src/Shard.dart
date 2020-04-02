@@ -22,17 +22,17 @@ class Shard implements Disposable {
 
   bool _acked = false;
   bool _waiting = true;
-  late Timer? _guildTimer;
+  Timer? _guildTimer;
 
   late final Timer _heartbeatTimer;
   late final _WS _ws;
   late final transport.WebSocket? _socket;
   late int _sequence;
-  late String _sessionId;
+  String? _sessionId;
   late final StreamController<Shard> _onReady;
   late final StreamController<Shard> _onDisconnect;
 
-  Logger _logger = Logger("Websocket");
+  Logger _logger = Logger.detached("Websocket");
 
   int messagesReceived = 0;
   int get eventsSeen => _sequence;
@@ -78,7 +78,7 @@ class Shard implements Disposable {
   // Attempts to connect to ws
   void _connect([bool resume = false, bool init = false]) {
     this.ready = false;
-    if (this._socket != null) this._socket!.close();
+    //if (this._socket != null) this._socket!.close();
 
     if (!init && resume) {
       Future.delayed(const Duration(seconds: 3), () => _connect(true));

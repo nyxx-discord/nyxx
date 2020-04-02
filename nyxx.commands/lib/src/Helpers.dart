@@ -26,10 +26,10 @@ class CommandExecutionError implements Exception {
   Message message;
 
   /// Exception associated with failure. Can be null.
-  Exception exception;
+  Exception? exception;
 
   /// Additional info. Eg. Preprocessor error message
-  String additionalInfo;
+  String? additionalInfo;
 
   CommandExecutionError(this.type, this.message,
       [this.exception, this.additionalInfo]);
@@ -43,10 +43,10 @@ class CommandExecutionError implements Exception {
 /// Error constructor allows to return message and optionally [Exception] associated with error
 class PreprocessorResult {
   /// Optional info
-  Exception exception;
+  Exception? exception;
 
   /// Error message
-  String message;
+  String? message;
 
   /// Whether preprocessor is successful
   final bool isSuccessful;

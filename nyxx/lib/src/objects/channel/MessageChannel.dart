@@ -13,7 +13,7 @@ part of nyxx;
 /// ```
 class MessageChannel extends Channel
     with IterableMixin<Message>, ISend, Disposable {
-  late Timer? _typing;
+  Timer? _typing;
 
   /// Sent when a new message is received.
   late final Stream<MessageReceivedEvent> onMessage;

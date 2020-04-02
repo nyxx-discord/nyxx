@@ -29,6 +29,9 @@ class Webhook extends SnowflakeEntity implements ISend, IMessageAuthor {
   @override
   String get username => this.name.toString();
 
+  @override
+  bool get bot => true;
+
   // TODO: Implement properly
   String? avatarURL({String format = 'webp', int size = 128}) {
     return null;
