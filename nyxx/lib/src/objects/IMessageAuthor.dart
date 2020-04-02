@@ -5,4 +5,6 @@ abstract class IMessageAuthor implements SnowflakeEntity {
   String get username;
 
   String? avatarURL({String format = 'webp', int size = 128});
+
+  bool get bot;
 }

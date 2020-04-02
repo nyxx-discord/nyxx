@@ -59,7 +59,7 @@ class Restrict {
       this.cooldown = 0,
       this.userPermissions = const [],
       this.botPermissions = const [],
-      this.requiredContext,
+      this.requiredContext = ContextType.both,
       this.nsfw = false,
       this.requireVoice = false,
       this.topics = const []});

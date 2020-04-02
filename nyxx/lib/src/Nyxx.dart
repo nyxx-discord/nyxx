@@ -176,7 +176,7 @@ class Nyxx implements Disposable {
   late Stream<MessageReceivedEvent> onSelfMention;
 
   /// Logger instance
-  Logger _logger = Logger("Client");
+  Logger _logger = Logger.detached("Client");
 
   /// Gets an bot invite link with zero permissions
   String get inviteLink => app.getInviteUrl();

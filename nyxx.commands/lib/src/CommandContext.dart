@@ -20,15 +20,15 @@ class CommandContext {
   Message message;
 
   /// Guild in which message was sent
-  Guild guild;
+  Guild? guild;
 
   /// Returns author as guild member
-  Member get member => guild.members[author.id];
+  Member? get member => guild?.members[author.id];
 
   /// Reference to client
   Nyxx client;
 
-  CommandContext();
+  //CommandContext();
   CommandContext._new(this.client, this.channel, this.author, this.guild, this.message);
 
   /// Reply to message. It allows to send regular message, Embed or both.
@@ -42,11 +42,11 @@ class CommandContext {
   /// ```
   Future<Message> reply(
       {Object content = "",
-      EmbedBuilder embed,
-      List<AttachmentBuilder> files,
+      EmbedBuilder? embed,
+      List<AttachmentBuilder>? files,
       bool tts = false,
-      bool disableEveryone,
-      MessageBuilder builder}) {
+      bool? disableEveryone,
+      MessageBuilder? builder}) {
     return channel.send(
         content: content,
         embed: embed,
@@ -65,12 +65,12 @@ class CommandContext {
   /// }
   /// ```
   Future<Message> replyTemp(Duration duration,
-      {Object content,
-      List<AttachmentBuilder> files,
-      EmbedBuilder embed,
+      {Object content = "",
+      List<AttachmentBuilder>? files,
+      EmbedBuilder? embed,
       bool tts = false,
-      bool disableEveryone,
-      MessageBuilder builder}) {
+      bool? disableEveryone,
+      MessageBuilder? builder}) {
       return channel.send(
           content: content,
           embed: embed,
@@ -91,12 +91,12 @@ class CommandContext {
   /// }
   /// ```
   Future<Message> replyDelayed(Duration duration,
-      {Object content,
-      List<AttachmentBuilder> files,
-      EmbedBuilder embed,
+      {Object content = "",
+      List<AttachmentBuilder>? files,
+      EmbedBuilder? embed,
       bool tts = false,
-      bool disableEveryone,
-      MessageBuilder builder}) {
+      bool? disableEveryone,
+      MessageBuilder? builder}) {
     return Future.delayed(
         duration,
         () => channel.send(
@@ -121,7 +121,7 @@ class CommandContext {
     var m = Map<Emoji, int>();
 
     return Future<Map<Emoji, int>>(() async {
-      await for (var r in this.client.onMessageReactionAdded.where((evnt) => evnt.message.id == msg.id)) {
+      await for (var r in this.client.onMessageReactionAdded.where((evnt) => evnt.message != null && evnt.message!.id == msg.id)) {
         if (m.containsKey(r.emoji))
           m[r.emoji] += 1;
         else

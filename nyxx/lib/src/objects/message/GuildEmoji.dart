@@ -30,7 +30,7 @@ class GuildEmoji extends Emoji implements SnowflakeEntity, GuildEntity {
 
   /// True if emoji is partial.
   /// Always check before accessing fields or methods, due any of field can be null or empty
-  late final bool partial = false;
+  late final bool partial;
 
   /// Creates full emoji object
   GuildEmoji._new(Map<String, dynamic> raw, this.guild, this.client)
@@ -47,6 +47,8 @@ class GuildEmoji extends Emoji implements SnowflakeEntity, GuildEntity {
       raw['roles'].forEach(
           (o) => this.roles.add(this.guild.roles[Snowflake(o as String)]));
     }
+
+    this.partial = false;
   }
 
   /// Creates partial object - only [id] and [name]

@@ -2,7 +2,7 @@ part of nyxx.commands;
 
 /// Handles caching of command cooldowns
 class CooldownCache {
-  Map<_CacheKey, int> _cache;
+  late final Map<_CacheKey, int> _cache;
 
   /// Constructor sets up empty cache and starts 'garbage collector'.
   CooldownCache(Duration roundupTime) {

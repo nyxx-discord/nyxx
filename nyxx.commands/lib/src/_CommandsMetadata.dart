@@ -6,7 +6,7 @@ class _CommandMetadata {
 
   Command methodCommand;
 
-  Restrict restrict;
+  Restrict? restrict;
 
   List<Preprocessor> preprocessors;
   List<Postprocessor> postprocessors;
