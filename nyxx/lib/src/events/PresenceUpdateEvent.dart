@@ -3,7 +3,7 @@ part of nyxx;
 /// Sent when a member's presence updates.
 class PresenceUpdateEvent {
   /// Member object, may be null.
-  late final Member? member;
+  Member? member;
 
   /// The new member.
   late final Presence presence;
@@ -12,7 +12,7 @@ class PresenceUpdateEvent {
     var guild = client.guilds[Snowflake(json['d']['guild_id'] as String)];
     if (guild == null) return;
 
-    this.member = guild!.members[Snowflake(json['d']['user']['id'] as String)];
+    this.member = guild.members[Snowflake(json['d']['user']['id'] as String)];
 
     if (json['d']['game'] != null)
       this.presence = Presence._new(json['d']['game'] as Map<String, dynamic>);
@@ -31,7 +31,7 @@ class PresenceUpdateEvent {
                   json['d']['client_status']['mobile'] as String));
           this.member?.presence = presence;
         } catch (e) {
-          print(jsonEncode(json['d']));
+          //print(jsonEncode(json['d']));
         }
 
         member!.guild.members[member!.id] = member!;
@@ -50,7 +50,7 @@ class PresenceUpdateEvent {
                   json['d']['client_status']['mobile'] as String));
           this.member!.presence = presence;
         } catch (e) {
-          print(jsonEncode(json['d']));
+          //print(jsonEncode(json['d']));
         }
       }
 

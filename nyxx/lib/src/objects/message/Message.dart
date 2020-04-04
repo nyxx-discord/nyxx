@@ -20,7 +20,7 @@ class Message extends SnowflakeEntity implements GuildEntity, Disposable {
   Guild? guild;
 
   /// The message's author. Can be instance of [Member]
-  late final IMessageAuthor? author;
+  IMessageAuthor? author;
 
   // TODO: Consider how to handle properly webhooks as message authors.
   late final bool isByWebhook;
