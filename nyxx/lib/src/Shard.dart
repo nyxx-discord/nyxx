@@ -32,7 +32,7 @@ class Shard implements Disposable {
   late final StreamController<Shard> _onReady;
   late final StreamController<Shard> _onDisconnect;
 
-  Logger _logger = Logger.detached("Websocket");
+  Logger _logger = Logger("Websocket");
 
   int messagesReceived = 0;
   int get eventsSeen => _sequence;
@@ -123,6 +123,10 @@ class Shard implements Disposable {
   }
 
   Future<void> _handleMsg(Map<String, dynamic> msg, bool resume) async {
+    if(this._socket!.closeCode != null) {
+      return;
+    }
+
     if (msg['op'] == _OPCodes.dispatch &&
         this._ws._client._options.ignoredEvents.contains(msg['t'] as String))
       return;
@@ -407,6 +411,7 @@ class Shard implements Disposable {
 
   @override
   Future<void> dispose() async {
+    await this._socket?.drain();
     await this._socket?.close(1000);
     this._socket = null;
   }

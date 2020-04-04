@@ -49,7 +49,7 @@ class Nyxx implements Disposable {
   final String version = _Constants.version;
 
   /// Current client's shard
-  late final Shard shard;
+  late Shard shard;
 
   /// Generic Stream for message like events. It includes added reactions, and message deletions.
   /// For received messages refer to [onMessageReceived]
@@ -176,7 +176,7 @@ class Nyxx implements Disposable {
   late Stream<MessageReceivedEvent> onSelfMention;
 
   /// Logger instance
-  Logger _logger = Logger.detached("Client");
+  Logger _logger = Logger("Client");
 
   /// Gets an bot invite link with zero permissions
   String get inviteLink => app.getInviteUrl();
