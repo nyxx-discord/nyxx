@@ -26,7 +26,7 @@ class Shard implements Disposable {
 
   late final Timer _heartbeatTimer;
   late final _WS _ws;
-  late final transport.WebSocket? _socket;
+  transport.WebSocket? _socket;
   late int _sequence;
   String? _sessionId;
   late final StreamController<Shard> _onReady;
@@ -231,7 +231,6 @@ class Shard implements Disposable {
           case 'CHANNEL_PINS_UPDATE':
             var m = ChannelPinsUpdateEvent._new(msg, _ws._client);
 
-            if (m.channel != null) m.channel!._pinsUpdated.add(m);
             _ws._client._events.onChannelPinsUpdate.add(m);
             break;
 
@@ -258,8 +257,6 @@ class Shard implements Disposable {
 
             _ws._client._events.onMessage.add(m);
             _ws._client._events.onMessageReceived.add(m);
-
-            m.message!.channel._onMessage.add(m);
             break;
 
           case 'MESSAGE_DELETE':
@@ -349,7 +346,6 @@ class Shard implements Disposable {
             var m = TypingEvent._new(msg, _ws._client);
 
             _ws._client._events.onTyping.add(m);
-            m.channel?._onTyping?.add(m);
             break;
 
           case 'PRESENCE_UPDATE':

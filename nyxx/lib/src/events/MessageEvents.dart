@@ -14,8 +14,7 @@ class MessageReceivedEvent extends MessageEvent {
 
   MessageReceivedEvent._new(Map<String, dynamic> json, Nyxx client) {
     this.message = Message._new(json['d'] as Map<String, dynamic>, client);
-    message!.channel.messages.put(this.message!);
-  }
+    message!.channel.messages.put(this.message!);}
 }
 
 /// Sent when a message is deleted.

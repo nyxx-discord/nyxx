@@ -8,8 +8,6 @@ class TextChannel extends MessageChannel
   /// Emitted when channel pins are updated.
   late final Stream<ChannelPinsUpdateEvent> pinsUpdated;
 
-  late final StreamController<ChannelPinsUpdateEvent> _pinsUpdated;
-
   /// The channel's topic.
   String? topic;
 
@@ -33,8 +31,7 @@ class TextChannel extends MessageChannel
     this.topic = raw['topic'] as String?;
     this.slowModeThreshold = raw['rate_limit_per_user'] as int? ?? 0;
 
-    _pinsUpdated = StreamController.broadcast();
-    pinsUpdated = _pinsUpdated.stream;
+    pinsUpdated = client.onChannelPinsUpdate.where((event) => event.channel == this);
   }
 
   //T getRaw<T>(Map<String, dynamic> raw, String name) => raw[name] as T;

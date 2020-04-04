@@ -17,7 +17,7 @@ class Message extends SnowflakeEntity implements GuildEntity, Disposable {
 
   /// The message's guild.
   @override
-  late final Guild? guild;
+  Guild? guild;
 
   /// The message's author. Can be instance of [Member]
   late final IMessageAuthor? author;
