@@ -125,6 +125,8 @@ class Guild extends SnowflakeEntity implements Disposable {
     this.splash = raw['splash'] as String?;
     this.embedEnabled = raw['embed_enabled'] as bool?;
 
+    this.channels = ChannelCache._new();
+
     if (raw['roles'] != null) {
       this.roles = _SnowflakeCache<Role>();
       raw['roles'].forEach((o) {
@@ -172,7 +174,6 @@ class Guild extends SnowflakeEntity implements Disposable {
 
     if (!guildCreate) return;
 
-    this.channels = ChannelCache._new();
     raw['channels'].forEach((o) {
       late GuildChannel channel;
 
