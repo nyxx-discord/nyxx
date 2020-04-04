@@ -12,7 +12,7 @@ class CommandsFramework {
   late final StreamController<CommandExecutionError> _onError;
   late final Stream<CommandExecutionError> onError;
 
-  final Logger _logger = Logger.detached("CommandsFramework");
+  final Logger _logger = Logger("CommandsFramework");
 
   RegExp _entityRegex = RegExp(r"<(@|@!|@&|#|a?:(.+):)([0-9]+)>");
 

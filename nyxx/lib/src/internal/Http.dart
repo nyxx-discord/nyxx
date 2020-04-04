@@ -266,7 +266,7 @@ class Http {
   /// Headers sent on every request.
   Map<String, String> _headers = Map();
 
-  Logger _logger = Logger.detached("Http");
+  Logger _logger = Logger("Http");
 
   Http._new(this._client) {
     this._headers['Authorization'] = "Bot ${this._client._token}";
