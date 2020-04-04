@@ -21,9 +21,6 @@ class MessageChannel extends Channel
   /// Emitted when user starts typing.
   late final Stream<TypingEvent> onTyping;
 
-  late final StreamController<MessageReceivedEvent> _onMessage;
-  late final StreamController<TypingEvent> _onTyping;
-
   /// A collection of messages sent to this channel.
   late final MessageCache messages;
 
@@ -31,11 +28,8 @@ class MessageChannel extends Channel
       : super._new(raw, type, client) {
     this.messages = MessageCache._new(client._options);
 
-    _onMessage = StreamController.broadcast();
-    _onTyping = StreamController.broadcast();
-
-    onTyping = _onTyping.stream;
-    onMessage = _onMessage.stream;
+    onTyping = client.onTyping.where((event) => event.channel == this);
+    onMessage = client.onMessageReceived.where((event) => event.message != null && event.message!.channel == this);
   }
 
   /// Returns message with given [id]. Allows to force fetch message from api
@@ -186,8 +180,6 @@ class MessageChannel extends Channel
 
   @override
   Future<void> dispose() => Future(() {
-        _onMessage.close();
-        _onTyping.close();
         messages.dispose();
       });
 }

@@ -37,8 +37,7 @@ class CommandParser {
       client.onMessageReceived.listen((event) async {
         if (event.message != null && !event.message!.content.startsWith(prefix)) return;
 
-
-        if(_predicate != null && await _predicate!(event.message!, event.message!.guild != null ? event.message!.guild!.members[event.message!.author!.id] : null, event.message!.channel)) {
+        if(_predicate != null && !(await _predicate!(event.message!, event.message!.guild != null ? event.message!.guild!.members[event.message!.author!.id] : null, event.message!.channel))) {
           return;
         }
 
@@ -62,5 +61,8 @@ class CommandParser {
   }
 
   /// Binds [command] to [handler] which is action that will be invoked when message matched prefix and specified [command].
-  void bind(String command, CommandHandler handler) => _commands[command] = handler;
+  CommandParser bind(String command, CommandHandler handler){
+    _commands[command] = handler;
+    return this;
+  }
 }
