@@ -303,9 +303,6 @@ class Nyxx implements Disposable {
     return Invite._new(r.body as Map<String, dynamic>, this);
   }
 
-  /// Closes websocket connections and cleans everything up.
-  Future<void> close() async => await dispose();
-
   /// Returns number of shards
   int get shards => this._options.shardCount;
 
