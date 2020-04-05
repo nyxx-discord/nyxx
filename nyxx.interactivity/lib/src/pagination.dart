@@ -37,7 +37,7 @@ class Pagination {
     return Pagination(_Utils.splitEqually(str, pieces).toList(), channel);
   }
 
-  /// Paginates a list of Strings - each String is different page.
+  /// Paginates a list of Strings - each String is a different page.
   Future<Message> paginate(Nyxx client,
       {Duration timeout = const Duration(minutes: 2)}) async {
     var nextEmoji = EmojiUtils.getEmoji('arrow_forward');
@@ -53,8 +53,8 @@ class Pagination {
 
     Future(() async {
       var currPage = 0;
-      var group = _Utils.merge(
-          [client.onMessageReactionAdded, client.onMessageReactionsRemoved]);
+      Stream<MessageReactionEvent> group = _Utils.merge(
+          [client.onMessageReactionAdded as Stream<MessageReactionEvent>, client.onMessageReactionsRemoved as Stream<MessageReactionEvent>]);
 
       await for (var event in group) {
         var emoji = (event as dynamic).emoji as UnicodeEmoji;
