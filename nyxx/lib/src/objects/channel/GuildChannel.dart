@@ -1,7 +1,7 @@
 part of nyxx;
 
 /// Represents channel which is part of guild.
-abstract class GuildChannel implements Channel, GuildEntity {
+mixin GuildChannel implements Channel, GuildEntity {
   /// The channel's name.
   late String name;
 

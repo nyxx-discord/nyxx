@@ -126,11 +126,11 @@ part 'src/objects/message/Reaction.dart';
 part 'src/objects/message/Message.dart';
 part 'src/objects/message/Attachment.dart';
 
-part 'src/objects/oauth/ClientOAuth2Application.dart';
-part 'src/objects/oauth/OAuth2Application.dart';
-part 'src/objects/oauth/OAuth2Guild.dart';
-part 'src/objects/oauth/OAuth2Info.dart';
-part 'src/objects/oauth/AppTeam.dart';
+part 'src/objects/application/ClientOAuth2Application.dart';
+part 'src/objects/application/OAuth2Application.dart';
+part 'src/objects/application/OAuth2Guild.dart';
+part 'src/objects/application/OAuth2Info.dart';
+part 'src/objects/application/AppTeam.dart';
 
 part 'src/objects/permissions/Permissions.dart';
 part 'src/objects/permissions/AbstractPermissions.dart';

@@ -18,7 +18,7 @@ class AppTeam extends SnowflakeEntity{
 
   String? get teamIconUrl {
     if(iconHash != null) {
-      return "https://cdn.discordapp.com/team-icons/team_id/team_icon.png";
+      return "https://cdn.discordapp.com/team-icons/${this.id.toString()}/${this.iconHash}.png";
     }
 
     return null;

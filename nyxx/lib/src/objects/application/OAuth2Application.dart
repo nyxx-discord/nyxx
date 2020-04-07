@@ -23,9 +23,13 @@ class OAuth2Application extends SnowflakeEntity {
     this.rpcOrigins = raw['rpcOrigins'] as List<String>?;
   }
 
-  String? iconUrl({String format = "png", int size = 512}) => icon == null
-      ? null
-      : "https://cdn.discordapp.com/app-icons/${this.id}/$icon.$format?size=$size";
+  String? iconUrl({String format = "png", int size = 512}) {
+    if(this.icon != null) {
+      return "https://cdn.discordapp.com/app-icons/${this.id}/$icon.$format?size=$size";
+    }
+
+    return null;
+  }
 
   /// Returns a string representation of this object.
   @override

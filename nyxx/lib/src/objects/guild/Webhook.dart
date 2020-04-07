@@ -30,7 +30,14 @@ class Webhook extends SnowflakeEntity implements ISend, IMessageAuthor {
   String get username => this.name.toString();
 
   @override
+  String get discriminator => "";
+
+  @override
   bool get bot => true;
+
+  // TODO: It should be here???
+  @override
+  String get tag => name.toString();
 
   // TODO: Implement properly
   String? avatarURL({String format = 'webp', int size = 128}) {

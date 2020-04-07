@@ -20,4 +20,8 @@ class OAuth2Guild extends SnowflakeEntity{
   /// Returns a string representation of this object.
   @override
   String toString() => this.name;
+
+  String? iconUrl({String format = "png", int size = 512}) {
+    return "https://cdn.discordapp.com/icons/${this.id.toString()}/$icon.$format?size=$size";
+  }
 }
