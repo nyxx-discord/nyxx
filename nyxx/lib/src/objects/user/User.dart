@@ -5,23 +5,27 @@ class User extends SnowflakeEntity with ISend, Mentionable, IMessageAuthor {
   Nyxx client;
 
   /// The user's username.
+  @override
   late final String username;
 
   /// The user's discriminator.
+  @override
   late final String discriminator;
 
   /// The user's avatar hash.
   late final String? avatar;
 
-  @override
 
   /// The string to mention the user.
+  @override
   String get mention => "<@!${this.id}>";
 
   /// Returns String with username#discriminator
+  @override
   String get tag => "${this.username}#${this.discriminator}";
 
   /// Whether or not the user is a bot.
+  @override
   late final bool bot;
 
   /// The member's status. `offline`, `online`, `idle`, or `dnd`.
@@ -39,6 +43,7 @@ class User extends SnowflakeEntity with ISend, Mentionable, IMessageAuthor {
   }
 
   /// The user's avatar, represented as URL.
+  @override
   String? avatarURL({String format = 'webp', int size = 128}) {
     if (this.avatar != null)
       return 'https://cdn.${_Constants.host}/avatars/${this.id}/${this.avatar}.$format?size=$size';
