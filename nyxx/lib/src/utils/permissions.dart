@@ -3,10 +3,10 @@ part of nyxx;
 class PermissionsUtils {
   /// Allows to check if [issueMember] or [issueRole] can interact with [targetMember] or [targetRole].
   static bool canInteract(
-      {Member issueMember,
-      Role issueRole,
-      Member targetMember,
-      Role targetRole}) {
+      {Member? issueMember,
+      Role? issueRole,
+      Member? targetMember,
+      Role? targetRole}) {
     bool canInter(Role role1, Role role2) => role1.position > role2.position;
 
     if (issueMember != null && targetMember != null) {
@@ -58,7 +58,7 @@ class PermissionsUtils {
     allowRaw = (allowRaw & ~denyRole) | allowRole;
     denyRaw = (denyRaw & ~allowRole) | denyRole;
 
-    final memberOverride = channel.permissions
+    PermissionsOverrides? memberOverride = channel.permissions
         .firstWhere((g) => g.id == member.id, orElse: () => null);
 
     if (memberOverride != null) {

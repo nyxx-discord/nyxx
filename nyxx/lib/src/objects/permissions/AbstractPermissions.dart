@@ -3,89 +3,89 @@ part of nyxx;
 /// Provides common properties for [Permissions] and [PermissionsBuilder]
 abstract class AbstractPermissions {
   /// The raw permission code.
-  int raw;
+  late final int raw;
 
   /// True if user can create InstantInvite
-  bool createInstantInvite;
+  late final bool createInstantInvite;
 
   /// True if user can kick members
-  bool kickMembers;
+  late final bool kickMembers;
 
   /// True if user can ban members
-  bool banMembers;
+  late final bool banMembers;
 
   /// True if user is administrator
-  bool administrator;
+  late final bool administrator;
 
   /// True if user can manager channels
-  bool manageChannels;
+  late final bool manageChannels;
 
   /// True if user can manager guilds
-  bool manageGuild;
+  late final bool manageGuild;
 
   /// Allows to add reactions
-  bool addReactions;
+  late final bool addReactions;
 
   /// Allows for using priority speaker in a voice channel
-  bool prioritySpeaker;
+  late final bool prioritySpeaker;
 
   /// Allow to view audit logs
-  bool viewAuditLog;
+  late final bool viewAuditLog;
 
   /// Allow viewing channels (OLD READ_MESSAGES)
-  bool viewChannel;
+  late final bool viewChannel;
 
   /// True if user can send messages
-  bool sendMessages;
+  late final bool sendMessages;
 
   /// True if user can send TTF messages
-  bool sendTtsMessages;
+  late final bool sendTtsMessages;
 
   /// True if user can manage messages
-  bool manageMessages;
+  late final bool manageMessages;
 
   /// True if user can send links in messages
-  bool embedLinks;
+  late final bool embedLinks;
 
   /// True if user can attach files in messages
-  bool attachFiles;
+  late final bool attachFiles;
 
   /// True if user can read messages history
-  bool readMessageHistory;
+  late final bool readMessageHistory;
 
   /// True if user can mention everyone
-  bool mentionEveryone;
+  late final bool mentionEveryone;
 
   /// True if user can use external emojis
-  bool useExternalEmojis;
+  late final bool useExternalEmojis;
 
   /// True if user can connect to voice channel
-  bool connect;
+  late final bool connect;
 
   /// True if user can speak
-  bool speak;
+  late final bool speak;
 
   /// True if user can mute members
-  bool muteMembers;
+  late final bool muteMembers;
 
   /// True if user can deafen members
-  bool deafenMembers;
+  late final bool deafenMembers;
 
   /// True if user can move members
-  bool moveMembers;
+  late final bool moveMembers;
 
   /// Allows for using voice-activity-detection in a voice channel
-  bool useVad;
+  late final bool useVad;
 
   /// True if user can change nick
-  bool changeNickname;
+  late final bool changeNickname;
 
   /// True if user can manager others nicknames
-  bool manageNicknames;
+  late final bool manageNicknames;
 
   /// True if user can manage server's roles
-  bool manageRoles;
+  late final bool manageRoles;
 
   /// True if user can manage webhooks
-  bool manageWebhooks;
+  late final bool manageWebhooks;
 }

@@ -3,23 +3,22 @@ part of nyxx.commands;
 /// Main point of commands in Nyxx.
 /// It gets all sent messages and matches to registered command and invokes its action based on registered commands.
 class CommandsFramework {
-  List<_CommandMetadata> _commands;
+  late final List<_CommandMetadata> _commands;
+  late final List<TypeConverter> _typeConverters;
+  late final CooldownCache _cooldownCache;
+  late final List<Object> _services = List();
+  late final List<Snowflake> _admins;
 
-  List<TypeConverter> _typeConverters;
-  CooldownCache _cooldownCache;
-  List<Object> _services = List();
+  late final StreamController<CommandExecutionError> _onError;
+  late final Stream<CommandExecutionError> onError;
 
-  StreamController<CommandExecutionError> _onError;
-  Stream<CommandExecutionError> onError;
-
-  List<Snowflake> _admins;
   final Logger _logger = Logger("CommandsFramework");
 
   RegExp _entityRegex = RegExp(r"<(@|@!|@&|#|a?:(.+):)([0-9]+)>");
 
   /// Prefix needed to dispatch a commands.
   /// All messages without this prefix will be ignored
-  String prefix;
+  String? prefix;
 
   Nyxx client;
 
@@ -28,10 +27,11 @@ class CommandsFramework {
   /// Creates commands framework handler. Requires prefix to handle commands.
   CommandsFramework(this.client,
       {this.prefix,
-      Stream<MessageEvent> stream,
+      Stream<MessageEvent>? stream,
       Duration roundupTime = const Duration(minutes: 2),
       this.ignoreBots = true,
       List<Snowflake> admins = const []}) {
+
     this._commands = List();
     _cooldownCache = CooldownCache(roundupTime);
     _admins = admins;
@@ -59,9 +59,9 @@ class CommandsFramework {
       prefix = client.self.mention;
     }
 
-    stream.listen((MessageEvent e) {
-      if (ignoreBots && e.message.author.bot) return;
-      if (!e.message.content.startsWith(prefix)) return;
+      stream!.listen((MessageEvent e) {
+        if (ignoreBots && e.message?.author != null && e.message!.author!.bot) return;
+        if (!e.message!.content.startsWith(prefix)) return;
 
       Future(() => dispatch(e));
     });
@@ -119,7 +119,7 @@ class CommandsFramework {
           toInject.add(service);
       }
     }
-    return toInject;
+    return toInject as List<Object>;
   }
 
   String _createLog(Command methodCmd) => "[${methodCmd.name}]";
@@ -168,15 +168,12 @@ class CommandsFramework {
   }
 
   /// Dispatches onMessage event to framework.
-  ///
-  /// Optionally takes a [prefix] to remove from the message recieved from MessageEvent [e].
-  Future dispatch(MessageEvent e, {String prefix}) async {
-    var cmdWithoutPrefix;
-    if (prefix == null) {
-      cmdWithoutPrefix = e.message.content.replaceFirst(this.prefix, "").trim();
-    } else {
-      cmdWithoutPrefix = e.message.content.replaceFirst(prefix, "").trim();
+  Future _dispatch(MessageEvent e) async {
+    if(e.message == null) {
+      return;
     }
+
+    var cmdWithoutPrefix = e.message!.content.replaceFirst(prefix, "").trim();
 
     _CommandMetadata matchedMeta;
     try {
@@ -186,22 +183,22 @@ class CommandsFramework {
       });
     } on Error {
       _onError.add(
-          CommandExecutionError(ExecutionErrorType.commandNotFound, e.message));
+          CommandExecutionError(ExecutionErrorType.commandNotFound, e.message!));
       return;
     }
 
     var executionCode = -1;
-    executionCode = await checkPermissions(matchedMeta, e.message);
+    executionCode = await checkPermissions(matchedMeta, e.message!);
 
     if (executionCode == -1 && matchedMeta.preprocessors.length > 0) {
       for (var p in matchedMeta.preprocessors) {
         try {
-          var res = await p.execute(_services, e.message);
+          var res = await p.execute(_services, e.message!);
 
           if (!res.isSuccessful) {
             _onError.add(CommandExecutionError(
                 ExecutionErrorType.preprocessorFail,
-                e.message,
+                e.message!,
                 res.exception,
                 res.message));
             executionCode = 8;
@@ -210,7 +207,7 @@ class CommandsFramework {
         } catch (err) {
           _onError.add(CommandExecutionError(
               ExecutionErrorType.preprocessorException,
-              e.message,
+              e.message!,
               err as Exception));
         }
       }
@@ -220,7 +217,7 @@ class CommandsFramework {
     void invokePost(res) {
       if (matchedMeta.postprocessors.length > 0) {
         for (var post in matchedMeta.postprocessors)
-          Future.microtask(() => post.execute(_services, res, e.message));
+          Future.microtask(() => post.execute(_services, res, e.message!));
       }
     }
 
@@ -228,65 +225,65 @@ class CommandsFramework {
     switch (executionCode) {
       case 0:
         _onError.add(
-            CommandExecutionError(ExecutionErrorType.adminOnly, e.message));
+            CommandExecutionError(ExecutionErrorType.adminOnly, e.message!));
         break;
       case 1:
         _onError.add(CommandExecutionError(
-            ExecutionErrorType.userPermissionsError, e.message));
+            ExecutionErrorType.userPermissionsError, e.message!));
         break;
       case 6:
         _onError.add(CommandExecutionError(
-            ExecutionErrorType.botPermissionError, e.message));
+            ExecutionErrorType.botPermissionError, e.message!));
         break;
       case 2:
         _onError
-            .add(CommandExecutionError(ExecutionErrorType.cooldown, e.message));
+            .add(CommandExecutionError(ExecutionErrorType.cooldown, e.message!));
         break;
       case 3:
         _onError.add(
-            CommandExecutionError(ExecutionErrorType.wrongContext, e.message));
+            CommandExecutionError(ExecutionErrorType.wrongContext, e.message!));
         break;
       case 4:
         _onError.add(
-            CommandExecutionError(ExecutionErrorType.nfswAccess, e.message));
+            CommandExecutionError(ExecutionErrorType.nfswAccess, e.message!));
         break;
       case 5:
         _onError.add(
-            CommandExecutionError(ExecutionErrorType.requiredTopic, e.message));
+            CommandExecutionError(ExecutionErrorType.requiredTopic, e.message!));
         break;
       case 7:
         _onError.add(
-            CommandExecutionError(ExecutionErrorType.roleRequired, e.message));
+            CommandExecutionError(ExecutionErrorType.roleRequired, e.message!));
         break;
       case 9:
         _onError.add(
-            CommandExecutionError(ExecutionErrorType.requiresVoice, e.message));
+            CommandExecutionError(ExecutionErrorType.requiresVoice, e.message!));
         break;
       case 8:
         break;
       case -1:
       case -2:
       case 100:
-        if (matchedMeta.methodCommand.typing) e.message.channel.startTypingLoop();
+        if (matchedMeta.methodCommand.typing) e.message!.channel.startTypingLoop();
 
         for (var s in matchedMeta.commandString)
           cmdWithoutPrefix = cmdWithoutPrefix.replaceFirst(s, "").trim();
 
         var methodInj = await _injectParameters(matchedMeta.method,
-            _escapeParameters(cmdWithoutPrefix.split(" ")), e.message);
+            _escapeParameters(cmdWithoutPrefix.split(" ")), e.message!);
 
         (matchedMeta.parent
                 .invoke(matchedMeta.method.simpleName, methodInj)
-                .reflectee as Future)?.then((r) {
+                .reflectee as Future?)?.then((r) {
           invokePost(r);
         })?.catchError((Exception err, String stack) {
           invokePost([err, stack]);
           _onError.add(CommandExecutionError(
-              ExecutionErrorType.commandFailed, e.message, err, stack));
+              ExecutionErrorType.commandFailed, e.message!, err, stack));
         });
 
         if (matchedMeta.methodCommand.typing)
-          e.message.channel.stopTypingLoop();
+          e.message!.channel.stopTypingLoop();
 
         _logger
             .info("Command ${_createLog(matchedMeta.methodCommand)} executed");
@@ -300,7 +297,7 @@ class CommandsFramework {
     if (annot == null) return -1;
 
     // Check if command requires admin
-    if (annot.admin) return _isUserAdmin(e.author.id, e.guild) ? 100 : 0;
+    if (annot.admin) return _isUserAdmin(e.author!.id, e.guild) ? 100 : 0;
 
     // Check for reqired context
     if (annot.requiredContext != null) {
@@ -312,12 +309,13 @@ class CommandsFramework {
     }
 
     if (e.guild != null) {
-      var member = await e.guild.getMember(e.author);
+      // TODO: NNBD - To consider
+      var member = await e.guild!.getMember(e.author as User);
 
       if (annot.nsfw && !(e.channel as GuildChannel).nsfw) return 4;
 
       // Check if user is in any channel
-      if (annot.requireVoice && e.guild.voiceStates[member.id] == null)
+      if (annot.requireVoice && e.guild!.voiceStates[member.id] == null)
         return 9;
 
       // Check if there is need to check user roles
@@ -329,9 +327,9 @@ class CommandsFramework {
       }
 
       // Check for channel topics
-      if (annot.topics.isNotEmpty && e.channel is TextChannel) {
+      if (annot.topics.isNotEmpty && e.channel is TextChannel && (e.channel as TextChannel).topic != null) {
         var topic = (e.channel as TextChannel).topic;
-        var list = topic.split(" ");
+        var list = topic!.split(" ");
 
         var total = list.any((s) => annot.topics.contains(s));
         if (!total) return 5;
@@ -354,7 +352,7 @@ class CommandsFramework {
 
       // Check if bot has required permissions
       if (annot.botPermissions.isNotEmpty) {
-        var self = await e.guild.getMember(client.self);
+        var self = await e.guild!.getMember(client.self);
         var total = (e.channel as TextChannel).effectivePermissions(self);
         if (total == Permissions.empty()) return 6;
 
@@ -370,7 +368,7 @@ class CommandsFramework {
 
     //Check if user is on cooldown
     if (annot.cooldown > 0) if (!(await _cooldownCache.canExecute(
-        e.author.id, "${meta.methodCommand.name}", annot.cooldown * 1000)))
+        e.author!.id, "${meta.methodCommand.name}", annot.cooldown * 1000)))
       return 2;
 
     return -1;
@@ -439,30 +437,44 @@ class CommandsFramework {
           break;
         case TextChannel:
           var id = _entityRegex.firstMatch(splitted[index]).group(3);
-          collected.add(msg.guild.channels[Snowflake(id)]);
+          collected.add(msg.guild!.channels[Snowflake(id)]);
           break;
         case VoiceState:
-          collected.add((await msg.guild.getMember(msg.author)).voiceState);
+          // TODO: NNBD - To consider
+          if(msg.guild != null) {
+            collected.add(
+                (await msg.guild!.getMember(msg.author as User)).voiceState);
+          }
           break;
         case VoiceChannel:
-          collected
-              .add((await msg.guild.getMember(msg.author)).voiceState.channel);
+          if(msg.guild != null) {
+            collected
+                .add(
+                (await msg.guild!.getMember(msg.author as User)).voiceState!
+                    .channel);
+          }
           break;
         case User:
           var id = _entityRegex.firstMatch(splitted[index]).group(3);
           collected.add(client.users[Snowflake(id)]);
           break;
         case Member:
-          var id = _entityRegex.firstMatch(splitted[index]).group(3);
-          collected.add(msg.guild.members[Snowflake(id)]);
+          if(msg.guild != null) {
+            var id = _entityRegex.firstMatch(splitted[index]).group(3);
+            collected.add(msg.guild!.members[Snowflake(id)]);
+          }
           break;
         case Role:
-          var id = _entityRegex.firstMatch(splitted[index]).group(3);
-          collected.add(msg.guild.roles[Snowflake(id)]);
+          if(msg.guild != null) {
+            var id = _entityRegex.firstMatch(splitted[index]).group(3);
+            collected.add(msg.guild!.roles[Snowflake(id)]);
+          }
           break;
         case GuildEmoji:
-          var id = _entityRegex.firstMatch(splitted[index]).group(3);
-          collected.add(msg.guild.emojis[Snowflake(id)]);
+          if(msg.guild != null) {
+            var id = _entityRegex.firstMatch(splitted[index]).group(3);
+            collected.add(msg.guild!.emojis[Snowflake(id)]);
+          }
           break;
         /*case UnicodeEmoji:
           collected.add(
@@ -481,7 +493,7 @@ class CommandsFramework {
       var type = e.type.reflectedType;
       if (type == CommandContext) {
         collected.add(CommandContext._new(
-            this.client, msg.channel, msg.author, msg.guild, msg));
+            this.client, msg.channel, msg.author as User, msg.guild, msg));
         continue;
       }
 
@@ -518,9 +530,9 @@ class CommandsFramework {
     return collected;
   }
 
-  bool _isUserAdmin(Snowflake authorId, Guild guild) {
+  bool _isUserAdmin(Snowflake authorId, Guild? guild) {
     if (guild == null) return true;
 
-    return (_admins.any((i) => i == authorId)) || guild.owner.id == authorId;
+    return (_admins.any((i) => i == authorId)) || guild.owner!.id == authorId;
   }
 }

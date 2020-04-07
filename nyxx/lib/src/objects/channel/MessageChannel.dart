@@ -13,34 +13,28 @@ part of nyxx;
 /// ```
 class MessageChannel extends Channel
     with IterableMixin<Message>, ISend, Disposable {
-  Timer _typing;
+  Timer? _typing;
 
   /// Sent when a new message is received.
-  Stream<MessageReceivedEvent> onMessage;
+  late final Stream<MessageReceivedEvent> onMessage;
 
   /// Emitted when user starts typing.
-  Stream<TypingEvent> onTyping;
-
-  StreamController<MessageReceivedEvent> _onMessage;
-  StreamController<TypingEvent> _onTyping;
+  late final Stream<TypingEvent> onTyping;
 
   /// A collection of messages sent to this channel.
-  MessageCache messages;
+  late final MessageCache messages;
 
   MessageChannel._new(Map<String, dynamic> raw, int type, Nyxx client)
       : super._new(raw, type, client) {
     this.messages = MessageCache._new(client._options);
 
-    _onMessage = StreamController.broadcast();
-    _onTyping = StreamController.broadcast();
-
-    onTyping = _onTyping.stream;
-    onMessage = _onMessage.stream;
+    onTyping = client.onTyping.where((event) => event.channel == this);
+    onMessage = client.onMessageReceived.where((event) => event.message != null && event.message!.channel == this);
   }
 
   /// Returns message with given [id]. Allows to force fetch message from api
   /// with [force] property. By default it checks if message is in cache and fetches from api if not.
-  Future<Message> getMessage(Snowflake id, {bool force = false}) async {
+  Future<Message?> getMessage(Snowflake id, {bool force = false}) async {
     if (force || !messages.hasKey(id)) {
       var r = await client._http
           .send('GET', "/channels/${this.id.toString()}/messages/$id");
@@ -91,11 +85,11 @@ class MessageChannel extends Channel
   /// ```
   Future<Message> send(
       {Object content = "",
-      List<AttachmentBuilder> files,
-      EmbedBuilder embed,
+      List<AttachmentBuilder>? files,
+      EmbedBuilder? embed,
       bool tts = false,
-      bool disableEveryone,
-      MessageBuilder builder}) async {
+      bool? disableEveryone,
+      MessageBuilder? builder}) async {
     if (builder != null) {
       content = builder._content;
       files = builder.files;
@@ -156,17 +150,17 @@ class MessageChannel extends Channel
     }
   }
 
-  /// Gets several [Message] objects from API. Only one of [after], [before], [around] can be specified
-  /// otherwise it'll throw.
+  /// Gets several [Message] objects from API. Only one of [after], [before], [around] can be specified,
+  /// otherwise, it'll throw.
   ///
   /// ```
   /// var messages = await chan.getMessages(limit: 100, after: Snowflake("222078108977594368"));
   /// ```
   Stream<Message> getMessages(
       {int limit = 50,
-      Snowflake after,
-      Snowflake before,
-      Snowflake around}) async* {
+      Snowflake? after,
+      Snowflake? before,
+      Snowflake? around}) async* {
     Map<String, String> query = {"limit": limit.toString()};
 
     if (after != null) query['after'] = after.toString();
@@ -186,8 +180,6 @@ class MessageChannel extends Channel
 
   @override
   Future<void> dispose() => Future(() {
-        _onMessage.close();
-        _onTyping.close();
         messages.dispose();
       });
 }

@@ -3,119 +3,119 @@ part of nyxx;
 /// A controller for all events.
 class _EventController implements Disposable {
   /// Emitted when a raw packet is received from the websocket connection.
-  StreamController<RawEvent> onRaw;
+  late final StreamController<RawEvent> onRaw;
 
   /// Emitted when a shard is disconnected from the websocket.
-  StreamController<DisconnectEvent> onDisconnect;
+  late final StreamController<DisconnectEvent> onDisconnect;
 
   /// Emitted before all HTTP requests are sent. (You can edit them)
   ///
   /// **WARNING:** Once you listen to this stream, all requests
   /// will be halted until you call `request.send()`
-  StreamController<BeforeHttpRequestSendEvent> beforeHttpRequestSend;
+  late final StreamController<BeforeHttpRequestSendEvent> beforeHttpRequestSend;
 
   /// Emitted when a successful HTTP response is received.
-  StreamController<HttpResponseEvent> onHttpResponse;
+  late final StreamController<HttpResponseEvent> onHttpResponse;
 
   /// Emitted when a HTTP request failed.
-  StreamController<HttpErrorEvent> onHttpError;
+  late final StreamController<HttpErrorEvent> onHttpError;
 
   /// Sent when the client is ratelimited, either by the ratelimit handler itself,
   /// or when a 429 is received.
-  StreamController<RatelimitEvent> onRatelimited;
+  late final StreamController<RatelimitEvent> onRatelimited;
 
   /// Emitted when the client is ready.
-  StreamController<ReadyEvent> onReady;
+  late final StreamController<ReadyEvent> onReady;
 
   /// Emitted when a message is received.
-  StreamController<MessageReceivedEvent> onMessageReceived;
+  late final StreamController<MessageReceivedEvent> onMessageReceived;
 
   /// Emitted when channel's pins are updated.
-  StreamController<ChannelPinsUpdateEvent> onChannelPinsUpdate;
+  late final StreamController<ChannelPinsUpdateEvent> onChannelPinsUpdate;
 
   /// Emitted when guild's emojis are changed.
-  StreamController<GuildEmojisUpdateEvent> onGuildEmojisUpdate;
+  late final StreamController<GuildEmojisUpdateEvent> onGuildEmojisUpdate;
 
   /// Emitted when a message is edited.
-  StreamController<MessageUpdateEvent> onMessageUpdate;
+  late final StreamController<MessageUpdateEvent> onMessageUpdate;
 
   /// Emitted when a message is edited.
-  StreamController<MessageDeleteEvent> onMessageDelete;
+  late final StreamController<MessageDeleteEvent> onMessageDelete;
 
   /// Emitted when a channel is created.
-  StreamController<ChannelCreateEvent> onChannelCreate;
+  late final StreamController<ChannelCreateEvent> onChannelCreate;
 
   /// Emitted when a channel is updated.
-  StreamController<ChannelUpdateEvent> onChannelUpdate;
+  late final StreamController<ChannelUpdateEvent> onChannelUpdate;
 
   /// Emitted when a channel is deleted.
-  StreamController<ChannelDeleteEvent> onChannelDelete;
+  late final StreamController<ChannelDeleteEvent> onChannelDelete;
 
   /// Emitted when a member is banned.
-  StreamController<GuildBanAddEvent> onGuildBanAdd;
+  late final StreamController<GuildBanAddEvent> onGuildBanAdd;
 
   /// Emitted when a user is unbanned.
-  StreamController<GuildBanRemoveEvent> onGuildBanRemove;
+  late final StreamController<GuildBanRemoveEvent> onGuildBanRemove;
 
   /// Emitted when the client joins a guild.
-  StreamController<GuildCreateEvent> onGuildCreate;
+  late final StreamController<GuildCreateEvent> onGuildCreate;
 
   /// Emitted when a guild is updated..
-  StreamController<GuildUpdateEvent> onGuildUpdate;
+  late final StreamController<GuildUpdateEvent> onGuildUpdate;
 
   /// Emitted when the client leaves a guild.
-  StreamController<GuildDeleteEvent> onGuildDelete;
+  late final StreamController<GuildDeleteEvent> onGuildDelete;
 
   /// Emitted when a guild becomes unavailable.
-  StreamController<GuildUnavailableEvent> onGuildUnavailable;
+  late final StreamController<GuildUnavailableEvent> onGuildUnavailable;
 
   /// Emitted when a member joins a guild.
-  StreamController<GuildMemberAddEvent> onGuildMemberAdd;
+  late final StreamController<GuildMemberAddEvent> onGuildMemberAdd;
 
   /// Emitted when a member is updated.
-  StreamController<GuildMemberUpdateEvent> onGuildMemberUpdate;
+  late final StreamController<GuildMemberUpdateEvent> onGuildMemberUpdate;
 
   /// Emitted when a user leaves a guild.
-  StreamController<GuildMemberRemoveEvent> onGuildMemberRemove;
+  late final StreamController<GuildMemberRemoveEvent> onGuildMemberRemove;
 
   /// Emitted when a member's presence is updated.
-  StreamController<PresenceUpdateEvent> onPresenceUpdate;
+  late final StreamController<PresenceUpdateEvent> onPresenceUpdate;
 
   /// Emitted when a user starts typing.
-  StreamController<TypingEvent> onTyping;
+  late final StreamController<TypingEvent> onTyping;
 
   /// Emitted when a role is updated.
-  StreamController<RoleCreateEvent> onRoleCreate;
+  late final StreamController<RoleCreateEvent> onRoleCreate;
 
   /// Emitted when a role is created.
-  StreamController<RoleUpdateEvent> onRoleUpdate;
+  late final StreamController<RoleUpdateEvent> onRoleUpdate;
 
   /// Emitted when a role is deleted.
-  StreamController<RoleDeleteEvent> onRoleDelete;
+  late final StreamController<RoleDeleteEvent> onRoleDelete;
 
   /// Emitted when many messages are deleted at once
-  StreamController<MessageDeleteBulkEvent> onMessageDeleteBulk;
+  late final StreamController<MessageDeleteBulkEvent> onMessageDeleteBulk;
 
   /// Emitted when a user adds a reaction to a message.
-  StreamController<MessageReactionEvent> onMessageReactionAdded;
+  late final StreamController<MessageReactionEvent> onMessageReactionAdded;
 
   /// Emitted when a user deletes a reaction to a message.
-  StreamController<MessageReactionEvent> onMessageReactionRemove;
+  late final StreamController<MessageReactionEvent> onMessageReactionRemove;
 
   /// Emitted when a user explicitly removes all reactions from a message.
-  StreamController<MessageReactionsRemovedEvent> onMessageReactionsRemoved;
+  late final StreamController<MessageReactionsRemovedEvent> onMessageReactionsRemoved;
 
   /// Emitted when someone joins/leaves/moves voice channels.
-  StreamController<VoiceStateUpdateEvent> onVoiceStateUpdate;
+  late final StreamController<VoiceStateUpdateEvent> onVoiceStateUpdate;
 
   /// Emitted when a guild's voice server is updated. This is sent when initially connecting to voice, and when the current voice instance fails over to a new server.
-  StreamController<VoiceServerUpdateEvent> onVoiceServerUpdate;
+  late final StreamController<VoiceServerUpdateEvent> onVoiceServerUpdate;
 
   /// Emitted when user was updated
-  StreamController<UserUpdateEvent> onUserUpdate;
+  late final StreamController<UserUpdateEvent> onUserUpdate;
 
   /// Emitted on any message related event
-  StreamController<MessageEvent> onMessage;
+  late final StreamController<MessageEvent> onMessage;
 
   /// Makes a new `EventController`.
   _EventController(Nyxx _client) {

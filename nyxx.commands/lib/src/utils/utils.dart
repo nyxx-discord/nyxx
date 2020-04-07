@@ -13,7 +13,7 @@ class Utils {
   }
 
   /// Gets single annotation with type [T] from [declaration]
-  static T _getCmdAnnot<T>(DeclarationMirror declaration) {
+  static T? _getCmdAnnot<T>(DeclarationMirror declaration) {
     Iterable<T> fs = _getCmdAnnots<T>(declaration);
     if (fs.isEmpty) return null;
     return fs.first;

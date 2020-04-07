@@ -3,24 +3,24 @@ part of nyxx;
 /// Represents channel which is part of guild.
 abstract class GuildChannel implements Channel, GuildEntity {
   /// The channel's name.
-  String name;
+  late String name;
 
   @override
 
   /// The guild that the channel is in.
-  Guild guild;
+  late Guild guild;
 
   /// The channel's position in the channel list.
-  int position;
+  late int position;
 
   /// Parent channel id
-  CategoryChannel parentChannel;
+  CategoryChannel? parentChannel;
 
   /// Indicates if channel is nsfw
-  bool nsfw;
+  late bool nsfw;
 
   /// Permissions overwrites for channel.
-  List<PermissionsOverrides> permissions;
+  late final List<PermissionsOverrides> permissions;
 
   /// Returns list of [Member] objects who can see this channel
   Iterable<Member> get users => this.guild.members.values.where((member) => this
@@ -38,10 +38,10 @@ abstract class GuildChannel implements Channel, GuildEntity {
           client.channels[Snowflake(raw['parent_id'])] as CategoryChannel;
     }
 
-    this.nsfw = raw['nsfw'] as bool;
+    this.nsfw = raw['nsfw'] as bool? ?? false;
 
+    this.permissions = List();
     if (raw['permission_overwrites'] != null) {
-      permissions = List();
       raw['permission_overwrites'].forEach((o) {
         permissions.add(PermissionsOverrides._new(o as Map<String, dynamic>));
       });
@@ -50,7 +50,7 @@ abstract class GuildChannel implements Channel, GuildEntity {
 
   /// Returns effective permissions for [member] to this channel including channel overrides.
   Permissions effectivePermissions(Member member) {
-    if (member.guild == null || member.guild != this.guild)
+    if (member.guild != this.guild)
       return Permissions.empty();
 
     if (member.guild.owner == member)
@@ -74,21 +74,22 @@ abstract class GuildChannel implements Channel, GuildEntity {
 
   /// Returns effective permissions for [role] to this channel including channel overrides.
   Permissions effectivePermissionForRole(Role role) {
-    if (role.guild == null || role.guild != this.guild)
+    if (role.guild != this.guild)
       return Permissions.empty();
 
     var permissions = role.permissions.raw | guild.everyoneRole.permissions.raw;
 
+    /// TODO: NNBD - To consider
     try {
       var over =
-          this.permissions.firstWhere((f) => f.id == guild.everyoneRole.id);
+          this.permissions!.firstWhere((f) => f.id == guild.everyoneRole.id);
 
       permissions &= ~over.deny;
       permissions |= over.allow;
     } catch (e) {}
 
     try {
-      var over = this.permissions.firstWhere((f) => f.id == role.id);
+      var over = this.permissions!.firstWhere((f) => f.id == role.id);
 
       permissions &= ~over.deny;
       permissions |= over.allow;
@@ -131,7 +132,7 @@ abstract class GuildChannel implements Channel, GuildEntity {
     final HttpResponse r =
         await client._http.send('GET', "/channels/$id/invites");
 
-    for (Map<String, dynamic> val in r.body.values.first)
+    for (Map<String, dynamic> val in (r.body.values.first as Iterable<Map<String, dynamic>>))
       yield Invite._new(val, client);
   }
 

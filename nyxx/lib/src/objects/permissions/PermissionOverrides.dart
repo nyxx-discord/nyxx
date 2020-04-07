@@ -3,16 +3,16 @@ part of nyxx;
 /// Holds permissions overrides for channel
 class PermissionsOverrides extends SnowflakeEntity {
   /// Type of entity
-  String type;
+  late final String type;
 
   /// Permissions
-  Permissions permissions;
+  late final Permissions permissions;
 
   /// Value of permissions allowed
-  int allow;
+  late final int allow;
 
   /// Value of permissions denied
-  int deny;
+  late final int deny;
 
   PermissionsOverrides._new(Map<String, dynamic> raw)
       : super(Snowflake(raw['id'] as String)) {

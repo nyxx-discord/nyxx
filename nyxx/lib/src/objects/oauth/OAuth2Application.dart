@@ -1,35 +1,29 @@
 part of nyxx;
 
 /// An OAuth2 application.
-class OAuth2Application {
+class OAuth2Application extends SnowflakeEntity {
   /// The app's description.
-  String description;
+  late final String description;
 
   /// The app's icon hash.
-  String icon;
-
-  /// The app's ID.
-  Snowflake id;
+  late final String? icon;
 
   /// The app's name.
-  String name;
+  late final String name;
 
   /// The app's RPC origins.
-  List<String> rpcOrigins;
+  late final List<String>? rpcOrigins;
 
-  /// A timestamp for when the app was created.
-  DateTime createdAt;
-
-  OAuth2Application._new(Map<String, dynamic> raw) {
+  OAuth2Application._new(Map<String, dynamic> raw)
+      : super(Snowflake(raw['id'] as String)) {
     this.description = raw['description'] as String;
-    this.icon = raw['icon'] as String;
-    this.id = Snowflake(raw['id'] as String);
     this.name = raw['name'] as String;
-    this.rpcOrigins = raw['rpcOrigins'] as List<String>;
-    this.createdAt = id.timestamp;
+
+    this.icon = raw['icon'] as String?;
+    this.rpcOrigins = raw['rpcOrigins'] as List<String>?;
   }
 
-  String iconUrl({String format = "png", int size = 512}) => icon == null
+  String? iconUrl({String format = "png", int size = 512}) => icon == null
       ? null
       : "https://cdn.discordapp.com/app-icons/${this.id}/$icon.$format?size=$size";
 

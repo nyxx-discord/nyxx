@@ -4,16 +4,16 @@ part of nyxx;
 /// be invited to.
 class OAuth2Info {
   /// The OAuth2 app.
-  OAuth2Application app;
+  late final OAuth2Application app;
 
   /// The app's bot.
-  User bot;
+  late final User bot;
 
   /// You.
-  User me;
+  late final User me;
 
   /// Mini guild objects with permissions for every guild you are on.
-  Map<Snowflake, OAuth2Guild> guilds;
+  late final Map<Snowflake, OAuth2Guild> guilds;
 
   OAuth2Info._new(Map<String, dynamic> raw, Nyxx client) {
     this.app =
@@ -22,10 +22,9 @@ class OAuth2Info {
     this.me = User._new(raw['user'] as Map<String, dynamic>, client);
 
     this.guilds = Map<Snowflake, OAuth2Guild>();
-    raw['guilds'].forEach((Map<String, dynamic> v) {
-      final OAuth2Guild g = OAuth2Guild._new(v);
-      this.guilds[Snowflake(g.id as String)] = g;
-    });
-    this.guilds;
+    for(Map<String, dynamic> v in raw['guilds']) {
+      final guild = OAuth2Guild._new(v);
+      this.guilds[Snowflake(guild.id as String)] = guild;
+    }
   }
 }

@@ -14,7 +14,7 @@ environment:
 
 dependencies:
   nyxx: "^1.0.0"
-  logging: "^0.11.3+2"
+  logging: "^0.11.4"
   w_transport: "^3.2.8"
 
 dependency_overrides:

@@ -3,7 +3,7 @@ part of nyxx;
 /// Represents channel with another user.
 class DMChannel extends MessageChannel {
   /// The recipient.
-  User recipient;
+  late User recipient;
 
   DMChannel._new(Map<String, dynamic> raw, Nyxx client)
       : super._new(raw, 4, client) {

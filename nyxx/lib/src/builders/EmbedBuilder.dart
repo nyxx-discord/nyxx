@@ -3,37 +3,37 @@ part of nyxx;
 /// Builds up embed object.
 class EmbedBuilder implements Builder {
   /// Embed title
-  String title;
+  String? title;
 
   /// Embed type
-  String type;
+  String? type;
 
   /// Embed description.
-  String description;
+  String? description;
 
   /// Url of Embed
-  String url;
+  String? url;
 
   /// Color code of the embed
-  DiscordColor color;
+  DiscordColor? color;
 
   /// Timestamp of embed content
-  DateTime timestamp;
+  DateTime? timestamp;
 
   /// Embed Footer
-  EmbedFooterBuilder footer;
+  EmbedFooterBuilder? footer;
 
   /// Image Url
-  String imageUrl;
+  String? imageUrl;
 
   /// Thumbnail Url
-  String thumbnailUrl;
+  String? thumbnailUrl;
 
   /// Author of embed
-  EmbedAuthorBuilder author;
+  EmbedAuthorBuilder? author;
 
   /// Embed custom fields;
-  List<EmbedFieldBuilder> _fields;
+  late final List<EmbedFieldBuilder> _fields;
 
   EmbedBuilder() {
     _fields = List();
@@ -42,22 +42,22 @@ class EmbedBuilder implements Builder {
   /// Adds author to embed.
   void addAuthor(void builder(EmbedAuthorBuilder author)) {
     this.author = EmbedAuthorBuilder();
-    builder(this.author);
+    builder(this.author!);
   }
 
   /// Adds footer to embed
   void addFooter(void builder(EmbedFooterBuilder footer)) {
     this.footer = EmbedFooterBuilder();
-    builder(this.footer);
+    builder(this.footer!);
   }
 
   /// Adds field to embed. [name] and [content] fields are required. Inline is set to false by default.
   void addField(
-      {dynamic name,
-      dynamic content,
+      {dynamic? name,
+      dynamic? content,
       bool inline = false,
-      Function(EmbedFieldBuilder field) builder,
-      EmbedFieldBuilder field}) {
+      Function(EmbedFieldBuilder field)? builder,
+      EmbedFieldBuilder? field}) {
     if (field != null) {
       _fields.add(field);
       return;
@@ -87,10 +87,10 @@ class EmbedBuilder implements Builder {
 
   /// Builds object to Map() instance;
   Map<String, dynamic> _build() {
-    if (this.title != null && this.title.length > 256)
+    if (this.title != null && this.title!.length > 256)
       throw new Exception("Embed title is too long (256 characters limit)");
 
-    if (this.description != null && this.description.length > 2048)
+    if (this.description != null && this.description!.length > 2048)
       throw new Exception(
           "Embed description is too long (2048 characters limit)");
 
@@ -107,13 +107,13 @@ class EmbedBuilder implements Builder {
     if (type != null) tmp["type"] = type;
     if (description != null) tmp["description"] = description;
     if (url != null) tmp["url"] = url;
-    if (timestamp != null) tmp["timestamp"] = timestamp.toIso8601String();
-    if (color != null) tmp["color"] = color._value;
-    if (footer != null) tmp["footer"] = footer._build();
+    if (timestamp != null) tmp["timestamp"] = timestamp!.toIso8601String();
+    if (color != null) tmp["color"] = color!._value;
+    if (footer != null) tmp["footer"] = footer!._build();
     if (imageUrl != null) tmp["image"] = <String, dynamic>{"url": imageUrl};
     if (thumbnailUrl != null)
       tmp["thumbnail"] = <String, dynamic>{"url": thumbnailUrl};
-    if (author != null) tmp["author"] = author._build();
+    if (author != null) tmp["author"] = author!._build();
     if (_fields.length > 0)
       tmp["fields"] = _fields.map((builder) => builder._build()).toList();
 

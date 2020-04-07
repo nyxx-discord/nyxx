@@ -74,6 +74,7 @@ part 'src/objects/Mentionable.dart';
 part 'src/objects/GuildEntity.dart';
 part 'src/objects/Disposable.dart';
 part 'src/objects/Downloadable.dart';
+part 'src/objects/IMessageAuthor.dart';
 
 part 'src/objects/DiscordColor.dart';
 
@@ -116,6 +117,7 @@ part 'src/objects/guild/Status.dart';
 part 'src/objects/guild/Role.dart';
 part 'src/objects/user/User.dart';
 part 'src/objects/guild/Ban.dart';
+part 'src/objects/guild/GuildEnums.dart';
 
 part 'src/objects/message/UnicodeEmoji.dart';
 part 'src/objects/message/GuildEmoji.dart';
@@ -128,6 +130,7 @@ part 'src/objects/oauth/ClientOAuth2Application.dart';
 part 'src/objects/oauth/OAuth2Application.dart';
 part 'src/objects/oauth/OAuth2Guild.dart';
 part 'src/objects/oauth/OAuth2Info.dart';
+part 'src/objects/oauth/AppTeam.dart';
 
 part 'src/objects/permissions/Permissions.dart';
 part 'src/objects/permissions/AbstractPermissions.dart';

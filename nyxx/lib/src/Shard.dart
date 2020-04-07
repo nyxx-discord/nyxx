@@ -6,31 +6,31 @@ part of nyxx;
 /// Shard is basically represents single websocket connection to gateway. Each shard can operate on up to 2500 guilds.
 class Shard implements Disposable {
   /// The shard id.
-  int id;
+  late final int id;
 
   /// Whether or not the shard is ready.
   bool ready = false;
 
   /// Emitted when the shard is ready.
-  Stream<Shard> onReady;
+  late Stream<Shard> onReady;
 
   /// Emitted when the shard encounters an error.
-  Stream<Shard> onDisconnect;
+  late Stream<Shard> onDisconnect;
 
   /// A map of guilds the shard is on.
   Cache<Snowflake, Guild> get guilds => _ws._client.guilds;
 
   bool _acked = false;
-  Timer _guildTimer;
   bool _waiting = true;
+  Timer? _guildTimer;
 
-  Timer _heartbeatTimer;
-  _WS _ws;
-  transport.WebSocket _socket;
-  int _sequence;
-  String _sessionId;
-  StreamController<Shard> _onReady;
-  StreamController<Shard> _onDisconnect;
+  late final Timer _heartbeatTimer;
+  late final _WS _ws;
+  transport.WebSocket? _socket;
+  late int _sequence;
+  String? _sessionId;
+  late final StreamController<Shard> _onReady;
+  late final StreamController<Shard> _onDisconnect;
 
   Logger _logger = Logger("Websocket");
 
@@ -47,24 +47,27 @@ class Shard implements Disposable {
 
   /// Allows to set presence for current shard.
   void setPresence(
-      {String status, bool afk = false, Presence game, DateTime since}) {
+      {String? status, bool afk = false, Presence? game, DateTime? since}) {
     var packet = Map<String, dynamic>();
 
     packet['status'] = status;
-    if (afk != null) packet['afk'] = afk;
+    packet['afk'] = afk;
 
     if (game != null) {
       var gameMap = Map<String, dynamic>();
+
       gameMap['name'] = game.name;
-      if (game.type != null) gameMap['type'] = game.type._value;
+      gameMap['type'] = game.type._value;
       if (game.url != null) gameMap['url'] = game.url;
+
       packet['game'] = gameMap;
     }
 
-    if (since != null)
+    if (since != null) {
       packet['since'] = since.millisecondsSinceEpoch;
-    else
+    } else {
       packet['since'] = null;
+    }
 
     this.send("STATUS_UPDATE", packet);
   }
@@ -75,18 +78,16 @@ class Shard implements Disposable {
   // Attempts to connect to ws
   void _connect([bool resume = false, bool init = false]) {
     this.ready = false;
-    if (this._socket != null) this._socket.close();
+    //if (this._socket != null) this._socket!.close();
 
     if (!init && resume) {
       Future.delayed(const Duration(seconds: 3), () => _connect(true));
       return;
     }
 
-    transport.WebSocket.connect(
-            Uri.parse("${this._ws.gateway}?v=6&encoding=json"))
-        .then((ws) {
+    transport.WebSocket.connect(Uri.parse("${this._ws.gateway}?v=6&encoding=json")).then((ws) {
       _socket = ws;
-      _socket.listen(
+      _socket!.listen(
           (data) {
             this._handleMsg(_decodeBytes(data), resume);
           },
@@ -95,9 +96,8 @@ class Shard implements Disposable {
             print(err);
             this._handleErr();
           });
-    },
-            onError: (_, __) => Future.delayed(
-                const Duration(seconds: 6), () => this._connect()));
+    }, onError: (_, __) => Future.delayed(
+        const Duration(seconds: 6), () => this._connect()));
   }
 
   // Decodes zlib compresses string into string json
@@ -111,18 +111,22 @@ class Shard implements Disposable {
 
   /// Sends WS data.
   void send(String op, dynamic d) {
-    this._socket.add(
+    this._socket?.add(
         jsonEncode(<String, dynamic>{"op": _OPCodes.matchOpCode(op), "d": d}));
   }
 
   void _heartbeat() {
-    if (this._socket.closeCode != null) return;
+    if (this._socket?.closeCode != null) return;
     if (!this._acked) _logger.warning("No ACK received");
     this.send("HEARTBEAT", _sequence);
     this._acked = false;
   }
 
   Future<void> _handleMsg(Map<String, dynamic> msg, bool resume) async {
+    if(this._socket!.closeCode != null) {
+      return;
+    }
+
     if (msg['op'] == _OPCodes.dispatch &&
         this._ws._client._options.ignoredEvents.contains(msg['t'] as String))
       return;
@@ -199,7 +203,8 @@ class Shard implements Disposable {
             msg['d']['members'].forEach((dynamic o) {
               var mem = _StandardMember(
                   o as Map<String, dynamic>,
-                  _ws._client.guilds[Snowflake(msg['d']['guild_id'])],
+                  /// TODO: NNBD - To consider
+                  (_ws._client.guilds[Snowflake(msg['d']['guild_id'])])!,
                   _ws._client);
               _ws._client.users[mem.id] = mem;
               mem.guild.members[mem.id] = mem;
@@ -230,7 +235,6 @@ class Shard implements Disposable {
           case 'CHANNEL_PINS_UPDATE':
             var m = ChannelPinsUpdateEvent._new(msg, _ws._client);
 
-            if (m.channel != null) m.channel._pinsUpdated.add(m);
             _ws._client._events.onChannelPinsUpdate.add(m);
             break;
 
@@ -257,8 +261,6 @@ class Shard implements Disposable {
 
             _ws._client._events.onMessage.add(m);
             _ws._client._events.onMessageReceived.add(m);
-
-            m.message.channel?._onMessage?.add(m);
             break;
 
           case 'MESSAGE_DELETE':
@@ -278,7 +280,7 @@ class Shard implements Disposable {
             // TODO: hack? Nvm, it works so it must be good quality code. Leave it alone.
             if (_waiting) {
               if (_guildTimer != null) {
-                _guildTimer.cancel();
+                _guildTimer?.cancel();
                 _guildTimer = null;
               }
               _guildTimer = Timer(const Duration(seconds: 6), () {
@@ -348,7 +350,6 @@ class Shard implements Disposable {
             var m = TypingEvent._new(msg, _ws._client);
 
             _ws._client._events.onTyping.add(m);
-            m.channel?._onTyping?.add(m);
             break;
 
           case 'PRESENCE_UPDATE':
@@ -386,10 +387,10 @@ class Shard implements Disposable {
   void _handleErr() {
     this._heartbeatTimer.cancel();
     _logger.severe(
-        "Shard disconnected. Error code: [${this._socket.closeCode}] | Error message: [${this._socket.closeReason}]");
+        "Shard disconnected. Error code: [${this._socket?.closeCode}] | Error message: [${this._socket?.closeReason}]");
     this.dispose();
 
-    switch (this._socket.closeCode) {
+    switch (this._socket?.closeCode) {
       case 4004:
       case 4010:
         exit(1);
@@ -404,13 +405,14 @@ class Shard implements Disposable {
     }
 
     _ws._client._events.onDisconnect
-        .add(DisconnectEvent._new(this, this._socket.closeCode));
+        .add(DisconnectEvent._new(this, this._socket?.closeCode!));
     this._onDisconnect.add(this);
   }
 
   @override
   Future<void> dispose() async {
-    await this._socket.close(1000);
+    await this._socket?.drain();
+    await this._socket?.close(1000);
     this._socket = null;
   }
 }

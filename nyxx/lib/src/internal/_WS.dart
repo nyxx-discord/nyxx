@@ -5,10 +5,10 @@ class _WS {
   Nyxx _client;
 
   /// The base websocket URL.
-  String gateway;
+  late final String gateway;
 
-  int remaining;
-  DateTime resetAt;
+  late int remaining;
+  late DateTime resetAt;
 
   final Logger logger = Logger("Client");
 
@@ -52,7 +52,6 @@ class _WS {
 
   void propagateReady() {
     _client.ready = true;
-    _client._startTime = DateTime.now();
 
     _client._http.send("GET", "/oauth2/applications/@me").then((response) {
       _client.app = ClientOAuth2Application._new(

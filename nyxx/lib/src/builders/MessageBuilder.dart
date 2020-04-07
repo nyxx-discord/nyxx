@@ -3,10 +3,10 @@ part of nyxx;
 /// Allows to create pre built custom messages which can be passed to classes which inherits from [ISend].
 class MessageBuilder {
   StringBuffer _content = StringBuffer();
-  EmbedBuilder embed;
-  bool tts;
-  List<AttachmentBuilder> files;
-  bool disableEveryone;
+  EmbedBuilder? embed;
+  bool? tts;
+  List<AttachmentBuilder>? files;
+  bool? disableEveryone;
 
   /// Clear content of message and sste new
   set content(Object content) {
@@ -17,18 +17,18 @@ class MessageBuilder {
   /// Allows to add embed to message
   void setEmbed(void builder(EmbedBuilder embed)) {
     this.embed = EmbedBuilder();
-    builder(embed);
+    builder(embed!);
   }
 
   /// Add attachment
   void addAttachment(AttachmentBuilder attachment) {
     if (this.files == null) this.files = List();
 
-    this.files.add(attachment);
+    this.files!.add(attachment);
   }
 
   /// Add attachment from specified file
-  void addFileAttachment(File file, {String name, bool spoiler = false}) {
+  void addFileAttachment(File file, {String? name, bool spoiler = false}) {
     addAttachment(AttachmentBuilder.file(file, name: name, spoiler: spoiler));
   }
 
@@ -39,7 +39,7 @@ class MessageBuilder {
   }
 
   /// Add attachment at specified path
-  void addPathAttachment(String path, {String name, bool spoiler = false}) {
+  void addPathAttachment(String path, {String? name, bool spoiler = false}) {
     addAttachment(AttachmentBuilder.path(path, name: name, spoiler: spoiler));
   }
 
@@ -79,7 +79,7 @@ class MessageBuilder {
   }
 
   /// Sends message
-  Future<Message> send(ISend entity) {
+  Future<Message?> send(ISend entity) {
     return entity.send(builder: this);
   }
 }

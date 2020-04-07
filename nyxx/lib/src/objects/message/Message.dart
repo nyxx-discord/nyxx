@@ -1,56 +1,58 @@
 part of nyxx;
 
 /// [Message] class represents single message. It contains it's Event [Stream]s.
-/// [Message] among all it's properties has also back-reference to [MessageChannel] from which it was sent, [Guild] and [User] properties which are associated with this message.
+/// [Message] among all it is properties has also back-reference to [MessageChannel] from which it was sent, [Guild] and [User] properties which are associated with this message.
 class Message extends SnowflakeEntity implements GuildEntity, Disposable {
   /// Reference to bot instance
   Nyxx client;
 
   /// The message's content.
-  String content;
+  late final String content;
 
   /// The timestamp of when the message was last edited, null if not edited.
-  DateTime editedTimestamp;
+  late final DateTime? editedTimestamp;
 
   /// Channel in which message was sent
-  MessageChannel channel;
-
-  @override
+  late final MessageChannel channel;
 
   /// The message's guild.
-  Guild guild;
+  @override
+  Guild? guild;
 
-  /// The message's author. Can be instance of member
-  User author;
+  /// The message's author. Can be instance of [Member]
+  IMessageAuthor? author;
+
+  // TODO: Consider how to handle properly webhooks as message authors.
+  late final bool isByWebhook;
 
   /// The mentions in the message. [User] value of this map can be [Member]
-  Map<Snowflake, User> mentions;
+  late final Map<Snowflake, User> mentions;
 
   /// A list of IDs for the role mentions in the message.
-  Map<Snowflake, Role> roleMentions;
+  late final Map<Snowflake, Role> roleMentions;
 
   /// A collection of the embeds in the message.
-  List<Embed> embeds;
+  late final List<Embed> embeds;
 
   /// The attachments in the message.
-  Map<Snowflake, Attachment> attachments;
+  late final Map<Snowflake, Attachment> attachments;
 
   /// Whether or not the message is pinned.
-  bool pinned;
+  late final bool pinned;
 
   /// Whether or not the message was sent with TTS enabled.
-  bool tts;
+  late final bool tts;
 
   /// Whether or @everyone was mentioned in the message.
-  bool mentionEveryone;
+  late final bool mentionEveryone;
 
   /// List of message reactions
-  List<Reaction> reactions;
+  late final List<Reaction> reactions;
 
-  MessageType type;
+  late final MessageType type;
 
   /// Returns clickable url to this message.
-  String get url => "https://discordapp.com/channels/${this.guild.id}"
+  String get url => "https://discordapp.com/channels/${this.guild!.id}"
       "/${this.channel.id}/${this.id}";
 
   Message._new(Map<String, dynamic> raw, this.client)
@@ -67,9 +69,15 @@ class Message extends SnowflakeEntity implements GuildEntity, Disposable {
     if (this.channel is GuildChannel) {
       this.guild = (this.channel as GuildChannel).guild;
 
-      if (raw['author'] != null) {
+      if(raw['webhook_id'] != null) {
+        this.isByWebhook = true;
+        this.author = Webhook._new(raw['author'] as Map<String, dynamic>, client);
+
+      } else if (raw['author'] != null) {
+        this.isByWebhook = false;
+
         this.author =
-            this.guild.members[Snowflake(raw['author']['id'] as String)];
+            this.guild!.members[Snowflake(raw['author']['id'] as String)];
 
         if (this.author == null) {
           if (raw['member'] == null) {
@@ -78,10 +86,11 @@ class Message extends SnowflakeEntity implements GuildEntity, Disposable {
           } else {
             var r = raw['author'];
             r['member'] = raw['member'];
+            // TODO: NNBD - To consider
             var author = _ReverseMember(r as Map<String, dynamic>,
-                client.guilds[Snowflake(raw['guild_id'] as String)], client);
+                client.guilds[Snowflake(raw['guild_id'] as String)] as Guild, client);
             client.users[author.id] = author;
-            guild.members[author.id] = author;
+            guild!.members[author.id] = author;
             this.author = author;
           }
         }
@@ -91,7 +100,7 @@ class Message extends SnowflakeEntity implements GuildEntity, Disposable {
       if (raw['mention_roles'] != null) {
         raw['mention_roles'].forEach((o) {
           var s = Snowflake(o as String);
-          this.roleMentions[s] = guild.roles[s];
+          this.roleMentions[s] = guild!.roles[s];
         });
       }
     } else {
@@ -101,15 +110,17 @@ class Message extends SnowflakeEntity implements GuildEntity, Disposable {
       if (this.author == null && raw['member'] != null) {
         var r = raw['author'];
         r['member'] = raw['member'];
+        // TODO: NNBD - To consider
         var author = _ReverseMember(r as Map<String, dynamic>,
-            client.guilds[Snowflake(raw['guild_id'] as String)], client);
+            client.guilds[Snowflake(raw['guild_id'] as String)] as Guild, client);
         this.author = author;
       }
     }
 
-    if (raw['edited_timestamp'] != null)
+    if (raw['edited_timestamp'] != null) {
       this.editedTimestamp =
           DateTime.parse(raw['edited_timestamp'] as String).toUtc();
+    }
 
     this.mentions = Map<Snowflake, User>();
     if (raw['mentions'] != null && raw['mentions'].isNotEmpty as bool) {
@@ -119,7 +130,7 @@ class Message extends SnowflakeEntity implements GuildEntity, Disposable {
           this.mentions[user.id] = user;
         } else {
           final user =
-              _ReverseMember(o as Map<String, dynamic>, this.guild, client);
+              _ReverseMember(o as Map<String, dynamic>, this.guild!, client);
           this.mentions[user.id] = user;
         }
       });
@@ -157,13 +168,13 @@ class Message extends SnowflakeEntity implements GuildEntity, Disposable {
   /// Replies to message. By default it mentions user who sends message.
   Future<Message> reply(
           {Object content = "",
-          List<AttachmentBuilder> files,
-          EmbedBuilder embed,
+          List<AttachmentBuilder>? files,
+          EmbedBuilder? embed,
           bool tts = false,
-          bool disableEveryone,
+          bool? disableEveryone,
           bool mention = true}) =>
       this.channel.send(
-          content: "${mention ? "${this.author.mention} " : ""}$content",
+          content: "${mention && !this.isByWebhook ? "${(this.author as User).mention} " : ""}$content",
           files: files,
           embed: embed,
           tts: tts,
@@ -174,11 +185,11 @@ class Message extends SnowflakeEntity implements GuildEntity, Disposable {
   /// Throws an [Exception] if the HTTP request errored.
   ///     Message.edit("My edited content!");
   Future<Message> edit(
-      {String content,
-      EmbedBuilder embed,
+      {String? content,
+      EmbedBuilder? embed,
       bool tts = false,
-      bool disableEveryone}) async {
-    if (this.author.id != client.self.id)
+      bool? disableEveryone}) async {
+    if (this.author != null && this.author!.id != client.self.id)
       return Future.error("Cannot edit someones message");
 
     var body = Map<String, dynamic>();
@@ -247,10 +258,10 @@ class Message extends SnowflakeEntity implements GuildEntity, Disposable {
 
   @override
   Future<void> dispose() async {
-    if (embeds != null) embeds.clear();
-    if (mentions != null) mentions.clear();
-    if (roleMentions != null) roleMentions.clear();
-    if (attachments != null) attachments.clear();
+    embeds.clear();
+    mentions.clear();
+    roleMentions.clear();
+    attachments.clear();
   }
 }
 

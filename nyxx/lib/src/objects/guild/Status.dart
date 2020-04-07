@@ -9,19 +9,19 @@ class MemberStatus {
 
   final String _value;
 
-  const MemberStatus._create(this._value);
-  MemberStatus.from(this._value);
+  const MemberStatus._create(String? value) : _value = value ?? "offline";
+  MemberStatus.from(String? value) : _value = value ?? "offline";
 
   @override
-  String toString() => _value ?? "offline";
+  String toString() => _value;
 
   @override
-  int get hashCode => (_value ?? "offline").hashCode;
+  int get hashCode => _value.hashCode;
 
   @override
   bool operator ==(other) {
     if (other is MemberStatus || other is String)
-      return other.toString() == (_value ?? "offline");
+      return other.toString() == _value;
 
     return false;
   }
@@ -29,9 +29,9 @@ class MemberStatus {
 
 /// Provides status of user on different devices
 class ClientStatus {
-  MemberStatus desktop;
-  MemberStatus web;
-  MemberStatus phone;
+  final MemberStatus desktop;
+  final MemberStatus web;
+  final MemberStatus phone;
 
   ClientStatus._new(this.desktop, this.web, this.phone);
 }
