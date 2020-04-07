@@ -24,7 +24,7 @@ class Webhook extends SnowflakeEntity implements ISend, IMessageAuthor {
 
   // TODO: What's that and where it came from
   /// Webhook avatar
-  late final String? avatar;
+  late final String? avatarHash;
 
   @override
   String get username => this.name.toString();
@@ -39,18 +39,13 @@ class Webhook extends SnowflakeEntity implements ISend, IMessageAuthor {
   @override
   String get tag => name.toString();
 
-  // TODO: Implement properly
-  String? avatarURL({String format = 'webp', int size = 128}) {
-    return null;
-  }
-
   Nyxx client;
 
   Webhook._new(Map<String, dynamic> raw, this.client)
       : super(Snowflake(raw['id'] as String)) {
     this.name = raw['name'] as String?;
     this.token = raw['token'] as String?;
-    this.avatar = raw['avatar'] as String?;
+    this.avatarHash = raw['avatar'] as String?;
     this.type = raw['type'] as int;
 
     if (raw['channel_id'] != null) {
@@ -64,6 +59,15 @@ class Webhook extends SnowflakeEntity implements ISend, IMessageAuthor {
     if(raw['user'] != null) {
       this.user = client.users[Snowflake(raw['user']['id'] as String)];
     }
+  }
+
+  @override
+  String? avatarURL({String format = 'webp', int size = 128}) {
+    if(this.avatarHash != null) {
+      return 'https://cdn.${_Constants.host}/avatars/${this.id}/${this.avatarHash}.$format?size=$size';
+    }
+
+    return null;
   }
 
   /// Edits the webhook.
