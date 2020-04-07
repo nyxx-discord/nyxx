@@ -45,11 +45,12 @@ class CommandsFramework {
   }
 
   ///Listens to messages sent that contain the prefix and triggers the dispatching of the command.
-  void _streamListener({Stream<MessageEvent> stream}) async {
+  void _streamListener({Stream<MessageEvent>? stream}) async {
     if (!client.ready) {
       //Allows to start listening if onReady has already been recieved
       await client.onReady.first;
     }
+
     if (prefix == null && stream == null) {
       prefix = client.self.mention;
       stream = client.onSelfMention;
@@ -59,9 +60,9 @@ class CommandsFramework {
       prefix = client.self.mention;
     }
 
-      stream!.listen((MessageEvent e) {
-        if (ignoreBots && e.message?.author != null && e.message!.author!.bot) return;
-        if (!e.message!.content.startsWith(prefix)) return;
+    stream!.listen((MessageEvent e) {
+      if (ignoreBots && e.message?.author != null && e.message!.author!.bot) return;
+      if (!e.message!.content.startsWith(prefix)) return;
 
       Future(() => dispatch(e));
     });
@@ -168,12 +169,17 @@ class CommandsFramework {
   }
 
   /// Dispatches onMessage event to framework.
-  Future _dispatch(MessageEvent e) async {
+  Future dispatch(MessageEvent e, {String? prefix}) async {
     if(e.message == null) {
       return;
     }
 
-    var cmdWithoutPrefix = e.message!.content.replaceFirst(prefix, "").trim();
+    String cmdWithoutPrefix;
+    if (prefix == null) {
+      cmdWithoutPrefix = e.message!.content.replaceFirst(this.prefix, "").trim();
+    } else {
+      cmdWithoutPrefix = e.message!.content.replaceFirst(prefix, "").trim();
+    }
 
     _CommandMetadata matchedMeta;
     try {
