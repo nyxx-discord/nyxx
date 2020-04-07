@@ -1,16 +1,17 @@
 part of nyxx;
 
-/// Sent when the client is ratelimited, either by the ratelimit handler itself,
+/// Sent when the client is rate limit
+/// ed, either by the rate limit handler itself,
 /// or when a 429 is received.
 class RatelimitEvent {
-  /// True if ratelimit handler stopped the request
+  /// True if rate limit handler stopped the request
   /// False if the client received a 429
   final bool handled;
 
-  /// The request that was ratelimited.
+  /// The request that was rate limited.
   final HttpBase request;
 
-  /// The error response received if the ratelimit handler did not stop
+  /// The error response received if the rate limit handler did not stop
   /// the request (aka hit 429)
   final HttpResponse? response;
 
