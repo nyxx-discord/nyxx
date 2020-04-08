@@ -130,6 +130,33 @@ class MessageReactionsRemovedEvent extends MessageEvent {
   }
 }
 
+class MessageReactionRemoveEmojiEvent extends MessageEvent {
+  /// Channel where reactions are removed
+  late final MessageChannel? channel;
+
+  @override
+
+  /// Message on which messages are removed
+  late final Message? message;
+
+  /// Guild where event occurs
+  late final Guild? guild;
+
+  /// The emoji that was removed
+  late final Emoji? emoji;
+
+  MessageReactionRemoveEmojiEvent._new(Map<String, dynamic> json, Nyxx client) {
+    this.channel = client.channels[Snowflake(json['d']['channel_id'])] as MessageChannel?;
+    this.message = channel?.messages[Snowflake(json['d']['message_id'])];
+
+    if(json['d']['guild_id'] != null) {
+      this.guild = client.guilds[Snowflake(json['d']['guild_id'])];
+
+      this.emoji = this.guild?.emojis[Snowflake(json['d']['emoji']['id'])];
+    }
+  }
+}
+
 /// Emitted when multiple messages are deleted at once.
 class MessageDeleteBulkEvent {
   /// List of deleted messages

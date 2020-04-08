@@ -175,6 +175,15 @@ class Nyxx implements Disposable {
   /// Emitted when bot is mentioned
   late Stream<MessageReceivedEvent> onSelfMention;
 
+  /// Emitted when invite is created
+  late Stream<InviteCreatedEvent> onInviteCreated;
+
+  /// Emitted when invite is deleted
+  late Stream<InviteDeletedEvent> onInviteDeleted;
+
+  /// Emitted when a bot removes all instances of a given emoji from the reactions of a message
+  late Stream<MessageReactionRemoveEmojiEvent> onMessageReactionRemoveEmoji;
+
   /// Logger instance
   Logger _logger = Logger("Client");
 
@@ -262,9 +271,12 @@ class Nyxx implements Disposable {
   /// var user = client.getClient(Snowflake("302359032612651009"));
   /// ``
   Future<User?> getUser(Snowflake id) async {
-    if (this.users.hasKey(id)) return this.users[id];
+    //if (this.users.hasKey(id)) return this.users[id];
 
     var r = await this._http.send("GET", "/users/${id.toString()}");
+
+    print(r.body);
+
     return User._new(r.body as Map<String, dynamic>, this);
   }
 

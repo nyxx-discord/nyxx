@@ -377,6 +377,21 @@ class Shard implements Disposable {
                 .add(UserUpdateEvent._new(msg, _ws._client));
             break;
 
+          case 'INVITE_CREATE':
+            _ws._client._events.onInviteCreated
+                .add(InviteCreatedEvent._new(msg, _ws._client));
+            break;
+
+          case 'INVITE_DELETE':
+            _ws._client._events.onInviteDelete
+                .add(InviteDeletedEvent._new(msg, _ws._client));
+            break;
+
+          case 'MESSAGE_REACTION_REMOVE_EMOJI':
+            _ws._client._events.onMessageReactionRemoveEmoji
+                .add(MessageReactionRemoveEmojiEvent._new(msg, _ws._client));
+            break;
+
           default:
             print("UNKNOWN OPCODE: ${jsonEncode(msg)}");
         }

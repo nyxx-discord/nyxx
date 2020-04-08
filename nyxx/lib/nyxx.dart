@@ -53,6 +53,8 @@ part 'src/events/HttpEvents.dart';
 part 'src/events/ChannelEvents.dart';
 part 'src/events/GuildEvents.dart';
 
+part 'src/events/InviteEvents.dart';
+
 // BUILDERS
 
 part 'src/builders/Builder.dart';
@@ -116,6 +118,8 @@ part 'src/objects/user/Member.dart';
 part 'src/objects/guild/Status.dart';
 part 'src/objects/guild/Role.dart';
 part 'src/objects/user/User.dart';
+part 'src/objects/user/UserFlags.dart';
+part 'src/objects/user/NitroType.dart';
 part 'src/objects/guild/Ban.dart';
 part 'src/objects/guild/GuildEnums.dart';
 
