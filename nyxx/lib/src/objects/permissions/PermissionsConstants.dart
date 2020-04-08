@@ -89,6 +89,12 @@ class PermissionsConstants {
   /// Allows management and editing of emojis
   static const int manageEmojis = 1 << 30;
 
+  /// Allows the user to go live
+  static const int stream = 1 << 9;
+
+  /// Allows for viewing guild insights
+  static const int viewGuildInsights = 1 << 19;
+
   /// All of the permissions
   static const int allPermissions = 0x7FFFFFFF;
 }

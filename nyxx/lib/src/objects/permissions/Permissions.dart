@@ -81,6 +81,13 @@ class Permissions extends AbstractPermissions {
         permissions, PermissionsConstants.manageRolesOrPermissions);
     this.manageWebhooks = PermissionsUtils.isApplied(
         permissions, PermissionsConstants.manageWebhooks);
+
+    this.manageEmojis = PermissionsUtils.isApplied(
+        permissions, PermissionsConstants.manageEmojis);
+    this.stream = PermissionsUtils.isApplied(
+        permissions, PermissionsConstants.stream);
+    this.viewGuildInsights = PermissionsUtils.isApplied(
+        permissions, PermissionsConstants.viewGuildInsights);
   }
 
   /// Returns true if this permissions has [permission]
