@@ -88,4 +88,13 @@ abstract class AbstractPermissions {
 
   /// True if user can manage webhooks
   late final bool manageWebhooks;
+
+  /// Allows management and editing of emojis
+  late final bool manageEmojis;
+
+  /// Allows the user to go live
+  late final bool stream;
+
+  /// Allows for viewing guild insights
+  late final bool viewGuildInsights;
 }
