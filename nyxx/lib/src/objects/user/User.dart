@@ -15,7 +15,6 @@ class User extends SnowflakeEntity with ISend, Mentionable, IMessageAuthor {
   /// The user's avatar hash.
   late final String? avatar;
 
-
   /// The string to mention the user.
   @override
   String get mention => "<@!${this.id}>";
@@ -24,9 +23,12 @@ class User extends SnowflakeEntity with ISend, Mentionable, IMessageAuthor {
   @override
   String get tag => "${this.username}#${this.discriminator}";
 
-  /// Whether or not the user is a bot.
+  /// Whether the user belongs to an OAuth2 application
   @override
   late final bool bot;
+
+  /// Whether the user is an Official Discord System user (part of the urgent message system)
+  late final bool system;
 
   /// The member's status. `offline`, `online`, `idle`, or `dnd`.
   ClientStatus? status;
@@ -34,12 +36,28 @@ class User extends SnowflakeEntity with ISend, Mentionable, IMessageAuthor {
   /// The member's presence.
   Presence? presence;
 
+  /// Additional flags associated with user account. Describes if user has certain
+  /// features like joined into one of houses or is discord employee.
+  UserFlags? userFlags;
+
+  /// Premium types denote the level of premium a user has.
+  NitroType? nitroType;
+
   User._new(Map<String, dynamic> raw, this.client)
       : super(Snowflake(raw['id'] as String)) {
     this.username = raw['username'] as String;
     this.discriminator = raw['discriminator'] as String;
     this.avatar = raw['avatar'] as String?;
     this.bot = raw['bot'] as bool? ?? false;
+    this.system = raw['system'] as bool? ?? false;
+
+    if(raw['public_flags'] != null) {
+      this.userFlags = UserFlags._new(raw['public_flags'] as int);
+    }
+
+    if(raw['premium_type'] != null) {
+      this.nitroType = NitroType.from(raw['premium_type'] as int);
+    }
   }
 
   /// The user's avatar, represented as URL.

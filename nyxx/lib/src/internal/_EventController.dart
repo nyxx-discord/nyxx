@@ -117,6 +117,15 @@ class _EventController implements Disposable {
   /// Emitted on any message related event
   late final StreamController<MessageEvent> onMessage;
 
+  /// Emitted when invite is creating
+  late final StreamController<InviteCreatedEvent> onInviteCreated;
+
+  /// Emitted when invite is deleted
+  late final StreamController<InviteDeletedEvent> onInviteDelete;
+
+  /// Emitted when a bot removes all instances of a given emoji from the reactions of a message
+  late final StreamController<MessageReactionRemoveEmojiEvent> onMessageReactionRemoveEmoji;
+
   /// Makes a new `EventController`.
   _EventController(Nyxx _client) {
     this.onRaw = StreamController.broadcast();
@@ -229,6 +238,15 @@ class _EventController implements Disposable {
 
     this.onMessage = StreamController.broadcast();
     _client.onMessage = this.onMessage.stream;
+
+    this.onInviteCreated = StreamController.broadcast();
+    _client.onInviteCreated = this.onInviteCreated.stream;
+
+    this.onInviteDelete = StreamController.broadcast();
+    _client.onInviteDeleted = this.onInviteDelete.stream;
+
+    this.onMessageReactionRemoveEmoji = StreamController.broadcast();
+    _client.onMessageReactionRemoveEmoji = this.onMessageReactionRemoveEmoji.stream;
   }
 
   @override
@@ -271,6 +289,10 @@ class _EventController implements Disposable {
     this.onMessageReactionsRemoved.close();
     this.onVoiceStateUpdate.close();
     this.onVoiceServerUpdate.close();
+    this.onMessageReactionRemoveEmoji.close();
+
+    this.onInviteCreated.close();
+    this.onInviteDelete.close();
 
     this.onUserUpdate.close();
   }
