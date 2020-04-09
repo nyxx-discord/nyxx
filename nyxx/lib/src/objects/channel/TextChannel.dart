@@ -64,13 +64,28 @@ class TextChannel extends MessageChannel
   }
 
   /// Creates a webhook for channel.
+  /// Valid file types for [avatarFile] are jpeg, gif and png.
   ///
   /// ```
   /// var webhook = await chan.createWebhook("!a Send nudes kek6407");
   /// ```
-  Future<Webhook> createWebhook(String name, {String auditReason = ""}) async {
+  Future<Webhook> createWebhook(String name,{File? avatarFile, String auditReason = ""}) async {
+    if(name.isEmpty || name.length > 80) {
+      return Future.error("Webhook's name cannot be shorter than 1 character and longer than 80 characters");
+    }
+
+    var body = Map<String, String>();
+    body['name'] = name;
+
+    if(avatarFile != null) {
+      final extension = Utils.getFileExtension(avatarFile.path);
+      final data = base64Encode(await avatarFile.readAsBytes());
+
+      body['avatar'] = "data:image/${extension};base64,${data}";
+    }
+
     HttpResponse r = await client._http.send('POST', "/channels/$id/webhooks",
-        body: {"name": name}, reason: auditReason);
+        body: body, reason: auditReason);
     return Webhook._new(r.body as Map<String, dynamic>, client);
   }
 

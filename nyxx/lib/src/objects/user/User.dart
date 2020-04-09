@@ -10,7 +10,7 @@ class User extends SnowflakeEntity with ISend, Mentionable, IMessageAuthor {
 
   /// The user's discriminator.
   @override
-  late final String discriminator;
+  late final int discriminator;
 
   /// The user's avatar hash.
   late final String? avatar;
@@ -46,7 +46,7 @@ class User extends SnowflakeEntity with ISend, Mentionable, IMessageAuthor {
   User._new(Map<String, dynamic> raw, this.client)
       : super(Snowflake(raw['id'] as String)) {
     this.username = raw['username'] as String;
-    this.discriminator = raw['discriminator'] as String;
+    this.discriminator = raw['discriminator'] as int;
     this.avatar = raw['avatar'] as String?;
     this.bot = raw['bot'] as bool? ?? false;
     this.system = raw['system'] as bool? ?? false;
@@ -61,12 +61,14 @@ class User extends SnowflakeEntity with ISend, Mentionable, IMessageAuthor {
   }
 
   /// The user's avatar, represented as URL.
+  /// In case if user does not have avatar, default discord avatar will be returned with specified size and png format.
   @override
   String? avatarURL({String format = 'webp', int size = 128}) {
-    if (this.avatar != null)
+    if (this.avatar != null) {
       return 'https://cdn.${_Constants.host}/avatars/${this.id}/${this.avatar}.$format?size=$size';
+    }
 
-    return null;
+    return "https://cdn.${_Constants.host}/embed/avatars/${discriminator % 5}.png?size=$size";
   }
 
   /// Gets the [DMChannel] for the user.

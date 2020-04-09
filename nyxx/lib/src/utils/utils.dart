@@ -9,4 +9,8 @@ class Utils {
       yield list.sublist(i, size > len ? len : size);
     }
   }
+
+  static String getFileExtension(String path) {
+    return pathUtils.Context(style: pathUtils.Style.platform).extension(path);
+  }
 }
