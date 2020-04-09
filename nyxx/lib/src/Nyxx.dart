@@ -271,12 +271,9 @@ class Nyxx implements Disposable {
   /// var user = client.getClient(Snowflake("302359032612651009"));
   /// ``
   Future<User?> getUser(Snowflake id) async {
-    //if (this.users.hasKey(id)) return this.users[id];
+    if (this.users.hasKey(id)) return this.users[id];
 
     var r = await this._http.send("GET", "/users/${id.toString()}");
-
-    print(r.body);
-
     return User._new(r.body as Map<String, dynamic>, this);
   }
 
@@ -298,7 +295,8 @@ class Nyxx implements Disposable {
     return Guild._new(this, r.body as Map<String, dynamic>);
   }
 
-  /// Gets a webhook by its ID and token.
+  /// Gets a webhook by its id and/or token.
+  /// If token is supplied authentication is not needed.
   Future<Webhook> getWebhook(String id, {String token = ""}) async {
     final r = await _http.send('GET', "/webhooks/$id/$token");
     return Webhook._new(r.body as Map<String, dynamic>, this);

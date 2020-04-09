@@ -30,7 +30,7 @@ class Webhook extends SnowflakeEntity implements ISend, IMessageAuthor {
   String get username => this.name.toString();
 
   @override
-  String get discriminator => "";
+  int get discriminator => -1;
 
   @override
   bool get bot => true;
@@ -86,6 +86,7 @@ class Webhook extends SnowflakeEntity implements ISend, IMessageAuthor {
 
   @override
 
+  // TODO: SUPPOER MULTIPLE EMBEDS
   /// Allows to send message via webhook
   Future<Message?> send(
       {Object content = "",
@@ -112,15 +113,10 @@ class Webhook extends SnowflakeEntity implements ISend, IMessageAuthor {
     HttpResponse r;
     if (files != null && files.isNotEmpty) {
       r = await client._http.sendMultipart(
-          'POST', '/channels/${this.id}/messages', files,
-          data: reqBody..addAll({"tts": tts}));
+          'POST', '/webhooks/${this.id}/${this.token}', files,
+          data: reqBody);
     } else {
-      if(this.channel == null) {
-        return null;
-      }
-
-      r = await client._http.send(
-          'POST', '/channels/${this.channel!.id}/messages',
+      r = await client._http.send('POST', '/webhooks/${this.id}/${this.token}',
           body: reqBody..addAll({"tts": tts}));
     }
 
