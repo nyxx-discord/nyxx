@@ -129,6 +129,9 @@ part 'src/objects/message/Emoji.dart';
 part 'src/objects/message/Reaction.dart';
 part 'src/objects/message/Message.dart';
 part 'src/objects/message/Attachment.dart';
+part 'src/objects/message/MessageFlags.dart';
+part 'src/objects/message/MessageReference.dart';
+part 'src/objects/message/MessageType.dart';
 
 part 'src/objects/application/ClientOAuth2Application.dart';
 part 'src/objects/application/OAuth2Application.dart';
