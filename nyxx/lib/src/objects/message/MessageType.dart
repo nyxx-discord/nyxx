@@ -15,6 +15,7 @@ class MessageType {
   static const MessageType userPremiumGuildSubscriptionTier3 = const MessageType._create(11);
   static const MessageType channelFollowAdd = const MessageType._create(12);
   static const MessageType guildDiscoveryDisqualified = const MessageType._create(14);
+  static const MessageType guildStream = const MessageType._create(13);
   static const MessageType guildDiscoveryRequalified =const MessageType._create(15);
 
   final int _value;
