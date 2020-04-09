@@ -23,7 +23,7 @@ class Message extends SnowflakeEntity implements GuildEntity, Disposable {
   IMessageAuthor? author;
 
   // TODO: Consider how to handle properly webhooks as message authors.
-  late final bool isByWebhook;
+  bool get isByWebhook => author is Webhook;
 
   /// The mentions in the message. [User] value of this map can be [Member]
   late final Map<Snowflake, User> mentions;
@@ -49,7 +49,17 @@ class Message extends SnowflakeEntity implements GuildEntity, Disposable {
   /// List of message reactions
   late final List<Reaction> reactions;
 
+  /// Type of message
   late final MessageType type;
+
+  /// Reference to original message if this message cross posts other message
+  late final MessageReference? crosspostReference;
+
+  /// True if this message is cross posts other message
+  bool get isCrossposting => this.crosspostReference != null;
+
+  /// Extra features of the message
+  MessageFlags? flags;
 
   /// Returns clickable url to this message.
   String get url => "https://discordapp.com/channels/${this.guild!.id}"
@@ -65,17 +75,24 @@ class Message extends SnowflakeEntity implements GuildEntity, Disposable {
     this.pinned = raw['pinned'] as bool;
     this.tts = raw['tts'] as bool;
     this.mentionEveryone = raw['mention_everyone'] as bool;
+    this.type = MessageType.from(raw['type'] as int);
+
+    if(raw['flags'] != null) {
+      this.flags = MessageFlags._new(raw['flags'] as int);
+    }
+
+    if(raw['message_reference'] != null) {
+      this.crosspostReference = MessageReference._new(raw['message_reference']
+        as Map<String, dynamic>, client);
+    }
 
     if (this.channel is GuildChannel) {
       this.guild = (this.channel as GuildChannel).guild;
 
       if(raw['webhook_id'] != null) {
-        this.isByWebhook = true;
         this.author = Webhook._new(raw['author'] as Map<String, dynamic>, client);
 
       } else if (raw['author'] != null) {
-        this.isByWebhook = false;
-
         this.author =
             this.guild!.members[Snowflake(raw['author']['id'] as String)];
 
@@ -264,5 +281,3 @@ class Message extends SnowflakeEntity implements GuildEntity, Disposable {
     attachments.clear();
   }
 }
-
-class MessageType {}
