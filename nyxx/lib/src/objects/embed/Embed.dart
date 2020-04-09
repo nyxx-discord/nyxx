@@ -4,40 +4,40 @@ part of nyxx;
 /// Can contain null elements.
 class Embed implements Convertable<EmbedBuilder> {
   /// The embed's title.
-  late final String? title;
+  String? title;
 
   /// The embed's type
-  late final String? type;
+  String? type;
 
   /// The embed's description.
-  late final String? description;
+  String? description;
 
   /// The embed's URL
-  late final String? url;
+  String? url;
 
   /// Timestamp of embed content
-  late final DateTime? timestamp;
+  DateTime? timestamp;
 
   /// Color of embed
-  late final DiscordColor? color;
+  DiscordColor? color;
 
   /// Embed's footer
-  late final EmbedFooter? footer;
+  EmbedFooter? footer;
 
   /// The embed's thumbnail, if any.
-  late final EmbedThumbnail? thumbnail;
+  EmbedThumbnail? thumbnail;
 
   /// The embed's provider, if any.
-  late final EmbedProvider? provider;
+  EmbedProvider? provider;
 
   /// Embed image
-  late final EmbedThumbnail? image;
+  EmbedThumbnail? image;
 
   /// Embed video
-  late final EmbedVideo? video;
+  EmbedVideo? video;
 
   /// Embed author
-  late final EmbedAuthor? author;
+  EmbedAuthor? author;
 
   /// Map of fields of embed. Map(name, field)
   late final List<EmbedField> fields;
@@ -46,6 +46,7 @@ class Embed implements Convertable<EmbedBuilder> {
     if (raw['title'] != null) {
       this.title = raw['title'] as String;
     }
+
     if (raw['url'] != null) {
       this.url = raw['url'] as String;
     }

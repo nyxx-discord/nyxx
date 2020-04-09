@@ -614,17 +614,13 @@ class Guild extends SnowflakeEntity implements Disposable {
     return _StandardMember(r.body as Map<String, dynamic>, this, client);
   }
 
-  /// Gets all of the webhooks for this guild.
-  Future<Map<Snowflake, Webhook>> getWebhooks() async {
-    HttpResponse r = await client._http.send('GET', "/guilds/$id/webhooks");
+  /// Gets all of the webhooks for this channel.
+  Stream<Webhook> getWebhooks() async* {
+    HttpResponse r = await client._http.send('GET', "/channels/$id/webhooks");
 
-    Map<Snowflake, Webhook> map = Map();
-    r.body.forEach((k, o) {
-      var webhook = Webhook._new(o as Map<String, dynamic>, client);
-      map[webhook.id] = webhook;
-    });
-
-    return map;
+    for(var o in r.body.values) {
+      yield Webhook._new(o as Map<String, dynamic>, client);
+    }
   }
 
   /// Deletes the guild.

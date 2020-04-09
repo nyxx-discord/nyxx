@@ -51,16 +51,12 @@ class TextChannel extends MessageChannel
   }
 
   /// Gets all of the webhooks for this channel.
-  Future<Map<String, Webhook>> getWebhooks() async {
+  Stream<Webhook> getWebhooks() async* {
     HttpResponse r = await client._http.send('GET', "/channels/$id/webhooks");
-    Map<String, Webhook> map = Map();
 
-    r.body.forEach((k, o) {
-      Webhook webhook = Webhook._new(o as Map<String, dynamic>, client);
-      map[webhook.id.toString()] = webhook;
-    });
-
-    return map;
+    for(var o in r.body.values) {
+      yield Webhook._new(o as Map<String, dynamic>, client);
+    }
   }
 
   /// Creates a webhook for channel.
