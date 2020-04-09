@@ -46,7 +46,7 @@ class User extends SnowflakeEntity with ISend, Mentionable, IMessageAuthor {
   User._new(Map<String, dynamic> raw, this.client)
       : super(Snowflake(raw['id'] as String)) {
     this.username = raw['username'] as String;
-    this.discriminator = raw['discriminator'] as int;
+    this.discriminator = int.parse(raw['discriminator'] as String);
     this.avatar = raw['avatar'] as String?;
     this.bot = raw['bot'] as bool? ?? false;
     this.system = raw['system'] as bool? ?? false;
