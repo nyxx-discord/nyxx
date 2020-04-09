@@ -149,13 +149,18 @@ class Shard implements Disposable {
               "\$device": "nyxx",
             },
             "large_threshold": this._ws._client._options.largeThreshold,
-            "compress": !browser
+            "compress": !browser,
           };
+
+          if(_ws._client._options.gatewayIntents != null) {
+            identifyMsg["intents"] = _ws._client._options.gatewayIntents!._calculate();
+          }
 
           identifyMsg['shard'] = <int>[
             this.id,
             _ws._client._options.shardCount
           ];
+
           this.send("IDENTIFY", identifyMsg);
         } else if (resume) {
           this.send("RESUME", <String, dynamic>{
@@ -408,6 +413,11 @@ class Shard implements Disposable {
     switch (this._socket?.closeCode) {
       case 4004:
       case 4010:
+        exit(1);
+        break;
+      case 4013:
+        _logger.shout("Cannot connect to gateway due intent value is invalid. "
+            "Check https://discordapp.com/developers/docs/topics/gateway#gateway-intents for more info.");
         exit(1);
         break;
       case 4007:
