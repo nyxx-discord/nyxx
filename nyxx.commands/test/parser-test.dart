@@ -25,18 +25,29 @@ void main() {
 
     if(event.message!.content == "Test 10") {
       await event.message!.delete();
+
+      await event.message!.channel.send(content: "CommandsParser tests completed sucessfuly!");
       exit(0);
     }
   });
 
   bot.onReady.listen((e) async {
     var channel = bot.channels[Snowflake('422285619952222208')] as TextChannel;
-    channel.send(content: "test>test1");
-    channel.send(content: "test>test2 arg1");
+
+    await channel.send(content: "Testing CommandsParser");
+
+    var msg1 = await channel.send(content: "test>test1");
+    msg1.delete();
+
+    var msg2 = await channel.send(content: "test>test2 arg1");
+    msg2.delete();
+
+    var msg3 = await channel.send(content: "test>test3");
+    msg3.delete();
   });
 
   CommandParser("test>", bot, (message, author, channel) async {
-    if(message.content.startsWith("test-test>")) {
+    if(message.content.endsWith("test3")) {
       await channel.send(content: "Test 10");
       return true;
     }
