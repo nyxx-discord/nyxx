@@ -1,5 +1,10 @@
 part of nyxx.commands;
 
+/// Used to decide if message can be executed in context.
+/// Can be used to set different prefixes based on guild from which message comes from.
+/// Callback is executed before dispatching message into command framework and based on return value message is dispatched or not.
+typedef FutureOr<bool> DispatchCallback(Guild? guild, String messageContent, MessageReceivedEvent event);
+
 /// Main point of commands in Nyxx.
 /// It gets all sent messages and matches to registered command and invokes its action based on registered commands.
 class CommandsFramework {
@@ -22,10 +27,11 @@ class CommandsFramework {
 
   Nyxx client;
 
-  /// Creates commands framework handler. Requires prefix to handle commands.
+  /// Creates commands framework handler.
+  /// Requires [prefix] or [callback] to handle commands. If both supplied [prefix] will be ignored.
   CommandsFramework(this.client,
       {this.prefix,
-      Stream<MessageEvent>? stream,
+      DispatchCallback? callback,
       Duration roundupTime = const Duration(minutes: 2),
       bool ignoreBots = true,
       List<Snowflake> admins = const []}) {
@@ -40,20 +46,28 @@ class CommandsFramework {
     _typeConverters = List();
 
     client.onReady.listen((_) {
-      if (prefix == null && stream == null) {
-        prefix = client.self.mention;
-        stream = client.onSelfMention;
-      } else if (stream == null && prefix != null) {
-        stream = client.onMessageReceived;
-      } else if (stream != null && prefix == null) {
-        prefix = client.self.mention;
+      if (prefix == null && callback == null) {
+        _logger.shout("Command framework isn't configured correcly. Supply it with prefix or implement DispatchCallback.");
+        exit(1);
+      } else if (callback == null && prefix != null) {
+        callback = (Guild? guild, String messageContent, MessageReceivedEvent event) async {
+          if (ignoreBots && event.message?.author != null && event.message!.author!.bot) return false;
+          if (!messageContent.startsWith(prefix)) return false;
+
+          return true;
+        };
       }
 
-      stream!.listen((MessageEvent e) {
-        if (ignoreBots && e.message?.author != null && e.message!.author!.bot) return;
-        if (!e.message!.content.startsWith(prefix)) return;
+      client.onMessageReceived.listen((MessageReceivedEvent e) async {
+        if(e.message == null) {
+          return;
+        }
 
-        Future(() => _dispatch(e));
+        var result = await callback!(e.message!.guild, e.message!.content, e);
+
+        if(result) {
+          Future(() => _dispatch(e));
+        }
       });
     });
   }
