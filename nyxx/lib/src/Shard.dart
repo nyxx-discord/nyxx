@@ -420,6 +420,12 @@ class Shard implements Disposable {
             "Check https://discordapp.com/developers/docs/topics/gateway#gateway-intents for more info.");
         exit(1);
         break;
+      case 4014:
+        _logger.shout("You sent a disallowed intent for a Gateway Intent. "
+            "You may have tried to specify an intent that you have not enabled or are not whitelisted for. "
+            "Check https://discordapp.com/developers/docs/topics/gateway#gateway-intents for more info.");
+        exit(1);
+        break;
       case 4007:
       case 4009:
         Future.delayed(const Duration(seconds: 3), () => this._connect(true));
