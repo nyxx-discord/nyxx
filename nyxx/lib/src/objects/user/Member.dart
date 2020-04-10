@@ -30,6 +30,9 @@ abstract class Member extends User implements GuildEntity {
   /// A list of [Role]s the member has.
   late List<Role> roles;
 
+  /// The highest displayed role that a member has, null if they don't have any
+  Role? hoistedRole;
+
   @override
 
   /// The guild that the member is a part of.
@@ -40,6 +43,7 @@ abstract class Member extends User implements GuildEntity {
       ? guild.everyoneRole
       : roles.reduce((f, s) => f.position > s.position ? f : s);
 
+  /// Color of highest role of user
   DiscordColor get color => highestRole.color;
 
   /// Voice state of member
@@ -60,23 +64,27 @@ abstract class Member extends User implements GuildEntity {
     return Permissions.fromInt(total);
   }
 
-  Member._new(Map<String, dynamic> data, Map<String, dynamic> user, this.guild,
+  Member._new(Map<String, dynamic> raw, Map<String, dynamic> user, this.guild,
       Nyxx client)
       : super._new(user, client) {
-    this.nickname = data['nick'] as String;
-    this.deaf = data['deaf'] as bool;
-    this.mute = data['mute'] as bool;
+    this.nickname = raw['nick'] as String;
+    this.deaf = raw['deaf'] as bool;
+    this.mute = raw['mute'] as bool;
 
     this.roles = List();
-    data['roles'].forEach((i) {
-      this.roles.add(guild.roles[Snowflake(i as String)]);
+    raw['roles'].forEach((i) {
+      this.roles.add(guild.roles[Snowflake(i)]);
     });
 
-    if (data['joined_at'] != null)
-      this.joinedAt = DateTime.parse(data['joined_at'] as String).toUtc();
+    if(raw['hoisted_role'] != null) {
+      this.hoistedRole = this.roles.firstWhere((element) => element.id == Snowflake(raw['hoisted_role']));
+    }
 
-    if (data['game'] != null)
-      this.presence = Presence._new(data['game'] as Map<String, dynamic>);
+    if (raw['joined_at'] != null)
+      this.joinedAt = DateTime.parse(raw['joined_at'] as String).toUtc();
+
+    if (raw['game'] != null)
+      this.presence = Presence._new(raw['game'] as Map<String, dynamic>);
   }
 
   /// Checks if member has specified role. Returns true if user is assigned to given role.
