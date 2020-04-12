@@ -6,10 +6,16 @@ class Snowflake implements Comparable<Snowflake> {
   static final discordEpoch = 1420070400000;
   static final snowflakeDateOffset = 1 << 22;
 
-  final String _id;
+  late final int _id;
 
   /// Creates new instance of [Snowflake].
-  Snowflake(dynamic id) : _id = id.toString();
+  Snowflake(dynamic id) {
+    if(id is int) {
+      _id = id;
+    } else {
+      _id = int.parse(id.toString());
+    }
+  }
 
   /// Creates synthetic snowflake based on current time
   Snowflake.fromNow() : _id = _parseId(DateTime.now());
@@ -22,7 +28,7 @@ class Snowflake implements Comparable<Snowflake> {
   Snowflake.fromDateTime(DateTime date) : _id = _parseId(date);
 
   /// Full snowflake id
-  String get id => _id;
+  int get id => _id;
 
   /// Checks if given [Snowflake] [s] is created before this instance
   bool isBefore(Snowflake s) => this.timestamp.isBefore(s.timestamp);
@@ -35,27 +41,23 @@ class Snowflake implements Comparable<Snowflake> {
       first.timestamp.compareTo(second.timestamp);
 
   //  Parses id from dateTime
-  static String _parseId(DateTime timestamp) =>
-      ((timestamp.millisecondsSinceEpoch - discordEpoch) * snowflakeDateOffset)
-          .toString();
+  static int _parseId(DateTime timestamp) =>
+      ((timestamp.millisecondsSinceEpoch - discordEpoch) * snowflakeDateOffset);
 
   /// Returns timestamp included in [Snowflake]
   /// [Snowflake reference](https://discordapp.com/developers/docs/reference#snowflakes)
   DateTime get timestamp => DateTime.fromMillisecondsSinceEpoch(
-      (BigInt.parse(_id) >> 22).toInt() + discordEpoch,
+      (_id >> 22).toInt() + discordEpoch,
       isUtc: true);
 
   @override
-  String toString() => _id;
-
-  /// Returns [Snowflake] as [int]
-  int toInt() => int.parse(this._id);
+  String toString() => _id.toString();
 
   @override
   bool operator ==(other) {
     if (other is Snowflake) return other.id == this._id;
-    if (other is int) return other.toString() == this._id;
-    if (other is String) return other == this._id;
+    if (other is int) return other == this._id;
+    if (other is String) return other == this._id.toString();
 
     return false;
   }
