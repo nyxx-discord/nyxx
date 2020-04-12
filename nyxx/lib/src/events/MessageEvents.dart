@@ -84,8 +84,9 @@ class MessageReactionEvent extends MessageEvent {
       if (r == -1) {
         var reaction = Reaction._event(emoji!, user == client.self);
         message!.reactions.add(reaction);
-      } else
+      } else {
         message!.reactions[r].count++;
+      }
 
       if (this.message != null) {
         client._events.onMessageReactionAdded.add(this);
