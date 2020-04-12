@@ -13,7 +13,7 @@ class VoiceState {
   Guild? guild;
 
   /// Channel id user is connected
-  late final VoiceChannel? channel;
+  VoiceChannel? channel;
 
   /// Whether this user is muted by the server
   late final bool deaf;
