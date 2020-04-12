@@ -22,23 +22,23 @@ class MessageDeleteEvent extends MessageEvent {
   @override
 
   /// The message, if cached.
-  late final Message? message;
+  late Message? message;
 
   /// The ID of the message.
   late final Snowflake? id;
 
+  // TODO: NNBD - To consider
   MessageDeleteEvent._new(Map<String, dynamic> json, Nyxx client) {
-    if ((client.channels[Snowflake(json['d']['channel_id'] as String)]
-                as MessageChannel)
-            .messages[Snowflake(json['d']['id'] as String)] !=
-        null) {
+    var channel = client.channels[Snowflake(json['d']['channel_id'] as String)] as MessageChannel?;
+    var messageSnowflake = Snowflake(json['d']['id']);
 
-      /// TODO: NNBD - To consider
-      this.message = (client.channels[Snowflake(json['d']['channel_id'] as String)] as MessageChannel).messages[Snowflake(json['d']['id'] as String)];
+    var message = channel?.messages[messageSnowflake];
 
-      this.id = message?.id;
+    if (message != null) {
+      this.message = message;
+      this.id = message.id;
     } else {
-      this.id = Snowflake((json['d']['id'] as String));
+      this.id = messageSnowflake;
     }
 
     if(this.id != null) {
