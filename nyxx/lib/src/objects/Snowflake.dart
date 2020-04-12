@@ -8,6 +8,15 @@ class Snowflake implements Comparable<Snowflake> {
 
   late final int _id;
 
+  /// Full snowflake id
+  int get id => _id;
+
+  /// Returns timestamp included in [Snowflake]
+  /// [Snowflake reference](https://discordapp.com/developers/docs/reference#snowflakes)
+  DateTime get timestamp => DateTime.fromMillisecondsSinceEpoch(
+      (_id >> 22).toInt() + discordEpoch,
+      isUtc: true);
+
   /// Creates new instance of [Snowflake].
   Snowflake(dynamic id) {
     if(id is int) {
@@ -27,9 +36,6 @@ class Snowflake implements Comparable<Snowflake> {
   /// Creates synthetic snowflake based on given [date].
   Snowflake.fromDateTime(DateTime date) : _id = _parseId(date);
 
-  /// Full snowflake id
-  int get id => _id;
-
   /// Checks if given [Snowflake] [s] is created before this instance
   bool isBefore(Snowflake s) => this.timestamp.isBefore(s.timestamp);
 
@@ -43,12 +49,6 @@ class Snowflake implements Comparable<Snowflake> {
   //  Parses id from dateTime
   static int _parseId(DateTime timestamp) =>
       ((timestamp.millisecondsSinceEpoch - discordEpoch) * snowflakeDateOffset);
-
-  /// Returns timestamp included in [Snowflake]
-  /// [Snowflake reference](https://discordapp.com/developers/docs/reference#snowflakes)
-  DateTime get timestamp => DateTime.fromMillisecondsSinceEpoch(
-      (_id >> 22).toInt() + discordEpoch,
-      isUtc: true);
 
   @override
   String toString() => _id.toString();
