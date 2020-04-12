@@ -10,7 +10,7 @@ documentation: https://github.com/l7ssha/nyxx/wiki
 issue_tracker: https://github.com/l7ssha/nyxx/issue
 
 environment:
-  sdk: '>=2.6.0 <3.0.0'
+  sdk: '>=2.8.0-dev.20.0 <3.0.0'
 
 dependencies:
   nyxx: "^1.0.0"

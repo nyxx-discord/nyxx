@@ -70,8 +70,8 @@ class HttpBase {
       final r = await req.send(this.method);
       return HttpResponse._fromResponse(this, r);
     } on transport.RequestException catch (e) {
-      return new HttpResponse._new(this, e.response?.status!,
-          e.response?.statusText!, e.response?.headers!, {});
+      return new HttpResponse._new(this, e.response.status,
+          e.response.statusText, e.response.headers, {});
     }
   }
 }
@@ -174,10 +174,10 @@ class HttpBucket {
   Uri url;
 
   /// The number of requests that can be made.
-  late int limit;
+  late int? limit;
 
   /// The number of remaining requests that can be made. May not always be accurate.
-  int rateLimitRemaining = 2;
+  int? rateLimitRemaining = 2;
 
   /// When the ratelimits reset.
   late DateTime? rateLimitReset;
@@ -207,7 +207,8 @@ class HttpBucket {
   }
 
   void _execute(HttpBase request, Nyxx client) async {
-    if (this.rateLimitRemaining == null || this.rateLimitRemaining > 1) {
+    // TODO: NNBD - To consider
+    if (this.rateLimitRemaining == null || this.rateLimitRemaining! > 1) {
       final HttpResponse r = await request._execute();
       this.limit = r.headers['x-ratelimit-limit'] != null
           ? int.parse(r.headers['x-ratelimit-limit'])
@@ -226,7 +227,7 @@ class HttpBucket {
             .add(RatelimitEvent._new(request, false, r));
         request.http._logger.warning(
             "Rate limitted via 429 on endpoint: ${request.path}. Trying to send request again after timeout...");
-        Timer(Duration(milliseconds: (r.body['retry_after'] as int) ?? 0 + 100),
+        Timer(Duration(milliseconds: (r.body['retry_after'] as int?) ?? 0 + 100),
             () => this._execute(request, client));
       } else {
         this.waiting = false;

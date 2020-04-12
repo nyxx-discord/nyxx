@@ -36,7 +36,7 @@ class EmbedBuilder implements Builder {
   late final List<EmbedFieldBuilder> _fields;
 
   EmbedBuilder() {
-    _fields = List();
+    _fields = [];
   }
 
   /// Adds author to embed.

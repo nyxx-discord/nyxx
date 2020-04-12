@@ -10,9 +10,9 @@ part of nyxx.interactivity;
 Future<Map<Emoji, int>> createPoll(
     TextChannel channel, String title, Map<Emoji, String> options,
     {Duration timeout = const Duration(minutes: 10),
-      String message,
+      String? message,
       bool delete = false,
-      dynamic messageFactory(Map<Emoji, String> options, String message)}) async {
+      dynamic messageFactory(Map<Emoji, String> options, String message)?}) async {
   var toSend;
 
   if (messageFactory == null) {
@@ -27,7 +27,7 @@ Future<Map<Emoji, int>> createPoll(
 
     toSend = buffer.toString();
   } else {
-    toSend = messageFactory(options, message);
+    toSend = messageFactory(options, message!);
   }
 
   Message msg;
@@ -42,7 +42,7 @@ Future<Map<Emoji, int>> createPoll(
 
   var m = Map<Emoji, int>();
   return Future<Map<Emoji, int>>(() async {
-    await for (MessageReactionEvent r in channel.client.onMessageReactionAdded.where((evnt) => evnt.message.id == msg.id) as Stream<MessageReactionEvent>) {
+    await for (MessageReactionEvent r in channel.client.onMessageReactionAdded.where((evnt) => evnt.message?.id == msg.id)) {
       if (m.containsKey(r.emoji))
         m[r.emoji] += 1;
       else

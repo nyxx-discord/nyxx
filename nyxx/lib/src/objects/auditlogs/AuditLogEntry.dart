@@ -26,7 +26,7 @@ class AuditLogEntry extends SnowflakeEntity {
       : super(Snowflake(raw['id'] as String)) {
     targetId = raw['targetId'] as String;
 
-    changes = List();
+    changes = [];
     if (raw['changes'] != null) {
       for (var o in raw['changes']) {
         changes.add(AuditLogChange._new(o as Map<String, dynamic>));

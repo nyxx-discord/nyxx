@@ -40,7 +40,7 @@ mixin GuildChannel implements Channel, GuildEntity {
 
     this.nsfw = raw['nsfw'] as bool? ?? false;
 
-    this.permissions = List();
+    this.permissions = [];
     if (raw['permission_overwrites'] != null) {
       raw['permission_overwrites'].forEach((o) {
         permissions.add(PermissionsOverrides._new(o as Map<String, dynamic>));
@@ -82,14 +82,14 @@ mixin GuildChannel implements Channel, GuildEntity {
     /// TODO: NNBD - To consider
     try {
       var over =
-          this.permissions!.firstWhere((f) => f.id == guild.everyoneRole.id);
+          this.permissions.firstWhere((f) => f.id == guild.everyoneRole.id);
 
       permissions &= ~over.deny;
       permissions |= over.allow;
     } catch (e) {}
 
     try {
-      var over = this.permissions!.firstWhere((f) => f.id == role.id);
+      var over = this.permissions.firstWhere((f) => f.id == role.id);
 
       permissions &= ~over.deny;
       permissions |= over.allow;

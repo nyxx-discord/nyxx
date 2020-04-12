@@ -10,7 +10,7 @@ class AppTeam extends SnowflakeEntity{
     this.iconHash = raw['icon'] as String?;
     this.ownerId = Snowflake(raw['owner_user_id']);
 
-    this.members = List();
+    this.members = [];
     for(Map<String, dynamic> obj in raw['members']) {
       this.members.add(AppTeamMember._new(obj));
     }

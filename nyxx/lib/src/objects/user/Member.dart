@@ -71,13 +71,13 @@ abstract class Member extends User implements GuildEntity {
     this.deaf = raw['deaf'] as bool;
     this.mute = raw['mute'] as bool;
 
-    this.roles = List();
+    this.roles = [];
     raw['roles'].forEach((i) {
       this.roles.add(guild.roles[Snowflake(i)]);
     });
 
     if(raw['hoisted_role'] != null && roles.isNotEmpty) {
-      this.hoistedRole = this.roles.firstWhere((element) => element?.id == Snowflake(raw['hoisted_role']), orElse: () => null);
+      this.hoistedRole = this.roles.firstWhere((element) => element.id == Snowflake(raw['hoisted_role']), orElse: () => null);
     }
 
     if (raw['joined_at'] != null)

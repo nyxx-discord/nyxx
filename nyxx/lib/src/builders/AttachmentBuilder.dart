@@ -51,7 +51,7 @@ class AttachmentBuilder {
 
   Stream<List<int>> _openRead() => this._file != null
       ? this._file!.openRead()
-      : Stream.fromIterable([this._bytes]);
+      : Stream.fromIterable([this._bytes!]);
 
   // creates instance of MultipartFile
   transport.MultipartFile _asMultipartFile() =>
