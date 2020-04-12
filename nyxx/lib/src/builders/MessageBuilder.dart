@@ -22,7 +22,7 @@ class MessageBuilder {
 
   /// Add attachment
   void addAttachment(AttachmentBuilder attachment) {
-    if (this.files == null) this.files = List();
+    if (this.files == null) this.files = [];
 
     this.files!.add(attachment);
   }

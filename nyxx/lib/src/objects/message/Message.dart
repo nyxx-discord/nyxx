@@ -153,7 +153,7 @@ class Message extends SnowflakeEntity implements GuildEntity, Disposable {
       });
     }
 
-    this.embeds = List<Embed>();
+    this.embeds = [];
     if (raw['embeds'] != null && raw['embeds'].isNotEmpty as bool) {
       raw['embeds'].forEach((o) {
         Embed embed = Embed._new(o as Map<String, dynamic>);
@@ -170,7 +170,7 @@ class Message extends SnowflakeEntity implements GuildEntity, Disposable {
       });
     }
 
-    this.reactions = List();
+    this.reactions = [];
     if (raw['reactions'] != null && raw['reactions'].isNotEmpty as bool) {
       raw['reactions'].forEach((o) {
         this.reactions.add(Reaction._new(o as Map<String, dynamic>));

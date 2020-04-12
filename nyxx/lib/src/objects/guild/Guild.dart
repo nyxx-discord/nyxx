@@ -318,7 +318,7 @@ class Guild extends SnowflakeEntity implements Disposable {
   Future<List<Ban>> getBans() async {
     final r = await client._http.send('GET', "/guilds/$id/bans");
 
-    List<Ban> lst = List();
+    List<Ban> lst = [];
     r.body.forEach((o) {
       lst.add(Ban._new(o as Map<String, dynamic>, client));
     });
@@ -377,7 +377,7 @@ class Guild extends SnowflakeEntity implements Disposable {
     HttpResponse r = await client._http.send('GET', "/guilds/$id/invites");
 
     var raw = r.body as List<dynamic>;
-    List<Invite> tmp = List();
+    List<Invite> tmp = [];
     raw.forEach((v) {
       tmp.add(Invite._new(v as Map<String, dynamic>, client));
     });
@@ -457,7 +457,7 @@ class Guild extends SnowflakeEntity implements Disposable {
     var r = await client._http.send('GET', "/guilds/$id/regions");
 
     var raw = r.body as List<dynamic>;
-    List<VoiceRegion> tmp = List();
+    List<VoiceRegion> tmp =[];
     raw.forEach((v) {
       tmp.add(VoiceRegion._new(v as Map<String, dynamic>));
     });

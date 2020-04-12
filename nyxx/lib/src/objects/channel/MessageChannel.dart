@@ -101,7 +101,7 @@ class MessageChannel extends Channel
     var newContent = _sanitizeMessage(content, disableEveryone, client);
 
     Map<String, dynamic> reqBody = {
-      "content": newContent ?? "",
+      "content": newContent,
       "embed": embed != null ? embed._build() : ""
     };
 

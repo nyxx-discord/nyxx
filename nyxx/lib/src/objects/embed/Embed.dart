@@ -93,10 +93,10 @@ class Embed implements Convertable<EmbedBuilder> {
           EmbedProvider._new(raw['provider'] as Map<String, dynamic>);
     }
 
-    fields = List();
+    fields = [];
     if (raw['fields'] != null) {
-      raw['fields'].forEach((dynamic o) {
-        fields!.add(EmbedField._new(o as Map<String, dynamic>));
+      raw['fields'].forEach((o) {
+        fields.add(EmbedField._new(o as Map<String, dynamic>));
       });
     }
   }

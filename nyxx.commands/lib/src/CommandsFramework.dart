@@ -11,7 +11,7 @@ class CommandsFramework {
   late final List<_CommandMetadata> _commands;
   late final List<TypeConverter> _typeConverters;
   late final CooldownCache _cooldownCache;
-  late final List<Object> _services = List();
+  late final List<Object> _services = [];
   late final List<Snowflake> _admins;
 
   late final StreamController<CommandExecutionError> _onError;
@@ -36,14 +36,14 @@ class CommandsFramework {
       bool ignoreBots = true,
       List<Snowflake> admins = const []}) {
 
-    this._commands = List();
+    this._commands = [];
     _cooldownCache = CooldownCache(roundupTime);
     _admins = admins;
 
     _onError = StreamController.broadcast();
     onError = _onError.stream;
 
-    _typeConverters = List();
+    _typeConverters = [];
 
     client.onReady.listen((_) {
       if (prefix == null && callback == null) {
@@ -115,7 +115,7 @@ class CommandsFramework {
     }) as MethodMirror;
 
     var params = ctor.parameters;
-    var toInject = List<dynamic>();
+    List<dynamic> toInject = [];
 
     for (var param in params) {
       for (var service in _services) {
@@ -381,10 +381,10 @@ class CommandsFramework {
 
   // Groups params into
   List<String> _escapeParameters(List<String> splitted) {
-    var tmpList = List<String>();
+    var tmpList = <String>[];
     var isInto = false;
 
-    var finalList = List<String>();
+    var finalList = <String>[];
 
     for (var item in splitted) {
       if (isInto) {
@@ -413,7 +413,7 @@ class CommandsFramework {
       MethodMirror method, List<String> splitted, Message msg) async {
     var params = method.parameters;
 
-    List<Object> collected = List();
+    List<Object> collected = [];
     var index = 0;
 
     Future<bool> parsePrimitives(Type type) async {
