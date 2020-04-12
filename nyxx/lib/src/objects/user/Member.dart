@@ -76,8 +76,8 @@ abstract class Member extends User implements GuildEntity {
       this.roles.add(guild.roles[Snowflake(i)]);
     });
 
-    if(raw['hoisted_role'] != null) {
-      this.hoistedRole = this.roles.firstWhere((element) => element.id == Snowflake(raw['hoisted_role']));
+    if(raw['hoisted_role'] != null && roles.isNotEmpty) {
+      this.hoistedRole = this.roles.firstWhere((element) => element?.id == Snowflake(raw['hoisted_role']), orElse: () => null);
     }
 
     if (raw['joined_at'] != null)

@@ -28,8 +28,11 @@ class VoiceState {
   late final bool suppress;
 
   VoiceState._new(Map<String, dynamic> raw, Nyxx client, [Guild? guild]) {
-    this.channel =
-        client.channels[Snowflake(raw['channel_id'] as String)] as VoiceChannel;
+    if(raw['channel_id'] != null) {
+      this.channel =
+          client.channels[Snowflake(raw['channel_id'])] as VoiceChannel?;
+    }
+
     this.deaf = raw['deaf'] as bool;
     this.selfDeaf = raw['self_deaf'] as bool;
     this.selfMute = raw['self_mute'] as bool;

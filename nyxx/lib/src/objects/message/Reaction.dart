@@ -3,7 +3,7 @@ part of nyxx;
 /// Reaction object. [emoji] field can be partial [GuildEmoji].
 class Reaction {
   /// Time this emoji has been used to react
-  late final int count;
+  late int count;
 
   ///	Whether the current user reacted using this emoji
   late final bool me;
