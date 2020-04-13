@@ -1,10 +1,10 @@
 part of nyxx;
 
 class PremiumTier {
-  static const PremiumTier dnd = const PremiumTier._create(0);
-  static const PremiumTier offline = const PremiumTier._create(1);
-  static const PremiumTier online = const PremiumTier._create(2);
-  static const PremiumTier idle = const PremiumTier._create(3);
+  static const PremiumTier none = const PremiumTier._create(0);
+  static const PremiumTier tier1 = const PremiumTier._create(1);
+  static const PremiumTier tier2 = const PremiumTier._create(2);
+  static const PremiumTier tier3 = const PremiumTier._create(3);
 
   final int _value;
 

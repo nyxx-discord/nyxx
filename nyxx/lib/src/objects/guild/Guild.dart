@@ -108,6 +108,21 @@ class Guild extends SnowflakeEntity implements Disposable {
   /// Returns member object for bot user
   Member? get selfMember => members[client.self.id];
 
+  /// Upload limit for this guild in bytes
+  int get fileUploadLimit {
+    var megabyte = 1024 * 1024;
+
+    if(this.premiumTier == PremiumTier.tier2) {
+      return 50 * megabyte;
+    }
+
+    if(this.premiumTier == PremiumTier.tier3) {
+      return 100 * megabyte;
+    }
+
+    return 8 * megabyte;
+  }
+
   Guild._new(this.client, Map<String, dynamic> raw,
       [this.available = true, bool guildCreate = false])
       : super(Snowflake(raw['id'] as String)) {
