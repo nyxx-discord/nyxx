@@ -87,8 +87,9 @@ class Webhook extends SnowflakeEntity implements ISend, IMessageAuthor {
   @override
 
   // TODO: SUPPOER MULTIPLE EMBEDS
+  // TODO: File limits
   /// Allows to send message via webhook
-  Future<Message?> send(
+  Future<Message> send(
       {Object content = "",
       List<AttachmentBuilder>? files,
       EmbedBuilder? embed,

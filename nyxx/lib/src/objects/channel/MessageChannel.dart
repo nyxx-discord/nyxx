@@ -24,6 +24,15 @@ class MessageChannel extends Channel
   /// A collection of messages sent to this channel.
   late final MessageCache messages;
 
+  /// File upload limit for channel
+  int get fileUploadLimit {
+    if (this is GuildChannel) {
+      return (this as GuildChannel).guild.fileUploadLimit;
+    }
+
+    return 8 * 1024 * 1024;
+  }
+
   MessageChannel._new(Map<String, dynamic> raw, int type, Nyxx client)
       : super._new(raw, type, client) {
     this.messages = MessageCache._new(client._options);
@@ -110,6 +119,13 @@ class MessageChannel extends Channel
 
     HttpResponse r;
     if (files != null && files.isNotEmpty) {
+
+      for(var file in files) {
+        if(file._bytes.length > fileUploadLimit) {
+          return Future.error("File with name: [${file._name}] is too big!");
+        }
+      }
+
       r = await client._http.sendMultipart(
           'POST', '/channels/${this.id}/messages', files,
           data: reqBody);
