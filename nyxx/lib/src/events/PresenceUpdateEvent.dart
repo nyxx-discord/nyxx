@@ -20,7 +20,7 @@ class PresenceUpdateEvent {
     if (member == null && 'online' == json['d']['status'].toString()) {
       if (json['d']['user']['username'] != null) {
         this.member =
-            _StandardMember(json['d'] as Map<String, dynamic>, guild, client);
+            Member._standard(json['d'] as Map<String, dynamic>, guild, client);
 
         try {
           this.member!.status = ClientStatus._new(

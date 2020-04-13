@@ -101,11 +101,13 @@ class Message extends SnowflakeEntity implements GuildEntity, Disposable {
             this.author =
                 User._new(raw['author'] as Map<String, dynamic>, client);
           } else {
-            var r = raw['author'];
-            r['member'] = raw['member'];
+            var authorData = raw['author'] as Map<String, dynamic>;
+            var memberData = raw['member'] as Map<String, dynamic>;
+
             // TODO: NNBD - To consider
-            var author = _ReverseMember(r as Map<String, dynamic>,
-                client.guilds[Snowflake(raw['guild_id'] as String)] as Guild, client);
+            var author = Member._fromUser(authorData, memberData,
+                client.guilds[Snowflake(raw['guild_id'])] as Guild, client);
+
             client.users[author.id] = author;
             guild!.members[author.id] = author;
             this.author = author;
@@ -125,11 +127,13 @@ class Message extends SnowflakeEntity implements GuildEntity, Disposable {
         this.author = client.users[Snowflake(raw['author']['id'] as String)];
 
       if (this.author == null && raw['member'] != null) {
-        var r = raw['author'];
-        r['member'] = raw['member'];
+        var authorData = raw['author'] as Map<String, dynamic>;
+        var memberData = raw['member'] as Map<String, dynamic>;
+
         // TODO: NNBD - To consider
-        var author = _ReverseMember(r as Map<String, dynamic>,
-            client.guilds[Snowflake(raw['guild_id'] as String)] as Guild, client);
+        var author = Member._fromUser(authorData, memberData,
+            client.guilds[Snowflake(raw['guild_id'])] as Guild, client);
+
         this.author = author;
       }
     }
@@ -147,7 +151,8 @@ class Message extends SnowflakeEntity implements GuildEntity, Disposable {
           this.mentions[user.id] = user;
         } else {
           final user =
-              _ReverseMember(o as Map<String, dynamic>, this.guild!, client);
+              Member._fromUser(o as Map<String, dynamic>, o['member'] as Map<String, dynamic>, this.guild!, client);
+
           this.mentions[user.id] = user;
         }
       });
