@@ -1,20 +1,7 @@
 part of nyxx;
 
-// TODO: Do something
-// Two classes to simplify Member class itself. Maybe it's over-engineered but at least there is no _cons method anymore
-
-class _StandardMember extends Member {
-  _StandardMember(Map<String, dynamic> data, Guild guild, Nyxx client)
-      : super._new(data, data['user'] as Map<String, dynamic>, guild, client);
-}
-
-class _ReverseMember extends Member {
-  _ReverseMember(Map<String, dynamic> data, Guild guild, Nyxx client)
-      : super._new(data['member'] as Map<String, dynamic>, data, guild, client);
-}
-
 /// A user with [Guild] context.
-abstract class Member extends User implements GuildEntity {
+class Member extends User implements GuildEntity {
   /// The member's nickname, null if not set.
   String? nickname;
 
@@ -62,6 +49,14 @@ abstract class Member extends User implements GuildEntity {
     }
 
     return Permissions.fromInt(total);
+  }
+
+  factory Member._standard(Map<String, dynamic> data, Guild guild, Nyxx client) {
+    return new Member._new(data, data['user'] as Map<String, dynamic>, guild, client);
+  }
+
+  factory Member._fromUser(Map<String, dynamic> dataUser, Map<String, dynamic> dataMember, Guild guild, Nyxx client) {
+    return new Member._new(dataMember, dataUser, guild, client);
   }
 
   Member._new(Map<String, dynamic> raw, Map<String, dynamic> user, this.guild,

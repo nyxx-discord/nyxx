@@ -206,11 +206,12 @@ class Shard implements Disposable {
 
           case 'GUILD_MEMBERS_CHUNK':
             msg['d']['members'].forEach((dynamic o) {
-              var mem = _StandardMember(
+              var mem = Member._standard(
                   o as Map<String, dynamic>,
                   /// TODO: NNBD - To consider
                   (_ws._client.guilds[Snowflake(msg['d']['guild_id'])])!,
                   _ws._client);
+
               _ws._client.users[mem.id] = mem;
               mem.guild.members[mem.id] = mem;
             });
