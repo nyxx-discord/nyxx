@@ -25,6 +25,3 @@ abstract class ISend {
     };
   }
 }
-
-/// Generate [Attachment] string for given [filename]
-String attach(String filename) => "attachment://$filename";

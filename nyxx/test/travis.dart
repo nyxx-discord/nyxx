@@ -88,7 +88,6 @@ void main() {
     await m.deleteReaction(nyxx.UnicodeEmoji('😂'));
 
     await m.delete();
-    await channel.send(content: "--trigger-test");
 
     print("TESTING SENDING FILES");
     channel.send(content: "PLIK SIEMA", files: [
@@ -96,8 +95,7 @@ void main() {
     ]).then((message) async => await message.delete());
 
     print("TESTING ALLOWED MENTIONS");
-    channel.send(content: "@everyone HEJ", allowedMentions: nyxx.AllowedMentions())
-        .then((message) => message.delete());
+    channel.send(content: "@everyone HEJ", allowedMentions: nyxx.AllowedMentions());
     
     print("TESTING EMBEDS");
     var e =
@@ -121,8 +119,12 @@ void main() {
       }
     }
 
-    if(m.content.endsWith("HEJ") && !m.mentionEveryone) {
-      exit(1);
+    if(m.content.endsWith("HEJ")) {
+      if(m.mentionEveryone) {
+        exit(1);
+      }
+
+      await m.delete();
     }
 
     if (m.content == "Testing embed!") {
