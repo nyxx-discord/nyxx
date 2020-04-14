@@ -41,19 +41,19 @@ class CommandContext {
   /// }
   /// ```
   Future<Message> reply(
-      {Object content = "",
-      EmbedBuilder? embed,
-      List<AttachmentBuilder>? files,
-      bool tts = false,
-      bool? disableEveryone,
-      MessageBuilder? builder}) {
+      {dynamic content,
+        List<AttachmentBuilder>? files,
+        EmbedBuilder? embed,
+        bool? tts,
+        AllowedMentions? allowedMentions,
+        MessageBuilder? builder}) {
     return channel.send(
         content: content,
         embed: embed,
         tts: tts,
         files: files,
         builder: builder,
-        disableEveryone: disableEveryone);
+        allowedMentions: allowedMentions);
   }
 
   /// Reply to messages, then delete it when [duration] expires.
@@ -65,19 +65,19 @@ class CommandContext {
   /// }
   /// ```
   Future<Message> replyTemp(Duration duration,
-      {Object content = "",
-      List<AttachmentBuilder>? files,
-      EmbedBuilder? embed,
-      bool tts = false,
-      bool? disableEveryone,
-      MessageBuilder? builder}) {
+      {dynamic content,
+        List<AttachmentBuilder>? files,
+        EmbedBuilder? embed,
+        bool? tts,
+        AllowedMentions? allowedMentions,
+        MessageBuilder? builder}) {
       return channel.send(
           content: content,
           embed: embed,
           files: files,
           tts: tts,
           builder: builder,
-          disableEveryone: disableEveryone).then((msg) {
+          allowedMentions: allowedMentions).then((msg) {
         Timer(duration, () => msg.delete());
         return msg;
       });
@@ -91,12 +91,12 @@ class CommandContext {
   /// }
   /// ```
   Future<Message> replyDelayed(Duration duration,
-      {Object content = "",
-      List<AttachmentBuilder>? files,
-      EmbedBuilder? embed,
-      bool tts = false,
-      bool? disableEveryone,
-      MessageBuilder? builder}) {
+      {dynamic content,
+        List<AttachmentBuilder>? files,
+        EmbedBuilder? embed,
+        bool? tts,
+        AllowedMentions? allowedMentions,
+        MessageBuilder? builder}) {
     return Future.delayed(
         duration,
         () => channel.send(
@@ -105,7 +105,7 @@ class CommandContext {
             files: files,
             tts: tts,
             builder: builder,
-            disableEveryone: disableEveryone));
+            allowedMentions: allowedMentions));
   }
 
   /// Gather emojis of message in given time

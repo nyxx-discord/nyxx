@@ -2,7 +2,7 @@ part of nyxx;
 
 ///Webhooks are a low-effort way to post messages to channels in Discord.
 ///They do not require a bot user or authentication to use.
-class Webhook extends SnowflakeEntity implements ISend, IMessageAuthor {
+class Webhook extends SnowflakeEntity with ISend implements IMessageAuthor {
   /// The webhook's name.
   late final String? name;
 
@@ -90,25 +90,24 @@ class Webhook extends SnowflakeEntity implements ISend, IMessageAuthor {
   // TODO: File limits
   /// Allows to send message via webhook
   Future<Message> send(
-      {Object content = "",
-      List<AttachmentBuilder>? files,
-      EmbedBuilder? embed,
-      bool tts = false,
-      bool? disableEveryone,
-      MessageBuilder? builder}) async {
+        {dynamic content,
+        List<AttachmentBuilder>? files,
+        EmbedBuilder? embed,
+        bool? tts,
+        AllowedMentions? allowedMentions,
+        MessageBuilder? builder}) async {
     if (builder != null) {
       content = builder._content;
       files = builder.files;
       embed = builder.embed;
       tts = builder.tts ?? false;
-      disableEveryone = builder.disableEveryone;
+      allowedMentions = builder.allowedMentions;
     }
 
-    var newContent = _sanitizeMessage(content, disableEveryone, client);
-
     Map<String, dynamic> reqBody = {
-      "content": newContent,
-      "embed": embed != null ? embed._build() : ""
+      ..._initMessage(content, allowedMentions),
+      if(embed != null) "embed" : embed._build(),
+      if(content != null && tts != null) "tts": tts
     };
 
     HttpResponse r;

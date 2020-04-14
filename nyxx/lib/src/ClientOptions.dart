@@ -5,7 +5,7 @@ part of nyxx;
 class ClientOptions {
   /// Whether or not to disable @everyone and @here mentions at a global level.
   /// **It means client won't send any of these. It doesn't mean filtering guild messages.**
-  bool disableEveryone;
+  AllowedMentions? allowedMentions;
 
   /// The index of this shard
   int shardIndex;
@@ -31,11 +31,14 @@ class ClientOptions {
   /// List of ignored events
   List<String> ignoredEvents;
 
+  /// When identifying to the gateway, you can specify an intents parameter which 
+  /// allows you to conditionally subscribe to pre-defined "intents", groups of events defined by Discord. 
+  /// If you do not specify a certain intent, you will not receive any of the gateway events that are batched into that group. 
   GatewayIntents? gatewayIntents;
 
   /// Makes a new `ClientOptions` object.
   ClientOptions(
-      {this.disableEveryone = false,
+      {this.allowedMentions,
       this.shardIndex = 0,
       this.shardCount = 1,
       this.messageCacheSize = 400,

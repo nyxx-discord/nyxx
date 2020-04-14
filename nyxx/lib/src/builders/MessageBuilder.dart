@@ -6,7 +6,7 @@ class MessageBuilder {
   EmbedBuilder? embed;
   bool? tts;
   List<AttachmentBuilder>? files;
-  bool? disableEveryone;
+  AllowedMentions? allowedMentions;
 
   /// Clear content of message and sste new
   set content(Object content) {

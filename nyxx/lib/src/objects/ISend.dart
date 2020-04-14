@@ -2,31 +2,29 @@ part of nyxx;
 
 /// Marks entity to which message can be sent
 abstract class ISend {
+  Nyxx get client;
+
   /// Sends message
   Future<Message?> send(
-      {Object content = "",
+      {dynamic content,
       List<AttachmentBuilder>? files,
       EmbedBuilder? embed,
-      bool tts = false,
-      bool? disableEveryone,
+      bool? tts,
+      AllowedMentions? allowedMentions,
       MessageBuilder? builder});
+
+
+  Map<String, dynamic> _initMessage(dynamic content, AllowedMentions? allowedMentions) {
+    if(allowedMentions == null) {
+      allowedMentions = client._options.allowedMentions;
+    }
+
+    return <String, dynamic>{
+      "content": content == null ? "" : content.toString(),
+      if (allowedMentions != null) "allowed_mentions" : allowedMentions._build()
+    };
+  }
 }
 
 /// Generate [Attachment] string for given [filename]
 String attach(String filename) => "attachment://$filename";
-
-// Sanitized message from @everyone and @here
-String _sanitizeMessage(Object content, bool? disableEveryone, Nyxx client) {
-  var msg = content.toString();
-
-  if (msg.length > 2000)
-    throw new Exception("Message is too long. (2000 characters limit)");
-
-  if (((disableEveryone != null && disableEveryone) ||
-          (disableEveryone == null && client._options.disableEveryone))) {
-    return msg
-        .replaceAll("@everyone", "@\u200Beveryone")
-        .replaceAll("@here", "@\u200Bhere");
-  } else
-    return msg;
-}
