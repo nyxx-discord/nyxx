@@ -15,10 +15,13 @@ class AttachmentBuilder {
     }
   }
 
+  /// Generate [Attachment] string
+  String get attachUrl => "attachment://$_name";
+
   /// Open file at [path] then read it's contents and prepare to send. Name will be automatically extracted from path if no name provided.
   factory AttachmentBuilder.path(String path, {String? name, bool? spoiler}) {
     var bytes = File(path).readAsBytesSync();
-    var fileName = name == null ? pathUtils.basenameWithoutExtension(path) : name;
+    var fileName = name == null ? pathUtils.basename(path) : name;
 
     return new AttachmentBuilder._new(bytes, fileName, spoiler);
   }
@@ -26,7 +29,7 @@ class AttachmentBuilder {
   /// Create attachment from specified file instance. Name will be automatically extracted from path if no name provided.
   factory AttachmentBuilder.file(File file, {String? name, bool? spoiler}) {
     var bytes = file.readAsBytesSync();
-    var fileName = name == null ? pathUtils.basenameWithoutExtension(file.path) : name;
+    var fileName = name == null ? pathUtils.basename(file.path) : name;
 
     return AttachmentBuilder._new(bytes, fileName, spoiler);
   }

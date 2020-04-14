@@ -26,14 +26,16 @@ void main() {
     if (e.message!.content == "!give-me-embed") {
       // Files can be used within embeds as custom images
 
+      var attachment = AttachmentBuilder.file(File("kitten.jpeg"));
+
       // Use `{file-name}` to embed sent file into embed.
       var embed = EmbedBuilder()
         ..title = "Example Title"
-        ..thumbnailUrl = "${attach('kitten.jpeg')}";
+        ..thumbnailUrl = attachment.attachUrl;
 
       // Sent all together
       e.message!.channel
-          .send(files: [AttachmentBuilder.file(File("kitten.jpeg"))], embed: embed, content: "HEJKA!");
+          .send(files: [attachment], embed: embed, content: "HEJKA!");
     }
   });
 }
