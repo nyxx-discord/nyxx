@@ -93,25 +93,24 @@ class MessageChannel extends Channel
   ///   .send(files: [new File("kitten.jpg")], embed: embed, content: "HEJKA!");
   /// ```
   Future<Message> send(
-      {Object content = "",
-      List<AttachmentBuilder>? files,
-      EmbedBuilder? embed,
-      bool tts = false,
-      bool? disableEveryone,
-      MessageBuilder? builder}) async {
+        {dynamic content,
+        List<AttachmentBuilder>? files,
+        EmbedBuilder? embed,
+        bool? tts,
+        AllowedMentions? allowedMentions,
+        MessageBuilder? builder}) async {
     if (builder != null) {
       content = builder._content;
       files = builder.files;
       embed = builder.embed;
       tts = builder.tts ?? false;
-      disableEveryone = builder.disableEveryone;
+      allowedMentions = builder.allowedMentions;
     }
 
-    var newContent = _sanitizeMessage(content, disableEveryone, client);
-
     Map<String, dynamic> reqBody = {
-      "content": newContent,
-      "embed": embed != null ? embed._build() : ""
+      ..._initMessage(content, allowedMentions),
+      if(embed != null) "embed" : embed._build(),
+      if(content != null && tts != null) "tts": tts
     };
 
     // Cancel typing if present
@@ -119,7 +118,6 @@ class MessageChannel extends Channel
 
     HttpResponse r;
     if (files != null && files.isNotEmpty) {
-
       for(var file in files) {
         if(file._bytes.length > fileUploadLimit) {
           return Future.error("File with name: [${file._name}] is too big!");
@@ -131,7 +129,7 @@ class MessageChannel extends Channel
           data: reqBody);
     } else {
       r = await client._http.send('POST', '/channels/${this.id}/messages',
-          body: reqBody..addAll({"tts": tts}));
+          body: reqBody);
     }
 
     return Message._new(r.body as Map<String, dynamic>, client);

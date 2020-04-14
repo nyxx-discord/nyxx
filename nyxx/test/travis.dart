@@ -84,8 +84,8 @@ void main() {
     var m = await channel.send(content: "Message test.");
     await m.edit(content: "Edit test.");
 
-    await m.createReaction(nyxx.UnicodeEmoji('😋'));
-    await m.deleteReaction(nyxx.UnicodeEmoji('😋'));
+    await m.createReaction(nyxx.UnicodeEmoji('😂'));
+    await m.deleteReaction(nyxx.UnicodeEmoji('😂'));
 
     await m.delete();
     await channel.send(content: "--trigger-test");
@@ -95,6 +95,10 @@ void main() {
       nyxx.AttachmentBuilder.path("test/kitty.webp", spoiler: true)
     ]).then((message) async => await message.delete());
 
+    print("TESTING ALLOWED MENTIONS");
+    channel.send(content: "@everyone HEJ", allowedMentions: nyxx.AllowedMentions())
+        .then((message) => message.delete());
+    
     print("TESTING EMBEDS");
     var e =
         await channel.send(content: "Testing embed!", embed: createTestEmbed());
@@ -115,6 +119,10 @@ void main() {
       if (att.filename != "SPOILER_kitty.webp") {
         exit(1);
       }
+    }
+
+    if(m.content.endsWith("HEJ") && !m.mentionEveryone) {
+      exit(1);
     }
 
     if (m.content == "Testing embed!") {

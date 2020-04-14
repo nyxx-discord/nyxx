@@ -91,19 +91,19 @@ class User extends SnowflakeEntity with ISend, Mentionable, IMessageAuthor {
 
   /// Sends a message to user.
   Future<Message> send(
-      {Object content = "",
-      List<AttachmentBuilder>? files,
-      EmbedBuilder? embed,
-      bool tts = false,
-      bool? disableEveryone,
-      MessageBuilder? builder}) async {
+      {dynamic content,
+        List<AttachmentBuilder>? files,
+        EmbedBuilder? embed,
+        bool? tts,
+        AllowedMentions? allowedMentions,
+        MessageBuilder? builder}) async {
     DMChannel channel = await this.dmChannel;
     return channel.send(
         content: content,
         files: files,
         embed: embed,
         tts: tts,
-        disableEveryone: disableEveryone,
+        allowedMentions: allowedMentions,
         builder: builder);
   }
 

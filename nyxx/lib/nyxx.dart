@@ -74,6 +74,7 @@ part 'src/builders/MessageBuilder.dart';
 
 part 'src/objects/Convertable.dart';
 part 'src/objects/ISend.dart';
+part 'src/objects/AllowedMentions.dart';
 part 'src/objects/Mentionable.dart';
 part 'src/objects/GuildEntity.dart';
 part 'src/objects/Disposable.dart';

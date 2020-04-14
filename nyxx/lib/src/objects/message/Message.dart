@@ -189,35 +189,36 @@ class Message extends SnowflakeEntity implements GuildEntity, Disposable {
 
   /// Replies to message. By default it mentions user who sends message.
   Future<Message> reply(
-          {Object content = "",
+          {dynamic content,
           List<AttachmentBuilder>? files,
           EmbedBuilder? embed,
-          bool tts = false,
-          bool? disableEveryone,
+          bool? tts,
+          AllowedMentions? allowedMentions,
+          MessageBuilder? builder,
           bool mention = true}) =>
       this.channel.send(
           content: "${mention && !this.isByWebhook ? "${(this.author as User).mention} " : ""}$content",
           files: files,
           embed: embed,
           tts: tts,
-          disableEveryone: disableEveryone);
+          allowedMentions: allowedMentions);
 
   /// Edits the message.
   ///
   /// Throws an [Exception] if the HTTP request errored.
   ///     Message.edit("My edited content!");
   Future<Message> edit(
-      {String? content,
+      {dynamic content,
       EmbedBuilder? embed,
-      bool tts = false,
-      bool? disableEveryone}) async {
+      AllowedMentions? allowedMentions}) async {
     if (this.author != null && this.author!.id != client.self.id)
       return Future.error("Cannot edit someones message");
 
-    var body = Map<String, dynamic>();
-    if (content != null)
-      body['content'] = _sanitizeMessage(content, disableEveryone, client);
-    if (embed != null) body['embed'] = embed._build();
+    var body = <String, dynamic>{
+      if(content != null) "content" : content.toString(),
+      if(embed != null) "embed" : embed._build(),
+      if(allowedMentions != null) "allowed_mentions" : allowedMentions._build()
+    };
 
     final HttpResponse r = await client._http.send(
         'PATCH', '/channels/${this.channel.id}/messages/${this.id}',
