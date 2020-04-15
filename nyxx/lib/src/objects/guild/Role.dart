@@ -20,9 +20,8 @@ class Role extends SnowflakeEntity implements Mentionable, GuildEntity {
   /// Whether or not the role is mentionable.
   late final bool mentionable;
 
-  @override
-
   /// The role's guild.
+  @override
   late final Guild guild;
 
   /// The role's permissions.

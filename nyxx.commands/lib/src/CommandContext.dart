@@ -117,10 +117,10 @@ class CommandContext {
   ///   var emojis = await collectEmojis(msg, Duration(seconds: 15));
   /// }
   /// ```
-  Future<Map<Emoji, int>> collectEmojis(Message msg, Duration duration) {
-    var m = Map<Emoji, int>();
-
+  Future<Map<Emoji, int>?> collectEmojis(Message msg, Duration duration) {
     return Future<Map<Emoji, int>>(() async {
+      var m = Map<Emoji, int>();
+
       await for (var r in this.client.onMessageReactionAdded.where((evnt) => evnt.message != null && evnt.message!.id == msg.id)) {
         if (m.containsKey(r.emoji))
           m[r.emoji] += 1;
@@ -129,12 +129,12 @@ class CommandContext {
       }
 
       return m;
-    }).timeout(duration, onTimeout: () => m);
+    }).timeout(duration, onTimeout: () => null);
   }
 
   /// Waits for first [TypingEvent] and returns it. If timed out returns null.
   /// Can listen to specific user by specifying [user]
-  Future<TypingEvent> waitForTyping(User user,
+  Future<TypingEvent?> waitForTyping(User user,
       {Duration timeout = const Duration(seconds: 30)}) {
     return client.onTyping
         .firstWhere((e) => e.user == user && e.channel == this.channel)

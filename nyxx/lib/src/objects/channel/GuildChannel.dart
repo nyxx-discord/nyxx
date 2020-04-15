@@ -40,12 +40,11 @@ mixin GuildChannel implements Channel, GuildEntity {
 
     this.nsfw = raw['nsfw'] as bool? ?? false;
 
-    this.permissions = [];
-    if (raw['permission_overwrites'] != null) {
-      raw['permission_overwrites'].forEach((o) {
-        permissions.add(PermissionsOverrides._new(o as Map<String, dynamic>));
-      });
-    }
+    this.permissions = [
+      if (raw['permission_overwrites'] != null)
+        for(var obj in raw['permission_overwrites'])
+          PermissionsOverrides._new(obj as Map<String, dynamic>)
+    ];
   }
 
   /// Returns effective permissions for [member] to this channel including channel overrides.
@@ -79,21 +78,20 @@ mixin GuildChannel implements Channel, GuildEntity {
 
     var permissions = role.permissions.raw | guild.everyoneRole.permissions.raw;
 
-    /// TODO: NNBD - To consider
-    try {
-      var over =
-          this.permissions.firstWhere((f) => f.id == guild.everyoneRole.id);
+    PermissionsOverrides? overEveryone =
+        this.permissions.firstWhere((f) => f.id == guild.everyoneRole.id, orElse: () => null);
 
-      permissions &= ~over.deny;
-      permissions |= over.allow;
-    } catch (e) {}
+    if(overEveryone != null) {
+      permissions &= ~overEveryone.deny;
+      permissions |= overEveryone.allow;
+    }
 
-    try {
-      var over = this.permissions.firstWhere((f) => f.id == role.id);
+    PermissionsOverrides? overRole = this.permissions.firstWhere((f) => f.id == role.id, orElse: () => null);
 
-      permissions &= ~over.deny;
-      permissions |= over.allow;
-    } catch (e) {}
+    if(overRole != null) {
+      permissions &= ~overRole.deny;
+      permissions |= overRole.allow;
+    }
 
     return Permissions.fromInt(permissions);
   }
@@ -104,17 +102,18 @@ mixin GuildChannel implements Channel, GuildEntity {
   /// var inv = await chan.createInvite(maxUses: 2137);
   /// ```
   Future<Invite> createInvite(
-      {int maxAge = 0,
-      int maxUses = 0,
-      bool temporary = false,
-      bool unique = false,
-      String auditReason = ""}) async {
-    Map<String, dynamic> params = Map<String, dynamic>();
+      {int? maxAge,
+      int? maxUses,
+      bool? temporary,
+      bool? unique,
+      String? auditReason}) async {
 
-    params['max_age'] = maxAge;
-    params['max_uses'] = maxUses;
-    params['temporary'] = temporary;
-    params['unique'] = unique;
+    Map<String, dynamic> params = {
+      if(maxAge != null) 'max_age' : maxAge,
+      if(maxAge != null) 'max_uses' : maxUses,
+      if(maxAge != null) 'temporary' : temporary,
+      if(maxAge != null) 'unique' : unique,
+    };
 
     final HttpResponse r = await client._http.send(
         'POST', "/channels/$id/invites",
@@ -140,9 +139,10 @@ mixin GuildChannel implements Channel, GuildEntity {
   /// Throws if [id] isn't [User] or [Role]
   Future<void> editChannelPermission(
       PermissionsBuilder perms, SnowflakeEntity id,
-      {String auditReason = ""}) {
-    if (id is! Role || id is! User)
+      {String? auditReason}) {
+    if (id is! Role || id is! User) {
       throw Exception("The `id` property must be either Role or User");
+    }
 
     return client._http.send(
         "PUT", "/channels/${this.id}/permissions/${id.toString()}",
@@ -152,9 +152,10 @@ mixin GuildChannel implements Channel, GuildEntity {
   /// Deletes permission overwrite for given User or Role [id]
   /// Throws if [id] isn't [User] or [Role]
   Future<void> deleteChannelPermission(SnowflakeEntity id,
-      {String auditReason = ""}) async {
-    if (!(id is Role) || !(id is User))
+      {String? auditReason}) async {
+    if (id is! Role || id is! User) {
       throw Exception("`id` property must be either Role or User");
+    }
 
     await client._http.send("POST", "/channels/${this.id}/permissions/$id",
         reason: auditReason);

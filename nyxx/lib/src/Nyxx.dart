@@ -326,6 +326,7 @@ class Nyxx implements Disposable {
   }
 }
 
+/// Sets up default logger
 void setupDefaultLogging([Level? loglevel]) {
   Logger.root.level = loglevel ?? Level.ALL;
 

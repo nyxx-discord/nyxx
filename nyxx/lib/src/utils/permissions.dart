@@ -46,7 +46,7 @@ class PermissionsUtils {
     var denyRole = 0;
 
     for (var role in member.roles) {
-      var chanOveride = channel.permissions
+      PermissionsOverrides? chanOveride = channel.permissions
           .firstWhere((f) => f.id == role.id, orElse: () => null);
 
       if (chanOveride != null) {

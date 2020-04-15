@@ -14,8 +14,13 @@ class AuditLogChange {
   late final ChangeKeyType key;
 
   AuditLogChange._new(Map<String, dynamic> raw) {
-    if (raw['new_value'] != null) newValue = raw['new_value'];
-    if (raw['old_value'] != null) oldValue = raw['old_value'];
+    if (raw['new_value'] != null) {
+      newValue = raw['new_value'];
+    }
+
+    if (raw['old_value'] != null) {
+      oldValue = raw['old_value'];
+    }
 
     this.key = ChangeKeyType(raw['key'] as String);
   }

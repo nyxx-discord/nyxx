@@ -62,20 +62,24 @@ class Presence {
       }
     }
 
-    if (raw['application_id'] != null)
+    if (raw['application_id'] != null) {
       applicationId = Snowflake(raw['application_id']);
+    }
 
     details = raw['details'] as String;
     state = raw['state'] as String;
 
-    if (raw['party'] != null)
+    if (raw['party'] != null) {
       party = GameParty._new(raw['party'] as Map<String, dynamic>);
+    }
 
-    if (raw['assets'] != null)
+    if (raw['assets'] != null) {
       assets = GameAssets._new(raw['assets'] as Map<String, dynamic>);
+    }
 
-    if (raw['secrets'] != null)
+    if (raw['secrets'] != null) {
       secrets = GameSecrets._new(raw['secrets'] as Map<String, dynamic>);
+    }
 
     instance = raw['instance'] as bool;
     activityFlags = raw['flags'] as int;

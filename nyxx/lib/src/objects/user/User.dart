@@ -63,7 +63,7 @@ class User extends SnowflakeEntity with ISend, Mentionable, IMessageAuthor {
   /// The user's avatar, represented as URL.
   /// In case if user does not have avatar, default discord avatar will be returned with specified size and png format.
   @override
-  String? avatarURL({String format = 'webp', int size = 128}) {
+  String avatarURL({String format = 'webp', int size = 128}) {
     if (this.avatar != null) {
       return 'https://cdn.${_Constants.host}/avatars/${this.id}/${this.avatar}.$format?size=$size';
     }
@@ -73,18 +73,19 @@ class User extends SnowflakeEntity with ISend, Mentionable, IMessageAuthor {
 
   /// Gets the [DMChannel] for the user.
   Future<DMChannel> get dmChannel async {
-    Future<DMChannel> downloadChannel() async {
-      HttpResponse r = await client._http.send('POST', "/users/@me/channels",
-          body: {"recipient_id": this.id.toString()});
-      var chan = DMChannel._new(r.body as Map<String, dynamic>, client);
-      this.client.channels.add(chan.id, chan);
-      return chan;
+    var channel = client.channels.findOne((Channel c) => c is DMChannel && c.recipient.id == this.id) as DMChannel?;
+
+    if(channel != null) {
+      return channel;
     }
 
-    return (client.channels.findOne(
-                (Channel c) => c is DMChannel && c.recipient.id == this.id)
-            as DMChannel?) ??
-        await downloadChannel();
+    HttpResponse r = await client._http.send('POST', "/users/@me/channels",
+        body: {"recipient_id": this.id.toString()});
+
+    channel = DMChannel._new(r.body as Map<String, dynamic>, client);
+    this.client.channels.add(channel.id, channel);
+
+    return channel;
   }
 
   @override

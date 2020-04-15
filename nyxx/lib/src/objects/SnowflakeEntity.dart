@@ -21,7 +21,8 @@ class SnowflakeEntity {
   @override
   bool operator ==(other) {
     if (other is SnowflakeEntity) return id == other.id;
-    if (other is String) return id.id == other;
+    if (other is String) return id.id.toString() == other;
+    if (other is int) return id.id == other;
 
     return false;
   }

@@ -25,12 +25,10 @@ class EmbedAuthorBuilder implements Builder {
       throw new Exception("Author name is too long. (256 characters limit)");
     }
 
-    Map<String, dynamic> tmp = Map();
-
-    tmp["name"] = name;
-    if (url != null) tmp["url"] = url;
-    if (iconUrl != null) tmp["icon_url"] = iconUrl;
-
-    return tmp;
+    return <String, dynamic>{
+      "name" : name,
+      if (url != null) "url" : url,
+      if (iconUrl != null) "icon_url" : iconUrl
+    };
   }
 }

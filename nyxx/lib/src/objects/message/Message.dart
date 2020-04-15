@@ -253,7 +253,7 @@ class Message extends SnowflakeEntity implements GuildEntity, Disposable {
   /// Deletes the message.
   ///
   /// Throws an [Exception] if the HTTP request errored.
-  Future<void> delete({String auditReason = ""}) {
+  Future<void> delete({String? auditReason}) {
     return client._http.send(
         'DELETE', '/channels/${this.channel.id}/messages/${this.id}',
         reason: auditReason);

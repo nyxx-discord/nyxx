@@ -517,7 +517,7 @@ class CommandsFramework {
       } catch (_) {}
 
       if (_typeConverters.isNotEmpty) {
-        var converter = _typeConverters.firstWhere((t) => t._type == type,
+        TypeConverter? converter = _typeConverters.firstWhere((t) => t._type == type,
             orElse: () => null);
         if (converter != null) {
           collected.add(await converter.parse(splitted[index], msg));

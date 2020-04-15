@@ -6,3 +6,4 @@ bool browser = false;
 
 /// The OS or browser name.
 String? operatingSystem;
+

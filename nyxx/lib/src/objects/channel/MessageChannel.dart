@@ -108,8 +108,7 @@ class MessageChannel extends Channel
     }
 
     Map<String, dynamic> reqBody = {
-      ..._initMessage(content, allowedMentions),
-      if(embed != null) "embed" : embed._build(),
+      ..._initMessage(content, embed, allowedMentions),
       if(content != null && tts != null) "tts": tts
     };
 
@@ -175,11 +174,12 @@ class MessageChannel extends Channel
       Snowflake? after,
       Snowflake? before,
       Snowflake? around}) async* {
-    Map<String, String> query = {"limit": limit.toString()};
-
-    if (after != null) query['after'] = after.toString();
-    if (before != null) query['before'] = before.toString();
-    if (around != null) query['around'] = around.toString();
+    Map<String, String> query = {
+      "limit": limit.toString(),
+      if (after != null) 'after' : after.toString(),
+      if (before != null) 'before' : before.toString(),
+      if (around != null) 'around' : around.toString()
+    };
 
     final HttpResponse r = await client._http
         .send('GET', '/channels/${this.id}/messages', queryParams: query);

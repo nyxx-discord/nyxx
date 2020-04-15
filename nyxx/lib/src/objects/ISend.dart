@@ -14,13 +14,18 @@ abstract class ISend {
       MessageBuilder? builder});
 
 
-  Map<String, dynamic> _initMessage(dynamic content, AllowedMentions? allowedMentions) {
+  Map<String, dynamic> _initMessage(dynamic content, EmbedBuilder? embed, AllowedMentions? allowedMentions) {
+    if(content == null && embed == null) {
+      throw new Exception("When sending message both content and embed cannot be null");
+    }
+    
     if(allowedMentions == null) {
       allowedMentions = client._options.allowedMentions;
     }
 
     return <String, dynamic>{
-      "content": content == null ? "" : content.toString(),
+      if(content == null) "content": content.toString(),
+      if(embed != null) "embed" : embed._build(),
       if (allowedMentions != null) "allowed_mentions" : allowedMentions._build()
     };
   }

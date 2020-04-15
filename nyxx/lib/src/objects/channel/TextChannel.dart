@@ -34,18 +34,19 @@ class TextChannel extends MessageChannel
     pinsUpdated = client.onChannelPinsUpdate.where((event) => event.channel == this);
   }
 
-  //T getRaw<T>(Map<String, dynamic> raw, String name) => raw[name] as T;
-
   /// Edits the channel.
   Future<TextChannel> edit(
       {String? name, String? topic, int? position, int? slowModeTreshold}) async {
+
+    var body = <String, dynamic> {
+      if(name != null) "name" : name,
+      if(topic != null) "topic" : topic,
+      if(position != null) "position" : position,
+      if(slowModeTreshold != null) "rate_limit_per_user" : slowModeTreshold,
+    };
+
     HttpResponse r =
-        await client._http.send('PATCH', "/channels/${this.id}", body: {
-      "name": name ?? this.name,
-      "topic": topic ?? this.topic,
-      "position": position ?? this.position,
-      "rate_limit_per_user": slowModeTreshold ?? slowModeTreshold
-    });
+        await client._http.send('PATCH', "/channels/${this.id}", body: body);
 
     return TextChannel._new(r.body as Map<String, dynamic>, this.guild, client);
   }
@@ -65,13 +66,14 @@ class TextChannel extends MessageChannel
   /// ```
   /// var webhook = await chan.createWebhook("!a Send nudes kek6407");
   /// ```
-  Future<Webhook> createWebhook(String name,{File? avatarFile, String auditReason = ""}) async {
+  Future<Webhook> createWebhook(String name, {File? avatarFile, String auditReason = ""}) async {
     if(name.isEmpty || name.length > 80) {
       return Future.error("Webhook's name cannot be shorter than 1 character and longer than 80 characters");
     }
 
-    var body = Map<String, String>();
-    body['name'] = name;
+    var body = <String, dynamic> {
+      "name": name
+    };
 
     if(avatarFile != null) {
       final extension = Utils.getFileExtension(avatarFile.path);

@@ -39,10 +39,11 @@ class VoiceState {
     this.suppress = raw['suppress'] as bool;
     this.sessionId = raw['session_id'] as String;
 
-    if (guild != null)
+    if (guild != null) {
       this.guild = guild;
-    else
+    } else {
       this.guild = client.guilds[Snowflake(raw['guild_id'] as String)];
+    }
 
     if(this.guild != null) {
       this.user = this.guild!.members[Snowflake(raw['user_id'] as String)];

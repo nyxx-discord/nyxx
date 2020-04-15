@@ -4,9 +4,8 @@ part of nyxx;
 abstract class IMessageAuthor implements SnowflakeEntity {
   String get username;
   int get discriminator;
-
-  String? avatarURL({String format = 'webp', int size = 128});
-
   bool get bot;
   String get tag;
+
+  String? avatarURL({String format = 'webp', int size = 128});
 }

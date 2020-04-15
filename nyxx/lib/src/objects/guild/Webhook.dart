@@ -105,8 +105,7 @@ class Webhook extends SnowflakeEntity with ISend implements IMessageAuthor {
     }
 
     Map<String, dynamic> reqBody = {
-      ..._initMessage(content, allowedMentions),
-      if(embed != null) "embed" : embed._build(),
+      ..._initMessage(content, embed, allowedMentions),
       if(content != null && tts != null) "tts": tts
     };
 
