@@ -66,10 +66,10 @@ class Member extends User implements GuildEntity {
     this.deaf = raw['deaf'] as bool;
     this.mute = raw['mute'] as bool;
 
-    this.roles = [];
-    raw['roles'].forEach((i) {
-      this.roles.add(guild.roles[Snowflake(i)]);
-    });
+    this.roles = [
+      for(var id in raw['roles'])
+        guild.roles[Snowflake(id)] as Role
+    ];
 
     if(raw['hoisted_role'] != null && roles.isNotEmpty) {
       this.hoistedRole = this.roles.firstWhere((element) => element.id == Snowflake(raw['hoisted_role']), orElse: () => null);
@@ -87,12 +87,14 @@ class Member extends User implements GuildEntity {
 
   /// Bans the member and optionally deletes [deleteMessageDays] days worth of messages.
   Future<void> ban(
-      {int deleteMessageDays = 0,
+      {int? deleteMessageDays,
       String? reason,
-      String auditReason = ""}) async {
+      String? auditReason}) async {
     await client._http.send('PUT', "/guilds/${this.guild.id}/bans/${this.id}",
-        body: {"delete-message-days": deleteMessageDays, "reason": reason},
-        reason: auditReason);
+        body: {
+          if(deleteMessageDays != null) "delete-message-days": deleteMessageDays,
+          if(reason != null)"reason": reason
+        }, reason: auditReason);
   }
 
   /// Adds role to user
@@ -115,7 +117,7 @@ class Member extends User implements GuildEntity {
   }
 
   /// Kicks the member from guild
-  Future<void> kick({String auditReason = ""}) async {
+  Future<void> kick({String? auditReason}) async {
     await client._http.send(
         'DELETE', "/guilds/${this.guild.id}/members/${this.id}",
         reason: auditReason);
@@ -128,18 +130,18 @@ class Member extends User implements GuildEntity {
       bool? mute,
       bool? deaf,
       VoiceChannel? channel,
-      String auditReason = ""}) {
-    var req = Map<String, dynamic>();
-    if (nick != null) req["nick"] = nick;
-    if (roles != null)
-      req['roles'] = roles.map((f) => f.id.toString()).toList();
-    if (mute != null) req['mute'] = mute;
-    if (deaf != null) req['deaf'] = deaf;
-    if (channel != null) req['channel_id'] = channel.id.toString();
+      String? auditReason}) {
+    var body = <String, dynamic> {
+      if (nick != null) "nick" : nick,
+      if (roles != null) 'roles' : roles.map((f) => f.id.toString()).toList(),
+      if (mute != null) 'mute' : mute,
+      if (deaf != null) 'deaf' : deaf,
+      if (channel != null) 'channel_id' : channel.id.toString()
+    };
 
     return client._http.send("PATCH",
         "/guilds/${this.guild.id.toString()}/members/${this.id.toString()}",
-        body: req, reason: auditReason);
+        body: body, reason: auditReason);
   }
 
   @override

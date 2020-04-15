@@ -17,6 +17,7 @@ class MessageReference {
     if(raw['message_id'] != null && this.channel != null) {
       this.message = this.channel!.messages[Snowflake(raw['message_id'])];
     }
+
     if(raw['guild_id'] != null) {
       this.guild = client.guilds[Snowflake(raw['guild_id'])];
     }

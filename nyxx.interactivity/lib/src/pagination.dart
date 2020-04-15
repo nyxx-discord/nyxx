@@ -54,7 +54,7 @@ class Pagination {
     Future(() async {
       var currPage = 0;
       Stream<MessageReactionEvent> group = _Utils.merge(
-          [client.onMessageReactionAdded as Stream<MessageReactionEvent>, client.onMessageReactionsRemoved as Stream<MessageReactionEvent>]);
+          [client.onMessageReactionAdded, client.onMessageReactionsRemoved as Stream<MessageReactionEvent>]);
 
       await for (var event in group) {
         var emoji = (event as dynamic).emoji as UnicodeEmoji;

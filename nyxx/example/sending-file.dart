@@ -25,10 +25,9 @@ void main() {
 
     if (e.message!.content == "!give-me-embed") {
       // Files can be used within embeds as custom images
-
       var attachment = AttachmentBuilder.file(File("kitten.jpeg"));
 
-      // Use `{file-name}` to embed sent file into embed.
+      // Use `attachUrl` property in embed to link uploaded file to thumbnail in that case
       var embed = EmbedBuilder()
         ..title = "Example Title"
         ..thumbnailUrl = attachment.attachUrl;

@@ -1,5 +1,6 @@
 part of nyxx;
 
+/// Boost level of guild
 class PremiumTier {
   static const PremiumTier none = const PremiumTier._create(0);
   static const PremiumTier tier1 = const PremiumTier._create(1);

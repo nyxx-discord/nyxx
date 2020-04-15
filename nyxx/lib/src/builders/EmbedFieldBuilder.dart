@@ -28,11 +28,10 @@ class EmbedFieldBuilder implements Builder {
     if (this.content.toString().length > 1024)
       throw new Exception("Field content is too long. (1024 characters limit)");
 
-    Map<String, dynamic> tmp = Map();
-    tmp["name"] = name != null ? name.toString() : "\u200B";
-    tmp["value"] = content != null ? content.toString() : "\u200B";
-    tmp["inline"] = inline != null ? inline : false;
-
-    return tmp;
+    return <String, dynamic> {
+      "name" : name != null ? name.toString() : "\u200B",
+      "value" : content != null ? content.toString() : "\u200B",
+      "inline" : inline != null ? inline : false,
+    };
   }
 }

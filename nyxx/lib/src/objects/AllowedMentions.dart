@@ -15,36 +15,30 @@ class AllowedMentions implements Builder {
   /// Allow @everyone and @here if [everyone] is true
   /// Allow @user if [users] is true
   /// Allow @role if [roles] is true
-  AllowedMentions allow({bool everyone = false, bool users = false, bool roles = false}) {
+  void allow({bool everyone = false, bool users = false, bool roles = false}) {
     this._allowEveryone = everyone;
     this._allowUsers = users;
     this._allowRoles = roles;
-
-    return this;
   }
 
   /// Suppress mentioning specific user by its id
-  AllowedMentions suppressUser(Snowflake userId) {
+  void suppressUser(Snowflake userId) {
     this._users.add(userId);
-    return this;
   }
 
   /// Suppress mentioning multiple users by their ids
-  AllowedMentions suppressUsers(Iterable<Snowflake> userIds) {
+  void suppressUsers(Iterable<Snowflake> userIds) {
     this._users.addAll(userIds);
-    return this;
   }
 
   /// Suppress mentioning specific role by its id
-  AllowedMentions suppressRole(Snowflake roleId) {
+  void suppressRole(Snowflake roleId) {
     this._roles.add(roleId);
-    return this;
   }
 
   /// Suppress mentioning multiple roles by their ids
-  AllowedMentions suppressRoles(Iterable<Snowflake> roleIds) {
+  void suppressRoles(Iterable<Snowflake> roleIds) {
     this._roles.addAll(roleIds);
-    return this;
   }
 
   @override

@@ -34,9 +34,8 @@ class Attachment extends SnowflakeEntity implements Downloadable {
     this.width = raw['width'] as int?;
   }
 
-  @override
-
   /// Download attachment and return it's bytes
+  @override
   Future<List<int>> download() => DownloadUtils.downloadAsBytes(Uri.parse(url));
 
   @override

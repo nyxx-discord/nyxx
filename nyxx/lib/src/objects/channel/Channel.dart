@@ -49,4 +49,7 @@ class ChannelType {
 
   static const ChannelType dm = ChannelType._create(1);
   static const ChannelType groupDm = ChannelType._create(3);
+
+  static const ChannelType guildNews = ChannelType._create(5);
+  static const ChannelType guildStore = ChannelType._create(6);
 }

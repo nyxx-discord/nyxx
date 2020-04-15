@@ -101,22 +101,18 @@ class EmbedBuilder implements Builder {
       throw new Exception(
           "Total length of embed cannot exceed 6000 characters");
 
-    Map<String, dynamic> tmp = Map();
-
-    if (title != null) tmp["title"] = title;
-    if (type != null) tmp["type"] = type;
-    if (description != null) tmp["description"] = description;
-    if (url != null) tmp["url"] = url;
-    if (timestamp != null) tmp["timestamp"] = timestamp!.toIso8601String();
-    if (color != null) tmp["color"] = color!._value;
-    if (footer != null) tmp["footer"] = footer!._build();
-    if (imageUrl != null) tmp["image"] = <String, dynamic>{"url": imageUrl};
-    if (thumbnailUrl != null)
-      tmp["thumbnail"] = <String, dynamic>{"url": thumbnailUrl};
-    if (author != null) tmp["author"] = author!._build();
-    if (_fields.length > 0)
-      tmp["fields"] = _fields.map((builder) => builder._build()).toList();
-
-    return tmp;
+    return <String, dynamic> {
+      if (title != null) "title" : title,
+      if (type != null) "type" : type,
+      if (description != null) "description" : description,
+      if (url != null) "url" : url,
+      if (timestamp != null) "timestamp" : timestamp!.toIso8601String(),
+      if (color != null) "color" :color!._value,
+      if (footer != null) "footer" : footer!._build(),
+      if (imageUrl != null) "image" : <String, dynamic>{ "url" : imageUrl },
+      if (thumbnailUrl != null) "thumbnail" : <String, dynamic>{ "url" : thumbnailUrl },
+      if (author != null) "author" :author!._build(),
+      if (_fields.length > 0) "fields" : _fields.map((builder) => builder._build()).toList()
+    };
   }
 }

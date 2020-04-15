@@ -22,8 +22,4 @@ class PermissionsOverrides extends SnowflakeEntity {
     permissions = Permissions.fromOverwrite(0, allow, deny);
     type = raw['type'] as String;
   }
-
-  PermissionsOverrides._synthetic(int value, Snowflake id) : super(id) {
-    this.permissions = Permissions.fromInt(value);
-  }
 }
