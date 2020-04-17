@@ -9,27 +9,22 @@ class Shard implements Disposable {
   late final int id;
 
   /// Whether or not the shard is ready.
-  bool ready = false;
+  bool connected = false;
 
   /// Emitted when the shard is ready.
-  late Stream<Shard> onReady;
+  late Stream<Shard> onConnected;
 
   /// Emitted when the shard encounters an error.
   late Stream<Shard> onDisconnect;
 
-  /// A map of guilds the shard is on.
-  Cache<Snowflake, Guild> get guilds => _ws._client.guilds;
-
   bool _acked = false;
-  bool _waiting = true;
-  Timer? _guildTimer;
 
-  late final Timer _heartbeatTimer;
+  late Timer _heartbeatTimer;
   late final _WS _ws;
   transport.WebSocket? _socket;
   late int _sequence;
   String? _sessionId;
-  late final StreamController<Shard> _onReady;
+  late final StreamController<Shard> _onConnect;
   late final StreamController<Shard> _onDisconnect;
 
   Logger _logger = Logger("Websocket");
@@ -38,8 +33,8 @@ class Shard implements Disposable {
   int get eventsSeen => _sequence;
 
   Shard._new(this._ws, this.id) {
-    this._onReady = StreamController<Shard>.broadcast();
-    this.onReady = this._onReady.stream;
+    this._onConnect = StreamController<Shard>.broadcast();
+    this.onConnected = this._onConnect.stream;
 
     this._onDisconnect = StreamController<Shard>.broadcast();
     this.onDisconnect = this._onDisconnect.stream;
@@ -73,12 +68,11 @@ class Shard implements Disposable {
   }
 
   /// Syncs all guilds
-  void guildSync() => this.send("GUILD_SYNC", this.guilds.keys.toList());
+  void guildSync() => this.send("GUILD_SYNC", this._ws._client.guilds.keys.toList());
 
   // Attempts to connect to ws
   void _connect([bool resume = false, bool init = false]) {
-    this.ready = false;
-    //if (this._socket != null) this._socket!.close();
+    this.connected = false;
 
     if (!init && resume) {
       Future.delayed(const Duration(seconds: 3), () => _connect(true));
@@ -128,8 +122,9 @@ class Shard implements Disposable {
     }
 
     if (msg['op'] == _OPCodes.dispatch &&
-        this._ws._client._options.ignoredEvents.contains(msg['t'] as String))
+        this._ws._client._options.ignoredEvents.contains(msg['t'] as String)) {
       return;
+    }
 
     _ws._client._events.onRaw.add(RawEvent._new(this, msg));
 
@@ -149,7 +144,7 @@ class Shard implements Disposable {
               "\$device": "nyxx",
             },
             "large_threshold": this._ws._client._options.largeThreshold,
-            "compress": !browser,
+            if(!browser) "compress": true
           };
 
           if(_ws._client._options.gatewayIntents != null) {
@@ -192,15 +187,18 @@ class Shard implements Disposable {
 
       case _OPCodes.dispatch:
         var j = msg['t'] as String;
+
         switch (j) {
           case 'READY':
             this._sessionId = msg['d']['session_id'] as String;
             _ws._client.self = ClientUser._new(
                 msg['d']['user'] as Map<String, dynamic>, _ws._client);
 
-            this.ready = true;
+            this.connected = true;
             _logger.info("Shard connected");
-            this._onReady.add(this);
+            this._onConnect.add(this);
+
+            await _ws.propagateReady();
 
             break;
 
@@ -280,21 +278,9 @@ class Shard implements Disposable {
             break;
 
           case 'GUILD_CREATE':
+            var guild = GuildCreateEvent._new(msg, this, _ws._client);
             _ws._client._events.onGuildCreate
-                .add(GuildCreateEvent._new(msg, this, _ws._client));
-
-            // TODO: hack? Nvm, it works so it must be good quality code. Leave it alone.
-            if (_waiting) {
-              if (_guildTimer != null) {
-                _guildTimer?.cancel();
-                _guildTimer = null;
-              }
-              _guildTimer = Timer(const Duration(seconds: 6), () {
-                _waiting = false;
-                _ws.propagateReady();
-                _guildTimer = null;
-              });
-            }
+                .add(guild);
 
             break;
 
