@@ -79,13 +79,18 @@ class User extends SnowflakeEntity with ISend, Mentionable, IMessageAuthor {
       return channel;
     }
 
-    HttpResponse r = await client._http.send('POST', "/users/@me/channels",
-        body: {"recipient_id": this.id.toString()});
+    var response = await this.client._http._execute(JsonRequest._new("/users/@me/channels", method: "POST", body: {
+      "recipient_id": this.id.toString()
+    }));
 
-    channel = DMChannel._new(r.body as Map<String, dynamic>, client);
-    this.client.channels.add(channel.id, channel);
+    if(response is HttpResponseSuccess) {
+      channel = DMChannel._new(response.jsonBody as Map<String, dynamic>, client);
+      this.client.channels.add(channel.id, channel);
 
-    return channel;
+      return channel;
+    }
+
+    return Future.error(response);
   }
 
   @override

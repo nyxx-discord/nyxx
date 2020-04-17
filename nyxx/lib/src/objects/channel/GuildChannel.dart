@@ -108,18 +108,21 @@ mixin GuildChannel implements Channel, GuildEntity {
       bool? unique,
       String? auditReason}) async {
 
-    Map<String, dynamic> params = {
+    Map<String, dynamic> body = {
       if(maxAge != null) 'max_age' : maxAge,
       if(maxAge != null) 'max_uses' : maxUses,
       if(maxAge != null) 'temporary' : temporary,
       if(maxAge != null) 'unique' : unique,
     };
 
-    final HttpResponse r = await client._http.send(
-        'POST', "/channels/$id/invites",
-        body: params, reason: auditReason);
+    var response = await client._http._execute(
+        JsonRequest._new("/channels/$id/invites", method: "POST", body: body, auditLog: auditReason));
 
-    return Invite._new(r.body as Map<String, dynamic>, client);
+    if(response is HttpResponseError) {
+      return Future.error(response);
+    }
+
+    return InviteWithMeta._new((response as HttpResponseSuccess).jsonBody as Map<String, dynamic>, client);
   }
 
   /// Fetches and returns all channel's [Invite]s
@@ -127,12 +130,18 @@ mixin GuildChannel implements Channel, GuildEntity {
   /// ```
   /// var invites = await chan.getChannelInvites();
   /// ```
-  Stream<Invite> getChannelInvites() async* {
-    final HttpResponse r =
-        await client._http.send('GET', "/channels/$id/invites");
+  Stream<InviteWithMeta> getChannelInvites() async* {
+    final HttpResponse response =
+        await client._http._execute(JsonRequest._new("/channels/$id/invites"));
 
-    for (Map<String, dynamic> val in (r.body.values.first as Iterable<Map<String, dynamic>>))
-      yield Invite._new(val, client);
+    if(response is HttpResponseError) {
+      yield* Stream.error(response);
+    }
+
+    var bodyValues = (response as HttpResponseSuccess).jsonBody.values.first;
+
+    for (Map<String, dynamic> val in (bodyValues as Iterable<Map<String, dynamic>>))
+      yield InviteWithMeta._new(val, client);
   }
 
   /// Allows to set permissions for channel. [id] can be either User or Role
@@ -144,9 +153,9 @@ mixin GuildChannel implements Channel, GuildEntity {
       throw Exception("The `id` property must be either Role or User");
     }
 
-    return client._http.send(
-        "PUT", "/channels/${this.id}/permissions/${id.toString()}",
-        body: perms._build()._build(), reason: auditReason);
+    return client._http._execute(
+        JsonRequest._new("/channels/${this.id}/permissions/${id.toString()}",
+            method: "PUT", body: perms._build()._build(), auditLog: auditReason));
   }
 
   /// Deletes permission overwrite for given User or Role [id]
@@ -157,7 +166,7 @@ mixin GuildChannel implements Channel, GuildEntity {
       throw Exception("`id` property must be either Role or User");
     }
 
-    await client._http.send("POST", "/channels/${this.id}/permissions/$id",
-        reason: auditReason);
+    return client._http._execute(JsonRequest._new("/channels/${this.id}/permissions/$id",
+        method: "PUT", auditLog: auditReason));
   }
 }

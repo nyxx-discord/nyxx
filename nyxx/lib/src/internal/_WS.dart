@@ -5,7 +5,7 @@ class _WS {
   Nyxx _client;
 
   /// The base websocket URL.
-  late final String gateway;
+  late String gateway;
 
   late int remaining;
   late DateTime resetAt;
@@ -14,13 +14,19 @@ class _WS {
 
   /// Makes a new WS manager.
   _WS(this._client) {
-    _client._http._headers['Authorization'] = "Bot ${_client._token}";
-    _client._http.send("GET", "/gateway/bot").then((HttpResponse r) {
-      this.gateway = r.body['url'] as String;
+    _client._http._execute(JsonRequest._new("/gateway/bot")).then((httpResponse) {
+      if(httpResponse is HttpResponseError) {
+        this.logger.severe("Cannot get gateway url");
+        exit(1);
+      }
+      
+      var response = httpResponse as HttpResponseSuccess;
+      
+      this.gateway = response.jsonBody['url'] as String;
 
-      this.remaining = r.body['session_start_limit']['remaining'] as int;
+      this.remaining = response.jsonBody['session_start_limit']['remaining'] as int;
       this.resetAt = DateTime.now().add(Duration(
-          milliseconds: r.body['session_start_limit']['reset_after'] as int));
+          milliseconds: response.jsonBody['session_start_limit']['reset_after'] as int));
       logger.info(
           "Remaining ${this.remaining} connections starts. Limit will reset at ${this.resetAt}");
 
@@ -50,15 +56,22 @@ class _WS {
     _client.shard._connect(false, true);
   }
 
-  void propagateReady() {
+  Future<void> propagateReady() async {
     _client.ready = true;
 
-    _client._http.send("GET", "/oauth2/applications/@me").then((response) {
-      _client.app = ClientOAuth2Application._new(
-          response.body as Map<String, dynamic>, _client);
+    var httpResponse = await _client._http._execute(JsonRequest._new("/oauth2/applications/@me"));
 
-      _client._events.onReady.add(ReadyEvent._new(_client));
-      logger.info("Connected and ready! Logged as `${_client.self.tag}`");
-    });
+    if(httpResponse is HttpResponseError) {
+      this.logger.severe("Cannot get bot identity");
+      exit(1);
+    }
+
+    var response = httpResponse as HttpResponseSuccess;
+
+    _client.app = ClientOAuth2Application._new(
+        response.jsonBody as Map<String, dynamic>, _client);
+
+    _client._events.onReady.add(ReadyEvent._new(_client));
+    logger.info("Connected and ready! Logged as `${_client.self.tag}`");
   }
 }

@@ -8,12 +8,6 @@ class _EventController implements Disposable {
   /// Emitted when a shard is disconnected from the websocket.
   late final StreamController<DisconnectEvent> onDisconnect;
 
-  /// Emitted before all HTTP requests are sent. (You can edit them)
-  ///
-  /// **WARNING:** Once you listen to this stream, all requests
-  /// will be halted until you call `request.send()`
-  late final StreamController<BeforeHttpRequestSendEvent> beforeHttpRequestSend;
-
   /// Emitted when a successful HTTP response is received.
   late final StreamController<HttpResponseEvent> onHttpResponse;
 
@@ -134,9 +128,6 @@ class _EventController implements Disposable {
     this.onDisconnect = StreamController.broadcast();
     _client.onDisconnect = this.onDisconnect.stream;
 
-    this.beforeHttpRequestSend = StreamController();
-    _client.beforeHttpRequestSend = this.beforeHttpRequestSend.stream;
-
     this.onHttpResponse = StreamController.broadcast();
     _client.onHttpResponse = this.onHttpResponse.stream;
 
@@ -253,7 +244,6 @@ class _EventController implements Disposable {
   Future<void> dispose() async {
     this.onRaw.close();
     this.onDisconnect.close();
-    this.beforeHttpRequestSend.close();
     this.onHttpResponse.close();
     this.onHttpError.close();
     this.onRatelimited.close();

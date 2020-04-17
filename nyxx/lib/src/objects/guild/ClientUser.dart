@@ -23,25 +23,40 @@ class ClientUser extends User {
 
   /// Allows to get [Member] objects for all guilds for bot user.
   Map<Guild, Member> getMembership() {
-    var tmp = Map<Guild, Member>();
-    for (var guild in client.guilds.values) tmp[guild] = guild.members[this.id];
+    var membershipCollection = Map<Guild, Member>();
 
-    return tmp;
+    for (var guild in client.guilds.values) {
+      var member = guild.members[this.id];
+
+      if(member != null) {
+        membershipCollection[guild] = member;
+      }
+    }
+
+    return membershipCollection;
   }
 
   /// Edits current user. This changes user's username - not per guild nickname.
-  Future<User?> edit({String? username, File? avatar, String? encodedAvatar}) async {
+  Future<User> edit({String? username, File? avatar, String? encodedAvatar}) async {
     if (username == null && (avatar == null || encodedAvatar == null)) {
       return Future.error("Cannot edit user with null values");
     }
     
-    var req = <String, dynamic> {
+    var body = <String, dynamic> {
       if (username != null) 'username' : username
     };
-    var enc = avatar != null ? base64Encode(await avatar.readAsBytes()) : encodedAvatar;
-    req['avatar'] = "data:image/jpeg;base64,$enc";
 
-    var res = await client._http.send("PATCH", "/users/@me", body: req);
-    return User._new(res.body as Map<String, dynamic>, client);
+    var base64Encoded = avatar != null ? base64Encode(await avatar.readAsBytes()) : encodedAvatar;
+    body['avatar'] = "data:image/jpeg;base64,$base64Encoded";
+
+    var response = await client._http._execute(
+        JsonRequest._new("/users/@me", method: "PATCH", body: body));
+
+
+    if(response is HttpResponseSuccess) {
+      return User._new(response.jsonBody as Map<String, dynamic>, client);
+    }
+
+    return Future.error(response);
   }
 }

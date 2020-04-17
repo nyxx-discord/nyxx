@@ -45,10 +45,14 @@ class MessageChannel extends Channel
   /// with [force] property. By default it checks if message is in cache and fetches from api if not.
   Future<Message?> getMessage(Snowflake id, {bool force = false}) async {
     if (force || !messages.hasKey(id)) {
-      var r = await client._http
-          .send('GET', "/channels/${this.id.toString()}/messages/$id");
-      var msg = Message._new(r.body as Map<String, dynamic>, client);
 
+      var response = client._http._execute(JsonRequest._new("/channels/${this.id.toString()}/messages/$id"));
+
+      if(response is HttpResponseError) {
+        return Future.error(response);
+      }
+
+      var msg = Message._new((response as HttpResponseSuccess).jsonBody as Map<String, dynamic>, client);
       return messages._cacheMessage(msg);
     }
 
@@ -115,7 +119,8 @@ class MessageChannel extends Channel
     // Cancel typing if present
     this._typing?.cancel();
 
-    HttpResponse r;
+    HttpResponse response;
+
     if (files != null && files.isNotEmpty) {
       for(var file in files) {
         if(file._bytes.length > fileUploadLimit) {
@@ -123,20 +128,25 @@ class MessageChannel extends Channel
         }
       }
 
-      r = await client._http.sendMultipart(
-          'POST', '/channels/${this.id}/messages', files,
-          data: reqBody);
+      response = await client._http._execute(
+          MultipartRequest._new('/channels/${this.id}/messages',
+              files, method: "POST", fields: reqBody));
     } else {
-      r = await client._http.send('POST', '/channels/${this.id}/messages',
-          body: reqBody);
+      response = await client._http._execute(
+          JsonRequest._new('/channels/${this.id}/messages',
+              body: reqBody, method: "POST"));
     }
 
-    return Message._new(r.body as Map<String, dynamic>, client);
+    if(response is HttpResponseSuccess) {
+      return Message._new(response.jsonBody as Map<String, dynamic>, client);
+    } else {
+      return Future.error(response);
+    }
   }
 
   /// Starts typing.
   Future<void> startTyping() async {
-    await client._http.send('POST', "/channels/$id/typing");
+    return client._http._execute(JsonRequest._new("/channels/$id/typing", method: "POST"));
   }
 
   /// Loops `startTyping` until `stopTypingLoop` is called.
@@ -157,9 +167,11 @@ class MessageChannel extends Channel
   /// ```
   Future<void> bulkRemoveMessages(Iterable<Message> messagesIds) async {
     await for (var chunk in Utils.chunk(messagesIds.toList(), 90)) {
-      await client._http.send(
-          'POST', "/channels/${id.toString()}/messages/bulk-delete",
-          body: {"messages": chunk.map((f) => f.id.toString()).toList()});
+      await client._http._execute(
+          JsonRequest._new("/channels/${id.toString()}/messages/bulk-delete",
+              method: "POST", body: {
+                "messages": chunk.map((f) => f.id.toString()).toList()
+              }));
     }
   }
 
@@ -174,17 +186,21 @@ class MessageChannel extends Channel
       Snowflake? after,
       Snowflake? before,
       Snowflake? around}) async* {
-    Map<String, String> query = {
+    Map<String, String> queryParams = {
       "limit": limit.toString(),
       if (after != null) 'after' : after.toString(),
       if (before != null) 'before' : before.toString(),
       if (around != null) 'around' : around.toString()
     };
 
-    final HttpResponse r = await client._http
-        .send('GET', '/channels/${this.id}/messages', queryParams: query);
+    var response = await client._http._execute(
+        JsonRequest._new('/channels/${this.id}/messages', queryParams: queryParams));
 
-    for (dynamic val in r.body) {
+    if(response is HttpResponseError) {
+      yield* Stream.error(response);
+    }
+
+    for (dynamic val in (response as HttpResponseSuccess).jsonBody) {
       yield Message._new(val as Map<String, dynamic>, client);
     }
   }

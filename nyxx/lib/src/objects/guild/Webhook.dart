@@ -72,16 +72,21 @@ class Webhook extends SnowflakeEntity with ISend implements IMessageAuthor {
 
   /// Edits the webhook.
   Future<Webhook> edit(String name, {String? auditReason}) async {
-    HttpResponse r = await client._http.send('PATCH', "/webhooks/$id/$token",
-        body: {"name": name}, reason: auditReason);
-    this.name = r.body['name'] as String;
-    return this;
+    var response = await client._http._execute(
+        JsonRequest._new("/webhooks/$id/$token",
+            method: "PATCH", auditLog: auditReason, body: {"name": name}));
+
+    if(response is HttpResponseSuccess) {
+      this.name = response.jsonBody['name'] as String;
+      return this;
+    }
+
+    return Future.error(response);
   }
 
   /// Deletes the webhook.
-  Future<void> delete({String auditReason = ""}) {
-    return client._http
-        .send('DELETE', "/webhooks/$id/$token", reason: auditReason);
+  Future<void> delete({String? auditReason}) {
+    return client._http._execute(JsonRequest._new("/webhooks/$id/$token", method: "DELETE", auditLog: auditReason));
   }
 
   @override
@@ -109,17 +114,30 @@ class Webhook extends SnowflakeEntity with ISend implements IMessageAuthor {
       if(content != null && tts != null) "tts": tts
     };
 
-    HttpResponse r;
+    HttpResponse response;
+
     if (files != null && files.isNotEmpty) {
-      r = await client._http.sendMultipart(
-          'POST', '/webhooks/${this.id}/${this.token}', files,
-          data: reqBody);
+      for(var file in files) {
+        // TODO: Check how to handle file size limit
+        if(file._bytes.length > 8 * 1024 * 1024) {
+          return Future.error("File with name: [${file._name}] is too big!");
+        }
+      }
+
+      response = await client._http._execute(
+          MultipartRequest._new('/webhooks/${this.id}/${this.token}',
+              files, method: "POST", fields: reqBody));
     } else {
-      r = await client._http.send('POST', '/webhooks/${this.id}/${this.token}',
-          body: reqBody..addAll({"tts": tts}));
+      response = await client._http._execute(
+          JsonRequest._new('/webhooks/${this.id}/${this.token}',
+              body: reqBody, method: "POST"));
     }
 
-    return Message._new(r.body as Map<String, dynamic>, client);
+    if(response is HttpResponseSuccess) {
+      return Message._new(response.jsonBody as Map<String, dynamic>, client);
+    } else {
+      return Future.error(response);
+    }
   }
 
   /// Returns a string representation of this object.

@@ -14,6 +14,47 @@ class Invite  {
   /// Returns url invite
   String get url => "https://discord.gg/$code";
 
+  /// User who created this invite
+  late final User? inviter;
+
+  /// The target user for this invite
+  late final User? targetUser;
+
+  /// Reference to bot instance
+  Nyxx client;
+
+  Invite._new(Map<String, dynamic> raw, this.client) {
+    this.code = raw['code'] as String;
+
+    if(raw['guild'] != null) {
+      this.guild = client.guilds[Snowflake(raw['guild']['id'])];
+    }
+
+    if(raw['channel'] != null) {
+      this.channel = client.channels[Snowflake(raw['channel']['id'])];
+    }
+
+    if(raw['channel_id'] != null) {
+      this.channel = client.channels[Snowflake(raw['channel_id'])];
+    }
+
+    if(raw['inviter'] != null) {
+      this.inviter = client.users[Snowflake(raw['inviter']['id'])];
+    }
+
+    if(raw['target_user'] != null) {
+      this.targetUser = client.users[Snowflake(raw['target_user']['id'])];
+    }
+  }
+
+  /// Deletes this Invite.
+  Future<void> delete({String? auditReason}) async {
+    return client._http._execute(JsonRequest._new('/invites/$code', method: "DELETE", auditLog: auditReason));
+  }
+}
+
+class InviteWithMeta extends Invite {
+
   /// Date when invite was created
   late final DateTime createdAt;
 
@@ -25,12 +66,6 @@ class Invite  {
 
   /// Max number of uses of this invite
   late final int maxUses;
-
-  /// User who created this invite
-  late final User? inviter;
-
-  /// The target user for this invite
-  late final User? targetUser;
 
   /// Duration (in seconds) after which the invite expires
   late final int maxAge;
@@ -56,41 +91,11 @@ class Invite  {
     return ageValidity && expiryValidity;
   }
 
-  /// Reference to bot instance
-  Nyxx client;
-
-  Invite._new(Map<String, dynamic> raw, this.client) {
-    this.code = raw['code'] as String;
-
-    if(raw['guild'] != null) {
-      this.guild = client.guilds[Snowflake(raw['guild']['id'])];
-    }
-
-    if(raw['channel'] != null) {
-      this.channel = client.channels[Snowflake(raw['channel']['id'])];
-    }
-
-    if(raw['channel_id'] != null) {
-      this.channel = client.channels[Snowflake(raw['channel_id'])];
-    }
-
+  InviteWithMeta._new(Map<String, dynamic> raw, Nyxx client) : super._new(raw, client) {
     this.createdAt = DateTime.parse(raw['created_at'] as String);
     this.temporary = raw['temporary'] as bool;
     this.uses = raw['uses'] as int;
     this.maxUses = raw['max_uses'] as int;
     this.maxAge = raw['max_age'] as int;
-
-    if(raw['inviter'] != null) {
-      this.inviter = client.users[Snowflake(raw['inviter']['id'])];
-    }
-
-    if(raw['target_user'] != null) {
-      this.targetUser = client.users[Snowflake(raw['target_user']['id'])];
-    }
-  }
-
-  /// Deletes this Invite.
-  Future<void> delete({String auditReason = ""}) async {
-    await client._http.send('DELETE', '/invites/$code', reason: auditReason);
   }
 }

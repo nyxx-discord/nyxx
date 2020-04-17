@@ -276,10 +276,14 @@ class Guild extends SnowflakeEntity implements Disposable {
   Future<GuildEmoji> getEmoji(Snowflake emojiId) async {
     if (emojis.hasKey(emojiId)) return emojis[emojiId] as GuildEmoji;
 
-    HttpResponse r = await client._http
-        .send('GET', "/guilds/$id/emojis/${emojiId.toString()}");
+    var response = await client._http._execute(
+        JsonRequest._new("/guilds/$id/emojis/${emojiId.toString()}"));
 
-    return GuildEmoji._new(r.body as Map<String, dynamic>, this, client);
+    if(response is HttpResponseSuccess) {
+      return GuildEmoji._new(response.jsonBody as Map<String, dynamic>, this, client);
+    }
+
+    return Future.error(response);
   }
 
   /// Allows to create new guild emoji. [name] is required and you have to specify one of two other parameters: [image] or [imageBytes].
@@ -295,16 +299,25 @@ class Guild extends SnowflakeEntity implements Disposable {
       return Future.error(
           "Emojis and animated emojis have a maximum file size of 256kb.");
 
-    var encoded =
-        base64.encode(image == null ? imageBytes : await image.readAsBytes());
-    var res = await client._http
-        .send("POST", "/guilds/${this.id.toString()}/emojis", body: {
-      "name": name,
-      "image": encoded,
-      "roles": roles != null ? roles.map((r) => r.id.toString()) : ""
-    });
+    if(image == null && imageBytes == null) {
+      return Future.error("Both imageData and file fields cannot be null");
+    }
 
-    return GuildEmoji._new(res.body as Map<String, dynamic>, this, client);
+    var body = <String, dynamic> {
+      "name": name,
+      "image": base64.encode(image == null ? imageBytes : await image.readAsBytes()),
+      if(roles != null) "roles": roles.map((r) => r.id.toString())
+    };
+
+    var response = await client._http._execute(
+        JsonRequest._new("/guilds/${this.id.toString()}/emojis",
+            method: "POST", body: body));
+
+    if(response is HttpResponseSuccess) {
+      return GuildEmoji._new(response.jsonBody as Map<String, dynamic>, this, client);
+    }
+
+    return Future.error(response);
   }
 
   /// Allows to download [Guild] widget aka advert png
@@ -316,53 +329,81 @@ class Guild extends SnowflakeEntity implements Disposable {
 
   /// Returns [int] indicating the number of members that would be removed in a prune operation.
   Future<int> pruneCount(int days) async {
-    HttpResponse r = await client._http
-        .send('GET', "/guilds/$id/prune", body: {"days": days});
-    return r.body['pruned'] as int;
+    var response = await client._http._execute(
+        JsonRequest._new("/guilds/$id/prune", body: {
+          "days": days
+        }));
+
+    if(response is HttpResponseSuccess) {
+      return response.jsonBody['pruned'] as int;
+    }
+
+    return Future.error(response);
   }
 
   /// Prunes the guild, returns the amount of members pruned.
   /// https://discordapp.com/developers/docs/resources/guild#get-guild-prune-count
   Future<int> prune(int days, {String? auditReason}) async {
-    HttpResponse r = await client._http.send('POST', "/guilds/$id/prune",
-        body: {"days": days}, reason: auditReason);
-    return r.body['pruned'] as int;
+    var response = await client._http._execute(
+        JsonRequest._new("/guilds/$id/prune", method: "POST", auditLog: auditReason,
+            body: { "days": days }));
+
+    if(response is HttpResponseSuccess) {
+      return response.jsonBody['pruned'] as int;
+    }
+
+    return Future.error(response);
   }
 
   /// Get's the guild's bans.
   Stream<Ban> getBans() async* {
-    final r = await client._http.send('GET', "/guilds/$id/bans");
+    var response = await client._http._execute(JsonRequest._new("/guilds/$id/bans"));
 
-    for (var obj in r.body) {
+    if(response is HttpResponseError) {
+      yield* Stream.error(response);
+    }
+
+    for (var obj in (response as HttpResponseSuccess).jsonBody) {
       yield Ban._new(obj as Map<String, dynamic>, client);
     }
   }
 
   /// Change self nickname in guild
   Future<void> changeSelfNick(String nick) async {
-    await client._http.send(
-        "PATCH", "/guilds/${this.id.toString()}/members/@me/nick",
-        body: {"nick": nick});
+    return client._http._execute(
+        JsonRequest._new("/guilds/${this.id.toString()}/members/@me/nick",
+            method: "PATCH", body : {"nick": nick}));
   }
 
   /// Gets single [Ban] object for given [id]
   Future<Ban> getBan(Snowflake id) async {
-    var r = await client._http
-        .send("GET", "/guilds/${this.id.toString()}/bans/${id.toString()}");
-    return Ban._new(r.body as Map<String, dynamic>, client);
+    var response = await client._http._execute(
+        JsonRequest._new("/guilds/${this.id.toString()}/bans/${id.toString()}"));
+
+    if(response is HttpResponseSuccess) {
+      return Ban._new(response.jsonBody as Map<String, dynamic>, client);
+    }
+
+    return Future.error(response);
   }
 
   /// Change guild owner.
   Future<Guild> changeOwner(Member member, {String? auditReason}) async {
-    HttpResponse r = await client._http.send('PATCH', "/guilds/$id",
-        body: {"owner_id": member.id}, reason: auditReason);
+    var response = await client._http._execute(
+        JsonRequest._new("/guilds/$id", method: "PATCH", auditLog: auditReason,
+            body: { "owner_id": member.id }));
 
-    return Guild._new(client, r.body as Map<String, dynamic>);
+    if(response is HttpResponseSuccess) {
+      return Guild._new(client, response.jsonBody as Map<String, dynamic>);
+    }
+
+    return Future.error(response);
   }
 
   /// Leaves the guild.
   Future<void> leave() async {
-    await client._http.send('DELETE', "/users/@me/guilds/$id");
+    return client._http._execute(
+        JsonRequest._new("/users/@me/guilds/$id", method: "DELETE"));
   }
 
   Future<Invite> createInvite(
@@ -387,9 +428,13 @@ class Guild extends SnowflakeEntity implements Disposable {
 
   /// Returns list of Guilds invites
   Stream<Invite> getGuildInvites() async* {
-    HttpResponse r = await client._http.send('GET', "/guilds/$id/invites");
+    var response = await client._http._execute(JsonRequest._new( "/guilds/$id/invites"));
 
-    for(var obj in r.body) {
+    if(response is HttpResponseError) {
+      yield* Stream.error(response);
+    }
+
+    for(var obj in (response as HttpResponseSuccess).jsonBody) {
       yield Invite._new(obj as Map<String, dynamic>, client);
     }
   }
@@ -405,31 +450,46 @@ class Guild extends SnowflakeEntity implements Disposable {
       int? actionType,
       Snowflake? before,
       int? limit}) async {
-    var query = <String, String> {
+    var queryParams = <String, String> {
       if (userId != null) 'user_id' : userId.toString(),
       if (actionType != null) 'action_type' : actionType.toString(),
       if (before != null) 'before' : before.toString(),
       if (limit != null) 'limit' : limit.toString()
     };
 
-    HttpResponse r = await client._http
-        .send('GET', '/guilds/${this.id}/audit-logs', queryParams: query);
+    var response = await client._http._execute(
+        JsonRequest._new('/guilds/${this.id}/audit-logs', queryParams: queryParams));
 
-    return AuditLog._new(r.body as Map<String, dynamic>, client);
+    if(response is HttpResponseSuccess) {
+      return AuditLog._new(response.jsonBody as Map<String, dynamic>, client);
+    }
+
+    return Future.error(response);
   }
 
   /// Get Guild's embed object
   Future<Embed> getGuildEmbed() async {
-    HttpResponse r = await client._http.send('GET', "/guilds/$id/embed");
-    return Embed._new(r.body as Map<String, dynamic>);
+    var response = await client._http._execute(JsonRequest._new("/guilds/$id/embed"));
+
+    if(response is HttpResponseSuccess) {
+      return Embed._new(response.jsonBody as Map<String, dynamic>);
+    }
+
+    return Future.error(response);
   }
 
   /// Modify guild embed object
   Future<Embed> editGuildEmbed(EmbedBuilder embed,
       {String? auditReason}) async {
-    HttpResponse r = await client._http.send('PATCH', "/guilds/$id/embed",
-        body: embed._build(), reason: auditReason);
-    return Embed._new(r.body as Map<String, dynamic>);
+    var response = await client._http._execute(
+        JsonRequest._new("/guilds/$id/embed", method: "PATCH",
+            auditLog: auditReason, body: embed._build()));
+
+    if(response is HttpResponseSuccess) {
+      return Embed._new(response.jsonBody as Map<String, dynamic>);
+    }
+
+    return Future.error(response);
   }
 
   /// Creates new role
@@ -444,9 +504,15 @@ class Guild extends SnowflakeEntity implements Disposable {
   /// ```
   Future<Role> createRole(RoleBuilder roleBuilder,
       {String? auditReason}) async {
-    HttpResponse r = await client._http.send('POST', "/guilds/$id/roles",
-        body: roleBuilder._build(), reason: auditReason);
-    return Role._new(r.body as Map<String, dynamic>, this, client);
+    var response = await client._http._execute(
+        JsonRequest._new("/guilds/$id/roles", method: "POST",
+            auditLog: auditReason, body: roleBuilder._build()));
+
+    if(response is HttpResponseSuccess) {
+      return Role._new(response.jsonBody as Map<String, dynamic>, this, client);
+    }
+
+    return Future.error(response);
   }
 
   /// Adds [Role] to [Member]
@@ -458,15 +524,20 @@ class Guild extends SnowflakeEntity implements Disposable {
   /// await guild.addRoleToMember(member, role);
   /// ```
   Future<void> addRoleToMember(Member user, Role role) async {
-    await client._http
-        .send('PUT', '/guilds/$id/members/${user.id}/roles/${role.id}');
+    return client._http._execute(
+        JsonRequest._new('/guilds/$id/members/${user.id}/roles/${role.id}', method: "PUT"));
   }
 
   /// Returns list of available [VoiceChannel]s
   Stream<VoiceRegion> getVoiceRegions() async* {
-    var r = await client._http.send('GET', "/guilds/$id/regions");
+    var response = await client._http._execute(
+        JsonRequest._new("/guilds/$id/regions"));
 
-    for(var obj in r.body) {
+    if(response is HttpResponseError) {
+      yield* Stream.error(response);
+    }
+
+    for(var obj in (response as HttpResponseSuccess).jsonBody) {
       yield (VoiceRegion._new(obj as Map<String, dynamic>));
     }
   }
@@ -507,10 +578,15 @@ class Guild extends SnowflakeEntity implements Disposable {
       if (permissions != null) 'permission_overwrites' : permissions
     };
 
-    // Send request
-    HttpResponse r = await client._http
-        .send('POST', "/guilds/$id/channels", body: body, reason: auditReason);
-    var raw = r.body;
+    var response = await client._http._execute(
+        JsonRequest._new("/guilds/$id/channels", method: "POST",
+            body: body, auditLog: auditReason));
+
+    if(response is HttpResponseError) {
+      return Future.error(response);
+    }
+
+    var raw = (response as HttpResponseSuccess).jsonBody;
 
     switch (type._value) {
       case 0:
@@ -531,7 +607,7 @@ class Guild extends SnowflakeEntity implements Disposable {
   /// await guild.moveChannel(chan, relative: -2);
   /// ```
   Future<void> moveChannel(GuildChannel channel,
-      {int? absolute, int? relative, String auditReason = ""}) async {
+      {int? absolute, int? relative, String? auditReason}) async {
 
     if (absolute == null && relative == null)
       return Future.error("Cannot move channel by zero places");
@@ -542,9 +618,9 @@ class Guild extends SnowflakeEntity implements Disposable {
       newPosition = absolute;
     }
 
-    await client._http.send('PATCH', "/guilds/${this.id}/channels",
-        body: {"id": channel.id.toString(), "position": newPosition},
-        reason: auditReason);
+    return client._http._execute(JsonRequest._new("/guilds/${this.id}/channels",
+        method: "PATCH", auditLog: auditReason,
+        body: { "id": channel.id.toString(), "position": newPosition }));
   }
 
   /// Bans a user and allows to delete messages from [deleteMessageDays] number of days.
@@ -554,9 +630,10 @@ class Guild extends SnowflakeEntity implements Disposable {
   /// ```
   Future<void> ban(Member member,
       {int deleteMessageDays = 0, String? auditReason}) async {
-    await client._http.send(
-        'PUT', "/guilds/${this.id}/bans/${member.id.toString()}",
-        body: {"delete-message-days": deleteMessageDays}, reason: auditReason);
+    return client._http._execute(
+        JsonRequest._new("/guilds/${this.id}/bans/${member.id.toString()}",
+            method: "PUT", auditLog: auditReason,
+            body: { "delete-message-days": deleteMessageDays }));
   }
 
   /// Kicks user from guild. Member is removed from guild and he is able to rejoin
@@ -565,15 +642,15 @@ class Guild extends SnowflakeEntity implements Disposable {
   /// await guild.kick(member);
   /// ```
   Future<void> kick(Member member, {String? auditReason}) async {
-    await client._http.send("DELETE",
-        "/guilds/${this.id.toString()}/members/${member.id.toString()}",
-        reason: auditReason);
+    return client._http._execute(
+        JsonRequest._new("/guilds/${this.id.toString()}/members/${member.id.toString()}",
+            method: "DELTE", auditLog: auditReason));
   }
 
   /// Unbans a user by ID.
   Future<void> unban(Snowflake id) async {
-    await client._http
-        .send('DELETE', "/guilds/${this.id}/bans/${id.toString()}");
+    return client._http._execute(
+        JsonRequest._new("/guilds/${this.id}/bans/${id.toString()}", method: "DELETE"));
   }
 
   /// Edits the guild.
@@ -594,9 +671,15 @@ class Guild extends SnowflakeEntity implements Disposable {
       if(icon != null) "icon" : icon
     };
 
-    HttpResponse r = await client._http.send('PATCH', "/guilds/${this.id}",
-        body: body, reason: auditReason);
-    return Guild._new(client, r.body as Map<String, dynamic>);
+    var response = await client._http._execute(
+        JsonRequest._new("/guilds/${this.id}", method: "PATCH",
+            auditLog: auditReason, body: body));
+
+    if(response is HttpResponseSuccess) {
+      return Guild._new(client, response.jsonBody as Map<String, dynamic>);
+    }
+
+    return Future.error(response);
   }
 
   /// Gets a [Member] object. Caches fetched member if not cached.
@@ -614,24 +697,34 @@ class Guild extends SnowflakeEntity implements Disposable {
   Future<Member> getMemberById(Snowflake id) async {
     if (this.members.hasKey(id)) return this.members[id] as Member;
 
-    final r = await client._http
-        .send('GET', '/guilds/${this.id}/members/${id.toString()}');
+    var response = await client._http._execute(
+        JsonRequest._new('/guilds/${this.id}/members/${id.toString()}'));
 
-    return Member._standard(r.body as Map<String, dynamic>, this, client);
+    if(response is HttpResponseSuccess) {
+      return Member._standard(response.jsonBody as Map<String, dynamic>, this, client);
+    }
+
+    return Future.error(response);
   }
 
   /// Gets all of the webhooks for this channel.
   Stream<Webhook> getWebhooks() async* {
-    HttpResponse r = await client._http.send('GET', "/channels/$id/webhooks");
+    var response = await client._http._execute(
+        JsonRequest._new("/channels/$id/webhooks"));
 
-    for(var o in r.body.values) {
+    if(response is HttpResponseError) {
+      yield* Stream.error(response);
+    }
+
+    for(var o in (response as HttpResponseSuccess).jsonBody.values) {
       yield Webhook._new(o as Map<String, dynamic>, client);
     }
   }
 
   /// Deletes the guild.
   Future<void> delete() async {
-    await client._http.send('DELETE', "/guilds/${this.id}");
+    return client._http._execute(
+        JsonRequest._new("/guilds/${this.id}", method: "DELETE"));
   }
 
   @override

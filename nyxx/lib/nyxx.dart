@@ -29,12 +29,14 @@ part 'src/ClientOptions.dart';
 part 'src/internal/_Constants.dart';
 part 'src/internal/_EventController.dart';
 part 'src/internal/_WS.dart';
-part 'src/internal/Http.dart';
 part 'src/internal/Cache.dart';
+
+part 'src/internal/http/HttpHandler.dart';
+part 'src/internal/http/HttpRequest.dart';
+part 'src/internal/http/HttpResponse.dart';
 
 // ERROR
 
-part 'src/errors/HttpError.dart';
 part 'src/errors/SetupErrors.dart';
 
 // EVENTS

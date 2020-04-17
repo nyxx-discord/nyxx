@@ -14,7 +14,6 @@ class GuildCreateEvent {
           {"guild_id": guild.id.toString(), "query": "", "limit": 0});
 
     client.guilds[guild.id] = guild;
-    shard.guilds[guild.id] = guild;
   }
 }
 
@@ -49,7 +48,6 @@ class GuildDeleteEvent {
     this.guild = client.guilds[Snowflake(json['d']['id'] as String)];
     /// TODO: NNBD - To consider
     client.guilds.remove(guild!.id);
-    shard.guilds.remove(guild!.id);
   }
 }
 

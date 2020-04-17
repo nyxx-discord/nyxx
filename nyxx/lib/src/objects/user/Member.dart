@@ -90,11 +90,14 @@ class Member extends User implements GuildEntity {
       {int? deleteMessageDays,
       String? reason,
       String? auditReason}) async {
-    await client._http.send('PUT', "/guilds/${this.guild.id}/bans/${this.id}",
-        body: {
-          if(deleteMessageDays != null) "delete-message-days": deleteMessageDays,
-          if(reason != null)"reason": reason
-        }, reason: auditReason);
+    var body = <String, dynamic>{
+      if(deleteMessageDays != null) "delete-message-days": deleteMessageDays,
+      if(reason != null)"reason": reason
+    };
+
+    return client._http._execute(
+        JsonRequest._new("/guilds/${this.guild.id}/bans/${this.id}",
+            method: "PUT", auditLog: auditReason, body: body));
   }
 
   /// Adds role to user
@@ -103,24 +106,25 @@ class Member extends User implements GuildEntity {
   /// var r = guild.roles.values.first;
   /// await member.addRole(r);
   /// ```
-  Future<void> addRole(Role role, {String auditReason = ""}) {
-    return client._http.send(
-        'PUT', '/guilds/${guild.id}/members/${this.id}/roles/${role.id}',
-        reason: auditReason);
+  Future<void> addRole(Role role, {String? auditReason}) {
+    return client._http._execute(
+        JsonRequest._new('/guilds/${guild.id}/members/${this.id}/roles/${role.id}',
+            method: "PUT", auditLog: auditReason));
+
   }
 
   /// Removes [role] from user.
-  Future<void> removeRole(Role role, {String auditReason = ""}) {
-    return client._http.send("DELETE",
-        "/guilds/${this.guild.id.toString()}/members/${this.id.toString()}/roles/${role.id.toString()}",
-        reason: auditReason);
+  Future<void> removeRole(Role role, {String? auditReason}) {
+    return client._http._execute(
+        JsonRequest._new("/guilds/${this.guild.id.toString()}/members/${this.id.toString()}/roles/${role.id.toString()}",
+            method: "DELETE", auditLog: auditReason));
   }
 
   /// Kicks the member from guild
   Future<void> kick({String? auditReason}) async {
-    await client._http.send(
-        'DELETE', "/guilds/${this.guild.id}/members/${this.id}",
-        reason: auditReason);
+    return client._http._execute(
+        JsonRequest._new("/guilds/${this.guild.id}/members/${this.id}",
+            method: "DELETE", auditLog: auditReason));
   }
 
   /// Edits members. Allows to move user in voice channel, mute or deaf, change nick, roles.
@@ -139,9 +143,9 @@ class Member extends User implements GuildEntity {
       if (channel != null) 'channel_id' : channel.id.toString()
     };
 
-    return client._http.send("PATCH",
-        "/guilds/${this.guild.id.toString()}/members/${this.id.toString()}",
-        body: body, reason: auditReason);
+    return client._http._execute(
+        JsonRequest._new("/guilds/${this.guild.id.toString()}/members/${this.id.toString()}",
+            method: "PATCH", auditLog: auditReason, body: body));
   }
 
   @override

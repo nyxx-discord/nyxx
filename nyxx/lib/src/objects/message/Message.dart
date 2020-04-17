@@ -220,53 +220,64 @@ class Message extends SnowflakeEntity implements GuildEntity, Disposable {
       if(allowedMentions != null) "allowed_mentions" : allowedMentions._build()
     };
 
-    final HttpResponse r = await client._http.send(
-        'PATCH', '/channels/${this.channel.id}/messages/${this.id}',
-        body: body);
-    return Message._new(r.body as Map<String, dynamic>, client);
+    var response = await client._http._execute(
+        JsonRequest._new('/channels/${this.channel.id}/messages/${this.id}',
+            method: "PATCH", body: body));
+
+    if(response is HttpResponseSuccess) {
+      return Message._new(response.jsonBody as Map<String, dynamic>, client);
+    }
+
+    return Future.error(response);
   }
 
   /// Add reaction to message.
   Future<void> createReaction(Emoji emoji) {
-    return client._http.send('PUT',
-        "/channels/${this.channel.id}/messages/${this.id}/reactions/${emoji.encode()}/@me");
+    return client._http._execute(
+        JsonRequest._new("/channels/${this.channel.id}/messages/${this.id}/reactions/${emoji.encode()}/@me",
+            method: "PUT"));
   }
 
   /// Deletes reaction of bot. Emoji as ':emoji_name:'
   Future<void> deleteReaction(Emoji emoji) {
-    return client._http.send('DELETE',
-        "/channels/${this.channel.id}/messages/${this.id}/reactions/${emoji.encode()}/@me");
+    return client._http._execute(
+        JsonRequest._new("/channels/${this.channel.id}/messages/${this.id}/reactions/${emoji.encode()}/@me",
+            method: "DELETE"));
   }
 
   /// Deletes reaction of given user.
   Future<void> deleteUserReaction(Emoji emoji, String userId) {
-    return client._http.send('DELETE',
-        "/channels/${this.channel.id}/messages/${this.id}/reactions/${emoji.encode()}/$userId");
+    return client._http._execute(
+        JsonRequest._new("/channels/${this.channel.id}/messages/${this.id}/reactions/${emoji.encode()}/$userId",
+            method: "DELETE"));
   }
 
   /// Deletes all reactions
   Future<void> deleteAllReactions() {
-    return client._http.send(
-        'DELETE', "/channels/${this.channel.id}/messages/${this.id}/reactions");
+    return client._http._execute(
+        JsonRequest._new("/channels/${this.channel.id}/messages/${this.id}/reactions",
+            method: "DELETE"));
   }
 
   /// Deletes the message.
   ///
   /// Throws an [Exception] if the HTTP request errored.
   Future<void> delete({String? auditReason}) {
-    return client._http.send(
-        'DELETE', '/channels/${this.channel.id}/messages/${this.id}',
-        reason: auditReason);
+    return client._http._execute(
+        JsonRequest._new('/channels/${this.channel.id}/messages/${this.id}',
+            method: "DELETE", auditLog: auditReason));
   }
 
   /// Pins [Message] in current [Channel]
   Future<void> pinMessage() {
-    return client._http.send('PUT', "/channels/${channel.id}/pins/$id");
+    return client._http._execute(
+        JsonRequest._new("/channels/${channel.id}/pins/$id", method: "PUT"));
   }
 
   /// Unpins [Message] in current [Channel]
   Future<void> unpinMessage() {
-    return client._http.send('DELETE', "/channels/${channel.id}/pins/$id");
+    return client._http._execute(
+        JsonRequest._new("/channels/${channel.id}/pins/$id", method: "DELETE"));
   }
 
   @override
