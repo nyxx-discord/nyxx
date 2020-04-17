@@ -9,11 +9,11 @@ class RatelimitEvent {
   final bool handled;
 
   /// The request that was rate limited.
-  final HttpBase request;
+  final HttpRequest request;
 
   /// The error response received if the rate limit handler did not stop
   /// the request (aka hit 429)
-  final HttpResponse? response;
+  final transport.Response? response;
 
   RatelimitEvent._new(this.request, this.handled, [this.response]);
 }

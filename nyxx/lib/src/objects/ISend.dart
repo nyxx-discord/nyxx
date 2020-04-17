@@ -5,7 +5,7 @@ abstract class ISend {
   Nyxx get client;
 
   /// Sends message
-  Future<Message?> send(
+  Future<Message> send(
       {dynamic content,
       List<AttachmentBuilder>? files,
       EmbedBuilder? embed,
@@ -24,7 +24,7 @@ abstract class ISend {
     }
 
     return <String, dynamic>{
-      if(content == null) "content": content.toString(),
+      if(content != null) "content": content.toString(),
       if(embed != null) "embed" : embed._build(),
       if (allowedMentions != null) "allowed_mentions" : allowedMentions._build()
     };

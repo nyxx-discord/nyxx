@@ -45,17 +45,25 @@ class TextChannel extends MessageChannel
       if(slowModeTreshold != null) "rate_limit_per_user" : slowModeTreshold,
     };
 
-    HttpResponse r =
-        await client._http.send('PATCH', "/channels/${this.id}", body: body);
+    var response = await client._http._execute(
+        JsonRequest._new( "/channels/${this.id}", method: "PATCH", body: body));
 
-    return TextChannel._new(r.body as Map<String, dynamic>, this.guild, client);
+    if(response is HttpResponseSuccess) {
+      return TextChannel._new(response.jsonBody as Map<String, dynamic>, this.guild, client);
+    }
+
+    return Future.error(response);
   }
 
   /// Gets all of the webhooks for this channel.
   Stream<Webhook> getWebhooks() async* {
-    HttpResponse r = await client._http.send('GET', "/channels/$id/webhooks");
+    var response = await client._http._execute(JsonRequest._new("/channels/$id/webhooks"));
 
-    for(var o in r.body.values) {
+    if(response is HttpResponseError) {
+      yield* Stream.error(response);
+    }
+
+    for(var o in (response as HttpResponseSuccess).jsonBody.values) {
       yield Webhook._new(o as Map<String, dynamic>, client);
     }
   }
@@ -81,18 +89,28 @@ class TextChannel extends MessageChannel
 
       body['avatar'] = "data:image/${extension};base64,${data}";
     }
-
-    HttpResponse r = await client._http.send('POST', "/channels/$id/webhooks",
-        body: body, reason: auditReason);
-    return Webhook._new(r.body as Map<String, dynamic>, client);
+    
+    var response = await client._http._execute(
+        JsonRequest._new("/channels/$id/webhooks", method: "POST", body: body, auditLog: auditReason));
+    
+    if(response is HttpResponseSuccess) {
+      return Webhook._new(response.jsonBody as Map<String, dynamic>, client);
+    }
+    
+    return Future.error(response);
   }
 
   /// Returns pinned [Message]s for [Channel].
   Stream<Message> getPinnedMessages() async* {
-    final HttpResponse r = await client._http.send('GET', "/channels/$id/pins");
+    var response = await client._http._execute(JsonRequest._new("/channels/$id/pins"));
 
-    for (Map<String, dynamic> val in (r.body.values.first as Iterable<Map<String, dynamic>>))
+    if(response is HttpResponseError) {
+      yield* Stream.error(response);
+    }
+
+    for (Map<String, dynamic> val in ((response as HttpResponseSuccess).jsonBody.values.first as Iterable<Map<String, dynamic>>)) {
       yield Message._new(val, client);
+    }
   }
 
   @override

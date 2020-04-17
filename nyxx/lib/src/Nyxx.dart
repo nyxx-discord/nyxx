@@ -24,7 +24,8 @@ class Nyxx implements Disposable {
   late final ClientOptions _options;
   late final _WS _ws;
   late final _EventController _events;
-  late final Http _http;
+
+  late final HttpHandler _http;
 
   /// The current bot user.
   late ClientUser self;
@@ -60,13 +61,6 @@ class Nyxx implements Disposable {
 
   /// Emitted when a shard is disconnected from the websocket.
   late Stream<DisconnectEvent> onDisconnect;
-
-  /// Emitted before all HTTP requests are sent. (You can edit them)
-  /// This is single subscription Stream - only one listener.
-  ///
-  /// **WARNING:** Once you listen to this stream, all requests
-  /// will be halted until you call `request.send()`
-  late Stream<BeforeHttpRequestSendEvent> beforeHttpRequestSend;
 
   /// Emitted when a successful HTTP response is received.
   late Stream<HttpResponseEvent> onHttpResponse;
@@ -216,7 +210,8 @@ class Nyxx implements Disposable {
     this.channels = ChannelCache._new();
     this.users = _SnowflakeCache();
 
-    this._http = Http._new(this);
+    this._http = HttpHandler._new(this);
+
     this._events = _EventController(this);
     this.onSelfMention = this.onMessageReceived.where((event) =>
         event.message?.mentions != null &&
@@ -243,8 +238,13 @@ class Nyxx implements Disposable {
   Future<Channel?> getChannel(Snowflake id, {Guild? guild}) async {
     if (this.channels.hasKey(id)) return this.channels[id];
 
-    var raw = (await this._http.send("GET", "/channels/${id.toString()}")).body
-        as Map<String, dynamic>;
+    var response = await this._http._execute(JsonRequest._new("/channels/${id.toString()}"));
+
+    if(response is HttpResponseError) {
+      return Future.error(response);
+    }
+
+    var raw = (response as HttpResponseSuccess).jsonBody as Map<String, dynamic>;
 
     switch (raw['type'] as int) {
       case 1:
@@ -273,8 +273,13 @@ class Nyxx implements Disposable {
   Future<User?> getUser(Snowflake id) async {
     if (this.users.hasKey(id)) return this.users[id];
 
-    var r = await this._http.send("GET", "/users/${id.toString()}");
-    return User._new(r.body as Map<String, dynamic>, this);
+    var response = await this._http._execute(JsonRequest._new("/users/${id.toString()}"));
+
+    if(response is HttpResponseSuccess) {
+      return User._new(response.jsonBody as Map<String, dynamic>, this);
+    }
+
+    return Future.error(response);
   }
 
   /// Creates new guild with provided builder.
@@ -287,19 +292,30 @@ class Nyxx implements Disposable {
   /// var newGuild = await client.createGuild(guildBuilder);
   /// ```
   Future<Guild> createGuild(GuildBuilder builder) async {
-    if (this.guilds.count >= 10)
+    if (this.guilds.count >= 10) {
       return Future.error(
           "Guild cannot be created if bot is in 10 or more guilds");
+    }
 
-    var r = await this._http.send("POST", "/guilds", body: builder._build());
-    return Guild._new(this, r.body as Map<String, dynamic>);
+    var response = await this._http._execute(JsonRequest._new("/guilds", method: "POST"));
+
+    if(response is HttpResponseSuccess) {
+      return Guild._new(this, response.jsonBody as Map<String, dynamic>);
+    }
+
+    return Future.error(response);
   }
 
   /// Gets a webhook by its id and/or token.
   /// If token is supplied authentication is not needed.
   Future<Webhook> getWebhook(String id, {String token = ""}) async {
-    final r = await _http.send('GET', "/webhooks/$id/$token");
-    return Webhook._new(r.body as Map<String, dynamic>, this);
+    var response = await this._http._execute(JsonRequest._new("/webhooks/$id/$token"));
+
+    if(response is HttpResponseSuccess) {
+      return Webhook._new(response.jsonBody as Map<String, dynamic>, this);
+    }
+
+    return Future.error(response);
   }
 
   /// Gets an [Invite] object with given code.
@@ -309,8 +325,13 @@ class Nyxx implements Disposable {
   /// var inv = client.getInvite("YMgffU8");
   /// ```
   Future<Invite> getInvite(String code) async {
-    final r = await this._http.send('GET', '/invites/$code');
-    return Invite._new(r.body as Map<String, dynamic>, this);
+    final r = await this._http._execute(JsonRequest._new("/invites/$code"));
+
+    if(r is HttpResponseSuccess) {
+      return Invite._new(r.jsonBody as Map<String, dynamic>, this);
+    }
+
+    return Future.error(r);
   }
 
   /// Returns number of shards

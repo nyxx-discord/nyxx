@@ -58,26 +58,30 @@ class GuildEmoji extends Emoji implements SnowflakeEntity, GuildEntity {
   }
 
   Future<GuildEmoji> edit({String? name, List<Snowflake>? roles}) async {
-    var body = Map<String, dynamic>();
-
-    if(name != null) {
-      body["name"] = name;
+    if(name == null && roles == null) {
+      return Future.error("Both name and roles fields cannot be null");
     }
 
-    if(roles != null) {
-      body['roles'] = roles.map((r) => r.toString());
+    var body = <String, dynamic> {
+      if(name != null) "name" : name,
+      if(roles != null) "roles" : roles.map((r) => r.toString())
+    };
+
+    var response = await client._http._execute(
+        JsonRequest._new("/guilds/${guild.id.toString()}/emojis/${this.id.toString()}",
+            method: "PATCH", body: body));
+
+    if(response is HttpResponseSuccess) {
+      return GuildEmoji._new(response.jsonBody as Map<String, dynamic>, guild, client);
     }
 
-    var res = await client._http.send(
-        "PATCH", "/guilds/${guild.id.toString()}/emojis/${this.id.toString()}",
-        body: body);
-
-    return GuildEmoji._new(res.body as Map<String, dynamic>, guild, client);
+    return Future.error(response);
   }
 
   Future<void> delete() async {
-    await client._http.send("DELETE",
-        "/guilds/${this.guild.id.toString()}/emojis/${this.id.toString()}");
+    return client._http._execute(
+        JsonRequest._new("/guilds/${this.guild.id.toString()}/emojis/${this.id.toString()}",
+            method: "DELETE"));
   }
 
   /// Encodes Emoji to API format
