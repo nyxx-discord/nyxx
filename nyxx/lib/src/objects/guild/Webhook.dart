@@ -39,6 +39,7 @@ class Webhook extends SnowflakeEntity with ISend implements IMessageAuthor {
   @override
   String get tag => name.toString();
 
+  @override
   Nyxx client;
 
   Webhook._new(Map<String, dynamic> raw, this.client)

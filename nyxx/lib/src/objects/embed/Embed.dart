@@ -118,7 +118,11 @@ class Embed implements Convertable<EmbedBuilder> {
       image.hashCode * 37 +
       video.hashCode * 37 +
       author.hashCode * 37 +
-      fields.map((f) => f.hashCode * 37).reduce((f, s) => f + s);
+      fields.map((f) => f.hashCode * 37).reduce((f, s) {
+        if (f != null) return f + s;
+
+        return s;
+      });
 
   @override
   EmbedBuilder toBuilder() {
@@ -133,7 +137,7 @@ class Embed implements Convertable<EmbedBuilder> {
       ..thumbnailUrl = this.thumbnail?.url
       ..imageUrl = this.image?.url
       ..author = this.author?.toBuilder()
-      .._fields = this.fields.map((field) => field.toBuilder()).toList();
+      .._fields = this.fields.map((field) => field.toBuilder()).toList() as List<EmbedFieldBuilder>;
   }
 
   @override

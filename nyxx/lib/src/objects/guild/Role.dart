@@ -44,7 +44,7 @@ class Role extends SnowflakeEntity implements Mentionable, GuildEntity {
     this.position = raw['position'] as int;
     this.hoist = raw['hoist'] as bool;
     this.managed = raw['managed'] as bool;
-    this.mentionable = raw['mentionable'] as bool? ?? false;
+    this.mentionable = raw['mentionable'] as bool;
     this.permissions = Permissions.fromInt(raw['permissions'] as int);
     this.color = DiscordColor.fromInt(raw['color'] as int);
   }

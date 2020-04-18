@@ -2,6 +2,7 @@ part of nyxx;
 
 /// Represents a single user of Discord, either a human or a bot, outside of any specific guild's context.
 class User extends SnowflakeEntity with ISend, Mentionable, IMessageAuthor {
+  @override
   Nyxx client;
 
   /// The user's username.
@@ -48,14 +49,15 @@ class User extends SnowflakeEntity with ISend, Mentionable, IMessageAuthor {
     this.username = raw['username'] as String;
     this.discriminator = int.parse(raw['discriminator'] as String);
     this.avatar = raw['avatar'] as String?;
-    this.bot = raw['bot'] as bool? ?? false;
-    this.system = raw['system'] as bool? ?? false;
+    // TODO: Change the type of bot to bool? if you want to use bool? ?? false
+    this.bot = raw['bot'] as bool;
+    this.system = raw['system'] as bool;
 
-    if(raw['public_flags'] != null) {
+    if (raw['public_flags'] != null) {
       this.userFlags = UserFlags._new(raw['public_flags'] as int);
     }
 
-    if(raw['premium_type'] != null) {
+    if (raw['premium_type'] != null) {
       this.nitroType = NitroType.from(raw['premium_type'] as int);
     }
   }
@@ -73,18 +75,22 @@ class User extends SnowflakeEntity with ISend, Mentionable, IMessageAuthor {
 
   /// Gets the [DMChannel] for the user.
   Future<DMChannel> get dmChannel async {
-    var channel = client.channels.findOne((Channel c) => c is DMChannel && c.recipient.id == this.id) as DMChannel?;
+    var channel = client.channels
+            .findOne((Channel c) => c is DMChannel && c.recipient.id == this.id)
+        as DMChannel?;
 
-    if(channel != null) {
+    if (channel != null) {
       return channel;
     }
 
-    var response = await this.client._http._execute(JsonRequest._new("/users/@me/channels", method: "POST", body: {
-      "recipient_id": this.id.toString()
-    }));
+    var response = await this.client._http._execute(JsonRequest._new(
+        "/users/@me/channels",
+        method: "POST",
+        body: {"recipient_id": this.id.toString()}));
 
-    if(response is HttpResponseSuccess) {
-      channel = DMChannel._new(response.jsonBody as Map<String, dynamic>, client);
+    if (response is HttpResponseSuccess) {
+      channel =
+          DMChannel._new(response.jsonBody as Map<String, dynamic>, client);
       this.client.channels.add(channel.id, channel);
 
       return channel;
@@ -98,11 +104,11 @@ class User extends SnowflakeEntity with ISend, Mentionable, IMessageAuthor {
   /// Sends a message to user.
   Future<Message> send(
       {dynamic content,
-        List<AttachmentBuilder>? files,
-        EmbedBuilder? embed,
-        bool? tts,
-        AllowedMentions? allowedMentions,
-        MessageBuilder? builder}) async {
+      List<AttachmentBuilder>? files,
+      EmbedBuilder? embed,
+      bool? tts,
+      AllowedMentions? allowedMentions,
+      MessageBuilder? builder}) async {
     DMChannel channel = await this.dmChannel;
     return channel.send(
         content: content,

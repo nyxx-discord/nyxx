@@ -68,7 +68,8 @@ class Shard implements Disposable {
   }
 
   /// Syncs all guilds
-  void guildSync() => this.send("GUILD_SYNC", this._ws._client.guilds.keys.toList());
+  void guildSync() =>
+      this.send("GUILD_SYNC", this._ws._client.guilds.keys.toList());
 
   // Attempts to connect to ws
   void _connect([bool resume = false, bool init = false]) {
@@ -79,7 +80,9 @@ class Shard implements Disposable {
       return;
     }
 
-    transport.WebSocket.connect(Uri.parse("${this._ws.gateway}?v=6&encoding=json")).then((ws) {
+    transport.WebSocket.connect(
+            Uri.parse("${this._ws.gateway}?v=6&encoding=json"))
+        .then((ws) {
       _socket = ws;
       _socket!.listen(
           (data) {
@@ -90,8 +93,9 @@ class Shard implements Disposable {
             print(err);
             this._handleErr();
           });
-    }, onError: (_, __) => Future.delayed(
-        const Duration(seconds: 6), () => this._connect()));
+    },
+            onError: (_, __) => Future.delayed(
+                const Duration(seconds: 6), () => this._connect()));
   }
 
   // Decodes zlib compresses string into string json
@@ -117,7 +121,7 @@ class Shard implements Disposable {
   }
 
   Future<void> _handleMsg(Map<String, dynamic> msg, bool resume) async {
-    if(this._socket!.closeCode != null) {
+    if (this._socket?.closeCode != null) {
       return;
     }
 
@@ -144,11 +148,12 @@ class Shard implements Disposable {
               "\$device": "nyxx",
             },
             "large_threshold": this._ws._client._options.largeThreshold,
-            if(!browser) "compress": true
+            if (!browser) "compress": true
           };
 
-          if(_ws._client._options.gatewayIntents != null) {
-            identifyMsg["intents"] = _ws._client._options.gatewayIntents!._calculate();
+          if (_ws._client._options.gatewayIntents != null) {
+            identifyMsg["intents"] =
+                _ws._client._options.gatewayIntents!._calculate();
           }
 
           identifyMsg['shard'] = <int>[
@@ -206,6 +211,7 @@ class Shard implements Disposable {
             msg['d']['members'].forEach((dynamic o) {
               var mem = Member._standard(
                   o as Map<String, dynamic>,
+
                   /// TODO: NNBD - To consider
                   (_ws._client.guilds[Snowflake(msg['d']['guild_id'])])!,
                   _ws._client);
@@ -274,13 +280,12 @@ class Shard implements Disposable {
             break;
 
           case 'MESSAGE_UPDATE':
-            var m = MessageUpdateEvent._new(msg, _ws._client);
+            MessageUpdateEvent._new(msg, _ws._client);
             break;
 
           case 'GUILD_CREATE':
             var guild = GuildCreateEvent._new(msg, this, _ws._client);
-            _ws._client._events.onGuildCreate
-                .add(guild);
+            _ws._client._events.onGuildCreate.add(guild);
 
             break;
 
@@ -397,7 +402,7 @@ class Shard implements Disposable {
         "Shard disconnected. Error code: [${this._socket?.closeCode}] | Error message: [${this._socket?.closeReason}]");
     this.dispose();
 
-    switch (this._socket?.closeCode) {
+    switch (this._socket?.closeCode!) {
       case 4004:
       case 4010:
         exit(1);
@@ -423,7 +428,7 @@ class Shard implements Disposable {
     }
 
     _ws._client._events.onDisconnect
-        .add(DisconnectEvent._new(this, this._socket?.closeCode!));
+        .add(DisconnectEvent._new(this, this._socket?.closeCode as int));
     this._onDisconnect.add(this);
   }
 

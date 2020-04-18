@@ -14,7 +14,8 @@ class MessageReceivedEvent extends MessageEvent {
 
   MessageReceivedEvent._new(Map<String, dynamic> json, Nyxx client) {
     this.message = Message._new(json['d'] as Map<String, dynamic>, client);
-    message!.channel.messages.put(this.message!);}
+    message!.channel.messages.put(this.message!);
+  }
 }
 
 /// Sent when a message is deleted.
@@ -29,7 +30,8 @@ class MessageDeleteEvent extends MessageEvent {
 
   // TODO: NNBD - To consider
   MessageDeleteEvent._new(Map<String, dynamic> json, Nyxx client) {
-    var channel = client.channels[Snowflake(json['d']['channel_id'] as String)] as MessageChannel?;
+    var channel = client.channels[Snowflake(json['d']['channel_id'] as String)]
+        as MessageChannel?;
     var messageSnowflake = Snowflake(json['d']['id']);
 
     var message = channel?.messages[messageSnowflake];
@@ -41,8 +43,8 @@ class MessageDeleteEvent extends MessageEvent {
       this.id = messageSnowflake;
     }
 
-    if(this.id != null) {
-      message?.channel.messages.remove(this.id!);
+    if (this.id != null) {
+      message?.channel.messages!.remove(this.id!);
     }
   }
 }
@@ -127,7 +129,8 @@ class MessageReactionsRemovedEvent extends MessageEvent {
     this.channel = client.channels[Snowflake(json['d']['channel_id'] as String)]
         as MessageChannel;
     this.guild = client.guilds[Snowflake(json['d']['guild_id'] as String)];
-    this.message = channel?.messages[Snowflake(json['d']['message_id'] as String)];
+    this.message =
+        channel?.messages[Snowflake(json['d']['message_id'] as String)];
   }
 }
 
@@ -147,10 +150,11 @@ class MessageReactionRemoveEmojiEvent extends MessageEvent {
   late final Emoji? emoji;
 
   MessageReactionRemoveEmojiEvent._new(Map<String, dynamic> json, Nyxx client) {
-    this.channel = client.channels[Snowflake(json['d']['channel_id'])] as MessageChannel?;
+    this.channel =
+        client.channels[Snowflake(json['d']['channel_id'])] as MessageChannel?;
     this.message = channel?.messages[Snowflake(json['d']['message_id'])];
 
-    if(json['d']['guild_id'] != null) {
+    if (json['d']['guild_id'] != null) {
       this.guild = client.guilds[Snowflake(json['d']['guild_id'])];
 
       this.emoji = this.guild?.emojis[Snowflake(json['d']['emoji']['id'])];

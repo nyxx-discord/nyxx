@@ -22,7 +22,6 @@ class Nyxx implements Disposable {
   final DateTime _startTime = DateTime.now();
 
   late final ClientOptions _options;
-  late final _WS _ws;
   late final _EventController _events;
 
   late final HttpHandler _http;
@@ -220,7 +219,6 @@ class Nyxx implements Disposable {
     this.onDmReceived = this.onMessageReceived.where((event) =>
         event.message?.channel is DMChannel ||
         event.message?.channel is GroupDMChannel);
-    this._ws = _WS(this);
   }
 
   /// The client's uptime.

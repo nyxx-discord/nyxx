@@ -1,15 +1,11 @@
 part of nyxx.commands;
 
 class Utils {
-  // TODO: make it less 'hacky' or even use something else
   /// Gets [Symbol]s 'name'
   static String _getSymbolName(Symbol symbol) {
-    return symbol
-        .toString()
-        .substring(6)
-        .replaceAll("\"", "")
-        .replaceAll("(", "")
-        .replaceAll(")", "");
+    return RegExp('Symbol\(\"(.+)\"\)')
+        .matchAsPrefix(symbol.toString())
+        .group(1);
   }
 
   /// Gets single annotation with type [T] from [declaration]

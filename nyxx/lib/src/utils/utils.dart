@@ -11,6 +11,6 @@ class Utils {
   }
 
   static String getFileExtension(String path) {
-    return pathUtils.Context(style: pathUtils.Style.platform).extension(path);
+    return path_utils.Context(style: path_utils.Style.platform).extension(path);
   }
 }

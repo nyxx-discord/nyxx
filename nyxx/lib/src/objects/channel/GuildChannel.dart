@@ -38,19 +38,18 @@ mixin GuildChannel implements Channel, GuildEntity {
           client.channels[Snowflake(raw['parent_id'])] as CategoryChannel;
     }
 
-    this.nsfw = raw['nsfw'] as bool? ?? false;
+    this.nsfw = raw['nsfw'] as bool;
 
     this.permissions = [
       if (raw['permission_overwrites'] != null)
-        for(var obj in raw['permission_overwrites'])
+        for (var obj in raw['permission_overwrites'])
           PermissionsOverrides._new(obj as Map<String, dynamic>)
     ];
   }
 
   /// Returns effective permissions for [member] to this channel including channel overrides.
   Permissions effectivePermissions(Member member) {
-    if (member.guild != this.guild)
-      return Permissions.empty();
+    if (member.guild != this.guild) return Permissions.empty();
 
     if (member.guild.owner == member)
       return Permissions.fromInt(PermissionsConstants.allPermissions);
@@ -73,22 +72,23 @@ mixin GuildChannel implements Channel, GuildEntity {
 
   /// Returns effective permissions for [role] to this channel including channel overrides.
   Permissions effectivePermissionForRole(Role role) {
-    if (role.guild != this.guild)
-      return Permissions.empty();
+    if (role.guild != this.guild) return Permissions.empty();
 
     var permissions = role.permissions.raw | guild.everyoneRole.permissions.raw;
 
-    PermissionsOverrides? overEveryone =
-        this.permissions.firstWhere((f) => f.id == guild.everyoneRole.id, orElse: () => null);
+    PermissionsOverrides? overEveryone = this
+        .permissions
+        .firstWhere((f) => f.id == guild.everyoneRole.id, orElse: () => null);
 
-    if(overEveryone != null) {
+    if (overEveryone != null) {
       permissions &= ~overEveryone.deny;
       permissions |= overEveryone.allow;
     }
 
-    PermissionsOverrides? overRole = this.permissions.firstWhere((f) => f.id == role.id, orElse: () => null);
+    PermissionsOverrides? overRole =
+        this.permissions.firstWhere((f) => f.id == role.id, orElse: () => null);
 
-    if(overRole != null) {
+    if (overRole != null) {
       permissions &= ~overRole.deny;
       permissions |= overRole.allow;
     }
@@ -107,22 +107,26 @@ mixin GuildChannel implements Channel, GuildEntity {
       bool? temporary,
       bool? unique,
       String? auditReason}) async {
-
     Map<String, dynamic> body = {
-      if(maxAge != null) 'max_age' : maxAge,
-      if(maxAge != null) 'max_uses' : maxUses,
-      if(maxAge != null) 'temporary' : temporary,
-      if(maxAge != null) 'unique' : unique,
+      if (maxAge != null) 'max_age': maxAge,
+      if (maxAge != null) 'max_uses': maxUses,
+      if (maxAge != null) 'temporary': temporary,
+      if (maxAge != null) 'unique': unique,
     };
 
-    var response = await client._http._execute(
-        JsonRequest._new("/channels/$id/invites", method: "POST", body: body, auditLog: auditReason));
+    var response = await client._http._execute(JsonRequest._new(
+        "/channels/$id/invites",
+        method: "POST",
+        body: body,
+        auditLog: auditReason));
 
-    if(response is HttpResponseError) {
+    if (response is HttpResponseError) {
       return Future.error(response);
     }
 
-    return InviteWithMeta._new((response as HttpResponseSuccess).jsonBody as Map<String, dynamic>, client);
+    return InviteWithMeta._new(
+        (response as HttpResponseSuccess).jsonBody as Map<String, dynamic>,
+        client);
   }
 
   /// Fetches and returns all channel's [Invite]s
@@ -134,13 +138,14 @@ mixin GuildChannel implements Channel, GuildEntity {
     final HttpResponse response =
         await client._http._execute(JsonRequest._new("/channels/$id/invites"));
 
-    if(response is HttpResponseError) {
+    if (response is HttpResponseError) {
       yield* Stream.error(response);
     }
 
     var bodyValues = (response as HttpResponseSuccess).jsonBody.values.first;
 
-    for (Map<String, dynamic> val in (bodyValues as Iterable<Map<String, dynamic>>))
+    for (Map<String, dynamic> val
+        in (bodyValues as Iterable<Map<String, dynamic>>))
       yield InviteWithMeta._new(val, client);
   }
 
@@ -153,9 +158,11 @@ mixin GuildChannel implements Channel, GuildEntity {
       throw Exception("The `id` property must be either Role or User");
     }
 
-    return client._http._execute(
-        JsonRequest._new("/channels/${this.id}/permissions/${id.toString()}",
-            method: "PUT", body: perms._build()._build(), auditLog: auditReason));
+    return client._http._execute(JsonRequest._new(
+        "/channels/${this.id}/permissions/${id.toString()}",
+        method: "PUT",
+        body: perms._build()._build(),
+        auditLog: auditReason));
   }
 
   /// Deletes permission overwrite for given User or Role [id]
@@ -166,7 +173,9 @@ mixin GuildChannel implements Channel, GuildEntity {
       throw Exception("`id` property must be either Role or User");
     }
 
-    return client._http._execute(JsonRequest._new("/channels/${this.id}/permissions/$id",
-        method: "PUT", auditLog: auditReason));
+    return client._http._execute(JsonRequest._new(
+        "/channels/${this.id}/permissions/$id",
+        method: "PUT",
+        auditLog: auditReason));
   }
 }

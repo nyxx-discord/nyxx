@@ -40,7 +40,7 @@ class JsonRequest extends HttpRequest {
     }
 
     if(this.queryParams != null) {
-      request.queryParameters = this.queryParams;
+      request.queryParameters = this.queryParams as Map<String, String>;
     }
 
     return request.send(this.method);

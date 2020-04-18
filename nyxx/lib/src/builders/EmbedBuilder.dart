@@ -80,7 +80,11 @@ class EmbedBuilder implements Builder {
         (this.author?.length ?? 0) +
         (_fields.isEmpty
             ? 0
-            : _fields.map((embed) => embed.length).reduce((f, s) => f + s));
+            : _fields.map((embed) => embed.length).reduce((f, s) {
+                if (f != null) return f + s;
+
+                return s;
+              }));
   }
 
   @override
@@ -101,18 +105,20 @@ class EmbedBuilder implements Builder {
       throw new Exception(
           "Total length of embed cannot exceed 6000 characters");
 
-    return <String, dynamic> {
-      if (title != null) "title" : title,
-      if (type != null) "type" : type,
-      if (description != null) "description" : description,
-      if (url != null) "url" : url,
-      if (timestamp != null) "timestamp" : timestamp!.toIso8601String(),
-      if (color != null) "color" :color!._value,
-      if (footer != null) "footer" : footer!._build(),
-      if (imageUrl != null) "image" : <String, dynamic>{ "url" : imageUrl },
-      if (thumbnailUrl != null) "thumbnail" : <String, dynamic>{ "url" : thumbnailUrl },
-      if (author != null) "author" :author!._build(),
-      if (_fields.length > 0) "fields" : _fields.map((builder) => builder._build()).toList()
+    return <String, dynamic>{
+      if (title != null) "title": title,
+      if (type != null) "type": type,
+      if (description != null) "description": description,
+      if (url != null) "url": url,
+      if (timestamp != null) "timestamp": timestamp!.toIso8601String(),
+      if (color != null) "color": color!._value,
+      if (footer != null) "footer": footer!._build(),
+      if (imageUrl != null) "image": <String, dynamic>{"url": imageUrl},
+      if (thumbnailUrl != null)
+        "thumbnail": <String, dynamic>{"url": thumbnailUrl},
+      if (author != null) "author": author!._build(),
+      if (_fields.length > 0)
+        "fields": _fields.map((builder) => builder._build()).toList()
     };
   }
 }

@@ -1,6 +1,7 @@
 part of nyxx;
 
 class MessageType {
+  // TODO: rename Default
   static const MessageType Default = const MessageType._create(0);
   static const MessageType recipientAdd = const MessageType._create(1);
   static const MessageType recipientRemove = const MessageType._create(2);
