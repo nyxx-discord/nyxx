@@ -1,10 +1,20 @@
 part of nyxx.commander;
 
+/// Handles command execution - requires to implement [commandName] field which
+/// returns name of command to match message content, and [commandHandler] callback
+/// which is fired when command matches message content.
 abstract class CommandHandler {
+  /// Executed before main [commandHandler] callback.
+  /// Used to check if command can be executed in current context.
   PassHandlerFunction? get beforeHandler => null;
+
+  /// Callback executed after [commandHandler].
   CommandHandlerFunction? get afterHandler => null;
+
+  /// Main command callback
   CommandHandlerFunction get commandHandler;
 
+  /// Command name
   String get commandName;
 }
 
