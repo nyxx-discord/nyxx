@@ -6,11 +6,14 @@ typedef Future<String?> PrefixHandlerFunction(CommandContext context, String mes
 
 class Commander {
   late final PrefixHandlerFunction _prefixHandler;
+  late final PassHandlerFunction? _beforeComamndHandler;
+  late final CommandHandlerFunction? _afterHandlerFunction;
+
   List<CommandHandler> commands = [];
   
   Logger _logger = Logger.detached("Commander");
 
-  Commander(Nyxx client, {String? prefix, PrefixHandlerFunction? prefixHandler}) {
+  Commander(Nyxx client, {String? prefix, PrefixHandlerFunction? prefixHandler, PassHandlerFunction? beforeCommandHandler, CommandHandlerFunction? afterCommandHandler}) {
     if(prefix == null && prefixHandler == null) {
       _logger.shout("Commander cannot start without both prefix and prefixHandler");
       exit(1);
@@ -21,6 +24,9 @@ class Commander {
     } else {
       _prefixHandler = (ctx, msg) async => msg.startsWith(prefix) ? prefix : null;
     }
+
+    this._beforeComamndHandler = beforeCommandHandler;
+    this._afterHandlerFunction = afterCommandHandler;
 
     client.onMessageReceived.listen(_handleMessage);
   }
@@ -45,6 +51,10 @@ class Commander {
       return;
     }
 
+    if(this._beforeComamndHandler != null && !await this._beforeComamndHandler!(context, event.message!.content)) {
+      return;
+    }
+
     if(matchingCommand.beforeHandler != null && !await matchingCommand.beforeHandler!(context, event.message!.content)){
       return;
     }
@@ -53,6 +63,10 @@ class Commander {
 
     if(matchingCommand.afterHandler != null) {
       await matchingCommand.afterHandler!(context, event.message!.content);
+    }
+
+    if(this._afterHandlerFunction != null) {
+      this._afterHandlerFunction!(context, event.message!.content);
     }
   }
 
