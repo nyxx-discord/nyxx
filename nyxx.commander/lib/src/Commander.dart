@@ -12,6 +12,9 @@ typedef Future<void> CommandHandlerFunction(CommandContext context, String messa
 /// Return String containing prefix or null if command cannot be executed.
 typedef Future<String?> PrefixHandlerFunction(CommandContext context, String message);
 
+/// Callback to customize logger output when command is executed.
+typedef Future<void> LoggerHandlerFunction(CommandContext context, String commandName, Logger logger);
+
 /// Lightweight command framework. Doesn't use `dart:mirrors` and can be used in browser.
 /// While constructing specify prefix which is string with prefix or 
 /// implement [PrefixHandlerFunction] for more fine control over where and in what conditions commands are executed.
@@ -22,15 +25,16 @@ class Commander {
   late final PrefixHandlerFunction _prefixHandler;
   late final PassHandlerFunction? _beforeComandHandler;
   late final CommandHandlerFunction? _afterHandlerFunction;
+  late final LoggerHandlerFunction _loggerHandlerFunction;
 
   List<CommandHandler> _commands = [];
   
-  Logger _logger = Logger.detached("Commander");
+  Logger _logger = Logger("Commander");
 
   /// Either [prefix] or [prefixHandler] must be specified otherwise program will exit.
   /// Allows to specify additional [beforeCommandHandler] executed before main command callback,
   /// and [afterCommandCallback] executed after main command callback.
-  Commander(Nyxx client, {String? prefix, PrefixHandlerFunction? prefixHandler, PassHandlerFunction? beforeCommandHandler, CommandHandlerFunction? afterCommandHandler}) {
+  Commander(Nyxx client, {String? prefix, PrefixHandlerFunction? prefixHandler, PassHandlerFunction? beforeCommandHandler, CommandHandlerFunction? afterCommandHandler, LoggerHandlerFunction? loggerHandlerFunction}) {
     if(prefix == null && prefixHandler == null) {
       _logger.shout("Commander cannot start without both prefix and prefixHandler");
       exit(1);
@@ -44,6 +48,10 @@ class Commander {
 
     this._beforeComandHandler = beforeCommandHandler;
     this._afterHandlerFunction = afterCommandHandler;
+
+    this._loggerHandlerFunction = loggerHandlerFunction ?? (ctx, cmdName, logger) async {
+      logger.info("Command [$cmdName] executed by [${ctx.author!.tag}]");
+    };
 
     client.onMessageReceived.listen(_handleMessage);
   }
@@ -77,6 +85,9 @@ class Commander {
     }
 
     await matchingCommand.commandHandler(context, event.message!.content);
+
+    // execute logger callback
+    _loggerHandlerFunction(context, matchingCommand.commandName, this._logger);
 
     if(matchingCommand.afterHandler != null) {
       await matchingCommand.afterHandler!(context, event.message!.content);
