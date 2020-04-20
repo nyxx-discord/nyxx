@@ -1,6 +1,7 @@
 library nyxx.commander;
 
 import 'dart:io';
+import 'dart:async';
 
 import 'package:logging/logging.dart';
 
