@@ -1,20 +1,20 @@
 part of nyxx;
 
 class HttpHandler {
-  List<_HttpBucket> buckets = [];
+  List<_HttpBucket> _buckets = [];
 
+  Logger _logger = Logger("Http");
   Nyxx client;
-  Logger logger = Logger.detached("Http");
 
   HttpHandler._new(this.client);
 
   Future<HttpResponse> _execute(HttpRequest request) async {
     request._client = this.client;
 
-    _HttpBucket? bucket = buckets.firstWhere((element) => element.uri == request.uri, orElse: () => null);
+    _HttpBucket? bucket = _buckets.firstWhere((element) => element.uri == request.uri, orElse: () => null);
     if(bucket == null) {
       var newBucket = _HttpBucket(request.uri, this);
-      buckets.add(newBucket);
+      _buckets.add(newBucket);
 
       return _handle(await newBucket._execute(request));
     }
@@ -37,29 +37,35 @@ class HttpHandler {
 }
 
 class _HttpBucket {
-  int? max;
+  // Rate limits
   int remaining = 10;
   DateTime? resetAt;
   int? resetAfter;
 
+  // Bucket uri
   late final Uri uri;
 
-  HttpHandler handler;
+  // Reference to http handler
+  HttpHandler _httpHandler;
 
-  _HttpBucket(this.uri, this.handler);
+  _HttpBucket(this.uri, this._httpHandler);
 
   Future<transport.Response> _execute(HttpRequest request) async {
+    // Get acutual time and check if request can be executed based on data that bucket already have
+    // and wait if ratelimit could be possibly hit
     var now = DateTime.now();
-
-    if(resetAt != null && resetAt!.isAfter(now) && remaining < 2) {
+    if((resetAt != null && resetAt!.isAfter(now)) && remaining < 2) {
       var waitTime = resetAt!.millisecondsSinceEpoch - now.millisecondsSinceEpoch;
 
-      handler.client._events.onRatelimited.add(RatelimitEvent._new(request, true));
-      handler.logger.warning("Rate limitted internally on endpoint: ${request.uri}. Trying to send request again in $waitTime ms...");
+      if(waitTime > 0) {
+        _httpHandler.client._events.onRatelimited.add(RatelimitEvent._new(request, true));
+        _httpHandler._logger.warning("Rate limitted internally on endpoint: ${request.uri}. Trying to send request again in $waitTime ms...");
 
-      return Future.delayed(Duration(milliseconds: waitTime), () => _execute(request));
+        return Future.delayed(Duration(milliseconds: waitTime), () => _execute(request));
+      }
     }
 
+    // Execute request
     try {
       var response = await request._execute();
 
@@ -68,15 +74,17 @@ class _HttpBucket {
     } on transport.RequestException catch (e) {
       var response = e.response as transport.Response;
 
+      // Check for 429, emmit events and wait given in response body time
       if(response.status == 429) {
         var retryAfter = response.body.asJson()['retry_after'] as int;
 
-        handler.client._events.onRatelimited.add(RatelimitEvent._new(request, false, response));
-        handler.logger.warning("Rate limitted via 429 on endpoint: ${request.uri}. Trying to send request again in $retryAfter ms...");
+        _httpHandler.client._events.onRatelimited.add(RatelimitEvent._new(request, false, response));
+        _httpHandler._logger.warning("Rate limitted via 429 on endpoint: ${request.uri}. Trying to send request again in $retryAfter ms...");
 
         return Future.delayed(Duration(milliseconds: retryAfter), () => _execute(request));
       }
 
+      // Return http error
       _setBucketValues(response.headers);
       return response;
     }
@@ -87,12 +95,14 @@ class _HttpBucket {
       this.remaining = int.parse(headers["x-ratelimit-remaining"]);
     }
 
+    // seconds since epoch
     if(headers["x-ratelimit-reset"] != null) {
-      this.resetAt = DateTime.fromMillisecondsSinceEpoch(int.parse(headers["x-ratelimit-reset"]));
+      var secondsSinceEpoch = (int.parse(headers["x-ratelimit-reset"]) * 1000);
+      this.resetAt = DateTime.fromMillisecondsSinceEpoch(secondsSinceEpoch);
     }
 
-    if(headers["x-ratelimit-reset-after"] != null) {
-      this.resetAfter = int.parse(headers["x-ratelimit-reset-after"]);
+    if(headers['x-ratelimit-reset-after'] != null) {
+      this.resetAfter = int.parse(headers['x-ratelimit-reset-after']);
     }
   }
 
