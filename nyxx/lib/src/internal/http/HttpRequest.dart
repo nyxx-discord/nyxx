@@ -4,8 +4,8 @@ abstract class HttpRequest {
   late final Uri uri;
   final String method;
   final Map<String, String>? queryParams;
+  final String? auditLog;
 
-  String? auditLog;
   Nyxx? _client;
 
   HttpRequest._new(String path, {this.method = "GET", this.queryParams, this.auditLog}) {
@@ -24,7 +24,7 @@ abstract class HttpRequest {
 }
 
 class JsonRequest extends HttpRequest {
-  dynamic body;
+  final dynamic body;
 
   JsonRequest._new(String path, {String method = "GET", this.body, Map<String, String>? queryParams, String? auditLog})
       : super._new(path, method: method, queryParams: queryParams, auditLog: auditLog);
@@ -48,9 +48,9 @@ class JsonRequest extends HttpRequest {
 }
 
 class MultipartRequest extends HttpRequest {
-  List<AttachmentBuilder> files;
+  final List<AttachmentBuilder> files;
 
-  Map<String, dynamic>? fields;
+  final Map<String, dynamic>? fields;
 
   MultipartRequest._new(String path, this.files, {this.fields, String method = "GET", Map<String, String>? queryParams, String? auditLog})
       : super._new(path, method: method, queryParams: queryParams, auditLog: auditLog);
