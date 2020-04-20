@@ -2,10 +2,18 @@ part of nyxx;
 
 //TODO: Consider what should be here and what should not
 abstract class IMessageAuthor implements SnowflakeEntity {
+  /// User name
   String get username;
+
+  /// User Discriminator. -1 if webhook
   int get discriminator;
+
+  /// True if bot or webhook
   bool get bot;
+
+  /// User tag: `l7ssha#6712`
   String get tag;
 
-  String? avatarURL({String format = 'webp', int size = 128});
+  /// Url to user avatar
+  String avatarURL({String format = 'webp', int size = 128});
 }
