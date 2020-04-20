@@ -156,7 +156,6 @@ class CommandContext {
   }
 
   /// Returns stream of all code blocks in message
-  /// For now it only parses codeblock which starts in first line
   /// Language string `dart, java` will be ignored and not included
   /// """
   /// n> eval ```(dart)?
