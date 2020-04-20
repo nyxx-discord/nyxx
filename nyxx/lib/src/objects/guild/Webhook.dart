@@ -1,5 +1,31 @@
 part of nyxx;
 
+/// Type of webhook. Either [incoming] if it its normal webhook executable with token,
+/// or [channelFollower] if its discord internal webhook
+class WebhookType {
+  static const WebhookType incoming = const WebhookType._create(1);
+  static const WebhookType channelFollower = const WebhookType._create(2);
+
+  final int _value;
+
+  const WebhookType._create(int? value) : _value = value ?? 0;
+  WebhookType.from(int? value) : _value = value ?? 0;
+
+  @override
+  String toString() => _value.toString();
+
+  @override
+  int get hashCode => _value.hashCode;
+
+  @override
+  bool operator ==(other) {
+    if (other is PremiumTier || other is int)
+      return other == _value;
+
+    return false;
+  }
+}
+
 ///Webhooks are a low-effort way to post messages to channels in Discord.
 ///They do not require a bot user or authentication to use.
 class Webhook extends SnowflakeEntity implements IMessageAuthor {
@@ -20,9 +46,9 @@ class Webhook extends SnowflakeEntity implements IMessageAuthor {
 
   // TODO: Create data class
   /// Webhook type
-  late final int type;
+  late final WebhookType type;
 
-  /// Webhook avatar
+  /// Webhooks avatar hash
   late final String? avatarHash;
 
   @override
@@ -45,7 +71,7 @@ class Webhook extends SnowflakeEntity implements IMessageAuthor {
     this.name = raw['name'] as String?;
     this.token = raw['token'] as String?;
     this.avatarHash = raw['avatar'] as String?;
-    this.type = raw['type'] as int;
+    this.type = WebhookType.from(raw['type'] as int);
 
     if (raw['channel_id'] != null) {
       this.channel = client.channels[Snowflake(raw['channel_id'] as String)] as TextChannel?;
