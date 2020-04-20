@@ -2,7 +2,7 @@ part of nyxx;
 
 ///Webhooks are a low-effort way to post messages to channels in Discord.
 ///They do not require a bot user or authentication to use.
-class Webhook extends SnowflakeEntity with ISend implements IMessageAuthor {
+class Webhook extends SnowflakeEntity implements IMessageAuthor {
   /// The webhook's name.
   late final String? name;
 
@@ -22,7 +22,6 @@ class Webhook extends SnowflakeEntity with ISend implements IMessageAuthor {
   /// Webhook type
   late final int type;
 
-  // TODO: What's that and where it came from
   /// Webhook avatar
   late final String? avatarHash;
 
@@ -62,12 +61,12 @@ class Webhook extends SnowflakeEntity with ISend implements IMessageAuthor {
   }
 
   @override
-  String? avatarURL({String format = 'webp', int size = 128}) {
+  String avatarURL({String format = 'webp', int size = 128}) {
     if(this.avatarHash != null) {
       return 'https://cdn.${_Constants.host}/avatars/${this.id}/${this.avatarHash}.$format?size=$size';
     }
 
-    return null;
+    return "https://cdn.${_Constants.host}/embed/avatars/0.png?size=$size";
   }
 
   /// Edits the webhook.
@@ -87,57 +86,6 @@ class Webhook extends SnowflakeEntity with ISend implements IMessageAuthor {
   /// Deletes the webhook.
   Future<void> delete({String? auditReason}) {
     return client._http._execute(JsonRequest._new("/webhooks/$id/$token", method: "DELETE", auditLog: auditReason));
-  }
-
-  @override
-
-  // TODO: SUPPOER MULTIPLE EMBEDS
-  // TODO: File limits
-  /// Allows to send message via webhook
-  Future<Message> send(
-        {dynamic content,
-        List<AttachmentBuilder>? files,
-        EmbedBuilder? embed,
-        bool? tts,
-        AllowedMentions? allowedMentions,
-        MessageBuilder? builder}) async {
-    if (builder != null) {
-      content = builder._content;
-      files = builder.files;
-      embed = builder.embed;
-      tts = builder.tts ?? false;
-      allowedMentions = builder.allowedMentions;
-    }
-
-    Map<String, dynamic> reqBody = {
-      ..._initMessage(content, embed, allowedMentions),
-      if(content != null && tts != null) "tts": tts
-    };
-
-    HttpResponse response;
-
-    if (files != null && files.isNotEmpty) {
-      for(var file in files) {
-        // TODO: Check how to handle file size limit
-        if(file._bytes.length > 8 * 1024 * 1024) {
-          return Future.error("File with name: [${file._name}] is too big!");
-        }
-      }
-
-      response = await client._http._execute(
-          MultipartRequest._new('/webhooks/${this.id}/${this.token}',
-              files, method: "POST", fields: reqBody));
-    } else {
-      response = await client._http._execute(
-          JsonRequest._new('/webhooks/${this.id}/${this.token}',
-              body: reqBody, method: "POST"));
-    }
-
-    if(response is HttpResponseSuccess) {
-      return Message._new(response.jsonBody as Map<String, dynamic>, client);
-    } else {
-      return Future.error(response);
-    }
   }
 
   /// Returns a string representation of this object.
