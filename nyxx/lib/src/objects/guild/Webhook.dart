@@ -96,10 +96,18 @@ class Webhook extends SnowflakeEntity implements IMessageAuthor {
   }
 
   /// Edits the webhook.
-  Future<Webhook> edit(String name, {String? auditReason}) async {
+  Future<Webhook> edit({String? name, TextChannel? channel, File? avatar, String? encodedAvatar, String? auditReason}) async {
+    var body = <String, dynamic> {
+      if(name != null) "name" : name,
+      if(channel != null) "channel_id" : channel.id.toString()
+    };
+
+    var base64Encoded = avatar != null ? base64Encode(await avatar.readAsBytes()) : encodedAvatar;
+    body['avatar'] = "data:image/jpeg;base64,$base64Encoded";
+
     var response = await client._http._execute(
         JsonRequest._new("/webhooks/$id/$token",
-            method: "PATCH", auditLog: auditReason, body: {"name": name}));
+            method: "PATCH", auditLog: auditReason, body: body));
 
     if(response is HttpResponseSuccess) {
       this.name = response.jsonBody['name'] as String;
