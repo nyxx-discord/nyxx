@@ -31,12 +31,6 @@ class AuditLogEntry extends SnowflakeEntity {
         for (var o in raw['changes'])
           AuditLogChange._new(o as Map<String, dynamic>)
     ];
-    /*
-    if (raw['changes'] != null) {
-      for (var o in raw['changes']) {
-        changes.add(AuditLogChange._new(o as Map<String, dynamic>));
-      }
-    }*/
 
     user = client.users[Snowflake(raw['user_id'])];
     type = AuditLogEntryType(raw['action_type'] as int);

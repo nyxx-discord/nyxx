@@ -14,6 +14,33 @@ abstract class Channel extends SnowflakeEntity {
       : this.type = ChannelType(type),
         super(Snowflake(raw['id'] as String));
 
+  factory Channel._deserialize(Map<String, dynamic> raw, Nyxx client) {
+    var type = raw['d']['type'] as int;
+
+    final guild = raw['d']['guild_id'] != null ? client.guilds[Snowflake(raw['d']['guild_id'])] : null;
+
+    switch(type) {
+      case 1:
+        return DMChannel._new(raw['d'] as Map<String, dynamic>, client);
+        break;
+      case 3:
+        return GroupDMChannel._new(raw['d'] as Map<String, dynamic>, client);
+        break;
+      case 0:
+      case 5:
+        return TextChannel._new(raw['d'] as Map<String, dynamic>, guild!, client);
+        break;
+      case 2:
+        return VoiceChannel._new(raw['d'] as Map<String, dynamic>, guild!, client);
+        break;
+      case 4:
+        return CategoryChannel._new(raw['d'] as Map<String, dynamic>, guild!, client);
+        break;
+      default:
+        return _InternalChannel._new(raw['d'] as Map<String, dynamic>, type, client);
+    }
+  }
+
   /// Deletes the channel.
   /// Throws if bot cannot perform operation
   Future<void> delete({String auditReason = ""}) {
@@ -23,6 +50,11 @@ abstract class Channel extends SnowflakeEntity {
 
   @override
   String toString() => this.id.toString();
+}
+
+class _InternalChannel extends Channel {
+  _InternalChannel._new(Map<String, dynamic> raw, int type, Nyxx client) :
+      super._new(raw, type, client);
 }
 
 /// Enum for possible channel types

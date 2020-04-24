@@ -75,11 +75,29 @@ class Member extends User implements GuildEntity {
       this.hoistedRole = this.roles.firstWhere((element) => element.id == Snowflake(raw['hoisted_role']), orElse: () => null);
     }
 
-    if (raw['joined_at'] != null)
+    if (raw['joined_at'] != null) {
       this.joinedAt = DateTime.parse(raw['joined_at'] as String).toUtc();
+    }
 
-    if (raw['game'] != null)
-      this.presence = Presence._new(raw['game'] as Map<String, dynamic>);
+    if (raw['game'] != null) {
+      this.presence = Activity._new(raw['game'] as Map<String, dynamic>);
+    }
+  }
+
+  bool _updateMember(String? nickname, List<Role> roles) {
+    var changed = false;
+
+    if(this.nickname != nickname) {
+      this.nickname = nickname;
+      changed = true;
+    }
+
+    if( this.roles != roles) {
+      this.roles = roles;
+      changed = true;
+    }
+
+    return changed;
   }
 
   /// Checks if member has specified role. Returns true if user is assigned to given role.

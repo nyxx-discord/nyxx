@@ -109,7 +109,7 @@ class TextChannel extends MessageChannel
     }
 
     for (Map<String, dynamic> val in ((response as HttpResponseSuccess).jsonBody.values.first as Iterable<Map<String, dynamic>>)) {
-      yield Message._new(val, client);
+      yield Message._deserialize(val, client);
     }
   }
 

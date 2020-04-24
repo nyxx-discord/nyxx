@@ -5,37 +5,33 @@ class GuildCreateEvent {
   /// The guild created.
   late final Guild guild;
 
-  GuildCreateEvent._new(Map<String, dynamic> json, Shard shard, Nyxx client) {
-    this.guild =
-        Guild._new(client, json['d'] as Map<String, dynamic>, true, true);
+  GuildCreateEvent._new(Map<String, dynamic> raw, Shard shard, Nyxx client) {
+    this.guild = Guild._new(client, raw['d'] as Map<String, dynamic>, true, true);
+    client.guilds[guild.id] = guild;
 
-    if (client._options.forceFetchMembers)
+    if (client._options.forceFetchMembers) {
       shard.send("REQUEST_GUILD_MEMBERS",
           {"guild_id": guild.id.toString(), "query": "", "limit": 0});
-
-    client.guilds[guild.id] = guild;
+    }
   }
 }
 
 /// Sent when a guild is updated.
 class GuildUpdateEvent {
-  /// The guild prior to the update.
-  Guild? oldGuild;
-
   /// The guild after the update.
-  late final Guild newGuild;
+  late final Guild guild;
 
   GuildUpdateEvent._new(Map<String, dynamic> json, Nyxx client) {
-    this.newGuild = Guild._new(client, json['d'] as Map<String, dynamic>);
-    this.oldGuild = client.guilds[this.newGuild.id];
-    /// TODO: NNBD - To consider
+    this.guild = Guild._new(client, json['d'] as Map<String, dynamic>);
 
+    // TODO: Cache should be moved to updated guild?
+    /*
     if(oldGuild != null) {
       this.newGuild.channels = this.oldGuild!.channels;
       this.newGuild.members = this.oldGuild!.members;
-
-      client.guilds[oldGuild!.id] = newGuild;
     }
+*/
+      client.guilds[guild.id] = guild;
   }
 }
 
@@ -44,26 +40,19 @@ class GuildDeleteEvent {
   /// The guild.
   Guild? guild;
 
-  GuildDeleteEvent._new(Map<String, dynamic> json, Shard shard, Nyxx client) {
-    this.guild = client.guilds[Snowflake(json['d']['id'] as String)];
-    /// TODO: NNBD - To consider
-    client.guilds.remove(guild!.id);
-  }
-}
+  /// ID og guild
+  late final Snowflake guildId;
 
-/// Sent when you leave a guild or it becomes unavailable.
-class GuildUnavailableEvent {
-  /// An unavailable guild object.
-  Snowflake? guildId;
+  /// True if guild is unavailable which means disconnected due discord side problems
+  /// False if user was kicked from guild
+  late final bool unavailable;
 
-  GuildUnavailableEvent._new(Map<String, dynamic> json, Nyxx client) {
-    this.guildId = Snowflake(json['d']['id'] as String);
-    var guild = client.guilds[guildId!];
-    /// TODO: NNBD - To consider
-    if(guild != null) {
-      client.guilds[guildId!]!.dispose();
-      client.guilds.remove(guildId!);
-    }
+  GuildDeleteEvent._new(Map<String, dynamic> raw, Shard shard, Nyxx client) {
+    this.guildId = Snowflake(raw['d']['id']);
+    this.unavailable = raw['d']['unavailable'] as bool;
+    this.guild = client.guilds[this.guildId];
+
+    client.guilds.remove(guildId);
   }
 }
 
@@ -72,73 +61,86 @@ class GuildMemberRemoveEvent {
   /// The guild the user left.
   Guild? guild;
 
+  /// ID of the guild
+  late final Snowflake guildId;
+
   ///The user that left.
-  User? user;
+  late final User user;
 
   GuildMemberRemoveEvent._new(Map<String, dynamic> json, Nyxx client) {
-    if (client.ready && json['d']['user']['id'] != client.self.id) {
-      this.guild = client.guilds[Snowflake(json['d']['guild_id'] as String)];
+    var userSnowflake = Snowflake(json['d']['user']['id']);
 
-      if (this.guild != null) {
-        this.user =
-            User._new(json['d']['user'] as Map<String, dynamic>, client);
-        this.guild!.members.remove(user!.id);
-        client.users.remove(user!.id);
-      }
+    var user = client.users[userSnowflake];
+
+    if(user == null) {
+      this.user = User._new(json['d']['user'] as Map<String, dynamic>, client);
+    } else {
+      this.user = user;
+    }
+
+    this.guildId = Snowflake(json['d']['guild_id']);
+    this.guild = client.guilds[this.guildId];
+
+    client.users.remove(this.user.id);
+    if(this.guild != null) {
+      this.guild!.members.remove(this.user.id);
     }
   }
 }
 
 /// Sent when a member is updated.
 class GuildMemberUpdateEvent {
-  /// The member prior to the update.
-  Member? oldMember;
+  /// The member after the update if member is updated.
+  late final Member? member;
 
-  /// The member after the update.
-  Member? newMember;
+  /// User if user is updated. Will be null if member is not null.
+  late final User? user;
 
-  GuildMemberUpdateEvent._new(Map<String, dynamic> json, Nyxx client) {
-    if (client.ready) {
-      final guild = client.guilds[Snowflake(json['d']['guild_id'] as String)];
-      this.oldMember =
-          guild?.members[Snowflake(json['d']['user']['id'] as String)];
+  GuildMemberUpdateEvent._new(Map<String, dynamic> raw, Nyxx client) {
+    print("GUILDMEMBERUPDATE: ${jsonEncode(raw)}");
 
-      if (oldMember != null && guild != null) {
-        this.newMember = oldMember;
+    var guild = client.guilds[Snowflake(raw['d']['guild_id'])];
 
-        if (oldMember?.nickname != json['d']['nick'])
-          newMember?.nickname = json['d']['nick'] as String;
-
-        // TODO: NNBD - To consider
-        var tmpRoles = (json['d']['roles'].cast<String>() as List<String>)
-            .map((r) => guild.roles[Snowflake(r)] as Role)
-            .toList();
-
-        if (oldMember?.roles != tmpRoles) newMember?.roles = tmpRoles;
-
-        guild.members[oldMember!.id] = newMember!;
-        client.users[oldMember!.id] = newMember!;
-      }
+    if(guild == null) {
+      return;
     }
+
+    var member = guild.members[Snowflake(raw['d']['user']['id'])];
+
+    if(member == null) {
+      return;
+    }
+
+    var nickname = raw['d']['nickname'] as String?;
+    var roles = (raw['d']['roles'] as List<dynamic>)
+        .map((str) => guild.roles[Snowflake(str)]!).toList();
+
+    if(member._updateMember(nickname, roles)) {
+      return;
+    }
+
+    var user = User._new(raw['d']['user'] as Map<String, dynamic>, client);
+    client.users[user.id] = user;
   }
 }
 
 /// Sent when a member joins a guild.
 class GuildMemberAddEvent {
   /// The member that joined.
-  Member? member;
+  late final Member? member;
 
-  GuildMemberAddEvent._new(Map<String, dynamic> json, Nyxx client) {
-    if (client.ready) {
-      final Guild? guild =
-          client.guilds[Snowflake(json['d']['guild_id'] as String)];
+  GuildMemberAddEvent._new(Map<String, dynamic> raw, Nyxx client) {
+    var guild = client.guilds[Snowflake(raw['d']['guild_id'] as String)];
 
-      if (guild != null) {
-        this.member =
-            Member._standard(json['d'] as Map<String, dynamic>, guild, client);
-        guild.members[member!.id] = member!;
-        client.users[member!.id] = member!;
-      }
+    if(guild == null) {
+      return;
+    }
+
+    this.member = Member._standard(raw['d'] as Map<String, dynamic>, guild, client);
+
+    guild.members[member!.id] = member!;
+    if(!client.users.hasKey(member!.id)) {
+      client.users[member!.id] = member!;
     }
   }
 }
@@ -148,32 +150,60 @@ class GuildBanAddEvent {
   /// The guild that the member was banned from.
   Guild? guild;
 
+  /// Id of the guild
+  late final Snowflake guildId;
+
   /// The user that was banned.
   late final User user;
 
-  GuildBanAddEvent._new(Map<String, dynamic> json, Nyxx client) {
-    this.guild = client.guilds[Snowflake(json['d']['guild_id'] as String)];
-    this.user = User._new(json['d']['user'] as Map<String, dynamic>, client);
+  GuildBanAddEvent._new(Map<String, dynamic> raw, Nyxx client) {
+    this.guildId = Snowflake(raw['d']['guild_id']);
 
-    if(guild != null) {
-      guild!.members.remove(user.id);
+    var user = client.users[Snowflake(raw['d']['user']['id'])];
+
+    if(user == null) {
+      this.user = User._new(raw['d']['user'] as Map<String, dynamic>, client);
+    } else {
+      this.user = user;
     }
 
-    client.users.remove(user.id);
+    this.guild = client.guilds[guildId];
+
+    client.users.remove(this.user.id);
+    if(guild != null) {
+      guild!.members.remove(this.user.id);
+    }
   }
 }
 
 /// Sent when a user is unbanned from a guild.
 class GuildBanRemoveEvent {
-  /// The guild that the member was unbanned from.
+  /// The guild that the member was banned from.
   Guild? guild;
 
-  /// The user that was unbanned.
+  /// Id of the guild
+  late final Snowflake guildId;
+
+  /// The user that was banned.
   late final User user;
 
-  GuildBanRemoveEvent._new(Map<String, dynamic> json, Nyxx client) {
-    this.guild = client.guilds[Snowflake(json['d']['guild_id'] as String)];
-    this.user = User._new(json['d']['user'] as Map<String, dynamic>, client);
+  GuildBanRemoveEvent._new(Map<String, dynamic> raw, Nyxx client) {
+    this.guildId = Snowflake(raw['d']['guild_id']);
+
+    var user = client.users[Snowflake(raw['d']['user']['id'])];
+
+    if(user == null) {
+      this.user = User._new(raw['d']['user'] as Map<String, dynamic>, client);
+    } else {
+      this.user = user;
+    }
+
+    this.guild = client.guilds[guildId];
+
+    client.users.remove(this.user.id);
+    if(guild != null) {
+      guild!.members.remove(this.user.id);
+    }
   }
 }
 

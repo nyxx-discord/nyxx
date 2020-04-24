@@ -34,7 +34,7 @@ class User extends SnowflakeEntity with ISend, Mentionable, IMessageAuthor {
   ClientStatus? status;
 
   /// The member's presence.
-  Presence? presence;
+  Activity? presence;
 
   /// Additional flags associated with user account. Describes if user has certain
   /// features like joined into one of houses or is discord employee.

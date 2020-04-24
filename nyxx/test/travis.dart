@@ -104,15 +104,15 @@ void main() {
   });
 
   bot.onMessageReceived.listen((e) async {
-    var m = e.message!;
+    var m = e.message;
 
     if (m.channel.id != nyxx.Snowflake("422285619952222208") &&
-        m.author!.id != bot.self.id) return;
+        m.author.id != bot.self.id) return;
 
     if (ddel.any((d) => d.startsWith(m.content))) await m.delete();
 
-    if (m.content == "PLIK SIEMA" && m.attachments.values.length > 0) {
-      var att = m.attachments.values.first;
+    if (m.content == "PLIK SIEMA" && m.attachments.length > 0) {
+      var att = m.attachments.first;
 
       if (att.filename != "SPOILER_kitty.webp") {
         exit(1);

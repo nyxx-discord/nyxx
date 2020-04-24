@@ -16,10 +16,11 @@ class Reaction {
     this.me = raw['me'] as bool;
 
     var rawEmoji = raw['emoji'] as Map<String, dynamic>;
-    if (rawEmoji['id'] == null)
+    if (rawEmoji['id'] == null) {
       this.emoji = UnicodeEmoji(rawEmoji['name'] as String);
-    else
+    } else {
       this.emoji = GuildEmoji._partial(rawEmoji);
+    }
   }
 
   Reaction._event(this.emoji, this.me) {
