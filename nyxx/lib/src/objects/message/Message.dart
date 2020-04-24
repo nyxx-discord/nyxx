@@ -1,41 +1,116 @@
 part of nyxx;
 
-/// [Message] class represents single message. It contains it's Event [Stream]s.
-/// [Message] among all it is properties has also back-reference to [MessageChannel] from which it was sent, [Guild] and [User] properties which are associated with this message.
-class Message extends SnowflakeEntity implements GuildEntity, Disposable {
-  /// Reference to bot instance
-  Nyxx client;
+class DMMessage extends Message {
+  late final User author;
 
-  /// The message's content.
-  late final String content;
+  /// Returns clickable url to this message.
+  String get url => "https://discordapp.com/channels/@me"
+      "/${this.channel.id}/${this.id}";
 
-  /// The timestamp of when the message was last edited, null if not edited.
-  late final DateTime? editedTimestamp;
+  DMMessage._new(Map<String, dynamic> raw, Nyxx client) :
+      super._new(raw, client) {
+    var user = client.users[Snowflake(raw['author']['id'] as String)];
 
-  /// Channel in which message was sent
-  late final MessageChannel channel;
+    if (user == null) {
+      var authorData = raw['author'] as Map<String, dynamic>;
+      this.author = User._new(authorData, client);
+    } else {
+      this.author = user;
+    }
+  }
+}
 
+class GuildMessage extends Message implements GuildEntity {
   /// The message's guild.
   @override
-  Guild? guild;
+  late final Guild guild;
 
-  /// The message's author. Can be instance of [Member]
-  IMessageAuthor? author;
+  /// Reference to original message if this message cross posts other message
+  late final MessageReference? crosspostReference;
+
+  /// True if this message is cross posts other message
+  bool get isCrossposting => this.crosspostReference != null;
+
+  /// Returns clickable url to this message.
+  String get url => "https://discordapp.com/channels/${this.guild.id}"
+      "/${this.channel.id}/${this.id}";
+
+  /// The message's author. Can be instance of [Member] or [Webhook]
+  late final IMessageAuthor author;
 
   // TODO: Consider how to handle properly webhooks as message authors.
   bool get isByWebhook => author is Webhook;
 
-  /// The mentions in the message. [User] value of this map can be [Member]
-  late final Map<Snowflake, User> mentions;
-
   /// A list of IDs for the role mentions in the message.
-  late final Map<Snowflake, Role> roleMentions;
+  late List<Role> roleMentions;
+
+  GuildMessage._new(Map<String, dynamic> raw, Nyxx client) :
+        super._new(raw, client) {
+    if(raw['message_reference'] != null) {
+      this.crosspostReference = MessageReference._new(raw['message_reference']
+      as Map<String, dynamic>, client);
+    }
+
+    this.guild = client.guilds[Snowflake(raw['guild_id'])]!;
+
+    if(raw['webhook_id'] != null) {
+      this.author = Webhook._new(raw['author'] as Map<String, dynamic>, client);
+    } else if (raw['author'] != null) {
+      var member = this.guild.members[Snowflake(raw['author']['id'] as String)];
+
+      if (member == null) {
+        if (raw['member'] == null) {
+          this.author = User._new(raw['author'] as Map<String, dynamic>, client);
+        } else {
+          var authorData = raw['author'] as Map<String, dynamic>;
+          var memberData = raw['member'] as Map<String, dynamic>;
+
+          var author = Member._fromUser(authorData, memberData,
+              client.guilds[Snowflake(raw['guild_id'])] as Guild, client);
+
+          client.users[author.id] = author;
+          guild.members[author.id] = author;
+          this.author = author;
+        }
+      } else {
+        this.author = member;
+      }
+    }
+
+    this.roleMentions = [
+      if (raw['mention_roles'] != null)
+        for(var r in raw['mention_roles'])
+          this.guild.roles[Snowflake(r)] as Role
+    ];
+  }
+}
+
+/// [Message] class represents single message. It contains it's Event [Stream]s.
+/// [Message] among all it is properties has also back-reference to [MessageChannel] from which it was sent, [Guild] and [User] properties which are associated with this message.
+abstract class Message extends SnowflakeEntity implements Disposable {
+  /// Reference to bot instance
+  Nyxx client;
+
+  /// The message's content.
+  late String content;
+
+  /// Channel in which message was sent
+  late final MessageChannel channel;
+
+  /// The timestamp of when the message was last edited, null if not edited.
+  late final DateTime? editedTimestamp;
+
+  /// The message's author. Can be instance of [Member]
+  IMessageAuthor get author;
+
+  /// The mentions in the message. [User] value of this map can be [Member]
+  late List<User> mentions;
 
   /// A collection of the embeds in the message.
-  late final List<Embed> embeds;
+  late List<Embed> embeds;
 
   /// The attachments in the message.
-  late final Map<Snowflake, Attachment> attachments;
+  late final List<Attachment> attachments;
 
   /// Whether or not the message is pinned.
   late final bool pinned;
@@ -52,25 +127,25 @@ class Message extends SnowflakeEntity implements GuildEntity, Disposable {
   /// Type of message
   late final MessageType type;
 
-  /// Reference to original message if this message cross posts other message
-  late final MessageReference? crosspostReference;
-
-  /// True if this message is cross posts other message
-  bool get isCrossposting => this.crosspostReference != null;
-
   /// Extra features of the message
   MessageFlags? flags;
 
   /// Returns clickable url to this message.
-  String get url => "https://discordapp.com/channels/${this.guild!.id}"
-      "/${this.channel.id}/${this.id}";
+  String get url;
+
+  factory Message._deserialize(Map<String, dynamic> raw, Nyxx client) {
+    if(raw['guild_id'] != null) {
+      return GuildMessage._new(raw, client);
+    }
+
+    return DMMessage._new(raw, client);
+  }
 
   Message._new(Map<String, dynamic> raw, this.client)
       : super(Snowflake(raw['id'] as String)) {
     this.content = raw['content'] as String;
 
-    this.channel = client.channels[Snowflake(raw['channel_id'] as String)]
-        as MessageChannel;
+    this.channel = client.channels[Snowflake(raw['channel_id'] as String)] as MessageChannel;
 
     this.pinned = raw['pinned'] as bool;
     this.tts = raw['tts'] as bool;
@@ -81,127 +156,39 @@ class Message extends SnowflakeEntity implements GuildEntity, Disposable {
       this.flags = MessageFlags._new(raw['flags'] as int);
     }
 
-    if(raw['message_reference'] != null) {
-      this.crosspostReference = MessageReference._new(raw['message_reference']
-        as Map<String, dynamic>, client);
-    }
-
-    if (this.channel is GuildChannel) {
-      this.guild = (this.channel as GuildChannel).guild;
-
-      if(raw['webhook_id'] != null) {
-        this.author = Webhook._new(raw['author'] as Map<String, dynamic>, client);
-
-      } else if (raw['author'] != null) {
-        this.author =
-            this.guild!.members[Snowflake(raw['author']['id'] as String)];
-
-        if (this.author == null) {
-          if (raw['member'] == null) {
-            this.author =
-                User._new(raw['author'] as Map<String, dynamic>, client);
-          } else {
-            var authorData = raw['author'] as Map<String, dynamic>;
-            var memberData = raw['member'] as Map<String, dynamic>;
-
-            // TODO: NNBD - To consider
-            var author = Member._fromUser(authorData, memberData,
-                client.guilds[Snowflake(raw['guild_id'])] as Guild, client);
-
-            client.users[author.id] = author;
-            guild!.members[author.id] = author;
-            this.author = author;
-          }
-        }
-      }
-
-      this.roleMentions = Map<Snowflake, Role>();
-      if (raw['mention_roles'] != null) {
-        raw['mention_roles'].forEach((o) {
-          var s = Snowflake(o as String);
-          this.roleMentions[s] = guild!.roles[s];
-        });
-      }
-    } else {
-      if (raw['author'] != null)
-        this.author = client.users[Snowflake(raw['author']['id'] as String)];
-
-      if (this.author == null && raw['member'] != null) {
-        var authorData = raw['author'] as Map<String, dynamic>;
-        var memberData = raw['member'] as Map<String, dynamic>;
-
-        // TODO: NNBD - To consider
-        var author = Member._fromUser(authorData, memberData,
-            client.guilds[Snowflake(raw['guild_id'])] as Guild, client);
-
-        this.author = author;
-      }
-    }
-
     if (raw['edited_timestamp'] != null) {
       this.editedTimestamp =
           DateTime.parse(raw['edited_timestamp'] as String).toUtc();
     }
 
-    this.mentions = Map<Snowflake, User>();
-    if (raw['mentions'] != null && raw['mentions'].isNotEmpty as bool) {
-      raw['mentions'].forEach((o) {
-        if (o['member'] == null) {
-          final user = User._new(o as Map<String, dynamic>, client);
-          this.mentions[user.id] = user;
-        } else {
-          final user =
-              Member._fromUser(o as Map<String, dynamic>, o['member'] as Map<String, dynamic>, this.guild!, client);
+    this.embeds = [
+      if (raw['embeds'] != null && raw['embeds'].isNotEmpty as bool)
+        for(var r in raw['embeds'])
+          Embed._new(r as Map<String, dynamic>)
+    ];
 
-          this.mentions[user.id] = user;
-        }
-      });
-    }
+    this.attachments = [
+      if (raw['attachments'] != null && raw['attachments'].isNotEmpty as bool)
+        for(var r in raw['attachments'])
+          Attachment._new(r as Map<String, dynamic>)
+    ];
 
-    this.embeds = [];
-    if (raw['embeds'] != null && raw['embeds'].isNotEmpty as bool) {
-      raw['embeds'].forEach((o) {
-        Embed embed = Embed._new(o as Map<String, dynamic>);
-        this.embeds.add(embed);
-      });
-    }
+    this.reactions = [
+      if (raw['reactions'] != null && raw['reactions'].isNotEmpty as bool)
+        for(var r in raw['reactions'])
+          Reaction._new(r as Map<String, dynamic>)
+    ];
 
-    this.attachments = Map<Snowflake, Attachment>();
-    if (raw['attachments'] != null && raw['attachments'].isNotEmpty as bool) {
-      raw['attachments'].forEach((o) {
-        final Attachment attachment =
-            Attachment._new(o as Map<String, dynamic>);
-        this.attachments[attachment.id] = attachment;
-      });
-    }
-
-    this.reactions = [];
-    if (raw['reactions'] != null && raw['reactions'].isNotEmpty as bool) {
-      raw['reactions'].forEach((o) {
-        this.reactions.add(Reaction._new(o as Map<String, dynamic>));
-      });
-    }
+    this.mentions = [
+      if (raw['mentions'] != null && raw['mentions'].isNotEmpty as bool)
+        for (var r in raw['mentions'])
+          User._new(r as Map<String, dynamic>, client)
+    ];
   }
 
   /// Returns content of message
   @override
   String toString() => this.content;
-
-  /// Replies to message. By default it mentions user who sends message.
-  Future<Message> reply(
-          {dynamic content,
-          List<AttachmentBuilder>? files,
-          EmbedBuilder? embed,
-          bool? tts,
-          AllowedMentions? allowedMentions,
-          MessageBuilder? builder,
-          bool mention = true}) =>
-      this.channel.send(
-          content: "${mention && !this.isByWebhook ? "${(this.author as User).mention} " : ""}$content",
-          files: files,
-          embed: embed,
-          tts: tts,
-          allowedMentions: allowedMentions);
 
   /// Edits the message.
   ///
@@ -211,8 +198,9 @@ class Message extends SnowflakeEntity implements GuildEntity, Disposable {
       {dynamic content,
       EmbedBuilder? embed,
       AllowedMentions? allowedMentions}) async {
-    if (this.author != null && this.author!.id != client.self.id)
+    if (this.author.id != client.self.id) {
       return Future.error("Cannot edit someones message");
+    }
 
     var body = <String, dynamic>{
       if(content != null) "content" : content.toString(),
@@ -225,7 +213,7 @@ class Message extends SnowflakeEntity implements GuildEntity, Disposable {
             method: "PATCH", body: body));
 
     if(response is HttpResponseSuccess) {
-      return Message._new(response.jsonBody as Map<String, dynamic>, client);
+      return Message._deserialize(response.jsonBody as Map<String, dynamic>, client);
     }
 
     return Future.error(response);
@@ -294,7 +282,6 @@ class Message extends SnowflakeEntity implements GuildEntity, Disposable {
   Future<void> dispose() async {
     embeds.clear();
     mentions.clear();
-    roleMentions.clear();
     attachments.clear();
   }
 }

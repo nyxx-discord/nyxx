@@ -35,24 +35,23 @@ class MessageChannel extends Channel
 
   MessageChannel._new(Map<String, dynamic> raw, int type, Nyxx client)
       : super._new(raw, type, client) {
-    this.messages = MessageCache._new(client._options);
+    this.messages = MessageCache._new(client._options.messageCacheSize);
 
     onTyping = client.onTyping.where((event) => event.channel == this);
-    onMessage = client.onMessageReceived.where((event) => event.message != null && event.message!.channel == this);
+    onMessage = client.onMessageReceived.where((event) => event.message.channel == this);
   }
 
   /// Returns message with given [id]. Allows to force fetch message from api
-  /// with [force] property. By default it checks if message is in cache and fetches from api if not.
-  Future<Message?> getMessage(Snowflake id, {bool force = false}) async {
-    if (force || !messages.hasKey(id)) {
-
-      var response = client._http._execute(JsonRequest._new("/channels/${this.id.toString()}/messages/$id"));
+  /// with [ignoreCache] property. By default it checks if message is in cache and fetches from api if not.
+  Future<Message?> getMessage(Snowflake id, {bool ignoreCache = false}) async {
+    if (ignoreCache || !messages.hasKey(id)) {
+      var response = await client._http._execute(JsonRequest._new("/channels/${this.id.toString()}/messages/$id"));
 
       if(response is HttpResponseError) {
         return Future.error(response);
       }
 
-      var msg = Message._new((response as HttpResponseSuccess).jsonBody as Map<String, dynamic>, client);
+      var msg = Message._deserialize((response as HttpResponseSuccess).jsonBody as Map<String, dynamic>, client);
       return messages._cacheMessage(msg);
     }
 
@@ -138,7 +137,7 @@ class MessageChannel extends Channel
     }
 
     if(response is HttpResponseSuccess) {
-      return Message._new(response.jsonBody as Map<String, dynamic>, client);
+      return Message._deserialize(response.jsonBody as Map<String, dynamic>, client);
     } else {
       return Future.error(response);
     }
@@ -201,7 +200,7 @@ class MessageChannel extends Channel
     }
 
     for (dynamic val in (response as HttpResponseSuccess).jsonBody) {
-      yield Message._new(val as Map<String, dynamic>, client);
+      yield Message._deserialize(val as Map<String, dynamic>, client);
     }
   }
 

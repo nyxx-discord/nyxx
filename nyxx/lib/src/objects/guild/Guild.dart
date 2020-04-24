@@ -187,6 +187,8 @@ class Guild extends SnowflakeEntity implements Disposable {
     this.premiumSubscriptionCount = raw['premium_subscription_count'] as int?;
     this.preferredLocale =  raw['preferred_locale'] as String;
 
+    this.members = _SnowflakeCache();
+
     if (!guildCreate) return;
 
     raw['channels'].forEach((o) {
@@ -203,7 +205,6 @@ class Guild extends SnowflakeEntity implements Disposable {
       client.channels[channel.id] = channel;
     });
 
-    this.members = _SnowflakeCache();
     if (client._options.cacheMembers) {
       raw['members'].forEach((o) {
         final member = Member._standard(o as Map<String, dynamic>, this, client);
@@ -215,12 +216,10 @@ class Guild extends SnowflakeEntity implements Disposable {
     raw['presences'].forEach((o) {
       var member = this.members[Snowflake(o['user']['id'] as String)];
       if (member != null) {
-        member.status = ClientStatus._new(
-            MemberStatus.from(o['client_status']['desktop'] as String),
-            MemberStatus.from(o['client_status']['web'] as String),
-            MemberStatus.from(o['client_status']['mobile'] as String));
+        member.status = ClientStatus._deserialize(o['client_status'] as Map<String, dynamic>);
+
         if (o['game'] != null) {
-          member.presence = Presence._new(o['game'] as Map<String, dynamic>);
+          member.presence = Activity._new(o['game'] as Map<String, dynamic>);
         }
       }
     });

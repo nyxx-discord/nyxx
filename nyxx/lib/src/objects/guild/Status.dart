@@ -1,16 +1,19 @@
 part of nyxx;
 
 /// Provides values for user status.
-class MemberStatus {
-  static const MemberStatus dnd = const MemberStatus._create("dnd");
-  static const MemberStatus offline = const MemberStatus._create("offline");
-  static const MemberStatus online = const MemberStatus._create("online");
-  static const MemberStatus idle = const MemberStatus._create("idle");
+class UserStatus {
+  static const UserStatus dnd = const UserStatus._create("dnd");
+  static const UserStatus offline = const UserStatus._create("offline");
+  static const UserStatus online = const UserStatus._create("online");
+  static const UserStatus idle = const UserStatus._create("idle");
 
   final String _value;
 
-  const MemberStatus._create(String? value) : _value = value ?? "offline";
-  MemberStatus.from(String? value) : _value = value ?? "offline";
+  const UserStatus._create(String? value) : _value = value ?? "offline";
+  UserStatus.from(String? value) : _value = value ?? "offline";
+
+  /// Returns if user is online
+  bool get isOnline => this != UserStatus.offline;
 
   @override
   String toString() => _value;
@@ -20,7 +23,7 @@ class MemberStatus {
 
   @override
   bool operator ==(other) {
-    if (other is MemberStatus || other is String)
+    if (other is UserStatus || other is String)
       return other.toString() == _value;
 
     return false;
@@ -29,9 +32,41 @@ class MemberStatus {
 
 /// Provides status of user on different devices
 class ClientStatus {
-  final MemberStatus desktop;
-  final MemberStatus web;
-  final MemberStatus phone;
+  /// The user's status set for an active desktop (Windows, Linux, Mac) application session
+  late final UserStatus desktop;
 
-  ClientStatus._new(this.desktop, this.web, this.phone);
+  /// The user's status set for an active mobile (iOS, Android) application session
+  late final UserStatus web;
+
+  /// The user's status set for an active web (browser, bot account) application session
+  late final UserStatus phone;
+
+  ClientStatus._deserialize(Map<String, dynamic> raw) {
+    this.desktop = UserStatus.from(raw['desktop'] as String?);
+    this.web = UserStatus.from(raw['web'] as String?);
+    this.phone = UserStatus.from(raw['phone'] as String?);
+  }
+
+  /// Returns if user is online
+  bool get isOnline {
+    return this.desktop.isOnline
+        || this.phone.isOnline
+        || this.web.isOnline;
+  }
+
+  @override
+  int get hashCode {
+    return desktop.hashCode * web.hashCode * phone.hashCode;
+  }
+
+  @override
+  bool operator ==(other) {
+    if(other is ClientStatus) {
+      return other.desktop == this.desktop
+        && other.phone == this.phone
+        && other.web == this.web;
+    }
+
+    return false;
+  }
 }

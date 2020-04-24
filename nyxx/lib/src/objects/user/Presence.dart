@@ -2,18 +2,21 @@ part of nyxx;
 
 /// Presence is game or activity which user is playing/user participate.
 /// Can be game, eg. Dota 2, VS Code or activity like Listening to song on Spotify.
-class Presence {
+class Activity {
   /// The activity name.
   late final String name;
 
   /// The activity type.
-  late final PresenceType type;
+  late final ActivityType type;
 
-  /// DateTime when activity started
-  DateTime? start;
+  /// The game URL, if provided.
+  String? url;
 
-  /// DateTime when activity ends
-  DateTime? end;
+  /// Timestamp of when the activity was added to the user's session
+  late final DateTime createdAt;
+
+  /// Timestamps for start and/or end of the game
+  ActivityTimestamps? timestamps;
 
   /// Application id for the game
   Snowflake? applicationId;
@@ -24,8 +27,11 @@ class Presence {
   /// The user's current party status
   String? state;
 
+  /// The emoji used for a custom status
+  ActivityEmoji? customStatusEmoji;
+
   /// Information for the current party of the player
-  GameParty? party;
+  ActivityParty? party;
 
   /// Images for the presence and their hover texts
   GameAssets? assets;
@@ -39,38 +45,33 @@ class Presence {
   ///	Activity flags ORd together, describes what the payload includes
   int? activityFlags;
 
-  /// The game URL, if provided.
-  String? url;
-
   /// Makes a new game object.
-  Presence.of(this.name, {this.type = PresenceType.game, this.url});
+  Activity.of(this.name, {this.type = ActivityType.game, this.url});
 
-  Presence._new(Map<String, dynamic> raw) {
+  Activity._new(Map<String, dynamic> raw) {
     this.name = raw['name'] as String;
     this.url = raw['url'] as String;
-    this.type = PresenceType(raw['type'] as int);
+    this.type = ActivityType(raw['type'] as int);
+    this.createdAt = DateTime.fromMillisecondsSinceEpoch(raw['created_at'] as int);
+    this.details = raw['details'] as String;
+    this.state = raw['state'] as String;
 
     if (raw['timestamps'] != null) {
-      if (raw['timestamps']['start'] != null) {
-        start = DateTime.fromMillisecondsSinceEpoch(
-            raw['timestamps']['start'] as int);
-      }
-
-      if (raw['timestamps']['end'] != null) {
-        end = DateTime.fromMillisecondsSinceEpoch(
-            raw['timestamps']['end'] as int);
-      }
+      this.timestamps =
+          ActivityTimestamps._new(raw['timestamps'] as Map<String, dynamic>);
     }
 
     if (raw['application_id'] != null) {
       applicationId = Snowflake(raw['application_id']);
     }
 
-    details = raw['details'] as String;
-    state = raw['state'] as String;
+    if (raw['emoji'] != null) {
+      this.customStatusEmoji =
+          ActivityEmoji._new(raw['emoji'] as Map<String, dynamic>);
+    }
 
     if (raw['party'] != null) {
-      party = GameParty._new(raw['party'] as Map<String, dynamic>);
+      party = ActivityParty._new(raw['party'] as Map<String, dynamic>);
     }
 
     if (raw['assets'] != null) {
@@ -86,16 +87,50 @@ class Presence {
   }
 }
 
+class ActivityEmoji {
+  late final Snowflake? id;
+  late final bool animated;
+
+  ActivityEmoji._new(Map<String, dynamic> raw) {
+    if (raw['id'] != null) {
+      this.id = Snowflake(raw['id']);
+    }
+
+    if (raw['animated'] != null) {
+      this.animated = raw['animated'] as bool? ?? false;
+    }
+  }
+}
+
+class ActivityTimestamps {
+  /// DateTime when activity started
+  late final DateTime? start;
+
+  /// DateTime when activity ends
+  late final DateTime? end;
+
+  ActivityTimestamps._new(Map<String, dynamic> raw) {
+    if (raw['start'] != null) {
+      this.start = DateTime.fromMillisecondsSinceEpoch(raw['start'] as int);
+    }
+
+    if (raw['end'] != null) {
+      this.end = DateTime.fromMillisecondsSinceEpoch(raw['end'] as int);
+    }
+  }
+}
+
 /// Represents type of presence activity
-class PresenceType {
-  static const PresenceType streaming = PresenceType._create(1);
-  static const PresenceType game = PresenceType._create(0);
-  static const PresenceType listening = PresenceType._create(2);
+class ActivityType {
+  static const ActivityType game = ActivityType._create(0);
+  static const ActivityType streaming = ActivityType._create(1);
+  static const ActivityType listening = ActivityType._create(2);
+  static const ActivityType custom = ActivityType._create(3);
 
   final int _value;
 
-  PresenceType(this._value);
-  const PresenceType._create(this._value);
+  ActivityType(this._value);
+  const ActivityType._create(this._value);
 
   @override
   String toString() => _value.toString();
@@ -110,7 +145,7 @@ class PresenceType {
 }
 
 /// Represents party of game.
-class GameParty {
+class ActivityParty {
   /// Party id.
   late final String id;
 
@@ -120,7 +155,7 @@ class GameParty {
   /// Max size of party.
   int? maxSize;
 
-  GameParty._new(Map<String, dynamic> raw) {
+  ActivityParty._new(Map<String, dynamic> raw) {
     id = raw['id'] as String;
 
     if (raw['size'] != null) {

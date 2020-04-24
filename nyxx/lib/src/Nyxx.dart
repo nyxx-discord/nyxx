@@ -52,13 +52,6 @@ class Nyxx implements Disposable {
   /// Current client's shard
   late Shard shard;
 
-  /// Generic Stream for message like events. It includes added reactions, and message deletions.
-  /// For received messages refer to [onMessageReceived]
-  late Stream<MessageEvent> onMessage;
-
-  /// Emitted when packet is received from gateway.
-  late Stream<RawEvent> onRaw;
-
   /// Emitted when a shard is disconnected from the websocket.
   late Stream<DisconnectEvent> onDisconnect;
 
@@ -116,9 +109,6 @@ class Nyxx implements Disposable {
 
   /// Emitted when the client leaves a guild.
   late Stream<GuildDeleteEvent> onGuildDelete;
-
-  /// Emitted when a guild becomes unavailable during a guild outage.
-  late Stream<GuildUnavailableEvent> onGuildUnavailable;
 
   /// Emitted when a member joins a guild.
   late Stream<GuildMemberAddEvent> onGuildMemberAdd;
@@ -213,13 +203,11 @@ class Nyxx implements Disposable {
     this._http = HttpHandler._new(this);
 
     this._events = _EventController(this);
-    this.onSelfMention = this.onMessageReceived.where((event) =>
-        event.message?.mentions != null &&
-            // TODO: NNBD
-        event.message!.mentions.containsKey(this.self.id));
+    this.onSelfMention = this.onMessageReceived.where((event) => 
+        event.message.mentions.any((mentionedUser) => mentionedUser == this.self));
     this.onDmReceived = this.onMessageReceived.where((event) =>
-        event.message?.channel is DMChannel ||
-        event.message?.channel is GroupDMChannel);
+        event.message.channel is DMChannel ||
+        event.message.channel is GroupDMChannel);
     this._ws = _WS(this);
   }
 
@@ -235,7 +223,7 @@ class Nyxx implements Disposable {
   /// ```
   /// var channel = await client.getChannel<TextChannel>(Snowflake('473853847115137024'));
   /// ```
-  Future<Channel?> getChannel(Snowflake id, {Guild? guild}) async {
+  Future<Channel?> getChannel(Snowflake id) async {
     if (this.channels.hasKey(id)) return this.channels[id];
 
     var response = await this._http._execute(JsonRequest._new("/channels/${id.toString()}"));
@@ -253,10 +241,13 @@ class Nyxx implements Disposable {
         return GroupDMChannel._new(raw, this);
       case 0:
       case 5:
+        var guild = this.guilds[Snowflake(raw['guild_id'])];
         return TextChannel._new(raw, guild!, this);
       case 2:
+        var guild = this.guilds[Snowflake(raw['guild_id'])];
         return VoiceChannel._new(raw, guild!, this);
       case 4:
+        var guild = this.guilds[Snowflake(raw['guild_id'])];
         return CategoryChannel._new(raw, guild!, this);
       default:
         return Future.error("Cannot create channel of type [${raw['type']}");

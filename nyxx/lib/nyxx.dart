@@ -29,7 +29,11 @@ part 'src/ClientOptions.dart';
 part 'src/internal/_Constants.dart';
 part 'src/internal/_EventController.dart';
 part 'src/internal/_WS.dart';
-part 'src/internal/Cache.dart';
+
+part 'src/internal/cache/Cache.dart';
+part 'src/internal/cache/_SnowflakeCache.dart';
+part 'src/internal/cache/ChannelCache.dart';
+part 'src/internal/cache/MessageCache.dart';
 
 part 'src/internal/http/HttpHandler.dart';
 part 'src/internal/http/HttpRequest.dart';
@@ -44,7 +48,6 @@ part 'src/errors/SetupErrors.dart';
 part 'src/events/DisconnectEvent.dart';
 part 'src/events/PresenceUpdateEvent.dart';
 part 'src/events/RatelimitEvent.dart';
-part 'src/events/RawEvent.dart';
 part 'src/events/ReadyEvent.dart';
 part 'src/events/TypingEvent.dart';
 

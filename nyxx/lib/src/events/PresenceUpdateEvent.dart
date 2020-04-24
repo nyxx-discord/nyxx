@@ -2,61 +2,40 @@ part of nyxx;
 
 /// Sent when a member's presence updates.
 class PresenceUpdateEvent {
-  /// Member object, may be null.
-  Member? member;
+  /// User object
+  User? user;
+
+  /// User id
+  late final Snowflake userId;
 
   /// The new member.
-  late final Presence presence;
+  Activity? presence;
+
+  /// Status of client
+  late final ClientStatus clientStatus;
 
   PresenceUpdateEvent._new(Map<String, dynamic> json, Nyxx client) {
-    var guild = client.guilds[Snowflake(json['d']['guild_id'] as String)];
-    if (guild == null) return;
+    if (json['d']['activity'] != null) {
+      this.presence = Activity._new(json['d']['activity'] as Map<String, dynamic>);
+    }
+    this.clientStatus = ClientStatus._deserialize(json['d']['client_status'] as Map<String, dynamic>);
 
-    this.member = guild.members[Snowflake(json['d']['user']['id'] as String)];
+    this.userId = Snowflake(json['d']['user']['id']);
+    this.user = client.users[this.userId];
 
-    if (json['d']['game'] != null)
-      this.presence = Presence._new(json['d']['game'] as Map<String, dynamic>);
+    if (user == null && (json['d']['user'] as Map<String, dynamic>).keys.length > 1) {
+      this.user = User._new(json['d']['user'] as Map<String, dynamic>, client);
+    }
 
-    if (member == null && 'online' == json['d']['status'].toString()) {
-      if (json['d']['user']['username'] != null) {
-        this.member =
-            Member._standard(json['d'] as Map<String, dynamic>, guild, client);
-
-        try {
-          this.member!.status = ClientStatus._new(
-              MemberStatus.from(
-                  json['d']['client_status']['desktop'] as String),
-              MemberStatus.from(json['d']['client_status']['web'] as String),
-              MemberStatus.from(
-                  json['d']['client_status']['mobile'] as String));
-          this.member?.presence = presence;
-        } catch (e) {
-          //print(jsonEncode(json['d']));
-        }
-
-        member!.guild.members[member!.id] = member!;
-        client.users[member!.id] = member!;
-      } else if (member != null &&
-          'offline' == json['d']['status'].toString()) {
-        member!.guild.members.remove(member!.id);
-        client.users.remove(member!.id);
-      } else if (member != null) {
-        try {
-          this.member!.status = ClientStatus._new(
-              MemberStatus.from(
-                  json['d']['client_status']['desktop'] as String),
-              MemberStatus.from(json['d']['client_status']['web'] as String),
-              MemberStatus.from(
-                  json['d']['client_status']['mobile'] as String));
-          this.member!.presence = presence;
-        } catch (e) {
-          //print(jsonEncode(json['d']));
-        }
+    if(this.user != null) {
+      if(this.clientStatus != this.user!.status) {
+        this.user!.status = this.clientStatus;
       }
 
-      if (this.member != null) {
-        client._events.onPresenceUpdate.add(this);
+      if(this.presence != null) {
+        this.user!.presence = this.presence;
       }
     }
+
   }
 }

@@ -22,6 +22,7 @@ class Shard implements Disposable {
   late Timer _heartbeatTimer;
   late final _WS _ws;
   transport.WebSocket? _socket;
+  StreamSubscription? _socketSubscription;
   late int _sequence;
   String? _sessionId;
   late final StreamController<Shard> _onConnect;
@@ -42,7 +43,7 @@ class Shard implements Disposable {
 
   /// Allows to set presence for current shard.
   void setPresence(
-      {String? status, bool afk = false, Presence? game, DateTime? since}) {
+      {String? status, bool afk = false, Activity? game, DateTime? since}) {
     var packet = Map<String, dynamic>();
 
     packet['status'] = status;
@@ -81,15 +82,10 @@ class Shard implements Disposable {
 
     transport.WebSocket.connect(Uri.parse("${this._ws.gateway}?v=6&encoding=json")).then((ws) {
       _socket = ws;
-      _socket!.listen(
-          (data) {
-            this._handleMsg(_decodeBytes(data), resume);
-          },
+      this._socketSubscription = _socket!.listen(
+          (data) => this._handleMsg(_decodeBytes(data), resume),
           onDone: this._handleErr,
-          onError: (err) {
-            print(err);
-            this._handleErr();
-          });
+          onError: (err) => this._handleErr);
     }, onError: (_, __) => Future.delayed(
         const Duration(seconds: 6), () => this._connect()));
   }
@@ -117,16 +113,10 @@ class Shard implements Disposable {
   }
 
   Future<void> _handleMsg(Map<String, dynamic> msg, bool resume) async {
-    if(this._socket!.closeCode != null) {
-      return;
-    }
-
     if (msg['op'] == _OPCodes.dispatch &&
         this._ws._client._options.ignoredEvents.contains(msg['t'] as String)) {
       return;
     }
-
-    _ws._client._events.onRaw.add(RawEvent._new(this, msg));
 
     if (msg['s'] != null) this._sequence = msg['s'] as int;
 
@@ -220,16 +210,15 @@ class Shard implements Disposable {
 
             if (m.message != null) {
               _ws._client._events.onMessageReactionsRemoved.add(m);
-              _ws._client._events.onMessage.add(m);
             }
             break;
 
           case 'MESSAGE_REACTION_ADD':
-            MessageReactionEvent._new(msg, _ws._client, true);
+            MessageReactionAddedEvent._new(msg, _ws._client);
             break;
 
           case 'MESSAGE_REACTION_REMOVE':
-            MessageReactionEvent._new(msg, _ws._client, false);
+            MessageReactionRemovedEvent._new(msg, _ws._client);
             break;
 
           case 'MESSAGE_DELETE_BULK':
@@ -261,15 +250,11 @@ class Shard implements Disposable {
             messagesReceived++;
 
             var m = MessageReceivedEvent._new(msg, _ws._client);
-            if (m.message == null) break;
-
-            _ws._client._events.onMessage.add(m);
             _ws._client._events.onMessageReceived.add(m);
             break;
 
           case 'MESSAGE_DELETE':
             var m = MessageDeleteEvent._new(msg, _ws._client);
-            _ws._client._events.onMessage.add(m);
             _ws._client._events.onMessageDelete.add(m);
             break;
 
@@ -290,10 +275,6 @@ class Shard implements Disposable {
             break;
 
           case 'GUILD_DELETE':
-            if (msg['d']['unavailable'] == true)
-              _ws._client._events.onGuildUnavailable
-                  .add(GuildUnavailableEvent._new(msg, _ws._client));
-            else
               _ws._client._events.onGuildDelete
                   .add(GuildDeleteEvent._new(msg, this, _ws._client));
             break;
@@ -345,8 +326,8 @@ class Shard implements Disposable {
             break;
 
           case 'PRESENCE_UPDATE':
-            var m = PresenceUpdateEvent._new(msg, _ws._client);
-            if (m.member != null) _ws._client._events.onPresenceUpdate.add(m);
+            _ws._client._events.onPresenceUpdate.add(
+                PresenceUpdateEvent._new(msg, _ws._client));
             break;
 
           case 'GUILD_ROLE_CREATE':
@@ -429,7 +410,7 @@ class Shard implements Disposable {
 
   @override
   Future<void> dispose() async {
-    await this._socket?.drain();
+    await this._socketSubscription?.cancel();
     await this._socket?.close(1000);
     this._socket = null;
   }

@@ -2,9 +2,6 @@ part of nyxx;
 
 /// A controller for all events.
 class _EventController implements Disposable {
-  /// Emitted when a raw packet is received from the websocket connection.
-  late final StreamController<RawEvent> onRaw;
-
   /// Emitted when a shard is disconnected from the websocket.
   late final StreamController<DisconnectEvent> onDisconnect;
 
@@ -60,9 +57,6 @@ class _EventController implements Disposable {
   /// Emitted when the client leaves a guild.
   late final StreamController<GuildDeleteEvent> onGuildDelete;
 
-  /// Emitted when a guild becomes unavailable.
-  late final StreamController<GuildUnavailableEvent> onGuildUnavailable;
-
   /// Emitted when a member joins a guild.
   late final StreamController<GuildMemberAddEvent> onGuildMemberAdd;
 
@@ -108,9 +102,6 @@ class _EventController implements Disposable {
   /// Emitted when user was updated
   late final StreamController<UserUpdateEvent> onUserUpdate;
 
-  /// Emitted on any message related event
-  late final StreamController<MessageEvent> onMessage;
-
   /// Emitted when invite is creating
   late final StreamController<InviteCreatedEvent> onInviteCreated;
 
@@ -122,9 +113,6 @@ class _EventController implements Disposable {
 
   /// Makes a new `EventController`.
   _EventController(Nyxx _client) {
-    this.onRaw = StreamController.broadcast();
-    _client.onRaw = this.onRaw.stream;
-
     this.onDisconnect = StreamController.broadcast();
     _client.onDisconnect = this.onDisconnect.stream;
 
@@ -172,9 +160,6 @@ class _EventController implements Disposable {
 
     this.onGuildDelete = StreamController.broadcast();
     _client.onGuildDelete = this.onGuildDelete.stream;
-
-    this.onGuildUnavailable = StreamController.broadcast();
-    _client.onGuildUnavailable = this.onGuildUnavailable.stream;
 
     this.onGuildMemberAdd = StreamController.broadcast();
     _client.onGuildMemberAdd = this.onGuildMemberAdd.stream;
@@ -227,9 +212,6 @@ class _EventController implements Disposable {
     this.onUserUpdate = StreamController.broadcast();
     _client.onUserUpdate = this.onUserUpdate.stream;
 
-    this.onMessage = StreamController.broadcast();
-    _client.onMessage = this.onMessage.stream;
-
     this.onInviteCreated = StreamController.broadcast();
     _client.onInviteCreated = this.onInviteCreated.stream;
 
@@ -242,7 +224,6 @@ class _EventController implements Disposable {
 
   @override
   Future<void> dispose() async {
-    this.onRaw.close();
     this.onDisconnect.close();
     this.onHttpResponse.close();
     this.onHttpError.close();
@@ -260,7 +241,6 @@ class _EventController implements Disposable {
     this.onGuildCreate.close();
     this.onGuildUpdate.close();
     this.onGuildDelete.close();
-    this.onGuildUnavailable.close();
     this.onGuildMemberAdd.close();
     this.onGuildMemberUpdate.close();
     this.onGuildMemberRemove.close();

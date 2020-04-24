@@ -16,7 +16,7 @@ class ClientUser extends User {
 
   /// Updates the client's presence. All parameters are optional.
   void setPresence(
-      {String? status, bool afk = false, Presence? game, DateTime? since}) {
+      {String? status, bool afk = false, Activity? game, DateTime? since}) {
     client.shard
         .setPresence(status: status, afk: afk, game: game, since: since);
   }
