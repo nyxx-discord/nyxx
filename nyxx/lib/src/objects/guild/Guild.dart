@@ -263,6 +263,15 @@ class Guild extends SnowflakeEntity implements Disposable {
     return null;
   }
 
+  /// URL to guild's splash.
+  /// If guild doesn't have splash it returns null.
+  String? discoveryURL({String format = 'webp', int size = 128}) {
+    if (this.splash != null)
+      return 'https://cdn.${_Constants.host}/discovery-splashes/${this.id}/${this.splash}.$format?size=$size';
+
+    return null;
+  }
+
   /// Returns a string representation of this object - Guild name.
   @override
   String toString() => this.name;
