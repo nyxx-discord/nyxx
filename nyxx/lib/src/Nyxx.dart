@@ -217,6 +217,18 @@ class Nyxx implements Disposable {
   /// [DateTime] when client was started
   DateTime get startTime => _startTime;
 
+  /// Returns guild  even if the user is not in the guild.
+  /// This endpoint is only for Public guilds.
+  Future<GuildPreview> getGuildPreview(Snowflake guildId) async {
+    var response = await _http._execute(JsonRequest._new("/guilds/$guildId/preview"));
+
+    if(response is HttpResponseSuccess) {
+      return GuildPreview._new(response.jsonBody as Map<String, dynamic>);
+    }
+
+    return Future.error(response);
+  }
+
   /// Returns channel with specified id.
   /// If channel is in cache - will be taken from it otherwise API will be called.
   ///

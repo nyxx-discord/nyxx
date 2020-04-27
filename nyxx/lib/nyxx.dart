@@ -38,7 +38,9 @@ part 'src/internal/cache/MessageCache.dart';
 part 'src/internal/http/HttpHandler.dart';
 part 'src/internal/http/HttpRequest.dart';
 part 'src/internal/http/HttpResponse.dart';
-
+/*part 'src/internal/http/HttpRoute.dart';
+part 'src/internal/http/HttpRoutes.dart';
+*/
 // ERROR
 
 part 'src/errors/SetupErrors.dart';
@@ -130,6 +132,7 @@ part 'src/objects/user/UserFlags.dart';
 part 'src/objects/user/NitroType.dart';
 part 'src/objects/guild/Ban.dart';
 part 'src/objects/guild/GuildEnums.dart';
+part 'src/objects/guild/GuildPreview.dart';
 
 part 'src/objects/message/UnicodeEmoji.dart';
 part 'src/objects/message/GuildEmoji.dart';
