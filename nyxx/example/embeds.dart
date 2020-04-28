@@ -1,4 +1,3 @@
-import 'package:nyxx/Vm.dart';
 import 'package:nyxx/nyxx.dart';
 
 import 'dart:io';
@@ -8,7 +7,7 @@ import 'dart:io';
 // Main function
 void main() {
   // Create new bot instance
-  Nyxx bot = NyxxVm(Platform.environment['DISCORD_TOKEN']);
+  Nyxx bot = Nyxx(Platform.environment['DISCORD_TOKEN']);
 
   // Listen to ready event. Invoked when bot started listening to events.
   bot.onReady.listen((ReadyEvent e) {
@@ -28,16 +27,16 @@ void main() {
           field.name = "Example Filed";
         })
         ..addAuthor((author) {
-          author.name = e.message!.author!.username;
-          author.iconUrl = e.message!.author!.avatarURL();
+          author.name = e.message.author.username;
+          author.iconUrl = e.message.author.avatarURL();
         })
         ..addFooter((footer) {
           footer.text = "Footer example, good";
         })
-        ..color = (e.message!.author as Member).color;
+        ..color = (e.message.author as Member).color;
 
       // Sent an embed
-      e.message!.channel.send(embed: embed);
+      e.message.channel.send(embed: embed);
     }
   });
 }

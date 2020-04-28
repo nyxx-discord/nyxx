@@ -1,4 +1,3 @@
-import 'package:nyxx/Vm.dart';
 import 'package:nyxx/nyxx.dart';
 
 import 'dart:io';
@@ -6,7 +5,7 @@ import 'dart:io';
 // Main function
 void main() {
   // Create new bot instance
-  Nyxx bot = NyxxVm(Platform.environment['DISCORD_TOKEN']);
+  Nyxx bot = Nyxx(Platform.environment['DISCORD_TOKEN']);
 
   // Listen to ready event. Invoked when bot started listening to events.
   bot.onReady.listen((ReadyEvent e) {

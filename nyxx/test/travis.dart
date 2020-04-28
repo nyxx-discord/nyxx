@@ -1,7 +1,6 @@
 import 'dart:io';
 import 'dart:async';
 
-import 'package:nyxx/Vm.dart' as nyxx;
 import 'package:nyxx/nyxx.dart' as nyxx;
 
 // Replacement for assert. Throws if [test] isn't true.
@@ -38,7 +37,7 @@ void main() {
   nyxx.setupDefaultLogging();
 
   var env = Platform.environment;
-  var bot = nyxx.NyxxVm(env['DISCORD_TOKEN'], ignoreExceptions: false);
+  var bot = nyxx.Nyxx(env['DISCORD_TOKEN'], ignoreExceptions: false);
 
   Timer(const Duration(seconds: 60), () {
     print('Timed out waiting for messages');

@@ -31,6 +31,10 @@ class EmbedThumbnail implements Downloadable {
   }
 
   @override
+  Future<File> downloadFile(File file) =>
+      download().then((data) => file.writeAsBytes(data));
+
+  @override
   String toString() => url ?? "";
 
   @override

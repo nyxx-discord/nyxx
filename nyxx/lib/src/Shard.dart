@@ -118,12 +118,12 @@ class Shard implements Disposable {
           Map<String, dynamic> identifyMsg = <String, dynamic>{
             "token": _ws._client._token,
             "properties": <String, dynamic>{
-              "\$os": internals.operatingSystem,
+              "\$os": Platform.operatingSystem,
               "\$browser": "nyxx",
               "\$device": "nyxx",
             },
             "large_threshold": this._ws._client._options.largeThreshold,
-            if(!internals.browser) "compress": true
+            "compress": true
           };
 
           if(_ws._client._options.gatewayIntents != null) {

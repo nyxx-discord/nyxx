@@ -22,6 +22,10 @@ class EmbedFooter implements Downloadable, Convertable<EmbedFooterBuilder> {
       DownloadUtils.downloadAsBytes(Uri.parse(iconUrl));
 
   @override
+  Future<File> downloadFile(File file) =>
+      download().then((data) => file.writeAsBytes(data));
+
+  @override
   String toString() => text ?? "";
 
   @override
