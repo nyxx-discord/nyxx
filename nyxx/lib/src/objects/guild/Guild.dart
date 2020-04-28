@@ -281,8 +281,8 @@ class Guild extends SnowflakeEntity implements Disposable {
   /// ```
   /// var emoji = await guild.getEmoji(Snowflake("461449676218957824"));
   /// ```
-  Future<GuildEmoji> getEmoji(Snowflake emojiId) async {
-    if (emojis.hasKey(emojiId)) return emojis[emojiId] as GuildEmoji;
+  Future<GuildEmoji> getEmoji(Snowflake emojiId, [bool useCache = true]) async {
+    if (emojis.hasKey(emojiId) && useCache) return emojis[emojiId] as GuildEmoji;
 
     var response = await client._http._execute(
         JsonRequest._new("/guilds/$id/emojis/${emojiId.toString()}"));
@@ -419,7 +419,7 @@ class Guild extends SnowflakeEntity implements Disposable {
       int maxUses = 0,
       bool temporary = false,
       bool unique = false,
-      String auditReason = ""}) async {
+      String? auditReason}) async {
     var chan = this.channels.first as GuildChannel?;
 
     if (chan == null) {
