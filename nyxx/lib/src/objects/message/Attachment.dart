@@ -39,6 +39,10 @@ class Attachment extends SnowflakeEntity implements Downloadable {
   Future<List<int>> download() => DownloadUtils.downloadAsBytes(Uri.parse(url));
 
   @override
+  Future<File> downloadFile(File file) =>
+      download().then((data) => file.writeAsBytes(data));
+
+  @override
   String toString() => url;
 
   @override

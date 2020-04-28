@@ -1,6 +1,5 @@
 import 'package:nyxx/nyxx.dart';
 
-import 'package:nyxx/Vm.dart';
 import 'dart:isolate';
 import 'dart:io';
 
@@ -13,7 +12,7 @@ void setupBot(SendPort remotePort) {
   remotePort.send(sendPort);
 
   // Create new bot instance
-  Nyxx bot = NyxxVm(Platform.environment['DISCORD_TOKEN']);
+  Nyxx bot = Nyxx(Platform.environment['DISCORD_TOKEN']);
 
   // Listen to ready event. Invoked when bot started listening to events.
   bot.onReady.listen((ReadyEvent e) {
@@ -22,8 +21,8 @@ void setupBot(SendPort remotePort) {
 
   // Listen to all incoming messages via Dart Stream
   bot.onMessageReceived.listen((MessageReceivedEvent e) {
-    if (e.message!.content == "!ping") {
-      e.message!.channel.send(content: "Pong!");
+    if (e.message.content == "!ping") {
+      e.message.channel.send(content: "Pong!");
     }
   });
 

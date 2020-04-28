@@ -177,15 +177,13 @@ class Nyxx implements Disposable {
   /// Creates and logs in a new client. If [ignoreExceptions] is true (by default is)
   /// isolate will ignore all exceptions and continue to work.
   Nyxx(this._token, {ClientOptions? options, bool ignoreExceptions = true}) {
-    if (!internals.setup) {
-      throw NoSetupError();
-    }
+    transportVm.configureWTransportForVM();
 
     if (_token.isEmpty) {
       throw NoTokenError();
     }
 
-    if (ignoreExceptions && !internals.browser) {
+    if (ignoreExceptions) {
       Isolate.current.setErrorsFatal(false);
 
       ReceivePort errorsPort = ReceivePort();
@@ -379,4 +377,26 @@ class Nyxx implements Disposable {
     await guilds.dispose();
     await this._events.dispose();
   }
+}
+
+
+/// Sets up default logger
+void setupDefaultLogging([Level? loglevel]) {
+  Logger.root.level = loglevel ?? Level.ALL;
+
+  Logger.root.onRecord.listen((LogRecord rec) {
+    String color = "";
+    if (rec.level == Level.WARNING)
+      color = "\u001B[33m";
+    else if (rec.level == Level.SEVERE)
+      color = "\u001B[31m";
+    else if (rec.level == Level.INFO)
+      color = "\u001B[32m";
+    else
+      color = "\u001B[0m";
+
+    print('[${DateTime.now()}] '
+        '$color[${rec.level.name}] [${rec.loggerName}]\u001B[0m: '
+        '${rec.message}');
+  });
 }
