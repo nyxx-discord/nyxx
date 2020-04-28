@@ -92,7 +92,7 @@ class Member extends User implements GuildEntity {
       changed = true;
     }
 
-    if( this.roles != roles) {
+    if(this.roles != roles) {
       this.roles = roles;
       changed = true;
     }

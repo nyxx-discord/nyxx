@@ -17,7 +17,7 @@ import 'package:w_transport/w_transport.dart' as transport;
 
 import 'package:path/path.dart' as pathUtils;
 
-import 'src/_internals.dart';
+import 'src/_internals.dart' as internals;
 
 // BASE
 
