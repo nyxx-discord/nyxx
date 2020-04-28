@@ -97,8 +97,6 @@ class GuildMemberUpdateEvent {
   late final User? user;
 
   GuildMemberUpdateEvent._new(Map<String, dynamic> raw, Nyxx client) {
-    print("GUILDMEMBERUPDATE: ${jsonEncode(raw)}");
-
     var guild = client.guilds[Snowflake(raw['d']['guild_id'])];
 
     if(guild == null) {

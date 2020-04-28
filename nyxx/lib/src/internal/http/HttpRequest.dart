@@ -16,7 +16,7 @@ abstract class HttpRequest {
     return {
       "Authorization" : "Bot ${_client?._token}",
       if(this.auditLog != null) "X-Audit-Log-Reason" : this.auditLog!,
-      if(!browser) "User-Agent" : "Nyxx (${_Constants.repoUrl}, ${_Constants.version})"
+      if(!internals.browser) "User-Agent" : "Nyxx (${_Constants.repoUrl}, ${_Constants.version})"
     };
   }
 

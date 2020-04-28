@@ -14,13 +14,6 @@ class ClientUser extends User {
     this.mfa = data['mfa_enabled'] as bool;
   }
 
-  /// Updates the client's presence. All parameters are optional.
-  void setPresence(
-      {String? status, bool afk = false, Activity? game, DateTime? since}) {
-    client.shard
-        .setPresence(status: status, afk: afk, game: game, since: since);
-  }
-
   /// Allows to get [Member] objects for all guilds for bot user.
   Map<Guild, Member> getMembership() {
     var membershipCollection = Map<Guild, Member>();

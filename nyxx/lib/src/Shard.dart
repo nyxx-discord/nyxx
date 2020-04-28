@@ -17,21 +17,21 @@ class Shard implements Disposable {
   /// Emitted when the shard encounters an error.
   late Stream<Shard> onDisconnect;
 
-  bool _acked = false;
-
-  late Timer _heartbeatTimer;
-  late final _WS _ws;
-  transport.WebSocket? _socket;
-  StreamSubscription? _socketSubscription;
-  late int _sequence;
-  String? _sessionId;
-  late final StreamController<Shard> _onConnect;
-  late final StreamController<Shard> _onDisconnect;
+  int get eventsSeen => _sequence;
 
   Logger _logger = Logger("Websocket");
+  late final _WS _ws;
 
-  int messagesReceived = 0;
-  int get eventsSeen => _sequence;
+  bool _acked = false;
+  late Timer _heartbeatTimer;
+  transport.WebSocket? _socket;
+  StreamSubscription? _socketSubscription;
+
+  late int _sequence;
+  String? _sessionId;
+
+  late final StreamController<Shard> _onConnect;
+  late final StreamController<Shard> _onDisconnect;
 
   Shard._new(this._ws, this.id) {
     this._onConnect = StreamController<Shard>.broadcast();
@@ -42,28 +42,17 @@ class Shard implements Disposable {
   }
 
   /// Allows to set presence for current shard.
-  void setPresence(
-      {String? status, bool afk = false, Activity? game, DateTime? since}) {
-    var packet = Map<String, dynamic>();
-
-    packet['status'] = status;
-    packet['afk'] = afk;
-
-    if (game != null) {
-      var gameMap = Map<String, dynamic>();
-
-      gameMap['name'] = game.name;
-      gameMap['type'] = game.type._value;
-      if (game.url != null) gameMap['url'] = game.url;
-
-      packet['game'] = gameMap;
-    }
-
-    if (since != null) {
-      packet['since'] = since.millisecondsSinceEpoch;
-    } else {
-      packet['since'] = null;
-    }
+  void setPresence({UserStatus? status, bool? afk, Activity? game, DateTime? since}) {
+    var packet = <String, dynamic> {
+      if(status != null) 'status' : status,
+      if(afk != null) 'afk' : afk,
+      if(game != null) 'game' : <String, dynamic> {
+        'name' : game.name,
+        'type' : game.type,
+        if(game.type == ActivityType.streaming) 'url' : game.url
+      },
+      if(since != null) 'since' : since.millisecondsSinceEpoch
+    };
 
     this.send("STATUS_UPDATE", packet);
   }
@@ -129,12 +118,12 @@ class Shard implements Disposable {
           Map<String, dynamic> identifyMsg = <String, dynamic>{
             "token": _ws._client._token,
             "properties": <String, dynamic>{
-              "\$os": operatingSystem,
+              "\$os": internals.operatingSystem,
               "\$browser": "nyxx",
               "\$device": "nyxx",
             },
             "large_threshold": this._ws._client._options.largeThreshold,
-            if(!browser) "compress": true
+            if(!internals.browser) "compress": true
           };
 
           if(_ws._client._options.gatewayIntents != null) {
@@ -247,8 +236,6 @@ class Shard implements Disposable {
             break;
 
           case 'MESSAGE_CREATE':
-            messagesReceived++;
-
             var m = MessageReceivedEvent._new(msg, _ws._client);
             _ws._client._events.onMessageReceived.add(m);
             break;

@@ -25,7 +25,7 @@ class Nyxx implements Disposable {
   late final _WS _ws;
   late final _EventController _events;
 
-  late final HttpHandler _http;
+  late final _HttpHandler _http;
 
   /// The current bot user.
   late ClientUser self;
@@ -177,7 +177,7 @@ class Nyxx implements Disposable {
   /// Creates and logs in a new client. If [ignoreExceptions] is true (by default is)
   /// isolate will ignore all exceptions and continue to work.
   Nyxx(this._token, {ClientOptions? options, bool ignoreExceptions = true}) {
-    if (!setup) {
+    if (!internals.setup) {
       throw NoSetupError();
     }
 
@@ -185,7 +185,7 @@ class Nyxx implements Disposable {
       throw NoTokenError();
     }
 
-    if (ignoreExceptions && !browser) {
+    if (ignoreExceptions && !internals.browser) {
       Isolate.current.setErrorsFatal(false);
 
       ReceivePort errorsPort = ReceivePort();
@@ -200,7 +200,7 @@ class Nyxx implements Disposable {
     this.channels = ChannelCache._new();
     this.users = _SnowflakeCache();
 
-    this._http = HttpHandler._new(this);
+    this._http = _HttpHandler._new(this);
 
     this._events = _EventController(this);
     this.onSelfMention = this.onMessageReceived.where((event) => 
@@ -353,6 +353,24 @@ class Nyxx implements Disposable {
   /// Returns number of shards
   int get shards => this._options.shardCount;
 
+  /// Sets presence for bot.
+  ///
+  /// Code below will display bot presence as `Playing Super duper game`:
+  /// ```dart
+  /// bot.setPresence(game: Activity.of("Super duper game"))
+  /// ```
+  ///
+  /// Bots cannot set custom status - only game, listening and stream available.
+  ///
+  /// To set bot presence to streaming use:
+  /// ```dart
+  /// bot.setPresence(game: Activity.of("Super duper game", type: ActivityType.streaming, url: "https://twitch.tv/l7ssha"))
+  /// ```
+  /// `url` property in `Activity` can be only set when type is set to `streaming`
+  void setPresence({UserStatus? status, bool? afk, Activity? game, DateTime? since}) {
+    this.shard.setPresence(status: status, afk: afk, game: game, since: since);
+  }
+
   @override
   Future<void> dispose() async {
     await shard.dispose();
@@ -361,25 +379,4 @@ class Nyxx implements Disposable {
     await guilds.dispose();
     await this._events.dispose();
   }
-}
-
-/// Sets up default logger
-void setupDefaultLogging([Level? loglevel]) {
-  Logger.root.level = loglevel ?? Level.ALL;
-
-  Logger.root.onRecord.listen((LogRecord rec) {
-    String color = "";
-    if (rec.level == Level.WARNING)
-      color = "\u001B[33m";
-    else if (rec.level == Level.SEVERE)
-      color = "\u001B[31m";
-    else if (rec.level == Level.INFO)
-      color = "\u001B[32m";
-    else
-      color = "\u001B[0m";
-
-    print('[${DateTime.now()}] '
-        '$color[${rec.level.name}] [${rec.loggerName}]\u001B[0m: '
-        '${rec.message}');
-  });
 }

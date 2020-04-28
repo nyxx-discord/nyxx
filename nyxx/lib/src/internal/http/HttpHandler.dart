@@ -1,12 +1,12 @@
 part of nyxx;
 
-class HttpHandler {
+class _HttpHandler {
   List<_HttpBucket> _buckets = [];
 
   Logger _logger = Logger("Http");
   Nyxx client;
 
-  HttpHandler._new(this.client);
+  _HttpHandler._new(this.client);
 
   Future<HttpResponse> _execute(HttpRequest request) async {
     request._client = this.client;
@@ -46,7 +46,7 @@ class _HttpBucket {
   late final Uri uri;
 
   // Reference to http handler
-  HttpHandler _httpHandler;
+  _HttpHandler _httpHandler;
 
   _HttpBucket(this.uri, this._httpHandler);
 

@@ -12,6 +12,9 @@ class User extends SnowflakeEntity with ISend, Mentionable, IMessageAuthor {
   @override
   late final int discriminator;
 
+  /// Formatted discriminator with leading zeros if needed
+  String get formattedDiscriminator => discriminator.toString().padLeft(4, "0");
+
   /// The user's avatar hash.
   late final String? avatar;
 
@@ -21,7 +24,7 @@ class User extends SnowflakeEntity with ISend, Mentionable, IMessageAuthor {
 
   /// Returns String with username#discriminator
   @override
-  String get tag => "${this.username}#${this.discriminator}";
+  String get tag => "${this.username}#${this.formattedDiscriminator}";
 
   /// Whether the user belongs to an OAuth2 application
   @override
