@@ -229,14 +229,27 @@ class Nyxx implements Disposable {
     return Future.error(response);
   }
 
+  /// Returns guild with given [guildId]
+  Future<Guild> getGuild(Snowflake guildId, [bool useCache = true]) async {
+    if(this.guilds.hasKey(guildId) && useCache) return this.guilds[guildId]!;
+
+    var response = await _http._execute(JsonRequest._new("/guilds/$guildId"));
+
+    if(response is HttpResponseSuccess) {
+      return Guild._new(this, response.jsonBody as Map<String, dynamic>, true, false);
+    }
+
+    return Future.error(response);
+  }
+
   /// Returns channel with specified id.
   /// If channel is in cache - will be taken from it otherwise API will be called.
   ///
   /// ```
   /// var channel = await client.getChannel<TextChannel>(Snowflake('473853847115137024'));
   /// ```
-  Future<Channel?> getChannel(Snowflake id) async {
-    if (this.channels.hasKey(id)) return this.channels[id];
+  Future<T> getChannel<T extends Channel>(Snowflake id, [bool useCache = true]) async {
+    if (this.channels.hasKey(id) && useCache) return this.channels[id] as T;
 
     var response = await this._http._execute(JsonRequest._new("/channels/${id.toString()}"));
 
@@ -248,19 +261,19 @@ class Nyxx implements Disposable {
 
     switch (raw['type'] as int) {
       case 1:
-        return DMChannel._new(raw, this);
+        return DMChannel._new(raw, this) as T;
       case 3:
-        return GroupDMChannel._new(raw, this);
+        return GroupDMChannel._new(raw, this) as T;
       case 0:
       case 5:
         var guild = this.guilds[Snowflake(raw['guild_id'])];
-        return TextChannel._new(raw, guild!, this);
+        return TextChannel._new(raw, guild!, this) as T;
       case 2:
         var guild = this.guilds[Snowflake(raw['guild_id'])];
-        return VoiceChannel._new(raw, guild!, this);
+        return VoiceChannel._new(raw, guild!, this) as T;
       case 4:
         var guild = this.guilds[Snowflake(raw['guild_id'])];
-        return CategoryChannel._new(raw, guild!, this);
+        return CategoryChannel._new(raw, guild!, this) as T;
       default:
         return Future.error("Cannot create channel of type [${raw['type']}");
     }
@@ -271,10 +284,10 @@ class Nyxx implements Disposable {
   /// will be called.
   ///
   /// ```
-  /// var user = client.getClient(Snowflake("302359032612651009"));
+  /// var user = client.getUser(Snowflake("302359032612651009"));
   /// ``
-  Future<User?> getUser(Snowflake id) async {
-    if (this.users.hasKey(id)) return this.users[id];
+  Future<User?> getUser(Snowflake id, [bool useCache = true]) async {
+    if (this.users.hasKey(id) && useCache) return this.users[id];
 
     var response = await this._http._execute(JsonRequest._new("/users/${id.toString()}"));
 
