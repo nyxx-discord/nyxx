@@ -37,9 +37,14 @@ part 'src/internal/cache/MessageCache.dart';
 part 'src/internal/http/HttpHandler.dart';
 part 'src/internal/http/HttpRequest.dart';
 part 'src/internal/http/HttpResponse.dart';
-/*part 'src/internal/http/HttpRoute.dart';
-part 'src/internal/http/HttpRoutes.dart';
-*/
+
+part 'src/internal/interfaces/Disposable.dart';
+part 'src/internal/interfaces/Downloadable.dart';
+part 'src/internal/interfaces/IMessageAuthor.dart';
+part 'src/internal/interfaces/Convertable.dart';
+part 'src/internal/interfaces/ISend.dart';
+part 'src/internal/interfaces/Mentionable.dart';
+
 // ERROR
 
 part 'src/errors/SetupErrors.dart';
@@ -65,94 +70,88 @@ part 'src/events/InviteEvents.dart';
 
 // BUILDERS
 
-part 'src/builders/Builder.dart';
+part 'src/utils/builders/Builder.dart';
 
-part 'src/builders/AttachmentBuilder.dart';
-part 'src/builders/PermissionsBuilder.dart';
-part 'src/builders/EmbedBuilder.dart';
-part 'src/builders/EmbedAuthorBuilder.dart';
-part 'src/builders/EmbedFieldBuilder.dart';
-part 'src/builders/EmbedFooterBuilder.dart';
-part 'src/builders/GuildBuilder.dart';
-part 'src/builders/MessageBuilder.dart';
+part 'src/utils/builders/AttachmentBuilder.dart';
+part 'src/utils/builders/PermissionsBuilder.dart';
+part 'src/utils/builders/EmbedBuilder.dart';
+part 'src/utils/builders/EmbedAuthorBuilder.dart';
+part 'src/utils/builders/EmbedFieldBuilder.dart';
+part 'src/utils/builders/EmbedFooterBuilder.dart';
+part 'src/utils/builders/GuildBuilder.dart';
+part 'src/utils/builders/MessageBuilder.dart';
 
 // OBJECTS
 
-part 'src/objects/Convertable.dart';
-part 'src/objects/ISend.dart';
-part 'src/objects/AllowedMentions.dart';
-part 'src/objects/Mentionable.dart';
-part 'src/objects/GuildEntity.dart';
-part 'src/objects/Disposable.dart';
-part 'src/objects/Downloadable.dart';
-part 'src/objects/IMessageAuthor.dart';
+part 'src/core/AllowedMentions.dart';
+part 'src/core/GuildEntity.dart';
 
-part 'src/objects/DiscordColor.dart';
+part 'src/core/DiscordColor.dart';
 
-part 'src/objects/SnowflakeEntity.dart';
-part 'src/objects/Snowflake.dart';
+part 'src/core/SnowflakeEntity.dart';
+part 'src/core/Snowflake.dart';
 part 'src/Shard.dart';
-part 'src/objects/guild/Webhook.dart';
+part 'src/core/guild/Webhook.dart';
 
-part 'src/objects/voice/VoiceState.dart';
-part 'src/objects/voice/VoiceRegion.dart';
+part 'src/core/voice/VoiceState.dart';
+part 'src/core/voice/VoiceRegion.dart';
 
-part 'src/objects/Invite.dart';
+part 'src/core/Invite.dart';
 
-part 'src/objects/auditlogs/AuditLog.dart';
-part 'src/objects/auditlogs/AuditLogEntry.dart';
-part 'src/objects/auditlogs/AuditLogChange.dart';
+part 'src/core/auditlogs/AuditLog.dart';
+part 'src/core/auditlogs/AuditLogEntry.dart';
+part 'src/core/auditlogs/AuditLogChange.dart';
 
-part 'src/objects/channel/VoiceChannel.dart';
-part 'src/objects/channel/CategoryChannel.dart';
-part 'src/objects/channel/TextChannel.dart';
-part 'src/objects/channel/GuildChannel.dart';
-part 'src/objects/channel/GroupDMChannel.dart';
-part 'src/objects/channel/DMChannel.dart';
-part 'src/objects/channel/Channel.dart';
-part 'src/objects/channel/MessageChannel.dart';
+part 'src/core/channel/guild/VoiceChannel.dart';
+part 'src/core/channel/guild/CategoryChannel.dart';
+part 'src/core/channel/guild/TextChannel.dart';
+part 'src/core/channel/guild/GuildChannel.dart';
+part 'src/core/channel/dm/GroupDMChannel.dart';
+part 'src/core/channel/dm/DMChannel.dart';
+part 'src/core/channel/Channel.dart';
+part 'src/core/channel/MessageChannel.dart';
 
-part 'src/objects/embed/EmbedField.dart';
-part 'src/objects/embed/EmbedAuthor.dart';
-part 'src/objects/embed/EmbedFooter.dart';
-part 'src/objects/embed/EmbedVideo.dart';
-part 'src/objects/embed/Embed.dart';
-part 'src/objects/embed/EmbedProvider.dart';
-part 'src/objects/embed/EmbedThumbnail.dart';
+part 'src/core/embed/EmbedField.dart';
+part 'src/core/embed/EmbedAuthor.dart';
+part 'src/core/embed/EmbedFooter.dart';
+part 'src/core/embed/EmbedVideo.dart';
+part 'src/core/embed/Embed.dart';
+part 'src/core/embed/EmbedProvider.dart';
+part 'src/core/embed/EmbedThumbnail.dart';
 
-part 'src/objects/guild/ClientUser.dart';
-part 'src/objects/guild/Guild.dart';
-part 'src/objects/user/Presence.dart';
-part 'src/objects/user/Member.dart';
-part 'src/objects/guild/Status.dart';
-part 'src/objects/guild/Role.dart';
-part 'src/objects/user/User.dart';
-part 'src/objects/user/UserFlags.dart';
-part 'src/objects/user/NitroType.dart';
-part 'src/objects/guild/Ban.dart';
-part 'src/objects/guild/GuildEnums.dart';
-part 'src/objects/guild/GuildPreview.dart';
+part 'src/core/guild/ClientUser.dart';
+part 'src/core/guild/Guild.dart';
+part 'src/core/user/Presence.dart';
+part 'src/core/user/Member.dart';
+part 'src/core/guild/Status.dart';
+part 'src/core/guild/Role.dart';
+part 'src/core/user/User.dart';
+part 'src/core/user/UserFlags.dart';
+part 'src/core/user/NitroType.dart';
+part 'src/core/guild/Ban.dart';
+part 'src/core/guild/PremiumTier.dart';
+part 'src/core/guild/GuildPreview.dart';
 
-part 'src/objects/message/UnicodeEmoji.dart';
-part 'src/objects/message/GuildEmoji.dart';
-part 'src/objects/message/Emoji.dart';
-part 'src/objects/message/Reaction.dart';
-part 'src/objects/message/Message.dart';
-part 'src/objects/message/Attachment.dart';
-part 'src/objects/message/MessageFlags.dart';
-part 'src/objects/message/MessageReference.dart';
-part 'src/objects/message/MessageType.dart';
+part 'src/core/message/UnicodeEmoji.dart';
+part 'src/core/message/GuildEmoji.dart';
+part 'src/core/message/Emoji.dart';
+part 'src/core/message/Reaction.dart';
+part 'src/core/message/Message.dart';
+part 'src/core/message/Attachment.dart';
+part 'src/core/message/MessageFlags.dart';
+part 'src/core/message/MessageReference.dart';
+part 'src/core/message/MessageType.dart';
 
-part 'src/objects/application/ClientOAuth2Application.dart';
-part 'src/objects/application/OAuth2Application.dart';
-part 'src/objects/application/OAuth2Guild.dart';
-part 'src/objects/application/OAuth2Info.dart';
-part 'src/objects/application/AppTeam.dart';
+part 'src/core/application/ClientOAuth2Application.dart';
+part 'src/core/application/OAuth2Application.dart';
+part 'src/core/application/OAuth2Guild.dart';
+part 'src/core/application/OAuth2Info.dart';
+part 'src/core/application/AppTeam.dart';
 
-part 'src/objects/permissions/Permissions.dart';
-part 'src/objects/permissions/AbstractPermissions.dart';
-part 'src/objects/permissions/PermissionOverrides.dart';
-part 'src/objects/permissions/PermissionsConstants.dart';
+part 'src/core/permissions/Permissions.dart';
+part 'src/core/permissions/AbstractPermissions.dart';
+part 'src/core/permissions/PermissionOverrides.dart';
+part 'src/core/permissions/PermissionsConstants.dart';
 
 part 'src/utils/permissions.dart';
 part 'src/utils/downloads.dart';
