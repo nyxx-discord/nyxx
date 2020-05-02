@@ -35,7 +35,7 @@ class VoiceChannel extends Channel with GuildChannel {
     };
 
     var response = await client._http._execute(
-        JsonRequest._new("/channels/${this.id}", method: "PATCH",
+        BasicRequest._new("/channels/${this.id}", method: "PATCH",
             body: body, auditLog: auditReason));
 
     if(response is HttpResponseSuccess) {

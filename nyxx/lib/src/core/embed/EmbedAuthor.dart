@@ -1,7 +1,7 @@
 part of nyxx;
 
 /// Author of embed. Can contain null elements.
-class EmbedAuthor implements Downloadable, Convertable<EmbedAuthorBuilder> {
+class EmbedAuthor implements Convertable<EmbedAuthorBuilder> {
   /// Name of embed author
   String? name;
 
@@ -20,12 +20,6 @@ class EmbedAuthor implements Downloadable, Convertable<EmbedAuthorBuilder> {
     this.iconUrl = raw['icon_url'] as String?;
     this.iconProxyUrl = raw['iconProxyUrl'] as String?;
   }
-
-  @override
-  Future<List<int>> download() => DownloadUtils.downloadAsBytes(Uri.parse(url));
-
-  Future<File> downloadFile(File file) =>
-      download().then((data) => file.writeAsBytes(data));
 
   @override
   String toString() => name ?? "";

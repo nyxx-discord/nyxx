@@ -17,6 +17,6 @@ class GroupDMChannel extends MessageChannel {
   /// Removes recipient from channel
   Future<void> removeRecipient(User user) {
     return client._http
-        ._execute(JsonRequest._new("/channels/${this.id}/recipients/${user.id}", method: "DELETE"));
+        ._execute(BasicRequest._new("/channels/${this.id}/recipients/${user.id}", method: "DELETE"));
   }
 }

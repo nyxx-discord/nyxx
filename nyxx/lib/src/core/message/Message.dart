@@ -209,7 +209,7 @@ abstract class Message extends SnowflakeEntity implements Disposable {
     };
 
     var response = await client._http._execute(
-        JsonRequest._new('/channels/${this.channel.id}/messages/${this.id}',
+        BasicRequest._new('/channels/${this.channel.id}/messages/${this.id}',
             method: "PATCH", body: body));
 
     if(response is HttpResponseSuccess) {
@@ -222,28 +222,28 @@ abstract class Message extends SnowflakeEntity implements Disposable {
   /// Add reaction to message.
   Future<void> createReaction(Emoji emoji) {
     return client._http._execute(
-        JsonRequest._new("/channels/${this.channel.id}/messages/${this.id}/reactions/${emoji.encode()}/@me",
+        BasicRequest._new("/channels/${this.channel.id}/messages/${this.id}/reactions/${emoji.encode()}/@me",
             method: "PUT"));
   }
 
   /// Deletes reaction of bot. Emoji as ':emoji_name:'
   Future<void> deleteReaction(Emoji emoji) {
     return client._http._execute(
-        JsonRequest._new("/channels/${this.channel.id}/messages/${this.id}/reactions/${emoji.encode()}/@me",
+        BasicRequest._new("/channels/${this.channel.id}/messages/${this.id}/reactions/${emoji.encode()}/@me",
             method: "DELETE"));
   }
 
   /// Deletes reaction of given user.
   Future<void> deleteUserReaction(Emoji emoji, String userId) {
     return client._http._execute(
-        JsonRequest._new("/channels/${this.channel.id}/messages/${this.id}/reactions/${emoji.encode()}/$userId",
+        BasicRequest._new("/channels/${this.channel.id}/messages/${this.id}/reactions/${emoji.encode()}/$userId",
             method: "DELETE"));
   }
 
   /// Deletes all reactions
   Future<void> deleteAllReactions() {
     return client._http._execute(
-        JsonRequest._new("/channels/${this.channel.id}/messages/${this.id}/reactions",
+        BasicRequest._new("/channels/${this.channel.id}/messages/${this.id}/reactions",
             method: "DELETE"));
   }
 
@@ -252,20 +252,20 @@ abstract class Message extends SnowflakeEntity implements Disposable {
   /// Throws an [Exception] if the HTTP request errored.
   Future<void> delete({String? auditReason}) {
     return client._http._execute(
-        JsonRequest._new('/channels/${this.channel.id}/messages/${this.id}',
+        BasicRequest._new('/channels/${this.channel.id}/messages/${this.id}',
             method: "DELETE", auditLog: auditReason));
   }
 
   /// Pins [Message] in current [Channel]
   Future<void> pinMessage() {
     return client._http._execute(
-        JsonRequest._new("/channels/${channel.id}/pins/$id", method: "PUT"));
+        BasicRequest._new("/channels/${channel.id}/pins/$id", method: "PUT"));
   }
 
   /// Unpins [Message] in current [Channel]
   Future<void> unpinMessage() {
     return client._http._execute(
-        JsonRequest._new("/channels/${channel.id}/pins/$id", method: "DELETE"));
+        BasicRequest._new("/channels/${channel.id}/pins/$id", method: "DELETE"));
   }
 
   @override

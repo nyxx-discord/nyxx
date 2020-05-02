@@ -2,14 +2,21 @@ part of nyxx;
 
 class _HttpHandler {
   List<_HttpBucket> _buckets = [];
+  late final _HttpBucket _noRateBucket;
 
   Logger _logger = Logger("Http");
   Nyxx client;
 
-  _HttpHandler._new(this.client);
+  _HttpHandler._new(this.client) {
+    this._noRateBucket = _HttpBucket(Uri.parse("noratelimit"), this);
+  }
 
   Future<HttpResponse> _execute(HttpRequest request) async {
     request._client = this.client;
+
+    if(!request.ratelimit) {
+      return _handle(await this._noRateBucket._execute(request));
+    }
 
     _HttpBucket? bucket = _buckets.firstWhere((element) => element.uri == request.uri, orElse: () => null);
     if(bucket == null) {

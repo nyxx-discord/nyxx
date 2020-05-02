@@ -218,7 +218,7 @@ class Nyxx implements Disposable {
   /// Returns guild  even if the user is not in the guild.
   /// This endpoint is only for Public guilds.
   Future<GuildPreview> getGuildPreview(Snowflake guildId) async {
-    var response = await _http._execute(JsonRequest._new("/guilds/$guildId/preview"));
+    var response = await _http._execute(BasicRequest._new("/guilds/$guildId/preview"));
 
     if(response is HttpResponseSuccess) {
       return GuildPreview._new(response.jsonBody as Map<String, dynamic>);
@@ -231,7 +231,7 @@ class Nyxx implements Disposable {
   Future<Guild> getGuild(Snowflake guildId, [bool useCache = true]) async {
     if(this.guilds.hasKey(guildId) && useCache) return this.guilds[guildId]!;
 
-    var response = await _http._execute(JsonRequest._new("/guilds/$guildId"));
+    var response = await _http._execute(BasicRequest._new("/guilds/$guildId"));
 
     if(response is HttpResponseSuccess) {
       return Guild._new(this, response.jsonBody as Map<String, dynamic>, true, false);
@@ -249,7 +249,7 @@ class Nyxx implements Disposable {
   Future<T> getChannel<T extends Channel>(Snowflake id, [bool useCache = true]) async {
     if (this.channels.hasKey(id) && useCache) return this.channels[id] as T;
 
-    var response = await this._http._execute(JsonRequest._new("/channels/${id.toString()}"));
+    var response = await this._http._execute(BasicRequest._new("/channels/${id.toString()}"));
 
     if(response is HttpResponseError) {
       return Future.error(response);
@@ -287,7 +287,7 @@ class Nyxx implements Disposable {
   Future<User?> getUser(Snowflake id, [bool useCache = true]) async {
     if (this.users.hasKey(id) && useCache) return this.users[id];
 
-    var response = await this._http._execute(JsonRequest._new("/users/${id.toString()}"));
+    var response = await this._http._execute(BasicRequest._new("/users/${id.toString()}"));
 
     if(response is HttpResponseSuccess) {
       return User._new(response.jsonBody as Map<String, dynamic>, this);
@@ -311,7 +311,7 @@ class Nyxx implements Disposable {
           "Guild cannot be created if bot is in 10 or more guilds");
     }
 
-    var response = await this._http._execute(JsonRequest._new("/guilds", method: "POST"));
+    var response = await this._http._execute(BasicRequest._new("/guilds", method: "POST"));
 
     if(response is HttpResponseSuccess) {
       return Guild._new(this, response.jsonBody as Map<String, dynamic>);
@@ -323,7 +323,7 @@ class Nyxx implements Disposable {
   /// Gets a webhook by its id and/or token.
   /// If token is supplied authentication is not needed.
   Future<Webhook> getWebhook(String id, {String token = ""}) async {
-    var response = await this._http._execute(JsonRequest._new("/webhooks/$id/$token"));
+    var response = await this._http._execute(BasicRequest._new("/webhooks/$id/$token"));
 
     if(response is HttpResponseSuccess) {
       return Webhook._new(response.jsonBody as Map<String, dynamic>, this);
@@ -339,7 +339,7 @@ class Nyxx implements Disposable {
   /// var inv = client.getInvite("YMgffU8");
   /// ```
   Future<Invite> getInvite(String code) async {
-    final r = await this._http._execute(JsonRequest._new("/invites/$code"));
+    final r = await this._http._execute(BasicRequest._new("/invites/$code"));
 
     if(r is HttpResponseSuccess) {
       return Invite._new(r.jsonBody as Map<String, dynamic>, this);

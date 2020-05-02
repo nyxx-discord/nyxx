@@ -52,7 +52,7 @@ class Role extends SnowflakeEntity implements Mentionable, GuildEntity {
   /// Edits the role.
   Future<Role> edit(RoleBuilder role, {String? auditReason}) async {
     var response = await client._http._execute(
-        JsonRequest._new("/guilds/${this.guild.id}/roles/$id", method: "PATCH", body: role._build(), auditLog: auditReason));
+        BasicRequest._new("/guilds/${this.guild.id}/roles/$id", method: "PATCH", body: role._build(), auditLog: auditReason));
 
     if(response is HttpResponseSuccess) {
       return Role._new(response.jsonBody as Map<String, dynamic>, this.guild, client);
@@ -63,12 +63,12 @@ class Role extends SnowflakeEntity implements Mentionable, GuildEntity {
 
   /// Deletes the role.
   Future<void> delete({String? auditReason}) {
-    return client._http._execute(JsonRequest._new("/guilds/${this.guild.id}/roles/$id", method: "DELETE", auditLog: auditReason));
+    return client._http._execute(BasicRequest._new("/guilds/${this.guild.id}/roles/$id", method: "DELETE", auditLog: auditReason));
   }
 
   /// Adds role to user.
   Future<void> addToUser(User user, {String? auditReason}) {
-    return client._http._execute(JsonRequest._new('/guilds/${guild.id}/members/${user.id}/roles/$id', method: "PUT", auditLog: auditReason));
+    return client._http._execute(BasicRequest._new('/guilds/${guild.id}/members/${user.id}/roles/$id', method: "PUT", auditLog: auditReason));
   }
 
   /// Returns a mention of role. If role cannot be mentioned it returns name of role.

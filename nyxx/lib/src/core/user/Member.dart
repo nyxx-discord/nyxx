@@ -114,7 +114,7 @@ class Member extends User implements GuildEntity {
     };
 
     return client._http._execute(
-        JsonRequest._new("/guilds/${this.guild.id}/bans/${this.id}",
+        BasicRequest._new("/guilds/${this.guild.id}/bans/${this.id}",
             method: "PUT", auditLog: auditReason, body: body));
   }
 
@@ -126,7 +126,7 @@ class Member extends User implements GuildEntity {
   /// ```
   Future<void> addRole(Role role, {String? auditReason}) {
     return client._http._execute(
-        JsonRequest._new('/guilds/${guild.id}/members/${this.id}/roles/${role.id}',
+        BasicRequest._new('/guilds/${guild.id}/members/${this.id}/roles/${role.id}',
             method: "PUT", auditLog: auditReason));
 
   }
@@ -134,14 +134,14 @@ class Member extends User implements GuildEntity {
   /// Removes [role] from user.
   Future<void> removeRole(Role role, {String? auditReason}) {
     return client._http._execute(
-        JsonRequest._new("/guilds/${this.guild.id.toString()}/members/${this.id.toString()}/roles/${role.id.toString()}",
+        BasicRequest._new("/guilds/${this.guild.id.toString()}/members/${this.id.toString()}/roles/${role.id.toString()}",
             method: "DELETE", auditLog: auditReason));
   }
 
   /// Kicks the member from guild
   Future<void> kick({String? auditReason}) async {
     return client._http._execute(
-        JsonRequest._new("/guilds/${this.guild.id}/members/${this.id}",
+        BasicRequest._new("/guilds/${this.guild.id}/members/${this.id}",
             method: "DELETE", auditLog: auditReason));
   }
 
@@ -162,7 +162,7 @@ class Member extends User implements GuildEntity {
     };
 
     return client._http._execute(
-        JsonRequest._new("/guilds/${this.guild.id.toString()}/members/${this.id.toString()}",
+        BasicRequest._new("/guilds/${this.guild.id.toString()}/members/${this.id.toString()}",
             method: "PATCH", auditLog: auditReason, body: body));
   }
 

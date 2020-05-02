@@ -39,7 +39,6 @@ part 'src/internal/http/HttpRequest.dart';
 part 'src/internal/http/HttpResponse.dart';
 
 part 'src/internal/interfaces/Disposable.dart';
-part 'src/internal/interfaces/Downloadable.dart';
 part 'src/internal/interfaces/IMessageAuthor.dart';
 part 'src/internal/interfaces/Convertable.dart';
 part 'src/internal/interfaces/ISend.dart';
@@ -154,5 +153,4 @@ part 'src/core/permissions/PermissionOverrides.dart';
 part 'src/core/permissions/PermissionsConstants.dart';
 
 part 'src/utils/permissions.dart';
-part 'src/utils/downloads.dart';
 part 'src/utils/utils.dart';

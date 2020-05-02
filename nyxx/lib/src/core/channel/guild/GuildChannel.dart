@@ -116,7 +116,7 @@ mixin GuildChannel implements Channel, GuildEntity {
     };
 
     var response = await client._http._execute(
-        JsonRequest._new("/channels/$id/invites", method: "POST", body: body, auditLog: auditReason));
+        BasicRequest._new("/channels/$id/invites", method: "POST", body: body, auditLog: auditReason));
 
     if(response is HttpResponseError) {
       return Future.error(response);
@@ -132,7 +132,7 @@ mixin GuildChannel implements Channel, GuildEntity {
   /// ```
   Stream<InviteWithMeta> getChannelInvites() async* {
     final HttpResponse response =
-        await client._http._execute(JsonRequest._new("/channels/$id/invites"));
+        await client._http._execute(BasicRequest._new("/channels/$id/invites"));
 
     if(response is HttpResponseError) {
       yield* Stream.error(response);
@@ -154,7 +154,7 @@ mixin GuildChannel implements Channel, GuildEntity {
     }
 
     return client._http._execute(
-        JsonRequest._new("/channels/${this.id}/permissions/${id.toString()}",
+        BasicRequest._new("/channels/${this.id}/permissions/${id.toString()}",
             method: "PUT", body: perms._build()._build(), auditLog: auditReason));
   }
 
@@ -166,7 +166,7 @@ mixin GuildChannel implements Channel, GuildEntity {
       throw Exception("`id` property must be either Role or User");
     }
 
-    return client._http._execute(JsonRequest._new("/channels/${this.id}/permissions/$id",
+    return client._http._execute(BasicRequest._new("/channels/${this.id}/permissions/$id",
         method: "PUT", auditLog: auditReason));
   }
 }

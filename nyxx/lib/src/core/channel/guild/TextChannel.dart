@@ -46,7 +46,7 @@ class TextChannel extends MessageChannel
     };
 
     var response = await client._http._execute(
-        JsonRequest._new( "/channels/${this.id}", method: "PATCH", body: body));
+        BasicRequest._new( "/channels/${this.id}", method: "PATCH", body: body));
 
     if(response is HttpResponseSuccess) {
       return TextChannel._new(response.jsonBody as Map<String, dynamic>, this.guild, client);
@@ -57,7 +57,7 @@ class TextChannel extends MessageChannel
 
   /// Gets all of the webhooks for this channel.
   Stream<Webhook> getWebhooks() async* {
-    var response = await client._http._execute(JsonRequest._new("/channels/$id/webhooks"));
+    var response = await client._http._execute(BasicRequest._new("/channels/$id/webhooks"));
 
     if(response is HttpResponseError) {
       yield* Stream.error(response);
@@ -91,7 +91,7 @@ class TextChannel extends MessageChannel
     }
     
     var response = await client._http._execute(
-        JsonRequest._new("/channels/$id/webhooks", method: "POST", body: body, auditLog: auditReason));
+        BasicRequest._new("/channels/$id/webhooks", method: "POST", body: body, auditLog: auditReason));
     
     if(response is HttpResponseSuccess) {
       return Webhook._new(response.jsonBody as Map<String, dynamic>, client);
@@ -102,7 +102,7 @@ class TextChannel extends MessageChannel
 
   /// Returns pinned [Message]s for [Channel].
   Stream<Message> getPinnedMessages() async* {
-    var response = await client._http._execute(JsonRequest._new("/channels/$id/pins"));
+    var response = await client._http._execute(BasicRequest._new("/channels/$id/pins"));
 
     if(response is HttpResponseError) {
       yield* Stream.error(response);
