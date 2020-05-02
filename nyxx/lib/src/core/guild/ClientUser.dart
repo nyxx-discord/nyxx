@@ -43,7 +43,7 @@ class ClientUser extends User {
     body['avatar'] = "data:image/jpeg;base64,$base64Encoded";
 
     var response = await client._http._execute(
-        JsonRequest._new("/users/@me", method: "PATCH", body: body));
+        BasicRequest._new("/users/@me", method: "PATCH", body: body));
 
 
     if(response is HttpResponseSuccess) {

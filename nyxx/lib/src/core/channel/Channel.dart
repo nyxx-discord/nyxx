@@ -45,7 +45,7 @@ abstract class Channel extends SnowflakeEntity {
   /// Throws if bot cannot perform operation
   Future<void> delete({String auditReason = ""}) {
     return client._http
-        ._execute(JsonRequest._new("/channels/${this.id}", method: 'DELETE', auditLog: auditReason));
+        ._execute(BasicRequest._new("/channels/${this.id}", method: 'DELETE', auditLog: auditReason));
   }
 
   @override

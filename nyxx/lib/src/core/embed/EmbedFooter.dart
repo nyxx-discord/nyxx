@@ -1,7 +1,7 @@
 part of nyxx;
 
 /// Embed's footer. Can contain null elements.
-class EmbedFooter implements Downloadable, Convertable<EmbedFooterBuilder> {
+class EmbedFooter implements Convertable<EmbedFooterBuilder> {
   /// Text inside footer
   late final String? text;
 
@@ -16,14 +16,6 @@ class EmbedFooter implements Downloadable, Convertable<EmbedFooterBuilder> {
     iconUrl = raw['icon_url'] as String;
     iconProxyUrl = raw['icon_proxy_url'] as String;
   }
-
-  @override
-  Future<List<int>> download() =>
-      DownloadUtils.downloadAsBytes(Uri.parse(iconUrl));
-
-  @override
-  Future<File> downloadFile(File file) =>
-      download().then((data) => file.writeAsBytes(data));
 
   @override
   String toString() => text ?? "";

@@ -6,9 +6,11 @@ abstract class HttpRequest {
   final Map<String, String>? queryParams;
   final String? auditLog;
 
+  final bool ratelimit;
+
   Nyxx? _client;
 
-  HttpRequest._new(String path, {this.method = "GET", this.queryParams, this.auditLog}) {
+  HttpRequest._new(String path, {this.method = "GET", this.queryParams, this.auditLog, this.ratelimit = true}) {
     this.uri = Uri.https(_Constants.host, _Constants.baseUri + path);
   }
 
@@ -23,11 +25,11 @@ abstract class HttpRequest {
   Future<transport.Response> _execute();
 }
 
-class JsonRequest extends HttpRequest {
+class BasicRequest extends HttpRequest {
   final dynamic body;
 
-  JsonRequest._new(String path, {String method = "GET", this.body, Map<String, String>? queryParams, String? auditLog})
-      : super._new(path, method: method, queryParams: queryParams, auditLog: auditLog);
+  BasicRequest._new(String path, {String method = "GET", this.body, Map<String, String>? queryParams, String? auditLog, bool ratelimit = true})
+      : super._new(path, method: method, queryParams: queryParams, auditLog: auditLog, ratelimit: ratelimit);
 
   @override
   Future<transport.Response> _execute() async {

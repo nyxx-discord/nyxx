@@ -82,7 +82,7 @@ class User extends SnowflakeEntity with ISend, Mentionable, IMessageAuthor {
       return channel;
     }
 
-    var response = await this.client._http._execute(JsonRequest._new("/users/@me/channels", method: "POST", body: {
+    var response = await this.client._http._execute(BasicRequest._new("/users/@me/channels", method: "POST", body: {
       "recipient_id": this.id.toString()
     }));
 

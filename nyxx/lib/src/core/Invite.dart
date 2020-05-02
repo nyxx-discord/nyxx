@@ -49,7 +49,7 @@ class Invite  {
 
   /// Deletes this Invite.
   Future<void> delete({String? auditReason}) async {
-    return client._http._execute(JsonRequest._new('/invites/$code', method: "DELETE", auditLog: auditReason));
+    return client._http._execute(BasicRequest._new('/invites/$code', method: "DELETE", auditLog: auditReason));
   }
 }
 

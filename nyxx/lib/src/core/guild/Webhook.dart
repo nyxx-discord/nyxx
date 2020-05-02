@@ -106,7 +106,7 @@ class Webhook extends SnowflakeEntity implements IMessageAuthor {
     body['avatar'] = "data:image/jpeg;base64,$base64Encoded";
 
     var response = await client._http._execute(
-        JsonRequest._new("/webhooks/$id/$token",
+        BasicRequest._new("/webhooks/$id/$token",
             method: "PATCH", auditLog: auditReason, body: body));
 
     if(response is HttpResponseSuccess) {
@@ -119,7 +119,7 @@ class Webhook extends SnowflakeEntity implements IMessageAuthor {
 
   /// Deletes the webhook.
   Future<void> delete({String? auditReason}) {
-    return client._http._execute(JsonRequest._new("/webhooks/$id/$token", method: "DELETE", auditLog: auditReason));
+    return client._http._execute(BasicRequest._new("/webhooks/$id/$token", method: "DELETE", auditLog: auditReason));
   }
 
   /// Returns a string representation of this object.

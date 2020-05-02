@@ -68,7 +68,7 @@ class GuildEmoji extends Emoji implements SnowflakeEntity, GuildEntity {
     };
 
     var response = await client._http._execute(
-        JsonRequest._new("/guilds/${guild.id.toString()}/emojis/${this.id.toString()}",
+        BasicRequest._new("/guilds/${guild.id.toString()}/emojis/${this.id.toString()}",
             method: "PATCH", body: body));
 
     if(response is HttpResponseSuccess) {
@@ -80,7 +80,7 @@ class GuildEmoji extends Emoji implements SnowflakeEntity, GuildEntity {
 
   Future<void> delete() async {
     return client._http._execute(
-        JsonRequest._new("/guilds/${this.guild.id.toString()}/emojis/${this.id.toString()}",
+        BasicRequest._new("/guilds/${this.guild.id.toString()}/emojis/${this.id.toString()}",
             method: "DELETE"));
   }
 

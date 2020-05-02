@@ -14,7 +14,7 @@ class _WS {
 
   /// Makes a new WS manager.
   _WS(this._client) {
-    _client._http._execute(JsonRequest._new("/gateway/bot")).then((httpResponse) {
+    _client._http._execute(BasicRequest._new("/gateway/bot")).then((httpResponse) {
       if(httpResponse is HttpResponseError) {
         this.logger.severe("Cannot get gateway url");
         exit(1);
@@ -59,7 +59,7 @@ class _WS {
   Future<void> propagateReady() async {
     _client.ready = true;
 
-    var httpResponse = await _client._http._execute(JsonRequest._new("/oauth2/applications/@me"));
+    var httpResponse = await _client._http._execute(BasicRequest._new("/oauth2/applications/@me"));
 
     if(httpResponse is HttpResponseError) {
       this.logger.severe("Cannot get bot identity");

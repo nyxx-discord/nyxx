@@ -45,7 +45,7 @@ class MessageChannel extends Channel
   /// with [ignoreCache] property. By default it checks if message is in cache and fetches from api if not.
   Future<Message?> getMessage(Snowflake id, {bool ignoreCache = false}) async {
     if (ignoreCache || !messages.hasKey(id)) {
-      var response = await client._http._execute(JsonRequest._new("/channels/${this.id.toString()}/messages/$id"));
+      var response = await client._http._execute(BasicRequest._new("/channels/${this.id.toString()}/messages/$id"));
 
       if(response is HttpResponseError) {
         return Future.error(response);
@@ -132,7 +132,7 @@ class MessageChannel extends Channel
               files, method: "POST", fields: reqBody));
     } else {
       response = await client._http._execute(
-          JsonRequest._new('/channels/${this.id}/messages',
+          BasicRequest._new('/channels/${this.id}/messages',
               body: reqBody, method: "POST"));
     }
 
@@ -145,7 +145,7 @@ class MessageChannel extends Channel
 
   /// Starts typing.
   Future<void> startTyping() async {
-    return client._http._execute(JsonRequest._new("/channels/$id/typing", method: "POST"));
+    return client._http._execute(BasicRequest._new("/channels/$id/typing", method: "POST"));
   }
 
   /// Loops `startTyping` until `stopTypingLoop` is called.
@@ -167,7 +167,7 @@ class MessageChannel extends Channel
   Future<void> bulkRemoveMessages(Iterable<Message> messagesIds) async {
     await for (var chunk in Utils.chunk(messagesIds.toList(), 90)) {
       await client._http._execute(
-          JsonRequest._new("/channels/${id.toString()}/messages/bulk-delete",
+          BasicRequest._new("/channels/${id.toString()}/messages/bulk-delete",
               method: "POST", body: {
                 "messages": chunk.map((f) => f.id.toString()).toList()
               }));
@@ -193,7 +193,7 @@ class MessageChannel extends Channel
     };
 
     var response = await client._http._execute(
-        JsonRequest._new('/channels/${this.id}/messages', queryParams: queryParams));
+        BasicRequest._new('/channels/${this.id}/messages', queryParams: queryParams));
 
     if(response is HttpResponseError) {
       yield* Stream.error(response);
