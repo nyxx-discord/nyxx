@@ -249,7 +249,7 @@ class Guild extends SnowflakeEntity implements Disposable {
   /// If guild doesn't have icon it returns null.
   String? iconURL({String format = 'webp', int size = 128}) {
     if (this.icon != null)
-      return 'https://cdn.${_Constants.host}/icons/${this.id}/${this.icon}.$format?size=$size';
+      return 'https://cdn.${_Constants.cdnHost}/icons/${this.id}/${this.icon}.$format?size=$size';
 
     return null;
   }
@@ -258,7 +258,7 @@ class Guild extends SnowflakeEntity implements Disposable {
   /// If guild doesn't have splash it returns null.
   String? splashURL({String format = 'webp', int size = 128}) {
     if (this.splash != null)
-      return 'https://cdn.${_Constants.host}/splashes/${this.id}/${this.splash}.$format?size=$size';
+      return 'https://cdn.${_Constants.cdnHost}/splashes/${this.id}/${this.splash}.$format?size=$size';
 
     return null;
   }
@@ -267,7 +267,7 @@ class Guild extends SnowflakeEntity implements Disposable {
   /// If guild doesn't have splash it returns null.
   String? discoveryURL({String format = 'webp', int size = 128}) {
     if (this.splash != null)
-      return 'https://cdn.${_Constants.host}/discovery-splashes/${this.id}/${this.splash}.$format?size=$size';
+      return 'https://cdn.${_Constants.cdnHost}/discovery-splashes/${this.id}/${this.splash}.$format?size=$size';
 
     return null;
   }
@@ -275,7 +275,7 @@ class Guild extends SnowflakeEntity implements Disposable {
   /// Allows to download [Guild] widget aka advert png
   /// Possible options for [style]: shield (default), banner1, banner2, banner3, banner4
   String guildWidgetUrl([String style = "shield"]) {
-    return "http://cdn.${_Constants.host}/guilds/${this.id.toString()}/widget.png?style=${style}";
+    return "http://cdn.${_Constants.cdnHost}/guilds/${this.id.toString()}/widget.png?style=${style}";
   }
 
   /// Returns a string representation of this object - Guild name.

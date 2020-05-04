@@ -68,10 +68,10 @@ class User extends SnowflakeEntity with ISend, Mentionable, IMessageAuthor {
   @override
   String avatarURL({String format = 'webp', int size = 128}) {
     if (this.avatar != null) {
-      return 'https://cdn.${_Constants.host}/avatars/${this.id}/${this.avatar}.$format?size=$size';
+      return 'https://cdn.${_Constants.cdnHost}/avatars/${this.id}/${this.avatar}.$format?size=$size';
     }
 
-    return "https://cdn.${_Constants.host}/embed/avatars/${discriminator % 5}.png?size=$size";
+    return "https://cdn.${_Constants.cdnHost}/embed/avatars/${discriminator % 5}.png?size=$size";
   }
 
   /// Gets the [DMChannel] for the user.

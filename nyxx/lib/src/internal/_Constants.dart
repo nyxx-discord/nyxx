@@ -51,7 +51,8 @@ class _OPCodes {
 
 /// The client constants.
 class _Constants {
-  static const String host = "discordapp.com";
+  static const String cdnHost = "discordapp.com";
+  static const String host = "discord.com";
   static const String baseUri = "/api/v7";
   static const String version = "0.30.0";
   static const String repoUrl = "https://github.com/l7ssha/nyxx";
