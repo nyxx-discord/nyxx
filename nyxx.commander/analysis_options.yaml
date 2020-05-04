@@ -8,6 +8,7 @@ analyzer:
     - example/webserver/**
 linter:
   rules:
+    lines_longer_than_80_chars
     - avoid_empty_else
     - comment_references
     - control_flow_in_finally

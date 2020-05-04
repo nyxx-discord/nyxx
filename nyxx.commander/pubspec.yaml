@@ -1,4 +1,4 @@
-name: nyxx.commands
+name: nyxx.commander
 version: 1.0.0
 description: A Discord library for Dart.
 authors:
@@ -10,7 +10,7 @@ documentation: https://github.com/l7ssha/nyxx/wiki
 issue_tracker: https://github.com/l7ssha/nyxx/issue
 
 environment:
-  sdk: '>=2.8.0-dev.20.0 <3.0.0'
+  sdk: '>=2.9.0-2.0.dev <3.0.0'
 
 dependencies:
   nyxx: "^1.0.0"
