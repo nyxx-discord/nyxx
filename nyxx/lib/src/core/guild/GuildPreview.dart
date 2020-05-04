@@ -62,7 +62,7 @@ class GuildPreview extends SnowflakeEntity {
   /// If guild doesn't have icon it returns null.
   String? iconURL({String format = 'webp', int size = 128}) {
     if (this.iconHash != null)
-      return 'https://cdn.${_Constants.host}/icons/${this.id}/${this.iconHash}.$format?size=$size';
+      return 'https://cdn.${_Constants.cdnHost}/icons/${this.id}/${this.iconHash}.$format?size=$size';
 
     return null;
   }
@@ -71,7 +71,7 @@ class GuildPreview extends SnowflakeEntity {
   /// If guild doesn't have splash it returns null.
   String? splashURL({String format = 'webp', int size = 128}) {
     if (this.splashHash != null)
-      return 'https://cdn.${_Constants.host}/splashes/${this.id}/${this.splashHash}.$format?size=$size';
+      return 'https://cdn.${_Constants.cdnHost}/splashes/${this.id}/${this.splashHash}.$format?size=$size';
 
     return null;
   }
@@ -80,7 +80,7 @@ class GuildPreview extends SnowflakeEntity {
   /// If guild doesn't have splash it returns null.
   String? discoveryURL({String format = 'webp', int size = 128}) {
     if (this.discoveryHash != null)
-      return 'https://cdn.${_Constants.host}/discovery-splashes/${this.id}/${this.discoveryHash}.$format?size=$size';
+      return 'https://cdn.${_Constants.cdnHost}/discovery-splashes/${this.id}/${this.discoveryHash}.$format?size=$size';
 
     return null;
   }

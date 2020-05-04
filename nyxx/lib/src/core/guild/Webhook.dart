@@ -89,10 +89,10 @@ class Webhook extends SnowflakeEntity implements IMessageAuthor {
   @override
   String avatarURL({String format = 'webp', int size = 128}) {
     if(this.avatarHash != null) {
-      return 'https://cdn.${_Constants.host}/avatars/${this.id}/${this.avatarHash}.$format?size=$size';
+      return 'https://cdn.${_Constants.cdnHost}/avatars/${this.id}/${this.avatarHash}.$format?size=$size';
     }
 
-    return "https://cdn.${_Constants.host}/embed/avatars/0.png?size=$size";
+    return "https://cdn.${_Constants.cdnHost}/embed/avatars/0.png?size=$size";
   }
 
   /// Edits the webhook.

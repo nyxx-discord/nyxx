@@ -23,8 +23,8 @@ mixin GuildChannel implements Channel, GuildEntity {
   late final List<PermissionsOverrides> permissions;
 
   /// Returns list of [Member] objects who can see this channel
-  Iterable<Member> get users => this.guild.members.values.where((member) => this
-      .effectivePermissions(member)
+  Iterable<Member> get users => this.guild.members.values.where(
+          (member) => this.effectivePermissions(member)
       .hasPermission(PermissionsConstants.viewChannel));
 
   // Initializes Guild channel
