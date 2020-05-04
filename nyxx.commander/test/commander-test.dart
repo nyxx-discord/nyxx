@@ -1,32 +1,27 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:nyxx/Vm.dart';
+import 'package:nyxx/nyxx.dart';
 import 'package:nyxx.commander/commander.dart';
 
 void main() {
   setupDefaultLogging();
 
-  var env = Platform.environment;
-  var bot = NyxxVm(env['DISCORD_TOKEN'], ignoreExceptions: false);
+  var bot = Nyxx(Platform.environment['DISCORD_TOKEN'], ignoreExceptions: false);
 
   bot.onMessageReceived.listen((event) async {
-    if(event.message == null) {
-      return;
+    if(event.message.content == "Test 1") {
+      event.message.delete();
     }
 
-    if(event.message!.content == "Test 1") {
-      event.message!.delete();
+    if(event.message.content == "Test 2") {
+      event.message.delete();
     }
 
-    if(event.message!.content == "Test 2") {
-      event.message!.delete();
-    }
+    if(event.message.content == "Test 10") {
+      await event.message.delete();
 
-    if(event.message!.content == "Test 10") {
-      await event.message!.delete();
-
-      await event.message!.channel.send(content: "Commander tests completed sucessfuly!");
+      await event.message.channel.send(content: "Commander tests completed sucessfuly!");
       exit(0);
     }
   });
