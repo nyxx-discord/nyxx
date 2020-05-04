@@ -716,6 +716,22 @@ class Guild extends SnowflakeEntity implements Disposable {
     return Future.error(response);
   }
 
+  /// Returns a [Stream] of [Member] objects whose username or nickname starts with a provided string.
+  /// By default limits to one entry - can be changed with [limit] parameter.
+  Stream<Member> searchMembers(String query, {int limit = 1}) async* {
+    var response = await client._http._execute(
+        BasicRequest._new("/guilds/${this.id}/members/search",
+            queryParams: { "query" : query, "limit": limit.toString() }));
+
+    if(response is HttpResponseError) {
+      yield* Stream.error(response);
+    }
+
+    for(Map<String, dynamic> member in (response as HttpResponseSuccess).jsonBody) {
+      yield Member._standard(member, this, client);
+    }
+  }
+
   /// Gets all of the webhooks for this channel.
   Stream<Webhook> getWebhooks() async* {
     var response = await client._http._execute(
