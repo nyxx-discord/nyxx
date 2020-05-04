@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:nyxx/Vm.dart';
-import 'package:nyxx.commands/commands.dart';
+import 'package:nyxx.commander/commander.dart';
 
 void main() {
   setupDefaultLogging();
@@ -26,7 +26,7 @@ void main() {
     if(event.message!.content == "Test 10") {
       await event.message!.delete();
 
-      await event.message!.channel.send(content: "CommandsParser tests completed sucessfuly!");
+      await event.message!.channel.send(content: "Commander tests completed sucessfuly!");
       exit(0);
     }
   });
@@ -34,7 +34,7 @@ void main() {
   bot.onReady.listen((e) async {
     var channel = bot.channels[Snowflake('422285619952222208')] as TextChannel;
 
-    await channel.send(content: "Testing CommandsParser");
+    await channel.send(content: "Testing Commander");
 
     var msg1 = await channel.send(content: "test>test1");
     msg1.delete();
@@ -46,19 +46,23 @@ void main() {
     msg3.delete();
   });
 
-  CommandParser("test>", bot, (message, author, channel) async {
-    if(message.content.endsWith("test3")) {
-      await channel.send(content: "Test 10");
+  Commander(bot, prefix: "test>", beforeCommandHandler: (context, message)  async{
+    if(message.endsWith("test3")) {
+      await context.channel.send(content: "Test 10");
       return true;
     }
 
     return true;
-  }).bind("test1", (message, author, channel, args) async => {
-      await channel.send(content: "Test 1")
-  }).bind("test2", (message, author, channel, args) async => {
+  })..registerCommand("test1", (context, message) async {
+    await context.channel.send(content: "Test 1");
+  })..registerCommand("test2", (context, message) async {
+    var args = message.split(" ");
+
     if(args.length == 2 && args.last == "arg1") {
-      await channel.send(content: "Test 2")
+      await context.channel.send(content: "Test 2");
     }
+  })..registerCommand("test3", (context, message) async {
+    await context.message.delete();
   });
 
   Timer(const Duration(seconds: 60), () {
