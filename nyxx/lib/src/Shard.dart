@@ -44,14 +44,14 @@ class Shard implements Disposable {
   /// Allows to set presence for current shard.
   void setPresence({UserStatus? status, bool? afk, Activity? game, DateTime? since}) {
     var packet = <String, dynamic> {
-      if(status != null) 'status' : status,
-      if(afk != null) 'afk' : afk,
+      'status' : (status != null) ? status._value : UserStatus.online._value,
+      'afk' : (afk != null) ? afk : false,
       if(game != null) 'game' : <String, dynamic> {
         'name' : game.name,
-        'type' : game.type,
-        if(game.type == ActivityType.streaming) 'url' : game.url
+        'type' : game.type._value,
+        if(game.type._value == ActivityType.streaming._value) 'url' : game.url
       },
-      if(since != null) 'since' : since.millisecondsSinceEpoch
+      'since': (since != null) ? since.millisecondsSinceEpoch : null
     };
 
     this.send("STATUS_UPDATE", packet);
