@@ -140,8 +140,7 @@ class ActivityType {
 
   @override
   bool operator ==(other) =>
-      other is int && other == _value ||
-      other is String && other == _value.toString();
+      other is ActivityType && other._value == this._value;
 }
 
 /// Represents party of game.
