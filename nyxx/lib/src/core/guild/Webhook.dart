@@ -2,27 +2,20 @@ part of nyxx;
 
 /// Type of webhook. Either [incoming] if it its normal webhook executable with token,
 /// or [channelFollower] if its discord internal webhook
-class WebhookType {
+class WebhookType extends IEnum<int> {
   static const WebhookType incoming = const WebhookType._create(1);
   static const WebhookType channelFollower = const WebhookType._create(2);
 
-  final int _value;
-
-  const WebhookType._create(int? value) : _value = value ?? 0;
-  WebhookType.from(int? value) : _value = value ?? 0;
-
-  @override
-  String toString() => _value.toString();
-
-  @override
-  int get hashCode => _value.hashCode;
+  const WebhookType._create(int? value) : super(value ?? 0);
+  WebhookType.from(int? value) : super(value ?? 0);
 
   @override
   bool operator ==(other) {
-    if (other is PremiumTier || other is int)
+    if (other is int) {
       return other == _value;
+    }
 
-    return false;
+    return super == other;
   }
 }
 
@@ -74,21 +67,22 @@ class Webhook extends SnowflakeEntity implements IMessageAuthor {
     this.type = WebhookType.from(raw['type'] as int);
 
     if (raw['channel_id'] != null) {
-      this.channel = client.channels[Snowflake(raw['channel_id'] as String)] as TextChannel?;
+      this.channel = client.channels[Snowflake(raw['channel_id'] as String)]
+          as TextChannel?;
     }
 
     if (raw['guild_id'] != null) {
       this.guild = client.guilds[Snowflake(raw['guild_id'] as String)];
     }
 
-    if(raw['user'] != null) {
+    if (raw['user'] != null) {
       this.user = client.users[Snowflake(raw['user']['id'] as String)];
     }
   }
 
   @override
   String avatarURL({String format = 'webp', int size = 128}) {
-    if(this.avatarHash != null) {
+    if (this.avatarHash != null) {
       return 'https://cdn.${_Constants.cdnHost}/avatars/${this.id}/${this.avatarHash}.$format?size=$size';
     }
 
@@ -96,20 +90,29 @@ class Webhook extends SnowflakeEntity implements IMessageAuthor {
   }
 
   /// Edits the webhook.
-  Future<Webhook> edit({String? name, TextChannel? channel, File? avatar, String? encodedAvatar, String? auditReason}) async {
-    var body = <String, dynamic> {
-      if(name != null) "name" : name,
-      if(channel != null) "channel_id" : channel.id.toString()
+  Future<Webhook> edit(
+      {String? name,
+      TextChannel? channel,
+      File? avatar,
+      String? encodedAvatar,
+      String? auditReason}) async {
+    var body = <String, dynamic>{
+      if (name != null) "name": name,
+      if (channel != null) "channel_id": channel.id.toString()
     };
 
-    var base64Encoded = avatar != null ? base64Encode(await avatar.readAsBytes()) : encodedAvatar;
+    var base64Encoded = avatar != null
+        ? base64Encode(await avatar.readAsBytes())
+        : encodedAvatar;
     body['avatar'] = "data:image/jpeg;base64,$base64Encoded";
 
-    var response = await client._http._execute(
-        BasicRequest._new("/webhooks/$id/$token",
-            method: "PATCH", auditLog: auditReason, body: body));
+    var response = await client._http._execute(BasicRequest._new(
+        "/webhooks/$id/$token",
+        method: "PATCH",
+        auditLog: auditReason,
+        body: body));
 
-    if(response is HttpResponseSuccess) {
+    if (response is HttpResponseSuccess) {
       this.name = response.jsonBody['name'] as String;
       return this;
     }
@@ -119,7 +122,8 @@ class Webhook extends SnowflakeEntity implements IMessageAuthor {
 
   /// Deletes the webhook.
   Future<void> delete({String? auditReason}) {
-    return client._http._execute(BasicRequest._new("/webhooks/$id/$token", method: "DELETE", auditLog: auditReason));
+    return client._http._execute(BasicRequest._new("/webhooks/$id/$token",
+        method: "DELETE", auditLog: auditReason));
   }
 
   /// Returns a string representation of this object.

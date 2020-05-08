@@ -27,7 +27,7 @@ class AuditLogEntry extends SnowflakeEntity {
     targetId = raw['targetId'] as String;
 
     changes = [
-      if(raw['changes'] != null)
+      if (raw['changes'] != null)
         for (var o in raw['changes'])
           AuditLogChange._new(o as Map<String, dynamic>)
     ];
@@ -43,7 +43,7 @@ class AuditLogEntry extends SnowflakeEntity {
   }
 }
 
-class AuditLogEntryType {
+class AuditLogEntryType extends IEnum<int> {
   static const AuditLogEntryType guildUpdate = AuditLogEntryType._of(1);
   static const AuditLogEntryType channelCreate = AuditLogEntryType._of(10);
   static const AuditLogEntryType channelUpdate = AuditLogEntryType._of(11);
@@ -74,20 +74,15 @@ class AuditLogEntryType {
   static const AuditLogEntryType emojiDelete = AuditLogEntryType._of(62);
   static const AuditLogEntryType messageDelete = AuditLogEntryType._of(72);
 
-  final int _value;
-  int get value => _value;
-
-  const AuditLogEntryType._of(this._value);
-  AuditLogEntryType(this._value);
+  const AuditLogEntryType._of(int value) : super(value);
+  AuditLogEntryType(int value) : super(value);
 
   @override
-  String toString() => _value.toString();
+  bool operator ==(other) {
+    if (other is int) {
+      return other == this._value;
+    }
 
-  @override
-  int get hashCode => _value.hashCode;
-
-  @override
-  bool operator ==(other) =>
-      (other is AuditLogEntryType && other.value == this._value) ||
-      (other is int && other == this._value);
+    return super == other;
+  }
 }

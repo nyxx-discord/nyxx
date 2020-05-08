@@ -1,6 +1,6 @@
 part of nyxx;
 
-class MessageType {
+class MessageType extends IEnum<int> {
   static const MessageType Default = const MessageType._create(0);
   static const MessageType recipientAdd = const MessageType._create(1);
   static const MessageType recipientRemove = const MessageType._create(2);
@@ -16,24 +16,17 @@ class MessageType {
   static const MessageType channelFollowAdd = const MessageType._create(12);
   static const MessageType guildDiscoveryDisqualified = const MessageType._create(14);
   static const MessageType guildStream = const MessageType._create(13);
-  static const MessageType guildDiscoveryRequalified =const MessageType._create(15);
+  static const MessageType guildDiscoveryRequalified = const MessageType._create(15);
 
-  final int _value;
-
-  const MessageType._create(int? value) : _value = value ?? 0;
-  MessageType.from(int? value) : _value = value ?? 0;
-
-  @override
-  String toString() => _value.toString();
-
-  @override
-  int get hashCode => _value.hashCode;
+  const MessageType._create(int? value) : super(value ?? 0);
+  MessageType.from(int? value) : super(value ?? 0);
 
   @override
   bool operator ==(other) {
-  if (other is MessageType || other is int)
-    return other == _value;
+    if (other is int) {
+      return other == _value;
+    }
 
-  return false;
+    return super == other;
   }
 }

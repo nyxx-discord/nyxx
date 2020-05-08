@@ -1,27 +1,20 @@
 part of nyxx;
 
 ///Premium types denote the level of premium a user has.
-class NitroType {
+class NitroType extends IEnum<int> {
   static const NitroType none = const NitroType._create(0);
   static const NitroType classic = const NitroType._create(1);
   static const NitroType nitro = const NitroType._create(2);
 
-  final int _value;
-
-  const NitroType._create(int? value) : _value = value ?? 0;
-  NitroType.from(int? value) : _value = value ?? 0;
-
-  @override
-  String toString() => _value.toString();
-
-  @override
-  int get hashCode => _value.hashCode;
+  const NitroType._create(int? value) : super(value ?? 0);
+  NitroType.from(int? value) : super(value ?? 0);
 
   @override
   bool operator ==(other) {
-    if (other is NitroType || other is int)
+    if (other is int) {
       return other == _value;
+    }
 
-    return false;
+    return super == other;
   }
 }
