@@ -14,7 +14,8 @@ import 'dart:isolate';
 
 import 'package:logging/logging.dart';
 import 'package:w_transport/w_transport.dart' as transport;
-import 'package:w_transport/vm.dart' as transportVm show configureWTransportForVM;
+import 'package:w_transport/vm.dart' as transportVm
+    show configureWTransportForVM;
 
 import 'package:path/path.dart' as pathUtils;
 
@@ -154,3 +155,4 @@ part 'src/core/permissions/PermissionsConstants.dart';
 
 part 'src/utils/permissions.dart';
 part 'src/utils/utils.dart';
+part 'src/utils/IEnum.dart';

@@ -1,16 +1,14 @@
 part of nyxx;
 
 /// Provides values for user status.
-class UserStatus {
+class UserStatus extends IEnum<String> {
   static const UserStatus dnd = const UserStatus._create("dnd");
   static const UserStatus offline = const UserStatus._create("offline");
   static const UserStatus online = const UserStatus._create("online");
   static const UserStatus idle = const UserStatus._create("idle");
 
-  final String _value;
-
-  const UserStatus._create(String? value) : _value = value ?? "offline";
-  UserStatus.from(String? value) : _value = value ?? "offline";
+  const UserStatus._create(String? value) : super(value ?? "offline");
+  UserStatus.from(String? value) : super(value ?? "offline");
 
   /// Returns if user is online
   bool get isOnline => this != UserStatus.offline;
@@ -19,14 +17,12 @@ class UserStatus {
   String toString() => _value;
 
   @override
-  int get hashCode => _value.hashCode;
-
-  @override
   bool operator ==(other) {
-    if (other is UserStatus || other is String)
+    if (other is String) {
       return other.toString() == _value;
+    }
 
-    return false;
+    return super == other;
   }
 }
 
@@ -49,9 +45,7 @@ class ClientStatus {
 
   /// Returns if user is online
   bool get isOnline {
-    return this.desktop.isOnline
-        || this.phone.isOnline
-        || this.web.isOnline;
+    return this.desktop.isOnline || this.phone.isOnline || this.web.isOnline;
   }
 
   @override
@@ -61,10 +55,10 @@ class ClientStatus {
 
   @override
   bool operator ==(other) {
-    if(other is ClientStatus) {
-      return other.desktop == this.desktop
-        && other.phone == this.phone
-        && other.web == this.web;
+    if (other is ClientStatus) {
+      return other.desktop == this.desktop &&
+          other.phone == this.phone &&
+          other.web == this.web;
     }
 
     return false;

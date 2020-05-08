@@ -26,7 +26,7 @@ class AuditLogChange {
   }
 }
 
-class ChangeKeyType {
+class ChangeKeyType extends IEnum<String> {
   static const ChangeKeyType name = ChangeKeyType._of("name");
   static const ChangeKeyType iconHash = ChangeKeyType._of("icon_hash");
   static const ChangeKeyType splashHash = ChangeKeyType._of("splash_hash");
@@ -81,20 +81,15 @@ class ChangeKeyType {
   static const ChangeKeyType id = ChangeKeyType._of("id");
   static const ChangeKeyType type = ChangeKeyType._of("type");
 
-  final String _value;
-  String get value => _value;
-
-  const ChangeKeyType._of(this._value);
-  ChangeKeyType(this._value);
+  const ChangeKeyType._of(String value) : super(value);
+  ChangeKeyType(String value) : super(value);
 
   @override
-  String toString() => _value;
+  bool operator ==(other) {
+    if (other is String) {
+      return other == this._value;
+    }
 
-  @override
-  int get hashCode => _value.hashCode;
-
-  @override
-  bool operator ==(other) =>
-      (other is ChangeKeyType && other.value == this._value) ||
-      (other is String && other == this._value);
+    return super == other;
+  }
 }
