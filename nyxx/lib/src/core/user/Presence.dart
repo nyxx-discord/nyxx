@@ -52,7 +52,8 @@ class Activity {
     this.name = raw['name'] as String;
     this.url = raw['url'] as String;
     this.type = ActivityType(raw['type'] as int);
-    this.createdAt = DateTime.fromMillisecondsSinceEpoch(raw['created_at'] as int);
+    this.createdAt =
+        DateTime.fromMillisecondsSinceEpoch(raw['created_at'] as int);
     this.details = raw['details'] as String;
     this.state = raw['state'] as String;
 
@@ -121,26 +122,23 @@ class ActivityTimestamps {
 }
 
 /// Represents type of presence activity
-class ActivityType {
+class ActivityType extends IEnum<int> {
   static const ActivityType game = ActivityType._create(0);
   static const ActivityType streaming = ActivityType._create(1);
   static const ActivityType listening = ActivityType._create(2);
   static const ActivityType custom = ActivityType._create(3);
 
-  final int _value;
-
-  ActivityType(this._value);
-  const ActivityType._create(this._value);
+  ActivityType(int value) : super(value);
+  const ActivityType._create(int value) : super(value);
 
   @override
-  String toString() => _value.toString();
+  bool operator ==(other) {
+    if (other is int) {
+      return other == this._value;
+    }
 
-  @override
-  int get hashCode => _value.hashCode;
-
-  @override
-  bool operator ==(other) =>
-      other is ActivityType && other._value == this._value;
+    return super == other;
+  }
 }
 
 /// Represents party of game.

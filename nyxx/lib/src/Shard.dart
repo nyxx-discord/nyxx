@@ -48,7 +48,7 @@ class Shard implements Disposable {
       'afk' : (afk != null) ? afk : false,
       if(game != null) 'game' : <String, dynamic> {
         'name' : game.name,
-        'type' : game.type._value, //Change to a getter when implemented
+        'type' : game.type.value,
         if(game.type == ActivityType.streaming) 'url' : game.url
       },
       'since': (since != null) ? since.millisecondsSinceEpoch : null
