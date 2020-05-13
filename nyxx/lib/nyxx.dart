@@ -51,6 +51,8 @@ part 'src/errors/SetupErrors.dart';
 
 // EVENTS
 
+part 'src/events/MemberChunkEvent.dart';
+
 part 'src/events/DisconnectEvent.dart';
 part 'src/events/PresenceUpdateEvent.dart';
 part 'src/events/RatelimitEvent.dart';

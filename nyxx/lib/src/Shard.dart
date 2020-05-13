@@ -17,6 +17,9 @@ class Shard implements Disposable {
   /// Emitted when the shard encounters an error.
   late Stream<Shard> onDisconnect;
 
+  /// Emitted when shard receives member chunk.
+  late Stream<MemberChunkEvent> onMemberChunk;
+
   int get eventsSeen => _sequence;
 
   Logger _logger = Logger("Websocket");
@@ -32,6 +35,7 @@ class Shard implements Disposable {
 
   late final StreamController<Shard> _onConnect;
   late final StreamController<Shard> _onDisconnect;
+  late final StreamController<MemberChunkEvent> _onMemberChunk;
 
   Shard._new(this._ws, this.id) {
     this._onConnect = StreamController<Shard>.broadcast();
@@ -39,6 +43,9 @@ class Shard implements Disposable {
 
     this._onDisconnect = StreamController<Shard>.broadcast();
     this.onDisconnect = this._onDisconnect.stream;
+
+    this._onMemberChunk = StreamController.broadcast();
+    this.onMemberChunk = this._onMemberChunk.stream;
   }
 
   /// Allows to set presence for current shard.
@@ -182,16 +189,7 @@ class Shard implements Disposable {
             break;
 
           case 'GUILD_MEMBERS_CHUNK':
-            msg['d']['members'].forEach((dynamic o) {
-              var mem = Member._standard(
-                  o as Map<String, dynamic>,
-                  /// TODO: NNBD - To consider
-                  (_ws._client.guilds[Snowflake(msg['d']['guild_id'])])!,
-                  _ws._client);
-
-              _ws._client.users[mem.id] = mem;
-              mem.guild.members[mem.id] = mem;
-            });
+            this._onMemberChunk.add(MemberChunkEvent._new(msg, _ws._client));
             break;
 
           case 'MESSAGE_REACTION_REMOVE_ALL':
@@ -251,8 +249,7 @@ class Shard implements Disposable {
 
           case 'GUILD_CREATE':
             var guild = GuildCreateEvent._new(msg, this, _ws._client);
-            _ws._client._events.onGuildCreate
-                .add(guild);
+            _ws._client._events.onGuildCreate.add(guild);
 
             break;
 
@@ -262,8 +259,8 @@ class Shard implements Disposable {
             break;
 
           case 'GUILD_DELETE':
-              _ws._client._events.onGuildDelete
-                  .add(GuildDeleteEvent._new(msg, this, _ws._client));
+            _ws._client._events.onGuildDelete
+                .add(GuildDeleteEvent._new(msg, this, _ws._client));
             break;
 
           case 'GUILD_BAN_ADD':
@@ -313,8 +310,8 @@ class Shard implements Disposable {
             break;
 
           case 'PRESENCE_UPDATE':
-            _ws._client._events.onPresenceUpdate.add(
-                PresenceUpdateEvent._new(msg, _ws._client));
+            _ws._client._events.onPresenceUpdate
+                .add(PresenceUpdateEvent._new(msg, _ws._client));
             break;
 
           case 'GUILD_ROLE_CREATE':
