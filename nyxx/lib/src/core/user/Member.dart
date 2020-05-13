@@ -62,7 +62,7 @@ class Member extends User implements GuildEntity {
   Member._new(Map<String, dynamic> raw, Map<String, dynamic> user, this.guild,
       Nyxx client)
       : super._new(user, client) {
-    this.nickname = raw['nick'] as String;
+    this.nickname = raw['nick'] as String?;
     this.deaf = raw['deaf'] as bool;
     this.mute = raw['mute'] as bool;
 

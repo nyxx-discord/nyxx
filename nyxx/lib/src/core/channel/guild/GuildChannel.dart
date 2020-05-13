@@ -35,7 +35,7 @@ mixin GuildChannel implements Channel, GuildEntity {
 
     if (raw['parent_id'] != null) {
       this.parentChannel =
-          client.channels[Snowflake(raw['parent_id'])] as CategoryChannel;
+          client.channels[Snowflake(raw['parent_id'])] as CategoryChannel?;
     }
 
     this.nsfw = raw['nsfw'] as bool? ?? false;

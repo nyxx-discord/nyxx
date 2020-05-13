@@ -9,7 +9,7 @@ class Attachment extends SnowflakeEntity {
   late final String url;
 
   /// The attachment's proxy URL.
-  late final String proxyUrl;
+  late final String? proxyUrl;
 
   /// The attachment's file size.
   late final int size;
@@ -27,7 +27,7 @@ class Attachment extends SnowflakeEntity {
       : super(Snowflake(raw['id'] as String)) {
     this.filename = raw['filename'] as String;
     this.url = raw['url'] as String;
-    this.proxyUrl = raw['proxyUrl'] as String;
+    this.proxyUrl = raw['proxyUrl'] as String?;
     this.size = raw['size'] as int;
 
     this.height = raw['height'] as int?;
