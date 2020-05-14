@@ -12,7 +12,7 @@ void setupBot(SendPort remotePort) {
   remotePort.send(sendPort);
 
   // Create new bot instance
-  Nyxx bot = Nyxx(Platform.environment['DISCORD_TOKEN']);
+  Nyxx bot = Nyxx("<TOKEN>");
 
   // Listen to ready event. Invoked when bot started listening to events.
   bot.onReady.listen((ReadyEvent e) {
