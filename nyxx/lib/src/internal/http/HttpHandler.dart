@@ -18,15 +18,17 @@ class _HttpHandler {
       return _handle(await this._noRateBucket._execute(request));
     }
 
-    _HttpBucket? bucket = _buckets.firstWhere((element) => element.uri == request.uri, orElse: () => null);
-    if(bucket == null) {
+    // TODO: NNBD: try-catch in where
+    try {
+      _HttpBucket bucket = _buckets.firstWhere((element) => element.uri == request.uri);
+
+      return _handle(await bucket._execute(request));
+    } catch (e) {
       var newBucket = _HttpBucket(request.uri, this);
       _buckets.add(newBucket);
 
       return _handle(await newBucket._execute(request));
     }
-
-    return _handle(await bucket._execute(request));
   }
 
   Future<HttpResponse> _handle(transport.Response response) async {
@@ -99,17 +101,17 @@ class _HttpBucket {
 
   void _setBucketValues(Map<String, String> headers) {
     if(headers["x-ratelimit-remaining"] != null) {
-      this.remaining = int.parse(headers["x-ratelimit-remaining"]);
+      this.remaining = int.parse(headers["x-ratelimit-remaining"]!);
     }
 
     // seconds since epoch
     if(headers["x-ratelimit-reset"] != null) {
-      var secondsSinceEpoch = (int.parse(headers["x-ratelimit-reset"]) * 1000);
+      var secondsSinceEpoch = (int.parse(headers["x-ratelimit-reset"]!) * 1000);
       this.resetAt = DateTime.fromMillisecondsSinceEpoch(secondsSinceEpoch);
     }
 
     if(headers['x-ratelimit-reset-after'] != null) {
-      this.resetAfter = int.parse(headers['x-ratelimit-reset-after']);
+      this.resetAfter = int.parse(headers['x-ratelimit-reset-after']!);
     }
   }
 

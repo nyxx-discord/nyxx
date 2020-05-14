@@ -72,7 +72,12 @@ class Member extends User implements GuildEntity {
     ];
 
     if(raw['hoisted_role'] != null && roles.isNotEmpty) {
-      this.hoistedRole = this.roles.firstWhere((element) => element.id == Snowflake(raw['hoisted_role']), orElse: () => null);
+      // TODO: NNBD: try-catch in where
+      try {
+        this.hoistedRole = this.roles.firstWhere((element) => element.id == Snowflake(raw['hoisted_role']));
+      } catch (e) {
+        this.hoistedRole = null;
+      }
     }
 
     if (raw['joined_at'] != null) {

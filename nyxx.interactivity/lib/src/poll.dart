@@ -31,22 +31,34 @@ Future<Map<Emoji, int>> createPoll(
   }
 
   Message msg;
-  if (toSend is String)
-    msg = await channel.send(content: toSend);
-  else if (toSend is EmbedBuilder)
-    msg = await channel.send(embed: toSend);
-  else
-    return Future.error("Cannot create poll");
 
-  for (var emoji in options.keys) await msg.createReaction(emoji);
+  if (toSend is String) {
+    msg = await channel.send(content: toSend);
+  } else if (toSend is EmbedBuilder) {
+    msg = await channel.send(embed: toSend);
+  } else {
+    return Future.error("Cannot create poll");
+  }
+
+  for (var emoji in options.keys) {
+    await msg.createReaction(emoji);
+  }
 
   var m = Map<Emoji, int>();
+
   return Future<Map<Emoji, int>>(() async {
     await for (MessageReactionEvent r in channel.client.onMessageReactionAdded.where((evnt) => evnt.message?.id == msg.id)) {
-      if (m.containsKey(r.emoji))
-        m[r.emoji] += 1;
-      else
+      if (m.containsKey(r.emoji)) {
+        // TODO: NNBD: weird stuff
+        var value = m[r.emoji];
+
+        if(value != null) {
+          value += 1;
+          m[r.emoji] = value;
+        }
+      } else {
         m[r.emoji] = 1;
+      }
     }
 
     return m;

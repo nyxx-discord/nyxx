@@ -37,7 +37,7 @@ void main() {
   nyxx.setupDefaultLogging();
 
   var env = Platform.environment;
-  var bot = nyxx.Nyxx(env['DISCORD_TOKEN'], ignoreExceptions: false);
+  var bot = nyxx.Nyxx(env['DISCORD_TOKEN']!, ignoreExceptions: false);
 
   Timer(const Duration(seconds: 60), () {
     print('Timed out waiting for messages');

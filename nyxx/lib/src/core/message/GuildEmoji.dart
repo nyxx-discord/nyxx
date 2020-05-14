@@ -44,8 +44,13 @@ class GuildEmoji extends Emoji implements SnowflakeEntity, GuildEntity {
 
     this.roles = [];
     if (raw['roles'] != null) {
-      raw['roles'].forEach(
-          (o) => this.roles.add(this.guild.roles[Snowflake(o as String)]));
+      for (var roleId in raw['roles']) {
+        var role = this.guild.roles[Snowflake(roleId)];
+
+        if(role != null) {
+          this.roles.add(role);
+        }
+      }
     }
 
     this.partial = false;

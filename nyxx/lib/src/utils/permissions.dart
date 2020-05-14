@@ -46,27 +46,26 @@ class PermissionsUtils {
     var denyRole = 0;
 
     for (var role in member.roles) {
-      PermissionsOverrides? chanOveride = channel.permissions
-          .firstWhere((f) => f.id == role.id, orElse: () => null);
+      try {
+        PermissionsOverrides chanOveride = channel.permissions
+            .firstWhere((f) => f.id == role.id);
 
-      if (chanOveride != null) {
         denyRole |= chanOveride.deny;
         allowRole |= chanOveride.allow;
-      }
+      } catch (e) { }
     }
 
     allowRaw = (allowRaw & ~denyRole) | allowRole;
     denyRaw = (denyRaw & ~allowRole) | denyRole;
 
-    PermissionsOverrides? memberOverride = channel.permissions
-        .firstWhere((g) => g.id == member.id, orElse: () => null);
+    // TODO: NNBD: try-catch in where
+    try {
+      PermissionsOverrides memberOverride = channel.permissions
+          .firstWhere((g) => g.id == member.id);
 
-    if (memberOverride != null) {
-      final oDeny = memberOverride.deny;
-      final oAllow = memberOverride.allow;
-      allowRaw = (allowRaw & ~oDeny) | oAllow;
-      denyRaw = (denyRaw & ~oAllow) | oDeny;
-    }
+      allowRaw = (allowRaw & ~memberOverride.deny) |  memberOverride.allow;
+      denyRaw = (denyRaw & ~ memberOverride.allow) | memberOverride.deny;
+    } catch (e) { }
 
     return [allowRaw, denyRaw];
   }

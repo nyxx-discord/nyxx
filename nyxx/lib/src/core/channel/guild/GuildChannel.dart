@@ -78,20 +78,20 @@ mixin GuildChannel implements Channel, GuildEntity {
 
     var permissions = role.permissions.raw | guild.everyoneRole.permissions.raw;
 
-    PermissionsOverrides? overEveryone =
-        this.permissions.firstWhere((f) => f.id == guild.everyoneRole.id, orElse: () => null);
+    // TODO: NNBD: try-catch in where
+    try {
+      PermissionsOverrides overEveryone = this.permissions.firstWhere((f) => f.id == guild.everyoneRole.id);
 
-    if(overEveryone != null) {
       permissions &= ~overEveryone.deny;
       permissions |= overEveryone.allow;
-    }
+    } catch (e) { }
 
-    PermissionsOverrides? overRole = this.permissions.firstWhere((f) => f.id == role.id, orElse: () => null);
+    try {
+      PermissionsOverrides overRole = this.permissions.firstWhere((f) => f.id == role.id);
 
-    if(overRole != null) {
       permissions &= ~overRole.deny;
       permissions |= overRole.allow;
-    }
+    } catch (e) { }
 
     return Permissions.fromInt(permissions);
   }
