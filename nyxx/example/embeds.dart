@@ -1,13 +1,11 @@
 import 'package:nyxx/nyxx.dart';
 
-import 'dart:io';
-
 //TODO: NNBD - Rewrite examples to be more idiomatic
 
 // Main function
 void main() {
   // Create new bot instance
-  Nyxx bot = Nyxx(Platform.environment['DISCORD_TOKEN']);
+  Nyxx bot = Nyxx("<TOKEN>");
 
   // Listen to ready event. Invoked when bot started listening to events.
   bot.onReady.listen((ReadyEvent e) {
@@ -16,7 +14,7 @@ void main() {
 
   // Listen to all incoming messages via Dart Stream
   bot.onMessageReceived.listen((MessageReceivedEvent e) {
-    if (e.message!.content == "!embed") {
+    if (e.message.content == "!embed") {
       // Build embed with `..Builder` classes.
 
       // Create embed with author and footer section.
