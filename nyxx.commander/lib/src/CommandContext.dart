@@ -107,14 +107,21 @@ class CommandContext {
   /// }
   /// ```
   Future<Map<Emoji, int>?> collectEmojis(Message msg, Duration duration) {
-    return Future<Map<Emoji, int>>(() async {
+    return Future<Map<Emoji, int>?>(() async {
       var m = Map<Emoji, int>();
 
       await for (var r in msg.client.onMessageReactionAdded.where((evnt) => evnt.message != null && evnt.message!.id == msg.id)) {
-        if (m.containsKey(r.emoji))
-          m[r.emoji] += 1;
-        else
+        if (m.containsKey(r.emoji)) {
+          // TODO: NNBD: weird stuff
+          var value = m[r.emoji];
+
+          if(value != null) {
+            value += 1;
+            m[r.emoji] = value;
+          }
+        } else {
           m[r.emoji] = 1;
+        }
       }
 
       return m;
@@ -125,9 +132,10 @@ class CommandContext {
   /// Can listen to specific user by specifying [user]
   Future<TypingEvent?> waitForTyping(User user,
       {Duration timeout = const Duration(seconds: 30)}) {
-    return user.client.onTyping
-        .firstWhere((e) => e.user == user && e.channel == this.channel)
-        .timeout(timeout, onTimeout: () => null);
+    return Future<TypingEvent?>(() {
+      return user.client.onTyping
+          .firstWhere((e) => e.user == user && e.channel == this.channel);
+    }).timeout(timeout, onTimeout: () => null);
   }
 
   /// Gets all context channel messages that satisfies [predicate].
@@ -162,10 +170,16 @@ class CommandContext {
   ///   await reply(content: 'no to elo');
   /// ```
   /// """
-  Stream<String> getCodeBlocks() async* {
+  Iterable<String> getCodeBlocks() sync* {
     var regex = RegExp(r"```(\w+)?(\s)?(((.+)(\s)?)+)```");
 
     var matches = regex.allMatches(message.content);
-    for (var m in matches) yield m.group(3);
+    for (var m in matches) {
+      var groupText = m.group(3);
+
+      if(groupText != null) {
+        yield groupText;
+      }
+    }
   }
 }

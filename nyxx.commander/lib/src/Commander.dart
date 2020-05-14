@@ -62,10 +62,6 @@ class Commander {
   }
 
   Future<void> _handleMessage(MessageReceivedEvent event) async {
-    if(event.message == null) {
-      return;
-    }
-
     var context = CommandContext._new(event.message.channel,
         event.message.author,
         event.message is GuildMessage ? (event.message as GuildMessage).guild : null,
@@ -76,10 +72,12 @@ class Commander {
       return;
     }
 
-    CommandHandler? matchingCommand = _commands.firstWhere((element) => _isCommandMatching(
-        element.commandName, event.message.content.replaceFirst(prefix, "")), orElse: () => null);
-
-    if(matchingCommand == null) {
+    // TODO: NNBD: try-catch in where
+    CommandHandler? matchingCommand;
+    try {
+      matchingCommand = _commands.firstWhere((element) =>
+          _isCommandMatching(element.commandName, event.message.content.replaceFirst(prefix, "")));
+    } catch (e) {
       return;
     }
 

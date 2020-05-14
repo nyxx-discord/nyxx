@@ -7,7 +7,7 @@ import 'package:nyxx.commander/commander.dart';
 void main() {
   setupDefaultLogging();
 
-  var bot = Nyxx(Platform.environment['DISCORD_TOKEN'], ignoreExceptions: false);
+  var bot = Nyxx(Platform.environment['DISCORD_TOKEN']!, ignoreExceptions: false);
 
   bot.onMessageReceived.listen((event) async {
     if(event.message.content == "Test 1") {

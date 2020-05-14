@@ -326,7 +326,7 @@ class Guild extends SnowflakeEntity implements Disposable {
     var body = <String, dynamic>{
       "name": name,
       "image":
-          base64.encode(image == null ? imageBytes : await image.readAsBytes()),
+          base64.encode(image == null ? imageBytes! : await image.readAsBytes()),
       if (roles != null) "roles": roles.map((r) => r.id.toString())
     };
 
@@ -635,13 +635,14 @@ class Guild extends SnowflakeEntity implements Disposable {
   /// ```
   Future<void> moveChannel(GuildChannel channel,
       {int? absolute, int? relative, String? auditReason}) async {
-    if (absolute == null && relative == null)
-      return Future.error("Cannot move channel by zero places");
+    var newPosition = 0;
 
-    int newPosition = channel.position + relative;
-
-    if (absolute != null) {
+    if (relative != null) {
+      newPosition = channel.position + relative;
+    } else if (absolute != null) {
       newPosition = absolute;
+    } else {
+      return Future.error("Cannot move channel by zero places");
     }
 
     return client._http._execute(BasicRequest._new(

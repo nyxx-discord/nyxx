@@ -2,7 +2,13 @@ part of nyxx.interactivity;
 
 class EmojiUtils {
   /// Returns [UnicodeEmoji] instance of given emoji [name].
-  static UnicodeEmoji getEmoji(String name) => UnicodeEmoji(emojisUnicode[name]);
+  static UnicodeEmoji? getEmoji(String name) {
+    if(emojisUnicode.containsKey(name)) {
+      return UnicodeEmoji(emojisUnicode[name]!);
+    }
+
+    return null;
+  }
 
   /// Map of all emojis which discord uses. Key is unicode name of emoji and value actual emoji.
   static Map<String, String> emojisUnicode = {
