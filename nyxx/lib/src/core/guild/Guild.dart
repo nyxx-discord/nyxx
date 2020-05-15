@@ -344,9 +344,13 @@ class Guild extends SnowflakeEntity implements Disposable {
   }
 
   /// Returns [int] indicating the number of members that would be removed in a prune operation.
-  Future<int> pruneCount(int days) async {
+  Future<int> pruneCount(int days, {Iterable<Snowflake>? includeRoles}) async {
     var response = await client._http
-        ._execute(BasicRequest._new("/guilds/$id/prune", body: {"days": days}));
+        ._execute(BasicRequest._new("/guilds/$id/prune",
+        queryParams: {
+          "days": days.toString(),
+          if (includeRoles != null) "include_roles" : includeRoles.map((e) => e.id.toString())
+        }));
 
     if (response is HttpResponseSuccess) {
       return response.jsonBody['pruned'] as int;
@@ -357,12 +361,15 @@ class Guild extends SnowflakeEntity implements Disposable {
 
   /// Prunes the guild, returns the amount of members pruned.
   /// https://discordapp.com/developers/docs/resources/guild#get-guild-prune-count
-  Future<int> prune(int days, {String? auditReason}) async {
+  Future<int> prune(int days, {Iterable<Snowflake>? includeRoles, String? auditReason}) async {
     var response = await client._http._execute(BasicRequest._new(
         "/guilds/$id/prune",
         method: "POST",
         auditLog: auditReason,
-        body: {"days": days}));
+        queryParams: {
+          "days": days.toString(),
+          if (includeRoles != null) "include_roles" : includeRoles.map((e) => e.id.toString())
+        }));
 
     if (response is HttpResponseSuccess) {
       return response.jsonBody['pruned'] as int;

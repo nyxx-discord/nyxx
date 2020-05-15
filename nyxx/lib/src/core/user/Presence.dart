@@ -50,7 +50,7 @@ class Activity {
 
   Activity._new(Map<String, dynamic> raw) {
     this.name = raw['name'] as String;
-    this.url = raw['url'] as String;
+    this.url = raw['url'] as String?;
     this.type = ActivityType(raw['type'] as int);
     this.createdAt =
         DateTime.fromMillisecondsSinceEpoch(raw['created_at'] as int);
@@ -83,7 +83,7 @@ class Activity {
       secrets = GameSecrets._new(raw['secrets'] as Map<String, dynamic>);
     }
 
-    instance = raw['instance'] as bool;
+    instance = raw['instance'] as bool?;
     activityFlags = raw['flags'] as int;
   }
 }
@@ -165,22 +165,22 @@ class ActivityParty {
 /// Presence's assets
 class GameAssets {
   /// The id for a large asset of the activity, usually a snowflake.
-  late final String largeImage;
+  late final String? largeImage;
 
   /// Text displayed when hovering over the large image of the activity.
-  late final String largeText;
+  late final String? largeText;
 
   /// The id for a small asset of the activity, usually a snowflake
-  late final String smallImage;
+  late final String? smallImage;
 
   /// Text displayed when hovering over the small image of the activity
-  late final String smallText;
+  late final String? smallText;
 
   GameAssets._new(Map<String, dynamic> raw) {
-    largeImage = raw['large_image'] as String;
-    largeText = raw['large_text'] as String;
-    smallImage = raw['small_image'] as String;
-    smallText = raw['small_text'] as String;
+    largeImage = raw['large_image'] as String?;
+    largeText = raw['large_text'] as String?;
+    smallImage = raw['small_image'] as String?;
+    smallText = raw['small_text'] as String?;
   }
 }
 
