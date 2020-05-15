@@ -3,7 +3,7 @@ part of nyxx;
 abstract class HttpRequest {
   late final Uri uri;
   final String method;
-  final Map<String, String>? queryParams;
+  final Map<String, dynamic>? queryParams;
   final String? auditLog;
 
   final bool ratelimit;
@@ -28,7 +28,7 @@ abstract class HttpRequest {
 class BasicRequest extends HttpRequest {
   final dynamic body;
 
-  BasicRequest._new(String path, {String method = "GET", this.body, Map<String, String>? queryParams, String? auditLog, bool ratelimit = true})
+  BasicRequest._new(String path, {String method = "GET", this.body, Map<String, dynamic>? queryParams, String? auditLog, bool ratelimit = true})
       : super._new(path, method: method, queryParams: queryParams, auditLog: auditLog, ratelimit: ratelimit);
 
   @override
@@ -42,7 +42,9 @@ class BasicRequest extends HttpRequest {
     }
 
     if(this.queryParams != null) {
-      request.queryParameters = this.queryParams;
+      this.queryParams!.forEach((key, value) {
+        request.updateQuery({ key : value });
+      });
     }
 
     return request.send(this.method);
@@ -54,7 +56,7 @@ class MultipartRequest extends HttpRequest {
 
   final Map<String, dynamic>? fields;
 
-  MultipartRequest._new(String path, this.files, {this.fields, String method = "GET", Map<String, String>? queryParams, String? auditLog})
+  MultipartRequest._new(String path, this.files, {this.fields, String method = "GET", Map<String, dynamic>? queryParams, String? auditLog})
       : super._new(path, method: method, queryParams: queryParams, auditLog: auditLog);
 
   Map<String, dynamic> _mapFiles() {
