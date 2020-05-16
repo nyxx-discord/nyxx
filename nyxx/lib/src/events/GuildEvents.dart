@@ -10,7 +10,7 @@ class GuildCreateEvent {
     client.guilds[guild.id] = guild;
 
     if (client._options.forceFetchMembers) {
-      shard.send("REQUEST_GUILD_MEMBERS",
+      shard.send(OPCodes.requestGuildMember,
           {"guild_id": guild.id.toString(), "query": "", "limit": 0});
     }
   }

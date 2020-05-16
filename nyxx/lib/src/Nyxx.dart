@@ -47,7 +47,7 @@ class Nyxx implements Disposable {
   bool ready = false;
 
   /// The current version of `nyxx`
-  final String version = _Constants.version;
+  final String version = Constants.version;
 
   /// Current client's shard
   late Shard shard;
