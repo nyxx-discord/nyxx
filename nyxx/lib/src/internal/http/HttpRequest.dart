@@ -11,14 +11,14 @@ abstract class HttpRequest {
   Nyxx? _client;
 
   HttpRequest._new(String path, {this.method = "GET", this.queryParams, this.auditLog, this.ratelimit = true}) {
-    this.uri = Uri.https(_Constants.host, _Constants.baseUri + path);
+    this.uri = Uri.https(Constants.host, Constants.baseUri + path);
   }
 
   Map<String, String> _genHeaders() {
     return {
       "Authorization" : "Bot ${_client?._token}",
       if(this.auditLog != null) "X-Audit-Log-Reason" : this.auditLog!,
-      "User-Agent" : "Nyxx (${_Constants.repoUrl}, ${_Constants.version})"
+      "User-Agent" : "Nyxx (${Constants.repoUrl}, ${Constants.version})"
     };
   }
 

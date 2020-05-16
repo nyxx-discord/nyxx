@@ -54,8 +54,8 @@ class Activity {
     this.type = ActivityType(raw['type'] as int);
     this.createdAt =
         DateTime.fromMillisecondsSinceEpoch(raw['created_at'] as int);
-    this.details = raw['details'] as String;
-    this.state = raw['state'] as String;
+    this.details = raw['details'] as String?;
+    this.state = raw['state'] as String?;
 
     if (raw['timestamps'] != null) {
       this.timestamps =
@@ -84,7 +84,7 @@ class Activity {
     }
 
     instance = raw['instance'] as bool?;
-    activityFlags = raw['flags'] as int;
+    activityFlags = raw['flags'] as int?;
   }
 }
 
@@ -144,7 +144,7 @@ class ActivityType extends IEnum<int> {
 /// Represents party of game.
 class ActivityParty {
   /// Party id.
-  late final String id;
+  late final String? id;
 
   /// Current size of party.
   int? currentSize;
@@ -153,7 +153,7 @@ class ActivityParty {
   int? maxSize;
 
   ActivityParty._new(Map<String, dynamic> raw) {
-    id = raw['id'] as String;
+    id = raw['id'] as String?;
 
     if (raw['size'] != null) {
       currentSize = raw['size'].first as int;

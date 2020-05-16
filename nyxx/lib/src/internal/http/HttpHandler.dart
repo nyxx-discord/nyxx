@@ -81,6 +81,11 @@ class _HttpBucket {
       _setBucketValues(response.headers);
       return response;
     } on transport.RequestException catch (e) {
+      if(e.response == null) {
+        _httpHandler._logger.warning("Http Error on endpoint: ${request.uri}. Error: [${e.error.toString()}].");
+        return Future.delayed(Duration(milliseconds: 1000), () => _execute(request));
+      }
+
       var response = e.response as transport.Response;
 
       // Check for 429, emmit events and wait given in response body time

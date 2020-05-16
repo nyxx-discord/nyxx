@@ -12,9 +12,9 @@ class EmbedFooter implements Convertable<EmbedFooterBuilder> {
   late final String? iconProxyUrl;
 
   EmbedFooter._new(Map<String, dynamic> raw) {
-    text = raw['text'] as String;
-    iconUrl = raw['icon_url'] as String;
-    iconProxyUrl = raw['icon_proxy_url'] as String;
+    text = raw['text'] as String?;
+    iconUrl = raw['icon_url'] as String?;
+    iconProxyUrl = raw['icon_proxy_url'] as String?;
   }
 
   @override

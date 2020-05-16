@@ -18,7 +18,7 @@ class AppTeam extends SnowflakeEntity{
 
   String? get teamIconUrl {
     if(iconHash != null) {
-      return "https://cdn.${_Constants.cdnHost}/team-icons/${this.id.toString()}/${this.iconHash}.png";
+      return "https://cdn.${Constants.cdnHost}/team-icons/${this.id.toString()}/${this.iconHash}.png";
     }
 
     return null;

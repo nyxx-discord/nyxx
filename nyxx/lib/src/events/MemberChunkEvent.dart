@@ -24,15 +24,18 @@ class MemberChunkEvent {
   /// Array of snowflakes which were invalid in search
   Iterable<Snowflake>? invalidIds;
 
-  MemberChunkEvent._new(Map<String, dynamic> raw, Nyxx client) {
-    this.chunkIndex = raw['chunk_index'] as int;
-    this.chunkCount = raw['chunk_count'] as int;
+  /// Nonce is used to identify events.
+  String? nonce;
 
-    this.guildId = Snowflake(raw['guild_id']);
+  MemberChunkEvent._new(Map<String, dynamic> raw, Nyxx client) {
+    this.chunkIndex = raw['d']['chunk_index'] as int;
+    this.chunkCount = raw['d']['chunk_count'] as int;
+
+    this.guildId = Snowflake(raw['d']['guild_id']);
     this.guild = client.guilds[this.guildId];
 
-    if (raw['not_found'] != null) {
-      this.invalidIds = [for (var id in raw['not_found']) Snowflake(id)];
+    if (raw['d']['not_found'] != null) {
+      this.invalidIds = [for (var id in raw['d']['not_found']) Snowflake(id)];
     }
 
     if (this.guild == null) {
@@ -40,7 +43,7 @@ class MemberChunkEvent {
     }
 
     this.members = [
-      for (var memberRaw in raw['members'])
+      for (var memberRaw in raw['d']['members'])
         Member._standard(memberRaw as Map<String, dynamic>, this.guild!, client)
     ];
 

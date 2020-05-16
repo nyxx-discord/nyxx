@@ -253,7 +253,7 @@ class Guild extends SnowflakeEntity implements Disposable {
   /// If guild doesn't have icon it returns null.
   String? iconURL({String format = 'webp', int size = 128}) {
     if (this.icon != null)
-      return 'https://cdn.${_Constants.cdnHost}/icons/${this.id}/${this.icon}.$format?size=$size';
+      return 'https://cdn.${Constants.cdnHost}/icons/${this.id}/${this.icon}.$format?size=$size';
 
     return null;
   }
@@ -262,7 +262,7 @@ class Guild extends SnowflakeEntity implements Disposable {
   /// If guild doesn't have splash it returns null.
   String? splashURL({String format = 'webp', int size = 128}) {
     if (this.splash != null)
-      return 'https://cdn.${_Constants.cdnHost}/splashes/${this.id}/${this.splash}.$format?size=$size';
+      return 'https://cdn.${Constants.cdnHost}/splashes/${this.id}/${this.splash}.$format?size=$size';
 
     return null;
   }
@@ -271,7 +271,7 @@ class Guild extends SnowflakeEntity implements Disposable {
   /// If guild doesn't have splash it returns null.
   String? discoveryURL({String format = 'webp', int size = 128}) {
     if (this.splash != null)
-      return 'https://cdn.${_Constants.cdnHost}/discovery-splashes/${this.id}/${this.splash}.$format?size=$size';
+      return 'https://cdn.${Constants.cdnHost}/discovery-splashes/${this.id}/${this.splash}.$format?size=$size';
 
     return null;
   }
@@ -279,7 +279,7 @@ class Guild extends SnowflakeEntity implements Disposable {
   /// Allows to download [Guild] widget aka advert png
   /// Possible options for [style]: shield (default), banner1, banner2, banner3, banner4
   String guildWidgetUrl([String style = "shield"]) {
-    return "http://cdn.${_Constants.cdnHost}/guilds/${this.id.toString()}/widget.png?style=${style}";
+    return "http://cdn.${Constants.cdnHost}/guilds/${this.id.toString()}/widget.png?style=${style}";
   }
 
   /// Returns a string representation of this object - Guild name.
@@ -784,6 +784,26 @@ class Guild extends SnowflakeEntity implements Disposable {
     for (Map<String, dynamic> member
         in (response as HttpResponseSuccess).jsonBody) {
       yield Member._standard(member, this, client);
+    }
+  }
+
+  Stream<Member> searchMembersGateway(String query, {int limit = 0}) async* {
+    var nonce = "$query${id.toString()}";
+
+    this.client.shard.requestMembers(this.id, query: query, limit: limit, nonce: nonce);
+
+    var first = (await this.client.shard.onMemberChunk.take(1).toList()).first;
+
+    for(var member in first.members) {
+      yield member;
+    }
+
+    if(first.chunkCount > 1) {
+      await for (var event in this.client.shard.onMemberChunk.where((event) => event.nonce == nonce).take(first.chunkCount - 1)) {
+        for(var member in event.members) {
+          yield member;
+        }
+      }
     }
   }
 

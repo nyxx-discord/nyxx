@@ -61,11 +61,47 @@ class Shard implements Disposable {
       'since': (since != null) ? since.millisecondsSinceEpoch : null
     };
 
-    this.send("STATUS_UPDATE", packet);
+    this.send(OPCodes.statusUpdate, packet);
   }
 
   /// Syncs all guilds
-  void guildSync() => this.send("GUILD_SYNC", this._ws._client.guilds.keys.toList());
+  void guildSync() => this.send(OPCodes.guildSync, this._ws._client.guilds.keys.toList());
+
+  /// Sends WS data.
+  void send(int opCode, dynamic d) {
+    this._socket?.add(
+        jsonEncode(<String, dynamic>{"op": opCode, "d": d}));
+  }
+
+  /// Allows to request members objects from gateway
+  /// [guild] can be either Snowflake or Iterable<Snowflake>
+  void requestMembers(/* Snowflake|Iterable<Snowflake> */ dynamic guild, {String? query,
+    Iterable<Snowflake>? userIds, int limit = 0, bool presences = false, String? nonce}) {
+    if(query != null && userIds != null) {
+      throw Exception("Both `query` and userIds cannot be specified.");
+    }
+
+    late guildPayload;
+
+    if(guild is Snowflake) {
+      guildPayload = guild.toString();
+    } else if(guild is Iterable<Snowflake>) {
+      guildPayload = guild.map((e) => e.toString()).toList();
+    } else {
+      throw Exception("guild has to be either Snowflake or Iterable<Snowflake>");
+    }
+
+    var payload = <String, dynamic> {
+      "guild_id" : guildPayload,
+      if(query != null) "query" : query,
+      if(userIds != null) "user_ids" : userIds.map((e) => e.toString()).toList(),
+      "limit" : limit,
+      "presences" : presences,
+      if(nonce != null) "nonce" : nonce
+    };
+
+    this.send(OPCodes.requestGuildMember, payload);
+  }
 
   // Attempts to connect to ws
   void _connect([bool resume = false, bool init = false]) {
@@ -95,21 +131,15 @@ class Shard implements Disposable {
     return jsonDecode(rawStr) as Map<String, dynamic>;
   }
 
-  /// Sends WS data.
-  void send(String op, dynamic d) {
-    this._socket?.add(
-        jsonEncode(<String, dynamic>{"op": _OPCodes.matchOpCode(op), "d": d}));
-  }
-
   void _heartbeat() {
     if (this._socket?.closeCode != null) return;
     if (!this._acked) _logger.warning("No ACK received");
-    this.send("HEARTBEAT", _sequence);
+    this.send(OPCodes.heartbeat, _sequence);
     this._acked = false;
   }
 
   Future<void> _handleMsg(Map<String, dynamic> msg, bool resume) async {
-    if (msg['op'] == _OPCodes.dispatch &&
+    if (msg['op'] == OPCodes.dispatch &&
         this._ws._client._options.ignoredEvents.contains(msg['t'] as String)) {
       return;
     }
@@ -117,10 +147,10 @@ class Shard implements Disposable {
     if (msg['s'] != null) this._sequence = msg['s'] as int;
 
     switch (msg['op'] as int) {
-      case _OPCodes.heartbeatAck:
+      case OPCodes.heartbeatAck:
         this._acked = true;
         break;
-      case _OPCodes.hello:
+      case OPCodes.hello:
         if (this._sessionId == null || !resume) {
           Map<String, dynamic> identifyMsg = <String, dynamic>{
             "token": _ws._client._token,
@@ -142,9 +172,9 @@ class Shard implements Disposable {
             _ws._client._options.shardCount
           ];
 
-          this.send("IDENTIFY", identifyMsg);
+          this.send(OPCodes.identify, identifyMsg);
         } else if (resume) {
-          this.send("RESUME", <String, dynamic>{
+          this.send(OPCodes.resume, <String, dynamic>{
             "token": _ws._client._token,
             "session_id": this._sessionId,
             "seq": this._sequence
@@ -157,7 +187,7 @@ class Shard implements Disposable {
 
         break;
 
-      case _OPCodes.invalidSession:
+      case OPCodes.invalidSession:
         _logger.severe("Invalid session. Reconnecting...");
         _heartbeatTimer.cancel();
         _ws._client._events.onDisconnect.add(DisconnectEvent._new(this, 9));
@@ -171,7 +201,7 @@ class Shard implements Disposable {
 
         break;
 
-      case _OPCodes.dispatch:
+      case OPCodes.dispatch:
         var j = msg['t'] as String;
 
         switch (j) {
@@ -184,7 +214,9 @@ class Shard implements Disposable {
             _logger.info("Shard connected");
             this._onConnect.add(this);
 
-            await _ws.propagateReady();
+            if(!resume) {
+              await _ws.propagateReady();
+            }
 
             break;
 
