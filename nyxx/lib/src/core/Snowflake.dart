@@ -3,8 +3,11 @@ part of nyxx;
 /// [Snowflake] represents id system used by Discord.
 /// [id] property is actual id of entity which holds [Snowflake].
 class Snowflake implements Comparable<Snowflake> {
-  static final discordEpoch = 1420070400000;
-  static final snowflakeDateOffset = 1 << 22;
+  /// START OF DISCORD EPOCH
+  static const discordEpoch = 1420070400000;
+
+  /// Offset of date in snowflake
+  static const snowflakeDateOffset = 1 << 22;
 
   late final int _id;
 
@@ -13,13 +16,11 @@ class Snowflake implements Comparable<Snowflake> {
 
   /// Returns timestamp included in [Snowflake]
   /// [Snowflake reference](https://discordapp.com/developers/docs/reference#snowflakes)
-  DateTime get timestamp => DateTime.fromMillisecondsSinceEpoch(
-      (_id >> 22).toInt() + discordEpoch,
-      isUtc: true);
+  DateTime get timestamp => DateTime.fromMillisecondsSinceEpoch((_id >> 22).toInt() + discordEpoch, isUtc: true);
 
   /// Creates new instance of [Snowflake].
   Snowflake(dynamic id) {
-    if(id is int) {
+    if (id is int) {
       _id = id;
     } else {
       _id = int.parse(id.toString());
@@ -30,8 +31,7 @@ class Snowflake implements Comparable<Snowflake> {
   Snowflake.fromNow() : _id = _parseId(DateTime.now());
 
   /// Creates first snowflake which can be deleted by `bulk-delete messages`
-  Snowflake.bulk()
-      : _id = _parseId(DateTime.now().subtract(Duration(days: 14)));
+  Snowflake.bulk() : _id = _parseId(DateTime.now().subtract(Duration(days: 14)));
 
   /// Creates synthetic snowflake based on given [date].
   Snowflake.fromDateTime(DateTime date) : _id = _parseId(date);
@@ -43,12 +43,10 @@ class Snowflake implements Comparable<Snowflake> {
   bool isAfter(Snowflake s) => this.timestamp.isAfter(s.timestamp);
 
   /// Compares two Snowflakes based on creation date
-  static int compareDates(Snowflake first, Snowflake second) =>
-      first.timestamp.compareTo(second.timestamp);
+  static int compareDates(Snowflake first, Snowflake second) => first.timestamp.compareTo(second.timestamp);
 
   //  Parses id from dateTime
-  static int _parseId(DateTime timestamp) =>
-      ((timestamp.millisecondsSinceEpoch - discordEpoch) * snowflakeDateOffset);
+  static int _parseId(DateTime timestamp) => (timestamp.millisecondsSinceEpoch - discordEpoch) * snowflakeDateOffset;
 
   @override
   String toString() => _id.toString();

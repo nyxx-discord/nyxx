@@ -9,7 +9,7 @@ class RatelimitEvent {
   final bool handled;
 
   /// The request that was rate limited.
-  final HttpRequest request;
+  final _HttpRequest request;
 
   /// The error response received if the rate limit handler did not stop
   /// the request (aka hit 429)

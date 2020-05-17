@@ -22,14 +22,12 @@ class AuditLogEntry extends SnowflakeEntity {
   /// The reason for the change
   String? reason;
 
-  AuditLogEntry._new(Map<String, dynamic> raw, Nyxx client)
-      : super(Snowflake(raw['id'] as String)) {
+  AuditLogEntry._new(Map<String, dynamic> raw, Nyxx client) : super(Snowflake(raw['id'] as String)) {
     targetId = raw['targetId'] as String;
 
     changes = [
       if (raw['changes'] != null)
-        for (var o in raw['changes'])
-          AuditLogChange._new(o as Map<String, dynamic>)
+        for (var o in raw['changes']) AuditLogChange._new(o as Map<String, dynamic>)
     ];
 
     user = client.users[Snowflake(raw['user_id'])];
@@ -48,12 +46,9 @@ class AuditLogEntryType extends IEnum<int> {
   static const AuditLogEntryType channelCreate = AuditLogEntryType._of(10);
   static const AuditLogEntryType channelUpdate = AuditLogEntryType._of(11);
   static const AuditLogEntryType channelDelete = AuditLogEntryType._of(12);
-  static const AuditLogEntryType channelOverwriteCreate =
-      AuditLogEntryType._of(13);
-  static const AuditLogEntryType channelOverwriteUpdate =
-      AuditLogEntryType._of(14);
-  static const AuditLogEntryType channelOverwriteDelete =
-      AuditLogEntryType._of(15);
+  static const AuditLogEntryType channelOverwriteCreate = AuditLogEntryType._of(13);
+  static const AuditLogEntryType channelOverwriteUpdate = AuditLogEntryType._of(14);
+  static const AuditLogEntryType channelOverwriteDelete = AuditLogEntryType._of(15);
   static const AuditLogEntryType memberKick = AuditLogEntryType._of(20);
   static const AuditLogEntryType memberPrune = AuditLogEntryType._of(21);
   static const AuditLogEntryType memberBanAdd = AuditLogEntryType._of(22);

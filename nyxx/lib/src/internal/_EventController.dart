@@ -224,46 +224,46 @@ class _EventController implements Disposable {
 
   @override
   Future<void> dispose() async {
-    this.onDisconnect.close();
-    this.onHttpResponse.close();
-    this.onHttpError.close();
-    this.onRatelimited.close();
-    this.onGuildUpdate.close();
-    this.onReady.close();
-    this.onMessageReceived.close();
-    this.onMessageUpdate.close();
-    this.onMessageDelete.close();
-    this.onChannelCreate.close();
-    this.onChannelUpdate.close();
-    this.onChannelDelete.close();
-    this.onGuildBanAdd.close();
-    this.onGuildBanRemove.close();
-    this.onGuildCreate.close();
-    this.onGuildUpdate.close();
-    this.onGuildDelete.close();
-    this.onGuildMemberAdd.close();
-    this.onGuildMemberUpdate.close();
-    this.onGuildMemberRemove.close();
-    this.onPresenceUpdate.close();
-    this.onTyping.close();
-    this.onRoleCreate.close();
-    this.onRoleUpdate.close();
-    this.onRoleDelete.close();
+    await this.onDisconnect.close();
+    await this.onHttpResponse.close();
+    await this.onHttpError.close();
+    await this.onRatelimited.close();
+    await this.onGuildUpdate.close();
+    await this.onReady.close();
+    await this.onMessageReceived.close();
+    await this.onMessageUpdate.close();
+    await this.onMessageDelete.close();
+    await this.onChannelCreate.close();
+    await this.onChannelUpdate.close();
+    await this.onChannelDelete.close();
+    await this.onGuildBanAdd.close();
+    await this.onGuildBanRemove.close();
+    await this.onGuildCreate.close();
+    await this.onGuildUpdate.close();
+    await this.onGuildDelete.close();
+    await this.onGuildMemberAdd.close();
+    await this.onGuildMemberUpdate.close();
+    await this.onGuildMemberRemove.close();
+    await this.onPresenceUpdate.close();
+    await this.onTyping.close();
+    await this.onRoleCreate.close();
+    await this.onRoleUpdate.close();
+    await this.onRoleDelete.close();
 
-    this.onChannelPinsUpdate.close();
-    this.onGuildEmojisUpdate.close();
+    await this.onChannelPinsUpdate.close();
+    await this.onGuildEmojisUpdate.close();
 
-    this.onMessageDeleteBulk.close();
-    this.onMessageReactionAdded.close();
-    this.onMessageReactionRemove.close();
-    this.onMessageReactionsRemoved.close();
-    this.onVoiceStateUpdate.close();
-    this.onVoiceServerUpdate.close();
-    this.onMessageReactionRemoveEmoji.close();
+    await this.onMessageDeleteBulk.close();
+    await this.onMessageReactionAdded.close();
+    await this.onMessageReactionRemove.close();
+    await this.onMessageReactionsRemoved.close();
+    await this.onVoiceStateUpdate.close();
+    await this.onVoiceServerUpdate.close();
+    await this.onMessageReactionRemoveEmoji.close();
 
-    this.onInviteCreated.close();
-    this.onInviteDelete.close();
+    await this.onInviteCreated.close();
+    await this.onInviteDelete.close();
 
-    this.onUserUpdate.close();
+    await this.onUserUpdate.close();
   }
 }

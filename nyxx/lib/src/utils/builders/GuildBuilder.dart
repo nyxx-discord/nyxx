@@ -27,24 +27,22 @@ class GuildBuilder implements Builder {
   List<ChannelBuilder>? channels;
 
   @override
-  Map<String, dynamic> _build() {
-    return <String, dynamic>{
-      if (name != null) 'name' : name,
-      if (region != null) 'region' : region,
-      if (icon != null) 'icon' : icon,
-      if (verificationLevel != null)
-        'verification_level' : verificationLevel,
-      if (defaultMessageNotifications != null)
-        'default_message_notifications' : defaultMessageNotifications,
-      if (explicitContentFilter != null)
-        'explicit_content_filter' : explicitContentFilter,
-      if (roles != null) 'roles' : _gen(roles!),
-      if (channels != null) 'channels' : _gen(channels!)
+  Map<String, dynamic> _build() =>
+    <String, dynamic>{
+      if (name != null) "name": name,
+      if (region != null) "region": region,
+      if (icon != null) "icon": icon,
+      if (verificationLevel != null) "verification_level": verificationLevel,
+      if (defaultMessageNotifications != null) "default_message_notifications": defaultMessageNotifications,
+      if (explicitContentFilter != null) "explicit_content_filter": explicitContentFilter,
+      if (roles != null) "roles": _genIterable(roles!),
+      if (channels != null) "channels": _genIterable(channels!)
     };
-  }
 
-  Iterable<Map<String, dynamic>> _gen(List<Builder> lst) sync* {
-    for (var e in lst) yield e._build();
+  Iterable<Map<String, dynamic>> _genIterable(List<Builder> list) sync* {
+    for (final e in list) {
+      yield e._build();
+    }
   }
 }
 
@@ -68,19 +66,18 @@ class RoleBuilder implements Builder {
   /// Whether role is mentionable
   bool? mentionable;
 
+  /// Creates role
   RoleBuilder(this.name);
 
   @override
-  Map<String, dynamic> _build() {
-    return <String, dynamic> {
-      'name' : name,
-      if (color != null) 'color' : color!._value,
-      if (hoist != null) 'hoist' : hoist,
-      if (position != null) 'position' : position,
-      if (permission != null) 'permission' : permission!._build()._build(),
-      if (mentionable != null) 'mentionable' : mentionable,
-    };
-  }
+  Map<String, dynamic> _build() => <String, dynamic>{
+        "name": name,
+        if (color != null) "color": color!._value,
+        if (hoist != null) "hoist": hoist,
+        if (position != null) "position": position,
+        if (permission != null) "permission": permission!._build()._build(),
+        if (mentionable != null) "mentionable": mentionable,
+      };
 }
 
 /// Builder for creating mini channel instance
@@ -91,13 +88,9 @@ class ChannelBuilder implements Builder {
   /// Type of channel
   ChannelType type;
 
+  /// Builder for creating mini channel instance
   ChannelBuilder(this.name, this.type);
 
   @override
-  Map<String, dynamic> _build() {
-    return {
-      "name": name,
-      "type": type._value
-    };
-  }
+  Map<String, dynamic> _build() => {"name": name, "type": type._value};
 }

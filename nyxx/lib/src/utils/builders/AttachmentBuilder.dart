@@ -10,7 +10,7 @@ class AttachmentBuilder {
   AttachmentBuilder._new(this._bytes, this._name, bool? spoiler) {
     this._spoiler = spoiler ?? false;
 
-    if(_spoiler) {
+    if (_spoiler) {
       _name = "SPOILER_$_name";
     }
   }
@@ -20,24 +20,23 @@ class AttachmentBuilder {
 
   /// Open file at [path] then read it's contents and prepare to send. Name will be automatically extracted from path if no name provided.
   factory AttachmentBuilder.path(String path, {String? name, bool? spoiler}) {
-    var bytes = File(path).readAsBytesSync();
-    var fileName = name == null ? pathUtils.basename(path) : name;
+    final bytes = File(path).readAsBytesSync();
+    final fileName = name ?? pathUtils.basename(path);
 
-    return new AttachmentBuilder._new(bytes, fileName, spoiler);
+    return AttachmentBuilder._new(bytes, fileName, spoiler);
   }
 
   /// Create attachment from specified file instance. Name will be automatically extracted from path if no name provided.
   factory AttachmentBuilder.file(File file, {String? name, bool? spoiler}) {
-    var bytes = file.readAsBytesSync();
-    var fileName = name == null ? pathUtils.basename(file.path) : name;
+    final  bytes = file.readAsBytesSync();
+    final fileName = name ?? pathUtils.basename(file.path);
 
     return AttachmentBuilder._new(bytes, fileName, spoiler);
   }
 
   /// Creates attachment from provided bytes
-  factory AttachmentBuilder.bytes(List<int> bytes, String name, {bool? spoiler}) {
-    return AttachmentBuilder._new(bytes, name, spoiler);
-  }
+  factory AttachmentBuilder.bytes(List<int> bytes, String name, {bool? spoiler}) =>
+    AttachmentBuilder._new(bytes, name, spoiler);
 
   // creates instance of MultipartFile
   transport.MultipartFile _asMultipartFile() =>

@@ -25,6 +25,5 @@ class EmbedVideo {
   int get hashCode => url.hashCode;
 
   @override
-  bool operator ==(other) =>
-      other is EmbedVideo ? other.url == this.url : false;
+  bool operator ==(other) => other is EmbedVideo ? other.url == this.url : false;
 }

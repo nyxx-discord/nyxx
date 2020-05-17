@@ -2,23 +2,23 @@ part of nyxx.commander;
 
 /// Used to determine if command can be executed in given environment.
 /// Return true to allow executing command or false otherwise.
-typedef FutureOr<bool> PassHandlerFunction(CommandContext context, String message);
+typedef PassHandlerFunction = FutureOr<bool> Function(CommandContext context, String message);
 
 /// Handler for executing command logic.
-typedef FutureOr<void> CommandHandlerFunction(CommandContext context, String message);
+typedef CommandHandlerFunction = FutureOr<void> Function(CommandContext context, String message);
 
 /// Handler used to determine prefix for command in given environment.
 /// Can be used to define different prefixes for different guild, users or dms.
 /// Return String containing prefix or null if command cannot be executed.
-typedef FutureOr<String?> PrefixHandlerFunction(CommandContext context, String message);
+typedef PrefixHandlerFunction = FutureOr<String?> Function(CommandContext context, String message);
 
 /// Callback to customize logger output when command is executed.
-typedef FutureOr<void> LoggerHandlerFunction(CommandContext context, String commandName, Logger logger);
+typedef LoggerHandlerFunction = FutureOr<void> Function(CommandContext context, String commandName, Logger logger);
 
 /// Lightweight command framework. Doesn't use `dart:mirrors` and can be used in browser.
-/// While constructing specify prefix which is string with prefix or 
+/// While constructing specify prefix which is string with prefix or
 /// implement [PrefixHandlerFunction] for more fine control over where and in what conditions commands are executed.
-/// 
+///
 /// Allows to specify callbacks which are executed before and after command - also on per command basis.
 /// [BeforeHandlerFunction] callbacks are executed only command exists and is matched with message content.
 class Commander {
@@ -28,22 +28,24 @@ class Commander {
   late final LoggerHandlerFunction _loggerHandlerFunction;
 
   List<CommandHandler> _commands = [];
-  
+
   Logger _logger = Logger("Commander");
 
   /// Either [prefix] or [prefixHandler] must be specified otherwise program will exit.
   /// Allows to specify additional [beforeCommandHandler] executed before main command callback,
   /// and [afterCommandCallback] executed after main command callback.
-  Commander(Nyxx client, {String? prefix, PrefixHandlerFunction? prefixHandler,
-    PassHandlerFunction? beforeCommandHandler, CommandHandlerFunction? afterCommandHandler,
-    LoggerHandlerFunction? loggerHandlerFunction}) {
-
-    if(prefix == null && prefixHandler == null) {
+  Commander(Nyxx client,
+      {String? prefix,
+      PrefixHandlerFunction? prefixHandler,
+      PassHandlerFunction? beforeCommandHandler,
+      CommandHandlerFunction? afterCommandHandler,
+      LoggerHandlerFunction? loggerHandlerFunction}) {
+    if (prefix == null && prefixHandler == null) {
       _logger.shout("Commander cannot start without both prefix and prefixHandler");
       exit(1);
     }
 
-    if(prefix == null) {
+    if (prefix == null) {
       _prefixHandler = prefixHandler!;
     } else {
       _prefixHandler = (ctx, msg) => prefix;
@@ -62,30 +64,29 @@ class Commander {
   }
 
   Future<void> _handleMessage(MessageReceivedEvent event) async {
-    var context = CommandContext._new(event.message.channel,
-        event.message.author,
-        event.message is GuildMessage ? (event.message as GuildMessage).guild : null,
-        event.message);
+    var context = CommandContext._new(event.message.channel, event.message.author,
+        event.message is GuildMessage ? (event.message as GuildMessage).guild : null, event.message);
 
     var prefix = await _prefixHandler(context, event.message.content);
-    if(prefix == null) {
+    if (prefix == null) {
       return;
     }
 
     // TODO: NNBD: try-catch in where
     CommandHandler? matchingCommand;
     try {
-      matchingCommand = _commands.firstWhere((element) =>
-          _isCommandMatching(element.commandName, event.message.content.replaceFirst(prefix, "")));
+      matchingCommand = _commands.firstWhere(
+          (element) => _isCommandMatching(element.commandName, event.message.content.replaceFirst(prefix, "")));
     } catch (e) {
       return;
     }
 
-    if(this._beforeComandHandler != null && !await this._beforeComandHandler!(context, event.message.content)) {
+    if (this._beforeComandHandler != null && !await this._beforeComandHandler!(context, event.message.content)) {
       return;
     }
 
-    if(matchingCommand.beforeHandler != null && !await matchingCommand.beforeHandler!(context, event.message.content)){
+    if (matchingCommand.beforeHandler != null &&
+        !await matchingCommand.beforeHandler!(context, event.message.content)) {
       return;
     }
 
@@ -93,19 +94,21 @@ class Commander {
 
     // execute logger callback
     _loggerHandlerFunction(context, matchingCommand.commandName, this._logger);
-    
-    if(matchingCommand.afterHandler != null) {
+
+    if (matchingCommand.afterHandler != null) {
       await matchingCommand.afterHandler!(context, event.message.content);
     }
 
-    if(this._afterHandlerFunction != null) {
+    if (this._afterHandlerFunction != null) {
       this._afterHandlerFunction!(context, event.message.content);
     }
   }
 
   /// Registers command with given [commandName]. Allows to specify command specific before and after command execution callbacks
-  void registerCommand(String commandName, CommandHandlerFunction commandHandler, {PassHandlerFunction? beforeHandler, CommandHandlerFunction? afterHandler}) {
-    this._commands.add(_InternalCommandHandler(commandName, commandHandler, beforeHandler: beforeHandler, afterHandler: afterHandler));
+  void registerCommand(String commandName, CommandHandlerFunction commandHandler,
+      {PassHandlerFunction? beforeHandler, CommandHandlerFunction? afterHandler}) {
+    this._commands.add(
+        _InternalCommandHandler(commandName, commandHandler, beforeHandler: beforeHandler, afterHandler: afterHandler));
   }
 
   /// Registers command as implemented [CommandHandler] class

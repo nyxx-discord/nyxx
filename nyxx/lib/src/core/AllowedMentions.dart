@@ -9,8 +9,8 @@ class AllowedMentions implements Builder {
   bool _allowUsers = false;
   bool _allowRoles = false;
 
-  List<Snowflake> _users = [];
-  List<Snowflake> _roles = [];
+  final List<Snowflake> _users = [];
+  final List<Snowflake> _roles = [];
 
   /// Allow @everyone and @here if [everyone] is true
   /// Allow @user if [users] is true
@@ -41,37 +41,40 @@ class AllowedMentions implements Builder {
     this._roles.addAll(roleIds);
   }
 
+  // TODO: spread collections???
   @override
   Map<String, dynamic> _build() {
-    var map = Map<String, dynamic>();
-    map['parse'] = [];
+    final map = <String, dynamic>{};
+    map["parse"] = [];
 
-    if(_allowEveryone) {
-      (map['parse'] as List).add("everyone");
+    if (_allowEveryone) {
+      (map["parse"] as List).add("everyone");
     }
 
-    if(_allowRoles) {
-      (map['parse'] as List).add("roles");
+    if (_allowRoles) {
+      (map["parse"] as List).add("roles");
     }
 
-    if(_allowUsers) {
-      (map['parse'] as List).add("users");
+    if (_allowUsers) {
+      (map["parse"] as List).add("users");
     }
 
-    if(_users.isNotEmpty) {
-      if(!_allowUsers) {
-        throw new Exception("Invalid configuration of allowed mentions! Allowed `user` and blacklisted users at the same time!");
+    if (_users.isNotEmpty) {
+      if (!_allowUsers) {
+        throw Exception(
+            "Invalid configuration of allowed mentions! Allowed `user` and blacklisted users at the same time!");
       }
 
-      map['users'] = _users.map((e) => e.id.toString());
+      map["users"] = _users.map((e) => e.id.toString());
     }
 
-    if(_roles.isNotEmpty) {
-      if(!_allowRoles) {
-        throw new Exception("Invalid configuration of allowed mentions! Allowed `roles` and blacklisted roles at the same time!");
+    if (_roles.isNotEmpty) {
+      if (!_allowRoles) {
+        throw Exception(
+            "Invalid configuration of allowed mentions! Allowed `roles` and blacklisted roles at the same time!");
       }
 
-      map['roles'] = _roles.map((e) => e.id.toString());
+      map["roles"] = _roles.map((e) => e.id.toString());
     }
 
     return map;

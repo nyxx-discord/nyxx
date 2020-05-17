@@ -27,7 +27,7 @@ class UserFlags {
   /// True if user has Early Supporter badge
   late final bool earlySupporter;
 
-  // TODO: ??
+  /// TODO: ??
   late final bool teamUser;
 
   /// If user is system user
@@ -40,7 +40,7 @@ class UserFlags {
   late final bool verfiedBot;
 
   /// True if use is verified bot developer/
-  late final verifiedBotDeveloper;
+  late final bool verifiedBotDeveloper;
 
   UserFlags._new(int raw) {
     this.discordEmployee = PermissionsUtils.isApplied(raw, 1 << 0);

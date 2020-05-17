@@ -11,24 +11,21 @@ class EmbedAuthorBuilder implements Builder {
   /// Author icon url
   String? iconUrl;
 
+  /// Returns length of embeds author section
   int? get length => name?.length;
 
   @override
 
   /// Builds object to Map() instance;
   Map<String, dynamic> _build() {
-    if(this.name == null || this.name!.isEmpty) {
-      throw new Exception("Author name cannot be null or empty");
+    if (this.name == null || this.name!.isEmpty) {
+      throw Exception("Author name cannot be null or empty");
     }
 
     if (this.length! > 256) {
-      throw new Exception("Author name is too long. (256 characters limit)");
+      throw Exception("Author name is too long. (256 characters limit)");
     }
 
-    return <String, dynamic>{
-      "name" : name,
-      if (url != null) "url" : url,
-      if (iconUrl != null) "icon_url" : iconUrl
-    };
+    return <String, dynamic>{"name": name, if (url != null) "url": url, if (iconUrl != null) "icon_url": iconUrl};
   }
 }

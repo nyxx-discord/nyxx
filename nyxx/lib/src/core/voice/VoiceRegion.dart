@@ -21,11 +21,11 @@ class VoiceRegion {
   late final bool custom;
 
   VoiceRegion._new(Map<String, dynamic> raw) {
-    this.id = raw['id'] as String;
-    this.name = raw['name'] as String;
-    this.vip = raw['vip'] as bool;
-    this.optimal = raw['optimal'] as bool;
-    this.deprecated = raw['deprecated'] as bool;
-    this.custom = raw['custom'] as bool;
+    this.id = raw["id"] as String;
+    this.name = raw["name"] as String;
+    this.vip = raw["vip"] as bool;
+    this.optimal = raw["optimal"] as bool;
+    this.deprecated = raw["deprecated"] as bool;
+    this.custom = raw["custom"] as bool;
   }
 }

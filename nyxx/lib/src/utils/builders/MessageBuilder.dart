@@ -2,20 +2,31 @@ part of nyxx;
 
 /// Allows to create pre built custom messages which can be passed to classes which inherits from [ISend].
 class MessageBuilder {
-  StringBuffer _content = StringBuffer();
+  final _content = StringBuffer();
+
+  /// Embed to include in message
   EmbedBuilder? embed;
+
+  /// Set to true if message should be TTS
   bool? tts;
+
+  /// List of files to send with message
   List<AttachmentBuilder>? files;
+
+  /// [AllowedMentions] object to control mentions in message
   AllowedMentions? allowedMentions;
 
-  /// Clear content of message and sste new
+  /// Clears current content of message and sets new
   set content(Object content) {
     _content.clear();
     _content.write(content);
   }
 
+  /// Returns current content of message
+  String get content => _content.toString();
+
   /// Allows to add embed to message
-  void setEmbed(void builder(EmbedBuilder embed)) {
+  void setEmbed(void Function(EmbedBuilder embed) builder) {
     this.embed = EmbedBuilder();
     builder(embed!);
   }
@@ -33,8 +44,7 @@ class MessageBuilder {
   }
 
   /// Add attachment from specified bytes
-  void addBytesAttachment(List<int> bytes, String name,
-      {bool spoiler = false}) {
+  void addBytesAttachment(List<int> bytes, String name, {bool spoiler = false}) {
     addAttachment(AttachmentBuilder.bytes(bytes, name, spoiler: spoiler));
   }
 
@@ -50,28 +60,22 @@ class MessageBuilder {
   void append(Object text) => _content.write(text);
 
   /// Appends spoiler to message
-  void appendSpoiler(Object text) =>
-      appendWithDecoration(text, MessageDecoration.spoiler);
+  void appendSpoiler(Object text) => appendWithDecoration(text, MessageDecoration.spoiler);
 
   /// Appends italic text to message
-  void appendItalics(Object text) =>
-      appendWithDecoration(text, MessageDecoration.italics);
+  void appendItalics(Object text) => appendWithDecoration(text, MessageDecoration.italics);
 
   /// Appends bold text to message
-  void appendBold(Object text) =>
-      appendWithDecoration(text, MessageDecoration.bold);
+  void appendBold(Object text) => appendWithDecoration(text, MessageDecoration.bold);
 
   /// Appends strikeout text to message
-  void appendStrike(Object text) =>
-      appendWithDecoration(text, MessageDecoration.strike);
+  void appendStrike(Object text) => appendWithDecoration(text, MessageDecoration.strike);
 
   /// Appends simple code to message
-  void appendCodeSimple(Object text) =>
-      appendWithDecoration(text, MessageDecoration.codeSimple);
+  void appendCodeSimple(Object text) => appendWithDecoration(text, MessageDecoration.codeSimple);
 
   /// Appends code block to message
-  void appendCode(Object language, Object code) =>
-      appendWithDecoration("$language\n$code", MessageDecoration.codeLong);
+  void appendCode(Object language, Object code) => appendWithDecoration("$language\n$code", MessageDecoration.codeLong);
 
   /// Appends formatted text to message
   void appendWithDecoration(Object text, MessageDecoration decoration) {
@@ -79,34 +83,37 @@ class MessageBuilder {
   }
 
   /// Sends message
-  Future<Message?> send(ISend entity) {
-    return entity.send(builder: this);
-  }
+  Future<Message?> send(ISend entity) => entity.send(builder: this);
 }
 
-class MessageDecoration {
-  static const MessageDecoration italics = const MessageDecoration("*");
-  static const MessageDecoration bold = const MessageDecoration("**");
-  static const MessageDecoration spoiler = const MessageDecoration("||");
-  static const MessageDecoration strike = const MessageDecoration("~~");
-  static const MessageDecoration codeSimple = const MessageDecoration("`");
-  static const MessageDecoration codeLong = const MessageDecoration("```");
-  static const MessageDecoration underline = const MessageDecoration("__");
+/// Specifies formatting of String appended with [MessageBuilder]
+class MessageDecoration extends IEnum<String> {
+  /// Italic text is surrounded with `*`
+  static const MessageDecoration italics = MessageDecoration._new("*");
 
-  final String _value;
-  const MessageDecoration(this._value);
+  /// Bold text is surrounded with `**`
+  static const MessageDecoration bold = MessageDecoration._new("**");
+
+  /// Spoiler text is surrounded with `||`. In discord client will render as clickable box to reveal text.
+  static const MessageDecoration spoiler = MessageDecoration._new("||");
+
+  /// Strike text is surrounded with `~~`
+  static const MessageDecoration strike = MessageDecoration._new("~~");
+
+  /// Inline code text is surrounded with ```
+  static const MessageDecoration codeSimple = MessageDecoration._new("`");
+
+  /// Multiline code block is surrounded with `````
+  static const MessageDecoration codeLong = MessageDecoration._new("```");
+
+  /// Underlined text is surrounded with `__`
+  static const MessageDecoration underline = MessageDecoration._new("__");
+
+  const MessageDecoration._new(String value) : super(value);
 
   @override
   String toString() => _value;
 
-  @override
-  int get hashCode => _value.hashCode;
-
   /// Creates formatted string
-  String create(Object text) => "$_value$text$_value";
-
-  @override
-  bool operator ==(other) =>
-      (other is String && other == this._value) ||
-      (other is MessageDecoration && other._value == this._value);
+  String format(Object text) => "$_value$text$_value";
 }

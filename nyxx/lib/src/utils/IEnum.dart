@@ -6,7 +6,7 @@ abstract class IEnum<T> {
   T get value => _value;
 
   const IEnum(this._value);
-  
+
   @override
   String toString() => _value.toString();
 

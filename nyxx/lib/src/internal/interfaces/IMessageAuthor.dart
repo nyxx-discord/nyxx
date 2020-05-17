@@ -1,6 +1,8 @@
 part of nyxx;
 
 //TODO: Consider what should be here and what should not
+/// Could be either [User], [Member] or [Webhook].
+/// [Webhook] will have most of field missing.
 abstract class IMessageAuthor implements SnowflakeEntity {
   /// User name
   String get username;
@@ -15,5 +17,5 @@ abstract class IMessageAuthor implements SnowflakeEntity {
   String get tag;
 
   /// Url to user avatar
-  String avatarURL({String format = 'webp', int size = 128});
+  String avatarURL({String format = "webp", int size = 128});
 }

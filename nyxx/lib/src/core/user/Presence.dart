@@ -49,60 +49,62 @@ class Activity {
   Activity.of(this.name, {this.type = ActivityType.game, this.url});
 
   Activity._new(Map<String, dynamic> raw) {
-    this.name = raw['name'] as String;
-    this.url = raw['url'] as String?;
-    this.type = ActivityType(raw['type'] as int);
-    this.createdAt =
-        DateTime.fromMillisecondsSinceEpoch(raw['created_at'] as int);
-    this.details = raw['details'] as String?;
-    this.state = raw['state'] as String?;
+    this.name = raw["name"] as String;
+    this.url = raw["url"] as String?;
+    this.type = ActivityType.from(raw["type"] as int);
+    this.createdAt = DateTime.fromMillisecondsSinceEpoch(raw["created_at"] as int);
+    this.details = raw["details"] as String?;
+    this.state = raw["state"] as String?;
 
-    if (raw['timestamps'] != null) {
-      this.timestamps =
-          ActivityTimestamps._new(raw['timestamps'] as Map<String, dynamic>);
+    if (raw["timestamps"] != null) {
+      this.timestamps = ActivityTimestamps._new(raw["timestamps"] as Map<String, dynamic>);
     }
 
-    if (raw['application_id'] != null) {
-      applicationId = Snowflake(raw['application_id']);
+    if (raw["application_id"] != null) {
+      applicationId = Snowflake(raw["application_id"]);
     }
 
-    if (raw['emoji'] != null) {
-      this.customStatusEmoji =
-          ActivityEmoji._new(raw['emoji'] as Map<String, dynamic>);
+    if (raw["emoji"] != null) {
+      this.customStatusEmoji = ActivityEmoji._new(raw["emoji"] as Map<String, dynamic>);
     }
 
-    if (raw['party'] != null) {
-      party = ActivityParty._new(raw['party'] as Map<String, dynamic>);
+    if (raw["party"] != null) {
+      party = ActivityParty._new(raw["party"] as Map<String, dynamic>);
     }
 
-    if (raw['assets'] != null) {
-      assets = GameAssets._new(raw['assets'] as Map<String, dynamic>);
+    if (raw["assets"] != null) {
+      assets = GameAssets._new(raw["assets"] as Map<String, dynamic>);
     }
 
-    if (raw['secrets'] != null) {
-      secrets = GameSecrets._new(raw['secrets'] as Map<String, dynamic>);
+    if (raw["secrets"] != null) {
+      secrets = GameSecrets._new(raw["secrets"] as Map<String, dynamic>);
     }
 
-    instance = raw['instance'] as bool?;
-    activityFlags = raw['flags'] as int?;
+    instance = raw["instance"] as bool?;
+    activityFlags = raw["flags"] as int?;
   }
 }
 
+/// Represent emoji within activity
 class ActivityEmoji {
+  /// Id of emoji.
   late final Snowflake? id;
+
+  /// True if emoji is animated
   late final bool animated;
 
   ActivityEmoji._new(Map<String, dynamic> raw) {
-    if (raw['id'] != null) {
-      this.id = Snowflake(raw['id']);
+    if (raw["id"] != null) {
+      this.id = Snowflake(raw["id"]);
     }
 
-    if (raw['animated'] != null) {
-      this.animated = raw['animated'] as bool? ?? false;
+    if (raw["animated"] != null) {
+      this.animated = raw["animated"] as bool? ?? false;
     }
   }
 }
 
+///
 class ActivityTimestamps {
   /// DateTime when activity started
   late final DateTime? start;
@@ -111,12 +113,12 @@ class ActivityTimestamps {
   late final DateTime? end;
 
   ActivityTimestamps._new(Map<String, dynamic> raw) {
-    if (raw['start'] != null) {
-      this.start = DateTime.fromMillisecondsSinceEpoch(raw['start'] as int);
+    if (raw["start"] != null) {
+      this.start = DateTime.fromMillisecondsSinceEpoch(raw["start"] as int);
     }
 
-    if (raw['end'] != null) {
-      this.end = DateTime.fromMillisecondsSinceEpoch(raw['end'] as int);
+    if (raw["end"] != null) {
+      this.end = DateTime.fromMillisecondsSinceEpoch(raw["end"] as int);
     }
   }
 }
@@ -128,7 +130,8 @@ class ActivityType extends IEnum<int> {
   static const ActivityType listening = ActivityType._create(2);
   static const ActivityType custom = ActivityType._create(3);
 
-  ActivityType(int value) : super(value);
+  /// Creates [ActivityType] from [value]
+  ActivityType.from(int value) : super(value);
   const ActivityType._create(int value) : super(value);
 
   @override
@@ -153,16 +156,16 @@ class ActivityParty {
   int? maxSize;
 
   ActivityParty._new(Map<String, dynamic> raw) {
-    id = raw['id'] as String?;
+    id = raw["id"] as String?;
 
-    if (raw['size'] != null) {
-      currentSize = raw['size'].first as int;
-      maxSize = raw['size'].last as int;
+    if (raw["size"] != null) {
+      currentSize = raw["size"].first as int;
+      maxSize = raw["size"].last as int;
     }
   }
 }
 
-/// Presence's assets
+/// Presence"s assets
 class GameAssets {
   /// The id for a large asset of the activity, usually a snowflake.
   late final String? largeImage;
@@ -177,14 +180,14 @@ class GameAssets {
   late final String? smallText;
 
   GameAssets._new(Map<String, dynamic> raw) {
-    largeImage = raw['large_image'] as String?;
-    largeText = raw['large_text'] as String?;
-    smallImage = raw['small_image'] as String?;
-    smallText = raw['small_text'] as String?;
+    largeImage = raw["large_image"] as String?;
+    largeText = raw["large_text"] as String?;
+    smallImage = raw["small_image"] as String?;
+    smallText = raw["small_text"] as String?;
   }
 }
 
-/// Represents presence's secrets
+/// Represents presence"s secrets
 class GameSecrets {
   /// Join secret
   late final String join;
@@ -196,8 +199,8 @@ class GameSecrets {
   late final String match;
 
   GameSecrets._new(Map<String, dynamic> raw) {
-    join = raw['join'] as String;
-    spectate = raw['spectate'] as String;
-    match = raw['match'] as String;
+    join = raw["join"] as String;
+    spectate = raw["spectate"] as String;
+    match = raw["match"] as String;
   }
 }

@@ -35,30 +35,21 @@ class ChangeKeyType extends IEnum<String> {
   static const ChangeKeyType afkChannelId = ChangeKeyType._of("afk_channel_id");
   static const ChangeKeyType afkTimeout = ChangeKeyType._of("afk_timeout");
   static const ChangeKeyType mfaLevel = ChangeKeyType._of("mfa_level");
-  static const ChangeKeyType verificationLevel =
-      ChangeKeyType._of("verification_level");
-  static const ChangeKeyType explicitContentFilter =
-      ChangeKeyType._of("explicit_content_filter");
-  static const ChangeKeyType defaultMessageNotifications =
-      ChangeKeyType._of("default_message_notifications");
+  static const ChangeKeyType verificationLevel = ChangeKeyType._of("verification_level");
+  static const ChangeKeyType explicitContentFilter = ChangeKeyType._of("explicit_content_filter");
+  static const ChangeKeyType defaultMessageNotifications = ChangeKeyType._of("default_message_notifications");
   static const ChangeKeyType $add = ChangeKeyType._of("\$add");
   static const ChangeKeyType $remove = ChangeKeyType._of("\$remove");
-  static const ChangeKeyType pruneDeleteDays =
-      ChangeKeyType._of("prune_delete_days");
-  static const ChangeKeyType widgetEnabled =
-      ChangeKeyType._of("widget_enabled");
-  static const ChangeKeyType widgetChannelId =
-      ChangeKeyType._of("widget_channel_id");
+  static const ChangeKeyType pruneDeleteDays = ChangeKeyType._of("prune_delete_days");
+  static const ChangeKeyType widgetEnabled = ChangeKeyType._of("widget_enabled");
+  static const ChangeKeyType widgetChannelId = ChangeKeyType._of("widget_channel_id");
   static const ChangeKeyType position = ChangeKeyType._of("position");
   static const ChangeKeyType topic = ChangeKeyType._of("topic");
   static const ChangeKeyType bitrate = ChangeKeyType._of("bitrate");
-  static const ChangeKeyType slowmode =
-      ChangeKeyType._of("rate_limit_per_user");
-  static const ChangeKeyType permissionOverwrites =
-      ChangeKeyType._of("permission_overwrites");
+  static const ChangeKeyType slowmode = ChangeKeyType._of("rate_limit_per_user");
+  static const ChangeKeyType permissionOverwrites = ChangeKeyType._of("permission_overwrites");
   static const ChangeKeyType nsfw = ChangeKeyType._of("nsfw");
-  static const ChangeKeyType applicationId =
-      ChangeKeyType._of("application_id");
+  static const ChangeKeyType applicationId = ChangeKeyType._of("application_id");
   static const ChangeKeyType permissions = ChangeKeyType._of("permissions");
   static const ChangeKeyType color = ChangeKeyType._of("color");
   static const ChangeKeyType hoist = ChangeKeyType._of("hoist");

@@ -30,18 +30,13 @@ class CommandContext {
   /// ```
   Future<Message> reply(
       {dynamic content,
-        List<AttachmentBuilder>? files,
-        EmbedBuilder? embed,
-        bool? tts,
-        AllowedMentions? allowedMentions,
-        MessageBuilder? builder}) {
+      List<AttachmentBuilder>? files,
+      EmbedBuilder? embed,
+      bool? tts,
+      AllowedMentions? allowedMentions,
+      MessageBuilder? builder}) {
     return channel.send(
-        content: content,
-        embed: embed,
-        tts: tts,
-        files: files,
-        builder: builder,
-        allowedMentions: allowedMentions);
+        content: content, embed: embed, tts: tts, files: files, builder: builder, allowedMentions: allowedMentions);
   }
 
   /// Reply to messages, then delete it when [duration] expires.
@@ -54,18 +49,15 @@ class CommandContext {
   /// ```
   Future<Message> replyTemp(Duration duration,
       {dynamic content,
-        List<AttachmentBuilder>? files,
-        EmbedBuilder? embed,
-        bool? tts,
-        AllowedMentions? allowedMentions,
-        MessageBuilder? builder}) {
-    return channel.send(
-        content: content,
-        embed: embed,
-        files: files,
-        tts: tts,
-        builder: builder,
-        allowedMentions: allowedMentions).then((msg) {
+      List<AttachmentBuilder>? files,
+      EmbedBuilder? embed,
+      bool? tts,
+      AllowedMentions? allowedMentions,
+      MessageBuilder? builder}) {
+    return channel
+        .send(
+            content: content, embed: embed, files: files, tts: tts, builder: builder, allowedMentions: allowedMentions)
+        .then((msg) {
       Timer(duration, () => msg.delete());
       return msg;
     });
@@ -80,14 +72,14 @@ class CommandContext {
   /// ```
   Future<Message> replyDelayed(Duration duration,
       {dynamic content,
-        List<AttachmentBuilder>? files,
-        EmbedBuilder? embed,
-        bool? tts,
-        AllowedMentions? allowedMentions,
-        MessageBuilder? builder}) {
+      List<AttachmentBuilder>? files,
+      EmbedBuilder? embed,
+      bool? tts,
+      AllowedMentions? allowedMentions,
+      MessageBuilder? builder}) {
     return Future.delayed(
         duration,
-            () => channel.send(
+        () => channel.send(
             content: content,
             embed: embed,
             files: files,
@@ -110,12 +102,13 @@ class CommandContext {
     return Future<Map<Emoji, int>?>(() async {
       var m = Map<Emoji, int>();
 
-      await for (var r in msg.client.onMessageReactionAdded.where((evnt) => evnt.message != null && evnt.message!.id == msg.id)) {
+      await for (var r
+          in msg.client.onMessageReactionAdded.where((evnt) => evnt.message != null && evnt.message!.id == msg.id)) {
         if (m.containsKey(r.emoji)) {
           // TODO: NNBD: weird stuff
           var value = m[r.emoji];
 
-          if(value != null) {
+          if (value != null) {
             value += 1;
             m[r.emoji] = value;
           }
@@ -130,11 +123,9 @@ class CommandContext {
 
   /// Waits for first [TypingEvent] and returns it. If timed out returns null.
   /// Can listen to specific user by specifying [user]
-  Future<TypingEvent?> waitForTyping(User user,
-      {Duration timeout = const Duration(seconds: 30)}) {
+  Future<TypingEvent?> waitForTyping(User user, {Duration timeout = const Duration(seconds: 30)}) {
     return Future<TypingEvent?>(() {
-      return user.client.onTyping
-          .firstWhere((e) => e.user == user && e.channel == this.channel);
+      return user.client.onTyping.firstWhere((e) => e.user == user && e.channel == this.channel);
     }).timeout(timeout, onTimeout: () => null);
   }
 
@@ -177,7 +168,7 @@ class CommandContext {
     for (var m in matches) {
       var groupText = m.group(3);
 
-      if(groupText != null) {
+      if (groupText != null) {
         yield groupText;
       }
     }

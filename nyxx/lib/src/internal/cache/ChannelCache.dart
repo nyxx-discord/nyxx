@@ -3,7 +3,7 @@ part of nyxx;
 /// Cache for Channels
 class ChannelCache extends Cache<Snowflake, Channel> {
   ChannelCache._new() {
-    this._cache = Map();
+    this._cache = {};
   }
 
   /// Allows to get channel and cast to [E] in one operation.

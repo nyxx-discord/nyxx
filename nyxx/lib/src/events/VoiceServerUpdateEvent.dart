@@ -2,6 +2,8 @@ part of nyxx;
 
 /// Emitted when guild's voice server changes
 class VoiceServerUpdateEvent {
+
+  /// Raw websocket event payload
   final Map<String, dynamic> raw;
 
   /// Voice connection token
@@ -17,10 +19,10 @@ class VoiceServerUpdateEvent {
   late final Snowflake guildId;
 
   VoiceServerUpdateEvent._new(this.raw, Nyxx client) {
-    this.token = raw['d']['token'] as String;
-    this.endpoint = raw['d']['endpoint'] as String;
+    this.token = raw["d"]["token"] as String;
+    this.endpoint = raw["d"]["endpoint"] as String;
 
-    this.guildId = Snowflake(raw['d']['guild_id']);
+    this.guildId = Snowflake(raw["d"]["guild_id"]);
     this.guild = client.guilds[this.guildId];
   }
 }

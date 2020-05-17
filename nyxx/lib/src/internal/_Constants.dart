@@ -1,5 +1,6 @@
 part of nyxx;
 
+/// Gateway constants
 class OPCodes {
   static const int dispatch = 0;
   static const int heartbeat = 1;
@@ -18,9 +19,18 @@ class OPCodes {
 
 /// The client constants.
 class Constants {
+  /// Discord CDN host
   static const String cdnHost = "discordapp.com";
+
+  /// Discord API host
   static const String host = "discord.com";
+
+  /// Base API uri
   static const String baseUri = "/api/v7";
-  static const String version = "0.30.0";
+
+  /// Version of Nyxx
+  static const String version = "1.0.0";
+
+  /// Url to Nyxx repo
   static const String repoUrl = "https://github.com/l7ssha/nyxx";
 }

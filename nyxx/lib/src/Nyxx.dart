@@ -6,14 +6,14 @@ part of nyxx;
 ///
 /// Creating new instance of bot:
 /// ```
-/// Nyxx('<TOKEN>');
+/// Nyxx("<TOKEN>");
 /// ```
 /// After initializing nyxx you can subscribe to events:
 /// ```
-/// client.onReady.listen((e) => print('Ready!'));
+/// client.onReady.listen((e) => print("Ready!"));
 ///
 /// client.onRoleCreate.listen((e) {
-///   print('Role created with name: ${e.role.name});
+///   print("Role created with name: ${e.role.name});
 /// });
 /// ```
 /// or setup `CommandsFramework` and `Voice`.
@@ -22,7 +22,7 @@ class Nyxx implements Disposable {
   final DateTime _startTime = DateTime.now();
 
   late final ClientOptions _options;
-  late final _WS _ws;
+  late final _WS _ws; // ignore: unused_field
   late final _EventController _events;
 
   late final _HttpHandler _http;
@@ -30,7 +30,7 @@ class Nyxx implements Disposable {
   /// The current bot user.
   late ClientUser self;
 
-  /// The bot's OAuth2 app.
+  /// The bot"s OAuth2 app.
   late ClientOAuth2Application app;
 
   /// All of the guilds the bot is in. Can be empty or can miss guilds on (READY_EVENT).
@@ -49,7 +49,7 @@ class Nyxx implements Disposable {
   /// The current version of `nyxx`
   final String version = Constants.version;
 
-  /// Current client's shard
+  /// Current client"s shard
   late Shard shard;
 
   /// Emitted when a shard is disconnected from the websocket.
@@ -74,13 +74,13 @@ class Nyxx implements Disposable {
   /// Emitted when private message is received.
   late Stream<MessageReceivedEvent> onDmReceived;
 
-  /// Emitted when channel's pins are updated.
+  /// Emitted when channel"s pins are updated.
   late Stream<ChannelPinsUpdateEvent> onChannelPinsUpdate;
 
-  /// Emitted when guild's emojis are changed.
+  /// Emitted when guild"s emojis are changed.
   late Stream<GuildEmojisUpdateEvent> onGuildEmojisUpdate;
 
-  /// Emitted when a message is edited. Old message can be null if isn't cached.
+  /// Emitted when a message is edited. Old message can be null if isn"t cached.
   late Stream<MessageUpdateEvent> onMessageUpdate;
 
   /// Emitted when a message is deleted.
@@ -119,7 +119,7 @@ class Nyxx implements Disposable {
   /// Emitted when a user leaves a guild.
   late Stream<GuildMemberRemoveEvent> onGuildMemberRemove;
 
-  /// Emitted when a member's presence is changed.
+  /// Emitted when a member"s presence is changed.
   late Stream<PresenceUpdateEvent> onPresenceUpdate;
 
   /// Emitted when a user starts typing.
@@ -149,7 +149,7 @@ class Nyxx implements Disposable {
   /// Emitted when someone joins/leaves/moves voice channel.
   late Stream<VoiceStateUpdateEvent> onVoiceStateUpdate;
 
-  /// Emitted when a guild's voice server is updated.
+  /// Emitted when a guild"s voice server is updated.
   /// This is sent when initially connecting to voice, and when the current voice instance fails over to a new server.
   late Stream<VoiceServerUpdateEvent> onVoiceServerUpdate;
 
@@ -169,7 +169,7 @@ class Nyxx implements Disposable {
   late Stream<MessageReactionRemoveEmojiEvent> onMessageReactionRemoveEmoji;
 
   /// Logger instance
-  Logger _logger = Logger("Client");
+  final Logger _logger = Logger("Client");
 
   /// Gets an bot invite link with zero permissions
   String get inviteLink => app.getInviteUrl();
@@ -186,7 +186,7 @@ class Nyxx implements Disposable {
     if (ignoreExceptions) {
       Isolate.current.setErrorsFatal(false);
 
-      ReceivePort errorsPort = ReceivePort();
+      final errorsPort = ReceivePort();
       errorsPort.listen((err) {
         _logger.severe("ERROR: ${err[0]} \n ${err[1]}");
       });
@@ -201,15 +201,16 @@ class Nyxx implements Disposable {
     this._http = _HttpHandler._new(this);
 
     this._events = _EventController(this);
-    this.onSelfMention = this.onMessageReceived.where((event) => 
-        event.message.mentions.any((mentionedUser) => mentionedUser == this.self));
-    this.onDmReceived = this.onMessageReceived.where((event) =>
-        event.message.channel is DMChannel ||
-        event.message.channel is GroupDMChannel);
+    this.onSelfMention = this
+        .onMessageReceived
+        .where((event) => event.message.mentions.any((mentionedUser) => mentionedUser == this.self));
+    this.onDmReceived = this
+        .onMessageReceived
+        .where((event) => event.message.channel is DMChannel || event.message.channel is GroupDMChannel);
     this._ws = _WS(this);
   }
 
-  /// The client's uptime.
+  /// The client"s uptime.
   Duration get uptime => DateTime.now().difference(_startTime);
 
   /// [DateTime] when client was started
@@ -218,9 +219,9 @@ class Nyxx implements Disposable {
   /// Returns guild  even if the user is not in the guild.
   /// This endpoint is only for Public guilds.
   Future<GuildPreview> getGuildPreview(Snowflake guildId) async {
-    var response = await _http._execute(BasicRequest._new("/guilds/$guildId/preview"));
+    final response = await _http._execute(BasicRequest._new("/guilds/$guildId/preview"));
 
-    if(response is HttpResponseSuccess) {
+    if (response is HttpResponseSuccess) {
       return GuildPreview._new(response.jsonBody as Map<String, dynamic>);
     }
 
@@ -229,12 +230,12 @@ class Nyxx implements Disposable {
 
   /// Returns guild with given [guildId]
   Future<Guild> getGuild(Snowflake guildId, [bool useCache = true]) async {
-    if(this.guilds.hasKey(guildId) && useCache) return this.guilds[guildId]!;
+    if (this.guilds.hasKey(guildId) && useCache) return this.guilds[guildId]!;
 
-    var response = await _http._execute(BasicRequest._new("/guilds/$guildId"));
+    final response = await _http._execute(BasicRequest._new("/guilds/$guildId"));
 
-    if(response is HttpResponseSuccess) {
-      return Guild._new(this, response.jsonBody as Map<String, dynamic>, true, false);
+    if (response is HttpResponseSuccess) {
+      return Guild._new(this, response.jsonBody as Map<String, dynamic>);
     }
 
     return Future.error(response);
@@ -244,41 +245,41 @@ class Nyxx implements Disposable {
   /// If channel is in cache - will be taken from it otherwise API will be called.
   ///
   /// ```
-  /// var channel = await client.getChannel<TextChannel>(Snowflake('473853847115137024'));
+  /// var channel = await client.getChannel<TextChannel>(Snowflake("473853847115137024"));
   /// ```
   Future<T> getChannel<T extends Channel>(Snowflake id, [bool useCache = true]) async {
     if (this.channels.hasKey(id) && useCache) return this.channels[id] as T;
 
-    var response = await this._http._execute(BasicRequest._new("/channels/${id.toString()}"));
+    final response = await this._http._execute(BasicRequest._new("/channels/${id.toString()}"));
 
-    if(response is HttpResponseError) {
+    if (response is HttpResponseError) {
       return Future.error(response);
     }
 
-    var raw = (response as HttpResponseSuccess).jsonBody as Map<String, dynamic>;
+    final raw = (response as HttpResponseSuccess).jsonBody as Map<String, dynamic>;
 
-    switch (raw['type'] as int) {
+    switch (raw["type"] as int) {
       case 1:
         return DMChannel._new(raw, this) as T;
       case 3:
         return GroupDMChannel._new(raw, this) as T;
       case 0:
       case 5:
-        var guild = this.guilds[Snowflake(raw['guild_id'])];
+        final guild = this.guilds[Snowflake(raw["guild_id"])];
         return TextChannel._new(raw, guild!, this) as T;
       case 2:
-        var guild = this.guilds[Snowflake(raw['guild_id'])];
+        final guild = this.guilds[Snowflake(raw["guild_id"])];
         return VoiceChannel._new(raw, guild!, this) as T;
       case 4:
-        var guild = this.guilds[Snowflake(raw['guild_id'])];
+        final guild = this.guilds[Snowflake(raw["guild_id"])];
         return CategoryChannel._new(raw, guild!, this) as T;
       default:
-        return Future.error("Cannot create channel of type [${raw['type']}");
+        return Future.error("Cannot create channel of type [${raw["type"]}");
     }
   }
 
   /// Get user instance with specified id.
-  /// If [id] is present in cache it'll be got from cache, otherwise API
+  /// If [id] is present in cache it"ll be got from cache, otherwise API
   /// will be called.
   ///
   /// ```
@@ -287,9 +288,9 @@ class Nyxx implements Disposable {
   Future<User?> getUser(Snowflake id, [bool useCache = true]) async {
     if (this.users.hasKey(id) && useCache) return this.users[id];
 
-    var response = await this._http._execute(BasicRequest._new("/users/${id.toString()}"));
+    final response = await this._http._execute(BasicRequest._new("/users/${id.toString()}"));
 
-    if(response is HttpResponseSuccess) {
+    if (response is HttpResponseSuccess) {
       return User._new(response.jsonBody as Map<String, dynamic>, this);
     }
 
@@ -307,13 +308,12 @@ class Nyxx implements Disposable {
   /// ```
   Future<Guild> createGuild(GuildBuilder builder) async {
     if (this.guilds.count >= 10) {
-      return Future.error(
-          "Guild cannot be created if bot is in 10 or more guilds");
+      return Future.error("Guild cannot be created if bot is in 10 or more guilds");
     }
 
-    var response = await this._http._execute(BasicRequest._new("/guilds", method: "POST"));
+    final response = await this._http._execute(BasicRequest._new("/guilds", method: "POST"));
 
-    if(response is HttpResponseSuccess) {
+    if (response is HttpResponseSuccess) {
       return Guild._new(this, response.jsonBody as Map<String, dynamic>);
     }
 
@@ -323,9 +323,9 @@ class Nyxx implements Disposable {
   /// Gets a webhook by its id and/or token.
   /// If token is supplied authentication is not needed.
   Future<Webhook> getWebhook(String id, {String token = ""}) async {
-    var response = await this._http._execute(BasicRequest._new("/webhooks/$id/$token"));
+    final response = await this._http._execute(BasicRequest._new("/webhooks/$id/$token"));
 
-    if(response is HttpResponseSuccess) {
+    if (response is HttpResponseSuccess) {
       return Webhook._new(response.jsonBody as Map<String, dynamic>, this);
     }
 
@@ -341,7 +341,7 @@ class Nyxx implements Disposable {
   Future<Invite> getInvite(String code) async {
     final r = await this._http._execute(BasicRequest._new("/invites/$code"));
 
-    if(r is HttpResponseSuccess) {
+    if (r is HttpResponseSuccess) {
       return Invite._new(r.jsonBody as Map<String, dynamic>, this);
     }
 
@@ -379,24 +379,24 @@ class Nyxx implements Disposable {
   }
 }
 
-
 /// Sets up default logger
 void setupDefaultLogging([Level? loglevel]) {
   Logger.root.level = loglevel ?? Level.ALL;
 
   Logger.root.onRecord.listen((LogRecord rec) {
-    String color = "";
-    if (rec.level == Level.WARNING)
+    var color = "";
+    if (rec.level == Level.WARNING) {
       color = "\u001B[33m";
-    else if (rec.level == Level.SEVERE)
+    } else if (rec.level == Level.SEVERE) {
       color = "\u001B[31m";
-    else if (rec.level == Level.INFO)
+    } else if (rec.level == Level.INFO) {
       color = "\u001B[32m";
-    else
+    } else {
       color = "\u001B[0m";
+    }
 
-    print('[${DateTime.now()}] '
-        '$color[${rec.level.name}] [${rec.loggerName}]\u001B[0m: '
-        '${rec.message}');
+    print("[${DateTime.now()}] "
+        "$color[${rec.level.name}] [${rec.loggerName}]\u001B[0m: "
+        "${rec.message}");
   });
 }

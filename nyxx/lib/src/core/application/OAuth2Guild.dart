@@ -1,7 +1,7 @@
 part of nyxx;
 
 /// A mini guild object with permissions for [OAuth2Info].
-class OAuth2Guild extends SnowflakeEntity{
+class OAuth2Guild extends SnowflakeEntity {
   /// The permissions you have on that guild.
   late final Permissions permissions;
 

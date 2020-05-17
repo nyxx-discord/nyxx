@@ -26,20 +26,17 @@ class Pagination {
   }
 
   /// Generates pagination from String but with user specified size of single page.
-  factory Pagination.fromStringLen(
-      String str, int len, MessageChannel channel) {
+  factory Pagination.fromStringLen(String str, int len, MessageChannel channel) {
     return Pagination(_Utils.split(str, len).toList(), channel);
   }
 
   /// Generates pagination from String but with user specified number of pages.
-  factory Pagination.fromStringEq(
-      String str, int pieces, MessageChannel channel) {
+  factory Pagination.fromStringEq(String str, int pieces, MessageChannel channel) {
     return Pagination(_Utils.splitEqually(str, pieces).toList(), channel);
   }
 
   /// Paginates a list of Strings - each String is a different page.
-  Future<Message> paginate(Nyxx client,
-      {Duration timeout = const Duration(minutes: 2)}) async {
+  Future<Message> paginate(Nyxx client, {Duration timeout = const Duration(minutes: 2)}) async {
     var nextEmoji = EmojiUtils.getEmoji('arrow_forward')!;
     var backEmoji = EmojiUtils.getEmoji('arrow_backward')!;
     var firstEmoji = EmojiUtils.getEmoji('track_previous')!;

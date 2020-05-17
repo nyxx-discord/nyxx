@@ -14,8 +14,7 @@ class OAuth2Application extends SnowflakeEntity {
   /// The app's RPC origins.
   late final List<String>? rpcOrigins;
 
-  OAuth2Application._new(Map<String, dynamic> raw)
-      : super(Snowflake(raw['id'] as String)) {
+  OAuth2Application._new(Map<String, dynamic> raw) : super(Snowflake(raw['id'] as String)) {
     this.description = raw['description'] as String;
     this.name = raw['name'] as String;
 
@@ -24,7 +23,7 @@ class OAuth2Application extends SnowflakeEntity {
   }
 
   String? iconUrl({String format = "png", int size = 512}) {
-    if(this.icon != null) {
+    if (this.icon != null) {
       return "https://cdn.discordapp.com/app-icons/${this.id}/$icon.$format?size=$size";
     }
 

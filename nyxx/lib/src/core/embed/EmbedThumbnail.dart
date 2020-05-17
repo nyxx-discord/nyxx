@@ -28,6 +28,5 @@ class EmbedThumbnail {
   int get hashCode => url.hashCode;
 
   @override
-  bool operator ==(other) =>
-      other is EmbedThumbnail ? other.url == this.url : false;
+  bool operator ==(other) => other is EmbedThumbnail ? other.url == this.url : false;
 }

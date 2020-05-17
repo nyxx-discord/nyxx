@@ -3,7 +3,7 @@ part of nyxx.interactivity;
 class EmojiUtils {
   /// Returns [UnicodeEmoji] instance of given emoji [name].
   static UnicodeEmoji? getEmoji(String name) {
-    if(emojisUnicode.containsKey(name)) {
+    if (emojisUnicode.containsKey(name)) {
       return UnicodeEmoji(emojisUnicode[name]!);
     }
 

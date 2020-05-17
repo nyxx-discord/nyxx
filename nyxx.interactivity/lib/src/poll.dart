@@ -7,12 +7,11 @@ part of nyxx.interactivity;
 ///   var results = createPoll(ctx.channel, "This is awesome poll", {UnicodeEmoji(""): "One option", UnicodeEmoji(""): "second option"});
 /// }
 /// ```
-Future<Map<Emoji, int>> createPoll(
-    TextChannel channel, String title, Map<Emoji, String> options,
+Future<Map<Emoji, int>> createPoll(TextChannel channel, String title, Map<Emoji, String> options,
     {Duration timeout = const Duration(minutes: 10),
-      String? message,
-      bool delete = false,
-      dynamic messageFactory(Map<Emoji, String> options, String message)?}) async {
+    String? message,
+    bool delete = false,
+    dynamic messageFactory(Map<Emoji, String> options, String message)?}) async {
   var toSend;
 
   if (messageFactory == null) {
@@ -47,12 +46,13 @@ Future<Map<Emoji, int>> createPoll(
   var m = Map<Emoji, int>();
 
   return Future<Map<Emoji, int>>(() async {
-    await for (MessageReactionEvent r in channel.client.onMessageReactionAdded.where((evnt) => evnt.message?.id == msg.id)) {
+    await for (MessageReactionEvent r
+        in channel.client.onMessageReactionAdded.where((evnt) => evnt.message?.id == msg.id)) {
       if (m.containsKey(r.emoji)) {
         // TODO: NNBD: weird stuff
         var value = m[r.emoji];
 
-        if(value != null) {
+        if (value != null) {
           value += 1;
           m[r.emoji] = value;
         }

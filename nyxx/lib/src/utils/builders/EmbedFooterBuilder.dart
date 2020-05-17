@@ -15,12 +15,8 @@ class EmbedFooterBuilder implements Builder {
 
   /// Builds object to Map() instance;
   Map<String, dynamic> _build() {
-    if (this.text != null && this.length! > 2048)
-      throw new Exception("Footer text is too long. (1024 characters limit)");
+    if (this.text != null && this.length! > 2048) throw Exception("Footer text is too long. (1024 characters limit)");
 
-    return <String, dynamic> {
-      if (text != null) "text" : text,
-      if (iconUrl != null) "icon_url" : iconUrl
-    };
+    return <String, dynamic>{if (text != null) "text": text, if (iconUrl != null) "icon_url": iconUrl};
   }
 }
