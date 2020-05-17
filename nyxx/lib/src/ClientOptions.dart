@@ -31,9 +31,9 @@ class ClientOptions {
   /// List of ignored events
   List<String> ignoredEvents;
 
-  /// When identifying to the gateway, you can specify an intents parameter which 
-  /// allows you to conditionally subscribe to pre-defined "intents", groups of events defined by Discord. 
-  /// If you do not specify a certain intent, you will not receive any of the gateway events that are batched into that group. 
+  /// When identifying to the gateway, you can specify an intents parameter which
+  /// allows you to conditionally subscribe to pre-defined "intents", groups of events defined by Discord.
+  /// If you do not specify a certain intent, you will not receive any of the gateway events that are batched into that group.
   GatewayIntents? gatewayIntents;
 
   /// Makes a new `ClientOptions` object.
@@ -75,26 +75,26 @@ class GatewayIntents {
   GatewayIntents.all() : _all = true;
 
   int _calculate() {
-    if(_all) {
+    if (_all) {
       return 0x7FFF;
     }
 
-    int value = 0;
+    var value = 0;
 
-    if(guilds) value += 1 << 0;
-    if(guildMembers) value += 1 << 1;
-    if(guildBans) value += 1 << 2;
-    if(guildEmojis) value += 1 << 3;
-    if(guildIntegrations) value += 1 << 4;
-    if(guildWebhooks) value += 1 << 5;
-    if(guildInvites) value += 1 << 6;
-    if(guildVoiceState) value += 1 << 8;
-    if(guildPresences) value += 1 << 9;
-    if(guildMessageReactions) value += 1 << 10;
-    if(guildMessageTyping) value += 1 << 11;
-    if(directMessages) value += 1 << 12;
-    if(directMessageReactions) value += 1 << 13;
-    if(directMessageTyping) value += 1 << 14;
+    if (guilds) value += 1 << 0;
+    if (guildMembers) value += 1 << 1;
+    if (guildBans) value += 1 << 2;
+    if (guildEmojis) value += 1 << 3;
+    if (guildIntegrations) value += 1 << 4;
+    if (guildWebhooks) value += 1 << 5;
+    if (guildInvites) value += 1 << 6;
+    if (guildVoiceState) value += 1 << 8;
+    if (guildPresences) value += 1 << 9;
+    if (guildMessageReactions) value += 1 << 10;
+    if (guildMessageTyping) value += 1 << 11;
+    if (directMessages) value += 1 << 12;
+    if (directMessageReactions) value += 1 << 13;
+    if (directMessageTyping) value += 1 << 14;
 
     return value;
   }

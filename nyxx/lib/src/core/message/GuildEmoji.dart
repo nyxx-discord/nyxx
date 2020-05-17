@@ -33,8 +33,7 @@ class GuildEmoji extends Emoji implements SnowflakeEntity, GuildEntity {
   late final bool partial;
 
   /// Creates full emoji object
-  GuildEmoji._new(Map<String, dynamic> raw, this.guild, this.client)
-      : super("") {
+  GuildEmoji._new(Map<String, dynamic> raw, this.guild, this.client) : super("") {
     this.id = Snowflake(raw['id'] as String);
 
     this.name = raw['name'] as String;
@@ -47,7 +46,7 @@ class GuildEmoji extends Emoji implements SnowflakeEntity, GuildEntity {
       for (var roleId in raw['roles']) {
         var role = this.guild.roles[Snowflake(roleId)];
 
-        if(role != null) {
+        if (role != null) {
           this.roles.add(role);
         }
       }
@@ -63,20 +62,19 @@ class GuildEmoji extends Emoji implements SnowflakeEntity, GuildEntity {
   }
 
   Future<GuildEmoji> edit({String? name, List<Snowflake>? roles}) async {
-    if(name == null && roles == null) {
+    if (name == null && roles == null) {
       return Future.error("Both name and roles fields cannot be null");
     }
 
-    var body = <String, dynamic> {
-      if(name != null) "name" : name,
-      if(roles != null) "roles" : roles.map((r) => r.toString())
+    var body = <String, dynamic>{
+      if (name != null) "name": name,
+      if (roles != null) "roles": roles.map((r) => r.toString())
     };
 
     var response = await client._http._execute(
-        BasicRequest._new("/guilds/${guild.id.toString()}/emojis/${this.id.toString()}",
-            method: "PATCH", body: body));
+        BasicRequest._new("/guilds/${guild.id.toString()}/emojis/${this.id.toString()}", method: "PATCH", body: body));
 
-    if(response is HttpResponseSuccess) {
+    if (response is HttpResponseSuccess) {
       return GuildEmoji._new(response.jsonBody as Map<String, dynamic>, guild, client);
     }
 
@@ -85,8 +83,7 @@ class GuildEmoji extends Emoji implements SnowflakeEntity, GuildEntity {
 
   Future<void> delete() async {
     return client._http._execute(
-        BasicRequest._new("/guilds/${this.guild.id.toString()}/emojis/${this.id.toString()}",
-            method: "DELETE"));
+        BasicRequest._new("/guilds/${this.guild.id.toString()}/emojis/${this.id.toString()}", method: "DELETE"));
   }
 
   /// Encodes Emoji to API format
@@ -98,8 +95,7 @@ class GuildEmoji extends Emoji implements SnowflakeEntity, GuildEntity {
   String format() => animated ? "<a:$name:$id>" : "<:$name:$id>";
 
   /// Returns cdn url to emoji
-  String get cdnUrl =>
-      "https://cdn.discordapp.com/emojis/${this.id}${animated ? ".gif" : ".png"}";
+  String get cdnUrl => "https://cdn.discordapp.com/emojis/${this.id}${animated ? ".gif" : ".png"}";
 
   /// Returns encoded string ready to send via message.
   @override
@@ -109,8 +105,7 @@ class GuildEmoji extends Emoji implements SnowflakeEntity, GuildEntity {
   bool operator ==(other) => other is Emoji && other.name == this.name;
 
   @override
-  int get hashCode =>
-      ((super.hashCode * 37 + id.hashCode) * 37 + name.hashCode);
+  int get hashCode => ((super.hashCode * 37 + id.hashCode) * 37 + name.hashCode);
 
   @override
   DateTime get createdAt => id.timestamp;

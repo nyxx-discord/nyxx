@@ -11,10 +11,9 @@ class _PermissionsSet {
 /// Builder for permissions.
 class PermissionsBuilder extends AbstractPermissions {
   _PermissionsSet _build() {
-    var tmp = _PermissionsSet();
+    final tmp = _PermissionsSet();
 
-    _apply(tmp, this.createInstantInvite,
-        PermissionsConstants.createInstantInvite);
+    _apply(tmp, this.createInstantInvite, PermissionsConstants.createInstantInvite);
     _apply(tmp, this.kickMembers, PermissionsConstants.kickMembers);
     _apply(tmp, this.banMembers, PermissionsConstants.banMembers);
     _apply(tmp, this.administrator, PermissionsConstants.administrator);
@@ -28,8 +27,7 @@ class PermissionsBuilder extends AbstractPermissions {
     _apply(tmp, this.manageMessages, PermissionsConstants.manageMessages);
     _apply(tmp, this.embedLinks, PermissionsConstants.embedLinks);
     _apply(tmp, this.attachFiles, PermissionsConstants.attachFiles);
-    _apply(
-        tmp, this.readMessageHistory, PermissionsConstants.readMessageHistory);
+    _apply(tmp, this.readMessageHistory, PermissionsConstants.readMessageHistory);
     _apply(tmp, this.mentionEveryone, PermissionsConstants.mentionEveryone);
     _apply(tmp, this.useExternalEmojis, PermissionsConstants.externalEmojis);
     _apply(tmp, this.connect, PermissionsConstants.connect);
@@ -40,18 +38,18 @@ class PermissionsBuilder extends AbstractPermissions {
     _apply(tmp, this.useVad, PermissionsConstants.useVad);
     _apply(tmp, this.changeNickname, PermissionsConstants.changeNickname);
     _apply(tmp, this.manageNicknames, PermissionsConstants.manageNicknames);
-    _apply(
-        tmp, this.manageRoles, PermissionsConstants.manageRolesOrPermissions);
+    _apply(tmp, this.manageRoles, PermissionsConstants.manageRolesOrPermissions);
     _apply(tmp, this.manageWebhooks, PermissionsConstants.manageWebhooks);
 
     return tmp;
   }
-  
+
   // TODO: NNBD - To consider
   void _apply(_PermissionsSet perm, bool applies, int constant) {
-    if (applies)
+    if (applies) {
       perm.allow |= constant;
-    else
+    } else {
       perm.deny |= constant;
+    }
   }
 }

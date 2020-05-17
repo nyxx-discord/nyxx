@@ -27,8 +27,7 @@ void setupBot(SendPort remotePort) {
   });
 
   port.listen((msg) async {
-    var exChannel =
-        bot.channels[Snowflake("355365529369706509")] as TextChannel;
+    var exChannel = bot.channels[Snowflake("355365529369706509")] as TextChannel;
     var m = msg.toString();
 
     if (m.startsWith("SEND")) {

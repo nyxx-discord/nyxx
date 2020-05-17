@@ -18,13 +18,13 @@ class TypingEvent {
   late final DateTime timestamp;
 
   TypingEvent._new(Map<String, dynamic> json, Nyxx client) {
-    this.channelId = Snowflake(json['d']['channel_id']);
+    this.channelId = Snowflake(json["d"]["channel_id"]);
     this.channel = client.channels[channelId] as MessageChannel?;
 
-    this.userId = Snowflake(json['d']['user_id']);
+    this.userId = Snowflake(json["d"]["user_id"]);
     this.user = client.users[this.userId];
 
-    this.timestamp = DateTime.fromMillisecondsSinceEpoch(json['d']['timestamp'] as int);
+    this.timestamp = DateTime.fromMillisecondsSinceEpoch(json["d"]["timestamp"] as int);
 
     client._events.onTyping.add(this);
   }

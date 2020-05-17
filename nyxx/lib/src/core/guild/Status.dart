@@ -2,10 +2,10 @@ part of nyxx;
 
 /// Provides values for user status.
 class UserStatus extends IEnum<String> {
-  static const UserStatus dnd = const UserStatus._create("dnd");
-  static const UserStatus offline = const UserStatus._create("offline");
-  static const UserStatus online = const UserStatus._create("online");
-  static const UserStatus idle = const UserStatus._create("idle");
+  static const UserStatus dnd = UserStatus._create("dnd");
+  static const UserStatus offline = UserStatus._create("offline");
+  static const UserStatus online = UserStatus._create("online");
+  static const UserStatus idle = UserStatus._create("idle");
 
   const UserStatus._create(String? value) : super(value ?? "offline");
   UserStatus.from(String? value) : super(value ?? "offline");
@@ -56,9 +56,7 @@ class ClientStatus {
   @override
   bool operator ==(other) {
     if (other is ClientStatus) {
-      return other.desktop == this.desktop &&
-          other.phone == this.phone &&
-          other.web == this.web;
+      return other.desktop == this.desktop && other.phone == this.phone && other.web == this.web;
     }
 
     return false;

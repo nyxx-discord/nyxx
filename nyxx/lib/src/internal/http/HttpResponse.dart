@@ -1,21 +1,24 @@
 part of nyxx;
 
-abstract class HttpResponse {
+abstract class _HttpResponse {
   late final int statusCode;
   late final String statusText;
 
   late final Map<String, String> headers;
 
-  HttpResponse._new(transport.Response response) {
+  _HttpResponse._new(transport.Response response) {
     this.statusCode = response.status;
     this.statusText = response.statusText;
     this.headers = response.headers;
   }
 }
 
-class HttpResponseSuccess extends HttpResponse {
+/// Returned when http request is successfully executed.
+class HttpResponseSuccess extends _HttpResponse {
+  /// Body of response
   late final transport.HttpBody body;
 
+  /// Response body as json
   dynamic get jsonBody => body.asJson();
 
   HttpResponseSuccess._new(transport.Response response) : super._new(response) {
@@ -23,16 +26,21 @@ class HttpResponseSuccess extends HttpResponse {
   }
 }
 
-class HttpResponseError extends HttpResponse {
+/// Returned when client fails to execute http request.
+/// Will contain reason why request failed.
+class HttpResponseError extends _HttpResponse {
+  /// Message why http request failed
   late final String errorMessage;
+
+  /// Error code of response
   late final int errorCode;
 
   HttpResponseError._new(transport.Response response) : super._new(response) {
-    if(response.contentType.type == "application/json") {
-      var body = response.body.asJson();
+    if (response.contentType.type == "application/json") {
+      final body = response.body.asJson();
 
-      this.errorCode = body['code'] as int;
-      this.errorMessage = body['message'] as String;
+      this.errorCode = body["code"] as int;
+      this.errorMessage = body["message"] as String;
     }
 
     this.errorMessage = response.body.asString();
@@ -40,7 +48,6 @@ class HttpResponseError extends HttpResponse {
   }
 
   @override
-  String toString() {
-    return "[Code: $errorCode] [Message: $errorMessage]";
-  }
+  String toString() =>
+    "[Code: $errorCode] [Message: $errorMessage]";
 }

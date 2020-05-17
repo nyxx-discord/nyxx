@@ -25,9 +25,9 @@ class DiscordColor {
   /// Construct color from individual color components with doubles
   /// Values should be from 0.0 to 1.0
   DiscordColor.fromDouble(double r, double g, double b) {
-    var rb = (r * 255).toInt();
-    var gb = (g * 255).toInt();
-    var bb = (b * 255).toInt();
+    final rb = (r * 255).toInt();
+    final gb = (g * 255).toInt();
+    final bb = (b * 255).toInt();
 
     this._value = rb << 16 | gb << 8 | bb;
   }
@@ -35,8 +35,7 @@ class DiscordColor {
   /// Construct color from hex String.
   /// Leading # will be ignored in process.
   DiscordColor.fromHexString(String hexStr) {
-    if (hexStr.isEmpty)
-      throw new ArgumentError("Hex color String cannot be empty");
+    if (hexStr.isEmpty) throw ArgumentError("Hex color String cannot be empty");
 
     if (hexStr.startsWith("#")) hexStr = hexStr.substring(1);
 
@@ -47,13 +46,13 @@ class DiscordColor {
   int get value => _value;
 
   /// Gets the blue component of this color as an integer.
-  int get r => ((this._value >> 16) & 0xFF);
+  int get r => (this._value >> 16) & 0xFF;
 
   /// Gets the green component of this color as an integer.
-  int get g => ((this._value >> 8) & 0xFF);
+  int get g => (this._value >> 8) & 0xFF;
 
   /// Gets the blue component of this color as an integer.
-  int get b => (this._value & 0xFF);
+  int get b => this._value & 0xFF;
 
   @override
   String toString() => "#${_value.toRadixString(16)}";
@@ -62,14 +61,13 @@ class DiscordColor {
   int get hashCode => _value.hashCode;
 
   @override
-  bool operator ==(other) =>
-      other is DiscordColor && other._value == this._value;
+  bool operator ==(other) => other is DiscordColor && other._value == this._value;
 
   // All colors got from DiscordColor class from DSharp+.
   // https://github.com/DSharpPlus/DSharpPlus/blob/a2f6eca7f5f675e83748b20b957ae8bdb8fd0cab/DSharpPlus/Entities/DiscordColor.Colors.cs
 
   /// Color of null, literally null.
-  static final DiscordColor? none = null;
+  static const DiscordColor? none = null;
 
   /// A near-black color. Due to API limitations, the color is #010101, rather than #000000, as the latter is treated as no color.
   static final DiscordColor black = DiscordColor.fromInt(0x010101);

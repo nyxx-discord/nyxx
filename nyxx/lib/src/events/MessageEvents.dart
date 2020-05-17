@@ -6,7 +6,7 @@ class MessageReceivedEvent {
   late final Message message;
 
   MessageReceivedEvent._new(Map<String, dynamic> raw, Nyxx client) {
-    this.message = Message._deserialize(raw['d'] as Map<String, dynamic>, client);
+    this.message = Message._deserialize(raw["d"] as Map<String, dynamic>, client);
     message.channel.messages.put(this.message);
   }
 }
@@ -20,10 +20,10 @@ class MessageDeleteEvent {
   late final Snowflake messageId;
 
   MessageDeleteEvent._new(Map<String, dynamic> raw, Nyxx client) {
-    var channel = client.channels[Snowflake(raw['d']['channel_id'] as String)] as MessageChannel?;
-    this.messageId  = Snowflake(raw['d']['id']);
+    final channel = client.channels[Snowflake(raw["d"]["channel_id"] as String)] as MessageChannel?;
+    this.messageId = Snowflake(raw["d"]["id"]);
 
-    var message = channel?.messages[this.messageId];
+    final message = channel?.messages[this.messageId];
 
     if (message != null) {
       this.message = message;
@@ -50,24 +50,23 @@ class MessageDeleteBulkEvent {
   late final Snowflake channelId;
 
   MessageDeleteBulkEvent._new(Map<String, dynamic> json, Nyxx client) {
-    this.channelId = Snowflake(json['d']['channel_id']);
+    this.channelId = Snowflake(json["d"]["channel_id"]);
 
-    if(json['d']['guild_id'] != null) {
-      this.guildId = Snowflake(json['d']['guild_id']);
+    if (json["d"]["guild_id"] != null) {
+      this.guildId = Snowflake(json["d"]["guild_id"]);
     }
 
     this.channel = client.channels[this.channelId] as MessageChannel?;
 
-    this.deletedMessagesIds = (json['d']['ids'] as List<dynamic>).map((stringId) => Snowflake(stringId));
-    if(this.channel != null) {
+    this.deletedMessagesIds = (json["d"]["ids"] as List<dynamic>).map((stringId) => Snowflake(stringId));
+    if (this.channel != null) {
       this.deletedMessages = this.channel!.messages.find((item) => this.deletedMessagesIds.contains(item.id));
       this.channel!.messages.removeWhere((key, value) => this.deletedMessagesIds.contains(key));
     }
-
-    client._events.onMessageDeleteBulk.add(this);
   }
 }
 
+/// Emitted when reaction is added or removed from message
 abstract class MessageReactionEvent {
   /// Reference to user who is behind event
   User? user;
@@ -91,34 +90,33 @@ abstract class MessageReactionEvent {
   late final Emoji emoji;
 
   MessageReactionEvent._new(Map<String, dynamic> json, Nyxx client) {
-    this.userId = Snowflake(json['d']['user_id']);
+    this.userId = Snowflake(json["d"]["user_id"]);
     this.user = client.users[this.userId];
 
-    this.channelId = Snowflake(json['d']['channel_id']);
-    this.channel = client.channels[this.channelId]
-        as MessageChannel?;
+    this.channelId = Snowflake(json["d"]["channel_id"]);
+    this.channel = client.channels[this.channelId] as MessageChannel?;
 
-    this.messageId = Snowflake(json['d']['message_id']);
-    if(this.channel != null) {
+    this.messageId = Snowflake(json["d"]["message_id"]);
+    if (this.channel != null) {
       this.message = this.channel!.messages[this.messageId];
     }
 
-    if (json['d']['emoji']['id'] == null) {
-      this.emoji = UnicodeEmoji((json['d']['emoji']['name'] as String));
+    if (json["d"]["emoji"]["id"] == null) {
+      this.emoji = UnicodeEmoji(json["d"]["emoji"]["name"] as String);
     } else {
-      this.emoji = GuildEmoji._partial(json['d']['emoji'] as Map<String, dynamic>);
+      this.emoji = GuildEmoji._partial(json["d"]["emoji"] as Map<String, dynamic>);
     }
   }
 }
 
+/// Emitted when reaction is add to message
 class MessageReactionAddedEvent extends MessageReactionEvent {
-  MessageReactionAddedEvent._new(Map<String, dynamic> json, Nyxx client)
-      : super._new(json, client) {
-    if(message == null) {
+  MessageReactionAddedEvent._new(Map<String, dynamic> json, Nyxx client) : super._new(json, client) {
+    if (message == null) {
       return;
     }
 
-    var r = message!.reactions.indexWhere((r) => r.emoji == emoji);
+    final r = message!.reactions.indexWhere((r) => r.emoji == emoji);
 
     if (r == -1) {
       message!.reactions.add(Reaction._event(emoji, user == client.self));
@@ -130,14 +128,14 @@ class MessageReactionAddedEvent extends MessageReactionEvent {
   }
 }
 
+/// Emitted when reaction is removed from message
 class MessageReactionRemovedEvent extends MessageReactionEvent {
-  MessageReactionRemovedEvent._new(Map<String, dynamic> json, Nyxx client)
-      : super._new(json, client) {
-    if(message == null) {
+  MessageReactionRemovedEvent._new(Map<String, dynamic> json, Nyxx client) : super._new(json, client) {
+    if (message == null) {
       return;
     }
 
-    var r = message!.reactions.indexWhere((r) => r.emoji == emoji);
+    final r = message!.reactions.indexWhere((r) => r.emoji == emoji);
 
     if (r != -1) {
       if (message!.reactions[r].count == 1) {
@@ -172,23 +170,24 @@ class MessageReactionsRemovedEvent {
   late final Snowflake guildId;
 
   MessageReactionsRemovedEvent._new(Map<String, dynamic> json, Nyxx client) {
-    this.channelId = Snowflake(json['d']['channel_id']);
+    this.channelId = Snowflake(json["d"]["channel_id"]);
     this.channel = client.channels[this.channelId] as MessageChannel?;
 
-    this.guildId = Snowflake(json['d']['guild_id']);
+    this.guildId = Snowflake(json["d"]["guild_id"]);
     this.guild = client.guilds[this.guildId];
 
-    this.messageId = Snowflake(json['d']['message_id']);
-    if(this.channel != null) {
+    this.messageId = Snowflake(json["d"]["message_id"]);
+    if (this.channel != null) {
       this.message = this.channel!.messages[messageId];
     }
 
-    if(this.message != null) {
+    if (this.message != null) {
       this.message!.reactions.clear();
     }
   }
 }
 
+/// Emitted when reactions of certain emoji are deleted
 class MessageReactionRemoveEmojiEvent {
   /// Channel on which event was fired
   late MessageChannel? channel;
@@ -212,24 +211,24 @@ class MessageReactionRemoveEmojiEvent {
   late final Emoji emoji;
 
   MessageReactionRemoveEmojiEvent._new(Map<String, dynamic> json, Nyxx client) {
-    this.channelId = Snowflake(json['d']['channel_id']);
+    this.channelId = Snowflake(json["d"]["channel_id"]);
     this.channel = client.channels[this.channelId] as MessageChannel?;
 
-    this.guildId = Snowflake(json['d']['guild_id']);
+    this.guildId = Snowflake(json["d"]["guild_id"]);
     this.guild = client.guilds[this.guildId];
 
-    this.messageId = Snowflake(json['d']['message_id']);
-    if(this.channel != null) {
+    this.messageId = Snowflake(json["d"]["message_id"]);
+    if (this.channel != null) {
       this.message = this.channel!.messages[messageId];
     }
 
-    if (json['d']['emoji']['id'] == null) {
-      this.emoji = UnicodeEmoji((json['d']['emoji']['name'] as String));
+    if (json["d"]["emoji"]["id"] == null) {
+      this.emoji = UnicodeEmoji(json["d"]["emoji"]["name"] as String);
     } else {
-      this.emoji = GuildEmoji._partial(json['d']['emoji'] as Map<String, dynamic>);
+      this.emoji = GuildEmoji._partial(json["d"]["emoji"] as Map<String, dynamic>);
     }
 
-    if(this.message != null) {
+    if (this.message != null) {
       this.message!.reactions.removeWhere((element) => element.emoji == this.emoji);
     }
   }
@@ -244,35 +243,37 @@ class MessageUpdateEvent {
   /// Id of channel where message was edited
   late final Snowflake channelId;
 
-  /// Id of eddited message
+  /// Id of edited message
   late final Snowflake messageId;
 
   MessageUpdateEvent._new(Map<String, dynamic> json, Nyxx client) {
-    this.channelId = Snowflake(json['d']['channel_id']);
-    this.messageId = Snowflake(json['d']['id']);
+    this.channelId = Snowflake(json["d"]["channel_id"]);
+    this.messageId = Snowflake(json["d"]["id"]);
 
-    var channel = client.channels[this.channelId] as MessageChannel?;
+    final channel = client.channels[this.channelId] as MessageChannel?;
 
-    if(channel == null) {
+    if (channel == null) {
       return;
     }
 
     this.updatedMessage = channel.messages[this.messageId];
 
-    if(this.updatedMessage == null) {
+    if (this.updatedMessage == null) {
       return;
     }
 
-    if(json['d']['content'] != this.updatedMessage!.content) {
-      this.updatedMessage!.content = json['d']['content'].toString();
+    if (json["d"]["content"] != this.updatedMessage!.content) {
+      this.updatedMessage!.content = json["d"]["content"].toString();
     }
 
-    if(json['d']['embeds'] != null) {
-      this.updatedMessage!.embeds = (json['d']['embeds'] as List<dynamic>).map((e) => Embed._new(e as Map<String, dynamic>)).toList();
+    if (json["d"]["embeds"] != null) {
+      this.updatedMessage!.embeds =
+          (json["d"]["embeds"] as List<dynamic>).map((e) => Embed._new(e as Map<String, dynamic>)).toList();
     }
 
-    if(json['d']['mentions'] != null) {
-      this.updatedMessage!.mentions = (json['d']['mentions'] as List<dynamic>).map((e) => User._new(e as Map<String, dynamic>, client)).toList();
+    if (json["d"]["mentions"] != null) {
+      this.updatedMessage!.mentions =
+          (json["d"]["mentions"] as List<dynamic>).map((e) => User._new(e as Map<String, dynamic>, client)).toList();
     }
   }
- }
+}

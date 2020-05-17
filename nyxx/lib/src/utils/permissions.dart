@@ -1,12 +1,9 @@
 part of nyxx;
 
+/// Util function for manipulating permissions
 class PermissionsUtils {
   /// Allows to check if [issueMember] or [issueRole] can interact with [targetMember] or [targetRole].
-  static bool canInteract(
-      {Member? issueMember,
-      Role? issueRole,
-      Member? targetMember,
-      Role? targetRole}) {
+  static bool canInteract({Member? issueMember, Role? issueRole, Member? targetMember, Role? targetRole}) {
     bool canInter(Role role1, Role role2) => role1.position > role2.position;
 
     if (issueMember != null && targetMember != null) {
@@ -36,23 +33,23 @@ class PermissionsUtils {
     var denyRaw = 0;
 
     try {
-      var publicOverride = channel.permissions
-          .firstWhere((ov) => ov.id == member.guild.everyoneRole.id);
+      final publicOverride = channel.permissions.firstWhere((ov) => ov.id == member.guild.everyoneRole.id);
       allowRaw = publicOverride.allow;
       denyRaw = publicOverride.deny;
+      // ignore: avoid_catches_without_on_clauses, empty_catches
     } catch (e) {}
 
     var allowRole = 0;
     var denyRole = 0;
 
-    for (var role in member.roles) {
+    for (final role in member.roles) {
       try {
-        PermissionsOverrides chanOveride = channel.permissions
-            .firstWhere((f) => f.id == role.id);
+        final chanOveride = channel.permissions.firstWhere((f) => f.id == role.id);
 
         denyRole |= chanOveride.deny;
         allowRole |= chanOveride.allow;
-      } catch (e) { }
+        // ignore: avoid_catches_without_on_clauses, empty_catches
+      } catch (e) {}
     }
 
     allowRaw = (allowRaw & ~denyRole) | allowRole;
@@ -60,12 +57,12 @@ class PermissionsUtils {
 
     // TODO: NNBD: try-catch in where
     try {
-      PermissionsOverrides memberOverride = channel.permissions
-          .firstWhere((g) => g.id == member.id);
+      final memberOverride = channel.permissions.firstWhere((g) => g.id == member.id);
 
-      allowRaw = (allowRaw & ~memberOverride.deny) |  memberOverride.allow;
-      denyRaw = (denyRaw & ~ memberOverride.allow) | memberOverride.deny;
-    } catch (e) { }
+      allowRaw = (allowRaw & ~memberOverride.deny) | memberOverride.allow;
+      denyRaw = (denyRaw & ~memberOverride.allow) | memberOverride.deny;
+      // ignore: avoid_catches_without_on_clauses, empty_catches
+    } catch (e) {}
 
     return [allowRaw, denyRaw];
   }
@@ -79,6 +76,5 @@ class PermissionsUtils {
   }
 
   /// Returns true if [permission] is applied to [permissions].
-  static bool isApplied(int permissions, int permission) =>
-      (permissions & permission) == permission;
+  static bool isApplied(int permissions, int permission) => (permissions & permission) == permission;
 }

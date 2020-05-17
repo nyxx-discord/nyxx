@@ -5,8 +5,7 @@ class DMChannel extends MessageChannel {
   /// The recipient.
   late User recipient;
 
-  DMChannel._new(Map<String, dynamic> raw, Nyxx client)
-      : super._new(raw, 1, client) {
+  DMChannel._new(Map<String, dynamic> raw, Nyxx client) : super._new(raw, 1, client) {
     if (raw['recipients'] != null) {
       this.recipient = User._new(raw['recipients'][0] as Map<String, dynamic>, client);
     } else {

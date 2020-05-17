@@ -84,21 +84,17 @@ class Embed implements Convertable<EmbedBuilder> {
     }
 
     if (raw['thumbnail'] != null) {
-      this.thumbnail =
-          EmbedThumbnail._new(raw['thumbnail'] as Map<String, dynamic>);
+      this.thumbnail = EmbedThumbnail._new(raw['thumbnail'] as Map<String, dynamic>);
     }
 
     if (raw['provider'] != null) {
-      this.provider =
-          EmbedProvider._new(raw['provider'] as Map<String, dynamic>);
+      this.provider = EmbedProvider._new(raw['provider'] as Map<String, dynamic>);
     }
 
     fields = [
       if (raw['fields'] != null)
-        for(var obj in raw['fields'])
-          EmbedField._new(obj as Map<String, dynamic>)
+        for (var obj in raw['fields']) EmbedField._new(obj as Map<String, dynamic>)
     ];
-
   }
 
   /// Returns a string representation of this object.
@@ -137,6 +133,5 @@ class Embed implements Convertable<EmbedBuilder> {
   }
 
   @override
-  bool operator ==(other) =>
-      other is EmbedVideo ? other.url == this.url : false;
+  bool operator ==(other) => other is EmbedVideo ? other.url == this.url : false;
 }

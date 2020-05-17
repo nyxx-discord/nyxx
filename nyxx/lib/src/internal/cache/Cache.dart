@@ -12,17 +12,17 @@ abstract class Cache<T, S> implements Disposable {
   Iterable<T> get keys => _cache.keys;
 
   /// Find one element in cache
-  S? findOne(bool predicate(S item)) {
+  S? findOne(bool Function(S item) predicate) {
     // TODO: NNBD: try-catch in where
     try {
       return values.firstWhere(predicate);
-    } catch (e) {
+    } on Exception {
       return null;
     }
   }
 
   /// Find matching items based of [predicate]
-  Iterable<S> find(bool predicate(S item)) => values.where(predicate);
+  Iterable<S> find(bool Function(S item) predicate) => values.where(predicate);
 
   /// Returns element with key [key]
   S? operator [](T key) => _cache.containsKey(key) ? _cache[key] : null;
@@ -55,18 +55,16 @@ abstract class Cache<T, S> implements Disposable {
   void remove(T key) => _cache.remove(key);
 
   /// Remove everything where [predicate] is true
-  void removeWhere(bool predicate(T key, S value)) =>
-      _cache.removeWhere(predicate);
+  void removeWhere(bool Function(T key, S value) predicate) => _cache.removeWhere(predicate);
 
   /// Loop over elements from cache
-  void forEach(void f(T key, S value)) => _cache.forEach(f);
+  void forEach(void Function(T key, S value) f) => _cache.forEach(f);
 
   /// Take [count] elements from cache. Returns Iterable of cache values
   Iterable<S> take(int count) => values.take(count);
 
   /// Takes [count] last elements from cache. Returns Iterable of cache values
-  Iterable<S> takeLast(int count) =>
-      values.toList().sublist(values.length - count);
+  Iterable<S> takeLast(int count) => values.toList().sublist(values.length - count);
 
   /// Get first element
   S? get first => _cache.values.first;

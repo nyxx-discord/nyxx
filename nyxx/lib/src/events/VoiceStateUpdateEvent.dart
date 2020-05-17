@@ -9,7 +9,7 @@ class VoiceStateUpdateEvent {
   Map<String, dynamic> raw;
 
   VoiceStateUpdateEvent._new(this.raw, Nyxx client) {
-    this.state = VoiceState._new(raw['d'] as Map<String, dynamic>, client);
+    this.state = VoiceState._new(raw["d"] as Map<String, dynamic>, client);
 
     if (state.user == null) {
       return;

@@ -32,8 +32,7 @@ void main() {
         ..thumbnailUrl = attachment.attachUrl;
 
       // Sent all together
-      e.message.channel
-          .send(files: [attachment], embed: embed, content: "HEJKA!");
+      e.message.channel.send(files: [attachment], embed: embed, content: "HEJKA!");
     }
   });
 }

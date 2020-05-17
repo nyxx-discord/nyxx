@@ -33,22 +33,19 @@ class GuildPreview extends SnowflakeEntity {
   GuildPreview._new(Map<String, dynamic> raw) : super(Snowflake(raw['id'])) {
     this.name = raw['name'] as String;
 
-    if(this.iconHash != null) {
+    if (this.iconHash != null) {
       this.iconHash = raw['icon'] as String;
     }
 
-    if(this.splashHash != null) {
+    if (this.splashHash != null) {
       this.splashHash = raw['splash'] as String;
     }
 
-    if(this.discoveryHash != null) {
+    if (this.discoveryHash != null) {
       this.discoveryHash = raw['discovery_splash'] as String;
     }
 
-    this.emojis = [
-      for(var rawEmoji in raw['emojis'])
-        Emoji._deserialize(rawEmoji as Map<String, dynamic>)
-    ];
+    this.emojis = [for (var rawEmoji in raw['emojis']) Emoji._deserialize(rawEmoji as Map<String, dynamic>)];
 
     this.features = (raw['features'] as List<dynamic>).map((e) => e.toString()).toList();
 

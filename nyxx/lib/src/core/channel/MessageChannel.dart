@@ -11,8 +11,7 @@ part of nyxx;
 ///   print(message.author.id);
 /// }
 /// ```
-class MessageChannel extends Channel
-    with IterableMixin<Message>, ISend, Disposable {
+class MessageChannel extends Channel with IterableMixin<Message>, ISend, Disposable {
   Timer? _typing;
 
   /// Sent when a new message is received.
@@ -33,8 +32,7 @@ class MessageChannel extends Channel
     return 8 * 1024 * 1024;
   }
 
-  MessageChannel._new(Map<String, dynamic> raw, int type, Nyxx client)
-      : super._new(raw, type, client) {
+  MessageChannel._new(Map<String, dynamic> raw, int type, Nyxx client) : super._new(raw, type, client) {
     this.messages = MessageCache._new(client._options.messageCacheSize);
 
     onTyping = client.onTyping.where((event) => event.channel == this);
@@ -47,7 +45,7 @@ class MessageChannel extends Channel
     if (ignoreCache || !messages.hasKey(id)) {
       var response = await client._http._execute(BasicRequest._new("/channels/${this.id.toString()}/messages/$id"));
 
-      if(response is HttpResponseError) {
+      if (response is HttpResponseError) {
         return Future.error(response);
       }
 
@@ -96,12 +94,12 @@ class MessageChannel extends Channel
   ///   .send(files: [new File("kitten.jpg")], embed: embed, content: "HEJKA!");
   /// ```
   Future<Message> send(
-        {dynamic content,
-        List<AttachmentBuilder>? files,
-        EmbedBuilder? embed,
-        bool? tts,
-        AllowedMentions? allowedMentions,
-        MessageBuilder? builder}) async {
+      {dynamic content,
+      List<AttachmentBuilder>? files,
+      EmbedBuilder? embed,
+      bool? tts,
+      AllowedMentions? allowedMentions,
+      MessageBuilder? builder}) async {
     if (builder != null) {
       content = builder._content;
       files = builder.files;
@@ -112,31 +110,29 @@ class MessageChannel extends Channel
 
     Map<String, dynamic> reqBody = {
       ..._initMessage(content, embed, allowedMentions),
-      if(content != null && tts != null) "tts": tts
+      if (content != null && tts != null) "tts": tts
     };
 
     // Cancel typing if present
     this._typing?.cancel();
 
-    HttpResponse response;
+    _HttpResponse response;
 
     if (files != null && files.isNotEmpty) {
-      for(var file in files) {
-        if(file._bytes.length > fileUploadLimit) {
+      for (var file in files) {
+        if (file._bytes.length > fileUploadLimit) {
           return Future.error("File with name: [${file._name}] is too big!");
         }
       }
 
-      response = await client._http._execute(
-          MultipartRequest._new('/channels/${this.id}/messages',
-              files, method: "POST", fields: reqBody));
+      response = await client._http
+          ._execute(MultipartRequest._new('/channels/${this.id}/messages', files, method: "POST", fields: reqBody));
     } else {
-      response = await client._http._execute(
-          BasicRequest._new('/channels/${this.id}/messages',
-              body: reqBody, method: "POST"));
+      response = await client._http
+          ._execute(BasicRequest._new('/channels/${this.id}/messages', body: reqBody, method: "POST"));
     }
 
-    if(response is HttpResponseSuccess) {
+    if (response is HttpResponseSuccess) {
       return Message._deserialize(response.jsonBody as Map<String, dynamic>, client);
     } else {
       return Future.error(response);
@@ -151,8 +147,7 @@ class MessageChannel extends Channel
   /// Loops `startTyping` until `stopTypingLoop` is called.
   void startTypingLoop() {
     startTyping();
-    this._typing =
-        Timer.periodic(const Duration(seconds: 7), (Timer t) => startTyping());
+    this._typing = Timer.periodic(const Duration(seconds: 7), (Timer t) => startTyping());
   }
 
   /// Stops a typing loop if one is running.
@@ -166,11 +161,8 @@ class MessageChannel extends Channel
   /// ```
   Future<void> bulkRemoveMessages(Iterable<Message> messagesIds) async {
     await for (var chunk in Utils.chunk(messagesIds.toList(), 90)) {
-      await client._http._execute(
-          BasicRequest._new("/channels/${id.toString()}/messages/bulk-delete",
-              method: "POST", body: {
-                "messages": chunk.map((f) => f.id.toString()).toList()
-              }));
+      await client._http._execute(BasicRequest._new("/channels/${id.toString()}/messages/bulk-delete",
+          method: "POST", body: {"messages": chunk.map((f) => f.id.toString()).toList()}));
     }
   }
 
@@ -180,22 +172,18 @@ class MessageChannel extends Channel
   /// ```
   /// var messages = await chan.getMessages(limit: 100, after: Snowflake("222078108977594368"));
   /// ```
-  Stream<Message> getMessages(
-      {int limit = 50,
-      Snowflake? after,
-      Snowflake? before,
-      Snowflake? around}) async* {
+  Stream<Message> getMessages({int limit = 50, Snowflake? after, Snowflake? before, Snowflake? around}) async* {
     Map<String, String> queryParams = {
       "limit": limit.toString(),
-      if (after != null) 'after' : after.toString(),
-      if (before != null) 'before' : before.toString(),
-      if (around != null) 'around' : around.toString()
+      if (after != null) 'after': after.toString(),
+      if (before != null) 'before': before.toString(),
+      if (around != null) 'around': around.toString()
     };
 
-    var response = await client._http._execute(
-        BasicRequest._new('/channels/${this.id}/messages', queryParams: queryParams));
+    var response =
+        await client._http._execute(BasicRequest._new('/channels/${this.id}/messages', queryParams: queryParams));
 
-    if(response is HttpResponseError) {
+    if (response is HttpResponseError) {
       yield* Stream.error(response);
     }
 

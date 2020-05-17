@@ -7,6 +7,6 @@ class UserUpdateEvent {
   late final User user;
 
   UserUpdateEvent._new(Map<String, dynamic> json, Nyxx client) {
-    user = User._new(json['d'] as Map<String, dynamic>, client);
+    user = User._new(json["d"] as Map<String, dynamic>, client);
   }
 }

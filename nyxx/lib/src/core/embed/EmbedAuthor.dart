@@ -25,15 +25,11 @@ class EmbedAuthor implements Convertable<EmbedAuthorBuilder> {
   String toString() => name ?? "";
 
   @override
-  int get hashCode =>
-      url.hashCode * 37 + name.hashCode * 37 + iconUrl.hashCode * 37;
+  int get hashCode => url.hashCode * 37 + name.hashCode * 37 + iconUrl.hashCode * 37;
 
   @override
-  bool operator ==(other) => other is EmbedAuthor
-      ? other.url == this.url &&
-          other.name == this.name &&
-          other.iconUrl == this.iconUrl
-      : false;
+  bool operator ==(other) =>
+      other is EmbedAuthor ? other.url == this.url && other.name == this.name && other.iconUrl == this.iconUrl : false;
 
   @override
   EmbedAuthorBuilder toBuilder() {

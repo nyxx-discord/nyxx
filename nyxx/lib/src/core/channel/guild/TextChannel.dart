@@ -2,9 +2,7 @@ part of nyxx;
 
 /// [TextChannel] represents single text channel on [Guild].
 /// Inhertits from [MessageChannel] and mixes [GuildChannel].
-class TextChannel extends MessageChannel
-    with GuildChannel
-    implements Mentionable {
+class TextChannel extends MessageChannel with GuildChannel implements Mentionable {
   /// Emitted when channel pins are updated.
   late final Stream<ChannelPinsUpdateEvent> pinsUpdated;
 
@@ -20,12 +18,10 @@ class TextChannel extends MessageChannel
   late final int slowModeThreshold;
 
   /// Returns url to this channel.
-  String get url =>
-      "https://discordapp.com/channels/${this.guild.id.toString()}"
+  String get url => "https://discordapp.com/channels/${this.guild.id.toString()}"
       "/${this.id.toString()}";
 
-  TextChannel._new(Map<String, dynamic> raw, Guild guild, Nyxx client)
-      : super._new(raw, 0, client) {
+  TextChannel._new(Map<String, dynamic> raw, Guild guild, Nyxx client) : super._new(raw, 0, client) {
     _initialize(raw, guild);
 
     this.topic = raw['topic'] as String?;
@@ -35,20 +31,17 @@ class TextChannel extends MessageChannel
   }
 
   /// Edits the channel.
-  Future<TextChannel> edit(
-      {String? name, String? topic, int? position, int? slowModeTreshold}) async {
-
-    var body = <String, dynamic> {
-      if(name != null) "name" : name,
-      if(topic != null) "topic" : topic,
-      if(position != null) "position" : position,
-      if(slowModeTreshold != null) "rate_limit_per_user" : slowModeTreshold,
+  Future<TextChannel> edit({String? name, String? topic, int? position, int? slowModeTreshold}) async {
+    var body = <String, dynamic>{
+      if (name != null) "name": name,
+      if (topic != null) "topic": topic,
+      if (position != null) "position": position,
+      if (slowModeTreshold != null) "rate_limit_per_user": slowModeTreshold,
     };
 
-    var response = await client._http._execute(
-        BasicRequest._new( "/channels/${this.id}", method: "PATCH", body: body));
+    var response = await client._http._execute(BasicRequest._new("/channels/${this.id}", method: "PATCH", body: body));
 
-    if(response is HttpResponseSuccess) {
+    if (response is HttpResponseSuccess) {
       return TextChannel._new(response.jsonBody as Map<String, dynamic>, this.guild, client);
     }
 
@@ -59,11 +52,11 @@ class TextChannel extends MessageChannel
   Stream<Webhook> getWebhooks() async* {
     var response = await client._http._execute(BasicRequest._new("/channels/$id/webhooks"));
 
-    if(response is HttpResponseError) {
+    if (response is HttpResponseError) {
       yield* Stream.error(response);
     }
 
-    for(var o in (response as HttpResponseSuccess).jsonBody.values) {
+    for (var o in (response as HttpResponseSuccess).jsonBody.values) {
       yield Webhook._new(o as Map<String, dynamic>, client);
     }
   }
@@ -75,28 +68,26 @@ class TextChannel extends MessageChannel
   /// var webhook = await chan.createWebhook("!a Send nudes kek6407");
   /// ```
   Future<Webhook> createWebhook(String name, {File? avatarFile, String auditReason = ""}) async {
-    if(name.isEmpty || name.length > 80) {
+    if (name.isEmpty || name.length > 80) {
       return Future.error("Webhook's name cannot be shorter than 1 character and longer than 80 characters");
     }
 
-    var body = <String, dynamic> {
-      "name": name
-    };
+    var body = <String, dynamic>{"name": name};
 
-    if(avatarFile != null) {
+    if (avatarFile != null) {
       final extension = Utils.getFileExtension(avatarFile.path);
       final data = base64Encode(await avatarFile.readAsBytes());
 
       body['avatar'] = "data:image/${extension};base64,${data}";
     }
-    
-    var response = await client._http._execute(
-        BasicRequest._new("/channels/$id/webhooks", method: "POST", body: body, auditLog: auditReason));
-    
-    if(response is HttpResponseSuccess) {
+
+    var response = await client._http
+        ._execute(BasicRequest._new("/channels/$id/webhooks", method: "POST", body: body, auditLog: auditReason));
+
+    if (response is HttpResponseSuccess) {
       return Webhook._new(response.jsonBody as Map<String, dynamic>, client);
     }
-    
+
     return Future.error(response);
   }
 
@@ -104,11 +95,12 @@ class TextChannel extends MessageChannel
   Stream<Message> getPinnedMessages() async* {
     var response = await client._http._execute(BasicRequest._new("/channels/$id/pins"));
 
-    if(response is HttpResponseError) {
+    if (response is HttpResponseError) {
       yield* Stream.error(response);
     }
 
-    for (Map<String, dynamic> val in ((response as HttpResponseSuccess).jsonBody.values.first as Iterable<Map<String, dynamic>>)) {
+    for (Map<String, dynamic> val
+        in ((response as HttpResponseSuccess).jsonBody.values.first as Iterable<Map<String, dynamic>>)) {
       yield Message._deserialize(val, client);
     }
   }

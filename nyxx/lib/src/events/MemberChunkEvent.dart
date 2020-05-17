@@ -28,14 +28,14 @@ class MemberChunkEvent {
   String? nonce;
 
   MemberChunkEvent._new(Map<String, dynamic> raw, Nyxx client) {
-    this.chunkIndex = raw['d']['chunk_index'] as int;
-    this.chunkCount = raw['d']['chunk_count'] as int;
+    this.chunkIndex = raw["d"]["chunk_index"] as int;
+    this.chunkCount = raw["d"]["chunk_count"] as int;
 
-    this.guildId = Snowflake(raw['d']['guild_id']);
+    this.guildId = Snowflake(raw["d"]["guild_id"]);
     this.guild = client.guilds[this.guildId];
 
-    if (raw['d']['not_found'] != null) {
-      this.invalidIds = [for (var id in raw['d']['not_found']) Snowflake(id)];
+    if (raw["d"]["not_found"] != null) {
+      this.invalidIds = [for (var id in raw["d"]["not_found"]) Snowflake(id)];
     }
 
     if (this.guild == null) {
@@ -43,12 +43,12 @@ class MemberChunkEvent {
     }
 
     this.members = [
-      for (var memberRaw in raw['d']['members'])
+      for (var memberRaw in raw["d"]["members"])
         Member._standard(memberRaw as Map<String, dynamic>, this.guild!, client)
     ];
 
     // TODO: Thats probably redundant
-    for (var member in members) {
+    for (final member in members) {
       this.guild!.members.add(member.id, member);
     }
   }

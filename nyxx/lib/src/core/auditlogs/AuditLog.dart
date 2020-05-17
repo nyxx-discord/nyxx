@@ -13,13 +13,12 @@ class AuditLog {
   /// List of audit log entries
   late final Map<Snowflake, AuditLogEntry> entries;
 
-  Iterable<AuditLogEntry> filterByUsers(List<User> users) {
-    return entries.values.where((entry) => users.contains(entry.user));
-  }
+  /// Filters audit log by [users]
+  Iterable<AuditLogEntry> filterByUsers(List<User> users) =>
+    entries.values.where((entry) => users.contains(entry.user));
 
   Iterable<AuditLogEntry> filterByChangeType(List<ChangeKeyType> changeType) {
-    return entries.values.where(
-            (entry) => entry.changes.any((t) => changeType.contains(t.key)));
+    return entries.values.where((entry) => entry.changes.any((t) => changeType.contains(t.key)));
   }
 
   Iterable<AuditLogEntry> filterByEntryType(List<AuditLogEntryType> entryType) {
@@ -36,18 +35,15 @@ class AuditLog {
     entries = Map();
 
     raw['webhooks'].forEach((o) {
-      webhooks[Snowflake(o['id'] as String)] =
-          Webhook._new(o as Map<String, dynamic>, client);
+      webhooks[Snowflake(o['id'] as String)] = Webhook._new(o as Map<String, dynamic>, client);
     });
 
     raw['users'].forEach((o) {
-      users[Snowflake(o['id'] as String)] =
-          User._new(o as Map<String, dynamic>, client);
+      users[Snowflake(o['id'] as String)] = User._new(o as Map<String, dynamic>, client);
     });
 
     raw['audit_log_entries'].forEach((o) {
-      entries[Snowflake(o['id'] as String)] =
-          AuditLogEntry._new(o as Map<String, dynamic>, client);
+      entries[Snowflake(o['id'] as String)] = AuditLogEntry._new(o as Map<String, dynamic>, client);
     });
   }
 }
