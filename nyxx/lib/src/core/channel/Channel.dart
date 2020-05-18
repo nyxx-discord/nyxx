@@ -12,40 +12,39 @@ abstract class Channel extends SnowflakeEntity {
 
   Channel._new(Map<String, dynamic> raw, int type, this.client)
       : this.type = ChannelType(type),
-        super(Snowflake(raw['id'] as String));
+        super(Snowflake(raw["id"] as String));
 
   factory Channel._deserialize(Map<String, dynamic> raw, Nyxx client) {
-    var type = raw['d']['type'] as int;
+    var type = raw["d"]["type"] as int;
 
-    final guild = raw['d']['guild_id'] != null ? client.guilds[Snowflake(raw['d']['guild_id'])] : null;
+    final guild = raw["d"]["guild_id"] != null ? client.guilds[Snowflake(raw["d"]["guild_id"])] : null;
 
     switch (type) {
       case 1:
-        return DMChannel._new(raw['d'] as Map<String, dynamic>, client);
+        return DMChannel._new(raw["d"] as Map<String, dynamic>, client);
         break;
       case 3:
-        return GroupDMChannel._new(raw['d'] as Map<String, dynamic>, client);
+        return GroupDMChannel._new(raw["d"] as Map<String, dynamic>, client);
         break;
       case 0:
       case 5:
-        return TextChannel._new(raw['d'] as Map<String, dynamic>, guild!, client);
+        return TextChannel._new(raw["d"] as Map<String, dynamic>, guild!, client);
         break;
       case 2:
-        return VoiceChannel._new(raw['d'] as Map<String, dynamic>, guild!, client);
+        return VoiceChannel._new(raw["d"] as Map<String, dynamic>, guild!, client);
         break;
       case 4:
-        return CategoryChannel._new(raw['d'] as Map<String, dynamic>, guild!, client);
+        return CategoryChannel._new(raw["d"] as Map<String, dynamic>, guild!, client);
         break;
       default:
-        return _InternalChannel._new(raw['d'] as Map<String, dynamic>, type, client);
+        return _InternalChannel._new(raw["d"] as Map<String, dynamic>, type, client);
     }
   }
 
   /// Deletes the channel.
   /// Throws if bot cannot perform operation
-  Future<void> delete({String auditReason = ""}) {
-    return client._http._execute(BasicRequest._new("/channels/${this.id}", method: 'DELETE', auditLog: auditReason));
-  }
+  Future<void> delete({String? auditReason}) =>
+    client._http._execute(BasicRequest._new("/channels/${this.id}", method: "DELETE", auditLog: auditReason));
 
   @override
   String toString() => this.id.toString();
@@ -67,7 +66,7 @@ class ChannelType extends IEnum<int> {
   static const ChannelType guildNews = ChannelType._create(5);
   static const ChannelType guildStore = ChannelType._create(6);
 
-  ChannelType(int value) : super(value);
+  ChannelType.from(int value) : super(value);
   const ChannelType._create(int value) : super(value);
 
   @override

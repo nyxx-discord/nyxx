@@ -15,10 +15,10 @@ class EmbedThumbnail {
   late final int? width;
 
   EmbedThumbnail._new(Map<String, dynamic> raw) {
-    this.url = raw['url'] as String?;
-    this.proxyUrl = raw['proxy_url'] as String?;
-    this.height = raw['height'] as int?;
-    this.width = raw['width'] as int?;
+    this.url = raw["url"] as String?;
+    this.proxyUrl = raw["proxy_url"] as String?;
+    this.height = raw["height"] as int?;
+    this.width = raw["width"] as int?;
   }
 
   @override
