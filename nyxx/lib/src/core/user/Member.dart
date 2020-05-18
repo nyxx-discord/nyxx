@@ -36,10 +36,12 @@ class Member extends User implements GuildEntity {
 
   /// Returns total permissions of user.
   Permissions get effectivePermissions {
-    if (this == guild.owner) return Permissions.all();
+    if (this == guild.owner) {
+      return Permissions.all();
+    }
 
     var total = guild.everyoneRole.permissions.raw;
-    for (var role in roles) {
+    for (final role in roles) {
       total |= role.permissions.raw;
 
       if (PermissionsUtils.isApplied(total, PermissionsConstants.administrator)) {
@@ -98,11 +100,11 @@ class Member extends User implements GuildEntity {
   }
 
   /// Checks if member has specified role. Returns true if user is assigned to given role.
-  bool hasRole(bool func(Role role)) => this.roles.any(func);
+  bool hasRole(bool Function(Role role) func) => this.roles.any(func);
 
   /// Bans the member and optionally deletes [deleteMessageDays] days worth of messages.
   Future<void> ban({int? deleteMessageDays, String? reason, String? auditReason}) async {
-    var body = <String, dynamic>{
+    final body = <String, dynamic>{
       if (deleteMessageDays != null) "delete-message-days": deleteMessageDays,
       if (reason != null) "reason": reason
     };

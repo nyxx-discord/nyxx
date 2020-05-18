@@ -29,7 +29,7 @@ class Shard implements Disposable {
   bool _acked = false;
   late Timer _heartbeatTimer;
   transport.WebSocket? _socket;
-  StreamSubscription? _socketSubscription;
+  StreamSubscription? _socketSubscription; // ignore: cancel_subscriptions
 
   late int _sequence;
   String? _sessionId;

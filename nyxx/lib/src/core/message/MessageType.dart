@@ -1,5 +1,6 @@
 part of nyxx;
 
+/// Represents messgae type
 class MessageType extends IEnum<int> {
   static const MessageType Default = MessageType._create(0);
   static const MessageType recipientAdd = MessageType._create(1);

@@ -31,7 +31,7 @@ class Snowflake implements Comparable<Snowflake> {
   Snowflake.fromNow() : _id = _parseId(DateTime.now());
 
   /// Creates first snowflake which can be deleted by `bulk-delete messages`
-  Snowflake.bulk() : _id = _parseId(DateTime.now().subtract(Duration(days: 14)));
+  Snowflake.bulk() : _id = _parseId(DateTime.now().subtract(const Duration(days: 14)));
 
   /// Creates synthetic snowflake based on given [date].
   Snowflake.fromDateTime(DateTime date) : _id = _parseId(date);

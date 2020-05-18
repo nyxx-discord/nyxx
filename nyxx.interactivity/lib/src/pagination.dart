@@ -21,40 +21,34 @@ class Pagination {
   Pagination(this.pages, this.channel);
 
   /// Generates pagination from String. It divides String into 250 char long pages.
-  factory Pagination.fromString(String str, MessageChannel channel) {
-    return Pagination(_Utils.split(str, 250).toList(), channel);
-  }
+  factory Pagination.fromString(String str, MessageChannel channel) => Pagination(_Utils.split(str, 250).toList(), channel);
 
   /// Generates pagination from String but with user specified size of single page.
-  factory Pagination.fromStringLen(String str, int len, MessageChannel channel) {
-    return Pagination(_Utils.split(str, len).toList(), channel);
-  }
+  factory Pagination.fromStringLen(String str, int len, MessageChannel channel) => Pagination(_Utils.split(str, len).toList(), channel);
 
   /// Generates pagination from String but with user specified number of pages.
-  factory Pagination.fromStringEq(String str, int pieces, MessageChannel channel) {
-    return Pagination(_Utils.splitEqually(str, pieces).toList(), channel);
-  }
+  factory Pagination.fromStringEq(String str, int pieces, MessageChannel channel) => Pagination(_Utils.splitEqually(str, pieces).toList(), channel);
 
   /// Paginates a list of Strings - each String is a different page.
   Future<Message> paginate(Nyxx client, {Duration timeout = const Duration(minutes: 2)}) async {
-    var nextEmoji = EmojiUtils.getEmoji('arrow_forward')!;
-    var backEmoji = EmojiUtils.getEmoji('arrow_backward')!;
-    var firstEmoji = EmojiUtils.getEmoji('track_previous')!;
-    var lastEmoji = EmojiUtils.getEmoji('track_next')!;
+    final nextEmoji = EmojiUtils.getEmoji("arrow_forward")!;
+    final backEmoji = EmojiUtils.getEmoji("arrow_backward")!;
+    final firstEmoji = EmojiUtils.getEmoji("track_previous")!;
+    final lastEmoji = EmojiUtils.getEmoji("track_next")!;
 
-    var msg = await channel.send(content: pages[0]);
+    final msg = await channel.send(content: pages[0]);
     await msg.createReaction(firstEmoji);
     await msg.createReaction(backEmoji);
     await msg.createReaction(nextEmoji);
     await msg.createReaction(lastEmoji);
 
-    Future(() async {
+    await Future(() async {
       var currPage = 0;
-      Stream<MessageReactionEvent> group = _Utils.merge(
+      final group = _Utils.merge(
           [client.onMessageReactionAdded, client.onMessageReactionsRemoved as Stream<MessageReactionEvent>]);
 
-      await for (var event in group) {
-        var emoji = (event as dynamic).emoji as UnicodeEmoji;
+      await for (final event in group) {
+        final emoji = (event as dynamic).emoji as UnicodeEmoji;
 
         if (emoji == nextEmoji) {
           if (currPage <= pages.length - 2) {

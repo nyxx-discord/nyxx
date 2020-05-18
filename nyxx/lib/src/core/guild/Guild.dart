@@ -11,6 +11,7 @@ part of nyxx;
 /// ```
 /// If you want to get [icon] or [splash] of [Guild] use `iconURL()` method - [icon] property returns only hash, same as [splash] property.
 class Guild extends SnowflakeEntity implements Disposable {
+  /// Reference to [Nyxx] instance
   Nyxx client;
 
   /// The guild's name.
@@ -102,6 +103,7 @@ class Guild extends SnowflakeEntity implements Disposable {
   /// Returns url to this guild.
   String get url => "https://discordapp.com/channels/${this.id.toString()}";
 
+  /// Getter for @everyone role
   Role get everyoneRole => roles.values.firstWhere((r) => r.name == "@everyone");
 
   /// Returns member object for bot user
@@ -109,7 +111,7 @@ class Guild extends SnowflakeEntity implements Disposable {
 
   /// Upload limit for this guild in bytes
   int get fileUploadLimit {
-    var megabyte = 1024 * 1024;
+    const megabyte = 1024 * 1024;
 
     if (this.premiumTier == PremiumTier.tier2) {
       return 50 * megabyte;
@@ -123,150 +125,158 @@ class Guild extends SnowflakeEntity implements Disposable {
   }
 
   Guild._new(this.client, Map<String, dynamic> raw, [this.available = true, bool guildCreate = false])
-      : super(Snowflake(raw['id'] as String)) {
+      : super(Snowflake(raw["id"] as String)) {
     if (!this.available) return;
 
-    this.name = raw['name'] as String;
-    this.region = raw['region'] as String;
-    this.afkTimeout = raw['afk_timeout'] as int;
-    this.mfaLevel = raw['mfa_level'] as int;
-    this.verificationLevel = raw['verification_level'] as int;
-    this.notificationLevel = raw['default_message_notifications'] as int;
+    this.name = raw["name"] as String;
+    this.region = raw["region"] as String;
+    this.afkTimeout = raw["afk_timeout"] as int;
+    this.mfaLevel = raw["mfa_level"] as int;
+    this.verificationLevel = raw["verification_level"] as int;
+    this.notificationLevel = raw["default_message_notifications"] as int;
 
-    this.icon = raw['icon'] as String?;
-    this.discoverySplash = raw['discoverySplash'] as String?;
-    this.splash = raw['splash'] as String?;
-    this.embedEnabled = raw['embed_enabled'] as bool?;
+    this.icon = raw["icon"] as String?;
+    this.discoverySplash = raw["discoverySplash"] as String?;
+    this.splash = raw["splash"] as String?;
+    this.embedEnabled = raw["embed_enabled"] as bool?;
 
     this.channels = ChannelCache._new();
 
-    if (raw['roles'] != null) {
+    if (raw["roles"] != null) {
       this.roles = _SnowflakeCache<Role>();
-      raw['roles'].forEach((o) {
-        var role = Role._new(o as Map<String, dynamic>, this, client);
+      raw["roles"].forEach((o) {
+        final role = Role._new(o as Map<String, dynamic>, this, client);
         this.roles[role.id] = role;
       });
     }
 
     this.emojis = _SnowflakeCache();
-    if (raw['emojis'] != null) {
-      raw['emojis'].forEach((dynamic o) {
-        var emoji = GuildEmoji._new(o as Map<String, dynamic>, this, client);
+    if (raw["emojis"] != null) {
+      raw["emojis"].forEach((dynamic o) {
+        final emoji = GuildEmoji._new(o as Map<String, dynamic>, this, client);
         this.emojis[emoji.id] = emoji;
       });
     }
 
-    if (raw.containsKey('embed_channel_id'))
-      this.embedChannel = client.channels[Snowflake(raw['embed_channel_id'] as String)] as GuildChannel;
-
-    if (raw['system_channel_id'] != null) {
-      var snow = Snowflake(raw['system_channel_id'] as String);
-      if (this.channels.hasKey(snow)) this.systemChannel = this.channels[snow] as TextChannel;
+    if (raw.containsKey("embed_channel_id")) {
+      this.embedChannel = client.channels[Snowflake(raw["embed_channel_id"])] as GuildChannel;
     }
 
-    this.features = (raw['features'] as List<dynamic>).cast<String>();
-
-    if (raw['permissions'] != null) {
-      this.currentUserPermissions = Permissions.fromInt(raw['permissions'] as int);
+    if (raw["system_channel_id"] != null) {
+      final id = Snowflake(raw["system_channel_id"] as String);
+      if (this.channels.hasKey(id)) {
+        this.systemChannel = this.channels[id] as TextChannel;
+      }
     }
 
-    if (raw['afk_channel_id'] != null) {
-      var snow = Snowflake(raw['afk_channel_id'] as String);
-      if (this.channels.hasKey(snow)) this.afkChannel = this.channels[snow] as VoiceChannel;
+    this.features = (raw["features"] as List<dynamic>).cast<String>();
+
+    if (raw["permissions"] != null) {
+      this.currentUserPermissions = Permissions.fromInt(raw["permissions"] as int);
     }
 
-    this.systemChannelFlags = raw['system_channel_flags'] as int;
-    this.premiumTier = PremiumTier.from(raw['premium_tier'] as int);
-    this.premiumSubscriptionCount = raw['premium_subscription_count'] as int?;
-    this.preferredLocale = raw['preferred_locale'] as String;
+    if (raw["afk_channel_id"] != null) {
+      final id = Snowflake(raw["afk_channel_id"] as String);
+      if (this.channels.hasKey(id)) {
+        this.afkChannel = this.channels[id] as VoiceChannel;
+      }
+    }
+
+    this.systemChannelFlags = raw["system_channel_flags"] as int;
+    this.premiumTier = PremiumTier.from(raw["premium_tier"] as int);
+    this.premiumSubscriptionCount = raw["premium_subscription_count"] as int?;
+    this.preferredLocale = raw["preferred_locale"] as String;
 
     this.members = _SnowflakeCache();
 
     if (!guildCreate) return;
 
-    raw['channels'].forEach((o) {
+    raw["channels"].forEach((o) {
       late GuildChannel channel;
 
-      if (o['type'] == 0 || o['type'] == 5 || o['type'] == 6)
+      if (o["type"] == 0 || o["type"] == 5 || o["type"] == 6) {
         channel = TextChannel._new(o as Map<String, dynamic>, this, client);
-      else if (o['type'] == 2)
+      } else if (o["type"] == 2) {
         channel = VoiceChannel._new(o as Map<String, dynamic>, this, client);
-      else if (o['type'] == 4) channel = CategoryChannel._new(o as Map<String, dynamic>, this, client);
+      } else if (o["type"] == 4) {
+        channel = CategoryChannel._new(o as Map<String, dynamic>, this, client);
+      }
 
       this.channels[channel.id] = channel;
       client.channels[channel.id] = channel;
     });
 
     if (client._options.cacheMembers) {
-      raw['members'].forEach((o) {
+      raw["members"].forEach((o) {
         final member = Member._standard(o as Map<String, dynamic>, this, client);
         this.members[member.id] = member;
         client.users[member.id] = member;
       });
     }
 
-    raw['presences'].forEach((o) {
-      var member = this.members[Snowflake(o['user']['id'] as String)];
+    raw["presences"].forEach((o) {
+      final member = this.members[Snowflake(o["user"]["id"] as String)];
       if (member != null) {
-        member.status = ClientStatus._deserialize(o['client_status'] as Map<String, dynamic>);
+        member.status = ClientStatus._deserialize(o["client_status"] as Map<String, dynamic>);
 
-        if (o['game'] != null) {
-          member.presence = Activity._new(o['game'] as Map<String, dynamic>);
+        if (o["game"] != null) {
+          member.presence = Activity._new(o["game"] as Map<String, dynamic>);
         }
       }
     });
 
-    this.owner = this.members[Snowflake(raw['owner_id'] as String)];
+    this.owner = this.members[Snowflake(raw["owner_id"] as String)];
 
     this.voiceStates = _SnowflakeCache();
-    if (raw['voice_states'] != null) {
-      raw['voice_states'].forEach((o) {
-        var state = VoiceState._new(o as Map<String, dynamic>, client, this);
+    if (raw["voice_states"] != null) {
+      raw["voice_states"].forEach((o) {
+        final state = VoiceState._new(o as Map<String, dynamic>, client, this);
 
         if (state.user != null) this.voiceStates[state.user!.id] = state;
       });
     }
 
-    if (raw['rules_channel_id'] != null) {
-      this.rulesChannel = this.channels[Snowflake(raw['rules_channel_id'])] as GuildChannel?;
+    if (raw["rules_channel_id"] != null) {
+      this.rulesChannel = this.channels[Snowflake(raw["rules_channel_id"])] as GuildChannel?;
     }
 
-    if (raw['public_updates_channel_id'] != null) {
-      this.publicUpdatesChannel = this.channels[Snowflake(raw['public_updates_channel_id'])] as GuildChannel?;
+    if (raw["public_updates_channel_id"] != null) {
+      this.publicUpdatesChannel = this.channels[Snowflake(raw["public_updates_channel_id"])] as GuildChannel?;
     }
   }
 
-  /// The guild's icon, represented as URL.
-  /// If guild doesn't have icon it returns null.
-  String? iconURL({String format = 'webp', int size = 128}) {
-    if (this.icon != null) return 'https://cdn.${Constants.cdnHost}/icons/${this.id}/${this.icon}.$format?size=$size';
+  /// The guild"s icon, represented as URL.
+  /// If guild doesn"t have icon it returns null.
+  String? iconURL({String format = "webp", int size = 128}) {
+    if (this.icon != null) return "https://cdn.${Constants.cdnHost}/icons/${this.id}/${this.icon}.$format?size=$size";
 
     return null;
   }
 
-  /// URL to guild's splash.
-  /// If guild doesn't have splash it returns null.
-  String? splashURL({String format = 'webp', int size = 128}) {
-    if (this.splash != null)
-      return 'https://cdn.${Constants.cdnHost}/splashes/${this.id}/${this.splash}.$format?size=$size';
+  /// URL to guild"s splash.
+  /// If guild doesn"t have splash it returns null.
+  String? splashURL({String format = "webp", int size = 128}) {
+    if (this.splash != null) {
+      return "https://cdn.${Constants.cdnHost}/splashes/${this.id}/${this.splash}.$format?size=$size";
+    }
 
     return null;
   }
 
-  /// URL to guild's splash.
-  /// If guild doesn't have splash it returns null.
-  String? discoveryURL({String format = 'webp', int size = 128}) {
-    if (this.splash != null)
-      return 'https://cdn.${Constants.cdnHost}/discovery-splashes/${this.id}/${this.splash}.$format?size=$size';
+  /// URL to guild"s splash.
+  /// If guild doesn"t have splash it returns null.
+  String? discoveryURL({String format = "webp", int size = 128}) {
+    if (this.splash != null) {
+      return "https://cdn.${Constants.cdnHost}/discovery-splashes/${this.id}/${this.splash}.$format?size=$size";
+    }
 
     return null;
   }
 
   /// Allows to download [Guild] widget aka advert png
   /// Possible options for [style]: shield (default), banner1, banner2, banner3, banner4
-  String guildWidgetUrl([String style = "shield"]) {
-    return "http://cdn.${Constants.cdnHost}/guilds/${this.id.toString()}/widget.png?style=${style}";
-  }
+  String guildWidgetUrl([String style = "shield"]) =>
+    "http://cdn.${Constants.cdnHost}/guilds/${this.id.toString()}/widget.png?style=$style";
 
   /// Returns a string representation of this object - Guild name.
   @override
@@ -280,7 +290,7 @@ class Guild extends SnowflakeEntity implements Disposable {
   Future<GuildEmoji> getEmoji(Snowflake emojiId, [bool useCache = true]) async {
     if (emojis.hasKey(emojiId) && useCache) return emojis[emojiId] as GuildEmoji;
 
-    var response = await client._http._execute(BasicRequest._new("/guilds/$id/emojis/${emojiId.toString()}"));
+    final response = await client._http._execute(BasicRequest._new("/guilds/$id/emojis/${emojiId.toString()}"));
 
     if (response is HttpResponseSuccess) {
       return GuildEmoji._new(response.jsonBody as Map<String, dynamic>, this, client);
@@ -293,24 +303,25 @@ class Guild extends SnowflakeEntity implements Disposable {
   /// [imageBytes] can be useful if you want to create image from http response.
   ///
   /// ```
-  /// var emojiFile = new File('weed.png');
+  /// var emojiFile = new File("weed.png");
   /// vare emoji = await guild.createEmoji("weed, image: emojiFile");
   /// ```
   Future<GuildEmoji> createEmoji(String name, {List<Role>? roles, File? image, List<int>? imageBytes}) async {
-    if (image != null && await image.length() > 256000)
+    if (image != null && await image.length() > 256000) {
       return Future.error("Emojis and animated emojis have a maximum file size of 256kb.");
+    }
 
     if (image == null && imageBytes == null) {
       return Future.error("Both imageData and file fields cannot be null");
     }
 
-    var body = <String, dynamic>{
+    final body = <String, dynamic>{
       "name": name,
       "image": base64.encode(image == null ? imageBytes! : await image.readAsBytes()),
       if (roles != null) "roles": roles.map((r) => r.id.toString())
     };
 
-    var response = await client._http
+    final response = await client._http
         ._execute(BasicRequest._new("/guilds/${this.id.toString()}/emojis", method: "POST", body: body));
 
     if (response is HttpResponseSuccess) {
@@ -322,13 +333,13 @@ class Guild extends SnowflakeEntity implements Disposable {
 
   /// Returns [int] indicating the number of members that would be removed in a prune operation.
   Future<int> pruneCount(int days, {Iterable<Snowflake>? includeRoles}) async {
-    var response = await client._http._execute(BasicRequest._new("/guilds/$id/prune", queryParams: {
+    final response = await client._http._execute(BasicRequest._new("/guilds/$id/prune", queryParams: {
       "days": days.toString(),
       if (includeRoles != null) "include_roles": includeRoles.map((e) => e.id.toString())
     }));
 
     if (response is HttpResponseSuccess) {
-      return response.jsonBody['pruned'] as int;
+      return response.jsonBody["pruned"] as int;
     }
 
     return Future.error(response);
@@ -337,7 +348,7 @@ class Guild extends SnowflakeEntity implements Disposable {
   /// Prunes the guild, returns the amount of members pruned.
   /// https://discordapp.com/developers/docs/resources/guild#get-guild-prune-count
   Future<int> prune(int days, {Iterable<Snowflake>? includeRoles, String? auditReason}) async {
-    var response = await client._http._execute(BasicRequest._new("/guilds/$id/prune",
+    final response = await client._http._execute(BasicRequest._new("/guilds/$id/prune",
         method: "POST",
         auditLog: auditReason,
         queryParams: {
@@ -346,35 +357,33 @@ class Guild extends SnowflakeEntity implements Disposable {
         }));
 
     if (response is HttpResponseSuccess) {
-      return response.jsonBody['pruned'] as int;
+      return response.jsonBody["pruned"] as int;
     }
 
     return Future.error(response);
   }
 
-  /// Get's the guild's bans.
+  /// Get"s the guild's bans.
   Stream<Ban> getBans() async* {
-    var response = await client._http._execute(BasicRequest._new("/guilds/$id/bans"));
+    final response = await client._http._execute(BasicRequest._new("/guilds/$id/bans"));
 
     if (response is HttpResponseError) {
       yield* Stream.error(response);
     }
 
-    for (var obj in (response as HttpResponseSuccess).jsonBody) {
+    for (final obj in (response as HttpResponseSuccess).jsonBody) {
       yield Ban._new(obj as Map<String, dynamic>, client);
     }
   }
 
   /// Change self nickname in guild
-  Future<void> changeSelfNick(String nick) async {
-    return client._http._execute(
+  Future<void> changeSelfNick(String nick) async =>
+    client._http._execute(
         BasicRequest._new("/guilds/${this.id.toString()}/members/@me/nick", method: "PATCH", body: {"nick": nick}));
-  }
 
   /// Gets single [Ban] object for given [id]
   Future<Ban> getBan(Snowflake id) async {
-    var response =
-        await client._http._execute(BasicRequest._new("/guilds/${this.id.toString()}/bans/${id.toString()}"));
+    final response = await client._http._execute(BasicRequest._new("/guilds/${this.id.toString()}/bans/${id.toString()}"));
 
     if (response is HttpResponseSuccess) {
       return Ban._new(response.jsonBody as Map<String, dynamic>, client);
@@ -385,7 +394,7 @@ class Guild extends SnowflakeEntity implements Disposable {
 
   /// Change guild owner.
   Future<Guild> changeOwner(Member member, {String? auditReason}) async {
-    var response = await client._http._execute(
+    final response = await client._http._execute(
         BasicRequest._new("/guilds/$id", method: "PATCH", auditLog: auditReason, body: {"owner_id": member.id}));
 
     if (response is HttpResponseSuccess) {
@@ -396,32 +405,31 @@ class Guild extends SnowflakeEntity implements Disposable {
   }
 
   /// Leaves the guild.
-  Future<void> leave() async {
-    return client._http._execute(BasicRequest._new("/users/@me/guilds/$id", method: "DELETE"));
-  }
+  Future<void> leave() async =>
+    client._http._execute(BasicRequest._new("/users/@me/guilds/$id", method: "DELETE"));
 
-  Future<Invite> createInvite(
-      {int maxAge = 0, int maxUses = 0, bool temporary = false, bool unique = false, String? auditReason}) async {
-    var chan = this.channels.first as GuildChannel?;
+  /// Creates invite in first channel possible
+  Future<Invite> createInvite({int maxAge = 0, int maxUses = 0, bool temporary = false, bool unique = false, String? auditReason}) async {
+    final channel = this.channels.first as GuildChannel?;
 
-    if (chan == null) {
+    if (channel == null) {
       return Future.error("Cannot get any channel to create invite to");
     }
 
-    return chan.createInvite(
+    return channel.createInvite(
         maxUses: maxUses, maxAge: maxAge, temporary: temporary, unique: unique, auditReason: auditReason);
   }
 
   /// Returns list of Guilds invites
   Stream<Invite> getGuildInvites() async* {
-    var response = await client._http._execute(BasicRequest._new("/guilds/$id/invites"));
+    final response = await client._http._execute(BasicRequest._new("/guilds/$id/invites"));
 
     if (response is HttpResponseError) {
       yield* Stream.error(response);
     }
 
-    for (var obj in (response as HttpResponseSuccess).jsonBody) {
-      yield Invite._new(obj as Map<String, dynamic>, client);
+    for (final raw in (response as HttpResponseSuccess).jsonBody) {
+      yield Invite._new(raw as Map<String, dynamic>, client);
     }
   }
 
@@ -432,15 +440,14 @@ class Guild extends SnowflakeEntity implements Disposable {
   /// var logs = await guild.getAuditLogs(actionType: 1);
   /// ```
   Future<AuditLog> getAuditLogs({Snowflake? userId, int? actionType, Snowflake? before, int? limit}) async {
-    var queryParams = <String, String>{
-      if (userId != null) 'user_id': userId.toString(),
-      if (actionType != null) 'action_type': actionType.toString(),
-      if (before != null) 'before': before.toString(),
-      if (limit != null) 'limit': limit.toString()
+    final queryParams = <String, String>{
+      if (userId != null) "user_id": userId.toString(),
+      if (actionType != null) "action_type": actionType.toString(),
+      if (before != null) "before": before.toString(),
+      if (limit != null) "limit": limit.toString()
     };
 
-    var response =
-        await client._http._execute(BasicRequest._new('/guilds/${this.id}/audit-logs', queryParams: queryParams));
+    final response = await client._http._execute(BasicRequest._new("/guilds/${this.id}/audit-logs", queryParams: queryParams));
 
     if (response is HttpResponseSuccess) {
       return AuditLog._new(response.jsonBody as Map<String, dynamic>, client);
@@ -449,9 +456,9 @@ class Guild extends SnowflakeEntity implements Disposable {
     return Future.error(response);
   }
 
-  /// Get Guild's embed object
+  /// Get Guild"s embed object
   Future<Embed> getGuildEmbed() async {
-    var response = await client._http._execute(BasicRequest._new("/guilds/$id/embed"));
+    final response = await client._http._execute(BasicRequest._new("/guilds/$id/embed"));
 
     if (response is HttpResponseSuccess) {
       return Embed._new(response.jsonBody as Map<String, dynamic>);
@@ -462,7 +469,7 @@ class Guild extends SnowflakeEntity implements Disposable {
 
   /// Modify guild embed object
   Future<Embed> editGuildEmbed(EmbedBuilder embed, {String? auditReason}) async {
-    var response = await client._http
+    final response = await client._http
         ._execute(BasicRequest._new("/guilds/$id/embed", method: "PATCH", auditLog: auditReason, body: embed._build()));
 
     if (response is HttpResponseSuccess) {
@@ -483,7 +490,7 @@ class Guild extends SnowflakeEntity implements Disposable {
   /// var role = await guild.createRole(roleBuilder);
   /// ```
   Future<Role> createRole(RoleBuilder roleBuilder, {String? auditReason}) async {
-    var response = await client._http._execute(
+    final response = await client._http._execute(
         BasicRequest._new("/guilds/$id/roles", method: "POST", auditLog: auditReason, body: roleBuilder._build()));
 
     if (response is HttpResponseSuccess) {
@@ -501,20 +508,19 @@ class Guild extends SnowflakeEntity implements Disposable {
   ///
   /// await guild.addRoleToMember(member, role);
   /// ```
-  Future<void> addRoleToMember(Member user, Role role) async {
-    return client._http._execute(BasicRequest._new('/guilds/$id/members/${user.id}/roles/${role.id}', method: "PUT"));
-  }
+  Future<void> addRoleToMember(Member user, Role role) async =>
+    client._http._execute(BasicRequest._new("/guilds/$id/members/${user.id}/roles/${role.id}", method: "PUT"));
 
   /// Returns list of available [VoiceChannel]s
   Stream<VoiceRegion> getVoiceRegions() async* {
-    var response = await client._http._execute(BasicRequest._new("/guilds/$id/regions"));
+    final response = await client._http._execute(BasicRequest._new("/guilds/$id/regions"));
 
     if (response is HttpResponseError) {
       yield* Stream.error(response);
     }
 
-    for (var obj in (response as HttpResponseSuccess).jsonBody) {
-      yield (VoiceRegion._new(obj as Map<String, dynamic>));
+    for (final raw in (response as HttpResponseSuccess).jsonBody) {
+      yield VoiceRegion._new(raw as Map<String, dynamic>);
     }
   }
 
@@ -542,25 +548,25 @@ class Guild extends SnowflakeEntity implements Disposable {
     }
 
     // Construct body
-    var body = <String, dynamic>{
+    final body = <String, dynamic>{
       "name": name,
       "type": type._value,
-      if (bitrate != null) 'bitrate': bitrate,
-      if (topic != null) 'topic': topic,
-      if (parent != null) 'parent_id': parent.id.toString(),
-      if (nsfw != null) 'nsfw': nsfw,
-      if (userLimit != null) 'user_limit': userLimit,
-      if (permissions != null) 'permission_overwrites': permissions
+      if (bitrate != null) "bitrate": bitrate,
+      if (topic != null) "topic": topic,
+      if (parent != null) "parent_id": parent.id.toString(),
+      if (nsfw != null) "nsfw": nsfw,
+      if (userLimit != null) "user_limit": userLimit,
+      if (permissions != null) "permission_overwrites": permissions
     };
 
-    var response = await client._http
+    final response = await client._http
         ._execute(BasicRequest._new("/guilds/$id/channels", method: "POST", body: body, auditLog: auditReason));
 
     if (response is HttpResponseError) {
       return Future.error(response);
     }
 
-    var raw = (response as HttpResponseSuccess).jsonBody;
+    final raw = (response as HttpResponseSuccess).jsonBody;
 
     switch (type._value) {
       case 0:
@@ -600,25 +606,22 @@ class Guild extends SnowflakeEntity implements Disposable {
   ///
   /// await guild.ban(member);
   /// ```
-  Future<void> ban(Member member, {int deleteMessageDays = 0, String? auditReason}) async {
-    return client._http._execute(BasicRequest._new("/guilds/${this.id}/bans/${member.id.toString()}",
+  Future<void> ban(Member member, {int deleteMessageDays = 0, String? auditReason}) async =>
+    client._http._execute(BasicRequest._new("/guilds/${this.id}/bans/${member.id.toString()}",
         method: "PUT", auditLog: auditReason, body: {"delete-message-days": deleteMessageDays}));
-  }
 
   /// Kicks user from guild. Member is removed from guild and he is able to rejoin
   ///
   /// ```
   /// await guild.kick(member);
   /// ```
-  Future<void> kick(Member member, {String? auditReason}) async {
-    return client._http._execute(BasicRequest._new("/guilds/${this.id.toString()}/members/${member.id.toString()}",
+  Future<void> kick(Member member, {String? auditReason}) async =>
+    client._http._execute(BasicRequest._new("/guilds/${this.id.toString()}/members/${member.id.toString()}",
         method: "DELTE", auditLog: auditReason));
-  }
 
   /// Unbans a user by ID.
-  Future<void> unban(Snowflake id) async {
-    return client._http._execute(BasicRequest._new("/guilds/${this.id}/bans/${id.toString()}", method: "DELETE"));
-  }
+  Future<void> unban(Snowflake id) async =>
+    client._http._execute(BasicRequest._new("/guilds/${this.id}/bans/${id.toString()}", method: "DELETE"));
 
   /// Edits the guild.
   Future<Guild> edit(
@@ -629,7 +632,7 @@ class Guild extends SnowflakeEntity implements Disposable {
       int? afkTimeout,
       String? icon,
       String? auditReason}) async {
-    var body = <String, dynamic>{
+    final body = <String, dynamic>{
       if (name != null) "name": name,
       if (verificationLevel != null) "verification_level": verificationLevel,
       if (notificationLevel != null) "default_message_notifications": notificationLevel,
@@ -638,7 +641,7 @@ class Guild extends SnowflakeEntity implements Disposable {
       if (icon != null) "icon": icon
     };
 
-    var response = await client._http
+    final response = await client._http
         ._execute(BasicRequest._new("/guilds/${this.id}", method: "PATCH", auditLog: auditReason, body: body));
 
     if (response is HttpResponseSuccess) {
@@ -658,12 +661,14 @@ class Guild extends SnowflakeEntity implements Disposable {
   /// Gets a [Member] object by id. Caches fetched member if not cached.
   ///
   /// ```
-  /// var member = guild.getMember(Snowflake('302359795648954380'));
+  /// var member = guild.getMember(Snowflake("302359795648954380"));
   /// ```
   Future<Member> getMemberById(Snowflake id) async {
-    if (this.members.hasKey(id)) return this.members[id] as Member;
+    if (this.members.hasKey(id)) {
+      return this.members[id] as Member;
+    }
 
-    var response = await client._http._execute(BasicRequest._new('/guilds/${this.id}/members/${id.toString()}'));
+    final response = await client._http._execute(BasicRequest._new("/guilds/${this.id}/members/${id.toString()}"));
 
     if (response is HttpResponseSuccess) {
       return Member._standard(response.jsonBody as Map<String, dynamic>, this, client);
@@ -676,14 +681,14 @@ class Guild extends SnowflakeEntity implements Disposable {
   /// [after] is used to continue from specified user id.
   /// By default limits to one user - use [limit] paramter to change that behavior.
   Stream<Member> getMembers({int limit = 1, Snowflake? after}) async* {
-    var request = this.client._http._execute(BasicRequest._new("/guilds/${this.id.toString()}/members",
+    final request = this.client._http._execute(BasicRequest._new("/guilds/${this.id.toString()}/members",
         queryParams: {"limit": limit.toString(), if (after != null) "after": after.toString()}));
 
     if (request is HttpResponseError) {
       yield* Stream.error(request);
     }
 
-    for (var rawMember in ((request as HttpResponseSuccess).jsonBody as List<dynamic>)) {
+    for (final rawMember in (request as HttpResponseSuccess).jsonBody as List<dynamic>) {
       yield Member._standard(rawMember as Map<String, dynamic>, this, client);
     }
   }
@@ -691,33 +696,34 @@ class Guild extends SnowflakeEntity implements Disposable {
   /// Returns a [Stream] of [Member] objects whose username or nickname starts with a provided string.
   /// By default limits to one entry - can be changed with [limit] parameter.
   Stream<Member> searchMembers(String query, {int limit = 1}) async* {
-    var response = await client._http._execute(BasicRequest._new("/guilds/${this.id}/members/search",
+    final response = await client._http._execute(BasicRequest._new("/guilds/${this.id}/members/search",
         queryParams: {"query": query, "limit": limit.toString()}));
 
     if (response is HttpResponseError) {
       yield* Stream.error(response);
     }
 
-    for (Map<String, dynamic> member in (response as HttpResponseSuccess).jsonBody) {
+    for (final Map<String, dynamic> member in (response as HttpResponseSuccess).jsonBody) {
       yield Member._standard(member, this, client);
     }
   }
 
+  /// Returns a [Stream] of [Member] objects whose username or nickname starts with a provided string.
+  /// By default limits to one entry - can be changed with [limit] parameter.
   Stream<Member> searchMembersGateway(String query, {int limit = 0}) async* {
-    var nonce = "$query${id.toString()}";
+    final nonce = "$query${id.toString()}";
 
     this.client.shard.requestMembers(this.id, query: query, limit: limit, nonce: nonce);
 
-    var first = (await this.client.shard.onMemberChunk.take(1).toList()).first;
+    final first = (await this.client.shard.onMemberChunk.take(1).toList()).first;
 
-    for (var member in first.members) {
+    for (final member in first.members) {
       yield member;
     }
 
     if (first.chunkCount > 1) {
-      await for (var event
-          in this.client.shard.onMemberChunk.where((event) => event.nonce == nonce).take(first.chunkCount - 1)) {
-        for (var member in event.members) {
+      await for (final event in this.client.shard.onMemberChunk.where((event) => event.nonce == nonce).take(first.chunkCount - 1)) {
+        for (final member in event.members) {
           yield member;
         }
       }
@@ -726,21 +732,20 @@ class Guild extends SnowflakeEntity implements Disposable {
 
   /// Gets all of the webhooks for this channel.
   Stream<Webhook> getWebhooks() async* {
-    var response = await client._http._execute(BasicRequest._new("/channels/$id/webhooks"));
+    final response = await client._http._execute(BasicRequest._new("/channels/$id/webhooks"));
 
     if (response is HttpResponseError) {
       yield* Stream.error(response);
     }
 
-    for (var o in (response as HttpResponseSuccess).jsonBody.values) {
-      yield Webhook._new(o as Map<String, dynamic>, client);
+    for (final raw in (response as HttpResponseSuccess).jsonBody.values) {
+      yield Webhook._new(raw as Map<String, dynamic>, client);
     }
   }
 
   /// Deletes the guild.
-  Future<void> delete() async {
-    return client._http._execute(BasicRequest._new("/guilds/${this.id}", method: "DELETE"));
-  }
+  Future<void> delete() async =>
+    client._http._execute(BasicRequest._new("/guilds/${this.id}", method: "DELETE"));
 
   @override
   Future<void> dispose() async {

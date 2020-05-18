@@ -9,16 +9,16 @@ class ClientUser extends User {
   bool? mfa;
 
   ClientUser._new(Map<String, dynamic> data, Nyxx client) : super._new(data, client) {
-    this.verified = data['verified'] as bool;
-    this.mfa = data['mfa_enabled'] as bool;
+    this.verified = data["verified"] as bool;
+    this.mfa = data["mfa_enabled"] as bool;
   }
 
   /// Allows to get [Member] objects for all guilds for bot user.
   Map<Guild, Member> getMembership() {
-    var membershipCollection = Map<Guild, Member>();
+    final membershipCollection = <Guild, Member>{};
 
-    for (var guild in client.guilds.values) {
-      var member = guild.members[this.id];
+    for (final guild in client.guilds.values) {
+      final member = guild.members[this.id];
 
       if (member != null) {
         membershipCollection[guild] = member;
@@ -34,12 +34,14 @@ class ClientUser extends User {
       return Future.error("Cannot edit user with null values");
     }
 
-    var body = <String, dynamic>{if (username != null) 'username': username};
+    final body = <String, dynamic>{
+      if (username != null) "username": username
+    };
 
-    var base64Encoded = avatar != null ? base64Encode(await avatar.readAsBytes()) : encodedAvatar;
-    body['avatar'] = "data:image/jpeg;base64,$base64Encoded";
+    final base64Encoded = avatar != null ? base64Encode(await avatar.readAsBytes()) : encodedAvatar;
+    body["avatar"] = "data:image/jpeg;base64,$base64Encoded";
 
-    var response = await client._http._execute(BasicRequest._new("/users/@me", method: "PATCH", body: body));
+    final response = await client._http._execute(BasicRequest._new("/users/@me", method: "PATCH", body: body));
 
     if (response is HttpResponseSuccess) {
       return User._new(response.jsonBody as Map<String, dynamic>, client);
