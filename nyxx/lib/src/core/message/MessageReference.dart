@@ -12,14 +12,14 @@ class MessageReference {
   Guild? guild;
 
   MessageReference._new(Map<String, dynamic> raw, Nyxx client) {
-    this.channel = client.channels[Snowflake(raw['channel_id'])] as MessageChannel?;
+    this.channel = client.channels[Snowflake(raw["channel_id"])] as MessageChannel?;
 
-    if (raw['message_id'] != null && this.channel != null) {
-      this.message = this.channel!.messages[Snowflake(raw['message_id'])];
+    if (raw["message_id"] != null && this.channel != null) {
+      this.message = this.channel!.messages[Snowflake(raw["message_id"])];
     }
 
-    if (raw['guild_id'] != null) {
-      this.guild = client.guilds[Snowflake(raw['guild_id'])];
+    if (raw["guild_id"] != null) {
+      this.guild = client.guilds[Snowflake(raw["guild_id"])];
     }
   }
 }

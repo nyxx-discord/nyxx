@@ -145,7 +145,7 @@ class Guild extends SnowflakeEntity implements Disposable {
     if (raw["roles"] != null) {
       this.roles = _SnowflakeCache<Role>();
       raw["roles"].forEach((o) {
-        var role = Role._new(o as Map<String, dynamic>, this, client);
+        final role = Role._new(o as Map<String, dynamic>, this, client);
         this.roles[role.id] = role;
       });
     }
@@ -276,7 +276,7 @@ class Guild extends SnowflakeEntity implements Disposable {
   /// Allows to download [Guild] widget aka advert png
   /// Possible options for [style]: shield (default), banner1, banner2, banner3, banner4
   String guildWidgetUrl([String style = "shield"]) =>
-    "http://cdn.${Constants.cdnHost}/guilds/${this.id.toString()}/widget.png?style=${style}";
+    "http://cdn.${Constants.cdnHost}/guilds/${this.id.toString()}/widget.png?style=$style";
 
   /// Returns a string representation of this object - Guild name.
   @override
@@ -703,7 +703,7 @@ class Guild extends SnowflakeEntity implements Disposable {
       yield* Stream.error(response);
     }
 
-    for (Map<String, dynamic> member in (response as HttpResponseSuccess).jsonBody) {
+    for (final Map<String, dynamic> member in (response as HttpResponseSuccess).jsonBody) {
       yield Member._standard(member, this, client);
     }
   }

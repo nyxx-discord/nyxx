@@ -38,20 +38,16 @@ class ClientStatus {
   late final UserStatus phone;
 
   ClientStatus._deserialize(Map<String, dynamic> raw) {
-    this.desktop = UserStatus.from(raw['desktop'] as String?);
-    this.web = UserStatus.from(raw['web'] as String?);
-    this.phone = UserStatus.from(raw['phone'] as String?);
+    this.desktop = UserStatus.from(raw["desktop"] as String?);
+    this.web = UserStatus.from(raw["web"] as String?);
+    this.phone = UserStatus.from(raw["phone"] as String?);
   }
 
   /// Returns if user is online
-  bool get isOnline {
-    return this.desktop.isOnline || this.phone.isOnline || this.web.isOnline;
-  }
+  bool get isOnline => this.desktop.isOnline || this.phone.isOnline || this.web.isOnline;
 
   @override
-  int get hashCode {
-    return desktop.hashCode * web.hashCode * phone.hashCode;
-  }
+  int get hashCode => desktop.hashCode * web.hashCode * phone.hashCode;
 
   @override
   bool operator ==(other) {

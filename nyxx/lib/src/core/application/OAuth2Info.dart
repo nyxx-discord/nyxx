@@ -16,13 +16,13 @@ class OAuth2Info {
   late final Map<Snowflake, OAuth2Guild> guilds;
 
   OAuth2Info._new(Map<String, dynamic> raw, Nyxx client) {
-    this.app = OAuth2Application._new(raw['application'] as Map<String, dynamic>);
-    this.bot = User._new(raw['bot'] as Map<String, dynamic>, client);
-    this.me = User._new(raw['user'] as Map<String, dynamic>, client);
+    this.app = OAuth2Application._new(raw["application"] as Map<String, dynamic>);
+    this.bot = User._new(raw["bot"] as Map<String, dynamic>, client);
+    this.me = User._new(raw["user"] as Map<String, dynamic>, client);
 
-    this.guilds = Map<Snowflake, OAuth2Guild>();
-    for (Map<String, dynamic> v in raw['guilds']) {
-      final guild = OAuth2Guild._new(v);
+    this.guilds = <Snowflake, OAuth2Guild>{};
+    for (final raw in raw["guilds"]) {
+      final guild = OAuth2Guild._new(raw as Map<String, dynamic>);
       this.guilds[Snowflake(guild.id as String)] = guild;
     }
   }

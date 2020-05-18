@@ -11,11 +11,11 @@ abstract class Channel extends SnowflakeEntity {
   Nyxx client;
 
   Channel._new(Map<String, dynamic> raw, int type, this.client)
-      : this.type = ChannelType(type),
+      : this.type = ChannelType._create(type),
         super(Snowflake(raw["id"] as String));
 
   factory Channel._deserialize(Map<String, dynamic> raw, Nyxx client) {
-    var type = raw["d"]["type"] as int;
+    final type = raw["d"]["type"] as int;
 
     final guild = raw["d"]["guild_id"] != null ? client.guilds[Snowflake(raw["d"]["guild_id"])] : null;
 

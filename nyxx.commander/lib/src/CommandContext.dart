@@ -34,10 +34,8 @@ class CommandContext {
       EmbedBuilder? embed,
       bool? tts,
       AllowedMentions? allowedMentions,
-      MessageBuilder? builder}) {
-    return channel.send(
+      MessageBuilder? builder}) => channel.send(
         content: content, embed: embed, tts: tts, files: files, builder: builder, allowedMentions: allowedMentions);
-  }
 
   /// Reply to messages, then delete it when [duration] expires.
   ///
@@ -48,20 +46,13 @@ class CommandContext {
   /// }
   /// ```
   Future<Message> replyTemp(Duration duration,
-      {dynamic content,
-      List<AttachmentBuilder>? files,
-      EmbedBuilder? embed,
-      bool? tts,
-      AllowedMentions? allowedMentions,
-      MessageBuilder? builder}) {
-    return channel
-        .send(
-            content: content, embed: embed, files: files, tts: tts, builder: builder, allowedMentions: allowedMentions)
+      {dynamic content, List<AttachmentBuilder>? files, EmbedBuilder? embed, bool? tts, AllowedMentions? allowedMentions, MessageBuilder? builder}) =>
+      channel
+        .send(content: content, embed: embed, files: files, tts: tts, builder: builder, allowedMentions: allowedMentions)
         .then((msg) {
-      Timer(duration, () => msg.delete());
-      return msg;
-    });
-  }
+          Timer(duration, () => msg.delete());
+          return msg;
+      });
 
   /// Replies to message after delay specified with [duration]
   /// ```
@@ -76,8 +67,7 @@ class CommandContext {
       EmbedBuilder? embed,
       bool? tts,
       AllowedMentions? allowedMentions,
-      MessageBuilder? builder}) {
-    return Future.delayed(
+      MessageBuilder? builder}) => Future.delayed(
         duration,
         () => channel.send(
             content: content,
@@ -86,7 +76,6 @@ class CommandContext {
             tts: tts,
             builder: builder,
             allowedMentions: allowedMentions));
-  }
 
   /// Gather emojis of message in given time
   ///
@@ -98,36 +87,28 @@ class CommandContext {
   ///   ...
   /// }
   /// ```
-  Future<Map<Emoji, int>?> collectEmojis(Message msg, Duration duration) {
-    return Future<Map<Emoji, int>?>(() async {
-      var m = Map<Emoji, int>();
-
-      await for (var r
-          in msg.client.onMessageReactionAdded.where((evnt) => evnt.message != null && evnt.message!.id == msg.id)) {
-        if (m.containsKey(r.emoji)) {
+  Future<Map<Emoji, int>?> collectEmojis(Message msg, Duration duration) => Future<Map<Emoji, int>?>(() async {
+      final collectedEmoji = <Emoji, int>{};
+      await for (final event in msg.client.onMessageReactionAdded.where((evnt) => evnt.message != null && evnt.message!.id == msg.id)) {
+        if (collectedEmoji.containsKey(event.emoji)) {
           // TODO: NNBD: weird stuff
-          var value = m[r.emoji];
+          var value = collectedEmoji[event.emoji];
 
           if (value != null) {
             value += 1;
-            m[r.emoji] = value;
+            collectedEmoji[event.emoji] = value;
           }
         } else {
-          m[r.emoji] = 1;
+          collectedEmoji[event.emoji] = 1;
         }
       }
 
-      return m;
+      return collectedEmoji;
     }).timeout(duration, onTimeout: () => null);
-  }
 
   /// Waits for first [TypingEvent] and returns it. If timed out returns null.
   /// Can listen to specific user by specifying [user]
-  Future<TypingEvent?> waitForTyping(User user, {Duration timeout = const Duration(seconds: 30)}) {
-    return Future<TypingEvent?>(() {
-      return user.client.onTyping.firstWhere((e) => e.user == user && e.channel == this.channel);
-    }).timeout(timeout, onTimeout: () => null);
-  }
+  Future<TypingEvent?> waitForTyping(User user, {Duration timeout = const Duration(seconds: 30)}) => Future<TypingEvent?>(() => user.client.onTyping.firstWhere((e) => e.user == user && e.channel == this.channel)).timeout(timeout, onTimeout: () => null);
 
   /// Gets all context channel messages that satisfies [predicate].
   ///
@@ -137,9 +118,7 @@ class CommandContext {
   ///   var messages = await context.nextMessagesWhere((msg) => msg.content.startsWith("fuck"));
   /// }
   /// ```
-  Stream<MessageReceivedEvent> nextMessagesWhere(bool predicate(MessageReceivedEvent msg), {int limit = 100}) {
-    return channel.onMessage.where(predicate).take(limit);
-  }
+  Stream<MessageReceivedEvent> nextMessagesWhere(bool Function(MessageReceivedEvent msg) predicate, {int limit = 100}) => channel.onMessage.where(predicate).take(limit);
 
   /// Gets next [num] number of any messages sent within one context (same channel).
   ///
@@ -150,9 +129,7 @@ class CommandContext {
   ///   var messages = await context.nextMessages(10);
   /// }
   /// ```
-  Stream<MessageReceivedEvent> nextMessages(int num) {
-    return channel.onMessage.take(num);
-  }
+  Stream<MessageReceivedEvent> nextMessages(int num) => channel.onMessage.take(num);
 
   /// Returns stream of all code blocks in message
   /// Language string `dart, java` will be ignored and not included
@@ -162,14 +139,14 @@ class CommandContext {
   /// ```
   /// """
   Iterable<String> getCodeBlocks() sync* {
-    var regex = RegExp(r"```(\w+)?(\s)?(((.+)(\s)?)+)```");
+    final regex = RegExp(r"```(\w+)?(\s)?(((.+)(\s)?)+)```");
 
-    var matches = regex.allMatches(message.content);
-    for (var m in matches) {
-      var groupText = m.group(3);
+    final matches = regex.allMatches(message.content);
+    for (final match in matches) {
+      final matchedText = match.group(3);
 
-      if (groupText != null) {
-        yield groupText;
+      if (matchedText != null) {
+        yield matchedText;
       }
     }
   }
