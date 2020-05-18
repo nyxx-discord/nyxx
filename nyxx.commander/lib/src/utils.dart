@@ -1,8 +1,8 @@
 part of nyxx.commander;
 
 bool _isCommandMatching(String command, String message) {
-  var commandParts = command.split(" ");
-  var messageParts = message.split(" ");
+  final commandParts = command.split(" ");
+  final messageParts = message.split(" ");
 
   if (commandParts.length > messageParts.length) {
     return false;

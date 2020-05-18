@@ -11,17 +11,17 @@ class OAuth2Guild extends SnowflakeEntity {
   /// The guild's name
   late final String name;
 
-  OAuth2Guild._new(Map<String, dynamic> raw) : super(Snowflake(raw['id'] as String)) {
-    this.permissions = Permissions.fromInt(raw['permissions'] as int);
-    this.icon = raw['icon'] as String;
-    this.name = raw['name'] as String;
+  OAuth2Guild._new(Map<String, dynamic> raw) : super(Snowflake(raw["id"] as String)) {
+    this.permissions = Permissions.fromInt(raw["permissions"] as int);
+    this.icon = raw["icon"] as String;
+    this.name = raw["name"] as String;
   }
 
   /// Returns a string representation of this object.
   @override
   String toString() => this.name;
 
-  String? iconUrl({String format = "png", int size = 512}) {
-    return "https://cdn.discordapp.com/icons/${this.id.toString()}/$icon.$format?size=$size";
-  }
+  /// Returns url to guilds icon
+  String? iconUrl({String format = "png", int size = 512}) =>
+    "https://cdn.discordapp.com/icons/${this.id.toString()}/$icon.$format?size=$size";
 }

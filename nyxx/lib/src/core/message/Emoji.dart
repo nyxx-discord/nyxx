@@ -8,11 +8,11 @@ abstract class Emoji {
   Emoji(this.name);
 
   factory Emoji._deserialize(Map<String, dynamic> raw) {
-    if (raw['id'] != null) {
+    if (raw["id"] != null) {
       return GuildEmoji._partial(raw);
     }
 
-    return UnicodeEmoji(raw['name'] as String);
+    return UnicodeEmoji(raw["name"] as String);
   }
 
   /// Encodes Emoji to API format

@@ -1,13 +1,13 @@
-import 'dart:async';
-import 'dart:io';
+import "dart:async";
+import "dart:io";
 
-import 'package:nyxx/nyxx.dart';
-import 'package:nyxx.commander/commander.dart';
+import "package:nyxx/nyxx.dart";
+import "package:nyxx.commander/commander.dart";
 
 void main() {
   setupDefaultLogging();
 
-  var bot = Nyxx(Platform.environment['DISCORD_TOKEN']!, ignoreExceptions: false);
+  final bot = Nyxx(Platform.environment["DISCORD_TOKEN"]!, ignoreExceptions: false);
 
   bot.onMessageReceived.listen((event) async {
     if (event.message.content == "Test 1") {
@@ -27,17 +27,17 @@ void main() {
   });
 
   bot.onReady.listen((e) async {
-    var channel = bot.channels[Snowflake('422285619952222208')] as TextChannel;
+    final channel = bot.channels[Snowflake("422285619952222208")] as TextChannel;
 
     await channel.send(content: "Testing Commander");
 
-    var msg1 = await channel.send(content: "test>test1");
+    final msg1 = await channel.send(content: "test>test1");
     msg1.delete();
 
-    var msg2 = await channel.send(content: "test>test2 arg1");
+    final msg2 = await channel.send(content: "test>test2 arg1");
     msg2.delete();
 
-    var msg3 = await channel.send(content: "test>test3");
+    final msg3 = await channel.send(content: "test>test3");
     msg3.delete();
   });
 
@@ -53,7 +53,7 @@ void main() {
       await context.channel.send(content: "Test 1");
     })
     ..registerCommand("test2", (context, message) async {
-      var args = message.split(" ");
+      final args = message.split(" ");
 
       if (args.length == 2 && args.last == "arg1") {
         await context.channel.send(content: "Test 2");
@@ -64,7 +64,7 @@ void main() {
     });
 
   Timer(const Duration(seconds: 60), () {
-    print('Timed out waiting for messages');
+    print("Timed out waiting for messages");
     exit(1);
   });
 }

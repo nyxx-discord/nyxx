@@ -11,11 +11,11 @@ Future<Map<Emoji, int>> createPoll(TextChannel channel, String title, Map<Emoji,
     {Duration timeout = const Duration(minutes: 10),
     String? message,
     bool delete = false,
-    dynamic messageFactory(Map<Emoji, String> options, String message)?}) async {
+    dynamic Function(Map<Emoji, String> options, String message)? messageFactory}) async {
   var toSend;
 
   if (messageFactory == null) {
-    StringBuffer buffer = StringBuffer();
+    final buffer = StringBuffer();
 
     buffer.writeln(title);
     options.forEach((k, v) {
@@ -39,32 +39,31 @@ Future<Map<Emoji, int>> createPoll(TextChannel channel, String title, Map<Emoji,
     return Future.error("Cannot create poll");
   }
 
-  for (var emoji in options.keys) {
+  for (final emoji in options.keys) {
     await msg.createReaction(emoji);
   }
 
-  var m = Map<Emoji, int>();
+  final emojiCollection = <Emoji, int>{};
 
   return Future<Map<Emoji, int>>(() async {
-    await for (MessageReactionEvent r
-        in channel.client.onMessageReactionAdded.where((evnt) => evnt.message?.id == msg.id)) {
-      if (m.containsKey(r.emoji)) {
+    await for (final event in channel.client.onMessageReactionAdded.where((evnt) => evnt.message?.id == msg.id)) {
+      if (emojiCollection.containsKey(event.emoji)) {
         // TODO: NNBD: weird stuff
-        var value = m[r.emoji];
+        var value = emojiCollection[event.emoji];
 
         if (value != null) {
           value += 1;
-          m[r.emoji] = value;
+          emojiCollection[event.emoji] = value;
         }
       } else {
-        m[r.emoji] = 1;
+        emojiCollection[event.emoji] = 1;
       }
     }
 
-    return m;
+    return emojiCollection;
   }).timeout(timeout, onTimeout: () async {
     if (delete) await msg.delete();
 
-    return m;
+    return emojiCollection;
   });
 }

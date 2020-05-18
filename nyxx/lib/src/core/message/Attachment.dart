@@ -23,14 +23,14 @@ class Attachment extends SnowflakeEntity {
   /// Indicates if attachment is spoiler
   bool get isSpoiler => filename.startsWith("SPOILER_");
 
-  Attachment._new(Map<String, dynamic> raw) : super(Snowflake(raw['id'] as String)) {
-    this.filename = raw['filename'] as String;
-    this.url = raw['url'] as String;
-    this.proxyUrl = raw['proxyUrl'] as String?;
-    this.size = raw['size'] as int;
+  Attachment._new(Map<String, dynamic> raw) : super(Snowflake(raw["id"] as String)) {
+    this.filename = raw["filename"] as String;
+    this.url = raw["url"] as String;
+    this.proxyUrl = raw["proxyUrl"] as String?;
+    this.size = raw["size"] as int;
 
-    this.height = raw['height'] as int?;
-    this.width = raw['width'] as int?;
+    this.height = raw["height"] as int?;
+    this.width = raw["width"] as int?;
   }
 
   @override

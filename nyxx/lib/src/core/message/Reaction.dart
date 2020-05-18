@@ -12,12 +12,12 @@ class Reaction {
   late final Emoji emoji;
 
   Reaction._new(Map<String, dynamic> raw) {
-    this.count = raw['count'] as int;
-    this.me = raw['me'] as bool;
+    this.count = raw["count"] as int;
+    this.me = raw["me"] as bool;
 
-    var rawEmoji = raw['emoji'] as Map<String, dynamic>;
-    if (rawEmoji['id'] == null) {
-      this.emoji = UnicodeEmoji(rawEmoji['name'] as String);
+    final rawEmoji = raw["emoji"] as Map<String, dynamic>;
+    if (rawEmoji["id"] == null) {
+      this.emoji = UnicodeEmoji(rawEmoji["name"] as String);
     } else {
       this.emoji = GuildEmoji._partial(rawEmoji);
     }

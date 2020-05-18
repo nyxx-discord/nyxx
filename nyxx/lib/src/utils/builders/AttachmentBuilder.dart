@@ -21,7 +21,7 @@ class AttachmentBuilder {
   /// Open file at [path] then read it's contents and prepare to send. Name will be automatically extracted from path if no name provided.
   factory AttachmentBuilder.path(String path, {String? name, bool? spoiler}) {
     final bytes = File(path).readAsBytesSync();
-    final fileName = name ?? pathUtils.basename(path);
+    final fileName = name ?? path_utils.basename(path);
 
     return AttachmentBuilder._new(bytes, fileName, spoiler);
   }
@@ -29,7 +29,7 @@ class AttachmentBuilder {
   /// Create attachment from specified file instance. Name will be automatically extracted from path if no name provided.
   factory AttachmentBuilder.file(File file, {String? name, bool? spoiler}) {
     final  bytes = file.readAsBytesSync();
-    final fileName = name ?? pathUtils.basename(file.path);
+    final fileName = name ?? path_utils.basename(file.path);
 
     return AttachmentBuilder._new(bytes, fileName, spoiler);
   }
