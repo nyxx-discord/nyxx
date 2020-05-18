@@ -12,9 +12,9 @@ class EmbedFooter implements Convertable<EmbedFooterBuilder> {
   late final String? iconProxyUrl;
 
   EmbedFooter._new(Map<String, dynamic> raw) {
-    text = raw['text'] as String?;
-    iconUrl = raw['icon_url'] as String?;
-    iconProxyUrl = raw['icon_proxy_url'] as String?;
+    text = raw["text"] as String?;
+    iconUrl = raw["icon_url"] as String?;
+    iconProxyUrl = raw["icon_proxy_url"] as String?;
   }
 
   @override
@@ -27,9 +27,8 @@ class EmbedFooter implements Convertable<EmbedFooterBuilder> {
   bool operator ==(other) => other is EmbedFooter ? other.text == this.text && other.iconUrl == this.iconUrl : false;
 
   @override
-  EmbedFooterBuilder toBuilder() {
-    return EmbedFooterBuilder()
+  EmbedFooterBuilder toBuilder() =>
+    EmbedFooterBuilder()
       ..text = this.text
       ..iconUrl = this.iconUrl;
-  }
 }

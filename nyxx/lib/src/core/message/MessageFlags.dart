@@ -15,7 +15,7 @@ class MessageFlags {
   late final bool sourceMessageDeleted;
 
   /// This message came from the urgent message system
-  late final urgent;
+  late final bool urgent;
 
   MessageFlags._new(int raw) {
     this.crossposted = PermissionsUtils.isApplied(raw, 1 << 0);

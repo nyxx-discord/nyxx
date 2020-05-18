@@ -27,9 +27,9 @@ class Commander {
   late final CommandHandlerFunction? _afterHandlerFunction;
   late final LoggerHandlerFunction _loggerHandlerFunction;
 
-  List<CommandHandler> _commands = [];
+  final List<CommandHandler> _commands = [];
 
-  Logger _logger = Logger("Commander");
+  final Logger _logger = Logger("Commander");
 
   /// Either [prefix] or [prefixHandler] must be specified otherwise program will exit.
   /// Allows to specify additional [beforeCommandHandler] executed before main command callback,
@@ -64,10 +64,10 @@ class Commander {
   }
 
   Future<void> _handleMessage(MessageReceivedEvent event) async {
-    var context = CommandContext._new(event.message.channel, event.message.author,
+    final context = CommandContext._new(event.message.channel, event.message.author,
         event.message is GuildMessage ? (event.message as GuildMessage).guild : null, event.message);
 
-    var prefix = await _prefixHandler(context, event.message.content);
+    final prefix = await _prefixHandler(context, event.message.content);
     if (prefix == null) {
       return;
     }
@@ -77,7 +77,7 @@ class Commander {
     try {
       matchingCommand = _commands.firstWhere(
           (element) => _isCommandMatching(element.commandName, event.message.content.replaceFirst(prefix, "")));
-    } catch (e) {
+    } on Exception {
       return;
     }
 

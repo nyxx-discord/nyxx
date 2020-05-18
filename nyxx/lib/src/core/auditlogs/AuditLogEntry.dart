@@ -22,22 +22,22 @@ class AuditLogEntry extends SnowflakeEntity {
   /// The reason for the change
   String? reason;
 
-  AuditLogEntry._new(Map<String, dynamic> raw, Nyxx client) : super(Snowflake(raw['id'] as String)) {
-    targetId = raw['targetId'] as String;
+  AuditLogEntry._new(Map<String, dynamic> raw, Nyxx client) : super(Snowflake(raw["id"] as String)) {
+    targetId = raw["targetId"] as String;
 
     changes = [
-      if (raw['changes'] != null)
-        for (var o in raw['changes']) AuditLogChange._new(o as Map<String, dynamic>)
+      if (raw["changes"] != null)
+        for (var o in raw["changes"]) AuditLogChange._new(o as Map<String, dynamic>)
     ];
 
-    user = client.users[Snowflake(raw['user_id'])];
-    type = AuditLogEntryType(raw['action_type'] as int);
+    user = client.users[Snowflake(raw["user_id"])];
+    type = AuditLogEntryType(raw["action_type"] as int);
 
-    if (raw['options'] != null) {
-      options = raw['options'] as String;
+    if (raw["options"] != null) {
+      options = raw["options"] as String;
     }
 
-    reason = raw['reason'] as String;
+    reason = raw["reason"] as String;
   }
 }
 
