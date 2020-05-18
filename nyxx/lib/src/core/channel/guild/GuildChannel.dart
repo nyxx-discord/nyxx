@@ -2,7 +2,7 @@ part of nyxx;
 
 /// Represents channel which is part of guild.
 mixin GuildChannel implements Channel, GuildEntity {
-  /// The channel's name.
+  /// The channel"s name.
   late String name;
 
   @override
@@ -10,7 +10,7 @@ mixin GuildChannel implements Channel, GuildEntity {
   /// The guild that the channel is in.
   late Guild guild;
 
-  /// The channel's position in the channel list.
+  /// The channel"s position in the channel list.
   late int position;
 
   /// Parent channel id
@@ -31,19 +31,19 @@ mixin GuildChannel implements Channel, GuildEntity {
 
   // Initializes Guild channel
   void _initialize(Map<String, dynamic> raw, Guild guild) {
-    this.name = raw['name'] as String;
-    this.position = raw['position'] as int;
+    this.name = raw["name"] as String;
+    this.position = raw["position"] as int;
     this.guild = guild;
 
-    if (raw['parent_id'] != null) {
-      this.parentChannel = client.channels[Snowflake(raw['parent_id'])] as CategoryChannel?;
+    if (raw["parent_id"] != null) {
+      this.parentChannel = client.channels[Snowflake(raw["parent_id"])] as CategoryChannel?;
     }
 
-    this.nsfw = raw['nsfw'] as bool? ?? false;
+    this.nsfw = raw["nsfw"] as bool? ?? false;
 
     this.permissions = [
-      if (raw['permission_overwrites'] != null)
-        for (var obj in raw['permission_overwrites']) PermissionsOverrides._new(obj as Map<String, dynamic>)
+      if (raw["permission_overwrites"] != null)
+        for (var obj in raw["permission_overwrites"]) PermissionsOverrides._new(obj as Map<String, dynamic>)
     ];
   }
 
@@ -55,8 +55,9 @@ mixin GuildChannel implements Channel, GuildEntity {
 
     var rawMemberPerms = member.effectivePermissions.raw;
 
-    if (PermissionsUtils.isApplied(rawMemberPerms, PermissionsConstants.administrator))
+    if (PermissionsUtils.isApplied(rawMemberPerms, PermissionsConstants.administrator)) {
       return Permissions.fromInt(PermissionsConstants.allPermissions);
+    }
 
     final overrides = PermissionsUtils.getOverrides(member, this);
     rawMemberPerms = PermissionsUtils.apply(rawMemberPerms, overrides.first, overrides.last);
@@ -74,36 +75,38 @@ mixin GuildChannel implements Channel, GuildEntity {
 
     // TODO: NNBD: try-catch in where
     try {
-      PermissionsOverrides overEveryone = this.permissions.firstWhere((f) => f.id == guild.everyoneRole.id);
+      final overEveryone = this.permissions.firstWhere((f) => f.id == guild.everyoneRole.id);
 
       permissions &= ~overEveryone.deny;
       permissions |= overEveryone.allow;
-    } catch (e) {}
+    // ignore: avoid_catches_without_on_clauses, empty_catches
+    } on Exception {}
 
     try {
-      PermissionsOverrides overRole = this.permissions.firstWhere((f) => f.id == role.id);
+      final overRole = this.permissions.firstWhere((f) => f.id == role.id);
 
       permissions &= ~overRole.deny;
       permissions |= overRole.allow;
-    } catch (e) {}
+    // ignore: avoid_catches_without_on_clauses, empty_catches
+    } on Exception {}
 
     return Permissions.fromInt(permissions);
   }
 
-  /// Creates new [Invite] for [Channel] and returns it's instance
+  /// Creates new [Invite] for [Channel] and returns it"s instance
   ///
   /// ```
   /// var inv = await chan.createInvite(maxUses: 2137);
   /// ```
   Future<Invite> createInvite({int? maxAge, int? maxUses, bool? temporary, bool? unique, String? auditReason}) async {
-    Map<String, dynamic> body = {
-      if (maxAge != null) 'max_age': maxAge,
-      if (maxAge != null) 'max_uses': maxUses,
-      if (maxAge != null) 'temporary': temporary,
-      if (maxAge != null) 'unique': unique,
+    final body = {
+      if (maxAge != null) "max_age": maxAge,
+      if (maxAge != null) "max_uses": maxUses,
+      if (maxAge != null) "temporary": temporary,
+      if (maxAge != null) "unique": unique,
     };
 
-    var response = await client._http
+    final response = await client._http
         ._execute(BasicRequest._new("/channels/$id/invites", method: "POST", body: body, auditLog: auditReason));
 
     if (response is HttpResponseError) {
@@ -113,22 +116,23 @@ mixin GuildChannel implements Channel, GuildEntity {
     return InviteWithMeta._new((response as HttpResponseSuccess).jsonBody as Map<String, dynamic>, client);
   }
 
-  /// Fetches and returns all channel's [Invite]s
+  /// Fetches and returns all channel"s [Invite]s
   ///
   /// ```
   /// var invites = await chan.getChannelInvites();
   /// ```
   Stream<InviteWithMeta> getChannelInvites() async* {
-    final _HttpResponse response = await client._http._execute(BasicRequest._new("/channels/$id/invites"));
+    final response = await client._http._execute(BasicRequest._new("/channels/$id/invites"));
 
     if (response is HttpResponseError) {
       yield* Stream.error(response);
     }
 
-    var bodyValues = (response as HttpResponseSuccess).jsonBody.values.first;
+    final bodyValues = (response as HttpResponseSuccess).jsonBody.values.first;
 
-    for (Map<String, dynamic> val in (bodyValues as Iterable<Map<String, dynamic>>))
+    for (final val in bodyValues as Iterable<Map<String, dynamic>>) {
       yield InviteWithMeta._new(val, client);
+    }
   }
 
   /// Allows to set permissions for channel. [id] can be either User or Role

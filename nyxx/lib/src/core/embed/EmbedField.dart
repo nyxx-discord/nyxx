@@ -12,9 +12,9 @@ class EmbedField implements Convertable<EmbedFieldBuilder> {
   late final bool? inline;
 
   EmbedField._new(Map<String, dynamic> raw) {
-    this.name = raw['name'] as String;
-    this.content = raw['value'] as String;
-    this.inline = raw['inline'] as bool?;
+    this.name = raw["name"] as String;
+    this.content = raw["value"] as String;
+    this.inline = raw["inline"] as bool?;
   }
 
   @override

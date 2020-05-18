@@ -43,7 +43,7 @@ class MessageChannel extends Channel with IterableMixin<Message>, ISend, Disposa
   /// with [ignoreCache] property. By default it checks if message is in cache and fetches from api if not.
   Future<Message?> getMessage(Snowflake id, {bool ignoreCache = false}) async {
     if (ignoreCache || !messages.hasKey(id)) {
-      var response = await client._http._execute(BasicRequest._new("/channels/${this.id.toString()}/messages/$id"));
+      final response = await client._http._execute(BasicRequest._new("/channels/${this.id.toString()}/messages/$id"));
 
       if (response is HttpResponseError) {
         return Future.error(response);
@@ -88,7 +88,7 @@ class MessageChannel extends Channel with IterableMixin<Message>, ISend, Disposa
   /// ```
   /// var embed = new nyxx.EmbedBuilder()
   ///   ..title = "Example Title"
-  ///   ..thumbnailUrl = "${attach('kitten.jpg')}";
+  ///   ..thumbnailUrl = "${attach("kitten.jpg")}";
   ///
   /// await e.message.channel
   ///   .send(files: [new File("kitten.jpg")], embed: embed, content: "HEJKA!");
@@ -108,7 +108,7 @@ class MessageChannel extends Channel with IterableMixin<Message>, ISend, Disposa
       allowedMentions = builder.allowedMentions;
     }
 
-    Map<String, dynamic> reqBody = {
+    final  reqBody = {
       ..._initMessage(content, embed, allowedMentions),
       if (content != null && tts != null) "tts": tts
     };
@@ -119,17 +119,17 @@ class MessageChannel extends Channel with IterableMixin<Message>, ISend, Disposa
     _HttpResponse response;
 
     if (files != null && files.isNotEmpty) {
-      for (var file in files) {
+      for (final file in files) {
         if (file._bytes.length > fileUploadLimit) {
           return Future.error("File with name: [${file._name}] is too big!");
         }
       }
 
       response = await client._http
-          ._execute(MultipartRequest._new('/channels/${this.id}/messages', files, method: "POST", fields: reqBody));
+          ._execute(MultipartRequest._new("/channels/${this.id}/messages", files, method: "POST", fields: reqBody));
     } else {
       response = await client._http
-          ._execute(BasicRequest._new('/channels/${this.id}/messages', body: reqBody, method: "POST"));
+          ._execute(BasicRequest._new("/channels/${this.id}/messages", body: reqBody, method: "POST"));
     }
 
     if (response is HttpResponseSuccess) {
@@ -140,9 +140,8 @@ class MessageChannel extends Channel with IterableMixin<Message>, ISend, Disposa
   }
 
   /// Starts typing.
-  Future<void> startTyping() async {
-    return client._http._execute(BasicRequest._new("/channels/$id/typing", method: "POST"));
-  }
+  Future<void> startTyping() async =>
+    client._http._execute(BasicRequest._new("/channels/$id/typing", method: "POST"));
 
   /// Loops `startTyping` until `stopTypingLoop` is called.
   void startTypingLoop() {
@@ -160,34 +159,34 @@ class MessageChannel extends Channel with IterableMixin<Message>, ISend, Disposa
   /// await chan.bulkRemoveMessages(toDelete);
   /// ```
   Future<void> bulkRemoveMessages(Iterable<Message> messagesIds) async {
-    await for (var chunk in Utils.chunk(messagesIds.toList(), 90)) {
+    await for (final chunk in Utils.chunk(messagesIds.toList(), 90)) {
       await client._http._execute(BasicRequest._new("/channels/${id.toString()}/messages/bulk-delete",
           method: "POST", body: {"messages": chunk.map((f) => f.id.toString()).toList()}));
     }
   }
 
   /// Gets several [Message] objects from API. Only one of [after], [before], [around] can be specified,
-  /// otherwise, it'll throw.
+  /// otherwise, it will throw.
   ///
   /// ```
   /// var messages = await chan.getMessages(limit: 100, after: Snowflake("222078108977594368"));
   /// ```
   Stream<Message> getMessages({int limit = 50, Snowflake? after, Snowflake? before, Snowflake? around}) async* {
-    Map<String, String> queryParams = {
+    final queryParams = {
       "limit": limit.toString(),
-      if (after != null) 'after': after.toString(),
-      if (before != null) 'before': before.toString(),
-      if (around != null) 'around': around.toString()
+      if (after != null) "after": after.toString(),
+      if (before != null) "before": before.toString(),
+      if (around != null) "around": around.toString()
     };
 
-    var response =
-        await client._http._execute(BasicRequest._new('/channels/${this.id}/messages', queryParams: queryParams));
+    final response =
+        await client._http._execute(BasicRequest._new("/channels/${this.id}/messages", queryParams: queryParams));
 
     if (response is HttpResponseError) {
       yield* Stream.error(response);
     }
 
-    for (dynamic val in (response as HttpResponseSuccess).jsonBody) {
+    for (final val in (response as HttpResponseSuccess).jsonBody) {
       yield Message._deserialize(val as Map<String, dynamic>, client);
     }
   }
@@ -196,7 +195,7 @@ class MessageChannel extends Channel with IterableMixin<Message>, ISend, Disposa
   Iterator<Message> get iterator => messages.values.iterator;
 
   @override
-  Future<void> dispose() => Future(() {
-        messages.dispose();
-      });
+  Future<void> dispose() async {
+    await messages.dispose();
+  }
 }
