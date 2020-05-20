@@ -21,7 +21,7 @@ void main() {
     if (event.message.content == "Test 10") {
       await event.message.delete();
 
-      await event.message.channel.send(content: "Commander tests completed sucessfuly!");
+      await event.message.channel?.send(content: "Commander tests completed sucessfuly!");
       exit(0);
     }
   });

@@ -1,24 +1,45 @@
 part of nyxx;
 
+abstract class IGuildEmoji extends Emoji {
+  /// True if emoji is partial.
+  final bool partial;
+
+  IGuildEmoji._new(String name, this.partial) : super(name);
+}
+
 /// Emoji object. Handles Unicode emojis and custom ones.
 /// Always check if object is partial via [partial] field before accessing fields or methods,
 /// due any of field can be null or empty
-class GuildEmoji extends Emoji implements SnowflakeEntity, GuildEntity {
+class GuildEmoji extends IGuildEmoji implements SnowflakeEntity, GuildEntity {
   /// Reference tp [Nyxx] object
-  Nyxx? client;
+  Nyxx client;
 
+  /// Emojis guild
   @override
+  late final Guild? guild;
 
-  /// Emoji guild
-  late final Guild guild;
-
+  /// Emojis guild id
   @override
+  late final Snowflake guildId;
 
   /// Snowflake id of emoji
+  @override
   late final Snowflake id;
 
+  late final List<Snowflake> _roles;
+
   /// Roles this emoji is whitelisted to
-  late final List<Role> roles;
+  Iterable<Role> get roles sync* {
+    if(this.guild != null) {
+      for(final roleId in this._roles) {
+        final role = this.guild!.roles[roleId];
+
+        if(role != null) {
+          yield role;
+        }
+      }
+    }
+  }
 
   /// whether this emoji must be wrapped in colons
   late final bool requireColons;
@@ -34,32 +55,19 @@ class GuildEmoji extends Emoji implements SnowflakeEntity, GuildEntity {
   late final bool partial;
 
   /// Creates full emoji object
-  GuildEmoji._new(Map<String, dynamic> raw, this.guild, this.client) : super("") {
+  GuildEmoji._new(Map<String, dynamic> raw, this.guildId, this.client) : super._new(raw["name"] as String, false) {
     this.id = Snowflake(raw["id"] as String);
+    this.guild = client.guilds[this.guildId];
 
-    this.name = raw["name"] as String;
     this.requireColons = raw["require_colons"] as bool? ?? false;
     this.managed = raw["managed"] as bool? ?? false;
     this.animated = raw["animated"] as bool? ?? false;
 
-    this.roles = [];
-    if (raw["roles"] != null) {
-      for (final roleId in raw["roles"]) {
-        final role = this.guild.roles[Snowflake(roleId)];
-
-        if (role != null) {
-          this.roles.add(role);
-        }
-      }
-    }
-
-    this.partial = false;
-  }
-
-  /// Creates partial object - only [id] and [name]
-  GuildEmoji._partial(Map<String, dynamic> raw) : super(raw["name"] as String) {
-    this.id = Snowflake(raw["id"] as String);
-    this.partial = true;
+    this._roles = [
+      if (raw["roles"] != null)
+        for (final roleId in raw["roles"])
+          Snowflake(roleId)
+    ];
   }
 
   /// Allows to edit emoji
@@ -73,20 +81,20 @@ class GuildEmoji extends Emoji implements SnowflakeEntity, GuildEntity {
       if (roles != null) "roles": roles.map((r) => r.toString())
     };
 
-    _HttpResponse? response = await client?._http._execute(
-        BasicRequest._new("/guilds/${guild.id.toString()}/emojis/${this.id.toString()}", method: "PATCH", body: body));
+    final response = await client._http._execute(
+        BasicRequest._new("/guilds/${this.guildId}/emojis/${this.id.toString()}", method: "PATCH", body: body));
 
     if (response is HttpResponseSuccess) {
-      return GuildEmoji._new(response.jsonBody as Map<String, dynamic>, guild, client);
+      return GuildEmoji._new(response.jsonBody as Map<String, dynamic>, this.guildId, client);
     }
 
-    return Future.error(response ?? "Cannot edit partial emoji");
+    return Future.error(response);
   }
 
   /// Deletes emoji
   Future<void> delete() async =>
-    client?._http._execute(
-        BasicRequest._new("/guilds/${this.guild.id.toString()}/emojis/${this.id.toString()}", method: "DELETE"));
+    client._http._execute(
+        BasicRequest._new("/guilds/${this.guildId}/emojis/${this.id.toString()}", method: "DELETE"));
 
   /// Encodes Emoji to API format
   @override

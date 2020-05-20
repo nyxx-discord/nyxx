@@ -64,7 +64,8 @@ class Commander {
   }
 
   Future<void> _handleMessage(MessageReceivedEvent event) async {
-    final context = CommandContext._new(event.message.channel, event.message.author,
+    /// TODO: Cache
+    final context = CommandContext._new(event.message.channel!, event.message.author,
         event.message is GuildMessage ? (event.message as GuildMessage).guild : null, event.message);
 
     final prefix = await _prefixHandler(context, event.message.content);

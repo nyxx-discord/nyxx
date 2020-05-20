@@ -93,7 +93,7 @@ void main() {
   });
 
   bot.onMessageReceived.listen((e) async {
-    if (e.message.channel.id != Snowflake("422285619952222208") && e.message.author.id != bot.self.id) {
+    if (e.message.channelId != Snowflake("422285619952222208") && e.message.author.id != bot.self.id) {
       return;
     }
 
@@ -124,7 +124,7 @@ void main() {
           final field = embed.fields.first;
 
           if (field.name == "Test field" && field.content == "Test value" && !field.inline!) {
-            await e.message.channel.send(content: "Tests completed successfully!");
+            await e.message.channel?.send(content: "Tests completed successfully!");
             print("Nyxx tests completed successfully!");
             exit(0);
           }
