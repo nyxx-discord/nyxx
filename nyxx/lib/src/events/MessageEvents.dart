@@ -7,7 +7,7 @@ class MessageReceivedEvent {
 
   MessageReceivedEvent._new(Map<String, dynamic> raw, Nyxx client) {
     this.message = Message._deserialize(raw["d"] as Map<String, dynamic>, client);
-    message.channel.messages.put(this.message);
+    message.channel?.messages.put(this.message);
   }
 }
 
@@ -27,7 +27,7 @@ class MessageDeleteEvent {
 
     if (message != null) {
       this.message = message;
-      message.channel.messages.remove(this.messageId);
+      message.channel?.messages.remove(this.messageId);
     }
   }
 }
