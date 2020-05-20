@@ -14,30 +14,39 @@ abstract class Channel extends SnowflakeEntity {
       : this.type = ChannelType._create(type),
         super(Snowflake(raw["id"] as String));
 
-  factory Channel._deserialize(Map<String, dynamic> raw, Nyxx client) {
-    final type = raw["d"]["type"] as int;
+  factory Channel._deserialize(Map<String, dynamic> raw, Nyxx client, [Guild? guild]) {
+    final type = raw["type"] as int;
 
-    final guild = raw["d"]["guild_id"] != null ? client.guilds[Snowflake(raw["d"]["guild_id"])] : null;
+    Guild? channelGuild;
+
+    if(guild != null) {
+      channelGuild = guild;
+    } else {
+      channelGuild = client.guilds[Snowflake(raw["guild_id"])];
+    }
 
     switch (type) {
       case 1:
-        return DMChannel._new(raw["d"] as Map<String, dynamic>, client);
+        return DMChannel._new(raw, client);
         break;
       case 3:
-        return GroupDMChannel._new(raw["d"] as Map<String, dynamic>, client);
+        return GroupDMChannel._new(raw, client);
         break;
       case 0:
-      case 5:
-        return TextChannel._new(raw["d"] as Map<String, dynamic>, guild!, client);
+        return CachelessTextChannel._new(raw, channelGuild == null ? Snowflake(raw["guild_id"]) : channelGuild.id, client);
         break;
       case 2:
-        return VoiceChannel._new(raw["d"] as Map<String, dynamic>, guild!, client);
+        if(channelGuild == null) {
+          return CachelessVoiceChannel._new(raw, Snowflake(raw["guild_id"]), client);
+        }
+
+        return CacheVoiceChannel._new(raw, channelGuild ,client);
         break;
       case 4:
-        return CategoryChannel._new(raw["d"] as Map<String, dynamic>, guild!, client);
+        return CategoryChannel._new(raw, channelGuild == null ? Snowflake(raw["guild_id"]) : channelGuild.id, client);
         break;
       default:
-        return _InternalChannel._new(raw["d"] as Map<String, dynamic>, type, client);
+        return _InternalChannel._new(raw, type, client);
     }
   }
 

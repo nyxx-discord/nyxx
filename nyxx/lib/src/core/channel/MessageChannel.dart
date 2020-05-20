@@ -1,6 +1,6 @@
 part of nyxx;
 
-/// Provides abstraction of messages for [TextChannel], [DMChannel] and [GroupDMChannel].
+/// Provides abstraction of messages for [CachelessTextChannel], [DMChannel] and [GroupDMChannel].
 /// Implements iterator which allows to use message object in for loops to access
 /// messages sequentially.
 ///
@@ -11,7 +11,7 @@ part of nyxx;
 ///   print(message.author.id);
 /// }
 /// ```
-class MessageChannel extends Channel with IterableMixin<Message>, ISend, Disposable {
+abstract class MessageChannel implements Channel, ISend {
   Timer? _typing;
 
   /// Sent when a new message is received.
@@ -25,14 +25,14 @@ class MessageChannel extends Channel with IterableMixin<Message>, ISend, Disposa
 
   /// File upload limit for channel
   int get fileUploadLimit {
-    if (this is GuildChannel) {
-      return (this as GuildChannel).guild.fileUploadLimit;
+    if (this is CacheGuildChannel) {
+      return (this as CacheGuildChannel).guild.fileUploadLimit;
     }
 
     return 8 * 1024 * 1024;
   }
 
-  MessageChannel._new(Map<String, dynamic> raw, int type, Nyxx client) : super._new(raw, type, client) {
+  void _initialize(Map<String, dynamic> raw) {
     this.messages = MessageCache._new(client._options.messageCacheSize);
 
     onTyping = client.onTyping.where((event) => event.channel == this);
@@ -48,9 +48,9 @@ class MessageChannel extends Channel with IterableMixin<Message>, ISend, Disposa
       if (response is HttpResponseError) {
         return Future.error(response);
       }
-
-      var msg = Message._deserialize((response as HttpResponseSuccess).jsonBody as Map<String, dynamic>, client);
-      return messages._cacheMessage(msg);
+      
+      return messages._cacheMessage(
+          Message._deserialize((response as HttpResponseSuccess).jsonBody as Map<String, dynamic>, client));
     }
 
     return messages[id];

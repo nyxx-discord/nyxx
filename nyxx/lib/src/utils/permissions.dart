@@ -28,12 +28,12 @@ class PermissionsUtils {
   }
 
   /// Returns List of [channel] permissions overrides for given [member].
-  static List<int> getOverrides(Member member, GuildChannel channel) {
+  static List<int> getOverrides(Member member, CacheGuildChannel channel) {
     var allowRaw = 0;
     var denyRaw = 0;
 
     try {
-      final publicOverride = channel.permissions.firstWhere((ov) => ov.id == member.guild.everyoneRole.id);
+      final publicOverride = channel.permissionOverrides.firstWhere((ov) => ov.id == member.guild.everyoneRole.id);
       allowRaw = publicOverride.allow;
       denyRaw = publicOverride.deny;
       // ignore: avoid_catches_without_on_clauses, empty_catches
@@ -44,7 +44,7 @@ class PermissionsUtils {
 
     for (final role in member.roles) {
       try {
-        final chanOveride = channel.permissions.firstWhere((f) => f.id == role.id);
+        final chanOveride = channel.permissionOverrides.firstWhere((f) => f.id == role.id);
 
         denyRole |= chanOveride.deny;
         allowRole |= chanOveride.allow;
@@ -57,7 +57,7 @@ class PermissionsUtils {
 
     // TODO: NNBD: try-catch in where
     try {
-      final memberOverride = channel.permissions.firstWhere((g) => g.id == member.id);
+      final memberOverride = channel.permissionOverrides.firstWhere((g) => g.id == member.id);
 
       allowRaw = (allowRaw & ~memberOverride.deny) | memberOverride.allow;
       denyRaw = (denyRaw & ~memberOverride.allow) | memberOverride.deny;

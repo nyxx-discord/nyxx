@@ -1,24 +1,17 @@
 part of nyxx;
 
-/// Represents VoiceChannel within [Guild]
-class VoiceChannel extends Channel with GuildChannel {
+abstract class VoiceChannel implements Channel {
   /// The channel's bitrate.
   int? bitrate;
 
   /// The channel's user limit.
   int? userLimit;
 
-  VoiceChannel._new(Map<String, dynamic> raw, Guild guild, Nyxx client) : super._new(raw, 2, client) {
-    _initialize(raw, guild);
-
+  void _initialize(Map<String, dynamic> raw) {
     this.bitrate = raw["bitrate"] as int?;
     this.userLimit = raw["user_limit"] as int?;
   }
 
-  /// Allows to get [VoiceState]s of users connected to this channel
-  Iterable<VoiceState> get connectedUsers => this.guild.voiceStates.values.where((e) => e.channel?.id == this.id);
-
-  /// Edits the channel.
   Future<VoiceChannel> edit({String? name, int? bitrate, int? position, int? userLimit, String? auditReason}) async {
     final body = <String, dynamic>{
       if (name != null) "name": name,
@@ -31,9 +24,29 @@ class VoiceChannel extends Channel with GuildChannel {
         ._execute(BasicRequest._new("/channels/${this.id}", method: "PATCH", body: body, auditLog: auditReason));
 
     if (response is HttpResponseSuccess) {
-      return VoiceChannel._new(response.jsonBody as Map<String, dynamic>, this.guild, client);
+      if(this is CacheGuildChannel) {
+        return CacheVoiceChannel._new(response.jsonBody as Map<String, dynamic>, (this as CacheGuildChannel).guild, client);
+      }
+
+      return CachelessVoiceChannel._new(response.jsonBody as Map<String, dynamic>, (this as CachelessVoiceChannel).guildId, client);
     }
 
     return Future.error(response);
+  }
+}
+
+class CachelessVoiceChannel extends CachelessGuildChannel with VoiceChannel {
+  CachelessVoiceChannel._new(Map<String, dynamic> raw, Snowflake guildId, Nyxx client) : super._new(raw, 2, guildId, client) {
+    _initialize(raw);
+  }
+}
+
+/// Represents VoiceChannel within [Guild]
+class CacheVoiceChannel extends CacheGuildChannel with VoiceChannel {
+  /// Allows to get [VoiceState]s of users connected to this channel
+  Iterable<VoiceState> get connectedUsers => this.guild.voiceStates.values.where((e) => e.channel?.id == this.id);
+
+  CacheVoiceChannel._new(Map<String, dynamic> raw, Guild guild, Nyxx client) : super._new(raw, 2, guild, client) {
+    _initialize(raw);
   }
 }
