@@ -2,10 +2,10 @@ part of nyxx;
 
 abstract class VoiceChannel implements Channel {
   /// The channel's bitrate.
-  int? bitrate;
+  late final int? bitrate;
 
   /// The channel's user limit.
-  int? userLimit;
+  late final int? userLimit;
 
   void _initialize(Map<String, dynamic> raw) {
     this.bitrate = raw["bitrate"] as int?;

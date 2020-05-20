@@ -5,14 +5,14 @@ part of nyxx;
 abstract class Channel extends SnowflakeEntity {
   /// The channel's type.
   /// https://discordapp.com/developers/docs/resources/channel#channel-object-channel-types
-  ChannelType type;
+  final ChannelType type;
 
   /// Reference to client instance
-  Nyxx client;
+  final Nyxx client;
 
   Channel._new(Map<String, dynamic> raw, int type, this.client)
       : this.type = ChannelType._create(type),
-        super(Snowflake(raw["id"] as String));
+        super(Snowflake(raw["id"]));
 
   factory Channel._deserialize(Map<String, dynamic> raw, Nyxx client, [Guild? guild]) {
     final type = raw["type"] as int;

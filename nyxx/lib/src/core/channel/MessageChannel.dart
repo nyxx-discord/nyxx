@@ -35,8 +35,8 @@ abstract class MessageChannel implements Channel, ISend {
   void _initialize(Map<String, dynamic> raw) {
     this.messages = MessageCache._new(client._options.messageCacheSize);
 
-    onTyping = client.onTyping.where((event) => event.channel == this);
-    onMessage = client.onMessageReceived.where((event) => event.message.channel == this);
+    this.onTyping = client.onTyping.where((event) => event.channel == this);
+    this.onMessage = client.onMessageReceived.where((event) => event.message.channel == this);
   }
 
   /// Returns message with given [id]. Allows to force fetch message from api
