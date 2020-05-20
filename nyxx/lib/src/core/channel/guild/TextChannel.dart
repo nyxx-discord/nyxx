@@ -7,7 +7,7 @@ class CachelessTextChannel extends CachelessGuildChannel with MessageChannel, IS
   late final Stream<ChannelPinsUpdateEvent> pinsUpdated;
 
   /// The channel's topic.
-  String? topic;
+  late final String? topic;
 
   @override
 

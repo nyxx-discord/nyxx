@@ -46,30 +46,34 @@ abstract class IGuildChannel extends Channel {
 
 abstract class CachelessGuildChannel extends IGuildChannel {
   /// The channel"s name.
-  late final name;
+  @override
+  late final String name;
 
   /// The channel's position in the channel list.
-  late final position;
+  @override
+  late final int position;
 
   /// Id of [Guild] that the channel is in.
-  late final Snowflake guildId;
+  @override
+  final Snowflake guildId;
 
   /// Id of parent channel
+  @override
   late final Snowflake? parentChannelId;
 
   /// Indicates if channel is nsfw
+  @override
   late final bool isNsfw;
 
   /// Returns list of [Member] objects who can see this channel
+  @override
   late final List<PermissionsOverrides> permissionOverrides;
 
-  CachelessGuildChannel._new(Map<String, dynamic> raw, int type, Snowflake guildId, Nyxx client) : super._new(raw, type, client) {
+  CachelessGuildChannel._new(Map<String, dynamic> raw, int type, this.guildId, Nyxx client) : super._new(raw, type, client) {
     this.name = raw["name"] as String;
     this.position = raw["position"] as int;
-    this.guildId = guildId;
 
     this.parentChannelId = raw["parent_id"] != null ? Snowflake(raw["parent_id"]) : null;
-
     this.isNsfw = raw["nsfw"] as bool? ?? false;
 
     this.permissionOverrides = [
@@ -84,6 +88,7 @@ abstract class CachelessGuildChannel extends IGuildChannel {
   /// ```
   /// var invites = await chan.getChannelInvites();
   /// ```
+  @override
   Stream<InviteWithMeta> getChannelInvites() async* {
     final response = await client._http._execute(BasicRequest._new("/channels/$id/invites"));
 
@@ -100,6 +105,7 @@ abstract class CachelessGuildChannel extends IGuildChannel {
 
   /// Allows to set permissions for channel. [id] can be either User or Role
   /// Throws if [id] isn't [User] or [Role]
+  @override
   Future<void> editChannelPermission(PermissionsBuilder perms, SnowflakeEntity id, {String? auditReason}) {
     if (id is! Role || id is! User) {
       throw Exception("The `id` property must be either Role or User");
@@ -111,6 +117,7 @@ abstract class CachelessGuildChannel extends IGuildChannel {
 
   /// Deletes permission overwrite for given User or Role [id]
   /// Throws if [id] isn't [User] or [Role]
+  @override
   Future<void> deleteChannelPermission(SnowflakeEntity id, {String? auditReason}) async {
     if (id is! Role || id is! User) {
       throw Exception("`id` property must be either Role or User");
@@ -125,6 +132,7 @@ abstract class CachelessGuildChannel extends IGuildChannel {
   /// ```
   /// var inv = await chan.createInvite(maxUses: 2137);
   /// ```
+  @override
   Future<Invite> createInvite({int? maxAge, int? maxUses, bool? temporary, bool? unique, String? auditReason}) async {
     final body = {
       if (maxAge != null) "max_age": maxAge,
