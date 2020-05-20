@@ -8,10 +8,10 @@ class DMMessage extends Message {
   /// Returns clickable url to this message.
   @override
   String get url => "https://discordapp.com/channels/@me"
-      "/${this.channel.id}/${this.id}";
+      "/${this.channelId}/${this.id}";
 
   DMMessage._new(Map<String, dynamic> raw, Nyxx client) : super._new(raw, client) {
-    final user = client.users[Snowflake(raw["author"]["id"] as String)];
+    final user = client.users[Snowflake(raw["author"]["id"])];
 
     if (user == null) {
       final authorData = raw["author"] as Map<String, dynamic>;
@@ -26,7 +26,10 @@ class DMMessage extends Message {
 class GuildMessage extends Message implements GuildEntity {
   /// The message's guild.
   @override
-  late final Guild guild;
+  late final Guild? guild;
+
+  /// Id of message's guild
+  late final Snowflake guildId;
 
   /// Reference to original message if this message cross posts other message
   late final MessageReference? crosspostReference;
@@ -36,8 +39,8 @@ class GuildMessage extends Message implements GuildEntity {
 
   /// Returns clickable url to this message.
   @override
-  String get url => "https://discordapp.com/channels/${this.guild.id}"
-      "/${this.channel.id}/${this.id}";
+  String get url => "https://discordapp.com/channels/${this.guildId}"
+      "/${this.channelId}/${this.id}";
 
   /// The message's author. Can be instance of [Member] or [Webhook]
   @override
@@ -47,20 +50,33 @@ class GuildMessage extends Message implements GuildEntity {
   /// True if message is sent by a webhook
   bool get isByWebhook => author is Webhook;
 
+  late List<Snowflake> _roleMentions;
+
   /// A list of IDs for the role mentions in the message.
-  late List<Role> roleMentions;
+  Iterable<Role> get roleMentions sync* {
+    if(this.guild != null) {
+      for (final roleId in _roleMentions) {
+        final role = this.guild!.roles[roleId];
+
+        if(role != null) {
+          yield role;
+        }
+      }
+    }
+  }
 
   GuildMessage._new(Map<String, dynamic> raw, Nyxx client) : super._new(raw, client) {
     if (raw["message_reference"] != null) {
       this.crosspostReference = MessageReference._new(raw["message_reference"] as Map<String, dynamic>, client);
     }
 
-    this.guild = client.guilds[Snowflake(raw["guild_id"])]!;
+    this.guildId = Snowflake(raw["guild_id"]);
+    this.guild = client.guilds[this.guildId];
 
     if (raw["webhook_id"] != null) {
       this.author = Webhook._new(raw["author"] as Map<String, dynamic>, client);
     } else if (raw["author"] != null) {
-      final member = this.guild.members[Snowflake(raw["author"]["id"] as String)];
+      final member = this.guild?.members[Snowflake(raw["author"]["id"])];
 
       if (member == null) {
         if (raw["member"] == null) {
@@ -73,7 +89,7 @@ class GuildMessage extends Message implements GuildEntity {
               Member._fromUser(authorData, memberData, client.guilds[Snowflake(raw["guild_id"])] as Guild, client);
 
           client.users[author.id] = author;
-          guild.members[author.id] = author;
+          guild?.members[author.id] = author;
           this.author = author;
         }
       } else {
@@ -81,9 +97,9 @@ class GuildMessage extends Message implements GuildEntity {
       }
     }
 
-    this.roleMentions = [
+    this._roleMentions = [
       if (raw["mention_roles"] != null)
-        for (var r in raw["mention_roles"]) this.guild.roles[Snowflake(r)] as Role
+        for (var r in raw["mention_roles"]) Snowflake(r)
     ];
   }
 
@@ -91,7 +107,7 @@ class GuildMessage extends Message implements GuildEntity {
   /// This endpoint requires the "DISCOVERY" feature to be present for the guild.
   Future<void> crosspost() async =>
     this.client._http._execute(BasicRequest._new(
-        "/channels/${this.channel.id.toString()}/messages/${this.id.toString()}/crosspost",
+        "/channels/${this.channelId.toString()}/messages/${this.id.toString()}/crosspost",
         method: "POST"));
 }
 
@@ -105,7 +121,10 @@ abstract class Message extends SnowflakeEntity implements Disposable {
   late String content;
 
   /// Channel in which message was sent
-  late final MessageChannel channel;
+  late final MessageChannel? channel;
+
+  /// Id of channel in which message was sent
+  late final Snowflake channelId;
 
   /// The timestamp of when the message was last edited, null if not edited.
   late final DateTime? editedTimestamp;
@@ -151,10 +170,11 @@ abstract class Message extends SnowflakeEntity implements Disposable {
     return DMMessage._new(raw, client);
   }
 
-  Message._new(Map<String, dynamic> raw, this.client) : super(Snowflake(raw["id"] as String)) {
+  Message._new(Map<String, dynamic> raw, this.client) : super(Snowflake(raw["id"])) {
     this.content = raw["content"] as String;
-
-    this.channel = client.channels[Snowflake(raw["channel_id"] as String)] as MessageChannel;
+  
+    this.channelId = Snowflake(raw["channel_id"]);
+    this.channel = client.channels[this.channelId] as MessageChannel?;
 
     this.pinned = raw["pinned"] as bool;
     this.tts = raw["tts"] as bool;
@@ -210,7 +230,7 @@ abstract class Message extends SnowflakeEntity implements Disposable {
     };
 
     final response = await client._http
-        ._execute(BasicRequest._new("/channels/${this.channel.id}/messages/${this.id}", method: "PATCH", body: body));
+        ._execute(BasicRequest._new("/channels/${this.channelId}/messages/${this.id}", method: "PATCH", body: body));
 
     if (response is HttpResponseSuccess) {
       return Message._deserialize(response.jsonBody as Map<String, dynamic>, client);
@@ -222,40 +242,40 @@ abstract class Message extends SnowflakeEntity implements Disposable {
   /// Add reaction to message.
   Future<void> createReaction(Emoji emoji) =>
     client._http._execute(BasicRequest._new(
-        "/channels/${this.channel.id}/messages/${this.id}/reactions/${emoji.encode()}/@me",
+        "/channels/${this.channelId}/messages/${this.id}/reactions/${emoji.encode()}/@me",
         method: "PUT"));
 
   /// Deletes reaction of bot. Emoji as ":emoji_name:"
   Future<void> deleteReaction(Emoji emoji) =>
     client._http._execute(BasicRequest._new(
-        "/channels/${this.channel.id}/messages/${this.id}/reactions/${emoji.encode()}/@me",
+        "/channels/${this.channelId}/messages/${this.id}/reactions/${emoji.encode()}/@me",
         method: "DELETE"));
 
   /// Deletes reaction of given user.
   Future<void> deleteUserReaction(Emoji emoji, String userId) =>
     client._http._execute(BasicRequest._new(
-        "/channels/${this.channel.id}/messages/${this.id}/reactions/${emoji.encode()}/$userId",
+        "/channels/${this.channelId}/messages/${this.id}/reactions/${emoji.encode()}/$userId",
         method: "DELETE"));
 
   /// Deletes all reactions
   Future<void> deleteAllReactions() =>
     client._http
-        ._execute(BasicRequest._new("/channels/${this.channel.id}/messages/${this.id}/reactions", method: "DELETE"));
+        ._execute(BasicRequest._new("/channels/${this.channelId}/messages/${this.id}/reactions", method: "DELETE"));
 
   /// Deletes the message.
   ///
   /// Throws an [Exception] if the HTTP request errored.
   Future<void> delete({String? auditReason}) =>
     client._http._execute(
-        BasicRequest._new("/channels/${this.channel.id}/messages/${this.id}", method: "DELETE", auditLog: auditReason));
+        BasicRequest._new("/channels/${this.channelId}/messages/${this.id}", method: "DELETE", auditLog: auditReason));
 
   /// Pins [Message] in current [Channel]
   Future<void> pinMessage() =>
-    client._http._execute(BasicRequest._new("/channels/${channel.id}/pins/$id", method: "PUT"));
+    client._http._execute(BasicRequest._new("/channels/${this.channelId}/pins/$id", method: "PUT"));
 
   /// Unpins [Message] in current [Channel]
   Future<void> unpinMessage() =>
-    client._http._execute(BasicRequest._new("/channels/${channel.id}/pins/$id", method: "DELETE"));
+    client._http._execute(BasicRequest._new("/channels/${this.channelId}/pins/$id", method: "DELETE"));
 
 
   @override
