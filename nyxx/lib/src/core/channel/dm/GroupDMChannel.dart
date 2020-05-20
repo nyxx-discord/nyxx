@@ -1,7 +1,7 @@
 part of nyxx;
 
 /// Represents group DM channel.
-class GroupDMChannel extends MessageChannel {
+class GroupDMChannel extends Channel with MessageChannel, ISend {
   /// The recipients of channel.
   late final List<User> recipients;
 

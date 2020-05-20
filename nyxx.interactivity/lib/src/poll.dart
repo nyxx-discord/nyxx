@@ -7,7 +7,7 @@ part of nyxx.interactivity;
 ///   var results = createPoll(ctx.channel, "This is awesome poll", {UnicodeEmoji(""): "One option", UnicodeEmoji(""): "second option"});
 /// }
 /// ```
-Future<Map<Emoji, int>> createPoll(TextChannel channel, String title, Map<Emoji, String> options,
+Future<Map<Emoji, int>> createPoll(CachelessTextChannel channel, String title, Map<Emoji, String> options,
     {Duration timeout = const Duration(minutes: 10),
     String? message,
     bool delete = false,

@@ -73,14 +73,14 @@ class GuildEmoji extends Emoji implements SnowflakeEntity, GuildEntity {
       if (roles != null) "roles": roles.map((r) => r.toString())
     };
 
-    final response = await client?._http._execute(
+    _HttpResponse? response = await client?._http._execute(
         BasicRequest._new("/guilds/${guild.id.toString()}/emojis/${this.id.toString()}", method: "PATCH", body: body));
 
     if (response is HttpResponseSuccess) {
       return GuildEmoji._new(response.jsonBody as Map<String, dynamic>, guild, client);
     }
 
-    return Future.error(response ?? "Cannot perform http request if emoji is partial");
+    return Future.error(response ?? "Cannot edit partial emoji");
   }
 
   /// Deletes emoji

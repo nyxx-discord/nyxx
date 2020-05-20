@@ -137,7 +137,7 @@ class Member extends User implements GuildEntity {
 
   /// Edits members. Allows to move user in voice channel, mute or deaf, change nick, roles.
   Future<void> edit(
-      {String? nick, List<Role>? roles, bool? mute, bool? deaf, VoiceChannel? channel, String? auditReason}) {
+      {String? nick, List<Role>? roles, bool? mute, bool? deaf, CacheVoiceChannel? channel, String? auditReason}) {
     final body = <String, dynamic>{
       if (nick != null) "nick": nick,
       if (roles != null) "roles": roles.map((f) => f.id.toString()).toList(),

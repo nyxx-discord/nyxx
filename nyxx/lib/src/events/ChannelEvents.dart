@@ -3,15 +3,15 @@ part of nyxx;
 // TODO: Decide what about guild store channels
 /// Sent when a channel is created.
 class ChannelCreateEvent {
-  /// The channel that was created, either a [GuildChannel], [DMChannel], or [GroupDMChannel].
+  /// The channel that was created, either a [CacheGuildChannel], [DMChannel], or [GroupDMChannel].
   late final Channel channel;
 
   ChannelCreateEvent._new(Map<String, dynamic> raw, Nyxx client) {
     this.channel = Channel._deserialize(raw, client);
 
     client.channels[channel.id] = channel;
-    if (this.channel is GuildChannel) {
-      (this.channel as GuildChannel).guild.channels[channel.id] = channel;
+    if (this.channel is CacheGuildChannel) {
+      (this.channel as CacheGuildChannel).guild.channels[channel.id] = channel;
     }
   }
 }
@@ -32,8 +32,8 @@ class ChannelDeleteEvent {
     }
 
     client.channels.remove(channelSnowflake);
-    if (this.channel is GuildChannel) {
-      (this.channel as GuildChannel).guild.channels.remove(channelSnowflake);
+    if (this.channel is CacheGuildChannel) {
+      (this.channel as CacheGuildChannel).guild.channels.remove(channelSnowflake);
     }
   }
 }
@@ -41,7 +41,7 @@ class ChannelDeleteEvent {
 /// Fired when channel"s pinned messages are updated
 class ChannelPinsUpdateEvent {
   /// Channel where pins were updated
-  TextChannel? channel;
+  CachelessTextChannel? channel;
 
   /// ID of channel pins were updated
   late final Snowflake channelId;
@@ -57,7 +57,7 @@ class ChannelPinsUpdateEvent {
       this.lastPingTimestamp = DateTime.parse(raw["d"]["last_pin_timestamp"] as String);
     }
 
-    this.channel = client.channels[Snowflake(raw["d"]["channel_id"])] as TextChannel;
+    this.channel = client.channels[Snowflake(raw["d"]["channel_id"])] as CachelessTextChannel;
 
     if (raw["d"]["guild_id"] != null) {
       this.guildId = Snowflake(raw["d"]["guild_id"]);
@@ -75,8 +75,8 @@ class ChannelUpdateEvent {
 
     client.channels[this.updatedChannel.id] = updatedChannel;
 
-    if (this.updatedChannel is GuildChannel) {
-      (this.updatedChannel as GuildChannel).guild.channels[this.updatedChannel.id] = updatedChannel;
+    if (this.updatedChannel is CacheGuildChannel) {
+      (this.updatedChannel as CacheGuildChannel).guild.channels[this.updatedChannel.id] = updatedChannel;
     }
   }
 }

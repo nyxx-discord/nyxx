@@ -1,119 +1,82 @@
 part of nyxx;
 
-/// Represents channel which is part of guild.
-mixin GuildChannel implements Channel, GuildEntity {
+abstract class IGuildChannel extends Channel {
   /// The channel"s name.
-  late String name;
+  String get name;
 
-  @override
+  /// The channel's position in the channel list.
+  int get position;
 
-  /// The guild that the channel is in.
-  late Guild guild;
+  /// Id of [Guild] that the channel is in.
+  Snowflake get guildId;
 
-  /// The channel"s position in the channel list.
-  late int position;
-
-  /// Parent channel id
-  CategoryChannel? parentChannel;
+  /// Id of parent channel
+  Snowflake? get parentChannelId;
 
   /// Indicates if channel is nsfw
-  late bool nsfw;
-
-  /// Permissions overwrites for channel.
-  late final List<PermissionsOverrides> permissions;
+  bool get isNsfw;
 
   /// Returns list of [Member] objects who can see this channel
-  Iterable<Member> get users => this
-      .guild
-      .members
-      .values
-      .where((member) => this.effectivePermissions(member).hasPermission(PermissionsConstants.viewChannel));
+  List<PermissionsOverrides> get permissionOverrides;
 
-  // Initializes Guild channel
-  void _initialize(Map<String, dynamic> raw, Guild guild) {
-    this.name = raw["name"] as String;
-    this.position = raw["position"] as int;
-    this.guild = guild;
+  IGuildChannel._new(Map<String, dynamic> raw, int type, Nyxx client) : super._new(raw, type, client);
 
-    if (raw["parent_id"] != null) {
-      this.parentChannel = client.channels[Snowflake(raw["parent_id"])] as CategoryChannel?;
-    }
+  /// Fetches and returns all channel"s [Invite]s
+  ///
+  /// ```
+  /// var invites = await chan.getChannelInvites();
+  /// ```
+  Stream<InviteWithMeta> getChannelInvites();
 
-    this.nsfw = raw["nsfw"] as bool? ?? false;
+  /// Allows to set permissions for channel. [id] can be either User or Role
+  /// Throws if [id] isn't [User] or [Role]
+  Future<void> editChannelPermission(PermissionsBuilder perms, SnowflakeEntity id, {String? auditReason});
 
-    this.permissions = [
-      if (raw["permission_overwrites"] != null)
-        for (var obj in raw["permission_overwrites"]) PermissionsOverrides._new(obj as Map<String, dynamic>)
-    ];
-  }
-
-  /// Returns effective permissions for [member] to this channel including channel overrides.
-  Permissions effectivePermissions(Member member) {
-    if (member.guild != this.guild) return Permissions.empty();
-
-    if (member.guild.owner == member) return Permissions.fromInt(PermissionsConstants.allPermissions);
-
-    var rawMemberPerms = member.effectivePermissions.raw;
-
-    if (PermissionsUtils.isApplied(rawMemberPerms, PermissionsConstants.administrator)) {
-      return Permissions.fromInt(PermissionsConstants.allPermissions);
-    }
-
-    final overrides = PermissionsUtils.getOverrides(member, this);
-    rawMemberPerms = PermissionsUtils.apply(rawMemberPerms, overrides.first, overrides.last);
-
-    return PermissionsUtils.isApplied(rawMemberPerms, PermissionsConstants.viewChannel)
-        ? Permissions.fromInt(rawMemberPerms)
-        : Permissions.empty();
-  }
-
-  /// Returns effective permissions for [role] to this channel including channel overrides.
-  Permissions effectivePermissionForRole(Role role) {
-    if (role.guild != this.guild) return Permissions.empty();
-
-    var permissions = role.permissions.raw | guild.everyoneRole.permissions.raw;
-
-    // TODO: NNBD: try-catch in where
-    try {
-      final overEveryone = this.permissions.firstWhere((f) => f.id == guild.everyoneRole.id);
-
-      permissions &= ~overEveryone.deny;
-      permissions |= overEveryone.allow;
-    // ignore: avoid_catches_without_on_clauses, empty_catches
-    } on Exception {}
-
-    try {
-      final overRole = this.permissions.firstWhere((f) => f.id == role.id);
-
-      permissions &= ~overRole.deny;
-      permissions |= overRole.allow;
-    // ignore: avoid_catches_without_on_clauses, empty_catches
-    } on Exception {}
-
-    return Permissions.fromInt(permissions);
-  }
+  /// Deletes permission overwrite for given User or Role [id]
+  /// Throws if [id] isn't [User] or [Role]
+  Future<void> deleteChannelPermission(SnowflakeEntity id, {String? auditReason});
 
   /// Creates new [Invite] for [Channel] and returns it"s instance
   ///
   /// ```
   /// var inv = await chan.createInvite(maxUses: 2137);
   /// ```
-  Future<Invite> createInvite({int? maxAge, int? maxUses, bool? temporary, bool? unique, String? auditReason}) async {
-    final body = {
-      if (maxAge != null) "max_age": maxAge,
-      if (maxAge != null) "max_uses": maxUses,
-      if (maxAge != null) "temporary": temporary,
-      if (maxAge != null) "unique": unique,
-    };
+  Future<Invite> createInvite({int? maxAge, int? maxUses, bool? temporary, bool? unique, String? auditReason});
+}
 
-    final response = await client._http
-        ._execute(BasicRequest._new("/channels/$id/invites", method: "POST", body: body, auditLog: auditReason));
+abstract class CachelessGuildChannel extends IGuildChannel {
+  /// The channel"s name.
+  late final name;
 
-    if (response is HttpResponseError) {
-      return Future.error(response);
-    }
+  /// The channel's position in the channel list.
+  late final position;
 
-    return InviteWithMeta._new((response as HttpResponseSuccess).jsonBody as Map<String, dynamic>, client);
+  /// Id of [Guild] that the channel is in.
+  late final Snowflake guildId;
+
+  /// Id of parent channel
+  late final Snowflake? parentChannelId;
+
+  /// Indicates if channel is nsfw
+  late final bool isNsfw;
+
+  /// Returns list of [Member] objects who can see this channel
+  late final List<PermissionsOverrides> permissionOverrides;
+
+  CachelessGuildChannel._new(Map<String, dynamic> raw, int type, Snowflake guildId, Nyxx client) : super._new(raw, type, client) {
+    this.name = raw["name"] as String;
+    this.position = raw["position"] as int;
+    this.guildId = guildId;
+
+    this.parentChannelId = raw["parent_id"] != null ? Snowflake(raw["parent_id"]) : null;
+
+    this.isNsfw = raw["nsfw"] as bool? ?? false;
+
+    this.permissionOverrides = [
+      if (raw["permission_overwrites"] != null)
+        for (var obj in raw["permission_overwrites"])
+          PermissionsOverrides._new(obj as Map<String, dynamic>)
+    ];
   }
 
   /// Fetches and returns all channel"s [Invite]s
@@ -155,5 +118,103 @@ mixin GuildChannel implements Channel, GuildEntity {
 
     return client._http
         ._execute(BasicRequest._new("/channels/${this.id}/permissions/$id", method: "PUT", auditLog: auditReason));
+  }
+
+  /// Creates new [Invite] for [Channel] and returns it"s instance
+  ///
+  /// ```
+  /// var inv = await chan.createInvite(maxUses: 2137);
+  /// ```
+  Future<Invite> createInvite({int? maxAge, int? maxUses, bool? temporary, bool? unique, String? auditReason}) async {
+    final body = {
+      if (maxAge != null) "max_age": maxAge,
+      if (maxAge != null) "max_uses": maxUses,
+      if (maxAge != null) "temporary": temporary,
+      if (maxAge != null) "unique": unique,
+    };
+
+    final response = await client._http
+        ._execute(BasicRequest._new("/channels/$id/invites", method: "POST", body: body, auditLog: auditReason));
+
+    if (response is HttpResponseError) {
+      return Future.error(response);
+    }
+
+    return InviteWithMeta._new((response as HttpResponseSuccess).jsonBody as Map<String, dynamic>, client);
+  }
+}
+
+/// Represents channel which is part of guild.
+abstract class CacheGuildChannel extends CachelessGuildChannel {
+  /// The guild that the channel is in.
+  late Guild guild;
+
+  /// Parent channel id
+  CategoryChannel? parentChannel;
+
+  /// Returns list of [Member] objects who can see this channel
+  Iterable<Member> get users => this
+      .guild
+      .members
+      .values
+      .where((member) => this.effectivePermissions(member).hasPermission(PermissionsConstants.viewChannel));
+
+  CacheGuildChannel._new(Map<String, dynamic> raw, int type, Guild guild, Nyxx client) : super._new(raw, type, guild.id, client) {
+    // ignore: prefer_initializing_formals
+    this.guild = guild;
+
+    if(this.parentChannelId != null) {
+      this.parentChannel = guild.channels[this.parentChannelId!] as CategoryChannel?;
+    }
+  }
+
+  /// Returns effective permissions for [member] to this channel including channel overrides.
+  Permissions effectivePermissions(Member member) {
+    if (member.guild != this.guild) {
+      return Permissions.empty();
+    }
+
+    if (member.guild.owner == member) {
+      return Permissions.fromInt(PermissionsConstants.allPermissions);
+    }
+
+    var rawMemberPerms = member.effectivePermissions.raw;
+
+    if (PermissionsUtils.isApplied(rawMemberPerms, PermissionsConstants.administrator)) {
+      return Permissions.fromInt(PermissionsConstants.allPermissions);
+    }
+
+    final overrides = PermissionsUtils.getOverrides(member, this);
+    rawMemberPerms = PermissionsUtils.apply(rawMemberPerms, overrides.first, overrides.last);
+
+    return PermissionsUtils.isApplied(rawMemberPerms, PermissionsConstants.viewChannel)
+        ? Permissions.fromInt(rawMemberPerms)
+        : Permissions.empty();
+  }
+
+  /// Returns effective permissions for [role] to this channel including channel overrides.
+  Permissions effectivePermissionForRole(Role role) {
+    if (role.guild != this.guild) return Permissions.empty();
+
+    var permissions = role.permissions.raw | guild.everyoneRole.permissions.raw;
+
+    // TODO: NNBD: try-catch in where
+    try {
+      final overEveryone = this.permissionOverrides.firstWhere((f) => f.id == guild.everyoneRole.id);
+
+      permissions &= ~overEveryone.deny;
+      permissions |= overEveryone.allow;
+    // ignore: avoid_catches_without_on_clauses, empty_catches
+    } on Exception {}
+
+    try {
+      final overRole = this.permissionOverrides.firstWhere((f) => f.id == role.id);
+
+      permissions &= ~overRole.deny;
+      permissions |= overRole.allow;
+    // ignore: avoid_catches_without_on_clauses, empty_catches
+    } on Exception {}
+
+    return Permissions.fromInt(permissions);
   }
 }

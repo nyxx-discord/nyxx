@@ -257,25 +257,7 @@ class Nyxx implements Disposable {
     }
 
     final raw = (response as HttpResponseSuccess).jsonBody as Map<String, dynamic>;
-
-    switch (raw["type"] as int) {
-      case 1:
-        return DMChannel._new(raw, this) as T;
-      case 3:
-        return GroupDMChannel._new(raw, this) as T;
-      case 0:
-      case 5:
-        final guild = this.guilds[Snowflake(raw["guild_id"])];
-        return TextChannel._new(raw, guild!, this) as T;
-      case 2:
-        final guild = this.guilds[Snowflake(raw["guild_id"])];
-        return VoiceChannel._new(raw, guild!, this) as T;
-      case 4:
-        final guild = this.guilds[Snowflake(raw["guild_id"])];
-        return CategoryChannel._new(raw, guild!, this) as T;
-      default:
-        return Future.error("Cannot create channel of type [${raw["type"]}");
-    }
+    return Channel._deserialize(raw, this) as T;
   }
 
   /// Get user instance with specified id.

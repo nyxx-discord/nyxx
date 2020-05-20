@@ -27,7 +27,7 @@ void main() {
   });
 
   bot.onReady.listen((e) async {
-    final channel = bot.channels[Snowflake("422285619952222208")] as TextChannel;
+    final channel = bot.channels[Snowflake("422285619952222208")] as CachelessTextChannel;
 
     await channel.send(content: "Testing Commander");
 

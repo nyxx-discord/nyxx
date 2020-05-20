@@ -1,7 +1,7 @@
 part of nyxx;
 
 /// Represents channel with another user.
-class DMChannel extends MessageChannel {
+class DMChannel extends Channel with MessageChannel, ISend {
   /// The recipient.
   late User recipient;
 

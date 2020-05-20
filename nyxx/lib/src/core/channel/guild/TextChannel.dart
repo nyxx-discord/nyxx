@@ -1,8 +1,8 @@
 part of nyxx;
 
-/// [TextChannel] represents single text channel on [Guild].
-/// Inhertits from [MessageChannel] and mixes [GuildChannel].
-class TextChannel extends MessageChannel with GuildChannel implements Mentionable {
+/// [CachelessTextChannel] represents single text channel on [Guild].
+/// Inhertits from [MessageChannel] and mixes [CacheGuildChannel].
+class CachelessTextChannel extends CachelessGuildChannel with MessageChannel, ISend implements Mentionable {
   /// Emitted when channel pins are updated.
   late final Stream<ChannelPinsUpdateEvent> pinsUpdated;
 
@@ -18,11 +18,11 @@ class TextChannel extends MessageChannel with GuildChannel implements Mentionabl
   late final int slowModeThreshold;
 
   /// Returns url to this channel.
-  String get url => "https://discordapp.com/channels/${this.guild.id.toString()}"
+  String get url => "https://discordapp.com/channels/${this.guildId.toString()}"
       "/${this.id.toString()}";
 
-  TextChannel._new(Map<String, dynamic> raw, Guild guild, Nyxx client) : super._new(raw, 0, client) {
-    _initialize(raw, guild);
+  CachelessTextChannel._new(Map<String, dynamic> raw, Snowflake guildId, Nyxx client) : super._new(raw, 0, guildId, client) {
+    _initialize(raw);
 
     this.topic = raw["topic"] as String?;
     this.slowModeThreshold = raw["rate_limit_per_user"] as int? ?? 0;
@@ -31,7 +31,7 @@ class TextChannel extends MessageChannel with GuildChannel implements Mentionabl
   }
 
   /// Edits the channel.
-  Future<TextChannel> edit({String? name, String? topic, int? position, int? slowModeTreshold}) async {
+  Future<CachelessTextChannel> edit({String? name, String? topic, int? position, int? slowModeTreshold}) async {
     final body = <String, dynamic>{
       if (name != null) "name": name,
       if (topic != null) "topic": topic,
@@ -42,7 +42,7 @@ class TextChannel extends MessageChannel with GuildChannel implements Mentionabl
     final response = await client._http._execute(BasicRequest._new("/channels/${this.id}", method: "PATCH", body: body));
 
     if (response is HttpResponseSuccess) {
-      return TextChannel._new(response.jsonBody as Map<String, dynamic>, this.guild, client);
+      return CachelessTextChannel._new(response.jsonBody as Map<String, dynamic>, guildId, client);
     }
 
     return Future.error(response);
