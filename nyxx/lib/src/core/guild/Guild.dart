@@ -145,7 +145,7 @@ class Guild extends SnowflakeEntity implements Disposable {
     if (raw["roles"] != null) {
       this.roles = _SnowflakeCache<Role>();
       raw["roles"].forEach((o) {
-        final role = Role._new(o as Map<String, dynamic>, this, client);
+        final role = Role._new(o as Map<String, dynamic>, this.id, client);
         this.roles[role.id] = role;
       });
     }
@@ -153,7 +153,7 @@ class Guild extends SnowflakeEntity implements Disposable {
     this.emojis = _SnowflakeCache();
     if (raw["emojis"] != null) {
       raw["emojis"].forEach((dynamic o) {
-        final emoji = GuildEmoji._new(o as Map<String, dynamic>, this, client);
+        final emoji = GuildEmoji._new(o as Map<String, dynamic>, this.id, client);
         this.emojis[emoji.id] = emoji;
       });
     }
@@ -285,7 +285,7 @@ class Guild extends SnowflakeEntity implements Disposable {
     final response = await client._http._execute(BasicRequest._new("/guilds/$id/emojis/${emojiId.toString()}"));
 
     if (response is HttpResponseSuccess) {
-      return GuildEmoji._new(response.jsonBody as Map<String, dynamic>, this, client);
+      return GuildEmoji._new(response.jsonBody as Map<String, dynamic>, this.id, client);
     }
 
     return Future.error(response);
@@ -317,7 +317,7 @@ class Guild extends SnowflakeEntity implements Disposable {
         ._execute(BasicRequest._new("/guilds/${this.id.toString()}/emojis", method: "POST", body: body));
 
     if (response is HttpResponseSuccess) {
-      return GuildEmoji._new(response.jsonBody as Map<String, dynamic>, this, client);
+      return GuildEmoji._new(response.jsonBody as Map<String, dynamic>, this.id, client);
     }
 
     return Future.error(response);
@@ -486,7 +486,7 @@ class Guild extends SnowflakeEntity implements Disposable {
         BasicRequest._new("/guilds/$id/roles", method: "POST", auditLog: auditReason, body: roleBuilder._build()));
 
     if (response is HttpResponseSuccess) {
-      return Role._new(response.jsonBody as Map<String, dynamic>, this, client);
+      return Role._new(response.jsonBody as Map<String, dynamic>, this.id, client);
     }
 
     return Future.error(response);
