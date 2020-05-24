@@ -128,7 +128,7 @@ class ActivityType extends IEnum<int> {
   static const ActivityType game = ActivityType._create(0);
   static const ActivityType streaming = ActivityType._create(1);
   static const ActivityType listening = ActivityType._create(2);
-  static const ActivityType custom = ActivityType._create(3);
+  static const ActivityType custom = ActivityType._create(4);
 
   /// Creates [ActivityType] from [value]
   ActivityType.from(int value) : super(value);
