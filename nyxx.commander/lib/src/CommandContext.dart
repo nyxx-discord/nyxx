@@ -15,7 +15,7 @@ class CommandContext {
   Guild? guild;
 
   /// Returns author as guild member
-  Member? get member => guild?.members[author!.id];
+  IMember? get member => guild?.members[author!.id];
 
   CommandContext._new(this.channel, this.author, this.guild, this.message);
 

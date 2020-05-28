@@ -11,17 +11,21 @@ part of nyxx;
 ///   print(message.author.id);
 /// }
 /// ```
-abstract class MessageChannel implements Channel, ISend {
+abstract class MessageChannel implements Channel, ISend, Disposable {
   Timer? _typing;
 
   /// Sent when a new message is received.
-  late final Stream<MessageReceivedEvent> onMessage;
+  late final Stream<MessageReceivedEvent> onMessage = client.onMessageReceived.where((event) => event.message.channel == this);
 
   /// Emitted when user starts typing.
-  late final Stream<TypingEvent> onTyping;
+  late final Stream<TypingEvent> onTyping = client.onTyping.where((event) => event.channel == this);
+
+  /// Emitted when channel pins are updated.
+  late final Stream<ChannelPinsUpdateEvent> pinsUpdated = client.onChannelPinsUpdate.where((event) => event.channel == this);
 
   /// A collection of messages sent to this channel.
-  late final MessageCache messages;
+  late final MessageCache messages = MessageCache._new(client._options.messageCacheSize);
+
 
   /// File upload limit for channel
   int get fileUploadLimit {
@@ -30,13 +34,6 @@ abstract class MessageChannel implements Channel, ISend {
     }
 
     return 8 * 1024 * 1024;
-  }
-
-  void _initialize(Map<String, dynamic> raw) {
-    this.messages = MessageCache._new(client._options.messageCacheSize);
-
-    this.onTyping = client.onTyping.where((event) => event.channel == this);
-    this.onMessage = client.onMessageReceived.where((event) => event.message.channel == this);
   }
 
   /// Returns message with given [id]. Allows to force fetch message from api
@@ -191,7 +188,7 @@ abstract class MessageChannel implements Channel, ISend {
     }
   }
 
-  @override
+  /// Returns iterator for messages cache
   Iterator<Message> get iterator => messages.values.iterator;
 
   @override

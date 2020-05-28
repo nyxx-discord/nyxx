@@ -4,8 +4,8 @@ part of nyxx;
 abstract class Emoji {
   /// Emojis name.
   String name;
-
-  Emoji(this.name);
+  
+  Emoji._new(this.name);
 
   // TODO: Emojis stuff
   factory Emoji._deserialize(Map<String, dynamic> raw) {

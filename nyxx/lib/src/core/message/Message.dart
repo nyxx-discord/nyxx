@@ -42,7 +42,7 @@ class GuildMessage extends Message implements GuildEntity {
   String get url => "https://discordapp.com/channels/${this.guildId}"
       "/${this.channelId}/${this.id}";
 
-  /// The message's author. Can be instance of [Member] or [Webhook]
+  /// The message's author. Can be instance of [CacheMember] or [Webhook]
   @override
   late final IMessageAuthor author;
 
@@ -50,20 +50,7 @@ class GuildMessage extends Message implements GuildEntity {
   /// True if message is sent by a webhook
   bool get isByWebhook => author is Webhook;
 
-  late List<Snowflake> _roleMentions;
-
-  /// A list of IDs for the role mentions in the message.
-  Iterable<Role> get roleMentions sync* {
-    if(this.guild != null) {
-      for (final roleId in _roleMentions) {
-        final role = this.guild!.roles[roleId];
-
-        if(role != null) {
-          yield role;
-        }
-      }
-    }
-  }
+  late final List<IRole> roleMentions;
 
   GuildMessage._new(Map<String, dynamic> raw, Nyxx client) : super._new(raw, client) {
     if (raw["message_reference"] != null) {
@@ -85,9 +72,8 @@ class GuildMessage extends Message implements GuildEntity {
           final authorData = raw["author"] as Map<String, dynamic>;
           final memberData = raw["member"] as Map<String, dynamic>;
 
-          final author =
-              Member._fromUser(authorData, memberData, client.guilds[Snowflake(raw["guild_id"])] as Guild, client);
-
+          final author = this.guild == null ? CachelessMember._fromUser(authorData, memberData, guildId, client) : CacheMember._fromUser(authorData, memberData, this.guild!, client);
+          
           client.users[author.id] = author;
           guild?.members[author.id] = author;
           this.author = author;
@@ -97,9 +83,10 @@ class GuildMessage extends Message implements GuildEntity {
       }
     }
 
-    this._roleMentions = [
+    this.roleMentions = [
       if (raw["mention_roles"] != null)
-        for (var r in raw["mention_roles"]) Snowflake(r)
+        for (var roleId in raw["mention_roles"])
+          this.guild == null ? IRole ._new(Snowflake(roleId), guildId, client) : guild!.roles[Snowflake(roleId)]!
     ];
   }
 
@@ -121,7 +108,7 @@ abstract class Message extends SnowflakeEntity implements Disposable {
   late String content;
 
   /// Channel in which message was sent
-  late final MessageChannel? channel;
+  late final ITextChannel channel;
 
   /// Id of channel in which message was sent
   late final Snowflake channelId;
@@ -129,10 +116,10 @@ abstract class Message extends SnowflakeEntity implements Disposable {
   /// The timestamp of when the message was last edited, null if not edited.
   late final DateTime? editedTimestamp;
 
-  /// The message's author. Can be instance of [Member]
+  /// The message's author. Can be instance of [CacheMember]
   IMessageAuthor get author;
 
-  /// The mentions in the message. [User] value of this map can be [Member]
+  /// The mentions in the message. [User] value of this map can be [CacheMember]
   late List<User> mentions;
 
   /// A collection of the embeds in the message.
@@ -174,7 +161,14 @@ abstract class Message extends SnowflakeEntity implements Disposable {
     this.content = raw["content"] as String;
   
     this.channelId = Snowflake(raw["channel_id"]);
-    this.channel = client.channels[this.channelId] as MessageChannel?;
+    final channel = client.channels[this.channelId] as ITextChannel?;
+
+    if(channel == null) {
+      // TODO: channel stuff
+      this.channel = DummyTextChannel._new({"id" : raw["channel_id"]}, -1, client);
+    } else {
+      this.channel = channel;
+    }
 
     this.pinned = raw["pinned"] as bool;
     this.tts = raw["tts"] as bool;

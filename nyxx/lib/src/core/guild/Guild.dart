@@ -33,8 +33,8 @@ class Guild extends SnowflakeEntity implements Disposable {
   late final List<String> features;
 
   /// The guild's afk channel ID, null if not set.
-  late CacheVoiceChannel? afkChannel;
-
+  late VoiceChannel? afkChannel;
+  
   /// The guild's voice region.
   late String region;
 
@@ -69,16 +69,16 @@ class Guild extends SnowflakeEntity implements Disposable {
   late final User? owner;
 
   /// The guild's members.
-  late final Cache<Snowflake, Member> members;
+  late final Cache<Snowflake, IMember> members;
 
   /// The guild's channels.
   late final ChannelCache channels;
 
   /// The guild's roles.
-  late final Cache<Snowflake, Role> roles;
+  late final Cache<Snowflake, IRole> roles;
 
   /// Guild custom emojis
-  late final Cache<Snowflake, GuildEmoji> emojis;
+  late final Cache<Snowflake, IGuildEmoji> emojis;
 
   /// Boost level of guild
   late final PremiumTier premiumTier;
@@ -104,10 +104,10 @@ class Guild extends SnowflakeEntity implements Disposable {
   String get url => "https://discordapp.com/channels/${this.id.toString()}";
 
   /// Getter for @everyone role
-  Role get everyoneRole => roles.values.firstWhere((r) => r.name == "@everyone");
+  IRole get everyoneRole => roles.values.firstWhere((r) => (r as Role).name == "@everyone");
 
   /// Returns member object for bot user
-  Member? get selfMember => members[client.self.id];
+  IMember? get selfMember => members[client.self.id];
 
   /// Upload limit for this guild in bytes
   int get fileUploadLimit {
@@ -200,7 +200,7 @@ class Guild extends SnowflakeEntity implements Disposable {
 
     if (client._options.cacheMembers) {
       raw["members"].forEach((o) {
-        final member = Member._standard(o as Map<String, dynamic>, this, client);
+        final member = CacheMember._standard(o as Map<String, dynamic>, this, client);
         this.members[member.id] = member;
         client.users[member.id] = member;
       });
@@ -385,7 +385,7 @@ class Guild extends SnowflakeEntity implements Disposable {
   }
 
   /// Change guild owner.
-  Future<Guild> changeOwner(Member member, {String? auditReason}) async {
+  Future<Guild> changeOwner(CacheMember member, {String? auditReason}) async {
     final response = await client._http._execute(
         BasicRequest._new("/guilds/$id", method: "PATCH", auditLog: auditReason, body: {"owner_id": member.id}));
 
@@ -492,7 +492,7 @@ class Guild extends SnowflakeEntity implements Disposable {
     return Future.error(response);
   }
 
-  /// Adds [Role] to [Member]
+  /// Adds [Role] to [CacheMember]
   ///
   /// ```
   /// var role = guild.roles.values.first;
@@ -500,7 +500,7 @@ class Guild extends SnowflakeEntity implements Disposable {
   ///
   /// await guild.addRoleToMember(member, role);
   /// ```
-  Future<void> addRoleToMember(Member user, Role role) async =>
+  Future<void> addRoleToMember(CacheMember user, Role role) async =>
     client._http._execute(BasicRequest._new("/guilds/$id/members/${user.id}/roles/${role.id}", method: "PUT"));
 
   /// Returns list of available [CacheVoiceChannel]s
@@ -589,7 +589,7 @@ class Guild extends SnowflakeEntity implements Disposable {
   ///
   /// await guild.ban(member);
   /// ```
-  Future<void> ban(Member member, {int deleteMessageDays = 0, String? auditReason}) async =>
+  Future<void> ban(CacheMember member, {int deleteMessageDays = 0, String? auditReason}) async =>
     client._http._execute(BasicRequest._new("/guilds/${this.id}/bans/${member.id.toString()}",
         method: "PUT", auditLog: auditReason, body: {"delete-message-days": deleteMessageDays}));
 
@@ -598,7 +598,7 @@ class Guild extends SnowflakeEntity implements Disposable {
   /// ```
   /// await guild.kick(member);
   /// ```
-  Future<void> kick(Member member, {String? auditReason}) async =>
+  Future<void> kick(CacheMember member, {String? auditReason}) async =>
     client._http._execute(BasicRequest._new("/guilds/${this.id.toString()}/members/${member.id.toString()}",
         method: "DELTE", auditLog: auditReason));
 
@@ -634,27 +634,27 @@ class Guild extends SnowflakeEntity implements Disposable {
     return Future.error(response);
   }
 
-  /// Gets a [Member] object. Caches fetched member if not cached.
+  /// Gets a [CacheMember] object. Caches fetched member if not cached.
   ///
   /// ```
   /// var member = guild.getMember(user);
   /// ```
-  Future<Member> getMember(User user) async => getMemberById(user.id);
+  Future<CacheMember> getMember(User user) async => getMemberById(user.id);
 
-  /// Gets a [Member] object by id. Caches fetched member if not cached.
+  /// Gets a [CacheMember] object by id. Caches fetched member if not cached.
   ///
   /// ```
   /// var member = guild.getMember(Snowflake("302359795648954380"));
   /// ```
-  Future<Member> getMemberById(Snowflake id) async {
+  Future<CacheMember> getMemberById(Snowflake id) async {
     if (this.members.hasKey(id)) {
-      return this.members[id] as Member;
+      return this.members[id] as CacheMember;
     }
 
     final response = await client._http._execute(BasicRequest._new("/guilds/${this.id}/members/${id.toString()}"));
 
     if (response is HttpResponseSuccess) {
-      return Member._standard(response.jsonBody as Map<String, dynamic>, this, client);
+      return CacheMember._standard(response.jsonBody as Map<String, dynamic>, this, client);
     }
 
     return Future.error(response);
@@ -663,7 +663,7 @@ class Guild extends SnowflakeEntity implements Disposable {
   /// Allows to fetch guild members. In future will be restricted with `Priviliged Intents`.
   /// [after] is used to continue from specified user id.
   /// By default limits to one user - use [limit] paramter to change that behavior.
-  Stream<Member> getMembers({int limit = 1, Snowflake? after}) async* {
+  Stream<CacheMember> getMembers({int limit = 1, Snowflake? after}) async* {
     final request = this.client._http._execute(BasicRequest._new("/guilds/${this.id.toString()}/members",
         queryParams: {"limit": limit.toString(), if (after != null) "after": after.toString()}));
 
@@ -672,13 +672,13 @@ class Guild extends SnowflakeEntity implements Disposable {
     }
 
     for (final rawMember in (request as HttpResponseSuccess).jsonBody as List<dynamic>) {
-      yield Member._standard(rawMember as Map<String, dynamic>, this, client);
+      yield CacheMember._standard(rawMember as Map<String, dynamic>, this, client);
     }
   }
 
-  /// Returns a [Stream] of [Member] objects whose username or nickname starts with a provided string.
+  /// Returns a [Stream] of [CacheMember] objects whose username or nickname starts with a provided string.
   /// By default limits to one entry - can be changed with [limit] parameter.
-  Stream<Member> searchMembers(String query, {int limit = 1}) async* {
+  Stream<CacheMember> searchMembers(String query, {int limit = 1}) async* {
     final response = await client._http._execute(BasicRequest._new("/guilds/${this.id}/members/search",
         queryParams: {"query": query, "limit": limit.toString()}));
 
@@ -687,13 +687,13 @@ class Guild extends SnowflakeEntity implements Disposable {
     }
 
     for (final Map<String, dynamic> member in (response as HttpResponseSuccess).jsonBody) {
-      yield Member._standard(member, this, client);
+      yield CacheMember._standard(member, this, client);
     }
   }
 
-  /// Returns a [Stream] of [Member] objects whose username or nickname starts with a provided string.
+  /// Returns a [Stream] of [CacheMember] objects whose username or nickname starts with a provided string.
   /// By default limits to one entry - can be changed with [limit] parameter.
-  Stream<Member> searchMembersGateway(String query, {int limit = 0}) async* {
+  Stream<IMember> searchMembersGateway(String query, {int limit = 0}) async* {
     final nonce = "$query${id.toString()}";
 
     this.client.shard.requestMembers(this.id, query: query, limit: limit, nonce: nonce);

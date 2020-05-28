@@ -124,7 +124,7 @@ void main() {
           final field = embed.fields.first;
 
           if (field.name == "Test field" && field.content == "Test value" && !field.inline!) {
-            await e.message.channel?.send(content: "Tests completed successfully!");
+            await e.message.channel.send(content: "Tests completed successfully!");
             print("Nyxx tests completed successfully!");
             exit(0);
           }

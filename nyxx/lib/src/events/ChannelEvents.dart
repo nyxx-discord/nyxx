@@ -57,7 +57,7 @@ class ChannelPinsUpdateEvent {
       this.lastPingTimestamp = DateTime.parse(raw["d"]["last_pin_timestamp"] as String);
     }
 
-    this.channel = client.channels[Snowflake(raw["d"]["channel_id"])] as CachelessTextChannel;
+    this.channel = client.channels[Snowflake(raw["d"]["channel_id"])] as CachelessTextChannel?;
 
     if (raw["d"]["guild_id"] != null) {
       this.guildId = Snowflake(raw["d"]["guild_id"]);

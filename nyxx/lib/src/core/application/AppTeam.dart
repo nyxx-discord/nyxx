@@ -1,19 +1,26 @@
 part of nyxx;
 
 class AppTeam extends SnowflakeEntity {
+  /// Hash of team icon
   late final String? iconHash;
+
+  /// Id of Team owner
   late final Snowflake ownerId;
 
+  /// List of members of team
   late final List<AppTeamMember> members;
+
+  /// Returns instance of [AppTeamMember] of team owner
+  AppTeamMember get ownerMember => this.members.firstWhere((element) => element.user.id == this.ownerId);
 
   AppTeam._new(Map<String, dynamic> raw) : super(Snowflake(raw["id"])) {
     this.iconHash = raw["icon"] as String?;
     this.ownerId = Snowflake(raw["owner_user_id"]);
 
-    this.members = [];
-    for (Map<String, dynamic> obj in raw["members"]) {
-      this.members.add(AppTeamMember._new(obj));
-    }
+    this.members = [
+    for (final rawMember in raw["members"])
+      AppTeamMember._new(rawMember as Map<String, dynamic>)
+    ];
   }
 
   /// Returns url to team icon
@@ -26,9 +33,8 @@ class AppTeam extends SnowflakeEntity {
   }
 }
 
-/// Represent membership of user in [Team]
+/// Represent membership of user in [AppTeam]
 class AppTeamMember {
-
   /// Basic information of user
   late final AppTeamUser user;
 

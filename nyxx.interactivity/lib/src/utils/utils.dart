@@ -33,20 +33,4 @@ class _Utils {
 
     return split(str, len);
   }
-
-  /// Partition list into chunks
-  static Iterable<List<T>> partition<T>(List<T> lst, int len) sync* {
-    for (var i = 0; i < lst.length; i += len) {
-      yield lst.sublist(i, i + len);
-    }
-  }
-
-  /// Divides list into equal pieces
-  static Stream<List<T>> chunk<T>(List<T> list, int chunkSize) async* {
-    final len = list.length;
-    for (var i = 0; i < len; i += chunkSize) {
-      final size = i + chunkSize;
-      yield list.sublist(i, size > len ? len : size);
-    }
-  }
 }

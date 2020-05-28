@@ -2,7 +2,6 @@ part of nyxx;
 
 /// Emitted when guild's voice server changes
 class VoiceServerUpdateEvent {
-
   /// Raw websocket event payload
   final Map<String, dynamic> raw;
 

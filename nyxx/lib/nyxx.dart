@@ -5,7 +5,6 @@ library nyxx;
 
 import "dart:async";
 
-import "dart:collection";
 import "dart:convert";
 import "dart:io";
 
@@ -17,6 +16,8 @@ import "package:w_transport/w_transport.dart" as transport;
 import "package:w_transport/vm.dart" as transport_vm show configureWTransportForVM;
 
 import "package:path/path.dart" as path_utils;
+
+import "package:http/http.dart" as http_client;
 
 // BASE
 
@@ -111,6 +112,8 @@ part "src/core/channel/dm/GroupDMChannel.dart";
 part "src/core/channel/dm/DMChannel.dart";
 part "src/core/channel/Channel.dart";
 part "src/core/channel/MessageChannel.dart";
+part "src/core/channel/ITextChannel.dart";
+part "src/core/channel/DummyTextChannel.dart";
 
 part "src/core/embed/EmbedField.dart";
 part "src/core/embed/EmbedAuthor.dart";
