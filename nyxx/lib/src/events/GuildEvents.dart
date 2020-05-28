@@ -89,7 +89,7 @@ class GuildMemberRemoveEvent {
 /// Sent when a member is updated.
 class GuildMemberUpdateEvent {
   /// The member after the update if member is updated.
-  late final Member? member;
+  late final CacheMember? member;
 
   /// User if user is updated. Will be null if member is not null.
   late final User? user;
@@ -110,7 +110,7 @@ class GuildMemberUpdateEvent {
     final nickname = raw["d"]["nickname"] as String?;
     final roles = (raw["d"]["roles"] as List<dynamic>).map((str) => guild.roles[Snowflake(str)]!).toList();
 
-    if (member._updateMember(nickname, roles)) {
+    if (this.member!._updateMember(nickname, roles)) {
       return;
     }
 
@@ -122,7 +122,7 @@ class GuildMemberUpdateEvent {
 /// Sent when a member joins a guild.
 class GuildMemberAddEvent {
   /// The member that joined.
-  late final Member? member;
+  late final CacheMember? member;
 
   GuildMemberAddEvent._new(Map<String, dynamic> raw, Nyxx client) {
     final guild = client.guilds[Snowflake(raw["d"]["guild_id"])];
@@ -131,7 +131,7 @@ class GuildMemberAddEvent {
       return;
     }
 
-    this.member = Member._standard(raw["d"] as Map<String, dynamic>, guild, client);
+    this.member = CacheMember._standard(raw["d"] as Map<String, dynamic>, guild, client);
 
     guild.members[member!.id] = member!;
     if (!client.users.hasKey(member!.id)) {
@@ -207,8 +207,10 @@ class GuildEmojisUpdateEvent {
   /// New list of changes emojis
   final Map<Snowflake, GuildEmoji> emojis = {};
 
+  /// Id of guild where event happend
   late final Snowflake guildId;
 
+  /// Instance of guild if available
   late final Guild? guild;
 
   GuildEmojisUpdateEvent._new(Map<String, dynamic> json, Nyxx client) {
@@ -233,8 +235,10 @@ class RoleCreateEvent {
   /// The role that was created.
   late final Role role;
 
+  /// Id of guild where event happend  
   late final Snowflake guildId;
 
+  /// Instance of [Guild] if available
   late final Guild? guild;
 
   RoleCreateEvent._new(Map<String, dynamic> json, Nyxx client) {
@@ -243,20 +247,23 @@ class RoleCreateEvent {
 
     this.role = Role._new(json["d"]["role"] as Map<String, dynamic>, guildId, client);
     if (guild != null) {
-      guild!.roles[role!.id] = role!;
+      guild!.roles[role.id] = role;
     }
   }
 }
 
 /// Sent when a role is deleted.
 class RoleDeleteEvent {
-  /// The role that was deleted.
-  Role? role;
+  /// The role that was deleted, if available
+  IRole? role;
 
+  /// Id of tole that was deleted
   late final Snowflake roleId;
 
+  /// Id of guild where event happend
   late final Snowflake guildId;
 
+  /// Instance of [Guild] if available
   late final Guild? guild;
 
   RoleDeleteEvent._new(Map<String, dynamic> json, Nyxx client) {
@@ -275,9 +282,10 @@ class RoleDeleteEvent {
 class RoleUpdateEvent {
   /// The role after the update.
   late final Role role;
-
+  /// Id of guild where event happend
   late final Snowflake guildId;
 
+  /// Instance of [Guild] if available
   late final Guild? guild;
   
   RoleUpdateEvent._new(Map<String, dynamic> json, Nyxx client) {

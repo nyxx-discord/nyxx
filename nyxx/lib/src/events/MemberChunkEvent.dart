@@ -4,7 +4,7 @@ part of nyxx;
 /// You can use the `chunk_index` and `chunk_count` to calculate how many chunks are left for your request.
 class MemberChunkEvent {
   /// Guild members
-  late final Iterable<Member> members;
+  late final Iterable<IMember> members;
 
   /// Id of guild
   late final Snowflake guildId;
@@ -44,7 +44,7 @@ class MemberChunkEvent {
 
     this.members = [
       for (var memberRaw in raw["d"]["members"])
-        Member._standard(memberRaw as Map<String, dynamic>, this.guild!, client)
+        CacheMember._standard(memberRaw as Map<String, dynamic>, this.guild!, client)
     ];
 
     // TODO: Thats probably redundant

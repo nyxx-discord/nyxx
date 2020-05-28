@@ -3,7 +3,10 @@ part of nyxx;
 /// Type of webhook. Either [incoming] if it its normal webhook executable with token,
 /// or [channelFollower] if its discord internal webhook
 class WebhookType extends IEnum<int> {
+  /// Incoming Webhooks can post messages to channels with a generated token
   static const WebhookType incoming = WebhookType._create(1);
+
+  /// 	Channel Follower Webhooks are internal webhooks used with Channel Following to post new messages into channels
   static const WebhookType channelFollower = WebhookType._create(2);
 
   const WebhookType._create(int? value) : super(value ?? 0);
@@ -89,7 +92,7 @@ class Webhook extends SnowflakeEntity implements IMessageAuthor {
   }
 
   /// Edits the webhook.
-  Future<Webhook> edit({String? name, CachelessTextChannel? channel, File? avatar, String? encodedAvatar, String? auditReason}) async {
+  Future<Webhook> edit({String? name, ITextChannel? channel, File? avatar, String? encodedAvatar, String? auditReason}) async {
     final body = <String, dynamic>{
       if (name != null) "name": name,
       if (channel != null) "channel_id": channel.id.toString()

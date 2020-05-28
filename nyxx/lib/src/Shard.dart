@@ -12,13 +12,13 @@ class Shard implements Disposable {
   bool connected = false;
 
   /// Emitted when the shard is ready.
-  late Stream<Shard> onConnected;
+  late Stream<Shard> onConnected = this._onConnect.stream;
 
   /// Emitted when the shard encounters an error.
-  late Stream<Shard> onDisconnect;
+  late Stream<Shard> onDisconnect = this._onDisconnect.stream;
 
   /// Emitted when shard receives member chunk.
-  late Stream<MemberChunkEvent> onMemberChunk;
+  late Stream<MemberChunkEvent> onMemberChunk = this._onMemberChunk.stream;
 
   /// Number of events seen by shard
   int get eventsSeen => _sequence;
@@ -34,20 +34,11 @@ class Shard implements Disposable {
   late int _sequence;
   String? _sessionId;
 
-  late final StreamController<Shard> _onConnect;
-  late final StreamController<Shard> _onDisconnect;
-  late final StreamController<MemberChunkEvent> _onMemberChunk;
+  final StreamController<Shard> _onConnect = StreamController<Shard>.broadcast();
+  late final StreamController<Shard> _onDisconnect = StreamController<Shard>.broadcast();
+  late final StreamController<MemberChunkEvent> _onMemberChunk = StreamController.broadcast();
 
-  Shard._new(this._ws, this.id) {
-    this._onConnect = StreamController<Shard>.broadcast();
-    this.onConnected = this._onConnect.stream;
-
-    this._onDisconnect = StreamController<Shard>.broadcast();
-    this.onDisconnect = this._onDisconnect.stream;
-
-    this._onMemberChunk = StreamController.broadcast();
-    this.onMemberChunk = this._onMemberChunk.stream;
-  }
+  Shard._new(this._ws, this.id);
 
   /// Allows to set presence for current shard.
   void setPresence({UserStatus? status, bool? afk, Activity? game, DateTime? since}) {
@@ -157,7 +148,7 @@ class Shard implements Disposable {
               "\$device": "nyxx",
             },
             "large_threshold": this._ws._client._options.largeThreshold,
-            "compress": true
+            "compress": "zlib-stream"
           };
 
           if (_ws._client._options.gatewayIntents != null) {
@@ -382,6 +373,7 @@ class Shard implements Disposable {
 
   @override
   Future<void> dispose() async {
+    this._heartbeatTimer.cancel();
     await this._socketSubscription?.cancel();
     await this._socket?.close(1000);
     this._socket = null;

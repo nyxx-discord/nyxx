@@ -1,17 +1,18 @@
 part of nyxx.interactivity;
 
+/// Utils for getting and manipulating emojis
 class EmojiUtils {
   /// Returns [UnicodeEmoji] instance of given emoji [name].
   static UnicodeEmoji? getEmoji(String name) {
-    if (emojisUnicode.containsKey(name)) {
-      return UnicodeEmoji(emojisUnicode[name]!);
+    if (emojis.containsKey(name)) {
+      return UnicodeEmoji(emojis[name]!);
     }
 
     return null;
   }
 
   /// Map of all emojis which discord uses. Key is unicode name of emoji and value actual emoji.
-  static Map<String, String> emojisUnicode = {
+  static Map<String, String> emojis = {
     "grinning": "😀",
     "grimacing": "😬",
     "grin": "😁",

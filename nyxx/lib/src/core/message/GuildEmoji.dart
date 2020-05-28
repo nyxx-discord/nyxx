@@ -4,7 +4,7 @@ abstract class IGuildEmoji extends Emoji {
   /// True if emoji is partial.
   final bool partial;
 
-  IGuildEmoji._new(String name, this.partial) : super(name);
+  IGuildEmoji._new(String name, this.partial) : super._new(name);
 }
 
 /// Emoji object. Handles Unicode emojis and custom ones.
@@ -26,20 +26,8 @@ class GuildEmoji extends IGuildEmoji implements SnowflakeEntity, GuildEntity {
   @override
   late final Snowflake id;
 
-  late final List<Snowflake> _roles;
-
-  /// Roles this emoji is whitelisted to
-  Iterable<Role> get roles sync* {
-    if(this.guild != null) {
-      for(final roleId in this._roles) {
-        final role = this.guild!.roles[roleId];
-
-        if(role != null) {
-          yield role;
-        }
-      }
-    }
-  }
+  /// Roles which can use this emote
+  late final Iterable<IRole> roles;
 
   /// whether this emoji must be wrapped in colons
   late final bool requireColons;
@@ -50,10 +38,6 @@ class GuildEmoji extends IGuildEmoji implements SnowflakeEntity, GuildEntity {
   /// whether this emoji is animated
   late final bool animated;
 
-  /// True if emoji is partial.
-  /// Always check before accessing fields or methods, due any of field can be null or empty
-  late final bool partial;
-
   /// Creates full emoji object
   GuildEmoji._new(Map<String, dynamic> raw, this.guildId, this.client) : super._new(raw["name"] as String, false) {
     this.id = Snowflake(raw["id"] as String);
@@ -63,10 +47,10 @@ class GuildEmoji extends IGuildEmoji implements SnowflakeEntity, GuildEntity {
     this.managed = raw["managed"] as bool? ?? false;
     this.animated = raw["animated"] as bool? ?? false;
 
-    this._roles = [
+    this.roles = [
       if (raw["roles"] != null)
         for (final roleId in raw["roles"])
-          Snowflake(roleId)
+          IRole._new(Snowflake(roleId), this.guildId, client)
     ];
   }
 

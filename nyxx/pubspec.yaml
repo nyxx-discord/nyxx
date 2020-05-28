@@ -10,11 +10,12 @@ documentation: https://github.com/l7ssha/nyxx/wiki
 issue_tracker: https://github.com/l7ssha/nyxx/issue
 
 environment:
-  sdk: '>=2.9.0-2.0.dev <3.0.0'
+  sdk: '>=2.9.0-11.0.dev <3.0.0'
 
 dependencies:
   logging: "^0.11.4"
   w_transport: "^3.2.8"
+  http: "^0.12.1"
 
 dev_dependencies:
   dart_style:

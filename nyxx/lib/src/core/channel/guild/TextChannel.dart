@@ -2,10 +2,7 @@ part of nyxx;
 
 /// [CachelessTextChannel] represents single text channel on [Guild].
 /// Inhertits from [MessageChannel] and mixes [CacheGuildChannel].
-class CachelessTextChannel extends CachelessGuildChannel with MessageChannel, ISend implements Mentionable {
-  /// Emitted when channel pins are updated.
-  late final Stream<ChannelPinsUpdateEvent> pinsUpdated;
-
+class CachelessTextChannel extends CachelessGuildChannel with MessageChannel, ISend implements Mentionable, ITextChannel {
   /// The channel's topic.
   late final String? topic;
 
@@ -22,12 +19,8 @@ class CachelessTextChannel extends CachelessGuildChannel with MessageChannel, IS
       "/${this.id.toString()}";
 
   CachelessTextChannel._new(Map<String, dynamic> raw, Snowflake guildId, Nyxx client) : super._new(raw, 0, guildId, client) {
-    _initialize(raw);
-
     this.topic = raw["topic"] as String?;
     this.slowModeThreshold = raw["rate_limit_per_user"] as int? ?? 0;
-
-    pinsUpdated = client.onChannelPinsUpdate.where((event) => event.channel == this);
   }
 
   /// Edits the channel.
@@ -65,9 +58,9 @@ class CachelessTextChannel extends CachelessGuildChannel with MessageChannel, IS
   /// Valid file types for [avatarFile] are jpeg, gif and png.
   ///
   /// ```
-  /// var webhook = await chan.createWebhook("!a Send nudes kek6407");
+  /// var webhook = await channnel.createWebhook("!a Send nudes kek6407");
   /// ```
-  Future<Webhook> createWebhook(String name, {File? avatarFile, String auditReason = ""}) async {
+  Future<Webhook> createWebhook(String name, {File? avatarFile, String? auditReason}) async {
     if (name.isEmpty || name.length > 80) {
       return Future.error("Webhook's name cannot be shorter than 1 character and longer than 80 characters");
     }

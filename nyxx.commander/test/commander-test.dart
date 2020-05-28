@@ -11,17 +11,17 @@ void main() {
 
   bot.onMessageReceived.listen((event) async {
     if (event.message.content == "Test 1") {
-      event.message.delete();
+      event.message.delete(); // ignore: unawaited_futures
     }
 
     if (event.message.content == "Test 2") {
-      event.message.delete();
+      event.message.delete(); // ignore: unawaited_futures
     }
 
     if (event.message.content == "Test 10") {
       await event.message.delete();
 
-      await event.message.channel?.send(content: "Commander tests completed sucessfuly!");
+      await event.message.channel.send(content: "Commander tests completed sucessfuly!");
       exit(0);
     }
   });
@@ -32,13 +32,13 @@ void main() {
     await channel.send(content: "Testing Commander");
 
     final msg1 = await channel.send(content: "test>test1");
-    msg1.delete();
+    msg1.delete(); // ignore: unawaited_futures
 
     final msg2 = await channel.send(content: "test>test2 arg1");
-    msg2.delete();
+    msg2.delete(); // ignore: unawaited_futures
 
     final msg3 = await channel.send(content: "test>test3");
-    msg3.delete();
+    msg3.delete(); // ignore: unawaited_futures
   });
 
   Commander(bot, prefix: "test>", beforeCommandHandler: (context, message) async {

@@ -3,19 +3,19 @@ part of nyxx;
 /// Util function for manipulating permissions
 class PermissionsUtils {
   /// Allows to check if [issueMember] or [issueRole] can interact with [targetMember] or [targetRole].
-  static bool canInteract({Member? issueMember, Role? issueRole, Member? targetMember, Role? targetRole}) {
+  static bool canInteract({CacheMember? issueMember, Role? issueRole, CacheMember? targetMember, Role? targetRole}) {
     bool canInter(Role role1, Role role2) => role1.position > role2.position;
 
     if (issueMember != null && targetMember != null) {
       if (issueMember.guild != targetMember.guild) return false;
 
-      return canInter(issueMember.highestRole, targetMember.highestRole);
+      return canInter(issueMember.highestRole as Role, targetMember.highestRole as Role);
     }
 
     if (issueMember != null && targetRole != null) {
       if (issueMember.guild != targetRole.guild) return false;
 
-      return canInter(issueMember.highestRole, targetRole);
+      return canInter(issueMember.highestRole as Role, targetRole);
     }
 
     if (issueRole != null && targetRole != null) {
@@ -28,7 +28,7 @@ class PermissionsUtils {
   }
 
   /// Returns List of [channel] permissions overrides for given [member].
-  static List<int> getOverrides(Member member, CacheGuildChannel channel) {
+  static List<int> getOverrides(CacheMember member, CacheGuildChannel channel) {
     var allowRaw = 0;
     var denyRaw = 0;
 

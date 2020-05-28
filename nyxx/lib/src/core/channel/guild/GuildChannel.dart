@@ -1,5 +1,7 @@
 part of nyxx;
 
+/// Represents channel which is part of guild.
+/// Can be represented by [CachelessGuildChannel] or [CacheGuildChannel]
 abstract class IGuildChannel extends Channel {
   /// The channel"s name.
   String get name;
@@ -16,7 +18,7 @@ abstract class IGuildChannel extends Channel {
   /// Indicates if channel is nsfw
   bool get isNsfw;
 
-  /// Returns list of [Member] objects who can see this channel
+  /// Returns list of [CacheMember] objects who can see this channel
   List<PermissionsOverrides> get permissionOverrides;
 
   IGuildChannel._new(Map<String, dynamic> raw, int type, Nyxx client) : super._new(raw, type, client);
@@ -44,6 +46,7 @@ abstract class IGuildChannel extends Channel {
   Future<Invite> createInvite({int? maxAge, int? maxUses, bool? temporary, bool? unique, String? auditReason});
 }
 
+/// Guild channel which does not have access to cache.
 abstract class CachelessGuildChannel extends IGuildChannel {
   /// The channel"s name.
   @override
@@ -65,7 +68,7 @@ abstract class CachelessGuildChannel extends IGuildChannel {
   @override
   late final bool isNsfw;
 
-  /// Returns list of [Member] objects who can see this channel
+  /// Returns list of [CacheMember] objects who can see this channel
   @override
   late final List<PermissionsOverrides> permissionOverrides;
 
@@ -152,7 +155,7 @@ abstract class CachelessGuildChannel extends IGuildChannel {
   }
 }
 
-/// Represents channel which is part of guild.
+/// Guild channel which does have access to cache.
 abstract class CacheGuildChannel extends CachelessGuildChannel {
   /// The guild that the channel is in.
   late Guild guild;
@@ -160,24 +163,17 @@ abstract class CacheGuildChannel extends CachelessGuildChannel {
   /// Parent channel id
   CategoryChannel? parentChannel;
 
-  /// Returns list of [Member] objects who can see this channel
-  Iterable<Member> get users => this
-      .guild
-      .members
-      .values
-      .where((member) => this.effectivePermissions(member).hasPermission(PermissionsConstants.viewChannel));
+  /// Returns list of [CacheMember] objects who can see this channel
+  Iterable<IMember> get users => this.guild.members.values.where((member) => member is CacheMember && this.effectivePermissions(member).hasPermission(PermissionsConstants.viewChannel));
 
-  CacheGuildChannel._new(Map<String, dynamic> raw, int type, Guild guild, Nyxx client) : super._new(raw, type, guild.id, client) {
-    // ignore: prefer_initializing_formals
-    this.guild = guild;
-
+  CacheGuildChannel._new(Map<String, dynamic> raw, int type, this.guild, Nyxx client) : super._new(raw, type, guild.id, client) {
     if(this.parentChannelId != null) {
       this.parentChannel = guild.channels[this.parentChannelId!] as CategoryChannel?;
     }
   }
 
   /// Returns effective permissions for [member] to this channel including channel overrides.
-  Permissions effectivePermissions(Member member) {
+  Permissions effectivePermissions(CacheMember member) {
     if (member.guild != this.guild) {
       return Permissions.empty();
     }
@@ -202,9 +198,11 @@ abstract class CacheGuildChannel extends CachelessGuildChannel {
 
   /// Returns effective permissions for [role] to this channel including channel overrides.
   Permissions effectivePermissionForRole(Role role) {
-    if (role.guild != this.guild) return Permissions.empty();
+    if (role.guild != this.guild) {
+      return Permissions.empty();
+    }
 
-    var permissions = role.permissions.raw | guild.everyoneRole.permissions.raw;
+    var permissions = role.permissions.raw | (guild.everyoneRole as Role).permissions.raw;
 
     // TODO: NNBD: try-catch in where
     try {

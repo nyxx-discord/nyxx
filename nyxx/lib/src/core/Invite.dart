@@ -30,6 +30,7 @@ class Invite {
       this.guild = client.guilds[Snowflake(raw["guild"]["id"])];
     }
 
+    // TODO: NNBD
     if (raw["channel"] != null) {
       this.channel = client.channels[Snowflake(raw["channel"]["id"])];
     }
@@ -41,7 +42,7 @@ class Invite {
     if (raw["inviter"] != null) {
       this.inviter = client.users[Snowflake(raw["inviter"]["id"])];
     }
-
+    
     if (raw["target_user"] != null) {
       this.targetUser = client.users[Snowflake(raw["target_user"]["id"])];
     }

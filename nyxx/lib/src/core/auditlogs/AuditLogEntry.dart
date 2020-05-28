@@ -23,54 +23,53 @@ class AuditLogEntry extends SnowflakeEntity {
   String? reason;
 
   AuditLogEntry._new(Map<String, dynamic> raw, Nyxx client) : super(Snowflake(raw["id"] as String)) {
-    targetId = raw["targetId"] as String;
+    this.targetId = raw["targetId"] as String;
 
-    changes = [
+    this.changes = [
       if (raw["changes"] != null)
         for (var o in raw["changes"]) AuditLogChange._new(o as Map<String, dynamic>)
     ];
 
-    user = client.users[Snowflake(raw["user_id"])];
-    type = AuditLogEntryType(raw["action_type"] as int);
+    this.user = client.users[Snowflake(raw["user_id"])];
+    this.type = AuditLogEntryType._create(raw["action_type"] as int);
 
     if (raw["options"] != null) {
-      options = raw["options"] as String;
+      this.options = raw["options"] as String;
     }
 
-    reason = raw["reason"] as String;
+    this.reason = raw["reason"] as String;
   }
 }
 
 class AuditLogEntryType extends IEnum<int> {
-  static const AuditLogEntryType guildUpdate = AuditLogEntryType._of(1);
-  static const AuditLogEntryType channelCreate = AuditLogEntryType._of(10);
-  static const AuditLogEntryType channelUpdate = AuditLogEntryType._of(11);
-  static const AuditLogEntryType channelDelete = AuditLogEntryType._of(12);
-  static const AuditLogEntryType channelOverwriteCreate = AuditLogEntryType._of(13);
-  static const AuditLogEntryType channelOverwriteUpdate = AuditLogEntryType._of(14);
-  static const AuditLogEntryType channelOverwriteDelete = AuditLogEntryType._of(15);
-  static const AuditLogEntryType memberKick = AuditLogEntryType._of(20);
-  static const AuditLogEntryType memberPrune = AuditLogEntryType._of(21);
-  static const AuditLogEntryType memberBanAdd = AuditLogEntryType._of(22);
-  static const AuditLogEntryType memberBanRemove = AuditLogEntryType._of(23);
-  static const AuditLogEntryType memberUpdate = AuditLogEntryType._of(24);
-  static const AuditLogEntryType memberRoleUpdate = AuditLogEntryType._of(25);
-  static const AuditLogEntryType roleCreate = AuditLogEntryType._of(30);
-  static const AuditLogEntryType roleUpdate = AuditLogEntryType._of(31);
-  static const AuditLogEntryType roleDelete = AuditLogEntryType._of(32);
-  static const AuditLogEntryType inviteCreate = AuditLogEntryType._of(40);
-  static const AuditLogEntryType inviteUpdate = AuditLogEntryType._of(41);
-  static const AuditLogEntryType inviteDelete = AuditLogEntryType._of(42);
-  static const AuditLogEntryType webhookCreate = AuditLogEntryType._of(50);
-  static const AuditLogEntryType webhookUpdate = AuditLogEntryType._of(51);
-  static const AuditLogEntryType webhookDelete = AuditLogEntryType._of(52);
-  static const AuditLogEntryType emojiCreate = AuditLogEntryType._of(60);
-  static const AuditLogEntryType emojiUpdate = AuditLogEntryType._of(61);
-  static const AuditLogEntryType emojiDelete = AuditLogEntryType._of(62);
-  static const AuditLogEntryType messageDelete = AuditLogEntryType._of(72);
+  static const AuditLogEntryType guildUpdate = AuditLogEntryType._create(1);
+  static const AuditLogEntryType channelCreate = AuditLogEntryType._create(10);
+  static const AuditLogEntryType channelUpdate = AuditLogEntryType._create(11);
+  static const AuditLogEntryType channelDelete = AuditLogEntryType._create(12);
+  static const AuditLogEntryType channelOverwriteCreate = AuditLogEntryType._create(13);
+  static const AuditLogEntryType channelOverwriteUpdate = AuditLogEntryType._create(14);
+  static const AuditLogEntryType channelOverwriteDelete = AuditLogEntryType._create(15);
+  static const AuditLogEntryType memberKick = AuditLogEntryType._create(20);
+  static const AuditLogEntryType memberPrune = AuditLogEntryType._create(21);
+  static const AuditLogEntryType memberBanAdd = AuditLogEntryType._create(22);
+  static const AuditLogEntryType memberBanRemove = AuditLogEntryType._create(23);
+  static const AuditLogEntryType memberUpdate = AuditLogEntryType._create(24);
+  static const AuditLogEntryType memberRoleUpdate = AuditLogEntryType._create(25);
+  static const AuditLogEntryType roleCreate = AuditLogEntryType._create(30);
+  static const AuditLogEntryType roleUpdate = AuditLogEntryType._create(31);
+  static const AuditLogEntryType roleDelete = AuditLogEntryType._create(32);
+  static const AuditLogEntryType inviteCreate = AuditLogEntryType._create(40);
+  static const AuditLogEntryType inviteUpdate = AuditLogEntryType._create(41);
+  static const AuditLogEntryType inviteDelete = AuditLogEntryType._create(42);
+  static const AuditLogEntryType webhookCreate = AuditLogEntryType._create(50);
+  static const AuditLogEntryType webhookUpdate = AuditLogEntryType._create(51);
+  static const AuditLogEntryType webhookDelete = AuditLogEntryType._create(52);
+  static const AuditLogEntryType emojiCreate = AuditLogEntryType._create(60);
+  static const AuditLogEntryType emojiUpdate = AuditLogEntryType._create(61);
+  static const AuditLogEntryType emojiDelete = AuditLogEntryType._create(62);
+  static const AuditLogEntryType messageDelete = AuditLogEntryType._create(72);
 
-  const AuditLogEntryType._of(int value) : super(value);
-  AuditLogEntryType(int value) : super(value);
+  const AuditLogEntryType._create(int value) : super(value);
 
   @override
   bool operator ==(other) {

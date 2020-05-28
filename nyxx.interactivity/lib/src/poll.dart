@@ -12,7 +12,7 @@ Future<Map<Emoji, int>> createPoll(CachelessTextChannel channel, String title, M
     String? message,
     bool delete = false,
     dynamic Function(Map<Emoji, String> options, String message)? messageFactory}) async {
-  var toSend;
+  dynamic toSend;
 
   if (messageFactory == null) {
     final buffer = StringBuffer();
