@@ -81,6 +81,8 @@ part "src/utils/builders/EmbedFooterBuilder.dart";
 part "src/utils/builders/GuildBuilder.dart";
 part "src/utils/builders/MessageBuilder.dart";
 
+part "src/utils/extensions.dart";
+
 // OBJECTS
 
 part "src/core/AllowedMentions.dart";
