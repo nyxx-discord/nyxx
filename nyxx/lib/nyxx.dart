@@ -17,8 +17,6 @@ import "package:w_transport/vm.dart" as transport_vm show configureWTransportFor
 
 import "package:path/path.dart" as path_utils;
 
-import "package:http/http.dart" as http_client;
-
 // BASE
 
 part "src/Nyxx.dart";
