@@ -68,7 +68,7 @@ class CachelessMember extends IMember {
       // TODO: NNBD: try-catch in where
       try {
         this.hoistedRole = this.roles.firstWhere((element) => element.id == IRole._new(Snowflake(raw["hoisted_role"]), this.guildId, client));
-      } on Exception {
+      } on Error {
         this.hoistedRole = null;
       }
     }

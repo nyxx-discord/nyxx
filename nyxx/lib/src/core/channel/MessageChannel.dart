@@ -12,6 +12,10 @@ part of nyxx;
 /// }
 /// ```
 abstract class MessageChannel implements Channel, ISend, Disposable {
+  /// Reference to client
+  @override
+  Nyxx get client;
+
   Timer? _typing;
 
   /// Sent when a new message is received.
@@ -25,7 +29,6 @@ abstract class MessageChannel implements Channel, ISend, Disposable {
 
   /// A collection of messages sent to this channel.
   late final MessageCache messages = MessageCache._new(client._options.messageCacheSize);
-
 
   /// File upload limit for channel
   int get fileUploadLimit {
