@@ -40,7 +40,7 @@ class Channel extends SnowflakeEntity {
           return CachelessVoiceChannel._new(raw, Snowflake(raw["guild_id"]), client);
         }
 
-        return CacheVoiceChannel._new(raw, channelGuild ,client);
+        return CacheVoiceChannel._new(raw, channelGuild, client);
         break;
       case 4:
         return CategoryChannel._new(raw, channelGuild == null ? Snowflake(raw["guild_id"]) : channelGuild.id, client);

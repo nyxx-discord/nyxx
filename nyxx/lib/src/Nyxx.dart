@@ -331,7 +331,7 @@ class Nyxx implements Disposable {
   }
 
   /// Returns number of shards
-  int get shards => this._options.shardCount;
+  int get shards => this.shardManager._shards.length;
 
   /*
   /// Sets presence for bot.
