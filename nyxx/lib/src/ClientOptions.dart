@@ -7,11 +7,8 @@ class ClientOptions {
   /// **It means client won't send any of these. It doesn't mean filtering guild messages.**
   AllowedMentions? allowedMentions;
 
-  /// The index of this shard
-  int shardIndex;
-
   /// The total number of shards.
-  int shardCount;
+  int? shardCount;
 
   /// The number of messages to cache for each channel.
   int messageCacheSize;
@@ -39,8 +36,7 @@ class ClientOptions {
   /// Makes a new `ClientOptions` object.
   ClientOptions(
       {this.allowedMentions,
-      this.shardIndex = 0,
-      this.shardCount = 1,
+      this.shardCount,
       this.messageCacheSize = 400,
       this.forceFetchMembers = false,
       this.cacheMembers = true,

@@ -7,7 +7,7 @@ class ChannelCreateEvent {
   late final Channel channel;
 
   ChannelCreateEvent._new(Map<String, dynamic> raw, Nyxx client) {
-    this.channel = Channel._deserialize(raw, client);
+    this.channel = Channel._deserialize(raw["d"] as Map<String, dynamic>, client);
 
     client.channels[channel.id] = channel;
     if (this.channel is CacheGuildChannel) {
