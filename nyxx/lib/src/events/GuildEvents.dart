@@ -5,13 +5,9 @@ class GuildCreateEvent {
   /// The guild created.
   late final Guild guild;
 
-  GuildCreateEvent._new(Map<String, dynamic> raw, Shard shard, Nyxx client) {
+  GuildCreateEvent._new(Map<String, dynamic> raw, Nyxx client) {
     this.guild = Guild._new(client, raw["d"] as Map<String, dynamic>, true, true);
     client.guilds[guild.id] = guild;
-
-    if (client._options.forceFetchMembers) {
-      shard.send(OPCodes.requestGuildMember, {"guild_id": guild.id.toString(), "query": "", "limit": 0});
-    }
   }
 }
 
@@ -46,7 +42,7 @@ class GuildDeleteEvent {
   /// False if user was kicked from guild
   late final bool unavailable;
 
-  GuildDeleteEvent._new(Map<String, dynamic> raw, Shard shard, Nyxx client) {
+  GuildDeleteEvent._new(Map<String, dynamic> raw, Nyxx client) {
     this.guildId = Snowflake(raw["d"]["id"]);
     this.unavailable = raw["d"]["unavailable"] as bool;
     this.guild = client.guilds[this.guildId];

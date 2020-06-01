@@ -690,7 +690,7 @@ class Guild extends SnowflakeEntity implements Disposable {
       yield CacheMember._standard(member, this, client);
     }
   }
-
+/*
   /// Returns a [Stream] of [CacheMember] objects whose username or nickname starts with a provided string.
   /// By default limits to one entry - can be changed with [limit] parameter.
   Stream<IMember> searchMembersGateway(String query, {int limit = 0}) async* {
@@ -711,7 +711,7 @@ class Guild extends SnowflakeEntity implements Disposable {
         }
       }
     }
-  }
+  }*/
 
   /// Gets all of the webhooks for this channel.
   Stream<Webhook> getWebhooks() async* {

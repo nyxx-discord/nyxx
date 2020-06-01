@@ -50,7 +50,7 @@ class Nyxx implements Disposable {
   final String version = Constants.version;
 
   /// Current client"s shard
-  late Shard shard;
+  late ShardManager shardManager;
 
   /// Emitted when a shard is disconnected from the websocket.
   late Stream<DisconnectEvent> onDisconnect;
@@ -333,6 +333,7 @@ class Nyxx implements Disposable {
   /// Returns number of shards
   int get shards => this._options.shardCount;
 
+  /*
   /// Sets presence for bot.
   ///
   /// Code below will display bot presence as `Playing Super duper game`:
@@ -350,10 +351,10 @@ class Nyxx implements Disposable {
   void setPresence({UserStatus? status, bool? afk, Activity? game, DateTime? since}) {
     this.shard.setPresence(status: status, afk: afk, game: game, since: since);
   }
-
+*/
   @override
   Future<void> dispose() async {
-    await shard.dispose();
+    await shardManager.dispose();
     await guilds.dispose();
     await users.dispose();
     await guilds.dispose();
