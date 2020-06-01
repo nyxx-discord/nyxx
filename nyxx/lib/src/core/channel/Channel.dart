@@ -21,7 +21,7 @@ class Channel extends SnowflakeEntity {
 
     if(guild != null) {
       channelGuild = guild;
-    } else {
+    } else if(raw["guild_id"] != null) {
       channelGuild = client.guilds[Snowflake(raw["guild_id"])];
     }
 

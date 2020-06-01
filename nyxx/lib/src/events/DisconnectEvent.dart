@@ -3,7 +3,7 @@ part of nyxx;
 /// Sent when a shard disconnects from the websocket.
 class DisconnectEvent {
   /// The shard that got disconnected.
-  Shard shard;
+  dynamic shard;
 
   /// The close code.
   int closeCode;

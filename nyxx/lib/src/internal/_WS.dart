@@ -46,12 +46,11 @@ class _WS {
   }
 
   void setupShard(int shardId) {
-    final shard = Shard._new(this, shardId);
-    _client.shard = shard;
+    this._client.shardManager = ShardManager(this, 2);
   }
 
   void connectShard(int index) {
-    _client.shard._connect(false, true);
+    //_client.shard._connect(false, true);
   }
 
   Future<void> propagateReady() async {
