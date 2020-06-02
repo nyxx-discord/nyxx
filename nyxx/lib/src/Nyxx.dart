@@ -203,7 +203,7 @@ class Nyxx implements Disposable {
     this._events = _EventController(this);
     this.onSelfMention = this
         .onMessageReceived
-        .where((event) => event.message.mentions.any((mentionedUser) => mentionedUser == this.self));
+        .where((event) => event.message.mentions.contains(this.self));
     this.onDmReceived = this
         .onMessageReceived
         .where((event) => event.message.channel is DMChannel || event.message.channel is GroupDMChannel);
@@ -230,7 +230,9 @@ class Nyxx implements Disposable {
 
   /// Returns guild with given [guildId]
   Future<Guild> getGuild(Snowflake guildId, [bool useCache = true]) async {
-    if (this.guilds.hasKey(guildId) && useCache) return this.guilds[guildId]!;
+    if (this.guilds.hasKey(guildId) && useCache) {
+      return this.guilds[guildId]!;
+    }
 
     final response = await _http._execute(BasicRequest._new("/guilds/$guildId"));
 
@@ -248,7 +250,9 @@ class Nyxx implements Disposable {
   /// var channel = await client.getChannel<TextChannel>(Snowflake("473853847115137024"));
   /// ```
   Future<T> getChannel<T extends Channel>(Snowflake id, [bool useCache = true]) async {
-    if (this.channels.hasKey(id) && useCache) return this.channels[id] as T;
+    if (this.channels.hasKey(id) && useCache) {
+      return this.channels[id] as T;
+    }
 
     final response = await this._http._execute(BasicRequest._new("/channels/${id.toString()}"));
 
@@ -268,7 +272,9 @@ class Nyxx implements Disposable {
   /// var user = client.getUser(Snowflake("302359032612651009"));
   /// ``
   Future<User?> getUser(Snowflake id, [bool useCache = true]) async {
-    if (this.users.hasKey(id) && useCache) return this.users[id];
+    if (this.users.hasKey(id) && useCache) {
+      return this.users[id];
+    }
 
     final response = await this._http._execute(BasicRequest._new("/users/${id.toString()}"));
 
@@ -321,19 +327,18 @@ class Nyxx implements Disposable {
   /// var inv = client.getInvite("YMgffU8");
   /// ```
   Future<Invite> getInvite(String code) async {
-    final r = await this._http._execute(BasicRequest._new("/invites/$code"));
+    final response = await this._http._execute(BasicRequest._new("/invites/$code"));
 
-    if (r is HttpResponseSuccess) {
-      return Invite._new(r.jsonBody as Map<String, dynamic>, this);
+    if (response is HttpResponseSuccess) {
+      return Invite._new(response.jsonBody as Map<String, dynamic>, this);
     }
 
-    return Future.error(r);
+    return Future.error(response);
   }
 
   /// Returns number of shards
   int get shards => this.shardManager._shards.length;
 
-  /*
   /// Sets presence for bot.
   ///
   /// Code below will display bot presence as `Playing Super duper game`:
@@ -349,9 +354,9 @@ class Nyxx implements Disposable {
   /// ```
   /// `url` property in `Activity` can be only set when type is set to `streaming`
   void setPresence({UserStatus? status, bool? afk, Activity? game, DateTime? since}) {
-    this.shard.setPresence(status: status, afk: afk, game: game, since: since);
+    this.shardManager.setPresence(status: status, afk: afk, game: game, since: since);
   }
-*/
+
   @override
   Future<void> dispose() async {
     await shardManager.dispose();

@@ -20,9 +20,19 @@ class ShardManager implements Disposable {
   final int _numShards;
   final Map<int, Shard> _shards = {};
 
+  /// List of shards
+  Iterable<Shard> get shards => List.unmodifiable(_shards.values);
+
   /// Starts shard manager
   ShardManager(this._ws, this._numShards) {
     _connect(_numShards - 1);
+  }
+
+  /// Sets presences on every shard
+  void setPresence({UserStatus? status, bool? afk, Activity? game, DateTime? since}) {
+    for (final shard in shards) {
+      shard.setPresence(status: status, afk: afk, game: game, since: since);
+    }
   }
 
   void _connect(int shardId) {
@@ -55,6 +65,9 @@ class Shard implements Disposable {
   /// Reference to [ShardManager]
   ShardManager manager;
 
+  /// List of handled guild ids
+  final List<Snowflake> guilds = [];
+
   late final Isolate _shardIsolate; // Reference to isolate
   late final Stream<dynamic> _receiveStream; // Broadcast stream on which data from isolate is received
   late final ReceivePort _receivePort; // Port on which data from isolate is received
@@ -84,6 +97,64 @@ class Shard implements Disposable {
   /// Sends WS data.
   void send(int opCode, dynamic d) {
     this.sendPort.send({"cmd": "SEND", "data" : {"op": opCode, "d": d}});
+  }
+
+  /// Allows to set presence for current shard.
+  void setPresence({UserStatus? status, bool? afk, Activity? game, DateTime? since}) {
+    final packet = <String, dynamic> {
+      "status": (status != null) ? status.toString() : UserStatus.online.toString(),
+      "afk": (afk != null) ? afk : false,
+      if (game != null)
+        "game": <String, dynamic>{
+          "name": game.name,
+          "type": game.type.value,
+          if (game.type == ActivityType.streaming) "url": game.url
+        },
+      "since": (since != null) ? since.millisecondsSinceEpoch : null
+    };
+
+    this.send(OPCodes.statusUpdate, packet);
+  }
+
+  /// Syncs all guilds
+  void guildSync() => this.send(OPCodes.guildSync, this.guilds.map((e) => e.toString()));
+
+  /// Allows to request members objects from gateway
+  /// [guild] can be either Snowflake or Iterable<Snowflake>
+  void requestMembers(/* Snowflake|Iterable<Snowflake> */ dynamic guild,
+      {String? query, Iterable<Snowflake>? userIds, int limit = 0, bool presences = false, String? nonce}) {
+    if (query != null && userIds != null) {
+      throw Exception("Both `query` and userIds cannot be specified.");
+    }
+
+    dynamic guildPayload;
+
+    if (guild is Snowflake) {
+      if(!this.guilds.contains(guild)) {
+        throw Exception("Cannot request member for guild on wrong shard");
+      }
+
+      guildPayload = guild.toString();
+    } else if (guild is Iterable<Snowflake>) {
+      if(!this.guilds.any((element) => guild.contains(element))) {
+        throw Exception("Cannot request member for guild on wrong shard");
+      }
+
+      guildPayload = guild.map((e) => e.toString()).toList();
+    } else {
+      throw Exception("guild has to be either Snowflake or Iterable<Snowflake>");
+    }
+
+    final payload = <String, dynamic>{
+      "guild_id": guildPayload,
+      if (query != null) "query": query,
+      if (userIds != null) "user_ids": userIds.map((e) => e.toString()).toList(),
+      "limit": limit,
+      "presences": presences,
+      if (nonce != null) "nonce": nonce
+    };
+
+    this.send(OPCodes.requestGuildMember, payload);
   }
 
   void _heartbeat() {
@@ -219,7 +290,9 @@ class Shard implements Disposable {
             break;
 
           case "GUILD_CREATE":
-            manager._ws._client._events.onGuildCreate.add(GuildCreateEvent._new(msg, manager._ws._client));
+            final event = GuildCreateEvent._new(msg, manager._ws._client);
+            this.guilds.add(event.guild.id);
+            manager._ws._client._events.onGuildCreate.add(event);
             break;
 
           case "GUILD_UPDATE":
@@ -363,7 +436,11 @@ Future<void> _shardHandler(SendPort shardPort) async {
       _socket = ws;
       _socket!.listen((data) {
         shardPort.send({ "cmd" : "DATA", "jsonData" : _decodeBytes(data), "resume" : resume});
-      }, onError: (err) => shardPort.send({ "cmd" : "ERROR", "error": err.toString()}));
+      }, onDone: () => print("DONE ----------------------- ${ws.closeCode}"),
+          onError: (err) {
+            print(err);
+            shardPort.send({ "cmd" : "ERROR", "error": err.toString()});
+          });
     }, onError: (_, __) => Future.delayed(const Duration(seconds: 2), _connect));
   }
 

@@ -104,8 +104,7 @@ abstract class MessageReactionEvent {
     if (json["d"]["emoji"]["id"] == null) {
       this.emoji = UnicodeEmoji(json["d"]["emoji"]["name"] as String);
     } else {
-      // TODO: emojis stuff
-      //this.emoji = GuildEmoji._partial(json["d"]["emoji"] as Map<String, dynamic>);
+      this.emoji = PartialGuildEmoji._new(json["d"]["emoji"] as Map<String, dynamic>);
     }
   }
 }
