@@ -6,14 +6,14 @@ class UnicodeEmoji extends Emoji {
   UnicodeEmoji(String code) : super._new(code);
 
   /// Returns Emoji
-  String get code => this.name;
+  String get code => this.name!;
 
   /// Returns runes of emoji
-  Runes get runes => this.name.runes;
+  Runes get runes => this.name!.runes;
 
   /// Encodes Emoji so that can be used in messages.
   @override
-  String encode() => this.name;
+  String encode() => this.name!;
 
   /// Returns encoded string ready to send via message.
   @override

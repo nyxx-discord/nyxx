@@ -63,7 +63,7 @@ class Guild extends SnowflakeEntity implements Disposable {
   late final int systemChannelFlags;
 
   /// Channel where "PUBLIC" guilds display rules and/or guidelines
-  late final CacheGuildChannel? rulesChannel;
+  late final IGuildChannel? rulesChannel;
 
   /// The guild owner's ID
   late final User? owner;
@@ -92,7 +92,7 @@ class Guild extends SnowflakeEntity implements Disposable {
 
   /// the id of the channel where admins and moderators
   /// of "PUBLIC" guilds receive notices from Discord
-  late final CacheGuildChannel? publicUpdatesChannel;
+  late final IGuildChannel? publicUpdatesChannel;
 
   /// Permission of current(bot) user in this guild
   Permissions? currentUserPermissions;
@@ -229,11 +229,11 @@ class Guild extends SnowflakeEntity implements Disposable {
     }
 
     if (raw["rules_channel_id"] != null) {
-      this.rulesChannel = this.channels[Snowflake(raw["rules_channel_id"])] as CacheGuildChannel?;
+      this.rulesChannel = this.channels[Snowflake(raw["rules_channel_id"])] as IGuildChannel;
     }
 
     if (raw["public_updates_channel_id"] != null) {
-      this.publicUpdatesChannel = this.channels[Snowflake(raw["public_updates_channel_id"])] as CacheGuildChannel?;
+      this.publicUpdatesChannel = this.channels[Snowflake(raw["public_updates_channel_id"])] as IGuildChannel?;
     }
   }
 

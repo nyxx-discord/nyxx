@@ -85,7 +85,7 @@ class GuildMemberRemoveEvent {
 /// Sent when a member is updated.
 class GuildMemberUpdateEvent {
   /// The member after the update if member is updated.
-  late final CacheMember? member;
+  late final IMember? member;
 
   /// User if user is updated. Will be null if member is not null.
   late final User? user;
@@ -97,16 +97,16 @@ class GuildMemberUpdateEvent {
       return;
     }
 
-    final member = guild.members[Snowflake(raw["d"]["user"]["id"])];
+    this.member = guild.members[Snowflake(raw["d"]["user"]["id"])];
 
-    if (member == null) {
+    if (this.member == null || this.member is! CacheMember) {
       return;
     }
 
     final nickname = raw["d"]["nickname"] as String?;
     final roles = (raw["d"]["roles"] as List<dynamic>).map((str) => guild.roles[Snowflake(str)]!).toList();
 
-    if (this.member!._updateMember(nickname, roles)) {
+    if ((this.member as CacheMember)._updateMember(nickname, roles)) {
       return;
     }
 
