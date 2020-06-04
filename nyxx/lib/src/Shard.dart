@@ -43,7 +43,7 @@ class ShardManager implements Disposable {
     final shard = Shard(shardId, this, _ws.gateway);
     _shards[shardId] = shard;
 
-    Future.delayed(const Duration(seconds: 1), () => _connect(shardId - 1));
+    Future.delayed(const Duration(seconds: 1, milliseconds: 500), () => _connect(shardId - 1));
   }
 
   @override
@@ -85,7 +85,7 @@ class Shard implements Disposable {
     this._receiveStream = _receivePort.asBroadcastStream();
     this._isolateSendPort = _receivePort.sendPort;
 
-    Isolate.spawn(_shardHandler, _isolateSendPort, errorsAreFatal: false).then((value) async {
+    Isolate.spawn(_shardHandler, _isolateSendPort, errorsAreFatal: true).then((value) async {
       this._shardIsolate = value;
       this.sendPort = await _receiveStream.first as SendPort;
 
@@ -97,6 +97,16 @@ class Shard implements Disposable {
   /// Sends WS data.
   void send(int opCode, dynamic d) {
     this.sendPort.send({"cmd": "SEND", "data" : {"op": opCode, "d": d}});
+  }
+
+  /// Updates clients voice state for [Guild] with given [guildId]
+  void changeVoiceState(Snowflake? guildId, Snowflake? channelId, {bool selfMute = false, bool selfDeafen = false}) {
+    this.send(OPCodes.voiceStateUpdate, <String, dynamic> {
+      "guild_id" : guildId.toString(),
+      "channel_id" : channelId?.toString(),
+      "self_mute" : selfMute,
+      "self_deaf" : selfDeafen
+    });
   }
 
   /// Allows to set presence for current shard.
@@ -186,10 +196,10 @@ class Shard implements Disposable {
         break;
       case 4007:
       case 4009:
-        Future.delayed(const Duration(seconds: 2), () => this._isolateSendPort.send({ "cmd" : "RECONNECT" }));
+        Future.delayed(const Duration(seconds: 2), () => this.sendPort.send({ "cmd" : "RECONNECT" }));
         break;
       default:
-        Future.delayed(const Duration(seconds: 3), () =>  this._isolateSendPort.send({ "cmd" : "CONNECT" }));
+        Future.delayed(const Duration(seconds: 3), () =>  this.sendPort.send({ "cmd" : "CONNECT" }));
         break;
     }
   }
@@ -245,9 +255,7 @@ class Shard implements Disposable {
 
         this._heartbeatTimer = Timer.periodic(
             Duration(milliseconds: msg["d"]["heartbeat_interval"] as int), (Timer t) => this._heartbeat());
-
         break;
-
       case OPCodes.invalidSession:
         manager._logger.severe("Invalid session on shard $id. ${(msg["d"] as bool) ? "Resuming..." : "Reconnecting..."}");
         _heartbeatTimer.cancel();
@@ -459,6 +467,7 @@ Future<void> _shardHandler(SendPort shardPort) async {
   final gatewayUri = Constants.gatewayUri(initData["gatewayUrl"] as String);
 
   transport.WebSocket? _socket;
+  StreamSubscription? _socketSubscription;
 
   transport_vm.configureWTransportForVM();
 
@@ -466,15 +475,11 @@ Future<void> _shardHandler(SendPort shardPort) async {
   Future<void> _connect([bool resume = false]) async {
     await transport.WebSocket.connect(gatewayUri).then((ws) {
       _socket = ws;
-      _socket!.listen((data) {
+      _socketSubscription = _socket!.listen((data) {
         shardPort.send({ "cmd" : "DATA", "jsonData" : _decodeBytes(data), "resume" : resume});
       }, onDone: () async {
-        if(_socket!.closeCode == 1010) {
-          return;
-        }
-
         shardPort.send({ "cmd" : "DISCONNECTED", "errorCode" : _socket!.closeCode, "errorReason" : _socket!.closeReason });
-      }, onError: (err) => shardPort.send({ "cmd" : "ERROR", "error": err.toString(), "errorCode" : _socket!.closeCode, "errorReason" : _socket!.closeReason }));
+      }, cancelOnError: true, onError: (err) => shardPort.send({ "cmd" : "ERROR", "error": err.toString(), "errorCode" : _socket!.closeCode, "errorReason" : _socket!.closeReason }));
     }, onError: (err, __) => shardPort.send({ "cmd" : "ERROR", "error": err.toString(), "errorCode" : _socket!.closeCode, "errorReason" : _socket!.closeReason }));
   }
 
@@ -485,21 +490,32 @@ Future<void> _shardHandler(SendPort shardPort) async {
     final cmd = message["cmd"];
 
     if(cmd == "SEND") {
-      _socket!.add(jsonEncode(message["data"]));
+      if(_socket?.closeCode == null) {
+        _socket?.add(jsonEncode(message["data"]));
+      }
+
+      continue;
     }
 
     if(cmd == "RECONNECT") {
-      await _socket?.close(1010);
+      await _socketSubscription?.cancel();
+      await _socket?.close(1000);
       await _connect(true);
+
+      continue;
     }
 
     if(cmd == "CONNECT") {
-      await _socket?.close(1010);
+      await _socketSubscription?.cancel();
+      await _socket?.close(1000);
       await _connect();
+
+      continue;
     }
 
     if(cmd == "TERMINATE") {
-      await _socket?.close(1010);
+      await _socketSubscription?.cancel();
+      await _socket?.close(1000);
       shardPort.send({ "cmd" : "TERMINATE_OK" });
     }
   }

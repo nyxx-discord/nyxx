@@ -39,6 +39,28 @@ class CachelessVoiceChannel extends CachelessGuildChannel with VoiceChannel {
   CachelessVoiceChannel._new(Map<String, dynamic> raw, Snowflake guildId, Nyxx client) : super._new(raw, 2, guildId, client) {
     _initialize(raw);
   }
+
+  /// Connects client to channel
+  void connect({bool selfMute = false, bool selfDeafen = false}) {
+    try {
+      final shard = this.client.shardManager.shards.firstWhere((element) => element.guilds.contains(this.guildId));
+
+      shard.changeVoiceState(this.guildId, this.id, selfMute: selfMute, selfDeafen: selfDeafen);
+    } on Error {
+      throw Exception("Cannot find shard for this channel!");
+    }
+  }
+
+  /// Disconnects use from channel.
+  void disconnect() {
+    try {
+      final shard = this.client.shardManager.shards.firstWhere((element) => element.guilds.contains(this.guildId));
+
+      shard.changeVoiceState(this.guildId, null);
+    } on Error {
+      throw Exception("Cannot find shard for this channel!");
+    }
+  }
 }
 
 /// Represents VoiceChannel within [Guild]
