@@ -375,7 +375,7 @@ void setupDefaultLogging([Level? loglevel]) {
     var color = "";
     if (rec.level == Level.WARNING) {
       color = "\u001B[33m";
-    } else if (rec.level == Level.SEVERE) {
+    } else if (rec.level == Level.SEVERE || rec.level == Level.SHOUT) {
       color = "\u001B[31m";
     } else if (rec.level == Level.INFO) {
       color = "\u001B[32m";
