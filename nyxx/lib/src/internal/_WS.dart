@@ -13,6 +13,8 @@ class _WS {
 
   final Logger _logger = Logger("Client");
 
+  int _shardsReady = 0;
+
   /// Makes a new WS manager.
   _WS(this._client) {
     _client._http._execute(BasicRequest._new("/gateway/bot")).then((httpResponse) {
@@ -48,7 +50,9 @@ class _WS {
   }
 
   Future<void> propagateReady() async {
-    if(_client.ready) {
+    this._shardsReady++;
+
+    if(_client.ready || this._shardsReady < (_client._options.shardCount ?? 1)) {
       return;
     }
 
