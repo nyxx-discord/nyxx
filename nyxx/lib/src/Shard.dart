@@ -227,7 +227,8 @@ class Shard implements Disposable {
               "\$device": "nyxx",
             },
             "large_threshold": manager._ws._client._options.largeThreshold,
-            "compress": false
+            "compress": manager._ws._client._options.compressedGatewayPayloads,
+            "guild_subscriptions" : manager._ws._client._options.guildSubscriptions
           };
 
           if (manager._ws._client._options.gatewayIntents != null) {
@@ -463,14 +464,15 @@ Future<void> _shardHandler(SendPort shardPort) async {
 
   // Attempts to connect to ws
   Future<void> _connect([bool resume = false]) async {
-    await _socket?.close();
-    _socket = null;
-
     await transport.WebSocket.connect(gatewayUri).then((ws) {
       _socket = ws;
       _socket!.listen((data) {
         shardPort.send({ "cmd" : "DATA", "jsonData" : _decodeBytes(data), "resume" : resume});
       }, onDone: () async {
+        if(_socket!.closeCode == 1010) {
+          return;
+        }
+
         shardPort.send({ "cmd" : "DISCONNECTED", "errorCode" : _socket!.closeCode, "errorReason" : _socket!.closeReason });
       }, onError: (err) => shardPort.send({ "cmd" : "ERROR", "error": err.toString(), "errorCode" : _socket!.closeCode, "errorReason" : _socket!.closeReason }));
     }, onError: (err, __) => shardPort.send({ "cmd" : "ERROR", "error": err.toString(), "errorCode" : _socket!.closeCode, "errorReason" : _socket!.closeReason }));
@@ -487,17 +489,17 @@ Future<void> _shardHandler(SendPort shardPort) async {
     }
 
     if(cmd == "RECONNECT") {
-      await _socket?.close(1000);
+      await _socket?.close(1010);
       await _connect(true);
     }
 
     if(cmd == "CONNECT") {
-      await _socket?.close(1000);
+      await _socket?.close(1010);
       await _connect();
     }
 
     if(cmd == "TERMINATE") {
-      await _socket?.close(1000);
+      await _socket?.close(1010);
       shardPort.send({ "cmd" : "TERMINATE_OK" });
     }
   }
