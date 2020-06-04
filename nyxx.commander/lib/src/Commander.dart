@@ -77,7 +77,7 @@ class Commander {
     try {
       matchingCommand = _commands.firstWhere(
           (element) => _isCommandMatching(element.commandName, event.message.content.replaceFirst(prefix, "")));
-    } on Exception {
+    } on Error {
       return;
     }
 

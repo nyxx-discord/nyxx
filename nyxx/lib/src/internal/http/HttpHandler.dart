@@ -23,7 +23,7 @@ class _HttpHandler {
       final bucket = _buckets.firstWhere((element) => element.uri == request.uri);
 
       return _handle(await bucket._execute(request));
-    } on Exception {
+    } on Error {
       final newBucket = _HttpBucket(request.uri, this);
       _buckets.add(newBucket);
 
