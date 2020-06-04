@@ -124,6 +124,9 @@ class Guild extends SnowflakeEntity implements Disposable {
     return 8 * megabyte;
   }
 
+  /// Returns this guilds shard
+  Shard get shard => client.shardManager.shards.firstWhere((_shard) => _shard.guilds.contains(this.id));
+  
   Guild._new(this.client, Map<String, dynamic> raw, [this.available = true, bool guildCreate = false])
       : super(Snowflake(raw["id"] as String)) {
     if (!this.available) return;
@@ -696,9 +699,9 @@ class Guild extends SnowflakeEntity implements Disposable {
   Stream<IMember> searchMembersGateway(String query, {int limit = 0}) async* {
     final nonce = "$query${id.toString()}";
 
-    this.client.shard.requestMembers(this.id, query: query, limit: limit, nonce: nonce);
+    this.shard.requestMembers(this.id, query: query, limit: limit, nonce: nonce);
 
-    final first = (await this.client.shard.onMemberChunk.take(1).toList()).first;
+    final first = (await this.shard.onMemberChunk.take(1).toList()).first;
 
     for (final member in first.members) {
       yield member;
@@ -711,8 +714,8 @@ class Guild extends SnowflakeEntity implements Disposable {
         }
       }
     }
-  }*/
-
+  }
+*/
   /// Gets all of the webhooks for this channel.
   Stream<Webhook> getWebhooks() async* {
     final response = await client._http._execute(BasicRequest._new("/channels/$id/webhooks"));

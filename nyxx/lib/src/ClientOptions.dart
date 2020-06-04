@@ -33,6 +33,12 @@ class ClientOptions {
   /// If you do not specify a certain intent, you will not receive any of the gateway events that are batched into that group.
   GatewayIntents? gatewayIntents;
 
+  /// Allows to receive compressed payloads from gateway
+  bool compressedGatewayPayloads;
+
+  /// Enables dispatching of guild subscription events (presence and typing events)
+  bool guildSubscriptions;
+
   /// Makes a new `ClientOptions` object.
   ClientOptions(
       {this.allowedMentions,
@@ -42,7 +48,9 @@ class ClientOptions {
       this.cacheMembers = true,
       this.largeThreshold = 50,
       this.ignoredEvents = const [],
-      this.gatewayIntents});
+      this.gatewayIntents,
+      this.compressedGatewayPayloads = true,
+      this.guildSubscriptions = true });
 }
 
 /// When identifying to the gateway, you can specify an intents parameter which
