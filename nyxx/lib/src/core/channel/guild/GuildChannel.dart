@@ -80,7 +80,7 @@ mixin GuildChannel implements Channel, GuildEntity {
       permissions &= ~overEveryone.deny;
       permissions |= overEveryone.allow;
     // ignore: avoid_catches_without_on_clauses, empty_catches
-    } on Exception {}
+    } on Error {}
 
     try {
       final overRole = this.permissions.firstWhere((f) => f.id == role.id);
@@ -88,7 +88,7 @@ mixin GuildChannel implements Channel, GuildEntity {
       permissions &= ~overRole.deny;
       permissions |= overRole.allow;
     // ignore: avoid_catches_without_on_clauses, empty_catches
-    } on Exception {}
+    } on Error {}
 
     return Permissions.fromInt(permissions);
   }

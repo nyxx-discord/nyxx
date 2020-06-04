@@ -69,7 +69,7 @@ class Member extends User implements GuildEntity {
       // TODO: NNBD: try-catch in where
       try {
         this.hoistedRole = this.roles.firstWhere((element) => element.id == Snowflake(raw["hoisted_role"]));
-      } on Exception {
+      } on Error {
         this.hoistedRole = null;
       }
     }

@@ -16,7 +16,7 @@ abstract class Cache<T, S> implements Disposable {
     // TODO: NNBD: try-catch in where
     try {
       return values.firstWhere(predicate);
-    } on Exception {
+    } on Error {
       return null;
     }
   }
