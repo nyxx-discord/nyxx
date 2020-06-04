@@ -33,4 +33,7 @@ class Constants {
 
   /// Url to Nyxx repo
   static const String repoUrl = "https://github.com/l7ssha/nyxx";
+
+  /// Returns [Uri] to gateway
+  static Uri gatewayUri(String gatewayHost) => Uri.parse("$gatewayHost?v=6&encoding=json");
 }

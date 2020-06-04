@@ -71,7 +71,7 @@ class ChannelUpdateEvent {
   late final Channel updatedChannel;
 
   ChannelUpdateEvent._new(Map<String, dynamic> raw, Nyxx client) {
-    this.updatedChannel = Channel._deserialize(raw, client);
+    this.updatedChannel = Channel._deserialize(raw["d"] as Map<String, dynamic>, client);
 
     client.channels[this.updatedChannel.id] = updatedChannel;
 

@@ -161,9 +161,45 @@ class Shard implements Disposable {
     this.send(OPCodes.heartbeat, _sequence);
   }
 
+  void _handleError(dynamic data) {
+    final closeCode = data["errorCode"] as int;
+
+    this._heartbeatTimer.cancel();
+    manager._logger.severe(
+        "Shard $id disconnected. Error code: [${data['errorCode']}] | Error message: [${data['errorReason']}]");
+
+    switch (closeCode) {
+      case 4004:
+      case 4010:
+        exit(1);
+        break;
+      case 4013:
+        manager._logger.shout("Cannot connect to gateway due intent value is invalid. "
+            "Check https://discordapp.com/developers/docs/topics/gateway#gateway-intents for more info.");
+        exit(1);
+        break;
+      case 4014:
+        manager._logger.shout("You sent a disallowed intent for a Gateway Intent. "
+            "You may have tried to specify an intent that you have not enabled or are not whitelisted for. "
+            "Check https://discordapp.com/developers/docs/topics/gateway#gateway-intents for more info.");
+        exit(1);
+        break;
+      case 4007:
+      case 4009:
+        Future.delayed(const Duration(seconds: 2), () => this._isolateSendPort.send({ "cmd" : "RECONNECT" }));
+        break;
+      default:
+        Future.delayed(const Duration(seconds: 3), () =>  this._isolateSendPort.send({ "cmd" : "CONNECT" }));
+        break;
+    }
+  }
+
   Future<void> _handle(dynamic data) async {
-    if(data["cmd"] == "ERROR") {
-      manager._logger.shout("Error on shard $id. Error message: ${data["error"]}");
+    if(data["cmd"] == "ERROR" || data["cmd"] == "DISCONNECTED") {
+      _handleError(data);
+    }
+
+    if(data["jsonData"] == null) {
       return;
     }
 
@@ -419,33 +455,29 @@ Future<void> _shardHandler(SendPort shardPort) async {
 
   /// Initial data init
   final initData = await receiveStream.first;
-  final gatewayUri = Uri.parse("${initData["gatewayUrl"]}?v=6&encoding=json");
+  final gatewayUri = Constants.gatewayUri(initData["gatewayUrl"] as String);
 
   transport.WebSocket? _socket;
 
   transport_vm.configureWTransportForVM();
 
   // Attempts to connect to ws
-  Future<void> _connect([bool resume = false, bool init = false]) async {
-    if (!init && resume) {
-      Future.delayed(const Duration(seconds: 3), () => _connect(true));
-      return;
-    }
+  Future<void> _connect([bool resume = false]) async {
+    await _socket?.close();
+    _socket = null;
 
-    await transport.WebSocket.connect(Uri.parse("$gatewayUri?v=6&encoding=json")).then((ws) {
+    await transport.WebSocket.connect(gatewayUri).then((ws) {
       _socket = ws;
       _socket!.listen((data) {
         shardPort.send({ "cmd" : "DATA", "jsonData" : _decodeBytes(data), "resume" : resume});
-      }, onDone: () => print("DONE ----------------------- ${ws.closeCode}"),
-          onError: (err) {
-            print(err);
-            shardPort.send({ "cmd" : "ERROR", "error": err.toString()});
-          });
-    }, onError: (_, __) => Future.delayed(const Duration(seconds: 2), _connect));
+      }, onDone: () async {
+        shardPort.send({ "cmd" : "DISCONNECTED", "errorCode" : _socket!.closeCode, "errorReason" : _socket!.closeReason });
+      }, onError: (err) => shardPort.send({ "cmd" : "ERROR", "error": err.toString(), "errorCode" : _socket!.closeCode, "errorReason" : _socket!.closeReason }));
+    }, onError: (err, __) => shardPort.send({ "cmd" : "ERROR", "error": err.toString(), "errorCode" : _socket!.closeCode, "errorReason" : _socket!.closeReason }));
   }
 
   // Connects
-  await _connect(false, true);
+  await _connect();
 
   await for(final message in receiveStream) {
     final cmd = message["cmd"];
@@ -456,16 +488,17 @@ Future<void> _shardHandler(SendPort shardPort) async {
 
     if(cmd == "RECONNECT") {
       await _socket?.close(1000);
-      _connect(true);
+      await _connect(true);
     }
 
     if(cmd == "CONNECT") {
       await _socket?.close(1000);
-      _connect(false, true);
+      await _connect();
     }
 
     if(cmd == "TERMINATE") {
       await _socket?.close(1000);
+      shardPort.send({ "cmd" : "TERMINATE_OK" });
     }
   }
 }
