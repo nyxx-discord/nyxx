@@ -72,6 +72,7 @@ part "src/events/InviteEvents.dart";
 
 part "src/utils/builders/Builder.dart";
 
+part "src/utils/builders/PresenceBuilder.dart";
 part "src/utils/builders/AttachmentBuilder.dart";
 part "src/utils/builders/PermissionsBuilder.dart";
 part "src/utils/builders/EmbedBuilder.dart";

@@ -353,8 +353,8 @@ class Nyxx implements Disposable {
   /// bot.setPresence(game: Activity.of("Super duper game", type: ActivityType.streaming, url: "https://twitch.tv/l7ssha"))
   /// ```
   /// `url` property in `Activity` can be only set when type is set to `streaming`
-  void setPresence({UserStatus? status, bool? afk, Activity? game, DateTime? since}) {
-    this.shardManager.setPresence(status: status, afk: afk, game: game, since: since);
+  void setPresence(PresenceBuilder presenceBuilder) {
+    this.shardManager.setPresence(presenceBuilder);
   }
 
   @override
