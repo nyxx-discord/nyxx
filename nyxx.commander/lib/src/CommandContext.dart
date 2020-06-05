@@ -3,16 +3,16 @@ part of nyxx.commander;
 /// Helper class which describes context in which command is executed
 class CommandContext {
   /// Channel from where message come from
-  MessageChannel channel;
+  final MessageChannel channel;
 
   /// Author of message
-  IMessageAuthor? author;
+  final IMessageAuthor? author;
 
   /// Message that was sent
-  Message message;
+  final Message message;
 
   /// Guild in which message was sent
-  Guild? guild;
+  final Guild? guild;
 
   /// Returns author as guild member
   IMember? get member => guild?.members[author!.id];
@@ -23,7 +23,10 @@ class CommandContext {
   /// Shard on which message was sent
   int get shardId => this.guild != null ? this.guild!.shard.id : 0;
 
-  CommandContext._new(this.channel, this.author, this.guild, this.message);
+  /// Substring by which command was matched
+  final String commandMatcher;
+
+  CommandContext._new(this.channel, this.author, this.guild, this.message, this.commandMatcher);
 
   /// Reply to message. It allows to send regular message, Embed or both.
   ///
@@ -137,7 +140,29 @@ class CommandContext {
   /// ```
   Stream<MessageReceivedEvent> nextMessages(int num) => channel.onMessage.take(num);
 
-  /// Returns stream of all code blocks in message
+  Iterable<String> getArguments() sync* {
+    final regex = RegExp('([A-Z0-9a-z]+)|["\']([^"]*)["\']');
+
+    final matches = regex.allMatches(this.message.content.replaceFirst(commandMatcher, ""));
+
+    for(final match in matches) {
+      final group1 = match.group(1);
+
+      yield group1 ?? match.group(2)!;
+    }
+  }
+
+  /// Returns list which content of quotes.
+  Iterable<String> getQuotedText() sync* {
+    final regex = RegExp('["\']([^"]*)["\']');
+
+    final matches = regex.allMatches(this.message.content.replaceFirst(commandMatcher, ""));
+    for(final match in matches) {
+      yield match.group(1)!;
+    }
+  }
+
+  /// Returns list of all code blocks in message
   /// Language string `dart, java` will be ignored and not included
   /// """
   /// n> eval ```(dart)?

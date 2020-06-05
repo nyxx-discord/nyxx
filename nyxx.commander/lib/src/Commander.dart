@@ -10,7 +10,7 @@ typedef CommandHandlerFunction = FutureOr<void> Function(CommandContext context,
 /// Handler used to determine prefix for command in given environment.
 /// Can be used to define different prefixes for different guild, users or dms.
 /// Return String containing prefix or null if command cannot be executed.
-typedef PrefixHandlerFunction = FutureOr<String?> Function(CommandContext context, String message);
+typedef PrefixHandlerFunction = FutureOr<String?> Function(Message message);
 
 /// Callback to customize logger output when command is executed.
 typedef LoggerHandlerFunction = FutureOr<void> Function(CommandContext context, String commandName, Logger logger);
@@ -20,10 +20,10 @@ typedef LoggerHandlerFunction = FutureOr<void> Function(CommandContext context, 
 /// implement [PrefixHandlerFunction] for more fine control over where and in what conditions commands are executed.
 ///
 /// Allows to specify callbacks which are executed before and after command - also on per command basis.
-/// [BeforeHandlerFunction] callbacks are executed only command exists and is matched with message content.
+/// [beforeCommandHandler] callbacks are executed only command exists and is matched with message content.
 class Commander {
   late final PrefixHandlerFunction _prefixHandler;
-  late final PassHandlerFunction? _beforeComandHandler;
+  late final PassHandlerFunction? _beforeCommandHandler;
   late final CommandHandlerFunction? _afterHandlerFunction;
   late final LoggerHandlerFunction _loggerHandlerFunction;
 
@@ -33,7 +33,7 @@ class Commander {
 
   /// Either [prefix] or [prefixHandler] must be specified otherwise program will exit.
   /// Allows to specify additional [beforeCommandHandler] executed before main command callback,
-  /// and [afterCommandCallback] executed after main command callback.
+  /// and [afterCommandHandler] executed after main command callback.
   Commander(Nyxx client,
       {String? prefix,
       PrefixHandlerFunction? prefixHandler,
@@ -48,10 +48,10 @@ class Commander {
     if (prefix == null) {
       _prefixHandler = prefixHandler!;
     } else {
-      _prefixHandler = (ctx, msg) => prefix;
+      _prefixHandler = (_) => prefix;
     }
 
-    this._beforeComandHandler = beforeCommandHandler;
+    this._beforeCommandHandler = beforeCommandHandler;
     this._afterHandlerFunction = afterCommandHandler;
 
     this._loggerHandlerFunction = loggerHandlerFunction ?? _defaultLogger;
@@ -66,11 +66,7 @@ class Commander {
   }
 
   Future<void> _handleMessage(MessageReceivedEvent event) async {
-    /// TODO: Cache
-    final context = CommandContext._new(event.message.channel, event.message.author,
-        event.message is GuildMessage ? (event.message as GuildMessage).guild : null, event.message);
-
-    final prefix = await _prefixHandler(context, event.message.content);
+    final prefix = await _prefixHandler(event.message);
     if (prefix == null) {
       return;
     }
@@ -84,7 +80,11 @@ class Commander {
       return;
     }
 
-    if (this._beforeComandHandler != null && !await this._beforeComandHandler!(context, event.message.content)) {
+    /// TODO: Cache
+    final context = CommandContext._new(event.message.channel, event.message.author,
+        event.message is GuildMessage ? (event.message as GuildMessage).guild : null, event.message, "$prefix${matchingCommand.commandName}");
+
+    if (this._beforeCommandHandler != null && !await this._beforeCommandHandler!(context, event.message.content)) {
       return;
     }
 
@@ -112,6 +112,9 @@ class Commander {
       {PassHandlerFunction? beforeHandler, CommandHandlerFunction? afterHandler}) {
     this._commands.add(
         _InternalCommandHandler(commandName, commandHandler, beforeHandler: beforeHandler, afterHandler: afterHandler));
+
+    // TODO: That is not most efficient way
+    this._commands.sort((a, b) => -a.commandName.length.compareTo(b.commandName.length));
   }
 
   /// Registers command as implemented [CommandHandler] class
