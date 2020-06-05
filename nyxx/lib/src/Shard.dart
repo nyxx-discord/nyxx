@@ -68,6 +68,12 @@ class Shard implements Disposable {
   /// List of handled guild ids
   final List<Snowflake> guilds = [];
 
+  /// Gets the latest gateway latency.
+  ///
+  /// To calculate the gateway latency, nyxx measures the time it takes for Discord to answer the gateway
+  /// heartbeat packet with a heartbeat ack packet. Note this value is updated each time gateway responses to ack.
+  Duration get gatewayLatency => _gatewaylatency;
+
   late final Isolate _shardIsolate; // Reference to isolate
   late final Stream<dynamic> _receiveStream; // Broadcast stream on which data from isolate is received
   late final ReceivePort _receivePort; // Port on which data from isolate is received
@@ -78,6 +84,10 @@ class Shard implements Disposable {
   bool connected = false;
 
   late SendPort sendPort;
+
+  Duration _gatewaylatency = Duration();
+  late DateTime _lastHeartbeatSent;
+  bool _heartbeatAckReceived = false;
 
   /// Isolate
   Shard(this.id, this.manager, String gatewayUrl) {
@@ -156,7 +166,15 @@ class Shard implements Disposable {
   }
 
   void _heartbeat() {
-    this.send(OPCodes.heartbeat, _sequence);
+    this.send(OPCodes.heartbeat, _sequence == 0 ? null : _sequence);
+    this._lastHeartbeatSent = DateTime.now();
+
+    if(!this._heartbeatAckReceived) {
+      manager._logger.warning("Not received previous heartbeat ack");
+      return;
+    }
+
+    this._heartbeatAckReceived = false;
   }
 
   void _handleError(dynamic data) {
@@ -214,6 +232,9 @@ class Shard implements Disposable {
 
     switch (msg["op"] as int) {
       case OPCodes.heartbeatAck:
+        this._heartbeatAckReceived = true;
+        this._gatewaylatency = DateTime.now().difference(this._lastHeartbeatSent);
+
         break;
       case OPCodes.hello:
         if (this._sessionId == null || !resume) {

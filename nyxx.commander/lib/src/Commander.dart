@@ -57,6 +57,8 @@ class Commander {
     this._loggerHandlerFunction = loggerHandlerFunction ?? _defaultLogger;
 
     client.onMessageReceived.listen(_handleMessage);
+
+    this._logger.info("Commander ready!");
   }
 
   FutureOr<void> _defaultLogger(CommandContext ctx, String commandName, Logger logger) {
