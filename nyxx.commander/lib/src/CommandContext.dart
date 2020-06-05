@@ -17,6 +17,12 @@ class CommandContext {
   /// Returns author as guild member
   IMember? get member => guild?.members[author!.id];
 
+  /// Reference to client
+  Nyxx get client => channel.client;
+
+  /// Shard on which message was sent
+  int get shardId => this.guild != null ? this.guild!.shard.id : 0;
+
   CommandContext._new(this.channel, this.author, this.guild, this.message);
 
   /// Reply to message. It allows to send regular message, Embed or both.
