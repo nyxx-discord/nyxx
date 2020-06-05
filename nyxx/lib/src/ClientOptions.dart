@@ -39,6 +39,9 @@ class ClientOptions {
   /// Enables dispatching of guild subscription events (presence and typing events)
   bool guildSubscriptions;
 
+  /// Initial bot presence
+  PresenceBuilder? initialPresence;
+
   /// Makes a new `ClientOptions` object.
   ClientOptions(
       {this.allowedMentions,
@@ -50,7 +53,8 @@ class ClientOptions {
       this.ignoredEvents = const [],
       this.gatewayIntents,
       this.compressedGatewayPayloads = true,
-      this.guildSubscriptions = true });
+      this.guildSubscriptions = true,
+      this.initialPresence });
 }
 
 /// When identifying to the gateway, you can specify an intents parameter which

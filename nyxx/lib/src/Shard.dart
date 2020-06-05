@@ -29,9 +29,9 @@ class ShardManager implements Disposable {
   }
 
   /// Sets presences on every shard
-  void setPresence({UserStatus? status, bool? afk, Activity? game, DateTime? since}) {
+  void setPresence(PresenceBuilder presenceBuilder) {
     for (final shard in shards) {
-      shard.setPresence(status: status, afk: afk, game: game, since: since);
+      shard.setPresence(presenceBuilder);
     }
   }
 
@@ -110,20 +110,8 @@ class Shard implements Disposable {
   }
 
   /// Allows to set presence for current shard.
-  void setPresence({UserStatus? status, bool? afk, Activity? game, DateTime? since}) {
-    final packet = <String, dynamic> {
-      "status": (status != null) ? status.toString() : UserStatus.online.toString(),
-      "afk": (afk != null) ? afk : false,
-      if (game != null)
-        "game": <String, dynamic>{
-          "name": game.name,
-          "type": game.type.value,
-          if (game.type == ActivityType.streaming) "url": game.url
-        },
-      "since": (since != null) ? since.millisecondsSinceEpoch : null
-    };
-
-    this.send(OPCodes.statusUpdate, packet);
+  void setPresence(PresenceBuilder presenceBuilder) {
+    this.send(OPCodes.statusUpdate, presenceBuilder._build());
   }
 
   /// Syncs all guilds
@@ -238,7 +226,9 @@ class Shard implements Disposable {
             },
             "large_threshold": manager._ws._client._options.largeThreshold,
             "compress": manager._ws._client._options.compressedGatewayPayloads,
-            "guild_subscriptions" : manager._ws._client._options.guildSubscriptions
+            "guild_subscriptions" : manager._ws._client._options.guildSubscriptions,
+            if (manager._ws._client._options.initialPresence != null)
+              "presence" : manager._ws._client._options.initialPresence!._build()
           };
 
           if (manager._ws._client._options.gatewayIntents != null) {
