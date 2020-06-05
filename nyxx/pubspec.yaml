@@ -15,7 +15,6 @@ environment:
 dependencies:
   logging: "^0.11.4"
   w_transport: "^3.2.8"
-  http: "^0.12.1"
 
 dev_dependencies:
   dart_style:
