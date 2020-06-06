@@ -95,7 +95,7 @@ class Shard implements Disposable {
     this._receiveStream = _receivePort.asBroadcastStream();
     this._isolateSendPort = _receivePort.sendPort;
 
-    Isolate.spawn(_shardHandler, _isolateSendPort, errorsAreFatal: true).then((value) async {
+    Isolate.spawn(_shardHandler, _isolateSendPort).then((value) async {
       this._shardIsolate = value;
       this.sendPort = await _receiveStream.first as SendPort;
 
@@ -437,8 +437,8 @@ class Shard implements Disposable {
 
   @override
   Future<void> dispose() async {
-    this._isolateSendPort.send({"cmd" : "TERMINATE" });
-    await this._receiveStream.firstWhere((element) => (element as Map<String, dynamic>)["cmd"] == "TERMINATE_OK");
+    //this._isolateSendPort.send({"cmd" : "TERMINATE" });
+    //await this._receiveStream.firstWhere((element) => (element as Map<String, dynamic>)["cmd"] == "TERMINATE_OK");
 
     this._shardIsolate.kill();
   }
@@ -523,11 +523,12 @@ Future<void> _shardHandler(SendPort shardPort) async {
 
       continue;
     }
-
+/*
     if(cmd == "TERMINATE") {
       await _socketSubscription?.cancel();
       await _socket?.close(1000);
       shardPort.send({ "cmd" : "TERMINATE_OK" });
     }
+*/
   }
 }
