@@ -71,11 +71,15 @@ class Commander {
       return;
     }
 
+    if(!event.message.content.startsWith(prefix)) {
+      return;
+    }
+
     // TODO: NNBD: try-catch in where
     CommandHandler? matchingCommand;
     try {
       matchingCommand = _commands.firstWhere(
-          (element) => _isCommandMatching(element.commandName, event.message.content.replaceFirst(prefix, "")));
+          (element) => _isCommandMatching(element.commandName, event.message.content.replaceFirst(prefix, "").trim()));
     } on Error {
       return;
     }

@@ -9,7 +9,7 @@ bool _isCommandMatching(String command, String message) {
   }
 
   for (var i = 0; i < commandParts.length; i++) {
-    if (commandParts[i] != messageParts[i]) {
+    if (commandParts[i].trim() != messageParts[i].trim()) {
       return false;
     }
   }
