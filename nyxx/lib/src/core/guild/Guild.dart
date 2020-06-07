@@ -583,7 +583,7 @@ class Guild extends SnowflakeEntity implements Disposable {
       return Future.error("Cannot move channel by zero places");
     }
 
-    return client._http._execute(BasicRequest._new("/guilds/${this.id}/channels",
+    await client._http._execute(BasicRequest._new("/guilds/${this.id}/channels",
         method: "PATCH", auditLog: auditReason, body: {"id": channel.id.toString(), "position": newPosition}));
   }
 
