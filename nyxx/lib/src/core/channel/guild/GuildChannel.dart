@@ -126,7 +126,7 @@ abstract class CachelessGuildChannel extends IGuildChannel {
       throw Exception("`id` property must be either Role or User");
     }
 
-    return client._http
+    await client._http
         ._execute(BasicRequest._new("/channels/${this.id}/permissions/$id", method: "PUT", auditLog: auditReason));
   }
 

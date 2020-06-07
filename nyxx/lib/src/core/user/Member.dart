@@ -110,7 +110,7 @@ class CachelessMember extends IMember {
       if (reason != null) "reason": reason
     };
 
-    return client._http._execute(BasicRequest._new("/guilds/${this.guildId}/bans/${this.id}",
+    await client._http._execute(BasicRequest._new("/guilds/${this.guildId}/bans/${this.id}",
         method: "PUT", auditLog: auditReason, body: body));
   }
 
