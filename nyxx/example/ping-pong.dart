@@ -1,20 +1,20 @@
 import 'package:nyxx/nyxx.dart';
 
-//TODO: NNBD - Rewrite examples to be more idiomatic
-
 // Main function
 void main() {
   // Create new bot instance
-  Nyxx bot = Nyxx("<TOKEN>");
+  final bot = Nyxx("<TOKEN>");
 
-  // Listen to ready event. Invoked when bot started listening to events.
+  // Listen to ready event. Invoked when bot is connected to all shards. Note that cache can be empty or not incomplete.
   bot.onReady.listen((e) {
     print("Ready!");
   });
 
-  // Listen to all incoming messages via Dart Stream
+  // Listen to all incoming messages
   bot.onMessageReceived.listen((e) {
+    // Check if message content equals "!ping"
     if (e.message.content == "!ping") {
+      // Send "Pong!" to channel where message was received
       e.message.channel.send(content: "Pong!");
     }
   });
