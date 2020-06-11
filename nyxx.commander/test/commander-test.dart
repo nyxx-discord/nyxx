@@ -41,8 +41,8 @@ void main() {
     msg3.delete(); // ignore: unawaited_futures
   });
 
-  Commander(bot, prefix: "test>", beforeCommandHandler: (context, message) async {
-    if (message.endsWith("test3")) {
+  Commander(bot, prefix: "test>", beforeCommandHandler: (context) async {
+    if (context.message.content.endsWith("test3")) {
       await context.channel.send(content: "Test 10");
       return true;
     }

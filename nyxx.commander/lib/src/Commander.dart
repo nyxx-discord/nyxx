@@ -2,10 +2,13 @@ part of nyxx.commander;
 
 /// Used to determine if command can be executed in given environment.
 /// Return true to allow executing command or false otherwise.
-typedef PassHandlerFunction = FutureOr<bool> Function(CommandContext context, String message);
+typedef PassHandlerFunction = FutureOr<bool> Function(CommandContext context);
 
 /// Handler for executing command logic.
 typedef CommandHandlerFunction = FutureOr<void> Function(CommandContext context, String message);
+
+/// Handler for executing logic after executing command.
+typedef AfterHandlerFunction = FutureOr<void> Function(CommandContext context);
 
 /// Handler used to determine prefix for command in given environment.
 /// Can be used to define different prefixes for different guild, users or dms.
@@ -24,10 +27,10 @@ typedef LoggerHandlerFunction = FutureOr<void> Function(CommandContext context, 
 class Commander {
   late final PrefixHandlerFunction _prefixHandler;
   late final PassHandlerFunction? _beforeCommandHandler;
-  late final CommandHandlerFunction? _afterHandlerFunction;
+  late final AfterHandlerFunction? _afterHandlerFunction;
   late final LoggerHandlerFunction _loggerHandlerFunction;
 
-  final List<CommandHandler> _commands = [];
+  final List<CommandEntity> _commandEntities = [];
 
   final Logger _logger = Logger("Commander");
 
@@ -38,7 +41,7 @@ class Commander {
       {String? prefix,
       PrefixHandlerFunction? prefixHandler,
       PassHandlerFunction? beforeCommandHandler,
-      CommandHandlerFunction? afterCommandHandler,
+        AfterHandlerFunction? afterCommandHandler,
       LoggerHandlerFunction? loggerHandlerFunction}) {
     if (prefix == null && prefixHandler == null) {
       _logger.shout("Commander cannot start without both prefix and prefixHandler");
@@ -61,10 +64,6 @@ class Commander {
     this._logger.info("Commander ready!");
   }
 
-  FutureOr<void> _defaultLogger(CommandContext ctx, String commandName, Logger logger) {
-    logger.info("Command [$commandName] executed by [${ctx.author!.tag}]");
-  }
-
   Future<void> _handleMessage(MessageReceivedEvent event) async {
     final prefix = await _prefixHandler(event.message);
     if (prefix == null) {
@@ -75,52 +74,86 @@ class Commander {
       return;
     }
 
-    // TODO: NNBD: try-catch in where
-    CommandHandler? matchingCommand;
-    try {
-      matchingCommand = _commands.firstWhere(
-          (element) => _isCommandMatching(element.commandName, event.message.content.replaceFirst(prefix, "").trim()));
-    } on Error {
+    // Find matching command with given message content
+    final matchingCommand = _commandEntities._findMatchingCommand(event.message.content.replaceFirst(prefix, "").trim().split(" ")) as CommandHandler?;
+
+    if(matchingCommand == null) {
       return;
     }
 
-    /// TODO: Cache
+    // construct commandcontext
     final context = CommandContext._new(event.message.channel, event.message.author,
-        event.message is GuildMessage ? (event.message as GuildMessage).guild : null, event.message, "$prefix${matchingCommand.commandName}");
+        event.message is GuildMessage ? (event.message as GuildMessage).guild : null, event.message, "$prefix${matchingCommand.name}");
 
-    if (this._beforeCommandHandler != null && !await this._beforeCommandHandler!(context, event.message.content)) {
+    // Invoke before handler for commands
+    if (!(await _invokeBeforeHandler(matchingCommand, context))) {
       return;
     }
 
-    if (matchingCommand.beforeHandler != null &&
-        !await matchingCommand.beforeHandler!(context, event.message.content)) {
+    // Invoke before handler for commander
+    if(this._beforeCommandHandler != null && !(await this._beforeCommandHandler!(context))) {
       return;
     }
 
+    // Execute command
     await matchingCommand.commandHandler(context, event.message.content);
 
     // execute logger callback
-    _loggerHandlerFunction(context, matchingCommand.commandName, this._logger);
+    _loggerHandlerFunction(context, matchingCommand.name, this._logger);
 
-    if (matchingCommand.afterHandler != null) {
-      await matchingCommand.afterHandler!(context, event.message.content);
-    }
+    // invoke after handler of command
+    await _invokeAfterHandler(matchingCommand, context);
 
+    // Invoke after handler for commander
     if (this._afterHandlerFunction != null) {
-      this._afterHandlerFunction!(context, event.message.content);
+      this._afterHandlerFunction!(context);
     }
+  }
+
+  // Invokes command after handler and its parents
+  Future<void> _invokeAfterHandler(CommandEntity? commandEntity, CommandContext context) async {
+    if(commandEntity == null) {
+      return;
+    }
+
+    if(commandEntity.afterHandler != null) {
+      await commandEntity.afterHandler!(context);
+    }
+
+    if(commandEntity.parent != null) {
+      await _invokeAfterHandler(commandEntity.parent, context);
+    }
+  }
+
+  // Invokes command before handler and its parents. It will check for next before handlers if top handler returns true.
+  Future<bool> _invokeBeforeHandler(CommandEntity? commandEntity, CommandContext context) async {
+    if(commandEntity == null) {
+      return true;
+    }
+
+    if(commandEntity.beforeHandler == null) {
+      return _invokeBeforeHandler(commandEntity.parent, context);
+    }
+
+    if(await commandEntity.beforeHandler!(context)) {
+      return _invokeBeforeHandler(commandEntity.parent, context);
+    }
+
+    return false;
+  }
+
+  FutureOr<void> _defaultLogger(CommandContext ctx, String commandName, Logger logger) {
+    logger.info("Command [$commandName] executed by [${ctx.author!.tag}]");
   }
 
   /// Registers command with given [commandName]. Allows to specify command specific before and after command execution callbacks
-  void registerCommand(String commandName, CommandHandlerFunction commandHandler,
-      {PassHandlerFunction? beforeHandler, CommandHandlerFunction? afterHandler}) {
-    this._commands.add(
-        _InternalCommandHandler(commandName, commandHandler, beforeHandler: beforeHandler, afterHandler: afterHandler));
+  void registerCommand(String commandName, CommandHandlerFunction commandHandler, {PassHandlerFunction? beforeHandler, AfterHandlerFunction? afterHandler}) {
+    this._commandEntities.add(BasicCommandHandler(commandName, commandHandler, beforeHandler: beforeHandler, afterHandler: afterHandler));
 
     // TODO: That is not most efficient way
-    this._commands.sort((a, b) => -a.commandName.length.compareTo(b.commandName.length));
+    this._commandEntities.sort((a, b) => -a.name.compareTo(b.name));
   }
 
-  /// Registers command as implemented [CommandHandler] class
-  void registerCommandClass(CommandHandler commandHandler) => this._commands.add(commandHandler);
+  /// Registers command as implemented [CommandEntity] class
+  void registerCommandEntity(CommandEntity commandHandler) => this._commandEntities.add(commandHandler);
 }
