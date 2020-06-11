@@ -29,7 +29,7 @@ void main() {
         ..addFooter((footer) {
           footer.text = "Footer example, good";
         })
-        ..color = e.message.author is CacheMember ? (e.message.author as CacheMember).color : DiscordColor.black;
+        ..color = (e.message.author is CacheMember) ? (e.message.author as CacheMember).color : DiscordColor.black;
 
       // Sent an embed to channel where message received was sent
       e.message.channel.send(embed: embed);

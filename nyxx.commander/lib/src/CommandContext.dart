@@ -31,10 +31,8 @@ class CommandContext {
   /// Reply to message. It allows to send regular message, Embed or both.
   ///
   /// ```
-  /// /// Class body
-  /// @Command()
-  /// Future<void> getAv(CommandContext context, String message) async {
-  ///   await context.reply(content: uset.avatarURL());
+  /// Future<void> getAv(CommandContext context) async {
+  ///   await context.reply(content: context.user.avatarURL());
   /// }
   /// ```
   Future<Message> reply(
@@ -49,8 +47,7 @@ class CommandContext {
   /// Reply to messages, then delete it when [duration] expires.
   ///
   /// ```
-  /// @Command()
-  /// Future<void> getAv(CommandContext context, String message) async {
+  /// Future<void> getAv(CommandContext context) async {
   ///   await context.replyTemp(content: user.avatarURL());
   /// }
   /// ```
@@ -65,8 +62,7 @@ class CommandContext {
 
   /// Replies to message after delay specified with [duration]
   /// ```
-  /// @Command()
-  /// Future<void> getAv(CommandContext context, String message) async {
+  /// Future<void> getAv(CommandContext context async {
   ///   await context.replyDelayed(Duration(seconds: 2), content: user.avatarURL());
   /// }
   /// ```
@@ -86,18 +82,22 @@ class CommandContext {
             builder: builder,
             allowedMentions: allowedMentions));
 
-  /// Gather emojis of message in given time
+  /// Awaits for emoji under given [msg]
+  Future<Emoji> awaitEmoji(Message msg) async =>
+      (await this.client.onMessageReactionAdded.where((event) => event.message == msg).first).emoji;
+
+  /// Collects emojis within given [duration]. Returns empty map if no reaction received
   ///
   /// ```
-  /// Future<void> getAv(CommandContext context, String message) async {
-  ///   var msg = await context.replyDelayed(content: context.user.avatarURL());
-  ///   var emojis = await context.collectEmojis(msg, Duration(seconds: 15));
+  /// Future<void> getAv(CommandContext context) async {
+  ///   final msg = await context.replyDelayed(content: context.user.avatarURL());
+  ///   final emojis = await context.awaitEmojis(msg, Duration(seconds: 15));
   ///
-  ///   ...
   /// }
   /// ```
-  Future<Map<Emoji, int>?> collectEmojis(Message msg, Duration duration) => Future<Map<Emoji, int>?>(() async {
-      final collectedEmoji = <Emoji, int>{};
+  Future<Map<Emoji, int>> awaitEmojis(Message msg, Duration duration){
+    final collectedEmoji = <Emoji, int>{};
+    return Future<Map<Emoji, int>>(() async {
       await for (final event in msg.client.onMessageReactionAdded.where((evnt) => evnt.message != null && evnt.message!.id == msg.id)) {
         if (collectedEmoji.containsKey(event.emoji)) {
           // TODO: NNBD: weird stuff
@@ -113,7 +113,9 @@ class CommandContext {
       }
 
       return collectedEmoji;
-    }).timeout(duration, onTimeout: () => null);
+    }).timeout(duration, onTimeout: () => collectedEmoji);
+  }
+
 
   /// Waits for first [TypingEvent] and returns it. If timed out returns null.
   /// Can listen to specific user by specifying [user]
@@ -122,9 +124,8 @@ class CommandContext {
   /// Gets all context channel messages that satisfies [predicate].
   ///
   /// ```
-  /// @Command()
-  /// Future<void> getAv(CommandContext context, String message) async {
-  ///   var messages = await context.nextMessagesWhere((msg) => msg.content.startsWith("fuck"));
+  /// Future<void> getAv(CommandContext context) async {
+  ///   final messages = await context.nextMessagesWhere((msg) => msg.content.startsWith("fuck"));
   /// }
   /// ```
   Stream<MessageReceivedEvent> nextMessagesWhere(bool Function(MessageReceivedEvent msg) predicate, {int limit = 100}) => channel.onMessage.where(predicate).take(limit);
@@ -132,14 +133,16 @@ class CommandContext {
   /// Gets next [num] number of any messages sent within one context (same channel).
   ///
   /// ```
-  /// @Command()
-  /// Future<void> getAv(CommandContext context, String message) async {
+  /// Future<void> getAv(CommandContext context) async {
   ///   // gets next 10 messages
-  ///   var messages = await context.nextMessages(10);
+  ///   final messages = await context.nextMessages(10);
   /// }
   /// ```
   Stream<MessageReceivedEvent> nextMessages(int num) => channel.onMessage.take(num);
 
+  /// Returns list of words separated with space and/or text surrounded by quotes
+  /// Text: `hi this is "example stuff" which 'can be parsed'` will return
+  /// `List<String> [hi, this, is, example stuff, which, can be parsed]`
   Iterable<String> getArguments() sync* {
     final regex = RegExp('([A-Z0-9a-z]+)|["\']([^"]*)["\']');
 
@@ -153,6 +156,8 @@ class CommandContext {
   }
 
   /// Returns list which content of quotes.
+  /// Text: `hi this is "example stuff" which 'can be parsed'` will return
+  /// `List<String> [example stuff, can be parsed]`
   Iterable<String> getQuotedText() sync* {
     final regex = RegExp('["\']([^"]*)["\']');
 
