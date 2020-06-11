@@ -19,7 +19,7 @@ class _WS {
   _WS(this._client) {
     _client._http._execute(BasicRequest._new("/gateway/bot")).then((httpResponse) {
       if (httpResponse is HttpResponseError) {
-        this._logger.severe("Cannot get gateway url");
+        this._logger.severe("Cannot get gateway url: [${httpResponse.errorCode}; ${httpResponse.errorMessage}]");
         exit(1);
       }
 
