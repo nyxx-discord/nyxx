@@ -114,7 +114,7 @@ class CachelessMember extends IMember {
         method: "PUT", auditLog: auditReason, body: body));
   }
 
-  /// Adds role to user
+  /// Adds role to user.
   ///
   /// ```
   /// var r = guild.roles.values.first;
