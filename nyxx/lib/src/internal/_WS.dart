@@ -32,7 +32,7 @@ class _WS {
 
       checkForConnections();
 
-      this._client.shardManager = ShardManager(this, this._client._options.shardCount != null ? this._client._options.shardCount! : this.recommendedShardsNum);
+      this._client.shardManager = ShardManager._new(this, this._client._options.shardCount != null ? this._client._options.shardCount! : this.recommendedShardsNum);
     });
   }
 

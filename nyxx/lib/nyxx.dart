@@ -24,6 +24,10 @@ part "src/ClientOptions.dart";
 
 // INTERNAL
 
+part "src/internal/shard/Shard.dart";
+part "src/internal/shard/ShardManager.dart";
+part "src/internal/shard/shardHandler.dart";
+
 part "src/internal/_Constants.dart";
 part "src/internal/_EventController.dart";
 part "src/internal/_WS.dart";
@@ -93,7 +97,6 @@ part "src/core/DiscordColor.dart";
 
 part "src/core/SnowflakeEntity.dart";
 part "src/core/Snowflake.dart";
-part "src/Shard.dart";
 part "src/core/guild/Webhook.dart";
 
 part "src/core/voice/VoiceState.dart";
