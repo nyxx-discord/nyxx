@@ -180,7 +180,7 @@ class Nyxx implements Disposable {
     transport_vm.configureWTransportForVM();
 
     if (_token.isEmpty) {
-      throw NoTokenError();
+      throw MissingTokenError();
     }
 
     ProcessSignal.sigterm.watch().listen((event) async {

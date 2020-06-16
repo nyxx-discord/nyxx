@@ -31,7 +31,7 @@ class ClientUser extends User {
   /// Edits current user. This changes user's username - not per guild nickname.
   Future<User> edit({String? username, File? avatar, String? encodedAvatar}) async {
     if (username == null && (avatar == null || encodedAvatar == null)) {
-      return Future.error("Cannot edit user with null values");
+      return Future.error(ArgumentError("Cannot edit user with null null arguments"));
     }
 
     final body = <String, dynamic>{
