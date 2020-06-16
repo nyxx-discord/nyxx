@@ -57,7 +57,7 @@ class CommandGroup extends CommandEntity {
   }
 
   /// Registers command as implemented [CommandEntity] class
-  void registerCommandEntity(CommandEntity commandHandler) => this._commandEntities.add(commandHandler);
+  void registerCommandGroup(CommandGroup commandGroup) => this._commandEntities.add(commandGroup..parent = this);
 }
 
 /// Handles command execution - requires to implement [name] field which
@@ -69,7 +69,7 @@ abstract class CommandHandler extends CommandEntity {
 }
 
 /// Basic implementation of command handler. Used internally in library.
-class BasicCommandHandler implements CommandHandler {
+class BasicCommandHandler extends CommandHandler {
   @override
   final PassHandlerFunction? beforeHandler;
 
