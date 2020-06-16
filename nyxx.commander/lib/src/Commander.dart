@@ -62,7 +62,6 @@ class Commander {
     this._beforeCommandHandler = beforeCommandHandler;
     this._afterHandlerFunction = afterCommandHandler;
     this._commandExecutionError = commandExecutionError;
-
     this._loggerHandlerFunction = loggerHandlerFunction ?? _defaultLogger;
 
     client.onMessageReceived.listen(_handleMessage);

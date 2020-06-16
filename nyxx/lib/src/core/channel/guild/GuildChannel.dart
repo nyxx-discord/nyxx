@@ -111,7 +111,7 @@ abstract class CachelessGuildChannel extends IGuildChannel {
   @override
   Future<void> editChannelPermission(PermissionsBuilder perms, SnowflakeEntity id, {String? auditReason}) {
     if (id is! Role || id is! User) {
-      throw Exception("The `id` property must be either Role or User");
+      throw ArgumentError("The `id` property must be either Role or User");
     }
 
     return client._http._execute(BasicRequest._new("/channels/${this.id}/permissions/${id.toString()}",
@@ -123,7 +123,7 @@ abstract class CachelessGuildChannel extends IGuildChannel {
   @override
   Future<void> deleteChannelPermission(SnowflakeEntity id, {String? auditReason}) async {
     if (id is! Role || id is! User) {
-      throw Exception("`id` property must be either Role or User");
+      throw ArgumentError("`id` property must be either Role or User");
     }
 
     await client._http

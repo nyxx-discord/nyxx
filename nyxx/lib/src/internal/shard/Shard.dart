@@ -77,25 +77,25 @@ class Shard implements Disposable {
   void requestMembers(/* Snowflake|Iterable<Snowflake> */ dynamic guild,
       {String? query, Iterable<Snowflake>? userIds, int limit = 0, bool presences = false, String? nonce}) {
     if (query != null && userIds != null) {
-      throw Exception("Both `query` and userIds cannot be specified.");
+      throw ArgumentError("Both `query` and userIds cannot be specified.");
     }
 
     dynamic guildPayload;
 
     if (guild is Snowflake) {
       if(!this.guilds.contains(guild)) {
-        throw Exception("Cannot request member for guild on wrong shard");
+        throw InvalidShardException("Cannot request member for guild on wrong shard");
       }
 
       guildPayload = guild.toString();
     } else if (guild is Iterable<Snowflake>) {
       if(!this.guilds.any((element) => guild.contains(element))) {
-        throw Exception("Cannot request member for guild on wrong shard");
+        throw InvalidShardException("Cannot request member for guild on wrong shard");
       }
 
       guildPayload = guild.map((e) => e.toString()).toList();
     } else {
-      throw Exception("guild has to be either Snowflake or Iterable<Snowflake>");
+      throw ArgumentError("guild has to be either Snowflake or Iterable<Snowflake>");
     }
 
     final payload = <String, dynamic>{

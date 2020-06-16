@@ -87,19 +87,19 @@ class EmbedBuilder implements Builder {
   /// Builds object to Map() instance;
   Map<String, dynamic> _build() {
     if (this.title != null && this.title!.length > 256) {
-      throw Exception("Embed title is too long (256 characters limit)");
+      throw EmbedBuilderArgumentException("Embed title is too long (256 characters limit)");
     }
 
     if (this.description != null && this.description!.length > 2048) {
-      throw Exception("Embed description is too long (2048 characters limit)");
+      throw EmbedBuilderArgumentException("Embed description is too long (2048 characters limit)");
     }
 
     if (this._fields.length > 25) {
-      throw Exception("Embed cannot contain more than 25 fields");
+      throw EmbedBuilderArgumentException("Embed cannot contain more than 25 fields");
     }
 
     if (this.length > 6000) {
-      throw Exception("Total length of embed cannot exceed 6000 characters");
+      throw EmbedBuilderArgumentException("Total length of embed cannot exceed 6000 characters");
     }
 
     return <String, dynamic>{

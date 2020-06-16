@@ -24,6 +24,10 @@ part "src/ClientOptions.dart";
 
 // INTERNAL
 
+part "src/internal/exceptions/MissingTokenError.dart";
+part "src/internal/exceptions/EmbedBuilderArgumentException.dart";
+part "src/internal/exceptions/InvalidShardException.dart";
+
 part "src/internal/shard/Shard.dart";
 part "src/internal/shard/ShardManager.dart";
 part "src/internal/shard/shardHandler.dart";
@@ -46,10 +50,6 @@ part "src/internal/interfaces/IMessageAuthor.dart";
 part "src/internal/interfaces/Convertable.dart";
 part "src/internal/interfaces/ISend.dart";
 part "src/internal/interfaces/Mentionable.dart";
-
-// ERROR
-
-part "src/errors/SetupErrors.dart";
 
 // EVENTS
 
