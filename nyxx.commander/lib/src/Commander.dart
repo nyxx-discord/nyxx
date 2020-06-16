@@ -18,6 +18,9 @@ typedef PrefixHandlerFunction = FutureOr<String?> Function(Message message);
 /// Callback to customize logger output when command is executed.
 typedef LoggerHandlerFunction = FutureOr<void> Function(CommandContext context, String commandName, Logger logger);
 
+/// Callback called when command executions returns with [Exception] or [Error] ([exception] variable could be either).
+typedef CommandExecutionError = FutureOr<void> Function(CommandContext context, dynamic exception);
+
 /// Lightweight command framework. Doesn't use `dart:mirrors` and can be used in browser.
 /// While constructing specify prefix which is string with prefix or
 /// implement [PrefixHandlerFunction] for more fine control over where and in what conditions commands are executed.
@@ -29,6 +32,7 @@ class Commander {
   late final PassHandlerFunction? _beforeCommandHandler;
   late final AfterHandlerFunction? _afterHandlerFunction;
   late final LoggerHandlerFunction _loggerHandlerFunction;
+  late final CommandExecutionError? _commandExecutionError;
 
   final List<CommandEntity> _commandEntities = [];
 
@@ -38,11 +42,12 @@ class Commander {
   /// Allows to specify additional [beforeCommandHandler] executed before main command callback,
   /// and [afterCommandHandler] executed after main command callback.
   Commander(Nyxx client,
-      {String? prefix,
-      PrefixHandlerFunction? prefixHandler,
-      PassHandlerFunction? beforeCommandHandler,
+        {String? prefix,
+        PrefixHandlerFunction? prefixHandler,
+        PassHandlerFunction? beforeCommandHandler,
         AfterHandlerFunction? afterCommandHandler,
-      LoggerHandlerFunction? loggerHandlerFunction}) {
+        LoggerHandlerFunction? loggerHandlerFunction,
+        CommandExecutionError? commandExecutionError}) {
     if (prefix == null && prefixHandler == null) {
       _logger.shout("Commander cannot start without both prefix and prefixHandler");
       exit(1);
@@ -56,6 +61,7 @@ class Commander {
 
     this._beforeCommandHandler = beforeCommandHandler;
     this._afterHandlerFunction = afterCommandHandler;
+    this._commandExecutionError = commandExecutionError;
 
     this._loggerHandlerFunction = loggerHandlerFunction ?? _defaultLogger;
 
@@ -81,9 +87,11 @@ class Commander {
       return;
     }
 
+    final fullCommandName = getFullCommandName(matchingCommand);
+
     // construct commandcontext
     final context = CommandContext._new(event.message.channel, event.message.author,
-        event.message is GuildMessage ? (event.message as GuildMessage).guild : null, event.message, "$prefix${matchingCommand.name}");
+        event.message is GuildMessage ? (event.message as GuildMessage).guild : null, event.message, "$prefix$fullCommandName");
 
     // Invoke before handler for commands
     if (!(await _invokeBeforeHandler(matchingCommand, context))) {
@@ -96,10 +104,20 @@ class Commander {
     }
 
     // Execute command
-    await matchingCommand.commandHandler(context, event.message.content);
+    try {
+      await matchingCommand.commandHandler(context, event.message.content);
+    } on Exception catch (e) {
+      if(this._commandExecutionError != null) {
+        await _commandExecutionError!(context, e);
+      }
+    } on Error catch (e) {
+      if(this._commandExecutionError != null) {
+        await _commandExecutionError!(context, e);
+      }
+    }
 
     // execute logger callback
-    _loggerHandlerFunction(context, matchingCommand.name, this._logger);
+    _loggerHandlerFunction(context, fullCommandName, this._logger);
 
     // invoke after handler of command
     await _invokeAfterHandler(matchingCommand, context);
@@ -155,5 +173,16 @@ class Commander {
   }
 
   /// Registers command as implemented [CommandEntity] class
-  void registerCommandEntity(CommandEntity commandHandler) => this._commandEntities.add(commandHandler);
+  void registerCommandGroup(CommandGroup commandGroup) => this._commandEntities.add(commandGroup);
+}
+
+/// Full qualified command name with its parents names
+String getFullCommandName(CommandEntity entity) {
+  var commandName = entity.name;
+
+  for(var e = entity.parent; e != null; e = e.parent) {
+    commandName = "${e.name} $commandName";
+  }
+
+  return commandName.trim();
 }
