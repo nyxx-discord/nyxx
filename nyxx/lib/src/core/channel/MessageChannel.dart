@@ -56,8 +56,6 @@ abstract class MessageChannel implements Channel, ISend, Disposable {
     return messages[id];
   }
 
-  @override
-
   /// Sends message to channel. Performs `toString()` on thing passed to [content]. Allows to send embeds with [embed] field.
   ///
   /// ```
@@ -93,6 +91,7 @@ abstract class MessageChannel implements Channel, ISend, Disposable {
   /// await e.message.channel
   ///   .send(files: [new File("kitten.jpg")], embed: embed, content: "HEJKA!");
   /// ```
+  @override
   Future<Message> send(
       {dynamic content,
       List<AttachmentBuilder>? files,

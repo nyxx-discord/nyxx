@@ -1,6 +1,6 @@
 part of nyxx.commander;
 
-/// Generic
+/// Base object for [CommandHandler] and [CommandGroup]
 abstract class CommandEntity {
   /// Executed before executing command.
   /// Used to check if command can be executed in current context.
