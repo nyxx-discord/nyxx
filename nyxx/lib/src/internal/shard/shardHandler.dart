@@ -1,12 +1,11 @@
 part of nyxx;
 
 // Decodes zlib compresses string into string json
-Map<String, dynamic> _decodeBytes(dynamic rawPayload) {
+Map<String, dynamic> _decodeBytes(dynamic rawPayload, ZLibDecoder decoder) {
   if (rawPayload is String) {
     return jsonDecode(rawPayload) as Map<String, dynamic>;
   }
-
-  final decoded = zlib.decoder.convert(rawPayload as List<int>);
+  final decoded = decoder.convert(rawPayload as List<int>);
   final rawStr = utf8.decode(decoded);
   return jsonDecode(rawStr) as Map<String, dynamic>;
 }
@@ -40,13 +39,30 @@ Future<void> _shardHandler(SendPort shardPort) async {
 
   transport_vm.configureWTransportForVM();
 
+  // TODO: ???
+  /*
+  ProcessSignal.sigterm.watch().listen((event) async {
+    await _socketSubscription?.cancel();
+    await _socket?.close(1000);
+    print("CLOSED");
+  });
+
+  ProcessSignal.sigint.watch().listen((event) async {
+    await _socketSubscription?.cancel();
+    await _socket?.close(1000);
+    print("CLOSED");
+  });
+*/
+
   // Attempts to connect to ws
   Future<void> _connect() async {
     await transport.WebSocket.connect(gatewayUri).then((ws) {
+      final zlibDecoder = ZLibDecoder(); // Create zlib decoder specific to this connection. New connection should get new zlib context
+
       shardPort.send({ "cmd" : "CONNECT_ACK" });
       _socket = ws;
       _socketSubscription = _socket!.listen((data) {
-        shardPort.send({ "cmd" : "DATA", "jsonData" : _decodeBytes(data) });
+        shardPort.send({ "cmd" : "DATA", "jsonData" : _decodeBytes(data, zlibDecoder) });
       }, onDone: () async {
         shardPort.send({ "cmd" : "DISCONNECTED", "errorCode" : _socket!.closeCode, "errorReason" : _socket!.closeReason });
       }, cancelOnError: true, onError: (err) => shardPort.send({ "cmd" : "ERROR", "error": err.toString(), "errorCode" : _socket!.closeCode, "errorReason" : _socket!.closeReason }));
