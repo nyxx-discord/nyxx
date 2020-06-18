@@ -12,14 +12,14 @@ class ShardManager implements Disposable {
   /// Emitted when the shard is ready.
   late Stream<Shard> onConnected = this._onConnect.stream;
 
-  /// Emitted when the shard encounters an error.
+  /// Emitted when the shard encounters a connection error.
   late Stream<Shard> onDisconnect = this._onDisconnect.stream;
 
   /// Emitted when shard receives member chunk.
   late Stream<MemberChunkEvent> onMemberChunk = this._onMemberChunk.stream;
 
-  final StreamController<Shard> _onConnect = StreamController<Shard>.broadcast();
-  final StreamController<Shard> _onDisconnect = StreamController<Shard>.broadcast();
+  final StreamController<Shard> _onConnect = StreamController.broadcast();
+  final StreamController<Shard> _onDisconnect = StreamController.broadcast();
   final StreamController<MemberChunkEvent> _onMemberChunk = StreamController.broadcast();
 
   final Logger _logger = Logger("Shard Manager");
