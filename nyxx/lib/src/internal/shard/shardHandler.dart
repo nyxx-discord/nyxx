@@ -5,6 +5,9 @@ Map<String, dynamic> _decodeBytes(dynamic rawPayload, ZLibDecoder decoder) {
   if (rawPayload is String) {
     return jsonDecode(rawPayload) as Map<String, dynamic>;
   }
+
+  // print("Size: ${(rawPayload as List<int>).length} bytes");
+
   final decoded = decoder.convert(rawPayload as List<int>);
   final rawStr = utf8.decode(decoded);
   return jsonDecode(rawStr) as Map<String, dynamic>;

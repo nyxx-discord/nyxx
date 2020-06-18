@@ -6,7 +6,7 @@ abstract class IGuildChannel extends Channel {
   /// The channel"s name.
   String get name;
 
-  /// The channel's position in the channel list.
+  /// Relative position of channel in context of channel list
   int get position;
 
   /// Id of [Guild] that the channel is in.

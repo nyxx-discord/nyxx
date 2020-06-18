@@ -5,7 +5,13 @@ class Shard implements Disposable {
   final int id;
 
   /// Reference to [ShardManager]
-  ShardManager manager;
+  final ShardManager manager;
+
+  /// Emitted when the shard encounters a connection error
+  late final Stream<Shard> onDisconnect = manager.onDisconnect.where((event) => event.id == this);
+
+  /// Emitted when shard receives member chunk.
+  late final Stream<MemberChunkEvent> onMemberChunk = manager.onMemberChunk.where((event) => event.shardId == this.id);
 
   /// List of handled guild ids
   final List<Snowflake> guilds = [];
@@ -269,7 +275,7 @@ class Shard implements Disposable {
             break;
 
           case "GUILD_MEMBERS_CHUNK":
-            manager._onMemberChunk.add(MemberChunkEvent._new(rawPayload, manager._ws._client));
+            manager._onMemberChunk.add(MemberChunkEvent._new(rawPayload, manager._ws._client, this.id));
             break;
 
           case "MESSAGE_REACTION_REMOVE_ALL":

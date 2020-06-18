@@ -27,7 +27,10 @@ class MemberChunkEvent {
   /// Nonce is used to identify events.
   String? nonce;
 
-  MemberChunkEvent._new(Map<String, dynamic> raw, Nyxx client) {
+  /// Id of shard where chunk was received
+  final int shardId;
+
+  MemberChunkEvent._new(Map<String, dynamic> raw, Nyxx client, this.shardId) {
     this.chunkIndex = raw["d"]["chunk_index"] as int;
     this.chunkCount = raw["d"]["chunk_count"] as int;
 
