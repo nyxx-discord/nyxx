@@ -106,16 +106,22 @@ abstract class CachelessGuildChannel extends IGuildChannel {
     }
   }
 
-  /// Allows to set permissions for channel. [id] can be either User or Role
-  /// Throws if [id] isn't [User] or [Role]
+  /// Allows to set permissions for channel. [entity] can be either User or Role
+  /// Throws if [entity] isn't [User] or [Role]
   @override
-  Future<void> editChannelPermission(PermissionsBuilder perms, SnowflakeEntity id, {String? auditReason}) {
-    if (id is! Role || id is! User) {
-      throw ArgumentError("The `id` property must be either Role or User");
+  Future<void> editChannelPermission(PermissionsBuilder perms, SnowflakeEntity entity, {String? auditReason}) {
+    if (entity is! IRole && entity is! User) {
+      return Future.error(Exception("The `id` property must be either Role or User"));
     }
 
-    return client._http._execute(BasicRequest._new("/channels/${this.id}/permissions/${id.toString()}",
-        method: "PUT", body: perms._build()._build(), auditLog: auditReason));
+    final permSet = perms._build();
+
+    return client._http._execute(BasicRequest._new("/channels/${this.id}/permissions/${entity.id.toString()}",
+        method: "PUT", body: {
+          "type" : entity is IRole ? "role" : "member",
+          "allow" : permSet.allow,
+          "deny" : permSet.deny
+        }, auditLog: auditReason));
   }
 
   /// Deletes permission overwrite for given User or Role [id]
@@ -210,7 +216,7 @@ abstract class CacheGuildChannel extends CachelessGuildChannel {
 
       permissions &= ~overEveryone.deny;
       permissions |= overEveryone.allow;
-    // ignore: avoid_catches_without_on_clauses, empty_catches
+      // ignore: avoid_catches_without_on_clauses, empty_catches
     } on Exception {}
 
     try {
@@ -218,7 +224,7 @@ abstract class CacheGuildChannel extends CachelessGuildChannel {
 
       permissions &= ~overRole.deny;
       permissions |= overRole.allow;
-    // ignore: avoid_catches_without_on_clauses, empty_catches
+      // ignore: avoid_catches_without_on_clauses, empty_catches
     } on Exception {}
 
     return Permissions.fromInt(permissions);
