@@ -101,7 +101,7 @@ class Shard implements Disposable {
 
       guildPayload = guild.map((e) => e.toString()).toList();
     } else {
-      throw ArgumentError("guild has to be either Snowflake or Iterable<Snowflake>");
+      throw ArgumentError("Guild has to be either Snowflake or Iterable<Snowflake>");
     }
 
     final payload = <String, dynamic>{
@@ -133,8 +133,7 @@ class Shard implements Disposable {
 
     this._connected = false;
     this._heartbeatTimer.cancel();
-    manager._logger.severe(
-        "Shard $id disconnected. Error code: [${data['errorCode']}] | Error message: [${data['errorReason']}]");
+    manager._logger.severe("Shard $id disconnected. Error code: [${data['errorCode']}] | Error message: [${data['errorReason']}]");
 
     switch (closeCode) {
       case 4004:
@@ -164,17 +163,16 @@ class Shard implements Disposable {
 
   // Connects to gateway
   void _connect() {
-
+    manager._logger.info("Connecting to gateway on shard $id!");
     this._resume = false;
-    Future.delayed(const Duration(seconds: 2), () => this._sendPort.send({ "cmd" : "CONNECT"}))
-        .then((_) => manager._logger.info("Connecting to gateway!"));
+    Future.delayed(const Duration(seconds: 2), () => this._sendPort.send({ "cmd" : "CONNECT"}));
   }
 
   // Reconnects to gateway
   void _reconnect() {
+    manager._logger.info("Resuming connection to gateway on shard $id!");
     this._resume = true;
-    Future.delayed(const Duration(seconds: 1), () => this._sendPort.send({ "cmd" : "CONNECT"}))
-        .then((value) => manager._logger.info("Resuming connection to gateway!"));
+    Future.delayed(const Duration(seconds: 1), () => this._sendPort.send({ "cmd" : "CONNECT"}));
   }
 
   Future<void> _handle(dynamic rawData) async {
