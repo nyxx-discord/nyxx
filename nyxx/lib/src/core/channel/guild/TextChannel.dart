@@ -1,8 +1,7 @@
 part of nyxx;
 
-/// [CachelessTextChannel] represents single text channel on [Guild].
-/// Inhertits from [MessageChannel] and mixes [CacheGuildChannel].
-class CachelessTextChannel extends CachelessGuildChannel with MessageChannel, ISend implements Mentionable, ITextChannel {
+/// [ITextChannel] in context of [Guild].
+abstract class GuildTextChannel implements Channel, CachelessGuildChannel, ITextChannel {
   /// The channel's topic.
   late final String? topic;
 
@@ -18,7 +17,7 @@ class CachelessTextChannel extends CachelessGuildChannel with MessageChannel, IS
   String get url => "https://discordapp.com/channels/${this.guildId.toString()}"
       "/${this.id.toString()}";
 
-  CachelessTextChannel._new(Map<String, dynamic> raw, Snowflake guildId, Nyxx client) : super._new(raw, 0, guildId, client) {
+  void _initialize(Map<String, dynamic> raw, Snowflake guildId, Nyxx client) {
     this.topic = raw["topic"] as String?;
     this.slowModeThreshold = raw["rate_limit_per_user"] as int? ?? 0;
   }
@@ -102,3 +101,21 @@ class CachelessTextChannel extends CachelessGuildChannel with MessageChannel, IS
   /// Returns mention to channel
   String toString() => this.mention;
 }
+
+/// [CachelessTextChannel] represents single text channel on [Guild].
+/// Inhertits from [MessageChannel] and mixes [CacheGuildChannel].
+class CachelessTextChannel extends CachelessGuildChannel with GuildTextChannel, MessageChannel, ISend implements Mentionable, ITextChannel {
+  CachelessTextChannel._new(Map<String, dynamic> raw, Snowflake guildId, Nyxx client) : super._new(raw, 0, guildId, client) {
+    _initialize(raw, guildId, client);
+  }
+}
+
+
+/// [CachelessTextChannel] represents single text channel on [Guild].
+/// Inhertits from [MessageChannel] and mixes [CacheGuildChannel].
+class CacheTextChannel extends CacheGuildChannel with GuildTextChannel, MessageChannel, ISend implements Mentionable, ITextChannel {
+  CacheTextChannel._new(Map<String, dynamic> raw, Guild guild, Nyxx client) : super._new(raw, 0, guild, client) {
+    _initialize(raw, guild.id, client);
+  }
+}
+

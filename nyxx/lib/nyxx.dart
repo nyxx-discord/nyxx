@@ -157,7 +157,6 @@ part "src/core/application/OAuth2Info.dart";
 part "src/core/application/AppTeam.dart";
 
 part "src/core/permissions/Permissions.dart";
-part "src/core/permissions/AbstractPermissions.dart";
 part "src/core/permissions/PermissionOverrides.dart";
 part "src/core/permissions/PermissionsConstants.dart";
 

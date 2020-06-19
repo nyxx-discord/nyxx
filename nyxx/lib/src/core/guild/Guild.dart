@@ -592,8 +592,8 @@ class Guild extends SnowflakeEntity implements Disposable {
   ///
   /// await guild.ban(member);
   /// ```
-  Future<void> ban(CacheMember member, {int deleteMessageDays = 0, String? auditReason}) async =>
-    client._http._execute(BasicRequest._new("/guilds/${this.id}/bans/${member.id.toString()}",
+  Future<void> ban(SnowflakeEntity user, {int deleteMessageDays = 0, String? auditReason}) async =>
+    client._http._execute(BasicRequest._new("/guilds/${this.id}/bans/${user.id.toString()}",
         method: "PUT", auditLog: auditReason, body: {"delete-message-days": deleteMessageDays}));
 
   /// Kicks user from guild. Member is removed from guild and he is able to rejoin
@@ -601,8 +601,8 @@ class Guild extends SnowflakeEntity implements Disposable {
   /// ```
   /// await guild.kick(member);
   /// ```
-  Future<void> kick(CacheMember member, {String? auditReason}) async =>
-    client._http._execute(BasicRequest._new("/guilds/${this.id.toString()}/members/${member.id.toString()}",
+  Future<void> kick(SnowflakeEntity user, {String? auditReason}) async =>
+    client._http._execute(BasicRequest._new("/guilds/${this.id.toString()}/members/${user.id.toString()}",
         method: "DELTE", auditLog: auditReason));
 
   /// Unbans a user by ID.
