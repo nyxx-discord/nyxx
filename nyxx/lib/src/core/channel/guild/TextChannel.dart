@@ -23,12 +23,12 @@ abstract class GuildTextChannel implements Channel, CachelessGuildChannel, IText
   }
 
   /// Edits the channel.
-  Future<CachelessTextChannel> edit({String? name, String? topic, int? position, int? slowModeTreshold}) async {
+  Future<CachelessTextChannel> edit({String? name, String? topic, int? position, int? slowModeThreshold}) async {
     final body = <String, dynamic>{
       if (name != null) "name": name,
       if (topic != null) "topic": topic,
       if (position != null) "position": position,
-      if (slowModeTreshold != null) "rate_limit_per_user": slowModeTreshold,
+      if (slowModeThreshold != null) "rate_limit_per_user": slowModeThreshold,
     };
 
     final response = await client._http._execute(BasicRequest._new("/channels/${this.id}", method: "PATCH", body: body));
