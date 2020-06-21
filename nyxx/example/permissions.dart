@@ -29,8 +29,14 @@ void main() {
       // Get current member permissions in context of channel
       final permissions = messageChannel.effectivePermissions(member);
 
+      // Get current member permissions as builder
+      final permissionsAsBuilder = permissions.toBuilder()..sendMessages = true;
+
+      // Get first channel override as builder and edit sendMessages property to allow sending messages for entities included in this override
+      final channelOverridesAsBuilder = messageChannel.permissionOverrides.first.toBuilder()..sendMessages = true;
+
       // Create new channel permission override
-      await messageChannel.editChannelPermission(PermissionsBuilder()..sendMessages = true, member);
+      await messageChannel.editChannelPermissions(PermissionsBuilder()..sendMessages = true, member);
     }
   });
 }

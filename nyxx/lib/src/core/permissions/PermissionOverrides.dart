@@ -1,7 +1,7 @@
 part of nyxx;
 
 /// Holds permissions overrides for channel
-class PermissionsOverrides extends SnowflakeEntity {
+class PermissionsOverrides extends SnowflakeEntity implements Convertable<PermissionOverrideBuilder> {
   /// Type of entity
   late final String type;
 
@@ -18,7 +18,10 @@ class PermissionsOverrides extends SnowflakeEntity {
     this.allow = raw["allow"] as int;
     this.deny = raw["deny"] as int;
 
-    permissions = Permissions.fromOverwrite(0, allow, deny);
-    type = raw["type"] as String;
+    this.permissions = Permissions.fromOverwrite(0, allow, deny);
+    this.type = raw["type"] as String;
   }
+
+  @override
+  PermissionOverrideBuilder toBuilder() => PermissionOverrideBuilder.from(this.type, this.id, this.permissions);
 }
