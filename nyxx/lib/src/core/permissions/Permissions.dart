@@ -1,7 +1,7 @@
 part of nyxx;
 
 /// Permissions for a role or channel override.
-class Permissions {
+class Permissions implements Convertable<PermissionsBuilder> {
   /// The raw permission code.
   late final int raw;
 
@@ -168,4 +168,7 @@ class Permissions {
 
     return false;
   }
+
+  @override
+  PermissionsBuilder toBuilder() => PermissionsBuilder.from(this);
 }
