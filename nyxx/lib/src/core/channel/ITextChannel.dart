@@ -9,37 +9,35 @@ abstract class ITextChannel implements Channel, MessageChannel {
   /// Sends message to channel. Performs `toString()` on thing passed to [content]. Allows to send embeds with [embed] field.
   ///
   /// ```
-  /// await chan.send(content: "Very nice message!");
+  /// await channel.send(content: "Very nice message!");
   /// ```
   ///
   /// Can be used in combination with [Emoji]. Just run `toString()` on [Emoji] instance:
   /// ```
-  /// var emoji = guild.emojis.values.firstWhere((e) => e.name.startsWith("dart"));
-  /// await chan.send(content: "Dart is superb! ${emoji.toString()}");
+  /// final emoji = guild.emojis.findOne((e) => e.name.startsWith("dart"));
+  /// await channel.send(content: "Dart is superb! ${emoji.toString()}");
   /// ```
   /// Embeds can be sent very easily:
   /// ```
-  /// var embed = new EmbedBuilder()
+  /// var embed = EmbedBuilder()
   ///   ..title = "Example Title"
   ///   ..addField(name: "Memory usage", value: "${ProcessInfo.currentRss / 1024 / 1024}MB");
   ///
   /// await chan.send(embed: embed);
   /// ```
   ///
-  ///
   /// Method also allows to send file and optional [content] with [embed].
   /// Use `expandAttachment(String file)` method to expand file names in embed
   ///
   /// ```
-  /// await chan.send(files: [new File("kitten.png"), new File("kitten.jpg")], content: "Kittens ^-^"]);
+  /// await channel.send(files: [new File("kitten.png"), new File("kitten.jpg")], content: "Kittens ^-^"]);
   /// ```
   /// ```
   /// var embed = new nyxx.EmbedBuilder()
   ///   ..title = "Example Title"
   ///   ..thumbnailUrl = "${attach("kitten.jpg")}";
   ///
-  /// await e.message.channel
-  ///   .send(files: [new File("kitten.jpg")], embed: embed, content: "HEJKA!");
+  /// channel.send(files: [new File("kitten.jpg")], embed: embed, content: "HEJKA!");
   /// ```
   @override
   Future<Message> send(
