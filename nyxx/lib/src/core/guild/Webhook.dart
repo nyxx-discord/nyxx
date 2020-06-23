@@ -28,8 +28,8 @@ class Webhook extends SnowflakeEntity implements IMessageAuthor {
   /// The webhook's name.
   late final String? name;
 
-  /// The webhook's token.
-  late final String? token;
+  /// The webhook's token. Defaults to empty string
+  late final String token;
 
   /// The webhook's channel, if this is accessed using a normal client and the client has that channel in it's cache.
   late final CachelessTextChannel? channel;
@@ -67,7 +67,7 @@ class Webhook extends SnowflakeEntity implements IMessageAuthor {
 
   Webhook._new(Map<String, dynamic> raw, this.client) : super(Snowflake(raw["id"] as String)) {
     this.name = raw["name"] as String?;
-    this.token = raw["token"] as String?;
+    this.token = raw["token"] as String? ?? "";
     this.avatarHash = raw["avatar"] as String?;
     this.type = WebhookType.from(raw["type"] as int);
 
@@ -85,7 +85,7 @@ class Webhook extends SnowflakeEntity implements IMessageAuthor {
   }
 
   /// Executes webhook. Webhooks can send multiple embeds in one messsage using [embeds].
-  /// 
+  ///
   /// [wait] - waits for server confirmation of message send before response,
   /// and returns the created message body (defaults to false; when false a message that is not save does not return an error)
   Future<Message> execute(
