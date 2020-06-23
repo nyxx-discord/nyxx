@@ -155,7 +155,7 @@ abstract class CachelessGuildChannel extends IGuildChannel {
   /// Creates new [Invite] for [Channel] and returns it"s instance
   ///
   /// ```
-  /// var inv = await chan.createInvite(maxUses: 2137);
+  /// final invite = await channel.createInvite(maxUses: 2137);
   /// ```
   @override
   Future<Invite> createInvite({int? maxAge, int? maxUses, bool? temporary, bool? unique, String? auditReason}) async {
