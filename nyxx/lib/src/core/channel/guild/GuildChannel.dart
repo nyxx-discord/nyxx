@@ -44,7 +44,7 @@ abstract class IGuildChannel extends Channel {
   /// Creates new [Invite] for [Channel] and returns it"s instance
   ///
   /// ```
-  /// var inv = await chan.createInvite(maxUses: 2137);
+  /// var invite = await channel.createInvite(maxUses: 2137);
   /// ```
   Future<Invite> createInvite({int? maxAge, int? maxUses, bool? temporary, bool? unique, String? auditReason});
 }
@@ -109,7 +109,7 @@ abstract class CachelessGuildChannel extends IGuildChannel {
     }
   }
 
-  /// Allows to set permissions for channel. [entity] can be either User or Role
+  /// Allows to set permissions for channel. [entity] can be either [User] or [Role]
   /// Throws if [entity] isn't [User] or [Role]
   @override
   Future<void> editChannelPermissions(PermissionsBuilder perms, SnowflakeEntity entity, {String? auditReason}) async {
@@ -152,7 +152,7 @@ abstract class CachelessGuildChannel extends IGuildChannel {
         ._execute(BasicRequest._new("/channels/${this.id}/permissions/$id", method: "PUT", auditLog: auditReason));
   }
 
-  /// Creates new [Invite] for [Channel] and returns it"s instance
+  /// Creates new [Invite] for [Channel] and returns it's instance
   ///
   /// ```
   /// final invite = await channel.createInvite(maxUses: 2137);
