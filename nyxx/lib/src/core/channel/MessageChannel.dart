@@ -133,9 +133,9 @@ abstract class MessageChannel implements Channel, ISend, Disposable {
 
     if (response is HttpResponseSuccess) {
       return Message._deserialize(response.jsonBody as Map<String, dynamic>, client);
-    } else {
-      return Future.error(response);
     }
+
+    return Future.error(response);
   }
 
   /// Starts typing.

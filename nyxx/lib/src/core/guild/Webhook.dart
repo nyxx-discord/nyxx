@@ -40,12 +40,14 @@ class Webhook extends SnowflakeEntity implements IMessageAuthor {
   /// The user, if this is accessed using a normal client.
   late final User? user;
 
-  // TODO: Create data class
   /// Webhook type
   late final WebhookType type;
 
   /// Webhooks avatar hash
   late final String? avatarHash;
+
+  /// Default webhook avatar id
+  int get defaultAvatarId => 0;
 
   @override
   String get username => this.name.toString();
@@ -82,17 +84,62 @@ class Webhook extends SnowflakeEntity implements IMessageAuthor {
     }
   }
 
+  /// Executes webhook. Webhooks can send multiple embeds in one messsage using [embeds].
+  /// 
+  /// [wait] - waits for server confirmation of message send before response,
+  /// and returns the created message body (defaults to false; when false a message that is not save does not return an error)
+  Future<Message> execute(
+      {dynamic content,
+      List<AttachmentBuilder>? files,
+      List<EmbedBuilder>? embeds,
+      bool? tts,
+      AllowedMentions? allowedMentions,
+      bool? wait,
+      String? avatarUrl}) async {
+    allowedMentions ??= client._options.allowedMentions;
+
+    final reqBody = {
+      if (content != null) "content": content.toString(),
+      if (allowedMentions != null) "allowed_mentions": allowedMentions._build(),
+      if(embeds != null) "embeds" : [
+        for(final e in embeds)
+          e._build()
+      ],
+      if (content != null && tts != null) "tts": tts,
+      if(avatarUrl != null) "avatar_url" : avatarUrl,
+    };
+
+    final queryParams = { if(wait != null) "wait" : wait };
+
+    _HttpResponse response;
+
+    if (files != null && files.isNotEmpty) {
+      response = await client._http
+          ._execute(MultipartRequest._new("/webhooks/${this.id.toString()}/${this.token}", files, method: "POST", fields: reqBody, queryParams: queryParams));
+    } else {
+      response = await client._http
+          ._execute(BasicRequest._new("/webhooks/${this.id.toString()}/${this.token}", body: reqBody, method: "POST", queryParams: queryParams));
+    }
+
+    if (response is HttpResponseSuccess) {
+      return Message._deserialize(response.jsonBody as Map<String, dynamic>, client);
+    }
+
+    return Future.error(response);
+  }
+
   @override
   String avatarURL({String format = "webp", int size = 128}) {
     if (this.avatarHash != null) {
       return "https://cdn.${Constants.cdnHost}/avatars/${this.id}/${this.avatarHash}.$format?size=$size";
     }
 
-    return "https://cdn.${Constants.cdnHost}/embed/avatars/0.png?size=$size";
+    return "https://cdn.${Constants.cdnHost}/embed/avatars/$defaultAvatarId.png?size=$size";
   }
 
   /// Edits the webhook.
-  Future<Webhook> edit({String? name, ITextChannel? channel, File? avatar, String? encodedAvatar, String? auditReason}) async {
+  Future<Webhook> edit(
+      {String? name, ITextChannel? channel, File? avatar, String? encodedAvatar, String? auditReason}) async {
     final body = <String, dynamic>{
       if (name != null) "name": name,
       if (channel != null) "channel_id": channel.id.toString()
@@ -114,7 +161,7 @@ class Webhook extends SnowflakeEntity implements IMessageAuthor {
 
   /// Deletes the webhook.
   Future<void> delete({String? auditReason}) =>
-    client._http._execute(BasicRequest._new("/webhooks/$id/$token", method: "DELETE", auditLog: auditReason));
+      client._http._execute(BasicRequest._new("/webhooks/$id/$token", method: "DELETE", auditLog: auditReason));
 
   /// Returns a string representation of this object.
   @override
