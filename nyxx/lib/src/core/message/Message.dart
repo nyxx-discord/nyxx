@@ -50,6 +50,7 @@ class GuildMessage extends Message implements GuildEntity {
   /// True if message is sent by a webhook
   bool get isByWebhook => author is Webhook;
 
+  /// Role mentions in this message
   late final List<IRole> roleMentions;
 
   GuildMessage._new(Map<String, dynamic> raw, Nyxx client) : super._new(raw, client) {
@@ -68,6 +69,7 @@ class GuildMessage extends Message implements GuildEntity {
       if (member == null) {
         if (raw["member"] == null) {
           this.author = User._new(raw["author"] as Map<String, dynamic>, client);
+          this.client.users[this.author.id] = this.author as User;
         } else {
           final authorData = raw["author"] as Map<String, dynamic>;
           final memberData = raw["member"] as Map<String, dynamic>;
@@ -275,7 +277,19 @@ abstract class Message extends SnowflakeEntity implements Disposable {
   @override
   bool operator ==(other) {
     if (other is Message) {
-      return other.content == this.content || other.embeds.any((e) => this.embeds.any((f) => e == f));
+      return this.id == other.id;
+    }
+
+    if(other is Snowflake) {
+      return this.id == other;
+    }
+
+    if(other is int) {
+      return this.id == other;
+    }
+
+    if(other is String) {
+      return this.id == other;
     }
 
     return false;
