@@ -57,11 +57,11 @@ abstract class GuildTextChannel implements Channel, CachelessGuildChannel, IText
   /// Valid file types for [avatarFile] are jpeg, gif and png.
   ///
   /// ```
-  /// var webhook = await channnel.createWebhook("!a Send nudes kek6407");
+  /// final webhook = await channnel.createWebhook("!a Send nudes kek6407");
   /// ```
   Future<Webhook> createWebhook(String name, {File? avatarFile, String? auditReason}) async {
     if (name.isEmpty || name.length > 80) {
-      return Future.error("Webhook's name cannot be shorter than 1 character and longer than 80 characters");
+      return Future.error("Webhook name cannot be shorter than 1 character and longer than 80 characters");
     }
 
     final body = <String, dynamic>{"name": name};
