@@ -129,6 +129,7 @@ part "src/core/embed/EmbedThumbnail.dart";
 
 part "src/core/guild/ClientUser.dart";
 part "src/core/guild/Guild.dart";
+part "src/core/guild/GuildFeature.dart";
 part "src/core/user/Presence.dart";
 part "src/core/user/Member.dart";
 part "src/core/guild/Status.dart";
