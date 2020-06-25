@@ -30,7 +30,7 @@ class Guild extends SnowflakeEntity implements Disposable {
   late final CachelessTextChannel? systemChannel;
 
   /// enabled guild features
-  late final List<String> features;
+  late final Iterable<GuildFeature> features;
 
   /// The guild's afk channel ID, null if not set.
   late VoiceChannel? afkChannel;
@@ -172,7 +172,7 @@ class Guild extends SnowflakeEntity implements Disposable {
       }
     }
 
-    this.features = (raw["features"] as List<dynamic>).cast<String>();
+    this.features = (raw["features"] as List<dynamic>).map((e) => GuildFeature.from(e.toString()));
 
     if (raw["permissions"] != null) {
       this.currentUserPermissions = Permissions.fromInt(raw["permissions"] as int);
