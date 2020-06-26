@@ -210,10 +210,24 @@ abstract class Message extends SnowflakeEntity implements Disposable {
   @override
   String toString() => this.content;
 
+  // TODO: Manage message flags better
+  /// Suppresses embeds in message. Can be executed in other users messages.
+  Future<Message> suppressEmbeds() async {
+    final body = <String, dynamic>{
+      "flags" : 1 << 2
+    };
+
+    final response = await client._http
+        ._execute(BasicRequest._new("/channels/${this.channelId}/messages/${this.id}", method: "PATCH", body: body));
+
+    if (response is HttpResponseSuccess) {
+      return Message._deserialize(response.jsonBody as Map<String, dynamic>, client);
+    }
+
+    return Future.error(response);
+  }
+
   /// Edits the message.
-  ///
-  /// Throws an [Exception] if the HTTP request errored.
-  ///     Message.edit("My edited content!");
   Future<Message> edit({dynamic content, EmbedBuilder? embed, AllowedMentions? allowedMentions}) async {
     if (this.author.id != client.self.id) {
       return Future.error("Cannot edit someones message");
@@ -222,7 +236,8 @@ abstract class Message extends SnowflakeEntity implements Disposable {
     final body = <String, dynamic>{
       if (content != null) "content": content.toString(),
       if (embed != null) "embed": embed._build(),
-      if (allowedMentions != null) "allowed_mentions": allowedMentions._build()
+      if (allowedMentions != null) "allowed_mentions": allowedMentions._build(),
+
     };
 
     final response = await client._http
