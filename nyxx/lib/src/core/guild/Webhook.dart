@@ -32,7 +32,7 @@ class Webhook extends SnowflakeEntity implements IMessageAuthor {
   late final String token;
 
   /// The webhook's channel, if this is accessed using a normal client and the client has that channel in it's cache.
-  late final CachelessTextChannel? channel;
+  late final GuildTextChannel? channel;
 
   /// The webhook's guild, if this is accessed using a normal client and the client has that guild in it's cache.
   late final Guild? guild;
@@ -72,7 +72,7 @@ class Webhook extends SnowflakeEntity implements IMessageAuthor {
     this.type = WebhookType.from(raw["type"] as int);
 
     if (raw["channel_id"] != null) {
-      this.channel = client.channels[Snowflake(raw["channel_id"] as String)] as CachelessTextChannel?;
+      this.channel = client.channels[Snowflake(raw["channel_id"] as String)] as GuildTextChannel?;
     }
 
     if (raw["guild_id"] != null) {
