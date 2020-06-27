@@ -120,7 +120,7 @@ abstract class MessageChannel implements Channel, ISend, Disposable {
     if (files != null && files.isNotEmpty) {
       for (final file in files) {
         if (file._bytes.length > fileUploadLimit) {
-          return Future.error("File with name: [${file._name}] is too big!");
+          return Future.error(ArgumentError("File with name: [${file._name}] is too big!"));
         }
       }
 

@@ -80,7 +80,7 @@ class GuildEmoji extends IGuildEmoji implements SnowflakeEntity, GuildEntity {
   /// Allows to edit emoji
   Future<GuildEmoji> edit({String? name, List<Snowflake>? roles}) async {
     if (name == null && roles == null) {
-      return Future.error("Both name and roles fields cannot be null");
+      return Future.error(ArgumentError("Both name and roles fields cannot be null"));
     }
 
     final body = <String, dynamic>{

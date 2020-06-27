@@ -303,11 +303,11 @@ class Guild extends SnowflakeEntity implements Disposable {
   /// ```
   Future<GuildEmoji> createEmoji(String name, {List<Role>? roles, File? image, List<int>? imageBytes}) async {
     if (image != null && await image.length() > 256000) {
-      return Future.error("Emojis and animated emojis have a maximum file size of 256kb.");
+      return Future.error(ArgumentError("Emojis and animated emojis have a maximum file size of 256kb."));
     }
 
     if (image == null && imageBytes == null) {
-      return Future.error("Both imageData and file fields cannot be null");
+      return Future.error(ArgumentError("Both imageData and file fields cannot be null"));
     }
 
     final body = <String, dynamic>{
@@ -408,7 +408,7 @@ class Guild extends SnowflakeEntity implements Disposable {
     final channel = this.channels.first as CacheGuildChannel?;
 
     if (channel == null) {
-      return Future.error("Cannot get any channel to create invite to");
+      return Future.error(ArgumentError("Cannot get any channel to create invite to"));
     }
 
     return channel.createInvite(
@@ -535,11 +535,11 @@ class Guild extends SnowflakeEntity implements Disposable {
       String? auditReason}) async {
     // Checks to avoid API panic
     if (type == ChannelType.dm || type == ChannelType.groupDm) {
-      return Future.error("Cannot create DM channel.");
+      return Future.error(ArgumentError("Cannot create DM channel."));
     }
 
     if (type == ChannelType.category && parent != null) {
-      return Future.error("Cannot create Category Channel which have parent channel.");
+      return Future.error(ArgumentError("Cannot create Category Channel which have parent channel."));
     }
 
     // Construct body
@@ -580,7 +580,7 @@ class Guild extends SnowflakeEntity implements Disposable {
     } else if (absolute != null) {
       newPosition = absolute;
     } else {
-      return Future.error("Cannot move channel by zero places");
+      return Future.error(ArgumentError("Cannot move channel by zero places"));
     }
 
     await client._http._execute(BasicRequest._new("/guilds/${this.id}/channels",

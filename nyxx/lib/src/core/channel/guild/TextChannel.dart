@@ -61,7 +61,7 @@ abstract class GuildTextChannel implements Channel, CachelessGuildChannel, IText
   /// ```
   Future<Webhook> createWebhook(String name, {File? avatarFile, String? auditReason}) async {
     if (name.isEmpty || name.length > 80) {
-      return Future.error("Webhook name cannot be shorter than 1 character and longer than 80 characters");
+      return Future.error(ArgumentError("Webhook name cannot be shorter than 1 character and longer than 80 characters"));
     }
 
     final body = <String, dynamic>{"name": name};
