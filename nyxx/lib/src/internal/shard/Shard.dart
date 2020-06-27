@@ -90,13 +90,13 @@ class Shard implements Disposable {
 
     if (guild is Snowflake) {
       if(!this.guilds.contains(guild)) {
-        throw InvalidShardException("Cannot request member for guild on wrong shard");
+        throw InvalidShardException._new("Cannot request member for guild on wrong shard");
       }
 
       guildPayload = guild.toString();
     } else if (guild is Iterable<Snowflake>) {
       if(!this.guilds.any((element) => guild.contains(element))) {
-        throw InvalidShardException("Cannot request member for guild on wrong shard");
+        throw InvalidShardException._new("Cannot request member for guild on wrong shard");
       }
 
       guildPayload = guild.map((e) => e.toString()).toList();

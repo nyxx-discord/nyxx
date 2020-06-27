@@ -47,7 +47,7 @@ class CachelessVoiceChannel extends CachelessGuildChannel with VoiceChannel {
 
       shard.changeVoiceState(this.guildId, this.id, selfMute: selfMute, selfDeafen: selfDeafen);
     } on Error {
-      throw InvalidShardException("Cannot find shard for this channel!");
+      throw InvalidShardException._new("Cannot find shard for this channel!");
     }
   }
 
@@ -58,7 +58,7 @@ class CachelessVoiceChannel extends CachelessGuildChannel with VoiceChannel {
 
       shard.changeVoiceState(this.guildId, null);
     } on Error {
-      throw InvalidShardException("Cannot find shard for this channel!");
+      throw InvalidShardException._new("Cannot find shard for this channel!");
     }
   }
 }
