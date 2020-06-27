@@ -346,8 +346,8 @@ class Guild extends SnowflakeEntity implements Disposable {
     final response = await client._http._execute(BasicRequest._new("/guilds/$id/prune",
         method: "POST",
         auditLog: auditReason,
-        queryParams: {
-          "days": days.toString(),
+        queryParams: { "days": days.toString() },
+        body: {
           if (includeRoles != null) "include_roles": includeRoles.map((e) => e.id.toString())
         }));
 
