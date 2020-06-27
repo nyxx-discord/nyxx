@@ -114,7 +114,7 @@ abstract class CachelessGuildChannel extends IGuildChannel {
   @override
   Future<void> editChannelPermissions(PermissionsBuilder perms, SnowflakeEntity entity, {String? auditReason}) async {
     if (entity is! IRole && entity is! User) {
-      return Future.error(Exception("The `id` property must be either Role or User"));
+      return Future.error(ArgumentError("The `id` property must be either Role or User"));
     }
 
     final permSet = perms._build();

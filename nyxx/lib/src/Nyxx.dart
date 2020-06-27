@@ -304,7 +304,7 @@ class Nyxx implements Disposable {
   /// ```
   Future<Guild> createGuild(GuildBuilder builder) async {
     if (this.guilds.count >= 10) {
-      return Future.error("Guild cannot be created if bot is in 10 or more guilds");
+      return Future.error(ArgumentError("Guild cannot be created if bot is in 10 or more guilds"));
     }
 
     final response = await this._http._execute(BasicRequest._new("/guilds", method: "POST"));
