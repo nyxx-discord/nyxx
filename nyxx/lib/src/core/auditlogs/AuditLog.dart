@@ -14,20 +14,8 @@ class AuditLog {
   late final Map<Snowflake, AuditLogEntry> entries;
 
   /// Filters audit log by [users]
-  Iterable<AuditLogEntry> filterByUsers(List<User> users) =>
-    entries.values.where((entry) => users.contains(entry.user));
-
-  /// Filter audit log entries by type of change
-  Iterable<AuditLogEntry> filterByChangeType(List<ChangeKeyType> changeType) =>
-    entries.values.where((entry) => entry.changes.any((t) => changeType.contains(t.key)));
-
-  /// Filter audit log by type of entry
-  Iterable<AuditLogEntry> filterByEntryType(List<AuditLogEntryType> entryType) =>
-    entries.values.where((entry) => entryType.contains(entry.type));
-
-  /// Filter audit log by id of target
-  Iterable<AuditLogEntry> filterByTargetId(List<Snowflake> targetId) =>
-    entries.values.where((entry) => targetId.contains(entry.targetId));
+  Iterable<AuditLogEntry> filter(bool Function(AuditLogEntry) test) =>
+      entries.values.where(test);
 
   AuditLog._new(Map<String, dynamic> raw, Nyxx client) {
     webhooks = {};
