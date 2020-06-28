@@ -1,4 +1,4 @@
-import 'package:nyxx/nyxx.dart';
+import "package:nyxx/nyxx.dart";
 
 // Main function
 void main() {
