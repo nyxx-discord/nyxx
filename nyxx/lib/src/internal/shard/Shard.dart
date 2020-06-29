@@ -412,9 +412,11 @@ class Shard implements Disposable {
 
   @override
   Future<void> dispose() async {
-    //this._isolateSendPort.send({"cmd" : "TERMINATE" });
-    //await this._receiveStream.firstWhere((element) => (element as Map<String, dynamic>)["cmd"] == "TERMINATE_OK");
+    this.manager._logger.info("Started disposing shard $id...");
 
-    this._shardIsolate.kill();
+    await this._receiveStream.firstWhere((element) => (element as Map<String, dynamic>)["cmd"] == "TERMINATE_OK");
+    this._shardIsolate.kill(priority: Isolate.immediate);
+
+    this.manager._logger.info("Shard $id disposed.");
   }
 }

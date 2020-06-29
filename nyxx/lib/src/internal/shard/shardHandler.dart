@@ -42,20 +42,21 @@ Future<void> _shardHandler(SendPort shardPort) async {
 
   transport_vm.configureWTransportForVM();
 
-  // TODO: ???
-  /*
-  ProcessSignal.sigterm.watch().listen((event) async {
+  Future<void> terminate() async {
     await _socketSubscription?.cancel();
     await _socket?.close(1000);
-    print("CLOSED");
+    shardPort.send({ "cmd" : "TERMINATE_OK" });
+  }
+
+  // ignore: unawaited_futures
+  ProcessSignal.sigterm.watch().forEach((event) async {
+    await terminate();
   });
 
-  ProcessSignal.sigint.watch().listen((event) async {
-    await _socketSubscription?.cancel();
-    await _socket?.close(1000);
-    print("CLOSED");
+  // ignore: unawaited_futures
+  ProcessSignal.sigint.watch().forEach((event) async {
+    await terminate();
   });
-*/
 
   // Attempts to connect to ws
   Future<void> _connect() async {
@@ -94,12 +95,5 @@ Future<void> _shardHandler(SendPort shardPort) async {
 
       continue;
     }
-/*
-    if(cmd == "TERMINATE") {
-      await _socketSubscription?.cancel();
-      await _socket?.close(1000);
-      shardPort.send({ "cmd" : "TERMINATE_OK" });
-    }
-*/
   }
 }
