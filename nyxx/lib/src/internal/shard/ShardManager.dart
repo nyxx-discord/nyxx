@@ -61,8 +61,10 @@ class ShardManager implements Disposable {
 
   @override
   Future<void> dispose() async {
+    this._logger.info("Closing gateway connections...");
+
     for(final shard in this._shards.values) {
-      await shard.dispose();
+      shard.dispose();
     }
 
     await this._onConnect.close();

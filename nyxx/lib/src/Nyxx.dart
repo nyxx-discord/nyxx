@@ -183,11 +183,11 @@ class Nyxx implements Disposable {
       throw MissingTokenError();
     }
 
-    ProcessSignal.sigterm.watch().listen((event) async {
+    ProcessSignal.sigterm.watch().forEach((event) async {
       await this.dispose();
     });
 
-    ProcessSignal.sigint.watch().listen((event) async {
+    ProcessSignal.sigint.watch().forEach((event) async {
       await this.dispose();
     });
 
@@ -367,13 +367,16 @@ class Nyxx implements Disposable {
 
   @override
   Future<void> dispose() async {
+    this._logger.info("Disposing and closing bot...");
+
     await shardManager.dispose();
     await this._events.dispose();
     await guilds.dispose();
     await users.dispose();
     await guilds.dispose();
 
-    exit(1);
+    this._logger.info("Exiting...");
+    exit(0);
   }
 }
 
