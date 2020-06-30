@@ -11,9 +11,6 @@ class Invite {
   /// A mini channel object for the invite's channel.
   late final Channel? channel;
 
-  /// Returns url invite
-  String get url => "https://discord.gg/$code";
-
   /// User who created this invite
   late final User? inviter;
 
@@ -21,7 +18,10 @@ class Invite {
   late final User? targetUser;
 
   /// Reference to bot instance
-  Nyxx client;
+  final Nyxx client;
+
+  /// Returns url to invite
+  String get url => "https://discord.gg/$code";
 
   Invite._new(Map<String, dynamic> raw, this.client) {
     this.code = raw["code"] as String;

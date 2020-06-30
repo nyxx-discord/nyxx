@@ -1,7 +1,9 @@
 part of nyxx;
 
+// All colors got from DiscordColor class from DSharp+.
+// https://github.com/DSharpPlus/DSharpPlus/blob/a2f6eca7f5f675e83748b20b957ae8bdb8fd0cab/DSharpPlus/Entities/DiscordColor.Colors.cs
+
 /// Wrapper for colors.
-///
 /// Simplifies creation and provides interface to interact with colors for nyxx.
 class DiscordColor {
   late final int _value;
@@ -62,9 +64,6 @@ class DiscordColor {
 
   @override
   bool operator ==(other) => other is DiscordColor && other._value == this._value;
-
-  // All colors got from DiscordColor class from DSharp+.
-  // https://github.com/DSharpPlus/DSharpPlus/blob/a2f6eca7f5f675e83748b20b957ae8bdb8fd0cab/DSharpPlus/Entities/DiscordColor.Colors.cs
 
   /// Color of null, literally null.
   static const DiscordColor? none = null;

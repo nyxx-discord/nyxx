@@ -31,3 +31,4 @@ pubspec.lock
 /private
 private-*.dart
 [Rr]pc*
+**/doc/api/**

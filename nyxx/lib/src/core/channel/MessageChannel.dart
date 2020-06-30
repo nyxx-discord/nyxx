@@ -56,8 +56,6 @@ abstract class MessageChannel implements Channel, ISend, Disposable {
     return messages[id];
   }
 
-  @override
-
   /// Sends message to channel. Performs `toString()` on thing passed to [content]. Allows to send embeds with [embed] field.
   ///
   /// ```
@@ -93,6 +91,7 @@ abstract class MessageChannel implements Channel, ISend, Disposable {
   /// await e.message.channel
   ///   .send(files: [new File("kitten.jpg")], embed: embed, content: "HEJKA!");
   /// ```
+  @override
   Future<Message> send(
       {dynamic content,
       List<AttachmentBuilder>? files,
@@ -121,7 +120,7 @@ abstract class MessageChannel implements Channel, ISend, Disposable {
     if (files != null && files.isNotEmpty) {
       for (final file in files) {
         if (file._bytes.length > fileUploadLimit) {
-          return Future.error("File with name: [${file._name}] is too big!");
+          return Future.error(ArgumentError("File with name: [${file._name}] is too big!"));
         }
       }
 
@@ -134,9 +133,9 @@ abstract class MessageChannel implements Channel, ISend, Disposable {
 
     if (response is HttpResponseSuccess) {
       return Message._deserialize(response.jsonBody as Map<String, dynamic>, client);
-    } else {
-      return Future.error(response);
     }
+
+    return Future.error(response);
   }
 
   /// Starts typing.

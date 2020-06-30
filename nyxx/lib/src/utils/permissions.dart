@@ -37,19 +37,19 @@ class PermissionsUtils {
       allowRaw = publicOverride.allow;
       denyRaw = publicOverride.deny;
       // ignore: avoid_catches_without_on_clauses, empty_catches
-    } catch (e) {}
+    } on Error { }
 
     var allowRole = 0;
     var denyRole = 0;
 
     for (final role in member.roles) {
       try {
-        final chanOveride = channel.permissionOverrides.firstWhere((f) => f.id == role.id);
+        final chanOverride = channel.permissionOverrides.firstWhere((f) => f.id == role.id);
 
-        denyRole |= chanOveride.deny;
-        allowRole |= chanOveride.allow;
+        denyRole |= chanOverride.deny;
+        allowRole |= chanOverride.allow;
         // ignore: avoid_catches_without_on_clauses, empty_catches
-      } catch (e) {}
+      } on Error { }
     }
 
     allowRaw = (allowRaw & ~denyRole) | allowRole;
@@ -62,7 +62,7 @@ class PermissionsUtils {
       allowRaw = (allowRaw & ~memberOverride.deny) | memberOverride.allow;
       denyRaw = (denyRaw & ~memberOverride.allow) | memberOverride.deny;
       // ignore: avoid_catches_without_on_clauses, empty_catches
-    } catch (e) {}
+    } on Error { }
 
     return [allowRaw, denyRaw];
   }

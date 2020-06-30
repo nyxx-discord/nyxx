@@ -5,13 +5,9 @@ class GuildCreateEvent {
   /// The guild created.
   late final Guild guild;
 
-  GuildCreateEvent._new(Map<String, dynamic> raw, Shard shard, Nyxx client) {
+  GuildCreateEvent._new(Map<String, dynamic> raw, Nyxx client) {
     this.guild = Guild._new(client, raw["d"] as Map<String, dynamic>, true, true);
     client.guilds[guild.id] = guild;
-
-    if (client._options.forceFetchMembers) {
-      shard.send(OPCodes.requestGuildMember, {"guild_id": guild.id.toString(), "query": "", "limit": 0});
-    }
   }
 }
 
@@ -46,7 +42,7 @@ class GuildDeleteEvent {
   /// False if user was kicked from guild
   late final bool unavailable;
 
-  GuildDeleteEvent._new(Map<String, dynamic> raw, Shard shard, Nyxx client) {
+  GuildDeleteEvent._new(Map<String, dynamic> raw, Nyxx client) {
     this.guildId = Snowflake(raw["d"]["id"]);
     this.unavailable = raw["d"]["unavailable"] as bool;
     this.guild = client.guilds[this.guildId];
@@ -89,7 +85,7 @@ class GuildMemberRemoveEvent {
 /// Sent when a member is updated.
 class GuildMemberUpdateEvent {
   /// The member after the update if member is updated.
-  late final CacheMember? member;
+  late final IMember? member;
 
   /// User if user is updated. Will be null if member is not null.
   late final User? user;
@@ -101,16 +97,16 @@ class GuildMemberUpdateEvent {
       return;
     }
 
-    final member = guild.members[Snowflake(raw["d"]["user"]["id"])];
+    this.member = guild.members[Snowflake(raw["d"]["user"]["id"])];
 
-    if (member == null) {
+    if (this.member == null || this.member is! CacheMember) {
       return;
     }
 
     final nickname = raw["d"]["nickname"] as String?;
     final roles = (raw["d"]["roles"] as List<dynamic>).map((str) => guild.roles[Snowflake(str)]!).toList();
 
-    if (this.member!._updateMember(nickname, roles)) {
+    if ((this.member as CacheMember)._updateMember(nickname, roles)) {
       return;
     }
 

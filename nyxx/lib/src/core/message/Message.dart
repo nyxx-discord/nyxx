@@ -50,6 +50,7 @@ class GuildMessage extends Message implements GuildEntity {
   /// True if message is sent by a webhook
   bool get isByWebhook => author is Webhook;
 
+  /// Role mentions in this message
   late final List<IRole> roleMentions;
 
   GuildMessage._new(Map<String, dynamic> raw, Nyxx client) : super._new(raw, client) {
@@ -68,6 +69,7 @@ class GuildMessage extends Message implements GuildEntity {
       if (member == null) {
         if (raw["member"] == null) {
           this.author = User._new(raw["author"] as Map<String, dynamic>, client);
+          this.client.users[this.author.id] = this.author as User;
         } else {
           final authorData = raw["author"] as Map<String, dynamic>;
           final memberData = raw["member"] as Map<String, dynamic>;
@@ -208,19 +210,34 @@ abstract class Message extends SnowflakeEntity implements Disposable {
   @override
   String toString() => this.content;
 
+  // TODO: Manage message flags better
+  /// Suppresses embeds in message. Can be executed in other users messages.
+  Future<Message> suppressEmbeds() async {
+    final body = <String, dynamic>{
+      "flags" : 1 << 2
+    };
+
+    final response = await client._http
+        ._execute(BasicRequest._new("/channels/${this.channelId}/messages/${this.id}", method: "PATCH", body: body));
+
+    if (response is HttpResponseSuccess) {
+      return Message._deserialize(response.jsonBody as Map<String, dynamic>, client);
+    }
+
+    return Future.error(response);
+  }
+
   /// Edits the message.
-  ///
-  /// Throws an [Exception] if the HTTP request errored.
-  ///     Message.edit("My edited content!");
   Future<Message> edit({dynamic content, EmbedBuilder? embed, AllowedMentions? allowedMentions}) async {
     if (this.author.id != client.self.id) {
-      return Future.error("Cannot edit someones message");
+      return Future.error(ArgumentError("Cannot edit someones message"));
     }
 
     final body = <String, dynamic>{
       if (content != null) "content": content.toString(),
       if (embed != null) "embed": embed._build(),
-      if (allowedMentions != null) "allowed_mentions": allowedMentions._build()
+      if (allowedMentions != null) "allowed_mentions": allowedMentions._build(),
+
     };
 
     final response = await client._http
@@ -275,7 +292,19 @@ abstract class Message extends SnowflakeEntity implements Disposable {
   @override
   bool operator ==(other) {
     if (other is Message) {
-      return other.content == this.content || other.embeds.any((e) => this.embeds.any((f) => e == f));
+      return this.id == other.id;
+    }
+
+    if(other is Snowflake) {
+      return this.id == other;
+    }
+
+    if(other is int) {
+      return this.id == other;
+    }
+
+    if(other is String) {
+      return this.id == other;
     }
 
     return false;

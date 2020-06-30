@@ -21,9 +21,13 @@ class EmbedFieldBuilder implements Builder {
 
   /// Builds object to Map() instance;
   Map<String, dynamic> _build() {
-    if (this.name.toString().length > 256) throw Exception("Field name is too long. (256 characters limit)");
+    if (this.name.toString().length > 256) {
+      throw EmbedBuilderArgumentException._new("Field name is too long. (256 characters limit)");
+    }
 
-    if (this.content.toString().length > 1024) throw Exception("Field content is too long. (1024 characters limit)");
+    if (this.content.toString().length > 1024) {
+      throw EmbedBuilderArgumentException._new("Field content is too long. (1024 characters limit)");
+    }
 
     return <String, dynamic>{
       "name": name != null ? name.toString() : "\u200B",

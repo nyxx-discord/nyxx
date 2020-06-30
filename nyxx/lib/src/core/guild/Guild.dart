@@ -30,7 +30,7 @@ class Guild extends SnowflakeEntity implements Disposable {
   late final CachelessTextChannel? systemChannel;
 
   /// enabled guild features
-  late final List<String> features;
+  late final Iterable<GuildFeature> features;
 
   /// The guild's afk channel ID, null if not set.
   late VoiceChannel? afkChannel;
@@ -63,7 +63,7 @@ class Guild extends SnowflakeEntity implements Disposable {
   late final int systemChannelFlags;
 
   /// Channel where "PUBLIC" guilds display rules and/or guidelines
-  late final CacheGuildChannel? rulesChannel;
+  late final IGuildChannel? rulesChannel;
 
   /// The guild owner's ID
   late final User? owner;
@@ -92,7 +92,7 @@ class Guild extends SnowflakeEntity implements Disposable {
 
   /// the id of the channel where admins and moderators
   /// of "PUBLIC" guilds receive notices from Discord
-  late final CacheGuildChannel? publicUpdatesChannel;
+  late final IGuildChannel? publicUpdatesChannel;
 
   /// Permission of current(bot) user in this guild
   Permissions? currentUserPermissions;
@@ -124,6 +124,9 @@ class Guild extends SnowflakeEntity implements Disposable {
     return 8 * megabyte;
   }
 
+  /// Returns this guilds shard
+  Shard get shard => client.shardManager.shards.firstWhere((_shard) => _shard.guilds.contains(this.id));
+  
   Guild._new(this.client, Map<String, dynamic> raw, [this.available = true, bool guildCreate = false])
       : super(Snowflake(raw["id"] as String)) {
     if (!this.available) return;
@@ -169,7 +172,7 @@ class Guild extends SnowflakeEntity implements Disposable {
       }
     }
 
-    this.features = (raw["features"] as List<dynamic>).cast<String>();
+    this.features = (raw["features"] as List<dynamic>).map((e) => GuildFeature.from(e.toString()));
 
     if (raw["permissions"] != null) {
       this.currentUserPermissions = Permissions.fromInt(raw["permissions"] as int);
@@ -229,11 +232,11 @@ class Guild extends SnowflakeEntity implements Disposable {
     }
 
     if (raw["rules_channel_id"] != null) {
-      this.rulesChannel = this.channels[Snowflake(raw["rules_channel_id"])] as CacheGuildChannel?;
+      this.rulesChannel = this.channels[Snowflake(raw["rules_channel_id"])] as IGuildChannel;
     }
 
     if (raw["public_updates_channel_id"] != null) {
-      this.publicUpdatesChannel = this.channels[Snowflake(raw["public_updates_channel_id"])] as CacheGuildChannel?;
+      this.publicUpdatesChannel = this.channels[Snowflake(raw["public_updates_channel_id"])] as IGuildChannel?;
     }
   }
 
@@ -300,11 +303,11 @@ class Guild extends SnowflakeEntity implements Disposable {
   /// ```
   Future<GuildEmoji> createEmoji(String name, {List<Role>? roles, File? image, List<int>? imageBytes}) async {
     if (image != null && await image.length() > 256000) {
-      return Future.error("Emojis and animated emojis have a maximum file size of 256kb.");
+      return Future.error(ArgumentError("Emojis and animated emojis have a maximum file size of 256kb."));
     }
 
     if (image == null && imageBytes == null) {
-      return Future.error("Both imageData and file fields cannot be null");
+      return Future.error(ArgumentError("Both imageData and file fields cannot be null"));
     }
 
     final body = <String, dynamic>{
@@ -343,8 +346,8 @@ class Guild extends SnowflakeEntity implements Disposable {
     final response = await client._http._execute(BasicRequest._new("/guilds/$id/prune",
         method: "POST",
         auditLog: auditReason,
-        queryParams: {
-          "days": days.toString(),
+        queryParams: { "days": days.toString() },
+        body: {
           if (includeRoles != null) "include_roles": includeRoles.map((e) => e.id.toString())
         }));
 
@@ -405,7 +408,7 @@ class Guild extends SnowflakeEntity implements Disposable {
     final channel = this.channels.first as CacheGuildChannel?;
 
     if (channel == null) {
-      return Future.error("Cannot get any channel to create invite to");
+      return Future.error(ArgumentError("Cannot get any channel to create invite to"));
     }
 
     return channel.createInvite(
@@ -532,11 +535,11 @@ class Guild extends SnowflakeEntity implements Disposable {
       String? auditReason}) async {
     // Checks to avoid API panic
     if (type == ChannelType.dm || type == ChannelType.groupDm) {
-      return Future.error("Cannot create DM channel.");
+      return Future.error(ArgumentError("Cannot create DM channel."));
     }
 
     if (type == ChannelType.category && parent != null) {
-      return Future.error("Cannot create Category Channel which have parent channel.");
+      return Future.error(ArgumentError("Cannot create Category Channel which have parent channel."));
     }
 
     // Construct body
@@ -577,10 +580,10 @@ class Guild extends SnowflakeEntity implements Disposable {
     } else if (absolute != null) {
       newPosition = absolute;
     } else {
-      return Future.error("Cannot move channel by zero places");
+      return Future.error(ArgumentError("Cannot move channel by zero places"));
     }
 
-    return client._http._execute(BasicRequest._new("/guilds/${this.id}/channels",
+    await client._http._execute(BasicRequest._new("/guilds/${this.id}/channels",
         method: "PATCH", auditLog: auditReason, body: {"id": channel.id.toString(), "position": newPosition}));
   }
 
@@ -589,8 +592,8 @@ class Guild extends SnowflakeEntity implements Disposable {
   ///
   /// await guild.ban(member);
   /// ```
-  Future<void> ban(CacheMember member, {int deleteMessageDays = 0, String? auditReason}) async =>
-    client._http._execute(BasicRequest._new("/guilds/${this.id}/bans/${member.id.toString()}",
+  Future<void> ban(SnowflakeEntity user, {int deleteMessageDays = 0, String? auditReason}) async =>
+    client._http._execute(BasicRequest._new("/guilds/${this.id}/bans/${user.id.toString()}",
         method: "PUT", auditLog: auditReason, body: {"delete-message-days": deleteMessageDays}));
 
   /// Kicks user from guild. Member is removed from guild and he is able to rejoin
@@ -598,8 +601,8 @@ class Guild extends SnowflakeEntity implements Disposable {
   /// ```
   /// await guild.kick(member);
   /// ```
-  Future<void> kick(CacheMember member, {String? auditReason}) async =>
-    client._http._execute(BasicRequest._new("/guilds/${this.id.toString()}/members/${member.id.toString()}",
+  Future<void> kick(SnowflakeEntity user, {String? auditReason}) async =>
+    client._http._execute(BasicRequest._new("/guilds/${this.id.toString()}/members/${user.id.toString()}",
         method: "DELTE", auditLog: auditReason));
 
   /// Unbans a user by ID.
@@ -690,15 +693,15 @@ class Guild extends SnowflakeEntity implements Disposable {
       yield CacheMember._standard(member, this, client);
     }
   }
-
+/*
   /// Returns a [Stream] of [CacheMember] objects whose username or nickname starts with a provided string.
   /// By default limits to one entry - can be changed with [limit] parameter.
   Stream<IMember> searchMembersGateway(String query, {int limit = 0}) async* {
     final nonce = "$query${id.toString()}";
 
-    this.client.shard.requestMembers(this.id, query: query, limit: limit, nonce: nonce);
+    this.shard.requestMembers(this.id, query: query, limit: limit, nonce: nonce);
 
-    final first = (await this.client.shard.onMemberChunk.take(1).toList()).first;
+    final first = (await this.shard.onMemberChunk.take(1).toList()).first;
 
     for (final member in first.members) {
       yield member;
@@ -712,7 +715,7 @@ class Guild extends SnowflakeEntity implements Disposable {
       }
     }
   }
-
+*/
   /// Gets all of the webhooks for this channel.
   Stream<Webhook> getWebhooks() async* {
     final response = await client._http._execute(BasicRequest._new("/channels/$id/webhooks"));
