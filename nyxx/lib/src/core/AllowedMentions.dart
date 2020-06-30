@@ -61,7 +61,7 @@ class AllowedMentions implements Builder {
 
     if (_users.isNotEmpty) {
       if (!_allowUsers) {
-        throw Exception(
+        throw ArgumentError(
             "Invalid configuration of allowed mentions! Allowed `user` and blacklisted users at the same time!");
       }
 
@@ -70,7 +70,7 @@ class AllowedMentions implements Builder {
 
     if (_roles.isNotEmpty) {
       if (!_allowRoles) {
-        throw Exception(
+        throw ArgumentError(
             "Invalid configuration of allowed mentions! Allowed `roles` and blacklisted roles at the same time!");
       }
 

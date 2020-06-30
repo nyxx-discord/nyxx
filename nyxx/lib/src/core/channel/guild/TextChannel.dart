@@ -1,8 +1,7 @@
 part of nyxx;
 
-/// [CachelessTextChannel] represents single text channel on [Guild].
-/// Inhertits from [MessageChannel] and mixes [CacheGuildChannel].
-class CachelessTextChannel extends CachelessGuildChannel with MessageChannel, ISend implements Mentionable, ITextChannel {
+/// [ITextChannel] in context of [Guild].
+abstract class GuildTextChannel implements Channel, CachelessGuildChannel, ITextChannel {
   /// The channel's topic.
   late final String? topic;
 
@@ -18,18 +17,18 @@ class CachelessTextChannel extends CachelessGuildChannel with MessageChannel, IS
   String get url => "https://discordapp.com/channels/${this.guildId.toString()}"
       "/${this.id.toString()}";
 
-  CachelessTextChannel._new(Map<String, dynamic> raw, Snowflake guildId, Nyxx client) : super._new(raw, 0, guildId, client) {
+  void _initialize(Map<String, dynamic> raw, Snowflake guildId, Nyxx client) {
     this.topic = raw["topic"] as String?;
     this.slowModeThreshold = raw["rate_limit_per_user"] as int? ?? 0;
   }
 
   /// Edits the channel.
-  Future<CachelessTextChannel> edit({String? name, String? topic, int? position, int? slowModeTreshold}) async {
+  Future<CachelessTextChannel> edit({String? name, String? topic, int? position, int? slowModeThreshold}) async {
     final body = <String, dynamic>{
       if (name != null) "name": name,
       if (topic != null) "topic": topic,
       if (position != null) "position": position,
-      if (slowModeTreshold != null) "rate_limit_per_user": slowModeTreshold,
+      if (slowModeThreshold != null) "rate_limit_per_user": slowModeThreshold,
     };
 
     final response = await client._http._execute(BasicRequest._new("/channels/${this.id}", method: "PATCH", body: body));
@@ -58,11 +57,11 @@ class CachelessTextChannel extends CachelessGuildChannel with MessageChannel, IS
   /// Valid file types for [avatarFile] are jpeg, gif and png.
   ///
   /// ```
-  /// var webhook = await channnel.createWebhook("!a Send nudes kek6407");
+  /// final webhook = await channnel.createWebhook("!a Send nudes kek6407");
   /// ```
   Future<Webhook> createWebhook(String name, {File? avatarFile, String? auditReason}) async {
     if (name.isEmpty || name.length > 80) {
-      return Future.error("Webhook's name cannot be shorter than 1 character and longer than 80 characters");
+      return Future.error(ArgumentError("Webhook name cannot be shorter than 1 character and longer than 80 characters"));
     }
 
     final body = <String, dynamic>{"name": name};
@@ -102,3 +101,21 @@ class CachelessTextChannel extends CachelessGuildChannel with MessageChannel, IS
   /// Returns mention to channel
   String toString() => this.mention;
 }
+
+/// [CachelessTextChannel] represents single text channel on [Guild].
+/// Inhertits from [MessageChannel] and mixes [CacheGuildChannel].
+class CachelessTextChannel extends CachelessGuildChannel with GuildTextChannel, MessageChannel, ISend implements Mentionable, ITextChannel {
+  CachelessTextChannel._new(Map<String, dynamic> raw, Snowflake guildId, Nyxx client) : super._new(raw, 0, guildId, client) {
+    _initialize(raw, guildId, client);
+  }
+}
+
+
+/// [CachelessTextChannel] represents single text channel on [Guild].
+/// Inhertits from [MessageChannel] and mixes [CacheGuildChannel].
+class CacheTextChannel extends CacheGuildChannel with GuildTextChannel, MessageChannel, ISend implements Mentionable, ITextChannel {
+  CacheTextChannel._new(Map<String, dynamic> raw, Guild guild, Nyxx client) : super._new(raw, 0, guild, client) {
+    _initialize(raw, guild.id, client);
+  }
+}
+

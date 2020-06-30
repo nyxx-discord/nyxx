@@ -7,11 +7,8 @@ class ClientOptions {
   /// **It means client won't send any of these. It doesn't mean filtering guild messages.**
   AllowedMentions? allowedMentions;
 
-  /// The index of this shard
-  int shardIndex;
-
   /// The total number of shards.
-  int shardCount;
+  int? shardCount;
 
   /// The number of messages to cache for each channel.
   int messageCacheSize;
@@ -36,17 +33,28 @@ class ClientOptions {
   /// If you do not specify a certain intent, you will not receive any of the gateway events that are batched into that group.
   GatewayIntents? gatewayIntents;
 
+  /// Allows to receive compressed payloads from gateway
+  bool compressedGatewayPayloads;
+
+  /// Enables dispatching of guild subscription events (presence and typing events)
+  bool guildSubscriptions;
+
+  /// Initial bot presence
+  PresenceBuilder? initialPresence;
+
   /// Makes a new `ClientOptions` object.
   ClientOptions(
       {this.allowedMentions,
-      this.shardIndex = 0,
-      this.shardCount = 1,
+      this.shardCount,
       this.messageCacheSize = 400,
       this.forceFetchMembers = false,
       this.cacheMembers = true,
       this.largeThreshold = 50,
       this.ignoredEvents = const [],
-      this.gatewayIntents});
+      this.gatewayIntents,
+      this.compressedGatewayPayloads = true,
+      this.guildSubscriptions = true,
+      this.initialPresence });
 }
 
 /// When identifying to the gateway, you can specify an intents parameter which

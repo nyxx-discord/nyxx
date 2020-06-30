@@ -2,6 +2,9 @@ part of nyxx;
 
 /// Allows to create pre built custom messages which can be passed to classes which inherits from [ISend].
 class MessageBuilder {
+  /// Clear character which can be used to skip first line in message body or sanitize message content
+  static const clearCharacter = "‎";
+
   final _content = StringBuffer();
 
   /// Embed to include in message
@@ -52,6 +55,9 @@ class MessageBuilder {
   void addPathAttachment(String path, {String? name, bool spoiler = false}) {
     addAttachment(AttachmentBuilder.path(path, name: name, spoiler: spoiler));
   }
+
+  /// Appends clear character. Can be used to skip first line in message body.
+  void appendClearCharacter() => _content.writeln(clearCharacter);
 
   /// Appends empty line to message
   void appendNewLine() => _content.writeln();

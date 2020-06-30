@@ -21,7 +21,7 @@ class Channel extends SnowflakeEntity {
 
     if(guild != null) {
       channelGuild = guild;
-    } else {
+    } else if(raw["guild_id"] != null) {
       channelGuild = client.guilds[Snowflake(raw["guild_id"])];
     }
 
@@ -33,14 +33,18 @@ class Channel extends SnowflakeEntity {
         return GroupDMChannel._new(raw, client);
         break;
       case 0:
-        return CachelessTextChannel._new(raw, channelGuild == null ? Snowflake(raw["guild_id"]) : channelGuild.id, client);
+        if(channelGuild == null) {
+          return CachelessTextChannel._new(raw, Snowflake(raw["guild_id"]), client);
+        }
+
+        return CacheTextChannel._new(raw, channelGuild, client);
         break;
       case 2:
         if(channelGuild == null) {
           return CachelessVoiceChannel._new(raw, Snowflake(raw["guild_id"]), client);
         }
 
-        return CacheVoiceChannel._new(raw, channelGuild ,client);
+        return CacheVoiceChannel._new(raw, channelGuild, client);
         break;
       case 4:
         return CategoryChannel._new(raw, channelGuild == null ? Snowflake(raw["guild_id"]) : channelGuild.id, client);

@@ -1,10 +1,38 @@
 part of nyxx;
 
-abstract class IGuildEmoji extends Emoji {
+abstract class IGuildEmoji extends Emoji implements SnowflakeEntity {
   /// True if emoji is partial.
   final bool partial;
 
-  IGuildEmoji._new(String name, this.partial) : super._new(name);
+  /// Snowflake id of emoji
+  @override
+  late final Snowflake id;
+
+  @override
+  DateTime get createdAt => id.timestamp;
+
+  IGuildEmoji._new(Map<String, dynamic> raw, this.partial) : super._new(raw["name"] as String?) {
+    this.id = Snowflake(raw["id"] as String);
+  }
+}
+
+class PartialGuildEmoji extends IGuildEmoji {
+  PartialGuildEmoji._new(Map<String, dynamic> raw) : super._new(raw, true);
+
+  /// Encodes Emoji to API format
+  @override
+  String encode() => "$id";
+
+  /// Formats Emoji to message format
+  @override
+  String format() => "<:$id>";
+
+  /// Returns cdn url to emoji
+  String get cdnUrl => "https://cdn.discordapp.com/emojis/${this.id}.png";
+
+  /// Returns encoded string ready to send via message.
+  @override
+  String toString() => format();
 }
 
 /// Emoji object. Handles Unicode emojis and custom ones.
@@ -22,10 +50,6 @@ class GuildEmoji extends IGuildEmoji implements SnowflakeEntity, GuildEntity {
   @override
   late final Snowflake guildId;
 
-  /// Snowflake id of emoji
-  @override
-  late final Snowflake id;
-
   /// Roles which can use this emote
   late final Iterable<IRole> roles;
 
@@ -39,8 +63,7 @@ class GuildEmoji extends IGuildEmoji implements SnowflakeEntity, GuildEntity {
   late final bool animated;
 
   /// Creates full emoji object
-  GuildEmoji._new(Map<String, dynamic> raw, this.guildId, this.client) : super._new(raw["name"] as String, false) {
-    this.id = Snowflake(raw["id"] as String);
+  GuildEmoji._new(Map<String, dynamic> raw, this.guildId, this.client) : super._new(raw, false) {
     this.guild = client.guilds[this.guildId];
 
     this.requireColons = raw["require_colons"] as bool? ?? false;
@@ -57,7 +80,7 @@ class GuildEmoji extends IGuildEmoji implements SnowflakeEntity, GuildEntity {
   /// Allows to edit emoji
   Future<GuildEmoji> edit({String? name, List<Snowflake>? roles}) async {
     if (name == null && roles == null) {
-      return Future.error("Both name and roles fields cannot be null");
+      return Future.error(ArgumentError("Both name and roles fields cannot be null"));
     }
 
     final body = <String, dynamic>{

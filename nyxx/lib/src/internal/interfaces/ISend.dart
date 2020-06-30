@@ -17,7 +17,7 @@ abstract class ISend {
 
   Map<String, dynamic> _initMessage(dynamic content, EmbedBuilder? embed, AllowedMentions? allowedMentions) {
     if (content == null && embed == null) {
-      throw Exception("When sending message both content and embed cannot be null");
+      throw ArgumentError("When sending message both content and embed cannot be null");
     }
 
     allowedMentions ??= client._options.allowedMentions;
