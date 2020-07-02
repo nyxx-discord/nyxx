@@ -27,6 +27,7 @@ part "src/ClientOptions.dart";
 part "src/internal/exceptions/MissingTokenError.dart";
 part "src/internal/exceptions/EmbedBuilderArgumentException.dart";
 part "src/internal/exceptions/InvalidShardException.dart";
+part "src/internal/exceptions/InvalidSnowflakeException.dart";
 
 part "src/internal/shard/Shard.dart";
 part "src/internal/shard/ShardManager.dart";
