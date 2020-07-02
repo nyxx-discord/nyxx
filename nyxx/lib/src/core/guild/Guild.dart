@@ -642,16 +642,16 @@ class Guild extends SnowflakeEntity implements Disposable {
   /// ```
   /// var member = guild.getMember(user);
   /// ```
-  Future<CacheMember> getMember(User user) async => getMemberById(user.id);
+  Future<IMember> getMember(User user) async => getMemberById(user.id);
 
   /// Gets a [CacheMember] object by id. Caches fetched member if not cached.
   ///
   /// ```
   /// var member = guild.getMember(Snowflake("302359795648954380"));
   /// ```
-  Future<CacheMember> getMemberById(Snowflake id) async {
+  Future<IMember> getMemberById(Snowflake id) async {
     if (this.members.hasKey(id)) {
-      return this.members[id] as CacheMember;
+      return this.members[id]!;
     }
 
     final response = await client._http._execute(BasicRequest._new("/guilds/${this.id}/members/${id.toString()}"));
@@ -693,12 +693,11 @@ class Guild extends SnowflakeEntity implements Disposable {
       yield CacheMember._standard(member, this, client);
     }
   }
-/*
+
   /// Returns a [Stream] of [CacheMember] objects whose username or nickname starts with a provided string.
   /// By default limits to one entry - can be changed with [limit] parameter.
   Stream<IMember> searchMembersGateway(String query, {int limit = 0}) async* {
     final nonce = "$query${id.toString()}";
-
     this.shard.requestMembers(this.id, query: query, limit: limit, nonce: nonce);
 
     final first = (await this.shard.onMemberChunk.take(1).toList()).first;
@@ -708,14 +707,14 @@ class Guild extends SnowflakeEntity implements Disposable {
     }
 
     if (first.chunkCount > 1) {
-      await for (final event in this.client.shard.onMemberChunk.where((event) => event.nonce == nonce).take(first.chunkCount - 1)) {
+      await for (final event in this.shard.onMemberChunk.where((event) => event.nonce == nonce).take(first.chunkCount - 1)) {
         for (final member in event.members) {
           yield member;
         }
       }
     }
   }
-*/
+
   /// Gets all of the webhooks for this channel.
   Stream<Webhook> getWebhooks() async* {
     final response = await client._http._execute(BasicRequest._new("/channels/$id/webhooks"));

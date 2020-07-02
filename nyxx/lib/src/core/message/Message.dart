@@ -16,6 +16,7 @@ class DMMessage extends Message {
     if (user == null) {
       final authorData = raw["author"] as Map<String, dynamic>;
       this.author = User._new(authorData, client);
+      this.client.users.add(this.author.id, this.author);
     } else {
       this.author = user;
     }
