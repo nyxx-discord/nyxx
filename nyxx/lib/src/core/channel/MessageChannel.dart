@@ -31,7 +31,7 @@ abstract class MessageChannel implements Channel, ISend, Disposable {
   // Used to create infinite typing loop
   Timer? _typing;
 
-  /// File upload limit for channel. If channel is [CachelessGuildChannel] returns default value.
+  /// File upload limit for channel in bytes. If channel is [CachelessGuildChannel] returns default value.
   int get fileUploadLimit {
     if (this is CacheGuildChannel) {
       return (this as CacheGuildChannel).guild.fileUploadLimit;

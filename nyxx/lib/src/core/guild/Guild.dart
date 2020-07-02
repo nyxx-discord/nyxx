@@ -109,7 +109,7 @@ class Guild extends SnowflakeEntity implements Disposable {
   /// Returns member object for bot user
   IMember? get selfMember => members[client.self.id];
 
-  /// Upload limit for this guild in bytes
+  /// File upload limit for channel in bytes.
   int get fileUploadLimit {
     const megabyte = 1024 * 1024;
 
