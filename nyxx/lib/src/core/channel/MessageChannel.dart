@@ -16,8 +16,6 @@ abstract class MessageChannel implements Channel, ISend, Disposable {
   @override
   Nyxx get client;
 
-  Timer? _typing;
-
   /// Sent when a new message is received.
   late final Stream<MessageReceivedEvent> onMessage = client.onMessageReceived.where((event) => event.message.channel == this);
 
@@ -30,7 +28,10 @@ abstract class MessageChannel implements Channel, ISend, Disposable {
   /// A collection of messages sent to this channel.
   late final MessageCache messages = MessageCache._new(client._options.messageCacheSize);
 
-  /// File upload limit for channel
+  // Used to create infinite typing loop
+  Timer? _typing;
+
+  /// File upload limit for channel. If channel is [CachelessGuildChannel] returns default value.
   int get fileUploadLimit {
     if (this is CacheGuildChannel) {
       return (this as CacheGuildChannel).guild.fileUploadLimit;
