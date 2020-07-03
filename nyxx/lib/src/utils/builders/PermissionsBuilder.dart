@@ -18,6 +18,12 @@ class PermissionOverrideBuilder extends PermissionsBuilder {
 
   /// Create builder manually from known data. Id is id of entity. [type] can be either `role` or `member`.
   PermissionOverrideBuilder.from(this.type, this.id, Permissions permissions) : super.from(permissions);
+
+  /// Create empty permission builder
+  PermissionOverrideBuilder(this.type, this.id) : super();
+
+  /// Create [PermissionsOverrides] for given [entity]. Entity have to be either [IRole] or [IMember]
+  PermissionOverrideBuilder.of(SnowflakeEntity entity) : type = entity is IRole ? "role" : "member", id = entity.id, super();
 }
 
 /// Builder for permissions.

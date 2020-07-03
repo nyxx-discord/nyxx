@@ -85,7 +85,7 @@ class EmbedBuilder implements Builder {
     this.addField(name: name, content: content, inline: inline, builder: builder, field: field);
   }
 
-  /// Total lenght of all text fields of embed
+  /// Total length of all text fields of embed
   int get length =>
     (this.title?.length ?? 0) +
         (this.description?.length ?? 0) +
