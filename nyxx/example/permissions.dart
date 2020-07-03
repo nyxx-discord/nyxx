@@ -27,7 +27,7 @@ void main() {
       final member = await (e.message as GuildMessage).guild!.getMemberById(302359032612651009.toSnowflake());
 
       // Get current member permissions in context of channel
-      final permissions = messageChannel.effectivePermissions(member);
+      final permissions = messageChannel.effectivePermissions(member as CacheMember);
 
       // Get current member permissions as builder
       final permissionsAsBuilder = permissions.toBuilder()..sendMessages = true;
