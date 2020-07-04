@@ -161,9 +161,9 @@ abstract class CachelessGuildChannel extends IGuildChannel {
   Future<Invite> createInvite({int? maxAge, int? maxUses, bool? temporary, bool? unique, String? auditReason}) async {
     final body = {
       if (maxAge != null) "max_age": maxAge,
-      if (maxAge != null) "max_uses": maxUses,
-      if (maxAge != null) "temporary": temporary,
-      if (maxAge != null) "unique": unique,
+      if (maxUses != null) "max_uses": maxUses,
+      if (temporary != null) "temporary": temporary,
+      if (unique != null) "unique": unique,
     };
 
     final response = await client._http
