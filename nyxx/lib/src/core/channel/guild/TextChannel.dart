@@ -5,8 +5,6 @@ abstract class GuildTextChannel implements Channel, CachelessGuildChannel, IText
   /// The channel's topic.
   late final String? topic;
 
-  @override
-
   /// The channel's mention string.
   String get mention => "<#${this.id}>";
 
@@ -17,6 +15,7 @@ abstract class GuildTextChannel implements Channel, CachelessGuildChannel, IText
   String get url => "https://discordapp.com/channels/${this.guildId.toString()}"
       "/${this.id.toString()}";
 
+  /* Constructor????? */
   void _initialize(Map<String, dynamic> raw, Snowflake guildId, Nyxx client) {
     this.topic = raw["topic"] as String?;
     this.slowModeThreshold = raw["rate_limit_per_user"] as int? ?? 0;
@@ -83,7 +82,7 @@ abstract class GuildTextChannel implements Channel, CachelessGuildChannel, IText
     return Future.error(response);
   }
 
-  /// Returns pinned [Message]s for [Channel].
+  /// Returns pinned [Message]s for channel.
   Stream<Message> getPinnedMessages() async* {
     final response = await client._http._execute(BasicRequest._new("/channels/$id/pins"));
 
