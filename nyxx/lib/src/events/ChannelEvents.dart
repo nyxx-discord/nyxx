@@ -41,7 +41,7 @@ class ChannelDeleteEvent {
 /// Fired when channel"s pinned messages are updated
 class ChannelPinsUpdateEvent {
   /// Channel where pins were updated
-  CachelessTextChannel? channel;
+  CacheTextChannel? channel;
 
   /// ID of channel pins were updated
   late final Snowflake channelId;
@@ -57,7 +57,7 @@ class ChannelPinsUpdateEvent {
       this.lastPingTimestamp = DateTime.parse(raw["d"]["last_pin_timestamp"] as String);
     }
 
-    this.channel = client.channels[Snowflake(raw["d"]["channel_id"])] as CachelessTextChannel?;
+    this.channel = client.channels[Snowflake(raw["d"]["channel_id"])] as CacheTextChannel?;
 
     if (raw["d"]["guild_id"] != null) {
       this.guildId = Snowflake(raw["d"]["guild_id"]);
