@@ -67,7 +67,7 @@ class CachelessMember extends IMember {
     if (raw["hoisted_role"] != null && roles.isNotEmpty) {
       // TODO: NNBD: try-catch in where
       try {
-        this.hoistedRole = this.roles.firstWhere((element) => element.id == IRole._new(Snowflake(raw["hoisted_role"]), this.guildId, client));
+        this.hoistedRole = this.roles.firstWhere((element) => element.id == Snowflake(raw["hoisted_role"]));
       } on Error {
         this.hoistedRole = null;
       }
