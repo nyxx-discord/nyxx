@@ -77,10 +77,10 @@ class User extends SnowflakeEntity with ISend, Mentionable, IMessageAuthor {
 
   /// Gets the [DMChannel] for the user.
   Future<DMChannel> get dmChannel async {
-    var channel = client.channels.findOne((Channel c) => c is DMChannel && c.recipient.id == this.id) as DMChannel?;
+    final dChannel = client.channels.findOne((Channel c) => c is DMChannel && c.recipient.id == this.id) as DMChannel?;
 
-    if (channel != null) {
-      return channel;
+    if(dChannel != null) {
+      return dChannel;
     }
 
     final response = await this
@@ -89,9 +89,8 @@ class User extends SnowflakeEntity with ISend, Mentionable, IMessageAuthor {
         ._execute(BasicRequest._new("/users/@me/channels", method: "POST", body: {"recipient_id": this.id.toString()}));
 
     if (response is HttpResponseSuccess) {
-      channel = DMChannel._new(response.jsonBody as Map<String, dynamic>, client);
+      final channel = DMChannel._new(response.jsonBody as Map<String, dynamic>, client);
       this.client.channels.add(channel.id, channel);
-
       return channel;
     }
 
