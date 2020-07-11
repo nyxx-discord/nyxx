@@ -1,4 +1,7 @@
-part of nyxx.interactivity;
+import "package:nyxx/nyxx.dart";
+
+import "../utils.dart";
+import "../../emoji.dart";
 
 /// Handles pagination interactivity. Allows to create paginated messages from List<String>
 /// Factory constructors allows to create message from String directly.
@@ -21,30 +24,30 @@ class Pagination {
   Pagination(this.pages, this.channel);
 
   /// Generates pagination from String. It divides String into 250 char long pages.
-  factory Pagination.fromString(String str, MessageChannel channel) => Pagination(_Utils.split(str, 250).toList(), channel);
+  factory Pagination.fromString(String str, MessageChannel channel) => Pagination(StringUtils.split(str, 250).toList(), channel);
 
   /// Generates pagination from String but with user specified size of single page.
-  factory Pagination.fromStringLen(String str, int len, MessageChannel channel) => Pagination(_Utils.split(str, len).toList(), channel);
+  factory Pagination.fromStringLen(String str, int len, MessageChannel channel) => Pagination(StringUtils.split(str, len).toList(), channel);
 
   /// Generates pagination from String but with user specified number of pages.
-  factory Pagination.fromStringEq(String str, int pieces, MessageChannel channel) => Pagination(_Utils.splitEqually(str, pieces).toList(), channel);
+  factory Pagination.fromStringEq(String str, int pieces, MessageChannel channel) => Pagination(StringUtils.splitEqually(str, pieces).toList(), channel);
 
   /// Paginates a list of Strings - each String is a different page.
   Future<Message> paginate(Nyxx client, {Duration timeout = const Duration(minutes: 2)}) async {
-    final nextEmoji = EmojiUtils.getEmoji("arrow_forward")!;
-    final backEmoji = EmojiUtils.getEmoji("arrow_backward")!;
-    final firstEmoji = EmojiUtils.getEmoji("track_previous")!;
-    final lastEmoji = EmojiUtils.getEmoji("track_next")!;
+    final nextEmoji = await filterEmojiDefinitions((emoji) => emoji.primaryName == "arrow_forward", cache: true);
+    final backEmoji = await filterEmojiDefinitions((emoji) => emoji.primaryName == "arrow_backward", cache: true);
+    final firstEmoji = await filterEmojiDefinitions((emoji) => emoji.primaryName == "track_previous", cache: true);
+    final lastEmoji = await filterEmojiDefinitions((emoji) => emoji.primaryName == "track_next", cache: true);
 
     final msg = await channel.send(content: pages[0]);
-    await msg.createReaction(firstEmoji);
-    await msg.createReaction(backEmoji);
-    await msg.createReaction(nextEmoji);
-    await msg.createReaction(lastEmoji);
+    await msg.createReaction(firstEmoji.toEmoji());
+    await msg.createReaction(backEmoji.toEmoji());
+    await msg.createReaction(nextEmoji.toEmoji());
+    await msg.createReaction(lastEmoji.toEmoji());
 
     await Future(() async {
       var currPage = 0;
-      final group = _Utils.merge(
+      final group = StreamUtils.merge(
           [client.onMessageReactionAdded, client.onMessageReactionsRemoved as Stream<MessageReactionEvent>]);
 
       await for (final event in group) {

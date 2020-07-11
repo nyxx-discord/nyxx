@@ -3,7 +3,7 @@ part of nyxx;
 /// Represents unicode emoji. Contains only emoji code.
 class UnicodeEmoji extends Emoji {
   /// Create unicode emoji from given code
-  UnicodeEmoji(String code) : super._new(code);
+  UnicodeEmoji(String name) : super._new(name);
 
   /// Returns Emoji
   String get code => this.name!;
