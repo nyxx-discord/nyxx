@@ -1,4 +1,4 @@
-part of nyxx.interactivity;
+import "package:nyxx/nyxx.dart";
 
 /// Creates new poll, generates options and collects results. Returns `Map<Emoji, int` as result. [timeout] is set by default to 10 minutes
 ///

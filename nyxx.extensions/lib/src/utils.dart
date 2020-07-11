@@ -1,6 +1,6 @@
-part of nyxx.interactivity;
+import "dart:async";
 
-class _Utils {
+class StreamUtils {
   /// Merges list of stream into one stream
   static Stream<T> merge<T>(List<Stream<T>> streams) {
     var _open = streams.length;
@@ -16,7 +16,9 @@ class _Utils {
     }
     return streamController.stream;
   }
+}
 
+class StringUtils {
   /// Splits string based on desired length
   static Iterable<String> split(String str, int length) sync* {
     var last = 0;
