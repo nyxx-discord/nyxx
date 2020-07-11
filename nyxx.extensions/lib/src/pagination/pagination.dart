@@ -1,7 +1,7 @@
 import "package:nyxx/nyxx.dart";
 
-import "../utils.dart";
 import "../../emoji.dart";
+import "../utils.dart";
 
 /// Handles pagination interactivity. Allows to create paginated messages from List<String>
 /// Factory constructors allows to create message from String directly.
