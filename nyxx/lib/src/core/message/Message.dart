@@ -229,7 +229,13 @@ abstract class Message extends SnowflakeEntity implements Disposable {
   }
 
   /// Edits the message.
-  Future<Message> edit({dynamic content, EmbedBuilder? embed, AllowedMentions? allowedMentions}) async {
+  Future<Message> edit({dynamic content, EmbedBuilder? embed, AllowedMentions? allowedMentions, MessageEditBuilder? builder}) async {
+    if (builder != null) {
+      content = builder._content;
+      embed = builder.embed;
+      allowedMentions = builder.allowedMentions;
+    }
+
     if (this.author.id != client.self.id) {
       return Future.error(ArgumentError("Cannot edit someones message"));
     }
