@@ -1,23 +1,17 @@
 part of nyxx;
 
-/// Allows to create pre built custom messages which can be passed to classes which inherits from [ISend].
-class MessageBuilder {
+/// Message builder for editing messages.
+class MessageEditBuilder {
   /// Clear character which can be used to skip first line in message body or sanitize message content
   static const clearCharacter = "‎";
-
-  final _content = StringBuffer();
 
   /// Embed to include in message
   EmbedBuilder? embed;
 
-  /// Set to true if message should be TTS
-  bool? tts;
-
-  /// List of files to send with message
-  List<AttachmentBuilder>? files;
-
   /// [AllowedMentions] object to control mentions in message
   AllowedMentions? allowedMentions;
+
+  final _content = StringBuffer();
 
   /// Clears current content of message and sets new
   set content(Object content) {
@@ -32,28 +26,6 @@ class MessageBuilder {
   void setEmbed(void Function(EmbedBuilder embed) builder) {
     this.embed = EmbedBuilder();
     builder(embed!);
-  }
-
-  /// Add attachment
-  void addAttachment(AttachmentBuilder attachment) {
-    if (this.files == null) this.files = [];
-
-    this.files!.add(attachment);
-  }
-
-  /// Add attachment from specified file
-  void addFileAttachment(File file, {String? name, bool spoiler = false}) {
-    addAttachment(AttachmentBuilder.file(file, name: name, spoiler: spoiler));
-  }
-
-  /// Add attachment from specified bytes
-  void addBytesAttachment(List<int> bytes, String name, {bool spoiler = false}) {
-    addAttachment(AttachmentBuilder.bytes(bytes, name, spoiler: spoiler));
-  }
-
-  /// Add attachment at specified path
-  void addPathAttachment(String path, {String? name, bool spoiler = false}) {
-    addAttachment(AttachmentBuilder.path(path, name: name, spoiler: spoiler));
   }
 
   /// Appends clear character. Can be used to skip first line in message body.
@@ -86,6 +58,37 @@ class MessageBuilder {
   /// Appends formatted text to message
   void appendWithDecoration(Object text, MessageDecoration decoration) {
     _content.write("$decoration$text$decoration");
+  }
+}
+
+/// Allows to create pre built custom messages which can be passed to classes which inherits from [ISend].
+class MessageBuilder extends MessageEditBuilder {
+  /// Set to true if message should be TTS
+  bool? tts;
+
+  /// List of files to send with message
+  List<AttachmentBuilder>? files;
+
+  /// Add attachment
+  void addAttachment(AttachmentBuilder attachment) {
+    if (this.files == null) this.files = [];
+
+    this.files!.add(attachment);
+  }
+
+  /// Add attachment from specified file
+  void addFileAttachment(File file, {String? name, bool spoiler = false}) {
+    addAttachment(AttachmentBuilder.file(file, name: name, spoiler: spoiler));
+  }
+
+  /// Add attachment from specified bytes
+  void addBytesAttachment(List<int> bytes, String name, {bool spoiler = false}) {
+    addAttachment(AttachmentBuilder.bytes(bytes, name, spoiler: spoiler));
+  }
+
+  /// Add attachment at specified path
+  void addPathAttachment(String path, {String? name, bool spoiler = false}) {
+    addAttachment(AttachmentBuilder.path(path, name: name, spoiler: spoiler));
   }
 
   /// Sends message
