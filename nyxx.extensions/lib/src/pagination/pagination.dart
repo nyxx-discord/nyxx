@@ -9,7 +9,7 @@ abstract class IPaginationHandler {
   FutureOr<MessageEditBuilder> generatePage(int page);
 
   /// Used to generate fist page of Paginated message.
-  FutureOr<MessageBuilder> generateFirstPage();
+  FutureOr<MessageBuilder> generateInitialPage();
 
   /// Return total number of pages
   int get dataLength;
@@ -49,7 +49,7 @@ class BasicPaginationHandler extends IPaginationHandler {
       MessageBuilder()..content = pages[page];
 
   @override
-  FutureOr<MessageBuilder> generateFirstPage() =>
+  FutureOr<MessageBuilder> generateInitialPage() =>
       generatePage(0) as MessageBuilder;
 
   @override
@@ -71,7 +71,7 @@ class Pagination<T extends IPaginationHandler> {
   ITextChannel channel;
 
   /// [IPaginationHandler] which will handle generating messages.
-  IPaginationHandler paginationHandler;
+  T paginationHandler;
 
   ///
   Pagination(this.channel, this.paginationHandler);
@@ -83,7 +83,7 @@ class Pagination<T extends IPaginationHandler> {
     final firstEmoji = await paginationHandler.firstEmoji;
     final lastEmoji = await paginationHandler.lastEmoji;
 
-    final msg = await channel.send(builder: await paginationHandler.generateFirstPage());
+    final msg = await channel.send(builder: await paginationHandler.generateInitialPage());
     await msg.createReaction(firstEmoji);
     await msg.createReaction(backEmoji);
     await msg.createReaction(nextEmoji);
