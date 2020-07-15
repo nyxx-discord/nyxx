@@ -5,8 +5,6 @@ import "package:nyxx/nyxx.dart";
 import "package:nyxx.commander/commander.dart";
 
 void main() {
-  setupDefaultLogging();
-
   final bot = Nyxx(Platform.environment["DISCORD_TOKEN"]!, ignoreExceptions: false);
 
   bot.onMessageReceived.listen((event) async {
