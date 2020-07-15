@@ -32,8 +32,6 @@ EmbedBuilder createTestEmbed() => EmbedBuilder()
 // -------------------------------------------------------
 
 void main() {
-  setupDefaultLogging();
-
   final env = Platform.environment;
   final bot = Nyxx(env["DISCORD_TOKEN"]!, ignoreExceptions: false);
 
@@ -104,7 +102,7 @@ void main() {
     if (e.message.content == "PLIK SIEMA" && e.message.attachments.isNotEmpty) {
       final att = e.message.attachments.first;
 
-      if (att.filename != "SPOILER_kitty.webp") {
+      if (att.filename != "SPOILER_kitty.webp" || !att.isSpoiler) {
         exit(1);
       }
     }

@@ -176,8 +176,18 @@ class Nyxx implements Disposable {
 
   /// Creates and logs in a new client. If [ignoreExceptions] is true (by default is)
   /// isolate will ignore all exceptions and continue to work.
-  Nyxx(this._token, {ClientOptions? options, bool ignoreExceptions = true}) {
+  Nyxx(this._token, {ClientOptions? options, bool ignoreExceptions = true, bool useDefaultLogger = true, Level? defaultLoggerLogLevel}) {
     transport_vm.configureWTransportForVM();
+
+    if(useDefaultLogger) {
+      Logger.root.level = defaultLoggerLogLevel ?? Level.ALL;
+
+      Logger.root.onRecord.listen((LogRecord rec) {
+        print("[${rec.time}] [${rec.level.name}] [${rec.loggerName}] ${rec.message}");
+      });
+    }
+
+    this._logger.info("Starting bot with pid: $pid");
 
     if (_token.isEmpty) {
       throw MissingTokenError();
@@ -378,26 +388,4 @@ class Nyxx implements Disposable {
     this._logger.info("Exiting...");
     exit(0);
   }
-}
-
-/// Sets up default logger
-void setupDefaultLogging([Level? loglevel]) {
-  Logger.root.level = loglevel ?? Level.ALL;
-
-  Logger.root.onRecord.listen((LogRecord rec) {
-    var color = "";
-    if (rec.level == Level.WARNING) {
-      color = "\u001B[33m";
-    } else if (rec.level == Level.SEVERE || rec.level == Level.SHOUT) {
-      color = "\u001B[31m";
-    } else if (rec.level == Level.INFO) {
-      color = "\u001B[32m";
-    } else {
-      color = "\u001B[0m";
-    }
-
-    print("[${DateTime.now()}] "
-        "$color[${rec.level.name}] [${rec.loggerName}]\u001B[0m: "
-        "${rec.message}");
-  });
 }
