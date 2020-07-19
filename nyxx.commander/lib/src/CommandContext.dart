@@ -140,6 +140,15 @@ class CommandContext {
   /// ```
   Stream<MessageReceivedEvent> nextMessages(int num) => channel.onMessage.take(num);
 
+  /// Starts typing loop and ends when [callback] resolves.
+  Future<T> enterTypingState<T>(Future<T> Function() callback) async {
+    this.channel.startTypingLoop();
+    final result = await callback();
+    this.channel.stopTypingLoop();
+
+    return result;
+  }
+
   /// Returns list of words separated with space and/or text surrounded by quotes
   /// Text: `hi this is "example stuff" which 'can be parsed'` will return
   /// `List<String> [hi, this, is, example stuff, which, can be parsed]`
