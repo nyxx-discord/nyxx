@@ -61,10 +61,12 @@ class Role extends IRole implements Mentionable, GuildEntity {
   /// The role's permissions.
   late final Permissions permissions;
 
-  @override
-
   /// Mention of role. If role cannot be mentioned it returns name of role (@name)
+  @override
   String get mention => mentionable ? "<@&${this.id}>" : "@$name";
+
+  /// Additional role data like if role is managed by integration or role is from server boosting.
+  late final RoleTags roleTags;
 
   Role._new(Map<String, dynamic> raw, Snowflake guildId, Nyxx client) : super._new(Snowflake(raw["id"]), guildId, client) {
     this.name = raw["name"] as String;
@@ -74,6 +76,7 @@ class Role extends IRole implements Mentionable, GuildEntity {
     this.mentionable = raw["mentionable"] as bool? ?? false;
     this.permissions = Permissions.fromInt(raw["permissions"] as int);
     this.color = DiscordColor.fromInt(raw["color"] as int);
+    this.roleTags = RoleTags._new(raw["tags"] as Map<String, dynamic>);
 
     this.guild = client.guilds[this.guildId];
   }
@@ -81,4 +84,25 @@ class Role extends IRole implements Mentionable, GuildEntity {
   /// Returns a mention of role. If role cannot be mentioned it returns name of role.
   @override
   String toString() => mention;
+}
+
+/// Additional [Role] role tags which hold optional data about role
+class RoleTags {
+  /// Holds [Snowflake] of bot id if role is for bot user
+  late final Snowflake? botId;
+
+  /// True if role is for server nitro boosting
+  late final bool nitroRole;
+
+  /// Holds [Snowflake] of integration if role is part of twitch/other integration
+  late final Snowflake? integrationId;
+
+  /// Returns true if role is for bot.
+  bool get isBotRole => botId != null;
+
+  RoleTags._new(Map<String, dynamic> raw) {
+    this.botId = raw["bot_id"] != null ? Snowflake(raw["role_id"]) : null;
+    this.nitroRole = raw["premium_subscriber"] != null ? raw["premium_subscriber"] as bool : false;
+    this.integrationId = raw["integration_id"] != null ? Snowflake(raw["integration_id"]) : null;
+  }
 }
