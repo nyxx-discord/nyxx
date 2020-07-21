@@ -66,7 +66,7 @@ class Role extends IRole implements Mentionable, GuildEntity {
   String get mention => mentionable ? "<@&${this.id}>" : "@$name";
 
   /// Additional role data like if role is managed by integration or role is from server boosting.
-  late final RoleTags roleTags;
+  late final RoleTags? roleTags;
 
   Role._new(Map<String, dynamic> raw, Snowflake guildId, Nyxx client) : super._new(Snowflake(raw["id"]), guildId, client) {
     this.name = raw["name"] as String;
@@ -76,7 +76,12 @@ class Role extends IRole implements Mentionable, GuildEntity {
     this.mentionable = raw["mentionable"] as bool? ?? false;
     this.permissions = Permissions.fromInt(raw["permissions"] as int);
     this.color = DiscordColor.fromInt(raw["color"] as int);
-    this.roleTags = RoleTags._new(raw["tags"] as Map<String, dynamic>);
+
+    if(raw["tags"] != null) {
+      this.roleTags = RoleTags._new(raw["tags"] as Map<String, dynamic>);
+    } else {
+      this.roleTags = null;
+    }
 
     this.guild = client.guilds[this.guildId];
   }
