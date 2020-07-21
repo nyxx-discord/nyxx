@@ -193,9 +193,11 @@ class Nyxx implements Disposable {
       throw MissingTokenError();
     }
 
-    ProcessSignal.sigterm.watch().forEach((event) async {
-      await this.dispose();
-    });
+    if(!Platform.isWindows) {
+      ProcessSignal.sigterm.watch().forEach((event) async {
+        await this.dispose();
+      });
+    }
 
     ProcessSignal.sigint.watch().forEach((event) async {
       await this.dispose();
