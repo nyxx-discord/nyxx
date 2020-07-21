@@ -48,10 +48,12 @@ Future<void> _shardHandler(SendPort shardPort) async {
     shardPort.send({ "cmd" : "TERMINATE_OK" });
   }
 
-  // ignore: unawaited_futures
-  ProcessSignal.sigterm.watch().forEach((event) async {
-    await terminate();
-  });
+  if(!Platform.isWindows) {
+    // ignore: unawaited_futures
+    ProcessSignal.sigterm.watch().forEach((event) async {
+      await terminate();
+    });
+  }
 
   // ignore: unawaited_futures
   ProcessSignal.sigint.watch().forEach((event) async {
