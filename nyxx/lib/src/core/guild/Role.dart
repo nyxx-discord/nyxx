@@ -106,7 +106,7 @@ class RoleTags {
   bool get isBotRole => botId != null;
 
   RoleTags._new(Map<String, dynamic> raw) {
-    this.botId = raw["bot_id"] != null ? Snowflake(raw["role_id"]) : null;
+    this.botId = raw["bot_id"] != null ? Snowflake(raw["bot_id"]) : null;
     this.nitroRole = raw["premium_subscriber"] != null ? raw["premium_subscriber"] as bool : false;
     this.integrationId = raw["integration_id"] != null ? Snowflake(raw["integration_id"]) : null;
   }
