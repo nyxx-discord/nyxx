@@ -33,11 +33,11 @@ class EmbedBuilder implements Builder {
   EmbedAuthorBuilder? author;
 
   /// Embed custom fields;
-  late final List<EmbedFieldBuilder> _fields;
+  late final List<EmbedFieldBuilder> fields;
 
   /// Creates clean instance [EmbedBuilder]
   EmbedBuilder() {
-    _fields = [];
+    fields = [];
   }
 
   /// Adds author to embed.
@@ -60,46 +60,57 @@ class EmbedBuilder implements Builder {
       Function(EmbedFieldBuilder field)? builder,
       EmbedFieldBuilder? field}) {
     if (field != null) {
-      _fields.add(field);
+      fields.add(field);
       return;
     }
 
     if (builder != null) {
       final tmp = EmbedFieldBuilder();
       builder(tmp);
-      _fields.add(tmp);
+      fields.add(tmp);
       return;
     }
 
-    _fields.add(EmbedFieldBuilder(name, content, inline));
+    fields.add(EmbedFieldBuilder(name, content, inline));
   }
 
-  /// Total lenght of all text fields of embed
+  /// Replaces field where [name] witch provided new field.
+  void replaceField({dynamic? name,
+      dynamic? content,
+      bool inline = false,
+      Function(EmbedFieldBuilder field)? builder,
+      EmbedFieldBuilder? field}) {
+
+    this.fields.removeWhere((element) => element.name == name);
+    this.addField(name: name, content: content, inline: inline, builder: builder, field: field);
+  }
+
+  /// Total length of all text fields of embed
   int get length =>
     (this.title?.length ?? 0) +
         (this.description?.length ?? 0) +
         (this.footer?.length ?? 0) +
         (this.author?.length ?? 0) +
-        (_fields.isEmpty ? 0 : _fields.map((embed) => embed.length).reduce((f, s) => f + s));
+        (fields.isEmpty ? 0 : fields.map((embed) => embed.length).reduce((f, s) => f + s));
 
   @override
 
   /// Builds object to Map() instance;
   Map<String, dynamic> _build() {
     if (this.title != null && this.title!.length > 256) {
-      throw Exception("Embed title is too long (256 characters limit)");
+      throw EmbedBuilderArgumentException._new("Embed title is too long (256 characters limit)");
     }
 
     if (this.description != null && this.description!.length > 2048) {
-      throw Exception("Embed description is too long (2048 characters limit)");
+      throw EmbedBuilderArgumentException._new("Embed description is too long (2048 characters limit)");
     }
 
-    if (this._fields.length > 25) {
-      throw Exception("Embed cannot contain more than 25 fields");
+    if (this.fields.length > 25) {
+      throw EmbedBuilderArgumentException._new("Embed cannot contain more than 25 fields");
     }
 
     if (this.length > 6000) {
-      throw Exception("Total length of embed cannot exceed 6000 characters");
+      throw EmbedBuilderArgumentException._new("Total length of embed cannot exceed 6000 characters");
     }
 
     return <String, dynamic>{
@@ -113,7 +124,7 @@ class EmbedBuilder implements Builder {
       if (imageUrl != null) "image": <String, dynamic>{"url": imageUrl},
       if (thumbnailUrl != null) "thumbnail": <String, dynamic>{"url": thumbnailUrl},
       if (author != null) "author": author!._build(),
-      if (_fields.isNotEmpty) "fields": _fields.map((builder) => builder._build()).toList()
+      if (fields.isNotEmpty) "fields": fields.map((builder) => builder._build()).toList()
     };
   }
 }

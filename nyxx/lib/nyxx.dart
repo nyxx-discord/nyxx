@@ -5,7 +5,6 @@ library nyxx;
 
 import "dart:async";
 
-import "dart:collection";
 import "dart:convert";
 import "dart:io";
 
@@ -25,6 +24,15 @@ part "src/ClientOptions.dart";
 
 // INTERNAL
 
+part "src/internal/exceptions/MissingTokenError.dart";
+part "src/internal/exceptions/EmbedBuilderArgumentException.dart";
+part "src/internal/exceptions/InvalidShardException.dart";
+part "src/internal/exceptions/InvalidSnowflakeException.dart";
+
+part "src/internal/shard/Shard.dart";
+part "src/internal/shard/ShardManager.dart";
+part "src/internal/shard/shardHandler.dart";
+
 part "src/internal/_Constants.dart";
 part "src/internal/_EventController.dart";
 part "src/internal/_WS.dart";
@@ -43,10 +51,6 @@ part "src/internal/interfaces/IMessageAuthor.dart";
 part "src/internal/interfaces/Convertable.dart";
 part "src/internal/interfaces/ISend.dart";
 part "src/internal/interfaces/Mentionable.dart";
-
-// ERROR
-
-part "src/errors/SetupErrors.dart";
 
 // EVENTS
 
@@ -73,6 +77,7 @@ part "src/events/InviteEvents.dart";
 
 part "src/utils/builders/Builder.dart";
 
+part "src/utils/builders/PresenceBuilder.dart";
 part "src/utils/builders/AttachmentBuilder.dart";
 part "src/utils/builders/PermissionsBuilder.dart";
 part "src/utils/builders/EmbedBuilder.dart";
@@ -81,6 +86,8 @@ part "src/utils/builders/EmbedFieldBuilder.dart";
 part "src/utils/builders/EmbedFooterBuilder.dart";
 part "src/utils/builders/GuildBuilder.dart";
 part "src/utils/builders/MessageBuilder.dart";
+
+part "src/utils/extensions.dart";
 
 // OBJECTS
 
@@ -91,7 +98,6 @@ part "src/core/DiscordColor.dart";
 
 part "src/core/SnowflakeEntity.dart";
 part "src/core/Snowflake.dart";
-part "src/Shard.dart";
 part "src/core/guild/Webhook.dart";
 
 part "src/core/voice/VoiceState.dart";
@@ -111,6 +117,8 @@ part "src/core/channel/dm/GroupDMChannel.dart";
 part "src/core/channel/dm/DMChannel.dart";
 part "src/core/channel/Channel.dart";
 part "src/core/channel/MessageChannel.dart";
+part "src/core/channel/ITextChannel.dart";
+part "src/core/channel/DummyTextChannel.dart";
 
 part "src/core/embed/EmbedField.dart";
 part "src/core/embed/EmbedAuthor.dart";
@@ -122,6 +130,7 @@ part "src/core/embed/EmbedThumbnail.dart";
 
 part "src/core/guild/ClientUser.dart";
 part "src/core/guild/Guild.dart";
+part "src/core/guild/GuildFeature.dart";
 part "src/core/user/Presence.dart";
 part "src/core/user/Member.dart";
 part "src/core/guild/Status.dart";
@@ -150,7 +159,6 @@ part "src/core/application/OAuth2Info.dart";
 part "src/core/application/AppTeam.dart";
 
 part "src/core/permissions/Permissions.dart";
-part "src/core/permissions/AbstractPermissions.dart";
 part "src/core/permissions/PermissionOverrides.dart";
 part "src/core/permissions/PermissionsConstants.dart";
 

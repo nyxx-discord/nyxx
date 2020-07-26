@@ -19,7 +19,7 @@ class GuildPreview extends SnowflakeEntity {
   late final List<Emoji> emojis;
 
   /// List of guild's features
-  late final List<String> features;
+  late final Iterable<GuildFeature> features;
 
   /// Approximate number of members in this guild
   late final int approxMemberCount;
@@ -47,7 +47,7 @@ class GuildPreview extends SnowflakeEntity {
 
     this.emojis = [for (var rawEmoji in raw["emojis"]) Emoji._deserialize(rawEmoji as Map<String, dynamic>)];
 
-    this.features = (raw["features"] as List<dynamic>).map((e) => e.toString()).toList();
+    this.features = (raw["features"] as List<dynamic>).map((e) => GuildFeature.from(e.toString()));
 
     this.approxMemberCount = raw["approximate_member_count"] as int;
     this.approxOnlineMembers = raw["approximate_presence_count"] as int;

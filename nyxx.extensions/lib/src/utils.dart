@@ -1,6 +1,6 @@
-part of nyxx.interactivity;
+import "dart:async";
 
-class _Utils {
+class StreamUtils {
   /// Merges list of stream into one stream
   static Stream<T> merge<T>(List<Stream<T>> streams) {
     var _open = streams.length;
@@ -16,7 +16,9 @@ class _Utils {
     }
     return streamController.stream;
   }
+}
 
+class StringUtils {
   /// Splits string based on desired length
   static Iterable<String> split(String str, int length) sync* {
     var last = 0;
@@ -32,21 +34,5 @@ class _Utils {
     final len = (str.length / pieces).round();
 
     return split(str, len);
-  }
-
-  /// Partition list into chunks
-  static Iterable<List<T>> partition<T>(List<T> lst, int len) sync* {
-    for (var i = 0; i < lst.length; i += len) {
-      yield lst.sublist(i, i + len);
-    }
-  }
-
-  /// Divides list into equal pieces
-  static Stream<List<T>> chunk<T>(List<T> list, int chunkSize) async* {
-    final len = list.length;
-    for (var i = 0; i < len; i += chunkSize) {
-      final size = i + chunkSize;
-      yield list.sublist(i, size > len ? len : size);
-    }
   }
 }

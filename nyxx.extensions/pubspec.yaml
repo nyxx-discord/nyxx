@@ -1,6 +1,6 @@
-name: nyxx.interactivity
+name: nyxx.extensions
 version: 1.0.0
-description: A Discord library for Dart.
+description: Extensions for Nyxx library
 authors:
 - Szymon Uglis <szymon.uglis@tuta.io>
 - Zach Vacura <admin@hackzzila.com>
@@ -10,7 +10,7 @@ documentation: https://github.com/l7ssha/nyxx/wiki
 issue_tracker: https://github.com/l7ssha/nyxx/issue
 
 environment:
-  sdk: '>=2.9.0-2.0.dev <3.0.0'
+  sdk: '>=2.9.0-10.0.dev <3.0.0'
 
 dependencies:
   nyxx: "^1.0.0"

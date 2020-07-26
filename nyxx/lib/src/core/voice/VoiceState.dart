@@ -13,7 +13,7 @@ class VoiceState {
   Guild? guild;
 
   /// Channel id user is connected
-  VoiceChannel? channel;
+  CacheVoiceChannel? channel;
 
   /// Whether this user is muted by the server
   late final bool deaf;
@@ -29,7 +29,7 @@ class VoiceState {
 
   VoiceState._new(Map<String, dynamic> raw, Nyxx client, [Guild? guild]) {
     if (raw["channel_id"] != null) {
-      this.channel = client.channels[Snowflake(raw["channel_id"])] as VoiceChannel?;
+      this.channel = client.channels[Snowflake(raw["channel_id"])] as CacheVoiceChannel?;
     }
 
     this.deaf = raw["deaf"] as bool;

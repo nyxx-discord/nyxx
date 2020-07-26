@@ -13,9 +13,9 @@ class ClientUser extends User {
     this.mfa = data["mfa_enabled"] as bool;
   }
 
-  /// Allows to get [Member] objects for all guilds for bot user.
-  Map<Guild, Member> getMembership() {
-    final membershipCollection = <Guild, Member>{};
+  /// Allows to get [CacheMember] objects for all guilds for bot user.
+  Map<Guild, IMember> getMembership() {
+    final membershipCollection = <Guild, IMember>{};
 
     for (final guild in client.guilds.values) {
       final member = guild.members[this.id];
@@ -31,7 +31,7 @@ class ClientUser extends User {
   /// Edits current user. This changes user's username - not per guild nickname.
   Future<User> edit({String? username, File? avatar, String? encodedAvatar}) async {
     if (username == null && (avatar == null || encodedAvatar == null)) {
-      return Future.error("Cannot edit user with null values");
+      return Future.error(ArgumentError("Cannot edit user with null null arguments"));
     }
 
     final body = <String, dynamic>{

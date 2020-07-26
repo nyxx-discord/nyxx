@@ -2,17 +2,18 @@ part of nyxx;
 
 /// Represents unicode emoji. Contains only emoji code.
 class UnicodeEmoji extends Emoji {
-  UnicodeEmoji(String code) : super(code);
+  /// Create unicode emoji from given code
+  UnicodeEmoji(String name) : super._new(name);
 
   /// Returns Emoji
-  String get code => this.name;
+  String get code => this.name!;
 
   /// Returns runes of emoji
-  Runes get runes => this.name.runes;
+  Runes get runes => this.name!.runes;
 
   /// Encodes Emoji so that can be used in messages.
   @override
-  String encode() => this.name;
+  String encode() => this.name!;
 
   /// Returns encoded string ready to send via message.
   @override

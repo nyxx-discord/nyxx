@@ -1,6 +1,6 @@
 part of nyxx;
 
-/// Provides abstraction of messages for [TextChannel], [DMChannel] and [GroupDMChannel].
+/// Provides abstraction of messages for [CachelessTextChannel], [DMChannel] and [GroupDMChannel].
 /// Implements iterator which allows to use message object in for loops to access
 /// messages sequentially.
 ///
@@ -11,32 +11,33 @@ part of nyxx;
 ///   print(message.author.id);
 /// }
 /// ```
-class MessageChannel extends Channel with IterableMixin<Message>, ISend, Disposable {
-  Timer? _typing;
+abstract class MessageChannel implements Channel, ISend, Disposable {
+  /// Reference to client
+  @override
+  Nyxx get client;
 
   /// Sent when a new message is received.
-  late final Stream<MessageReceivedEvent> onMessage;
+  late final Stream<MessageReceivedEvent> onMessage = client.onMessageReceived.where((event) => event.message.channel == this);
 
   /// Emitted when user starts typing.
-  late final Stream<TypingEvent> onTyping;
+  late final Stream<TypingEvent> onTyping = client.onTyping.where((event) => event.channel == this);
+
+  /// Emitted when channel pins are updated.
+  late final Stream<ChannelPinsUpdateEvent> pinsUpdated = client.onChannelPinsUpdate.where((event) => event.channel == this);
 
   /// A collection of messages sent to this channel.
-  late final MessageCache messages;
+  late final MessageCache messages = MessageCache._new(client._options.messageCacheSize);
 
-  /// File upload limit for channel
+  // Used to create infinite typing loop
+  Timer? _typing;
+
+  /// File upload limit for channel in bytes. If channel is [CachelessGuildChannel] returns default value.
   int get fileUploadLimit {
-    if (this is GuildChannel) {
-      return (this as GuildChannel).guild.fileUploadLimit;
+    if (this is CacheGuildChannel) {
+      return (this as CacheGuildChannel).guild.fileUploadLimit;
     }
 
     return 8 * 1024 * 1024;
-  }
-
-  MessageChannel._new(Map<String, dynamic> raw, int type, Nyxx client) : super._new(raw, type, client) {
-    this.messages = MessageCache._new(client._options.messageCacheSize);
-
-    onTyping = client.onTyping.where((event) => event.channel == this);
-    onMessage = client.onMessageReceived.where((event) => event.message.channel == this);
   }
 
   /// Returns message with given [id]. Allows to force fetch message from api
@@ -48,15 +49,13 @@ class MessageChannel extends Channel with IterableMixin<Message>, ISend, Disposa
       if (response is HttpResponseError) {
         return Future.error(response);
       }
-
-      var msg = Message._deserialize((response as HttpResponseSuccess).jsonBody as Map<String, dynamic>, client);
-      return messages._cacheMessage(msg);
+      
+      return messages._cacheMessage(
+          Message._deserialize((response as HttpResponseSuccess).jsonBody as Map<String, dynamic>, client));
     }
 
     return messages[id];
   }
-
-  @override
 
   /// Sends message to channel. Performs `toString()` on thing passed to [content]. Allows to send embeds with [embed] field.
   ///
@@ -93,6 +92,7 @@ class MessageChannel extends Channel with IterableMixin<Message>, ISend, Disposa
   /// await e.message.channel
   ///   .send(files: [new File("kitten.jpg")], embed: embed, content: "HEJKA!");
   /// ```
+  @override
   Future<Message> send(
       {dynamic content,
       List<AttachmentBuilder>? files,
@@ -121,7 +121,7 @@ class MessageChannel extends Channel with IterableMixin<Message>, ISend, Disposa
     if (files != null && files.isNotEmpty) {
       for (final file in files) {
         if (file._bytes.length > fileUploadLimit) {
-          return Future.error("File with name: [${file._name}] is too big!");
+          return Future.error(ArgumentError("File with name: [${file._name}] is too big!"));
         }
       }
 
@@ -134,9 +134,9 @@ class MessageChannel extends Channel with IterableMixin<Message>, ISend, Disposa
 
     if (response is HttpResponseSuccess) {
       return Message._deserialize(response.jsonBody as Map<String, dynamic>, client);
-    } else {
-      return Future.error(response);
     }
+
+    return Future.error(response);
   }
 
   /// Starts typing.
@@ -191,7 +191,7 @@ class MessageChannel extends Channel with IterableMixin<Message>, ISend, Disposa
     }
   }
 
-  @override
+  /// Returns iterator for messages cache
   Iterator<Message> get iterator => messages.values.iterator;
 
   @override

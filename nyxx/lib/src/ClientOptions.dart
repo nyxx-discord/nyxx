@@ -7,11 +7,8 @@ class ClientOptions {
   /// **It means client won't send any of these. It doesn't mean filtering guild messages.**
   AllowedMentions? allowedMentions;
 
-  /// The index of this shard
-  int shardIndex;
-
   /// The total number of shards.
-  int shardCount;
+  int? shardCount;
 
   /// The number of messages to cache for each channel.
   int messageCacheSize;
@@ -36,17 +33,28 @@ class ClientOptions {
   /// If you do not specify a certain intent, you will not receive any of the gateway events that are batched into that group.
   GatewayIntents? gatewayIntents;
 
+  /// Allows to receive compressed payloads from gateway
+  bool compressedGatewayPayloads;
+
+  /// Enables dispatching of guild subscription events (presence and typing events)
+  bool guildSubscriptions;
+
+  /// Initial bot presence
+  PresenceBuilder? initialPresence;
+
   /// Makes a new `ClientOptions` object.
   ClientOptions(
       {this.allowedMentions,
-      this.shardIndex = 0,
-      this.shardCount = 1,
+      this.shardCount,
       this.messageCacheSize = 400,
       this.forceFetchMembers = false,
       this.cacheMembers = true,
       this.largeThreshold = 50,
       this.ignoredEvents = const [],
-      this.gatewayIntents});
+      this.gatewayIntents,
+      this.compressedGatewayPayloads = true,
+      this.guildSubscriptions = true,
+      this.initialPresence });
 }
 
 /// When identifying to the gateway, you can specify an intents parameter which
@@ -54,24 +62,57 @@ class ClientOptions {
 /// If you do not specify a certain intent, you will not receive any of the gateway events that are batched into that group.
 /// [Reference](https://discordapp.com/developers/docs/topics/gateway#gateway-intents)
 class GatewayIntents {
+  /// Includes events: `GUILD_CREATE, GUILD_UPDATE, GUILD_DELETE, GUILD_ROLE_CREATE, GUILD_ROLE_UPDATE, GUILD_ROLE_DELETE, CHANNEL_DELETE, CHANNEL_CREATE, CHANNEL_UPDATE, CHANNEL_PINS_UPDATE`
   bool guilds = false;
+
+  /// Includes events: `GUILD_MEMBER_ADD, GUILD_MEMBER_UPDATE, GUILD_MEMBER_REMOVE`
   bool guildMembers = false;
+
+  /// Includes events: `GUILD_BAN_ADD, GUILD_BAN_REMOVE`
   bool guildBans = false;
+
+  /// Includes event: `GUILD_EMOJIS_UPDATE`
   bool guildEmojis = false;
+
+  /// Includes events: `GUILD_INTEGRATIONS_UPDATE`
   bool guildIntegrations = false;
+
+  /// Includes events: `WEBHOOKS_UPDATE`
   bool guildWebhooks = false;
+
+  /// Includes events: `INVITE_CREATE, INVITE_DELETE`
   bool guildInvites = false;
+
+  /// Includes events: `VOICE_STATE_UPDATE`
   bool guildVoiceState = false;
+
+  /// Includes events: `PRESENCE_UPDATE`
   bool guildPresences = false;
+
+  /// Include events: `MESSAGE_CREATE, MESSAGE_UPDATE, MESSAGE_DELETE, MESSAGE_DELETE_BULK`
+  bool guildMessages = false;
+
+  /// Includes events: `MESSAGE_REACTION_ADD, MESSAGE_REACTION_REMOVE, MESSAGE_REACTION_REMOVE_ALL, MESSAGE_REACTION_REMOVE_EMOJI`
   bool guildMessageReactions = false;
+
+  /// Includes events: `TYPING_START`
   bool guildMessageTyping = false;
+
+  /// Includes events: `CHANNEL_CREATE, MESSAGE_CREATE, MESSAGE_UPDATE, MESSAGE_DELETE, CHANNEL_PINS_UPDATE`
   bool directMessages = false;
+
+  /// Includes events: `MESSAGE_REACTION_ADD, MESSAGE_REACTION_REMOVE, MESSAGE_REACTION_REMOVE_ALL, MESSAGE_REACTION_REMOVE_EMOJI`
   bool directMessageReactions = false;
+
+  /// Includes events: `TYPING_START`
   bool directMessageTyping = false;
 
   bool _all = false;
 
+  /// Constructs intens config object
   GatewayIntents();
+
+  /// Return config with turned on all intents
   GatewayIntents.all() : _all = true;
 
   int _calculate() {
@@ -88,8 +129,9 @@ class GatewayIntents {
     if (guildIntegrations) value += 1 << 4;
     if (guildWebhooks) value += 1 << 5;
     if (guildInvites) value += 1 << 6;
-    if (guildVoiceState) value += 1 << 8;
-    if (guildPresences) value += 1 << 9;
+    if (guildVoiceState) value += 1 << 7;
+    if (guildPresences) value += 1 << 8;
+    if (guildMessages) value += 1 << 9;
     if (guildMessageReactions) value += 1 << 10;
     if (guildMessageTyping) value += 1 << 11;
     if (directMessages) value += 1 << 12;

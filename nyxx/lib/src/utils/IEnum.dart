@@ -1,10 +1,13 @@
 part of nyxx;
 
+/// Abstract interface for enums in library
 abstract class IEnum<T> {
   final T _value;
 
+  /// Returns value of enum
   T get value => _value;
 
+  /// Creates enum with given value
   const IEnum(this._value);
 
   @override

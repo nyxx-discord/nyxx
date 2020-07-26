@@ -3,15 +3,12 @@ part of nyxx;
 /// Represents emoji. Subclasses provides abstraction to custom emojis(like [GuildEmoji]).
 abstract class Emoji {
   /// Emojis name.
-  String name;
+  final String? name;
+  
+  Emoji._new(this.name);
 
-  Emoji(this.name);
-
+  // TODO: Emojis stuff
   factory Emoji._deserialize(Map<String, dynamic> raw) {
-    if (raw["id"] != null) {
-      return GuildEmoji._partial(raw);
-    }
-
     return UnicodeEmoji(raw["name"] as String);
   }
 

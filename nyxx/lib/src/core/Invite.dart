@@ -11,9 +11,6 @@ class Invite {
   /// A mini channel object for the invite's channel.
   late final Channel? channel;
 
-  /// Returns url invite
-  String get url => "https://discord.gg/$code";
-
   /// User who created this invite
   late final User? inviter;
 
@@ -21,7 +18,10 @@ class Invite {
   late final User? targetUser;
 
   /// Reference to bot instance
-  Nyxx client;
+  final Nyxx client;
+
+  /// Returns url to invite
+  String get url => "https://discord.gg/$code";
 
   Invite._new(Map<String, dynamic> raw, this.client) {
     this.code = raw["code"] as String;
@@ -30,6 +30,7 @@ class Invite {
       this.guild = client.guilds[Snowflake(raw["guild"]["id"])];
     }
 
+    // TODO: NNBD
     if (raw["channel"] != null) {
       this.channel = client.channels[Snowflake(raw["channel"]["id"])];
     }
@@ -41,7 +42,7 @@ class Invite {
     if (raw["inviter"] != null) {
       this.inviter = client.users[Snowflake(raw["inviter"]["id"])];
     }
-
+    
     if (raw["target_user"] != null) {
       this.targetUser = client.users[Snowflake(raw["target_user"]["id"])];
     }

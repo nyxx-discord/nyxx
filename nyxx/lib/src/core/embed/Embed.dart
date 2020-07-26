@@ -129,7 +129,7 @@ class Embed implements Convertable<EmbedBuilder> {
       ..thumbnailUrl = this.thumbnail?.url
       ..imageUrl = this.image?.url
       ..author = this.author?.toBuilder()
-      .._fields = this.fields.map((field) => field.toBuilder()).toList();
+      ..fields = this.fields.map((field) => field.toBuilder()).toList();
 
   @override
   bool operator ==(other) => other is EmbedVideo ? other.url == this.url : false;

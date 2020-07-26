@@ -50,7 +50,7 @@ class Nyxx implements Disposable {
   final String version = Constants.version;
 
   /// Current client"s shard
-  late Shard shard;
+  late ShardManager shardManager;
 
   /// Emitted when a shard is disconnected from the websocket.
   late Stream<DisconnectEvent> onDisconnect;
@@ -176,12 +176,32 @@ class Nyxx implements Disposable {
 
   /// Creates and logs in a new client. If [ignoreExceptions] is true (by default is)
   /// isolate will ignore all exceptions and continue to work.
-  Nyxx(this._token, {ClientOptions? options, bool ignoreExceptions = true}) {
+  Nyxx(this._token, {ClientOptions? options, bool ignoreExceptions = true, bool useDefaultLogger = true, Level? defaultLoggerLogLevel}) {
     transport_vm.configureWTransportForVM();
 
-    if (_token.isEmpty) {
-      throw NoTokenError();
+    if(useDefaultLogger) {
+      Logger.root.level = defaultLoggerLogLevel ?? Level.ALL;
+
+      Logger.root.onRecord.listen((LogRecord rec) {
+        print("[${rec.time}] [${rec.level.name}] [${rec.loggerName}] ${rec.message}");
+      });
     }
+
+    this._logger.info("Starting bot with pid: $pid");
+
+    if (_token.isEmpty) {
+      throw MissingTokenError();
+    }
+
+    if(!Platform.isWindows) {
+      ProcessSignal.sigterm.watch().forEach((event) async {
+        await this.dispose();
+      });
+    }
+
+    ProcessSignal.sigint.watch().forEach((event) async {
+      await this.dispose();
+    });
 
     if (ignoreExceptions) {
       Isolate.current.setErrorsFatal(false);
@@ -203,7 +223,7 @@ class Nyxx implements Disposable {
     this._events = _EventController(this);
     this.onSelfMention = this
         .onMessageReceived
-        .where((event) => event.message.mentions.any((mentionedUser) => mentionedUser == this.self));
+        .where((event) => event.message.mentions.contains(this.self));
     this.onDmReceived = this
         .onMessageReceived
         .where((event) => event.message.channel is DMChannel || event.message.channel is GroupDMChannel);
@@ -230,7 +250,9 @@ class Nyxx implements Disposable {
 
   /// Returns guild with given [guildId]
   Future<Guild> getGuild(Snowflake guildId, [bool useCache = true]) async {
-    if (this.guilds.hasKey(guildId) && useCache) return this.guilds[guildId]!;
+    if (this.guilds.hasKey(guildId) && useCache) {
+      return this.guilds[guildId]!;
+    }
 
     final response = await _http._execute(BasicRequest._new("/guilds/$guildId"));
 
@@ -248,7 +270,9 @@ class Nyxx implements Disposable {
   /// var channel = await client.getChannel<TextChannel>(Snowflake("473853847115137024"));
   /// ```
   Future<T> getChannel<T extends Channel>(Snowflake id, [bool useCache = true]) async {
-    if (this.channels.hasKey(id) && useCache) return this.channels[id] as T;
+    if (this.channels.hasKey(id) && useCache) {
+      return this.channels[id] as T;
+    }
 
     final response = await this._http._execute(BasicRequest._new("/channels/${id.toString()}"));
 
@@ -257,25 +281,7 @@ class Nyxx implements Disposable {
     }
 
     final raw = (response as HttpResponseSuccess).jsonBody as Map<String, dynamic>;
-
-    switch (raw["type"] as int) {
-      case 1:
-        return DMChannel._new(raw, this) as T;
-      case 3:
-        return GroupDMChannel._new(raw, this) as T;
-      case 0:
-      case 5:
-        final guild = this.guilds[Snowflake(raw["guild_id"])];
-        return TextChannel._new(raw, guild!, this) as T;
-      case 2:
-        final guild = this.guilds[Snowflake(raw["guild_id"])];
-        return VoiceChannel._new(raw, guild!, this) as T;
-      case 4:
-        final guild = this.guilds[Snowflake(raw["guild_id"])];
-        return CategoryChannel._new(raw, guild!, this) as T;
-      default:
-        return Future.error("Cannot create channel of type [${raw["type"]}");
-    }
+    return Channel._deserialize(raw, this) as T;
   }
 
   /// Get user instance with specified id.
@@ -286,7 +292,9 @@ class Nyxx implements Disposable {
   /// var user = client.getUser(Snowflake("302359032612651009"));
   /// ``
   Future<User?> getUser(Snowflake id, [bool useCache = true]) async {
-    if (this.users.hasKey(id) && useCache) return this.users[id];
+    if (this.users.hasKey(id) && useCache) {
+      return this.users[id];
+    }
 
     final response = await this._http._execute(BasicRequest._new("/users/${id.toString()}"));
 
@@ -308,7 +316,7 @@ class Nyxx implements Disposable {
   /// ```
   Future<Guild> createGuild(GuildBuilder builder) async {
     if (this.guilds.count >= 10) {
-      return Future.error("Guild cannot be created if bot is in 10 or more guilds");
+      return Future.error(ArgumentError("Guild cannot be created if bot is in 10 or more guilds"));
     }
 
     final response = await this._http._execute(BasicRequest._new("/guilds", method: "POST"));
@@ -339,17 +347,17 @@ class Nyxx implements Disposable {
   /// var inv = client.getInvite("YMgffU8");
   /// ```
   Future<Invite> getInvite(String code) async {
-    final r = await this._http._execute(BasicRequest._new("/invites/$code"));
+    final response = await this._http._execute(BasicRequest._new("/invites/$code"));
 
-    if (r is HttpResponseSuccess) {
-      return Invite._new(r.jsonBody as Map<String, dynamic>, this);
+    if (response is HttpResponseSuccess) {
+      return Invite._new(response.jsonBody as Map<String, dynamic>, this);
     }
 
-    return Future.error(r);
+    return Future.error(response);
   }
 
   /// Returns number of shards
-  int get shards => this._options.shardCount;
+  int get shards => this.shardManager._shards.length;
 
   /// Sets presence for bot.
   ///
@@ -365,38 +373,21 @@ class Nyxx implements Disposable {
   /// bot.setPresence(game: Activity.of("Super duper game", type: ActivityType.streaming, url: "https://twitch.tv/l7ssha"))
   /// ```
   /// `url` property in `Activity` can be only set when type is set to `streaming`
-  void setPresence({UserStatus? status, bool? afk, Activity? game, DateTime? since}) {
-    this.shard.setPresence(status: status, afk: afk, game: game, since: since);
+  void setPresence(PresenceBuilder presenceBuilder) {
+    this.shardManager.setPresence(presenceBuilder);
   }
 
   @override
   Future<void> dispose() async {
-    await shard.dispose();
+    this._logger.info("Disposing and closing bot...");
+
+    await shardManager.dispose();
+    await this._events.dispose();
     await guilds.dispose();
     await users.dispose();
     await guilds.dispose();
-    await this._events.dispose();
+
+    this._logger.info("Exiting...");
+    exit(0);
   }
-}
-
-/// Sets up default logger
-void setupDefaultLogging([Level? loglevel]) {
-  Logger.root.level = loglevel ?? Level.ALL;
-
-  Logger.root.onRecord.listen((LogRecord rec) {
-    var color = "";
-    if (rec.level == Level.WARNING) {
-      color = "\u001B[33m";
-    } else if (rec.level == Level.SEVERE) {
-      color = "\u001B[31m";
-    } else if (rec.level == Level.INFO) {
-      color = "\u001B[32m";
-    } else {
-      color = "\u001B[0m";
-    }
-
-    print("[${DateTime.now()}] "
-        "$color[${rec.level.name}] [${rec.loggerName}]\u001B[0m: "
-        "${rec.message}");
-  });
 }
