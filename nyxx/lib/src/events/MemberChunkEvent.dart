@@ -4,7 +4,7 @@ part of nyxx;
 /// You can use the `chunk_index` and `chunk_count` to calculate how many chunks are left for your request.
 class MemberChunkEvent {
   /// Guild members
-  late final Iterable<Member> members;
+  late final Iterable<IMember> members;
 
   /// Id of guild
   late final Snowflake guildId;
@@ -27,7 +27,10 @@ class MemberChunkEvent {
   /// Nonce is used to identify events.
   String? nonce;
 
-  MemberChunkEvent._new(Map<String, dynamic> raw, Nyxx client) {
+  /// Id of shard where chunk was received
+  final int shardId;
+
+  MemberChunkEvent._new(Map<String, dynamic> raw, Nyxx client, this.shardId) {
     this.chunkIndex = raw["d"]["chunk_index"] as int;
     this.chunkCount = raw["d"]["chunk_count"] as int;
 
@@ -44,7 +47,7 @@ class MemberChunkEvent {
 
     this.members = [
       for (var memberRaw in raw["d"]["members"])
-        Member._standard(memberRaw as Map<String, dynamic>, this.guild!, client)
+        CacheMember._standard(memberRaw as Map<String, dynamic>, this.guild!, client)
     ];
 
     // TODO: Thats probably redundant

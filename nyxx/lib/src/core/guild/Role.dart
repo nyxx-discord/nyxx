@@ -1,7 +1,41 @@
 part of nyxx;
 
+/// Represents [Guild] role.
+/// Interface allows basic operations on member but does not guarantee data to be valid or available
+class IRole extends SnowflakeEntity {
+  /// Reference to client
+  final Nyxx client;
+
+  /// Id of role's [Guild]
+  final Snowflake guildId;
+
+  IRole._new(Snowflake id, this.guildId, this.client) : super(id);
+
+  /// Edits the role.
+  Future<Role> edit(RoleBuilder role, {String? auditReason}) async {
+    final response = await client._http._execute(BasicRequest._new("/guilds/${this.guildId}/roles/$id",
+        method: "PATCH", body: role._build(), auditLog: auditReason));
+
+    if (response is HttpResponseSuccess) {
+      return Role._new(response.jsonBody as Map<String, dynamic>, this.guildId, client);
+    }
+
+    return Future.error(response);
+  }
+
+  /// Deletes the role.
+  Future<void> delete({String? auditReason}) =>
+      client._http
+          ._execute(BasicRequest._new("/guilds/${this.guildId}/roles/$id", method: "DELETE", auditLog: auditReason));
+
+  /// Adds role to user.
+  Future<void> addToUser(User user, {String? auditReason}) =>
+      client._http._execute(
+          BasicRequest._new("/guilds/${this.guildId}/members/${user.id}/roles/$id", method: "PUT", auditLog: auditReason));
+}
+
 /// Represents a Discord guild role, which is used to assign priority, permissions, and a color to guild members
-class Role extends SnowflakeEntity implements Mentionable, GuildEntity {
+class Role extends IRole implements Mentionable, GuildEntity {
   /// The role's name.
   late final String name;
 
@@ -22,24 +56,19 @@ class Role extends SnowflakeEntity implements Mentionable, GuildEntity {
 
   /// The role's guild.
   @override
-  late final Guild guild;
+  late final Guild? guild;
 
   /// The role's permissions.
   late final Permissions permissions;
 
-  /// Returns all members which have this role assigned
-  Iterable<Member> get members => guild.members.find((m) => m.roles.contains(this));
-
-  @override
-
   /// Mention of role. If role cannot be mentioned it returns name of role (@name)
+  @override
   String get mention => mentionable ? "<@&${this.id}>" : "@$name";
 
+  /// Additional role data like if role is managed by integration or role is from server boosting.
+  late final RoleTags? roleTags;
 
-  /// Reference to [Nyxx] instance
-  Nyxx client;
-
-  Role._new(Map<String, dynamic> raw, this.guild, this.client) : super(Snowflake(raw["id"] as String)) {
+  Role._new(Map<String, dynamic> raw, Snowflake guildId, Nyxx client) : super._new(Snowflake(raw["id"]), guildId, client) {
     this.name = raw["name"] as String;
     this.position = raw["position"] as int;
     this.hoist = raw["hoist"] as bool;
@@ -47,31 +76,38 @@ class Role extends SnowflakeEntity implements Mentionable, GuildEntity {
     this.mentionable = raw["mentionable"] as bool? ?? false;
     this.permissions = Permissions.fromInt(raw["permissions"] as int);
     this.color = DiscordColor.fromInt(raw["color"] as int);
-  }
 
-  /// Edits the role.
-  Future<Role> edit(RoleBuilder role, {String? auditReason}) async {
-    final response = await client._http._execute(BasicRequest._new("/guilds/${this.guild.id}/roles/$id",
-        method: "PATCH", body: role._build(), auditLog: auditReason));
-
-    if (response is HttpResponseSuccess) {
-      return Role._new(response.jsonBody as Map<String, dynamic>, this.guild, client);
+    if(raw["tags"] != null) {
+      this.roleTags = RoleTags._new(raw["tags"] as Map<String, dynamic>);
+    } else {
+      this.roleTags = null;
     }
 
-    return Future.error(response);
+    this.guild = client.guilds[this.guildId];
   }
-
-  /// Deletes the role.
-  Future<void> delete({String? auditReason}) =>
-    client._http
-        ._execute(BasicRequest._new("/guilds/${this.guild.id}/roles/$id", method: "DELETE", auditLog: auditReason));
-
-  /// Adds role to user.
-  Future<void> addToUser(User user, {String? auditReason}) =>
-    client._http._execute(
-        BasicRequest._new("/guilds/${guild.id}/members/${user.id}/roles/$id", method: "PUT", auditLog: auditReason));
 
   /// Returns a mention of role. If role cannot be mentioned it returns name of role.
   @override
   String toString() => mention;
+}
+
+/// Additional [Role] role tags which hold optional data about role
+class RoleTags {
+  /// Holds [Snowflake] of bot id if role is for bot user
+  late final Snowflake? botId;
+
+  /// True if role is for server nitro boosting
+  late final bool nitroRole;
+
+  /// Holds [Snowflake] of integration if role is part of twitch/other integration
+  late final Snowflake? integrationId;
+
+  /// Returns true if role is for bot.
+  bool get isBotRole => botId != null;
+
+  RoleTags._new(Map<String, dynamic> raw) {
+    this.botId = raw["bot_id"] != null ? Snowflake(raw["bot_id"]) : null;
+    this.nitroRole = raw["premium_subscriber"] != null ? raw["premium_subscriber"] as bool : false;
+    this.integrationId = raw["integration_id"] != null ? Snowflake(raw["integration_id"]) : null;
+  }
 }

@@ -32,8 +32,6 @@ EmbedBuilder createTestEmbed() => EmbedBuilder()
 // -------------------------------------------------------
 
 void main() {
-  setupDefaultLogging();
-
   final env = Platform.environment;
   final bot = Nyxx(env["DISCORD_TOKEN"]!, ignoreExceptions: false);
 
@@ -43,7 +41,7 @@ void main() {
   });
 
   bot.onReady.listen((e) async {
-    final channel = bot.channels[Snowflake(422285619952222208)] as TextChannel?;
+    final channel = bot.channels[Snowflake(422285619952222208)] as CachelessTextChannel?;
     test(channel != null, "Channel cannot be null");
     if (env["TRAVIS_BUILD_NUMBER"] != null) {
       await channel!.send(
@@ -93,7 +91,7 @@ void main() {
   });
 
   bot.onMessageReceived.listen((e) async {
-    if (e.message.channel.id != Snowflake("422285619952222208") && e.message.author.id != bot.self.id) {
+    if (e.message.channelId != Snowflake("422285619952222208") && e.message.author.id != bot.self.id) {
       return;
     }
 
@@ -104,7 +102,7 @@ void main() {
     if (e.message.content == "PLIK SIEMA" && e.message.attachments.isNotEmpty) {
       final att = e.message.attachments.first;
 
-      if (att.filename != "SPOILER_kitty.webp") {
+      if (att.filename != "SPOILER_kitty.webp" || !att.isSpoiler) {
         exit(1);
       }
     }

@@ -23,7 +23,11 @@ class Snowflake implements Comparable<Snowflake> {
     if (id is int) {
       _id = id;
     } else {
-      _id = int.parse(id.toString());
+      try {
+        _id = int.parse(id.toString());
+      } on FormatException {
+        throw InvalidSnowflakeException._new(id);
+      }
     }
   }
 

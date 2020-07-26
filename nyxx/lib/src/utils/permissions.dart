@@ -3,19 +3,19 @@ part of nyxx;
 /// Util function for manipulating permissions
 class PermissionsUtils {
   /// Allows to check if [issueMember] or [issueRole] can interact with [targetMember] or [targetRole].
-  static bool canInteract({Member? issueMember, Role? issueRole, Member? targetMember, Role? targetRole}) {
+  static bool canInteract({CacheMember? issueMember, Role? issueRole, CacheMember? targetMember, Role? targetRole}) {
     bool canInter(Role role1, Role role2) => role1.position > role2.position;
 
     if (issueMember != null && targetMember != null) {
       if (issueMember.guild != targetMember.guild) return false;
 
-      return canInter(issueMember.highestRole, targetMember.highestRole);
+      return canInter(issueMember.highestRole as Role, targetMember.highestRole as Role);
     }
 
     if (issueMember != null && targetRole != null) {
       if (issueMember.guild != targetRole.guild) return false;
 
-      return canInter(issueMember.highestRole, targetRole);
+      return canInter(issueMember.highestRole as Role, targetRole);
     }
 
     if (issueRole != null && targetRole != null) {
@@ -28,28 +28,28 @@ class PermissionsUtils {
   }
 
   /// Returns List of [channel] permissions overrides for given [member].
-  static List<int> getOverrides(Member member, GuildChannel channel) {
+  static List<int> getOverrides(CacheMember member, CacheGuildChannel channel) {
     var allowRaw = 0;
     var denyRaw = 0;
 
     try {
-      final publicOverride = channel.permissions.firstWhere((ov) => ov.id == member.guild.everyoneRole.id);
+      final publicOverride = channel.permissionOverrides.firstWhere((ov) => ov.id == member.guild.everyoneRole.id);
       allowRaw = publicOverride.allow;
       denyRaw = publicOverride.deny;
       // ignore: avoid_catches_without_on_clauses, empty_catches
-    } catch (e) {}
+    } on Error { }
 
     var allowRole = 0;
     var denyRole = 0;
 
     for (final role in member.roles) {
       try {
-        final chanOveride = channel.permissions.firstWhere((f) => f.id == role.id);
+        final chanOverride = channel.permissionOverrides.firstWhere((f) => f.id == role.id);
 
-        denyRole |= chanOveride.deny;
-        allowRole |= chanOveride.allow;
+        denyRole |= chanOverride.deny;
+        allowRole |= chanOverride.allow;
         // ignore: avoid_catches_without_on_clauses, empty_catches
-      } catch (e) {}
+      } on Error { }
     }
 
     allowRaw = (allowRaw & ~denyRole) | allowRole;
@@ -57,12 +57,12 @@ class PermissionsUtils {
 
     // TODO: NNBD: try-catch in where
     try {
-      final memberOverride = channel.permissions.firstWhere((g) => g.id == member.id);
+      final memberOverride = channel.permissionOverrides.firstWhere((g) => g.id == member.id);
 
       allowRaw = (allowRaw & ~memberOverride.deny) | memberOverride.allow;
       denyRaw = (denyRaw & ~memberOverride.allow) | memberOverride.deny;
       // ignore: avoid_catches_without_on_clauses, empty_catches
-    } catch (e) {}
+    } on Error { }
 
     return [allowRaw, denyRaw];
   }

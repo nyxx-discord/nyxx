@@ -5,13 +5,9 @@ class GuildCreateEvent {
   /// The guild created.
   late final Guild guild;
 
-  GuildCreateEvent._new(Map<String, dynamic> raw, Shard shard, Nyxx client) {
+  GuildCreateEvent._new(Map<String, dynamic> raw, Nyxx client) {
     this.guild = Guild._new(client, raw["d"] as Map<String, dynamic>, true, true);
     client.guilds[guild.id] = guild;
-
-    if (client._options.forceFetchMembers) {
-      shard.send(OPCodes.requestGuildMember, {"guild_id": guild.id.toString(), "query": "", "limit": 0});
-    }
   }
 }
 
@@ -46,7 +42,7 @@ class GuildDeleteEvent {
   /// False if user was kicked from guild
   late final bool unavailable;
 
-  GuildDeleteEvent._new(Map<String, dynamic> raw, Shard shard, Nyxx client) {
+  GuildDeleteEvent._new(Map<String, dynamic> raw, Nyxx client) {
     this.guildId = Snowflake(raw["d"]["id"]);
     this.unavailable = raw["d"]["unavailable"] as bool;
     this.guild = client.guilds[this.guildId];
@@ -89,7 +85,7 @@ class GuildMemberRemoveEvent {
 /// Sent when a member is updated.
 class GuildMemberUpdateEvent {
   /// The member after the update if member is updated.
-  late final Member? member;
+  late final IMember? member;
 
   /// User if user is updated. Will be null if member is not null.
   late final User? user;
@@ -101,16 +97,16 @@ class GuildMemberUpdateEvent {
       return;
     }
 
-    final member = guild.members[Snowflake(raw["d"]["user"]["id"])];
+    this.member = guild.members[Snowflake(raw["d"]["user"]["id"])];
 
-    if (member == null) {
+    if (this.member == null || this.member is! CacheMember) {
       return;
     }
 
     final nickname = raw["d"]["nickname"] as String?;
     final roles = (raw["d"]["roles"] as List<dynamic>).map((str) => guild.roles[Snowflake(str)]!).toList();
 
-    if (member._updateMember(nickname, roles)) {
+    if ((this.member as CacheMember)._updateMember(nickname, roles)) {
       return;
     }
 
@@ -122,7 +118,7 @@ class GuildMemberUpdateEvent {
 /// Sent when a member joins a guild.
 class GuildMemberAddEvent {
   /// The member that joined.
-  late final Member? member;
+  late final CacheMember? member;
 
   GuildMemberAddEvent._new(Map<String, dynamic> raw, Nyxx client) {
     final guild = client.guilds[Snowflake(raw["d"]["guild_id"])];
@@ -131,7 +127,7 @@ class GuildMemberAddEvent {
       return;
     }
 
-    this.member = Member._standard(raw["d"] as Map<String, dynamic>, guild, client);
+    this.member = CacheMember._standard(raw["d"] as Map<String, dynamic>, guild, client);
 
     guild.members[member!.id] = member!;
     if (!client.users.hasKey(member!.id)) {
@@ -205,20 +201,26 @@ class GuildBanRemoveEvent {
 /// Fired when emojis are updated
 class GuildEmojisUpdateEvent {
   /// New list of changes emojis
-  late final Map<Snowflake, GuildEmoji> emojis;
+  final Map<Snowflake, GuildEmoji> emojis = {};
+
+  /// Id of guild where event happend
+  late final Snowflake guildId;
+
+  /// Instance of guild if available
+  late final Guild? guild;
 
   GuildEmojisUpdateEvent._new(Map<String, dynamic> json, Nyxx client) {
-    if (client.ready) {
-      final guild = client.guilds[Snowflake(json["d"]["guild_id"])];
+    this.guildId = Snowflake(json["d"]["guild_id"]);
+    this.guild = client.guilds[this.guildId];
 
-      emojis = {};
+    for(final rawEmoji in json["d"]["emojis"]) {
+      final emoji = GuildEmoji._new(rawEmoji as Map<String, dynamic>, guildId, client);
+
+      this.emojis[emoji.id] = emoji;
+
       if (guild != null) {
-        json["d"]["emojis"].forEach((o) {
-          final emoji = GuildEmoji._new(o as Map<String, dynamic>, guild, client);
-
-          guild.emojis[emoji.id] = emoji;
-          emojis[emoji.id] = emoji;
-        });
+        guild!.emojis[emoji.id] = emoji;
+        emojis[emoji.id] = emoji;
       }
     }
   }
@@ -227,56 +229,69 @@ class GuildEmojisUpdateEvent {
 /// Sent when a role is created.
 class RoleCreateEvent {
   /// The role that was created.
-  Role? role;
+  late final Role role;
+
+  /// Id of guild where event happend  
+  late final Snowflake guildId;
+
+  /// Instance of [Guild] if available
+  late final Guild? guild;
 
   RoleCreateEvent._new(Map<String, dynamic> json, Nyxx client) {
-    if (client.ready) {
-      final guild = client.guilds[Snowflake(json["d"]["guild_id"])];
+    this.guildId = Snowflake(json["d"]["guild_id"]);
+    this.guild = client.guilds[this.guildId];
 
-      if (guild != null) {
-        this.role = Role._new(json["d"]["role"] as Map<String, dynamic>, guild, client);
-
-        guild.roles[role!.id] = role!;
-      }
+    this.role = Role._new(json["d"]["role"] as Map<String, dynamic>, guildId, client);
+    if (guild != null) {
+      guild!.roles[role.id] = role;
     }
   }
 }
 
 /// Sent when a role is deleted.
 class RoleDeleteEvent {
-  /// The role that was deleted.
-  Role? role;
+  /// The role that was deleted, if available
+  IRole? role;
+
+  /// Id of tole that was deleted
+  late final Snowflake roleId;
+
+  /// Id of guild where event happend
+  late final Snowflake guildId;
+
+  /// Instance of [Guild] if available
+  late final Guild? guild;
 
   RoleDeleteEvent._new(Map<String, dynamic> json, Nyxx client) {
-    final guild = client.guilds[Snowflake(json["d"]["guild_id"])];
+    this.guildId = Snowflake(json["d"]["guild_id"]);
+    this.guild = client.guilds[this.guildId];
 
+    this.roleId = Snowflake(json["d"]["role_id"]);
     if (guild != null) {
-      this.role = guild.roles[Snowflake(json["d"]["role_id"])];
-      guild.roles.remove(role!.id);
+      this.role = guild!.roles[this.roleId];
+      guild!.roles.remove(role!.id);
     }
   }
 }
 
 /// Sent when a role is updated.
 class RoleUpdateEvent {
-  /// The role prior to the update.
-  Role? oldRole;
-
   /// The role after the update.
-  Role? newRole;
+  late final Role role;
+  /// Id of guild where event happend
+  late final Snowflake guildId;
 
+  /// Instance of [Guild] if available
+  late final Guild? guild;
+  
   RoleUpdateEvent._new(Map<String, dynamic> json, Nyxx client) {
-    final guild = client.guilds[Snowflake(json["d"]["guild_id"])];
+    this.guildId = Snowflake(json["d"]["guild_id"]);
+    this.guild = client.guilds[this.guildId];
+
+    this.role = Role._new(json["d"]["role"] as Map<String, dynamic>, guildId, client);
 
     if (guild != null) {
-      this.oldRole = guild.roles[Snowflake(json["d"]["role"]["id"])];
-      this.newRole = Role._new(json["d"]["role"] as Map<String, dynamic>, guild, client);
-
-      if (oldRole != null) {
-        oldRole!.guild.roles[oldRole!.id] = newRole!;
-      } else {
-        guild.roles.add(newRole!.id, newRole!);
-      }
+      this.guild!.roles[role.id] = role;
     }
   }
 }

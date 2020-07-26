@@ -5,17 +5,15 @@ import "package:nyxx/nyxx.dart";
 import "package:nyxx.commander/commander.dart";
 
 void main() {
-  setupDefaultLogging();
-
   final bot = Nyxx(Platform.environment["DISCORD_TOKEN"]!, ignoreExceptions: false);
 
   bot.onMessageReceived.listen((event) async {
     if (event.message.content == "Test 1") {
-      event.message.delete();
+      event.message.delete(); // ignore: unawaited_futures
     }
 
     if (event.message.content == "Test 2") {
-      event.message.delete();
+      event.message.delete(); // ignore: unawaited_futures
     }
 
     if (event.message.content == "Test 10") {
@@ -27,22 +25,22 @@ void main() {
   });
 
   bot.onReady.listen((e) async {
-    final channel = bot.channels[Snowflake("422285619952222208")] as TextChannel;
+    final channel = bot.channels[Snowflake("422285619952222208")] as CachelessTextChannel;
 
     await channel.send(content: "Testing Commander");
 
     final msg1 = await channel.send(content: "test>test1");
-    msg1.delete();
+    msg1.delete(); // ignore: unawaited_futures
 
     final msg2 = await channel.send(content: "test>test2 arg1");
-    msg2.delete();
+    msg2.delete(); // ignore: unawaited_futures
 
     final msg3 = await channel.send(content: "test>test3");
-    msg3.delete();
+    msg3.delete(); // ignore: unawaited_futures
   });
 
-  Commander(bot, prefix: "test>", beforeCommandHandler: (context, message) async {
-    if (message.endsWith("test3")) {
+  Commander(bot, prefix: "test>", beforeCommandHandler: (context) async {
+    if (context.message.content.endsWith("test3")) {
       await context.channel.send(content: "Test 10");
       return true;
     }
