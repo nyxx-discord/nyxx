@@ -89,7 +89,7 @@ class GuildMessage extends Message implements GuildEntity {
     this.roleMentions = [
       if (raw["mention_roles"] != null)
         for (var roleId in raw["mention_roles"])
-          this.guild == null ? IRole ._new(Snowflake(roleId), guildId, client) : guild!.roles[Snowflake(roleId)]!
+          this.guild == null ? IRole._new(Snowflake(roleId), guildId, client) : guild!.roles[Snowflake(roleId)]!
     ];
   }
 

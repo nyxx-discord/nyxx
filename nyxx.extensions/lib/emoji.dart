@@ -1,4 +1,4 @@
-library nyxx.extensions.emoji;
+library emoji;
 
 import "dart:convert";
 

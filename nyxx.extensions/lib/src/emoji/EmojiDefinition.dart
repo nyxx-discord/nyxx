@@ -1,4 +1,4 @@
-part of nyxx.extensions.emoji;
+part of emoji;
 
 /// Wrapper class around discords emojis data
 class EmojiDefinition {

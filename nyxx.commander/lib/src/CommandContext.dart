@@ -23,10 +23,17 @@ class CommandContext {
   /// Shard on which message was sent
   int get shardId => this.guild != null ? this.guild!.shard.id : 0;
 
+  /// Returns shard on which message was sent
+  Shard get shard => this.client.shardManager.shards.toList()[shardId];
+
   /// Substring by which command was matched
   final String commandMatcher;
 
   CommandContext._new(this.channel, this.author, this.guild, this.message, this.commandMatcher);
+
+  static final _argumentsRegex = RegExp('([A-Z0-9a-z]+)|["\']([^"]*)["\']');
+  static final _quotedTextRegex = RegExp('["\']([^"]*)["\']');
+  static final _codeBlocksRegex = RegExp(r"```(\w+)?(\s)?(((.+)(\s)?)+)```");
 
   /// Reply to message. It allows to send regular message, Embed or both.
   ///
@@ -128,7 +135,7 @@ class CommandContext {
   ///   final messages = await context.nextMessagesWhere((msg) => msg.content.startsWith("fuck"));
   /// }
   /// ```
-  Stream<MessageReceivedEvent> nextMessagesWhere(bool Function(MessageReceivedEvent msg) predicate, {int limit = 100}) => channel.onMessage.where(predicate).take(limit);
+  Stream<MessageReceivedEvent> nextMessagesWhere(bool Function(MessageReceivedEvent msg) predicate, {int limit = 1}) => channel.onMessage.where(predicate).take(limit);
 
   /// Gets next [num] number of any messages sent within one context (same channel).
   ///
@@ -153,9 +160,7 @@ class CommandContext {
   /// Text: `hi this is "example stuff" which 'can be parsed'` will return
   /// `List<String> [hi, this, is, example stuff, which, can be parsed]`
   Iterable<String> getArguments() sync* {
-    final regex = RegExp('([A-Z0-9a-z]+)|["\']([^"]*)["\']');
-
-    final matches = regex.allMatches(this.message.content.replaceFirst(commandMatcher, ""));
+    final matches = _argumentsRegex.allMatches(this.message.content.replaceFirst(commandMatcher, ""));
 
     for(final match in matches) {
       final group1 = match.group(1);
@@ -168,9 +173,7 @@ class CommandContext {
   /// Text: `hi this is "example stuff" which 'can be parsed'` will return
   /// `List<String> [example stuff, can be parsed]`
   Iterable<String> getQuotedText() sync* {
-    final regex = RegExp('["\']([^"]*)["\']');
-
-    final matches = regex.allMatches(this.message.content.replaceFirst(commandMatcher, ""));
+    final matches = _quotedTextRegex.allMatches(this.message.content.replaceFirst(commandMatcher, ""));
     for(final match in matches) {
       yield match.group(1)!;
     }
@@ -184,9 +187,7 @@ class CommandContext {
   /// ```
   /// """
   Iterable<String> getCodeBlocks() sync* {
-    final regex = RegExp(r"```(\w+)?(\s)?(((.+)(\s)?)+)```");
-
-    final matches = regex.allMatches(message.content);
+    final matches = _codeBlocksRegex.allMatches(message.content);
     for (final match in matches) {
       final matchedText = match.group(3);
 
