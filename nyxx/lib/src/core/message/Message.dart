@@ -105,7 +105,7 @@ class GuildMessage extends Message implements GuildEntity {
 /// [Message] among all it is properties has also back-reference to [MessageChannel] from which it was sent, [Guild] and [User] properties which are associated with this message.
 abstract class Message extends SnowflakeEntity implements Disposable {
   /// Reference to bot instance
-  Nyxx client;
+  final Nyxx client;
 
   /// The message's content.
   late String content;
