@@ -11,5 +11,7 @@ class DMChannel extends Channel with MessageChannel, ISend implements ITextChann
     } else {
       this.recipient = User._new(raw["recipient"] as Map<String, dynamic>, client);
     }
+
+    this.client.users[this.recipient.id] = recipient;
   }
 }

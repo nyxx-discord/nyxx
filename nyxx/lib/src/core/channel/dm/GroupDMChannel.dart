@@ -6,7 +6,11 @@ class GroupDMChannel extends Channel with MessageChannel, ISend implements IText
   late final List<User> recipients;
 
   GroupDMChannel._new(Map<String, dynamic> raw, Nyxx client) : super._new(raw, 3, client) {
-    this.recipients = [for (var o in raw["recipients"]) User._new(o as Map<String, dynamic>, client)];
+    for(final rawObj in raw["recipients"]) {
+      final user = User._new(rawObj as Map<String, dynamic>, client);
+      this.recipients.add(user);
+      this.client.users[user.id] = user;
+    }
   }
 
   /// Removes recipient from channel
