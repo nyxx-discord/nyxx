@@ -123,7 +123,7 @@ abstract class Message extends SnowflakeEntity implements Disposable {
   IMessageAuthor get author;
 
   /// The mentions in the message. [User] value of this map can be [CacheMember]
-  late List<User> mentions;
+  List<User> mentions = [];
 
   /// A collection of the embeds in the message.
   late List<Embed> embeds;
@@ -201,10 +201,14 @@ abstract class Message extends SnowflakeEntity implements Disposable {
         for (var r in raw["reactions"]) Reaction._new(r as Map<String, dynamic>)
     ];
 
-    this.mentions = [
-      if (raw["mentions"] != null && raw["mentions"].isNotEmpty as bool)
-        for (var r in raw["mentions"]) User._new(r as Map<String, dynamic>, client)
-    ];
+    if (raw["mentions"] != null && raw["mentions"].isNotEmpty as bool) {
+      for (final rawUser in raw["mentions"]) {
+        final user = User._new(rawUser as Map<String, dynamic>, client);
+
+        this.mentions.add(user);
+        this.client.users[user.id] = user;
+      }
+    }
   }
 
   /// Returns content of message
