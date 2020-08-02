@@ -38,6 +38,10 @@ class Commander {
 
   final Logger _logger = Logger("Commander");
 
+  /// Resolves prefix for given [message]. Returns null if there is no prefix for given [message] which
+  /// means command wouldn't execute in given context.
+  FutureOr<String?> getPrefixForMessage(Message message) => _prefixHandler(message);
+
   /// Either [prefix] or [prefixHandler] must be specified otherwise program will exit.
   /// Allows to specify additional [beforeCommandHandler] executed before main command callback,
   /// and [afterCommandHandler] executed after main command callback.
