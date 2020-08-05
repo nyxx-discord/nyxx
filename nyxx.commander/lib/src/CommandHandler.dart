@@ -14,6 +14,17 @@ abstract class CommandEntity {
 
   /// Parent of entity
   CommandEntity? get parent;
+
+  /// Full qualified command name with its parents names
+  String getFullCommandName() {
+    var commandName = this.name;
+
+    for(var e = this.parent; e != null; e = e.parent) {
+      commandName = "${e.name} $commandName";
+    }
+
+    return commandName.trim();
+  }
 }
 
 /// Creates command group. Pass a [name] to crated command and commands added

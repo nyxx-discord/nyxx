@@ -42,6 +42,9 @@ class Commander {
   /// means command wouldn't execute in given context.
   FutureOr<String?> getPrefixForMessage(Message message) => _prefixHandler(message);
 
+  /// Returns unmodifiable list of registered commands.
+  List<CommandEntity> get commands => List.unmodifiable(this._commandEntities);
+
   /// Either [prefix] or [prefixHandler] must be specified otherwise program will exit.
   /// Allows to specify additional [beforeCommandHandler] executed before main command callback,
   /// and [afterCommandHandler] executed after main command callback.
@@ -90,7 +93,7 @@ class Commander {
       return;
     }
 
-    final fullCommandName = getFullCommandName(matchingCommand);
+    final fullCommandName = matchingCommand.getFullCommandName();
 
     // construct commandcontext
     final context = CommandContext._new(event.message.channel, event.message.author,
@@ -177,15 +180,4 @@ class Commander {
 
   /// Registers command as implemented [CommandEntity] class
   void registerCommandGroup(CommandGroup commandGroup) => this._commandEntities.add(commandGroup);
-}
-
-/// Full qualified command name with its parents names
-String getFullCommandName(CommandEntity entity) {
-  var commandName = entity.name;
-
-  for(var e = entity.parent; e != null; e = e.parent) {
-    commandName = "${e.name} $commandName";
-  }
-
-  return commandName.trim();
 }
