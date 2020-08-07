@@ -42,6 +42,17 @@ class ClientOptions {
   /// Initial bot presence
   PresenceBuilder? initialPresence;
 
+  /// Hook executed when disposing bots process.
+  ///
+  /// Most likely by when process receives SIGINT (*nix) or SIGTERM (*nix and windows).
+  /// Not guaranteed to be completed or executed at all.
+  ShutdownHook? shutdownHook;
+
+  /// Hook executed when shard is disposing.
+  ///
+  /// It could be either when shards disconnects or when bots process shuts down (look [shutdownHook].
+  ShutdownShardHook? shutdownShardHook;
+
   /// Makes a new `ClientOptions` object.
   ClientOptions(
       {this.allowedMentions,
@@ -54,7 +65,9 @@ class ClientOptions {
       this.gatewayIntents,
       this.compressedGatewayPayloads = true,
       this.guildSubscriptions = true,
-      this.initialPresence });
+      this.initialPresence,
+      this.shutdownHook,
+      this.shutdownShardHook });
 }
 
 /// When identifying to the gateway, you can specify an intents parameter which
@@ -141,3 +154,6 @@ class GatewayIntents {
     return value;
   }
 }
+
+typedef ShutdownHook = Future<void> Function(Nyxx client);
+typedef ShutdownShardHook = Future<void> Function(Nyxx client, Shard shard);

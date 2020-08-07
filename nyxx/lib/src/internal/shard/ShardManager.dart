@@ -56,7 +56,7 @@ class ShardManager implements Disposable {
     final shard = Shard._new(shardId, this, _ws.gateway);
     _shards[shardId] = shard;
 
-    Future.delayed(const Duration(seconds: 1, milliseconds: 500), () => _connect(shardId - 1));
+    Future.delayed(const Duration(seconds: 5), () => _connect(shardId - 1));
   }
 
   @override
@@ -64,7 +64,10 @@ class ShardManager implements Disposable {
     this._logger.info("Closing gateway connections...");
 
     for(final shard in this._shards.values) {
-      shard.dispose();
+      if(this._ws._client._options.shutdownShardHook != null) {
+        this._ws._client._options.shutdownShardHook!(this._ws._client, shard); // ignore: unawaited_futures
+      }
+      shard.dispose(); // ignore: unawaited_futures
     }
 
     await this._onConnect.close();

@@ -381,6 +381,10 @@ class Nyxx implements Disposable {
   Future<void> dispose() async {
     this._logger.info("Disposing and closing bot...");
 
+    if(this._options.shutdownHook != null) {
+      await this._options.shutdownHook!(this);
+    }
+
     await shardManager.dispose();
     await this._events.dispose();
     await guilds.dispose();
