@@ -22,7 +22,7 @@ class Nyxx implements Disposable {
   final DateTime _startTime = DateTime.now();
 
   late final ClientOptions _options;
-  late final _WS _ws; // ignore: unused_field
+  late final _ConnectionManager _ws; // ignore: unused_field
   late final _EventController _events;
 
   late final _HttpHandler _http;
@@ -221,13 +221,10 @@ class Nyxx implements Disposable {
     this._http = _HttpHandler._new(this);
 
     this._events = _EventController(this);
-    this.onSelfMention = this
-        .onMessageReceived
-        .where((event) => event.message.mentions.contains(this.self));
-    this.onDmReceived = this
-        .onMessageReceived
-        .where((event) => event.message.channel is DMChannel || event.message.channel is GroupDMChannel);
-    this._ws = _WS(this);
+    this.onSelfMention = this.onMessageReceived.where((event) => event.message.mentions.contains(this.self));
+    this.onDmReceived = this.onMessageReceived.where((event) => event.message is DMMessage);
+    
+    this._ws = _ConnectionManager(this);
   }
 
   /// The client"s uptime.

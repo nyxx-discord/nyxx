@@ -1,7 +1,7 @@
 part of nyxx;
 
 /// The WS manager for the client.
-class _WS {
+class _ConnectionManager {
   final Nyxx _client;
 
   /// The base websocket URL.
@@ -16,7 +16,7 @@ class _WS {
   int _shardsReady = 0;
 
   /// Makes a new WS manager.
-  _WS(this._client) {
+  _ConnectionManager(this._client) {
     _client._http._execute(BasicRequest._new("/gateway/bot")).then((httpResponse) {
       if (httpResponse is HttpResponseError) {
         this._logger.severe("Cannot get gateway url: [${httpResponse.errorCode}; ${httpResponse.errorMessage}]");

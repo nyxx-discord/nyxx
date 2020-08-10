@@ -10,13 +10,13 @@ part of nyxx;
 /// between separate connections to operate.
 class ShardManager implements Disposable {
   /// Emitted when the shard is ready.
-  late Stream<Shard> onConnected = this._onConnect.stream;
+  late final Stream<Shard> onConnected = this._onConnect.stream;
 
   /// Emitted when the shard encounters a connection error.
-  late Stream<Shard> onDisconnect = this._onDisconnect.stream;
+  late final Stream<Shard> onDisconnect = this._onDisconnect.stream;
 
   /// Emitted when shard receives member chunk.
-  late Stream<MemberChunkEvent> onMemberChunk = this._onMemberChunk.stream;
+  late final Stream<MemberChunkEvent> onMemberChunk = this._onMemberChunk.stream;
 
   final StreamController<Shard> _onConnect = StreamController.broadcast();
   final StreamController<Shard> _onDisconnect = StreamController.broadcast();
@@ -32,12 +32,17 @@ class ShardManager implements Disposable {
     => Duration(milliseconds: (this.shards.map((e) => e.gatewayLatency.inMilliseconds)
         .fold<int>(0, (first, second) => first + second)) ~/ shards.length);
 
-  final _WS _ws;
+  final _ConnectionManager _ws;
   final int _numShards;
   final Map<int, Shard> _shards = {};
 
   /// Starts shard manager
   ShardManager._new(this._ws, this._numShards) {
+    if (this._numShards < 1) {
+      this._logger.shout("Number of shards cannot be lower than 1.");
+      exit(1);
+    }
+
     _connect(_numShards - 1);
   }
 
