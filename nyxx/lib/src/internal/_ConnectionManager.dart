@@ -56,19 +56,17 @@ class _ConnectionManager {
       return;
     }
 
-    _client.ready = true;
-
     final httpResponse = await _client._http._execute(BasicRequest._new("/oauth2/applications/@me"));
 
     if (httpResponse is HttpResponseError) {
-      this._logger.severe("Cannot get bot identity");
+      this._logger.severe("Cannot get bot identity: `${httpResponse.toString()}`");
       exit(1);
     }
 
     final response = httpResponse as HttpResponseSuccess;
-
     _client.app = ClientOAuth2Application._new(response.jsonBody as Map<String, dynamic>, _client);
 
+    _client.ready = true;
     _client._events.onReady.add(ReadyEvent._new(_client));
     _logger.info("Connected and ready! Logged as `${_client.self.tag}`");
   }
