@@ -9,35 +9,37 @@ echo "Testing nyxx package..."
 cd nyxx/
 pub get
 
-echo "Checking dartfmt..."
-NEEDS_DARTFMT="$(find lib test -name "*.dart" | xargs pub run dart_style:format -n)"
-if [[ ${NEEDS_DARTFMT} != "" ]]
-then
-  echo "AUTOMATIC LINTING"
-  find lib test -name "*.dart" | xargs pub run dart_style:format -w
-fi
-echo "PASSED"
 # Lazy newlines
 echo ""
 
-#echo "Skipping dartanalyzer, he is drunk or something."
-#Make sure we pass the analyzer
-
-echo "Checking dartanalyzer..."
-FAILS_ANALYZER="$(find lib test -name "*.dart" | xargs dartanalyzer --options analysis_options.yaml)"
-if [[ $FAILS_ANALYZER == *"[error]"* ]]
-then
-  echo "FAILED"
-  echo "${FAILS_ANALYZER}"
-  exit 1
+if [ "$DISCORD_TOKEN" ]; then
+    dart --enable-experiment=non-nullable --no-null-safety test/travis.dart
+else
+  echo "Discord token not present, skipping Discord tests"
 fi
-echo "PASSED"
+
+echo "Testing nyxx.commander package..."
+cd ../nyxx.commander/
+pub get
 
 # Lazy newlines
 echo ""
 
 if [ "$DISCORD_TOKEN" ]; then
-    dart test/travis.dart
+    dart --enable-experiment=non-nullable --no-null-safety test/commander-test.dart
+else
+  echo "Discord token not present, skipping Discord tests"
+fi
+
+echo "Testing nyxx.extensions package..."
+cd ../nyxx.extensions/
+pub get
+
+# Lazy newlines
+echo ""
+
+if [ "$DISCORD_TOKEN" ]; then
+    dart --enable-experiment=non-nullable --no-null-safety test/extensions-tests.dart
 else
   echo "Discord token not present, skipping Discord tests"
 fi

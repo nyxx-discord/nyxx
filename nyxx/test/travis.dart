@@ -41,7 +41,7 @@ void main() {
   });
 
   bot.onReady.listen((e) async {
-    final channel = bot.channels[Snowflake(422285619952222208)] as CachelessTextChannel?;
+    final channel = bot.channels[Snowflake(422285619952222208)] as GuildTextChannel?;
     test(channel != null, "Channel cannot be null");
     if (env["TRAVIS_BUILD_NUMBER"] != null) {
       await channel!.send(
