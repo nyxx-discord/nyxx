@@ -25,7 +25,7 @@ void main() {
   });
 
   bot.onReady.listen((e) async {
-    final channel = bot.channels[Snowflake("422285619952222208")] as CachelessTextChannel;
+    final channel = bot.channels[Snowflake("422285619952222208")] as GuildTextChannel;
 
     await channel.send(content: "Testing Commander");
 
