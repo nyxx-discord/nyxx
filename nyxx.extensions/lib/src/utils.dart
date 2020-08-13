@@ -1,5 +1,6 @@
 import "dart:async";
 
+// ignore: public_member_api_docs
 class StreamUtils {
   /// Merges list of stream into one stream
   static Stream<T> merge<T>(List<Stream<T>> streams) {
@@ -18,6 +19,7 @@ class StreamUtils {
   }
 }
 
+// ignore: public_member_api_docs
 class StringUtils {
   /// Splits string based on desired length
   static Iterable<String> split(String str, int length) sync* {

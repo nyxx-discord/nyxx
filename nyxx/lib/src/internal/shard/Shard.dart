@@ -256,9 +256,9 @@ class Shard implements Disposable {
         break;
 
       case OPCodes.dispatch:
-        final j = rawPayload["t"] as String;
+        final dispatchType = rawPayload["t"] as String;
 
-        switch (j) {
+        switch (dispatchType) {
           case "READY":
             this._sessionId = rawPayload["d"]["session_id"] as String;
             manager._ws._client.self = ClientUser._new(rawPayload["d"]["user"] as Map<String, dynamic>, manager._ws._client);
