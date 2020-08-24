@@ -1,4 +1,4 @@
-library nyxx.commander;
+library nyxx_commander;
 
 import "dart:async";
 import "dart:io";

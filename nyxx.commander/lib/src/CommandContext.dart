@@ -1,4 +1,4 @@
-part of nyxx.commander;
+part of nyxx_commander;
 
 /// Helper class which describes context in which command is executed
 class CommandContext {

@@ -1,4 +1,4 @@
-part of nyxx.commander;
+part of nyxx_commander;
 
 /// Used to determine if command can be executed in given environment.
 /// Return true to allow executing command or false otherwise.

@@ -1,23 +1,18 @@
-name: nyxx.extensions
+name: nyxx_extensions
 version: 1.0.0
 description: Extensions for Nyxx library
-authors:
-- Szymon Uglis <szymon.uglis@tuta.io>
-- Zach Vacura <admin@hackzzila.com>
 homepage: https://github.com/l7ssha/nyxx
 repository: https://github.com/l7ssha/nyxx
 documentation: https://github.com/l7ssha/nyxx/wiki
 issue_tracker: https://github.com/l7ssha/nyxx/issue
 
 environment:
-  sdk: '>=2.9.0'
+  sdk: '>=2.9.0 <3.0.0'
 
 dependencies:
   nyxx: "^1.0.0"
-
-dependency_overrides:
-  nyxx:
-    path: "../nyxx"
+  w_transport: "^3.2.8"
+  http: "^0.12.2"
 
 dev_dependencies:
   dart_style:

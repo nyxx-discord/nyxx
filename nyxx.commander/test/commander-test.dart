@@ -2,7 +2,7 @@ import "dart:async";
 import "dart:io";
 
 import "package:nyxx/nyxx.dart";
-import "package:nyxx.commander/commander.dart";
+import "package:nyxx_commander/commander.dart";
 
 void main() {
   final bot = Nyxx(Platform.environment["DISCORD_TOKEN"]!, ignoreExceptions: false);
