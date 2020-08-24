@@ -1,4 +1,4 @@
-part of nyxx.commander;
+part of nyxx_commander;
 
 // TODO: FIX. I think that is just awful but is does its job
 extension _CommandMatcher on Iterable<CommandEntity> {

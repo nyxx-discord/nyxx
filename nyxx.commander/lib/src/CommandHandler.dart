@@ -1,4 +1,4 @@
-part of nyxx.commander;
+part of nyxx_commander;
 
 /// Base object for [CommandHandler] and [CommandGroup]
 abstract class CommandEntity {

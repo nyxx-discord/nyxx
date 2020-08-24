@@ -1,20 +1,18 @@
 name: nyxx
 version: 1.0.0
 description: A Discord library for Dart.
-authors:
-- Szymon Uglis <szymon.uglis@tuta.io>
-- Zach Vacura <admin@hackzzila.com>
 homepage: https://github.com/l7ssha/nyxx
 repository: https://github.com/l7ssha/nyxx
 documentation: https://github.com/l7ssha/nyxx/wiki
 issue_tracker: https://github.com/l7ssha/nyxx/issue
 
 environment:
-  sdk: '>=2.9.0'
+  sdk: '>=2.9.0 <3.0.0'
 
 dependencies:
   logging: "^0.11.4"
   w_transport: "^3.2.8"
+  path: "^1.7.0"
 
 dev_dependencies:
   dart_style:

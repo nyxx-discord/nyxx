@@ -1,4 +1,4 @@
-import "package:nyxx.extensions/emoji.dart";
+import "package:nyxx_extensions/emoji.dart";
 
 main() async {
   final emojis = await getAllEmojiDefinitions();
