@@ -1,7 +1,0 @@
-name: webserver_nyxx
-version: 0.0.1
-
-dependencies:
-  shelf:
-  nyxx:
-    path: ../..
