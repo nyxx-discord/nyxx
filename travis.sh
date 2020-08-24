@@ -2,44 +2,34 @@
 # Exit on errors
 set -e
 
-# Make sure dartfmt is run on everything
-# This assumes you have dart_style as a dev_dependency
-
 echo "Testing nyxx package..."
 cd nyxx/
 pub get
 
-# Lazy newlines
-echo ""
+echo "---------------------"
 
 if [ "$DISCORD_TOKEN" ]; then
-    dart --enable-experiment=non-nullable --no-null-safety test/travis.dart
+    dart --enable-experiment=non-nullable --no-null-safety --enable-asserts test/travis.dart
 else
-  echo "Discord token not present, skipping Discord tests"
+  echo "Discord token not present, skipping main lib tests"
 fi
 
 echo "Testing nyxx.commander package..."
 cd ../nyxx.commander/
 pub get
 
-# Lazy newlines
-echo ""
+echo "---------------------"
 
 if [ "$DISCORD_TOKEN" ]; then
-    dart --enable-experiment=non-nullable --no-null-safety test/commander-test.dart
+    dart --enable-experiment=non-nullable --no-null-safety --enable-asserts test/commander-test.dart
 else
-  echo "Discord token not present, skipping Discord tests"
+  echo "Discord token not present, skipping commander tests"
 fi
 
 echo "Testing nyxx.extensions package..."
 cd ../nyxx.extensions/
 pub get
 
-# Lazy newlines
-echo ""
+echo "---------------------"
 
-if [ "$DISCORD_TOKEN" ]; then
-    dart --enable-experiment=non-nullable --no-null-safety test/extensions-tests.dart
-else
-  echo "Discord token not present, skipping Discord tests"
-fi
+dart --enable-experiment=non-nullable --no-null-safety --enable-asserts test/extensions-tests.dart

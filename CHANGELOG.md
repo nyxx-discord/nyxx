@@ -1,14 +1,53 @@
-## [1.0.0](https://github.com/l7ssha/nyxx/compare/0.30.0...0.30.0)
-_ xx.xx.2020_
+## [1.0.0](https://github.com/l7ssha/nyxx/compare/0.30.0...1.0.0)
+_24.08.2020_
 
-**Stable release - breaks with previous versions**
+> **Stable release - breaks with previous versions - this version required Dart 2.9 stable and non-nullable experiment to be enabled to function**
+
+> **`1.0.0` drops support for browser. Nyxx will now run only on VM**
+
  - `nyxx` package contains only basic functionality - everything else is getting own package
-   - `nyxx.commands` - contains commands specific code
-   - `nyxx.interacticity` - contains utils for interactive features and utils for emojis 
- - Added ability to specify predicate in `CommandParser` from `nyxx.commands` [a3104e1](https://github.com/l7ssha/nyxx/pull/43/commits/a3104e19fc699ab273b9e48fbd871e6447a2a609) 
- - Fixed setup errors to be more self explanatory [683ba12](https://github.com/l7ssha/nyxx/pull/43/commits/683ba12b4494b1f8b416d451333b179a7032ebe0)
- - Implemented download functions to file as extension method to avoid misusing them in browser [50b57b6](https://github.com/l7ssha/nyxx/pull/43/commits/50b57b6de6ed35ac38e45c26ba540f8e5b0100c1)
- 
+   - `main lib package`
+        * Fixed errors and exceptions to be more self-explanatory
+        * Added new and fixed old examples. Added additional documentation, fixed code to be more idiomatic
+        * Logger fixes. User is now able to use their logger implementation. Or disable logging whatsover 
+        * New internal http submodule - errors got from discord are always returned to end user. Improved ratelimits and errors hadling
+        * Now initial presence can be specified
+        * Added support for conneting to voice channel. No audio support by now tho
+        * Cache no longer needed for bot to function properly
+            - There is now difference between cached and uncached objects
+            - Events will provide objects if cache but also raw data received from websocket (etc. snowflakes)
+            - Better cache handling with better events performance
+        * Implemented missing API features
+        * **Added support for sharding. Bot now spawn isolate per shard to handle incoming data**
+        * Fixed websocket connectin issues. Now lib should reliably react to websocket errors
+        * Added `MemberChunkEvent` to client. Invoked when event is received on websocket.
+        
+        * Lib will try to properly close ws connections when process receives SIGTERM OR SIGINT.
+        * Added support to shutdown hooks. Code in these hooks will be run before disposing and closed shards and/or client
+        * Fixed and moved around docs
+        * New internal structure of lib
+        * Added extensions for `String` and `int` for more convenient way to convert them to `Snowflake`
+        * Added support for gateway intents
+        * `Snowflake` objects are now ints
+        * Implemented member search endpoints for websocket and API
+        * Added missing wrappers for data from discord
+        * `==` operator fixes for objects
+   - `nyxx.commander` - new commands module
+        * `dart:mirrors` no longer required to function
+        * Support for command and command groups
+        * Allows to run code before and after invoking command. Allows to run code before matching command.
+        * Fixed and added new functionality to `CommandContext`
+            - Support for extracting quoted text, parameters and code blocks
+            - Getter for shard that command is executed
+        * Improved performance and extensibility
+   - `nyxx.extensions` - contains utils for interactive features and utils for emojis 
+        * New emoji module for fetching available emoji info 
+        * Pagination module for created paginated messages
+        * Scheduler module for invoking repeatable actions
+        * Additional general utils
+        * Message resolver module for resolving raw message content into human readable form
+        * Attachment extensions for vm
+        
 ## [0.30.0](https://github.com/l7ssha/nyxx/compare/0.24.0...0.30.0)
 _Tue 07.02.2019_
 
