@@ -1,3 +1,53 @@
+## [1.0.0](https://github.com/l7ssha/nyxx/compare/0.30.0...1.0.0)
+_24.08.2020_
+
+> **Stable release - breaks with previous versions - this version required Dart 2.9 stable and non-nullable experiment to be enabled to function**
+
+> **`1.0.0` drops support for browser. Nyxx will now run only on VM**
+
+ - `nyxx` package contains only basic functionality - everything else is getting own package
+   - `main lib package`
+        * Fixed errors and exceptions to be more self-explanatory
+        * Added new and fixed old examples. Added additional documentation, fixed code to be more idiomatic
+        * Logger fixes. User is now able to use their logger implementation. Or disable logging whatsover 
+        * New internal http submodule - errors got from discord are always returned to end user. Improved ratelimits and errors hadling
+        * Now initial presence can be specified
+        * Added support for conneting to voice channel. No audio support by now tho
+        * Cache no longer needed for bot to function properly
+            - There is now difference between cached and uncached objects
+            - Events will provide objects if cache but also raw data received from websocket (etc. snowflakes)
+            - Better cache handling with better events performance
+        * Implemented missing API features
+        * **Added support for sharding. Bot now spawn isolate per shard to handle incoming data**
+        * Fixed websocket connectin issues. Now lib should reliably react to websocket errors
+        * Added `MemberChunkEvent` to client. Invoked when event is received on websocket.
+        
+        * Lib will try to properly close ws connections when process receives SIGTERM OR SIGINT.
+        * Added support to shutdown hooks. Code in these hooks will be run before disposing and closed shards and/or client
+        * Fixed and moved around docs
+        * New internal structure of lib
+        * Added extensions for `String` and `int` for more convenient way to convert them to `Snowflake`
+        * Added support for gateway intents
+        * `Snowflake` objects are now ints
+        * Implemented member search endpoints for websocket and API
+        * Added missing wrappers for data from discord
+        * `==` operator fixes for objects
+   - `nyxx.commander` - new commands module
+        * `dart:mirrors` no longer required to function
+        * Support for command and command groups
+        * Allows to run code before and after invoking command. Allows to run code before matching command.
+        * Fixed and added new functionality to `CommandContext`
+            - Support for extracting quoted text, parameters and code blocks
+            - Getter for shard that command is executed
+        * Improved performance and extensibility
+   - `nyxx.extensions` - contains utils for interactive features and utils for emojis 
+        * New emoji module for fetching available emoji info 
+        * Pagination module for created paginated messages
+        * Scheduler module for invoking repeatable actions
+        * Additional general utils
+        * Message resolver module for resolving raw message content into human readable form
+        * Attachment extensions for vm
+        
 ## [0.30.0](https://github.com/l7ssha/nyxx/compare/0.24.0...0.30.0)
 _Tue 07.02.2019_
 
@@ -9,13 +59,13 @@ _Tue 07.02.2019_
   * **SUPPORT FOR DART 2.0+**
   * **ADDED SUPPORT FOR VOICE via Lavalink**
   * **PERMISSIONS OVERHAUL**
-    - Proper permissing handling
+    - Proper permissions handling
   * **COMMANDS FRAMEWORK REWRITTEN**
     - Dispatch pipe is completely rewritten. Bot should operate about 2-8x faster
     - Allowed to declare single method commands without using classes
     - Added support for specify custom restrictions to commands handlers
     - Classes now have to be annotated with `Module` instead of `Command`
-    - `Remainder` can now colled data to `List<String>` or `String`
+    - `Remainder` can now called data to `List<String>` or `String`
     - Added `Preprocessor` and `Posprocessor`
     - Removed help system
   * **COMMANDS PARSER**
@@ -27,7 +77,7 @@ _Tue 07.02.2019_
   * Added typing event per channel
   * Using `v7` api endpoint
   * Added support for zlib compressed gateway payload
-  * Added enpoints for Guild, Emoji, Role, Member
+  * Added endpoints for Guild, Emoji, Role, Member
   * Added utils module
   * Allowed to download attachments. (`Downloadable` interface)
   * Implemented new Discord features (Priority speaker, Slowmode)
@@ -39,8 +89,8 @@ _Tue 07.02.2019_
 - **Bug fixes**
   * **Lowered memory usage**
   * **Websocket fixed**
-  * Fixed Emijis comparing
-  * Fixed searchin in Emojis unicode
+  * Fixed Emojis comparing
+  * Fixed searching in Emojis unicode
   * Code cleanup and style fixes
   * Proper error handling for `CommandsFramework`
   * Gateway fixes
@@ -48,7 +98,7 @@ _Tue 07.02.2019_
   * Memory and performance improvements
   * Random null exceptions
   * Emojis CDN fixes
-  * Fixes ratelimitter
+  * Few fixes for ratelimitter
 - **Changes**
   * **Docs are rewritten**
   * **Faster deserialization**
@@ -60,7 +110,7 @@ _Tue 07.02.2019_
   * Cooldown cache rewritten
   * Presence sending fixes
   * Title is not required for EmbedBuilder
-  * Removed uneccessary dependencies
+  * Removed unnecessary dependencies
 
 ## [0.24.0](https://github.com/l7ssha/nyxx/compare/0.23.1...0.24.0)
 _Tue 03.08.2018_

@@ -1,5 +1,5 @@
 language: dart
 dart:
-  - 2.5.0-dev.0.0
+#  - dev
   - stable
-script: ./test/travis.sh
+script: ./travis.sh
