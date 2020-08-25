@@ -27,13 +27,15 @@ typedef CommandExecutionError = FutureOr<void> Function(CommandContext context, 
 ///
 /// Allows to specify callbacks which are executed before and after command - also on per command basis.
 /// [beforeCommandHandler] callbacks are executed only command exists and is matched with message content.
-class Commander {
+// ignore: prefer_mixin
+class Commander with ICommandRegistrable {
   late final PrefixHandlerFunction _prefixHandler;
   late final PassHandlerFunction? _beforeCommandHandler;
   late final AfterHandlerFunction? _afterHandlerFunction;
   late final LoggerHandlerFunction _loggerHandlerFunction;
   late final CommandExecutionError? _commandExecutionError;
 
+  @override
   final List<CommandEntity> _commandEntities = [];
 
   final Logger _logger = Logger("Commander");
@@ -96,8 +98,13 @@ class Commander {
     final fullCommandName = matchingCommand.getFullCommandName();
 
     // construct commandcontext
-    final context = CommandContext._new(event.message.channel, event.message.author,
-        event.message is GuildMessage ? (event.message as GuildMessage).guild : null, event.message, "$prefix$fullCommandName");
+    final context = CommandContext._new(
+        event.message.channel,
+        event.message.author,
+        event.message is GuildMessage ? (event.message as GuildMessage).guild : null,
+        event.message,
+        "$prefix$fullCommandName"
+    );
 
     // Invoke before handler for commands
     if (!(await _invokeBeforeHandler(matchingCommand, context))) {
@@ -172,12 +179,27 @@ class Commander {
 
   /// Registers command with given [commandName]. Allows to specify command specific before and after command execution callbacks
   void registerCommand(String commandName, CommandHandlerFunction commandHandler, {PassHandlerFunction? beforeHandler, AfterHandlerFunction? afterHandler}) {
-    this._commandEntities.add(BasicCommandHandler(commandName, commandHandler, beforeHandler: beforeHandler, afterHandler: afterHandler));
-
-    // TODO: That is not most efficient way
-    this._commandEntities.sort((a, b) => -a.name.compareTo(b.name));
+    this.registerCommandEntity(BasicCommandHandler(commandName, commandHandler, beforeHandler: beforeHandler, afterHandler: afterHandler));
   }
 
   /// Registers command as implemented [CommandEntity] class
-  void registerCommandGroup(CommandGroup commandGroup) => this._commandEntities.add(commandGroup);
+  void registerCommandGroup(CommandGroup commandGroup) => this.registerCommandEntity(commandGroup);
+}
+
+/// Provides common functionality for entities which can register subcommand or sub command groups.
+abstract class ICommandRegistrable {
+  List<CommandEntity> get _commandEntities;
+
+  /// Registers [CommandEntity] within context of this instance. Throws error if there is command with same name as provided.
+  void registerCommandEntity(CommandEntity entity) {
+    if (this._commandEntities.any((element) => element.isEntityName(entity.name) )) {
+      throw Exception("Command name should be unique! There is already command with name: ${entity.name}}");
+    }
+
+    if (entity is CommandGroup && entity.name.isEmpty && entity.aliases.isNotEmpty) {
+      throw Exception("Command group cannot have aliases if its name is empty! Provided aliases: [${entity.aliases.join(", ")}]");
+    }
+
+    this._commandEntities.add(entity);
+  }
 }
