@@ -12,7 +12,7 @@ extension _CommandMatcher on Iterable<CommandEntity> {
         }
       }
 
-      if(entity is CommandGroup && entity.name == messageParts.first) {
+      if(entity is CommandGroup && entity.isEntityName(messageParts.first)) {
         final e = entity._commandEntities._findMatchingCommand(messageParts.skip(1));
 
         if(e != null) {
@@ -20,7 +20,7 @@ extension _CommandMatcher on Iterable<CommandEntity> {
         }
       }
 
-      if(entity is CommandHandler && entity.name == messageParts.first) {
+      if(entity is CommandHandler && entity.isEntityName(messageParts.first)) {
         return entity;
       }
     }
