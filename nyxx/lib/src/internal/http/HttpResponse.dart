@@ -16,7 +16,10 @@ abstract class _HttpResponse {
 
   Future<void> _finalize() async {
     this._body = await _bodyStream.toBytes();
-    this._jsonBody = jsonDecode(utf8.decode(this._body));
+
+    if (this._body.isNotEmpty) {
+      this._jsonBody = jsonDecode(utf8.decode(this._body));
+    }
   }
 }
 
