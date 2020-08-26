@@ -47,7 +47,7 @@ abstract class GuildTextChannel implements Channel, CachelessGuildChannel, IText
       yield* Stream.error(response);
     }
 
-    for (final o in (response as HttpResponseSuccess).jsonBody.values) {
+    for (final o in (response as HttpResponseSuccess)._jsonBody.values) {
       yield Webhook._new(o as Map<String, dynamic>, client);
     }
   }
@@ -90,7 +90,7 @@ abstract class GuildTextChannel implements Channel, CachelessGuildChannel, IText
       yield* Stream.error(response);
     }
 
-    for (final val in (response as HttpResponseSuccess).jsonBody.values.first as Iterable<Map<String, dynamic>>) {
+    for (final val in (response as HttpResponseSuccess)._jsonBody.values.first as Iterable<Map<String, dynamic>>) {
       yield Message._deserialize(val, client);
     }
   }

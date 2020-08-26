@@ -39,6 +39,6 @@ class AttachmentBuilder {
     AttachmentBuilder._new(bytes, name, spoiler);
 
   // creates instance of MultipartFile
-  transport.MultipartFile _asMultipartFile() =>
-      transport.MultipartFile(Stream.value(_bytes), _bytes.length, filename: _name);
+  http.MultipartFile _asMultipartFile() =>
+      http.MultipartFile(_name, Stream.value(_bytes), _bytes.length, filename: _name);
 }
