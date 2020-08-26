@@ -3,13 +3,10 @@ part of emoji;
 List<EmojiDefinition> _emojisCache = [];
 
 Future<Map<String, dynamic>> _downloadEmojiData() async {
-  final request = w_transport.JsonRequest(transportPlatform: w_transport.vmTransportPlatform)
-    ..uri = emojiDataUri;
+  final request = http.Request("GET", emojiDataUri);
+  final requestBody = await (await request.send()).stream.bytesToString();
 
-  // ??? Had to trim 3 characters for some reason
-  final bodyString = (await request.send("GET")).body.asString().substring(3);
-
-  return jsonDecode(bodyString) as Map<String, dynamic>;
+  return jsonDecode(requestBody) as Map<String, dynamic>;
 }
 
 /// Emoji definitions uri
