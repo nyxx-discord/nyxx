@@ -2,28 +2,33 @@ part of nyxx;
 
 abstract class _HttpResponse {
   late final int statusCode;
-  late final String statusText;
-
   late final Map<String, String> headers;
 
-  _HttpResponse._new(transport.Response response) {
-    this.statusCode = response.status;
-    this.statusText = response.statusText;
+  late final List<int> _body;
+  late final dynamic _jsonBody;
+  late final http.ByteStream _bodyStream;
+
+  _HttpResponse._new(http.StreamedResponse response) {
+    this._bodyStream = response.stream;
+    this.statusCode = response.statusCode;
     this.headers = response.headers;
+  }
+
+  Future<void> _finalize() async {
+    this._body = await _bodyStream.toBytes();
+    this._jsonBody = jsonDecode(utf8.decode(this._body));
   }
 }
 
 /// Returned when http request is successfully executed.
 class HttpResponseSuccess extends _HttpResponse {
   /// Body of response
-  late final transport.HttpBody body;
+  List<int> get body => this._body;
 
   /// Response body as json
-  dynamic get jsonBody => body.asJson();
+  dynamic get jsonBody => this._jsonBody;
 
-  HttpResponseSuccess._new(transport.Response response) : super._new(response) {
-    this.body = response.body;
-  }
+  HttpResponseSuccess._new(http.StreamedResponse response) : super._new(response);
 }
 
 /// Returned when client fails to execute http request.
@@ -35,16 +40,14 @@ class HttpResponseError extends _HttpResponse {
   /// Error code of response
   late final int errorCode;
 
-  HttpResponseError._new(transport.Response response) : super._new(response) {
-    if (response.contentType.type == "application/json") {
-      final body = response.body.asJson();
-
-      this.errorCode = body["code"] as int;
-      this.errorMessage = body["message"] as String;
+  HttpResponseError._new(http.StreamedResponse response) : super._new(response) {
+    if (response.headers["Content-Type"] == "application/json") {
+      this.errorCode = this._jsonBody["code"] as int;
+      this.errorMessage = this._jsonBody["message"] as String;
     }
 
-    this.errorMessage = response.body.asString();
-    this.errorCode = response.status;
+    this.errorMessage = utf8.decode(this._body);
+    this.errorCode = response.statusCode;
   }
 
   @override

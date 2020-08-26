@@ -19,13 +19,8 @@ abstract class CommandEntity {
   CommandEntity? get parent;
 
   /// Returns true if provided String [str] is entity name or alias
-  bool isEntityName(String str) {
-    if (str == this.name) {
-      return true;
-    }
-
-    return this.aliases.any((element) => element == str);
-  }
+  bool isEntityName(String str) =>
+      str == this.name || this.aliases.any((element) => element == str);
 
   /// Full qualified command name with its parents names
   String getFullCommandName() {

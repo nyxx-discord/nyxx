@@ -8,19 +8,23 @@ abstract class _HttpRequest {
 
   final bool ratelimit;
 
-  late Nyxx _client;
+  // Injected by the HttpHandler
+  late _HttpClient _client;
 
   _HttpRequest._new(String path, {this.method = "GET", this.queryParams, this.auditLog, this.ratelimit = true}) {
     this.uri = Uri.https(Constants.host, Constants.baseUri + path);
   }
 
   Map<String, String> _genHeaders() => {
-    "Authorization": "Bot ${_client._token}",
     if (this.auditLog != null) "X-Audit-Log-Reason": this.auditLog!,
     "User-Agent": "Nyxx (${Constants.repoUrl}, ${Constants.version})"
   };
 
-  Future<transport.Response> _execute();
+  Map<String, String> _getJsonContentTypeHeader() => {
+    "Content-Type" : "application/json"
+  };
+
+  Future<http.StreamedResponse> _execute();
 }
 
 /// [BasicRequest] with json body
@@ -33,22 +37,21 @@ class BasicRequest extends _HttpRequest {
       : super._new(path, method: method, queryParams: queryParams, auditLog: auditLog, ratelimit: ratelimit);
 
   @override
-  Future<transport.Response> _execute() async {
-    final request = transport.JsonRequest()
-      ..uri = this.uri
-      ..headers = _genHeaders();
+  Future<http.StreamedResponse> _execute() async {
+    final request = http.Request(this.method, this.uri..replace(queryParameters: queryParams))
+      ..headers.addAll(_genHeaders());
 
-    if (this.body != null) {
-      request.body = this.body;
+    if (this.body != null && this.method != "GET") {
+      if (this.body is String) {
+        request.headers.addAll(_getJsonContentTypeHeader());
+        request.body = this.body as String;
+      } else if (this.body is Map<String, dynamic> || this.body is List<dynamic>) {
+        request.headers.addAll(_getJsonContentTypeHeader());
+        request.body = jsonEncode(this.body);
+      }
     }
 
-    if (this.queryParams != null) {
-      this.queryParams!.forEach((key, value) {
-        request.updateQuery({key: value});
-      });
-    }
-
-    return request.send(this.method);
+    return this._client.send(request);
   }
 }
 
@@ -64,22 +67,19 @@ class MultipartRequest extends _HttpRequest {
       {this.fields, String method = "GET", Map<String, dynamic>? queryParams, String? auditLog})
       : super._new(path, method: method, queryParams: queryParams, auditLog: auditLog);
 
-  Map<String, dynamic> _mapFiles() => {
-    for (var file in files)
-      file._name: file._asMultipartFile()
-  };
-
   @override
-  Future<transport.Response> _execute() {
-    final request = transport.MultipartRequest()
-      ..uri = this.uri
-      ..headers = _genHeaders()
-      ..files = _mapFiles();
+  Future<http.StreamedResponse> _execute() {
+    final request = http.MultipartRequest(this.method, this.uri..replace(queryParameters: queryParams))
+      ..headers.addAll(_genHeaders());
+
+    for (final file in this.files) {
+      request.files.add(file._asMultipartFile());
+    }
 
     if (this.fields != null) {
       request.fields.addAll({"payload_json": jsonEncode(this.fields)});
     }
 
-    return request.send(this.method);
+    return this._client.send(request);
   }
 }

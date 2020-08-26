@@ -12,8 +12,8 @@ import "dart:io";
 import "dart:isolate";
 
 import "package:logging/logging.dart";
-import "package:w_transport/w_transport.dart" as transport;
-import "package:w_transport/vm.dart" as transport_vm show configureWTransportForVM;
+
+import "package:http/http.dart" as http;
 
 import "package:path/path.dart" as path_utils;
 

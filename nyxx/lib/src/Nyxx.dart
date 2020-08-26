@@ -177,8 +177,6 @@ class Nyxx implements Disposable {
   /// Creates and logs in a new client. If [ignoreExceptions] is true (by default is)
   /// isolate will ignore all exceptions and continue to work.
   Nyxx(this._token, {ClientOptions? options, bool ignoreExceptions = true, bool useDefaultLogger = true, Level? defaultLoggerLogLevel}) {
-    transport_vm.configureWTransportForVM();
-
     if(useDefaultLogger) {
       Logger.root.level = defaultLoggerLogLevel ?? Level.ALL;
 
@@ -277,7 +275,7 @@ class Nyxx implements Disposable {
       return Future.error(response);
     }
 
-    final raw = (response as HttpResponseSuccess).jsonBody as Map<String, dynamic>;
+    final raw = (response as HttpResponseSuccess)._jsonBody as Map<String, dynamic>;
     return Channel._deserialize(raw, this) as T;
   }
 
