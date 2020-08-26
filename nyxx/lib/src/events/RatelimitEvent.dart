@@ -13,7 +13,7 @@ class RatelimitEvent {
 
   /// The error response received if the rate limit handler did not stop
   /// the request (aka hit 429)
-  final transport.Response? response;
+  final http.BaseResponse? response;
 
   RatelimitEvent._new(this.request, this.handled, [this.response]);
 }

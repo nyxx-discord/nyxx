@@ -1,18 +1,51 @@
 part of nyxx;
 
+class _HttpClient extends http.BaseClient {
+  late final Map<String, String> _authHeader;
+
+  final http.Client _innerClient = http.Client();
+
+  // ignore: public_member_api_docs
+  _HttpClient(Nyxx client) {
+    this._authHeader = {
+      "Authorization" : "Bot ${client._token}"
+    };
+  }
+  
+  @override
+  Future<http.StreamedResponse> send(http.BaseRequest request) async {
+    request.headers.addAll(this._authHeader);
+    final response = await this._innerClient.send(request);
+
+    if (response.statusCode >= 400) {
+      throw HttpClientException(response);
+    }
+
+    return response;
+  }
+}
+
+class HttpClientException extends http.ClientException {
+  final http.BaseResponse? response;
+
+  HttpClientException(this.response) : super("Exception", response?.request.url);
+}
+
 class _HttpHandler {
   final List<_HttpBucket> _buckets = [];
   late final _HttpBucket _noRateBucket;
 
   final Logger _logger = Logger("Http");
-  Nyxx client;
+  late final _HttpClient _httpClient;
+  final Nyxx client;
 
   _HttpHandler._new(this.client) {
     this._noRateBucket = _HttpBucket(Uri.parse("noratelimit"), this);
+    this._httpClient = _HttpClient(client);
   }
 
   Future<_HttpResponse> _execute(_HttpRequest request) async {
-    request._client = this.client;
+    request._client = this._httpClient;
 
     if (!request.ratelimit) {
       return _handle(await this._noRateBucket._execute(request));
@@ -31,15 +64,18 @@ class _HttpHandler {
     }
   }
 
-  Future<_HttpResponse> _handle(transport.Response response) async {
-    if (response.status >= 200 && response.status < 300) {
+  Future<_HttpResponse> _handle(http.StreamedResponse response) async {
+    if (response.statusCode >= 200 && response.statusCode < 300) {
       final responseSuccess = HttpResponseSuccess._new(response);
+      await responseSuccess._finalize();
 
       client._events.onHttpResponse.add(HttpResponseEvent._new(responseSuccess));
       return responseSuccess;
     }
 
     final responseError = HttpResponseError._new(response);
+    await responseError._finalize();
+
     client._events.onHttpError.add(HttpErrorEvent._new(responseError));
     return responseError;
   }
@@ -59,7 +95,7 @@ class _HttpBucket {
 
   _HttpBucket(this.uri, this._httpHandler);
 
-  Future<transport.Response> _execute(_HttpRequest request) async {
+  Future<http.StreamedResponse> _execute(_HttpRequest request) async {
     // Get acutual time and check if request can be executed based on data that bucket already have
     // and wait if ratelimit could be possibly hit
     final now = DateTime.now();
@@ -81,17 +117,18 @@ class _HttpBucket {
 
       _setBucketValues(response.headers);
       return response;
-    } on transport.RequestException catch (e) {
+    } on HttpClientException catch (e) {
       if (e.response == null) {
-        _httpHandler._logger.warning("Http Error on endpoint: ${request.uri}. Error: [${e.error.toString()}].");
+        _httpHandler._logger.warning("Http Error on endpoint: ${request.uri}. Error: [${e.message.toString()}].");
         return Future.delayed(const Duration(milliseconds: 1000), () => _execute(request));
       }
 
-      final response = e.response as transport.Response;
+      final response = e.response as http.StreamedResponse;
 
       // Check for 429, emmit events and wait given in response body time
-      if (response.status == 429) {
-        final retryAfter = response.body.asJson()["retry_after"] as int;
+      if (response.statusCode == 429) {
+        final responseBody = jsonDecode(await response.stream.bytesToString());
+        final retryAfter = responseBody["retry_after"] as int;
 
         _httpHandler.client._events.onRatelimited.add(RatelimitEvent._new(request, false, response));
         _httpHandler._logger.warning(

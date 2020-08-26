@@ -366,7 +366,7 @@ class Guild extends SnowflakeEntity implements Disposable {
       yield* Stream.error(response);
     }
 
-    for (final obj in (response as HttpResponseSuccess).jsonBody) {
+    for (final obj in (response as HttpResponseSuccess)._jsonBody) {
       yield Ban._new(obj as Map<String, dynamic>, client);
     }
   }
@@ -423,7 +423,7 @@ class Guild extends SnowflakeEntity implements Disposable {
       yield* Stream.error(response);
     }
 
-    for (final raw in (response as HttpResponseSuccess).jsonBody) {
+    for (final raw in (response as HttpResponseSuccess)._jsonBody) {
       yield Invite._new(raw as Map<String, dynamic>, client);
     }
   }
@@ -514,7 +514,7 @@ class Guild extends SnowflakeEntity implements Disposable {
       yield* Stream.error(response);
     }
 
-    for (final raw in (response as HttpResponseSuccess).jsonBody) {
+    for (final raw in (response as HttpResponseSuccess)._jsonBody) {
       yield VoiceRegion._new(raw as Map<String, dynamic>);
     }
   }
@@ -561,7 +561,7 @@ class Guild extends SnowflakeEntity implements Disposable {
       return Future.error(response);
     }
 
-    final raw = (response as HttpResponseSuccess).jsonBody as Map<String, dynamic>;
+    final raw = (response as HttpResponseSuccess)._jsonBody as Map<String, dynamic>;
 
     return Channel._deserialize(raw, this.client, this) as CacheGuildChannel;
   }
@@ -674,7 +674,7 @@ class Guild extends SnowflakeEntity implements Disposable {
       yield* Stream.error(request);
     }
 
-    for (final rawMember in (request as HttpResponseSuccess).jsonBody as List<dynamic>) {
+    for (final rawMember in (request as HttpResponseSuccess)._jsonBody as List<dynamic>) {
       yield CacheMember._standard(rawMember as Map<String, dynamic>, this, client);
     }
   }
@@ -689,7 +689,7 @@ class Guild extends SnowflakeEntity implements Disposable {
       yield* Stream.error(response);
     }
 
-    for (final Map<String, dynamic> member in (response as HttpResponseSuccess).jsonBody) {
+    for (final Map<String, dynamic> member in (response as HttpResponseSuccess)._jsonBody) {
       yield CacheMember._standard(member, this, client);
     }
   }
@@ -723,7 +723,7 @@ class Guild extends SnowflakeEntity implements Disposable {
       yield* Stream.error(response);
     }
 
-    for (final raw in (response as HttpResponseSuccess).jsonBody.values) {
+    for (final raw in (response as HttpResponseSuccess)._jsonBody.values) {
       yield Webhook._new(raw as Map<String, dynamic>, client);
     }
   }

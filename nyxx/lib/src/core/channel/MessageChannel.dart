@@ -51,7 +51,7 @@ abstract class MessageChannel implements Channel, ISend, Disposable {
       }
       
       return messages._cacheMessage(
-          Message._deserialize((response as HttpResponseSuccess).jsonBody as Map<String, dynamic>, client));
+          Message._deserialize((response as HttpResponseSuccess)._jsonBody as Map<String, dynamic>, client));
     }
 
     return messages[id];
@@ -186,7 +186,7 @@ abstract class MessageChannel implements Channel, ISend, Disposable {
       yield* Stream.error(response);
     }
 
-    for (final val in (response as HttpResponseSuccess).jsonBody) {
+    for (final val in await (response as HttpResponseSuccess)._jsonBody) {
       yield Message._deserialize(val as Map<String, dynamic>, client);
     }
   }

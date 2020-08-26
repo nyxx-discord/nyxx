@@ -37,10 +37,8 @@ Future<void> _shardHandler(SendPort shardPort) async {
   final initData = await receiveStream.first;
   final gatewayUri = Constants.gatewayUri(initData["gatewayUrl"] as String);
 
-  transport.WebSocket? _socket;
+  WebSocket? _socket;
   StreamSubscription? _socketSubscription;
-
-  transport_vm.configureWTransportForVM();
 
   Future<void> terminate() async {
     await _socketSubscription?.cancel();
@@ -62,7 +60,7 @@ Future<void> _shardHandler(SendPort shardPort) async {
 
   // Attempts to connect to ws
   Future<void> _connect() async {
-    await transport.WebSocket.connect(gatewayUri).then((ws) {
+    await WebSocket.connect(gatewayUri.toString()).then((ws) {
       final zlibDecoder = ZLibDecoder(); // Create zlib decoder specific to this connection. New connection should get new zlib context
 
       _socket = ws;

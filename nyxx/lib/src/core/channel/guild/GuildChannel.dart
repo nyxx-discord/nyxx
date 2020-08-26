@@ -102,7 +102,7 @@ abstract class CachelessGuildChannel extends IGuildChannel {
       yield* Stream.error(response);
     }
 
-    final bodyValues = (response as HttpResponseSuccess).jsonBody.values.first;
+    final bodyValues = (response as HttpResponseSuccess)._jsonBody.values.first;
 
     for (final val in bodyValues as Iterable<Map<String, dynamic>>) {
       yield InviteWithMeta._new(val, client);
@@ -173,7 +173,7 @@ abstract class CachelessGuildChannel extends IGuildChannel {
       return Future.error(response);
     }
 
-    return InviteWithMeta._new((response as HttpResponseSuccess).jsonBody as Map<String, dynamic>, client);
+    return InviteWithMeta._new((response as HttpResponseSuccess)._jsonBody as Map<String, dynamic>, client);
   }
 }
 
