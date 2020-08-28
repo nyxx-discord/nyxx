@@ -59,19 +59,12 @@ class EmbedBuilder implements Builder {
       bool inline = false,
       Function(EmbedFieldBuilder field)? builder,
       EmbedFieldBuilder? field}) {
-    if (field != null) {
-      fields.add(field);
-      return;
-    }
-
-    if (builder != null) {
-      final tmp = EmbedFieldBuilder();
-      builder(tmp);
-      fields.add(tmp);
-      return;
-    }
-
-    fields.add(EmbedFieldBuilder(name, content, inline));
+    this.fields.add(_constructEmbedFieldBuilder(
+      name: name,
+      content: content,
+      builder: builder,
+      field: field
+    ));
   }
 
   /// Replaces field where [name] witch provided new field.
@@ -81,8 +74,32 @@ class EmbedBuilder implements Builder {
       Function(EmbedFieldBuilder field)? builder,
       EmbedFieldBuilder? field}) {
 
-    this.fields.removeWhere((element) => element.name == name);
-    this.addField(name: name, content: content, inline: inline, builder: builder, field: field);
+    final index = this.fields.indexWhere((element) => element.name == name);
+    this.fields[index] = _constructEmbedFieldBuilder(
+        name: name,
+        content: content,
+        builder: builder,
+        field: field
+    );
+  }
+
+  EmbedFieldBuilder _constructEmbedFieldBuilder(
+      {dynamic? name,
+        dynamic? content,
+        bool inline = false,
+        Function(EmbedFieldBuilder field)? builder,
+        EmbedFieldBuilder? field}) {
+    if (field != null) {
+      return field;
+    }
+
+    if (builder != null) {
+      final tmp = EmbedFieldBuilder();
+      builder(tmp);
+      return tmp;
+    }
+
+    return EmbedFieldBuilder(name, content, inline);
   }
 
   /// Total length of all text fields of embed
