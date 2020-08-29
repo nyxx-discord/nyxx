@@ -1,3 +1,8 @@
+## [1.0.1](https://github.com/l7ssha/nyxx/compare/1.0.0...1.0.1)
+_29.08.2020_
+
+- Fix voice state cache being not initialized properly.
+
 ## [1.0.0](https://github.com/l7ssha/nyxx/compare/0.30.0...1.0.0)
 _24.08.2020_
 
