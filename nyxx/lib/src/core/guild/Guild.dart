@@ -191,6 +191,7 @@ class Guild extends SnowflakeEntity implements Disposable {
     this.preferredLocale = raw["preferred_locale"] as String;
 
     this.members = _SnowflakeCache();
+    this.voiceStates = _SnowflakeCache();
 
     if (!guildCreate) return;
 
@@ -222,7 +223,6 @@ class Guild extends SnowflakeEntity implements Disposable {
 
     this.owner = this.members[Snowflake(raw["owner_id"] as String)];
 
-    this.voiceStates = _SnowflakeCache();
     if (raw["voice_states"] != null) {
       raw["voice_states"].forEach((o) {
         final state = VoiceState._new(o as Map<String, dynamic>, client, this);
