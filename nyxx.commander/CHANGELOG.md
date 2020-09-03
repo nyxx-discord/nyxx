@@ -1,3 +1,8 @@
+## 1.0.1
+_03.09.2020_
+
+* Fix default command handler not being invoked.
+
 ## 1.0.0
 _24.08.2020_
 
