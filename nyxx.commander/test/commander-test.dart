@@ -17,6 +17,10 @@ void main() {
     }
 
     if (event.message.content == "Test 10") {
+      event.message.delete(); // ignore: unawaited_futures
+    }
+
+    if (event.message.content == "Test 11") {
       await event.message.delete();
 
       await event.message.channel.send(content: "Commander tests completed sucessfuly!");
@@ -37,6 +41,9 @@ void main() {
 
     final msg3 = await channel.send(content: "test>test3");
     msg3.delete(); // ignore: unawaited_futures
+
+    final msg4 = await channel.send(content: "test>test4");
+    msg4.delete(); // ignore: unawaited_futures
   });
 
   Commander(bot, prefix: "test>", beforeCommandHandler: (context) async {
@@ -59,7 +66,9 @@ void main() {
     })
     ..registerCommand("test3", (context, message) async {
       await context.message.delete();
-    });
+    })
+    ..registerCommandGroup(CommandGroup(name: "test4")
+      ..registerDefaultCommand((context, message) async => await context.channel.send(content: "Test 11")));
 
   Timer(const Duration(seconds: 60), () {
     print("Timed out waiting for messages");
