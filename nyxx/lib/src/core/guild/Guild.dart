@@ -161,7 +161,7 @@ class Guild extends SnowflakeEntity implements Disposable {
       });
     }
 
-    if (raw.containsKey("embed_channel_id")) {
+    if (raw["embed_channel_id"] != null) {
       this.embedChannel = client.channels[Snowflake(raw["embed_channel_id"])] as CacheGuildChannel;
     }
 
