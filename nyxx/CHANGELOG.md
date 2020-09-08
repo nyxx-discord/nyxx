@@ -1,3 +1,9 @@
+## 1.0.2
+_08.09.2020_
+
+- Fix guild embed channel deserialization
+- Fix store and news channel deserialization
+
 ## 1.0.1
 _29.08.2020_
 

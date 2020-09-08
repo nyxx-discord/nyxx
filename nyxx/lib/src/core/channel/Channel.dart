@@ -33,6 +33,7 @@ class Channel extends SnowflakeEntity {
         return GroupDMChannel._new(raw, client);
         break;
       case 0:
+      case 5:
         if(channelGuild == null) {
           return CachelessTextChannel._new(raw, Snowflake(raw["guild_id"]), client);
         }
