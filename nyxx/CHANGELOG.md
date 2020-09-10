@@ -1,4 +1,15 @@
-## [1.0.0](https://github.com/l7ssha/nyxx/compare/0.30.0...1.0.0)
+## 1.0.2
+_08.09.2020_
+
+- Fix guild embed channel deserialization
+- Fix store and news channel deserialization
+
+## 1.0.1
+_29.08.2020_
+
+- Fix voice state cache being not initialized properly.
+
+## 1.0.0
 _24.08.2020_
 
 > **Stable release - breaks with previous versions - this version required Dart 2.9 stable and non-nullable experiment to be enabled to function**
@@ -21,7 +32,6 @@ _24.08.2020_
         * **Added support for sharding. Bot now spawn isolate per shard to handle incoming data**
         * Fixed websocket connectin issues. Now lib should reliably react to websocket errors
         * Added `MemberChunkEvent` to client. Invoked when event is received on websocket.
-        
         * Lib will try to properly close ws connections when process receives SIGTERM OR SIGINT.
         * Added support to shutdown hooks. Code in these hooks will be run before disposing and closed shards and/or client
         * Fixed and moved around docs
@@ -32,21 +42,6 @@ _24.08.2020_
         * Implemented member search endpoints for websocket and API
         * Added missing wrappers for data from discord
         * `==` operator fixes for objects
-   - `nyxx.commander` - new commands module
-        * `dart:mirrors` no longer required to function
-        * Support for command and command groups
-        * Allows to run code before and after invoking command. Allows to run code before matching command.
-        * Fixed and added new functionality to `CommandContext`
-            - Support for extracting quoted text, parameters and code blocks
-            - Getter for shard that command is executed
-        * Improved performance and extensibility
-   - `nyxx.extensions` - contains utils for interactive features and utils for emojis 
-        * New emoji module for fetching available emoji info 
-        * Pagination module for created paginated messages
-        * Scheduler module for invoking repeatable actions
-        * Additional general utils
-        * Message resolver module for resolving raw message content into human readable form
-        * Attachment extensions for vm
         
 ## [0.30.0](https://github.com/l7ssha/nyxx/compare/0.24.0...0.30.0)
 _Tue 07.02.2019_
