@@ -1,5 +1,5 @@
 name: nyxx
-version: 1.0.2
+version: 1.1.0
 description: A Discord library for Dart.
 homepage: https://github.com/l7ssha/nyxx
 repository: https://github.com/l7ssha/nyxx
@@ -7,13 +7,20 @@ documentation: https://github.com/l7ssha/nyxx/wiki
 issue_tracker: https://github.com/l7ssha/nyxx/issue
 
 environment:
-  sdk: '>=2.9.0 <3.0.0'
+  sdk: '>=2.10.0-110.0.dev <3.0.0'
 
 dependencies:
-  logging: "^0.11.4"
-  path: "^1.7.0"
-  http: "^0.12.2"
+  logging: "^1.0.0-dev"
+  path: "^1.8.0-nullsafety.1"
+  http: "^0.13.0-nullsafety-dev"
 
-dev_dependencies:
-  dart_style:
-  analyzer:
+dependency_overrides:
+  http:
+    git:
+      url: git://github.com/dart-lang/http.git
+  logging:
+    git:
+      url: git://github.com/dart-lang/logging.git
+  http_parser:
+    git:
+      url: git://github.com/dart-lang/http_parser.git

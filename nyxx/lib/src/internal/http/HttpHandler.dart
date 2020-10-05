@@ -8,7 +8,7 @@ class _HttpClient extends http.BaseClient {
   // ignore: public_member_api_docs
   _HttpClient(Nyxx client) {
     this._authHeader = {
-      "Authorization" : "Bot ${client._token}"
+     "Authorization" : "Bot ${client._token}"
     };
   }
   
@@ -26,9 +26,11 @@ class _HttpClient extends http.BaseClient {
 }
 
 class HttpClientException extends http.ClientException {
+  /// Raw response from server
   final http.BaseResponse? response;
 
-  HttpClientException(this.response) : super("Exception", response?.request.url);
+  // ignore: public_member_api_docs
+  HttpClientException(this.response) : super("Exception", response?.request?.url!);
 }
 
 class _HttpHandler {
@@ -47,7 +49,7 @@ class _HttpHandler {
   Future<_HttpResponse> _execute(_HttpRequest request) async {
     request._client = this._httpClient;
 
-    if (!request.ratelimit) {
+    if (!request.rateLimit) {
       return _handle(await this._noRateBucket._execute(request));
     }
 
