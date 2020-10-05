@@ -17,8 +17,13 @@ abstract class _HttpResponse {
   Future<void> _finalize() async {
     this._body = await _bodyStream.toBytes();
 
-    if (this._body.isNotEmpty) {
-      this._jsonBody = jsonDecode(utf8.decode(this._body));
+    try {
+      if (this._body.isNotEmpty) {
+        this._jsonBody = jsonDecode(utf8.decode(this._body));
+      }
+    } on FormatException {
+      print(utf8.decode(this._body));
+      this._jsonBody = null;
     }
   }
 }
@@ -49,7 +54,12 @@ class HttpResponseError extends _HttpResponse {
       this.errorMessage = this._jsonBody["message"] as String;
     }
 
-    this.errorMessage = utf8.decode(this._body);
+    try {
+      this.errorMessage = utf8.decode(this._body);
+    } on Exception {
+      this.errorMessage = "";
+    }
+
     this.errorCode = response.statusCode;
   }
 

@@ -1,5 +1,5 @@
 name: nyxx_extensions
-version: 1.0.0
+version: 1.1.0
 description: Extensions for Nyxx library
 homepage: https://github.com/l7ssha/nyxx
 repository: https://github.com/l7ssha/nyxx
@@ -7,12 +7,21 @@ documentation: https://github.com/l7ssha/nyxx/wiki
 issue_tracker: https://github.com/l7ssha/nyxx/issue
 
 environment:
-  sdk: '>=2.9.0 <3.0.0'
+  sdk: '>=2.10.0-110.0.dev <3.0.0'
 
 dependencies:
   nyxx: "^1.0.0"
-  http: "^0.12.2"
+  http: "^0.13.0-nullsafety-dev"
 
-dev_dependencies:
-  dart_style:
-  analyzer:
+dependency_overrides:
+  http:
+    git:
+      url: git://github.com/dart-lang/http.git
+  http_parser:
+    git:
+      url: git://github.com/dart-lang/http_parser.git
+  logging:
+    git:
+      url: git://github.com/dart-lang/logging.git
+  nyxx:
+    path: "../nyxx"

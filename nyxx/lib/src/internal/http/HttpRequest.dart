@@ -6,22 +6,18 @@ abstract class _HttpRequest {
   final Map<String, dynamic>? queryParams;
   final String? auditLog;
 
-  final bool ratelimit;
+  final bool rateLimit;
 
   // Injected by the HttpHandler
   late _HttpClient _client;
 
-  _HttpRequest._new(String path, {this.method = "GET", this.queryParams, this.auditLog, this.ratelimit = true}) {
+  _HttpRequest._new(String path, {this.method = "GET", this.queryParams, this.auditLog, this.rateLimit = true}) {
     this.uri = Uri.https(Constants.host, Constants.baseUri + path);
   }
 
   Map<String, String> _genHeaders() => {
     if (this.auditLog != null) "X-Audit-Log-Reason": this.auditLog!,
     "User-Agent": "Nyxx (${Constants.repoUrl}, ${Constants.version})"
-  };
-
-  Map<String, String> _getJsonContentTypeHeader() => {
-    "Content-Type" : "application/json"
   };
 
   Future<http.StreamedResponse> _execute();
@@ -33,8 +29,8 @@ class BasicRequest extends _HttpRequest {
   final dynamic body;
 
   BasicRequest._new(String path,
-      {String method = "GET", this.body, Map<String, dynamic>? queryParams, String? auditLog, bool ratelimit = true})
-      : super._new(path, method: method, queryParams: queryParams, auditLog: auditLog, ratelimit: ratelimit);
+      {String method = "GET", this.body, Map<String, dynamic>? queryParams, String? auditLog, bool rateLimit = true})
+      : super._new(path, method: method, queryParams: queryParams, auditLog: auditLog, rateLimit: rateLimit);
 
   @override
   Future<http.StreamedResponse> _execute() async {
@@ -42,17 +38,21 @@ class BasicRequest extends _HttpRequest {
       ..headers.addAll(_genHeaders());
 
     if (this.body != null && this.method != "GET") {
+      request.headers.addAll(_getJsonContentTypeHeader());
       if (this.body is String) {
-        request.headers.addAll(_getJsonContentTypeHeader());
         request.body = this.body as String;
-      } else if (this.body is Map<String, dynamic> || this.body is List<dynamic>) {
-        request.headers.addAll(_getJsonContentTypeHeader());
+      } else
+      if (this.body is Map<String, dynamic> || this.body is List<dynamic>) {
         request.body = jsonEncode(this.body);
       }
     }
 
     return this._client.send(request);
   }
+  
+  Map<String, String> _getJsonContentTypeHeader() => {
+    "Content-Type" : "application/json"
+  };
 }
 
 /// Request with which files will be sent. Cannot contain request body.
@@ -64,8 +64,8 @@ class MultipartRequest extends _HttpRequest {
   final Map<String, dynamic>? fields;
 
   MultipartRequest._new(String path, this.files,
-      {this.fields, String method = "GET", Map<String, dynamic>? queryParams, String? auditLog})
-      : super._new(path, method: method, queryParams: queryParams, auditLog: auditLog);
+      {this.fields, String method = "GET", Map<String, dynamic>? queryParams, String? auditLog, bool rateLimit = true})
+      : super._new(path, method: method, queryParams: queryParams, auditLog: auditLog, rateLimit: rateLimit);
 
   @override
   Future<http.StreamedResponse> _execute() {

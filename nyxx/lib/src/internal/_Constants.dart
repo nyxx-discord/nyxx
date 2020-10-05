@@ -29,7 +29,7 @@ class Constants {
   static const String baseUri = "/api/v7";
 
   /// Version of Nyxx
-  static const String version = "1.0.0";
+  static const String version = "1.1.0";
 
   /// Url to Nyxx repo
   static const String repoUrl = "https://github.com/l7ssha/nyxx";
