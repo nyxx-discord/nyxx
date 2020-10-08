@@ -52,6 +52,7 @@ class HttpResponseError extends _HttpResponse {
     if (response.headers["Content-Type"] == "application/json") {
       this.errorCode = this._jsonBody["code"] as int;
       this.errorMessage = this._jsonBody["message"] as String;
+      return;
     }
 
     try {
