@@ -43,10 +43,10 @@ class HttpResponseSuccess extends _HttpResponse {
 /// Will contain reason why request failed.
 class HttpResponseError extends _HttpResponse {
   /// Message why http request failed
-  late final String errorMessage;
+  late String errorMessage;
 
   /// Error code of response
-  late final int errorCode;
+  late int errorCode;
 
   HttpResponseError._new(http.StreamedResponse response) : super._new(response) {
     if (response.headers["Content-Type"] == "application/json") {
