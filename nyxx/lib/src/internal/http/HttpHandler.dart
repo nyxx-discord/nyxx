@@ -30,7 +30,7 @@ class HttpClientException extends http.ClientException {
   final http.BaseResponse? response;
 
   // ignore: public_member_api_docs
-  HttpClientException(this.response) : super("Exception", response?.request?.url!);
+  HttpClientException(this.response) : super("Exception", response?.request?.url);
 }
 
 class _HttpHandler {
@@ -98,8 +98,8 @@ class _HttpBucket {
   _HttpBucket(this.uri, this._httpHandler);
 
   Future<http.StreamedResponse> _execute(_HttpRequest request) async {
-    // Get acutual time and check if request can be executed based on data that bucket already have
-    // and wait if ratelimit could be possibly hit
+    // Get actual time and check if request can be executed based on data that bucket already have
+    // and wait if rate limit could be possibly hit
     final now = DateTime.now();
     if ((resetAt != null && resetAt!.isAfter(now)) && remaining < 2) {
       final waitTime = resetAt!.millisecondsSinceEpoch - now.millisecondsSinceEpoch;
@@ -107,7 +107,7 @@ class _HttpBucket {
       if (waitTime > 0) {
         _httpHandler.client._events.onRatelimited.add(RatelimitEvent._new(request, true));
         _httpHandler._logger.warning(
-            "Rate limitted internally on endpoint: ${request.uri}. Trying to send request again in $waitTime ms...");
+            "Rate limited internally on endpoint: ${request.uri}. Trying to send request again in $waitTime ms...");
 
         return Future.delayed(Duration(milliseconds: waitTime), () => _execute(request));
       }
@@ -134,7 +134,7 @@ class _HttpBucket {
 
         _httpHandler.client._events.onRatelimited.add(RatelimitEvent._new(request, false, response));
         _httpHandler._logger.warning(
-            "Rate limitted via 429 on endpoint: ${request.uri}. Trying to send request again in $retryAfter ms...");
+            "Rate limited via 429 on endpoint: ${request.uri}. Trying to send request again in $retryAfter ms...");
 
         return Future.delayed(Duration(milliseconds: retryAfter), () => _execute(request));
       }
