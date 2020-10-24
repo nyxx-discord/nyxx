@@ -7,7 +7,7 @@ class MemberChunkEvent {
   late final Iterable<Member> members;
 
   /// Reference to guild
-  late final Cacheable<Snowflake, GuildNew> guild;
+  late final Cacheable<Snowflake, Guild> guild;
 
   /// Set of presences if requested
 //  late final Iterable<Activity>? presences;

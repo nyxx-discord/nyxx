@@ -6,7 +6,7 @@ class Invite {
   late final String code;
 
   /// A mini guild object for the invite's guild.
-  late final Cacheable<Snowflake, GuildNew>? guild;
+  late final Cacheable<Snowflake, Guild>? guild;
 
   /// A mini channel object for the invite's channel.
   late final Cacheable<Snowflake, TextChannel>? channel;
@@ -53,7 +53,7 @@ class Invite {
 
   /// Deletes this [Invite].
   Future<void> delete({String? auditReason}) async =>
-    client._httpEndpoints._deleteInvite(this.code, auditReason: auditReason);
+    client._httpEndpoints.deleteInvite(this.code, auditReason: auditReason);
 }
 
 /// Invite object with additional metadata

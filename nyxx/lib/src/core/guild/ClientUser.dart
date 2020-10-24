@@ -14,8 +14,8 @@ class ClientUser extends User {
   }
 
   /// Allows to get [Member] objects for all guilds for bot user.
-  Map<GuildNew, Member> getMembership() {
-    final membershipCollection = <GuildNew, Member>{};
+  Map<Guild, Member> getMembership() {
+    final membershipCollection = <Guild, Member>{};
 
     for (final guild in client.guilds.values) {
       final member = guild.members[this.id];
@@ -30,5 +30,5 @@ class ClientUser extends User {
 
   /// Edits current user. This changes user's username - not per guild nickname.
   Future<User> edit({String? username, File? avatar, String? encodedAvatar}) =>
-      client._httpEndpoints._editSelfUser(username: username, avatar: avatar, encodedAvatar: encodedAvatar);
+      client._httpEndpoints.editSelfUser(username: username, avatar: avatar, encodedAvatar: encodedAvatar);
 }

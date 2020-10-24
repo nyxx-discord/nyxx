@@ -34,7 +34,7 @@ class TextGuildChannel extends GuildChannel implements TextChannel {
 
   /// Gets all of the webhooks for this channel.
   Stream<Webhook> getWebhooks() =>
-      client._httpEndpoints._fetchChannelWebhooks(this.id);
+      client._httpEndpoints.fetchChannelWebhooks(this.id);
 
   /// Creates a webhook for channel.
   /// Valid file types for [avatarFile] are jpeg, gif and png.
@@ -43,19 +43,19 @@ class TextGuildChannel extends GuildChannel implements TextChannel {
   /// final webhook = await channnel.createWebhook("!a Send nudes kek6407");
   /// ```
   Future<Webhook> createWebhook(String name, {File? avatarFile, String? auditReason}) =>
-      client._httpEndpoints._createWebhook(this.id, name, avatarFile: avatarFile, auditReason: auditReason);
+      client._httpEndpoints.createWebhook(this.id, name, avatarFile: avatarFile, auditReason: auditReason);
 
   /// Returns pinned [Message]s for channel.
   Stream<Message> getPinnedMessages() =>
-      client._httpEndpoints._fetchPinnedMessages(this.id);
+      client._httpEndpoints.fetchPinnedMessages(this.id);
 
   /// Edits the channel.
   Future<TextGuildChannel> edit({String? name, String? topic, int? position, int? slowModeThreshold}) =>
-      client._httpEndpoints._editTextChannel(this.id, name: name, topic: topic, position: position, slowModeThreshold: slowModeThreshold);
+      client._httpEndpoints.editTextChannel(this.id, name: name, topic: topic, position: position, slowModeThreshold: slowModeThreshold);
 
   @override
   Future<void> startTyping() async =>
-      client._httpEndpoints._triggerTyping(this.id);
+      client._httpEndpoints.triggerTyping(this.id);
 
   @override
   void startTypingLoop() {
@@ -68,20 +68,20 @@ class TextGuildChannel extends GuildChannel implements TextChannel {
 
   @override
   Future<void> bulkRemoveMessages(Iterable<SnowflakeEntity> messages) =>
-      client._httpEndpoints._bulkRemoveMessages(this.id, messages);
+      client._httpEndpoints.bulkRemoveMessages(this.id, messages);
 
   @override
   Stream<Message> downloadMessages({int limit = 50, Snowflake? after, Snowflake? around, Snowflake? before}) =>
-      client._httpEndpoints._downloadMessages(this.id, limit: limit, after: after, around: around, before: before);
+      client._httpEndpoints.downloadMessages(this.id, limit: limit, after: after, around: around, before: before);
 
   @override
   Future<Message?> fetchMessage(Snowflake messageId) =>
-      client._httpEndpoints._fetchMessage(this.id, messageId);
+      client._httpEndpoints.fetchMessage(this.id, messageId);
 
   @override
   Future<Message?> getMessage(Snowflake id) => Future.value(this.messageCache[id]);
 
   @override
   Future<Message> sendMessage({dynamic content, EmbedBuilder? embed, List<AttachmentBuilder>? files, bool? tts, AllowedMentions? allowedMentions, MessageBuilder? builder}) =>
-      client._httpEndpoints._sendMessage(this.id, content: content, embed: embed, files: files, tts: tts, allowedMentions: allowedMentions, builder: builder);
+      client._httpEndpoints.sendMessage(this.id, content: content, embed: embed, files: files, tts: tts, allowedMentions: allowedMentions, builder: builder);
 }

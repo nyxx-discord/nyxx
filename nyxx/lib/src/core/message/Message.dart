@@ -98,39 +98,39 @@ abstract class Message extends SnowflakeEntity implements Disposable {
 
   /// Suppresses embeds in message. Can be executed in other users messages.
   Future<Message> suppressEmbeds() =>
-      client._httpEndpoints._suppressMessageEmbeds(this.channel.id, this.id);
+      client._httpEndpoints.suppressMessageEmbeds(this.channel.id, this.id);
 
   /// Edits the message.
   Future<Message> edit({dynamic content, EmbedBuilder? embed, AllowedMentions? allowedMentions, MessageEditBuilder? builder}) =>
-      client._httpEndpoints._editMessage(this.channel.id, this.id, content: content, embed: embed, allowedMentions: allowedMentions, builder: builder);
+      client._httpEndpoints.editMessage(this.channel.id, this.id, content: content, embed: embed, allowedMentions: allowedMentions, builder: builder);
 
   /// Add reaction to message.
   Future<void> createReaction(IEmoji emoji) =>
-      client._httpEndpoints._createMessageReaction(this.channel.id, this.id, emoji);
+      client._httpEndpoints.createMessageReaction(this.channel.id, this.id, emoji);
 
   /// Deletes reaction of bot.
   Future<void> deleteSelfReaction(IEmoji emoji) =>
-      client._httpEndpoints._deleteMessageReaction(this.channel.id, this.id, emoji);
+      client._httpEndpoints.deleteMessageReaction(this.channel.id, this.id, emoji);
 
   /// Deletes reaction of given user.
   Future<void> deleteUserReaction(IEmoji emoji, SnowflakeEntity entity) =>
-      client._httpEndpoints._deleteMessageUserReaction(this.channel.id, this.id, emoji, entity.id);
+      client._httpEndpoints.deleteMessageUserReaction(this.channel.id, this.id, emoji, entity.id);
 
   /// Deletes all reactions
   Future<void> deleteAllReactions() =>
-      client._httpEndpoints._deleteMessageAllReactions(this.channel.id, this.id);
+      client._httpEndpoints.deleteMessageAllReactions(this.channel.id, this.id);
 
   /// Deletes the message.
   Future<void> delete({String? auditReason}) =>
-      client._httpEndpoints._deleteMessage(this.channel.id, this.id);
+      client._httpEndpoints.deleteMessage(this.channel.id, this.id);
 
   /// Pins [Message] in message's channel
   Future<void> pinMessage() =>
-      client._httpEndpoints._pinMessage(this.channel.id, this.id);
+      client._httpEndpoints.pinMessage(this.channel.id, this.id);
 
   /// Unpins [Message] in message's channel
   Future<void> unpinMessage() =>
-      client._httpEndpoints._unpinMessage(this.channel.id, this.id);
+      client._httpEndpoints.unpinMessage(this.channel.id, this.id);
 
   @override
   Future<void> dispose() => Future.value(null);
@@ -183,7 +183,7 @@ class DMMessage extends Message {
 /// Message that is sent in guild channel
 class GuildMessage extends Message {
   /// The message's guild.
-  late final Cacheable<Snowflake, GuildNew> guild;
+  late final Cacheable<Snowflake, Guild> guild;
 
   /// Reference to original message if this message cross posts other message
   late final MessageReference? crossPostReference;
@@ -242,5 +242,5 @@ class GuildMessage extends Message {
   /// Crosspost a Message into all guilds what follow the news channel indicated.
   /// This endpoint requires the "DISCOVERY" feature to be present for the guild.
   Future<void> crossPost() async =>
-      client._httpEndpoints._crossPostGuildMessage(this.channel.id, this.id);
+      client._httpEndpoints.crossPostGuildMessage(this.channel.id, this.id);
 }

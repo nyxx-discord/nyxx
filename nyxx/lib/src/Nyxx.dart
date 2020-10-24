@@ -26,7 +26,7 @@ class Nyxx implements Disposable {
   late final _EventController _events;
 
   late final _HttpHandler _http;
-  late final HttpEndpoints _httpEndpoints;
+  late final _HttpEndpoints _httpEndpoints;
 
   /// The current bot user.
   late ClientUser self;
@@ -35,7 +35,7 @@ class Nyxx implements Disposable {
   late ClientOAuth2Application app;
 
   /// All of the guilds the bot is in. Can be empty or can miss guilds on (READY_EVENT).
-  late final Cache<Snowflake, GuildNew> guilds;
+  late final Cache<Snowflake, Guild> guilds;
 
   /// All of the channels the bot can see.
   late final ChannelCache channels;
@@ -175,6 +175,9 @@ class Nyxx implements Disposable {
   /// Gets an bot invite link with zero permissions
   String get inviteLink => app.getInviteUrl();
 
+  /// Returns handler for all available REST API action.
+  IHttpEndpoints get httpEndpoints => this._httpEndpoints;
+
   /// Creates and logs in a new client. If [ignoreExceptions] is true (by default is)
   /// isolate will ignore all exceptions and continue to work.
   Nyxx(this._token, {ClientOptions? options, bool ignoreExceptions = true, bool useDefaultLogger = true, Level? defaultLoggerLogLevel}) {
@@ -218,7 +221,7 @@ class Nyxx implements Disposable {
     this.users = _SnowflakeCache();
 
     this._http = _HttpHandler._new(this);
-    this._httpEndpoints = HttpEndpoints._new(this);
+    this._httpEndpoints = _HttpEndpoints._new(this);
 
     this._events = _EventController(this);
     this.onSelfMention = this.onMessageReceived.where((event) => event.message.mentions.contains(this.self));
@@ -246,22 +249,22 @@ class Nyxx implements Disposable {
   }
 
   /// Returns guild with given [guildId]
-  Future<GuildNew> fetchGuild(Snowflake guildId) =>
-    this._httpEndpoints._fetchGuild(guildId);
+  Future<Guild> fetchGuild(Snowflake guildId) =>
+    this._httpEndpoints.fetchGuild(guildId);
 
   /// Returns channel with specified id.
   /// ```
   /// var channel = await client.getChannel<TextChannel>(Snowflake("473853847115137024"));
   /// ```
   Future<T> fetchChannel<T extends IChannel>(Snowflake channelId) =>
-    this._httpEndpoints._fetchChannel(channelId);
+    this._httpEndpoints.fetchChannel(channelId);
 
   /// Get user instance with specified id.
   /// ```
   /// var user = client.getUser(Snowflake("302359032612651009"));
   /// ``
   Future<User> fetchUser(Snowflake userId) =>
-    this._httpEndpoints._fetchUser(userId);
+    this._httpEndpoints.fetchUser(userId);
 
   // /// Creates new guild with provided builder.
   // /// Only for bots with less than 10 guilds otherwise it will return Future with error.
@@ -289,7 +292,7 @@ class Nyxx implements Disposable {
   /// Gets a webhook by its id and/or token.
   /// If token is supplied authentication is not needed.
   Future<Webhook> fetchWebhook(Snowflake id, {String token = ""}) =>
-      this._httpEndpoints._fetchWebhook(id, token: token);
+      this._httpEndpoints.fetchWebhook(id, token: token);
 
   /// Gets an [Invite] object with given code.
   /// If the [code] is in cache - it will be taken from it, otherwise API will be called.
@@ -298,7 +301,7 @@ class Nyxx implements Disposable {
   /// var inv = client.getInvite("YMgffU8");
   /// ```
   Future<Invite> getInvite(String code) =>
-    this._httpEndpoints._fetchInvite(code);
+    this._httpEndpoints.fetchInvite(code);
 
   /// Returns number of shards
   int get shards => this.shardManager._shards.length;

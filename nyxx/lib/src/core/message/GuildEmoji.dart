@@ -31,7 +31,7 @@ class GuildEmoji extends GuildEmojiPartial implements IEmoji {
   final Nyxx client;
 
   /// Reference to guild where emoji belongs to
-  late final Cacheable<Snowflake, GuildNew> guild;
+  late final Cacheable<Snowflake, Guild> guild;
 
   /// Roles which can use this emote
   late final Iterable<Cacheable<Snowflake, RoleNew>> roles;
@@ -62,9 +62,9 @@ class GuildEmoji extends GuildEmojiPartial implements IEmoji {
 
   /// Allows to delete guild emoji
   Future<void> delete() =>
-      client._httpEndpoints._deleteGuildEmoji(this.guild.id, this.id);
+      client._httpEndpoints.deleteGuildEmoji(this.guild.id, this.id);
 
   /// Allows to edit guild emoji
   Future<void> edit({String? name, List<Snowflake>? roles}) =>
-      client._httpEndpoints._editGuildEmoji(this.guild.id, this.id, name: name, roles: roles);
+      client._httpEndpoints.editGuildEmoji(this.guild.id, this.id, name: name, roles: roles);
 }

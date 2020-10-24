@@ -4,7 +4,7 @@ class Member extends SnowflakeEntity {
   /// Reference to client
   final Nyxx client;
 
-  /// [Cacheable] for this [GuildNew] member
+  /// [Cacheable] for this [Guild] member
   late final Cacheable<Snowflake, User> user;
 
   /// The members nickname, null if not set.
@@ -20,7 +20,7 @@ class Member extends SnowflakeEntity {
   late final bool mute;
 
   /// Cacheable of guild where member is located
-  late final Cacheable<Snowflake, GuildNew> guild;
+  late final Cacheable<Snowflake, Guild> guild;
 
   /// Roles of member
   late Iterable<Cacheable<Snowflake, RoleNew>> roles;
@@ -92,7 +92,7 @@ class Member extends SnowflakeEntity {
 
   /// Bans the member and optionally deletes [deleteMessageDays] days worth of messages.
   Future<void> ban({int? deleteMessageDays, String? reason, String? auditReason}) async =>
-      client._httpEndpoints._guildBan(this.guild.id, this.id, auditReason: auditReason);
+      client._httpEndpoints.guildBan(this.guild.id, this.id, auditReason: auditReason);
 
   /// Adds role to user.
   ///
@@ -101,19 +101,19 @@ class Member extends SnowflakeEntity {
   /// await member.addRole(r);
   /// ```
   Future<void> addRole(SnowflakeEntity role, {String? auditReason}) =>
-      client._httpEndpoints._addRoleToUser(this.guild.id, role.id, this.id, auditReason: auditReason);
+      client._httpEndpoints.addRoleToUser(this.guild.id, role.id, this.id, auditReason: auditReason);
 
   /// Removes [role] from user.
   Future<void> removeRole(SnowflakeEntity role, {String? auditReason}) =>
-      client._httpEndpoints._removeRoleFromUser(this.guild.id, role.id, this.id, auditReason: auditReason);
+      client._httpEndpoints.removeRoleFromUser(this.guild.id, role.id, this.id, auditReason: auditReason);
 
   /// Kicks the member from guild
   Future<void> kick({String? auditReason}) =>
-      client._httpEndpoints._guildKick(this.guild.id, this.id);
+      client._httpEndpoints.guildKick(this.guild.id, this.id);
 
   /// Edits members. Allows to move user in voice channel, mute or deaf, change nick, roles.
   Future<void> edit({String? nick, List<SnowflakeEntity>? roles, bool? mute, bool? deaf, SnowflakeEntity? channel, String? auditReason}) =>
-      client._httpEndpoints._editGuildMember(this.guild.id, this.id, nick: nick, roles: roles, mute: mute, deaf: deaf, channel: channel, auditReason: auditReason);
+      client._httpEndpoints.editGuildMember(this.guild.id, this.id, nick: nick, roles: roles, mute: mute, deaf: deaf, channel: channel, auditReason: auditReason);
 
   bool _updateMember(String? nickname, List<SnowflakeEntity> roles) {
     var changed = false;
