@@ -4,50 +4,34 @@ part of nyxx;
 /// Sent when a channel is created.
 class ChannelCreateEvent {
   /// The channel that was created, either a [CacheGuildChannel], [DMChannel], or [GroupDMChannel].
-  late final Channel channel;
+  late final IChannel channel;
 
   ChannelCreateEvent._new(Map<String, dynamic> raw, Nyxx client) {
-    this.channel = Channel._deserialize(raw["d"] as Map<String, dynamic>, client);
+    this.channel = IChannel._deserialize(client, raw["d"] as Map<String, dynamic>);
 
-    client.channels[channel.id] = channel;
-    if (this.channel is CacheGuildChannel) {
-      (this.channel as CacheGuildChannel).guild.channels[channel.id] = channel;
-    }
+    client.channels[this.channel.id] = this.channel;
   }
 }
 
 /// Sent when a channel is deleted.
 class ChannelDeleteEvent {
   /// The channel that was deleted.
-  late final Channel channel;
+  late final IChannel channel;
 
   ChannelDeleteEvent._new(Map<String, dynamic> raw, Nyxx client) {
-    final channelSnowflake = Snowflake(raw["d"]["id"]);
-    final channel = client.channels[channelSnowflake];
+    this.channel = IChannel._deserialize(client, raw["d"] as Map<String, dynamic>);
 
-    if (channel == null) {
-      this.channel = Channel._deserialize(raw, client);
-    } else {
-      this.channel = channel;
-    }
-
-    client.channels.remove(channelSnowflake);
-    if (this.channel is CacheGuildChannel) {
-      (this.channel as CacheGuildChannel).guild.channels.remove(channelSnowflake);
-    }
+    client.channels.remove(this.channel.id);
   }
 }
 
 /// Fired when channel"s pinned messages are updated
 class ChannelPinsUpdateEvent {
   /// Channel where pins were updated
-  CacheTextChannel? channel;
+  late final Cacheable<Snowflake, TextChannel> channel;
 
   /// ID of channel pins were updated
-  late final Snowflake channelId;
-
-  /// ID of channels guild
-  Snowflake? guildId;
+  late final Cacheable<Snowflake, GuildNew>? guild;
 
   /// the time at which the most recent pinned message was pinned
   late final DateTime? lastPingTimestamp;
@@ -57,10 +41,12 @@ class ChannelPinsUpdateEvent {
       this.lastPingTimestamp = DateTime.parse(raw["d"]["last_pin_timestamp"] as String);
     }
 
-    this.channel = client.channels[Snowflake(raw["d"]["channel_id"])] as CacheTextChannel?;
+    this.channel = _ChannelCacheable(client, Snowflake(raw["d"]["channel_id"]));
 
     if (raw["d"]["guild_id"] != null) {
-      this.guildId = Snowflake(raw["d"]["guild_id"]);
+      this.guild = _GuildCacheable(client, Snowflake(raw["d"]["guild_id"]));
+    } else {
+      this.guild = null;
     }
   }
 }
@@ -68,15 +54,18 @@ class ChannelPinsUpdateEvent {
 /// Sent when a channel is updated.
 class ChannelUpdateEvent {
   /// The channel after the update.
-  late final Channel updatedChannel;
+  late final IChannel updatedChannel;
 
   ChannelUpdateEvent._new(Map<String, dynamic> raw, Nyxx client) {
-    this.updatedChannel = Channel._deserialize(raw["d"] as Map<String, dynamic>, client);
+    this.updatedChannel = IChannel._deserialize(client, raw["d"] as Map<String, dynamic>);
+
+    final oldChannel = client.channels[this.updatedChannel.id];
+
+    // Move messages to new channel
+    if (this.updatedChannel is TextChannel && oldChannel is TextChannel) {
+      (this.updatedChannel as TextChannel).messageCache.addMap(oldChannel.messageCache.asMap);
+    }
 
     client.channels[this.updatedChannel.id] = updatedChannel;
-
-    if (this.updatedChannel is CacheGuildChannel) {
-      (this.updatedChannel as CacheGuildChannel).guild.channels[this.updatedChannel.id] = updatedChannel;
-    }
   }
 }

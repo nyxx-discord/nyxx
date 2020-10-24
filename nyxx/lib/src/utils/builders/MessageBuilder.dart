@@ -92,7 +92,7 @@ class MessageBuilder extends MessageEditBuilder {
   }
 
   /// Sends message
-  Future<Message?> send(ISend entity) => entity.send(builder: this);
+  Future<Message?> send(ISend entity) => entity.sendMessage(builder: this);
 }
 
 /// Specifies formatting of String appended with [MessageBuilder]

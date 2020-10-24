@@ -10,12 +10,6 @@ class Ban {
 
   Ban._new(Map<String, dynamic> raw, Nyxx client) {
     this.reason = raw["reason"] as String;
-
-    final userId = Snowflake(raw["user"]["id"] as String);
-    if (client.users.hasKey(userId)) {
-      this.user = client.users[userId] as User;
-    } else {
-      this.user = User._new(raw["user"] as Map<String, dynamic>, client);
-    }
+    this.user = User._new(client, raw["user"] as Map<String, dynamic>);
   }
 }

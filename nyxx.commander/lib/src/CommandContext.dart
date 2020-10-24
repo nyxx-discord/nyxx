@@ -3,19 +3,21 @@ part of nyxx_commander;
 /// Helper class which describes context in which command is executed
 class CommandContext {
   /// Channel from where message come from
-  final MessageChannel channel;
+  final TextChannel channel;
 
   /// Author of message
-  final IMessageAuthor? author;
+  final IMessageAuthor author;
 
   /// Message that was sent
   final Message message;
 
   /// Guild in which message was sent
-  final Guild? guild;
+  final GuildNew? guild;
 
   /// Returns author as guild member
-  IMember? get member => guild?.members[author!.id];
+  Member? get member => this.message is GuildMessage
+      ? (message as GuildMessage).member
+      : null;
 
   /// Reference to client
   Nyxx get client => channel.client;
@@ -42,13 +44,14 @@ class CommandContext {
   ///   await context.reply(content: context.user.avatarURL());
   /// }
   /// ```
-  Future<Message> reply(
-      {dynamic content,
-      List<AttachmentBuilder>? files,
-      EmbedBuilder? embed,
-      bool? tts,
-      AllowedMentions? allowedMentions,
-      MessageBuilder? builder}) => channel.send(
+  Future<Message?> sendMessage({
+    dynamic content,
+    EmbedBuilder? embed,
+    List<AttachmentBuilder>? files,
+    bool? tts,
+    AllowedMentions? allowedMentions,
+    MessageBuilder? builder
+  }) => channel.sendMessage(
         content: content, embed: embed, tts: tts, files: files, builder: builder, allowedMentions: allowedMentions);
 
   /// Reply to messages, then delete it when [duration] expires.
@@ -59,9 +62,14 @@ class CommandContext {
   /// }
   /// ```
   Future<Message> replyTemp(Duration duration,
-      {dynamic content, List<AttachmentBuilder>? files, EmbedBuilder? embed, bool? tts, AllowedMentions? allowedMentions, MessageBuilder? builder}) =>
-      channel
-        .send(content: content, embed: embed, files: files, tts: tts, builder: builder, allowedMentions: allowedMentions)
+      {dynamic content,
+      EmbedBuilder? embed,
+      List<AttachmentBuilder>? files,
+      bool? tts,
+      AllowedMentions? allowedMentions,
+      MessageBuilder? builder
+  }) => channel
+        .sendMessage(content: content, embed: embed, files: files, tts: tts, builder: builder, allowedMentions: allowedMentions)
         .then((msg) {
           Timer(duration, () => msg.delete());
           return msg;
@@ -75,13 +83,14 @@ class CommandContext {
   /// ```
   Future<Message> replyDelayed(Duration duration,
       {dynamic content,
-      List<AttachmentBuilder>? files,
-      EmbedBuilder? embed,
-      bool? tts,
-      AllowedMentions? allowedMentions,
-      MessageBuilder? builder}) => Future.delayed(
+        EmbedBuilder? embed,
+        List<AttachmentBuilder>? files,
+        bool? tts,
+        AllowedMentions? allowedMentions,
+        MessageBuilder? builder
+      }) =>  Future.delayed(
         duration,
-        () => channel.send(
+        () => channel.sendMessage(
             content: content,
             embed: embed,
             files: files,
@@ -90,7 +99,7 @@ class CommandContext {
             allowedMentions: allowedMentions));
 
   /// Awaits for emoji under given [msg]
-  Future<Emoji> awaitEmoji(Message msg) async =>
+  Future<IEmoji> awaitEmoji(Message msg) async =>
       (await this.client.onMessageReactionAdded.where((event) => event.message == msg).first).emoji;
 
   /// Collects emojis within given [duration]. Returns empty map if no reaction received
@@ -102,9 +111,9 @@ class CommandContext {
   ///
   /// }
   /// ```
-  Future<Map<Emoji, int>> awaitEmojis(Message msg, Duration duration){
-    final collectedEmoji = <Emoji, int>{};
-    return Future<Map<Emoji, int>>(() async {
+  Future<Map<IEmoji, int>> awaitEmojis(Message msg, Duration duration){
+    final collectedEmoji = <IEmoji, int>{};
+    return Future<Map<IEmoji, int>>(() async {
       await for (final event in msg.client.onMessageReactionAdded.where((evnt) => evnt.message != null && evnt.message!.id == msg.id)) {
         if (collectedEmoji.containsKey(event.emoji)) {
           // TODO: NNBD: weird stuff
@@ -126,7 +135,8 @@ class CommandContext {
 
   /// Waits for first [TypingEvent] and returns it. If timed out returns null.
   /// Can listen to specific user by specifying [user]
-  Future<TypingEvent?> waitForTyping(User user, {Duration timeout = const Duration(seconds: 30)}) => Future<TypingEvent?>(() => user.client.onTyping.firstWhere((e) => e.user == user && e.channel == this.channel)).timeout(timeout, onTimeout: () => null);
+  Future<TypingEvent?> waitForTyping(User user, {Duration timeout = const Duration(seconds: 30)}) =>
+      Future<TypingEvent?>(() => user.client.onTyping.firstWhere((e) => e.user == user && e.channel == this.channel)).timeout(timeout, onTimeout: () => null);
 
   /// Gets all context channel messages that satisfies [predicate].
   ///
@@ -135,7 +145,8 @@ class CommandContext {
   ///   final messages = await context.nextMessagesWhere((msg) => msg.content.startsWith("fuck"));
   /// }
   /// ```
-  Stream<MessageReceivedEvent> nextMessagesWhere(bool Function(MessageReceivedEvent msg) predicate, {int limit = 1}) => channel.onMessage.where(predicate).take(limit);
+  Stream<MessageReceivedEvent> nextMessagesWhere(bool Function(MessageReceivedEvent msg) predicate, {int limit = 1}) =>
+    client.onMessageReceived.where((event) => event.message.channel.id == channel.id).where(predicate).take(limit);
 
   /// Gets next [num] number of any messages sent within one context (same channel).
   ///
@@ -145,7 +156,8 @@ class CommandContext {
   ///   final messages = await context.nextMessages(10);
   /// }
   /// ```
-  Stream<MessageReceivedEvent> nextMessages(int num) => channel.onMessage.take(num);
+  Stream<MessageReceivedEvent> nextMessages(int num) =>
+      client.onMessageReceived.where((event) => event.message.channel.id == channel.id).take(num);
 
   /// Starts typing loop and ends when [callback] resolves.
   Future<T> enterTypingState<T>(Future<T> Function() callback) async {

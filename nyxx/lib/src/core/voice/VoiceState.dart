@@ -4,16 +4,16 @@ part of nyxx;
 /// If [channel] is null, it means that user left channel.
 class VoiceState {
   /// User this voice state is for
-  User? user;
+  late final Cacheable<Snowflake, User> user;
 
   /// Session id for this voice state
   late final String sessionId;
 
   /// Guild this voice state update is
-  Guild? guild;
+  late final Cacheable<Snowflake, GuildNew>? guild;
 
   /// Channel id user is connected
-  CacheVoiceChannel? channel;
+  late final Cacheable<Snowflake, IChannel>? channel;
 
   /// Whether this user is muted by the server
   late final bool deaf;
@@ -33,9 +33,11 @@ class VoiceState {
   /// Whether this user's camera is enabled
   late final bool selfVideo;
 
-  VoiceState._new(Map<String, dynamic> raw, Nyxx client, [Guild? guild]) {
+  VoiceState._new(Nyxx client, Map<String, dynamic> raw) {
     if (raw["channel_id"] != null) {
-      this.channel = client.channels[Snowflake(raw["channel_id"])] as CacheVoiceChannel?;
+      this.channel = _ChannelCacheable(client, Snowflake(raw["channel_id"]));
+    } else {
+      this.channel = null;
     }
 
     this.deaf = raw["deaf"] as bool;
@@ -48,14 +50,12 @@ class VoiceState {
     this.suppress = raw["suppress"] as bool;
     this.sessionId = raw["session_id"] as String;
 
-    if (guild != null) {
-      this.guild = guild;
+    if (raw["guild_id"] == null) {
+      this.guild = null;
     } else {
-      this.guild = client.guilds[Snowflake(raw["guild_id"] as String)];
+      this.guild = _GuildCacheable(client, Snowflake(raw["guild_id"]));
     }
 
-    if (this.guild != null) {
-      this.user = this.guild!.members[Snowflake(raw["user_id"] as String)];
-    }
+    this.user = _UserCacheable(client, Snowflake(raw["user_id"]));
   }
 }

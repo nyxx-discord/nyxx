@@ -22,8 +22,8 @@ class PermissionOverrideBuilder extends PermissionsBuilder {
   /// Create empty permission builder
   PermissionOverrideBuilder(this.type, this.id) : super();
 
-  /// Create [PermissionsOverrides] for given [entity]. Entity have to be either [IRole] or [IMember]
-  PermissionOverrideBuilder.of(SnowflakeEntity entity) : type = entity is IRole ? "role" : "member", id = entity.id, super();
+  /// Create [PermissionsOverrides] for given [entity]. Entity have to be either [RoleNew] or [Member]
+  PermissionOverrideBuilder.of(SnowflakeEntity entity) : type = entity is RoleNew ? "role" : "member", id = entity.id, super();
 }
 
 /// Builder for permissions.

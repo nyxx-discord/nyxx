@@ -3,23 +3,27 @@ part of nyxx;
 /// Reference data to cross posted message
 class MessageReference {
   /// Original message
-  Message? message;
+  late final Cacheable<Snowflake, Message>? message;
 
   /// Original channel
-  MessageChannel? channel;
+  late final Cacheable<Snowflake, TextChannel> channel;
 
   /// Original guild
-  Guild? guild;
+  late final Cacheable<Snowflake, GuildNew>? guild;
 
   MessageReference._new(Map<String, dynamic> raw, Nyxx client) {
-    this.channel = client.channels[Snowflake(raw["channel_id"])] as MessageChannel?;
+    this.channel = _ChannelCacheable(client, Snowflake(raw["channel_id"]));
 
-    if (raw["message_id"] != null && this.channel != null) {
-      this.message = this.channel!.messages[Snowflake(raw["message_id"])];
+    if (raw["message_id"] != null) {
+      this.message = _MessageCacheable(client, Snowflake(raw["message_id"]), this.channel);
+    } else {
+      this.message = null;
     }
 
     if (raw["guild_id"] != null) {
-      this.guild = client.guilds[Snowflake(raw["guild_id"])];
+      this.guild = _GuildCacheable(client, Snowflake(raw["guild_id"]));
+    } else {
+      this.guild = null;
     }
   }
 }
