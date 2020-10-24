@@ -27,7 +27,7 @@ class AuditLog {
     });
 
     raw["users"].forEach((o) {
-      users[Snowflake(o["id"] as String)] = User._new(o as Map<String, dynamic>, client);
+      users[Snowflake(o["id"] as String)] = User._new(client, o as Map<String, dynamic>);
     });
 
     raw["audit_log_entries"].forEach((o) {

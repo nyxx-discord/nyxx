@@ -17,8 +17,8 @@ class OAuth2Info {
 
   OAuth2Info._new(Map<String, dynamic> raw, Nyxx client) {
     this.app = OAuth2Application._new(raw["application"] as Map<String, dynamic>);
-    this.bot = User._new(raw["bot"] as Map<String, dynamic>, client);
-    this.me = User._new(raw["user"] as Map<String, dynamic>, client);
+    this.bot = User._new(client, raw["bot"] as Map<String, dynamic>);
+    this.me = User._new(client, raw["user"] as Map<String, dynamic>);
 
     this.guilds = <Snowflake, OAuth2Guild>{};
     for (final raw in raw["guilds"]) {

@@ -41,6 +41,7 @@ part "src/internal/cache/Cache.dart";
 part "src/internal/cache/_SnowflakeCache.dart";
 part "src/internal/cache/ChannelCache.dart";
 part "src/internal/cache/MessageCache.dart";
+part "src/internal/cache/Cacheable.dart";
 
 part "src/internal/http/HttpHandler.dart";
 part "src/internal/http/HttpRequest.dart";
@@ -92,7 +93,6 @@ part "src/utils/extensions.dart";
 // OBJECTS
 
 part "src/core/AllowedMentions.dart";
-part "src/core/GuildEntity.dart";
 
 part "src/core/DiscordColor.dart";
 
@@ -109,16 +109,13 @@ part "src/core/auditlogs/AuditLog.dart";
 part "src/core/auditlogs/AuditLogEntry.dart";
 part "src/core/auditlogs/AuditLogChange.dart";
 
-part "src/core/channel/guild/VoiceChannel.dart";
-part "src/core/channel/guild/CategoryChannel.dart";
-part "src/core/channel/guild/TextChannel.dart";
+part "src/core/channel/guild/CategoryGuildChannel.dart";
 part "src/core/channel/guild/GuildChannel.dart";
-part "src/core/channel/dm/GroupDMChannel.dart";
-part "src/core/channel/dm/DMChannel.dart";
+part "src/core/channel/guild/TextGuildChannel.dart";
+part "src/core/channel/guild/VoiceChannelNew.dart";
 part "src/core/channel/Channel.dart";
-part "src/core/channel/MessageChannel.dart";
-part "src/core/channel/ITextChannel.dart";
-part "src/core/channel/DummyTextChannel.dart";
+part "src/core/channel/DMChannel.dart";
+part "src/core/channel/TextChannel.dart";
 
 part "src/core/embed/EmbedField.dart";
 part "src/core/embed/EmbedAuthor.dart";

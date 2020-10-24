@@ -3,6 +3,9 @@ part of nyxx;
 /// Returns guild  even if the user is not in the guild.
 /// This endpoint is only for Public guilds.
 class GuildPreview extends SnowflakeEntity {
+  /// Reference to client
+  final Nyxx client;
+
   /// Guild name
   late final String name;
 
@@ -16,7 +19,7 @@ class GuildPreview extends SnowflakeEntity {
   String? discoveryHash;
 
   /// List of guild's emojis
-  late final List<Emoji> emojis;
+  late final List<GuildEmoji> emojis;
 
   /// List of guild's features
   late final Iterable<GuildFeature> features;
@@ -30,7 +33,7 @@ class GuildPreview extends SnowflakeEntity {
   /// The description for the guild
   String? description;
 
-  GuildPreview._new(Map<String, dynamic> raw) : super(Snowflake(raw["id"])) {
+  GuildPreview._new(this.client, Map<String, dynamic> raw) : super(Snowflake(raw["id"])) {
     this.name = raw["name"] as String;
 
     if (this.iconHash != null) {
@@ -45,7 +48,10 @@ class GuildPreview extends SnowflakeEntity {
       this.discoveryHash = raw["discovery_splash"] as String;
     }
 
-    this.emojis = [for (var rawEmoji in raw["emojis"]) Emoji._deserialize(rawEmoji as Map<String, dynamic>)];
+    this.emojis = [
+      for (var rawEmoji in raw["emojis"])
+        GuildEmoji._new(client, rawEmoji as Map<String, dynamic>, this.id)
+    ];
 
     this.features = (raw["features"] as List<dynamic>).map((e) => GuildFeature.from(e.toString()));
 

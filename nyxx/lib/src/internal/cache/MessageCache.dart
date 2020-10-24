@@ -43,14 +43,12 @@ class MessageCache extends Cache<Snowflake, Message> {
   /// Returns messages in chronological order
   List<Message> get inOrder => _cache.values.toList()..sort((f, s) => f.createdAt.compareTo(s.createdAt));
 
-  @override
-
   /// Takes first [count] elements from cache. Returns Iterable of cache values
+  @override
   Iterable<Message> take(int count) => values.toList().sublist(values.length - count);
 
-  @override
-
   /// Takes last [count] elements from cache. Returns Iterable of cache values
+  @override
   Iterable<Message> takeLast(int count) => values.take(count);
 
   /// Get first element

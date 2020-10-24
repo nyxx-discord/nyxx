@@ -2,70 +2,45 @@ part of nyxx;
 
 /// A channel.
 /// Abstract base class that defines the base methods and/or properties for all Discord channel types.
-class Channel extends SnowflakeEntity {
-  /// The channel's type.
-  /// https://discordapp.com/developers/docs/resources/channel#channel-object-channel-types
-  final ChannelType type;
+/// Generic interface for all channels
+abstract class IChannel extends SnowflakeEntity implements Disposable {
+  /// Type of this channel
+  late final ChannelType channelType;
 
-  /// Reference to client instance
+  /// Reference to client
   final Nyxx client;
 
-  Channel._new(Map<String, dynamic> raw, int type, this.client)
-      : this.type = ChannelType._create(type),
-        super(Snowflake(raw["id"]));
+  IChannel._new(this.client, Map<String, dynamic> raw): super(Snowflake(raw["id"])){
+    this.channelType = ChannelType.from(raw["type"] as int);
+  }
 
-  factory Channel._deserialize(Map<String, dynamic> raw, Nyxx client, [Guild? guild]) {
+  factory IChannel._deserialize(Nyxx client, Map<String, dynamic> raw, [Snowflake? guildId]) {
     final type = raw["type"] as int;
-
-    Guild? channelGuild;
-
-    if(guild != null) {
-      channelGuild = guild;
-    } else if(raw["guild_id"] != null) {
-      channelGuild = client.guilds[Snowflake(raw["guild_id"])];
-    }
 
     switch (type) {
       case 1:
-        return DMChannel._new(raw, client);
-        break;
       case 3:
-        return GroupDMChannel._new(raw, client);
-        break;
+        return DMChannel._new(client, raw);
       case 0:
       case 5:
-        if(channelGuild == null) {
-          return CachelessTextChannel._new(raw, Snowflake(raw["guild_id"]), client);
-        }
-
-        return CacheTextChannel._new(raw, channelGuild, client);
-        break;
+        return TextGuildChannel._new(client, raw, guildId);
       case 2:
-        if(channelGuild == null) {
-          return CachelessVoiceChannel._new(raw, Snowflake(raw["guild_id"]), client);
-        }
-
-        return CacheVoiceChannel._new(raw, channelGuild, client);
-        break;
+        return VoiceGuildChannel._new(client, raw, guildId);
       case 4:
-        return CategoryChannel._new(raw, channelGuild == null ? Snowflake(raw["guild_id"]) : channelGuild.id, client);
-        break;
+        return CategoryGuildChannel._new(client, raw, guildId);
       default:
-        return _InternalChannel._new(raw, type, client);
+        return _InternalChannel._new(client, raw);
     }
   }
 
-  /// Deletes the channel.
-  /// Throws if bot cannot perform operation
-  Future<void> delete({String? auditReason}) =>
-    client._http._execute(BasicRequest._new("/channels/${this.id}", method: "DELETE", auditLog: auditReason));
-
   @override
-  String toString() => this.id.toString();
+  Future<void> dispose() async {
+    // Empty body
+  }
 }
 
-class _InternalChannel extends Channel {
-  _InternalChannel._new(Map<String, dynamic> raw, int type, Nyxx client) : super._new(raw, type, client);
+class _InternalChannel extends GuildChannel {
+  _InternalChannel._new(Nyxx client, Map<String, dynamic> raw): super._new(client, raw);
 }
 
 /// Enum for possible channel types

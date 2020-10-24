@@ -9,16 +9,12 @@ class VoiceStateUpdateEvent {
   Map<String, dynamic> raw;
 
   VoiceStateUpdateEvent._new(this.raw, Nyxx client) {
-    this.state = VoiceState._new(raw["d"] as Map<String, dynamic>, client);
-
-    if (state.user == null) {
-      return;
-    }
+    this.state = VoiceState._new(client, raw["d"] as Map<String, dynamic>);
 
     if (state.channel != null) {
-      state.guild!.voiceStates[state.user!.id] = state;
+      state.guild?.getFromCache()?.voiceStates[this.state.user.id] = this.state;
     } else {
-      state.guild!.voiceStates.remove(state.user!.id);
+      state.guild?.getFromCache()?.voiceStates.remove(state.user.id);
     }
   }
 }

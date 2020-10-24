@@ -6,16 +6,16 @@ class Invite {
   late final String code;
 
   /// A mini guild object for the invite's guild.
-  late final Guild? guild;
+  late final Cacheable<Snowflake, GuildNew>? guild;
 
   /// A mini channel object for the invite's channel.
-  late final Channel? channel;
+  late final Cacheable<Snowflake, TextChannel>? channel;
 
   /// User who created this invite
   late final User? inviter;
 
   /// The target user for this invite
-  late final User? targetUser;
+  late final Cacheable<Snowflake, User>? targetUser;
 
   /// Reference to bot instance
   final Nyxx client;
@@ -27,30 +27,33 @@ class Invite {
     this.code = raw["code"] as String;
 
     if (raw["guild"] != null) {
-      this.guild = client.guilds[Snowflake(raw["guild"]["id"])];
+      this.guild = _GuildCacheable(client, Snowflake(raw["guild"]["id"]));
+    } else {
+      this.guild = null;
     }
 
-    // TODO: NNBD
     if (raw["channel"] != null) {
-      this.channel = client.channels[Snowflake(raw["channel"]["id"])];
-    }
-
-    if (raw["channel_id"] != null) {
-      this.channel = client.channels[Snowflake(raw["channel_id"])];
+      this.channel = _ChannelCacheable(client, Snowflake(raw["channel"]["id"]));
+    } else {
+      this.channel = null;
     }
 
     if (raw["inviter"] != null) {
-      this.inviter = client.users[Snowflake(raw["inviter"]["id"])];
+      this.inviter = User._new(client, raw["inviter"] as Map<String, dynamic>);
+    } else {
+      this.inviter = null;
     }
     
     if (raw["target_user"] != null) {
-      this.targetUser = client.users[Snowflake(raw["target_user"]["id"])];
+      this.targetUser = _UserCacheable(client, Snowflake(raw["target_user"]["id"]));
+    } else {
+      this.targetUser = null;
     }
   }
 
-  /// Deletes this Invite.
+  /// Deletes this [Invite].
   Future<void> delete({String? auditReason}) async =>
-    client._http._execute(BasicRequest._new("/invites/$code", method: "DELETE", auditLog: auditReason));
+    client._httpEndpoints._deleteInvite(this.code, auditReason: auditReason);
 }
 
 /// Invite object with additional metadata

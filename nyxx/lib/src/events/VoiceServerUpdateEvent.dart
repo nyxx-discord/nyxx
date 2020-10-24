@@ -12,16 +12,11 @@ class VoiceServerUpdateEvent {
   late final String endpoint;
 
   /// The guild this voice server update is for
-  Guild? guild;
-
-  /// Id of the guild this voice server update is for
-  late final Snowflake guildId;
+  late final Cacheable<Snowflake, GuildNew> guild;
 
   VoiceServerUpdateEvent._new(this.raw, Nyxx client) {
     this.token = raw["d"]["token"] as String;
     this.endpoint = raw["d"]["endpoint"] as String;
-
-    this.guildId = Snowflake(raw["d"]["guild_id"]);
-    this.guild = client.guilds[this.guildId];
+    this.guild = _GuildCacheable(client, Snowflake(raw["d"]["guild_id"]));
   }
 }

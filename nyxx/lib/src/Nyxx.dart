@@ -26,6 +26,7 @@ class Nyxx implements Disposable {
   late final _EventController _events;
 
   late final _HttpHandler _http;
+  late final HttpEndpoints _httpEndpoints;
 
   /// The current bot user.
   late ClientUser self;
@@ -34,7 +35,7 @@ class Nyxx implements Disposable {
   late ClientOAuth2Application app;
 
   /// All of the guilds the bot is in. Can be empty or can miss guilds on (READY_EVENT).
-  late final Cache<Snowflake, Guild> guilds;
+  late final Cache<Snowflake, GuildNew> guilds;
 
   /// All of the channels the bot can see.
   late final ChannelCache channels;
@@ -217,6 +218,7 @@ class Nyxx implements Disposable {
     this.users = _SnowflakeCache();
 
     this._http = _HttpHandler._new(this);
+    this._httpEndpoints = HttpEndpoints._new(this);
 
     this._events = _EventController(this);
     this.onSelfMention = this.onMessageReceived.where((event) => event.message.mentions.contains(this.self));
@@ -237,103 +239,57 @@ class Nyxx implements Disposable {
     final response = await _http._execute(BasicRequest._new("/guilds/$guildId/preview"));
 
     if (response is HttpResponseSuccess) {
-      return GuildPreview._new(response.jsonBody as Map<String, dynamic>);
+      return GuildPreview._new(this, response.jsonBody as Map<String, dynamic>);
     }
 
     return Future.error(response);
   }
 
   /// Returns guild with given [guildId]
-  Future<Guild> getGuild(Snowflake guildId, [bool useCache = true]) async {
-    if (this.guilds.hasKey(guildId) && useCache) {
-      return this.guilds[guildId]!;
-    }
-
-    final response = await _http._execute(BasicRequest._new("/guilds/$guildId"));
-
-    if (response is HttpResponseSuccess) {
-      return Guild._new(this, response.jsonBody as Map<String, dynamic>);
-    }
-
-    return Future.error(response);
-  }
+  Future<GuildNew> fetchGuild(Snowflake guildId) =>
+    this._httpEndpoints._fetchGuild(guildId);
 
   /// Returns channel with specified id.
-  /// If channel is in cache - will be taken from it otherwise API will be called.
-  ///
   /// ```
   /// var channel = await client.getChannel<TextChannel>(Snowflake("473853847115137024"));
   /// ```
-  Future<T> getChannel<T extends Channel>(Snowflake id, [bool useCache = true]) async {
-    if (this.channels.hasKey(id) && useCache) {
-      return this.channels[id] as T;
-    }
-
-    final response = await this._http._execute(BasicRequest._new("/channels/${id.toString()}"));
-
-    if (response is HttpResponseError) {
-      return Future.error(response);
-    }
-
-    final raw = (response as HttpResponseSuccess)._jsonBody as Map<String, dynamic>;
-    return Channel._deserialize(raw, this) as T;
-  }
+  Future<T> fetchChannel<T extends IChannel>(Snowflake channelId) =>
+    this._httpEndpoints._fetchChannel(channelId);
 
   /// Get user instance with specified id.
-  /// If [id] is present in cache it"ll be got from cache, otherwise API
-  /// will be called.
-  ///
   /// ```
   /// var user = client.getUser(Snowflake("302359032612651009"));
   /// ``
-  Future<User?> getUser(Snowflake id, [bool useCache = true]) async {
-    if (this.users.hasKey(id) && useCache) {
-      return this.users[id];
-    }
+  Future<User> fetchUser(Snowflake userId) =>
+    this._httpEndpoints._fetchUser(userId);
 
-    final response = await this._http._execute(BasicRequest._new("/users/${id.toString()}"));
-
-    if (response is HttpResponseSuccess) {
-      return User._new(response.jsonBody as Map<String, dynamic>, this);
-    }
-
-    return Future.error(response);
-  }
-
-  /// Creates new guild with provided builder.
-  /// Only for bots with less than 10 guilds otherwise it will return Future with error.
-  ///
-  /// ```
-  /// var guildBuilder = GuildBuilder()
-  ///                       ..name = "Example Guild"
-  ///                       ..roles = [RoleBuilder()..name = "Example Role]
-  /// var newGuild = await client.createGuild(guildBuilder);
-  /// ```
-  Future<Guild> createGuild(GuildBuilder builder) async {
-    if (this.guilds.count >= 10) {
-      return Future.error(ArgumentError("Guild cannot be created if bot is in 10 or more guilds"));
-    }
-
-    final response = await this._http._execute(BasicRequest._new("/guilds", method: "POST"));
-
-    if (response is HttpResponseSuccess) {
-      return Guild._new(this, response.jsonBody as Map<String, dynamic>);
-    }
-
-    return Future.error(response);
-  }
+  // /// Creates new guild with provided builder.
+  // /// Only for bots with less than 10 guilds otherwise it will return Future with error.
+  // ///
+  // /// ```
+  // /// var guildBuilder = GuildBuilder()
+  // ///                       ..name = "Example Guild"
+  // ///                       ..roles = [RoleBuilder()..name = "Example Role]
+  // /// var newGuild = await client.createGuild(guildBuilder);
+  // /// ```
+  // Future<Guild> createGuild(GuildBuilder builder) async {
+  //   if (this.guilds.count >= 10) {
+  //     return Future.error(ArgumentError("Guild cannot be created if bot is in 10 or more guilds"));
+  //   }
+  //
+  //   final response = await this._http._execute(BasicRequest._new("/guilds", method: "POST"));
+  //
+  //   if (response is HttpResponseSuccess) {
+  //     return Guild._new(this, response.jsonBody as Map<String, dynamic>);
+  //   }
+  //
+  //   return Future.error(response);
+  // }
 
   /// Gets a webhook by its id and/or token.
   /// If token is supplied authentication is not needed.
-  Future<Webhook> getWebhook(String id, {String token = ""}) async {
-    final response = await this._http._execute(BasicRequest._new("/webhooks/$id/$token"));
-
-    if (response is HttpResponseSuccess) {
-      return Webhook._new(response.jsonBody as Map<String, dynamic>, this);
-    }
-
-    return Future.error(response);
-  }
+  Future<Webhook> fetchWebhook(Snowflake id, {String token = ""}) =>
+      this._httpEndpoints._fetchWebhook(id, token: token);
 
   /// Gets an [Invite] object with given code.
   /// If the [code] is in cache - it will be taken from it, otherwise API will be called.
@@ -341,15 +297,8 @@ class Nyxx implements Disposable {
   /// ```
   /// var inv = client.getInvite("YMgffU8");
   /// ```
-  Future<Invite> getInvite(String code) async {
-    final response = await this._http._execute(BasicRequest._new("/invites/$code"));
-
-    if (response is HttpResponseSuccess) {
-      return Invite._new(response.jsonBody as Map<String, dynamic>, this);
-    }
-
-    return Future.error(response);
-  }
+  Future<Invite> getInvite(String code) =>
+    this._httpEndpoints._fetchInvite(code);
 
   /// Returns number of shards
   int get shards => this.shardManager._shards.length;

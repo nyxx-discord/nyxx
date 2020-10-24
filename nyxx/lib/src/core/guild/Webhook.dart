@@ -32,10 +32,10 @@ class Webhook extends SnowflakeEntity implements IMessageAuthor {
   late final String token;
 
   /// The webhook's channel, if this is accessed using a normal client and the client has that channel in it's cache.
-  late final GuildTextChannel? channel;
+  late final Cacheable<Snowflake, TextGuildChannel> channel;
 
   /// The webhook's guild, if this is accessed using a normal client and the client has that guild in it's cache.
-  late final Guild? guild;
+  late final Cacheable<Snowflake, GuildNew>? guild;
 
   /// The user, if this is accessed using a normal client.
   late final User? user;
@@ -58,9 +58,8 @@ class Webhook extends SnowflakeEntity implements IMessageAuthor {
   @override
   bool get bot => true;
 
-  // TODO: It should be here???
   @override
-  String get tag => name.toString();
+  String get tag => "";
 
   /// Reference to [Nyxx] object
   final Nyxx client;
@@ -71,16 +70,18 @@ class Webhook extends SnowflakeEntity implements IMessageAuthor {
     this.avatarHash = raw["avatar"] as String?;
     this.type = WebhookType.from(raw["type"] as int);
 
-    if (raw["channel_id"] != null) {
-      this.channel = client.channels[Snowflake(raw["channel_id"] as String)] as GuildTextChannel?;
-    }
+    this.channel = _ChannelCacheable(client, Snowflake(raw["channel_id"]));
 
     if (raw["guild_id"] != null) {
-      this.guild = client.guilds[Snowflake(raw["guild_id"] as String)];
+      this.guild = _GuildCacheable(client, Snowflake(raw["guild_id"] as String));
+    } else {
+      this.guild = null;
     }
 
     if (raw["user"] != null) {
-      this.user = client.users[Snowflake(raw["user"]["id"] as String)];
+      this.user = User._new(client, raw["user"] as Map<String, dynamic>);
+    } else {
+      this.user = null;
     }
   }
 
@@ -95,73 +96,31 @@ class Webhook extends SnowflakeEntity implements IMessageAuthor {
       bool? tts,
       AllowedMentions? allowedMentions,
       bool? wait,
-      String? avatarUrl}) async {
-    allowedMentions ??= client._options.allowedMentions;
-
-    final reqBody = {
-      if (content != null) "content": content.toString(),
-      if (allowedMentions != null) "allowed_mentions": allowedMentions._build(),
-      if(embeds != null) "embeds" : [
-        for(final e in embeds)
-          e._build()
-      ],
-      if (content != null && tts != null) "tts": tts,
-      if(avatarUrl != null) "avatar_url" : avatarUrl,
-    };
-
-    final queryParams = { if(wait != null) "wait" : wait };
-
-    _HttpResponse response;
-
-    if (files != null && files.isNotEmpty) {
-      response = await client._http
-          ._execute(MultipartRequest._new("/webhooks/${this.id.toString()}/${this.token}", files, method: "POST", fields: reqBody, queryParams: queryParams));
-    } else {
-      response = await client._http
-          ._execute(BasicRequest._new("/webhooks/${this.id.toString()}/${this.token}", body: reqBody, method: "POST", queryParams: queryParams));
-    }
-
-    if (response is HttpResponseSuccess) {
-      return Message._deserialize(response.jsonBody as Map<String, dynamic>, client);
-    }
-
-    return Future.error(response);
-  }
+      String? avatarUrl}) =>
+      client._httpEndpoints._executeWebhook(
+        this.id,
+        token: token,
+        content: content,
+        files: files,
+        embeds: embeds,
+        tts: tts,
+        allowedMentions: allowedMentions,
+        wait: wait,
+        avatarUrl: avatarUrl
+      );
 
   @override
-  String avatarURL({String format = "webp", int size = 128}) {
-    if (this.avatarHash != null) {
-      return "https://cdn.${Constants.cdnHost}/avatars/${this.id}/${this.avatarHash}.$format?size=$size";
-    }
-
-    return "https://cdn.${Constants.cdnHost}/embed/avatars/$defaultAvatarId.png?size=$size";
-  }
+  String avatarURL({String format = "webp", int size = 128}) =>
+      client._httpEndpoints._userAvatarURL(this.id, this.avatarHash, 0, format: format, size: size);
 
   /// Edits the webhook.
-  Future<Webhook> edit(
-      {String? name, ITextChannel? channel, File? avatar, String? encodedAvatar, String? auditReason}) async {
-    final body = <String, dynamic>{
-      if (name != null) "name": name,
-      if (channel != null) "channel_id": channel.id.toString()
-    };
-
-    final base64Encoded = avatar != null ? base64Encode(await avatar.readAsBytes()) : encodedAvatar;
-    body["avatar"] = "data:image/jpeg;base64,$base64Encoded";
-
-    final response = await client._http
-        ._execute(BasicRequest._new("/webhooks/$id/$token", method: "PATCH", auditLog: auditReason, body: body));
-
-    if (response is HttpResponseSuccess) {
-      this.name = response.jsonBody["name"] as String;
-      return this;
-    }
-
-    return Future.error(response);
-  }
+  Future<Webhook> edit({String? name, SnowflakeEntity? channel, File? avatar, String? encodedAvatar, String? auditReason}) =>
+    client._httpEndpoints._editWebhook(this.id, token: this.token, name: name,
+        channel: channel, avatar: avatar, encodedAvatar: encodedAvatar, auditReason: auditReason);
 
   /// Deletes the webhook.
   Future<void> delete({String? auditReason}) =>
-      client._http._execute(BasicRequest._new("/webhooks/$id/$token", method: "DELETE", auditLog: auditReason));
+      client._httpEndpoints._deleteWebhook(this.id, token: token, auditReason: auditReason);
 
   /// Returns a string representation of this object.
   @override

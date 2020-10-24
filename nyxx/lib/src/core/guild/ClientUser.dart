@@ -8,14 +8,14 @@ class ClientUser extends User {
   /// Weather or not the client user has MFA enabled.
   bool? mfa;
 
-  ClientUser._new(Map<String, dynamic> data, Nyxx client) : super._new(data, client) {
-    this.verified = data["verified"] as bool;
-    this.mfa = data["mfa_enabled"] as bool;
+  ClientUser._new(Nyxx client, Map<String, dynamic> raw) : super._new(client, raw) {
+    this.verified = raw["verified"] as bool;
+    this.mfa = raw["mfa_enabled"] as bool;
   }
 
-  /// Allows to get [CacheMember] objects for all guilds for bot user.
-  Map<Guild, IMember> getMembership() {
-    final membershipCollection = <Guild, IMember>{};
+  /// Allows to get [Member] objects for all guilds for bot user.
+  Map<GuildNew, Member> getMembership() {
+    final membershipCollection = <GuildNew, Member>{};
 
     for (final guild in client.guilds.values) {
       final member = guild.members[this.id];
@@ -29,24 +29,6 @@ class ClientUser extends User {
   }
 
   /// Edits current user. This changes user's username - not per guild nickname.
-  Future<User> edit({String? username, File? avatar, String? encodedAvatar}) async {
-    if (username == null && (avatar == null || encodedAvatar == null)) {
-      return Future.error(ArgumentError("Cannot edit user with null null arguments"));
-    }
-
-    final body = <String, dynamic>{
-      if (username != null) "username": username
-    };
-
-    final base64Encoded = avatar != null ? base64Encode(await avatar.readAsBytes()) : encodedAvatar;
-    body["avatar"] = "data:image/jpeg;base64,$base64Encoded";
-
-    final response = await client._http._execute(BasicRequest._new("/users/@me", method: "PATCH", body: body));
-
-    if (response is HttpResponseSuccess) {
-      return User._new(response.jsonBody as Map<String, dynamic>, client);
-    }
-
-    return Future.error(response);
-  }
+  Future<User> edit({String? username, File? avatar, String? encodedAvatar}) =>
+      client._httpEndpoints._editSelfUser(username: username, avatar: avatar, encodedAvatar: encodedAvatar);
 }

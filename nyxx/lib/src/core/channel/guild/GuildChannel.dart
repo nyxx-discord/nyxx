@@ -1,85 +1,42 @@
 part of nyxx;
 
-/// Represents channel which is part of guild.
-/// Can be represented by [CachelessGuildChannel] or [CacheGuildChannel]
-abstract class IGuildChannel extends Channel {
+abstract class GuildChannel extends IChannel {
   /// The channel"s name.
-  String get name;
-
-  /// Relative position of channel in context of channel list
-  int get position;
-
-  /// Id of [Guild] that the channel is in.
-  Snowflake get guildId;
-
-  /// Id of parent channel
-  Snowflake? get parentChannelId;
-
-  /// Indicates if channel is nsfw
-  bool get isNsfw;
-
-  /// Returns list of [CacheMember] objects who can see this channel
-  List<PermissionsOverrides> get permissionOverrides;
-
-  IGuildChannel._new(Map<String, dynamic> raw, int type, Nyxx client) : super._new(raw, type, client);
-
-  /// Fetches and returns all channel"s [Invite]s
-  ///
-  /// ```
-  /// var invites = await chan.getChannelInvites();
-  /// ```
-  Stream<InviteWithMeta> getChannelInvites();
-
-  /// Allows to set or edit permissions for channel. [id] can be either User or Role
-  /// Throws if [id] isn't [User] or [Role]
-  Future<void> editChannelPermissions(PermissionsBuilder perms, SnowflakeEntity id, {String? auditReason});
-
-  /// Allows to edit or set channel permission overrides.
-  Future<void> editChannelPermissionOverrides(PermissionOverrideBuilder permissionBuilder, {String? auditReason});
-
-  /// Deletes permission overwrite for given User or Role [id]
-  /// Throws if [id] isn't [User] or [Role]
-  Future<void> deleteChannelPermission(SnowflakeEntity id, {String? auditReason});
-
-  /// Creates new [Invite] for [Channel] and returns it"s instance
-  ///
-  /// ```
-  /// var invite = await channel.createInvite(maxUses: 2137);
-  /// ```
-  Future<Invite> createInvite({int? maxAge, int? maxUses, bool? temporary, bool? unique, String? auditReason});
-}
-
-/// Guild channel which does not have access to cache.
-abstract class CachelessGuildChannel extends IGuildChannel {
-  /// The channel"s name.
-  @override
   late final String name;
 
-  /// The channel's position in the channel list.
-  @override
+  /// Relative position of channel in context of channel list
   late final int position;
 
   /// Id of [Guild] that the channel is in.
-  @override
-  final Snowflake guildId;
+  late final Cacheable<Snowflake, GuildNew> guild;
 
   /// Id of parent channel
-  @override
-  late final Snowflake? parentChannelId;
+  late final Cacheable<Snowflake, GuildChannel>? parentChannel;
 
   /// Indicates if channel is nsfw
-  @override
   late final bool isNsfw;
 
   /// Returns list of [CacheMember] objects who can see this channel
-  @override
   late final List<PermissionsOverrides> permissionOverrides;
 
-  CachelessGuildChannel._new(Map<String, dynamic> raw, int type, this.guildId, Nyxx client) : super._new(raw, type, client) {
+  GuildChannel._new(Nyxx client, Map<String, dynamic> raw, [Snowflake? guildId]) : super._new(client, raw) {
     this.name = raw["name"] as String;
     this.position = raw["position"] as int;
 
-    this.parentChannelId = raw["parent_id"] != null ? Snowflake(raw["parent_id"]) : null;
+    if (raw["guild_id"] != null) {
+      this.guild = _GuildCacheable(client, Snowflake(raw["guild_id"]));
+    } else if (guildId != null) {
+      _GuildCacheable(client, guildId);
+    } else {
+      throw Exception("Cannot initialize instance of GuildChannelNex due missing `guild_id` in json payload and/or missing optional guildId parameter. Report this issue to developer");
+    }
+
+    if (raw["parent_id"] != null) {
+      this.parentChannel = _ChannelCacheable(client, Snowflake(raw["parent_id"]));
+    } else {
+      this.parentChannel = null;
+    }
+
     this.isNsfw = raw["nsfw"] as bool? ?? false;
 
     this.permissionOverrides = [
@@ -89,122 +46,18 @@ abstract class CachelessGuildChannel extends IGuildChannel {
     ];
   }
 
-  /// Fetches and returns all channel"s [Invite]s
-  ///
-  /// ```
-  /// var invites = await chan.getChannelInvites();
-  /// ```
-  @override
-  Stream<InviteWithMeta> getChannelInvites() async* {
-    final response = await client._http._execute(BasicRequest._new("/channels/$id/invites"));
-
-    if (response is HttpResponseError) {
-      yield* Stream.error(response);
-    }
-
-    final bodyValues = (response as HttpResponseSuccess)._jsonBody.values.first;
-
-    for (final val in bodyValues as Iterable<Map<String, dynamic>>) {
-      yield InviteWithMeta._new(val, client);
-    }
-  }
-
-  /// Allows to set permissions for channel. [entity] can be either [User] or [Role]
-  /// Throws if [entity] isn't [User] or [Role]
-  @override
-  Future<void> editChannelPermissions(PermissionsBuilder perms, SnowflakeEntity entity, {String? auditReason}) async {
-    if (entity is! IRole && entity is! User) {
-      return Future.error(ArgumentError("The `id` property must be either Role or User"));
-    }
-
-    final permSet = perms._build();
-    
-    await client._http._execute(BasicRequest._new("/channels/${this.id}/permissions/${entity.id.toString()}",
-        method: "PUT", body: {
-          "type" : entity is IRole ? "role" : "member",
-          "allow" : permSet.allow,
-          "deny" : permSet.deny
-        }, auditLog: auditReason));
-  }
-
-  @override
-  /// Allows to edit or set channel permission overrides.
-  Future<void> editChannelPermissionOverrides(PermissionOverrideBuilder permissionBuilder, {String? auditReason}) async {
-    final permSet = permissionBuilder._build();
-
-    await client._http._execute(BasicRequest._new("/channels/${this.id}/permissions/${permissionBuilder.id.toString()}",
-        method: "PUT", body: {
-          "type" : permissionBuilder.type,
-          "allow" : permSet.allow,
-          "deny" : permSet.deny
-        }, auditLog: auditReason));
-  }
-
-  /// Deletes permission overwrite for given User or Role [id]
-  /// Throws if [id] isn't [User] or [Role]
-  @override
-  Future<void> deleteChannelPermission(SnowflakeEntity id, {String? auditReason}) async {
-    if (id is! Role && id is! User) {
-      throw ArgumentError("`id` property must be either Role or User");
-    }
-
-    await client._http
-        ._execute(BasicRequest._new("/channels/${this.id}/permissions/$id", method: "PUT", auditLog: auditReason));
-  }
-
-  /// Creates new [Invite] for [Channel] and returns it's instance
-  ///
-  /// ```
-  /// final invite = await channel.createInvite(maxUses: 2137);
-  /// ```
-  @override
-  Future<Invite> createInvite({int? maxAge, int? maxUses, bool? temporary, bool? unique, String? auditReason}) async {
-    final body = {
-      if (maxAge != null) "max_age": maxAge,
-      if (maxUses != null) "max_uses": maxUses,
-      if (temporary != null) "temporary": temporary,
-      if (unique != null) "unique": unique,
-    };
-
-    final response = await client._http
-        ._execute(BasicRequest._new("/channels/$id/invites", method: "POST", body: body, auditLog: auditReason));
-
-    if (response is HttpResponseError) {
-      return Future.error(response);
-    }
-
-    return InviteWithMeta._new((response as HttpResponseSuccess)._jsonBody as Map<String, dynamic>, client);
-  }
-}
-
-/// Guild channel which does have access to cache.
-abstract class CacheGuildChannel extends CachelessGuildChannel {
-  /// The guild that the channel is in.
-  late Guild guild;
-
-  /// Parent channel id
-  CategoryChannel? parentChannel;
-
-  /// Returns list of [CacheMember] objects who can see this channel
-  Iterable<IMember> get users => this.guild.members.values.where((member) => member is CacheMember && this.effectivePermissions(member).hasPermission(PermissionsConstants.viewChannel));
-
-  CacheGuildChannel._new(Map<String, dynamic> raw, int type, this.guild, Nyxx client) : super._new(raw, type, guild.id, client) {
-    if(this.parentChannelId != null) {
-      this.parentChannel = guild.channels[this.parentChannelId!] as CategoryChannel?;
-    }
-  }
-
   /// Returns effective permissions for [member] to this channel including channel overrides.
-  Permissions effectivePermissions(CacheMember member) {
+  Future<Permissions> effectivePermissions(Member member) async {
     if (member.guild != this.guild) {
       return Permissions.empty();
     }
 
-    if (member.guild.owner == member) {
+    final owner = await member.guild.getOrDownload();
+    if (owner == member) {
       return Permissions.fromInt(PermissionsConstants.allPermissions);
     }
 
-    var rawMemberPerms = member.effectivePermissions.raw;
+    var rawMemberPerms = (await member.effectivePermissions).raw;
 
     if (PermissionsUtils.isApplied(rawMemberPerms, PermissionsConstants.administrator)) {
       return Permissions.fromInt(PermissionsConstants.allPermissions);
@@ -219,16 +72,18 @@ abstract class CacheGuildChannel extends CachelessGuildChannel {
   }
 
   /// Returns effective permissions for [role] to this channel including channel overrides.
-  Permissions effectivePermissionForRole(Role role) {
+  Future<Permissions> effectivePermissionForRole(RoleNew role) async {
     if (role.guild != this.guild) {
       return Permissions.empty();
     }
 
-    var permissions = role.permissions.raw | (guild.everyoneRole as Role).permissions.raw;
+    final guildInstance = await this.guild.getOrDownload();
+
+    var permissions = role.permissions.raw | (guildInstance.everyoneRole as RoleNew).permissions.raw;
 
     // TODO: NNBD: try-catch in where
     try {
-      final overEveryone = this.permissionOverrides.firstWhere((f) => f.id == guild.everyoneRole.id);
+      final overEveryone = this.permissionOverrides.firstWhere((f) => f.id == guildInstance.everyoneRole.id);
 
       permissions &= ~overEveryone.deny;
       permissions |= overEveryone.allow;
@@ -245,4 +100,34 @@ abstract class CacheGuildChannel extends CachelessGuildChannel {
 
     return Permissions.fromInt(permissions);
   }
+
+  /// Fetches and returns all channel"s [Invite]s
+  ///
+  /// ```
+  /// var invites = await chan.getChannelInvites();
+  /// ```
+  Stream<InviteWithMeta> fetchChannelInvites() =>
+      client._httpEndpoints._fetchChannelInvites(this.id);
+
+  /// Allows to set or edit permissions for channel. [id] can be either User or Role
+  /// Throws if [id] isn't [User] or [Role]
+  Future<void> editChannelPermissions(PermissionsBuilder perms, SnowflakeEntity entity, {String? auditReason}) =>
+      client._httpEndpoints._editChannelPermissions(this.id, perms, entity, auditReason: auditReason);
+
+  /// Allows to edit or set channel permission overrides.
+  Future<void> editChannelPermissionOverrides(PermissionOverrideBuilder permissionBuilder, {String? auditReason}) =>
+      client._httpEndpoints._editChannelPermissionOverrides(this.id, permissionBuilder, auditReason: auditReason);
+
+  /// Deletes permission overwrite for given User or Role [entity]
+  /// Throws if [entity] isn't [User] or [Role]
+  Future<void> deleteChannelPermission(SnowflakeEntity entity, {String? auditReason}) =>
+      client._httpEndpoints._deleteChannelPermission(this.id, entity, auditReason: auditReason);
+
+  /// Creates new [Invite] for [Channel] and returns it"s instance
+  ///
+  /// ```
+  /// var invite = await channel.createInvite(maxUses: 2137);
+  /// ```
+  Future<Invite> createInvite({int? maxAge, int? maxUses, bool? temporary, bool? unique, String? auditReason}) =>
+      client._httpEndpoints._createInvite(this.id, maxAge: maxAge, maxUses: maxUses, temporary: temporary, unique: unique, auditReason: auditReason);
 }
