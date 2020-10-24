@@ -11,7 +11,7 @@ class AuditLogEntry extends SnowflakeEntity {
   late final List<AuditLogChange> changes;
 
   /// The user who made the changes
-  User? user;
+  late final Cacheable<Snowflake, User> user;
 
   /// Type of action that occurred
   late final AuditLogEntryType type;
@@ -30,7 +30,7 @@ class AuditLogEntry extends SnowflakeEntity {
         for (var o in raw["changes"]) AuditLogChange._new(o as Map<String, dynamic>)
     ];
 
-    this.user = client.users[Snowflake(raw["user_id"])];
+    this.user = _UserCacheable(client, Snowflake(raw["user_id"]));
     this.type = AuditLogEntryType._create(raw["action_type"] as int);
 
     if (raw["options"] != null) {

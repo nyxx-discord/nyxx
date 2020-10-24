@@ -9,7 +9,7 @@ class Reaction {
   late final bool me;
 
   /// Emoji information
-  late final Emoji emoji;
+  late final IEmoji emoji;
 
   Reaction._new(Map<String, dynamic> raw) {
     this.count = raw["count"] as int;
@@ -17,7 +17,7 @@ class Reaction {
 
     final rawEmoji = raw["emoji"] as Map<String, dynamic>;
     if (rawEmoji["id"] == null) {
-      this.emoji = UnicodeEmoji(rawEmoji["name"] as String);
+      this.emoji = UnicodeEmojiNew(rawEmoji["name"] as String);
     } else {
 
       //TODO: EMOJIS STUUF

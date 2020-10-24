@@ -1,7 +1,7 @@
 part of nyxx;
 
 /// Cache for Channels
-class ChannelCache extends Cache<Snowflake, Channel> {
+class ChannelCache extends Cache<Snowflake, IChannel> {
   ChannelCache._new() {
     this._cache = {};
   }
@@ -11,10 +11,6 @@ class ChannelCache extends Cache<Snowflake, Channel> {
 
   @override
   Future<void> dispose() async {
-    _cache.forEach((_, v) {
-      if (v is MessageChannel) v.dispose();
-    });
-
     _cache.clear();
   }
 }

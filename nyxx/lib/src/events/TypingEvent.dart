@@ -3,29 +3,35 @@ part of nyxx;
 /// Sent when a user starts typing.
 class TypingEvent {
   /// The channel that the user is typing in.
-  ITextChannel? channel;
-
-  /// Id of the channel that the user is typing in.
-  late final Snowflake channelId;
+  late final Cacheable<Snowflake, TextChannel> channel;
 
   /// The user that is typing.
-  User? user;
+  late final Cacheable<Snowflake, User> user;
 
-  /// ID of user that is typing
-  late final Snowflake userId;
+  /// The member who started typing if this happened in a guild
+  late final Member? member;
 
   /// Timestamp when the user started typing
   late final DateTime timestamp;
 
-  TypingEvent._new(Map<String, dynamic> json, Nyxx client) {
-    this.channelId = Snowflake(json["d"]["channel_id"]);
-    this.channel = client.channels[channelId] as ITextChannel?;
+  /// Refernce to guild where typing occured
+  late final Cacheable<Snowflake, GuildNew>? guild;
 
-    this.userId = Snowflake(json["d"]["user_id"]);
-    this.user = client.users[this.userId];
+  TypingEvent._new(Map<String, dynamic> raw, Nyxx client) {
+    this.channel = _ChannelCacheable(client, Snowflake(raw["d"]["channel_id"]));
+    this.user = _UserCacheable(client, Snowflake(raw["d"]["user_id"]));
+    this.timestamp = DateTime.fromMillisecondsSinceEpoch(raw["d"]["timestamp"] as int);
 
-    this.timestamp = DateTime.fromMillisecondsSinceEpoch(json["d"]["timestamp"] as int);
-
-    client._events.onTyping.add(this);
+    if (raw["d"]["guild_id"] != null) {
+      this.guild = _GuildCacheable(client, Snowflake(raw["d"]["guild_id"]));
+    } else {
+      this.guild = null;
+    }
+    
+    if (raw["d"]["member"] != null) {
+      this.member = Member._new(client, raw["d"]["member"] as Map<String, dynamic>, this.guild!.id);
+    } else {
+      this.member = null;
+    }
   }
 }

@@ -17,3 +17,9 @@ extension StringExtensions on String {
   /// Converts String to [SnowflakeEntity]
   SnowflakeEntity toSnowflakeEntity() => SnowflakeEntity(this.toSnowflake());
 }
+
+/// Extensions on Iterable of Snowflakes entities
+extension SnowflakeEntityListExtensions<T> on Iterable<SnowflakeEntity> {
+  /// Returns Iterable of [SnowflakeEntity] as Iterable of IDs
+  Iterable<Snowflake> asSnowflakes() => this.map((e) => e.id);
+}

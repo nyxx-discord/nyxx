@@ -261,7 +261,7 @@ class Shard implements Disposable {
         switch (dispatchType) {
           case "READY":
             this._sessionId = rawPayload["d"]["session_id"] as String;
-            manager._ws._client.self = ClientUser._new(rawPayload["d"]["user"] as Map<String, dynamic>, manager._ws._client);
+            manager._ws._client.self = ClientUser._new(manager._ws._client, rawPayload["d"]["user"] as Map<String, dynamic>);
 
             this._connected = true;
             manager._logger.info("Shard ${this.id} ready!");

@@ -41,14 +41,14 @@ void main() {
   });
 
   bot.onReady.listen((e) async {
-    final channel = bot.channels[Snowflake(422285619952222208)] as GuildTextChannel?;
+    final channel = bot.channels[Snowflake(422285619952222208)] as TextGuildChannel?;
     test(channel != null, "Channel cannot be null");
     if (env["TRAVIS_BUILD_NUMBER"] != null) {
-      await channel!.send(
+      await channel!.sendMessage(
           content:
               "Testing new Travis CI build `#${env['TRAVIS_BUILD_NUMBER']}` from commit `${env['TRAVIS_COMMIT']}` on branch `${env['TRAVIS_BRANCH']}` with Dart version: `${env['TRAVIS_DART_VERSION']}`");
     } else {
-      await channel!.send(content: "Testing new local build");
+      await channel!.sendMessage(content: "Testing new local build");
     }
 
     print("TESTING CLIENT INTERNALS");
@@ -69,29 +69,30 @@ void main() {
     //test(bot.inviteLink != null, "Bot's invite link shouldn't be null");
 
     print("TESTING BASIC FUNCTIONALITY!");
-    final m = await channel.send(content: "Message test.");
+    final m = await channel.sendMessage(content: "Message test.");
     await m.edit(content: "Edit test.");
 
-    await m.createReaction(UnicodeEmoji("😂"));
-    await m.deleteReaction(UnicodeEmoji("😂"));
+    await m.createReaction(UnicodeEmojiNew("😂"));
+    await m.deleteSelfReaction(UnicodeEmojiNew("😂"));
 
     await m.delete();
 
     print("TESTING SENDING FILES");
-    await channel.send(
+
+    await channel.sendMessage(
         content: "PLIK SIEMA",
-        files: [AttachmentBuilder.path("test/kitty.webp", spoiler: true)]).then((message) async => message.delete());
+        files: [AttachmentBuilder.path("${Directory.current.path}/kitty.webp", spoiler: true)]).then((message) async => message.delete());
 
     print("TESTING ALLOWED MENTIONS");
-    await channel.send(content: "@everyone HEJ", allowedMentions: AllowedMentions());
+    await channel.sendMessage(content: "@everyone HEJ", allowedMentions: AllowedMentions());
 
     print("TESTING EMBEDS");
-    final e = await channel.send(content: "Testing embed!", embed: createTestEmbed());
+    final e = await channel.sendMessage(content: "Testing embed!", embed: createTestEmbed());
     await e.delete();
   });
 
   bot.onMessageReceived.listen((e) async {
-    if (e.message.channelId != Snowflake("422285619952222208") && e.message.author.id != bot.self.id) {
+    if (e.message.channel.id != Snowflake("422285619952222208") && e.message.author.id != bot.self.id) {
       return;
     }
 
@@ -122,8 +123,9 @@ void main() {
           final field = embed.fields.first;
 
           if (field.name == "Test field" && field.content == "Test value" && !field.inline!) {
-            await e.message.channel.send(content: "Tests completed successfully!");
+            await (await e.message.channel.getOrDownload()).sendMessage(content: "Tests completed successfully!");
             print("Nyxx tests completed successfully!");
+            print("Final memory usage: ${(ProcessInfo.currentRss / 1024 / 1024).toStringAsFixed(2)} MB");
             exit(0);
           }
         }

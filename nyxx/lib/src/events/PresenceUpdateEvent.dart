@@ -3,38 +3,30 @@ part of nyxx;
 /// Sent when a member's presence updates.
 class PresenceUpdateEvent {
   /// User object
-  User? user;
+  late final Cacheable<Snowflake, User> user;
 
-  /// User id
-  late final Snowflake userId;
-
-  /// The new member.
-  Activity? presence;
+  /// Users current activities
+  late final Iterable<Activity> presences;
 
   /// Status of client
   late final ClientStatus clientStatus;
 
-  PresenceUpdateEvent._new(Map<String, dynamic> json, Nyxx client) {
-    if (json["d"]["activity"] != null) {
-      this.presence = Activity._new(json["d"]["activity"] as Map<String, dynamic>);
-    }
-    this.clientStatus = ClientStatus._deserialize(json["d"]["client_status"] as Map<String, dynamic>);
+  PresenceUpdateEvent._new(Map<String, dynamic> raw, Nyxx client) {
+    this.presences = [
+      for (final rawActivity in raw["d"]["activities"])
+        Activity._new(rawActivity as Map<String, dynamic>)
+    ];
+    this.clientStatus = ClientStatus._deserialize(raw["d"]["client_status"] as Map<String, dynamic>);
+    this.user = _UserCacheable(client, Snowflake(raw["d"]["user"]["id"]));
 
-    this.userId = Snowflake(json["d"]["user"]["id"]);
-    this.user = client.users[this.userId];
-
-    if (user == null && (json["d"]["user"] as Map<String, dynamic>).keys.length > 1) {
-      this.user = User._new(json["d"]["user"] as Map<String, dynamic>, client);
-    }
-
-    if (this.user != null) {
-      if (this.clientStatus != this.user!.status) {
-        this.user!.status = this.clientStatus;
+    final user = this.user.getFromCache();
+    if (user != null) {
+      if (this.clientStatus != user.status) {
+        user.status = this.clientStatus;
       }
 
-      if (this.presence != null) {
-        this.user!.presence = this.presence;
-      }
+      // TODO: Decide what to do with multiplace presences
+      // user.presence = this.presences.first;
     }
   }
 }

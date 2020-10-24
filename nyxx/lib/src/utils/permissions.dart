@@ -3,19 +3,23 @@ part of nyxx;
 /// Util function for manipulating permissions
 class PermissionsUtils {
   /// Allows to check if [issueMember] or [issueRole] can interact with [targetMember] or [targetRole].
-  static bool canInteract({CacheMember? issueMember, Role? issueRole, CacheMember? targetMember, Role? targetRole}) {
-    bool canInter(Role role1, Role role2) => role1.position > role2.position;
+  static bool canInteract({Member? issueMember, RoleNew? issueRole, Member? targetMember, RoleNew? targetRole}) {
+    bool canInter(RoleNew role1, RoleNew role2) => role1.position > role2.position;
 
     if (issueMember != null && targetMember != null) {
-      if (issueMember.guild != targetMember.guild) return false;
+      if (issueMember.guild != targetMember.guild) {
+        return false;
+      }
 
-      return canInter(issueMember.highestRole as Role, targetMember.highestRole as Role);
+      return canInter(issueMember.highestRole, targetMember.highestRole);
     }
 
     if (issueMember != null && targetRole != null) {
-      if (issueMember.guild != targetRole.guild) return false;
+      if (issueMember.guild != targetRole.guild) {
+        return false;
+      }
 
-      return canInter(issueMember.highestRole as Role, targetRole);
+      return canInter(issueMember.highestRole, targetRole);
     }
 
     if (issueRole != null && targetRole != null) {
@@ -28,12 +32,12 @@ class PermissionsUtils {
   }
 
   /// Returns List of [channel] permissions overrides for given [member].
-  static List<int> getOverrides(CacheMember member, CacheGuildChannel channel) {
+  static List<int> getOverrides(Member member, GuildChannel channel) {
     var allowRaw = 0;
     var denyRaw = 0;
 
     try {
-      final publicOverride = channel.permissionOverrides.firstWhere((ov) => ov.id == member.guild.everyoneRole.id);
+      final publicOverride = channel.permissionOverrides.firstWhere((ov) => ov.id == member.guild.getFromCache()?.everyoneRole.id);
       allowRaw = publicOverride.allow;
       denyRaw = publicOverride.deny;
       // ignore: avoid_catches_without_on_clauses, empty_catches

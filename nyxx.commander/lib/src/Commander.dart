@@ -99,9 +99,9 @@ class Commander with ICommandRegistrable {
 
     // construct commandcontext
     final context = CommandContext._new(
-        event.message.channel,
+        event.message.channel.getFromCache()!,
         event.message.author,
-        event.message is GuildMessage ? (event.message as GuildMessage).guild : null,
+        event.message is GuildMessage ? (event.message as GuildMessage).guild.getFromCache()! : null,
         event.message,
         "$prefix$fullCommandName"
     );

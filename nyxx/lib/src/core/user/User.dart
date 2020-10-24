@@ -1,9 +1,8 @@
 part of nyxx;
 
 /// Represents a single user of Discord, either a human or a bot, outside of any specific guild's context.
-class User extends SnowflakeEntity with ISend, Mentionable, IMessageAuthor {
-  /// Reference to [Nyxx] instance
-  @override
+class User extends SnowflakeEntity with Mentionable, IMessageAuthor implements ISend {
+  /// Reference to client
   final Nyxx client;
 
   /// The user's username.
@@ -48,7 +47,7 @@ class User extends SnowflakeEntity with ISend, Mentionable, IMessageAuthor {
   /// Premium types denote the level of premium a user has.
   NitroType? nitroType;
 
-  User._new(Map<String, dynamic> raw, this.client) : super(Snowflake(raw["id"] as String)) {
+  User._new(this.client, Map<String, dynamic> raw) : super(Snowflake(raw["id"])) {
     this.username = raw["username"] as String;
     this.discriminator = int.parse(raw["discriminator"] as String);
     this.avatar = raw["avatar"] as String?;
@@ -64,55 +63,25 @@ class User extends SnowflakeEntity with ISend, Mentionable, IMessageAuthor {
     }
   }
 
+  /// Gets the [DMChannel] for the user.
+  Future<DMChannel> get dmChannel => Future.value(null);
+
   /// The user's avatar, represented as URL.
   /// In case if user does not have avatar, default discord avatar will be returned with specified size and png format.
   @override
-  String avatarURL({String format = "webp", int size = 128}) {
-    if (this.avatar != null) {
-      return "https://cdn.${Constants.cdnHost}/avatars/${this.id}/${this.avatar}.$format?size=$size";
-    }
-
-    return "https://cdn.${Constants.cdnHost}/embed/avatars/${discriminator % 5}.png?size=$size";
-  }
-
-  /// Gets the [DMChannel] for the user.
-  Future<DMChannel> get dmChannel async {
-    final dChannel = client.channels.findOne((Channel c) => c is DMChannel && c.recipient.id == this.id) as DMChannel?;
-
-    if(dChannel != null) {
-      return dChannel;
-    }
-
-    final response = await this
-        .client
-        ._http
-        ._execute(BasicRequest._new("/users/@me/channels", method: "POST", body: {"recipient_id": this.id.toString()}));
-
-    if (response is HttpResponseSuccess) {
-      final channel = DMChannel._new(response.jsonBody as Map<String, dynamic>, client);
-      this.client.channels.add(channel.id, channel);
-      return channel;
-    }
-
-    return Future.error(response);
-  }
-
-  @override
+  String avatarURL({String format = "webp", int size = 128}) =>
+      client._httpEndpoints._userAvatarURL(this.id, this.avatar, this.discriminator, format: format, size: size);
 
   /// Sends a message to user.
-  Future<Message> send(
+  Future<Message> sendMessage(
       {dynamic content,
-      List<AttachmentBuilder>? files,
-      EmbedBuilder? embed,
-      bool? tts,
-      AllowedMentions? allowedMentions,
-      MessageBuilder? builder}) async {
+        List<AttachmentBuilder>? files,
+        EmbedBuilder? embed,
+        bool? tts,
+        AllowedMentions? allowedMentions,
+        MessageBuilder? builder}) async {
     final channel = await this.dmChannel;
-    return channel.send(
+    return channel.sendMessage(
         content: content, files: files, embed: embed, tts: tts, allowedMentions: allowedMentions, builder: builder);
   }
-
-  /// Returns a mention of user
-  @override
-  String toString() => this.mention;
 }
