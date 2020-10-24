@@ -35,7 +35,7 @@ class Webhook extends SnowflakeEntity implements IMessageAuthor {
   late final Cacheable<Snowflake, TextGuildChannel> channel;
 
   /// The webhook's guild, if this is accessed using a normal client and the client has that guild in it's cache.
-  late final Cacheable<Snowflake, GuildNew>? guild;
+  late final Cacheable<Snowflake, Guild>? guild;
 
   /// The user, if this is accessed using a normal client.
   late final User? user;
@@ -97,7 +97,7 @@ class Webhook extends SnowflakeEntity implements IMessageAuthor {
       AllowedMentions? allowedMentions,
       bool? wait,
       String? avatarUrl}) =>
-      client._httpEndpoints._executeWebhook(
+      client._httpEndpoints.executeWebhook(
         this.id,
         token: token,
         content: content,
@@ -111,16 +111,16 @@ class Webhook extends SnowflakeEntity implements IMessageAuthor {
 
   @override
   String avatarURL({String format = "webp", int size = 128}) =>
-      client._httpEndpoints._userAvatarURL(this.id, this.avatarHash, 0, format: format, size: size);
+      client._httpEndpoints.userAvatarURL(this.id, this.avatarHash, 0, format: format, size: size);
 
   /// Edits the webhook.
   Future<Webhook> edit({String? name, SnowflakeEntity? channel, File? avatar, String? encodedAvatar, String? auditReason}) =>
-    client._httpEndpoints._editWebhook(this.id, token: this.token, name: name,
+    client._httpEndpoints.editWebhook(this.id, token: this.token, name: name,
         channel: channel, avatar: avatar, encodedAvatar: encodedAvatar, auditReason: auditReason);
 
   /// Deletes the webhook.
   Future<void> delete({String? auditReason}) =>
-      client._httpEndpoints._deleteWebhook(this.id, token: token, auditReason: auditReason);
+      client._httpEndpoints.deleteWebhook(this.id, token: token, auditReason: auditReason);
 
   /// Returns a string representation of this object.
   @override

@@ -5,7 +5,7 @@ class RoleNew extends SnowflakeEntity implements Mentionable {
   final Nyxx client;
 
   /// Cachealble or guild attached to this role instance
-  late final Cacheable<Snowflake, GuildNew> guild;
+  late final Cacheable<Snowflake, Guild> guild;
 
   /// The role's name.
   late final String name;
@@ -54,11 +54,11 @@ class RoleNew extends SnowflakeEntity implements Mentionable {
 
   /// Edits the role.
   Future<RoleNew> edit(RoleBuilder role, {String? auditReason}) async =>
-      client._httpEndpoints._editRole(this.guild.id, this.id, role, auditReason: auditReason);
+      client._httpEndpoints.editRole(this.guild.id, this.id, role, auditReason: auditReason);
 
   /// Deletes the role.
   Future<void> delete() async =>
-      client._httpEndpoints._deleteRole(guild.id, this.id);
+      client._httpEndpoints.deleteRole(guild.id, this.id);
 }
 
 /// Additional [Role] role tags which hold optional data about role

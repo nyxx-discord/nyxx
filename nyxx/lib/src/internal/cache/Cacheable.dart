@@ -34,7 +34,7 @@ abstract class Cacheable<T extends Snowflake, S extends SnowflakeEntity> {
 }
 
 class _RoleCacheable extends Cacheable<Snowflake, RoleNew> {
-  final Cacheable<Snowflake, GuildNew> guild;
+  final Cacheable<Snowflake, Guild> guild;
 
   _RoleCacheable(Nyxx client, Snowflake id, this.guild): super._new(client, id);
 
@@ -53,7 +53,7 @@ class _RoleCacheable extends Cacheable<Snowflake, RoleNew> {
   }
 
   Future<RoleNew> _fetchGuildRole() async {
-    final roles = await _client._httpEndpoints._fetchGuildRoles(this.id).toList();
+    final roles = await _client._httpEndpoints.fetchGuildRoles(this.id).toList();
 
     try {
       return roles.firstWhere((element) => element.id == this.id);
@@ -70,37 +70,37 @@ class _ChannelCacheable<T extends IChannel> extends Cacheable<Snowflake, T> {
   T? getFromCache() => this._client.channels[this.id] as T;
 
   @override
-  Future<T> download() => _client._httpEndpoints._fetchChannel<T>(this.id);
+  Future<T> download() => _client._httpEndpoints.fetchChannel<T>(this.id);
 }
 
-class _GuildCacheable extends Cacheable<Snowflake, GuildNew> {
+class _GuildCacheable extends Cacheable<Snowflake, Guild> {
   _GuildCacheable(Nyxx client, Snowflake id): super._new(client, id);
 
   @override
-  GuildNew? getFromCache() => this._client.guilds[this.id];
+  Guild? getFromCache() => this._client.guilds[this.id];
 
   @override
-  Future<GuildNew> download() => _client._httpEndpoints._fetchGuild(this.id);
+  Future<Guild> download() => _client._httpEndpoints.fetchGuild(this.id);
 }
 
 class _UserCacheable extends Cacheable<Snowflake, User> {
   _UserCacheable(Nyxx client, Snowflake id): super._new(client, id);
 
   @override
-  Future<User> download() => _client._httpEndpoints._fetchUser(this.id);
+  Future<User> download() => _client._httpEndpoints.fetchUser(this.id);
 
   @override
   User? getFromCache() => this._client.users[this.id];
 }
 
 class _MemberCacheable extends Cacheable<Snowflake, Member> {
-  final Cacheable<Snowflake, GuildNew> guild;
+  final Cacheable<Snowflake, Guild> guild;
 
   _MemberCacheable(Nyxx client, Snowflake id, this.guild): super._new(client, id);
 
   @override
   Future<Member> download() =>
-      this._client._httpEndpoints._fetchGuildMember(guild.id, id);
+      this._client._httpEndpoints.fetchGuildMember(guild.id, id);
 
   @override
   Member? getFromCache() {

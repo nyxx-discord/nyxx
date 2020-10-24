@@ -34,7 +34,7 @@ class DMChannel extends IChannel implements TextChannel {
 
   @override
   Future<void> startTyping() async =>
-      client._httpEndpoints._triggerTyping(this.id);
+      client._httpEndpoints.triggerTyping(this.id);
 
   @override
   void startTypingLoop() {
@@ -47,21 +47,21 @@ class DMChannel extends IChannel implements TextChannel {
 
   @override
   Future<void> bulkRemoveMessages(Iterable<SnowflakeEntity> messages) =>
-      client._httpEndpoints._bulkRemoveMessages(this.id, messages);
+      client._httpEndpoints.bulkRemoveMessages(this.id, messages);
 
   @override
   Stream<Message> downloadMessages({int limit = 50, Snowflake? after, Snowflake? around, Snowflake? before}) =>
-      client._httpEndpoints._downloadMessages(this.id, limit: limit, after: after, around: around, before: before);
+      client._httpEndpoints.downloadMessages(this.id, limit: limit, after: after, around: around, before: before);
 
   @override
   Future<Message?> fetchMessage(Snowflake messageId) =>
-      client._httpEndpoints._fetchMessage(this.id, messageId);
+      client._httpEndpoints.fetchMessage(this.id, messageId);
 
   @override
   Future<Message?> getMessage(Snowflake id) => Future.value(this.messageCache[id]);
 
   @override
   Future<Message> sendMessage({dynamic content, EmbedBuilder? embed, List<AttachmentBuilder>? files, bool? tts, AllowedMentions? allowedMentions, MessageBuilder? builder}) =>
-      client._httpEndpoints._sendMessage(this.id, content: content, embed: embed, files: files, tts: tts, allowedMentions: allowedMentions, builder: builder);
+      client._httpEndpoints.sendMessage(this.id, content: content, embed: embed, files: files, tts: tts, allowedMentions: allowedMentions, builder: builder);
 
 }

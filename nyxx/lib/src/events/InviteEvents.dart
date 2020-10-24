@@ -16,7 +16,7 @@ class InviteDeletedEvent {
   late final Cacheable<Snowflake, GuildChannel> channel;
 
   /// Guild where invite was deleted
-  late final Cacheable<Snowflake, GuildNew>? guild;
+  late final Cacheable<Snowflake, Guild>? guild;
 
   /// Code of invite
   late final String code;
