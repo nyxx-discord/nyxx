@@ -10,7 +10,7 @@ class VoiceState {
   late final String sessionId;
 
   /// Guild this voice state update is
-  late final Cacheable<Snowflake, GuildNew>? guild;
+  late final Cacheable<Snowflake, Guild>? guild;
 
   /// Channel id user is connected
   late final Cacheable<Snowflake, IChannel>? channel;

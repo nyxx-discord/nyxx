@@ -12,7 +12,7 @@ class CommandContext {
   final Message message;
 
   /// Guild in which message was sent
-  final GuildNew? guild;
+  final Guild? guild;
 
   /// Returns author as guild member
   Member? get member => this.message is GuildMessage

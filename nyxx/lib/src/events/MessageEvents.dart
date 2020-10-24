@@ -39,7 +39,7 @@ class MessageDeleteBulkEvent {
   late final Cacheable<Snowflake, TextChannel> channel;
 
   /// Id of guild where event occurred
-  late final Cacheable<Snowflake, GuildNew>? guild;
+  late final Cacheable<Snowflake, Guild>? guild;
 
   MessageDeleteBulkEvent._new(Map<String, dynamic> json, Nyxx client) {
     this.channel = _ChannelCacheable(client, Snowflake(json["d"]["channel_id"]));
@@ -75,7 +75,7 @@ abstract class MessageReactionEvent {
   late final Cacheable<Snowflake, TextChannel> channel;
 
   /// Reference to guild if event happend in guild
-  late final Cacheable<Snowflake, GuildNew> guild;
+  late final Cacheable<Snowflake, Guild> guild;
 
   /// Message reference
   late final Message? message;
@@ -159,7 +159,7 @@ class MessageReactionsRemovedEvent {
   late final Cacheable<Snowflake, Message> message;
 
   /// Guild where event occurs
-  late final Cacheable<Snowflake, GuildNew>? guild;
+  late final Cacheable<Snowflake, Guild>? guild;
 
   MessageReactionsRemovedEvent._new(Map<String, dynamic> json, Nyxx client) {
     this.channel = _ChannelCacheable(client, Snowflake(json["d"]["channel_id"]));
@@ -182,7 +182,7 @@ class MessageReactionRemoveEmojiEvent {
   late final Cacheable<Snowflake, Message> message;
 
   /// Guild where event occurs
-  late final Cacheable<Snowflake, GuildNew>? guild;
+  late final Cacheable<Snowflake, Guild>? guild;
 
   /// Removed emoji
   late final IEmoji emoji;

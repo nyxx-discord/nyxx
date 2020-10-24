@@ -36,6 +36,7 @@ part "src/internal/shard/shardHandler.dart";
 part "src/internal/_Constants.dart";
 part "src/internal/_EventController.dart";
 part "src/internal/_ConnectionManager.dart";
+part "src/internal/_HttpEndpoints.dart";
 
 part "src/internal/cache/Cache.dart";
 part "src/internal/cache/_SnowflakeCache.dart";

@@ -3,10 +3,10 @@ part of nyxx;
 /// Sent when the bot joins a guild.
 class GuildCreateEvent {
   /// The guild created.
-  late final GuildNew guild;
+  late final Guild guild;
 
   GuildCreateEvent._new(Map<String, dynamic> raw, Nyxx client) {
-    this.guild = GuildNew._new(client, raw["d"] as Map<String, dynamic>, true);
+    this.guild = Guild._new(client, raw["d"] as Map<String, dynamic>, true);
     client.guilds[guild.id] = guild;
   }
 }
@@ -14,10 +14,10 @@ class GuildCreateEvent {
 /// Sent when a guild is updated.
 class GuildUpdateEvent {
   /// The guild after the update.
-  late final GuildNew guild;
+  late final Guild guild;
 
   GuildUpdateEvent._new(Map<String, dynamic> json, Nyxx client) {
-    this.guild = GuildNew._new(client, json["d"] as Map<String, dynamic>);
+    this.guild = Guild._new(client, json["d"] as Map<String, dynamic>);
 
     // TODO: Cache should be moved to updated guild?
     /*
@@ -33,7 +33,7 @@ class GuildUpdateEvent {
 /// Sent when you leave a guild.
 class GuildDeleteEvent {
   /// The guild.
-  late final Cacheable<Snowflake, GuildNew> guild;
+  late final Cacheable<Snowflake, Guild> guild;
 
   /// True if guild is unavailable which means disconnected due discord side problems
   /// False if user was kicked from guild
@@ -50,7 +50,7 @@ class GuildDeleteEvent {
 /// Sent when a user leaves a guild, can be a leave, kick, or ban.
 class GuildMemberRemoveEvent {
   /// The guild the user left.
-  late final Cacheable<Snowflake, GuildNew> guild;
+  late final Cacheable<Snowflake, Guild> guild;
 
   ///The user that left.
   late final User user;
@@ -75,7 +75,7 @@ class GuildMemberUpdateEvent {
   late final User user;
 
   /// Guild in which member is
-  late final Cacheable<Snowflake, GuildNew> guild;
+  late final Cacheable<Snowflake, Guild> guild;
 
   GuildMemberUpdateEvent._new(Map<String, dynamic> raw, Nyxx client) {
     this.guild = _GuildCacheable(client, Snowflake(raw["d"]["guild_id"]));
@@ -112,7 +112,7 @@ class GuildMemberAddEvent {
   late final User user;
 
   /// Guild where used was added
-  late final Cacheable<Snowflake, GuildNew> guild;
+  late final Cacheable<Snowflake, Guild> guild;
 
   GuildMemberAddEvent._new(Map<String, dynamic> raw, Nyxx client) {
     this.guild = _GuildCacheable(client, Snowflake(raw["d"]["guild_id"]));
@@ -135,7 +135,7 @@ class GuildMemberAddEvent {
 /// Sent when a member is banned.
 class GuildBanAddEvent {
   /// The guild that the member was banned from.
-  late final Cacheable<Snowflake, GuildNew> guild;
+  late final Cacheable<Snowflake, Guild> guild;
 
   /// The user that was banned.
   late final User user;
@@ -149,7 +149,7 @@ class GuildBanAddEvent {
 /// Sent when a user is unbanned from a guild.
 class GuildBanRemoveEvent {
   /// The guild that the member was banned from.
-  late final Cacheable<Snowflake, GuildNew> guild;
+  late final Cacheable<Snowflake, Guild> guild;
 
   /// The user that was banned.
   late final User user;
@@ -166,7 +166,7 @@ class GuildEmojisUpdateEvent {
   late final List<GuildEmoji> emojis = [];
 
   /// The guild that the member was banned from.
-  late final Cacheable<Snowflake, GuildNew> guild;
+  late final Cacheable<Snowflake, Guild> guild;
 
   GuildEmojisUpdateEvent._new(Map<String, dynamic> raw, Nyxx client) {
     this.guild = _GuildCacheable(client, Snowflake(raw["d"]["guild_id"]));
@@ -190,7 +190,7 @@ class RoleCreateEvent {
   late final RoleNew role;
 
   /// The guild that the member was banned from.
-  late final Cacheable<Snowflake, GuildNew> guild;
+  late final Cacheable<Snowflake, Guild> guild;
 
   RoleCreateEvent._new(Map<String, dynamic> raw, Nyxx client) {
     this.guild = _GuildCacheable(client, Snowflake(raw["d"]["guild_id"]));
@@ -213,7 +213,7 @@ class RoleDeleteEvent {
   late final Snowflake roleId;
 
   /// The guild that the member was banned from.
-  late final Cacheable<Snowflake, GuildNew> guild;
+  late final Cacheable<Snowflake, Guild> guild;
 
   RoleDeleteEvent._new(Map<String, dynamic> raw, Nyxx client) {
     this.guild = _GuildCacheable(client, Snowflake(raw["d"]["guild_id"]));
@@ -235,7 +235,7 @@ class RoleUpdateEvent {
   late final RoleNew role;
 
   /// The guild that the member was banned from.
-  late final Cacheable<Snowflake, GuildNew> guild;
+  late final Cacheable<Snowflake, Guild> guild;
   
   RoleUpdateEvent._new(Map<String, dynamic> raw, Nyxx client) {
     this.guild = _GuildCacheable(client, Snowflake(raw["d"]["guild_id"]));

@@ -8,7 +8,7 @@ abstract class GuildChannel extends IChannel {
   late final int position;
 
   /// Id of [Guild] that the channel is in.
-  late final Cacheable<Snowflake, GuildNew> guild;
+  late final Cacheable<Snowflake, Guild> guild;
 
   /// Id of parent channel
   late final Cacheable<Snowflake, GuildChannel>? parentChannel;
@@ -107,21 +107,21 @@ abstract class GuildChannel extends IChannel {
   /// var invites = await chan.getChannelInvites();
   /// ```
   Stream<InviteWithMeta> fetchChannelInvites() =>
-      client._httpEndpoints._fetchChannelInvites(this.id);
+      client._httpEndpoints.fetchChannelInvites(this.id);
 
   /// Allows to set or edit permissions for channel. [id] can be either User or Role
   /// Throws if [id] isn't [User] or [Role]
   Future<void> editChannelPermissions(PermissionsBuilder perms, SnowflakeEntity entity, {String? auditReason}) =>
-      client._httpEndpoints._editChannelPermissions(this.id, perms, entity, auditReason: auditReason);
+      client._httpEndpoints.editChannelPermissions(this.id, perms, entity, auditReason: auditReason);
 
   /// Allows to edit or set channel permission overrides.
   Future<void> editChannelPermissionOverrides(PermissionOverrideBuilder permissionBuilder, {String? auditReason}) =>
-      client._httpEndpoints._editChannelPermissionOverrides(this.id, permissionBuilder, auditReason: auditReason);
+      client._httpEndpoints.editChannelPermissionOverrides(this.id, permissionBuilder, auditReason: auditReason);
 
   /// Deletes permission overwrite for given User or Role [entity]
   /// Throws if [entity] isn't [User] or [Role]
   Future<void> deleteChannelPermission(SnowflakeEntity entity, {String? auditReason}) =>
-      client._httpEndpoints._deleteChannelPermission(this.id, entity, auditReason: auditReason);
+      client._httpEndpoints.deleteChannelPermission(this.id, entity, auditReason: auditReason);
 
   /// Creates new [Invite] for [Channel] and returns it"s instance
   ///
@@ -129,5 +129,5 @@ abstract class GuildChannel extends IChannel {
   /// var invite = await channel.createInvite(maxUses: 2137);
   /// ```
   Future<Invite> createInvite({int? maxAge, int? maxUses, bool? temporary, bool? unique, String? auditReason}) =>
-      client._httpEndpoints._createInvite(this.id, maxAge: maxAge, maxUses: maxUses, temporary: temporary, unique: unique, auditReason: auditReason);
+      client._httpEndpoints.createInvite(this.id, maxAge: maxAge, maxUses: maxUses, temporary: temporary, unique: unique, auditReason: auditReason);
 }

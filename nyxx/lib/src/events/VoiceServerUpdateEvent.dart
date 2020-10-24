@@ -12,7 +12,7 @@ class VoiceServerUpdateEvent {
   late final String endpoint;
 
   /// The guild this voice server update is for
-  late final Cacheable<Snowflake, GuildNew> guild;
+  late final Cacheable<Snowflake, Guild> guild;
 
   VoiceServerUpdateEvent._new(this.raw, Nyxx client) {
     this.token = raw["d"]["token"] as String;

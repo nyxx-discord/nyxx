@@ -31,7 +31,7 @@ class ChannelPinsUpdateEvent {
   late final Cacheable<Snowflake, TextChannel> channel;
 
   /// ID of channel pins were updated
-  late final Cacheable<Snowflake, GuildNew>? guild;
+  late final Cacheable<Snowflake, Guild>? guild;
 
   /// the time at which the most recent pinned message was pinned
   late final DateTime? lastPingTimestamp;
