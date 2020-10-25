@@ -114,9 +114,9 @@ class Webhook extends SnowflakeEntity implements IMessageAuthor {
       client._httpEndpoints.userAvatarURL(this.id, this.avatarHash, 0, format: format, size: size);
 
   /// Edits the webhook.
-  Future<Webhook> edit({String? name, SnowflakeEntity? channel, File? avatar, String? encodedAvatar, String? auditReason}) =>
+  Future<Webhook> edit({String? name, SnowflakeEntity? channel, File? avatarFile, List<int>? avatarBytes, String? encodedAvatar, String? encodedExtension, String? auditReason}) =>
     client._httpEndpoints.editWebhook(this.id, token: this.token, name: name,
-        channel: channel, avatar: avatar, encodedAvatar: encodedAvatar, auditReason: auditReason);
+        channel: channel, avatarFile: avatarFile, avatarBytes: avatarBytes, encodedAvatar: encodedAvatar, encodedExtension: encodedExtension, auditReason: auditReason);
 
   /// Deletes the webhook.
   Future<void> delete({String? auditReason}) =>
