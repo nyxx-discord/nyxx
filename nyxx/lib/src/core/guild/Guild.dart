@@ -246,8 +246,8 @@ class Guild extends SnowflakeEntity {
   /// var emojiFile = new File("weed.png");
   /// vare emoji = await guild.createEmoji("weed, image: emojiFile");
   /// ```
-  Future<GuildEmoji> createEmoji(String name, {List<SnowflakeEntity>? roles, File? image, List<int>? imageBytes}) =>
-      client._httpEndpoints.createEmoji(this.id, name, roles: roles, image: image, imageBytes: imageBytes);
+  Future<GuildEmoji> createEmoji(String name, {List<SnowflakeEntity>? roles, File? imageFile, List<int>? imageBytes, String? encodedImage, String? encodedExtension}) =>
+      client._httpEndpoints.createEmoji(this.id, name, roles: roles, imageFile: imageFile, imageBytes: imageBytes, encodedImage: encodedImage, encodedExtension: encodedExtension);
 
   /// Returns [int] indicating the number of members that would be removed in a prune operation.
   Future<int> pruneCount(int days, {Iterable<Snowflake>? includeRoles}) =>

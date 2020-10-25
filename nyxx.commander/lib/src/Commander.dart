@@ -174,7 +174,7 @@ class Commander with ICommandRegistrable {
   }
 
   FutureOr<void> _defaultLogger(CommandContext ctx, String commandName, Logger logger) {
-    logger.info("Command [$commandName] executed by [${ctx.author!.tag}]");
+    logger.info("Command [$commandName] executed by [${ctx.author.tag}]");
   }
 
   /// Registers command with given [commandName]. Allows to specify command specific before and after command execution callbacks
