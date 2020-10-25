@@ -13,4 +13,21 @@ class Utils {
 
   /// Returns extension of file from specified [path]
   static String getFileExtension(String path) => path_utils.Context(style: path_utils.Style.platform).extension(path);
+
+  /// Returns String with base64 encoded image data for API upload
+  static String? getBase64UploadString({File? file, List<int>? fileBytes, String? base64EncodedFile, String? fileExtension}) {
+    String? base64Encoded;
+    if (file != null) {
+      base64Encoded = base64Encode(file.readAsBytesSync());
+    } else if (fileBytes != null) {
+      base64Encoded = base64Encode(fileBytes);
+    } else if (base64EncodedFile != null) {
+      base64Encoded = base64EncodedFile;
+    } else {
+      return null;
+    }
+
+    final extension = file != null ? path_utils.extension(file.path) : fileExtension;
+    return "data:image/$extension;base64,$base64Encoded";
+  }
 }
