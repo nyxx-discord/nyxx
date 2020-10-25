@@ -28,6 +28,7 @@ part "src/internal/exceptions/MissingTokenError.dart";
 part "src/internal/exceptions/EmbedBuilderArgumentException.dart";
 part "src/internal/exceptions/InvalidShardException.dart";
 part "src/internal/exceptions/InvalidSnowflakeException.dart";
+part "src/internal/exceptions/HttpClientException.dart";
 
 part "src/internal/shard/Shard.dart";
 part "src/internal/shard/ShardManager.dart";
@@ -37,6 +38,9 @@ part "src/internal/_Constants.dart";
 part "src/internal/_EventController.dart";
 part "src/internal/_ConnectionManager.dart";
 part "src/internal/_HttpEndpoints.dart";
+
+part "src/internal/http/_HttpClient.dart";
+part "src/internal/http/HttpBucket.dart";
 
 part "src/internal/cache/Cache.dart";
 part "src/internal/cache/_SnowflakeCache.dart";
