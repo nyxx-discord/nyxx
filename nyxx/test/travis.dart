@@ -72,8 +72,8 @@ void main() {
     final m = await channel.sendMessage(content: "Message test.");
     await m.edit(content: "Edit test.");
 
-    await m.createReaction(UnicodeEmojiNew("😂"));
-    await m.deleteSelfReaction(UnicodeEmojiNew("😂"));
+    await m.createReaction(UnicodeEmoji("😂"));
+    await m.deleteSelfReaction(UnicodeEmoji("😂"));
 
     await m.delete();
 

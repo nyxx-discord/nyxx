@@ -34,7 +34,7 @@ class GuildEmoji extends GuildEmojiPartial implements IEmoji {
   late final Cacheable<Snowflake, Guild> guild;
 
   /// Roles which can use this emote
-  late final Iterable<Cacheable<Snowflake, RoleNew>> roles;
+  late final Iterable<Cacheable<Snowflake, Role>> roles;
 
   /// whether this emoji must be wrapped in colons
   late final bool requireColons;

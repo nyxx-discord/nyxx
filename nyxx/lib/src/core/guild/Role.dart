@@ -1,6 +1,6 @@
 part of nyxx;
 
-class RoleNew extends SnowflakeEntity implements Mentionable {
+class Role extends SnowflakeEntity implements Mentionable {
   /// Reference to client
   final Nyxx client;
 
@@ -35,7 +35,7 @@ class RoleNew extends SnowflakeEntity implements Mentionable {
   /// Additional role data like if role is managed by integration or role is from server boosting.
   late final RoleTags? roleTags;
 
-  RoleNew._new(this.client, Map<String, dynamic> raw, Snowflake guildId) : super(Snowflake(raw["id"])) {
+  Role._new(this.client, Map<String, dynamic> raw, Snowflake guildId) : super(Snowflake(raw["id"])) {
     this.name = raw["name"] as String;
     this.position = raw["position"] as int;
     this.hoist = raw["hoist"] as bool;
@@ -53,7 +53,7 @@ class RoleNew extends SnowflakeEntity implements Mentionable {
   }
 
   /// Edits the role.
-  Future<RoleNew> edit(RoleBuilder role, {String? auditReason}) async =>
+  Future<Role> edit(RoleBuilder role, {String? auditReason}) async =>
       client._httpEndpoints.editRole(this.guild.id, this.id, role, auditReason: auditReason);
 
   /// Deletes the role.

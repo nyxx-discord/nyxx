@@ -157,12 +157,12 @@ class HttpEndpoints {
           BasicRequest._new("/guilds/$guildId/emojis/$emojiId", method: "DELETE"));
 
   /// Edits the role.
-  Future<RoleNew> _editRole(Snowflake guildId, Snowflake roleId, RoleBuilder role, {String? auditReason}) async {
+  Future<Role> _editRole(Snowflake guildId, Snowflake roleId, RoleBuilder role, {String? auditReason}) async {
     final response = await _httpClient._execute(BasicRequest._new("/guilds/$guildId/roles/$roleId",
         method: "PATCH", body: role._build(), auditLog: auditReason));
 
     if (response is HttpResponseSuccess) {
-      return RoleNew._new(_client, response.jsonBody as Map<String, dynamic>, guildId);
+      return Role._new(_client, response.jsonBody as Map<String, dynamic>, guildId);
     }
 
     return Future.error(response);
@@ -329,12 +329,12 @@ class HttpEndpoints {
     return Future.error(response);
   }
 
-  Future<RoleNew> _createGuildRole(Snowflake guildId, RoleBuilder roleBuilder, {String? auditReason}) async {
+  Future<Role> _createGuildRole(Snowflake guildId, RoleBuilder roleBuilder, {String? auditReason}) async {
     final response = await _httpClient._execute(
         BasicRequest._new("/guilds/$guildId/roles", method: "POST", auditLog: auditReason, body: roleBuilder._build()));
 
     if (response is HttpResponseSuccess) {
-      return RoleNew._new(_client, response.jsonBody as Map<String, dynamic>, guildId);
+      return Role._new(_client, response.jsonBody as Map<String, dynamic>, guildId);
     }
 
     return Future.error(response);
@@ -447,7 +447,7 @@ class HttpEndpoints {
   Future<void> _deleteGuild(Snowflake guildId) async =>
       _httpClient._execute(BasicRequest._new("/guilds/$guildId", method: "DELETE"));
 
-   Stream<RoleNew> _fetchGuildRoles(Snowflake guildId) async* {
+   Stream<Role> _fetchGuildRoles(Snowflake guildId) async* {
      final response = _httpClient._execute(BasicRequest._new("/guilds/$guildId/roles"));
 
      if (response is HttpResponseError) {
@@ -455,7 +455,7 @@ class HttpEndpoints {
      }
 
      for (final rawRole in (response as HttpResponseSuccess)._jsonBody.values) {
-       yield RoleNew._new(_client, rawRole as Map<String, dynamic>, guildId);
+       yield Role._new(_client, rawRole as Map<String, dynamic>, guildId);
      }
    }
 
@@ -523,7 +523,7 @@ class HttpEndpoints {
 
     await _httpClient._execute(BasicRequest._new("/channels/$channelId/permissions/${entity.id.toString()}",
         method: "PUT", body: {
-          "type" : entity is RoleNew ? "role" : "member",
+          "type" : entity is Role ? "role" : "member",
           "allow" : permSet.allow,
           "deny" : permSet.deny
         }, auditLog: auditReason));
