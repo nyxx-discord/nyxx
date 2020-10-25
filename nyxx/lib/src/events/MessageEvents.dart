@@ -103,7 +103,7 @@ abstract class MessageReactionEvent {
     }
 
     if (json["d"]["emoji"]["id"] == null) {
-      this.emoji = UnicodeEmojiNew(json["d"]["emoji"]["name"] as String);
+      this.emoji = UnicodeEmoji(json["d"]["emoji"]["name"] as String);
     } else {
       this.emoji = GuildEmojiPartial._new(json["d"]["emoji"] as Map<String, dynamic>);
     }
@@ -193,7 +193,7 @@ class MessageReactionRemoveEmojiEvent {
     this.message = _MessageCacheable(client, Snowflake(json["d"]["message_id"]), channel);
 
     if (json["d"]["emoji"]["id"] == null) {
-      this.emoji = UnicodeEmojiNew(json["d"]["emoji"]["name"] as String);
+      this.emoji = UnicodeEmoji(json["d"]["emoji"]["name"] as String);
     } else {
       this.emoji = GuildEmojiPartial._new(json["d"]["emoji"] as Map<String, dynamic>);
     }

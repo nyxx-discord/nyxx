@@ -1,5 +1,5 @@
 import "dart:async" show Future, FutureOr, Stream;
-import "package:nyxx/nyxx.dart" show Emoji, ITextChannel, Message, MessageBuilder, MessageChannel, MessageEditBuilder, MessageReactionEvent, Nyxx, UnicodeEmoji;
+import "package:nyxx/nyxx.dart" show IEmoji, TextChannel, Message, MessageBuilder, MessageEditBuilder, MessageReactionEvent, Nyxx, UnicodeEmoji;
 import "../../emoji.dart" show filterEmojiDefinitions;
 import "../utils.dart" show StreamUtils, StringUtils;
 
@@ -15,16 +15,16 @@ abstract class IPaginationHandler {
   int get dataLength;
 
   /// Emoji used to navigate to next page. Default: "▶"
-  FutureOr<Emoji> get nextEmoji async => (await filterEmojiDefinitions((emoji) => emoji.primaryName == "arrow_forward", cache: true)).toEmoji();
+  FutureOr<IEmoji> get nextEmoji async => (await filterEmojiDefinitions((emoji) => emoji.primaryName == "arrow_forward", cache: true)).toEmoji();
 
   /// Emoji used to navigate to previous page. Default: "◀"
-  FutureOr<Emoji> get backEmoji async => (await filterEmojiDefinitions((emoji) => emoji.primaryName == "arrow_backward", cache: true)).toEmoji();
+  FutureOr<IEmoji> get backEmoji async => (await filterEmojiDefinitions((emoji) => emoji.primaryName == "arrow_backward", cache: true)).toEmoji();
 
   /// Emoji used to navigate to first page. Default: "⏮"
-  FutureOr<Emoji> get firstEmoji async => (await filterEmojiDefinitions((emoji) => emoji.primaryName == "track_previous", cache: true)).toEmoji();
+  FutureOr<IEmoji> get firstEmoji async => (await filterEmojiDefinitions((emoji) => emoji.primaryName == "track_previous", cache: true)).toEmoji();
 
   /// Emoji used to navigate to last page. Default: "⏭"
-  FutureOr<Emoji> get lastEmoji async => (await filterEmojiDefinitions((emoji) => emoji.primaryName == "track_next", cache: true)).toEmoji();
+  FutureOr<IEmoji> get lastEmoji async => (await filterEmojiDefinitions((emoji) => emoji.primaryName == "track_next", cache: true)).toEmoji();
 }
 
 /// Basic pagination handler based on [String]. Each entry in [pages] will be different page.
@@ -36,13 +36,13 @@ class BasicPaginationHandler extends IPaginationHandler {
   BasicPaginationHandler(this.pages);
 
   /// Generates pagination from String. It divides String into 250 char long pages.
-  factory BasicPaginationHandler.fromString(String str, MessageChannel channel) => BasicPaginationHandler(StringUtils.split(str, 250).toList());
+  factory BasicPaginationHandler.fromString(String str, TextChannel channel) => BasicPaginationHandler(StringUtils.split(str, 250).toList());
 
   /// Generates pagination from String but with user specified size of single page.
-  factory BasicPaginationHandler.fromStringLen(String str, int len, MessageChannel channel) => BasicPaginationHandler(StringUtils.split(str, len).toList());
+  factory BasicPaginationHandler.fromStringLen(String str, int len, TextChannel channel) => BasicPaginationHandler(StringUtils.split(str, len).toList());
 
   /// Generates pagination from String but with user specified number of pages.
-  factory BasicPaginationHandler.fromStringEq(String str, int pieces, MessageChannel channel) => BasicPaginationHandler(StringUtils.splitEqually(str, pieces).toList());
+  factory BasicPaginationHandler.fromStringEq(String str, int pieces, TextChannel channel) => BasicPaginationHandler(StringUtils.splitEqually(str, pieces).toList());
 
   @override
   FutureOr<MessageEditBuilder> generatePage(int page) =>
@@ -68,7 +68,7 @@ class BasicPaginationHandler extends IPaginationHandler {
 /// ```
 class Pagination<T extends IPaginationHandler> {
   /// Channel where message will be sent
-  ITextChannel channel;
+  TextChannel channel;
 
   /// [IPaginationHandler] which will handle generating messages.
   T paginationHandler;
@@ -83,7 +83,7 @@ class Pagination<T extends IPaginationHandler> {
     final firstEmoji = await paginationHandler.firstEmoji;
     final lastEmoji = await paginationHandler.lastEmoji;
 
-    final msg = await channel.send(builder: await paginationHandler.generateInitialPage());
+    final msg = await channel.sendMessage(builder: await paginationHandler.generateInitialPage());
     await msg.createReaction(firstEmoji);
     await msg.createReaction(backEmoji);
     await msg.createReaction(nextEmoji);

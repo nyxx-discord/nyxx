@@ -65,7 +65,7 @@ class Guild extends SnowflakeEntity {
   late final Iterable<GuildChannel> channels = this.client.channels.find((item) => item is GuildChannel && item.guild.id == this.id).cast();
 
   /// The guild's roles.
-  late final Cache<Snowflake, RoleNew> roles;
+  late final Cache<Snowflake, Role> roles;
 
   /// Guild custom emojis
   late final Cache<Snowflake, IGuildEmoji> emojis;
@@ -94,7 +94,7 @@ class Guild extends SnowflakeEntity {
   String get url => "https://discordapp.com/channels/${this.id.toString()}";
 
   /// Getter for @everyone role
-  RoleNew get everyoneRole => roles.values.firstWhere((r) => r.name == "@everyone");
+  Role get everyoneRole => roles.values.firstWhere((r) => r.name == "@everyone");
 
   /// Returns member object for bot user
   Member? get selfMember => members[client.self.id];
@@ -130,10 +130,10 @@ class Guild extends SnowflakeEntity {
     this.splash = raw["splash"] as String?;
     this.embedEnabled = raw["embed_enabled"] as bool?;
 
-    this.roles = _SnowflakeCache<RoleNew>();
+    this.roles = _SnowflakeCache<Role>();
     if (raw["roles"] != null) {
       raw["roles"].forEach((o) {
-        final role = RoleNew._new(client, o as Map<String, dynamic>, this.id);
+        final role = Role._new(client, o as Map<String, dynamic>, this.id);
         this.roles[role.id] = role;
       });
     }
@@ -299,7 +299,7 @@ class Guild extends SnowflakeEntity {
   ///
   /// var role = await guild.createRole(roleBuilder);
   /// ```
-  Future<RoleNew> createRole(RoleBuilder roleBuilder, {String? auditReason}) =>
+  Future<Role> createRole(RoleBuilder roleBuilder, {String? auditReason}) =>
       client._httpEndpoints.createGuildRole(this.id, roleBuilder, auditReason: auditReason);
 
   /// Returns list of available [CacheVoiceChannel]s

@@ -23,15 +23,15 @@ class Member extends SnowflakeEntity {
   late final Cacheable<Snowflake, Guild> guild;
 
   /// Roles of member
-  late Iterable<Cacheable<Snowflake, RoleNew>> roles;
+  late Iterable<Cacheable<Snowflake, Role>> roles;
 
   /// Highest role of member
-  late Cacheable<Snowflake, RoleNew> hoistedRole;
+  late Cacheable<Snowflake, Role> hoistedRole;
 
   // TODO: is everything okay?
   /// Returns highest role of member.
   /// Uses ! on nullable properties and will throw if anything is missing from cache
-  RoleNew get highestRole =>
+  Role get highestRole =>
       this.roles.reduce((value, element) {
         final valueInstance = value.getFromCache();
         final elementInstance = element.getFromCache();

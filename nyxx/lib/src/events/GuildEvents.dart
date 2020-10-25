@@ -187,7 +187,7 @@ class GuildEmojisUpdateEvent {
 /// Sent when a role is created.
 class RoleCreateEvent {
   /// The role that was created.
-  late final RoleNew role;
+  late final Role role;
 
   /// The guild that the member was banned from.
   late final Cacheable<Snowflake, Guild> guild;
@@ -195,7 +195,7 @@ class RoleCreateEvent {
   RoleCreateEvent._new(Map<String, dynamic> raw, Nyxx client) {
     this.guild = _GuildCacheable(client, Snowflake(raw["d"]["guild_id"]));
 
-    this.role = RoleNew._new(client, raw["d"]["role"] as Map<String, dynamic>, this.guild.id);
+    this.role = Role._new(client, raw["d"]["role"] as Map<String, dynamic>, this.guild.id);
 
     final guildInstance = guild.getFromCache();
     if (guildInstance != null) {
@@ -207,7 +207,7 @@ class RoleCreateEvent {
 /// Sent when a role is deleted.
 class RoleDeleteEvent {
   /// The role that was deleted, if available
-  late final RoleNew? role;
+  late final Role? role;
 
   /// Id of tole that was deleted
   late final Snowflake roleId;
@@ -232,14 +232,14 @@ class RoleDeleteEvent {
 /// Sent when a role is updated.
 class RoleUpdateEvent {
   /// The role after the update.
-  late final RoleNew role;
+  late final Role role;
 
   /// The guild that the member was banned from.
   late final Cacheable<Snowflake, Guild> guild;
   
   RoleUpdateEvent._new(Map<String, dynamic> raw, Nyxx client) {
     this.guild = _GuildCacheable(client, Snowflake(raw["d"]["guild_id"]));
-    this.role = RoleNew._new(client, raw["d"]["role"] as Map<String, dynamic>, this.guild.id);
+    this.role = Role._new(client, raw["d"]["role"] as Map<String, dynamic>, this.guild.id);
 
     final guildInstance = guild.getFromCache();
     if (guildInstance != null) {

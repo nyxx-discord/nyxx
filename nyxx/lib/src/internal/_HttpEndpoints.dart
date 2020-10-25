@@ -23,7 +23,7 @@ abstract class IHttpEndpoints {
 
   Future<void> deleteGuildEmoji(Snowflake guildId, Snowflake emojiId);
 
-  Future<RoleNew> editRole(Snowflake guildId, Snowflake roleId, RoleBuilder role, {String? auditReason});
+  Future<Role> editRole(Snowflake guildId, Snowflake roleId, RoleBuilder role, {String? auditReason});
 
   Future<void> deleteRole(Snowflake guildId, Snowflake roleId, {String? auditReason});
 
@@ -55,7 +55,7 @@ abstract class IHttpEndpoints {
 
   Future<AuditLog> fetchAuditLogs(Snowflake guildId, {Snowflake? userId, int? actionType, Snowflake? before, int? limit});
 
-  Future<RoleNew> createGuildRole(Snowflake guildId, RoleBuilder roleBuilder, {String? auditReason});
+  Future<Role> createGuildRole(Snowflake guildId, RoleBuilder roleBuilder, {String? auditReason});
 
   Stream<VoiceRegion> fetchGuildVoiceRegions(Snowflake guildId);
 
@@ -87,7 +87,7 @@ abstract class IHttpEndpoints {
 
   Future<void> deleteGuild(Snowflake guildId);
 
-  Stream<RoleNew> fetchGuildRoles(Snowflake guildId);
+  Stream<Role> fetchGuildRoles(Snowflake guildId);
 
   String userAvatarURL(Snowflake userId, String? avatarHash, int discriminator, {String format = "webp", int size = 128});
 
@@ -270,12 +270,12 @@ class _HttpEndpoints implements IHttpEndpoints {
           BasicRequest._new("/guilds/$guildId/emojis/$emojiId", method: "DELETE"));
   
   @override
-  Future<RoleNew> editRole(Snowflake guildId, Snowflake roleId, RoleBuilder role, {String? auditReason}) async {
+  Future<Role> editRole(Snowflake guildId, Snowflake roleId, RoleBuilder role, {String? auditReason}) async {
     final response = await _httpClient._execute(BasicRequest._new("/guilds/$guildId/roles/$roleId",
         method: "PATCH", body: role._build(), auditLog: auditReason));
 
     if (response is HttpResponseSuccess) {
-      return RoleNew._new(_client, response.jsonBody as Map<String, dynamic>, guildId);
+      return Role._new(_client, response.jsonBody as Map<String, dynamic>, guildId);
     }
 
     return Future.error(response);
@@ -453,12 +453,12 @@ class _HttpEndpoints implements IHttpEndpoints {
   }
 
   @override
-  Future<RoleNew> createGuildRole(Snowflake guildId, RoleBuilder roleBuilder, {String? auditReason}) async {
+  Future<Role> createGuildRole(Snowflake guildId, RoleBuilder roleBuilder, {String? auditReason}) async {
     final response = await _httpClient._execute(
         BasicRequest._new("/guilds/$guildId/roles", method: "POST", auditLog: auditReason, body: roleBuilder._build()));
 
     if (response is HttpResponseSuccess) {
-      return RoleNew._new(_client, response.jsonBody as Map<String, dynamic>, guildId);
+      return Role._new(_client, response.jsonBody as Map<String, dynamic>, guildId);
     }
 
     return Future.error(response);
@@ -583,7 +583,7 @@ class _HttpEndpoints implements IHttpEndpoints {
       _httpClient._execute(BasicRequest._new("/guilds/$guildId", method: "DELETE"));
 
   @override
-  Stream<RoleNew> fetchGuildRoles(Snowflake guildId) async* {
+  Stream<Role> fetchGuildRoles(Snowflake guildId) async* {
     final response = _httpClient._execute(BasicRequest._new("/guilds/$guildId/roles"));
 
     if (response is HttpResponseError) {
@@ -591,7 +591,7 @@ class _HttpEndpoints implements IHttpEndpoints {
     }
 
     for (final rawRole in (response as HttpResponseSuccess)._jsonBody.values) {
-      yield RoleNew._new(_client, rawRole as Map<String, dynamic>, guildId);
+      yield Role._new(_client, rawRole as Map<String, dynamic>, guildId);
     }
   }
 
@@ -665,7 +665,7 @@ class _HttpEndpoints implements IHttpEndpoints {
 
     await _httpClient._execute(BasicRequest._new("/channels/$channelId/permissions/${entity.id.toString()}",
         method: "PUT", body: {
-          "type" : entity is RoleNew ? "role" : "member",
+          "type" : entity is Role ? "role" : "member",
           "allow" : permSet.allow,
           "deny" : permSet.deny
         }, auditLog: auditReason));
