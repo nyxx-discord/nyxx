@@ -208,7 +208,7 @@ class GuildMessage extends Message {
   bool get isByWebhook => author is Webhook;
 
   /// Role mentions in this message
-  late final List<Cacheable<Snowflake, RoleNew>> roleMentions;
+  late final List<Cacheable<Snowflake, Role>> roleMentions;
 
   GuildMessage._new(Nyxx client, Map<String, dynamic> raw) : super._new(client, raw) {
     if (raw["message_reference"] != null) {

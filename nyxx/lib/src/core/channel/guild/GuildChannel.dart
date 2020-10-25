@@ -72,14 +72,14 @@ abstract class GuildChannel extends IChannel {
   }
 
   /// Returns effective permissions for [role] to this channel including channel overrides.
-  Future<Permissions> effectivePermissionForRole(RoleNew role) async {
+  Future<Permissions> effectivePermissionForRole(Role role) async {
     if (role.guild != this.guild) {
       return Permissions.empty();
     }
 
     final guildInstance = await this.guild.getOrDownload();
 
-    var permissions = role.permissions.raw | (guildInstance.everyoneRole as RoleNew).permissions.raw;
+    var permissions = role.permissions.raw | guildInstance.everyoneRole.permissions.raw;
 
     // TODO: NNBD: try-catch in where
     try {

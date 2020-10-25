@@ -17,7 +17,7 @@ class Reaction {
 
     final rawEmoji = raw["emoji"] as Map<String, dynamic>;
     if (rawEmoji["id"] == null) {
-      this.emoji = UnicodeEmojiNew(rawEmoji["name"] as String);
+      this.emoji = UnicodeEmoji(rawEmoji["name"] as String);
     } else {
 
       //TODO: EMOJIS STUUF

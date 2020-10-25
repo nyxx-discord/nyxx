@@ -33,16 +33,16 @@ abstract class Cacheable<T extends Snowflake, S extends SnowflakeEntity> {
   int get hashCode => super.hashCode;
 }
 
-class _RoleCacheable extends Cacheable<Snowflake, RoleNew> {
+class _RoleCacheable extends Cacheable<Snowflake, Role> {
   final Cacheable<Snowflake, Guild> guild;
 
   _RoleCacheable(Nyxx client, Snowflake id, this.guild): super._new(client, id);
 
   @override
-  Future<RoleNew> download() async => this._fetchGuildRole();
+  Future<Role> download() async => this._fetchGuildRole();
 
   @override
-  RoleNew? getFromCache() {
+  Role? getFromCache() {
     final guildInstance = guild.getFromCache();
 
     if (guildInstance == null) {
@@ -52,7 +52,7 @@ class _RoleCacheable extends Cacheable<Snowflake, RoleNew> {
     return guildInstance.roles[this.id];
   }
 
-  Future<RoleNew> _fetchGuildRole() async {
+  Future<Role> _fetchGuildRole() async {
     final roles = await _client._httpEndpoints.fetchGuildRoles(this.id).toList();
 
     try {

@@ -1,6 +1,6 @@
 import "dart:async";
 
-import "package:nyxx/nyxx.dart" show GuildTextChannel, Message, Nyxx, Role, Snowflake;
+import "package:nyxx/nyxx.dart" show TextGuildChannel, Message, Nyxx, Role, Snowflake;
 
 import "Regexes.dart" show Regexes;
 
@@ -188,7 +188,7 @@ class MessageResolver {
       return "<#$_whiteSpaceCharacter${match.group(1)}>";
     }
     
-    final channel = _client.channels.values.firstWhere((ch) => ch is GuildTextChannel && ch.id == match.group(1)) as GuildTextChannel?;
+    final channel = _client.channels.values.firstWhere((ch) => ch is TextGuildChannel && ch.id == match.group(1)) as TextGuildChannel?;
 
     if (channelTagHandling == TagHandling.name || channelTagHandling == TagHandling.fullName) {
       return channel != null ? "#${channel.name}" : this.missingEntityHandler("channel");
@@ -226,17 +226,21 @@ class MessageResolver {
       return "<@&$_whiteSpaceCharacter${match.group(1)}>";
     }
 
-    final role = _client.guilds.values
-        .map((e) => e.roles.values)
-        .expand((element) => element)
-        .firstWhere((element) => element.id == Snowflake(match.group(1))) as Role?;
+    try {
+      final role = _client.guilds.values
+          .map((e) => e.roles.values)
+          .expand((element) => element)
+          .firstWhere((element) => element.id == Snowflake(match.group(1)));
 
-    if (roleTagHandling == TagHandling.name || roleTagHandling == TagHandling.fullName) {
-      return role != null ? "@${role.name}" : this.missingEntityHandler("role");
-    }
+      if (roleTagHandling == TagHandling.name || roleTagHandling == TagHandling.fullName) {
+        return "@${role.name}";
+      }
 
-    if (roleTagHandling == TagHandling.nameNoPrefix || roleTagHandling == TagHandling.fullNameNoPrefix) {
-      return role != null ? role.name : this.missingEntityHandler("role");
+      if (roleTagHandling == TagHandling.nameNoPrefix || roleTagHandling == TagHandling.fullNameNoPrefix) {
+        return role.name;
+      }
+    } on Exception {
+      return this.missingEntityHandler("role");
     }
 
     return content;
@@ -255,7 +259,7 @@ class MessageResolver {
       return "<@$_whiteSpaceCharacter${match.group(1)}>";
     }
 
-    final user = await _client.getUser(Snowflake(match.group(1)));
+    final user = _client.users[Snowflake(match.group(1))];
 
     if (userTagHandling == TagHandling.name) {
       return user != null ? "@${user.username}" : this.missingEntityHandler("user");
