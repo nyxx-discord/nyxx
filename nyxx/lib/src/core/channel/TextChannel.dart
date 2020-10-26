@@ -11,7 +11,7 @@ abstract class TextChannel implements IChannel, ISend {
   Future<Message?> getMessage(Snowflake id);
 
   /// Returns [Message] downloaded from API
-  Future<Message?> fetchMessage(Snowflake id);
+  Future<Message> fetchMessage(Snowflake id);
 
   /// Sends message to channel. Performs `toString()` on thing passed to [content]. Allows to send embeds with [embed] field.
   ///

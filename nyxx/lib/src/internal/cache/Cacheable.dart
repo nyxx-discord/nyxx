@@ -1,5 +1,8 @@
 part of nyxx;
 
+/// Wraps [SnowflakeEntity] that can be taken from cache or optionally downloaded from API.
+/// Always provides [id] of entity. `download()` method tries to get entity from API and returns it upon success or
+/// throws Error if something happens in the process.
 abstract class Cacheable<T extends Snowflake, S extends SnowflakeEntity> {
   final Nyxx _client;
 
@@ -30,7 +33,7 @@ abstract class Cacheable<T extends Snowflake, S extends SnowflakeEntity> {
   bool operator ==(Object other) => other is Cacheable && other.id == this.id;
 
   @override
-  int get hashCode => super.hashCode;
+  int get hashCode => id.hashCode;
 }
 
 class _RoleCacheable extends Cacheable<Snowflake, Role> {
@@ -52,6 +55,7 @@ class _RoleCacheable extends Cacheable<Snowflake, Role> {
     return guildInstance.roles[this.id];
   }
 
+  // We cant download single role
   Future<Role> _fetchGuildRole() async {
     final roles = await _client._httpEndpoints.fetchGuildRoles(this.id).toList();
 
@@ -122,14 +126,7 @@ class _MessageCacheable<U extends TextChannel> extends Cacheable<Snowflake, Mess
   @override
   Future<Message> download() async {
     final channelInstance = await this.channel.getOrDownload();
-
-    final message = await channelInstance.fetchMessage(this.id);
-
-    if (message == null) {
-      return Future.error(ArgumentError("Provided message id (${this.id}) does not belongs to given channel (${this.channel.id})"));
-    }
-
-    return message;
+    return channelInstance.fetchMessage(this.id);
   }
 
   @override

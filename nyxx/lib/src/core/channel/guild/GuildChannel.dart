@@ -16,7 +16,7 @@ abstract class GuildChannel extends IChannel {
   /// Indicates if channel is nsfw
   late final bool isNsfw;
 
-  /// Returns list of [CacheMember] objects who can see this channel
+  /// Permission override for channel
   late final List<PermissionsOverrides> permissionOverrides;
 
   GuildChannel._new(Nyxx client, Map<String, dynamic> raw, [Snowflake? guildId]) : super._new(client, raw) {
