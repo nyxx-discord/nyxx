@@ -26,7 +26,7 @@ class Constants {
   static const String host = "discord.com";
 
   /// Base API uri
-  static const String baseUri = "/api/v7";
+  static const String baseUri = "/api/v8";
 
   /// Version of Nyxx
   static const String version = "1.1.0";
@@ -36,7 +36,7 @@ class Constants {
 
   /// Returns [Uri] to gateway
   static Uri gatewayUri(String gatewayHost, bool useCompression) {
-    var uriString = "$gatewayHost?v=6&encoding=json";
+    var uriString = "$gatewayHost?v=8&encoding=json";
 
     if (useCompression) {
       uriString += "&compress=zlib-stream";

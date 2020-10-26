@@ -5,7 +5,11 @@ import "package:nyxx/nyxx.dart";
 import "package:nyxx_commander/commander.dart";
 
 void main() {
-  final bot = Nyxx(Platform.environment["DISCORD_TOKEN"]!, ignoreExceptions: false);
+  final bot = Nyxx(Platform.environment["DISCORD_TOKEN"]!, ignoreExceptions: false, options: ClientOptions(
+    gatewayIntents: GatewayIntents()
+        ..guildMessages = true
+        ..guilds = true
+  ));
 
   bot.onMessageReceived.listen((event) async {
     if (event.message.content == "Test 1") {
@@ -29,7 +33,7 @@ void main() {
   });
 
   bot.onReady.listen((e) async {
-    final channel = bot.channels[Snowflake("422285619952222208")] as TextChannel;
+    final channel = await bot.fetchChannel<TextChannel>(Snowflake("422285619952222208"));
 
     await channel.sendMessage(content: "Testing Commander");
 
