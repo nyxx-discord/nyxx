@@ -1,6 +1,7 @@
 import "dart:async";
 import "dart:io";
 
+import 'package:http/http.dart';
 import "package:nyxx/nyxx.dart";
 
 // Replacement for assert. Throws if [test] isn't true.
@@ -33,7 +34,10 @@ EmbedBuilder createTestEmbed() => EmbedBuilder()
 
 void main() {
   final env = Platform.environment;
-  final bot = Nyxx(env["DISCORD_TOKEN"]!, ignoreExceptions: false);
+  final bot = Nyxx(env["DISCORD_TOKEN"]!, ignoreExceptions: false, options: ClientOptions(
+    gatewayIntents: GatewayIntents()
+        ..guildMessages = true
+  ));
 
   Timer(const Duration(seconds: 60), () {
     print("Timed out waiting for messages");
@@ -62,8 +66,8 @@ void main() {
     test(snowflakeA.timestamp.isAtSameMomentAs(DateTime(2017)), "Snowflake should repsresent proper date");
     test(snowflakeB.timestamp.isAtSameMomentAs(DateTime(2018)), "Snowflake should repsresent proper date");
 
-    test(bot.channels.count > 0, "Channel count shouldn't be less or equal zero");
-    test(bot.users.count > 0, "Users coutn count should n't be less or equal zero");
+    // test(bot.channels.count > 0, "Channel count shouldn't be less or equal zero");
+    // test(bot.users.count > 0, "Users coutn count should n't be less or equal zero");
     test(bot.shards == 1, "Shard count should be one");
     test(bot.ready, "Bot should be ready");
     //test(bot.inviteLink != null, "Bot's invite link shouldn't be null");
@@ -81,14 +85,13 @@ void main() {
 
     await channel.sendMessage(
         content: "PLIK SIEMA",
-        files: [AttachmentBuilder.path("${Directory.current.path}/kitty.webp", spoiler: true)]).then((message) async => message.delete());
+        files: [AttachmentBuilder.path("${Directory.current.path}/test/kitty.webp", spoiler: true)]).then((message) async => message.delete());
 
     print("TESTING ALLOWED MENTIONS");
     await channel.sendMessage(content: "@everyone HEJ", allowedMentions: AllowedMentions());
 
     print("TESTING EMBEDS");
-    final e = await channel.sendMessage(content: "Testing embed!", embed: createTestEmbed());
-    await e.delete();
+    await channel.sendMessage(content: "Testing embed!", embed: createTestEmbed());
   });
 
   bot.onMessageReceived.listen((e) async {
@@ -124,6 +127,7 @@ void main() {
 
           if (field.name == "Test field" && field.content == "Test value" && !field.inline!) {
             await (await e.message.channel.getOrDownload()).sendMessage(content: "Tests completed successfully!");
+            await e.message.delete();
             print("Nyxx tests completed successfully!");
             print("Final memory usage: ${(ProcessInfo.currentRss / 1024 / 1024).toStringAsFixed(2)} MB");
             exit(0);

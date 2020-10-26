@@ -4,7 +4,7 @@ class _HttpBucket {
   // Rate limits
   int remaining = 10;
   DateTime? resetAt;
-  int? resetAfter;
+  double? resetAfter;
 
   // Bucket uri
   late final Uri uri;
@@ -69,12 +69,12 @@ class _HttpBucket {
 
     // seconds since epoch
     if (headers["x-ratelimit-reset"] != null) {
-      final secondsSinceEpoch = int.parse(headers["x-ratelimit-reset"]!) * 1000;
-      this.resetAt = DateTime.fromMillisecondsSinceEpoch(secondsSinceEpoch);
+      final secondsSinceEpoch = (double.parse(headers["x-ratelimit-reset"]!) * 1000000).toInt();
+      this.resetAt = DateTime.fromMicrosecondsSinceEpoch(secondsSinceEpoch);
     }
 
     if (headers["x-ratelimit-reset-after"] != null) {
-      this.resetAfter = int.parse(headers["x-ratelimit-reset-after"]!);
+      this.resetAfter = double.parse(headers["x-ratelimit-reset-after"]!);
     }
   }
 }

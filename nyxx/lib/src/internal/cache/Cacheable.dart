@@ -71,7 +71,7 @@ class _ChannelCacheable<T extends IChannel> extends Cacheable<Snowflake, T> {
   _ChannelCacheable(Nyxx client, Snowflake id): super._new(client, id);
 
   @override
-  T? getFromCache() => this._client.channels[this.id] as T;
+  T? getFromCache() => this._client.channels[this.id] as T?;
 
   @override
   Future<T> download() => _client._httpEndpoints.fetchChannel<T>(this.id);

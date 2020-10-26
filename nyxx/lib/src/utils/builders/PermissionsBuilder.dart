@@ -11,7 +11,7 @@ class _PermissionsSet {
 /// Builder for manipulating [PermissionsOverrides]. Created from existing override or manually by passing [type] and [id] of enttiy.
 class PermissionOverrideBuilder extends PermissionsBuilder {
   /// Type of permission override either `role` or `member`
-  final String type;
+  final int type;
 
   /// Id of entity of permission override
   final Snowflake id;
@@ -23,7 +23,7 @@ class PermissionOverrideBuilder extends PermissionsBuilder {
   PermissionOverrideBuilder(this.type, this.id) : super();
 
   /// Create [PermissionsOverrides] for given [entity]. Entity have to be either [Role] or [Member]
-  PermissionOverrideBuilder.of(SnowflakeEntity entity) : type = entity is Role ? "role" : "member", id = entity.id, super();
+  PermissionOverrideBuilder.of(SnowflakeEntity entity) : type = entity is Role ? 0 : 1, id = entity.id, super();
 }
 
 /// Builder for permissions.
