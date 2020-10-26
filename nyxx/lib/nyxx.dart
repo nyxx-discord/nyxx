@@ -4,17 +4,12 @@
 library nyxx;
 
 import "dart:async";
-
 import "dart:convert";
 import "dart:io";
-
-// Used to discard errors on vm to continue working even if error occured
-import "dart:isolate";
+import "dart:isolate"; // Used to discard errors on vm to continue working even if error occurred
 
 import "package:logging/logging.dart";
-
 import "package:http/http.dart" as http;
-
 import "package:path/path.dart" as path_utils;
 
 // BASE
