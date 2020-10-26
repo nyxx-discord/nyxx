@@ -64,7 +64,11 @@ class Member extends SnowflakeEntity {
     }
 
     if (!client.users.hasKey(this.id)) {
-      client.users.add(this.id, User._new(client, raw["user"] as Map<String, dynamic>));
+      final userRaw = raw["user"] as Map<String, dynamic>;
+
+      if (userRaw["id"] != null && userRaw.length != 1) {
+        client.users.add(this.id, User._new(client, userRaw));
+      }
     }
   }
 
