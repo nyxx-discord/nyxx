@@ -75,7 +75,7 @@ class TextGuildChannel extends GuildChannel implements TextChannel {
       client._httpEndpoints.downloadMessages(this.id, limit: limit, after: after, around: around, before: before);
 
   @override
-  Future<Message?> fetchMessage(Snowflake messageId) =>
+  Future<Message> fetchMessage(Snowflake messageId) =>
       client._httpEndpoints.fetchMessage(this.id, messageId);
 
   @override
