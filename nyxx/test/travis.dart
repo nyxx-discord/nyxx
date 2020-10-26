@@ -41,14 +41,14 @@ void main() {
   });
 
   bot.onReady.listen((e) async {
-    final channel = bot.channels[Snowflake(422285619952222208)] as TextGuildChannel?;
-    test(channel != null, "Channel cannot be null");
+    final channel = await bot.fetchChannel<TextGuildChannel>(Snowflake(422285619952222208));
+    // test(channel != null, "Channel cannot be null");
     if (env["TRAVIS_BUILD_NUMBER"] != null) {
-      await channel!.sendMessage(
+      await channel.sendMessage(
           content:
               "Testing new Travis CI build `#${env['TRAVIS_BUILD_NUMBER']}` from commit `${env['TRAVIS_COMMIT']}` on branch `${env['TRAVIS_BRANCH']}` with Dart version: `${env['TRAVIS_DART_VERSION']}`");
     } else {
-      await channel!.sendMessage(content: "Testing new local build");
+      await channel.sendMessage(content: "Testing new local build");
     }
 
     print("TESTING CLIENT INTERNALS");

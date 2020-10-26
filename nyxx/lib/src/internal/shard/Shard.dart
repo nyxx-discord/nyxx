@@ -50,7 +50,7 @@ class Shard implements Disposable {
       this._shardIsolate = isolate;
       this._sendPort = await _receiveStream.first as SendPort;
 
-      this._sendPort.send({"cmd" : "INIT", "gatewayUrl" : gatewayUrl });
+      this._sendPort.send({"cmd" : "INIT", "gatewayUrl" : gatewayUrl, "compression":  manager._ws._client._options.compressedGatewayPayloads});
       this._receiveStream.listen(_handle);
     });
   }
@@ -221,7 +221,6 @@ class Shard implements Disposable {
               "\$device": "nyxx",
             },
             "large_threshold": manager._ws._client._options.largeThreshold,
-            "compress": manager._ws._client._options.compressedGatewayPayloads,
             "guild_subscriptions" : manager._ws._client._options.guildSubscriptions,
             if (manager._ws._client._options.initialPresence != null)
               "presence" : manager._ws._client._options.initialPresence!._build()

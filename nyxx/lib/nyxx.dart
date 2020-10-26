@@ -112,7 +112,7 @@ part "src/core/auditlogs/AuditLogChange.dart";
 part "src/core/channel/guild/CategoryGuildChannel.dart";
 part "src/core/channel/guild/GuildChannel.dart";
 part "src/core/channel/guild/TextGuildChannel.dart";
-part "src/core/channel/guild/VoiceChannelNew.dart";
+part "src/core/channel/guild/VoiceChannel.dart";
 part "src/core/channel/Channel.dart";
 part "src/core/channel/DMChannel.dart";
 part "src/core/channel/TextChannel.dart";

@@ -1,15 +1,24 @@
 part of nyxx;
 
 // Decodes zlib compresses string into string json
-Map<String, dynamic> _decodeBytes(dynamic rawPayload, ZLibDecoder decoder) {
+Map<String, dynamic> _decodeBytes(dynamic rawPayload, RawZLibFilter decoder) {
   if (rawPayload is String) {
     return jsonDecode(rawPayload) as Map<String, dynamic>;
   }
 
-  // print("Size: ${(rawPayload as List<int>).length} bytes");
+  decoder.process(rawPayload as List<int>, 0, rawPayload.length);
 
-  final decoded = decoder.convert(rawPayload as List<int>);
-  final rawStr = utf8.decode(decoded);
+  final buffer = <int>[];
+  for (List<int>? decoded = []; decoded != null; decoded = decoder.processed()) {
+    buffer.addAll(decoded);
+  }
+
+  // that shouldn't really happen
+  if (buffer.isEmpty) {
+    return {};
+  }
+
+  final rawStr = utf8.decode(buffer);
   return jsonDecode(rawStr) as Map<String, dynamic>;
 }
 
@@ -35,7 +44,7 @@ Future<void> _shardHandler(SendPort shardPort) async {
 
   /// Initial data init
   final initData = await receiveStream.first;
-  final gatewayUri = Constants.gatewayUri(initData["gatewayUrl"] as String);
+  final gatewayUri = Constants.gatewayUri(initData["gatewayUrl"] as String, initData["compression"] as bool);
 
   WebSocket? _socket;
   StreamSubscription? _socketSubscription;
@@ -61,7 +70,7 @@ Future<void> _shardHandler(SendPort shardPort) async {
   // Attempts to connect to ws
   Future<void> _connect() async {
     await WebSocket.connect(gatewayUri.toString()).then((ws) {
-      final zlibDecoder = ZLibDecoder(); // Create zlib decoder specific to this connection. New connection should get new zlib context
+      final zlibDecoder = RawZLibFilter.inflateFilter(); // Create zlib decoder specific to this connection. New connection should get new zlib context
 
       _socket = ws;
       _socketSubscription = _socket!.listen((data) {
