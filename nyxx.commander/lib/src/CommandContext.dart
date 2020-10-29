@@ -44,7 +44,7 @@ class CommandContext {
   ///   await context.reply(content: context.user.avatarURL());
   /// }
   /// ```
-  Future<Message?> sendMessage({
+  Future<Message> sendMessage({
     dynamic content,
     EmbedBuilder? embed,
     List<AttachmentBuilder>? files,
