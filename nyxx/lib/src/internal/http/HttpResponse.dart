@@ -52,16 +52,15 @@ class HttpResponseError extends _HttpResponse {
     if (response.headers["Content-Type"] == "application/json") {
       this.errorCode = this._jsonBody["code"] as int;
       this.errorMessage = this._jsonBody["message"] as String;
-      return;
-    }
+    } else {
+      try {
+        this.errorMessage = utf8.decode(this._body);
+      } on Exception {
+        this.errorMessage = "";
+      }
 
-    try {
-      this.errorMessage = utf8.decode(this._body);
-    } on Exception {
-      this.errorMessage = "";
+      this.errorCode = response.statusCode;
     }
-
-    this.errorCode = response.statusCode;
   }
 
   @override
