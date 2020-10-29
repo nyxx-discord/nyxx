@@ -50,9 +50,10 @@ class CommandContext {
     List<AttachmentBuilder>? files,
     bool? tts,
     AllowedMentions? allowedMentions,
-    MessageBuilder? builder
+    MessageBuilder? builder,
+    ReplyBuilder? replyBuilder
   }) => channel.sendMessage(
-        content: content, embed: embed, tts: tts, files: files, builder: builder, allowedMentions: allowedMentions);
+        content: content, embed: embed, tts: tts, files: files, builder: builder, allowedMentions: allowedMentions, replyBuilder: replyBuilder);
 
   /// Reply to messages, then delete it when [duration] expires.
   ///
@@ -61,15 +62,16 @@ class CommandContext {
   ///   await context.replyTemp(content: user.avatarURL());
   /// }
   /// ```
-  Future<Message> replyTemp(Duration duration,
-      {dynamic content,
-      EmbedBuilder? embed,
-      List<AttachmentBuilder>? files,
-      bool? tts,
-      AllowedMentions? allowedMentions,
-      MessageBuilder? builder
+  Future<Message> replyTemp(Duration duration, {
+    dynamic content,
+    EmbedBuilder? embed,
+    List<AttachmentBuilder>? files,
+    bool? tts,
+    AllowedMentions? allowedMentions,
+    MessageBuilder? builder,
+    ReplyBuilder? replyBuilder
   }) => channel
-        .sendMessage(content: content, embed: embed, files: files, tts: tts, builder: builder, allowedMentions: allowedMentions)
+        .sendMessage(content: content, embed: embed, files: files, tts: tts, builder: builder, allowedMentions: allowedMentions, replyBuilder: replyBuilder)
         .then((msg) {
           Timer(duration, () => msg.delete());
           return msg;
@@ -87,7 +89,8 @@ class CommandContext {
         List<AttachmentBuilder>? files,
         bool? tts,
         AllowedMentions? allowedMentions,
-        MessageBuilder? builder
+        MessageBuilder? builder,
+        ReplyBuilder? replyBuilder
       }) =>  Future.delayed(
         duration,
         () => channel.sendMessage(
@@ -96,7 +99,8 @@ class CommandContext {
             files: files,
             tts: tts,
             builder: builder,
-            allowedMentions: allowedMentions));
+            allowedMentions: allowedMentions,
+            replyBuilder: replyBuilder));
 
   /// Awaits for emoji under given [msg]
   Future<IEmoji> awaitEmoji(Message msg) async =>

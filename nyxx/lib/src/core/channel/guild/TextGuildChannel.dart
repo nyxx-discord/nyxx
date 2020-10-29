@@ -82,6 +82,6 @@ class TextGuildChannel extends GuildChannel implements TextChannel {
   Future<Message?> getMessage(Snowflake id) => Future.value(this.messageCache[id]);
 
   @override
-  Future<Message> sendMessage({dynamic content, EmbedBuilder? embed, List<AttachmentBuilder>? files, bool? tts, AllowedMentions? allowedMentions, MessageBuilder? builder}) =>
-      client._httpEndpoints.sendMessage(this.id, content: content, embed: embed, files: files, tts: tts, allowedMentions: allowedMentions, builder: builder);
+  Future<Message> sendMessage({dynamic content, EmbedBuilder? embed, List<AttachmentBuilder>? files, bool? tts, AllowedMentions? allowedMentions, MessageBuilder? builder, ReplyBuilder? replyBuilder}) =>
+      client._httpEndpoints.sendMessage(this.id, content: content, embed: embed, files: files, tts: tts, allowedMentions: allowedMentions, builder: builder, replyBuilder: replyBuilder);
 }

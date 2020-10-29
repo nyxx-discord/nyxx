@@ -69,6 +69,9 @@ class MessageBuilder extends MessageEditBuilder {
   /// List of files to send with message
   List<AttachmentBuilder>? files;
 
+  /// Allows to create message that replies to another message
+  ReplyBuilder? replyBuilder;
+
   /// Add attachment
   void addAttachment(AttachmentBuilder attachment) {
     if (this.files == null) this.files = [];
