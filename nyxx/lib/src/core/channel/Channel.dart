@@ -29,7 +29,7 @@ abstract class IChannel extends SnowflakeEntity implements Disposable {
       case 4:
         return CategoryGuildChannel._new(client, raw, guildId);
       default:
-        return _InternalChannel._new(client, raw);
+        return _InternalChannel._new(client, raw, guildId);
     }
   }
 
@@ -40,7 +40,7 @@ abstract class IChannel extends SnowflakeEntity implements Disposable {
 }
 
 class _InternalChannel extends GuildChannel {
-  _InternalChannel._new(Nyxx client, Map<String, dynamic> raw): super._new(client, raw);
+  _InternalChannel._new(Nyxx client, Map<String, dynamic> raw, [Snowflake? guildId]): super._new(client, raw, guildId);
 }
 
 /// Enum for possible channel types
