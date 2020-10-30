@@ -53,13 +53,21 @@ class HttpResponseError extends _HttpResponse {
       this.errorCode = this._jsonBody["code"] as int;
       this.errorMessage = this._jsonBody["message"] as String;
     } else {
+      this.errorMessage = "";
+      this.errorCode = response.statusCode;
+    }
+  }
+
+  @override
+  Future<void> _finalize() async {
+    await super._finalize();
+
+    if (this.errorMessage.isEmpty) {
       try {
         this.errorMessage = utf8.decode(this._body);
       } on Exception {
         this.errorMessage = "";
       }
-
-      this.errorCode = response.statusCode;
     }
   }
 
