@@ -28,11 +28,6 @@ class ClientOptions {
   /// List of ignored events
   List<String> ignoredEvents;
 
-  /// When identifying to the gateway, you can specify an intents parameter which
-  /// allows you to conditionally subscribe to pre-defined "intents", groups of events defined by Discord.
-  /// If you do not specify a certain intent, you will not receive any of the gateway events that are batched into that group.
-  GatewayIntents? gatewayIntents;
-
   /// Allows to receive compressed payloads from gateway
   bool compressedGatewayPayloads;
 
@@ -62,7 +57,6 @@ class ClientOptions {
       this.cacheMembers = true,
       this.largeThreshold = 50,
       this.ignoredEvents = const [],
-      this.gatewayIntents,
       this.compressedGatewayPayloads = true,
       this.guildSubscriptions = true,
       this.initialPresence,
@@ -76,83 +70,60 @@ class ClientOptions {
 /// [Reference](https://discordapp.com/developers/docs/topics/gateway#gateway-intents)
 class GatewayIntents {
   /// Includes events: `GUILD_CREATE, GUILD_UPDATE, GUILD_DELETE, GUILD_ROLE_CREATE, GUILD_ROLE_UPDATE, GUILD_ROLE_DELETE, CHANNEL_DELETE, CHANNEL_CREATE, CHANNEL_UPDATE, CHANNEL_PINS_UPDATE`
-  bool guilds = false;
+  static const int guilds = 1 << 0;
 
   /// Includes events: `GUILD_MEMBER_ADD, GUILD_MEMBER_UPDATE, GUILD_MEMBER_REMOVE`
-  bool guildMembers = false;
+  static const int guildMembers = 1 << 1;
 
   /// Includes events: `GUILD_BAN_ADD, GUILD_BAN_REMOVE`
-  bool guildBans = false;
+  static const int guildBans = 1 << 2;
 
   /// Includes event: `GUILD_EMOJIS_UPDATE`
-  bool guildEmojis = false;
+  static const int guildEmojis = 1 << 3;
 
   /// Includes events: `GUILD_INTEGRATIONS_UPDATE`
-  bool guildIntegrations = false;
+  static const int guildIntegrations = 1 << 4;
 
   /// Includes events: `WEBHOOKS_UPDATE`
-  bool guildWebhooks = false;
+  static const int guildWebhooks = 1 << 5;
 
   /// Includes events: `INVITE_CREATE, INVITE_DELETE`
-  bool guildInvites = false;
+  static const int guildInvites = 1 << 6;
 
   /// Includes events: `VOICE_STATE_UPDATE`
-  bool guildVoiceState = false;
+  static const int guildVoiceState = 1 << 7;
 
   /// Includes events: `PRESENCE_UPDATE`
-  bool guildPresences = false;
+  static const int guildPresences = 1 << 8;
 
   /// Include events: `MESSAGE_CREATE, MESSAGE_UPDATE, MESSAGE_DELETE, MESSAGE_DELETE_BULK`
-  bool guildMessages = false;
+  static const int guildMessages = 1 << 9;
 
   /// Includes events: `MESSAGE_REACTION_ADD, MESSAGE_REACTION_REMOVE, MESSAGE_REACTION_REMOVE_ALL, MESSAGE_REACTION_REMOVE_EMOJI`
-  bool guildMessageReactions = false;
+  static const int guildMessageReactions = 1 << 10;
 
   /// Includes events: `TYPING_START`
-  bool guildMessageTyping = false;
+  static const int guildMessageTyping = 1 << 11;
 
   /// Includes events: `CHANNEL_CREATE, MESSAGE_CREATE, MESSAGE_UPDATE, MESSAGE_DELETE, CHANNEL_PINS_UPDATE`
-  bool directMessages = false;
+  static const int directMessages = 1 << 12;
 
   /// Includes events: `MESSAGE_REACTION_ADD, MESSAGE_REACTION_REMOVE, MESSAGE_REACTION_REMOVE_ALL, MESSAGE_REACTION_REMOVE_EMOJI`
-  bool directMessageReactions = false;
+  static const int directMessageReactions = 1 << 13;
 
   /// Includes events: `TYPING_START`
-  bool directMessageTyping = false;
+  static const int directMessageTyping = 1 << 14;
 
-  bool _all = false;
+  /// All unprivileged intents
+  static const int allUnprivileged = guilds | guildBans | guildEmojis | guildIntegrations | guildWebhooks | guildInvites
+    | guildVoiceState | guildMessages | guildMessageReactions | guildMessageTyping | directMessages
+    | directMessageReactions | directMessageTyping;
 
-  /// Constructs intens config object
-  GatewayIntents();
+  /// All privileged intents
+  static const int allPrivileged = guildMembers | guildPresences;
 
-  /// Return config with turned on all intents
-  GatewayIntents.all() : _all = true;
-
-  int _calculate() {
-    if (_all) {
-      return 0x7FFF;
-    }
-
-    var value = 0;
-
-    if (guilds) value += 1 << 0;
-    if (guildMembers) value += 1 << 1;
-    if (guildBans) value += 1 << 2;
-    if (guildEmojis) value += 1 << 3;
-    if (guildIntegrations) value += 1 << 4;
-    if (guildWebhooks) value += 1 << 5;
-    if (guildInvites) value += 1 << 6;
-    if (guildVoiceState) value += 1 << 7;
-    if (guildPresences) value += 1 << 8;
-    if (guildMessages) value += 1 << 9;
-    if (guildMessageReactions) value += 1 << 10;
-    if (guildMessageTyping) value += 1 << 11;
-    if (directMessages) value += 1 << 12;
-    if (directMessageReactions) value += 1 << 13;
-    if (directMessageTyping) value += 1 << 14;
-
-    return value;
-  }
+  /// All intents
+  static const int all = allUnprivileged | allPrivileged;
 }
 
 /// Hook executed when disposing bots process.

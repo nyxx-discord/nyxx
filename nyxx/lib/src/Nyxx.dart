@@ -28,6 +28,12 @@ class Nyxx implements Disposable {
   late final _HttpHandler _http;
   late final _HttpEndpoints _httpEndpoints;
 
+  /// When identifying to the gateway, you have to specify an intents parameter which
+  /// allows you to conditionally subscribe to pre-defined "intents", groups of events defined by Discord.
+  /// If you do not specify a certain intent, you will not receive any of the gateway events that are batched into that group.
+  /// Since api v8 its required upon connecting to gateway.
+  final int intents;
+
   /// The current bot user.
   late ClientUser self;
 
@@ -180,7 +186,7 @@ class Nyxx implements Disposable {
 
   /// Creates and logs in a new client. If [ignoreExceptions] is true (by default is)
   /// isolate will ignore all exceptions and continue to work.
-  Nyxx(this._token, {ClientOptions? options, bool ignoreExceptions = true, bool useDefaultLogger = true, Level? defaultLoggerLogLevel}) {
+  Nyxx(this._token, this.intents, {ClientOptions? options, bool ignoreExceptions = true, bool useDefaultLogger = true, Level? defaultLoggerLogLevel}) {
     if(useDefaultLogger) {
       Logger.root.level = defaultLoggerLogLevel ?? Level.ALL;
 

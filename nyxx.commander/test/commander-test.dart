@@ -5,11 +5,7 @@ import "package:nyxx/nyxx.dart";
 import "package:nyxx_commander/commander.dart";
 
 void main() {
-  final bot = Nyxx(Platform.environment["DISCORD_TOKEN"]!, ignoreExceptions: false, options: ClientOptions(
-    gatewayIntents: GatewayIntents()
-        ..guildMessages = true
-        ..guilds = true
-  ));
+  final bot = Nyxx(Platform.environment["DISCORD_TOKEN"]!, GatewayIntents.guilds | GatewayIntents.guildMessages, ignoreExceptions: false);
 
   bot.onMessageReceived.listen((event) async {
     if (event.message.content == "Test 1") {

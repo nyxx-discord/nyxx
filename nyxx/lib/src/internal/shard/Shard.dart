@@ -222,13 +222,10 @@ class Shard implements Disposable {
             },
             "large_threshold": manager._ws._client._options.largeThreshold,
             "guild_subscriptions" : manager._ws._client._options.guildSubscriptions,
+            "intents": manager._ws._client.intents,
             if (manager._ws._client._options.initialPresence != null)
               "presence" : manager._ws._client._options.initialPresence!._build()
           };
-
-          if (manager._ws._client._options.gatewayIntents != null) {
-            identifyMsg["intents"] = manager._ws._client._options.gatewayIntents!._calculate();
-          }
 
           identifyMsg["shard"] = <int>[this.id, manager._numShards];
 
