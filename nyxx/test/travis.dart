@@ -34,10 +34,7 @@ EmbedBuilder createTestEmbed() => EmbedBuilder()
 
 void main() {
   final env = Platform.environment;
-  final bot = Nyxx(env["DISCORD_TOKEN"]!, ignoreExceptions: false, options: ClientOptions(
-    gatewayIntents: GatewayIntents()
-        ..guildMessages = true
-  ));
+  final bot = Nyxx(env["DISCORD_TOKEN"]!, GatewayIntents.guildMessages, ignoreExceptions: false);
 
   Timer(const Duration(seconds: 60), () {
     print("Timed out waiting for messages");
