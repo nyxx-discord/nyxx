@@ -22,7 +22,6 @@ abstract class _HttpResponse {
         this._jsonBody = jsonDecode(utf8.decode(this._body));
       }
     } on FormatException {
-      print(utf8.decode(this._body));
       this._jsonBody = null;
     }
   }
@@ -65,9 +64,7 @@ class HttpResponseError extends _HttpResponse {
     if (this.errorMessage.isEmpty) {
       try {
         this.errorMessage = utf8.decode(this._body);
-      } on Exception {
-        this.errorMessage = "";
-      }
+      } on Exception { } // ignore: empty_catches
     }
   }
 
