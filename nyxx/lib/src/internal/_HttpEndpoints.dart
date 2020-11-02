@@ -184,6 +184,8 @@ abstract class IHttpEndpoints {
   Future<Webhook> fetchWebhook(Snowflake id, {String token = ""});
 
   Future<Invite> fetchInvite(String code);
+
+  String stickerUrl(String stickerHash, String extension);
 }
 
 class _HttpEndpoints implements IHttpEndpoints {
@@ -1073,4 +1075,8 @@ class _HttpEndpoints implements IHttpEndpoints {
 
     return Future.error(response);
   }
+
+  @override
+  String stickerUrl(String stickerHash, String extension) =>
+      "https://cdn.${Constants.cdnHost}/stickers/$stickerHash.$extension";
 }
