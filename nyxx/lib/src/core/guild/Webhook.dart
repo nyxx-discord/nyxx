@@ -41,7 +41,7 @@ class Webhook extends SnowflakeEntity implements IMessageAuthor {
   late final User? user;
 
   /// Webhook type
-  late final WebhookType type;
+  late final WebhookType? type;
 
   /// Webhooks avatar hash
   late final String? avatarHash;
@@ -68,7 +68,12 @@ class Webhook extends SnowflakeEntity implements IMessageAuthor {
     this.name = raw["name"] as String?;
     this.token = raw["token"] as String? ?? "";
     this.avatarHash = raw["avatar"] as String?;
-    this.type = WebhookType.from(raw["type"] as int);
+
+    if (raw["type"] != null) {
+      this.type = WebhookType.from(raw["type"] as int);
+    } else {
+      this.type = null;
+    }
 
     this.channel = _ChannelCacheable(client, Snowflake(raw["channel_id"]));
 
