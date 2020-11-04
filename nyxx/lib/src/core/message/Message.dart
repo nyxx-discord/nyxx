@@ -69,7 +69,7 @@ abstract class Message extends SnowflakeEntity implements Disposable {
     this.stickers = [
       if (raw["stickers"] != null)
         for (final rawSticker in raw["stickers"])
-          Sticker._new(rawSticker as Map<String, dynamic>);
+          Sticker._new(rawSticker as Map<String, dynamic>)
     ];
 
     if (raw["flags"] != null) {

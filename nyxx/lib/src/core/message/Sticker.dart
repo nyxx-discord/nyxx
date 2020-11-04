@@ -41,10 +41,11 @@ class Sticker extends SnowflakeEntity {
   }
 }
 
+/// Enumerates different possible format of sticker
 class StickerFormat extends IEnum<int> {
   static const StickerFormat png = const StickerFormat(1);
-  static const StickerFormat apng = StickerFormat(2);
-  static const StickerFormat lottie = StickerFormat(3);
+  static const StickerFormat apng = const StickerFormat(2);
+  static const StickerFormat lottie = const StickerFormat(3);
 
   const StickerFormat(int value) : super(value);
   StickerFormat.from(int value): super(value);
