@@ -531,7 +531,13 @@ class _HttpEndpoints implements IHttpEndpoints {
     final response = await _httpClient._execute(BasicRequest._new("/guilds/$guildId/members/$memberId"));
 
     if (response is HttpResponseSuccess) {
-      return Member._new(_client, response.jsonBody as Map<String, dynamic>, guildId);
+      final member = Member._new(_client, response.jsonBody as Map<String, dynamic>, guildId);
+
+      if (_client._cacheOptions.memberCachePolicyLocation.http && _client._cacheOptions.memberCachePolicy.canCache(member)) {
+        member.guild.getFromCache()?.members[member.id] = member;
+      }
+
+      return member;
     }
 
     return Future.error(response);
@@ -547,7 +553,13 @@ class _HttpEndpoints implements IHttpEndpoints {
     }
 
     for (final rawMember in (request as HttpResponseSuccess)._jsonBody as List<dynamic>) {
-      yield Member._new(_client, rawMember as Map<String, dynamic>, guildId);
+      final member = Member._new(_client, rawMember as Map<String, dynamic>, guildId);
+
+      if (_client._cacheOptions.memberCachePolicyLocation.http && _client._cacheOptions.memberCachePolicy.canCache(member)) {
+        member.guild.getFromCache()?.members[member.id] = member;
+      }
+
+      yield member;
     }
   }
 
@@ -561,7 +573,13 @@ class _HttpEndpoints implements IHttpEndpoints {
     }
 
     for (final Map<String, dynamic> memberData in (response as HttpResponseSuccess)._jsonBody) {
-      yield Member._new(_client, memberData, guildId);
+      final member = Member._new(_client, memberData, guildId);
+
+      if (_client._cacheOptions.memberCachePolicyLocation.http && _client._cacheOptions.memberCachePolicy.canCache(member)) {
+        member.guild.getFromCache()?.members[member.id] = member;
+      }
+
+      yield member;
     }
   }
   

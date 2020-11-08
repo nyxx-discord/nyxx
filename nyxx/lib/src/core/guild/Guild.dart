@@ -179,10 +179,12 @@ class Guild extends SnowflakeEntity {
       client.channels[channel.id] = channel;
     });
 
-    if (client._options.cacheMembers) {
+    if (client._cacheOptions.memberCachePolicyLocation.objectConstructor) {
       raw["members"].forEach((o) {
         final member = Member._new(client, o as Map<String, dynamic>, this.id);
-        this.members[member.id] = member;
+        if (client._cacheOptions.memberCachePolicy.canCache(member)) {
+          this.members[member.id] = member;
+        }
       });
     }
 
