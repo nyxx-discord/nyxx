@@ -37,6 +37,7 @@ part "src/internal/_HttpEndpoints.dart";
 part "src/internal/http/_HttpClient.dart";
 part "src/internal/http/HttpBucket.dart";
 
+part "src/internal/cache/CachePolicy.dart";
 part "src/internal/cache/Cache.dart";
 part "src/internal/cache/_SnowflakeCache.dart";
 part "src/internal/cache/ChannelCache.dart";

@@ -128,7 +128,9 @@ class GuildMemberAddEvent {
       return;
     }
 
-    guildInstance.members[this.member.id] = member;
+    if (client._cacheOptions.memberCachePolicyLocation.event && client._cacheOptions.memberCachePolicy.canCache(this.member)) {
+      guildInstance.members[this.member.id] = member;
+    }
   }
 }
 

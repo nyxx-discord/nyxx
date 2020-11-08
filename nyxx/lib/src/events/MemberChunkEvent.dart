@@ -42,10 +42,14 @@ class MemberChunkEvent {
         Member._new(client, memberRaw as Map<String, dynamic>, this.guild.id)
     ];
 
-    final guildInstance = this.guild.getFromCache();
-    // TODO: Thats probably redundant
-    for (final member in members) {
-      guildInstance?.members.add(member.id, member);
+    if (client._cacheOptions.memberCachePolicyLocation.event) {
+      final guildInstance = this.guild.getFromCache();
+      // TODO: Thats probably redundant
+      for (final member in members) {
+        if (client._cacheOptions.memberCachePolicy.canCache(member)) {
+          guildInstance?.members.add(member.id, member);
+        }
+      }
     }
   }
 }

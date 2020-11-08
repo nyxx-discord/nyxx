@@ -248,6 +248,10 @@ class GuildMessage extends Message {
         "id": raw["author"]["id"]
       };
       this.member = Member._new(client, raw["member"] as Map<String, dynamic>, this.guild.id);
+
+      if (client._cacheOptions.memberCachePolicyLocation.objectConstructor && client._cacheOptions.memberCachePolicy.canCache(member)) {
+        this.guild.getFromCache()?.members[member.id] = member;
+      }
     }
 
     this.roleMentions = [
