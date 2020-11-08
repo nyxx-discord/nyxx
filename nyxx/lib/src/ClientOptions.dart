@@ -1,5 +1,10 @@
 part of nyxx;
 
+class CacheOptions {
+  CachePolicyLocation memberCachePolicyLocation = CachePolicyLocation();
+  CachePolicy<Member> memberCachePolicy = MemberCachePolicy.def;
+}
+
 /// Optional client settings which can be used when creating new instance
 /// of client. It allows to tune up client to your needs.
 class ClientOptions {

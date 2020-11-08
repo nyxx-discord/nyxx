@@ -33,5 +33,9 @@ class TypingEvent {
     } else {
       this.member = null;
     }
+
+    if (this.member != null && client._cacheOptions.memberCachePolicyLocation.event && client._cacheOptions.memberCachePolicy.canCache(this.member!)) {
+      member!.guild.getFromCache()?.members[this.member!.id] = member!;
+    }
   }
 }

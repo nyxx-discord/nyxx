@@ -28,6 +28,9 @@ class Member extends SnowflakeEntity {
   /// Highest role of member
   late Cacheable<Snowflake, Role> hoistedRole;
 
+  /// Voice state of member. Null if not connected to channel or voice state not cached
+  VoiceState? get voiceState => this.guild.getFromCache()?.voiceStates[this.id];
+
   // TODO: is everything okay?
   /// Returns highest role of member.
   /// Uses ! on nullable properties and will throw if anything is missing from cache
