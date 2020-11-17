@@ -49,6 +49,9 @@ abstract class Message extends SnowflakeEntity implements Disposable {
   /// The stickers sent with the message
   late final Iterable<Sticker> stickers;
 
+  /// Message reply
+  late final ReferencedMessage? referencedMessage;
+
   factory Message._deserialize(Nyxx client, Map<String, dynamic> raw) {
     if (raw["guild_id"] != null) {
       return GuildMessage._new(client, raw);
@@ -102,6 +105,12 @@ abstract class Message extends SnowflakeEntity implements Disposable {
 
         this.mentions.add(_UserCacheable(client, user.id));
       }
+    }
+
+    if (raw["type"] == 19) {
+      this.referencedMessage = ReferencedMessage._new(client, raw);
+    } else {
+      this.referencedMessage = null;
     }
   }
 
