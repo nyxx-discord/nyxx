@@ -8,6 +8,7 @@ class AllowedMentions implements Builder {
   bool _allowEveryone = false;
   bool _allowUsers = false;
   bool _allowRoles = false;
+  bool _allowReply = false;
 
   final List<Snowflake> _users = [];
   final List<Snowflake> _roles = [];
@@ -15,10 +16,11 @@ class AllowedMentions implements Builder {
   /// Allow @everyone and @here if [everyone] is true
   /// Allow @user if [users] is true
   /// Allow @role if [roles] is true
-  void allow({bool everyone = false, bool users = false, bool roles = false}) {
+  void allow({bool reply = false, bool everyone = false, bool users = false, bool roles = false}) {
     this._allowEveryone = everyone;
     this._allowUsers = users;
     this._allowRoles = roles;
+    this._allowReply = reply;
   }
 
   /// Suppress mentioning specific user by its id
@@ -76,6 +78,8 @@ class AllowedMentions implements Builder {
 
       map["roles"] = _roles.map((e) => e.id.toString());
     }
+
+    map["replied_user"] = this._allowReply;
 
     return map;
   }
