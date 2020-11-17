@@ -145,6 +145,7 @@ part "src/core/message/GuildEmoji.dart";
 part "src/core/message/Emoji.dart";
 part "src/core/message/Reaction.dart";
 part "src/core/message/Message.dart";
+part "src/core/message/Sticker.dart";
 part "src/core/message/Attachment.dart";
 part "src/core/message/MessageFlags.dart";
 part "src/core/message/MessageReference.dart";
