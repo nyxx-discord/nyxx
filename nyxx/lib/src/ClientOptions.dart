@@ -1,8 +1,18 @@
 part of nyxx;
 
+/// Options for configuring cache. Allows to specify where and which entities should be cached and preserved in cache
 class CacheOptions {
+  /// Defines in which locations members will be cached
   CachePolicyLocation memberCachePolicyLocation = CachePolicyLocation();
+
+  /// Defines which members are preserved in cache
   CachePolicy<Member> memberCachePolicy = MemberCachePolicy.def;
+
+  /// Defines where channel entities are preserved cache. Defaults to [CachePolicyLocation] with additional objectConstructor set to true
+  CachePolicyLocation channelCachePolicyLocation = CachePolicyLocation()..objectConstructor = true;
+
+  /// Defines which channel entities are preserved in cache.
+  CachePolicy<IChannel> channelCachePolicy = ChannelCachePolicy.def;
 }
 
 /// Optional client settings which can be used when creating new instance
