@@ -13,22 +13,25 @@ class ReferencedMessage {
   /// If true message was delted
   late final bool isDeleted;
 
+  /// True if references message exists and is available
+  bool get exists => !isDeleted && !isBackendFetchError;
+
   ReferencedMessage._new(Nyxx client, Map<String, dynamic> raw) {
-    if (!raw.containsKey(raw["referencedMessage"])) {
+    if (!raw.containsKey("referenced_message")) {
       this.message = null;
       this.isBackendFetchError = true;
       this.isDeleted = false;
       return;
     }
 
-    if (raw["referencedMessage"] == null) {
+    if (raw["referenced_message"] == null) {
       this.message = null;
       this.isBackendFetchError = false;
       this.isDeleted = true;
       return;
     }
 
-    this.message = Message._deserialize(client, raw);
+    this.message = Message._deserialize(client, raw["referenced_message"] as Map<String, dynamic>);
     this.isBackendFetchError = false;
     this.isDeleted = false;
   }
