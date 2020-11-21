@@ -47,7 +47,7 @@ class _HttpBucket {
       // Check for 429, emmit events and wait given in response body time
       if (response.statusCode == 429) {
         final responseBody = jsonDecode(await response.stream.bytesToString());
-        final retryAfter = responseBody["retry_after"] as int;
+        final retryAfter = ((responseBody["retry_after"] as double) * 1000).round();
 
         _httpHandler.client._events.onRatelimited.add(RatelimitEvent._new(request, false, response));
         _httpHandler._logger.warning(

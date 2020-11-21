@@ -73,15 +73,20 @@ class User extends SnowflakeEntity with Mentionable, IMessageAuthor implements I
       client._httpEndpoints.userAvatarURL(this.id, this.avatar, this.discriminator, format: format, size: size);
 
   /// Sends a message to user.
+  @override
   Future<Message> sendMessage(
       {dynamic content,
         List<AttachmentBuilder>? files,
         EmbedBuilder? embed,
         bool? tts,
         AllowedMentions? allowedMentions,
-        MessageBuilder? builder}) async {
+        MessageBuilder? builder,
+        ReplyBuilder? replyBuilder
+      }) async {
     final channel = await this.dmChannel;
     return channel.sendMessage(
-        content: content, files: files, embed: embed, tts: tts, allowedMentions: allowedMentions, builder: builder);
+        content: content, files: files, embed: embed, tts: tts,
+        allowedMentions: allowedMentions, builder: builder, replyBuilder: replyBuilder
+    );
   }
 }

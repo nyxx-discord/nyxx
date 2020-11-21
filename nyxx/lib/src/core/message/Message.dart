@@ -46,6 +46,12 @@ abstract class Message extends SnowflakeEntity implements Disposable {
   /// Returns clickable url to this message.
   String get url;
 
+  /// The stickers sent with the message
+  late final Iterable<Sticker> stickers;
+
+  /// Message reply
+  late final ReferencedMessage? referencedMessage;
+
   factory Message._deserialize(Nyxx client, Map<String, dynamic> raw) {
     if (raw["guild_id"] != null) {
       return GuildMessage._new(client, raw);
@@ -62,6 +68,12 @@ abstract class Message extends SnowflakeEntity implements Disposable {
     this.tts = raw["tts"] as bool;
     this.mentionEveryone = raw["mention_everyone"] as bool;
     this.type = MessageType.from(raw["type"] as int);
+
+    this.stickers = [
+      if (raw["stickers"] != null)
+        for (final rawSticker in raw["stickers"])
+          Sticker._new(rawSticker as Map<String, dynamic>)
+    ];
 
     if (raw["flags"] != null) {
       this.flags = MessageFlags._new(raw["flags"] as int);
@@ -93,6 +105,12 @@ abstract class Message extends SnowflakeEntity implements Disposable {
 
         this.mentions.add(_UserCacheable(client, user.id));
       }
+    }
+
+    if (raw["type"] == 19) {
+      this.referencedMessage = ReferencedMessage._new(client, raw);
+    } else {
+      this.referencedMessage = null;
     }
   }
 

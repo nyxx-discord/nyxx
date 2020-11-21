@@ -26,7 +26,7 @@ abstract class GuildChannel extends IChannel {
     if (raw["guild_id"] != null) {
       this.guild = _GuildCacheable(client, Snowflake(raw["guild_id"]));
     } else if (guildId != null) {
-      _GuildCacheable(client, guildId);
+      this.guild = _GuildCacheable(client, guildId);
     } else {
       throw Exception("Cannot initialize instance of GuildChannelNex due missing `guild_id` in json payload and/or missing optional guildId parameter. Report this issue to developer");
     }
