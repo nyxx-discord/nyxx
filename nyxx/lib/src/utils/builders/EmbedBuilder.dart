@@ -63,7 +63,8 @@ class EmbedBuilder implements Builder {
       name: name,
       content: content,
       builder: builder,
-      field: field
+      field: field,
+      inline: inline
     ));
   }
 
@@ -79,7 +80,8 @@ class EmbedBuilder implements Builder {
         name: name,
         content: content,
         builder: builder,
-        field: field
+        field: field,
+        inline: inline
     );
   }
 
