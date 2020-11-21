@@ -81,7 +81,7 @@ void main() {
 
     await channel.sendMessage(
         content: "PLIK SIEMA",
-        files: [AttachmentBuilder.path("${Directory.current.path}/test/kitty.webp", spoiler: true)]).then((message) async => message.delete());
+        files: [AttachmentBuilder.path("./kitty.webp", spoiler: true)]).then((message) async => message.delete());
 
     print("TESTING ALLOWED MENTIONS");
     await channel.sendMessage(content: "@everyone HEJ", allowedMentions: AllowedMentions());
