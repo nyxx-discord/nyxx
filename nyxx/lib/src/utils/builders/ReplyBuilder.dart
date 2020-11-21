@@ -9,7 +9,7 @@ class ReplyBuilder implements Builder {
   ReplyBuilder(this.messageId);
 
   /// Constructs message reply from given message
-  factory ReplyBuilder.froMessage(Message message) =>
+  factory ReplyBuilder.fromMessage(Message message) =>
       ReplyBuilder(message.id);
 
   /// Constructs message reply from cacheable of message and channel
