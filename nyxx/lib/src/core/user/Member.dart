@@ -31,6 +31,9 @@ class Member extends SnowflakeEntity {
   /// Voice state of member. Null if not connected to channel or voice state not cached
   VoiceState? get voiceState => this.guild.getFromCache()?.voiceStates[this.id];
 
+  /// When the user starting boosting the guild 
+  late DateTime? boostingSince;
+
   // TODO: is everything okay?
   /// Returns highest role of member.
   /// Uses ! on nullable properties and will throw if anything is missing from cache
@@ -52,6 +55,7 @@ class Member extends SnowflakeEntity {
     this.mute = raw["mute"] as bool;
     this.user = _UserCacheable(client, this.id);
     this.guild = _GuildCacheable(client, guildId);
+    this.boostingSince = DateTime.tryParse(raw["premium_since"] as String? ?? "");
 
     this.roles = [
       for (var id in raw["roles"])
@@ -122,19 +126,17 @@ class Member extends SnowflakeEntity {
   Future<void> edit({String? nick, List<SnowflakeEntity>? roles, bool? mute, bool? deaf, SnowflakeEntity? channel, String? auditReason}) =>
       client._httpEndpoints.editGuildMember(this.guild.id, this.id, nick: nick, roles: roles, mute: mute, deaf: deaf, channel: channel, auditReason: auditReason);
 
-  bool _updateMember(String? nickname, List<SnowflakeEntity> roles) {
-    var changed = false;
-
+  void _updateMember(String? nickname, List<Snowflake> roles, DateTime? boostingSince) {
     if (this.nickname != nickname) {
       this.nickname = nickname;
-      changed = true;
     }
 
     if (this.roles != roles) {
-      this.roles = roles.map((e) => _RoleCacheable(client, e.id, this.guild));
-      changed = true;
+      this.roles = roles.map((e) => _RoleCacheable(client, e, this.guild));
     }
 
-    return changed;
+    if (this.boostingSince == null && boostingSince != null) {
+      this.boostingSince = boostingSince;
+    }
   }
 }
