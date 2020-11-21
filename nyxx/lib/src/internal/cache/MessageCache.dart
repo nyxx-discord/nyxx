@@ -25,23 +25,8 @@ class MessageCache extends Cache<Snowflake, Message> {
   /// Allows to put message into cache
   Message put(Message message) => _cacheMessage(message);
 
-  /// Returns messages which were sent by [user]
-  Iterable<Message> fromUser(User user) => values.where((m) => m.author == user);
-
-  /// Returns messages which were sent by [users]
-  Iterable<Message> fromUsers(Iterable<User> users) => values.where((m) => users.contains(m.author));
-
-  /// Returns messages which were created before [date]
-  Iterable<Message> beforeDate(DateTime date) => values.where((m) => m.createdAt.isBefore(date));
-
-  /// Returns messages which were created before [date]
-  Iterable<Message> afterDate(DateTime date) => values.where((m) => m.createdAt.isAfter(date));
-
-  /// Returns messages which were sent by bots
-  Iterable<Message> get byBot => values.where((m) => m.author is User && (m.author as User).bot);
-
   /// Returns messages in chronological order
-  List<Message> get inOrder => _cache.values.toList()..sort((f, s) => f.createdAt.compareTo(s.createdAt));
+  List<Message> get sorted => _cache.values.toList()..sort((f, s) => f.createdAt.compareTo(s.createdAt));
 
   /// Takes first [count] elements from cache. Returns Iterable of cache values
   @override

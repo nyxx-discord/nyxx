@@ -3,7 +3,7 @@ part of nyxx;
 // TODO: Decide what about guild store channels
 /// Sent when a channel is created.
 class ChannelCreateEvent {
-  /// The channel that was created, either a [CacheGuildChannel], [DMChannel], or [GroupDMChannel].
+  /// The channel that was created, either a [GuildChannel] or [DMChannel]
   late final IChannel channel;
 
   ChannelCreateEvent._new(Map<String, dynamic> raw, Nyxx client) {

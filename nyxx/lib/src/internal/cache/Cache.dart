@@ -57,7 +57,7 @@ abstract class Cache<T, S> implements Disposable {
   void removeWhere(bool Function(T key, S value) predicate) => _cache.removeWhere(predicate);
 
   /// Loop over elements from cache
-  void forEach(void Function(T key, S value) f) => _cache.forEach(f);
+  void forEach(void Function(T, S) f) => _cache.forEach(f);
 
   /// Take [count] elements from cache. Returns Iterable of cache values
   Iterable<S> take(int count) => values.take(count);

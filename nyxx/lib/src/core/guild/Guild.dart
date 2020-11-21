@@ -179,10 +179,12 @@ class Guild extends SnowflakeEntity {
       client.channels[channel.id] = channel;
     });
 
-    if (client._options.cacheMembers) {
+    if (client._cacheOptions.memberCachePolicyLocation.objectConstructor) {
       raw["members"].forEach((o) {
         final member = Member._new(client, o as Map<String, dynamic>, this.id);
-        this.members[member.id] = member;
+        if (client._cacheOptions.memberCachePolicy.canCache(member)) {
+          this.members[member.id] = member;
+        }
       });
     }
 
@@ -302,7 +304,7 @@ class Guild extends SnowflakeEntity {
   Future<Role> createRole(RoleBuilder roleBuilder, {String? auditReason}) =>
       client._httpEndpoints.createGuildRole(this.id, roleBuilder, auditReason: auditReason);
 
-  /// Returns list of available [CacheVoiceChannel]s
+  /// Returns list of available [VoiceRegion]s
   Stream<VoiceRegion> getVoiceRegions() =>
       client._httpEndpoints.fetchGuildVoiceRegions(this.id);
 
@@ -361,12 +363,12 @@ class Guild extends SnowflakeEntity {
   Stream<Member> fetchMembers({int limit = 1, Snowflake? after}) =>
       client._httpEndpoints.fetchGuildMembers(this.id, limit: limit, after: after);
 
-  /// Returns a [Stream] of [CacheMember] objects whose username or nickname starts with a provided string.
+  /// Returns a [Stream] of [Member]s objects whose username or nickname starts with a provided string.
   /// By default limits to one entry - can be changed with [limit] parameter.
   Stream<Member> searchMembers(String query, {int limit = 1}) =>
       client._httpEndpoints.searchGuildMembers(this.id, query, limit: limit);
 
-  /// Returns a [Stream] of [CacheMember] objects whose username or nickname starts with a provided string.
+  /// Returns a [Stream] of [Member]s objects whose username or nickname starts with a provided string.
   /// By default limits to one entry - can be changed with [limit] parameter.
   Stream<Member> searchMembersGateway(String query, {int limit = 0}) async* {
     final nonce = "$query${id.toString()}";
@@ -386,6 +388,9 @@ class Guild extends SnowflakeEntity {
       }
     }
   }
+
+  /// Request members from gateway. Requires privileged intents in order to work.
+  void requestChunking() => this.shard.requestMembers(this.id);
 
   /// Deletes the guild.
   Future<void> delete() =>
