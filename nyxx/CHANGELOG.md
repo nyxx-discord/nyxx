@@ -1,3 +1,15 @@
+## 1.1.0
+_xx.xx.2020_
+
+ - Removed `w_transport` and replaced it with `http` package for http module and websockets from `dart:io` (18d0163, 5644937, 9b863a4, 06482f9)
+ - Fix replacing embed field. Order of fields is now preserved (f667c2a)
+ - Dart2native support (1c6a4f3)
+ - Rewrite of internal object structure (ff8953d)
+ - Expose raw api call api (f297cc0)
+ - Add support for gateway transport compression (fd090dd)
+ - Moved to v8 on REST and gateway (423173d)
+-  Intents value is now required and added to Nyxx constructor (2b3e002)
+
 ## 1.0.2
 _08.09.2020_
 
