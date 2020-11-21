@@ -1,7 +1,6 @@
 import "dart:async";
 import "dart:io";
 
-import 'package:http/http.dart';
 import "package:nyxx/nyxx.dart";
 
 // Replacement for assert. Throws if [test] isn't true.
@@ -34,7 +33,7 @@ EmbedBuilder createTestEmbed() => EmbedBuilder()
 
 void main() {
   final env = Platform.environment;
-  final bot = Nyxx(env["DISCORD_TOKEN"]!, GatewayIntents.guildMessages, ignoreExceptions: false);
+  final bot = Nyxx(env["TEST_TOKEN"]!, GatewayIntents.guildMessages, ignoreExceptions: false);
 
   Timer(const Duration(seconds: 60), () {
     print("Timed out waiting for messages");
@@ -44,10 +43,10 @@ void main() {
   bot.onReady.listen((e) async {
     final channel = await bot.fetchChannel<TextGuildChannel>(Snowflake(422285619952222208));
     // test(channel != null, "Channel cannot be null");
-    if (env["TRAVIS_BUILD_NUMBER"] != null) {
+    if (env["GITHUB_RUN_NUMBER"] != null) {
       await channel.sendMessage(
           content:
-              "Testing new Travis CI build `#${env['TRAVIS_BUILD_NUMBER']}` from commit `${env['TRAVIS_COMMIT']}` on branch `${env['TRAVIS_BRANCH']}` with Dart version: `${env['TRAVIS_DART_VERSION']}`");
+              "Testing new build `#${env['GITHUB_RUN_NUMBER']}` (ID: `${env['GITHUB_RUN_ID']}`) from commit `${env['GITHUB_SHA']}` started by `${env['GITHUB_ACTOR']} `");
     } else {
       await channel.sendMessage(content: "Testing new local build");
     }
@@ -82,7 +81,7 @@ void main() {
 
     await channel.sendMessage(
         content: "PLIK SIEMA",
-        files: [AttachmentBuilder.path("${Directory.current.path}/test/kitty.webp", spoiler: true)]).then((message) async => message.delete());
+        files: [AttachmentBuilder.path("./kitty.webp", spoiler: true)]).then((message) async => message.delete());
 
     print("TESTING ALLOWED MENTIONS");
     await channel.sendMessage(content: "@everyone HEJ", allowedMentions: AllowedMentions());

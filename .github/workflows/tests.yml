@@ -1,0 +1,114 @@
+name: Tests
+
+on: [push, pull_request]
+
+jobs:         
+  test-nyxx:
+    name: Test main nyxx package
+    runs-on: ubuntu-latest
+    env:
+      TEST_TOKEN: ${{ secrets.TEST_TOKEN }}
+    steps:
+      - name: Cache
+        uses: actions/cache@v2
+        with:
+          path: ~/.pub_cache
+          key: ${{ runner.os }}
+          
+      - name: Setup Dart Action
+        uses: cedx/setup-dart@v2.3.0
+        with:
+         release-channel: dev
+        
+      - name: Checkout
+        uses: actions/checkout@v2.3.4
+      
+      - name: Install dependencies
+        working-directory: ./nyxx
+        run: dart pub get
+      
+      - name: Analyze project source
+        working-directory: ./nyxx
+        run: dart analyze
+      
+      - name: Compile tests
+        working-directory: ./nyxx/test
+        run: dart2native --enable-experiment=non-nullable travis.dart
+
+      - name: Run tests
+        working-directory: ./nyxx/test
+        run: ./travis.exe
+  
+  test-commander:
+    name: Tests commander package
+    needs: [test-nyxx]
+    runs-on: ubuntu-latest
+    env:
+      TEST_TOKEN: ${{ secrets.TEST_TOKEN }}
+    steps:
+      - name: Cache
+        uses: actions/cache@v2
+        with:
+          path: ~/.pub_cache
+          key: ${{ runner.os }}
+       
+      - name: Setup Dart Action
+        uses: cedx/setup-dart@v2.3.0
+        with:
+         release-channel: dev
+      
+      - name: Checkout
+        uses: actions/checkout@v2.3.4
+      
+      - name: Install dependencies
+        working-directory: ./nyxx.commander
+        run: dart pub get
+      
+      - name: Analyze project source
+        working-directory: ./nyxx.commander
+        run: dart analyze
+
+      - name: Compile tests
+        working-directory: ./nyxx.commander/test
+        run: dart2native --enable-experiment=non-nullable commander-test.dart
+      
+      - name: Run tests
+        working-directory: ./nyxx.commander/test
+        run: ./commander-test.exe
+  
+  test-extensions:
+    name: Tests extensions package
+    needs: [test-commander]
+    runs-on: ubuntu-latest
+    env:
+      TEST_TOKEN: ${{ secrets.TEST_TOKEN }}
+    steps:
+     - name: Cache
+       uses: actions/cache@v2
+       with:
+        path: ~/.pub_cache
+        key: ${{ runner.os }}
+     
+     - name: Setup Dart Action
+       uses: cedx/setup-dart@v2.3.0
+       with:
+        release-channel: dev
+     
+     - name: Checkout
+       uses: actions/checkout@v2.3.4
+     
+     - name: Install dependencies
+       working-directory: ./nyxx.extensions
+       run: dart pub get
+     
+     - name: Analyze project source
+       working-directory: ./nyxx.extensions
+       run: dart analyze
+
+     - name: Compile tests
+       working-directory: ./nyxx.extensions/test
+       run: dart2native --enable-experiment=non-nullable extensions-tests.dart
+     
+     - name: Run tests
+       working-directory: ./nyxx.extensions/test
+       run: ./extensions-tests.exe

@@ -79,6 +79,7 @@ part "src/events/InviteEvents.dart";
 
 part "src/utils/builders/Builder.dart";
 
+part "src/utils/builders/ReplyBuilder.dart";
 part "src/utils/builders/PresenceBuilder.dart";
 part "src/utils/builders/AttachmentBuilder.dart";
 part "src/utils/builders/PermissionsBuilder.dart";
@@ -145,10 +146,12 @@ part "src/core/message/GuildEmoji.dart";
 part "src/core/message/Emoji.dart";
 part "src/core/message/Reaction.dart";
 part "src/core/message/Message.dart";
+part "src/core/message/Sticker.dart";
 part "src/core/message/Attachment.dart";
 part "src/core/message/MessageFlags.dart";
 part "src/core/message/MessageReference.dart";
 part "src/core/message/MessageType.dart";
+part "src/core/message/ReferencedMessage.dart";
 
 part "src/core/application/ClientOAuth2Application.dart";
 part "src/core/application/OAuth2Application.dart";

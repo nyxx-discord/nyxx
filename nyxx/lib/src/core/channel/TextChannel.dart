@@ -53,7 +53,8 @@ abstract class TextChannel implements IChannel, ISend {
     List<AttachmentBuilder>? files,
     bool? tts,
     AllowedMentions? allowedMentions,
-    MessageBuilder? builder
+    MessageBuilder? builder,
+    ReplyBuilder? replyBuilder
   });
 
   /// Bulk removes many messages by its ids. [messages] is list of messages ids to delete.

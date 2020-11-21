@@ -122,7 +122,9 @@ abstract class IHttpEndpoints {
         EmbedBuilder? embed,
         bool? tts,
         AllowedMentions? allowedMentions,
-        MessageBuilder? builder});
+        MessageBuilder? builder,
+        ReplyBuilder? replyBuilder
+      });
 
   Future<Message> fetchMessage(Snowflake channelId, Snowflake messageId);
 
@@ -182,6 +184,8 @@ abstract class IHttpEndpoints {
   Future<Webhook> fetchWebhook(Snowflake id, {String token = ""});
 
   Future<Invite> fetchInvite(String code);
+
+  String stickerUrl(String stickerHash, String extension);
 }
 
 class _HttpEndpoints implements IHttpEndpoints {
@@ -192,7 +196,7 @@ class _HttpEndpoints implements IHttpEndpoints {
     this._httpClient = this._client._http;
   }
 
-  Map<String, dynamic> _initMessage(dynamic content, EmbedBuilder? embed, AllowedMentions? allowedMentions) {
+  Map<String, dynamic> _initMessage(dynamic content, EmbedBuilder? embed, AllowedMentions? allowedMentions, ReplyBuilder? replyBuilder) {
     if (content == null && embed == null) {
       throw ArgumentError("When sending message both content and embed cannot be null");
     }
@@ -202,7 +206,8 @@ class _HttpEndpoints implements IHttpEndpoints {
     return <String, dynamic>{
       if (content != null) "content": content.toString(),
       if (embed != null) "embed": embed._build(),
-      if (allowedMentions != null) "allowed_mentions": allowedMentions._build()
+      if (allowedMentions != null) "allowed_mentions": allowedMentions._build(),
+      if (replyBuilder != null) "message_reference": replyBuilder._build(),
     };
   }
   
@@ -733,17 +738,20 @@ class _HttpEndpoints implements IHttpEndpoints {
         EmbedBuilder? embed,
         bool? tts,
         AllowedMentions? allowedMentions,
-        MessageBuilder? builder}) async {
+        MessageBuilder? builder,
+        ReplyBuilder? replyBuilder
+      }) async {
     if (builder != null) {
       content = builder._content;
       files = builder.files;
       embed = builder.embed;
       tts = builder.tts ?? false;
       allowedMentions = builder.allowedMentions;
+      replyBuilder = builder.replyBuilder;
     }
 
     final  reqBody = {
-      ..._initMessage(content, embed, allowedMentions),
+      ..._initMessage(content, embed, allowedMentions, replyBuilder),
       if (content != null && tts != null) "tts": tts
     };
 
@@ -1085,4 +1093,8 @@ class _HttpEndpoints implements IHttpEndpoints {
 
     return Future.error(response);
   }
+
+  @override
+  String stickerUrl(String stickerHash, String extension) =>
+      "https://cdn.${Constants.cdnHost}/stickers/$stickerHash.$extension";
 }
