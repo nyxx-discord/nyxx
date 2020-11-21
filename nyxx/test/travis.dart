@@ -27,7 +27,7 @@ const toDeleteMessageContent = [
 
 EmbedBuilder createTestEmbed() => EmbedBuilder()
   ..title = "Test title"
-  ..addField(name: "Test field", content: "Test value");
+  ..addField(name: "Test field", content: "Test value", inline: true);
 
 // -------------------------------------------------------
 
@@ -121,7 +121,7 @@ void main() {
         if (embed.title == "Test title" && embed.fields.isNotEmpty) {
           final field = embed.fields.first;
 
-          if (field.name == "Test field" && field.content == "Test value" && !field.inline!) {
+          if (field.name == "Test field" && field.content == "Test value" && field.inline!) {
             await (await e.message.channel.getOrDownload()).sendMessage(content: "Tests completed successfully!");
             await e.message.delete();
             print("Nyxx tests completed successfully!");
