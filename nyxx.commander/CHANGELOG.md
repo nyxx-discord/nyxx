@@ -1,3 +1,8 @@
+## 1.1.0
+_xx.xx.2020_
+
+- Support for aliases for Commander (580e55c)
+
 ## 1.0.1
 _03.09.2020_
 
