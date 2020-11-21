@@ -1,0 +1,58 @@
+name: Deploy docs
+on:
+  workflow_dispatch:
+    inputs:
+        package-name:
+          description: 'Package name'
+          default: 'nyxx'
+          required: true
+
+jobs:
+  build-docs:
+    name: Build and upload docs
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2.3.4 
+      
+      - name: Setup Dart Action
+        uses: cedx/setup-dart@v2.3.0
+        with:
+         release-channel: dev
+         
+      - name: Create temp docs dir
+        run: mkdir /tmp/temp_docs    
+     
+      - name: Build nyxx docs
+        working-directory: ./nyxx
+        run: dartdoc --enable-experiment=non-nullable
+      
+      - name: Move nyxx docs to shared directory
+        working-directory: ./nyxx
+        run: cp -R ./doc/api /tmp/temp_docs/nyxx
+        
+      - name: Build nyxx.commander docs
+        working-directory: ./nyxx.commander
+        run: dartdoc --enable-experiment=non-nullable
+      
+      - name: Move nyxx docs to shared directory
+        working-directory: ./nyxx.commander
+        run: cp -R ./doc/api /tmp/temp_docs/nyxx.commander
+        
+      - name: Build nyxx.extensions docs
+        working-directory: ./nyxx.extensions
+        run: dartdoc --enable-experiment=non-nullable
+      
+      - name: Move nyxx docs to shared directory
+        working-directory: ./nyxx.extensions
+        run: cp -R ./doc/api /tmp/temp_docs/nyxx.extensions
+        
+      - name: GitHub Pages action
+        uses: peaceiris/actions-gh-pages@v3.7.3
+        with:
+          github_token: ${{ secrets.ACCESS_TOKEN }}
+          # personal_token: # optional
+          publish_dir: /tmp/temp_docs
+          destination_dir: ./
+          user_name: l7ssha
+          user_email: szymon@l7ssha.xyz
