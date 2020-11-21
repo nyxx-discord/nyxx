@@ -19,13 +19,11 @@ class GuildUpdateEvent {
   GuildUpdateEvent._new(Map<String, dynamic> json, Nyxx client) {
     this.guild = Guild._new(client, json["d"] as Map<String, dynamic>);
 
-    // TODO: Cache should be moved to updated guild?
-    /*
+    final oldGuild = client.guilds[this.guild.id];
     if(oldGuild != null) {
-      this.newGuild.channels = this.oldGuild!.channels;
-      this.newGuild.members = this.oldGuild!.members;
+      this.guild.members = oldGuild.members;
     }
-*/
+
     client.guilds[guild.id] = guild;
   }
 }
@@ -95,11 +93,10 @@ class GuildMemberUpdateEvent {
     }
 
     final nickname = raw["d"]["nickname"] as String?;
-    final roles = (raw["d"]["roles"] as List<dynamic>).map((str) => guildInstance.roles[Snowflake(str)]!).toList();
+    final roles = (raw["d"]["roles"] as List<dynamic>).map((str) => Snowflake(str)).toList();
+    final boostingSince = DateTime.tryParse(raw["premium_since"] as String? ?? "");
 
-    if (memberInstance._updateMember(nickname, roles)) {
-      return;
-    }
+    memberInstance._updateMember(nickname, roles, boostingSince);
   }
 }
 
@@ -128,7 +125,9 @@ class GuildMemberAddEvent {
       return;
     }
 
-    guildInstance.members[this.member.id] = member;
+    if (client._cacheOptions.memberCachePolicyLocation.event && client._cacheOptions.memberCachePolicy.canCache(this.member)) {
+      guildInstance.members[this.member.id] = member;
+    }
   }
 }
 

@@ -93,7 +93,7 @@ class Shard implements Disposable {
         throw InvalidShardException._new("Cannot request member for guild on wrong shard");
       }
 
-      guildPayload = guild.toString();
+      guildPayload = [guild.toString()];
     } else if (guild is Iterable<Snowflake>) {
       if(!this.guilds.any((element) => guild.contains(element))) {
         throw InvalidShardException._new("Cannot request member for guild on wrong shard");
@@ -106,10 +106,10 @@ class Shard implements Disposable {
 
     final payload = <String, dynamic>{
       "guild_id": guildPayload,
-      if (query != null) "query": query,
-      if (userIds != null) "user_ids": userIds.map((e) => e.toString()).toList(),
       "limit": limit,
       "presences": presences,
+      if (query != null) "query": query,
+      if (userIds != null) "user_ids": userIds.map((e) => e.toString()).toList(),
       if (nonce != null) "nonce": nonce
     };
 

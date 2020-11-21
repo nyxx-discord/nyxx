@@ -22,6 +22,8 @@ class Nyxx implements Disposable {
   final DateTime _startTime = DateTime.now();
 
   late final ClientOptions _options;
+  late final CacheOptions _cacheOptions;
+
   late final _ConnectionManager _ws; // ignore: unused_field
   late final _EventController _events;
 
@@ -186,7 +188,7 @@ class Nyxx implements Disposable {
 
   /// Creates and logs in a new client. If [ignoreExceptions] is true (by default is)
   /// isolate will ignore all exceptions and continue to work.
-  Nyxx(this._token, this.intents, {ClientOptions? options, bool ignoreExceptions = true, bool useDefaultLogger = true, Level? defaultLoggerLogLevel}) {
+  Nyxx(this._token, this.intents, {ClientOptions? options, CacheOptions? cacheOptions, bool ignoreExceptions = true, bool useDefaultLogger = true, Level? defaultLoggerLogLevel}) {
     if(useDefaultLogger) {
       Logger.root.level = defaultLoggerLogLevel ?? Level.ALL;
 
@@ -222,6 +224,8 @@ class Nyxx implements Disposable {
     }
 
     this._options = options ?? ClientOptions();
+    this._cacheOptions = cacheOptions ?? CacheOptions();
+
     this.guilds = _SnowflakeCache();
     this.channels = ChannelCache._new();
     this.users = _SnowflakeCache();
