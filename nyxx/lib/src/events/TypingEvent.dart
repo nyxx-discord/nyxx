@@ -14,7 +14,7 @@ class TypingEvent {
   /// Timestamp when the user started typing
   late final DateTime timestamp;
 
-  /// Refernce to guild where typing occured
+  /// Reference to guild where typing occurred
   late final Cacheable<Snowflake, Guild>? guild;
 
   TypingEvent._new(Map<String, dynamic> raw, Nyxx client) {
