@@ -64,7 +64,15 @@ class User extends SnowflakeEntity with Mentionable, IMessageAuthor implements I
   }
 
   /// Gets the [DMChannel] for the user.
-  Future<DMChannel> get dmChannel => Future.value(null);
+  FutureOr<DMChannel> get dmChannel {
+    final cacheChannel = client.channels.findOne((item) => item is DMChannel && item.participants.contains(this));
+
+    if (cacheChannel != null) {
+      return cacheChannel as DMChannel;
+    }
+
+    return client.httpEndpoints.createDMChannel(this.id);
+  }
 
   /// The user's avatar, represented as URL.
   /// In case if user does not have avatar, default discord avatar will be returned with specified size and png format.

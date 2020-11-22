@@ -186,6 +186,8 @@ abstract class IHttpEndpoints {
   Future<Invite> fetchInvite(String code);
 
   String stickerUrl(String stickerHash, String extension);
+
+  Future<DMChannel> createDMChannel(Snowflake userId);
 }
 
 class _HttpEndpoints implements IHttpEndpoints {
@@ -1097,4 +1099,17 @@ class _HttpEndpoints implements IHttpEndpoints {
   @override
   String stickerUrl(String stickerHash, String extension) =>
       "https://cdn.${Constants.cdnHost}/stickers/$stickerHash.$extension";
+
+  @override
+  Future<DMChannel> createDMChannel(Snowflake userId) async {
+    final response = await _httpClient._execute(BasicRequest._new("/users/@me/channels", body: {
+      "recipient_id": userId.toString()
+    }));
+
+    if (response is HttpResponseError) {
+      return Future.error(response);
+    }
+
+    return DMChannel._new(_client, (response as HttpResponseSuccess).jsonBody as Map<String, dynamic>);
+  }
 }
