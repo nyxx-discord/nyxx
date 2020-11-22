@@ -1102,7 +1102,7 @@ class _HttpEndpoints implements IHttpEndpoints {
 
   @override
   Future<DMChannel> createDMChannel(Snowflake userId) async {
-    final response = await _httpClient._execute(BasicRequest._new("/users/@me/channels", body: {
+    final response = await _httpClient._execute(BasicRequest._new("/users/@me/channels", method: "POST", body: {
       "recipient_id": userId.toString()
     }));
 
