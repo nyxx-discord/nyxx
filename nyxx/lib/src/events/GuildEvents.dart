@@ -21,7 +21,7 @@ class GuildUpdateEvent {
 
     final oldGuild = client.guilds[this.guild.id];
     if(oldGuild != null) {
-      this.guild.members = oldGuild.members;
+      this.guild.members.addMap(oldGuild.members.asMap);
     }
 
     client.guilds[guild.id] = guild;
