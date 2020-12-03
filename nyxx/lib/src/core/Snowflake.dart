@@ -56,7 +56,7 @@ class Snowflake implements Comparable<Snowflake> {
   String toString() => _id.toString();
 
   @override
-  bool operator ==(other) {
+  bool operator ==(dynamic other) {
     if (other is Snowflake) return other.id == this._id;
     if (other is int) return other == this._id;
     if (other is String) return other == this._id.toString();

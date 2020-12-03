@@ -68,6 +68,12 @@ class AuditLogEntryType extends IEnum<int> {
   static const AuditLogEntryType emojiUpdate = AuditLogEntryType._create(61);
   static const AuditLogEntryType emojiDelete = AuditLogEntryType._create(62);
   static const AuditLogEntryType messageDelete = AuditLogEntryType._create(72);
+  static const AuditLogEntryType messageBulkDelete = AuditLogEntryType._create(73);
+  static const AuditLogEntryType messagePin = AuditLogEntryType._create(74);
+  static const AuditLogEntryType messageUnpin = AuditLogEntryType._create(75);
+  static const AuditLogEntryType integrationCreate = AuditLogEntryType._create(80);
+  static const AuditLogEntryType integrationUpdate = AuditLogEntryType._create(81);
+  static const AuditLogEntryType integrationDelete = AuditLogEntryType._create(82);
 
   const AuditLogEntryType._create(int value) : super(value);
 
