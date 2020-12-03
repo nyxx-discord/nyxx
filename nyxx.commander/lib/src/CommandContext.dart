@@ -37,6 +37,27 @@ class CommandContext {
   static final _quotedTextRegex = RegExp('["\']([^"]*)["\']');
   static final _codeBlocksRegex = RegExp(r"```(\w+)?(\s)?(((.+)(\s)?)+)```");
 
+  /// Creates inline reply for message
+  Future<Message> reply({
+    dynamic content,
+    EmbedBuilder? embed,
+    List<AttachmentBuilder>? files,
+    bool? tts,
+    AllowedMentions? allowedMentions,
+    MessageBuilder? builder,
+    bool mention = false,
+  }) async {
+    if (mention) {
+      if (allowedMentions != null) {
+        allowedMentions.allow(reply: true);
+      } else {
+        allowedMentions = AllowedMentions()..allow(reply: true);
+      }
+    }
+
+    return channel.sendMessage(content: content, embed: embed, tts: tts, allowedMentions: allowedMentions, builder: builder, replyBuilder: ReplyBuilder.fromMessage(this.message));
+  }
+
   /// Reply to message. It allows to send regular message, Embed or both.
   ///
   /// ```
@@ -51,7 +72,7 @@ class CommandContext {
     bool? tts,
     AllowedMentions? allowedMentions,
     MessageBuilder? builder,
-    ReplyBuilder? replyBuilder
+    ReplyBuilder? replyBuilder,
   }) => channel.sendMessage(
         content: content, embed: embed, tts: tts, files: files, builder: builder, allowedMentions: allowedMentions, replyBuilder: replyBuilder);
 
@@ -62,7 +83,7 @@ class CommandContext {
   ///   await context.replyTemp(content: user.avatarURL());
   /// }
   /// ```
-  Future<Message> replyTemp(Duration duration, {
+  Future<Message> sendMessageTemp(Duration duration, {
     dynamic content,
     EmbedBuilder? embed,
     List<AttachmentBuilder>? files,
@@ -83,7 +104,7 @@ class CommandContext {
   ///   await context.replyDelayed(Duration(seconds: 2), content: user.avatarURL());
   /// }
   /// ```
-  Future<Message> replyDelayed(Duration duration,
+  Future<Message> sendMessageDelayed(Duration duration,
       {dynamic content,
         EmbedBuilder? embed,
         List<AttachmentBuilder>? files,

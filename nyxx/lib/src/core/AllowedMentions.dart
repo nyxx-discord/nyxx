@@ -16,11 +16,21 @@ class AllowedMentions implements Builder {
   /// Allow @everyone and @here if [everyone] is true
   /// Allow @user if [users] is true
   /// Allow @role if [roles] is true
-  void allow({bool reply = false, bool everyone = false, bool users = false, bool roles = false}) {
-    this._allowEveryone = everyone;
-    this._allowUsers = users;
-    this._allowRoles = roles;
-    this._allowReply = reply;
+  void allow({bool? reply, bool? everyone, bool? users, bool? roles}) {
+    if (everyone != null) {
+      this._allowEveryone = everyone;
+    }
+
+    if (users != null) {
+      this._allowUsers = users;
+    }
+    if (roles != null) {
+      this._allowRoles = roles;
+    }
+
+    if (reply != null) {
+      this._allowReply = reply;
+    }
   }
 
   /// Suppress mentioning specific user by its id
