@@ -1,5 +1,6 @@
 part of nyxx;
 
+/// Object of team that manages given app
 class AppTeam extends SnowflakeEntity {
   /// Hash of team icon
   late final String? iconHash;
