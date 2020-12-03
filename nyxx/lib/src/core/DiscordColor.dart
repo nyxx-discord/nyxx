@@ -63,7 +63,7 @@ class DiscordColor {
   int get hashCode => _value.hashCode;
 
   @override
-  bool operator ==(other) => other is DiscordColor && other._value == this._value;
+  bool operator ==(dynamic other) => other is DiscordColor && other._value == this._value;
 
   /// Color of null, literally null.
   static const DiscordColor? none = null;
