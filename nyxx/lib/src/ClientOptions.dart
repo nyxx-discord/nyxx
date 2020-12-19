@@ -63,6 +63,9 @@ class ClientOptions {
   /// It could be either when shards disconnects or when bots process shuts down (look [shutdownHook].
   ShutdownShardHook? shutdownShardHook;
 
+  /// Allows to enable receiving raw gateway event
+  bool dispatchRawShardEvent;
+
   /// Makes a new `ClientOptions` object.
   ClientOptions(
       {this.allowedMentions,
@@ -76,7 +79,8 @@ class ClientOptions {
       this.guildSubscriptions = true,
       this.initialPresence,
       this.shutdownHook,
-      this.shutdownShardHook });
+      this.shutdownShardHook,
+      this.dispatchRawShardEvent = false });
 }
 
 /// When identifying to the gateway, you can specify an intents parameter which

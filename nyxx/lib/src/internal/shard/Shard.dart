@@ -205,6 +205,10 @@ class Shard implements Disposable {
   }
   
   Future<void> _dispatch(Map<String, dynamic> rawPayload) async {
+    if (this.manager._ws._client._options.dispatchRawShardEvent) {
+      this.manager._onRawEvent.add(RawEvent._new(this, rawPayload));
+    }
+
     switch (rawPayload["op"] as int) {
       case OPCodes.heartbeatAck:
         this._heartbeatAckReceived = true;
