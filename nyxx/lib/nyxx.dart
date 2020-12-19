@@ -56,6 +56,8 @@ part "src/internal/interfaces/Mentionable.dart";
 
 // EVENTS
 
+part "src/events/RawEvent.dart";
+
 part "src/events/MemberChunkEvent.dart";
 
 part "src/events/DisconnectEvent.dart";

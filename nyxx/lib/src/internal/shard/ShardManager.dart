@@ -18,9 +18,13 @@ class ShardManager implements Disposable {
   /// Emitted when shard receives member chunk.
   late final Stream<MemberChunkEvent> onMemberChunk = this._onMemberChunk.stream;
 
+  /// Raw gateway payloads. You have set `dispatchRawShardEvent` in [ClientOptions] to true otherwise stream won't receive any events.
+  late final Stream<RawEvent> rawEvent = this._onRawEvent.stream;
+
   final StreamController<Shard> _onConnect = StreamController.broadcast();
   final StreamController<Shard> _onDisconnect = StreamController.broadcast();
   final StreamController<MemberChunkEvent> _onMemberChunk = StreamController.broadcast();
+  final StreamController<RawEvent> _onRawEvent = StreamController.broadcast();
 
   final Logger _logger = Logger("Shard Manager");
 
