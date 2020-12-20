@@ -1,0 +1,24 @@
+name: nyxx_interactions
+version: 0.0.0-dev.1
+description: Interactions for Nyxx library
+homepage: https://github.com/l7ssha/nyxx
+repository: https://github.com/l7ssha/nyxx
+documentation: https://github.com/l7ssha/nyxx/wiki
+issue_tracker: https://github.com/l7ssha/nyxx/issue
+
+environment:
+  sdk: '>=2.12.0-51.0.dev <3.0.0'
+
+dependencies:
+  nyxx: "^1.1.0-dev.1"
+  http: "^0.13.0-nullsafety-dev"
+
+dependency_overrides:
+  http:
+    git:
+      url: git://github.com/dart-lang/http.git
+  http_parser:
+    git:
+      url: git://github.com/dart-lang/http_parser.git
+  nyxx:
+    path: "../nyxx"
