@@ -205,10 +205,6 @@ class Shard implements Disposable {
   }
   
   Future<void> _dispatch(Map<String, dynamic> rawPayload) async {
-    if (this.manager._ws._client._options.dispatchRawShardEvent) {
-      this.manager._onRawEvent.add(RawEvent._new(this, rawPayload));
-    }
-
     switch (rawPayload["op"] as int) {
       case OPCodes.heartbeatAck:
         this._heartbeatAckReceived = true;
@@ -404,7 +400,11 @@ class Shard implements Disposable {
             break;
 
           default:
-            print("UNKNOWN OPCODE: ${jsonEncode(rawPayload)}");
+            if (this.manager._ws._client._options.dispatchRawShardEvent) {
+              this.manager._onRawEvent.add(RawEvent._new(this, rawPayload));
+            } else {
+              print("UNKNOWN OPCODE: ${jsonEncode(rawPayload)}");
+            }
         }
         break;
     }
