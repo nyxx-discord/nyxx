@@ -113,6 +113,8 @@ abstract class MessageReactionEvent {
 /// Emitted when reaction is add to message
 class MessageReactionAddedEvent extends MessageReactionEvent {
   MessageReactionAddedEvent._new(Map<String, dynamic> json, Nyxx client) : super._new(json, client) {
+    client._events.onMessageReactionAdded.add(this);
+
     if (message == null) {
       return;
     }
@@ -124,14 +126,14 @@ class MessageReactionAddedEvent extends MessageReactionEvent {
     } else {
       message!.reactions[r].count++;
     }
-
-    client._events.onMessageReactionAdded.add(this);
   }
 }
 
 /// Emitted when reaction is removed from message
 class MessageReactionRemovedEvent extends MessageReactionEvent {
   MessageReactionRemovedEvent._new(Map<String, dynamic> json, Nyxx client) : super._new(json, client) {
+    client._events.onMessageReactionRemove.add(this);
+
     if (message == null) {
       return;
     }
@@ -145,8 +147,6 @@ class MessageReactionRemovedEvent extends MessageReactionEvent {
         message!.reactions[r].count--;
       }
     }
-
-    client._events.onMessageReactionRemove.add(this);
   }
 }
 
