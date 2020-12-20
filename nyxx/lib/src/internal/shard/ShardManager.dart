@@ -19,6 +19,7 @@ class ShardManager implements Disposable {
   late final Stream<MemberChunkEvent> onMemberChunk = this._onMemberChunk.stream;
 
   /// Raw gateway payloads. You have set `dispatchRawShardEvent` in [ClientOptions] to true otherwise stream won't receive any events.
+  /// Also rawEvent is dispatched ONLY for payload that doesn't match any event built in into Nyxx.
   late final Stream<RawEvent> rawEvent = this._onRawEvent.stream;
 
   final StreamController<Shard> _onConnect = StreamController.broadcast();
