@@ -94,6 +94,9 @@ part "src/utils/builders/MessageBuilder.dart";
 
 part "src/utils/extensions.dart";
 
+part "src/utils/CacheUtility.dart";
+part "src/utils/EntityUtility.dart";
+
 // OBJECTS
 
 part "src/core/AllowedMentions.dart";
