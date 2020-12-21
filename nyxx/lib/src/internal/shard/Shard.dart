@@ -205,10 +205,6 @@ class Shard implements Disposable {
   }
   
   Future<void> _dispatch(Map<String, dynamic> rawPayload) async {
-    if (this.manager._ws._client._options.dispatchRawShardEvent) {
-      this.manager._onRawEvent.add(RawEvent._new(this, rawPayload));
-    }
-
     switch (rawPayload["op"] as int) {
       case OPCodes.heartbeatAck:
         this._heartbeatAckReceived = true;
@@ -281,11 +277,11 @@ class Shard implements Disposable {
             break;
 
           case "MESSAGE_REACTION_ADD":
-            MessageReactionAddedEvent._new(rawPayload, manager._ws._client);
+            manager._ws._client._events.onMessageReactionAdded.add(MessageReactionAddedEvent._new(rawPayload, manager._ws._client));
             break;
 
           case "MESSAGE_REACTION_REMOVE":
-            MessageReactionRemovedEvent._new(rawPayload, manager._ws._client);
+            manager._ws._client._events.onMessageReactionRemove.add(MessageReactionRemovedEvent._new(rawPayload, manager._ws._client));
             break;
 
           case "MESSAGE_DELETE_BULK":
@@ -404,7 +400,11 @@ class Shard implements Disposable {
             break;
 
           default:
-            print("UNKNOWN OPCODE: ${jsonEncode(rawPayload)}");
+            if (this.manager._ws._client._options.dispatchRawShardEvent) {
+              this.manager._onRawEvent.add(RawEvent._new(this, rawPayload));
+            } else {
+              print("UNKNOWN OPCODE: ${jsonEncode(rawPayload)}");
+            }
         }
         break;
     }

@@ -124,8 +124,6 @@ class MessageReactionAddedEvent extends MessageReactionEvent {
     } else {
       message!.reactions[r].count++;
     }
-
-    client._events.onMessageReactionAdded.add(this);
   }
 }
 
@@ -145,8 +143,6 @@ class MessageReactionRemovedEvent extends MessageReactionEvent {
         message!.reactions[r].count--;
       }
     }
-
-    client._events.onMessageReactionRemove.add(this);
   }
 }
 
