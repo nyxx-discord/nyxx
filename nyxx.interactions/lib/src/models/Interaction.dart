@@ -4,45 +4,65 @@ class Interaction extends SnowflakeEntity implements Disposable {
   /// Reference to bot instance
   final Nyxx client;
 
-  late final InteractionType type;
+  late final int type;
 
   late final CommandInteractionData? data;
 
-  late final Snowflake guild_id;
+  late final Cacheable<Snowflake, Guild> guild;
 
-  late final Snowflake channel_id;
+  late final Cacheable<Snowflake, IChannel> channel;
 
-  late final User author;
+  late final Member author;
 
   late final String token;
 
   late final int version;
 
+  CommandInteractionData? _generateData(Map<String, dynamic> raw) {
+    return raw["data"] != null
+        ? CommandInteractionData._new(
+            Snowflake(raw["data"]["id"]),
+            raw["data"]["name"] as String,
+            null, //TODO Add Tree Implimentation to show options
+          )
+        : null;
+  }
+
   Interaction._new(
     this.client,
     Map<String, dynamic> raw,
   ) : super(Snowflake(raw["id"])) {
-    switch (raw["type"] as int) {
-      case 1:
-        {
-          this.type = InteractionType.Ping;
-          break;
-        }
-      case 2:
-        {
-          this.type = InteractionType.ApplicationCommand;
-          break;
-        }
-      default:
-        {
-          this.type = InteractionType.Unknown;
-          break;
-        }
-    }
+    this.type = raw["type"] as int;
 
-    this.guild_id = Snowflake(raw["guild_id"]);
-    this.channel_id = Snowflake(raw["channel_id"]);
-    this.author =
+    this.data = _generateData(
+      raw,
+    );
+
+    this.guild = CacheUtility.createCacheableGuild(
+      client,
+      Snowflake(
+        raw["guild_id"],
+      ),
+    );
+
+    this.channel = CacheUtility.createCacheableChannel(
+      client,
+      Snowflake(
+        raw["channel_id"],
+      ),
+    );
+
+    this.author = EntityUtility.createGuildMember(
+      client,
+      Snowflake(
+        raw["guild_id"],
+      ),
+      raw["member"] as Map<String, dynamic>,
+    );
+
+    this.token = raw["token"] as String;
+
+    this.version = raw["version"] as int;
   }
 
   @override
