@@ -66,6 +66,8 @@ class ClientOptions {
   /// Allows to enable receiving raw gateway event
   bool dispatchRawShardEvent;
 
+
+
   /// Makes a new `ClientOptions` object.
   ClientOptions(
       {this.allowedMentions,

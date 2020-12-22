@@ -10,7 +10,7 @@ class Interaction extends SnowflakeEntity implements Disposable {
 
   late final Cacheable<Snowflake, Guild> guild;
 
-  late final Cacheable<Snowflake, IChannel> channel;
+  late final Cacheable<Snowflake, TextChannel> channel;
 
   late final Member author;
 
@@ -45,7 +45,7 @@ class Interaction extends SnowflakeEntity implements Disposable {
       ),
     );
 
-    this.channel = CacheUtility.createCacheableChannel(
+    this.channel = CacheUtility.createCacheableTextChannel(
       client,
       Snowflake(
         raw["channel_id"],
