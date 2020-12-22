@@ -43,7 +43,7 @@ class CacheUtility {
           Nyxx client, Snowflake id, Cacheable<Snowflake, Guild> guild) =>
       _RoleCacheable(client, id, guild);
 
-  /// Retrieves a cached Role.
+  /// Retrieves a cached IChannel. Can be cast.
   /// ```dart
   /// void main() {
   ///     var bot = Nyxx("TOKEN");
@@ -52,6 +52,39 @@ class CacheUtility {
   /// ```
   static Cacheable<Snowflake, IChannel> createCacheableChannel(
           Nyxx client, Snowflake id) =>
+      _ChannelCacheable(client, id);
+
+  /// Retrieves a cached TextChannel.
+  /// ```dart
+  /// void main() {
+  ///     var bot = Nyxx("TOKEN");
+  ///     Cacheable<Snowflake, TextChannel> cachedChannel = CacheUtility.createCacheableTextChannel(bot, Snowflake(''));
+  /// }
+  /// ```
+  static Cacheable<Snowflake, TextChannel> createCacheableTextChannel(
+      Nyxx client, Snowflake id) =>
+      _ChannelCacheable(client, id);
+
+  /// Retrieves a cached VoiceChannel.
+  /// ```dart
+  /// void main() {
+  ///     var bot = Nyxx("TOKEN");
+  ///     Cacheable<Snowflake, VoiceGuildChannel> cachedChannel = CacheUtility.createCacheableVoiceChannel(bot, Snowflake(''));
+  /// }
+  /// ```
+  static Cacheable<Snowflake, VoiceGuildChannel> createCacheableVoiceChannel(
+      Nyxx client, Snowflake id) =>
+      _ChannelCacheable(client, id);
+
+  /// Retrieves a cached DMChannel.
+  /// ```dart
+  /// void main() {
+  ///     var bot = Nyxx("TOKEN");
+  ///     Cacheable<Snowflake, DMChannel> cachedChannel = CacheUtility.createCacheableDMChannel(bot, Snowflake(''));
+  /// }
+  /// ```
+  static Cacheable<Snowflake, DMChannel> createCacheableDMChannel(
+      Nyxx client, Snowflake id) =>
       _ChannelCacheable(client, id);
 
   /// Retrieves a cached Guild Member.
@@ -66,7 +99,7 @@ class CacheUtility {
           Nyxx client, Snowflake id, Cacheable<Snowflake, Guild> guild) =>
       _MemberCacheable(client, id, guild);
 
-  /// Retrieves a cached Guild Member.
+  /// Retrieves a cached Guild Message.
   /// ```dart
   /// void main() {
   ///     var bot = Nyxx("TOKEN");

@@ -30,5 +30,6 @@ pubspec.lock
 /test/mirrors.dart
 /private
 private-*.dart
+test-*.dart
 [Rr]pc*
 **/doc/api/**
