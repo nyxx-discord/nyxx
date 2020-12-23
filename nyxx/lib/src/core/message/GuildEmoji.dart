@@ -8,6 +8,9 @@ abstract class IGuildEmoji extends SnowflakeEntity implements IEmoji {
 
   IGuildEmoji._new(Map<String, dynamic> raw): super(Snowflake(raw["id"]));
 
+  /// Creates partial emoji from given String or Snowflake.
+  static GuildEmojiPartial fromId(dynamic id) => GuildEmojiPartial._new({"id": id.toString()});
+
   @override
   String formatForMessage() => "<:$id>";
 
