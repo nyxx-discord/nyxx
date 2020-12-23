@@ -48,10 +48,10 @@ class PermissionsUtils {
 
     for (final role in member.roles) {
       try {
-        final chanOverride = channel.permissionOverrides.firstWhere((f) => f.id == role.id);
+        final channelOverride = channel.permissionOverrides.firstWhere((f) => f.id == role.id);
 
-        denyRole |= chanOverride.deny;
-        allowRole |= chanOverride.allow;
+        denyRole |= channelOverride.deny;
+        allowRole |= channelOverride.allow;
         // ignore: avoid_catches_without_on_clauses, empty_catches
       } on Error { }
     }
