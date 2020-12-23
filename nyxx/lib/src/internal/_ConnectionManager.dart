@@ -17,7 +17,7 @@ class _ConnectionManager {
 
   /// Makes a new WS manager.
   _ConnectionManager(this._client) {
-    _client._http._execute(BasicRequest._new("/gateway/bot")).then((httpResponse) {
+    _client._httpEndpoints._getGatewayBot().then((httpResponse) {
       if (httpResponse is HttpResponseError) {
         this._logger.severe("Cannot get gateway url: [${httpResponse.errorCode}; ${httpResponse.errorMessage}]");
         exit(1);
@@ -56,7 +56,7 @@ class _ConnectionManager {
       return;
     }
 
-    final httpResponse = await _client._http._execute(BasicRequest._new("/oauth2/applications/@me"));
+    final httpResponse = await _client._httpEndpoints._getMeApplication();
 
     if (httpResponse is HttpResponseError) {
       this._logger.severe("Cannot get bot identity: `${httpResponse.toString()}`");
