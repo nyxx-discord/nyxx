@@ -1,5 +1,13 @@
 import "package:nyxx/nyxx.dart";
 
+DiscordColor getColorForUserFromMessage(Message message) {
+  if (message is GuildMessage) {
+    return message.member.highestRole.color;
+  }
+
+  return DiscordColor.black;
+}
+
 // Main function
 void main() {
   // Create new bot instance. Replace string with your token
@@ -29,10 +37,10 @@ void main() {
         ..addFooter((footer) {
           footer.text = "Footer example, good";
         })
-        ..color = (e.message.author is CacheMember) ? (e.message.author as CacheMember).color : DiscordColor.black;
+        ..color = getColorForUserFromMessage(e.message);
 
       // Sent an embed to channel where message received was sent
-      e.message.channel.send(embed: embed);
+      e.message.channel.getFromCache()?.sendMessage(embed: embed);
     }
   });
 }

@@ -35,10 +35,10 @@ void main() {
       final userToBan = getUserToBan(e.message as GuildMessage);
 
       // Ban user using variable initialized before
-      await (e.message as GuildMessage).guild!.ban(userToBan);
+      await (e.message as GuildMessage).guild.getFromCache()!.ban(userToBan);
 
       // Send feedback
-      await e.message.channel.send(content: "👍");
+      await e.message.channel.getFromCache()?.send(content: "👍");
     }
 
     // Check if message content equals "!embed"
@@ -52,10 +52,10 @@ void main() {
       final userToBan = getUserToBan(e.message as GuildMessage);
 
       // Kick user
-      await (e.message as GuildMessage).guild!.kick(userToBan);
+      await (e.message as GuildMessage).guild.getFromCache()!.kick(userToBan);
 
       // Send feedback
-      await e.message.channel.send(content: "👍");
+      await e.message.channel.getFromCache()?.sendMessage(content: "👍");
     }
   });
 }

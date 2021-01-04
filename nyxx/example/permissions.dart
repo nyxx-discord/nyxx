@@ -21,13 +21,13 @@ void main() {
       }
 
       // Get current channel
-      final messageChannel = e.message.channel as CacheGuildChannel;
+      final messageChannel = (e.message.channel.getFromCache()) as GuildChannel;
 
       // Get member from id
-      final member = await (e.message as GuildMessage).guild!.getMemberById(302359032612651009.toSnowflake());
+      final member = await (e.message as GuildMessage).guild.getFromCache()!.members[302359032612651009.toSnowflake()]!;
 
       // Get current member permissions in context of channel
-      final permissions = messageChannel.effectivePermissions(member as CacheMember);
+      final permissions = await messageChannel.effectivePermissions(member);
 
       // Get current member permissions as builder
       final permissionsAsBuilder = permissions.toBuilder()..sendMessages = true;
