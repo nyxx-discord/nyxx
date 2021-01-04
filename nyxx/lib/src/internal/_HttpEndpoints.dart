@@ -187,6 +187,8 @@ abstract class IHttpEndpoints {
 
   String stickerUrl(String stickerHash, String extension);
 
+  String emojiUrl(Snowflake emojiId);
+
   Future<DMChannel> createDMChannel(Snowflake userId);
 }
 
@@ -1114,6 +1116,10 @@ class _HttpEndpoints implements IHttpEndpoints {
   @override
   String stickerUrl(String stickerHash, String extension) =>
       "https://cdn.${Constants.cdnHost}/stickers/$stickerHash.$extension";
+
+  @override
+  String emojiUrl(Snowflake emojiId) =>
+      "https://cdn.discordapp.com/emojis/$emojiId.png";
 
   @override
   Future<DMChannel> createDMChannel(Snowflake userId) async {
