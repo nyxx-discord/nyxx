@@ -14,5 +14,5 @@ extension DownloadAttachmentExtensions on Attachment {
   }
 
   /// Downloads attachment as returns bytes of downloaded file.
-  Future<Uint8List> downloadAsBytes() async => (await http.get(this.url)).bodyBytes;
+  Future<Uint8List> downloadAsBytes() async => (await http.get(Uri.parse(this.url))).bodyBytes;
 }
