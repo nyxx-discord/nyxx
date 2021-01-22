@@ -28,13 +28,13 @@ class TypingEvent {
       this.guild = null;
     }
     
-    if (raw["d"]["member"] != null) {
-      this.member = Member._new(client, raw["d"]["member"] as Map<String, dynamic>, this.guild!.id);
-    } else {
+    if (raw["d"]["member"] == null) {
       this.member = null;
+      return;
     }
 
-    if (this.member != null && client._cacheOptions.memberCachePolicyLocation.event && client._cacheOptions.memberCachePolicy.canCache(this.member!)) {
+    this.member = Member._new(client, raw["d"]["member"] as Map<String, dynamic>, this.guild!.id);
+    if (client._cacheOptions.memberCachePolicyLocation.event && client._cacheOptions.memberCachePolicy.canCache(this.member!)) {
       member!.guild.getFromCache()?.members[this.member!.id] = member!;
     }
   }
