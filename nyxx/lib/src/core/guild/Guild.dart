@@ -62,7 +62,7 @@ class Guild extends SnowflakeEntity {
   late final Cache<Snowflake, Member> members;
 
   /// The guild's channels.
-  late final Iterable<GuildChannel> channels = this.client.channels.find((item) => item is GuildChannel && item.guild.id == this.id).cast();
+  Iterable<GuildChannel> get channels => this.client.channels.find((item) => item is GuildChannel && item.guild.id == this.id).cast();
 
   /// The guild's roles.
   late final Cache<Snowflake, Role> roles;
