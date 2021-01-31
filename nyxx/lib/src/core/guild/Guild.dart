@@ -389,6 +389,10 @@ class Guild extends SnowflakeEntity {
     }
   }
 
+  /// Fetches guild preview for this guild. Allows to download approx member count in guild
+  Future<GuildPreview> fetchGuildPreview() async =>
+      this.client.httpEndpoints.fetchGuildPreview(this.id);
+
   /// Request members from gateway. Requires privileged intents in order to work.
   void requestChunking() => this.shard.requestMembers(this.id);
 

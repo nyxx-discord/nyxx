@@ -190,6 +190,8 @@ abstract class IHttpEndpoints {
   String emojiUrl(Snowflake emojiId);
 
   Future<DMChannel> createDMChannel(Snowflake userId);
+
+  Future<GuildPreview> fetchGuildPreview(Snowflake guildId);
 }
 
 class _HttpEndpoints implements IHttpEndpoints {
@@ -1139,4 +1141,15 @@ class _HttpEndpoints implements IHttpEndpoints {
 
   Future<_HttpResponse> _getMeApplication() =>
       _client._http._execute(BasicRequest._new("/oauth2/applications/@me"));
+
+  @override
+  Future<GuildPreview> fetchGuildPreview(Snowflake guildId) async {
+    final response = await _httpClient._execute(BasicRequest._new("/guilds/$guildId/preview"));
+
+    if (response is HttpResponseSuccess) {
+      return GuildPreview._new(_client, response.jsonBody as Map<String, dynamic>);
+    }
+
+    return Future.error(response);
+  }
 }
