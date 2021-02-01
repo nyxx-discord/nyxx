@@ -192,6 +192,8 @@ abstract class IHttpEndpoints {
   Future<DMChannel> createDMChannel(Snowflake userId);
 
   Future<GuildPreview> fetchGuildPreview(Snowflake guildId);
+
+  Future<IChannel> createGuildChannel(Snowflake guildId, ChannelBuilder channelBuilder);
 }
 
 class _HttpEndpoints implements IHttpEndpoints {
@@ -1148,6 +1150,17 @@ class _HttpEndpoints implements IHttpEndpoints {
 
     if (response is HttpResponseSuccess) {
       return GuildPreview._new(_client, response.jsonBody as Map<String, dynamic>);
+    }
+
+    return Future.error(response);
+  }
+  @override
+  Future<IChannel> createGuildChannel(Snowflake guildId, ChannelBuilder channelBuilder) async {
+    final response = await _httpClient._execute(
+        BasicRequest._new("/guilds/${guildId.toString()}/channels", method: "POST", body: channelBuilder._build()));
+
+    if (response is HttpResponseSuccess) {
+      return IChannel._deserialize(_client, response.jsonBody as Map<String, dynamic>);
     }
 
     return Future.error(response);
