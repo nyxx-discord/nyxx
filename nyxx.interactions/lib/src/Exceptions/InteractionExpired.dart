@@ -1,11 +1,11 @@
 part of nyxx_interactions;
 
 /// Thrown when 15 minutes has passed since an interaction was called.
-class AlreadyResponded implements Error {
+class InteractionExpired implements Error {
   /// Returns a string representation of this object.
   @override
   String toString() =>
-      "AlreadyRespondedError: Interaction has already been acknowledged, you can now only send channel messages (with/without source)";
+      "InteractionExpiredError: Interaction tokens are only valid for 15mins. It has been over 15mins and the token is now invalid.";
 
   @override
   StackTrace? get stackTrace => StackTrace.empty;
