@@ -10,7 +10,7 @@ environment:
   sdk: '>=2.12.0-51.0.dev <3.0.0'
 
 dependencies:
-  http: "0.13.0"
+  http: "^0.13.0"
   logging: "^1.0.0-nullsafety.0"
   nyxx: "^1.1.0-dev.1"
 
