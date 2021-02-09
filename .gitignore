@@ -33,3 +33,4 @@ private-*.dart
 test-*.dart
 [Rr]pc*
 **/doc/api/**
+old.*
