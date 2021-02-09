@@ -11,14 +11,8 @@ environment:
 
 dependencies:
   nyxx: "^1.1.0-dev.1"
-  http: "^0.13.0-nullsafety-dev"
+  http: "0.13.0"
 
 dependency_overrides:
-  http:
-    git:
-      url: git://github.com/dart-lang/http.git
-  http_parser:
-    git:
-      url: git://github.com/dart-lang/http_parser.git
   nyxx:
     path: "../nyxx"
