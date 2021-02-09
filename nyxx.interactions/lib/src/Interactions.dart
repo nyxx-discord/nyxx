@@ -4,19 +4,25 @@ part of nyxx_interactions;
 class Interactions {
   late final Nyxx _client;
   final Logger _logger = Logger("Interactions");
+  final List<SlashCommand> _commands = List.empty(growable: true);
   late final _EventController _events;
 
   /// Emitted when a a slash command is sent.
   late Stream<InteractionEvent> onSlashCommand;
 
+  /// Emitted when a a slash command is sent.
+  late Stream<SlashCommand> onSlashCommandCreated;
+
   ///
   Interactions(Nyxx client) {
-    client.options.dispatchRawShardEvent = true;
     this._client = client;
     _events = _EventController(this);
+    _client.options.dispatchRawShardEvent = true;
+    _logger.info("Interactions ready");
+
     client.onReady.listen((event) {
       client.shardManager.rawEvent.listen((event) {
-        print(event);
+        print(event.rawData);
         if (event.rawData["op"] as int == 0) {
           if (event.rawData["t"] as String == "INTERACTION_CREATE") {
             _events.onSlashCommand.add(
@@ -26,42 +32,58 @@ class Interactions {
           }
         }
       });
-      _logger.info("Interactions ready");
     });
   }
 
-  Future<SlashCommand> registerSlashGlobal(
-      String name, String description, List<SlashArg> args) async {
-    final command =
-        SlashCommand._new(this._client, name, args, description, null);
-    final response = await this._client.httpEndpoints.sendRawRequest(
-          "/applications/${this._client.app.id.toString()}/commands",
-          "POST",
-          body: command._build(),
-        );
+  SlashCommand createCommand(String name, String description, List<CommandArg> args, {String? guild})
+    => SlashCommand._new(_client, name, description, args, guild: guild != null ? CacheUtility.createCacheableGuild(_client, Snowflake(guild)) : null);
 
-    if (response is HttpResponseError) {
-      return Future.error(response);
-    }
-
-    return Future.value(command);
+  /// Registers a single command.
+  ///
+  /// @param command A [SlashCommand] to register.
+  void registerCommand(SlashCommand command) {
+    _commands.add(command);
   }
 
-  Future<SlashCommand> registerSlashGuild(String name, String description,
-      Snowflake guildId, List<SlashArg> args) async {
-    final command =
-        SlashCommand._new(this._client, name, args, description, guildId);
-    command._build();
-    final response = await this._client.httpEndpoints.sendRawRequest(
-          "/applications/${this._client.app.id.toString()}/guilds/${guildId.toString()}/commands",
-          "POST",
-          body: command._build(),
-        );
-
-    if (response is HttpResponseError) {
-      return Future.error(response);
+  /// Registers multiple commands at one.
+  ///
+  /// This wraps around [Interactions.registerCommand()] running [Interactions.registerCommand] for each command in the list.
+  /// @param commands A list of [SlashCommand]s to register.
+  void registerCommands(List<SlashCommand> commands) {
+    for(var i = 0; i < commands.length; i++) {
+      this.registerCommand(commands[i]);
     }
-
-    return Future.value(command);
   }
+
+  List<SlashCommand> getCommands({bool registeredOnly = false}) {
+    if(!registeredOnly) { return _commands; }
+    final registeredCommands = List<SlashCommand>.empty(growable: true);
+    for(var i = 0; i < _commands.length; i++) {
+      final el = _commands[i];
+      if(el.isRegistered) {
+        registeredCommands.add(el);
+      }
+    }
+    return registeredCommands;
+  }
+
+  Future<void> sync() async {
+    var success = 0;
+    var failed = 0;
+    for(var i = 0; i < _commands.length; i++) {
+      final el = _commands[i];
+      if(!el.isRegistered) {
+        final command = await el._register();
+        if(command != null) {
+          _commands[i] = command;
+          this._events.onSlashCommandCreated.add(_commands[i]);
+          success++;
+        } else {
+          failed++;
+        }
+      }
+    }
+    _logger.info("Successfully registered $success ${success > 1 ? "commands" : "command"}. Failed registering $failed ${failed > 1 ? "commands" : "command"}.");
+  }
+
 }
