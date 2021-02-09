@@ -11,7 +11,7 @@ environment:
 
 dependencies:
   nyxx: "^1.1.0-dev.1"
-  http: "0.13.0"
+  http: "^0.13.0"
 
 dependency_overrides:
   nyxx:
