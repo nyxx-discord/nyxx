@@ -10,13 +10,11 @@ class ArgChoice {
 
   /// A Choice for the user to input in int & string args. You can only have an int or string option.
   ArgChoice(this.name, dynamic value) {
-    if (value is String || value is int) {
-      this.value = value;
-    }
-
     if (value is! int && value is! String) {
       throw "InvalidParamTypeError: Please send a string if its a string arg or an int if its an int arg.";
     }
+
+    this.value = value;
   }
 
   Map<String, dynamic> _build() => {"name": this.name, "value": this.value};

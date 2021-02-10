@@ -63,12 +63,11 @@ class Interaction extends SnowflakeEntity implements Disposable {
     final args = <String, InteractionOption>{};
 
     if (rawData["options"] != null) {
-      final l = rawData["options"] as List;
-      for (var i = 0; i < l.length; i++) {
-        final el = l[i];
-        args[el["name"] as String] = InteractionOption._new(
-          el["value"] as dynamic,
-          (el["options"] ?? List<dynamic>.empty()) as List,
+      final options = rawData["options"] as List;
+      for (final option in options) {
+        args[option["name"] as String] = InteractionOption._new(
+          option["value"] as dynamic,
+          (option["options"] ?? List<dynamic>.empty()) as List<Map<String, dynamic>>,
         );
       }
     }
