@@ -1,7 +1,8 @@
 part of nyxx_interactions;
 
-/// Thrown when 15 minutes has passed since an interaction was called.
+/// Thrown when you have already responded to an interaction
 class AlreadyResponded implements Error {
+
   /// Returns a string representation of this object.
   @override
   String toString() =>

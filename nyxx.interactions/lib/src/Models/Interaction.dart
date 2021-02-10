@@ -16,30 +16,27 @@ class Interaction extends SnowflakeEntity implements Disposable {
 
   late final int version;
 
-  late final String name; // TODO
+  late final String name;
 
-  late final Map<String, InteractionOption> args; // TODO
+  late final Map<String, InteractionOption> args;
 
   Interaction._new(
-      this.client,
-      Map<String, dynamic> raw,
-      ) : super(Snowflake(raw["id"])) {
+    this.client,
+    Map<String, dynamic> raw,
+  ) : super(Snowflake(raw["id"])) {
     this.type = raw["type"] as int;
-
     this.guild = CacheUtility.createCacheableGuild(
       client,
       Snowflake(
         raw["guild_id"],
       ),
     );
-
     this.channel = CacheUtility.createCacheableTextChannel(
       client,
       Snowflake(
         raw["channel_id"],
       ),
     );
-
     this.author = EntityUtility.createGuildMember(
       client,
       Snowflake(
@@ -47,26 +44,22 @@ class Interaction extends SnowflakeEntity implements Disposable {
       ),
       raw["member"] as Map<String, dynamic>,
     );
-
     this.token = raw["token"] as String;
-
     this.version = raw["version"] as int;
-
     this.name = raw["data"]["name"] as String;
-
     this.args = _generateArgs(raw["data"] as Map<String, dynamic>);
   }
 
   Map<String, InteractionOption> _generateArgs(Map<String, dynamic> rawData) {
     final args = <String, InteractionOption>{};
 
-    if(rawData["options"] != null) {
+    if (rawData["options"] != null) {
       final l = rawData["options"] as List;
-      for(var i = 0; i < l.length; i++) {
+      for (var i = 0; i < l.length; i++) {
         final el = l[i];
         args[el["name"] as String] = InteractionOption._new(
           el["value"] as dynamic,
-          (el["options"] ?? List<dynamic>.empty() ) as List,
+          (el["options"] ?? List<dynamic>.empty()) as List,
         );
       }
     }

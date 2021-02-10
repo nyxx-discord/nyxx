@@ -2,6 +2,7 @@ part of nyxx_interactions;
 
 /// Thrown when 15 minutes has passed since an interaction was called.
 class InteractionExpired implements Error {
+
   /// Returns a string representation of this object.
   @override
   String toString() =>

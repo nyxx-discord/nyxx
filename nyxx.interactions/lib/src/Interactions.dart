@@ -4,14 +4,14 @@ part of nyxx_interactions;
 class Interactions {
   late final Nyxx _client;
   final Logger _logger = Logger("Interactions");
-  final List<SlashCommand> _commands = List.empty(growable: true);
+  final List<SlashCommand> _commands = [];
   late final _EventController _events;
 
-  /// Emitted when a a slash command is sent.
-  late Stream<InteractionEvent> onSlashCommand;
+  /// Emitted when a slash command is sent.
+  late final Stream<InteractionEvent> onSlashCommand;
 
-  /// Emitted when a a slash command is sent.
-  late Stream<SlashCommand> onSlashCommandCreated;
+  /// Emitted when a slash command is created by the user.
+  late final Stream<SlashCommand> onSlashCommandCreated;
 
   ///
   Interactions(Nyxx client) {
@@ -22,12 +22,10 @@ class Interactions {
 
     client.onReady.listen((event) {
       client.shardManager.rawEvent.listen((event) {
-        print(event.rawData);
         if (event.rawData["op"] as int == 0) {
           if (event.rawData["t"] as String == "INTERACTION_CREATE") {
             _events.onSlashCommand.add(
-              InteractionEvent._new(
-                  client, event.rawData["d"] as Map<String, dynamic>),
+              InteractionEvent._new(client, event.rawData["d"] as Map<String, dynamic>),
             );
           }
         }
@@ -35,55 +33,55 @@ class Interactions {
     });
   }
 
-  SlashCommand createCommand(String name, String description, List<CommandArg> args, {String? guild})
-    => SlashCommand._new(_client, name, description, args, guild: guild != null ? CacheUtility.createCacheableGuild(_client, Snowflake(guild)) : null);
+  /// Creates a command that can be registered using .registerCommand or .registerCommands
+  ///
+  /// The [name] is the name that the user can see when typing /, the [description] can also be seen in this same place. [args] are any arguments you want the user to type, you can put an empty list here is you require no arguments. If you want this to be specific to a guild you can set the [guild] param with the ID of a guild, when testing its recommended to use this as it propagates immediately while global commands can take some time.
+  SlashCommand createCommand(String name, String description, List<CommandArg> args, {Snowflake? guild}) =>
+      SlashCommand._new(_client, name, description, args,
+          guild: guild != null ? CacheUtility.createCacheableGuild(_client, guild) : null);
 
   /// Registers a single command.
   ///
-  /// @param command A [SlashCommand] to register.
-  void registerCommand(SlashCommand command) {
-    _commands.add(command);
-  }
+  /// The command you want to register is the [command] you create a command by using [createCommand]
+  void registerCommand(SlashCommand command) => _commands.add(command);
 
   /// Registers multiple commands at one.
   ///
-  /// This wraps around [Interactions.registerCommand()] running [Interactions.registerCommand] for each command in the list.
-  /// @param commands A list of [SlashCommand]s to register.
-  void registerCommands(List<SlashCommand> commands) {
-    for(var i = 0; i < commands.length; i++) {
-      this.registerCommand(commands[i]);
-    }
-  }
+  /// The commands you want to register is the [commands] you create a command by using [createCommand], this just runs [registerCommand] for each command.
+  void registerCommands(List<SlashCommand> commands) => commands.forEach(this.registerCommand);
 
+  /// Gets all the commands that are currently registered.
   List<SlashCommand> getCommands({bool registeredOnly = false}) {
-    if(!registeredOnly) { return _commands; }
+    if (!registeredOnly) {
+      return _commands;
+    }
     final registeredCommands = List<SlashCommand>.empty(growable: true);
-    for(var i = 0; i < _commands.length; i++) {
-      final el = _commands[i];
-      if(el.isRegistered) {
+    for (final el in _commands) {
+      if (el.isRegistered) {
         registeredCommands.add(el);
       }
     }
     return registeredCommands;
   }
 
+  /// Syncs the local commands with the discord API
   Future<void> sync() async {
     var success = 0;
     var failed = 0;
-    for(var i = 0; i < _commands.length; i++) {
-      final el = _commands[i];
-      if(!el.isRegistered) {
-        final command = await el._register();
-        if(command != null) {
-          _commands[i] = command;
-          this._events.onSlashCommandCreated.add(_commands[i]);
-          success++;
-        } else {
-          failed++;
-        }
+    for (final el in _commands) {
+      if (!el.isRegistered) {
+        await el
+            ._register()
+            .catchError(() {
+              failed++;
+              return;
+            });
+
+        this._events.onSlashCommandCreated.add(el);
+        success++;
       }
     }
-    _logger.info("Successfully registered $success ${success > 1 ? "commands" : "command"}. Failed registering $failed ${failed > 1 ? "commands" : "command"}.");
+    _logger.info(
+        "Successfully registered $success ${success > 1 ? "commands" : "command"}. Failed registering $failed ${failed > 1 ? "commands" : "command"}.");
   }
-
 }
