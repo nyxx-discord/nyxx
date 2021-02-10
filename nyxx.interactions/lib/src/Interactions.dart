@@ -55,13 +55,8 @@ class Interactions {
     if (!registeredOnly) {
       return _commands;
     }
-    final registeredCommands = List<SlashCommand>.empty(growable: true);
-    for (final command in _commands) {
-      if (command.isRegistered) {
-        registeredCommands.add(command);
-      }
-    }
-    return registeredCommands;
+
+    return _commands.where((command) => command.isRegistered).toList();
   }
 
   /// Syncs the local commands with the discord API

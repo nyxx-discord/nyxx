@@ -1,5 +1,5 @@
 name: nyxx_interactions
-version: 1.1.0-dev.2
+version: 1.1.0-dev.1
 authors:
   - HarryET
 description: Interactions for Nyxx library
@@ -9,18 +9,12 @@ documentation: https://github.com/l7ssha/nyxx/wiki
 issue_tracker: https://github.com/l7ssha/nyxx/issue
 
 environment:
-  sdk: '>=2.12.0-51.0.dev <3.0.0'
+  sdk: ">=2.12.0-51.0.dev <3.0.0"
 
 dependencies:
   logging: "^1.0.0-nullsafety.0"
   nyxx: "^1.1.0-dev.2"
 
 dependency_overrides:
-  http:
-    git:
-      url: git://github.com/dart-lang/http.git
-  http_parser:
-    git:
-      url: git://github.com/dart-lang/http_parser.git
   nyxx:
     path: "../nyxx"
