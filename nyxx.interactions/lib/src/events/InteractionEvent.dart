@@ -36,14 +36,12 @@ class InteractionEvent {
           return Future.error(response);
         }
 
-        if (!hasResponded) {
-          hasResponded = true;
-        }
+        hasResponded = true;
       } else {
-        return Future.error(InteractionExpired());
+        return Future.error(InteractionExpiredError());
       }
     } else {
-      return Future.error(InteractionExpired());
+      return Future.error(InteractionExpiredError());
     }
   }
 
@@ -51,7 +49,7 @@ class InteractionEvent {
   Future<void> acknowledge({ bool showSource = false, }) async {
     if (DateTime.now().isBefore(this.receivedAt.add(const Duration(minutes: 15)))) {
       if (hasResponded) {
-        return Future.error(AlreadyResponded());
+        return Future.error(AlreadyRespondedError());
       }
       final url = "/interactions/${this.interaction.id.toString()}/${this.interaction.token}/callback";
 
@@ -68,11 +66,9 @@ class InteractionEvent {
         return Future.error(response);
       }
 
-      if (!hasResponded) {
-        hasResponded = true;
-      }
+      hasResponded = true;
     } else {
-      return Future.error(InteractionExpired());
+      return Future.error(InteractionExpiredError());
     }
   }
 
@@ -108,7 +104,7 @@ class InteractionEvent {
         hasResponded = true;
       }
     } else {
-      return Future.error(InteractionExpired());
+      return Future.error(InteractionExpiredError());
     }
   }
 }

@@ -1,5 +1,7 @@
 name: nyxx_interactions
 version: 1.1.0-dev.2
+authors:
+  - HarryET
 description: Interactions for Nyxx library
 homepage: https://github.com/l7ssha/nyxx
 repository: https://github.com/l7ssha/nyxx

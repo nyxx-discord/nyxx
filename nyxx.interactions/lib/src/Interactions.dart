@@ -13,7 +13,7 @@ class Interactions {
   /// Emitted when a slash command is created by the user.
   late final Stream<SlashCommand> onSlashCommandCreated;
 
-  ///
+  /// Create new instance of the interactions class.
   Interactions(Nyxx client) {
     this._client = client;
     _events = _EventController(this);
@@ -56,9 +56,9 @@ class Interactions {
       return _commands;
     }
     final registeredCommands = List<SlashCommand>.empty(growable: true);
-    for (final el in _commands) {
-      if (el.isRegistered) {
-        registeredCommands.add(el);
+    for (final command in _commands) {
+      if (command.isRegistered) {
+        registeredCommands.add(command);
       }
     }
     return registeredCommands;
@@ -68,16 +68,16 @@ class Interactions {
   Future<void> sync() async {
     var success = 0;
     var failed = 0;
-    for (final el in _commands) {
-      if (!el.isRegistered) {
-        await el
+    for (final command in _commands) {
+      if (!command.isRegistered) {
+        await command
             ._register()
             .catchError(() {
               failed++;
               return;
             });
 
-        this._events.onSlashCommandCreated.add(el);
+        this._events.onSlashCommandCreated.add(command);
         success++;
       }
     }
