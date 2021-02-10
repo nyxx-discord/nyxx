@@ -1,7 +1,7 @@
 part of nyxx_interactions;
 
 /// Thrown when you have already responded to an interaction
-class AlreadyResponded implements Error {
+class AlreadyRespondedError implements Error {
 
   /// Returns a string representation of this object.
   @override

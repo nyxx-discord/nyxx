@@ -9,20 +9,20 @@ import "package:nyxx/nyxx.dart";
 part "src/Interactions.dart";
 
 // Models
-part "src/Models/SlashCommand.dart";
-part "src/Models/Interaction.dart";
-part "src/Models/InteractionOption.dart";
+part "src/models/SlashCommand.dart";
+part "src/models/Interaction.dart";
+part "src/models/InteractionOption.dart";
 
 // Command Args
-part "src/Models/CommandArgs/ArgChoice.dart";
-part "src/Models/CommandArgs/CommandArg.dart";
+part "src/models/commandArgs/ArgChoice.dart";
+part "src/models/commandArgs/CommandArg.dart";
 
 // Internal
-part "src/Internal/_EventController.dart";
+part "src/internal/_EventController.dart";
 
 // Events
-part "src/Events/InteractionEvent.dart";
+part "src/events/InteractionEvent.dart";
 
 // Exceptions
-part "src/Exceptions/InteractionExpired.dart";
-part "src/Exceptions/AlreadyResponded.dart";
+part "src/exceptions/InteractionExpired.dart";
+part "src/exceptions/AlreadyResponded.dart";
