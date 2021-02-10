@@ -12,9 +12,9 @@ class InteractionEvent {
 
   InteractionEvent._new(Nyxx client, Map<String, dynamic> rawJson) {
     this._client = client;
-    interaction = Interaction._new(client, rawJson);
+    this.interaction = Interaction._new(client, rawJson);
 
-    if (interaction.type == 1) {
+    if (this.interaction.type == 1) {
       this._pong();
     }
   }
