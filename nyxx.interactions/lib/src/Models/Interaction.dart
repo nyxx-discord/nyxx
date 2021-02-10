@@ -1,44 +1,53 @@
 part of nyxx_interactions;
 
+/// The Interaction data. e.g channel, guild and member
 class Interaction extends SnowflakeEntity implements Disposable {
-  /// Reference to bot instance
-  final Nyxx client;
+  /// Reference to bot instance.
+  final Nyxx _client;
 
+  /// The type of the interaction received.
   late final int type;
 
+  /// The guild the command was sent in.
   late final Cacheable<Snowflake, Guild> guild;
 
+  /// The channel the command was sent in.
   late final Cacheable<Snowflake, TextChannel> channel;
 
+  /// The member who sent the interaction
   late final Member author;
 
+  /// Token to send requests
   late final String token;
 
+  /// Version of interactions api
   late final int version;
 
+  /// Name of interaction
   late final String name;
 
+  /// Args of the interaction
   late final Map<String, InteractionOption> args;
 
   Interaction._new(
-    this.client,
+    this._client,
     Map<String, dynamic> raw,
   ) : super(Snowflake(raw["id"])) {
     this.type = raw["type"] as int;
     this.guild = CacheUtility.createCacheableGuild(
-      client,
+      _client,
       Snowflake(
         raw["guild_id"],
       ),
     );
     this.channel = CacheUtility.createCacheableTextChannel(
-      client,
+      _client,
       Snowflake(
         raw["channel_id"],
       ),
     );
     this.author = EntityUtility.createGuildMember(
-      client,
+      _client,
       Snowflake(
         raw["guild_id"],
       ),
