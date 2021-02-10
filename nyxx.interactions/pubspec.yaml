@@ -1,5 +1,5 @@
 name: nyxx_interactions
-version: 1.1.0-dev.1
+version: 1.1.0-dev.2
 description: Interactions for Nyxx library
 homepage: https://github.com/l7ssha/nyxx
 repository: https://github.com/l7ssha/nyxx
@@ -10,8 +10,8 @@ environment:
   sdk: '>=2.12.0-51.0.dev <3.0.0'
 
 dependencies:
-  nyxx: "^1.1.0-dev.1"
   logging: "^1.0.0-nullsafety.0"
+  nyxx: "^1.1.0-dev.2"
 
 dependency_overrides:
   http:

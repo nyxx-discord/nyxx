@@ -2,14 +2,22 @@ part of nyxx_interactions;
 
 /// The type that a user should input for a [SlashArg]
 enum CommandArgType {
-  SUB_COMMAND,
-  SUB_COMMAND_GROUP,
-  STRING,
-  INTEGER,
-  BOOLEAN,
-  USER,
-  CHANNEL,
-  ROLE,
+  /// Specify an arg as a sub command
+  subCommand,
+  /// Specify an arg as a sub command group
+  subCommandGroup,
+  /// Specify an arg as a string
+  string,
+  /// Specify an arg as an int
+  integer,
+  /// Specify an arg as a bool
+  boolean,
+  /// Specify an arg as a user e.g @HarryET#2954
+  user,
+  /// Specify an arg as a channel e.g. #Help
+  channel,
+  /// Specify an arg as a role e.g. @RoleName
+  role,
 }
 
 /// An argument for a [SlashCommand].
@@ -39,29 +47,25 @@ class CommandArg {
   /// If this argument is required
   late final bool required;
 
-  /// Choices for [SlashArgType.STRING] and [SlashArgType.INTEGER] types for the user to pick from
+  /// Choices for [CommandArgType.string] and [CommandArgType.string] types for the user to pick from
   late final List<ArgChoice>? choices;
 
   /// If the option is a subcommand or subcommand group type, this nested options will be the parameters
   late final List<CommandArg>? options;
 
-  /// Used to create an argument for a [SlashCommand]. Thease are used in [Interactions.registerSlashGlobal] and [Interactions.registerSlashGuild]
+  /// Used to create an argument for a [SlashCommand]. Tease are used in [Interactions.registerCommand]
   CommandArg(this.type, this.name, this.description,
-      {this.defaultArg = false,
-        this.required = false,
-        this.choices,
-        this.options});
+      {this.defaultArg = false, this.required = false, this.choices, this.options});
 
   Map<String, dynamic> _build() {
     final subOptions = this.options != null
-        ? List<Map<String, dynamic>>.generate(
-        this.options!.length, (i) => this.options![i]._build())
+        ? this.options!.map((e) => e._build())
         : null;
 
     final rawChoices = this.choices != null
-        ? List<Map<String, dynamic>>.generate(
-        this.choices!.length, (i) => this.choices![i]._build())
+        ? this.choices!.map((e) => e._build())
         : null;
+
     return {
       "type": (this.type.index) + 1,
       "name": this.name,

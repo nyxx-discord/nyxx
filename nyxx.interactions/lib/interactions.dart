@@ -9,16 +9,16 @@ import "package:nyxx/nyxx.dart";
 part "src/Interactions.dart";
 
 // Models
-part 'src/Models/SlashCommand.dart';
+part "src/Models/SlashCommand.dart";
 part "src/Models/Interaction.dart";
 part "src/Models/InteractionOption.dart";
 
 // Command Args
-part 'src/Models/CommandArgs/ArgChoice.dart';
-part 'src/Models/CommandArgs/CommandArg.dart';
+part "src/Models/CommandArgs/ArgChoice.dart";
+part "src/Models/CommandArgs/CommandArg.dart";
 
 // Internal
-part 'src/Internal/_EventController.dart';
+part "src/Internal/_EventController.dart";
 
 // Events
 part "src/Events/InteractionEvent.dart";

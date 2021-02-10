@@ -1,14 +1,18 @@
 part of nyxx_interactions;
 
+/// The option given by the user when sending a command
 class InteractionOption {
+  /// The value given by the user
   final dynamic? value;
-  final Map<String, InteractionOption> args = <String, InteractionOption>{};
+
+  /// Any args under this as you can have sub commands
+  final Map<String, InteractionOption> args = {};
+
   InteractionOption._new(this.value, List rawOptions) {
-    for(var i = 0; i < rawOptions.length; i++) {
-      final el = rawOptions[i];
+    for (final el in rawOptions) {
       this.args[el["name"] as String] = InteractionOption._new(
         el["value"] as dynamic,
-        (el["options"] ?? List<dynamic>.empty() ) as List,
+        (el["options"] ?? List<dynamic>.empty()) as List,
       );
     }
   }
