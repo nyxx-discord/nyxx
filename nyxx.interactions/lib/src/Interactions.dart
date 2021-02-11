@@ -65,15 +65,12 @@ class Interactions {
     var failed = 0;
     for (final command in _commands) {
       if (!command.isRegistered) {
-        await command
-            ._register()
-            .catchError(() {
-              failed++;
-              return;
-            });
-
-        this._events.onSlashCommandCreated.add(command);
-        success++;
+        await command._register().then((value) {
+          this._events.onSlashCommandCreated.add(command);
+          success++;
+        }).catchError(() {
+          failed++;
+        });
       }
     }
     _logger.info(
