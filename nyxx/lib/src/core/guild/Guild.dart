@@ -62,7 +62,7 @@ class Guild extends SnowflakeEntity {
   late final Cache<Snowflake, Member> members;
 
   /// The guild's channels.
-  late final Iterable<GuildChannel> channels = this.client.channels.find((item) => item is GuildChannel && item.guild.id == this.id).cast();
+  Iterable<GuildChannel> get channels => this.client.channels.find((item) => item is GuildChannel && item.guild.id == this.id).cast();
 
   /// The guild's roles.
   late final Cache<Snowflake, Role> roles;
@@ -389,8 +389,16 @@ class Guild extends SnowflakeEntity {
     }
   }
 
+  /// Fetches guild preview for this guild. Allows to download approx member count in guild
+  Future<GuildPreview> fetchGuildPreview() async =>
+      this.client.httpEndpoints.fetchGuildPreview(this.id);
+
   /// Request members from gateway. Requires privileged intents in order to work.
   void requestChunking() => this.shard.requestMembers(this.id);
+
+  /// Allows to create new guil channel
+  Future<IChannel> createChannel(ChannelBuilder channelBuilder) =>
+    this.client.httpEndpoints.createGuildChannel(this.id, channelBuilder);
 
   /// Deletes the guild.
   Future<void> delete() =>

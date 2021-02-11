@@ -22,13 +22,13 @@ void main() {
 
       // Creating role with RoleBuilder. We have to cast `e.message` to GuildMessage because we want to access guild property
       // and generic dont have that.
-      final role = await (e.message as GuildMessage).guild!.createRole(RoleBuilder("testRole")..color = DiscordColor.chartreuse);
+      final role = await (e.message as GuildMessage).guild.getFromCache()!.createRole(RoleBuilder("testRole")..color = DiscordColor.chartreuse);
 
       // Cast message author to member because webhook can also be message author. And add role to user
-      await (e.message.author as CachelessMember).addRole(role);
+      await (e.message as GuildMessage).member.addRole(role);
 
       // Send message with confirmation of given action
-      await e.message.channel.send(content: "Added [${role.name}] to user: [${e.message.author.tag}");
+      await e.message.channel.getFromCache()?.sendMessage(content: "Added [${role.name}] to user: [${e.message.author.tag}");
     }
   });
 }

@@ -259,11 +259,16 @@ abstract class IHttpEndpoints {
 
   String stickerUrl(String stickerHash, String extension);
 
+  String emojiUrl(Snowflake emojiId);
+
   Future<DMChannel> createDMChannel(Snowflake userId);
 
   /// Used to send a request including the bot token header.
-  Future<_HttpResponse> sendRawRequest(String url, String method,
-      {dynamic body, dynamic headers});
+  Future<_HttpResponse> sendRawRequest(String url, String method, {dynamic body, dynamic headers});
+  
+  Future<GuildPreview> fetchGuildPreview(Snowflake guildId);
+
+  Future<IChannel> createGuildChannel(Snowflake guildId, ChannelBuilder channelBuilder);
 }
 
 class _HttpEndpoints implements IHttpEndpoints {
@@ -522,6 +527,7 @@ class _HttpEndpoints implements IHttpEndpoints {
 
     if (response is HttpResponseError) {
       yield* Stream.error(response);
+      return;
     }
 
     for (final obj in (response as HttpResponseSuccess)._jsonBody) {
@@ -575,6 +581,7 @@ class _HttpEndpoints implements IHttpEndpoints {
 
     if (response is HttpResponseError) {
       yield* Stream.error(response);
+      return;
     }
 
     for (final raw in (response as HttpResponseSuccess)._jsonBody) {
@@ -630,6 +637,7 @@ class _HttpEndpoints implements IHttpEndpoints {
 
     if (response is HttpResponseError) {
       yield* Stream.error(response);
+      return;
     }
 
     for (final raw in (response as HttpResponseSuccess)._jsonBody) {
@@ -729,6 +737,7 @@ class _HttpEndpoints implements IHttpEndpoints {
 
     if (request is HttpResponseError) {
       yield* Stream.error(request);
+      return;
     }
 
     for (final rawMember
@@ -746,14 +755,18 @@ class _HttpEndpoints implements IHttpEndpoints {
   }
 
   @override
-  Stream<Member> searchGuildMembers(Snowflake guildId, String query,
-      {int limit = 1}) async* {
-    final response = await _httpClient._execute(BasicRequest._new(
-        "/guilds/$guildId/members/search",
+  Stream<Member> searchGuildMembers(Snowflake guildId, String query, {int limit = 1}) async* {
+    if (query.isEmpty) {
+      yield* Stream.error(ArgumentError("`query` parameter cannot be empty. If you want to request all members use `fetchGuildMembers`"));
+      return;
+    }
+
+    final response = await _httpClient._execute(BasicRequest._new("/guilds/$guildId/members/search",
         queryParams: {"query": query, "limit": limit.toString()}));
 
     if (response is HttpResponseError) {
       yield* Stream.error(response);
+      return;
     }
 
     for (final Map<String, dynamic> memberData
@@ -776,6 +789,7 @@ class _HttpEndpoints implements IHttpEndpoints {
 
     if (response is HttpResponseError) {
       yield* Stream.error(response);
+      return;
     }
 
     for (final raw in (response as HttpResponseSuccess)._jsonBody.values) {
@@ -794,6 +808,7 @@ class _HttpEndpoints implements IHttpEndpoints {
 
     if (response is HttpResponseError) {
       yield* Stream.error(response);
+      return;
     }
 
     for (final rawRole in (response as HttpResponseSuccess)._jsonBody.values) {
@@ -862,6 +877,7 @@ class _HttpEndpoints implements IHttpEndpoints {
 
     if (response is HttpResponseError) {
       yield* Stream.error(response);
+      return;
     }
 
     final bodyValues = (response as HttpResponseSuccess).jsonBody.values.first;
@@ -1029,6 +1045,7 @@ class _HttpEndpoints implements IHttpEndpoints {
 
     if (response is HttpResponseError) {
       yield* Stream.error(response);
+      return;
     }
 
     for (final val in await (response as HttpResponseSuccess)._jsonBody) {
@@ -1111,6 +1128,7 @@ class _HttpEndpoints implements IHttpEndpoints {
 
     if (response is HttpResponseError) {
       yield* Stream.error(response);
+      return;
     }
 
     for (final val in (response as HttpResponseSuccess)._jsonBody.values.first
@@ -1401,6 +1419,10 @@ class _HttpEndpoints implements IHttpEndpoints {
       "https://cdn.${Constants.cdnHost}/stickers/$stickerHash.$extension";
 
   @override
+  String emojiUrl(Snowflake emojiId) =>
+      "https://cdn.discordapp.com/emojis/$emojiId.png";
+
+  @override
   Future<DMChannel> createDMChannel(Snowflake userId) async {
     final response = await _httpClient._execute(BasicRequest._new(
         "/users/@me/channels",
@@ -1426,5 +1448,33 @@ class _HttpEndpoints implements IHttpEndpoints {
     }
 
     return Future.value(response);
+  }
+
+  Future<_HttpResponse> _getGatewayBot() =>
+      _client._http._execute(BasicRequest._new("/gateway/bot"));
+
+  Future<_HttpResponse> _getMeApplication() =>
+      _client._http._execute(BasicRequest._new("/oauth2/applications/@me"));
+
+  @override
+  Future<GuildPreview> fetchGuildPreview(Snowflake guildId) async {
+    final response = await _httpClient._execute(BasicRequest._new("/guilds/$guildId/preview"));
+
+    if (response is HttpResponseSuccess) {
+      return GuildPreview._new(_client, response.jsonBody as Map<String, dynamic>);
+    }
+
+    return Future.error(response);
+  }
+  @override
+  Future<IChannel> createGuildChannel(Snowflake guildId, ChannelBuilder channelBuilder) async {
+    final response = await _httpClient._execute(
+        BasicRequest._new("/guilds/${guildId.toString()}/channels", method: "POST", body: channelBuilder._build()));
+
+    if (response is HttpResponseSuccess) {
+      return IChannel._deserialize(_client, response.jsonBody as Map<String, dynamic>);
+    }
+
+    return Future.error(response);
   }
 }
