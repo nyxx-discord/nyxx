@@ -20,10 +20,10 @@ void main() {
       }
 
       // Create default invite. We have to cast channel to access guild specific functionality.
-      final invite = await (e.message.channel as GuildTextChannel).createInvite();
+      final invite = await (e.message.channel as TextGuildChannel).createInvite();
 
       // Send back invite url
-      await e.message.channel.send(content: invite.url);
+      await e.message.channel.getFromCache()?.sendMessage(content: invite.url);
     }
   });
 }

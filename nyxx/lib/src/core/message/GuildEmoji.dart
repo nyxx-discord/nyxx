@@ -1,4 +1,5 @@
 part of nyxx;
+
 abstract class IGuildEmoji extends SnowflakeEntity implements IEmoji {
   /// True if emoji is partial.
   bool get isPartial;
@@ -7,6 +8,9 @@ abstract class IGuildEmoji extends SnowflakeEntity implements IEmoji {
   String get cdnUrl => "https://cdn.discordapp.com/emojis/${this.id}.png";
 
   IGuildEmoji._new(Map<String, dynamic> raw): super(Snowflake(raw["id"]));
+
+  /// Creates partial emoji from given String or Snowflake.
+  factory IGuildEmoji.fromId(dynamic id) => GuildEmojiPartial._new({ "id": id.toString() });
 
   @override
   String formatForMessage() => "<:$id>";

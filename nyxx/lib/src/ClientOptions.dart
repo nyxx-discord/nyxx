@@ -147,7 +147,7 @@ class GatewayIntents {
 
 /// Hook executed when disposing bots process.
 ///
-/// Most likely by when process receives SIGINT (*nix) or SIGTERM (*nix and windows).
+/// Executed most likely when process receives SIGINT (*nix) or SIGTERM (*nix and windows).
 /// Not guaranteed to be completed or executed at all.
 typedef ShutdownHook = Future<void> Function(Nyxx client);
 

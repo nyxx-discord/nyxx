@@ -54,7 +54,8 @@ class MessageDeleteBulkEvent {
   }
 
   /// Searches cache for deleted messages and returns those which are present in bots cache.
-  /// Will return empty collections if cannot obtain channel instance from cache.
+  /// Will return empty collection if cannot obtain channel instance from cache.
+  /// It is not guaranteed that returned collection will have all deleted messages.
   Iterable<Message> getDeletedMessages() {
     final channelInstance = this.channel.getFromCache();
 

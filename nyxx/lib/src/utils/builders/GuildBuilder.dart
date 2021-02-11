@@ -88,9 +88,45 @@ class ChannelBuilder implements Builder {
   /// Type of channel
   ChannelType type;
 
+  /// Channel topic (0-1024 characters)
+  String? topic;
+
+  /// The bitrate (in bits) of the voice channel (voice only)
+  int? bitrate;
+
+  /// The user limit of the voice channel (voice only)
+  int? userLimit;
+
+  /// Amount of seconds a user has to wait before sending another message (0-21600);
+  /// bots, as well as users with the permission manage_messages or manage_channel, are unaffected
+  int? rateLimitPerUser;
+
+  /// Sorting position of the channel
+  int? position;
+
+  /// Id of the parent category for a channel
+  SnowflakeEntity? parentChannel;
+
+  /// The channel's permission overwrites
+  List<PermissionOverrideBuilder>? overrides;
+
+  /// Whether the channel is nsfw
+  bool? nsfw;
+
   /// Builder for creating mini channel instance
   ChannelBuilder(this.name, this.type);
 
   @override
-  Map<String, dynamic> _build() => {"name": name, "type": type._value};
+  Map<String, dynamic> _build() => {
+    "name": name,
+    "type": type._value,
+    if (topic != null) "topic": topic,
+    if (bitrate != null) "bitrate": bitrate,
+    if (userLimit != null) "user_limit": userLimit,
+    if (rateLimitPerUser != null) "rate_limit_per_user": rateLimitPerUser,
+    if (position != null) "position": position,
+    if (parentChannel != null) "parent_id": parentChannel!.id,
+    if (nsfw != null) "nsfw": nsfw,
+    if (overrides != null) "permission_overwrites" : overrides!.map((e) => e._build())
+  };
 }
