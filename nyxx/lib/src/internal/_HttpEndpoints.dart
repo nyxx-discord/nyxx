@@ -280,10 +280,10 @@ class _HttpEndpoints implements IHttpEndpoints {
   }
 
   Map<String, dynamic> _initMessage(dynamic content, EmbedBuilder? embed,
-      AllowedMentions? allowedMentions, ReplyBuilder? replyBuilder) {
-    if (content == null && embed == null) {
+      AllowedMentions? allowedMentions, ReplyBuilder? replyBuilder, {bool hasFiles = false}) {
+    if (content == null && embed == null && !hasFiles) {
       throw ArgumentError(
-          "When sending message both content and embed cannot be null");
+          "When sending message content, embed or files have to be not null");
     }
 
     allowedMentions ??= _client._options.allowedMentions;
@@ -978,7 +978,7 @@ class _HttpEndpoints implements IHttpEndpoints {
     }
 
     final reqBody = {
-      ..._initMessage(content, embed, allowedMentions, replyBuilder),
+      ..._initMessage(content, embed, allowedMentions, replyBuilder, hasFiles: files != null && files.isNotEmpty),
       if (content != null && tts != null) "tts": tts
     };
 
