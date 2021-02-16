@@ -33,6 +33,9 @@ abstract class IChannel extends SnowflakeEntity implements Disposable {
     }
   }
 
+  /// Deletes channel if guild channel or closes DM if DM channel
+  Future<void> delete() => this.client.httpEndpoints.deleteChannel(this.id);
+
   @override
   Future<void> dispose() async {
     // Empty body

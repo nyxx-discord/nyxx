@@ -269,6 +269,8 @@ abstract class IHttpEndpoints {
   Future<GuildPreview> fetchGuildPreview(Snowflake guildId);
 
   Future<IChannel> createGuildChannel(Snowflake guildId, ChannelBuilder channelBuilder);
+
+  Future<void> deleteChannel(Snowflake channelId);
 }
 
 class _HttpEndpoints implements IHttpEndpoints {
@@ -1466,6 +1468,7 @@ class _HttpEndpoints implements IHttpEndpoints {
 
     return Future.error(response);
   }
+
   @override
   Future<IChannel> createGuildChannel(Snowflake guildId, ChannelBuilder channelBuilder) async {
     final response = await _httpClient._execute(
@@ -1476,5 +1479,14 @@ class _HttpEndpoints implements IHttpEndpoints {
     }
 
     return Future.error(response);
+  }
+
+  @override
+  Future<void> deleteChannel(Snowflake channelId) async {
+    final response = await _httpClient._execute(BasicRequest._new("/channels/${channelId.toString()}", method: "DELETE"));
+
+    if (response is HttpResponseError) {
+      return Future.error(response);
+    }
   }
 }
