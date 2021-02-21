@@ -30,14 +30,20 @@ jobs:
       - name: Analyze project source
         working-directory: ./nyxx
         run: dart analyze
-      
+
+      - name: Unit tests
+        working-directory: ./nyxx/test
+        run: dart run test unit.dart
+
       - name: Compile tests
         working-directory: ./nyxx/test
         run: dart2native --enable-experiment=non-nullable travis.dart
+        if: github.event_name != 'pull_request'
 
       - name: Run tests
         working-directory: ./nyxx/test
         run: ./travis.exe
+        if: github.event_name != 'pull_request'
   
   test-commander:
     name: Tests commander package
@@ -71,10 +77,12 @@ jobs:
       - name: Compile tests
         working-directory: ./nyxx.commander/test
         run: dart2native --enable-experiment=non-nullable commander-test.dart
+        if: github.event_name != 'pull_request'
       
       - name: Run tests
         working-directory: ./nyxx.commander/test
         run: ./commander-test.exe
+        if: github.event_name != 'pull_request'
   
   test-extensions:
     name: Tests extensions package
@@ -108,7 +116,9 @@ jobs:
      - name: Compile tests
        working-directory: ./nyxx.extensions/test
        run: dart2native --enable-experiment=non-nullable extensions-tests.dart
+       if: github.event_name != 'pull_request'
      
      - name: Run tests
        working-directory: ./nyxx.extensions/test
        run: ./extensions-tests.exe
+       if: github.event_name != 'pull_request'
