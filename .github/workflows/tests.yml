@@ -32,8 +32,8 @@ jobs:
         run: dart analyze
 
       - name: Unit tests
-        working-directory: ./nyxx/test
-        run: dart test unit.dart
+        working-directory: ./nyxx
+        run: dart test test/unit.dart
 
       - name: Compile tests
         working-directory: ./nyxx/test
