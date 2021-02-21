@@ -13,3 +13,6 @@ dependencies:
   logging: "^1.0.0-nullsafety.0"
   http: "^0.13.0"
   path: "^1.8.0-nullsafety.3"
+
+dev_dependencies:
+  test: "^1.16.2"
