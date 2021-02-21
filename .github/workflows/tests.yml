@@ -33,7 +33,7 @@ jobs:
 
       - name: Unit tests
         working-directory: ./nyxx/test
-        run: dart run test unit.dart
+        run: dart test unit.dart
 
       - name: Compile tests
         working-directory: ./nyxx/test
