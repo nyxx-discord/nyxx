@@ -11,7 +11,7 @@ class MessageReference {
   /// Original guild
   late final Cacheable<Snowflake, Guild>? guild;
 
-  MessageReference._new(Map<String, dynamic> raw, Nyxx client) {
+  MessageReference._new(Map<String, dynamic> raw, INyxx client) {
     this.channel = _ChannelCacheable(client, Snowflake(raw["channel_id"]));
 
     if (raw["message_id"] != null) {

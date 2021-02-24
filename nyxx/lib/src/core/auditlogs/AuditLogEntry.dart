@@ -22,7 +22,7 @@ class AuditLogEntry extends SnowflakeEntity {
   /// The reason for the change
   String? reason;
 
-  AuditLogEntry._new(Map<String, dynamic> raw, Nyxx client) : super(Snowflake(raw["id"] as String)) {
+  AuditLogEntry._new(Map<String, dynamic> raw, INyxx client) : super(Snowflake(raw["id"] as String)) {
     this.targetId = raw["targetId"] as String;
 
     this.changes = [

@@ -7,7 +7,7 @@ class VoiceGuildChannel extends GuildChannel {
   /// The channel's user limit.
   late final int? userLimit;
 
-  VoiceGuildChannel._new(Nyxx client, Map<String, dynamic> raw, [Snowflake? guildId]) : super._new(client, raw, guildId) {
+  VoiceGuildChannel._new(INyxx client, Map<String, dynamic> raw, [Snowflake? guildId]) : super._new(client, raw, guildId) {
     this.bitrate = raw["bitrate"] as int?;
     this.userLimit = raw["user_limit"] as int?;
   }
@@ -18,8 +18,12 @@ class VoiceGuildChannel extends GuildChannel {
 
   /// Connects client to channel
   void connect({bool selfMute = false, bool selfDeafen = false}) {
+    if (this.client is! Nyxx) {
+      throw new UnsupportedError("Cannot connect with NyxxRest");
+    }
+
     try {
-      final shard = this.client.shardManager.shards.firstWhere((element) => element.guilds.contains(this.guild.id));
+      final shard = (this.client as Nyxx).shardManager.shards.firstWhere((element) => element.guilds.contains(this.guild.id));
 
       shard.changeVoiceState(this.guild.id, this.id, selfMute: selfMute, selfDeafen: selfDeafen);
     } on Error {
@@ -29,8 +33,12 @@ class VoiceGuildChannel extends GuildChannel {
 
   /// Disconnects use from channel.
   void disconnect() {
+    if (this.client is! Nyxx) {
+      throw new UnsupportedError("Cannot connect with NyxxRest");
+    }
+
     try {
-      final shard = this.client.shardManager.shards.firstWhere((element) => element.guilds.contains(this.guild.id));
+      final shard = (this.client as Nyxx).shardManager.shards.firstWhere((element) => element.guilds.contains(this.guild.id));
 
       shard.changeVoiceState(this.guild.id, null);
     } on Error {

@@ -2,7 +2,7 @@ part of nyxx;
 
 class Guild extends SnowflakeEntity {
   /// Reference to [Nyxx] instance
-  Nyxx client;
+  final INyxx client;
 
   /// The guild's name.
   late final String name;
@@ -97,7 +97,13 @@ class Guild extends SnowflakeEntity {
   Role get everyoneRole => roles.values.firstWhere((r) => r.name == "@everyone");
 
   /// Returns member object for bot user
-  Member? get selfMember => members[client.self.id];
+  Member? get selfMember {
+    if (this.client is! Nyxx) {
+      throw new UnsupportedError("Cannot use this property with NyxxRest");
+    }
+
+    return members[(client as Nyxx).self.id];
+  }
 
   /// File upload limit for channel in bytes.
   int get fileUploadLimit {
@@ -115,7 +121,13 @@ class Guild extends SnowflakeEntity {
   }
 
   /// Returns this guilds shard
-  Shard get shard => client.shardManager.shards.firstWhere((_shard) => _shard.guilds.contains(this.id));
+  Shard get shard {
+    if (this.client is! Nyxx) {
+      throw new UnsupportedError("Cannot use this property with NyxxRest");
+    }
+
+    return (client as Nyxx).shardManager.shards.firstWhere((_shard) => _shard.guilds.contains(this.id));
+  }
 
   Guild._new(this.client, Map<String, dynamic> raw, [bool guildCreate = false]) : super(Snowflake(raw["id"])) {
     this.name = raw["name"] as String;

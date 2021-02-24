@@ -275,7 +275,7 @@ abstract class IHttpEndpoints {
 
 class _HttpEndpoints implements IHttpEndpoints {
   late final _HttpHandler _httpClient;
-  final Nyxx _client;
+  final INyxx _client;
 
   _HttpEndpoints._new(this._client) {
     this._httpClient = this._client._http;

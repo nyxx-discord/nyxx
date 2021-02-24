@@ -18,7 +18,7 @@ class Invite {
   late final Cacheable<Snowflake, User>? targetUser;
 
   /// Reference to bot instance
-  final Nyxx client;
+  final INyxx client;
 
   /// Returns url to invite
   String get url => "https://discord.gg/$code";
@@ -93,7 +93,7 @@ class InviteWithMeta extends Invite {
     return ageValidity && expiryValidity;
   }
 
-  InviteWithMeta._new(Map<String, dynamic> raw, Nyxx client) : super._new(raw, client) {
+  InviteWithMeta._new(Map<String, dynamic> raw, INyxx client) : super._new(raw, client) {
     this.createdAt = DateTime.parse(raw["created_at"] as String);
     this.temporary = raw["temporary"] as bool;
     this.uses = raw["uses"] as int;

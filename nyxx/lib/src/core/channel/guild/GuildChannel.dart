@@ -19,7 +19,7 @@ abstract class GuildChannel extends IChannel {
   /// Permission override for channel
   late final List<PermissionsOverrides> permissionOverrides;
 
-  GuildChannel._new(Nyxx client, Map<String, dynamic> raw, [Snowflake? guildId]) : super._new(client, raw) {
+  GuildChannel._new(INyxx client, Map<String, dynamic> raw, [Snowflake? guildId]) : super._new(client, raw) {
     this.name = raw["name"] as String;
     this.position = raw["position"] as int;
 

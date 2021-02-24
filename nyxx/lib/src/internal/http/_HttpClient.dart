@@ -6,7 +6,7 @@ class _HttpClient extends http.BaseClient {
   final http.Client _innerClient = http.Client();
 
   // ignore: public_member_api_docs
-  _HttpClient(Nyxx client) {
+  _HttpClient(INyxx client) {
     this._authHeader = {
       "Authorization" : "Bot ${client._token}"
     };

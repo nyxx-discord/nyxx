@@ -16,7 +16,7 @@ class ReferencedMessage {
   /// True if references message exists and is available
   bool get exists => !isDeleted && !isBackendFetchError;
 
-  ReferencedMessage._new(Nyxx client, Map<String, dynamic> raw) {
+  ReferencedMessage._new(INyxx client, Map<String, dynamic> raw) {
     if (!raw.containsKey("referenced_message")) {
       this.message = null;
       this.isBackendFetchError = true;

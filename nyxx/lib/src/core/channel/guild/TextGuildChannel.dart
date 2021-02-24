@@ -27,7 +27,7 @@ class TextGuildChannel extends GuildChannel implements TextChannel {
   // Used to create infinite typing loop
   Timer? _typing;
 
-  TextGuildChannel._new(Nyxx client, Map<String, dynamic> raw, [Snowflake? guildId]) : super._new(client, raw, guildId) {
+  TextGuildChannel._new(INyxx client, Map<String, dynamic> raw, [Snowflake? guildId]) : super._new(client, raw, guildId) {
     this.topic = raw["topic"] as String?;
     this.slowModeThreshold = raw["rate_limit_per_user"] as int? ?? 0;
   }

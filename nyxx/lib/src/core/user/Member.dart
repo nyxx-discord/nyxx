@@ -2,7 +2,7 @@ part of nyxx;
 
 class Member extends SnowflakeEntity {
   /// Reference to client
-  final Nyxx client;
+  final INyxx client;
 
   /// [Cacheable] for this [Guild] member
   late final Cacheable<Snowflake, User> user;

@@ -1,5 +1,176 @@
 part of nyxx;
 
+abstract class INyxx implements Disposable {
+  _HttpHandler get _http;
+  _HttpEndpoints get _httpEndpoints;
+
+  ClientOptions get _options;
+  CacheOptions get _cacheOptions;
+
+  String get _token;
+
+  /// All of the guilds the bot is in. Can be empty or can miss guilds on (READY_EVENT).
+  Cache<Snowflake, Guild> get guilds;
+
+  /// All of the channels the bot can see.
+  ChannelCache get channels;
+
+  /// All of the users the bot can see. Does not have offline users
+  /// without `forceFetchUsers` enabled.
+  Cache<Snowflake, User> get users;
+
+  /// Returns handler for all available REST API action.
+  IHttpEndpoints get httpEndpoints => this._httpEndpoints;
+
+  /// Emitted when a successful HTTP response is received.
+  late final StreamController<HttpResponseEvent> _onHttpResponse;
+
+  /// Emitted when a HTTP request failed.
+  late final StreamController<HttpErrorEvent> _onHttpError;
+
+  /// Sent when the client is ratelimited, either by the ratelimit handler itself,
+  /// or when a 429 is received.
+  late final StreamController<RatelimitEvent> _onRatelimited;
+
+  /// Emitted when a successful HTTP response is received.
+  late Stream<HttpResponseEvent> onHttpResponse;
+
+  /// Emitted when a HTTP request failed.
+  late Stream<HttpErrorEvent> onHttpError;
+
+  /// Sent when the client is ratelimited, either by the ratelimit handler itself,
+  /// or when a 429 is received.
+  late Stream<RatelimitEvent> onRatelimited;
+}
+
+/// Lightweight client which do not start ws connections.
+class NyxxRest extends INyxx {
+  @override
+  final String _token;
+
+  final DateTime _startTime = DateTime.now();
+
+  @override
+  late final ClientOptions _options;
+  @override
+  late final CacheOptions _cacheOptions;
+  @override
+  late final _HttpHandler _http;
+  @override
+  late final _HttpEndpoints _httpEndpoints;
+
+  /// When identifying to the gateway, you have to specify an intents parameter which
+  /// allows you to conditionally subscribe to pre-defined "intents", groups of events defined by Discord.
+  /// If you do not specify a certain intent, you will not receive any of the gateway events that are batched into that group.
+  /// Since api v8 its required upon connecting to gateway.
+  final int intents;
+
+  /// The current bot user.
+  late ClientUser self;
+
+  /// The bot"s OAuth2 app.
+  late ClientOAuth2Application app;
+
+  /// All of the guilds the bot is in. Can be empty or can miss guilds on (READY_EVENT).
+  @override
+  late final Cache<Snowflake, Guild> guilds;
+
+  /// All of the channels the bot can see.
+  @override
+  late final ChannelCache channels;
+
+  /// All of the users the bot can see. Does not have offline users
+  /// without `forceFetchUsers` enabled.
+  @override
+  late final Cache<Snowflake, User> users;
+
+  /// True if client is ready.
+  bool ready = false;
+
+  /// The current version of `nyxx`
+  final String version = Constants.version;
+
+  /// Logger instance
+  final Logger _logger = Logger("Client");
+
+  /// Gets an bot invite link with zero permissions
+  String get inviteLink => app.getInviteUrl();
+
+  /// Can be used to edit options after client initialised. Used by Nyxx.interactions to enable raw events
+  ClientOptions get options => this._options;
+
+  /// Creates and logs in a new client. If [ignoreExceptions] is true (by default is)
+  /// isolate will ignore all exceptions and continue to work.
+  NyxxRest(this._token, this.intents,
+      {ClientOptions? options,
+        CacheOptions? cacheOptions,
+        bool ignoreExceptions = true,
+        bool useDefaultLogger = true,
+        Level? defaultLoggerLogLevel}) {
+
+    if (useDefaultLogger) {
+      Logger.root.level = defaultLoggerLogLevel ?? Level.ALL;
+
+      Logger.root.onRecord.listen((LogRecord rec) {
+        print(
+            "[${rec.time}] [${rec.level.name}] [${rec.loggerName}] ${rec.message}");
+      });
+    }
+
+    this._logger.info("Starting bot with pid: $pid");
+
+    if (_token.isEmpty) {
+      throw MissingTokenError();
+    }
+
+    if (!Platform.isWindows) {
+      ProcessSignal.sigterm.watch().forEach((event) async {
+        await this.dispose();
+      });
+    }
+
+    ProcessSignal.sigint.watch().forEach((event) async {
+      await this.dispose();
+    });
+
+    if (ignoreExceptions) {
+      Isolate.current.setErrorsFatal(false);
+
+      final errorsPort = ReceivePort();
+      errorsPort.listen((err) {
+        _logger.severe("ERROR: ${err[0]} \n ${err[1]}");
+      });
+      Isolate.current.addErrorListener(errorsPort.sendPort);
+    }
+
+    this._options = options ?? ClientOptions();
+    this._cacheOptions = cacheOptions ?? CacheOptions();
+
+    this.guilds = _SnowflakeCache();
+    this.channels = ChannelCache._new();
+    this.users = _SnowflakeCache();
+
+    this._http = _HttpHandler._new(this);
+    this._httpEndpoints = _HttpEndpoints._new(this);
+
+    this._onHttpError = StreamController.broadcast();
+    this.onHttpError = _onHttpError.stream;
+
+    this._onHttpResponse = StreamController.broadcast();
+    this.onHttpResponse = _onHttpResponse.stream;
+
+    this._onRatelimited = StreamController.broadcast();
+    this.onRatelimited = _onRatelimited.stream;
+  }
+
+  @override
+  Future<void> dispose() async {
+    await this._onHttpResponse.close();
+    await this._onHttpError.close();
+    await this._onRatelimited.close();
+  }
+}
+
 /// The main place to start with interacting with the Discord API and creating discord bot.
 /// From there you can subscribe to various [Stream]s to listen to [Events](https://github.com/l7ssha/nyxx/wiki/EventList)
 /// and fetch data from API with provided methods or get cached data.
@@ -17,62 +188,15 @@ part of nyxx;
 /// });
 /// ```
 /// or setup `CommandsFramework` and `Voice`.
-class Nyxx implements Disposable {
-  final String _token;
-  final DateTime _startTime = DateTime.now();
-
-  late final ClientOptions _options;
-  late final CacheOptions _cacheOptions;
-
+class Nyxx extends NyxxRest {
   late final _ConnectionManager _ws; // ignore: unused_field
   late final _EventController _events;
-
-  late final _HttpHandler _http;
-  late final _HttpEndpoints _httpEndpoints;
-
-  /// When identifying to the gateway, you have to specify an intents parameter which
-  /// allows you to conditionally subscribe to pre-defined "intents", groups of events defined by Discord.
-  /// If you do not specify a certain intent, you will not receive any of the gateway events that are batched into that group.
-  /// Since api v8 its required upon connecting to gateway.
-  final int intents;
-
-  /// The current bot user.
-  late ClientUser self;
-
-  /// The bot"s OAuth2 app.
-  late ClientOAuth2Application app;
-
-  /// All of the guilds the bot is in. Can be empty or can miss guilds on (READY_EVENT).
-  late final Cache<Snowflake, Guild> guilds;
-
-  /// All of the channels the bot can see.
-  late final ChannelCache channels;
-
-  /// All of the users the bot can see. Does not have offline users
-  /// without `forceFetchUsers` enabled.
-  late final Cache<Snowflake, User> users;
-
-  /// True if client is ready.
-  bool ready = false;
-
-  /// The current version of `nyxx`
-  final String version = Constants.version;
 
   /// Current client"s shard
   late ShardManager shardManager;
 
   /// Emitted when a shard is disconnected from the websocket.
   late Stream<DisconnectEvent> onDisconnect;
-
-  /// Emitted when a successful HTTP response is received.
-  late Stream<HttpResponseEvent> onHttpResponse;
-
-  /// Emitted when a HTTP request failed.
-  late Stream<HttpErrorEvent> onHttpError;
-
-  /// Sent when the client is ratelimited, either by the ratelimit handler itself,
-  /// or when a 429 is received.
-  late Stream<RatelimitEvent> onRatelimited;
 
   /// Emitted when the client is ready. Should be sent only once.
   late Stream<ReadyEvent> onReady;
@@ -177,71 +301,18 @@ class Nyxx implements Disposable {
   /// Emitted when a bot removes all instances of a given emoji from the reactions of a message
   late Stream<MessageReactionRemoveEmojiEvent> onMessageReactionRemoveEmoji;
 
-  /// Logger instance
-  final Logger _logger = Logger("Client");
-
-  /// Gets an bot invite link with zero permissions
-  String get inviteLink => app.getInviteUrl();
-
-  /// Can be used to edit options after client initialised. Used by Nyxx.interactions to enable raw events
-  ClientOptions get options => this._options;
-
-  /// Returns handler for all available REST API action.
-  IHttpEndpoints get httpEndpoints => this._httpEndpoints;
-
   /// Creates and logs in a new client. If [ignoreExceptions] is true (by default is)
   /// isolate will ignore all exceptions and continue to work.
-  Nyxx(this._token, this.intents,
+  Nyxx(String token, int intents,
       {ClientOptions? options,
       CacheOptions? cacheOptions,
       bool ignoreExceptions = true,
       bool useDefaultLogger = true,
-      Level? defaultLoggerLogLevel}) {
-    if (useDefaultLogger) {
-      Logger.root.level = defaultLoggerLogLevel ?? Level.ALL;
-
-      Logger.root.onRecord.listen((LogRecord rec) {
-        print(
-            "[${rec.time}] [${rec.level.name}] [${rec.loggerName}] ${rec.message}");
-      });
-    }
-
-    this._logger.info("Starting bot with pid: $pid");
-
-    if (_token.isEmpty) {
-      throw MissingTokenError();
-    }
-
-    if (!Platform.isWindows) {
-      ProcessSignal.sigterm.watch().forEach((event) async {
-        await this.dispose();
-      });
-    }
-
-    ProcessSignal.sigint.watch().forEach((event) async {
-      await this.dispose();
-    });
-
-    if (ignoreExceptions) {
-      Isolate.current.setErrorsFatal(false);
-
-      final errorsPort = ReceivePort();
-      errorsPort.listen((err) {
-        _logger.severe("ERROR: ${err[0]} \n ${err[1]}");
-      });
-      Isolate.current.addErrorListener(errorsPort.sendPort);
-    }
-
-    this._options = options ?? ClientOptions();
-    this._cacheOptions = cacheOptions ?? CacheOptions();
-
-    this.guilds = _SnowflakeCache();
-    this.channels = ChannelCache._new();
-    this.users = _SnowflakeCache();
-
-    this._http = _HttpHandler._new(this);
-    this._httpEndpoints = _HttpEndpoints._new(this);
-
+      Level? defaultLoggerLogLevel}) :
+        super(token, intents, options: options, cacheOptions: cacheOptions,
+              ignoreExceptions: ignoreExceptions, useDefaultLogger: useDefaultLogger,
+              defaultLoggerLogLevel: defaultLoggerLogLevel
+      ) {
     this._events = _EventController(this);
     this.onSelfMention = this
         .onMessageReceived

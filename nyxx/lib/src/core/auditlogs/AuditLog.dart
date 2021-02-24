@@ -17,7 +17,7 @@ class AuditLog {
   Iterable<AuditLogEntry> filter(bool Function(AuditLogEntry) test) =>
       entries.values.where(test);
 
-  AuditLog._new(Map<String, dynamic> raw, Nyxx client) {
+  AuditLog._new(Map<String, dynamic> raw, INyxx client) {
     webhooks = {};
     users = {};
     entries = {};
