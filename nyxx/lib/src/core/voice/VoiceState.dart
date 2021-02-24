@@ -33,7 +33,7 @@ class VoiceState {
   /// Whether this user's camera is enabled
   late final bool selfVideo;
 
-  VoiceState._new(Nyxx client, Map<String, dynamic> raw) {
+  VoiceState._new(INyxx client, Map<String, dynamic> raw) {
     if (raw["channel_id"] != null) {
       this.channel = _ChannelCacheable(client, Snowflake(raw["channel_id"]));
     } else {

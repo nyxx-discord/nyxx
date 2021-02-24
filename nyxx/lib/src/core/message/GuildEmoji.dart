@@ -32,7 +32,7 @@ class GuildEmojiPartial extends IGuildEmoji implements IEmoji {
 
 class GuildEmoji extends GuildEmojiPartial implements IEmoji {
   /// Reference to client
-  final Nyxx client;
+  final INyxx client;
 
   /// Reference to guild where emoji belongs to
   late final Cacheable<Snowflake, Guild> guild;

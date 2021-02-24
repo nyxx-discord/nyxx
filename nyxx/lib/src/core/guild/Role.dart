@@ -2,7 +2,7 @@ part of nyxx;
 
 class Role extends SnowflakeEntity implements Mentionable {
   /// Reference to client
-  final Nyxx client;
+  final INyxx client;
 
   /// Cachealble or guild attached to this role instance
   late final Cacheable<Snowflake, Guild> guild;

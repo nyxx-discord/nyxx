@@ -1,5 +1,5 @@
 name: nyxx_extensions
-version: 1.1.0-dev.3
+version: 1.1.0-dev.2
 description: Extensions for Nyxx library
 homepage: https://github.com/l7ssha/nyxx
 repository: https://github.com/l7ssha/nyxx
@@ -7,8 +7,12 @@ documentation: https://github.com/l7ssha/nyxx/wiki
 issue_tracker: https://github.com/l7ssha/nyxx/issue
 
 environment:
-  sdk: '>=2.12.0 <2.13.0'
+  sdk: '>=2.12.0-51.0.dev <3.0.0'
 
 dependencies:
+  nyxx: "^1.1.0-dev.1"
   http: "^0.13.0"
-  nyxx: "1.1.0-dev.4"
+
+dependency_overrides:
+  nyxx:
+    path: "../nyxx"

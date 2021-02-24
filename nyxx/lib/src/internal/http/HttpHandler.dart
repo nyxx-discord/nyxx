@@ -6,7 +6,7 @@ class _HttpHandler {
 
   final Logger _logger = Logger("Http");
   late final _HttpClient _httpClient;
-  final Nyxx client;
+  final INyxx client;
 
   _HttpHandler._new(this.client) {
     this._noRateBucket = _HttpBucket(Uri.parse("noratelimit"), this);
@@ -38,14 +38,14 @@ class _HttpHandler {
       final responseSuccess = HttpResponseSuccess._new(response);
       await responseSuccess._finalize();
 
-      client._events.onHttpResponse.add(HttpResponseEvent._new(responseSuccess));
+      client._onHttpResponse.add(HttpResponseEvent._new(responseSuccess));
       return responseSuccess;
     }
 
     final responseError = HttpResponseError._new(response);
     await responseError._finalize();
 
-    client._events.onHttpError.add(HttpErrorEvent._new(responseError));
+    client._onHttpError.add(HttpErrorEvent._new(responseError));
     return responseError;
   }
 }

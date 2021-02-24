@@ -5,16 +5,6 @@ class _EventController implements Disposable {
   /// Emitted when a shard is disconnected from the websocket.
   late final StreamController<DisconnectEvent> onDisconnect;
 
-  /// Emitted when a successful HTTP response is received.
-  late final StreamController<HttpResponseEvent> onHttpResponse;
-
-  /// Emitted when a HTTP request failed.
-  late final StreamController<HttpErrorEvent> onHttpError;
-
-  /// Sent when the client is ratelimited, either by the ratelimit handler itself,
-  /// or when a 429 is received.
-  late final StreamController<RatelimitEvent> onRatelimited;
-
   /// Emitted when the client is ready.
   late final StreamController<ReadyEvent> onReady;
 
@@ -116,15 +106,6 @@ class _EventController implements Disposable {
     this.onDisconnect = StreamController.broadcast();
     _client.onDisconnect = this.onDisconnect.stream;
 
-    this.onHttpResponse = StreamController.broadcast();
-    _client.onHttpResponse = this.onHttpResponse.stream;
-
-    this.onHttpError = StreamController.broadcast();
-    _client.onHttpError = this.onHttpError.stream;
-
-    this.onRatelimited = StreamController.broadcast();
-    _client.onRatelimited = this.onRatelimited.stream;
-
     this.onReady = StreamController.broadcast();
     _client.onReady = this.onReady.stream;
 
@@ -225,9 +206,6 @@ class _EventController implements Disposable {
   @override
   Future<void> dispose() async {
     await this.onDisconnect.close();
-    await this.onHttpResponse.close();
-    await this.onHttpError.close();
-    await this.onRatelimited.close();
     await this.onGuildUpdate.close();
     await this.onReady.close();
     await this.onMessageReceived.close();

@@ -4,7 +4,7 @@ part of nyxx;
 /// This endpoint is only for Public guilds.
 class GuildPreview extends SnowflakeEntity {
   /// Reference to client
-  final Nyxx client;
+  final INyxx client;
 
   /// Guild name
   late final String name;

@@ -38,7 +38,7 @@ extension MessageResolverExtension on Message {
       return "";
     }
 
-    return MessageResolver(this.client,
+    return MessageResolver(this.client as Nyxx,
       userTagHandling: userTagHandling,
       roleTagHandling: roleTagHandling,
       everyoneTagHandling: everyoneTagHandling,

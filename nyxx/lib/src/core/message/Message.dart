@@ -2,7 +2,7 @@ part of nyxx;
 
 abstract class Message extends SnowflakeEntity implements Disposable {
   /// Reference to bot instance
-  final Nyxx client;
+  final INyxx client;
 
   /// The message's content.
   late String content;
@@ -52,7 +52,7 @@ abstract class Message extends SnowflakeEntity implements Disposable {
   /// Message reply
   late final ReferencedMessage? referencedMessage;
 
-  factory Message._deserialize(Nyxx client, Map<String, dynamic> raw) {
+  factory Message._deserialize(INyxx client, Map<String, dynamic> raw) {
     if (raw["guild_id"] != null) {
       return GuildMessage._new(client, raw);
     }
@@ -185,7 +185,7 @@ class DMMessage extends Message {
   String get url => "https://discordapp.com/channels/@me"
       "/${this.channel.id}/${this.id}";
 
-  DMMessage._new(Nyxx client, Map<String, dynamic> raw) : super._new(client, raw) {
+  DMMessage._new(INyxx client, Map<String, dynamic> raw) : super._new(client, raw) {
     final user = client.users[Snowflake(raw["author"]["id"])];
 
     if (user == null) {
@@ -228,7 +228,7 @@ class GuildMessage extends Message {
   /// Role mentions in this message
   late final List<Cacheable<Snowflake, Role>> roleMentions;
 
-  GuildMessage._new(Nyxx client, Map<String, dynamic> raw) : super._new(client, raw) {
+  GuildMessage._new(INyxx client, Map<String, dynamic> raw) : super._new(client, raw) {
     if (raw["message_reference"] != null) {
       this.crossPostReference = MessageReference._new(
           raw["message_reference"] as Map<String, dynamic>, client);
