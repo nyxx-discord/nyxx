@@ -12,3 +12,7 @@ environment:
 dependencies:
   logging: "^1.0.0-nullsafety.0"
   nyxx: "^1.1.0-dev.2"
+
+dependency_overrides:
+  nyxx:
+    path: "../nyxx"

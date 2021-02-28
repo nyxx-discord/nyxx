@@ -1,7 +1,7 @@
 part of nyxx_interactions;
 
 /// The Interaction data. e.g channel, guild and member
-class Interaction extends SnowflakeEntity implements Disposable {
+class Interaction extends SnowflakeEntity {
   /// Reference to bot instance.
   final Nyxx _client;
 
@@ -27,54 +27,45 @@ class Interaction extends SnowflakeEntity implements Disposable {
   late final String name;
 
   /// Args of the interaction
-  late final Map<String, InteractionOption> args;
+  late final Iterable<InteractionOption> args;
 
-  Interaction._new(
-    this._client,
-    Map<String, dynamic> raw,
-  ) : super(Snowflake(raw["id"])) {
+  /// Id of command
+  late final Snowflake commandId;
+
+  Interaction._new(this._client, Map<String, dynamic> raw) : super(Snowflake(raw["id"])) {
     this.type = raw["type"] as int;
+
     this.guild = CacheUtility.createCacheableGuild(
       _client,
-      Snowflake(
-        raw["guild_id"],
-      ),
+      Snowflake(raw["guild_id"],),
     );
+
     this.channel = CacheUtility.createCacheableTextChannel(
       _client,
-      Snowflake(
-        raw["channel_id"],
-      ),
+      Snowflake(raw["channel_id"]),
     );
+
     this.author = EntityUtility.createGuildMember(
       _client,
-      Snowflake(
-        raw["guild_id"],
-      ),
+      Snowflake(raw["guild_id"]),
       raw["member"] as Map<String, dynamic>,
     );
+
     this.token = raw["token"] as String;
     this.version = raw["version"] as int;
     this.name = raw["data"]["name"] as String;
     this.args = _generateArgs(raw["data"] as Map<String, dynamic>);
+    this.commandId = Snowflake(raw["data"]["id"]);
   }
 
-  Map<String, InteractionOption> _generateArgs(Map<String, dynamic> rawData) {
-    final args = <String, InteractionOption>{};
-
-    if (rawData["options"] != null) {
-      final options = rawData["options"] as List;
-      for (final option in options) {
-        args[option["name"] as String] = InteractionOption._new(
-          option["value"] as dynamic,
-          (option["options"] ?? List<dynamic>.empty()) as List<Map<String, dynamic>>,
-        );
-      }
+  Iterable<InteractionOption> _generateArgs(Map<String, dynamic> rawData) sync* {
+    if (rawData["options"] == null) {
+      return;
     }
 
-    return args;
+    final options = rawData["options"] as List<dynamic>;
+    for (final option in options) {
+      yield InteractionOption._new(option as Map<String, dynamic>);
+    }
   }
-
-  @override
-  Future<void> dispose() => Future.value(null);
 }
