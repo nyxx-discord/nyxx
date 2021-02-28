@@ -1,27 +1,30 @@
 part of nyxx_interactions;
 
-/// The type that a user should input for a [SlashArg]
-enum CommandArgType {
+/// The type that a user should input for a [CommandArg]
+class CommandArgType extends IEnum<int> {
   /// Specify an arg as a sub command
-  subCommand,
+  static const subCommand = const CommandArgType(1);
   /// Specify an arg as a sub command group
-  subCommandGroup,
+  static const subCommandGroup  = const CommandArgType(2);
   /// Specify an arg as a string
-  string,
+  static const string = const CommandArgType(3);
   /// Specify an arg as an int
-  integer,
+  static const integer = const CommandArgType(4);
   /// Specify an arg as a bool
-  boolean,
+  static const boolean = const CommandArgType(5);
   /// Specify an arg as a user e.g @HarryET#2954
-  user,
+  static const user = const CommandArgType(6);
   /// Specify an arg as a channel e.g. #Help
-  channel,
+  static const channel = const CommandArgType(7);
   /// Specify an arg as a role e.g. @RoleName
-  role,
+  static const role = const CommandArgType(8);
+
+  /// Create new instance of CommandArgType
+  const CommandArgType(int value) : super(value);
 }
 
 /// An argument for a [SlashCommand].
-class CommandArg {
+class CommandArg implements Builder {
   /// The type of arg that will be later changed to an INT value, their values can be seen in the table below:
   /// | Name              | Value |
   /// |-------------------|-------|
@@ -57,23 +60,13 @@ class CommandArg {
   CommandArg(this.type, this.name, this.description,
       {this.defaultArg = false, this.required = false, this.choices, this.options});
 
-  Map<String, dynamic> _build() {
-    final subOptions = this.options != null
-        ? this.options!.map((e) => e._build())
-        : null;
-
-    final rawChoices = this.choices != null
-        ? this.choices!.map((e) => e._build())
-        : null;
-
-    return {
-      "type": (this.type.index) + 1,
+  Map<String, dynamic> _build() => {
+      "type": this.type.value,
       "name": this.name,
       "description": this.description,
       "default": this.defaultArg,
       "required": this.required,
-      "choices": rawChoices,
-      "options": subOptions
+      if (this.choices != null) "choices": this.choices!.map((e) => e._build()),
+      if (this.options != null) "options": this.options!.map((e) => e._build())
     };
-  }
 }

@@ -3,17 +3,30 @@ part of nyxx_interactions;
 /// The option given by the user when sending a command
 class InteractionOption {
   /// The value given by the user
-  final dynamic? value;
+  late final dynamic value;
+
+  /// Type of interaction
+  late final InteractionOption type;
+
+  /// Name of option
+  late final String name;
 
   /// Any args under this as you can have sub commands
-  final Map<String, InteractionOption> args = {};
+  late final Iterable<InteractionOption> args;
 
-  InteractionOption._new(this.value, List<Map<String, dynamic>> rawOptions) {
-    for (final option in rawOptions) {
-      this.args[option["name"] as String] = InteractionOption._new(
-        option["value"] as dynamic,
-        (option["options"] ?? List<Map<String, dynamic>>.empty()) as List<Map<String, dynamic>>,
-      );
+  /// Option choices
+  late final Iterable<ArgChoice> choices;
+
+  InteractionOption._new(Map<String, dynamic> raw) {
+    this.value = raw["value"] as dynamic;
+    this.name = raw["name"] as String;
+
+    if (raw["options"] != null) {
+      this.args = (raw["options"] as List<Map<String, dynamic>>).map((e) => InteractionOption._new(e));
+    }
+
+    if (raw["choices"] != null) {
+      this.choices = (raw["options"] as List<Map<String, dynamic>>).map((e) => ArgChoice(e["name"] as String, e["value"]));
     }
   }
 }

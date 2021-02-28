@@ -10,9 +10,8 @@ class InteractionEvent {
   /// If the Client has sent a response to the Discord API. Once the API was received a response you cannot send another.
   bool hasResponded = false;
 
-  InteractionEvent._new(Nyxx client, Map<String, dynamic> rawJson) {
-    this._client = client;
-    this.interaction = Interaction._new(client, rawJson);
+  InteractionEvent._new(this._client, Map<String, dynamic> rawJson) {
+    this.interaction = Interaction._new(this._client, rawJson);
 
     if (this.interaction.type == 1) {
       this._pong();
@@ -73,7 +72,7 @@ class InteractionEvent {
   }
 
   /// Used to acknowledge a Interaction and send a response. Once this is sent you can then only send ChannelMessages. You can also set showSource to also print out the command the user entered.
-  Future<void> reply({ dynamic content, EmbedBuilder? embed, bool? tts, AllowedMentions? allowedMentions, bool showSource = false, }) async {
+  Future<void> reply({ dynamic content, EmbedBuilder? embed, bool? tts, AllowedMentions? allowedMentions, bool showSource = false, bool hidden = false}) async {
     if (DateTime.now().isBefore(this.receivedAt.add(const Duration(minutes: 15)))) {
       String url;
       if (hasResponded) {
@@ -87,6 +86,7 @@ class InteractionEvent {
         body: {
           "type": showSource ? 4 : 3,
           "data": {
+            if (hidden) "flags": 1 << 6,
             "content": content,
             "embeds": embed != null ? [BuilderUtility.buildRawEmbed(embed)] : null,
             "allowed_mentions":
