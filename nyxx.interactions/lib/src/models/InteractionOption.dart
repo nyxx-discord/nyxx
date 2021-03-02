@@ -6,7 +6,7 @@ class InteractionOption {
   late final dynamic value;
 
   /// Type of interaction
-  late final InteractionOption type;
+  late final CommandArgType type;
 
   /// Name of option
   late final String name;
@@ -20,6 +20,7 @@ class InteractionOption {
   InteractionOption._new(Map<String, dynamic> raw) {
     this.value = raw["value"] as dynamic;
     this.name = raw["name"] as String;
+    this.type = CommandArgType(raw["type"] as int);
 
     if (raw["options"] != null) {
       this.args = (raw["options"] as List<Map<String, dynamic>>).map((e) => InteractionOption._new(e));
