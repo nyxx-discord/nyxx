@@ -1,7 +1,12 @@
 part of nyxx_interactions;
 
+typedef SlashCommandHandlder = FutureOr<void> Function(InteractionEvent);
+
 /// Interaction extension for Nyxx. Allows use of: Slash Commands.
 class Interactions {
+  static const _interactionCreateCommand = "INTERACTION_CREATE";
+  static const _op0 = 0;
+
   late final Nyxx _client;
   final Logger _logger = Logger("Interactions");
   final List<SlashCommand> _commands = [];
@@ -13,6 +18,8 @@ class Interactions {
   /// Emitted when a slash command is created by the user.
   late final Stream<SlashCommand> onSlashCommandCreated;
 
+  final _commandHandlers = <String, SlashCommandHandlder>{};
+
   /// Create new instance of the interactions class.
   Interactions(Nyxx client) {
     this._client = client;
@@ -20,17 +27,41 @@ class Interactions {
     _client.options.dispatchRawShardEvent = true;
     _logger.info("Interactions ready");
 
-    client.onReady.listen((event) {
+    client.onReady.listen((event) async {
       client.shardManager.rawEvent.listen((event) {
-        if (event.rawData["op"] as int == 0) {
-          if (event.rawData["t"] as String == "INTERACTION_CREATE") {
+        if (event.rawData["op"] as int == _op0) {
+          if (event.rawData["t"] as String == _interactionCreateCommand) {
             _events.onSlashCommand.add(
               InteractionEvent._new(client, event.rawData["d"] as Map<String, dynamic>),
             );
           }
         }
       });
+
+      if (this._commandHandlers.isNotEmpty) {
+        await this.sync();
+        this.onSlashCommand.listen((event) async {
+          try {
+            final handler = _commandHandlers[event.interaction.name];
+
+            if (handler == null) {
+              return;
+            }
+
+            await handler(event);
+          } on Error catch (e) {
+            this._logger.severe("Failed to execute command (${event.interaction.name})", e);
+          }
+        });
+      }
     });
+  }
+
+  /// Registers command and handler for that command.
+  void registerHandler(String name, String description, List<CommandArg> args, {required SlashCommandHandlder handler, Snowflake? guild}) {
+    final command = this.createCommand(name, description, args, guild: guild);
+    this.registerCommand(command);
+    _commandHandlers[name] = handler;
   }
 
   /// Creates a command that can be registered using .registerCommand or .registerCommands
@@ -65,12 +96,15 @@ class Interactions {
     var failed = 0;
     for (final command in _commands) {
       if (!command.isRegistered) {
-        await command._register().then((value) {
-          this._events.onSlashCommandCreated.add(command);
+        try {
+          final registeredCommand = await command._register();
+          this._events.onSlashCommandCreated.add(registeredCommand);
+
           success++;
-        }).catchError(() {
+        } on HttpResponseError catch (e) {
+          this._logger.severe("Failed registering command: ${e.toString()}");
           failed++;
-        });
+        }
       }
     }
     _logger.info(

@@ -227,7 +227,7 @@ class Nyxx implements Disposable {
 
       final errorsPort = ReceivePort();
       errorsPort.listen((err) {
-        _logger.severe("ERROR: ${err[0]} \n ${err[1]}");
+        _logger.severe("ERROR: ${err[0]}; ${err[1]}");
       });
       Isolate.current.addErrorListener(errorsPort.sendPort);
     }
