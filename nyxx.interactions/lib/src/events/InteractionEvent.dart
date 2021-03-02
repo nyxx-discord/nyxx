@@ -3,12 +3,28 @@ part of nyxx_interactions;
 /// The event that you receive when a user types a slash command.
 class InteractionEvent {
   late final Nyxx _client;
+
   /// The interaction data, includes the args, name, guild, channel, etc.
   late final Interaction interaction;
+
   /// The DateTime the interaction was received by the Nyxx Client.
   final DateTime receivedAt = DateTime.now();
+
   /// If the Client has sent a response to the Discord API. Once the API was received a response you cannot send another.
   bool hasResponded = false;
+
+  /// Returns subcommand or null if not subcommand
+  InteractionOption? get subCommand {
+    if (this.interaction.args.isEmpty) {
+      return null;
+    }
+
+    try {
+      return this.interaction.args.firstWhere((element) => element.type == CommandArgType.subCommand);
+    } on Error {
+      return null;
+    }
+  }
 
   InteractionEvent._new(this._client, Map<String, dynamic> rawJson) {
     this.interaction = Interaction._new(this._client, rawJson);
