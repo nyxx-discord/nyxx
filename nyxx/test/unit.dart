@@ -88,4 +88,18 @@ void main() {
       ]));
     });
   });
+
+  group("Permission utils", () {
+    test("PermissionsUtils.apply returns valid int", () {
+      final appliedPermissions = PermissionsUtils.apply(0x01, 0x10, 0x01);
+      expect(appliedPermissions, 0x10);
+    });
+
+    test("PermissionsUtils.isApplied returns valid result", () {
+      const permissionInt = 0x01;
+
+      expect(PermissionsUtils.isApplied(permissionInt, 0x01), true);
+      expect(PermissionsUtils.isApplied(permissionInt, 0x10), false);
+    });
+  });
 }
