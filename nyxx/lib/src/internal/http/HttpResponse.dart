@@ -40,7 +40,7 @@ class HttpResponseSuccess extends _HttpResponse {
 
 /// Returned when client fails to execute http request.
 /// Will contain reason why request failed.
-class HttpResponseError extends _HttpResponse {
+class HttpResponseError extends _HttpResponse implements Error {
   /// Message why http request failed
   late String errorMessage;
 
@@ -71,4 +71,7 @@ class HttpResponseError extends _HttpResponse {
   @override
   String toString() =>
     "[Code: $errorCode] [Message: $errorMessage]";
+
+  @override
+  StackTrace? get stackTrace => null;
 }

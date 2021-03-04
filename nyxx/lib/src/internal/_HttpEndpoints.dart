@@ -1441,16 +1441,8 @@ class _HttpEndpoints implements IHttpEndpoints {
 
   @override
   Future<_HttpResponse> sendRawRequest(String url, String method,
-      {dynamic body, dynamic headers}) async {
-    final response = await _httpClient
+      {dynamic body, dynamic headers}) => _httpClient
         ._execute(BasicRequest._new(url, method: method, body: body));
-
-    if (response is HttpResponseError) {
-      return Future.error(response);
-    }
-
-    return Future.value(response);
-  }
 
   Future<_HttpResponse> _getGatewayBot() =>
       _client._http._execute(BasicRequest._new("/gateway/bot"));
