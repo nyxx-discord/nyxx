@@ -7,10 +7,36 @@ import "package:test/test.dart";
 const snowflakeAYear = 2017;
 const snowflakeBYear = 2018;
 
-void main() {
-  final snowflakeA = Snowflake.fromDateTime(DateTime.utc(snowflakeAYear));
-  final snowflakeB = Snowflake.fromDateTime(DateTime.utc(snowflakeBYear));
+final snowflakeA = Snowflake.fromDateTime(DateTime.utc(snowflakeAYear));
+final snowflakeB = Snowflake.fromDateTime(DateTime.utc(snowflakeBYear));
 
+final sampleUserRawData = {
+  "id": 123,
+  "username": "Test test",
+  "discriminator": "123",
+  "avatar": null,
+  "bot": false,
+  "system": false,
+  "public_flags": 1 << 0 // Discord employee
+};
+
+final sampleMemberData = {
+  "user": {
+    "id": 123
+  },
+  "nick": "This is nick",
+  "deaf": false,
+  "mute": false,
+  "roles": [
+    "1234564"
+    "1234563"
+  ],
+  "joined_at": DateTime.now().toIso8601String()
+};
+
+final client = NyxxRest("dum", 0);
+
+void main() {
   group("Snowflake tests", () {
     test("Snowflakes should have correct date", () {
       expect(snowflakeA.timestamp.year, snowflakeAYear);
@@ -100,6 +126,66 @@ void main() {
 
       expect(PermissionsUtils.isApplied(permissionInt, 0x01), true);
       expect(PermissionsUtils.isApplied(permissionInt, 0x10), false);
+    });
+  });
+
+  group("Cache utils", () {
+    test("Cacheable User", () {
+      final cacheable = CacheUtility.createCacheableUser(client, 123.toSnowflake());
+      expect(123.toSnowflake(), cacheable.id);
+    });
+
+    test("Cacheable Guild", () {
+      final cacheable = CacheUtility.createCacheableGuild(client, 123.toSnowflake());
+      expect(123.toSnowflake(), cacheable.id);
+    });
+
+    test("Cacheable Role", () {
+      final cacheableGuild = CacheUtility.createCacheableGuild(client, 123.toSnowflake());
+      final cacheable = CacheUtility.createCacheableRole(client, 123.toSnowflake(), cacheableGuild);
+      expect(123.toSnowflake(), cacheable.id);
+      expect(123.toSnowflake(), cacheableGuild.id);
+    });
+
+    test("Cacheable Channel", () {
+      final cacheable = CacheUtility.createCacheableChannel(client, 123.toSnowflake());
+      expect(123.toSnowflake(), cacheable.id);
+    });
+
+    test("Cacheable Member", () {
+      final cacheableGuild = CacheUtility.createCacheableGuild(client, 123.toSnowflake());
+      final cacheable = CacheUtility.createCacheableMember(client, 123.toSnowflake(), cacheableGuild);
+      expect(123.toSnowflake(), cacheable.id);
+      expect(123.toSnowflake(), cacheableGuild.id);
+    });
+
+    test("Cacheable Message", () {
+      final cacheableChannel = CacheUtility.createCacheableTextChannel(client, 123.toSnowflake());
+      final cacheable = CacheUtility.createCacheableMessage(client, 123.toSnowflake(), cacheableChannel);
+      expect(123.toSnowflake(), cacheable.id);
+      expect(123.toSnowflake(), cacheableChannel.id);
+    });
+  });
+
+  group("Entity utils", () {
+    test("Create user object", () {
+      final user = EntityUtility.createUser(client, sampleUserRawData);
+
+      expect(123.toSnowflake(), user.id);
+      expect("Test test", user.username);
+      expect(123, user.discriminator);
+      expect(user.avatarURL(), isNotNull);
+      expect(user.avatarURL(), contains("${123 % 5}.png"));
+      expect(user.bot, false);
+      expect(user.system, false);
+      expect(user.userFlags, isNotNull);
+      expect(user.userFlags!.discordEmployee, true);
+      expect(user.userFlags!.earlySupporter, false);
+    });
+
+    test("Create member object", () {
+      final member = EntityUtility.createGuildMember(client, 123.toSnowflake(), sampleMemberData);
+
     });
   });
 }

@@ -17,7 +17,7 @@ class CacheUtility {
   /// }
   /// ```
   static Cacheable<Snowflake, User> createCacheableUser(
-          Nyxx client, Snowflake id) =>
+          INyxx client, Snowflake id) =>
       _UserCacheable(client, id);
 
   /// Retrieves a cached Guild.
@@ -28,7 +28,7 @@ class CacheUtility {
   /// }
   /// ```
   static Cacheable<Snowflake, Guild> createCacheableGuild(
-          Nyxx client, Snowflake id) =>
+          INyxx client, Snowflake id) =>
       _GuildCacheable(client, id);
 
   /// Retrieves a cached Role.
@@ -40,7 +40,7 @@ class CacheUtility {
   /// }
   /// ```
   static Cacheable<Snowflake, Role> createCacheableRole(
-          Nyxx client, Snowflake id, Cacheable<Snowflake, Guild> guild) =>
+          INyxx client, Snowflake id, Cacheable<Snowflake, Guild> guild) =>
       _RoleCacheable(client, id, guild);
 
   /// Retrieves a cached IChannel. Can be cast.
@@ -51,7 +51,7 @@ class CacheUtility {
   /// }
   /// ```
   static Cacheable<Snowflake, IChannel> createCacheableChannel(
-          Nyxx client, Snowflake id) =>
+          INyxx client, Snowflake id) =>
       _ChannelCacheable(client, id);
 
   /// Retrieves a cached TextChannel.
@@ -62,7 +62,7 @@ class CacheUtility {
   /// }
   /// ```
   static Cacheable<Snowflake, TextChannel> createCacheableTextChannel(
-      Nyxx client, Snowflake id) =>
+          INyxx client, Snowflake id) =>
       _ChannelCacheable(client, id);
 
   /// Retrieves a cached VoiceChannel.
@@ -73,7 +73,7 @@ class CacheUtility {
   /// }
   /// ```
   static Cacheable<Snowflake, VoiceGuildChannel> createCacheableVoiceChannel(
-      Nyxx client, Snowflake id) =>
+          INyxx client, Snowflake id) =>
       _ChannelCacheable(client, id);
 
   /// Retrieves a cached DMChannel.
@@ -84,7 +84,7 @@ class CacheUtility {
   /// }
   /// ```
   static Cacheable<Snowflake, DMChannel> createCacheableDMChannel(
-      Nyxx client, Snowflake id) =>
+          INyxx client, Snowflake id) =>
       _ChannelCacheable(client, id);
 
   /// Retrieves a cached Guild Member.
@@ -96,7 +96,7 @@ class CacheUtility {
   /// }
   /// ```
   static Cacheable<Snowflake, Member> createCacheableMember(
-          Nyxx client, Snowflake id, Cacheable<Snowflake, Guild> guild) =>
+          INyxx client, Snowflake id, Cacheable<Snowflake, Guild> guild) =>
       _MemberCacheable(client, id, guild);
 
   /// Retrieves a cached Guild Message.
@@ -107,7 +107,7 @@ class CacheUtility {
   ///     Cacheable<Snowflake, Member> cachedMember = CacheUtility.createCacheableMessage(bot, Snowflake(''), cachedChannel);
   /// }
   /// ```
-  static Cacheable<Snowflake, Message> createCacheableMessage(Nyxx client,
+  static Cacheable<Snowflake, Message> createCacheableMessage(INyxx client,
           Snowflake id, Cacheable<Snowflake, TextChannel> channel) =>
       _MessageCacheable(client, id, channel);
 }
