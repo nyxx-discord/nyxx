@@ -28,10 +28,80 @@ final sampleMemberData = {
   "deaf": false,
   "mute": false,
   "roles": [
-    "1234564"
-    "1234563"
+    "1234564",
+    "5434534"
   ],
   "joined_at": DateTime.now().toIso8601String()
+};
+
+final sampleRoleData = {
+  "id": 456,
+  "name": "This is role",
+  "position": 1,
+  "hoist": false,
+  "managed": false,
+  "mentionable": false,
+  "permissions": (
+      PermissionsBuilder()
+        ..sendMessages = true
+        ..readMessageHistory = true
+  ).calculatePermissionValue().toString(),
+  "color": DiscordColor.aquamarine.value,
+};
+
+final sampleTextChannel = {
+  "id": 1234,
+  "name": "This is text channel",
+  "position": 0,
+  "nsfw": true,
+  "topic": "This is topic",
+  "type": 0
+};
+
+final sampleVoiceChannel = {
+  "id": 4321,
+  "name": "This is voice channel",
+  "position": 1,
+  "type": 2
+};
+
+final sampleDMChannel = {
+  "id": 1234,
+  "type": 1,
+  "recipient": sampleUserRawData
+};
+
+final sampleEmoji = {
+  "id": 123,
+  "roles": []
+};
+
+final sampleGuildData = {
+  "id": 123,
+  "name": "This is guild name",
+  "region": "Europe",
+  "afk_timeout": 10,
+  "mfa_level": 1,
+  "verification_level": 1,
+  "default_message_notifications": 1,
+  "icon": null,
+  "discoverySplash": null,
+  "system_channel_flags": 1,
+  "premium_tier": 1,
+  "premium_subscription_count": 15,
+  "preferred_locale": "en_US",
+  "roles": [
+    sampleRoleData
+  ],
+  "emojis": [
+    sampleEmoji
+  ],
+  "owner_id": 321,
+  "channels": [
+    sampleTextChannel,
+    sampleVoiceChannel
+  ],
+  "features": [ "FEATURE" ]
 };
 
 final client = NyxxRest("dum", 0);
@@ -186,6 +256,71 @@ void main() {
     test("Create member object", () {
       final member = EntityUtility.createGuildMember(client, 123.toSnowflake(), sampleMemberData);
 
+      expect(member.id, 123.toSnowflake());
+      expect(member.nickname, "This is nick");
+      expect(member.deaf, false);
+      expect(member.mute, false);
+      expect(member.roles, hasLength(2));
+      expect(member.joinedAt, isNotNull);
+    });
+
+    test("Create guild object", () {
+      final guild = EntityUtility.createGuild(client, sampleGuildData, true);
+
+      expect(guild.id, 123.toSnowflake());
+      expect(guild.name, "This is guild name");
+      expect(guild.region, "Europe");
+      expect(guild.afkTimeout, 10);
+      expect(guild.mfaLevel, 1);
+      expect(guild.verificationLevel, 1);
+      expect(guild.notificationLevel, 1);
+      expect(guild.iconURL(), isNull);
+      expect(guild.discoveryURL(), isNull);
+      expect(guild.systemChannelFlags, 1);
+      expect(guild.premiumTier, PremiumTier.tier1);
+      expect(guild.premiumSubscriptionCount, 15);
+      expect(guild.preferredLocale, "en_US");
+      expect(guild.roles.count, 1);
+      expect(guild.roles.first!.id, 456.toSnowflake());
+      expect(guild.emojis.count, 1);
+      expect(guild.emojis.first!.id, 123.toSnowflake());
+      expect(guild.channels.toList().length, 2);
+      expect(guild.channels.first.id, 1234.toSnowflake());
+      expect(guild.channels.last.id, 4321.toSnowflake());
+      expect(guild.owner.id, 321.toSnowflake());
+    });
+
+    test("Create Text channel", () {
+      final channel = EntityUtility.createTextGuildChannel(client, 123.toSnowflake(), sampleTextChannel);
+
+      expect(channel.id, 1234.toSnowflake());
+      expect(channel.name, "This is text channel");
+      expect(channel.position, 0);
+      expect(channel.isNsfw, true);
+      expect(channel.topic, "This is topic");
+      expect(channel.channelType, ChannelType.text);
+    });
+
+    test("Create Voice channel", () {
+      final channel = EntityUtility.createVoiceGuildChannel(client, 123.toSnowflake(), sampleVoiceChannel);
+
+      expect(channel.id, 4321.toSnowflake());
+      expect(channel.name, "This is voice channel");
+      expect(channel.position, 1);
+      expect(channel.channelType, ChannelType.voice);
+    });
+
+    test("Create Role", () {
+      final role = EntityUtility.createRole(client, 123.toSnowflake(), sampleRoleData);
+
+      expect(role.id, 456.toSnowflake());
+      expect(role.name, "This is role");
+      expect(role.position, 1);
+      expect(role.hoist, false);
+      expect(role.managed, false);
+      expect(role.mentionable, false);
+      expect(role.color, DiscordColor.aquamarine);
+      expect(role.permissions.raw, PermissionsConstants.sendMessages | PermissionsConstants.readMessageHistory);
     });
   });
 }

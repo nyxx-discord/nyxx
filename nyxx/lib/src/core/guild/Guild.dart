@@ -56,7 +56,7 @@ class Guild extends SnowflakeEntity {
   late final Cacheable<Snowflake, TextChannel>? rulesChannel;
 
   /// The guild owner's ID
-  late final Cacheable<Snowflake, User>? owner;
+  late final Cacheable<Snowflake, User> owner;
 
   /// The guild's members.
   late final Cache<Snowflake, Member> members;
@@ -142,6 +142,13 @@ class Guild extends SnowflakeEntity {
     this.splash = raw["splash"] as String?;
     this.embedEnabled = raw["embed_enabled"] as bool?;
 
+    this.systemChannelFlags = raw["system_channel_flags"] as int;
+    this.premiumTier = PremiumTier.from(raw["premium_tier"] as int);
+    this.premiumSubscriptionCount = raw["premium_subscription_count"] as int?;
+    this.preferredLocale = raw["preferred_locale"] as String;
+
+    this.owner = _UserCacheable(client, Snowflake(raw["owner_id"]));
+
     this.roles = _SnowflakeCache<Role>();
     if (raw["roles"] != null) {
       raw["roles"].forEach((o) {
@@ -176,11 +183,6 @@ class Guild extends SnowflakeEntity {
       this.afkChannel = _ChannelCacheable(client, Snowflake(raw["afk_channel_id"]));
     }
 
-    this.systemChannelFlags = raw["system_channel_flags"] as int;
-    this.premiumTier = PremiumTier.from(raw["premium_tier"] as int);
-    this.premiumSubscriptionCount = raw["premium_subscription_count"] as int?;
-    this.preferredLocale = raw["preferred_locale"] as String;
-
     this.members = _SnowflakeCache();
     this.voiceStates = _SnowflakeCache();
 
@@ -210,8 +212,6 @@ class Guild extends SnowflakeEntity {
     //     }
     //   }
     // });
-
-    this.owner = _UserCacheable(client, Snowflake(raw["owner_id"]));
 
     if (raw["voice_states"] != null) {
       raw["voice_states"].forEach((o) {

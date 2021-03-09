@@ -163,6 +163,12 @@ class PermissionsBuilder {
       ..viewGuildInsights = permissions.viewGuildInsights;
   }
 
+  /// Calculates permission int
+  int calculatePermissionValue() {
+    final set = this._build();
+
+    return set.allow & ~set.deny;
+  }
 
   _PermissionsSet _build() {
     final permissionSet = _PermissionsSet();

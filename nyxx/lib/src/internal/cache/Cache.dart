@@ -2,7 +2,7 @@ part of nyxx;
 
 /// Generic interface for caching entities.
 /// Wraps [Map] interface and provides utilities for manipulating cache.
-abstract class Cache<T, S> implements Disposable {
+class Cache<T, S> implements Disposable {
   late Map<T, S> _cache;
 
   /// Returns values of cache
@@ -66,9 +66,11 @@ abstract class Cache<T, S> implements Disposable {
   Iterable<S> takeLast(int count) => values.toList().sublist(values.length - count);
 
   /// Get first element
+  @override
   S? get first => _cache.values.first;
 
   /// Get last element
+  @override
   S get last => _cache.values.last;
 
   /// Get number of elements from cache
