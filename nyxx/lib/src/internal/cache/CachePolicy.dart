@@ -76,7 +76,7 @@ class MemberCachePolicy extends CachePolicy<Member> {
   static final CachePolicy<Member> voice = MemberCachePolicy((member) => member.voiceState != null);
 
   /// Cache only member which are owner of guild
-  static final CachePolicy<Member> owner = MemberCachePolicy((member) => member.guild.getFromCache()?.owner?.id == member.id);
+  static final CachePolicy<Member> owner = MemberCachePolicy((member) => member.guild.getFromCache()?.owner.id == member.id);
 
   /// Default policy is [owner] or [voice]. So it caches guild owners and users in voice channels
   static final CachePolicy<Member> def = owner.or(voice);

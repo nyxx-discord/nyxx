@@ -82,7 +82,7 @@ class Member extends SnowflakeEntity {
   /// Returns total permissions of user.
   Future<Permissions> get effectivePermissions async {
     final guildInstance = await guild.getOrDownload();
-    final owner = await guildInstance.owner?.getOrDownload();
+    final owner = await guildInstance.owner.getOrDownload();
     if (this == owner) {
       return Permissions.all();
     }

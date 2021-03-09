@@ -29,8 +29,8 @@ class EntityUtility {
   ///     Guild guild = EntityUtility.createGuild(bot, rawJson);
   /// }
   /// ```
-  static Guild createGuild(INyxx client, Map<String, dynamic> rawJson) =>
-      Guild._new(client, rawJson);
+  static Guild createGuild(INyxx client, Map<String, dynamic> rawJson, [bool guildCreate = false]) =>
+      Guild._new(client, rawJson, guildCreate);
 
   /// Creates a Role object, can be used for other classes where you have correct rawJson data from the API.
   /// ```dart
