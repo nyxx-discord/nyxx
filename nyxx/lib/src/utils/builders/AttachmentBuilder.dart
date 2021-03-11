@@ -19,12 +19,8 @@ class AttachmentBuilder {
   String get attachUrl => "attachment://$_name";
 
   /// Open file at [path] then read it's contents and prepare to send. Name will be automatically extracted from path if no name provided.
-  factory AttachmentBuilder.path(String path, {String? name, bool? spoiler}) {
-    final bytes = File(path).readAsBytesSync();
-    final fileName = name ?? path_utils.basename(path);
-
-    return AttachmentBuilder._new(bytes, fileName, spoiler);
-  }
+  factory AttachmentBuilder.path(String path, {String? name, bool? spoiler}) =>
+      AttachmentBuilder.file(File(path), name: name, spoiler: spoiler);
 
   /// Create attachment from specified file instance. Name will be automatically extracted from path if no name provided.
   factory AttachmentBuilder.file(File file, {String? name, bool? spoiler}) {
