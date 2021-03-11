@@ -323,4 +323,29 @@ void main() {
       expect(role.permissions.raw, PermissionsConstants.sendMessages | PermissionsConstants.readMessageHistory);
     });
   });
+
+  group("AttachmentBuilder tests", () {
+    test(".bytes constructor", () {
+      final attachment = AttachmentBuilder.bytes([], "test.txt", spoiler: true);
+
+      expect(attachment.attachUrl, "attachment://SPOILER_test.txt");
+    });
+
+    test(".file constructor", () async {
+      final file = File("/tmp/test.txt");
+      await file.create();
+      final attachment = AttachmentBuilder.file(file, name: "name_for_file.png", spoiler: true);
+
+      expect(attachment.attachUrl, "attachment://SPOILER_name_for_file.png");
+    });
+
+    test(".file constructor", () async {
+      const path = "/tmp/test.txt";
+      final file = File(path);
+      await file.create();
+      final attachment = AttachmentBuilder.path(path);
+
+      expect(attachment.attachUrl, "attachment://test.txt");
+    });
+  });
 }
