@@ -102,8 +102,8 @@ class Commander with ICommandRegistrable {
 
     // Builds a RegEx that matches the full command including their parents and all possible
     // aliases of the final command entity and their parents.
-    // Example: (?<finalCommand>(quote|quotes) (remove|rm))
-    // This will match the command `quote remove`, `quotes remove`, `quote rm` and `quotes rm`
+    // Example: (?<finalCommand>(quote|q) (remove|rm))
+    // This will match the command `quote remove`, `q remove`, `quote rm` and `q rm`
 
     final match = RegExp("(?<finalCommand>${matchingCommand.getFullCommandMatch()})").firstMatch(
       event.message.content,
