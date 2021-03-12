@@ -117,11 +117,12 @@ class Commander with ICommandRegistrable {
 
     // construct commandcontext
     final context = CommandContext._new(
-        event.message.channel.getFromCache()!,
-        event.message.author,
-        event.message is GuildMessage ? (event.message as GuildMessage).guild.getFromCache()! : null,
-        event.message,
-        "$prefix$finalCommand");
+      event.message.channel.getFromCache()!,
+      event.message.author,
+      event.message is GuildMessage ? (event.message as GuildMessage).guild.getFromCache()! : null,
+      event.message,
+      "$prefix$finalCommand",
+    );
 
     // Invoke before handler for commands
     if (!(await _invokeBeforeHandler(matchingCommand, context))) {
