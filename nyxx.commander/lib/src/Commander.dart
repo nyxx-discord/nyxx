@@ -94,14 +94,26 @@ class Commander with ICommandRegistrable {
     }
 
     // Find matching command with given message content
-    final messageContentParts = event.message.content.replaceFirst(prefix, "").trim().split(" ");
-    final matchingCommand = _commandEntities._findMatchingCommand(messageContentParts) as CommandHandler?;
+    final matchingCommand = _commandEntities._findMatchingCommand(event.message.content.replaceFirst(prefix, "").trim().split(" ")) as CommandHandler?;
 
     if(matchingCommand == null) {
       return;
     }
 
-    final fullCommandName = _getFullCommandFromMessage(matchingCommand, messageContentParts);
+    // Builds a RegEx that matches the full command including their parents and all possible
+    // aliases of the final command entity and their parents.
+    // Example: (?<finalCommand>(quote|quotes) (remove|rm))
+    // This will match the command `quote remove`, `quotes remove`, `quote rm` and `quotes rm`
+
+    final match = RegExp("(?<finalCommand>${matchingCommand.getFullCommandMatch()})").firstMatch(
+      event.message.content,
+    );
+
+    final finalCommand = match?.namedGroup("finalCommand");
+
+    if (finalCommand == null) {
+      return;
+    }
 
     // construct commandcontext
     final context = CommandContext._new(
@@ -109,8 +121,7 @@ class Commander with ICommandRegistrable {
         event.message.author,
         event.message is GuildMessage ? (event.message as GuildMessage).guild.getFromCache()! : null,
         event.message,
-        "$prefix$fullCommandName"
-    );
+        "$prefix$finalCommand");
 
     // Invoke before handler for commands
     if (!(await _invokeBeforeHandler(matchingCommand, context))) {
@@ -136,7 +147,7 @@ class Commander with ICommandRegistrable {
     }
 
     // execute logger callback
-    _loggerHandlerFunction(context, fullCommandName, this._logger);
+    _loggerHandlerFunction(context, finalCommand, this._logger);
 
     // invoke after handler of command
     await _invokeAfterHandler(matchingCommand, context);

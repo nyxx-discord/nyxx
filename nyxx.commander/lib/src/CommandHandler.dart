@@ -18,20 +18,20 @@ abstract class CommandEntity {
   /// Parent of entity
   CommandEntity? get parent;
 
-  /// Returns true if provided String [str] is entity name or alias
-  bool isEntityName(String str) =>
-      str == this.name || this.aliases.any((element) => element == str);
+  /// A list of valid command names
+  List<String> get commandNames => [this.name, ...this.aliases];
 
-  /// Full qualified command name with its parents names
-  String getFullCommandName() {
-    var commandName = this.name;
-
-    for(var e = this.parent; e != null; e = e.parent) {
-      commandName = "${e.name} $commandName";
+  /// RegEx matching the fully qualified command name with its parents and all aliases
+  String getFullCommandMatch() {
+    var parentMatch = "";
+    if (parent != null) {
+      parentMatch = "${parent!.getFullCommandMatch()} ";
     }
-
-    return commandName.trim();
+    return '$parentMatch(${this.commandNames.join('|')})';
   }
+
+  /// Returns true if provided String [str] is entity name or alias
+  bool isEntityName(String str) => commandNames.contains(str);
 }
 
 /// Creates command group. Pass a [name] to crated command and commands added
