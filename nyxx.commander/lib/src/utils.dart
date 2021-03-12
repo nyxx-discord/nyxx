@@ -1,16 +1,5 @@
 part of nyxx_commander;
 
-String _getFullCommandFromMessage(CommandHandler commandHandler, List<String> messageParts) {
-  var iterator = 1;
-
-  for(var e = commandHandler.parent; e != null; e = e.parent) {
-    iterator++;
-  }
-
-  messageParts.removeRange(iterator, messageParts.length);
-  return messageParts.join(" ");
-}
-
 // TODO: FIX. I think that is just awful but is does its job
 extension _CommandMatcher on Iterable<CommandEntity> {
   CommandEntity? _findMatchingCommand(Iterable<String> messageParts) {
