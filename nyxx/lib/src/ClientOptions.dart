@@ -28,15 +28,6 @@ class ClientOptions {
   /// The number of messages to cache for each channel.
   int messageCacheSize;
 
-  /// Whether or not to force fetch all of the members the client can see.
-  /// Can slow down ready times but is recommended if you rely on `Message.member`
-  /// or the member cache.
-  bool forceFetchMembers;
-
-  /// Allows to disable member caching on `GUILD_CREATE` event.
-  /// **It means client will collect members from other events**
-  bool cacheMembers;
-
   /// Maximum size of guild for which offline member will be sent
   int largeThreshold;
 
@@ -71,8 +62,6 @@ class ClientOptions {
       {this.allowedMentions,
       this.shardCount,
       this.messageCacheSize = 400,
-      this.forceFetchMembers = false,
-      this.cacheMembers = true,
       this.largeThreshold = 50,
       this.ignoredEvents = const [],
       this.compressedGatewayPayloads = true,

@@ -57,6 +57,11 @@ class Commander with ICommandRegistrable {
         AfterHandlerFunction? afterCommandHandler,
         LoggerHandlerFunction? loggerHandlerFunction,
         CommandExecutionError? commandExecutionError}) {
+    if (!PermissionsUtils.isApplied(client.intents, GatewayIntents.allUnprivileged)) {
+      _logger.shout("Commander cannot start without at least all unprivileged intents");
+      exit(1);
+    }
+
     if (prefix == null && prefixHandler == null) {
       _logger.shout("Commander cannot start without both prefix and prefixHandler");
       exit(1);
@@ -89,13 +94,14 @@ class Commander with ICommandRegistrable {
     }
 
     // Find matching command with given message content
-    final matchingCommand = _commandEntities._findMatchingCommand(event.message.content.replaceFirst(prefix, "").trim().split(" ")) as CommandHandler?;
+    final messageContentParts = event.message.content.replaceFirst(prefix, "").trim().split(" ");
+    final matchingCommand = _commandEntities._findMatchingCommand(messageContentParts) as CommandHandler?;
 
     if(matchingCommand == null) {
       return;
     }
 
-    final fullCommandName = matchingCommand.getFullCommandName();
+    final fullCommandName = _getFullCommandFromMessage(matchingCommand, messageContentParts);
 
     // construct commandcontext
     final context = CommandContext._new(
