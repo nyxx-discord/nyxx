@@ -240,6 +240,7 @@ class GuildMessage extends Message {
       this.author = Webhook._new(raw["author"] as Map<String, dynamic>, client);
     } else {
       this.author = User._new(client, raw["author"] as Map<String, dynamic>);
+      this.client.users[this.author.id] = this.author as User;
     }
 
     if (raw["member"] != null) {
