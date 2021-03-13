@@ -142,7 +142,7 @@ class Commander with ICommandRegistrable {
     }
 
     // execute logger callback
-    _loggerHandlerFunction(context, finalCommand, this._logger);
+    _loggerHandlerFunction(context, finalCommand!, this._logger);
 
     // invoke after handler of command
     await _invokeAfterHandler(matchingCommand, context);
