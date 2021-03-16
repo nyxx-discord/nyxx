@@ -26,7 +26,7 @@ class MessageDeleteEvent {
     this.channel = _ChannelCacheable(client, Snowflake(raw["d"]["channel_id"]));
     this.messageId = Snowflake(raw["d"]["id"]);
 
-    final message = channel.getFromCache()?.messageCache[this.messageId];
+    this.message = channel.getFromCache()?.messageCache[this.messageId];
   }
 }
 

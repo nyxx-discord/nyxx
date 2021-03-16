@@ -57,6 +57,11 @@ class Commander with ICommandRegistrable {
         AfterHandlerFunction? afterCommandHandler,
         LoggerHandlerFunction? loggerHandlerFunction,
         CommandExecutionError? commandExecutionError}) {
+    if (!PermissionsUtils.isApplied(client.intents, GatewayIntents.allUnprivileged)) {
+      _logger.shout("Commander cannot start without at least all unprivileged intents");
+      exit(1);
+    }
+
     if (prefix == null && prefixHandler == null) {
       _logger.shout("Commander cannot start without both prefix and prefixHandler");
       exit(1);
@@ -95,15 +100,22 @@ class Commander with ICommandRegistrable {
       return;
     }
 
-    final fullCommandName = matchingCommand.getFullCommandName();
+    // Builds a RegEx that matches the full command including their parents and all possible
+    // aliases of the final command entity and their parents.
+    // Example: (?<finalCommand>(quote|q) (remove|rm))
+    // This will match the command `quote remove`, `q remove`, `quote rm` and `q rm`
+
+    final match = RegExp("(?<finalCommand>${matchingCommand.getFullCommandMatch().trim()})").firstMatch(event.message.content);
+
+    final finalCommand = match?.namedGroup("finalCommand");
 
     // construct commandcontext
     final context = CommandContext._new(
-        event.message.channel.getFromCache()!,
-        event.message.author,
-        event.message is GuildMessage ? (event.message as GuildMessage).guild.getFromCache()! : null,
-        event.message,
-        "$prefix$fullCommandName"
+      event.message.channel.getFromCache()!,
+      event.message.author,
+      event.message is GuildMessage ? (event.message as GuildMessage).guild.getFromCache()! : null,
+      event.message,
+      "$prefix$finalCommand",
     );
 
     // Invoke before handler for commands
@@ -130,7 +142,7 @@ class Commander with ICommandRegistrable {
     }
 
     // execute logger callback
-    _loggerHandlerFunction(context, fullCommandName, this._logger);
+    _loggerHandlerFunction(context, finalCommand!, this._logger);
 
     // invoke after handler of command
     await _invokeAfterHandler(matchingCommand, context);

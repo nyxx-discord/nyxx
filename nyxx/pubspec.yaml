@@ -1,5 +1,5 @@
 name: nyxx
-version: 1.1.0-dev.3
+version: 1.1.0-dev.4
 description: A Discord library for Dart.
 homepage: https://github.com/l7ssha/nyxx
 repository: https://github.com/l7ssha/nyxx
@@ -15,4 +15,4 @@ dependencies:
   path: "^1.8.0"
 
 dev_dependencies:
-  test: "^1.16.5"
+  test: "^1.16.8"

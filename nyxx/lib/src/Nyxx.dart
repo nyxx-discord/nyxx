@@ -351,29 +351,6 @@ class Nyxx extends NyxxRest {
   Future<User> fetchUser(Snowflake userId) =>
       this._httpEndpoints.fetchUser(userId);
 
-  // /// Creates new guild with provided builder.
-  // /// Only for bots with less than 10 guilds otherwise it will return Future with error.
-  // ///
-  // /// ```
-  // /// var guildBuilder = GuildBuilder()
-  // ///                       ..name = "Example Guild"
-  // ///                       ..roles = [RoleBuilder()..name = "Example Role]
-  // /// var newGuild = await client.createGuild(guildBuilder);
-  // /// ```
-  // Future<Guild> createGuild(GuildBuilder builder) async {
-  //   if (this.guilds.count >= 10) {
-  //     return Future.error(ArgumentError("Guild cannot be created if bot is in 10 or more guilds"));
-  //   }
-  //
-  //   final response = await this._http._execute(BasicRequest._new("/guilds", method: "POST"));
-  //
-  //   if (response is HttpResponseSuccess) {
-  //     return Guild._new(this, response.jsonBody as Map<String, dynamic>);
-  //   }
-  //
-  //   return Future.error(response);
-  // }
-
   /// Gets a webhook by its id and/or token.
   /// If token is supplied authentication is not needed.
   Future<Webhook> fetchWebhook(Snowflake id, {String token = ""}) =>

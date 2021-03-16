@@ -18,20 +18,26 @@ abstract class CommandEntity {
   /// Parent of entity
   CommandEntity? get parent;
 
-  /// Returns true if provided String [str] is entity name or alias
-  bool isEntityName(String str) =>
-      str == this.name || this.aliases.any((element) => element == str);
+  /// A list of valid command names
+  List<String> get commandNames => [if (this.name.isNotEmpty) this.name, ...this.aliases];
 
-  /// Full qualified command name with its parents names
-  String getFullCommandName() {
-    var commandName = this.name;
+  /// RegEx matching the fully qualified command name with its parents and all aliases
+  String getFullCommandMatch() {
+    var parentMatch = "";
 
-    for(var e = this.parent; e != null; e = e.parent) {
-      commandName = "${e.name} $commandName";
+    if (parent != null) {
+      parentMatch = "${parent!.getFullCommandMatch()} ";
     }
 
-    return commandName.trim();
+    if (this.commandNames.isNotEmpty) {
+      parentMatch += "(${this.commandNames.join('|')})";
+    }
+
+    return parentMatch;
   }
+
+  /// Returns true if provided String [str] is entity name or alias
+  bool isEntityName(String str) => commandNames.contains(str);
 }
 
 /// Creates command group. Pass a [name] to crated command and commands added
@@ -66,7 +72,7 @@ class CommandGroup extends CommandEntity with ICommandRegistrable {
   /// Registers default command handler which will be executed if no subcommand is matched to message content
   void registerDefaultCommand(CommandHandlerFunction commandHandler,
       {PassHandlerFunction? beforeHandler, AfterHandlerFunction? afterHandler}) {
-    this.defaultHandler = BasicCommandHandler(this.name, commandHandler, beforeHandler: beforeHandler, afterHandler: afterHandler, parent: this);
+    this.defaultHandler = BasicCommandHandler("", commandHandler, beforeHandler: beforeHandler, afterHandler: afterHandler, parent: this);
   }
 
   /// Registers subcommand

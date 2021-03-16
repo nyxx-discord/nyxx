@@ -30,7 +30,7 @@ void main() {
 
       // Delete channel that we just created
       await channel.delete();
-Gu
+
       // Send feedback
       await e.message.channel.send(content: "Deleted ${channel.mention}");
     }
