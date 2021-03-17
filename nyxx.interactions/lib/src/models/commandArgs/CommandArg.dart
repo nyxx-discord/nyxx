@@ -66,7 +66,7 @@ class CommandArg implements Builder {
       "description": this.description,
       "default": this.defaultArg,
       "required": this.required,
-      if (this.choices != null) "choices": this.choices!.map((e) => e._build()),
-      if (this.options != null) "options": this.options!.map((e) => e._build())
+      if (this.choices != null) "choices": this.choices!.map((e) => e._build()).toList(),
+      if (this.options != null) "options": this.options!.map((e) => e._build()).toList()
     };
 }
