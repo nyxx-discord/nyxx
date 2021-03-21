@@ -11,4 +11,4 @@ environment:
 
 dependencies:
   logging: "^1.0.0"
-  nyxx: "^1.1.0-dev.3"
+  nyxx: "1.1.0-dev.4"
