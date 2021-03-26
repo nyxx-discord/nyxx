@@ -183,17 +183,26 @@ class Nyxx implements Disposable {
   /// Gets an bot invite link with zero permissions
   String get inviteLink => app.getInviteUrl();
 
+  /// Can be used to edit options after client initialised. Used by Nyxx.interactions to enable raw events
+  ClientOptions get options => this._options;
+
   /// Returns handler for all available REST API action.
   IHttpEndpoints get httpEndpoints => this._httpEndpoints;
 
   /// Creates and logs in a new client. If [ignoreExceptions] is true (by default is)
   /// isolate will ignore all exceptions and continue to work.
-  Nyxx(this._token, this.intents, {ClientOptions? options, CacheOptions? cacheOptions, bool ignoreExceptions = true, bool useDefaultLogger = true, Level? defaultLoggerLogLevel}) {
-    if(useDefaultLogger) {
+  Nyxx(this._token, this.intents,
+      {ClientOptions? options,
+      CacheOptions? cacheOptions,
+      bool ignoreExceptions = true,
+      bool useDefaultLogger = true,
+      Level? defaultLoggerLogLevel}) {
+    if (useDefaultLogger) {
       Logger.root.level = defaultLoggerLogLevel ?? Level.ALL;
 
       Logger.root.onRecord.listen((LogRecord rec) {
-        print("[${rec.time}] [${rec.level.name}] [${rec.loggerName}] ${rec.message}");
+        print(
+            "[${rec.time}] [${rec.level.name}] [${rec.loggerName}] ${rec.message}");
       });
     }
 
@@ -203,7 +212,7 @@ class Nyxx implements Disposable {
       throw MissingTokenError();
     }
 
-    if(!Platform.isWindows) {
+    if (!Platform.isWindows) {
       ProcessSignal.sigterm.watch().forEach((event) async {
         await this.dispose();
       });
@@ -234,9 +243,12 @@ class Nyxx implements Disposable {
     this._httpEndpoints = _HttpEndpoints._new(this);
 
     this._events = _EventController(this);
-    this.onSelfMention = this.onMessageReceived.where((event) => event.message.mentions.contains(this.self));
-    this.onDmReceived = this.onMessageReceived.where((event) => event.message is DMMessage);
-    
+    this.onSelfMention = this
+        .onMessageReceived
+        .where((event) => event.message.mentions.any((element) => element.id == this.self.id));
+    this.onDmReceived =
+        this.onMessageReceived.where((event) => event.message is DMMessage);
+
     this._ws = _ConnectionManager(this);
   }
 
@@ -246,28 +258,27 @@ class Nyxx implements Disposable {
   /// [DateTime] when client was started
   DateTime get startTime => _startTime;
 
-  /// Returns guild  even if the user is not in the guild.
   /// This endpoint is only for Public guilds if bot is not int the guild.
   Future<GuildPreview> fetchGuildPreview(Snowflake guildId) async =>
     this._httpEndpoints.fetchGuildPreview(guildId);
 
   /// Returns guild with given [guildId]
   Future<Guild> fetchGuild(Snowflake guildId) =>
-    this._httpEndpoints.fetchGuild(guildId);
+      this._httpEndpoints.fetchGuild(guildId);
 
   /// Returns channel with specified id.
   /// ```
   /// var channel = await client.getChannel<TextChannel>(Snowflake("473853847115137024"));
   /// ```
   Future<T> fetchChannel<T extends IChannel>(Snowflake channelId) =>
-    this._httpEndpoints.fetchChannel(channelId);
+      this._httpEndpoints.fetchChannel(channelId);
 
   /// Get user instance with specified id.
   /// ```
   /// var user = client.getUser(Snowflake("302359032612651009"));
   /// ``
   Future<User> fetchUser(Snowflake userId) =>
-    this._httpEndpoints.fetchUser(userId);
+      this._httpEndpoints.fetchUser(userId);
 
   /// Gets a webhook by its id and/or token.
   /// If token is supplied authentication is not needed.
@@ -281,7 +292,7 @@ class Nyxx implements Disposable {
   /// var inv = client.getInvite("YMgffU8");
   /// ```
   Future<Invite> getInvite(String code) =>
-    this._httpEndpoints.fetchInvite(code);
+      this._httpEndpoints.fetchInvite(code);
 
   /// Returns number of shards
   int get shards => this.shardManager._shards.length;
@@ -308,7 +319,7 @@ class Nyxx implements Disposable {
   Future<void> dispose() async {
     this._logger.info("Disposing and closing bot...");
 
-    if(this._options.shutdownHook != null) {
+    if (this._options.shutdownHook != null) {
       await this._options.shutdownHook!(this);
     }
 
