@@ -10,5 +10,5 @@ environment:
   sdk: '>=2.12.0 <2.13.0'
 
 dependencies:
-  logging: "^1.0.0"
-  nyxx: "^1.1.0-dev.3"
+  logging: "^1.0.1"
+  nyxx: "1.1.0-dev.4"

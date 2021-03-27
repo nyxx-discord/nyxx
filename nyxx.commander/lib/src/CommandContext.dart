@@ -136,7 +136,7 @@ class CommandContext {
   Future<Map<IEmoji, int>> awaitEmojis(Message msg, Duration duration){
     final collectedEmoji = <IEmoji, int>{};
     return Future<Map<IEmoji, int>>(() async {
-      await for (final event in client.onMessageReactionAdded.where((evnt) => evnt.message != null && evnt.message!.id == msg.id)) {
+      await for (final event in (msg.client as Nyxx).onMessageReactionAdded.where((evnt) => evnt.message != null && evnt.message!.id == msg.id)) {
         if (collectedEmoji.containsKey(event.emoji)) {
           // TODO: NNBD: weird stuff
           var value = collectedEmoji[event.emoji];
@@ -158,7 +158,7 @@ class CommandContext {
   /// Waits for first [TypingEvent] and returns it. If timed out returns null.
   /// Can listen to specific user by specifying [user]
   Future<TypingEvent?> waitForTyping(User user, {Duration timeout = const Duration(seconds: 30)}) =>
-      Future<TypingEvent?>(() => client.onTyping.firstWhere((e) => e.user == user && e.channel == this.channel)).timeout(timeout, onTimeout: () => null);
+      Future<TypingEvent?>(() => (user.client as Nyxx).onTyping.firstWhere((e) => e.user == user && e.channel == this.channel)).timeout(timeout, onTimeout: () => null);
 
   /// Gets all context channel messages that satisfies [predicate].
   ///

@@ -23,7 +23,7 @@ class InteractionOption {
     this.type = CommandArgType(raw["type"] as int);
 
     if (raw["options"] != null) {
-      this.args = (raw["options"] as List<Map<String, dynamic>>).map((e) => InteractionOption._new(e));
+      this.args = (raw["options"] as List<dynamic>).map((e) => InteractionOption._new(e as Map<String, dynamic>));
     }
 
     if (raw["choices"] != null) {

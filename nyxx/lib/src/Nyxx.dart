@@ -316,7 +316,7 @@ class Nyxx extends NyxxRest {
     this._events = _EventController(this);
     this.onSelfMention = this
         .onMessageReceived
-        .where((event) => event.message.mentions.contains(this.self));
+        .where((event) => event.message.mentions.any((element) => element.id == this.self.id));
     this.onDmReceived =
         this.onMessageReceived.where((event) => event.message is DMMessage);
 
