@@ -2,7 +2,7 @@ name: Tests
 
 on: [push, pull_request]
 
-jobs:         
+jobs:
   test-nyxx:
     name: Test main nyxx package
     runs-on: ubuntu-latest
@@ -14,19 +14,19 @@ jobs:
         with:
           path: ~/.pub_cache
           key: ${{ runner.os }}
-          
+
       - name: Setup Dart Action
         uses: cedx/setup-dart@v2.3.0
         with:
-         release-channel: dev
-        
+         release-channel: stable
+
       - name: Checkout
         uses: actions/checkout@v2.3.4
-      
+
       - name: Install dependencies
         working-directory: ./nyxx
         run: dart pub get
-      
+
       - name: Analyze project source
         working-directory: ./nyxx
         run: dart analyze
@@ -37,14 +37,14 @@ jobs:
 
       - name: Compile tests
         working-directory: ./nyxx/test
-        run: dart2native --enable-experiment=non-nullable travis.dart
+        run: dart2native travis.dart
         if: github.event_name != 'pull_request'
 
       - name: Run tests
         working-directory: ./nyxx/test
         run: ./travis.exe
         if: github.event_name != 'pull_request'
-  
+
   test-commander:
     name: Tests commander package
     needs: [test-nyxx]
@@ -57,33 +57,33 @@ jobs:
         with:
           path: ~/.pub_cache
           key: ${{ runner.os }}
-       
+
       - name: Setup Dart Action
         uses: cedx/setup-dart@v2.3.0
         with:
-         release-channel: dev
-      
+         release-channel: stable
+
       - name: Checkout
         uses: actions/checkout@v2.3.4
-      
+
       - name: Install dependencies
         working-directory: ./nyxx.commander
         run: dart pub get
-      
+
       - name: Analyze project source
         working-directory: ./nyxx.commander
         run: dart analyze
 
       - name: Compile tests
         working-directory: ./nyxx.commander/test
-        run: dart2native --enable-experiment=non-nullable commander-test.dart
+        run: dart2native commander-test.dart
         if: github.event_name != 'pull_request'
-      
+
       - name: Run tests
         working-directory: ./nyxx.commander/test
         run: ./commander-test.exe
         if: github.event_name != 'pull_request'
-  
+
   test-extensions:
     name: Tests extensions package
     needs: [test-commander]
@@ -96,28 +96,28 @@ jobs:
        with:
         path: ~/.pub_cache
         key: ${{ runner.os }}
-     
+
      - name: Setup Dart Action
        uses: cedx/setup-dart@v2.3.0
        with:
-        release-channel: dev
-     
+        release-channel: stable
+
      - name: Checkout
        uses: actions/checkout@v2.3.4
-     
+
      - name: Install dependencies
        working-directory: ./nyxx.extensions
        run: dart pub get
-     
+
      - name: Analyze project source
        working-directory: ./nyxx.extensions
        run: dart analyze
 
      - name: Compile tests
        working-directory: ./nyxx.extensions/test
-       run: dart2native --enable-experiment=non-nullable extensions-tests.dart
+       run: dart2native extensions-tests.dart
        if: github.event_name != 'pull_request'
-     
+
      - name: Run tests
        working-directory: ./nyxx.extensions/test
        run: ./extensions-tests.exe
