@@ -3,7 +3,7 @@ import "package:nyxx/nyxx.dart";
 // Main function
 void main() {
   // Create new bot instance. Replace string with your token
-  final bot = Nyxx("<TOKEN>");
+  final bot = Nyxx("<TOKEN>", GatewayIntents.none);
 
   // Listen to ready event. Invoked when bot is connected to all shards. Note that cache can be empty or not incomplete.
   bot.onReady.listen((ReadyEvent e) {

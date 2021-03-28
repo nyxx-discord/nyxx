@@ -143,6 +143,9 @@ class GatewayIntents {
 
   /// All intents
   static const int all = allUnprivileged | allPrivileged;
+
+  /// No intents. Client shouldn't receive any events.
+  static const int none = 0;
 }
 
 /// Hook executed when disposing bots process.
