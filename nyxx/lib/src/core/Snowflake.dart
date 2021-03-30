@@ -40,6 +40,9 @@ class Snowflake implements Comparable<Snowflake> {
   /// Creates synthetic snowflake based on given [date].
   Snowflake.fromDateTime(DateTime date) : _id = _parseId(date);
 
+  /// Returns [SnowflakeEntity] from current [Snowflake]
+  SnowflakeEntity toSnowflakeEntity() => SnowflakeEntity(this);
+
   /// Checks if given [Snowflake] [s] is created before this instance
   bool isBefore(Snowflake s) => this.timestamp.isBefore(s.timestamp);
 

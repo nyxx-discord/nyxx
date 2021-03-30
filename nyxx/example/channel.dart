@@ -23,16 +23,16 @@ void main() {
       final guild = (e.message as GuildMessage).guild.getFromCache()!;
 
       // Created text channel. Remember discord will lower the case of name and replace spaces with - and do other sanitization
-      final channel = (await guild.createChannel("TEST CHANNEL", ChannelType.text)) as GuildTextChannel;
+      final channel = await guild.createChannel(ChannelBuilder("Test channel", ChannelType.text)) as TextGuildChannel;
 
       // Send feedback
-      await e.message.channel.getFromCache().sendMessage(content: "Crated ${channel.mention}");
+      await e.message.channel.getFromCache()?.sendMessage(content: "Crated ${channel.mention}");
 
       // Delete channel that we just created
       await channel.delete();
 
       // Send feedback
-      await e.message.channel.send(content: "Deleted ${channel.mention}");
+      await e.message.channel.getFromCache()?.sendMessage(content: "Deleted ${channel.mention}");
     }
   });
 }

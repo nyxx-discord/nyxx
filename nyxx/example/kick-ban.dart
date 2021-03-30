@@ -4,7 +4,7 @@ import "package:nyxx/nyxx.dart";
 SnowflakeEntity getUserToBan(GuildMessage message) {
   // If mentions are not empty return first mention
   if(message.mentions.isNotEmpty) {
-    return message.mentions.first;
+    return message.mentions.first.id.toSnowflakeEntity();
   }
 
   // Otherwise split message by spaces then take lst part and parse it to snowflake and return as Snowflake entity
@@ -38,7 +38,7 @@ void main() {
       await (e.message as GuildMessage).guild.getFromCache()!.ban(userToBan);
 
       // Send feedback
-      await e.message.channel.getFromCache()?.send(content: "👍");
+      await e.message.channel.getFromCache()?.sendMessage(content: "👍");
     }
 
     // Check if message content equals "!embed"
