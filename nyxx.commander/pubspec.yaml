@@ -13,7 +13,3 @@ dependencies:
   http: "^0.13.1"
   logging: "^1.0.1"
   nyxx: "^2.0.0-rc.1"
-
-dependency_overrides:
-  nyxx:
-    path: "../nyxx"
