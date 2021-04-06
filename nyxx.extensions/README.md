@@ -1,20 +1,19 @@
-<div align="center">
-<br />
-<p> <img width="600" src="https://l7ssha.github.io/nyxx0.png" />
-<br />
+# nyxx.extensions
 
-[![Build Status](https://travis-ci.org/l7ssha/nyxx.svg?branch=master)](https://travis-ci.org/l7ssha/nyxx)
-[![Pub](https://img.shields.io/pub/v/nyxx.svg)](https://pub.dartlang.org/packages/nyxx)
+[![pub](https://img.shields.io/pub/v/nyxx.svg)](https://pub.dartlang.org/packages/nyxx)
 [![documentation](https://img.shields.io/badge/Documentation-nyxx-yellow.svg)](https://www.dartdocs.org/documentation/nyxx/latest/)
+[![documentation](https://img.shields.io/badge/Documentation-nyxx.commander-yellow.svg)](https://www.dartdocs.org/documentation/nyxx.commander/latest/)
+[![documentation](https://img.shields.io/badge/Documentation-nyxx.interactions-yellow.svg)](https://www.dartdocs.org/documentation/nyxx.interactions/latest/)
+[![documentation](https://img.shields.io/badge/Documentation-nyxx.extentions-yellow.svg)](https://www.dartdocs.org/documentation/nyxx.extensions/latest/)
 
 Simple, robust framework for creating discord bots for Dart language.
 
 <hr />
 
-</div>
-
 ### Features
 
+- **Slash commands support** <br>
+  Supports and provides easy API for creating and handling slash commands
 - **Commands framework included** <br>
   A fast way to create a bot with command support. Implementing the framework is simple - and everything is done automatically.
 - **Cross Platform** <br>
@@ -30,20 +29,34 @@ Simple, robust framework for creating discord bots for Dart language.
 Basic usage:
 ```dart
 void main() {
-  var bot = Nyxx("TOKEN");
+  final bot = Nyxx("TOKEN", GatewayIntents.allUnprivileged);
 
   bot.onMessageReceived.listen((event) {
     if (event.message.content == "!ping") {
-      event.message.channel.send(content: "Pong!");
+      (event.message.channel.getOrDownload() as TextChannel).sendMessage(content: "Pong!");
     }
   });
+}
+```
+
+Slash commands:
+```dart
+void main() {
+  final bot = Nyxx("<%TOKEN%>", GatewayIntents.all);
+  final interactions = Interactions(bot);
+
+  interactions
+    ..registerHandler("test", "This is test comamnd", [], handler: (event) async {
+      await event.acknowledge(showSource: true);
+      await event.reply(content: "This is example message result");
+    });
 }
 ```
 
 Commands:
 ```dart
 void main() {
-  final bot = Nyxx("TOKEN");
+  final bot = Nyxx("TOKEN", GatewayIntents.allUnprivileged);
 
   Commander(bot, prefix: "!!!")
     ..registerCommand("ping", (context, message) => context.reply(content: "Pong!"));
@@ -52,9 +65,11 @@ void main() {
 
 ## More examples
 
-Nyxx examples can be found [here](https://github.com/l7ssha/nyxx/tree/development/nyxx/example).
+Nyxx examples can be found [here](https://github.com/l7ssha/nyxx/tree/dev/nyxx/example).
 
-Commander examples can be found [here](https://github.com/l7ssha/nyxx/tree/development/nyxx.commander/example)
+Commander examples can be found [here](https://github.com/l7ssha/nyxx/tree/dev/nyxx.commander/example)
+
+Slash commands (interactions) examples can be found [here](https://github.com/l7ssha/nyxx/tree/dev/nyxx.interactions/example)
 
 ### Example bots
  - [Running on Dart](https://github.com/l7ssha/running_on_dart)
