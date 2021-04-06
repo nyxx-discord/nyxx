@@ -38,11 +38,13 @@ class ShardManager implements Disposable {
         .fold<int>(0, (first, second) => first + second)) ~/ shards.length);
 
   final _ConnectionManager _ws;
-  final int _numShards;
+  late final int _numShards;
   final Map<int, Shard> _shards = {};
 
   /// Starts shard manager
-  ShardManager._new(this._ws, this._numShards) {
+  ShardManager._new(this._ws) {
+    this._numShards = this._ws._client._options.shardCount != null ? this._ws._client._options.shardCount! : this._ws.recommendedShardsNum;
+
     if (this._numShards < 1) {
       this._logger.shout("Number of shards cannot be lower than 1.");
       exit(1);

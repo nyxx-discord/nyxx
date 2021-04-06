@@ -42,7 +42,7 @@ void main() {
 Slash commands:
 ```dart
 void main() {
-  final bot = Nyxx("<%TOKEN%>", GatewayIntents.all);
+  final bot = Nyxx("<%TOKEN%>", GatewayIntents.allUnprivileged);
   final interactions = Interactions(bot);
 
   interactions
