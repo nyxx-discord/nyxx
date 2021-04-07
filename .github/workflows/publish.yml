@@ -1,0 +1,32 @@
+name: Publish package
+
+on:
+  workflow_dispatch:
+    inputs:
+      name:
+        description: 'package name to publish'
+        default: 'nyxx'
+        required: true
+
+jobs:
+  greet:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 'Checkout'
+        uses: actions/checkout@v2
+
+      - name: 'Publish package'
+        id: publish
+        uses: k-paxian/dart-package-publisher@master
+        with:
+          force: true
+          credentialJson: ${{ secrets.CREDENTIAL_JSON }}
+          relativePath: ${{ github.event.inputs.name }}
+
+      - name: 'Commit release tag'
+        if: steps.publish.outputs.success
+        uses: hole19/git-tag-action@master
+        env:
+          TAG: ${{steps.publish.outputs.package}}-${{steps.publish.outputs.localVersion}}
+          GITHUB_TOKEN: ${{ secrets.ACCESS_TOKEN }}
