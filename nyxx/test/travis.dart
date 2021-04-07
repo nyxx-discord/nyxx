@@ -3,15 +3,6 @@ import "dart:io";
 
 import "package:nyxx/nyxx.dart";
 
-// Replacement for assert. Throws if [test] isn't true.
-void test(bool test, [String? name]) {
-  if (!test) {
-    throw AssertionError();
-  } else {
-    print("Test ${name != null ? "[$name] " : ""}passed");
-  }
-}
-
 // Messages content on which we delete message
 const toDeleteMessageContent = [
   "--trigger-test",
@@ -23,13 +14,9 @@ const toDeleteMessageContent = [
   "Converting successfull"
 ];
 
-// -------------------------------------------------------
-
 EmbedBuilder createTestEmbed() => EmbedBuilder()
   ..title = "Test title"
   ..addField(name: "Test field", content: "Test value", inline: true);
-
-// -------------------------------------------------------
 
 void main() {
   final env = Platform.environment;
@@ -50,23 +37,6 @@ void main() {
     } else {
       await channel.sendMessage(content: "Testing new local build");
     }
-
-    print("TESTING CLIENT INTERNALS");
-
-    final snowflakeA = Snowflake.fromDateTime(DateTime(2017));
-    final snowflakeB = Snowflake.fromDateTime(DateTime(2018));
-
-    test(snowflakeA.timestamp.isBefore(snowflakeB.timestamp), "Snowflake should be before timestamp");
-    test(snowflakeB.timestamp.isAfter(snowflakeA.timestamp), "Snowflake should be after timestamp");
-
-    test(snowflakeA.timestamp.isAtSameMomentAs(DateTime(2017)), "Snowflake should repsresent proper date");
-    test(snowflakeB.timestamp.isAtSameMomentAs(DateTime(2018)), "Snowflake should repsresent proper date");
-
-    // test(bot.channels.count > 0, "Channel count shouldn't be less or equal zero");
-    // test(bot.users.count > 0, "Users coutn count should n't be less or equal zero");
-    test(bot.shards == 1, "Shard count should be one");
-    test(bot.ready, "Bot should be ready");
-    //test(bot.inviteLink != null, "Bot's invite link shouldn't be null");
 
     print("TESTING BASIC FUNCTIONALITY!");
     final m = await channel.sendMessage(content: "Message test.");

@@ -1,7 +1,11 @@
-## 1.1.0
-_xx.xx.2020_
+## 2.0.0-rc.2
+_07.04.2020_
+
+> **Release Candidate 2 for stable version. Requires dart sdk 2.12**
 
 - Support for aliases for Commander (580e55c)
+- Fix command aliases (17187c5) @WasserEsser
+- Fix command recognition in Commander (7fff136) @WasserEsser
 
 ## 1.0.1
 _03.09.2020_

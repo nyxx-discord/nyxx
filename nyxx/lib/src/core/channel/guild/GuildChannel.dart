@@ -1,5 +1,6 @@
 part of nyxx;
 
+/// Represents channel within [Guild]. Shares logic for both [TextGuildChannel] and [VoiceGuildChannel].
 abstract class GuildChannel extends IChannel {
   /// The channel"s name.
   late final String name;

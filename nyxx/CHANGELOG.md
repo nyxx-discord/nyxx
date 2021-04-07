@@ -1,5 +1,7 @@
-## 1.1.0
-_xx.xx.2020_
+## 2.0.0-rc.2
+_07.04.2020_
+
+> **Release Candidate 2 for stable version. Requires dart sdk 2.12**
 
  - Removed `w_transport` and replaced it with `http` package for http module and websockets from `dart:io` (18d0163, 5644937, 9b863a4, 06482f9)
  - Fix replacing embed field. Order of fields is now preserved (f667c2a)
@@ -8,7 +10,17 @@ _xx.xx.2020_
  - Expose raw api call api (f297cc0)
  - Add support for gateway transport compression (fd090dd)
  - Moved to v8 on REST and gateway (423173d)
--  Intents value is now required and added to Nyxx constructor (2b3e002)
+ - Intents value is now required and added to Nyxx constructor (2b3e002)
+ - Added ability to configure cache (163eca9)
+ - Implemented stickers (16f2b79)
+ - Implemented inline replies (e412ec9)
+ - Added raw shard event stream (627f4a0)
+ - Fix message reaction events were not triggered when cache misses message (fedbd88)
+ - New utils related to slash commands (8e46b71) @HarryET
+ - Fixed bug where message with only files cannot be sent (1092624)
+ - Fixed setPresence method (fbb9c39) @One-Nub
+ - Added missing delete() method to IChannel (131ecc0)
+ - Added support for stage channels
 
 ## 1.0.2
 _08.09.2020_

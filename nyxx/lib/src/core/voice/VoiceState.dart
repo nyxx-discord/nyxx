@@ -33,6 +33,9 @@ class VoiceState {
   /// Whether this user's camera is enabled
   late final bool selfVideo;
 
+  /// The time at which the user requested to speak
+  late final DateTime? requestToSpeakTimeStamp;
+
   VoiceState._new(INyxx client, Map<String, dynamic> raw) {
     if (raw["channel_id"] != null) {
       this.channel = _ChannelCacheable(client, Snowflake(raw["channel_id"]));
@@ -46,6 +49,10 @@ class VoiceState {
 
     this.selfStream = raw["self_stream"] as bool? ?? false;
     this.selfVideo = raw["self_video"] as bool;
+
+    this.requestToSpeakTimeStamp = raw["request_to_speak_timestamp"] == null
+      ? null
+      : DateTime.parse(raw["request_to_speak_timestamp"] as String);
 
     this.suppress = raw["suppress"] as bool;
     this.sessionId = raw["session_id"] as String;

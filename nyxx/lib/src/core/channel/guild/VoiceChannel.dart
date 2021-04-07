@@ -46,3 +46,7 @@ class VoiceGuildChannel extends GuildChannel {
     }
   }
 }
+
+class StageVoiceGuildChannel extends VoiceGuildChannel {
+  StageVoiceGuildChannel._new(INyxx client, Map<String, dynamic> raw, [Snowflake? guildId]) : super._new(client, raw, guildId);
+}

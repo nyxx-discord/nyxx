@@ -26,6 +26,8 @@ abstract class IChannel extends SnowflakeEntity implements Disposable {
         return TextGuildChannel._new(client, raw, guildId);
       case 2:
         return VoiceGuildChannel._new(client, raw, guildId);
+      case 13:
+        return StageVoiceGuildChannel._new(client, raw, guildId);
       case 4:
         return CategoryGuildChannel._new(client, raw, guildId);
       default:

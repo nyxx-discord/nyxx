@@ -1,10 +1,6 @@
 analyzer:
-  enable-experiment:
-    - non-nullable
   strong-mode:
     implicit-casts: false
-  exclude:
-    - example/**
 linter:
   rules:
     - avoid_empty_else
