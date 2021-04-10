@@ -33,7 +33,7 @@ void main() {
 
   bot.onMessageReceived.listen((event) {
     if (event.message.content == "!ping") {
-      (event.message.channel.getOrDownload() as TextChannel).sendMessage(content: "Pong!");
+      event.message.channel.getFromCache()?.sendMessage(content: "Pong!");
     }
   });
 }

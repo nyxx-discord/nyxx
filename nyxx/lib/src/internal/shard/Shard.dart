@@ -139,18 +139,15 @@ class Shard implements Disposable {
       case 4004:
       case 4010:
         exit(1);
-        break;
       case 4013:
         manager._logger.shout("Cannot connect to gateway due intent value is invalid. "
             "Check https://discordapp.com/developers/docs/topics/gateway#gateway-intents for more info.");
         exit(1);
-        break;
       case 4014:
         manager._logger.shout("You sent a disallowed intent for a Gateway Intent. "
             "You may have tried to specify an intent that you have not enabled or are not whitelisted for. "
             "Check https://discordapp.com/developers/docs/topics/gateway#gateway-intents for more info.");
         exit(1);
-        break;
       case 4007:
       case 4009:
         _reconnect();
