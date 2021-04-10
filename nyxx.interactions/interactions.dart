@@ -7,11 +7,11 @@ void main() {
 
   interactions
     ..registerHandler("test", "This is test comamnd", [], handler: (event) async {
-      // Acknowledge about event so you can send reply later. You have 3 second to either ack command
-      // or send response
-      await event.acknowledge(showSource: true);
+      // Acknowledge about event so you can send reply later.
+      // You have 3 second to either ack command or send response
+      await event.acknowledge();
 
       // After long running task, send response
-      await event.reply(content: "This is example message result");
+      await event.respond(content: "This is example message result");
     });
 }

@@ -20,7 +20,7 @@ void main() {
       // Check if the name of the command is echo
       if (event.interaction.name == "echo") {
         // Reply with the message the user sent, showSource makes discord show the command the user sent in the channel.
-        await event.reply(content: event.interaction.args["message"]!.value, showSource: true);
+        await event.respond(content: event.interaction.getArg("message"));
       }
     });
   });

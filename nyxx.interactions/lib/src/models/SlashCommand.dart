@@ -2,6 +2,8 @@ part of nyxx_interactions;
 
 /// A slash command, can only be instantiated through a method on [Interactions]
 class SlashCommand {
+  final Nyxx _client;
+
   Snowflake? _id;
 
   Snowflake get id {
@@ -13,24 +15,22 @@ class SlashCommand {
   }
 
   /// Command name to be shown to the user in the Slash Command UI
-  late final String name;
+  final String name;
 
   /// Command description shown to the user in the Slash Command UI
-  late final String description;
+  final String description;
 
   /// The guild that the slash Command is registered in. This can be null if its a global command.
   late final Cacheable<Snowflake, Guild>? guild;
 
   /// The arguments that the command takes
-  late final List<CommandArg> args;
+  final List<CommandArg> args;
 
   /// If the command is a global on, false if restricted to a guild.
   bool get isGlobal => this.guild == null;
 
   /// If the command has been registered with the discord api
   late bool isRegistered = false;
-
-  late final Nyxx _client;
 
   SlashCommand._new(this._client, this.name, this.description, this.args, {this.guild});
 

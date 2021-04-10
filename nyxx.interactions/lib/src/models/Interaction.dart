@@ -58,6 +58,15 @@ class Interaction extends SnowflakeEntity {
     this.commandId = Snowflake(raw["data"]["id"]);
   }
 
+  /// Allows to fetch argument value by argument name
+  dynamic? getArg(String name) {
+    try {
+      return this.args.firstWhere((element) => element.name == name);
+    } on Error {
+      return null;
+    }
+  }
+
   Iterable<InteractionOption> _generateArgs(Map<String, dynamic> rawData) sync* {
     if (rawData["options"] == null) {
       return;
