@@ -45,6 +45,20 @@ jobs:
         run: ./travis.exe
         if: github.event_name != 'pull_request'
 
+      - name: Generate docs
+        working-directory: ./nyxx
+        run: dartdoc
+
+      - name: Deploy nyxx dev docs
+        uses: easingthemes/ssh-deploy@v2.1.5
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SERVER_SSH_KEY }}
+          ARGS: "-rltDzvO"
+          SOURCE: "nyxx/doc/api/"
+          REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
+          REMOTE_USER: ${{ secrets.REMOTE_USER }}
+          TARGET: "${{ secrets.REMOTE_TARGET }}/nyxx/"
+
   test-commander:
     name: Tests commander package
     needs: [test-nyxx]
@@ -84,6 +98,20 @@ jobs:
         run: ./commander-test.exe
         if: github.event_name != 'pull_request'
 
+      - name: Generate docs
+        working-directory: ./nyxx.commander
+        run: dartdoc
+
+      - name: Deploy nyxx.commander dev docs
+        uses: easingthemes/ssh-deploy@v2.1.5
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SERVER_SSH_KEY }}
+          ARGS: "-rltDzvO"
+          SOURCE: "nyxx.commander/doc/api/"
+          REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
+          REMOTE_USER: ${{ secrets.REMOTE_USER }}
+          TARGET: "${{ secrets.REMOTE_TARGET }}/nyxx.commander/"
+
   test-extensions:
     name: Tests extensions package
     needs: [test-commander]
@@ -122,3 +150,60 @@ jobs:
        working-directory: ./nyxx.extensions/test
        run: ./extensions-tests.exe
        if: github.event_name != 'pull_request'
+
+     - name: Generate docs
+       working-directory: ./nyxx.extensions
+       run: dartdoc
+
+     - name: Deploy nyxx.extensions dev docs
+       uses: easingthemes/ssh-deploy@v2.1.5
+       env:
+         SSH_PRIVATE_KEY: ${{ secrets.SERVER_SSH_KEY }}
+         ARGS: "-rltDzvO"
+         SOURCE: "nyxx.extensions/doc/api/"
+         REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
+         REMOTE_USER: ${{ secrets.REMOTE_USER }}
+         TARGET: "${{ secrets.REMOTE_TARGET }}/nyxx.extensions/"
+
+  test-interactions:
+    name: Tests interactions package
+    needs: [ test-extensions ]
+    runs-on: ubuntu-latest
+    env:
+      TEST_TOKEN: ${{ secrets.TEST_TOKEN }}
+    steps:
+      - name: Cache
+        uses: actions/cache@v2
+        with:
+          path: ~/.pub_cache
+          key: ${{ runner.os }}
+
+      - name: Setup Dart Action
+        uses: cedx/setup-dart@v2.3.0
+        with:
+          release-channel: stable
+
+      - name: Checkout
+        uses: actions/checkout@v2.3.4
+
+      - name: Install dependencies
+        working-directory: ./nyxx.interactions
+        run: dart pub get
+
+      - name: Analyze project source
+        working-directory: ./nyxx.interactions
+        run: dart analyze
+
+      - name: Generate docs
+        working-directory: ./nyxx.interactions
+        run: dartdoc
+
+      - name: Deploy nyxx.interactions dev docs
+        uses: easingthemes/ssh-deploy@v2.1.5
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SERVER_SSH_KEY }}
+          ARGS: "-rltDzvO"
+          SOURCE: "nyxx.interactions/doc/api/"
+          REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
+          REMOTE_USER: ${{ secrets.REMOTE_USER }}
+          TARGET: "${{ secrets.REMOTE_TARGET }}/nyxx.interactions/"
