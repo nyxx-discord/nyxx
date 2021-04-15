@@ -9,7 +9,7 @@ class Interaction extends SnowflakeEntity {
   late final int type;
 
   /// The guild the command was sent in.
-  late final Cacheable<Snowflake, Guild> guild;
+  late final Cacheable<Snowflake, Guild>? guild;
 
   /// The channel the command was sent in.
   late final Cacheable<Snowflake, TextChannel> channel;
@@ -35,10 +35,14 @@ class Interaction extends SnowflakeEntity {
   Interaction._new(this._client, Map<String, dynamic> raw) : super(Snowflake(raw["id"])) {
     this.type = raw["type"] as int;
 
-    this.guild = CacheUtility.createCacheableGuild(
-      _client,
-      Snowflake(raw["guild_id"],),
-    );
+    if (raw["guild_id"] != null) {
+      this.guild = CacheUtility.createCacheableGuild(
+        _client,
+        Snowflake(raw["guild_id"]),
+      );
+    } else {
+      this.guild = null;
+    }
 
     this.channel = CacheUtility.createCacheableTextChannel(
       _client,

@@ -81,36 +81,36 @@ jobs:
         uses: actions/checkout@v2.3.4
 
       - name: Install dependencies
-        working-directory: ./nyxx.commander
+        working-directory: ./nyxx_commander
         run: dart pub get
 
       - name: Analyze project source
-        working-directory: ./nyxx.commander
+        working-directory: ./nyxx_commander
         run: dart analyze
 
       - name: Compile tests
-        working-directory: ./nyxx.commander/test
+        working-directory: ./nyxx_commander/test
         run: dart2native commander-test.dart
         if: github.event_name != 'pull_request'
 
       - name: Run tests
-        working-directory: ./nyxx.commander/test
+        working-directory: ./nyxx_commander/test
         run: ./commander-test.exe
         if: github.event_name != 'pull_request'
 
       - name: Generate docs
-        working-directory: ./nyxx.commander
+        working-directory: ./nyxx_commander
         run: dartdoc
 
-      - name: Deploy nyxx.commander dev docs
+      - name: Deploy nyxx_commander dev docs
         uses: easingthemes/ssh-deploy@v2.1.5
         env:
           SSH_PRIVATE_KEY: ${{ secrets.SERVER_SSH_KEY }}
           ARGS: "-rltDzvO"
-          SOURCE: "nyxx.commander/doc/api/"
+          SOURCE: "nyxx_commander/doc/api/"
           REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
           REMOTE_USER: ${{ secrets.REMOTE_USER }}
-          TARGET: "${{ secrets.REMOTE_TARGET }}/nyxx.commander/"
+          TARGET: "${{ secrets.REMOTE_TARGET }}/nyxx_commander/"
 
   test-extensions:
     name: Tests extensions package
@@ -134,36 +134,36 @@ jobs:
        uses: actions/checkout@v2.3.4
 
      - name: Install dependencies
-       working-directory: ./nyxx.extensions
+       working-directory: ./nyxx_extensions
        run: dart pub get
 
      - name: Analyze project source
-       working-directory: ./nyxx.extensions
+       working-directory: ./nyxx_extensions
        run: dart analyze
 
      - name: Compile tests
-       working-directory: ./nyxx.extensions/test
+       working-directory: ./nyxx_extensions/test
        run: dart2native extensions-tests.dart
        if: github.event_name != 'pull_request'
 
      - name: Run tests
-       working-directory: ./nyxx.extensions/test
+       working-directory: ./nyxx_extensions/test
        run: ./extensions-tests.exe
        if: github.event_name != 'pull_request'
 
      - name: Generate docs
-       working-directory: ./nyxx.extensions
+       working-directory: ./nyxx_extensions
        run: dartdoc
 
-     - name: Deploy nyxx.extensions dev docs
+     - name: Deploy nyxx_extensions dev docs
        uses: easingthemes/ssh-deploy@v2.1.5
        env:
          SSH_PRIVATE_KEY: ${{ secrets.SERVER_SSH_KEY }}
          ARGS: "-rltDzvO"
-         SOURCE: "nyxx.extensions/doc/api/"
+         SOURCE: "nyxx_extensions/doc/api/"
          REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
          REMOTE_USER: ${{ secrets.REMOTE_USER }}
-         TARGET: "${{ secrets.REMOTE_TARGET }}/nyxx.extensions/"
+         TARGET: "${{ secrets.REMOTE_TARGET }}/nyxx_extensions/"
 
   test-interactions:
     name: Tests interactions package
@@ -187,23 +187,23 @@ jobs:
         uses: actions/checkout@v2.3.4
 
       - name: Install dependencies
-        working-directory: ./nyxx.interactions
+        working-directory: ./nyxx_interactions
         run: dart pub get
 
       - name: Analyze project source
-        working-directory: ./nyxx.interactions
+        working-directory: ./nyxx_interactions
         run: dart analyze
 
       - name: Generate docs
-        working-directory: ./nyxx.interactions
+        working-directory: ./nyxx_interactions
         run: dartdoc
 
-      - name: Deploy nyxx.interactions dev docs
+      - name: Deploy nyxx_interactions dev docs
         uses: easingthemes/ssh-deploy@v2.1.5
         env:
           SSH_PRIVATE_KEY: ${{ secrets.SERVER_SSH_KEY }}
           ARGS: "-rltDzvO"
-          SOURCE: "nyxx.interactions/doc/api/"
+          SOURCE: "nyxx_interactions/doc/api/"
           REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
           REMOTE_USER: ${{ secrets.REMOTE_USER }}
-          TARGET: "${{ secrets.REMOTE_TARGET }}/nyxx.interactions/"
+          TARGET: "${{ secrets.REMOTE_TARGET }}/nyxx_interactions/"

@@ -12,13 +12,19 @@ part "src/Interactions.dart";
 part "src/models/SlashCommand.dart";
 part "src/models/Interaction.dart";
 part "src/models/InteractionOption.dart";
+part "src/models/ArgChoice.dart";
+
+// Builders
+part "src/builders/ArgChoiceBuilder.dart";
+part "src/builders/CommandOptionBuilder.dart";
+part "src/builders/SlashCommandBuilder.dart";
 
 // Command Args
-part "src/models/commandArgs/ArgChoice.dart";
-part "src/models/commandArgs/CommandArg.dart";
+part "src/models/CommandOption.dart";
 
 // Internal
 part "src/internal/_EventController.dart";
+part "src/internal/utils.dart";
 
 // Events
 part "src/events/InteractionEvent.dart";
