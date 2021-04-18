@@ -23,6 +23,7 @@ class CommandOptionType extends IEnum<int> {
   const CommandOptionType(int value) : super(value);
 }
 
+/// An argument for a [SlashCommand].
 class CommandOption {
   /// The type of arg that will be later changed to an INT value, their values can be seen in the table below:
   /// | Name              | Value |

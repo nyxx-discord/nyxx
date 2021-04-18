@@ -1,5 +1,6 @@
 part of nyxx_interactions;
 
+/// Represents slash command that is returned from Discord API.
 class SlashCommand extends SnowflakeEntity {
   /// Unique id of the parent application
   late final Snowflake applicationId;

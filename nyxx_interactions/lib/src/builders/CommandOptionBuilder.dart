@@ -33,7 +33,7 @@ class CommandOptionBuilder implements Builder {
   /// If the option is a subcommand or subcommand group type, this nested options will be the parameters
   List<CommandOptionBuilder>? options;
 
-  SlashCommandHandlder? _handler;
+  SlashCommandHandler? _handler;
 
   /// Used to create an argument for a [SlashCommandBuilder].
   CommandOptionBuilder(this.type, this.name, this.description,
@@ -50,7 +50,7 @@ class CommandOptionBuilder implements Builder {
   };
 
   /// Registers handler for subcommand
-  void registerHandler(SlashCommandHandlder handler) {
+  void registerHandler(SlashCommandHandler handler) {
     if (this.type != CommandOptionType.subCommand) {
       throw StateError("Cannot register handler for command option with type other that subcommand");
     }

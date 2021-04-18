@@ -1,8 +1,11 @@
 part of nyxx_interactions;
 
+/// Choice that user can pick from. For [CommandOptionType.integer] or [CommandOptionType.string]
 class ArgChoice {
+  /// Name of choice
   late final String name;
 
+  /// Value of choice
   late final dynamic value;
 
   ArgChoice._new(Map<String, dynamic> raw) {

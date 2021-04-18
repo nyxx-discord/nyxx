@@ -14,7 +14,7 @@ class SlashCommandBuilder implements Builder {
   /// The arguments that the command takes
   List<CommandOptionBuilder> options;
 
-  SlashCommandHandlder? _handler;
+  SlashCommandHandler? _handler;
 
   /// A slash command, can only be instantiated through a method on [Interactions]
   SlashCommandBuilder(this.name, this.description, this.options, {this.guild});
@@ -25,5 +25,12 @@ class SlashCommandBuilder implements Builder {
     if (this.options.isNotEmpty) "options": this.options.map((e) => e._build()).toList()
   };
 
-  void registerHandler(SlashCommandHandlder handler) => this._handler = handler;
+  /// Registers handler for command. Note command cannot have handler if there are options present
+  void registerHandler(SlashCommandHandler handler) {
+    if (this.options.any((element) => element.type == CommandOptionType.subCommand || element.type == CommandOptionType.subCommandGroup)) {
+      throw new ArgumentError("Cannot register handler for slash command if command have subcommand or subcommandgroup");
+    }
+
+    this._handler = handler;
+  }
 }

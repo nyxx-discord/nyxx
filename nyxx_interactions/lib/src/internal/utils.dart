@@ -16,6 +16,7 @@ Iterable<Iterable<T>> _partition<T>(Iterable<T> list, bool Function(T) predicate
   return [matches, nonMatches];
 }
 
+/// Determine what handler should be executed based on [interaction]
 String _determineInteractionCommandHandler(Interaction interaction) {
   final commandHash = "${interaction.commandId}|${interaction.name}";
 
@@ -32,6 +33,7 @@ String _determineInteractionCommandHandler(Interaction interaction) {
   return "$commandHash${subCommand.name}";
 }
 
+/// Groups [SlashCommandBuilder] for registering them later in bulk
 Map<Snowflake, Iterable<SlashCommandBuilder>> _groupSlashCommandBuilders(Iterable<SlashCommandBuilder> commands) {
   final commandsMap = <Snowflake, List<SlashCommandBuilder>>{};
 

@@ -1,6 +1,7 @@
 part of nyxx_interactions;
 
-typedef SlashCommandHandlder = FutureOr<void> Function(InteractionEvent);
+/// Function that will handle execution of interaction event
+typedef SlashCommandHandler = FutureOr<void> Function(InteractionEvent);
 
 /// Interaction extension for Nyxx. Allows use of: Slash Commands.
 class Interactions {
@@ -14,7 +15,7 @@ class Interactions {
 
   final _commandBuilders = <SlashCommandBuilder>[];
   final _commands = <SlashCommand>[];
-  final _commandHandlers = <String, SlashCommandHandlder>{};
+  final _commandHandlers = <String, SlashCommandHandler>{};
 
   /// Emitted when a slash command is sent.
   late final Stream<InteractionEvent> onSlashCommand;
@@ -39,13 +40,16 @@ class Interactions {
     });
   }
 
+  /// Syncs commands builders with discord after client is ready.
   void syncOnReady() {
     this._client.onReady.listen((_) async {
       await this.sync();
     });
   }
 
-  /// Syncs command builders with discord
+  /// Syncs command builders with discord immediately.
+  /// Warning: Client could not be ready at the function execution.
+  /// Use [syncOnReady] for proper behavior
   Future<void> sync() async {
     final commandPartition = _partition<SlashCommandBuilder>(this._commandBuilders, (element) => element.guild == null);
     final globalCommands = commandPartition.first;
@@ -97,6 +101,7 @@ class Interactions {
     this._logger.info("Finished registering ${this._commandHandlers.length} commands!");
   }
 
+  /// Allows to register new [SlashCommandBuilder]
   void registerSlashCommand(SlashCommandBuilder slashCommandBuilder) {
     this._commandBuilders.add(slashCommandBuilder);
   }
