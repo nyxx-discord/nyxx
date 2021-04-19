@@ -107,6 +107,9 @@ class NyxxRest extends INyxx {
         bool ignoreExceptions = true,
         bool useDefaultLogger = true,
         Level? defaultLoggerLogLevel}) {
+    if (_token.isEmpty) {
+      throw MissingTokenError();
+    }
 
     if (useDefaultLogger) {
       Logger.root.level = defaultLoggerLogLevel ?? Level.ALL;
@@ -117,11 +120,7 @@ class NyxxRest extends INyxx {
       });
     }
 
-    this._logger.info("Starting bot with pid: $pid");
-
-    if (_token.isEmpty) {
-      throw MissingTokenError();
-    }
+    this._logger.info("Starting bot with pid: $pid. To stop the bot gracefully send SIGTERM or SIGKILL");
 
     if (!Platform.isWindows) {
       ProcessSignal.sigterm.watch().forEach((event) async {
@@ -323,13 +322,13 @@ class Nyxx extends NyxxRest {
     this._ws = _ConnectionManager(this);
   }
 
-  /// The client"s uptime.
+  /// The client's uptime.
   Duration get uptime => DateTime.now().difference(_startTime);
 
   /// [DateTime] when client was started
   DateTime get startTime => _startTime;
 
-  /// This endpoint is only for Public guilds if bot is not int the guild.
+  /// This endpoint is only for public guilds if bot is not int the guild.
   Future<GuildPreview> fetchGuildPreview(Snowflake guildId) async =>
     this._httpEndpoints.fetchGuildPreview(guildId);
 
@@ -350,29 +349,6 @@ class Nyxx extends NyxxRest {
   /// ``
   Future<User> fetchUser(Snowflake userId) =>
       this._httpEndpoints.fetchUser(userId);
-
-  // /// Creates new guild with provided builder.
-  // /// Only for bots with less than 10 guilds otherwise it will return Future with error.
-  // ///
-  // /// ```
-  // /// var guildBuilder = GuildBuilder()
-  // ///                       ..name = "Example Guild"
-  // ///                       ..roles = [RoleBuilder()..name = "Example Role]
-  // /// var newGuild = await client.createGuild(guildBuilder);
-  // /// ```
-  // Future<Guild> createGuild(GuildBuilder builder) async {
-  //   if (this.guilds.count >= 10) {
-  //     return Future.error(ArgumentError("Guild cannot be created if bot is in 10 or more guilds"));
-  //   }
-  //
-  //   final response = await this._http._execute(BasicRequest._new("/guilds", method: "POST"));
-  //
-  //   if (response is HttpResponseSuccess) {
-  //     return Guild._new(this, response.jsonBody as Map<String, dynamic>);
-  //   }
-  //
-  //   return Future.error(response);
-  // }
 
   /// Gets a webhook by its id and/or token.
   /// If token is supplied authentication is not needed.
@@ -421,7 +397,6 @@ class Nyxx extends NyxxRest {
     await this._events.dispose();
     await guilds.dispose();
     await users.dispose();
-    await guilds.dispose();
 
     this._logger.info("Exiting...");
     exit(0);

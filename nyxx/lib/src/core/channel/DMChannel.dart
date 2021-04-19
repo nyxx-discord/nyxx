@@ -58,7 +58,7 @@ class DMChannel extends IChannel implements TextChannel {
       client._httpEndpoints.fetchMessage(this.id, messageId);
 
   @override
-  Future<Message?> getMessage(Snowflake id) => Future.value(this.messageCache[id]);
+  Message? getMessage(Snowflake id) => this.messageCache[id];
 
   @override
   Future<Message> sendMessage({dynamic content, EmbedBuilder? embed, List<AttachmentBuilder>? files, bool? tts, AllowedMentions? allowedMentions, MessageBuilder? builder, ReplyBuilder? replyBuilder}) =>

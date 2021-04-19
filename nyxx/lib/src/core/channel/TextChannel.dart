@@ -8,7 +8,7 @@ abstract class TextChannel implements IChannel, ISend {
   MessageCache get messageCache;
 
   /// Returns [Message] with given id from CACHE
-  Future<Message?> getMessage(Snowflake id);
+  Message? getMessage(Snowflake id);
 
   /// Returns [Message] downloaded from API
   Future<Message> fetchMessage(Snowflake id);

@@ -191,7 +191,10 @@ class DMMessage extends Message {
     if (user == null) {
       final authorData = raw["author"] as Map<String, dynamic>;
       this.author = User._new(client, authorData);
-      this.client.users.add(this.author.id, this.author);
+
+      if (client._cacheOptions.userCachePolicyLocation.objectConstructor) {
+        this.client.users[this.author.id] = this.author;
+      }
     } else {
       this.author = user;
     }
@@ -240,7 +243,10 @@ class GuildMessage extends Message {
       this.author = Webhook._new(raw["author"] as Map<String, dynamic>, client);
     } else {
       this.author = User._new(client, raw["author"] as Map<String, dynamic>);
-      this.client.users[this.author.id] = this.author as User;
+
+      if (client._cacheOptions.userCachePolicyLocation.objectConstructor) {
+        this.client.users[this.author.id] = this.author as User;
+      }
     }
 
     if (raw["member"] != null) {

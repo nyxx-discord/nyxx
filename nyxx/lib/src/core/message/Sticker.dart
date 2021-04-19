@@ -19,7 +19,7 @@ class Sticker extends SnowflakeEntity {
   late final String asset;
 
   /// Sticker preview asset hash
-  late final String assetPreview;
+  late final String? assetPreview;
 
   /// Type of sticker format
   late final StickerFormat format;
@@ -36,7 +36,9 @@ class Sticker extends SnowflakeEntity {
     this.description = raw["description"] as String;
     this.tags = raw["tags"] as String?;
     this.asset = raw["asset"] as String;
-    this.assetPreview = raw["preview_asset"] as String;
+    this.assetPreview = raw["preview_asset"] != null
+      ? raw["preview_asset"] as String
+      : null;
     this.format = StickerFormat.from(raw["format_type"] as int);
   }
 }

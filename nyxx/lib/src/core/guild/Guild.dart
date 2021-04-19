@@ -408,7 +408,7 @@ class Guild extends SnowflakeEntity {
   /// Request members from gateway. Requires privileged intents in order to work.
   void requestChunking() => this.shard.requestMembers(this.id);
 
-  /// Allows to create new guil channel
+  /// Allows to create new guild channel
   Future<IChannel> createChannel(ChannelBuilder channelBuilder) =>
     this.client.httpEndpoints.createGuildChannel(this.id, channelBuilder);
 

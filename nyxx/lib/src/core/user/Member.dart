@@ -31,7 +31,7 @@ class Member extends SnowflakeEntity {
   /// Voice state of member. Null if not connected to channel or voice state not cached
   VoiceState? get voiceState => this.guild.getFromCache()?.voiceStates[this.id];
 
-  /// When the user starting boosting the guild 
+  /// When the user starting boosting the guild
   late DateTime? boostingSince;
 
   // TODO: is everything okay?
@@ -70,7 +70,7 @@ class Member extends SnowflakeEntity {
       this.joinedAt = DateTime.parse(raw["joined_at"] as String).toUtc();
     }
 
-    if (!client.users.hasKey(this.id)) {
+    if (!client.users.hasKey(this.id) && client._cacheOptions.userCachePolicyLocation.objectConstructor) {
       final userRaw = raw["user"] as Map<String, dynamic>;
 
       if (userRaw["id"] != null && userRaw.length != 1) {

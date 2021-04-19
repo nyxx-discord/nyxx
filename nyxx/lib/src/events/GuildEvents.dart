@@ -80,7 +80,9 @@ class GuildMemberUpdateEvent {
     this.member = _MemberCacheable(client, Snowflake(raw["d"]["user"]["id"]), guild);
 
     final user = User._new(client, raw["d"]["user"] as Map<String, dynamic>);
-    client.users[user.id] = user;
+    if (client._cacheOptions.userCachePolicyLocation.event) {
+      client.users[user.id] = user;
+    }
 
     final memberInstance = this.member.getFromCache();
     if (memberInstance == null) {
@@ -116,7 +118,7 @@ class GuildMemberAddEvent {
     this.member = Member._new(client, raw["d"] as Map<String, dynamic>, this.guild.id);
     this.user = User._new(client, raw["d"]["user"] as Map<String, dynamic>);
 
-    if (!client.users.hasKey(this.user.id)) {
+    if (!client.users.hasKey(this.user.id) && client._cacheOptions.userCachePolicyLocation.event) {
       client.users[user.id] = user;
     }
 
@@ -235,7 +237,7 @@ class RoleUpdateEvent {
 
   /// The guild that the member was banned from.
   late final Cacheable<Snowflake, Guild> guild;
-  
+
   RoleUpdateEvent._new(Map<String, dynamic> raw, Nyxx client) {
     this.guild = _GuildCacheable(client, Snowflake(raw["d"]["guild_id"]));
     this.role = Role._new(client, raw["d"]["role"] as Map<String, dynamic>, this.guild.id);

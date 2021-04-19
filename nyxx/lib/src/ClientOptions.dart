@@ -13,6 +13,9 @@ class CacheOptions {
 
   /// Defines which channel entities are preserved in cache.
   CachePolicy<IChannel> channelCachePolicy = ChannelCachePolicy.def;
+
+  /// Defines in which places user can be cached
+  CachePolicyLocation userCachePolicyLocation = CachePolicyLocation();
 }
 
 /// Optional client settings which can be used when creating new instance

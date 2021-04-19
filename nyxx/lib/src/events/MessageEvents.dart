@@ -75,7 +75,8 @@ abstract class MessageReactionEvent {
   /// Channel on which event was fired
   late final Cacheable<Snowflake, TextChannel> channel;
 
-  /// Reference to guild if event happend in guild
+  // TODO: Probably not working
+  /// Reference to guild if event happened in guild
   late final Cacheable<Snowflake, Guild> guild;
 
   /// Message reference
