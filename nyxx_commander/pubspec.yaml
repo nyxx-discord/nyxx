@@ -1,5 +1,5 @@
 name: nyxx_commander
-version: 2.0.0-rc.2
+version: 2.0.0-rc.3
 description: A Discord library for Dart.
 homepage: https://github.com/l7ssha/nyxx
 repository: https://github.com/l7ssha/nyxx
@@ -12,4 +12,4 @@ environment:
 dependencies:
   http: "^0.13.1"
   logging: "^1.0.1"
-  nyxx: "2.0.0-rc.1"
+  nyxx: "2.0.0-rc.3"

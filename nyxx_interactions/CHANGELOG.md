@@ -1,5 +1,5 @@
-## 2.0.0-rc.2
-_07.04.2020_
+## 2.0.0-rc.4
+_21.04.2021_
 
 > **Release Candidate 2 for stable version. Requires dart sdk 2.12**
 

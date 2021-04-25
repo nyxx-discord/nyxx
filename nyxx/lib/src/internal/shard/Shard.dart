@@ -40,7 +40,7 @@ class Shard implements Disposable {
   Duration _gatewayLatency = const Duration(); // latency of discord
   late DateTime _lastHeartbeatSent; // Datetime when last heartbeat was sent
   bool _heartbeatAckReceived = false; // True if last heartbeat was acked
-  
+
   Shard._new(this.id, this.manager, String gatewayUrl) {
     this._receivePort = ReceivePort();
     this._receiveStream = _receivePort.asBroadcastStream();
@@ -197,10 +197,10 @@ class Shard implements Disposable {
     if (discordPayload["s"] != null) {
       this._sequence = discordPayload["s"] as int;
     }
-    
+
     await _dispatch(discordPayload);
   }
-  
+
   Future<void> _dispatch(Map<String, dynamic> rawPayload) async {
     switch (rawPayload["op"] as int) {
       case OPCodes.heartbeatAck:
@@ -405,7 +405,7 @@ class Shard implements Disposable {
         }
         break;
     }
-  } 
+  }
 
   @override
   Future<void> dispose() async {

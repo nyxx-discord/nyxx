@@ -1,5 +1,5 @@
-## 2.0.0-rc.2
-_07.04.2020_
+## 2.0.0-rc.3
+_25.04.2021_
 
 > **Release Candidate 2 for stable version. Requires dart sdk 2.12**
 
@@ -21,6 +21,7 @@ _07.04.2020_
  - Fixed setPresence method (fbb9c39) @One-Nub
  - Added missing delete() method to IChannel (131ecc0)
  - Added support for stage channels
+ - Added cache options for user 
 
 ## 1.0.2
 _08.09.2020_
@@ -238,4 +239,3 @@ _Fri 06.07.2018_
   * Added missing gateway events
   * Replaced String ids with `Snowflake` type
 - **Bug fixes**
-
