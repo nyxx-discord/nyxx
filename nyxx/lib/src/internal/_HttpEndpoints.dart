@@ -265,7 +265,7 @@ abstract class IHttpEndpoints {
 
   /// Used to send a request including the bot token header.
   Future<_HttpResponse> sendRawRequest(String url, String method, {dynamic body, dynamic headers});
-  
+
   Future<GuildPreview> fetchGuildPreview(Snowflake guildId);
 
   Future<IChannel> createGuildChannel(Snowflake guildId, ChannelBuilder channelBuilder);
@@ -794,7 +794,7 @@ class _HttpEndpoints implements IHttpEndpoints {
       return;
     }
 
-    for (final raw in (response as HttpResponseSuccess)._jsonBody.values) {
+    for (final raw in (response as HttpResponseSuccess)._jsonBody) {
       yield Webhook._new(raw as Map<String, dynamic>, _client);
     }
   }

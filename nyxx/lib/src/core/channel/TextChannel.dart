@@ -1,5 +1,6 @@
 part of nyxx;
 
+/// Generic interface for all text channels types
 abstract class TextChannel implements IChannel, ISend {
   /// File upload limit for channel in bytes.
   Future<int> get fileUploadLimit;
@@ -74,14 +75,11 @@ abstract class TextChannel implements IChannel, ISend {
   Stream<Message> downloadMessages({int limit = 50, Snowflake? after, Snowflake? around, Snowflake? before});
 
   /// Starts typing.
-  @override
   Future<void> startTyping();
 
   /// Loops `startTyping` until `stopTypingLoop` is called.
-  @override
   void startTypingLoop();
 
   /// Stops a typing loop if one is running.
-  @override
   void stopTypingLoop();
 }

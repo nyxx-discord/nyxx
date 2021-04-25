@@ -1,5 +1,6 @@
 part of nyxx;
 
+/// Represents private channel with user
 class DMChannel extends IChannel implements TextChannel {
   @override
   late final MessageCache messageCache = MessageCache._new(client._options.messageCacheSize);

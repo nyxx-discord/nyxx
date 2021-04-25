@@ -66,11 +66,9 @@ class Cache<T, S> implements Disposable {
   Iterable<S> takeLast(int count) => values.toList().sublist(values.length - count);
 
   /// Get first element
-  @override
   S? get first => _cache.values.first;
 
   /// Get last element
-  @override
   S get last => _cache.values.last;
 
   /// Get number of elements from cache

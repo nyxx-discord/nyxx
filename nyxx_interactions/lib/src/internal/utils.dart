@@ -28,9 +28,12 @@ String _determineInteractionCommandHandler(Interaction interaction) {
     // ignore: empty_catches
   } on Error { }
 
-  final subCommand = interaction.args.firstWhere((element) => element.type == CommandOptionType.subCommand);
-
-  return "$commandHash${subCommand.name}";
+  try {
+    final subCommand = interaction.args.firstWhere((element) => element.type == CommandOptionType.subCommand);
+    return "$commandHash${subCommand.name}";
+  } on Error {
+    return commandHash;
+  }
 }
 
 /// Groups [SlashCommandBuilder] for registering them later in bulk

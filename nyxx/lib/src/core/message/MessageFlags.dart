@@ -3,13 +3,13 @@ part of nyxx;
 /// Extra features of the message
 class MessageFlags {
   /// This message has been published to subscribed channels (via Channel Following)
-  late final bool crossposted;
+  late final bool crossPosted;
 
   /// This message originated from a message in another channel (via Channel Following)
-  late final bool isCrosspost;
+  late final bool isCrossPost;
 
   /// Do not include any embeds when serializing this message
-  late final bool supressEmbeds;
+  late final bool suppressEmbeds;
 
   /// The source message for this crosspost has been deleted (via Channel Following)
   late final bool sourceMessageDeleted;
@@ -18,9 +18,9 @@ class MessageFlags {
   late final bool urgent;
 
   MessageFlags._new(int raw) {
-    this.crossposted = PermissionsUtils.isApplied(raw, 1 << 0);
-    this.isCrosspost = PermissionsUtils.isApplied(raw, 1 << 1);
-    this.supressEmbeds = PermissionsUtils.isApplied(raw, 1 << 2);
+    this.crossPosted = PermissionsUtils.isApplied(raw, 1 << 0);
+    this.isCrossPost = PermissionsUtils.isApplied(raw, 1 << 1);
+    this.suppressEmbeds = PermissionsUtils.isApplied(raw, 1 << 2);
     this.sourceMessageDeleted = PermissionsUtils.isApplied(raw, 1 << 3);
     this.urgent = PermissionsUtils.isApplied(raw, 1 << 4);
   }
