@@ -60,15 +60,19 @@ class ChannelType extends IEnum<int> {
   static const ChannelType guildNews = ChannelType._create(5);
   static const ChannelType guildStore = ChannelType._create(6);
 
+  /// Creates instance of [ChannelType] from [value].
   ChannelType.from(int value) : super(value);
   const ChannelType._create(int value) : super(value);
 
   @override
-  bool operator ==(other) {
+  bool operator ==(dynamic other) {
     if (other is int) {
       return this._value == other;
     }
 
     return super == other;
   }
+
+  @override
+  int get hashCode => this.value.hashCode;
 }

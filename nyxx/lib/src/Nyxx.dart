@@ -1,5 +1,6 @@
 part of nyxx;
 
+/// Generic interface for Nyxx. Represents basic functionality of Nyxx that are always available.
 abstract class INyxx implements Disposable {
   _HttpHandler get _http;
   _HttpEndpoints get _httpEndpoints;
@@ -28,9 +29,9 @@ abstract class INyxx implements Disposable {
   /// Emitted when a HTTP request failed.
   late final StreamController<HttpErrorEvent> _onHttpError;
 
-  /// Sent when the client is ratelimited, either by the ratelimit handler itself,
+  /// Sent when the client is rate limited, either by the rate limit handler itself,
   /// or when a 429 is received.
-  late final StreamController<RatelimitEvent> _onRatelimited;
+  late final StreamController<RatelimitEvent> _onRateLimited;
 
   /// Emitted when a successful HTTP response is received.
   late Stream<HttpResponseEvent> onHttpResponse;
@@ -38,9 +39,9 @@ abstract class INyxx implements Disposable {
   /// Emitted when a HTTP request failed.
   late Stream<HttpErrorEvent> onHttpError;
 
-  /// Sent when the client is ratelimited, either by the ratelimit handler itself,
+  /// Sent when the client is rate limited, either by the rate limit handler itself,
   /// or when a 429 is received.
-  late Stream<RatelimitEvent> onRatelimited;
+  late Stream<RatelimitEvent> onRateLimited;
 }
 
 /// Lightweight client which do not start ws connections.
@@ -158,15 +159,15 @@ class NyxxRest extends INyxx {
     this._onHttpResponse = StreamController.broadcast();
     this.onHttpResponse = _onHttpResponse.stream;
 
-    this._onRatelimited = StreamController.broadcast();
-    this.onRatelimited = _onRatelimited.stream;
+    this._onRateLimited = StreamController.broadcast();
+    this.onRateLimited = _onRateLimited.stream;
   }
 
   @override
   Future<void> dispose() async {
     await this._onHttpResponse.close();
     await this._onHttpError.close();
-    await this._onRatelimited.close();
+    await this._onRateLimited.close();
   }
 }
 

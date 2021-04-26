@@ -1,6 +1,6 @@
 import "dart:async";
 
-import "package:nyxx/nyxx.dart" show TextGuildChannel, Message, Nyxx, Role, Snowflake;
+import "package:nyxx/nyxx.dart" show TextGuildChannel, Message, Nyxx, Snowflake;
 
 import "Regexes.dart" show Regexes;
 
@@ -143,10 +143,10 @@ class MessageResolver {
         outputBuffer.write(await this._resolveEmoji(emojiMatch, part));
         continue;
       }
-      
+
       outputBuffer.write(part);
     }
-    
+
     return outputBuffer.toString().trim();
   }
 
@@ -187,7 +187,7 @@ class MessageResolver {
     if (channelTagHandling == TagHandling.sanitize) {
       return "<#$_whiteSpaceCharacter${match.group(1)}>";
     }
-    
+
     final channel = _client.channels.values.firstWhere((ch) => ch is TextGuildChannel && ch.id == match.group(1)) as TextGuildChannel?;
 
     if (channelTagHandling == TagHandling.name || channelTagHandling == TagHandling.fullName) {
@@ -197,10 +197,10 @@ class MessageResolver {
     if (channelTagHandling == TagHandling.nameNoPrefix || channelTagHandling == TagHandling.fullNameNoPrefix) {
       return channel != null ? channel.name : this.missingEntityHandler("channel");
     }
-    
+
     return content;
   }
-  
+
   FutureOr<String> _resolveEveryone(RegExpMatch match, String content) async {
     if (roleTagHandling == TagHandling.remove) {
       return "";

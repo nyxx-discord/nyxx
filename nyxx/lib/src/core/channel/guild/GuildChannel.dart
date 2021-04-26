@@ -124,7 +124,7 @@ abstract class GuildChannel extends IChannel {
   Future<void> deleteChannelPermission(SnowflakeEntity entity, {String? auditReason}) =>
       client._httpEndpoints.deleteChannelPermission(this.id, entity, auditReason: auditReason);
 
-  /// Creates new [Invite] for [Channel] and returns it"s instance
+  /// Creates new [Invite] for [IChannel] and returns it"s instance
   ///
   /// ```
   /// var invite = await channel.createInvite(maxUses: 2137);

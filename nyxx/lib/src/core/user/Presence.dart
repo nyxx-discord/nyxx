@@ -127,13 +127,13 @@ class ActivityTimestamps {
 class ActivityType extends IEnum<int> {
   ///Status type when playing a game
   static const ActivityType game = ActivityType._create(0);
-  
+
   ///Status type when streaming a game. Only supports twitch.tv or youtube.com url
   static const ActivityType streaming = ActivityType._create(1);
-  
+
   ///Status type when listening to Spotify
   static const ActivityType listening = ActivityType._create(2);
-  
+
   ///Custom status, not supported for bot accounts
   static const ActivityType custom = ActivityType._create(4);
 
@@ -142,13 +142,16 @@ class ActivityType extends IEnum<int> {
   const ActivityType._create(int value) : super(value);
 
   @override
-  bool operator ==(other) {
+  bool operator ==(dynamic other) {
     if (other is int) {
       return other == this._value;
     }
 
     return super == other;
   }
+
+  @override
+  int get hashCode => this.value.hashCode;
 }
 
 /// Represents party of game.

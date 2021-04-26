@@ -173,6 +173,9 @@ abstract class Message extends SnowflakeEntity implements Disposable {
 
     return false;
   }
+
+  @override
+  int get hashCode => this.id.hashCode;
 }
 
 /// Message that is sent in dm channel or group dm channel

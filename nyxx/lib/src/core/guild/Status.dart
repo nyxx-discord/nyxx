@@ -7,8 +7,9 @@ class UserStatus extends IEnum<String> {
   static const UserStatus online = UserStatus._create("online");
   static const UserStatus idle = UserStatus._create("idle");
 
-  const UserStatus._create(String? value) : super(value ?? "offline");
+  /// Creates instance of [UserStatus] from [value].
   UserStatus.from(String? value) : super(value ?? "offline");
+  const UserStatus._create(String? value) : super(value ?? "offline");
 
   /// Returns if user is online
   bool get isOnline => this != UserStatus.offline;
@@ -17,13 +18,16 @@ class UserStatus extends IEnum<String> {
   String toString() => _value;
 
   @override
-  bool operator ==(other) {
+  bool operator ==(dynamic other) {
     if (other is String) {
       return other.toString() == _value;
     }
 
     return super == other;
   }
+
+  @override
+  int get hashCode => this.value.hashCode;
 }
 
 /// Provides status of user on different devices

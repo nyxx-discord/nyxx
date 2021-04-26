@@ -26,7 +26,7 @@ typedef CommandExecutionError = FutureOr<void> Function(CommandContext context, 
 /// implement [PrefixHandlerFunction] for more fine control over where and in what conditions commands are executed.
 ///
 /// Allows to specify callbacks which are executed before and after command - also on per command basis.
-/// [beforeCommandHandler] callbacks are executed only command exists and is matched with message content.
+/// beforeCommandHandler callbacks are executed only command exists and is matched with message content.
 // ignore: prefer_mixin
 class Commander with ICommandRegistrable {
   late final PrefixHandlerFunction _prefixHandler;

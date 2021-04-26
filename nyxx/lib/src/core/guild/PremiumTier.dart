@@ -11,11 +11,14 @@ class PremiumTier extends IEnum<int> {
   PremiumTier.from(int? value) : super(value ?? 0);
 
   @override
-  bool operator ==(other) {
+  bool operator ==(dynamic other) {
     if (other is int) {
       return other == _value;
     }
 
     return super == other;
   }
+
+  @override
+  int get hashCode => this.value.hashCode;
 }

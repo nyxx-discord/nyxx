@@ -1,5 +1,7 @@
 part of nyxx;
 
+/// Shard is single connection to discord gateway. Since bots can grow big, handling thousand of guild on same websocket connections would be very hand.
+/// Traffic can be split into different connections which can be run on different processes or even different machines.
 class Shard implements Disposable {
   /// Id of shard
   final int id;

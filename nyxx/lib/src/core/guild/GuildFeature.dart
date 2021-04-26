@@ -38,15 +38,19 @@ class GuildFeature extends IEnum<String> {
   /// Guild has enabled the welcome screen
   static const GuildFeature welcomeScreenEnabled = GuildFeature._create("WELCOME_SCREEN_ENABLED");
 
-  const GuildFeature._create(String? value) : super(value ?? "");
+  /// Creates instance of [GuildFeature] from [value].
   GuildFeature.from(String? value) : super(value ?? "");
+  const GuildFeature._create(String? value) : super(value ?? "");
 
   @override
-  bool operator ==(other) {
+  bool operator ==(dynamic other) {
     if (other is String) {
       return other == _value;
     }
 
     return super == other;
   }
+
+  @override
+  int get hashCode => this.value.hashCode;
 }

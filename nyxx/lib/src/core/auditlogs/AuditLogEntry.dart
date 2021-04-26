@@ -78,11 +78,14 @@ class AuditLogEntryType extends IEnum<int> {
   const AuditLogEntryType._create(int value) : super(value);
 
   @override
-  bool operator ==(other) {
+  bool operator ==(dynamic other) {
     if (other is int) {
       return other == this._value;
     }
 
     return super == other;
   }
+
+  @override
+  int get hashCode => this.value.hashCode;
 }

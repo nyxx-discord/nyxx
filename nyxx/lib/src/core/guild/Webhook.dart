@@ -20,6 +20,9 @@ class WebhookType extends IEnum<int> {
 
     return super == other;
   }
+
+  @override
+  int get hashCode => this.value.hashCode;
 }
 
 ///Webhooks are a low-effort way to post messages to channels in Discord.

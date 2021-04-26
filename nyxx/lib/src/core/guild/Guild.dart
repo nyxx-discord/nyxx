@@ -253,7 +253,7 @@ class Guild extends SnowflakeEntity {
   Future<IGuildEmoji> fetchEmoji(Snowflake emojiId) =>
       client._httpEndpoints.fetchGuildEmoji(this.id, emojiId);
 
-  /// Allows to create new guild emoji. [name] is required and you have to specify one of two other parameters: [image] or [imageBytes].
+  /// Allows to create new guild emoji. [name] is required and you have to specify one of other parameters: [imageFile], [imageBytes] or [encodedImage].
   /// [imageBytes] can be useful if you want to create image from http response.
   ///
   /// ```

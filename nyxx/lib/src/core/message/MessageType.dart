@@ -2,7 +2,7 @@ part of nyxx;
 
 /// Represents messgae type
 class MessageType extends IEnum<int> {
-  static const MessageType Default = MessageType._create(0);
+  static const MessageType def = MessageType._create(0);
   static const MessageType recipientAdd = MessageType._create(1);
   static const MessageType recipientRemove = MessageType._create(2);
   static const MessageType call = MessageType._create(3);
@@ -19,15 +19,19 @@ class MessageType extends IEnum<int> {
   static const MessageType guildStream = MessageType._create(13);
   static const MessageType guildDiscoveryRequalified = MessageType._create(15);
 
-  const MessageType._create(int? value) : super(value ?? 0);
+  /// Creates instance of [MessageType] from [value].
   MessageType.from(int? value) : super(value ?? 0);
+  const MessageType._create(int? value) : super(value ?? 0);
 
   @override
-  bool operator ==(other) {
+  bool operator ==(dynamic other) {
     if (other is int) {
       return other == _value;
     }
 
     return super == other;
   }
+
+  @override
+  int get hashCode => this.value.hashCode;
 }

@@ -17,7 +17,7 @@ abstract class IEnum<T> {
   int get hashCode => _value.hashCode;
 
   @override
-  bool operator ==(other) {
+  bool operator ==(dynamic other) {
     if (other is IEnum<T>) {
       return other._value == this._value;
     }
