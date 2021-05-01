@@ -4,7 +4,7 @@ part of nyxx;
 /// This will always validate against message content to avoid phantom pings (e.g. to ping everyone, you must still have @everyone in the message content), and check against user/bot permissions.
 ///
 /// If class is only instantiated without any modifications to its fields, by default it will suppress all mentions.
-class AllowedMentions implements Builder {
+class AllowedMentions extends Builder {
   bool _allowEveryone = false;
   bool _allowUsers = false;
   bool _allowRoles = false;

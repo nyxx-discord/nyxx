@@ -48,15 +48,7 @@ abstract class TextChannel implements IChannel, ISend {
   /// channel.sendMessage(files: [new File("kitten.jpg")], embed: embed, content: "HEJKA!");
   /// ```
   @override
-  Future<Message> sendMessage({
-    dynamic content,
-    EmbedBuilder? embed,
-    List<AttachmentBuilder>? files,
-    bool? tts,
-    AllowedMentions? allowedMentions,
-    MessageBuilder? builder,
-    ReplyBuilder? replyBuilder
-  });
+  Future<Message> sendMessage(MessageBuilder builder);
 
   /// Bulk removes many messages by its ids. [messages] is list of messages ids to delete.
   ///

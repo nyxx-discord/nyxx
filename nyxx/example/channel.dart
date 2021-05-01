@@ -26,13 +26,13 @@ void main() {
       final channel = await guild.createChannel(ChannelBuilder("Test channel", ChannelType.text)) as TextGuildChannel;
 
       // Send feedback
-      await e.message.channel.getFromCache()?.sendMessage(content: "Crated ${channel.mention}");
+      await e.message.channel.getFromCache()?.sendMessage(MessageBuilder.content("Crated ${channel.mention}"));
 
       // Delete channel that we just created
       await channel.delete();
 
       // Send feedback
-      await e.message.channel.getFromCache()?.sendMessage(content: "Deleted ${channel.mention}");
+      await e.message.channel.getFromCache()?.sendMessage(MessageBuilder.content("Deleted ${channel.mention}"));
     }
   });
 }

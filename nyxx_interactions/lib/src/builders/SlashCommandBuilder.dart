@@ -1,7 +1,7 @@
 part of nyxx_interactions;
 
 /// A slash command, can only be instantiated through a method on [Interactions]
-class SlashCommandBuilder implements Builder {
+class SlashCommandBuilder extends Builder {
   /// Command name to be shown to the user in the Slash Command UI
   final String name;
 

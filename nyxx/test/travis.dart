@@ -32,15 +32,15 @@ void main() {
     // test(channel != null, "Channel cannot be null");
     if (env["GITHUB_RUN_NUMBER"] != null) {
       await channel.sendMessage(
-          content:
-              "Testing new build `#${env['GITHUB_RUN_NUMBER']}` (ID: `${env['GITHUB_RUN_ID']}`) from commit `${env['GITHUB_SHA']}` started by `${env['GITHUB_ACTOR']} `");
+          MessageBuilder.content("Testing new build `#${env['GITHUB_RUN_NUMBER']}` (ID: `${env['GITHUB_RUN_ID']}`) from commit `${env['GITHUB_SHA']}` started by `${env['GITHUB_ACTOR']}`")
+      );
     } else {
-      await channel.sendMessage(content: "Testing new local build");
+      await channel.sendMessage(MessageBuilder.content("Testing new local build"));
     }
 
     print("TESTING BASIC FUNCTIONALITY!");
-    final m = await channel.sendMessage(content: "Message test.");
-    await m.edit(content: "Edit test.");
+    final m = await channel.sendMessage(MessageBuilder.content("Message test."));
+    await m.edit(MessageBuilder.content("Edit test."));
 
     await m.createReaction(UnicodeEmoji("😂"));
     await m.deleteSelfReaction(UnicodeEmoji("😂"));
@@ -49,15 +49,14 @@ void main() {
 
     print("TESTING SENDING FILES");
 
-    await channel.sendMessage(
-        content: "PLIK SIEMA",
-        files: [AttachmentBuilder.path("./kitty.webp", spoiler: true)]).then((message) async => message.delete());
+    await channel.sendMessage(MessageBuilder.content("PLIK SIEMA")..files = [AttachmentBuilder.path("./kitty.webp", spoiler: true)])
+        .then((message) async => message.delete());
 
     print("TESTING ALLOWED MENTIONS");
-    await channel.sendMessage(content: "@everyone HEJ", allowedMentions: AllowedMentions());
+    await channel.sendMessage(MessageBuilder.content("@everyone HEJ")..allowedMentions = AllowedMentions());
 
     print("TESTING EMBEDS");
-    await channel.sendMessage(content: "Testing embed!", embed: createTestEmbed());
+    await channel.sendMessage(MessageBuilder.content("Testing embed!")..embed = createTestEmbed());
   });
 
   bot.onMessageReceived.listen((e) async {
@@ -92,7 +91,7 @@ void main() {
           final field = embed.fields.first;
 
           if (field.name == "Test field" && field.content == "Test value" && field.inline!) {
-            await (await e.message.channel.getOrDownload()).sendMessage(content: "Tests completed successfully!");
+            await (await e.message.channel.getOrDownload()).sendMessage(MessageBuilder.content("Tests completed successfully!"));
             await e.message.delete();
             print("Nyxx tests completed successfully!");
             print("Final memory usage: ${(ProcessInfo.currentRss / 1024 / 1024).toStringAsFixed(2)} MB");

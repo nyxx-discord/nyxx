@@ -119,8 +119,8 @@ abstract class Message extends SnowflakeEntity implements Disposable {
       client._httpEndpoints.suppressMessageEmbeds(this.channel.id, this.id);
 
   /// Edits the message.
-  Future<Message> edit({dynamic content, EmbedBuilder? embed, AllowedMentions? allowedMentions, MessageEditBuilder? builder}) =>
-      client._httpEndpoints.editMessage(this.channel.id, this.id, content: content, embed: embed, allowedMentions: allowedMentions, builder: builder);
+  Future<Message> edit(MessageBuilder builder) =>
+      client._httpEndpoints.editMessage(this.channel.id, this.id, builder);
 
   /// Add reaction to message.
   Future<void> createReaction(IEmoji emoji) =>

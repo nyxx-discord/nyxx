@@ -1,7 +1,7 @@
 part of nyxx;
 
 /// Allows to build guild object for creating new one or modifying existing
-class GuildBuilder implements Builder {
+class GuildBuilder extends Builder {
   /// Name of Guild
   String? name;
 
@@ -47,7 +47,7 @@ class GuildBuilder implements Builder {
 }
 
 /// Creates role
-class RoleBuilder implements Builder {
+class RoleBuilder extends Builder {
   /// Name of role
   String name;
 
@@ -81,7 +81,7 @@ class RoleBuilder implements Builder {
 }
 
 /// Builder for creating mini channel instance
-class ChannelBuilder implements Builder {
+class ChannelBuilder extends Builder {
   /// Name of channel
   String name;
 

@@ -40,7 +40,7 @@ void main() {
         ..color = getColorForUserFromMessage(e.message);
 
       // Sent an embed to channel where message received was sent
-      e.message.channel.getFromCache()?.sendMessage(embed: embed);
+      e.message.channel.getFromCache()?.sendMessage(MessageBuilder.embed(embed));
     }
   });
 }

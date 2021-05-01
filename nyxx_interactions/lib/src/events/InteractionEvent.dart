@@ -54,7 +54,7 @@ class InteractionEvent {
   /// Used to acknowledge a Interaction and send a response.
   /// Once this is sent you can then only send ChannelMessages.
   /// You can also set showSource to also print out the command the user entered.
-  Future<void> respond({ dynamic content, EmbedBuilder? embed, bool? tts, AllowedMentions? allowedMentions, bool hidden = false}) async {
+  Future<void> respond(MessageBuilder builder, {bool hidden = false}) async {
     if (DateTime.now().isAfter(this.receivedAt.add(const Duration(minutes: 15)))) {
       return Future.error(InteractionExpiredError());
     }
@@ -65,13 +65,7 @@ class InteractionEvent {
 
     if (hasResponded) {
       url = "/webhooks/${this._client.app.id.toString()}/${this.interaction.token}/messages/@original";
-      body = <String, dynamic> {
-        "content": content,
-        "embeds": embed != null ? [BuilderUtility.buildRawEmbed(embed)] : null,
-        "allowed_mentions":
-        allowedMentions != null ? BuilderUtility.buildRawAllowedMentions(allowedMentions) : null,
-        "tts": content != null && tts != null && tts
-      };
+      body = builder.build(this._client);
       method = "PATCH";
     } else {
       url = "/interactions/${this.interaction.id.toString()}/${this.interaction.token}/callback";
@@ -79,11 +73,7 @@ class InteractionEvent {
         "type": 4,
         "data": {
           if (hidden) "flags": 1 << 6,
-          "content": content,
-          "embeds": embed != null ? [BuilderUtility.buildRawEmbed(embed)] : null,
-          "allowed_mentions":
-          allowedMentions != null ? BuilderUtility.buildRawAllowedMentions(allowedMentions) : null,
-          "tts": content != null && tts != null && tts
+          ...builder.build(this._client)
         },
       };
       method = "POST";

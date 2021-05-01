@@ -35,24 +35,20 @@ class CommandContext {
   static final _codeBlocksRegex = RegExp(r"```(\w+)?(\s)?(((.+)(\s)?)+)```");
 
   /// Creates inline reply for message
-  Future<Message> reply({
-    dynamic content,
-    EmbedBuilder? embed,
-    List<AttachmentBuilder>? files,
-    bool? tts,
-    AllowedMentions? allowedMentions,
-    MessageBuilder? builder,
-    bool mention = false,
-  }) async {
+  Future<Message> reply(MessageBuilder builder, {bool mention = false, bool reply = false }) async {
     if (mention) {
-      if (allowedMentions != null) {
-        allowedMentions.allow(reply: true);
+      if (builder.allowedMentions != null) {
+        builder.allowedMentions!.allow(reply: true);
       } else {
-        allowedMentions = AllowedMentions()..allow(reply: true);
+        builder.allowedMentions = AllowedMentions()..allow(reply: true);
       }
     }
 
-    return channel.sendMessage(content: content, embed: embed, tts: tts, allowedMentions: allowedMentions, builder: builder, replyBuilder: ReplyBuilder.fromMessage(this.message));
+    if (reply) {
+      builder.replyBuilder = ReplyBuilder.fromMessage(this.message);
+    }
+
+    return channel.sendMessage(builder);
   }
 
   /// Reply to message. It allows to send regular message, Embed or both.
@@ -62,16 +58,7 @@ class CommandContext {
   ///   await context.reply(content: context.user.avatarURL());
   /// }
   /// ```
-  Future<Message> sendMessage({
-    dynamic content,
-    EmbedBuilder? embed,
-    List<AttachmentBuilder>? files,
-    bool? tts,
-    AllowedMentions? allowedMentions,
-    MessageBuilder? builder,
-    ReplyBuilder? replyBuilder,
-  }) => channel.sendMessage(
-        content: content, embed: embed, tts: tts, files: files, builder: builder, allowedMentions: allowedMentions, replyBuilder: replyBuilder);
+  Future<Message> sendMessage(MessageBuilder builder) => channel.sendMessage(builder);
 
   /// Reply to messages, then delete it when [duration] expires.
   ///
@@ -80,16 +67,8 @@ class CommandContext {
   ///   await context.replyTemp(content: user.avatarURL());
   /// }
   /// ```
-  Future<Message> sendMessageTemp(Duration duration, {
-    dynamic content,
-    EmbedBuilder? embed,
-    List<AttachmentBuilder>? files,
-    bool? tts,
-    AllowedMentions? allowedMentions,
-    MessageBuilder? builder,
-    ReplyBuilder? replyBuilder
-  }) => channel
-        .sendMessage(content: content, embed: embed, files: files, tts: tts, builder: builder, allowedMentions: allowedMentions, replyBuilder: replyBuilder)
+  Future<Message> sendMessageTemp(Duration duration, MessageBuilder builder) => channel
+        .sendMessage(builder)
         .then((msg) {
           Timer(duration, () => msg.delete());
           return msg;
@@ -101,24 +80,8 @@ class CommandContext {
   ///   await context.replyDelayed(Duration(seconds: 2), content: user.avatarURL());
   /// }
   /// ```
-  Future<Message> sendMessageDelayed(Duration duration,
-      {dynamic content,
-        EmbedBuilder? embed,
-        List<AttachmentBuilder>? files,
-        bool? tts,
-        AllowedMentions? allowedMentions,
-        MessageBuilder? builder,
-        ReplyBuilder? replyBuilder
-      }) =>  Future.delayed(
-        duration,
-        () => channel.sendMessage(
-            content: content,
-            embed: embed,
-            files: files,
-            tts: tts,
-            builder: builder,
-            allowedMentions: allowedMentions,
-            replyBuilder: replyBuilder));
+  Future<Message> sendMessageDelayed(Duration duration, MessageBuilder builder) =>
+      Future.delayed(duration, () => channel.sendMessage(builder));
 
   /// Awaits for emoji under given [msg]
   Future<IEmoji> awaitEmoji(Message msg) async =>

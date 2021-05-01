@@ -1,7 +1,7 @@
 part of nyxx_interactions;
 
 /// A specified choice for a slash command argument.
-class ArgChoiceBuilder implements Builder {
+class ArgChoiceBuilder extends Builder {
   /// This options name.
   String name;
 

@@ -1,9 +1,18 @@
 part of nyxx;
 
-/// Message builder for editing messages.
-class MessageEditBuilder {
+/// Allows to create pre built custom messages which can be passed to classes which inherits from [ISend].
+class MessageBuilder extends BuilderWithClient {
   /// Clear character which can be used to skip first line in message body or sanitize message content
   static const clearCharacter = "‎";
+
+  /// Set to true if message should be TTS
+  bool? tts;
+
+  /// List of files to send with message
+  List<AttachmentBuilder>? files;
+
+  /// Allows to create message that replies to another message
+  ReplyBuilder? replyBuilder;
 
   /// Embed to include in message
   EmbedBuilder? embed;
@@ -22,6 +31,17 @@ class MessageEditBuilder {
   /// Returns current content of message
   String get content => _content.toString();
 
+  /// Generic constructor for [MessageBuilder]
+  MessageBuilder();
+
+  /// Creates [MessageBuilder] with only content
+  MessageBuilder.content(String content) {
+    this.content = content;
+  }
+
+  /// Creates [MessageBuilder] with only embed
+  MessageBuilder.embed(this.embed);
+
   /// Allows to add embed to message
   void setEmbed(void Function(EmbedBuilder embed) builder) {
     this.embed = EmbedBuilder();
@@ -38,39 +58,33 @@ class MessageEditBuilder {
   void append(Object text) => _content.write(text);
 
   /// Appends spoiler to message
-  void appendSpoiler(Object text) => appendWithDecoration(text, MessageDecoration.spoiler);
+  void appendSpoiler(Object text) =>
+      appendWithDecoration(text, MessageDecoration.spoiler);
 
   /// Appends italic text to message
-  void appendItalics(Object text) => appendWithDecoration(text, MessageDecoration.italics);
+  void appendItalics(Object text) =>
+      appendWithDecoration(text, MessageDecoration.italics);
 
   /// Appends bold text to message
-  void appendBold(Object text) => appendWithDecoration(text, MessageDecoration.bold);
+  void appendBold(Object text) =>
+      appendWithDecoration(text, MessageDecoration.bold);
 
   /// Appends strikeout text to message
-  void appendStrike(Object text) => appendWithDecoration(text, MessageDecoration.strike);
+  void appendStrike(Object text) =>
+      appendWithDecoration(text, MessageDecoration.strike);
 
   /// Appends simple code to message
-  void appendCodeSimple(Object text) => appendWithDecoration(text, MessageDecoration.codeSimple);
+  void appendCodeSimple(Object text) =>
+      appendWithDecoration(text, MessageDecoration.codeSimple);
 
   /// Appends code block to message
-  void appendCode(Object language, Object code) => appendWithDecoration("$language\n$code", MessageDecoration.codeLong);
+  void appendCode(Object language, Object code) =>
+      appendWithDecoration("$language\n$code", MessageDecoration.codeLong);
 
   /// Appends formatted text to message
   void appendWithDecoration(Object text, MessageDecoration decoration) {
     _content.write("$decoration$text$decoration");
   }
-}
-
-/// Allows to create pre built custom messages which can be passed to classes which inherits from [ISend].
-class MessageBuilder extends MessageEditBuilder {
-  /// Set to true if message should be TTS
-  bool? tts;
-
-  /// List of files to send with message
-  List<AttachmentBuilder>? files;
-
-  /// Allows to create message that replies to another message
-  ReplyBuilder? replyBuilder;
 
   /// Add attachment
   void addAttachment(AttachmentBuilder attachment) {
@@ -85,7 +99,8 @@ class MessageBuilder extends MessageEditBuilder {
   }
 
   /// Add attachment from specified bytes
-  void addBytesAttachment(List<int> bytes, String name, {bool spoiler = false}) {
+  void addBytesAttachment(List<int> bytes, String name,
+      {bool spoiler = false}) {
     addAttachment(AttachmentBuilder.bytes(bytes, name, spoiler: spoiler));
   }
 
@@ -95,7 +110,27 @@ class MessageBuilder extends MessageEditBuilder {
   }
 
   /// Sends message
-  Future<Message?> send(ISend entity) => entity.sendMessage(builder: this);
+  Future<Message> send(ISend entity) => entity.sendMessage(this);
+
+  @override
+  Map<String, dynamic> _build(INyxx client) {
+    if (this.content.isEmpty && embed == null && (this.files == null || this.files!.isEmpty)) {
+      throw ArgumentError(
+          "When sending message content, embed or files have to be not null");
+    }
+
+    allowedMentions ??= client._options.allowedMentions;
+
+    return <String, dynamic>{
+      if (content.isNotEmpty) "content": content.toString(),
+      if (embed != null) "embed": embed!._build(),
+      if (allowedMentions != null) "allowed_mentions": allowedMentions!._build(),
+      if (replyBuilder != null) "message_reference": replyBuilder!._build(),
+      if (tts != null) "tts": tts,
+    };
+  }
+
+  bool _hasFiles() => this.files != null && this.files!.isNotEmpty;
 }
 
 /// Specifies formatting of String appended with [MessageBuilder]

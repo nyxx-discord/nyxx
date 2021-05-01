@@ -1,7 +1,7 @@
 part of nyxx;
 
 /// Allows to build object of user presence used later when setting user presence.
-class PresenceBuilder implements Builder {
+class PresenceBuilder extends Builder {
   /// Status of user.
   UserStatus? status;
 
