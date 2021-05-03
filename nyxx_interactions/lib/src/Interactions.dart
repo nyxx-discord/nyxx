@@ -142,7 +142,7 @@ class Interactions {
     final registeredSlashCommands = (response.jsonBody as List<dynamic>).map((e) => SlashCommand._new(e as Map<String, dynamic>, this._client));
 
     for(final registeredCommand in registeredSlashCommands) {
-      final matchingBuilder = builders.firstWhere((element) => element.name == registeredCommand.name);
+      final matchingBuilder = builders.firstWhere((element) => element.name.toLowerCase() == registeredCommand.name);
       this._assignCommandToHandler(matchingBuilder, registeredCommand);
 
       this._commands.add(registeredCommand);
