@@ -131,6 +131,8 @@ class MessageBuilder extends BuilderWithClient {
   }
 
   bool _hasFiles() => this.files != null && this.files!.isNotEmpty;
+
+  Map<String, dynamic> build(INyxx client) => this._build(client);
 }
 
 /// Specifies formatting of String appended with [MessageBuilder]

@@ -94,7 +94,7 @@ class Commander with ICommandRegistrable {
     }
 
     // Find matching command with given message content
-    final matchingCommand = _commandEntities._findMatchingCommand(event.message.content.replaceFirst(prefix, "").trim().split(" ")) as CommandHandler?;
+    final matchingCommand = _CommandMatcher._findMatchingCommand(event.message.content.replaceFirst(prefix, "").trim().split(" "), _commandEntities) as CommandHandler?;
 
     if(matchingCommand == null) {
       return;
@@ -109,7 +109,7 @@ class Commander with ICommandRegistrable {
 
     final finalCommand = match?.namedGroup("finalCommand");
 
-    // construct commandcontext
+    // construct CommandContext
     final context = CommandContext._new(
       event.message.channel.getFromCache()!,
       event.message.author,

@@ -1,11 +1,10 @@
 part of nyxx_commander;
 
-// TODO: FIX. I think that is just awful but is does its job
-extension _CommandMatcher on Iterable<CommandEntity> {
-  CommandEntity? _findMatchingCommand(Iterable<String> messageParts) {
-    for (final entity in this) {
+class  _CommandMatcher {
+  static CommandEntity? _findMatchingCommand(Iterable<String> messageParts, Iterable<CommandEntity> commands) {
+    for (final entity in commands) {
       if(entity is CommandGroup && entity.name == "") {
-        final e = entity._commandEntities._findMatchingCommand(messageParts);
+        final e = _findMatchingCommand(messageParts, entity._commandEntities);
 
         if(e != null) {
           return e;
@@ -19,7 +18,7 @@ extension _CommandMatcher on Iterable<CommandEntity> {
           return null;
         }
 
-        final e = entity._commandEntities._findMatchingCommand(messageParts.skip(1));
+        final e = _findMatchingCommand(messageParts.skip(1), entity._commandEntities);
 
         if(e != null) {
           return e;

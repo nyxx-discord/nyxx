@@ -15,7 +15,10 @@ class Interaction extends SnowflakeEntity {
   late final Cacheable<Snowflake, TextChannel> channel;
 
   /// The member who sent the interaction
-  late final Member author;
+  late final Member memberAuthor;
+
+  /// The user who sent the interaction.
+  late final User userAuthor;
 
   /// Token to send requests
   late final String token;
@@ -23,49 +26,49 @@ class Interaction extends SnowflakeEntity {
   /// Version of interactions api
   late final int version;
 
-  /// Name of interaction
-  late final String name;
-
-  /// Args of the interaction
-  late final Iterable<InteractionOption> args;
-
-  /// Id of command
-  late final Snowflake commandId;
-
   Interaction._new(this._client, Map<String, dynamic> raw) : super(Snowflake(raw["id"])) {
     this.type = raw["type"] as int;
 
     if (raw["guild_id"] != null) {
-      this.guild = CacheUtility.createCacheableGuild(
-        _client,
-        Snowflake(raw["guild_id"]),
-      );
+      this.guild = CacheUtility.createCacheableGuild(_client, Snowflake(raw["guild_id"]),);
     } else {
       this.guild = null;
     }
 
-    this.channel = CacheUtility.createCacheableTextChannel(
-      _client,
-      Snowflake(raw["channel_id"]),
-    );
+    this.channel = CacheUtility.createCacheableTextChannel(_client, Snowflake(raw["channel_id"]),);
 
-    this.author = EntityUtility.createGuildMember(
-      _client,
-      Snowflake(raw["guild_id"]),
-      raw["member"] as Map<String, dynamic>,
-    );
+    if (this.guild != null) {
+      this.memberAuthor = EntityUtility.createGuildMember(_client, Snowflake(raw["guild_id"]), raw["member"] as Map<String, dynamic>,);
+    } else {
+      this.userAuthor = EntityUtility.createUser(_client, raw["user"] as Map<String, dynamic>);
+    }
 
     this.token = raw["token"] as String;
     this.version = raw["version"] as int;
+  }
+}
+
+/// Interaction for slash command
+class SlashCommandInteraction extends Interaction {
+  /// Name of interaction
+  late final String name;
+
+  /// Args of the interaction
+  late final Iterable<InteractionOption> options;
+
+  /// Id of command
+  late final Snowflake commandId;
+
+  SlashCommandInteraction._new(Nyxx client, Map<String, dynamic> raw) : super._new(client, raw) {
     this.name = raw["data"]["name"] as String;
-    this.args = _generateArgs(raw["data"] as Map<String, dynamic>);
+    this.options = _generateArgs(raw["data"] as Map<String, dynamic>);
     this.commandId = Snowflake(raw["data"]["id"]);
   }
 
   /// Allows to fetch argument value by argument name
   dynamic? getArg(String name) {
     try {
-      return this.args.firstWhere((element) => element.name == name);
+      return this.options.firstWhere((element) => element.name == name);
     } on Error {
       return null;
     }
@@ -80,5 +83,20 @@ class Interaction extends SnowflakeEntity {
     for (final option in options) {
       yield InteractionOption._new(option as Map<String, dynamic>);
     }
+  }
+}
+
+class ButtonInteraction extends Interaction {
+  /// Id with additional custom metadata
+  late final String idMetadata;
+
+  /// Id of the button is the string before `;`
+  String get buttonId => idMetadata.split(";").first;
+
+  /// Additional data string after ';'
+  String get metadata => idMetadata.split(";").last;
+
+  ButtonInteraction._new(Nyxx client, Map<String, dynamic> raw): super._new(client, raw) {
+    this.idMetadata = raw["data"]["custom_id"] as String;
   }
 }

@@ -1,11 +1,11 @@
 part of nyxx_interactions;
 
 /// The event that you receive when a user types a slash command.
-class InteractionEvent {
+abstract class InteractionEvent<T extends Interaction> {
   late final Nyxx _client;
 
   /// The interaction data, includes the args, name, guild, channel, etc.
-  late final Interaction interaction;
+  T get interaction;
 
   /// The DateTime the interaction was received by the Nyxx Client.
   final DateTime receivedAt = DateTime.now();
@@ -13,11 +13,24 @@ class InteractionEvent {
   /// If the Client has sent a response to the Discord API. Once the API was received a response you cannot send another.
   bool hasResponded = false;
 
-  InteractionEvent._new(this._client, Map<String, dynamic> rawJson) {
-    this.interaction = Interaction._new(this._client, rawJson);
+  int get _acknowledgeOpCode;
+  int get _respondOpcode;
 
-    if (this.interaction.type == 1) {
-      this._pong();
+  InteractionEvent._new(this._client) {
+    // if (this.interaction.type == 1) {
+    //   this._pong();
+    // }
+  }
+
+  /// Create a followup message for an Interaction
+  Future<void> sendFollowup(MessageBuilder builder) async {
+    final url = "/webhooks/${this._client.app.id.toString()}/${this.interaction.token}";
+    final body = BuilderUtility.buildWithClient(builder, _client);
+
+    final response = await this._client.httpEndpoints.sendRawRequest(url, "POST", body: body);
+
+    if (response is HttpResponseError) {
+      return Future.error(response);
     }
   }
 
@@ -25,7 +38,7 @@ class InteractionEvent {
   /// Once this is sent you can then only send ChannelMessages.
   /// You can also set showSource to also print out the command the user entered.
   Future<void> acknowledge() async {
-    if (DateTime.now().isAfter(this.receivedAt.add(const Duration(minutes: 15)))) {
+    if (DateTime.now().isAfter(this.receivedAt.add(const Duration(seconds: 3)))) {
       return Future.error(InteractionExpiredError());
     }
 
@@ -34,15 +47,7 @@ class InteractionEvent {
     }
 
     final url = "/interactions/${this.interaction.id.toString()}/${this.interaction.token}/callback";
-
-    final response = await this._client.httpEndpoints.sendRawRequest(
-      url,
-      "POST",
-      body: {
-        "type": 5,
-        "data": null,
-      },
-    );
+    final response = await this._client.httpEndpoints.sendRawRequest(url, "POST", body: { "type": this._acknowledgeOpCode });
 
     if (response is HttpResponseError) {
       return Future.error(response);
@@ -54,7 +59,7 @@ class InteractionEvent {
   /// Used to acknowledge a Interaction and send a response.
   /// Once this is sent you can then only send ChannelMessages.
   /// You can also set showSource to also print out the command the user entered.
-  Future<void> respond(MessageBuilder builder, {bool hidden = false}) async {
+  Future<void> respond(MessageBuilder builder, { bool hidden = false }) async {
     if (DateTime.now().isAfter(this.receivedAt.add(const Duration(minutes: 15)))) {
       return Future.error(InteractionExpiredError());
     }
@@ -65,53 +70,27 @@ class InteractionEvent {
 
     if (hasResponded) {
       url = "/webhooks/${this._client.app.id.toString()}/${this.interaction.token}/messages/@original";
-      body = builder.build(this._client);
+      body = BuilderUtility.buildWithClient(builder, _client);
       method = "PATCH";
     } else {
       url = "/interactions/${this.interaction.id.toString()}/${this.interaction.token}/callback";
       body = <String, dynamic>{
-        "type": 4,
+        "type": this._respondOpcode,
         "data": {
           if (hidden) "flags": 1 << 6,
-          ...builder.build(this._client)
+          ...BuilderUtility.buildWithClient(builder, _client)
         },
       };
       method = "POST";
     }
 
-    final response = await this._client.httpEndpoints.sendRawRequest(
-      url,
-      method,
-      body: body,
-    );
+    final response = await this._client.httpEndpoints.sendRawRequest(url, method, body: body,);
 
     if (response is HttpResponseError) {
       return Future.error(response);
     }
 
     hasResponded = true;
-  }
-
-  /// Create a followup message for an Interaction
-  Future<void> sendFollowup({ dynamic content, EmbedBuilder? embed, bool? tts, AllowedMentions? allowedMentions, bool hidden = false}) async {
-    final url = "/webhooks/${this._client.app.id.toString()}/${this.interaction.token}";
-    final body = <String, dynamic> {
-      "content": content,
-      "embeds": embed != null ? [BuilderUtility.buildRawEmbed(embed)] : null,
-      "allowed_mentions":
-      allowedMentions != null ? BuilderUtility.buildRawAllowedMentions(allowedMentions) : null,
-      "tts": content != null && tts != null && tts
-    };
-
-    final response = await this._client.httpEndpoints.sendRawRequest(
-      url,
-      "POST",
-      body: body,
-    );
-
-    if (response is HttpResponseError) {
-      return Future.error(response);
-    }
   }
 
   /// Should be sent when you receive a ping from interactions.
@@ -129,8 +108,7 @@ class InteractionEvent {
       "/interactions/${this.interaction.id.toString()}/${this.interaction.token}/callback",
       "POST",
       body: {
-        "type": 1,
-        "data": null,
+        "type": 1
       },
     );
 
@@ -139,5 +117,37 @@ class InteractionEvent {
     }
 
     hasResponded = true;
+  }
+}
+
+class SlashCommandInteractionEvent extends InteractionEvent<SlashCommandInteraction> {
+  /// Interaction data for slash command
+  @override
+  late final SlashCommandInteraction interaction;
+
+  @override
+  int get _acknowledgeOpCode => 5;
+
+  @override
+  int get _respondOpcode => 4;
+
+  SlashCommandInteractionEvent._new(Nyxx client, Map<String, dynamic> raw): super._new(client) {
+    this.interaction = SlashCommandInteraction._new(client, raw);
+  }
+}
+
+class ButtonInteractionEvent extends InteractionEvent<ButtonInteraction> {
+  /// Interaction data for slash command
+  @override
+  late final ButtonInteraction interaction;
+
+  @override
+  int get _acknowledgeOpCode => 6;
+
+  @override
+  int get _respondOpcode => 7;
+
+  ButtonInteractionEvent._new(Nyxx client, Map<String, dynamic> raw): super._new(client) {
+    this.interaction = ButtonInteraction._new(client, raw);
   }
 }

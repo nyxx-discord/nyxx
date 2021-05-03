@@ -53,23 +53,16 @@ class AllowedMentions extends Builder {
     this._roles.addAll(roleIds);
   }
 
-  // TODO: spread collections???
   @override
   Map<String, dynamic> _build() {
-    final map = <String, dynamic>{};
-    map["parse"] = [];
-
-    if (_allowEveryone) {
-      (map["parse"] as List).add("everyone");
-    }
-
-    if (_allowRoles) {
-      (map["parse"] as List).add("roles");
-    }
-
-    if (_allowUsers) {
-      (map["parse"] as List).add("users");
-    }
+    final map = <String, dynamic>{
+      "parse": [
+        if (_allowEveryone) "everyone",
+        if (_allowRoles) "roles",
+        if (_allowUsers) "users",
+      ],
+      "replied_user": this._allowReply
+    };
 
     if (_users.isNotEmpty) {
       if (!_allowUsers) {
@@ -88,8 +81,6 @@ class AllowedMentions extends Builder {
 
       map["roles"] = _roles.map((e) => e.id.toString());
     }
-
-    map["replied_user"] = this._allowReply;
 
     return map;
   }

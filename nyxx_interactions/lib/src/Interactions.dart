@@ -1,7 +1,10 @@
 part of nyxx_interactions;
 
-/// Function that will handle execution of interaction event
-typedef SlashCommandHandler = FutureOr<void> Function(InteractionEvent);
+/// Function that will handle execution of slash command interaction event
+typedef SlashCommandHandler = FutureOr<void> Function(SlashCommandInteractionEvent);
+
+/// Function that will handle execution of button interaction event
+typedef ButtonInteractionHandler = FutureOr<void> Function(ButtonInteractionEvent);
 
 /// Interaction extension for Nyxx. Allows use of: Slash Commands.
 class Interactions {
@@ -16,9 +19,13 @@ class Interactions {
   final _commandBuilders = <SlashCommandBuilder>[];
   final _commands = <SlashCommand>[];
   final _commandHandlers = <String, SlashCommandHandler>{};
+  final _buttonHandlers = <String, ButtonInteractionHandler>{};
 
   /// Emitted when a slash command is sent.
-  late final Stream<InteractionEvent> onSlashCommand;
+  late final Stream<SlashCommandInteractionEvent> onSlashCommand;
+
+  /// Emitted when a button interaction is received.
+  late final Stream<ButtonInteractionEvent> onButtonEvent;
 
   /// Emitted when a slash command is created by the user.
   late final Stream<SlashCommand> onSlashCommandCreated;
@@ -31,10 +38,19 @@ class Interactions {
 
     _client.onReady.listen((event) async {
       _client.shardManager.rawEvent.listen((event) {
-        if (event.rawData["op"] == _op0
-            && event.rawData["t"] == _interactionCreateCommand
-        ) {
-          _events.onSlashCommand.add(InteractionEvent._new(_client, event.rawData["d"] as Map<String, dynamic>));
+        if (event.rawData["op"] == _op0 && event.rawData["t"] == _interactionCreateCommand) {
+          final type = event.rawData["d"]["type"] as int;
+
+          switch (type) {
+            case 2:
+              _events.onSlashCommand.add(SlashCommandInteractionEvent._new(_client, event.rawData["d"] as Map<String, dynamic>));
+              break;
+            case 3:
+              _events.onButtonEvent.add(ButtonInteractionEvent._new(_client, event.rawData["d"] as Map<String, dynamic>));
+              break;
+            default:
+              this._logger.warning("Unknown interaction type: [$type]; Payload: ${jsonEncode(event.rawData)}");
+          }
         }
       });
     });
@@ -99,7 +115,23 @@ class Interactions {
     });
 
     this._logger.info("Finished registering ${this._commandHandlers.length} commands!");
+
+    if (this._buttonHandlers.isEmpty) {
+      return;
+    }
+
+    this.onButtonEvent.listen((event) {
+      if (this._buttonHandlers.containsKey(event.interaction.buttonId)) {
+        this._buttonHandlers[event.interaction.buttonId]!(event);
+      } else {
+        this._logger.warning("Received event for unknown button: ${event.interaction.idMetadata}");
+      }
+    });
   }
+
+  /// Registers callback for button event for given [id]
+  void registerButtonHandler(String id, ButtonInteractionHandler handler) =>
+      this._buttonHandlers[id] = handler;
 
   /// Allows to register new [SlashCommandBuilder]
   void registerSlashCommand(SlashCommandBuilder slashCommandBuilder) {

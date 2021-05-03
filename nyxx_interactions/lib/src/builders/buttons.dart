@@ -1,5 +1,6 @@
 part of nyxx_interactions;
 
+/// Style for a button.
 class ButtonStyle extends IEnum<int> {
   /// A blurple button
   static const primary = ButtonStyle._create(1);
@@ -17,6 +18,7 @@ class ButtonStyle extends IEnum<int> {
   const ButtonStyle._create(int value) : super(value);
 }
 
+/// Allows to build button. Generic interface for all types of buttons
 abstract class IButtonBuilder extends Builder {
   /// Type of component
   static const type = 2;
@@ -39,7 +41,6 @@ abstract class IButtonBuilder extends Builder {
     }
   }
 
-  @override
   Map<String, dynamic> _build() => {
     "type": type,
     "label": this.label,
@@ -53,6 +54,7 @@ abstract class IButtonBuilder extends Builder {
   };
 }
 
+/// Allows to create a button with link
 class LinkButtonBuilder extends IButtonBuilder {
   /// Url where his button should redirect
   final String url;
@@ -69,8 +71,15 @@ class LinkButtonBuilder extends IButtonBuilder {
       throw ArgumentError("Url for button cannot have more than 512 characters");
     }
   }
+
+  @override
+  Map<String, dynamic> _build() => {
+    ...super._build(),
+    "url": url
+  };
 }
 
+/// Button which will generate event when clicked.
 class ButtonBuilder extends IButtonBuilder {
   /// Id with optional additional metadata for button.
   /// Metadata attached with [attachAdditionalMetadata] is delimited by ; after id of button
@@ -99,4 +108,44 @@ class ButtonBuilder extends IButtonBuilder {
 
     this.idMetadata += ";$metadata";
   }
+
+  @override
+  Map<String, dynamic> _build() => {
+    ...super._build(),
+    "custom_id": idMetadata
+  };
+}
+
+/// Extended [MessageBuilder] with support for buttons
+class ButtonMessageBuilder extends MessageBuilder {
+  /// Set of buttons to attach to message. Message can only have 5 rows with 5 buttons each.
+  List<List<IButtonBuilder>> buttons = [];
+
+  /// Allows to add
+  void addButtonRow(List<IButtonBuilder> buttons) {
+    if (buttons.length > 5 || buttons.isEmpty) {
+      throw ArgumentError("Button row cannot be empty or have more than 5 buttons");
+    }
+
+    if (this.buttons.length == 5) {
+      throw ArgumentError("Buttons cannot have more than 5 rows of buttons");
+    }
+
+    this.buttons.add(buttons);
+  }
+
+  @override
+  Map<String, dynamic> build(INyxx client) => {
+      ...super.build(client),
+      if (this.buttons.isNotEmpty) "components": [
+        for (final row in this.buttons)
+          if (row.isNotEmpty) {
+            "type": 1,
+            "components": [
+              for (final button in row)
+                button._build()
+            ]
+          }
+      ]
+    };
 }
