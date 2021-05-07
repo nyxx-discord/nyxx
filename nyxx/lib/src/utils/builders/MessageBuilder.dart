@@ -112,13 +112,12 @@ class MessageBuilder extends BuilderWithClient {
   /// Sends message
   Future<Message> send(ISend entity) => entity.sendMessage(this);
 
+  /// Returns if this instance of message builder can be used when editing message
+  bool canBeUsedAsNewMessage() =>
+      this.content.isNotEmpty || embed != null || (this.files != null && this.files!.isNotEmpty);
+
   @override
   Map<String, dynamic> _build(INyxx client) {
-    if (this.content.isEmpty && embed == null && (this.files == null || this.files!.isEmpty)) {
-      throw ArgumentError(
-          "When sending message content, embed or files have to be not null");
-    }
-
     allowedMentions ??= client._options.allowedMentions;
 
     return <String, dynamic>{

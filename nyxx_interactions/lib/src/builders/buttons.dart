@@ -119,27 +119,31 @@ class ButtonBuilder extends IButtonBuilder {
 /// Extended [MessageBuilder] with support for buttons
 class ButtonMessageBuilder extends MessageBuilder {
   /// Set of buttons to attach to message. Message can only have 5 rows with 5 buttons each.
-  List<List<IButtonBuilder>> buttons = [];
+  List<List<IButtonBuilder>>? buttons;
 
   /// Allows to add
   void addButtonRow(List<IButtonBuilder> buttons) {
+    if (this.buttons == null) {
+      this.buttons = [];
+    }
+
     if (buttons.length > 5 || buttons.isEmpty) {
       throw ArgumentError("Button row cannot be empty or have more than 5 buttons");
     }
 
-    if (this.buttons.length == 5) {
+    if (this.buttons!.length == 5) {
       throw ArgumentError("Buttons cannot have more than 5 rows of buttons");
     }
 
-    this.buttons.add(buttons);
+    this.buttons!.add(buttons);
   }
 
   @override
   Map<String, dynamic> build(INyxx client) => {
       ...super.build(client),
-      if (this.buttons.isNotEmpty) "components": [
-        for (final row in this.buttons)
-          if (row.isNotEmpty) {
+      if (this.buttons != null) "components": [
+        for (final row in this.buttons!)
+          {
             "type": 1,
             "components": [
               for (final button in row)

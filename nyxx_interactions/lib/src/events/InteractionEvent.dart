@@ -16,11 +16,7 @@ abstract class InteractionEvent<T extends Interaction> {
   int get _acknowledgeOpCode;
   int get _respondOpcode;
 
-  InteractionEvent._new(this._client) {
-    // if (this.interaction.type == 1) {
-    //   this._pong();
-    // }
-  }
+  InteractionEvent._new(this._client);
 
   /// Create a followup message for an Interaction
   Future<void> sendFollowup(MessageBuilder builder) async {
@@ -58,7 +54,6 @@ abstract class InteractionEvent<T extends Interaction> {
 
   /// Used to acknowledge a Interaction and send a response.
   /// Once this is sent you can then only send ChannelMessages.
-  /// You can also set showSource to also print out the command the user entered.
   Future<void> respond(MessageBuilder builder, { bool hidden = false }) async {
     if (DateTime.now().isAfter(this.receivedAt.add(const Duration(minutes: 15)))) {
       return Future.error(InteractionExpiredError());
@@ -70,9 +65,16 @@ abstract class InteractionEvent<T extends Interaction> {
 
     if (hasResponded) {
       url = "/webhooks/${this._client.app.id.toString()}/${this.interaction.token}/messages/@original";
-      body = BuilderUtility.buildWithClient(builder, _client);
+      body = {
+        if (hidden) "flags": 1 << 6,
+        ...BuilderUtility.buildWithClient(builder, _client)
+      };
       method = "PATCH";
     } else {
+      if (!builder.canBeUsedAsNewMessage()) {
+        return Future.error(ArgumentError("Cannot sent message when MessageBuilder doesn't have set either content, embed or files"));
+      }
+
       url = "/interactions/${this.interaction.id.toString()}/${this.interaction.token}/callback";
       body = <String, dynamic>{
         "type": this._respondOpcode,

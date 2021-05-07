@@ -952,6 +952,10 @@ class _HttpEndpoints implements IHttpEndpoints {
 
   @override
   Future<Message> sendMessage(Snowflake channelId, MessageBuilder builder) async {
+    if (!builder.canBeUsedAsNewMessage()) {
+      return Future.error(ArgumentError("Cannot sent message when MessageBuilder doesn't have set either content, embed or files"));
+    }
+
     _HttpResponse response;
     if (builder._hasFiles()) {
       response = await _httpClient._execute(MultipartRequest._new(
