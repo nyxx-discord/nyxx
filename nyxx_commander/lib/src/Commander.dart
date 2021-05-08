@@ -111,7 +111,7 @@ class Commander with ICommandRegistrable {
 
     // construct commandcontext
     final context = CommandContext._new(
-      event.message.channel.getFromCache()!,
+      await event.message.channel.getOrDownload(),
       event.message.author,
       event.message is GuildMessage ? (event.message as GuildMessage).guild.getFromCache()! : null,
       event.message,
