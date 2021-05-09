@@ -67,7 +67,7 @@ void main() {
 
 Nyxx examples can be found [here](https://github.com/l7ssha/nyxx/tree/dev/nyxx/example).
 
-Commander examples can be found [here](https://github.com/l7ssha/running_on_dart)
+Commander examples can be found [here](https://github.com/l7ssha/nyxx/tree/dev/nyxx.commander/example)
 
 
 Slash commands (interactions) examples can be found [here](https://github.com/l7ssha/nyxx/tree/dev/nyxx.interactions/example)
