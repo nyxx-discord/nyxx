@@ -69,7 +69,6 @@ Nyxx examples can be found [here](https://github.com/l7ssha/nyxx/tree/dev/nyxx/e
 
 Commander examples can be found [here](https://github.com/l7ssha/nyxx/tree/dev/nyxx.commander/example)
 
-
 Slash commands (interactions) examples can be found [here](https://github.com/l7ssha/nyxx/tree/dev/nyxx.interactions/example)
 
 ### Example bots
