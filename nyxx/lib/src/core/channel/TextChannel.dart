@@ -1,13 +1,68 @@
 part of nyxx;
 
-/// Generic interface for all text channels types
-abstract class TextChannel implements IChannel, ISend {
-  /// File upload limit for channel in bytes.
-  Future<int> get fileUploadLimit;
+/// Lightweight channel which implements cacheable and allows to perform basic operation on channel instance
+class CacheableTextChannel<S extends TextChannel> extends IChannel implements MinimalTextChannel, ISend, Cacheable<Snowflake, S> {
+  @override
+  DateTime get createdAt => this.id.timestamp;
 
-  /// A collection of messages sent to this channel.
-  MessageCache get messageCache;
+  @override
+  INyxx get _client => this.client;
 
+  late Timer _typing;
+
+  CacheableTextChannel._new(INyxx client, Snowflake id, [ChannelType type = ChannelType.unknown]): super._raw(client, id, type);
+
+  @override
+  S? getFromCache() => this.client.channels.get(this.id);
+
+  @override
+  Future<S> download() => this.client.httpEndpoints.fetchChannel(this.id);
+
+  @override
+  FutureOr<S> getOrDownload() async => this.getFromCache() ?? await this.download();
+
+  @override
+  Future<void> bulkRemoveMessages(Iterable<SnowflakeEntity> messages) =>
+      this.client.httpEndpoints.bulkRemoveMessages(this.id, messages);
+
+  @override
+  Future<void> delete() => this.client.httpEndpoints.deleteChannel(this.id);
+
+  @override
+  Stream<Message> downloadMessages({int limit = 50, Snowflake? after, Snowflake? around, Snowflake? before}) =>
+      this.client.httpEndpoints.downloadMessages(this.id, limit: limit, after: after, around: around, before: before);
+
+  @override
+  Future<Message> fetchMessage(Snowflake id) =>
+      this.client.httpEndpoints.fetchMessage(this.id, id);
+
+  /// Returns always null since this type of channel doesn't have cache.
+  @override
+  Message? getMessage(Snowflake id) => null;
+
+  @override
+  Future<Message> sendMessage(MessageBuilder builder) =>
+      this.client.httpEndpoints.sendMessage(this.id, builder);
+
+  @override
+  Future<void> startTyping() => this.client.httpEndpoints.triggerTyping(this.id);
+
+  @override
+  void startTypingLoop() {
+    startTyping();
+    this._typing = Timer.periodic(const Duration(seconds: 7), (Timer t) => startTyping());
+  }
+
+  @override
+  void stopTypingLoop() => this._typing.cancel();
+
+  @override
+  Future<void> dispose() async {
+    // TODO: Empty body
+  }
+}
+
+abstract class MinimalTextChannel implements IChannel, ISend {
   /// Returns [Message] with given id from CACHE
   Message? getMessage(Snowflake id);
 
@@ -67,11 +122,20 @@ abstract class TextChannel implements IChannel, ISend {
   Stream<Message> downloadMessages({int limit = 50, Snowflake? after, Snowflake? around, Snowflake? before});
 
   /// Starts typing.
-  Future<void> startTyping();
+  Future<void> startTyping() => this.client.httpEndpoints.triggerTyping(this.id);
 
   /// Loops `startTyping` until `stopTypingLoop` is called.
   void startTypingLoop();
 
   /// Stops a typing loop if one is running.
   void stopTypingLoop();
+}
+
+/// Generic interface for all text channels types
+abstract class TextChannel extends MinimalTextChannel {
+  /// File upload limit for channel in bytes.
+  Future<int> get fileUploadLimit;
+
+  /// A collection of messages sent to this channel.
+  MessageCache get messageCache;
 }

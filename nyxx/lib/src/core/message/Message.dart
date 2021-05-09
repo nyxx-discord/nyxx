@@ -8,7 +8,7 @@ abstract class Message extends SnowflakeEntity implements Disposable {
   late String content;
 
   /// Channel in which message was sent
-  late final Cacheable<Snowflake, TextChannel> channel;
+  late final CacheableTextChannel<TextChannel> channel;
 
   /// The timestamp of when the message was last edited, null if not edited.
   late final DateTime? editedTimestamp;
@@ -62,7 +62,7 @@ abstract class Message extends SnowflakeEntity implements Disposable {
 
   Message._new(this.client, Map<String, dynamic> raw) : super(Snowflake(raw["id"])) {
     this.content = raw["content"] as String;
-    this.channel = _ChannelCacheable(client, Snowflake(raw["channel_id"]));
+    this.channel = CacheableTextChannel<TextChannel>._new(client, Snowflake(raw["channel_id"]), ChannelType.unknown);
 
     this.pinned = raw["pinned"] as bool;
     this.tts = raw["tts"] as bool;

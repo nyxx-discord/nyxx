@@ -28,7 +28,7 @@ class ChannelDeleteEvent {
 /// Fired when channel"s pinned messages are updated
 class ChannelPinsUpdateEvent {
   /// Channel where pins were updated
-  late final Cacheable<Snowflake, TextChannel> channel;
+  late final CacheableTextChannel<TextChannel> channel;
 
   /// ID of channel pins were updated
   late final Cacheable<Snowflake, Guild>? guild;
@@ -41,7 +41,7 @@ class ChannelPinsUpdateEvent {
       this.lastPingTimestamp = DateTime.parse(raw["d"]["last_pin_timestamp"] as String);
     }
 
-    this.channel = _ChannelCacheable(client, Snowflake(raw["d"]["channel_id"]));
+    this.channel = CacheableTextChannel<TextChannel>._new(client, Snowflake(raw["d"]["channel_id"]));
 
     if (raw["d"]["guild_id"] != null) {
       this.guild = _GuildCacheable(client, Snowflake(raw["d"]["guild_id"]));

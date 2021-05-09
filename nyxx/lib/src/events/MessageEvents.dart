@@ -20,10 +20,10 @@ class MessageDeleteEvent {
   late final Snowflake messageId;
 
   /// Channel where message was deleted
-  late final Cacheable<Snowflake, TextChannel> channel;
+  late final CacheableTextChannel<TextChannel> channel;
 
   MessageDeleteEvent._new(Map<String, dynamic> raw, Nyxx client) {
-    this.channel = _ChannelCacheable(client, Snowflake(raw["d"]["channel_id"]));
+    this.channel = CacheableTextChannel<TextChannel>._new(client, Snowflake(raw["d"]["channel_id"]), ChannelType.unknown);
     this.messageId = Snowflake(raw["d"]["id"]);
 
     this.message = channel.getFromCache()?.messageCache[this.messageId];
@@ -36,13 +36,13 @@ class MessageDeleteBulkEvent {
   late final Iterable<Snowflake> deletedMessagesIds;
 
   /// Channel on which messages were deleted.
-  late final Cacheable<Snowflake, TextChannel> channel;
+  late final CacheableTextChannel<TextChannel> channel;
 
   /// Id of guild where event occurred
   late final Cacheable<Snowflake, Guild>? guild;
 
   MessageDeleteBulkEvent._new(Map<String, dynamic> json, Nyxx client) {
-    this.channel = _ChannelCacheable(client, Snowflake(json["d"]["channel_id"]));
+    this.channel = CacheableTextChannel<TextChannel>._new(client, Snowflake(json["d"]["channel_id"]), ChannelType.unknown);
 
     if (json["d"]["guild_id"] != null) {
       this.guild = _GuildCacheable(client, Snowflake(json["d"]["guild_id"]));
@@ -73,7 +73,7 @@ abstract class MessageReactionEvent {
   late final Cacheable<Snowflake, User> user;
 
   /// Channel on which event was fired
-  late final Cacheable<Snowflake, TextChannel> channel;
+  late final CacheableTextChannel<TextChannel> channel;
 
   // TODO: Probably not working
   /// Reference to guild if event happened in guild
@@ -93,7 +93,7 @@ abstract class MessageReactionEvent {
 
   MessageReactionEvent._new(Map<String, dynamic> json, Nyxx client) {
     this.user = _UserCacheable(client, Snowflake(json["d"]["user_id"]));
-    this.channel = _ChannelCacheable(client, Snowflake(json["d"]["channel_id"]));
+    this.channel = CacheableTextChannel<TextChannel>._new(client, Snowflake(json["d"]["channel_id"]), ChannelType.unknown);
 
     this.messageId = Snowflake(json["d"]["message_id"]);
 
@@ -151,7 +151,7 @@ class MessageReactionRemovedEvent extends MessageReactionEvent {
 /// Emitted when all reaction are removed
 class MessageReactionsRemovedEvent {
   /// Channel on which event was fired
-  late Cacheable<Snowflake, TextChannel> channel;
+  late CacheableTextChannel<TextChannel> channel;
 
   /// Message reference
   late final Cacheable<Snowflake, Message> message;
@@ -160,7 +160,7 @@ class MessageReactionsRemovedEvent {
   late final Cacheable<Snowflake, Guild>? guild;
 
   MessageReactionsRemovedEvent._new(Map<String, dynamic> json, Nyxx client) {
-    this.channel = _ChannelCacheable(client, Snowflake(json["d"]["channel_id"]));
+    this.channel = CacheableTextChannel<TextChannel>._new(client, Snowflake(json["d"]["channel_id"]));
     this.guild = _GuildCacheable(client, Snowflake(json["d"]["guild_id"]));
     this.message = _MessageCacheable(client, Snowflake(json["d"]["message_id"]), channel);
 
@@ -174,7 +174,7 @@ class MessageReactionsRemovedEvent {
 /// Emitted when reactions of certain emoji are deleted
 class MessageReactionRemoveEmojiEvent {
   /// Channel on which event was fired
-  late Cacheable<Snowflake, TextChannel> channel;
+  late final CacheableTextChannel<TextChannel> channel;
 
   /// Message reference
   late final Cacheable<Snowflake, Message> message;
@@ -186,7 +186,7 @@ class MessageReactionRemoveEmojiEvent {
   late final IEmoji emoji;
 
   MessageReactionRemoveEmojiEvent._new(Map<String, dynamic> json, Nyxx client) {
-    this.channel = _ChannelCacheable(client, Snowflake(json["d"]["channel_id"]));
+    this.channel = CacheableTextChannel<TextChannel>._new(client, Snowflake(json["d"]["channel_id"]));
     this.guild = _GuildCacheable(client, Snowflake(json["d"]["guild_id"]));
     this.message = _MessageCacheable(client, Snowflake(json["d"]["message_id"]), channel);
 
@@ -210,13 +210,13 @@ class MessageUpdateEvent {
   late final Message? updatedMessage;
 
   /// Id of channel where message was edited
-  late final Cacheable<Snowflake, TextChannel> channel;
+  late final CacheableTextChannel<TextChannel> channel;
 
   /// Id of edited message
   late final Snowflake messageId;
 
   MessageUpdateEvent._new(Map<String, dynamic> json, Nyxx client) {
-    this.channel = _ChannelCacheable(client, Snowflake(json["d"]["channel_id"]));
+    this.channel = CacheableTextChannel<TextChannel>._new(client, Snowflake(json["d"]["channel_id"]));
     this.messageId = Snowflake(json["d"]["id"]);
 
     final channelInstance = channel.getFromCache();
