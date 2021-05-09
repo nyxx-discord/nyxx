@@ -6,12 +6,12 @@ class  _CommandMatcher {
       if(entity is CommandGroup && entity.name == "") {
         final e = _findMatchingCommand(messageParts, entity._commandEntities);
 
-        if(e != null) {
+        if (e != null) {
           return e;
         }
       }
 
-      if(entity is CommandGroup && entity.isEntityName(messageParts.first)) {
+      if (entity is CommandGroup && entity.isEntityName(messageParts.first)) {
         if (messageParts.length == 1 && entity.defaultHandler != null) {
           return entity.defaultHandler;
         } else if (messageParts.length == 1 && entity.defaultHandler == null) {
@@ -20,12 +20,14 @@ class  _CommandMatcher {
 
         final e = _findMatchingCommand(messageParts.skip(1), entity._commandEntities);
 
-        if(e != null) {
+        if (e != null) {
           return e;
+        } else if (entity.defaultHandler != null) {
+          return entity.defaultHandler;
         }
       }
 
-      if(entity is CommandHandler && entity.isEntityName(messageParts.first)) {
+      if (entity is CommandHandler && entity.isEntityName(messageParts.first)) {
         return entity;
       }
     }
