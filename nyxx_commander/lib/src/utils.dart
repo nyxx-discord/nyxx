@@ -19,8 +19,7 @@ extension _CommandMatcher on Iterable<CommandEntity> {
           return null;
         }
 
-        final e =
-            entity._commandEntities._findMatchingCommand(messageParts.skip(1));
+        final e = entity._commandEntities._findMatchingCommand(messageParts.skip(1));
 
         if (e != null) {
           return e;
