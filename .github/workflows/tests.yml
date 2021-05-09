@@ -48,6 +48,7 @@ jobs:
       - name: Generate docs
         working-directory: ./nyxx
         run: dartdoc
+        if: github.event_name != 'pull_request'
 
       - name: Deploy nyxx dev docs
         uses: easingthemes/ssh-deploy@v2.1.5
@@ -58,6 +59,7 @@ jobs:
           REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
           REMOTE_USER: ${{ secrets.REMOTE_USER }}
           TARGET: "${{ secrets.REMOTE_TARGET }}/nyxx/"
+        if: github.event_name != 'pull_request'
 
   test-commander:
     name: Tests commander package
@@ -101,6 +103,7 @@ jobs:
       - name: Generate docs
         working-directory: ./nyxx_commander
         run: dartdoc
+        if: github.event_name != 'pull_request'
 
       - name: Deploy nyxx_commander dev docs
         uses: easingthemes/ssh-deploy@v2.1.5
@@ -111,6 +114,7 @@ jobs:
           REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
           REMOTE_USER: ${{ secrets.REMOTE_USER }}
           TARGET: "${{ secrets.REMOTE_TARGET }}/nyxx_commander/"
+        if: github.event_name != 'pull_request'
 
   test-extensions:
     name: Tests extensions package
@@ -148,6 +152,7 @@ jobs:
      - name: Generate docs
        working-directory: ./nyxx_extensions
        run: dartdoc
+       if: github.event_name != 'pull_request'
 
      - name: Deploy nyxx_extensions dev docs
        uses: easingthemes/ssh-deploy@v2.1.5
@@ -158,6 +163,7 @@ jobs:
          REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
          REMOTE_USER: ${{ secrets.REMOTE_USER }}
          TARGET: "${{ secrets.REMOTE_TARGET }}/nyxx_extensions/"
+       if: github.event_name != 'pull_request'
 
   test-interactions:
     name: Tests interactions package
@@ -191,6 +197,7 @@ jobs:
       - name: Generate docs
         working-directory: ./nyxx_interactions
         run: dartdoc
+        if: github.event_name != 'pull_request'
 
       - name: Deploy nyxx_interactions dev docs
         uses: easingthemes/ssh-deploy@v2.1.5
@@ -201,3 +208,4 @@ jobs:
           REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
           REMOTE_USER: ${{ secrets.REMOTE_USER }}
           TARGET: "${{ secrets.REMOTE_TARGET }}/nyxx_interactions/"
+        if: github.event_name != 'pull_request'
