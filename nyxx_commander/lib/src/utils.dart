@@ -4,15 +4,15 @@ part of nyxx_commander;
 extension _CommandMatcher on Iterable<CommandEntity> {
   CommandEntity? _findMatchingCommand(Iterable<String> messageParts) {
     for (final entity in this) {
-      if(entity is CommandGroup && entity.name == "") {
+      if (entity is CommandGroup && entity.name == "") {
         final e = entity._commandEntities._findMatchingCommand(messageParts);
 
-        if(e != null) {
+        if (e != null) {
           return e;
         }
       }
 
-      if(entity is CommandGroup && entity.isEntityName(messageParts.first)) {
+      if (entity is CommandGroup && entity.isEntityName(messageParts.first)) {
         if (messageParts.length == 1 && entity.defaultHandler != null) {
           return entity.defaultHandler;
         } else if (messageParts.length == 1 && entity.defaultHandler == null) {
@@ -21,12 +21,14 @@ extension _CommandMatcher on Iterable<CommandEntity> {
 
         final e = entity._commandEntities._findMatchingCommand(messageParts.skip(1));
 
-        if(e != null) {
+        if (e != null) {
           return e;
+        } else if (entity.defaultHandler != null) {
+          return entity.defaultHandler;
         }
       }
 
-      if(entity is CommandHandler && entity.isEntityName(messageParts.first)) {
+      if (entity is CommandHandler && entity.isEntityName(messageParts.first)) {
         return entity;
       }
     }
