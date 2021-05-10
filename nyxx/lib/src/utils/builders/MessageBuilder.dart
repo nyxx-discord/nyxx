@@ -20,6 +20,10 @@ class MessageBuilder extends BuilderWithClient {
   /// [AllowedMentions] object to control mentions in message
   AllowedMentions? allowedMentions;
 
+  /// A nonce that can be used for optimistic message sending (up to 25 characters)
+  /// You will be able to identify that message when receiving it through gateway
+  String? nonce;
+
   final _content = StringBuffer();
 
   /// Clears current content of message and sets new
@@ -126,6 +130,7 @@ class MessageBuilder extends BuilderWithClient {
       if (allowedMentions != null) "allowed_mentions": allowedMentions!._build(),
       if (replyBuilder != null) "message_reference": replyBuilder!._build(),
       if (tts != null) "tts": tts,
+      if (nonce != null) "nonce": nonce
     };
   }
 

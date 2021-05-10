@@ -52,8 +52,12 @@ abstract class Message extends SnowflakeEntity implements Disposable {
   /// Message reply
   late final ReferencedMessage? referencedMessage;
 
+  /// A nonce that can be used for optimistic message sending (up to 25 characters)
+  /// You will be able to identify that message when receiving it through gateway
+  late final String? nonce;
+
   factory Message._deserialize(INyxx client, Map<String, dynamic> raw) {
-    if (raw["guild_id"] != null) {
+    if (raw["member"] != null) {
       return GuildMessage._new(client, raw);
     }
 
@@ -111,6 +115,12 @@ abstract class Message extends SnowflakeEntity implements Disposable {
       this.referencedMessage = ReferencedMessage._new(client, raw);
     } else {
       this.referencedMessage = null;
+    }
+
+    if (raw["nonce"] != null) {
+      this.nonce = raw["nonce"].toString();
+    } else {
+      this.nonce = null;
     }
   }
 

@@ -141,21 +141,21 @@ void main() {
 
       expect(snowflake.id, snowflakeValue);
 
-      expect(snowflake == snowflakeValue, true);
-      expect(snowflake2 == snowflake, true);
-      expect(snowflake == snowflakeValue.toString(), true);
+      expect(snowflake, snowflakeValue);
+      expect(snowflake2, snowflake);
+      expect(snowflake, snowflakeValue.toString());
 
-      expect(snowflake == 125, false);
+      expect(snowflake, 125);
     });
   });
 
   test("SnowflakeEntity equality", () {
     final snowflakeEntityA = SnowflakeEntity(snowflakeA);
 
-    expect(snowflakeEntityA.id == snowflakeA, true);
-    expect(snowflakeEntityA.createdAt == snowflakeA.timestamp, true);
+    expect(snowflakeEntityA.id, snowflakeA);
+    expect(snowflakeEntityA.createdAt, snowflakeA.timestamp);
 
-    expect(snowflakeEntityA == snowflakeA, true);
+    expect(snowflakeEntityA, snowflakeA);
   });
 
   group("Generic utils", () {
