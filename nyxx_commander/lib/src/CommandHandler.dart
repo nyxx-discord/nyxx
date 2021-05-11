@@ -19,7 +19,7 @@ abstract class CommandEntity {
   CommandEntity? get parent;
 
   /// A list of valid command names
-  List<String> get commandNames => [if (this.name.isNotEmpty) this.name.toLowerCase(),]+aliases.map((e) => e.toLowerCase()).toList();
+  List<String> get commandNames => [if (this.name.isNotEmpty) this.name.toLowerCase(), ...aliases.map((e) => e.toLowerCase())];
 
   /// RegEx matching the fully qualified command name with its parents and all aliases
   String getFullCommandMatch() {
