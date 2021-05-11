@@ -33,7 +33,7 @@ abstract class CommandEntity {
       parentMatch += "(${this.commandNames.join('|')})";
     }
 
-    return parentMatch;
+    return parentMatch.toLowerCase();
   }
 
   /// Returns true if provided String [str] is entity name or alias
