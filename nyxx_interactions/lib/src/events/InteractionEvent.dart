@@ -20,13 +20,17 @@ abstract class InteractionEvent<T extends Interaction> {
 
   /// Create a followup message for an Interaction
   Future<void> sendFollowup(MessageBuilder builder) async {
-    final url = "/webhooks/${this._client.app.id.toString()}/${this.interaction.token}";
-    final body = BuilderUtility.buildWithClient(builder, _client);
+    if(hasResponded) {
+      final url = "/webhooks/${this._client.app.id.toString()}/${this.interaction.token}";
+      final body = BuilderUtility.buildWithClient(builder, _client);
 
-    final response = await this._client.httpEndpoints.sendRawRequest(url, "POST", body: body);
+      final response = await this._client.httpEndpoints.sendRawRequest(url, "POST", body: body);
 
-    if (response is HttpResponseError) {
-      return Future.error(response);
+      if (response is HttpResponseError) {
+        return Future.error(response);
+      }
+    } else {
+      return Future.error(ResponseRequiredError());
     }
   }
 
