@@ -260,6 +260,18 @@ abstract class IHttpEndpoints {
   Future<IChannel> createGuildChannel(Snowflake guildId, ChannelBuilder channelBuilder);
 
   Future<void> deleteChannel(Snowflake channelId);
+
+  /// Gets the stage instance associated with the Stage channel, if it exists.
+  Future<StageChannelInstance> getStageChannelInstance(Snowflake channelId);
+
+  /// Deletes the Stage instance.
+  Future<void> deleteStageChannelInstance(Snowflake channelId);
+
+  /// Creates a new Stage instance associated to a Stage channel.
+  Future<StageChannelInstance> createStageChannelInstance(Snowflake channelId, String topic);
+
+  /// Updates fields of an existing Stage instance.
+  Future<StageChannelInstance> updateStageChannelInstance(Snowflake channelId, String topic);
 }
 
 class _HttpEndpoints implements IHttpEndpoints {
@@ -1436,5 +1448,64 @@ class _HttpEndpoints implements IHttpEndpoints {
     if (response is HttpResponseError) {
       return Future.error(response);
     }
+  }
+
+  @override
+  Future<StageChannelInstance> createStageChannelInstance(Snowflake channelId, String topic) async {
+    final body = {
+      "topic": topic,
+      "channel_id": channelId.toString()
+    };
+
+    final response = await _httpClient._execute(BasicRequest._new(
+      "/stage-instances",
+      method: "POST",
+      body: body
+    ));
+
+    if (response is HttpResponseError) {
+      return Future.error(response);
+    }
+
+    return StageChannelInstance._new(_client, response._jsonBody as Map<String, dynamic>);
+  }
+
+  @override
+  Future<void> deleteStageChannelInstance(Snowflake channelId) async {
+    final response = await _httpClient._execute(BasicRequest._new("/stage-instances/${channelId.toString()}", method: "DELETE"));
+
+    if (response is HttpResponseError) {
+      return Future.error(response);
+    }
+  }
+
+  @override
+  Future<StageChannelInstance> getStageChannelInstance(Snowflake channelId) async {
+    final response = await _httpClient._execute(BasicRequest._new("/stage-instances/${channelId.toString()}"));
+
+    if (response is HttpResponseError) {
+      return Future.error(response);
+    }
+
+    return StageChannelInstance._new(_client, response._jsonBody as Map<String, dynamic>);
+  }
+
+  @override
+  Future<StageChannelInstance> updateStageChannelInstance(Snowflake channelId, String topic) async {
+    final body = {
+      "topic": topic,
+    };
+
+    final response = await _httpClient._execute(BasicRequest._new(
+        "/stage-instances/${channelId.toString()}",
+        method: "POST",
+        body: body
+    ));
+
+    if (response is HttpResponseError) {
+      return Future.error(response);
+    }
+
+    return StageChannelInstance._new(_client, response._jsonBody as Map<String, dynamic>);
   }
 }

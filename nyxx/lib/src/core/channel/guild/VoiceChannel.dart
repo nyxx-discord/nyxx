@@ -49,4 +49,38 @@ class VoiceGuildChannel extends GuildChannel {
 
 class StageVoiceGuildChannel extends VoiceGuildChannel {
   StageVoiceGuildChannel._new(INyxx client, Map<String, dynamic> raw, [Snowflake? guildId]) : super._new(client, raw, guildId);
+
+  /// Gets the stage instance associated with the Stage channel, if it exists.
+  Future<StageChannelInstance> getStageChannelInstance() =>
+      this.client.httpEndpoints.getStageChannelInstance(this.id);
+
+  /// Deletes the Stage instance.
+  Future<void> deleteStageChannelInstance() =>
+      this.client.httpEndpoints.deleteStageChannelInstance(this.id);
+
+  /// Creates a new Stage instance associated to a Stage channel.
+  Future<StageChannelInstance> createStageChannelInstance(String topic) =>
+      this.client.httpEndpoints.createStageChannelInstance(this.id, topic);
+
+  /// Updates fields of an existing Stage instance.
+  Future<StageChannelInstance> updateStageChannelInstance(String topic) =>
+      this.client.httpEndpoints.updateStageChannelInstance(this.id, topic);
+}
+
+/// A [StageChannelInstance] holds information about a live stage.
+class StageChannelInstance extends SnowflakeEntity {
+  /// The guild id of the associated Stage channel
+  late final Cacheable<Snowflake, Guild> guild;
+
+  /// The id of the associated Stage channel
+  late final Cacheable<Snowflake, StageVoiceGuildChannel> channel;
+
+  /// The topic of the Stage instance
+  late final String topic;
+
+  StageChannelInstance._new(INyxx client, Map<String, dynamic> raw): super(Snowflake(raw["id"])) {
+    this.guild = _GuildCacheable(client, Snowflake(raw["guild_id"]));
+    this.channel = _ChannelCacheable(client, Snowflake(raw["channel_id"]));
+    this.topic = raw["topic"] as String;
+  }
 }

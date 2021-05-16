@@ -94,7 +94,7 @@ class Commander with ICommandRegistrable {
     }
 
     // Find matching command with given message content
-    final matchingCommand = _CommandMatcher._findMatchingCommand(event.message.content.replaceFirst(prefix, "").trim().split(" "), _commandEntities) as CommandHandler?;
+    final matchingCommand = _CommandMatcher._findMatchingCommand(event.message.content.toLowerCase().replaceFirst(prefix, "").trim().split(" "), _commandEntities) as CommandHandler?;
 
     if(matchingCommand == null) {
       return;
@@ -105,8 +105,7 @@ class Commander with ICommandRegistrable {
     // Example: (?<finalCommand>(quote|q) (remove|rm))
     // This will match the command `quote remove`, `q remove`, `quote rm` and `q rm`
 
-    final match = RegExp("(?<finalCommand>${matchingCommand.getFullCommandMatch().trim()})").firstMatch(event.message.content);
-
+    final match = RegExp("(?<finalCommand>${matchingCommand.getFullCommandMatch().trim()})").firstMatch(event.message.content.toLowerCase());
     final finalCommand = match?.namedGroup("finalCommand");
 
     // construct CommandContext
