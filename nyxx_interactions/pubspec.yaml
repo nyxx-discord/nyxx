@@ -11,7 +11,7 @@ environment:
 
 dependencies:
   logging: "^1.0.1"
-  nyxx: "2.0.0-rc.3"
+  nyxx: "2.0.0-rc.4"
 
 dependency_overrides:
   nyxx:
