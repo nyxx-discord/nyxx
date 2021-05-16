@@ -14,6 +14,7 @@ class SlashCommandBuilder extends Builder {
   /// The arguments that the command takes
   List<CommandOptionBuilder> options;
 
+  // Handler for SlashCommandBuilder
   SlashCommandHandler? _handler;
 
   /// A slash command, can only be instantiated through a method on [Interactions]

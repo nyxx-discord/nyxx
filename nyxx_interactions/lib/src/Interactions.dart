@@ -4,7 +4,7 @@ part of nyxx_interactions;
 typedef SlashCommandHandler = FutureOr<void> Function(SlashCommandInteractionEvent);
 
 /// Function that will handle execution of button interaction event
-typedef ButtonInteractionHandler = FutureOr<void> Function(ButtonInteractionEvent);
+typedef ButtonInteractionHandler = FutureOr<void> Function(ComponentInteractionEvent);
 
 /// Interaction extension for Nyxx. Allows use of: Slash Commands.
 class Interactions {
@@ -25,7 +25,7 @@ class Interactions {
   late final Stream<SlashCommandInteractionEvent> onSlashCommand;
 
   /// Emitted when a button interaction is received.
-  late final Stream<ButtonInteractionEvent> onButtonEvent;
+  late final Stream<ComponentInteractionEvent> onButtonEvent;
 
   /// Emitted when a slash command is created by the user.
   late final Stream<SlashCommand> onSlashCommandCreated;
@@ -46,7 +46,7 @@ class Interactions {
               _events.onSlashCommand.add(SlashCommandInteractionEvent._new(_client, event.rawData["d"] as Map<String, dynamic>));
               break;
             case 3:
-              _events.onButtonEvent.add(ButtonInteractionEvent._new(_client, event.rawData["d"] as Map<String, dynamic>));
+              _events.onButtonEvent.add(ComponentInteractionEvent._new(_client, event.rawData["d"] as Map<String, dynamic>));
               break;
             default:
               this._logger.warning("Unknown interaction type: [$type]; Payload: ${jsonEncode(event.rawData)}");

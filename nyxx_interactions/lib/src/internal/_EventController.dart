@@ -8,7 +8,7 @@ class _EventController implements Disposable {
   late final StreamController<SlashCommand> onSlashCommandCreated;
 
   /// Emitted when button event is sent
-  late final StreamController<ButtonInteractionEvent> onButtonEvent;
+  late final StreamController<ComponentInteractionEvent> onButtonEvent;
 
   _EventController(Interactions _client) {
     this.onSlashCommand = StreamController.broadcast();

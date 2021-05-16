@@ -86,7 +86,7 @@ class SlashCommandInteraction extends Interaction {
   }
 }
 
-class ButtonInteraction extends Interaction {
+class ComponentInteraction extends Interaction {
   /// Id with additional custom metadata
   late final String idMetadata;
 
@@ -96,7 +96,7 @@ class ButtonInteraction extends Interaction {
   /// Additional data string after ';'
   String get metadata => idMetadata.split(";").last;
 
-  ButtonInteraction._new(Nyxx client, Map<String, dynamic> raw): super._new(client, raw) {
+  ComponentInteraction._new(Nyxx client, Map<String, dynamic> raw): super._new(client, raw) {
     this.idMetadata = raw["data"]["custom_id"] as String;
   }
 }

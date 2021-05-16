@@ -1,33 +1,15 @@
 part of nyxx_interactions;
 
-/// Style for a button.
-class ButtonStyle extends IEnum<int> {
-  /// A blurple button
-  static const primary = ButtonStyle._create(1);
-  /// A grey button
-  static const secondary = ButtonStyle._create(2);
-  /// A green button
-  static const success = ButtonStyle._create(3);
-  /// A red button
-  static const danger = ButtonStyle._create(4);
-  /// A button that navigates to a URL
-  static const link = ButtonStyle._create(5);
-
-  /// Creates instance of [ButtonStyle]
-  ButtonStyle.from(int value) : super(value);
-  const ButtonStyle._create(int value) : super(value);
-}
-
 /// Allows to build button. Generic interface for all types of buttons
-abstract class IButtonBuilder extends Builder {
+abstract class IComponentBuilder extends Builder {
   /// Type of component
   static const type = 2;
 
   /// Label for button. Max 80 characters.
   final String label;
 
-  /// Style of button. See [ButtonStyle]
-  final ButtonStyle style;
+  /// Style of button. See [ComponentStyle]
+  final ComponentStyle style;
 
   /// True if emoji is disabled
   bool disabled = false;
@@ -35,7 +17,7 @@ abstract class IButtonBuilder extends Builder {
   /// Additional emoji for button
   IEmoji? emoji;
 
-  IButtonBuilder._new(this.label, this.style, {this.disabled = false, this.emoji}) {
+  IComponentBuilder._new(this.label, this.style, {this.disabled = false, this.emoji}) {
     if (this.label.length > 80) {
       throw ArgumentError("Label for Button cannot have more than 80 characters");
     }
@@ -55,7 +37,7 @@ abstract class IButtonBuilder extends Builder {
 }
 
 /// Allows to create a button with link
-class LinkButtonBuilder extends IButtonBuilder {
+class LinkButtonBuilder extends IComponentBuilder {
   /// Url where his button should redirect
   final String url;
 
@@ -65,7 +47,7 @@ class LinkButtonBuilder extends IButtonBuilder {
       this.url,
       {bool disabled = false,
         IEmoji? emoji
-      }): super._new(label, ButtonStyle.link, disabled: disabled, emoji: emoji
+      }): super._new(label, ComponentStyle.link, disabled: disabled, emoji: emoji
   ) {
     if (this.url.length > 512) {
       throw ArgumentError("Url for button cannot have more than 512 characters");
@@ -80,7 +62,7 @@ class LinkButtonBuilder extends IButtonBuilder {
 }
 
 /// Button which will generate event when clicked.
-class ButtonBuilder extends IButtonBuilder {
+class ButtonBuilder extends IComponentBuilder {
   /// Id with optional additional metadata for button.
   /// Metadata attached with [attachAdditionalMetadata] is delimited by ; after id of button
   String idMetadata;
@@ -89,11 +71,11 @@ class ButtonBuilder extends IButtonBuilder {
   ButtonBuilder(
       String label,
       this.idMetadata,
-      ButtonStyle style,
+      ComponentStyle style,
       {bool disabled = false,
         IEmoji? emoji
       }
-  ) : super._new(label, style, disabled: disabled, emoji: emoji) {
+      ) : super._new(label, style, disabled: disabled, emoji: emoji) {
     if (this.label.length > 100) {
       throw ArgumentError("IdMetadata for button cannot have more than 100 characters");
     }
@@ -117,12 +99,12 @@ class ButtonBuilder extends IButtonBuilder {
 }
 
 /// Extended [MessageBuilder] with support for buttons
-class ButtonMessageBuilder extends MessageBuilder {
+class ComponentMessageBuilder extends MessageBuilder {
   /// Set of buttons to attach to message. Message can only have 5 rows with 5 buttons each.
-  List<List<IButtonBuilder>>? buttons;
+  List<List<IComponentBuilder>>? buttons;
 
   /// Allows to add
-  void addButtonRow(List<IButtonBuilder> buttons) {
+  void addButtonRow(List<IComponentBuilder> buttons) {
     if (this.buttons == null) {
       this.buttons = [];
     }
@@ -140,16 +122,16 @@ class ButtonMessageBuilder extends MessageBuilder {
 
   @override
   Map<String, dynamic> build(INyxx client) => {
-      ...super.build(client),
-      if (this.buttons != null) "components": [
-        for (final row in this.buttons!)
-          {
-            "type": 1,
-            "components": [
-              for (final button in row)
-                button._build()
-            ]
-          }
-      ]
-    };
+    ...super.build(client),
+    if (this.buttons != null) "components": [
+      for (final row in this.buttons!)
+        {
+          "type": 1,
+          "components": [
+            for (final button in row)
+              button._build()
+          ]
+        }
+    ]
+  };
 }

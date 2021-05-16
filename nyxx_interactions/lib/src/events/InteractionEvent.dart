@@ -138,10 +138,10 @@ class SlashCommandInteractionEvent extends InteractionEvent<SlashCommandInteract
   }
 }
 
-class ButtonInteractionEvent extends InteractionEvent<ButtonInteraction> {
+class ComponentInteractionEvent extends InteractionEvent<ComponentInteraction> {
   /// Interaction data for slash command
   @override
-  late final ButtonInteraction interaction;
+  late final ComponentInteraction interaction;
 
   @override
   int get _acknowledgeOpCode => 6;
@@ -149,7 +149,7 @@ class ButtonInteractionEvent extends InteractionEvent<ButtonInteraction> {
   @override
   int get _respondOpcode => 7;
 
-  ButtonInteractionEvent._new(Nyxx client, Map<String, dynamic> raw): super._new(client) {
-    this.interaction = ButtonInteraction._new(client, raw);
+  ComponentInteractionEvent._new(Nyxx client, Map<String, dynamic> raw): super._new(client) {
+    this.interaction = ComponentInteraction._new(client, raw);
   }
 }

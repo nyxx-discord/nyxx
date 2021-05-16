@@ -65,6 +65,8 @@ part "src/core/message/Reaction.dart";
 part "src/core/message/ReferencedMessage.dart";
 part "src/core/message/Sticker.dart";
 part "src/core/message/UnicodeEmoji.dart";
+part "src/core/message/components/ComponentStyle.dart";
+part "src/core/message/components/MessageComponent.dart";
 part "src/core/permissions/PermissionOverrides.dart";
 part "src/core/permissions/Permissions.dart";
 part "src/core/permissions/PermissionsConstants.dart";

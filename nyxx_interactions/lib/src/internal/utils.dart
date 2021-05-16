@@ -31,9 +31,10 @@ String _determineInteractionCommandHandler(SlashCommandInteraction interaction) 
   try {
     final subCommand = interaction.options.firstWhere((element) => element.type == CommandOptionType.subCommand);
     return "$commandHash${subCommand.name}";
-  } on Error {
-    return commandHash;
-  }
+    // ignore: empty_catches
+  } on Error { }
+
+  return commandHash;
 }
 
 /// Groups [SlashCommandBuilder] for registering them later in bulk

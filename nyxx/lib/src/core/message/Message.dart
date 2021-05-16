@@ -52,6 +52,9 @@ abstract class Message extends SnowflakeEntity implements Disposable {
   /// Message reply
   late final ReferencedMessage? referencedMessage;
 
+  /// List of components attached to message.
+  late final List<List<IMessageComponent>> components;
+
   /// A nonce that can be used for optimistic message sending (up to 25 characters)
   /// You will be able to identify that message when receiving it through gateway
   late final String? nonce;
@@ -121,6 +124,17 @@ abstract class Message extends SnowflakeEntity implements Disposable {
       this.nonce = raw["nonce"].toString();
     } else {
       this.nonce = null;
+    }
+
+    if (raw["components"] != null) {
+      this.components = [
+        for (final rawRow in raw["components"]) [
+          for (final componentRaw in rawRow["components"])
+            IMessageComponent._deserialize(componentRaw as Map<String, dynamic>)
+        ]
+      ];
+    } else {
+      this.components = [];
     }
   }
 

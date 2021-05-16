@@ -24,10 +24,14 @@ class InteractionOption {
 
     if (raw["options"] != null) {
       this.args = (raw["options"] as List<dynamic>).map((e) => InteractionOption._new(e as Map<String, dynamic>));
+    } else {
+      this.args = [];
     }
 
     if (raw["choices"] != null) {
       this.choices = (raw["options"] as List<Map<String, dynamic>>).map((e) => ArgChoiceBuilder(e["name"] as String, e["value"]));
+    } else {
+      this.choices = [];
     }
   }
 }

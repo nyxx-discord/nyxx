@@ -19,7 +19,7 @@ part "src/models/ArgChoice.dart";
 part "src/builders/ArgChoiceBuilder.dart";
 part "src/builders/CommandOptionBuilder.dart";
 part "src/builders/SlashCommandBuilder.dart";
-part "src/builders/buttons.dart";
+part "src/builders/ComponentBuilder.dart";
 
 // Command Args
 part "src/models/CommandOption.dart";
