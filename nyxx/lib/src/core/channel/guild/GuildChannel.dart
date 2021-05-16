@@ -29,7 +29,8 @@ abstract class GuildChannel extends IChannel {
     } else if (guildId != null) {
       this.guild = _GuildCacheable(client, guildId);
     } else {
-      throw Exception("Cannot initialize instance of GuildChannelNex due missing `guild_id` in json payload and/or missing optional guildId parameter. Report this issue to developer");
+      throw Exception(
+          "Cannot initialize instance of GuildChannelNex due missing `guild_id` in json payload and/or missing optional guildId parameter. Report this issue to developer");
     }
 
     if (raw["parent_id"] != null) {
@@ -42,8 +43,7 @@ abstract class GuildChannel extends IChannel {
 
     this.permissionOverrides = [
       if (raw["permission_overwrites"] != null)
-        for (var obj in raw["permission_overwrites"])
-          PermissionsOverrides._new(obj as Map<String, dynamic>)
+        for (var obj in raw["permission_overwrites"]) PermissionsOverrides._new(obj as Map<String, dynamic>)
     ];
   }
 
@@ -107,8 +107,7 @@ abstract class GuildChannel extends IChannel {
   /// ```
   /// var invites = await chan.getChannelInvites();
   /// ```
-  Stream<InviteWithMeta> fetchChannelInvites() =>
-      client._httpEndpoints.fetchChannelInvites(this.id);
+  Stream<InviteWithMeta> fetchChannelInvites() => client._httpEndpoints.fetchChannelInvites(this.id);
 
   /// Allows to set or edit permissions for channel. [id] can be either User or Role
   /// Throws if [id] isn't [User] or [Role]
@@ -130,5 +129,6 @@ abstract class GuildChannel extends IChannel {
   /// var invite = await channel.createInvite(maxUses: 2137);
   /// ```
   Future<Invite> createInvite({int? maxAge, int? maxUses, bool? temporary, bool? unique, String? auditReason}) =>
-      client._httpEndpoints.createInvite(this.id, maxAge: maxAge, maxUses: maxUses, temporary: temporary, unique: unique, auditReason: auditReason);
+      client._httpEndpoints.createInvite(this.id,
+          maxAge: maxAge, maxUses: maxUses, temporary: temporary, unique: unique, auditReason: auditReason);
 }

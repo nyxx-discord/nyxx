@@ -22,7 +22,7 @@ class MessageComponentEmoji {
       return IGuildEmoji.fromId(this.id!);
     }
 
-    throw new ArgumentError("Tried to parse emojis from invalid payload");
+    throw ArgumentError("Tried to parse emojis from invalid payload");
   }
 
   MessageComponentEmoji._new(Map<String, dynamic> raw) {
@@ -55,7 +55,7 @@ abstract class IMessageComponent {
 
     if (raw["emoji"] != null) {
       this.emoji = MessageComponentEmoji._new(raw["emoji"] as Map<String, dynamic>);
-    }  else {
+    } else {
       this.emoji = null;
     }
 
@@ -76,7 +76,7 @@ class MessageButton extends IMessageComponent {
   ///  a dev-defined unique string sent on click (max 100 characters)
   late final String buttonMetadata;
 
-  MessageButton._new(Map<String, dynamic> raw): super._new(raw) {
+  MessageButton._new(Map<String, dynamic> raw) : super._new(raw) {
     this.buttonMetadata = raw["custom_id"] as String;
   }
 }
@@ -89,7 +89,7 @@ class LinkMessageButton extends IMessageComponent {
   /// buttons url as [Uri]
   Uri get uri => Uri.parse(url);
 
-  LinkMessageButton._new(Map<String, dynamic> raw): super._new(raw) {
+  LinkMessageButton._new(Map<String, dynamic> raw) : super._new(raw) {
     this.url = raw["url"] as String;
   }
 }

@@ -26,10 +26,6 @@ class EmbedAuthorBuilder extends Builder {
       throw EmbedBuilderArgumentException._new("Author name is too long. (256 characters limit)");
     }
 
-    return <String, dynamic> {
-      "name": name,
-      if (url != null) "url": url,
-      if (iconUrl != null) "icon_url": iconUrl
-    };
+    return <String, dynamic>{"name": name, if (url != null) "url": url, if (iconUrl != null) "icon_url": iconUrl};
   }
 }

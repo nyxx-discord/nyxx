@@ -52,23 +52,30 @@ class Shard implements Disposable {
       this._shardIsolate = isolate;
       this._sendPort = await _receiveStream.first as SendPort;
 
-      this._sendPort.send({"cmd" : "INIT", "gatewayUrl" : gatewayUrl, "compression":  manager._ws._client._options.compressedGatewayPayloads});
+      this._sendPort.send({
+        "cmd": "INIT",
+        "gatewayUrl": gatewayUrl,
+        "compression": manager._ws._client._options.compressedGatewayPayloads
+      });
       this._receiveStream.listen(_handle);
     });
   }
 
   /// Sends WS data.
   void send(int opCode, dynamic d) {
-    this._sendPort.send({"cmd": "SEND", "data" : {"op": opCode, "d": d}});
+    this._sendPort.send({
+      "cmd": "SEND",
+      "data": {"op": opCode, "d": d}
+    });
   }
 
   /// Updates clients voice state for [Guild] with given [guildId]
   void changeVoiceState(Snowflake? guildId, Snowflake? channelId, {bool selfMute = false, bool selfDeafen = false}) {
-    this.send(OPCodes.voiceStateUpdate, <String, dynamic> {
-      "guild_id" : guildId.toString(),
-      "channel_id" : channelId?.toString(),
-      "self_mute" : selfMute,
-      "self_deaf" : selfDeafen
+    this.send(OPCodes.voiceStateUpdate, <String, dynamic>{
+      "guild_id": guildId.toString(),
+      "channel_id": channelId?.toString(),
+      "self_mute": selfMute,
+      "self_deaf": selfDeafen
     });
   }
 
@@ -91,13 +98,13 @@ class Shard implements Disposable {
     dynamic guildPayload;
 
     if (guild is Snowflake) {
-      if(!this.guilds.contains(guild)) {
+      if (!this.guilds.contains(guild)) {
         throw InvalidShardException._new("Cannot request member for guild on wrong shard");
       }
 
       guildPayload = [guild.toString()];
     } else if (guild is Iterable<Snowflake>) {
-      if(!this.guilds.any((element) => guild.contains(element))) {
+      if (!this.guilds.any((element) => guild.contains(element))) {
         throw InvalidShardException._new("Cannot request member for guild on wrong shard");
       }
 
@@ -122,7 +129,7 @@ class Shard implements Disposable {
     this.send(OPCodes.heartbeat, _sequence == 0 ? null : _sequence);
     this._lastHeartbeatSent = DateTime.now();
 
-    if(!this._heartbeatAckReceived) {
+    if (!this._heartbeatAckReceived) {
       manager._logger.warning("Not received previous heartbeat ack");
       return;
     }
@@ -135,7 +142,8 @@ class Shard implements Disposable {
 
     this._connected = false;
     this._heartbeatTimer.cancel();
-    manager._logger.severe("Shard $id disconnected. Error code: [${data['errorCode']}] | Error message: [${data['errorReason']}]");
+    manager._logger
+        .severe("Shard $id disconnected. Error code: [${data['errorCode']}] | Error message: [${data['errorReason']}]");
 
     switch (closeCode) {
       case 4004:
@@ -164,35 +172,36 @@ class Shard implements Disposable {
   void _connect() {
     manager._logger.info("Connecting to gateway on shard $id!");
     this._resume = false;
-    Future.delayed(const Duration(seconds: 2), () => this._sendPort.send({ "cmd" : "CONNECT"}));
+    Future.delayed(const Duration(seconds: 2), () => this._sendPort.send({"cmd": "CONNECT"}));
   }
 
   // Reconnects to gateway
   void _reconnect() {
     manager._logger.info("Resuming connection to gateway on shard $id!");
     this._resume = true;
-    Future.delayed(const Duration(seconds: 1), () => this._sendPort.send({ "cmd" : "CONNECT"}));
+    Future.delayed(const Duration(seconds: 1), () => this._sendPort.send({"cmd": "CONNECT"}));
   }
 
   Future<void> _handle(dynamic rawData) async {
-    if(rawData["cmd"] == "CONNECT_ACK") {
+    if (rawData["cmd"] == "CONNECT_ACK") {
       manager._logger.info("Shard $id connected to gateway!");
 
       return;
     }
 
-    if(rawData["cmd"] == "ERROR" || rawData["cmd"] == "DISCONNECTED") {
+    if (rawData["cmd"] == "ERROR" || rawData["cmd"] == "DISCONNECTED") {
       _handleError(rawData);
       return;
     }
 
-    if(rawData["jsonData"] == null) {
+    if (rawData["jsonData"] == null) {
       return;
     }
 
     final discordPayload = rawData["jsonData"] as Map<String, dynamic>;
 
-    if (discordPayload["op"] == OPCodes.dispatch && manager._ws._client._options.ignoredEvents.contains(discordPayload["t"] as String)) {
+    if (discordPayload["op"] == OPCodes.dispatch &&
+        manager._ws._client._options.ignoredEvents.contains(discordPayload["t"] as String)) {
       return;
     }
 
@@ -214,31 +223,35 @@ class Shard implements Disposable {
         if (this._sessionId == null || !_resume) {
           final identifyMsg = <String, dynamic>{
             "token": manager._ws._client._token,
-            "properties": <String, dynamic> {
+            "properties": <String, dynamic>{
               "\$os": Platform.operatingSystem,
               "\$browser": "nyxx",
               "\$device": "nyxx",
             },
             "large_threshold": manager._ws._client._options.largeThreshold,
-            "guild_subscriptions" : manager._ws._client._options.guildSubscriptions,
+            "guild_subscriptions": manager._ws._client._options.guildSubscriptions,
             "intents": manager._ws._client.intents,
             if (manager._ws._client._options.initialPresence != null)
-              "presence" : manager._ws._client._options.initialPresence!._build()
+              "presence": manager._ws._client._options.initialPresence!._build()
           };
 
           identifyMsg["shard"] = <int>[this.id, manager._numShards];
 
           this.send(OPCodes.identify, identifyMsg);
         } else if (_resume) {
-          this.send(OPCodes.resume,
-              <String, dynamic>{"token": manager._ws._client._token, "session_id": this._sessionId, "seq": this._sequence});
+          this.send(OPCodes.resume, <String, dynamic>{
+            "token": manager._ws._client._token,
+            "session_id": this._sessionId,
+            "seq": this._sequence
+          });
         }
 
         this._heartbeatTimer = Timer.periodic(
             Duration(milliseconds: rawPayload["d"]["heartbeat_interval"] as int), (Timer t) => this._heartbeat());
         break;
       case OPCodes.invalidSession:
-        manager._logger.severe("Invalid session on shard $id. ${(rawPayload["d"] as bool) ? "Resuming..." : "Reconnecting..."}");
+        manager._logger
+            .severe("Invalid session on shard $id. ${(rawPayload["d"] as bool) ? "Resuming..." : "Reconnecting..."}");
         _heartbeatTimer.cancel();
         manager._ws._client._events.onDisconnect.add(DisconnectEvent._new(this, DisconnectEventReason.invalidSession));
 
@@ -256,7 +269,8 @@ class Shard implements Disposable {
         switch (dispatchType) {
           case "READY":
             this._sessionId = rawPayload["d"]["session_id"] as String;
-            manager._ws._client.self = ClientUser._new(manager._ws._client, rawPayload["d"]["user"] as Map<String, dynamic>);
+            manager._ws._client.self =
+                ClientUser._new(manager._ws._client, rawPayload["d"]["user"] as Map<String, dynamic>);
 
             this._connected = true;
             manager._logger.info("Shard ${this.id} ready!");
@@ -272,39 +286,48 @@ class Shard implements Disposable {
             break;
 
           case "MESSAGE_REACTION_REMOVE_ALL":
-            manager._ws._client._events.onMessageReactionsRemoved.add(MessageReactionsRemovedEvent._new(rawPayload, manager._ws._client));
+            manager._ws._client._events.onMessageReactionsRemoved
+                .add(MessageReactionsRemovedEvent._new(rawPayload, manager._ws._client));
             break;
 
           case "MESSAGE_REACTION_ADD":
-            manager._ws._client._events.onMessageReactionAdded.add(MessageReactionAddedEvent._new(rawPayload, manager._ws._client));
+            manager._ws._client._events.onMessageReactionAdded
+                .add(MessageReactionAddedEvent._new(rawPayload, manager._ws._client));
             break;
 
           case "MESSAGE_REACTION_REMOVE":
-            manager._ws._client._events.onMessageReactionRemove.add(MessageReactionRemovedEvent._new(rawPayload, manager._ws._client));
+            manager._ws._client._events.onMessageReactionRemove
+                .add(MessageReactionRemovedEvent._new(rawPayload, manager._ws._client));
             break;
 
           case "MESSAGE_DELETE_BULK":
-            manager._ws._client._events.onMessageDeleteBulk.add(MessageDeleteBulkEvent._new(rawPayload, manager._ws._client));
+            manager._ws._client._events.onMessageDeleteBulk
+                .add(MessageDeleteBulkEvent._new(rawPayload, manager._ws._client));
             break;
 
           case "CHANNEL_PINS_UPDATE":
-            manager._ws._client._events.onChannelPinsUpdate.add(ChannelPinsUpdateEvent._new(rawPayload, manager._ws._client));
+            manager._ws._client._events.onChannelPinsUpdate
+                .add(ChannelPinsUpdateEvent._new(rawPayload, manager._ws._client));
             break;
 
           case "VOICE_STATE_UPDATE":
-            manager._ws._client._events.onVoiceStateUpdate.add(VoiceStateUpdateEvent._new(rawPayload, manager._ws._client));
+            manager._ws._client._events.onVoiceStateUpdate
+                .add(VoiceStateUpdateEvent._new(rawPayload, manager._ws._client));
             break;
 
           case "VOICE_SERVER_UPDATE":
-            manager._ws._client._events.onVoiceServerUpdate.add(VoiceServerUpdateEvent._new(rawPayload, manager._ws._client));
+            manager._ws._client._events.onVoiceServerUpdate
+                .add(VoiceServerUpdateEvent._new(rawPayload, manager._ws._client));
             break;
 
           case "GUILD_EMOJIS_UPDATE":
-            manager._ws._client._events.onGuildEmojisUpdate.add(GuildEmojisUpdateEvent._new(rawPayload, manager._ws._client));
+            manager._ws._client._events.onGuildEmojisUpdate
+                .add(GuildEmojisUpdateEvent._new(rawPayload, manager._ws._client));
             break;
 
           case "MESSAGE_CREATE":
-            manager._ws._client._events.onMessageReceived.add(MessageReceivedEvent._new(rawPayload, manager._ws._client));
+            manager._ws._client._events.onMessageReceived
+                .add(MessageReceivedEvent._new(rawPayload, manager._ws._client));
             break;
 
           case "MESSAGE_DELETE":
@@ -342,11 +365,13 @@ class Shard implements Disposable {
             break;
 
           case "GUILD_MEMBER_REMOVE":
-            manager._ws._client._events.onGuildMemberRemove.add(GuildMemberRemoveEvent._new(rawPayload, manager._ws._client));
+            manager._ws._client._events.onGuildMemberRemove
+                .add(GuildMemberRemoveEvent._new(rawPayload, manager._ws._client));
             break;
 
           case "GUILD_MEMBER_UPDATE":
-            manager._ws._client._events.onGuildMemberUpdate.add(GuildMemberUpdateEvent._new(rawPayload, manager._ws._client));
+            manager._ws._client._events.onGuildMemberUpdate
+                .add(GuildMemberUpdateEvent._new(rawPayload, manager._ws._client));
             break;
 
           case "CHANNEL_CREATE":

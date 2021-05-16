@@ -1,7 +1,8 @@
 part of nyxx;
 
 /// Lightweight channel which implements cacheable and allows to perform basic operation on channel instance
-class CacheableTextChannel<S extends TextChannel> extends IChannel implements MinimalTextChannel, ISend, Cacheable<Snowflake, S> {
+class CacheableTextChannel<S extends TextChannel> extends IChannel
+    implements MinimalTextChannel, ISend, Cacheable<Snowflake, S> {
   @override
   DateTime get createdAt => this.id.timestamp;
 
@@ -10,7 +11,8 @@ class CacheableTextChannel<S extends TextChannel> extends IChannel implements Mi
 
   late Timer _typing;
 
-  CacheableTextChannel._new(INyxx client, Snowflake id, [ChannelType type = ChannelType.unknown]): super._raw(client, id, type);
+  CacheableTextChannel._new(INyxx client, Snowflake id, [ChannelType type = ChannelType.unknown])
+      : super._raw(client, id, type);
 
   @override
   S? getFromCache() => this.client.channels.get(this.id);
@@ -33,16 +35,14 @@ class CacheableTextChannel<S extends TextChannel> extends IChannel implements Mi
       this.client.httpEndpoints.downloadMessages(this.id, limit: limit, after: after, around: around, before: before);
 
   @override
-  Future<Message> fetchMessage(Snowflake id) =>
-      this.client.httpEndpoints.fetchMessage(this.id, id);
+  Future<Message> fetchMessage(Snowflake id) => this.client.httpEndpoints.fetchMessage(this.id, id);
 
   /// Returns always null since this type of channel doesn't have cache.
   @override
   Message? getMessage(Snowflake id) => null;
 
   @override
-  Future<Message> sendMessage(MessageBuilder builder) =>
-      this.client.httpEndpoints.sendMessage(this.id, builder);
+  Future<Message> sendMessage(MessageBuilder builder) => this.client.httpEndpoints.sendMessage(this.id, builder);
 
   @override
   Future<void> startTyping() => this.client.httpEndpoints.triggerTyping(this.id);

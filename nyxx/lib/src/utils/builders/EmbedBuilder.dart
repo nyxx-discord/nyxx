@@ -59,38 +59,29 @@ class EmbedBuilder extends Builder {
       bool inline = false,
       Function(EmbedFieldBuilder field)? builder,
       EmbedFieldBuilder? field}) {
-    this.fields.add(_constructEmbedFieldBuilder(
-      name: name,
-      content: content,
-      builder: builder,
-      field: field,
-      inline: inline
-    ));
+    this
+        .fields
+        .add(_constructEmbedFieldBuilder(name: name, content: content, builder: builder, field: field, inline: inline));
   }
 
   /// Replaces field where [name] witch provided new field.
-  void replaceField({dynamic? name,
+  void replaceField(
+      {dynamic? name,
       dynamic? content,
       bool inline = false,
       Function(EmbedFieldBuilder field)? builder,
       EmbedFieldBuilder? field}) {
-
     final index = this.fields.indexWhere((element) => element.name == name);
-    this.fields[index] = _constructEmbedFieldBuilder(
-        name: name,
-        content: content,
-        builder: builder,
-        field: field,
-        inline: inline
-    );
+    this.fields[index] =
+        _constructEmbedFieldBuilder(name: name, content: content, builder: builder, field: field, inline: inline);
   }
 
   EmbedFieldBuilder _constructEmbedFieldBuilder(
       {dynamic? name,
-        dynamic? content,
-        bool inline = false,
-        Function(EmbedFieldBuilder field)? builder,
-        EmbedFieldBuilder? field}) {
+      dynamic? content,
+      bool inline = false,
+      Function(EmbedFieldBuilder field)? builder,
+      EmbedFieldBuilder? field}) {
     if (field != null) {
       return field;
     }
@@ -106,11 +97,11 @@ class EmbedBuilder extends Builder {
 
   /// Total length of all text fields of embed
   int get length =>
-    (this.title?.length ?? 0) +
-        (this.description?.length ?? 0) +
-        (this.footer?.length ?? 0) +
-        (this.author?.length ?? 0) +
-        (fields.isEmpty ? 0 : fields.map((embed) => embed.length).reduce((f, s) => f + s));
+      (this.title?.length ?? 0) +
+      (this.description?.length ?? 0) +
+      (this.footer?.length ?? 0) +
+      (this.author?.length ?? 0) +
+      (fields.isEmpty ? 0 : fields.map((embed) => embed.length).reduce((f, s) => f + s));
 
   @override
 

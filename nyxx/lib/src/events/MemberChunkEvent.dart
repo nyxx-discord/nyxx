@@ -38,8 +38,7 @@ class MemberChunkEvent {
     }
 
     this.members = [
-      for (var memberRaw in raw["d"]["members"])
-        Member._new(client, memberRaw as Map<String, dynamic>, this.guild.id)
+      for (var memberRaw in raw["d"]["members"]) Member._new(client, memberRaw as Map<String, dynamic>, this.guild.id)
     ];
 
     if (client._cacheOptions.memberCachePolicyLocation.event) {

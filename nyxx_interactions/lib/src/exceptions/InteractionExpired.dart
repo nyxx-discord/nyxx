@@ -4,7 +4,8 @@ part of nyxx_interactions;
 class InteractionExpiredError implements Error {
   /// Returns a string representation of this object.
   @override
-  String toString() => "InteractionExpiredError: Interaction tokens are only valid for 15mins. It has been over 15mins and the token is now invalid.";
+  String toString() =>
+      "InteractionExpiredError: Interaction tokens are only valid for 15mins. It has been over 15mins and the token is now invalid.";
 
   @override
   StackTrace? get stackTrace => StackTrace.empty;

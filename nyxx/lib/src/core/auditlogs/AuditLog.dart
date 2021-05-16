@@ -14,8 +14,7 @@ class AuditLog {
   late final Map<Snowflake, AuditLogEntry> entries;
 
   /// Filters audit log by [users]
-  Iterable<AuditLogEntry> filter(bool Function(AuditLogEntry) test) =>
-      entries.values.where(test);
+  Iterable<AuditLogEntry> filter(bool Function(AuditLogEntry) test) => entries.values.where(test);
 
   AuditLog._new(Map<String, dynamic> raw, INyxx client) {
     webhooks = {};

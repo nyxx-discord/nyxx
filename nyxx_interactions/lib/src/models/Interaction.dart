@@ -30,15 +30,25 @@ class Interaction extends SnowflakeEntity {
     this.type = raw["type"] as int;
 
     if (raw["guild_id"] != null) {
-      this.guild = CacheUtility.createCacheableGuild(_client, Snowflake(raw["guild_id"]),);
+      this.guild = CacheUtility.createCacheableGuild(
+        _client,
+        Snowflake(raw["guild_id"]),
+      );
     } else {
       this.guild = null;
     }
 
-    this.channel = CacheUtility.createCacheableTextChannel(_client, Snowflake(raw["channel_id"]),);
+    this.channel = CacheUtility.createCacheableTextChannel(
+      _client,
+      Snowflake(raw["channel_id"]),
+    );
 
     if (this.guild != null) {
-      this.memberAuthor = EntityUtility.createGuildMember(_client, Snowflake(raw["guild_id"]), raw["member"] as Map<String, dynamic>,);
+      this.memberAuthor = EntityUtility.createGuildMember(
+        _client,
+        Snowflake(raw["guild_id"]),
+        raw["member"] as Map<String, dynamic>,
+      );
     } else {
       this.userAuthor = EntityUtility.createUser(_client, raw["user"] as Map<String, dynamic>);
     }
@@ -96,7 +106,7 @@ class ComponentInteraction extends Interaction {
   /// Additional data string after ';'
   String get metadata => idMetadata.split(";").last;
 
-  ComponentInteraction._new(Nyxx client, Map<String, dynamic> raw): super._new(client, raw) {
+  ComponentInteraction._new(Nyxx client, Map<String, dynamic> raw) : super._new(client, raw) {
     this.idMetadata = raw["data"]["custom_id"] as String;
   }
 }

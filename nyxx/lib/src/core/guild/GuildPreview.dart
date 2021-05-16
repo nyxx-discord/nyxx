@@ -49,8 +49,7 @@ class GuildPreview extends SnowflakeEntity {
     }
 
     this.emojis = [
-      for (var rawEmoji in raw["emojis"])
-        GuildEmoji._new(client, rawEmoji as Map<String, dynamic>, this.id)
+      for (var rawEmoji in raw["emojis"]) GuildEmoji._new(client, rawEmoji as Map<String, dynamic>, this.id)
     ];
 
     this.features = (raw["features"] as List<dynamic>).map((e) => GuildFeature.from(e.toString()));

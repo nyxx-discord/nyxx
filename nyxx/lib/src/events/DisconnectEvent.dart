@@ -14,7 +14,7 @@ class DisconnectEvent {
 /// Reason why shard was disconnected.
 class DisconnectEventReason extends IEnum<int> {
   /// When shard is disconnected due invalid shard session.
-  static const DisconnectEventReason invalidSession = const DisconnectEventReason._from(9);
+  static const DisconnectEventReason invalidSession = DisconnectEventReason._from(9);
 
   const DisconnectEventReason._from(int value) : super(value);
 }

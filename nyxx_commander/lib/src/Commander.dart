@@ -51,12 +51,12 @@ class Commander with ICommandRegistrable {
   /// Allows to specify additional [beforeCommandHandler] executed before main command callback,
   /// and [afterCommandHandler] executed after main command callback.
   Commander(Nyxx client,
-        {String? prefix,
-        PrefixHandlerFunction? prefixHandler,
-        PassHandlerFunction? beforeCommandHandler,
-        AfterHandlerFunction? afterCommandHandler,
-        LoggerHandlerFunction? loggerHandlerFunction,
-        CommandExecutionError? commandExecutionError}) {
+      {String? prefix,
+      PrefixHandlerFunction? prefixHandler,
+      PassHandlerFunction? beforeCommandHandler,
+      AfterHandlerFunction? afterCommandHandler,
+      LoggerHandlerFunction? loggerHandlerFunction,
+      CommandExecutionError? commandExecutionError}) {
     if (!PermissionsUtils.isApplied(client.intents, GatewayIntents.allUnprivileged)) {
       _logger.shout("Commander cannot start without at least all unprivileged intents");
       exit(1);
@@ -89,14 +89,16 @@ class Commander with ICommandRegistrable {
       return;
     }
 
-    if(!event.message.content.startsWith(prefix)) {
+    if (!event.message.content.startsWith(prefix)) {
       return;
     }
 
     // Find matching command with given message content
-    final matchingCommand = _CommandMatcher._findMatchingCommand(event.message.content.toLowerCase().replaceFirst(prefix, "").trim().split(" "), _commandEntities) as CommandHandler?;
+    final matchingCommand = _CommandMatcher._findMatchingCommand(
+            event.message.content.toLowerCase().replaceFirst(prefix, "").trim().split(" "), _commandEntities)
+        as CommandHandler?;
 
-    if(matchingCommand == null) {
+    if (matchingCommand == null) {
       return;
     }
 
@@ -105,7 +107,8 @@ class Commander with ICommandRegistrable {
     // Example: (?<finalCommand>(quote|q) (remove|rm))
     // This will match the command `quote remove`, `q remove`, `quote rm` and `q rm`
 
-    final match = RegExp("(?<finalCommand>${matchingCommand.getFullCommandMatch().trim()})").firstMatch(event.message.content.toLowerCase());
+    final match = RegExp("(?<finalCommand>${matchingCommand.getFullCommandMatch().trim()})")
+        .firstMatch(event.message.content.toLowerCase());
     final finalCommand = match?.namedGroup("finalCommand");
 
     // construct CommandContext
@@ -123,7 +126,7 @@ class Commander with ICommandRegistrable {
     }
 
     // Invoke before handler for commander
-    if(this._beforeCommandHandler != null && !(await this._beforeCommandHandler!(context))) {
+    if (this._beforeCommandHandler != null && !(await this._beforeCommandHandler!(context))) {
       return;
     }
 
@@ -131,11 +134,11 @@ class Commander with ICommandRegistrable {
     try {
       await matchingCommand.commandHandler(context, event.message.content);
     } on Exception catch (e) {
-      if(this._commandExecutionError != null) {
+      if (this._commandExecutionError != null) {
         await _commandExecutionError!(context, e);
       }
     } on Error catch (e) {
-      if(this._commandExecutionError != null) {
+      if (this._commandExecutionError != null) {
         await _commandExecutionError!(context, e);
       }
     }
@@ -154,30 +157,30 @@ class Commander with ICommandRegistrable {
 
   // Invokes command after handler and its parents
   Future<void> _invokeAfterHandler(CommandEntity? commandEntity, CommandContext context) async {
-    if(commandEntity == null) {
+    if (commandEntity == null) {
       return;
     }
 
-    if(commandEntity.afterHandler != null) {
+    if (commandEntity.afterHandler != null) {
       await commandEntity.afterHandler!(context);
     }
 
-    if(commandEntity.parent != null) {
+    if (commandEntity.parent != null) {
       await _invokeAfterHandler(commandEntity.parent, context);
     }
   }
 
   // Invokes command before handler and its parents. It will check for next before handlers if top handler returns true.
   Future<bool> _invokeBeforeHandler(CommandEntity? commandEntity, CommandContext context) async {
-    if(commandEntity == null) {
+    if (commandEntity == null) {
       return true;
     }
 
-    if(commandEntity.beforeHandler == null) {
+    if (commandEntity.beforeHandler == null) {
       return _invokeBeforeHandler(commandEntity.parent, context);
     }
 
-    if(await commandEntity.beforeHandler!(context)) {
+    if (await commandEntity.beforeHandler!(context)) {
       return _invokeBeforeHandler(commandEntity.parent, context);
     }
 
@@ -189,8 +192,10 @@ class Commander with ICommandRegistrable {
   }
 
   /// Registers command with given [commandName]. Allows to specify command specific before and after command execution callbacks
-  void registerCommand(String commandName, CommandHandlerFunction commandHandler, {PassHandlerFunction? beforeHandler, AfterHandlerFunction? afterHandler}) {
-    this.registerCommandEntity(BasicCommandHandler(commandName, commandHandler, beforeHandler: beforeHandler, afterHandler: afterHandler));
+  void registerCommand(String commandName, CommandHandlerFunction commandHandler,
+      {PassHandlerFunction? beforeHandler, AfterHandlerFunction? afterHandler}) {
+    this.registerCommandEntity(
+        BasicCommandHandler(commandName, commandHandler, beforeHandler: beforeHandler, afterHandler: afterHandler));
   }
 
   /// Registers command as implemented [CommandEntity] class
@@ -203,12 +208,13 @@ abstract class ICommandRegistrable {
 
   /// Registers [CommandEntity] within context of this instance. Throws error if there is command with same name as provided.
   void registerCommandEntity(CommandEntity entity) {
-    if (this._commandEntities.any((element) => element.isEntityName(entity.name) )) {
+    if (this._commandEntities.any((element) => element.isEntityName(entity.name))) {
       throw Exception("Command name should be unique! There is already command with name: ${entity.name}}");
     }
 
     if (entity is CommandGroup && entity.name.isEmpty && entity.aliases.isNotEmpty) {
-      throw Exception("Command group cannot have aliases if its name is empty! Provided aliases: [${entity.aliases.join(", ")}]");
+      throw Exception(
+          "Command group cannot have aliases if its name is empty! Provided aliases: [${entity.aliases.join(", ")}]");
     }
 
     this._commandEntities.add(entity);

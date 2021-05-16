@@ -64,13 +64,12 @@ class HttpResponseError extends _HttpResponse implements Error {
     if (this.errorMessage.isEmpty) {
       try {
         this.errorMessage = utf8.decode(this._body);
-      } on Exception { } // ignore: empty_catches
+      } on Exception {} // ignore: empty_catches
     }
   }
 
   @override
-  String toString() =>
-    "[Code: $errorCode] [Message: $errorMessage]";
+  String toString() => "[Code: $errorCode] [Message: $errorMessage]";
 
   @override
   StackTrace? get stackTrace => null;

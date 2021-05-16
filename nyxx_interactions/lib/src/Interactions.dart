@@ -43,10 +43,12 @@ class Interactions {
 
           switch (type) {
             case 2:
-              _events.onSlashCommand.add(SlashCommandInteractionEvent._new(_client, event.rawData["d"] as Map<String, dynamic>));
+              _events.onSlashCommand
+                  .add(SlashCommandInteractionEvent._new(_client, event.rawData["d"] as Map<String, dynamic>));
               break;
             case 3:
-              _events.onButtonEvent.add(ComponentInteractionEvent._new(_client, event.rawData["d"] as Map<String, dynamic>));
+              _events.onButtonEvent
+                  .add(ComponentInteractionEvent._new(_client, event.rawData["d"] as Map<String, dynamic>));
               break;
             default:
               this._logger.warning("Unknown interaction type: [$type]; Payload: ${jsonEncode(event.rawData)}");
@@ -72,27 +74,17 @@ class Interactions {
     final groupedGuildCommands = _groupSlashCommandBuilders(commandPartition.last);
 
     final globalCommandsResponse = await this._client.httpEndpoints.sendRawRequest(
-        "/applications/${this._client.app.id}/commands",
-        "PUT",
-        body: [
-          for(final builder in globalCommands)
-            builder._build()
-        ]
-    );
+        "/applications/${this._client.app.id}/commands", "PUT",
+        body: [for (final builder in globalCommands) builder._build()]);
 
     if (globalCommandsResponse is HttpResponseSuccess) {
       this._registerCommandHandlers(globalCommandsResponse, globalCommands);
     }
 
-    for(final entry in groupedGuildCommands.entries) {
+    for (final entry in groupedGuildCommands.entries) {
       final response = await this._client.httpEndpoints.sendRawRequest(
-          "/applications/${this._client.app.id}/guilds/${entry.key}/commands",
-          "PUT",
-          body: [
-            for(final builder in entry.value)
-              builder._build()
-          ]
-      );
+          "/applications/${this._client.app.id}/guilds/${entry.key}/commands", "PUT",
+          body: [for (final builder in entry.value) builder._build()]);
 
       if (response is HttpResponseSuccess) {
         this._registerCommandHandlers(response, entry.value);
@@ -130,8 +122,7 @@ class Interactions {
   }
 
   /// Registers callback for button event for given [id]
-  void registerButtonHandler(String id, ButtonInteractionHandler handler) =>
-      this._buttonHandlers[id] = handler;
+  void registerButtonHandler(String id, ButtonInteractionHandler handler) => this._buttonHandlers[id] = handler;
 
   /// Allows to register new [SlashCommandBuilder]
   void registerSlashCommand(SlashCommandBuilder slashCommandBuilder) {
@@ -139,9 +130,10 @@ class Interactions {
   }
 
   void _registerCommandHandlers(HttpResponseSuccess response, Iterable<SlashCommandBuilder> builders) {
-    final registeredSlashCommands = (response.jsonBody as List<dynamic>).map((e) => SlashCommand._new(e as Map<String, dynamic>, this._client));
+    final registeredSlashCommands =
+        (response.jsonBody as List<dynamic>).map((e) => SlashCommand._new(e as Map<String, dynamic>, this._client));
 
-    for(final registeredCommand in registeredSlashCommands) {
+    for (final registeredCommand in registeredSlashCommands) {
       final matchingBuilder = builders.firstWhere((element) => element.name.toLowerCase() == registeredCommand.name);
       this._assignCommandToHandler(matchingBuilder, registeredCommand);
 
@@ -168,7 +160,8 @@ class Interactions {
     final subCommandGroups = builder.options.where((element) => element.type == CommandOptionType.subCommandGroup);
     if (subCommandGroups.isNotEmpty) {
       for (final subCommandGroup in subCommandGroups) {
-        final subCommands = subCommandGroup.options?.where((element) => element.type == CommandOptionType.subCommand) ?? [];
+        final subCommands =
+            subCommandGroup.options?.where((element) => element.type == CommandOptionType.subCommand) ?? [];
 
         for (final subCommand in subCommands) {
           if (subCommand._handler == null) {

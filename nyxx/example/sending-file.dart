@@ -34,11 +34,9 @@ void main() {
 
       // Send everything we created before to channel where message was received.
       // e.message.channel.getFromCache()?.sendMessage(files: [attachment], embed: embed, content: "HEJKA!");
-      e.message.channel.getFromCache()?.sendMessage(
-          MessageBuilder.content("HEJKA!")
-            ..embed = embed
-            ..files = [attachment]
-      );
+      e.message.channel.getFromCache()?.sendMessage(MessageBuilder.content("HEJKA!")
+        ..embed = embed
+        ..files = [attachment]);
     }
   });
 }

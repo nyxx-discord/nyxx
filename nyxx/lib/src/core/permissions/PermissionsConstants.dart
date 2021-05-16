@@ -98,7 +98,7 @@ class PermissionsConstants {
   /// Allows members to use slash commands in text channels
   static const int useSlashCommands = 1 << 31;
 
-  /// Allows for requesting to speak in stage channels  
+  /// Allows for requesting to speak in stage channels
   static const int requestToSpeak = 1 << 32;
 
   /// All of the permissions

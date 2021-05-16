@@ -27,7 +27,9 @@ void main() {
     if (event.message.content == "Test 12") {
       await event.message.delete();
 
-      await event.message.channel.getFromCache()?.sendMessage(MessageBuilder.content("Commander tests completed successfully!"));
+      await event.message.channel
+          .getFromCache()
+          ?.sendMessage(MessageBuilder.content("Commander tests completed successfully!"));
       exit(0);
     }
   });
@@ -75,9 +77,9 @@ void main() {
       await context.message.delete();
     })
     ..registerCommandGroup(CommandGroup(name: "test4")
-        ..registerDefaultCommand((context, message) => context.channel.sendMessage(MessageBuilder.content("Test 11")))
-        ..registerSubCommand("test5", (context, message) => context.channel.sendMessage(MessageBuilder.content("Test 12")))
-    );
+      ..registerDefaultCommand((context, message) => context.channel.sendMessage(MessageBuilder.content("Test 11")))
+      ..registerSubCommand(
+          "test5", (context, message) => context.channel.sendMessage(MessageBuilder.content("Test 12"))));
 
   Timer(const Duration(seconds: 60), () {
     print("Timed out waiting for messages");

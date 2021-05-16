@@ -37,8 +37,7 @@ class Member extends SnowflakeEntity {
   // TODO: is everything okay?
   /// Returns highest role of member.
   /// Uses ! on nullable properties and will throw if anything is missing from cache
-  Role get highestRole =>
-      this.roles.reduce((value, element) {
+  Role get highestRole => this.roles.reduce((value, element) {
         final valueInstance = value.getFromCache();
         final elementInstance = element.getFromCache();
 
@@ -57,10 +56,7 @@ class Member extends SnowflakeEntity {
     this.guild = _GuildCacheable(client, guildId);
     this.boostingSince = DateTime.tryParse(raw["premium_since"] as String? ?? "");
 
-    this.roles = [
-      for (var id in raw["roles"])
-        _RoleCacheable(client, Snowflake(id), this.guild)
-    ];
+    this.roles = [for (var id in raw["roles"]) _RoleCacheable(client, Snowflake(id), this.guild)];
 
     if (raw["hoisted_role"] != null) {
       this.hoistedRole = _RoleCacheable(client, Snowflake(raw["hoisted_role"]), this.guild);
@@ -119,12 +115,18 @@ class Member extends SnowflakeEntity {
       client._httpEndpoints.removeRoleFromUser(this.guild.id, role.id, this.id, auditReason: auditReason);
 
   /// Kicks the member from guild
-  Future<void> kick({String? auditReason}) =>
-      client._httpEndpoints.guildKick(this.guild.id, this.id);
+  Future<void> kick({String? auditReason}) => client._httpEndpoints.guildKick(this.guild.id, this.id);
 
   /// Edits members. Allows to move user in voice channel, mute or deaf, change nick, roles.
-  Future<void> edit({String? nick, List<SnowflakeEntity>? roles, bool? mute, bool? deaf, SnowflakeEntity? channel, String? auditReason}) =>
-      client._httpEndpoints.editGuildMember(this.guild.id, this.id, nick: nick, roles: roles, mute: mute, deaf: deaf, channel: channel, auditReason: auditReason);
+  Future<void> edit(
+          {String? nick,
+          List<SnowflakeEntity>? roles,
+          bool? mute,
+          bool? deaf,
+          SnowflakeEntity? channel,
+          String? auditReason}) =>
+      client._httpEndpoints.editGuildMember(this.guild.id, this.id,
+          nick: nick, roles: roles, mute: mute, deaf: deaf, channel: channel, auditReason: auditReason);
 
   void _updateMember(String? nickname, List<Snowflake> roles, DateTime? boostingSince) {
     if (this.nickname != nickname) {

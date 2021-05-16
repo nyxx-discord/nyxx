@@ -8,16 +8,22 @@ import "Regexes.dart" show Regexes;
 enum TagHandling {
   /// Ignores tag handling completely - leaves content as is.
   ignore,
+
   /// Removes tag completely.
   remove,
+
   /// Returns name of tag, eg. `<@932489234> -> @l7ssha`
   name,
+
   /// Returns name of tag without mention prefix, eg. `<@932489234> -> l7ssha`
   nameNoPrefix,
+
   /// Returns name of the tag with full possible data, eg. `<@932489234> -> @l7ssha#6712`
   fullName,
+
   /// Returns name of the tag with full possible data without mention prefix, eg. `<@932489234> -> l7ssha#6712`
   fullNameNoPrefix,
+
   /// Sanitizes tag to form that client wont treat it as valid tag
   sanitize
 }
@@ -27,23 +33,23 @@ extension MessageResolverExtension on Message {
   /// Resolves raw message content to human readable string.
   /// Allows to set what to do with particular parts of message.
   /// Each mention, channel reference and emoji can be resolved by [TagHandling]
-  FutureOr<String> resolveContent( {
-    TagHandling userTagHandling = TagHandling.sanitize,
-    TagHandling roleTagHandling = TagHandling.sanitize,
-    TagHandling everyoneTagHandling = TagHandling.sanitize,
-    TagHandling channelTagHandling = TagHandling.sanitize,
-    TagHandling emojiTagHandling = TagHandling.sanitize
-  }) {
-    if(this.content.isEmpty) {
+  FutureOr<String> resolveContent(
+      {TagHandling userTagHandling = TagHandling.sanitize,
+      TagHandling roleTagHandling = TagHandling.sanitize,
+      TagHandling everyoneTagHandling = TagHandling.sanitize,
+      TagHandling channelTagHandling = TagHandling.sanitize,
+      TagHandling emojiTagHandling = TagHandling.sanitize}) {
+    if (this.content.isEmpty) {
       return "";
     }
 
     return MessageResolver(this.client as Nyxx,
-      userTagHandling: userTagHandling,
-      roleTagHandling: roleTagHandling,
-      everyoneTagHandling: everyoneTagHandling,
-      channelTagHandling: channelTagHandling,
-      emojiTagHandling: everyoneTagHandling).resolve(this.content);
+            userTagHandling: userTagHandling,
+            roleTagHandling: roleTagHandling,
+            everyoneTagHandling: everyoneTagHandling,
+            channelTagHandling: channelTagHandling,
+            emojiTagHandling: everyoneTagHandling)
+        .resolve(this.content);
   }
 }
 
@@ -77,14 +83,13 @@ class MessageResolver {
   late final MissingEntityHandler missingEntityHandler;
 
   /// Create message resolver with given options
-  MessageResolver(this._client, {
-    this.userTagHandling = TagHandling.sanitize,
-    this.roleTagHandling = TagHandling.sanitize,
-    this.everyoneTagHandling = TagHandling.sanitize,
-    this.channelTagHandling = TagHandling.sanitize,
-    this.emojiTagHandling = TagHandling.sanitize,
-    MissingEntityHandler? missingEntityHandler
-  }) {
+  MessageResolver(this._client,
+      {this.userTagHandling = TagHandling.sanitize,
+      this.roleTagHandling = TagHandling.sanitize,
+      this.everyoneTagHandling = TagHandling.sanitize,
+      this.channelTagHandling = TagHandling.sanitize,
+      this.emojiTagHandling = TagHandling.sanitize,
+      MissingEntityHandler? missingEntityHandler}) {
     if (missingEntityHandler == null) {
       this.missingEntityHandler = _defaultMissingEntityHandler;
     } else {
@@ -93,14 +98,12 @@ class MessageResolver {
   }
 
   /// Create message resolver with tag handlers set to [tagHandling].
-  factory MessageResolver.uniform(Nyxx client, TagHandling tagHandling) =>
-      MessageResolver(client,
-        userTagHandling: tagHandling,
-        roleTagHandling: tagHandling,
-        everyoneTagHandling: tagHandling,
-        channelTagHandling: tagHandling,
-        emojiTagHandling: tagHandling
-    );
+  factory MessageResolver.uniform(Nyxx client, TagHandling tagHandling) => MessageResolver(client,
+      userTagHandling: tagHandling,
+      roleTagHandling: tagHandling,
+      everyoneTagHandling: tagHandling,
+      channelTagHandling: tagHandling,
+      emojiTagHandling: tagHandling);
 
   /// Resolves raw [messageContent] into human readable form.
   Future<String> resolve(String messageContent) async {
@@ -111,7 +114,7 @@ class MessageResolver {
     final messageParts = messageContent.split(" ");
     final outputBuffer = StringBuffer();
 
-    for(final part in messageParts) {
+    for (final part in messageParts) {
       outputBuffer.write(" ");
 
       final userMatch = Regexes.userMentionRegex.firstMatch(part);
@@ -188,7 +191,8 @@ class MessageResolver {
       return "<#$_whiteSpaceCharacter${match.group(1)}>";
     }
 
-    final channel = _client.channels.values.firstWhere((ch) => ch is TextGuildChannel && ch.id == match.group(1)) as TextGuildChannel?;
+    final channel = _client.channels.values.firstWhere((ch) => ch is TextGuildChannel && ch.id == match.group(1))
+        as TextGuildChannel?;
 
     if (channelTagHandling == TagHandling.name || channelTagHandling == TagHandling.fullName) {
       return channel != null ? "#${channel.name}" : this.missingEntityHandler("channel");

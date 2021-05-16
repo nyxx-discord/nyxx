@@ -9,12 +9,11 @@ extension MemberExtension on User {
 
     for (final guild in this.client.guilds.values) {
       try {
-        final member = guild.members[this.id]
-          ?? await guild.fetchMember(this.id);
+        final member = guild.members[this.id] ?? await guild.fetchMember(this.id);
 
         result[guild] = member;
-      // ignore: empty_catches
-      } on Exception { }
+        // ignore: empty_catches
+      } on Exception {}
     }
 
     return result;

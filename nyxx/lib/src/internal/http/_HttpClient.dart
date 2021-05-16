@@ -7,9 +7,7 @@ class _HttpClient extends http.BaseClient {
 
   // ignore: public_member_api_docs
   _HttpClient(INyxx client) {
-    this._authHeader = {
-      "Authorization" : "Bot ${client._token}"
-    };
+    this._authHeader = {"Authorization": "Bot ${client._token}"};
   }
 
   @override

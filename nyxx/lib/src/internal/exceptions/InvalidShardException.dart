@@ -4,7 +4,7 @@ part of nyxx;
 class InvalidShardException implements Exception {
   /// Custom error message specific to context of exception
   final String message;
-  
+
   InvalidShardException._new(this.message);
 
   @override

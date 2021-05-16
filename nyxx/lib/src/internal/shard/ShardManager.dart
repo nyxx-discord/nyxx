@@ -33,9 +33,10 @@ class ShardManager implements Disposable {
   Iterable<Shard> get shards => List.unmodifiable(_shards.values);
 
   /// Average gateway latency across all shards
-  Duration get gatewayLatency
-    => Duration(milliseconds: (this.shards.map((e) => e.gatewayLatency.inMilliseconds)
-        .fold<int>(0, (first, second) => first + second)) ~/ shards.length);
+  Duration get gatewayLatency => Duration(
+      milliseconds:
+          (this.shards.map((e) => e.gatewayLatency.inMilliseconds).fold<int>(0, (first, second) => first + second)) ~/
+              shards.length);
 
   final _ConnectionManager _ws;
   late final int _numShards;
@@ -43,7 +44,9 @@ class ShardManager implements Disposable {
 
   /// Starts shard manager
   ShardManager._new(this._ws) {
-    this._numShards = this._ws._client._options.shardCount != null ? this._ws._client._options.shardCount! : this._ws.recommendedShardsNum;
+    this._numShards = this._ws._client._options.shardCount != null
+        ? this._ws._client._options.shardCount!
+        : this._ws.recommendedShardsNum;
 
     if (this._numShards < 1) {
       this._logger.shout("Number of shards cannot be lower than 1.");
@@ -61,7 +64,7 @@ class ShardManager implements Disposable {
   }
 
   void _connect(int shardId) {
-    if(shardId < 0) {
+    if (shardId < 0) {
       return;
     }
 
@@ -75,8 +78,8 @@ class ShardManager implements Disposable {
   Future<void> dispose() async {
     this._logger.info("Closing gateway connections...");
 
-    for(final shard in this._shards.values) {
-      if(this._ws._client._options.shutdownShardHook != null) {
+    for (final shard in this._shards.values) {
+      if (this._ws._client._options.shutdownShardHook != null) {
         this._ws._client._options.shutdownShardHook!(this._ws._client, shard); // ignore: unawaited_futures
       }
       shard.dispose(); // ignore: unawaited_futures

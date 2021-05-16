@@ -12,7 +12,8 @@ class Utils {
   }
 
   /// Returns String with base64 encoded image data for API upload
-  static String? getBase64UploadString({File? file, List<int>? fileBytes, String? base64EncodedFile, String? fileExtension}) {
+  static String? getBase64UploadString(
+      {File? file, List<int>? fileBytes, String? base64EncodedFile, String? fileExtension}) {
     String base64Encoded;
     if (file != null) {
       base64Encoded = base64Encode(file.readAsBytesSync());

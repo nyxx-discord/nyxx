@@ -79,7 +79,8 @@ class Webhook extends SnowflakeEntity implements IMessageAuthor {
     }
 
     if (raw["channel_id"] != null) {
-      this.channel = CacheableTextChannel<TextGuildChannel>._new(client, Snowflake(raw["channel_id"]), ChannelType.text);
+      this.channel =
+          CacheableTextChannel<TextGuildChannel>._new(client, Snowflake(raw["channel_id"]), ChannelType.text);
     } else {
       this.channel = null;
     }
@@ -102,33 +103,45 @@ class Webhook extends SnowflakeEntity implements IMessageAuthor {
   /// [wait] - waits for server confirmation of message send before response,
   /// and returns the created message body (defaults to false; when false a message that is not save does not return an error)
   Future<Message> execute(
-      {dynamic content,
-      List<AttachmentBuilder>? files,
-      List<EmbedBuilder>? embeds,
-      bool? tts,
-      AllowedMentions? allowedMentions,
-      bool? wait,
-      String? avatarUrl}) =>
-      client._httpEndpoints.executeWebhook(
-        this.id,
-        token: token,
-        content: content,
-        files: files,
-        embeds: embeds,
-        tts: tts,
-        allowedMentions: allowedMentions,
-        wait: wait,
-        avatarUrl: avatarUrl
-      );
+          {dynamic content,
+          List<AttachmentBuilder>? files,
+          List<EmbedBuilder>? embeds,
+          bool? tts,
+          AllowedMentions? allowedMentions,
+          bool? wait,
+          String? avatarUrl}) =>
+      client._httpEndpoints.executeWebhook(this.id,
+          token: token,
+          content: content,
+          files: files,
+          embeds: embeds,
+          tts: tts,
+          allowedMentions: allowedMentions,
+          wait: wait,
+          avatarUrl: avatarUrl);
 
   @override
   String avatarURL({String format = "webp", int size = 128}) =>
       client._httpEndpoints.userAvatarURL(this.id, this.avatarHash, 0, format: format, size: size);
 
   /// Edits the webhook.
-  Future<Webhook> edit({String? name, SnowflakeEntity? channel, File? avatarFile, List<int>? avatarBytes, String? encodedAvatar, String? encodedExtension, String? auditReason}) =>
-    client._httpEndpoints.editWebhook(this.id, token: this.token, name: name,
-        channel: channel, avatarFile: avatarFile, avatarBytes: avatarBytes, encodedAvatar: encodedAvatar, encodedExtension: encodedExtension, auditReason: auditReason);
+  Future<Webhook> edit(
+          {String? name,
+          SnowflakeEntity? channel,
+          File? avatarFile,
+          List<int>? avatarBytes,
+          String? encodedAvatar,
+          String? encodedExtension,
+          String? auditReason}) =>
+      client._httpEndpoints.editWebhook(this.id,
+          token: this.token,
+          name: name,
+          channel: channel,
+          avatarFile: avatarFile,
+          avatarBytes: avatarBytes,
+          encodedAvatar: encodedAvatar,
+          encodedExtension: encodedExtension,
+          auditReason: auditReason);
 
   /// Deletes the webhook.
   Future<void> delete({String? auditReason}) =>

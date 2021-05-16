@@ -13,7 +13,7 @@ class ScheduledEvent {
 
   /// Callback which will be run every given period of time
   final ScheduledEventCallback callback;
-  
+
   late final Timer _timer;
 
   /// Creates and starts new periodic event. [callback] will be executed every [duration] of time.

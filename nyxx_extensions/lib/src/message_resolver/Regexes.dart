@@ -1,4 +1,3 @@
-
 /// Collection of regexes for message entities
 class Regexes {
   /// Matches user mention

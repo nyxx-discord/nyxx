@@ -27,17 +27,16 @@ class GuildBuilder extends Builder {
   List<ChannelBuilder>? channels;
 
   @override
-  Map<String, dynamic> _build() =>
-    <String, dynamic>{
-      if (name != null) "name": name,
-      if (region != null) "region": region,
-      if (icon != null) "icon": icon,
-      if (verificationLevel != null) "verification_level": verificationLevel,
-      if (defaultMessageNotifications != null) "default_message_notifications": defaultMessageNotifications,
-      if (explicitContentFilter != null) "explicit_content_filter": explicitContentFilter,
-      if (roles != null) "roles": _genIterable(roles!),
-      if (channels != null) "channels": _genIterable(channels!)
-    };
+  Map<String, dynamic> _build() => <String, dynamic>{
+        if (name != null) "name": name,
+        if (region != null) "region": region,
+        if (icon != null) "icon": icon,
+        if (verificationLevel != null) "verification_level": verificationLevel,
+        if (defaultMessageNotifications != null) "default_message_notifications": defaultMessageNotifications,
+        if (explicitContentFilter != null) "explicit_content_filter": explicitContentFilter,
+        if (roles != null) "roles": _genIterable(roles!),
+        if (channels != null) "channels": _genIterable(channels!)
+      };
 
   Iterable<Map<String, dynamic>> _genIterable(List<Builder> list) sync* {
     for (final e in list) {
@@ -118,15 +117,15 @@ class ChannelBuilder extends Builder {
 
   @override
   Map<String, dynamic> _build() => {
-    "name": name,
-    "type": type._value,
-    if (topic != null) "topic": topic,
-    if (bitrate != null) "bitrate": bitrate,
-    if (userLimit != null) "user_limit": userLimit,
-    if (rateLimitPerUser != null) "rate_limit_per_user": rateLimitPerUser,
-    if (position != null) "position": position,
-    if (parentChannel != null) "parent_id": parentChannel!.id,
-    if (nsfw != null) "nsfw": nsfw,
-    if (overrides != null) "permission_overwrites" : overrides!.map((e) => e._build())
-  };
+        "name": name,
+        "type": type._value,
+        if (topic != null) "topic": topic,
+        if (bitrate != null) "bitrate": bitrate,
+        if (userLimit != null) "user_limit": userLimit,
+        if (rateLimitPerUser != null) "rate_limit_per_user": rateLimitPerUser,
+        if (position != null) "position": position,
+        if (parentChannel != null) "parent_id": parentChannel!.id,
+        if (nsfw != null) "nsfw": nsfw,
+        if (overrides != null) "permission_overwrites": overrides!.map((e) => e._build())
+      };
 }

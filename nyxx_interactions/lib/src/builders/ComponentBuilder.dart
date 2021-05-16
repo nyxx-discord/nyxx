@@ -24,16 +24,17 @@ abstract class IComponentBuilder extends Builder {
   }
 
   Map<String, dynamic> _build() => {
-    "type": type,
-    "label": this.label,
-    "style": this.style.value,
-    if (this.disabled) "disabled": true,
-    if (this.emoji != null) "emoji": {
-      if (this.emoji is IGuildEmoji) "id": (this.emoji as IGuildEmoji).id,
-      if (this.emoji is UnicodeEmoji) "name": (this.emoji as UnicodeEmoji).code,
-      if (this.emoji is GuildEmoji) "animated": (this.emoji as GuildEmoji).animated,
-    }
-  };
+        "type": type,
+        "label": this.label,
+        "style": this.style.value,
+        if (this.disabled) "disabled": true,
+        if (this.emoji != null)
+          "emoji": {
+            if (this.emoji is IGuildEmoji) "id": (this.emoji as IGuildEmoji).id,
+            if (this.emoji is UnicodeEmoji) "name": (this.emoji as UnicodeEmoji).code,
+            if (this.emoji is GuildEmoji) "animated": (this.emoji as GuildEmoji).animated,
+          }
+      };
 }
 
 /// Allows to create a button with link
@@ -42,23 +43,15 @@ class LinkButtonBuilder extends IComponentBuilder {
   final String url;
 
   /// Creates instance of [LinkButtonBuilder]
-  LinkButtonBuilder(
-      String label,
-      this.url,
-      {bool disabled = false,
-        IEmoji? emoji
-      }): super._new(label, ComponentStyle.link, disabled: disabled, emoji: emoji
-  ) {
+  LinkButtonBuilder(String label, this.url, {bool disabled = false, IEmoji? emoji})
+      : super._new(label, ComponentStyle.link, disabled: disabled, emoji: emoji) {
     if (this.url.length > 512) {
       throw ArgumentError("Url for button cannot have more than 512 characters");
     }
   }
 
   @override
-  Map<String, dynamic> _build() => {
-    ...super._build(),
-    "url": url
-  };
+  Map<String, dynamic> _build() => {...super._build(), "url": url};
 }
 
 /// Button which will generate event when clicked.
@@ -68,14 +61,8 @@ class ButtonBuilder extends IComponentBuilder {
   String idMetadata;
 
   /// Creates instance of [ButtonBuilder]
-  ButtonBuilder(
-      String label,
-      this.idMetadata,
-      ComponentStyle style,
-      {bool disabled = false,
-        IEmoji? emoji
-      }
-      ) : super._new(label, style, disabled: disabled, emoji: emoji) {
+  ButtonBuilder(String label, this.idMetadata, ComponentStyle style, {bool disabled = false, IEmoji? emoji})
+      : super._new(label, style, disabled: disabled, emoji: emoji) {
     if (this.label.length > 100) {
       throw ArgumentError("IdMetadata for button cannot have more than 100 characters");
     }
@@ -92,10 +79,7 @@ class ButtonBuilder extends IComponentBuilder {
   }
 
   @override
-  Map<String, dynamic> _build() => {
-    ...super._build(),
-    "custom_id": idMetadata
-  };
+  Map<String, dynamic> _build() => {...super._build(), "custom_id": idMetadata};
 }
 
 /// Extended [MessageBuilder] with support for buttons
@@ -122,16 +106,14 @@ class ComponentMessageBuilder extends MessageBuilder {
 
   @override
   Map<String, dynamic> build(INyxx client) => {
-    ...super.build(client),
-    if (this.buttons != null) "components": [
-      for (final row in this.buttons!)
-        {
-          "type": 1,
+        ...super.build(client),
+        if (this.buttons != null)
           "components": [
-            for (final button in row)
-              button._build()
+            for (final row in this.buttons!)
+              {
+                "type": 1,
+                "components": [for (final button in row) button._build()]
+              }
           ]
-        }
-    ]
-  };
+      };
 }

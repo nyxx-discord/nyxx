@@ -18,10 +18,7 @@ class AppTeam extends SnowflakeEntity {
     this.iconHash = raw["icon"] as String?;
     this.ownerId = Snowflake(raw["owner_user_id"]);
 
-    this.members = [
-    for (final rawMember in raw["members"])
-      AppTeamMember._new(rawMember as Map<String, dynamic>)
-    ];
+    this.members = [for (final rawMember in raw["members"]) AppTeamMember._new(rawMember as Map<String, dynamic>)];
   }
 
   /// Returns url to team icon

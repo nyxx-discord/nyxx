@@ -16,9 +16,7 @@ class CacheUtility {
   ///     Cacheable<Snowflake, User> cachedUser = CacheUtility.createCacheableUser(bot, Snowflake(''));
   /// }
   /// ```
-  static Cacheable<Snowflake, User> createCacheableUser(
-          INyxx client, Snowflake id) =>
-      _UserCacheable(client, id);
+  static Cacheable<Snowflake, User> createCacheableUser(INyxx client, Snowflake id) => _UserCacheable(client, id);
 
   /// Retrieves a cached Guild.
   /// ```dart
@@ -27,9 +25,7 @@ class CacheUtility {
   ///     Cacheable<Snowflake, Guild> cachedGuild = CacheUtility.createCacheableGuild(bot, Snowflake(''));
   /// }
   /// ```
-  static Cacheable<Snowflake, Guild> createCacheableGuild(
-          INyxx client, Snowflake id) =>
-      _GuildCacheable(client, id);
+  static Cacheable<Snowflake, Guild> createCacheableGuild(INyxx client, Snowflake id) => _GuildCacheable(client, id);
 
   /// Retrieves a cached Role.
   /// ```dart
@@ -50,8 +46,7 @@ class CacheUtility {
   ///     Cacheable<Snowflake, IChannel> cachedChannel = CacheUtility.createCacheableChannel(bot, Snowflake(''));
   /// }
   /// ```
-  static Cacheable<Snowflake, IChannel> createCacheableChannel(
-          INyxx client, Snowflake id) =>
+  static Cacheable<Snowflake, IChannel> createCacheableChannel(INyxx client, Snowflake id) =>
       _ChannelCacheable(client, id);
 
   /// Retrieves a cached TextChannel.
@@ -61,8 +56,7 @@ class CacheUtility {
   ///     Cacheable<Snowflake, TextChannel> cachedChannel = CacheUtility.createCacheableTextChannel(bot, Snowflake(''));
   /// }
   /// ```
-  static Cacheable<Snowflake, TextChannel> createCacheableTextChannel(
-          INyxx client, Snowflake id) =>
+  static Cacheable<Snowflake, TextChannel> createCacheableTextChannel(INyxx client, Snowflake id) =>
       _ChannelCacheable(client, id);
 
   /// Retrieves a cached VoiceChannel.
@@ -72,8 +66,7 @@ class CacheUtility {
   ///     Cacheable<Snowflake, VoiceGuildChannel> cachedChannel = CacheUtility.createCacheableVoiceChannel(bot, Snowflake(''));
   /// }
   /// ```
-  static Cacheable<Snowflake, VoiceGuildChannel> createCacheableVoiceChannel(
-          INyxx client, Snowflake id) =>
+  static Cacheable<Snowflake, VoiceGuildChannel> createCacheableVoiceChannel(INyxx client, Snowflake id) =>
       _ChannelCacheable(client, id);
 
   /// Retrieves a cached DMChannel.
@@ -83,8 +76,7 @@ class CacheUtility {
   ///     Cacheable<Snowflake, DMChannel> cachedChannel = CacheUtility.createCacheableDMChannel(bot, Snowflake(''));
   /// }
   /// ```
-  static Cacheable<Snowflake, DMChannel> createCacheableDMChannel(
-          INyxx client, Snowflake id) =>
+  static Cacheable<Snowflake, DMChannel> createCacheableDMChannel(INyxx client, Snowflake id) =>
       _ChannelCacheable(client, id);
 
   /// Retrieves a cached Guild Member.
@@ -107,7 +99,7 @@ class CacheUtility {
   ///     Cacheable<Snowflake, Member> cachedMember = CacheUtility.createCacheableMessage(bot, Snowflake(''), cachedChannel);
   /// }
   /// ```
-  static Cacheable<Snowflake, Message> createCacheableMessage(INyxx client,
-          Snowflake id, Cacheable<Snowflake, TextChannel> channel) =>
+  static Cacheable<Snowflake, Message> createCacheableMessage(
+          INyxx client, Snowflake id, Cacheable<Snowflake, TextChannel> channel) =>
       _MessageCacheable(client, id, channel);
 }

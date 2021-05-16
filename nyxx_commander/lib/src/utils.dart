@@ -1,9 +1,9 @@
 part of nyxx_commander;
 
-class  _CommandMatcher {
+class _CommandMatcher {
   static CommandEntity? _findMatchingCommand(Iterable<String> messageParts, Iterable<CommandEntity> commands) {
     for (final entity in commands) {
-      if(entity is CommandGroup && entity.name == "") {
+      if (entity is CommandGroup && entity.name == "") {
         final e = _findMatchingCommand(messageParts, entity._commandEntities);
 
         if (e != null) {

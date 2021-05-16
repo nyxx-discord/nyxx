@@ -20,7 +20,7 @@ class GuildUpdateEvent {
     this.guild = Guild._new(client, json["d"] as Map<String, dynamic>);
 
     final oldGuild = client.guilds[this.guild.id];
-    if(oldGuild != null) {
+    if (oldGuild != null) {
       this.guild.members.addMap(oldGuild.members.asMap);
     }
 
@@ -127,7 +127,8 @@ class GuildMemberAddEvent {
       return;
     }
 
-    if (client._cacheOptions.memberCachePolicyLocation.event && client._cacheOptions.memberCachePolicy.canCache(this.member)) {
+    if (client._cacheOptions.memberCachePolicyLocation.event &&
+        client._cacheOptions.memberCachePolicy.canCache(this.member)) {
       guildInstance.members[this.member.id] = member;
     }
   }
@@ -173,7 +174,7 @@ class GuildEmojisUpdateEvent {
     this.guild = _GuildCacheable(client, Snowflake(raw["d"]["guild_id"]));
 
     final guildInstance = this.guild.getFromCache();
-    for(final rawEmoji in raw["d"]["emojis"]) {
+    for (final rawEmoji in raw["d"]["emojis"]) {
       final emoji = GuildEmoji._new(client, rawEmoji as Map<String, dynamic>, this.guild.id);
 
       this.emojis.add(emoji);

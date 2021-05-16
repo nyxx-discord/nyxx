@@ -23,7 +23,10 @@ class PermissionOverrideBuilder extends PermissionsBuilder {
   PermissionOverrideBuilder(this.type, this.id) : super();
 
   /// Create [PermissionsOverrides] for given [entity]. Entity have to be either [Role] or [Member]
-  PermissionOverrideBuilder.of(SnowflakeEntity entity) : type = entity is Role ? 0 : 1, id = entity.id, super();
+  PermissionOverrideBuilder.of(SnowflakeEntity entity)
+      : type = entity is Role ? 0 : 1,
+        id = entity.id,
+        super();
 }
 
 /// Builder for permissions.
@@ -209,7 +212,7 @@ class PermissionsBuilder {
 
   // TODO: NNBD - To consider
   void _apply(_PermissionsSet perm, bool? applies, int constant) {
-    if(applies == null) {
+    if (applies == null) {
       return;
     }
 

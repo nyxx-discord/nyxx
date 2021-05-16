@@ -18,24 +18,20 @@ class DMChannel extends IChannel implements TextChannel {
   late final Iterable<User> participants;
 
   /// Returns other user in chat if channel is not group dm. Will throw [ArgumentError] if channel is group dm.
-  User get participant => !this.isGroupDM ? participants.first : throw new ArgumentError("Channel is not direct DM");
+  User get participant => !this.isGroupDM ? participants.first : throw ArgumentError("Channel is not direct DM");
 
-  DMChannel._new(INyxx client, Map<String, dynamic> raw): super._new(client, raw) {
+  DMChannel._new(INyxx client, Map<String, dynamic> raw) : super._new(client, raw) {
     if (raw["recipients"] != null) {
       this.participants = [
-        for (final userRaw in raw["recipients"])
-          User._new(this.client, userRaw as Map<String, dynamic>)
+        for (final userRaw in raw["recipients"]) User._new(this.client, userRaw as Map<String, dynamic>)
       ];
     } else {
-      this.participants = [
-        User._new(client, raw["recipient"] as Map<String, dynamic>)
-      ];
+      this.participants = [User._new(client, raw["recipient"] as Map<String, dynamic>)];
     }
   }
 
   @override
-  Future<void> startTyping() async =>
-      client._httpEndpoints.triggerTyping(this.id);
+  Future<void> startTyping() async => client._httpEndpoints.triggerTyping(this.id);
 
   @override
   void startTypingLoop() {
@@ -55,14 +51,11 @@ class DMChannel extends IChannel implements TextChannel {
       client._httpEndpoints.downloadMessages(this.id, limit: limit, after: after, around: around, before: before);
 
   @override
-  Future<Message> fetchMessage(Snowflake messageId) =>
-      client._httpEndpoints.fetchMessage(this.id, messageId);
+  Future<Message> fetchMessage(Snowflake messageId) => client._httpEndpoints.fetchMessage(this.id, messageId);
 
   @override
   Message? getMessage(Snowflake id) => this.messageCache[id];
 
   @override
-  Future<Message> sendMessage(MessageBuilder builder) =>
-      client._httpEndpoints.sendMessage(this.id,builder);
-
+  Future<Message> sendMessage(MessageBuilder builder) => client._httpEndpoints.sendMessage(this.id, builder);
 }

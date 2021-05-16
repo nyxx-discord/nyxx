@@ -34,7 +34,8 @@ class TypingEvent {
     }
 
     this.member = Member._new(client, raw["d"]["member"] as Map<String, dynamic>, this.guild!.id);
-    if (client._cacheOptions.memberCachePolicyLocation.event && client._cacheOptions.memberCachePolicy.canCache(this.member!)) {
+    if (client._cacheOptions.memberCachePolicyLocation.event &&
+        client._cacheOptions.memberCachePolicy.canCache(this.member!)) {
       member!.guild.getFromCache()?.members[this.member!.id] = member!;
     }
   }

@@ -27,7 +27,8 @@ class _ConnectionManager {
 
       this.gateway = response.jsonBody["url"] as String;
       this.remaining = response.jsonBody["session_start_limit"]["remaining"] as int;
-      this.resetAt = DateTime.now().add(Duration(milliseconds: response.jsonBody["session_start_limit"]["reset_after"] as int));
+      this.resetAt =
+          DateTime.now().add(Duration(milliseconds: response.jsonBody["session_start_limit"]["reset_after"] as int));
       this.recommendedShardsNum = response.jsonBody["shards"] as int;
 
       checkForConnections();
@@ -52,7 +53,7 @@ class _ConnectionManager {
   Future<void> propagateReady() async {
     this._shardsReady++;
 
-    if(_client.ready || this._shardsReady < (_client._options.shardCount ?? 1)) {
+    if (_client.ready || this._shardsReady < (_client._options.shardCount ?? 1)) {
       return;
     }
 

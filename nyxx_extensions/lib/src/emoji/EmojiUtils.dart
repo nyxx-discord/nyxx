@@ -19,18 +19,15 @@ Future<EmojiDefinition> filterEmojiDefinitions(bool Function(EmojiDefinition) pr
 /// Returns all possible [EmojiDefinition]s. Allows to cache results via [cache] parameter.
 /// If emojis are cached it will resolve immediately with result.
 Future<Iterable<EmojiDefinition>> getAllEmojiDefinitions({bool cache = false}) async {
-  if(_emojisCache.isNotEmpty) {
+  if (_emojisCache.isNotEmpty) {
     return Future.value(_emojisCache);
   }
 
   final rawData = await _downloadEmojiData();
 
-  final _emojis = [
-    for(final ed in rawData["emojiDefinitions"])
-      EmojiDefinition._new(ed as Map<String, dynamic>)
-  ];
-  
-  if(cache) {
+  final _emojis = [for (final ed in rawData["emojiDefinitions"]) EmojiDefinition._new(ed as Map<String, dynamic>)];
+
+  if (cache) {
     _emojisCache = _emojis;
   }
 

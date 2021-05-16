@@ -62,28 +62,22 @@ class MessageBuilder extends BuilderWithClient {
   void append(Object text) => _content.write(text);
 
   /// Appends spoiler to message
-  void appendSpoiler(Object text) =>
-      appendWithDecoration(text, MessageDecoration.spoiler);
+  void appendSpoiler(Object text) => appendWithDecoration(text, MessageDecoration.spoiler);
 
   /// Appends italic text to message
-  void appendItalics(Object text) =>
-      appendWithDecoration(text, MessageDecoration.italics);
+  void appendItalics(Object text) => appendWithDecoration(text, MessageDecoration.italics);
 
   /// Appends bold text to message
-  void appendBold(Object text) =>
-      appendWithDecoration(text, MessageDecoration.bold);
+  void appendBold(Object text) => appendWithDecoration(text, MessageDecoration.bold);
 
   /// Appends strikeout text to message
-  void appendStrike(Object text) =>
-      appendWithDecoration(text, MessageDecoration.strike);
+  void appendStrike(Object text) => appendWithDecoration(text, MessageDecoration.strike);
 
   /// Appends simple code to message
-  void appendCodeSimple(Object text) =>
-      appendWithDecoration(text, MessageDecoration.codeSimple);
+  void appendCodeSimple(Object text) => appendWithDecoration(text, MessageDecoration.codeSimple);
 
   /// Appends code block to message
-  void appendCode(Object language, Object code) =>
-      appendWithDecoration("$language\n$code", MessageDecoration.codeLong);
+  void appendCode(Object language, Object code) => appendWithDecoration("$language\n$code", MessageDecoration.codeLong);
 
   /// Appends formatted text to message
   void appendWithDecoration(Object text, MessageDecoration decoration) {
@@ -103,8 +97,7 @@ class MessageBuilder extends BuilderWithClient {
   }
 
   /// Add attachment from specified bytes
-  void addBytesAttachment(List<int> bytes, String name,
-      {bool spoiler = false}) {
+  void addBytesAttachment(List<int> bytes, String name, {bool spoiler = false}) {
     addAttachment(AttachmentBuilder.bytes(bytes, name, spoiler: spoiler));
   }
 

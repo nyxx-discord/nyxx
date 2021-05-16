@@ -25,36 +25,31 @@ class Sticker extends SnowflakeEntity {
   late final StickerFormat format;
 
   /// [Sticker] tags in list form
-  Iterable<String> get tagsList =>
-    this.tags != null
-        ? tags!.split(", ").map((e) => e.trim())
-        : [];
+  Iterable<String> get tagsList => this.tags != null ? tags!.split(", ").map((e) => e.trim()) : [];
 
-  Sticker._new(Map<String, dynamic> raw): super(Snowflake(raw["id"])) {
+  Sticker._new(Map<String, dynamic> raw) : super(Snowflake(raw["id"])) {
     this.packId = Snowflake(raw["pack_id"]);
     this.name = raw["name"] as String;
     this.description = raw["description"] as String;
     this.tags = raw["tags"] as String?;
     this.asset = raw["asset"] as String;
-    this.assetPreview = raw["preview_asset"] != null
-      ? raw["preview_asset"] as String
-      : null;
+    this.assetPreview = raw["preview_asset"] != null ? raw["preview_asset"] as String : null;
     this.format = StickerFormat.from(raw["format_type"] as int);
   }
 }
 
 /// Enumerates different possible format of sticker
 class StickerFormat extends IEnum<int> {
-  static const StickerFormat png = const StickerFormat(1);
-  static const StickerFormat apng = const StickerFormat(2);
-  static const StickerFormat lottie = const StickerFormat(3);
+  static const StickerFormat png = StickerFormat(1);
+  static const StickerFormat apng = StickerFormat(2);
+  static const StickerFormat lottie = StickerFormat(3);
 
   const StickerFormat(int value) : super(value);
-  StickerFormat.from(int value): super(value);
+  StickerFormat.from(int value) : super(value);
 
   /// Returns extension for given Sticker type
   String getExtension() {
-    switch(this.value) {
+    switch (this.value) {
       case 1:
         return "png";
       case 2:

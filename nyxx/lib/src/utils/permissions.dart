@@ -37,11 +37,12 @@ class PermissionsUtils {
     var denyRaw = 0;
 
     try {
-      final publicOverride = channel.permissionOverrides.firstWhere((ov) => ov.id == member.guild.getFromCache()?.everyoneRole.id);
+      final publicOverride =
+          channel.permissionOverrides.firstWhere((ov) => ov.id == member.guild.getFromCache()?.everyoneRole.id);
       allowRaw = publicOverride.allow;
       denyRaw = publicOverride.deny;
       // ignore: avoid_catches_without_on_clauses, empty_catches
-    } on Error { }
+    } on Error {}
 
     var allowRole = 0;
     var denyRole = 0;
@@ -53,7 +54,7 @@ class PermissionsUtils {
         denyRole |= channelOverride.deny;
         allowRole |= channelOverride.allow;
         // ignore: avoid_catches_without_on_clauses, empty_catches
-      } on Error { }
+      } on Error {}
     }
 
     allowRaw = (allowRaw & ~denyRole) | allowRole;
@@ -66,7 +67,7 @@ class PermissionsUtils {
       allowRaw = (allowRaw & ~memberOverride.deny) | memberOverride.allow;
       denyRaw = (denyRaw & ~memberOverride.allow) | memberOverride.deny;
       // ignore: avoid_catches_without_on_clauses, empty_catches
-    } on Error { }
+    } on Error {}
 
     return [allowRaw, denyRaw];
   }

@@ -72,7 +72,7 @@ class ClientOptions {
       this.initialPresence,
       this.shutdownHook,
       this.shutdownShardHook,
-      this.dispatchRawShardEvent = false });
+      this.dispatchRawShardEvent = false});
 }
 
 /// When identifying to the gateway, you can specify an intents parameter which
@@ -126,20 +126,19 @@ class GatewayIntents {
   static const int directMessageTyping = 1 << 14;
 
   /// All unprivileged intents
-  static const int allUnprivileged =
-      guilds
-      | guildBans
-      | guildEmojis
-      | guildIntegrations
-      | guildWebhooks
-      | guildInvites
-      | guildVoiceState
-      | guildMessages
-      | guildMessageReactions
-      | guildMessageTyping
-      | directMessages
-      | directMessageReactions
-      | directMessageTyping;
+  static const int allUnprivileged = guilds |
+      guildBans |
+      guildEmojis |
+      guildIntegrations |
+      guildWebhooks |
+      guildInvites |
+      guildVoiceState |
+      guildMessages |
+      guildMessageReactions |
+      guildMessageTyping |
+      directMessages |
+      directMessageReactions |
+      directMessageTyping;
 
   /// All privileged intents
   static const int allPrivileged = guildMembers | guildPresences;
