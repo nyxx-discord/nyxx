@@ -17,23 +17,24 @@ Iterable<Iterable<T>> _partition<T>(Iterable<T> list, bool Function(T) predicate
 }
 
 /// Determine what handler should be executed based on [interaction]
-String _determineInteractionCommandHandler(Interaction interaction) {
+String _determineInteractionCommandHandler(SlashCommandInteraction interaction) {
   final commandHash = "${interaction.commandId}|${interaction.name}";
 
   try {
-    final subCommandGroup = interaction.args.firstWhere((element) => element.type == CommandOptionType.subCommandGroup);
-    final subCommand = interaction.args.firstWhere((element) => element.type == CommandOptionType.subCommand);
+    final subCommandGroup = interaction.options.firstWhere((element) => element.type == CommandOptionType.subCommandGroup);
+    final subCommand = interaction.options.firstWhere((element) => element.type == CommandOptionType.subCommand);
 
     return "$commandHash${subCommandGroup.name}${subCommand.name}";
     // ignore: empty_catches
   } on Error { }
 
   try {
-    final subCommand = interaction.args.firstWhere((element) => element.type == CommandOptionType.subCommand);
+    final subCommand = interaction.options.firstWhere((element) => element.type == CommandOptionType.subCommand);
     return "$commandHash${subCommand.name}";
-  } on Error {
-    return commandHash;
-  }
+    // ignore: empty_catches
+  } on Error { }
+
+  return commandHash;
 }
 
 /// Groups [SlashCommandBuilder] for registering them later in bulk

@@ -1,7 +1,7 @@
 part of nyxx;
 
 /// Build new instance of author which can be used in [EmbedBuilder]
-class EmbedAuthorBuilder implements Builder {
+class EmbedAuthorBuilder extends Builder {
   /// Author name
   String? name;
 

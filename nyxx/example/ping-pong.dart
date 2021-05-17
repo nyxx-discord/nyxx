@@ -15,7 +15,7 @@ void main() {
     // Check if message content equals "!ping"
     if (e.message.content == "!ping") {
       // Send "Pong!" to channel where message was received
-      e.message.channel.getFromCache()?.sendMessage(content: "Pong!");
+      e.message.channel.getFromCache()?.sendMessage(MessageBuilder.content("Pong!"));
     }
   });
 }

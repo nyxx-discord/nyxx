@@ -1,12 +1,12 @@
 import "dart:async" show Future, FutureOr, Stream;
-import "package:nyxx/nyxx.dart" show IEmoji, TextChannel, Message, MessageBuilder, MessageEditBuilder, MessageReactionEvent, Nyxx, UnicodeEmoji;
+import "package:nyxx/nyxx.dart" show IEmoji, TextChannel, Message, MessageBuilder, MessageReactionEvent, Nyxx, UnicodeEmoji;
 import "../../emoji.dart" show filterEmojiDefinitions;
 import "../utils.dart" show StreamUtils, StringUtils;
 
 /// Handles data and constructing data
 abstract class IPaginationHandler {
   /// Used to generate message based on given [page] number.
-  FutureOr<MessageEditBuilder> generatePage(int page);
+  FutureOr<MessageBuilder> generatePage(int page);
 
   /// Used to generate fist page of Paginated message.
   FutureOr<MessageBuilder> generateInitialPage();
@@ -45,8 +45,7 @@ class BasicPaginationHandler extends IPaginationHandler {
   factory BasicPaginationHandler.fromStringEq(String str, int pieces, TextChannel channel) => BasicPaginationHandler(StringUtils.splitEqually(str, pieces).toList());
 
   @override
-  FutureOr<MessageEditBuilder> generatePage(int page) =>
-      MessageBuilder()..content = pages[page];
+  FutureOr<MessageBuilder> generatePage(int page) => MessageBuilder()..content = pages[page];
 
   @override
   FutureOr<MessageBuilder> generateInitialPage() =>
@@ -83,7 +82,7 @@ class Pagination<T extends IPaginationHandler> {
     final firstEmoji = await paginationHandler.firstEmoji;
     final lastEmoji = await paginationHandler.lastEmoji;
 
-    final msg = await channel.sendMessage(builder: await paginationHandler.generateInitialPage());
+    final msg = await channel.sendMessage(await paginationHandler.generateInitialPage());
     await msg.createReaction(firstEmoji);
     await msg.createReaction(backEmoji);
     await msg.createReaction(nextEmoji);
@@ -100,19 +99,19 @@ class Pagination<T extends IPaginationHandler> {
         if (emoji == nextEmoji) {
           if (currPage <= paginationHandler.dataLength - 2) {
             ++currPage;
-            await msg.edit(builder: await paginationHandler.generatePage(currPage));
+            await msg.edit(await paginationHandler.generatePage(currPage));
           }
         } else if (emoji == backEmoji) {
           if (currPage >= 1) {
             --currPage;
-            await msg.edit(builder: await paginationHandler.generatePage(currPage));
+            await msg.edit(await paginationHandler.generatePage(currPage));
           }
         } else if (emoji == firstEmoji) {
           currPage = 0;
-          await msg.edit(builder: await paginationHandler.generatePage(currPage));
+          await msg.edit(await paginationHandler.generatePage(currPage));
         } else if (emoji == lastEmoji) {
           currPage = paginationHandler.dataLength;
-          await msg.edit(builder: await paginationHandler.generatePage(currPage));
+          await msg.edit(await paginationHandler.generatePage(currPage));
         }
       }
     }).timeout(timeout);

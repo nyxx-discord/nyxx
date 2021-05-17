@@ -23,7 +23,7 @@ void main() {
       final invite = await (e.message.channel as TextGuildChannel).createInvite();
 
       // Send back invite url
-      await e.message.channel.getFromCache()?.sendMessage(content: invite.url);
+      await e.message.channel.getFromCache()?.sendMessage(MessageBuilder.content(invite.url));
     }
   });
 }

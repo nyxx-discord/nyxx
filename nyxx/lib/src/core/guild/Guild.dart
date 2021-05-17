@@ -82,7 +82,7 @@ class Guild extends SnowflakeEntity {
 
   /// the id of the channel where admins and moderators
   /// of "PUBLIC" guilds receive notices from Discord
-  late final Cacheable<Snowflake, TextChannel>? publicUpdatesChannel;
+  late final CacheableTextChannel<TextChannel>? publicUpdatesChannel;
 
   /// Permission of current(bot) user in this guild
   Permissions? currentUserPermissions;
@@ -225,7 +225,7 @@ class Guild extends SnowflakeEntity {
     }
 
     if (raw["public_updates_channel_id"] != null) {
-      this.publicUpdatesChannel = _ChannelCacheable(client, Snowflake(raw["public_updates_channel_id"]));
+      this.publicUpdatesChannel = CacheableTextChannel<TextChannel>._new(client, Snowflake(raw["public_updates_channel_id"]));
     }
   }
 

@@ -8,7 +8,7 @@ abstract class Message extends SnowflakeEntity implements Disposable {
   late String content;
 
   /// Channel in which message was sent
-  late final Cacheable<Snowflake, TextChannel> channel;
+  late final CacheableTextChannel<TextChannel> channel;
 
   /// The timestamp of when the message was last edited, null if not edited.
   late final DateTime? editedTimestamp;
@@ -52,8 +52,15 @@ abstract class Message extends SnowflakeEntity implements Disposable {
   /// Message reply
   late final ReferencedMessage? referencedMessage;
 
+  /// List of components attached to message.
+  late final List<List<IMessageComponent>> components;
+
+  /// A nonce that can be used for optimistic message sending (up to 25 characters)
+  /// You will be able to identify that message when receiving it through gateway
+  late final String? nonce;
+
   factory Message._deserialize(INyxx client, Map<String, dynamic> raw) {
-    if (raw["guild_id"] != null) {
+    if (raw["member"] != null) {
       return GuildMessage._new(client, raw);
     }
 
@@ -62,7 +69,7 @@ abstract class Message extends SnowflakeEntity implements Disposable {
 
   Message._new(this.client, Map<String, dynamic> raw) : super(Snowflake(raw["id"])) {
     this.content = raw["content"] as String;
-    this.channel = _ChannelCacheable(client, Snowflake(raw["channel_id"]));
+    this.channel = CacheableTextChannel<TextChannel>._new(client, Snowflake(raw["channel_id"]), ChannelType.unknown);
 
     this.pinned = raw["pinned"] as bool;
     this.tts = raw["tts"] as bool;
@@ -112,6 +119,23 @@ abstract class Message extends SnowflakeEntity implements Disposable {
     } else {
       this.referencedMessage = null;
     }
+
+    if (raw["nonce"] != null) {
+      this.nonce = raw["nonce"].toString();
+    } else {
+      this.nonce = null;
+    }
+
+    if (raw["components"] != null) {
+      this.components = [
+        for (final rawRow in raw["components"]) [
+          for (final componentRaw in rawRow["components"])
+            IMessageComponent._deserialize(componentRaw as Map<String, dynamic>)
+        ]
+      ];
+    } else {
+      this.components = [];
+    }
   }
 
   /// Suppresses embeds in message. Can be executed in other users messages.
@@ -119,8 +143,8 @@ abstract class Message extends SnowflakeEntity implements Disposable {
       client._httpEndpoints.suppressMessageEmbeds(this.channel.id, this.id);
 
   /// Edits the message.
-  Future<Message> edit({dynamic content, EmbedBuilder? embed, AllowedMentions? allowedMentions, MessageEditBuilder? builder}) =>
-      client._httpEndpoints.editMessage(this.channel.id, this.id, content: content, embed: embed, allowedMentions: allowedMentions, builder: builder);
+  Future<Message> edit(MessageBuilder builder) =>
+      client._httpEndpoints.editMessage(this.channel.id, this.id, builder);
 
   /// Add reaction to message.
   Future<void> createReaction(IEmoji emoji) =>

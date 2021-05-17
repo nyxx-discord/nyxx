@@ -1,7 +1,7 @@
 part of nyxx;
 
 /// Build new instance of Embed's footer
-class EmbedFooterBuilder implements Builder {
+class EmbedFooterBuilder extends Builder {
   /// Footer text
   String? text;
 

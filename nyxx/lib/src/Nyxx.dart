@@ -138,7 +138,7 @@ class NyxxRest extends INyxx {
 
       final errorsPort = ReceivePort();
       errorsPort.listen((err) {
-        _logger.severe("ERROR: ${err[0]} \n ${err[1]}");
+        _logger.severe("ERROR: ${err[0]}");
       });
       Isolate.current.addErrorListener(errorsPort.sendPort);
     }

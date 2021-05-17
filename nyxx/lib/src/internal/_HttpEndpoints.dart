@@ -153,14 +153,7 @@ abstract class IHttpEndpoints {
       bool? unique,
       String? auditReason});
 
-  Future<Message> sendMessage(Snowflake channelId,
-      {dynamic content,
-      List<AttachmentBuilder>? files,
-      EmbedBuilder? embed,
-      bool? tts,
-      AllowedMentions? allowedMentions,
-      MessageBuilder? builder,
-      ReplyBuilder? replyBuilder});
+  Future<Message> sendMessage(Snowflake channelId, MessageBuilder builder);
 
   Future<Message> fetchMessage(Snowflake channelId, Snowflake messageId);
 
@@ -196,11 +189,7 @@ abstract class IHttpEndpoints {
   Future<Message> suppressMessageEmbeds(
       Snowflake channelId, Snowflake messageId);
 
-  Future<Message> editMessage(Snowflake channelId, Snowflake messageId,
-      {dynamic content,
-      EmbedBuilder? embed,
-      AllowedMentions? allowedMentions,
-      MessageEditBuilder? builder});
+  Future<Message> editMessage(Snowflake channelId, Snowflake messageId, MessageBuilder builder);
 
   Future<void> createMessageReaction(
       Snowflake channelId, Snowflake messageId, IEmoji emoji);
@@ -974,37 +963,20 @@ class _HttpEndpoints implements IHttpEndpoints {
   }
 
   @override
-  Future<Message> sendMessage(Snowflake channelId,
-      {dynamic content,
-      List<AttachmentBuilder>? files,
-      EmbedBuilder? embed,
-      bool? tts,
-      AllowedMentions? allowedMentions,
-      MessageBuilder? builder,
-      ReplyBuilder? replyBuilder}) async {
-    if (builder != null) {
-      content = builder._content;
-      files = builder.files;
-      embed = builder.embed;
-      tts = builder.tts ?? false;
-      allowedMentions = builder.allowedMentions;
-      replyBuilder = builder.replyBuilder;
+  Future<Message> sendMessage(Snowflake channelId, MessageBuilder builder) async {
+    if (!builder.canBeUsedAsNewMessage()) {
+      return Future.error(ArgumentError("Cannot sent message when MessageBuilder doesn't have set either content, embed or files"));
     }
 
-    final reqBody = {
-      ..._initMessage(content, embed, allowedMentions, replyBuilder, hasFiles: files != null && files.isNotEmpty),
-      if (content != null && tts != null) "tts": tts
-    };
-
     _HttpResponse response;
-    if (files != null && files.isNotEmpty) {
+    if (builder._hasFiles()) {
       response = await _httpClient._execute(MultipartRequest._new(
-          "/channels/$channelId/messages", files,
-          method: "POST", fields: reqBody));
+          "/channels/$channelId/messages", builder.files!,
+          method: "POST", fields: builder._build(_client)));
     } else {
       response = await _httpClient._execute(BasicRequest._new(
           "/channels/$channelId/messages",
-          body: reqBody,
+          body: builder._build(_client),
           method: "POST"));
     }
 
@@ -1210,27 +1182,11 @@ class _HttpEndpoints implements IHttpEndpoints {
   }
 
   @override
-  Future<Message> editMessage(Snowflake channelId, Snowflake messageId,
-      {dynamic content,
-      EmbedBuilder? embed,
-      AllowedMentions? allowedMentions,
-      MessageEditBuilder? builder}) async {
-    if (builder != null) {
-      content = builder._content;
-      embed = builder.embed;
-      allowedMentions = builder.allowedMentions;
-    }
-
-    final body = <String, dynamic>{
-      if (content != null) "content": content.toString(),
-      if (embed != null) "embed": embed._build(),
-      if (allowedMentions != null) "allowed_mentions": allowedMentions._build(),
-    };
-
+  Future<Message> editMessage(Snowflake channelId, Snowflake messageId, MessageBuilder builder) async {
     final response = await _httpClient._execute(BasicRequest._new(
         "/channels/$channelId/messages/$messageId",
         method: "PATCH",
-        body: body));
+        body: builder._build(_client)));
 
     if (response is HttpResponseSuccess) {
       return Message._deserialize(

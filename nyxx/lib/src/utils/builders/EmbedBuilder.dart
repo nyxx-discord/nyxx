@@ -1,7 +1,7 @@
 part of nyxx;
 
 /// Builds up embed object.
-class EmbedBuilder implements Builder {
+class EmbedBuilder extends Builder {
   /// Embed title
   String? title;
 

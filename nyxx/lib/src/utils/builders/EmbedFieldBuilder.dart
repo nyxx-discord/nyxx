@@ -1,7 +1,7 @@
 part of nyxx;
 
 /// Builder for embed Field.
-class EmbedFieldBuilder implements Builder {
+class EmbedFieldBuilder extends Builder {
   /// Field name/title
   dynamic? name;
 

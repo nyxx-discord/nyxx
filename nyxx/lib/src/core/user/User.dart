@@ -82,19 +82,8 @@ class User extends SnowflakeEntity with Mentionable, IMessageAuthor implements I
 
   /// Sends a message to user.
   @override
-  Future<Message> sendMessage(
-      {dynamic content,
-        List<AttachmentBuilder>? files,
-        EmbedBuilder? embed,
-        bool? tts,
-        AllowedMentions? allowedMentions,
-        MessageBuilder? builder,
-        ReplyBuilder? replyBuilder
-      }) async {
+  Future<Message> sendMessage(MessageBuilder builder) async {
     final channel = await this.dmChannel;
-    return channel.sendMessage(
-        content: content, files: files, embed: embed, tts: tts,
-        allowedMentions: allowedMentions, builder: builder, replyBuilder: replyBuilder
-    );
+    return channel.sendMessage(builder);
   }
 }

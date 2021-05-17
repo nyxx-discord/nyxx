@@ -1,7 +1,7 @@
 part of nyxx_interactions;
 
 /// An argument for a [SlashCommandBuilder].
-class CommandOptionBuilder implements Builder {
+class CommandOptionBuilder extends Builder {
   /// The type of arg that will be later changed to an INT value, their values can be seen in the table below:
   /// | Name              | Value |
   /// |-------------------|-------|

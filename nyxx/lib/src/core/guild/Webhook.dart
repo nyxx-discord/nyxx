@@ -35,7 +35,7 @@ class Webhook extends SnowflakeEntity implements IMessageAuthor {
   late final String token;
 
   /// The webhook's channel, if this is accessed using a normal client and the client has that channel in it's cache.
-  late final Cacheable<Snowflake, TextGuildChannel>? channel;
+  late final CacheableTextChannel<TextGuildChannel>? channel;
 
   /// The webhook's guild, if this is accessed using a normal client and the client has that guild in it's cache.
   late final Cacheable<Snowflake, Guild>? guild;
@@ -79,7 +79,7 @@ class Webhook extends SnowflakeEntity implements IMessageAuthor {
     }
 
     if (raw["channel_id"] != null) {
-      this.channel = _ChannelCacheable(client, Snowflake(raw["channel_id"]));
+      this.channel = CacheableTextChannel<TextGuildChannel>._new(client, Snowflake(raw["channel_id"]), ChannelType.text);
     } else {
       this.channel = null;
     }

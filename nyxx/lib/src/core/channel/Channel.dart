@@ -14,6 +14,8 @@ abstract class IChannel extends SnowflakeEntity implements Disposable {
     this.channelType = ChannelType.from(raw["type"] as int);
   }
 
+  IChannel._raw(this.client, Snowflake id, this.channelType): super(id);
+
   factory IChannel._deserialize(INyxx client, Map<String, dynamic> raw, [Snowflake? guildId]) {
     final type = raw["type"] as int;
 
@@ -59,6 +61,9 @@ class ChannelType extends IEnum<int> {
 
   static const ChannelType guildNews = ChannelType._create(5);
   static const ChannelType guildStore = ChannelType._create(6);
+
+  /// Type of channel is unknown
+  static const ChannelType unknown = ChannelType._create(1337);
 
   /// Creates instance of [ChannelType] from [value].
   ChannelType.from(int value) : super(value);

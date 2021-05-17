@@ -1,6 +1,7 @@
 library nyxx_interactions;
 
 import "dart:async";
+import 'dart:convert';
 
 import "package:logging/logging.dart";
 import "package:nyxx/nyxx.dart";
@@ -18,6 +19,7 @@ part "src/models/ArgChoice.dart";
 part "src/builders/ArgChoiceBuilder.dart";
 part "src/builders/CommandOptionBuilder.dart";
 part "src/builders/SlashCommandBuilder.dart";
+part "src/builders/ComponentBuilder.dart";
 
 // Command Args
 part "src/models/CommandOption.dart";
@@ -32,3 +34,4 @@ part "src/events/InteractionEvent.dart";
 // Exceptions
 part "src/exceptions/InteractionExpired.dart";
 part "src/exceptions/AlreadyResponded.dart";
+part "src/exceptions/ResponseRequired.dart";

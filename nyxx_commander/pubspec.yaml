@@ -1,5 +1,5 @@
 name: nyxx_commander
-version: 2.0.0-rc.7
+version: 2.0.0-rc.8
 description: Nyxx Commander Module. Discord library for Dart. Simple, robust framework for creating discord bots for Dart language.
 homepage: https://github.com/l7ssha/nyxx
 repository: https://github.com/l7ssha/nyxx
@@ -12,4 +12,4 @@ environment:
 dependencies:
   http: "^0.13.1"
   logging: "^1.0.1"
-  nyxx: "2.0.0-rc.4"
+  nyxx: "2.0.0-rc.5"

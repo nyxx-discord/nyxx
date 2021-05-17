@@ -6,13 +6,13 @@ class MessageReference {
   late final Cacheable<Snowflake, Message>? message;
 
   /// Original channel
-  late final Cacheable<Snowflake, TextChannel> channel;
+  late final CacheableTextChannel<TextChannel> channel;
 
   /// Original guild
   late final Cacheable<Snowflake, Guild>? guild;
 
   MessageReference._new(Map<String, dynamic> raw, INyxx client) {
-    this.channel = _ChannelCacheable(client, Snowflake(raw["channel_id"]));
+    this.channel = CacheableTextChannel<TextChannel>._new(client, Snowflake(raw["channel_id"]), ChannelType.unknown);
 
     if (raw["message_id"] != null) {
       this.message = _MessageCacheable(client, Snowflake(raw["message_id"]), this.channel);

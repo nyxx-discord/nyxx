@@ -145,15 +145,9 @@ jobs:
        working-directory: ./nyxx_extensions
        run: dart analyze
 
-     - name: Compile tests
-       working-directory: ./nyxx_extensions/test
-       run: dart2native extensions-tests.dart
-       if: github.event_name != 'pull_request'
-
-     - name: Run tests
-       working-directory: ./nyxx_extensions/test
-       run: ./extensions-tests.exe
-       if: github.event_name != 'pull_request'
+     - name: Unit tests
+       working-directory: ./nyxx_extensions
+       run: dart test test/extensions-tests.dart
 
      - name: Generate docs
        working-directory: ./nyxx_extensions

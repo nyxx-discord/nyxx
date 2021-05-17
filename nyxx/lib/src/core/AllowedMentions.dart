@@ -4,7 +4,7 @@ part of nyxx;
 /// This will always validate against message content to avoid phantom pings (e.g. to ping everyone, you must still have @everyone in the message content), and check against user/bot permissions.
 ///
 /// If class is only instantiated without any modifications to its fields, by default it will suppress all mentions.
-class AllowedMentions implements Builder {
+class AllowedMentions extends Builder {
   bool _allowEveryone = false;
   bool _allowUsers = false;
   bool _allowRoles = false;
@@ -53,23 +53,16 @@ class AllowedMentions implements Builder {
     this._roles.addAll(roleIds);
   }
 
-  // TODO: spread collections???
   @override
   Map<String, dynamic> _build() {
-    final map = <String, dynamic>{};
-    map["parse"] = [];
-
-    if (_allowEveryone) {
-      (map["parse"] as List).add("everyone");
-    }
-
-    if (_allowRoles) {
-      (map["parse"] as List).add("roles");
-    }
-
-    if (_allowUsers) {
-      (map["parse"] as List).add("users");
-    }
+    final map = <String, dynamic>{
+      "parse": [
+        if (_allowEveryone) "everyone",
+        if (_allowRoles) "roles",
+        if (_allowUsers) "users",
+      ],
+      "replied_user": this._allowReply
+    };
 
     if (_users.isNotEmpty) {
       if (!_allowUsers) {
@@ -88,8 +81,6 @@ class AllowedMentions implements Builder {
 
       map["roles"] = _roles.map((e) => e.id.toString());
     }
-
-    map["replied_user"] = this._allowReply;
 
     return map;
   }

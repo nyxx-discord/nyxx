@@ -3,7 +3,7 @@ part of nyxx;
 /// Sent when a user starts typing.
 class TypingEvent {
   /// The channel that the user is typing in.
-  late final Cacheable<Snowflake, TextChannel> channel;
+  late final CacheableTextChannel<TextChannel> channel;
 
   /// The user that is typing.
   late final Cacheable<Snowflake, User> user;
@@ -18,7 +18,7 @@ class TypingEvent {
   late final Cacheable<Snowflake, Guild>? guild;
 
   TypingEvent._new(Map<String, dynamic> raw, Nyxx client) {
-    this.channel = _ChannelCacheable(client, Snowflake(raw["d"]["channel_id"]));
+    this.channel = CacheableTextChannel._new(client, Snowflake(raw["d"]["channel_id"]), ChannelType.unknown);
     this.user = _UserCacheable(client, Snowflake(raw["d"]["user_id"]));
     this.timestamp = DateTime.fromMillisecondsSinceEpoch(raw["d"]["timestamp"] as int);
 
@@ -27,7 +27,7 @@ class TypingEvent {
     } else {
       this.guild = null;
     }
-    
+
     if (raw["d"]["member"] == null) {
       this.member = null;
       return;
