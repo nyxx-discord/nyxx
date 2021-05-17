@@ -34,3 +34,4 @@ part "src/events/InteractionEvent.dart";
 // Exceptions
 part "src/exceptions/InteractionExpired.dart";
 part "src/exceptions/AlreadyResponded.dart";
+part "src/exceptions/ResponseRequired.dart";
