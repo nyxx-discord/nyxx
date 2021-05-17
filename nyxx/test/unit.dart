@@ -141,11 +141,11 @@ void main() {
 
       expect(snowflake.id, snowflakeValue);
 
-      expect(snowflake, snowflakeValue);
+      expect(snowflake.id, snowflakeValue);
       expect(snowflake2, snowflake);
-      expect(snowflake, snowflakeValue.toString());
+      expect(snowflake.toString(), snowflakeValue.toString());
 
-      expect(snowflake, 125);
+      expect(snowflake.id == 125, false);
     });
   });
 
@@ -155,7 +155,7 @@ void main() {
     expect(snowflakeEntityA.id, snowflakeA);
     expect(snowflakeEntityA.createdAt, snowflakeA.timestamp);
 
-    expect(snowflakeEntityA, snowflakeA);
+    expect(snowflakeEntityA.id, snowflakeA);
   });
 
   group("Generic utils", () {

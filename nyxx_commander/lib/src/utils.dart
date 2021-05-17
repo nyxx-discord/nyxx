@@ -1,6 +1,7 @@
 part of nyxx_commander;
 
 class  _CommandMatcher {
+  /// Matches [commands] from [messageParts]. Performs recursive lookup on available commands and it's children.
   static CommandEntity? _findMatchingCommand(Iterable<String> messageParts, Iterable<CommandEntity> commands) {
     for (final entity in commands) {
       if(entity is CommandGroup && entity.name == "") {

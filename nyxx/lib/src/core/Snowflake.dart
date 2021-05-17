@@ -63,6 +63,7 @@ class Snowflake implements Comparable<Snowflake> {
     if (other is Snowflake) return other.id == this._id;
     if (other is int) return other == this._id;
     if (other is String) return other == this._id.toString();
+    if (other is SnowflakeEntity) return other.id == this._id;
 
     return false;
   }

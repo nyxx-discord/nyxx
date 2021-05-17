@@ -10,7 +10,9 @@ class BuilderUtility {
   static Map<String, dynamic> buildRawAllowedMentions(AllowedMentions mentions) =>
       mentions._build();
 
+  /// Allows to build any object which implements [Builder]
   static Map<String, dynamic> build<T extends Builder> (T builder) => builder._build();
 
+  /// Allows to build any object which implements [BuilderWithClient]
   static Map<String, dynamic> buildWithClient<T extends BuilderWithClient> (T builder, INyxx client) => builder.build(client);
 }
