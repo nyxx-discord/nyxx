@@ -1,6 +1,5 @@
 import "dart:async" show Future, FutureOr, Stream;
-import "package:nyxx/nyxx.dart"
-    show IEmoji, TextChannel, Message, MessageBuilder, MessageReactionEvent, Nyxx, UnicodeEmoji;
+import "package:nyxx/nyxx.dart" show IEmoji, TextChannel, Message, MessageBuilder, MessageReactionEvent, Nyxx, UnicodeEmoji;
 import "../../emoji.dart" show filterEmojiDefinitions;
 import "../utils.dart" show StreamUtils, StringUtils;
 
@@ -16,20 +15,16 @@ abstract class IPaginationHandler {
   int get dataLength;
 
   /// Emoji used to navigate to next page. Default: "▶"
-  FutureOr<IEmoji> get nextEmoji async =>
-      (await filterEmojiDefinitions((emoji) => emoji.primaryName == "arrow_forward", cache: true)).toEmoji();
+  FutureOr<IEmoji> get nextEmoji async => (await filterEmojiDefinitions((emoji) => emoji.primaryName == "arrow_forward", cache: true)).toEmoji();
 
   /// Emoji used to navigate to previous page. Default: "◀"
-  FutureOr<IEmoji> get backEmoji async =>
-      (await filterEmojiDefinitions((emoji) => emoji.primaryName == "arrow_backward", cache: true)).toEmoji();
+  FutureOr<IEmoji> get backEmoji async => (await filterEmojiDefinitions((emoji) => emoji.primaryName == "arrow_backward", cache: true)).toEmoji();
 
   /// Emoji used to navigate to first page. Default: "⏮"
-  FutureOr<IEmoji> get firstEmoji async =>
-      (await filterEmojiDefinitions((emoji) => emoji.primaryName == "track_previous", cache: true)).toEmoji();
+  FutureOr<IEmoji> get firstEmoji async => (await filterEmojiDefinitions((emoji) => emoji.primaryName == "track_previous", cache: true)).toEmoji();
 
   /// Emoji used to navigate to last page. Default: "⏭"
-  FutureOr<IEmoji> get lastEmoji async =>
-      (await filterEmojiDefinitions((emoji) => emoji.primaryName == "track_next", cache: true)).toEmoji();
+  FutureOr<IEmoji> get lastEmoji async => (await filterEmojiDefinitions((emoji) => emoji.primaryName == "track_next", cache: true)).toEmoji();
 }
 
 /// Basic pagination handler based on [String]. Each entry in [pages] will be different page.
@@ -41,22 +36,20 @@ class BasicPaginationHandler extends IPaginationHandler {
   BasicPaginationHandler(this.pages);
 
   /// Generates pagination from String. It divides String into 250 char long pages.
-  factory BasicPaginationHandler.fromString(String str, TextChannel channel) =>
-      BasicPaginationHandler(StringUtils.split(str, 250).toList());
+  factory BasicPaginationHandler.fromString(String str, TextChannel channel) => BasicPaginationHandler(StringUtils.split(str, 250).toList());
 
   /// Generates pagination from String but with user specified size of single page.
-  factory BasicPaginationHandler.fromStringLen(String str, int len, TextChannel channel) =>
-      BasicPaginationHandler(StringUtils.split(str, len).toList());
+  factory BasicPaginationHandler.fromStringLen(String str, int len, TextChannel channel) => BasicPaginationHandler(StringUtils.split(str, len).toList());
 
   /// Generates pagination from String but with user specified number of pages.
-  factory BasicPaginationHandler.fromStringEq(String str, int pieces, TextChannel channel) =>
-      BasicPaginationHandler(StringUtils.splitEqually(str, pieces).toList());
+  factory BasicPaginationHandler.fromStringEq(String str, int pieces, TextChannel channel) => BasicPaginationHandler(StringUtils.splitEqually(str, pieces).toList());
 
   @override
   FutureOr<MessageBuilder> generatePage(int page) => MessageBuilder()..content = pages[page];
 
   @override
-  FutureOr<MessageBuilder> generateInitialPage() => generatePage(0) as MessageBuilder;
+  FutureOr<MessageBuilder> generateInitialPage() =>
+      generatePage(0) as MessageBuilder;
 
   @override
   int get dataLength => pages.length;

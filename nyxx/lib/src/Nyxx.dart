@@ -104,10 +104,10 @@ class NyxxRest extends INyxx {
   /// isolate will ignore all exceptions and continue to work.
   NyxxRest(this._token, this.intents,
       {ClientOptions? options,
-      CacheOptions? cacheOptions,
-      bool ignoreExceptions = true,
-      bool useDefaultLogger = true,
-      Level? defaultLoggerLogLevel}) {
+        CacheOptions? cacheOptions,
+        bool ignoreExceptions = true,
+        bool useDefaultLogger = true,
+        Level? defaultLoggerLogLevel}) {
     if (_token.isEmpty) {
       throw MissingTokenError();
     }
@@ -116,7 +116,8 @@ class NyxxRest extends INyxx {
       Logger.root.level = defaultLoggerLogLevel ?? Level.ALL;
 
       Logger.root.onRecord.listen((LogRecord rec) {
-        print("[${rec.time}] [${rec.level.name}] [${rec.loggerName}] ${rec.message}");
+        print(
+            "[${rec.time}] [${rec.level.name}] [${rec.loggerName}] ${rec.message}");
       });
     }
 
@@ -307,16 +308,17 @@ class Nyxx extends NyxxRest {
       CacheOptions? cacheOptions,
       bool ignoreExceptions = true,
       bool useDefaultLogger = true,
-      Level? defaultLoggerLogLevel})
-      : super(token, intents,
-            options: options,
-            cacheOptions: cacheOptions,
-            ignoreExceptions: ignoreExceptions,
-            useDefaultLogger: useDefaultLogger,
-            defaultLoggerLogLevel: defaultLoggerLogLevel) {
+      Level? defaultLoggerLogLevel}) :
+        super(token, intents, options: options, cacheOptions: cacheOptions,
+              ignoreExceptions: ignoreExceptions, useDefaultLogger: useDefaultLogger,
+              defaultLoggerLogLevel: defaultLoggerLogLevel
+      ) {
     this._events = _EventController(this);
-    this.onSelfMention = this.onMessageReceived.where((event) => event.message.mentions.contains(this.self));
-    this.onDmReceived = this.onMessageReceived.where((event) => event.message is DMMessage);
+    this.onSelfMention = this
+        .onMessageReceived
+        .where((event) => event.message.mentions.contains(this.self));
+    this.onDmReceived =
+        this.onMessageReceived.where((event) => event.message is DMMessage);
 
     this._ws = _ConnectionManager(this);
   }
@@ -328,26 +330,31 @@ class Nyxx extends NyxxRest {
   DateTime get startTime => _startTime;
 
   /// This endpoint is only for public guilds if bot is not int the guild.
-  Future<GuildPreview> fetchGuildPreview(Snowflake guildId) async => this._httpEndpoints.fetchGuildPreview(guildId);
+  Future<GuildPreview> fetchGuildPreview(Snowflake guildId) async =>
+    this._httpEndpoints.fetchGuildPreview(guildId);
 
   /// Returns guild with given [guildId]
-  Future<Guild> fetchGuild(Snowflake guildId) => this._httpEndpoints.fetchGuild(guildId);
+  Future<Guild> fetchGuild(Snowflake guildId) =>
+      this._httpEndpoints.fetchGuild(guildId);
 
   /// Returns channel with specified id.
   /// ```
   /// var channel = await client.getChannel<TextChannel>(Snowflake("473853847115137024"));
   /// ```
-  Future<T> fetchChannel<T extends IChannel>(Snowflake channelId) => this._httpEndpoints.fetchChannel(channelId);
+  Future<T> fetchChannel<T extends IChannel>(Snowflake channelId) =>
+      this._httpEndpoints.fetchChannel(channelId);
 
   /// Get user instance with specified id.
   /// ```
   /// var user = client.getUser(Snowflake("302359032612651009"));
   /// ``
-  Future<User> fetchUser(Snowflake userId) => this._httpEndpoints.fetchUser(userId);
+  Future<User> fetchUser(Snowflake userId) =>
+      this._httpEndpoints.fetchUser(userId);
 
   /// Gets a webhook by its id and/or token.
   /// If token is supplied authentication is not needed.
-  Future<Webhook> fetchWebhook(Snowflake id, {String token = ""}) => this._httpEndpoints.fetchWebhook(id, token: token);
+  Future<Webhook> fetchWebhook(Snowflake id, {String token = ""}) =>
+      this._httpEndpoints.fetchWebhook(id, token: token);
 
   /// Gets an [Invite] object with given code.
   /// If the [code] is in cache - it will be taken from it, otherwise API will be called.
@@ -355,7 +362,8 @@ class Nyxx extends NyxxRest {
   /// ```
   /// var inv = client.getInvite("YMgffU8");
   /// ```
-  Future<Invite> getInvite(String code) => this._httpEndpoints.fetchInvite(code);
+  Future<Invite> getInvite(String code) =>
+      this._httpEndpoints.fetchInvite(code);
 
   /// Returns number of shards
   int get shards => this.shardManager._shards.length;

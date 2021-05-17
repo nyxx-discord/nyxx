@@ -45,7 +45,7 @@ class Role extends SnowflakeEntity implements Mentionable {
     this.color = DiscordColor.fromInt(raw["color"] as int);
     this.guild = _GuildCacheable(client, guildId);
 
-    if (raw["tags"] != null) {
+    if(raw["tags"] != null) {
       this.roleTags = RoleTags._new(raw["tags"] as Map<String, dynamic>);
     } else {
       this.roleTags = null;
@@ -57,7 +57,8 @@ class Role extends SnowflakeEntity implements Mentionable {
       client._httpEndpoints.editRole(this.guild.id, this.id, role, auditReason: auditReason);
 
   /// Deletes the role.
-  Future<void> delete() async => client._httpEndpoints.deleteRole(guild.id, this.id);
+  Future<void> delete() async =>
+      client._httpEndpoints.deleteRole(guild.id, this.id);
 }
 
 /// Additional [Role] role tags which hold optional data about role

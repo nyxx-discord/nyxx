@@ -27,7 +27,8 @@ class EmbedFooter implements Convertable<EmbedFooterBuilder> {
   bool operator ==(other) => other is EmbedFooter ? other.text == this.text && other.iconUrl == this.iconUrl : false;
 
   @override
-  EmbedFooterBuilder toBuilder() => EmbedFooterBuilder()
-    ..text = this.text
-    ..iconUrl = this.iconUrl;
+  EmbedFooterBuilder toBuilder() =>
+    EmbedFooterBuilder()
+      ..text = this.text
+      ..iconUrl = this.iconUrl;
 }

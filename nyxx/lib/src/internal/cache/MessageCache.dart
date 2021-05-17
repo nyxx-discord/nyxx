@@ -46,5 +46,6 @@ class MessageCache extends Cache<Snowflake, Message> {
 
   /// Unsupported
   @override
-  void operator []=(Snowflake key, Message item) => throw UnsupportedError("Unsupported operation. Use put() instead");
+  void operator []=(Snowflake key, Message item) =>
+      throw UnsupportedError("Unsupported operation. Use put() instead");
 }

@@ -19,6 +19,7 @@ class Reaction {
     if (rawEmoji["id"] == null) {
       this.emoji = UnicodeEmoji(rawEmoji["name"] as String);
     } else {
+
       //TODO: EMOJIS STUUF
       //this.emoji = PartialGuildEmoji._new(rawEmoji);
     }

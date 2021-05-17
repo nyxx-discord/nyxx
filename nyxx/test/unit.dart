@@ -21,11 +21,16 @@ final sampleUserRawData = {
 };
 
 final sampleMemberData = {
-  "user": {"id": 123},
+  "user": {
+    "id": 123
+  },
   "nick": "This is nick",
   "deaf": false,
   "mute": false,
-  "roles": ["1234564", "5434534"],
+  "roles": [
+    "1234564",
+    "5434534"
+  ],
   "joined_at": DateTime.now().toIso8601String()
 };
 
@@ -36,11 +41,11 @@ final sampleRoleData = {
   "hoist": false,
   "managed": false,
   "mentionable": false,
-  "permissions": (PermissionsBuilder()
+  "permissions": (
+      PermissionsBuilder()
         ..sendMessages = true
-        ..readMessageHistory = true)
-      .calculatePermissionValue()
-      .toString(),
+        ..readMessageHistory = true
+  ).calculatePermissionValue().toString(),
   "color": DiscordColor.aquamarine.value,
 };
 
@@ -53,11 +58,23 @@ final sampleTextChannel = {
   "type": 0
 };
 
-final sampleVoiceChannel = {"id": 4321, "name": "This is voice channel", "position": 1, "type": 2};
+final sampleVoiceChannel = {
+  "id": 4321,
+  "name": "This is voice channel",
+  "position": 1,
+  "type": 2
+};
 
-final sampleDMChannel = {"id": 1234, "type": 1, "recipient": sampleUserRawData};
+final sampleDMChannel = {
+  "id": 1234,
+  "type": 1,
+  "recipient": sampleUserRawData
+};
 
-final sampleEmoji = {"id": 123, "roles": []};
+final sampleEmoji = {
+  "id": 123,
+  "roles": []
+};
 
 final sampleGuildData = {
   "id": 123,
@@ -73,11 +90,18 @@ final sampleGuildData = {
   "premium_tier": 1,
   "premium_subscription_count": 15,
   "preferred_locale": "en_US",
-  "roles": [sampleRoleData],
-  "emojis": [sampleEmoji],
+  "roles": [
+    sampleRoleData
+  ],
+  "emojis": [
+    sampleEmoji
+  ],
   "owner_id": 321,
-  "channels": [sampleTextChannel, sampleVoiceChannel],
-  "features": ["FEATURE"]
+  "channels": [
+    sampleTextChannel,
+    sampleVoiceChannel
+  ],
+  "features": [ "FEATURE" ]
 };
 
 final client = NyxxRest("dum", 0);
@@ -143,25 +167,21 @@ void main() {
 
       final expectedStringFile = "data:image/$extension;base64,$encodedKitty";
       expect(Utils.getBase64UploadString(file: kittyFile, fileExtension: extension), expectedStringFile);
-      expect(Utils.getBase64UploadString(fileBytes: kittyFile.readAsBytesSync(), fileExtension: extension),
-          expectedStringFile);
-      expect(
-          Utils.getBase64UploadString(base64EncodedFile: encodedKitty, fileExtension: extension), expectedStringFile);
+      expect(Utils.getBase64UploadString(fileBytes: kittyFile.readAsBytesSync(), fileExtension: extension), expectedStringFile);
+      expect(Utils.getBase64UploadString(base64EncodedFile: encodedKitty, fileExtension: extension), expectedStringFile);
     }, skip: "Skipped for now because of problems with required path to file");
 
     test("Utils.chunk returns valid chunks", () async {
       final testList = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
       final chunks = Utils.chunk(testList, 2);
 
-      expect(
-          chunks,
-          emitsInOrder([
-            [0, 1],
-            [2, 3],
-            [4, 5],
-            [6, 7],
-            [8, 9]
-          ]));
+      expect(chunks, emitsInOrder([
+        [0, 1],
+        [2, 3],
+        [4, 5],
+        [6, 7],
+        [8, 9]
+      ]));
     });
   });
 

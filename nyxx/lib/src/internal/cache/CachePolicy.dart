@@ -49,10 +49,12 @@ class CachePolicy<T extends SnowflakeEntity> {
   bool canCache(T entity) => _predicate(entity);
 
   /// Convenience method to concatenate other policy
-  CachePolicy<T> or(CachePolicy<T> other) => CachePolicy((entity) => this.canCache(entity) || other.canCache(entity));
+  CachePolicy<T> or(CachePolicy<T> other) =>
+      CachePolicy((entity) => this.canCache(entity) || other.canCache(entity));
 
   /// Convenience method to require other policy
-  CachePolicy<T> and(CachePolicy<T> other) => CachePolicy((entity) => this.canCache(entity) && other.canCache(entity));
+  CachePolicy<T> and(CachePolicy<T> other) =>
+      CachePolicy((entity) => this.canCache(entity) && other.canCache(entity));
 
   /// Composes a policy by concatenating multiple other policies from list
   static CachePolicy<S> any<S extends SnowflakeEntity>(List<CachePolicy<S>> policies) =>
@@ -68,15 +70,13 @@ class MemberCachePolicy extends CachePolicy<Member> {
   static final CachePolicy<Member> all = MemberCachePolicy((member) => true);
 
   /// Cache members which have online status
-  static final CachePolicy<Member> online =
-      MemberCachePolicy((member) => member.user.getFromCache()?.status?.isOnline ?? false);
+  static final CachePolicy<Member> online = MemberCachePolicy((member) => member.user.getFromCache()?.status?.isOnline ?? false);
 
   /// Cache only members which have voice state not null
   static final CachePolicy<Member> voice = MemberCachePolicy((member) => member.voiceState != null);
 
   /// Cache only member which are owner of guild
-  static final CachePolicy<Member> owner =
-      MemberCachePolicy((member) => member.guild.getFromCache()?.owner.id == member.id);
+  static final CachePolicy<Member> owner = MemberCachePolicy((member) => member.guild.getFromCache()?.owner.id == member.id);
 
   /// Default policy is [owner] or [voice]. So it caches guild owners and users in voice channels
   static final CachePolicy<Member> def = owner.or(voice);

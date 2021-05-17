@@ -22,7 +22,8 @@ class PresenceBuilder extends Builder {
 
   @override
   Map<String, dynamic> _build() => <String, dynamic>{
-        "status": (status != null) ? status.toString() : UserStatus.online.toString(),
+        "status":
+            (status != null) ? status.toString() : UserStatus.online.toString(),
         "afk": (afk != null) ? afk : false,
         if (game != null)
           "game": <String, dynamic>{

@@ -9,10 +9,12 @@ class UnicodeEmoji implements IEmoji {
   UnicodeEmoji(this.code);
 
   @override
-  String formatForMessage() => this.code;
+  String formatForMessage() =>
+      this.code;
 
   @override
-  String encodeForAPI() => this.code;
+  String encodeForAPI() =>
+      this.code;
 
   @override
   String toString() => this.formatForMessage();

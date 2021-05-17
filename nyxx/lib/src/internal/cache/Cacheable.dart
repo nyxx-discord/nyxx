@@ -39,7 +39,7 @@ abstract class Cacheable<T extends Snowflake, S extends SnowflakeEntity> {
 class _RoleCacheable extends Cacheable<Snowflake, Role> {
   final Cacheable<Snowflake, Guild> guild;
 
-  _RoleCacheable(INyxx client, Snowflake id, this.guild) : super._new(client, id);
+  _RoleCacheable(INyxx client, Snowflake id, this.guild): super._new(client, id);
 
   @override
   Future<Role> download() async => this._fetchGuildRole();
@@ -68,7 +68,7 @@ class _RoleCacheable extends Cacheable<Snowflake, Role> {
 }
 
 class _ChannelCacheable<T extends IChannel> extends Cacheable<Snowflake, T> {
-  _ChannelCacheable(INyxx client, Snowflake id) : super._new(client, id);
+  _ChannelCacheable(INyxx client, Snowflake id): super._new(client, id);
 
   @override
   T? getFromCache() => this._client.channels[this.id] as T?;
@@ -78,7 +78,7 @@ class _ChannelCacheable<T extends IChannel> extends Cacheable<Snowflake, T> {
 }
 
 class _GuildCacheable extends Cacheable<Snowflake, Guild> {
-  _GuildCacheable(INyxx client, Snowflake id) : super._new(client, id);
+  _GuildCacheable(INyxx client, Snowflake id): super._new(client, id);
 
   @override
   Guild? getFromCache() => this._client.guilds[this.id];
@@ -88,7 +88,7 @@ class _GuildCacheable extends Cacheable<Snowflake, Guild> {
 }
 
 class _UserCacheable extends Cacheable<Snowflake, User> {
-  _UserCacheable(INyxx client, Snowflake id) : super._new(client, id);
+  _UserCacheable(INyxx client, Snowflake id): super._new(client, id);
 
   @override
   Future<User> download() => _client._httpEndpoints.fetchUser(this.id);
@@ -100,10 +100,11 @@ class _UserCacheable extends Cacheable<Snowflake, User> {
 class _MemberCacheable extends Cacheable<Snowflake, Member> {
   final Cacheable<Snowflake, Guild> guild;
 
-  _MemberCacheable(INyxx client, Snowflake id, this.guild) : super._new(client, id);
+  _MemberCacheable(INyxx client, Snowflake id, this.guild): super._new(client, id);
 
   @override
-  Future<Member> download() => this._client._httpEndpoints.fetchGuildMember(guild.id, id);
+  Future<Member> download() =>
+      this._client._httpEndpoints.fetchGuildMember(guild.id, id);
 
   @override
   Member? getFromCache() {

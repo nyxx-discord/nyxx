@@ -16,9 +16,9 @@ abstract class _HttpRequest {
   }
 
   Map<String, String> _genHeaders() => {
-        if (this.auditLog != null) "X-Audit-Log-Reason": this.auditLog!,
-        "User-Agent": "Nyxx (${Constants.repoUrl}, ${Constants.version})"
-      };
+    if (this.auditLog != null) "X-Audit-Log-Reason": this.auditLog!,
+    "User-Agent": "Nyxx (${Constants.repoUrl}, ${Constants.version})"
+  };
 
   Future<http.StreamedResponse> _execute();
 }
@@ -41,15 +41,18 @@ class BasicRequest extends _HttpRequest {
       request.headers.addAll(_getJsonContentTypeHeader());
       if (this.body is String) {
         request.body = this.body as String;
-      } else if (this.body is Map<String, dynamic> || this.body is List<dynamic>) {
+      } else
+      if (this.body is Map<String, dynamic> || this.body is List<dynamic>) {
         request.body = jsonEncode(this.body);
       }
     }
 
     return this._client.send(request);
   }
-
-  Map<String, String> _getJsonContentTypeHeader() => {"Content-Type": "application/json"};
+  
+  Map<String, String> _getJsonContentTypeHeader() => {
+    "Content-Type" : "application/json"
+  };
 }
 
 /// Request with which files will be sent. Cannot contain request body.

@@ -16,5 +16,5 @@ class ArgChoiceBuilder extends Builder {
     }
   }
 
-  Map<String, dynamic> _build() => {"name": this.name, "value": this.value};
+  Map<String, dynamic> _build() => { "name": this.name, "value": this.value };
 }

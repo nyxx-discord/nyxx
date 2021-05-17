@@ -18,7 +18,8 @@ class EntityUtility {
   ///     User user = EntityUtility.createUser(bot, rawJson);
   /// }
   /// ```
-  static User createUser(INyxx client, Map<String, dynamic> rawJson) => User._new(client, rawJson);
+  static User createUser(INyxx client, Map<String, dynamic> rawJson) =>
+      User._new(client, rawJson);
 
   /// Creates a Guild object, can be used for other classes where you have correct rawJson data from the API.
   /// ```dart
@@ -39,7 +40,8 @@ class EntityUtility {
   ///     Role role = EntityUtility.createRole(bot, Snowflake("81384788765712384"), rawJson);
   /// }
   /// ```
-  static Role createRole(INyxx client, Snowflake guildId, Map<String, dynamic> rawJson) =>
+  static Role createRole(
+          INyxx client, Snowflake guildId, Map<String, dynamic> rawJson) =>
       Role._new(client, rawJson, guildId);
 
   /// Creates a CategoryGuildChannel object, can be used for other classes where you have correct rawJson data from the API.
@@ -62,7 +64,8 @@ class EntityUtility {
   ///     VoiceGuildChannel voiceChannel = EntityUtility.createVoiceGuildChannel(bot, Snowflake("81384788765712384"), rawJson);
   /// }
   /// ```
-  static VoiceGuildChannel createVoiceGuildChannel(INyxx client, Snowflake guildId, Map<String, dynamic> rawJson) =>
+  static VoiceGuildChannel createVoiceGuildChannel(
+          INyxx client, Snowflake guildId, Map<String, dynamic> rawJson) =>
       VoiceGuildChannel._new(client, rawJson, guildId);
 
   /// Creates a Guild object, can be used for other classes where you have correct rawJson data from the API.
@@ -73,7 +76,8 @@ class EntityUtility {
   ///     TextGuildChannel textChannel = EntityUtility.createTextGuildChannel(bot, Snowflake("81384788765712384"), rawJson);
   /// }
   /// ```
-  static TextGuildChannel createTextGuildChannel(INyxx client, Snowflake guildId, Map<String, dynamic> rawJson) =>
+  static TextGuildChannel createTextGuildChannel(
+          INyxx client, Snowflake guildId, Map<String, dynamic> rawJson) =>
       TextGuildChannel._new(client, rawJson, guildId);
 
   /// Creates a Guild object, can be used for other classes where you have correct rawJson data from the API.
@@ -84,7 +88,8 @@ class EntityUtility {
   ///     DMChannel dmChannel = EntityUtility.createDMChannel(bot, rawJson);
   /// }
   /// ```
-  static DMChannel createDMChannel(INyxx client, Map<String, dynamic> rawJson) => DMChannel._new(client, rawJson);
+  static DMChannel createDMChannel(INyxx client, Map<String, dynamic> rawJson) =>
+      DMChannel._new(client, rawJson);
 
   /// Creates a Guild Member object, can be used for other classes where you have correct rawJson data from the API.
   /// ```dart
@@ -94,6 +99,7 @@ class EntityUtility {
   ///     DMChannel dmChannel = EntityUtility.createGuildMember(bot, Snowflake(''), rawJson);
   /// }
   /// ```
-  static Member createGuildMember(INyxx client, Snowflake guildId, Map<String, dynamic> rawJson) =>
+  static Member createGuildMember(
+          INyxx client, Snowflake guildId, Map<String, dynamic> rawJson) =>
       Member._new(client, rawJson, guildId);
 }

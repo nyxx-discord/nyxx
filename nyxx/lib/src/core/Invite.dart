@@ -43,7 +43,7 @@ class Invite {
     } else {
       this.inviter = null;
     }
-
+    
     if (raw["target_user"] != null) {
       this.targetUser = _UserCacheable(client, Snowflake(raw["target_user"]["id"]));
     } else {
@@ -53,7 +53,7 @@ class Invite {
 
   /// Deletes this [Invite].
   Future<void> delete({String? auditReason}) async =>
-      client._httpEndpoints.deleteInvite(this.code, auditReason: auditReason);
+    client._httpEndpoints.deleteInvite(this.code, auditReason: auditReason);
 }
 
 /// Invite object with additional metadata
@@ -74,7 +74,8 @@ class InviteWithMeta extends Invite {
   late final int maxAge;
 
   /// Date when invite will expire
-  DateTime get expiryDate => this.createdAt.add(Duration(seconds: maxAge));
+  DateTime get expiryDate =>
+    this.createdAt.add(Duration(seconds: maxAge));
 
   /// True if Invite is valid and can be used
   bool get isValid {

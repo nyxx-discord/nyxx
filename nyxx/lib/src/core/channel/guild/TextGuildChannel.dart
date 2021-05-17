@@ -27,14 +27,14 @@ class TextGuildChannel extends GuildChannel implements TextChannel {
   // Used to create infinite typing loop
   Timer? _typing;
 
-  TextGuildChannel._new(INyxx client, Map<String, dynamic> raw, [Snowflake? guildId])
-      : super._new(client, raw, guildId) {
+  TextGuildChannel._new(INyxx client, Map<String, dynamic> raw, [Snowflake? guildId]) : super._new(client, raw, guildId) {
     this.topic = raw["topic"] as String?;
     this.slowModeThreshold = raw["rate_limit_per_user"] as int? ?? 0;
   }
 
   /// Gets all of the webhooks for this channel.
-  Stream<Webhook> getWebhooks() => client._httpEndpoints.fetchChannelWebhooks(this.id);
+  Stream<Webhook> getWebhooks() =>
+      client._httpEndpoints.fetchChannelWebhooks(this.id);
 
   /// Creates a webhook for channel.
   /// Valid file types for [avatarFile] are jpeg, gif and png.
@@ -46,15 +46,16 @@ class TextGuildChannel extends GuildChannel implements TextChannel {
       client._httpEndpoints.createWebhook(this.id, name, avatarFile: avatarFile, auditReason: auditReason);
 
   /// Returns pinned [Message]s for channel.
-  Stream<Message> getPinnedMessages() => client._httpEndpoints.fetchPinnedMessages(this.id);
+  Stream<Message> getPinnedMessages() =>
+      client._httpEndpoints.fetchPinnedMessages(this.id);
 
   /// Edits the channel.
   Future<TextGuildChannel> edit({String? name, String? topic, int? position, int? slowModeThreshold}) =>
-      client._httpEndpoints
-          .editTextChannel(this.id, name: name, topic: topic, position: position, slowModeThreshold: slowModeThreshold);
+      client._httpEndpoints.editTextChannel(this.id, name: name, topic: topic, position: position, slowModeThreshold: slowModeThreshold);
 
   @override
-  Future<void> startTyping() async => client._httpEndpoints.triggerTyping(this.id);
+  Future<void> startTyping() async =>
+      client._httpEndpoints.triggerTyping(this.id);
 
   @override
   void startTypingLoop() {
@@ -74,11 +75,13 @@ class TextGuildChannel extends GuildChannel implements TextChannel {
       client._httpEndpoints.downloadMessages(this.id, limit: limit, after: after, around: around, before: before);
 
   @override
-  Future<Message> fetchMessage(Snowflake messageId) => client._httpEndpoints.fetchMessage(this.id, messageId);
+  Future<Message> fetchMessage(Snowflake messageId) =>
+      client._httpEndpoints.fetchMessage(this.id, messageId);
 
   @override
   Message? getMessage(Snowflake id) => this.messageCache[id];
 
   @override
-  Future<Message> sendMessage(MessageBuilder builder) => client._httpEndpoints.sendMessage(this.id, builder);
+  Future<Message> sendMessage(MessageBuilder builder) =>
+      client._httpEndpoints.sendMessage(this.id, builder);
 }

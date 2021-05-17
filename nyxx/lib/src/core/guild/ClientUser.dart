@@ -29,16 +29,6 @@ class ClientUser extends User {
   }
 
   /// Edits current user. This changes user's username - not per guild nickname.
-  Future<User> edit(
-          {String? username,
-          File? avatarFile,
-          List<int>? avatarBytes,
-          String? encodedAvatar,
-          String? encodedExtension}) =>
-      client._httpEndpoints.editSelfUser(
-          username: username,
-          avatarFile: avatarFile,
-          avatarBytes: avatarBytes,
-          encodedAvatar: encodedAvatar,
-          encodedExtension: encodedExtension);
+  Future<User> edit({String? username, File? avatarFile, List<int>? avatarBytes, String? encodedAvatar, String? encodedExtension}) =>
+      client._httpEndpoints.editSelfUser(username: username, avatarFile: avatarFile, avatarBytes: avatarBytes, encodedAvatar: encodedAvatar, encodedExtension: encodedExtension);
 }

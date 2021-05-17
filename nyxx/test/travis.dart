@@ -31,8 +31,9 @@ void main() {
     final channel = await bot.fetchChannel<TextGuildChannel>(Snowflake(422285619952222208));
     // test(channel != null, "Channel cannot be null");
     if (env["GITHUB_RUN_NUMBER"] != null) {
-      await channel.sendMessage(MessageBuilder.content(
-          "Testing new build `#${env['GITHUB_RUN_NUMBER']}` (ID: `${env['GITHUB_RUN_ID']}`) from commit `${env['GITHUB_SHA']}` started by `${env['GITHUB_ACTOR']}`"));
+      await channel.sendMessage(
+          MessageBuilder.content("Testing new build `#${env['GITHUB_RUN_NUMBER']}` (ID: `${env['GITHUB_RUN_ID']}`) from commit `${env['GITHUB_SHA']}` started by `${env['GITHUB_ACTOR']}`")
+      );
     } else {
       await channel.sendMessage(MessageBuilder.content("Testing new local build"));
     }
@@ -48,9 +49,7 @@ void main() {
 
     print("TESTING SENDING FILES");
 
-    await channel
-        .sendMessage(
-            MessageBuilder.content("PLIK SIEMA")..files = [AttachmentBuilder.path("./kitty.webp", spoiler: true)])
+    await channel.sendMessage(MessageBuilder.content("PLIK SIEMA")..files = [AttachmentBuilder.path("./kitty.webp", spoiler: true)])
         .then((message) async => message.delete());
 
     print("TESTING ALLOWED MENTIONS");
@@ -92,8 +91,7 @@ void main() {
           final field = embed.fields.first;
 
           if (field.name == "Test field" && field.content == "Test value" && field.inline!) {
-            await (await e.message.channel.getOrDownload())
-                .sendMessage(MessageBuilder.content("Tests completed successfully!"));
+            await (await e.message.channel.getOrDownload()).sendMessage(MessageBuilder.content("Tests completed successfully!"));
             await e.message.delete();
             print("Nyxx tests completed successfully!");
             print("Final memory usage: ${(ProcessInfo.currentRss / 1024 / 1024).toStringAsFixed(2)} MB");
