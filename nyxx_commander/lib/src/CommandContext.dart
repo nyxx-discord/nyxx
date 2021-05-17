@@ -15,7 +15,9 @@ class CommandContext {
   final Guild? guild;
 
   /// Returns author as guild member
-  Member? get member => this.message is GuildMessage ? (message as GuildMessage).member : null;
+  Member? get member => this.message is GuildMessage
+      ? (message as GuildMessage).member
+      : null;
 
   /// Reference to client
   Nyxx get client => channel.client as Nyxx;
@@ -33,7 +35,7 @@ class CommandContext {
   static final _codeBlocksRegex = RegExp(r"```(\w+)?(\s)?(((.+)(\s)?)+)```");
 
   /// Creates inline reply for message
-  Future<Message> reply(MessageBuilder builder, {bool mention = false, bool reply = false}) async {
+  Future<Message> reply(MessageBuilder builder, {bool mention = false, bool reply = false }) async {
     if (mention) {
       if (builder.allowedMentions != null) {
         builder.allowedMentions!.allow(reply: true);
@@ -65,10 +67,11 @@ class CommandContext {
   ///   await context.replyTemp(content: user.avatarURL());
   /// }
   /// ```
-  Future<Message> sendMessageTemp(Duration duration, MessageBuilder builder) =>
-      channel.sendMessage(builder).then((msg) {
-        Timer(duration, () => msg.delete());
-        return msg;
+  Future<Message> sendMessageTemp(Duration duration, MessageBuilder builder) => channel
+        .sendMessage(builder)
+        .then((msg) {
+          Timer(duration, () => msg.delete());
+          return msg;
       });
 
   /// Replies to message after delay specified with [duration]
@@ -93,11 +96,10 @@ class CommandContext {
   ///
   /// }
   /// ```
-  Future<Map<IEmoji, int>> awaitEmojis(Message msg, Duration duration) {
+  Future<Map<IEmoji, int>> awaitEmojis(Message msg, Duration duration){
     final collectedEmoji = <IEmoji, int>{};
     return Future<Map<IEmoji, int>>(() async {
-      await for (final event
-          in client.onMessageReactionAdded.where((evnt) => evnt.message != null && evnt.message!.id == msg.id)) {
+      await for (final event in client.onMessageReactionAdded.where((evnt) => evnt.message != null && evnt.message!.id == msg.id)) {
         if (collectedEmoji.containsKey(event.emoji)) {
           // TODO: NNBD: weird stuff
           var value = collectedEmoji[event.emoji];
@@ -115,11 +117,11 @@ class CommandContext {
     }).timeout(duration, onTimeout: () => collectedEmoji);
   }
 
+
   /// Waits for first [TypingEvent] and returns it. If timed out returns null.
   /// Can listen to specific user by specifying [user]
   Future<TypingEvent?> waitForTyping(User user, {Duration timeout = const Duration(seconds: 30)}) =>
-      Future<TypingEvent?>(() => client.onTyping.firstWhere((e) => e.user == user && e.channel == this.channel))
-          .timeout(timeout, onTimeout: () => null);
+      Future<TypingEvent?>(() => client.onTyping.firstWhere((e) => e.user == user && e.channel == this.channel)).timeout(timeout, onTimeout: () => null);
 
   /// Gets all context channel messages that satisfies [predicate].
   ///
@@ -129,7 +131,7 @@ class CommandContext {
   /// }
   /// ```
   Stream<MessageReceivedEvent> nextMessagesWhere(bool Function(MessageReceivedEvent msg) predicate, {int limit = 1}) =>
-      client.onMessageReceived.where((event) => event.message.channel.id == channel.id).where(predicate).take(limit);
+    client.onMessageReceived.where((event) => event.message.channel.id == channel.id).where(predicate).take(limit);
 
   /// Gets next [num] number of any messages sent within one context (same channel).
   ///
@@ -157,7 +159,7 @@ class CommandContext {
   Iterable<String> getArguments() sync* {
     final matches = _argumentsRegex.allMatches(this.message.content.replaceFirst(commandMatcher, ""));
 
-    for (final match in matches) {
+    for(final match in matches) {
       final group1 = match.group(1);
 
       yield group1 ?? match.group(2)!;
@@ -169,7 +171,7 @@ class CommandContext {
   /// `List<String> [example stuff, can be parsed]`
   Iterable<String> getQuotedText() sync* {
     final matches = _quotedTextRegex.allMatches(this.message.content.replaceFirst(commandMatcher, ""));
-    for (final match in matches) {
+    for(final match in matches) {
       yield match.group(1)!;
     }
   }

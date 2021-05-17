@@ -13,7 +13,8 @@ class PresenceUpdateEvent {
 
   PresenceUpdateEvent._new(Map<String, dynamic> raw, Nyxx client) {
     this.presences = [
-      for (final rawActivity in raw["d"]["activities"]) Activity._new(rawActivity as Map<String, dynamic>)
+      for (final rawActivity in raw["d"]["activities"])
+        Activity._new(rawActivity as Map<String, dynamic>)
     ];
     this.clientStatus = ClientStatus._deserialize(raw["d"]["client_status"] as Map<String, dynamic>);
     this.user = _UserCacheable(client, Snowflake(raw["d"]["user"]["id"]));

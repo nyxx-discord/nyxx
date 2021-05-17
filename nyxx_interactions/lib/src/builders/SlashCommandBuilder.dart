@@ -21,16 +21,15 @@ class SlashCommandBuilder extends Builder {
   SlashCommandBuilder(this.name, this.description, this.options, {this.guild});
 
   Map<String, dynamic> _build() => {
-        "name": this.name,
-        "description": this.description,
-        if (this.options.isNotEmpty) "options": this.options.map((e) => e._build()).toList()
-      };
+    "name": this.name,
+    "description": this.description,
+    if (this.options.isNotEmpty) "options": this.options.map((e) => e._build()).toList()
+  };
 
   /// Registers handler for command. Note command cannot have handler if there are options present
   void registerHandler(SlashCommandHandler handler) {
-    if (this.options.any((element) =>
-        element.type == CommandOptionType.subCommand || element.type == CommandOptionType.subCommandGroup)) {
-      throw ArgumentError("Cannot register handler for slash command if command have subcommand or subcommandgroup");
+    if (this.options.any((element) => element.type == CommandOptionType.subCommand || element.type == CommandOptionType.subCommandGroup)) {
+      throw new ArgumentError("Cannot register handler for slash command if command have subcommand or subcommandgroup");
     }
 
     this._handler = handler;

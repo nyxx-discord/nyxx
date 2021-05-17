@@ -24,7 +24,7 @@ class AttachmentBuilder {
 
   /// Create attachment from specified file instance. Name will be automatically extracted from path if no name provided.
   factory AttachmentBuilder.file(File file, {String? name, bool? spoiler}) {
-    final bytes = file.readAsBytesSync();
+    final  bytes = file.readAsBytesSync();
     final fileName = name ?? path_utils.basename(file.path);
 
     return AttachmentBuilder._new(bytes, fileName, spoiler);
@@ -32,7 +32,7 @@ class AttachmentBuilder {
 
   /// Creates attachment from provided bytes
   factory AttachmentBuilder.bytes(List<int> bytes, String name, {bool? spoiler}) =>
-      AttachmentBuilder._new(bytes, name, spoiler);
+    AttachmentBuilder._new(bytes, name, spoiler);
 
   // creates instance of MultipartFile
   http.MultipartFile _asMultipartFile() =>

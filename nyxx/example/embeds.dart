@@ -22,6 +22,7 @@ void main() {
   bot.onMessageReceived.listen((MessageReceivedEvent e) {
     // Check if message content equals "!embed"
     if (e.message.content == "!embed") {
+
       // Create embed with author and footer section.
       final embed = EmbedBuilder()
         ..addField(name: "Example field title", content: "Example value")

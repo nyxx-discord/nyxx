@@ -19,8 +19,7 @@ abstract class CommandEntity {
   CommandEntity? get parent;
 
   /// A list of valid command names
-  List<String> get commandNames =>
-      [if (this.name.isNotEmpty) this.name.toLowerCase(), ...aliases.map((e) => e.toLowerCase())];
+  List<String> get commandNames => [if (this.name.isNotEmpty) this.name.toLowerCase(), ...aliases.map((e) => e.toLowerCase())];
 
   /// RegEx matching the fully qualified command name with its parents and all aliases
   String getFullCommandMatch() {
@@ -68,26 +67,18 @@ class CommandGroup extends CommandEntity with ICommandRegistrable {
 
   /// Creates command group. Pass a [name] to crated command and commands added
   /// via [registerSubCommand] will be subcommands og that group
-  CommandGroup(
-      {this.name = "",
-      this.aliases = const [],
-      this.defaultHandler,
-      this.beforeHandler,
-      this.afterHandler,
-      this.parent});
+  CommandGroup({this.name = "", this.aliases = const [], this.defaultHandler, this.beforeHandler, this.afterHandler, this.parent});
 
   /// Registers default command handler which will be executed if no subcommand is matched to message content
   void registerDefaultCommand(CommandHandlerFunction commandHandler,
       {PassHandlerFunction? beforeHandler, AfterHandlerFunction? afterHandler}) {
-    this.defaultHandler =
-        BasicCommandHandler("", commandHandler, beforeHandler: beforeHandler, afterHandler: afterHandler, parent: this);
+    this.defaultHandler = BasicCommandHandler("", commandHandler, beforeHandler: beforeHandler, afterHandler: afterHandler, parent: this);
   }
 
   /// Registers subcommand
   void registerSubCommand(String name, CommandHandlerFunction commandHandler,
       {PassHandlerFunction? beforeHandler, AfterHandlerFunction? afterHandler}) {
-    this.registerCommandEntity(BasicCommandHandler(name, commandHandler,
-        beforeHandler: beforeHandler, afterHandler: afterHandler, parent: this));
+    this.registerCommandEntity(BasicCommandHandler(name, commandHandler, beforeHandler: beforeHandler, afterHandler: afterHandler, parent: this));
   }
 
   /// Registers command as implemented [CommandEntity] class
@@ -123,6 +114,5 @@ class BasicCommandHandler extends CommandHandler {
   CommandGroup? parent;
 
   /// Basic implementation of command handler. Used internally in library.
-  BasicCommandHandler(this.name, this.commandHandler,
-      {this.aliases = const [], this.beforeHandler, this.afterHandler, this.parent});
+  BasicCommandHandler(this.name, this.commandHandler, {this.aliases = const [], this.beforeHandler, this.afterHandler, this.parent});
 }

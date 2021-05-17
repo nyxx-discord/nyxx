@@ -20,7 +20,7 @@ abstract class InteractionEvent<T extends Interaction> {
 
   /// Create a followup message for an Interaction
   Future<void> sendFollowup(MessageBuilder builder) async {
-    if (hasResponded) {
+    if(hasResponded) {
       final url = "/webhooks/${this._client.app.id.toString()}/${this.interaction.token}";
       final body = BuilderUtility.buildWithClient(builder, _client);
 
@@ -47,8 +47,7 @@ abstract class InteractionEvent<T extends Interaction> {
     }
 
     final url = "/interactions/${this.interaction.id.toString()}/${this.interaction.token}/callback";
-    final response =
-        await this._client.httpEndpoints.sendRawRequest(url, "POST", body: {"type": this._acknowledgeOpCode});
+    final response = await this._client.httpEndpoints.sendRawRequest(url, "POST", body: { "type": this._acknowledgeOpCode });
 
     if (response is HttpResponseError) {
       return Future.error(response);
@@ -59,7 +58,7 @@ abstract class InteractionEvent<T extends Interaction> {
 
   /// Used to acknowledge a Interaction and send a response.
   /// Once this is sent you can then only send ChannelMessages.
-  Future<void> respond(MessageBuilder builder, {bool hidden = false}) async {
+  Future<void> respond(MessageBuilder builder, { bool hidden = false }) async {
     if (DateTime.now().isAfter(this.receivedAt.add(const Duration(minutes: 15)))) {
       return Future.error(InteractionExpiredError());
     }
@@ -70,27 +69,28 @@ abstract class InteractionEvent<T extends Interaction> {
 
     if (hasResponded) {
       url = "/webhooks/${this._client.app.id.toString()}/${this.interaction.token}/messages/@original";
-      body = {if (hidden) "flags": 1 << 6, ...BuilderUtility.buildWithClient(builder, _client)};
+      body = {
+        if (hidden) "flags": 1 << 6,
+        ...BuilderUtility.buildWithClient(builder, _client)
+      };
       method = "PATCH";
     } else {
       if (!builder.canBeUsedAsNewMessage()) {
-        return Future.error(
-            ArgumentError("Cannot sent message when MessageBuilder doesn't have set either content, embed or files"));
+        return Future.error(ArgumentError("Cannot sent message when MessageBuilder doesn't have set either content, embed or files"));
       }
 
       url = "/interactions/${this.interaction.id.toString()}/${this.interaction.token}/callback";
       body = <String, dynamic>{
         "type": this._respondOpcode,
-        "data": {if (hidden) "flags": 1 << 6, ...BuilderUtility.buildWithClient(builder, _client)},
+        "data": {
+          if (hidden) "flags": 1 << 6,
+          ...BuilderUtility.buildWithClient(builder, _client)
+        },
       };
       method = "POST";
     }
 
-    final response = await this._client.httpEndpoints.sendRawRequest(
-          url,
-          method,
-          body: body,
-        );
+    final response = await this._client.httpEndpoints.sendRawRequest(url, method, body: body,);
 
     if (response is HttpResponseError) {
       return Future.error(response);
@@ -113,7 +113,9 @@ abstract class InteractionEvent<T extends Interaction> {
     final response = await this._client.httpEndpoints.sendRawRequest(
       "/interactions/${this.interaction.id.toString()}/${this.interaction.token}/callback",
       "POST",
-      body: {"type": 1},
+      body: {
+        "type": 1
+      },
     );
 
     if (response is HttpResponseError) {
@@ -135,7 +137,7 @@ class SlashCommandInteractionEvent extends InteractionEvent<SlashCommandInteract
   @override
   int get _respondOpcode => 4;
 
-  SlashCommandInteractionEvent._new(Nyxx client, Map<String, dynamic> raw) : super._new(client) {
+  SlashCommandInteractionEvent._new(Nyxx client, Map<String, dynamic> raw): super._new(client) {
     this.interaction = SlashCommandInteraction._new(client, raw);
   }
 }
@@ -151,7 +153,7 @@ class ComponentInteractionEvent extends InteractionEvent<ComponentInteraction> {
   @override
   int get _respondOpcode => 7;
 
-  ComponentInteractionEvent._new(Nyxx client, Map<String, dynamic> raw) : super._new(client) {
+  ComponentInteractionEvent._new(Nyxx client, Map<String, dynamic> raw): super._new(client) {
     this.interaction = ComponentInteraction._new(client, raw);
   }
 }

@@ -14,8 +14,9 @@ void main() {
   bot.onMessageReceived.listen((MessageReceivedEvent e) async {
     // Check if message content equals "!embed"
     if (e.message.content == "!addReadPerms") {
+
       // Dont process message when not send in guild context
-      if (e.message is! GuildMessage) {
+      if(e.message is! GuildMessage) {
         return;
       }
 

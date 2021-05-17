@@ -9,12 +9,15 @@ class ReplyBuilder extends Builder {
   ReplyBuilder(this.messageId);
 
   /// Constructs message reply from given message
-  factory ReplyBuilder.fromMessage(Message message) => ReplyBuilder(message.id);
+  factory ReplyBuilder.fromMessage(Message message) =>
+      ReplyBuilder(message.id);
 
   /// Constructs message reply from cacheable of message and channel
   factory ReplyBuilder.fromCacheable(Cacheable<Snowflake, Message> messageCacheable) =>
-      ReplyBuilder(messageCacheable.id);
+    ReplyBuilder(messageCacheable.id);
 
   @override
-  Map<String, dynamic> _build() => {"message_id": this.messageId.id};
+  Map<String, dynamic> _build() => {
+    "message_id": this.messageId.id
+  };
 }
