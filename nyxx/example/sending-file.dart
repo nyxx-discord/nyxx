@@ -19,7 +19,7 @@ void main() {
       // Files argument needs to be list of AttachmentBuilder object with
       // path to file that you want to send. You can also use other
       // AttachmentBuilder constructors to send File object or raw bytes
-      e.message.channel.getFromCache()?.sendMessage(MessageBuilder()..files = [AttachmentBuilder.path("kitten.jpeg")]);
+      e.message.channel.sendMessage(MessageBuilder()..files = [AttachmentBuilder.path("kitten.jpeg")]);
     }
 
     // Check if message content equals "!givemeembed"
@@ -34,7 +34,7 @@ void main() {
 
       // Send everything we created before to channel where message was received.
       // e.message.channel.getFromCache()?.sendMessage(files: [attachment], embed: embed, content: "HEJKA!");
-      e.message.channel.getFromCache()?.sendMessage(
+      e.message.channel.sendMessage(
           MessageBuilder.content("HEJKA!")
             ..embed = embed
             ..files = [attachment]

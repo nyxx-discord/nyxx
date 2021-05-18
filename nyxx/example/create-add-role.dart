@@ -28,7 +28,7 @@ void main() {
       await (e.message as GuildMessage).member.addRole(role);
 
       // Send message with confirmation of given action
-      await e.message.channel.getFromCache()?.sendMessage(MessageBuilder.content("Added [${role.name}] to user: [${e.message.author.tag}"));
+      await e.message.channel.sendMessage(MessageBuilder.content("Added [${role.name}] to user: [${e.message.author.tag}"));
     }
   });
 }

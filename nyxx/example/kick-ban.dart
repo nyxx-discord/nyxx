@@ -38,7 +38,7 @@ void main() {
       await (e.message as GuildMessage).guild.getFromCache()!.ban(userToBan);
 
       // Send feedback
-      await e.message.channel.getFromCache()?.sendMessage(MessageBuilder.content("👍"));
+      await e.message.channel.sendMessage(MessageBuilder.content("👍"));
     }
 
     // Check if message content equals "!embed"
@@ -55,7 +55,7 @@ void main() {
       await (e.message as GuildMessage).guild.getFromCache()!.kick(userToBan);
 
       // Send feedback
-      await e.message.channel.getFromCache()?.sendMessage(MessageBuilder.content("👍"));
+      await e.message.channel.sendMessage(MessageBuilder.content("👍"));
     }
   });
 }
