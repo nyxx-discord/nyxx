@@ -30,7 +30,7 @@ class CommandContext {
 
   CommandContext._new(this.channel, this.author, this.guild, this.message, this.commandMatcher);
 
-  static final _argumentsRegex = RegExp('([A-Z0-9a-z]+)|["\']([^"]*)["\']');
+  static final _argumentsRegex = RegExp('([^"\' ]+)|["\']([^"]*)["\']');
   static final _quotedTextRegex = RegExp('["\']([^"]*)["\']');
   static final _codeBlocksRegex = RegExp(r"```(\w+)?(\s)?(((.+)(\s)?)+)```");
 
@@ -157,7 +157,7 @@ class CommandContext {
   /// Text: `hi this is "example stuff" which 'can be parsed'` will return
   /// `List<String> [hi, this, is, example stuff, which, can be parsed]`
   Iterable<String> getArguments() sync* {
-    final matches = _argumentsRegex.allMatches(this.message.content.replaceFirst(commandMatcher, ""));
+    final matches = _argumentsRegex.allMatches(this.message.content.toLowerCase().replaceFirst(commandMatcher.toLowerCase(), ""));
 
     for(final match in matches) {
       final group1 = match.group(1);
