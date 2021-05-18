@@ -24,7 +24,7 @@ FutureOr<String?> prefixHandler(Message message) {
 
 void main() {
   // Start bot
-  final bot = Nyxx("MzYxOTQ5MDUwMDE2MjM1NTIw.WclRUg.RtxcvnSWi5nLhzYuMKGKOtJuXTM", GatewayIntents.allUnprivileged);
+  final bot = Nyxx("TOKEN", GatewayIntents.allUnprivileged);
 
   // Start commander with prefix `!`
   Commander(bot, prefixHandler: prefixHandler) // prefixHandler will handle deciding which guild can use which prefix
