@@ -174,6 +174,12 @@ abstract class Message extends SnowflakeEntity implements Disposable {
   Future<void> unpinMessage() =>
       client._httpEndpoints.unpinMessage(this.channel.id, this.id);
 
+  // TODO Return actual thread channel
+
+  /// Creates a thread based on this message
+  Future<void> createThread(ThreadBuilder builder) async =>
+      client._httpEndpoints.createThread(this.channel.id, this.id, builder);
+
   @override
   Future<void> dispose() => Future.value(null);
 

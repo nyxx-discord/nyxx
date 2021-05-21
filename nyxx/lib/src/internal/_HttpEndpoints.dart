@@ -186,6 +186,8 @@ abstract class IHttpEndpoints {
 
   Future<void> crossPostGuildMessage(Snowflake channelId, Snowflake messageId);
 
+  Future<void> createThread(Snowflake channelId, Snowflake messageId, ThreadBuilder builder);
+
   Future<Message> suppressMessageEmbeds(
       Snowflake channelId, Snowflake messageId);
 
@@ -1161,6 +1163,13 @@ class _HttpEndpoints implements IHttpEndpoints {
       _httpClient._execute(BasicRequest._new(
           "/channels/$channelId/messages/$messageId/crosspost",
           method: "POST"));
+
+  @override
+  Future<void> createThread(
+      Snowflake channelId, Snowflake messageId, ThreadBuilder builder) async =>
+      _httpClient._execute(BasicRequest._new(
+          "/channels/$channelId/messages/$messageId/threads",
+          method: "POST", body: builder._build()));
 
   // TODO: Manage message flags better
   @override
