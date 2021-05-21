@@ -33,7 +33,7 @@ void main() {
 
   bot.onMessageReceived.listen((event) {
     if (event.message.content == "!ping") {
-      event.message.channel.getFromCache()?.sendMessage(content: "Pong!");
+      event.message.channel.getFromCache()?.sendMessage(MessageBuilder()..content = "Pong!");
     }
   });
 }
@@ -42,13 +42,13 @@ void main() {
 Slash commands:
 ```dart
 void main() {
-  final bot = Nyxx("<%TOKEN%>", GatewayIntents.all);
+  final bot = Nyxx("TOKEN", GatewayIntents.all);
   final interactions = Interactions(bot);
 
   interactions
     ..registerHandler("test", "This is test comamnd", [], handler: (event) async {
       await event.acknowledge(showSource: true);
-      await event.reply(content: "This is example message result");
+      await event.reply(MessageBuilder()..content = "This is example message result");
     });
 }
 ```
