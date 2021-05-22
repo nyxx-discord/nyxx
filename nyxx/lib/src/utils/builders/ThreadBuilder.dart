@@ -23,10 +23,10 @@ class ThreadBuilder extends Builder {
   void setArchiveAfter(ThreadArchiveTime time) => this.archiveAfter = time;
 
   /// Make the thread private
-  void setPrivate(ThreadArchiveTime time) => this.private = true;
+  void setPrivate() => this.private = true;
 
   /// Make the thread public
-  void setPublic(ThreadArchiveTime time) => this.private = false;
+  void setPublic() => this.private = false;
 
   @override
   Map<String, dynamic> _build() => <String, dynamic>{
