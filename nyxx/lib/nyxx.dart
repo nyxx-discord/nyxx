@@ -50,6 +50,7 @@ part "src/core/guild/ClientUser.dart";
 part "src/core/guild/Guild.dart";
 part "src/core/guild/GuildFeature.dart";
 part "src/core/guild/GuildPreview.dart";
+part "src/core/guild/GuildNsfwLevel.dart";
 part "src/core/guild/PremiumTier.dart";
 part "src/core/guild/Role.dart";
 part "src/core/guild/Status.dart";
