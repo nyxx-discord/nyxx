@@ -28,7 +28,7 @@ void main() {
   });
 
   bot.onReady.listen((e) async {
-    final channel = await bot.fetchChannel<TextGuildChannel>(Snowflake(422285619952222208));
+    final channel = await bot.fetchChannel<TextGuildChannel>(Snowflake(846139169818017812));
     // test(channel != null, "Channel cannot be null");
     if (env["GITHUB_RUN_NUMBER"] != null) {
       await channel.sendMessage(
@@ -60,7 +60,7 @@ void main() {
   });
 
   bot.onMessageReceived.listen((e) async {
-    if (e.message.channel.id != Snowflake("422285619952222208") && e.message.author.id != bot.self.id) {
+    if (e.message.channel.id != Snowflake("846139169818017812") && e.message.author.id != bot.self.id) {
       return;
     }
 
