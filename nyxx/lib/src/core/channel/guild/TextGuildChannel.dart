@@ -53,6 +53,10 @@ class TextGuildChannel extends GuildChannel implements TextChannel {
   Future<TextGuildChannel> edit({String? name, String? topic, int? position, int? slowModeThreshold}) =>
       client._httpEndpoints.editTextChannel(this.id, name: name, topic: topic, position: position, slowModeThreshold: slowModeThreshold);
 
+  /// Creates a thread in a message
+  Future<ThreadPreviewChannel> createThread(ThreadBuilder builder) async =>
+      client._httpEndpoints.createThread(this.id, builder);
+
   @override
   Future<void> startTyping() async =>
       client._httpEndpoints.triggerTyping(this.id);

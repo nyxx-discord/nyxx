@@ -1,44 +1,16 @@
 part of nyxx;
 
 /// Represents channel within [Guild]. Shares logic for both [TextGuildChannel] and [VoiceGuildChannel].
-abstract class GuildChannel extends IChannel {
-  /// The channel"s name.
-  late final String name;
+abstract class GuildChannel extends MinimalGuildChannel {
 
   /// Relative position of channel in context of channel list
   late final int position;
 
-  /// Id of [Guild] that the channel is in.
-  late final Cacheable<Snowflake, Guild> guild;
-
-  /// Id of parent channel
-  late final Cacheable<Snowflake, GuildChannel>? parentChannel;
-
-  /// Indicates if channel is nsfw
-  late final bool isNsfw;
-
   /// Permission override for channel
   late final List<PermissionsOverrides> permissionOverrides;
 
-  GuildChannel._new(INyxx client, Map<String, dynamic> raw, [Snowflake? guildId]) : super._new(client, raw) {
-    this.name = raw["name"] as String;
+  GuildChannel._new(INyxx client, Map<String, dynamic> raw, [Snowflake? guildId]) : super._new(client, raw, guildId) {
     this.position = raw["position"] as int;
-
-    if (raw["guild_id"] != null) {
-      this.guild = _GuildCacheable(client, Snowflake(raw["guild_id"]));
-    } else if (guildId != null) {
-      this.guild = _GuildCacheable(client, guildId);
-    } else {
-      throw Exception("Cannot initialize instance of GuildChannelNex due missing `guild_id` in json payload and/or missing optional guildId parameter. Report this issue to developer");
-    }
-
-    if (raw["parent_id"] != null) {
-      this.parentChannel = _ChannelCacheable(client, Snowflake(raw["parent_id"]));
-    } else {
-      this.parentChannel = null;
-    }
-
-    this.isNsfw = raw["nsfw"] as bool? ?? false;
 
     this.permissionOverrides = [
       if (raw["permission_overwrites"] != null)
@@ -131,4 +103,38 @@ abstract class GuildChannel extends IChannel {
   /// ```
   Future<Invite> createInvite({int? maxAge, int? maxUses, bool? temporary, bool? unique, String? auditReason}) =>
       client._httpEndpoints.createInvite(this.id, maxAge: maxAge, maxUses: maxUses, temporary: temporary, unique: unique, auditReason: auditReason);
+}
+
+abstract class MinimalGuildChannel extends IChannel {
+  /// The channel"s name.
+  late final String name;
+
+  /// Id of [Guild] that the channel is in.
+  late final Cacheable<Snowflake, Guild> guild;
+
+  /// Id of parent channel
+  late final Cacheable<Snowflake, GuildChannel>? parentChannel;
+
+  /// Indicates if channel is nsfw
+  late final bool isNsfw;
+
+  MinimalGuildChannel._new(INyxx client, Map<String, dynamic> raw, [Snowflake? guildId]) : super._new(client, raw) {
+    this.name = raw["name"] as String;
+
+    if (raw["guild_id"] != null) {
+      this.guild = _GuildCacheable(client, Snowflake(raw["guild_id"]));
+    } else if (guildId != null) {
+      this.guild = _GuildCacheable(client, guildId);
+    } else {
+      throw Exception("Cannot initialize instance of GuildChannelNex due missing `guild_id` in json payload and/or missing optional guildId parameter. Report this issue to developer");
+    }
+
+    if (raw["parent_id"] != null) {
+      this.parentChannel = _ChannelCacheable(client, Snowflake(raw["parent_id"]));
+    } else {
+      this.parentChannel = null;
+    }
+
+    this.isNsfw = raw["nsfw"] as bool? ?? false;
+  }
 }

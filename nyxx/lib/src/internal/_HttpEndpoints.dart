@@ -186,7 +186,9 @@ abstract class IHttpEndpoints {
 
   Future<void> crossPostGuildMessage(Snowflake channelId, Snowflake messageId);
 
-  Future<void> createThread(Snowflake channelId, Snowflake messageId, ThreadBuilder builder);
+  Future<void> createThreadWithMessage(Snowflake channelId, Snowflake messageId, ThreadBuilder builder);
+
+  Future<void> createThread(Snowflake channelId, ThreadBuilder builder);
 
   Future<Message> suppressMessageEmbeds(
       Snowflake channelId, Snowflake messageId);
@@ -1165,11 +1167,33 @@ class _HttpEndpoints implements IHttpEndpoints {
           method: "POST"));
 
   @override
-  Future<void> createThread(
-      Snowflake channelId, Snowflake messageId, ThreadBuilder builder) async =>
-      _httpClient._execute(BasicRequest._new(
-          "/channels/$channelId/messages/$messageId/threads",
-          method: "POST", body: builder._build()));
+  Future<ThreadPreviewChannel> createThreadWithMessage(
+      Snowflake channelId, Snowflake messageId, ThreadBuilder builder) async {
+    final response = await _httpClient._execute(BasicRequest._new(
+        "/channels/$channelId/messages/$messageId/threads",
+        method: "POST", body: builder._build(),),);
+
+    if (response is HttpResponseSuccess) {
+      return ThreadPreviewChannel._new(_client, response.jsonBody as Map<String, dynamic>);
+    }
+
+    return Future.error(response);
+  }
+
+
+  @override
+  Future<ThreadPreviewChannel> createThread(
+      Snowflake channelId, ThreadBuilder builder) async {
+    final response = await _httpClient._execute(BasicRequest._new(
+      "/channels/$channelId/threads",
+      method: "POST", body: builder._build(),),);
+
+    if (response is HttpResponseSuccess) {
+      return ThreadPreviewChannel._new(_client, response.jsonBody as Map<String, dynamic>);
+    }
+
+    return Future.error(response);
+  }
 
   // TODO: Manage message flags better
   @override
