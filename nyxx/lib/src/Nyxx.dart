@@ -301,6 +301,15 @@ class Nyxx extends NyxxRest {
   /// Emitted when a bot removes all instances of a given emoji from the reactions of a message
   late Stream<MessageReactionRemoveEmojiEvent> onMessageReactionRemoveEmoji;
 
+  /// Emitted when stage channel instance is created
+  late Stream<StageInstanceEvent>  onStageInstanceCreate;
+
+  /// Emitted when stage channel instance is updated
+  late Stream<StageInstanceEvent>  onStageInstanceUpdate;
+
+  /// Emitted when stage channel instance is deleted
+  late Stream<StageInstanceEvent>  onStageInstanceDelete;
+
   /// Creates and logs in a new client. If [ignoreExceptions] is true (by default is)
   /// isolate will ignore all exceptions and continue to work.
   Nyxx(String token, int intents,

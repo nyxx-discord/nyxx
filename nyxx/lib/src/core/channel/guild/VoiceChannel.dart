@@ -59,12 +59,12 @@ class StageVoiceGuildChannel extends VoiceGuildChannel {
       this.client.httpEndpoints.deleteStageChannelInstance(this.id);
 
   /// Creates a new Stage instance associated to a Stage channel.
-  Future<StageChannelInstance> createStageChannelInstance(String topic) =>
-      this.client.httpEndpoints.createStageChannelInstance(this.id, topic);
+  Future<StageChannelInstance> createStageChannelInstance(String topic, {StageChannelInstancePrivacyLevel? privacyLevel}) =>
+      this.client.httpEndpoints.createStageChannelInstance(this.id, topic, privacyLevel: privacyLevel);
 
   /// Updates fields of an existing Stage instance.
-  Future<StageChannelInstance> updateStageChannelInstance(String topic) =>
-      this.client.httpEndpoints.updateStageChannelInstance(this.id, topic);
+  Future<StageChannelInstance> updateStageChannelInstance(String topic, {StageChannelInstancePrivacyLevel? privacyLevel}) =>
+      this.client.httpEndpoints.updateStageChannelInstance(this.id, topic, privacyLevel: privacyLevel);
 }
 
 /// A [StageChannelInstance] holds information about a live stage.
@@ -78,9 +78,30 @@ class StageChannelInstance extends SnowflakeEntity {
   /// The topic of the Stage instance
   late final String topic;
 
+  /// The privacy level of the Stage instance
+  late final StageChannelInstancePrivacyLevel privacyLevel;
+
+  /// Whether or not Stage discovery is disabled
+  late final bool disoverableDisabled;
+
   StageChannelInstance._new(INyxx client, Map<String, dynamic> raw): super(Snowflake(raw["id"])) {
     this.guild = _GuildCacheable(client, Snowflake(raw["guild_id"]));
     this.channel = _ChannelCacheable(client, Snowflake(raw["channel_id"]));
     this.topic = raw["topic"] as String;
+    this.privacyLevel = StageChannelInstancePrivacyLevel.from(raw["privacy_level"] as int);
+    this.disoverableDisabled = raw["discoverable_disabled"] as bool;
   }
+}
+
+/// The privacy level of the Stage instance
+class StageChannelInstancePrivacyLevel extends IEnum {
+  /// The Stage instance is visible publicly, such as on Stage discovery.
+  static const StageChannelInstancePrivacyLevel public = const StageChannelInstancePrivacyLevel._create(1);
+
+  /// The Stage instance is visible to only guild members.
+  static const StageChannelInstancePrivacyLevel guildOnly = const StageChannelInstancePrivacyLevel._create(2);
+
+  const StageChannelInstancePrivacyLevel._create(value) : super(value);
+  /// Create [StageChannelInstancePrivacyLevel] from [value]
+  StageChannelInstancePrivacyLevel.from(value) : super(value);
 }

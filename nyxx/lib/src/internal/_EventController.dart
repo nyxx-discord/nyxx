@@ -101,6 +101,15 @@ class _EventController implements Disposable {
   /// Emitted when a bot removes all instances of a given emoji from the reactions of a message
   late final StreamController<MessageReactionRemoveEmojiEvent> onMessageReactionRemoveEmoji;
 
+  /// Emitted when stage channel instance is created
+  late final StreamController<StageInstanceEvent> onStageInstanceCreate;
+
+  /// Emitted when stage channel instance is updated
+  late final StreamController<StageInstanceEvent> onStageInstanceUpdate;
+
+  /// Emitted when stage channel instance is deleted
+  late final StreamController<StageInstanceEvent> onStageInstanceDelete;
+
   /// Makes a new `EventController`.
   _EventController(Nyxx _client) {
     this.onDisconnect = StreamController.broadcast();
@@ -201,6 +210,15 @@ class _EventController implements Disposable {
 
     this.onMessageReactionRemoveEmoji = StreamController.broadcast();
     _client.onMessageReactionRemoveEmoji = this.onMessageReactionRemoveEmoji.stream;
+
+    this.onStageInstanceCreate = StreamController.broadcast();
+    _client.onStageInstanceCreate = this.onStageInstanceCreate.stream;
+
+    this.onStageInstanceUpdate = StreamController.broadcast();
+    _client.onStageInstanceUpdate = this.onStageInstanceUpdate.stream;
+
+    this.onStageInstanceDelete = StreamController.broadcast();
+    _client.onStageInstanceDelete = this.onStageInstanceDelete.stream;
   }
 
   @override

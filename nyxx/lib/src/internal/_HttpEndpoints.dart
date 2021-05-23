@@ -268,10 +268,10 @@ abstract class IHttpEndpoints {
   Future<void> deleteStageChannelInstance(Snowflake channelId);
 
   /// Creates a new Stage instance associated to a Stage channel.
-  Future<StageChannelInstance> createStageChannelInstance(Snowflake channelId, String topic);
+  Future<StageChannelInstance> createStageChannelInstance(Snowflake channelId, String topic, {StageChannelInstancePrivacyLevel? privacyLevel});
 
   /// Updates fields of an existing Stage instance.
-  Future<StageChannelInstance> updateStageChannelInstance(Snowflake channelId, String topic);
+  Future<StageChannelInstance> updateStageChannelInstance(Snowflake channelId, String topic, {StageChannelInstancePrivacyLevel? privacyLevel});
 }
 
 class _HttpEndpoints implements IHttpEndpoints {
@@ -1451,10 +1451,11 @@ class _HttpEndpoints implements IHttpEndpoints {
   }
 
   @override
-  Future<StageChannelInstance> createStageChannelInstance(Snowflake channelId, String topic) async {
+  Future<StageChannelInstance> createStageChannelInstance(Snowflake channelId, String topic, {StageChannelInstancePrivacyLevel? privacyLevel}) async {
     final body = {
       "topic": topic,
-      "channel_id": channelId.toString()
+      "channel_id": channelId.toString(),
+      if (privacyLevel != null) "privacy_level": privacyLevel.value
     };
 
     final response = await _httpClient._execute(BasicRequest._new(
@@ -1491,9 +1492,10 @@ class _HttpEndpoints implements IHttpEndpoints {
   }
 
   @override
-  Future<StageChannelInstance> updateStageChannelInstance(Snowflake channelId, String topic) async {
+  Future<StageChannelInstance> updateStageChannelInstance(Snowflake channelId, String topic, {StageChannelInstancePrivacyLevel? privacyLevel}) async {
     final body = {
       "topic": topic,
+      if (privacyLevel != null) "privacy_level": privacyLevel.value
     };
 
     final response = await _httpClient._execute(BasicRequest._new(
