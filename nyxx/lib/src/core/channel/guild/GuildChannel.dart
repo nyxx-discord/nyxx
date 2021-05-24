@@ -106,7 +106,7 @@ abstract class GuildChannel extends MinimalGuildChannel {
 }
 
 abstract class MinimalGuildChannel extends IChannel {
-  /// The channel"s name.
+  /// The channel's name.
   late final String name;
 
   /// Id of [Guild] that the channel is in.
