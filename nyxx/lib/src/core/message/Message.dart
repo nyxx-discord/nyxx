@@ -59,6 +59,9 @@ abstract class Message extends SnowflakeEntity implements Disposable {
   /// You will be able to identify that message when receiving it through gateway
   late final String? nonce;
 
+  /// If the message is a response to an Interaction, this is the id of the interaction's application
+  late final Snowflake? applicationId;
+
   factory Message._deserialize(INyxx client, Map<String, dynamic> raw) {
     if (raw["member"] != null) {
       return GuildMessage._new(client, raw);
@@ -125,6 +128,10 @@ abstract class Message extends SnowflakeEntity implements Disposable {
     } else {
       this.nonce = null;
     }
+
+    this.applicationId = raw["application_id"] != null
+        ? Snowflake(raw["application_id"])
+        : null;
 
     if (raw["components"] != null) {
       this.components = [
