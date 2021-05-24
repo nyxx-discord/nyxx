@@ -3,7 +3,7 @@ part of nyxx;
 /// Fired when a thread has a member added/removed
 class ThreadMembersUpdateEvent {
   /// The thread that was updated
-  late final _ChannelCacheable<ThreadChannel> thread;
+  late final CacheableTextChannel<ThreadChannel> thread;
 
   /// The guild it was updated in
   late final _GuildCacheable guild;
@@ -13,7 +13,7 @@ class ThreadMembersUpdateEvent {
 
   ThreadMembersUpdateEvent._new(Map<String, dynamic> raw, Nyxx client) {
     final data = raw["d"] as Map<String, dynamic>;
-    this.thread = new _ChannelCacheable(client, Snowflake(data["id"]));
+    this.thread = new CacheableTextChannel._new(client, Snowflake(data["id"]));
     this.guild = new _GuildCacheable(client, Snowflake(data["guild_id"]));
     addedMembers = [];
     if(data["added_members"] != null) {
