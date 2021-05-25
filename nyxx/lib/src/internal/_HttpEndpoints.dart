@@ -186,6 +186,12 @@ abstract class IHttpEndpoints {
 
   Future<void> crossPostGuildMessage(Snowflake channelId, Snowflake messageId);
 
+  Future<void> createThreadWithMessage(Snowflake channelId, Snowflake messageId, ThreadBuilder builder);
+
+  Future<void> createThread(Snowflake channelId, ThreadBuilder builder);
+
+  Future<List<_MemberCacheable>> getThreadMembers(Snowflake channelId, Snowflake guildId);
+
   Future<Message> suppressMessageEmbeds(
       Snowflake channelId, Snowflake messageId);
 
@@ -1161,6 +1167,52 @@ class _HttpEndpoints implements IHttpEndpoints {
       _httpClient._execute(BasicRequest._new(
           "/channels/$channelId/messages/$messageId/crosspost",
           method: "POST"));
+
+  @override
+  Future<ThreadPreviewChannel> createThreadWithMessage(
+      Snowflake channelId, Snowflake messageId, ThreadBuilder builder) async {
+    final response = await _httpClient._execute(BasicRequest._new(
+        "/channels/$channelId/messages/$messageId/threads",
+        method: "POST", body: builder._build(),),);
+
+    if (response is HttpResponseSuccess) {
+      return ThreadPreviewChannel._new(_client, response.jsonBody as Map<String, dynamic>);
+    }
+
+    return Future.error(response);
+  }
+
+
+  @override
+  Future<ThreadPreviewChannel> createThread(
+      Snowflake channelId, ThreadBuilder builder) async {
+    final response = await _httpClient._execute(BasicRequest._new(
+      "/channels/$channelId/threads",
+      method: "POST", body: builder._build(),),);
+
+    if (response is HttpResponseSuccess) {
+      return ThreadPreviewChannel._new(_client, response.jsonBody as Map<String, dynamic>);
+    }
+
+    return Future.error(response);
+  }
+
+  @override
+  Future<List<_MemberCacheable>> getThreadMembers(Snowflake channelId, Snowflake guildId) async {
+    final response = await _httpClient._execute(BasicRequest._new("/channels/$channelId/thread-members"));
+
+    if (response is HttpResponseSuccess) {
+      final body = response.jsonBody as List<dynamic>;
+      final guild = new _GuildCacheable(_client, guildId);
+
+      return [
+        for(final id in body)
+          _MemberCacheable(_client, Snowflake(id), guild)
+      ];
+    }
+
+    return Future.error(response);
+  }
 
   // TODO: Manage message flags better
   @override

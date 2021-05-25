@@ -301,6 +301,14 @@ class Nyxx extends NyxxRest {
   /// Emitted when a bot removes all instances of a given emoji from the reactions of a message
   late Stream<MessageReactionRemoveEmojiEvent> onMessageReactionRemoveEmoji;
 
+  /// Emitted when a thread is created
+  late Stream<ThreadCreateEvent> onThreadCreated;
+
+  /// Fired when a thread has a member added/removed
+  late Stream<ThreadMembersUpdateEvent> onThreadMembersUpdate;
+
+  /// Fired when a thread gets deleted
+  late Stream<ThreadDeletedEvent> onThreadDelete;
   /// Emitted when stage channel instance is created
   late Stream<StageInstanceEvent>  onStageInstanceCreate;
 

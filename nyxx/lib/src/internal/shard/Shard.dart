@@ -398,6 +398,22 @@ class Shard implements Disposable {
                 .add(MessageReactionRemoveEmojiEvent._new(rawPayload, manager._ws._client));
             break;
 
+          case "THREAD_CREATE":
+            manager._ws._client._events.onThreadCreated.add(ThreadCreateEvent._new(rawPayload, manager._ws._client));
+            break;
+
+          case "THREAD_MEMBERS_UPDATE":
+            manager._ws._client._events.onThreadMembersUpdate.add(ThreadMembersUpdateEvent._new(rawPayload, manager._ws._client));
+            break;
+
+          case "THREAD_DELETE":
+            manager._ws._client._events.onThreadDelete.add(ThreadDeletedEvent._new(rawPayload, manager._ws._client));
+            break;
+
+          case "THREAD_MEMBER_UPDATE":
+            // Catch unnecessary OP, could be needed in future but unsure.
+            break;
+
           default:
             if (this.manager._ws._client._options.dispatchRawShardEvent) {
               this.manager._onRawEvent.add(RawEvent._new(this, rawPayload));

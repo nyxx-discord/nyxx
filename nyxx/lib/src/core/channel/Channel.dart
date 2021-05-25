@@ -32,6 +32,10 @@ abstract class IChannel extends SnowflakeEntity implements Disposable {
         return StageVoiceGuildChannel._new(client, raw, guildId);
       case 4:
         return CategoryGuildChannel._new(client, raw, guildId);
+      case 10:
+      case 11:
+      case 12:
+        return ThreadChannel._new(client, raw, guildId);
       default:
         return _InternalChannel._new(client, raw, guildId);
     }
@@ -61,6 +65,11 @@ class ChannelType extends IEnum<int> {
 
   static const ChannelType guildNews = ChannelType._create(5);
   static const ChannelType guildStore = ChannelType._create(6);
+  static const ChannelType guildStage = ChannelType._create(13);
+
+  static const ChannelType guildNewsThread = ChannelType._create(10);
+  static const ChannelType guildPublicThread = ChannelType._create(11);
+  static const ChannelType guildPrivateThread = ChannelType._create(12);
 
   /// Type of channel is unknown
   static const ChannelType unknown = ChannelType._create(1337);
