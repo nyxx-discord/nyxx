@@ -18,7 +18,11 @@ class SlashCommandBuilder extends Builder {
   SlashCommandHandler? _handler;
 
   /// A slash command, can only be instantiated through a method on [Interactions]
-  SlashCommandBuilder(this.name, this.description, this.options, {this.guild});
+  SlashCommandBuilder(this.name, this.description, this.options, {this.guild}) {
+    if (!slashCommandNameRegex.hasMatch(this.name)) {
+      throw ArgumentError("Command name has to match regex: ${slashCommandNameRegex.pattern}");
+    }
+  }
 
   Map<String, dynamic> _build() => {
     "name": this.name,

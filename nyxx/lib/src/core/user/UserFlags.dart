@@ -37,10 +37,13 @@ class UserFlags {
   late final bool bugHunterLevel2;
 
   /// True if user is verified bot
-  late final bool verfiedBot;
+  late final bool verifiedBot;
 
-  /// True if use is verified bot developer/
-  late final bool verifiedBotDeveloper;
+  /// True if user is Early Verified Bot Developer
+  late final bool earlyVerifiedBotDeveloper;
+
+  /// rue if user is Discord Certified Moderator
+  late final bool certifiedModerator;
 
   UserFlags._new(int raw) {
     this.discordEmployee = PermissionsUtils.isApplied(raw, 1 << 0);
@@ -54,7 +57,8 @@ class UserFlags {
     this.teamUser = PermissionsUtils.isApplied(raw, 1 << 10);
     this.system = PermissionsUtils.isApplied(raw, 1 << 12);
     this.bugHunterLevel2 = PermissionsUtils.isApplied(raw, 1 << 14);
-    this.verfiedBot = PermissionsUtils.isApplied(raw, 1 << 16);
-    this.verifiedBotDeveloper = PermissionsUtils.isApplied(raw, 1 << 17);
+    this.verifiedBot = PermissionsUtils.isApplied(raw, 1 << 16);
+    this.earlyVerifiedBotDeveloper = PermissionsUtils.isApplied(raw, 1 << 17);
+    this.certifiedModerator = PermissionsUtils.isApplied(raw, 1 << 18);
   }
 }

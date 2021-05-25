@@ -109,6 +109,14 @@ class _EventController implements Disposable {
 
   /// Fired when a thread gets deleted
   late final StreamController<ThreadDeletedEvent> onThreadDelete;
+  /// Emitted when stage channel instance is created
+  late final StreamController<StageInstanceEvent> onStageInstanceCreate;
+
+  /// Emitted when stage channel instance is updated
+  late final StreamController<StageInstanceEvent> onStageInstanceUpdate;
+
+  /// Emitted when stage channel instance is deleted
+  late final StreamController<StageInstanceEvent> onStageInstanceDelete;
 
   /// Makes a new `EventController`.
   _EventController(Nyxx _client) {
@@ -219,6 +227,14 @@ class _EventController implements Disposable {
 
     this.onThreadDelete = StreamController.broadcast();
     _client.onThreadDelete = this.onThreadDelete.stream;
+    this.onStageInstanceCreate = StreamController.broadcast();
+    _client.onStageInstanceCreate = this.onStageInstanceCreate.stream;
+
+    this.onStageInstanceUpdate = StreamController.broadcast();
+    _client.onStageInstanceUpdate = this.onStageInstanceUpdate.stream;
+
+    this.onStageInstanceDelete = StreamController.broadcast();
+    _client.onStageInstanceDelete = this.onStageInstanceDelete.stream;
   }
 
   @override

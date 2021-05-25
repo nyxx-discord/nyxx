@@ -101,7 +101,8 @@ final sampleGuildData = {
     sampleTextChannel,
     sampleVoiceChannel
   ],
-  "features": [ "FEATURE" ]
+  "features": [ "FEATURE" ],
+  "nsfw_level": 0
 };
 
 final client = NyxxRest("dum", 0);

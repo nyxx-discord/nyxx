@@ -85,10 +85,16 @@ class Guild extends SnowflakeEntity {
   late final CacheableTextChannel<TextChannel>? publicUpdatesChannel;
 
   /// Permission of current(bot) user in this guild
-  Permissions? currentUserPermissions;
+  late final Permissions? currentUserPermissions;
 
   /// Users state cache
   late final Cache<Snowflake, VoiceState> voiceStates;
+
+  /// Stage instances in the guild
+  late final Iterable<StageChannelInstance> stageInstances;
+
+  /// Nsfw level of guild
+  late final GuildNsfwLevel guildNsfwLevel;
 
   /// Returns url to this guild.
   String get url => "https://discordapp.com/channels/${this.id.toString()}";
@@ -177,6 +183,8 @@ class Guild extends SnowflakeEntity {
 
     if (raw["permissions"] != null) {
       this.currentUserPermissions = Permissions.fromInt(raw["permissions"] as int);
+    } else {
+      this.currentUserPermissions = null;
     }
 
     if (raw["afk_channel_id"] != null) {
@@ -185,6 +193,8 @@ class Guild extends SnowflakeEntity {
 
     this.members = _SnowflakeCache();
     this.voiceStates = _SnowflakeCache();
+
+    this.guildNsfwLevel = GuildNsfwLevel.from(raw["nsfw_level"] as int);
 
     if (!guildCreate) return;
 
@@ -202,6 +212,7 @@ class Guild extends SnowflakeEntity {
       });
     }
 
+    // TODO: do we need that?
     // raw["presences"].forEach((o) {
     //   final member = this.members[Snowflake(o["user"]["id"] as String)];
     //   if (member != null) {
@@ -227,6 +238,12 @@ class Guild extends SnowflakeEntity {
     if (raw["public_updates_channel_id"] != null) {
       this.publicUpdatesChannel = CacheableTextChannel<TextChannel>._new(client, Snowflake(raw["public_updates_channel_id"]));
     }
+
+    this.stageInstances = [
+      if (raw["stage_instances"] != null)
+        for (final rawInstance in raw["stage_instances"])
+          StageChannelInstance._new(this.client, rawInstance as Map<String, dynamic>)
+    ];
   }
 
   /// The guild's icon, represented as URL.

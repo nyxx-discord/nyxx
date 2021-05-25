@@ -27,7 +27,7 @@ void main() {
       // Files can be used within embeds as custom images
       final attachment = AttachmentBuilder.file(File("kitten.jpeg"));
 
-      // use attachUrl getter from AttachmentBuildrer class to get reference to uploaded file
+      // use attachUrl getter from AttachmentBuilder class to get reference to uploaded file
       final embed = EmbedBuilder()
         ..title = "Example Title"
         ..thumbnailUrl = attachment.attachUrl;

@@ -69,3 +69,13 @@ class ChannelUpdateEvent {
     client.channels[this.updatedChannel.id] = updatedChannel;
   }
 }
+
+/// Event for actions related to stage channels
+class StageInstanceEvent {
+  /// [StageChannelInstance] related to event
+  late final StageChannelInstance stageChannelInstance;
+
+  StageInstanceEvent._new(INyxx client, Map<String, dynamic> raw) {
+    this.stageChannelInstance = StageChannelInstance._new(client, raw);
+  }
+}

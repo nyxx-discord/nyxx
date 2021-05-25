@@ -33,7 +33,7 @@ void main() {
   });
 
   bot.onReady.listen((e) async {
-    final channel = await bot.fetchChannel<TextChannel>(Snowflake("422285619952222208"));
+    final channel = await bot.fetchChannel<TextChannel>(Snowflake("846139169818017812"));
 
     await channel.sendMessage(MessageBuilder.content("Testing Commander"));
 
