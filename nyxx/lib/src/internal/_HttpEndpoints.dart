@@ -1199,16 +1199,16 @@ class _HttpEndpoints implements IHttpEndpoints {
 
   @override
   Future<List<_MemberCacheable>> getThreadMembers(Snowflake channelId, Snowflake guildId) async {
-    final response = await _httpClient._execute(BasicRequest._new("/channels/$channelId/thread-members", method: "GET",),);
+    final response = await _httpClient._execute(BasicRequest._new("/channels/$channelId/thread-members"));
 
     if (response is HttpResponseSuccess) {
       final body = response.jsonBody as List<dynamic>;
       final guild = new _GuildCacheable(_client, guildId);
-      List<_MemberCacheable> members = [];
-      for(final id in body) {
-        members.add(new _MemberCacheable(_client, Snowflake(id), guild));
-      }
-      return members;
+
+      return [
+        for(final id in body)
+          _MemberCacheable(_client, Snowflake(id), guild)
+      ];
     }
 
     return Future.error(response);

@@ -1,8 +1,10 @@
 part of nyxx;
 
 /// Given when a thread is created as only partial information is available. If you want the final channel use [getThreadChannel]
-class ThreadPreviewChannel extends IChannel {
+class ThreadPreviewChannel extends IChannel implements TextChannel {
+  Timer? _typing;
   late final INyxx _client;
+
   /// Name of the channel
   late final String name;
 
@@ -16,7 +18,7 @@ class ThreadPreviewChannel extends IChannel {
   late final Cacheable<Snowflake, Guild> guild;
 
   /// The text channel where the thread was made
-  late final Cacheable<Snowflake, TextChannel> parentChannel;
+  late final CacheableTextChannel parentChannel;
 
   /// Initial author of the thread
   late final Cacheable<Snowflake, Member> owner;
@@ -37,7 +39,7 @@ class ThreadPreviewChannel extends IChannel {
     this.name = raw["name"] as String;
     this.messageCount = raw["message_count"] as int;
     this.memberCount = raw["member_count"] as int;
-    this.parentChannel = CacheUtility.createCacheableTextChannel(client, Snowflake(raw["parent_id"]));
+    this.parentChannel = CacheableTextChannel._new(client, Snowflake(raw["parent_id"]));
     this.guild = CacheUtility.createCacheableGuild(client, Snowflake(raw["guild_id"]));
     this.owner = CacheUtility.createCacheableMember(client, Snowflake(raw["owner_id"]), this.guild);
     this.memberPreview = [];
@@ -55,4 +57,46 @@ class ThreadPreviewChannel extends IChannel {
 
   /// Get the actual thread channel from the preview
   _ChannelCacheable<ThreadChannel> getThreadChannel() => new _ChannelCacheable(_client, this.id);
+
+  @override
+  Future<void> bulkRemoveMessages(Iterable<SnowflakeEntity> messages) =>
+      client._httpEndpoints.bulkRemoveMessages(this.id, messages);
+
+  @override
+  Stream<Message> downloadMessages({int limit = 50, Snowflake? after, Snowflake? around, Snowflake? before}) =>
+      client._httpEndpoints.downloadMessages(this.id, limit: limit, after: after, around: around, before: before);
+
+  @override
+  Future<Message> fetchMessage(Snowflake messageId) =>
+      client._httpEndpoints.fetchMessage(this.id, messageId);
+
+  @override
+  Message? getMessage(Snowflake id) => this.messageCache[id];
+
+  @override
+  Future<Message> sendMessage(MessageBuilder builder) =>
+      client._httpEndpoints.sendMessage(this.id, builder);
+
+  @override
+  Future<int> get fileUploadLimit async {
+    final guildInstance = await this.guild.getOrDownload();
+
+    return guildInstance.fileUploadLimit;
+  }
+
+  @override
+  late final MessageCache messageCache = MessageCache._new(client._options.messageCacheSize);
+
+  @override
+  Future<void> startTyping() async =>
+      client._httpEndpoints.triggerTyping(this.id);
+
+  @override
+  void startTypingLoop() {
+    startTyping();
+    this._typing = Timer.periodic(const Duration(seconds: 7), (Timer t) => startTyping());
+  }
+
+  @override
+  void stopTypingLoop() => this._typing?.cancel();
 }
