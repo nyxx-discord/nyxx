@@ -978,11 +978,11 @@ class _HttpEndpoints implements IHttpEndpoints {
     if (builder._hasFiles()) {
       response = await _httpClient._execute(MultipartRequest._new(
           "/channels/$channelId/messages", builder.files!,
-          method: "POST", fields: builder._build(_client)));
+          method: "POST", fields: builder.build(_client)));
     } else {
       response = await _httpClient._execute(BasicRequest._new(
           "/channels/$channelId/messages",
-          body: builder._build(_client),
+          body: builder.build(_client),
           method: "POST"));
     }
 
