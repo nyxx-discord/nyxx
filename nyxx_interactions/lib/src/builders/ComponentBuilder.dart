@@ -190,26 +190,34 @@ class ButtonBuilder extends IButtonBuilder {
   };
 }
 
+/// Helper builder to provide fluid api for building component rows
+class ComponentRowBuilder {
+  final List<IComponentBuilder> _components = [];
+
+  /// Adds component to row
+  void addComponent(IComponentBuilder componentBuilder) => this._components.add(componentBuilder);
+}
+
 /// Extended [MessageBuilder] with support for buttons
 class ComponentMessageBuilder extends MessageBuilder {
   /// Set of buttons to attach to message. Message can only have 5 rows with 5 buttons each.
   List<List<IComponentBuilder>>? components;
 
   /// Allows to add
-  void addButtonRow(List<IComponentBuilder> buttons) {
+  void addComponentRow(ComponentRowBuilder componentRowBuilder) {
     if (this.components == null) {
       this.components = [];
     }
 
-    if (buttons.length > 5 || buttons.isEmpty) {
-      throw ArgumentError("Button row cannot be empty or have more than 5 buttons");
+    if (componentRowBuilder._components.length > 5 || componentRowBuilder._components.isEmpty) {
+      throw ArgumentError("Component row cannot be empty or have more than 5 components");
     }
 
     if (this.components!.length == 5) {
-      throw ArgumentError("Buttons cannot have more than 5 rows of buttons");
+      throw ArgumentError("There cannot be more that 5 rows of components");
     }
 
-    this.components!.add(buttons);
+    this.components!.add(componentRowBuilder._components);
   }
 
   @override
