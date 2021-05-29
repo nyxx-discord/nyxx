@@ -23,7 +23,7 @@ abstract class InteractionEvent<T extends Interaction> {
     if(!hasResponded) {
       return Future.error(ResponseRequiredError());
     }
-    
+
     final url = "/webhooks/${this._client.app.id.toString()}/${this.interaction.token}";
     final body = BuilderUtility.buildWithClient(builder, _client);
 
@@ -101,6 +101,7 @@ abstract class InteractionEvent<T extends Interaction> {
 
   /// Should be sent when you receive a ping from interactions.
   /// Used to acknowledge a ping. Internal to the InteractionEvent.
+  @Deprecated("Unused. Probably not needed anymore")
   Future<void> _pong() async {
     if (DateTime.now().isAfter(this.receivedAt.add(const Duration(minutes: 15)))) {
       return Future.error(InteractionExpiredError());
@@ -126,6 +127,7 @@ abstract class InteractionEvent<T extends Interaction> {
   }
 }
 
+/// Event for slash commands
 class SlashCommandInteractionEvent extends InteractionEvent<SlashCommandInteraction> {
   /// Interaction data for slash command
   @override
@@ -142,10 +144,11 @@ class SlashCommandInteractionEvent extends InteractionEvent<SlashCommandInteract
   }
 }
 
-class ComponentInteractionEvent extends InteractionEvent<ComponentInteraction> {
+/// Generic event for component interactions
+abstract class ComponentInteractionEvent<T extends ComponentInteraction> extends InteractionEvent<T> {
   /// Interaction data for slash command
   @override
-  late final ComponentInteraction interaction;
+  late final T interaction;
 
   @override
   int get _acknowledgeOpCode => 6;
@@ -153,7 +156,25 @@ class ComponentInteractionEvent extends InteractionEvent<ComponentInteraction> {
   @override
   int get _respondOpcode => 7;
 
-  ComponentInteractionEvent._new(Nyxx client, Map<String, dynamic> raw): super._new(client) {
-    this.interaction = ComponentInteraction._new(client, raw);
+  ComponentInteractionEvent._new(Nyxx client, Map<String, dynamic> raw): super._new(client);
+}
+
+/// Interaction event for button events
+class ButtonInteractionEvent extends ComponentInteractionEvent<ButtonInteraction> {
+  @override
+  late final ButtonInteraction interaction;
+
+  ButtonInteractionEvent._new(Nyxx client, Map<String, dynamic> raw): super._new(client, raw) {
+    this.interaction = ButtonInteraction._new(client, raw);
+  }
+}
+
+/// Interaction event for dropdown events
+class DropdownInteractionEvent extends ComponentInteractionEvent<DropdownInteraction> {
+  @override
+  late final DropdownInteraction interaction;
+
+  DropdownInteractionEvent._new(Nyxx client, Map<String, dynamic> raw): super._new(client, raw) {
+    this.interaction = DropdownInteraction._new(client, raw);
   }
 }

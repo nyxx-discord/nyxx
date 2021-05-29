@@ -86,17 +86,28 @@ class SlashCommandInteraction extends Interaction {
   }
 }
 
-class ComponentInteraction extends Interaction {
+abstract class ComponentInteraction implements Interaction {
+  String get customId;
+}
+
+class ButtonInteraction extends Interaction implements ComponentInteraction {
   /// Id with additional custom metadata
-  late final String idMetadata;
+  late final String customId;
 
-  /// Id of the button is the string before `;`
-  String get buttonId => idMetadata.split(";").first;
+  ButtonInteraction._new(Nyxx client, Map<String, dynamic> raw): super._new(client, raw) {
+    this.customId = raw["data"]["custom_id"] as String;
+  }
+}
 
-  /// Additional data string after ';'
-  String get metadata => idMetadata.split(";").last;
+class DropdownInteraction extends Interaction implements ComponentInteraction {
+  /// Id with additional custom metadata
+  late final String customId;
 
-  ComponentInteraction._new(Nyxx client, Map<String, dynamic> raw): super._new(client, raw) {
-    this.idMetadata = raw["data"]["custom_id"] as String;
+  /// Values selected by the user
+  late final List<String> values;
+
+  DropdownInteraction._new(Nyxx client, Map<String, dynamic> raw): super._new(client, raw) {
+    this.customId = raw["data"]["custom_id"] as String;
+    this.values = (raw["data"]["values"] as List<dynamic>).cast<String>();
   }
 }

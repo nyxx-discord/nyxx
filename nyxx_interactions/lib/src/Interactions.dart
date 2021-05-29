@@ -25,7 +25,10 @@ class Interactions {
   late final Stream<SlashCommandInteractionEvent> onSlashCommand;
 
   /// Emitted when a button interaction is received.
-  late final Stream<ComponentInteractionEvent> onButtonEvent;
+  late final Stream<ButtonInteractionEvent> onButtonEvent;
+
+  /// Emitted when a dropdown interaction is received.
+  late final Stream<DropdownInteractionEvent> onDropdownEvent;
 
   /// Emitted when a slash command is created by the user.
   late final Stream<SlashCommand> onSlashCommandCreated;
@@ -46,7 +49,19 @@ class Interactions {
               _events.onSlashCommand.add(SlashCommandInteractionEvent._new(_client, event.rawData["d"] as Map<String, dynamic>));
               break;
             case 3:
-              _events.onButtonEvent.add(ComponentInteractionEvent._new(_client, event.rawData["d"] as Map<String, dynamic>));
+              final componentType = event.rawData["d"]["type"]["data"]["component_type"] as int;
+
+              switch (componentType) {
+                case 2:
+                  _events.onButtonEvent.add(ButtonInteractionEvent._new(_client, event.rawData["d"] as Map<String, dynamic>));
+                  break;
+                case 3:
+                  _events.onDropdownEvent.add(DropdownInteractionEvent._new(_client, event.rawData["d"] as Map<String, dynamic>));
+                  break;
+                default:
+                  this._logger.warning("Unknown componentType type: [$componentType]; Payload: ${jsonEncode(event.rawData)}");
+              }
+
               break;
             default:
               this._logger.warning("Unknown interaction type: [$type]; Payload: ${jsonEncode(event.rawData)}");
@@ -76,7 +91,7 @@ class Interactions {
         "PUT",
         body: [
           for(final builder in globalCommands)
-            builder._build()
+            builder.build()
         ]
     );
 
@@ -90,7 +105,7 @@ class Interactions {
           "PUT",
           body: [
             for(final builder in entry.value)
-              builder._build()
+              builder.build()
           ]
       );
 
@@ -121,10 +136,10 @@ class Interactions {
     }
 
     this.onButtonEvent.listen((event) {
-      if (this._buttonHandlers.containsKey(event.interaction.buttonId)) {
-        this._buttonHandlers[event.interaction.buttonId]!(event);
+      if (this._buttonHandlers.containsKey(event.interaction.customId)) {
+        this._buttonHandlers[event.interaction.customId]!(event);
       } else {
-        this._logger.warning("Received event for unknown button: ${event.interaction.idMetadata}");
+        this._logger.warning("Received event for unknown button: ${event.interaction.customId}");
       }
     });
   }

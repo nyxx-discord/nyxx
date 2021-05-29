@@ -8,7 +8,10 @@ class _EventController implements Disposable {
   late final StreamController<SlashCommand> onSlashCommandCreated;
 
   /// Emitted when button event is sent
-  late final StreamController<ComponentInteractionEvent> onButtonEvent;
+  late final StreamController<ButtonInteractionEvent> onButtonEvent;
+
+  /// Emitted when dropdown event is sent
+  late final StreamController<DropdownInteractionEvent> onDropdownEvent;
 
   _EventController(Interactions _client) {
     this.onSlashCommand = StreamController.broadcast();
@@ -19,6 +22,9 @@ class _EventController implements Disposable {
 
     this.onButtonEvent = StreamController.broadcast();
     _client.onButtonEvent = this.onButtonEvent.stream;
+
+    this.onDropdownEvent = StreamController.broadcast();
+    _client.onDropdownEvent = this.onDropdownEvent.stream;
   }
 
   @override
