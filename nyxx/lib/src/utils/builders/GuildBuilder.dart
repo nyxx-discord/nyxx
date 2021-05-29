@@ -75,7 +75,7 @@ class RoleBuilder extends Builder {
         if (color != null) "color": color!._value,
         if (hoist != null) "hoist": hoist,
         if (position != null) "position": position,
-        if (permission != null) "permission": permission!._build()._build(),
+        if (permission != null) "permission": permission!.build().build(),
         if (mentionable != null) "mentionable": mentionable,
       };
 }
@@ -127,6 +127,6 @@ class ChannelBuilder extends Builder {
     if (position != null) "position": position,
     if (parentChannel != null) "parent_id": parentChannel!.id,
     if (nsfw != null) "nsfw": nsfw,
-    if (overrides != null) "permission_overwrites" : overrides!.map((e) => e._build())
+    if (overrides != null) "permission_overwrites" : overrides!.map((e) => e.build())
   };
 }

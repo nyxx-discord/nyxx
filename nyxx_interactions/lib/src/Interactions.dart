@@ -76,7 +76,7 @@ class Interactions {
         "PUT",
         body: [
           for(final builder in globalCommands)
-            builder._build()
+            builder.build()
         ]
     );
 
@@ -90,7 +90,7 @@ class Interactions {
           "PUT",
           body: [
             for(final builder in entry.value)
-              builder._build()
+              builder.build()
           ]
       );
 
