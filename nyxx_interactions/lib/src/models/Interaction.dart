@@ -86,6 +86,7 @@ class SlashCommandInteraction extends Interaction {
   }
 }
 
+/// Interaction for button, dropdown, etc.
 class ComponentInteraction extends Interaction {
   /// Id with additional custom metadata
   late final String idMetadata;
@@ -96,7 +97,11 @@ class ComponentInteraction extends Interaction {
   /// Additional data string after ';'
   String get metadata => idMetadata.split(";").last;
 
+  /// The message that the button was pressed on.
+  late final Cacheable<Snowflake, Message> message;
+
   ComponentInteraction._new(Nyxx client, Map<String, dynamic> raw): super._new(client, raw) {
     this.idMetadata = raw["data"]["custom_id"] as String;
+    this.message = CacheUtility.createCacheableMessage(this._client, Snowflake(raw["message"]["id"]), this.channel);
   }
 }
