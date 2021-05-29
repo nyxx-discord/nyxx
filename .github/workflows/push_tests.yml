@@ -43,20 +43,6 @@ jobs:
         working-directory: ./nyxx/test
         run: ./travis.exe
 
-      - name: Generate docs
-        working-directory: ./nyxx
-        run: dartdoc
-
-      - name: Deploy nyxx dev docs
-        uses: easingthemes/ssh-deploy@v2.1.5
-        env:
-          SSH_PRIVATE_KEY: ${{ secrets.SERVER_SSH_KEY }}
-          ARGS: "-rltDzvO"
-          SOURCE: "nyxx/doc/api/"
-          REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
-          REMOTE_USER: ${{ secrets.REMOTE_USER }}
-          TARGET: "${{ secrets.REMOTE_TARGET }}/nyxx/"
-
   test-commander:
     name: Tests commander package
     needs: [test-nyxx]
@@ -90,24 +76,9 @@ jobs:
         working-directory: ./nyxx_commander/test
         run: dart2native commander-test.dart
 
-
       - name: Run tests
         working-directory: ./nyxx_commander/test
         run: ./commander-test.exe
-
-      - name: Generate docs
-        working-directory: ./nyxx_commander
-        run: dartdoc
-
-      - name: Deploy nyxx_commander dev docs
-        uses: easingthemes/ssh-deploy@v2.1.5
-        env:
-          SSH_PRIVATE_KEY: ${{ secrets.SERVER_SSH_KEY }}
-          ARGS: "-rltDzvO"
-          SOURCE: "nyxx_commander/doc/api/"
-          REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
-          REMOTE_USER: ${{ secrets.REMOTE_USER }}
-          TARGET: "${{ secrets.REMOTE_TARGET }}/nyxx_commander/"
 
   test-extensions:
     name: Tests extensions package
@@ -142,20 +113,6 @@ jobs:
        working-directory: ./nyxx_extensions
        run: dart test test/extensions-tests.dart
 
-     - name: Generate docs
-       working-directory: ./nyxx_extensions
-       run: dartdoc
-
-     - name: Deploy nyxx_extensions dev docs
-       uses: easingthemes/ssh-deploy@v2.1.5
-       env:
-         SSH_PRIVATE_KEY: ${{ secrets.SERVER_SSH_KEY }}
-         ARGS: "-rltDzvO"
-         SOURCE: "nyxx_extensions/doc/api/"
-         REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
-         REMOTE_USER: ${{ secrets.REMOTE_USER }}
-         TARGET: "${{ secrets.REMOTE_TARGET }}/nyxx_extensions/"
-
   test-interactions:
     name: Tests interactions package
     needs: [ test-extensions ]
@@ -184,17 +141,3 @@ jobs:
       - name: Analyze project source
         working-directory: ./nyxx_interactions
         run: dart analyze
-
-      - name: Generate docs
-        working-directory: ./nyxx_interactions
-        run: dartdoc
-
-      - name: Deploy nyxx_interactions dev docs
-        uses: easingthemes/ssh-deploy@v2.1.5
-        env:
-          SSH_PRIVATE_KEY: ${{ secrets.SERVER_SSH_KEY }}
-          ARGS: "-rltDzvO"
-          SOURCE: "nyxx_interactions/doc/api/"
-          REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
-          REMOTE_USER: ${{ secrets.REMOTE_USER }}
-          TARGET: "${{ secrets.REMOTE_TARGET }}/nyxx_interactions/"

@@ -1,0 +1,151 @@
+name: deploy dev docs
+
+on:
+  push:
+    branches:
+      - dev
+
+jobs:
+  docs-nyxx:
+    name: Deploy nyxx package docs
+    runs-on: ubuntu-latest
+    steps:
+      - name: Cache
+        uses: actions/cache@v2
+        with:
+          path: ~/.pub_cache
+          key: ${{ runner.os }}
+
+      - name: Setup Dart Action
+        uses: cedx/setup-dart@v2.3.0
+        with:
+         release-channel: stable
+
+      - name: Checkout
+        uses: actions/checkout@v2.3.4
+
+      - name: Install dependencies
+        working-directory: ./nyxx
+        run: dart pub get
+
+      - name: Generate docs
+        working-directory: ./nyxx
+        run: dartdoc
+
+      - name: Deploy nyxx dev docs
+        uses: easingthemes/ssh-deploy@v2.1.5
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SERVER_SSH_KEY }}
+          ARGS: "-rltDzvO"
+          SOURCE: "nyxx/doc/api/"
+          REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
+          REMOTE_USER: ${{ secrets.REMOTE_USER }}
+          TARGET: "${{ secrets.REMOTE_TARGET }}/nyxx/"
+
+  docs-commander:
+    name: Deploy nyxx_commander package docs
+    runs-on: ubuntu-latest
+    steps:
+      - name: Cache
+        uses: actions/cache@v2
+        with:
+          path: ~/.pub_cache
+          key: ${{ runner.os }}
+
+      - name: Setup Dart Action
+        uses: cedx/setup-dart@v2.3.0
+        with:
+         release-channel: stable
+
+      - name: Checkout
+        uses: actions/checkout@v2.3.4
+
+      - name: Install dependencies
+        working-directory: ./nyxx_commander
+        run: dart pub get
+
+      - name: Generate docs
+        working-directory: ./nyxx_commander
+        run: dartdoc
+
+      - name: Deploy nyxx_commander dev docs
+        uses: easingthemes/ssh-deploy@v2.1.5
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SERVER_SSH_KEY }}
+          ARGS: "-rltDzvO"
+          SOURCE: "nyxx_commander/doc/api/"
+          REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
+          REMOTE_USER: ${{ secrets.REMOTE_USER }}
+          TARGET: "${{ secrets.REMOTE_TARGET }}/nyxx_commander/"
+
+  docs-extensions:
+    name: Deploy nyxx_extensions package docs
+    runs-on: ubuntu-latest
+    steps:
+     - name: Cache
+       uses: actions/cache@v2
+       with:
+        path: ~/.pub_cache
+        key: ${{ runner.os }}
+
+     - name: Setup Dart Action
+       uses: cedx/setup-dart@v2.3.0
+       with:
+        release-channel: stable
+
+     - name: Checkout
+       uses: actions/checkout@v2.3.4
+
+     - name: Install dependencies
+       working-directory: ./nyxx_extensions
+       run: dart pub get
+
+     - name: Generate docs
+       working-directory: ./nyxx_extensions
+       run: dartdoc
+
+     - name: Deploy nyxx_extensions dev docs
+       uses: easingthemes/ssh-deploy@v2.1.5
+       env:
+         SSH_PRIVATE_KEY: ${{ secrets.SERVER_SSH_KEY }}
+         ARGS: "-rltDzvO"
+         SOURCE: "nyxx_extensions/doc/api/"
+         REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
+         REMOTE_USER: ${{ secrets.REMOTE_USER }}
+         TARGET: "${{ secrets.REMOTE_TARGET }}/nyxx_extensions/"
+
+  docs-interactions:
+    name: Deploy nyxx_interactions package docs
+    runs-on: ubuntu-latest
+    steps:
+      - name: Cache
+        uses: actions/cache@v2
+        with:
+          path: ~/.pub_cache
+          key: ${{ runner.os }}
+
+      - name: Setup Dart Action
+        uses: cedx/setup-dart@v2.3.0
+        with:
+          release-channel: stable
+
+      - name: Checkout
+        uses: actions/checkout@v2.3.4
+
+      - name: Install dependencies
+        working-directory: ./nyxx_interactions
+        run: dart pub get
+
+      - name: Generate docs
+        working-directory: ./nyxx_interactions
+        run: dartdoc
+
+      - name: Deploy nyxx_interactions dev docs
+        uses: easingthemes/ssh-deploy@v2.1.5
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SERVER_SSH_KEY }}
+          ARGS: "-rltDzvO"
+          SOURCE: "nyxx_interactions/doc/api/"
+          REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
+          REMOTE_USER: ${{ secrets.REMOTE_USER }}
+          TARGET: "${{ secrets.REMOTE_TARGET }}/nyxx_interactions/"
