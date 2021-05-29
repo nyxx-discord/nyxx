@@ -17,7 +17,7 @@ class ReplyBuilder extends Builder {
     ReplyBuilder(messageCacheable.id);
 
   @override
-  Map<String, dynamic> _build() => {
+  Map<String, dynamic> build() => {
     "message_id": this.messageId.id
   };
 }

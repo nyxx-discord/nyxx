@@ -115,7 +115,7 @@ class EmbedBuilder extends Builder {
   @override
 
   /// Builds object to Map() instance;
-  Map<String, dynamic> _build() {
+  Map<String, dynamic> build() {
     if (this.title != null && this.title!.length > 256) {
       throw EmbedBuilderArgumentException._new("Embed title is too long (256 characters limit)");
     }
@@ -139,11 +139,11 @@ class EmbedBuilder extends Builder {
       if (url != null) "url": url,
       if (timestamp != null) "timestamp": timestamp!.toIso8601String(),
       if (color != null) "color": color!._value,
-      if (footer != null) "footer": footer!._build(),
+      if (footer != null) "footer": footer!.build(),
       if (imageUrl != null) "image": <String, dynamic>{"url": imageUrl},
       if (thumbnailUrl != null) "thumbnail": <String, dynamic>{"url": thumbnailUrl},
-      if (author != null) "author": author!._build(),
-      if (fields.isNotEmpty) "fields": fields.map((builder) => builder._build()).toList()
+      if (author != null) "author": author!.build(),
+      if (fields.isNotEmpty) "fields": fields.map((builder) => builder.build()).toList()
     };
   }
 }

@@ -126,9 +126,9 @@ class MessageBuilder extends BuilderWithClient {
 
     return <String, dynamic>{
       if (content.isNotEmpty) "content": content.toString(),
-      if (embed != null) "embed": embed!._build(),
-      if (allowedMentions != null) "allowed_mentions": allowedMentions!._build(),
-      if (replyBuilder != null) "message_reference": replyBuilder!._build(),
+      if (embed != null) "embed": embed!.build(),
+      if (allowedMentions != null) "allowed_mentions": allowedMentions!.build(),
+      if (replyBuilder != null) "message_reference": replyBuilder!.build(),
       if (tts != null) "tts": tts,
       if (nonce != null) "nonce": nonce
     };

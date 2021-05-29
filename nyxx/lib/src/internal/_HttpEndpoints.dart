@@ -288,23 +288,6 @@ class _HttpEndpoints implements IHttpEndpoints {
     this._httpClient = this._client._http;
   }
 
-  Map<String, dynamic> _initMessage(dynamic content, EmbedBuilder? embed,
-      AllowedMentions? allowedMentions, ReplyBuilder? replyBuilder, {bool hasFiles = false}) {
-    if (content == null && embed == null && !hasFiles) {
-      throw ArgumentError(
-          "When sending message content, embed or files have to be not null");
-    }
-
-    allowedMentions ??= _client._options.allowedMentions;
-
-    return <String, dynamic>{
-      if (content != null) "content": content.toString(),
-      if (embed != null) "embed": embed._build(),
-      if (allowedMentions != null) "allowed_mentions": allowedMentions._build(),
-      if (replyBuilder != null) "message_reference": replyBuilder._build(),
-    };
-  }
-
   @override
   String? getGuildIconUrl(
       Snowflake guildId, String? iconHash, String format, int size) {
@@ -390,7 +373,7 @@ class _HttpEndpoints implements IHttpEndpoints {
     final response = await _httpClient._execute(BasicRequest._new(
         "/guilds/$guildId/roles/$roleId",
         method: "PATCH",
-        body: role._build(),
+        body: role.build(),
         auditLog: auditReason));
 
     if (response is HttpResponseSuccess) {
@@ -629,7 +612,7 @@ class _HttpEndpoints implements IHttpEndpoints {
         "/guilds/$guildId/roles",
         method: "POST",
         auditLog: auditReason,
-        body: roleBuilder._build()));
+        body: roleBuilder.build()));
 
     if (response is HttpResponseSuccess) {
       return Role._new(
@@ -1173,7 +1156,7 @@ class _HttpEndpoints implements IHttpEndpoints {
       Snowflake channelId, Snowflake messageId, ThreadBuilder builder) async {
     final response = await _httpClient._execute(BasicRequest._new(
         "/channels/$channelId/messages/$messageId/threads",
-        method: "POST", body: builder._build(),),);
+        method: "POST", body: builder.build(),),);
 
     if (response is HttpResponseSuccess) {
       return ThreadPreviewChannel._new(_client, response.jsonBody as Map<String, dynamic>);
@@ -1188,7 +1171,7 @@ class _HttpEndpoints implements IHttpEndpoints {
       Snowflake channelId, ThreadBuilder builder) async {
     final response = await _httpClient._execute(BasicRequest._new(
       "/channels/$channelId/threads",
-      method: "POST", body: builder._build(),),);
+      method: "POST", body: builder.build(),),);
 
     if (response is HttpResponseSuccess) {
       return ThreadPreviewChannel._new(_client, response.jsonBody as Map<String, dynamic>);
@@ -1382,8 +1365,8 @@ class _HttpEndpoints implements IHttpEndpoints {
 
     final reqBody = {
       if (content != null) "content": content.toString(),
-      if (allowedMentions != null) "allowed_mentions": allowedMentions._build(),
-      if (embeds != null) "embeds": [for (final e in embeds) e._build()],
+      if (allowedMentions != null) "allowed_mentions": allowedMentions.build(),
+      if (embeds != null) "embeds": [for (final e in embeds) e.build()],
       if (content != null && tts != null) "tts": tts,
       if (avatarUrl != null) "avatar_url": avatarUrl,
     };
@@ -1484,7 +1467,7 @@ class _HttpEndpoints implements IHttpEndpoints {
   @override
   Future<IChannel> createGuildChannel(Snowflake guildId, ChannelBuilder channelBuilder) async {
     final response = await _httpClient._execute(
-        BasicRequest._new("/guilds/${guildId.toString()}/channels", method: "POST", body: channelBuilder._build()));
+        BasicRequest._new("/guilds/${guildId.toString()}/channels", method: "POST", body: channelBuilder.build()));
 
     if (response is HttpResponseSuccess) {
       return IChannel._deserialize(_client, response.jsonBody as Map<String, dynamic>);

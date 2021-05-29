@@ -39,14 +39,14 @@ class CommandOptionBuilder extends Builder {
   CommandOptionBuilder(this.type, this.name, this.description,
       {this.defaultArg = false, this.required = false, this.choices, this.options});
 
-  Map<String, dynamic> _build() => {
+  Map<String, dynamic> build() => {
     "type": this.type.value,
     "name": this.name,
     "description": this.description,
     "default": this.defaultArg,
     "required": this.required,
-    if (this.choices != null) "choices": this.choices!.map((e) => e._build()).toList(),
-    if (this.options != null) "options": this.options!.map((e) => e._build()).toList()
+    if (this.choices != null) "choices": this.choices!.map((e) => e.build()).toList(),
+    if (this.options != null) "options": this.options!.map((e) => e.build()).toList()
   };
 
   /// Registers handler for subcommand

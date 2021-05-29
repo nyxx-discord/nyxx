@@ -24,10 +24,10 @@ class SlashCommandBuilder extends Builder {
     }
   }
 
-  Map<String, dynamic> _build() => {
+  Map<String, dynamic> build() => {
     "name": this.name,
     "description": this.description,
-    if (this.options.isNotEmpty) "options": this.options.map((e) => e._build()).toList()
+    if (this.options.isNotEmpty) "options": this.options.map((e) => e.build()).toList()
   };
 
   /// Registers handler for command. Note command cannot have handler if there are options present
