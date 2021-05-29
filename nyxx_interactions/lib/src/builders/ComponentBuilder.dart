@@ -18,6 +18,7 @@ abstract class IComponentBuilder extends Builder {
   /// Type of component
   ComponentType get type;
 
+  @override
   Map<String, dynamic> build() => {
     "type": this.type.value,
   };
