@@ -5,7 +5,7 @@ class _PermissionsSet {
   int allow = 0;
   int deny = 0;
 
-  Map<String, dynamic> _build() => {"allow": allow, "deny": deny};
+  Map<String, dynamic> build() => {"allow": allow, "deny": deny};
 }
 
 /// Builder for manipulating [PermissionsOverrides]. Created from existing override or manually by passing [type] and [id] of enttiy.
@@ -165,12 +165,12 @@ class PermissionsBuilder {
 
   /// Calculates permission int
   int calculatePermissionValue() {
-    final set = this._build();
+    final set = this.build();
 
     return set.allow & ~set.deny;
   }
 
-  _PermissionsSet _build() {
+  _PermissionsSet build() {
     final permissionSet = _PermissionsSet();
 
     _apply(permissionSet, this.createInstantInvite, PermissionsConstants.createInstantInvite);

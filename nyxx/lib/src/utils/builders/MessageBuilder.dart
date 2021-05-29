@@ -121,7 +121,7 @@ class MessageBuilder extends BuilderWithClient {
       this.content.isNotEmpty || embed != null || (this.files != null && this.files!.isNotEmpty);
 
   @override
-  Map<String, dynamic> _build(INyxx client) {
+  Map<String, dynamic> build(INyxx client) {
     allowedMentions ??= client._options.allowedMentions;
 
     return <String, dynamic>{
@@ -135,8 +135,6 @@ class MessageBuilder extends BuilderWithClient {
   }
 
   bool _hasFiles() => this.files != null && this.files!.isNotEmpty;
-
-  Map<String, dynamic> build(INyxx client) => this._build(client);
 }
 
 /// Specifies formatting of String appended with [MessageBuilder]

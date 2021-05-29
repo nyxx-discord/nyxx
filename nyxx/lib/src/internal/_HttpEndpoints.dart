@@ -883,7 +883,7 @@ class _HttpEndpoints implements IHttpEndpoints {
   Future<void> editChannelPermissions(
       Snowflake channelId, PermissionsBuilder perms, SnowflakeEntity entity,
       {String? auditReason}) async {
-    final permSet = perms._build();
+    final permSet = perms.build();
 
     await _httpClient._execute(BasicRequest._new(
         "/channels/$channelId/permissions/${entity.id.toString()}",
@@ -900,7 +900,7 @@ class _HttpEndpoints implements IHttpEndpoints {
   Future<void> editChannelPermissionOverrides(
       Snowflake channelId, PermissionOverrideBuilder permissionBuilder,
       {String? auditReason}) async {
-    final permSet = permissionBuilder._build();
+    final permSet = permissionBuilder.build();
 
     await _httpClient._execute(BasicRequest._new(
         "/channels/$channelId/permissions/${permissionBuilder.id.toString()}",
@@ -1221,7 +1221,7 @@ class _HttpEndpoints implements IHttpEndpoints {
     final response = await _httpClient._execute(BasicRequest._new(
         "/channels/$channelId/messages/$messageId",
         method: "PATCH",
-        body: builder._build(_client)));
+        body: builder.build(_client)));
 
     if (response is HttpResponseSuccess) {
       return Message._deserialize(
