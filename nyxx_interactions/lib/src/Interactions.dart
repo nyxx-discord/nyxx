@@ -4,7 +4,10 @@ part of nyxx_interactions;
 typedef SlashCommandHandler = FutureOr<void> Function(SlashCommandInteractionEvent);
 
 /// Function that will handle execution of button interaction event
-typedef ButtonInteractionHandler = FutureOr<void> Function(ComponentInteractionEvent);
+typedef ButtonInteractionHandler = FutureOr<void> Function(ButtonInteractionEvent);
+
+/// Function that will handle execution of dropdown event
+typedef DropdownInteractionHandler = FutureOr<void> Function(DropdownInteractionEvent);
 
 /// Interaction extension for Nyxx. Allows use of: Slash Commands.
 class Interactions {
@@ -20,6 +23,7 @@ class Interactions {
   final _commands = <SlashCommand>[];
   final _commandHandlers = <String, SlashCommandHandler>{};
   final _buttonHandlers = <String, ButtonInteractionHandler>{};
+  final _dropdownHandlers = <String, DropdownInteractionHandler>{};
 
   /// Emitted when a slash command is sent.
   late final Stream<SlashCommandInteractionEvent> onSlashCommand;
@@ -49,7 +53,7 @@ class Interactions {
               _events.onSlashCommand.add(SlashCommandInteractionEvent._new(_client, event.rawData["d"] as Map<String, dynamic>));
               break;
             case 3:
-              final componentType = event.rawData["d"]["type"]["data"]["component_type"] as int;
+              final componentType = event.rawData["d"]["data"]["component_type"] as int;
 
               switch (componentType) {
                 case 2:
@@ -131,27 +135,38 @@ class Interactions {
 
     this._logger.info("Finished registering ${this._commandHandlers.length} commands!");
 
-    if (this._buttonHandlers.isEmpty) {
-      return;
+    if (this._buttonHandlers.isNotEmpty) {
+      this.onButtonEvent.listen((event) {
+        if (this._buttonHandlers.containsKey(event.interaction.customId)) {
+          this._buttonHandlers[event.interaction.customId]!(event);
+        } else {
+          this._logger.warning("Received event for unknown button: ${event.interaction.customId}");
+        }
+      });
     }
 
-    this.onButtonEvent.listen((event) {
-      if (this._buttonHandlers.containsKey(event.interaction.customId)) {
-        this._buttonHandlers[event.interaction.customId]!(event);
-      } else {
-        this._logger.warning("Received event for unknown button: ${event.interaction.customId}");
-      }
-    });
+    if (this._dropdownHandlers.isNotEmpty) {
+      this.onDropdownEvent.listen((event) {
+        if (this._dropdownHandlers.containsKey(event.interaction.customId)) {
+          this._dropdownHandlers[event.interaction.customId]!(event);
+        } else {
+          this._logger.warning("Received event for unknown dropdown: ${event.interaction.customId}");
+        }
+      });
+    }
   }
 
   /// Registers callback for button event for given [id]
   void registerButtonHandler(String id, ButtonInteractionHandler handler) =>
       this._buttonHandlers[id] = handler;
 
+  /// Register callback for dropdown event for given [id]
+  void registerDropdownHandler(String id, DropdownInteractionHandler handler) =>
+      this._dropdownHandlers[id] = handler;
+
   /// Allows to register new [SlashCommandBuilder]
-  void registerSlashCommand(SlashCommandBuilder slashCommandBuilder) {
-    this._commandBuilders.add(slashCommandBuilder);
-  }
+  void registerSlashCommand(SlashCommandBuilder slashCommandBuilder) =>
+      this._commandBuilders.add(slashCommandBuilder);
 
   void _registerCommandHandlers(HttpResponseSuccess response, Iterable<SlashCommandBuilder> builders) {
     final registeredSlashCommands = (response.jsonBody as List<dynamic>).map((e) => SlashCommand._new(e as Map<String, dynamic>, this._client));

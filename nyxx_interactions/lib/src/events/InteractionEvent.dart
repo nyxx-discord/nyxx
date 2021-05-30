@@ -24,10 +24,11 @@ abstract class InteractionEvent<T extends Interaction> {
       return Future.error(ResponseRequiredError());
     }
 
-    final url = "/webhooks/${this._client.app.id.toString()}/${this.interaction.token}";
-    final body = BuilderUtility.buildWithClient(builder, _client);
-
-    final response = await this._client.httpEndpoints.sendRawRequest(url, "POST", body: body);
+    final response = await this._client.httpEndpoints.sendRawRequest(
+        "/webhooks/${this._client.app.id.toString()}/${this.interaction.token}",
+        "POST",
+        body: builder.build(this._client)
+    );
 
     if (response is HttpResponseError) {
       return Future.error(response);
@@ -46,8 +47,11 @@ abstract class InteractionEvent<T extends Interaction> {
       return Future.error(AlreadyRespondedError());
     }
 
-    final url = "/interactions/${this.interaction.id.toString()}/${this.interaction.token}/callback";
-    final response = await this._client.httpEndpoints.sendRawRequest(url, "POST", body: { "type": this._acknowledgeOpCode });
+    final response = await this._client.httpEndpoints.sendRawRequest(
+        "/interactions/${this.interaction.id.toString()}/${this.interaction.token}/callback",
+        "POST",
+        body: { "type": this._acknowledgeOpCode }
+    );
 
     if (response is HttpResponseError) {
       return Future.error(response);
