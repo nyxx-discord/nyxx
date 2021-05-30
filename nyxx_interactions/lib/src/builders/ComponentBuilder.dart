@@ -1,18 +1,5 @@
 part of nyxx_interactions;
 
-/// Type of interaction component
-class ComponentType extends IEnum {
-  /// Row where other components can be placed
-  static const ComponentType row = const ComponentType._create(1);
-
-  static const ComponentType button = const ComponentType._create(2);
-  static const ComponentType select = const ComponentType._create(3);
-
-  const ComponentType._create(value) : super(value);
-  /// Create [ComponentType] from [value]
-  ComponentType.from(value) : super(value);
-}
-
 /// Allows to create components
 abstract class IComponentBuilder extends Builder {
   /// Type of component
@@ -24,6 +11,7 @@ abstract class IComponentBuilder extends Builder {
   };
 }
 
+/// Allows to create multi select option for [MultiselectBuilder]
 class MultiselectOptionBuilder extends Builder {
   /// User-facing name of the option
   final String label;
@@ -57,6 +45,7 @@ class MultiselectOptionBuilder extends Builder {
   };
 }
 
+/// Allows to create multi select interactive components.
 class MultiselectBuilder extends IComponentBuilder {
   @override
   ComponentType get type => ComponentType.select;
