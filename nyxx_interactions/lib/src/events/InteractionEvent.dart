@@ -13,7 +13,10 @@ abstract class InteractionEvent<T extends Interaction> {
   /// If the Client has sent a response to the Discord API. Once the API was received a response you cannot send another.
   bool hasResponded = false;
 
+  /// Opcode for acknowledging interaction
   int get _acknowledgeOpCode;
+
+  /// Opcode for responding to interaction
   int get _respondOpcode;
 
   InteractionEvent._new(this._client);
@@ -174,11 +177,11 @@ class ButtonInteractionEvent extends ComponentInteractionEvent<ButtonInteraction
 }
 
 /// Interaction event for dropdown events
-class DropdownInteractionEvent extends ComponentInteractionEvent<DropdownInteraction> {
+class MultiselectInteractionEvent extends ComponentInteractionEvent<MultiselectInteraction> {
   @override
-  late final DropdownInteraction interaction;
+  late final MultiselectInteraction interaction;
 
-  DropdownInteractionEvent._new(Nyxx client, Map<String, dynamic> raw): super._new(client, raw) {
-    this.interaction = DropdownInteraction._new(client, raw);
+  MultiselectInteractionEvent._new(Nyxx client, Map<String, dynamic> raw): super._new(client, raw) {
+    this.interaction = MultiselectInteraction._new(client, raw);
   }
 }

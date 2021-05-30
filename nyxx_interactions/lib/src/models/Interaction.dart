@@ -99,14 +99,14 @@ class ButtonInteraction extends Interaction implements ComponentInteraction {
   }
 }
 
-class DropdownInteraction extends Interaction implements ComponentInteraction {
+class MultiselectInteraction extends Interaction implements ComponentInteraction {
   /// Id with additional custom metadata
   late final String customId;
 
   /// Values selected by the user
   late final List<String> values;
 
-  DropdownInteraction._new(Nyxx client, Map<String, dynamic> raw): super._new(client, raw) {
+  MultiselectInteraction._new(Nyxx client, Map<String, dynamic> raw): super._new(client, raw) {
     this.customId = raw["data"]["custom_id"] as String;
     this.values = (raw["data"]["values"] as List<dynamic>).cast<String>();
   }

@@ -24,7 +24,7 @@ abstract class IComponentBuilder extends Builder {
   };
 }
 
-class DropdownOptionBuilder extends Builder {
+class MultiselectOptionBuilder extends Builder {
   /// User-facing name of the option
   final String label;
 
@@ -40,8 +40,8 @@ class DropdownOptionBuilder extends Builder {
   /// Emoji displayed alongside with label
   IEmoji? emoji;
 
-  /// Creates instance of [DropdownOptionBuilder]
-  DropdownOptionBuilder(this.label, this.value, [this.isDefault = false]);
+  /// Creates instance of [MultiselectOptionBuilder]
+  MultiselectOptionBuilder(this.label, this.value, [this.isDefault = false]);
 
   @override
   Map<String, dynamic> build() => {
@@ -57,7 +57,7 @@ class DropdownOptionBuilder extends Builder {
   };
 }
 
-class DropdownBuilder extends IComponentBuilder {
+class MultiselectBuilder extends IComponentBuilder {
   @override
   ComponentType get type => ComponentType.select;
 
@@ -65,7 +65,7 @@ class DropdownBuilder extends IComponentBuilder {
   final String customId;
 
   /// Max: 25
-  final List<DropdownOptionBuilder> options;
+  final List<MultiselectOptionBuilder> options;
 
   /// Custom placeholder when nothing selected
   String? placeholder;
@@ -78,15 +78,15 @@ class DropdownBuilder extends IComponentBuilder {
   /// Default: 1, min: 1, max: 25
   int? maxValues;
 
-  /// Creates instance of [DropdownBuilder]
-  DropdownBuilder(this.customId, [this.options = const []]) {
+  /// Creates instance of [MultiselectBuilder]
+  MultiselectBuilder(this.customId, [this.options = const []]) {
     if (this.customId.length > 100) {
       throw ArgumentError("Custom Id for Select cannot have more than 100 characters");
     }
   }
 
   /// Adds option to dropdown
-  void addOption(DropdownOptionBuilder builder) => this.options.add(builder);
+  void addOption(MultiselectOptionBuilder builder) => this.options.add(builder);
 
   @override
   Map<String, dynamic> build() => {

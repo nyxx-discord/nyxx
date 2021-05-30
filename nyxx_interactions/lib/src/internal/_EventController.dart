@@ -11,7 +11,7 @@ class _EventController implements Disposable {
   late final StreamController<ButtonInteractionEvent> onButtonEvent;
 
   /// Emitted when dropdown event is sent
-  late final StreamController<DropdownInteractionEvent> onDropdownEvent;
+  late final StreamController<MultiselectInteractionEvent> onMultiselectEvent;
 
   _EventController(Interactions _client) {
     this.onSlashCommand = StreamController.broadcast();
@@ -23,8 +23,8 @@ class _EventController implements Disposable {
     this.onButtonEvent = StreamController.broadcast();
     _client.onButtonEvent = this.onButtonEvent.stream;
 
-    this.onDropdownEvent = StreamController.broadcast();
-    _client.onDropdownEvent = this.onDropdownEvent.stream;
+    this.onMultiselectEvent = StreamController.broadcast();
+    _client.onMultiselectEvent = this.onMultiselectEvent.stream;
   }
 
   @override

@@ -7,7 +7,7 @@ typedef SlashCommandHandler = FutureOr<void> Function(SlashCommandInteractionEve
 typedef ButtonInteractionHandler = FutureOr<void> Function(ButtonInteractionEvent);
 
 /// Function that will handle execution of dropdown event
-typedef DropdownInteractionHandler = FutureOr<void> Function(DropdownInteractionEvent);
+typedef MultiselectInteractionHandler = FutureOr<void> Function(MultiselectInteractionEvent);
 
 /// Interaction extension for Nyxx. Allows use of: Slash Commands.
 class Interactions {
@@ -23,7 +23,7 @@ class Interactions {
   final _commands = <SlashCommand>[];
   final _commandHandlers = <String, SlashCommandHandler>{};
   final _buttonHandlers = <String, ButtonInteractionHandler>{};
-  final _dropdownHandlers = <String, DropdownInteractionHandler>{};
+  final _multiselectHandlers = <String, MultiselectInteractionHandler>{};
 
   /// Emitted when a slash command is sent.
   late final Stream<SlashCommandInteractionEvent> onSlashCommand;
@@ -32,7 +32,7 @@ class Interactions {
   late final Stream<ButtonInteractionEvent> onButtonEvent;
 
   /// Emitted when a dropdown interaction is received.
-  late final Stream<DropdownInteractionEvent> onDropdownEvent;
+  late final Stream<MultiselectInteractionEvent> onMultiselectEvent;
 
   /// Emitted when a slash command is created by the user.
   late final Stream<SlashCommand> onSlashCommandCreated;
@@ -60,7 +60,7 @@ class Interactions {
                   _events.onButtonEvent.add(ButtonInteractionEvent._new(_client, event.rawData["d"] as Map<String, dynamic>));
                   break;
                 case 3:
-                  _events.onDropdownEvent.add(DropdownInteractionEvent._new(_client, event.rawData["d"] as Map<String, dynamic>));
+                  _events.onMultiselectEvent.add(MultiselectInteractionEvent._new(_client, event.rawData["d"] as Map<String, dynamic>));
                   break;
                 default:
                   this._logger.warning("Unknown componentType type: [$componentType]; Payload: ${jsonEncode(event.rawData)}");
@@ -145,10 +145,10 @@ class Interactions {
       });
     }
 
-    if (this._dropdownHandlers.isNotEmpty) {
-      this.onDropdownEvent.listen((event) {
-        if (this._dropdownHandlers.containsKey(event.interaction.customId)) {
-          this._dropdownHandlers[event.interaction.customId]!(event);
+    if (this._multiselectHandlers.isNotEmpty) {
+      this.onMultiselectEvent.listen((event) {
+        if (this._multiselectHandlers.containsKey(event.interaction.customId)) {
+          this._multiselectHandlers[event.interaction.customId]!(event);
         } else {
           this._logger.warning("Received event for unknown dropdown: ${event.interaction.customId}");
         }
@@ -161,8 +161,8 @@ class Interactions {
       this._buttonHandlers[id] = handler;
 
   /// Register callback for dropdown event for given [id]
-  void registerDropdownHandler(String id, DropdownInteractionHandler handler) =>
-      this._dropdownHandlers[id] = handler;
+  void registerMultiselectHandler(String id, MultiselectInteractionHandler handler) =>
+      this._multiselectHandlers[id] = handler;
 
   /// Allows to register new [SlashCommandBuilder]
   void registerSlashCommand(SlashCommandBuilder slashCommandBuilder) =>
