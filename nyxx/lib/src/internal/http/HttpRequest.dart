@@ -69,7 +69,7 @@ class MultipartRequest extends _HttpRequest {
 
   @override
   Future<http.StreamedResponse> _execute() {
-    final request = http.MultipartRequest(this.method, this.uri..replace(queryParameters: queryParams))
+    final request = http.MultipartRequest(this.method, this.uri.replace(queryParameters: queryParams))
       ..headers.addAll(_genHeaders());
 
     for (final file in this.files) {
