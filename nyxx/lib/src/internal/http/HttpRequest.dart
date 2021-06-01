@@ -34,7 +34,7 @@ class BasicRequest extends _HttpRequest {
 
   @override
   Future<http.StreamedResponse> _execute() async {
-    final request = http.Request(this.method, this.uri..replace(queryParameters: queryParams))
+    final request = http.Request(this.method, this.uri.replace(queryParameters: queryParams))
       ..headers.addAll(_genHeaders());
 
     if (this.body != null && this.method != "GET") {
@@ -69,7 +69,7 @@ class MultipartRequest extends _HttpRequest {
 
   @override
   Future<http.StreamedResponse> _execute() {
-    final request = http.MultipartRequest(this.method, this.uri..replace(queryParameters: queryParams))
+    final request = http.MultipartRequest(this.method, this.uri.replace(queryParameters: queryParams))
       ..headers.addAll(_genHeaders());
 
     for (final file in this.files) {
