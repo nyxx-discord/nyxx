@@ -114,4 +114,16 @@ class EntityUtility {
   static GuildMessage createGuildMessage(
       INyxx client, Map<String, dynamic> rawJson) =>
       GuildMessage._new(client, rawJson);
+
+  /// Creates a Guild Member object, can be used for other classes where you have correct rawJson data from the API.
+  /// ```dart
+  /// void main() {
+  ///     var bot = Nyxx("TOKEN");
+  ///     Map<String, dynamic> rawJson = /* rawJson from the API */
+  ///     DMChannel dmChannel = EntityUtility.createGuildMessage(bot, rawJson);
+  /// }
+  /// ```
+  static Message createMessage(
+      INyxx client, Map<String, dynamic> rawJson) =>
+      Message._deserialize(client, rawJson);
 }
