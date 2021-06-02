@@ -39,12 +39,19 @@ class MessageBuilder extends BuilderWithClient {
   MessageBuilder();
 
   /// Creates [MessageBuilder] with only content
-  MessageBuilder.content(String content) {
-    this.content = content;
-  }
+  factory MessageBuilder.content(String content) =>
+      MessageBuilder()
+        ..content = content;
+
+  /// Creates [MessageBuilder] with content of empty character
+  factory MessageBuilder.empty() =>
+      MessageBuilder()
+        ..appendClearCharacter();
 
   /// Creates [MessageBuilder] with only embed
-  MessageBuilder.embed(this.embed);
+  factory MessageBuilder.embed(EmbedBuilder embed) =>
+      MessageBuilder()
+        ..embed = embed;
 
   /// Allows to add embed to message
   void setEmbed(void Function(EmbedBuilder embed) builder) {
@@ -121,22 +128,20 @@ class MessageBuilder extends BuilderWithClient {
       this.content.isNotEmpty || embed != null || (this.files != null && this.files!.isNotEmpty);
 
   @override
-  Map<String, dynamic> _build(INyxx client) {
+  Map<String, dynamic> build(INyxx client) {
     allowedMentions ??= client._options.allowedMentions;
 
     return <String, dynamic>{
       if (content.isNotEmpty) "content": content.toString(),
-      if (embed != null) "embed": embed!._build(),
-      if (allowedMentions != null) "allowed_mentions": allowedMentions!._build(),
-      if (replyBuilder != null) "message_reference": replyBuilder!._build(),
+      if (embed != null) "embed": embed!.build(),
+      if (allowedMentions != null) "allowed_mentions": allowedMentions!.build(),
+      if (replyBuilder != null) "message_reference": replyBuilder!.build(),
       if (tts != null) "tts": tts,
       if (nonce != null) "nonce": nonce
     };
   }
 
   bool _hasFiles() => this.files != null && this.files!.isNotEmpty;
-
-  Map<String, dynamic> build(INyxx client) => this._build(client);
 }
 
 /// Specifies formatting of String appended with [MessageBuilder]

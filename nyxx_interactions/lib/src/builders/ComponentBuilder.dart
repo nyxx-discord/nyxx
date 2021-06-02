@@ -23,7 +23,7 @@ abstract class IComponentBuilder extends Builder {
     }
   }
 
-  Map<String, dynamic> _build() => {
+  Map<String, dynamic> build() => {
     "type": type,
     "label": this.label,
     "style": this.style.value,
@@ -55,8 +55,8 @@ class LinkButtonBuilder extends IComponentBuilder {
   }
 
   @override
-  Map<String, dynamic> _build() => {
-    ...super._build(),
+  Map<String, dynamic> build() => {
+    ...super.build(),
     "url": url
   };
 }
@@ -92,8 +92,8 @@ class ButtonBuilder extends IComponentBuilder {
   }
 
   @override
-  Map<String, dynamic> _build() => {
-    ...super._build(),
+  Map<String, dynamic> build() => {
+    ...super.build(),
     "custom_id": idMetadata
   };
 }
@@ -129,7 +129,7 @@ class ComponentMessageBuilder extends MessageBuilder {
           "type": 1,
           "components": [
             for (final button in row)
-              button._build()
+              button.build()
           ]
         }
     ]

@@ -1,13 +1,14 @@
-name: Tests
+name: deploy dev docs
 
-on: [push, pull_request]
+on:
+  push:
+    branches:
+      - dev
 
 jobs:
-  test-nyxx:
-    name: Test main nyxx package
+  docs-nyxx:
+    name: Deploy nyxx package docs
     runs-on: ubuntu-latest
-    env:
-      TEST_TOKEN: ${{ secrets.TEST_TOKEN }}
     steps:
       - name: Cache
         uses: actions/cache@v2
@@ -27,28 +28,9 @@ jobs:
         working-directory: ./nyxx
         run: dart pub get
 
-      - name: Analyze project source
-        working-directory: ./nyxx
-        run: dart analyze
-
-      - name: Unit tests
-        working-directory: ./nyxx
-        run: dart test test/unit.dart
-
-      - name: Compile tests
-        working-directory: ./nyxx/test
-        run: dart2native travis.dart
-        if: github.event_name != 'pull_request'
-
-      - name: Run tests
-        working-directory: ./nyxx/test
-        run: ./travis.exe
-        if: github.event_name != 'pull_request'
-
       - name: Generate docs
         working-directory: ./nyxx
         run: dartdoc
-        if: github.event_name != 'pull_request'
 
       - name: Deploy nyxx dev docs
         uses: easingthemes/ssh-deploy@v2.1.5
@@ -59,14 +41,10 @@ jobs:
           REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
           REMOTE_USER: ${{ secrets.REMOTE_USER }}
           TARGET: "${{ secrets.REMOTE_TARGET }}/nyxx/"
-        if: github.event_name != 'pull_request'
 
-  test-commander:
-    name: Tests commander package
-    needs: [test-nyxx]
+  docs-commander:
+    name: Deploy nyxx_commander package docs
     runs-on: ubuntu-latest
-    env:
-      TEST_TOKEN: ${{ secrets.TEST_TOKEN }}
     steps:
       - name: Cache
         uses: actions/cache@v2
@@ -86,24 +64,9 @@ jobs:
         working-directory: ./nyxx_commander
         run: dart pub get
 
-      - name: Analyze project source
-        working-directory: ./nyxx_commander
-        run: dart analyze
-
-      - name: Compile tests
-        working-directory: ./nyxx_commander/test
-        run: dart2native commander-test.dart
-        if: github.event_name != 'pull_request'
-
-      - name: Run tests
-        working-directory: ./nyxx_commander/test
-        run: ./commander-test.exe
-        if: github.event_name != 'pull_request'
-
       - name: Generate docs
         working-directory: ./nyxx_commander
         run: dartdoc
-        if: github.event_name != 'pull_request'
 
       - name: Deploy nyxx_commander dev docs
         uses: easingthemes/ssh-deploy@v2.1.5
@@ -114,14 +77,10 @@ jobs:
           REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
           REMOTE_USER: ${{ secrets.REMOTE_USER }}
           TARGET: "${{ secrets.REMOTE_TARGET }}/nyxx_commander/"
-        if: github.event_name != 'pull_request'
 
-  test-extensions:
-    name: Tests extensions package
-    needs: [test-commander]
+  docs-extensions:
+    name: Deploy nyxx_extensions package docs
     runs-on: ubuntu-latest
-    env:
-      TEST_TOKEN: ${{ secrets.TEST_TOKEN }}
     steps:
      - name: Cache
        uses: actions/cache@v2
@@ -141,18 +100,9 @@ jobs:
        working-directory: ./nyxx_extensions
        run: dart pub get
 
-     - name: Analyze project source
-       working-directory: ./nyxx_extensions
-       run: dart analyze
-
-     - name: Unit tests
-       working-directory: ./nyxx_extensions
-       run: dart test test/extensions-tests.dart
-
      - name: Generate docs
        working-directory: ./nyxx_extensions
        run: dartdoc
-       if: github.event_name != 'pull_request'
 
      - name: Deploy nyxx_extensions dev docs
        uses: easingthemes/ssh-deploy@v2.1.5
@@ -163,14 +113,10 @@ jobs:
          REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
          REMOTE_USER: ${{ secrets.REMOTE_USER }}
          TARGET: "${{ secrets.REMOTE_TARGET }}/nyxx_extensions/"
-       if: github.event_name != 'pull_request'
 
-  test-interactions:
-    name: Tests interactions package
-    needs: [ test-extensions ]
+  docs-interactions:
+    name: Deploy nyxx_interactions package docs
     runs-on: ubuntu-latest
-    env:
-      TEST_TOKEN: ${{ secrets.TEST_TOKEN }}
     steps:
       - name: Cache
         uses: actions/cache@v2
@@ -190,14 +136,9 @@ jobs:
         working-directory: ./nyxx_interactions
         run: dart pub get
 
-      - name: Analyze project source
-        working-directory: ./nyxx_interactions
-        run: dart analyze
-
       - name: Generate docs
         working-directory: ./nyxx_interactions
         run: dartdoc
-        if: github.event_name != 'pull_request'
 
       - name: Deploy nyxx_interactions dev docs
         uses: easingthemes/ssh-deploy@v2.1.5
@@ -208,4 +149,3 @@ jobs:
           REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
           REMOTE_USER: ${{ secrets.REMOTE_USER }}
           TARGET: "${{ secrets.REMOTE_TARGET }}/nyxx_interactions/"
-        if: github.event_name != 'pull_request'

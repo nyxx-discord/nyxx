@@ -74,7 +74,7 @@ class Shard implements Disposable {
 
   /// Allows to set presence for current shard.
   void setPresence(PresenceBuilder presenceBuilder) {
-    this.send(OPCodes.statusUpdate, presenceBuilder._build());
+    this.send(OPCodes.statusUpdate, presenceBuilder.build());
   }
 
   /// Syncs all guilds
@@ -223,7 +223,7 @@ class Shard implements Disposable {
             "guild_subscriptions" : manager._ws._client._options.guildSubscriptions,
             "intents": manager._ws._client.intents,
             if (manager._ws._client._options.initialPresence != null)
-              "presence" : manager._ws._client._options.initialPresence!._build()
+              "presence" : manager._ws._client._options.initialPresence!.build()
           };
 
           identifyMsg["shard"] = <int>[this.id, manager._numShards];

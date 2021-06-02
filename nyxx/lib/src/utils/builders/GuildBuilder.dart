@@ -27,7 +27,7 @@ class GuildBuilder extends Builder {
   List<ChannelBuilder>? channels;
 
   @override
-  Map<String, dynamic> _build() =>
+  Map<String, dynamic> build() =>
     <String, dynamic>{
       if (name != null) "name": name,
       if (region != null) "region": region,
@@ -41,7 +41,7 @@ class GuildBuilder extends Builder {
 
   Iterable<Map<String, dynamic>> _genIterable(List<Builder> list) sync* {
     for (final e in list) {
-      yield e._build();
+      yield e.build();
     }
   }
 }
@@ -70,12 +70,12 @@ class RoleBuilder extends Builder {
   RoleBuilder(this.name);
 
   @override
-  Map<String, dynamic> _build() => <String, dynamic>{
+  Map<String, dynamic> build() => <String, dynamic>{
         "name": name,
         if (color != null) "color": color!._value,
         if (hoist != null) "hoist": hoist,
         if (position != null) "position": position,
-        if (permission != null) "permission": permission!._build()._build(),
+        if (permission != null) "permission": permission!.build().build(),
         if (mentionable != null) "mentionable": mentionable,
       };
 }
@@ -117,7 +117,7 @@ class ChannelBuilder extends Builder {
   ChannelBuilder(this.name, this.type);
 
   @override
-  Map<String, dynamic> _build() => {
+  Map<String, dynamic> build() => {
     "name": name,
     "type": type._value,
     if (topic != null) "topic": topic,
@@ -127,6 +127,6 @@ class ChannelBuilder extends Builder {
     if (position != null) "position": position,
     if (parentChannel != null) "parent_id": parentChannel!.id,
     if (nsfw != null) "nsfw": nsfw,
-    if (overrides != null) "permission_overwrites" : overrides!.map((e) => e._build())
+    if (overrides != null) "permission_overwrites" : overrides!.map((e) => e.build())
   };
 }
