@@ -98,10 +98,10 @@ class ComponentInteraction extends Interaction {
   String get metadata => idMetadata.split(";").last;
 
   /// The message that the button was pressed on.
-  late final Cacheable<Snowflake, Message> message;
+  late final GuildMessage message;
 
   ComponentInteraction._new(Nyxx client, Map<String, dynamic> raw): super._new(client, raw) {
     this.idMetadata = raw["data"]["custom_id"] as String;
-    this.message = CacheUtility.createCacheableMessage(this._client, Snowflake(raw["message"]["id"]), this.channel);
+    this.message = EntityUtility.createGuildMessage(this._client, {...raw["message"] as Map<String, dynamic>, "guild_id": raw["guild_id"]}); // Discord doesn't include guild's id in the message object but is included in the data so its been added to the object so that guild message can be used :)
   }
 }
