@@ -43,12 +43,15 @@ Slash commands:
 ```dart
 void main() {
   final bot = Nyxx("<%TOKEN%>", GatewayIntents.allUnprivileged);
-  final interactions = Interactions(bot);
-
-  interactions
-    ..registerHandler("test", "This is test comamnd", [], handler: (event) async {
-      await event.reply(MessageBuilder.content("This is example message result"));
-    });
+  Interactions(bot)
+    ..registerSlashCommand(
+        SlashCommandBuilder("hi", "This is example slash command", [])
+            ..registerHandler((event) async {
+              await event.acknowledge();
+              
+              await event.respond(MessageBuilder.content("Hello World!"));
+            })
+    );
 }
 ```
 
