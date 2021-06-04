@@ -14,6 +14,13 @@ class EmbedFieldBuilder extends Builder {
   /// Constructs new instance of Field
   EmbedFieldBuilder([this.name, this.content, this.inline]);
 
+  /// Creates a [EmbedFieldBuilder] from raw json
+  EmbedFieldBuilder.fromJson(Map<String, dynamic> raw) {
+    this.name = raw["name"];
+    this.content = raw["value"];
+    this.inline = raw["inline"] as bool?;
+  }
+
   /// Length of current field
   int get length => name.toString().length + content.toString().length;
 

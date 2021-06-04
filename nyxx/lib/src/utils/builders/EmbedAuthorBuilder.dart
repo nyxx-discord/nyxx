@@ -14,6 +14,15 @@ class EmbedAuthorBuilder extends Builder {
   /// Returns length of embeds author section
   int? get length => name?.length;
 
+  /// Create empty [EmbedAuthorBuilder]
+  EmbedAuthorBuilder();
+
+  EmbedAuthorBuilder.fromJson(Map<String, String?> raw) {
+    this.name = raw["name"];
+    this.url = raw["url"];
+    this.iconUrl = raw["icon_url"];
+  }
+
   @override
 
   /// Builds object to Map() instance;

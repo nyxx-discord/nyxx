@@ -11,6 +11,15 @@ class EmbedFooterBuilder extends Builder {
   /// Length of footer
   int? get length => text?.length;
 
+  /// Create empty [EmbedFooterBuilder]
+  EmbedFooterBuilder();
+
+  /// Creates a [EmbedFooterBuilder] from raw json
+  EmbedFooterBuilder.fromJson(Map<String, String?> raw) {
+    this.text = raw["text"];
+    this.iconUrl = raw["icon_url"];
+  }
+
   @override
 
   /// Builds object to Map() instance;
