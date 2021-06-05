@@ -33,7 +33,7 @@ void main() {
 
   bot.onMessageReceived.listen((event) {
     if (event.message.content == "!ping") {
-      event.message.channel.getFromCache()?.sendMessage(content: "Pong!");
+      event.message.channel.sendMessage(MessageBuilder.content("Pong!"));
     }
   });
 }
@@ -42,13 +42,12 @@ void main() {
 Slash commands:
 ```dart
 void main() {
-  final bot = Nyxx("<%TOKEN%>", GatewayIntents.all);
+  final bot = Nyxx("<%TOKEN%>", GatewayIntents.allUnprivileged);
   final interactions = Interactions(bot);
 
   interactions
     ..registerHandler("test", "This is test comamnd", [], handler: (event) async {
-      await event.acknowledge(showSource: true);
-      await event.reply(content: "This is example message result");
+      await event.reply(MessageBuilder.content("This is example message result"));
     });
 }
 ```
@@ -59,7 +58,7 @@ void main() {
   final bot = Nyxx("TOKEN", GatewayIntents.allUnprivileged);
 
   Commander(bot, prefix: "!!!")
-    ..registerCommand("ping", (context, message) => context.reply(content: "Pong!"));
+    ..registerCommand("ping", (context, message) => context.reply(MessageBuilder.content("Pong!")));
 }
 ```
 
@@ -67,16 +66,16 @@ void main() {
 
 Nyxx examples can be found [here](https://github.com/l7ssha/nyxx/tree/dev/nyxx/example).
 
-Commander examples can be found [here](https://github.com/l7ssha/nyxx/tree/dev/nyxx.commander/example)
+Commander examples can be found [here](https://github.com/l7ssha/nyxx/tree/dev/nyxx_commander/example)
 
-Slash commands (interactions) examples can be found [here](https://github.com/l7ssha/nyxx/tree/dev/nyxx.interactions/example)
+Slash commands (interactions) examples can be found [here](https://github.com/l7ssha/nyxx/tree/dev/nyxx_interactions/example)
 
 ### Example bots
- - [Running on Dart](https://github.com/l7ssha/running_on_dart)
+- [Running on Dart](https://github.com/l7ssha/running_on_dart)
 
 ## Documentation, help and examples
 
-**Dartdoc documentation is hosted on [pub](https://www.dartdocs.org/documentation/nyxx/latest/). 
+**Dartdoc documentation is hosted on [pub](https://www.dartdocs.org/documentation/nyxx/latest/).
 This wiki just fills gap in docs with more descriptive guides and tutorials.**
 
 #### [Discord API docs](https://discordapp.com/developers/docs/intro)
@@ -98,6 +97,6 @@ Wiki documentation are designed to match the latest Nyxx release.
 
 Read [contributing document](https://github.com/l7ssha/nyxx/blob/development/CONTRIBUTING.md)
 
-## Credits 
+## Credits
 
- * [Hackzzila's](https://github.com/Hackzzila) for [nyx](https://github.com/Hackzzila/nyx).
+* [Hackzzila's](https://github.com/Hackzzila) for [nyx](https://github.com/Hackzzila/nyx).

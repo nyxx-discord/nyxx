@@ -1,6 +1,6 @@
 part of nyxx;
 
-abstract class Message extends SnowflakeEntity implements Disposable {
+abstract class Message extends SnowflakeEntity implements Disposable, Convertable<MessageBuilder> {
   /// Reference to bot instance
   final INyxx client;
 
@@ -195,6 +195,9 @@ abstract class Message extends SnowflakeEntity implements Disposable {
   Future<void> dispose() => Future.value(null);
 
   @override
+  MessageBuilder toBuilder() => MessageBuilder.fromMessage(this);
+
+  @override
   bool operator ==(other) {
     if (other is Message) {
       return this.id == other.id;
@@ -312,7 +315,7 @@ class GuildMessage extends Message {
     ];
   }
 
-  /// Crosspost a Message into all guilds what follow the news channel indicated.
+  /// Cross post a Message into all guilds what follow the news channel indicated.
   /// This endpoint requires the "DISCOVERY" feature to be present for the guild.
   Future<void> crossPost() async =>
       client._httpEndpoints.crossPostGuildMessage(this.channel.id, this.id);

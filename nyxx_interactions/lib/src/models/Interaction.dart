@@ -86,11 +86,20 @@ class SlashCommandInteraction extends Interaction {
   }
 }
 
-abstract class ComponentInteraction implements Interaction {
+/// Interaction for button, dropdown, etc.
+abstract class ComponentInteraction extends Interaction {
   String get customId;
+
+  /// The message that the button was pressed on.
+  late final Message message;
+
+  ComponentInteraction._new(Nyxx client, Map<String, dynamic> raw): super(client, raw) {
+    // Discord doesn't include guild's id in the message object even if its a guild message but is included in the data so its been added to the object so that guild message can be used if the interaction is from a guild.
+    this.message = EntityUtility.createMessage(this._client, {...raw["message"] as Map<String, dynamic>, if(raw["guild_id"] != null) "guild_id": raw["guild_id"]});
+  }
 }
 
-class ButtonInteraction extends Interaction implements ComponentInteraction {
+class ButtonInteraction extends ComponentInteraction {
   /// Id with additional custom metadata
   late final String customId;
 
@@ -99,7 +108,7 @@ class ButtonInteraction extends Interaction implements ComponentInteraction {
   }
 }
 
-class MultiselectInteraction extends Interaction implements ComponentInteraction {
+class MultiselectInteraction extends ComponentInteraction {
   /// Id with additional custom metadata
   late final String customId;
 

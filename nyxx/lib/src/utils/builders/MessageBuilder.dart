@@ -39,12 +39,27 @@ class MessageBuilder extends BuilderWithClient {
   MessageBuilder();
 
   /// Creates [MessageBuilder] with only content
-  MessageBuilder.content(String content) {
-    this.content = content;
-  }
+  factory MessageBuilder.content(String content) =>
+      MessageBuilder()
+        ..content = content;
+
+  /// Creates [MessageBuilder] with content of empty character
+  factory MessageBuilder.empty() =>
+      MessageBuilder()
+        ..appendClearCharacter();
 
   /// Creates [MessageBuilder] with only embed
-  MessageBuilder.embed(this.embed);
+  factory MessageBuilder.embed(EmbedBuilder embed) =>
+      MessageBuilder()
+        ..embed = embed;
+
+  /// Creates [MessageBuilder] from [Message].
+  /// Copies content, tts and first embed of target [message]
+  factory MessageBuilder.fromMessage(Message message) => MessageBuilder()
+        ..content = message.content
+        ..tts = message.tts
+        ..embed = message.embeds.first.toBuilder()
+        ..replyBuilder = message.referencedMessage?.toBuilder();
 
   /// Allows to add embed to message
   void setEmbed(void Function(EmbedBuilder embed) builder) {
