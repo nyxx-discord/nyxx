@@ -23,6 +23,7 @@ abstract class IComponentBuilder extends Builder {
     }
   }
 
+  /// Builds instance of [IComponentBuilder]
   Map<String, dynamic> build() => {
     "type": type,
     "label": this.label,
