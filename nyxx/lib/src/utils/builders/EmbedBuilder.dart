@@ -40,28 +40,6 @@ class EmbedBuilder extends Builder {
     this.fields = [];
   }
 
-  /// Creates an instance of [EmbedBuilder] from json.
-  EmbedBuilder.fromJson(Map<String, dynamic> raw) {
-    this.title = raw["title"] as String?;
-    this.description = raw["description"] as String?;
-    this.url = raw["url"] as String?;
-    this.color = raw["color"] != null ? DiscordColor.fromInt(raw["color"] as int) : null;
-    this.timestamp = raw["timestamp"] != null ? DateTime.parse(raw["timestamp"] as String) : null;
-    this.footer = raw["footer"] != null
-        ? EmbedFooterBuilder.fromJson(raw["footer"] as Map<String, String?>)
-        : null;
-    this.imageUrl = raw["image"]["url"] as String?;
-    this.thumbnailUrl = raw["thumbnail"]["url"] as String?;
-    this.author = raw["author"] != null
-      ? EmbedAuthorBuilder.fromJson(raw["author"] as Map<String, String?>)
-      : null;
-
-    this.fields = [];
-    for(final rawFields in raw["fields"] as List<dynamic>) {
-      this.fields.add(EmbedFieldBuilder.fromJson(rawFields as Map<String, dynamic>));
-    }
-  }
-
   /// Adds author to embed.
   void addAuthor(void Function(EmbedAuthorBuilder author) builder) {
     this.author = EmbedAuthorBuilder();
