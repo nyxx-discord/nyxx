@@ -62,7 +62,7 @@ class Shard implements Disposable {
   /// Sends WS data.
   void send(int opCode, dynamic d) {
     final rawData = {"cmd": "SEND", "data" : {"op": opCode, "d": d}};
-    this.manager._logger.finest("Sending to shard isolate: $rawData");
+    this.manager._logger.finest("Sending to shard isolate: [$rawData]");
     this._sendPort.send(rawData);
   }
 
@@ -179,6 +179,8 @@ class Shard implements Disposable {
   }
 
   Future<void> _handle(dynamic rawData) async {
+    this.manager._logger.finest("Received gateway payload: [$rawData]");
+
     if(rawData["cmd"] == "CONNECT_ACK") {
       manager._logger.info("Shard $id connected to gateway!");
 
