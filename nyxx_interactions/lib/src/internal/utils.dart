@@ -1,7 +1,7 @@
 part of nyxx_interactions;
 
 /// Slash command names and subcommands names have to match this regex
-final RegExp slashCommandNameRegex = RegExp(r'^[\w-]{1,32}$');
+final RegExp slashCommandNameRegex = RegExp(r"^[\w-]{1,32}$");
 
 Iterable<Iterable<T>> _partition<T>(Iterable<T> list, bool Function(T) predicate) {
   final matches = <T>[];

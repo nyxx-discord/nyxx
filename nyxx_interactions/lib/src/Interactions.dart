@@ -108,8 +108,6 @@ class Interactions {
       this.onSlashCommand.listen((event) async {
         final commandHash = _determineInteractionCommandHandler(event.interaction);
 
-        this._logger.fine("Received slash command event: Name: [${event.interaction.name}]; Command id: [${event.interaction.commandId}]}; Internal command hash: [$commandHash]");
-
         if (this._commandHandlers.containsKey(commandHash)) {
           await this._commandHandlers[commandHash]!(event);
         }
@@ -120,16 +118,12 @@ class Interactions {
 
     if (this._buttonHandlers.isNotEmpty) {
       this.onButtonEvent.listen((event) {
-        this._logger.fine("Receive button event for button with id: [${event.interaction.buttonId}]");
-
         if (this._buttonHandlers.containsKey(event.interaction.buttonId)) {
           this._buttonHandlers[event.interaction.buttonId]!(event);
         } else {
           this._logger.warning("Received event for unknown button: ${event.interaction.idMetadata}");
         }
       });
-
-      this._logger.info("Registered ${this._buttonHandlers.length} button handlers!");
     }
   }
 
