@@ -39,7 +39,7 @@ class _HttpBucket {
     } on HttpClientException catch (e) {
       if (e.response == null) {
         _httpHandler._logger.warning("Http Error on endpoint: ${request.uri}. Error: [${e.message.toString()}].");
-        return Future.delayed(const Duration(milliseconds: 1000), () => _execute(request));
+        return Future.error(e);
       }
 
       final response = e.response as http.StreamedResponse;
