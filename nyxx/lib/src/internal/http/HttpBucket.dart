@@ -15,7 +15,7 @@ class _HttpBucket {
   _HttpBucket(this.id, this._httpHandler);
 
   Future<http.StreamedResponse> _execute(_HttpRequest request) async {
-    this._httpHandler._logger.fine("Executing request: [${request.uri.toString()}]; Bucket ID: [$uri]; Reset at: [$resetAt]; Remaining: [$remaining]; Reset after: [$resetAfter]");
+    this._httpHandler._logger.fine("Executing request: [${request.uri.toString()}]; Bucket ID: [$id]; Reset at: [$resetAt]; Remaining: [$remaining]; Reset after: [$resetAfter]");
 
     // Get actual time and check if request can be executed based on data that bucket already have
     // and wait if rate limit could be possibly hit
