@@ -50,6 +50,7 @@ class ShardManager implements Disposable {
       exit(1);
     }
 
+    this._logger.fine("Starting shard manager. Number of shards to spawn: $_numShards");
     _connect(_numShards - 1);
   }
 
@@ -61,6 +62,8 @@ class ShardManager implements Disposable {
   }
 
   void _connect(int shardId) {
+    this._logger.fine("Setting up shard with id: ${_numShards - 1}");
+
     if(shardId < 0) {
       return;
     }

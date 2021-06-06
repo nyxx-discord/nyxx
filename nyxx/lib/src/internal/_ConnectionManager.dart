@@ -30,6 +30,8 @@ class _ConnectionManager {
       this.resetAt = DateTime.now().add(Duration(milliseconds: response.jsonBody["session_start_limit"]["reset_after"] as int));
       this.recommendedShardsNum = response.jsonBody["shards"] as int;
 
+      this._logger.fine("Got gateway info: Url: [$gateway]; Recommended shard num: [$recommendedShardsNum]");
+
       checkForConnections();
 
       this._client.shardManager = ShardManager._new(this);
@@ -59,7 +61,7 @@ class _ConnectionManager {
     final httpResponse = await _client._httpEndpoints._getMeApplication();
 
     if (httpResponse is HttpResponseError) {
-      this._logger.severe("Cannot get bot identity: `${httpResponse.toString()}`");
+      this._logger.shout("Cannot get bot identity: `${httpResponse.toString()}`");
       exit(1);
     }
 

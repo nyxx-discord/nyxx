@@ -44,6 +44,8 @@ class Shard implements Disposable {
   bool _heartbeatAckReceived = false; // True if last heartbeat was acked
 
   Shard._new(this.id, this.manager, String gatewayUrl) {
+    this.manager._logger.finer("Starting shard with id: $id; url: $gatewayUrl");
+
     this._receivePort = ReceivePort();
     this._receiveStream = _receivePort.asBroadcastStream();
     this._isolateSendPort = _receivePort.sendPort;
@@ -59,7 +61,9 @@ class Shard implements Disposable {
 
   /// Sends WS data.
   void send(int opCode, dynamic d) {
-    this._sendPort.send({"cmd": "SEND", "data" : {"op": opCode, "d": d}});
+    final rawData = {"cmd": "SEND", "data" : {"op": opCode, "d": d}};
+    this.manager._logger.finest("Sending to shard isolate: $rawData");
+    this._sendPort.send(rawData);
   }
 
   /// Updates clients voice state for [Guild] with given [guildId]
