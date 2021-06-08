@@ -1,10 +1,40 @@
 part of nyxx;
 
-class ThreadChannel extends MinimalGuildChannel implements TextChannel {
+/// Member of [ThreadChannel]
+class ThreadMember extends SnowflakeEntity {
+  /// Reference to client
+  INyxx client;
 
+  /// Reference to [ThreadChannel]
+  late final CacheableTextChannel<ThreadChannel> thread;
+
+  /// When member joined thread
+  late final DateTime joinTimestamp;
+
+  /// Any user-thread settings, currently only used for notifications
+  late final int flags;
+
+  /// [ThreadMember]s [Guild]
+  final Cacheable<Snowflake, Guild> guild;
+
+  /// [Cacheable] of [User]
+  Cacheable<Snowflake, User> get user => _UserCacheable(this.client, this.id);
+
+  /// [Cacheable] of [Member]
+  Cacheable<Snowflake, Member> get member => _MemberCacheable(this.client, this.id, this.guild);
+
+  ThreadMember._new(this.client, Map<String, dynamic> raw, this.guild): super(Snowflake(raw["user_id"])) {
+    this.thread = CacheableTextChannel._new(client, Snowflake(raw["id"]));
+    this.joinTimestamp = DateTime.parse(raw["join_timestamp"] as String);
+    this.flags = raw["flags"] as int;
+  }
+}
+
+class ThreadChannel extends MinimalGuildChannel implements TextChannel {
   Timer? _typing;
 
-  late final _MemberCacheable owner;
+  /// Owner of the thread
+  late final Cacheable<Snowflake, Member> owner;
 
   /// Approximate message count
   late final int messageCount;
@@ -12,16 +42,23 @@ class ThreadChannel extends MinimalGuildChannel implements TextChannel {
   /// Approximate member count
   late final int memberCount;
 
-  /// Is null until [updateMembers] is called, then it contains a list of all members in the thread.
-  late final List<_MemberCacheable> members;
-
+  /// True if thread is archived
   late final bool archived;
 
+  /// Date when thread was archived
   late final DateTime archiveAt;
 
+  /// Time after what thread will be archived
   late final ThreadArchiveTime archiveAfter;
 
-  // TODO add more features
+  @override
+  Future<int> get fileUploadLimit async {
+    final guildInstance = await this.guild.getOrDownload();
+    return guildInstance.fileUploadLimit;
+  }
+
+  @override
+  late final MessageCache messageCache = MessageCache._new(client._options.messageCacheSize);
 
   ThreadChannel._new(INyxx client, Map<String, dynamic> raw, [Snowflake? guildId]) : super._new(client, raw) {
     this.owner = new _MemberCacheable(client, Snowflake(raw["owner_id"]), this.guild);
@@ -35,8 +72,9 @@ class ThreadChannel extends MinimalGuildChannel implements TextChannel {
     this.archiveAfter = ThreadArchiveTime._new(meta["auto_archive_duration"] as int);
   }
 
-  /// Update [members] with the latest information from the API
-  Future<void> updateMembers() async => this.members = await client._httpEndpoints.getThreadMembers(this.id, this.guild.id);
+  /// Fetches from API current list of member that has access to that thread
+  Stream<ThreadMember> fetchMembers() =>
+      client._httpEndpoints.getThreadMembers(this.id, this.guild.id);
 
   @override
   Future<void> bulkRemoveMessages(Iterable<SnowflakeEntity> messages) =>
@@ -56,16 +94,6 @@ class ThreadChannel extends MinimalGuildChannel implements TextChannel {
   @override
   Future<Message> sendMessage(MessageBuilder builder) =>
       client._httpEndpoints.sendMessage(this.id, builder);
-
-  @override
-  Future<int> get fileUploadLimit async {
-    final guildInstance = await this.guild.getOrDownload();
-
-    return guildInstance.fileUploadLimit;
-  }
-
-  @override
-  late final MessageCache messageCache = MessageCache._new(client._options.messageCacheSize);
 
   @override
   Future<void> startTyping() async =>

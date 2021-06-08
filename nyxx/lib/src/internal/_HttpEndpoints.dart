@@ -190,7 +190,23 @@ abstract class IHttpEndpoints {
 
   Future<void> createThread(Snowflake channelId, ThreadBuilder builder);
 
-  Future<List<_MemberCacheable>> getThreadMembers(Snowflake channelId, Snowflake guildId);
+  Stream<ThreadMember> getThreadMembers(Snowflake channelId, Snowflake guildId);
+
+  Future<void> joinThread(Snowflake channelId);
+
+  Future<void> addThreadMember(Snowflake channelId, Snowflake userId);
+
+  Future<void> leaveThread(Snowflake channelId);
+
+  Future<void> removeThreadMember(Snowflake channelId, Snowflake userId);
+
+  Future<ThreadListResultWrapper> fetchActiveThreads(Snowflake channelId);
+
+  Future<ThreadListResultWrapper> fetchPublicArchivedThreads(Snowflake channelId, {DateTime? before, int? limit});
+
+  Future<ThreadListResultWrapper> fetchPrivateArchivedThreads(Snowflake channelId, {DateTime? before, int? limit});
+
+  Future<ThreadListResultWrapper> fetchJoinedPrivateArchivedThreads(Snowflake channelId, {DateTime? before, int? limit});
 
   Future<Message> suppressMessageEmbeds(
       Snowflake channelId, Snowflake messageId);
@@ -1181,20 +1197,18 @@ class _HttpEndpoints implements IHttpEndpoints {
   }
 
   @override
-  Future<List<_MemberCacheable>> getThreadMembers(Snowflake channelId, Snowflake guildId) async {
+  Stream<ThreadMember> getThreadMembers(Snowflake channelId, Snowflake guildId) async* {
     final response = await _httpClient._execute(BasicRequest._new("/channels/$channelId/thread-members"));
 
     if (response is HttpResponseSuccess) {
-      final body = response.jsonBody as List<dynamic>;
       final guild = new _GuildCacheable(_client, guildId);
 
-      return [
-        for(final id in body)
-          _MemberCacheable(_client, Snowflake(id), guild)
-      ];
+      for(final rawThreadMember in response.jsonBody as List<dynamic>) {
+        yield ThreadMember._new(_client, rawThreadMember as Map<String, dynamic>, guild);
+      }
     }
 
-    return Future.error(response);
+    yield* Stream.error(response);
   }
 
   // TODO: Manage message flags better
@@ -1544,5 +1558,53 @@ class _HttpEndpoints implements IHttpEndpoints {
     }
 
     return StageChannelInstance._new(_client, response._jsonBody as Map<String, dynamic>);
+  }
+
+  @override
+  Future<void> addThreadMember(Snowflake channelId, Snowflake userId) {
+    // TODO: implement addThreadMember
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<ThreadListResultWrapper> fetchActiveThreads(Snowflake channelId) {
+    // TODO: implement fetchActiveThreads
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<ThreadListResultWrapper> fetchJoinedPrivateArchivedThreads(Snowflake channelId, {DateTime? before, int? limit}) {
+    // TODO: implement fetchJoinedPrivateArchivedThreads
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<ThreadListResultWrapper> fetchPrivateArchivedThreads(Snowflake channelId, {DateTime? before, int? limit}) {
+    // TODO: implement fetchPrivateArchivedThreads
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<ThreadListResultWrapper> fetchPublicArchivedThreads(Snowflake channelId, {DateTime? before, int? limit}) {
+    // TODO: implement fetchPublicArchivedThreads
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> joinThread(Snowflake channelId) {
+    // TODO: implement joinThread
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> leaveThread(Snowflake channelId) {
+    // TODO: implement leaveThread
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> removeThreadMember(Snowflake channelId, Snowflake userId) {
+    // TODO: implement removeThreadMember
+    throw UnimplementedError();
   }
 }
