@@ -54,11 +54,11 @@ class Role extends SnowflakeEntity implements Mentionable {
 
   /// Edits the role.
   Future<Role> edit(RoleBuilder role, {String? auditReason}) async =>
-      client._httpEndpoints.editRole(this.guild.id, this.id, role, auditReason: auditReason);
+      client.httpEndpoints.editRole(this.guild.id, this.id, role, auditReason: auditReason);
 
   /// Deletes the role.
   Future<void> delete() async =>
-      client._httpEndpoints.deleteRole(guild.id, this.id);
+      client.httpEndpoints.deleteRole(guild.id, this.id);
 }
 
 /// Additional [Role] role tags which hold optional data about role

@@ -186,9 +186,9 @@ abstract class IHttpEndpoints {
 
   Future<void> crossPostGuildMessage(Snowflake channelId, Snowflake messageId);
 
-  Future<void> createThreadWithMessage(Snowflake channelId, Snowflake messageId, ThreadBuilder builder);
+  Future<ThreadPreviewChannel> createThreadWithMessage(Snowflake channelId, Snowflake messageId, ThreadBuilder builder);
 
-  Future<void> createThread(Snowflake channelId, ThreadBuilder builder);
+  Future<ThreadPreviewChannel> createThread(Snowflake channelId, ThreadBuilder builder);
 
   Stream<ThreadMember> getThreadMembers(Snowflake channelId, Snowflake guildId);
 

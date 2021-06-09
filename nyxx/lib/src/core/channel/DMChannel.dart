@@ -35,7 +35,7 @@ class DMChannel extends IChannel implements TextChannel {
 
   @override
   Future<void> startTyping() async =>
-      client._httpEndpoints.triggerTyping(this.id);
+      client.httpEndpoints.triggerTyping(this.id);
 
   @override
   void startTypingLoop() {
@@ -48,21 +48,21 @@ class DMChannel extends IChannel implements TextChannel {
 
   @override
   Future<void> bulkRemoveMessages(Iterable<SnowflakeEntity> messages) =>
-      client._httpEndpoints.bulkRemoveMessages(this.id, messages);
+      client.httpEndpoints.bulkRemoveMessages(this.id, messages);
 
   @override
   Stream<Message> downloadMessages({int limit = 50, Snowflake? after, Snowflake? around, Snowflake? before}) =>
-      client._httpEndpoints.downloadMessages(this.id, limit: limit, after: after, around: around, before: before);
+      client.httpEndpoints.downloadMessages(this.id, limit: limit, after: after, around: around, before: before);
 
   @override
   Future<Message> fetchMessage(Snowflake messageId) =>
-      client._httpEndpoints.fetchMessage(this.id, messageId);
+      client.httpEndpoints.fetchMessage(this.id, messageId);
 
   @override
   Message? getMessage(Snowflake id) => this.messageCache[id];
 
   @override
   Future<Message> sendMessage(MessageBuilder builder) =>
-      client._httpEndpoints.sendMessage(this.id,builder);
+      client.httpEndpoints.sendMessage(this.id,builder);
 
 }
