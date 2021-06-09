@@ -107,4 +107,15 @@ class ThreadChannel extends MinimalGuildChannel implements TextChannel {
 
   @override
   void stopTypingLoop() => this._typing?.cancel();
+
+  /// Leaves this thread channel
+  Future<void> leaveThread() => client._httpEndpoints.leaveGuild(this.id);
+
+  /// Removes [user] from [ThreadChannel]
+  Future<void> removeThreadMember(SnowflakeEntity user) =>
+      client._httpEndpoints.removeThreadMember(this.id, user.id);
+
+  /// Adds [user] to [ThreadChannel]
+  Future<void> addThreadMember(SnowflakeEntity user) =>
+      client._httpEndpoints.addThreadMember(this.id, user.id);
 }

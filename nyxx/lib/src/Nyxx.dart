@@ -403,6 +403,10 @@ class Nyxx extends NyxxRest {
     this.shardManager.setPresence(presenceBuilder);
   }
 
+  /// Join [ThreadChannel] with given [channelId]
+  Future<void> joinThread(Snowflake channelId) =>
+      this.httpEndpoints.joinThread(channelId);
+
   @override
   Future<void> dispose() async {
     this._logger.info("Disposing and closing bot...");

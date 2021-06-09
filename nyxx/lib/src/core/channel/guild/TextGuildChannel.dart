@@ -94,4 +94,20 @@ class TextGuildChannel extends GuildChannel implements TextChannel {
   @override
   Future<Message> sendMessage(MessageBuilder builder) =>
       client._httpEndpoints.sendMessage(this.id, builder);
+
+  /// Fetches all active threads in this channel
+  Future<ThreadListResultWrapper> fetchActiveThreads() =>
+      client._httpEndpoints.fetchActiveThreads(this.id);
+
+  /// Fetches joined private and archived thread channels
+  Future<ThreadListResultWrapper> fetchJoinedPrivateArchivedThreads({DateTime? before, int? limit}) =>
+      client._httpEndpoints.fetchJoinedPrivateArchivedThreads(this.id, before: before, limit: limit);
+
+  /// Fetches private, archived thread channels
+  Future<ThreadListResultWrapper> fetchPrivateArchivedThreads({DateTime? before, int? limit}) =>
+      client._httpEndpoints.fetchPrivateArchivedThreads(this.id, before: before, limit: limit);
+
+  /// Fetches public, archives thread channels
+  Future<ThreadListResultWrapper> fetchPublicArchivedThreads({DateTime? before, int? limit}) =>
+      client._httpEndpoints.fetchPublicArchivedThreads(this.id, before: before, limit: limit);
 }

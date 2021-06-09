@@ -1561,50 +1561,126 @@ class _HttpEndpoints implements IHttpEndpoints {
   }
 
   @override
-  Future<void> addThreadMember(Snowflake channelId, Snowflake userId) {
-    // TODO: implement addThreadMember
-    throw UnimplementedError();
+  Future<void> addThreadMember(Snowflake channelId, Snowflake userId) async {
+    final response = await _httpClient._execute(BasicRequest._new(
+        "/channels/$channelId/thread-members/$userId",
+        method: "PUT"
+    ));
+
+    if (response is HttpResponseError) {
+      return Future.error(response);
+    }
   }
 
   @override
-  Future<ThreadListResultWrapper> fetchActiveThreads(Snowflake channelId) {
-    // TODO: implement fetchActiveThreads
-    throw UnimplementedError();
+  Future<ThreadListResultWrapper> fetchActiveThreads(Snowflake channelId) async {
+    final response = await _httpClient._execute(BasicRequest._new(
+        "/channels/$channelId/threads/active"
+    ));
+
+    if (response is HttpResponseError) {
+      return Future.error(response);
+    }
+
+    return ThreadListResultWrapper._new(
+      _client,
+      (response as HttpResponseSuccess).jsonBody as Map<String, dynamic>
+    );
   }
 
   @override
-  Future<ThreadListResultWrapper> fetchJoinedPrivateArchivedThreads(Snowflake channelId, {DateTime? before, int? limit}) {
-    // TODO: implement fetchJoinedPrivateArchivedThreads
-    throw UnimplementedError();
+  Future<ThreadListResultWrapper> fetchJoinedPrivateArchivedThreads(Snowflake channelId, {DateTime? before, int? limit}) async {
+    final response = await _httpClient._execute(BasicRequest._new(
+      "/channels/$channelId/users/@me/threads/archived/private",
+      queryParams: {
+        if (before != null) "before": before.toIso8601String(),
+        if (limit != null) "limit": limit
+      }
+    ));
+
+    if (response is HttpResponseError) {
+      return Future.error(response);
+    }
+
+    return ThreadListResultWrapper._new(
+        _client,
+        (response as HttpResponseSuccess).jsonBody as Map<String, dynamic>
+    );
   }
 
   @override
-  Future<ThreadListResultWrapper> fetchPrivateArchivedThreads(Snowflake channelId, {DateTime? before, int? limit}) {
-    // TODO: implement fetchPrivateArchivedThreads
-    throw UnimplementedError();
+  Future<ThreadListResultWrapper> fetchPrivateArchivedThreads(Snowflake channelId, {DateTime? before, int? limit}) async {
+    final response = await _httpClient._execute(BasicRequest._new(
+        "/channels/$channelId/threads/archived/private",
+        queryParams: {
+          if (before != null) "before": before.toIso8601String(),
+          if (limit != null) "limit": limit
+        }
+    ));
+
+    if (response is HttpResponseError) {
+      return Future.error(response);
+    }
+
+    return ThreadListResultWrapper._new(
+        _client,
+        (response as HttpResponseSuccess).jsonBody as Map<String, dynamic>
+    );
   }
 
   @override
-  Future<ThreadListResultWrapper> fetchPublicArchivedThreads(Snowflake channelId, {DateTime? before, int? limit}) {
-    // TODO: implement fetchPublicArchivedThreads
-    throw UnimplementedError();
+  Future<ThreadListResultWrapper> fetchPublicArchivedThreads(Snowflake channelId, {DateTime? before, int? limit}) async {
+    final response = await _httpClient._execute(BasicRequest._new(
+        "/channels/$channelId/threads/archived/public",
+        queryParams: {
+          if (before != null) "before": before.toIso8601String(),
+          if (limit != null) "limit": limit
+        }
+    ));
+
+    if (response is HttpResponseError) {
+      return Future.error(response);
+    }
+
+    return ThreadListResultWrapper._new(
+        _client,
+        (response as HttpResponseSuccess).jsonBody as Map<String, dynamic>
+    );
   }
 
   @override
-  Future<void> joinThread(Snowflake channelId) {
-    // TODO: implement joinThread
-    throw UnimplementedError();
+  Future<void> joinThread(Snowflake channelId) async {
+    final response = await _httpClient._execute(BasicRequest._new(
+      "/channels/$channelId/thread-members/@me",
+      method: "PUT"
+    ));
+
+    if (response is HttpResponseError) {
+      return Future.error(response);
+    }
   }
 
   @override
-  Future<void> leaveThread(Snowflake channelId) {
-    // TODO: implement leaveThread
-    throw UnimplementedError();
+  Future<void> leaveThread(Snowflake channelId) async {
+    final response = await _httpClient._execute(BasicRequest._new(
+        "/channels/$channelId/thread-members/@me",
+        method: "DELETE"
+    ));
+
+    if (response is HttpResponseError) {
+      return Future.error(response);
+    }
   }
 
   @override
-  Future<void> removeThreadMember(Snowflake channelId, Snowflake userId) {
-    // TODO: implement removeThreadMember
-    throw UnimplementedError();
+  Future<void> removeThreadMember(Snowflake channelId, Snowflake userId) async {
+    final response = await _httpClient._execute(BasicRequest._new(
+        "/channels/$channelId/thread-members/$userId",
+        method: "DELETE"
+    ));
+
+    if (response is HttpResponseError) {
+      return Future.error(response);
+    }
   }
 }
