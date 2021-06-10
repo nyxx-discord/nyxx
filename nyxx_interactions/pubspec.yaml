@@ -15,7 +15,3 @@ dependencies:
 
 dev_dependencies:
   test: "^1.16.8"
-
-dependency_overrides:
-  nyxx:
-    path: "../nyxx"
