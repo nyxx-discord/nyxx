@@ -36,7 +36,7 @@ void main() {
       // e.message.channel.getFromCache()?.sendMessage(files: [attachment], embed: embed, content: "HEJKA!");
       e.message.channel.sendMessage(
           MessageBuilder.content("HEJKA!")
-            ..embed = embed
+            ..embeds = [embed]
             ..files = [attachment]
       );
     }

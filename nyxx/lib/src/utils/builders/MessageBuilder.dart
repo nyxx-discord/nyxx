@@ -58,7 +58,7 @@ class MessageBuilder extends BuilderWithClient {
   factory MessageBuilder.fromMessage(Message message) => MessageBuilder()
         ..content = message.content
         ..tts = message.tts
-        ..embed = message.embeds.first.toBuilder()
+        ..embeds = message.embeds.map((e) => e.toBuilder()).toList()
         ..replyBuilder = message.referencedMessage?.toBuilder();
 
   /// Allows to add embed to message
