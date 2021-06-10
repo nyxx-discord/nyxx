@@ -11,6 +11,9 @@ class EmbedFooterBuilder extends Builder {
   /// Length of footer
   int? get length => text?.length;
 
+  /// Create empty [EmbedFooterBuilder]
+  EmbedFooterBuilder();
+
   @override
 
   /// Builds object to Map() instance;

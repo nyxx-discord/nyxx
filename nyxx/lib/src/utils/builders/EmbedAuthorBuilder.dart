@@ -14,6 +14,10 @@ class EmbedAuthorBuilder extends Builder {
   /// Returns length of embeds author section
   int? get length => name?.length;
 
+  /// Create empty [EmbedAuthorBuilder]
+  EmbedAuthorBuilder();
+
+
   @override
 
   /// Builds object to Map() instance;

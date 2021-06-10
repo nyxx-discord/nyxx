@@ -37,7 +37,7 @@ class EmbedBuilder extends Builder {
 
   /// Creates clean instance [EmbedBuilder]
   EmbedBuilder() {
-    fields = [];
+    this.fields = [];
   }
 
   /// Adds author to embed.
