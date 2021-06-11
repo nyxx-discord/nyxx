@@ -1,0 +1,19 @@
+name: nyxx_lavalink
+version: 1.0.0
+description: Nyxx Lavalink Module. Discord library for Dart. Simple, robust framework for creating discord bots for Dart language.
+homepage: https://github.com/l7ssha/nyxx
+repository: https://github.com/l7ssha/nyxx
+documentation: https://github.com/l7ssha/nyxx/wiki
+issue_tracker: https://github.com/l7ssha/nyxx/issues
+
+environment:
+  sdk: '>=2.12.0 <3.0.0'
+
+dependencies:
+   http: "^0.13.1"
+   logging: "^1.0.1"
+   nyxx: "2.0.0-rc.5"
+
+dev_dependencies:
+  pedantic: ^1.10.0
+  test: ^1.16.0
