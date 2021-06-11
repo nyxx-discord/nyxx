@@ -56,7 +56,7 @@ void main() {
     await channel.sendMessage(MessageBuilder.content("@everyone HEJ")..allowedMentions = AllowedMentions());
 
     print("TESTING EMBEDS");
-    await channel.sendMessage(MessageBuilder.content("Testing embed!")..embed = createTestEmbed());
+    await channel.sendMessage(MessageBuilder.content("Testing embed!")..embeds = [createTestEmbed()]);
   });
 
   bot.onMessageReceived.listen((e) async {

@@ -125,3 +125,7 @@ jobs:
       - name: Analyze project source
         working-directory: ./nyxx_interactions
         run: dart analyze
+
+      - name: Unit tests
+        working-directory: ./nyxx_interactions
+        run: dart test test/unit.dart
