@@ -14,7 +14,7 @@ class VoiceGuildChannel extends GuildChannel {
 
   /// Edits channel properties
   Future<VoiceGuildChannel> edit({String? name, int? bitrate, int? position, int? userLimit, String? auditReason}) =>
-      client._httpEndpoints.editVoiceChannel(this.id, name: name, bitrate: bitrate, position: position, userLimit: userLimit, auditReason: auditReason);
+      client.httpEndpoints.editVoiceChannel(this.id, name: name, bitrate: bitrate, position: position, userLimit: userLimit, auditReason: auditReason);
 
   /// Connects client to channel
   void connect({bool selfMute = false, bool selfDeafen = false}) {

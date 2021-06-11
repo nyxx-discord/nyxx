@@ -6,21 +6,27 @@ class ThreadMembersUpdateEvent {
   late final CacheableTextChannel<ThreadChannel> thread;
 
   /// The guild it was updated in
-  late final _GuildCacheable guild;
+  late final Cacheable<Snowflake, Guild> guild;
 
-  /// The members that were added
-  late final List<_MemberCacheable> addedMembers;
+  /// The members that were added. Note that they are not cached
+  late final List<Cacheable<Snowflake, Member>> addedMembers;
 
   ThreadMembersUpdateEvent._new(Map<String, dynamic> raw, Nyxx client) {
     final data = raw["d"] as Map<String, dynamic>;
+
     this.thread = new CacheableTextChannel._new(client, Snowflake(data["id"]));
     this.guild = new _GuildCacheable(client, Snowflake(data["guild_id"]));
+
     addedMembers = [];
     if(data["added_members"] != null) {
-      for(final dynamic memberData in data["added_members"] as List<dynamic>) {
-        final member = memberData as Map<String, dynamic>;
-        addedMembers.add(new _MemberCacheable(client, Snowflake(member["user_id"]), this.guild));
+      for(final memberData in data["added_members"] as List<dynamic>) {
+        addedMembers.add(new _MemberCacheable(client, Snowflake(memberData["user_id"]), this.guild));
       }
     }
   }
+}
+
+/// Fired when current bots user is updated in context of thread channel.
+class ThreadMemberUpdateEvent {
+
 }

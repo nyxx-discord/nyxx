@@ -348,30 +348,30 @@ class Nyxx extends NyxxRest {
 
   /// This endpoint is only for public guilds if bot is not int the guild.
   Future<GuildPreview> fetchGuildPreview(Snowflake guildId) async =>
-    this._httpEndpoints.fetchGuildPreview(guildId);
+    this.httpEndpoints.fetchGuildPreview(guildId);
 
   /// Returns guild with given [guildId]
   Future<Guild> fetchGuild(Snowflake guildId) =>
-      this._httpEndpoints.fetchGuild(guildId);
+      this.httpEndpoints.fetchGuild(guildId);
 
   /// Returns channel with specified id.
   /// ```
   /// var channel = await client.getChannel<TextChannel>(Snowflake("473853847115137024"));
   /// ```
   Future<T> fetchChannel<T extends IChannel>(Snowflake channelId) =>
-      this._httpEndpoints.fetchChannel(channelId);
+      this.httpEndpoints.fetchChannel(channelId);
 
   /// Get user instance with specified id.
   /// ```
   /// var user = client.getUser(Snowflake("302359032612651009"));
   /// ``
   Future<User> fetchUser(Snowflake userId) =>
-      this._httpEndpoints.fetchUser(userId);
+      this.httpEndpoints.fetchUser(userId);
 
   /// Gets a webhook by its id and/or token.
   /// If token is supplied authentication is not needed.
   Future<Webhook> fetchWebhook(Snowflake id, {String token = ""}) =>
-      this._httpEndpoints.fetchWebhook(id, token: token);
+      this.httpEndpoints.fetchWebhook(id, token: token);
 
   /// Gets an [Invite] object with given code.
   /// If the [code] is in cache - it will be taken from it, otherwise API will be called.
@@ -380,7 +380,7 @@ class Nyxx extends NyxxRest {
   /// var inv = client.getInvite("YMgffU8");
   /// ```
   Future<Invite> getInvite(String code) =>
-      this._httpEndpoints.fetchInvite(code);
+      this.httpEndpoints.fetchInvite(code);
 
   /// Returns number of shards
   int get shards => this.shardManager._shards.length;
@@ -402,6 +402,10 @@ class Nyxx extends NyxxRest {
   void setPresence(PresenceBuilder presenceBuilder) {
     this.shardManager.setPresence(presenceBuilder);
   }
+
+  /// Join [ThreadChannel] with given [channelId]
+  Future<void> joinThread(Snowflake channelId) =>
+      this.httpEndpoints.joinThread(channelId);
 
   @override
   Future<void> dispose() async {
