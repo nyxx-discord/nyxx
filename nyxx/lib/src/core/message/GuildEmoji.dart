@@ -66,9 +66,9 @@ class GuildEmoji extends GuildEmojiPartial implements IEmoji {
 
   /// Allows to delete guild emoji
   Future<void> delete() =>
-      client._httpEndpoints.deleteGuildEmoji(this.guild.id, this.id);
+      client.httpEndpoints.deleteGuildEmoji(this.guild.id, this.id);
 
   /// Allows to edit guild emoji
   Future<void> edit({String? name, List<Snowflake>? roles}) =>
-      client._httpEndpoints.editGuildEmoji(this.guild.id, this.id, name: name, roles: roles);
+      client.httpEndpoints.editGuildEmoji(this.guild.id, this.id, name: name, roles: roles);
 }

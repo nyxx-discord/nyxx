@@ -53,7 +53,7 @@ class Invite {
 
   /// Deletes this [Invite].
   Future<void> delete({String? auditReason}) async =>
-    client._httpEndpoints.deleteInvite(this.code, auditReason: auditReason);
+    client.httpEndpoints.deleteInvite(this.code, auditReason: auditReason);
 }
 
 /// Invite object with additional metadata

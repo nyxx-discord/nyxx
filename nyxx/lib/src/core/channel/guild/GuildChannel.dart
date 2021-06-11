@@ -80,21 +80,21 @@ abstract class GuildChannel extends MinimalGuildChannel {
   /// var invites = await chan.getChannelInvites();
   /// ```
   Stream<InviteWithMeta> fetchChannelInvites() =>
-      client._httpEndpoints.fetchChannelInvites(this.id);
+      client.httpEndpoints.fetchChannelInvites(this.id);
 
   /// Allows to set or edit permissions for channel. [id] can be either User or Role
   /// Throws if [id] isn't [User] or [Role]
   Future<void> editChannelPermissions(PermissionsBuilder perms, SnowflakeEntity entity, {String? auditReason}) =>
-      client._httpEndpoints.editChannelPermissions(this.id, perms, entity, auditReason: auditReason);
+      client.httpEndpoints.editChannelPermissions(this.id, perms, entity, auditReason: auditReason);
 
   /// Allows to edit or set channel permission overrides.
   Future<void> editChannelPermissionOverrides(PermissionOverrideBuilder permissionBuilder, {String? auditReason}) =>
-      client._httpEndpoints.editChannelPermissionOverrides(this.id, permissionBuilder, auditReason: auditReason);
+      client.httpEndpoints.editChannelPermissionOverrides(this.id, permissionBuilder, auditReason: auditReason);
 
   /// Deletes permission overwrite for given User or Role [entity]
   /// Throws if [entity] isn't [User] or [Role]
   Future<void> deleteChannelPermission(SnowflakeEntity entity, {String? auditReason}) =>
-      client._httpEndpoints.deleteChannelPermission(this.id, entity, auditReason: auditReason);
+      client.httpEndpoints.deleteChannelPermission(this.id, entity, auditReason: auditReason);
 
   /// Creates new [Invite] for [IChannel] and returns it"s instance
   ///
@@ -102,7 +102,7 @@ abstract class GuildChannel extends MinimalGuildChannel {
   /// var invite = await channel.createInvite(maxUses: 2137);
   /// ```
   Future<Invite> createInvite({int? maxAge, int? maxUses, bool? temporary, bool? unique, String? auditReason}) =>
-      client._httpEndpoints.createInvite(this.id, maxAge: maxAge, maxUses: maxUses, temporary: temporary, unique: unique, auditReason: auditReason);
+      client.httpEndpoints.createInvite(this.id, maxAge: maxAge, maxUses: maxUses, temporary: temporary, unique: unique, auditReason: auditReason);
 }
 
 abstract class MinimalGuildChannel extends IChannel {
