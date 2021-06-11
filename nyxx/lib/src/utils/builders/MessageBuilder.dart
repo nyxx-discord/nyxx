@@ -15,7 +15,7 @@ class MessageBuilder extends BuilderWithClient {
   ReplyBuilder? replyBuilder;
 
   /// Embed to include in message
-  EmbedBuilder? embed;
+  List<EmbedBuilder> embeds = [];
 
   /// [AllowedMentions] object to control mentions in message
   AllowedMentions? allowedMentions;
@@ -51,20 +51,21 @@ class MessageBuilder extends BuilderWithClient {
   /// Creates [MessageBuilder] with only embed
   factory MessageBuilder.embed(EmbedBuilder embed) =>
       MessageBuilder()
-        ..embed = embed;
+        ..embeds = [embed];
 
   /// Creates [MessageBuilder] from [Message].
   /// Copies content, tts and first embed of target [message]
   factory MessageBuilder.fromMessage(Message message) => MessageBuilder()
         ..content = message.content
         ..tts = message.tts
-        ..embed = message.embeds.first.toBuilder()
+        ..embeds = message.embeds.map((e) => e.toBuilder()).toList()
         ..replyBuilder = message.referencedMessage?.toBuilder();
 
   /// Allows to add embed to message
-  void setEmbed(void Function(EmbedBuilder embed) builder) {
-    this.embed = EmbedBuilder();
-    builder(embed!);
+  void addEmbed(void Function(EmbedBuilder embed) builder) {
+    final e = EmbedBuilder();
+    builder(e);
+    this.embeds.add(e);
   }
 
   /// Appends clear character. Can be used to skip first line in message body.
@@ -133,7 +134,7 @@ class MessageBuilder extends BuilderWithClient {
 
   /// Returns if this instance of message builder can be used when editing message
   bool canBeUsedAsNewMessage() =>
-      this.content.isNotEmpty || embed != null || (this.files != null && this.files!.isNotEmpty);
+      this.content.isNotEmpty || embeds.isNotEmpty || (this.files != null && this.files!.isNotEmpty);
 
   @override
   Map<String, dynamic> build(INyxx client) {
@@ -141,7 +142,7 @@ class MessageBuilder extends BuilderWithClient {
 
     return <String, dynamic>{
       if (content.isNotEmpty) "content": content.toString(),
-      if (embed != null) "embed": embed!.build(),
+      if (embeds.isNotEmpty) "embeds": [for (final e in embeds) e.build()],
       if (allowedMentions != null) "allowed_mentions": allowedMentions!.build(),
       if (replyBuilder != null) "message_reference": replyBuilder!.build(),
       if (tts != null) "tts": tts,
