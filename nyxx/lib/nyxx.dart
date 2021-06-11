@@ -127,6 +127,7 @@ part "src/internal/interfaces/Disposable.dart";
 part "src/internal/interfaces/IMessageAuthor.dart";
 part "src/internal/interfaces/ISend.dart";
 part "src/internal/interfaces/Mentionable.dart";
+part "src/internal/response_wrapper/ThreadListResultWrapper.dart";
 part "src/internal/shard/Shard.dart";
 part "src/internal/shard/ShardManager.dart";
 part "src/internal/shard/shardHandler.dart";

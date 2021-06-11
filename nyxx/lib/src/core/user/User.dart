@@ -78,7 +78,7 @@ class User extends SnowflakeEntity with Mentionable, IMessageAuthor implements I
   /// In case if user does not have avatar, default discord avatar will be returned with specified size and png format.
   @override
   String avatarURL({String format = "webp", int size = 128}) =>
-      client._httpEndpoints.userAvatarURL(this.id, this.avatar, this.discriminator, format: format, size: size);
+      client.httpEndpoints.userAvatarURL(this.id, this.avatar, this.discriminator, format: format, size: size);
 
   /// Sends a message to user.
   @override

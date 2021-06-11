@@ -104,98 +104,108 @@ class Permissions implements Convertable<PermissionsBuilder> {
   /// Allows for requesting to speak in stage channels
   late final bool requestToSpeak;
 
+  /// Allows for deleting and archiving threads, and viewing all private threads
+  late final bool manageThreads;
+
+  /// Allows for creating and participating in threads
+  late final bool usePublicThreads;
+
+  /// Allows for creating and participating in private threads
+  late final bool usePrivateThreads;
+
   /// Makes a [Permissions] object from a raw permission code.
-  Permissions.fromInt(int permissions) {
-    _construct(permissions);
-  }
+  factory Permissions.fromInt(int permissions) =>
+      Permissions._construct(permissions);
 
   /// Permissions with value of 0
-  Permissions.empty() {
-    _construct(0);
-  }
+  factory Permissions.empty() =>
+      Permissions._construct(0);
 
   /// Permissions with max value
   @Deprecated("Needs to be updated")
-  Permissions.all() {
-    _construct(PermissionsConstants.allPermissions);
-  }
+  factory Permissions.all() =>
+      Permissions._construct(PermissionsConstants.allPermissions);
 
   /// Makes a [Permissions] object from overwrite object
-  Permissions.fromOverwrite(int permissions, int allow, int deny) {
-    _construct(PermissionsUtils.apply(permissions, allow, deny));
-  }
+  factory Permissions.fromOverwrite(int permissions, int allow, int deny) =>
+      Permissions._construct(PermissionsUtils.apply(permissions, allow, deny));
 
-  void _construct(int permissions) {
-    this.raw = permissions;
-
+  Permissions._construct(this.raw) {
     this.createInstantInvite = PermissionsUtils.isApplied(
-        permissions, PermissionsConstants.createInstantInvite);
+        this.raw, PermissionsConstants.createInstantInvite);
     this.kickMembers = PermissionsUtils.isApplied(
-        permissions, PermissionsConstants.kickMembers);
+        this.raw, PermissionsConstants.kickMembers);
     this.banMembers = PermissionsUtils.isApplied(
-        permissions, PermissionsConstants.banMembers);
+        this.raw, PermissionsConstants.banMembers);
     this.administrator = PermissionsUtils.isApplied(
-        permissions, PermissionsConstants.administrator);
+        this.raw, PermissionsConstants.administrator);
     this.manageChannels = PermissionsUtils.isApplied(
-        permissions, PermissionsConstants.manageChannels);
+        this.raw, PermissionsConstants.manageChannels);
     this.manageGuild = PermissionsUtils.isApplied(
-        permissions, PermissionsConstants.manageGuild);
+        this.raw, PermissionsConstants.manageGuild);
     this.addReactions = PermissionsUtils.isApplied(
-        permissions, PermissionsConstants.addReactions);
+        this.raw, PermissionsConstants.addReactions);
     this.viewAuditLog = PermissionsUtils.isApplied(
-        permissions, PermissionsConstants.viewAuditLog);
+        this.raw, PermissionsConstants.viewAuditLog);
     this.viewChannel = PermissionsUtils.isApplied(
-        permissions, PermissionsConstants.viewChannel);
+        this.raw, PermissionsConstants.viewChannel);
     this.sendMessages = PermissionsUtils.isApplied(
-        permissions, PermissionsConstants.sendMessages);
+        this.raw, PermissionsConstants.sendMessages);
     this.prioritySpeaker = PermissionsUtils.isApplied(
-        permissions, PermissionsConstants.prioritySpeaker);
+        this.raw, PermissionsConstants.prioritySpeaker);
     this.sendTtsMessages = PermissionsUtils.isApplied(
-        permissions, PermissionsConstants.sendTtsMessages);
+        this.raw, PermissionsConstants.sendTtsMessages);
     this.manageMessages = PermissionsUtils.isApplied(
-        permissions, PermissionsConstants.manageMessages);
+        this.raw, PermissionsConstants.manageMessages);
     this.embedLinks = PermissionsUtils.isApplied(
-        permissions, PermissionsConstants.embedLinks);
+        this.raw, PermissionsConstants.embedLinks);
     this.attachFiles = PermissionsUtils.isApplied(
-        permissions, PermissionsConstants.attachFiles);
+        this.raw, PermissionsConstants.attachFiles);
     this.readMessageHistory = PermissionsUtils.isApplied(
-        permissions, PermissionsConstants.readMessageHistory);
+        this.raw, PermissionsConstants.readMessageHistory);
     this.mentionEveryone = PermissionsUtils.isApplied(
-        permissions, PermissionsConstants.mentionEveryone);
+        this.raw, PermissionsConstants.mentionEveryone);
     this.useExternalEmojis = PermissionsUtils.isApplied(
-        permissions, PermissionsConstants.externalEmojis);
+        this.raw, PermissionsConstants.externalEmojis);
     this.connect =
-        PermissionsUtils.isApplied(permissions, PermissionsConstants.connect);
+        PermissionsUtils.isApplied(this.raw, PermissionsConstants.connect);
     this.speak =
-        PermissionsUtils.isApplied(permissions, PermissionsConstants.speak);
+        PermissionsUtils.isApplied(this.raw, PermissionsConstants.speak);
     this.muteMembers = PermissionsUtils.isApplied(
-        permissions, PermissionsConstants.muteMembers);
+        this.raw, PermissionsConstants.muteMembers);
     this.deafenMembers = PermissionsUtils.isApplied(
-        permissions, PermissionsConstants.deafenMembers);
+        this.raw, PermissionsConstants.deafenMembers);
     this.moveMembers = PermissionsUtils.isApplied(
-        permissions, PermissionsConstants.moveMembers);
+        this.raw, PermissionsConstants.moveMembers);
     this.useVad =
-        PermissionsUtils.isApplied(permissions, PermissionsConstants.useVad);
+        PermissionsUtils.isApplied(this.raw, PermissionsConstants.useVad);
     this.changeNickname = PermissionsUtils.isApplied(
-        permissions, PermissionsConstants.changeNickname);
+        this.raw, PermissionsConstants.changeNickname);
     this.manageNicknames = PermissionsUtils.isApplied(
-        permissions, PermissionsConstants.manageNicknames);
+        this.raw, PermissionsConstants.manageNicknames);
     this.manageRoles = PermissionsUtils.isApplied(
-        permissions, PermissionsConstants.manageRolesOrPermissions);
+        this.raw, PermissionsConstants.manageRolesOrPermissions);
     this.manageWebhooks = PermissionsUtils.isApplied(
-        permissions, PermissionsConstants.manageWebhooks);
+        this.raw, PermissionsConstants.manageWebhooks);
 
     this.manageEmojis = PermissionsUtils.isApplied(
-        permissions, PermissionsConstants.manageEmojis);
+        this.raw, PermissionsConstants.manageEmojis);
     this.stream =
-        PermissionsUtils.isApplied(permissions, PermissionsConstants.stream);
+        PermissionsUtils.isApplied(this.raw, PermissionsConstants.stream);
     this.viewGuildInsights = PermissionsUtils.isApplied(
-        permissions, PermissionsConstants.viewGuildInsights);
+        this.raw, PermissionsConstants.viewGuildInsights);
 
     this.useSlashCommands = PermissionsUtils.isApplied(
-        permissions, PermissionsConstants.useSlashCommands);
+        this.raw, PermissionsConstants.useSlashCommands);
     this.requestToSpeak = PermissionsUtils.isApplied(
-        permissions, PermissionsConstants.useSlashCommands);
+        this.raw, PermissionsConstants.useSlashCommands);
+
+    this.manageThreads = PermissionsUtils.isApplied(
+        this.raw, PermissionsConstants.manageThreads);
+    this.usePublicThreads = PermissionsUtils.isApplied(
+        this.raw, PermissionsConstants.usePublicThreads);
+    this.usePrivateThreads = PermissionsUtils.isApplied(
+        this.raw, PermissionsConstants.usePrivateThreads);
   }
 
   /// Returns true if this permissions has [permission]

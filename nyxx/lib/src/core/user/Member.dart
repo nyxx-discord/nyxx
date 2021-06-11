@@ -103,7 +103,7 @@ class Member extends SnowflakeEntity {
 
   /// Bans the member and optionally deletes [deleteMessageDays] days worth of messages.
   Future<void> ban({int? deleteMessageDays, String? reason, String? auditReason}) async =>
-      client._httpEndpoints.guildBan(this.guild.id, this.id, auditReason: auditReason);
+      client.httpEndpoints.guildBan(this.guild.id, this.id, auditReason: auditReason);
 
   /// Adds role to user.
   ///
@@ -112,19 +112,19 @@ class Member extends SnowflakeEntity {
   /// await member.addRole(r);
   /// ```
   Future<void> addRole(SnowflakeEntity role, {String? auditReason}) =>
-      client._httpEndpoints.addRoleToUser(this.guild.id, role.id, this.id, auditReason: auditReason);
+      client.httpEndpoints.addRoleToUser(this.guild.id, role.id, this.id, auditReason: auditReason);
 
   /// Removes [role] from user.
   Future<void> removeRole(SnowflakeEntity role, {String? auditReason}) =>
-      client._httpEndpoints.removeRoleFromUser(this.guild.id, role.id, this.id, auditReason: auditReason);
+      client.httpEndpoints.removeRoleFromUser(this.guild.id, role.id, this.id, auditReason: auditReason);
 
   /// Kicks the member from guild
   Future<void> kick({String? auditReason}) =>
-      client._httpEndpoints.guildKick(this.guild.id, this.id);
+      client.httpEndpoints.guildKick(this.guild.id, this.id);
 
   /// Edits members. Allows to move user in voice channel, mute or deaf, change nick, roles.
   Future<void> edit({String? nick, List<SnowflakeEntity>? roles, bool? mute, bool? deaf, SnowflakeEntity? channel, String? auditReason}) =>
-      client._httpEndpoints.editGuildMember(this.guild.id, this.id, nick: nick, roles: roles, mute: mute, deaf: deaf, channel: channel, auditReason: auditReason);
+      client.httpEndpoints.editGuildMember(this.guild.id, this.id, nick: nick, roles: roles, mute: mute, deaf: deaf, channel: channel, auditReason: auditReason);
 
   void _updateMember(String? nickname, List<Snowflake> roles, DateTime? boostingSince) {
     if (this.nickname != nickname) {
