@@ -809,8 +809,7 @@ class _HttpEndpoints implements IHttpEndpoints {
 
   @override
   Stream<Role> fetchGuildRoles(Snowflake guildId) async* {
-    final response =
-        _httpClient._execute(BasicRequest._new("/guilds/$guildId/roles"));
+    final response = await _httpClient._execute(BasicRequest._new("/guilds/$guildId/roles"));
 
     if (response is HttpResponseError) {
       yield* Stream.error(response);
@@ -834,8 +833,7 @@ class _HttpEndpoints implements IHttpEndpoints {
 
   @override
   Future<User> fetchUser(Snowflake userId) async {
-    final response =
-        await _httpClient._execute(BasicRequest._new("/users/$userId"));
+    final response = await _httpClient._execute(BasicRequest._new("/users/$userId"));
 
     if (response is HttpResponseError) {
       return Future.error(response);
@@ -878,8 +876,7 @@ class _HttpEndpoints implements IHttpEndpoints {
 
   @override
   Stream<InviteWithMeta> fetchChannelInvites(Snowflake channelId) async* {
-    final response = await _httpClient
-        ._execute(BasicRequest._new("/channels/$channelId/invites"));
+    final response = await _httpClient._execute(BasicRequest._new("/channels/$channelId/invites"));
 
     if (response is HttpResponseError) {
       yield* Stream.error(response);
@@ -993,15 +990,13 @@ class _HttpEndpoints implements IHttpEndpoints {
 
   @override
   Future<Message> fetchMessage(Snowflake channelId, Snowflake messageId) async {
-    final response = await _httpClient._execute(
-        BasicRequest._new("/channels/$channelId/messages/$messageId"));
+    final response = await _httpClient._execute(BasicRequest._new("/channels/$channelId/messages/$messageId"));
 
     if (response is HttpResponseError) {
       return Future.error(response);
     }
 
-    return Message._deserialize(_client,
-        (response as HttpResponseSuccess)._jsonBody as Map<String, dynamic>);
+    return Message._deserialize(_client, (response as HttpResponseSuccess)._jsonBody as Map<String, dynamic>);
   }
 
   @override
@@ -1155,12 +1150,10 @@ class _HttpEndpoints implements IHttpEndpoints {
   }
 
   @override
-  Future<void> triggerTyping(Snowflake channelId) => _httpClient._execute(
-      BasicRequest._new("/channels/$channelId/typing", method: "POST"));
+  Future<void> triggerTyping(Snowflake channelId) => _httpClient._execute(BasicRequest._new("/channels/$channelId/typing", method: "POST"));
 
   @override
-  Future<void> crossPostGuildMessage(
-          Snowflake channelId, Snowflake messageId) async =>
+  Future<void> crossPostGuildMessage(Snowflake channelId, Snowflake messageId) async =>
       _httpClient._execute(BasicRequest._new(
           "/channels/$channelId/messages/$messageId/crosspost",
           method: "POST"));
