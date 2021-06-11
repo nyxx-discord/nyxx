@@ -735,10 +735,8 @@ class _HttpEndpoints implements IHttpEndpoints {
   }
 
   @override
-  Stream<Member> fetchGuildMembers(Snowflake guildId,
-      {int limit = 1, Snowflake? after}) async* {
-    final request = _httpClient._execute(
-        BasicRequest._new("/guilds/$guildId/members", queryParams: {
+  Stream<Member> fetchGuildMembers(Snowflake guildId, {int limit = 1, Snowflake? after}) async* {
+    final request = await _httpClient._execute(BasicRequest._new("/guilds/$guildId/members", queryParams: {
       "limit": limit.toString(),
       if (after != null) "after": after.toString()
     }));
