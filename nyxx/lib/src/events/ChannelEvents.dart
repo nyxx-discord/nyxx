@@ -9,7 +9,9 @@ class ChannelCreateEvent {
   ChannelCreateEvent._new(Map<String, dynamic> raw, Nyxx client) {
     this.channel = IChannel._deserialize(client, raw["d"] as Map<String, dynamic>);
 
-    client.channels[this.channel.id] = this.channel;
+    if (client._cacheOptions.channelCachePolicyLocation.event && client._cacheOptions.channelCachePolicy.canCache(this.channel)) {
+      client.channels[this.channel.id] = this.channel;
+    }
   }
 }
 

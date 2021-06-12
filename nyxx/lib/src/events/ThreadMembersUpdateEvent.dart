@@ -25,8 +25,3 @@ class ThreadMembersUpdateEvent {
     }
   }
 }
-
-/// Fired when current bots user is updated in context of thread channel.
-class ThreadMemberUpdateEvent {
-
-}
