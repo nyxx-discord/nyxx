@@ -18,5 +18,9 @@ void main() async {
 
   await for (final msg in client.onMessageReceived) {
     print(msg);
+
+    final channel = await client.fetchChannel<VoiceGuildChannel>(769699425089748992.toSnowflake());
+
+    channel.connect();
   }
 }

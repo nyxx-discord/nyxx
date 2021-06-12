@@ -52,11 +52,6 @@ class Node {
 
     if (player == null) return;
 
-    if (player.queue.isEmpty) {
-      await stop(guildId);
-      return;
-    }
-
     final track = player.queue[0];
 
     player.nowPlaying = track;
@@ -76,11 +71,30 @@ class Node {
 
   /// Stops a player
   Future<void> stop(Snowflake guildId) async {
+    final player = this.players[guildId];
+
+    if (player == null) return;
+
+    player.queue.clear();
+    player.nowPlaying = null;
+
     await _sendPayload("stop", guildId);
   }
 
   Future<void> skip(Snowflake guildId) async {
-    // TODO: implement skip logic
+    final player = this.players[guildId];
+
+    if (player == null) return;
+
+    if (player.queue.isEmpty) {
+      return;
+    } else if (player.queue.length == 1) {
+      await stop(guildId);
+      return;
+    } else {
+      player.queue.removeAt(0);
+      await this._playNext(guildId);
+    }
   }
 
   Future<void> setPause(Snowflake guildId, bool pause) async {

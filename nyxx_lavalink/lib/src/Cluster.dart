@@ -12,6 +12,9 @@ class Cluster {
   /// All available nodes
   final Map<int, Node> nodes = {};
 
+  /// A map to keep the assigned node id for each player
+  final Map<Snowflake, int> _nodeLocations = {};
+
   int _lastId = 0;
 
   final _receivePort = ReceivePort();
@@ -98,6 +101,14 @@ class Cluster {
         this.nodes.remove(nodeId as int);
       }
       break;
+    }
+  }
+
+  Node getOrCreatePlayerNode(Snowflake guildId) {
+    if (this._nodeLocations.containsKey(guildId)) {
+      return this.nodes[_nodeLocations[guildId]!]!;
+    } else {
+      return this.nodes[1]!;
     }
   }
 
