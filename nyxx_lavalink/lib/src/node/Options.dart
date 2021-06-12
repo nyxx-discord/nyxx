@@ -12,18 +12,21 @@ class NodeOptions {
   String password;
   /// Shards the bot is operating on
   int shards;
+  /// Max connect attempts before shutting down a node
+  int maxConnectAttempts;
   /// Client id
-  Snowflake clientId;
+  late final Snowflake clientId;
+  late final int _nodeId;
 
 
   /// Constructor to build a new node builder
   NodeOptions({
-    required this.clientId,
     this.host = "localhost",
     this.port = 2333,
     this.ssl = false,
     this.password = "youshallnotpass",
     this.shards = 1,
+    this.maxConnectAttempts = 5
   });
 
   NodeOptions._fromJson(Map<String, dynamic> json)
@@ -32,7 +35,9 @@ class NodeOptions {
         ssl = json["ssl"] as bool,
         password = json["password"] as String,
         shards = json["shards"] as int,
-        clientId = Snowflake(json["clientId"] as int);
+        clientId = Snowflake(json["clientId"] as int),
+        _nodeId = json["nodeId"] as int,
+        maxConnectAttempts = json["maxConnectAttempts"] as int;
 
   Map<String, dynamic> _toJson() => {
     "host": this.host,
@@ -40,6 +45,8 @@ class NodeOptions {
     "ssl": this.ssl,
     "password": this.password,
     "shards": this.shards,
-    "clientId": this.clientId.id
+    "clientId": this.clientId.id,
+    "nodeId": this._nodeId,
+    "maxConnectAttempts": this.maxConnectAttempts
   };
 }

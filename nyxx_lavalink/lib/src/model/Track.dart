@@ -5,7 +5,7 @@ class QueuedTrack {
   /// The actual track
   Track track;
   /// Where should start lavalink playing the track
-  int startTime = 0;
+  int startTime;
   /// If the track should stop playing before finish and where
   int? endTime;
 
@@ -60,4 +60,33 @@ class TrackInfo {
     position = json["position"] as int,
     title = json["title"] as String,
     uri = json["uri"] as String;
+}
+
+/// Playlist info
+class PlaylistInfo {
+  /// Name of the playlist
+  String? name;
+  /// Currently selected track
+  int? selectedTrack;
+
+  PlaylistInfo._fromJson(Map<String, dynamic> json)
+  : name = json["name"] as String?, selectedTrack = json["selectedTrack"] as int?;
+}
+
+/// Object returned from lavalink when searching
+class Tracks {
+  /// Information about loaded playlist
+  PlaylistInfo playlistInfo;
+  /// Load type (track, playlist, etc)
+  String loadType;
+  /// Loaded tracks
+  List<Track> tracks;
+  /// Occurred exception (if occurred)
+  LavalinkException? exception;
+  
+  Tracks._fromJson(Map<String, dynamic> json)
+  : playlistInfo = PlaylistInfo._fromJson(json["playlistInfo"] as Map<String, dynamic>), 
+    loadType = json["loadType"] as String,
+    tracks = (json["tracks"] as List<dynamic>).map((t) => Track._fromJson(t as Map<String, dynamic>)).toList(),
+    exception = json["exception"] == null ? null : LavalinkException._fromJson(json["exception"] as Map<String, dynamic>);
 }

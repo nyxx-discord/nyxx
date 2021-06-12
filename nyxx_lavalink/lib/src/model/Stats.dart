@@ -20,7 +20,7 @@ class Stats extends BaseEvent {
     players = json["players"] as int,
     uptime = json["uptime"] as int,
     memory = Memory._fromJson(json["memory"] as Map<String, dynamic>),
-    frameStats = FrameStats._fromJson(json["frameStats"] as Map<String, dynamic>),
+    frameStats = json["frameStats"] == null ? null : FrameStats._fromJson(json["frameStats"] as Map<String, dynamic>),
     cpu = Cpu._fromJson(json["cpu"] as Map<String, dynamic>),
     super(client);
 }
@@ -37,7 +37,7 @@ class FrameStats {
   /// Construct a new instance with provided data
   FrameStats(this.sent, this.deficit, this.nulled);
 
-  static FrameStats _fromJson(Map<String, dynamic> json) => new FrameStats(json["sent"] as int, json["deficit"] as int, json["nulled"] as int);
+  static FrameStats _fromJson(Map<String, dynamic> json) => FrameStats(json["sent"] as int, json["deficit"] as int, json["nulled"] as int);
 }
 
 /// Cpu usage stats
@@ -45,14 +45,14 @@ class Cpu {
   /// Amount of available cores on the cpu
   int cores;
   /// The total load of the machine where lavalink is running on
-  Double systemLoad;
+  num systemLoad;
   /// The total load of lavalink server
-  Double lavalinkLoad;
+  num lavalinkLoad;
 
   /// Construct a new instance with provided data
   Cpu(this.cores, this.systemLoad, this.lavalinkLoad);
 
-  static Cpu _fromJson(Map<String, dynamic> json) => new Cpu(json["cores"] as int, json["systemLoad"] as Double, json["lavalinkLoad"] as Double);
+  static Cpu _fromJson(Map<String, dynamic> json) => Cpu(json["cores"] as int, json["systemLoad"] as num, json["lavalinkLoad"] as num);
 }
 
 /// Memory usage stats
@@ -69,5 +69,5 @@ class Memory {
   /// Construct a new instance with provided data
   Memory(this.reservable, this.used, this.free, this.allocated);
 
-  static Memory _fromJson(Map<String, dynamic> json) => new Memory(json["reservable"] as int, json["used"] as int, json["free"] as int, json["allocated"] as int);
+  static Memory _fromJson(Map<String, dynamic> json) => Memory(json["reservable"] as int, json["used"] as int, json["free"] as int, json["allocated"] as int);
 }

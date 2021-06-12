@@ -1,6 +1,6 @@
 part of nyxx_lavalink;
 
-class _HttpClient extends http.BaseClient {
+class _HttpClient {
   late final Map<String, String> defaultHeaders;
   final http.Client _innerClient = http.Client();
 
@@ -12,7 +12,6 @@ class _HttpClient extends http.BaseClient {
     };
   }
 
-  @override
   Future<http.StreamedResponse> send(http.BaseRequest request) async {
     request.headers.addAll(this.defaultHeaders);
 
@@ -23,5 +22,15 @@ class _HttpClient extends http.BaseClient {
     }
 
     return response;
+  }
+
+  Future<http.StreamedResponse> makeRequest(String method, Uri uri, [Map<String, String>? headers]) async {
+    final request = http.Request(method, uri);
+
+    if (headers != null) {
+      request.headers.addAll(headers);
+    }
+
+    return this.send(request);
   }
 }
