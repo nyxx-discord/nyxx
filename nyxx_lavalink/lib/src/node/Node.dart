@@ -75,8 +75,6 @@ class Node {
 
     final player = this.players[event.guildId];
 
-    print("player $player");
-
     if (player == null) return;
 
     player.queue.removeAt(0);
@@ -86,14 +84,6 @@ class Node {
 
 
     await _playNext(event.guildId);
-  }
-
-  void _dispatchVoiceUpdate(Map<String, dynamic> payload) {
-    if (payload.containsKey("sessionId") && payload.containsKey("event")) {
-      this._sendPayload("voiceUpdate", Snowflake(payload["guildId"]), {
-
-      });
-    }
   }
 
   /// Destroys a player
