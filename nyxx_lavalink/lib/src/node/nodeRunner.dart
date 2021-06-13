@@ -26,7 +26,7 @@ Future<void> _handleNode(SendPort clusterPort) async {
   WebSocket? socket;
   StreamSubscription? socketStream;
 
-  // First thing to do is ro return a send port to the cluster to communicate with the node
+  // First thing to do is to return a send port to the cluster to communicate with the node
   final receivePort = ReceivePort();
   final receiveStream = receivePort.asBroadcastStream();
   clusterPort.send(receivePort.sendPort);
