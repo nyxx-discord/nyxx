@@ -6,8 +6,8 @@ class ChannelCreateEvent {
   /// The channel that was created, either a [GuildChannel] or [DMChannel]
   late final IChannel channel;
 
-  ChannelCreateEvent._new(Map<String, dynamic> raw, Nyxx client) {
-    this.channel = IChannel._deserialize(client, raw["d"] as Map<String, dynamic>);
+  ChannelCreateEvent._new(RawApiMap raw, Nyxx client) {
+    this.channel = IChannel._deserialize(client, raw["d"] as RawApiMap);
 
     if (client._cacheOptions.channelCachePolicyLocation.event && client._cacheOptions.channelCachePolicy.canCache(this.channel)) {
       client.channels[this.channel.id] = this.channel;
@@ -20,8 +20,8 @@ class ChannelDeleteEvent {
   /// The channel that was deleted.
   late final IChannel channel;
 
-  ChannelDeleteEvent._new(Map<String, dynamic> raw, Nyxx client) {
-    this.channel = IChannel._deserialize(client, raw["d"] as Map<String, dynamic>);
+  ChannelDeleteEvent._new(RawApiMap raw, Nyxx client) {
+    this.channel = IChannel._deserialize(client, raw["d"] as RawApiMap);
 
     client.channels.remove(this.channel.id);
   }
@@ -38,7 +38,7 @@ class ChannelPinsUpdateEvent {
   /// the time at which the most recent pinned message was pinned
   late final DateTime? lastPingTimestamp;
 
-  ChannelPinsUpdateEvent._new(Map<String, dynamic> raw, Nyxx client) {
+  ChannelPinsUpdateEvent._new(RawApiMap raw, Nyxx client) {
     if (raw["d"]["last_pin_timestamp"] != null) {
       this.lastPingTimestamp = DateTime.parse(raw["d"]["last_pin_timestamp"] as String);
     }
@@ -58,8 +58,8 @@ class ChannelUpdateEvent {
   /// The channel after the update.
   late final IChannel updatedChannel;
 
-  ChannelUpdateEvent._new(Map<String, dynamic> raw, Nyxx client) {
-    this.updatedChannel = IChannel._deserialize(client, raw["d"] as Map<String, dynamic>);
+  ChannelUpdateEvent._new(RawApiMap raw, Nyxx client) {
+    this.updatedChannel = IChannel._deserialize(client, raw["d"] as RawApiMap);
 
     final oldChannel = client.channels[this.updatedChannel.id];
 
@@ -77,7 +77,7 @@ class StageInstanceEvent {
   /// [StageChannelInstance] related to event
   late final StageChannelInstance stageChannelInstance;
 
-  StageInstanceEvent._new(INyxx client, Map<String, dynamic> raw) {
+  StageInstanceEvent._new(INyxx client, RawApiMap raw) {
     this.stageChannelInstance = StageChannelInstance._new(client, raw);
   }
 }

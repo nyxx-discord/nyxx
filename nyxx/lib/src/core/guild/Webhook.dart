@@ -67,7 +67,7 @@ class Webhook extends SnowflakeEntity implements IMessageAuthor {
   /// Reference to [Nyxx] object
   final INyxx client;
 
-  Webhook._new(Map<String, dynamic> raw, this.client) : super(Snowflake(raw["id"] as String)) {
+  Webhook._new(RawApiMap raw, this.client) : super(Snowflake(raw["id"] as String)) {
     this.name = raw["name"] as String?;
     this.token = raw["token"] as String? ?? "";
     this.avatarHash = raw["avatar"] as String?;
@@ -91,7 +91,7 @@ class Webhook extends SnowflakeEntity implements IMessageAuthor {
     }
 
     if (raw["user"] != null) {
-      this.user = User._new(client, raw["user"] as Map<String, dynamic>);
+      this.user = User._new(client, raw["user"] as RawApiMap);
     } else {
       this.user = null;
     }

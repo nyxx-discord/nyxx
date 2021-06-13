@@ -3,7 +3,7 @@ part of nyxx;
 abstract class _HttpRequest {
   late final Uri uri;
   final String method;
-  final Map<String, dynamic>? queryParams;
+  final RawApiMap? queryParams;
   final String? auditLog;
 
   final bool rateLimit;
@@ -29,7 +29,7 @@ class BasicRequest extends _HttpRequest {
   final dynamic body;
 
   BasicRequest._new(String path,
-      {String method = "GET", this.body, Map<String, dynamic>? queryParams, String? auditLog, bool rateLimit = true})
+      {String method = "GET", this.body, RawApiMap? queryParams, String? auditLog, bool rateLimit = true})
       : super._new(path, method: method, queryParams: queryParams, auditLog: auditLog, rateLimit: rateLimit);
 
   @override
@@ -42,7 +42,7 @@ class BasicRequest extends _HttpRequest {
       if (this.body is String) {
         request.body = this.body as String;
       } else
-      if (this.body is Map<String, dynamic> || this.body is List<dynamic>) {
+      if (this.body is RawApiMap || this.body is List<dynamic>) {
         request.body = jsonEncode(this.body);
       }
     }
@@ -61,10 +61,10 @@ class MultipartRequest extends _HttpRequest {
   final List<AttachmentBuilder> files;
 
   /// Additional data to sent
-  final Map<String, dynamic>? fields;
+  final RawApiMap? fields;
 
   MultipartRequest._new(String path, this.files,
-      {this.fields, String method = "GET", Map<String, dynamic>? queryParams, String? auditLog, bool rateLimit = true})
+      {this.fields, String method = "GET", RawApiMap? queryParams, String? auditLog, bool rateLimit = true})
       : super._new(path, method: method, queryParams: queryParams, auditLog: auditLog, rateLimit: rateLimit);
 
   @override

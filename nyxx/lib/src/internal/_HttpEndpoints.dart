@@ -372,7 +372,7 @@ class _HttpEndpoints implements IHttpEndpoints {
 
     if (response is HttpResponseSuccess) {
       return GuildEmoji._new(
-          _client, response.jsonBody as Map<String, dynamic>, guildId);
+          _client, response.jsonBody as RawApiMap, guildId);
     }
 
     return Future.error(response);
@@ -394,7 +394,7 @@ class _HttpEndpoints implements IHttpEndpoints {
 
     if (response is HttpResponseSuccess) {
       return Role._new(
-          _client, response.jsonBody as Map<String, dynamic>, guildId);
+          _client, response.jsonBody as RawApiMap, guildId);
     }
 
     return Future.error(response);
@@ -421,7 +421,7 @@ class _HttpEndpoints implements IHttpEndpoints {
         await _httpClient._execute(BasicRequest._new("/guilds/$guildId"));
 
     if (response is HttpResponseSuccess) {
-      return Guild._new(_client, response.jsonBody as Map<String, dynamic>);
+      return Guild._new(_client, response.jsonBody as RawApiMap);
     }
 
     return Future.error(response);
@@ -437,7 +437,7 @@ class _HttpEndpoints implements IHttpEndpoints {
     }
 
     final raw =
-        (response as HttpResponseSuccess)._jsonBody as Map<String, dynamic>;
+        (response as HttpResponseSuccess)._jsonBody as RawApiMap;
     return IChannel._deserialize(_client, raw) as T;
   }
 
@@ -449,7 +449,7 @@ class _HttpEndpoints implements IHttpEndpoints {
 
     if (response is HttpResponseSuccess) {
       return GuildEmoji._new(
-          _client, response.jsonBody as Map<String, dynamic>, guildId);
+          _client, response.jsonBody as RawApiMap, guildId);
     }
 
     return Future.error(response);
@@ -483,7 +483,7 @@ class _HttpEndpoints implements IHttpEndpoints {
 
     if (response is HttpResponseSuccess) {
       return GuildEmoji._new(
-          _client, response.jsonBody as Map<String, dynamic>, guildId);
+          _client, response.jsonBody as RawApiMap, guildId);
     }
 
     return Future.error(response);
@@ -539,7 +539,7 @@ class _HttpEndpoints implements IHttpEndpoints {
     }
 
     for (final obj in (response as HttpResponseSuccess)._jsonBody) {
-      yield Ban._new(obj as Map<String, dynamic>, _client);
+      yield Ban._new(obj as RawApiMap, _client);
     }
   }
 
@@ -556,7 +556,7 @@ class _HttpEndpoints implements IHttpEndpoints {
         ._execute(BasicRequest._new("/guilds/$guildId/bans/$bannedUserId"));
 
     if (response is HttpResponseSuccess) {
-      return Ban._new(response.jsonBody as Map<String, dynamic>, _client);
+      return Ban._new(response.jsonBody as RawApiMap, _client);
     }
 
     return Future.error(response);
@@ -572,7 +572,7 @@ class _HttpEndpoints implements IHttpEndpoints {
         body: {"owner_id": member.id}));
 
     if (response is HttpResponseSuccess) {
-      return Guild._new(_client, response.jsonBody as Map<String, dynamic>);
+      return Guild._new(_client, response.jsonBody as RawApiMap);
     }
 
     return Future.error(response);
@@ -593,7 +593,7 @@ class _HttpEndpoints implements IHttpEndpoints {
     }
 
     for (final raw in (response as HttpResponseSuccess)._jsonBody) {
-      yield Invite._new(raw as Map<String, dynamic>, _client);
+      yield Invite._new(raw as RawApiMap, _client);
     }
   }
 
@@ -615,7 +615,7 @@ class _HttpEndpoints implements IHttpEndpoints {
         queryParams: queryParams));
 
     if (response is HttpResponseSuccess) {
-      return AuditLog._new(response.jsonBody as Map<String, dynamic>, _client);
+      return AuditLog._new(response.jsonBody as RawApiMap, _client);
     }
 
     return Future.error(response);
@@ -632,7 +632,7 @@ class _HttpEndpoints implements IHttpEndpoints {
 
     if (response is HttpResponseSuccess) {
       return Role._new(
-          _client, response.jsonBody as Map<String, dynamic>, guildId);
+          _client, response.jsonBody as RawApiMap, guildId);
     }
 
     return Future.error(response);
@@ -649,7 +649,7 @@ class _HttpEndpoints implements IHttpEndpoints {
     }
 
     for (final raw in (response as HttpResponseSuccess)._jsonBody) {
-      yield VoiceRegion._new(raw as Map<String, dynamic>);
+      yield VoiceRegion._new(raw as RawApiMap);
     }
   }
 
@@ -708,7 +708,7 @@ class _HttpEndpoints implements IHttpEndpoints {
         body: body));
 
     if (response is HttpResponseSuccess) {
-      return Guild._new(_client, response.jsonBody as Map<String, dynamic>);
+      return Guild._new(_client, response.jsonBody as RawApiMap);
     }
 
     return Future.error(response);
@@ -721,7 +721,7 @@ class _HttpEndpoints implements IHttpEndpoints {
 
     if (response is HttpResponseSuccess) {
       final member = Member._new(
-          _client, response.jsonBody as Map<String, dynamic>, guildId);
+          _client, response.jsonBody as RawApiMap, guildId);
 
       if (_client._cacheOptions.memberCachePolicyLocation.http &&
           _client._cacheOptions.memberCachePolicy.canCache(member)) {
@@ -749,7 +749,7 @@ class _HttpEndpoints implements IHttpEndpoints {
     for (final rawMember
         in (request as HttpResponseSuccess)._jsonBody as List<dynamic>) {
       final member =
-          Member._new(_client, rawMember as Map<String, dynamic>, guildId);
+          Member._new(_client, rawMember as RawApiMap, guildId);
 
       if (_client._cacheOptions.memberCachePolicyLocation.http &&
           _client._cacheOptions.memberCachePolicy.canCache(member)) {
@@ -775,7 +775,7 @@ class _HttpEndpoints implements IHttpEndpoints {
       return;
     }
 
-    for (final Map<String, dynamic> memberData
+    for (final RawApiMap memberData
         in (response as HttpResponseSuccess)._jsonBody) {
       final member = Member._new(_client, memberData, guildId);
 
@@ -799,7 +799,7 @@ class _HttpEndpoints implements IHttpEndpoints {
     }
 
     for (final raw in (response as HttpResponseSuccess)._jsonBody) {
-      yield Webhook._new(raw as Map<String, dynamic>, _client);
+      yield Webhook._new(raw as RawApiMap, _client);
     }
   }
 
@@ -817,7 +817,7 @@ class _HttpEndpoints implements IHttpEndpoints {
     }
 
     for (final rawRole in (response as HttpResponseSuccess)._jsonBody.values) {
-      yield Role._new(_client, rawRole as Map<String, dynamic>, guildId);
+      yield Role._new(_client, rawRole as RawApiMap, guildId);
     }
   }
 
@@ -839,7 +839,7 @@ class _HttpEndpoints implements IHttpEndpoints {
       return Future.error(response);
     }
 
-    return User._new(_client, response._jsonBody as Map<String, dynamic>);
+    return User._new(_client, response._jsonBody as RawApiMap);
   }
 
   @override
@@ -885,7 +885,7 @@ class _HttpEndpoints implements IHttpEndpoints {
 
     final bodyValues = (response as HttpResponseSuccess).jsonBody.values.first;
 
-    for (final val in bodyValues as Iterable<Map<String, dynamic>>) {
+    for (final val in bodyValues as Iterable<RawApiMap>) {
       yield InviteWithMeta._new(val, _client);
     }
   }
@@ -958,7 +958,7 @@ class _HttpEndpoints implements IHttpEndpoints {
     }
 
     return InviteWithMeta._new(
-        (response as HttpResponseSuccess).jsonBody as Map<String, dynamic>,
+        (response as HttpResponseSuccess).jsonBody as RawApiMap,
         _client);
   }
 
@@ -982,7 +982,7 @@ class _HttpEndpoints implements IHttpEndpoints {
 
     if (response is HttpResponseSuccess) {
       return Message._deserialize(
-          _client, response.jsonBody as Map<String, dynamic>);
+          _client, response.jsonBody as RawApiMap);
     }
 
     return Future.error(response);
@@ -996,7 +996,7 @@ class _HttpEndpoints implements IHttpEndpoints {
       return Future.error(response);
     }
 
-    return Message._deserialize(_client, (response as HttpResponseSuccess)._jsonBody as Map<String, dynamic>);
+    return Message._deserialize(_client, (response as HttpResponseSuccess)._jsonBody as RawApiMap);
   }
 
   @override
@@ -1033,7 +1033,7 @@ class _HttpEndpoints implements IHttpEndpoints {
     }
 
     for (final val in await (response as HttpResponseSuccess)._jsonBody) {
-      yield Message._deserialize(_client, val as Map<String, dynamic>);
+      yield Message._deserialize(_client, val as RawApiMap);
     }
   }
 
@@ -1063,7 +1063,7 @@ class _HttpEndpoints implements IHttpEndpoints {
 
     if (response is HttpResponseSuccess) {
       return VoiceGuildChannel._new(
-          _client, response.jsonBody as Map<String, dynamic>);
+          _client, response.jsonBody as RawApiMap);
     }
 
     return Future.error(response);
@@ -1099,7 +1099,7 @@ class _HttpEndpoints implements IHttpEndpoints {
         auditLog: auditReason));
 
     if (response is HttpResponseSuccess) {
-      return Webhook._new(response.jsonBody as Map<String, dynamic>, _client);
+      return Webhook._new(response.jsonBody as RawApiMap, _client);
     }
 
     return Future.error(response);
@@ -1116,7 +1116,7 @@ class _HttpEndpoints implements IHttpEndpoints {
     }
 
     for (final val in (response as HttpResponseSuccess)._jsonBody.values.first
-        as Iterable<Map<String, dynamic>>) {
+        as Iterable<RawApiMap>) {
       yield Message._deserialize(_client, val);
     }
   }
@@ -1143,7 +1143,7 @@ class _HttpEndpoints implements IHttpEndpoints {
 
     if (response is HttpResponseSuccess) {
       return TextGuildChannel._new(
-          _client, response.jsonBody as Map<String, dynamic>);
+          _client, response.jsonBody as RawApiMap);
     }
 
     return Future.error(response);
@@ -1166,7 +1166,7 @@ class _HttpEndpoints implements IHttpEndpoints {
         method: "POST", body: builder.build(),),);
 
     if (response is HttpResponseSuccess) {
-      return ThreadPreviewChannel._new(_client, response.jsonBody as Map<String, dynamic>);
+      return ThreadPreviewChannel._new(_client, response.jsonBody as RawApiMap);
     }
 
     return Future.error(response);
@@ -1181,7 +1181,7 @@ class _HttpEndpoints implements IHttpEndpoints {
       method: "POST", body: builder.build(),),);
 
     if (response is HttpResponseSuccess) {
-      return ThreadPreviewChannel._new(_client, response.jsonBody as Map<String, dynamic>);
+      return ThreadPreviewChannel._new(_client, response.jsonBody as RawApiMap);
     }
 
     return Future.error(response);
@@ -1195,7 +1195,7 @@ class _HttpEndpoints implements IHttpEndpoints {
       final guild = new _GuildCacheable(_client, guildId);
 
       for(final rawThreadMember in response.jsonBody as List<dynamic>) {
-        yield ThreadMember._new(_client, rawThreadMember as Map<String, dynamic>, guild);
+        yield ThreadMember._new(_client, rawThreadMember as RawApiMap, guild);
       }
     }
 
@@ -1215,7 +1215,7 @@ class _HttpEndpoints implements IHttpEndpoints {
 
     if (response is HttpResponseSuccess) {
       return Message._deserialize(
-          _client, response.jsonBody as Map<String, dynamic>);
+          _client, response.jsonBody as RawApiMap);
     }
 
     return Future.error(response);
@@ -1230,7 +1230,7 @@ class _HttpEndpoints implements IHttpEndpoints {
 
     if (response is HttpResponseSuccess) {
       return Message._deserialize(
-          _client, response.jsonBody as Map<String, dynamic>);
+          _client, response.jsonBody as RawApiMap);
     }
 
     return Future.error(response);
@@ -1306,7 +1306,7 @@ class _HttpEndpoints implements IHttpEndpoints {
         ._execute(BasicRequest._new("/users/@me", method: "PATCH", body: body));
 
     if (response is HttpResponseSuccess) {
-      return User._new(_client, response.jsonBody as Map<String, dynamic>);
+      return User._new(_client, response.jsonBody as RawApiMap);
     }
 
     return Future.error(response);
@@ -1394,7 +1394,7 @@ class _HttpEndpoints implements IHttpEndpoints {
 
     if (response is HttpResponseSuccess) {
       return Message._deserialize(
-          _client, response.jsonBody as Map<String, dynamic>);
+          _client, response.jsonBody as RawApiMap);
     }
 
     return Future.error(response);
@@ -1406,7 +1406,7 @@ class _HttpEndpoints implements IHttpEndpoints {
         await _httpClient._execute(BasicRequest._new("/webhooks/$id/$token"));
 
     if (response is HttpResponseSuccess) {
-      return Webhook._new(response.jsonBody as Map<String, dynamic>, _client);
+      return Webhook._new(response.jsonBody as RawApiMap, _client);
     }
 
     return Future.error(response);
@@ -1418,7 +1418,7 @@ class _HttpEndpoints implements IHttpEndpoints {
         await _httpClient._execute(BasicRequest._new("/invites/$code"));
 
     if (response is HttpResponseSuccess) {
-      return Invite._new(response.jsonBody as Map<String, dynamic>, _client);
+      return Invite._new(response.jsonBody as RawApiMap, _client);
     }
 
     return Future.error(response);
@@ -1444,7 +1444,7 @@ class _HttpEndpoints implements IHttpEndpoints {
     }
 
     return DMChannel._new(_client,
-        (response as HttpResponseSuccess).jsonBody as Map<String, dynamic>);
+        (response as HttpResponseSuccess).jsonBody as RawApiMap);
   }
 
   @override
@@ -1463,7 +1463,7 @@ class _HttpEndpoints implements IHttpEndpoints {
     final response = await _httpClient._execute(BasicRequest._new("/guilds/$guildId/preview"));
 
     if (response is HttpResponseSuccess) {
-      return GuildPreview._new(_client, response.jsonBody as Map<String, dynamic>);
+      return GuildPreview._new(_client, response.jsonBody as RawApiMap);
     }
 
     return Future.error(response);
@@ -1475,7 +1475,7 @@ class _HttpEndpoints implements IHttpEndpoints {
         BasicRequest._new("/guilds/${guildId.toString()}/channels", method: "POST", body: channelBuilder.build()));
 
     if (response is HttpResponseSuccess) {
-      return IChannel._deserialize(_client, response.jsonBody as Map<String, dynamic>);
+      return IChannel._deserialize(_client, response.jsonBody as RawApiMap);
     }
 
     return Future.error(response);
@@ -1508,7 +1508,7 @@ class _HttpEndpoints implements IHttpEndpoints {
       return Future.error(response);
     }
 
-    return StageChannelInstance._new(_client, response._jsonBody as Map<String, dynamic>);
+    return StageChannelInstance._new(_client, response._jsonBody as RawApiMap);
   }
 
   @override
@@ -1528,7 +1528,7 @@ class _HttpEndpoints implements IHttpEndpoints {
       return Future.error(response);
     }
 
-    return StageChannelInstance._new(_client, response._jsonBody as Map<String, dynamic>);
+    return StageChannelInstance._new(_client, response._jsonBody as RawApiMap);
   }
 
   @override
@@ -1548,7 +1548,7 @@ class _HttpEndpoints implements IHttpEndpoints {
       return Future.error(response);
     }
 
-    return StageChannelInstance._new(_client, response._jsonBody as Map<String, dynamic>);
+    return StageChannelInstance._new(_client, response._jsonBody as RawApiMap);
   }
 
   @override
@@ -1575,7 +1575,7 @@ class _HttpEndpoints implements IHttpEndpoints {
 
     return ThreadListResultWrapper._new(
       _client,
-      (response as HttpResponseSuccess).jsonBody as Map<String, dynamic>
+      (response as HttpResponseSuccess).jsonBody as RawApiMap
     );
   }
 
@@ -1595,7 +1595,7 @@ class _HttpEndpoints implements IHttpEndpoints {
 
     return ThreadListResultWrapper._new(
         _client,
-        (response as HttpResponseSuccess).jsonBody as Map<String, dynamic>
+        (response as HttpResponseSuccess).jsonBody as RawApiMap
     );
   }
 
@@ -1615,7 +1615,7 @@ class _HttpEndpoints implements IHttpEndpoints {
 
     return ThreadListResultWrapper._new(
         _client,
-        (response as HttpResponseSuccess).jsonBody as Map<String, dynamic>
+        (response as HttpResponseSuccess).jsonBody as RawApiMap
     );
   }
 
@@ -1635,7 +1635,7 @@ class _HttpEndpoints implements IHttpEndpoints {
 
     return ThreadListResultWrapper._new(
         _client,
-        (response as HttpResponseSuccess).jsonBody as Map<String, dynamic>
+        (response as HttpResponseSuccess).jsonBody as RawApiMap
     );
   }
 

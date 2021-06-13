@@ -27,7 +27,7 @@ class MemberChunkEvent {
   /// Id of shard where chunk was received
   final int shardId;
 
-  MemberChunkEvent._new(Map<String, dynamic> raw, Nyxx client, this.shardId) {
+  MemberChunkEvent._new(RawApiMap raw, Nyxx client, this.shardId) {
     this.chunkIndex = raw["d"]["chunk_index"] as int;
     this.chunkCount = raw["d"]["chunk_count"] as int;
 
@@ -39,7 +39,7 @@ class MemberChunkEvent {
 
     this.members = [
       for (var memberRaw in raw["d"]["members"])
-        Member._new(client, memberRaw as Map<String, dynamic>, this.guild.id)
+        Member._new(client, memberRaw as RawApiMap, this.guild.id)
     ];
 
     if (client._cacheOptions.memberCachePolicyLocation.event) {

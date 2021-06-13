@@ -11,8 +11,8 @@ class ThreadMembersUpdateEvent {
   /// The members that were added. Note that they are not cached
   late final List<Cacheable<Snowflake, Member>> addedMembers;
 
-  ThreadMembersUpdateEvent._new(Map<String, dynamic> raw, Nyxx client) {
-    final data = raw["d"] as Map<String, dynamic>;
+  ThreadMembersUpdateEvent._new(RawApiMap raw, Nyxx client) {
+    final data = raw["d"] as RawApiMap;
 
     this.thread = new CacheableTextChannel._new(client, Snowflake(data["id"]));
     this.guild = new _GuildCacheable(client, Snowflake(data["guild_id"]));

@@ -35,3 +35,5 @@ part "src/events/InteractionEvent.dart";
 part "src/exceptions/InteractionExpired.dart";
 part "src/exceptions/AlreadyResponded.dart";
 part "src/exceptions/ResponseRequired.dart";
+
+typedef RawApiMap = Map<String, dynamic>;

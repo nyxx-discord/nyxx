@@ -64,7 +64,7 @@ class _ConnectionManager {
     }
 
     final response = httpResponse as HttpResponseSuccess;
-    _client.app = ClientOAuth2Application._new(response.jsonBody as Map<String, dynamic>, _client);
+    _client.app = ClientOAuth2Application._new(response.jsonBody as RawApiMap, _client);
 
     _client.ready = true;
     _client._events.onReady.add(ReadyEvent._new(_client));

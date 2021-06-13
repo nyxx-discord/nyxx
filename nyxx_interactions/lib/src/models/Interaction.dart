@@ -26,7 +26,7 @@ class Interaction extends SnowflakeEntity {
   /// Version of interactions api
   late final int version;
 
-  Interaction._new(this._client, Map<String, dynamic> raw) : super(Snowflake(raw["id"])) {
+  Interaction._new(this._client, RawApiMap raw) : super(Snowflake(raw["id"])) {
     this.type = raw["type"] as int;
 
     if (raw["guild_id"] != null) {
@@ -38,9 +38,9 @@ class Interaction extends SnowflakeEntity {
     this.channel = CacheUtility.createCacheableTextChannel(_client, Snowflake(raw["channel_id"]),);
 
     if (this.guild != null) {
-      this.memberAuthor = EntityUtility.createGuildMember(_client, Snowflake(raw["guild_id"]), raw["member"] as Map<String, dynamic>,);
+      this.memberAuthor = EntityUtility.createGuildMember(_client, Snowflake(raw["guild_id"]), raw["member"] as RawApiMap,);
     } else {
-      this.userAuthor = EntityUtility.createUser(_client, raw["user"] as Map<String, dynamic>);
+      this.userAuthor = EntityUtility.createUser(_client, raw["user"] as RawApiMap);
     }
 
     this.token = raw["token"] as String;
@@ -59,9 +59,9 @@ class SlashCommandInteraction extends Interaction {
   /// Id of command
   late final Snowflake commandId;
 
-  SlashCommandInteraction._new(Nyxx client, Map<String, dynamic> raw) : super._new(client, raw) {
+  SlashCommandInteraction._new(Nyxx client, RawApiMap raw) : super._new(client, raw) {
     this.name = raw["data"]["name"] as String;
-    this.options = _generateArgs(raw["data"] as Map<String, dynamic>);
+    this.options = _generateArgs(raw["data"] as RawApiMap);
     this.commandId = Snowflake(raw["data"]["id"]);
   }
 
@@ -74,14 +74,14 @@ class SlashCommandInteraction extends Interaction {
     }
   }
 
-  Iterable<InteractionOption> _generateArgs(Map<String, dynamic> rawData) sync* {
+  Iterable<InteractionOption> _generateArgs(RawApiMap rawData) sync* {
     if (rawData["options"] == null) {
       return;
     }
 
     final options = rawData["options"] as List<dynamic>;
     for (final option in options) {
-      yield InteractionOption._new(option as Map<String, dynamic>);
+      yield InteractionOption._new(option as RawApiMap);
     }
   }
 }
@@ -100,10 +100,10 @@ class ComponentInteraction extends Interaction {
   /// The message that the button was pressed on.
   late final Message message;
 
-  ComponentInteraction._new(Nyxx client, Map<String, dynamic> raw): super._new(client, raw) {
+  ComponentInteraction._new(Nyxx client, RawApiMap raw): super._new(client, raw) {
     this.idMetadata = raw["data"]["custom_id"] as String;
 
     // Discord doesn't include guild's id in the message object even if its a guild message but is included in the data so its been added to the object so that guild message can be used if the interaction is from a guild.
-    this.message = EntityUtility.createMessage(this._client, {...raw["message"] as Map<String, dynamic>, if(raw["guild_id"] != null) "guild_id": raw["guild_id"]});
+    this.message = EntityUtility.createMessage(this._client, {...raw["message"] as RawApiMap, if(raw["guild_id"] != null) "guild_id": raw["guild_id"]});
   }
 }

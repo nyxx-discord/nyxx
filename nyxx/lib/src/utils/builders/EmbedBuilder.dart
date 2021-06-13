@@ -115,7 +115,7 @@ class EmbedBuilder extends Builder {
   @override
 
   /// Builds object to Map() instance;
-  Map<String, dynamic> build() {
+  RawApiMap build() {
     if (this.title != null && this.title!.length > 256) {
       throw EmbedBuilderArgumentException._new("Embed title is too long (256 characters limit)");
     }

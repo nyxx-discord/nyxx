@@ -14,7 +14,7 @@ class EmbedAuthor implements Convertable<EmbedAuthorBuilder> {
   /// Proxied icon url
   String? iconProxyUrl;
 
-  EmbedAuthor._new(Map<String, dynamic> raw) {
+  EmbedAuthor._new(RawApiMap raw) {
     this.name = raw["name"] as String?;
     this.url = raw["url"] as String?;
     this.iconUrl = raw["icon_url"] as String?;

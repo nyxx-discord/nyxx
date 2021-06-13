@@ -13,7 +13,7 @@ class AuditLogChange {
   /// type of audit log change hey
   late final ChangeKeyType key;
 
-  AuditLogChange._new(Map<String, dynamic> raw) {
+  AuditLogChange._new(RawApiMap raw) {
     if (raw["new_value"] != null) {
       newValue = raw["new_value"];
     }

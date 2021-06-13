@@ -137,7 +137,7 @@ class MessageBuilder extends BuilderWithClient {
       this.content.isNotEmpty || embeds.isNotEmpty || (this.files != null && this.files!.isNotEmpty);
 
   @override
-  Map<String, dynamic> build(INyxx client) {
+  RawApiMap build(INyxx client) {
     allowedMentions ??= client._options.allowedMentions;
 
     return <String, dynamic>{

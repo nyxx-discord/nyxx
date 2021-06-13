@@ -30,7 +30,7 @@ class Sticker extends SnowflakeEntity {
         ? tags!.split(", ").map((e) => e.trim())
         : [];
 
-  Sticker._new(Map<String, dynamic> raw): super(Snowflake(raw["id"])) {
+  Sticker._new(RawApiMap raw): super(Snowflake(raw["id"])) {
     this.packId = Snowflake(raw["pack_id"]);
     this.name = raw["name"] as String;
     this.description = raw["description"] as String;

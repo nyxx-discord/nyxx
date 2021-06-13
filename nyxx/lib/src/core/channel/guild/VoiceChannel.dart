@@ -7,7 +7,7 @@ class VoiceGuildChannel extends GuildChannel {
   /// The channel's user limit.
   late final int? userLimit;
 
-  VoiceGuildChannel._new(INyxx client, Map<String, dynamic> raw, [Snowflake? guildId]) : super._new(client, raw, guildId) {
+  VoiceGuildChannel._new(INyxx client, RawApiMap raw, [Snowflake? guildId]) : super._new(client, raw, guildId) {
     this.bitrate = raw["bitrate"] as int?;
     this.userLimit = raw["user_limit"] as int?;
   }
@@ -48,7 +48,7 @@ class VoiceGuildChannel extends GuildChannel {
 }
 
 class StageVoiceGuildChannel extends VoiceGuildChannel {
-  StageVoiceGuildChannel._new(INyxx client, Map<String, dynamic> raw, [Snowflake? guildId]) : super._new(client, raw, guildId);
+  StageVoiceGuildChannel._new(INyxx client, RawApiMap raw, [Snowflake? guildId]) : super._new(client, raw, guildId);
 
   /// Gets the stage instance associated with the Stage channel, if it exists.
   Future<StageChannelInstance> getStageChannelInstance() =>
@@ -84,7 +84,7 @@ class StageChannelInstance extends SnowflakeEntity {
   /// Whether or not Stage discovery is disabled
   late final bool disoverableDisabled;
 
-  StageChannelInstance._new(INyxx client, Map<String, dynamic> raw): super(Snowflake(raw["id"])) {
+  StageChannelInstance._new(INyxx client, RawApiMap raw): super(Snowflake(raw["id"])) {
     this.guild = _GuildCacheable(client, Snowflake(raw["guild_id"]));
     this.channel = _ChannelCacheable(client, Snowflake(raw["channel_id"]));
     this.topic = raw["topic"] as String;

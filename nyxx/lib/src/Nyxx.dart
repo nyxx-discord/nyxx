@@ -1,5 +1,7 @@
 part of nyxx;
 
+typedef RawApiMap = Map<String, dynamic>;
+
 /// Generic interface for Nyxx. Represents basic functionality of Nyxx that are always available.
 abstract class INyxx implements Disposable {
   _HttpHandler get _http;

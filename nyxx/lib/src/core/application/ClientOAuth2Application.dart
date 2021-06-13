@@ -8,9 +8,9 @@ class ClientOAuth2Application extends OAuth2Application {
   /// The app's owner.
   late final User owner;
 
-  ClientOAuth2Application._new(Map<String, dynamic> raw, Nyxx client) : super._new(raw) {
+  ClientOAuth2Application._new(RawApiMap raw, Nyxx client) : super._new(raw) {
     this.flags = raw["flags"] as int?;
-    this.owner = User._new(client, raw["owner"] as Map<String, dynamic>);
+    this.owner = User._new(client, raw["owner"] as RawApiMap);
   }
 
   /// Creates an OAuth2 URL with the specified permissions.

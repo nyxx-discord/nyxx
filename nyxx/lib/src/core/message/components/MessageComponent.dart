@@ -25,7 +25,7 @@ class MessageComponentEmoji {
     throw new ArgumentError("Tried to parse emojis from invalid payload");
   }
 
-  MessageComponentEmoji._new(Map<String, dynamic> raw) {
+  MessageComponentEmoji._new(RawApiMap raw) {
     this.name = raw["name"] as String?;
     this.id = raw["id"] as String?;
     this.animated = raw["animated"] as bool? ?? false;
@@ -49,12 +49,12 @@ abstract class IMessageComponent {
   /// True if button is disabled
   late final bool disabled;
 
-  IMessageComponent._new(Map<String, dynamic> raw) {
+  IMessageComponent._new(RawApiMap raw) {
     this.label = raw["label"] as String;
     this.style = ComponentStyle.from(raw["style"] as int);
 
     if (raw["emoji"] != null) {
-      this.emoji = MessageComponentEmoji._new(raw["emoji"] as Map<String, dynamic>);
+      this.emoji = MessageComponentEmoji._new(raw["emoji"] as RawApiMap);
     }  else {
       this.emoji = null;
     }
@@ -62,7 +62,7 @@ abstract class IMessageComponent {
     this.disabled = raw["disabled"] as bool? ?? false;
   }
 
-  factory IMessageComponent._deserialize(Map<String, dynamic> raw) {
+  factory IMessageComponent._deserialize(RawApiMap raw) {
     if (raw["style"] == ComponentStyle.link.value) {
       return LinkMessageButton._new(raw);
     }
@@ -76,7 +76,7 @@ class MessageButton extends IMessageComponent {
   ///  a dev-defined unique string sent on click (max 100 characters)
   late final String buttonMetadata;
 
-  MessageButton._new(Map<String, dynamic> raw): super._new(raw) {
+  MessageButton._new(RawApiMap raw): super._new(raw) {
     this.buttonMetadata = raw["custom_id"] as String;
   }
 }
@@ -89,7 +89,7 @@ class LinkMessageButton extends IMessageComponent {
   /// buttons url as [Uri]
   Uri get uri => Uri.parse(url);
 
-  LinkMessageButton._new(Map<String, dynamic> raw): super._new(raw) {
+  LinkMessageButton._new(RawApiMap raw): super._new(raw) {
     this.url = raw["url"] as String;
   }
 }

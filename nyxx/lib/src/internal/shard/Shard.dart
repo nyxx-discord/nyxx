@@ -190,7 +190,7 @@ class Shard implements Disposable {
       return;
     }
 
-    final discordPayload = rawData["jsonData"] as Map<String, dynamic>;
+    final discordPayload = rawData["jsonData"] as RawApiMap;
 
     if (discordPayload["op"] == OPCodes.dispatch && manager._ws._client._options.ignoredEvents.contains(discordPayload["t"] as String)) {
       return;
@@ -203,7 +203,7 @@ class Shard implements Disposable {
     await _dispatch(discordPayload);
   }
 
-  Future<void> _dispatch(Map<String, dynamic> rawPayload) async {
+  Future<void> _dispatch(RawApiMap rawPayload) async {
     switch (rawPayload["op"] as int) {
       case OPCodes.heartbeatAck:
         this._heartbeatAckReceived = true;
@@ -256,7 +256,7 @@ class Shard implements Disposable {
         switch (dispatchType) {
           case "READY":
             this._sessionId = rawPayload["d"]["session_id"] as String;
-            manager._ws._client.self = ClientUser._new(manager._ws._client, rawPayload["d"]["user"] as Map<String, dynamic>);
+            manager._ws._client.self = ClientUser._new(manager._ws._client, rawPayload["d"]["user"] as RawApiMap);
 
             this._connected = true;
             manager._logger.info("Shard ${this.id} ready!");
@@ -429,7 +429,7 @@ class Shard implements Disposable {
   Future<void> dispose() async {
     this.manager._logger.info("Started disposing shard $id...");
 
-    await this._receiveStream.firstWhere((element) => (element as Map<String, dynamic>)["cmd"] == "TERMINATE_OK");
+    await this._receiveStream.firstWhere((element) => (element as RawApiMap)["cmd"] == "TERMINATE_OK");
     this._shardIsolate.kill(priority: Isolate.immediate);
 
     this.manager._logger.info("Shard $id disposed.");

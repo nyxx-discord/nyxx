@@ -4,6 +4,7 @@
 library nyxx;
 
 import "dart:async";
+import "dart:collection";
 import "dart:convert";
 import "dart:io";
 import "dart:isolate"; // Used to discard errors on vm to continue working even if error occurred
@@ -101,7 +102,7 @@ part "src/events/ThreadCreateEvent.dart";
 part "src/events/ThreadMembersUpdateEvent.dart";
 part "src/events/ThreadDeletedEvent.dart";
 part "src/internal/_ConnectionManager.dart";
-part "src/internal/_Constants.dart";
+part "src/internal/Constants.dart";
 part "src/internal/_EventController.dart";
 part "src/internal/_HttpEndpoints.dart";
 part "src/internal/cache/Cache.dart";

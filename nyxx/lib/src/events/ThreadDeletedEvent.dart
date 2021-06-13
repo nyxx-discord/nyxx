@@ -11,8 +11,8 @@ class ThreadDeletedEvent {
   /// Guild where event was generated
   late final Cacheable<Snowflake, Guild> guild;
 
-  ThreadDeletedEvent._new(Map<String, dynamic> raw, Nyxx client) {
-    final data = raw["d"] as Map<String, dynamic>;
+  ThreadDeletedEvent._new(RawApiMap raw, Nyxx client) {
+    final data = raw["d"] as RawApiMap;
 
     this.thread = CacheableTextChannel._new(client, Snowflake(data["id"]));
     this.parent = CacheableTextChannel._new(client, Snowflake(data["parent_id"]));

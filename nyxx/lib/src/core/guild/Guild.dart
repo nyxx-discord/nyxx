@@ -135,7 +135,7 @@ class Guild extends SnowflakeEntity {
     return (client as Nyxx).shardManager.shards.firstWhere((_shard) => _shard.guilds.contains(this.id));
   }
 
-  Guild._new(this.client, Map<String, dynamic> raw, [bool guildCreate = false]) : super(Snowflake(raw["id"])) {
+  Guild._new(this.client, RawApiMap raw, [bool guildCreate = false]) : super(Snowflake(raw["id"])) {
     this.name = raw["name"] as String;
     this.region = raw["region"] as String;
     this.afkTimeout = raw["afk_timeout"] as int;
@@ -158,7 +158,7 @@ class Guild extends SnowflakeEntity {
     this.roles = _SnowflakeCache<Role>();
     if (raw["roles"] != null) {
       raw["roles"].forEach((o) {
-        final role = Role._new(client, o as Map<String, dynamic>, this.id);
+        final role = Role._new(client, o as RawApiMap, this.id);
         this.roles[role.id] = role;
       });
     }
@@ -166,7 +166,7 @@ class Guild extends SnowflakeEntity {
     this.emojis = _SnowflakeCache();
     if (raw["emojis"] != null) {
       raw["emojis"].forEach((dynamic o) {
-        final emoji = GuildEmoji._new(client, o as Map<String, dynamic>, this.id);
+        final emoji = GuildEmoji._new(client, o as RawApiMap, this.id);
         this.emojis[emoji.id] = emoji;
       });
     }
@@ -199,13 +199,13 @@ class Guild extends SnowflakeEntity {
     if (!guildCreate) return;
 
     raw["channels"].forEach((o) {
-      final channel = IChannel._deserialize(this.client, o as Map<String, dynamic>, this.id);
+      final channel = IChannel._deserialize(this.client, o as RawApiMap, this.id);
       client.channels[channel.id] = channel;
     });
 
     if (client._cacheOptions.memberCachePolicyLocation.objectConstructor) {
       raw["members"].forEach((o) {
-        final member = Member._new(client, o as Map<String, dynamic>, this.id);
+        final member = Member._new(client, o as RawApiMap, this.id);
         if (client._cacheOptions.memberCachePolicy.canCache(member)) {
           this.members[member.id] = member;
         }
@@ -216,17 +216,17 @@ class Guild extends SnowflakeEntity {
     // raw["presences"].forEach((o) {
     //   final member = this.members[Snowflake(o["user"]["id"] as String)];
     //   if (member != null) {
-    //     member.status = ClientStatus._deserialize(o["client_status"] as Map<String, dynamic>);
+    //     member.status = ClientStatus._deserialize(o["client_status"] as RawApiMap);
     //
     //     if (o["game"] != null) {
-    //       member.presence = Activity._new(o["game"] as Map<String, dynamic>);
+    //       member.presence = Activity._new(o["game"] as RawApiMap);
     //     }
     //   }
     // });
 
     if (raw["voice_states"] != null) {
       raw["voice_states"].forEach((o) {
-        final state = VoiceState._new(client, o as Map<String, dynamic>);
+        final state = VoiceState._new(client, o as RawApiMap);
         this.voiceStates[state.user.id] = state;
       });
     }
@@ -242,7 +242,7 @@ class Guild extends SnowflakeEntity {
     this.stageInstances = [
       if (raw["stage_instances"] != null)
         for (final rawInstance in raw["stage_instances"])
-          StageChannelInstance._new(this.client, rawInstance as Map<String, dynamic>)
+          StageChannelInstance._new(this.client, rawInstance as RawApiMap)
     ];
   }
 

@@ -42,7 +42,7 @@ class Embed implements Convertable<EmbedBuilder> {
   /// Map of fields of embed. Map(name, field)
   late final List<EmbedField> fields;
 
-  Embed._new(Map<String, dynamic> raw) {
+  Embed._new(RawApiMap raw) {
     if (raw["title"] != null) {
       this.title = raw["title"] as String;
     }
@@ -68,32 +68,32 @@ class Embed implements Convertable<EmbedBuilder> {
     }
 
     if (raw["author"] != null) {
-      this.author = EmbedAuthor._new(raw["author"] as Map<String, dynamic>);
+      this.author = EmbedAuthor._new(raw["author"] as RawApiMap);
     }
 
     if (raw["video"] != null) {
-      this.video = EmbedVideo._new(raw["video"] as Map<String, dynamic>);
+      this.video = EmbedVideo._new(raw["video"] as RawApiMap);
     }
 
     if (raw["image"] != null) {
-      this.image = EmbedThumbnail._new(raw["image"] as Map<String, dynamic>);
+      this.image = EmbedThumbnail._new(raw["image"] as RawApiMap);
     }
 
     if (raw["footer"] != null) {
-      this.footer = EmbedFooter._new(raw["footer"] as Map<String, dynamic>);
+      this.footer = EmbedFooter._new(raw["footer"] as RawApiMap);
     }
 
     if (raw["thumbnail"] != null) {
-      this.thumbnail = EmbedThumbnail._new(raw["thumbnail"] as Map<String, dynamic>);
+      this.thumbnail = EmbedThumbnail._new(raw["thumbnail"] as RawApiMap);
     }
 
     if (raw["provider"] != null) {
-      this.provider = EmbedProvider._new(raw["provider"] as Map<String, dynamic>);
+      this.provider = EmbedProvider._new(raw["provider"] as RawApiMap);
     }
 
     fields = [
       if (raw["fields"] != null)
-        for (var obj in raw["fields"]) EmbedField._new(obj as Map<String, dynamic>)
+        for (var obj in raw["fields"]) EmbedField._new(obj as RawApiMap)
     ];
   }
 

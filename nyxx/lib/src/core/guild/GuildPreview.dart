@@ -33,7 +33,7 @@ class GuildPreview extends SnowflakeEntity {
   /// The description for the guild
   String? description;
 
-  GuildPreview._new(this.client, Map<String, dynamic> raw) : super(Snowflake(raw["id"])) {
+  GuildPreview._new(this.client, RawApiMap raw) : super(Snowflake(raw["id"])) {
     this.name = raw["name"] as String;
 
     if (this.iconHash != null) {
@@ -50,7 +50,7 @@ class GuildPreview extends SnowflakeEntity {
 
     this.emojis = [
       for (var rawEmoji in raw["emojis"])
-        GuildEmoji._new(client, rawEmoji as Map<String, dynamic>, this.id)
+        GuildEmoji._new(client, rawEmoji as RawApiMap, this.id)
     ];
 
     this.features = (raw["features"] as List<dynamic>).map((e) => GuildFeature.from(e.toString()));

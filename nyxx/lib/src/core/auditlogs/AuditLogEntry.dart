@@ -22,12 +22,12 @@ class AuditLogEntry extends SnowflakeEntity {
   /// The reason for the change
   String? reason;
 
-  AuditLogEntry._new(Map<String, dynamic> raw, INyxx client) : super(Snowflake(raw["id"] as String)) {
+  AuditLogEntry._new(RawApiMap raw, INyxx client) : super(Snowflake(raw["id"] as String)) {
     this.targetId = raw["targetId"] as String;
 
     this.changes = [
       if (raw["changes"] != null)
-        for (var o in raw["changes"]) AuditLogChange._new(o as Map<String, dynamic>)
+        for (var o in raw["changes"]) AuditLogChange._new(o as RawApiMap)
     ];
 
     this.user = _UserCacheable(client, Snowflake(raw["user_id"]));

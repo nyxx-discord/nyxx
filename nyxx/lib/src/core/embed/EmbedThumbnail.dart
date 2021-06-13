@@ -14,7 +14,7 @@ class EmbedThumbnail {
   /// The embed thumbnal's width.
   late final int? width;
 
-  EmbedThumbnail._new(Map<String, dynamic> raw) {
+  EmbedThumbnail._new(RawApiMap raw) {
     this.url = raw["url"] as String?;
     this.proxyUrl = raw["proxy_url"] as String?;
     this.height = raw["height"] as int?;

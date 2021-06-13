@@ -1,9 +1,9 @@
 part of nyxx;
 
 // Decodes zlib compresses string into string json
-Map<String, dynamic> _decodeBytes(dynamic rawPayload, RawZLibFilter decoder) {
+RawApiMap _decodeBytes(dynamic rawPayload, RawZLibFilter decoder) {
   if (rawPayload is String) {
-    return jsonDecode(rawPayload) as Map<String, dynamic>;
+    return jsonDecode(rawPayload) as RawApiMap;
   }
 
   decoder.process(rawPayload as List<int>, 0, rawPayload.length);
@@ -19,7 +19,7 @@ Map<String, dynamic> _decodeBytes(dynamic rawPayload, RawZLibFilter decoder) {
   }
 
   final rawStr = utf8.decode(buffer);
-  return jsonDecode(rawStr) as Map<String, dynamic>;
+  return jsonDecode(rawStr) as RawApiMap;
 }
 
 /*

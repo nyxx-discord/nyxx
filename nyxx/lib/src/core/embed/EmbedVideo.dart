@@ -12,7 +12,7 @@ class EmbedVideo {
   /// The embed video's width.
   late final int? width;
 
-  EmbedVideo._new(Map<String, dynamic> raw) {
+  EmbedVideo._new(RawApiMap raw) {
     this.url = raw["url"] as String;
     this.height = raw["height"] as int;
     this.width = raw["width"] as int;

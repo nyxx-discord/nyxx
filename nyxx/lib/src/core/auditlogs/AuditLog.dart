@@ -17,21 +17,21 @@ class AuditLog {
   Iterable<AuditLogEntry> filter(bool Function(AuditLogEntry) test) =>
       entries.values.where(test);
 
-  AuditLog._new(Map<String, dynamic> raw, INyxx client) {
+  AuditLog._new(RawApiMap raw, INyxx client) {
     webhooks = {};
     users = {};
     entries = {};
 
     raw["webhooks"].forEach((o) {
-      webhooks[Snowflake(o["id"] as String)] = Webhook._new(o as Map<String, dynamic>, client);
+      webhooks[Snowflake(o["id"] as String)] = Webhook._new(o as RawApiMap, client);
     });
 
     raw["users"].forEach((o) {
-      users[Snowflake(o["id"] as String)] = User._new(client, o as Map<String, dynamic>);
+      users[Snowflake(o["id"] as String)] = User._new(client, o as RawApiMap);
     });
 
     raw["audit_log_entries"].forEach((o) {
-      entries[Snowflake(o["id"] as String)] = AuditLogEntry._new(o as Map<String, dynamic>, client);
+      entries[Snowflake(o["id"] as String)] = AuditLogEntry._new(o as RawApiMap, client);
     });
   }
 }
