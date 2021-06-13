@@ -56,12 +56,46 @@ class Node {
 
     player.nowPlaying = track;
 
-    await this._sendPayload("play", guildId, {
-      "track": track.track.track,
-      "noReplace": false,
-      "startTime": track.startTime,
-      "endTime": track.endTime
-    });
+    if(track.endTime == null) {
+      await this._sendPayload("play", guildId, {
+        "track": track.track.track,
+        "noReplace": false,
+        "startTime": track.startTime,
+      });
+    } else {
+      await this._sendPayload("play", guildId, {
+        "track": track.track.track,
+        "noReplace": false,
+        "startTime": track.startTime,
+        "endTime": track.endTime
+      });
+    }
+  }
+
+  Future<void> _handleTrackEnd(TrackEnd event) async {
+    if(!(event.reason == "FINISHED")) return;
+
+    final player = this.players[event.guildId];
+
+    print("player $player");
+
+    if (player == null) return;
+
+    player.queue.removeAt(0);
+    player.nowPlaying = null;
+
+    if (player.queue.isEmpty) return;
+
+
+    await _playNext(event.guildId);
+  }
+
+  void _dispatchVoiceUpdate(Map<String, dynamic> payload) {
+    if (payload.containsKey("sessionId") && payload.containsKey("event")) {
+      this._sendPayload("voiceUpdate", Snowflake(payload["guildId"]), {
+
+      });
+    }
   }
 
   /// Destroys a player
@@ -125,7 +159,7 @@ class Node {
   
   Future<Tracks> searchTracks(String query) async {
     final response = await _httpClient.get(Uri.parse(
-      "${this._httpUri}?identifier=$query"),
+      "${this._httpUri}/loadtracks?identifier=$query"),
       headers: this.defaultHeaders
     );
 
@@ -136,5 +170,5 @@ class Node {
 
   Future<Tracks> youtubeSearch(String query) async => searchTracks("ytsearch:$query");
 
-
+  PlayParameters play(Snowflake guildId, Track track) => PlayParameters._new(this, track, guildId);
 }

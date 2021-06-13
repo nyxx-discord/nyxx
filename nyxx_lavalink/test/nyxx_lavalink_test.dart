@@ -17,10 +17,30 @@ void main() async {
   //await cluster.addNode(NodeOptions(port: 18100, password: "testings"));
 
   await for (final msg in client.onMessageReceived) {
-    print(msg);
+    if(msg.message.content == "!join") {
+      final channel = await client.fetchChannel<VoiceGuildChannel>(769699425089748992.toSnowflake());
 
-    final channel = await client.fetchChannel<VoiceGuildChannel>(769699425089748992.toSnowflake());
+      channel.connect();
+      
+      cluster.getOrCreatePlayerNode(Snowflake(769699424170541067));
+    } else if(msg.message.content == "!queue") {
+      final node = cluster.getOrCreatePlayerNode(Snowflake(769699424170541067));
 
-    channel.connect();
+      final player = node.players[Snowflake(769699424170541067)];
+
+      print(player!.queue);
+    } else if (msg.message.content == "!skip") {
+      final node = cluster.getOrCreatePlayerNode(Snowflake(769699424170541067));
+
+      await node.skip(Snowflake(769699424170541067));
+    } else {
+      final node = cluster.getOrCreatePlayerNode(Snowflake(769699424170541067));
+
+      final searchResults = await node.searchTracks(msg.message.content);
+
+      final params = node.play(Snowflake(769699424170541067), searchResults.tracks[0]);
+
+      await params.queue();
+    }
   }
 }

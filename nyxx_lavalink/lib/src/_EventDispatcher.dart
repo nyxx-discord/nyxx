@@ -10,7 +10,6 @@ class _EventDispatcher {
   final StreamController<WebSocketClosed> onWebSocketClosed = StreamController.broadcast();
   final StreamController<Map<String, dynamic>> onRawEvent = StreamController.broadcast();
 
-
   Future<void> dispatchEvent(Map<String, dynamic> json) async {
     final node = cluster.nodes[json["nodeId"]];
 
@@ -26,18 +25,26 @@ class _EventDispatcher {
     switch(json["event"]) {
       case "TrackStart":
         this.onTrackStart.add(
-          TrackStart._fromJson(cluster.client,
-              json["data"] as Map<String, dynamic>
-          )
-        );
-        break;
-
-      case "TrackEnd":
-        this.onTrackEnd.add(
-            TrackEnd._fromJson(cluster.client,
+            TrackStart._fromJson(cluster.client,
                 json["data"] as Map<String, dynamic>
             )
         );
+        break;
+
+      case "TrackEnd": {
+          final trackEnd = TrackEnd._fromJson(cluster.client,
+              json["data"] as Map<String, dynamic>
+          );
+
+          this.onTrackEnd.add(
+              trackEnd
+          );
+
+          final node = cluster.nodes[json["nodeId"]];
+
+          if (node == null) return;
+          await node._handleTrackEnd(trackEnd);
+        }
         break;
 
       case "WebSocketClosed":

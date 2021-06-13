@@ -37,12 +37,11 @@ class PlayParameters {
     final queuedTrack = QueuedTrack(this.track, startTime, this.endTime);
 
     if (player.nowPlaying == null && player.queue.isEmpty) {
-      player.queue.add(queuedTrack);
       player.nowPlaying = queuedTrack;
 
       await this.startPlaying();
-    } else {
-      player.queue.add(queuedTrack);
     }
+
+    player.queue.add(queuedTrack);
   }
 }

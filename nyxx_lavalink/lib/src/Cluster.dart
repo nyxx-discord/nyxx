@@ -105,15 +105,59 @@ class Cluster {
   }
 
   Node getOrCreatePlayerNode(Snowflake guildId) {
+    Node node;
+
+    print(this._nodeLocations.containsKey(guildId));
+
     if (this._nodeLocations.containsKey(guildId)) {
-      return this.nodes[_nodeLocations[guildId]!]!;
+      node = this.nodes[_nodeLocations[guildId]!]!;
     } else {
-      return this.nodes[1]!;
+      node = this.nodes[1]!;
+      this._nodeLocations[guildId] = node.options._nodeId;
+      node.players[guildId] = GuildPlayer._new(node, guildId);
     }
+
+    return node;
+  }
+
+  void _registerEvents() {
+    this.client.onVoiceServerUpdate.listen((event) async {
+      await Future.delayed(const Duration(milliseconds: 200));
+
+      final node = this.nodes[this._nodeLocations[event.guild.id]];
+
+      if(node == null) return;
+
+      final player = node.players[event.guild.id];
+
+      if(player == null) return;
+
+      player._handleServerUpdate(event);
+    });
+
+    this.client.onVoiceStateUpdate.listen((event) async {
+      if(!(event.raw["d"]["user_id"] == clientId.toString())) return;
+
+      await Future.delayed(const Duration(milliseconds: 200));
+
+      print(this._nodeLocations[event.state.guild!.id]);
+
+      final node = this.nodes[this._nodeLocations[event.state.guild!.id]];
+
+      if(node == null) return;
+
+      final player = node.players[event.state.guild!.id];
+
+      if(player == null) return;
+
+      player._handleStateUpdate(event);
+    });
   }
 
   /// Creates a new cluster ready to start adding connections
   Cluster(this.client, this.clientId) {
+    this._registerEvents();
+
     this._eventDispatcher = _EventDispatcher(this);
 
     this._receiveStream = this._receivePort.asBroadcastStream();

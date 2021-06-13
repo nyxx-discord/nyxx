@@ -8,7 +8,7 @@ import 'dart:math';
 
 import "package:http/http.dart" as http;
 import "package:logging/logging.dart" as logging;
-import "package:nyxx/nyxx.dart" show Nyxx, Snowflake, IntExtensions;
+import "package:nyxx/nyxx.dart" show Nyxx, Snowflake, IntExtensions, VoiceStateUpdateEvent, VoiceServerUpdateEvent;
 import "package:synchronized/synchronized.dart" show Lock;
 
 part "src/Cluster.dart";
