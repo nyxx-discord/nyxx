@@ -13,18 +13,16 @@ class Node {
 
   late SendPort _nodeSendPort;
   late String _httpUri;
-  late Map<String, String> defaultHeaders;
-
-  Isolate _nodeIsolate;
+  late Map<String, String> _defaultHeaders;
 
   /// Build a new Node
-  Node._fromOptions(this.options, this._nodeSendPort, this._nodeIsolate) {
+  Node._fromOptions(this.options, this._nodeSendPort) {
     this._httpUri =
         options.ssl ?
         "https://${options.host}:${options.port}"
             : "http://${options.host}:${options.port}";
 
-    this.defaultHeaders = {
+    this._defaultHeaders = {
       "Authorization": options.password,
       "Num-Shards": options.shards.toString(),
       "User-Id": options.clientId.toString()
@@ -160,7 +158,7 @@ class Node {
   Future<Tracks> searchTracks(String query) async {
     final response = await _httpClient.get(Uri.parse(
       "${this._httpUri}/loadtracks?identifier=$query"),
-      headers: this.defaultHeaders
+      headers: this._defaultHeaders
     );
 
     if(!(response.statusCode == 200)) throw HttpException(response.statusCode);
@@ -171,4 +169,9 @@ class Node {
   Future<Tracks> youtubeSearch(String query) async => searchTracks("ytsearch:$query");
 
   PlayParameters play(Snowflake guildId, Track track) => PlayParameters._new(this, track, guildId);
+
+  /// Shuts down the node
+  void shutdown() {
+    this._nodeSendPort.send({"cmd": "SHUTDOWN"});
+  }
 }

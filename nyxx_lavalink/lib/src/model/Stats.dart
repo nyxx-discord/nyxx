@@ -15,14 +15,14 @@ class Stats extends BaseEvent {
   /// Server uptime
   int uptime;
 
-  Stats._fromJson(Nyxx client, Map<String, dynamic> json)
+  Stats._fromJson(Nyxx client, Node node, Map<String, dynamic> json)
   : playingPlayers = json["playingPlayers"] as int,
     players = json["players"] as int,
     uptime = json["uptime"] as int,
     memory = Memory._fromJson(json["memory"] as Map<String, dynamic>),
     frameStats = json["frameStats"] == null ? null : FrameStats._fromJson(json["frameStats"] as Map<String, dynamic>),
     cpu = Cpu._fromJson(json["cpu"] as Map<String, dynamic>),
-    super(client);
+    super(client, node);
 }
 
 /// Stats about frame sending to discord

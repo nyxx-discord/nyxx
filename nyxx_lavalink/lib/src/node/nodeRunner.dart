@@ -100,14 +100,7 @@ Future<void> _handleNode(SendPort clusterPort) async {
         });
 
         return;
-      } on SocketException {
-        clusterPort.send({"cmd": "LOG", "nodeId": node._nodeId, "level": "WARNING", "message": "[Node ${node._nodeId}] Got a SocketException while trying to connect to lavalink, exiting node"});
-
-        clusterPort.send({"cmd": "EXITED", "nodeId": node._nodeId});
-
-        Isolate.current.kill();
-
-        return;
+      // ignore: avoid_catches_without_on_clauses
       } catch (e) {
         clusterPort.send({"cmd": "LOG", "nodeId": node._nodeId, "level": "WARNING", "message": "[Node ${node._nodeId}] Error while trying to connect to lavalink; $e"});
       }
@@ -157,7 +150,7 @@ Future<void> _handleNode(SendPort clusterPort) async {
         break;
 
       case "SHUTDOWN": {
-        Isolate.current.kill();
+        Isolate.current.kill(priority: Isolate.immediate);
       }
       break;
 

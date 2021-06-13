@@ -10,10 +10,10 @@ class TrackEnd extends BaseEvent {
   /// Guild where the track ended
   Snowflake guildId;
 
-  TrackEnd._fromJson(Nyxx client, Map<String, dynamic> json)
+  TrackEnd._fromJson(Nyxx client, Node node, Map<String, dynamic> json)
   : reason = json["reason"] as String,
     type = json["type"] as String,
     track = json["track"] as String,
     guildId = Snowflake(json["guildId"] as String),
-    super(client);
+    super(client, node);
 }

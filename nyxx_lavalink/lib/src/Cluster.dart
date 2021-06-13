@@ -52,7 +52,7 @@ class Cluster {
   }
 
   Future<void> _addNode(NodeOptions nodeOptions, int nodeId) async {
-    final isolate = await Isolate.spawn(_handleNode, this._receivePort.sendPort);
+    await Isolate.spawn(_handleNode, this._receivePort.sendPort);
 
     final isolateSendPort = await this._receiveStream.first as SendPort;
 
@@ -63,7 +63,7 @@ class Cluster {
 
     isolateSendPort.send({"cmd": "CONNECT"});
 
-    final node = Node._fromOptions(nodeOptions, isolateSendPort, isolate);
+    final node = Node._fromOptions(nodeOptions, isolateSendPort);
 
     this.nodes[nodeId] = node;
   }
@@ -72,7 +72,7 @@ class Cluster {
     if (message is SendPort) return;
     final map = message as Map<String, dynamic>;
 
-    this._logger.log(logging.Level.INFO, "Receved data from node id ${map["nodeId"]}, data: $map");
+    this._logger.log(logging.Level.FINE, "Receved data from node ${map["nodeId"]}, data: $map");
 
     switch(map["cmd"]) {
       case "DISPATCH":
@@ -107,8 +107,6 @@ class Cluster {
   Node getOrCreatePlayerNode(Snowflake guildId) {
     Node node;
 
-    print(this._nodeLocations.containsKey(guildId));
-
     if (this._nodeLocations.containsKey(guildId)) {
       node = this.nodes[_nodeLocations[guildId]!]!;
     } else {
@@ -122,7 +120,7 @@ class Cluster {
 
   void _registerEvents() {
     this.client.onVoiceServerUpdate.listen((event) async {
-      await Future.delayed(const Duration(milliseconds: 200));
+      await Future.delayed(const Duration(milliseconds: 100));
 
       final node = this.nodes[this._nodeLocations[event.guild.id]];
 
@@ -138,9 +136,7 @@ class Cluster {
     this.client.onVoiceStateUpdate.listen((event) async {
       if(!(event.raw["d"]["user_id"] == clientId.toString())) return;
 
-      await Future.delayed(const Duration(milliseconds: 200));
-
-      print(this._nodeLocations[event.state.guild!.id]);
+      await Future.delayed(const Duration(milliseconds: 100));
 
       final node = this.nodes[this._nodeLocations[event.state.guild!.id]];
 

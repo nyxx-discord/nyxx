@@ -16,8 +16,8 @@ class _EventDispatcher {
     if(node == null) return;
 
     cluster._logger.log(
-        logging.Level.INFO,
-        "Dispatching ${json["event"]} for node ${json["nodeId"]}"
+        logging.Level.FINE,
+        "[Node ${json["nodeId"]}] Dispatching ${json["event"]}"
     );
 
     this.onRawEvent.add(json);
@@ -25,14 +25,14 @@ class _EventDispatcher {
     switch(json["event"]) {
       case "TrackStart":
         this.onTrackStart.add(
-            TrackStart._fromJson(cluster.client,
+            TrackStart._fromJson(cluster.client, node,
                 json["data"] as Map<String, dynamic>
             )
         );
         break;
 
       case "TrackEnd": {
-          final trackEnd = TrackEnd._fromJson(cluster.client,
+          final trackEnd = TrackEnd._fromJson(cluster.client, node,
               json["data"] as Map<String, dynamic>
           );
 
@@ -40,16 +40,13 @@ class _EventDispatcher {
               trackEnd
           );
 
-          final node = cluster.nodes[json["nodeId"]];
-
-          if (node == null) return;
           await node._handleTrackEnd(trackEnd);
         }
         break;
 
       case "WebSocketClosed":
         this.onWebSocketClosed.add(
-            WebSocketClosed._fromJson(cluster.client,
+            WebSocketClosed._fromJson(cluster.client, node,
                 json["data"] as Map<String, dynamic>
             )
         );
@@ -58,7 +55,7 @@ class _EventDispatcher {
 
       case "Stats":
         this.onStatsReceived.add(
-            Stats._fromJson(cluster.client,
+            Stats._fromJson(cluster.client, node,
                 json["data"] as Map<String, dynamic>
             )
         );
@@ -67,7 +64,7 @@ class _EventDispatcher {
 
       case "PlayerUpdate":
         this.onPlayerUpdate.add(
-            PlayerUpdate._fromJson(cluster.client,
+            PlayerUpdate._fromJson(cluster.client, node,
                 json["data"] as Map<String, dynamic>
             )
         );
