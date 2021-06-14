@@ -13,7 +13,6 @@ import "package:synchronized/synchronized.dart" show Lock;
 
 part "src/Cluster.dart";
 part "src/_EventDispatcher.dart";
-part "src/HttpClient.dart";
 part "src/model/BaseEvent.dart";
 part "src/model/GuildPlayer.dart";
 part "src/model/PlayerUpdate.dart";
