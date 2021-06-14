@@ -193,8 +193,6 @@ class Cluster extends _Cluster {
       }
     });
 
-    print("Min $minNode");
-
     return this._nodes[minNode[0]]!;
   }
 
