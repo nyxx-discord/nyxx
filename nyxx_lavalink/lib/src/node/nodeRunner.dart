@@ -33,15 +33,15 @@ Future<void> _handleNode(SendPort clusterPort) async {
   Future<void> processEvent(Map<String, dynamic> json) async {
     switch(json["type"]) {
       case "TrackStartEvent":
-        clusterPort.send({"cmd": "DISPATCH", "nodeId": node._nodeId, "event": "TrackStart", "data": json});
+        clusterPort.send({"cmd": "DISPATCH", "nodeId": node.nodeId, "event": "TrackStart", "data": json});
         break;
 
       case "TrackEndEvent":
-        clusterPort.send({"cmd": "DISPATCH", "nodeId": node._nodeId, "event": "TrackEnd", "data": json});
+        clusterPort.send({"cmd": "DISPATCH", "nodeId": node.nodeId, "event": "TrackEnd", "data": json});
         break;
 
       case "WebSocketClosedEvent":
-        clusterPort.send({"cmd": "DISPATCH", "nodeId": node._nodeId, "event": "WebSocketClosed", "data": json});
+        clusterPort.send({"cmd": "DISPATCH", "nodeId": node.nodeId, "event": "WebSocketClosed", "data": json});
         break;
     }
   }
@@ -49,11 +49,11 @@ Future<void> _handleNode(SendPort clusterPort) async {
   Future<void> process(Map<String, dynamic> json) async {
     switch(json["op"]) {
       case "stats":
-        clusterPort.send({"cmd": "DISPATCH", "nodeId": node._nodeId, "event": "Stats", "data": json});
+        clusterPort.send({"cmd": "DISPATCH", "nodeId": node.nodeId, "event": "Stats", "data": json});
         break;
 
       case "playerUpdate":
-        clusterPort.send({"cmd": "DISPATCH", "nodeId": node._nodeId, "event": "PlayerUpdate", "data": json});
+        clusterPort.send({"cmd": "DISPATCH", "nodeId": node.nodeId, "event": "PlayerUpdate", "data": json});
         break;
 
       case "event":
@@ -68,28 +68,28 @@ Future<void> _handleNode(SendPort clusterPort) async {
 
     while (!(actualAttempt > node.maxConnectAttempts)) {
       try {
-        clusterPort.send({"cmd": "LOG", "nodeId": node._nodeId, "level": "INFO", "message": "[Node ${node._nodeId}] Trying to connect to lavalink (${actualAttempt}/${node.maxConnectAttempts})"});
+        clusterPort.send({"cmd": "LOG", "nodeId": node.nodeId, "level": "INFO", "message": "[Node ${node.nodeId}] Trying to connect to lavalink (${actualAttempt}/${node.maxConnectAttempts})"});
 
         await WebSocket.connect(address, headers: {
           "Authorization": node.password,
           "Num-Shards": node.shards,
           "User-Id": node.clientId.id
         }).then((ws) {
-          clusterPort.send({"cmd": "CONNECTED", "nodeId": node._nodeId});
+          clusterPort.send({"cmd": "CONNECTED", "nodeId": node.nodeId});
 
           socket = ws;
 
           socketStream = socket!.listen((data) {
             process(jsonDecode(data as String) as Map<String, dynamic>);
           }, onDone: () async {
-            clusterPort.send({"cmd": "DISCONNECTED", "nodeId": node._nodeId});
+            clusterPort.send({"cmd": "DISCONNECTED", "nodeId": node.nodeId});
             unawaited(connect());
 
             return;
           },
               cancelOnError: true,
               onError: (err) {
-                clusterPort.send({"cmd": "ERROR", "nodeId": node._nodeId, "code": socket!.closeCode, "reason": socket!.closeReason});
+                clusterPort.send({"cmd": "ERROR", "nodeId": node.nodeId, "code": socket!.closeCode, "reason": socket!.closeReason});
               }
           );
 
@@ -99,17 +99,17 @@ Future<void> _handleNode(SendPort clusterPort) async {
         return;
       // ignore: avoid_catches_without_on_clauses
       } catch (e) {
-        clusterPort.send({"cmd": "LOG", "nodeId": node._nodeId, "level": "WARNING", "message": "[Node ${node._nodeId}] Error while trying to connect to lavalink; $e"});
+        clusterPort.send({"cmd": "LOG", "nodeId": node.nodeId, "level": "WARNING", "message": "[Node ${node.nodeId}] Error while trying to connect to lavalink; $e"});
       }
 
-      clusterPort.send({"cmd": "LOG", "nodeId": node._nodeId, "level": "WARNING", "message": "[Node ${node._nodeId}] Failed to connect to lavalink, retrying"});
+      clusterPort.send({"cmd": "LOG", "nodeId": node.nodeId, "level": "WARNING", "message": "[Node ${node.nodeId}] Failed to connect to lavalink, retrying"});
 
       actualAttempt += 1;
 
       await Future.delayed(const Duration(seconds: 5));
     }
 
-    clusterPort.send({"cmd": "EXITED", "nodeId": node._nodeId});
+    clusterPort.send({"cmd": "EXITED", "nodeId": node.nodeId});
 
     return;
   }

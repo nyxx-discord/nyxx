@@ -185,8 +185,12 @@ class Node {
     final player = GuildPlayer._new(this, guildId);
 
     this.players[guildId] = player;
-    _cluster._nodeLocations[guildId] = this.options._nodeId;
+    _cluster._nodeLocations[guildId] = this.options.nodeId;
 
     return player;
   }
+
+  @override
+  String toString() =>
+      "Node ${this.options.nodeId}";
 }

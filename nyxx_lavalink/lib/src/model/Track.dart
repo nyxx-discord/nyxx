@@ -17,6 +17,10 @@ class QueuedTrack {
 
   /// Create a new QueuedTrack instance
   QueuedTrack._new(this.track, this.startTime, this.endTime, this.requester, this.channelId);
+
+  @override
+  String toString() =>
+      "Track[${this.track.info?.title}]";
 }
 
 /// Lavalink track object

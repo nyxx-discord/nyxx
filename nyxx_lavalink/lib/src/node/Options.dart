@@ -16,7 +16,8 @@ class NodeOptions {
   int maxConnectAttempts;
   /// Client id
   late final Snowflake clientId;
-  late final int _nodeId;
+  /// Node id, you **must** not set this yourself
+  late final int nodeId;
 
 
   /// Constructor to build a new node builder
@@ -36,7 +37,7 @@ class NodeOptions {
         password = json["password"] as String,
         shards = json["shards"] as int,
         clientId = Snowflake(json["clientId"] as int),
-        _nodeId = json["nodeId"] as int,
+        nodeId = json["nodeId"] as int,
         maxConnectAttempts = json["maxConnectAttempts"] as int;
 
   Map<String, dynamic> _toJson() => {
@@ -46,7 +47,7 @@ class NodeOptions {
     "password": this.password,
     "shards": this.shards,
     "clientId": this.clientId.id,
-    "nodeId": this._nodeId,
+    "nodeId": this.nodeId,
     "maxConnectAttempts": this.maxConnectAttempts
   };
 }

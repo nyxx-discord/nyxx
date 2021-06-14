@@ -45,7 +45,7 @@ class _Cluster {
     final isolateSendPort = await this._receiveStream.first as SendPort;
 
     nodeOptions.clientId = this._clientId;
-    nodeOptions._nodeId = nodeId;
+    nodeOptions.nodeId = nodeId;
 
     isolateSendPort.send(nodeOptions._toJson());
 
@@ -92,7 +92,7 @@ class _Cluster {
         final node = this._connectingNodes.remove(map["nodeId"] as int);
 
         if(node != null) {
-          this._nodes[node.options._nodeId] = node;
+          this._nodes[node.options.nodeId] = node;
 
           _logger.log(logging.Level.INFO, "[Node ${map["nodeId"]}] Connected to lavalink");
         }
@@ -103,7 +103,7 @@ class _Cluster {
         final node = this._nodes.remove(map["nodeId"] as int);
 
         if(node != null) {
-          this._connectingNodes[node.options._nodeId] = node;
+          this._connectingNodes[node.options.nodeId] = node;
 
           _logger.log(logging.Level.INFO, "[Node ${map["nodeId"]}] Disconnected from lavalink, trying to reconnect");
         }
