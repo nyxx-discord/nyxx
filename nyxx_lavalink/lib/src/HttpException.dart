@@ -1,8 +1,12 @@
 part of nyxx_lavalink;
 
 class HttpException implements Exception {
-  int code;
+  /// The status code of the request
+  final int code;
 
-  // ignore: public_member_api_docs
-  HttpException(this.code): super();
+  HttpException._new(this.code): super();
+
+  @override
+  String toString() =>
+      "Lavalink server responded with $code code";
 }

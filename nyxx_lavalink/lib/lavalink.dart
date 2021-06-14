@@ -9,6 +9,7 @@ import 'dart:math';
 import "package:http/http.dart" as http;
 import "package:logging/logging.dart" as logging;
 import "package:nyxx/nyxx.dart" show Nyxx, Snowflake, IntExtensions, VoiceStateUpdateEvent, VoiceServerUpdateEvent;
+import "package:pedantic/pedantic.dart" show unawaited;
 
 part "src/Cluster.dart";
 part "src/_EventDispatcher.dart";
@@ -26,3 +27,4 @@ part "src/model/WebSocketClosed.dart";
 part "src/node/Node.dart";
 part "src/node/Options.dart";
 part "src/node/nodeRunner.dart";
+part "src/ClusterException.dart";

@@ -1,7 +1,7 @@
 part of nyxx_lavalink;
 
 class _EventDispatcher {
-  Cluster cluster;
+  _Cluster cluster;
 
   final StreamController<Stats> onStatsReceived = StreamController.broadcast();
   final StreamController<PlayerUpdate> onPlayerUpdate = StreamController.broadcast();
@@ -11,7 +11,7 @@ class _EventDispatcher {
   final StreamController<Map<String, dynamic>> onRawEvent = StreamController.broadcast();
 
   Future<void> dispatchEvent(Map<String, dynamic> json) async {
-    final node = cluster.nodes[json["nodeId"]];
+    final node = cluster._nodes[json["nodeId"]];
 
     if(node == null) return;
 
@@ -25,14 +25,14 @@ class _EventDispatcher {
     switch(json["event"]) {
       case "TrackStart":
         this.onTrackStart.add(
-            TrackStart._fromJson(cluster.client, node,
+            TrackStart._fromJson(cluster._client, node,
                 json["data"] as Map<String, dynamic>
             )
         );
         break;
 
       case "TrackEnd": {
-          final trackEnd = TrackEnd._fromJson(cluster.client, node,
+          final trackEnd = TrackEnd._fromJson(cluster._client, node,
               json["data"] as Map<String, dynamic>
           );
 
@@ -46,7 +46,7 @@ class _EventDispatcher {
 
       case "WebSocketClosed":
         this.onWebSocketClosed.add(
-            WebSocketClosed._fromJson(cluster.client, node,
+            WebSocketClosed._fromJson(cluster._client, node,
                 json["data"] as Map<String, dynamic>
             )
         );
@@ -55,7 +55,7 @@ class _EventDispatcher {
 
       case "Stats":
         this.onStatsReceived.add(
-            Stats._fromJson(cluster.client, node,
+            Stats._fromJson(cluster._client, node,
                 json["data"] as Map<String, dynamic>
             )
         );
@@ -64,7 +64,7 @@ class _EventDispatcher {
 
       case "PlayerUpdate":
         this.onPlayerUpdate.add(
-            PlayerUpdate._fromJson(cluster.client, node,
+            PlayerUpdate._fromJson(cluster._client, node,
                 json["data"] as Map<String, dynamic>
             )
         );

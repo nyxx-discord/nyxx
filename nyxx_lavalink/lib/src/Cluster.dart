@@ -1,16 +1,14 @@
 part of nyxx_lavalink;
 
-
-/// Cluster of lavalink nodes
-class Cluster {
+class _Cluster {
   /// A reference to the client
-  final Nyxx client;
+  final Nyxx _client;
 
   /// The client id provided to lavalink;
-  final Snowflake clientId;
+  final Snowflake _clientId;
 
   /// All available nodes
-  final Map<int, Node> nodes = {};
+  final Map<int, Node> _nodes = {};
 
   /// A map to keep the assigned node id for each player
   final Map<Snowflake, int> _nodeLocations = {};
@@ -37,32 +35,19 @@ class Cluster {
 
   late final _EventDispatcher _eventDispatcher;
 
-  /// Add and initialize a node
-  Future<void> addNode(NodeOptions options) async {
-
-    /// Set a tiny delay so we can ensure we don't repeat ids
-    await Future.delayed(const Duration(milliseconds: 50));
-
-    this._lastId += 1;
-
-    await this._addNode(options, this._lastId);
-  }
-
   Future<void> _addNode(NodeOptions nodeOptions, int nodeId) async {
     await Isolate.spawn(_handleNode, this._receivePort.sendPort);
 
     final isolateSendPort = await this._receiveStream.first as SendPort;
 
-    nodeOptions.clientId = this.clientId;
+    nodeOptions.clientId = this._clientId;
     nodeOptions._nodeId = nodeId;
 
     isolateSendPort.send(nodeOptions._toJson());
 
-    isolateSendPort.send({"cmd": "CONNECT"});
+    final node = Node._fromOptions(this, nodeOptions, isolateSendPort);
 
-    final node = Node._fromOptions(nodeOptions, isolateSendPort);
-
-    this.nodes[nodeId] = node;
+    this._nodes[nodeId] = node;
   }
 
   Future<void> _handleNodeMessage(dynamic message) async {
@@ -95,17 +80,17 @@ class Cluster {
 
       case "EXITED": {
         final nodeId = map["nodeId"]!;
-        this.nodes.remove(nodeId as int);
+        this._nodes.remove(nodeId as int);
       }
       break;
     }
   }
 
   void _registerEvents() {
-    this.client.onVoiceServerUpdate.listen((event) async {
+    this._client.onVoiceServerUpdate.listen((event) async {
       await Future.delayed(const Duration(milliseconds: 100));
 
-      final node = this.nodes[this._nodeLocations[event.guild.id]];
+      final node = this._nodes[this._nodeLocations[event.guild.id]];
 
       if(node == null) return;
 
@@ -116,12 +101,12 @@ class Cluster {
       player._handleServerUpdate(event);
     });
 
-    this.client.onVoiceStateUpdate.listen((event) async {
-      if(!(event.raw["d"]["user_id"] == clientId.toString())) return;
+    this._client.onVoiceStateUpdate.listen((event) async {
+      if(!(event.raw["d"]["user_id"] == _clientId.toString())) return;
 
       await Future.delayed(const Duration(milliseconds: 100));
 
-      final node = this.nodes[this._nodeLocations[event.state.guild!.id]];
+      final node = this._nodes[this._nodeLocations[event.state.guild!.id]];
 
       if(node == null) return;
 
@@ -134,7 +119,7 @@ class Cluster {
   }
 
   /// Creates a new cluster ready to start adding connections
-  Cluster(this.client, this.clientId) {
+  _Cluster(this._client, this._clientId) {
     this._registerEvents();
 
     this._eventDispatcher = _EventDispatcher(this);
@@ -143,22 +128,72 @@ class Cluster {
 
     this._receiveStream.listen(_handleNodeMessage);
   }
+}
 
-  Node? getBestNode() {
-    return null;
+/// Cluster of lavalink nodes
+class Cluster extends _Cluster {
+  /// Creates a new lavalink cluster
+  Cluster(Nyxx client, Snowflake clientId): super(client, clientId);
+
+  /// Return the number of operating nodes
+  int get nodes => this._nodes.length;
+
+  /// Get the best available node, it is recommended to use [getOrCreatePlayerNode] instead
+  Node getBestNode() {
+    if(this.nodes == 0) throw ClusterException._new("No available nodes");
+    if(this.nodes == 1) return this._nodes[0]!;
+
+    /// As dart doesn't have tuples this will contain the node with few players
+    /// Order:
+    ///   Index 0 - Node id
+    ///   Index 1 - The number of players the node has
+    final minNode = <int>[];
+
+    this._nodes.forEach((id, node) {
+      if(minNode.isEmpty) {
+        minNode[0] = id;
+        minNode[1] = node.players.length;
+      } else {
+        if (node.players.length < minNode[1]) {
+          minNode[0] = id;
+          minNode[1] = node.players.length;
+        }
+      }
+    });
+
+    return this._nodes[minNode[0]]!;
   }
 
+  /// Attempts to get the node containing a player for a specific guild id
+  ///
+  /// if the player doesn't exist, then the best node is retrieved and the player created
   Node getOrCreatePlayerNode(Snowflake guildId) {
+    final nodePreview = this._nodeLocations.containsKey(guildId) ?
+        this._nodes[_nodeLocations[guildId]] : this.getBestNode();
+
     Node node;
 
-    if (this._nodeLocations.containsKey(guildId)) {
-      node = this.nodes[_nodeLocations[guildId]!]!;
+    if(nodePreview == null) {
+      node = this.getBestNode();
+
+      node.createPlayer(guildId);
     } else {
-      node = this.nodes[1]!;
-      this._nodeLocations[guildId] = node.options._nodeId;
-      node.players[guildId] = GuildPlayer._new(node, guildId);
+      nodePreview.createPlayer(guildId);
+
+      node = nodePreview;
     }
 
     return node;
+  }
+
+  /// Add and initialize a node
+  Future<void> addNode(NodeOptions options) async {
+
+    /// Set a tiny delay so we can ensure we don't repeat ids
+    await Future.delayed(const Duration(milliseconds: 50));
+
+    this._lastId += 1;
+
+    await this._addNode(options, this._lastId);
   }
 }

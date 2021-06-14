@@ -11,12 +11,13 @@ class Node {
   /// Http client used with this node
   final http.Client _httpClient = http.Client();
 
-  late SendPort _nodeSendPort;
+  final SendPort _nodeSendPort;
   late String _httpUri;
   late Map<String, String> _defaultHeaders;
+  _Cluster _cluster;
 
   /// Build a new Node
-  Node._fromOptions(this.options, this._nodeSendPort) {
+  Node._fromOptions(this._cluster, this.options, this._nodeSendPort) {
     this._httpUri =
         options.ssl ?
         "https://${options.host}:${options.port}"
@@ -89,6 +90,8 @@ class Node {
   /// Destroys a player
   Future<void> destroy(Snowflake guildId) async {
     await _sendPayload("destroy", guildId);
+
+    this.players.remove(guildId);
   }
 
   /// Stops a player
@@ -151,7 +154,7 @@ class Node {
       headers: this._defaultHeaders
     );
 
-    if(!(response.statusCode == 200)) throw HttpException(response.statusCode);
+    if(!(response.statusCode == 200)) throw HttpException._new(response.statusCode);
 
     return Tracks._fromJson(jsonDecode(response.body) as Map<String, dynamic>);
   }
@@ -163,5 +166,15 @@ class Node {
   /// Shuts down the node
   void shutdown() {
     this._nodeSendPort.send({"cmd": "SHUTDOWN"});
+  }
+
+  /// Create a new player for a specific guild
+  GuildPlayer createPlayer(Snowflake guildId) {
+    final player = GuildPlayer._new(this, guildId);
+
+    this.players[guildId] = player;
+    _cluster._nodeLocations[guildId] = this.options._nodeId;
+
+    return player;
   }
 }

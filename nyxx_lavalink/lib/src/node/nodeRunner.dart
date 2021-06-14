@@ -6,9 +6,6 @@ part of nyxx_lavalink;
   First message will always be the [NodeOptions] data
 
   Can receive:
-  * CONNECT - Attempts to connect to lavalink server
-  * RECONNECT - Reconnects to the server
-  * DISCONNECT - Disconnects from the server
   * SEND - Sends a given json payload directly to the server through the web socket
   * UPDATE - Updates the current node data
   * SHUTDOWN - Shuts down the node and kills the isolate
@@ -32,8 +29,6 @@ Future<void> _handleNode(SendPort clusterPort) async {
   clusterPort.send(receivePort.sendPort);
 
   var node = NodeOptions._fromJson(await receiveStream.first as Map<String, dynamic>);
-
-  final logger = logging.Logger("Node ${node._nodeId}");
 
   Future<void> processEvent(Map<String, dynamic> json) async {
     switch(json["type"]) {
@@ -86,7 +81,7 @@ Future<void> _handleNode(SendPort clusterPort) async {
             process(jsonDecode(data as String) as Map<String, dynamic>);
           }, onDone: () async {
             clusterPort.send({"cmd": "DISCONNECTED", "nodeId": node._nodeId});
-            connect();
+            unawaited(connect());
 
             return;
           },
@@ -105,8 +100,6 @@ Future<void> _handleNode(SendPort clusterPort) async {
         clusterPort.send({"cmd": "LOG", "nodeId": node._nodeId, "level": "WARNING", "message": "[Node ${node._nodeId}] Error while trying to connect to lavalink; $e"});
       }
 
-      logger.log(logging.Level.WARNING, "Failed to connect to lavalink, retrying");
-
       clusterPort.send({"cmd": "LOG", "nodeId": node._nodeId, "level": "WARNING", "message": "[Node ${node._nodeId}] Failed to connect to lavalink, retrying"});
 
       actualAttempt += 1;
@@ -119,28 +112,11 @@ Future<void> _handleNode(SendPort clusterPort) async {
     return;
   }
 
-  Future<void> disconnect() async {
-
-  }
-
-  Future<void> reconnect() async {
-
-  }
+  // Now with all set up and ready, we can start our connection
+  await connect();
 
   await for (final msg in receiveStream) {
     switch (msg["cmd"]) {
-      case "CONNECT":
-        await connect();
-        break;
-
-      case "RECONNECT":
-        await reconnect();
-        break;
-
-      case "DISCONNECT":
-        await disconnect();
-        break;
-
       case "SEND":
         socket?.add(jsonEncode(msg["data"]));
         break;

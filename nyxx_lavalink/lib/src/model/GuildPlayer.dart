@@ -5,11 +5,11 @@ class GuildPlayer {
   List<QueuedTrack> queue = [];
   /// Now playing track
   QueuedTrack? nowPlaying;
-  final Node _nodeRef;
   /// Guild where this player operates on
   Snowflake guildId;
 
   final Map<String, dynamic> _serverUpdate = {};
+  final Node _nodeRef;
 
   GuildPlayer._new(this._nodeRef, this.guildId);
 
