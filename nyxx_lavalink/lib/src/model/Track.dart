@@ -16,12 +16,7 @@ class QueuedTrack {
   Snowflake? channelId;
 
   /// Create a new QueuedTrack instance
-  QueuedTrack(this.track, this.startTime, this.endTime);
-
-  /// Sets the requester of the track
-  void setRequester(Snowflake requester) => this.requester = requester;
-  /// Sets the channel id where this track was requested
-  void setChannelId(Snowflake channelId) => this.channelId = channelId;
+  QueuedTrack._new(this.track, this.startTime, this.endTime, this.requester, this.channelId);
 }
 
 /// Lavalink track object
