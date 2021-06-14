@@ -34,9 +34,6 @@ class FrameStats {
   /// Nulled frames
   int nulled;
 
-  /// Construct a new instance with provided data
-  FrameStats(this.sent, this.deficit, this.nulled);
-
   FrameStats._fromJson(Map<String, dynamic> json)
   : sent = json["sent"] as int,
     deficit = json["deficit"] as int,
@@ -51,9 +48,6 @@ class Cpu {
   num systemLoad;
   /// The total load of lavalink server
   num lavalinkLoad;
-
-  /// Construct a new instance with provided data
-  Cpu(this.cores, this.systemLoad, this.lavalinkLoad);
 
   Cpu._fromJson(Map<String, dynamic> json)
   : cores = json["cores"] as int,
@@ -71,9 +65,6 @@ class Memory {
   int free;
   /// Total allocated memory
   int allocated;
-
-  /// Construct a new instance with provided data
-  Memory(this.reservable, this.used, this.free, this.allocated);
 
   Memory._fromJson(Map<String, dynamic> json)
   : reservable = json["reservable"] as int,
