@@ -167,7 +167,13 @@ class Cluster extends _Cluster {
   /// Get the best available node, it is recommended to use [getOrCreatePlayerNode] instead
   Node getBestNode() {
     if(this._nodes.isEmpty) throw ClusterException._new("No available nodes");
-    if(this._nodes.length == 1) return this._nodes[1]!;
+    if(this._nodes.length == 1) {
+
+      for(final k in this._nodes.keys) {
+        // return first node if only one is connected
+        return this._nodes[k]!;
+      }
+    }
 
     /// As dart doesn't have tuples this will contain the node with few players
     /// Order:
@@ -177,8 +183,8 @@ class Cluster extends _Cluster {
 
     this._nodes.forEach((id, node) {
       if(minNode.isEmpty) {
-        minNode[0] = id;
-        minNode[1] = node.players.length;
+        minNode.add(id);
+        minNode.add(node.players.length);
       } else {
         if (node.players.length < minNode[1]) {
           minNode[0] = id;
@@ -186,6 +192,8 @@ class Cluster extends _Cluster {
         }
       }
     });
+
+    print("Min $minNode");
 
     return this._nodes[minNode[0]]!;
   }
@@ -201,12 +209,12 @@ class Cluster extends _Cluster {
 
     if(nodePreview == null) {
       node = this.getBestNode();
-
-      node.createPlayer(guildId);
     } else {
-      nodePreview.createPlayer(guildId);
-
       node = nodePreview;
+    }
+
+    if(!node.players.containsKey(guildId)) {
+      node.createPlayer(guildId);
     }
 
     return node;

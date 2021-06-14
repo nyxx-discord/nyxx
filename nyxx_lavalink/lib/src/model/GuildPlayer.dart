@@ -16,8 +16,6 @@ class GuildPlayer {
   void _dispatchVoiceUpdate() {
     if(_serverUpdate.containsKey("sessionId") && _serverUpdate.containsKey("event")) {
       _nodeRef._sendPayload("voiceUpdate", this.guildId, _serverUpdate);
-
-      _serverUpdate.clear();
     }
   }
 

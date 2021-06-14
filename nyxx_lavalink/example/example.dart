@@ -14,7 +14,7 @@ void main() async {
   final options = NodeOptions(port: 18100, password: "testing");
 
   await cluster.addNode(options);
-  //await cluster.addNode(NodeOptions(port: 18100, password: "testings"));
+  await cluster.addNode(NodeOptions(port: 18101, password: "testing"));
 
   await for (final msg in client.onMessageReceived) {
     if(msg.message.content == "!join") {
@@ -33,6 +33,8 @@ void main() async {
       final node = cluster.getOrCreatePlayerNode(Snowflake(769699424170541067));
 
       await node.skip(Snowflake(769699424170541067));
+    } else if(msg.message.content == "!nodes") {
+      print("${cluster.nodes} available nodes");
     } else {
       final node = cluster.getOrCreatePlayerNode(Snowflake(769699424170541067));
 
