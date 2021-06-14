@@ -10,6 +10,10 @@ class _Cluster {
   /// All available nodes
   final Map<int, Node> _nodes = {};
 
+  /// Nodes that are currently connecting to server, when a node gets connected
+  /// it will be moved to [_nodes], and when reconnecting will be moved here again
+  final Map<int, Node> _connectingNodes = {};
+
   /// A map to keep the assigned node id for each player
   final Map<Snowflake, int> _nodeLocations = {};
 
@@ -47,7 +51,7 @@ class _Cluster {
 
     final node = Node._fromOptions(this, nodeOptions, isolateSendPort);
 
-    this._nodes[nodeId] = node;
+    this._connectingNodes[nodeId] = node;
   }
 
   Future<void> _handleNodeMessage(dynamic message) async {
@@ -81,6 +85,28 @@ class _Cluster {
       case "EXITED": {
         final nodeId = map["nodeId"]!;
         this._nodes.remove(nodeId as int);
+      }
+      break;
+
+      case "CONNECTED": {
+        final node = this._connectingNodes.remove(map["nodeId"] as int);
+
+        if(node != null) {
+          this._nodes[node.options._nodeId] = node;
+
+          _logger.log(logging.Level.INFO, "[Node ${map["nodeId"]}] Connected to lavalink");
+        }
+      }
+      break;
+
+      case "DISCONNECTED": {
+        final node = this._nodes.remove(map["nodeId"] as int);
+
+        if(node != null) {
+          this._connectingNodes[node.options._nodeId] = node;
+
+          _logger.log(logging.Level.INFO, "[Node ${map["nodeId"]}] Disconnected from lavalink, trying to reconnect");
+        }
       }
       break;
     }
@@ -140,8 +166,8 @@ class Cluster extends _Cluster {
 
   /// Get the best available node, it is recommended to use [getOrCreatePlayerNode] instead
   Node getBestNode() {
-    if(this.nodes == 0) throw ClusterException._new("No available nodes");
-    if(this.nodes == 1) return this._nodes[0]!;
+    if(this._nodes.isEmpty) throw ClusterException._new("No available nodes");
+    if(this._nodes.length == 1) return this._nodes[1]!;
 
     /// As dart doesn't have tuples this will contain the node with few players
     /// Order:

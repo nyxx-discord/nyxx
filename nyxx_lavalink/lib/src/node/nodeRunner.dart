@@ -75,6 +75,8 @@ Future<void> _handleNode(SendPort clusterPort) async {
           "Num-Shards": node.shards,
           "User-Id": node.clientId.id
         }).then((ws) {
+          clusterPort.send({"cmd": "CONNECTED", "nodeId": node._nodeId});
+
           socket = ws;
 
           socketStream = socket!.listen((data) {
