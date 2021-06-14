@@ -21,7 +21,6 @@ class Cluster {
   late final Stream<dynamic> _receiveStream;
 
   final _logger = logging.Logger("Lavalink cluster");
-  final Lock _lock = Lock();
 
   /// Emitted when stats are sent from lavalink
   late final Stream<Stats> onStatsReceived;
@@ -40,15 +39,13 @@ class Cluster {
 
   /// Add and initialize a node
   Future<void> addNode(NodeOptions options) async {
-    final id = await this._lock.synchronized(() {
-      final id = this._lastId + 1;
 
-      this._lastId = id;
+    /// Set a tiny delay so we can ensure we don't repeat numbers
+    await Future.delayed(const Duration(milliseconds: 50));
 
-      return id;
-    });
+    this._lastId += 1;
 
-    this._addNode(options, id);
+    await this._addNode(options, this._lastId);
   }
 
   Future<void> _addNode(NodeOptions nodeOptions, int nodeId) async {
@@ -104,20 +101,6 @@ class Cluster {
     }
   }
 
-  Node getOrCreatePlayerNode(Snowflake guildId) {
-    Node node;
-
-    if (this._nodeLocations.containsKey(guildId)) {
-      node = this.nodes[_nodeLocations[guildId]!]!;
-    } else {
-      node = this.nodes[1]!;
-      this._nodeLocations[guildId] = node.options._nodeId;
-      node.players[guildId] = GuildPlayer._new(node, guildId);
-    }
-
-    return node;
-  }
-
   void _registerEvents() {
     this.client.onVoiceServerUpdate.listen((event) async {
       await Future.delayed(const Duration(milliseconds: 100));
@@ -159,5 +142,23 @@ class Cluster {
     this._receiveStream = this._receivePort.asBroadcastStream();
 
     this._receiveStream.listen(_handleNodeMessage);
+  }
+
+  Node? getBestNode() {
+    return null;
+  }
+
+  Node getOrCreatePlayerNode(Snowflake guildId) {
+    Node node;
+
+    if (this._nodeLocations.containsKey(guildId)) {
+      node = this.nodes[_nodeLocations[guildId]!]!;
+    } else {
+      node = this.nodes[1]!;
+      this._nodeLocations[guildId] = node.options._nodeId;
+      node.players[guildId] = GuildPlayer._new(node, guildId);
+    }
+
+    return node;
   }
 }
