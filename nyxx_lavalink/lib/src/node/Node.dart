@@ -14,7 +14,9 @@ class Node {
   final SendPort _nodeSendPort;
   late String _httpUri;
   late Map<String, String> _defaultHeaders;
-  _Cluster _cluster;
+  final _Cluster _cluster;
+  /// A regular expression to avoid searching when a link is provided
+  final RegExp _urlRegex = RegExp(r"https?://(?:www\.)?.+");
 
   /// Build a new Node
   Node._fromOptions(this._cluster, this.options, this._nodeSendPort) {
@@ -159,7 +161,16 @@ class Node {
     return Tracks._fromJson(jsonDecode(response.body) as Map<String, dynamic>);
   }
 
-  Future<Tracks> youtubeSearch(String query) async => searchTracks("ytsearch:$query");
+  /// Searches a provided query on youtube, if the query is a link
+  /// it's searched directly by the link
+  Future<Tracks> autoSearch(String query) async {
+
+    if(this._urlRegex.hasMatch(query)) {
+      return searchTracks(query);
+    }
+
+    return searchTracks("ytsearch:$query");
+  }
 
   PlayParameters play(Snowflake guildId, Track track) => PlayParameters._new(this, track, guildId);
 

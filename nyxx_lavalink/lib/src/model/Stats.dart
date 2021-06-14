@@ -37,7 +37,10 @@ class FrameStats {
   /// Construct a new instance with provided data
   FrameStats(this.sent, this.deficit, this.nulled);
 
-  static FrameStats _fromJson(Map<String, dynamic> json) => FrameStats(json["sent"] as int, json["deficit"] as int, json["nulled"] as int);
+  FrameStats._fromJson(Map<String, dynamic> json)
+  : sent = json["sent"] as int,
+    deficit = json["deficit"] as int,
+    nulled = json["nulled"] as int;
 }
 
 /// Cpu usage stats
@@ -52,7 +55,10 @@ class Cpu {
   /// Construct a new instance with provided data
   Cpu(this.cores, this.systemLoad, this.lavalinkLoad);
 
-  static Cpu _fromJson(Map<String, dynamic> json) => Cpu(json["cores"] as int, json["systemLoad"] as num, json["lavalinkLoad"] as num);
+  Cpu._fromJson(Map<String, dynamic> json)
+  : cores = json["cores"] as int,
+    systemLoad = json["systemLoad"] as num,
+    lavalinkLoad = json["lavalinkLoad"] as num;
 }
 
 /// Memory usage stats
@@ -69,5 +75,9 @@ class Memory {
   /// Construct a new instance with provided data
   Memory(this.reservable, this.used, this.free, this.allocated);
 
-  static Memory _fromJson(Map<String, dynamic> json) => Memory(json["reservable"] as int, json["used"] as int, json["free"] as int, json["allocated"] as int);
+  Memory._fromJson(Map<String, dynamic> json)
+  : reservable = json["reservable"] as int,
+    used = json["used"] as int,
+    free = json["free"] as int,
+    allocated = json["allocated"] as int;
 }
