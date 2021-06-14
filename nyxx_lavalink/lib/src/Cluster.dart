@@ -40,7 +40,7 @@ class Cluster {
   /// Add and initialize a node
   Future<void> addNode(NodeOptions options) async {
 
-    /// Set a tiny delay so we can ensure we don't repeat numbers
+    /// Set a tiny delay so we can ensure we don't repeat ids
     await Future.delayed(const Duration(milliseconds: 50));
 
     this._lastId += 1;
