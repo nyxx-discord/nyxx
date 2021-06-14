@@ -172,6 +172,7 @@ class Node {
     return searchTracks("ytsearch:$query");
   }
 
+  /// Get the [PlayParameters] object for a specific track
   PlayParameters play(Snowflake guildId, Track track) => PlayParameters._new(this, track, guildId);
 
   /// Shuts down the node

@@ -1,5 +1,6 @@
 part of nyxx_lavalink;
 
+/// Parameters to start playing a track
 class PlayParameters {
   final Node _node;
   Track track;
