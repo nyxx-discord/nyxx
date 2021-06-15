@@ -40,7 +40,7 @@ class _EventDispatcher {
               trackEnd
           );
 
-          await node._handleTrackEnd(trackEnd);
+          node._handleTrackEnd(trackEnd);
         }
         break;
 

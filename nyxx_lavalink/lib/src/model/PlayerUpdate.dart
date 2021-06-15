@@ -10,7 +10,7 @@ class PlayerUpdate extends BaseEvent {
 
   PlayerUpdate._fromJson(Nyxx client, Node node, Map<String, dynamic> json)
   : guildId = Snowflake(json["guildId"]),
-    state = PlayerUpdateState(json["state"]["time"] as int, json["state"]["position"] as int),
+    state = PlayerUpdateState._new(json["state"]["time"] as int, json["state"]["position"] as int),
     super(client, node);
 }
 
@@ -18,5 +18,5 @@ class PlayerUpdateState {
   int time;
   int position;
 
-  PlayerUpdateState(this.time, this.position);
+  PlayerUpdateState._new(this.time, this.position);
 }

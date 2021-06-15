@@ -7,7 +7,10 @@ part of nyxx_lavalink;
 
   Can receive:
   * SEND - Sends a given json payload directly to the server through the web socket
+  * CONNECT - Starts the connection to lavalink server
   * UPDATE - Updates the current node data
+  * RECONNECT - Reconnects to lavalink server
+  * DISCONNECT - Disconnects from lavalink server
   * SHUTDOWN - Shuts down the node and kills the isolate
 
   Can send:
@@ -68,7 +71,7 @@ Future<void> _handleNode(SendPort clusterPort) async {
 
     while (!(actualAttempt > node.maxConnectAttempts)) {
       try {
-        clusterPort.send({"cmd": "LOG", "nodeId": node.nodeId, "level": "INFO", "message": "[Node ${node.nodeId}] Trying to connect to lavalink (${actualAttempt}/${node.maxConnectAttempts})"});
+        clusterPort.send({"cmd": "LOG", "nodeId": node.nodeId, "level": "INFO", "message": "[Node ${node.nodeId}] Trying to connect to lavalink ($actualAttempt/${node.maxConnectAttempts})"});
 
         await WebSocket.connect(address, headers: {
           "Authorization": node.password,
@@ -114,14 +117,18 @@ Future<void> _handleNode(SendPort clusterPort) async {
     return;
   }
 
-  Future<void> dispose() async {
+  Future<void> disconnect() async {
     await socket?.close(1000);
     await socketStream?.cancel();
-    receivePort.close();
+
+    clusterPort.send({"cmd": "DISCONNECTED", "nodeId": node.nodeId});
   }
 
-  // Now with all set up and ready, we can start our connection
-  await connect();
+  Future<void> reconnect() async {
+    await disconnect();
+    await Future.delayed(const Duration(milliseconds: 300));
+    await connect();
+  }
 
   await for (final msg in receiveStream) {
     switch (msg["cmd"]) {
@@ -129,13 +136,27 @@ Future<void> _handleNode(SendPort clusterPort) async {
         socket?.add(jsonEncode(msg["data"]));
         break;
 
+      case "CONNECT":
+        await connect();
+        break;
+
       case "UPDATE":
         node = NodeOptions._fromJson(msg["data"] as Map<String, dynamic>);
+        await reconnect();
+        break;
+
+      case "DISCONNECT":
+        await disconnect();
+        break;
+
+      case "RECONNECT":
+        await reconnect();
         break;
 
       case "SHUTDOWN": {
         clusterPort.send({"cmd": "EXITED", "nodeId": node.nodeId});
-        await dispose();
+        await disconnect();
+        receivePort.close();
         Isolate.current.kill(priority: Isolate.immediate);
       }
       break;

@@ -28,21 +28,16 @@ class PlayParameters {
       this.channelId
   );
 
-  /// Sets the requester of the track
-  void setRequester(Snowflake requester) => this.requester = requester;
-  /// Sets the channel id where this track was requested
-  void setChannelId(Snowflake channelId) => this.channelId = channelId;
-
   /// Forces the song to start playing
-  Future<void> startPlaying() async {
+  void startPlaying() {
     if (this.endTime == null) {
-      await _node._sendPayload("play", this.guildId, {
+      _node._sendPayload("play", this.guildId, {
         "track": track.track,
         "noReplace": !this.replace,
         "startTime": this.startTime
       });
     } else {
-      await _node._sendPayload("play", this.guildId, {
+      _node._sendPayload("play", this.guildId, {
         "track": track.track,
         "noReplace": !this.replace,
         "startTime": this.startTime,
@@ -52,7 +47,7 @@ class PlayParameters {
   }
 
   /// Puts the track on the queue and starts playing if necessary
-  Future<void> queue() async {
+  void queue() {
     final player = _node.players[this.guildId];
 
     if(player == null) return;
@@ -62,7 +57,7 @@ class PlayParameters {
     if (player.nowPlaying == null && player.queue.isEmpty) {
       player.nowPlaying = queuedTrack;
 
-      await this.startPlaying();
+      this.startPlaying();
     }
 
     player.queue.add(queuedTrack);

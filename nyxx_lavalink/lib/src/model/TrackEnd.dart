@@ -1,5 +1,6 @@
 part of nyxx_lavalink;
 
+/// Object sent when a track ends playing
 class TrackEnd extends BaseEvent {
   /// Reason to the track to end
   String reason;

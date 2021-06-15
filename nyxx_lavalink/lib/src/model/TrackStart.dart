@@ -1,5 +1,6 @@
 part of nyxx_lavalink;
 
+/// Object sent when a track starts playing
 class TrackStart extends BaseEvent {
   /// Track start type (if its replaced or not the track)
   String startType;

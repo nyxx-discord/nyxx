@@ -1,5 +1,7 @@
 part of nyxx_lavalink;
 
+/// An exception that can be thrown when using
+/// [Node.searchTracks] or [Node.autoSearch] if the request fails
 class HttpException implements Exception {
   /// The status code of the request
   final int code;

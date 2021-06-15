@@ -1,6 +1,7 @@
 part of nyxx_lavalink;
 
-/// Builder options for creating a lavalink node
+/// Class containing all node options needed to establish and mantain a connection
+/// with lavalink server
 class NodeOptions {
   /// Host where lavalink is running
   String host;

@@ -1,6 +1,6 @@
 part of nyxx_lavalink;
 
-
+/// Web socket closed event from lavalink
 class WebSocketClosed extends BaseEvent {
   /// Type of close
   String? type;

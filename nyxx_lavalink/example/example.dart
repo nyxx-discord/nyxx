@@ -14,7 +14,7 @@ void main() async {
   final options = NodeOptions(port: 18100, password: "testing");
 
   await cluster.addNode(options);
-  await cluster.addNode(NodeOptions(port: 18101, password: "testing"));
+  //await cluster.addNode(NodeOptions(port: 18101, password: "testing"));
 
   await for (final msg in client.onMessageReceived) {
     if(msg.message.content == "!join") {
@@ -32,15 +32,19 @@ void main() async {
     } else if (msg.message.content == "!skip") {
       final node = cluster.getOrCreatePlayerNode(Snowflake(769699424170541067));
 
-      await node.skip(Snowflake(769699424170541067));
+      node.skip(Snowflake(769699424170541067));
     } else if(msg.message.content == "!nodes") {
-      print("${cluster.nodes} available nodes");
+      print("${cluster.connectedNodes.length} available nodes");
+    } else if (msg.message.content == "!update") {
+      final node = cluster.getOrCreatePlayerNode(Snowflake(769699424170541067));
+
+      node.updateOptions(NodeOptions(port: 18101, password: "testing"));
     } else {
       final node = cluster.getOrCreatePlayerNode(Snowflake(769699424170541067));
 
       final searchResults = await node.searchTracks(msg.message.content);
 
-      await node.play(Snowflake(769699424170541067), searchResults.tracks[0]).queue();
+      node.play(Snowflake(769699424170541067), searchResults.tracks[0]).queue();
     }
   }
 }

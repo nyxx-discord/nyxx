@@ -49,6 +49,9 @@ class _Cluster {
 
     isolateSendPort.send(nodeOptions._toJson());
 
+    // Say the node to start the connection
+    isolateSendPort.send({"cmd": "CONNECT"});
+
     final node = Node._fromOptions(this, nodeOptions, isolateSendPort);
 
     this._connectingNodes[nodeId] = node;
@@ -62,7 +65,7 @@ class _Cluster {
 
     switch(map["cmd"]) {
       case "DISPATCH":
-        this._eventDispatcher.dispatchEvent(map);
+        unawaited(this._eventDispatcher.dispatchEvent(map));
         break;
 
       case "LOG": {
@@ -116,7 +119,7 @@ class _Cluster {
           // Also delete the players, so them can be created again on another node
           node.players.clear();
 
-          _logger.log(logging.Level.INFO, "[Node ${map["nodeId"]}] Disconnected from lavalink, trying to reconnect");
+          _logger.log(logging.Level.INFO, "[Node ${map["nodeId"]}] Disconnected from lavalink");
         }
       }
       break;
@@ -173,8 +176,11 @@ class Cluster extends _Cluster {
   /// Creates a new lavalink cluster
   Cluster(Nyxx client, Snowflake clientId): super(client, clientId);
 
-  /// Return the number of operating nodes
-  int get nodes => this._nodes.length;
+  /// Returns a map with the nodes connected to lavalink cluster
+  Map<int, Node> get connectedNodes => Map.unmodifiable(this._nodes);
+
+  /// Returns a map with the nodes that are actually disconnected from lavalink
+  Map<int, Node> get disconnectedNodes => Map.unmodifiable(this._connectingNodes);
 
   /// Get the best available node, it is recommended to use [getOrCreatePlayerNode] instead
   Node getBestNode() {
@@ -229,6 +235,12 @@ class Cluster extends _Cluster {
 
     return node;
   }
+
+  /// Attempts to retrieve a node disconnected from lavalink by its id
+  ///
+  /// this method does not work with nodes that have exceeded the maximum
+  /// reconnect attempts as those get removed from cluster
+  Node? getDisconnectedNode(int nodeId) => this._connectingNodes[nodeId];
 
   /// Add and initialize a node
   Future<void> addNode(NodeOptions options) async {

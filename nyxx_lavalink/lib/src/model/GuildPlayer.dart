@@ -1,5 +1,6 @@
 part of nyxx_lavalink;
 
+/// A player of a specific guild
 class GuildPlayer {
   /// Track queue
   List<QueuedTrack> queue = [];
@@ -8,7 +9,9 @@ class GuildPlayer {
   /// Guild where this player operates on
   Snowflake guildId;
 
+  /// A map to combine server state and server update events to send them to lavalink
   final Map<String, dynamic> _serverUpdate = {};
+  /// A reference to the parent node
   final Node _nodeRef;
 
   GuildPlayer._new(this._nodeRef, this.guildId);

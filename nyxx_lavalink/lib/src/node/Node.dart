@@ -32,7 +32,7 @@ class Node {
     };
   }
 
-  Future<void> _sendPayload(String op, Snowflake guildId, [Map<String, dynamic>? data]) async {
+  void _sendPayload(String op, Snowflake guildId, [Map<String, dynamic>? data]) async {
 
     if (data == null) {
       _nodeSendPort.send({"cmd": "SEND", "data": {
@@ -48,7 +48,7 @@ class Node {
     }
   }
 
-  Future<void> _playNext(Snowflake guildId) async {
+  void _playNext(Snowflake guildId) async {
     final player = this.players[guildId];
 
     if (player == null) return;
@@ -58,13 +58,13 @@ class Node {
     player.nowPlaying = track;
 
     if(track.endTime == null) {
-      await this._sendPayload("play", guildId, {
+      this._sendPayload("play", guildId, {
         "track": track.track.track,
         "noReplace": false,
         "startTime": track.startTime,
       });
     } else {
-      await this._sendPayload("play", guildId, {
+      this._sendPayload("play", guildId, {
         "track": track.track.track,
         "noReplace": false,
         "startTime": track.startTime,
@@ -73,7 +73,7 @@ class Node {
     }
   }
 
-  Future<void> _handleTrackEnd(TrackEnd event) async {
+  void _handleTrackEnd(TrackEnd event) {
     if(!(event.reason == "FINISHED")) return;
 
     final player = this.players[event.guildId];
@@ -86,12 +86,12 @@ class Node {
     if (player.queue.isEmpty) return;
 
 
-    await _playNext(event.guildId);
+    _playNext(event.guildId);
   }
 
   /// Destroys a player
-  Future<void> destroy(Snowflake guildId) async {
-    await _sendPayload("destroy", guildId);
+  void destroy(Snowflake guildId) {
+    _sendPayload("destroy", guildId);
 
     // delete the actual player
     this.players.remove(guildId);
@@ -102,7 +102,7 @@ class Node {
   }
 
   /// Stops a player
-  Future<void> stop(Snowflake guildId) async {
+  void stop(Snowflake guildId) {
     final player = this.players[guildId];
 
     if (player == null) return;
@@ -110,10 +110,11 @@ class Node {
     player.queue.clear();
     player.nowPlaying = null;
 
-    await _sendPayload("stop", guildId);
+    _sendPayload("stop", guildId);
   }
 
-  Future<void> skip(Snowflake guildId) async {
+  /// Skips a track, starting the next one if available or stopping the player if not
+  void skip(Snowflake guildId) {
     final player = this.players[guildId];
 
     if (player == null) return;
@@ -121,40 +122,48 @@ class Node {
     if (player.queue.isEmpty) {
       return;
     } else if (player.queue.length == 1) {
-      await stop(guildId);
+      stop(guildId);
       return;
     } else {
       player.queue.removeAt(0);
-      await this._playNext(guildId);
+      this._playNext(guildId);
     }
   }
 
-  Future<void> setPause(Snowflake guildId, bool pause) async {
-    await _sendPayload("pause", guildId, {"pause": pause});
+  /// Set the pause state of a player
+  ///
+  /// this method is internally used by [resume] and [pause]
+  void setPause(Snowflake guildId, bool pauseState) {
+    _sendPayload("pause", guildId, {"pause": pauseState});
   }
 
-  Future<void> seek(Snowflake guildId, Duration time) async {
-    await _sendPayload("seek", guildId, {
+  /// Seeks for a given time at the currently playing track
+  void seek(Snowflake guildId, Duration time) {
+    _sendPayload("seek", guildId, {
       "position": time.inMilliseconds
     });
   }
 
-  Future<void> volume(Snowflake guildId, int volume) async {
+  /// Sets the volume for a guild player
+  void volume(Snowflake guildId, int volume) {
     final trimmed = max(min(volume, 1000), 0);
 
-    await _sendPayload("volume", guildId, {
+    _sendPayload("volume", guildId, {
       "volume": trimmed
     });
   }
 
-  Future<void> pause(Snowflake guildId) async {
-    await setPause(guildId, true);
+  /// Pauses a guild player
+  void pause(Snowflake guildId) {
+    setPause(guildId, true);
   }
 
-  Future<void> resume(Snowflake guildId) async {
-    await setPause(guildId, true);
+  /// Resumes the track playback of a guild player
+  void resume(Snowflake guildId) {
+    setPause(guildId, true);
   }
-  
+
+  /// Searches a given query over the lavalink api and returns the results
   Future<Tracks> searchTracks(String query) async {
     final response = await _httpClient.get(Uri.parse(
       "${this._httpUri}/loadtracks?identifier=$query"),
@@ -208,6 +217,28 @@ class Node {
     _cluster._nodeLocations[guildId] = this.options.nodeId;
 
     return player;
+  }
+
+  /// Updates the [NodeOptions} property of the node, also reconnects the
+  /// websocket to the new options
+  void updateOptions(NodeOptions newOptions) {
+    // Set the node id and client id before sending it to the isolate
+    newOptions.clientId = this.options.clientId;
+    newOptions.nodeId = this.options.nodeId;
+
+    _nodeSendPort.send({"cmd": "UPDATE", "data": newOptions._toJson()});
+
+    this.options = newOptions;
+  }
+
+  /// Tells the node to disconnect from lavalink server
+  void disconnect() {
+    _nodeSendPort.send({"cmd": "DISCONNECT"});
+  }
+
+  /// Tells the node to reconnect to lavalink server
+  void reconnect() {
+    _nodeSendPort.send({"cmd": "RECONNECT"});
   }
 
   @override
