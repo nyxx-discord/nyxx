@@ -3,7 +3,7 @@ part of nyxx_lavalink;
 class GuildPlayer {
   /// Track queue
   List<QueuedTrack> queue = [];
-  /// Now playing track
+  /// The currently playing track
   QueuedTrack? nowPlaying;
   /// Guild where this player operates on
   Snowflake guildId;
