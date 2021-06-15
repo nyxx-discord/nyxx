@@ -103,12 +103,16 @@ class Guild extends SnowflakeEntity {
   Role get everyoneRole => roles.values.firstWhere((r) => r.name == "@everyone");
 
   /// Returns member object for bot user
-  Member? get selfMember {
+  Cacheable<Snowflake, Member> get selfMember {
     if (this.client is! Nyxx) {
       throw new UnsupportedError("Cannot use this property with NyxxRest");
     }
 
-    return members[(client as Nyxx).self.id];
+    return _MemberCacheable(
+        this.client,
+        (client as Nyxx).self.id,
+        _GuildCacheable(this.client, this.id)
+    );
   }
 
   /// File upload limit for channel in bytes.
