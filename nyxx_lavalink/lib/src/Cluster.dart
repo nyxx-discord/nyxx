@@ -108,6 +108,14 @@ class _Cluster {
         if(node != null) {
           this._connectingNodes[node.options.nodeId] = node;
 
+          node.players.forEach((guildId, _) {
+            // this makes possible for a player to be moved to another node
+            this._nodeLocations.remove(guildId);
+          });
+
+          // Also delete the players, so them can be created again on another node
+          node.players.clear();
+
           _logger.log(logging.Level.INFO, "[Node ${map["nodeId"]}] Disconnected from lavalink, trying to reconnect");
         }
       }
