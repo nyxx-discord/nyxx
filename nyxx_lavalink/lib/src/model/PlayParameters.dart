@@ -4,17 +4,29 @@ part of nyxx_lavalink;
 class PlayParameters {
   final Node _node;
   Track track;
-  bool replace;
-  int startTime = 0;
-  int? endTime;
   Snowflake guildId;
+  bool replace;
+  int startTime;
+  int? endTime;
+
   /// The requester of the track
   Snowflake? requester;
 
   /// The channel where this track was requested
   Snowflake? channelId;
 
-  PlayParameters._new(this._node, this.track, this.guildId) : replace = false;
+  /// Create a new play parameters object, it is recommended to create this
+  /// through [Node.play]
+  PlayParameters(
+      this._node,
+      this.track,
+      this.guildId,
+      this.replace,
+      this.startTime,
+      this.endTime,
+      this.requester,
+      this.channelId
+  );
 
   /// Sets the requester of the track
   void setRequester(Snowflake requester) => this.requester = requester;

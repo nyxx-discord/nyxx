@@ -40,9 +40,7 @@ void main() async {
 
       final searchResults = await node.searchTracks(msg.message.content);
 
-      final params = node.play(Snowflake(769699424170541067), searchResults.tracks[0]);
-
-      await params.queue();
+      await node.play(Snowflake(769699424170541067), searchResults.tracks[0]).queue();
     }
   }
 }

@@ -173,7 +173,22 @@ class Node {
   }
 
   /// Get the [PlayParameters] object for a specific track
-  PlayParameters play(Snowflake guildId, Track track) => PlayParameters._new(this, track, guildId);
+  PlayParameters play(Snowflake guildId, Track track, {
+    bool replace = false,
+    int startTime = 0,
+    int? endTime,
+    Snowflake? requester,
+    Snowflake? channelId
+  }) => PlayParameters(
+    this,
+    track,
+    guildId,
+    replace,
+    startTime,
+    endTime,
+    requester,
+    channelId
+  );
 
   /// Shuts down the node
   void shutdown() {

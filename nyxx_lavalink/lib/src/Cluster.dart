@@ -42,7 +42,7 @@ class _Cluster {
   Future<void> _addNode(NodeOptions nodeOptions, int nodeId) async {
     await Isolate.spawn(_handleNode, this._receivePort.sendPort);
 
-    final isolateSendPort = await this._receiveStream.first as SendPort;
+    final isolateSendPort = await this._receiveStream.firstWhere((element) => element is SendPort) as SendPort;
 
     nodeOptions.clientId = this._clientId;
     nodeOptions.nodeId = nodeId;
@@ -83,8 +83,11 @@ class _Cluster {
       break;
 
       case "EXITED": {
-        final nodeId = map["nodeId"]!;
-        this._nodes.remove(nodeId as int);
+        final nodeId = map["nodeId"]! as int;
+        this._nodes.remove(nodeId);
+        this._connectingNodes.remove(nodeId);
+
+        _logger.log(logging.Level.INFO, "[Node $nodeId] Exited");
       }
       break;
 

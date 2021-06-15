@@ -114,6 +114,12 @@ Future<void> _handleNode(SendPort clusterPort) async {
     return;
   }
 
+  Future<void> dispose() async {
+    await socket?.close(1000);
+    await socketStream?.cancel();
+    receivePort.close();
+  }
+
   // Now with all set up and ready, we can start our connection
   await connect();
 
@@ -128,6 +134,8 @@ Future<void> _handleNode(SendPort clusterPort) async {
         break;
 
       case "SHUTDOWN": {
+        clusterPort.send({"cmd": "EXITED", "nodeId": node.nodeId});
+        await dispose();
         Isolate.current.kill(priority: Isolate.immediate);
       }
       break;
