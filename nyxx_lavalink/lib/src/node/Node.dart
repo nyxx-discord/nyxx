@@ -93,7 +93,7 @@ class Node {
   Future<void> destroy(Snowflake guildId) async {
     await _sendPayload("destroy", guildId);
 
-    // delete the actual node
+    // delete the actual player
     this.players.remove(guildId);
 
     // delete the relationship between this node and the player so
