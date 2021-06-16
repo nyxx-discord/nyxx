@@ -59,10 +59,13 @@ class PlayParameters {
 
     final queuedTrack = QueuedTrack._new(this.track, this.startTime, this.endTime, this.requester, this.channelId);
 
-    if (player.nowPlaying == null && player.queue.isEmpty) {
-      this._node._playNext(this.guildId);
-    }
+    // Whether if the node should start playing the track
+    final shouldPlay = player.nowPlaying == null && player.queue.isEmpty;
 
     player.queue.add(queuedTrack);
+
+    if(shouldPlay == true) {
+      this._node._playNext(this.guildId);
+    }
   }
 }
