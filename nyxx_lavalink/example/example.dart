@@ -10,14 +10,14 @@ void main() async {
   final client = Nyxx(Platform.environment["DISCORD_TOKEN"]!, GatewayIntents.all);
   final cluster = Cluster(client, Snowflake("YOUR_BOT_ID"));
   final channelId = Snowflake("CHANNEL_ID_HERE");
+  final guildId = Snowflake("GUILD_ID_HERE");
 
   client.onReady.listen((event) {
     print("ready");
   });
 
-  final options = NodeOptions(port: 2333, password: "testing");
-
-  await cluster.addNode(options);
+  // Add your lavalink nodes
+  await cluster.addNode(NodeOptions());
 
   await for (final msg in client.onMessageReceived) {
     if(msg.message.content == "!join") {
@@ -25,29 +25,29 @@ void main() async {
 
       channel.connect();
 
-      cluster.getOrCreatePlayerNode(channelId);
+      cluster.getOrCreatePlayerNode(guildId);
     } else if(msg.message.content == "!queue") {
-      final node = cluster.getOrCreatePlayerNode(channelId);
+      final node = cluster.getOrCreatePlayerNode(guildId);
 
-      final player = node.players[channelId];
+      final player = node.players[guildId];
 
       print(player!.queue);
     } else if (msg.message.content == "!skip") {
-      final node = cluster.getOrCreatePlayerNode(channelId);
+      final node = cluster.getOrCreatePlayerNode(guildId);
 
       node.skip(channelId);
     } else if(msg.message.content == "!nodes") {
       print("${cluster.connectedNodes.length} available nodes");
     } else if (msg.message.content == "!update") {
-      final node = cluster.getOrCreatePlayerNode(channelId);
+      final node = cluster.getOrCreatePlayerNode(guildId);
 
-      node.updateOptions(NodeOptions(port: 18101, password: "testing"));
+      node.updateOptions(NodeOptions());
     } else {
-      final node = cluster.getOrCreatePlayerNode(channelId);
+      final node = cluster.getOrCreatePlayerNode(guildId);
 
       final searchResults = await node.searchTracks(msg.message.content);
 
-      node.play(channelId, searchResults.tracks[0]).queue();
+      node.play(guildId, searchResults.tracks[0]).queue();
     }
   }
 }

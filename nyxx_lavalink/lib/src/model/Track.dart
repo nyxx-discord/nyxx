@@ -5,9 +5,9 @@ class QueuedTrack {
   /// The actual track
   Track track;
   /// Where should start lavalink playing the track
-  int startTime;
+  Duration startTime;
   /// If the track should stop playing before finish and where
-  int? endTime;
+  Duration? endTime;
 
   /// The requester of the track
   Snowflake? requester;

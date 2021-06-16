@@ -10,9 +10,9 @@ class PlayParameters {
   /// Wether to replace the track or not
   bool replace;
   /// The time at where the track will start to play
-  int startTime;
+  Duration startTime;
   /// The time at where the track will stop playing
-  int? endTime;
+  Duration? endTime;
 
   /// The requester of the track
   Snowflake? requester;
@@ -39,14 +39,14 @@ class PlayParameters {
       _node._sendPayload("play", this.guildId, {
         "track": track.track,
         "noReplace": !this.replace,
-        "startTime": this.startTime
+        "startTime": this.startTime.inMilliseconds
       });
     } else {
       _node._sendPayload("play", this.guildId, {
         "track": track.track,
         "noReplace": !this.replace,
         "startTime": this.startTime,
-        "endTime": this.endTime
+        "endTime": this.endTime!.inMilliseconds
       });
     }
   }

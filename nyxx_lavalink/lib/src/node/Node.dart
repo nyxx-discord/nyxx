@@ -33,7 +33,6 @@ class Node {
   }
 
   void _sendPayload(String op, Snowflake guildId, [Map<String, dynamic>? data]) async {
-
     if (data == null) {
       _nodeSendPort.send({"cmd": "SEND", "data": {
         "op": op,
@@ -189,8 +188,8 @@ class Node {
   /// Get the [PlayParameters] object for a specific track
   PlayParameters play(Snowflake guildId, Track track, {
     bool replace = false,
-    int startTime = 0,
-    int? endTime,
+    Duration startTime = const Duration(),
+    Duration? endTime,
     Snowflake? requester,
     Snowflake? channelId
   }) => PlayParameters(
