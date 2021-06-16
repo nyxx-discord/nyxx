@@ -64,7 +64,7 @@ class PlayParameters {
 
     player.queue.add(queuedTrack);
 
-    if(shouldPlay == true) {
+    if(shouldPlay) {
       this._node._playNext(this.guildId);
     }
   }
