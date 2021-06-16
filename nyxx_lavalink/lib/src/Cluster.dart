@@ -57,7 +57,7 @@ class _Cluster {
     this._connectingNodes[nodeId] = node;
   }
 
-  Future<void> _handleNodeMessage(dynamic message) async {
+  void _handleNodeMessage(dynamic message) {
     if (message is SendPort) return;
     final map = message as Map<String, dynamic>;
 
@@ -65,7 +65,7 @@ class _Cluster {
 
     switch(map["cmd"]) {
       case "DISPATCH":
-        unawaited(this._eventDispatcher.dispatchEvent(map));
+        this._eventDispatcher.dispatchEvent(map);
         break;
 
       case "LOG": {
@@ -128,7 +128,7 @@ class _Cluster {
 
   void _registerEvents() {
     this._client.onVoiceServerUpdate.listen((event) async {
-      await Future.delayed(const Duration(milliseconds: 100));
+      await Future.delayed(const Duration(milliseconds: 80));
 
       final node = this._nodes[this._nodeLocations[event.guild.id]];
 
@@ -145,7 +145,7 @@ class _Cluster {
       if(!(event.raw["d"]["user_id"] == _clientId.toString())) return;
       if(event.state.guild == null) return;
 
-      await Future.delayed(const Duration(milliseconds: 100));
+      await Future.delayed(const Duration(milliseconds: 80));
 
       final node = this._nodes[this._nodeLocations[event.state.guild!.id]];
 

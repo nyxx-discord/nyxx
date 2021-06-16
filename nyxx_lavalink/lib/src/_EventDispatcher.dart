@@ -10,7 +10,7 @@ class _EventDispatcher {
   final StreamController<WebSocketClosed> onWebSocketClosed = StreamController.broadcast();
   final StreamController<Map<String, dynamic>> onRawEvent = StreamController.broadcast();
 
-  Future<void> dispatchEvent(Map<String, dynamic> json) async {
+  void dispatchEvent(Map<String, dynamic> json) {
     final node = cluster._nodes[json["nodeId"]];
 
     if(node == null) return;
