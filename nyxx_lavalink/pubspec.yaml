@@ -7,12 +7,12 @@ documentation: https://github.com/l7ssha/nyxx/wiki
 issue_tracker: https://github.com/l7ssha/nyxx/issues
 
 environment:
-  sdk: '>=2.12.0 <3.0.0'
+  sdk: '>=2.13.0 <3.0.0'
 
 dependencies:
    http: "^0.13.1"
    logging: "^1.0.1"
-   nyxx: "2.0.0-rc.6"
+   nyxx: "2.0.0-rc.7"
 
 dev_dependencies:
   pedantic: ^1.10.0
