@@ -160,7 +160,7 @@ class _Cluster {
   }
 
   /// Creates a new cluster ready to start adding connections
-  _Cluster(this._client, this._clientId) {
+  _Cluster(this._client, this._clientId, [logging.Level? loggingLevel]) {
     this._registerEvents();
 
     this._eventDispatcher = _EventDispatcher(this);
@@ -168,13 +168,16 @@ class _Cluster {
     this._receiveStream = this._receivePort.asBroadcastStream();
 
     this._receiveStream.listen(_handleNodeMessage);
+
+    logging.Logger.root.level = loggingLevel ?? logging.Level.INFO;
   }
 }
 
 /// Cluster of lavalink nodes
 class Cluster extends _Cluster {
   /// Creates a new lavalink cluster
-  Cluster(Nyxx client, Snowflake clientId): super(client, clientId);
+  Cluster(Nyxx client, Snowflake clientId, {logging.Level? loggingLevel}):
+        super(client, clientId, loggingLevel);
 
   /// Returns a map with the nodes connected to lavalink cluster
   Map<int, Node> get connectedNodes => Map.unmodifiable(this._nodes);
