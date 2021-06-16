@@ -245,7 +245,7 @@ class Cluster extends _Cluster {
   /// reconnect attempts as those get removed from cluster
   Node? getDisconnectedNode(int nodeId) => this._connectingNodes[nodeId];
 
-  /// Add and initialize a node
+  /// Adds and initializes a node
   Future<void> addNode(NodeOptions options) async {
 
     /// Set a tiny delay so we can ensure we don't repeat ids
