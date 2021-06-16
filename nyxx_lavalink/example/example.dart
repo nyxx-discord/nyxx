@@ -3,48 +3,51 @@ import "dart:io";
 import "package:nyxx_lavalink/lavalink.dart";
 import "package:nyxx/nyxx.dart";
 
+// This is a very simple example, for a more complete one take a look at
+// https://github.com/AlvaroMS25/nyxx_lavalink_testbot
+
 void main() async {
   final client = Nyxx(Platform.environment["DISCORD_TOKEN"]!, GatewayIntents.all);
-  final cluster = Cluster(client, 728671963811414019.toSnowflake());
+  final cluster = Cluster(client, Snowflake("YOUR_BOT_ID"));
+  final channelId = Snowflake("CHANNEL_ID_HERE");
 
   client.onReady.listen((event) {
     print("ready");
   });
 
-  final options = NodeOptions(port: 18100, password: "testing");
+  final options = NodeOptions(port: 2333, password: "testing");
 
   await cluster.addNode(options);
-  //await cluster.addNode(NodeOptions(port: 18101, password: "testing"));
 
   await for (final msg in client.onMessageReceived) {
     if(msg.message.content == "!join") {
-      final channel = await client.fetchChannel<VoiceGuildChannel>(769699425089748992.toSnowflake());
+      final channel = await client.fetchChannel<VoiceGuildChannel>(channelId);
 
       channel.connect();
 
-      cluster.getOrCreatePlayerNode(Snowflake(769699424170541067));
+      cluster.getOrCreatePlayerNode(channelId);
     } else if(msg.message.content == "!queue") {
-      final node = cluster.getOrCreatePlayerNode(Snowflake(769699424170541067));
+      final node = cluster.getOrCreatePlayerNode(channelId);
 
-      final player = node.players[Snowflake(769699424170541067)];
+      final player = node.players[channelId];
 
       print(player!.queue);
     } else if (msg.message.content == "!skip") {
-      final node = cluster.getOrCreatePlayerNode(Snowflake(769699424170541067));
+      final node = cluster.getOrCreatePlayerNode(channelId);
 
-      node.skip(Snowflake(769699424170541067));
+      node.skip(channelId);
     } else if(msg.message.content == "!nodes") {
       print("${cluster.connectedNodes.length} available nodes");
     } else if (msg.message.content == "!update") {
-      final node = cluster.getOrCreatePlayerNode(Snowflake(769699424170541067));
+      final node = cluster.getOrCreatePlayerNode(channelId);
 
       node.updateOptions(NodeOptions(port: 18101, password: "testing"));
     } else {
-      final node = cluster.getOrCreatePlayerNode(Snowflake(769699424170541067));
+      final node = cluster.getOrCreatePlayerNode(channelId);
 
       final searchResults = await node.searchTracks(msg.message.content);
 
-      node.play(Snowflake(769699424170541067), searchResults.tracks[0]).queue();
+      node.play(channelId, searchResults.tracks[0]).queue();
     }
   }
 }

@@ -219,7 +219,7 @@ class Node {
     return player;
   }
 
-  /// Updates the [NodeOptions} property of the node, also reconnects the
+  /// Updates the [NodeOptions] property of the node, also reconnects the
   /// websocket to the new options
   void updateOptions(NodeOptions newOptions) {
     // Set the node id and client id before sending it to the isolate
