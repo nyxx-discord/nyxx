@@ -7,7 +7,7 @@ class _Cluster {
   /// The client id provided to lavalink;
   final Snowflake _clientId;
 
-  /// All available nodes
+  /// All available nodes, ordered by node id
   final Map<int, Node> _nodes = {};
 
   /// Nodes that are currently connecting to server, when a node gets connected

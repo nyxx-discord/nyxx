@@ -8,6 +8,9 @@ class Node {
   /// A map with guild ids as keys and players as values
   Map<Snowflake, GuildPlayer> players = {};
 
+  /// Last stats received by this node
+  Stats? stats;
+
   /// Http client used with this node
   final http.Client _httpClient = http.Client();
 
