@@ -60,14 +60,14 @@ class Node {
       this._sendPayload("play", guildId, {
         "track": track.track.track,
         "noReplace": false,
-        "startTime": track.startTime,
+        "startTime": track.startTime.inMilliseconds,
       });
     } else {
       this._sendPayload("play", guildId, {
         "track": track.track.track,
         "noReplace": false,
-        "startTime": track.startTime,
-        "endTime": track.endTime
+        "startTime": track.startTime.inMilliseconds,
+        "endTime": track.endTime!.inMilliseconds
       });
     }
   }

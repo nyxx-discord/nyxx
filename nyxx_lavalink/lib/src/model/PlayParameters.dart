@@ -60,9 +60,7 @@ class PlayParameters {
     final queuedTrack = QueuedTrack._new(this.track, this.startTime, this.endTime, this.requester, this.channelId);
 
     if (player.nowPlaying == null && player.queue.isEmpty) {
-      player.nowPlaying = queuedTrack;
-
-      this.startPlaying();
+      this._node._playNext(this.guildId);
     }
 
     player.queue.add(queuedTrack);
