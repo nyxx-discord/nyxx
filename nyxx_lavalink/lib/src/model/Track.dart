@@ -20,7 +20,7 @@ class QueuedTrack {
 
   @override
   String toString() =>
-      "Track[${this.track.info?.title}]";
+      "<QueuedTrack title=${this.track.info?.title} identifier=${this.track.info?.identifier}>";
 }
 
 /// Lavalink track object
