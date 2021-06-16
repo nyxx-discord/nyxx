@@ -3,10 +3,15 @@ part of nyxx_lavalink;
 /// Parameters to start playing a track
 class PlayParameters {
   final Node _node;
+  /// The track to play
   Track track;
+  /// The guild where the track will be played
   Snowflake guildId;
+  /// Wether to replace the track or not
   bool replace;
+  /// The time at where the track will start to play
   int startTime;
+  /// The time at where the track will stop playing
   int? endTime;
 
   /// The requester of the track
