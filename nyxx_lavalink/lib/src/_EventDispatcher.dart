@@ -53,7 +53,7 @@ class _EventDispatcher {
         break;
 
 
-      case "Stats":{
+      case "Stats": {
         final stats = Stats._fromJson(cluster._client, node,
             json["data"] as Map<String, dynamic>
         );
