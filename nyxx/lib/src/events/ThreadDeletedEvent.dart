@@ -2,16 +2,20 @@ part of nyxx;
 
 /// Fired when a thread is created
 class ThreadDeletedEvent {
-  late final ThreadChannel? thread;
-  late final _ChannelCacheable<TextGuildChannel> parent;
-  late final Snowflake threadId;
-  late final _GuildCacheable guild;
+  /// Thread that was deleted
+  late final CacheableTextChannel<ThreadChannel> thread;
 
-  ThreadDeletedEvent._new(Map<String, dynamic> raw, Nyxx client) {
-    final data = raw["d"] as Map<String, dynamic>;
-    this.threadId = Snowflake(data["id"]);
-    this.thread = new _ChannelCacheable<ThreadChannel>(client, this.threadId).getFromCache();
-    this.parent = new _ChannelCacheable(client, Snowflake(data["parent_id"]));
-    this.guild = new _GuildCacheable(client, Snowflake(data["guild_id"]));
+  /// Channel where thread was located
+  late final CacheableTextChannel<TextGuildChannel> parent;
+
+  /// Guild where event was generated
+  late final Cacheable<Snowflake, Guild> guild;
+
+  ThreadDeletedEvent._new(RawApiMap raw, Nyxx client) {
+    final data = raw["d"] as RawApiMap;
+
+    this.thread = CacheableTextChannel._new(client, Snowflake(data["id"]));
+    this.parent = CacheableTextChannel._new(client, Snowflake(data["parent_id"]));
+    this.guild = _GuildCacheable(client, Snowflake(data["guild_id"]));
   }
 }

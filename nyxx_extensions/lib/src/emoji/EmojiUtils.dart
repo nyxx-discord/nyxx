@@ -2,11 +2,11 @@ part of emoji;
 
 List<EmojiDefinition> _emojisCache = [];
 
-Future<Map<String, dynamic>> _downloadEmojiData() async {
+Future<RawApiMap> _downloadEmojiData() async {
   final request = http.Request("GET", emojiDataUri);
   final requestBody = await (await request.send()).stream.bytesToString();
 
-  return jsonDecode(requestBody) as Map<String, dynamic>;
+  return jsonDecode(requestBody) as RawApiMap;
 }
 
 /// Emoji definitions uri
@@ -27,7 +27,7 @@ Future<Iterable<EmojiDefinition>> getAllEmojiDefinitions({bool cache = false}) a
 
   final _emojis = [
     for(final ed in rawData["emojiDefinitions"])
-      EmojiDefinition._new(ed as Map<String, dynamic>)
+      EmojiDefinition._new(ed as RawApiMap)
   ];
   
   if(cache) {

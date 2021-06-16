@@ -47,7 +47,7 @@ class User extends SnowflakeEntity with Mentionable, IMessageAuthor implements I
   /// Premium types denote the level of premium a user has.
   NitroType? nitroType;
 
-  User._new(this.client, Map<String, dynamic> raw) : super(Snowflake(raw["id"])) {
+  User._new(this.client, RawApiMap raw) : super(Snowflake(raw["id"])) {
     this.username = raw["username"] as String;
     this.discriminator = int.parse(raw["discriminator"] as String);
     this.avatar = raw["avatar"] as String?;
@@ -78,7 +78,7 @@ class User extends SnowflakeEntity with Mentionable, IMessageAuthor implements I
   /// In case if user does not have avatar, default discord avatar will be returned with specified size and png format.
   @override
   String avatarURL({String format = "webp", int size = 128}) =>
-      client._httpEndpoints.userAvatarURL(this.id, this.avatar, this.discriminator, format: format, size: size);
+      client.httpEndpoints.userAvatarURL(this.id, this.avatar, this.discriminator, format: format, size: size);
 
   /// Sends a message to user.
   @override

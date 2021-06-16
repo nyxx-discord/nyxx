@@ -30,7 +30,7 @@ class ShardManager implements Disposable {
   final Logger _logger = Logger("Shard Manager");
 
   /// List of shards
-  Iterable<Shard> get shards => List.unmodifiable(_shards.values);
+  Iterable<Shard> get shards => UnmodifiableListView(this._shards.values);
 
   /// Average gateway latency across all shards
   Duration get gatewayLatency

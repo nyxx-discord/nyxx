@@ -14,10 +14,12 @@ class EmbedAuthorBuilder extends Builder {
   /// Returns length of embeds author section
   int? get length => name?.length;
 
-  @override
+  /// Create empty [EmbedAuthorBuilder]
+  EmbedAuthorBuilder();
 
   /// Builds object to Map() instance;
-  Map<String, dynamic> build() {
+  @override
+  RawApiMap build() {
     if (this.name == null || this.name!.isEmpty) {
       throw EmbedBuilderArgumentException._new("Author name cannot be null or empty");
     }

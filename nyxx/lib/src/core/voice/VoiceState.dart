@@ -36,7 +36,7 @@ class VoiceState {
   /// The time at which the user requested to speak
   late final DateTime? requestToSpeakTimeStamp;
 
-  VoiceState._new(INyxx client, Map<String, dynamic> raw) {
+  VoiceState._new(INyxx client, RawApiMap raw) {
     if (raw["channel_id"] != null) {
       this.channel = _ChannelCacheable(client, Snowflake(raw["channel_id"]));
     } else {

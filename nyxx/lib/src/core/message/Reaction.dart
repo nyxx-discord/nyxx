@@ -11,11 +11,11 @@ class Reaction {
   /// Emoji information
   late final IEmoji emoji;
 
-  Reaction._new(Map<String, dynamic> raw) {
+  Reaction._new(RawApiMap raw) {
     this.count = raw["count"] as int;
     this.me = raw["me"] as bool;
 
-    final rawEmoji = raw["emoji"] as Map<String, dynamic>;
+    final rawEmoji = raw["emoji"] as RawApiMap;
     if (rawEmoji["id"] == null) {
       this.emoji = UnicodeEmoji(rawEmoji["name"] as String);
     } else {

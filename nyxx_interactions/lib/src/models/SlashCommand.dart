@@ -14,7 +14,7 @@ class SlashCommand extends SnowflakeEntity {
   /// The arguments that the command takes
   late final List<CommandOption> options;
 
-  SlashCommand._new(Map<String, dynamic> raw, Nyxx client): super(Snowflake(raw["id"])) {
+  SlashCommand._new(RawApiMap raw, Nyxx client): super(Snowflake(raw["id"])) {
     this.applicationId = Snowflake(raw["application_id"]);
     this.name = raw["name"] as String;
     this.description = raw["description"] as String;
@@ -22,7 +22,7 @@ class SlashCommand extends SnowflakeEntity {
     this.options = [
       if (raw["options"] != null)
         for(final optionRaw in raw["options"])
-          CommandOption._new(optionRaw as Map<String, dynamic>)
+          CommandOption._new(optionRaw as RawApiMap)
     ];
   }
 }

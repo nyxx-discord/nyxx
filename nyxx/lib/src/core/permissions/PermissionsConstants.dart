@@ -98,8 +98,17 @@ class PermissionsConstants {
   /// Allows members to use slash commands in text channels
   static const int useSlashCommands = 1 << 31;
 
-  /// Allows for requesting to speak in stage channels  
+  /// Allows for requesting to speak in stage channels
   static const int requestToSpeak = 1 << 32;
+
+  /// Allows for deleting and archiving threads, and viewing all private threads
+  static const int manageThreads = 1 << 34;
+
+  /// Allows for creating and participating in threads
+  static const int usePublicThreads = 1 << 35;
+
+  /// Allows for creating and participating in private threads
+  static const int usePrivateThreads = 1 << 36;
 
   /// All of the permissions
   @Deprecated("Needs to be updated")

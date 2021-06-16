@@ -8,8 +8,8 @@ class Ban {
   /// Banned user
   late final User user;
 
-  Ban._new(Map<String, dynamic> raw, INyxx client) {
+  Ban._new(RawApiMap raw, INyxx client) {
     this.reason = raw["reason"] as String;
-    this.user = User._new(client, raw["user"] as Map<String, dynamic>);
+    this.user = User._new(client, raw["user"] as RawApiMap);
   }
 }

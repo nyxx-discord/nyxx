@@ -43,10 +43,10 @@ class Interactions {
 
           switch (type) {
             case 2:
-              _events.onSlashCommand.add(SlashCommandInteractionEvent._new(_client, event.rawData["d"] as Map<String, dynamic>));
+              _events.onSlashCommand.add(SlashCommandInteractionEvent._new(_client, event.rawData["d"] as RawApiMap));
               break;
             case 3:
-              _events.onButtonEvent.add(ComponentInteractionEvent._new(_client, event.rawData["d"] as Map<String, dynamic>));
+              _events.onButtonEvent.add(ComponentInteractionEvent._new(_client, event.rawData["d"] as RawApiMap));
               break;
             default:
               this._logger.warning("Unknown interaction type: [$type]; Payload: ${jsonEncode(event.rawData)}");
@@ -135,7 +135,7 @@ class Interactions {
   }
 
   void _registerCommandHandlers(HttpResponseSuccess response, Iterable<SlashCommandBuilder> builders) {
-    final registeredSlashCommands = (response.jsonBody as List<dynamic>).map((e) => SlashCommand._new(e as Map<String, dynamic>, this._client));
+    final registeredSlashCommands = (response.jsonBody as List<dynamic>).map((e) => SlashCommand._new(e as RawApiMap, this._client));
 
     for(final registeredCommand in registeredSlashCommands) {
       final matchingBuilder = builders.firstWhere((element) => element.name.toLowerCase() == registeredCommand.name);

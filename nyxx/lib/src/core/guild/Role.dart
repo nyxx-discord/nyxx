@@ -35,7 +35,7 @@ class Role extends SnowflakeEntity implements Mentionable {
   /// Additional role data like if role is managed by integration or role is from server boosting.
   late final RoleTags? roleTags;
 
-  Role._new(this.client, Map<String, dynamic> raw, Snowflake guildId) : super(Snowflake(raw["id"])) {
+  Role._new(this.client, RawApiMap raw, Snowflake guildId) : super(Snowflake(raw["id"])) {
     this.name = raw["name"] as String;
     this.position = raw["position"] as int;
     this.hoist = raw["hoist"] as bool;
@@ -46,7 +46,7 @@ class Role extends SnowflakeEntity implements Mentionable {
     this.guild = _GuildCacheable(client, guildId);
 
     if(raw["tags"] != null) {
-      this.roleTags = RoleTags._new(raw["tags"] as Map<String, dynamic>);
+      this.roleTags = RoleTags._new(raw["tags"] as RawApiMap);
     } else {
       this.roleTags = null;
     }
@@ -54,11 +54,11 @@ class Role extends SnowflakeEntity implements Mentionable {
 
   /// Edits the role.
   Future<Role> edit(RoleBuilder role, {String? auditReason}) async =>
-      client._httpEndpoints.editRole(this.guild.id, this.id, role, auditReason: auditReason);
+      client.httpEndpoints.editRole(this.guild.id, this.id, role, auditReason: auditReason);
 
   /// Deletes the role.
   Future<void> delete() async =>
-      client._httpEndpoints.deleteRole(guild.id, this.id);
+      client.httpEndpoints.deleteRole(guild.id, this.id);
 }
 
 /// Additional [Role] role tags which hold optional data about role
@@ -75,7 +75,7 @@ class RoleTags {
   /// Returns true if role is for bot.
   bool get isBotRole => botId != null;
 
-  RoleTags._new(Map<String, dynamic> raw) {
+  RoleTags._new(RawApiMap raw) {
     this.botId = raw["bot_id"] != null ? Snowflake(raw["bot_id"]) : null;
     this.nitroRole = raw["premium_subscriber"] != null ? raw["premium_subscriber"] as bool : false;
     this.integrationId = raw["integration_id"] != null ? Snowflake(raw["integration_id"]) : null;

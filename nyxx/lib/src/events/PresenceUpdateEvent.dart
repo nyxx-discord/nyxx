@@ -11,12 +11,12 @@ class PresenceUpdateEvent {
   /// Status of client
   late final ClientStatus clientStatus;
 
-  PresenceUpdateEvent._new(Map<String, dynamic> raw, Nyxx client) {
+  PresenceUpdateEvent._new(RawApiMap raw, Nyxx client) {
     this.presences = [
       for (final rawActivity in raw["d"]["activities"])
-        Activity._new(rawActivity as Map<String, dynamic>)
+        Activity._new(rawActivity as RawApiMap)
     ];
-    this.clientStatus = ClientStatus._deserialize(raw["d"]["client_status"] as Map<String, dynamic>);
+    this.clientStatus = ClientStatus._deserialize(raw["d"]["client_status"] as RawApiMap);
     this.user = _UserCacheable(client, Snowflake(raw["d"]["user"]["id"]));
 
     final user = this.user.getFromCache();

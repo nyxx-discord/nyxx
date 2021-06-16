@@ -11,7 +11,7 @@ class EmbedField implements Convertable<EmbedFieldBuilder> {
   /// Indicates of field is inlined in embed
   late final bool? inline;
 
-  EmbedField._new(Map<String, dynamic> raw) {
+  EmbedField._new(RawApiMap raw) {
     this.name = raw["name"] as String;
     this.content = raw["value"] as String;
     this.inline = raw["inline"] as bool?;

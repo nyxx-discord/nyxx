@@ -35,7 +35,7 @@ class ThreadPreviewChannel extends IChannel implements TextChannel {
   /// How long till the thread is archived
   late final ThreadArchiveTime archivedAfter;
 
-  ThreadPreviewChannel._new(INyxx this._client, Map<String, dynamic> raw) : super._new(_client, raw) {
+  ThreadPreviewChannel._new(INyxx this._client, RawApiMap raw) : super._new(_client, raw) {
     this.name = raw["name"] as String;
     this.messageCount = raw["message_count"] as int;
     this.memberCount = raw["member_count"] as int;
@@ -48,7 +48,7 @@ class ThreadPreviewChannel extends IChannel implements TextChannel {
         this.memberPreview.add(CacheUtility.createCacheableMember(client, Snowflake(id), this.guild));
       }
     }
-    final metadata = raw["thread_metadata"] as Map<String, dynamic>;
+    final metadata = raw["thread_metadata"] as RawApiMap;
 
     this.archived = metadata["archived"] as bool;
     this.archivedTime = DateTime.parse(metadata["archive_timestamp"] as String);
@@ -60,22 +60,22 @@ class ThreadPreviewChannel extends IChannel implements TextChannel {
 
   @override
   Future<void> bulkRemoveMessages(Iterable<SnowflakeEntity> messages) =>
-      client._httpEndpoints.bulkRemoveMessages(this.id, messages);
+      client.httpEndpoints.bulkRemoveMessages(this.id, messages);
 
   @override
   Stream<Message> downloadMessages({int limit = 50, Snowflake? after, Snowflake? around, Snowflake? before}) =>
-      client._httpEndpoints.downloadMessages(this.id, limit: limit, after: after, around: around, before: before);
+      client.httpEndpoints.downloadMessages(this.id, limit: limit, after: after, around: around, before: before);
 
   @override
   Future<Message> fetchMessage(Snowflake messageId) =>
-      client._httpEndpoints.fetchMessage(this.id, messageId);
+      client.httpEndpoints.fetchMessage(this.id, messageId);
 
   @override
   Message? getMessage(Snowflake id) => this.messageCache[id];
 
   @override
   Future<Message> sendMessage(MessageBuilder builder) =>
-      client._httpEndpoints.sendMessage(this.id, builder);
+      client.httpEndpoints.sendMessage(this.id, builder);
 
   @override
   Future<int> get fileUploadLimit async {
@@ -89,7 +89,7 @@ class ThreadPreviewChannel extends IChannel implements TextChannel {
 
   @override
   Future<void> startTyping() async =>
-      client._httpEndpoints.triggerTyping(this.id);
+      client.httpEndpoints.triggerTyping(this.id);
 
   @override
   void startTypingLoop() {

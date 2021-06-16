@@ -16,5 +16,5 @@ class ArgChoiceBuilder extends Builder {
     }
   }
 
-  Map<String, dynamic> build() => { "name": this.name, "value": this.value };
+  RawApiMap build() => { "name": this.name, "value": this.value };
 }

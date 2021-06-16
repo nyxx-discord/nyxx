@@ -14,7 +14,7 @@ class PermissionsOverrides extends SnowflakeEntity implements Convertable<Permis
   /// Value of permissions denied
   late final int deny;
 
-  PermissionsOverrides._new(Map<String, dynamic> raw) : super(Snowflake(raw["id"] as String)) {
+  PermissionsOverrides._new(RawApiMap raw) : super(Snowflake(raw["id"] as String)) {
     this.allow = int.parse(raw["allow"] as String);
     this.deny = int.parse(raw["deny"] as String);
 

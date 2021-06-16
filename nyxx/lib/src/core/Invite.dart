@@ -23,7 +23,7 @@ class Invite {
   /// Returns url to invite
   String get url => "https://discord.gg/$code";
 
-  Invite._new(Map<String, dynamic> raw, this.client) {
+  Invite._new(RawApiMap raw, this.client) {
     this.code = raw["code"] as String;
 
     if (raw["guild"] != null) {
@@ -39,7 +39,7 @@ class Invite {
     }
 
     if (raw["inviter"] != null) {
-      this.inviter = User._new(client, raw["inviter"] as Map<String, dynamic>);
+      this.inviter = User._new(client, raw["inviter"] as RawApiMap);
     } else {
       this.inviter = null;
     }
@@ -53,7 +53,7 @@ class Invite {
 
   /// Deletes this [Invite].
   Future<void> delete({String? auditReason}) async =>
-    client._httpEndpoints.deleteInvite(this.code, auditReason: auditReason);
+    client.httpEndpoints.deleteInvite(this.code, auditReason: auditReason);
 }
 
 /// Invite object with additional metadata
@@ -93,7 +93,7 @@ class InviteWithMeta extends Invite {
     return ageValidity && expiryValidity;
   }
 
-  InviteWithMeta._new(Map<String, dynamic> raw, INyxx client) : super._new(raw, client) {
+  InviteWithMeta._new(RawApiMap raw, INyxx client) : super._new(raw, client) {
     this.createdAt = DateTime.parse(raw["created_at"] as String);
     this.temporary = raw["temporary"] as bool;
     this.uses = raw["uses"] as int;

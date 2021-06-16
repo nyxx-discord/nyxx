@@ -37,7 +37,7 @@ class EmbedBuilder extends Builder {
 
   /// Creates clean instance [EmbedBuilder]
   EmbedBuilder() {
-    fields = [];
+    this.fields = [];
   }
 
   /// Adds author to embed.
@@ -115,7 +115,7 @@ class EmbedBuilder extends Builder {
   @override
 
   /// Builds object to Map() instance;
-  Map<String, dynamic> build() {
+  RawApiMap build() {
     if (this.title != null && this.title!.length > 256) {
       throw EmbedBuilderArgumentException._new("Embed title is too long (256 characters limit)");
     }

@@ -62,7 +62,7 @@ abstract class Message extends SnowflakeEntity implements Disposable, Convertabl
   /// If the message is a response to an Interaction, this is the id of the interaction's application
   late final Snowflake? applicationId;
 
-  factory Message._deserialize(INyxx client, Map<String, dynamic> raw) {
+  factory Message._deserialize(INyxx client, RawApiMap raw) {
     if (raw["member"] != null) {
       return GuildMessage._new(client, raw);
     }
@@ -70,7 +70,7 @@ abstract class Message extends SnowflakeEntity implements Disposable, Convertabl
     return DMMessage._new(client, raw);
   }
 
-  Message._new(this.client, Map<String, dynamic> raw) : super(Snowflake(raw["id"])) {
+  Message._new(this.client, RawApiMap raw) : super(Snowflake(raw["id"])) {
     this.content = raw["content"] as String;
     this.channel = CacheableTextChannel<TextChannel>._new(client, Snowflake(raw["channel_id"]), ChannelType.unknown);
 
@@ -82,7 +82,7 @@ abstract class Message extends SnowflakeEntity implements Disposable, Convertabl
     this.stickers = [
       if (raw["stickers"] != null)
         for (final rawSticker in raw["stickers"])
-          Sticker._new(rawSticker as Map<String, dynamic>)
+          Sticker._new(rawSticker as RawApiMap)
     ];
 
     if (raw["flags"] != null) {
@@ -95,22 +95,22 @@ abstract class Message extends SnowflakeEntity implements Disposable, Convertabl
 
     this.embeds = [
       if (raw["embeds"] != null && raw["embeds"].isNotEmpty as bool)
-        for (var r in raw["embeds"]) Embed._new(r as Map<String, dynamic>)
+        for (var r in raw["embeds"]) Embed._new(r as RawApiMap)
     ];
 
     this.attachments = [
       if (raw["attachments"] != null && raw["attachments"].isNotEmpty as bool)
-        for (var r in raw["attachments"]) Attachment._new(r as Map<String, dynamic>)
+        for (var r in raw["attachments"]) Attachment._new(r as RawApiMap)
     ];
 
     this.reactions = [
       if (raw["reactions"] != null && raw["reactions"].isNotEmpty as bool)
-        for (var r in raw["reactions"]) Reaction._new(r as Map<String, dynamic>)
+        for (var r in raw["reactions"]) Reaction._new(r as RawApiMap)
     ];
 
     if (raw["mentions"] != null && raw["mentions"].isNotEmpty as bool) {
       for (final rawUser in raw["mentions"]) {
-        final user = User._new(client, rawUser as Map<String, dynamic>);
+        final user = User._new(client, rawUser as RawApiMap);
         this.client.users[user.id] = user;
 
         this.mentions.add(_UserCacheable(client, user.id));
@@ -137,7 +137,7 @@ abstract class Message extends SnowflakeEntity implements Disposable, Convertabl
       this.components = [
         for (final rawRow in raw["components"]) [
           for (final componentRaw in rawRow["components"])
-            IMessageComponent._deserialize(componentRaw as Map<String, dynamic>)
+            IMessageComponent._deserialize(componentRaw as RawApiMap)
         ]
       ];
     } else {
@@ -147,47 +147,47 @@ abstract class Message extends SnowflakeEntity implements Disposable, Convertabl
 
   /// Suppresses embeds in message. Can be executed in other users messages.
   Future<Message> suppressEmbeds() =>
-      client._httpEndpoints.suppressMessageEmbeds(this.channel.id, this.id);
+      client.httpEndpoints.suppressMessageEmbeds(this.channel.id, this.id);
 
   /// Edits the message.
   Future<Message> edit(MessageBuilder builder) =>
-      client._httpEndpoints.editMessage(this.channel.id, this.id, builder);
+      client.httpEndpoints.editMessage(this.channel.id, this.id, builder);
 
   /// Add reaction to message.
   Future<void> createReaction(IEmoji emoji) =>
-      client._httpEndpoints.createMessageReaction(this.channel.id, this.id, emoji);
+      client.httpEndpoints.createMessageReaction(this.channel.id, this.id, emoji);
 
   /// Deletes reaction of bot.
   Future<void> deleteSelfReaction(IEmoji emoji) =>
-      client._httpEndpoints.deleteMessageReaction(this.channel.id, this.id, emoji);
+      client.httpEndpoints.deleteMessageReaction(this.channel.id, this.id, emoji);
 
   /// Deletes reaction of given user.
   Future<void> deleteUserReaction(IEmoji emoji, SnowflakeEntity entity) =>
-      client._httpEndpoints.deleteMessageUserReaction(this.channel.id, this.id, emoji, entity.id);
+      client.httpEndpoints.deleteMessageUserReaction(this.channel.id, this.id, emoji, entity.id);
 
   /// Deletes all reactions
   Future<void> deleteAllReactions() =>
-      client._httpEndpoints.deleteMessageAllReactions(this.channel.id, this.id);
+      client.httpEndpoints.deleteMessageAllReactions(this.channel.id, this.id);
 
   /// Deletes the message.
   Future<void> delete({String? auditReason}) =>
-      client._httpEndpoints.deleteMessage(this.channel.id, this.id);
+      client.httpEndpoints.deleteMessage(this.channel.id, this.id);
 
   /// Pins [Message] in message's channel
   Future<void> pinMessage() =>
-      client._httpEndpoints.pinMessage(this.channel.id, this.id);
+      client.httpEndpoints.pinMessage(this.channel.id, this.id);
 
   /// Unpins [Message] in message's channel
   Future<void> unpinMessage() =>
-      client._httpEndpoints.unpinMessage(this.channel.id, this.id);
+      client.httpEndpoints.unpinMessage(this.channel.id, this.id);
 
   /// Creates a thread based on this message, that only retrieves a [ThreadPreviewChannel]
   Future<ThreadPreviewChannel> createThread(ThreadBuilder builder) async =>
-      client._httpEndpoints.createThreadWithMessage(this.channel.id, this.id, builder);
+      client.httpEndpoints.createThreadWithMessage(this.channel.id, this.id, builder);
 
   /// Creates a thread in a message
   Future<ThreadChannel> createAndGetThread(ThreadBuilder builder) async {
-    final preview = await client._httpEndpoints.createThreadWithMessage(this.channel.id, this.id, builder);
+    final preview = await client.httpEndpoints.createThreadWithMessage(this.channel.id, this.id, builder);
     return preview.getThreadChannel().getOrDownload();
   }
 
@@ -232,11 +232,11 @@ class DMMessage extends Message {
   String get url => "https://discordapp.com/channels/@me"
       "/${this.channel.id}/${this.id}";
 
-  DMMessage._new(INyxx client, Map<String, dynamic> raw) : super._new(client, raw) {
+  DMMessage._new(INyxx client, RawApiMap raw) : super._new(client, raw) {
     final user = client.users[Snowflake(raw["author"]["id"])];
 
     if (user == null) {
-      final authorData = raw["author"] as Map<String, dynamic>;
+      final authorData = raw["author"] as RawApiMap;
       this.author = User._new(client, authorData);
 
       if (client._cacheOptions.userCachePolicyLocation.objectConstructor) {
@@ -278,18 +278,18 @@ class GuildMessage extends Message {
   /// Role mentions in this message
   late final List<Cacheable<Snowflake, Role>> roleMentions;
 
-  GuildMessage._new(INyxx client, Map<String, dynamic> raw) : super._new(client, raw) {
+  GuildMessage._new(INyxx client, RawApiMap raw) : super._new(client, raw) {
     if (raw["message_reference"] != null) {
       this.crossPostReference = MessageReference._new(
-          raw["message_reference"] as Map<String, dynamic>, client);
+          raw["message_reference"] as RawApiMap, client);
     }
 
     this.guild = _GuildCacheable(client, Snowflake(raw["guild_id"]));
 
     if (raw["webhook_id"] != null) {
-      this.author = Webhook._new(raw["author"] as Map<String, dynamic>, client);
+      this.author = Webhook._new(raw["author"] as RawApiMap, client);
     } else {
-      this.author = User._new(client, raw["author"] as Map<String, dynamic>);
+      this.author = User._new(client, raw["author"] as RawApiMap);
 
       if (client._cacheOptions.userCachePolicyLocation.objectConstructor) {
         this.client.users[this.author.id] = this.author as User;
@@ -301,7 +301,7 @@ class GuildMessage extends Message {
       raw["member"]["user"] = <String, dynamic>{
         "id": raw["author"]["id"]
       };
-      this.member = Member._new(client, raw["member"] as Map<String, dynamic>, this.guild.id);
+      this.member = Member._new(client, raw["member"] as RawApiMap, this.guild.id);
 
       if (client._cacheOptions.memberCachePolicyLocation.objectConstructor && client._cacheOptions.memberCachePolicy.canCache(member)) {
         this.guild.getFromCache()?.members[member.id] = member;
@@ -318,5 +318,5 @@ class GuildMessage extends Message {
   /// Cross post a Message into all guilds what follow the news channel indicated.
   /// This endpoint requires the "DISCOVERY" feature to be present for the guild.
   Future<void> crossPost() async =>
-      client._httpEndpoints.crossPostGuildMessage(this.channel.id, this.id);
+      client.httpEndpoints.crossPostGuildMessage(this.channel.id, this.id);
 }

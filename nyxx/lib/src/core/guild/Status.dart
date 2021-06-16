@@ -41,7 +41,7 @@ class ClientStatus {
   /// The user's status set for an active web (browser, bot account) application session
   late final UserStatus phone;
 
-  ClientStatus._deserialize(Map<String, dynamic> raw) {
+  ClientStatus._deserialize(RawApiMap raw) {
     this.desktop = UserStatus.from(raw["desktop"] as String?);
     this.web = UserStatus.from(raw["web"] as String?);
     this.phone = UserStatus.from(raw["phone"] as String?);

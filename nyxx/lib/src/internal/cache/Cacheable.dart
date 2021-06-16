@@ -57,7 +57,7 @@ class _RoleCacheable extends Cacheable<Snowflake, Role> {
 
   // We cant download single role
   Future<Role> _fetchGuildRole() async {
-    final roles = await _client._httpEndpoints.fetchGuildRoles(this.id).toList();
+    final roles = await _client.httpEndpoints.fetchGuildRoles(this.id).toList();
 
     try {
       return roles.firstWhere((element) => element.id == this.id);
@@ -74,7 +74,7 @@ class _ChannelCacheable<T extends IChannel> extends Cacheable<Snowflake, T> {
   T? getFromCache() => this._client.channels[this.id] as T?;
 
   @override
-  Future<T> download() => _client._httpEndpoints.fetchChannel<T>(this.id);
+  Future<T> download() => _client.httpEndpoints.fetchChannel<T>(this.id);
 }
 
 class _GuildCacheable extends Cacheable<Snowflake, Guild> {
@@ -84,14 +84,14 @@ class _GuildCacheable extends Cacheable<Snowflake, Guild> {
   Guild? getFromCache() => this._client.guilds[this.id];
 
   @override
-  Future<Guild> download() => _client._httpEndpoints.fetchGuild(this.id);
+  Future<Guild> download() => _client.httpEndpoints.fetchGuild(this.id);
 }
 
 class _UserCacheable extends Cacheable<Snowflake, User> {
   _UserCacheable(INyxx client, Snowflake id): super._new(client, id);
 
   @override
-  Future<User> download() => _client._httpEndpoints.fetchUser(this.id);
+  Future<User> download() => _client.httpEndpoints.fetchUser(this.id);
 
   @override
   User? getFromCache() => this._client.users[this.id];
@@ -104,7 +104,7 @@ class _MemberCacheable extends Cacheable<Snowflake, Member> {
 
   @override
   Future<Member> download() =>
-      this._client._httpEndpoints.fetchGuildMember(guild.id, id);
+      this._client.httpEndpoints.fetchGuildMember(guild.id, id);
 
   @override
   Member? getFromCache() {

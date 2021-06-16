@@ -11,10 +11,13 @@ class EmbedFooterBuilder extends Builder {
   /// Length of footer
   int? get length => text?.length;
 
+  /// Create empty [EmbedFooterBuilder]
+  EmbedFooterBuilder();
+
   @override
 
   /// Builds object to Map() instance;
-  Map<String, dynamic> build() {
+  RawApiMap build() {
     if (this.text != null && this.length! > 2048) {
       throw EmbedBuilderArgumentException._new("Footer text is too long. (1024 characters limit)");
     }

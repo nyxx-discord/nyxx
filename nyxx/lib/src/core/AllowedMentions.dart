@@ -54,7 +54,7 @@ class AllowedMentions extends Builder {
   }
 
   @override
-  Map<String, dynamic> build() {
+  RawApiMap build() {
     final map = <String, dynamic>{
       "parse": [
         if (_allowEveryone) "everyone",

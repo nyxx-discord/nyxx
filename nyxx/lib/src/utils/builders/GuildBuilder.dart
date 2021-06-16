@@ -27,7 +27,7 @@ class GuildBuilder extends Builder {
   List<ChannelBuilder>? channels;
 
   @override
-  Map<String, dynamic> build() =>
+  RawApiMap build() =>
     <String, dynamic>{
       if (name != null) "name": name,
       if (region != null) "region": region,
@@ -39,7 +39,7 @@ class GuildBuilder extends Builder {
       if (channels != null) "channels": _genIterable(channels!)
     };
 
-  Iterable<Map<String, dynamic>> _genIterable(List<Builder> list) sync* {
+  Iterable<RawApiMap> _genIterable(List<Builder> list) sync* {
     for (final e in list) {
       yield e.build();
     }
@@ -70,7 +70,7 @@ class RoleBuilder extends Builder {
   RoleBuilder(this.name);
 
   @override
-  Map<String, dynamic> build() => <String, dynamic>{
+  RawApiMap build() => <String, dynamic>{
         "name": name,
         if (color != null) "color": color!._value,
         if (hoist != null) "hoist": hoist,
@@ -117,7 +117,7 @@ class ChannelBuilder extends Builder {
   ChannelBuilder(this.name, this.type);
 
   @override
-  Map<String, dynamic> build() => {
+  RawApiMap build() => {
     "name": name,
     "type": type._value,
     if (topic != null) "topic": topic,

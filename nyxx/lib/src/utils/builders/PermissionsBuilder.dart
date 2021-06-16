@@ -5,7 +5,7 @@ class _PermissionsSet {
   int allow = 0;
   int deny = 0;
 
-  Map<String, dynamic> build() => {"allow": allow, "deny": deny};
+  RawApiMap build() => {"allow": allow, "deny": deny};
 }
 
 /// Builder for manipulating [PermissionsOverrides]. Created from existing override or manually by passing [type] and [id] of enttiy.
@@ -16,7 +16,7 @@ class PermissionOverrideBuilder extends PermissionsBuilder {
   /// Id of entity of permission override
   final Snowflake id;
 
-  /// Create builder manually from known data. Id is id of entity. [type] can be either `role` or `member`.
+  /// Create builder manually from known data. Id is id of entity. [type] can be either 0 for `role` or 1 for `member`.
   PermissionOverrideBuilder.from(this.type, this.id, Permissions permissions) : super.from(permissions);
 
   /// Create empty permission builder
@@ -124,43 +124,55 @@ class PermissionsBuilder {
   /// Allows for viewing guild insights
   bool? viewGuildInsights;
 
+  /// Allows for deleting and archiving threads, and viewing all private threads
+  bool? manageThreads;
+
+  /// Allows for creating and participating in threads
+  bool? usePublicThreads;
+
+  /// Allows for creating and participating in private threads
+  bool? usePrivateThreads;
+
   /// Empty permission builder
   PermissionsBuilder();
 
   /// Permission builder from existing [Permissions] object.
   PermissionsBuilder.from(Permissions permissions) {
     this
-      ..createInstantInvite = permissions.createInstantInvite
-      ..kickMembers = permissions.kickMembers
-      ..banMembers = permissions.banMembers
-      ..administrator = permissions.administrator
-      ..manageChannels = permissions.manageChannels
-      ..manageGuild = permissions.manageGuild
-      ..addReactions = permissions.addReactions
-      ..viewAuditLog = permissions.viewAuditLog
-      ..viewChannel = permissions.viewChannel
-      ..sendMessages = permissions.sendMessages
-      ..prioritySpeaker = permissions.prioritySpeaker
-      ..sendTtsMessages = permissions.sendTtsMessages
-      ..manageMessages = permissions.manageMessages
-      ..embedLinks = permissions.embedLinks
-      ..attachFiles = permissions.attachFiles
-      ..readMessageHistory = permissions.readMessageHistory
-      ..mentionEveryone = permissions.mentionEveryone
-      ..useExternalEmojis = permissions.useExternalEmojis
-      ..connect = permissions.connect
-      ..speak = permissions.speak
-      ..muteMembers = permissions.muteMembers
-      ..deafenMembers = permissions.deafenMembers
-      ..moveMembers = permissions.moveMembers
-      ..useVad = permissions.useVad
-      ..changeNickname = permissions.changeNickname
-      ..manageNicknames = permissions.manageNicknames
-      ..manageRoles = permissions.manageRoles
-      ..manageWebhooks = permissions.manageWebhooks
-      ..manageEmojis = permissions.manageEmojis
-      ..stream = permissions.stream
-      ..viewGuildInsights = permissions.viewGuildInsights;
+        ..createInstantInvite = permissions.createInstantInvite
+        ..kickMembers = permissions.kickMembers
+        ..banMembers = permissions.banMembers
+        ..administrator = permissions.administrator
+        ..manageChannels = permissions.manageChannels
+        ..manageGuild = permissions.manageGuild
+        ..addReactions = permissions.addReactions
+        ..viewAuditLog = permissions.viewAuditLog
+        ..viewChannel = permissions.viewChannel
+        ..sendMessages = permissions.sendMessages
+        ..prioritySpeaker = permissions.prioritySpeaker
+        ..sendTtsMessages = permissions.sendTtsMessages
+        ..manageMessages = permissions.manageMessages
+        ..embedLinks = permissions.embedLinks
+        ..attachFiles = permissions.attachFiles
+        ..readMessageHistory = permissions.readMessageHistory
+        ..mentionEveryone = permissions.mentionEveryone
+        ..useExternalEmojis = permissions.useExternalEmojis
+        ..connect = permissions.connect
+        ..speak = permissions.speak
+        ..muteMembers = permissions.muteMembers
+        ..deafenMembers = permissions.deafenMembers
+        ..moveMembers = permissions.moveMembers
+        ..useVad = permissions.useVad
+        ..changeNickname = permissions.changeNickname
+        ..manageNicknames = permissions.manageNicknames
+        ..manageRoles = permissions.manageRoles
+        ..manageWebhooks = permissions.manageWebhooks
+        ..manageEmojis = permissions.manageEmojis
+        ..stream = permissions.stream
+        ..viewGuildInsights = permissions.viewGuildInsights
+        ..manageThreads = permissions.manageThreads
+        ..usePublicThreads = permissions.usePublicThreads
+        ..usePrivateThreads = permissions.usePrivateThreads;
   }
 
   /// Calculates permission int
@@ -203,6 +215,9 @@ class PermissionsBuilder {
     _apply(permissionSet, this.viewGuildInsights, PermissionsConstants.viewGuildInsights);
     _apply(permissionSet, this.stream, PermissionsConstants.stream);
     _apply(permissionSet, this.manageEmojis, PermissionsConstants.manageEmojis);
+    _apply(permissionSet, this.manageThreads, PermissionsConstants.manageThreads);
+    _apply(permissionSet, this.usePublicThreads, PermissionsConstants.usePublicThreads);
+    _apply(permissionSet, this.usePrivateThreads, PermissionsConstants.usePrivateThreads);
 
     return permissionSet;
   }
