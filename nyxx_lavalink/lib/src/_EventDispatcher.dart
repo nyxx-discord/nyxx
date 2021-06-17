@@ -4,10 +4,10 @@ class _EventDispatcher {
   _Cluster cluster;
 
   final StreamController<StatsEvent> onStatsReceived = StreamController.broadcast();
-  final StreamController<PlayerUpdate> onPlayerUpdate = StreamController.broadcast();
-  final StreamController<TrackStart> onTrackStart = StreamController.broadcast();
-  final StreamController<TrackEnd> onTrackEnd = StreamController.broadcast();
-  final StreamController<WebSocketClosed> onWebSocketClosed = StreamController.broadcast();
+  final StreamController<PlayerUpdateEvent> onPlayerUpdate = StreamController.broadcast();
+  final StreamController<TrackStartEvent> onTrackStart = StreamController.broadcast();
+  final StreamController<TrackEndEvent> onTrackEnd = StreamController.broadcast();
+  final StreamController<WebSocketClosedEvent> onWebSocketClosed = StreamController.broadcast();
 
   void dispatchEvent(Map<String, dynamic> json) {
     final node = cluster._nodes[json["nodeId"]];
@@ -24,14 +24,14 @@ class _EventDispatcher {
     switch(json["event"]) {
       case "TrackStart":
         this.onTrackStart.add(
-            TrackStart._fromJson(cluster._client, node,
+            TrackStartEvent._fromJson(cluster._client, node,
                 json["data"] as Map<String, dynamic>
             )
         );
         break;
 
       case "TrackEnd": {
-          final trackEnd = TrackEnd._fromJson(cluster._client, node,
+          final trackEnd = TrackEndEvent._fromJson(cluster._client, node,
               json["data"] as Map<String, dynamic>
           );
 
@@ -45,7 +45,7 @@ class _EventDispatcher {
 
       case "WebSocketClosed":
         this.onWebSocketClosed.add(
-            WebSocketClosed._fromJson(cluster._client, node,
+            WebSocketClosedEvent._fromJson(cluster._client, node,
                 json["data"] as Map<String, dynamic>
             )
         );
@@ -65,7 +65,7 @@ class _EventDispatcher {
 
       case "PlayerUpdate":
         this.onPlayerUpdate.add(
-            PlayerUpdate._fromJson(cluster._client, node,
+            PlayerUpdateEvent._fromJson(cluster._client, node,
                 json["data"] as Map<String, dynamic>
             )
         );

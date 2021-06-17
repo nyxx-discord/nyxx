@@ -78,7 +78,7 @@ class Node {
     }
   }
 
-  void _handleTrackEnd(TrackEnd event) {
+  void _handleTrackEnd(TrackEndEvent event) {
     if(!(event.reason == "FINISHED")) {
       return;
     }

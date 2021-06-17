@@ -1,7 +1,7 @@
 part of nyxx_lavalink;
 
 /// Web socket closed event from lavalink
-class WebSocketClosed extends BaseEvent {
+class WebSocketClosedEvent extends BaseEvent {
   /// Type of close
   late final String? type;
   /// Guild where the websocket has closed
@@ -13,7 +13,7 @@ class WebSocketClosed extends BaseEvent {
   /// If the connection was closed by discord
   late final bool byRemote;
 
-  WebSocketClosed._fromJson(Nyxx client, Node node, Map<String, dynamic> json)
+  WebSocketClosedEvent._fromJson(Nyxx client, Node node, Map<String, dynamic> json)
   : super(client, node)
   {
     this.guildId = Snowflake(json["guildId"]);

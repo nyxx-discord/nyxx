@@ -1,14 +1,14 @@
 part of nyxx_lavalink;
 
 /// Player update event dispatched by lavalink at player progression
-class PlayerUpdate extends BaseEvent {
+class PlayerUpdateEvent extends BaseEvent {
   /// State of the current player
   late final PlayerUpdateState state;
 
   /// Guild id where player comes from
   late final Snowflake guildId;
 
-  PlayerUpdate._fromJson(Nyxx client, Node node, Map<String, dynamic> json)
+  PlayerUpdateEvent._fromJson(Nyxx client, Node node, Map<String, dynamic> json)
   : super(client, node)
   {
     guildId = Snowflake(json["guildId"]);

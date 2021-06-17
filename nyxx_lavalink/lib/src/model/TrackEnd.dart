@@ -1,7 +1,7 @@
 part of nyxx_lavalink;
 
 /// Object sent when a track ends playing
-class TrackEnd extends BaseEvent {
+class TrackEndEvent extends BaseEvent {
   /// Reason to the track to end
   late final String reason;
   /// End type
@@ -11,7 +11,7 @@ class TrackEnd extends BaseEvent {
   /// Guild where the track ended
   late final Snowflake guildId;
 
-  TrackEnd._fromJson(Nyxx client, Node node, Map<String, dynamic> json)
+  TrackEndEvent._fromJson(Nyxx client, Node node, Map<String, dynamic> json)
   : super(client, node)
   {
     this.reason = json["reason"] as String;

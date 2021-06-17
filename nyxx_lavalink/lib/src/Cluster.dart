@@ -27,13 +27,13 @@ class _Cluster {
   /// Emitted when stats are sent from lavalink
   late final Stream<StatsEvent> onStatsReceived;
   /// Emitted when a player gets updated
-  late final Stream<PlayerUpdate> onPlayerUpdate;
+  late final Stream<PlayerUpdateEvent> onPlayerUpdate;
   /// Emitted when a track starts playing
-  late final Stream<TrackStart> onTrackStart;
+  late final Stream<TrackStartEvent> onTrackStart;
   /// Emitted when a track ends playing
-  late final Stream<TrackEnd> onTrackEnd;
+  late final Stream<TrackEndEvent> onTrackEnd;
   /// Emitted when a web socket is closed
-  late final Stream<WebSocketClosed> onWebSocketClosed;
+  late final Stream<WebSocketClosedEvent> onWebSocketClosed;
 
   late final _EventDispatcher _eventDispatcher;
 
