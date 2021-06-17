@@ -193,10 +193,10 @@ class Cluster extends _Cluster {
         super(client, clientId, loggingLevel);
 
   /// Returns a map with the nodes connected to lavalink cluster
-  Map<int, Node> get connectedNodes => Map.unmodifiable(this._nodes);
+  Map<int, Node> get connectedNodes => UnmodifiableMapView(this._nodes);
 
   /// Returns a map with the nodes that are actually disconnected from lavalink
-  Map<int, Node> get disconnectedNodes => Map.unmodifiable(this._connectingNodes);
+  Map<int, Node> get disconnectedNodes => UnmodifiableMapView(this._connectingNodes);
 
   /// Get the best available node, it is recommended to use [getOrCreatePlayerNode] instead
   Node getBestNode() {
