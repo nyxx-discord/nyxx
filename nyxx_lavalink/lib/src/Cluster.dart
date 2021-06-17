@@ -240,8 +240,7 @@ class Cluster extends _Cluster {
     return node;
   }
 
-  /// Attempts to retrieve a node disconnected from lavalink by its id
-  ///
+  /// Attempts to retrieve a node disconnected from lavalink by its id,
   /// this method does not work with nodes that have exceeded the maximum
   /// reconnect attempts as those get removed from cluster
   Node? getDisconnectedNode(int nodeId) => this._connectingNodes[nodeId];
