@@ -8,5 +8,6 @@ class LavalinkException {
   String severity;
 
   LavalinkException._fromJson(Map<String, dynamic> json)
-  : message = json["message"] as String, severity = json["severity"] as String;
+  : message = json["message"] as String,
+    severity = json["severity"] as String;
 }
