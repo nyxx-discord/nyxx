@@ -3,11 +3,12 @@ part of nyxx_lavalink;
 /// A exception object that can be sent by lavalink at certain endpoints
 class LavalinkException {
   /// Exception message
-  final String message;
+  late final String message;
   /// Exception severity
-  final String severity;
+  late final String severity;
 
-  LavalinkException._fromJson(Map<String, dynamic> json)
-  : message = json["message"] as String,
-    severity = json["severity"] as String;
+  LavalinkException._fromJson(Map<String, dynamic> json) {
+    this.message = json["message"] as String;
+    this.severity = json["severity"] as String;
+  }
 }

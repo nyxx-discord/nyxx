@@ -17,89 +17,86 @@ class QueuedTrack {
 
   /// Create a new QueuedTrack instance
   QueuedTrack._new(this.track, this.startTime, this.endTime, this.requester, this.channelId);
-
-  @override
-  String toString() =>
-      "<QueuedTrack title=${this.track.info?.title} identifier=${this.track.info?.identifier}>";
 }
 
 /// Lavalink track object
 class Track {
   /// Base64 encoded track
-  final String track;
+  late final String track;
   /// Optional information about the track
-  final TrackInfo? info;
+  late final TrackInfo? info;
 
   /// Create a new track instance
   Track(this.track, this.info);
 
-  factory Track._fromJson(Map<String, dynamic> json) {
-    TrackInfo? trackInfo;
-
+  Track._fromJson(Map<String, dynamic> json) {
     if (json.containsKey("info")) {
-      trackInfo = TrackInfo._fromJson(json["info"] as Map<String, dynamic>);
+      this.info = TrackInfo._fromJson(json["info"] as Map<String, dynamic>);
     }
 
-    return Track(json["track"] as String, trackInfo);
+    this.track = json["track"] as String;
   }
 }
 
 /// Track details
 class TrackInfo {
   /// Track identifier
-  final String identifier;
+  late final String identifier;
   /// If the track is seekable (if it's a streaming it's not)
-  final bool seekable;
+  late final bool seekable;
   /// The author of the track
-  final String author;
+  late final String author;
   /// The length of the track
-  final int length;
+  late final int length;
   /// Whether the track is a streaming or not
-  final bool stream;
+  late final bool stream;
   /// Position returned by lavalink
-  final int position;
+  late final int position;
   /// The title of the track
-  final String title;
+  late final String title;
   /// Url of the track
-  final String uri;
+  late final String uri;
 
-  TrackInfo._fromJson(Map<String, dynamic> json)
-  : identifier = json["identifier"] as String,
-    seekable = json["isSeekable"] as bool,
-    author = json["author"] as String,
-    length = json["length"] as int,
-    stream = json["isStream"] as bool,
-    position = json["position"] as int,
-    title = json["title"] as String,
-    uri = json["uri"] as String;
+  TrackInfo._fromJson(Map<String, dynamic> json) {
+    this.identifier = json["identifier"] as String;
+    this.seekable = json["isSeekable"] as bool;
+    this.author = json["author"] as String;
+    this.length = json["length"] as int;
+    this.stream = json["isStream"] as bool;
+    this.position = json["position"] as int;
+    this.title = json["title"] as String;
+    this.uri = json["uri"] as String;
+  }
 }
 
 /// Playlist info
 class PlaylistInfo {
   /// Name of the playlist
-  final String? name;
+  late final String? name;
   /// Currently selected track
-  final int? selectedTrack;
+  late final int? selectedTrack;
 
-  PlaylistInfo._fromJson(Map<String, dynamic> json)
-  : name = json["name"] as String?,
-    selectedTrack = json["selectedTrack"] as int?;
+  PlaylistInfo._fromJson(Map<String, dynamic> json) {
+    this.name = json["name"] as String?;
+    this.selectedTrack = json["selectedTrack"] as int;
+  }
 }
 
 /// Object returned from lavalink when searching
 class Tracks {
   /// Information about loaded playlist
-  final PlaylistInfo playlistInfo;
+  late final PlaylistInfo playlistInfo;
   /// Load type (track, playlist, etc)
-  final String loadType;
+  late final String loadType;
   /// Loaded tracks
-  final List<Track> tracks;
+  late final List<Track> tracks;
   /// Occurred exception (if occurred)
-  final LavalinkException? exception;
+  late final LavalinkException? exception;
   
-  Tracks._fromJson(Map<String, dynamic> json)
-  : playlistInfo = PlaylistInfo._fromJson(json["playlistInfo"] as Map<String, dynamic>), 
-    loadType = json["loadType"] as String,
-    tracks = (json["tracks"] as List<dynamic>).map((t) => Track._fromJson(t as Map<String, dynamic>)).toList(),
-    exception = json["exception"] == null ? null : LavalinkException._fromJson(json["exception"] as Map<String, dynamic>);
+  Tracks._fromJson(Map<String, dynamic> json) {
+    this.playlistInfo = PlaylistInfo._fromJson(json["playlistInfo"] as Map<String, dynamic>);
+    this.loadType = json["loadType"] as String;
+    this.tracks = (json["tracks"] as List<dynamic>).map((t) => Track._fromJson(t as Map<String, dynamic>)).toList();
+    this.exception = json["exception"] == null ? null : LavalinkException._fromJson(json["exception"] as Map<String, dynamic>);
+  }
 }

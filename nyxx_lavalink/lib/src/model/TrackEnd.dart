@@ -3,18 +3,20 @@ part of nyxx_lavalink;
 /// Object sent when a track ends playing
 class TrackEnd extends BaseEvent {
   /// Reason to the track to end
-  final String reason;
+  late final String reason;
   /// End type
-  final String type;
+  late final String type;
   /// Base64 encoded track
-  final String track;
+  late final String track;
   /// Guild where the track ended
-  final Snowflake guildId;
+  late final Snowflake guildId;
 
   TrackEnd._fromJson(Nyxx client, Node node, Map<String, dynamic> json)
-  : reason = json["reason"] as String,
-    type = json["type"] as String,
-    track = json["track"] as String,
-    guildId = Snowflake(json["guildId"] as String),
-    super(client, node);
+  : super(client, node)
+  {
+    this.reason = json["reason"] as String;
+    this.type = json["type"] as String;
+    this.track = json["track"] as String;
+    this.guildId = Snowflake(json["guildId"] as String);
+  }
 }
