@@ -33,7 +33,7 @@ void main() async {
 
       // skip the current track, if it's the last on the queue, the
       // player will stop automatically
-      node.skip(channelId);
+      node.skip(guildId);
     } else if(msg.message.content == "!nodes") {
       print("${cluster.connectedNodes.length} available nodes");
     } else if (msg.message.content == "!update") {
