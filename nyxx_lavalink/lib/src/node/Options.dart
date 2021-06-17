@@ -15,6 +15,9 @@ class NodeOptions {
   int shards;
   /// Max connect attempts before shutting down a node
   int maxConnectAttempts;
+  /// How much time should the node wait before trying to reconnect
+  /// to lavalink server again
+  Duration delayBetweenReconnections;
   /// Client id
   late final Snowflake clientId;
   /// Node id, you **must** not set this yourself
@@ -28,7 +31,8 @@ class NodeOptions {
     this.ssl = false,
     this.password = "youshallnotpass",
     this.shards = 1,
-    this.maxConnectAttempts = 5
+    this.maxConnectAttempts = 5,
+    this.delayBetweenReconnections = const Duration(seconds: 5)
   });
 
   NodeOptions._fromJson(Map<String, dynamic> json)
@@ -39,7 +43,8 @@ class NodeOptions {
         shards = json["shards"] as int,
         clientId = Snowflake(json["clientId"] as int),
         nodeId = json["nodeId"] as int,
-        maxConnectAttempts = json["maxConnectAttempts"] as int;
+        maxConnectAttempts = json["maxConnectAttempts"] as int,
+        delayBetweenReconnections = Duration(milliseconds: json["delayBetweenReconnections"] as int);
 
   Map<String, dynamic> _toJson() => {
     "host": this.host,
@@ -49,6 +54,7 @@ class NodeOptions {
     "shards": this.shards,
     "clientId": this.clientId.id,
     "nodeId": this.nodeId,
-    "maxConnectAttempts": this.maxConnectAttempts
+    "maxConnectAttempts": this.maxConnectAttempts,
+    "delayBetweenReconnections": this.delayBetweenReconnections.inMilliseconds
   };
 }
