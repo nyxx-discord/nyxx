@@ -41,14 +41,16 @@ class PlayParameters {
         "noReplace": !this.replace,
         "startTime": this.startTime.inMilliseconds
       });
-    } else {
-      _node._sendPayload("play", this.guildId, {
-        "track": track.track,
-        "noReplace": !this.replace,
-        "startTime": this.startTime,
-        "endTime": this.endTime!.inMilliseconds
-      });
+
+      return;
     }
+
+    _node._sendPayload("play", this.guildId, {
+      "track": track.track,
+      "noReplace": !this.replace,
+      "startTime": this.startTime,
+      "endTime": this.endTime!.inMilliseconds
+    });
   }
 
   /// Puts the track on the queue and starts playing if necessary
