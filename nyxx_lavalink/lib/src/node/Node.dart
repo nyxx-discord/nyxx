@@ -23,10 +23,9 @@ class Node {
 
   /// Build a new Node
   Node._fromOptions(this._cluster, this.options, this._nodeSendPort) {
-    this._httpUri =
-        options.ssl ?
-        "https://${options.host}:${options.port}"
-            : "http://${options.host}:${options.port}";
+    this._httpUri = options.ssl
+        ? "https://${options.host}:${options.port}"
+        : "http://${options.host}:${options.port}";
 
     this._defaultHeaders = {
       "Authorization": options.password,
