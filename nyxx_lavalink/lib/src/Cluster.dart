@@ -129,8 +129,6 @@ class _Cluster {
 
   void _registerEvents() {
     this._client.onVoiceServerUpdate.listen((event) async {
-      await Future.delayed(const Duration(milliseconds: 80));
-
       final node = this._nodes[this._nodeLocations[event.guild.id]];
 
       if (node == null) {
@@ -153,8 +151,6 @@ class _Cluster {
       if (event.state.guild == null) {
         return;
       }
-
-      await Future.delayed(const Duration(milliseconds: 80));
 
       final node = this._nodes[this._nodeLocations[event.state.guild!.id]];
 
