@@ -199,7 +199,8 @@ class Cluster extends _Cluster {
   Map<int, Node> get disconnectedNodes => UnmodifiableMapView(this._connectingNodes);
 
   /// Get the best available node, it is recommended to use [getOrCreatePlayerNode] instead
-  Node getBestNode() {
+  /// as this won't create the player itself if it doesn't exists
+  Node get bestNode {
     if (this._nodes.isEmpty) {
       throw ClusterException._new("No available nodes");
     }
@@ -232,12 +233,13 @@ class Cluster extends _Cluster {
   ///
   /// if the player doesn't exist, then the best node is retrieved and the player created
   Node getOrCreatePlayerNode(Snowflake guildId) {
-    final nodePreview = this._nodeLocations.containsKey(guildId) ?
-        this._nodes[_nodeLocations[guildId]] : this.getBestNode();
+    final nodePreview = this._nodeLocations.containsKey(guildId)
+        ? this._nodes[_nodeLocations[guildId]]
+        : this.bestNode;
 
     Node node;
 
-    node = nodePreview ?? this.getBestNode();
+    node = nodePreview ?? this.bestNode;
 
     if (!node.players.containsKey(guildId)) {
       node.createPlayer(guildId);
