@@ -113,10 +113,10 @@ class _Cluster {
           this._connectingNodes[node.options.nodeId] = node;
 
           // this makes possible for a player to be moved to another node
-          node.players.forEach((guildId, _) => this._nodeLocations.remove(guildId));
+          node._players.forEach((guildId, _) => this._nodeLocations.remove(guildId));
 
           // Also delete the players, so them can be created again on another node
-          node.players.clear();
+          node._players.clear();
 
           _logger.info("[Node ${map["nodeId"]}] Disconnected from lavalink");
         }
@@ -132,7 +132,7 @@ class _Cluster {
         return;
       }
 
-      final player = node.players[event.guild.id];
+      final player = node._players[event.guild.id];
       if (player == null) {
         return;
       }
@@ -153,7 +153,7 @@ class _Cluster {
         return;
       }
 
-      final player = node.players[event.state.guild!.id];
+      final player = node._players[event.state.guild!.id];
       if (player == null) {
         return;
       }
@@ -207,11 +207,11 @@ class Cluster extends _Cluster {
     this._nodes.forEach((id, node) {
       if (minNode.isEmpty) {
         minNode.add(id);
-        minNode.add(node.players.length);
+        minNode.add(node._players.length);
       } else {
-        if (node.players.length < minNode[1]) {
+        if (node._players.length < minNode[1]) {
           minNode[0] = id;
-          minNode[1] = node.players.length;
+          minNode[1] = node._players.length;
         }
       }
     });
@@ -231,7 +231,7 @@ class Cluster extends _Cluster {
 
     node = nodePreview ?? this.bestNode;
 
-    if (!node.players.containsKey(guildId)) {
+    if (!node._players.containsKey(guildId)) {
       node.createPlayer(guildId);
     }
 

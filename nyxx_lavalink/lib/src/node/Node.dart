@@ -6,7 +6,9 @@ class Node {
   NodeOptions options;
 
   /// A map with guild ids as keys and players as values
-  Map<Snowflake, GuildPlayer> players = {};
+  final Map<Snowflake, GuildPlayer> _players = {};
+
+  UnmodifiableMapView<Snowflake, GuildPlayer> get players => UnmodifiableMapView(this._players);
 
   /// Last stats received by this node
   StatsEvent? stats;
@@ -50,7 +52,7 @@ class Node {
   }
 
   void _playNext(Snowflake guildId) async {
-    final player = this.players[guildId];
+    final player = this._players[guildId];
 
     if (player == null) {
       return;
@@ -81,7 +83,7 @@ class Node {
       return;
     }
 
-    final player = this.players[event.guildId];
+    final player = this._players[event.guildId];
 
     if (player == null) {
       return;
@@ -103,7 +105,7 @@ class Node {
     _sendPayload("destroy", guildId);
 
     // delete the actual player
-    this.players.remove(guildId);
+    this._players.remove(guildId);
 
     // delete the relationship between this node and the player so
     // if this guild creates a new player, it can be assigned to other node
@@ -112,7 +114,7 @@ class Node {
 
   /// Stops a player
   void stop(Snowflake guildId) {
-    final player = this.players[guildId];
+    final player = this._players[guildId];
 
     if (player == null) {
       return;
@@ -126,7 +128,7 @@ class Node {
 
   /// Skips a track, starting the next one if available or stopping the player if not
   void skip(Snowflake guildId) {
-    final player = this.players[guildId];
+    final player = this._players[guildId];
 
     if (player == null) {
       return;
@@ -228,7 +230,7 @@ class Node {
   GuildPlayer createPlayer(Snowflake guildId) {
     final player = GuildPlayer._new(this, guildId);
 
-    this.players[guildId] = player;
+    this._players[guildId] = player;
     _cluster._nodeLocations[guildId] = this.options.nodeId;
 
     return player;

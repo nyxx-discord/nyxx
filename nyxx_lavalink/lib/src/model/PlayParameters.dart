@@ -55,7 +55,7 @@ class PlayParameters {
 
   /// Puts the track on the queue and starts playing if necessary
   void queue() {
-    final player = _node.players[this.guildId];
+    final player = _node._players[this.guildId];
 
     if (player == null) {
       return;
