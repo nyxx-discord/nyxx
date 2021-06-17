@@ -58,7 +58,10 @@ class _Cluster {
   }
 
   void _handleNodeMessage(dynamic message) {
-    if (message is SendPort) return;
+    if (message is SendPort) {
+      return;
+    }
+
     final map = message as Map<String, dynamic>;
 
     this._logger.finer("Receved data from node ${map["nodeId"]}, data: $map");
@@ -97,7 +100,7 @@ class _Cluster {
       case "CONNECTED": {
         final node = this._connectingNodes.remove(map["nodeId"] as int);
 
-        if(node != null) {
+        if (node != null) {
           this._nodes[node.options.nodeId] = node;
 
           _logger.info("[Node ${map["nodeId"]}] Connected to lavalink");
@@ -108,13 +111,11 @@ class _Cluster {
       case "DISCONNECTED": {
         final node = this._nodes.remove(map["nodeId"] as int);
 
-        if(node != null) {
+        if (node != null) {
           this._connectingNodes[node.options.nodeId] = node;
 
-          node.players.forEach((guildId, _) {
-            // this makes possible for a player to be moved to another node
-            this._nodeLocations.remove(guildId);
-          });
+          // this makes possible for a player to be moved to another node
+          node.players.forEach((guildId, _) => this._nodeLocations.remove(guildId));
 
           // Also delete the players, so them can be created again on another node
           node.players.clear();
@@ -132,28 +133,40 @@ class _Cluster {
 
       final node = this._nodes[this._nodeLocations[event.guild.id]];
 
-      if(node == null) return;
+      if (node == null) {
+        return;
+      }
 
       final player = node.players[event.guild.id];
 
-      if(player == null) return;
+      if (player == null) {
+        return;
+      }
 
       player._handleServerUpdate(event);
     });
 
     this._client.onVoiceStateUpdate.listen((event) async {
-      if(event.raw["d"]["user_id"] != _clientId.toString()) return;
-      if(event.state.guild == null) return;
+      if (event.raw["d"]["user_id"] != _clientId.toString()) {
+        return;
+      }
+      if (event.state.guild == null) {
+        return;
+      }
 
       await Future.delayed(const Duration(milliseconds: 80));
 
       final node = this._nodes[this._nodeLocations[event.state.guild!.id]];
 
-      if(node == null) return;
+      if (node == null) {
+        return;
+      }
 
       final player = node.players[event.state.guild!.id];
 
-      if(player == null) return;
+      if (player == null) {
+        return;
+      }
 
       player._handleStateUpdate(event);
     });
@@ -187,10 +200,12 @@ class Cluster extends _Cluster {
 
   /// Get the best available node, it is recommended to use [getOrCreatePlayerNode] instead
   Node getBestNode() {
-    if(this._nodes.isEmpty) throw ClusterException._new("No available nodes");
-    if(this._nodes.length == 1) {
+    if (this._nodes.isEmpty) {
+      throw ClusterException._new("No available nodes");
+    }
+    if (this._nodes.length == 1) {
 
-      for(final k in this._nodes.keys) {
+      for (final k in this._nodes.keys) {
         // return first node if only one is connected
         return this._nodes[k]!;
       }
@@ -203,7 +218,7 @@ class Cluster extends _Cluster {
     final minNode = <int>[];
 
     this._nodes.forEach((id, node) {
-      if(minNode.isEmpty) {
+      if (minNode.isEmpty) {
         minNode.add(id);
         minNode.add(node.players.length);
       } else {
@@ -226,13 +241,9 @@ class Cluster extends _Cluster {
 
     Node node;
 
-    if(nodePreview == null) {
-      node = this.getBestNode();
-    } else {
-      node = nodePreview;
-    }
+    node = nodePreview ?? this.getBestNode();
 
-    if(!node.players.containsKey(guildId)) {
+    if (!node.players.containsKey(guildId)) {
       node.createPlayer(guildId);
     }
 

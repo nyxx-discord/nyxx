@@ -53,13 +53,15 @@ class Node {
   void _playNext(Snowflake guildId) async {
     final player = this.players[guildId];
 
-    if (player == null) return;
+    if (player == null) {
+      return;
+    }
 
     final track = player.queue[0];
 
     player.nowPlaying = track;
 
-    if(track.endTime == null) {
+    if (track.endTime == null) {
       this._sendPayload("play", guildId, {
         "track": track.track.track,
         "noReplace": false,
@@ -76,16 +78,22 @@ class Node {
   }
 
   void _handleTrackEnd(TrackEnd event) {
-    if(!(event.reason == "FINISHED")) return;
+    if(!(event.reason == "FINISHED")) {
+      return;
+    }
 
     final player = this.players[event.guildId];
 
-    if (player == null) return;
+    if (player == null) {
+      return;
+    }
 
     player.queue.removeAt(0);
     player.nowPlaying = null;
 
-    if (player.queue.isEmpty) return;
+    if (player.queue.isEmpty) {
+      return;
+    }
 
 
     _playNext(event.guildId);
@@ -107,7 +115,9 @@ class Node {
   void stop(Snowflake guildId) {
     final player = this.players[guildId];
 
-    if (player == null) return;
+    if (player == null) {
+      return;
+    }
 
     player.queue.clear();
     player.nowPlaying = null;
@@ -119,7 +129,9 @@ class Node {
   void skip(Snowflake guildId) {
     final player = this.players[guildId];
 
-    if (player == null) return;
+    if (player == null) {
+      return;
+    }
 
     if (player.queue.isEmpty) {
       return;
@@ -172,7 +184,9 @@ class Node {
       headers: this._defaultHeaders
     );
 
-    if(!(response.statusCode == 200)) throw HttpException._new(response.statusCode);
+    if (!(response.statusCode == 200)) {
+      throw HttpException._new(response.statusCode);
+    }
 
     return Tracks._fromJson(jsonDecode(response.body) as Map<String, dynamic>);
   }
@@ -181,7 +195,7 @@ class Node {
   /// it's searched directly by the link
   Future<Tracks> autoSearch(String query) async {
 
-    if(this._urlRegex.hasMatch(query)) {
+    if (this._urlRegex.hasMatch(query)) {
       return searchTracks(query);
     }
 
