@@ -61,7 +61,7 @@ class _Cluster {
     if (message is SendPort) return;
     final map = message as Map<String, dynamic>;
 
-    this._logger.log(logging.Level.FINE, "Receved data from node ${map["nodeId"]}, data: $map");
+    this._logger.finer("Receved data from node ${map["nodeId"]}, data: $map");
 
     switch(map["cmd"]) {
       case "DISPATCH":
@@ -90,7 +90,7 @@ class _Cluster {
         this._nodes.remove(nodeId);
         this._connectingNodes.remove(nodeId);
 
-        _logger.log(logging.Level.INFO, "[Node $nodeId] Exited");
+        _logger.info("[Node $nodeId] Exited");
       }
       break;
 
@@ -100,7 +100,7 @@ class _Cluster {
         if(node != null) {
           this._nodes[node.options.nodeId] = node;
 
-          _logger.log(logging.Level.INFO, "[Node ${map["nodeId"]}] Connected to lavalink");
+          _logger.info("[Node ${map["nodeId"]}] Connected to lavalink");
         }
       }
       break;
@@ -119,7 +119,7 @@ class _Cluster {
           // Also delete the players, so them can be created again on another node
           node.players.clear();
 
-          _logger.log(logging.Level.INFO, "[Node ${map["nodeId"]}] Disconnected from lavalink");
+          _logger.info("[Node ${map["nodeId"]}] Disconnected from lavalink");
         }
       }
       break;
