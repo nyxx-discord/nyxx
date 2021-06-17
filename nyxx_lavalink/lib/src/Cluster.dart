@@ -34,8 +34,6 @@ class _Cluster {
   late final Stream<TrackEnd> onTrackEnd;
   /// Emitted when a web socket is closed
   late final Stream<WebSocketClosed> onWebSocketClosed;
-  /// Emitted everytime an event is received
-  late final Stream<Map<String, dynamic>> onRawEvent;
 
   late final _EventDispatcher _eventDispatcher;
 

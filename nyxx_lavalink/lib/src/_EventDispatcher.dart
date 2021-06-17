@@ -8,19 +8,18 @@ class _EventDispatcher {
   final StreamController<TrackStart> onTrackStart = StreamController.broadcast();
   final StreamController<TrackEnd> onTrackEnd = StreamController.broadcast();
   final StreamController<WebSocketClosed> onWebSocketClosed = StreamController.broadcast();
-  final StreamController<Map<String, dynamic>> onRawEvent = StreamController.broadcast();
 
   void dispatchEvent(Map<String, dynamic> json) {
     final node = cluster._nodes[json["nodeId"]];
 
-    if(node == null) return;
+    if(node == null) {
+      return;
+    }
 
     cluster._logger.log(
         Level.FINE,
         "[Node ${json["nodeId"]}] Dispatching ${json["event"]}"
     );
-
-    this.onRawEvent.add(json);
 
     switch(json["event"]) {
       case "TrackStart":
@@ -82,6 +81,5 @@ class _EventDispatcher {
     cluster.onTrackStart = this.onTrackStart.stream;
     cluster.onTrackEnd = this.onTrackEnd.stream;
     cluster.onWebSocketClosed = this.onWebSocketClosed.stream;
-    cluster.onRawEvent = this.onRawEvent.stream;
   }
 }
