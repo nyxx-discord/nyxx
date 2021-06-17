@@ -142,7 +142,7 @@ class _Cluster {
     });
 
     this._client.onVoiceStateUpdate.listen((event) async {
-      if(!(event.raw["d"]["user_id"] == _clientId.toString())) return;
+      if(event.raw["d"]["user_id"] != _clientId.toString()) return;
       if(event.state.guild == null) return;
 
       await Future.delayed(const Duration(milliseconds: 80));
