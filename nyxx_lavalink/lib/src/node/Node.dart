@@ -12,7 +12,7 @@ class Node {
   StatsEvent? stats;
 
   /// Http client used with this node
-  final http.Client _httpClient = http.Client();
+  final Client _httpClient = Client();
 
   final SendPort _nodeSendPort;
   late String _httpUri;
