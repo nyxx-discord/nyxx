@@ -204,11 +204,7 @@ class Cluster extends _Cluster {
       throw ClusterException._new("No available nodes");
     }
     if (this._nodes.length == 1) {
-
-      for (final k in this._nodes.keys) {
-        // return first node if only one is connected
-        return this._nodes[k]!;
-      }
+      return this._nodes.values.first;
     }
 
     /// As dart doesn't have tuples this will contain the node with few players
