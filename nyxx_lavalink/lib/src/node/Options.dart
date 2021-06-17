@@ -23,7 +23,6 @@ class NodeOptions {
   /// Node id, you **must** not set this yourself
   late final int nodeId;
 
-
   /// Constructor to build a new node builder
   NodeOptions({
     this.host = "localhost",
