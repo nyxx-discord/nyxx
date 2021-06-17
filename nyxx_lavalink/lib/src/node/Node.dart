@@ -174,7 +174,7 @@ class Node {
 
   /// Resumes the track playback of a guild player
   void resume(Snowflake guildId) {
-    setPause(guildId, true);
+    setPause(guildId, false);
   }
 
   /// Searches a given query over the lavalink api and returns the results
