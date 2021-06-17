@@ -3,11 +3,11 @@ part of nyxx_lavalink;
 /// Object sent when a track starts playing
 class TrackStart extends BaseEvent {
   /// Track start type (if its replaced or not the track)
-  String startType;
+  final String startType;
   /// Base64 encoded track
-  String track;
+  final String track;
   /// Guild where the track started
-  Snowflake guildId;
+  final Snowflake guildId;
 
   TrackStart._fromJson(Nyxx client, Node node, Map<String, dynamic> json)
   : startType = json["type"] as String,

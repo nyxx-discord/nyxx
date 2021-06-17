@@ -3,17 +3,17 @@ part of nyxx_lavalink;
 /// Stats update event dispatched by lavalink
 class StatsEvent extends BaseEvent {
   /// Number of playing players
-  int playingPlayers;
+  final int playingPlayers;
   ///Memory usage stats
-  Memory memory;
+  final Memory memory;
   /// Frame sending stats
-  FrameStats? frameStats;
+  final FrameStats? frameStats;
   /// Total amount of players
-  int players;
+  final int players;
   /// Cpu usage stats
-  Cpu cpu;
+  final Cpu cpu;
   /// Server uptime
-  int uptime;
+  final int uptime;
 
   StatsEvent._fromJson(Nyxx client, Node node, Map<String, dynamic> json)
   : playingPlayers = json["playingPlayers"] as int,
@@ -28,11 +28,11 @@ class StatsEvent extends BaseEvent {
 /// Stats about frame sending to discord
 class FrameStats {
   /// Sent frames
-  int sent;
+  final int sent;
   /// Deficit frames
-  int deficit;
+  final int deficit;
   /// Nulled frames
-  int nulled;
+  final int nulled;
 
   FrameStats._fromJson(Map<String, dynamic> json)
   : sent = json["sent"] as int,
@@ -43,11 +43,11 @@ class FrameStats {
 /// Cpu usage stats
 class Cpu {
   /// Amount of available cores on the cpu
-  int cores;
+  final int cores;
   /// The total load of the machine where lavalink is running on
-  num systemLoad;
+  final num systemLoad;
   /// The total load of lavalink server
-  num lavalinkLoad;
+  final num lavalinkLoad;
 
   Cpu._fromJson(Map<String, dynamic> json)
   : cores = json["cores"] as int,
@@ -58,13 +58,13 @@ class Cpu {
 /// Memory usage stats
 class Memory {
   /// Reservable memory
-  int reservable;
+  final int reservable;
   /// Used memory
-  int used;
+  final int used;
   /// Free/unused memory
-  int free;
+  final int free;
   /// Total allocated memory
-  int allocated;
+  final int allocated;
 
   Memory._fromJson(Map<String, dynamic> json)
   : reservable = json["reservable"] as int,

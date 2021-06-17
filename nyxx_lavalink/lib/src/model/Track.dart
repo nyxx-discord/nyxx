@@ -3,17 +3,17 @@ part of nyxx_lavalink;
 /// Represents a track already on a player queue
 class QueuedTrack {
   /// The actual track
-  Track track;
+  final Track track;
   /// Where should start lavalink playing the track
-  Duration startTime;
+  final Duration startTime;
   /// If the track should stop playing before finish and where
-  Duration? endTime;
+  final Duration? endTime;
 
   /// The requester of the track
-  Snowflake? requester;
+  final Snowflake? requester;
 
   /// The channel where this track was requested
-  Snowflake? channelId;
+  final Snowflake? channelId;
 
   /// Create a new QueuedTrack instance
   QueuedTrack._new(this.track, this.startTime, this.endTime, this.requester, this.channelId);
@@ -26,9 +26,9 @@ class QueuedTrack {
 /// Lavalink track object
 class Track {
   /// Base64 encoded track
-  String track;
+  final String track;
   /// Optional information about the track
-  TrackInfo? info;
+  final TrackInfo? info;
 
   /// Create a new track instance
   Track(this.track, this.info);
@@ -36,7 +36,9 @@ class Track {
   factory Track._fromJson(Map<String, dynamic> json) {
     TrackInfo? trackInfo;
 
-    if (json.containsKey("info")) trackInfo = TrackInfo._fromJson(json["info"] as Map<String, dynamic>);
+    if (json.containsKey("info")) {
+      trackInfo = TrackInfo._fromJson(json["info"] as Map<String, dynamic>);
+    }
 
     return Track(json["track"] as String, trackInfo);
   }
@@ -45,21 +47,21 @@ class Track {
 /// Track details
 class TrackInfo {
   /// Track identifier
-  String identifier;
+  final String identifier;
   /// If the track is seekable (if it's a streaming it's not)
-  bool seekable;
+  final bool seekable;
   /// The author of the track
-  String author;
+  final String author;
   /// The length of the track
-  int length;
+  final int length;
   /// Whether the track is a streaming or not
-  bool stream;
+  final bool stream;
   /// Position returned by lavalink
-  int position;
+  final int position;
   /// The title of the track
-  String title;
+  final String title;
   /// Url of the track
-  String uri;
+  final String uri;
 
   TrackInfo._fromJson(Map<String, dynamic> json)
   : identifier = json["identifier"] as String,
@@ -75,24 +77,25 @@ class TrackInfo {
 /// Playlist info
 class PlaylistInfo {
   /// Name of the playlist
-  String? name;
+  final String? name;
   /// Currently selected track
-  int? selectedTrack;
+  final int? selectedTrack;
 
   PlaylistInfo._fromJson(Map<String, dynamic> json)
-  : name = json["name"] as String?, selectedTrack = json["selectedTrack"] as int?;
+  : name = json["name"] as String?,
+    selectedTrack = json["selectedTrack"] as int?;
 }
 
 /// Object returned from lavalink when searching
 class Tracks {
   /// Information about loaded playlist
-  PlaylistInfo playlistInfo;
+  final PlaylistInfo playlistInfo;
   /// Load type (track, playlist, etc)
-  String loadType;
+  final String loadType;
   /// Loaded tracks
-  List<Track> tracks;
+  final List<Track> tracks;
   /// Occurred exception (if occurred)
-  LavalinkException? exception;
+  final LavalinkException? exception;
   
   Tracks._fromJson(Map<String, dynamic> json)
   : playlistInfo = PlaylistInfo._fromJson(json["playlistInfo"] as Map<String, dynamic>), 

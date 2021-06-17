@@ -7,7 +7,7 @@ class GuildPlayer {
   /// The currently playing track
   QueuedTrack? nowPlaying;
   /// Guild where this player operates on
-  Snowflake guildId;
+  final Snowflake guildId;
 
   /// A map to combine server state and server update events to send them to lavalink
   final Map<String, dynamic> _serverUpdate = {};

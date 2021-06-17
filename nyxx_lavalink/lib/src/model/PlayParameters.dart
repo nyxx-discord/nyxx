@@ -4,9 +4,9 @@ part of nyxx_lavalink;
 class PlayParameters {
   final Node _node;
   /// The track to play
-  Track track;
+  final Track track;
   /// The guild where the track will be played
-  Snowflake guildId;
+  final Snowflake guildId;
   /// Wether to replace the track or not
   bool replace;
   /// The time at where the track will start to play
