@@ -57,7 +57,9 @@ class PlayParameters {
   void queue() {
     final player = _node.players[this.guildId];
 
-    if(player == null) return;
+    if (player == null) {
+      return;
+    }
 
     final queuedTrack = QueuedTrack._new(this.track, this.startTime, this.endTime, this.requester, this.channelId);
 
@@ -66,7 +68,7 @@ class PlayParameters {
 
     player.queue.add(queuedTrack);
 
-    if(shouldPlay) {
+    if (shouldPlay) {
       this._node._playNext(this.guildId);
     }
   }
