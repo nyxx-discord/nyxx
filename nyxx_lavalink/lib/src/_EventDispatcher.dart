@@ -16,7 +16,7 @@ class _EventDispatcher {
     if(node == null) return;
 
     cluster._logger.log(
-        logging.Level.FINE,
+        Level.FINE,
         "[Node ${json["nodeId"]}] Dispatching ${json["event"]}"
     );
 

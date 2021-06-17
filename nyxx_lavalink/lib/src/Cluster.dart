@@ -22,7 +22,7 @@ class _Cluster {
   final _receivePort = ReceivePort();
   late final Stream<dynamic> _receiveStream;
 
-  final _logger = logging.Logger("Lavalink cluster");
+  final _logger = Logger("Lavalink cluster");
 
   /// Emitted when stats are sent from lavalink
   late final Stream<StatsEvent> onStatsReceived;
@@ -72,15 +72,15 @@ class _Cluster {
         break;
 
       case "LOG": {
-        logging.Level? level;
+        Level? level;
 
         switch (map["level"]) {
           case "INFO":
-            level = logging.Level.INFO;
+            level = Level.INFO;
             break;
 
           case "WARNING":
-            level = logging.Level.WARNING;
+            level = Level.WARNING;
             break;
         }
 
@@ -169,7 +169,7 @@ class _Cluster {
   }
 
   /// Creates a new cluster ready to start adding connections
-  _Cluster(this._client, this._clientId, [logging.Level? loggingLevel]) {
+  _Cluster(this._client, this._clientId, [Level? loggingLevel]) {
     this._registerEvents();
 
     this._eventDispatcher = _EventDispatcher(this);
@@ -178,14 +178,14 @@ class _Cluster {
 
     this._receiveStream.listen(_handleNodeMessage);
 
-    logging.Logger.root.level = loggingLevel ?? logging.Level.INFO;
+    Logger.root.level = loggingLevel ?? Level.INFO;
   }
 }
 
 /// Cluster of lavalink nodes
 class Cluster extends _Cluster {
   /// Creates a new lavalink cluster
-  Cluster(Nyxx client, Snowflake clientId, {logging.Level? loggingLevel}):
+  Cluster(Nyxx client, Snowflake clientId, {Level? loggingLevel}):
         super(client, clientId, loggingLevel);
 
   /// Returns a map with the nodes connected to lavalink cluster

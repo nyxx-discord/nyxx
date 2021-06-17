@@ -8,7 +8,7 @@ import "dart:isolate";
 import "dart:math";
 
 import "package:http/http.dart" as http;
-import "package:logging/logging.dart" as logging;
+import "package:logging/logging.dart";
 import "package:nyxx/nyxx.dart" show Nyxx, Snowflake, IntExtensions, VoiceStateUpdateEvent, VoiceServerUpdateEvent;
 
 part "src/_EventDispatcher.dart";
