@@ -9,7 +9,7 @@ class Node {
   Map<Snowflake, GuildPlayer> players = {};
 
   /// Last stats received by this node
-  Stats? stats;
+  StatsEvent? stats;
 
   /// Http client used with this node
   final http.Client _httpClient = http.Client();

@@ -16,6 +16,8 @@ Simple, robust framework for creating discord bots for Dart language.
   Supports and provides easy API for creating and handling slash commands
 - **Commands framework included** <br>
   A fast way to create a bot with command support. Implementing the framework is simple - and everything is done automatically.
+- **Lavalink support** <br>
+  Nyxx allows you to create music bots by adding support to [Lavalink](https://github.com/freyacodes/Lavalink) API
 - **Cross Platform** <br>
   Nyxx works on the command line, in the browser, and on mobile devices.
 - **Fine Control** <br>

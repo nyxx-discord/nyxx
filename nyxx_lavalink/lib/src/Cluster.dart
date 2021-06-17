@@ -25,7 +25,7 @@ class _Cluster {
   final _logger = logging.Logger("Lavalink cluster");
 
   /// Emitted when stats are sent from lavalink
-  late final Stream<Stats> onStatsReceived;
+  late final Stream<StatsEvent> onStatsReceived;
   /// Emitted when a player gets updated
   late final Stream<PlayerUpdate> onPlayerUpdate;
   /// Emitted when a track starts playing

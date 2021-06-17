@@ -3,7 +3,7 @@ part of nyxx_lavalink;
 class _EventDispatcher {
   _Cluster cluster;
 
-  final StreamController<Stats> onStatsReceived = StreamController.broadcast();
+  final StreamController<StatsEvent> onStatsReceived = StreamController.broadcast();
   final StreamController<PlayerUpdate> onPlayerUpdate = StreamController.broadcast();
   final StreamController<TrackStart> onTrackStart = StreamController.broadcast();
   final StreamController<TrackEnd> onTrackEnd = StreamController.broadcast();
@@ -54,7 +54,7 @@ class _EventDispatcher {
 
 
       case "Stats": {
-        final stats = Stats._fromJson(cluster._client, node,
+        final stats = StatsEvent._fromJson(cluster._client, node,
             json["data"] as Map<String, dynamic>
         );
 

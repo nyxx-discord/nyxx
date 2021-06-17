@@ -12,10 +12,6 @@ void main() async {
   final channelId = Snowflake("CHANNEL_ID_HERE");
   final guildId = Snowflake("GUILD_ID_HERE");
 
-  client.onReady.listen((event) {
-    print("ready");
-  });
-
   // Add your lavalink nodes
   await cluster.addNode(NodeOptions());
 

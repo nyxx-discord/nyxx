@@ -1,7 +1,7 @@
 part of nyxx_lavalink;
 
 /// Stats update event dispatched by lavalink
-class Stats extends BaseEvent {
+class StatsEvent extends BaseEvent {
   /// Number of playing players
   int playingPlayers;
   ///Memory usage stats
@@ -15,7 +15,7 @@ class Stats extends BaseEvent {
   /// Server uptime
   int uptime;
 
-  Stats._fromJson(Nyxx client, Node node, Map<String, dynamic> json)
+  StatsEvent._fromJson(Nyxx client, Node node, Map<String, dynamic> json)
   : playingPlayers = json["playingPlayers"] as int,
     players = json["players"] as int,
     uptime = json["uptime"] as int,

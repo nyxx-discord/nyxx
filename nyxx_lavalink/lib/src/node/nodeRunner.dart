@@ -86,7 +86,7 @@ Future<void> _handleNode(SendPort clusterPort) async {
             process(jsonDecode(data as String) as Map<String, dynamic>);
           }, onDone: () async {
             clusterPort.send({"cmd": "DISCONNECTED", "nodeId": node.nodeId});
-            unawaited(connect());
+            connect();
 
             return;
           },

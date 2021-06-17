@@ -9,7 +9,6 @@ import "dart:math";
 import "package:http/http.dart" as http;
 import "package:logging/logging.dart" as logging;
 import "package:nyxx/nyxx.dart" show Nyxx, Snowflake, IntExtensions, VoiceStateUpdateEvent, VoiceServerUpdateEvent;
-import "package:pedantic/pedantic.dart" show unawaited;
 
 part "src/_EventDispatcher.dart";
 part "src/Cluster.dart";
