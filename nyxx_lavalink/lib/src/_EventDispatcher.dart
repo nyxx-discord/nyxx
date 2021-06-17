@@ -51,7 +51,6 @@ class _EventDispatcher {
         );
         break;
 
-
       case "Stats": {
         final stats = StatsEvent._fromJson(cluster._client, node,
             json["data"] as Map<String, dynamic>
@@ -63,7 +62,6 @@ class _EventDispatcher {
         this.onStatsReceived.add(stats);
         }
         break;
-
 
       case "PlayerUpdate":
         this.onPlayerUpdate.add(
