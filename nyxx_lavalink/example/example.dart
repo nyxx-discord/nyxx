@@ -4,7 +4,7 @@ import "package:nyxx_lavalink/lavalink.dart";
 import "package:nyxx/nyxx.dart";
 
 // This is a very simple example, for a more complete one take a look at
-// https://github.com/AlvaroMS25/nyxx_lavalink_testbot
+//
 
 void main() async {
   final client = Nyxx(Platform.environment["DISCORD_TOKEN"]!, GatewayIntents.all);

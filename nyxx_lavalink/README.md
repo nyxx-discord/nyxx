@@ -75,8 +75,11 @@ Commander examples can be found [here](https://github.com/l7ssha/nyxx/tree/dev/n
 
 Slash commands (interactions) examples can be found [here](https://github.com/l7ssha/nyxx/tree/dev/nyxx_interactions/example)
 
+Lavalink examples can be found [here](https://github.com/l7ssha/nyxx/tree/dev/nyxx_lavalink/example)
+
 ### Example bots
 - [Running on Dart](https://github.com/l7ssha/running_on_dart)
+- [Lavalink testbot](https://github.com/AlvaroMS25/nyxx_lavalink_testbot)
 
 ## Documentation, help and examples
 
