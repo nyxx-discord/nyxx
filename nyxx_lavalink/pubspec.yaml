@@ -12,7 +12,7 @@ environment:
 dependencies:
    http: "^0.13.1"
    logging: "^1.0.1"
-   nyxx: "2.0.0-rc.7"
+   nyxx: "^2.0.0-rc.7"
 
 dev_dependencies:
   pedantic: ^1.10.0
