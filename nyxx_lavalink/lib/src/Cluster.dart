@@ -130,13 +130,11 @@ class _Cluster {
   void _registerEvents() {
     this._client.onVoiceServerUpdate.listen((event) async {
       final node = this._nodes[this._nodeLocations[event.guild.id]];
-
       if (node == null) {
         return;
       }
 
       final player = node.players[event.guild.id];
-
       if (player == null) {
         return;
       }
@@ -153,13 +151,11 @@ class _Cluster {
       }
 
       final node = this._nodes[this._nodeLocations[event.state.guild!.id]];
-
       if (node == null) {
         return;
       }
 
       final player = node.players[event.state.guild!.id];
-
       if (player == null) {
         return;
       }
