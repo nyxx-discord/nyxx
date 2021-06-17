@@ -3,14 +3,14 @@ import "dart:io";
 import "package:nyxx_lavalink/lavalink.dart";
 import "package:nyxx/nyxx.dart";
 
-// This is a very simple example, for a more complete one take a look at
-//
-
 void main() async {
   final client = Nyxx(Platform.environment["DISCORD_TOKEN"]!, GatewayIntents.all);
   final cluster = Cluster(client, Snowflake("YOUR_BOT_ID"));
-  final channelId = Snowflake("CHANNEL_ID_HERE");
+
+  // This is a really simple example, so we'll define the guild and
+  // the channel where the bot will play music on
   final guildId = Snowflake("GUILD_ID_HERE");
+  final channelId = Snowflake("CHANNEL_ID_HERE");
 
   // Add your lavalink nodes
   await cluster.addNode(NodeOptions());
@@ -31,6 +31,8 @@ void main() async {
     } else if (msg.message.content == "!skip") {
       final node = cluster.getOrCreatePlayerNode(guildId);
 
+      // skip the current track, if it's the last on the queue, the
+      // player will stop automatically
       node.skip(channelId);
     } else if(msg.message.content == "!nodes") {
       print("${cluster.connectedNodes.length} available nodes");
