@@ -22,7 +22,6 @@ part of nyxx_lavalink;
   * LOG - Log something
 */
 Future<void> _handleNode(SendPort clusterPort) async {
-
   WebSocket? socket;
   StreamSubscription? socketStream;
 
