@@ -29,7 +29,7 @@ class Cluster {
   final _receivePort = ReceivePort();
   late final Stream<dynamic> _receiveStream;
 
-  final _logger = Logger("Lavalink cluster");
+  final _logger = Logger("Lavalink");
 
   /// Emitted when stats are sent from lavalink
   late final Stream<StatsEvent> onStatsReceived;
