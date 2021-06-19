@@ -31,6 +31,7 @@ class GuildPlayer {
 
     _dispatchVoiceUpdate();
   }
+  
   void _handleStateUpdate(VoiceStateUpdateEvent event) {
     this._serverUpdate["sessionId"] = event.state.sessionId;
 

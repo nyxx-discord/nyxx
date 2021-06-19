@@ -60,6 +60,7 @@ part "src/core/guild/Status.dart";
 part "src/core/guild/Webhook.dart";
 part "src/core/message/Attachment.dart";
 part "src/core/message/Emoji.dart";
+part "src/core/message/MessageTimeStamp.dart";
 part "src/core/message/GuildEmoji.dart";
 part "src/core/message/Message.dart";
 part "src/core/message/MessageFlags.dart";

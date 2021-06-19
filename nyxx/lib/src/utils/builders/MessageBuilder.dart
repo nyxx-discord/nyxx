@@ -106,6 +106,14 @@ class MessageBuilder extends BuilderWithClient {
     _content.write("$decoration$text$decoration");
   }
 
+  /// Appends [Mentionable] object to message
+  void appendMention(Mentionable mentionable) =>
+      this.append(mentionable.mention);
+
+  /// Appends timestamp to message from [dateTime]
+  void appendTimestamp(DateTime dateTime, {TimeStampStyle style = TimeStampStyle.def}) =>
+      this.append(style.format(dateTime));
+
   /// Add attachment
   void addAttachment(AttachmentBuilder attachment) {
     if (this.files == null) this.files = [];

@@ -62,6 +62,13 @@ abstract class Message extends SnowflakeEntity implements Disposable, Convertabl
   /// If the message is a response to an Interaction, this is the id of the interaction's application
   late final Snowflake? applicationId;
 
+  /// Inline timestamps of current message
+  Iterable<MessageTimeStamp> get timestamps sync* {
+    for (final match in MessageTimeStamp.regex.allMatches(this.content)) {
+      yield MessageTimeStamp._new(match);
+    }
+  }
+
   factory Message._deserialize(INyxx client, RawApiMap raw) {
     if (raw["member"] != null) {
       return GuildMessage._new(client, raw);

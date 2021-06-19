@@ -1,10 +1,11 @@
 part of nyxx;
 
-class TextGuildChannel extends GuildChannel implements TextChannel {
+class TextGuildChannel extends GuildChannel implements TextChannel, Mentionable {
   /// The channel's topic.
   late final String? topic;
 
   /// The channel's mention string.
+  @override
   String get mention => "<#${this.id}>";
 
   /// Channel's slow mode rate limit in seconds. This must be between 0 and 120.
