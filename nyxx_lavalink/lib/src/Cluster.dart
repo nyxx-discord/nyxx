@@ -198,25 +198,24 @@ class Cluster extends _Cluster {
       return this._nodes.values.first;
     }
 
-    /// As dart doesn't have tuples this will contain the node with few players
-    /// Order:
-    ///   Index 0 - Node id
-    ///   Index 1 - The number of players the node has
-    final minNode = <int>[];
+    /// Node id of the node who has fewer players
+    int? minNodeId;
+    /// Number of players the node has
+    int? minNodePlayers;
 
     this._nodes.forEach((id, node) {
-      if (minNode.isEmpty) {
-        minNode.add(id);
-        minNode.add(node._players.length);
+      if (minNodeId == null && minNodePlayers == null) {
+        minNodeId = id;
+        minNodePlayers = node._players.length;
       } else {
-        if (node._players.length < minNode[1]) {
-          minNode[0] = id;
-          minNode[1] = node._players.length;
+        if (node._players.length < minNodePlayers!) {
+          minNodeId = id;
+          minNodePlayers = node._players.length;
         }
       }
     });
 
-    return this._nodes[minNode[0]]!;
+    return this._nodes[minNodeId]!;
   }
 
   /// Attempts to get the node containing a player for a specific guild id
