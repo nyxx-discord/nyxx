@@ -19,9 +19,9 @@ void main() async {
     if(msg.message.content == "!join") {
       final channel = await client.fetchChannel<VoiceGuildChannel>(channelId);
 
-      channel.connect();
-
       cluster.getOrCreatePlayerNode(guildId);
+
+      channel.connect();
     } else if(msg.message.content == "!queue") {
       final node = cluster.getOrCreatePlayerNode(guildId);
 
