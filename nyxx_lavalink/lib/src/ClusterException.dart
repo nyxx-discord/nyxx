@@ -8,6 +8,5 @@ class ClusterException implements Exception {
   ClusterException._new(this.error);
 
   @override
-  String toString() =>
-      "Lavalink cluster error: $error";
+  String toString() => "Lavalink cluster error: $error";
 }

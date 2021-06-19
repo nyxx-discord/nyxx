@@ -227,9 +227,7 @@ class Cluster extends _Cluster {
         ? this._nodes[_nodeLocations[guildId]]
         : this.bestNode;
 
-    Node node;
-
-    node = nodePreview ?? this.bestNode;
+    final node = nodePreview ?? this.bestNode;
 
     if (!node._players.containsKey(guildId)) {
       node.createPlayer(guildId);

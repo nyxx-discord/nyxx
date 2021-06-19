@@ -65,7 +65,6 @@ class PlayParameters {
 
     // Whether if the node should start playing the track
     final shouldPlay = player.nowPlaying == null && player.queue.isEmpty;
-
     player.queue.add(queuedTrack);
 
     if (shouldPlay) {
