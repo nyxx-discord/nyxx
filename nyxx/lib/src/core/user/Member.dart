@@ -1,6 +1,6 @@
 part of nyxx;
 
-class Member extends SnowflakeEntity {
+class Member extends SnowflakeEntity implements Mentionable {
   /// Reference to client
   final INyxx client;
 
@@ -33,6 +33,10 @@ class Member extends SnowflakeEntity {
 
   /// When the user starting boosting the guild
   late DateTime? boostingSince;
+
+  /// The channel's mention string.
+  @override
+  String get mention => "<@${this.id}>";
 
   // TODO: is everything okay?
   /// Returns highest role of member.
