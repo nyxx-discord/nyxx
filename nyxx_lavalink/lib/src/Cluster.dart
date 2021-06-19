@@ -116,17 +116,18 @@ class Cluster {
       case "DISCONNECTED": {
         final node = this._nodes.remove(map["nodeId"] as int);
 
-        if (node != null) {
-          this._connectingNodes[node.options.nodeId] = node;
-
-          // this makes possible for a player to be moved to another node
-          node._players.forEach((guildId, _) => this._nodeLocations.remove(guildId));
-
-          // Also delete the players, so them can be created again on another node
-          node._players.clear();
-
-          _logger.info("[Node ${map["nodeId"]}] Disconnected from lavalink");
+        if (node == null) {
+          return;
         }
+        this._connectingNodes[node.options.nodeId] = node;
+
+        // this makes possible for a player to be moved to another node
+        node._players.forEach((guildId, _) => this._nodeLocations.remove(guildId));
+
+        // Also delete the players, so them can be created again on another node
+        node._players.clear();
+
+        _logger.info("[Node ${map["nodeId"]}] Disconnected from lavalink");
       }
       break;
     }
