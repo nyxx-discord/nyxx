@@ -112,8 +112,6 @@ Future<void> _handleNode(SendPort clusterPort) async {
     }
 
     clusterPort.send({"cmd": "EXITED", "nodeId": node.nodeId});
-
-    return;
   }
 
   Future<void> disconnect() async {
