@@ -78,7 +78,7 @@ class PlaylistInfo {
 
   PlaylistInfo._fromJson(Map<String, dynamic> json) {
     this.name = json["name"] as String?;
-    this.selectedTrack = json["selectedTrack"] as int;
+    this.selectedTrack = json["selectedTrack"] as int?;
   }
 }
 
