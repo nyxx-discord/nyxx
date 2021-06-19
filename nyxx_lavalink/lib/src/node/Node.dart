@@ -195,7 +195,6 @@ class Node {
   /// Searches a provided query on youtube, if the query is a link
   /// it's searched directly by the link
   Future<Tracks> autoSearch(String query) async {
-
     if (this._urlRegex.hasMatch(query)) {
       return searchTracks(query);
     }
