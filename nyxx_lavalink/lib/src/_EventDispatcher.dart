@@ -1,7 +1,7 @@
 part of nyxx_lavalink;
 
 class _EventDispatcher implements Disposable {
-  _Cluster cluster;
+  Cluster cluster;
 
   final StreamController<StatsEvent> onStatsReceived = StreamController.broadcast();
   final StreamController<PlayerUpdateEvent> onPlayerUpdate = StreamController.broadcast();

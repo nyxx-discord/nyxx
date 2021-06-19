@@ -1,6 +1,7 @@
 part of nyxx_lavalink;
 
-class _Cluster {
+/// Cluster of lavalink nodes
+class Cluster {
   /// A reference to the client
   final Nyxx _client;
 
@@ -10,9 +11,15 @@ class _Cluster {
   /// All available nodes, ordered by node id
   final Map<int, Node> _nodes = {};
 
+  /// Returns a map with the nodes connected to lavalink cluster
+  UnmodifiableMapView<int, Node> get connectedNodes => UnmodifiableMapView(this._nodes);
+
   /// Nodes that are currently connecting to server, when a node gets connected
   /// it will be moved to [_nodes], and when reconnecting will be moved here again
   final Map<int, Node> _connectingNodes = {};
+
+  /// Returns a map with the nodes that are actually disconnected from lavalink
+  UnmodifiableMapView<int, Node> get disconnectedNodes => UnmodifiableMapView(this._connectingNodes);
 
   /// A map to keep the assigned node id for each player
   final Map<Snowflake, int> _nodeLocations = {};
@@ -162,32 +169,6 @@ class _Cluster {
     });
   }
 
-  /// Creates a new cluster ready to start adding connections
-  _Cluster(this._client, this._clientId, [Level? loggingLevel]) {
-    this._registerEvents();
-
-    this._eventDispatcher = _EventDispatcher(this);
-
-    this._receiveStream = this._receivePort.asBroadcastStream();
-
-    this._receiveStream.listen(_handleNodeMessage);
-
-    Logger.root.level = loggingLevel ?? Level.INFO;
-  }
-}
-
-/// Cluster of lavalink nodes
-class Cluster extends _Cluster {
-  /// Creates a new lavalink cluster
-  Cluster(Nyxx client, Snowflake clientId, {Level? loggingLevel}):
-        super(client, clientId, loggingLevel);
-
-  /// Returns a map with the nodes connected to lavalink cluster
-  UnmodifiableMapView<int, Node> get connectedNodes => UnmodifiableMapView(this._nodes);
-
-  /// Returns a map with the nodes that are actually disconnected from lavalink
-  UnmodifiableMapView<int, Node> get disconnectedNodes => UnmodifiableMapView(this._connectingNodes);
-
   /// Get the best available node, it is recommended to use [getOrCreatePlayerNode] instead
   /// as this won't create the player itself if it doesn't exists
   Node get bestNode {
@@ -249,5 +230,18 @@ class Cluster extends _Cluster {
     this._lastId += 1;
 
     await this._addNode(options, this._lastId);
+  }
+
+  /// Creates a new cluster ready to start adding connections
+  Cluster(this._client, this._clientId, [Level? loggingLevel]) {
+    this._registerEvents();
+
+    this._eventDispatcher = _EventDispatcher(this);
+
+    this._receiveStream = this._receivePort.asBroadcastStream();
+
+    this._receiveStream.listen(_handleNodeMessage);
+
+    Logger.root.level = loggingLevel ?? Level.INFO;
   }
 }

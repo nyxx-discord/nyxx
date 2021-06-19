@@ -19,7 +19,7 @@ class Node {
   final SendPort _nodeSendPort;
   late String _httpUri;
   late Map<String, String> _defaultHeaders;
-  final _Cluster _cluster;
+  final Cluster _cluster;
   /// A regular expression to avoid searching when a link is provided
   final RegExp _urlRegex = RegExp(r"https?://(?:www\.)?.+");
 
