@@ -6,7 +6,7 @@ class HttpException implements Exception {
   /// The status code of the request
   final int code;
 
-  HttpException._new(this.code): super();
+  HttpException._new(this.code);
 
   @override
   String toString() =>

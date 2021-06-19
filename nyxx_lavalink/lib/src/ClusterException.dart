@@ -5,7 +5,7 @@ class ClusterException implements Exception {
   /// The actual error description
   String error;
   
-  ClusterException._new(this.error) : super();
+  ClusterException._new(this.error);
 
   @override
   String toString() =>
