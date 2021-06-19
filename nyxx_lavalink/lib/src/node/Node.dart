@@ -58,7 +58,7 @@ class Node {
       return;
     }
 
-    final track = player.queue[0];
+    final track = player.queue.first;
 
     player.nowPlaying = track;
 
