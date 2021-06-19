@@ -15,9 +15,7 @@ class StatsEvent extends BaseEvent {
   /// Server uptime
   late final int uptime;
 
-  StatsEvent._fromJson(Nyxx client, Node node, Map<String, dynamic> json)
-  : super(client, node)
-  {
+  StatsEvent._fromJson(Nyxx client, Node node, Map<String, dynamic> json) : super(client, node) {
     this.playingPlayers = json["playingPlayers"] as int;
     this.players = json["players"] as int;
     this.uptime = json["uptime"] as int;

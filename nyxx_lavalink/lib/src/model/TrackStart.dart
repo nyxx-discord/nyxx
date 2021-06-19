@@ -9,9 +9,7 @@ class TrackStartEvent extends BaseEvent {
   /// Guild where the track started
   late final Snowflake guildId;
 
-  TrackStartEvent._fromJson(Nyxx client, Node node, Map<String, dynamic> json)
-  : super(client, node)
-  {
+  TrackStartEvent._fromJson(Nyxx client, Node node, Map<String, dynamic> json) : super(client, node) {
     this.startType = json["type"] as String;
     this.track = json["track"] as String;
     this.guildId = Snowflake(json["guildId"]);

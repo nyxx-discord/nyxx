@@ -8,9 +8,7 @@ class PlayerUpdateEvent extends BaseEvent {
   /// Guild id where player comes from
   late final Snowflake guildId;
 
-  PlayerUpdateEvent._fromJson(Nyxx client, Node node, Map<String, dynamic> json)
-  : super(client, node)
-  {
+  PlayerUpdateEvent._fromJson(Nyxx client, Node node, Map<String, dynamic> json) : super(client, node) {
     guildId = Snowflake(json["guildId"]);
     this.state = PlayerUpdateState._new(json["state"]["time"] as int, json["state"]["position"] as int);
   }

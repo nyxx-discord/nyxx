@@ -13,9 +13,7 @@ class WebSocketClosedEvent extends BaseEvent {
   /// If the connection was closed by discord
   late final bool byRemote;
 
-  WebSocketClosedEvent._fromJson(Nyxx client, Node node, Map<String, dynamic> json)
-  : super(client, node)
-  {
+  WebSocketClosedEvent._fromJson(Nyxx client, Node node, Map<String, dynamic> json) : super(client, node) {
     this.guildId = Snowflake(json["guildId"]);
     this.type = json["type"] as String?;
     this.code = json["code"] as int;
