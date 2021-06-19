@@ -1,6 +1,6 @@
 part of nyxx_lavalink;
 
-class _EventDispatcher {
+class _EventDispatcher implements Disposable {
   _Cluster cluster;
 
   final StreamController<StatsEvent> onStatsReceived = StreamController.broadcast();
@@ -68,6 +68,15 @@ class _EventDispatcher {
         );
         break;
     }
+  }
+
+  @override
+  Future<void> dispose() async {
+    await this.onStatsReceived.close();
+    await this.onPlayerUpdate.close();
+    await this.onTrackStart.close();
+    await this.onTrackEnd.close();
+    await this.onWebSocketClosed.close();
   }
 
   _EventDispatcher(this.cluster) {
