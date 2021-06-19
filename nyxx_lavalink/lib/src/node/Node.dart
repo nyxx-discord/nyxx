@@ -159,9 +159,9 @@ class Node {
     });
   }
 
-  /// Sets the volume for a guild player
+  /// Sets the volume for a guild player, [volume] should be a number between 1 to 1000
   void volume(Snowflake guildId, int volume) {
-    final trimmed = max(min(volume, 1000), 0);
+    final trimmed = volume.clamp(0, 1000);
 
     _sendPayload("volume", guildId, {
       "volume": trimmed
