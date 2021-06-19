@@ -67,6 +67,36 @@ void main() {
 }
 ```
 
+Lavalink
+```dart
+void main() async {
+  final bot = Nyxx("TOKEN", GatewayIntents.allUnprivileged);
+  final botId = Snowflake("BOT_ID");
+  final guildId = Snowflake("GUILD_ID");
+  final channelId = Snowflake("CHANNEL_ID");
+  
+  final cluster = Cluster(bot, botId);
+  
+  await cluster.addNode(NodeOptions());
+  
+  bot.onMessageReceived.listen((event) {
+    if (event.message.content == "!join") {
+      final channel = await bot.fetchChannel<VoiceGuildChannel>(channelId);
+
+      cluster.getOrCreatePlayerNode(guildId);
+      
+      channel.connect();
+    } else {
+      final node = cluster.getOrCreatePlayerNode(guildId);
+
+      final searchResults = await node.searchTracks(event.message.content);
+
+      node.play(guildId, searchResults.tracks[0]).queue();
+    }
+  });
+}
+```
+
 ## More examples
 
 Nyxx examples can be found [here](https://github.com/l7ssha/nyxx/tree/dev/nyxx/example).
