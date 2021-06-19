@@ -4,20 +4,20 @@ part of nyxx_lavalink;
 /// with lavalink server
 class NodeOptions {
   /// Host where lavalink is running
-  String host;
+  late final String host;
   /// Port used by lavalink rest & socket
-  int port;
+  late final int port;
   /// Whether to use a tls connection or not
-  bool ssl;
+  late final bool ssl;
   /// Password to connect to the server
-  String password;
+  late final String password;
   /// Shards the bot is operating on
-  int shards;
+  late final int shards;
   /// Max connect attempts before shutting down a node
-  int maxConnectAttempts;
+  late final int maxConnectAttempts;
   /// How much time should the node wait before trying to reconnect
   /// to lavalink server again
-  Duration delayBetweenReconnections;
+  late final Duration delayBetweenReconnections;
   /// Client id
   late final Snowflake clientId;
   /// Node id, you **must** not set this yourself
@@ -34,16 +34,17 @@ class NodeOptions {
     this.delayBetweenReconnections = const Duration(seconds: 5)
   });
 
-  NodeOptions._fromJson(Map<String, dynamic> json)
-      : host = json["host"] as String,
-        port = json["port"] as int,
-        ssl = json["ssl"] as bool,
-        password = json["password"] as String,
-        shards = json["shards"] as int,
-        clientId = Snowflake(json["clientId"] as int),
-        nodeId = json["nodeId"] as int,
-        maxConnectAttempts = json["maxConnectAttempts"] as int,
-        delayBetweenReconnections = Duration(milliseconds: json["delayBetweenReconnections"] as int);
+  NodeOptions._fromJson(Map<String, dynamic> json) {
+    host = json["host"] as String;
+    port = json["port"] as int;
+    ssl = json["ssl"] as bool;
+    password = json["password"] as String;
+    shards = json["shards"] as int;
+    clientId = Snowflake(json["clientId"] as int);
+    nodeId = json["nodeId"] as int;
+    maxConnectAttempts = json["maxConnectAttempts"] as int;
+    delayBetweenReconnections = Duration(milliseconds: json["delayBetweenReconnections"] as int);
+  }
 
   Map<String, dynamic> _toJson() => {
     "host": this.host,
