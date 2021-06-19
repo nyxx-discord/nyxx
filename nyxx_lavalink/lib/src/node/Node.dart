@@ -8,6 +8,7 @@ class Node {
   /// A map with guild ids as keys and players as values
   final Map<Snowflake, GuildPlayer> _players = {};
 
+  /// Returns a map with all the players the node currently has
   UnmodifiableMapView<Snowflake, GuildPlayer> get players => UnmodifiableMapView(this._players);
 
   /// Last stats received by this node
