@@ -16,10 +16,7 @@ class _EventDispatcher {
       return;
     }
 
-    cluster._logger.log(
-        Level.FINE,
-        "[Node ${json["nodeId"]}] Dispatching ${json["event"]}"
-    );
+    cluster._logger.fine("[Node ${json["nodeId"]}] Dispatching ${json["event"]}");
 
     switch(json["event"]) {
       case "TrackStart":
