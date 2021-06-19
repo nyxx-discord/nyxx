@@ -9,6 +9,14 @@ class _EventDispatcher implements Disposable {
   final StreamController<TrackEndEvent> onTrackEnd = StreamController.broadcast();
   final StreamController<WebSocketClosedEvent> onWebSocketClosed = StreamController.broadcast();
 
+  _EventDispatcher(this.cluster) {
+    cluster.onStatsReceived = this.onStatsReceived.stream;
+    cluster.onPlayerUpdate = this.onPlayerUpdate.stream;
+    cluster.onTrackStart = this.onTrackStart.stream;
+    cluster.onTrackEnd = this.onTrackEnd.stream;
+    cluster.onWebSocketClosed = this.onWebSocketClosed.stream;
+  }
+
   void dispatchEvent(Map<String, dynamic> json) {
     final node = cluster._nodes[json["nodeId"]];
 
@@ -77,13 +85,5 @@ class _EventDispatcher implements Disposable {
     await this.onTrackStart.close();
     await this.onTrackEnd.close();
     await this.onWebSocketClosed.close();
-  }
-
-  _EventDispatcher(this.cluster) {
-    cluster.onStatsReceived = this.onStatsReceived.stream;
-    cluster.onPlayerUpdate = this.onPlayerUpdate.stream;
-    cluster.onTrackStart = this.onTrackStart.stream;
-    cluster.onTrackEnd = this.onTrackEnd.stream;
-    cluster.onWebSocketClosed = this.onWebSocketClosed.stream;
   }
 }
