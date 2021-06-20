@@ -24,6 +24,8 @@ class Cluster {
   /// A map to keep the assigned node id for each player
   final Map<Snowflake, int> _nodeLocations = {};
 
+  /// The last id assigned to a node, this is used to avoid repeating ids
+  /// since if we use a repeated id, the existing node would be overwritten and lost
   int _lastId = 0;
 
   final _receivePort = ReceivePort();
