@@ -259,6 +259,5 @@ class Node {
   }
 
   @override
-  String toString() =>
-      "Node ${this.options.nodeId}";
+  String toString() =>  "Node ${this.options.nodeId}";
 }

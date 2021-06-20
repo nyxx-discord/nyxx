@@ -9,6 +9,5 @@ class HttpException implements Exception {
   HttpException._new(this.code);
 
   @override
-  String toString() =>
-      "Lavalink server responded with $code code";
+  String toString() =>  "Lavalink server responded with $code code";
 }
