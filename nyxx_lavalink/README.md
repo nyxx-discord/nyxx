@@ -71,15 +71,14 @@ Lavalink
 ```dart
 void main() async {
   final bot = Nyxx("TOKEN", GatewayIntents.allUnprivileged);
-  final botId = Snowflake("BOT_ID");
   final guildId = Snowflake("GUILD_ID");
   final channelId = Snowflake("CHANNEL_ID");
   
-  final cluster = Cluster(bot, botId);
+  final cluster = Cluster(bot, Snowflake("BOT_ID"));
   
   await cluster.addNode(NodeOptions());
   
-  bot.onMessageReceived.listen((event) {
+  bot.onMessageReceived.listen((event) async {
     if (event.message.content == "!join") {
       final channel = await bot.fetchChannel<VoiceGuildChannel>(channelId);
 
