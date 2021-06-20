@@ -62,7 +62,7 @@ class _EventDispatcher implements Disposable {
         );
 
         // Put the stats into the node
-        node.stats = stats;
+        node._stats = stats;
 
         this.onStatsReceived.add(stats);
         }

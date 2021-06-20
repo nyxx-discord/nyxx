@@ -12,7 +12,10 @@ class Node {
   UnmodifiableMapView<Snowflake, GuildPlayer> get players => UnmodifiableMapView(this._players);
 
   /// Last stats received by this node
-  StatsEvent? stats;
+  StatsEvent? _stats;
+
+  /// Returns the last stats received by this node
+  StatsEvent? get stats => this._stats;
 
   /// Http client used with this node
   final Client _httpClient = Client();
