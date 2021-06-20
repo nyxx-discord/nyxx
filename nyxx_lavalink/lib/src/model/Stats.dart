@@ -46,14 +46,14 @@ class CpuStats {
   /// Amount of available cores on the cpu
   late final int cores;
   /// The total load of the machine where lavalink is running on
-  late final num systemLoad;
+  late final double systemLoad;
   /// The total load of lavalink server
-  late final num lavalinkLoad;
+  late final double lavalinkLoad;
 
   CpuStats._fromJson(Map<String, dynamic> json) {
     this.cores = json["cores"] as int;
-    this.systemLoad = json["systemLoad"] as num;
-    this.lavalinkLoad = json["lavalinkLoad"] as num;
+    this.systemLoad = json["systemLoad"] as double;
+    this.lavalinkLoad = json["lavalinkLoad"] as double;
   }
 }
 
