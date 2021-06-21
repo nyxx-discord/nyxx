@@ -9,6 +9,7 @@ import "dart:convert";
 import "dart:io";
 import "dart:isolate"; // Used to discard errors on vm to continue working even if error occurred
 
+import "package:meta/meta.dart" as meta;
 import "package:http/http.dart" as http;
 import "package:logging/logging.dart";
 import "package:path/path.dart" as path_utils;
