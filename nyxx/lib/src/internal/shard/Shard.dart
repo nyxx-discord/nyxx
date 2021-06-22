@@ -135,7 +135,7 @@ class Shard implements Disposable {
 
     this._connected = false;
     this._heartbeatTimer.cancel();
-    manager._logger.severe("Shard $id disconnected. Error code: [${data['errorCode']}] | Error message: [${data['errorReason']}]");
+    manager._logger.severe("Shard $id disconnected. Error: [${data['error']}] Error code: [${data['errorCode']}] | Error message: [${data['errorReason']}]");
 
     switch (closeCode) {
       case 4004:

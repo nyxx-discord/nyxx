@@ -45,7 +45,7 @@ class ShardManager implements Disposable {
 
   Duration get _identifyDelay {
     /// 5s * 1000 / maxConcurrency + 250ms
-    final delay = (5 * 1000) ~/ this.maxConcurrency + 250;
+    final delay = (5 * 1000) ~/ this.maxConcurrency + 300;
     return Duration(milliseconds: delay);
   }
 

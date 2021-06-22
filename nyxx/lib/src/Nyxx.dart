@@ -140,7 +140,11 @@ class NyxxRest extends INyxx {
 
       final errorsPort = ReceivePort();
       errorsPort.listen((err) {
-        _logger.severe("ERROR: ${err[0]}");
+        final stackTrace = err[1] != null
+          ? ". Stacktrace: \n${err[1]}"
+          : "";
+
+        _logger.shout("Got Error: Message: [${err[0]}]$stackTrace");
       });
       Isolate.current.addErrorListener(errorsPort.sendPort);
     }
