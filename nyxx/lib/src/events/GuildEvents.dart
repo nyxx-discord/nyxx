@@ -38,7 +38,7 @@ class GuildDeleteEvent {
   late final bool unavailable;
 
   GuildDeleteEvent._new(RawApiMap raw, Nyxx client) {
-    this.unavailable = raw["d"]["unavailable"] as bool;
+    this.unavailable = raw["d"]["unavailable"] as bool? ?? false;
     this.guild = _GuildCacheable(client, Snowflake(raw["d"]["id"]));
 
     client.guilds.remove(guild.id);
