@@ -41,7 +41,7 @@ class Shard implements Disposable {
 
   Duration _gatewayLatency = const Duration(); // latency of discord
   late DateTime _lastHeartbeatSent; // Datetime when last heartbeat was sent
-  bool _heartbeatAckReceived = false; // True if last heartbeat was acked
+  bool _heartbeatAckReceived = true; // True if last heartbeat was acked
 
   Shard._new(this.id, this.manager, String gatewayUrl) {
     this._receivePort = ReceivePort();
@@ -123,7 +123,7 @@ class Shard implements Disposable {
     this._lastHeartbeatSent = DateTime.now();
 
     if(!this._heartbeatAckReceived) {
-      manager._logger.warning("Not received previous heartbeat ack");
+      manager._logger.warning("Not received previous heartbeat ack on shard: [${this.id}] on sequence: [{$_sequence}]");
       return;
     }
 
