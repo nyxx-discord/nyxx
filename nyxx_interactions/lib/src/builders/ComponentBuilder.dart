@@ -24,7 +24,7 @@ abstract class IComponentBuilder extends Builder {
   }
 
   /// Builds instance of [IComponentBuilder]
-  Map<String, dynamic> build() => {
+  RawApiMap build() => {
     "type": type,
     "label": this.label,
     "style": this.style.value,
@@ -56,7 +56,7 @@ class LinkButtonBuilder extends IComponentBuilder {
   }
 
   @override
-  Map<String, dynamic> build() => {
+  RawApiMap build() => {
     ...super.build(),
     "url": url
   };
@@ -93,7 +93,7 @@ class ButtonBuilder extends IComponentBuilder {
   }
 
   @override
-  Map<String, dynamic> build() => {
+  RawApiMap build() => {
     ...super.build(),
     "custom_id": idMetadata
   };
@@ -122,7 +122,7 @@ class ComponentMessageBuilder extends MessageBuilder {
   }
 
   @override
-  Map<String, dynamic> build(INyxx client) => {
+  RawApiMap build(INyxx client) => {
     ...super.build(client),
     if (this.buttons != null) "components": [
       for (final row in this.buttons!)

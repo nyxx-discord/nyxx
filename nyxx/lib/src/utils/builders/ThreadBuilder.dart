@@ -29,7 +29,7 @@ class ThreadBuilder extends Builder {
   void setPublic() => this.private = false;
 
   @override
-  Map<String, dynamic> build() => <String, dynamic>{
+  RawApiMap build() => <String, dynamic>{
     "auto_archive_duration": this.archiveAfter.value,
     "name": name,
     "type": private ? 12 : 11

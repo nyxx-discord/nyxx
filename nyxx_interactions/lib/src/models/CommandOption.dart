@@ -53,7 +53,7 @@ class CommandOption {
   /// If the option is a subcommand or subcommand group type, this nested options will be the parameters
   late final List<CommandOption> options;
 
-  CommandOption._new(Map<String, dynamic> raw) {
+  CommandOption._new(RawApiMap raw) {
     this.type = CommandOptionType(raw["type"] as int);
     this.name = raw["name"] as String;
     this.description = raw["description"] as String;
@@ -62,13 +62,13 @@ class CommandOption {
     this.choices = [
       if (raw["choices"] != null)
         for(final choiceRaw in raw["choices"])
-          ArgChoice._new(choiceRaw as Map<String, dynamic>)
+          ArgChoice._new(choiceRaw as RawApiMap)
     ];
 
     this.options = [
       if (raw["options"] != null)
         for(final optionRaw in raw["options"])
-          CommandOption._new(optionRaw as Map<String, dynamic>)
+          CommandOption._new(optionRaw as RawApiMap)
     ];
   }
 }

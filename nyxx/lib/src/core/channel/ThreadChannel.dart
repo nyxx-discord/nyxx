@@ -23,7 +23,7 @@ class ThreadMember extends SnowflakeEntity {
   /// [Cacheable] of [Member]
   Cacheable<Snowflake, Member> get member => _MemberCacheable(this.client, this.id, this.guild);
 
-  ThreadMember._new(this.client, Map<String, dynamic> raw, this.guild): super(Snowflake(raw["user_id"])) {
+  ThreadMember._new(this.client, RawApiMap raw, this.guild): super(Snowflake(raw["user_id"])) {
     this.thread = CacheableTextChannel._new(client, Snowflake(raw["id"]));
     this.joinTimestamp = DateTime.parse(raw["join_timestamp"] as String);
     this.flags = raw["flags"] as int;
@@ -60,7 +60,7 @@ class ThreadChannel extends MinimalGuildChannel implements TextChannel {
   @override
   late final MessageCache messageCache = MessageCache._new(client._options.messageCacheSize);
 
-  ThreadChannel._new(INyxx client, Map<String, dynamic> raw, [Snowflake? guildId]) : super._new(client, raw) {
+  ThreadChannel._new(INyxx client, RawApiMap raw, [Snowflake? guildId]) : super._new(client, raw) {
     this.owner = new _MemberCacheable(client, Snowflake(raw["owner_id"]), this.guild);
 
     this.messageCount = raw["message_count"] as int;

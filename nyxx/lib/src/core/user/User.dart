@@ -47,7 +47,7 @@ class User extends SnowflakeEntity with Mentionable, IMessageAuthor implements I
   /// Premium types denote the level of premium a user has.
   NitroType? nitroType;
 
-  User._new(this.client, Map<String, dynamic> raw) : super(Snowflake(raw["id"])) {
+  User._new(this.client, RawApiMap raw) : super(Snowflake(raw["id"])) {
     this.username = raw["username"] as String;
     this.discriminator = int.parse(raw["discriminator"] as String);
     this.avatar = raw["avatar"] as String?;

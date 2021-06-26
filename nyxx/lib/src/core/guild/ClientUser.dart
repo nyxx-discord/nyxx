@@ -8,7 +8,7 @@ class ClientUser extends User {
   /// Weather or not the client user has MFA enabled.
   bool? mfa;
 
-  ClientUser._new(Nyxx client, Map<String, dynamic> raw) : super._new(client, raw) {
+  ClientUser._new(Nyxx client, RawApiMap raw) : super._new(client, raw) {
     this.verified = raw["verified"] as bool;
     this.mfa = raw["mfa_enabled"] as bool;
   }

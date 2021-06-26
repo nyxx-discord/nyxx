@@ -5,8 +5,8 @@ class MessageReceivedEvent {
   /// The new message.
   late final Message message;
 
-  MessageReceivedEvent._new(Map<String, dynamic> raw, Nyxx client) {
-    this.message = Message._deserialize(client, raw["d"] as Map<String, dynamic>);
+  MessageReceivedEvent._new(RawApiMap raw, Nyxx client) {
+    this.message = Message._deserialize(client, raw["d"] as RawApiMap);
     message.channel.getFromCache()?.messageCache.put(this.message);
   }
 }
@@ -22,8 +22,8 @@ class MessageDeleteEvent {
   /// Channel where message was deleted
   late final CacheableTextChannel<TextChannel> channel;
 
-  MessageDeleteEvent._new(Map<String, dynamic> raw, Nyxx client) {
-    this.channel = CacheableTextChannel<TextChannel>._new(client, Snowflake(raw["d"]["channel_id"]), ChannelType.unknown);
+  MessageDeleteEvent._new(RawApiMap raw, Nyxx client) {
+    this.channel = CacheableTextChannel<TextChannel>._new(client, Snowflake(raw["d"]["channel_id"]));
     this.messageId = Snowflake(raw["d"]["id"]);
 
     this.message = channel.getFromCache()?.messageCache[this.messageId];
@@ -41,8 +41,8 @@ class MessageDeleteBulkEvent {
   /// Id of guild where event occurred
   late final Cacheable<Snowflake, Guild>? guild;
 
-  MessageDeleteBulkEvent._new(Map<String, dynamic> json, Nyxx client) {
-    this.channel = CacheableTextChannel<TextChannel>._new(client, Snowflake(json["d"]["channel_id"]), ChannelType.unknown);
+  MessageDeleteBulkEvent._new(RawApiMap json, Nyxx client) {
+    this.channel = CacheableTextChannel<TextChannel>._new(client, Snowflake(json["d"]["channel_id"]));
 
     if (json["d"]["guild_id"] != null) {
       this.guild = _GuildCacheable(client, Snowflake(json["d"]["guild_id"]));
@@ -91,9 +91,9 @@ abstract class MessageReactionEvent {
   /// Emoji object.
   late final IEmoji emoji;
 
-  MessageReactionEvent._new(Map<String, dynamic> json, Nyxx client) {
+  MessageReactionEvent._new(RawApiMap json, Nyxx client) {
     this.user = _UserCacheable(client, Snowflake(json["d"]["user_id"]));
-    this.channel = CacheableTextChannel<TextChannel>._new(client, Snowflake(json["d"]["channel_id"]), ChannelType.unknown);
+    this.channel = CacheableTextChannel<TextChannel>._new(client, Snowflake(json["d"]["channel_id"]));
 
     this.messageId = Snowflake(json["d"]["message_id"]);
 
@@ -107,14 +107,14 @@ abstract class MessageReactionEvent {
     if (json["d"]["emoji"]["id"] == null) {
       this.emoji = UnicodeEmoji(json["d"]["emoji"]["name"] as String);
     } else {
-      this.emoji = GuildEmojiPartial._new(json["d"]["emoji"] as Map<String, dynamic>);
+      this.emoji = GuildEmojiPartial._new(json["d"]["emoji"] as RawApiMap);
     }
   }
 }
 
 /// Emitted when reaction is add to message
 class MessageReactionAddedEvent extends MessageReactionEvent {
-  MessageReactionAddedEvent._new(Map<String, dynamic> json, Nyxx client) : super._new(json, client) {
+  MessageReactionAddedEvent._new(RawApiMap json, Nyxx client) : super._new(json, client) {
     if (message == null) {
       return;
     }
@@ -131,7 +131,7 @@ class MessageReactionAddedEvent extends MessageReactionEvent {
 
 /// Emitted when reaction is removed from message
 class MessageReactionRemovedEvent extends MessageReactionEvent {
-  MessageReactionRemovedEvent._new(Map<String, dynamic> json, Nyxx client) : super._new(json, client) {
+  MessageReactionRemovedEvent._new(RawApiMap json, Nyxx client) : super._new(json, client) {
     if (message == null) {
       return;
     }
@@ -159,7 +159,7 @@ class MessageReactionsRemovedEvent {
   /// Guild where event occurs
   late final Cacheable<Snowflake, Guild>? guild;
 
-  MessageReactionsRemovedEvent._new(Map<String, dynamic> json, Nyxx client) {
+  MessageReactionsRemovedEvent._new(RawApiMap json, Nyxx client) {
     this.channel = CacheableTextChannel<TextChannel>._new(client, Snowflake(json["d"]["channel_id"]));
     this.guild = _GuildCacheable(client, Snowflake(json["d"]["guild_id"]));
     this.message = _MessageCacheable(client, Snowflake(json["d"]["message_id"]), channel);
@@ -185,7 +185,7 @@ class MessageReactionRemoveEmojiEvent {
   /// Removed emoji
   late final IEmoji emoji;
 
-  MessageReactionRemoveEmojiEvent._new(Map<String, dynamic> json, Nyxx client) {
+  MessageReactionRemoveEmojiEvent._new(RawApiMap json, Nyxx client) {
     this.channel = CacheableTextChannel<TextChannel>._new(client, Snowflake(json["d"]["channel_id"]));
     this.guild = _GuildCacheable(client, Snowflake(json["d"]["guild_id"]));
     this.message = _MessageCacheable(client, Snowflake(json["d"]["message_id"]), channel);
@@ -193,7 +193,7 @@ class MessageReactionRemoveEmojiEvent {
     if (json["d"]["emoji"]["id"] == null) {
       this.emoji = UnicodeEmoji(json["d"]["emoji"]["name"] as String);
     } else {
-      this.emoji = GuildEmojiPartial._new(json["d"]["emoji"] as Map<String, dynamic>);
+      this.emoji = GuildEmojiPartial._new(json["d"]["emoji"] as RawApiMap);
     }
 
     final messageInstance = this.message.getFromCache();
@@ -215,7 +215,7 @@ class MessageUpdateEvent {
   /// Id of edited message
   late final Snowflake messageId;
 
-  MessageUpdateEvent._new(Map<String, dynamic> json, Nyxx client) {
+  MessageUpdateEvent._new(RawApiMap json, Nyxx client) {
     this.channel = CacheableTextChannel<TextChannel>._new(client, Snowflake(json["d"]["channel_id"]));
     this.messageId = Snowflake(json["d"]["id"]);
 
@@ -235,7 +235,7 @@ class MessageUpdateEvent {
 
     if (json["d"]["embeds"] != null) {
       this.updatedMessage!.embeds =
-          (json["d"]["embeds"] as List<dynamic>).map((e) => Embed._new(e as Map<String, dynamic>)).toList();
+          (json["d"]["embeds"] as List<dynamic>).map((e) => Embed._new(e as RawApiMap)).toList();
     }
   }
 }

@@ -6,10 +6,10 @@ class VoiceStateUpdateEvent {
   late final VoiceState state;
 
   /// Raw gateway response
-  Map<String, dynamic> raw;
+  final RawApiMap raw;
 
   VoiceStateUpdateEvent._new(this.raw, Nyxx client) {
-    this.state = VoiceState._new(client, raw["d"] as Map<String, dynamic>);
+    this.state = VoiceState._new(client, raw["d"] as RawApiMap);
 
     if (state.channel != null) {
       state.guild?.getFromCache()?.voiceStates[this.state.user.id] = this.state;

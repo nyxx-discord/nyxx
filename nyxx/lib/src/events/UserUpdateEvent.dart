@@ -6,7 +6,7 @@ class UserUpdateEvent {
   /// User instance after update
   late final User user;
 
-  UserUpdateEvent._new(Map<String, dynamic> json, Nyxx client) {
-    this.user = User._new(client, json["d"] as Map<String, dynamic>);
+  UserUpdateEvent._new(RawApiMap json, Nyxx client) {
+    this.user = User._new(client, json["d"] as RawApiMap);
   }
 }

@@ -17,19 +17,19 @@ class InteractionOption {
   /// Option choices
   late final Iterable<ArgChoiceBuilder> choices;
 
-  InteractionOption._new(Map<String, dynamic> raw) {
+  InteractionOption._new(RawApiMap raw) {
     this.value = raw["value"] as dynamic;
     this.name = raw["name"] as String;
     this.type = CommandOptionType(raw["type"] as int);
 
     if (raw["options"] != null) {
-      this.args = (raw["options"] as List<dynamic>).map((e) => InteractionOption._new(e as Map<String, dynamic>));
+      this.args = (raw["options"] as List<dynamic>).map((e) => InteractionOption._new(e as RawApiMap));
     } else {
       this.args = [];
     }
 
     if (raw["choices"] != null) {
-      this.choices = (raw["options"] as List<Map<String, dynamic>>).map((e) => ArgChoiceBuilder(e["name"] as String, e["value"]));
+      this.choices = (raw["options"] as List<RawApiMap>).map((e) => ArgChoiceBuilder(e["name"] as String, e["value"]));
     } else {
       this.choices = [];
     }

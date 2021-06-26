@@ -62,7 +62,14 @@ abstract class Message extends SnowflakeEntity implements Disposable, Convertabl
   /// If the message is a response to an Interaction, this is the id of the interaction's application
   late final Snowflake? applicationId;
 
-  factory Message._deserialize(INyxx client, Map<String, dynamic> raw) {
+  /// Inline timestamps of current message
+  Iterable<MessageTimeStamp> get timestamps sync* {
+    for (final match in MessageTimeStamp.regex.allMatches(this.content)) {
+      yield MessageTimeStamp._new(match);
+    }
+  }
+
+  factory Message._deserialize(INyxx client, RawApiMap raw) {
     if (raw["member"] != null) {
       return GuildMessage._new(client, raw);
     }
@@ -70,7 +77,7 @@ abstract class Message extends SnowflakeEntity implements Disposable, Convertabl
     return DMMessage._new(client, raw);
   }
 
-  Message._new(this.client, Map<String, dynamic> raw) : super(Snowflake(raw["id"])) {
+  Message._new(this.client, RawApiMap raw) : super(Snowflake(raw["id"])) {
     this.content = raw["content"] as String;
     this.channel = CacheableTextChannel<TextChannel>._new(client, Snowflake(raw["channel_id"]), ChannelType.unknown);
 
@@ -82,7 +89,7 @@ abstract class Message extends SnowflakeEntity implements Disposable, Convertabl
     this.stickers = [
       if (raw["stickers"] != null)
         for (final rawSticker in raw["stickers"])
-          Sticker._new(rawSticker as Map<String, dynamic>)
+          Sticker._new(rawSticker as RawApiMap)
     ];
 
     if (raw["flags"] != null) {
@@ -95,22 +102,22 @@ abstract class Message extends SnowflakeEntity implements Disposable, Convertabl
 
     this.embeds = [
       if (raw["embeds"] != null && raw["embeds"].isNotEmpty as bool)
-        for (var r in raw["embeds"]) Embed._new(r as Map<String, dynamic>)
+        for (var r in raw["embeds"]) Embed._new(r as RawApiMap)
     ];
 
     this.attachments = [
       if (raw["attachments"] != null && raw["attachments"].isNotEmpty as bool)
-        for (var r in raw["attachments"]) Attachment._new(r as Map<String, dynamic>)
+        for (var r in raw["attachments"]) Attachment._new(r as RawApiMap)
     ];
 
     this.reactions = [
       if (raw["reactions"] != null && raw["reactions"].isNotEmpty as bool)
-        for (var r in raw["reactions"]) Reaction._new(r as Map<String, dynamic>)
+        for (var r in raw["reactions"]) Reaction._new(r as RawApiMap)
     ];
 
     if (raw["mentions"] != null && raw["mentions"].isNotEmpty as bool) {
       for (final rawUser in raw["mentions"]) {
-        final user = User._new(client, rawUser as Map<String, dynamic>);
+        final user = User._new(client, rawUser as RawApiMap);
         this.client.users[user.id] = user;
 
         this.mentions.add(_UserCacheable(client, user.id));
@@ -137,7 +144,7 @@ abstract class Message extends SnowflakeEntity implements Disposable, Convertabl
       this.components = [
         for (final rawRow in raw["components"]) [
           for (final componentRaw in rawRow["components"])
-            IMessageComponent._deserialize(componentRaw as Map<String, dynamic>)
+            IMessageComponent._deserialize(componentRaw as RawApiMap)
         ]
       ];
     } else {
@@ -232,11 +239,11 @@ class DMMessage extends Message {
   String get url => "https://discordapp.com/channels/@me"
       "/${this.channel.id}/${this.id}";
 
-  DMMessage._new(INyxx client, Map<String, dynamic> raw) : super._new(client, raw) {
+  DMMessage._new(INyxx client, RawApiMap raw) : super._new(client, raw) {
     final user = client.users[Snowflake(raw["author"]["id"])];
 
     if (user == null) {
-      final authorData = raw["author"] as Map<String, dynamic>;
+      final authorData = raw["author"] as RawApiMap;
       this.author = User._new(client, authorData);
 
       if (client._cacheOptions.userCachePolicyLocation.objectConstructor) {
@@ -278,18 +285,18 @@ class GuildMessage extends Message {
   /// Role mentions in this message
   late final List<Cacheable<Snowflake, Role>> roleMentions;
 
-  GuildMessage._new(INyxx client, Map<String, dynamic> raw) : super._new(client, raw) {
+  GuildMessage._new(INyxx client, RawApiMap raw) : super._new(client, raw) {
     if (raw["message_reference"] != null) {
       this.crossPostReference = MessageReference._new(
-          raw["message_reference"] as Map<String, dynamic>, client);
+          raw["message_reference"] as RawApiMap, client);
     }
 
     this.guild = _GuildCacheable(client, Snowflake(raw["guild_id"]));
 
     if (raw["webhook_id"] != null) {
-      this.author = Webhook._new(raw["author"] as Map<String, dynamic>, client);
+      this.author = Webhook._new(raw["author"] as RawApiMap, client);
     } else {
-      this.author = User._new(client, raw["author"] as Map<String, dynamic>);
+      this.author = User._new(client, raw["author"] as RawApiMap);
 
       if (client._cacheOptions.userCachePolicyLocation.objectConstructor) {
         this.client.users[this.author.id] = this.author as User;
@@ -301,7 +308,7 @@ class GuildMessage extends Message {
       raw["member"]["user"] = <String, dynamic>{
         "id": raw["author"]["id"]
       };
-      this.member = Member._new(client, raw["member"] as Map<String, dynamic>, this.guild.id);
+      this.member = Member._new(client, raw["member"] as RawApiMap, this.guild.id);
 
       if (client._cacheOptions.memberCachePolicyLocation.objectConstructor && client._cacheOptions.memberCachePolicy.canCache(member)) {
         this.guild.getFromCache()?.members[member.id] = member;

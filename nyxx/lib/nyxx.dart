@@ -4,10 +4,12 @@
 library nyxx;
 
 import "dart:async";
+import "dart:collection";
 import "dart:convert";
 import "dart:io";
 import "dart:isolate"; // Used to discard errors on vm to continue working even if error occurred
 
+import "package:meta/meta.dart" as meta;
 import "package:http/http.dart" as http;
 import "package:logging/logging.dart";
 import "package:path/path.dart" as path_utils;
@@ -59,6 +61,7 @@ part "src/core/guild/Status.dart";
 part "src/core/guild/Webhook.dart";
 part "src/core/message/Attachment.dart";
 part "src/core/message/Emoji.dart";
+part "src/core/message/MessageTimeStamp.dart";
 part "src/core/message/GuildEmoji.dart";
 part "src/core/message/Message.dart";
 part "src/core/message/MessageFlags.dart";
@@ -101,7 +104,7 @@ part "src/events/ThreadCreateEvent.dart";
 part "src/events/ThreadMembersUpdateEvent.dart";
 part "src/events/ThreadDeletedEvent.dart";
 part "src/internal/_ConnectionManager.dart";
-part "src/internal/_Constants.dart";
+part "src/internal/Constants.dart";
 part "src/internal/_EventController.dart";
 part "src/internal/_HttpEndpoints.dart";
 part "src/internal/cache/Cache.dart";

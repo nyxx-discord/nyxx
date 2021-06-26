@@ -41,7 +41,7 @@ class Shard implements Disposable {
 
   Duration _gatewayLatency = const Duration(); // latency of discord
   late DateTime _lastHeartbeatSent; // Datetime when last heartbeat was sent
-  bool _heartbeatAckReceived = false; // True if last heartbeat was acked
+  bool _heartbeatAckReceived = true; // True if last heartbeat was acked
 
   Shard._new(this.id, this.manager, String gatewayUrl) {
     this.manager._logger.finer("Starting shard with id: $id; url: $gatewayUrl");
@@ -127,7 +127,7 @@ class Shard implements Disposable {
     this._lastHeartbeatSent = DateTime.now();
 
     if(!this._heartbeatAckReceived) {
-      manager._logger.warning("Not received previous heartbeat ack");
+      manager._logger.warning("Not received previous heartbeat ack on shard: [${this.id}] on sequence: [{$_sequence}]");
       return;
     }
 
@@ -139,7 +139,7 @@ class Shard implements Disposable {
 
     this._connected = false;
     this._heartbeatTimer.cancel();
-    manager._logger.severe("Shard $id disconnected. Error code: [${data['errorCode']}] | Error message: [${data['errorReason']}]");
+    manager._logger.severe("Shard $id disconnected. Error: [${data['error']}] Error code: [${data['errorCode']}] | Error message: [${data['errorReason']}]");
 
     switch (closeCode) {
       case 4004:
@@ -196,7 +196,7 @@ class Shard implements Disposable {
       return;
     }
 
-    final discordPayload = rawData["jsonData"] as Map<String, dynamic>;
+    final discordPayload = rawData["jsonData"] as RawApiMap;
 
     if (discordPayload["op"] == OPCodes.dispatch && manager._ws._client._options.ignoredEvents.contains(discordPayload["t"] as String)) {
       return;
@@ -209,7 +209,7 @@ class Shard implements Disposable {
     await _dispatch(discordPayload);
   }
 
-  Future<void> _dispatch(Map<String, dynamic> rawPayload) async {
+  Future<void> _dispatch(RawApiMap rawPayload) async {
     switch (rawPayload["op"] as int) {
       case OPCodes.heartbeatAck:
         this._heartbeatAckReceived = true;
@@ -262,7 +262,7 @@ class Shard implements Disposable {
         switch (dispatchType) {
           case "READY":
             this._sessionId = rawPayload["d"]["session_id"] as String;
-            manager._ws._client.self = ClientUser._new(manager._ws._client, rawPayload["d"]["user"] as Map<String, dynamic>);
+            manager._ws._client.self = ClientUser._new(manager._ws._client, rawPayload["d"]["user"] as RawApiMap);
 
             this._connected = true;
             manager._logger.info("Shard ${this.id} ready!");
@@ -435,7 +435,7 @@ class Shard implements Disposable {
   Future<void> dispose() async {
     this.manager._logger.info("Started disposing shard $id...");
 
-    await this._receiveStream.firstWhere((element) => (element as Map<String, dynamic>)["cmd"] == "TERMINATE_OK");
+    await this._receiveStream.firstWhere((element) => (element as RawApiMap)["cmd"] == "TERMINATE_OK");
     this._shardIsolate.kill(priority: Isolate.immediate);
 
     this.manager._logger.info("Shard $id disposed.");

@@ -14,13 +14,13 @@ class AppTeam extends SnowflakeEntity {
   /// Returns instance of [AppTeamMember] of team owner
   AppTeamMember get ownerMember => this.members.firstWhere((element) => element.user.id == this.ownerId);
 
-  AppTeam._new(Map<String, dynamic> raw) : super(Snowflake(raw["id"])) {
+  AppTeam._new(RawApiMap raw) : super(Snowflake(raw["id"])) {
     this.iconHash = raw["icon"] as String?;
     this.ownerId = Snowflake(raw["owner_user_id"]);
 
     this.members = [
     for (final rawMember in raw["members"])
-      AppTeamMember._new(rawMember as Map<String, dynamic>)
+      AppTeamMember._new(rawMember as RawApiMap)
     ];
   }
 
@@ -42,8 +42,8 @@ class AppTeamMember {
   /// State of membership
   late final int membershipState;
 
-  AppTeamMember._new(Map<String, dynamic> raw) {
-    this.user = AppTeamUser._new(raw["user"] as Map<String, dynamic>);
+  AppTeamMember._new(RawApiMap raw) {
+    this.user = AppTeamUser._new(raw["user"] as RawApiMap);
     this.membershipState = raw["membership_state"] as int;
   }
 }
@@ -59,7 +59,7 @@ class AppTeamUser extends SnowflakeEntity {
   /// The user's avatar hash.
   late final String? avatar;
 
-  AppTeamUser._new(Map<String, dynamic> raw) : super(Snowflake(raw["id"] as String)) {
+  AppTeamUser._new(RawApiMap raw) : super(Snowflake(raw["id"] as String)) {
     this.username = raw["username"] as String;
     this.discriminator = raw["discriminator"] as String;
     this.avatar = raw["avatar"] as String?;

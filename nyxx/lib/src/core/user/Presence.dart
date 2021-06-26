@@ -48,7 +48,7 @@ class Activity {
   /// Makes a new game object.
   Activity.of(this.name, {this.type = ActivityType.game, this.url});
 
-  Activity._new(Map<String, dynamic> raw) {
+  Activity._new(RawApiMap raw) {
     this.name = raw["name"] as String;
     this.url = raw["url"] as String?;
     this.type = ActivityType.from(raw["type"] as int);
@@ -57,7 +57,7 @@ class Activity {
     this.state = raw["state"] as String?;
 
     if (raw["timestamps"] != null) {
-      this.timestamps = ActivityTimestamps._new(raw["timestamps"] as Map<String, dynamic>);
+      this.timestamps = ActivityTimestamps._new(raw["timestamps"] as RawApiMap);
     }
 
     if (raw["application_id"] != null) {
@@ -65,19 +65,19 @@ class Activity {
     }
 
     if (raw["emoji"] != null) {
-      this.customStatusEmoji = ActivityEmoji._new(raw["emoji"] as Map<String, dynamic>);
+      this.customStatusEmoji = ActivityEmoji._new(raw["emoji"] as RawApiMap);
     }
 
     if (raw["party"] != null) {
-      party = ActivityParty._new(raw["party"] as Map<String, dynamic>);
+      party = ActivityParty._new(raw["party"] as RawApiMap);
     }
 
     if (raw["assets"] != null) {
-      assets = GameAssets._new(raw["assets"] as Map<String, dynamic>);
+      assets = GameAssets._new(raw["assets"] as RawApiMap);
     }
 
     if (raw["secrets"] != null) {
-      secrets = GameSecrets._new(raw["secrets"] as Map<String, dynamic>);
+      secrets = GameSecrets._new(raw["secrets"] as RawApiMap);
     }
 
     instance = raw["instance"] as bool?;
@@ -93,7 +93,7 @@ class ActivityEmoji {
   /// True if emoji is animated
   late final bool animated;
 
-  ActivityEmoji._new(Map<String, dynamic> raw) {
+  ActivityEmoji._new(RawApiMap raw) {
     if (raw["id"] != null) {
       this.id = Snowflake(raw["id"]);
     }
@@ -112,7 +112,7 @@ class ActivityTimestamps {
   /// DateTime when activity ends
   late final DateTime? end;
 
-  ActivityTimestamps._new(Map<String, dynamic> raw) {
+  ActivityTimestamps._new(RawApiMap raw) {
     if (raw["start"] != null) {
       this.start = DateTime.fromMillisecondsSinceEpoch(raw["start"] as int);
     }
@@ -165,7 +165,7 @@ class ActivityParty {
   /// Max size of party.
   int? maxSize;
 
-  ActivityParty._new(Map<String, dynamic> raw) {
+  ActivityParty._new(RawApiMap raw) {
     id = raw["id"] as String?;
 
     if (raw["size"] != null) {
@@ -189,7 +189,7 @@ class GameAssets {
   /// Text displayed when hovering over the small image of the activity
   late final String? smallText;
 
-  GameAssets._new(Map<String, dynamic> raw) {
+  GameAssets._new(RawApiMap raw) {
     largeImage = raw["large_image"] as String?;
     largeText = raw["large_text"] as String?;
     smallImage = raw["small_image"] as String?;
@@ -208,7 +208,7 @@ class GameSecrets {
   /// Match secret
   late final String match;
 
-  GameSecrets._new(Map<String, dynamic> raw) {
+  GameSecrets._new(RawApiMap raw) {
     join = raw["join"] as String;
     spectate = raw["spectate"] as String;
     match = raw["match"] as String;

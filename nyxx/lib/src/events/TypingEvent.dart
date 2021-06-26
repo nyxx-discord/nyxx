@@ -17,7 +17,7 @@ class TypingEvent {
   /// Reference to guild where typing occurred
   late final Cacheable<Snowflake, Guild>? guild;
 
-  TypingEvent._new(Map<String, dynamic> raw, Nyxx client) {
+  TypingEvent._new(RawApiMap raw, Nyxx client) {
     this.channel = CacheableTextChannel._new(client, Snowflake(raw["d"]["channel_id"]), ChannelType.unknown);
     this.user = _UserCacheable(client, Snowflake(raw["d"]["user_id"]));
     this.timestamp = DateTime.fromMillisecondsSinceEpoch(raw["d"]["timestamp"] as int);
@@ -33,7 +33,7 @@ class TypingEvent {
       return;
     }
 
-    this.member = Member._new(client, raw["d"]["member"] as Map<String, dynamic>, this.guild!.id);
+    this.member = Member._new(client, raw["d"]["member"] as RawApiMap, this.guild!.id);
     if (client._cacheOptions.memberCachePolicyLocation.event && client._cacheOptions.memberCachePolicy.canCache(this.member!)) {
       member!.guild.getFromCache()?.members[this.member!.id] = member!;
     }

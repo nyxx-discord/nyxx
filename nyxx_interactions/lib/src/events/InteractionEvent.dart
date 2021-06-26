@@ -70,7 +70,7 @@ abstract class InteractionEvent<T extends Interaction> {
     }
 
     late String url;
-    late Map<String, dynamic> body;
+    late RawApiMap body;
     late String method;
 
     if (hasResponded) {
@@ -119,7 +119,7 @@ class SlashCommandInteractionEvent extends InteractionEvent<SlashCommandInteract
   @override
   int get _respondOpcode => 4;
 
-  SlashCommandInteractionEvent._new(Nyxx client, Map<String, dynamic> raw): super._new(client) {
+  SlashCommandInteractionEvent._new(Nyxx client, RawApiMap raw): super._new(client) {
     this.interaction = SlashCommandInteraction._new(client, raw);
   }
 }
@@ -135,7 +135,7 @@ class ComponentInteractionEvent extends InteractionEvent<ComponentInteraction> {
   @override
   int get _respondOpcode => 7;
 
-  ComponentInteractionEvent._new(Nyxx client, Map<String, dynamic> raw): super._new(client) {
+  ComponentInteractionEvent._new(Nyxx client, RawApiMap raw): super._new(client) {
     this.interaction = ComponentInteraction._new(client, raw);
   }
 }

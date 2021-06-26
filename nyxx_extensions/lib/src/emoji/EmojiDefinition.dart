@@ -20,7 +20,7 @@ class EmojiDefinition {
   /// Url of emoji picture
   late final String assetUrl;
 
-  EmojiDefinition._new(Map<String, dynamic> raw) {
+  EmojiDefinition._new(RawApiMap raw) {
     this.primaryName = raw["primaryName"] as String;
     this.names = (raw["names"] as Iterable<dynamic>).cast();
     this.rawEmoji = raw["surrogates"] as String;

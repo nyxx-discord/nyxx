@@ -39,7 +39,7 @@ class CommandOptionBuilder extends Builder {
   CommandOptionBuilder(this.type, this.name, this.description,
       {this.defaultArg = false, this.required = false, this.choices, this.options});
 
-  Map<String, dynamic> build() => {
+  RawApiMap build() => {
     "type": this.type.value,
     "name": this.name,
     "description": this.description,

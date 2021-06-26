@@ -20,7 +20,7 @@ class VoiceRegion {
   /// Whether this is a custom voice region (used for events/etc)
   late final bool custom;
 
-  VoiceRegion._new(Map<String, dynamic> raw) {
+  VoiceRegion._new(RawApiMap raw) {
     this.id = raw["id"] as String;
     this.name = raw["name"] as String;
     this.vip = raw["vip"] as bool;

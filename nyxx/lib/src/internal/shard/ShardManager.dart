@@ -30,19 +30,27 @@ class ShardManager implements Disposable {
   final Logger _logger = Logger("Shard Manager");
 
   /// List of shards
-  Iterable<Shard> get shards => List.unmodifiable(_shards.values);
+  Iterable<Shard> get shards => UnmodifiableListView(this._shards.values);
 
   /// Average gateway latency across all shards
   Duration get gatewayLatency
     => Duration(milliseconds: (this.shards.map((e) => e.gatewayLatency.inMilliseconds)
         .fold<int>(0, (first, second) => first + second)) ~/ shards.length);
 
+  /// The number of identify requests allowed per 5 seconds
+  final int maxConcurrency;
   final _ConnectionManager _ws;
   late final int _numShards;
   final Map<int, Shard> _shards = {};
 
+  Duration get _identifyDelay {
+    /// 5s * 1000 / maxConcurrency + 250ms
+    final delay = (5 * 1000) ~/ this.maxConcurrency + 300;
+    return Duration(milliseconds: delay);
+  }
+
   /// Starts shard manager
-  ShardManager._new(this._ws) {
+  ShardManager._new(this._ws, this.maxConcurrency) {
     this._numShards = this._ws._client._options.shardCount != null ? this._ws._client._options.shardCount! : this._ws.recommendedShardsNum;
 
     if (this._numShards < 1) {
@@ -71,7 +79,7 @@ class ShardManager implements Disposable {
     final shard = Shard._new(shardId, this, _ws.gateway);
     _shards[shardId] = shard;
 
-    Future.delayed(const Duration(seconds: 5), () => _connect(shardId - 1));
+    Future.delayed(this._identifyDelay, () => _connect(shardId - 1));
   }
 
   @override
