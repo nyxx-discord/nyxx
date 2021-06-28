@@ -27,7 +27,7 @@ class _EventDispatcher implements Disposable {
     cluster._logger.fine("[Node ${json["nodeId"]}] Dispatching ${json["event"]}");
 
     switch(json["event"]) {
-      case "TrackStart":
+      case "TrackStartEvent":
         this.onTrackStart.add(
             TrackStartEvent._fromJson(cluster._client, node,
                 json["data"] as Map<String, dynamic>
@@ -35,7 +35,7 @@ class _EventDispatcher implements Disposable {
         );
         break;
 
-      case "TrackEnd": {
+      case "TrackEndEvent": {
           final trackEnd = TrackEndEvent._fromJson(cluster._client, node,
               json["data"] as Map<String, dynamic>
           );
@@ -48,7 +48,7 @@ class _EventDispatcher implements Disposable {
         }
         break;
 
-      case "WebSocketClosed":
+      case "WebSocketClosedEvent":
         this.onWebSocketClosed.add(
             WebSocketClosedEvent._fromJson(cluster._client, node,
                 json["data"] as Map<String, dynamic>
@@ -56,7 +56,7 @@ class _EventDispatcher implements Disposable {
         );
         break;
 
-      case "Stats": {
+      case "stats": {
         final stats = StatsEvent._fromJson(cluster._client, node,
             json["data"] as Map<String, dynamic>
         );
@@ -68,7 +68,7 @@ class _EventDispatcher implements Disposable {
         }
         break;
 
-      case "PlayerUpdate":
+      case "playerUpdate":
         this.onPlayerUpdate.add(
             PlayerUpdateEvent._fromJson(cluster._client, node,
                 json["data"] as Map<String, dynamic>
