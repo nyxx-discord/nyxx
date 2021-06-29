@@ -34,9 +34,6 @@ class ClientOptions {
   /// Maximum size of guild for which offline member will be sent
   int largeThreshold;
 
-  /// List of ignored events
-  List<String> ignoredEvents;
-
   /// Allows to receive compressed payloads from gateway
   bool compressedGatewayPayloads;
 
@@ -66,7 +63,6 @@ class ClientOptions {
       this.shardCount,
       this.messageCacheSize = 400,
       this.largeThreshold = 50,
-      this.ignoredEvents = const [],
       this.compressedGatewayPayloads = true,
       this.guildSubscriptions = true,
       this.initialPresence,
