@@ -7,6 +7,8 @@ class _EventDispatcher implements Disposable {
   final StreamController<PlayerUpdateEvent> onPlayerUpdate = StreamController.broadcast();
   final StreamController<TrackStartEvent> onTrackStart = StreamController.broadcast();
   final StreamController<TrackEndEvent> onTrackEnd = StreamController.broadcast();
+  final StreamController<TrackExceptionEvent> onTrackException = StreamController.broadcast();
+  final StreamController<TrackStuckEvent> onTrackStuck = StreamController.broadcast();
   final StreamController<WebSocketClosedEvent> onWebSocketClosed = StreamController.broadcast();
 
   _EventDispatcher(this.cluster) {
@@ -14,6 +16,8 @@ class _EventDispatcher implements Disposable {
     cluster.onPlayerUpdate = this.onPlayerUpdate.stream;
     cluster.onTrackStart = this.onTrackStart.stream;
     cluster.onTrackEnd = this.onTrackEnd.stream;
+    cluster.onTrackException = this.onTrackException.stream;
+    cluster.onTrackStuck = this.onTrackStuck.stream;
     cluster.onWebSocketClosed = this.onWebSocketClosed.stream;
   }
 
@@ -27,7 +31,7 @@ class _EventDispatcher implements Disposable {
     cluster._logger.fine("[Node ${json["nodeId"]}] Dispatching ${json["event"]}");
 
     switch(json["event"]) {
-      case "TrackStart":
+      case "TrackStartEvent":
         this.onTrackStart.add(
             TrackStartEvent._fromJson(cluster._client, node,
                 json["data"] as Map<String, dynamic>
@@ -35,7 +39,7 @@ class _EventDispatcher implements Disposable {
         );
         break;
 
-      case "TrackEnd": {
+      case "TrackEndEvent": {
           final trackEnd = TrackEndEvent._fromJson(cluster._client, node,
               json["data"] as Map<String, dynamic>
           );
@@ -48,7 +52,23 @@ class _EventDispatcher implements Disposable {
         }
         break;
 
-      case "WebSocketClosed":
+      case "TrackExceptionEvent":
+        this.onTrackException.add(
+            TrackExceptionEvent._fromJson(cluster._client, node,
+                json["data"] as Map<String, dynamic>
+            )
+        );
+        break;
+
+      case "TrackStuckEvent":
+        this.onTrackStuck.add(
+            TrackStuckEvent._fromJson(cluster._client, node,
+                json["data"] as Map<String, dynamic>
+            )
+        );
+        break;
+
+      case "WebSocketClosedEvent":
         this.onWebSocketClosed.add(
             WebSocketClosedEvent._fromJson(cluster._client, node,
                 json["data"] as Map<String, dynamic>
@@ -56,7 +76,7 @@ class _EventDispatcher implements Disposable {
         );
         break;
 
-      case "Stats": {
+      case "stats": {
         final stats = StatsEvent._fromJson(cluster._client, node,
             json["data"] as Map<String, dynamic>
         );
@@ -68,7 +88,7 @@ class _EventDispatcher implements Disposable {
         }
         break;
 
-      case "PlayerUpdate":
+      case "playerUpdate":
         this.onPlayerUpdate.add(
             PlayerUpdateEvent._fromJson(cluster._client, node,
                 json["data"] as Map<String, dynamic>
