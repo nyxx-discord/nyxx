@@ -1,3 +1,4 @@
-## 2.0.0-rc.0
+## 2.0.0-rc.1
 
-- Initial version.
+- Added `TrackStuck` and `TrackException` events.
+- Removed `type` property from `TrackEndEvent`
