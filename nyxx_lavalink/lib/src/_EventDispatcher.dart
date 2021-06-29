@@ -7,6 +7,8 @@ class _EventDispatcher implements Disposable {
   final StreamController<PlayerUpdateEvent> onPlayerUpdate = StreamController.broadcast();
   final StreamController<TrackStartEvent> onTrackStart = StreamController.broadcast();
   final StreamController<TrackEndEvent> onTrackEnd = StreamController.broadcast();
+  final StreamController<TrackExceptionEvent> onTrackException = StreamController.broadcast();
+  final StreamController<TrackStuckEvent> onTrackStuck = StreamController.broadcast();
   final StreamController<WebSocketClosedEvent> onWebSocketClosed = StreamController.broadcast();
 
   _EventDispatcher(this.cluster) {
@@ -14,6 +16,8 @@ class _EventDispatcher implements Disposable {
     cluster.onPlayerUpdate = this.onPlayerUpdate.stream;
     cluster.onTrackStart = this.onTrackStart.stream;
     cluster.onTrackEnd = this.onTrackEnd.stream;
+    cluster.onTrackException = this.onTrackException.stream;
+    cluster.onTrackStuck = this.onTrackStuck.stream;
     cluster.onWebSocketClosed = this.onWebSocketClosed.stream;
   }
 
@@ -46,6 +50,22 @@ class _EventDispatcher implements Disposable {
 
           node._handleTrackEnd(trackEnd);
         }
+        break;
+
+      case "TrackExceptionEvent":
+        this.onTrackException.add(
+            TrackExceptionEvent._fromJson(cluster._client, node,
+                json["data"] as Map<String, dynamic>
+            )
+        );
+        break;
+
+      case "TrackStuckEvent":
+        this.onTrackStuck.add(
+            TrackStuckEvent._fromJson(cluster._client, node,
+                json["data"] as Map<String, dynamic>
+            )
+        );
         break;
 
       case "WebSocketClosedEvent":
