@@ -33,9 +33,11 @@ Future<void> _handleNode(SendPort clusterPort) async {
   var node = NodeOptions._fromJson(await receiveStream.first as Map<String, dynamic>);
 
   void process(Map<String, dynamic> json) {
-    json["op"] == "event"
-      ? clusterPort.send({"cmd": "DISPATCH", "nodeId": node.nodeId, "event": json["type"], "data": json})
-      : clusterPort.send({"cmd": "DISPATCH", "nodeId": node.nodeId, "event": json["op"], "data": json});
+    if (json["op"] == "event") {
+      clusterPort.send({"cmd": "DISPATCH", "nodeId": node.nodeId, "event": json["type"], "data": json});
+    } else {
+      clusterPort.send({"cmd": "DISPATCH", "nodeId": node.nodeId, "event": json["op"], "data": json});
+    }
   }
 
   Future<void> connect() async {
