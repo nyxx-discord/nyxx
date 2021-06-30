@@ -69,18 +69,31 @@ Future<void> _shardHandler(SendPort shardPort) async {
 
   // Attempts to connect to ws
   Future<void> _connect() async {
-    await WebSocket.connect(gatewayUri.toString()).then((ws) {
+    try {
+      _socket = await WebSocket.connect(gatewayUri.toString());
       final zlibDecoder = RawZLibFilter.inflateFilter(); // Create zlib decoder specific to this connection. New connection should get new zlib context
 
-      _socket = ws;
+      // ignore: unawaited_futures
+      _socket!.done.then((value) {
+        shardPort.send({ "cmd" : "DISCONNECTED", "errorCode" : _socket!.closeCode, "errorReason" : _socket!.closeReason });
+      });
+
+      _socket!.handleError((err) {
+        shardPort.send({ "cmd" : "ERROR", "error": err.toString(), "errorCode" : _socket!.closeCode, "errorReason" : _socket!.closeReason });
+      });
+
       _socketSubscription = _socket!.listen((data) {
         shardPort.send({ "cmd" : "DATA", "jsonData" : _decodeBytes(data, zlibDecoder) });
-      }, onDone: () async {
-        shardPort.send({ "cmd" : "DISCONNECTED", "errorCode" : _socket!.closeCode, "errorReason" : _socket!.closeReason });
-      }, cancelOnError: true, onError: (err) => shardPort.send({ "cmd" : "ERROR", "error": err.toString(), "errorCode" : _socket!.closeCode, "errorReason" : _socket!.closeReason }));
+      });
 
       shardPort.send({ "cmd" : "CONNECT_ACK" });
-    }, onError: (err, __) => shardPort.send({ "cmd" : "ERROR", "error": err.toString(), "errorCode" : _socket!.closeCode, "errorReason" : _socket!.closeReason }));
+    } on WebSocketException catch (err) {
+      shardPort.send({ "cmd" : "ERROR", "error": err.toString(), "errorCode" : _socket!.closeCode, "errorReason" : _socket!.closeReason });
+    } on Exception catch (err) {
+      print(err);
+    } on Error catch (err) {
+      print(err);
+    }
   }
 
   // Connects
