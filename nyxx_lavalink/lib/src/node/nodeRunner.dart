@@ -32,35 +32,11 @@ Future<void> _handleNode(SendPort clusterPort) async {
 
   var node = NodeOptions._fromJson(await receiveStream.first as Map<String, dynamic>);
 
-  Future<void> processEvent(Map<String, dynamic> json) async {
-    switch(json["type"]) {
-      case "TrackStartEvent":
-        clusterPort.send({"cmd": "DISPATCH", "nodeId": node.nodeId, "event": "TrackStart", "data": json});
-        break;
-
-      case "TrackEndEvent":
-        clusterPort.send({"cmd": "DISPATCH", "nodeId": node.nodeId, "event": "TrackEnd", "data": json});
-        break;
-
-      case "WebSocketClosedEvent":
-        clusterPort.send({"cmd": "DISPATCH", "nodeId": node.nodeId, "event": "WebSocketClosed", "data": json});
-        break;
-    }
-  }
-
-  Future<void> process(Map<String, dynamic> json) async {
-    switch(json["op"]) {
-      case "stats":
-        clusterPort.send({"cmd": "DISPATCH", "nodeId": node.nodeId, "event": "Stats", "data": json});
-        break;
-
-      case "playerUpdate":
-        clusterPort.send({"cmd": "DISPATCH", "nodeId": node.nodeId, "event": "PlayerUpdate", "data": json});
-        break;
-
-      case "event":
-        await processEvent(json);
-        break;
+  void process(Map<String, dynamic> json) {
+    if (json["op"] == "event") {
+      clusterPort.send({"cmd": "DISPATCH", "nodeId": node.nodeId, "event": json["type"], "data": json});
+    } else {
+      clusterPort.send({"cmd": "DISPATCH", "nodeId": node.nodeId, "event": json["op"], "data": json});
     }
   }
 

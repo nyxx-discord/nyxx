@@ -41,6 +41,10 @@ class Cluster {
   late final Stream<TrackStartEvent> onTrackStart;
   /// Emitted when a track ends playing
   late final Stream<TrackEndEvent> onTrackEnd;
+  /// Emitted when a track gets an exception during playback
+  late final Stream<TrackExceptionEvent> onTrackException;
+  /// Emitted when a track gets stuck
+  late final Stream<TrackStuckEvent> onTrackStuck;
   /// Emitted when a web socket is closed
   late final Stream<WebSocketClosedEvent> onWebSocketClosed;
 

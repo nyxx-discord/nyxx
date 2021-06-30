@@ -1,3 +1,6 @@
-## 2.0.0-rc.0
+## 2.0.0-rc.1
 
-- Initial version.
+- Added `TrackStuck` and `TrackException` events.
+- Removed `type` property from `TrackEndEvent`
+- Changed `position` property from `PlayerUpdateStateEvent` type to `int?` to avoid deserializing errors when using Andesite instead of Lavalink
+- Updated `Exception` model

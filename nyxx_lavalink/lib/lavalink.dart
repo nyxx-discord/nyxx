@@ -23,7 +23,9 @@ part "src/model/PlayParameters.dart";
 part "src/model/Stats.dart";
 part "src/model/Track.dart";
 part "src/model/TrackEnd.dart";
+part "src/model/TrackException.dart";
 part "src/model/TrackStart.dart";
+part "src/model/TrackStuck.dart";
 part "src/model/WebSocketClosed.dart";
 
 part "src/node/Node.dart";
