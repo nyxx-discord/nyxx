@@ -110,12 +110,14 @@ class NyxxRest extends INyxx {
         bool ignoreExceptions = true,
         bool useDefaultLogger = true,
         Level? defaultLoggerLogLevel}) {
+    this._logger.fine("Staring Nyxx: intents: [$intents]; ignoreExceptions: [$ignoreExceptions]; useDefaultLogger: [$useDefaultLogger]; defaultLoggerLogLevel: $defaultLoggerLogLevel");
+
     if (_token.isEmpty) {
       throw MissingTokenError();
     }
 
     if (useDefaultLogger) {
-      Logger.root.level = defaultLoggerLogLevel ?? Level.ALL;
+      Logger.root.level = defaultLoggerLogLevel ?? Level.INFO;
 
       Logger.root.onRecord.listen((LogRecord rec) {
         print(
