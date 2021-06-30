@@ -2,7 +2,8 @@ part of nyxx;
 
 class _HttpHandler {
   final RegExp _bucketRegexp = RegExp(r"\/(channels|guilds)\/(\d+)");
-  final RegExp _bucketReactionsRegexp = RegExp(r"\/channels/(\d+)\/messages\/(\d+)\/reactions");
+  final RegExp _bucketReactionsRegexp =
+      RegExp(r"\/channels/(\d+)\/messages\/(\d+)\/reactions");
 
   final List<_HttpBucket> _buckets = [];
   late final _HttpBucket _noRateBucket;
@@ -29,7 +30,8 @@ class _HttpHandler {
   }
 
   _HttpBucket _getBucketForRequest(_HttpRequest request) {
-    final reactionsRegexMatch = _bucketReactionsRegexp.firstMatch(request.uri.toString());
+    final reactionsRegexMatch =
+        _bucketReactionsRegexp.firstMatch(request.uri.toString());
     if (reactionsRegexMatch != null) {
       final bucketMajorId = reactionsRegexMatch.group(1);
       final bucketMessageId = reactionsRegexMatch.group(2);
