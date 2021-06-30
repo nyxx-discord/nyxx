@@ -46,6 +46,9 @@ class ThreadArchiveTime extends IEnum<int> {
   /// Archive after an day
   static const ThreadArchiveTime day = ThreadArchiveTime._new(1440);
 
+  /// Archive after 3 days
+  static const ThreadArchiveTime threeDays = ThreadArchiveTime._new(4320);
+
   /// Archive after an week
   static const ThreadArchiveTime week = ThreadArchiveTime._new(10080);
 
