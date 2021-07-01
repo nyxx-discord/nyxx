@@ -11,7 +11,7 @@ environment:
 
 dependencies:
   logging: "^1.0.1"
-  nyxx: "^2.0.0-rc.7"
+  nyxx: "^2.0.0-rc.9"
 
 dev_dependencies:
   test: "^1.16.8"

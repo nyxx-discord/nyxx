@@ -52,6 +52,20 @@ class Interactions {
             case 3:
               _events.onButtonEvent.add(ComponentInteractionEvent._new(
                   _client, event.rawData["d"] as RawApiMap));
+
+                            final componentType = event.rawData["d"]["data"]["component_type"] as int;
+
+              switch (componentType) {
+                case 2:
+                  _events.onButtonEvent.add(ButtonInteractionEvent._new(_client, event.rawData["d"] as Map<String, dynamic>));
+                  break;
+                case 3:
+                  _events.onMultiselectEvent.add(MultiselectInteractionEvent._new(_client, event.rawData["d"] as Map<String, dynamic>));
+                  break;
+                default:
+                  this._logger.warning("Unknown componentType type: [$componentType]; Payload: ${jsonEncode(event.rawData)}");
+              }
+              
               break;
             default:
               this._logger.warning(
