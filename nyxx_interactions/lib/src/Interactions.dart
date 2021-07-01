@@ -77,6 +77,52 @@ class Interactions {
     });
   }
 
+  Future<void> _syncPermissions() async {
+    final commandPartition = _partition<SlashCommandBuilder>(
+        this._commandBuilders, (element) => element.guild == null);
+    final globalCommands = commandPartition.first;
+    final groupedGuildCommands =
+        _groupSlashCommandBuilders(commandPartition.last);
+
+    final globalBody = globalCommands
+      .where((builder) => builder.permissions.isNotEmpty)
+      .map((builder) => {
+        "id": builder._id, 
+        "permissions": [for (final permsBuilder in builder.permissions) permsBuilder.build()]
+      });
+
+    await this
+        ._client
+        .httpEndpoints
+        .sendRawRequest("/applications/${this._client.app.id}/commands/permissions", "PUT", body: globalBody);
+
+    for (final entry in groupedGuildCommands.entries) {
+      final guildBody = entry.value
+        .where((builder) => builder.permissions.isNotEmpty)
+        .map((builder) => {
+          "id": builder._id, 
+          "permissions": [for (final permsBuilder in builder.permissions) permsBuilder.build()]
+        });
+
+      await this._client.httpEndpoints.sendRawRequest("/applications/${this._client.app.id}/guilds/${entry.key}/commands/permissions", "PUT", body: guildBody);
+    }
+  }
+
+  void _extractCommandIds(HttpResponseSuccess response) {
+    final body = response.jsonBody as List<dynamic>;
+    for (final command in body) {
+      final commandMap = command as Map<String, dynamic>;
+      this._commandBuilders.firstWhere(
+          (b) => b.name == commandMap["name"]
+          && b.guild == (commandMap["guild_id"] == null
+              ? null
+              : Snowflake(commandMap["guild_id"])
+          )
+        )
+        ._setId(Snowflake(commandMap["id"]));
+    }
+  }
+
   /// Syncs commands builders with discord after client is ready.
   void syncOnReady() {
     this._client.onReady.listen((_) async {
@@ -102,6 +148,7 @@ class Interactions {
     );
 
     if (globalCommandsResponse is HttpResponseSuccess) {
+      _extractCommandIds(globalCommandsResponse);
       this._registerCommandHandlers(globalCommandsResponse, globalCommands);
     }
 
@@ -116,6 +163,7 @@ class Interactions {
       );
 
       if (response is HttpResponseSuccess) {
+        _extractCommandIds(response);
         this._registerCommandHandlers(response, entry.value);
       }
     }
