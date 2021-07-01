@@ -11,6 +11,12 @@ abstract class ICommandPermissionBuilder extends Builder {
 
   ICommandPermissionBuilder(this.id, {this.hasPermission = true});
 
+  /// A permission for a single user that can be used in [SlashCommandBuilder]
+  factory ICommandPermissionBuilder.user(Snowflake id, {bool hasPermission = true}) => UserCommandPermissionBuilder(id, hasPermission: hasPermission);
+
+  /// A permission for a single role that can be used in [SlashCommandBuilder]
+  factory ICommandPermissionBuilder.role(Snowflake id, {bool hasPermission = true}) => RoleCommandPermissionBuilder(id, hasPermission: hasPermission);
+
 }
 
 /// A permission for a single role that can be used in [SlashCommandBuilder]
