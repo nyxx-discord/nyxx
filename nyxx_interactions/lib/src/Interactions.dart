@@ -1,12 +1,10 @@
 part of nyxx_interactions;
 
 /// Function that will handle execution of slash command interaction event
-typedef SlashCommandHandler = FutureOr<void> Function(
-    SlashCommandInteractionEvent);
+typedef SlashCommandHandler = FutureOr<void> Function(SlashCommandInteractionEvent);
 
 /// Function that will handle execution of button interaction event
-typedef ButtonInteractionHandler = FutureOr<void> Function(
-    ComponentInteractionEvent);
+typedef ButtonInteractionHandler = FutureOr<void> Function(ComponentInteractionEvent);
 
 /// Interaction extension for Nyxx. Allows use of: Slash Commands.
 class Interactions {
@@ -41,8 +39,7 @@ class Interactions {
 
     _client.onReady.listen((event) async {
       _client.shardManager.rawEvent.listen((event) {
-        if (event.rawData["op"] == _op0 &&
-            event.rawData["t"] == _interactionCreateCommand) {
+        if (event.rawData["op"] == _op0 && event.rawData["t"] == _interactionCreateCommand) {
           this._logger.fine("Received interaction event: [${event.rawData}]");
 
           final type = event.rawData["d"]["type"] as int;
@@ -155,8 +152,7 @@ class Interactions {
         }
       });
 
-      this._logger.info(
-          "Finished registering ${this._commandHandlers.length} commands!");
+      this._logger.info("Finished registering ${this._commandHandlers.length} commands!");
     }
 
     if (this._buttonHandlers.isNotEmpty) {
@@ -164,8 +160,7 @@ class Interactions {
         if (this._buttonHandlers.containsKey(event.interaction.buttonId)) {
           this._buttonHandlers[event.interaction.buttonId]!(event);
         } else {
-          this._logger.warning(
-              "Received event for unknown button: ${event.interaction.idMetadata}");
+          this._logger.warning("Received event for unknown button: ${event.interaction.idMetadata}");
         }
       });
     }
