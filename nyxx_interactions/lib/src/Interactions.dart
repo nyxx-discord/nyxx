@@ -108,6 +108,21 @@ class Interactions {
     }
   }
 
+  void _extractCommandIds(HttpResponseSuccess response) {
+    final body = response.jsonBody as List<dynamic>;
+    for (final command in body) {
+      final commandMap = command as Map<String, dynamic>;
+      this._commandBuilders.firstWhere(
+          (b) => b.name == commandMap["name"]
+          && b.guild == (commandMap["guild_id"] == null
+              ? null
+              : Snowflake(commandMap["guild_id"])
+          )
+        )
+        ._setId(Snowflake(commandMap["id"]));
+    }
+  }
+
   /// Syncs commands builders with discord after client is ready.
   void syncOnReady() {
     this._client.onReady.listen((_) async {
@@ -133,14 +148,7 @@ class Interactions {
     );
 
     if (globalCommandsResponse is HttpResponseSuccess) {
-      final body = globalCommandsResponse.jsonBody as List<dynamic>;
-      for (final command in body) {
-        final commandMap = command as Map<String, dynamic>;
-        this._commandBuilders.firstWhere(
-                (b) => b.name == commandMap["name"]
-                && b.guild == (commandMap["guild_id"] == null ? null : Snowflake(commandMap["guild_id"])))
-            ._setId(Snowflake(commandMap["id"]));
-      }
+      _extractCommandIds(globalCommandsResponse);
       this._registerCommandHandlers(globalCommandsResponse, globalCommands);
     }
 
@@ -155,14 +163,7 @@ class Interactions {
       );
 
       if (response is HttpResponseSuccess) {
-        final body = response.jsonBody as List<dynamic>;
-        for (final command in body) {
-          final commandMap = command as Map<String, dynamic>;
-          this._commandBuilders.firstWhere(
-                  (b) => b.name == commandMap["name"]
-                      && b.guild == (commandMap["guild_id"] == null ? null : Snowflake(commandMap["guild_id"])))
-              ._setId(Snowflake(commandMap["id"]));
-        }
+        _extractCommandIds(response);
         this._registerCommandHandlers(response, entry.value);
       }
     }
