@@ -108,7 +108,6 @@ class Interactions {
 
       if (response is HttpResponseSuccess) {
         final body = response.jsonBody as List<dynamic>;
-        print(jsonEncode(response.jsonBody));
         var i = 0;
         for (final commandData in body) {
           await entry.value.elementAt(i)._syncPermissions(
