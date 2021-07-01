@@ -38,6 +38,24 @@ class GuildFeature extends IEnum<String> {
   /// Guild has enabled the welcome screen
   static const GuildFeature welcomeScreenEnabled = GuildFeature._create("WELCOME_SCREEN_ENABLED");
 
+  /// Guild has enabled ticketed events
+  static const GuildFeature ticketsEventEnabled = GuildFeature._create("TICKETED_EVENTS_ENABLED");
+
+  /// Guild has enabled monetization
+  static const GuildFeature monetizationEnabled = GuildFeature._create("MONETIZATION_ENABLED");
+
+  /// Guild has increased custom sticker slots
+  static const GuildFeature moreStickers = GuildFeature._create("MORE_STICKERS");
+
+  /// Guild has access to the three day archive time for threads
+  static const GuildFeature threeDayThreadArchive = GuildFeature._create("THREE_DAY_THREAD_ARCHIVE");
+
+  /// Guild has access to the seven day archive time for threads
+  static const GuildFeature sevenDayThreadArchive = GuildFeature._create("SEVEN_DAY_THREAD_ARCHIVE");
+
+  /// Guild has access to create private threads
+  static const GuildFeature privateThreadsEnabled = GuildFeature._create("PRIVATE_THREADS");
+
   /// Creates instance of [GuildFeature] from [value].
   GuildFeature.from(String? value) : super(value ?? "");
   const GuildFeature._create(String? value) : super(value ?? "");

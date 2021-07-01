@@ -39,6 +39,15 @@ class CommandOptionBuilder extends Builder {
   CommandOptionBuilder(this.type, this.name, this.description,
       {this.defaultArg = false, this.required = false, this.choices, this.options});
 
+  /// Registers handler for subcommand
+  void registerHandler(SlashCommandHandler handler) {
+    if (this.type != CommandOptionType.subCommand) {
+      throw StateError("Cannot register handler for command option with type other that subcommand");
+    }
+
+    this._handler = handler;
+  }
+
   RawApiMap build() => {
     "type": this.type.value,
     "name": this.name,
@@ -48,13 +57,4 @@ class CommandOptionBuilder extends Builder {
     if (this.choices != null) "choices": this.choices!.map((e) => e.build()).toList(),
     if (this.options != null) "options": this.options!.map((e) => e.build()).toList()
   };
-
-  /// Registers handler for subcommand
-  void registerHandler(SlashCommandHandler handler) {
-    if (this.type != CommandOptionType.subCommand) {
-      throw StateError("Cannot register handler for command option with type other that subcommand");
-    }
-
-    this._handler = handler;
-  }
 }
