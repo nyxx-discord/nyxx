@@ -1,26 +1,42 @@
 part of nyxx_interactions;
 
 /// Used to define permissions for a particular command.
-class CommandPermissionBuilder extends Builder {
-  /// The role ID to change the permissions for
-  Snowflake? role;
+abstract class ICommandPermissionBuilder extends Builder {
 
-  /// The user'd ID to change the permissions for
-  Snowflake? user;
+  /// The ID of the Role or User to give permissions too
+  final Snowflake id;
 
   /// Does the role have permission to use the command
   final bool hasPermission;
 
-  /// A permission for a single user that can be used in [SlashCommandBuilder]
-  CommandPermissionBuilder.forUser(this.user, {this.hasPermission = true});
+  ICommandPermissionBuilder(this.id, {this.hasPermission = true});
+
+}
+
+/// A permission for a single role that can be used in [SlashCommandBuilder]
+class RoleCommandPermissionBuilder extends ICommandPermissionBuilder {
 
   /// A permission for a single role that can be used in [SlashCommandBuilder]
-  CommandPermissionBuilder.forRole(this.role, {this.hasPermission = true});
+  RoleCommandPermissionBuilder(Snowflake id, {bool hasPermission = true}) : super(id, hasPermission: hasPermission);
 
   @override
-  Map<String, dynamic> build() => {
-        "id": this.role != null ? this.role.toString() : this.user.toString(),
-        "type": this.role != null ? 1 : 2,
+  RawApiMap build() => {
+        "id": this.id.toString(),
+        "type": 1,
+        "permission": this.hasPermission
+      };
+}
+
+/// A permission for a single user that can be used in [SlashCommandBuilder]
+class UserCommandPermissionBuilder extends ICommandPermissionBuilder {
+
+  /// A permission for a single user that can be used in [SlashCommandBuilder]
+  UserCommandPermissionBuilder(Snowflake id, {bool hasPermission = true}) : super(id, hasPermission: hasPermission);
+
+  @override
+  RawApiMap build() => {
+        "id": this.id.toString(),
+        "type": 2,
         "permission": this.hasPermission
       };
 }

@@ -22,7 +22,7 @@ class SlashCommandBuilder extends Builder {
   List<CommandOptionBuilder> options;
 
   /// Permission overrides for the command
-  final List<CommandPermissionBuilder> permissions = [];
+  final List<ICommandPermissionBuilder> permissions = [];
 
   /// Handler for SlashCommandBuilder
   SlashCommandHandler? _handler;
@@ -48,7 +48,7 @@ class SlashCommandBuilder extends Builder {
   void _setId(Snowflake id) => this._id = id;
 
   /// Register a permission
-  void addPermission(CommandPermissionBuilder permission) =>
+  void addPermission(ICommandPermissionBuilder permission) =>
       this.permissions.add(permission);
 
   /// Registers handler for command. Note command cannot have handler if there are options present
