@@ -2,6 +2,10 @@ part of nyxx_interactions;
 
 /// A slash command, can only be instantiated through a method on [Interactions]
 class SlashCommandBuilder extends Builder {
+
+  /// The commands ID that is defined on registration and used for permission syncing.
+  late final Snowflake _id;
+
   /// Command name to be shown to the user in the Slash Command UI
   final String name;
 
@@ -41,26 +45,7 @@ class SlashCommandBuilder extends Builder {
           "options": this.options.map((e) => e.build()).toList()
       };
 
-  Future<void> _syncPermissions(Nyxx client, Snowflake id) async {
-    if (this.guild != null) {
-      await client.httpEndpoints.sendRawRequest(
-          "/applications/${client.app.id}/guilds/${this.guild.toString()}/commands/$id/permissions",
-          "PUT",
-          body: {
-            "permissions": [
-              for (final builder in this.permissions) builder.build()
-            ]
-          });
-    } else {
-      await client.httpEndpoints.sendRawRequest(
-          "/applications/${client.app.id}/commands/$id/permissions", "PUT",
-          body: {
-            "permissions": [
-              for (final builder in this.permissions) builder.build()
-            ]
-          });
-    }
-  }
+  void _setId(Snowflake id) => this._id = id;
 
   /// Register a permission
   void addPermission(CommandPermissionBuilder permission) =>
