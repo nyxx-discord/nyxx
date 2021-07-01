@@ -1,6 +1,6 @@
 part of nyxx;
 
-class Member extends SnowflakeEntity {
+class Member extends SnowflakeEntity implements Mentionable {
   /// Reference to client
   final INyxx client;
 
@@ -34,6 +34,10 @@ class Member extends SnowflakeEntity {
   /// When the user starting boosting the guild
   late DateTime? boostingSince;
 
+  /// The channel's mention string.
+  @override
+  String get mention => "<@${this.id}>";
+
   // TODO: is everything okay?
   /// Returns highest role of member.
   /// Uses ! on nullable properties and will throw if anything is missing from cache
@@ -49,7 +53,7 @@ class Member extends SnowflakeEntity {
         return element;
       }).getFromCache()!;
 
-  Member._new(this.client, Map<String, dynamic> raw, Snowflake guildId) : super(Snowflake(raw["user"]["id"])) {
+  Member._new(this.client, RawApiMap raw, Snowflake guildId) : super(Snowflake(raw["user"]["id"])) {
     this.nickname = raw["nick"] as String?;
     this.deaf = raw["deaf"] as bool;
     this.mute = raw["mute"] as bool;
@@ -71,7 +75,7 @@ class Member extends SnowflakeEntity {
     }
 
     if (!client.users.hasKey(this.id) && client._cacheOptions.userCachePolicyLocation.objectConstructor) {
-      final userRaw = raw["user"] as Map<String, dynamic>;
+      final userRaw = raw["user"] as RawApiMap;
 
       if (userRaw["id"] != null && userRaw.length != 1) {
         client.users.add(this.id, User._new(client, userRaw));

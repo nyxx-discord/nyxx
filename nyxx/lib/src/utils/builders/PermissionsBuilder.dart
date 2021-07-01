@@ -5,7 +5,7 @@ class _PermissionsSet {
   int allow = 0;
   int deny = 0;
 
-  Map<String, dynamic> build() => {"allow": allow, "deny": deny};
+  RawApiMap build() => {"allow": allow, "deny": deny};
 }
 
 /// Builder for manipulating [PermissionsOverrides]. Created from existing override or manually by passing [type] and [id] of enttiy.

@@ -1,10 +1,11 @@
 part of nyxx;
 
-class TextGuildChannel extends GuildChannel implements TextChannel {
+class TextGuildChannel extends GuildChannel implements TextChannel, Mentionable {
   /// The channel's topic.
   late final String? topic;
 
   /// The channel's mention string.
+  @override
   String get mention => "<#${this.id}>";
 
   /// Channel's slow mode rate limit in seconds. This must be between 0 and 120.
@@ -27,7 +28,7 @@ class TextGuildChannel extends GuildChannel implements TextChannel {
   // Used to create infinite typing loop
   Timer? _typing;
 
-  TextGuildChannel._new(INyxx client, Map<String, dynamic> raw, [Snowflake? guildId]) : super._new(client, raw, guildId) {
+  TextGuildChannel._new(INyxx client, RawApiMap raw, [Snowflake? guildId]) : super._new(client, raw, guildId) {
     this.topic = raw["topic"] as String?;
     this.slowModeThreshold = raw["rate_limit_per_user"] as int? ?? 0;
   }

@@ -9,13 +9,13 @@ abstract class GuildChannel extends MinimalGuildChannel {
   /// Permission override for channel
   late final List<PermissionsOverrides> permissionOverrides;
 
-  GuildChannel._new(INyxx client, Map<String, dynamic> raw, [Snowflake? guildId]) : super._new(client, raw, guildId) {
+  GuildChannel._new(INyxx client, RawApiMap raw, [Snowflake? guildId]) : super._new(client, raw, guildId) {
     this.position = raw["position"] as int;
 
     this.permissionOverrides = [
       if (raw["permission_overwrites"] != null)
         for (var obj in raw["permission_overwrites"])
-          PermissionsOverrides._new(obj as Map<String, dynamic>)
+          PermissionsOverrides._new(obj as RawApiMap)
     ];
   }
 
@@ -118,7 +118,7 @@ abstract class MinimalGuildChannel extends IChannel {
   /// Indicates if channel is nsfw
   late final bool isNsfw;
 
-  MinimalGuildChannel._new(INyxx client, Map<String, dynamic> raw, [Snowflake? guildId]) : super._new(client, raw) {
+  MinimalGuildChannel._new(INyxx client, RawApiMap raw, [Snowflake? guildId]) : super._new(client, raw) {
     this.name = raw["name"] as String;
 
     if (raw["guild_id"] != null) {

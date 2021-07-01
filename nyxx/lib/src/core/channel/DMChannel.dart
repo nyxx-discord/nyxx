@@ -20,15 +20,15 @@ class DMChannel extends IChannel implements TextChannel {
   /// Returns other user in chat if channel is not group dm. Will throw [ArgumentError] if channel is group dm.
   User get participant => !this.isGroupDM ? participants.first : throw new ArgumentError("Channel is not direct DM");
 
-  DMChannel._new(INyxx client, Map<String, dynamic> raw): super._new(client, raw) {
+  DMChannel._new(INyxx client, RawApiMap raw): super._new(client, raw) {
     if (raw["recipients"] != null) {
       this.participants = [
         for (final userRaw in raw["recipients"])
-          User._new(this.client, userRaw as Map<String, dynamic>)
+          User._new(this.client, userRaw as RawApiMap)
       ];
     } else {
       this.participants = [
-        User._new(client, raw["recipient"] as Map<String, dynamic>)
+        User._new(client, raw["recipient"] as RawApiMap)
       ];
     }
   }

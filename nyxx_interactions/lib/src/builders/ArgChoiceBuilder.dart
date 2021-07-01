@@ -12,10 +12,9 @@ class ArgChoiceBuilder extends Builder {
   /// You can only have an int or string option.
   ArgChoiceBuilder(this.name, this.value) {
     if (value is! int && value is! String) {
-      throw ArgumentError("value could be either String or int type");
+      throw ArgumentError("Value could be either String or int type");
     }
   }
 
-  @override
-  Map<String, dynamic> build() => { "name": this.name, "value": this.value };
+  RawApiMap build() => { "name": this.name, "value": this.value };
 }

@@ -7,7 +7,7 @@ class RawEvent {
   final Shard shard;
 
   /// Raw event data as deserialized json
-  final Map<String, dynamic> rawData;
+  final RawApiMap rawData;
 
   RawEvent._new(this.shard, this.rawData);
 }

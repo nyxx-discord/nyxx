@@ -93,6 +93,8 @@ class Commander with ICommandRegistrable {
       return;
     }
 
+    this._logger.finer("Attempting to execute command from message: [${event.message.content}] from [${event.message.author.tag}]");
+
     // Find matching command with given message content
     final matchingCommand = _CommandMatcher._findMatchingCommand(event.message.content.toLowerCase().replaceFirst(prefix, "").trim().split(" "), _commandEntities) as CommandHandler?;
 
@@ -107,6 +109,8 @@ class Commander with ICommandRegistrable {
 
     final match = RegExp("(?<finalCommand>${matchingCommand.getFullCommandMatch().trim()})").firstMatch(event.message.content.toLowerCase());
     final finalCommand = match?.namedGroup("finalCommand");
+
+    this._logger.finer("Preparing command for execution: Command name: $finalCommand");
 
     // construct CommandContext
     final context = CommandContext._new(
@@ -134,10 +138,14 @@ class Commander with ICommandRegistrable {
       if(this._commandExecutionError != null) {
         await _commandExecutionError!(context, e);
       }
+
+      this._logger.fine("Command [$finalCommand] executed with Exception: $e");
     } on Error catch (e) {
       if(this._commandExecutionError != null) {
         await _commandExecutionError!(context, e);
       }
+
+      this._logger.fine("Command [$finalCommand] executed with Error: $e");
     }
 
     // execute logger callback

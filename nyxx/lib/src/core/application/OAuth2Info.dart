@@ -15,14 +15,14 @@ class OAuth2Info {
   /// Mini guild objects with permissions for every guild you are on.
   late final Map<Snowflake, OAuth2Guild> guilds;
 
-  OAuth2Info._new(Map<String, dynamic> raw, Nyxx client) {
-    this.app = OAuth2Application._new(raw["application"] as Map<String, dynamic>);
-    this.bot = User._new(client, raw["bot"] as Map<String, dynamic>);
-    this.me = User._new(client, raw["user"] as Map<String, dynamic>);
+  OAuth2Info._new(RawApiMap raw, Nyxx client) {
+    this.app = OAuth2Application._new(raw["application"] as RawApiMap);
+    this.bot = User._new(client, raw["bot"] as RawApiMap);
+    this.me = User._new(client, raw["user"] as RawApiMap);
 
     this.guilds = <Snowflake, OAuth2Guild>{};
     for (final raw in raw["guilds"]) {
-      final guild = OAuth2Guild._new(raw as Map<String, dynamic>);
+      final guild = OAuth2Guild._new(raw as RawApiMap);
       this.guilds[Snowflake(guild.id as String)] = guild;
     }
   }

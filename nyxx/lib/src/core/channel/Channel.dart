@@ -10,13 +10,13 @@ abstract class IChannel extends SnowflakeEntity implements Disposable {
   /// Reference to client
   final INyxx client;
 
-  IChannel._new(this.client, Map<String, dynamic> raw): super(Snowflake(raw["id"])){
+  IChannel._new(this.client, RawApiMap raw): super(Snowflake(raw["id"])){
     this.channelType = ChannelType.from(raw["type"] as int);
   }
 
   IChannel._raw(this.client, Snowflake id, this.channelType): super(id);
 
-  factory IChannel._deserialize(INyxx client, Map<String, dynamic> raw, [Snowflake? guildId]) {
+  factory IChannel._deserialize(INyxx client, RawApiMap raw, [Snowflake? guildId]) {
     final type = raw["type"] as int;
 
     switch (type) {
@@ -51,7 +51,7 @@ abstract class IChannel extends SnowflakeEntity implements Disposable {
 }
 
 class _InternalChannel extends GuildChannel {
-  _InternalChannel._new(INyxx client, Map<String, dynamic> raw, [Snowflake? guildId]): super._new(client, raw, guildId);
+  _InternalChannel._new(INyxx client, RawApiMap raw, [Snowflake? guildId]): super._new(client, raw, guildId);
 }
 
 /// Enum for possible channel types

@@ -48,8 +48,7 @@ class CommandOptionBuilder extends Builder {
     this._handler = handler;
   }
 
-  @override
-  Map<String, dynamic> build() => {
+  RawApiMap build() => {
     "type": this.type.value,
     "name": this.name,
     "description": this.description,

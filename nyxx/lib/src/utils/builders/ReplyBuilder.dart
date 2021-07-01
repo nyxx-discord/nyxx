@@ -20,7 +20,7 @@ class ReplyBuilder extends Builder{
     ReplyBuilder(messageCacheable.id, failIfNotExists);
 
   @override
-  Map<String, dynamic> build() => {
+  RawApiMap build() => {
     "message_id": this.messageId.id,
     "fail_if_not_exists": this.failIfNotExists
   };

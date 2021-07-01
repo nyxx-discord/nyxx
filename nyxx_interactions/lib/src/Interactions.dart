@@ -46,11 +46,13 @@ class Interactions {
     _client.onReady.listen((event) async {
       _client.shardManager.rawEvent.listen((event) {
         if (event.rawData["op"] == _op0 && event.rawData["t"] == _interactionCreateCommand) {
+          this._logger.fine("Received interaction event: [${event.rawData}]");
+
           final type = event.rawData["d"]["type"] as int;
 
           switch (type) {
             case 2:
-              _events.onSlashCommand.add(SlashCommandInteractionEvent._new(_client, event.rawData["d"] as Map<String, dynamic>));
+              _events.onSlashCommand.add(SlashCommandInteractionEvent._new(_client, event.rawData["d"] as RawApiMap));
               break;
             case 3:
               final componentType = event.rawData["d"]["data"]["component_type"] as int;
@@ -169,7 +171,7 @@ class Interactions {
       this._commandBuilders.add(slashCommandBuilder);
 
   void _registerCommandHandlers(HttpResponseSuccess response, Iterable<SlashCommandBuilder> builders) {
-    final registeredSlashCommands = (response.jsonBody as List<dynamic>).map((e) => SlashCommand._new(e as Map<String, dynamic>, this._client));
+    final registeredSlashCommands = (response.jsonBody as List<dynamic>).map((e) => SlashCommand._new(e as RawApiMap, this._client));
 
     for(final registeredCommand in registeredSlashCommands) {
       final matchingBuilder = builders.firstWhere((element) => element.name.toLowerCase() == registeredCommand.name);

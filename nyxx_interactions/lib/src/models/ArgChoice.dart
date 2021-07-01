@@ -8,7 +8,7 @@ class ArgChoice {
   /// Value of choice
   late final dynamic value;
 
-  ArgChoice._new(Map<String, dynamic> raw) {
+  ArgChoice._new(RawApiMap raw) {
     this.name = raw["name"] as String;
     this.value = raw["value"];
   }

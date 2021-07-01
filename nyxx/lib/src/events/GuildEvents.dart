@@ -5,8 +5,8 @@ class GuildCreateEvent {
   /// The guild created.
   late final Guild guild;
 
-  GuildCreateEvent._new(Map<String, dynamic> raw, Nyxx client) {
-    this.guild = Guild._new(client, raw["d"] as Map<String, dynamic>, true);
+  GuildCreateEvent._new(RawApiMap raw, Nyxx client) {
+    this.guild = Guild._new(client, raw["d"] as RawApiMap, true);
     client.guilds[guild.id] = guild;
   }
 }
@@ -16,8 +16,8 @@ class GuildUpdateEvent {
   /// The guild after the update.
   late final Guild guild;
 
-  GuildUpdateEvent._new(Map<String, dynamic> json, Nyxx client) {
-    this.guild = Guild._new(client, json["d"] as Map<String, dynamic>);
+  GuildUpdateEvent._new(RawApiMap json, Nyxx client) {
+    this.guild = Guild._new(client, json["d"] as RawApiMap);
 
     final oldGuild = client.guilds[this.guild.id];
     if(oldGuild != null) {
@@ -37,8 +37,8 @@ class GuildDeleteEvent {
   /// False if user was kicked from guild
   late final bool unavailable;
 
-  GuildDeleteEvent._new(Map<String, dynamic> raw, Nyxx client) {
-    this.unavailable = raw["d"]["unavailable"] as bool;
+  GuildDeleteEvent._new(RawApiMap raw, Nyxx client) {
+    this.unavailable = raw["d"]["unavailable"] as bool? ?? false;
     this.guild = _GuildCacheable(client, Snowflake(raw["d"]["id"]));
 
     client.guilds.remove(guild.id);
@@ -53,8 +53,8 @@ class GuildMemberRemoveEvent {
   ///The user that left.
   late final User user;
 
-  GuildMemberRemoveEvent._new(Map<String, dynamic> json, Nyxx client) {
-    this.user = User._new(client, json["d"]["user"] as Map<String, dynamic>);
+  GuildMemberRemoveEvent._new(RawApiMap json, Nyxx client) {
+    this.user = User._new(client, json["d"]["user"] as RawApiMap);
     this.guild = _GuildCacheable(client, Snowflake(json["d"]["guild_id"]));
 
     final guildInstance = this.guild.getFromCache();
@@ -75,11 +75,11 @@ class GuildMemberUpdateEvent {
   /// Guild in which member is
   late final Cacheable<Snowflake, Guild> guild;
 
-  GuildMemberUpdateEvent._new(Map<String, dynamic> raw, Nyxx client) {
+  GuildMemberUpdateEvent._new(RawApiMap raw, Nyxx client) {
     this.guild = _GuildCacheable(client, Snowflake(raw["d"]["guild_id"]));
     this.member = _MemberCacheable(client, Snowflake(raw["d"]["user"]["id"]), guild);
 
-    final user = User._new(client, raw["d"]["user"] as Map<String, dynamic>);
+    final user = User._new(client, raw["d"]["user"] as RawApiMap);
     if (client._cacheOptions.userCachePolicyLocation.event) {
       client.users[user.id] = user;
     }
@@ -113,10 +113,10 @@ class GuildMemberAddEvent {
   /// Guild where used was added
   late final Cacheable<Snowflake, Guild> guild;
 
-  GuildMemberAddEvent._new(Map<String, dynamic> raw, Nyxx client) {
+  GuildMemberAddEvent._new(RawApiMap raw, Nyxx client) {
     this.guild = _GuildCacheable(client, Snowflake(raw["d"]["guild_id"]));
-    this.member = Member._new(client, raw["d"] as Map<String, dynamic>, this.guild.id);
-    this.user = User._new(client, raw["d"]["user"] as Map<String, dynamic>);
+    this.member = Member._new(client, raw["d"] as RawApiMap, this.guild.id);
+    this.user = User._new(client, raw["d"]["user"] as RawApiMap);
 
     if (!client.users.hasKey(this.user.id) && client._cacheOptions.userCachePolicyLocation.event) {
       client.users[user.id] = user;
@@ -141,9 +141,9 @@ class GuildBanAddEvent {
   /// The user that was banned.
   late final User user;
 
-  GuildBanAddEvent._new(Map<String, dynamic> raw, Nyxx client) {
+  GuildBanAddEvent._new(RawApiMap raw, Nyxx client) {
     this.guild = _GuildCacheable(client, Snowflake(raw["d"]["guild_id"]));
-    this.user = User._new(client, raw["d"]["user"] as Map<String, dynamic>);
+    this.user = User._new(client, raw["d"]["user"] as RawApiMap);
   }
 }
 
@@ -155,9 +155,9 @@ class GuildBanRemoveEvent {
   /// The user that was banned.
   late final User user;
 
-  GuildBanRemoveEvent._new(Map<String, dynamic> raw, Nyxx client) {
+  GuildBanRemoveEvent._new(RawApiMap raw, Nyxx client) {
     this.guild = _GuildCacheable(client, Snowflake(raw["d"]["guild_id"]));
-    this.user = User._new(client, raw["d"]["user"] as Map<String, dynamic>);
+    this.user = User._new(client, raw["d"]["user"] as RawApiMap);
   }
 }
 
@@ -169,12 +169,12 @@ class GuildEmojisUpdateEvent {
   /// The guild that the member was banned from.
   late final Cacheable<Snowflake, Guild> guild;
 
-  GuildEmojisUpdateEvent._new(Map<String, dynamic> raw, Nyxx client) {
+  GuildEmojisUpdateEvent._new(RawApiMap raw, Nyxx client) {
     this.guild = _GuildCacheable(client, Snowflake(raw["d"]["guild_id"]));
 
     final guildInstance = this.guild.getFromCache();
     for(final rawEmoji in raw["d"]["emojis"]) {
-      final emoji = GuildEmoji._new(client, rawEmoji as Map<String, dynamic>, this.guild.id);
+      final emoji = GuildEmoji._new(client, rawEmoji as RawApiMap, this.guild.id);
 
       this.emojis.add(emoji);
 
@@ -193,10 +193,10 @@ class RoleCreateEvent {
   /// The guild that the member was banned from.
   late final Cacheable<Snowflake, Guild> guild;
 
-  RoleCreateEvent._new(Map<String, dynamic> raw, Nyxx client) {
+  RoleCreateEvent._new(RawApiMap raw, Nyxx client) {
     this.guild = _GuildCacheable(client, Snowflake(raw["d"]["guild_id"]));
 
-    this.role = Role._new(client, raw["d"]["role"] as Map<String, dynamic>, this.guild.id);
+    this.role = Role._new(client, raw["d"]["role"] as RawApiMap, this.guild.id);
 
     final guildInstance = guild.getFromCache();
     if (guildInstance != null) {
@@ -216,7 +216,7 @@ class RoleDeleteEvent {
   /// The guild that the member was banned from.
   late final Cacheable<Snowflake, Guild> guild;
 
-  RoleDeleteEvent._new(Map<String, dynamic> raw, Nyxx client) {
+  RoleDeleteEvent._new(RawApiMap raw, Nyxx client) {
     this.guild = _GuildCacheable(client, Snowflake(raw["d"]["guild_id"]));
     this.roleId = Snowflake(raw["d"]["role_id"]);
 
@@ -238,9 +238,9 @@ class RoleUpdateEvent {
   /// The guild that the member was banned from.
   late final Cacheable<Snowflake, Guild> guild;
 
-  RoleUpdateEvent._new(Map<String, dynamic> raw, Nyxx client) {
+  RoleUpdateEvent._new(RawApiMap raw, Nyxx client) {
     this.guild = _GuildCacheable(client, Snowflake(raw["d"]["guild_id"]));
-    this.role = Role._new(client, raw["d"]["role"] as Map<String, dynamic>, this.guild.id);
+    this.role = Role._new(client, raw["d"]["role"] as RawApiMap, this.guild.id);
 
     final guildInstance = guild.getFromCache();
     if (guildInstance != null) {

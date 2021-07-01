@@ -8,7 +8,7 @@ class EmbedProvider {
   /// The embed provider's URL.
   late final String? url;
 
-  EmbedProvider._new(Map<String, dynamic> raw) {
+  EmbedProvider._new(RawApiMap raw) {
     if (raw["name"] != null) {
       this.name = raw["name"] as String?;
     }

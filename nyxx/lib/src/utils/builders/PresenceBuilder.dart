@@ -18,19 +18,34 @@ class PresenceBuilder extends Builder {
   PresenceBuilder();
 
   /// Default builder constructor.
-  PresenceBuilder.of({this.status, this.afk, this.game, this.since});
+  factory PresenceBuilder.of({UserStatus? status, bool? afk, Activity? game, DateTime? since}) =>
+      PresenceBuilder()
+        ..status = status
+        ..afk = afk
+        ..game = game
+        ..since = since;
+
+  /// Sets bot status to game type
+  factory PresenceBuilder.game({required String gameName, UserStatus? status}) =>
+      PresenceBuilder()
+        ..game = Activity.of(gameName)
+        ..status = status;
+
+  /// Sets bot status to stream type
+  factory PresenceBuilder.streaming({required String streamName, required String streamUrl, UserStatus? status}) =>
+      PresenceBuilder()
+        ..game = Activity.of(streamName, type: ActivityType.streaming, url: streamUrl)
+        ..status = status;
 
   @override
-  Map<String, dynamic> build() => <String, dynamic>{
-        "status":
-            (status != null) ? status.toString() : UserStatus.online.toString(),
+  RawApiMap build() => <String, dynamic>{
+        "status": (status != null) ? status.toString() : UserStatus.online.toString(),
         "afk": (afk != null) ? afk : false,
-        if (game != null)
-          "game": <String, dynamic>{
+        if (game != null) "game": <String, dynamic>{
             "name": game!.name,
             "type": game!.type.value,
             if (game!.type == ActivityType.streaming) "url": game!.url
-          },
+        },
         "since": (since != null) ? since!.millisecondsSinceEpoch : null
       };
 }

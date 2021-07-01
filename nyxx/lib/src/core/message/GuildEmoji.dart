@@ -7,7 +7,7 @@ abstract class IGuildEmoji extends SnowflakeEntity implements IEmoji {
   /// Returns cdn url to emoji
   String get cdnUrl => "https://cdn.discordapp.com/emojis/${this.id}.png";
 
-  IGuildEmoji._new(Map<String, dynamic> raw): super(Snowflake(raw["id"]));
+  IGuildEmoji._new(RawApiMap raw): super(Snowflake(raw["id"]));
 
   /// Creates partial emoji from given String or Snowflake.
   factory IGuildEmoji.fromId(dynamic id, [bool animated = false]) => GuildEmojiPartial._new({ "id": id.toString() });
@@ -27,7 +27,7 @@ class GuildEmojiPartial extends IGuildEmoji implements IEmoji {
   @override
   bool get isPartial => true;
 
-  GuildEmojiPartial._new(Map<String, dynamic> raw): super._new(raw);
+  GuildEmojiPartial._new(RawApiMap raw): super._new(raw);
 }
 
 class GuildEmoji extends GuildEmojiPartial implements IEmoji {
@@ -52,7 +52,7 @@ class GuildEmoji extends GuildEmojiPartial implements IEmoji {
   @override
   bool get isPartial => false;
 
-  GuildEmoji._new(this.client, Map<String, dynamic> raw, Snowflake guildId): super._new(raw) {
+  GuildEmoji._new(this.client, RawApiMap raw, Snowflake guildId): super._new(raw) {
     this.guild = _GuildCacheable(client, guildId);
 
     this.requireColons = raw["require_colons"] as bool? ?? false;

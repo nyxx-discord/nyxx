@@ -1,5 +1,7 @@
 part of nyxx;
 
+typedef RawApiMap = Map<String, dynamic>;
+
 /// Generic interface for Nyxx. Represents basic functionality of Nyxx that are always available.
 abstract class INyxx implements Disposable {
   _HttpHandler get _http;
@@ -108,12 +110,14 @@ class NyxxRest extends INyxx {
         bool ignoreExceptions = true,
         bool useDefaultLogger = true,
         Level? defaultLoggerLogLevel}) {
+    this._logger.fine("Staring Nyxx: intents: [$intents]; ignoreExceptions: [$ignoreExceptions]; useDefaultLogger: [$useDefaultLogger]; defaultLoggerLogLevel: $defaultLoggerLogLevel");
+
     if (_token.isEmpty) {
       throw MissingTokenError();
     }
 
     if (useDefaultLogger) {
-      Logger.root.level = defaultLoggerLogLevel ?? Level.ALL;
+      Logger.root.level = defaultLoggerLogLevel ?? Level.INFO;
 
       Logger.root.onRecord.listen((LogRecord rec) {
         print(
@@ -138,7 +142,11 @@ class NyxxRest extends INyxx {
 
       final errorsPort = ReceivePort();
       errorsPort.listen((err) {
-        _logger.severe("ERROR: ${err[0]}");
+        final stackTrace = err[1] != null
+          ? ". Stacktrace: \n${err[1]}"
+          : "";
+
+        _logger.shout("Got Error: Message: [${err[0]}]$stackTrace");
       });
       Isolate.current.addErrorListener(errorsPort.sendPort);
     }

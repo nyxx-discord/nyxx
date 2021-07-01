@@ -1,9 +1,11 @@
 import "package:nyxx/nyxx.dart";
 
+typedef RawApiMap = Map<String, dynamic>;
+
 /// Collection of extensions for [EmbedFieldBuilder]
 extension EmbedFieldBuilderJson on EmbedFieldBuilder {
   /// Returns a [EmbedFieldBuilder] with data from the raw json
-  EmbedFieldBuilder importJson(Map<String, dynamic> raw) {
+  EmbedFieldBuilder importJson(RawApiMap raw) {
     this.name = raw["name"];
     this.content = raw["value"];
     this.inline = raw["inline"] as bool?;
@@ -35,7 +37,7 @@ extension EmbedAuthorBuilderJson on EmbedAuthorBuilder {
 /// Collection of extensions for [EmbedBuilder]
 extension EmbedBuilderJson on EmbedBuilder {
   /// Returns a [EmbedBuilder] with data from the raw json
-  EmbedBuilder importJson(Map<String, dynamic> raw) {
+  EmbedBuilder importJson(RawApiMap raw) {
     this.title = raw["title"] as String?;
     this.description = raw["description"] as String?;
     this.url = raw["url"] as String?;
@@ -51,7 +53,7 @@ extension EmbedBuilderJson on EmbedBuilder {
         : null;
 
     for(final rawFields in raw["fields"] as List<dynamic>) {
-      this.fields.add(EmbedFieldBuilder().importJson(rawFields as Map<String, dynamic>));
+      this.fields.add(EmbedFieldBuilder().importJson(rawFields as RawApiMap));
     }
 
     return this;

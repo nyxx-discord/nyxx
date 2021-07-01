@@ -5,8 +5,8 @@ class InviteCreatedEvent {
   /// [Invite] object of created invite
   late final Invite invite;
 
-  InviteCreatedEvent._new(Map<String, dynamic> raw, Nyxx client) {
-    this.invite = Invite._new(raw["d"] as Map<String, dynamic>, client);
+  InviteCreatedEvent._new(RawApiMap raw, Nyxx client) {
+    this.invite = Invite._new(raw["d"] as RawApiMap, client);
   }
 }
 
@@ -21,7 +21,7 @@ class InviteDeletedEvent {
   /// Code of invite
   late final String code;
 
-  InviteDeletedEvent._new(Map<String, dynamic> raw, Nyxx client) {
+  InviteDeletedEvent._new(RawApiMap raw, Nyxx client) {
     this.code = raw["d"]["code"] as String;
     this.channel = _ChannelCacheable(client, Snowflake(raw["d"]["channel_id"]));
 

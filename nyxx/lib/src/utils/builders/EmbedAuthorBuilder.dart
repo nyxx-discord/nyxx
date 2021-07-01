@@ -19,7 +19,7 @@ class EmbedAuthorBuilder extends Builder {
 
   /// Builds object to Map() instance;
   @override
-  Map<String, dynamic> build() {
+  RawApiMap build() {
     if (this.name == null || this.name!.isEmpty) {
       throw EmbedBuilderArgumentException._new("Author name cannot be null or empty");
     }

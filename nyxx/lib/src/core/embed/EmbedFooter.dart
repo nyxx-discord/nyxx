@@ -11,7 +11,7 @@ class EmbedFooter implements Convertable<EmbedFooterBuilder> {
   /// Proxied url of icon url
   late final String? iconProxyUrl;
 
-  EmbedFooter._new(Map<String, dynamic> raw) {
+  EmbedFooter._new(RawApiMap raw) {
     text = raw["text"] as String?;
     iconUrl = raw["icon_url"] as String?;
     iconProxyUrl = raw["icon_proxy_url"] as String?;

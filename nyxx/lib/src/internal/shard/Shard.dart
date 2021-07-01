@@ -41,9 +41,11 @@ class Shard implements Disposable {
 
   Duration _gatewayLatency = const Duration(); // latency of discord
   late DateTime _lastHeartbeatSent; // Datetime when last heartbeat was sent
-  bool _heartbeatAckReceived = false; // True if last heartbeat was acked
+  bool _heartbeatAckReceived = true; // True if last heartbeat was acked
 
   Shard._new(this.id, this.manager, String gatewayUrl) {
+    this.manager._logger.finer("Starting shard with id: $id; url: $gatewayUrl");
+
     this._receivePort = ReceivePort();
     this._receiveStream = _receivePort.asBroadcastStream();
     this._isolateSendPort = _receivePort.sendPort;
@@ -59,7 +61,9 @@ class Shard implements Disposable {
 
   /// Sends WS data.
   void send(int opCode, dynamic d) {
-    this._sendPort.send({"cmd": "SEND", "data" : {"op": opCode, "d": d}});
+    final rawData = {"cmd": "SEND", "data" : {"op": opCode, "d": d}};
+    this.manager._logger.finest("Sending to shard isolate on shard [${this.id}]: [$rawData]");
+    this._sendPort.send(rawData);
   }
 
   /// Updates clients voice state for [Guild] with given [guildId]
@@ -123,7 +127,7 @@ class Shard implements Disposable {
     this._lastHeartbeatSent = DateTime.now();
 
     if(!this._heartbeatAckReceived) {
-      manager._logger.warning("Not received previous heartbeat ack");
+      manager._logger.warning("Not received previous heartbeat ack on shard: [${this.id}] on sequence: [{$_sequence}]");
       return;
     }
 
@@ -135,7 +139,7 @@ class Shard implements Disposable {
 
     this._connected = false;
     this._heartbeatTimer.cancel();
-    manager._logger.severe("Shard $id disconnected. Error code: [${data['errorCode']}] | Error message: [${data['errorReason']}]");
+    manager._logger.severe("Shard $id disconnected. Error: [${data['error']}] Error code: [${data['errorCode']}] | Error message: [${data['errorReason']}]");
 
     switch (closeCode) {
       case 4004:
@@ -152,6 +156,7 @@ class Shard implements Disposable {
         exit(1);
       case 4007:
       case 4009:
+      case 1001:
         _reconnect();
         break;
       default:
@@ -175,6 +180,8 @@ class Shard implements Disposable {
   }
 
   Future<void> _handle(dynamic rawData) async {
+    this.manager._logger.finest("Received gateway payload on shard [${this.id}]: [$rawData]");
+
     if(rawData["cmd"] == "CONNECT_ACK") {
       manager._logger.info("Shard $id connected to gateway!");
 
@@ -190,11 +197,7 @@ class Shard implements Disposable {
       return;
     }
 
-    final discordPayload = rawData["jsonData"] as Map<String, dynamic>;
-
-    if (discordPayload["op"] == OPCodes.dispatch && manager._ws._client._options.ignoredEvents.contains(discordPayload["t"] as String)) {
-      return;
-    }
+    final discordPayload = rawData["jsonData"] as RawApiMap;
 
     if (discordPayload["s"] != null) {
       this._sequence = discordPayload["s"] as int;
@@ -203,7 +206,7 @@ class Shard implements Disposable {
     await _dispatch(discordPayload);
   }
 
-  Future<void> _dispatch(Map<String, dynamic> rawPayload) async {
+  Future<void> _dispatch(RawApiMap rawPayload) async {
     switch (rawPayload["op"] as int) {
       case OPCodes.heartbeatAck:
         this._heartbeatAckReceived = true;
@@ -230,12 +233,12 @@ class Shard implements Disposable {
 
           this.send(OPCodes.identify, identifyMsg);
         } else if (_resume) {
-          this.send(OPCodes.resume,
-              <String, dynamic>{"token": manager._ws._client._token, "session_id": this._sessionId, "seq": this._sequence});
+          this.send(OPCodes.resume, <String, dynamic>{"token": manager._ws._client._token, "session_id": this._sessionId, "seq": this._sequence});
         }
 
-        this._heartbeatTimer = Timer.periodic(
-            Duration(milliseconds: rawPayload["d"]["heartbeat_interval"] as int), (Timer t) => this._heartbeat());
+        Future.delayed(const Duration(milliseconds: 100), () {
+          this._heartbeatTimer = Timer.periodic(Duration(milliseconds: rawPayload["d"]["heartbeat_interval"] as int), (Timer t) => this._heartbeat());
+        });
         break;
       case OPCodes.invalidSession:
         manager._logger.severe("Invalid session on shard $id. ${(rawPayload["d"] as bool) ? "Resuming..." : "Reconnecting..."}");
@@ -256,7 +259,7 @@ class Shard implements Disposable {
         switch (dispatchType) {
           case "READY":
             this._sessionId = rawPayload["d"]["session_id"] as String;
-            manager._ws._client.self = ClientUser._new(manager._ws._client, rawPayload["d"]["user"] as Map<String, dynamic>);
+            manager._ws._client.self = ClientUser._new(manager._ws._client, rawPayload["d"]["user"] as RawApiMap);
 
             this._connected = true;
             manager._logger.info("Shard ${this.id} ready!");
@@ -429,7 +432,7 @@ class Shard implements Disposable {
   Future<void> dispose() async {
     this.manager._logger.info("Started disposing shard $id...");
 
-    await this._receiveStream.firstWhere((element) => (element as Map<String, dynamic>)["cmd"] == "TERMINATE_OK");
+    await this._receiveStream.firstWhere((element) => (element as RawApiMap)["cmd"] == "TERMINATE_OK");
     this._shardIsolate.kill(priority: Isolate.immediate);
 
     this.manager._logger.info("Shard $id disposed.");

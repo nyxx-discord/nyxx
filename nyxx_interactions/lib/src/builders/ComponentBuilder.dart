@@ -32,7 +32,7 @@ class MultiselectOptionBuilder extends Builder {
   MultiselectOptionBuilder(this.label, this.value, [this.isDefault = false]);
 
   @override
-  Map<String, dynamic> build() => {
+  RawApiMap build() => {
     "label": this.label,
     "value": this.value,
     "default": this.isDefault,
@@ -148,7 +148,7 @@ class LinkButtonBuilder extends IButtonBuilder {
   }
 
   @override
-  Map<String, dynamic> build() => {
+  RawApiMap build() => {
     ...super.build(),
     "url": url
   };
@@ -174,7 +174,7 @@ class ButtonBuilder extends IButtonBuilder {
   }
 
   @override
-  Map<String, dynamic> build() => {
+  RawApiMap build() => {
     ...super.build(),
     "custom_id": customId
   };
@@ -211,7 +211,7 @@ class ComponentMessageBuilder extends MessageBuilder {
   }
 
   @override
-  Map<String, dynamic> build(INyxx client) => {
+  RawApiMap build(INyxx client) => {
     ...super.build(client),
     if (this.components != null) "components": [
       for (final row in this.components!)

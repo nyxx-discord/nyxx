@@ -24,7 +24,7 @@ class SlashCommandBuilder extends Builder {
     }
   }
 
-  Map<String, dynamic> build() => {
+  RawApiMap build() => {
     "name": this.name,
     "description": this.description,
     if (this.options.isNotEmpty) "options": this.options.map((e) => e.build()).toList()

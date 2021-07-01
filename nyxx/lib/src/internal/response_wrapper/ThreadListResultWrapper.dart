@@ -10,17 +10,17 @@ class ThreadListResultWrapper {
   /// Whether there are potentially additional threads that could be returned on a subsequent call
   late final bool hasMore;
 
-  ThreadListResultWrapper._new(INyxx client, Map<String, dynamic> raw) {
+  ThreadListResultWrapper._new(INyxx client, RawApiMap raw) {
     this.threads = [
       for (final rawThread in raw["threads"])
-        ThreadChannel._new(client, rawThread as Map<String, dynamic>)
+        ThreadChannel._new(client, rawThread as RawApiMap)
     ];
 
     this.selfThreadMembers = [
       for (final rawMember in raw["members"])
         ThreadMember._new(
             client,
-            rawMember as Map<String, dynamic>,
+            rawMember as RawApiMap,
             _ChannelCacheable(client, this.threads.firstWhere((element) => element.id == rawMember["id"]).id)
         )
     ];
