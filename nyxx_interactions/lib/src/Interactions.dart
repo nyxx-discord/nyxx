@@ -53,7 +53,7 @@ class Interactions {
               _events.onButtonEvent.add(ComponentInteractionEvent._new(
                   _client, event.rawData["d"] as RawApiMap));
 
-                            final componentType = event.rawData["d"]["data"]["component_type"] as int;
+              final componentType = event.rawData["d"]["data"]["component_type"] as int;
 
               switch (componentType) {
                 case 2:
@@ -65,7 +65,7 @@ class Interactions {
                 default:
                   this._logger.warning("Unknown componentType type: [$componentType]; Payload: ${jsonEncode(event.rawData)}");
               }
-              
+
               break;
             default:
               this._logger.warning(
@@ -169,14 +169,8 @@ class Interactions {
       this._logger.info("Finished registering ${this._commandHandlers.length} commands!");
     }
 
-    if (this._buttonHandlers.isNotEmpty) {
-      this.onButtonEvent.listen((event) {
-        if (this._buttonHandlers.containsKey(event.interaction.buttonId)) {
-          this._buttonHandlers[event.interaction.buttonId]!(event);
-        } else {
-          this._logger.warning("Received event for unknown button: ${event.interaction.idMetadata}");
-        }
-      });
+    if (this._commands.isEmpty) {
+      return;
     }
   }
 
