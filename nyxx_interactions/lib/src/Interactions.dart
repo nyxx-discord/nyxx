@@ -77,31 +77,6 @@ class Interactions {
     });
   }
 
-  Future<void> _syncPermissions() async {
-    final commandPartition = _partition<SlashCommandBuilder>(
-        this._commandBuilders, (element) => element.guild == null);
-    final globalCommands = commandPartition.first;
-    final groupedGuildCommands =
-        _groupSlashCommandBuilders(commandPartition.last);
-
-    await this
-        ._client
-        .httpEndpoints
-        .sendRawRequest("/applications/${this._client.app.id}/commands/permissions", "PUT",
-            body: [globalCommands.where((builder) => builder.permissions.isNotEmpty).map((builder) => {
-              "id": builder._id, 
-              "permissions": [for (final permsBuilder in builder.permissions) permsBuilder.build()]
-            })]);
-
-    for (final entry in groupedGuildCommands.entries) {
-      await this._client.httpEndpoints.sendRawRequest("/applications/${this._client.app.id}/guilds/${entry.key}/commands/permissions", "PUT",
-            body: [entry.value.where((builder) => builder.permissions.isNotEmpty).map((builder) => {
-              "id": builder._id, 
-              "permissions": [for (final permsBuilder in builder.permissions) permsBuilder.build()]
-            })]);
-    }
-  }
-
   /// Syncs commands builders with discord after client is ready.
   void syncOnReady() {
     this._client.onReady.listen((_) async {
@@ -127,13 +102,6 @@ class Interactions {
     );
 
     if (globalCommandsResponse is HttpResponseSuccess) {
-      // TODO improve
-      final body = globalCommandsResponse.jsonBody as List<dynamic>;
-      var i = 0;
-      for (final commandData in body) {
-        globalCommands.elementAt(i)._setId(Snowflake(commandData["id"]));
-        i++;
-      }
       this._registerCommandHandlers(globalCommandsResponse, globalCommands);
     }
 
@@ -148,13 +116,6 @@ class Interactions {
       );
 
       if (response is HttpResponseSuccess) {
-        // TODO improve
-        final body = response.jsonBody as List<dynamic>;
-        var i = 0;
-        for (final commandData in body) {
-          entry.value.elementAt(i)._setId(Snowflake(commandData["id"]));
-          i++;
-        }
         this._registerCommandHandlers(response, entry.value);
       }
     }
