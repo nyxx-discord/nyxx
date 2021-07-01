@@ -87,23 +87,37 @@ class SlashCommandInteraction extends Interaction {
 }
 
 /// Interaction for button, dropdown, etc.
-class ComponentInteraction extends Interaction {
-  /// Id with additional custom metadata
-  late final String idMetadata;
-
-  /// Id of the button is the string before `;`
-  String get buttonId => idMetadata.split(";").first;
-
-  /// Additional data string after ';'
-  String get metadata => idMetadata.split(";").last;
+abstract class ComponentInteraction extends Interaction {
+  /// Custom id of component interaction
+  String get customId;
 
   /// The message that the button was pressed on.
   late final Message message;
 
   ComponentInteraction._new(Nyxx client, RawApiMap raw): super._new(client, raw) {
-    this.idMetadata = raw["data"]["custom_id"] as String;
-
     // Discord doesn't include guild's id in the message object even if its a guild message but is included in the data so its been added to the object so that guild message can be used if the interaction is from a guild.
     this.message = EntityUtility.createMessage(this._client, {...raw["message"] as RawApiMap, if(raw["guild_id"] != null) "guild_id": raw["guild_id"]});
+  }
+}
+
+class ButtonInteraction extends ComponentInteraction {
+  @override
+  late final String customId;
+
+  ButtonInteraction._new(Nyxx client, Map<String, dynamic> raw): super._new(client, raw) {
+    this.customId = raw["data"]["custom_id"] as String;
+  }
+}
+
+class MultiselectInteraction extends ComponentInteraction {
+  @override
+  late final String customId;
+
+  /// Values selected by the user
+  late final List<String> values;
+
+  MultiselectInteraction._new(Nyxx client, Map<String, dynamic> raw): super._new(client, raw) {
+    this.customId = raw["data"]["custom_id"] as String;
+    this.values = (raw["data"]["values"] as List<dynamic>).cast<String>();
   }
 }

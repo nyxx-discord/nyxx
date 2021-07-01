@@ -15,7 +15,10 @@ abstract class InteractionEvent<T extends Interaction> {
   /// If the Client has sent a response to the Discord API. Once the API was received a response you cannot send another.
   bool hasResponded = false;
 
+  /// Opcode for acknowledging interaction
   int get _acknowledgeOpCode;
+
+  /// Opcode for responding to interaction
   int get _respondOpcode;
 
   InteractionEvent._new(this._client);
@@ -28,7 +31,6 @@ abstract class InteractionEvent<T extends Interaction> {
 
     final url = "/webhooks/${this._client.app.id.toString()}/${this.interaction.token}";
     final body = BuilderUtility.buildWithClient(builder, _client);
-
     this._logger.fine("Sending followup for for interaction: url: [$url]; body: [$body]");
 
     final response = await this._client.httpEndpoints.sendRawRequest(url, "POST", body: body);
@@ -95,11 +97,9 @@ abstract class InteractionEvent<T extends Interaction> {
       };
       method = "POST";
     }
-
     this._logger.fine("Sending respond for for interaction: url: [$url]; body: [$body]; method: [$method]");
 
-    final response = await this._client.httpEndpoints.sendRawRequest(url, method, body: body);
-
+    final response = await this._client.httpEndpoints.sendRawRequest(url, method, body: body,);
     if (response is HttpResponseError) {
       return Future.error(response);
     }
@@ -108,6 +108,7 @@ abstract class InteractionEvent<T extends Interaction> {
   }
 }
 
+/// Event for slash commands
 class SlashCommandInteractionEvent extends InteractionEvent<SlashCommandInteraction> {
   /// Interaction data for slash command
   @override
@@ -124,10 +125,11 @@ class SlashCommandInteractionEvent extends InteractionEvent<SlashCommandInteract
   }
 }
 
-class ComponentInteractionEvent extends InteractionEvent<ComponentInteraction> {
+/// Generic event for component interactions
+abstract class ComponentInteractionEvent<T extends ComponentInteraction> extends InteractionEvent<T> {
   /// Interaction data for slash command
   @override
-  late final ComponentInteraction interaction;
+  late final T interaction;
 
   @override
   int get _acknowledgeOpCode => 6;
@@ -135,7 +137,25 @@ class ComponentInteractionEvent extends InteractionEvent<ComponentInteraction> {
   @override
   int get _respondOpcode => 7;
 
-  ComponentInteractionEvent._new(Nyxx client, RawApiMap raw): super._new(client) {
-    this.interaction = ComponentInteraction._new(client, raw);
+  ComponentInteractionEvent._new(Nyxx client, RawApiMap raw): super._new(client);
+}
+
+/// Interaction event for button events
+class ButtonInteractionEvent extends ComponentInteractionEvent<ButtonInteraction> {
+  @override
+  late final ButtonInteraction interaction;
+
+  ButtonInteractionEvent._new(Nyxx client, RawApiMap raw): super._new(client, raw) {
+    this.interaction = ButtonInteraction._new(client, raw);
+  }
+}
+
+/// Interaction event for dropdown events
+class MultiselectInteractionEvent extends ComponentInteractionEvent<MultiselectInteraction> {
+  @override
+  late final MultiselectInteraction interaction;
+
+  MultiselectInteractionEvent._new(Nyxx client, RawApiMap raw): super._new(client, raw) {
+    this.interaction = MultiselectInteraction._new(client, raw);
   }
 }
