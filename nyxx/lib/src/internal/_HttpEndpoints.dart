@@ -294,6 +294,20 @@ abstract class IHttpEndpoints {
 
   /// Updates fields of an existing Stage instance.
   Future<StageChannelInstance> updateStageChannelInstance(Snowflake channelId, String topic, {StageChannelInstancePrivacyLevel? privacyLevel});
+
+  Future<StandardSticker> getSticker(Snowflake id);
+
+  Stream<StickerPack> listNitroStickerPacks();
+
+  Stream<GuildSticker> getGuildStickers(Snowflake guildId);
+
+  Future<GuildSticker> getGuildSticker(Snowflake guildId, Snowflake stickerId);
+
+  Future<GuildSticker> createGuildSticker(Snowflake guildId, StickerBuilder builder);
+
+  Future<GuildSticker> editGuildSticker(Snowflake guildId, Snowflake stickerId, StickerBuilder builder);
+
+  Future<void> deleteGuildSticker(Snowflake guildId, Snowflake stickerId);
 }
 
 class _HttpEndpoints implements IHttpEndpoints {
@@ -1672,6 +1686,94 @@ class _HttpEndpoints implements IHttpEndpoints {
 
     if (response is HttpResponseError) {
       return Future.error(response);
+    }
+  }
+
+  @override
+  Future<GuildSticker> createGuildSticker(Snowflake guildId, StickerBuilder builder) async {
+    final response = await _httpClient._execute(MultipartRequest._new(
+      "/guilds/$guildId/stickers",
+      []
+    ));
+
+    if (response is HttpResponseError) {
+      return Future.error(response);
+    }
+
+    return GuildSticker._new(response._jsonBody as RawApiMap, _client);
+  }
+
+  @override
+  Future<GuildSticker> editGuildSticker(Snowflake guildId, Snowflake stickerId, StickerBuilder builder) {
+    // TODO: implement editGuildSticker
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> deleteGuildSticker(Snowflake guildId, Snowflake stickerId) async {
+    final response = await _httpClient._execute(BasicRequest._new(
+        "/guilds/$guildId/stickers/$stickerId",
+        method: "DELETE"
+    ));
+
+    if (response is HttpResponseError) {
+      return Future.error(response);
+    }
+  }
+
+  @override
+  Future<GuildSticker> getGuildSticker(Snowflake guildId, Snowflake stickerId) async {
+    final response = await _httpClient._execute(BasicRequest._new(
+        "/guilds/$guildId/stickers/$stickerId",
+    ));
+
+    if (response is HttpResponseError) {
+      return Future.error(response);
+    }
+
+    return GuildSticker._new(response._jsonBody as RawApiMap, _client);
+  }
+
+  @override
+  Stream<GuildSticker> getGuildStickers(Snowflake guildId) async* {
+    final response = await _httpClient._execute(BasicRequest._new(
+      "/guilds/$guildId/stickers",
+    ));
+
+    if (response is HttpResponseError) {
+      yield* Stream.error(response);
+    }
+
+    for (final rawSticker in response._jsonBody) {
+      yield GuildSticker._new(rawSticker as RawApiMap, _client);
+    }
+  }
+
+  @override
+  Future<StandardSticker> getSticker(Snowflake id) async {
+    final response = await _httpClient._execute(BasicRequest._new(
+      "/stickers/$id",
+    ));
+
+    if (response is HttpResponseError) {
+      return Future.error(response);
+    }
+
+    return StandardSticker._new(response._jsonBody as RawApiMap);
+  }
+
+  @override
+  Stream<StickerPack> listNitroStickerPacks() async* {
+    final response = await _httpClient._execute(BasicRequest._new(
+      "/sticker-packs",
+    ));
+
+    if (response is HttpResponseError) {
+      yield* Stream.error(response);
+    }
+
+    for (final rawSticker in response._jsonBody) {
+      yield StickerPack._new(rawSticker as RawApiMap, _client);
     }
   }
 }

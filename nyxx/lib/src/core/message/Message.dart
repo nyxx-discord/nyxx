@@ -47,7 +47,7 @@ abstract class Message extends SnowflakeEntity implements Disposable, Convertabl
   String get url;
 
   /// The stickers sent with the message
-  late final Iterable<Sticker> stickers;
+  late final Iterable<StandardSticker> stickers;
 
   /// Message reply
   late final ReferencedMessage? referencedMessage;
@@ -89,7 +89,7 @@ abstract class Message extends SnowflakeEntity implements Disposable, Convertabl
     this.stickers = [
       if (raw["stickers"] != null)
         for (final rawSticker in raw["stickers"])
-          Sticker._new(rawSticker as RawApiMap)
+          StandardSticker._new(rawSticker as RawApiMap)
     ];
 
     if (raw["flags"] != null) {
