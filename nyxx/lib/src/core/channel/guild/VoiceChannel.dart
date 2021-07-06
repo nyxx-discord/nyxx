@@ -12,10 +12,6 @@ class VoiceGuildChannel extends GuildChannel {
     this.userLimit = raw["user_limit"] as int?;
   }
 
-  /// Edits channel properties
-  Future<VoiceGuildChannel> edit({String? name, int? bitrate, int? position, int? userLimit, String? auditReason}) =>
-      client.httpEndpoints.editVoiceChannel(this.id, name: name, bitrate: bitrate, position: position, userLimit: userLimit, auditReason: auditReason);
-
   /// Connects client to channel
   void connect({bool selfMute = false, bool selfDeafen = false}) {
     if (this.client is! Nyxx) {
