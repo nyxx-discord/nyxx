@@ -54,7 +54,7 @@ class MultiselectBuilder extends IComponentBuilder {
   final String customId;
 
   /// Max: 25
-  final List<MultiselectOptionBuilder> options;
+  final List<MultiselectOptionBuilder> options = [];
 
   /// Custom placeholder when nothing selected
   String? placeholder;
@@ -68,9 +68,13 @@ class MultiselectBuilder extends IComponentBuilder {
   int? maxValues;
 
   /// Creates instance of [MultiselectBuilder]
-  MultiselectBuilder(this.customId, [this.options = const []]) {
+  MultiselectBuilder(this.customId, [Iterable<MultiselectOptionBuilder>? options]) {
     if (this.customId.length > 100) {
       throw ArgumentError("Custom Id for Select cannot have more than 100 characters");
+    }
+
+    if (options != null) {
+      this.options.addAll(options);
     }
   }
 
