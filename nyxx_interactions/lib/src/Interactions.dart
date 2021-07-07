@@ -85,10 +85,11 @@ class Interactions {
         _groupSlashCommandBuilders(commandPartition.last);
 
     final globalBody = globalCommands
-      .where((builder) => builder.permissions.isNotEmpty)
+      .where((builder) => builder.permissions != null)
+      .where((builder) => builder.permissions!.isNotEmpty)
       .map((builder) => {
         "id": builder._id.toString(),
-        "permissions": [for (final permsBuilder in builder.permissions) permsBuilder.build()]
+        "permissions": [for (final permsBuilder in builder.permissions!) permsBuilder.build()]
       });
 
     await this
@@ -98,10 +99,11 @@ class Interactions {
 
     for (final entry in groupedGuildCommands.entries) {
       final guildBody = entry.value
-        .where((builder) => builder.permissions.isNotEmpty)
+          .where((builder) => builder.permissions != null)
+        .where((builder) => builder.permissions!.isNotEmpty)
         .map((builder) => {
           "id": builder._id.toString(),
-          "permissions": [for (final permsBuilder in builder.permissions) permsBuilder.build()]
+          "permissions": [for (final permsBuilder in builder.permissions!) permsBuilder.build()]
         });
 
       await this._client.httpEndpoints.sendRawRequest("/applications/${this._client.app.id}/guilds/${entry.key}/commands/permissions", "PUT", body: guildBody);
