@@ -85,8 +85,7 @@ class Interactions {
         _groupSlashCommandBuilders(commandPartition.last);
 
     final globalBody = globalCommands
-      .where((builder) => builder.permissions != null)
-      .where((builder) => builder.permissions!.isNotEmpty)
+      .where((builder) => builder.permissions != null && builder.permissions!.isNotEmpty)
       .map((builder) => {
         "id": builder._id.toString(),
         "permissions": [for (final permsBuilder in builder.permissions!) permsBuilder.build()]
@@ -100,8 +99,7 @@ class Interactions {
 
     for (final entry in groupedGuildCommands.entries) {
       final guildBody = entry.value
-        .where((builder) => builder.permissions != null)
-        .where((builder) => builder.permissions!.isNotEmpty)
+        .where((builder) => builder.permissions != null && builder.permissions!.isNotEmpty)
         .map((builder) => {
           "id": builder._id.toString(),
           "permissions": [for (final permsBuilder in builder.permissions!) permsBuilder.build()]
