@@ -87,7 +87,7 @@ class Interactions {
     final globalBody = globalCommands
       .where((builder) => builder.permissions.isNotEmpty)
       .map((builder) => {
-        "id": builder._id, 
+        "id": builder._id.toString(),
         "permissions": [for (final permsBuilder in builder.permissions) permsBuilder.build()]
       });
 
@@ -100,7 +100,7 @@ class Interactions {
       final guildBody = entry.value
         .where((builder) => builder.permissions.isNotEmpty)
         .map((builder) => {
-          "id": builder._id, 
+          "id": builder._id.toString(),
           "permissions": [for (final permsBuilder in builder.permissions) permsBuilder.build()]
         });
 
@@ -167,6 +167,9 @@ class Interactions {
         this._registerCommandHandlers(response, entry.value);
       }
     }
+
+    await this._syncPermissions();
+    this._logger.info("Finished bulk overriding permissions");
 
     this._commandBuilders.clear(); // Cleanup after registering command since we don't need this anymore
     this._logger.info("Finished bulk overriding slash commands");
