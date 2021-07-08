@@ -49,7 +49,7 @@ class BasicRequest extends _HttpRequest {
 
     return this._client.send(request);
   }
-  
+
   Map<String, String> _getJsonContentTypeHeader() => {
     "Content-Type" : "application/json"
   };
@@ -58,7 +58,7 @@ class BasicRequest extends _HttpRequest {
 /// Request with which files will be sent. Cannot contain request body.
 class MultipartRequest extends _HttpRequest {
   /// Files which will be sent
-  final List<AttachmentBuilder> files;
+  final List<http.MultipartFile> files;
 
   /// Additional data to sent
   final RawApiMap? fields;
@@ -72,9 +72,7 @@ class MultipartRequest extends _HttpRequest {
     final request = http.MultipartRequest(this.method, this.uri.replace(queryParameters: queryParams))
       ..headers.addAll(_genHeaders());
 
-    for (final file in this.files) {
-      request.files.add(file._asMultipartFile());
-    }
+    request.files.addAll(this.files);
 
     if (this.fields != null) {
       request.fields.addAll({"payload_json": jsonEncode(this.fields)});

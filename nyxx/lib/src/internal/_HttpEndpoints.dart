@@ -985,7 +985,7 @@ class _HttpEndpoints implements IHttpEndpoints {
     _HttpResponse response;
     if (builder._hasFiles()) {
       response = await _httpClient._execute(MultipartRequest._new(
-          "/channels/$channelId/messages", builder.files!,
+          "/channels/$channelId/messages", builder.files!.map((e) => e._asMultipartFile()).toList(),
           method: "POST", fields: builder.build(_client)));
     } else {
       response = await _httpClient._execute(BasicRequest._new(
@@ -1396,7 +1396,7 @@ class _HttpEndpoints implements IHttpEndpoints {
 
     if (files != null && files.isNotEmpty) {
       response = await _httpClient._execute(MultipartRequest._new(
-          "/webhooks/$webhookId/$token", files,
+          "/webhooks/$webhookId/$token", files.map((e) => e._asMultipartFile()).toList(),
           method: "POST", fields: reqBody, queryParams: queryParams));
     } else {
       response = await _httpClient._execute(BasicRequest._new(
@@ -1693,7 +1693,9 @@ class _HttpEndpoints implements IHttpEndpoints {
   Future<GuildSticker> createGuildSticker(Snowflake guildId, StickerBuilder builder) async {
     final response = await _httpClient._execute(MultipartRequest._new(
       "/guilds/$guildId/stickers",
-      []
+      [builder._multipartFile],
+      fields: builder.build(),
+      method: "POST"
     ));
 
     if (response is HttpResponseError) {
@@ -1704,9 +1706,17 @@ class _HttpEndpoints implements IHttpEndpoints {
   }
 
   @override
-  Future<GuildSticker> editGuildSticker(Snowflake guildId, Snowflake stickerId, StickerBuilder builder) {
-    // TODO: implement editGuildSticker
-    throw UnimplementedError();
+  Future<GuildSticker> editGuildSticker(Snowflake guildId, Snowflake stickerId, StickerBuilder builder) async {
+    final response = await _httpClient._execute(BasicRequest._new(
+        "/guilds/$guildId/stickers/$stickerId",
+        method: "PATCH"
+    ));
+
+    if (response is HttpResponseError) {
+      return Future.error(response);
+    }
+
+    return GuildSticker._new(response._jsonBody as RawApiMap, _client);
   }
 
   @override
