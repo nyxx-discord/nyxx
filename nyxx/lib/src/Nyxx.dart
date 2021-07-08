@@ -318,13 +318,16 @@ class Nyxx extends NyxxRest {
   /// Fired when a thread gets deleted
   late Stream<ThreadDeletedEvent> onThreadDelete;
   /// Emitted when stage channel instance is created
-  late Stream<StageInstanceEvent>  onStageInstanceCreate;
+  late Stream<StageInstanceEvent> onStageInstanceCreate;
 
   /// Emitted when stage channel instance is updated
-  late Stream<StageInstanceEvent>  onStageInstanceUpdate;
+  late Stream<StageInstanceEvent> onStageInstanceUpdate;
 
   /// Emitted when stage channel instance is deleted
-  late Stream<StageInstanceEvent>  onStageInstanceDelete;
+  late Stream<StageInstanceEvent> onStageInstanceDelete;
+
+  /// Emitted when stage channel instance is deleted
+  late Stream<GuildStickerUpdate> onGuildStickersUpdate;
 
   /// Creates and logs in a new client. If [ignoreExceptions] is true (by default is)
   /// isolate will ignore all exceptions and continue to work.

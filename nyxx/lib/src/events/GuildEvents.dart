@@ -248,3 +248,20 @@ class RoleUpdateEvent {
     }
   }
 }
+
+/// Sent when a guild's stickers have been updated.
+class GuildStickerUpdate {
+  /// Cacheable of guild where stickers changed
+  late final Cacheable<Snowflake, Guild> guild;
+
+  /// List of stickers
+  late final List<GuildSticker> stickers;
+
+  GuildStickerUpdate._new(RawApiMap raw, Nyxx client) {
+    this.guild = _GuildCacheable(client, Snowflake(raw["d"]["guild_id"]));
+    this.stickers = [
+      for (final rawSticker in raw["d"]["stickers"])
+          GuildSticker._new(rawSticker as RawApiMap, client)
+    ];
+  }
+}

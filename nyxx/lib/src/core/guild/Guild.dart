@@ -96,6 +96,9 @@ class Guild extends SnowflakeEntity {
   /// Nsfw level of guild
   late final GuildNsfwLevel guildNsfwLevel;
 
+  /// Stickers of this guild
+  late final Iterable<GuildSticker> stickers;
+
   /// Returns url to this guild.
   String get url => "https://discordapp.com/channels/${this.id.toString()}";
 
@@ -199,6 +202,12 @@ class Guild extends SnowflakeEntity {
     this.voiceStates = _SnowflakeCache();
 
     this.guildNsfwLevel = GuildNsfwLevel.from(raw["nsfw_level"] as int);
+
+    this.stickers = [
+      if (raw["stickers"] != null)
+        for (final rawSticker in raw["stickers"])
+          GuildSticker._new(rawSticker as RawApiMap, client)
+    ];
 
     if (!guildCreate) return;
 
