@@ -16,6 +16,9 @@ abstract class ISticker implements SnowflakeEntity {
 }
 
 class GuildSticker extends SnowflakeEntity implements ISticker {
+  /// Reference to [INyxx]
+  final INyxx client;
+
   @override
   late final String name;
 
@@ -40,7 +43,7 @@ class GuildSticker extends SnowflakeEntity implements ISticker {
   /// User that uploaded the guild sticker
   late final User? user;
 
-  GuildSticker._new(RawApiMap raw, INyxx client) : super(Snowflake(raw["id"])) {
+  GuildSticker._new(RawApiMap raw, this.client) : super(Snowflake(raw["id"])) {
     this.name = raw["name"] as String;
     this.description = raw["description"] as String;
     this.format = StickerFormat.from(raw["format_type"] as int);
@@ -55,6 +58,14 @@ class GuildSticker extends SnowflakeEntity implements ISticker {
       this.user = null;
     }
   }
+
+  /// Edits current sticker
+  Future<GuildSticker> edit(StickerBuilder builder) =>
+      client.httpEndpoints.editGuildSticker(this.guild.id, this.id, builder);
+
+  /// Removed current sticker
+  Future<void> delete() =>
+      client.httpEndpoints.deleteGuildSticker(this.guild.id, this.id);
 }
 
 /// Animated (or not) image like emoji

@@ -279,6 +279,18 @@ class Guild extends SnowflakeEntity {
   String guildWidgetUrl([String style = "shield"]) =>
       client.httpEndpoints.getGuildWidgetUrl(this.id, style);
 
+  /// Fetches all stickers of current guild
+  Stream<GuildSticker> fetchStickers() =>
+      client.httpEndpoints.fetchGuildStickers(this.id);
+
+  /// Fetch sticker with given [id]
+  Future<GuildSticker> fetchSticker(Snowflake id) =>
+      client.httpEndpoints.fetchGuildSticker(this.id, id);
+
+  /// Creates sticker in current guild
+  Future<GuildSticker> createSticker(StickerBuilder builder) =>
+      client.httpEndpoints.createGuildSticker(this.id, builder);
+
   /// Fetches emoji from API
   Future<IGuildEmoji> fetchEmoji(Snowflake emojiId) =>
       client.httpEndpoints.fetchGuildEmoji(this.id, emojiId);

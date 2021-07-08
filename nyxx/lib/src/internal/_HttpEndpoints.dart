@@ -299,9 +299,9 @@ abstract class IHttpEndpoints {
 
   Stream<StickerPack> listNitroStickerPacks();
 
-  Stream<GuildSticker> getGuildStickers(Snowflake guildId);
+  Stream<GuildSticker> fetchGuildStickers(Snowflake guildId);
 
-  Future<GuildSticker> getGuildSticker(Snowflake guildId, Snowflake stickerId);
+  Future<GuildSticker> fetchGuildSticker(Snowflake guildId, Snowflake stickerId);
 
   Future<GuildSticker> createGuildSticker(Snowflake guildId, StickerBuilder builder);
 
@@ -1732,7 +1732,7 @@ class _HttpEndpoints implements IHttpEndpoints {
   }
 
   @override
-  Future<GuildSticker> getGuildSticker(Snowflake guildId, Snowflake stickerId) async {
+  Future<GuildSticker> fetchGuildSticker(Snowflake guildId, Snowflake stickerId) async {
     final response = await _httpClient._execute(BasicRequest._new(
         "/guilds/$guildId/stickers/$stickerId",
     ));
@@ -1745,7 +1745,7 @@ class _HttpEndpoints implements IHttpEndpoints {
   }
 
   @override
-  Stream<GuildSticker> getGuildStickers(Snowflake guildId) async* {
+  Stream<GuildSticker> fetchGuildStickers(Snowflake guildId) async* {
     final response = await _httpClient._execute(BasicRequest._new(
       "/guilds/$guildId/stickers",
     ));

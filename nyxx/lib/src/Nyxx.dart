@@ -418,6 +418,14 @@ class Nyxx extends NyxxRest {
   Future<void> joinThread(Snowflake channelId) =>
       this.httpEndpoints.joinThread(channelId);
 
+  /// Gets standard sticker with given id
+  Future<StandardSticker> getSticker(Snowflake id) =>
+      this.httpEndpoints.getSticker(id);
+
+  /// List all nitro stickers packs
+  Stream<StickerPack> listNitroStickerPacks() =>
+      this.httpEndpoints.listNitroStickerPacks();
+
   @override
   Future<void> dispose() async {
     this._logger.info("Disposing and closing bot...");
