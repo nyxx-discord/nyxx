@@ -244,15 +244,14 @@ abstract class IHttpEndpoints {
       String? encodedExtension,
       String? auditReason});
 
-  Future<Message> executeWebhook(Snowflake webhookId,
-      {String token = "",
-      dynamic content,
-      List<AttachmentBuilder>? files,
-      List<EmbedBuilder>? embeds,
-      bool? tts,
-      AllowedMentions? allowedMentions,
-      bool? wait,
-      String? avatarUrl});
+  Future<Message> executeWebhook(
+      Snowflake webhookId,
+      MessageBuilder builder,
+      {String? token,
+        bool? wait,
+        String? avatarUrl,
+        String? username,
+        Snowflake? threadId});
 
   Future<Webhook> fetchWebhook(Snowflake id, {String token = ""});
 
@@ -264,13 +263,16 @@ abstract class IHttpEndpoints {
 
   Future<DMChannel> createDMChannel(Snowflake userId);
 
-  /// Used to send a request including the bot token header.
+  /// Used to send a request including standard bot authentication.
   Future<_HttpResponse> sendRawRequest(String url, String method, {dynamic body, dynamic headers});
 
+  /// Fetches preview of guild
   Future<GuildPreview> fetchGuildPreview(Snowflake guildId);
 
+  /// Allows to create guild channel.
   Future<IChannel> createGuildChannel(Snowflake guildId, ChannelBuilder channelBuilder);
 
+  /// Deletes guild channel
   Future<void> deleteChannel(Snowflake channelId);
 
   /// Gets the stage instance associated with the Stage channel, if it exists.
@@ -576,8 +578,7 @@ class _HttpEndpoints implements IHttpEndpoints {
   }
 
   @override
-  Future<Guild> changeGuildOwner(Snowflake guildId, SnowflakeEntity member,
-      {String? auditReason}) async {
+  Future<Guild> changeGuildOwner(Snowflake guildId, SnowflakeEntity member, {String? auditReason}) async {
     final response = await _httpClient._execute(BasicRequest._new(
         "/guilds/$guildId",
         method: "PATCH",
@@ -1325,30 +1326,28 @@ class _HttpEndpoints implements IHttpEndpoints {
   }
 
   @override
-  Future<Message> executeWebhook(Snowflake webhookId,
-      {String token = "",
-      dynamic content,
-      List<AttachmentBuilder>? files,
-      List<EmbedBuilder>? embeds,
-      bool? tts,
-      AllowedMentions? allowedMentions,
+  Future<Message> executeWebhook(
+      Snowflake webhookId,
+      MessageBuilder builder,
+      {String? token,
       bool? wait,
-      String? avatarUrl}) async {
-    allowedMentions ??= _client._options.allowedMentions;
+      String? avatarUrl,
+      String? username,
+      Snowflake? threadId}) async {
 
-    final reqBody = {
-      if (content != null) "content": content.toString(),
-      if (allowedMentions != null) "allowed_mentions": allowedMentions.build(),
-      if (embeds != null) "embeds": [for (final e in embeds) e.build()],
-      if (content != null && tts != null) "tts": tts,
-      if (avatarUrl != null) "avatar_url": avatarUrl,
+    final queryParams = {
+      if (wait != null) "wait": wait,
+      if (threadId != null) "thread_id": threadId
     };
 
-    final queryParams = {if (wait != null) "wait": wait};
+    final body = {
+      ...builder.build(_client),
+      if (avatarUrl != null) "avatar_url": avatarUrl,
+      if (username != null) "username": username,
+    };
 
     _HttpResponse response;
-
-    if (files != null && files.isNotEmpty) {
+    if (builder.files != null && builder.files!.isNotEmpty) {
       response = await _httpClient._execute(MultipartRequest._new(
           "/webhooks/$webhookId/$token",
           builder.files!.map((e) => e._asMultipartFile()).toList(),
@@ -1359,7 +1358,7 @@ class _HttpEndpoints implements IHttpEndpoints {
     } else {
       response = await _httpClient._execute(BasicRequest._new(
           "/webhooks/$webhookId/$token",
-          body: reqBody,
+          body: body,
           method: "POST",
           queryParams: queryParams));
     }
