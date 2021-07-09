@@ -287,18 +287,25 @@ abstract class IHttpEndpoints {
 
   Future<T> editGuildChannel<T extends GuildChannel>(Snowflake channelId, ChannelBuilder builder, {String? auditReason});
 
+  /// Returns single nitro sticker
   Future<StandardSticker> getSticker(Snowflake id);
 
+  /// Returns all nitro sticker packs
   Stream<StickerPack> listNitroStickerPacks();
 
+  /// Fetches all [GuildSticker]s in given [Guild]
   Stream<GuildSticker> fetchGuildStickers(Snowflake guildId);
 
+  /// Fetches [GuildSticker]
   Future<GuildSticker> fetchGuildSticker(Snowflake guildId, Snowflake stickerId);
 
+  /// Creates [GuildSticker] in given [Guild]
   Future<GuildSticker> createGuildSticker(Snowflake guildId, StickerBuilder builder);
 
+  /// Edits [GuildSticker]. Only allows to update sticker metadata
   Future<GuildSticker> editGuildSticker(Snowflake guildId, Snowflake stickerId, StickerBuilder builder);
 
+  /// Deletes [GuildSticker] for [Guild]
   Future<void> deleteGuildSticker(Snowflake guildId, Snowflake stickerId);
 }
 
@@ -1343,8 +1350,12 @@ class _HttpEndpoints implements IHttpEndpoints {
 
     if (files != null && files.isNotEmpty) {
       response = await _httpClient._execute(MultipartRequest._new(
-          "/webhooks/$webhookId/$token", files.map((e) => e._asMultipartFile()).toList(),
-          method: "POST", fields: reqBody, queryParams: queryParams));
+          "/webhooks/$webhookId/$token",
+          builder.files!.map((e) => e._asMultipartFile()).toList(),
+          method: "POST",
+          fields: body,
+          queryParams: queryParams)
+       );
     } else {
       response = await _httpClient._execute(BasicRequest._new(
           "/webhooks/$webhookId/$token",
