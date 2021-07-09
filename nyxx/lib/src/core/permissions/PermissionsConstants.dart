@@ -2,7 +2,7 @@ part of nyxx;
 
 /// Permissions constants
 class PermissionsConstants {
-  /// Allows to create instnt invite
+  /// Allows to create instant invite
   static const int createInstantInvite = 1 << 0;
 
   /// Allows to kick members
@@ -28,6 +28,9 @@ class PermissionsConstants {
 
   /// Allows for using priority speaker in a voice channel
   static const int prioritySpeaker = 1 << 8;
+
+  /// Allows the user to go live
+  static const int stream = 1 << 9;
 
   /// Allows guild members to view a channel, which includes reading messages in text channels
   static const int viewChannel = 1 << 10;
@@ -55,6 +58,9 @@ class PermissionsConstants {
 
   /// Allows the usage of custom emojis from other servers
   static const int externalEmojis = 1 << 18;
+
+  /// Allows for viewing guild insights
+  static const int viewGuildInsights = 1 << 19;
 
   /// Allows for joining of a voice channel
   static const int connect = 1 << 20;
@@ -89,12 +95,6 @@ class PermissionsConstants {
   /// Allows management and editing of emojis
   static const int manageEmojis = 1 << 30;
 
-  /// Allows the user to go live
-  static const int stream = 1 << 9;
-
-  /// Allows for viewing guild insights
-  static const int viewGuildInsights = 1 << 19;
-
   /// Allows members to use slash commands in text channels
   static const int useSlashCommands = 1 << 31;
 
@@ -111,6 +111,5 @@ class PermissionsConstants {
   static const int usePrivateThreads = 1 << 36;
 
   /// All of the permissions
-  @Deprecated("Needs to be updated")
-  static const int allPermissions = 0x7FFFFFFF;
+  static int get allPermissions => int.parse("1".padRight(37, "1"), radix: 2);
 }

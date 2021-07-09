@@ -318,13 +318,16 @@ class Nyxx extends NyxxRest {
   /// Fired when a thread gets deleted
   late Stream<ThreadDeletedEvent> onThreadDelete;
   /// Emitted when stage channel instance is created
-  late Stream<StageInstanceEvent>  onStageInstanceCreate;
+  late Stream<StageInstanceEvent> onStageInstanceCreate;
 
   /// Emitted when stage channel instance is updated
-  late Stream<StageInstanceEvent>  onStageInstanceUpdate;
+  late Stream<StageInstanceEvent> onStageInstanceUpdate;
 
   /// Emitted when stage channel instance is deleted
-  late Stream<StageInstanceEvent>  onStageInstanceDelete;
+  late Stream<StageInstanceEvent> onStageInstanceDelete;
+
+  /// Emitted when stage channel instance is deleted
+  late Stream<GuildStickerUpdate> onGuildStickersUpdate;
 
   /// Creates and logs in a new client. If [ignoreExceptions] is true (by default is)
   /// isolate will ignore all exceptions and continue to work.
@@ -414,6 +417,14 @@ class Nyxx extends NyxxRest {
   /// Join [ThreadChannel] with given [channelId]
   Future<void> joinThread(Snowflake channelId) =>
       this.httpEndpoints.joinThread(channelId);
+
+  /// Gets standard sticker with given id
+  Future<StandardSticker> getSticker(Snowflake id) =>
+      this.httpEndpoints.getSticker(id);
+
+  /// List all nitro stickers packs
+  Stream<StickerPack> listNitroStickerPacks() =>
+      this.httpEndpoints.listNitroStickerPacks();
 
   @override
   Future<void> dispose() async {
