@@ -163,13 +163,6 @@ abstract class IHttpEndpoints {
   Stream<Message> downloadMessages(Snowflake channelId,
       {int limit = 50, Snowflake? after, Snowflake? before, Snowflake? around});
 
-  Future<VoiceGuildChannel> editVoiceChannel(Snowflake channelId,
-      {String? name,
-      int? bitrate,
-      int? position,
-      int? userLimit,
-      String? auditReason});
-
   Future<Webhook> createWebhook(Snowflake channelId, String name,
       {File? avatarFile,
       List<int>? avatarBytes,
@@ -178,9 +171,6 @@ abstract class IHttpEndpoints {
       String? auditReason});
 
   Stream<Message> fetchPinnedMessages(Snowflake channelId);
-
-  Future<TextGuildChannel> editTextChannel(Snowflake channelId,
-      {String? name, String? topic, int? position, int? slowModeThreshold});
 
   Future<void> triggerTyping(Snowflake channelId);
 
@@ -294,6 +284,8 @@ abstract class IHttpEndpoints {
 
   /// Updates fields of an existing Stage instance.
   Future<StageChannelInstance> updateStageChannelInstance(Snowflake channelId, String topic, {StageChannelInstancePrivacyLevel? privacyLevel});
+
+  Future<T> editGuildChannel<T extends GuildChannel>(Snowflake channelId, ChannelBuilder builder, {String? auditReason});
 
   Future<StandardSticker> getSticker(Snowflake id);
 
@@ -1052,32 +1044,15 @@ class _HttpEndpoints implements IHttpEndpoints {
   }
 
   @override
-  Future<VoiceGuildChannel> editVoiceChannel(Snowflake channelId,
-      {String? name,
-      int? bitrate,
-      int? position,
-      int? userLimit,
-      String? auditReason}) async {
-    final body = <String, dynamic>{
-      if (name != null) "name": name,
-      if (bitrate != null) "bitrate": bitrate,
-      if (userLimit != null) "user_limit": userLimit,
-      if (position != null) "position": position,
-    };
-
-    if (body.isEmpty) {
-      return Future.error(ArgumentError("Cannot edit channel with empty body"));
-    }
-
+  Future<T> editGuildChannel<T extends GuildChannel>(Snowflake channelId, ChannelBuilder builder, {String? auditReason}) async {
     final response = await _httpClient._execute(BasicRequest._new(
         "/channels/$channelId",
         method: "PATCH",
-        body: body,
+        body: builder.build(),
         auditLog: auditReason));
 
     if (response is HttpResponseSuccess) {
-      return VoiceGuildChannel._new(
-          _client, response.jsonBody as RawApiMap);
+      return IChannel._deserialize(_client, response.jsonBody as RawApiMap) as T;
     }
 
     return Future.error(response);
@@ -1133,34 +1108,6 @@ class _HttpEndpoints implements IHttpEndpoints {
         as Iterable<RawApiMap>) {
       yield Message._deserialize(_client, val);
     }
-  }
-
-  @override
-  Future<TextGuildChannel> editTextChannel(Snowflake channelId,
-      {String? name,
-      String? topic,
-      int? position,
-      int? slowModeThreshold}) async {
-    final body = <String, dynamic>{
-      if (name != null) "name": name,
-      if (topic != null) "topic": topic,
-      if (position != null) "position": position,
-      if (slowModeThreshold != null) "rate_limit_per_user": slowModeThreshold,
-    };
-
-    if (body.isEmpty) {
-      return Future.error(ArgumentError("Cannot edit channel with empty body"));
-    }
-
-    final response = await _httpClient._execute(
-        BasicRequest._new("/channels/$channelId", method: "PATCH", body: body));
-
-    if (response is HttpResponseSuccess) {
-      return TextGuildChannel._new(
-          _client, response.jsonBody as RawApiMap);
-    }
-
-    return Future.error(response);
   }
 
   @override

@@ -92,11 +92,11 @@ abstract class ComponentInteraction extends Interaction {
   String get customId;
 
   /// The message that the button was pressed on.
-  late final Message message;
+  late final Cacheable<Snowflake, Message> message;
 
   ComponentInteraction._new(Nyxx client, RawApiMap raw): super._new(client, raw) {
     // Discord doesn't include guild's id in the message object even if its a guild message but is included in the data so its been added to the object so that guild message can be used if the interaction is from a guild.
-    this.message = EntityUtility.createMessage(this._client, {...raw["message"] as RawApiMap, if(raw["guild_id"] != null) "guild_id": raw["guild_id"]});
+    this.message = CacheUtility.createCacheableMessage(client, Snowflake(raw["message"]["id"]), this.channel);
   }
 }
 

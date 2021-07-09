@@ -4,6 +4,8 @@ class _HttpHandler {
   final RegExp _bucketRegexp = RegExp(r"\/(channels|guilds)\/(\d+)");
   final RegExp _bucketReactionsRegexp =
       RegExp(r"\/channels/(\d+)\/messages\/(\d+)\/reactions");
+  final RegExp _bucketCommandPermissions =
+      RegExp(r"\/applications/(\d+)\/guilds\/(\d+)\/commands/permissions");
 
   final List<_HttpBucket> _buckets = [];
   late final _HttpBucket _noRateBucket;
@@ -37,6 +39,16 @@ class _HttpHandler {
       final bucketMessageId = reactionsRegexMatch.group(2);
 
       return this._findBucketById("reactions/$bucketMajorId/$bucketMessageId");
+    }
+
+    final commandPermissionRegexMatch =
+        _bucketCommandPermissions.firstMatch(request.uri.toString());
+
+    if (commandPermissionRegexMatch != null) {
+      final bucketMajorId = commandPermissionRegexMatch.group(1);
+      final bucketMessageId = commandPermissionRegexMatch.group(2);
+
+      return this._findBucketById("commands/permissions/$bucketMajorId/$bucketMessageId");
     }
 
     final bucketRegexMatch = _bucketRegexp.firstMatch(request.uri.toString());

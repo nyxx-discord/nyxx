@@ -22,14 +22,14 @@ class SlashCommandBuilder extends Builder {
   List<CommandOptionBuilder> options;
 
   /// Permission overrides for the command
-  final List<ICommandPermissionBuilder> permissions = [];
+  List<ICommandPermissionBuilder>? permissions;
 
   /// Handler for SlashCommandBuilder
   SlashCommandHandler? _handler;
 
   /// A slash command, can only be instantiated through a method on [Interactions]
   SlashCommandBuilder(this.name, this.description, this.options,
-      {this.defaultPermisions = true, this.guild}) {
+      {this.defaultPermisions = true, this.permissions, this.guild}) {
     if (!slashCommandNameRegex.hasMatch(this.name)) {
       throw ArgumentError(
           "Command name has to match regex: ${slashCommandNameRegex.pattern}");
@@ -48,8 +48,13 @@ class SlashCommandBuilder extends Builder {
   void _setId(Snowflake id) => this._id = id;
 
   /// Register a permission
-  void addPermission(ICommandPermissionBuilder permission) =>
-      this.permissions.add(permission);
+  void addPermission(ICommandPermissionBuilder permission) {
+    if(this.permissions == null) {
+      this.permissions = [];
+    }
+    this.permissions!.add(permission);
+  }
+
 
   /// Registers handler for command. Note command cannot have handler if there are options present
   void registerHandler(SlashCommandHandler handler) {

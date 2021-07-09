@@ -93,7 +93,7 @@ class MessageMultiselectOption {
     }  else {
       this.emoji = null;
     }
-    this.isDefault = raw["default"] as bool;
+    this.isDefault = raw["default"] as bool? ?? false;
   }
 }
 
