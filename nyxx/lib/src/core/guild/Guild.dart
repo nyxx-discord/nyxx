@@ -287,6 +287,10 @@ class Guild extends SnowflakeEntity {
   Future<GuildSticker> fetchSticker(Snowflake id) =>
       client.httpEndpoints.fetchGuildSticker(this.id, id);
 
+  /// Fetches all roles that are in the server.
+  Stream<Role> fetchRoles() =>
+      client.httpEndpoints.fetchGuildRoles(this.id);
+
   /// Creates sticker in current guild
   Future<GuildSticker> createSticker(StickerBuilder builder) =>
       client.httpEndpoints.createGuildSticker(this.id, builder);
