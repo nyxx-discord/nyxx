@@ -288,7 +288,6 @@ class Guild extends SnowflakeEntity {
       client.httpEndpoints.fetchGuildSticker(this.id, id);
 
   /// Fetches all roles that are in the server.
-  /// To get a single file use .firstWhere()
   Stream<Role> fetchRoles() =>
       client.httpEndpoints.fetchGuildRoles(this.id);
 
