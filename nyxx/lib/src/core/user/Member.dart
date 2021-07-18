@@ -110,12 +110,12 @@ class Member extends SnowflakeEntity implements Mentionable {
   }
 
   /// Returns url to member avatar
-  String? avatarURL({String format = "webp", int size = 128}) {
+  String? avatarURL({String format = "webp"}) {
     if(this.avatarHash == null) {
       return null;
     }
 
-    return this.client.httpEndpoints.memberAvatarURL(this.id, this.guild.id, this.avatarHash!);
+    return this.client.httpEndpoints.memberAvatarURL(this.id, this.guild.id, this.avatarHash!, format: format);
   }
 
   /// Bans the member and optionally deletes [deleteMessageDays] days worth of messages.
