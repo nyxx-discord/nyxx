@@ -44,6 +44,8 @@ class Shard implements Disposable {
   bool _heartbeatAckReceived = true; // True if last heartbeat was acked
 
   Shard._new(this.id, this.manager, String gatewayUrl) {
+    this.manager._logger.finer("Starting shard with id: $id; url: $gatewayUrl");
+
     this._receivePort = ReceivePort();
     this._receiveStream = _receivePort.asBroadcastStream();
     this._isolateSendPort = _receivePort.sendPort;
@@ -59,7 +61,9 @@ class Shard implements Disposable {
 
   /// Sends WS data.
   void send(int opCode, dynamic d) {
-    this._sendPort.send({"cmd": "SEND", "data" : {"op": opCode, "d": d}});
+    final rawData = {"cmd": "SEND", "data" : {"op": opCode, "d": d}};
+    this.manager._logger.finest("Sending to shard isolate on shard [${this.id}]: [$rawData]");
+    this._sendPort.send(rawData);
   }
 
   /// Updates clients voice state for [Guild] with given [guildId]
@@ -152,6 +156,7 @@ class Shard implements Disposable {
         exit(1);
       case 4007:
       case 4009:
+      case 1001:
         _reconnect();
         break;
       default:
@@ -175,6 +180,8 @@ class Shard implements Disposable {
   }
 
   Future<void> _handle(dynamic rawData) async {
+    this.manager._logger.finest("Received gateway payload on shard [${this.id}]: [$rawData]");
+
     if(rawData["cmd"] == "CONNECT_ACK") {
       manager._logger.info("Shard $id connected to gateway!");
 
@@ -191,10 +198,6 @@ class Shard implements Disposable {
     }
 
     final discordPayload = rawData["jsonData"] as RawApiMap;
-
-    if (discordPayload["op"] == OPCodes.dispatch && manager._ws._client._options.ignoredEvents.contains(discordPayload["t"] as String)) {
-      return;
-    }
 
     if (discordPayload["s"] != null) {
       this._sequence = discordPayload["s"] as int;
@@ -230,12 +233,12 @@ class Shard implements Disposable {
 
           this.send(OPCodes.identify, identifyMsg);
         } else if (_resume) {
-          this.send(OPCodes.resume,
-              <String, dynamic>{"token": manager._ws._client._token, "session_id": this._sessionId, "seq": this._sequence});
+          this.send(OPCodes.resume, <String, dynamic>{"token": manager._ws._client._token, "session_id": this._sessionId, "seq": this._sequence});
         }
 
-        this._heartbeatTimer = Timer.periodic(
-            Duration(milliseconds: rawPayload["d"]["heartbeat_interval"] as int), (Timer t) => this._heartbeat());
+        Future.delayed(const Duration(milliseconds: 100), () {
+          this._heartbeatTimer = Timer.periodic(Duration(milliseconds: rawPayload["d"]["heartbeat_interval"] as int), (Timer t) => this._heartbeat());
+        });
         break;
       case OPCodes.invalidSession:
         manager._logger.severe("Invalid session on shard $id. ${(rawPayload["d"] as bool) ? "Resuming..." : "Reconnecting..."}");

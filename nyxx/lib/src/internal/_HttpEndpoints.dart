@@ -165,13 +165,6 @@ abstract class IHttpEndpoints {
   Stream<Message> downloadMessages(Snowflake channelId,
       {int limit = 50, Snowflake? after, Snowflake? before, Snowflake? around});
 
-  Future<VoiceGuildChannel> editVoiceChannel(Snowflake channelId,
-      {String? name,
-      int? bitrate,
-      int? position,
-      int? userLimit,
-      String? auditReason});
-
   Future<Webhook> createWebhook(Snowflake channelId, String name,
       {File? avatarFile,
       List<int>? avatarBytes,
@@ -180,9 +173,6 @@ abstract class IHttpEndpoints {
       String? auditReason});
 
   Stream<Message> fetchPinnedMessages(Snowflake channelId);
-
-  Future<TextGuildChannel> editTextChannel(Snowflake channelId,
-      {String? name, String? topic, int? position, int? slowModeThreshold});
 
   Future<void> triggerTyping(Snowflake channelId);
 
@@ -256,15 +246,14 @@ abstract class IHttpEndpoints {
       String? encodedExtension,
       String? auditReason});
 
-  Future<Message> executeWebhook(Snowflake webhookId,
-      {String token = "",
-      dynamic content,
-      List<AttachmentBuilder>? files,
-      List<EmbedBuilder>? embeds,
-      bool? tts,
-      AllowedMentions? allowedMentions,
-      bool? wait,
-      String? avatarUrl});
+  Future<Message> executeWebhook(
+      Snowflake webhookId,
+      MessageBuilder builder,
+      {String? token,
+        bool? wait,
+        String? avatarUrl,
+        String? username,
+        Snowflake? threadId});
 
   Future<Webhook> fetchWebhook(Snowflake id, {String token = ""});
 
@@ -276,13 +265,16 @@ abstract class IHttpEndpoints {
 
   Future<DMChannel> createDMChannel(Snowflake userId);
 
-  /// Used to send a request including the bot token header.
+  /// Used to send a request including standard bot authentication.
   Future<_HttpResponse> sendRawRequest(String url, String method, {dynamic body, dynamic headers});
 
+  /// Fetches preview of guild
   Future<GuildPreview> fetchGuildPreview(Snowflake guildId);
 
+  /// Allows to create guild channel.
   Future<IChannel> createGuildChannel(Snowflake guildId, ChannelBuilder channelBuilder);
 
+  /// Deletes guild channel
   Future<void> deleteChannel(Snowflake channelId);
 
   /// Gets the stage instance associated with the Stage channel, if it exists.
@@ -296,6 +288,29 @@ abstract class IHttpEndpoints {
 
   /// Updates fields of an existing Stage instance.
   Future<StageChannelInstance> updateStageChannelInstance(Snowflake channelId, String topic, {StageChannelInstancePrivacyLevel? privacyLevel});
+
+  Future<T> editGuildChannel<T extends GuildChannel>(Snowflake channelId, ChannelBuilder builder, {String? auditReason});
+
+  /// Returns single nitro sticker
+  Future<StandardSticker> getSticker(Snowflake id);
+
+  /// Returns all nitro sticker packs
+  Stream<StickerPack> listNitroStickerPacks();
+
+  /// Fetches all [GuildSticker]s in given [Guild]
+  Stream<GuildSticker> fetchGuildStickers(Snowflake guildId);
+
+  /// Fetches [GuildSticker]
+  Future<GuildSticker> fetchGuildSticker(Snowflake guildId, Snowflake stickerId);
+
+  /// Creates [GuildSticker] in given [Guild]
+  Future<GuildSticker> createGuildSticker(Snowflake guildId, StickerBuilder builder);
+
+  /// Edits [GuildSticker]. Only allows to update sticker metadata
+  Future<GuildSticker> editGuildSticker(Snowflake guildId, Snowflake stickerId, StickerBuilder builder);
+
+  /// Deletes [GuildSticker] for [Guild]
+  Future<void> deleteGuildSticker(Snowflake guildId, Snowflake stickerId);
 }
 
 class _HttpEndpoints implements IHttpEndpoints {
@@ -565,8 +580,7 @@ class _HttpEndpoints implements IHttpEndpoints {
   }
 
   @override
-  Future<Guild> changeGuildOwner(Snowflake guildId, SnowflakeEntity member,
-      {String? auditReason}) async {
+  Future<Guild> changeGuildOwner(Snowflake guildId, SnowflakeEntity member, {String? auditReason}) async {
     final response = await _httpClient._execute(BasicRequest._new(
         "/guilds/$guildId",
         method: "PATCH",
@@ -973,7 +987,7 @@ class _HttpEndpoints implements IHttpEndpoints {
     _HttpResponse response;
     if (builder._hasFiles()) {
       response = await _httpClient._execute(MultipartRequest._new(
-          "/channels/$channelId/messages", builder.files!,
+          "/channels/$channelId/messages", builder.files!.map((e) => e._asMultipartFile()).toList(),
           method: "POST", fields: builder.build(_client)));
     } else {
       response = await _httpClient._execute(BasicRequest._new(
@@ -1040,32 +1054,15 @@ class _HttpEndpoints implements IHttpEndpoints {
   }
 
   @override
-  Future<VoiceGuildChannel> editVoiceChannel(Snowflake channelId,
-      {String? name,
-      int? bitrate,
-      int? position,
-      int? userLimit,
-      String? auditReason}) async {
-    final body = <String, dynamic>{
-      if (name != null) "name": name,
-      if (bitrate != null) "bitrate": bitrate,
-      if (userLimit != null) "user_limit": userLimit,
-      if (position != null) "position": position,
-    };
-
-    if (body.isEmpty) {
-      return Future.error(ArgumentError("Cannot edit channel with empty body"));
-    }
-
+  Future<T> editGuildChannel<T extends GuildChannel>(Snowflake channelId, ChannelBuilder builder, {String? auditReason}) async {
     final response = await _httpClient._execute(BasicRequest._new(
         "/channels/$channelId",
         method: "PATCH",
-        body: body,
+        body: builder.build(),
         auditLog: auditReason));
 
     if (response is HttpResponseSuccess) {
-      return VoiceGuildChannel._new(
-          _client, response.jsonBody as RawApiMap);
+      return IChannel._deserialize(_client, response.jsonBody as RawApiMap) as T;
     }
 
     return Future.error(response);
@@ -1121,34 +1118,6 @@ class _HttpEndpoints implements IHttpEndpoints {
         as Iterable<RawApiMap>) {
       yield Message._deserialize(_client, val);
     }
-  }
-
-  @override
-  Future<TextGuildChannel> editTextChannel(Snowflake channelId,
-      {String? name,
-      String? topic,
-      int? position,
-      int? slowModeThreshold}) async {
-    final body = <String, dynamic>{
-      if (name != null) "name": name,
-      if (topic != null) "topic": topic,
-      if (position != null) "position": position,
-      if (slowModeThreshold != null) "rate_limit_per_user": slowModeThreshold,
-    };
-
-    if (body.isEmpty) {
-      return Future.error(ArgumentError("Cannot edit channel with empty body"));
-    }
-
-    final response = await _httpClient._execute(
-        BasicRequest._new("/channels/$channelId", method: "PATCH", body: body));
-
-    if (response is HttpResponseSuccess) {
-      return TextGuildChannel._new(
-          _client, response.jsonBody as RawApiMap);
-    }
-
-    return Future.error(response);
   }
 
   @override
@@ -1359,37 +1328,39 @@ class _HttpEndpoints implements IHttpEndpoints {
   }
 
   @override
-  Future<Message> executeWebhook(Snowflake webhookId,
-      {String token = "",
-      dynamic content,
-      List<AttachmentBuilder>? files,
-      List<EmbedBuilder>? embeds,
-      bool? tts,
-      AllowedMentions? allowedMentions,
+  Future<Message> executeWebhook(
+      Snowflake webhookId,
+      MessageBuilder builder,
+      {String? token,
       bool? wait,
-      String? avatarUrl}) async {
-    allowedMentions ??= _client._options.allowedMentions;
+      String? avatarUrl,
+      String? username,
+      Snowflake? threadId}) async {
 
-    final reqBody = {
-      if (content != null) "content": content.toString(),
-      if (allowedMentions != null) "allowed_mentions": allowedMentions.build(),
-      if (embeds != null) "embeds": [for (final e in embeds) e.build()],
-      if (content != null && tts != null) "tts": tts,
-      if (avatarUrl != null) "avatar_url": avatarUrl,
+    final queryParams = {
+      if (wait != null) "wait": wait,
+      if (threadId != null) "thread_id": threadId
     };
 
-    final queryParams = {if (wait != null) "wait": wait};
+    final body = {
+      ...builder.build(_client),
+      if (avatarUrl != null) "avatar_url": avatarUrl,
+      if (username != null) "username": username,
+    };
 
     _HttpResponse response;
-
-    if (files != null && files.isNotEmpty) {
+    if (builder.files != null && builder.files!.isNotEmpty) {
       response = await _httpClient._execute(MultipartRequest._new(
-          "/webhooks/$webhookId/$token", files,
-          method: "POST", fields: reqBody, queryParams: queryParams));
+          "/webhooks/$webhookId/$token",
+          builder.files!.map((e) => e._asMultipartFile()).toList(),
+          method: "POST",
+          fields: body,
+          queryParams: queryParams)
+       );
     } else {
       response = await _httpClient._execute(BasicRequest._new(
           "/webhooks/$webhookId/$token",
-          body: reqBody,
+          body: body,
           method: "POST",
           queryParams: queryParams));
     }
@@ -1674,6 +1645,104 @@ class _HttpEndpoints implements IHttpEndpoints {
 
     if (response is HttpResponseError) {
       return Future.error(response);
+    }
+  }
+
+  @override
+  Future<GuildSticker> createGuildSticker(Snowflake guildId, StickerBuilder builder) async {
+    final response = await _httpClient._execute(MultipartRequest._new(
+      "/guilds/$guildId/stickers",
+      [builder._multipartFile],
+      fields: builder.build(),
+      method: "POST"
+    ));
+
+    if (response is HttpResponseError) {
+      return Future.error(response);
+    }
+
+    return GuildSticker._new(response._jsonBody as RawApiMap, _client);
+  }
+
+  @override
+  Future<GuildSticker> editGuildSticker(Snowflake guildId, Snowflake stickerId, StickerBuilder builder) async {
+    final response = await _httpClient._execute(BasicRequest._new(
+        "/guilds/$guildId/stickers/$stickerId",
+        method: "PATCH"
+    ));
+
+    if (response is HttpResponseError) {
+      return Future.error(response);
+    }
+
+    return GuildSticker._new(response._jsonBody as RawApiMap, _client);
+  }
+
+  @override
+  Future<void> deleteGuildSticker(Snowflake guildId, Snowflake stickerId) async {
+    final response = await _httpClient._execute(BasicRequest._new(
+        "/guilds/$guildId/stickers/$stickerId",
+        method: "DELETE"
+    ));
+
+    if (response is HttpResponseError) {
+      return Future.error(response);
+    }
+  }
+
+  @override
+  Future<GuildSticker> fetchGuildSticker(Snowflake guildId, Snowflake stickerId) async {
+    final response = await _httpClient._execute(BasicRequest._new(
+        "/guilds/$guildId/stickers/$stickerId",
+    ));
+
+    if (response is HttpResponseError) {
+      return Future.error(response);
+    }
+
+    return GuildSticker._new(response._jsonBody as RawApiMap, _client);
+  }
+
+  @override
+  Stream<GuildSticker> fetchGuildStickers(Snowflake guildId) async* {
+    final response = await _httpClient._execute(BasicRequest._new(
+      "/guilds/$guildId/stickers",
+    ));
+
+    if (response is HttpResponseError) {
+      yield* Stream.error(response);
+    }
+
+    for (final rawSticker in response._jsonBody) {
+      yield GuildSticker._new(rawSticker as RawApiMap, _client);
+    }
+  }
+
+  @override
+  Future<StandardSticker> getSticker(Snowflake id) async {
+    final response = await _httpClient._execute(BasicRequest._new(
+      "/stickers/$id",
+    ));
+
+    if (response is HttpResponseError) {
+      return Future.error(response);
+    }
+
+    return StandardSticker._new(response._jsonBody as RawApiMap);
+  }
+
+  @override
+  Stream<StickerPack> listNitroStickerPacks() async* {
+    final response = await _httpClient._execute(BasicRequest._new(
+      "/sticker-packs",
+    ));
+
+    if (response is HttpResponseError) {
+      yield* Stream.error(response);
+    }
+
+    for (final rawSticker in response._jsonBody) {
+      yield StickerPack._new(rawSticker as RawApiMap, _client);
     }
   }
 

@@ -19,6 +19,10 @@ abstract class GuildChannel extends MinimalGuildChannel {
     ];
   }
 
+  /// Edits channel
+  Future<T> edit<T extends GuildChannel>(ChannelBuilder builder, {String? auditReason}) =>
+    this.client.httpEndpoints.editGuildChannel(this.id, builder, auditReason: auditReason);
+
   /// Returns effective permissions for [member] to this channel including channel overrides.
   Future<Permissions> effectivePermissions(Member member) async {
     if (member.guild != this.guild) {

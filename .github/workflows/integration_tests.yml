@@ -1,4 +1,4 @@
-name: push full tests
+name: integration and unit tests
 
 on: [push]
 

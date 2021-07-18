@@ -83,10 +83,10 @@ class RoleBuilder extends Builder {
 /// Builder for creating mini channel instance
 class ChannelBuilder extends Builder {
   /// Name of channel
-  String name;
+  String? name;
 
   /// Type of channel
-  ChannelType type;
+  ChannelType? type;
 
   /// Channel topic (0-1024 characters)
   String? topic;
@@ -113,13 +113,23 @@ class ChannelBuilder extends Builder {
   /// Whether the channel is nsfw
   bool? nsfw;
 
-  /// Builder for creating mini channel instance
-  ChannelBuilder(this.name, this.type);
+  /// Channel voice region id, automatic when set to null
+  String? rtcRegion = "";
+
+  /// The default duration for newly created threads in the channel
+  /// to automatically archive the thread after recent activity
+  ThreadArchiveTime? defaultAutoArchiveDuration;
+
+  /// Builder for editing channel
+  ChannelBuilder();
+
+  /// Builder for creating channel
+  ChannelBuilder.create({required this.name, required this.type});
 
   @override
   RawApiMap build() => {
-    "name": name,
-    "type": type._value,
+    if (name != null) "name": name,
+    if (type != null) "type": type!._value,
     if (topic != null) "topic": topic,
     if (bitrate != null) "bitrate": bitrate,
     if (userLimit != null) "user_limit": userLimit,
@@ -127,6 +137,7 @@ class ChannelBuilder extends Builder {
     if (position != null) "position": position,
     if (parentChannel != null) "parent_id": parentChannel!.id,
     if (nsfw != null) "nsfw": nsfw,
-    if (overrides != null) "permission_overwrites" : overrides!.map((e) => e.build())
+    if (overrides != null) "permission_overwrites" : overrides!.map((e) => e.build()),
+    if (rtcRegion != "") "rtc_region": rtcRegion,
   };
 }

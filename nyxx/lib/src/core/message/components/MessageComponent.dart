@@ -1,5 +1,18 @@
 part of nyxx;
 
+/// Type of interaction component
+class ComponentType extends IEnum<int> {
+  /// Row where other components can be placed
+  static const ComponentType row = const ComponentType._create(1);
+
+  static const ComponentType button = const ComponentType._create(2);
+  static const ComponentType select = const ComponentType._create(3);
+
+  const ComponentType._create(int value) : super(value);
+  /// Create [ComponentType] from [value]
+  ComponentType.from(int value) : super(value);
+}
+
 /// Spacial emoji object for [IMessageComponent]
 class MessageComponentEmoji {
   /// Name of the emoji if unicode emoji
@@ -34,8 +47,91 @@ class MessageComponentEmoji {
 
 /// Generic container for components that can be attached to message
 abstract class IMessageComponent {
-  /// Component type. For button will be always 2.
-  static const type = 2;
+  /// [ComponentType]
+  ComponentType get type;
+
+  /// Empty constructor
+  IMessageComponent._new();
+
+  factory IMessageComponent._deserialize(Map<String, dynamic> raw) {
+    final type = raw["type"] as int;
+
+    switch(type) {
+      case 2:
+        return IMessageButton._deserialize(raw);
+      case 3:
+        return MessageMultiselect._new(raw);
+    }
+
+    throw new ArgumentError("Unknown interaction type: [$type]: ${jsonEncode(raw)}");
+  }
+}
+
+class MessageMultiselectOption {
+  /// Option label
+  late final String label;
+
+  /// Value of option
+  late final String value;
+
+  /// Additional description for option
+  late final String? description;
+
+  /// Additional emoji that is displayed before label
+  late final MessageComponentEmoji? emoji;
+
+  /// True of option will be preselected in UI
+  late final bool isDefault;
+
+  MessageMultiselectOption._new(Map<String, dynamic> raw) {
+    this.label = raw["label"] as String;
+    this.value = raw["value"] as String;
+
+    this.description = raw["description"] as String?;
+    if (raw["emoji"] != null) {
+      this.emoji = MessageComponentEmoji._new(raw["emoji"] as Map<String, dynamic>);
+    }  else {
+      this.emoji = null;
+    }
+    this.isDefault = raw["default"] as bool? ?? false;
+  }
+}
+
+class MessageMultiselect extends IMessageComponent {
+  @override
+  ComponentType get type => ComponentType.select;
+
+  /// A dev-defined unique string sent on click (max 100 characters)
+  late final String customId;
+
+  /// Custom placeholder when no option selected
+  late final String? placeholder;
+
+  /// Min value of selected options
+  late final int minValues;
+
+  /// Max value of selected options
+  late final int maxValues;
+
+  /// Possible options of multiselect
+  late final Iterable<MessageMultiselectOption> options;
+
+  MessageMultiselect._new(Map<String, dynamic> raw): super._new() {
+    this.customId = raw["custom_id"] as String;
+    this.placeholder = raw["placeholder"] as String?;
+    this.minValues = raw["min_values"] as int? ?? 1;
+    this.maxValues= raw["max_values"] as int? ?? 1;
+    this.options = [
+      for (final rawOption in raw["options"])
+        MessageMultiselectOption._new(rawOption as Map<String, dynamic>)
+    ];
+  }
+}
+
+/// Button component for Message
+class IMessageButton extends IMessageComponent {
+  @override
+  ComponentType get type => ComponentType.button;
 
   /// What the button says (max 80 characters)
   late final String label;
@@ -49,7 +145,15 @@ abstract class IMessageComponent {
   /// True if button is disabled
   late final bool disabled;
 
-  IMessageComponent._new(RawApiMap raw) {
+  factory IMessageButton._deserialize(RawApiMap raw) {
+    if (raw["style"] == ComponentStyle.link.value) {
+      return LinkMessageButton._new(raw);
+    }
+
+    return MessageButton._new(raw);
+  }
+
+  IMessageButton._new(Map<String, dynamic> raw): super._new() {
     this.label = raw["label"] as String;
     this.style = ComponentStyle.from(raw["style"] as int);
 
@@ -61,28 +165,20 @@ abstract class IMessageComponent {
 
     this.disabled = raw["disabled"] as bool? ?? false;
   }
-
-  factory IMessageComponent._deserialize(RawApiMap raw) {
-    if (raw["style"] == ComponentStyle.link.value) {
-      return LinkMessageButton._new(raw);
-    }
-
-    return MessageButton._new(raw);
-  }
 }
 
 /// Represents button that has attached metadata and will generate interaction event
-class MessageButton extends IMessageComponent {
+class MessageButton extends IMessageButton {
   ///  a dev-defined unique string sent on click (max 100 characters)
-  late final String buttonMetadata;
+  late final String customId;
 
   MessageButton._new(RawApiMap raw): super._new(raw) {
-    this.buttonMetadata = raw["custom_id"] as String;
+    this.customId = raw["custom_id"] as String;
   }
 }
 
 /// Button with a link that user will be redirected after clicking
-class LinkMessageButton extends IMessageComponent {
+class LinkMessageButton extends IMessageButton {
   /// Url where button points
   late final String url;
 

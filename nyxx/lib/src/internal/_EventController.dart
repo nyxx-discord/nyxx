@@ -118,6 +118,9 @@ class _EventController implements Disposable {
   /// Emitted when stage channel instance is deleted
   late final StreamController<StageInstanceEvent> onStageInstanceDelete;
 
+  /// Emitted when guild stickers are update
+  late final StreamController<GuildStickerUpdate> onGuildStickersUpdate;
+
   /// Makes a new `EventController`.
   _EventController(Nyxx _client) {
     this.onDisconnect = StreamController.broadcast();
@@ -235,6 +238,9 @@ class _EventController implements Disposable {
 
     this.onStageInstanceDelete = StreamController.broadcast();
     _client.onStageInstanceDelete = this.onStageInstanceDelete.stream;
+
+    this.onGuildStickersUpdate = StreamController.broadcast();
+    _client.onGuildStickersUpdate = this.onGuildStickersUpdate.stream;
   }
 
   @override
@@ -281,5 +287,7 @@ class _EventController implements Disposable {
     await this.onThreadCreated.close();
     await this.onThreadMembersUpdate.close();
     await this.onThreadDelete.close();
+
+    await this.onGuildStickersUpdate.close();
   }
 }

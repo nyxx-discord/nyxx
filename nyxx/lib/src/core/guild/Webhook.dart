@@ -6,7 +6,7 @@ class WebhookType extends IEnum<int> {
   /// Incoming Webhooks can post messages to channels with a generated token
   static const WebhookType incoming = WebhookType._create(1);
 
-  /// 	Channel Follower Webhooks are internal webhooks used with Channel Following to post new messages into channels
+  /// Channel Follower Webhooks are internal webhooks used with Channel Following to post new messages into channels
   static const WebhookType channelFollower = WebhookType._create(2);
 
   const WebhookType._create(int? value) : super(value ?? 0);
@@ -102,21 +102,17 @@ class Webhook extends SnowflakeEntity implements IMessageAuthor {
   /// [wait] - waits for server confirmation of message send before response,
   /// and returns the created message body (defaults to false; when false a message that is not save does not return an error)
   Future<Message> execute(
-      {dynamic content,
-      List<AttachmentBuilder>? files,
-      List<EmbedBuilder>? embeds,
-      bool? tts,
-      AllowedMentions? allowedMentions,
-      bool? wait,
-      String? avatarUrl}) =>
+      MessageBuilder builder,
+      {bool? wait,
+      Snowflake? threadId,
+      String? avatarUrl,
+      String? username}) =>
       client.httpEndpoints.executeWebhook(
         this.id,
+        builder,
         token: token,
-        content: content,
-        files: files,
-        embeds: embeds,
-        tts: tts,
-        allowedMentions: allowedMentions,
+        threadId: threadId,
+        username: username,
         wait: wait,
         avatarUrl: avatarUrl
       );

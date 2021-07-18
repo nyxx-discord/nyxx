@@ -96,6 +96,9 @@ class Guild extends SnowflakeEntity {
   /// Nsfw level of guild
   late final GuildNsfwLevel guildNsfwLevel;
 
+  /// Stickers of this guild
+  late final Iterable<GuildSticker> stickers;
+
   /// Returns url to this guild.
   String get url => "https://discordapp.com/channels/${this.id.toString()}";
 
@@ -200,6 +203,12 @@ class Guild extends SnowflakeEntity {
 
     this.guildNsfwLevel = GuildNsfwLevel.from(raw["nsfw_level"] as int);
 
+    this.stickers = [
+      if (raw["stickers"] != null)
+        for (final rawSticker in raw["stickers"])
+          GuildSticker._new(rawSticker as RawApiMap, client)
+    ];
+
     if (!guildCreate) return;
 
     raw["channels"].forEach((o) {
@@ -269,6 +278,22 @@ class Guild extends SnowflakeEntity {
   /// Possible options for [style]: shield (default), banner1, banner2, banner3, banner4
   String guildWidgetUrl([String style = "shield"]) =>
       client.httpEndpoints.getGuildWidgetUrl(this.id, style);
+
+  /// Fetches all stickers of current guild
+  Stream<GuildSticker> fetchStickers() =>
+      client.httpEndpoints.fetchGuildStickers(this.id);
+
+  /// Fetch sticker with given [id]
+  Future<GuildSticker> fetchSticker(Snowflake id) =>
+      client.httpEndpoints.fetchGuildSticker(this.id, id);
+
+  /// Fetches all roles that are in the server.
+  Stream<Role> fetchRoles() =>
+      client.httpEndpoints.fetchGuildRoles(this.id);
+
+  /// Creates sticker in current guild
+  Future<GuildSticker> createSticker(StickerBuilder builder) =>
+      client.httpEndpoints.createGuildSticker(this.id, builder);
 
   /// Fetches emoji from API
   Future<IGuildEmoji> fetchEmoji(Snowflake emojiId) =>

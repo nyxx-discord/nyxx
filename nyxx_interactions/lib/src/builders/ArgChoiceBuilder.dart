@@ -12,7 +12,7 @@ class ArgChoiceBuilder extends Builder {
   /// You can only have an int or string option.
   ArgChoiceBuilder(this.name, this.value) {
     if (value is! int && value is! String) {
-      throw ArgumentError("Please send a string if its a string arg or an int if its an int arg");
+      throw ArgumentError("Value could be either String or int type");
     }
   }
 

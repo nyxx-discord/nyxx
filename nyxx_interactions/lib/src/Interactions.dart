@@ -4,7 +4,10 @@ part of nyxx_interactions;
 typedef SlashCommandHandler = FutureOr<void> Function(SlashCommandInteractionEvent);
 
 /// Function that will handle execution of button interaction event
-typedef ButtonInteractionHandler = FutureOr<void> Function(ComponentInteractionEvent);
+typedef ButtonInteractionHandler = FutureOr<void> Function(ButtonInteractionEvent);
+
+/// Function that will handle execution of dropdown event
+typedef MultiselectInteractionHandler = FutureOr<void> Function(MultiselectInteractionEvent);
 
 /// Interaction extension for Nyxx. Allows use of: Slash Commands.
 class Interactions {
@@ -20,12 +23,16 @@ class Interactions {
   final _commands = <SlashCommand>[];
   final _commandHandlers = <String, SlashCommandHandler>{};
   final _buttonHandlers = <String, ButtonInteractionHandler>{};
+  final _multiselectHandlers = <String, MultiselectInteractionHandler>{};
 
   /// Emitted when a slash command is sent.
   late final Stream<SlashCommandInteractionEvent> onSlashCommand;
 
   /// Emitted when a button interaction is received.
-  late final Stream<ComponentInteractionEvent> onButtonEvent;
+  late final Stream<ButtonInteractionEvent> onButtonEvent;
+
+  /// Emitted when a dropdown interaction is received.
+  late final Stream<MultiselectInteractionEvent> onMultiselectEvent;
 
   /// Emitted when a slash command is created by the user.
   late final Stream<SlashCommand> onSlashCommandCreated;
@@ -39,6 +46,8 @@ class Interactions {
     _client.onReady.listen((event) async {
       _client.shardManager.rawEvent.listen((event) {
         if (event.rawData["op"] == _op0 && event.rawData["t"] == _interactionCreateCommand) {
+          this._logger.fine("Received interaction event: [${event.rawData}]");
+
           final type = event.rawData["d"]["type"] as int;
 
           switch (type) {
@@ -46,7 +55,19 @@ class Interactions {
               _events.onSlashCommand.add(SlashCommandInteractionEvent._new(_client, event.rawData["d"] as RawApiMap));
               break;
             case 3:
-              _events.onButtonEvent.add(ComponentInteractionEvent._new(_client, event.rawData["d"] as RawApiMap));
+              final componentType = event.rawData["d"]["data"]["component_type"] as int;
+
+              switch (componentType) {
+                case 2:
+                  _events.onButtonEvent.add(ButtonInteractionEvent._new(_client, event.rawData["d"] as Map<String, dynamic>));
+                  break;
+                case 3:
+                  _events.onMultiselectEvent.add(MultiselectInteractionEvent._new(_client, event.rawData["d"] as Map<String, dynamic>));
+                  break;
+                default:
+                  this._logger.warning("Unknown componentType type: [$componentType]; Payload: ${jsonEncode(event.rawData)}");
+              }
+
               break;
             default:
               this._logger.warning("Unknown interaction type: [$type]; Payload: ${jsonEncode(event.rawData)}");
@@ -54,6 +75,54 @@ class Interactions {
         }
       });
     });
+  }
+
+  Future<void> _syncPermissions() async {
+    final commandPartition = _partition<SlashCommandBuilder>(
+        this._commandBuilders, (element) => element.guild == null);
+    final globalCommands = commandPartition.first;
+    final groupedGuildCommands =
+        _groupSlashCommandBuilders(commandPartition.last);
+
+    final globalBody = globalCommands
+      .where((builder) => builder.permissions != null && builder.permissions!.isNotEmpty)
+      .map((builder) => {
+        "id": builder._id.toString(),
+        "permissions": [for (final permsBuilder in builder.permissions!) permsBuilder.build()]
+      })
+      .toList();
+
+    await this
+        ._client
+        .httpEndpoints
+        .sendRawRequest("/applications/${this._client.app.id}/commands/permissions", "PUT", body: globalBody);
+
+    for (final entry in groupedGuildCommands.entries) {
+      final guildBody = entry.value
+        .where((builder) => builder.permissions != null && builder.permissions!.isNotEmpty)
+        .map((builder) => {
+          "id": builder._id.toString(),
+          "permissions": [for (final permsBuilder in builder.permissions!) permsBuilder.build()]
+        })
+        .toList();
+
+      await this._client.httpEndpoints.sendRawRequest("/applications/${this._client.app.id}/guilds/${entry.key}/commands/permissions", "PUT", body: guildBody);
+    }
+  }
+
+  void _extractCommandIds(HttpResponseSuccess response) {
+    final body = response.jsonBody as List<dynamic>;
+    for (final command in body) {
+      final commandMap = command as Map<String, dynamic>;
+      this._commandBuilders.firstWhere(
+          (b) => b.name == commandMap["name"]
+          && b.guild == (commandMap["guild_id"] == null
+              ? null
+              : Snowflake(commandMap["guild_id"])
+          )
+        )
+        ._setId(Snowflake(commandMap["id"]));
+    }
   }
 
   /// Syncs commands builders with discord after client is ready.
@@ -81,6 +150,7 @@ class Interactions {
     );
 
     if (globalCommandsResponse is HttpResponseSuccess) {
+      _extractCommandIds(globalCommandsResponse);
       this._registerCommandHandlers(globalCommandsResponse, globalCommands);
     }
 
@@ -95,31 +165,47 @@ class Interactions {
       );
 
       if (response is HttpResponseSuccess) {
+        _extractCommandIds(response);
         this._registerCommandHandlers(response, entry.value);
       }
     }
 
+    await this._syncPermissions();
+    this._logger.info("Finished bulk overriding permissions");
+
     this._commandBuilders.clear(); // Cleanup after registering command since we don't need this anymore
     this._logger.info("Finished bulk overriding slash commands");
 
-    if (this._commands.isNotEmpty) {
-      this.onSlashCommand.listen((event) async {
-        final commandHash = _determineInteractionCommandHandler(event.interaction);
-
-        if (this._commandHandlers.containsKey(commandHash)) {
-          await this._commandHandlers[commandHash]!(event);
-        }
-      });
-
-      this._logger.info("Finished registering ${this._commandHandlers.length} commands!");
+    if (this._commands.isEmpty) {
+      return;
     }
+
+    this.onSlashCommand.listen((event) async {
+      final commandHash = _determineInteractionCommandHandler(event.interaction);
+
+      if (this._commandHandlers.containsKey(commandHash)) {
+        await this._commandHandlers[commandHash]!(event);
+      }
+    });
+
+    this._logger.info("Finished registering ${this._commandHandlers.length} commands!");
 
     if (this._buttonHandlers.isNotEmpty) {
       this.onButtonEvent.listen((event) {
-        if (this._buttonHandlers.containsKey(event.interaction.buttonId)) {
-          this._buttonHandlers[event.interaction.buttonId]!(event);
+        if (this._buttonHandlers.containsKey(event.interaction.customId)) {
+          this._buttonHandlers[event.interaction.customId]!(event);
         } else {
-          this._logger.warning("Received event for unknown button: ${event.interaction.idMetadata}");
+          this._logger.warning("Received event for unknown button: ${event.interaction.customId}");
+        }
+      });
+    }
+
+    if (this._multiselectHandlers.isNotEmpty) {
+      this.onMultiselectEvent.listen((event) {
+        if (this._multiselectHandlers.containsKey(event.interaction.customId)) {
+          this._multiselectHandlers[event.interaction.customId]!(event);
+        } else {
+          this._logger.warning("Received event for unknown dropdown: ${event.interaction.customId}");
         }
       });
     }
@@ -129,10 +215,13 @@ class Interactions {
   void registerButtonHandler(String id, ButtonInteractionHandler handler) =>
       this._buttonHandlers[id] = handler;
 
+  /// Register callback for dropdown event for given [id]
+  void registerMultiselectHandler(String id, MultiselectInteractionHandler handler) =>
+      this._multiselectHandlers[id] = handler;
+
   /// Allows to register new [SlashCommandBuilder]
-  void registerSlashCommand(SlashCommandBuilder slashCommandBuilder) {
-    this._commandBuilders.add(slashCommandBuilder);
-  }
+  void registerSlashCommand(SlashCommandBuilder slashCommandBuilder) =>
+      this._commandBuilders.add(slashCommandBuilder);
 
   void _registerCommandHandlers(HttpResponseSuccess response, Iterable<SlashCommandBuilder> builders) {
     final registeredSlashCommands = (response.jsonBody as List<dynamic>).map((e) => SlashCommand._new(e as RawApiMap, this._client));

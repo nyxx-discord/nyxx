@@ -10,6 +10,6 @@ environment:
   sdk: '>=2.13.0 <3.0.0'
 
 dependencies:
-  http: "^0.13.1"
+  http: "^0.13.3"
   logging: "^1.0.1"
   nyxx: "^2.0.0-rc.6"

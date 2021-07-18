@@ -1,4 +1,4 @@
-name: pull request unit tests
+name: unit tests
 
 on: [pull_request]
 

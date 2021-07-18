@@ -50,10 +50,6 @@ class TextGuildChannel extends GuildChannel implements TextChannel, Mentionable 
   Stream<Message> getPinnedMessages() =>
       client.httpEndpoints.fetchPinnedMessages(this.id);
 
-  /// Edits the channel.
-  Future<TextGuildChannel> edit({String? name, String? topic, int? position, int? slowModeThreshold}) =>
-      client.httpEndpoints.editTextChannel(this.id, name: name, topic: topic, position: position, slowModeThreshold: slowModeThreshold);
-
   /// Creates a thread in a channel, that only retrieves a [ThreadPreviewChannel]
   Future<ThreadPreviewChannel> createThread(ThreadBuilder builder) =>
       client.httpEndpoints.createThread(this.id, builder);

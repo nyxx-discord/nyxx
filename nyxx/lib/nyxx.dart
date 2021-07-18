@@ -152,6 +152,7 @@ part "src/utils/builders/PermissionsBuilder.dart";
 part "src/utils/builders/PresenceBuilder.dart";
 part "src/utils/builders/ReplyBuilder.dart";
 part "src/utils/builders/ThreadBuilder.dart";
+part "src/utils/builders/StickerBuilder.dart";
 part "src/utils/extensions.dart";
 part "src/utils/permissions.dart";
 part "src/utils/utils.dart";
