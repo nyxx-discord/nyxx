@@ -42,10 +42,16 @@ class User extends SnowflakeEntity with Mentionable, IMessageAuthor implements I
 
   /// Additional flags associated with user account. Describes if user has certain
   /// features like joined into one of houses or is discord employee.
-  UserFlags? userFlags;
+  late final UserFlags? userFlags;
 
   /// Premium types denote the level of premium a user has.
-  NitroType? nitroType;
+  late final NitroType? nitroType;
+
+  /// Hash of user banner
+  late final String? bannerHash;
+
+  /// Color of the banner
+  late final DiscordColor? bannerColor;
 
   User._new(this.client, RawApiMap raw) : super(Snowflake(raw["id"])) {
     this.username = raw["username"] as String;
@@ -56,10 +62,21 @@ class User extends SnowflakeEntity with Mentionable, IMessageAuthor implements I
 
     if (raw["public_flags"] != null) {
       this.userFlags = UserFlags._new(raw["public_flags"] as int);
+    } else {
+      this.userFlags = null;
     }
 
     if (raw["premium_type"] != null) {
       this.nitroType = NitroType.from(raw["premium_type"] as int);
+    } else {
+      this.nitroType = null;
+    }
+
+    this.bannerHash = raw["banner"] as String?;
+    if (raw["banner_color"] != null) {
+      this.bannerColor = DiscordColor.fromHexString(raw["banner_color"] as String);
+    } else {
+      this.bannerColor = null;
     }
   }
 

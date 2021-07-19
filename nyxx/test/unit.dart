@@ -349,4 +349,19 @@ void main() {
       expect(attachment.attachUrl, "attachment://test.txt");
     });
   });
+
+  group("DiscordColor tests", () {
+    test("equality test", () {
+      final color1 = DiscordColor.fromInt(0);
+      final color2 = DiscordColor.fromInt(0);
+
+      expect(color1, color2);
+      expect(0, color1);
+      expect(0, color2);
+    });
+
+    test("toString test", () {
+      final color1 = DiscordColor.fromInt(0);
+    });
+  });
 }

@@ -5,9 +5,7 @@ part of nyxx;
 
 /// Wrapper for colors.
 /// Simplifies creation and provides interface to interact with colors for nyxx.
-class DiscordColor {
-  late final int _value;
-
+class DiscordColor extends IEnum<int> {
   /// Construct color from int.
   /// It allows to create color from hex number and decimal number
   ///
@@ -15,55 +13,47 @@ class DiscordColor {
   /// var color = DiscordColor.fromInt(43563);
   /// var color2 = DiscordColor.fromInt(0xff0044);
   /// ```
-  DiscordColor.fromInt(int color) {
-    this._value = color;
-  }
+  DiscordColor.fromInt(int value): super(value);
 
   /// Construct color from individual color components
-  DiscordColor.fromRgb(int r, int g, int b) {
-    this._value = r << 16 | g << 8 | b;
-  }
+  factory DiscordColor.fromRgb(int r, int g, int b) =>
+    DiscordColor.fromInt(r << 16 | g << 8 | b);
 
   /// Construct color from individual color components with doubles
   /// Values should be from 0.0 to 1.0
-  DiscordColor.fromDouble(double r, double g, double b) {
+  factory DiscordColor.fromDouble(double r, double g, double b) {
     final rb = (r * 255).toInt();
     final gb = (g * 255).toInt();
     final bb = (b * 255).toInt();
 
-    this._value = rb << 16 | gb << 8 | bb;
+    return DiscordColor.fromInt(rb << 16 | gb << 8 | bb);
   }
 
   /// Construct color from hex String.
   /// Leading # will be ignored in process.
-  DiscordColor.fromHexString(String hexStr) {
-    if (hexStr.isEmpty) throw ArgumentError("Hex color String cannot be empty");
+  factory DiscordColor.fromHexString(String hexStr) {
+    if (hexStr.isEmpty) {
+      throw ArgumentError("Hex color String cannot be empty");
+    }
 
-    if (hexStr.startsWith("#")) hexStr = hexStr.substring(1);
+    if (hexStr.startsWith("#")) {
+      hexStr = hexStr.substring(1);
+    }
 
-    this._value = int.parse(hexStr, radix: 16);
+    return DiscordColor.fromInt(int.parse(hexStr, radix: 16));
   }
 
-  /// Int value of color
-  int get value => _value;
-
   /// Gets the blue component of this color as an integer.
-  int get r => (this._value >> 16) & 0xFF;
+  int get r => (this.value >> 16) & 0xFF;
 
   /// Gets the green component of this color as an integer.
-  int get g => (this._value >> 8) & 0xFF;
+  int get g => (this.value >> 8) & 0xFF;
 
   /// Gets the blue component of this color as an integer.
-  int get b => this._value & 0xFF;
+  int get b => this.value & 0xFF;
 
   @override
-  String toString() => "#${_value.toRadixString(16)}";
-
-  @override
-  int get hashCode => _value.hashCode;
-
-  @override
-  bool operator ==(dynamic other) => other is DiscordColor && other._value == this._value;
+  String toString() => "#${value.toRadixString(16)}";
 
   /// Color of null, literally null.
   static const DiscordColor? none = null;

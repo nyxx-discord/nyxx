@@ -309,6 +309,9 @@ abstract class IHttpEndpoints {
 
   /// Deletes [GuildSticker] for [Guild]
   Future<void> deleteGuildSticker(Snowflake guildId, Snowflake stickerId);
+
+  /// Returns url of user banner
+  String getUserBannerURL(Snowflake userId, String hash, {String format = "png"});
 }
 
 class _HttpEndpoints implements IHttpEndpoints {
@@ -330,8 +333,7 @@ class _HttpEndpoints implements IHttpEndpoints {
   }
 
   @override
-  String? getGuildSplashURL(
-      Snowflake guildId, String? splashHash, String format, int size) {
+  String? getGuildSplashURL(Snowflake guildId, String? splashHash, String format, int size) {
     if (splashHash != null) {
       return "https://cdn.${Constants.cdnHost}/splashes/$guildId/$splashHash.$format?size=$size";
     }
@@ -1743,4 +1745,8 @@ class _HttpEndpoints implements IHttpEndpoints {
       yield StickerPack._new(rawSticker as RawApiMap, _client);
     }
   }
+
+  @override
+  String getUserBannerURL(Snowflake userId, String hash, {String format = "png"}) =>
+      "https://cdn.${Constants.cdnHost}/banners/$userId/$hash.$format";
 }
