@@ -21,6 +21,10 @@ class ActivityBuilder implements Builder{
   factory ActivityBuilder.streaming(String name, String url) =>
       ActivityBuilder(name, ActivityType.streaming, url: url);
 
+  /// Sets activity to listening
+  factory ActivityBuilder.listening(String name) =>
+      ActivityBuilder(name, ActivityType.listening);
+
   @override
   RawApiMap build() => {
     "name": this.name,
