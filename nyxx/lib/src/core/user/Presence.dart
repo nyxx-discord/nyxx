@@ -43,7 +43,10 @@ class Activity {
   late final bool? instance;
 
   ///	Activity flags ORd together, describes what the payload includes
-  late final int? activityFlags;
+  late final ActivityFlags activityFlags;
+
+  /// Activity buttons. List of button labels
+  late final Iterable<String> buttons;
 
   Activity._new(RawApiMap raw) {
     this.name = raw["name"] as String;
@@ -90,7 +93,28 @@ class Activity {
     }
 
     this.instance = raw["instance"] as bool?;
-    this.activityFlags = raw["flags"] as int?;
+    this.activityFlags = ActivityFlags._new(raw["flags"] as int?);
+    this.buttons = [
+      if (raw["buttons"] != null)
+        ...raw["buttons"].cast<String>()
+    ];
+  }
+}
+
+/// Flags of the activity
+class ActivityFlags {
+  /// Flags value
+  late final int value;
+
+  bool get isInstance => PermissionsUtils.isApplied(this.value, 1 << 0);
+  bool get isJoin => PermissionsUtils.isApplied(this.value, 1 << 1);
+  bool get isSpectate=> PermissionsUtils.isApplied(this.value, 1 << 2);
+  bool get isJoinRequest => PermissionsUtils.isApplied(this.value, 1 << 3);
+  bool get isSync => PermissionsUtils.isApplied(this.value, 1 << 4);
+  bool get isPlay => PermissionsUtils.isApplied(this.value, 1 << 5);
+
+  ActivityFlags._new(int? value) {
+    this.value = value ?? 0;
   }
 }
 

@@ -1,6 +1,7 @@
 part of nyxx;
 
-class ActivityBuilder implements Builder{
+/// Allows to change status and presence of bot
+class ActivityBuilder implements Builder {
   /// The activity name.
   late final String name;
 
@@ -66,9 +67,8 @@ class PresenceBuilder extends Builder {
   RawApiMap build() => <String, dynamic>{
         "status": (status != null) ? status.toString() : UserStatus.online.toString(),
         "afk": (afk != null) ? afk : false,
-        "activities": [
-          if (this.activity != null)
-            this.activity!.build(),
+        if (this.activity != null) "activities": [
+          this.activity!.build(),
         ],
         "since": (since != null) ? since!.millisecondsSinceEpoch : null
       };
