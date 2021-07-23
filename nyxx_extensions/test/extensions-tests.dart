@@ -10,10 +10,10 @@ import "package:test/scaffolding.dart";
 
 void main() async {
   test("Basic tests", () async {
-    final emojis = await getAllEmojiDefinitions(cache: true);
+    final emojis = await getAllEmojiDefinitions(cache: true).toList();
     expect(emojis, isNotEmpty);
 
-    final emojisFromCache = await getAllEmojiDefinitions();
+    final emojisFromCache = await getAllEmojiDefinitions().toList();
     expect(emojisFromCache, isNotEmpty);
   });
 
@@ -41,7 +41,7 @@ void main() async {
       expect(author.url, equals("https://discord.com"));
       expect(author.iconUrl, equals("https://cdn.discordapp.com/avatars/281314080923320321/e7e716c1a1efb236f9ff0e29a54f1ba2.png?size=128"));
     });
-    
+
     group("Embed Field Builder tests", () {
       test("with inline", () async {
         final data = <String, dynamic>{
