@@ -10,8 +10,8 @@ class DiscordColor extends IEnum<int> {
   /// It allows to create color from hex number and decimal number
   ///
   /// ```
-  /// var color = DiscordColor.fromInt(43563);
-  /// var color2 = DiscordColor.fromInt(0xff0044);
+  /// final color = DiscordColor.fromInt(43563);
+  /// final color2 = DiscordColor.fromInt(0xff0044);
   /// ```
   DiscordColor.fromInt(int value): super(value);
 
@@ -22,9 +22,9 @@ class DiscordColor extends IEnum<int> {
   /// Construct color from individual color components with doubles
   /// Values should be from 0.0 to 1.0
   factory DiscordColor.fromDouble(double r, double g, double b) {
-    final rb = (r * 255).toInt();
-    final gb = (g * 255).toInt();
-    final bb = (b * 255).toInt();
+    final rb = (r * 255).toInt().clamp(0, 255);
+    final gb = (g * 255).toInt().clamp(0, 255);
+    final bb = (b * 255).toInt().clamp(0, 255);
 
     return DiscordColor.fromInt(rb << 16 | gb << 8 | bb);
   }
@@ -67,8 +67,8 @@ class DiscordColor extends IEnum<int> {
     return buffer.toString().toUpperCase();
   }
 
-  /// Color of null, literally null.
-  static const DiscordColor? none = null;
+  /// Represents no color, or integer 0.
+  static final DiscordColor none = DiscordColor.fromInt(0);
 
   /// A near-black color. Due to API limitations, the color is #010101, rather than #000000, as the latter is treated as no color.
   static final DiscordColor black = DiscordColor.fromInt(0x010101);
