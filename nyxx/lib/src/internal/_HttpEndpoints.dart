@@ -1,5 +1,6 @@
 part of nyxx;
 
+/// All Http endpoints that can be accessed by client. Allows raw access to discord apis.
 abstract class IHttpEndpoints {
   /// Returns cdn url for given [guildId] and [iconHash].
   /// Requires to specify format and size of returned image.
@@ -10,12 +11,10 @@ abstract class IHttpEndpoints {
   /// Returns cdn url for given [guildId] and [splashHash].
   /// Requires to specify format and size of returned image.
   /// Format can be webp, png. Size should be power of 2, eg. 512, 1024
-  String? getGuildSplashURL(
-      Snowflake guildId, String? splashHash, String format, int size);
+  String? getGuildSplashURL(Snowflake guildId, String? splashHash, String format, int size);
 
   /// Returns discovery url for given [guildId] and [splashHash]. Allows to additionally specify [format] and [size] of returned image.
-  String? getGuildDiscoveryURL(Snowflake guildId, String? splashHash,
-      {String format = "webp", int size = 128});
+  String? getGuildDiscoveryURL(Snowflake guildId, String? splashHash, {String format = "webp", int size = 128});
 
   /// Returns url to guild widget for given [guildId]. Additionally accepts [style] parameter.
   String getGuildWidgetUrl(Snowflake guildId, [String style = "shield"]);

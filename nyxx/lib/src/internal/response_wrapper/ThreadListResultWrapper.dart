@@ -1,5 +1,6 @@
 part of nyxx;
 
+/// Wrapper of threads listing results.
 class ThreadListResultWrapper {
   /// List of threads
   late final List<ThreadChannel> threads;

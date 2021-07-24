@@ -1,5 +1,6 @@
 part of nyxx;
 
+/// Exception of http client
 class HttpClientException extends http.ClientException {
   /// Raw response from server
   final http.BaseResponse? response;

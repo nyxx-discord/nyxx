@@ -31,7 +31,7 @@ class Shard implements Disposable {
   late final Stream<dynamic> _receiveStream; // Broadcast stream on which data from isolate is received
   late final ReceivePort _receivePort; // Port on which data from isolate is received
   late final SendPort _isolateSendPort; // Port on which data can be sent to isolate
-  late SendPort _sendPort; // Sendport for isolate
+  late SendPort _sendPort; // Send Port for isolate
 
   String? _sessionId; // Id of gateway session
   int _sequence = 0; // Event sequence
