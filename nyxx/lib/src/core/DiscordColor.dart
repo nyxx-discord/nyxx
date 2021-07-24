@@ -53,7 +53,19 @@ class DiscordColor extends IEnum<int> {
   int get b => this.value & 0xFF;
 
   @override
-  String toString() => "#${value.toRadixString(16)}";
+  String toString() => this.asHexString();
+
+  /// Returns
+  String asHexString() {
+    final buffer = StringBuffer();
+
+    buffer.write("#");
+    buffer.write(this.r.toRadixString(16).padLeft(2, "0"));
+    buffer.write(this.g.toRadixString(16).padLeft(2, "0"));
+    buffer.write(this.b.toRadixString(16).padLeft(2, "0"));
+
+    return buffer.toString().toUpperCase();
+  }
 
   /// Color of null, literally null.
   static const DiscordColor? none = null;

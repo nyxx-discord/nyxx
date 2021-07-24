@@ -362,6 +362,44 @@ void main() {
 
     test("toString test", () {
       final color1 = DiscordColor.fromInt(0);
+      final color2 = DiscordColor.fromInt(16777085);
+      final color3 = DiscordColor.fromInt(65405);
+      final color4 = DiscordColor.fromInt(8257405);
+
+      expect("#000000", color1.toString());
+      expect("#FFFF7D", color2.toString());
+      expect("#00FF7D", color3.toString());
+      expect("#7DFF7D", color4.toString());
+    });
+
+    test("DiscordColor.fromHexString test", () {
+      final color = DiscordColor.fromHexString("#FFFF7D");
+
+      expect("#FFFF7D", color.asHexString());
+      expect(16777085, color.value);
+      expect(255, color.r);
+      expect(255, color.g);
+      expect(125, color.b);
+    });
+
+    test("DiscordColor.fromDouble test", () {
+      final color = DiscordColor.fromDouble(1, 1, 0);
+
+      expect("#FFFF00", color.asHexString());
+      expect(16776960, color.value);
+      expect(255, color.r);
+      expect(255, color.g);
+      expect(0, color.b);
+    });
+
+    test("DiscordColor.fromRgb test", () {
+      final color = DiscordColor.fromRgb(0, 125, 125);
+
+      expect("#007D7D", color.asHexString());
+      expect(32125, color.value);
+      expect(0, color.r);
+      expect(125, color.g);
+      expect(125, color.b);
     });
   });
 }
