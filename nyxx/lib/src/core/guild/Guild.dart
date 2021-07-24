@@ -287,6 +287,10 @@ class Guild extends SnowflakeEntity {
   Future<GuildSticker> fetchSticker(Snowflake id) =>
       client.httpEndpoints.fetchGuildSticker(this.id, id);
 
+  /// Fetches all roles that are in the server.
+  Stream<Role> fetchRoles() =>
+      client.httpEndpoints.fetchGuildRoles(this.id);
+
   /// Creates sticker in current guild
   Future<GuildSticker> createSticker(StickerBuilder builder) =>
       client.httpEndpoints.createGuildSticker(this.id, builder);
@@ -317,8 +321,8 @@ class Guild extends SnowflakeEntity {
   Stream<Ban> getBans() => client.httpEndpoints.getGuildBans(this.id);
 
   /// Change self nickname in guild
-  Future<void> changeSelfNick(String nick) async =>
-      client.httpEndpoints.changeGuildSelfNick(this.id, nick);
+  Future<void> modifyCurrentMember({String? nick}) async =>
+      client.httpEndpoints.modifyCurrentMember(this.id, nick: nick);
 
   /// Gets single [Ban] object for given [bannedUserId]
   Future<Ban> getBan(Snowflake bannedUserId) async =>

@@ -72,8 +72,7 @@ abstract class IHttpEndpoints {
   /// Get all guild bans.
   Stream<Ban> getGuildBans(Snowflake guildId);
 
-  /// Changes nick of self user in given [guildId]
-  Future<void> changeGuildSelfNick(Snowflake guildId, String nick);
+  Future<void> modifyCurrentMember(Snowflake guildId, {String? nick});
 
   /// Get [Ban] object for given [bannedUserId]
   Future<Ban> getGuildBan(Snowflake guildId, Snowflake bannedUserId);
@@ -151,6 +150,8 @@ abstract class IHttpEndpoints {
   /// Returns url to user avatar
   String userAvatarURL(Snowflake userId, String? avatarHash, int discriminator,
       {String format = "webp", int size = 128});
+
+  String memberAvatarURL(Snowflake memberId, Snowflake guildId, String avatarHash, {String format = "webp"});
 
   /// Fetches [User] object for given [userId]
   Future<User> fetchUser(Snowflake userId);
@@ -645,11 +646,13 @@ class _HttpEndpoints implements IHttpEndpoints {
   }
 
   @override
-  Future<void> changeGuildSelfNick(Snowflake guildId, String nick) async =>
+  Future<void> modifyCurrentMember(Snowflake guildId, {String? nick}) async =>
       _httpClient._execute(BasicRequest._new(
           "/guilds/$guildId/members/@me/nick",
           method: "PATCH",
-          body: {"nick": nick}));
+          body: {
+            if (nick != null) "nick": nick
+      }));
 
   @override
   Future<Ban> getGuildBan(Snowflake guildId, Snowflake bannedUserId) async {
@@ -1833,4 +1836,8 @@ class _HttpEndpoints implements IHttpEndpoints {
       yield StickerPack._new(rawSticker as RawApiMap, _client);
     }
   }
+
+  @override
+  String memberAvatarURL(Snowflake memberId, Snowflake guildId, String avatarHash, {String format = "webp"}) =>
+      "guilds/$guildId/users/$memberId/avatars/$avatarHash.$format";
 }
