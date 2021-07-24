@@ -321,8 +321,8 @@ class Guild extends SnowflakeEntity {
   Stream<Ban> getBans() => client.httpEndpoints.getGuildBans(this.id);
 
   /// Change self nickname in guild
-  Future<void> changeSelfNick(String nick) async =>
-      client.httpEndpoints.changeGuildSelfNick(this.id, nick);
+  Future<void> modifyCurrentMember({String? nick}) async =>
+      client.httpEndpoints.modifyCurrentMember(this.id, nick: nick);
 
   /// Gets single [Ban] object for given [bannedUserId]
   Future<Ban> getBan(Snowflake bannedUserId) async =>
