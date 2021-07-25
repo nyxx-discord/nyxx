@@ -259,7 +259,7 @@ abstract class IHttpEndpoints {
 
   Future<Invite> fetchInvite(String code);
 
-  String stickerUrl(String stickerHash, String extension);
+  String stickerUrl(Snowflake stickerHash, String extension);
 
   String emojiUrl(Snowflake emojiId);
 
@@ -1400,8 +1400,8 @@ class _HttpEndpoints implements IHttpEndpoints {
   }
 
   @override
-  String stickerUrl(String stickerHash, String extension) =>
-      "https://cdn.${Constants.cdnHost}/stickers/$stickerHash.$extension";
+  String stickerUrl(Snowflake stickerId, String extension) =>
+      "https://cdn.${Constants.cdnHost}/stickers/$stickerId.$extension";
 
   @override
   String emojiUrl(Snowflake emojiId) =>
@@ -1730,7 +1730,7 @@ class _HttpEndpoints implements IHttpEndpoints {
       return Future.error(response);
     }
 
-    return StandardSticker._new(response._jsonBody as RawApiMap);
+    return StandardSticker._new(response._jsonBody as RawApiMap, _client);
   }
 
   @override
