@@ -14,25 +14,24 @@ final Uri emojiDataUri = Uri.parse("https://static.emzi0767.com/misc/discordEmoj
 
 /// Returns emoji based on given [predicate]. Allows to cache results via [cache] parameter.
 Future<EmojiDefinition> filterEmojiDefinitions(bool Function(EmojiDefinition) predicate, {bool cache = false}) async =>
-    (await getAllEmojiDefinitions(cache: cache)).firstWhere(predicate);
+    getAllEmojiDefinitions(cache: cache).firstWhere(predicate);
 
 /// Returns all possible [EmojiDefinition]s. Allows to cache results via [cache] parameter.
 /// If emojis are cached it will resolve immediately with result.
-Future<Iterable<EmojiDefinition>> getAllEmojiDefinitions({bool cache = false}) async {
-  if(_emojisCache.isNotEmpty) {
-    return Future.value(_emojisCache);
+Stream<EmojiDefinition> getAllEmojiDefinitions({bool cache = false}) async* {
+  if (_emojisCache.isNotEmpty) {
+    yield* Stream.fromIterable(_emojisCache);
   }
 
   final rawData = await _downloadEmojiData();
 
-  final _emojis = [
-    for(final ed in rawData["emojiDefinitions"])
-      EmojiDefinition._new(ed as RawApiMap)
-  ];
-  
-  if(cache) {
-    _emojisCache = _emojis;
-  }
+  for (final emojiDefinition in rawData["emojiDefinitions"]) {
+    final definition = EmojiDefinition._new(emojiDefinition as RawApiMap);
 
-  return _emojis;
+    if(cache) {
+      _emojisCache.add(definition);
+    }
+
+    yield definition;
+  }
 }
