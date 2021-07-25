@@ -51,7 +51,7 @@ class User extends SnowflakeEntity with Mentionable, IMessageAuthor implements I
   late final String? bannerHash;
 
   /// Color of the banner
-  late final DiscordColor? bannerColor;
+  late final DiscordColor? accentColor;
 
   User._new(this.client, RawApiMap raw) : super(Snowflake(raw["id"])) {
     this.username = raw["username"] as String;
@@ -73,10 +73,10 @@ class User extends SnowflakeEntity with Mentionable, IMessageAuthor implements I
     }
 
     this.bannerHash = raw["banner"] as String?;
-    if (raw["banner_color"] != null) {
-      this.bannerColor = DiscordColor.fromHexString(raw["banner_color"] as String);
+    if (raw["accent_color"] != null) {
+      this.accentColor = DiscordColor.fromHexString(raw["accent_color"] as String);
     } else {
-      this.bannerColor = null;
+      this.accentColor = null;
     }
   }
 
