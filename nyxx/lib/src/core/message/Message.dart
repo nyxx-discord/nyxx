@@ -47,7 +47,7 @@ abstract class Message extends SnowflakeEntity implements Disposable, Convertabl
   String get url;
 
   /// The stickers sent with the message
-  late final Iterable<Snowflake> stickersIds;
+  late final Iterable<PartialSticker> partialStickers;
 
   /// Message reply
   late final ReferencedMessage? referencedMessage;
@@ -86,10 +86,10 @@ abstract class Message extends SnowflakeEntity implements Disposable, Convertabl
     this.mentionEveryone = raw["mention_everyone"] as bool;
     this.type = MessageType.from(raw["type"] as int);
 
-    this.stickersIds = [
+    this.partialStickers = [
       if (raw["sticker_items"] != null)
         for (final rawSticker in raw["sticker_items"])
-          Snowflake(rawSticker)
+          PartialSticker._new(rawSticker as RawApiMap, client)
     ];
 
     if (raw["flags"] != null) {
