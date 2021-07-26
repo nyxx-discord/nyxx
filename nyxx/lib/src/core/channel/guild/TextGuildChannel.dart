@@ -43,8 +43,8 @@ class TextGuildChannel extends GuildChannel implements TextChannel, Mentionable 
   /// ```
   /// final webhook = await channnel.createWebhook("!a Send nudes kek6407");
   /// ```
-  Future<Webhook> createWebhook(String name, {File? avatarFile, String? auditReason}) =>
-      client.httpEndpoints.createWebhook(this.id, name, avatarFile: avatarFile, auditReason: auditReason);
+  Future<Webhook> createWebhook(String name, {AttachmentBuilder? avatarAttachment, String? auditReason}) =>
+      client.httpEndpoints.createWebhook(this.id, name, avatarAttachment: avatarAttachment, auditReason: auditReason);
 
   /// Returns pinned [Message]s for channel.
   Stream<Message> getPinnedMessages() =>

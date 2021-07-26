@@ -9,11 +9,12 @@ class WebhookType extends IEnum<int> {
   /// Channel Follower Webhooks are internal webhooks used with Channel Following to post new messages into channels
   static const WebhookType channelFollower = WebhookType._create(2);
 
-  const WebhookType._create(int? value) : super(value ?? 0);
+  /// Creates instance of [WebhookType] from [value]. Default value is 0
   WebhookType.from(int? value) : super(value ?? 0);
+  const WebhookType._create(int? value) : super(value ?? 0);
 
   @override
-  bool operator ==(other) {
+  bool operator ==(dynamic other) {
     if (other is int) {
       return other == _value;
     }
@@ -122,9 +123,9 @@ class Webhook extends SnowflakeEntity implements IMessageAuthor {
       client.httpEndpoints.userAvatarURL(this.id, this.avatarHash, 0, format: format, size: size);
 
   /// Edits the webhook.
-  Future<Webhook> edit({String? name, SnowflakeEntity? channel, File? avatarFile, List<int>? avatarBytes, String? encodedAvatar, String? encodedExtension, String? auditReason}) =>
+  Future<Webhook> edit({String? name, SnowflakeEntity? channel, AttachmentBuilder? avatarAttachment, String? auditReason}) =>
     client.httpEndpoints.editWebhook(this.id, token: this.token, name: name,
-        channel: channel, avatarFile: avatarFile, avatarBytes: avatarBytes, encodedAvatar: encodedAvatar, encodedExtension: encodedExtension, auditReason: auditReason);
+        channel: channel, avatarAttachment: avatarAttachment, auditReason: auditReason);
 
   /// Deletes the webhook.
   Future<void> delete({String? auditReason}) =>

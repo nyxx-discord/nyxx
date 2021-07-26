@@ -53,6 +53,11 @@ class MessageBuilder extends BuilderWithClient {
       MessageBuilder()
         ..embeds = [embed];
 
+  /// Creates [MessageBuilder] with only specified files
+  factory MessageBuilder.files(List<AttachmentBuilder> files) =>
+      MessageBuilder()
+        ..files = files;
+
   /// Creates [MessageBuilder] from [Message].
   /// Copies content, tts and first embed of target [message]
   factory MessageBuilder.fromMessage(Message message) => MessageBuilder()
@@ -116,7 +121,9 @@ class MessageBuilder extends BuilderWithClient {
 
   /// Add attachment
   void addAttachment(AttachmentBuilder attachment) {
-    if (this.files == null) this.files = [];
+    if (this.files == null) {
+      this.files = [];
+    }
 
     this.files!.add(attachment);
   }
