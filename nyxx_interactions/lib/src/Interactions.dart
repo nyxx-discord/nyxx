@@ -126,16 +126,21 @@ class Interactions {
   }
 
   /// Syncs commands builders with discord after client is ready.
-  void syncOnReady() {
+  void syncOnReady({ICommandsSync? syncRules}) {
     this._client.onReady.listen((_) async {
-      await this.sync();
+      await this.sync(syncRules ?? ManualCommandsSync(true));
     });
   }
 
   /// Syncs command builders with discord immediately.
   /// Warning: Client could not be ready at the function execution.
   /// Use [syncOnReady] for proper behavior
-  Future<void> sync() async {
+  Future<void> sync(ICommandsSync syncRules) async {
+    final syncCommands = await syncRules.shouldSync(this._commandBuilders);
+    if(!syncCommands) {
+      return;
+    }
+
     final commandPartition = _partition<SlashCommandBuilder>(this._commandBuilders, (element) => element.guild == null);
     final globalCommands = commandPartition.first;
     final groupedGuildCommands = _groupSlashCommandBuilders(commandPartition.last);

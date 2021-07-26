@@ -25,6 +25,10 @@ part "src/builders/CommandPermissionBuilder.dart";
 // Command Args
 part "src/models/CommandOption.dart";
 
+// Command Syncing
+part "src/interfaces/ICommandsSync.dart";
+part "src/models/ManualCommandSync.dart";
+
 // Internal
 part "src/internal/_EventController.dart";
 part "src/internal/utils.dart";
