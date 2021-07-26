@@ -70,7 +70,7 @@ abstract class Message extends SnowflakeEntity implements Disposable, Convertabl
   }
 
   factory Message._deserialize(INyxx client, RawApiMap raw) {
-    if (raw["member"] != null) {
+    if (raw["guild_id"] != null) {
       return GuildMessage._new(client, raw);
     }
 

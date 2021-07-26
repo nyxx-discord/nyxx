@@ -2,7 +2,6 @@ part of nyxx;
 
 /// Represents channel within [Guild]. Shares logic for both [TextGuildChannel] and [VoiceGuildChannel].
 abstract class GuildChannel extends MinimalGuildChannel {
-
   /// Relative position of channel in context of channel list
   late final int position;
 

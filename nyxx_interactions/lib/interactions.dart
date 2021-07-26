@@ -14,6 +14,7 @@ part "src/models/SlashCommand.dart";
 part "src/models/Interaction.dart";
 part "src/models/InteractionOption.dart";
 part "src/models/ArgChoice.dart";
+part "src/models/InteractionDataResolved.dart";
 
 // Builders
 part "src/builders/ArgChoiceBuilder.dart";
@@ -37,4 +38,5 @@ part "src/exceptions/InteractionExpired.dart";
 part "src/exceptions/AlreadyResponded.dart";
 part "src/exceptions/ResponseRequired.dart";
 
+/// Typedef of api response
 typedef RawApiMap = Map<String, dynamic>;
