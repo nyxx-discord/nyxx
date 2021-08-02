@@ -43,7 +43,7 @@ abstract class InteractionEvent<T extends Interaction> {
   /// Used to acknowledge a Interaction but not send any response yet.
   /// Once this is sent you can then only send ChannelMessages.
   /// You can also set showSource to also print out the command the user entered.
-  Future<void> acknowledge() async {
+  Future<void> acknowledge({bool hidden = false}) async {
     if (DateTime.now().isAfter(this.receivedAt.add(const Duration(seconds: 3)))) {
       return Future.error(InteractionExpiredError());
     }
@@ -53,7 +53,12 @@ abstract class InteractionEvent<T extends Interaction> {
     }
 
     final url = "/interactions/${this.interaction.id.toString()}/${this.interaction.token}/callback";
-    final response = await this._client.httpEndpoints.sendRawRequest(url, "POST", body: { "type": this._acknowledgeOpCode });
+    final response = await this._client.httpEndpoints.sendRawRequest(url, "POST", body: {
+      "type": this._acknowledgeOpCode,
+      "data": {
+        if (hidden) "flags": 1 << 6,
+      }
+    });
 
     this._logger.fine("Sending acknowledge for for interaction: $url");
 
