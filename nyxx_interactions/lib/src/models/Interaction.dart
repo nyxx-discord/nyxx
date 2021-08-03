@@ -26,9 +26,6 @@ class Interaction extends SnowflakeEntity {
   /// Version of interactions api
   late final int version;
 
-  /// The message that the button was pressed on.
-  late final Message? message;
-
   Interaction._new(this._client, RawApiMap raw) : super(Snowflake(raw["id"])) {
     this.type = raw["type"] as int;
 
@@ -51,12 +48,6 @@ class Interaction extends SnowflakeEntity {
     } else {
       this.userAuthor = null;
     }
-
-    // Discord doesn't include guild's id in the message object even if its a guild message but is included in the data so its been added to the object so that guild message can be used if the interaction is from a guild.
-    this.message = EntityUtility.createMessage(_client, {
-      ...raw["message"],
-      if (guild != null) "guild_id": guild!.id.toString()
-    });
 
     this.token = raw["token"] as String;
     this.version = raw["version"] as int;
@@ -111,8 +102,17 @@ abstract class ComponentInteraction extends Interaction {
   /// Custom id of component interaction
   late final String customId;
 
+  /// The message that the button was pressed on.
+  late final Message? message;
+
   ComponentInteraction._new(Nyxx client, RawApiMap raw): super._new(client, raw) {
     this.customId = raw["data"]["custom_id"] as String;
+
+    // Discord doesn't include guild's id in the message object even if its a guild message but is included in the data so its been added to the object so that guild message can be used if the interaction is from a guild.
+    this.message = EntityUtility.createMessage(_client, {
+      ...raw["message"],
+      if (guild != null) "guild_id": guild!.id.toString()
+    });
   }
 }
 

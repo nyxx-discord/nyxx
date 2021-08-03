@@ -34,14 +34,15 @@ class InteractionDataResolved {
 
   InteractionDataResolved._new(RawApiMap raw, Snowflake? guildId, Nyxx client) {
     this.users = [
-      for (final rawUserEntry in (raw["users"] as RawApiMap).entries)
-        EntityUtility.createUser(client, rawUserEntry.value as RawApiMap)
+      if (raw["users"] != null)
+        for (final rawUserEntry in (raw["users"] as RawApiMap).entries)
+          EntityUtility.createUser(client, rawUserEntry.value as RawApiMap)
     ];
 
     this.members = [
-      if (guildId != null)
+      if (raw["members"] != null)
         for (final rawMemberEntry in (raw["members"] as RawApiMap).entries)
-          EntityUtility.createGuildMember(client, guildId, {
+          EntityUtility.createGuildMember(client, guildId!, {
             ...rawMemberEntry.value as RawApiMap,
             "user": {
               "id": rawMemberEntry.key
@@ -50,14 +51,15 @@ class InteractionDataResolved {
     ];
 
     this.roles = [
-      if (guildId != null)
+      if (raw["roles"] != null)
         for (final rawRoleEntry in (raw["roles"] as RawApiMap).entries)
-          EntityUtility.createRole(client, guildId, rawRoleEntry.value as RawApiMap)
+          EntityUtility.createRole(client, guildId!, rawRoleEntry.value as RawApiMap)
     ];
 
     this.channels = [
-      for (final rawChannelEntry in (raw["channels"] as RawApiMap).entries)
-        PartialChannel._new(rawChannelEntry.value as RawApiMap)
+      if (raw["channels"] != null)
+        for (final rawChannelEntry in (raw["channels"] as RawApiMap).entries)
+          PartialChannel._new(rawChannelEntry.value as RawApiMap)
     ];
   }
 }
