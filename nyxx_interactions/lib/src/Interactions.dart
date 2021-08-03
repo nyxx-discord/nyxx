@@ -176,19 +176,17 @@ class Interactions {
     this._commandBuilders.clear(); // Cleanup after registering command since we don't need this anymore
     this._logger.info("Finished bulk overriding slash commands");
 
-    if (this._commands.isEmpty) {
-      return;
+    if (this._commands.isNotEmpty) {
+      this.onSlashCommand.listen((event) async {
+        final commandHash = _determineInteractionCommandHandler(event.interaction);
+
+        if (this._commandHandlers.containsKey(commandHash)) {
+          await this._commandHandlers[commandHash]!(event);
+        }
+      });
+
+      this._logger.info("Finished registering ${this._commandHandlers.length} commands!");
     }
-
-    this.onSlashCommand.listen((event) async {
-      final commandHash = _determineInteractionCommandHandler(event.interaction);
-
-      if (this._commandHandlers.containsKey(commandHash)) {
-        await this._commandHandlers[commandHash]!(event);
-      }
-    });
-
-    this._logger.info("Finished registering ${this._commandHandlers.length} commands!");
 
     if (this._buttonHandlers.isNotEmpty) {
       this.onButtonEvent.listen((event) {

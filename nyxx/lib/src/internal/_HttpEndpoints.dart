@@ -20,13 +20,12 @@ abstract class IHttpEndpoints {
   String getGuildWidgetUrl(Snowflake guildId, [String style = "shield"]);
 
   /// Allows to modify guild emoji.
-  Future<GuildEmoji> editGuildEmoji(Snowflake guildId, Snowflake emojiId,
+  Future<GuildEmoji> editGuildEmoji(
+      Snowflake guildId,
+      Snowflake emojiId,
       {String? name,
       List<Snowflake>? roles,
-      File? avatar,
-      String? encodedAvatar,
-      List<int>? avatarBytes,
-      String? encodedExtension});
+      AttachmentBuilder? avatarAttachment});
 
   /// Removes emoji from given guild
   Future<void> deleteGuildEmoji(Snowflake guildId, Snowflake emojiId);
@@ -56,10 +55,7 @@ abstract class IHttpEndpoints {
   /// Creates emoji in given guild
   Future<GuildEmoji> createEmoji(Snowflake guildId, String name,
       {List<SnowflakeEntity>? roles,
-      File? imageFile,
-      List<int>? imageBytes,
-      String? encodedImage,
-      String? encodedExtension});
+      AttachmentBuilder? emojiAttachment});
 
   /// Returns how many user will be pruned in prune operation
   Future<int> guildPruneCount(Snowflake guildId, int days,
@@ -211,10 +207,7 @@ abstract class IHttpEndpoints {
 
   /// Crates new webhook
   Future<Webhook> createWebhook(Snowflake channelId, String name,
-      {File? avatarFile,
-      List<int>? avatarBytes,
-      String? encodedAvatar,
-      String? encodedExtension,
+      {AttachmentBuilder? avatarAttachment,
       String? auditReason});
 
   /// Returns all pinned messages in channel
@@ -295,10 +288,7 @@ abstract class IHttpEndpoints {
   /// Edits self user.
   Future<User> editSelfUser(
       {String? username,
-      File? avatarFile,
-      List<int>? avatarBytes,
-      String? encodedAvatar,
-      String? encodedExtension});
+      AttachmentBuilder? avatarAttachment});
 
   /// Deletes invite with given [code]
   Future<void> deleteInvite(String code, {String? auditReason});
@@ -310,10 +300,7 @@ abstract class IHttpEndpoints {
       {String token = "",
       String? name,
       SnowflakeEntity? channel,
-      File? avatarFile,
-      List<int>? avatarBytes,
-      String? encodedAvatar,
-      String? encodedExtension,
+      AttachmentBuilder?  avatarAttachment,
       String? auditReason});
 
   /// Executes [Webhook] -- sends message using [Webhook]
@@ -443,31 +430,21 @@ class _HttpEndpoints implements IHttpEndpoints {
       "https://cdn.${Constants.cdnHost}/guilds/$guildId/widget.png?style=$style";
 
   @override
-  Future<GuildEmoji> editGuildEmoji(Snowflake guildId, Snowflake emojiId,
+  Future<GuildEmoji> editGuildEmoji(
+      Snowflake guildId,
+      Snowflake emojiId,
       {String? name,
       List<Snowflake>? roles,
-      File? avatar,
-      String? encodedAvatar,
-      List<int>? avatarBytes,
-      String? encodedExtension}) async {
+      AttachmentBuilder? avatarAttachment}) async {
     if (name == null && roles == null) {
-      return Future.error(
-          ArgumentError("Both name and roles fields cannot be null"));
+      return Future.error(ArgumentError("Both name and roles fields cannot be null"));
     }
 
     final body = <String, dynamic>{
       if (name != null) "name": name,
-      if (roles != null) "roles": roles.map((r) => r.toString())
+      if (roles != null) "roles": roles.map((r) => r.toString()),
+      if (avatarAttachment != null) "avatar": avatarAttachment.getBase64()
     };
-
-    final uploadString = Utils.getBase64UploadString(
-        file: avatar,
-        fileBytes: avatarBytes,
-        base64EncodedFile: encodedAvatar,
-        fileExtension: encodedExtension);
-    if (uploadString != null) {
-      body["avatar"] = uploadString;
-    }
 
     final response = await _httpClient._execute(BasicRequest._new(
         "/guilds/$guildId/emojis/$emojiId",
@@ -562,23 +539,12 @@ class _HttpEndpoints implements IHttpEndpoints {
   @override
   Future<GuildEmoji> createEmoji(Snowflake guildId, String name,
       {List<SnowflakeEntity>? roles,
-      File? imageFile,
-      List<int>? imageBytes,
-      String? encodedImage,
-      String? encodedExtension}) async {
+       AttachmentBuilder? emojiAttachment}) async {
     final body = <String, dynamic>{
       "name": name,
-      if (roles != null) "roles": roles.map((r) => r.id.toString())
+      if (roles != null) "roles": roles.map((r) => r.id.toString()),
+      if (emojiAttachment != null) "image": emojiAttachment.getBase64()
     };
-
-    final uploadString = Utils.getBase64UploadString(
-        file: imageFile,
-        fileBytes: imageBytes,
-        base64EncodedFile: encodedImage,
-        fileExtension: encodedExtension);
-    if (uploadString != null) {
-      body["image"] = uploadString;
-    }
 
     final response = await _httpClient._execute(BasicRequest._new(
         "/guilds/$guildId/emojis",
@@ -594,8 +560,7 @@ class _HttpEndpoints implements IHttpEndpoints {
   }
 
   @override
-  Future<int> guildPruneCount(Snowflake guildId, int days,
-      {Iterable<Snowflake>? includeRoles}) async {
+  Future<int> guildPruneCount(Snowflake guildId, int days, {Iterable<Snowflake>? includeRoles}) async {
     final response = await _httpClient
         ._execute(BasicRequest._new("/guilds/$guildId/prune", queryParams: {
       "days": days.toString(),
@@ -1076,7 +1041,7 @@ class _HttpEndpoints implements IHttpEndpoints {
     _HttpResponse response;
     if (builder._hasFiles()) {
       response = await _httpClient._execute(MultipartRequest._new(
-          "/channels/$channelId/messages", builder.files!.map((e) => e._asMultipartFile()).toList(),
+          "/channels/$channelId/messages", builder.files!.map((e) => e.getMultipartFile()).toList(),
           method: "POST", fields: builder.build(_client)));
     } else {
       response = await _httpClient._execute(BasicRequest._new(
@@ -1159,26 +1124,17 @@ class _HttpEndpoints implements IHttpEndpoints {
 
   @override
   Future<Webhook> createWebhook(Snowflake channelId, String name,
-      {File? avatarFile,
-      List<int>? avatarBytes,
-      String? encodedAvatar,
-      String? encodedExtension,
+      {AttachmentBuilder? avatarAttachment,
       String? auditReason}) async {
     if (name.isEmpty || name.length > 80) {
       return Future.error(ArgumentError(
           "Webhook name cannot be shorter than 1 character and longer than 80 characters"));
     }
 
-    final body = <String, dynamic>{"name": name};
-
-    final uploadString = Utils.getBase64UploadString(
-        file: avatarFile,
-        fileBytes: avatarBytes,
-        base64EncodedFile: encodedAvatar,
-        fileExtension: encodedExtension);
-    if (uploadString != null) {
-      body["avatar"] = uploadString;
-    }
+    final body = <String, dynamic>{
+      "name": name,
+      if (avatarAttachment != null) "avatar": avatarAttachment.getBase64(),
+    };
 
     final response = await _httpClient._execute(BasicRequest._new(
         "/channels/$channelId/webhooks",
@@ -1347,20 +1303,11 @@ class _HttpEndpoints implements IHttpEndpoints {
   @override
   Future<User> editSelfUser(
       {String? username,
-      File? avatarFile,
-      List<int>? avatarBytes,
-      String? encodedAvatar,
-      String? encodedExtension}) async {
-    final body = <String, dynamic>{if (username != null) "username": username};
-
-    final uploadString = Utils.getBase64UploadString(
-        file: avatarFile,
-        fileBytes: avatarBytes,
-        base64EncodedFile: encodedAvatar,
-        fileExtension: encodedExtension);
-    if (uploadString != null) {
-      body["avatar"] = uploadString;
-    }
+      AttachmentBuilder? avatarAttachment}) async {
+    final body = <String, dynamic>{
+      if (username != null) "username": username,
+      if (avatarAttachment != null) "avatar": avatarAttachment.getBase64(),
+    };
 
     final response = await _httpClient
         ._execute(BasicRequest._new("/users/@me", method: "PATCH", body: body));
@@ -1388,24 +1335,13 @@ class _HttpEndpoints implements IHttpEndpoints {
       {String token = "",
       String? name,
       SnowflakeEntity? channel,
-      File? avatarFile,
-      List<int>? avatarBytes,
-      String? encodedAvatar,
-      String? encodedExtension,
+      AttachmentBuilder?  avatarAttachment,
       String? auditReason}) async {
     final body = <String, dynamic>{
       if (name != null) "name": name,
-      if (channel != null) "channel_id": channel.id.toString()
+      if (channel != null) "channel_id": channel.id.toString(),
+      if (avatarAttachment != null) "avatar": avatarAttachment.getBase64(),
     };
-
-    final uploadString = Utils.getBase64UploadString(
-        file: avatarFile,
-        fileBytes: avatarBytes,
-        base64EncodedFile: encodedAvatar,
-        fileExtension: encodedExtension);
-    if (uploadString != null) {
-      body["avatar"] = uploadString;
-    }
 
     final response = await _httpClient._execute(BasicRequest._new(
         "/webhooks/$webhookId/$token",
@@ -1441,7 +1377,7 @@ class _HttpEndpoints implements IHttpEndpoints {
     if (builder.files != null && builder.files!.isNotEmpty) {
       response = await _httpClient._execute(MultipartRequest._new(
           "/webhooks/$webhookId/$token",
-          builder.files!.map((e) => e._asMultipartFile()).toList(),
+          builder.files!.map((e) => e.getMultipartFile()).toList(),
           method: "POST",
           fields: body,
           queryParams: queryParams)

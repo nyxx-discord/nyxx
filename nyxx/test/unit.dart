@@ -161,15 +161,15 @@ void main() {
 
   group("Generic utils", () {
     test("Utils.getBase64UploadString returns valid string", () {
-      final kittyFile = File("./test/kitty.webp");
+      const path = "./test/kitty.webp";
       const extension = "webp";
 
+      final kittyFile = File(path);
       final encodedKitty = base64Encode(kittyFile.readAsBytesSync());
 
       final expectedStringFile = "data:image/$extension;base64,$encodedKitty";
-      expect(Utils.getBase64UploadString(file: kittyFile, fileExtension: extension), expectedStringFile);
-      expect(Utils.getBase64UploadString(fileBytes: kittyFile.readAsBytesSync(), fileExtension: extension), expectedStringFile);
-      expect(Utils.getBase64UploadString(base64EncodedFile: encodedKitty, fileExtension: extension), expectedStringFile);
+      expect(AttachmentBuilder.file(kittyFile), expectedStringFile);
+      expect(AttachmentBuilder.bytes(kittyFile.readAsBytesSync(), path), expectedStringFile);
     }, skip: "Skipped for now because of problems with required path to file");
 
     test("Utils.chunk returns valid chunks", () async {

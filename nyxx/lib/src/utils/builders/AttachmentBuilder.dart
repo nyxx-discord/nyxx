@@ -24,7 +24,7 @@ class AttachmentBuilder {
 
   /// Create attachment from specified file instance. Name will be automatically extracted from path if no name provided.
   factory AttachmentBuilder.file(File file, {String? name, bool? spoiler}) {
-    final  bytes = file.readAsBytesSync();
+    final bytes = file.readAsBytesSync();
     final fileName = name ?? path_utils.basename(file.path);
 
     return AttachmentBuilder._new(bytes, fileName, spoiler);
@@ -34,7 +34,15 @@ class AttachmentBuilder {
   factory AttachmentBuilder.bytes(List<int> bytes, String name, {bool? spoiler}) =>
     AttachmentBuilder._new(bytes, name, spoiler);
 
-  // creates instance of MultipartFile
-  http.MultipartFile _asMultipartFile() =>
+  /// creates instance of MultipartFile from attachment
+  http.MultipartFile getMultipartFile() =>
       http.MultipartFile(_name, Stream.value(_bytes), _bytes.length, filename: _name);
+
+  /// Returns attachment encoded in Data URI scheme format
+  /// See: https://discord.com/developers/docs/reference#image-data
+  String getBase64() {
+    final encodedData = base64Encode(_bytes);
+    final extension = path_utils.extension(_name);
+    return "data:image/$extension;base64,$encodedData";
+  }
 }
