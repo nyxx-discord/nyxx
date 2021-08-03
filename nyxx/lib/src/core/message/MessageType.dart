@@ -18,6 +18,13 @@ class MessageType extends IEnum<int> {
   static const MessageType guildDiscoveryDisqualified = MessageType._create(14);
   static const MessageType guildStream = MessageType._create(13);
   static const MessageType guildDiscoveryRequalified = MessageType._create(15);
+  static const MessageType guildDiscoveryGracePeriodInitialWarning = MessageType._create(16);
+  static const MessageType guildDiscoveryGracePeriodFinalWarning = MessageType._create(17);
+  static const MessageType threadCreated = MessageType._create(18);
+  static const MessageType reply = MessageType._create(19);
+  static const MessageType applicationCommand = MessageType._create(20);
+  static const MessageType threadStarterMessage = MessageType._create(21);
+  static const MessageType guildInviteRemainder = MessageType._create(22);
 
   /// Creates instance of [MessageType] from [value].
   MessageType.from(int? value) : super(value ?? 0);
