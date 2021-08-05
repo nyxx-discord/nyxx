@@ -74,7 +74,7 @@ class GuildSticker extends ISticker {
 
   GuildSticker._new(RawApiMap raw, INyxx client) : super._new(raw, client) {
     this.name = raw["name"] as String;
-    this.description = raw["description"] as String;
+    this.description = raw["description"] as String?;
     this.format = StickerFormat.from(raw["format_type"] as int);
     this.type = StickerType.from(raw["type"] as int);
 
