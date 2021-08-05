@@ -17,7 +17,7 @@ abstract class ISticker extends SnowflakeEntity {
   /// Format of sticker
   StickerFormat get format;
 
-  ISticker._new(RawApiMap raw, this.client): super(Snowflake(raw["id"]));
+  ISticker._new(RawApiMap raw, this.client) : super(Snowflake(raw["id"]));
 
   /// Url for sticker image
   String get stickerURL =>
@@ -42,7 +42,7 @@ class PartialSticker extends ISticker {
   @override
   StickerType get type => StickerType.partial;
 
-  PartialSticker._new(RawApiMap raw, INyxx client): super._new(raw, client);
+  PartialSticker._new(RawApiMap raw, INyxx client) : super._new(raw, client);
 }
 
 /// Sticker that is available through guild and nitro users that joined that guild
@@ -74,7 +74,7 @@ class GuildSticker extends ISticker {
 
   GuildSticker._new(RawApiMap raw, INyxx client) : super._new(raw, client) {
     this.name = raw["name"] as String;
-    this.description = raw["description"] as String;
+    this.description = raw["description"] as String?;
     this.format = StickerFormat.from(raw["format_type"] as int);
     this.type = StickerType.from(raw["type"] as int);
 
@@ -121,7 +121,7 @@ class StandardSticker extends ISticker {
   /// [StandardSticker] tags in list form
   Iterable<String> get tagsList => tags!.split(", ").map((e) => e.trim());
 
-  StandardSticker._new(RawApiMap raw, INyxx client): super._new(raw, client) {
+  StandardSticker._new(RawApiMap raw, INyxx client) : super._new(raw, client) {
     this.name = raw["name"] as String;
     this.description = raw["description"] as String;
     this.format = StickerFormat.from(raw["format_type"] as int);
@@ -152,7 +152,7 @@ class StickerPack extends SnowflakeEntity {
   /// Id of the sticker pack's banner image
   late final Snowflake bannerAssetId;
 
-  StickerPack._new(RawApiMap raw, INyxx client): super(Snowflake(raw["id"])) {
+  StickerPack._new(RawApiMap raw, INyxx client) : super(Snowflake(raw["id"])) {
     this.stickers = [
       for (final rawSticker in raw["stickers"])
         StandardSticker._new(rawSticker as RawApiMap, client)
@@ -177,7 +177,7 @@ class StickerType extends IEnum<int> {
   static const StickerType partial = const StickerType._create(99);
 
   /// Creates [StickerType] from [value]
-  StickerType.from(int value): super(value);
+  StickerType.from(int value) : super(value);
   const StickerType._create(int value) : super(value);
 }
 
@@ -188,12 +188,12 @@ class StickerFormat extends IEnum<int> {
   static const StickerFormat lottie = const StickerFormat._create(3);
 
   /// Creates [StickerFormat] from [value]
-  StickerFormat.from(int value): super(value);
+  StickerFormat.from(int value) : super(value);
   const StickerFormat._create(int value) : super(value);
 
   /// Returns extension for given Sticker type
   String getExtension() {
-    switch(this.value) {
+    switch (this.value) {
       case 1:
       case 2:
         return "png";
