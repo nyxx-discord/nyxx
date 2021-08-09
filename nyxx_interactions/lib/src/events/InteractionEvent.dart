@@ -42,12 +42,12 @@ abstract class InteractionEvent<T extends Interaction> {
   /// Once this is sent you can then only send ChannelMessages.
   /// You can also set showSource to also print out the command the user entered.
   Future<void> acknowledge({bool hidden = false}) async {
-    if (DateTime.now().isAfter(this.receivedAt.add(const Duration(seconds: 3)))) {
-      return Future.error(InteractionExpiredError._3secs());
-    }
-
     if (_hasAcked) {
       return Future.error(AlreadyRespondedError());
+    }
+
+    if (DateTime.now().isAfter(this.receivedAt.add(const Duration(seconds: 3)))) {
+      return Future.error(InteractionExpiredError._3secs());
     }
 
     final url = "/interactions/${this.interaction.id.toString()}/${this.interaction.token}/callback";
