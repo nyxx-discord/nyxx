@@ -3,7 +3,6 @@ import "dart:async";
 import "package:nyxx/nyxx.dart";
 import "package:nyxx_extensions/embedbuilder_extension.dart";
 import "package:nyxx_extensions/emoji.dart";
-import "package:nyxx_extensions/pagination.dart";
 import "package:nyxx_extensions/src/utils.dart";
 import "package:test/expect.dart";
 import "package:test/scaffolding.dart";
@@ -118,30 +117,6 @@ void main() async {
       };
       final embed = EmbedBuilder().importJson(data);
       expect(BuilderUtility.buildRawEmbed(embed), equals(data));
-    });
-  });
-
-  group("Pagination tests", () {
-    test("BasicPaginationHandler", () async {
-      final pages = [
-        "This is first page",
-        "This is second page",
-      ];
-
-      final basicPaginationHandler = BasicPaginationHandler(pages);
-
-      expect(basicPaginationHandler.dataLength, 2);
-      expect(basicPaginationHandler.pages, pages);
-
-      final initialPage = await basicPaginationHandler.generateInitialPage();
-      expect(initialPage.runtimeType, MessageBuilder);
-      expect(initialPage.content, pages[0]);
-
-      final secondPage = await basicPaginationHandler.generatePage(1);
-      expect(secondPage.runtimeType, MessageBuilder);
-      expect(secondPage.content, pages[1]);
-
-      expect(() async => await basicPaginationHandler.generatePage(2), throwsRangeError);
     });
   });
 
