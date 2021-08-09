@@ -4,8 +4,6 @@ part of nyxx_interactions;
 abstract class InteractionEvent<T extends Interaction> {
   late final Nyxx _client;
 
-  final Logger _logger = Logger("Interaction Event");
-
   /// The interaction data, includes the args, name, guild, channel, etc.
   T get interaction;
 
@@ -13,19 +11,19 @@ abstract class InteractionEvent<T extends Interaction> {
   final DateTime receivedAt = DateTime.now();
 
   /// If the Client has sent a response to the Discord API. Once the API was received a response you cannot send another.
-  bool hasResponded = false;
-
+  bool _hasAcked = false;
   /// Opcode for acknowledging interaction
   int get _acknowledgeOpCode;
-
   /// Opcode for responding to interaction
   int get _respondOpcode;
+
+  final Logger _logger = Logger("Interaction Event");
 
   InteractionEvent._new(this._client);
 
   /// Create a followup message for an Interaction
   Future<void> sendFollowup(MessageBuilder builder) async {
-    if(!hasResponded) {
+    if(!_hasAcked) {
       return Future.error(ResponseRequiredError());
     }
 
@@ -45,10 +43,10 @@ abstract class InteractionEvent<T extends Interaction> {
   /// You can also set showSource to also print out the command the user entered.
   Future<void> acknowledge({bool hidden = false}) async {
     if (DateTime.now().isAfter(this.receivedAt.add(const Duration(seconds: 3)))) {
-      return Future.error(InteractionExpiredError());
+      return Future.error(InteractionExpiredError._3secs());
     }
 
-    if (hasResponded) {
+    if (_hasAcked) {
       return Future.error(AlreadyRespondedError());
     }
 
@@ -66,21 +64,24 @@ abstract class InteractionEvent<T extends Interaction> {
       return Future.error(response);
     }
 
-    hasResponded = true;
+    _hasAcked = true;
   }
 
   /// Used to acknowledge a Interaction and send a response.
   /// Once this is sent you can then only send ChannelMessages.
   Future<void> respond(MessageBuilder builder, { bool hidden = false }) async {
-    if (DateTime.now().isAfter(this.receivedAt.add(const Duration(minutes: 15)))) {
-      return Future.error(InteractionExpiredError());
+    final now = DateTime.now();
+    if (_hasAcked && now.isAfter(this.receivedAt.add(const Duration(minutes: 15)))) {
+      return Future.error(InteractionExpiredError._15mins());
+    } else if (now.isAfter(this.receivedAt.add(const Duration(seconds: 3)))) {
+      return Future.error(InteractionExpiredError._3secs());
     }
 
     late String url;
     late RawApiMap body;
     late String method;
 
-    if (hasResponded) {
+    if (_hasAcked) {
       url = "/webhooks/${this._client.app.id.toString()}/${this.interaction.token}/messages/@original";
       body = {
         if (hidden) "flags": 1 << 6,
@@ -109,7 +110,7 @@ abstract class InteractionEvent<T extends Interaction> {
       return Future.error(response);
     }
 
-    hasResponded = true;
+    _hasAcked = true;
   }
 }
 
