@@ -14,7 +14,6 @@ class Interactions {
   static const _interactionCreateCommand = "INTERACTION_CREATE";
   static const _op0 = 0;
 
-  final Nyxx _client;
   late final _EventController _events;
 
   final Logger _logger = Logger("Interactions");
@@ -24,6 +23,9 @@ class Interactions {
   final _commandHandlers = <String, SlashCommandHandler>{};
   final _buttonHandlers = <String, ButtonInteractionHandler>{};
   final _multiselectHandlers = <String, MultiselectInteractionHandler>{};
+
+  /// Reference to client
+  final Nyxx client;
 
   /// Emitted when a slash command is sent.
   late final Stream<SlashCommandInteractionEvent> onSlashCommand;
@@ -38,13 +40,13 @@ class Interactions {
   late final Stream<SlashCommand> onSlashCommandCreated;
 
   /// Create new instance of the interactions class.
-  Interactions(this._client) {
+  Interactions(this.client) {
     _events = _EventController(this);
-    _client.options.dispatchRawShardEvent = true;
+    client.options.dispatchRawShardEvent = true;
     _logger.info("Interactions ready");
 
-    _client.onReady.listen((event) async {
-      _client.shardManager.rawEvent.listen((event) {
+    client.onReady.listen((event) async {
+      client.shardManager.rawEvent.listen((event) {
         if (event.rawData["op"] == OPCodes.dispatch && event.rawData["t"] == _interactionCreateCommand) {
           this._logger.fine("Received interaction event: [${event.rawData}]");
 
@@ -52,17 +54,17 @@ class Interactions {
 
           switch (type) {
             case 2:
-              _events.onSlashCommand.add(SlashCommandInteractionEvent._new(_client, event.rawData["d"] as RawApiMap));
+              _events.onSlashCommand.add(SlashCommandInteractionEvent._new(this, event.rawData["d"] as RawApiMap));
               break;
             case 3:
               final componentType = event.rawData["d"]["data"]["component_type"] as int;
 
               switch (componentType) {
                 case 2:
-                  _events.onButtonEvent.add(ButtonInteractionEvent._new(_client, event.rawData["d"] as Map<String, dynamic>));
+                  _events.onButtonEvent.add(ButtonInteractionEvent._new(this, event.rawData["d"] as Map<String, dynamic>));
                   break;
                 case 3:
-                  _events.onMultiselectEvent.add(MultiselectInteractionEvent._new(_client, event.rawData["d"] as Map<String, dynamic>));
+                  _events.onMultiselectEvent.add(MultiselectInteractionEvent._new(this, event.rawData["d"] as Map<String, dynamic>));
                   break;
                 default:
                   this._logger.warning("Unknown componentType type: [$componentType]; Payload: ${jsonEncode(event.rawData)}");
@@ -93,9 +95,9 @@ class Interactions {
       .toList();
 
     await this
-        ._client
+        .client
         .httpEndpoints
-        .sendRawRequest("/applications/${this._client.app.id}/commands/permissions", "PUT", body: globalBody);
+        .sendRawRequest("/applications/${this.client.app.id}/commands/permissions", "PUT", body: globalBody);
 
     for (final entry in groupedGuildCommands.entries) {
       final guildBody = entry.value
@@ -106,7 +108,7 @@ class Interactions {
         })
         .toList();
 
-      await this._client.httpEndpoints.sendRawRequest("/applications/${this._client.app.id}/guilds/${entry.key}/commands/permissions", "PUT", body: guildBody);
+      await this.client.httpEndpoints.sendRawRequest("/applications/${this.client.app.id}/guilds/${entry.key}/commands/permissions", "PUT", body: guildBody);
     }
   }
 
@@ -127,7 +129,7 @@ class Interactions {
 
   /// Syncs commands builders with discord after client is ready.
   void syncOnReady() {
-    this._client.onReady.listen((_) async {
+    this.client.onReady.listen((_) async {
       await this.sync();
     });
   }
@@ -140,8 +142,8 @@ class Interactions {
     final globalCommands = commandPartition.first;
     final groupedGuildCommands = _groupSlashCommandBuilders(commandPartition.last);
 
-    final globalCommandsResponse = await this._client.httpEndpoints.sendRawRequest(
-        "/applications/${this._client.app.id}/commands",
+    final globalCommandsResponse = await this.client.httpEndpoints.sendRawRequest(
+        "/applications/${this.client.app.id}/commands",
         "PUT",
         body: [
           for(final builder in globalCommands)
@@ -155,8 +157,8 @@ class Interactions {
     }
 
     for(final entry in groupedGuildCommands.entries) {
-      final response = await this._client.httpEndpoints.sendRawRequest(
-          "/applications/${this._client.app.id}/guilds/${entry.key}/commands",
+      final response = await this.client.httpEndpoints.sendRawRequest(
+          "/applications/${this.client.app.id}/guilds/${entry.key}/commands",
           "PUT",
           body: [
             for(final builder in entry.value)
@@ -222,7 +224,7 @@ class Interactions {
       this._commandBuilders.add(slashCommandBuilder);
 
   void _registerCommandHandlers(HttpResponseSuccess response, Iterable<SlashCommandBuilder> builders) {
-    final registeredSlashCommands = (response.jsonBody as List<dynamic>).map((e) => SlashCommand._new(e as RawApiMap, this._client));
+    final registeredSlashCommands = (response.jsonBody as List<dynamic>).map((e) => SlashCommand._new(e as RawApiMap, this.client));
 
     for(final registeredCommand in registeredSlashCommands) {
       final matchingBuilder = builders.firstWhere((element) => element.name.toLowerCase() == registeredCommand.name);

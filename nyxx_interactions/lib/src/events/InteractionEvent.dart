@@ -2,7 +2,10 @@ part of nyxx_interactions;
 
 /// The event that you receive when a user types a slash command.
 abstract class InteractionEvent<T extends Interaction> {
-  late final Nyxx _client;
+  Nyxx get _client => interactions.client;
+
+  /// Reference to [Interactions]
+  late final Interactions interactions;
 
   /// The interaction data, includes the args, name, guild, channel, etc.
   T get interaction;
@@ -19,7 +22,7 @@ abstract class InteractionEvent<T extends Interaction> {
 
   final Logger _logger = Logger("Interaction Event");
 
-  InteractionEvent._new(this._client);
+  InteractionEvent._new(this.interactions);
 
   /// Create a followup message for an Interaction
   Future<void> sendFollowup(MessageBuilder builder) async {
@@ -126,8 +129,8 @@ class SlashCommandInteractionEvent extends InteractionEvent<SlashCommandInteract
   @override
   int get _respondOpcode => 4;
 
-  SlashCommandInteractionEvent._new(Nyxx client, RawApiMap raw): super._new(client) {
-    this.interaction = SlashCommandInteraction._new(client, raw);
+  SlashCommandInteractionEvent._new(Interactions interactions, RawApiMap raw): super._new(interactions) {
+    this.interaction = SlashCommandInteraction._new(_client, raw);
   }
 }
 
@@ -143,7 +146,7 @@ abstract class ComponentInteractionEvent<T extends ComponentInteraction> extends
   @override
   int get _respondOpcode => 7;
 
-  ComponentInteractionEvent._new(Nyxx client, RawApiMap raw): super._new(client);
+  ComponentInteractionEvent._new(Interactions interactions, RawApiMap raw): super._new(interactions);
 }
 
 /// Interaction event for button events
@@ -151,8 +154,8 @@ class ButtonInteractionEvent extends ComponentInteractionEvent<ButtonInteraction
   @override
   late final ButtonInteraction interaction;
 
-  ButtonInteractionEvent._new(Nyxx client, RawApiMap raw): super._new(client, raw) {
-    this.interaction = ButtonInteraction._new(client, raw);
+  ButtonInteractionEvent._new(Interactions interactions, RawApiMap raw): super._new(interactions, raw) {
+    this.interaction = ButtonInteraction._new(_client, raw);
   }
 }
 
@@ -161,7 +164,7 @@ class MultiselectInteractionEvent extends ComponentInteractionEvent<MultiselectI
   @override
   late final MultiselectInteraction interaction;
 
-  MultiselectInteractionEvent._new(Nyxx client, RawApiMap raw): super._new(client, raw) {
-    this.interaction = MultiselectInteraction._new(client, raw);
+  MultiselectInteractionEvent._new(Interactions interactions, RawApiMap raw): super._new(interactions, raw) {
+    this.interaction = MultiselectInteraction._new(_client, raw);
   }
 }
