@@ -66,14 +66,16 @@ class SlashCommandInteraction extends Interaction {
   late final Snowflake commandId;
 
   /// Additional data for command
-  late final InteractionDataResolved resolved;
+  late final InteractionDataResolved? resolved;
 
   SlashCommandInteraction._new(Nyxx client, RawApiMap raw) : super._new(client, raw) {
     this.name = raw["data"]["name"] as String;
     this.options = _generateArgs(raw["data"] as RawApiMap);
     this.commandId = Snowflake(raw["data"]["id"]);
 
-    this.resolved = InteractionDataResolved._new(raw["data"]["resolved"] as RawApiMap, this.guild?.id, client);
+    this.resolved = raw["data"]["resolved"] != null
+        ? InteractionDataResolved._new(raw["data"]["resolved"] as RawApiMap, this.guild?.id, client)
+        : null;
   }
 
   /// Allows to fetch argument value by argument name
