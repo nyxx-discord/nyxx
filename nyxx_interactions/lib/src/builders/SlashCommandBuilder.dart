@@ -1,13 +1,5 @@
 part of nyxx_interactions;
 
-class SlashCommandTarget extends IEnum<int> {
-  static const SlashCommandTarget chat = const SlashCommandTarget(1);
-  static const SlashCommandTarget user = const SlashCommandTarget(2);
-  static const SlashCommandTarget message = const SlashCommandTarget(3);
-
-  const SlashCommandTarget(int value) : super(value);
-}
-
 /// A slash command, can only be instantiated through a method on [Interactions]
 class SlashCommandBuilder extends Builder {
   /// The commands ID that is defined on registration and used for permission syncing.
@@ -33,29 +25,36 @@ class SlashCommandBuilder extends Builder {
 
   /// Target of slash command if different that SlashCommandTarget.chat - slash command will
   /// become context menu in appropriate context
-  SlashCommandTarget target;
+  SlashCommandType type;
 
   /// Handler for SlashCommandBuilder
   SlashCommandHandler? _handler;
 
   /// A slash command, can only be instantiated through a method on [Interactions]
   SlashCommandBuilder(this.name, this.description, this.options,
-      {this.defaultPermissions = true, this.permissions, this.guild, this.target = SlashCommandTarget.chat}) {
+      {this.defaultPermissions = true, this.permissions, this.guild, this.type = SlashCommandType.chat}) {
     if (!slashCommandNameRegex.hasMatch(this.name)) {
-      throw ArgumentError(
-          "Command name has to match regex: ${slashCommandNameRegex.pattern}");
+      throw ArgumentError("Command name has to match regex: ${slashCommandNameRegex.pattern}");
+    }
+
+    if (this.description == null && this.type == SlashCommandType.chat) {
+      throw ArgumentError("Normal slash command needs to have description");
+    }
+
+    if (this.description != null && this.type != SlashCommandType.chat) {
+      throw ArgumentError("Context menus cannot have description");
     }
   }
 
   @override
   RawApiMap build() => {
         "name": this.name,
-        if (this.target == SlashCommandTarget.chat)
+        if (this.type == SlashCommandType.chat)
           "description": this.description,
         "default_permission": this.defaultPermissions,
         if (this.options.isNotEmpty)
           "options": this.options.map((e) => e.build()).toList(),
-        "type": this.target.value,
+        "type": this.type.value,
       };
 
   void _setId(Snowflake id) => this._id = id;

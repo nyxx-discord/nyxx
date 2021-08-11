@@ -15,6 +15,7 @@ part "src/models/Interaction.dart";
 part "src/models/InteractionOption.dart";
 part "src/models/ArgChoice.dart";
 part "src/models/InteractionDataResolved.dart";
+part "src/models/SlashCommandType.dart";
 
 // Builders
 part "src/builders/ArgChoiceBuilder.dart";
