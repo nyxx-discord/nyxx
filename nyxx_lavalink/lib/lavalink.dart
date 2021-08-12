@@ -27,6 +27,7 @@ part "src/model/TrackException.dart";
 part "src/model/TrackStart.dart";
 part "src/model/TrackStuck.dart";
 part "src/model/WebSocketClosed.dart";
+part "src/model/SearchPlatform.dart";
 
 part "src/node/Node.dart";
 part "src/node/nodeRunner.dart";
