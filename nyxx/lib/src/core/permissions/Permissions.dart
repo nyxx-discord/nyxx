@@ -122,7 +122,6 @@ class Permissions implements Convertable<PermissionsBuilder> {
       Permissions._construct(0);
 
   /// Permissions with max value
-  @Deprecated("Needs to be updated")
   factory Permissions.all() =>
       Permissions._construct(PermissionsConstants.allPermissions);
 
