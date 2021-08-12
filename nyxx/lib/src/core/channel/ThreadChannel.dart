@@ -51,6 +51,9 @@ class ThreadChannel extends MinimalGuildChannel implements TextChannel {
   /// Time after what thread will be archived
   late final ThreadArchiveTime archiveAfter;
 
+  /// Whether non-moderators can add other non-moderators to a thread; only available on private threads
+  late final bool invitable;
+
   @override
   Future<int> get fileUploadLimit async {
     final guildInstance = await this.guild.getOrDownload();
@@ -70,6 +73,7 @@ class ThreadChannel extends MinimalGuildChannel implements TextChannel {
     this.archived = meta["archived"] as bool;
     this.archiveAt = DateTime.parse(meta["archive_timestamp"] as String);
     this.archiveAfter = ThreadArchiveTime._new(meta["auto_archive_duration"] as int);
+    this.invitable = raw["invitable"] as bool;
   }
 
   /// Fetches from API current list of member that has access to that thread
