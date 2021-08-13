@@ -199,9 +199,9 @@ class Node {
   /// Searches a provided query on selected platform (YouTube by default),
   /// if the query is a link it's searched directly by the link
   Future<Tracks> autoSearch(
-    String query, [
+    String query, {
     SearchPlatform platform = SearchPlatform.youtube,
-  ]) async {
+  }) async {
     if (this._urlRegex.hasMatch(query)) {
       return searchTracks(query);
     }
