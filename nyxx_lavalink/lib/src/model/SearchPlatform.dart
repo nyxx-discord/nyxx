@@ -1,20 +1,15 @@
 part of nyxx_lavalink;
 
 /// Search platforms supported by Lavalink
-enum SearchPlatform {
+class SearchPlatform extends IEnum<String> {
   /// Youtube
-  youtube,
+  static const youtube = SearchPlatform._create("ytsearch");
 
   /// Youtube Music
-  youtubeMusic,
+  static const youtubeMusic = SearchPlatform._create("ytmsearch");
 
   /// SoundCloud
-  soundcloud,
-}
+  static const soundcloud = SearchPlatform._create("scsearch");
 
-/// String presentation of the platform
-const Map<SearchPlatform, String> _stringPlatform = {
-  SearchPlatform.youtube: "ytsearch",
-  SearchPlatform.youtubeMusic: "ytmsearch",
-  SearchPlatform.soundcloud: "scsearch",
-};
+  const SearchPlatform._create(String value) : super(value);
+}

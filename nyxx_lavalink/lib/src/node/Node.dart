@@ -206,7 +206,7 @@ class Node {
       return searchTracks(query);
     }
 
-    return searchTracks("${_stringPlatform[platform]}:$query");
+    return searchTracks("${platform.value}:$query");
   }
 
   /// Get the [PlayParameters] object for a specific track
