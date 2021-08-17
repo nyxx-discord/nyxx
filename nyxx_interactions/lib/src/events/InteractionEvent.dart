@@ -25,7 +25,7 @@ abstract class InteractionEvent<T extends Interaction> {
   InteractionEvent._new(this.interactions);
 
   /// Create a followup message for an Interaction
-  Future<void> sendFollowup(MessageBuilder builder) async {
+  Future<Message> sendFollowup(MessageBuilder builder) async {
     if(!_hasAcked) {
       return Future.error(ResponseRequiredError());
     }
@@ -39,6 +39,8 @@ abstract class InteractionEvent<T extends Interaction> {
     if (response is HttpResponseError) {
       return Future.error(response);
     }
+
+    return EntityUtility.createMessage(this._client, (response as HttpResponseSuccess).jsonBody as RawApiMap);
   }
 
   /// Used to acknowledge a Interaction but not send any response yet.
@@ -114,6 +116,35 @@ abstract class InteractionEvent<T extends Interaction> {
     }
 
     _hasAcked = true;
+  }
+
+  /// Returns [Message] object of original interaction response
+  Future<Message> getOriginalResponse() async {
+    final response = await this._client.httpEndpoints.sendRawRequest(
+        "/webhooks/${this.interaction.id.toString()}/${this.interaction.token}/messages/@original",
+        "GET"
+    );
+
+    if (response is HttpResponseError) {
+      return Future.error(response);
+    }
+
+    return EntityUtility.createMessage(this._client, (response as HttpResponseSuccess).jsonBody as RawApiMap);
+  }
+
+  /// Edits original message response
+  Future<Message> editOriginalResponse(MessageBuilder builder) async {
+    final response = await this._client.httpEndpoints.sendRawRequest(
+        "/webhooks/${this.interaction.id.toString()}/${this.interaction.token}/messages/@original",
+        "PATCH",
+        body: builder.build(this._client)
+    );
+
+    if (response is HttpResponseError) {
+      return Future.error(response);
+    }
+
+    return EntityUtility.createMessage(this._client, (response as HttpResponseSuccess).jsonBody as RawApiMap);
   }
 }
 
