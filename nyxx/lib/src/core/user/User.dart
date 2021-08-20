@@ -74,7 +74,7 @@ class User extends SnowflakeEntity with Mentionable, IMessageAuthor implements I
 
     this.bannerHash = raw["banner"] as String?;
     if (raw["accent_color"] != null) {
-      this.accentColor = DiscordColor.fromHexString(raw["accent_color"] as String);
+      this.accentColor = DiscordColor.fromInt(raw["accent_color"] as int);
     } else {
       this.accentColor = null;
     }
