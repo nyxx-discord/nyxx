@@ -1,9 +1,10 @@
 library nyxx_interactions;
 
 import "dart:async";
-import 'dart:convert';
-import 'dart:io';
+import "dart:convert";
+import "dart:io";
 
+import "package:crypto/crypto.dart";
 import "package:logging/logging.dart";
 import "package:nyxx/nyxx.dart";
 
@@ -21,18 +22,17 @@ part "src/exceptions/AlreadyResponded.dart";
 // Exceptions
 part "src/exceptions/InteractionExpired.dart";
 part "src/exceptions/ResponseRequired.dart";
-// Command Syncing
-part "src/interfaces/ICommandsSync.dart";
 // Internal
 part "src/internal/_EventController.dart";
+part "src/internal/sync/ICommandsSync.dart";
+part "src/internal/sync/LockFileCommandSync.dart";
+part "src/internal/sync/ManualCommandSync.dart";
 part "src/internal/utils.dart";
+// Models
 part "src/models/ArgChoice.dart";
-// Command Args
 part "src/models/CommandOption.dart";
 part "src/models/Interaction.dart";
 part "src/models/InteractionOption.dart";
-part "src/models/LockFileCommandSync.dart";
-part "src/models/ManualCommandSync.dart";
 // Models
 part "src/models/SlashCommand.dart";
 
