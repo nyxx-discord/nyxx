@@ -9,18 +9,16 @@ class LockFileCommandSync implements ICommandsSync {
     final lockFile = File("./nyxx_interactions.lock");
     final lockFileMapData = <String, String>{};
 
-    commands.forEach(
-      (c) {
-        lockFileMapData[c.name] = new _LockfileCommand(
-          c.name,
-          c.description,
-          c.guild,
-          c.defaultPermissions,
-          c.permissions?.map((p) => new _LockfilePermission(p._type, p.id, p.hasPermission)) ?? [],
-          c.options.map((o) => new _LockfileOption(o.type.value, o.name, o.description, o.options ?? [])),
-        ).generateHash();
-      },
-    );
+    for (final c in commands) {
+      lockFileMapData[c.name] = new _LockfileCommand(
+        c.name,
+        c.description,
+        c.guild,
+        c.defaultPermissions,
+        c.permissions?.map((p) => new _LockfilePermission(p._type, p.id, p.hasPermission)) ?? [],
+        c.options.map((o) => new _LockfileOption(o.type.value, o.name, o.description, o.options ?? [])),
+      ).generateHash();
+    }
 
     if (!lockFile.existsSync()) {
       await lockFile.writeAsString(jsonEncode(lockFileMapData));
