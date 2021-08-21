@@ -39,10 +39,14 @@ class Interactions {
   /// Emitted when a slash command is created by the user.
   late final Stream<SlashCommand> onSlashCommandCreated;
 
+  late final IInteractionsEndpoints interactionsEndpoints;
+
   /// Create new instance of the interactions class.
   Interactions(this.client) {
     _events = _EventController(this);
     client.options.dispatchRawShardEvent = true;
+    this.interactionsEndpoints = _InteractionsEndpoints(client);
+
     _logger.info("Interactions ready");
 
     client.onReady.listen((event) async {

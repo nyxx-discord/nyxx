@@ -29,6 +29,7 @@ part "src/models/CommandOption.dart";
 
 // Internal
 part "src/internal/_EventController.dart";
+part "src/internal/InteractionEndpoints.dart";
 part "src/internal/utils.dart";
 
 // Events
