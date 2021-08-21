@@ -38,6 +38,9 @@ class Permissions implements Convertable<PermissionsBuilder> {
   /// True if user can send messages
   late final bool sendMessages;
 
+  /// True if user can send messages in threads
+  late final bool sendMessagesInThreads;
+
   /// True if user can send TTF messages
   late final bool sendTtsMessages;
 
@@ -108,10 +111,10 @@ class Permissions implements Convertable<PermissionsBuilder> {
   late final bool manageThreads;
 
   /// Allows for creating and participating in threads
-  late final bool usePublicThreads;
+  late final bool createPublicThreads;
 
   /// Allows for creating and participating in private threads
-  late final bool usePrivateThreads;
+  late final bool createPrivateThreads;
 
   /// Makes a [Permissions] object from a raw permission code.
   factory Permissions.fromInt(int permissions) =>
@@ -150,6 +153,8 @@ class Permissions implements Convertable<PermissionsBuilder> {
         this.raw, PermissionsConstants.viewChannel);
     this.sendMessages = PermissionsUtils.isApplied(
         this.raw, PermissionsConstants.sendMessages);
+     this.sendMessagesInThreads = PermissionsUtils.isApplied(
+       this.raw, PermissionsConstants.sendMessagesInThread);
     this.prioritySpeaker = PermissionsUtils.isApplied(
         this.raw, PermissionsConstants.prioritySpeaker);
     this.sendTtsMessages = PermissionsUtils.isApplied(
@@ -201,10 +206,10 @@ class Permissions implements Convertable<PermissionsBuilder> {
 
     this.manageThreads = PermissionsUtils.isApplied(
         this.raw, PermissionsConstants.manageThreads);
-    this.usePublicThreads = PermissionsUtils.isApplied(
-        this.raw, PermissionsConstants.usePublicThreads);
-    this.usePrivateThreads = PermissionsUtils.isApplied(
-        this.raw, PermissionsConstants.usePrivateThreads);
+    this.createPublicThreads = PermissionsUtils.isApplied(
+        this.raw, PermissionsConstants.createPublicThreads);
+    this.createPrivateThreads = PermissionsUtils.isApplied(
+        this.raw, PermissionsConstants.createPrivateThreads);
   }
 
   /// Returns true if this permissions has [permission]

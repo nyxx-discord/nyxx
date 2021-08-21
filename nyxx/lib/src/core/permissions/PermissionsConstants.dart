@@ -38,6 +38,9 @@ class PermissionsConstants {
   /// Allows to send messages
   static const int sendMessages = 1 << 11;
 
+  /// Allows to send messages in threads
+  static const int sendMessagesInThread = 1 << 38;
+
   /// Allows to send TTS messages
   static const int sendTtsMessages = 1 << 12;
 
@@ -105,10 +108,10 @@ class PermissionsConstants {
   static const int manageThreads = 1 << 34;
 
   /// Allows for creating and participating in threads
-  static const int usePublicThreads = 1 << 35;
+  static const int createPublicThreads = 1 << 35;
 
   /// Allows for creating and participating in private threads
-  static const int usePrivateThreads = 1 << 36;
+  static const int createPrivateThreads = 1 << 36;
 
   /// All of the permissions
   static int get allPermissions => int.parse("1".padRight(37, "1"), radix: 2);

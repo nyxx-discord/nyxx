@@ -64,6 +64,9 @@ class PermissionsBuilder {
   /// True if user can send messages
   bool? sendMessages;
 
+  /// True if user can send messages in threads
+  bool? sendMessagesInThreads;
+
   /// True if user can send TTF messages
   bool? sendTtsMessages;
 
@@ -128,10 +131,10 @@ class PermissionsBuilder {
   bool? manageThreads;
 
   /// Allows for creating and participating in threads
-  bool? usePublicThreads;
+  bool? createPublicThreads;
 
   /// Allows for creating and participating in private threads
-  bool? usePrivateThreads;
+  bool? createPrivateThreads;
 
   /// Empty permission builder
   PermissionsBuilder();
@@ -149,6 +152,7 @@ class PermissionsBuilder {
         ..viewAuditLog = permissions.viewAuditLog
         ..viewChannel = permissions.viewChannel
         ..sendMessages = permissions.sendMessages
+        ..sendMessagesInThreads = permissions.sendMessagesInThreads
         ..prioritySpeaker = permissions.prioritySpeaker
         ..sendTtsMessages = permissions.sendTtsMessages
         ..manageMessages = permissions.manageMessages
@@ -171,8 +175,8 @@ class PermissionsBuilder {
         ..stream = permissions.stream
         ..viewGuildInsights = permissions.viewGuildInsights
         ..manageThreads = permissions.manageThreads
-        ..usePublicThreads = permissions.usePublicThreads
-        ..usePrivateThreads = permissions.usePrivateThreads;
+        ..createPublicThreads = permissions.createPublicThreads
+        ..createPrivateThreads = permissions.createPrivateThreads;
   }
 
   /// Calculates permission int
@@ -216,8 +220,8 @@ class PermissionsBuilder {
     _apply(permissionSet, this.stream, PermissionsConstants.stream);
     _apply(permissionSet, this.manageEmojis, PermissionsConstants.manageEmojis);
     _apply(permissionSet, this.manageThreads, PermissionsConstants.manageThreads);
-    _apply(permissionSet, this.usePublicThreads, PermissionsConstants.usePublicThreads);
-    _apply(permissionSet, this.usePrivateThreads, PermissionsConstants.usePrivateThreads);
+    _apply(permissionSet, this.createPublicThreads, PermissionsConstants.createPublicThreads);
+    _apply(permissionSet, this.createPrivateThreads, PermissionsConstants.createPrivateThreads);
 
     return permissionSet;
   }
