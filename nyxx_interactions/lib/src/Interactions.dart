@@ -12,10 +12,8 @@ typedef MultiselectInteractionHandler = FutureOr<void> Function(MultiselectInter
 /// Interaction extension for Nyxx. Allows use of: Slash Commands.
 class Interactions {
   static const _interactionCreateCommand = "INTERACTION_CREATE";
-  static const _op0 = 0;
 
   late final _EventController _events;
-
   final Logger _logger = Logger("Interactions");
 
   final _commandBuilders = <SlashCommandBuilder>[];
@@ -23,6 +21,9 @@ class Interactions {
   final _commandHandlers = <String, SlashCommandHandler>{};
   final _buttonHandlers = <String, ButtonInteractionHandler>{};
   final _multiselectHandlers = <String, MultiselectInteractionHandler>{};
+
+  /// Commands registered by bot
+  Iterable<SlashCommand> get commands => UnmodifiableListView(this._commands);
 
   /// Reference to client
   final Nyxx client;
@@ -39,6 +40,7 @@ class Interactions {
   /// Emitted when a slash command is created by the user.
   late final Stream<SlashCommand> onSlashCommandCreated;
 
+  /// All interaction endpoints that can be accessed.
   late final IInteractionsEndpoints interactionsEndpoints;
 
   /// Create new instance of the interactions class.

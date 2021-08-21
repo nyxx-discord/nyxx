@@ -10,6 +10,16 @@ abstract class IInteractionsEndpoints {
  Future<void> deleteOriginalResponse(String token, String interactionId);
  Future<void> deleteFollowup(String token, String interactionId, Snowflake messageId);
  Future<Message> editFollowup(String token, String interactionId, MessageBuilder builder);
+ Stream<SlashCommand> getGlobalCommands(Snowflake applicationId);
+ Future<SlashCommand> getGlobalCommand(Snowflake applicationId, Snowflake commandId);
+ Future<SlashCommand> editGlobalCommand(Snowflake applicationId, Snowflake commandId, SlashCommandBuilder builder);
+ Future<void> deleteGlobalCommand(Snowflake applicationId, Snowflake commandId);
+ Stream<SlashCommand> bulkOverrideGlobalCommands(Snowflake applicationId, Snowflake commandId, Iterable<SlashCommandBuilder> builders);
+ Stream<SlashCommand> getGuildCommands(Snowflake applicationId, Snowflake guildId);
+ Future<SlashCommand> getGuildCommand(Snowflake applicationId, Snowflake commandId, Snowflake guildId);
+ Future<SlashCommand> editGuildCommand(Snowflake applicationId, Snowflake commandId, Snowflake guildId, SlashCommandBuilder builder);
+ Future<void> deleteGuildCommand(Snowflake applicationId, Snowflake commandId, Snowflake guildId);
+ Stream<SlashCommand> bulkOverrideGuildCommands(Snowflake applicationId, Snowflake commandId, Snowflake guildId, Iterable<SlashCommandBuilder> builders);
 }
 
 class _InteractionsEndpoints implements IInteractionsEndpoints {
