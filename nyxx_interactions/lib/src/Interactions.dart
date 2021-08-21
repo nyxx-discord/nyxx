@@ -86,18 +86,12 @@ class Interactions {
     final globalCommands = commandPartition.first;
     final groupedGuildCommands = _groupSlashCommandBuilders(commandPartition.last);
 
-    final globalBody = globalCommands
-        .where((builder) => builder.permissions != null && builder.permissions!.isNotEmpty)
-        .map((builder) => {
-              "id": builder._id.toString(),
-              "permissions": [for (final permsBuilder in builder.permissions!) permsBuilder.build()]
-            })
-        .toList();
+    final globalBody =
+        globalCommands.where((builder) => builder.permissions != null && builder.permissions!.isNotEmpty).toList();
 
-    await this
-        ._client
-        .httpEndpoints
-        .sendRawRequest("/applications/${this._client.app.id}/commands/permissions", "PUT", body: globalBody);
+    if (globalBody.isNotEmpty) {
+      throw "Only guild commands may have permission's set. If you need custom permissions based on guild then you can send HTTP requests.";
+    }
 
     for (final entry in groupedGuildCommands.entries) {
       final guildBody = entry.value
