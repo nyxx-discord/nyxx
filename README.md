@@ -1,5 +1,6 @@
 # nyxx
 
+[![Discord Shield](https://discordapp.com/api/guilds/846136758470443069/widget.png?style=shield)](https://discord.gg/m3tNPpwmRg)
 [![pub](https://img.shields.io/pub/v/nyxx.svg)](https://pub.dartlang.org/packages/nyxx)
 [![documentation](https://img.shields.io/badge/Documentation-nyxx-yellow.svg)](https://www.dartdocs.org/documentation/nyxx/latest/)
 [![documentation](https://img.shields.io/badge/Documentation-nyxx.commander-yellow.svg)](https://www.dartdocs.org/documentation/nyxx.commander/latest/)
