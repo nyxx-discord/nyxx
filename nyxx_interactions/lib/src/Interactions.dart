@@ -132,8 +132,7 @@ class Interactions {
   /// Warning: Client could not be ready at the function execution.
   /// Use [syncOnReady] for proper behavior
   Future<void> sync({ICommandsSync syncRule = const ManualCommandSync()}) async {
-    final syncCommands = await syncRule.shouldSync(this._commandBuilders);
-    if (!syncCommands) {
+    if (!await syncRule.shouldSync(this._commandBuilders)) {
       return;
     }
 
