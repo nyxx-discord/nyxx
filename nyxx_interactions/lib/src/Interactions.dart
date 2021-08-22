@@ -85,54 +85,6 @@ class Interactions {
     });
   }
 
-  Future<void> _syncPermissions() async {
-    final commandPartition = _partition<SlashCommandBuilder>(
-        this._commandBuilders, (element) => element.guild == null);
-    final globalCommands = commandPartition.first;
-    final groupedGuildCommands =
-        _groupSlashCommandBuilders(commandPartition.last);
-
-    final globalBody = globalCommands
-      .where((builder) => builder.permissions != null && builder.permissions!.isNotEmpty)
-      .map((builder) => {
-        "id": builder._id.toString(),
-        "permissions": [for (final permsBuilder in builder.permissions!) permsBuilder.build()]
-      })
-      .toList();
-
-    await this
-        .client
-        .httpEndpoints
-        .sendRawRequest("/applications/${this.client.app.id}/commands/permissions", "PUT", body: globalBody);
-
-    for (final entry in groupedGuildCommands.entries) {
-      final guildBody = entry.value
-        .where((builder) => builder.permissions != null && builder.permissions!.isNotEmpty)
-        .map((builder) => {
-          "id": builder._id.toString(),
-          "permissions": [for (final permsBuilder in builder.permissions!) permsBuilder.build()]
-        })
-        .toList();
-
-      await this.client.httpEndpoints.sendRawRequest("/applications/${this.client.app.id}/guilds/${entry.key}/commands/permissions", "PUT", body: guildBody);
-    }
-  }
-
-  void _extractCommandIds(HttpResponseSuccess response) {
-    final body = response.jsonBody as List<dynamic>;
-    for (final command in body) {
-      final commandMap = command as Map<String, dynamic>;
-      this._commandBuilders.firstWhere(
-          (b) => b.name == commandMap["name"]
-          && b.guild == (commandMap["guild_id"] == null
-              ? null
-              : Snowflake(commandMap["guild_id"])
-          )
-        )
-        ._setId(Snowflake(commandMap["id"]));
-    }
-  }
-
   /// Syncs commands builders with discord after client is ready.
   void syncOnReady() {
     this.client.onReady.listen((_) async {
@@ -148,41 +100,26 @@ class Interactions {
     final globalCommands = commandPartition.first;
     final groupedGuildCommands = _groupSlashCommandBuilders(commandPartition.last);
 
-    final globalCommandsResponse = await this.client.httpEndpoints.sendRawRequest(
-        "/applications/${this.client.app.id}/commands",
-        "PUT",
-        body: [
-          for(final builder in globalCommands)
-            builder.build()
-        ]
-    );
+    final globalCommandsResponse = await this.interactionsEndpoints
+        .bulkOverrideGlobalCommands(this.client.app.id, globalCommands)
+        .toList();
 
-    if (globalCommandsResponse is HttpResponseSuccess) {
-      _extractCommandIds(globalCommandsResponse);
-      this._registerCommandHandlers(globalCommandsResponse, globalCommands);
-    }
+    _extractCommandIds(globalCommandsResponse);
+    this._registerCommandHandlers(globalCommandsResponse, globalCommands);
+    await this.interactionsEndpoints.bulkOverrideGlobalCommandsPermissions(this.client.app.id, globalCommands);
 
     for(final entry in groupedGuildCommands.entries) {
-      final response = await this.client.httpEndpoints.sendRawRequest(
-          "/applications/${this.client.app.id}/guilds/${entry.key}/commands",
-          "PUT",
-          body: [
-            for(final builder in entry.value)
-              builder.build()
-          ]
-      );
+      final response = await this.interactionsEndpoints
+          .bulkOverrideGuildCommands(this.client.app.id, entry.key, entry.value)
+          .toList();
 
-      if (response is HttpResponseSuccess) {
-        _extractCommandIds(response);
-        this._registerCommandHandlers(response, entry.value);
-      }
+      _extractCommandIds(response);
+      this._registerCommandHandlers(response, entry.value);
+      await this.interactionsEndpoints.bulkOverrideGuildCommandsPermissions(this.client.app.id, entry.key, entry.value);
     }
 
-    await this._syncPermissions();
-    this._logger.info("Finished bulk overriding permissions");
-
     this._commandBuilders.clear(); // Cleanup after registering command since we don't need this anymore
-    this._logger.info("Finished bulk overriding slash commands");
+    this._logger.info("Finished bulk overriding slash commands and permissions");
 
     if (this._commands.isNotEmpty) {
       this.onSlashCommand.listen((event) async {
@@ -229,9 +166,15 @@ class Interactions {
   void registerSlashCommand(SlashCommandBuilder slashCommandBuilder) =>
       this._commandBuilders.add(slashCommandBuilder);
 
-  void _registerCommandHandlers(HttpResponseSuccess response, Iterable<SlashCommandBuilder> builders) {
-    final registeredSlashCommands = (response.jsonBody as List<dynamic>).map((e) => SlashCommand._new(e as RawApiMap, this.client));
+  void _extractCommandIds(List<SlashCommand> commands) {
+    for (final slashCommand in commands) {
+      this._commandBuilders
+          .firstWhere((element) => element.name == slashCommand.name && element.guild == slashCommand.guild?.id)
+          ._setId(slashCommand.id);
+    }
+  }
 
+  void _registerCommandHandlers(List<SlashCommand> registeredSlashCommands, Iterable<SlashCommandBuilder> builders) {
     for(final registeredCommand in registeredSlashCommands) {
       final matchingBuilder = builders.firstWhere((element) => element.name.toLowerCase() == registeredCommand.name);
       this._assignCommandToHandler(matchingBuilder, registeredCommand);

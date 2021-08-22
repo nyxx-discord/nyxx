@@ -14,12 +14,14 @@ abstract class IInteractionsEndpoints {
  Future<SlashCommand> getGlobalCommand(Snowflake applicationId, Snowflake commandId);
  Future<SlashCommand> editGlobalCommand(Snowflake applicationId, Snowflake commandId, SlashCommandBuilder builder);
  Future<void> deleteGlobalCommand(Snowflake applicationId, Snowflake commandId);
- Stream<SlashCommand> bulkOverrideGlobalCommands(Snowflake applicationId, Snowflake commandId, Iterable<SlashCommandBuilder> builders);
+ Stream<SlashCommand> bulkOverrideGlobalCommands(Snowflake applicationId, Iterable<SlashCommandBuilder> builders);
  Stream<SlashCommand> getGuildCommands(Snowflake applicationId, Snowflake guildId);
  Future<SlashCommand> getGuildCommand(Snowflake applicationId, Snowflake commandId, Snowflake guildId);
  Future<SlashCommand> editGuildCommand(Snowflake applicationId, Snowflake commandId, Snowflake guildId, SlashCommandBuilder builder);
  Future<void> deleteGuildCommand(Snowflake applicationId, Snowflake commandId, Snowflake guildId);
- Stream<SlashCommand> bulkOverrideGuildCommands(Snowflake applicationId, Snowflake commandId, Snowflake guildId, Iterable<SlashCommandBuilder> builders);
+ Stream<SlashCommand> bulkOverrideGuildCommands(Snowflake applicationId, Snowflake guildId, Iterable<SlashCommandBuilder> builders);
+ Future<void> bulkOverrideGuildCommandsPermissions(Snowflake applicationId, Snowflake guildId, Iterable<SlashCommandBuilder> builders);
+ Future<void> bulkOverrideGlobalCommandsPermissions(Snowflake applicationId, Iterable<SlashCommandBuilder> builders);
 }
 
 class _InteractionsEndpoints implements IInteractionsEndpoints {
@@ -146,5 +148,122 @@ class _InteractionsEndpoints implements IInteractionsEndpoints {
     }
 
     return EntityUtility.createMessage(this._client, (response as HttpResponseSuccess).jsonBody as RawApiMap);
+  }
+
+  @override
+  Stream<SlashCommand> bulkOverrideGlobalCommands(Snowflake applicationId, Iterable<SlashCommandBuilder> builders) async* {
+    final response = await this._client.httpEndpoints.sendRawRequest(
+        "/applications/$applicationId/commands",
+        "PUT",
+        body: [
+          for(final builder in builders)
+            builder.build()
+        ]
+    );
+
+    if (response is HttpResponseError) {
+      yield* Stream.error(response);
+    }
+
+    for (final rawRes in (response as HttpResponseSuccess).jsonBody as List<dynamic>) {
+      yield SlashCommand._new(rawRes as RawApiMap, this._client);
+    }
+  }
+
+  @override
+  Stream<SlashCommand> bulkOverrideGuildCommands(Snowflake applicationId, Snowflake guildId, Iterable<SlashCommandBuilder> builders) async* {
+    final response = await this._client.httpEndpoints.sendRawRequest(
+        "/applications/${this._client.app.id}/guilds/$guildId/commands",
+        "PUT",
+        body: [
+          for(final builder in builders)
+            builder.build()
+        ]
+    );
+
+    if (response is HttpResponseError) {
+      yield* Stream.error(response);
+    }
+
+    for (final rawRes in (response as HttpResponseSuccess).jsonBody as List<dynamic>) {
+      yield SlashCommand._new(rawRes as RawApiMap, this._client);
+    }
+  }
+
+  @override
+  Future<void> deleteGlobalCommand(Snowflake applicationId, Snowflake commandId) {
+    // TODO: implement deleteGlobalCommand
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> deleteGuildCommand(Snowflake applicationId, Snowflake commandId, Snowflake guildId) {
+    // TODO: implement deleteGuildCommand
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<SlashCommand> editGlobalCommand(Snowflake applicationId, Snowflake commandId, SlashCommandBuilder builder) {
+    // TODO: implement editGlobalCommand
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<SlashCommand> editGuildCommand(Snowflake applicationId, Snowflake commandId, Snowflake guildId, SlashCommandBuilder builder) {
+    // TODO: implement editGuildCommand
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<SlashCommand> getGlobalCommand(Snowflake applicationId, Snowflake commandId) {
+    // TODO: implement getGlobalCommand
+    throw UnimplementedError();
+  }
+
+  @override
+  Stream<SlashCommand> getGlobalCommands(Snowflake applicationId) {
+    // TODO: implement getGlobalCommands
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<SlashCommand> getGuildCommand(Snowflake applicationId, Snowflake commandId, Snowflake guildId) {
+    // TODO: implement getGuildCommand
+    throw UnimplementedError();
+  }
+
+  @override
+  Stream<SlashCommand> getGuildCommands(Snowflake applicationId, Snowflake guildId) {
+    // TODO: implement getGuildCommands
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> bulkOverrideGlobalCommandsPermissions(Snowflake applicationId, Iterable<SlashCommandBuilder> builders) async {
+    final globalBody = builders
+        .where((builder) => builder.permissions != null && builder.permissions!.isNotEmpty)
+        .map((builder) => {
+          "id": builder._id.toString(),
+          "permissions": [for (final permsBuilder in builder.permissions!) permsBuilder.build()]
+        })
+        .toList();
+
+    await this._client.httpEndpoints
+        .sendRawRequest("/applications/${this._client.app.id}/commands/permissions", "PUT", body: globalBody);
+  }
+
+  @override
+  Future<void> bulkOverrideGuildCommandsPermissions(Snowflake applicationId, Snowflake guildId, Iterable<SlashCommandBuilder> builders) async {
+    final guildBody = builders
+        .where((b) => b.permissions != null && b.permissions!.isNotEmpty)
+        .map((builder) => {
+          "id": builder._id.toString(),
+          "permissions": [for (final permsBuilder in builder.permissions!) permsBuilder.build()]
+        })
+        .toList();
+
+    await this._client.httpEndpoints
+        .sendRawRequest("/applications/${this._client.app.id}/guilds/$guildId/commands/permissions", "PUT", body: guildBody);
+
   }
 }
