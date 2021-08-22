@@ -1,26 +1,69 @@
 part of nyxx_interactions;
 
 abstract class IInteractionsEndpoints {
+  /// Sends followup for interaction with given [token]. Message will be created with [builder]
   Future<Message> sendFollowup(String token, String interactionId, MessageBuilder builder);
+
+  /// Acknowledges interaction that response can be sent within next 15 mins.
+  /// Response will be ephemeral if [hidden] is set to true. To response to different interaction types
+  /// (slash command, button...) [opCode] is used.
   Future<void> acknowledge(String token, String interactionId, bool hidden, int opCode);
+
+  /// Response to interaction by editing original response. Used when interaction was acked before.
   Future<void> respondEditOriginal(String token, String interactionId, MessageBuilder builder, bool hidden);
+
+  /// Response to interaction by creating response. Used when interaction wasn't acked before.
   Future<void> respondCreateResponse(String token, String interactionId, MessageBuilder builder, bool hidden, int respondOpCode);
+
+  /// Fetch original interaction response.
   Future<Message> fetchOriginalResponse(String token, String interactionId);
+
+  /// Edits original interaction response using [builder]
   Future<Message> editOriginalResponse(String token, String interactionId, MessageBuilder builder);
+
+  /// Deletes original interaction response
   Future<void> deleteOriginalResponse(String token, String interactionId);
+
+  /// Deletes followup message with given id
   Future<void> deleteFollowup(String token, String interactionId, Snowflake messageId);
-  Future<Message> editFollowup(String token, String interactionId, MessageBuilder builder);
+
+  /// Edits followup message with given [messageId]
+  Future<Message> editFollowup(String token, String interactionId, Snowflake messageId, MessageBuilder builder);
+
+  /// Fetches global commands of application
   Stream<SlashCommand> fetchGlobalCommands(Snowflake applicationId);
+
+  /// Fetches global command with given [commandId]
   Future<SlashCommand> fetchGlobalCommand(Snowflake applicationId, Snowflake commandId);
+
+  /// Edits global command with given [commandId] using [builder]
   Future<SlashCommand> editGlobalCommand(Snowflake applicationId, Snowflake commandId, SlashCommandBuilder builder);
+
+  /// Deletes global command with given [commandId]
   Future<void> deleteGlobalCommand(Snowflake applicationId, Snowflake commandId);
+
+  /// Bulk overrides global commands. To delete all apps global commands pass empty list to [builders]
   Stream<SlashCommand> bulkOverrideGlobalCommands(Snowflake applicationId, Iterable<SlashCommandBuilder> builders);
+
+  /// Fetches all commands for given [guildId]
   Stream<SlashCommand> fetchGuildCommands(Snowflake applicationId, Snowflake guildId);
+
+  /// Fetches single guild command with given [commandId]
   Future<SlashCommand> fetchGuildCommand(Snowflake applicationId, Snowflake commandId, Snowflake guildId);
+
+  /// Edits single guild command with given [commandId]
   Future<SlashCommand> editGuildCommand(Snowflake applicationId, Snowflake commandId, Snowflake guildId, SlashCommandBuilder builder);
+
+  /// Deletes guild command with given commandId]
   Future<void> deleteGuildCommand(Snowflake applicationId, Snowflake commandId, Snowflake guildId);
+
+  /// Bulk overrides global commands. To delete all apps global commands pass empty list to [builders]
   Stream<SlashCommand> bulkOverrideGuildCommands(Snowflake applicationId, Snowflake guildId, Iterable<SlashCommandBuilder> builders);
+
+  /// Overrides permissions for guild commands
   Future<void> bulkOverrideGuildCommandsPermissions(Snowflake applicationId, Snowflake guildId, Iterable<SlashCommandBuilder> builders);
+
+  /// Overrides permissions for global commands
   Future<void> bulkOverrideGlobalCommandsPermissions(Snowflake applicationId, Iterable<SlashCommandBuilder> builders);
 }
 
@@ -63,8 +106,8 @@ class _InteractionsEndpoints implements IInteractionsEndpoints {
   }
 
   @override
-  Future<Message> editFollowup(String token, String interactionId, MessageBuilder builder) async {
-    final url = "/webhooks/${interactionId.toString()}/$token";
+  Future<Message> editFollowup(String token, String interactionId, Snowflake messageId, MessageBuilder builder) async {
+    final url = "/webhooks/${interactionId.toString()}/$token/messages/$messageId";
     final body = BuilderUtility.buildWithClient(builder, _client);
 
     final response = await this._client.httpEndpoints.sendRawRequest(url, "PATCH", body: body);

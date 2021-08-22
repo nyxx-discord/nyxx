@@ -39,8 +39,8 @@ abstract class InteractionEvent<T extends Interaction> {
   }
 
   /// Edits followup message
-  Future<Message> editFollowup(MessageBuilder builder) =>
-    this.interactions.interactionsEndpoints.editFollowup(this.interaction.token, this.interaction.id.toString(), builder);
+  Future<Message> editFollowup(Snowflake messageId, MessageBuilder builder) =>
+    this.interactions.interactionsEndpoints.editFollowup(this.interaction.token, this.interaction.id.toString(), messageId, builder);
 
   /// Deletes followup message with given id
   Future<void> deleteFollowup(Snowflake messageId) =>

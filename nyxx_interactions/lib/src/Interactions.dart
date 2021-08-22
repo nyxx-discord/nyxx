@@ -170,15 +170,19 @@ class Interactions {
   void registerSlashCommandHandler(String id, SlashCommandHandler handler) =>
       this._commandHandlers[id] = handler;
 
+  /// Deletes global command
   Future<void> deleteGlobalCommand(Snowflake commandId) =>
       this.interactionsEndpoints.deleteGlobalCommand(this.client.app.id, commandId);
 
+  /// Deletes guild command
   Future<void> deleteGuildCommand(Snowflake commandId, Snowflake guildId) =>
       this.interactionsEndpoints.deleteGuildCommand(this.client.app.id, commandId, guildId);
 
+  /// Fetches all global bots command
   Stream<SlashCommand> fetchGlobalCommands() =>
       this.interactionsEndpoints.fetchGlobalCommands(this.client.app.id);
 
+  /// Fetches all guild commands for given guild
   Stream<SlashCommand> fetchGuildCommands(Snowflake guildId) =>
       this.interactionsEndpoints.fetchGuildCommands(this.client.app.id, guildId);
 
