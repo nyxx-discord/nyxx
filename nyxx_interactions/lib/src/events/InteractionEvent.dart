@@ -111,7 +111,7 @@ abstract class InteractionEvent<T extends Interaction> {
 
   /// Returns [Message] object of original interaction response
   Future<Message> getOriginalResponse() async =>
-      this.interactions.interactionsEndpoints.getOriginalResponse(this.interaction.token, this.interaction.id.toString());
+      this.interactions.interactionsEndpoints.fetchOriginalResponse(this.interaction.token, this.interaction.id.toString());
 
   /// Edits original message response
   Future<Message> editOriginalResponse(MessageBuilder builder) =>

@@ -1,27 +1,27 @@
 part of nyxx_interactions;
 
 abstract class IInteractionsEndpoints {
- Future<Message> sendFollowup(String token, String interactionId, MessageBuilder builder);
- Future<void> acknowledge(String token, String interactionId, bool hidden, int opCode);
- Future<void> respondEditOriginal(String token, String interactionId, MessageBuilder builder, bool hidden);
- Future<void> respondCreateResponse(String token, String interactionId, MessageBuilder builder, bool hidden, int respondOpCode);
- Future<Message> getOriginalResponse(String token, String interactionId);
- Future<Message> editOriginalResponse(String token, String interactionId, MessageBuilder builder);
- Future<void> deleteOriginalResponse(String token, String interactionId);
- Future<void> deleteFollowup(String token, String interactionId, Snowflake messageId);
- Future<Message> editFollowup(String token, String interactionId, MessageBuilder builder);
- Stream<SlashCommand> getGlobalCommands(Snowflake applicationId);
- Future<SlashCommand> getGlobalCommand(Snowflake applicationId, Snowflake commandId);
- Future<SlashCommand> editGlobalCommand(Snowflake applicationId, Snowflake commandId, SlashCommandBuilder builder);
- Future<void> deleteGlobalCommand(Snowflake applicationId, Snowflake commandId);
- Stream<SlashCommand> bulkOverrideGlobalCommands(Snowflake applicationId, Iterable<SlashCommandBuilder> builders);
- Stream<SlashCommand> getGuildCommands(Snowflake applicationId, Snowflake guildId);
- Future<SlashCommand> getGuildCommand(Snowflake applicationId, Snowflake commandId, Snowflake guildId);
- Future<SlashCommand> editGuildCommand(Snowflake applicationId, Snowflake commandId, Snowflake guildId, SlashCommandBuilder builder);
- Future<void> deleteGuildCommand(Snowflake applicationId, Snowflake commandId, Snowflake guildId);
- Stream<SlashCommand> bulkOverrideGuildCommands(Snowflake applicationId, Snowflake guildId, Iterable<SlashCommandBuilder> builders);
- Future<void> bulkOverrideGuildCommandsPermissions(Snowflake applicationId, Snowflake guildId, Iterable<SlashCommandBuilder> builders);
- Future<void> bulkOverrideGlobalCommandsPermissions(Snowflake applicationId, Iterable<SlashCommandBuilder> builders);
+  Future<Message> sendFollowup(String token, String interactionId, MessageBuilder builder);
+  Future<void> acknowledge(String token, String interactionId, bool hidden, int opCode);
+  Future<void> respondEditOriginal(String token, String interactionId, MessageBuilder builder, bool hidden);
+  Future<void> respondCreateResponse(String token, String interactionId, MessageBuilder builder, bool hidden, int respondOpCode);
+  Future<Message> fetchOriginalResponse(String token, String interactionId);
+  Future<Message> editOriginalResponse(String token, String interactionId, MessageBuilder builder);
+  Future<void> deleteOriginalResponse(String token, String interactionId);
+  Future<void> deleteFollowup(String token, String interactionId, Snowflake messageId);
+  Future<Message> editFollowup(String token, String interactionId, MessageBuilder builder);
+  Stream<SlashCommand> fetchGlobalCommands(Snowflake applicationId);
+  Future<SlashCommand> fetchGlobalCommand(Snowflake applicationId, Snowflake commandId);
+  Future<SlashCommand> editGlobalCommand(Snowflake applicationId, Snowflake commandId, SlashCommandBuilder builder);
+  Future<void> deleteGlobalCommand(Snowflake applicationId, Snowflake commandId);
+  Stream<SlashCommand> bulkOverrideGlobalCommands(Snowflake applicationId, Iterable<SlashCommandBuilder> builders);
+  Stream<SlashCommand> fetchGuildCommands(Snowflake applicationId, Snowflake guildId);
+  Future<SlashCommand> fetchGuildCommand(Snowflake applicationId, Snowflake commandId, Snowflake guildId);
+  Future<SlashCommand> editGuildCommand(Snowflake applicationId, Snowflake commandId, Snowflake guildId, SlashCommandBuilder builder);
+  Future<void> deleteGuildCommand(Snowflake applicationId, Snowflake commandId, Snowflake guildId);
+  Stream<SlashCommand> bulkOverrideGuildCommands(Snowflake applicationId, Snowflake guildId, Iterable<SlashCommandBuilder> builders);
+  Future<void> bulkOverrideGuildCommandsPermissions(Snowflake applicationId, Snowflake guildId, Iterable<SlashCommandBuilder> builders);
+  Future<void> bulkOverrideGlobalCommandsPermissions(Snowflake applicationId, Iterable<SlashCommandBuilder> builders);
 }
 
 class _InteractionsEndpoints implements IInteractionsEndpoints {
@@ -91,7 +91,7 @@ class _InteractionsEndpoints implements IInteractionsEndpoints {
   }
 
   @override
-  Future<Message> getOriginalResponse(String token, String interactionId) async {
+  Future<Message> fetchOriginalResponse(String token, String interactionId) async {
     final response = await this._client.httpEndpoints.sendRawRequest(
         "/webhooks/${interactionId.toString()}/$token/messages/@original",
         "GET"
@@ -191,51 +191,117 @@ class _InteractionsEndpoints implements IInteractionsEndpoints {
   }
 
   @override
-  Future<void> deleteGlobalCommand(Snowflake applicationId, Snowflake commandId) {
-    // TODO: implement deleteGlobalCommand
-    throw UnimplementedError();
+  Future<void> deleteGlobalCommand(Snowflake applicationId, Snowflake commandId) async {
+    final response = await this._client.httpEndpoints.sendRawRequest(
+        "/applications/$applicationId/commands/$commandId",
+        "DELETE"
+    );
+
+    if (response is HttpResponseSuccess) {
+      return Future.error(response);
+    }
   }
 
   @override
-  Future<void> deleteGuildCommand(Snowflake applicationId, Snowflake commandId, Snowflake guildId) {
-    // TODO: implement deleteGuildCommand
-    throw UnimplementedError();
+  Future<void> deleteGuildCommand(Snowflake applicationId, Snowflake commandId, Snowflake guildId) async {
+    final response = await this._client.httpEndpoints.sendRawRequest(
+        "/applications/$applicationId/guilds/$guildId/commands/$commandId",
+        "DELETE"
+    );
+
+    if (response is HttpResponseSuccess) {
+      return Future.error(response);
+    }
   }
 
   @override
-  Future<SlashCommand> editGlobalCommand(Snowflake applicationId, Snowflake commandId, SlashCommandBuilder builder) {
-    // TODO: implement editGlobalCommand
-    throw UnimplementedError();
+  Future<SlashCommand> editGlobalCommand(Snowflake applicationId, Snowflake commandId, SlashCommandBuilder builder) async {
+    final response = await this._client.httpEndpoints.sendRawRequest(
+        "/applications/$applicationId/commands/$commandId",
+        "PATCH",
+        body: builder.build()
+    );
+
+    if (response is HttpResponseSuccess) {
+      return Future.error(response);
+    }
+
+    return SlashCommand._new((response as HttpResponseSuccess).jsonBody as RawApiMap, _client);
   }
 
   @override
-  Future<SlashCommand> editGuildCommand(Snowflake applicationId, Snowflake commandId, Snowflake guildId, SlashCommandBuilder builder) {
-    // TODO: implement editGuildCommand
-    throw UnimplementedError();
+  Future<SlashCommand> editGuildCommand(Snowflake applicationId, Snowflake commandId, Snowflake guildId, SlashCommandBuilder builder) async {
+    final response = await this._client.httpEndpoints.sendRawRequest(
+        "/applications/$applicationId/guilds/$guildId/commands/$commandId",
+        "GET",
+        body: builder.build()
+    );
+
+    if (response is HttpResponseSuccess) {
+      return Future.error(response);
+    }
+
+    return SlashCommand._new((response as HttpResponseSuccess).jsonBody as RawApiMap, _client);
   }
 
   @override
-  Future<SlashCommand> getGlobalCommand(Snowflake applicationId, Snowflake commandId) {
-    // TODO: implement getGlobalCommand
-    throw UnimplementedError();
+  Future<SlashCommand> fetchGlobalCommand(Snowflake applicationId, Snowflake commandId) async {
+    final response = await this._client.httpEndpoints.sendRawRequest(
+        "/applications/$applicationId/commands/$commandId",
+        "GET"
+    );
+
+    if (response is HttpResponseSuccess) {
+      return Future.error(response);
+    }
+
+    return SlashCommand._new((response as HttpResponseSuccess).jsonBody as RawApiMap, _client);
   }
 
   @override
-  Stream<SlashCommand> getGlobalCommands(Snowflake applicationId) {
-    // TODO: implement getGlobalCommands
-    throw UnimplementedError();
+  Stream<SlashCommand> fetchGlobalCommands(Snowflake applicationId) async* {
+    final response = await this._client.httpEndpoints.sendRawRequest(
+        "/applications/$applicationId/commands",
+        "GET"
+    );
+
+    if (response is HttpResponseError) {
+      yield* Stream.error(response);
+    }
+
+    for (final commandSlash in (response as HttpResponseSuccess).jsonBody as List<dynamic>) {
+      yield SlashCommand._new(commandSlash as RawApiMap, _client);
+    }
   }
 
   @override
-  Future<SlashCommand> getGuildCommand(Snowflake applicationId, Snowflake commandId, Snowflake guildId) {
-    // TODO: implement getGuildCommand
-    throw UnimplementedError();
+  Future<SlashCommand> fetchGuildCommand(Snowflake applicationId, Snowflake commandId, Snowflake guildId) async {
+    final response = await this._client.httpEndpoints.sendRawRequest(
+        "/applications/$applicationId/guilds/$guildId/commands/$commandId",
+        "GET"
+    );
+
+    if (response is HttpResponseSuccess) {
+      return Future.error(response);
+    }
+
+    return SlashCommand._new((response as HttpResponseSuccess).jsonBody as RawApiMap, _client);
   }
 
   @override
-  Stream<SlashCommand> getGuildCommands(Snowflake applicationId, Snowflake guildId) {
-    // TODO: implement getGuildCommands
-    throw UnimplementedError();
+  Stream<SlashCommand> fetchGuildCommands(Snowflake applicationId, Snowflake guildId) async* {
+    final response = await this._client.httpEndpoints.sendRawRequest(
+      "/applications/$applicationId/guilds/$guildId/commands",
+      "GET"
+    );
+
+    if (response is HttpResponseError) {
+      yield* Stream.error(response);
+    }
+
+    for (final commandSlash in (response as HttpResponseSuccess).jsonBody as List<dynamic>) {
+      yield SlashCommand._new(commandSlash as RawApiMap, _client);
+    }
   }
 
   @override
@@ -249,7 +315,7 @@ class _InteractionsEndpoints implements IInteractionsEndpoints {
         .toList();
 
     await this._client.httpEndpoints
-        .sendRawRequest("/applications/${this._client.app.id}/commands/permissions", "PUT", body: globalBody);
+        .sendRawRequest("/applications/$applicationId/commands/permissions", "PUT", body: globalBody);
   }
 
   @override
@@ -263,7 +329,7 @@ class _InteractionsEndpoints implements IInteractionsEndpoints {
         .toList();
 
     await this._client.httpEndpoints
-        .sendRawRequest("/applications/${this._client.app.id}/guilds/$guildId/commands/permissions", "PUT", body: guildBody);
+        .sendRawRequest("/applications/$applicationId/guilds/$guildId/commands/permissions", "PUT", body: guildBody);
 
   }
 }

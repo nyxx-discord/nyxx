@@ -166,6 +166,22 @@ class Interactions {
   void registerSlashCommand(SlashCommandBuilder slashCommandBuilder) =>
       this._commandBuilders.add(slashCommandBuilder);
 
+  /// Register callback for slash command event for given [id]
+  void registerSlashCommandHandler(String id, SlashCommandHandler handler) =>
+      this._commandHandlers[id] = handler;
+
+  Future<void> deleteGlobalCommand(Snowflake commandId) =>
+      this.interactionsEndpoints.deleteGlobalCommand(this.client.app.id, commandId);
+
+  Future<void> deleteGuildCommand(Snowflake commandId, Snowflake guildId) =>
+      this.interactionsEndpoints.deleteGuildCommand(this.client.app.id, commandId, guildId);
+
+  Stream<SlashCommand> fetchGlobalCommands() =>
+      this.interactionsEndpoints.fetchGlobalCommands(this.client.app.id);
+
+  Stream<SlashCommand> fetchGuildCommands(Snowflake guildId) =>
+      this.interactionsEndpoints.fetchGuildCommands(this.client.app.id, guildId);
+
   void _extractCommandIds(List<SlashCommand> commands) {
     for (final slashCommand in commands) {
       this._commandBuilders
