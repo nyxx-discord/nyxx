@@ -52,7 +52,7 @@ class Interactions {
 
           switch (type) {
             case 2:
-              _events.onSlashCommand.add(SlashCommandInteractionEvent._new(_client, event.rawData["d"] as RawApiMap));
+              _events.onSlashCommand.add(SlashCommandInteractionEvent._new(this, event.rawData["d"] as RawApiMap));
               break;
             case 3:
               final componentType = event.rawData["d"]["data"]["component_type"] as int;
@@ -60,11 +60,11 @@ class Interactions {
               switch (componentType) {
                 case 2:
                   _events.onButtonEvent
-                      .add(ButtonInteractionEvent._new(_client, event.rawData["d"] as Map<String, dynamic>));
+                      .add(ButtonInteractionEvent._new(this, event.rawData["d"] as Map<String, dynamic>));
                   break;
                 case 3:
                   _events.onMultiselectEvent
-                      .add(MultiselectInteractionEvent._new(_client, event.rawData["d"] as Map<String, dynamic>));
+                      .add(MultiselectInteractionEvent._new(this, event.rawData["d"] as Map<String, dynamic>));
                   break;
                 default:
                   this
