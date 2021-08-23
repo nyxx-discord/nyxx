@@ -1,8 +1,9 @@
 library nyxx_interactions;
 
 import "dart:async";
-import 'dart:convert';
-import 'dart:io';
+import "dart:collection";
+import "dart:convert";
+import "dart:io";
 
 import "package:crypto/crypto.dart";
 import "package:logging/logging.dart";
@@ -24,6 +25,7 @@ part "src/exceptions/InteractionExpired.dart";
 part "src/exceptions/ResponseRequired.dart";
 // Internal
 part "src/internal/_EventController.dart";
+part "src/internal/InteractionEndpoints.dart";
 // Sync
 part "src/internal/sync/ICommandsSync.dart";
 part "src/internal/sync/LockFileCommandSync.dart";

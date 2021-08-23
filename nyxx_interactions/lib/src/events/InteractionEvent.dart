@@ -27,21 +27,30 @@ abstract class InteractionEvent<T extends Interaction> {
   InteractionEvent._new(this.interactions);
 
   /// Create a followup message for an Interaction
-  Future<void> sendFollowup(MessageBuilder builder) async {
+  Future<Message> sendFollowup(MessageBuilder builder) async {
     if (!_hasAcked) {
       return Future.error(ResponseRequiredError());
     }
+    this._logger.fine("Sending followup for for interaction: ${this.interaction.id}");
 
-    final url = "/webhooks/${this._client.app.id.toString()}/${this.interaction.token}";
-    final body = BuilderUtility.buildWithClient(builder, _client);
-    this._logger.fine("Sending followup for for interaction: url: [$url]; body: [$body]");
-
-    final response = await this._client.httpEndpoints.sendRawRequest(url, "POST", body: body);
-
-    if (response is HttpResponseError) {
-      return Future.error(response);
-    }
+    return this.interactions.interactionsEndpoints.sendFollowup(
+        this.interaction.token,
+        this.interaction.id.toString(),
+        builder
+    );
   }
+
+  /// Edits followup message
+  Future<Message> editFollowup(Snowflake messageId, MessageBuilder builder) =>
+    this.interactions.interactionsEndpoints.editFollowup(this.interaction.token, this.interaction.id.toString(), messageId, builder);
+
+  /// Deletes followup message with given id
+  Future<void> deleteFollowup(Snowflake messageId) =>
+      this.interactions.interactionsEndpoints.deleteFollowup(this.interaction.token, this.interaction.id.toString(), messageId);
+
+  /// Deletes original response
+  Future<void> deleteOriginalResponse() =>
+      this.interactions.interactionsEndpoints.deleteOriginalResponse(this.interaction.token, this.interaction.id.toString());
 
   /// Used to acknowledge a Interaction but not send any response yet.
   /// Once this is sent you can then only send ChannelMessages.
@@ -55,19 +64,14 @@ abstract class InteractionEvent<T extends Interaction> {
       return Future.error(InteractionExpiredError._3secs());
     }
 
-    final url = "/interactions/${this.interaction.id.toString()}/${this.interaction.token}/callback";
-    final response = await this._client.httpEndpoints.sendRawRequest(url, "POST", body: {
-      "type": this._acknowledgeOpCode,
-      "data": {
-        if (hidden) "flags": 1 << 6,
-      }
-    });
+    await this.interactions.interactionsEndpoints.acknowledge(
+        this.interaction.token,
+        this.interaction.id.toString(),
+        hidden,
+        this._acknowledgeOpCode
+    );
 
-    this._logger.fine("Sending acknowledge for for interaction: $url");
-
-    if (response is HttpResponseError) {
-      return Future.error(response);
-    }
+    this._logger.fine("Sending acknowledge for for interaction: ${this.interaction.id}");
 
     _hasAcked = true;
   }
@@ -82,40 +86,38 @@ abstract class InteractionEvent<T extends Interaction> {
       return Future.error(InteractionExpiredError._3secs());
     }
 
-    late String url;
-    late RawApiMap body;
-    late String method;
-
+    this._logger.fine("Sending respond for for interaction: ${this.interaction.id}");
     if (_hasAcked) {
-      url = "/webhooks/${this._client.app.id.toString()}/${this.interaction.token}/messages/@original";
-      body = {if (hidden) "flags": 1 << 6, ...BuilderUtility.buildWithClient(builder, _client)};
-      method = "PATCH";
+      await this.interactions.interactionsEndpoints.respondEditOriginal(
+          this.interaction.token,
+          this.interaction.id.toString(),
+          builder,
+          hidden
+      );
     } else {
       if (!builder.canBeUsedAsNewMessage()) {
-        return Future.error(
-            ArgumentError("Cannot sent message when MessageBuilder doesn't have set either content, embed or files"));
+        return Future.error(ArgumentError("Cannot sent message when MessageBuilder doesn't have set either content, embed or files"));
       }
 
-      url = "/interactions/${this.interaction.id.toString()}/${this.interaction.token}/callback";
-      body = <String, dynamic>{
-        "type": this._respondOpcode,
-        "data": {if (hidden) "flags": 1 << 6, ...BuilderUtility.buildWithClient(builder, _client)},
-      };
-      method = "POST";
-    }
-    this._logger.fine("Sending respond for for interaction: url: [$url]; body: [$body]; method: [$method]");
-
-    final response = await this._client.httpEndpoints.sendRawRequest(
-          url,
-          method,
-          body: body,
-        );
-    if (response is HttpResponseError) {
-      return Future.error(response);
+      await this.interactions.interactionsEndpoints.respondCreateResponse(
+          this.interaction.token,
+          this.interaction.id.toString(),
+          builder,
+          hidden,
+          _respondOpcode
+      );
     }
 
     _hasAcked = true;
   }
+
+  /// Returns [Message] object of original interaction response
+  Future<Message> getOriginalResponse() async =>
+      this.interactions.interactionsEndpoints.fetchOriginalResponse(this.interaction.token, this.interaction.id.toString());
+
+  /// Edits original message response
+  Future<Message> editOriginalResponse(MessageBuilder builder) =>
+      this.interactions.interactionsEndpoints.editOriginalResponse(this.interaction.token, this.interaction.id.toString(), builder);
 }
 
 /// Event for slash commands

@@ -12,18 +12,21 @@ typedef MultiselectInteractionHandler = FutureOr<void> Function(MultiselectInter
 /// Interaction extension for Nyxx. Allows use of: Slash Commands.
 class Interactions {
   static const _interactionCreateCommand = "INTERACTION_CREATE";
-  static const _op0 = 0;
 
-  final Nyxx _client;
   late final _EventController _events;
-
   final Logger _logger = Logger("Interactions");
 
+  /// Reference to client
+  final Nyxx _client;
   final _commandBuilders = <SlashCommandBuilder>[];
   final _commands = <SlashCommand>[];
   final _commandHandlers = <String, SlashCommandHandler>{};
   final _buttonHandlers = <String, ButtonInteractionHandler>{};
   final _multiselectHandlers = <String, MultiselectInteractionHandler>{};
+
+  /// Commands registered by bot
+  Iterable<SlashCommand> get commands => UnmodifiableListView(this._commands);
+
 
   /// Emitted when a slash command is sent.
   late final Stream<SlashCommandInteractionEvent> onSlashCommand;
@@ -37,10 +40,15 @@ class Interactions {
   /// Emitted when a slash command is created by the user.
   late final Stream<SlashCommand> onSlashCommandCreated;
 
+  /// All interaction endpoints that can be accessed.
+  late final IInteractionsEndpoints interactionsEndpoints;
+
   /// Create new instance of the interactions class.
   Interactions(this._client) {
     _events = _EventController(this);
     _client.options.dispatchRawShardEvent = true;
+    this.interactionsEndpoints = _InteractionsEndpoints(_client);
+
     _logger.info("Interactions ready");
 
     _client.onReady.listen((event) async {
@@ -81,47 +89,6 @@ class Interactions {
     });
   }
 
-  Future<void> _syncPermissions() async {
-    final commandPartition = _partition<SlashCommandBuilder>(this._commandBuilders, (element) => element.guild == null);
-    final globalCommands = commandPartition.first;
-    final groupedGuildCommands = _groupSlashCommandBuilders(commandPartition.last);
-
-    final globalBody =
-        globalCommands.where((builder) => builder.permissions != null && builder.permissions!.isNotEmpty).toList();
-
-    if (globalBody.isNotEmpty) {
-      return Future.error(StateError(
-          "Only guild commands may have permission's set. If you need custom permissions based on guild then you can send HTTP requests."));
-    }
-
-    for (final entry in groupedGuildCommands.entries) {
-      final guildBody = entry.value
-          .where((builder) => builder.permissions != null && builder.permissions!.isNotEmpty)
-          .map((builder) => {
-                "id": builder._id.toString(),
-                "permissions": [for (final permsBuilder in builder.permissions!) permsBuilder.build()]
-              })
-          .toList();
-
-      await this._client.httpEndpoints.sendRawRequest(
-          "/applications/${this._client.app.id}/guilds/${entry.key}/commands/permissions", "PUT",
-          body: guildBody);
-    }
-  }
-
-  void _extractCommandIds(HttpResponseSuccess response) {
-    final body = response.jsonBody as List<dynamic>;
-    for (final command in body) {
-      final commandMap = command as Map<String, dynamic>;
-      this
-          ._commandBuilders
-          .firstWhere((b) =>
-              b.name == commandMap["name"] &&
-              b.guild == (commandMap["guild_id"] == null ? null : Snowflake(commandMap["guild_id"])))
-          ._setId(Snowflake(commandMap["id"]));
-    }
-  }
-
   /// Syncs commands builders with discord after client is ready.
   void syncOnReady({ICommandsSync syncRule = const ManualCommandSync()}) {
     this._client.onReady.listen((_) async {
@@ -141,45 +108,38 @@ class Interactions {
     final globalCommands = commandPartition.first;
     final groupedGuildCommands = _groupSlashCommandBuilders(commandPartition.last);
 
-    final globalCommandsResponse = await this._client.httpEndpoints.sendRawRequest(
-        "/applications/${this._client.app.id}/commands", "PUT",
-        body: [for (final builder in globalCommands) builder.build()]);
+    final globalCommandsResponse = await this.interactionsEndpoints
+        .bulkOverrideGlobalCommands(this._client.app.id, globalCommands)
+        .toList();
 
-    if (globalCommandsResponse is HttpResponseSuccess) {
-      _extractCommandIds(globalCommandsResponse);
-      this._registerCommandHandlers(globalCommandsResponse, globalCommands);
+    _extractCommandIds(globalCommandsResponse);
+    this._registerCommandHandlers(globalCommandsResponse, globalCommands);
+    await this.interactionsEndpoints.bulkOverrideGlobalCommandsPermissions(this._client.app.id, globalCommands);
+
+    for(final entry in groupedGuildCommands.entries) {
+      final response = await this.interactionsEndpoints
+          .bulkOverrideGuildCommands(this._client.app.id, entry.key, entry.value)
+          .toList();
+
+      _extractCommandIds(response);
+      this._registerCommandHandlers(response, entry.value);
+      await this.interactionsEndpoints.bulkOverrideGuildCommandsPermissions(this._client.app.id, entry.key, entry.value);
     }
-
-    for (final entry in groupedGuildCommands.entries) {
-      final response = await this._client.httpEndpoints.sendRawRequest(
-          "/applications/${this._client.app.id}/guilds/${entry.key}/commands", "PUT",
-          body: [for (final builder in entry.value) builder.build()]);
-
-      if (response is HttpResponseSuccess) {
-        _extractCommandIds(response);
-        this._registerCommandHandlers(response, entry.value);
-      }
-    }
-
-    await this._syncPermissions();
-    this._logger.info("Finished bulk overriding permissions");
 
     this._commandBuilders.clear(); // Cleanup after registering command since we don't need this anymore
-    this._logger.info("Finished bulk overriding slash commands");
+    this._logger.info("Finished bulk overriding slash commands and permissions");
 
-    if (this._commands.isEmpty) {
-      return;
+    if (this._commands.isNotEmpty) {
+      this.onSlashCommand.listen((event) async {
+        final commandHash = _determineInteractionCommandHandler(event.interaction);
+
+        if (this._commandHandlers.containsKey(commandHash)) {
+          await this._commandHandlers[commandHash]!(event);
+        }
+      });
+
+      this._logger.info("Finished registering ${this._commandHandlers.length} commands!");
     }
-
-    this.onSlashCommand.listen((event) async {
-      final commandHash = _determineInteractionCommandHandler(event.interaction);
-
-      if (this._commandHandlers.containsKey(commandHash)) {
-        await this._commandHandlers[commandHash]!(event);
-      }
-    });
-
-    this._logger.info("Finished registering ${this._commandHandlers.length} commands!");
 
     if (this._buttonHandlers.isNotEmpty) {
       this.onButtonEvent.listen((event) {
@@ -212,11 +172,36 @@ class Interactions {
   /// Allows to register new [SlashCommandBuilder]
   void registerSlashCommand(SlashCommandBuilder slashCommandBuilder) => this._commandBuilders.add(slashCommandBuilder);
 
-  void _registerCommandHandlers(HttpResponseSuccess response, Iterable<SlashCommandBuilder> builders) {
-    final registeredSlashCommands =
-        (response.jsonBody as List<dynamic>).map((e) => SlashCommand._new(e as RawApiMap, this._client));
+  /// Register callback for slash command event for given [id]
+  void registerSlashCommandHandler(String id, SlashCommandHandler handler) =>
+      this._commandHandlers[id] = handler;
 
-    for (final registeredCommand in registeredSlashCommands) {
+  /// Deletes global command
+  Future<void> deleteGlobalCommand(Snowflake commandId) =>
+      this.interactionsEndpoints.deleteGlobalCommand(this._client.app.id, commandId);
+
+  /// Deletes guild command
+  Future<void> deleteGuildCommand(Snowflake commandId, Snowflake guildId) =>
+      this.interactionsEndpoints.deleteGuildCommand(this._client.app.id, commandId, guildId);
+
+  /// Fetches all global bots command
+  Stream<SlashCommand> fetchGlobalCommands() =>
+      this.interactionsEndpoints.fetchGlobalCommands(this._client.app.id);
+
+  /// Fetches all guild commands for given guild
+  Stream<SlashCommand> fetchGuildCommands(Snowflake guildId) =>
+      this.interactionsEndpoints.fetchGuildCommands(this._client.app.id, guildId);
+
+  void _extractCommandIds(List<SlashCommand> commands) {
+    for (final slashCommand in commands) {
+      this._commandBuilders
+          .firstWhere((element) => element.name == slashCommand.name && element.guild == slashCommand.guild?.id)
+          ._setId(slashCommand.id);
+    }
+  }
+
+  void _registerCommandHandlers(List<SlashCommand> registeredSlashCommands, Iterable<SlashCommandBuilder> builders) {
+    for(final registeredCommand in registeredSlashCommands) {
       final matchingBuilder = builders.firstWhere((element) => element.name.toLowerCase() == registeredCommand.name);
       this._assignCommandToHandler(matchingBuilder, registeredCommand);
 
