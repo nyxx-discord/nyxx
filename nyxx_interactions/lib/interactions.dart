@@ -17,10 +17,8 @@ part "src/builders/SlashCommandBuilder.dart";
 // Events
 part "src/events/InteractionEvent.dart";
 part "src/exceptions/AlreadyResponded.dart";
-part "src/exceptions/AlreadyResponded.dart";
 // Exceptions
 part "src/exceptions/InteractionExpired.dart";
-part "src/exceptions/ResponseRequired.dart";
 part "src/exceptions/ResponseRequired.dart";
 // Internal
 part "src/internal/_EventController.dart";
