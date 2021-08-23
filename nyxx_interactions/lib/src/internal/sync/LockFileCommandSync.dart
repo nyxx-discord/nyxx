@@ -41,7 +41,7 @@ class _LockfileCommand {
   final Snowflake? guild;
   final bool defaultPermissions;
   final Iterable<_LockfilePermission> permissions;
-  final String description;
+  final String? description;
   final Iterable<_LockfileOption> options;
 
   _LockfileCommand(this.name, this.description, this.guild, this.defaultPermissions, this.permissions, this.options);
@@ -68,7 +68,7 @@ class _LockfileCommand {
 class _LockfileOption {
   final int type;
   final String name;
-  final String description;
+  final String? description;
 
   late final Iterable<_LockfileOption> options;
 
