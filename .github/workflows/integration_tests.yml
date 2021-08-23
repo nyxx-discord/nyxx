@@ -1,6 +1,9 @@
 name: integration tests
 
-on: [push]
+on:
+  push:
+    branches:
+      - dev
 
 jobs:
   test-nyxx:
