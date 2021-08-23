@@ -15,8 +15,10 @@ abstract class InteractionEvent<T extends Interaction> {
 
   /// If the Client has sent a response to the Discord API. Once the API was received a response you cannot send another.
   bool _hasAcked = false;
+
   /// Opcode for acknowledging interaction
   int get _acknowledgeOpCode;
+
   /// Opcode for responding to interaction
   int get _respondOpcode;
 
@@ -26,7 +28,7 @@ abstract class InteractionEvent<T extends Interaction> {
 
   /// Create a followup message for an Interaction
   Future<Message> sendFollowup(MessageBuilder builder) async {
-    if(!_hasAcked) {
+    if (!_hasAcked) {
       return Future.error(ResponseRequiredError());
     }
     this._logger.fine("Sending followup for for interaction: ${this.interaction.id}");
@@ -76,7 +78,7 @@ abstract class InteractionEvent<T extends Interaction> {
 
   /// Used to acknowledge a Interaction and send a response.
   /// Once this is sent you can then only send ChannelMessages.
-  Future<void> respond(MessageBuilder builder, { bool hidden = false }) async {
+  Future<void> respond(MessageBuilder builder, {bool hidden = false}) async {
     final now = DateTime.now();
     if (_hasAcked && now.isAfter(this.receivedAt.add(const Duration(minutes: 15)))) {
       return Future.error(InteractionExpiredError._15mins());
@@ -130,7 +132,7 @@ class SlashCommandInteractionEvent extends InteractionEvent<SlashCommandInteract
   @override
   int get _respondOpcode => 4;
 
-  SlashCommandInteractionEvent._new(Interactions interactions, RawApiMap raw): super._new(interactions) {
+  SlashCommandInteractionEvent._new(Interactions interactions, RawApiMap raw) : super._new(interactions) {
     this.interaction = SlashCommandInteraction._new(_client, raw);
   }
 }
@@ -147,7 +149,7 @@ abstract class ComponentInteractionEvent<T extends ComponentInteraction> extends
   @override
   int get _respondOpcode => 7;
 
-  ComponentInteractionEvent._new(Interactions interactions, RawApiMap raw): super._new(interactions);
+  ComponentInteractionEvent._new(Interactions interactions, RawApiMap raw) : super._new(interactions);
 }
 
 /// Interaction event for button events
@@ -155,7 +157,7 @@ class ButtonInteractionEvent extends ComponentInteractionEvent<ButtonInteraction
   @override
   late final ButtonInteraction interaction;
 
-  ButtonInteractionEvent._new(Interactions interactions, RawApiMap raw): super._new(interactions, raw) {
+  ButtonInteractionEvent._new(Interactions interactions, RawApiMap raw) : super._new(interactions, raw) {
     this.interaction = ButtonInteraction._new(_client, raw);
   }
 }
@@ -165,7 +167,7 @@ class MultiselectInteractionEvent extends ComponentInteractionEvent<MultiselectI
   @override
   late final MultiselectInteraction interaction;
 
-  MultiselectInteractionEvent._new(Interactions interactions, RawApiMap raw): super._new(interactions, raw) {
+  MultiselectInteractionEvent._new(Interactions interactions, RawApiMap raw) : super._new(interactions, raw) {
     this.interaction = MultiselectInteraction._new(_client, raw);
   }
 }

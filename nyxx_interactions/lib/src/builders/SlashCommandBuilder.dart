@@ -49,11 +49,9 @@ class SlashCommandBuilder extends Builder {
   @override
   RawApiMap build() => {
         "name": this.name,
-        if (this.type == SlashCommandType.chat)
-          "description": this.description,
+        if (this.type == SlashCommandType.chat) "description": this.description,
         "default_permission": this.defaultPermissions,
-        if (this.options.isNotEmpty)
-          "options": this.options.map((e) => e.build()).toList(),
+        if (this.options.isNotEmpty) "options": this.options.map((e) => e.build()).toList(),
         "type": this.type.value,
       };
 
@@ -61,7 +59,7 @@ class SlashCommandBuilder extends Builder {
 
   /// Register a permission
   void addPermission(ICommandPermissionBuilder permission) {
-    if(this.permissions == null) {
+    if (this.permissions == null) {
       this.permissions = [];
     }
     this.permissions!.add(permission);
@@ -70,8 +68,7 @@ class SlashCommandBuilder extends Builder {
   /// Registers handler for command. Note command cannot have handler if there are options present
   void registerHandler(SlashCommandHandler handler) {
     if (this.options.any((element) =>
-        element.type == CommandOptionType.subCommand ||
-        element.type == CommandOptionType.subCommandGroup)) {
+        element.type == CommandOptionType.subCommand || element.type == CommandOptionType.subCommandGroup)) {
       throw new ArgumentError(
           "Cannot register handler for slash command if command have subcommand or subcommandgroup");
     }

@@ -67,13 +67,17 @@ class Interactions {
 
               switch (componentType) {
                 case 2:
-                  _events.onButtonEvent.add(ButtonInteractionEvent._new(this, event.rawData["d"] as Map<String, dynamic>));
+                  _events.onButtonEvent
+                      .add(ButtonInteractionEvent._new(this, event.rawData["d"] as Map<String, dynamic>));
                   break;
                 case 3:
-                  _events.onMultiselectEvent.add(MultiselectInteractionEvent._new(this, event.rawData["d"] as Map<String, dynamic>));
+                  _events.onMultiselectEvent
+                      .add(MultiselectInteractionEvent._new(this, event.rawData["d"] as Map<String, dynamic>));
                   break;
                 default:
-                  this._logger.warning("Unknown componentType type: [$componentType]; Payload: ${jsonEncode(event.rawData)}");
+                  this
+                      ._logger
+                      .warning("Unknown componentType type: [$componentType]; Payload: ${jsonEncode(event.rawData)}");
               }
 
               break;
@@ -86,16 +90,20 @@ class Interactions {
   }
 
   /// Syncs commands builders with discord after client is ready.
-  void syncOnReady() {
-    this.client.onReady.listen((_) async {
-      await this.sync();
+  void syncOnReady({ICommandsSync syncRule = const ManualCommandSync()}) {
+    this._client.onReady.listen((_) async {
+      await this.sync(syncRule: syncRule);
     });
   }
 
   /// Syncs command builders with discord immediately.
   /// Warning: Client could not be ready at the function execution.
   /// Use [syncOnReady] for proper behavior
-  Future<void> sync() async {
+  Future<void> sync({ICommandsSync syncRule = const ManualCommandSync()}) async {
+    if (!await syncRule.shouldSync(this._commandBuilders)) {
+      return;
+    }
+
     final commandPartition = _partition<SlashCommandBuilder>(this._commandBuilders, (element) => element.guild == null);
     final globalCommands = commandPartition.first;
     final groupedGuildCommands = _groupSlashCommandBuilders(commandPartition.last);
@@ -155,16 +163,14 @@ class Interactions {
   }
 
   /// Registers callback for button event for given [id]
-  void registerButtonHandler(String id, ButtonInteractionHandler handler) =>
-      this._buttonHandlers[id] = handler;
+  void registerButtonHandler(String id, ButtonInteractionHandler handler) => this._buttonHandlers[id] = handler;
 
   /// Register callback for dropdown event for given [id]
   void registerMultiselectHandler(String id, MultiselectInteractionHandler handler) =>
       this._multiselectHandlers[id] = handler;
 
   /// Allows to register new [SlashCommandBuilder]
-  void registerSlashCommand(SlashCommandBuilder slashCommandBuilder) =>
-      this._commandBuilders.add(slashCommandBuilder);
+  void registerSlashCommand(SlashCommandBuilder slashCommandBuilder) => this._commandBuilders.add(slashCommandBuilder);
 
   /// Register callback for slash command event for given [id]
   void registerSlashCommandHandler(String id, SlashCommandHandler handler) =>
@@ -222,7 +228,8 @@ class Interactions {
     final subCommandGroups = builder.options.where((element) => element.type == CommandOptionType.subCommandGroup);
     if (subCommandGroups.isNotEmpty) {
       for (final subCommandGroup in subCommandGroups) {
-        final subCommands = subCommandGroup.options?.where((element) => element.type == CommandOptionType.subCommand) ?? [];
+        final subCommands =
+            subCommandGroup.options?.where((element) => element.type == CommandOptionType.subCommand) ?? [];
 
         for (final subCommand in subCommands) {
           if (subCommand._handler == null) {
