@@ -16,6 +16,8 @@ class Interactions {
   late final _EventController _events;
   final Logger _logger = Logger("Interactions");
 
+  /// Reference to client
+  final Nyxx _client;
   final _commandBuilders = <SlashCommandBuilder>[];
   final _commands = <SlashCommand>[];
   final _commandHandlers = <String, SlashCommandHandler>{};
@@ -25,8 +27,6 @@ class Interactions {
   /// Commands registered by bot
   Iterable<SlashCommand> get commands => UnmodifiableListView(this._commands);
 
-  /// Reference to client
-  final Nyxx client;
 
   /// Emitted when a slash command is sent.
   late final Stream<SlashCommandInteractionEvent> onSlashCommand;
@@ -44,15 +44,15 @@ class Interactions {
   late final IInteractionsEndpoints interactionsEndpoints;
 
   /// Create new instance of the interactions class.
-  Interactions(this.client) {
+  Interactions(this._client) {
     _events = _EventController(this);
-    client.options.dispatchRawShardEvent = true;
-    this.interactionsEndpoints = _InteractionsEndpoints(client);
+    _client.options.dispatchRawShardEvent = true;
+    this.interactionsEndpoints = _InteractionsEndpoints(_client);
 
     _logger.info("Interactions ready");
 
-    client.onReady.listen((event) async {
-      client.shardManager.rawEvent.listen((event) {
+    _client.onReady.listen((event) async {
+      _client.shardManager.rawEvent.listen((event) {
         if (event.rawData["op"] == OPCodes.dispatch && event.rawData["t"] == _interactionCreateCommand) {
           this._logger.fine("Received interaction event: [${event.rawData}]");
 
@@ -91,7 +91,7 @@ class Interactions {
 
   /// Syncs commands builders with discord after client is ready.
   void syncOnReady({ICommandsSync syncRule = const ManualCommandSync()}) {
-    this.client.onReady.listen((_) async {
+    this._client.onReady.listen((_) async {
       await this.sync(syncRule: syncRule);
     });
   }
@@ -109,21 +109,21 @@ class Interactions {
     final groupedGuildCommands = _groupSlashCommandBuilders(commandPartition.last);
 
     final globalCommandsResponse = await this.interactionsEndpoints
-        .bulkOverrideGlobalCommands(this.client.app.id, globalCommands)
+        .bulkOverrideGlobalCommands(this._client.app.id, globalCommands)
         .toList();
 
     _extractCommandIds(globalCommandsResponse);
     this._registerCommandHandlers(globalCommandsResponse, globalCommands);
-    await this.interactionsEndpoints.bulkOverrideGlobalCommandsPermissions(this.client.app.id, globalCommands);
+    await this.interactionsEndpoints.bulkOverrideGlobalCommandsPermissions(this._client.app.id, globalCommands);
 
     for(final entry in groupedGuildCommands.entries) {
       final response = await this.interactionsEndpoints
-          .bulkOverrideGuildCommands(this.client.app.id, entry.key, entry.value)
+          .bulkOverrideGuildCommands(this._client.app.id, entry.key, entry.value)
           .toList();
 
       _extractCommandIds(response);
       this._registerCommandHandlers(response, entry.value);
-      await this.interactionsEndpoints.bulkOverrideGuildCommandsPermissions(this.client.app.id, entry.key, entry.value);
+      await this.interactionsEndpoints.bulkOverrideGuildCommandsPermissions(this._client.app.id, entry.key, entry.value);
     }
 
     this._commandBuilders.clear(); // Cleanup after registering command since we don't need this anymore
@@ -178,19 +178,19 @@ class Interactions {
 
   /// Deletes global command
   Future<void> deleteGlobalCommand(Snowflake commandId) =>
-      this.interactionsEndpoints.deleteGlobalCommand(this.client.app.id, commandId);
+      this.interactionsEndpoints.deleteGlobalCommand(this._client.app.id, commandId);
 
   /// Deletes guild command
   Future<void> deleteGuildCommand(Snowflake commandId, Snowflake guildId) =>
-      this.interactionsEndpoints.deleteGuildCommand(this.client.app.id, commandId, guildId);
+      this.interactionsEndpoints.deleteGuildCommand(this._client.app.id, commandId, guildId);
 
   /// Fetches all global bots command
   Stream<SlashCommand> fetchGlobalCommands() =>
-      this.interactionsEndpoints.fetchGlobalCommands(this.client.app.id);
+      this.interactionsEndpoints.fetchGlobalCommands(this._client.app.id);
 
   /// Fetches all guild commands for given guild
   Stream<SlashCommand> fetchGuildCommands(Snowflake guildId) =>
-      this.interactionsEndpoints.fetchGuildCommands(this.client.app.id, guildId);
+      this.interactionsEndpoints.fetchGuildCommands(this._client.app.id, guildId);
 
   void _extractCommandIds(List<SlashCommand> commands) {
     for (final slashCommand in commands) {

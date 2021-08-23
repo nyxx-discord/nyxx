@@ -2,7 +2,7 @@ part of nyxx_interactions;
 
 /// The event that you receive when a user types a slash command.
 abstract class InteractionEvent<T extends Interaction> {
-  Nyxx get _client => interactions.client;
+  Nyxx get _client => interactions._client;
 
   /// Reference to [Interactions]
   late final Interactions interactions;
