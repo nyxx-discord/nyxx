@@ -22,9 +22,14 @@ part "src/exceptions/InteractionExpired.dart";
 part "src/exceptions/ResponseRequired.dart";
 // Internal
 part "src/internal/_EventController.dart";
+// Sync
+part "src/internal/sync/ICommandsSync.dart";
+part "src/internal/sync/LockFileCommandSync.dart";
+part "src/internal/sync/ManualCommandSync.dart";
+// Utils
 part "src/internal/utils.dart";
-part "src/models/ArgChoice.dart";
 // Command Args
+part "src/models/ArgChoice.dart";
 part "src/models/CommandOption.dart";
 part "src/models/Interaction.dart";
 part "src/models/InteractionOption.dart";
