@@ -91,7 +91,7 @@ class Interactions {
 
   /// Syncs commands builders with discord after client is ready.
   void syncOnReady({ICommandsSync syncRule = const ManualCommandSync()}) {
-    this._client.onReady.listen((_) async {
+    this.client.onReady.listen((_) async {
       await this.sync(syncRule: syncRule);
     });
   }
