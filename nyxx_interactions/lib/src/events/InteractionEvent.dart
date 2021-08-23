@@ -2,9 +2,10 @@ part of nyxx_interactions;
 
 /// The event that you receive when a user types a slash command.
 abstract class InteractionEvent<T extends Interaction> {
-  late final Nyxx _client;
+  Nyxx get _client => interactions.client;
 
-  final Logger _logger = Logger("Interaction Event");
+  /// Reference to [Interactions]
+  late final Interactions interactions;
 
   /// The interaction data, includes the args, name, guild, channel, etc.
   T get interaction;
@@ -13,19 +14,19 @@ abstract class InteractionEvent<T extends Interaction> {
   final DateTime receivedAt = DateTime.now();
 
   /// If the Client has sent a response to the Discord API. Once the API was received a response you cannot send another.
-  bool hasResponded = false;
-
+  bool _hasAcked = false;
   /// Opcode for acknowledging interaction
   int get _acknowledgeOpCode;
-
   /// Opcode for responding to interaction
   int get _respondOpcode;
 
-  InteractionEvent._new(this._client);
+  final Logger _logger = Logger("Interaction Event");
+
+  InteractionEvent._new(this.interactions);
 
   /// Create a followup message for an Interaction
   Future<void> sendFollowup(MessageBuilder builder) async {
-    if(!hasResponded) {
+    if(!_hasAcked) {
       return Future.error(ResponseRequiredError());
     }
 
@@ -43,17 +44,22 @@ abstract class InteractionEvent<T extends Interaction> {
   /// Used to acknowledge a Interaction but not send any response yet.
   /// Once this is sent you can then only send ChannelMessages.
   /// You can also set showSource to also print out the command the user entered.
-  Future<void> acknowledge() async {
-    if (DateTime.now().isAfter(this.receivedAt.add(const Duration(seconds: 3)))) {
-      return Future.error(InteractionExpiredError());
-    }
-
-    if (hasResponded) {
+  Future<void> acknowledge({bool hidden = false}) async {
+    if (_hasAcked) {
       return Future.error(AlreadyRespondedError());
     }
 
+    if (DateTime.now().isAfter(this.receivedAt.add(const Duration(seconds: 3)))) {
+      return Future.error(InteractionExpiredError._3secs());
+    }
+
     final url = "/interactions/${this.interaction.id.toString()}/${this.interaction.token}/callback";
-    final response = await this._client.httpEndpoints.sendRawRequest(url, "POST", body: { "type": this._acknowledgeOpCode });
+    final response = await this._client.httpEndpoints.sendRawRequest(url, "POST", body: {
+      "type": this._acknowledgeOpCode,
+      "data": {
+        if (hidden) "flags": 1 << 6,
+      }
+    });
 
     this._logger.fine("Sending acknowledge for for interaction: $url");
 
@@ -61,21 +67,24 @@ abstract class InteractionEvent<T extends Interaction> {
       return Future.error(response);
     }
 
-    hasResponded = true;
+    _hasAcked = true;
   }
 
   /// Used to acknowledge a Interaction and send a response.
   /// Once this is sent you can then only send ChannelMessages.
   Future<void> respond(MessageBuilder builder, { bool hidden = false }) async {
-    if (DateTime.now().isAfter(this.receivedAt.add(const Duration(minutes: 15)))) {
-      return Future.error(InteractionExpiredError());
+    final now = DateTime.now();
+    if (_hasAcked && now.isAfter(this.receivedAt.add(const Duration(minutes: 15)))) {
+      return Future.error(InteractionExpiredError._15mins());
+    } else if (now.isAfter(this.receivedAt.add(const Duration(seconds: 3)))) {
+      return Future.error(InteractionExpiredError._3secs());
     }
 
     late String url;
     late RawApiMap body;
     late String method;
 
-    if (hasResponded) {
+    if (_hasAcked) {
       url = "/webhooks/${this._client.app.id.toString()}/${this.interaction.token}/messages/@original";
       body = {
         if (hidden) "flags": 1 << 6,
@@ -104,7 +113,7 @@ abstract class InteractionEvent<T extends Interaction> {
       return Future.error(response);
     }
 
-    hasResponded = true;
+    _hasAcked = true;
   }
 }
 
@@ -120,8 +129,8 @@ class SlashCommandInteractionEvent extends InteractionEvent<SlashCommandInteract
   @override
   int get _respondOpcode => 4;
 
-  SlashCommandInteractionEvent._new(Nyxx client, RawApiMap raw): super._new(client) {
-    this.interaction = SlashCommandInteraction._new(client, raw);
+  SlashCommandInteractionEvent._new(Interactions interactions, RawApiMap raw): super._new(interactions) {
+    this.interaction = SlashCommandInteraction._new(_client, raw);
   }
 }
 
@@ -137,7 +146,7 @@ abstract class ComponentInteractionEvent<T extends ComponentInteraction> extends
   @override
   int get _respondOpcode => 7;
 
-  ComponentInteractionEvent._new(Nyxx client, RawApiMap raw): super._new(client);
+  ComponentInteractionEvent._new(Interactions interactions, RawApiMap raw): super._new(interactions);
 }
 
 /// Interaction event for button events
@@ -145,8 +154,8 @@ class ButtonInteractionEvent extends ComponentInteractionEvent<ButtonInteraction
   @override
   late final ButtonInteraction interaction;
 
-  ButtonInteractionEvent._new(Nyxx client, RawApiMap raw): super._new(client, raw) {
-    this.interaction = ButtonInteraction._new(client, raw);
+  ButtonInteractionEvent._new(Interactions interactions, RawApiMap raw): super._new(interactions, raw) {
+    this.interaction = ButtonInteraction._new(_client, raw);
   }
 }
 
@@ -155,7 +164,7 @@ class MultiselectInteractionEvent extends ComponentInteractionEvent<MultiselectI
   @override
   late final MultiselectInteraction interaction;
 
-  MultiselectInteractionEvent._new(Nyxx client, RawApiMap raw): super._new(client, raw) {
-    this.interaction = MultiselectInteraction._new(client, raw);
+  MultiselectInteractionEvent._new(Interactions interactions, RawApiMap raw): super._new(interactions, raw) {
+    this.interaction = MultiselectInteraction._new(_client, raw);
   }
 }

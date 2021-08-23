@@ -8,7 +8,7 @@ import "dart:isolate";
 
 import "package:http/http.dart" show Client;
 import "package:logging/logging.dart";
-import "package:nyxx/nyxx.dart" show Nyxx, Snowflake, IntExtensions, VoiceStateUpdateEvent, VoiceServerUpdateEvent, Disposable;
+import "package:nyxx/nyxx.dart" show Nyxx, Snowflake, VoiceStateUpdateEvent, VoiceServerUpdateEvent, Disposable, IEnum;
 
 part "src/_EventDispatcher.dart";
 part "src/Cluster.dart";
@@ -27,6 +27,7 @@ part "src/model/TrackException.dart";
 part "src/model/TrackStart.dart";
 part "src/model/TrackStuck.dart";
 part "src/model/WebSocketClosed.dart";
+part "src/model/SearchPlatform.dart";
 
 part "src/node/Node.dart";
 part "src/node/nodeRunner.dart";

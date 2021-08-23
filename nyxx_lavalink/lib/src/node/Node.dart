@@ -196,14 +196,17 @@ class Node {
     return Tracks._fromJson(jsonDecode(response.body) as Map<String, dynamic>);
   }
 
-  /// Searches a provided query on youtube, if the query is a link
-  /// it's searched directly by the link
-  Future<Tracks> autoSearch(String query) async {
+  /// Searches a provided query on selected platform (YouTube by default),
+  /// if the query is a link it's searched directly by the link
+  Future<Tracks> autoSearch(
+    String query, {
+    SearchPlatform platform = SearchPlatform.youtube,
+  }) async {
     if (this._urlRegex.hasMatch(query)) {
       return searchTracks(query);
     }
 
-    return searchTracks("ytsearch:$query");
+    return searchTracks("${platform.value}:$query");
   }
 
   /// Get the [PlayParameters] object for a specific track

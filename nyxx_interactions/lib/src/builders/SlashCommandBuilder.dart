@@ -9,7 +9,7 @@ class SlashCommandBuilder extends Builder {
   final String name;
 
   /// Command description shown to the user in the Slash Command UI
-  final String description;
+  final String? description;
 
   /// If people can use the command by default or if they need permissions to use it.
   final bool defaultPermissions;
@@ -23,23 +23,36 @@ class SlashCommandBuilder extends Builder {
   /// Permission overrides for the command
   List<ICommandPermissionBuilder>? permissions;
 
+  /// Target of slash command if different that SlashCommandTarget.chat - slash command will
+  /// become context menu in appropriate context
+  SlashCommandType type;
+
   /// Handler for SlashCommandBuilder
   SlashCommandHandler? _handler;
 
   /// A slash command, can only be instantiated through a method on [Interactions]
   SlashCommandBuilder(this.name, this.description, this.options,
-      {this.defaultPermissions = true, this.permissions, this.guild}) {
+      {this.defaultPermissions = true, this.permissions, this.guild, this.type = SlashCommandType.chat}) {
     if (!slashCommandNameRegex.hasMatch(this.name)) {
       throw ArgumentError("Command name has to match regex: ${slashCommandNameRegex.pattern}");
+    }
+
+    if (this.description == null && this.type == SlashCommandType.chat) {
+      throw ArgumentError("Normal slash command needs to have description");
+    }
+
+    if (this.description != null && this.type != SlashCommandType.chat) {
+      throw ArgumentError("Context menus cannot have description");
     }
   }
 
   @override
   RawApiMap build() => {
         "name": this.name,
-        "description": this.description,
+        if (this.type == SlashCommandType.chat) "description": this.description,
         "default_permission": this.defaultPermissions,
-        if (this.options.isNotEmpty) "options": this.options.map((e) => e.build()).toList()
+        if (this.options.isNotEmpty) "options": this.options.map((e) => e.build()).toList(),
+        "type": this.type.value,
       };
 
   void _setId(Snowflake id) => this._id = id;

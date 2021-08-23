@@ -108,20 +108,16 @@ class NyxxRest extends INyxx {
       {ClientOptions? options,
         CacheOptions? cacheOptions,
         bool ignoreExceptions = true,
-        bool useDefaultLogger = true,
-        Level? defaultLoggerLogLevel}) {
-    this._logger.fine("Staring Nyxx: intents: [$intents]; ignoreExceptions: [$ignoreExceptions]; useDefaultLogger: [$useDefaultLogger]; defaultLoggerLogLevel: $defaultLoggerLogLevel");
+        bool useDefaultLogger = true}) {
+    this._logger.fine("Staring Nyxx: intents: [$intents]; ignoreExceptions: [$ignoreExceptions]; useDefaultLogger: [$useDefaultLogger]");
 
     if (_token.isEmpty) {
       throw MissingTokenError();
     }
 
     if (useDefaultLogger) {
-      Logger.root.level = defaultLoggerLogLevel ?? Level.INFO;
-
       Logger.root.onRecord.listen((LogRecord rec) {
-        print(
-            "[${rec.time}] [${rec.level.name}] [${rec.loggerName}] ${rec.message}");
+        print("[${rec.time}] [${rec.level.name}] [${rec.loggerName}] ${rec.message}");
       });
     }
 
@@ -335,18 +331,16 @@ class Nyxx extends NyxxRest {
       {ClientOptions? options,
       CacheOptions? cacheOptions,
       bool ignoreExceptions = true,
-      bool useDefaultLogger = true,
-      Level? defaultLoggerLogLevel}) :
+      bool useDefaultLogger = true}) :
         super(token, intents, options: options, cacheOptions: cacheOptions,
               ignoreExceptions: ignoreExceptions, useDefaultLogger: useDefaultLogger,
-              defaultLoggerLogLevel: defaultLoggerLogLevel
       ) {
     this._events = _EventController(this);
-    this.onSelfMention = this
-        .onMessageReceived
-        .where((event) => event.message.mentions.contains(this.self));
-    this.onDmReceived =
-        this.onMessageReceived.where((event) => event.message is DMMessage);
+
+    this.onSelfMention = this.onMessageReceived
+        .where((event) => event.message.mentions.map((e) => e.id).contains(self.id));
+    this.onDmReceived = this.onMessageReceived
+        .where((event) => event.message is DMMessage);
 
     this._ws = _ConnectionManager(this);
   }

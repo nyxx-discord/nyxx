@@ -1,10 +1,10 @@
 name: nyxx_lavalink
-version: 2.0.0-rc.1
+version: 2.0.0-rc.3
 description: Nyxx Lavalink Module
-homepage: https://github.com/l7ssha/nyxx
-repository: https://github.com/l7ssha/nyxx
-documentation: https://github.com/l7ssha/nyxx/wiki
-issue_tracker: https://github.com/l7ssha/nyxx/issues
+homepage: https://github.com/nyxx-discord/nyxx
+repository: https://github.com/nyxx-discord/nyxx
+documentation: https://nyxx.l7ssha.xyz
+issue_tracker: https://github.com/nyxx-discord/nyxx/issues
 
 environment:
   sdk: '>=2.13.0 <3.0.0'

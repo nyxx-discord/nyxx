@@ -58,8 +58,8 @@ class Member extends SnowflakeEntity implements Mentionable {
 
   Member._new(this.client, RawApiMap raw, Snowflake guildId) : super(Snowflake(raw["user"]["id"])) {
     this.nickname = raw["nick"] as String?;
-    this.deaf = raw["deaf"] as bool;
-    this.mute = raw["mute"] as bool;
+    this.deaf = raw["deaf"] as bool? ?? false;
+    this.mute = raw["mute"] as bool? ?? false;
     this.user = _UserCacheable(client, this.id);
     this.guild = _GuildCacheable(client, guildId);
     this.boostingSince = DateTime.tryParse(raw["premium_since"] as String? ?? "");

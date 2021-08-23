@@ -1,10 +1,8 @@
 library nyxx_interactions;
 
 import "dart:async";
-import "dart:convert";
-import "dart:io";
+import 'dart:convert';
 
-import "package:crypto/crypto.dart";
 import "package:logging/logging.dart";
 import "package:nyxx/nyxx.dart";
 
@@ -19,21 +17,21 @@ part "src/builders/SlashCommandBuilder.dart";
 // Events
 part "src/events/InteractionEvent.dart";
 part "src/exceptions/AlreadyResponded.dart";
+part "src/exceptions/AlreadyResponded.dart";
 // Exceptions
 part "src/exceptions/InteractionExpired.dart";
 part "src/exceptions/ResponseRequired.dart";
+part "src/exceptions/ResponseRequired.dart";
 // Internal
 part "src/internal/_EventController.dart";
-part "src/internal/sync/ICommandsSync.dart";
-part "src/internal/sync/LockFileCommandSync.dart";
-part "src/internal/sync/ManualCommandSync.dart";
 part "src/internal/utils.dart";
-// Models
 part "src/models/ArgChoice.dart";
+// Command Args
 part "src/models/CommandOption.dart";
 part "src/models/Interaction.dart";
 part "src/models/InteractionOption.dart";
 // Models
 part "src/models/SlashCommand.dart";
 
+/// Typedef of api response
 typedef RawApiMap = Map<String, dynamic>;
