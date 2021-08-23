@@ -90,7 +90,8 @@ class Interactions {
         globalCommands.where((builder) => builder.permissions != null && builder.permissions!.isNotEmpty).toList();
 
     if (globalBody.isNotEmpty) {
-      return Future.error(StateError("Only guild commands may have permission's set. If you need custom permissions based on guild then you can send HTTP requests."));
+      return Future.error(StateError(
+          "Only guild commands may have permission's set. If you need custom permissions based on guild then you can send HTTP requests."));
     }
 
     for (final entry in groupedGuildCommands.entries) {
