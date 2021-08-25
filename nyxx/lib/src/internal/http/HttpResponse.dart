@@ -20,6 +20,8 @@ abstract class _HttpResponse {
     try {
       if (this._body.isNotEmpty) {
         this._jsonBody = jsonDecode(utf8.decode(this._body));
+      } else {
+        this._jsonBody = null;
       }
     } on FormatException {
       this._jsonBody = null;
