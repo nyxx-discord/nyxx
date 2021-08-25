@@ -82,6 +82,9 @@ class _HttpHandler {
       await responseSuccess._finalize();
 
       _client._onHttpResponse.add(HttpResponseEvent._new(responseSuccess));
+
+      this._logger.finer("Got successful http response for endpoint: [${response.request?.url.toString()}]; Response: [${responseSuccess.jsonBody}]");
+
       return responseSuccess;
     }
 
@@ -89,6 +92,9 @@ class _HttpHandler {
     await responseError._finalize();
 
     _client._onHttpError.add(HttpErrorEvent._new(responseError));
+
+    this._logger.finer("Got failure http response for endpoint: [${response.request?.url.toString()}]; Response: [${responseError.errorMessage}]");
+
     return responseError;
   }
 }
