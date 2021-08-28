@@ -35,12 +35,12 @@ jobs:
       - name: Deploy nyxx dev docs
         uses: easingthemes/ssh-deploy@v2.1.5
         env:
-          SSH_PRIVATE_KEY: ${{ secrets.SERVER_SSH_KEY }}
+          SSH_PRIVATE_KEY: ${{ secrets.DEPLOY_SSH_SERVER_KEY }}
           ARGS: "-rltDzvO"
           SOURCE: "nyxx/doc/api/"
-          REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
-          REMOTE_USER: ${{ secrets.REMOTE_USER }}
-          TARGET: "${{ secrets.REMOTE_TARGET }}/dartdocs/nyxx/"
+          REMOTE_HOST: ${{ secrets.DEPLOY_REMOTE_HOST }}
+          REMOTE_USER: ${{ secrets.DEPLOY_REMOTE_USER }}
+          TARGET: "${{ secrets.DEPLOY_REMOTE_TARGET }}/dartdocs/nyxx/"
 
   docs-commander:
     name: Deploy nyxx_commander package docs
@@ -71,12 +71,12 @@ jobs:
       - name: Deploy nyxx_commander dev docs
         uses: easingthemes/ssh-deploy@v2.1.5
         env:
-          SSH_PRIVATE_KEY: ${{ secrets.SERVER_SSH_KEY }}
+          SSH_PRIVATE_KEY: ${{ secrets.DEPLOY_SSH_SERVER_KEY }}
           ARGS: "-rltDzvO"
           SOURCE: "nyxx_commander/doc/api/"
-          REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
-          REMOTE_USER: ${{ secrets.REMOTE_USER }}
-          TARGET: "${{ secrets.REMOTE_TARGET }}/dartdocs/nyxx_commander/"
+          REMOTE_HOST: ${{ secrets.DEPLOY_REMOTE_HOST }}
+          REMOTE_USER: ${{ secrets.DEPLOY_REMOTE_USER }}
+          TARGET: "${{ secrets.DEPLOY_REMOTE_TARGET }}/dartdocs/nyxx_commander/"
 
   docs-extensions:
     name: Deploy nyxx_extensions package docs
@@ -107,12 +107,12 @@ jobs:
      - name: Deploy nyxx_extensions dev docs
        uses: easingthemes/ssh-deploy@v2.1.5
        env:
-         SSH_PRIVATE_KEY: ${{ secrets.SERVER_SSH_KEY }}
+         SSH_PRIVATE_KEY: ${{ secrets.DEPLOY_SSH_SERVER_KEY }}
          ARGS: "-rltDzvO"
          SOURCE: "nyxx_extensions/doc/api/"
-         REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
-         REMOTE_USER: ${{ secrets.REMOTE_USER }}
-         TARGET: "${{ secrets.REMOTE_TARGET }}/dartdocs/nyxx_extensions/"
+         REMOTE_HOST: ${{ secrets.DEPLOY_REMOTE_HOST }}
+         REMOTE_USER: ${{ secrets.DEPLOY_REMOTE_USER }}
+         TARGET: "${{ secrets.DEPLOY_REMOTE_TARGET }}/dartdocs/nyxx_extensions/"
 
   docs-interactions:
     name: Deploy nyxx_interactions package docs
@@ -143,9 +143,9 @@ jobs:
       - name: Deploy nyxx_interactions dev docs
         uses: easingthemes/ssh-deploy@v2.1.5
         env:
-          SSH_PRIVATE_KEY: ${{ secrets.SERVER_SSH_KEY }}
+          SSH_PRIVATE_KEY: ${{ secrets.DEPLOY_SSH_SERVER_KEY }}
           ARGS: "-rltDzvO"
           SOURCE: "nyxx_interactions/doc/api/"
-          REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
-          REMOTE_USER: ${{ secrets.REMOTE_USER }}
-          TARGET: "${{ secrets.REMOTE_TARGET }}/dartdocs/nyxx_interactions/"
+          REMOTE_HOST: ${{ secrets.DEPLOY_REMOTE_HOST }}
+          REMOTE_USER: ${{ secrets.DEPLOY_REMOTE_USER }}
+          TARGET: "${{ secrets.DEPLOY_REMOTE_TARGET }}/dartdocs/nyxx_interactions/"
