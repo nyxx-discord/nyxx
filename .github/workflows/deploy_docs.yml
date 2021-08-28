@@ -40,7 +40,7 @@ jobs:
           SOURCE: "nyxx/doc/api/"
           REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
           REMOTE_USER: ${{ secrets.REMOTE_USER }}
-          TARGET: "${{ secrets.REMOTE_TARGET }}/nyxx/"
+          TARGET: "${{ secrets.REMOTE_TARGET }}/dartdocs/nyxx/"
 
   docs-commander:
     name: Deploy nyxx_commander package docs
@@ -76,7 +76,7 @@ jobs:
           SOURCE: "nyxx_commander/doc/api/"
           REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
           REMOTE_USER: ${{ secrets.REMOTE_USER }}
-          TARGET: "${{ secrets.REMOTE_TARGET }}/nyxx_commander/"
+          TARGET: "${{ secrets.REMOTE_TARGET }}/dartdocs/nyxx_commander/"
 
   docs-extensions:
     name: Deploy nyxx_extensions package docs
@@ -112,7 +112,7 @@ jobs:
          SOURCE: "nyxx_extensions/doc/api/"
          REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
          REMOTE_USER: ${{ secrets.REMOTE_USER }}
-         TARGET: "${{ secrets.REMOTE_TARGET }}/nyxx_extensions/"
+         TARGET: "${{ secrets.REMOTE_TARGET }}/dartdocs/nyxx_extensions/"
 
   docs-interactions:
     name: Deploy nyxx_interactions package docs
@@ -148,4 +148,4 @@ jobs:
           SOURCE: "nyxx_interactions/doc/api/"
           REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
           REMOTE_USER: ${{ secrets.REMOTE_USER }}
-          TARGET: "${{ secrets.REMOTE_TARGET }}/nyxx_interactions/"
+          TARGET: "${{ secrets.REMOTE_TARGET }}/dartdocs/nyxx_interactions/"
