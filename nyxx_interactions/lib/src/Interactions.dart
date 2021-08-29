@@ -27,7 +27,6 @@ class Interactions {
   /// Commands registered by bot
   Iterable<SlashCommand> get commands => UnmodifiableListView(this._commands);
 
-
   /// Emitted when a slash command is sent.
   late final Stream<SlashCommandInteractionEvent> onSlashCommand;
 
@@ -219,7 +218,7 @@ class Interactions {
           continue;
         }
 
-        this._commandHandlers["$commandHashPrefix${subCommand.name}"] = subCommand._handler!;
+        this._commandHandlers["$commandHashPrefix|${subCommand.name}"] = subCommand._handler!;
       }
 
       return;
@@ -236,7 +235,7 @@ class Interactions {
             continue;
           }
 
-          this._commandHandlers["$commandHashPrefix${subCommandGroup.name}${subCommand.name}"] = subCommand._handler!;
+          this._commandHandlers["$commandHashPrefix|${subCommandGroup.name}|${subCommand.name}"] = subCommand._handler!;
         }
       }
 

@@ -70,7 +70,11 @@ class SlashCommandInteraction extends Interaction {
 
   SlashCommandInteraction._new(Nyxx client, RawApiMap raw) : super._new(client, raw) {
     this.name = raw["data"]["name"] as String;
-    this.options = _generateArgs(raw["data"] as RawApiMap);
+    this.options = [
+      if (raw["data"]["options"] != null)
+        for (final option in raw["data"]["options"] as List<dynamic>)
+          InteractionOption._new(option as RawApiMap)
+    ];
     this.commandId = Snowflake(raw["data"]["id"]);
 
     this.resolved = raw["data"]["resolved"] != null
@@ -81,20 +85,9 @@ class SlashCommandInteraction extends Interaction {
   /// Allows to fetch argument value by argument name
   dynamic getArg(String name) {
     try {
-      return this.options.firstWhere((element) => element.name == name);
+      return this.options.firstWhere((element) => element.name == name).value;
     } on Error {
       return null;
-    }
-  }
-
-  Iterable<InteractionOption> _generateArgs(RawApiMap rawData) sync* {
-    if (rawData["options"] == null) {
-      return;
-    }
-
-    final options = rawData["options"] as List<dynamic>;
-    for (final option in options) {
-      yield InteractionOption._new(option as RawApiMap);
     }
   }
 }
