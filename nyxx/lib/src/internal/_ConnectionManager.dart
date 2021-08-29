@@ -70,8 +70,10 @@ class _ConnectionManager {
     final response = httpResponse as HttpResponseSuccess;
     _client.app = ClientOAuth2Application._new(response.jsonBody as RawApiMap, _client);
 
+    if (!_client.ready) {
+      _client._events.onReady.add(ReadyEvent._new(_client));
+    }
     _client.ready = true;
-    _client._events.onReady.add(ReadyEvent._new(_client));
     _logger.info("Connected and ready! Logged as `${_client.self.tag}`");
   }
 }

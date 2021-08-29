@@ -15,7 +15,7 @@ class CachePolicyLocation {
   bool other = false;
 
   /// Allows entities downloaded from http api to be cached
-  bool http = true;
+  bool http = false;
 
   /// Default options.
   /// [event] and [http] will be enabled by default

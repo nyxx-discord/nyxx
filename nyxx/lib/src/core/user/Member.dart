@@ -78,7 +78,7 @@ class Member extends SnowflakeEntity implements Mentionable {
       this.joinedAt = DateTime.parse(raw["joined_at"] as String).toUtc();
     }
 
-    if (!client.users.hasKey(this.id) && client._cacheOptions.userCachePolicyLocation.objectConstructor) {
+    if (client._cacheOptions.userCachePolicyLocation.objectConstructor) {
       final userRaw = raw["user"] as RawApiMap;
 
       if (userRaw["id"] != null && userRaw.length != 1) {

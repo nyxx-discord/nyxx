@@ -118,7 +118,7 @@ class GuildMemberAddEvent {
     this.member = Member._new(client, raw["d"] as RawApiMap, this.guild.id);
     this.user = User._new(client, raw["d"]["user"] as RawApiMap);
 
-    if (!client.users.hasKey(this.user.id) && client._cacheOptions.userCachePolicyLocation.event) {
+    if (client._cacheOptions.userCachePolicyLocation.event) {
       client.users[user.id] = user;
     }
 

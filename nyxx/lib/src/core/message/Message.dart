@@ -118,7 +118,10 @@ abstract class Message extends SnowflakeEntity implements Disposable, Convertabl
     if (raw["mentions"] != null && raw["mentions"].isNotEmpty as bool) {
       for (final rawUser in raw["mentions"]) {
         final user = User._new(client, rawUser as RawApiMap);
-        this.client.users[user.id] = user;
+
+        if (client._cacheOptions.userCachePolicyLocation.objectConstructor) {
+          this.client.users[user.id] = user;
+        }
 
         this.mentions.add(_UserCacheable(client, user.id));
       }
