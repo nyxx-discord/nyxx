@@ -15,6 +15,9 @@ class ShardManager implements Disposable {
   /// Emitted when the shard encounters a connection error.
   late final Stream<Shard> onDisconnect = this._onDisconnect.stream;
 
+  /// Emitted when the shard resumed its connection
+  late final Stream<Shard> onResume = this._onDisconnect.stream;
+
   /// Emitted when shard receives member chunk.
   late final Stream<MemberChunkEvent> onMemberChunk = this._onMemberChunk.stream;
 
@@ -24,6 +27,7 @@ class ShardManager implements Disposable {
 
   final StreamController<Shard> _onConnect = StreamController.broadcast();
   final StreamController<Shard> _onDisconnect = StreamController.broadcast();
+  final StreamController<Shard> _onResume = StreamController.broadcast();
   final StreamController<MemberChunkEvent> _onMemberChunk = StreamController.broadcast();
   final StreamController<RawEvent> _onRawEvent = StreamController.broadcast();
 

@@ -10,10 +10,13 @@ class Shard implements Disposable {
   final ShardManager manager;
 
   /// Emitted when the shard encounters a connection error
-  late final Stream<Shard> onDisconnect = manager.onDisconnect.where((event) => event.id == this);
+  late final Stream<Shard> onDisconnect = manager.onDisconnect.where((event) => event.id == this.id);
 
   /// Emitted when shard receives member chunk.
   late final Stream<MemberChunkEvent> onMemberChunk = manager.onMemberChunk.where((event) => event.shardId == this.id);
+
+  /// Emitted when the shard resumed its connection
+  late final Stream<Shard> onResume = manager.onResume.where((event) => event.id == this.id);
 
   /// List of handled guild ids
   final List<Snowflake> guilds = [];
@@ -140,6 +143,7 @@ class Shard implements Disposable {
     this._connected = false;
     this._heartbeatTimer.cancel();
     manager._logger.severe("Shard $id disconnected. Error: [${data['error']}] Error code: [${data['errorCode']}] | Error message: [${data['errorReason']}]");
+    this.manager._onDisconnect.add(this);
 
     switch (closeCode) {
       case 4004:
@@ -226,12 +230,13 @@ class Shard implements Disposable {
             "guild_subscriptions" : manager._ws._client._options.guildSubscriptions,
             "intents": manager._ws._client.intents,
             if (manager._ws._client._options.initialPresence != null)
-              "presence" : manager._ws._client._options.initialPresence!.build()
+              "presence" : manager._ws._client._options.initialPresence!.build(),
+            "shard": <int>[this.id, manager._numShards]
           };
 
-          identifyMsg["shard"] = <int>[this.id, manager._numShards];
-
           this.send(OPCodes.identify, identifyMsg);
+
+          this.manager._onConnect.add(this);
         } else if (_resume) {
           this.send(OPCodes.resume, <String, dynamic>{"token": manager._ws._client._token, "session_id": this._sessionId, "seq": this._sequence});
         }
@@ -268,6 +273,9 @@ class Shard implements Disposable {
               await manager._ws.propagateReady();
             }
 
+            break;
+          case "RESUME":
+            this.manager._onResume.add(this);
             break;
 
           case "GUILD_MEMBERS_CHUNK":
