@@ -27,13 +27,13 @@ String _determineInteractionCommandHandler(SlashCommandInteraction interaction) 
     final subCommandGroup = interaction.options.firstWhere((element) => element.type == CommandOptionType.subCommandGroup);
     final subCommand = interaction.options.firstWhere((element) => element.type == CommandOptionType.subCommand);
 
-    return "$commandHash${subCommandGroup.name}${subCommand.name}";
+    return "$commandHash|${subCommandGroup.name}|${subCommand.name}";
     // ignore: empty_catches
   } on Error { }
 
   try {
     final subCommand = interaction.options.firstWhere((element) => element.type == CommandOptionType.subCommand);
-    return "$commandHash${subCommand.name}";
+    return "$commandHash|${subCommand.name}";
     // ignore: empty_catches
   } on Error { }
 
@@ -56,4 +56,16 @@ Map<Snowflake, Iterable<SlashCommandBuilder>> _groupSlashCommandBuilders(Iterabl
   }
 
   return commandsMap;
+}
+
+Iterable<InteractionOption> _extractArgs(Iterable<InteractionOption> args) {
+  if (args.length == 1
+      && (args.first.type == CommandOptionType.subCommand
+          || args.first.type == CommandOptionType.subCommandGroup
+      )
+  ) {
+    return _extractArgs(args.first.args);
+  }
+
+  return args;
 }

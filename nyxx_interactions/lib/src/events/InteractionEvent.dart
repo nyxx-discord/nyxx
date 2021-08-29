@@ -132,6 +132,9 @@ class SlashCommandInteractionEvent extends InteractionEvent<SlashCommandInteract
   @override
   int get _respondOpcode => 4;
 
+  /// Returns args of interaction
+  List<InteractionOption> get args => UnmodifiableListView(_extractArgs(this.interaction.options));
+
   SlashCommandInteractionEvent._new(Interactions interactions, RawApiMap raw) : super._new(interactions) {
     this.interaction = SlashCommandInteraction._new(_client, raw);
   }
