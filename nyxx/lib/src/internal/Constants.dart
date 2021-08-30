@@ -35,7 +35,7 @@ class Constants {
   static const String version = "2.0.0-rc.7";
 
   /// Url to Nyxx repo
-  static const String repoUrl = "https://github.com/l7ssha/nyxx";
+  static const String repoUrl = "https://github.com/nyxx-discord/nyxx";
 
   /// Returns [Uri] to gateway
   static Uri gatewayUri(String gatewayHost, bool useCompression) {
