@@ -2,7 +2,8 @@ part of nyxx_interactions;
 
 /// The event that you receive when a user types a slash command.
 abstract class InteractionEvent<T extends Interaction> {
-  Nyxx get _client => interactions._client;
+  /// Reference to [Nyxx]
+  Nyxx get client => interactions._client;
 
   /// Reference to [Interactions]
   late final Interactions interactions;
@@ -136,8 +137,11 @@ class SlashCommandInteractionEvent extends InteractionEvent<SlashCommandInteract
   List<InteractionOption> get args => UnmodifiableListView(_extractArgs(this.interaction.options));
 
   SlashCommandInteractionEvent._new(Interactions interactions, RawApiMap raw) : super._new(interactions) {
-    this.interaction = SlashCommandInteraction._new(_client, raw);
+    this.interaction = SlashCommandInteraction._new(client, raw);
   }
+
+  /// Searches for arg with [name] in this interaction
+  InteractionOption getArg(String name) => args.firstWhere((element) => element.name == name);
 }
 
 /// Generic event for component interactions
@@ -161,7 +165,7 @@ class ButtonInteractionEvent extends ComponentInteractionEvent<ButtonInteraction
   late final ButtonInteraction interaction;
 
   ButtonInteractionEvent._new(Interactions interactions, RawApiMap raw) : super._new(interactions, raw) {
-    this.interaction = ButtonInteraction._new(_client, raw);
+    this.interaction = ButtonInteraction._new(client, raw);
   }
 }
 
@@ -171,6 +175,6 @@ class MultiselectInteractionEvent extends ComponentInteractionEvent<MultiselectI
   late final MultiselectInteraction interaction;
 
   MultiselectInteractionEvent._new(Interactions interactions, RawApiMap raw) : super._new(interactions, raw) {
-    this.interaction = MultiselectInteraction._new(_client, raw);
+    this.interaction = MultiselectInteraction._new(client, raw);
   }
 }
