@@ -17,6 +17,10 @@ class Interaction extends SnowflakeEntity {
   /// The member who sent the interaction
   late final Member? memberAuthor;
 
+  /// Permission of member who sent the interaction. Will be set if [memberAuthor]
+  /// is not null
+  late final Permissions? memberAuthorPermissions;
+
   /// The user who sent the interaction.
   late final User? userAuthor;
 
@@ -39,6 +43,10 @@ class Interaction extends SnowflakeEntity {
 
     if (raw["member"] != null) {
       this.memberAuthor = EntityUtility.createGuildMember(_client, Snowflake(raw["guild_id"]), raw["member"] as RawApiMap);
+      this.memberAuthorPermissions = Permissions.fromInt(raw["member"]["permissions"] as int);
+    } else {
+      this.memberAuthor = null;
+      this.memberAuthorPermissions = null;
     }
 
     if (raw["user"] != null) {
