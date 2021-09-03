@@ -43,7 +43,7 @@ class Interaction extends SnowflakeEntity {
 
     if (raw["member"] != null) {
       this.memberAuthor = EntityUtility.createGuildMember(_client, Snowflake(raw["guild_id"]), raw["member"] as RawApiMap);
-      this.memberAuthorPermissions = Permissions.fromInt(raw["member"]["permissions"] as int);
+      this.memberAuthorPermissions = Permissions.fromInt(int.parse(raw["member"]["permissions"] as String));
     } else {
       this.memberAuthor = null;
       this.memberAuthorPermissions = null;

@@ -54,10 +54,6 @@ class _ConnectionManager {
   }
 
   Future<void> propagateReady() async {
-    if (!_client.ready) {
-      _client._events.onReady.add(ReadyEvent._new(_client));
-    }
-
     this._shardsReady++;
     if(_client.ready || this._shardsReady < (_client._options.shardCount ?? 1)) {
       return;
@@ -73,6 +69,9 @@ class _ConnectionManager {
     final response = httpResponse as HttpResponseSuccess;
     _client.app = ClientOAuth2Application._new(response.jsonBody as RawApiMap, _client);
 
+    if (!_client.ready) {
+      _client._events.onReady.add(ReadyEvent._new(_client));
+    }
     _client.ready = true;
     _logger.info("Connected and ready! Logged as `${_client.self.tag}`");
   }
