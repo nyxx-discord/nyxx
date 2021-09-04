@@ -132,6 +132,7 @@ class Interactions {
       this.onSlashCommand.listen((event) async {
         final commandHash = _determineInteractionCommandHandler(event.interaction);
 
+        this._logger.info("Executing command with hash [$commandHash]");
         if (this._commandHandlers.containsKey(commandHash)) {
           await this._commandHandlers[commandHash]!(event);
         }
@@ -143,6 +144,7 @@ class Interactions {
     if (this._buttonHandlers.isNotEmpty) {
       this.onButtonEvent.listen((event) {
         if (this._buttonHandlers.containsKey(event.interaction.customId)) {
+          this._logger.info("Executing button with id [${event.interaction.customId}]");
           this._buttonHandlers[event.interaction.customId]!(event);
         } else {
           this._logger.warning("Received event for unknown button: ${event.interaction.customId}");
@@ -153,6 +155,7 @@ class Interactions {
     if (this._multiselectHandlers.isNotEmpty) {
       this.onMultiselectEvent.listen((event) {
         if (this._multiselectHandlers.containsKey(event.interaction.customId)) {
+          this._logger.info("Executing multiselect with id [${event.interaction.customId}]");
           this._multiselectHandlers[event.interaction.customId]!(event);
         } else {
           this._logger.warning("Received event for unknown dropdown: ${event.interaction.customId}");
