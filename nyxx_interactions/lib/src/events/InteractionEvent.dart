@@ -91,7 +91,6 @@ abstract class InteractionEvent<T extends Interaction> {
     if (_hasAcked) {
       await this.interactions.interactionsEndpoints.respondEditOriginal(
           this.interaction.token,
-          this.interaction.id.toString(),
           builder,
           hidden
       );
@@ -118,7 +117,7 @@ abstract class InteractionEvent<T extends Interaction> {
 
   /// Edits original message response
   Future<Message> editOriginalResponse(MessageBuilder builder) =>
-      this.interactions.interactionsEndpoints.editOriginalResponse(this.interaction.token, this.interaction.id.toString(), builder);
+      this.interactions.interactionsEndpoints.editOriginalResponse(this.interaction.token, builder);
 }
 
 /// Event for slash commands

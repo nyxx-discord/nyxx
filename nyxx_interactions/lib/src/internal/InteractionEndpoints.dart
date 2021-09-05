@@ -10,7 +10,7 @@ abstract class IInteractionsEndpoints {
   Future<void> acknowledge(String token, String interactionId, bool hidden, int opCode);
 
   /// Response to interaction by editing original response. Used when interaction was acked before.
-  Future<void> respondEditOriginal(String token, String interactionId, MessageBuilder builder, bool hidden);
+  Future<void> respondEditOriginal(String token, MessageBuilder builder, bool hidden);
 
   /// Response to interaction by creating response. Used when interaction wasn't acked before.
   Future<void> respondCreateResponse(String token, String interactionId, MessageBuilder builder, bool hidden, int respondOpCode);
@@ -19,7 +19,7 @@ abstract class IInteractionsEndpoints {
   Future<Message> fetchOriginalResponse(String token, String interactionId);
 
   /// Edits original interaction response using [builder]
-  Future<Message> editOriginalResponse(String token, String interactionId, MessageBuilder builder);
+  Future<Message> editOriginalResponse(String token, MessageBuilder builder);
 
   /// Deletes original interaction response
   Future<void> deleteOriginalResponse(String token, String interactionId);
@@ -119,9 +119,9 @@ class _InteractionsEndpoints implements IInteractionsEndpoints {
   }
 
   @override
-  Future<Message> editOriginalResponse(String token, String interactionId, MessageBuilder builder) async {
+  Future<Message> editOriginalResponse(String token, MessageBuilder builder) async {
     final response = await this._client.httpEndpoints.sendRawRequest(
-        "/webhooks/${interactionId.toString()}/$token/messages/@original",
+        "/webhooks/${this._client.app.id.toString()}/$token/messages/@original",
         "PATCH",
         body: builder.build(this._client)
     );
@@ -148,7 +148,7 @@ class _InteractionsEndpoints implements IInteractionsEndpoints {
   }
 
   @override
-  Future<void> respondEditOriginal(String token, String interactionId, MessageBuilder builder, bool hidden) async {
+  Future<void> respondEditOriginal(String token, MessageBuilder builder, bool hidden) async {
    final url = "/webhooks/${this._client.app.id.toString()}/$token/messages/@original";
    final body = {
     if (hidden) "flags": 1 << 6,
