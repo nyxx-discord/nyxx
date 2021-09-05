@@ -149,7 +149,7 @@ class _InteractionsEndpoints implements IInteractionsEndpoints {
 
   @override
   Future<void> respondEditOriginal(String token, String interactionId, MessageBuilder builder, bool hidden) async {
-   final url = "/webhooks/${interactionId.toString()}/$token/messages/@original";
+   final url = "/webhooks/${this._client.app.id.toString()}/$token/messages/@original";
    final body = {
     if (hidden) "flags": 1 << 6,
     ...BuilderUtility.buildWithClient(builder, _client)
