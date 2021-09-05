@@ -14,7 +14,7 @@ class PartialChannel extends SnowflakeEntity {
   PartialChannel._new(RawApiMap raw): super(Snowflake(raw["id"])) {
     this.name = raw["name"] as String;
     this.type = ChannelType.from(raw["type"] as int);
-    this.permissions = Permissions.fromInt(raw["permissions"] as int);
+    this.permissions = Permissions.fromInt(int.parse(raw["permissions"].toString()));
   }
 }
 
