@@ -2,7 +2,10 @@ part of nyxx_interactions;
 
 abstract class IInteractionsEndpoints {
   /// Sends followup for interaction with given [token]. Message will be created with [builder]
-  Future<Message> sendFollowup(String token, String interactionId, MessageBuilder builder);
+  Future<Message> sendFollowup(String token, MessageBuilder builder);
+
+  /// Fetches followup messagge from API
+  Future<Message> fetchFollowup(String token, Snowflake messageId);
 
   /// Acknowledges interaction that response can be sent within next 15 mins.
   /// Response will be ephemeral if [hidden] is set to true. To response to different interaction types
@@ -25,10 +28,10 @@ abstract class IInteractionsEndpoints {
   Future<void> deleteOriginalResponse(String token, String interactionId);
 
   /// Deletes followup message with given id
-  Future<void> deleteFollowup(String token, String interactionId, Snowflake messageId);
+  Future<void> deleteFollowup(String token, Snowflake messageId);
 
   /// Edits followup message with given [messageId]
-  Future<Message> editFollowup(String token, String interactionId, Snowflake messageId, MessageBuilder builder);
+  Future<Message> editFollowup(String token, Snowflake messageId, MessageBuilder builder);
 
   /// Fetches global commands of application
   Stream<SlashCommand> fetchGlobalCommands(Snowflake applicationId);
@@ -88,9 +91,9 @@ class _InteractionsEndpoints implements IInteractionsEndpoints {
   }
 
   @override
-  Future<void> deleteFollowup(String token, String interactionId, Snowflake messageId) =>
+  Future<void> deleteFollowup(String token, Snowflake messageId) =>
       this._client.httpEndpoints.sendRawRequest(
-        "webhooks/$interactionId/$token/messages/$messageId",
+        "webhooks/${this._client.app.id.toString()}/$token/messages/$messageId",
         "DELETE"
       );
 
@@ -106,8 +109,8 @@ class _InteractionsEndpoints implements IInteractionsEndpoints {
   }
 
   @override
-  Future<Message> editFollowup(String token, String interactionId, Snowflake messageId, MessageBuilder builder) async {
-    final url = "/webhooks/${interactionId.toString()}/$token/messages/$messageId";
+  Future<Message> editFollowup(String token, Snowflake messageId, MessageBuilder builder) async {
+    final url = "/webhooks/${this._client.app.id.toString()}/$token/messages/$messageId";
     final body = BuilderUtility.buildWithClient(builder, _client);
 
     final response = await this._client.httpEndpoints.sendRawRequest(url, "PATCH", body: body);
@@ -181,8 +184,8 @@ class _InteractionsEndpoints implements IInteractionsEndpoints {
   }
 
   @override
-  Future<Message> sendFollowup(String token, String interactionId, MessageBuilder builder) async {
-    final url = "/webhooks/${interactionId.toString()}/$token";
+  Future<Message> sendFollowup(String token, MessageBuilder builder) async {
+    final url = "/webhooks/${this._client.app.id.toString()}/$token";
     final body = BuilderUtility.buildWithClient(builder, _client);
 
     final response = await this._client.httpEndpoints.sendRawRequest(url, "POST", body: body);
@@ -374,5 +377,19 @@ class _InteractionsEndpoints implements IInteractionsEndpoints {
     await this._client.httpEndpoints
         .sendRawRequest("/applications/$applicationId/guilds/$guildId/commands/permissions", "PUT", body: guildBody);
 
+  }
+
+  @override
+  Future<Message> fetchFollowup(String token, Snowflake messageId) async {
+    final result = await this._client.httpEndpoints.sendRawRequest(
+        "/webhooks/${this._client.app.id.toString()}/$token/messages/${messageId.toString()}",
+        "GET"
+    );
+
+    if (result is HttpResponseError) {
+      return Future.error(result);
+    }
+
+    return EntityUtility.createMessage(_client, (result as HttpResponseSuccess).jsonBody as RawApiMap);
   }
 }

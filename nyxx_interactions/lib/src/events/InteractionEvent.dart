@@ -35,7 +35,6 @@ abstract class InteractionEvent<T extends Interaction> {
     this._logger.fine("Sending followup for for interaction: ${this.interaction.id}");
 
     return this.interactions.interactionsEndpoints.sendFollowup(
-        this.interaction.token,
         this.interaction.id.toString(),
         builder
     );
@@ -43,15 +42,19 @@ abstract class InteractionEvent<T extends Interaction> {
 
   /// Edits followup message
   Future<Message> editFollowup(Snowflake messageId, MessageBuilder builder) =>
-    this.interactions.interactionsEndpoints.editFollowup(this.interaction.token, this.interaction.id.toString(), messageId, builder);
+    this.interactions.interactionsEndpoints.editFollowup(this.interaction.token, messageId, builder);
 
   /// Deletes followup message with given id
   Future<void> deleteFollowup(Snowflake messageId) =>
-      this.interactions.interactionsEndpoints.deleteFollowup(this.interaction.token, this.interaction.id.toString(), messageId);
+      this.interactions.interactionsEndpoints.deleteFollowup(this.interaction.token, messageId);
 
   /// Deletes original response
   Future<void> deleteOriginalResponse() =>
       this.interactions.interactionsEndpoints.deleteOriginalResponse(this.interaction.token, this.interaction.id.toString());
+
+  /// Fetch followup message
+  Future<Message> fetchFollowup(Snowflake messageId) async =>
+    this.interactions.interactionsEndpoints.fetchFollowup(this.interaction.token, messageId);
 
   /// Used to acknowledge a Interaction but not send any response yet.
   /// Once this is sent you can then only send ChannelMessages.
