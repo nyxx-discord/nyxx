@@ -36,25 +36,26 @@ abstract class InteractionEvent<T extends Interaction> {
 
     return this.interactions.interactionsEndpoints.sendFollowup(
         this.interaction.id.toString(),
+        this.client.app.id,
         builder
     );
   }
 
   /// Edits followup message
   Future<Message> editFollowup(Snowflake messageId, MessageBuilder builder) =>
-    this.interactions.interactionsEndpoints.editFollowup(this.interaction.token, messageId, builder);
+    this.interactions.interactionsEndpoints.editFollowup(this.interaction.token, this.client.app.id, messageId, builder);
 
   /// Deletes followup message with given id
   Future<void> deleteFollowup(Snowflake messageId) =>
-      this.interactions.interactionsEndpoints.deleteFollowup(this.interaction.token, messageId);
+      this.interactions.interactionsEndpoints.deleteFollowup(this.interaction.token, this.client.app.id, messageId);
 
   /// Deletes original response
   Future<void> deleteOriginalResponse() =>
-      this.interactions.interactionsEndpoints.deleteOriginalResponse(this.interaction.token, this.interaction.id.toString());
+      this.interactions.interactionsEndpoints.deleteOriginalResponse(this.interaction.token, this.client.app.id, this.interaction.id.toString());
 
   /// Fetch followup message
   Future<Message> fetchFollowup(Snowflake messageId) async =>
-    this.interactions.interactionsEndpoints.fetchFollowup(this.interaction.token, messageId);
+    this.interactions.interactionsEndpoints.fetchFollowup(this.interaction.token, this.client.app.id, messageId);
 
   /// Used to acknowledge a Interaction but not send any response yet.
   /// Once this is sent you can then only send ChannelMessages.
@@ -94,6 +95,7 @@ abstract class InteractionEvent<T extends Interaction> {
     if (_hasAcked) {
       await this.interactions.interactionsEndpoints.respondEditOriginal(
           this.interaction.token,
+          this.client.app.id,
           builder,
           hidden
       );
@@ -116,11 +118,11 @@ abstract class InteractionEvent<T extends Interaction> {
 
   /// Returns [Message] object of original interaction response
   Future<Message> getOriginalResponse() async =>
-      this.interactions.interactionsEndpoints.fetchOriginalResponse(this.interaction.token, this.interaction.id.toString());
+      this.interactions.interactionsEndpoints.fetchOriginalResponse(this.interaction.token, this.client.app.id, this.interaction.id.toString());
 
   /// Edits original message response
   Future<Message> editOriginalResponse(MessageBuilder builder) =>
-      this.interactions.interactionsEndpoints.editOriginalResponse(this.interaction.token, builder);
+      this.interactions.interactionsEndpoints.editOriginalResponse(this.interaction.token, this.client.app.id, builder);
 }
 
 /// Event for slash commands
