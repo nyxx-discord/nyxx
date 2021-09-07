@@ -35,7 +35,7 @@ abstract class InteractionEvent<T extends Interaction> {
     this._logger.fine("Sending followup for for interaction: ${this.interaction.id}");
 
     return this.interactions.interactionsEndpoints.sendFollowup(
-        this.interaction.id.toString(),
+        this.interaction.token,
         this.client.app.id,
         builder
     );
