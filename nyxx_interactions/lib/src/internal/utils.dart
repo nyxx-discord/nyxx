@@ -25,17 +25,17 @@ String _determineInteractionCommandHandler(SlashCommandInteraction interaction) 
 
   try {
     final subCommandGroup = interaction.options.firstWhere((element) => element.type == CommandOptionType.subCommandGroup);
-    final subCommand = interaction.options.firstWhere((element) => element.type == CommandOptionType.subCommand);
+    final subCommand = subCommandGroup.args.firstWhere((element) => element.type == CommandOptionType.subCommand);
 
     return "$commandHash|${subCommandGroup.name}|${subCommand.name}";
     // ignore: empty_catches
-  } on Error { }
+  } on StateError { }
 
   try {
     final subCommand = interaction.options.firstWhere((element) => element.type == CommandOptionType.subCommand);
     return "$commandHash|${subCommand.name}";
     // ignore: empty_catches
-  } on Error { }
+  } on StateError { }
 
   return commandHash;
 }
