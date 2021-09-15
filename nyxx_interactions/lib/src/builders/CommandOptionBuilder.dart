@@ -33,11 +33,15 @@ class CommandOptionBuilder extends Builder {
   /// If the option is a subcommand or subcommand group type, this nested options will be the parameters
   List<CommandOptionBuilder>? options;
 
+  /// If [type] is channel then list can be used to restrict types of channel to choose from
+  List<ChannelType>? channelTypes;
+
   SlashCommandHandler? _handler;
 
   /// Used to create an argument for a [SlashCommandBuilder].
   CommandOptionBuilder(this.type, this.name, this.description,
-      {this.defaultArg = false, this.required = false, this.choices, this.options});
+      {this.defaultArg = false, this.required = false, this.choices, this.options,
+      this.channelTypes});
 
   /// Registers handler for subcommand
   void registerHandler(SlashCommandHandler handler) {
@@ -55,6 +59,8 @@ class CommandOptionBuilder extends Builder {
     "default": this.defaultArg,
     "required": this.required,
     if (this.choices != null) "choices": this.choices!.map((e) => e.build()).toList(),
-    if (this.options != null) "options": this.options!.map((e) => e.build()).toList()
+    if (this.options != null) "options": this.options!.map((e) => e.build()).toList(),
+    if (this.channelTypes != null && this.type == CommandOptionType.channel)
+      "channel_types": channelTypes!.map((e) => e.value).toList()
   };
 }
