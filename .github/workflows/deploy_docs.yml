@@ -149,3 +149,39 @@ jobs:
           REMOTE_HOST: ${{ secrets.DEPLOY_REMOTE_HOST }}
           REMOTE_USER: ${{ secrets.DEPLOY_REMOTE_USER }}
           TARGET: "${{ secrets.DEPLOY_REMOTE_TARGET }}/dartdocs/nyxx_interactions/"
+
+  docs-lavalink:
+    name: Deploy nyxx_lavalink package docs
+    runs-on: ubuntu-latest
+    steps:
+      - name: Cache
+        uses: actions/cache@v2
+        with:
+          path: ~/.pub_cache
+          key: ${{ runner.os }}
+
+      - name: Setup Dart Action
+        uses: cedx/setup-dart@v2.3.0
+        with:
+          release-channel: stable
+
+      - name: Checkout
+        uses: actions/checkout@v2.3.4
+
+      - name: Install dependencies
+        working-directory: ./nyxx_lavalink
+        run: dart pub get
+
+      - name: Generate docs
+        working-directory: ./nyxx_lavalink
+        run: dartdoc
+
+      - name: Deploy nyxx_lavalink dev docs
+        uses: easingthemes/ssh-deploy@v2.1.5
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.DEPLOY_SSH_SERVER_KEY }}
+          ARGS: "-rltDzvO"
+          SOURCE: "nyxx_lavalink/doc/api/"
+          REMOTE_HOST: ${{ secrets.DEPLOY_REMOTE_HOST }}
+          REMOTE_USER: ${{ secrets.DEPLOY_REMOTE_USER }}
+          TARGET: "${{ secrets.DEPLOY_REMOTE_TARGET }}/dartdocs/nyxx_lavalink/"
