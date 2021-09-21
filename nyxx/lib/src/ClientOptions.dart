@@ -16,6 +16,12 @@ class CacheOptions {
 
   /// Defines in which places user can be cached
   CachePolicyLocation userCachePolicyLocation = CachePolicyLocation();
+
+  /// Defines in which locations members will be cached
+  CachePolicyLocation messageCachePolicyLocation = CachePolicyLocation();
+
+  /// Defines which members are preserved in cache
+  CachePolicy<Message> messageCachePolicy = MessageCachePolicy.def;
 }
 
 /// Optional client settings which can be used when creating new instance
@@ -61,7 +67,7 @@ class ClientOptions {
   ClientOptions(
       {this.allowedMentions,
       this.shardCount,
-      this.messageCacheSize = 400,
+      this.messageCacheSize = 100,
       this.largeThreshold = 50,
       this.compressedGatewayPayloads = true,
       this.guildSubscriptions = true,

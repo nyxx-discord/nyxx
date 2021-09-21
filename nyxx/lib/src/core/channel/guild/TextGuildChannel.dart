@@ -47,7 +47,8 @@ class TextGuildChannel extends GuildChannel implements TextChannel, Mentionable 
       client.httpEndpoints.createWebhook(this.id, name, avatarAttachment: avatarAttachment, auditReason: auditReason);
 
   /// Returns pinned [Message]s for channel.
-  Stream<Message> getPinnedMessages() =>
+  @override
+  Stream<Message> fetchPinnedMessages() =>
       client.httpEndpoints.fetchPinnedMessages(this.id);
 
   /// Creates a thread in a channel, that only retrieves a [ThreadPreviewChannel]
@@ -82,8 +83,15 @@ class TextGuildChannel extends GuildChannel implements TextChannel, Mentionable 
       client.httpEndpoints.downloadMessages(this.id, limit: limit, after: after, around: around, before: before);
 
   @override
-  Future<Message> fetchMessage(Snowflake messageId) =>
-      client.httpEndpoints.fetchMessage(this.id, messageId);
+  Future<Message> fetchMessage(Snowflake messageId) async {
+    final message = await client.httpEndpoints.fetchMessage(this.id, messageId);
+
+    if(client._cacheOptions.messageCachePolicyLocation.http && client._cacheOptions.messageCachePolicy.canCache(message)) {
+      this.messageCache.put(message);
+    }
+
+    return message;
+  }
 
   @override
   Message? getMessage(Snowflake id) => this.messageCache[id];

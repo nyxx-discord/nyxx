@@ -7,7 +7,10 @@ class MessageReceivedEvent {
 
   MessageReceivedEvent._new(RawApiMap raw, Nyxx client) {
     this.message = Message._deserialize(client, raw["d"] as RawApiMap);
-    message.channel.getFromCache()?.messageCache.put(this.message);
+
+    if(client._cacheOptions.messageCachePolicyLocation.event && client._cacheOptions.messageCachePolicy.canCache(this.message)) {
+      message.channel.getFromCache()?.messageCache.put(this.message);
+    }
   }
 }
 

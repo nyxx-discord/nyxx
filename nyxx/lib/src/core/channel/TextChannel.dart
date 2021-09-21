@@ -57,6 +57,10 @@ class CacheableTextChannel<S extends TextChannel> extends IChannel implements Mi
   void stopTypingLoop() => this._typing.cancel();
 
   @override
+  Stream<Message> fetchPinnedMessages() =>
+      client.httpEndpoints.fetchPinnedMessages(this.id);
+
+  @override
   Future<void> dispose() async {
     // TODO: Empty body
   }
@@ -120,6 +124,9 @@ abstract class MinimalTextChannel implements IChannel, ISend {
   /// var messages = await channel.downloadMessages(limit: 100, after: Snowflake("222078108977594368"));
   /// ```
   Stream<Message> downloadMessages({int limit = 50, Snowflake? after, Snowflake? around, Snowflake? before});
+
+  /// Returns pinned [Message]s for channel.
+  Stream<Message> fetchPinnedMessages();
 
   /// Starts typing.
   Future<void> startTyping() => this.client.httpEndpoints.triggerTyping(this.id);
