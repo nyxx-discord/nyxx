@@ -36,12 +36,15 @@ class CommandOptionBuilder extends Builder {
   /// If [type] is channel then list can be used to restrict types of channel to choose from
   List<ChannelType>? channelTypes;
 
+  /// Set to true if option should be autocompleted
+  bool? autoComplete;
+
   SlashCommandHandler? _handler;
 
   /// Used to create an argument for a [SlashCommandBuilder].
   CommandOptionBuilder(this.type, this.name, this.description,
       {this.defaultArg = false, this.required = false, this.choices, this.options,
-      this.channelTypes});
+      this.channelTypes, this.autoComplete});
 
   /// Registers handler for subcommand
   void registerHandler(SlashCommandHandler handler) {
@@ -61,6 +64,7 @@ class CommandOptionBuilder extends Builder {
     if (this.choices != null) "choices": this.choices!.map((e) => e.build()).toList(),
     if (this.options != null) "options": this.options!.map((e) => e.build()).toList(),
     if (this.channelTypes != null && this.type == CommandOptionType.channel)
-      "channel_types": channelTypes!.map((e) => e.value).toList()
+      "channel_types": channelTypes!.map((e) => e.value).toList(),
+    if (this.autoComplete != null) "autocomplete": this.autoComplete,
   };
 }

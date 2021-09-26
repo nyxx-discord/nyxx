@@ -12,10 +12,10 @@ class InteractionOption {
   late final String name;
 
   /// Any args under this as you can have sub commands
-  late final Iterable<InteractionOption> args;
+  late final Iterable<InteractionOption> options;
 
-  /// Option choices
-  late final Iterable<ArgChoiceBuilder> choices;
+  /// True if options is focused
+  late final bool isFocused;
 
   InteractionOption._new(RawApiMap raw) {
     this.value = raw["value"] as dynamic;
@@ -23,15 +23,11 @@ class InteractionOption {
     this.type = CommandOptionType(raw["type"] as int);
 
     if (raw["options"] != null) {
-      this.args = (raw["options"] as List<dynamic>).map((e) => InteractionOption._new(e as RawApiMap));
+      this.options = (raw["options"] as List<dynamic>).map((e) => InteractionOption._new(e as RawApiMap));
     } else {
-      this.args = [];
+      this.options = [];
     }
 
-    if (raw["choices"] != null) {
-      this.choices = (raw["options"] as List<RawApiMap>).map((e) => ArgChoiceBuilder(e["name"] as String, e["value"]));
-    } else {
-      this.choices = [];
-    }
+    this.isFocused = raw["focused"] as bool;
   }
 }

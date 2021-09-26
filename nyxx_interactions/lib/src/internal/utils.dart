@@ -25,7 +25,7 @@ String _determineInteractionCommandHandler(SlashCommandInteraction interaction) 
 
   try {
     final subCommandGroup = interaction.options.firstWhere((element) => element.type == CommandOptionType.subCommandGroup);
-    final subCommand = subCommandGroup.args.firstWhere((element) => element.type == CommandOptionType.subCommand);
+    final subCommand = subCommandGroup.options.firstWhere((element) => element.type == CommandOptionType.subCommand);
 
     return "$commandHash|${subCommandGroup.name}|${subCommand.name}";
     // ignore: empty_catches
@@ -64,7 +64,7 @@ Iterable<InteractionOption> _extractArgs(Iterable<InteractionOption> args) {
           || args.first.type == CommandOptionType.subCommandGroup
       )
   ) {
-    return _extractArgs(args.first.args);
+    return _extractArgs(args.first.options);
   }
 
   return args;
