@@ -9,6 +9,9 @@ typedef ButtonInteractionHandler = FutureOr<void> Function(ButtonInteractionEven
 /// Function that will handle execution of dropdown event
 typedef MultiselectInteractionHandler = FutureOr<void> Function(MultiselectInteractionEvent);
 
+/// Function that will handle execution of button interaction event
+typedef AutocompleteInteractionHandler = FutureOr<void> Function(AutocompleteInteractionEvent);
+
 /// Interaction extension for Nyxx. Allows use of: Slash Commands.
 class Interactions {
   static const _interactionCreateCommand = "INTERACTION_CREATE";
@@ -18,10 +21,12 @@ class Interactions {
 
   /// Reference to client
   final Nyxx _client;
+
   final _commandBuilders = <SlashCommandBuilder>[];
   final _commands = <SlashCommand>[];
   final _commandHandlers = <String, SlashCommandHandler>{};
   final _buttonHandlers = <String, ButtonInteractionHandler>{};
+  final _autocompleteHandlers = <String, AutocompleteInteractionHandler>{};
   final _multiselectHandlers = <String, MultiselectInteractionHandler>{};
 
   /// Commands registered by bot
@@ -38,6 +43,9 @@ class Interactions {
 
   /// Emitted when a slash command is created by the user.
   late final Stream<SlashCommand> onSlashCommandCreated;
+
+  /// Emitted when a slash command is created by the user.
+  late final Stream<AutocompleteInteractionEvent> onAutocompleteEvent;
 
   /// All interaction endpoints that can be accessed.
   late final IInteractionsEndpoints interactionsEndpoints;
@@ -78,7 +86,10 @@ class Interactions {
                       ._logger
                       .warning("Unknown componentType type: [$componentType]; Payload: ${jsonEncode(event.rawData)}");
               }
-
+              break;
+            case 4:
+              _events.onAutocompleteEvent
+                  .add(AutocompleteInteractionEvent._new(this, event.rawData["d"] as Map<String, dynamic>));
               break;
             default:
               this._logger.warning("Unknown interaction type: [$type]; Payload: ${jsonEncode(event.rawData)}");
@@ -162,7 +173,23 @@ class Interactions {
         }
       });
     }
+
+    if (this._autocompleteHandlers.isNotEmpty) {
+      this.onAutocompleteEvent.listen((event) {
+        final name = event.focusedOption.name;
+
+        if (this._autocompleteHandlers.containsKey(name)) {
+          this._logger.info("Executing autocomplete with id [$name]");
+          this._autocompleteHandlers[name]!(event);
+        } else {
+          this._logger.warning("Received event for unknown dropdown: $name");
+        }
+      });
+    }
   }
+
+  /// Registers callback for button event for given [id]
+  void registerAutocompleteHandler(String id, AutocompleteInteractionHandler handler) => this._autocompleteHandlers[id] = handler;
 
   /// Registers callback for button event for given [id]
   void registerButtonHandler(String id, ButtonInteractionHandler handler) => this._buttonHandlers[id] = handler;

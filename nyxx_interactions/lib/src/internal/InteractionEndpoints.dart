@@ -68,6 +68,9 @@ abstract class IInteractionsEndpoints {
 
   /// Overrides permissions for global commands
   Future<void> bulkOverrideGlobalCommandsPermissions(Snowflake applicationId, Iterable<SlashCommandBuilder> builders);
+
+  /// Responds to autocomplete interaction
+  Future<void> respondToAutocomplete(Snowflake interactionId, String token, List<ArgChoiceBuilder> builders);
 }
 
 class _InteractionsEndpoints implements IInteractionsEndpoints {
@@ -391,5 +394,26 @@ class _InteractionsEndpoints implements IInteractionsEndpoints {
     }
 
     return EntityUtility.createMessage(_client, (result as HttpResponseSuccess).jsonBody as RawApiMap);
+  }
+
+  @override
+  Future<void> respondToAutocomplete(Snowflake interactionId, String token, List<ArgChoiceBuilder> builders) async {
+    final result = await this._client.httpEndpoints.sendRawRequest(
+      "/interactions/${interactionId.toString()}/$token/callback",
+      "POST",
+      body: {
+        "type": 8,
+        "data": {
+           "choices": [
+             for (final builder in builders)
+               builder.build()
+           ]
+        }
+      }
+    );
+
+    if (result is HttpResponseError) {
+      return Future.error(result);
+    }
   }
 }
