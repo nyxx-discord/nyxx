@@ -57,8 +57,8 @@ class Commander with ICommandRegistrable {
         AfterHandlerFunction? afterCommandHandler,
         LoggerHandlerFunction? loggerHandlerFunction,
         CommandExecutionError? commandExecutionError}) {
-    if (!PermissionsUtils.isApplied(client.intents, GatewayIntents.allUnprivileged)) {
-      _logger.shout("Commander cannot start without at least all unprivileged intents");
+    if (!_hasRequiredIntents(client)) {
+      _logger.shout("Commander cannot start without required intents (directMessages, guildMessages, guilds)");
       exit(1);
     }
 
@@ -82,6 +82,14 @@ class Commander with ICommandRegistrable {
 
     this._logger.info("Commander ready!");
   }
+
+  /// Registers command with given [commandName]. Allows to specify command specific before and after command execution callbacks
+  void registerCommand(String commandName, CommandHandlerFunction commandHandler, {PassHandlerFunction? beforeHandler, AfterHandlerFunction? afterHandler}) {
+    this.registerCommandEntity(BasicCommandHandler(commandName, commandHandler, beforeHandler: beforeHandler, afterHandler: afterHandler));
+  }
+
+  /// Registers command as implemented [CommandEntity] class
+  void registerCommandGroup(CommandGroup commandGroup) => this.registerCommandEntity(commandGroup);
 
   Future<void> _handleMessage(MessageReceivedEvent event) async {
     final prefix = await _prefixHandler(event.message);
@@ -196,13 +204,11 @@ class Commander with ICommandRegistrable {
     logger.info("Command [$commandName] executed by [${ctx.author.tag}]");
   }
 
-  /// Registers command with given [commandName]. Allows to specify command specific before and after command execution callbacks
-  void registerCommand(String commandName, CommandHandlerFunction commandHandler, {PassHandlerFunction? beforeHandler, AfterHandlerFunction? afterHandler}) {
-    this.registerCommandEntity(BasicCommandHandler(commandName, commandHandler, beforeHandler: beforeHandler, afterHandler: afterHandler));
-  }
-
-  /// Registers command as implemented [CommandEntity] class
-  void registerCommandGroup(CommandGroup commandGroup) => this.registerCommandEntity(commandGroup);
+  bool _hasRequiredIntents(Nyxx client) =>
+      PermissionsUtils.isApplied(client.intents, GatewayIntents.guildMessages)
+          || PermissionsUtils.isApplied(client.intents, GatewayIntents.directMessages)
+          || PermissionsUtils.isApplied(client.intents, GatewayIntents.guilds)
+          || PermissionsUtils.isApplied(client.intents, GatewayIntents.guilds);
 }
 
 /// Provides common functionality for entities which can register subcommand or sub command groups.
