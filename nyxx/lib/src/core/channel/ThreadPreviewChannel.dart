@@ -85,7 +85,7 @@ class ThreadPreviewChannel extends IChannel implements TextChannel {
   }
 
   @override
-  late final MessageCache messageCache = MessageCache._new(client._options.messageCacheSize);
+  late final MessageCache messageCache = MessageCache._new(0);
 
   @override
   Future<void> startTyping() async =>
@@ -99,4 +99,8 @@ class ThreadPreviewChannel extends IChannel implements TextChannel {
 
   @override
   void stopTypingLoop() => this._typing?.cancel();
+
+  @override
+  Stream<Message> fetchPinnedMessages() =>
+      client.httpEndpoints.fetchPinnedMessages(this.id);
 }

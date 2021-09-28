@@ -89,9 +89,15 @@ class ThreadChannel extends MinimalGuildChannel implements TextChannel {
       client.httpEndpoints.downloadMessages(this.id, limit: limit, after: after, around: around, before: before);
 
   @override
-  Future<Message> fetchMessage(Snowflake messageId) =>
-      client.httpEndpoints.fetchMessage(this.id, messageId);
+  Future<Message> fetchMessage(Snowflake messageId) async {
+    final message = await client.httpEndpoints.fetchMessage(this.id, messageId);
 
+    if(client._cacheOptions.messageCachePolicyLocation.http && client._cacheOptions.messageCachePolicy.canCache(message)) {
+      this.messageCache.put(message);
+    }
+
+    return message;
+  }
   @override
   Message? getMessage(Snowflake id) => this.messageCache[id];
 
@@ -122,4 +128,8 @@ class ThreadChannel extends MinimalGuildChannel implements TextChannel {
   /// Adds [user] to [ThreadChannel]
   Future<void> addThreadMember(SnowflakeEntity user) =>
       client.httpEndpoints.addThreadMember(this.id, user.id);
+
+  @override
+  Stream<Message> fetchPinnedMessages() =>
+      client.httpEndpoints.fetchPinnedMessages(this.id);
 }
