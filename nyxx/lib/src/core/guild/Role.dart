@@ -4,7 +4,7 @@ class Role extends SnowflakeEntity implements Mentionable {
   /// Reference to client
   final INyxx client;
 
-  /// Cachealble or guild attached to this role instance
+  /// Cacheable or guild attached to this role instance
   late final Cacheable<Snowflake, Guild> guild;
 
   /// The role's name.
@@ -28,12 +28,19 @@ class Role extends SnowflakeEntity implements Mentionable {
   /// The role's permissions.
   late final Permissions permissions;
 
+  /// Additional role data like if role is managed by integration or role is from server boosting.
+  late final RoleTags? roleTags;
+
+  /// Hash of role icon
+  late final String? iconHash;
+
+  /// Emoji that represents role.
+  /// For now emoji data is not validated and this can be any arbitrary string
+  late final String? iconEmoji;
+
   /// Mention of role. If role cannot be mentioned it returns name of role (@name)
   @override
   String get mention => mentionable ? "<@&${this.id}>" : "@$name";
-
-  /// Additional role data like if role is managed by integration or role is from server boosting.
-  late final RoleTags? roleTags;
 
   Role._new(this.client, RawApiMap raw, Snowflake guildId) : super(Snowflake(raw["id"])) {
     this.name = raw["name"] as String;
@@ -44,12 +51,23 @@ class Role extends SnowflakeEntity implements Mentionable {
     this.permissions = Permissions.fromInt(int.parse(raw["permissions"] as String));
     this.color = DiscordColor.fromInt(raw["color"] as int);
     this.guild = _GuildCacheable(client, guildId);
+    this.iconEmoji = raw["unicode_emoji"] as String?;
+    this.iconHash = raw["icon"] as String?;
 
     if(raw["tags"] != null) {
       this.roleTags = RoleTags._new(raw["tags"] as RawApiMap);
     } else {
       this.roleTags = null;
     }
+  }
+
+  /// Returns url to role icon
+  String? iconURL({String format = "webp", int size = 128}) {
+    if (this.iconHash == null) {
+      return null;
+    }
+
+    return this.client.httpEndpoints.getRoleIconUrl(this.id, this.iconHash!, format, size);
   }
 
   /// Edits the role.
