@@ -1,6 +1,5 @@
 part of nyxx_interactions;
 
-/// The event that you receive when a user types a slash command.
 abstract class InteractionEvent<T extends Interaction> {
   /// Reference to [Nyxx]
   Nyxx get client => interactions._client;
@@ -14,6 +13,34 @@ abstract class InteractionEvent<T extends Interaction> {
   /// The DateTime the interaction was received by the Nyxx Client.
   final DateTime receivedAt = DateTime.now();
 
+  final Logger _logger = Logger("Interaction Event");
+
+  InteractionEvent._new(this.interactions);
+}
+
+class AutocompleteInteractionEvent extends InteractionEvent<Interaction> {
+  @override
+  late final SlashCommandInteraction interaction;
+
+  AutocompleteInteractionEvent._new(Interactions interactions, RawApiMap raw): super._new(interactions) {
+    this.interaction = SlashCommandInteraction._new(client, raw);
+  }
+
+  /// Returns focused option of autocomplete
+  InteractionOption get focusedOption => _extractArgs(this.interaction.options)
+      .firstWhere((element) => element.isFocused);
+
+  /// Responds to interaction
+  Future<void> respond(List<ArgChoiceBuilder> builders) async {
+    if (DateTime.now().difference(this.receivedAt).inSeconds > 3) {
+      throw new InteractionExpiredError._3secs();
+    }
+
+    return this.interactions.interactionsEndpoints.respondToAutocomplete(this.interaction.id, this.interaction.token, builders);
+  }
+}
+
+abstract class InteractionEventWithAcknowledge<T extends Interaction> extends InteractionEvent<T> {
   /// If the Client has sent a response to the Discord API. Once the API was received a response you cannot send another.
   bool _hasAcked = false;
 
@@ -23,9 +50,7 @@ abstract class InteractionEvent<T extends Interaction> {
   /// Opcode for responding to interaction
   int get _respondOpcode;
 
-  final Logger _logger = Logger("Interaction Event");
-
-  InteractionEvent._new(this.interactions);
+  InteractionEventWithAcknowledge._new(Interactions interactions): super._new(interactions);
 
   /// Create a followup message for an Interaction
   Future<Message> sendFollowup(MessageBuilder builder) async {
@@ -126,7 +151,7 @@ abstract class InteractionEvent<T extends Interaction> {
 }
 
 /// Event for slash commands
-class SlashCommandInteractionEvent extends InteractionEvent<SlashCommandInteraction> {
+class SlashCommandInteractionEvent extends InteractionEventWithAcknowledge<SlashCommandInteraction> {
   /// Interaction data for slash command
   @override
   late final SlashCommandInteraction interaction;
@@ -140,16 +165,16 @@ class SlashCommandInteractionEvent extends InteractionEvent<SlashCommandInteract
   /// Returns args of interaction
   List<InteractionOption> get args => UnmodifiableListView(_extractArgs(this.interaction.options));
 
+  /// Searches for arg with [name] in this interaction
+  InteractionOption getArg(String name) => args.firstWhere((element) => element.name == name);
+
   SlashCommandInteractionEvent._new(Interactions interactions, RawApiMap raw) : super._new(interactions) {
     this.interaction = SlashCommandInteraction._new(client, raw);
   }
-
-  /// Searches for arg with [name] in this interaction
-  InteractionOption getArg(String name) => args.firstWhere((element) => element.name == name);
 }
 
 /// Generic event for component interactions
-abstract class ComponentInteractionEvent<T extends ComponentInteraction> extends InteractionEvent<T> {
+abstract class ComponentInteractionEvent<T extends ComponentInteraction> extends InteractionEventWithAcknowledge<T> {
   /// Interaction data for slash command
   @override
   late final T interaction;
