@@ -3,6 +3,9 @@ part of nyxx;
 /// Raw access to all http endpoints exposed by nyxx.
 /// Allows to execute specific action without any context.
 abstract class IHttpEndpoints {
+  /// Returns cdn url for given icon hash of role
+  String getRoleIconUrl(Snowflake roleId, String iconHash, String format, int size);
+
   /// Returns cdn url for given [guildId] and [iconHash].
   /// Requires to specify format and size of returned image.
   /// Format can be webp, png. Size should be power of 2, eg. 512, 1024
@@ -1780,9 +1783,13 @@ class _HttpEndpoints implements IHttpEndpoints {
 
   @override
   String memberAvatarURL(Snowflake memberId, Snowflake guildId, String avatarHash, {String format = "webp"}) =>
-      "guilds/$guildId/users/$memberId/avatars/$avatarHash.$format";
+      "${Constants.cdnUrl}/guilds/$guildId/users/$memberId/avatars/$avatarHash.$format";
 
   @override
   String getUserBannerURL(Snowflake userId, String hash, {String format = "png"}) =>
-      "https://cdn.${Constants.cdnHost}/banners/$userId/$hash.$format";
+      "${Constants.cdnUrl}/banners/$userId/$hash.$format";
+
+  @override
+  String getRoleIconUrl(Snowflake roleId, String iconHash, String format, int size) =>
+      "${Constants.cdnUrl}/role-icons/$roleId/$iconHash.$format?size=$size";
 }
