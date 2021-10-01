@@ -113,11 +113,11 @@ class PermissionsConstants {
   /// Allows for creating and participating in private threads
   static const int createPrivateThreads = 1 << 36;
 
-	/// Allows the usage of custom stickers from other servers
-	static const int useExternalStickers = 1 << 37;
+  /// Allows the usage of custom stickers from other servers
+  static const int useExternalStickers = 1 << 37;
 
-	/// Allows for launching activities in a voice channel
-	static const int startEmbeddedActivities = 1 << 39;
+  /// Allows for launching activities in a voice channel
+  static const int startEmbeddedActivities = 1 << 39;
 
   /// All of the permissions
   static int get allPermissions => int.parse("1".padRight(37, "1"), radix: 2);
