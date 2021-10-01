@@ -116,6 +116,12 @@ class Permissions implements Convertable<PermissionsBuilder> {
   /// Allows for creating and participating in private threads
   late final bool createPrivateThreads;
 
+  /// Allows the usage of custom stickers from other servers
+  late final bool useExternalStickers;
+
+  /// Allows for launching activities in a voice channel
+  late final bool startEmbeddedActivities;
+	
   /// Makes a [Permissions] object from a raw permission code.
   factory Permissions.fromInt(int permissions) =>
       Permissions._construct(permissions);
@@ -210,6 +216,12 @@ class Permissions implements Convertable<PermissionsBuilder> {
         this.raw, PermissionsConstants.createPublicThreads);
     this.createPrivateThreads = PermissionsUtils.isApplied(
         this.raw, PermissionsConstants.createPrivateThreads);
+		
+    this.useExternalStickers = PermissionsUtils.isApplied(
+        this.raw, PermissionsConstants.useExternalStickers);
+
+    this.startEmbeddedActivities = PermissionsUtils.isApplied(
+        this.raw, PermissionsConstants.startEmbeddedActivities);
   }
 
   /// Returns true if this permissions has [permission]
