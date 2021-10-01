@@ -116,11 +116,11 @@ class Permissions implements Convertable<PermissionsBuilder> {
   /// Allows for creating and participating in private threads
   late final bool createPrivateThreads;
 
-	/// Allows the usage of custom stickers from other servers
-	late final bool useExternalStickers;
+  /// Allows the usage of custom stickers from other servers
+  late final bool useExternalStickers;
 
-	/// Allows for launching activities in a voice channel
-	late final bool startEmbeddedActivities;
+  /// Allows for launching activities in a voice channel
+  late final bool startEmbeddedActivities;
 	
   /// Makes a [Permissions] object from a raw permission code.
   factory Permissions.fromInt(int permissions) =>
