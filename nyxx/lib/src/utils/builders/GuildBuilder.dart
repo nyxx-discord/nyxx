@@ -66,6 +66,12 @@ class RoleBuilder extends Builder {
   /// Whether role is mentionable
   bool? mentionable;
 
+  /// ole icon attachment
+  AttachmentBuilder? roleIcon;
+
+  /// Role icon emoji
+  String? roleIconEmoji;
+
   /// Creates role
   RoleBuilder(this.name);
 
@@ -77,6 +83,8 @@ class RoleBuilder extends Builder {
         if (position != null) "position": position,
         if (permission != null) "permission": permission!.build().build(),
         if (mentionable != null) "mentionable": mentionable,
+        if (roleIcon != null) "icon": roleIcon!.getBase64(),
+        if (roleIconEmoji != null) "unicode_emoji": roleIconEmoji
       };
 }
 

@@ -22,6 +22,9 @@ class Constants {
   /// Discord CDN host
   static const String cdnHost = "discordapp.com";
 
+  /// Url for cdn host
+  static const String cdnUrl = "https://cdn.${Constants.cdnHost}";
+
   /// Discord API host
   static const String host = "discord.com";
 
