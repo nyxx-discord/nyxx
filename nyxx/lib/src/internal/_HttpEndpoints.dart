@@ -87,8 +87,8 @@ abstract class IHttpEndpoints {
   /// Returns list of all guild invites
   Stream<Invite> fetchGuildInvites(Snowflake guildId);
 
-	/// Creates an activity invite
-	Future<Invite> createVoiceActivityInvite(Snowflake activityId, Snowflake channelId, {int? maxAge, int? maxUses});
+  /// Creates an activity invite
+  Future<Invite> createVoiceActivityInvite(Snowflake activityId, Snowflake channelId, {int? maxAge, int? maxUses});
 
   /// Fetches audit logs of guild
   Future<AuditLog> fetchAuditLogs(Snowflake guildId,
@@ -679,11 +679,11 @@ class _HttpEndpoints implements IHttpEndpoints {
         "/channels/$channelId/invites",
         method: "POST",
         body: {
-						"max_age": maxAge ?? 0,
-						"max_uses": maxUses ?? 0,
-						"target_application_id": "$activityId",
-						"target_type": 2,
-				}));
+          "max_age": maxAge ?? 0,
+          "max_uses": maxUses ?? 0,
+          "target_application_id": "$activityId",
+          "target_type": 2,
+        }));
 
     if (response is HttpResponseSuccess) {
       return Invite._new(response.jsonBody as RawApiMap, _client);
