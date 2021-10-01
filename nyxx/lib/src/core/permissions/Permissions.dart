@@ -217,10 +217,10 @@ class Permissions implements Convertable<PermissionsBuilder> {
     this.createPrivateThreads = PermissionsUtils.isApplied(
         this.raw, PermissionsConstants.createPrivateThreads);
 		
-		this.useExternalStickers = PermissionsUtils.isApplied(
+    this.useExternalStickers = PermissionsUtils.isApplied(
         this.raw, PermissionsConstants.useExternalStickers);
 
-		this.startEmbeddedActivities = PermissionsUtils.isApplied(
+    this.startEmbeddedActivities = PermissionsUtils.isApplied(
         this.raw, PermissionsConstants.startEmbeddedActivities);
   }
 
