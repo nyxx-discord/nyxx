@@ -87,6 +87,9 @@ abstract class IHttpEndpoints {
   /// Returns list of all guild invites
   Stream<Invite> fetchGuildInvites(Snowflake guildId);
 
+	/// Creates an activity invite
+	Future<Invite> createVoiceActivityInvite(Snowflake activityId, Snowflake channelId, {int? maxAge, int? maxUses});
+
   /// Fetches audit logs of guild
   Future<AuditLog> fetchAuditLogs(Snowflake guildId,
       {Snowflake? userId, int? actionType, Snowflake? before, int? limit});
@@ -669,6 +672,25 @@ class _HttpEndpoints implements IHttpEndpoints {
       yield Invite._new(raw as RawApiMap, _client);
     }
   }
+
+	@override
+	Future<Invite> createVoiceActivityInvite(Snowflake activityId, Snowflake channelId, {int? maxAge, int? maxUses}) async {
+		final response = await _httpClient._execute(BasicRequest._new(
+        "/channels/$channelId/invites",
+        method: "POST",
+        body: {
+						"max_age": maxAge ?? 0,
+						"max_uses": maxUses ?? 0,
+						"target_application_id": "$activityId",
+						"target_type": 2,
+				}));
+
+    if (response is HttpResponseSuccess) {
+      return Invite._new(response.jsonBody as RawApiMap, _client);
+    }
+
+    return Future.error(response);
+	}
 
   @override
   Future<AuditLog> fetchAuditLogs(Snowflake guildId,
