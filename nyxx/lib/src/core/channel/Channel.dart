@@ -71,6 +71,9 @@ class ChannelType extends IEnum<int> {
   static const ChannelType guildPublicThread = ChannelType._create(11);
   static const ChannelType guildPrivateThread = ChannelType._create(12);
 
+  /// Channel in a Student Hub containing the listed servers
+  static const ChannelType guildDirectory = ChannelType._create(14);
+
   /// Type of channel is unknown
   static const ChannelType unknown = ChannelType._create(1337);
 
