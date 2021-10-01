@@ -41,6 +41,9 @@ class VoiceGuildChannel extends GuildChannel {
       throw InvalidShardException._new("Cannot find shard for this channel!");
     }
   }
+
+  Future<Invite> createActivityInvite(VoiceActivityType type, {int? maxAge, int? maxUses}) 
+    => this.client.httpEndpoints.createVoiceActivityInvite(Snowflake(type.value), this.id, maxAge: maxAge, maxUses: maxUses);
 }
 
 class StageVoiceGuildChannel extends VoiceGuildChannel {

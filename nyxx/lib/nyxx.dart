@@ -42,6 +42,7 @@ part "src/core/channel/guild/CategoryGuildChannel.dart";
 part "src/core/channel/guild/GuildChannel.dart";
 part "src/core/channel/guild/TextGuildChannel.dart";
 part "src/core/channel/guild/VoiceChannel.dart";
+part "src/core/channel/guild/ActivityTypes.dart";
 part "src/core/embed/Embed.dart";
 part "src/core/embed/EmbedAuthor.dart";
 part "src/core/embed/EmbedField.dart";
