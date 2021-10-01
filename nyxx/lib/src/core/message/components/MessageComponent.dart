@@ -134,7 +134,7 @@ class IMessageButton extends IMessageComponent {
   ComponentType get type => ComponentType.button;
 
   /// What the button says (max 80 characters)
-  late final String label;
+  late final String? label;
 
   /// Component style, appearance
   late final ComponentStyle style;
@@ -154,7 +154,7 @@ class IMessageButton extends IMessageComponent {
   }
 
   IMessageButton._new(Map<String, dynamic> raw): super._new() {
-    this.label = raw["label"] as String;
+    this.label = raw["label"] as String?;
     this.style = ComponentStyle.from(raw["style"] as int);
 
     if (raw["emoji"] != null) {
