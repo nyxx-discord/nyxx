@@ -56,7 +56,7 @@ class GuildFeature extends IEnum<String> {
   /// Guild has access to create private threads
   static const GuildFeature privateThreadsEnabled = GuildFeature._create("PRIVATE_THREADS");
 
-	/// Guild is a Student Hub
+  /// Guild is a Student Hub
   static const GuildFeature studentHub = GuildFeature._create("HUB");
 
   /// Creates instance of [GuildFeature] from [value].
