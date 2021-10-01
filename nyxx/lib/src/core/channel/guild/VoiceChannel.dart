@@ -42,8 +42,8 @@ class VoiceGuildChannel extends GuildChannel {
     }
   }
 
-	Future<Invite> createActivityInvite(VoiceActivityType type, {int? maxAge, int? maxUses}) 
-		=> this.client.httpEndpoints.createVoiceActivityInvite(Snowflake(type.value), this.id, maxAge: maxAge, maxUses: maxUses);
+  Future<Invite> createActivityInvite(VoiceActivityType type, {int? maxAge, int? maxUses}) 
+    => this.client.httpEndpoints.createVoiceActivityInvite(Snowflake(type.value), this.id, maxAge: maxAge, maxUses: maxUses);
 }
 
 class StageVoiceGuildChannel extends VoiceGuildChannel {
