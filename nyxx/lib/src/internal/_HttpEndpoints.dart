@@ -343,7 +343,14 @@ abstract class IHttpEndpoints {
   Future<DMChannel> createDMChannel(Snowflake userId);
 
   /// Used to send a request including standard bot authentication.
-  Future<_HttpResponse> sendRawRequest(String url, String method, {dynamic body, dynamic headers});
+  Future<_HttpResponse> sendRawRequest(
+      String url,
+      String method,
+      {dynamic body,
+        Map<String, dynamic>? headers,
+        List<AttachmentBuilder> files = const [],
+        Map<String, dynamic>? queryParams}
+      );
 
   /// Fetches preview of guild
   Future<GuildPreview> fetchGuildPreview(Snowflake guildId);
@@ -1478,9 +1485,38 @@ class _HttpEndpoints implements IHttpEndpoints {
   }
 
   @override
-  Future<_HttpResponse> sendRawRequest(String url, String method,
-      {dynamic body, dynamic headers}) => _httpClient
-        ._execute(BasicRequest._new(url, method: method, body: body));
+  Future<_HttpResponse> sendRawRequest(
+      String url,
+      String method,
+      {dynamic body,
+        Map<String, dynamic>? headers,
+        List<AttachmentBuilder> files = const [],
+        Map<String, dynamic>? queryParams}
+      ) async {
+
+    _HttpResponse response;
+    if (files.isNotEmpty) {
+      response = await _httpClient._execute(MultipartRequest._new(
+          url,
+          files.map((e) => e.getMultipartFile()).toList(),
+          method: method,
+          fields: body,
+          queryParams: queryParams)
+      );
+    } else {
+      response = await _httpClient._execute(BasicRequest._new(
+          url,
+          body: body,
+          method: method,
+          queryParams: queryParams));
+    }
+
+    if (response is HttpResponseError) {
+      return Future.error(response);
+    }
+
+    return response;
+  }
 
   Future<_HttpResponse> _getGatewayBot() =>
       _client._http._execute(BasicRequest._new("/gateway/bot"));

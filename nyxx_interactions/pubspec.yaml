@@ -11,8 +11,12 @@ environment:
 
 dependencies:
   logging: "^1.0.1"
-  nyxx: "^2.0.0-rc.12"
   crypto: "^3.0.1"
+  nyxx: "^2.0.0-rc.12"
 
 dev_dependencies:
   test: "^1.17.0"
+
+dependency_overrides:
+  nyxx:
+    path: "../nyxx"
