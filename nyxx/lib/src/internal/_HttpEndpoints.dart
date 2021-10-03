@@ -153,6 +153,7 @@ abstract class IHttpEndpoints {
   String userAvatarURL(Snowflake userId, String? avatarHash, int discriminator,
       {String format = "webp", int size = 128});
 
+  /// Returns url to member avatar url
   String memberAvatarURL(Snowflake memberId, Snowflake guildId, String avatarHash, {String format = "webp"});
 
   /// Fetches [User] object for given [userId]
@@ -164,7 +165,7 @@ abstract class IHttpEndpoints {
       List<SnowflakeEntity>? roles,
       bool? mute,
       bool? deaf,
-      Snowflake channel = const Snowflake.zero(),
+      Snowflake? channel = const Snowflake.zero(),
       String? auditReason});
 
   /// Removes role from user
