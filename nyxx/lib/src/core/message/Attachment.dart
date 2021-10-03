@@ -20,6 +20,11 @@ class Attachment extends SnowflakeEntity {
   /// The attachment's width, if an image.
   late final int? width;
 
+  /// whether this attachment is ephemeral
+  /// Note: Ephemeral attachments will automatically be removed after a set period of time.
+  /// Ephemeral attachments on messages are guaranteed to be available as long as the message itself exists.
+  late final bool ephemeral;
+
   /// Indicates if attachment is spoiler
   bool get isSpoiler => filename.startsWith("SPOILER_");
 
@@ -31,14 +36,26 @@ class Attachment extends SnowflakeEntity {
 
     this.height = raw["height"] as int?;
     this.width = raw["width"] as int?;
+
+    this.ephemeral = raw["ephemeral"] as bool? ?? false;
   }
 
   @override
   String toString() => url;
 
   @override
-  bool operator ==(other) => other is Attachment ? other.filename == this.filename && other.url == this.url : false;
+  bool operator ==(other) {
+    if (other is Attachment) {
+      return other.id == this.id;
+    }
+
+    if (other is Snowflake) {
+      return other == this.id;
+    }
+
+    return false;
+  }
 
   @override
-  int get hashCode => filename.hashCode * 37 + url.hashCode * 37;
+  int get hashCode => this.id.hashCode;
 }

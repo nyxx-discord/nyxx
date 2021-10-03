@@ -124,7 +124,6 @@ class Interactions {
 
     _extractCommandIds(globalCommandsResponse);
     this._registerCommandHandlers(globalCommandsResponse, globalCommands);
-    await this.interactionsEndpoints.bulkOverrideGlobalCommandsPermissions(this._client.app.id, globalCommands);
 
     for(final entry in groupedGuildCommands.entries) {
       final response = await this.interactionsEndpoints
