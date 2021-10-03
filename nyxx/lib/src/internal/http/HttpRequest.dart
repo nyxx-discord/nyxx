@@ -61,7 +61,7 @@ class MultipartRequest extends _HttpRequest {
   final List<http.MultipartFile> files;
 
   /// Additional data to sent
-  final RawApiMap? fields;
+  final dynamic fields;
 
   MultipartRequest._new(String path, this.files,
       {this.fields, String method = "GET", RawApiMap? queryParams, String? auditLog, bool rateLimit = true})
