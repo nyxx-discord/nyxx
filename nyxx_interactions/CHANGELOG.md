@@ -1,3 +1,8 @@
+## 2.0.1
+_03.10.2021_
+
+- fix deserialization of autocomplete interaction
+
 ## 2.0.0
 _03.10.2021_
 
