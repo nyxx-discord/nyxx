@@ -1,3 +1,11 @@
+## 2.0.0
+_03.10.2021_
+
+> Bumped version to 2.0 for compatibility with nyxx
+
+- Added compatibility for nyxx 2.0.0-rc2
+- Implemented mutual guilds extension method (9a8bb35)
+
 ## 2.0.0-rc.3
 _25.04.2021_
 

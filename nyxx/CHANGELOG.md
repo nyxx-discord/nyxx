@@ -1,3 +1,16 @@
+## 2.0.0
+_03.10.2021_
+
+Second major stable version of nyxx. Since 1.0 changed a lot - internal are completely rewritten, bots should work faster
+and more stable and reliable
+
+ - Implemented message components
+ - Reworked rate limits implementation
+ - Reworked sharding
+ - Reworked http internals. Now all raw api calls are accessible.
+ - Rework entity structure allowing more flexibility and partial instantiating
+ - Slash commands implementation
+
 ## 2.0.0-rc.3
 _25.04.2021_
 

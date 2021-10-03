@@ -1,3 +1,12 @@
+## 2.0.0
+_03.10.2021_
+
+> Bumped version to 2.0 for compatibility with nyxx
+
+- Support for aliases for Commander (580e55c)
+- Fix command aliases (17187c5) @WasserEsser
+- Fix command recognition in Commander (7fff136) @WasserEsser
+
 ## 2.0.0-rc.3
 _25.04.2021_
 
