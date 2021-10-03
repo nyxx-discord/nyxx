@@ -9,7 +9,7 @@ class Snowflake implements Comparable<Snowflake> {
   /// Offset of date in snowflake
   static const snowflakeDateOffset = 1 << 22;
 
-  late final int _id;
+  final int _id;
 
   /// Full snowflake id
   int get id => _id;
@@ -18,13 +18,22 @@ class Snowflake implements Comparable<Snowflake> {
   /// [Snowflake reference](https://discordapp.com/developers/docs/reference#snowflakes)
   DateTime get timestamp => DateTime.fromMillisecondsSinceEpoch((_id >> 22).toInt() + discordEpoch, isUtc: true);
 
+  /// Returns true if snowflake is zero
+  bool get isZero => this.id == 0;
+
   /// Creates new instance of [Snowflake].
-  Snowflake(dynamic id) {
+  const Snowflake.value(this._id);
+
+  /// Creates new instance with value of 0
+  const Snowflake.zero(): _id = 0;
+
+  /// Creates instance of an Snowflake
+  factory Snowflake(dynamic id) {
     if (id is int) {
-      _id = id;
+      return Snowflake.value(id);
     } else {
       try {
-        _id = int.parse(id.toString());
+        return Snowflake.value(int.parse(id.toString()));
       } on FormatException {
         throw InvalidSnowflakeException._new(id);
       }

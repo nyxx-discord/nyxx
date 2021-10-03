@@ -140,7 +140,7 @@ class Member extends SnowflakeEntity implements Mentionable {
       client.httpEndpoints.guildKick(this.guild.id, this.id);
 
   /// Edits members. Allows to move user in voice channel, mute or deaf, change nick, roles.
-  Future<void> edit({String? nick, List<SnowflakeEntity>? roles, bool? mute, bool? deaf, SnowflakeEntity? channel, String? auditReason}) =>
+  Future<void> edit({String nick = "", List<SnowflakeEntity>? roles, bool? mute, bool? deaf, Snowflake? channel, String? auditReason}) =>
       client.httpEndpoints.editGuildMember(this.guild.id, this.id, nick: nick, roles: roles, mute: mute, deaf: deaf, channel: channel, auditReason: auditReason);
 
   void _updateMember(String? nickname, List<Snowflake> roles, DateTime? boostingSince) {

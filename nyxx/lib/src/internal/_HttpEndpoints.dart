@@ -160,11 +160,11 @@ abstract class IHttpEndpoints {
 
   /// "Edits" guild member. Allows to manipulate other guild users.
   Future<void> editGuildMember(Snowflake guildId, Snowflake memberId,
-      {String? nick,
+      {String nick,
       List<SnowflakeEntity>? roles,
       bool? mute,
       bool? deaf,
-      SnowflakeEntity? channel,
+      Snowflake channel = const Snowflake.zero(),
       String? auditReason});
 
   /// Removes role from user
@@ -939,18 +939,18 @@ class _HttpEndpoints implements IHttpEndpoints {
 
   @override
   Future<void> editGuildMember(Snowflake guildId, Snowflake memberId,
-      {String? nick,
+      {String nick = "",
       List<SnowflakeEntity>? roles,
       bool? mute,
       bool? deaf,
-      SnowflakeEntity? channel,
+      Snowflake? channel = const Snowflake.zero(),
       String? auditReason}) {
     final body = <String, dynamic>{
-      if (nick != null) "nick": nick,
+      if (nick != "") "nick": nick,
       if (roles != null) "roles": roles.map((f) => f.id.toString()).toList(),
       if (mute != null) "mute": mute,
       if (deaf != null) "deaf": deaf,
-      if (channel != null) "channel_id": channel.id.toString()
+      if (channel == null || !channel.isZero) "channel_id": channel.toString()
     };
 
     return _httpClient._execute(BasicRequest._new(
