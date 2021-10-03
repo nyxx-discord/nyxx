@@ -28,6 +28,6 @@ class InteractionOption {
       this.options = [];
     }
 
-    this.isFocused = raw["focused"] as bool;
+    this.isFocused = raw["focused"] as bool? ?? false;
   }
 }
