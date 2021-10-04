@@ -137,7 +137,7 @@ class EmbedBuilder extends Builder {
       if (type != null) "type": type,
       if (description != null) "description": description,
       if (url != null) "url": url,
-      if (timestamp != null) "timestamp": timestamp!.toIso8601String(),
+      if (timestamp != null) "timestamp": timestamp!.toUtc().toIso8601String(),
       if (color != null) "color": color!._value,
       if (footer != null) "footer": footer!.build(),
       if (imageUrl != null) "image": <String, dynamic>{"url": imageUrl},
