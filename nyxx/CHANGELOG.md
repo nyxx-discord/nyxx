@@ -1,3 +1,8 @@
+## 2.0.3
+_04.10.2021_
+
+- Fix #214 - Invalid date in embed timestamp (07d855f1)
+
 ## 2.0.2
 _03.10.2021_
 
