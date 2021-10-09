@@ -35,12 +35,12 @@ jobs:
 
     strategy:
       matrix:
-        adapter: ["nyxx_commander", "nyxx_extensions", "nyxx_interactions", "nyxx_lavalink"]
+        package: ["nyxx_commander", "nyxx_extensions", "nyxx_interactions", "nyxx_lavalink"]
 
     steps:
       - uses: actions/checkout@v2
-      - run: cp -f LICENSE ./${{ matrix.adapter }}/LICENSE
-      - name: 'publish ${{ matrix.adapter }} to pub.dev'
+      - run: cp -f LICENSE ./${{ matrix.package }}/LICENSE
+      - name: 'publish ${{ matrix.package }} to pub.dev'
         id: publish
         uses: k-paxian/dart-package-publisher@master
         with:
@@ -48,7 +48,7 @@ jobs:
           force: true
           suppressBuildRunner: true
           credentialJson: ${{ secrets.CREDENTIAL_JSON }}
-          relativePath: adapters/${{ matrix.adapter }}
+          relativePath: ${{ matrix.package }}
       - name: 'Commit release tag'
         if: steps.publish.outputs.success
         uses: hole19/git-tag-action@master
