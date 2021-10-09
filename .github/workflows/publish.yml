@@ -1,0 +1,51 @@
+name: publish
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  nyxx_publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - run: |
+          cp README.md ./nyxx/README.md
+          cp -f LICENSE ./nyxx/LICENSE
+      - name: 'publish nyxx package to pub.dev'
+        id: publish
+        uses: k-paxian/dart-package-publisher@master
+        with:
+          credentialJson: ${{ secrets.CREDENTIAL_JSON }}
+          relativePath: nyxx
+      - name: 'Commit release tag'
+        if: steps.publish.outputs.success
+        uses: hole19/git-tag-action@master
+        env:
+          TAG: ${{steps.publish.outputs.package}}-${{steps.publish.outputs.localVersion}}
+          GITHUB_TOKEN: ${{ secrets.TAG_RELEASE_TOKEN }}
+
+  publish_adapter:
+    needs: [nyxx_publish]
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        adapter: ["nyxx_commander", "nyxx_extensions", "nyxx_interactions", "nyxx_lavalink"]
+
+    steps:
+      - uses: actions/checkout@v2
+      - run: cp -f LICENSE ./${{ matrix.adapter }}/LICENSE
+      - name: 'publish ${{ matrix.adapter }} to pub.dev'
+        id: publish
+        uses: k-paxian/dart-package-publisher@master
+        with:
+          credentialJson: ${{ secrets.CREDENTIAL_JSON }}
+          relativePath: adapters/${{ matrix.adapter }}
+      - name: 'Commit release tag'
+        if: steps.publish.outputs.success
+        uses: hole19/git-tag-action@master
+        env:
+          TAG: ${{steps.publish.outputs.package}}-${{steps.publish.outputs.localVersion}}
+          GITHUB_TOKEN: ${{ secrets.TAG_RELEASE_TOKEN }}
