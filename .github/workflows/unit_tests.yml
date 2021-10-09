@@ -99,9 +99,9 @@ jobs:
         run: dart pub get
 
       - name: Analyze project source
-        working-directory: ../${{ matrix.package }}
+        working-directory: ./${{ matrix.package }}
         run: dart analyze
 
       - name: Unit tests
         working-directory: ./${{ matrix.package }}
-        run: dart test test/extensions-tests.dart
+        run: dart test test/unit.dart
