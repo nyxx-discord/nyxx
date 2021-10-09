@@ -3,6 +3,9 @@ part of nyxx;
 /// Raw access to all http endpoints exposed by nyxx.
 /// Allows to execute specific action without any context.
 abstract class IHttpEndpoints {
+  /// Creates an OAuth2 URL with the specified permissions.
+  String getApplicationInviteUrl(Snowflake applicationId, [int? permissions]);
+  
   /// Returns cdn url for given icon hash of role
   String getRoleIconUrl(Snowflake roleId, String iconHash, String format, int size);
 
@@ -408,6 +411,17 @@ class _HttpEndpoints implements IHttpEndpoints {
 
   _HttpEndpoints._new(this._client) {
     this._httpClient = this._client._http;
+  }
+
+  @override
+  String getApplicationInviteUrl(Snowflake applicationId, [int? permissions]) {
+    var baseLink = "https://${Constants.host}/oauth2/authorize?client_id=${applicationId.toString()}&scope=bot";
+
+    if (permissions != null) {
+      baseLink += "&permissions=$permissions";
+    }
+
+    return baseLink;
   }
 
   @override
