@@ -1,3 +1,8 @@
+## 2.0.4
+_09.10_2021_
+
+- Fix #215 - invalid application url was generated with zero permissions (592c4dcc)
+
 ## 2.0.3
 _04.10.2021_
 
