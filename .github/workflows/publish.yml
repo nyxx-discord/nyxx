@@ -17,6 +17,9 @@ jobs:
         id: publish
         uses: k-paxian/dart-package-publisher@master
         with:
+          skipTests: true
+          force: true
+          suppressBuildRunner: true
           credentialJson: ${{ secrets.CREDENTIAL_JSON }}
           relativePath: nyxx
       - name: 'Commit release tag'
@@ -41,6 +44,9 @@ jobs:
         id: publish
         uses: k-paxian/dart-package-publisher@master
         with:
+          skipTests: true
+          force: true
+          suppressBuildRunner: true
           credentialJson: ${{ secrets.CREDENTIAL_JSON }}
           relativePath: adapters/${{ matrix.adapter }}
       - name: 'Commit release tag'
