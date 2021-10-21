@@ -34,6 +34,9 @@ class Member extends SnowflakeEntity implements Mentionable {
   /// Member's avatar in [Guild]
   late final String? avatarHash;
 
+  /// Whether the user has not yet passed the guild's Membership Screening requirements
+  late final bool? pending;
+
   /// Voice state of member. Null if not connected to channel or voice state not cached
   VoiceState? get voiceState => this.guild.getFromCache()?.voiceStates[this.id];
 
@@ -64,6 +67,7 @@ class Member extends SnowflakeEntity implements Mentionable {
     this.guild = _GuildCacheable(client, guildId);
     this.boostingSince = DateTime.tryParse(raw["premium_since"] as String? ?? "");
     this.avatarHash = raw["avatar"] as String?;
+	this.pending = raw["pending"] as bool?;
 
     this.roles = [
       for (var id in raw["roles"])
