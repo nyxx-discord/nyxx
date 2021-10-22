@@ -67,7 +67,7 @@ class Member extends SnowflakeEntity implements Mentionable {
     this.guild = _GuildCacheable(client, guildId);
     this.boostingSince = DateTime.tryParse(raw["premium_since"] as String? ?? "");
     this.avatarHash = raw["avatar"] as String?;
-		this.pending = raw["pending"] as bool?;
+    this.pending = raw["pending"] as bool?;
 
     this.roles = [
       for (var id in raw["roles"])
