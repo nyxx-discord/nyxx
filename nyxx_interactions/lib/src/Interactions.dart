@@ -230,7 +230,8 @@ class Interactions {
 
   void _registerCommandHandlers(List<SlashCommand> registeredSlashCommands, Iterable<SlashCommandBuilder> builders) {
     for(final registeredCommand in registeredSlashCommands) {
-      final matchingBuilder = builders.firstWhere((element) => element.name.toLowerCase() == registeredCommand.name);
+      final matchingBuilder =
+          builders.firstWhere((element) => element.name.toLowerCase() == registeredCommand.name.toLowerCase());
       this._assignCommandToHandler(matchingBuilder, registeredCommand);
 
       this._commands.add(registeredCommand);
