@@ -1,3 +1,9 @@
+## 2.1.0
+__22.10.2021__
+
+- Add pending to member (#224)
+- use case-insensitive name comparison in _registerCommandHandlers (#225)
+
 ## 2.0.5
 _15.10.2021_
 
