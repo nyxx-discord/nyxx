@@ -35,11 +35,11 @@ jobs:
         run: dart analyze
 
       - name: Compile tests
-        working-directory: ./nyxx/test
+        working-directory: ./nyxx/test/integration
         run: dart2native travis.dart
 
       - name: Run tests
-        working-directory: ./nyxx/test
+        working-directory: ./nyxx/test/integration
         run: ./travis.exe
 
   test-commander:
