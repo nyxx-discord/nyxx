@@ -98,7 +98,7 @@ abstract class IGuild implements SnowflakeEntity {
   Map<Snowflake, IRole> get roles;
 
   /// Guild custom emojis
-  Map<Snowflake, BaseGuildEmoji> get emojis;
+  Map<Snowflake, IBaseGuildEmoji> get emojis;
 
   /// Boost level of guild
   PremiumTier get premiumTier;
@@ -369,7 +369,7 @@ class Guild extends SnowflakeEntity implements IGuild {
 
   /// The guild's members.
   @override
-  late final SnowflakeCache<Member> members;
+  late final SnowflakeCache<IMember> members;
 
   /// The guild's channels.
   @override
@@ -378,11 +378,11 @@ class Guild extends SnowflakeEntity implements IGuild {
 
   /// The guild's roles.
   @override
-  late final Map<Snowflake, IRole> roles;
+  late final SnowflakeCache<IRole> roles;
 
   /// Guild custom emojis
   @override
-  late final Map<Snowflake, BaseGuildEmoji> emojis;
+  late final SnowflakeCache<IBaseGuildEmoji> emojis;
 
   /// Boost level of guild
   @override
@@ -408,7 +408,7 @@ class Guild extends SnowflakeEntity implements IGuild {
 
   /// Users state cache
   @override
-  late final SnowflakeCache<IVoiceState> voiceStates;
+  late final Map<Snowflake, IVoiceState> voiceStates;
 
   /// Stage instances in the guild
   @override
@@ -491,7 +491,7 @@ class Guild extends SnowflakeEntity implements IGuild {
 
     this.owner = UserCacheable(client, Snowflake(raw["owner_id"]));
 
-    this.roles = const SnowflakeCache<IRole>();
+    this.roles = SnowflakeCache<IRole>();
     if (raw["roles"] != null) {
       raw["roles"].forEach((o) {
         final role = Role(client, o as RawApiMap, this.id);
@@ -499,7 +499,7 @@ class Guild extends SnowflakeEntity implements IGuild {
       });
     }
 
-    this.emojis = const SnowflakeCache();
+    this.emojis = {};
     if (raw["emojis"] != null) {
       raw["emojis"].forEach((dynamic o) {
         final emoji = GuildEmoji(client, o as RawApiMap, this.id);
@@ -527,8 +527,8 @@ class Guild extends SnowflakeEntity implements IGuild {
       this.afkChannel = ChannelCacheable(client, Snowflake(raw["afk_channel_id"]));
     }
 
-    this.members = const SnowflakeCache();
-    this.voiceStates = const SnowflakeCache();
+    this.members = SnowflakeCache();
+    this.voiceStates = SnowflakeCache();
 
     this.guildNsfwLevel = GuildNsfwLevel.from(raw["nsfw_level"] as int);
 
