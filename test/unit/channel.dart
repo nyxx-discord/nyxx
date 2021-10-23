@@ -1,11 +1,11 @@
-import 'package:mockito/mockito.dart';
+
 import 'package:nyxx/nyxx.dart';
 import 'package:test/scaffolding.dart';
 import 'package:test/test.dart';
 
-import 'Channel.mocks.dart';
+import '../mocks/channel.mocks.dart';
 
-void testChannel() {
+void main() {
 	group("Channel:Text", () {
 		test("Send message", () async {
 			final mockChannel = MockTextChannel(testChannelId);

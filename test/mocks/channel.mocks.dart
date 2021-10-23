@@ -1,7 +1,7 @@
 import 'package:nyxx/nyxx.dart';
 import 'package:test/fake.dart';
 
-import 'Message.mocks.dart';
+import 'message.mocks.dart';
 
 // Constants For DM Channel Testing.
 final Snowflake testMessageId = 901383332011593750.toSnowflake();

@@ -3,7 +3,7 @@ import 'package:nyxx/src/utils/extensions.dart';
 import 'package:test/expect.dart';
 import 'package:test/scaffolding.dart';
 
-void testSnowflake() {
+void main() {
 	group("Snowflake", () {
 		test(".toSnowflake()", () {
 			const rawSnowflake = 901383075009806336;
