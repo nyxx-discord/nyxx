@@ -1,4 +1,30 @@
-part of nyxx;
+import 'package:nyxx/src/Nyxx.dart';
+import 'package:nyxx/src/core/Snowflake.dart';
+import 'package:nyxx/src/core/channel/CacheableTextChannel.dart';
+import 'package:nyxx/src/core/channel/Channel.dart';
+import 'package:nyxx/src/core/channel/ITextChannel.dart';
+import 'package:nyxx/src/core/guild/Guild.dart';
+import 'package:nyxx/src/core/user/Member.dart';
+import 'package:nyxx/src/core/user/User.dart';
+import 'package:nyxx/src/internal/cache/Cacheable.dart';
+import 'package:nyxx/src/typedefs.dart';
+
+abstract class ITypingEvent {
+  /// The channel that the user is typing in.
+  CacheableTextChannel<ITextChannel> get channel;
+
+  /// The user that is typing.
+  Cacheable<Snowflake, IUser> get user;
+
+  /// The member who started typing if this happened in a guild
+  IMember? get member;
+
+  /// Timestamp when the user started typing
+  DateTime get timestamp;
+
+  /// Reference to guild where typing occurred
+  Cacheable<Snowflake, IGuild>? get guild;
+}
 
 /// Sent when a user starts typing.
 class TypingEvent implements ITypingEvent {

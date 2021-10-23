@@ -1,4 +1,6 @@
-part of nyxx;
+import 'package:nyxx/src/internal/exceptions/EmbedBuilderArgumentException.dart';
+import 'package:nyxx/src/typedefs.dart';
+import 'package:nyxx/src/utils/builders/Builder.dart';
 
 /// Build new instance of author which can be used in [EmbedBuilder]
 class EmbedAuthorBuilder extends Builder {
@@ -21,11 +23,11 @@ class EmbedAuthorBuilder extends Builder {
   @override
   RawApiMap build() {
     if (this.name == null || this.name!.isEmpty) {
-      throw EmbedBuilderArgumentException._new("Author name cannot be null or empty");
+      throw EmbedBuilderArgumentException("Author name cannot be null or empty");
     }
 
     if (this.length! > 256) {
-      throw EmbedBuilderArgumentException._new("Author name is too long. (256 characters limit)");
+      throw EmbedBuilderArgumentException("Author name is too long. (256 characters limit)");
     }
 
     return <String, dynamic> {

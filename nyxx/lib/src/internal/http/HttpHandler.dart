@@ -1,37 +1,45 @@
-part of nyxx;
+import 'package:http/http.dart' as http;
 
-class _HttpHandler {
+import 'package:logging/logging.dart';
+import 'package:nyxx/src/Nyxx.dart';
+import 'package:nyxx/src/internal/http/HttpBucket.dart';
+import 'package:nyxx/src/internal/http/HttpClient.dart';
+import 'package:nyxx/src/internal/http/HttpRequest.dart';
+import 'package:nyxx/src/internal/http/HttpResponse.dart';
+
+class HttpHandler {
   final RegExp _bucketRegexp = RegExp(r"\/(channels|guilds)\/(\d+)");
   final RegExp _bucketReactionsRegexp =
       RegExp(r"\/channels/(\d+)\/messages\/(\d+)\/reactions");
   final RegExp _bucketCommandPermissions =
       RegExp(r"\/applications/(\d+)\/guilds\/(\d+)\/commands/permissions");
 
-  final List<_HttpBucket> _buckets = [];
-  late final _HttpBucket _noRateBucket;
+  final List<HttpBucket> _buckets = [];
+  late final HttpBucket _noRateBucket;
 
-  final Logger _logger = Logger("Http");
-  late final _HttpClient _httpClient;
+  late final InternalHttpClient _httpClient;
 
-  final INyxx _client;
+  final Logger logger = Logger("Http");
+  final NyxxRest client;
 
-  _HttpHandler._new(this._client) {
-    this._noRateBucket = _HttpBucket("", this);
-    this._httpClient = _HttpClient(_client);
+  /// Creates an instance of [HttpHandler]
+  HttpHandler(this.client) {
+    this._noRateBucket = HttpBucket("", this);
+    this._httpClient = InternalHttpClient(client.token);
   }
 
-  Future<_HttpResponse> _execute(_HttpRequest request) async {
-    request._client = this._httpClient;
+  Future<HttpResponse> execute(HttpRequest request) async {
+    request.passClient(this._httpClient);
 
     if (!request.rateLimit) {
-      return _handle(await this._noRateBucket._execute(request));
+      return _handle(await this._noRateBucket.execute(request));
     }
 
     final bucket = this._getBucketForRequest(request);
-    return _handle(await bucket._execute(request));
+    return _handle(await bucket.execute(request));
   }
 
-  _HttpBucket _getBucketForRequest(_HttpRequest request) {
+  HttpBucket _getBucketForRequest(HttpRequest request) {
     final reactionsRegexMatch =
         _bucketReactionsRegexp.firstMatch(request.uri.toString());
     if (reactionsRegexMatch != null) {
@@ -65,35 +73,37 @@ class _HttpHandler {
     return this._findBucketById(bucketId);
   }
 
-  _HttpBucket _findBucketById(String bucketId) {
+  HttpBucket _findBucketById(String bucketId) {
     try {
       return _buckets.firstWhere((element) => element.id == bucketId);
     } on StateError {
-      final newBucket = _HttpBucket(bucketId, this);
+      final newBucket = HttpBucket(bucketId, this);
       _buckets.add(newBucket);
 
       return newBucket;
     }
   }
 
-  Future<_HttpResponse> _handle(http.StreamedResponse response) async {
+  Future<HttpResponse> _handle(http.StreamedResponse response) async {
     if (response.statusCode >= 200 && response.statusCode < 300) {
-      final responseSuccess = HttpResponseSuccess._new(response);
-      await responseSuccess._finalize();
+      final responseSuccess = HttpResponseSuccess(response);
+      await responseSuccess.finalize();
 
-      _client._onHttpResponse.add(HttpResponseEvent._new(responseSuccess));
+      // TODO: fix this
+      // _client._onHttpResponse.add(HttpResponseEvent._new(responseSuccess));
 
-      this._logger.finer("Got successful http response for endpoint: [${response.request?.url.toString()}]; Response: [${responseSuccess.jsonBody}]");
+      this.logger.finer("Got successful http response for endpoint: [${response.request?.url.toString()}]; Response: [${responseSuccess.jsonBody}]");
 
       return responseSuccess;
     }
 
-    final responseError = HttpResponseError._new(response);
-    await responseError._finalize();
+    final responseError = HttpResponseError(response);
+    await responseError.finalize();
 
-    _client._onHttpError.add(HttpErrorEvent._new(responseError));
+    // TODO: fix this
+    // _client._onHttpError.add(HttpErrorEvent._new(responseError));
 
-    this._logger.finer("Got failure http response for endpoint: [${response.request?.url.toString()}]; Response: [${responseError.errorMessage}]");
+    this.logger.finer("Got failure http response for endpoint: [${response.request?.url.toString()}]; Response: [${responseError.errorMessage}]");
 
     return responseError;
   }

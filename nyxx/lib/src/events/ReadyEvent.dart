@@ -1,4 +1,6 @@
-part of nyxx;
+import 'package:nyxx/src/Nyxx.dart';
+
+abstract class IReadyEvent {}
 
 // TODO: ???
 /// Sent when the client is ready.

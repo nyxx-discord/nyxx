@@ -1,4 +1,4 @@
-part of nyxx;
+import 'package:http/http.dart' as http;
 
 /// Exception of http client
 class HttpClientException extends http.ClientException {

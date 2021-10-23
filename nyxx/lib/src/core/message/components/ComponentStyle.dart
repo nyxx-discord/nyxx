@@ -1,4 +1,4 @@
-part of nyxx;
+import 'package:nyxx/src/utils/IEnum.dart';
 
 /// Style for a button.
 class ComponentStyle extends IEnum<int> {

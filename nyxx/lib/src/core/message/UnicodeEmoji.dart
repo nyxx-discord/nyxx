@@ -1,4 +1,10 @@
-part of nyxx;
+
+import 'package:nyxx/src/core/message/Emoji.dart';
+
+abstract class IUnicodeEmoji implements IEmoji {
+  /// Codepoint for emoji
+  String get code;
+}
 
 /// Represents unicode emoji. Contains only emoji code.
 class UnicodeEmoji implements IUnicodeEmoji, IEmoji {

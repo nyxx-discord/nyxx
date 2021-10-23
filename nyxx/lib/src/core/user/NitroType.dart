@@ -1,4 +1,4 @@
-part of nyxx;
+import 'package:nyxx/src/utils/IEnum.dart';
 
 ///Premium types denote the level of premium a user has.
 class NitroType extends IEnum<int> {
@@ -13,7 +13,7 @@ class NitroType extends IEnum<int> {
   @override
   bool operator ==(dynamic other) {
     if (other is int) {
-      return other == _value;
+      return other == value;
     }
 
     return super == other;

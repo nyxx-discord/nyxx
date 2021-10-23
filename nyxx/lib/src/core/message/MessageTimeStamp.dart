@@ -1,4 +1,4 @@
-part of nyxx;
+import 'package:nyxx/src/utils/IEnum.dart';
 
 /// Style of inline timestamp that can be embedded into message
 class TimeStampStyle extends IEnum<String> {
@@ -28,16 +28,28 @@ class TimeStampStyle extends IEnum<String> {
   String format(DateTime dateTime) => "<t:${dateTime.millisecondsSinceEpoch ~/ 1000}:${this.value}>";
 }
 
-class MessageTimeStamp {
+abstract class IMessageTimestamp {
+  /// Regex to parse message timestamp
   static final regex = RegExp(r"<t:(\d+)(:([tTDdFfR]+))?>");
 
   /// Style of timestamp
+  TimeStampStyle get style;
+
+  /// [DateTime] of timestamp
+  DateTime get timeStamp;
+}
+
+class MessageTimestamp implements IMessageTimestamp {
+  /// Style of timestamp
+  @override
   late final TimeStampStyle style;
 
   /// [DateTime] of timestamp
+  @override
   late final DateTime timeStamp;
 
-  MessageTimeStamp._new(Match match) {
+  /// Creates an instance of [MessageTimestamp]
+  MessageTimestamp(Match match) {
     this.timeStamp = DateTime.fromMillisecondsSinceEpoch(int.parse(match.group(1)!) * 1000);
 
     final styleMatch = match.group(3);

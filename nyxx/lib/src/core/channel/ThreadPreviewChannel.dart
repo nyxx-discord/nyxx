@@ -1,4 +1,56 @@
-part of nyxx;
+import 'dart:async';
+
+import 'package:nyxx/src/Nyxx.dart';
+import 'package:nyxx/src/core/Snowflake.dart';
+import 'package:nyxx/src/core/SnowflakeEntity.dart';
+import 'package:nyxx/src/core/channel/CacheableTextChannel.dart';
+import 'package:nyxx/src/core/channel/Channel.dart';
+import 'package:nyxx/src/core/channel/ITextChannel.dart';
+import 'package:nyxx/src/core/channel/ThreadChannel.dart';
+import 'package:nyxx/src/core/channel/guild/TextGuildChannel.dart';
+import 'package:nyxx/src/core/guild/Guild.dart';
+import 'package:nyxx/src/core/message/Message.dart';
+import 'package:nyxx/src/core/user/Member.dart';
+import 'package:nyxx/src/internal/cache/Cache.dart';
+import 'package:nyxx/src/internal/cache/Cacheable.dart';
+import 'package:nyxx/src/typedefs.dart';
+import 'package:nyxx/src/utils/builders/MessageBuilder.dart';
+import 'package:nyxx/src/utils/builders/ThreadBuilder.dart';
+
+abstract class IThreadPreviewChannel implements IChannel, ITextChannel {
+  /// Name of the channel
+  String get name;
+
+  /// Approximate message count
+  int get messageCount;
+
+  /// Approximate member count
+  int get memberCount;
+
+  /// Guild where the thread is located
+  Cacheable<Snowflake, IGuild> get guild;
+
+  /// The text channel where the thread was made
+  CacheableTextChannel<ITextGuildChannel> get parentChannel;
+
+  /// Initial author of the thread
+  Cacheable<Snowflake, IMember> get owner;
+
+  /// Preview of initial members
+  List<Cacheable<Snowflake, IMember>> get memberPreview;
+
+  /// If the thread has been archived
+  bool get archived;
+
+  /// When the thread will be archived
+  DateTime get archivedTime;
+
+  /// How long till the thread is archived
+  ThreadArchiveTime get archivedAfter;
+
+  /// Get the actual thread channel from the preview
+  ChannelCacheable<IThreadChannel> getThreadChannel();
+}
 
 /// Given when a thread is created as only partial information is available. If you want the final channel use [getThreadChannel]
 class ThreadPreviewChannel extends Channel implements IThreadPreviewChannel {

@@ -1,4 +1,77 @@
-part of nyxx;
+import 'dart:async';
+import 'dart:io';
+import 'dart:isolate';
+
+import 'package:nyxx/src/core/Snowflake.dart';
+import 'package:nyxx/src/core/guild/ClientUser.dart';
+import 'package:nyxx/src/events/ChannelEvents.dart';
+import 'package:nyxx/src/events/DisconnectEvent.dart';
+import 'package:nyxx/src/events/GuildEvents.dart';
+import 'package:nyxx/src/events/InviteEvents.dart';
+import 'package:nyxx/src/events/MemberChunkEvent.dart';
+import 'package:nyxx/src/events/MessageEvents.dart';
+import 'package:nyxx/src/events/PresenceUpdateEvent.dart';
+import 'package:nyxx/src/events/RawEvent.dart';
+import 'package:nyxx/src/events/ThreadCreateEvent.dart';
+import 'package:nyxx/src/events/ThreadDeletedEvent.dart';
+import 'package:nyxx/src/events/ThreadMembersUpdateEvent.dart';
+import 'package:nyxx/src/events/TypingEvent.dart';
+import 'package:nyxx/src/events/UserUpdateEvent.dart';
+import 'package:nyxx/src/events/VoiceServerUpdateEvent.dart';
+import 'package:nyxx/src/events/VoiceStateUpdateEvent.dart';
+import 'package:nyxx/src/internal/Constants.dart';
+import 'package:nyxx/src/internal/EventController.dart';
+import 'package:nyxx/src/internal/exceptions/InvalidShardException.dart';
+import 'package:nyxx/src/internal/interfaces/Disposable.dart';
+import 'package:nyxx/src/internal/shard/ShardManager.dart';
+import 'package:nyxx/src/internal/shard/shardHandler.dart';
+import 'package:nyxx/src/typedefs.dart';
+import 'package:nyxx/src/utils/builders/PresenceBuilder.dart';
+
+abstract class IShard implements Disposable {
+  /// Id of shard
+  int get id;
+
+  /// Reference to [ShardManager]
+  IShardManager get manager;
+
+  /// Emitted when the shard encounters a connection error
+  Stream<IShard> get onDisconnect;
+
+  /// Emitted when shard receives member chunk.
+  Stream<IMemberChunkEvent> get onMemberChunk;
+
+  /// Emitted when the shard resumed its connection
+  Stream<IShard> get onResume;
+
+  /// List of handled guild ids
+  List<Snowflake> get guilds;
+
+  /// Gets the latest gateway latency.
+  ///
+  /// To calculate the gateway latency, nyxx measures the time it takes for Discord to answer the gateway
+  /// heartbeat packet with a heartbeat ack packet. Note this value is updated each time gateway responses to ack.
+  Duration get gatewayLatency;
+
+  /// Returns true if shard is connected to websocket
+  bool get connected;
+
+  /// Sends WS data.
+  void send(int opCode, dynamic d);
+
+  /// Updates clients voice state for [IGuild] with given [guildId]
+  void changeVoiceState(Snowflake? guildId, Snowflake? channelId, {bool selfMute = false, bool selfDeafen = false});
+
+  /// Allows to set presence for current shard.
+  void setPresence(PresenceBuilder presenceBuilder);
+
+  /// Syncs all guilds
+  void guildSync();
+
+  /// Allows to request members objects from gateway
+  /// [guild] can be either Snowflake or Iterable<Snowflake>
+  void requestMembers(/* Snowflake|Iterable<Snowflake> */ dynamic guild, {String? query, Iterable<Snowflake>? userIds, int limit = 0, bool presences = false, String? nonce});
+}
 
 /// Shard is single connection to discord gateway. Since bots can grow big, handling thousand of guild on same websocket connections would be very hand.
 /// Traffic can be split into different connections which can be run on different processes or even different machines.

@@ -16,12 +16,12 @@ class UserStatus extends IEnum<String> {
   bool get isOnline => this != UserStatus.offline;
 
   @override
-  String toString() => _value;
+  String toString() => value;
 
   @override
   bool operator ==(dynamic other) {
     if (other is String) {
-      return other.toString() == _value;
+      return other.toString() == value;
     }
 
     return super == other;

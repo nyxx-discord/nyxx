@@ -1,28 +1,56 @@
-part of nyxx;
+import 'package:nyxx/src/Nyxx.dart';
+import 'package:nyxx/src/core/Snowflake.dart';
+import 'package:nyxx/src/core/SnowflakeEntity.dart';
+import 'package:nyxx/src/core/channel/DMChannel.dart';
+import 'package:nyxx/src/core/channel/ThreadChannel.dart';
+import 'package:nyxx/src/core/channel/guild/CategoryGuildChannel.dart';
+import 'package:nyxx/src/core/channel/guild/GuildChannel.dart';
+import 'package:nyxx/src/core/channel/guild/TextGuildChannel.dart';
+import 'package:nyxx/src/core/channel/guild/VoiceChannel.dart';
+import 'package:nyxx/src/internal/interfaces/Disposable.dart';
+import 'package:nyxx/src/typedefs.dart';
+import 'package:nyxx/src/utils/IEnum.dart';
+
+abstract class IChannel implements SnowflakeEntity, Disposable
+{
+  /// Reference to client
+  INyxx get client;
+
+  /// Type of this channel
+  ChannelType get channelType;
+
+  /// Deletes channel if guild channel or closes DM if DM channel
+  Future<void> delete();
+}
 
 /// A channel.
 /// Abstract base class that defines the base methods and/or properties for all Discord channel types.
 /// Generic interface for all channels
-abstract class IChannel extends SnowflakeEntity implements Disposable {
+abstract class Channel extends SnowflakeEntity implements IChannel {
   /// Type of this channel
+  @override
   late final ChannelType channelType;
 
   /// Reference to client
+  @override
   final INyxx client;
 
-  IChannel._new(this.client, RawApiMap raw): super(Snowflake(raw["id"])){
+  /// Creates instance of [Channel]
+  Channel(this.client, RawApiMap raw): super(Snowflake(raw["id"])){
     this.channelType = ChannelType.from(raw["type"] as int);
   }
 
-  IChannel._raw(this.client, Snowflake id, this.channelType): super(id);
+  /// Creates instance of [Channel] as raw
+  Channel.raw(this.client, Snowflake id, this.channelType): super(id);
 
-  factory IChannel._deserialize(INyxx client, RawApiMap raw, [Snowflake? guildId]) {
+  /// Deserializes and matches payload to create appropriate instance of [Channel]
+  factory Channel.deserialize(INyxx client, RawApiMap raw, [Snowflake? guildId]) {
     final type = raw["type"] as int;
 
     switch (type) {
       case 1:
       case 3:
-        return DMChannel._new(client, raw);
+        return DMChannel(client, raw);
       case 0:
       case 5:
         return TextGuildChannel(client, raw, guildId);
@@ -42,16 +70,15 @@ abstract class IChannel extends SnowflakeEntity implements Disposable {
   }
 
   /// Deletes channel if guild channel or closes DM if DM channel
+  @override
   Future<void> delete() => this.client.httpEndpoints.deleteChannel(this.id);
 
   @override
-  Future<void> dispose() async {
-    // Empty body
-  }
+  Future<void> dispose() async {}
 }
 
 class _InternalChannel extends GuildChannel {
-  _InternalChannel._new(INyxx client, RawApiMap raw, [Snowflake? guildId]): super._new(client, raw, guildId);
+  _InternalChannel._new(INyxx client, RawApiMap raw, [Snowflake? guildId]): super(client, raw, guildId);
 }
 
 /// Enum for possible channel types
@@ -84,7 +111,7 @@ class ChannelType extends IEnum<int> {
   @override
   bool operator ==(dynamic other) {
     if (other is int) {
-      return this._value == other;
+      return this.value == other;
     }
 
     return super == other;

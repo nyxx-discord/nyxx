@@ -22,17 +22,21 @@ abstract class IReferencedMessage implements Convertable<ReplyBuilder> {
 /// Message wrapper that other message replies to.
 /// [message] field can be null of two reasons: backend error or message was deleted.
 /// In first case [isBackendFetchError] will be true and [isDeleted] in second case.
-class ReferencedMessage implements Convertable<ReplyBuilder> {
+class ReferencedMessage implements IReferencedMessage {
   /// Message object of reply
-  late final Message? message;
+  @override
+  late final IMessage? message;
 
   /// If true the backend couldn't fetch the message
+  @override
   late final bool isBackendFetchError;
 
   /// If true message was deleted
+  @override
   late final bool isDeleted;
 
   /// True if references message exists and is available
+  @override
   bool get exists => !isDeleted && !isBackendFetchError;
 
   ReferencedMessage(INyxx client, RawApiMap raw) {

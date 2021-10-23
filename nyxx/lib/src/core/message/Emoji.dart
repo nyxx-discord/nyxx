@@ -1,4 +1,4 @@
-part of nyxx;
+
 
 /// Represents emoji. Subclasses provides abstraction to custom emojis(like [GuildEmoji]).
 abstract class IEmoji {

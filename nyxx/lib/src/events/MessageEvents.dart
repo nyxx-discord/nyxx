@@ -1,4 +1,24 @@
-part of nyxx;
+import 'package:nyxx/src/Nyxx.dart';
+import 'package:nyxx/src/core/Snowflake.dart';
+import 'package:nyxx/src/core/channel/CacheableTextChannel.dart';
+import 'package:nyxx/src/core/channel/ITextChannel.dart';
+import 'package:nyxx/src/core/embed/Embed.dart';
+import 'package:nyxx/src/core/guild/Guild.dart';
+import 'package:nyxx/src/core/message/Emoji.dart';
+import 'package:nyxx/src/core/message/GuildEmoji.dart';
+import 'package:nyxx/src/core/message/Message.dart';
+import 'package:nyxx/src/core/message/Reaction.dart';
+import 'package:nyxx/src/core/message/UnicodeEmoji.dart';
+import 'package:nyxx/src/core/user/Member.dart';
+import 'package:nyxx/src/core/user/User.dart';
+import 'package:nyxx/src/internal/cache/Cacheable.dart';
+import 'package:nyxx/src/typedefs.dart';
+
+/// Sent when a new message is received.
+abstract class IMessageReceivedEvent {
+  /// The new message.
+  IMessage get message;
+}
 
 /// Sent when a new message is received.
 class MessageReceivedEvent implements IMessageReceivedEvent {

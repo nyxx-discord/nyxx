@@ -1,84 +1,103 @@
-part of nyxx;
 
-/// Generic interface for caching entities.
-/// Wraps [Map] interface and provides utilities for manipulating cache.
-class Cache<T, S> implements Disposable {
-  late Map<T, S> _cache;
+import 'dart:collection';
 
-  /// Returns values of cache
-  Iterable<S> get values => _cache.values;
+import 'package:nyxx/src/core/Snowflake.dart';
+import 'package:nyxx/src/core/message/Message.dart';
 
-  /// Returns key's values of cache
-  Iterable<T> get keys => _cache.keys;
+// typedef Cache<T> = Map<Snowflake, T>;
+//
+// extension CacheExtensions on Cache {
+//
+// }
 
-  /// Find one element in cache
-  S? findOne(bool Function(S item) predicate) {
-    try {
-      return values.firstWhere(predicate);
-    } on Error {
-      return null;
+class MessageCache extends SnowflakeCache<IMessage> {
+  final int cacheSize;
+
+  MessageCache(this.cacheSize) : super();
+
+  IMessage put(IMessage message) {
+    if (this.length <= this.cacheSize) {
+      this[message.id] = message;
     }
+
+    return message;
   }
+}
 
-  /// Find matching items based of [predicate]
-  Iterable<S> find(bool Function(S item) predicate) => values.where(predicate);
+class SnowflakeCache<V> implements Map<Snowflake, V> {
+  final Map<Snowflake, V> _map;
 
-  /// Returns element with key [key]
-  S? operator [](T key) => _cache.containsKey(key) ? _cache[key] : null;
-
-  /// Sets [item] for [key]
-  void operator []=(T key, S item) => _cache[key] = item;
-
-  /// Puts [item] to collection if [key] doesn't exist in cache
-  S addIfAbsent(T key, S item) {
-    if (!_cache.containsKey(key)) return _cache[key] = item;
-    return item;
-  }
-
-  /// Returns true if cache contains [key]
-  bool hasKey(T key) => _cache.containsKey(key);
-
-  /// Returns true if cache contains [value]
-  bool hasValue(S value) => _cache.containsValue(value);
-
-  /// Clear cache
-  void invalidate() => _cache.clear();
-
-  /// Add to cache [value] associated with [key]
-  void add(T key, S value) => _cache[key] = value;
-
-  /// Add [Map] to cache.
-  void addMap(Map<T, S> mp) => _cache.addAll(mp);
-
-  /// Remove [key] with associated with it value
-  void remove(T key) => _cache.remove(key);
-
-  /// Remove everything where [predicate] is true
-  void removeWhere(bool Function(T key, S value) predicate) => _cache.removeWhere(predicate);
-
-  /// Loop over elements from cache
-  void forEach(void Function(T, S) f) => _cache.forEach(f);
-
-  /// Take [count] elements from cache. Returns Iterable of cache values
-  Iterable<S> take(int count) => values.take(count);
-
-  /// Takes [count] last elements from cache. Returns Iterable of cache values
-  Iterable<S> takeLast(int count) => values.toList().sublist(values.length - count);
-
-  /// Get first element
-  S? get first => _cache.values.first;
-
-  /// Get last element
-  S get last => _cache.values.last;
-
-  /// Get number of elements from cache
-  int get count => _cache.length;
-
-  /// Returns cache as Map
-  Map<T, S> get asMap => this._cache;
+  /// Creates an instance of [SnowflakeCache]
+  const SnowflakeCache([Map<Snowflake, V> map = const {}]) : _map = map;
 
   @override
-  Future<void> dispose() async {
-    this._cache.clear();
+  Map<RK, RV> cast<RK, RV>() => _map.cast<RK, RV>();
+  @override
+  V? operator [](Object? key) => _map[key];
+  @override
+  void operator []=(Snowflake key, V value) {
+    _map[key] = value;
+  }
+
+  @override
+  void addAll(Map<Snowflake, V> other) {
+    _map.addAll(other);
+  }
+
+  @override
+  void clear() {
+    _map.clear();
+  }
+
+  @override
+  V putIfAbsent(Snowflake key, V Function() ifAbsent) => _map.putIfAbsent(key, ifAbsent);
+  @override
+  bool containsKey(Object? key) => _map.containsKey(key);
+  @override
+  bool containsValue(Object? value) => _map.containsValue(value);
+  @override
+  void forEach(void Function(Snowflake key, V value) action) {
+    _map.forEach(action);
+  }
+
+  @override
+  bool get isEmpty => _map.isEmpty;
+  @override
+  bool get isNotEmpty => _map.isNotEmpty;
+  @override
+  int get length => _map.length;
+  @override
+  Iterable<Snowflake> get keys => _map.keys;
+  @override
+  V? remove(Object? key) => _map.remove(key);
+  @override
+  String toString() => _map.toString();
+  @override
+  Iterable<V> get values => _map.values;
+
+  @override
+  Iterable<MapEntry<Snowflake, V>> get entries => _map.entries;
+
+  @override
+  void addEntries(Iterable<MapEntry<Snowflake, V>> entries) {
+    _map.addEntries(entries);
+  }
+
+  @override
+  Map<K2, V2> map<K2, V2>(MapEntry<K2, V2> Function(Snowflake key, V value) transform) =>
+      _map.map<K2, V2>(transform);
+
+  @override
+  V update(Snowflake key, V Function(V value) update, {V Function()? ifAbsent}) =>
+      _map.update(key, update, ifAbsent: ifAbsent);
+
+  @override
+  void updateAll(V Function(Snowflake key, V value) update) {
+    _map.updateAll(update);
+  }
+
+  @override
+  void removeWhere(bool Function(Snowflake key, V value) test) {
+    _map.removeWhere(test);
   }
 }

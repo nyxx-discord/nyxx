@@ -1,10 +1,10 @@
-part of nyxx;
+import 'package:nyxx/src/Nyxx.dart';
+import 'package:nyxx/src/typedefs.dart';
 
 /// Provides abstraction for builders
 // ignore: one_member_abstracts
 abstract class Builder {
   /// Returns built response for api
-  @meta.protected
   RawApiMap build();
 }
 
@@ -12,6 +12,5 @@ abstract class Builder {
 // ignore: one_member_abstracts
 abstract class BuilderWithClient {
   /// Returns built response for api
-  @meta.protected
   RawApiMap build(INyxx client);
 }

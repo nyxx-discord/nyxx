@@ -1,4 +1,4 @@
-part of nyxx;
+
 
 /// Permissions constants
 class PermissionsConstants {

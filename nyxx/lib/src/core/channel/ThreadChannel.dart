@@ -1,7 +1,46 @@
-part of nyxx;
+import 'dart:async';
+
+import 'package:nyxx/src/Nyxx.dart';
+import 'package:nyxx/src/core/Snowflake.dart';
+import 'package:nyxx/src/core/SnowflakeEntity.dart';
+import 'package:nyxx/src/core/channel/CacheableTextChannel.dart';
+import 'package:nyxx/src/core/channel/ITextChannel.dart';
+import 'package:nyxx/src/core/channel/guild/GuildChannel.dart';
+import 'package:nyxx/src/core/guild/Guild.dart';
+import 'package:nyxx/src/core/message/Message.dart';
+import 'package:nyxx/src/core/user/Member.dart';
+import 'package:nyxx/src/core/user/User.dart';
+import 'package:nyxx/src/internal/cache/Cache.dart';
+import 'package:nyxx/src/internal/cache/Cacheable.dart';
+import 'package:nyxx/src/typedefs.dart';
+import 'package:nyxx/src/utils/builders/MessageBuilder.dart';
+import 'package:nyxx/src/utils/builders/ThreadBuilder.dart';
+
+abstract class IThreadMember implements SnowflakeEntity {
+  /// Reference to client
+  INyxx get client;
+
+  /// Reference to [ThreadChannel]
+  ICacheableTextChannel<IThreadChannel> get thread;
+
+  /// When member joined thread
+  DateTime get joinTimestamp;
+
+  /// Any user-thread settings, currently only used for notifications
+  int get flags;
+
+  /// [ThreadMember]s [IGuild]
+  Cacheable<Snowflake, IGuild> get guild;
+
+  /// [Cacheable] of [IUser]
+  Cacheable<Snowflake, IUser> get user;
+
+  /// [Cacheable] of [IMember]
+  Cacheable<Snowflake, IMember> get member;
+}
 
 /// Member of [ThreadChannel]
-class ThreadMember extends SnowflakeEntity {
+class ThreadMember extends SnowflakeEntity implements IThreadMember {
   /// Reference to client
   @override
   final INyxx client;

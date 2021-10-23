@@ -85,7 +85,7 @@ class RoleBuilder extends Builder {
   @override
   RawApiMap build() => <String, dynamic>{
         "name": name,
-        if (color != null) "color": color!._value,
+        if (color != null) "color": color!.value,
         if (hoist != null) "hoist": hoist,
         if (position != null) "position": position,
         if (permission != null) "permission": permission!.build().build(),
@@ -144,7 +144,7 @@ class ChannelBuilder extends Builder {
   @override
   RawApiMap build() => {
     if (name != null) "name": name,
-    if (type != null) "type": type!._value,
+    if (type != null) "type": type!.value,
     if (topic != null) "topic": topic,
     if (bitrate != null) "bitrate": bitrate,
     if (userLimit != null) "user_limit": userLimit,

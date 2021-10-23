@@ -1,4 +1,18 @@
-part of nyxx;
+
+import 'package:nyxx/src/Nyxx.dart';
+import 'package:nyxx/src/core/Snowflake.dart';
+import 'package:nyxx/src/core/channel/CacheableTextChannel.dart';
+import 'package:nyxx/src/core/channel/Channel.dart';
+import 'package:nyxx/src/core/channel/ITextChannel.dart';
+import 'package:nyxx/src/core/channel/guild/VoiceChannel.dart';
+import 'package:nyxx/src/core/guild/Guild.dart';
+import 'package:nyxx/src/internal/cache/Cacheable.dart';
+import 'package:nyxx/src/typedefs.dart';
+
+abstract class IChannelCreateEvent {
+  /// The channel that was created, either a [GuildChannel] or [DMChannel]
+  IChannel get channel;
+}
 
 // TODO: Decide what about guild store channels
 /// Sent when a channel is created.

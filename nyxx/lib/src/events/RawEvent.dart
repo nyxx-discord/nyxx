@@ -1,4 +1,5 @@
-part of nyxx;
+import 'package:nyxx/src/internal/shard/Shard.dart';
+import 'package:nyxx/src/typedefs.dart';
 
 /// Raw gateway event
 /// RawEvent is dispatched ONLY for payload that doesn't match any event built in into Nyxx.

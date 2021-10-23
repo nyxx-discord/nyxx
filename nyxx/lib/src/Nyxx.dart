@@ -1,22 +1,77 @@
-part of nyxx;
+import 'dart:async';
+import 'dart:io';
+import 'dart:isolate';
 
-typedef RawApiMap = Map<String, dynamic>;
+import 'package:logging/logging.dart';
+import 'package:nyxx/src/ClientOptions.dart';
+import 'package:nyxx/src/core/Invite.dart';
+import 'package:nyxx/src/core/Snowflake.dart';
+import 'package:nyxx/src/core/application/ClientOAuth2Application.dart';
+import 'package:nyxx/src/core/channel/Channel.dart';
+import 'package:nyxx/src/core/guild/ClientUser.dart';
+import 'package:nyxx/src/core/guild/Guild.dart';
+import 'package:nyxx/src/core/guild/GuildPreview.dart';
+import 'package:nyxx/src/core/guild/Webhook.dart';
+import 'package:nyxx/src/core/message/Sticker.dart';
+import 'package:nyxx/src/core/user/User.dart';
+import 'package:nyxx/src/internal/ConnectionManager.dart';
+import 'package:nyxx/src/internal/Constants.dart';
+import 'package:nyxx/src/internal/EventController.dart';
+import 'package:nyxx/src/internal/HttpEndpoints.dart';
+import 'package:nyxx/src/internal/exceptions/MissingTokenError.dart';
+import 'package:nyxx/src/internal/http/HttpHandler.dart';
+import 'package:nyxx/src/internal/interfaces/Disposable.dart';
+import 'package:nyxx/src/internal/shard/ShardManager.dart';
+import 'utils/builders/PresenceBuilder.dart';
+
+class NyxxFactory {
+  static INyxx createNyxxRest(String token, int intents,
+      {ClientOptions? options,
+        CacheOptions? cacheOptions,
+        bool ignoreExceptions = true,
+        bool useDefaultLogger = true}) =>
+      NyxxRest(token, intents,
+          options: options,
+          cacheOptions: cacheOptions,
+          ignoreExceptions: ignoreExceptions,
+          useDefaultLogger: useDefaultLogger
+      );
+
+  static INyxxWebsocket createNyxxWebsocket(String token, int intents,
+      {ClientOptions? options,
+        CacheOptions? cacheOptions,
+        bool ignoreExceptions = true,
+        bool useDefaultLogger = true}) =>
+      NyxxWebsocket(token,intents,
+          options: options,
+          cacheOptions: cacheOptions,
+          ignoreExceptions: ignoreExceptions,
+          useDefaultLogger: useDefaultLogger
+      );
+}
 
 /// Generic interface for Nyxx. Represents basic functionality of Nyxx that are always available.
 abstract class INyxx implements Disposable {
-  _HttpHandler get _http;
-  _HttpEndpoints get _httpEndpoints;
+  /// Reference to HttpHandler
+  HttpHandler get httpHandler;
 
-  ClientOptions get _options;
-  CacheOptions get _cacheOptions;
+  /// Returns handler for all available REST API action.
+  IHttpEndpoints get httpEndpoints;
 
-  String get _token;
+  /// Can be used to edit options after client initialised. Used by Nyxx.interactions to enable raw events
+  ClientOptions get options;
+
+  /// Options for cache handling in nyxx
+  CacheOptions get cacheOptions;
+
+  /// Token of instance
+  String get token;
 
   /// All of the guilds the bot is in. Can be empty or can miss guilds on (READY_EVENT).
-  Cache<Snowflake, Guild> get guilds;
+  Map<Snowflake, IGuild> get guilds;
 
   /// All of the channels the bot can see.
-  ChannelCache get channels;
+  Map<Snowflake, IChannel> get channels;
 
   /// All of the users the bot can see. Does not have offline users
   /// without `forceFetchUsers` enabled.
@@ -58,47 +113,55 @@ class NyxxRest extends INyxxRest {
   final String token;
 
   @override
-  late final ClientOptions _options;
+  late final ClientOptions options;
+
   @override
-  late final CacheOptions _cacheOptions;
+  late final CacheOptions cacheOptions;
+
   @override
-  late final _HttpHandler _http;
+  late final HttpHandler httpHandler;
+
   @override
-  late final _HttpEndpoints _httpEndpoints;
+  late final IHttpEndpoints httpEndpoints;
 
   /// When identifying to the gateway, you have to specify an intents parameter which
   /// allows you to conditionally subscribe to pre-defined "intents", groups of events defined by Discord.
   /// If you do not specify a certain intent, you will not receive any of the gateway events that are batched into that group.
   /// Since api v8 its required upon connecting to gateway.
+  @override
   final int intents;
 
   /// The current bot user.
-  late ClientUser self;
+  @override
+  late IClientUser self;
 
   /// The bot"s OAuth2 app.
-  late ClientOAuth2Application app;
+  @override
+  late IClientOAuth2Application app;
 
   /// All of the guilds the bot is in. Can be empty or can miss guilds on (READY_EVENT).
   @override
-  late final Cache<Snowflake, Guild> guilds;
+  late final Map<Snowflake, Guild> guilds;
 
   /// All of the channels the bot can see.
   @override
-  late final ChannelCache channels;
+  late final Map<Snowflake, IChannel>  channels;
 
   /// All of the users the bot can see. Does not have offline users
   /// without `forceFetchUsers` enabled.
   @override
-  late final Cache<Snowflake, User> users;
+  late final Map<Snowflake, IUser> users;
 
   /// True if client is ready.
   @override
   bool ready = false;
 
   /// The current version of `nyxx`
+  @override
   String get version => Constants.version;
 
   /// Gets an bot invite link with zero permissions
+  @override
   String get inviteLink => app.getInviteUrl();
 
   @override
@@ -112,14 +175,14 @@ class NyxxRest extends INyxxRest {
 
   /// Creates and logs in a new client. If [ignoreExceptions] is true (by default is)
   /// isolate will ignore all exceptions and continue to work.
-  NyxxRest(this._token, this.intents,
+  NyxxRest(this.token, this.intents,
       {ClientOptions? options,
         CacheOptions? cacheOptions,
         bool ignoreExceptions = true,
         bool useDefaultLogger = true}) {
     this._logger.fine("Staring Nyxx: intents: [$intents]; ignoreExceptions: [$ignoreExceptions]; useDefaultLogger: [$useDefaultLogger]");
 
-    if (_token.isEmpty) {
+    if (token.isEmpty) {
       throw MissingTokenError();
     }
 
@@ -155,12 +218,12 @@ class NyxxRest extends INyxxRest {
       Isolate.current.addErrorListener(errorsPort.sendPort);
     }
 
-    this._options = options ?? ClientOptions();
-    this._cacheOptions = cacheOptions ?? CacheOptions();
+    this.options = options ?? ClientOptions();
+    this.cacheOptions = cacheOptions ?? CacheOptions();
 
-    this.guilds = _SnowflakeCache();
-    this.channels = ChannelCache._new();
-    this.users = _SnowflakeCache();
+    this.guilds = {};
+    this.channels = {};
+    this.users = {};
 
     this.httpHandler = HttpHandler(this);
     this.httpEndpoints = HttpEndpoints(this);
@@ -258,133 +321,11 @@ class NyxxWebsocket extends NyxxRest implements INyxxWebsocket {
   late final ConnectionManager ws; // ignore: unused_field
 
   /// Current client"s shard
-  late ShardManager shardManager;
+  @override
+  late final IShardManager shardManager;
 
-  /// Emitted when a shard is disconnected from the websocket.
-  late Stream<DisconnectEvent> onDisconnect;
-
-  /// Emitted when the client is ready. Should be sent only once.
-  late Stream<ReadyEvent> onReady;
-
-  /// Emitted when a message is received. It includes private messages.
-  late Stream<MessageReceivedEvent> onMessageReceived;
-
-  /// Emitted when private message is received.
-  late Stream<MessageReceivedEvent> onDmReceived;
-
-  /// Emitted when channel"s pins are updated.
-  late Stream<ChannelPinsUpdateEvent> onChannelPinsUpdate;
-
-  /// Emitted when guild"s emojis are changed.
-  late Stream<GuildEmojisUpdateEvent> onGuildEmojisUpdate;
-
-  /// Emitted when a message is edited. Old message can be null if isn"t cached.
-  late Stream<MessageUpdateEvent> onMessageUpdate;
-
-  /// Emitted when a message is deleted.
-  late Stream<MessageDeleteEvent> onMessageDelete;
-
-  /// Emitted when a channel is created.
-  late Stream<ChannelCreateEvent> onChannelCreate;
-
-  /// Emitted when a channel is updated.
-  late Stream<ChannelUpdateEvent> onChannelUpdate;
-
-  /// Emitted when a channel is deleted.
-  late Stream<ChannelDeleteEvent> onChannelDelete;
-
-  /// Emitted when a member is banned.
-  late Stream<GuildBanAddEvent> onGuildBanAdd;
-
-  /// Emitted when a user is unbanned.
-  late Stream<GuildBanRemoveEvent> onGuildBanRemove;
-
-  /// Emitted when the client joins a guild.
-  late Stream<GuildCreateEvent> onGuildCreate;
-
-  /// Emitted when a guild is updated.
-  late Stream<GuildUpdateEvent> onGuildUpdate;
-
-  /// Emitted when the client leaves a guild.
-  late Stream<GuildDeleteEvent> onGuildDelete;
-
-  /// Emitted when a member joins a guild.
-  late Stream<GuildMemberAddEvent> onGuildMemberAdd;
-
-  /// Emitted when a member is updated.
-  late Stream<GuildMemberUpdateEvent> onGuildMemberUpdate;
-
-  /// Emitted when a user leaves a guild.
-  late Stream<GuildMemberRemoveEvent> onGuildMemberRemove;
-
-  /// Emitted when a member"s presence is changed.
-  late Stream<PresenceUpdateEvent> onPresenceUpdate;
-
-  /// Emitted when a user starts typing.
-  late Stream<TypingEvent> onTyping;
-
-  /// Emitted when a role is created.
-  late Stream<RoleCreateEvent> onRoleCreate;
-
-  /// Emitted when a role is updated.
-  late Stream<RoleUpdateEvent> onRoleUpdate;
-
-  /// Emitted when a role is deleted.
-  late Stream<RoleDeleteEvent> onRoleDelete;
-
-  /// Emitted when many messages are deleted at once
-  late Stream<MessageDeleteBulkEvent> onMessageDeleteBulk;
-
-  /// Emitted when a user adds a reaction to a message.
-  late Stream<MessageReactionEvent> onMessageReactionAdded;
-
-  /// Emitted when a user deletes a reaction to a message.
-  late Stream<MessageReactionEvent> onMessageReactionRemove;
-
-  /// Emitted when a user explicitly removes all reactions from a message.
-  late Stream<MessageReactionsRemovedEvent> onMessageReactionsRemoved;
-
-  /// Emitted when someone joins/leaves/moves voice channel.
-  late Stream<VoiceStateUpdateEvent> onVoiceStateUpdate;
-
-  /// Emitted when a guild"s voice server is updated.
-  /// This is sent when initially connecting to voice, and when the current voice instance fails over to a new server.
-  late Stream<VoiceServerUpdateEvent> onVoiceServerUpdate;
-
-  /// Emitted when user was updated
-  late Stream<UserUpdateEvent> onUserUpdate;
-
-  /// Emitted when bot is mentioned
-  late Stream<MessageReceivedEvent> onSelfMention;
-
-  /// Emitted when invite is created
-  late Stream<InviteCreatedEvent> onInviteCreated;
-
-  /// Emitted when invite is deleted
-  late Stream<InviteDeletedEvent> onInviteDeleted;
-
-  /// Emitted when a bot removes all instances of a given emoji from the reactions of a message
-  late Stream<MessageReactionRemoveEmojiEvent> onMessageReactionRemoveEmoji;
-
-  /// Emitted when a thread is created
-  late Stream<ThreadCreateEvent> onThreadCreated;
-
-  /// Fired when a thread has a member added/removed
-  late Stream<ThreadMembersUpdateEvent> onThreadMembersUpdate;
-
-  /// Fired when a thread gets deleted
-  late Stream<ThreadDeletedEvent> onThreadDelete;
-  /// Emitted when stage channel instance is created
-  late Stream<StageInstanceEvent> onStageInstanceCreate;
-
-  /// Emitted when stage channel instance is updated
-  late Stream<StageInstanceEvent> onStageInstanceUpdate;
-
-  /// Emitted when stage channel instance is deleted
-  late Stream<StageInstanceEvent> onStageInstanceDelete;
-
-  /// Emitted when stage channel instance is deleted
-  late Stream<GuildStickerUpdate> onGuildStickersUpdate;
+  @override
+  late final IWebsocketEventController eventsWs;
 
   /// Creates and logs in a new client. If [ignoreExceptions] is true (by default is)
   /// isolate will ignore all exceptions and continue to work.
@@ -403,10 +344,12 @@ class NyxxWebsocket extends NyxxRest implements INyxxWebsocket {
   }
 
   /// This endpoint is only for public guilds if bot is not int the guild.
-  Future<GuildPreview> fetchGuildPreview(Snowflake guildId) async =>
+  @override
+  Future<IGuildPreview> fetchGuildPreview(Snowflake guildId) async =>
     this.httpEndpoints.fetchGuildPreview(guildId);
 
   /// Returns guild with given [guildId]
+  @override
   Future<IGuild> fetchGuild(Snowflake guildId) =>
       this.httpEndpoints.fetchGuild(guildId);
 
@@ -414,6 +357,7 @@ class NyxxWebsocket extends NyxxRest implements INyxxWebsocket {
   /// ```
   /// var channel = await client.getChannel<TextChannel>(Snowflake("473853847115137024"));
   /// ```
+  @override
   Future<T> fetchChannel<T extends IChannel>(Snowflake channelId) =>
       this.httpEndpoints.fetchChannel(channelId);
 
@@ -426,6 +370,7 @@ class NyxxWebsocket extends NyxxRest implements INyxxWebsocket {
 
   /// Gets a webhook by its id and/or token.
   /// If token is supplied authentication is not needed.
+  @override
   Future<IWebhook> fetchWebhook(Snowflake id, {String token = ""}) =>
       this.httpEndpoints.fetchWebhook(id, token: token);
 
@@ -435,10 +380,12 @@ class NyxxWebsocket extends NyxxRest implements INyxxWebsocket {
   /// ```
   /// var inv = client.getInvite("YMgffU8");
   /// ```
+  @override
   Future<IInvite> getInvite(String code) =>
       this.httpEndpoints.fetchInvite(code);
 
   /// Returns number of shards
+  @override
   int get shards => this.shardManager.shards.length;
 
   /// Sets presence for bot.
@@ -455,19 +402,23 @@ class NyxxWebsocket extends NyxxRest implements INyxxWebsocket {
   /// bot.setPresence(game: Activity.of("Super duper game", type: ActivityType.streaming, url: "https://twitch.tv/l7ssha"))
   /// ```
   /// `url` property in `Activity` can be only set when type is set to `streaming`
+  @override
   void setPresence(PresenceBuilder presenceBuilder) {
     this.shardManager.setPresence(presenceBuilder);
   }
 
   /// Join [ThreadChannel] with given [channelId]
+  @override
   Future<void> joinThread(Snowflake channelId) =>
       this.httpEndpoints.joinThread(channelId);
 
   /// Gets standard sticker with given id
+  @override
   Future<IStandardSticker> getSticker(Snowflake id) =>
       this.httpEndpoints.getSticker(id);
 
   /// List all nitro stickers packs
+  @override
   Stream<IStickerPack> listNitroStickerPacks() =>
       this.httpEndpoints.listNitroStickerPacks();
 

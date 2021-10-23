@@ -1,4 +1,4 @@
-part of nyxx;
+
 
 /// Gateway constants
 class OPCodes {

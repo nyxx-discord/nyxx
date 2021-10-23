@@ -83,7 +83,7 @@ class Invite implements IInvite {
     } else {
       this.inviter = null;
     }
-    
+
     if (raw["target_user"] != null) {
       this.targetUser = UserCacheable(client, Snowflake(raw["target_user"]["id"]));
     } else {

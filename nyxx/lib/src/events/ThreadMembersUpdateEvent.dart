@@ -1,4 +1,29 @@
-part of nyxx;
+import 'package:nyxx/src/Nyxx.dart';
+import 'package:nyxx/src/core/Snowflake.dart';
+import 'package:nyxx/src/core/channel/CacheableTextChannel.dart';
+import 'package:nyxx/src/core/channel/ThreadChannel.dart';
+import 'package:nyxx/src/core/guild/Guild.dart';
+import 'package:nyxx/src/core/user/Member.dart';
+import 'package:nyxx/src/core/user/User.dart';
+import 'package:nyxx/src/internal/cache/Cacheable.dart';
+import 'package:nyxx/src/typedefs.dart';
+
+abstract class IThreadMembersUpdateEvent {
+  /// The thread that was updated
+  CacheableTextChannel<IThreadChannel> get thread;
+
+  /// The guild it was updated in
+  Cacheable<Snowflake, IGuild> get guild;
+
+  /// The members that were added. Note that they are not cached
+  Iterable<Cacheable<Snowflake, IMember>> get addedMembers;
+
+  /// The approximate number of members in the thread, capped at 50
+  int get approxMemberCount;
+
+  /// Users who were removed from the thread
+  Iterable<Cacheable<Snowflake, IUser>> get removedUsers;
+}
 
 /// Fired when a thread has a member added/removed
 class ThreadMembersUpdateEvent implements IThreadMembersUpdateEvent {

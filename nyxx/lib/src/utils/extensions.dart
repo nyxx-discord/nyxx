@@ -1,4 +1,5 @@
-part of nyxx;
+import 'package:nyxx/src/core/Snowflake.dart';
+import 'package:nyxx/src/core/SnowflakeEntity.dart';
 
 /// Extension on int
 extension IntExtensions on int {

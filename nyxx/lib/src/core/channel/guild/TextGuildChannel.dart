@@ -1,4 +1,61 @@
-part of nyxx;
+import 'dart:async';
+
+import 'package:nyxx/src/Nyxx.dart';
+import 'package:nyxx/src/core/Snowflake.dart';
+import 'package:nyxx/src/core/SnowflakeEntity.dart';
+import 'package:nyxx/src/core/channel/ITextChannel.dart';
+import 'package:nyxx/src/core/channel/ThreadChannel.dart';
+import 'package:nyxx/src/core/channel/ThreadPreviewChannel.dart';
+import 'package:nyxx/src/core/channel/guild/GuildChannel.dart';
+import 'package:nyxx/src/core/guild/Webhook.dart';
+import 'package:nyxx/src/core/message/Message.dart';
+import 'package:nyxx/src/internal/cache/Cache.dart';
+import 'package:nyxx/src/internal/interfaces/Mentionable.dart';
+import 'package:nyxx/src/internal/response_wrapper/ThreadListResultWrapper.dart';
+import 'package:nyxx/src/typedefs.dart';
+import 'package:nyxx/src/utils/builders/AttachmentBuilder.dart';
+import 'package:nyxx/src/utils/builders/MessageBuilder.dart';
+import 'package:nyxx/src/utils/builders/ThreadBuilder.dart';
+
+abstract class ITextGuildChannel implements IGuildChannel, ITextChannel, Mentionable {
+  /// The channel's topic.
+  String? get topic;
+
+  /// Channel's slow mode rate limit in seconds. This must be between 0 and 120.
+  int get slowModeThreshold;
+
+  /// Returns url to this channel.
+  String get url;
+
+  /// Gets all of the webhooks for this channel.
+  Stream<IWebhook> getWebhooks();
+
+  /// Creates a webhook for channel.
+  /// Valid file types for [avatarFile] are jpeg, gif and png.
+  ///
+  /// ```
+  /// final webhook = await channnel.createWebhook("!a Send nudes kek6407");
+  /// ```
+  Future<IWebhook> createWebhook(String name, {AttachmentBuilder? avatarAttachment, String? auditReason});
+
+  /// Creates a thread in a channel, that only retrieves a [ThreadPreviewChannel]
+  Future<IThreadPreviewChannel> createThread(ThreadBuilder builder);
+
+  /// Creates a thread in a message
+  Future<IThreadChannel> createAndGetThread(ThreadBuilder builder);
+
+  /// Fetches all active threads in this channel
+  Future<IThreadListResultWrapper> fetchActiveThreads();
+
+  /// Fetches joined private and archived thread channels
+  Future<IThreadListResultWrapper> fetchJoinedPrivateArchivedThreads({DateTime? before, int? limit});
+
+  /// Fetches private, archived thread channels
+  Future<IThreadListResultWrapper> fetchPrivateArchivedThreads({DateTime? before, int? limit});
+
+  /// Fetches public, archives thread channels
+  Future<IThreadListResultWrapper> fetchPublicArchivedThreads({DateTime? before, int? limit});
+}
 
 class TextGuildChannel extends GuildChannel implements ITextGuildChannel {
   /// The channel's topic.

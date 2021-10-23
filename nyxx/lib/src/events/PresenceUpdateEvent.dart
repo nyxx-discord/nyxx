@@ -1,4 +1,21 @@
-part of nyxx;
+import 'package:nyxx/src/Nyxx.dart';
+import 'package:nyxx/src/core/Snowflake.dart';
+import 'package:nyxx/src/core/guild/Status.dart';
+import 'package:nyxx/src/core/user/Presence.dart';
+import 'package:nyxx/src/core/user/User.dart';
+import 'package:nyxx/src/internal/cache/Cacheable.dart';
+import 'package:nyxx/src/typedefs.dart';
+
+abstract class IPresenceUpdateEvent {
+  /// User object
+  Cacheable<Snowflake, IUser> get user;
+
+  /// Users current activities
+  Iterable<Activity> get presences;
+
+  /// Status of client
+  IClientStatus get clientStatus;
+}
 
 /// Sent when a member's presence updates.
 class PresenceUpdateEvent implements IPresenceUpdateEvent {

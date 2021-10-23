@@ -1,4 +1,11 @@
-part of nyxx;
+import 'package:nyxx/src/Nyxx.dart';
+import 'package:nyxx/src/core/channel/ThreadChannel.dart';
+import 'package:nyxx/src/typedefs.dart';
+
+abstract class IThreadCreateEvent {
+  /// The thread that was just created
+  IThreadChannel get thread;
+}
 
 /// Fired when a thread is created
 class ThreadCreateEvent implements IThreadCreateEvent {

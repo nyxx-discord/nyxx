@@ -1,4 +1,18 @@
-part of nyxx;
+import 'package:nyxx/src/typedefs.dart';
+
+abstract class IEmbedThumbnail {
+  /// The embed thumbnail's URL.
+  String? get url;
+
+  /// The embed thumbnal's proxy URL.
+  String? get proxyUrl;
+
+  /// The embed thumbnal's height.
+  int? get height;
+
+  /// The embed thumbnal's width.
+  int? get width;
+}
 
 /// A message embed thumbnail.
 class EmbedThumbnail implements IEmbedThumbnail {

@@ -1,4 +1,24 @@
-part of nyxx;
+import 'package:nyxx/src/typedefs.dart';
+
+abstract class IVoiceRegion {
+  /// Unique id for region
+  String get id;
+
+  /// Name of the region
+  String get name;
+
+  /// True if this is a vip-only server
+  bool get vip;
+
+  /// True for a single server that is closest to the current user's client
+  bool get optimal;
+
+  /// Whether this is a deprecated voice region (avoid switching to these)
+  bool get deprecated;
+
+  /// Whether this is a custom voice region (used for events/etc)
+  bool get custom;
+}
 
 /// Represents voice region on which discord guild takes place
 class VoiceRegion implements IVoiceRegion {

@@ -1,4 +1,11 @@
-part of nyxx;
+import 'package:nyxx/src/Nyxx.dart';
+import 'package:nyxx/src/core/user/User.dart';
+import 'package:nyxx/src/typedefs.dart';
+
+abstract class IUserUpdateEvent {
+  /// User instance after update
+  IUser get user;
+}
 
 // TODO: ???
 /// Emitted when user was updated

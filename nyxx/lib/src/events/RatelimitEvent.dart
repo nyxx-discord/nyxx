@@ -1,4 +1,19 @@
-part of nyxx;
+import 'package:http/http.dart' as http;
+
+import 'package:nyxx/src/internal/http/HttpRequest.dart';
+
+abstract class IRatelimitEvent {
+  /// True if rate limit handler stopped the request
+  /// False if the client received a 429
+  bool get handled;
+
+  /// The request that was rate limited.
+  HttpRequest get request;
+
+  /// The error response received if the rate limit handler did not stop
+  /// the request (aka hit 429)
+  http.BaseResponse? get response;
+}
 
 /// Sent when the client is rate limit
 /// ed, either by the rate limit handler itself,
@@ -18,5 +33,6 @@ class RatelimitEvent implements IRatelimitEvent {
   @override
   final http.BaseResponse? response;
 
-  RatelimitEvent._new(this.request, this.handled, [this.response]);
+  /// Creates an instance of [RatelimitEvent]
+  RatelimitEvent(this.request, this.handled, [this.response]);
 }

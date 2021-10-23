@@ -1,4 +1,12 @@
-part of nyxx;
+import 'package:nyxx/src/typedefs.dart';
+
+abstract class IEmbedProvider {
+  /// The embed provider's name.
+  String? get name;
+
+  /// The embed provider's URL.
+  String? get url;
+}
 
 /// A message embed provider.
 class EmbedProvider implements IEmbedProvider{

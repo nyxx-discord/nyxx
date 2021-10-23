@@ -288,7 +288,7 @@ class ActivityType extends IEnum<int> {
   @override
   bool operator ==(dynamic other) {
     if (other is int) {
-      return other == this._value;
+      return other == this.value;
     }
 
     return super == other;

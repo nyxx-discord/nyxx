@@ -1,4 +1,13 @@
-part of nyxx;
+
+
+import 'package:nyxx/src/Nyxx.dart';
+import 'package:nyxx/src/core/AllowedMentions.dart';
+import 'package:nyxx/src/core/channel/Channel.dart';
+import 'package:nyxx/src/core/message/Message.dart';
+import 'package:nyxx/src/core/user/Member.dart';
+import 'package:nyxx/src/internal/cache/CachePolicy.dart';
+import 'package:nyxx/src/internal/shard/Shard.dart';
+import 'package:nyxx/src/utils/builders/PresenceBuilder.dart';
 
 /// Options for configuring cache. Allows to specify where and which entities should be cached and preserved in cache
 class CacheOptions {
@@ -6,7 +15,7 @@ class CacheOptions {
   CachePolicyLocation memberCachePolicyLocation = CachePolicyLocation();
 
   /// Defines which members are preserved in cache
-  CachePolicy<Member> memberCachePolicy = MemberCachePolicy.def;
+  CachePolicy<IMember> memberCachePolicy = MemberCachePolicy.def;
 
   /// Defines where channel entities are preserved cache. Defaults to [CachePolicyLocation] with additional objectConstructor set to true
   CachePolicyLocation channelCachePolicyLocation = CachePolicyLocation()..objectConstructor = true;
@@ -21,7 +30,7 @@ class CacheOptions {
   CachePolicyLocation messageCachePolicyLocation = CachePolicyLocation();
 
   /// Defines which members are preserved in cache
-  CachePolicy<Message> messageCachePolicy = MessageCachePolicy.def;
+  CachePolicy<IMessage> messageCachePolicy = MessageCachePolicy.def;
 }
 
 /// Optional client settings which can be used when creating new instance

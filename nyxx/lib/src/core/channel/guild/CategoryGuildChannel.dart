@@ -1,5 +1,12 @@
-part of nyxx;
+import 'package:nyxx/src/Nyxx.dart';
+import 'package:nyxx/src/core/Snowflake.dart';
+import 'package:nyxx/src/core/channel/guild/GuildChannel.dart';
+import 'package:nyxx/src/typedefs.dart';
 
-class CategoryGuildChannel extends GuildChannel {
-  CategoryGuildChannel._new(INyxx client, RawApiMap raw, [Snowflake? guildId]): super._new(client, raw, guildId);
+abstract class ICategoryGuildChannel implements IGuildChannel {
+
+}
+
+class CategoryGuildChannel extends GuildChannel implements ICategoryGuildChannel {
+  CategoryGuildChannel(INyxx client, RawApiMap raw, [Snowflake? guildId]): super(client, raw, guildId);
 }

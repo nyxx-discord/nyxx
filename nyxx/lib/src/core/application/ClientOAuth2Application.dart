@@ -1,4 +1,7 @@
-part of nyxx;
+import 'package:nyxx/src/Nyxx.dart';
+import 'package:nyxx/src/core/application/OAuth2Application.dart';
+import 'package:nyxx/src/core/user/User.dart';
+import 'package:nyxx/src/typedefs.dart';
 
 /// The client's OAuth2 app, if the client is a bot.
 abstract class IClientOAuth2Application implements IOAuth2Application {
@@ -22,17 +25,21 @@ class ClientOAuth2Application extends OAuth2Application implements IClientOAuth2
   final NyxxWebsocket client;
 
   /// The app's flags.
+  @override
   late final int? flags;
 
   /// The app's owner.
-  late final User owner;
+  @override
+  late final IUser owner;
 
-  ClientOAuth2Application._new(RawApiMap raw, this.client) : super._new(raw) {
+  /// Creates an instance of [ClientOAuth2Application]
+  ClientOAuth2Application(RawApiMap raw, this.client) : super(raw) {
     this.flags = raw["flags"] as int?;
-    this.owner = User._new(client, raw["owner"] as RawApiMap);
+    this.owner = User(client, raw["owner"] as RawApiMap);
   }
 
   /// Creates an OAuth2 URL with the specified permissions.
+  @override
   String getInviteUrl([int? permissions]) =>
       this.client.httpEndpoints.getApplicationInviteUrl(this.id, permissions);
 }

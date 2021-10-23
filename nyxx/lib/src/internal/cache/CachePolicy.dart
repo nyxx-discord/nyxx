@@ -69,27 +69,27 @@ class CachePolicy<T extends SnowflakeEntity> {
 }
 
 /// Cache policies for caching members
-class MemberCachePolicy extends CachePolicy<Member> {
+class MemberCachePolicy extends CachePolicy<IMember> {
   /// Do not cache members
-  static final CachePolicy<Member> none = MemberCachePolicy((member) => false);
+  static final CachePolicy<IMember> none = MemberCachePolicy((member) => false);
 
   /// Cache all members
-  static final CachePolicy<Member> all = MemberCachePolicy((member) => true);
+  static final CachePolicy<IMember> all = MemberCachePolicy((member) => true);
 
   /// Cache members which have online status
-  static final CachePolicy<Member> online = MemberCachePolicy((member) => member.user.getFromCache()?.status?.isOnline ?? false);
+  static final CachePolicy<IMember> online = MemberCachePolicy((member) => member.user.getFromCache()?.status?.isOnline ?? false);
 
   /// Cache only members which have voice state not null
-  static final CachePolicy<Member> voice = MemberCachePolicy((member) => member.voiceState != null);
+  static final CachePolicy<IMember> voice = MemberCachePolicy((member) => member.voiceState != null);
 
   /// Cache only member which are owner of guild
-  static final CachePolicy<Member> owner = MemberCachePolicy((member) => member.guild.getFromCache()?.owner.id == member.id);
+  static final CachePolicy<IMember> owner = MemberCachePolicy((member) => member.guild.getFromCache()?.owner.id == member.id);
 
   /// Default policy is [owner] or [voice]. So it caches guild owners and users in voice channels
-  static final CachePolicy<Member> def = owner.or(voice);
+  static final CachePolicy<IMember> def = owner.or(voice);
 
   /// Constructor
-  MemberCachePolicy(CachePolicyPredicate<Member> predicate) : super(predicate);
+  MemberCachePolicy(CachePolicyPredicate<IMember> predicate) : super(predicate);
 }
 
 /// Cache policies for caching channels
@@ -116,22 +116,22 @@ class ChannelCachePolicy extends CachePolicy<IChannel> {
   ChannelCachePolicy(CachePolicyPredicate<IChannel> predicate) : super(predicate);
 }
 
-class MessageCachePolicy extends CachePolicy<Message> {
+class MessageCachePolicy extends CachePolicy<IMessage> {
   /// Do not any messages
-  static final CachePolicy<Message> none = MessageCachePolicy((channel) => false);
+  static final CachePolicy<IMessage> none = MessageCachePolicy((channel) => false);
 
   /// Cache all messages
-  static final CachePolicy<Message> all = MessageCachePolicy((channel) => true);
+  static final CachePolicy<IMessage> all = MessageCachePolicy((channel) => true);
 
   /// Cache only guild messages
-  static final CachePolicy<Message> guildMessages = MessageCachePolicy((channel) => channel is MinimalGuildChannel);
+  static final CachePolicy<IMessage> guildMessages = MessageCachePolicy((channel) => channel is MinimalGuildChannel);
 
   /// Cache only dm messages
-  static final CachePolicy<Message> dmMessages = MessageCachePolicy((channel) => channel is! MinimalGuildChannel);
+  static final CachePolicy<IMessage> dmMessages = MessageCachePolicy((channel) => channel is! MinimalGuildChannel);
 
   /// Default policy is [all]
-  static final CachePolicy<Message> def = all;
+  static final CachePolicy<IMessage> def = all;
 
   /// Constructor
-  MessageCachePolicy(CachePolicyPredicate<Message> predicate) : super(predicate);
+  MessageCachePolicy(CachePolicyPredicate<IMessage> predicate) : super(predicate);
 }

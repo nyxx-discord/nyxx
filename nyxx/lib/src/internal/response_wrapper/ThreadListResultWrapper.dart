@@ -1,4 +1,18 @@
-part of nyxx;
+import 'package:nyxx/src/Nyxx.dart';
+import 'package:nyxx/src/core/channel/ThreadChannel.dart';
+import 'package:nyxx/src/internal/cache/Cacheable.dart';
+import 'package:nyxx/src/typedefs.dart';
+
+abstract class IThreadListResultWrapper {
+  /// List of threads
+  List<IThreadChannel> get threads;
+
+  /// A thread member object for each returned thread the current user has joined
+  List<IThreadMember> get selfThreadMembers;
+
+  /// Whether there are potentially additional threads that could be returned on a subsequent call
+  bool get hasMore;
+}
 
 /// Wrapper of threads listing results.
 class ThreadListResultWrapper implements IThreadListResultWrapper {

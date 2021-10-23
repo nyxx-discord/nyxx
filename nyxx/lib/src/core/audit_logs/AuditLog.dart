@@ -1,4 +1,23 @@
-part of nyxx;
+import 'package:nyxx/src/Nyxx.dart';
+import 'package:nyxx/src/core/Snowflake.dart';
+import 'package:nyxx/src/core/audit_logs/AuditLogEntry.dart';
+import 'package:nyxx/src/core/guild/Webhook.dart';
+import 'package:nyxx/src/core/user/User.dart';
+import 'package:nyxx/src/typedefs.dart';
+
+abstract class IAuditLog {
+  /// List of webhooks found in the audit log
+  late final Map<Snowflake, IWebhook> webhooks;
+
+  /// List of users found in the audit log
+  late final Map<Snowflake, IUser> users;
+
+  /// List of audit log entries
+  late final Map<Snowflake, IAuditLogEntry> entries;
+
+  /// Filters audit log by [users]
+  Iterable<IAuditLogEntry> filter(bool Function(IAuditLogEntry) test);
+}
 
 /// Whenever an admin action is performed on the API, an entry is added to the respective guild's audit log.
 ///

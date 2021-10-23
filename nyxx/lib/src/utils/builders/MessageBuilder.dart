@@ -73,7 +73,7 @@ class MessageBuilder extends BuilderWithClient {
 
   /// Creates [MessageBuilder] from [Message].
   /// Copies content, tts and first embed of target [message]
-  factory MessageBuilder.fromMessage(Message message) => MessageBuilder()
+  factory MessageBuilder.fromMessage(IMessage message) => MessageBuilder()
         ..content = message.content
         ..tts = message.tts
         ..embeds = message.embeds.map((e) => e.toBuilder()).toList()
@@ -158,7 +158,7 @@ class MessageBuilder extends BuilderWithClient {
   }
 
   /// Sends message
-  Future<Message> send(ISend entity) => entity.sendMessage(this);
+  Future<IMessage> send(ISend entity) => entity.sendMessage(this);
 
   /// Returns if this instance of message builder can be used when editing message
   bool canBeUsedAsNewMessage() =>
@@ -166,7 +166,7 @@ class MessageBuilder extends BuilderWithClient {
 
   @override
   RawApiMap build(INyxx client) {
-    allowedMentions ??= client._options.allowedMentions;
+    allowedMentions ??= client.options.allowedMentions;
 
     return <String, dynamic>{
       if (content.isNotEmpty) "content": content.toString(),

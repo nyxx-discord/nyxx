@@ -1,4 +1,5 @@
-part of nyxx;
+import 'package:nyxx/src/core/SnowflakeEntity.dart';
+import 'package:nyxx/src/internal/exceptions/InvalidSnowflakeException.dart';
 
 /// [Snowflake] represents id system used by Discord.
 /// [id] property is actual id of entity which holds [Snowflake].
@@ -35,7 +36,7 @@ class Snowflake implements Comparable<Snowflake> {
       try {
         return Snowflake.value(int.parse(id.toString()));
       } on FormatException {
-        throw InvalidSnowflakeException._new(id);
+        throw InvalidSnowflakeException(id);
       }
     }
   }

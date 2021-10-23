@@ -1,4 +1,10 @@
-part of nyxx;
+import 'dart:async';
+import 'dart:convert';
+import 'dart:io';
+import 'dart:isolate';
+
+import 'package:nyxx/src/internal/Constants.dart';
+import 'package:nyxx/src/typedefs.dart';
 
 // Decodes zlib compresses string into string json
 RawApiMap _decodeBytes(dynamic rawPayload, RawZLibFilter decoder) {
@@ -34,7 +40,7 @@ Protocol used to communicate with shard isolate.
  * CONNECT - sent when ws connection is established. additional data can contain if reconnected.
  * SEND - sent along with data to send via websocket
 */
-Future<void> _shardHandler(SendPort shardPort) async {
+Future<void> shardHandler(SendPort shardPort) async {
   /// Port init
   final receivePort = ReceivePort();
   final receiveStream = receivePort.asBroadcastStream();

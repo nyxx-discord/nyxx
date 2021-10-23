@@ -1,4 +1,8 @@
-part of nyxx;
+import 'dart:convert';
+import 'dart:io';
+
+import 'package:http/http.dart' as http;
+import 'package:path/path.dart' as path_utils;
 
 /// Helper for sending attachment in messages. Allows to create attachment from path, [File] or bytes.
 class AttachmentBuilder {

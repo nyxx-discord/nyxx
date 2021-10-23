@@ -1,4 +1,6 @@
-part of nyxx;
+import 'package:nyxx/src/internal/exceptions/EmbedBuilderArgumentException.dart';
+import 'package:nyxx/src/typedefs.dart';
+import 'package:nyxx/src/utils/builders/Builder.dart';
 
 /// Build new instance of Embed's footer
 class EmbedFooterBuilder extends Builder {
@@ -19,7 +21,7 @@ class EmbedFooterBuilder extends Builder {
   /// Builds object to Map() instance;
   RawApiMap build() {
     if (this.text != null && this.length! > 2048) {
-      throw EmbedBuilderArgumentException._new("Footer text is too long. (1024 characters limit)");
+      throw EmbedBuilderArgumentException("Footer text is too long. (1024 characters limit)");
     }
 
     return <String, dynamic>{if (text != null) "text": text, if (iconUrl != null) "icon_url": iconUrl};

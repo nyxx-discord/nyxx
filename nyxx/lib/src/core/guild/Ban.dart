@@ -1,15 +1,28 @@
-part of nyxx;
+import 'package:nyxx/src/Nyxx.dart';
+import 'package:nyxx/src/core/user/User.dart';
+import 'package:nyxx/src/typedefs.dart';
 
-/// Ban object. Has attached reason of ban and user who was banned.
-class Ban {
+abstract class IBan {
   /// Reason of ban
-  String? reason;
+  String? get reason;
 
   /// Banned user
-  late final User user;
+  IUser get user;
+}
 
-  Ban._new(RawApiMap raw, INyxx client) {
+/// Ban object. Has attached reason of ban and user who was banned.
+class Ban implements IBan {
+  /// Reason of ban
+  @override
+  late final String? reason;
+
+  /// Banned user
+  @override
+  late final IUser user;
+
+  /// Creates an instance of [Ban]
+  Ban(RawApiMap raw, INyxx client) {
     this.reason = raw["reason"] as String;
-    this.user = User._new(client, raw["user"] as RawApiMap);
+    this.user = User(client, raw["user"] as RawApiMap);
   }
 }

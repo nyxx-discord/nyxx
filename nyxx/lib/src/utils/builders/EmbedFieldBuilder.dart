@@ -1,4 +1,6 @@
-part of nyxx;
+import 'package:nyxx/src/internal/exceptions/EmbedBuilderArgumentException.dart';
+import 'package:nyxx/src/typedefs.dart';
+import 'package:nyxx/src/utils/builders/Builder.dart';
 
 /// Builder for embed Field.
 class EmbedFieldBuilder extends Builder {
@@ -22,11 +24,11 @@ class EmbedFieldBuilder extends Builder {
   /// Builds object to Map() instance;
   RawApiMap build() {
     if (this.name.toString().length > 256) {
-      throw EmbedBuilderArgumentException._new("Field name is too long. (256 characters limit)");
+      throw EmbedBuilderArgumentException("Field name is too long. (256 characters limit)");
     }
 
     if (this.content.toString().length > 1024) {
-      throw EmbedBuilderArgumentException._new("Field content is too long. (1024 characters limit)");
+      throw EmbedBuilderArgumentException("Field content is too long. (1024 characters limit)");
     }
 
     return <String, dynamic>{

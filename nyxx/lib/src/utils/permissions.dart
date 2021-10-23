@@ -1,10 +1,14 @@
-part of nyxx;
+
+
+import 'package:nyxx/src/core/channel/guild/GuildChannel.dart';
+import 'package:nyxx/src/core/guild/Role.dart';
+import 'package:nyxx/src/core/user/Member.dart';
 
 /// Util function for manipulating permissions
 class PermissionsUtils {
   /// Allows to check if [issueMember] or [issueRole] can interact with [targetMember] or [targetRole].
-  static bool canInteract({Member? issueMember, Role? issueRole, Member? targetMember, Role? targetRole}) {
-    bool canInter(Role role1, Role role2) => role1.position > role2.position;
+  static bool canInteract({IMember? issueMember, IRole? issueRole, IMember? targetMember, IRole? targetRole}) {
+    bool canInter(IRole role1, IRole role2) => role1.position > role2.position;
 
     if (issueMember != null && targetMember != null) {
       if (issueMember.guild != targetMember.guild) {

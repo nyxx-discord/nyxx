@@ -1,4 +1,9 @@
-part of nyxx;
+import 'package:nyxx/src/core/Snowflake.dart';
+import 'package:nyxx/src/core/SnowflakeEntity.dart';
+import 'package:nyxx/src/core/guild/Role.dart';
+import 'package:nyxx/src/core/permissions/Permissions.dart';
+import 'package:nyxx/src/core/permissions/PermissionsConstants.dart';
+import 'package:nyxx/src/typedefs.dart';
 
 /// Set of permissions ints
 class _PermissionsSet {
@@ -23,7 +28,7 @@ class PermissionOverrideBuilder extends PermissionsBuilder {
   PermissionOverrideBuilder(this.type, this.id) : super();
 
   /// Create [PermissionsOverrides] for given [entity]. Entity have to be either [Role] or [Member]
-  PermissionOverrideBuilder.of(SnowflakeEntity entity) : type = entity is Role ? 0 : 1, id = entity.id, super();
+  PermissionOverrideBuilder.of(SnowflakeEntity entity) : type = entity is IRole ? 0 : 1, id = entity.id, super();
 }
 
 /// Builder for permissions.

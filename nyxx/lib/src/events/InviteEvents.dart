@@ -1,4 +1,15 @@
-part of nyxx;
+import 'package:nyxx/src/Nyxx.dart';
+import 'package:nyxx/src/core/Invite.dart';
+import 'package:nyxx/src/core/Snowflake.dart';
+import 'package:nyxx/src/core/channel/guild/GuildChannel.dart';
+import 'package:nyxx/src/core/guild/Guild.dart';
+import 'package:nyxx/src/internal/cache/Cacheable.dart';
+import 'package:nyxx/src/typedefs.dart';
+
+abstract class IInviteCreatedEvent {
+  /// [IInvite] object of created invite
+  IInvite get invite;
+}
 
 /// Emitted when invite is creating
 class InviteCreatedEvent implements IInviteCreatedEvent {

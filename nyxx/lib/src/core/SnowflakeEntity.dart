@@ -1,4 +1,4 @@
-part of nyxx;
+import 'package:nyxx/src/core/Snowflake.dart';
 
 /// Marks a snowflake entity. Snowflake entities are ones that have an id that uniquely identifies them.
 /// Includes only actual id of entity and [createdAt] which is timestamp when entity was created.

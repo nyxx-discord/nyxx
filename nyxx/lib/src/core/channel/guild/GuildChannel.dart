@@ -1,4 +1,63 @@
-part of nyxx;
+
+
+import 'package:nyxx/src/Nyxx.dart';
+import 'package:nyxx/src/core/Invite.dart';
+import 'package:nyxx/src/core/Snowflake.dart';
+import 'package:nyxx/src/core/SnowflakeEntity.dart';
+import 'package:nyxx/src/core/channel/Channel.dart';
+import 'package:nyxx/src/core/guild/Guild.dart';
+import 'package:nyxx/src/core/guild/Role.dart';
+import 'package:nyxx/src/core/permissions/PermissionOverrides.dart';
+import 'package:nyxx/src/core/permissions/Permissions.dart';
+import 'package:nyxx/src/core/permissions/PermissionsConstants.dart';
+import 'package:nyxx/src/core/user/Member.dart';
+import 'package:nyxx/src/internal/cache/Cacheable.dart';
+import 'package:nyxx/src/typedefs.dart';
+import 'package:nyxx/src/utils/builders/GuildBuilder.dart';
+import 'package:nyxx/src/utils/builders/PermissionsBuilder.dart';
+import 'package:nyxx/src/utils/permissions.dart';
+
+abstract class IGuildChannel implements MinimalGuildChannel {
+  /// Relative position of channel in context of channel list
+  int get position;
+
+  /// Permission override for channel
+  List<IPermissionsOverrides> get permissionOverrides;
+
+  /// Edits channel
+  Future<T> edit<T extends GuildChannel>(ChannelBuilder builder, {String? auditReason});
+
+  /// Returns effective permissions for [member] to this channel including channel overrides.
+  Future<IPermissions> effectivePermissions(IMember member);
+
+  /// Returns effective permissions for [role] to this channel including channel overrides.
+  Future<IPermissions> effectivePermissionForRole(IRole role);
+
+  /// Fetches and returns all channel"s [Invite]s
+  ///
+  /// ```
+  /// var invites = await chan.getChannelInvites();
+  /// ```
+  Stream<IInviteWithMeta> fetchChannelInvites();
+
+  /// Allows to set or edit permissions for channel. [id] can be either User or Role
+  /// Throws if [id] isn't [User] or [Role]
+  Future<void> editChannelPermissions(PermissionsBuilder perms, SnowflakeEntity entity, {String? auditReason});
+
+  /// Allows to edit or set channel permission overrides.
+  Future<void> editChannelPermissionOverrides(PermissionOverrideBuilder permissionBuilder, {String? auditReason});
+
+  /// Deletes permission overwrite for given User or Role [entity]
+  /// Throws if [entity] isn't [User] or [Role]
+  Future<void> deleteChannelPermission(SnowflakeEntity entity, {String? auditReason});
+
+  /// Creates new [IInvite] for [IChannel] and returns it"s instance
+  ///
+  /// ```
+  /// var invite = await channel.createInvite(maxUses: 2137);
+  /// ```
+  Future<IInvite> createInvite({int? maxAge, int? maxUses, bool? temporary, bool? unique, String? auditReason});
+}
 
 /// Represents channel within [Guild]. Shares logic for both [TextGuildChannel] and [VoiceGuildChannel].
 abstract class GuildChannel extends MinimalGuildChannel implements IGuildChannel {
@@ -10,13 +69,14 @@ abstract class GuildChannel extends MinimalGuildChannel implements IGuildChannel
   @override
   late final List<IPermissionsOverrides> permissionOverrides;
 
-  GuildChannel._new(INyxx client, RawApiMap raw, [Snowflake? guildId]) : super._new(client, raw, guildId) {
+  /// Creates an instance of [GuildChannel]
+  GuildChannel(INyxx client, RawApiMap raw, [Snowflake? guildId]) : super(client, raw, guildId) {
     this.position = raw["position"] as int;
 
     this.permissionOverrides = [
       if (raw["permission_overwrites"] != null)
         for (var obj in raw["permission_overwrites"])
-          PermissionsOverrides._new(obj as RawApiMap)
+          PermissionsOverrides(obj as RawApiMap)
     ];
   }
 
@@ -118,20 +178,39 @@ abstract class GuildChannel extends MinimalGuildChannel implements IGuildChannel
       client.httpEndpoints.createInvite(this.id, maxAge: maxAge, maxUses: maxUses, temporary: temporary, unique: unique, auditReason: auditReason);
 }
 
-abstract class MinimalGuildChannel extends IChannel {
+abstract class IMinimalGuildChannel implements IChannel {
   /// The channel's name.
+  String get name;
+
+  /// Id of [Guild] that the channel is in.
+  Cacheable<Snowflake, IGuild> get guild;
+
+  /// Id of parent channel
+  Cacheable<Snowflake, GuildChannel>? get parentChannel;
+
+  /// Indicates if channel is nsfw
+  bool get isNsfw;
+}
+
+abstract class MinimalGuildChannel extends Channel implements IMinimalGuildChannel {
+  /// The channel's name.
+  @override
   late final String name;
 
   /// Id of [Guild] that the channel is in.
-  late final Cacheable<Snowflake, Guild> guild;
+  @override
+  late final Cacheable<Snowflake, IGuild> guild;
 
   /// Id of parent channel
+  @override
   late final Cacheable<Snowflake, GuildChannel>? parentChannel;
 
   /// Indicates if channel is nsfw
+  @override
   late final bool isNsfw;
 
-  MinimalGuildChannel._new(INyxx client, RawApiMap raw, [Snowflake? guildId]) : super._new(client, raw) {
+  /// Creates instance of [MinimalGuildChannel]
+  MinimalGuildChannel(INyxx client, RawApiMap raw, [Snowflake? guildId]) : super(client, raw) {
     this.name = raw["name"] as String;
 
     if (raw["guild_id"] != null) {

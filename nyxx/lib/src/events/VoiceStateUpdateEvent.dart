@@ -1,4 +1,14 @@
-part of nyxx;
+import 'package:nyxx/src/Nyxx.dart';
+import 'package:nyxx/src/core/voice/VoiceState.dart';
+import 'package:nyxx/src/typedefs.dart';
+
+abstract class IVoiceStateUpdateEvent {
+  /// Used to represent a user's voice connection status.
+  IVoiceState get state;
+
+  /// Raw gateway response
+  RawApiMap get raw;
+}
 
 /// Emitted when client connects/disconnects/mutes etc to voice channel
 class VoiceStateUpdateEvent implements IVoiceStateUpdateEvent {

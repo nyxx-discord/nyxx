@@ -1,14 +1,15 @@
-part of nyxx;
+import 'package:http/http.dart' as http;
+import 'package:nyxx/src/internal/exceptions/HttpClientException.dart';
 
-class _HttpClient extends http.BaseClient {
+class InternalHttpClient extends http.BaseClient {
   late final Map<String, String> _authHeader;
 
   final http.Client _innerClient = http.Client();
 
   // ignore: public_member_api_docs
-  _HttpClient(INyxx client) {
+  InternalHttpClient(String token) {
     this._authHeader = {
-      "Authorization" : "Bot ${client._token}"
+      "Authorization" : "Bot $token"
     };
   }
 

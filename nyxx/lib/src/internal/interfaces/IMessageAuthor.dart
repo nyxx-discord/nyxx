@@ -1,4 +1,4 @@
-part of nyxx;
+import 'package:nyxx/src/core/SnowflakeEntity.dart';
 
 //TODO: Consider what should be here and what should not
 /// Could be either [User], [Member] or [Webhook].

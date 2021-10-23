@@ -1,4 +1,4 @@
-part of nyxx;
+
 
 import 'package:nyxx/src/Nyxx.dart';
 import 'package:nyxx/src/core/Invite.dart';
@@ -59,8 +59,8 @@ class VoiceGuildChannel extends GuildChannel {
     }
   }
 
-  Future<Invite> createActivityInvite(VoiceActivityType type, {int? maxAge, int? maxUses}) 
-    => this.client.httpEndpoints.createVoiceActivityInvite(Snowflake(type.value), this.id, maxAge: maxAge, maxUses: maxUses);
+  Future<IInvite> createActivityInvite(VoiceActivityType type, {int? maxAge, int? maxUses}) =>
+      this.client.httpEndpoints.createVoiceActivityInvite(Snowflake(type.value), this.id, maxAge: maxAge, maxUses: maxUses);
 }
 
 abstract class IStageVoiceGuildChannel implements IVoiceGuildChannel {

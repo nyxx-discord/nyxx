@@ -1,4 +1,6 @@
-part of nyxx;
+import 'dart:convert';
+
+import 'package:http/http.dart' as http;
 
 abstract class IHttpResponse {
   int get statusCode;
@@ -15,13 +17,14 @@ abstract class HttpResponse implements IHttpResponse {
   late final dynamic _jsonBody;
   late final http.ByteStream _bodyStream;
 
-  _HttpResponse._new(http.StreamedResponse response) {
+  /// Creates an instance of [HttpResponse]
+  HttpResponse(http.StreamedResponse response) {
     this._bodyStream = response.stream;
     this.statusCode = response.statusCode;
     this.headers = response.headers;
   }
 
-  Future<void> _finalize() async {
+  Future<void> finalize() async {
     this._body = await _bodyStream.toBytes();
 
     try {
@@ -45,7 +48,7 @@ abstract class IHttpResponseSucess implements IHttpResponse {
 }
 
 /// Returned when http request is successfully executed.
-class HttpResponseSuccess extends _HttpResponse {
+class HttpResponseSuccess extends HttpResponse implements IHttpResponseSucess {
   /// Body of response
   @override
   List<int> get body => this._body;
@@ -54,7 +57,8 @@ class HttpResponseSuccess extends _HttpResponse {
   @override
   dynamic get jsonBody => this._jsonBody;
 
-  HttpResponseSuccess._new(http.StreamedResponse response) : super._new(response);
+  /// Creates an instance of [HttpResponseSuccess]
+  HttpResponseSuccess(http.StreamedResponse response) : super(response);
 }
 
 abstract class IHttpResponseError implements IHttpResponse, Error {
@@ -67,7 +71,7 @@ abstract class IHttpResponseError implements IHttpResponse, Error {
 
 /// Returned when client fails to execute http request.
 /// Will contain reason why request failed.
-class HttpResponseError extends _HttpResponse implements Error {
+class HttpResponseError extends HttpResponse implements IHttpResponseError {
   /// Message why http request failed
   @override
   late String errorMessage;
@@ -76,7 +80,8 @@ class HttpResponseError extends _HttpResponse implements Error {
   @override
   late int errorCode;
 
-  HttpResponseError._new(http.StreamedResponse response) : super._new(response) {
+  /// Creates an instance of [HttpResponseError]
+  HttpResponseError(http.StreamedResponse response) : super(response) {
     if (response.headers["Content-Type"] == "application/json") {
       this.errorCode = this._jsonBody["code"] as int;
       this.errorMessage = this._jsonBody["message"] as String;
@@ -87,8 +92,8 @@ class HttpResponseError extends _HttpResponse implements Error {
   }
 
   @override
-  Future<void> _finalize() async {
-    await super._finalize();
+  Future<void> finalize() async {
+    await super.finalize();
 
     if (this.errorMessage.isEmpty) {
       try {

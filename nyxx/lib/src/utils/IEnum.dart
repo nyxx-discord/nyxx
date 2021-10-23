@@ -1,4 +1,4 @@
-part of nyxx;
+
 
 /// Abstract interface for enums in library
 abstract class IEnum<T> {

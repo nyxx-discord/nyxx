@@ -1,4 +1,22 @@
-part of nyxx;
+import 'package:nyxx/src/Nyxx.dart';
+import 'package:nyxx/src/core/Snowflake.dart';
+import 'package:nyxx/src/core/guild/Guild.dart';
+import 'package:nyxx/src/internal/cache/Cacheable.dart';
+import 'package:nyxx/src/typedefs.dart';
+
+abstract class IVoiceServerUpdateEvent {
+  /// Raw websocket event payload
+  RawApiMap get raw;
+
+  /// Voice connection token
+  String get token;
+
+  /// The voice server host
+  String get endpoint;
+
+  /// The guild this voice server update is for
+  Cacheable<Snowflake, IGuild> get guild;
+}
 
 /// Emitted when guild's voice server changes
 class VoiceServerUpdateEvent implements IVoiceServerUpdateEvent {

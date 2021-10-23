@@ -1,4 +1,12 @@
-part of nyxx;
+import 'dart:convert';
+
+import 'package:nyxx/src/core/Snowflake.dart';
+import 'package:nyxx/src/core/message/Emoji.dart';
+import 'package:nyxx/src/core/message/GuildEmoji.dart';
+import 'package:nyxx/src/core/message/UnicodeEmoji.dart';
+import 'package:nyxx/src/core/message/components/ComponentStyle.dart';
+import 'package:nyxx/src/typedefs.dart';
+import 'package:nyxx/src/utils/IEnum.dart';
 
 /// Type of interaction component
 class ComponentType extends IEnum<int> {

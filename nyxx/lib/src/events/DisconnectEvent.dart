@@ -1,4 +1,4 @@
-part of nyxx;
+
 
 import 'package:nyxx/src/internal/shard/Shard.dart';
 import 'package:nyxx/src/utils/IEnum.dart';

@@ -1,4 +1,4 @@
-part of nyxx;
+
 
 /// Thrown when token is empty or null
 class MissingTokenError implements Error {

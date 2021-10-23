@@ -1,4 +1,10 @@
-part of nyxx;
+import 'package:nyxx/src/core/DiscordColor.dart';
+import 'package:nyxx/src/internal/exceptions/EmbedBuilderArgumentException.dart';
+import 'package:nyxx/src/typedefs.dart';
+import 'package:nyxx/src/utils/builders/Builder.dart';
+import 'package:nyxx/src/utils/builders/EmbedAuthorBuilder.dart';
+import 'package:nyxx/src/utils/builders/EmbedFieldBuilder.dart';
+import 'package:nyxx/src/utils/builders/EmbedFooterBuilder.dart';
 
 /// Builds up embed object.
 class EmbedBuilder extends Builder {
@@ -117,19 +123,19 @@ class EmbedBuilder extends Builder {
   /// Builds object to Map() instance;
   RawApiMap build() {
     if (this.title != null && this.title!.length > 256) {
-      throw EmbedBuilderArgumentException._new("Embed title is too long (256 characters limit)");
+      throw EmbedBuilderArgumentException("Embed title is too long (256 characters limit)");
     }
 
     if (this.description != null && this.description!.length > 2048) {
-      throw EmbedBuilderArgumentException._new("Embed description is too long (2048 characters limit)");
+      throw EmbedBuilderArgumentException("Embed description is too long (2048 characters limit)");
     }
 
     if (this.fields.length > 25) {
-      throw EmbedBuilderArgumentException._new("Embed cannot contain more than 25 fields");
+      throw EmbedBuilderArgumentException("Embed cannot contain more than 25 fields");
     }
 
     if (this.length > 6000) {
-      throw EmbedBuilderArgumentException._new("Total length of embed cannot exceed 6000 characters");
+      throw EmbedBuilderArgumentException("Total length of embed cannot exceed 6000 characters");
     }
 
     return <String, dynamic>{
@@ -138,7 +144,7 @@ class EmbedBuilder extends Builder {
       if (description != null) "description": description,
       if (url != null) "url": url,
       if (timestamp != null) "timestamp": timestamp!.toUtc().toIso8601String(),
-      if (color != null) "color": color!._value,
+      if (color != null) "color": color!.value,
       if (footer != null) "footer": footer!.build(),
       if (imageUrl != null) "image": <String, dynamic>{"url": imageUrl},
       if (thumbnailUrl != null) "thumbnail": <String, dynamic>{"url": thumbnailUrl},

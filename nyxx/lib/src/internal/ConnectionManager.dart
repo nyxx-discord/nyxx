@@ -1,4 +1,14 @@
-part of nyxx;
+import 'dart:io';
+
+import 'package:logging/logging.dart';
+import 'package:nyxx/src/Nyxx.dart';
+import 'package:nyxx/src/core/application/ClientOAuth2Application.dart';
+import 'package:nyxx/src/events/ReadyEvent.dart';
+import 'package:nyxx/src/internal/EventController.dart';
+import 'package:nyxx/src/internal/HttpEndpoints.dart';
+import 'package:nyxx/src/internal/http/HttpResponse.dart';
+import 'package:nyxx/src/internal/shard/ShardManager.dart';
+import 'package:nyxx/src/typedefs.dart';
 
 /// The WS manager for the client.
 class ConnectionManager {
@@ -17,8 +27,8 @@ class ConnectionManager {
   int _shardsReady = 0;
 
   /// Makes a new WS manager.
-  _ConnectionManager(this._client) {
-    _client._httpEndpoints._getGatewayBot().then((httpResponse) {
+  ConnectionManager(this.client) {
+    (client.httpEndpoints as HttpEndpoints).getGatewayBot().then((httpResponse) {
       if (httpResponse is HttpResponseError) {
         this._logger.severe("Cannot get gateway url: [${httpResponse.errorCode}; ${httpResponse.errorMessage}]");
         exit(1);
@@ -36,7 +46,7 @@ class ConnectionManager {
 
       checkForConnections();
 
-      this._client.shardManager = ShardManager._new(this, this.maxConcurrency);
+      this.client.shardManager = ShardManager(this, this.maxConcurrency);
     });
   }
 
@@ -55,11 +65,11 @@ class ConnectionManager {
 
   Future<void> propagateReady() async {
     this._shardsReady++;
-    if(_client.ready || this._shardsReady < (_client._options.shardCount ?? 1)) {
+    if(client.ready || this._shardsReady < (client.options.shardCount ?? 1)) {
       return;
     }
 
-    final httpResponse = await _client._httpEndpoints._getMeApplication();
+    final httpResponse = await (client.httpEndpoints as HttpEndpoints).getMeApplication();
 
     if (httpResponse is HttpResponseError) {
       this._logger.shout("Cannot get bot identity: `${httpResponse.toString()}`");
@@ -67,12 +77,12 @@ class ConnectionManager {
     }
 
     final response = httpResponse as HttpResponseSuccess;
-    _client.app = ClientOAuth2Application._new(response.jsonBody as RawApiMap, _client);
+    client.app = ClientOAuth2Application(response.jsonBody as RawApiMap, client);
 
-    if (!_client.ready) {
-      _client._events.onReady.add(ReadyEvent._new(_client));
+    if (!client.ready) {
+      (client.eventsWs as WebsocketEventController).onReadyController.add(ReadyEvent(client));
     }
-    _client.ready = true;
-    _logger.info("Connected and ready! Logged as `${_client.self.tag}`");
+    client.ready = true;
+    _logger.info("Connected and ready! Logged as `${client.self.tag}`");
   }
 }

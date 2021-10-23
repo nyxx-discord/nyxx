@@ -1,32 +1,34 @@
-part of nyxx;
+import 'package:nyxx/src/Nyxx.dart';
+import 'package:nyxx/src/core/user/User.dart';
+import 'package:nyxx/src/typedefs.dart';
+import 'package:nyxx/src/utils/builders/AttachmentBuilder.dart';
 
 /// ClientUser is bot's discord account. Allows to change bot's presence.
-class ClientUser extends User {
+abstract class IClientUser implements IUser {
   /// Weather or not the client user's account is verified.
+  bool? get verified;
+
+  /// Weather or not the client user has MFA enabled.
+  bool? get mfa;
+
+  /// Edits current user. This changes user's username - not per guild nickname.
+  Future<IUser> edit({String? username, AttachmentBuilder? avatarAttachment});
+}
+
+/// ClientUser is bot's discord account. Allows to change bot's presence.
+class ClientUser extends User implements IClientUser {
+  /// Weather or not the client user's account is verified.
+  @override
   bool? verified;
 
   /// Weather or not the client user has MFA enabled.
+  @override
   bool? mfa;
 
   /// Creates an instance of [ClientUser]
   ClientUser(NyxxWebsocket client, RawApiMap raw) : super(client, raw) {
     this.verified = raw["verified"] as bool;
     this.mfa = raw["mfa_enabled"] as bool;
-  }
-
-  /// Allows to get [Member] objects for all guilds for bot user.
-  Map<Guild, Member> getMembership() {
-    final membershipCollection = <Guild, Member>{};
-
-    for (final guild in client.guilds.values) {
-      final member = guild.members[this.id];
-
-      if (member != null) {
-        membershipCollection[guild] = member;
-      }
-    }
-
-    return membershipCollection;
   }
 
   /// Edits current user. This changes user's username - not per guild nickname.

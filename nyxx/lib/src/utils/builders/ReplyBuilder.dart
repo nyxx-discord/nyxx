@@ -1,4 +1,8 @@
-part of nyxx;
+import 'package:nyxx/src/core/Snowflake.dart';
+import 'package:nyxx/src/core/message/Message.dart';
+import 'package:nyxx/src/internal/cache/Cacheable.dart';
+import 'package:nyxx/src/typedefs.dart';
+import 'package:nyxx/src/utils/builders/Builder.dart';
 
 /// Builder for replying to message
 class ReplyBuilder extends Builder {
@@ -12,11 +16,11 @@ class ReplyBuilder extends Builder {
   ReplyBuilder(this.messageId, [this.failIfNotExists = true]);
 
   /// Constructs message reply from given message
-  factory ReplyBuilder.fromMessage(Message message, [bool failIfNotExists = true]) =>
+  factory ReplyBuilder.fromMessage(IMessage message, [bool failIfNotExists = true]) =>
       ReplyBuilder(message.id, failIfNotExists);
 
   /// Constructs message reply from cacheable of message and channel
-  factory ReplyBuilder.fromCacheable(Cacheable<Snowflake, Message> messageCacheable, [bool failIfNotExists = true]) =>
+  factory ReplyBuilder.fromCacheable(Cacheable<Snowflake, IMessage> messageCacheable, [bool failIfNotExists = true]) =>
     ReplyBuilder(messageCacheable.id, failIfNotExists);
 
   @override

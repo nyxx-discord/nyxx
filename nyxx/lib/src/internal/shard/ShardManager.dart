@@ -1,4 +1,55 @@
-part of nyxx;
+import 'dart:async';
+import 'dart:collection';
+import 'dart:io';
+
+import 'package:logging/logging.dart';
+import 'package:nyxx/src/events/MemberChunkEvent.dart';
+import 'package:nyxx/src/events/RawEvent.dart';
+import 'package:nyxx/src/internal/ConnectionManager.dart';
+import 'package:nyxx/src/internal/interfaces/Disposable.dart';
+import 'package:nyxx/src/internal/shard/Shard.dart';
+import 'package:nyxx/src/utils/builders/PresenceBuilder.dart';
+
+/// Spawns, connects, monitors, manages and terminates shards.
+/// Sharding will be automatic if no user settings are supplied in
+/// [ClientOptions] when instantiating [Nyxx] client instance.
+///
+/// Discord gateways implement a method of user-controlled guild sharding which
+/// allows for splitting events across a number of gateway connections.
+/// Guild sharding is entirely user controlled, and requires no state-sharing
+/// between separate connections to operate.
+abstract class IShardManager implements Disposable {
+  /// Emitted when the shard is ready.
+  Stream<IShard> get onConnected;
+
+  /// Emitted when the shard encounters a connection error.
+  Stream<IShard> get onDisconnect;
+
+  /// Emitted when the shard resumed its connection
+  Stream<IShard> get onResume;
+
+  /// Emitted when shard receives member chunk.
+  Stream<IMemberChunkEvent> get onMemberChunk;
+
+  /// Raw gateway payloads. You have set `dispatchRawShardEvent` in [ClientOptions] to true otherwise stream won't receive any events.
+  /// Also rawEvent is dispatched ONLY for payload that doesn't match any event built in into Nyxx.
+  Stream<IRawEvent> get rawEvent;
+
+  /// List of shards
+  Iterable<IShard> get shards;
+
+  /// Average gateway latency across all shards
+  Duration get gatewayLatency;
+
+  /// The number of identify requests allowed per 5 seconds
+  int get maxConcurrency;
+
+  /// Number of shards spawned
+  int get numShards;
+
+  /// Sets presences on every shard
+  void setPresence(PresenceBuilder presenceBuilder);
+}
 
 /// Spawns, connects, monitors, manages and terminates shards.
 /// Sharding will be automatic if no user settings are supplied in
@@ -36,7 +87,7 @@ class ShardManager implements IShardManager {
   final StreamController<IMemberChunkEvent> onMemberChunkController = StreamController.broadcast();
   final StreamController<IRawEvent> onRawEventController = StreamController.broadcast();
 
-  final Logger _logger = Logger("Shard Manager");
+  final Logger logger = Logger("Shard Manager");
 
   /// List of shards
   @override
@@ -68,16 +119,18 @@ class ShardManager implements IShardManager {
   }
 
   /// Starts shard manager
-  ShardManager._new(this._ws, this.maxConcurrency) {
-    this._numShards = this._ws._client._options.shardCount != null ? this._ws._client._options.shardCount! : this._ws.recommendedShardsNum;
+  ShardManager(this.connectionManager, this.maxConcurrency) {
+    this.numShards = this.connectionManager.client.options.shardCount != null
+        ? this.connectionManager.client.options.shardCount!
+        : this.connectionManager.recommendedShardsNum;
 
-    if (this._numShards < 1) {
-      this._logger.shout("Number of shards cannot be lower than 1.");
+    if (this.numShards < 1) {
+      this.logger.shout("Number of shards cannot be lower than 1.");
       exit(1);
     }
 
-    this._logger.fine("Starting shard manager. Number of shards to spawn: $_numShards");
-    _connect(_numShards - 1);
+    this.logger.fine("Starting shard manager. Number of shards to spawn: $numShards");
+    _connect(numShards - 1);
   }
 
   /// Sets presences on every shard
@@ -89,7 +142,7 @@ class ShardManager implements IShardManager {
   }
 
   void _connect(int shardId) {
-    this._logger.fine("Setting up shard with id: $shardId");
+    this.logger.fine("Setting up shard with id: $shardId");
 
     if(shardId < 0) {
       return;
@@ -102,7 +155,7 @@ class ShardManager implements IShardManager {
 
   @override
   Future<void> dispose() async {
-    this._logger.info("Closing gateway connections...");
+    this.logger.info("Closing gateway connections...");
 
     for(final shard in this._shards.values) {
       if(this.connectionManager.client.options.shutdownShardHook != null) {

@@ -1,4 +1,4 @@
-part of nyxx;
+import 'package:nyxx/src/utils/IEnum.dart';
 
 /// Activity Types
 class VoiceActivityType extends IEnum<String> {
@@ -11,14 +11,14 @@ class VoiceActivityType extends IEnum<String> {
   static const VoiceActivityType wordSnack = VoiceActivityType._create("879863976006127627");
   static const VoiceActivityType doodleCrew = VoiceActivityType._create("878067389634314250");
 
-  /// Creates instance of [GuildFeature] from [value].
+  /// Creates instance of [VoiceActivityType] from [value].
   VoiceActivityType.from(String? value) : super(value ?? "");
   const VoiceActivityType._create(String? value) : super(value ?? "");
 
   @override
   bool operator ==(dynamic other) {
     if (other is String) {
-      return other == _value;
+      return other == value;
     }
 
     return super == other;

@@ -42,7 +42,103 @@ abstract class IMessage implements SnowflakeEntity, Disposable, Convertable<Mess
   /// The timestamp of when the message was last edited, null if not edited.
   DateTime? get editedTimestamp;
 
-abstract class Message extends SnowflakeEntity implements Disposable, Convertable<MessageBuilder> {
+  /// The message's author.
+  IMessageAuthor get author;
+
+  /// The mentions in the message.
+  List<Cacheable<Snowflake, IUser>> get mentions;
+
+  /// A collection of the embeds in the message.
+  List<Embed> get embeds;
+
+  /// The attachments in the message.
+  List<IAttachment> get attachments;
+
+  /// Whether or not the message is pinned.
+  bool get pinned;
+
+  /// Whether or not the message was sent with TTS enabled.
+  bool get tts;
+
+  /// Whether or @everyone was mentioned in the message.
+  bool get mentionEveryone;
+
+  /// List of message reactions
+  List<IReaction> get reactions;
+
+  /// Type of message
+  MessageType get type;
+
+  /// Extra features of the message
+  MessageFlags? get flags;
+
+  /// Returns clickable url to this message.
+  String get url;
+
+  /// The stickers sent with the message
+  late final Iterable<IPartialSticker> partialStickers;
+
+  /// Message reply
+  IReferencedMessage? get referencedMessage;
+
+  /// List of components attached to message.
+  late final List<List<IMessageComponent>> components;
+
+  /// A nonce that can be used for optimistic message sending (up to 25 characters)
+  /// You will be able to identify that message when receiving it through gateway
+  late final String? nonce;
+
+  /// If the message is a response to an Interaction, this is the id of the interaction's application
+  late final Snowflake? applicationId;
+
+  /// Inline timestamps of current message
+  Iterable<IMessageTimestamp> get timestamps;
+
+  /// The message's guild.
+  late final Cacheable<Snowflake, IGuild>? guild;
+
+  /// Member data of message author
+  late final IMember? member;
+
+  /// Cross post a Message into all guilds what follow the news channel indicated.
+  /// This endpoint requires the "DISCOVERY" feature to be present for the guild.
+  Future<void> crossPost();
+
+  /// Suppresses embeds in message. Can be executed in other users messages.
+  Future<IMessage> suppressEmbeds();
+
+  /// Edits the message.
+  Future<IMessage> edit(MessageBuilder builder);
+
+  /// Add reaction to message.
+  Future<void> createReaction(IEmoji emoji);
+
+  /// Deletes reaction of bot.
+  Future<void> deleteSelfReaction(IEmoji emoji);
+
+  /// Deletes reaction of given user.
+  Future<void> deleteUserReaction(IEmoji emoji, SnowflakeEntity entity);
+
+  /// Deletes all reactions
+  Future<void> deleteAllReactions();
+
+  /// Deletes the message.
+  Future<void> delete({String? auditReason});
+
+  /// Pins [Message] in message's channel
+  Future<void> pinMessage();
+
+  /// Unpins [Message] in message's channel
+  Future<void> unpinMessage();
+
+  /// Creates a thread based on this message, that only retrieves a [ThreadPreviewChannel]
+  Future<IThreadPreviewChannel> createThread(ThreadBuilder builder);
+
+  /// Creates a thread in a message
+  Future<IThreadChannel> createAndGetThread(ThreadBuilder builder);
+}
+
+class Message extends SnowflakeEntity implements IMessage {
   /// Reference to bot instance
   @override
   final INyxx client;
@@ -157,7 +253,7 @@ abstract class Message extends SnowflakeEntity implements Disposable, Convertabl
   /// Creates na instance of [Message]
   Message(this.client, RawApiMap raw) : super(Snowflake(raw["id"])) {
     this.content = raw["content"] as String;
-    this.channel = CacheableTextChannel<TextChannel>._new(client, Snowflake(raw["channel_id"]));
+    this.channel = CacheableTextChannel<ITextChannel>(client, Snowflake(raw["channel_id"]));
 
     this.pinned = raw["pinned"] as bool;
     this.tts = raw["tts"] as bool;

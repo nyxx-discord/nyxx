@@ -1,4 +1,6 @@
-part of nyxx;
+
+
+import 'package:nyxx/src/utils/IEnum.dart';
 
 /// Guild features
 class GuildFeature extends IEnum<String> {
@@ -66,7 +68,7 @@ class GuildFeature extends IEnum<String> {
   @override
   bool operator ==(dynamic other) {
     if (other is String) {
-      return other == _value;
+      return other == value;
     }
 
     return super == other;
