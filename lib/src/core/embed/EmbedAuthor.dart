@@ -49,13 +49,11 @@ class EmbedAuthor implements IEmbedAuthor {
   int get hashCode => url.hashCode * 37 + name.hashCode * 37 + iconUrl.hashCode * 37;
 
   @override
-  bool operator ==(other) =>
-      other is EmbedAuthor ? other.url == this.url && other.name == this.name && other.iconUrl == this.iconUrl : false;
+  bool operator ==(other) => other is EmbedAuthor ? other.url == this.url && other.name == this.name && other.iconUrl == this.iconUrl : false;
 
   @override
-  EmbedAuthorBuilder toBuilder() =>
-    EmbedAuthorBuilder()
-      ..url = this.url
-      ..name = this.name
-      ..iconUrl = this.iconUrl;
+  EmbedAuthorBuilder toBuilder() => EmbedAuthorBuilder()
+    ..url = this.url
+    ..name = this.name
+    ..iconUrl = this.iconUrl;
 }

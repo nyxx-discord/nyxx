@@ -16,16 +16,12 @@ class ReplyBuilder extends Builder {
   ReplyBuilder(this.messageId, [this.failIfNotExists = true]);
 
   /// Constructs message reply from given message
-  factory ReplyBuilder.fromMessage(IMessage message, [bool failIfNotExists = true]) =>
-      ReplyBuilder(message.id, failIfNotExists);
+  factory ReplyBuilder.fromMessage(IMessage message, [bool failIfNotExists = true]) => ReplyBuilder(message.id, failIfNotExists);
 
   /// Constructs message reply from cacheable of message and channel
   factory ReplyBuilder.fromCacheable(Cacheable<Snowflake, IMessage> messageCacheable, [bool failIfNotExists = true]) =>
-    ReplyBuilder(messageCacheable.id, failIfNotExists);
+      ReplyBuilder(messageCacheable.id, failIfNotExists);
 
   @override
-  RawApiMap build() => {
-    "message_id": this.messageId.id,
-    "fail_if_not_exists": this.failIfNotExists
-  };
+  RawApiMap build() => {"message_id": this.messageId.id, "fail_if_not_exists": this.failIfNotExists};
 }

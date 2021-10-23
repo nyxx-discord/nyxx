@@ -53,8 +53,7 @@ abstract class Sticker extends SnowflakeEntity implements ISticker {
 
   /// Url for sticker image
   @override
-  String get stickerURL =>
-      this.client.httpEndpoints.stickerUrl(this.id, format.getExtension());
+  String get stickerURL => this.client.httpEndpoints.stickerUrl(this.id, format.getExtension());
 
   /// Creates an instance of [Sticker]
   Sticker(RawApiMap raw, this.client) : super(Snowflake(raw["id"]));
@@ -154,13 +153,11 @@ class GuildSticker extends Sticker implements IGuildSticker {
 
   /// Edits current sticker
   @override
-  Future<IGuildSticker> edit(StickerBuilder builder) =>
-      client.httpEndpoints.editGuildSticker(this.guild.id, this.id, builder);
+  Future<IGuildSticker> edit(StickerBuilder builder) => client.httpEndpoints.editGuildSticker(this.guild.id, this.id, builder);
 
   /// Removed current sticker
   @override
-  Future<void> delete() =>
-      client.httpEndpoints.deleteGuildSticker(this.guild.id, this.id);
+  Future<void> delete() => client.httpEndpoints.deleteGuildSticker(this.guild.id, this.id);
 }
 
 abstract class IStandardSticker implements ISticker {
@@ -262,10 +259,7 @@ class StickerPack extends SnowflakeEntity implements IStickerPack {
 
   /// Creates an instance of [StickerPack]
   StickerPack(RawApiMap raw, INyxx client) : super(Snowflake(raw["id"])) {
-    this.stickers = [
-      for (final rawSticker in raw["stickers"])
-        StandardSticker(rawSticker as RawApiMap, client)
-    ];
+    this.stickers = [for (final rawSticker in raw["stickers"]) StandardSticker(rawSticker as RawApiMap, client)];
     this.name = raw["name"] as String;
     this.skuId = Snowflake(raw["sku_id"]);
     this.coverStickerId = Snowflake(raw["cover_sticker_id"]);

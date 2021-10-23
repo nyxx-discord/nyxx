@@ -98,7 +98,7 @@ class HttpResponseError extends HttpResponse implements IHttpResponseError {
     if (this.errorMessage.isEmpty) {
       try {
         this.errorMessage = utf8.decode(this._body);
-      } on Exception { } // ignore: empty_catches
+      } on Exception {} // ignore: empty_catches
     }
   }
 

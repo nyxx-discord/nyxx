@@ -56,6 +56,5 @@ class AuditLog implements IAuditLog {
 
   /// Filters audit log by [users]
   @override
-  Iterable<IAuditLogEntry> filter(bool Function(IAuditLogEntry) test) =>
-      entries.values.where(test);
+  Iterable<IAuditLogEntry> filter(bool Function(IAuditLogEntry) test) => entries.values.where(test);
 }

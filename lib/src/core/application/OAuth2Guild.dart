@@ -41,6 +41,5 @@ class OAuth2Guild extends SnowflakeEntity implements IOAuth2Guild {
 
   /// Returns url to guilds icon
   @override
-  String? iconUrl({String format = "png", int size = 512}) =>
-    "https://cdn.discordapp.com/icons/${this.id.toString()}/$icon.$format?size=$size";
+  String? iconUrl({String format = "png", int size = 512}) => "https://cdn.discordapp.com/icons/${this.id.toString()}/$icon.$format?size=$size";
 }

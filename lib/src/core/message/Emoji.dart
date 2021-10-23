@@ -1,5 +1,3 @@
-
-
 /// Represents emoji. Subclasses provides abstraction to custom emojis(like [GuildEmoji]).
 abstract class IEmoji {
   /// Returns encoded emoji for API usage

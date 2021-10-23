@@ -96,8 +96,7 @@ class TextGuildChannel extends GuildChannel implements ITextGuildChannel {
 
   /// Gets all of the webhooks for this channel.
   @override
-  Stream<IWebhook> getWebhooks() =>
-      client.httpEndpoints.fetchChannelWebhooks(this.id);
+  Stream<IWebhook> getWebhooks() => client.httpEndpoints.fetchChannelWebhooks(this.id);
 
   /// Creates a webhook for channel.
   /// Valid file types for [avatarFile] are jpeg, gif and png.
@@ -111,13 +110,11 @@ class TextGuildChannel extends GuildChannel implements ITextGuildChannel {
 
   /// Returns pinned [Message]s for channel.
   @override
-  Stream<IMessage> fetchPinnedMessages() =>
-      client.httpEndpoints.fetchPinnedMessages(this.id);
+  Stream<IMessage> fetchPinnedMessages() => client.httpEndpoints.fetchPinnedMessages(this.id);
 
   /// Creates a thread in a channel, that only retrieves a [ThreadPreviewChannel]
   @override
-  Future<IThreadPreviewChannel> createThread(ThreadBuilder builder) =>
-      client.httpEndpoints.createThread(this.id, builder);
+  Future<IThreadPreviewChannel> createThread(ThreadBuilder builder) => client.httpEndpoints.createThread(this.id, builder);
 
   /// Creates a thread in a message
   @override
@@ -127,8 +124,7 @@ class TextGuildChannel extends GuildChannel implements ITextGuildChannel {
   }
 
   @override
-  Future<void> startTyping() async =>
-      client.httpEndpoints.triggerTyping(this.id);
+  Future<void> startTyping() async => client.httpEndpoints.triggerTyping(this.id);
 
   @override
   void startTypingLoop() {
@@ -140,8 +136,7 @@ class TextGuildChannel extends GuildChannel implements ITextGuildChannel {
   void stopTypingLoop() => this._typing?.cancel();
 
   @override
-  Future<void> bulkRemoveMessages(Iterable<SnowflakeEntity> messages) =>
-      client.httpEndpoints.bulkRemoveMessages(this.id, messages);
+  Future<void> bulkRemoveMessages(Iterable<SnowflakeEntity> messages) => client.httpEndpoints.bulkRemoveMessages(this.id, messages);
 
   @override
   Stream<IMessage> downloadMessages({int limit = 50, Snowflake? after, Snowflake? around, Snowflake? before}) =>
@@ -151,7 +146,7 @@ class TextGuildChannel extends GuildChannel implements ITextGuildChannel {
   Future<IMessage> fetchMessage(Snowflake messageId) async {
     final message = await client.httpEndpoints.fetchMessage(this.id, messageId);
 
-    if(client.cacheOptions.messageCachePolicyLocation.http && client.cacheOptions.messageCachePolicy.canCache(message)) {
+    if (client.cacheOptions.messageCachePolicyLocation.http && client.cacheOptions.messageCachePolicy.canCache(message)) {
       this.messageCache.put(message);
     }
 
@@ -162,13 +157,11 @@ class TextGuildChannel extends GuildChannel implements ITextGuildChannel {
   IMessage? getMessage(Snowflake id) => this.messageCache[id];
 
   @override
-  Future<IMessage> sendMessage(MessageBuilder builder) =>
-      client.httpEndpoints.sendMessage(this.id, builder);
+  Future<IMessage> sendMessage(MessageBuilder builder) => client.httpEndpoints.sendMessage(this.id, builder);
 
   /// Fetches all active threads in this channel
   @override
-  Future<IThreadListResultWrapper> fetchActiveThreads() =>
-      client.httpEndpoints.fetchActiveThreads(this.id);
+  Future<IThreadListResultWrapper> fetchActiveThreads() => client.httpEndpoints.fetchActiveThreads(this.id);
 
   /// Fetches joined private and archived thread channels
   @override

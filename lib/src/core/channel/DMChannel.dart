@@ -1,4 +1,3 @@
-
 import 'dart:async';
 
 import 'package:nyxx/src/Nyxx.dart';
@@ -49,22 +48,16 @@ class DMChannel extends Channel implements IDMChannel {
   IUser get participant => !this.isGroupDM ? participants.first : throw new ArgumentError("Channel is not direct DM");
 
   /// Creates an instance of [DMChannel]
-  DMChannel(INyxx client, RawApiMap raw): super(client, raw) {
+  DMChannel(INyxx client, RawApiMap raw) : super(client, raw) {
     if (raw["recipients"] != null) {
-      this.participants = [
-        for (final userRaw in raw["recipients"])
-          User(this.client, userRaw as RawApiMap)
-      ];
+      this.participants = [for (final userRaw in raw["recipients"]) User(this.client, userRaw as RawApiMap)];
     } else {
-      this.participants = [
-        User(client, raw["recipient"] as RawApiMap)
-      ];
+      this.participants = [User(client, raw["recipient"] as RawApiMap)];
     }
   }
 
   @override
-  Future<void> startTyping() async =>
-      client.httpEndpoints.triggerTyping(this.id);
+  Future<void> startTyping() async => client.httpEndpoints.triggerTyping(this.id);
 
   @override
   void startTypingLoop() {
@@ -76,8 +69,7 @@ class DMChannel extends Channel implements IDMChannel {
   void stopTypingLoop() => this._typing?.cancel();
 
   @override
-  Future<void> bulkRemoveMessages(Iterable<SnowflakeEntity> messages) =>
-      client.httpEndpoints.bulkRemoveMessages(this.id, messages);
+  Future<void> bulkRemoveMessages(Iterable<SnowflakeEntity> messages) => client.httpEndpoints.bulkRemoveMessages(this.id, messages);
 
   @override
   Stream<IMessage> downloadMessages({int limit = 50, Snowflake? after, Snowflake? around, Snowflake? before}) =>
@@ -87,7 +79,7 @@ class DMChannel extends Channel implements IDMChannel {
   Future<IMessage> fetchMessage(Snowflake messageId) async {
     final message = await client.httpEndpoints.fetchMessage(this.id, messageId);
 
-    if(client.cacheOptions.messageCachePolicyLocation.http && client.cacheOptions.messageCachePolicy.canCache(message)) {
+    if (client.cacheOptions.messageCachePolicyLocation.http && client.cacheOptions.messageCachePolicy.canCache(message)) {
       this.messageCache[messageId] = message;
     }
 
@@ -95,14 +87,11 @@ class DMChannel extends Channel implements IDMChannel {
   }
 
   @override
-  Stream<IMessage> fetchPinnedMessages() =>
-      client.httpEndpoints.fetchPinnedMessages(this.id);
+  Stream<IMessage> fetchPinnedMessages() => client.httpEndpoints.fetchPinnedMessages(this.id);
 
   @override
   IMessage? getMessage(Snowflake id) => this.messageCache[id];
 
   @override
-  Future<IMessage> sendMessage(MessageBuilder builder) =>
-      client.httpEndpoints.sendMessage(this.id,builder);
-
+  Future<IMessage> sendMessage(MessageBuilder builder) => client.httpEndpoints.sendMessage(this.id, builder);
 }

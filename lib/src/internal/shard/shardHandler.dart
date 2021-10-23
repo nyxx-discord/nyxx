@@ -58,10 +58,10 @@ Future<void> shardHandler(SendPort shardPort) async {
   Future<void> terminate() async {
     await _socketSubscription?.cancel();
     await _socket?.close(1000);
-    shardPort.send({ "cmd" : "TERMINATE_OK" });
+    shardPort.send({"cmd": "TERMINATE_OK"});
   }
 
-  if(!Platform.isWindows) {
+  if (!Platform.isWindows) {
     // ignore: unawaited_futures
     ProcessSignal.sigterm.watch().forEach((event) async {
       await terminate();
@@ -81,20 +81,20 @@ Future<void> shardHandler(SendPort shardPort) async {
 
       // ignore: unawaited_futures
       _socket!.done.then((value) {
-        shardPort.send({ "cmd" : "DISCONNECTED", "errorCode" : _socket!.closeCode, "errorReason" : _socket!.closeReason });
+        shardPort.send({"cmd": "DISCONNECTED", "errorCode": _socket!.closeCode, "errorReason": _socket!.closeReason});
       });
 
       _socket!.handleError((err) {
-        shardPort.send({ "cmd" : "ERROR", "error": err.toString(), "errorCode" : _socket!.closeCode, "errorReason" : _socket!.closeReason });
+        shardPort.send({"cmd": "ERROR", "error": err.toString(), "errorCode": _socket!.closeCode, "errorReason": _socket!.closeReason});
       });
 
       _socketSubscription = _socket!.listen((data) {
-        shardPort.send({ "cmd" : "DATA", "jsonData" : _decodeBytes(data, zlibDecoder) });
+        shardPort.send({"cmd": "DATA", "jsonData": _decodeBytes(data, zlibDecoder)});
       });
 
-      shardPort.send({ "cmd" : "CONNECT_ACK" });
+      shardPort.send({"cmd": "CONNECT_ACK"});
     } on WebSocketException catch (err) {
-      shardPort.send({ "cmd" : "ERROR", "error": err.toString(), "errorCode" : _socket!.closeCode, "errorReason" : _socket!.closeReason });
+      shardPort.send({"cmd": "ERROR", "error": err.toString(), "errorCode": _socket!.closeCode, "errorReason": _socket!.closeReason});
     } on Exception catch (err) {
       print(err);
     } on Error catch (err) {
@@ -105,18 +105,18 @@ Future<void> shardHandler(SendPort shardPort) async {
   // Connects
   await _connect();
 
-  await for(final message in receiveStream) {
+  await for (final message in receiveStream) {
     final cmd = message["cmd"];
 
-    if(cmd == "SEND") {
-      if(_socket?.closeCode == null) {
+    if (cmd == "SEND") {
+      if (_socket?.closeCode == null) {
         _socket?.add(jsonEncode(message["data"]));
       }
 
       continue;
     }
 
-    if(cmd == "CONNECT") {
+    if (cmd == "CONNECT") {
       await _socketSubscription?.cancel();
       await _socket?.close(1000);
       await _connect();

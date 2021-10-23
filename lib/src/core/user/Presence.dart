@@ -160,10 +160,7 @@ class Activity implements IActivity {
 
     this.instance = raw["instance"] as bool?;
     this.activityFlags = ActivityFlags(raw["flags"] as int?);
-    this.buttons = [
-      if (raw["buttons"] != null)
-        ...raw["buttons"].cast<String>()
-    ];
+    this.buttons = [if (raw["buttons"] != null) ...raw["buttons"].cast<String>()];
   }
 }
 

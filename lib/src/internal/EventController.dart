@@ -312,6 +312,7 @@ class WebsocketEventController extends RestEventController implements IWebsocket
 
   /// Fired when a thread gets deleted
   late final StreamController<IThreadDeletedEvent> onThreadDeleteController;
+
   /// Emitted when stage channel instance is created
   late final StreamController<IStageInstanceEvent> onStageInstanceCreateController;
 
@@ -494,7 +495,7 @@ class WebsocketEventController extends RestEventController implements IWebsocket
   late final Stream<IGuildStickerUpdate> onGuildStickersUpdate;
 
   /// Makes a new `EventController`.
-  WebsocketEventController(): super() {
+  WebsocketEventController() : super() {
     this.onDisconnectController = StreamController.broadcast();
     this.onDisconnect = this.onDisconnectController.stream;
 

@@ -28,7 +28,10 @@ class PermissionOverrideBuilder extends PermissionsBuilder {
   PermissionOverrideBuilder(this.type, this.id) : super();
 
   /// Create [PermissionsOverrides] for given [entity]. Entity have to be either [Role] or [Member]
-  PermissionOverrideBuilder.of(SnowflakeEntity entity) : type = entity is IRole ? 0 : 1, id = entity.id, super();
+  PermissionOverrideBuilder.of(SnowflakeEntity entity)
+      : type = entity is IRole ? 0 : 1,
+        id = entity.id,
+        super();
 }
 
 /// Builder for permissions.
@@ -147,41 +150,41 @@ class PermissionsBuilder {
   /// Permission builder from existing [Permissions] object.
   PermissionsBuilder.from(Permissions permissions) {
     this
-        ..createInstantInvite = permissions.createInstantInvite
-        ..kickMembers = permissions.kickMembers
-        ..banMembers = permissions.banMembers
-        ..administrator = permissions.administrator
-        ..manageChannels = permissions.manageChannels
-        ..manageGuild = permissions.manageGuild
-        ..addReactions = permissions.addReactions
-        ..viewAuditLog = permissions.viewAuditLog
-        ..viewChannel = permissions.viewChannel
-        ..sendMessages = permissions.sendMessages
-        ..sendMessagesInThreads = permissions.sendMessagesInThreads
-        ..prioritySpeaker = permissions.prioritySpeaker
-        ..sendTtsMessages = permissions.sendTtsMessages
-        ..manageMessages = permissions.manageMessages
-        ..embedLinks = permissions.embedLinks
-        ..attachFiles = permissions.attachFiles
-        ..readMessageHistory = permissions.readMessageHistory
-        ..mentionEveryone = permissions.mentionEveryone
-        ..useExternalEmojis = permissions.useExternalEmojis
-        ..connect = permissions.connect
-        ..speak = permissions.speak
-        ..muteMembers = permissions.muteMembers
-        ..deafenMembers = permissions.deafenMembers
-        ..moveMembers = permissions.moveMembers
-        ..useVad = permissions.useVad
-        ..changeNickname = permissions.changeNickname
-        ..manageNicknames = permissions.manageNicknames
-        ..manageRoles = permissions.manageRoles
-        ..manageWebhooks = permissions.manageWebhooks
-        ..manageEmojis = permissions.manageEmojis
-        ..stream = permissions.stream
-        ..viewGuildInsights = permissions.viewGuildInsights
-        ..manageThreads = permissions.manageThreads
-        ..createPublicThreads = permissions.createPublicThreads
-        ..createPrivateThreads = permissions.createPrivateThreads;
+      ..createInstantInvite = permissions.createInstantInvite
+      ..kickMembers = permissions.kickMembers
+      ..banMembers = permissions.banMembers
+      ..administrator = permissions.administrator
+      ..manageChannels = permissions.manageChannels
+      ..manageGuild = permissions.manageGuild
+      ..addReactions = permissions.addReactions
+      ..viewAuditLog = permissions.viewAuditLog
+      ..viewChannel = permissions.viewChannel
+      ..sendMessages = permissions.sendMessages
+      ..sendMessagesInThreads = permissions.sendMessagesInThreads
+      ..prioritySpeaker = permissions.prioritySpeaker
+      ..sendTtsMessages = permissions.sendTtsMessages
+      ..manageMessages = permissions.manageMessages
+      ..embedLinks = permissions.embedLinks
+      ..attachFiles = permissions.attachFiles
+      ..readMessageHistory = permissions.readMessageHistory
+      ..mentionEveryone = permissions.mentionEveryone
+      ..useExternalEmojis = permissions.useExternalEmojis
+      ..connect = permissions.connect
+      ..speak = permissions.speak
+      ..muteMembers = permissions.muteMembers
+      ..deafenMembers = permissions.deafenMembers
+      ..moveMembers = permissions.moveMembers
+      ..useVad = permissions.useVad
+      ..changeNickname = permissions.changeNickname
+      ..manageNicknames = permissions.manageNicknames
+      ..manageRoles = permissions.manageRoles
+      ..manageWebhooks = permissions.manageWebhooks
+      ..manageEmojis = permissions.manageEmojis
+      ..stream = permissions.stream
+      ..viewGuildInsights = permissions.viewGuildInsights
+      ..manageThreads = permissions.manageThreads
+      ..createPublicThreads = permissions.createPublicThreads
+      ..createPrivateThreads = permissions.createPrivateThreads;
   }
 
   /// Calculates permission int
@@ -233,7 +236,7 @@ class PermissionsBuilder {
 
   // TODO: NNBD - To consider
   void _apply(_PermissionsSet perm, bool? applies, int constant) {
-    if(applies == null) {
+    if (applies == null) {
       return;
     }
 

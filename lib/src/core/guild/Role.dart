@@ -128,7 +128,7 @@ class Role extends SnowflakeEntity implements IRole {
     this.iconEmoji = raw["unicode_emoji"] as String?;
     this.iconHash = raw["icon"] as String?;
 
-    if(raw["tags"] != null) {
+    if (raw["tags"] != null) {
       this.roleTags = RoleTags(raw["tags"] as RawApiMap);
     } else {
       this.roleTags = null;
@@ -147,13 +147,11 @@ class Role extends SnowflakeEntity implements IRole {
 
   /// Edits the role.
   @override
-  Future<IRole> edit(RoleBuilder role, {String? auditReason}) async =>
-      client.httpEndpoints.editRole(this.guild.id, this.id, role, auditReason: auditReason);
+  Future<IRole> edit(RoleBuilder role, {String? auditReason}) async => client.httpEndpoints.editRole(this.guild.id, this.id, role, auditReason: auditReason);
 
   /// Deletes the role.
   @override
-  Future<void> delete() async =>
-      client.httpEndpoints.deleteRole(guild.id, this.id);
+  Future<void> delete() async => client.httpEndpoints.deleteRole(guild.id, this.id);
 }
 
 abstract class IRoleTags {

@@ -11,8 +11,7 @@ import 'package:nyxx/src/internal/interfaces/Disposable.dart';
 import 'package:nyxx/src/typedefs.dart';
 import 'package:nyxx/src/utils/IEnum.dart';
 
-abstract class IChannel implements SnowflakeEntity, Disposable
-{
+abstract class IChannel implements SnowflakeEntity, Disposable {
   /// Reference to client
   INyxx get client;
 
@@ -36,12 +35,12 @@ abstract class Channel extends SnowflakeEntity implements IChannel {
   final INyxx client;
 
   /// Creates instance of [Channel]
-  Channel(this.client, RawApiMap raw): super(Snowflake(raw["id"])){
+  Channel(this.client, RawApiMap raw) : super(Snowflake(raw["id"])) {
     this.channelType = ChannelType.from(raw["type"] as int);
   }
 
   /// Creates instance of [Channel] as raw
-  Channel.raw(this.client, Snowflake id, this.channelType): super(id);
+  Channel.raw(this.client, Snowflake id, this.channelType) : super(id);
 
   /// Deserializes and matches payload to create appropriate instance of [Channel]
   factory Channel.deserialize(INyxx client, RawApiMap raw, [Snowflake? guildId]) {
@@ -78,7 +77,7 @@ abstract class Channel extends SnowflakeEntity implements IChannel {
 }
 
 class _InternalChannel extends GuildChannel {
-  _InternalChannel._new(INyxx client, RawApiMap raw, [Snowflake? guildId]): super(client, raw, guildId);
+  _InternalChannel._new(INyxx client, RawApiMap raw, [Snowflake? guildId]) : super(client, raw, guildId);
 }
 
 /// Enum for possible channel types

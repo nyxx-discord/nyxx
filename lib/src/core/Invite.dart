@@ -93,8 +93,7 @@ class Invite implements IInvite {
 
   /// Deletes this [Invite].
   @override
-  Future<void> delete({String? auditReason}) async =>
-    client.httpEndpoints.deleteInvite(this.code, auditReason: auditReason);
+  Future<void> delete({String? auditReason}) async => client.httpEndpoints.deleteInvite(this.code, auditReason: auditReason);
 }
 
 abstract class IInviteWithMeta implements IInvite {
@@ -144,8 +143,7 @@ class InviteWithMeta extends Invite implements IInviteWithMeta {
 
   /// Date when invite will expire
   @override
-  DateTime get expiryDate =>
-    this.createdAt.add(Duration(seconds: maxAge));
+  DateTime get expiryDate => this.createdAt.add(Duration(seconds: maxAge));
 
   /// True if Invite is valid and can be used
   @override

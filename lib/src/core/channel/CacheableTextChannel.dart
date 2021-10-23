@@ -20,7 +20,7 @@ class CacheableTextChannel<S extends ITextChannel> extends Channel implements IC
   DateTime get createdAt => this.id.timestamp;
 
   /// Creates an instance of [CacheableTextChannel]
-  CacheableTextChannel(INyxx client, Snowflake id, [ChannelType type = ChannelType.unknown]): super.raw(client, id, type);
+  CacheableTextChannel(INyxx client, Snowflake id, [ChannelType type = ChannelType.unknown]) : super.raw(client, id, type);
 
   @override
   S? getFromCache() => this.client.channels[this.id] as S;
@@ -32,8 +32,7 @@ class CacheableTextChannel<S extends ITextChannel> extends Channel implements IC
   FutureOr<S> getOrDownload() async => this.getFromCache() ?? await this.download();
 
   @override
-  Future<void> bulkRemoveMessages(Iterable<SnowflakeEntity> messages) =>
-      this.client.httpEndpoints.bulkRemoveMessages(this.id, messages);
+  Future<void> bulkRemoveMessages(Iterable<SnowflakeEntity> messages) => this.client.httpEndpoints.bulkRemoveMessages(this.id, messages);
 
   @override
   Future<void> delete() => this.client.httpEndpoints.deleteChannel(this.id);
@@ -43,16 +42,14 @@ class CacheableTextChannel<S extends ITextChannel> extends Channel implements IC
       this.client.httpEndpoints.downloadMessages(this.id, limit: limit, after: after, around: around, before: before);
 
   @override
-  Future<IMessage> fetchMessage(Snowflake id) =>
-      this.client.httpEndpoints.fetchMessage(this.id, id);
+  Future<IMessage> fetchMessage(Snowflake id) => this.client.httpEndpoints.fetchMessage(this.id, id);
 
   /// Returns always null since this type of channel doesn't have cache.
   @override
   IMessage? getMessage(Snowflake id) => null;
 
   @override
-  Future<IMessage> sendMessage(MessageBuilder builder) =>
-      this.client.httpEndpoints.sendMessage(this.id, builder);
+  Future<IMessage> sendMessage(MessageBuilder builder) => this.client.httpEndpoints.sendMessage(this.id, builder);
 
   @override
   Future<void> startTyping() => this.client.httpEndpoints.triggerTyping(this.id);
@@ -67,8 +64,7 @@ class CacheableTextChannel<S extends ITextChannel> extends Channel implements IC
   void stopTypingLoop() => this._typing.cancel();
 
   @override
-  Stream<IMessage> fetchPinnedMessages() =>
-      client.httpEndpoints.fetchPinnedMessages(this.id);
+  Stream<IMessage> fetchPinnedMessages() => client.httpEndpoints.fetchPinnedMessages(this.id);
 
   @override
   Future<void> dispose() async {
@@ -76,8 +72,10 @@ class CacheableTextChannel<S extends ITextChannel> extends Channel implements IC
   }
 
   @override
-  Future<int> get fileUploadLimit => throw UnimplementedError("CacheableTextChannel doesn't provide fileUploadLimit. Try getting channel from channel using methods from Cacheable");
+  Future<int> get fileUploadLimit =>
+      throw UnimplementedError("CacheableTextChannel doesn't provide fileUploadLimit. Try getting channel from channel using methods from Cacheable");
 
   @override
-  Map<Snowflake, IMessage> get messageCache => throw UnimplementedError("CacheableTextChannel doesn't provide cache. Try getting channel from channel using methods from Cacheable");
+  Map<Snowflake, IMessage> get messageCache =>
+      throw UnimplementedError("CacheableTextChannel doesn't provide cache. Try getting channel from channel using methods from Cacheable");
 }

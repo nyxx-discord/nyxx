@@ -105,8 +105,8 @@ class ThreadPreviewChannel extends Channel implements IThreadPreviewChannel {
     this.guild = GuildCacheable(client, Snowflake(raw["guild_id"]));
     this.owner = MemberCacheable(client, Snowflake(raw["owner_id"]), this.guild);
     this.memberPreview = [];
-    if(raw["member_ids_preview"] != null) {
-      for(final id in raw["member_ids_preview"] as List<String>) {
+    if (raw["member_ids_preview"] != null) {
+      for (final id in raw["member_ids_preview"] as List<String>) {
         this.memberPreview.add(MemberCacheable(client, Snowflake(id), this.guild));
       }
     }
@@ -122,23 +122,20 @@ class ThreadPreviewChannel extends Channel implements IThreadPreviewChannel {
   ChannelCacheable<IThreadChannel> getThreadChannel() => new ChannelCacheable(client, this.id);
 
   @override
-  Future<void> bulkRemoveMessages(Iterable<SnowflakeEntity> messages) =>
-      client.httpEndpoints.bulkRemoveMessages(this.id, messages);
+  Future<void> bulkRemoveMessages(Iterable<SnowflakeEntity> messages) => client.httpEndpoints.bulkRemoveMessages(this.id, messages);
 
   @override
   Stream<IMessage> downloadMessages({int limit = 50, Snowflake? after, Snowflake? around, Snowflake? before}) =>
       client.httpEndpoints.downloadMessages(this.id, limit: limit, after: after, around: around, before: before);
 
   @override
-  Future<IMessage> fetchMessage(Snowflake messageId) =>
-      client.httpEndpoints.fetchMessage(this.id, messageId);
+  Future<IMessage> fetchMessage(Snowflake messageId) => client.httpEndpoints.fetchMessage(this.id, messageId);
 
   @override
   IMessage? getMessage(Snowflake id) => this.messageCache[id];
 
   @override
-  Future<IMessage> sendMessage(MessageBuilder builder) =>
-      client.httpEndpoints.sendMessage(this.id, builder);
+  Future<IMessage> sendMessage(MessageBuilder builder) => client.httpEndpoints.sendMessage(this.id, builder);
 
   @override
   Future<int> get fileUploadLimit async {
@@ -151,8 +148,7 @@ class ThreadPreviewChannel extends Channel implements IThreadPreviewChannel {
   late final MessageCache messageCache = MessageCache(0);
 
   @override
-  Future<void> startTyping() async =>
-      client.httpEndpoints.triggerTyping(this.id);
+  Future<void> startTyping() async => client.httpEndpoints.triggerTyping(this.id);
 
   @override
   void startTypingLoop() {
@@ -164,6 +160,5 @@ class ThreadPreviewChannel extends Channel implements IThreadPreviewChannel {
   void stopTypingLoop() => this._typing?.cancel();
 
   @override
-  Stream<IMessage> fetchPinnedMessages() =>
-      client.httpEndpoints.fetchPinnedMessages(this.id);
+  Stream<IMessage> fetchPinnedMessages() => client.httpEndpoints.fetchPinnedMessages(this.id);
 }

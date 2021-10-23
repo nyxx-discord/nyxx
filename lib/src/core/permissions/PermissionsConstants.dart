@@ -1,5 +1,3 @@
-
-
 /// Permissions constants
 class PermissionsConstants {
   /// Allows to create instant invite

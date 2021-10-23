@@ -65,7 +65,7 @@ class ConnectionManager {
 
   Future<void> propagateReady() async {
     this._shardsReady++;
-    if(client.ready || this._shardsReady < (client.options.shardCount ?? 1)) {
+    if (client.ready || this._shardsReady < (client.options.shardCount ?? 1)) {
       return;
     }
 

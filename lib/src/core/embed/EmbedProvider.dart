@@ -9,7 +9,7 @@ abstract class IEmbedProvider {
 }
 
 /// A message embed provider.
-class EmbedProvider implements IEmbedProvider{
+class EmbedProvider implements IEmbedProvider {
   /// The embed provider's name.
   @override
   late final String? name;

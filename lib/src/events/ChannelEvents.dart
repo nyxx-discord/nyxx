@@ -1,4 +1,3 @@
-
 import 'package:nyxx/src/Nyxx.dart';
 import 'package:nyxx/src/core/Snowflake.dart';
 import 'package:nyxx/src/core/channel/CacheableTextChannel.dart';

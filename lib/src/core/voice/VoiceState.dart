@@ -103,9 +103,7 @@ class VoiceState implements IVoiceState {
     this.selfStream = raw["self_stream"] as bool? ?? false;
     this.selfVideo = raw["self_video"] as bool;
 
-    this.requestToSpeakTimeStamp = raw["request_to_speak_timestamp"] == null
-      ? null
-      : DateTime.parse(raw["request_to_speak_timestamp"] as String);
+    this.requestToSpeakTimeStamp = raw["request_to_speak_timestamp"] == null ? null : DateTime.parse(raw["request_to_speak_timestamp"] as String);
 
     this.suppress = raw["suppress"] as bool;
     this.sessionId = raw["session_id"] as String;

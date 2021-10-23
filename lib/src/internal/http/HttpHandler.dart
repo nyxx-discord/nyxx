@@ -9,10 +9,8 @@ import 'package:nyxx/src/internal/http/HttpResponse.dart';
 
 class HttpHandler {
   final RegExp _bucketRegexp = RegExp(r"\/(channels|guilds)\/(\d+)");
-  final RegExp _bucketReactionsRegexp =
-      RegExp(r"\/channels/(\d+)\/messages\/(\d+)\/reactions");
-  final RegExp _bucketCommandPermissions =
-      RegExp(r"\/applications/(\d+)\/guilds\/(\d+)\/commands/permissions");
+  final RegExp _bucketReactionsRegexp = RegExp(r"\/channels/(\d+)\/messages\/(\d+)\/reactions");
+  final RegExp _bucketCommandPermissions = RegExp(r"\/applications/(\d+)\/guilds\/(\d+)\/commands/permissions");
 
   final List<HttpBucket> _buckets = [];
   late final HttpBucket _noRateBucket;
@@ -40,8 +38,7 @@ class HttpHandler {
   }
 
   HttpBucket _getBucketForRequest(HttpRequest request) {
-    final reactionsRegexMatch =
-        _bucketReactionsRegexp.firstMatch(request.uri.toString());
+    final reactionsRegexMatch = _bucketReactionsRegexp.firstMatch(request.uri.toString());
     if (reactionsRegexMatch != null) {
       final bucketMajorId = reactionsRegexMatch.group(1);
       final bucketMessageId = reactionsRegexMatch.group(2);
@@ -49,8 +46,7 @@ class HttpHandler {
       return this._findBucketById("reactions/$bucketMajorId/$bucketMessageId");
     }
 
-    final commandPermissionRegexMatch =
-        _bucketCommandPermissions.firstMatch(request.uri.toString());
+    final commandPermissionRegexMatch = _bucketCommandPermissions.firstMatch(request.uri.toString());
 
     if (commandPermissionRegexMatch != null) {
       final bucketMajorId = commandPermissionRegexMatch.group(1);

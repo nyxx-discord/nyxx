@@ -26,28 +26,12 @@ import 'utils/builders/PresenceBuilder.dart';
 
 class NyxxFactory {
   static INyxx createNyxxRest(String token, int intents,
-      {ClientOptions? options,
-        CacheOptions? cacheOptions,
-        bool ignoreExceptions = true,
-        bool useDefaultLogger = true}) =>
-      NyxxRest(token, intents,
-          options: options,
-          cacheOptions: cacheOptions,
-          ignoreExceptions: ignoreExceptions,
-          useDefaultLogger: useDefaultLogger
-      );
+          {ClientOptions? options, CacheOptions? cacheOptions, bool ignoreExceptions = true, bool useDefaultLogger = true}) =>
+      NyxxRest(token, intents, options: options, cacheOptions: cacheOptions, ignoreExceptions: ignoreExceptions, useDefaultLogger: useDefaultLogger);
 
   static INyxxWebsocket createNyxxWebsocket(String token, int intents,
-      {ClientOptions? options,
-        CacheOptions? cacheOptions,
-        bool ignoreExceptions = true,
-        bool useDefaultLogger = true}) =>
-      NyxxWebsocket(token,intents,
-          options: options,
-          cacheOptions: cacheOptions,
-          ignoreExceptions: ignoreExceptions,
-          useDefaultLogger: useDefaultLogger
-      );
+          {ClientOptions? options, CacheOptions? cacheOptions, bool ignoreExceptions = true, bool useDefaultLogger = true}) =>
+      NyxxWebsocket(token, intents, options: options, cacheOptions: cacheOptions, ignoreExceptions: ignoreExceptions, useDefaultLogger: useDefaultLogger);
 }
 
 /// Generic interface for Nyxx. Represents basic functionality of Nyxx that are always available.
@@ -145,7 +129,7 @@ class NyxxRest extends INyxxRest {
 
   /// All of the channels the bot can see.
   @override
-  late final Map<Snowflake, IChannel>  channels;
+  late final Map<Snowflake, IChannel> channels;
 
   /// All of the users the bot can see. Does not have offline users
   /// without `forceFetchUsers` enabled.
@@ -175,11 +159,7 @@ class NyxxRest extends INyxxRest {
 
   /// Creates and logs in a new client. If [ignoreExceptions] is true (by default is)
   /// isolate will ignore all exceptions and continue to work.
-  NyxxRest(this.token, this.intents,
-      {ClientOptions? options,
-        CacheOptions? cacheOptions,
-        bool ignoreExceptions = true,
-        bool useDefaultLogger = true}) {
+  NyxxRest(this.token, this.intents, {ClientOptions? options, CacheOptions? cacheOptions, bool ignoreExceptions = true, bool useDefaultLogger = true}) {
     this._logger.fine("Staring Nyxx: intents: [$intents]; ignoreExceptions: [$ignoreExceptions]; useDefaultLogger: [$useDefaultLogger]");
 
     if (token.isEmpty) {
@@ -209,9 +189,7 @@ class NyxxRest extends INyxxRest {
 
       final errorsPort = ReceivePort();
       errorsPort.listen((err) {
-        final stackTrace = err[1] != null
-          ? ". Stacktrace: \n${err[1]}"
-          : "";
+        final stackTrace = err[1] != null ? ". Stacktrace: \n${err[1]}" : "";
 
         _logger.shout("Got Error: Message: [${err[0]}]$stackTrace");
       });
@@ -329,15 +307,15 @@ class NyxxWebsocket extends NyxxRest implements INyxxWebsocket {
 
   /// Creates and logs in a new client. If [ignoreExceptions] is true (by default is)
   /// isolate will ignore all exceptions and continue to work.
-  NyxxWebsocket(String token, int intents,
-      {ClientOptions? options,
-      CacheOptions? cacheOptions,
-      bool ignoreExceptions = true,
-      bool useDefaultLogger = true}) :
-        super(token, intents, options: options, cacheOptions: cacheOptions,
-              ignoreExceptions: ignoreExceptions, useDefaultLogger: useDefaultLogger,
-      ) {
-
+  NyxxWebsocket(String token, int intents, {ClientOptions? options, CacheOptions? cacheOptions, bool ignoreExceptions = true, bool useDefaultLogger = true})
+      : super(
+          token,
+          intents,
+          options: options,
+          cacheOptions: cacheOptions,
+          ignoreExceptions: ignoreExceptions,
+          useDefaultLogger: useDefaultLogger,
+        ) {
     this.eventsWs = WebsocketEventController();
 
     this.ws = ConnectionManager(this);
@@ -345,34 +323,29 @@ class NyxxWebsocket extends NyxxRest implements INyxxWebsocket {
 
   /// This endpoint is only for public guilds if bot is not int the guild.
   @override
-  Future<IGuildPreview> fetchGuildPreview(Snowflake guildId) async =>
-    this.httpEndpoints.fetchGuildPreview(guildId);
+  Future<IGuildPreview> fetchGuildPreview(Snowflake guildId) async => this.httpEndpoints.fetchGuildPreview(guildId);
 
   /// Returns guild with given [guildId]
   @override
-  Future<IGuild> fetchGuild(Snowflake guildId) =>
-      this.httpEndpoints.fetchGuild(guildId);
+  Future<IGuild> fetchGuild(Snowflake guildId) => this.httpEndpoints.fetchGuild(guildId);
 
   /// Returns channel with specified id.
   /// ```
   /// var channel = await client.getChannel<TextChannel>(Snowflake("473853847115137024"));
   /// ```
   @override
-  Future<T> fetchChannel<T extends IChannel>(Snowflake channelId) =>
-      this.httpEndpoints.fetchChannel(channelId);
+  Future<T> fetchChannel<T extends IChannel>(Snowflake channelId) => this.httpEndpoints.fetchChannel(channelId);
 
   /// Get user instance with specified id.
   /// ```
   /// var user = client.getUser(Snowflake("302359032612651009"));
   /// ``
-  Future<IUser> fetchUser(Snowflake userId) =>
-      this.httpEndpoints.fetchUser(userId);
+  Future<IUser> fetchUser(Snowflake userId) => this.httpEndpoints.fetchUser(userId);
 
   /// Gets a webhook by its id and/or token.
   /// If token is supplied authentication is not needed.
   @override
-  Future<IWebhook> fetchWebhook(Snowflake id, {String token = ""}) =>
-      this.httpEndpoints.fetchWebhook(id, token: token);
+  Future<IWebhook> fetchWebhook(Snowflake id, {String token = ""}) => this.httpEndpoints.fetchWebhook(id, token: token);
 
   /// Gets an [Invite] object with given code.
   /// If the [code] is in cache - it will be taken from it, otherwise API will be called.
@@ -381,8 +354,7 @@ class NyxxWebsocket extends NyxxRest implements INyxxWebsocket {
   /// var inv = client.getInvite("YMgffU8");
   /// ```
   @override
-  Future<IInvite> getInvite(String code) =>
-      this.httpEndpoints.fetchInvite(code);
+  Future<IInvite> getInvite(String code) => this.httpEndpoints.fetchInvite(code);
 
   /// Returns number of shards
   @override
@@ -409,18 +381,15 @@ class NyxxWebsocket extends NyxxRest implements INyxxWebsocket {
 
   /// Join [ThreadChannel] with given [channelId]
   @override
-  Future<void> joinThread(Snowflake channelId) =>
-      this.httpEndpoints.joinThread(channelId);
+  Future<void> joinThread(Snowflake channelId) => this.httpEndpoints.joinThread(channelId);
 
   /// Gets standard sticker with given id
   @override
-  Future<IStandardSticker> getSticker(Snowflake id) =>
-      this.httpEndpoints.getSticker(id);
+  Future<IStandardSticker> getSticker(Snowflake id) => this.httpEndpoints.getSticker(id);
 
   /// List all nitro stickers packs
   @override
-  Stream<IStickerPack> listNitroStickerPacks() =>
-      this.httpEndpoints.listNitroStickerPacks();
+  Stream<IStickerPack> listNitroStickerPacks() => this.httpEndpoints.listNitroStickerPacks();
 
   @override
   Future<void> dispose() async {

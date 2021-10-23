@@ -13,11 +13,10 @@ class DiscordColor extends IEnum<int> {
   /// final color = DiscordColor.fromInt(43563);
   /// final color2 = DiscordColor.fromInt(0xff0044);
   /// ```
-  DiscordColor.fromInt(int value): super(value);
+  DiscordColor.fromInt(int value) : super(value);
 
   /// Construct color from individual color components
-  factory DiscordColor.fromRgb(int r, int g, int b) =>
-    DiscordColor.fromInt(r << 16 | g << 8 | b);
+  factory DiscordColor.fromRgb(int r, int g, int b) => DiscordColor.fromInt(r << 16 | g << 8 | b);
 
   /// Construct color from individual color components with doubles
   /// Values should be from 0.0 to 1.0

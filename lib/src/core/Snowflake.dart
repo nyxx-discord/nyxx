@@ -26,7 +26,7 @@ class Snowflake implements Comparable<Snowflake> {
   const Snowflake.value(this._id);
 
   /// Creates new instance with value of 0
-  const Snowflake.zero(): _id = 0;
+  const Snowflake.zero() : _id = 0;
 
   /// Creates instance of an Snowflake
   factory Snowflake(dynamic id) {

@@ -22,10 +22,8 @@ abstract class HttpRequest {
     this.uri = Uri.https(Constants.host, Constants.baseUri + path);
   }
 
-  Map<String, String> genHeaders() => {
-    if (this.auditLog != null) "X-Audit-Log-Reason": this.auditLog!,
-    "User-Agent": "Nyxx (${Constants.repoUrl}, ${Constants.version})"
-  };
+  Map<String, String> genHeaders() =>
+      {if (this.auditLog != null) "X-Audit-Log-Reason": this.auditLog!, "User-Agent": "Nyxx (${Constants.repoUrl}, ${Constants.version})"};
 
   Future<http.StreamedResponse> execute();
 
@@ -37,21 +35,18 @@ class BasicRequest extends HttpRequest {
   /// Body of request
   final dynamic body;
 
-  BasicRequest(String path,
-      {String method = "GET", this.body, RawApiMap? queryParams, String? auditLog, bool rateLimit = true})
+  BasicRequest(String path, {String method = "GET", this.body, RawApiMap? queryParams, String? auditLog, bool rateLimit = true})
       : super(path, method: method, queryParams: queryParams, auditLog: auditLog, rateLimit: rateLimit);
 
   @override
   Future<http.StreamedResponse> execute() async {
-    final request = http.Request(this.method, this.uri.replace(queryParameters: queryParams))
-      ..headers.addAll(genHeaders());
+    final request = http.Request(this.method, this.uri.replace(queryParameters: queryParams))..headers.addAll(genHeaders());
 
     if (this.body != null && this.method != "GET") {
       request.headers.addAll(_getJsonContentTypeHeader());
       if (this.body is String) {
         request.body = this.body as String;
-      } else
-      if (this.body is RawApiMap || this.body is List<dynamic>) {
+      } else if (this.body is RawApiMap || this.body is List<dynamic>) {
         request.body = jsonEncode(this.body);
       }
     }
@@ -59,9 +54,7 @@ class BasicRequest extends HttpRequest {
     return this._client.send(request);
   }
 
-  Map<String, String> _getJsonContentTypeHeader() => {
-    "Content-Type" : "application/json"
-  };
+  Map<String, String> _getJsonContentTypeHeader() => {"Content-Type": "application/json"};
 }
 
 /// Request with which files will be sent. Cannot contain request body.
@@ -73,14 +66,12 @@ class MultipartRequest extends HttpRequest {
   final dynamic fields;
 
   /// Creates an instance of [MultipartRequest]
-  MultipartRequest(String path, this.files,
-      {this.fields, String method = "GET", RawApiMap? queryParams, String? auditLog, bool rateLimit = true})
+  MultipartRequest(String path, this.files, {this.fields, String method = "GET", RawApiMap? queryParams, String? auditLog, bool rateLimit = true})
       : super(path, method: method, queryParams: queryParams, auditLog: auditLog, rateLimit: rateLimit);
 
   @override
   Future<http.StreamedResponse> execute() {
-    final request = http.MultipartRequest(this.method, this.uri.replace(queryParameters: queryParams))
-      ..headers.addAll(genHeaders());
+    final request = http.MultipartRequest(this.method, this.uri.replace(queryParameters: queryParams))..headers.addAll(genHeaders());
 
     request.files.addAll(this.files);
 

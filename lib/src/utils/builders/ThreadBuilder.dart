@@ -3,7 +3,6 @@ import 'package:nyxx/src/utils/IEnum.dart';
 import 'package:nyxx/src/utils/builders/Builder.dart';
 
 class ThreadBuilder extends Builder {
-
   /// The name fo the thread
   String? name;
 
@@ -31,11 +30,7 @@ class ThreadBuilder extends Builder {
   void setPublic() => this.private = false;
 
   @override
-  RawApiMap build() => <String, dynamic>{
-    "auto_archive_duration": this.archiveAfter.value,
-    "name": name,
-    "type": private ? 12 : 11
-  };
+  RawApiMap build() => <String, dynamic>{"auto_archive_duration": this.archiveAfter.value, "name": name, "type": private ? 12 : 11};
 }
 
 /// Simplifies the process of setting an auto archive time.

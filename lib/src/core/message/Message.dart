@@ -262,8 +262,7 @@ class Message extends SnowflakeEntity implements IMessage {
 
     this.partialStickers = [
       if (raw["sticker_items"] != null)
-        for (final rawSticker in raw["sticker_items"])
-          PartialSticker(rawSticker as RawApiMap, client)
+        for (final rawSticker in raw["sticker_items"]) PartialSticker(rawSticker as RawApiMap, client)
     ];
 
     if (raw["flags"] != null) {
@@ -313,16 +312,11 @@ class Message extends SnowflakeEntity implements IMessage {
       this.nonce = null;
     }
 
-    this.applicationId = raw["application_id"] != null
-        ? Snowflake(raw["application_id"])
-        : null;
+    this.applicationId = raw["application_id"] != null ? Snowflake(raw["application_id"]) : null;
 
     if (raw["components"] != null) {
       this.components = [
-        for (final rawRow in raw["components"]) [
-          for (final componentRaw in rawRow["components"])
-            MessageComponent.deserialize(componentRaw as RawApiMap)
-        ]
+        for (final rawRow in raw["components"]) [for (final componentRaw in rawRow["components"]) MessageComponent.deserialize(componentRaw as RawApiMap)]
       ];
     } else {
       this.components = [];
@@ -332,9 +326,7 @@ class Message extends SnowflakeEntity implements IMessage {
       this.crossPostReference = MessageReference(raw["message_reference"] as RawApiMap, client);
     }
 
-    this.guild = raw["guild_id"] != null
-        ? GuildCacheable(client, Snowflake(raw["guild_id"]))
-        : null;
+    this.guild = raw["guild_id"] != null ? GuildCacheable(client, Snowflake(raw["guild_id"])) : null;
 
     if (raw["webhook_id"] != null) {
       this.author = Webhook(raw["author"] as RawApiMap, client);
@@ -348,9 +340,7 @@ class Message extends SnowflakeEntity implements IMessage {
 
     if (raw["member"] != null) {
       // In case member object doesnt have id property and we need it for member object
-      raw["member"]["user"] = <String, dynamic>{
-        "id": raw["author"]["id"]
-      };
+      raw["member"]["user"] = <String, dynamic>{"id": raw["author"]["id"]};
       this.member = Member(client, raw["member"] as RawApiMap, this.guild!.id);
 
       if (client.cacheOptions.memberCachePolicyLocation.objectConstructor && client.cacheOptions.memberCachePolicy.canCache(member!)) {
@@ -360,30 +350,25 @@ class Message extends SnowflakeEntity implements IMessage {
 
     this.roleMentions = [
       if (raw["mention_roles"] != null)
-        for (var roleId in raw["mention_roles"])
-          RoleCacheable(client, Snowflake(roleId), this.guild!)
+        for (var roleId in raw["mention_roles"]) RoleCacheable(client, Snowflake(roleId), this.guild!)
     ];
   }
 
   /// Suppresses embeds in message. Can be executed in other users messages.
   @override
-  Future<IMessage> suppressEmbeds() =>
-      client.httpEndpoints.suppressMessageEmbeds(this.channel.id, this.id);
+  Future<IMessage> suppressEmbeds() => client.httpEndpoints.suppressMessageEmbeds(this.channel.id, this.id);
 
   /// Edits the message.
   @override
-  Future<IMessage> edit(MessageBuilder builder) =>
-      client.httpEndpoints.editMessage(this.channel.id, this.id, builder);
+  Future<IMessage> edit(MessageBuilder builder) => client.httpEndpoints.editMessage(this.channel.id, this.id, builder);
 
   /// Add reaction to message.
   @override
-  Future<void> createReaction(IEmoji emoji) =>
-      client.httpEndpoints.createMessageReaction(this.channel.id, this.id, emoji);
+  Future<void> createReaction(IEmoji emoji) => client.httpEndpoints.createMessageReaction(this.channel.id, this.id, emoji);
 
   /// Deletes reaction of bot.
   @override
-  Future<void> deleteSelfReaction(IEmoji emoji) =>
-      client.httpEndpoints.deleteMessageReaction(this.channel.id, this.id, emoji);
+  Future<void> deleteSelfReaction(IEmoji emoji) => client.httpEndpoints.deleteMessageReaction(this.channel.id, this.id, emoji);
 
   /// Deletes reaction of given user.
   @override
@@ -392,28 +377,23 @@ class Message extends SnowflakeEntity implements IMessage {
 
   /// Deletes all reactions
   @override
-  Future<void> deleteAllReactions() =>
-      client.httpEndpoints.deleteMessageAllReactions(this.channel.id, this.id);
+  Future<void> deleteAllReactions() => client.httpEndpoints.deleteMessageAllReactions(this.channel.id, this.id);
 
   /// Deletes the message.
   @override
-  Future<void> delete({String? auditReason}) =>
-      client.httpEndpoints.deleteMessage(this.channel.id, this.id);
+  Future<void> delete({String? auditReason}) => client.httpEndpoints.deleteMessage(this.channel.id, this.id);
 
   /// Pins [Message] in message's channel
   @override
-  Future<void> pinMessage() =>
-      client.httpEndpoints.pinMessage(this.channel.id, this.id);
+  Future<void> pinMessage() => client.httpEndpoints.pinMessage(this.channel.id, this.id);
 
   /// Unpins [Message] in message's channel
   @override
-  Future<void> unpinMessage() =>
-      client.httpEndpoints.unpinMessage(this.channel.id, this.id);
+  Future<void> unpinMessage() => client.httpEndpoints.unpinMessage(this.channel.id, this.id);
 
   /// Creates a thread based on this message, that only retrieves a [ThreadPreviewChannel]
   @override
-  Future<IThreadPreviewChannel> createThread(ThreadBuilder builder) async =>
-      client.httpEndpoints.createThreadWithMessage(this.channel.id, this.id, builder);
+  Future<IThreadPreviewChannel> createThread(ThreadBuilder builder) async => client.httpEndpoints.createThreadWithMessage(this.channel.id, this.id, builder);
 
   /// Creates a thread in a message
   @override
@@ -425,8 +405,7 @@ class Message extends SnowflakeEntity implements IMessage {
   /// Cross post a Message into all guilds what follow the news channel indicated.
   /// This endpoint requires the "DISCOVERY" feature to be present for the guild.
   @override
-  Future<void> crossPost() async =>
-      client.httpEndpoints.crossPostGuildMessage(this.channel.id, this.id);
+  Future<void> crossPost() async => client.httpEndpoints.crossPostGuildMessage(this.channel.id, this.id);
 
   @override
   Future<void> dispose() => Future.value(null);
@@ -440,15 +419,15 @@ class Message extends SnowflakeEntity implements IMessage {
       return this.id == other.id;
     }
 
-    if(other is Snowflake) {
+    if (other is Snowflake) {
       return this.id == other;
     }
 
-    if(other is int) {
+    if (other is int) {
       return this.id == other;
     }
 
-    if(other is String) {
+    if (other is String) {
       return this.id == other;
     }
 
@@ -458,5 +437,4 @@ class Message extends SnowflakeEntity implements IMessage {
   @override
   // TODO: implement hashCode
   int get hashCode => super.hashCode;
-
 }

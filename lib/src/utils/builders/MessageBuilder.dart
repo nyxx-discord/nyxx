@@ -52,32 +52,24 @@ class MessageBuilder extends BuilderWithClient {
   MessageBuilder();
 
   /// Creates [MessageBuilder] with only content
-  factory MessageBuilder.content(String content) =>
-      MessageBuilder()
-        ..content = content;
+  factory MessageBuilder.content(String content) => MessageBuilder()..content = content;
 
   /// Creates [MessageBuilder] with content of empty character
-  factory MessageBuilder.empty() =>
-      MessageBuilder()
-        ..appendClearCharacter();
+  factory MessageBuilder.empty() => MessageBuilder()..appendClearCharacter();
 
   /// Creates [MessageBuilder] with only embed
-  factory MessageBuilder.embed(EmbedBuilder embed) =>
-      MessageBuilder()
-        ..embeds = [embed];
+  factory MessageBuilder.embed(EmbedBuilder embed) => MessageBuilder()..embeds = [embed];
 
   /// Creates [MessageBuilder] with only specified files
-  factory MessageBuilder.files(List<AttachmentBuilder> files) =>
-      MessageBuilder()
-        ..files = files;
+  factory MessageBuilder.files(List<AttachmentBuilder> files) => MessageBuilder()..files = files;
 
   /// Creates [MessageBuilder] from [Message].
   /// Copies content, tts and first embed of target [message]
   factory MessageBuilder.fromMessage(IMessage message) => MessageBuilder()
-        ..content = message.content
-        ..tts = message.tts
-        ..embeds = message.embeds.map((e) => e.toBuilder()).toList()
-        ..replyBuilder = message.referencedMessage?.toBuilder();
+    ..content = message.content
+    ..tts = message.tts
+    ..embeds = message.embeds.map((e) => e.toBuilder()).toList()
+    ..replyBuilder = message.referencedMessage?.toBuilder();
 
   /// Allows to add embed to message
   void addEmbed(void Function(EmbedBuilder embed) builder) {
@@ -96,28 +88,22 @@ class MessageBuilder extends BuilderWithClient {
   void append(Object text) => _content.write(text);
 
   /// Appends spoiler to message
-  void appendSpoiler(Object text) =>
-      appendWithDecoration(text, MessageDecoration.spoiler);
+  void appendSpoiler(Object text) => appendWithDecoration(text, MessageDecoration.spoiler);
 
   /// Appends italic text to message
-  void appendItalics(Object text) =>
-      appendWithDecoration(text, MessageDecoration.italics);
+  void appendItalics(Object text) => appendWithDecoration(text, MessageDecoration.italics);
 
   /// Appends bold text to message
-  void appendBold(Object text) =>
-      appendWithDecoration(text, MessageDecoration.bold);
+  void appendBold(Object text) => appendWithDecoration(text, MessageDecoration.bold);
 
   /// Appends strikeout text to message
-  void appendStrike(Object text) =>
-      appendWithDecoration(text, MessageDecoration.strike);
+  void appendStrike(Object text) => appendWithDecoration(text, MessageDecoration.strike);
 
   /// Appends simple code to message
-  void appendCodeSimple(Object text) =>
-      appendWithDecoration(text, MessageDecoration.codeSimple);
+  void appendCodeSimple(Object text) => appendWithDecoration(text, MessageDecoration.codeSimple);
 
   /// Appends code block to message
-  void appendCode(Object language, Object code) =>
-      appendWithDecoration("$language\n$code", MessageDecoration.codeLong);
+  void appendCode(Object language, Object code) => appendWithDecoration("$language\n$code", MessageDecoration.codeLong);
 
   /// Appends formatted text to message
   void appendWithDecoration(Object text, MessageDecoration decoration) {
@@ -125,12 +111,10 @@ class MessageBuilder extends BuilderWithClient {
   }
 
   /// Appends [Mentionable] object to message
-  void appendMention(Mentionable mentionable) =>
-      this.append(mentionable.mention);
+  void appendMention(Mentionable mentionable) => this.append(mentionable.mention);
 
   /// Appends timestamp to message from [dateTime]
-  void appendTimestamp(DateTime dateTime, {TimeStampStyle style = TimeStampStyle.def}) =>
-      this.append(style.format(dateTime));
+  void appendTimestamp(DateTime dateTime, {TimeStampStyle style = TimeStampStyle.def}) => this.append(style.format(dateTime));
 
   /// Add attachment
   void addAttachment(AttachmentBuilder attachment) {
@@ -147,8 +131,7 @@ class MessageBuilder extends BuilderWithClient {
   }
 
   /// Add attachment from specified bytes
-  void addBytesAttachment(List<int> bytes, String name,
-      {bool spoiler = false}) {
+  void addBytesAttachment(List<int> bytes, String name, {bool spoiler = false}) {
     addAttachment(AttachmentBuilder.bytes(bytes, name, spoiler: spoiler));
   }
 
@@ -161,8 +144,7 @@ class MessageBuilder extends BuilderWithClient {
   Future<IMessage> send(ISend entity) => entity.sendMessage(this);
 
   /// Returns if this instance of message builder can be used when editing message
-  bool canBeUsedAsNewMessage() =>
-      this.content.isNotEmpty || embeds.isNotEmpty || (this.files != null && this.files!.isNotEmpty);
+  bool canBeUsedAsNewMessage() => this.content.isNotEmpty || embeds.isNotEmpty || (this.files != null && this.files!.isNotEmpty);
 
   @override
   RawApiMap build(INyxx client) {

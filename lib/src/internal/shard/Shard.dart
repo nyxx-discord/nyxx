@@ -70,7 +70,8 @@ abstract class IShard implements Disposable {
 
   /// Allows to request members objects from gateway
   /// [guild] can be either Snowflake or Iterable<Snowflake>
-  void requestMembers(/* Snowflake|Iterable<Snowflake> */ dynamic guild, {String? query, Iterable<Snowflake>? userIds, int limit = 0, bool presences = false, String? nonce});
+  void requestMembers(/* Snowflake|Iterable<Snowflake> */ dynamic guild,
+      {String? query, Iterable<Snowflake>? userIds, int limit = 0, bool presences = false, String? nonce});
 }
 
 /// Shard is single connection to discord gateway. Since bots can grow big, handling thousand of guild on same websocket connections would be very hand.
@@ -125,8 +126,7 @@ class Shard implements IShard {
   late DateTime _lastHeartbeatSent; // Datetime when last heartbeat was sent
   bool _heartbeatAckReceived = true; // True if last heartbeat was acked
 
-  WebsocketEventController get eventController =>
-      manager.connectionManager.client.eventsWs as WebsocketEventController;
+  WebsocketEventController get eventController => manager.connectionManager.client.eventsWs as WebsocketEventController;
 
   /// Creates an instance of [Shard]
   Shard(this.id, this.manager, String gatewayUrl) {
@@ -140,7 +140,7 @@ class Shard implements IShard {
       this._shardIsolate = isolate;
       this._sendPort = await _receiveStream.first as SendPort;
 
-      this._sendPort.send({"cmd" : "INIT", "gatewayUrl" : gatewayUrl, "compression":  manager.connectionManager.client.options.compressedGatewayPayloads});
+      this._sendPort.send({"cmd": "INIT", "gatewayUrl": gatewayUrl, "compression": manager.connectionManager.client.options.compressedGatewayPayloads});
       this._receiveStream.listen(_handle);
     });
   }
@@ -148,7 +148,10 @@ class Shard implements IShard {
   /// Sends WS data.
   @override
   void send(int opCode, dynamic d) {
-    final rawData = {"cmd": "SEND", "data" : {"op": opCode, "d": d}};
+    final rawData = {
+      "cmd": "SEND",
+      "data": {"op": opCode, "d": d}
+    };
     this.manager.logger.finest("Sending to shard isolate on shard [${this.id}]: [$rawData]");
     this._sendPort.send(rawData);
   }
@@ -156,12 +159,8 @@ class Shard implements IShard {
   /// Updates clients voice state for [Guild] with given [guildId]
   @override
   void changeVoiceState(Snowflake? guildId, Snowflake? channelId, {bool selfMute = false, bool selfDeafen = false}) {
-    this.send(OPCodes.voiceStateUpdate, <String, dynamic> {
-      "guild_id" : guildId.toString(),
-      "channel_id" : channelId?.toString(),
-      "self_mute" : selfMute,
-      "self_deaf" : selfDeafen
-    });
+    this.send(OPCodes.voiceStateUpdate,
+        <String, dynamic>{"guild_id": guildId.toString(), "channel_id": channelId?.toString(), "self_mute": selfMute, "self_deaf": selfDeafen});
   }
 
   /// Allows to set presence for current shard.
@@ -186,13 +185,13 @@ class Shard implements IShard {
     dynamic guildPayload;
 
     if (guild is Snowflake) {
-      if(!this.guilds.contains(guild)) {
+      if (!this.guilds.contains(guild)) {
         throw InvalidShardException("Cannot request member for guild on wrong shard");
       }
 
       guildPayload = [guild.toString()];
     } else if (guild is Iterable<Snowflake>) {
-      if(!this.guilds.any((element) => guild.contains(element))) {
+      if (!this.guilds.any((element) => guild.contains(element))) {
         throw InvalidShardException("Cannot request member for guild on wrong shard");
       }
 
@@ -217,7 +216,7 @@ class Shard implements IShard {
     this.send(OPCodes.heartbeat, _sequence == 0 ? null : _sequence);
     this._lastHeartbeatSent = DateTime.now();
 
-    if(!this._heartbeatAckReceived) {
+    if (!this._heartbeatAckReceived) {
       manager.logger.warning("Not received previous heartbeat ack on shard: [${this.id}] on sequence: [{$_sequence}]");
       return;
     }
@@ -261,31 +260,31 @@ class Shard implements IShard {
   void _connect() {
     manager.logger.info("Connecting to gateway on shard $id!");
     this._resume = false;
-    Future.delayed(const Duration(seconds: 2), () => this._sendPort.send({ "cmd" : "CONNECT"}));
+    Future.delayed(const Duration(seconds: 2), () => this._sendPort.send({"cmd": "CONNECT"}));
   }
 
   // Reconnects to gateway
   void _reconnect() {
     manager.logger.info("Resuming connection to gateway on shard $id!");
     this._resume = true;
-    Future.delayed(const Duration(seconds: 1), () => this._sendPort.send({ "cmd" : "CONNECT"}));
+    Future.delayed(const Duration(seconds: 1), () => this._sendPort.send({"cmd": "CONNECT"}));
   }
 
   Future<void> _handle(dynamic rawData) async {
     this.manager.logger.finest("Received gateway payload on shard [${this.id}]: [$rawData]");
 
-    if(rawData["cmd"] == "CONNECT_ACK") {
+    if (rawData["cmd"] == "CONNECT_ACK") {
       manager.logger.info("Shard $id connected to gateway!");
 
       return;
     }
 
-    if(rawData["cmd"] == "ERROR" || rawData["cmd"] == "DISCONNECTED") {
+    if (rawData["cmd"] == "ERROR" || rawData["cmd"] == "DISCONNECTED") {
       _handleError(rawData);
       return;
     }
 
-    if(rawData["jsonData"] == null) {
+    if (rawData["jsonData"] == null) {
       return;
     }
 
@@ -309,16 +308,15 @@ class Shard implements IShard {
         if (this._sessionId == null || !_resume) {
           final identifyMsg = <String, dynamic>{
             "token": manager.connectionManager.client.token,
-            "properties": <String, dynamic> {
+            "properties": <String, dynamic>{
               "\$os": Platform.operatingSystem,
               "\$browser": "nyxx",
               "\$device": "nyxx",
             },
             "large_threshold": manager.connectionManager.client.options.largeThreshold,
-            "guild_subscriptions" : manager.connectionManager.client.options.guildSubscriptions,
+            "guild_subscriptions": manager.connectionManager.client.options.guildSubscriptions,
             "intents": manager.connectionManager.client.intents,
-            if (manager.connectionManager.client.options.initialPresence != null)
-              "presence" : manager.connectionManager.client.options.initialPresence!.build(),
+            if (manager.connectionManager.client.options.initialPresence != null) "presence": manager.connectionManager.client.options.initialPresence!.build(),
             "shard": <int>[this.id, manager.numShards]
           };
 
@@ -336,7 +334,9 @@ class Shard implements IShard {
       case OPCodes.invalidSession:
         manager.logger.severe("Invalid session on shard $id. ${(rawPayload["d"] as bool) ? "Resuming..." : "Reconnecting..."}");
         _heartbeatTimer.cancel();
-        (manager.connectionManager.client.eventsWs as WebsocketEventController).onDisconnectController.add(DisconnectEvent(this, DisconnectEventReason.invalidSession));
+        (manager.connectionManager.client.eventsWs as WebsocketEventController)
+            .onDisconnectController
+            .add(DisconnectEvent(this, DisconnectEventReason.invalidSession));
 
         if (rawPayload["d"] as bool) {
           _reconnect();
@@ -493,8 +493,7 @@ class Shard implements IShard {
             break;
 
           case "MESSAGE_REACTION_REMOVE_EMOJI":
-            this.eventController.onMessageReactionRemoveEmojiController
-                .add(MessageReactionRemoveEmojiEvent(rawPayload, manager.connectionManager.client));
+            this.eventController.onMessageReactionRemoveEmojiController.add(MessageReactionRemoveEmojiEvent(rawPayload, manager.connectionManager.client));
             break;
 
           case "THREAD_CREATE":

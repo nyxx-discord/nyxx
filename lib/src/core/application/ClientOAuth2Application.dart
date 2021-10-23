@@ -40,6 +40,5 @@ class ClientOAuth2Application extends OAuth2Application implements IClientOAuth2
 
   /// Creates an OAuth2 URL with the specified permissions.
   @override
-  String getInviteUrl([int? permissions]) =>
-      this.client.httpEndpoints.getApplicationInviteUrl(this.id, permissions);
+  String getInviteUrl([int? permissions]) => this.client.httpEndpoints.getApplicationInviteUrl(this.id, permissions);
 }

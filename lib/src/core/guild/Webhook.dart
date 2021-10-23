@@ -74,34 +74,18 @@ abstract class IWebhook implements SnowflakeEntity, IMessageAuthor {
   ///
   /// [wait] - waits for server confirmation of message send before response,
   /// and returns the created message body (defaults to false; when false a message that is not save does not return an error)
-  Future<IMessage?> execute(
-      MessageBuilder builder,
-      {bool? wait,
-        Snowflake? threadId,
-        String? avatarUrl,
-        String? username}) =>
-      client.httpEndpoints.executeWebhook(
-          this.id,
-          builder,
-          token: token,
-          threadId: threadId,
-          username: username,
-          wait: wait,
-          avatarUrl: avatarUrl
-      );
+  Future<IMessage?> execute(MessageBuilder builder, {bool? wait, Snowflake? threadId, String? avatarUrl, String? username}) =>
+      client.httpEndpoints.executeWebhook(this.id, builder, token: token, threadId: threadId, username: username, wait: wait, avatarUrl: avatarUrl);
 
   @override
-  String avatarURL({String format = "webp", int size = 128}) =>
-      client.httpEndpoints.userAvatarURL(this.id, this.avatarHash, 0, format: format, size: size);
+  String avatarURL({String format = "webp", int size = 128}) => client.httpEndpoints.userAvatarURL(this.id, this.avatarHash, 0, format: format, size: size);
 
   /// Edits the webhook.
   Future<IWebhook> edit({String? name, SnowflakeEntity? channel, AttachmentBuilder? avatarAttachment, String? auditReason}) =>
-      client.httpEndpoints.editWebhook(this.id, token: this.token, name: name,
-          channel: channel, avatarAttachment: avatarAttachment, auditReason: auditReason);
+      client.httpEndpoints.editWebhook(this.id, token: this.token, name: name, channel: channel, avatarAttachment: avatarAttachment, auditReason: auditReason);
 
   /// Deletes the webhook.
-  Future<void> delete({String? auditReason}) =>
-      client.httpEndpoints.deleteWebhook(this.id, token: token, auditReason: auditReason);
+  Future<void> delete({String? auditReason}) => client.httpEndpoints.deleteWebhook(this.id, token: token, auditReason: auditReason);
 }
 
 ///Webhooks are a low-effort way to post messages to channels in Discord.
@@ -191,34 +175,18 @@ class Webhook extends SnowflakeEntity implements IWebhook {
   /// [wait] - waits for server confirmation of message send before response,
   /// and returns the created message body (defaults to false; when false a message that is not save does not return an error)
   @override
-  Future<IMessage?> execute(
-      MessageBuilder builder,
-      {bool? wait,
-      Snowflake? threadId,
-      String? avatarUrl,
-      String? username}) =>
-      client.httpEndpoints.executeWebhook(
-        this.id,
-        builder,
-        token: token,
-        threadId: threadId,
-        username: username,
-        wait: wait,
-        avatarUrl: avatarUrl
-      );
+  Future<IMessage?> execute(MessageBuilder builder, {bool? wait, Snowflake? threadId, String? avatarUrl, String? username}) =>
+      client.httpEndpoints.executeWebhook(this.id, builder, token: token, threadId: threadId, username: username, wait: wait, avatarUrl: avatarUrl);
 
   @override
-  String avatarURL({String format = "webp", int size = 128}) =>
-      client.httpEndpoints.userAvatarURL(this.id, this.avatarHash, 0, format: format, size: size);
+  String avatarURL({String format = "webp", int size = 128}) => client.httpEndpoints.userAvatarURL(this.id, this.avatarHash, 0, format: format, size: size);
 
   /// Edits the webhook.
   @override
   Future<IWebhook> edit({String? name, SnowflakeEntity? channel, AttachmentBuilder? avatarAttachment, String? auditReason}) =>
-    client.httpEndpoints.editWebhook(this.id, token: this.token, name: name,
-        channel: channel, avatarAttachment: avatarAttachment, auditReason: auditReason);
+      client.httpEndpoints.editWebhook(this.id, token: this.token, name: name, channel: channel, avatarAttachment: avatarAttachment, auditReason: auditReason);
 
   /// Deletes the webhook.
   @override
-  Future<void> delete({String? auditReason}) =>
-      client.httpEndpoints.deleteWebhook(this.id, token: token, auditReason: auditReason);
+  Future<void> delete({String? auditReason}) => client.httpEndpoints.deleteWebhook(this.id, token: token, auditReason: auditReason);
 }

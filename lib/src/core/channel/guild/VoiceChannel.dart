@@ -1,5 +1,3 @@
-
-
 import 'package:nyxx/src/Nyxx.dart';
 import 'package:nyxx/src/core/Invite.dart';
 import 'package:nyxx/src/core/Snowflake.dart';
@@ -12,9 +10,7 @@ import 'package:nyxx/src/internal/exceptions/InvalidShardException.dart';
 import 'package:nyxx/src/typedefs.dart';
 import 'package:nyxx/src/utils/IEnum.dart';
 
-abstract class IVoiceGuildChannel implements IGuildChannel {
-
-}
+abstract class IVoiceGuildChannel implements IGuildChannel {}
 
 class VoiceGuildChannel extends GuildChannel {
   /// The channel's bitrate.
@@ -81,12 +77,10 @@ class StageVoiceGuildChannel extends VoiceGuildChannel {
   StageVoiceGuildChannel(INyxx client, RawApiMap raw, [Snowflake? guildId]) : super(client, raw, guildId);
 
   /// Gets the stage instance associated with the Stage channel, if it exists.
-  Future<IStageChannelInstance> getStageChannelInstance() =>
-      this.client.httpEndpoints.getStageChannelInstance(this.id);
+  Future<IStageChannelInstance> getStageChannelInstance() => this.client.httpEndpoints.getStageChannelInstance(this.id);
 
   /// Deletes the Stage instance.
-  Future<void> deleteStageChannelInstance() =>
-      this.client.httpEndpoints.deleteStageChannelInstance(this.id);
+  Future<void> deleteStageChannelInstance() => this.client.httpEndpoints.deleteStageChannelInstance(this.id);
 
   /// Creates a new Stage instance associated to a Stage channel.
   Future<IStageChannelInstance> createStageChannelInstance(String topic, {StageChannelInstancePrivacyLevel? privacyLevel}) =>
@@ -137,7 +131,7 @@ class StageChannelInstance extends SnowflakeEntity implements IStageChannelInsta
   late final bool disoverableDisabled;
 
   /// Creates an instance of [StageChannelInstance]
-  StageChannelInstance(INyxx client, RawApiMap raw): super(Snowflake(raw["id"])) {
+  StageChannelInstance(INyxx client, RawApiMap raw) : super(Snowflake(raw["id"])) {
     this.guild = GuildCacheable(client, Snowflake(raw["guild_id"]));
     this.channel = ChannelCacheable(client, Snowflake(raw["channel_id"]));
     this.topic = raw["topic"] as String;
@@ -156,6 +150,7 @@ class StageChannelInstancePrivacyLevel extends IEnum<int> {
 
   /// Creates an instance of [StageChannelInstancePrivacyLevel]
   const StageChannelInstancePrivacyLevel(int value) : super(value);
+
   /// Create [StageChannelInstancePrivacyLevel] from [value]
   StageChannelInstancePrivacyLevel.from(int value) : super(value);
 }

@@ -1,5 +1,3 @@
-
-
 import 'package:nyxx/src/Nyxx.dart';
 import 'package:nyxx/src/core/Invite.dart';
 import 'package:nyxx/src/core/Snowflake.dart';
@@ -75,15 +73,14 @@ abstract class GuildChannel extends MinimalGuildChannel implements IGuildChannel
 
     this.permissionOverrides = [
       if (raw["permission_overwrites"] != null)
-        for (var obj in raw["permission_overwrites"])
-          PermissionsOverrides(obj as RawApiMap)
+        for (var obj in raw["permission_overwrites"]) PermissionsOverrides(obj as RawApiMap)
     ];
   }
 
   /// Edits channel
   @override
   Future<T> edit<T extends GuildChannel>(ChannelBuilder builder, {String? auditReason}) =>
-    this.client.httpEndpoints.editGuildChannel(this.id, builder, auditReason: auditReason);
+      this.client.httpEndpoints.editGuildChannel(this.id, builder, auditReason: auditReason);
 
   /// Returns effective permissions for [member] to this channel including channel overrides.
   @override
@@ -106,9 +103,7 @@ abstract class GuildChannel extends MinimalGuildChannel implements IGuildChannel
     final overrides = PermissionsUtils.getOverrides(member, this);
     rawMemberPerms = PermissionsUtils.apply(rawMemberPerms, overrides.first, overrides.last);
 
-    return PermissionsUtils.isApplied(rawMemberPerms, PermissionsConstants.viewChannel)
-        ? Permissions(rawMemberPerms)
-        : Permissions.empty();
+    return PermissionsUtils.isApplied(rawMemberPerms, PermissionsConstants.viewChannel) ? Permissions(rawMemberPerms) : Permissions.empty();
   }
 
   /// Returns effective permissions for [role] to this channel including channel overrides.
@@ -148,8 +143,7 @@ abstract class GuildChannel extends MinimalGuildChannel implements IGuildChannel
   /// var invites = await chan.getChannelInvites();
   /// ```
   @override
-  Stream<IInviteWithMeta> fetchChannelInvites() =>
-      client.httpEndpoints.fetchChannelInvites(this.id);
+  Stream<IInviteWithMeta> fetchChannelInvites() => client.httpEndpoints.fetchChannelInvites(this.id);
 
   /// Allows to set or edit permissions for channel. [id] can be either User or Role
   /// Throws if [id] isn't [User] or [Role]
@@ -218,7 +212,8 @@ abstract class MinimalGuildChannel extends Channel implements IMinimalGuildChann
     } else if (guildId != null) {
       this.guild = GuildCacheable(client, guildId);
     } else {
-      throw Exception("Cannot initialize instance of GuildChannelNex due missing `guild_id` in json payload and/or missing optional guildId parameter. Report this issue to developer");
+      throw Exception(
+          "Cannot initialize instance of GuildChannelNex due missing `guild_id` in json payload and/or missing optional guildId parameter. Report this issue to developer");
     }
 
     if (raw["parent_id"] != null) {

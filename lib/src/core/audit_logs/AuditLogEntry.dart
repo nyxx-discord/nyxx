@@ -7,7 +7,7 @@ import 'package:nyxx/src/internal/cache/Cacheable.dart';
 import 'package:nyxx/src/typedefs.dart';
 import 'package:nyxx/src/utils/IEnum.dart';
 
-abstract class IAuditLogEntry implements SnowflakeEntity{
+abstract class IAuditLogEntry implements SnowflakeEntity {
   /// Id of the affected entity (webhook, user, role, etc.)
   String get targetId;
 

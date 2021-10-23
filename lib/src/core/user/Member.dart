@@ -82,7 +82,8 @@ abstract class IMember implements SnowflakeEntity, Mentionable {
   Future<void> kick({String? auditReason});
 
   /// Edits members. Allows to move user in voice channel, mute or deaf, change nick, roles.
-  Future<void> edit({String? nick = "", List<SnowflakeEntity>? roles, bool? mute, bool? deaf, Snowflake? channel = const Snowflake.zero(), String? auditReason});
+  Future<void> edit(
+      {String? nick = "", List<SnowflakeEntity>? roles, bool? mute, bool? deaf, Snowflake? channel = const Snowflake.zero(), String? auditReason});
 }
 
 class Member extends SnowflakeEntity implements IMember {
@@ -142,8 +143,7 @@ class Member extends SnowflakeEntity implements IMember {
   /// Returns highest role of member.
   /// Uses ! on nullable properties and will throw if anything is missing from cache
   @override
-  IRole get highestRole =>
-      this.roles.reduce((value, element) {
+  IRole get highestRole => this.roles.reduce((value, element) {
         final valueInstance = value.getFromCache();
         final elementInstance = element.getFromCache();
 
@@ -187,10 +187,7 @@ class Member extends SnowflakeEntity implements IMember {
     this.boostingSince = DateTime.tryParse(raw["premium_since"] as String? ?? "");
     this.avatarHash = raw["avatar"] as String?;
 
-    this.roles = [
-      for (var id in raw["roles"])
-        RoleCacheable(client, Snowflake(id), this.guild)
-    ];
+    this.roles = [for (var id in raw["roles"]) RoleCacheable(client, Snowflake(id), this.guild)];
 
     if (raw["hoisted_role"] != null) {
       this.hoistedRole = RoleCacheable(client, Snowflake(raw["hoisted_role"]), this.guild);
@@ -212,7 +209,7 @@ class Member extends SnowflakeEntity implements IMember {
   /// Returns url to member avatar
   @override
   String? avatarURL({String format = "webp"}) {
-    if(this.avatarHash == null) {
+    if (this.avatarHash == null) {
       return null;
     }
 
@@ -241,13 +238,14 @@ class Member extends SnowflakeEntity implements IMember {
 
   /// Kicks the member from guild
   @override
-  Future<void> kick({String? auditReason}) =>
-      client.httpEndpoints.guildKick(this.guild.id, this.id);
+  Future<void> kick({String? auditReason}) => client.httpEndpoints.guildKick(this.guild.id, this.id);
 
   /// Edits members. Allows to move user in voice channel, mute or deaf, change nick, roles.
   @override
-  Future<void> edit({String? nick = "", List<SnowflakeEntity>? roles, bool? mute, bool? deaf, Snowflake? channel = const Snowflake.zero(), String? auditReason}) =>
-      client.httpEndpoints.editGuildMember(this.guild.id, this.id, nick: nick, roles: roles, mute: mute, deaf: deaf, channel: channel, auditReason: auditReason);
+  Future<void> edit(
+          {String? nick = "", List<SnowflakeEntity>? roles, bool? mute, bool? deaf, Snowflake? channel = const Snowflake.zero(), String? auditReason}) =>
+      client.httpEndpoints
+          .editGuildMember(this.guild.id, this.id, nick: nick, roles: roles, mute: mute, deaf: deaf, channel: channel, auditReason: auditReason);
 
   void updateMember(String? nickname, List<Snowflake> roles, DateTime? boostingSince) {
     if (this.nickname != nickname) {

@@ -51,7 +51,7 @@ class RoleCacheable extends Cacheable<Snowflake, IRole> {
   final Cacheable<Snowflake, IGuild> guild;
 
   /// Creates an instance of [RoleCacheable]
-  RoleCacheable(INyxx client, Snowflake id, this.guild): super(client, id);
+  RoleCacheable(INyxx client, Snowflake id, this.guild) : super(client, id);
 
   @override
   Future<IRole> download() async => this._fetchGuildRole();
@@ -81,7 +81,7 @@ class RoleCacheable extends Cacheable<Snowflake, IRole> {
 
 class ChannelCacheable<T extends IChannel> extends Cacheable<Snowflake, T> {
   /// Creates an instance of [ChannelCacheable]
-  ChannelCacheable(INyxx client, Snowflake id): super(client, id);
+  ChannelCacheable(INyxx client, Snowflake id) : super(client, id);
 
   @override
   T? getFromCache() => this.client.channels[this.id] as T?;
@@ -91,7 +91,7 @@ class ChannelCacheable<T extends IChannel> extends Cacheable<Snowflake, T> {
 }
 
 class GuildCacheable extends Cacheable<Snowflake, IGuild> {
-  GuildCacheable(INyxx client, Snowflake id): super(client, id);
+  GuildCacheable(INyxx client, Snowflake id) : super(client, id);
 
   @override
   IGuild? getFromCache() => this.client.guilds[this.id];
@@ -102,7 +102,7 @@ class GuildCacheable extends Cacheable<Snowflake, IGuild> {
 
 class UserCacheable extends Cacheable<Snowflake, IUser> {
   /// Creates an instance of [ChannelCacheable]
-  UserCacheable(INyxx client, Snowflake id): super(client, id);
+  UserCacheable(INyxx client, Snowflake id) : super(client, id);
 
   @override
   Future<IUser> download() => client.httpEndpoints.fetchUser(this.id);
@@ -115,7 +115,7 @@ class MemberCacheable extends Cacheable<Snowflake, IMember> {
   final Cacheable<Snowflake, IGuild> guild;
 
   /// Creates an instance of [ChannelCacheable]
-  MemberCacheable(INyxx client, Snowflake id, this.guild): super(client, id);
+  MemberCacheable(INyxx client, Snowflake id, this.guild) : super(client, id);
 
   @override
   Future<IMember> download() => this.client.httpEndpoints.fetchGuildMember(guild.id, id);

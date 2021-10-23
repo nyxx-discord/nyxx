@@ -1,4 +1,3 @@
-
 import 'package:nyxx/src/typedefs.dart';
 import 'package:nyxx/src/utils/builders/AttachmentBuilder.dart';
 import 'package:nyxx/src/utils/builders/Builder.dart';
@@ -18,9 +17,5 @@ class StickerBuilder implements Builder {
   late final AttachmentBuilder file;
 
   @override
-  RawApiMap build() => {
-    "name": this.name,
-    "description": this.description,
-    "tags": this.tags
-  };
+  RawApiMap build() => {"name": this.name, "description": this.description, "tags": this.tags};
 }

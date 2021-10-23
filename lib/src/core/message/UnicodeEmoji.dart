@@ -1,4 +1,3 @@
-
 import 'package:nyxx/src/core/message/Emoji.dart';
 
 abstract class IUnicodeEmoji implements IEmoji {
@@ -16,12 +15,10 @@ class UnicodeEmoji implements IUnicodeEmoji, IEmoji {
   UnicodeEmoji(this.code);
 
   @override
-  String formatForMessage() =>
-      this.code;
+  String formatForMessage() => this.code;
 
   @override
-  String encodeForAPI() =>
-      this.code;
+  String encodeForAPI() => this.code;
 
   @override
   String toString() => this.formatForMessage();

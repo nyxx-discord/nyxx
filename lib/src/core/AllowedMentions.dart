@@ -68,8 +68,7 @@ class AllowedMentions extends Builder {
 
     if (_users.isNotEmpty) {
       if (!_allowUsers) {
-        throw ArgumentError(
-            "Invalid configuration of allowed mentions! Allowed `user` and blacklisted users at the same time!");
+        throw ArgumentError("Invalid configuration of allowed mentions! Allowed `user` and blacklisted users at the same time!");
       }
 
       map["users"] = _users.map((e) => e.id.toString());
@@ -77,8 +76,7 @@ class AllowedMentions extends Builder {
 
     if (_roles.isNotEmpty) {
       if (!_allowRoles) {
-        throw ArgumentError(
-            "Invalid configuration of allowed mentions! Allowed `roles` and blacklisted roles at the same time!");
+        throw ArgumentError("Invalid configuration of allowed mentions! Allowed `roles` and blacklisted roles at the same time!");
       }
 
       map["roles"] = _roles.map((e) => e.id.toString());

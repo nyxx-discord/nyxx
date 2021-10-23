@@ -30,7 +30,7 @@ class MessageReceivedEvent implements IMessageReceivedEvent {
   MessageReceivedEvent(RawApiMap raw, INyxx client) {
     this.message = Message(client, raw["d"] as RawApiMap);
 
-    if(client.cacheOptions.messageCachePolicyLocation.event && client.cacheOptions.messageCachePolicy.canCache(this.message)) {
+    if (client.cacheOptions.messageCachePolicyLocation.event && client.cacheOptions.messageCachePolicy.canCache(this.message)) {
       message.channel.getFromCache()?.messageCache[this.message.id] = this.message;
     }
   }
@@ -198,9 +198,7 @@ abstract class MessageReactionEvent {
   }
 }
 
-abstract class IMessageReactionAddedEvent implements IMessageReactionEvent {
-
-}
+abstract class IMessageReactionAddedEvent implements IMessageReactionEvent {}
 
 /// Emitted when reaction is add to message
 class MessageReactionAddedEvent extends MessageReactionEvent implements IMessageReactionAddedEvent {
@@ -220,9 +218,7 @@ class MessageReactionAddedEvent extends MessageReactionEvent implements IMessage
   }
 }
 
-abstract class IMessageReactionRemovedEvent implements IMessageReactionEvent {
-
-}
+abstract class IMessageReactionRemovedEvent implements IMessageReactionEvent {}
 
 /// Emitted when reaction is removed from message
 class MessageReactionRemovedEvent extends MessageReactionEvent implements IMessageReactionRemovedEvent {

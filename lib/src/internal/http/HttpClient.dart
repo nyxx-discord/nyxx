@@ -8,9 +8,7 @@ class InternalHttpClient extends http.BaseClient {
 
   // ignore: public_member_api_docs
   InternalHttpClient(String token) {
-    this._authHeader = {
-      "Authorization" : "Bot $token"
-    };
+    this._authHeader = {"Authorization": "Bot $token"};
   }
 
   @override

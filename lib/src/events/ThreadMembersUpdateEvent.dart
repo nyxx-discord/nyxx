@@ -55,15 +55,13 @@ class ThreadMembersUpdateEvent implements IThreadMembersUpdateEvent {
     this.guild = GuildCacheable(client, Snowflake(data["guild_id"]));
 
     this.addedMembers = [
-      if(data["added_members"] != null)
-        for(final memberData in data["added_members"] as List<dynamic>)
-          MemberCacheable(client, Snowflake(memberData["user_id"]), this.guild)
+      if (data["added_members"] != null)
+        for (final memberData in data["added_members"] as List<dynamic>) MemberCacheable(client, Snowflake(memberData["user_id"]), this.guild)
     ];
 
     this.removedUsers = [
-      if(data["removed_member_ids"] != null)
-        for(final removedUserId in data["removed_member_ids"])
-          UserCacheable(client, Snowflake(removedUserId))
+      if (data["removed_member_ids"] != null)
+        for (final removedUserId in data["removed_member_ids"]) UserCacheable(client, Snowflake(removedUserId))
     ];
   }
 }

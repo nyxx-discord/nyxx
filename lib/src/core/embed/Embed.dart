@@ -162,17 +162,16 @@ class Embed implements IEmbed {
   }
 
   @override
-  EmbedBuilder toBuilder() =>
-    EmbedBuilder()
-      ..title = this.title
-      ..type = this.type
-      ..description = this.description
-      ..url = this.url
-      ..timestamp = this.timestamp
-      ..color = this.color
-      ..footer = this.footer?.toBuilder()
-      ..thumbnailUrl = this.thumbnail?.url
-      ..imageUrl = this.image?.url
-      ..author = this.author?.toBuilder()
-      ..fields = this.fields.map((field) => field.toBuilder()).toList();
+  EmbedBuilder toBuilder() => EmbedBuilder()
+    ..title = this.title
+    ..type = this.type
+    ..description = this.description
+    ..url = this.url
+    ..timestamp = this.timestamp
+    ..color = this.color
+    ..footer = this.footer?.toBuilder()
+    ..thumbnailUrl = this.thumbnail?.url
+    ..imageUrl = this.image?.url
+    ..author = this.author?.toBuilder()
+    ..fields = this.fields.map((field) => field.toBuilder()).toList();
 }

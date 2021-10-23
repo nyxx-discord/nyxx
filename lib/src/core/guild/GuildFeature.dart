@@ -1,5 +1,3 @@
-
-
 import 'package:nyxx/src/utils/IEnum.dart';
 
 /// Guild features

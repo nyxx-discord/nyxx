@@ -1,5 +1,3 @@
-
-
 /// Collection of misc util functions
 class Utils {
   /// Divides list into equal pieces

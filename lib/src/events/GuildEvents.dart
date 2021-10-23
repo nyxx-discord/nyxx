@@ -43,7 +43,7 @@ class GuildUpdateEvent implements IGuildUpdateEvent {
     this.guild = Guild(client, json["d"] as RawApiMap);
 
     final oldGuild = client.guilds[this.guild.id];
-    if(oldGuild != null) {
+    if (oldGuild != null) {
       this.guild.members.addAll(oldGuild.members);
     }
 
@@ -282,7 +282,7 @@ class GuildEmojisUpdateEvent implements IGuildEmojisUpdateEvent {
     this.guild = GuildCacheable(client, Snowflake(raw["d"]["guild_id"]));
 
     final guildInstance = this.guild.getFromCache();
-    for(final rawEmoji in raw["d"]["emojis"]) {
+    for (final rawEmoji in raw["d"]["emojis"]) {
       final emoji = GuildEmoji(client, rawEmoji as RawApiMap, this.guild.id);
 
       this.emojis.add(emoji);
@@ -408,9 +408,6 @@ class GuildStickerUpdate implements IGuildStickerUpdate {
   /// Creates na instance of [GuildStickerUpdate]
   GuildStickerUpdate(RawApiMap raw, INyxx client) {
     this.guild = GuildCacheable(client, Snowflake(raw["d"]["guild_id"]));
-    this.stickers = [
-      for (final rawSticker in raw["d"]["stickers"])
-          GuildSticker(rawSticker as RawApiMap, client)
-    ];
+    this.stickers = [for (final rawSticker in raw["d"]["stickers"]) GuildSticker(rawSticker as RawApiMap, client)];
   }
 }

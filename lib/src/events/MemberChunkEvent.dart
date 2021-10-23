@@ -32,7 +32,7 @@ abstract class IMemberChunkEvent {
 
 /// Sent in response to `GUILD_REQUENT_MEMBERS` websocket command.
 /// You can use the `chunk_index` and `chunk_count` to calculate how many chunks are left for your request.
-class MemberChunkEvent implements IMemberChunkEvent{
+class MemberChunkEvent implements IMemberChunkEvent {
   /// Guild members
   @override
   late final Iterable<IMember> members;
@@ -71,10 +71,7 @@ class MemberChunkEvent implements IMemberChunkEvent{
       this.invalidIds = [for (var id in raw["d"]["not_found"]) Snowflake(id)];
     }
 
-    this.members = [
-      for (var memberRaw in raw["d"]["members"])
-        Member(client, memberRaw as RawApiMap, this.guild.id)
-    ];
+    this.members = [for (var memberRaw in raw["d"]["members"]) Member(client, memberRaw as RawApiMap, this.guild.id)];
 
     if (client.cacheOptions.memberCachePolicyLocation.event) {
       final guildInstance = this.guild.getFromCache();

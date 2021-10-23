@@ -17,6 +17,7 @@ class ComponentType extends IEnum<int> {
   static const ComponentType select = const ComponentType._create(3);
 
   const ComponentType._create(int value) : super(value);
+
   /// Create [ComponentType] from [value]
   ComponentType.from(int value) : super(value);
 }
@@ -90,7 +91,7 @@ abstract class MessageComponent implements IMessageComponent {
   factory MessageComponent.deserialize(Map<String, dynamic> raw) {
     final type = raw["type"] as int;
 
-    switch(type) {
+    switch (type) {
       case 2:
         return MessageButton.deserialize(raw);
       case 3:
@@ -147,7 +148,7 @@ class MessageMultiselectOption implements IMessageMultiselectOption {
     this.description = raw["description"] as String?;
     if (raw["emoji"] != null) {
       this.emoji = MessageComponentEmoji(raw["emoji"] as Map<String, dynamic>);
-    }  else {
+    } else {
       this.emoji = null;
     }
     this.isDefault = raw["default"] as bool? ?? false;
@@ -196,15 +197,12 @@ class MessageMultiselect extends MessageComponent implements IMessageMultiselect
   late final Iterable<IMessageMultiselectOption> options;
 
   /// Creates an instance of [MessageMultiselect]
-  MessageMultiselect(Map<String, dynamic> raw): super() {
+  MessageMultiselect(Map<String, dynamic> raw) : super() {
     this.customId = raw["custom_id"] as String;
     this.placeholder = raw["placeholder"] as String?;
     this.minValues = raw["min_values"] as int? ?? 1;
-    this.maxValues= raw["max_values"] as int? ?? 1;
-    this.options = [
-      for (final rawOption in raw["options"])
-        MessageMultiselectOption(rawOption as Map<String, dynamic>)
-    ];
+    this.maxValues = raw["max_values"] as int? ?? 1;
+    this.options = [for (final rawOption in raw["options"]) MessageMultiselectOption(rawOption as Map<String, dynamic>)];
   }
 }
 
@@ -252,13 +250,13 @@ class MessageButton extends MessageComponent implements IMessageButton {
   }
 
   /// Creates an instance of [MessageButton]
-  MessageButton(Map<String, dynamic> raw): super() {
+  MessageButton(Map<String, dynamic> raw) : super() {
     this.label = raw["label"] as String?;
     this.style = ComponentStyle.from(raw["style"] as int);
 
     if (raw["emoji"] != null) {
       this.emoji = MessageComponentEmoji(raw["emoji"] as RawApiMap);
-    }  else {
+    } else {
       this.emoji = null;
     }
 
@@ -266,7 +264,7 @@ class MessageButton extends MessageComponent implements IMessageButton {
   }
 }
 
-abstract class ICustomMessageButton implements IMessageButton  {
+abstract class ICustomMessageButton implements IMessageButton {
   ///  a dev-defined unique string sent on click (max 100 characters)
   String get customId;
 }
@@ -278,7 +276,7 @@ class CustomMessageButton extends MessageButton implements ICustomMessageButton 
   late final String customId;
 
   /// Creates an instance of [CustomMessageButton]
-  CustomMessageButton(RawApiMap raw): super(raw) {
+  CustomMessageButton(RawApiMap raw) : super(raw) {
     this.customId = raw["custom_id"] as String;
   }
 }
@@ -302,7 +300,7 @@ class LinkMessageButton extends MessageButton implements ILinkMessageButton {
   Uri get uri => Uri.parse(url);
 
   /// Creates an instance of [LinkMessageButton]
-  LinkMessageButton(RawApiMap raw): super(raw) {
+  LinkMessageButton(RawApiMap raw) : super(raw) {
     this.url = raw["url"] as String;
   }
 }

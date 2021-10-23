@@ -147,6 +147,7 @@ abstract class IGuild implements SnowflakeEntity {
   /// The guild's icon, represented as URL.
   /// If guild doesn't have icon it returns null.
   String? iconURL({String format = "webp", int size = 128});
+
   /// URL to guild's splash.
   /// If guild doesn't have splash it returns null.
   String? splashURL({String format = "webp", int size = 128});
@@ -233,7 +234,6 @@ abstract class IGuild implements SnowflakeEntity {
   /// Moves channel
   Future<void> moveChannel(IChannel channel, int position, {String? auditReason});
 
-
   /// Bans a user and allows to delete messages from [deleteMessageDays] number of days.
   /// ```
   ///
@@ -253,13 +253,7 @@ abstract class IGuild implements SnowflakeEntity {
 
   /// Edits the guild.
   Future<IGuild> edit(
-      {String? name,
-        int? verificationLevel,
-        int? notificationLevel,
-        SnowflakeEntity? afkChannel,
-        int? afkTimeout,
-        String? icon,
-        String? auditReason});
+      {String? name, int? verificationLevel, int? notificationLevel, SnowflakeEntity? afkChannel, int? afkTimeout, String? icon, String? auditReason});
 
   /// Fetches member from API
   Future<IMember> fetchMember(Snowflake memberId);
@@ -373,8 +367,7 @@ class Guild extends SnowflakeEntity implements IGuild {
 
   /// The guild's channels.
   @override
-  Iterable<IGuildChannel> get channels => this.client.channels.values
-      .where((item) => item is IGuildChannel && item.guild.id == this.id).cast();
+  Iterable<IGuildChannel> get channels => this.client.channels.values.where((item) => item is IGuildChannel && item.guild.id == this.id).cast();
 
   /// The guild's roles.
   @override
@@ -437,11 +430,7 @@ class Guild extends SnowflakeEntity implements IGuild {
       throw new UnsupportedError("Cannot use this property with NyxxRest");
     }
 
-    return MemberCacheable(
-        this.client,
-        (client as NyxxWebsocket).self.id,
-        GuildCacheable(this.client, this.id)
-    );
+    return MemberCacheable(this.client, (client as NyxxWebsocket).self.id, GuildCacheable(this.client, this.id));
   }
 
   /// File upload limit for channel in bytes.
@@ -534,8 +523,7 @@ class Guild extends SnowflakeEntity implements IGuild {
 
     this.stickers = [
       if (raw["stickers"] != null)
-        for (final rawSticker in raw["stickers"])
-          GuildSticker(rawSticker as RawApiMap, client)
+        for (final rawSticker in raw["stickers"]) GuildSticker(rawSticker as RawApiMap, client)
     ];
 
     if (!guildCreate) return;
@@ -571,59 +559,49 @@ class Guild extends SnowflakeEntity implements IGuild {
 
     this.stageInstances = [
       if (raw["stage_instances"] != null)
-        for (final rawInstance in raw["stage_instances"])
-          StageChannelInstance(this.client, rawInstance as RawApiMap)
+        for (final rawInstance in raw["stage_instances"]) StageChannelInstance(this.client, rawInstance as RawApiMap)
     ];
   }
 
   /// The guild's icon, represented as URL.
   /// If guild doesn't have icon it returns null.
   @override
-  String? iconURL({String format = "webp", int size = 128}) =>
-      client.httpEndpoints.getGuildIconUrl(this.id, this.icon, format, size);
+  String? iconURL({String format = "webp", int size = 128}) => client.httpEndpoints.getGuildIconUrl(this.id, this.icon, format, size);
 
   /// URL to guild's splash.
   /// If guild doesn't have splash it returns null.
   @override
-  String? splashURL({String format = "webp", int size = 128}) =>
-      client.httpEndpoints.getGuildSplashURL(this.id, this.splash, format, size);
+  String? splashURL({String format = "webp", int size = 128}) => client.httpEndpoints.getGuildSplashURL(this.id, this.splash, format, size);
 
   /// URL to guilds discovery splash
   /// If guild doesn't have splash it returns null.
   @override
-  String? discoveryURL({String format = "webp", int size = 128}) =>
-      client.httpEndpoints.getGuildDiscoveryURL(this.id, this.splash, format: format, size: size);
+  String? discoveryURL({String format = "webp", int size = 128}) => client.httpEndpoints.getGuildDiscoveryURL(this.id, this.splash, format: format, size: size);
 
   /// Allows to download [Guild] widget aka advert png
   /// Possible options for [style]: shield (default), banner1, banner2, banner3, banner4
   @override
-  String guildWidgetUrl([String style = "shield"]) =>
-      client.httpEndpoints.getGuildWidgetUrl(this.id, style);
+  String guildWidgetUrl([String style = "shield"]) => client.httpEndpoints.getGuildWidgetUrl(this.id, style);
 
   /// Fetches all stickers of current guild
   @override
-  Stream<IGuildSticker> fetchStickers() =>
-      client.httpEndpoints.fetchGuildStickers(this.id);
+  Stream<IGuildSticker> fetchStickers() => client.httpEndpoints.fetchGuildStickers(this.id);
 
   /// Fetch sticker with given [id]
   @override
-  Future<IGuildSticker> fetchSticker(Snowflake id) =>
-      client.httpEndpoints.fetchGuildSticker(this.id, id);
+  Future<IGuildSticker> fetchSticker(Snowflake id) => client.httpEndpoints.fetchGuildSticker(this.id, id);
 
   /// Fetches all roles that are in the server.
   @override
-  Stream<IRole> fetchRoles() =>
-      client.httpEndpoints.fetchGuildRoles(this.id);
+  Stream<IRole> fetchRoles() => client.httpEndpoints.fetchGuildRoles(this.id);
 
   /// Creates sticker in current guild
   @override
-  Future<IGuildSticker> createSticker(StickerBuilder builder) =>
-      client.httpEndpoints.createGuildSticker(this.id, builder);
+  Future<IGuildSticker> createSticker(StickerBuilder builder) => client.httpEndpoints.createGuildSticker(this.id, builder);
 
   /// Fetches emoji from API
   @override
-  Future<IBaseGuildEmoji> fetchEmoji(Snowflake emojiId) =>
-      client.httpEndpoints.fetchGuildEmoji(this.id, emojiId);
+  Future<IBaseGuildEmoji> fetchEmoji(Snowflake emojiId) => client.httpEndpoints.fetchGuildEmoji(this.id, emojiId);
 
   /// Allows to create new guild emoji. [name] is required and you have to specify one of other parameters: [imageFile], [imageBytes] or [encodedImage].
   /// [imageBytes] can be useful if you want to create image from http response.
@@ -638,8 +616,7 @@ class Guild extends SnowflakeEntity implements IGuild {
 
   /// Returns [int] indicating the number of members that would be removed in a prune operation.
   @override
-  Future<int> pruneCount(int days, {Iterable<Snowflake>? includeRoles}) =>
-      client.httpEndpoints.guildPruneCount(this.id, days, includeRoles: includeRoles);
+  Future<int> pruneCount(int days, {Iterable<Snowflake>? includeRoles}) => client.httpEndpoints.guildPruneCount(this.id, days, includeRoles: includeRoles);
 
   /// Prunes the guild, returns the amount of members pruned.
   @override
@@ -652,28 +629,23 @@ class Guild extends SnowflakeEntity implements IGuild {
 
   /// Change self nickname in guild
   @override
-  Future<void> modifyCurrentMember({String? nick}) async =>
-      client.httpEndpoints.modifyCurrentMember(this.id, nick: nick);
+  Future<void> modifyCurrentMember({String? nick}) async => client.httpEndpoints.modifyCurrentMember(this.id, nick: nick);
 
   /// Gets single [Ban] object for given [bannedUserId]
   @override
-  Future<IBan> getBan(Snowflake bannedUserId) async =>
-      client.httpEndpoints.getGuildBan(this.id, bannedUserId);
+  Future<IBan> getBan(Snowflake bannedUserId) async => client.httpEndpoints.getGuildBan(this.id, bannedUserId);
 
   /// Change guild owner.
   @override
-  Future<IGuild> changeOwner(SnowflakeEntity memberEntity, {String? auditReason}) =>
-      client.httpEndpoints.changeGuildOwner(this.id, memberEntity);
+  Future<IGuild> changeOwner(SnowflakeEntity memberEntity, {String? auditReason}) => client.httpEndpoints.changeGuildOwner(this.id, memberEntity);
 
   /// Leaves the guild.
   @override
-  Future<void> leave() async =>
-      client.httpEndpoints.leaveGuild(this.id);
+  Future<void> leave() async => client.httpEndpoints.leaveGuild(this.id);
 
   /// Returns list of Guilds invites
   @override
-  Stream<IInvite> fetchGuildInvites() =>
-      client.httpEndpoints.fetchGuildInvites(this.id);
+  Stream<IInvite> fetchGuildInvites() => client.httpEndpoints.fetchGuildInvites(this.id);
 
   /// Returns Audit logs.
   /// https://discordapp.com/developers/docs/resources/audit-log
@@ -701,14 +673,12 @@ class Guild extends SnowflakeEntity implements IGuild {
 
   /// Returns list of available [VoiceRegion]s
   @override
-  Stream<IVoiceRegion> getVoiceRegions() =>
-      client.httpEndpoints.fetchGuildVoiceRegions(this.id);
+  Stream<IVoiceRegion> getVoiceRegions() => client.httpEndpoints.fetchGuildVoiceRegions(this.id);
 
   /// Moves channel
   @override
   Future<void> moveChannel(IChannel channel, int position, {String? auditReason}) =>
       client.httpEndpoints.moveGuildChannel(this.id, channel.id, position, auditReason: auditReason);
-
 
   /// Bans a user and allows to delete messages from [deleteMessageDays] number of days.
   /// ```
@@ -719,31 +689,22 @@ class Guild extends SnowflakeEntity implements IGuild {
   Future<void> ban(SnowflakeEntity user, {int deleteMessageDays = 0, String? auditReason}) =>
       client.httpEndpoints.guildBan(this.id, user.id, deleteMessageDays: deleteMessageDays, auditReason: auditReason);
 
-
   /// Kicks user from guild. Member is removed from guild and he is able to rejoin
   ///
   /// ```
   /// await guild.kick(member);
   /// ```
   @override
-  Future<void> kick(SnowflakeEntity user, {String? auditReason}) =>
-      client.httpEndpoints.guildKick(this.id, user.id, auditReason: auditReason);
+  Future<void> kick(SnowflakeEntity user, {String? auditReason}) => client.httpEndpoints.guildKick(this.id, user.id, auditReason: auditReason);
 
   /// Unbans a user by ID.
   @override
-  Future<void> unban(Snowflake id, Snowflake userId) =>
-      client.httpEndpoints.guildUnban(this.id, userId);
+  Future<void> unban(Snowflake id, Snowflake userId) => client.httpEndpoints.guildUnban(this.id, userId);
 
   /// Edits the guild.
   @override
   Future<IGuild> edit(
-      {String? name,
-        int? verificationLevel,
-        int? notificationLevel,
-        SnowflakeEntity? afkChannel,
-        int? afkTimeout,
-        String? icon,
-        String? auditReason}) =>
+          {String? name, int? verificationLevel, int? notificationLevel, SnowflakeEntity? afkChannel, int? afkTimeout, String? icon, String? auditReason}) =>
       client.httpEndpoints.editGuild(this.id,
           name: name,
           verificationLevel: verificationLevel,
@@ -751,26 +712,22 @@ class Guild extends SnowflakeEntity implements IGuild {
           afkChannel: afkChannel,
           afkTimeout: afkTimeout,
           icon: icon,
-          auditReason: auditReason
-      );
+          auditReason: auditReason);
 
   /// Fetches member from API
   @override
-  Future<IMember> fetchMember(Snowflake memberId) =>
-      client.httpEndpoints.fetchGuildMember(this.id, memberId);
+  Future<IMember> fetchMember(Snowflake memberId) => client.httpEndpoints.fetchGuildMember(this.id, memberId);
 
   /// Allows to fetch guild members. In future will be restricted with `Privileged Intents`.
   /// [after] is used to continue from specified user id.
   /// By default limits to one user - use [limit] parameter to change that behavior.
   @override
-  Stream<IMember> fetchMembers({int limit = 1, Snowflake? after}) =>
-      client.httpEndpoints.fetchGuildMembers(this.id, limit: limit, after: after);
+  Stream<IMember> fetchMembers({int limit = 1, Snowflake? after}) => client.httpEndpoints.fetchGuildMembers(this.id, limit: limit, after: after);
 
   /// Returns a [Stream] of [IMember]s objects whose username or nickname starts with a provided string.
   /// By default limits to one entry - can be changed with [limit] parameter.
   @override
-  Stream<IMember> searchMembers(String query, {int limit = 1}) =>
-      client.httpEndpoints.searchGuildMembers(this.id, query, limit: limit);
+  Stream<IMember> searchMembers(String query, {int limit = 1}) => client.httpEndpoints.searchGuildMembers(this.id, query, limit: limit);
 
   /// Returns a [Stream] of [IMember]s objects whose username or nickname starts with a provided string.
   /// By default limits to one entry - can be changed with [limit] parameter.
@@ -796,8 +753,7 @@ class Guild extends SnowflakeEntity implements IGuild {
 
   /// Fetches guild preview for this guild. Allows to download approx member count in guild
   @override
-  Future<IGuildPreview> fetchGuildPreview() async =>
-      this.client.httpEndpoints.fetchGuildPreview(this.id);
+  Future<IGuildPreview> fetchGuildPreview() async => this.client.httpEndpoints.fetchGuildPreview(this.id);
 
   /// Request members from gateway. Requires privileged intents in order to work.
   @override
@@ -805,11 +761,9 @@ class Guild extends SnowflakeEntity implements IGuild {
 
   /// Allows to create new guild channel
   @override
-  Future<IChannel> createChannel(ChannelBuilder channelBuilder) =>
-    this.client.httpEndpoints.createGuildChannel(this.id, channelBuilder);
+  Future<IChannel> createChannel(ChannelBuilder channelBuilder) => this.client.httpEndpoints.createGuildChannel(this.id, channelBuilder);
 
   /// Deletes the guild.
   @override
-  Future<void> delete() =>
-      client.httpEndpoints.deleteGuild(this.id);
+  Future<void> delete() => client.httpEndpoints.deleteGuild(this.id);
 }

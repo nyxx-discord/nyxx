@@ -36,11 +36,11 @@ class Reaction implements IReaction {
     if (rawEmoji["id"] == null) {
       this.emoji = UnicodeEmoji(rawEmoji["name"] as String);
     } else {
-
       //TODO: EMOJIS STUUF
       //this.emoji = PartialGuildEmoji._new(rawEmoji);
     }
   }
+
   /// Creates na instance of [Reaction]
   Reaction.event(this.emoji, this.me) {
     this.count = 1;

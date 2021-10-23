@@ -1,5 +1,3 @@
-
-
 import 'package:nyxx/src/core/guild/Status.dart';
 import 'package:nyxx/src/core/user/Presence.dart';
 import 'package:nyxx/src/typedefs.dart';
@@ -20,23 +18,20 @@ class ActivityBuilder implements Builder {
   ActivityBuilder(this.name, this.type, {this.url});
 
   /// Sets activity to game
-  factory ActivityBuilder.game(String name) =>
-      ActivityBuilder(name, ActivityType.game);
+  factory ActivityBuilder.game(String name) => ActivityBuilder(name, ActivityType.game);
 
   /// Sets activity to streaming
-  factory ActivityBuilder.streaming(String name, String url) =>
-      ActivityBuilder(name, ActivityType.streaming, url: url);
+  factory ActivityBuilder.streaming(String name, String url) => ActivityBuilder(name, ActivityType.streaming, url: url);
 
   /// Sets activity to listening
-  factory ActivityBuilder.listening(String name) =>
-      ActivityBuilder(name, ActivityType.listening);
+  factory ActivityBuilder.listening(String name) => ActivityBuilder(name, ActivityType.listening);
 
   @override
   RawApiMap build() => {
-    "name": this.name,
-    "type": this.type.value,
-    if (this.type == ActivityType.streaming) "url": this.url,
-  };
+        "name": this.name,
+        "type": this.type.value,
+        if (this.type == ActivityType.streaming) "url": this.url,
+      };
 }
 
 /// Allows to build object of user presence used later when setting user presence.
@@ -57,24 +52,23 @@ class PresenceBuilder extends Builder {
   PresenceBuilder();
 
   /// Default builder constructor.
-  factory PresenceBuilder.of({UserStatus? status, ActivityBuilder? activity}) =>
-      PresenceBuilder()
-        ..status = status
-        ..activity = activity;
+  factory PresenceBuilder.of({UserStatus? status, ActivityBuilder? activity}) => PresenceBuilder()
+    ..status = status
+    ..activity = activity;
 
   /// Sets client status to idle. [since] indicates how long client is afking
-  factory PresenceBuilder.idle({DateTime? since}) =>
-    PresenceBuilder()
-      ..since = since
-      ..afk = true;
+  factory PresenceBuilder.idle({DateTime? since}) => PresenceBuilder()
+    ..since = since
+    ..afk = true;
 
   @override
   RawApiMap build() => <String, dynamic>{
         "status": (status != null) ? status.toString() : UserStatus.online.toString(),
         "afk": (afk != null) ? afk : false,
-        if (this.activity != null) "activities": [
-          this.activity!.build(),
-        ],
+        if (this.activity != null)
+          "activities": [
+            this.activity!.build(),
+          ],
         "since": (since != null) ? since!.millisecondsSinceEpoch : null
       };
 }

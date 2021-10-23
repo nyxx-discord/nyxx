@@ -96,8 +96,7 @@ class ShardManager implements IShardManager {
   /// Average gateway latency across all shards
   @override
   Duration get gatewayLatency =>
-      Duration(milliseconds: (this.shards.map((e) => e.gatewayLatency.inMilliseconds)
-        .fold<int>(0, (first, second) => first + second)) ~/ shards.length);
+      Duration(milliseconds: (this.shards.map((e) => e.gatewayLatency.inMilliseconds).fold<int>(0, (first, second) => first + second)) ~/ shards.length);
 
   /// The number of identify requests allowed per 5 seconds
   @override
@@ -144,7 +143,7 @@ class ShardManager implements IShardManager {
   void _connect(int shardId) {
     this.logger.fine("Setting up shard with id: $shardId");
 
-    if(shardId < 0) {
+    if (shardId < 0) {
       return;
     }
 
@@ -157,8 +156,8 @@ class ShardManager implements IShardManager {
   Future<void> dispose() async {
     this.logger.info("Closing gateway connections...");
 
-    for(final shard in this._shards.values) {
-      if(this.connectionManager.client.options.shutdownShardHook != null) {
+    for (final shard in this._shards.values) {
+      if (this.connectionManager.client.options.shutdownShardHook != null) {
         this.connectionManager.client.options.shutdownShardHook!(this.connectionManager.client, shard); // ignore: unawaited_futures
       }
       shard.dispose(); // ignore: unawaited_futures

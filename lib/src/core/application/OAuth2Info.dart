@@ -1,4 +1,3 @@
-
 import 'package:nyxx/src/Nyxx.dart';
 import 'package:nyxx/src/core/Snowflake.dart';
 import 'package:nyxx/src/core/application/OAuth2Application.dart';
@@ -19,7 +18,6 @@ abstract class IOAuth2Info {
   /// Mini guild objects with permissions for every guild you are on.
   Map<Snowflake, IOAuth2Guild> get guilds;
 }
-
 
 /// Info about a OAuth2 app, bot, user, and possible guilds that that bot can
 /// be invited to.

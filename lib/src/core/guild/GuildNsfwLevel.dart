@@ -7,6 +7,7 @@ class GuildNsfwLevel extends IEnum<int> {
   static const GuildNsfwLevel ageRestricted = const GuildNsfwLevel._create(3);
 
   const GuildNsfwLevel._create(int value) : super(value);
+
   /// Create [StageChannelInstancePrivacyLevel] from [value]
   GuildNsfwLevel.from(int value) : super(value);
 }

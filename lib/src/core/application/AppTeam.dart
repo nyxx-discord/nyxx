@@ -55,9 +55,6 @@ class AppTeam extends SnowflakeEntity implements IAppTeam {
     this.iconHash = raw["icon"] as String?;
     this.ownerId = Snowflake(raw["owner_user_id"]);
 
-    this.members = [
-    for (final rawMember in raw["members"])
-      AppTeamMember(rawMember as RawApiMap)
-    ];
+    this.members = [for (final rawMember in raw["members"]) AppTeamMember(rawMember as RawApiMap)];
   }
 }

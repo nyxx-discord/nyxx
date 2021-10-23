@@ -133,98 +133,79 @@ class Permissions implements IPermissions {
 
   /// True if user can create InstantInvite
   @override
-  bool get createInstantInvite => PermissionsUtils.isApplied(
-      this.raw, PermissionsConstants.createInstantInvite);
+  bool get createInstantInvite => PermissionsUtils.isApplied(this.raw, PermissionsConstants.createInstantInvite);
 
   /// True if user can kick members
   @override
-  bool get kickMembers => PermissionsUtils.isApplied(
-      this.raw, PermissionsConstants.kickMembers);
+  bool get kickMembers => PermissionsUtils.isApplied(this.raw, PermissionsConstants.kickMembers);
 
   /// True if user can ban members
   @override
-  bool get banMembers => PermissionsUtils.isApplied(
-      this.raw, PermissionsConstants.banMembers);
+  bool get banMembers => PermissionsUtils.isApplied(this.raw, PermissionsConstants.banMembers);
 
   /// True if user is administrator
   @override
-  bool get administrator => PermissionsUtils.isApplied(
-      this.raw, PermissionsConstants.administrator);
+  bool get administrator => PermissionsUtils.isApplied(this.raw, PermissionsConstants.administrator);
 
   /// True if user can manager channels
   @override
-  bool get manageChannels => PermissionsUtils.isApplied(
-      this.raw, PermissionsConstants.manageChannels);
+  bool get manageChannels => PermissionsUtils.isApplied(this.raw, PermissionsConstants.manageChannels);
 
   /// True if user can manager guilds
   @override
-  bool get manageGuild => PermissionsUtils.isApplied(
-      this.raw, PermissionsConstants.manageGuild);
+  bool get manageGuild => PermissionsUtils.isApplied(this.raw, PermissionsConstants.manageGuild);
 
   /// Allows to add reactions
   @override
-  bool get addReactions => PermissionsUtils.isApplied(
-      this.raw, PermissionsConstants.addReactions);
+  bool get addReactions => PermissionsUtils.isApplied(this.raw, PermissionsConstants.addReactions);
 
   /// Allows for using priority speaker in a voice channel
   @override
-  bool get prioritySpeaker => PermissionsUtils.isApplied(
-      this.raw, PermissionsConstants.prioritySpeaker);
+  bool get prioritySpeaker => PermissionsUtils.isApplied(this.raw, PermissionsConstants.prioritySpeaker);
 
   /// Allow to view audit logs
   @override
-  bool get viewAuditLog => PermissionsUtils.isApplied(
-      this.raw, PermissionsConstants.viewAuditLog);
+  bool get viewAuditLog => PermissionsUtils.isApplied(this.raw, PermissionsConstants.viewAuditLog);
 
   /// Allow viewing channels (OLD READ_MESSAGES)
   @override
-  bool get viewChannel => PermissionsUtils.isApplied(
-      this.raw, PermissionsConstants.viewChannel);
+  bool get viewChannel => PermissionsUtils.isApplied(this.raw, PermissionsConstants.viewChannel);
 
   /// True if user can send messages
   @override
-  bool get sendMessages => PermissionsUtils.isApplied(
-      this.raw, PermissionsConstants.sendMessages);
+  bool get sendMessages => PermissionsUtils.isApplied(this.raw, PermissionsConstants.sendMessages);
 
   /// True if user can send messages in threads
   @override
-  bool get sendMessagesInThreads => PermissionsUtils.isApplied(
-      this.raw, PermissionsConstants.sendMessagesInThread);
+  bool get sendMessagesInThreads => PermissionsUtils.isApplied(this.raw, PermissionsConstants.sendMessagesInThread);
 
   /// True if user can send TTF messages
   @override
-  bool get sendTtsMessages => PermissionsUtils.isApplied(
-      this.raw, PermissionsConstants.sendTtsMessages);
+  bool get sendTtsMessages => PermissionsUtils.isApplied(this.raw, PermissionsConstants.sendTtsMessages);
 
   /// True if user can manage messages
   @override
-  bool get manageMessages => PermissionsUtils.isApplied(
-      this.raw, PermissionsConstants.manageMessages);
+  bool get manageMessages => PermissionsUtils.isApplied(this.raw, PermissionsConstants.manageMessages);
 
   /// True if user can send links in messages
   @override
-  bool get embedLinks => PermissionsUtils.isApplied(
-      this.raw, PermissionsConstants.embedLinks);
+  bool get embedLinks => PermissionsUtils.isApplied(this.raw, PermissionsConstants.embedLinks);
 
   /// True if user can attach files in messages
   @override
-  bool get attachFiles => PermissionsUtils.isApplied(
-      this.raw, PermissionsConstants.attachFiles);
+  bool get attachFiles => PermissionsUtils.isApplied(this.raw, PermissionsConstants.attachFiles);
 
   /// True if user can read messages history
   @override
-  bool get readMessageHistory => PermissionsUtils.isApplied(
-      this.raw, PermissionsConstants.readMessageHistory);
+  bool get readMessageHistory => PermissionsUtils.isApplied(this.raw, PermissionsConstants.readMessageHistory);
 
   /// True if user can mention everyone
   @override
-  bool get mentionEveryone => PermissionsUtils.isApplied(
-      this.raw, PermissionsConstants.mentionEveryone);
+  bool get mentionEveryone => PermissionsUtils.isApplied(this.raw, PermissionsConstants.mentionEveryone);
 
   /// True if user can use external emojis
   @override
-  bool get useExternalEmojis => PermissionsUtils.isApplied(
-      this.raw, PermissionsConstants.externalEmojis);
+  bool get useExternalEmojis => PermissionsUtils.isApplied(this.raw, PermissionsConstants.externalEmojis);
 
   /// True if user can connect to voice channel
   @override
@@ -236,18 +217,15 @@ class Permissions implements IPermissions {
 
   /// True if user can mute members
   @override
-  bool get muteMembers => PermissionsUtils.isApplied(
-      this.raw, PermissionsConstants.muteMembers);
+  bool get muteMembers => PermissionsUtils.isApplied(this.raw, PermissionsConstants.muteMembers);
 
   /// True if user can deafen members
   @override
-  bool get deafenMembers => PermissionsUtils.isApplied(
-      this.raw, PermissionsConstants.deafenMembers);
+  bool get deafenMembers => PermissionsUtils.isApplied(this.raw, PermissionsConstants.deafenMembers);
 
   /// True if user can move members
   @override
-  bool get moveMembers => PermissionsUtils.isApplied(
-      this.raw, PermissionsConstants.moveMembers);
+  bool get moveMembers => PermissionsUtils.isApplied(this.raw, PermissionsConstants.moveMembers);
 
   /// Allows for using voice-activity-detection in a voice channel
   @override
@@ -255,28 +233,23 @@ class Permissions implements IPermissions {
 
   /// True if user can change nick
   @override
-  bool get changeNickname => PermissionsUtils.isApplied(
-      this.raw, PermissionsConstants.changeNickname);
+  bool get changeNickname => PermissionsUtils.isApplied(this.raw, PermissionsConstants.changeNickname);
 
   /// True if user can manager others nicknames
   @override
-  bool get manageNicknames => PermissionsUtils.isApplied(
-      this.raw, PermissionsConstants.manageNicknames);
+  bool get manageNicknames => PermissionsUtils.isApplied(this.raw, PermissionsConstants.manageNicknames);
 
   /// True if user can manage server's roles
   @override
-  bool get manageRoles => PermissionsUtils.isApplied(
-      this.raw, PermissionsConstants.manageRolesOrPermissions);
+  bool get manageRoles => PermissionsUtils.isApplied(this.raw, PermissionsConstants.manageRolesOrPermissions);
 
   /// True if user can manage webhooks
   @override
-  bool get manageWebhooks => PermissionsUtils.isApplied(
-      this.raw, PermissionsConstants.manageWebhooks);
+  bool get manageWebhooks => PermissionsUtils.isApplied(this.raw, PermissionsConstants.manageWebhooks);
 
   /// Allows management and editing of emojis
   @override
-  bool get manageEmojis => PermissionsUtils.isApplied(
-      this.raw, PermissionsConstants.manageEmojis);
+  bool get manageEmojis => PermissionsUtils.isApplied(this.raw, PermissionsConstants.manageEmojis);
 
   /// Allows the user to go live
   @override
@@ -284,62 +257,50 @@ class Permissions implements IPermissions {
 
   /// Allows for viewing guild insights
   @override
-  bool get viewGuildInsights => PermissionsUtils.isApplied(
-      this.raw, PermissionsConstants.viewGuildInsights);
+  bool get viewGuildInsights => PermissionsUtils.isApplied(this.raw, PermissionsConstants.viewGuildInsights);
 
   /// Allows members to use slash commands in text channels
   @override
-  bool get useSlashCommands => PermissionsUtils.isApplied(
-      this.raw, PermissionsConstants.useSlashCommands);
+  bool get useSlashCommands => PermissionsUtils.isApplied(this.raw, PermissionsConstants.useSlashCommands);
 
   /// Allows for requesting to speak in stage channels
   @override
-  bool get requestToSpeak => PermissionsUtils.isApplied(
-      this.raw, PermissionsConstants.useSlashCommands);
+  bool get requestToSpeak => PermissionsUtils.isApplied(this.raw, PermissionsConstants.useSlashCommands);
 
   /// Allows for deleting and archiving threads, and viewing all private threads
   @override
-  bool get manageThreads => PermissionsUtils.isApplied(
-      this.raw, PermissionsConstants.manageThreads);
+  bool get manageThreads => PermissionsUtils.isApplied(this.raw, PermissionsConstants.manageThreads);
 
   /// Allows for creating and participating in threads
   @override
-  bool get createPublicThreads => PermissionsUtils.isApplied(
-      this.raw, PermissionsConstants.createPublicThreads);
+  bool get createPublicThreads => PermissionsUtils.isApplied(this.raw, PermissionsConstants.createPublicThreads);
 
   /// Allows for creating and participating in private threads
   @override
-  bool get createPrivateThreads => PermissionsUtils.isApplied(
-      this.raw, PermissionsConstants.createPrivateThreads);
+  bool get createPrivateThreads => PermissionsUtils.isApplied(this.raw, PermissionsConstants.createPrivateThreads);
 
   /// Allows the usage of custom stickers from other servers
   @override
-  bool get useExternalStickers => PermissionsUtils.isApplied(
-      this.raw, PermissionsConstants.useExternalStickers);
+  bool get useExternalStickers => PermissionsUtils.isApplied(this.raw, PermissionsConstants.useExternalStickers);
 
   /// Allows for launching activities in a voice channel
   @override
-  bool get startEmbeddedActivities => PermissionsUtils.isApplied(
-      this.raw, PermissionsConstants.startEmbeddedActivities);
+  bool get startEmbeddedActivities => PermissionsUtils.isApplied(this.raw, PermissionsConstants.startEmbeddedActivities);
 
   /// Creates an instance of [Permissions]
   Permissions(this.raw);
 
   /// Permissions with value of 0
-  factory Permissions.empty() =>
-      Permissions(0);
+  factory Permissions.empty() => Permissions(0);
 
   /// Permissions with max value
-  factory Permissions.all() =>
-      Permissions(PermissionsConstants.allPermissions);
+  factory Permissions.all() => Permissions(PermissionsConstants.allPermissions);
 
   /// Makes a [Permissions] object from overwrite object
-  factory Permissions.fromOverwrite(int permissions, int allow, int deny) =>
-      Permissions(PermissionsUtils.apply(permissions, allow, deny));
+  factory Permissions.fromOverwrite(int permissions, int allow, int deny) => Permissions(PermissionsUtils.apply(permissions, allow, deny));
 
   /// Returns true if this permissions has [permission]
-  bool hasPermission(int permission) =>
-      PermissionsUtils.isApplied(this.raw, permission);
+  bool hasPermission(int permission) => PermissionsUtils.isApplied(this.raw, permission);
 
   @override
   int get hashCode => raw.hashCode;

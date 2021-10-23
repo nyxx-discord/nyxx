@@ -61,24 +61,59 @@ export 'src/core/message/ReferencedMessage.dart' show IReferencedMessage;
 export 'src/core/message/Sticker.dart' show IStandardSticker, IStickerPack, ISticker, IGuildSticker, IPartialSticker;
 export 'src/core/message/UnicodeEmoji.dart' show IUnicodeEmoji, UnicodeEmoji;
 export 'src/core/message/components/ComponentStyle.dart' show ComponentStyle;
-export 'src/core/message/components/MessageComponent.dart' show IMessageButton, ICustomMessageButton, ILinkMessageButton, IMessageComponent, IMessageComponentEmoji, IMessageMultiselect, IMessageMultiselectOption, MessageComponentEmoji, ComponentType;
+export 'src/core/message/components/MessageComponent.dart'
+    show
+        IMessageButton,
+        ICustomMessageButton,
+        ILinkMessageButton,
+        IMessageComponent,
+        IMessageComponentEmoji,
+        IMessageMultiselect,
+        IMessageMultiselectOption,
+        MessageComponentEmoji,
+        ComponentType;
 export 'src/core/permissions/PermissionOverrides.dart' show IPermissionsOverrides;
 export 'src/core/permissions/Permissions.dart' show IPermissions;
 export 'src/core/permissions/PermissionsConstants.dart' show PermissionsConstants;
 export 'src/core/user/Member.dart' show IMember;
 export 'src/core/user/NitroType.dart' show NitroType;
-export 'src/core/user/Presence.dart' show IActivity, IActivityEmoji, IActivityFlags, IActivityParty, IActivityTimestamps, IGameAssets, IGameSecrets, ActivityType;
+export 'src/core/user/Presence.dart'
+    show IActivity, IActivityEmoji, IActivityFlags, IActivityParty, IActivityTimestamps, IGameAssets, IGameSecrets, ActivityType;
 export 'src/core/user/User.dart' show IUser;
 export 'src/core/user/UserFlags.dart' show IUserFlags;
 export 'src/core/voice/VoiceRegion.dart' show IVoiceRegion;
 export 'src/core/voice/VoiceState.dart' show IVoiceState;
 export 'src/events/ChannelEvents.dart' show IChannelCreateEvent, IChannelDeleteEvent, IChannelPinsUpdateEvent, IChannelUpdateEvent, IStageInstanceEvent;
 export 'src/events/DisconnectEvent.dart' show IDisconnectEvent, DisconnectEventReason;
-export 'src/events/GuildEvents.dart' show IGuildBanAddEvent, IGuildBanRemoveEvent, IGuildCreateEvent, IGuildDeleteEvent, IGuildEmojisUpdateEvent, IGuildMemberAddEvent, IGuildMemberRemoveEvent, IGuildMemberUpdateEvent, IGuildStickerUpdate, IGuildUpdateEvent, IRoleCreateEvent, IRoleDeleteEvent, IRoleUpdateEvent;
+export 'src/events/GuildEvents.dart'
+    show
+        IGuildBanAddEvent,
+        IGuildBanRemoveEvent,
+        IGuildCreateEvent,
+        IGuildDeleteEvent,
+        IGuildEmojisUpdateEvent,
+        IGuildMemberAddEvent,
+        IGuildMemberRemoveEvent,
+        IGuildMemberUpdateEvent,
+        IGuildStickerUpdate,
+        IGuildUpdateEvent,
+        IRoleCreateEvent,
+        IRoleDeleteEvent,
+        IRoleUpdateEvent;
 export 'src/events/HttpEvents.dart' show IHttpResponseEvent, IHttpErrorEvent;
 export 'src/events/InviteEvents.dart' show IInviteCreatedEvent, IInviteDeletedEvent;
 export 'src/events/MemberChunkEvent.dart' show IMemberChunkEvent;
-export 'src/events/MessageEvents.dart' show IMessageReactionEvent, IMessageDeleteBulkEvent, IMessageDeleteEvent, IMessageReactionAddedEvent, IMessageReactionRemovedEvent, IMessageReactionRemoveEmojiEvent, IMessageReactionsRemovedEvent, IMessageReceivedEvent, IMessageUpdateEvent;
+export 'src/events/MessageEvents.dart'
+    show
+        IMessageReactionEvent,
+        IMessageDeleteBulkEvent,
+        IMessageDeleteEvent,
+        IMessageReactionAddedEvent,
+        IMessageReactionRemovedEvent,
+        IMessageReactionRemoveEmojiEvent,
+        IMessageReactionsRemovedEvent,
+        IMessageReceivedEvent,
+        IMessageUpdateEvent;
 export 'src/events/PresenceUpdateEvent.dart' show IPresenceUpdateEvent;
 export 'src/events/RatelimitEvent.dart' show IRatelimitEvent;
 export 'src/events/RawEvent.dart' show IRawEvent;
@@ -94,7 +129,8 @@ export 'src/internal/Constants.dart' show Constants;
 export 'src/internal/EventController.dart' show IWebsocketEventController, IRestEventController;
 export 'src/internal/HttpEndpoints.dart' show IHttpEndpoints;
 export 'src/internal/cache/Cache.dart' show MessageCache, SnowflakeCache;
-export 'src/internal/cache/CachePolicy.dart' show CachePolicyPredicate, CachePolicyLocation, CachePolicy, ChannelCachePolicy, MemberCachePolicy, MessageCachePolicy;
+export 'src/internal/cache/CachePolicy.dart'
+    show CachePolicyPredicate, CachePolicyLocation, CachePolicy, ChannelCachePolicy, MemberCachePolicy, MessageCachePolicy;
 export 'src/internal/cache/Cacheable.dart' show Cacheable;
 export 'src/internal/exceptions/EmbedBuilderArgumentException.dart' show EmbedBuilderArgumentException;
 export 'src/internal/exceptions/HttpClientException.dart' show HttpClientException;

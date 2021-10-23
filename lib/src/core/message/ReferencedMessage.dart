@@ -60,6 +60,5 @@ class ReferencedMessage implements IReferencedMessage {
   }
 
   @override
-  ReplyBuilder toBuilder() =>
-      ReplyBuilder(this.message?.id ?? Snowflake(0), false);
+  ReplyBuilder toBuilder() => ReplyBuilder(this.message?.id ?? Snowflake(0), false);
 }

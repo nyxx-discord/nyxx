@@ -14,7 +14,7 @@ abstract class IEmbedField implements Convertable<EmbedFieldBuilder> {
 }
 
 /// Single instance of Embed's field. Can contain null elements.
-class EmbedField implements IEmbedField{
+class EmbedField implements IEmbedField {
   /// Field name
   @override
   late final String name;

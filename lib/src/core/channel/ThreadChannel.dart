@@ -70,7 +70,7 @@ class ThreadMember extends SnowflakeEntity implements IThreadMember {
   Cacheable<Snowflake, IMember> get member => MemberCacheable(this.client, this.id, this.guild);
 
   /// Creates an instance of [ThreadMember]
-  ThreadMember(this.client, RawApiMap raw, this.guild): super(Snowflake(raw["user_id"])) {
+  ThreadMember(this.client, RawApiMap raw, this.guild) : super(Snowflake(raw["user_id"])) {
     this.thread = CacheableTextChannel(client, Snowflake(raw["id"]));
     this.joinTimestamp = DateTime.parse(raw["join_timestamp"] as String);
     this.flags = raw["flags"] as int;
@@ -168,12 +168,10 @@ class ThreadChannel extends MinimalGuildChannel implements IThreadChannel {
 
   /// Fetches from API current list of member that has access to that thread
   @override
-  Stream<IThreadMember> fetchMembers() =>
-      client.httpEndpoints.getThreadMembers(this.id, this.guild.id);
+  Stream<IThreadMember> fetchMembers() => client.httpEndpoints.getThreadMembers(this.id, this.guild.id);
 
   @override
-  Future<void> bulkRemoveMessages(Iterable<SnowflakeEntity> messages) =>
-      client.httpEndpoints.bulkRemoveMessages(this.id, messages);
+  Future<void> bulkRemoveMessages(Iterable<SnowflakeEntity> messages) => client.httpEndpoints.bulkRemoveMessages(this.id, messages);
 
   @override
   Stream<IMessage> downloadMessages({int limit = 50, Snowflake? after, Snowflake? around, Snowflake? before}) =>
@@ -183,22 +181,21 @@ class ThreadChannel extends MinimalGuildChannel implements IThreadChannel {
   Future<IMessage> fetchMessage(Snowflake messageId) async {
     final message = await client.httpEndpoints.fetchMessage(this.id, messageId);
 
-    if(client.cacheOptions.messageCachePolicyLocation.http && client.cacheOptions.messageCachePolicy.canCache(message)) {
+    if (client.cacheOptions.messageCachePolicyLocation.http && client.cacheOptions.messageCachePolicy.canCache(message)) {
       this.messageCache.put(message);
     }
 
     return message;
   }
+
   @override
   IMessage? getMessage(Snowflake id) => this.messageCache[id];
 
   @override
-  Future<IMessage> sendMessage(MessageBuilder builder) =>
-      client.httpEndpoints.sendMessage(this.id, builder);
+  Future<IMessage> sendMessage(MessageBuilder builder) => client.httpEndpoints.sendMessage(this.id, builder);
 
   @override
-  Future<void> startTyping() async =>
-      client.httpEndpoints.triggerTyping(this.id);
+  Future<void> startTyping() async => client.httpEndpoints.triggerTyping(this.id);
 
   @override
   void startTypingLoop() {
@@ -215,15 +212,12 @@ class ThreadChannel extends MinimalGuildChannel implements IThreadChannel {
 
   /// Removes [user] from [ThreadChannel]
   @override
-  Future<void> removeThreadMember(SnowflakeEntity user) =>
-      client.httpEndpoints.removeThreadMember(this.id, user.id);
+  Future<void> removeThreadMember(SnowflakeEntity user) => client.httpEndpoints.removeThreadMember(this.id, user.id);
 
   /// Adds [user] to [ThreadChannel]
   @override
-  Future<void> addThreadMember(SnowflakeEntity user) =>
-      client.httpEndpoints.addThreadMember(this.id, user.id);
+  Future<void> addThreadMember(SnowflakeEntity user) => client.httpEndpoints.addThreadMember(this.id, user.id);
 
   @override
-  Stream<IMessage> fetchPinnedMessages() =>
-      client.httpEndpoints.fetchPinnedMessages(this.id);
+  Stream<IMessage> fetchPinnedMessages() => client.httpEndpoints.fetchPinnedMessages(this.id);
 }
