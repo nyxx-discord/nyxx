@@ -3,18 +3,23 @@ part of nyxx;
 /// Sent when a user starts typing.
 class TypingEvent implements ITypingEvent {
   /// The channel that the user is typing in.
+  @override
   late final CacheableTextChannel<ITextChannel> channel;
 
   /// The user that is typing.
+  @override
   late final Cacheable<Snowflake, IUser> user;
 
   /// The member who started typing if this happened in a guild
+  @override
   late final IMember? member;
 
   /// Timestamp when the user started typing
+  @override
   late final DateTime timestamp;
 
   /// Reference to guild where typing occurred
+  @override
   late final Cacheable<Snowflake, IGuild>? guild;
 
   /// Creates an instance of [TypingEvent]

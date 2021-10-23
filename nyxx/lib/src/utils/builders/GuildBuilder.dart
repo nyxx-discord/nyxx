@@ -1,4 +1,11 @@
-part of nyxx;
+import 'package:nyxx/src/core/DiscordColor.dart';
+import 'package:nyxx/src/core/SnowflakeEntity.dart';
+import 'package:nyxx/src/core/channel/Channel.dart';
+import 'package:nyxx/src/typedefs.dart';
+import 'package:nyxx/src/utils/builders/AttachmentBuilder.dart';
+import 'package:nyxx/src/utils/builders/Builder.dart';
+import 'package:nyxx/src/utils/builders/PermissionsBuilder.dart';
+import 'package:nyxx/src/utils/builders/ThreadBuilder.dart';
 
 /// Allows to build guild object for creating new one or modifying existing
 class GuildBuilder extends Builder {

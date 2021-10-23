@@ -3,6 +3,7 @@ part of nyxx;
 /// Fired when a thread is created
 class ThreadCreateEvent implements IThreadCreateEvent {
   /// The thread that was just created
+  @override
   late final IThreadChannel thread;
 
   /// Creates an instance of [ThreadCreateEvent]

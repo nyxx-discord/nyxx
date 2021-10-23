@@ -108,27 +108,35 @@ abstract class IWebhook implements SnowflakeEntity, IMessageAuthor {
 ///They do not require a bot user or authentication to use.
 class Webhook extends SnowflakeEntity implements IWebhook {
   /// The webhook's name.
+  @override
   late final String? name;
 
   /// The webhook's token. Defaults to empty string
+  @override
   late final String token;
 
   /// The webhook's channel, if this is accessed using a normal client and the client has that channel in it's cache.
+  @override
   late final ICacheableTextChannel<ITextGuildChannel>? channel;
 
   /// The webhook's guild, if this is accessed using a normal client and the client has that guild in it's cache.
+  @override
   late final Cacheable<Snowflake, IGuild>? guild;
 
   /// The user, if this is accessed using a normal client.
+  @override
   late final IUser? user;
 
   /// Webhook type
+  @override
   late final WebhookType? type;
 
   /// Webhooks avatar hash
+  @override
   late final String? avatarHash;
 
   /// Default webhook avatar id
+  @override
   int get defaultAvatarId => 0;
 
   @override
@@ -144,6 +152,7 @@ class Webhook extends SnowflakeEntity implements IWebhook {
   String get tag => "";
 
   /// Reference to [NyxxWebsocket] object
+  @override
   final INyxx client;
 
   /// Creates an instance of [Webhook]
@@ -181,6 +190,7 @@ class Webhook extends SnowflakeEntity implements IWebhook {
   ///
   /// [wait] - waits for server confirmation of message send before response,
   /// and returns the created message body (defaults to false; when false a message that is not save does not return an error)
+  @override
   Future<IMessage?> execute(
       MessageBuilder builder,
       {bool? wait,
@@ -202,11 +212,13 @@ class Webhook extends SnowflakeEntity implements IWebhook {
       client.httpEndpoints.userAvatarURL(this.id, this.avatarHash, 0, format: format, size: size);
 
   /// Edits the webhook.
+  @override
   Future<IWebhook> edit({String? name, SnowflakeEntity? channel, AttachmentBuilder? avatarAttachment, String? auditReason}) =>
     client.httpEndpoints.editWebhook(this.id, token: this.token, name: name,
         channel: channel, avatarAttachment: avatarAttachment, auditReason: auditReason);
 
   /// Deletes the webhook.
+  @override
   Future<void> delete({String? auditReason}) =>
       client.httpEndpoints.deleteWebhook(this.id, token: token, auditReason: auditReason);
 }

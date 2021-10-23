@@ -14,9 +14,11 @@ abstract class IDisconnectEvent {
 /// Sent when a shard disconnects from the websocket.
 class DisconnectEvent implements IDisconnectEvent {
   /// The shard that got disconnected.
+  @override
   final IShard shard;
 
   /// Reason of disconnection
+  @override
   final DisconnectEventReason reason;
 
   /// Creates an instance of [DisconnectEvent]

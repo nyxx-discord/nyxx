@@ -12,9 +12,11 @@ abstract class IRawEvent {
 
 class RawEvent implements IRawEvent {
   /// Shard where event was received
+  @override
   final IShard shard;
 
   /// Raw event data as deserialized json
+  @override
   final RawApiMap rawData;
 
   /// Creates an instance of [RawEvent]

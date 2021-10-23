@@ -1,4 +1,11 @@
-part of nyxx;
+import 'package:nyxx/src/core/SnowflakeEntity.dart';
+import 'package:nyxx/src/core/channel/Channel.dart';
+import 'package:nyxx/src/core/channel/ITextChannel.dart';
+import 'package:nyxx/src/core/channel/ThreadChannel.dart';
+import 'package:nyxx/src/core/channel/guild/GuildChannel.dart';
+import 'package:nyxx/src/core/channel/guild/VoiceChannel.dart';
+import 'package:nyxx/src/core/message/Message.dart';
+import 'package:nyxx/src/core/user/Member.dart';
 
 /// Predicate which will decide if entity could be cached
 typedef CachePolicyPredicate<T extends SnowflakeEntity> = bool Function(T);

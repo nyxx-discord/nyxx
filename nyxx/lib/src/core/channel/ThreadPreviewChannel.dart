@@ -5,33 +5,43 @@ class ThreadPreviewChannel extends Channel implements IThreadPreviewChannel {
   Timer? _typing;
 
   /// Name of the channel
+  @override
   late final String name;
 
   /// Approximate message count
+  @override
   late final int messageCount;
 
   /// Approximate member count
+  @override
   late final int memberCount;
 
   /// Guild where the thread is located
+  @override
   late final Cacheable<Snowflake, IGuild> guild;
 
   /// The text channel where the thread was made
+  @override
   late final CacheableTextChannel<ITextGuildChannel> parentChannel;
 
   /// Initial author of the thread
+  @override
   late final Cacheable<Snowflake, IMember> owner;
 
   /// Preview of initial members
+  @override
   late final List<Cacheable<Snowflake, IMember>> memberPreview;
 
   /// If the thread has been archived
+  @override
   late final bool archived;
 
   /// When the thread will be archived
+  @override
   late final DateTime archivedTime;
 
   /// How long till the thread is archived
+  @override
   late final ThreadArchiveTime archivedAfter;
 
   /// Creates an instance of [ThreadPreviewChannel]
@@ -44,7 +54,7 @@ class ThreadPreviewChannel extends Channel implements IThreadPreviewChannel {
     this.owner = MemberCacheable(client, Snowflake(raw["owner_id"]), this.guild);
     this.memberPreview = [];
     if(raw["member_ids_preview"] != null) {
-      for(final String id in raw["member_ids_preview"] as List<String>) {
+      for(final id in raw["member_ids_preview"] as List<String>) {
         this.memberPreview.add(MemberCacheable(client, Snowflake(id), this.guild));
       }
     }
@@ -56,6 +66,7 @@ class ThreadPreviewChannel extends Channel implements IThreadPreviewChannel {
   }
 
   /// Get the actual thread channel from the preview
+  @override
   ChannelCacheable<IThreadChannel> getThreadChannel() => new ChannelCacheable(client, this.id);
 
   @override

@@ -3,12 +3,15 @@ part of nyxx;
 /// Sent when a member's presence updates.
 class PresenceUpdateEvent implements IPresenceUpdateEvent {
   /// User object
+  @override
   late final Cacheable<Snowflake, IUser> user;
 
   /// Users current activities
+  @override
   late final Iterable<Activity> presences;
 
   /// Status of client
+  @override
   late final IClientStatus clientStatus;
 
   /// Creates na instance of [PresenceUpdateEvent]

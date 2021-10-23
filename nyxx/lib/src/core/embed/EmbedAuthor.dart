@@ -19,15 +19,19 @@ abstract class IEmbedAuthor implements Convertable<EmbedAuthorBuilder> {
 /// Author of embed. Can contain null elements.
 class EmbedAuthor implements IEmbedAuthor {
   /// Name of embed author
+  @override
   String? name;
 
   /// Url to embed author
+  @override
   String? url;
 
   /// Url to author's url
+  @override
   String? iconUrl;
 
   /// Proxied icon url
+  @override
   String? iconProxyUrl;
 
   /// Creates an instance of [EmbedAuthor]

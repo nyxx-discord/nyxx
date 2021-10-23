@@ -3,12 +3,15 @@ part of nyxx;
 /// Wrapper of threads listing results.
 class ThreadListResultWrapper implements IThreadListResultWrapper {
   /// List of threads
+  @override
   late final List<IThreadChannel> threads;
 
   /// A thread member object for each returned thread the current user has joined
+  @override
   late final List<IThreadMember> selfThreadMembers;
 
   /// Whether there are potentially additional threads that could be returned on a subsequent call
+  @override
   late final bool hasMore;
 
   /// Create an instance of [ThreadListResultWrapper]

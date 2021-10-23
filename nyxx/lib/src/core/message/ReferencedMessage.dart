@@ -1,4 +1,23 @@
-part of nyxx;
+import 'package:nyxx/src/Nyxx.dart';
+import 'package:nyxx/src/core/Snowflake.dart';
+import 'package:nyxx/src/core/message/Message.dart';
+import 'package:nyxx/src/internal/interfaces/Convertable.dart';
+import 'package:nyxx/src/typedefs.dart';
+import 'package:nyxx/src/utils/builders/ReplyBuilder.dart';
+
+abstract class IReferencedMessage implements Convertable<ReplyBuilder> {
+  /// Message object of reply
+  IMessage? get message;
+
+  /// If true the backend couldn't fetch the message
+  bool get isBackendFetchError;
+
+  /// If true message was deleted
+  bool get isDeleted;
+
+  /// True if references message exists and is available
+  bool get exists;
+}
 
 /// Message wrapper that other message replies to.
 /// [message] field can be null of two reasons: backend error or message was deleted.

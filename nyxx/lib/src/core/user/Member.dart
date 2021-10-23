@@ -44,6 +44,7 @@ class Member extends SnowflakeEntity implements Mentionable {
   // TODO: is everything okay?
   /// Returns highest role of member.
   /// Uses ! on nullable properties and will throw if anything is missing from cache
+  @override
   IRole get highestRole =>
       this.roles.reduce((value, element) {
         final valueInstance = value.getFromCache();

@@ -3,24 +3,31 @@ part of nyxx;
 /// Member of [ThreadChannel]
 class ThreadMember extends SnowflakeEntity {
   /// Reference to client
-  INyxx client;
+  @override
+  final INyxx client;
 
   /// Reference to [ThreadChannel]
+  @override
   late final ICacheableTextChannel<IThreadChannel> thread;
 
   /// When member joined thread
+  @override
   late final DateTime joinTimestamp;
 
   /// Any user-thread settings, currently only used for notifications
+  @override
   late final int flags;
 
   /// [ThreadMember]s [Guild]
+  @override
   final Cacheable<Snowflake, IGuild> guild;
 
   /// [Cacheable] of [User]
+  @override
   Cacheable<Snowflake, IUser> get user => UserCacheable(this.client, this.id);
 
   /// [Cacheable] of [Member]
+  @override
   Cacheable<Snowflake, IMember> get member => MemberCacheable(this.client, this.id, this.guild);
 
   /// Creates an instance of [ThreadMember]
@@ -70,24 +77,31 @@ class ThreadChannel extends MinimalGuildChannel implements IThreadChannel {
   Timer? _typing;
 
   /// Owner of the thread
+  @override
   late final Cacheable<Snowflake, IMember> owner;
 
   /// Approximate message count
+  @override
   late final int messageCount;
 
   /// Approximate member count
+  @override
   late final int memberCount;
 
   /// True if thread is archived
+  @override
   late final bool archived;
 
   /// Date when thread was archived
+  @override
   late final DateTime archiveAt;
 
   /// Time after what thread will be archived
+  @override
   late final ThreadArchiveTime archiveAfter;
 
   /// Whether non-moderators can add other non-moderators to a thread; only available on private threads
+  @override
   late final bool invitable;
 
   @override
@@ -114,6 +128,7 @@ class ThreadChannel extends MinimalGuildChannel implements IThreadChannel {
   }
 
   /// Fetches from API current list of member that has access to that thread
+  @override
   Stream<IThreadMember> fetchMembers() =>
       client.httpEndpoints.getThreadMembers(this.id, this.guild.id);
 
@@ -156,13 +171,16 @@ class ThreadChannel extends MinimalGuildChannel implements IThreadChannel {
   void stopTypingLoop() => this._typing?.cancel();
 
   /// Leaves this thread channel
+  @override
   Future<void> leaveThread() => client.httpEndpoints.leaveGuild(this.id);
 
   /// Removes [user] from [ThreadChannel]
+  @override
   Future<void> removeThreadMember(SnowflakeEntity user) =>
       client.httpEndpoints.removeThreadMember(this.id, user.id);
 
   /// Adds [user] to [ThreadChannel]
+  @override
   Future<void> addThreadMember(SnowflakeEntity user) =>
       client.httpEndpoints.addThreadMember(this.id, user.id);
 

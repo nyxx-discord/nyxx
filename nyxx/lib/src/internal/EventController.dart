@@ -325,130 +325,172 @@ class WebsocketEventController extends RestEventController implements IWebsocket
   late final StreamController<IGuildStickerUpdate> onGuildStickersUpdateController;
 
   /// Emitted when a shard is disconnected from the websocket.
+  @override
   late final Stream<IDisconnectEvent> onDisconnect;
 
   /// Emitted when the client is ready. Should be sent only once.
+  @override
   late final Stream<IReadyEvent> onReady;
 
   /// Emitted when a message is received. It includes private messages.
+  @override
   late final Stream<IMessageReceivedEvent> onMessageReceived;
 
   /// Emitted when private message is received.
+  @override
   late final Stream<IMessageReceivedEvent> onDmReceived;
 
   /// Emitted when channel"s pins are updated.
+  @override
   late final Stream<IChannelPinsUpdateEvent> onChannelPinsUpdate;
 
   /// Emitted when guild"s emojis are changed.
+  @override
   late final Stream<IGuildEmojisUpdateEvent> onGuildEmojisUpdate;
 
   /// Emitted when a message is edited. Old message can be null if isn"t cached.
+  @override
   late final Stream<IMessageUpdateEvent> onMessageUpdate;
 
   /// Emitted when a message is deleted.
+  @override
   late final Stream<IMessageDeleteEvent> onMessageDelete;
 
   /// Emitted when a channel is created.
+  @override
   late final Stream<IChannelCreateEvent> onChannelCreate;
 
   /// Emitted when a channel is updated.
+  @override
   late final Stream<IChannelUpdateEvent> onChannelUpdate;
 
   /// Emitted when a channel is deleted.
+  @override
   late final Stream<IChannelDeleteEvent> onChannelDelete;
 
   /// Emitted when a member is banned.
+  @override
   late final Stream<IGuildBanAddEvent> onGuildBanAdd;
 
   /// Emitted when a user is unbanned.
+  @override
   late final Stream<IGuildBanRemoveEvent> onGuildBanRemove;
 
   /// Emitted when the client joins a guild.
+  @override
   late final Stream<IGuildCreateEvent> onGuildCreate;
 
   /// Emitted when a guild is updated.
+  @override
   late final Stream<IGuildUpdateEvent> onGuildUpdate;
 
   /// Emitted when the client leaves a guild.
+  @override
   late final Stream<IGuildDeleteEvent> onGuildDelete;
 
   /// Emitted when a member joins a guild.
+  @override
   late final Stream<IGuildMemberAddEvent> onGuildMemberAdd;
 
   /// Emitted when a member is updated.
+  @override
   late final Stream<IGuildMemberUpdateEvent> onGuildMemberUpdate;
 
   /// Emitted when a user leaves a guild.
+  @override
   late final Stream<IGuildMemberRemoveEvent> onGuildMemberRemove;
 
   /// Emitted when a member"s presence is changed.
+  @override
   late final Stream<IPresenceUpdateEvent> onPresenceUpdate;
 
   /// Emitted when a user starts typing.
+  @override
   late final Stream<ITypingEvent> onTyping;
 
   /// Emitted when a role is created.
+  @override
   late final Stream<IRoleCreateEvent> onRoleCreate;
 
   /// Emitted when a role is updated.
+  @override
   late final Stream<IRoleUpdateEvent> onRoleUpdate;
 
   /// Emitted when a role is deleted.
+  @override
   late final Stream<IRoleDeleteEvent> onRoleDelete;
 
   /// Emitted when many messages are deleted at once
+  @override
   late final Stream<IMessageDeleteBulkEvent> onMessageDeleteBulk;
 
   /// Emitted when a user adds a reaction to a message.
+  @override
   late final Stream<IMessageReactionEvent> onMessageReactionAdded;
 
   /// Emitted when a user deletes a reaction to a message.
+  @override
   late final Stream<IMessageReactionEvent> onMessageReactionRemove;
 
   /// Emitted when a user explicitly removes all reactions from a message.
+  @override
   late final Stream<IMessageReactionsRemovedEvent> onMessageReactionsRemoved;
 
   /// Emitted when someone joins/leaves/moves voice channel.
+  @override
   late final Stream<IVoiceStateUpdateEvent> onVoiceStateUpdate;
 
   /// Emitted when a guild"s voice server is updated.
   /// This is sent when initially connecting to voice, and when the current voice instance fails over to a new server.
+  @override
   late final Stream<IVoiceServerUpdateEvent> onVoiceServerUpdate;
 
   /// Emitted when user was updated
+  @override
   late final Stream<IUserUpdateEvent> onUserUpdate;
 
   /// Emitted when bot is mentioned
+  @override
   late final Stream<IMessageReceivedEvent> onSelfMention;
 
   /// Emitted when invite is created
+  @override
   late final Stream<IInviteCreatedEvent> onInviteCreated;
 
   /// Emitted when invite is deleted
+  @override
   late final Stream<IInviteDeletedEvent> onInviteDeleted;
 
   /// Emitted when a bot removes all instances of a given emoji from the reactions of a message
+  @override
   late final Stream<IMessageReactionRemoveEmojiEvent> onMessageReactionRemoveEmoji;
 
   /// Emitted when a thread is created
+  @override
   late final Stream<IThreadCreateEvent> onThreadCreated;
 
   /// Fired when a thread has a member added/removed
+  @override
   late final Stream<IThreadMembersUpdateEvent> onThreadMembersUpdate;
 
   /// Fired when a thread gets deleted
+  @override
   late final Stream<IThreadDeletedEvent> onThreadDelete;
 
   /// Emitted when stage channel instance is created
+  @override
   late final Stream<IStageInstanceEvent> onStageInstanceCreate;
 
   /// Emitted when stage channel instance is updated
+  @override
   late final Stream<IStageInstanceEvent> onStageInstanceUpdate;
 
   /// Emitted when stage channel instance is deleted
+  @override
   late final Stream<IStageInstanceEvent> onStageInstanceDelete;
 
   /// Emitted when stage channel instance is deleted
+  @override
   late final Stream<IGuildStickerUpdate> onGuildStickersUpdate;
 
   /// Makes a new `EventController`.

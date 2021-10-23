@@ -1,4 +1,5 @@
-part of nyxx;
+import 'package:nyxx/src/typedefs.dart';
+import 'package:nyxx/src/utils/IEnum.dart';
 
 /// Provides values for user status.
 class UserStatus extends IEnum<String> {
@@ -47,15 +48,19 @@ abstract class IClientStatus {
 /// Provides status of user on different devices
 class ClientStatus implements IClientStatus {
   /// The user's status set for an active desktop (Windows, Linux, Mac) application session
+  @override
   late final UserStatus desktop;
 
   /// The user's status set for an active mobile (iOS, Android) application session
+  @override
   late final UserStatus web;
 
   /// The user's status set for an active web (browser, bot account) application session
+  @override
   late final UserStatus phone;
 
   /// Returns if user is online
+  @override
   bool get isOnline => this.desktop.isOnline || this.phone.isOnline || this.web.isOnline;
 
   /// Creates na instance of [ClientStatus]

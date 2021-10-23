@@ -1,4 +1,6 @@
-part of nyxx;
+import 'package:nyxx/src/typedefs.dart';
+import 'package:nyxx/src/utils/IEnum.dart';
+import 'package:nyxx/src/utils/builders/Builder.dart';
 
 class ThreadBuilder extends Builder {
 

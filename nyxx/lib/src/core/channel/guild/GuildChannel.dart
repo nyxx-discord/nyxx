@@ -3,10 +3,12 @@ part of nyxx;
 /// Represents channel within [Guild]. Shares logic for both [TextGuildChannel] and [VoiceGuildChannel].
 abstract class GuildChannel extends MinimalGuildChannel implements IGuildChannel {
   /// Relative position of channel in context of channel list
+  @override
   late final int position;
 
   /// Permission override for channel
-  late final List<PermissionsOverrides> permissionOverrides;
+  @override
+  late final List<IPermissionsOverrides> permissionOverrides;
 
   GuildChannel._new(INyxx client, RawApiMap raw, [Snowflake? guildId]) : super._new(client, raw, guildId) {
     this.position = raw["position"] as int;
@@ -19,11 +21,13 @@ abstract class GuildChannel extends MinimalGuildChannel implements IGuildChannel
   }
 
   /// Edits channel
+  @override
   Future<T> edit<T extends GuildChannel>(ChannelBuilder builder, {String? auditReason}) =>
     this.client.httpEndpoints.editGuildChannel(this.id, builder, auditReason: auditReason);
 
   /// Returns effective permissions for [member] to this channel including channel overrides.
-  Future<Permissions> effectivePermissions(Member member) async {
+  @override
+  Future<IPermissions> effectivePermissions(IMember member) async {
     if (member.guild != this.guild) {
       return Permissions.empty();
     }
@@ -48,7 +52,8 @@ abstract class GuildChannel extends MinimalGuildChannel implements IGuildChannel
   }
 
   /// Returns effective permissions for [role] to this channel including channel overrides.
-  Future<Permissions> effectivePermissionForRole(Role role) async {
+  @override
+  Future<IPermissions> effectivePermissionForRole(IRole role) async {
     if (role.guild != this.guild) {
       return Permissions.empty();
     }
@@ -82,20 +87,24 @@ abstract class GuildChannel extends MinimalGuildChannel implements IGuildChannel
   /// ```
   /// var invites = await chan.getChannelInvites();
   /// ```
-  Stream<InviteWithMeta> fetchChannelInvites() =>
+  @override
+  Stream<IInviteWithMeta> fetchChannelInvites() =>
       client.httpEndpoints.fetchChannelInvites(this.id);
 
   /// Allows to set or edit permissions for channel. [id] can be either User or Role
   /// Throws if [id] isn't [User] or [Role]
+  @override
   Future<void> editChannelPermissions(PermissionsBuilder perms, SnowflakeEntity entity, {String? auditReason}) =>
       client.httpEndpoints.editChannelPermissions(this.id, perms, entity, auditReason: auditReason);
 
   /// Allows to edit or set channel permission overrides.
+  @override
   Future<void> editChannelPermissionOverrides(PermissionOverrideBuilder permissionBuilder, {String? auditReason}) =>
       client.httpEndpoints.editChannelPermissionOverrides(this.id, permissionBuilder, auditReason: auditReason);
 
   /// Deletes permission overwrite for given User or Role [entity]
   /// Throws if [entity] isn't [User] or [Role]
+  @override
   Future<void> deleteChannelPermission(SnowflakeEntity entity, {String? auditReason}) =>
       client.httpEndpoints.deleteChannelPermission(this.id, entity, auditReason: auditReason);
 
@@ -104,6 +113,7 @@ abstract class GuildChannel extends MinimalGuildChannel implements IGuildChannel
   /// ```
   /// var invite = await channel.createInvite(maxUses: 2137);
   /// ```
+  @override
   Future<IInvite> createInvite({int? maxAge, int? maxUses, bool? temporary, bool? unique, String? auditReason}) =>
       client.httpEndpoints.createInvite(this.id, maxAge: maxAge, maxUses: maxUses, temporary: temporary, unique: unique, auditReason: auditReason);
 }

@@ -3,6 +3,7 @@ part of nyxx;
 /// Emitted when invite is creating
 class InviteCreatedEvent implements IInviteCreatedEvent {
   /// [IInvite] object of created invite
+  @override
   late final IInvite invite;
 
   /// Creates na instance of [InviteCreatedEvent]
@@ -25,12 +26,15 @@ abstract class IInviteDeletedEvent {
 /// Emitted when invite is deleted
 class InviteDeletedEvent implements IInviteDeletedEvent {
   /// Channel to which invite was pointing
+  @override
   late final Cacheable<Snowflake, IGuildChannel> channel;
 
   /// Guild where invite was deleted
+  @override
   late final Cacheable<Snowflake, IGuild>? guild;
 
   /// Code of invite
+  @override
   late final String code;
 
   /// Creates na instance of [InviteDeletedEvent]

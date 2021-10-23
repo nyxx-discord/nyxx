@@ -1,7 +1,14 @@
 part of nyxx;
 
-abstract class _HttpResponse {
+abstract class IHttpResponse {
+  int get statusCode;
+  Map<String, String> get headers;
+}
+
+abstract class HttpResponse implements IHttpResponse {
+  @override
   late final int statusCode;
+  @override
   late final Map<String, String> headers;
 
   late final List<int> _body;

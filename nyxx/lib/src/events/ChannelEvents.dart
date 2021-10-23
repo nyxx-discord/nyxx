@@ -4,6 +4,7 @@ part of nyxx;
 /// Sent when a channel is created.
 class ChannelCreateEvent implements IChannelCreateEvent {
   /// The channel that was created, either a [GuildChannel] or [DMChannel]
+  @override
   late final IChannel channel;
 
   /// Creates an instance of [ChannelCreateEvent]
@@ -25,6 +26,7 @@ abstract class IChannelDeleteEvent {
 /// Sent when a channel is deleted.
 class ChannelDeleteEvent implements IChannelDeleteEvent {
   /// The channel that was deleted.
+  @override
   late final IChannel channel;
 
   /// Creates an instance of [ChannelDeleteEvent]
@@ -49,12 +51,15 @@ abstract class IChannelPinsUpdateEvent {
 /// Fired when channel"s pinned messages are updated
 class ChannelPinsUpdateEvent implements IChannelPinsUpdateEvent {
   /// Channel where pins were updated
+  @override
   late final CacheableTextChannel<ITextChannel> channel;
 
   /// ID of channel pins were updated
+  @override
   late final Cacheable<Snowflake, IGuild>? guild;
 
   /// the time at which the most recent pinned message was pinned
+  @override
   late final DateTime? lastPingTimestamp;
 
   /// Creates na instance of [ChannelPinsUpdateEvent]
@@ -81,6 +86,7 @@ abstract class IChannelUpdateEvent {
 /// Sent when a channel is updated.
 class ChannelUpdateEvent implements IChannelUpdateEvent {
   /// The channel after the update.
+  @override
   late final IChannel updatedChannel;
 
   /// Creates na instance of [ChannelUpdateEvent]
@@ -106,6 +112,7 @@ abstract class IStageInstanceEvent {
 /// Event for actions related to stage channels
 class StageInstanceEvent implements IStageInstanceEvent {
   /// [IStageChannelInstance] related to event
+  @override
   late final IStageChannelInstance stageChannelInstance;
 
   /// Creates na instance of [StageInstanceEvent]

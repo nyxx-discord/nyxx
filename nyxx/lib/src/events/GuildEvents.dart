@@ -291,9 +291,11 @@ abstract class IRoleCreateEvent {
 /// Sent when a role is created.
 class RoleCreateEvent implements IRoleCreateEvent {
   /// The role that was created.
+  @override
   late final IRole role;
 
   /// The guild that the member was banned from.
+  @override
   late final Cacheable<Snowflake, IGuild> guild;
 
   /// Creates na instance of [RoleCreateEvent]
@@ -320,9 +322,11 @@ abstract class IRoleDeleteEvent {
 /// Sent when a role is deleted.
 class RoleDeleteEvent implements IRoleDeleteEvent {
   /// Id of tole that was deleted
+  @override
   late final Cacheable<Snowflake, IRole>? role;
 
   /// The guild that the member was banned from.
+  @override
   late final Cacheable<Snowflake, IGuild> guild;
 
   /// Creates na instance of [RoleDeleteEvent]
@@ -350,9 +354,11 @@ abstract class IRoleUpdateEvent {
 /// Sent when a role is updated.
 class RoleUpdateEvent implements IRoleUpdateEvent {
   /// The role after the update.
+  @override
   late final IRole role;
 
   /// The guild that the member was banned from.
+  @override
   late final Cacheable<Snowflake, IGuild> guild;
 
   /// Creates na instance of [RoleUpdateEvent]
@@ -378,9 +384,11 @@ abstract class IGuildStickerUpdate {
 /// Sent when a guild's stickers have been updated.
 class GuildStickerUpdate implements IGuildStickerUpdate {
   /// Cacheable of guild where stickers changed
+  @override
   late final Cacheable<Snowflake, IGuild> guild;
 
   /// List of stickers
+  @override
   late final List<IGuildSticker> stickers;
 
   /// Creates na instance of [GuildStickerUpdate]

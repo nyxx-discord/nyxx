@@ -4,36 +4,47 @@ part of nyxx;
 /// If [channel] is null, it means that user left channel.
 class VoiceState implements IVoiceState {
   /// User this voice state is for
+  @override
   late final Cacheable<Snowflake, IUser> user;
 
   /// Session id for this voice state
+  @override
   late final String sessionId;
 
   /// Guild this voice state update is
+  @override
   late final Cacheable<Snowflake, IGuild>? guild;
 
   /// Channel id user is connected
+  @override
   late final Cacheable<Snowflake, IChannel>? channel;
 
   /// Whether this user is muted by the server
+  @override
   late final bool deaf;
 
   /// Whether this user is locally deafened
+  @override
   late final bool selfDeaf;
 
   /// Whether this user is locally muted
+  @override
   late final bool selfMute;
 
   /// Whether this user is muted by the current user
+  @override
   late final bool suppress;
 
   /// Whether this user is streaming using "Go Live"
+  @override
   late final bool selfStream;
 
   /// Whether this user's camera is enabled
+  @override
   late final bool selfVideo;
 
   /// The time at which the user requested to speak
+  @override
   late final DateTime? requestToSpeakTimeStamp;
 
   VoiceState._new(INyxx client, RawApiMap raw) {

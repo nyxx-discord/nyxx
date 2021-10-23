@@ -8,6 +8,7 @@ abstract class IHttpErrorEvent {
 /// Sent when a failed HTTP response is received.
 class HttpErrorEvent implements IHttpErrorEvent {
   /// The HTTP response.
+  @override
   final HttpResponseError response;
 
   /// Creates na instance of [HttpErrorEvent]
@@ -22,6 +23,7 @@ abstract class IHttpResponseEvent {
 /// Sent when a successful HTTP response is received.
 class HttpResponseEvent implements IHttpResponseEvent {
   /// The HTTP response.
+  @override
   final HttpResponseSuccess response;
 
   /// Creates na instance of [HttpResponseEvent]

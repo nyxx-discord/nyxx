@@ -1,4 +1,17 @@
-part of nyxx;
+import 'dart:io';
+
+import 'package:nyxx/src/Nyxx.dart';
+import 'package:nyxx/src/core/AllowedMentions.dart';
+import 'package:nyxx/src/core/message/Message.dart';
+import 'package:nyxx/src/core/message/MessageTimeStamp.dart';
+import 'package:nyxx/src/internal/interfaces/ISend.dart';
+import 'package:nyxx/src/internal/interfaces/Mentionable.dart';
+import 'package:nyxx/src/typedefs.dart';
+import 'package:nyxx/src/utils/IEnum.dart';
+import 'package:nyxx/src/utils/builders/AttachmentBuilder.dart';
+import 'package:nyxx/src/utils/builders/Builder.dart';
+import 'package:nyxx/src/utils/builders/EmbedBuilder.dart';
+import 'package:nyxx/src/utils/builders/ReplyBuilder.dart';
 
 /// Allows to create pre built custom messages which can be passed to classes which inherits from [ISend].
 class MessageBuilder extends BuilderWithClient {

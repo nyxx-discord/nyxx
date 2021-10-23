@@ -4,8 +4,8 @@ import 'package:nyxx/src/core/SnowflakeEntity.dart';
 import 'package:nyxx/src/core/guild/Guild.dart';
 import 'package:nyxx/src/core/user/User.dart';
 import 'package:nyxx/src/internal/cache/Cacheable.dart';
-import 'package:nyxx/src/utils/IEnum.dart';
 import 'package:nyxx/src/typedefs.dart';
+import 'package:nyxx/src/utils/IEnum.dart';
 import 'package:nyxx/src/utils/builders/StickerBuilder.dart';
 
 /// Base interface for all sticker types
@@ -32,21 +32,27 @@ abstract class ISticker implements SnowflakeEntity {
 /// Base class for all sticker types
 abstract class Sticker extends SnowflakeEntity implements ISticker {
   /// Reference to client
+  @override
   final INyxx client;
 
   /// Name of the sticker
+  @override
   String get name;
 
   /// Description of the sticker
+  @override
   String? get description;
 
   /// Type of sticker
+  @override
   StickerType get type;
 
   /// Format of sticker
+  @override
   StickerFormat get format;
 
   /// Url for sticker image
+  @override
   String get stickerURL =>
       this.client.httpEndpoints.stickerUrl(this.id, format.getExtension());
 
@@ -114,15 +120,19 @@ class GuildSticker extends Sticker implements IGuildSticker {
   late final StickerFormat format;
 
   /// The Discord name of a unicode emoji representing the sticker's expression.
+  @override
   late final String tags;
 
   /// Whether this guild sticker can be used, may be false due to loss of Server Boosts
+  @override
   late final bool? available;
 
   /// Guild that owns this sticker
+  @override
   late final Cacheable<Snowflake, IGuild> guild;
 
   /// User that uploaded the guild sticker
+  @override
   late final IUser? user;
 
   /// Create an instance of [GuildSticker]
@@ -143,10 +153,12 @@ class GuildSticker extends Sticker implements IGuildSticker {
   }
 
   /// Edits current sticker
+  @override
   Future<IGuildSticker> edit(StickerBuilder builder) =>
       client.httpEndpoints.editGuildSticker(this.guild.id, this.id, builder);
 
   /// Removed current sticker
+  @override
   Future<void> delete() =>
       client.httpEndpoints.deleteGuildSticker(this.guild.id, this.id);
 }
@@ -178,13 +190,16 @@ class StandardSticker extends Sticker implements IStandardSticker {
   late final StickerFormat format;
 
   /// Id of the pack the sticker is from
+  @override
   late final Snowflake packId;
 
   /// Comma-separated list of tags for the sticker.
   /// Available in list form: [tagsList].
+  @override
   late final String? tags;
 
   /// [StandardSticker] tags in list form
+  @override
   Iterable<String> get tagsList => tags!.split(", ").map((e) => e.trim());
 
   /// Creates an instance of [StandardSticker]
@@ -222,21 +237,27 @@ abstract class IStickerPack implements SnowflakeEntity {
 /// Represents a pack of standard stickers.
 class StickerPack extends SnowflakeEntity implements IStickerPack {
   /// The stickers in the pack
+  @override
   late final List<StandardSticker> stickers;
 
   /// Name of the sticker pack
+  @override
   late final String name;
 
   /// Id of the pack's SKU
+  @override
   late final Snowflake skuId;
 
   /// Id of a sticker in the pack which is shown as the pack's icon
+  @override
   late final Snowflake coverStickerId;
 
   /// Description of the sticker pack
+  @override
   late final String description;
 
   /// Id of the sticker pack's banner image
+  @override
   late final Snowflake bannerAssetId;
 
   /// Creates an instance of [StickerPack]

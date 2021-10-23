@@ -22,9 +22,11 @@ abstract class IBaseGuildEmoji implements SnowflakeEntity, IEmoji {
 
 abstract class BaseGuildEmoji extends SnowflakeEntity implements IBaseGuildEmoji {
   /// True if emoji is partial.
+  @override
   bool get isPartial;
 
   /// Returns cdn url to emoji
+  @override
   String get cdnUrl => "https://cdn.discordapp.com/emojis/${this.id}.png";
 
   /// Creates an instance of [BaseGuildEmoji]
@@ -79,21 +81,27 @@ abstract class IGuildEmoji implements IBaseGuildEmoji {
 
 class GuildEmoji extends BaseGuildEmoji implements IGuildEmoji {
   /// Reference to client
+  @override
   final INyxx client;
 
   /// Reference to guild where emoji belongs to
+  @override
   late final Cacheable<Snowflake, IGuild> guild;
 
   /// Roles which can use this emote
+  @override
   late final Iterable<Cacheable<Snowflake, IRole>> roles;
 
   /// whether this emoji must be wrapped in colons
+  @override
   late final bool requireColons;
 
   /// whether this emoji is managed
+  @override
   late final bool managed;
 
   /// whether this emoji is animated
+  @override
   late final bool animated;
 
   @override
@@ -113,10 +121,12 @@ class GuildEmoji extends BaseGuildEmoji implements IGuildEmoji {
   }
 
   /// Allows to delete guild emoji
+  @override
   Future<void> delete() =>
       client.httpEndpoints.deleteGuildEmoji(this.guild.id, this.id);
 
   /// Allows to edit guild emoji
+  @override
   Future<void> edit({String? name, List<Snowflake>? roles}) =>
       client.httpEndpoints.editGuildEmoji(this.guild.id, this.id, name: name, roles: roles);
 }

@@ -10,19 +10,24 @@ part of nyxx;
 /// between separate connections to operate.
 class ShardManager implements IShardManager {
   /// Emitted when the shard is ready.
+  @override
   late final Stream<IShard> onConnected = this.onConnectController.stream;
 
   /// Emitted when the shard encounters a connection error.
+  @override
   late final Stream<IShard> onDisconnect = this.onDisconnectController.stream;
 
   /// Emitted when the shard resumed its connection
+  @override
   late final Stream<IShard> onResume = this.onDisconnectController.stream;
 
   /// Emitted when shard receives member chunk.
+  @override
   late final Stream<IMemberChunkEvent> onMemberChunk = this.onMemberChunkController.stream;
 
   /// Raw gateway payloads. You have set `dispatchRawShardEvent` in [ClientOptions] to true otherwise stream won't receive any events.
   /// Also rawEvent is dispatched ONLY for payload that doesn't match any event built in into Nyxx.
+  @override
   late final Stream<IRawEvent> rawEvent = this.onRawEventController.stream;
 
   final StreamController<IShard> onConnectController = StreamController.broadcast();
@@ -34,17 +39,26 @@ class ShardManager implements IShardManager {
   final Logger _logger = Logger("Shard Manager");
 
   /// List of shards
+  @override
   Iterable<Shard> get shards => UnmodifiableListView(this._shards.values);
 
   /// Average gateway latency across all shards
+  @override
   Duration get gatewayLatency =>
       Duration(milliseconds: (this.shards.map((e) => e.gatewayLatency.inMilliseconds)
         .fold<int>(0, (first, second) => first + second)) ~/ shards.length);
 
   /// The number of identify requests allowed per 5 seconds
+  @override
   final int maxConcurrency;
-  final _ConnectionManager _ws;
-  late final int _numShards;
+
+  /// Reference to [ConnectionManager]
+  final ConnectionManager connectionManager;
+
+  /// Number of shards spawned
+  @override
+  late final int numShards;
+
   final Map<int, Shard> _shards = {};
 
   Duration get _identifyDelay {
@@ -67,6 +81,7 @@ class ShardManager implements IShardManager {
   }
 
   /// Sets presences on every shard
+  @override
   void setPresence(PresenceBuilder presenceBuilder) {
     for (final shard in shards) {
       shard.setPresence(presenceBuilder);
@@ -80,8 +95,7 @@ class ShardManager implements IShardManager {
       return;
     }
 
-    final shard = Shard._new(shardId, this, _ws.gateway);
-    _shards[shardId] = shard;
+    _shards[shardId] = Shard(shardId, this, connectionManager.gateway);
 
     Future.delayed(this._identifyDelay, () => _connect(shardId - 1));
   }

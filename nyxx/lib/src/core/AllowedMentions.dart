@@ -1,4 +1,6 @@
-part of nyxx;
+import 'package:nyxx/src/core/Snowflake.dart';
+import 'package:nyxx/src/typedefs.dart';
+import 'package:nyxx/src/utils/builders/Builder.dart';
 
 /// The allowed mention field allows for more granular control over mentions without various hacks to the message content.
 /// This will always validate against message content to avoid phantom pings (e.g. to ping everyone, you must still have @everyone in the message content), and check against user/bot permissions.

@@ -1,5 +1,5 @@
-import 'package:nyxx/src/utils/IEnum.dart';
 import 'package:nyxx/src/typedefs.dart';
+import 'package:nyxx/src/utils/IEnum.dart';
 
 abstract class IAuditLogChange {
   /// New value
@@ -17,12 +17,15 @@ abstract class IAuditLogChange {
 /// [Look here for more](https://discordapp.com/developers/docs/resources/audit-log)
 class AuditLogChange implements IAuditLogChange {
   /// New value
+  @override
   dynamic newValue;
 
   /// Old value
+  @override
   dynamic oldValue;
 
   /// type of audit log change hey
+  @override
   late final ChangeKeyType key;
 
   /// Creates na instance of [AuditLogChange]

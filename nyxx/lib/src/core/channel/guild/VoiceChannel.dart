@@ -117,18 +117,23 @@ abstract class IStageChannelInstance implements SnowflakeEntity {
 /// A [StageChannelInstance] holds information about a live stage.
 class StageChannelInstance extends SnowflakeEntity implements IStageChannelInstance {
   /// The guild id of the associated Stage channel
+  @override
   late final Cacheable<Snowflake, IGuild> guild;
 
   /// The id of the associated Stage channel
+  @override
   late final Cacheable<Snowflake, IStageVoiceGuildChannel> channel;
 
   /// The topic of the Stage instance
+  @override
   late final String topic;
 
   /// The privacy level of the Stage instance
+  @override
   late final StageChannelInstancePrivacyLevel privacyLevel;
 
   /// Whether or not Stage discovery is disabled
+  @override
   late final bool disoverableDisabled;
 
   /// Creates an instance of [StageChannelInstance]

@@ -30,6 +30,7 @@ class ClientUser extends User {
   }
 
   /// Edits current user. This changes user's username - not per guild nickname.
+  @override
   Future<IUser> edit({String? username, AttachmentBuilder? avatarAttachment}) =>
       client.httpEndpoints.editSelfUser(username: username, avatarAttachment: avatarAttachment);
 }

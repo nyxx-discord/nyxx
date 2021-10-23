@@ -3,18 +3,23 @@ part of nyxx;
 /// Fired when a thread has a member added/removed
 class ThreadMembersUpdateEvent implements IThreadMembersUpdateEvent {
   /// The thread that was updated
+  @override
   late final CacheableTextChannel<IThreadChannel> thread;
 
   /// The guild it was updated in
+  @override
   late final Cacheable<Snowflake, IGuild> guild;
 
   /// The members that were added. Note that they are not cached
+  @override
   late final Iterable<Cacheable<Snowflake, IMember>> addedMembers;
 
   /// The approximate number of members in the thread, capped at 50
+  @override
   late final int approxMemberCount;
 
   /// Users who were removed from the thread
+  @override
   late final Iterable<Cacheable<Snowflake, IUser>> removedUsers;
 
   /// Creates an instance of [ThreadMembersUpdateEvent]

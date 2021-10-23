@@ -3,6 +3,7 @@ part of nyxx;
 /// Sent when a new message is received.
 class MessageReceivedEvent implements IMessageReceivedEvent {
   /// The new message.
+  @override
   late final IMessage message;
 
   /// Creates an instance of [MessageReceivedEvent]
@@ -29,12 +30,15 @@ abstract class IMessageDeleteEvent {
 /// Sent when a message is deleted.
 class MessageDeleteEvent implements IMessageDeleteEvent {
   /// The message, if cached.
+  @override
   late final IMessage? message;
 
   /// The ID of the message.
+  @override
   late final Snowflake messageId;
 
   /// Channel where message was deleted
+  @override
   late final CacheableTextChannel<ITextChannel> channel;
 
   /// Creates na instance of [MessageDeleteEvent]
@@ -65,12 +69,15 @@ abstract class IMessageDeleteBulkEvent {
 /// Emitted when multiple messages are deleted at once.
 class MessageDeleteBulkEvent implements IMessageDeleteBulkEvent {
   /// List of deleted messages ids
+  @override
   late final Iterable<Snowflake> deletedMessagesIds;
 
   /// Channel on which messages were deleted.
+  @override
   late final CacheableTextChannel<ITextChannel> channel;
 
   /// Id of guild where event occurred
+  @override
   late final Cacheable<Snowflake, IGuild>? guild;
 
   /// Creates an instance of [MessageDeleteBulkEvent]
@@ -89,6 +96,7 @@ class MessageDeleteBulkEvent implements IMessageDeleteBulkEvent {
   /// Searches cache for deleted messages and returns those which are present in bots cache.
   /// Will return empty collection if cannot obtain channel instance from cache.
   /// It is not guaranteed that returned collection will have all deleted messages.
+  @override
   Iterable<IMessage> getDeletedMessages() {
     final channelInstance = this.channel.getFromCache();
 
@@ -230,12 +238,15 @@ abstract class IMessageReactionsRemovedEvent {
 /// Emitted when all reaction are removed
 class MessageReactionsRemovedEvent implements IMessageReactionsRemovedEvent {
   /// Channel on which event was fired
+  @override
   late final CacheableTextChannel<ITextChannel> channel;
 
   /// Message reference
+  @override
   late final Cacheable<Snowflake, IMessage> message;
 
   /// Guild where event occurs
+  @override
   late final Cacheable<Snowflake, IGuild>? guild;
 
   /// Creates na instance of [MessageReactionsRemovedEvent]
@@ -268,15 +279,19 @@ abstract class IMessageReactionRemoveEmojiEvent {
 /// Emitted when reactions of certain emoji are deleted
 class MessageReactionRemoveEmojiEvent implements IMessageReactionRemoveEmojiEvent {
   /// Channel on which event was fired
+  @override
   late final CacheableTextChannel<ITextChannel> channel;
 
   /// Message reference
+  @override
   late final Cacheable<Snowflake, IMessage> message;
 
   /// Guild where event occurs
+  @override
   late final Cacheable<Snowflake, IGuild>? guild;
 
   /// Removed emoji
+  @override
   late final IEmoji emoji;
 
   /// Creates na instance of [MessageReactionRemoveEmojiEvent]
@@ -313,12 +328,15 @@ abstract class IMessageUpdateEvent {
 /// Sent when a message is updated.
 class MessageUpdateEvent implements IMessageUpdateEvent {
   /// Edited message with updated fields
+  @override
   late final IMessage? updatedMessage;
 
   /// Id of channel where message was edited
+  @override
   late final CacheableTextChannel<ITextChannel> channel;
 
   /// Id of edited message
+  @override
   late final Snowflake messageId;
 
   /// Creates na instance of [MessageUpdateEvent]

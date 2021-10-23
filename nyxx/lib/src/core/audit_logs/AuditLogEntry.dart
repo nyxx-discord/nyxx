@@ -4,8 +4,8 @@ import 'package:nyxx/src/core/SnowflakeEntity.dart';
 import 'package:nyxx/src/core/audit_logs/AuditLogChange.dart';
 import 'package:nyxx/src/core/user/User.dart';
 import 'package:nyxx/src/internal/cache/Cacheable.dart';
-import 'package:nyxx/src/utils/IEnum.dart';
 import 'package:nyxx/src/typedefs.dart';
+import 'package:nyxx/src/utils/IEnum.dart';
 
 abstract class IAuditLogEntry implements SnowflakeEntity{
   /// Id of the affected entity (webhook, user, role, etc.)
@@ -32,21 +32,27 @@ abstract class IAuditLogEntry implements SnowflakeEntity{
 /// /// [Look here for more](https://discordapp.com/developers/docs/resources/audit-log)
 class AuditLogEntry extends SnowflakeEntity implements IAuditLogEntry {
   /// Id of the affected entity (webhook, user, role, etc.)
+  @override
   late final String targetId;
 
   /// Changes made to the target_id
+  @override
   late final List<IAuditLogChange> changes;
 
   /// The user who made the changes
+  @override
   late final Cacheable<Snowflake, IUser> user;
 
   /// Type of action that occurred
+  @override
   late final AuditLogEntryType type;
 
   /// Additional info for certain action types
+  @override
   late final String? options;
 
   /// The reason for the change
+  @override
   late final String? reason;
 
   /// Creates na instance of [AuditLogEntry]

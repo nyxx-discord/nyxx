@@ -1,4 +1,40 @@
-part of nyxx;
+import 'package:nyxx/src/Nyxx.dart';
+import 'package:nyxx/src/core/Invite.dart';
+import 'package:nyxx/src/core/Snowflake.dart';
+import 'package:nyxx/src/core/SnowflakeEntity.dart';
+import 'package:nyxx/src/core/audit_logs/AuditLog.dart';
+import 'package:nyxx/src/core/channel/Channel.dart';
+import 'package:nyxx/src/core/channel/DMChannel.dart';
+import 'package:nyxx/src/core/channel/ThreadChannel.dart';
+import 'package:nyxx/src/core/channel/ThreadPreviewChannel.dart';
+import 'package:nyxx/src/core/channel/guild/GuildChannel.dart';
+import 'package:nyxx/src/core/channel/guild/VoiceChannel.dart';
+import 'package:nyxx/src/core/guild/Ban.dart';
+import 'package:nyxx/src/core/guild/Guild.dart';
+import 'package:nyxx/src/core/guild/GuildPreview.dart';
+import 'package:nyxx/src/core/guild/Role.dart';
+import 'package:nyxx/src/core/guild/Webhook.dart';
+import 'package:nyxx/src/core/message/Emoji.dart';
+import 'package:nyxx/src/core/message/GuildEmoji.dart';
+import 'package:nyxx/src/core/message/Message.dart';
+import 'package:nyxx/src/core/message/Sticker.dart';
+import 'package:nyxx/src/core/user/Member.dart';
+import 'package:nyxx/src/core/user/User.dart';
+import 'package:nyxx/src/core/voice/VoiceRegion.dart';
+import 'package:nyxx/src/internal/Constants.dart';
+import 'package:nyxx/src/internal/cache/Cacheable.dart';
+import 'package:nyxx/src/internal/http/HttpHandler.dart';
+import 'package:nyxx/src/internal/http/HttpRequest.dart';
+import 'package:nyxx/src/internal/http/HttpResponse.dart';
+import 'package:nyxx/src/internal/response_wrapper/ThreadListResultWrapper.dart';
+import 'package:nyxx/src/typedefs.dart';
+import 'package:nyxx/src/utils/builders/AttachmentBuilder.dart';
+import 'package:nyxx/src/utils/builders/GuildBuilder.dart';
+import 'package:nyxx/src/utils/builders/MessageBuilder.dart';
+import 'package:nyxx/src/utils/builders/PermissionsBuilder.dart';
+import 'package:nyxx/src/utils/builders/StickerBuilder.dart';
+import 'package:nyxx/src/utils/builders/ThreadBuilder.dart';
+import 'package:nyxx/src/utils/utils.dart';
 
 /// Raw access to all http endpoints exposed by nyxx.
 /// Allows to execute specific action without any context.

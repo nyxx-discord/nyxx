@@ -1,4 +1,7 @@
-part of nyxx;
+
+import 'package:nyxx/src/typedefs.dart';
+import 'package:nyxx/src/utils/builders/AttachmentBuilder.dart';
+import 'package:nyxx/src/utils/builders/Builder.dart';
 
 /// Create a new sticker for the guild
 class StickerBuilder implements Builder {

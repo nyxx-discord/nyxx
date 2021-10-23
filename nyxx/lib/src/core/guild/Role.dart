@@ -1,4 +1,13 @@
-part of nyxx;
+import 'package:nyxx/src/Nyxx.dart';
+import 'package:nyxx/src/core/DiscordColor.dart';
+import 'package:nyxx/src/core/Snowflake.dart';
+import 'package:nyxx/src/core/SnowflakeEntity.dart';
+import 'package:nyxx/src/core/guild/Guild.dart';
+import 'package:nyxx/src/core/permissions/Permissions.dart';
+import 'package:nyxx/src/internal/cache/Cacheable.dart';
+import 'package:nyxx/src/internal/interfaces/Mentionable.dart';
+import 'package:nyxx/src/typedefs.dart';
+import 'package:nyxx/src/utils/builders/GuildBuilder.dart';
 
 class Role extends SnowflakeEntity implements Mentionable {
   /// Reference to client

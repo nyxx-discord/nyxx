@@ -44,71 +44,92 @@ abstract class IMessage implements SnowflakeEntity, Disposable, Convertable<Mess
 
 abstract class Message extends SnowflakeEntity implements Disposable, Convertable<MessageBuilder> {
   /// Reference to bot instance
+  @override
   final INyxx client;
 
   /// The message's author.
+  @override
   late final IMessageAuthor author;
 
   /// The message's content.
+  @override
   late String content;
 
   /// Channel in which message was sent
-  late final CacheableTextChannel<TextChannel> channel;
+  @override
+  late final CacheableTextChannel<ITextChannel> channel;
 
   /// The timestamp of when the message was last edited, null if not edited.
+  @override
   late final DateTime? editedTimestamp;
 
   /// The mentions in the message.
+  @override
   List<Cacheable<Snowflake, IUser>> mentions = [];
 
   /// A collection of the embeds in the message.
+  @override
   late List<Embed> embeds;
 
   /// The attachments in the message.
+  @override
   late final List<Attachment> attachments;
 
   /// Whether or not the message is pinned.
+  @override
   late final bool pinned;
 
   /// Whether or not the message was sent with TTS enabled.
+  @override
   late final bool tts;
 
   /// Whether or @everyone was mentioned in the message.
+  @override
   late final bool mentionEveryone;
 
   /// List of message reactions
+  @override
   late final List<Reaction> reactions;
 
   /// Type of message
+  @override
   late final MessageType type;
 
   /// Extra features of the message
+  @override
   late final MessageFlags? flags;
 
   /// The stickers sent with the message
+  @override
   late final Iterable<IPartialSticker> partialStickers;
 
   /// Message reply
+  @override
   late final ReferencedMessage? referencedMessage;
 
   /// List of components attached to message.
+  @override
   late final List<List<IMessageComponent>> components;
 
   /// A nonce that can be used for optimistic message sending (up to 25 characters)
   /// You will be able to identify that message when receiving it through gateway
+  @override
   late final String? nonce;
 
   /// If the message is a response to an Interaction, this is the id of the interaction's application
+  @override
   late final Snowflake? applicationId;
 
   /// Inline timestamps of current message
-  Iterable<MessageTimeStamp> get timestamps sync* {
-    for (final match in MessageTimeStamp.regex.allMatches(this.content)) {
-      yield MessageTimeStamp._new(match);
+  @override
+  Iterable<IMessageTimestamp> get timestamps sync* {
+    for (final match in IMessageTimestamp.regex.allMatches(this.content)) {
+      yield MessageTimestamp(match);
     }
   }
 
   /// The message's guild.
+  @override
   late final Cacheable<Snowflake, IGuild>? guild;
 
   /// Reference to original message if this message cross posts other message
@@ -123,6 +144,7 @@ abstract class Message extends SnowflakeEntity implements Disposable, Convertabl
       "/${this.channel.id}/${this.id}";
 
   /// Member data of message author
+  @override
   late final IMember? member;
 
   // TODO: Consider how to handle properly webhooks as message authors.
@@ -248,46 +270,57 @@ abstract class Message extends SnowflakeEntity implements Disposable, Convertabl
   }
 
   /// Suppresses embeds in message. Can be executed in other users messages.
+  @override
   Future<IMessage> suppressEmbeds() =>
       client.httpEndpoints.suppressMessageEmbeds(this.channel.id, this.id);
 
   /// Edits the message.
+  @override
   Future<IMessage> edit(MessageBuilder builder) =>
       client.httpEndpoints.editMessage(this.channel.id, this.id, builder);
 
   /// Add reaction to message.
+  @override
   Future<void> createReaction(IEmoji emoji) =>
       client.httpEndpoints.createMessageReaction(this.channel.id, this.id, emoji);
 
   /// Deletes reaction of bot.
+  @override
   Future<void> deleteSelfReaction(IEmoji emoji) =>
       client.httpEndpoints.deleteMessageReaction(this.channel.id, this.id, emoji);
 
   /// Deletes reaction of given user.
+  @override
   Future<void> deleteUserReaction(IEmoji emoji, SnowflakeEntity entity) =>
       client.httpEndpoints.deleteMessageUserReaction(this.channel.id, this.id, emoji, entity.id);
 
   /// Deletes all reactions
+  @override
   Future<void> deleteAllReactions() =>
       client.httpEndpoints.deleteMessageAllReactions(this.channel.id, this.id);
 
   /// Deletes the message.
+  @override
   Future<void> delete({String? auditReason}) =>
       client.httpEndpoints.deleteMessage(this.channel.id, this.id);
 
   /// Pins [Message] in message's channel
+  @override
   Future<void> pinMessage() =>
       client.httpEndpoints.pinMessage(this.channel.id, this.id);
 
   /// Unpins [Message] in message's channel
+  @override
   Future<void> unpinMessage() =>
       client.httpEndpoints.unpinMessage(this.channel.id, this.id);
 
   /// Creates a thread based on this message, that only retrieves a [ThreadPreviewChannel]
+  @override
   Future<IThreadPreviewChannel> createThread(ThreadBuilder builder) async =>
       client.httpEndpoints.createThreadWithMessage(this.channel.id, this.id, builder);
 
   /// Creates a thread in a message
+  @override
   Future<IThreadChannel> createAndGetThread(ThreadBuilder builder) async {
     final preview = await client.httpEndpoints.createThreadWithMessage(this.channel.id, this.id, builder);
     return preview.getThreadChannel().getOrDownload();
@@ -295,6 +328,7 @@ abstract class Message extends SnowflakeEntity implements Disposable, Convertabl
 
   /// Cross post a Message into all guilds what follow the news channel indicated.
   /// This endpoint requires the "DISCOVERY" feature to be present for the guild.
+  @override
   Future<void> crossPost() async =>
       client.httpEndpoints.crossPostGuildMessage(this.channel.id, this.id);
 
@@ -324,4 +358,9 @@ abstract class Message extends SnowflakeEntity implements Disposable, Convertabl
 
     return false;
   }
+
+  @override
+  // TODO: implement hashCode
+  int get hashCode => super.hashCode;
+
 }

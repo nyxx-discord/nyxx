@@ -1,6 +1,6 @@
 import 'package:nyxx/src/internal/interfaces/Convertable.dart';
-import 'package:nyxx/src/utils/builders/EmbedFooterBuilder.dart';
 import 'package:nyxx/src/typedefs.dart';
+import 'package:nyxx/src/utils/builders/EmbedFooterBuilder.dart';
 
 abstract class IEmbedFooter implements Convertable<EmbedFooterBuilder> {
   /// Text inside footer
@@ -16,12 +16,15 @@ abstract class IEmbedFooter implements Convertable<EmbedFooterBuilder> {
 /// Embed's footer. Can contain null elements.
 class EmbedFooter implements IEmbedFooter {
   /// Text inside footer
+  @override
   late final String? text;
 
   /// Url of icon which is next to text
+  @override
   late final String? iconUrl;
 
   /// Proxied url of icon url
+  @override
   late final String? iconProxyUrl;
 
   /// Creates an instance of [EmbedFooter]

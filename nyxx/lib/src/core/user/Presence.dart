@@ -1,51 +1,116 @@
-part of nyxx;
+import 'package:nyxx/src/core/Snowflake.dart';
+import 'package:nyxx/src/typedefs.dart';
+import 'package:nyxx/src/utils/IEnum.dart';
+import 'package:nyxx/src/utils/permissions.dart';
+
+abstract class IActivity {
+  /// The activity name.
+  String get name;
+
+  /// The activity type.
+  ActivityType get type;
+
+  /// The game URL, if provided.
+  String? get url;
+
+  /// Timestamp of when the activity was added to the user's session
+  DateTime get createdAt;
+
+  /// Timestamps for start and/or end of the game
+  IActivityTimestamps? get timestamps;
+
+  /// Application id for the game
+  Snowflake? get applicationId;
+
+  /// What the player is currently doing
+  String? get details;
+
+  /// The user's current party status
+  String? get state;
+
+  /// The emoji used for a custom status
+  IActivityEmoji? get customStatusEmoji;
+
+  /// Information for the current party of the player
+  IActivityParty? get party;
+
+  /// Images for the presence and their hover texts
+  IGameAssets? get assets;
+
+  /// Secrets for Rich Presence joining and spectating
+  IGameSecrets? get secrets;
+
+  /// Whether or not the activity is an instanced game session
+  bool? get instance;
+
+  ///	Activity flags ORd together, describes what the payload includes
+  IActivityFlags get activityFlags;
+
+  /// Activity buttons. List of button labels
+  Iterable<String> get buttons;
+}
 
 /// Presence is game or activity which user is playing/user participate.
 /// Can be game, eg. Dota 2, VS Code or activity like Listening to song on Spotify.
 class Activity implements IActivity {
   /// The activity name.
+  @override
   late final String name;
 
   /// The activity type.
+  @override
   late final ActivityType type;
 
   /// The game URL, if provided.
+  @override
   late final String? url;
 
   /// Timestamp of when the activity was added to the user's session
+  @override
   late final DateTime createdAt;
 
   /// Timestamps for start and/or end of the game
+  @override
   late final ActivityTimestamps? timestamps;
 
   /// Application id for the game
+  @override
   late final Snowflake? applicationId;
 
   /// What the player is currently doing
+  @override
   late final String? details;
 
   /// The user's current party status
+  @override
   late final String? state;
 
   /// The emoji used for a custom status
+  @override
   late final ActivityEmoji? customStatusEmoji;
 
   /// Information for the current party of the player
+  @override
   late final ActivityParty? party;
 
   /// Images for the presence and their hover texts
+  @override
   late final GameAssets? assets;
 
   /// Secrets for Rich Presence joining and spectating
+  @override
   late final GameSecrets? secrets;
 
   /// Whether or not the activity is an instanced game session
+  @override
   late final bool? instance;
 
   ///	Activity flags ORd together, describes what the payload includes
+  @override
   late final ActivityFlags activityFlags;
 
   /// Activity buttons. List of button labels
+  @override
   late final Iterable<String> buttons;
 
   /// Creates na instance of [Activity]
@@ -117,13 +182,20 @@ abstract class IActivityFlags {
 /// Flags of the activity
 class ActivityFlags implements IActivityFlags {
   /// Flags value
+  @override
   late final int value;
 
+  @override
   bool get isInstance => PermissionsUtils.isApplied(this.value, 1 << 0);
+  @override
   bool get isJoin => PermissionsUtils.isApplied(this.value, 1 << 1);
+  @override
   bool get isSpectate => PermissionsUtils.isApplied(this.value, 1 << 2);
+  @override
   bool get isJoinRequest => PermissionsUtils.isApplied(this.value, 1 << 3);
+  @override
   bool get isSync => PermissionsUtils.isApplied(this.value, 1 << 4);
+  @override
   bool get isPlay => PermissionsUtils.isApplied(this.value, 1 << 5);
 
   /// Creates na instance of [ActivityFlags]
@@ -143,9 +215,11 @@ abstract class IActivityEmoji {
 /// Represent emoji within activity
 class ActivityEmoji implements IActivityEmoji {
   /// Id of emoji.
+  @override
   late final Snowflake? id;
 
   /// True if emoji is animated
+  @override
   late final bool animated;
 
   /// Creates na instance of [ActivityEmoji]
@@ -171,9 +245,11 @@ abstract class IActivityTimestamps {
 /// Timestamp of activity
 class ActivityTimestamps implements IActivityTimestamps {
   /// DateTime when activity started
+  @override
   late final DateTime? start;
 
   /// DateTime when activity ends
+  @override
   late final DateTime? end;
 
   /// Creates na instance of [ActivityTimestamps]
@@ -236,12 +312,15 @@ abstract class IActivityParty {
 /// Represents party of game.
 class ActivityParty implements IActivityParty {
   /// Party id.
+  @override
   late final String? id;
 
   /// Current size of party.
+  @override
   late final int? currentSize;
 
   /// Max size of party.
+  @override
   late final int? maxSize;
 
   /// Creates na instance of [ActivityParty]
@@ -275,15 +354,19 @@ abstract class IGameAssets {
 /// Presence"s assets
 class GameAssets implements IGameAssets {
   /// The id for a large asset of the activity, usually a snowflake.
+  @override
   late final String? largeImage;
 
   /// Text displayed when hovering over the large image of the activity.
+  @override
   late final String? largeText;
 
   /// The id for a small asset of the activity, usually a snowflake
+  @override
   late final String? smallImage;
 
   /// Text displayed when hovering over the small image of the activity
+  @override
   late final String? smallText;
 
   /// Creates na instance of [GameAssets]
@@ -309,12 +392,15 @@ abstract class IGameSecrets {
 /// Represents presence"s secrets
 class GameSecrets implements IGameSecrets {
   /// Join secret
+  @override
   late final String join;
 
   /// Spectate secret
+  @override
   late final String spectate;
 
   /// Match secret
+  @override
   late final String match;
 
   /// Creates na instance of [GameSecrets]

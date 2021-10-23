@@ -3,6 +3,7 @@ part of nyxx;
 /// Represents unicode emoji. Contains only emoji code.
 class UnicodeEmoji implements IUnicodeEmoji, IEmoji {
   /// Codepoint for emoji
+  @override
   final String code;
 
   /// Constructs new Unicode emoji from given [String]

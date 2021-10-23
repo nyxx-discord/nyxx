@@ -2,6 +2,7 @@ part of nyxx;
 
 class TextGuildChannel extends GuildChannel implements ITextGuildChannel {
   /// The channel's topic.
+  @override
   late final String? topic;
 
   /// The channel's mention string.
@@ -9,9 +10,11 @@ class TextGuildChannel extends GuildChannel implements ITextGuildChannel {
   String get mention => "<#${this.id}>";
 
   /// Channel's slow mode rate limit in seconds. This must be between 0 and 120.
+  @override
   late final int slowModeThreshold;
 
   /// Returns url to this channel.
+  @override
   String get url => "https://discordapp.com/channels/${this.guild.id.toString()}"
       "/${this.id.toString()}";
 
@@ -35,6 +38,7 @@ class TextGuildChannel extends GuildChannel implements ITextGuildChannel {
   }
 
   /// Gets all of the webhooks for this channel.
+  @override
   Stream<IWebhook> getWebhooks() =>
       client.httpEndpoints.fetchChannelWebhooks(this.id);
 
@@ -44,6 +48,7 @@ class TextGuildChannel extends GuildChannel implements ITextGuildChannel {
   /// ```
   /// final webhook = await channnel.createWebhook("!a Send nudes kek6407");
   /// ```
+  @override
   Future<IWebhook> createWebhook(String name, {AttachmentBuilder? avatarAttachment, String? auditReason}) =>
       client.httpEndpoints.createWebhook(this.id, name, avatarAttachment: avatarAttachment, auditReason: auditReason);
 
@@ -53,10 +58,12 @@ class TextGuildChannel extends GuildChannel implements ITextGuildChannel {
       client.httpEndpoints.fetchPinnedMessages(this.id);
 
   /// Creates a thread in a channel, that only retrieves a [ThreadPreviewChannel]
+  @override
   Future<IThreadPreviewChannel> createThread(ThreadBuilder builder) =>
       client.httpEndpoints.createThread(this.id, builder);
 
   /// Creates a thread in a message
+  @override
   Future<IThreadChannel> createAndGetThread(ThreadBuilder builder) async {
     final preview = await client.httpEndpoints.createThread(this.id, builder);
     return preview.getThreadChannel().getOrDownload();
@@ -102,18 +109,22 @@ class TextGuildChannel extends GuildChannel implements ITextGuildChannel {
       client.httpEndpoints.sendMessage(this.id, builder);
 
   /// Fetches all active threads in this channel
+  @override
   Future<IThreadListResultWrapper> fetchActiveThreads() =>
       client.httpEndpoints.fetchActiveThreads(this.id);
 
   /// Fetches joined private and archived thread channels
+  @override
   Future<IThreadListResultWrapper> fetchJoinedPrivateArchivedThreads({DateTime? before, int? limit}) =>
       client.httpEndpoints.fetchJoinedPrivateArchivedThreads(this.id, before: before, limit: limit);
 
   /// Fetches private, archived thread channels
+  @override
   Future<IThreadListResultWrapper> fetchPrivateArchivedThreads({DateTime? before, int? limit}) =>
       client.httpEndpoints.fetchPrivateArchivedThreads(this.id, before: before, limit: limit);
 
   /// Fetches public, archives thread channels
+  @override
   Future<IThreadListResultWrapper> fetchPublicArchivedThreads({DateTime? before, int? limit}) =>
       client.httpEndpoints.fetchPublicArchivedThreads(this.id, before: before, limit: limit);
 }

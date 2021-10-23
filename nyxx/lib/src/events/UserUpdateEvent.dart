@@ -4,6 +4,7 @@ part of nyxx;
 /// Emitted when user was updated
 class UserUpdateEvent implements IUserUpdateEvent {
   /// User instance after update
+  @override
   late final User user;
 
   /// Creates na instance of [UserUpdateEvent]

@@ -73,6 +73,7 @@ class Shard implements IShard {
   }
 
   /// Sends WS data.
+  @override
   void send(int opCode, dynamic d) {
     final rawData = {"cmd": "SEND", "data" : {"op": opCode, "d": d}};
     this.manager.logger.finest("Sending to shard isolate on shard [${this.id}]: [$rawData]");
@@ -80,6 +81,7 @@ class Shard implements IShard {
   }
 
   /// Updates clients voice state for [Guild] with given [guildId]
+  @override
   void changeVoiceState(Snowflake? guildId, Snowflake? channelId, {bool selfMute = false, bool selfDeafen = false}) {
     this.send(OPCodes.voiceStateUpdate, <String, dynamic> {
       "guild_id" : guildId.toString(),
@@ -90,15 +92,18 @@ class Shard implements IShard {
   }
 
   /// Allows to set presence for current shard.
+  @override
   void setPresence(PresenceBuilder presenceBuilder) {
     this.send(OPCodes.statusUpdate, presenceBuilder.build());
   }
 
   /// Syncs all guilds
+  @override
   void guildSync() => this.send(OPCodes.guildSync, this.guilds.map((e) => e.toString()));
 
   /// Allows to request members objects from gateway
   /// [guild] can be either Snowflake or Iterable<Snowflake>
+  @override
   void requestMembers(/* Snowflake|Iterable<Snowflake> */ dynamic guild,
       {String? query, Iterable<Snowflake>? userIds, int limit = 0, bool presences = false, String? nonce}) {
     if (query != null && userIds != null) {

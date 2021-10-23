@@ -73,6 +73,7 @@ abstract class IMessageComponent {
 /// Generic container for components that can be attached to message
 abstract class MessageComponent implements IMessageComponent {
   /// [ComponentType]
+  @override
   ComponentType get type;
 
   /// Empty constructor
@@ -111,18 +112,23 @@ abstract class IMessageMultiselectOption {
 
 class MessageMultiselectOption implements IMessageMultiselectOption {
   /// Option label
+  @override
   late final String label;
 
   /// Value of option
+  @override
   late final String value;
 
   /// Additional description for option
+  @override
   late final String? description;
 
   /// Additional emoji that is displayed before label
+  @override
   late final IMessageComponentEmoji? emoji;
 
   /// True of option will be preselected in UI
+  @override
   late final bool isDefault;
 
   /// Creates an instance of [MessageMultiselectOption]
@@ -162,18 +168,23 @@ class MessageMultiselect extends MessageComponent implements IMessageMultiselect
   ComponentType get type => ComponentType.select;
 
   /// A dev-defined unique string sent on click (max 100 characters)
+  @override
   late final String customId;
 
   /// Custom placeholder when no option selected
+  @override
   late final String? placeholder;
 
   /// Min value of selected options
+  @override
   late final int minValues;
 
   /// Max value of selected options
+  @override
   late final int maxValues;
 
   /// Possible options of multiselect
+  @override
   late final Iterable<IMessageMultiselectOption> options;
 
   /// Creates an instance of [MessageMultiselect]
@@ -209,15 +220,19 @@ class MessageButton extends MessageComponent implements IMessageButton {
   ComponentType get type => ComponentType.button;
 
   /// What the button says (max 80 characters)
+  @override
   late final String? label;
 
   /// Component style, appearance
+  @override
   late final ComponentStyle style;
 
   /// Additional emoji that will be displayed before label
+  @override
   late final IMessageComponentEmoji? emoji;
 
   /// True if button is disabled
+  @override
   late final bool disabled;
 
   factory MessageButton.deserialize(RawApiMap raw) {
@@ -251,6 +266,7 @@ abstract class ICustomMessageButton implements IMessageButton  {
 /// Represents button that has attached metadata and will generate interaction event
 class CustomMessageButton extends MessageButton implements ICustomMessageButton {
   ///  a dev-defined unique string sent on click (max 100 characters)
+  @override
   late final String customId;
 
   /// Creates an instance of [CustomMessageButton]
@@ -270,9 +286,11 @@ abstract class ILinkMessageButton implements IMessageButton {
 /// Button with a link that user will be redirected after clicking
 class LinkMessageButton extends MessageButton implements ILinkMessageButton {
   /// Url where button points
+  @override
   late final String url;
 
   /// buttons url as [Uri]
+  @override
   Uri get uri => Uri.parse(url);
 
   /// Creates an instance of [LinkMessageButton]

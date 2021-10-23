@@ -34,24 +34,31 @@ abstract class IMemberChunkEvent {
 /// You can use the `chunk_index` and `chunk_count` to calculate how many chunks are left for your request.
 class MemberChunkEvent implements IMemberChunkEvent{
   /// Guild members
+  @override
   late final Iterable<IMember> members;
 
   /// Reference to guild
+  @override
   late final Cacheable<Snowflake, IGuild> guild;
 
   /// Index of current event
+  @override
   late final int chunkIndex;
 
   /// Total number of chunks that will be sent.
+  @override
   late final int chunkCount;
 
   /// Array of snowflakes which were invalid in search
+  @override
   Iterable<Snowflake>? invalidIds;
 
   /// Nonce is used to identify events.
+  @override
   String? nonce;
 
   /// Id of shard where chunk was received
+  @override
   final int shardId;
 
   MemberChunkEvent(RawApiMap raw, INyxx client, this.shardId) {
