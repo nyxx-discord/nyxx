@@ -1,0 +1,38 @@
+import 'package:nyxx/src/Nyxx.dart';
+import 'package:nyxx/src/core/user/User.dart';
+import 'package:nyxx/src/typedefs.dart';
+import 'package:nyxx/src/utils/builders/AttachmentBuilder.dart';
+
+/// ClientUser is bot's discord account. Allows to change bot's presence.
+abstract class IClientUser implements IUser {
+  /// Weather or not the client user's account is verified.
+  bool? get verified;
+
+  /// Weather or not the client user has MFA enabled.
+  bool? get mfa;
+
+  /// Edits current user. This changes user's username - not per guild nickname.
+  Future<IUser> edit({String? username, AttachmentBuilder? avatarAttachment});
+}
+
+/// ClientUser is bot's discord account. Allows to change bot's presence.
+class ClientUser extends User implements IClientUser {
+  /// Weather or not the client user's account is verified.
+  @override
+  bool? verified;
+
+  /// Weather or not the client user has MFA enabled.
+  @override
+  bool? mfa;
+
+  /// Creates an instance of [ClientUser]
+  ClientUser(NyxxWebsocket client, RawApiMap raw) : super(client, raw) {
+    this.verified = raw["verified"] as bool;
+    this.mfa = raw["mfa_enabled"] as bool;
+  }
+
+  /// Edits current user. This changes user's username - not per guild nickname.
+  @override
+  Future<IUser> edit({String? username, AttachmentBuilder? avatarAttachment}) =>
+      client.httpEndpoints.editSelfUser(username: username, avatarAttachment: avatarAttachment);
+}
