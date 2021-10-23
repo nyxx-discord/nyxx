@@ -8,7 +8,8 @@ class ClientUser extends User {
   /// Weather or not the client user has MFA enabled.
   bool? mfa;
 
-  ClientUser._new(Nyxx client, RawApiMap raw) : super._new(client, raw) {
+  /// Creates an instance of [ClientUser]
+  ClientUser(NyxxWebsocket client, RawApiMap raw) : super(client, raw) {
     this.verified = raw["verified"] as bool;
     this.mfa = raw["mfa_enabled"] as bool;
   }
@@ -29,6 +30,6 @@ class ClientUser extends User {
   }
 
   /// Edits current user. This changes user's username - not per guild nickname.
-  Future<User> edit({String? username, AttachmentBuilder? avatarAttachment}) =>
+  Future<IUser> edit({String? username, AttachmentBuilder? avatarAttachment}) =>
       client.httpEndpoints.editSelfUser(username: username, avatarAttachment: avatarAttachment);
 }

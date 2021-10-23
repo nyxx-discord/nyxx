@@ -1,4 +1,18 @@
-part of nyxx;
+import 'package:nyxx/src/Nyxx.dart';
+import 'package:nyxx/src/core/Snowflake.dart';
+import 'package:nyxx/src/core/SnowflakeEntity.dart';
+import 'package:nyxx/src/core/channel/CacheableTextChannel.dart';
+import 'package:nyxx/src/core/channel/Channel.dart';
+import 'package:nyxx/src/core/channel/guild/TextGuildChannel.dart';
+import 'package:nyxx/src/core/guild/Guild.dart';
+import 'package:nyxx/src/core/message/Message.dart';
+import 'package:nyxx/src/core/user/User.dart';
+import 'package:nyxx/src/internal/cache/Cacheable.dart';
+import 'package:nyxx/src/internal/interfaces/IMessageAuthor.dart';
+import 'package:nyxx/src/typedefs.dart';
+import 'package:nyxx/src/utils/IEnum.dart';
+import 'package:nyxx/src/utils/builders/AttachmentBuilder.dart';
+import 'package:nyxx/src/utils/builders/MessageBuilder.dart';
 
 /// Type of webhook. Either [incoming] if it its normal webhook executable with token,
 /// or [channelFollower] if its discord internal webhook
@@ -16,7 +30,7 @@ class WebhookType extends IEnum<int> {
   @override
   bool operator ==(dynamic other) {
     if (other is int) {
-      return other == _value;
+      return other == value;
     }
 
     return super == other;
@@ -28,7 +42,71 @@ class WebhookType extends IEnum<int> {
 
 ///Webhooks are a low-effort way to post messages to channels in Discord.
 ///They do not require a bot user or authentication to use.
-class Webhook extends SnowflakeEntity implements IMessageAuthor {
+abstract class IWebhook implements SnowflakeEntity, IMessageAuthor {
+  /// The webhook's name.
+  String? get name;
+
+  /// The webhook's token. Defaults to empty string
+  String get token;
+
+  /// The webhook's channel, if this is accessed using a normal client and the client has that channel in it's cache.
+  ICacheableTextChannel<ITextGuildChannel>? get channel;
+
+  /// The webhook's guild, if this is accessed using a normal client and the client has that guild in it's cache.
+  Cacheable<Snowflake, IGuild>? get guild;
+
+  /// The user, if this is accessed using a normal client.
+  IUser? get user;
+
+  /// Webhook type
+  WebhookType? get type;
+
+  /// Webhooks avatar hash
+  String? get avatarHash;
+
+  /// Default webhook avatar id
+  int get defaultAvatarId;
+
+  /// Reference to [NyxxWebsocket] object
+  INyxx get client;
+
+  /// Executes webhook.
+  ///
+  /// [wait] - waits for server confirmation of message send before response,
+  /// and returns the created message body (defaults to false; when false a message that is not save does not return an error)
+  Future<IMessage?> execute(
+      MessageBuilder builder,
+      {bool? wait,
+        Snowflake? threadId,
+        String? avatarUrl,
+        String? username}) =>
+      client.httpEndpoints.executeWebhook(
+          this.id,
+          builder,
+          token: token,
+          threadId: threadId,
+          username: username,
+          wait: wait,
+          avatarUrl: avatarUrl
+      );
+
+  @override
+  String avatarURL({String format = "webp", int size = 128}) =>
+      client.httpEndpoints.userAvatarURL(this.id, this.avatarHash, 0, format: format, size: size);
+
+  /// Edits the webhook.
+  Future<IWebhook> edit({String? name, SnowflakeEntity? channel, AttachmentBuilder? avatarAttachment, String? auditReason}) =>
+      client.httpEndpoints.editWebhook(this.id, token: this.token, name: name,
+          channel: channel, avatarAttachment: avatarAttachment, auditReason: auditReason);
+
+  /// Deletes the webhook.
+  Future<void> delete({String? auditReason}) =>
+      client.httpEndpoints.deleteWebhook(this.id, token: token, auditReason: auditReason);
+}
+
+///Webhooks are a low-effort way to post messages to channels in Discord.
+///They do not require a bot user or authentication to use.
+class Webhook extends SnowflakeEntity implements IWebhook {
   /// The webhook's name.
   late final String? name;
 
@@ -36,13 +114,13 @@ class Webhook extends SnowflakeEntity implements IMessageAuthor {
   late final String token;
 
   /// The webhook's channel, if this is accessed using a normal client and the client has that channel in it's cache.
-  late final CacheableTextChannel<TextGuildChannel>? channel;
+  late final ICacheableTextChannel<ITextGuildChannel>? channel;
 
   /// The webhook's guild, if this is accessed using a normal client and the client has that guild in it's cache.
-  late final Cacheable<Snowflake, Guild>? guild;
+  late final Cacheable<Snowflake, IGuild>? guild;
 
   /// The user, if this is accessed using a normal client.
-  late final User? user;
+  late final IUser? user;
 
   /// Webhook type
   late final WebhookType? type;
@@ -65,10 +143,11 @@ class Webhook extends SnowflakeEntity implements IMessageAuthor {
   @override
   String get tag => "";
 
-  /// Reference to [Nyxx] object
+  /// Reference to [NyxxWebsocket] object
   final INyxx client;
 
-  Webhook._new(RawApiMap raw, this.client) : super(Snowflake(raw["id"] as String)) {
+  /// Creates an instance of [Webhook]
+  Webhook(RawApiMap raw, this.client) : super(Snowflake(raw["id"] as String)) {
     this.name = raw["name"] as String?;
     this.token = raw["token"] as String? ?? "";
     this.avatarHash = raw["avatar"] as String?;
@@ -80,19 +159,19 @@ class Webhook extends SnowflakeEntity implements IMessageAuthor {
     }
 
     if (raw["channel_id"] != null) {
-      this.channel = CacheableTextChannel<TextGuildChannel>._new(client, Snowflake(raw["channel_id"]), ChannelType.text);
+      this.channel = CacheableTextChannel<TextGuildChannel>(client, Snowflake(raw["channel_id"]), ChannelType.text);
     } else {
       this.channel = null;
     }
 
     if (raw["guild_id"] != null) {
-      this.guild = _GuildCacheable(client, Snowflake(raw["guild_id"] as String));
+      this.guild = GuildCacheable(client, Snowflake(raw["guild_id"] as String));
     } else {
       this.guild = null;
     }
 
     if (raw["user"] != null) {
-      this.user = User._new(client, raw["user"] as RawApiMap);
+      this.user = User(client, raw["user"] as RawApiMap);
     } else {
       this.user = null;
     }
@@ -102,7 +181,7 @@ class Webhook extends SnowflakeEntity implements IMessageAuthor {
   ///
   /// [wait] - waits for server confirmation of message send before response,
   /// and returns the created message body (defaults to false; when false a message that is not save does not return an error)
-  Future<Message?> execute(
+  Future<IMessage?> execute(
       MessageBuilder builder,
       {bool? wait,
       Snowflake? threadId,
@@ -123,15 +202,11 @@ class Webhook extends SnowflakeEntity implements IMessageAuthor {
       client.httpEndpoints.userAvatarURL(this.id, this.avatarHash, 0, format: format, size: size);
 
   /// Edits the webhook.
-  Future<Webhook> edit({String? name, SnowflakeEntity? channel, AttachmentBuilder? avatarAttachment, String? auditReason}) =>
+  Future<IWebhook> edit({String? name, SnowflakeEntity? channel, AttachmentBuilder? avatarAttachment, String? auditReason}) =>
     client.httpEndpoints.editWebhook(this.id, token: this.token, name: name,
         channel: channel, avatarAttachment: avatarAttachment, auditReason: auditReason);
 
   /// Deletes the webhook.
   Future<void> delete({String? auditReason}) =>
       client.httpEndpoints.deleteWebhook(this.id, token: token, auditReason: auditReason);
-
-  /// Returns a string representation of this object.
-  @override
-  String toString() => this.name.toString();
 }

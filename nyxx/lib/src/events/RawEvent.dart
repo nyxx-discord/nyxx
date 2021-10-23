@@ -2,12 +2,21 @@ part of nyxx;
 
 /// Raw gateway event
 /// RawEvent is dispatched ONLY for payload that doesn't match any event built in into Nyxx.
-class RawEvent {
+abstract class IRawEvent {
   /// Shard where event was received
-  final Shard shard;
+  IShard get shard;
+
+  /// Raw event data as deserialized json
+  RawApiMap get rawData;
+}
+
+class RawEvent implements IRawEvent {
+  /// Shard where event was received
+  final IShard shard;
 
   /// Raw event data as deserialized json
   final RawApiMap rawData;
 
-  RawEvent._new(this.shard, this.rawData);
+  /// Creates an instance of [RawEvent]
+  RawEvent(this.shard, this.rawData);
 }

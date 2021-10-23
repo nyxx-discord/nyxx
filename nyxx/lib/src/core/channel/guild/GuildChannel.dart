@@ -1,7 +1,7 @@
 part of nyxx;
 
 /// Represents channel within [Guild]. Shares logic for both [TextGuildChannel] and [VoiceGuildChannel].
-abstract class GuildChannel extends MinimalGuildChannel {
+abstract class GuildChannel extends MinimalGuildChannel implements IGuildChannel {
   /// Relative position of channel in context of channel list
   late final int position;
 
@@ -30,20 +30,20 @@ abstract class GuildChannel extends MinimalGuildChannel {
 
     final owner = await member.guild.getOrDownload();
     if (owner == member) {
-      return Permissions.fromInt(PermissionsConstants.allPermissions);
+      return Permissions(PermissionsConstants.allPermissions);
     }
 
     var rawMemberPerms = (await member.effectivePermissions).raw;
 
     if (PermissionsUtils.isApplied(rawMemberPerms, PermissionsConstants.administrator)) {
-      return Permissions.fromInt(PermissionsConstants.allPermissions);
+      return Permissions(PermissionsConstants.allPermissions);
     }
 
     final overrides = PermissionsUtils.getOverrides(member, this);
     rawMemberPerms = PermissionsUtils.apply(rawMemberPerms, overrides.first, overrides.last);
 
     return PermissionsUtils.isApplied(rawMemberPerms, PermissionsConstants.viewChannel)
-        ? Permissions.fromInt(rawMemberPerms)
+        ? Permissions(rawMemberPerms)
         : Permissions.empty();
   }
 
@@ -74,7 +74,7 @@ abstract class GuildChannel extends MinimalGuildChannel {
       // ignore: avoid_catches_without_on_clauses, empty_catches
     } on Exception {}
 
-    return Permissions.fromInt(permissions);
+    return Permissions(permissions);
   }
 
   /// Fetches and returns all channel"s [Invite]s
@@ -104,7 +104,7 @@ abstract class GuildChannel extends MinimalGuildChannel {
   /// ```
   /// var invite = await channel.createInvite(maxUses: 2137);
   /// ```
-  Future<Invite> createInvite({int? maxAge, int? maxUses, bool? temporary, bool? unique, String? auditReason}) =>
+  Future<IInvite> createInvite({int? maxAge, int? maxUses, bool? temporary, bool? unique, String? auditReason}) =>
       client.httpEndpoints.createInvite(this.id, maxAge: maxAge, maxUses: maxUses, temporary: temporary, unique: unique, auditReason: auditReason);
 }
 
@@ -125,15 +125,15 @@ abstract class MinimalGuildChannel extends IChannel {
     this.name = raw["name"] as String;
 
     if (raw["guild_id"] != null) {
-      this.guild = _GuildCacheable(client, Snowflake(raw["guild_id"]));
+      this.guild = GuildCacheable(client, Snowflake(raw["guild_id"]));
     } else if (guildId != null) {
-      this.guild = _GuildCacheable(client, guildId);
+      this.guild = GuildCacheable(client, guildId);
     } else {
       throw Exception("Cannot initialize instance of GuildChannelNex due missing `guild_id` in json payload and/or missing optional guildId parameter. Report this issue to developer");
     }
 
     if (raw["parent_id"] != null) {
-      this.parentChannel = _ChannelCacheable(client, Snowflake(raw["parent_id"]));
+      this.parentChannel = ChannelCacheable(client, Snowflake(raw["parent_id"]));
     } else {
       this.parentChannel = null;
     }

@@ -1,4 +1,4 @@
-part of nyxx;
+import 'package:nyxx/src/utils/permissions.dart';
 
 /// Extra features of the message
 class MessageFlags {
@@ -29,5 +29,6 @@ class MessageFlags {
   /// This message is an Interaction Response and the bot is "thinking"
   bool get loading => PermissionsUtils.isApplied(raw, 1 << 7);
 
-  MessageFlags._new(this.raw);
+  /// Creates an instance of [MessageFlags]
+  MessageFlags(this.raw);
 }

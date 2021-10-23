@@ -20,15 +20,15 @@ EmbedBuilder createTestEmbed() => EmbedBuilder()
 
 void main() {
   final env = Platform.environment;
-  final bot = Nyxx(env["TEST_TOKEN"]!, GatewayIntents.guildMessages, ignoreExceptions: false);
+  final bot = NyxxFactory.createNyxxWebsocket(env["TEST_TOKEN"]!, GatewayIntents.guildMessages, ignoreExceptions: false);
 
   Timer(const Duration(seconds: 60), () {
     print("Timed out waiting for messages");
     exit(1);
   });
 
-  bot.onReady.listen((e) async {
-    final channel = await bot.fetchChannel<TextGuildChannel>(Snowflake(846139169818017812));
+  bot.eventsWs.onReady.listen((e) async {
+    final channel = await bot.fetchChannel<ITextGuildChannel>(Snowflake(846139169818017812));
     // test(channel != null, "Channel cannot be null");
     if (env["GITHUB_RUN_NUMBER"] != null) {
       await channel.sendMessage(
@@ -59,7 +59,7 @@ void main() {
     await channel.sendMessage(MessageBuilder.content("Testing embed!")..embeds = [createTestEmbed()]);
   });
 
-  bot.onMessageReceived.listen((e) async {
+  bot.eventsWs.onMessageReceived.listen((e) async {
     if (e.message.channel.id != Snowflake("846139169818017812") && e.message.author.id != bot.self.id) {
       return;
     }

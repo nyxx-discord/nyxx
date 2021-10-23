@@ -16,7 +16,7 @@ class ReferencedMessage implements Convertable<ReplyBuilder> {
   /// True if references message exists and is available
   bool get exists => !isDeleted && !isBackendFetchError;
 
-  ReferencedMessage._new(INyxx client, RawApiMap raw) {
+  ReferencedMessage(INyxx client, RawApiMap raw) {
     if (!raw.containsKey("referenced_message")) {
       this.message = null;
       this.isBackendFetchError = true;
@@ -31,7 +31,7 @@ class ReferencedMessage implements Convertable<ReplyBuilder> {
       return;
     }
 
-    this.message = Message._deserialize(client, raw["referenced_message"] as RawApiMap);
+    this.message = Message(client, raw["referenced_message"] as RawApiMap);
     this.isBackendFetchError = false;
     this.isDeleted = false;
   }

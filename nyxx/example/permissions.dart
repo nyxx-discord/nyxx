@@ -3,28 +3,28 @@ import "package:nyxx/nyxx.dart";
 // Main function
 void main() {
   // Create new bot instance. Replace string with your token
-  final bot = Nyxx("<TOKEN>", GatewayIntents.allUnprivileged);
+  final bot = NyxxFactory.createNyxxWebsocket("<TOKEN>", GatewayIntents.allUnprivileged);
 
   // Listen to ready event. Invoked when bot is connected to all shards. Note that cache can be empty or not incomplete.
-  bot.onReady.listen((ReadyEvent e) {
+  bot.eventsWs.onReady.listen((IReadyEvent e) {
     print("Ready!");
   });
 
   // Listen to all incoming messages
-  bot.onMessageReceived.listen((MessageReceivedEvent e) async {
+  bot.eventsWs.onMessageReceived.listen((IMessageReceivedEvent e) async {
     // Check if message content equals "!embed"
     if (e.message.content == "!addReadPerms") {
 
       // Dont process message when not send in guild context
-      if(e.message is! GuildMessage) {
+      if(e.message.guild != null) {
         return;
       }
 
       // Get current channel
-      final messageChannel = e.message.channel.getFromCache() as GuildChannel;
+      final messageChannel = e.message.channel.getFromCache() as IGuildChannel;
 
       // Get member from id
-      final member = (e.message as GuildMessage).guild.getFromCache()!.members[302359032612651009.toSnowflake()]!;
+      final member = e.message.guild!.getFromCache()!.members[302359032612651009.toSnowflake()]!;
 
       // Get current member permissions in context of channel
       final permissions = await messageChannel.effectivePermissions(member);

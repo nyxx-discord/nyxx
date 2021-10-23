@@ -1,14 +1,15 @@
 part of nyxx;
 
 /// A message embed provider.
-class EmbedProvider {
+class EmbedProvider implements IEmbedProvider{
   /// The embed provider's name.
   late final String? name;
 
   /// The embed provider's URL.
   late final String? url;
 
-  EmbedProvider._new(RawApiMap raw) {
+  /// Creates an instance of [EmbedProvider]
+  EmbedProvider(RawApiMap raw) {
     if (raw["name"] != null) {
       this.name = raw["name"] as String?;
     }
@@ -17,14 +18,4 @@ class EmbedProvider {
       this.url = raw["url"] as String?;
     }
   }
-
-  /// Returns a string representation of this object.
-  @override
-  String toString() => this.name ?? "";
-
-  @override
-  int get hashCode => url.hashCode * 37 + name.hashCode;
-
-  @override
-  bool operator ==(other) => other is EmbedProvider ? other.url == this.url && other.name == this.name : false;
 }

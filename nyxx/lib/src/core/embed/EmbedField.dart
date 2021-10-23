@@ -1,7 +1,7 @@
 part of nyxx;
 
 /// Single instance of Embed's field. Can contain null elements.
-class EmbedField implements Convertable<EmbedFieldBuilder> {
+class EmbedField implements IEmbedField{
   /// Field name
   late final String name;
 
@@ -11,22 +11,12 @@ class EmbedField implements Convertable<EmbedFieldBuilder> {
   /// Indicates of field is inlined in embed
   late final bool? inline;
 
-  EmbedField._new(RawApiMap raw) {
+  /// Creates an instance of [EmbedField]
+  EmbedField(RawApiMap raw) {
     this.name = raw["name"] as String;
     this.content = raw["value"] as String;
     this.inline = raw["inline"] as bool?;
   }
-
-  @override
-  String toString() => "[$name] $content";
-
-  @override
-  int get hashCode => name.hashCode * 37 + content.hashCode * 37 + inline.hashCode * 37;
-
-  @override
-  bool operator ==(other) => other is EmbedField
-      ? other.name == this.name && other.content == this.content && other.inline == this.inline
-      : false;
 
   @override
   EmbedFieldBuilder toBuilder() => EmbedFieldBuilder(this.name, this.content, this.inline);

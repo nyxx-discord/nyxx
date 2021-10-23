@@ -1,8 +1,53 @@
-part of nyxx;
+import 'package:nyxx/src/Nyxx.dart';
+import 'package:nyxx/src/core/Snowflake.dart';
+import 'package:nyxx/src/core/SnowflakeEntity.dart';
+import 'package:nyxx/src/core/channel/CacheableTextChannel.dart';
+import 'package:nyxx/src/core/channel/ITextChannel.dart';
+import 'package:nyxx/src/core/channel/ThreadChannel.dart';
+import 'package:nyxx/src/core/channel/ThreadPreviewChannel.dart';
+import 'package:nyxx/src/core/embed/Embed.dart';
+import 'package:nyxx/src/core/guild/Guild.dart';
+import 'package:nyxx/src/core/guild/Role.dart';
+import 'package:nyxx/src/core/guild/Webhook.dart';
+import 'package:nyxx/src/core/message/Attachment.dart';
+import 'package:nyxx/src/core/message/Emoji.dart';
+import 'package:nyxx/src/core/message/MessageFlags.dart';
+import 'package:nyxx/src/core/message/MessageReference.dart';
+import 'package:nyxx/src/core/message/MessageTimeStamp.dart';
+import 'package:nyxx/src/core/message/MessageType.dart';
+import 'package:nyxx/src/core/message/Reaction.dart';
+import 'package:nyxx/src/core/message/ReferencedMessage.dart';
+import 'package:nyxx/src/core/message/Sticker.dart';
+import 'package:nyxx/src/core/message/components/MessageComponent.dart';
+import 'package:nyxx/src/core/user/Member.dart';
+import 'package:nyxx/src/core/user/User.dart';
+import 'package:nyxx/src/internal/cache/Cacheable.dart';
+import 'package:nyxx/src/internal/interfaces/Convertable.dart';
+import 'package:nyxx/src/internal/interfaces/Disposable.dart';
+import 'package:nyxx/src/internal/interfaces/IMessageAuthor.dart';
+import 'package:nyxx/src/typedefs.dart';
+import 'package:nyxx/src/utils/builders/MessageBuilder.dart';
+import 'package:nyxx/src/utils/builders/ThreadBuilder.dart';
+
+abstract class IMessage implements SnowflakeEntity, Disposable, Convertable<MessageBuilder> {
+  /// Reference to bot instance
+  INyxx get client;
+
+  /// The message's content.
+  String get content;
+
+  /// Channel in which message was sent
+  CacheableTextChannel<ITextChannel> get channel;
+
+  /// The timestamp of when the message was last edited, null if not edited.
+  DateTime? get editedTimestamp;
 
 abstract class Message extends SnowflakeEntity implements Disposable, Convertable<MessageBuilder> {
   /// Reference to bot instance
   final INyxx client;
+
+  /// The message's author.
+  late final IMessageAuthor author;
 
   /// The message's content.
   late String content;
@@ -13,11 +58,8 @@ abstract class Message extends SnowflakeEntity implements Disposable, Convertabl
   /// The timestamp of when the message was last edited, null if not edited.
   late final DateTime? editedTimestamp;
 
-  /// The message's author.
-  IMessageAuthor get author;
-
   /// The mentions in the message.
-  List<Cacheable<Snowflake, User>> mentions = [];
+  List<Cacheable<Snowflake, IUser>> mentions = [];
 
   /// A collection of the embeds in the message.
   late List<Embed> embeds;
@@ -43,11 +85,8 @@ abstract class Message extends SnowflakeEntity implements Disposable, Convertabl
   /// Extra features of the message
   late final MessageFlags? flags;
 
-  /// Returns clickable url to this message.
-  String get url;
-
   /// The stickers sent with the message
-  late final Iterable<PartialSticker> partialStickers;
+  late final Iterable<IPartialSticker> partialStickers;
 
   /// Message reply
   late final ReferencedMessage? referencedMessage;
@@ -69,15 +108,32 @@ abstract class Message extends SnowflakeEntity implements Disposable, Convertabl
     }
   }
 
-  factory Message._deserialize(INyxx client, RawApiMap raw) {
-    if (raw["guild_id"] != null) {
-      return GuildMessage._new(client, raw);
-    }
+  /// The message's guild.
+  late final Cacheable<Snowflake, IGuild>? guild;
 
-    return DMMessage._new(client, raw);
-  }
+  /// Reference to original message if this message cross posts other message
+  late final IMessageReference? crossPostReference;
 
-  Message._new(this.client, RawApiMap raw) : super(Snowflake(raw["id"])) {
+  /// True if this message is cross posts other message
+  bool get isCrossPosting => this.crossPostReference != null;
+
+  /// Returns clickable url to this message.
+  @override
+  String get url => "https://discordapp.com/channels/${this.guild?.id ?? '@me'}"
+      "/${this.channel.id}/${this.id}";
+
+  /// Member data of message author
+  late final IMember? member;
+
+  // TODO: Consider how to handle properly webhooks as message authors.
+  /// True if message is sent by a webhook
+  bool get isByWebhook => author is IWebhook;
+
+  /// Role mentions in this message
+  late final List<Cacheable<Snowflake, IRole>> roleMentions;
+
+  /// Creates na instance of [Message]
+  Message(this.client, RawApiMap raw) : super(Snowflake(raw["id"])) {
     this.content = raw["content"] as String;
     this.channel = CacheableTextChannel<TextChannel>._new(client, Snowflake(raw["channel_id"]));
 
@@ -89,11 +145,11 @@ abstract class Message extends SnowflakeEntity implements Disposable, Convertabl
     this.partialStickers = [
       if (raw["sticker_items"] != null)
         for (final rawSticker in raw["sticker_items"])
-          PartialSticker._new(rawSticker as RawApiMap, client)
+          PartialSticker(rawSticker as RawApiMap, client)
     ];
 
     if (raw["flags"] != null) {
-      this.flags = MessageFlags._new(raw["flags"] as int);
+      this.flags = MessageFlags(raw["flags"] as int);
     }
 
     if (raw["edited_timestamp"] != null) {
@@ -102,33 +158,33 @@ abstract class Message extends SnowflakeEntity implements Disposable, Convertabl
 
     this.embeds = [
       if (raw["embeds"] != null && raw["embeds"].isNotEmpty as bool)
-        for (var r in raw["embeds"]) Embed._new(r as RawApiMap)
+        for (var r in raw["embeds"]) Embed(r as RawApiMap)
     ];
 
     this.attachments = [
       if (raw["attachments"] != null && raw["attachments"].isNotEmpty as bool)
-        for (var r in raw["attachments"]) Attachment._new(r as RawApiMap)
+        for (var r in raw["attachments"]) Attachment(r as RawApiMap)
     ];
 
     this.reactions = [
       if (raw["reactions"] != null && raw["reactions"].isNotEmpty as bool)
-        for (var r in raw["reactions"]) Reaction._new(r as RawApiMap)
+        for (var r in raw["reactions"]) Reaction(r as RawApiMap)
     ];
 
     if (raw["mentions"] != null && raw["mentions"].isNotEmpty as bool) {
       for (final rawUser in raw["mentions"]) {
-        final user = User._new(client, rawUser as RawApiMap);
+        final user = User(client, rawUser as RawApiMap);
 
-        if (client._cacheOptions.userCachePolicyLocation.objectConstructor) {
+        if (client.cacheOptions.userCachePolicyLocation.objectConstructor) {
           this.client.users[user.id] = user;
         }
 
-        this.mentions.add(_UserCacheable(client, user.id));
+        this.mentions.add(UserCacheable(client, user.id));
       }
     }
 
     if (raw["type"] == 19) {
-      this.referencedMessage = ReferencedMessage._new(client, raw);
+      this.referencedMessage = ReferencedMessage(client, raw);
     } else {
       this.referencedMessage = null;
     }
@@ -147,20 +203,56 @@ abstract class Message extends SnowflakeEntity implements Disposable, Convertabl
       this.components = [
         for (final rawRow in raw["components"]) [
           for (final componentRaw in rawRow["components"])
-            IMessageComponent._deserialize(componentRaw as RawApiMap)
+            MessageComponent.deserialize(componentRaw as RawApiMap)
         ]
       ];
     } else {
       this.components = [];
     }
+
+    if (raw["message_reference"] != null) {
+      this.crossPostReference = MessageReference(raw["message_reference"] as RawApiMap, client);
+    }
+
+    this.guild = raw["guild_id"] != null
+        ? GuildCacheable(client, Snowflake(raw["guild_id"]))
+        : null;
+
+    if (raw["webhook_id"] != null) {
+      this.author = Webhook(raw["author"] as RawApiMap, client);
+    } else {
+      this.author = User(client, raw["author"] as RawApiMap);
+
+      if (client.cacheOptions.userCachePolicyLocation.objectConstructor) {
+        this.client.users[this.author.id] = this.author as User;
+      }
+    }
+
+    if (raw["member"] != null) {
+      // In case member object doesnt have id property and we need it for member object
+      raw["member"]["user"] = <String, dynamic>{
+        "id": raw["author"]["id"]
+      };
+      this.member = Member(client, raw["member"] as RawApiMap, this.guild!.id);
+
+      if (client.cacheOptions.memberCachePolicyLocation.objectConstructor && client.cacheOptions.memberCachePolicy.canCache(member!)) {
+        this.guild?.getFromCache()?.members[member!.id] = member!;
+      }
+    }
+
+    this.roleMentions = [
+      if (raw["mention_roles"] != null)
+        for (var roleId in raw["mention_roles"])
+          RoleCacheable(client, Snowflake(roleId), this.guild!)
+    ];
   }
 
   /// Suppresses embeds in message. Can be executed in other users messages.
-  Future<Message> suppressEmbeds() =>
+  Future<IMessage> suppressEmbeds() =>
       client.httpEndpoints.suppressMessageEmbeds(this.channel.id, this.id);
 
   /// Edits the message.
-  Future<Message> edit(MessageBuilder builder) =>
+  Future<IMessage> edit(MessageBuilder builder) =>
       client.httpEndpoints.editMessage(this.channel.id, this.id, builder);
 
   /// Add reaction to message.
@@ -192,14 +284,19 @@ abstract class Message extends SnowflakeEntity implements Disposable, Convertabl
       client.httpEndpoints.unpinMessage(this.channel.id, this.id);
 
   /// Creates a thread based on this message, that only retrieves a [ThreadPreviewChannel]
-  Future<ThreadPreviewChannel> createThread(ThreadBuilder builder) async =>
+  Future<IThreadPreviewChannel> createThread(ThreadBuilder builder) async =>
       client.httpEndpoints.createThreadWithMessage(this.channel.id, this.id, builder);
 
   /// Creates a thread in a message
-  Future<ThreadChannel> createAndGetThread(ThreadBuilder builder) async {
+  Future<IThreadChannel> createAndGetThread(ThreadBuilder builder) async {
     final preview = await client.httpEndpoints.createThreadWithMessage(this.channel.id, this.id, builder);
     return preview.getThreadChannel().getOrDownload();
   }
+
+  /// Cross post a Message into all guilds what follow the news channel indicated.
+  /// This endpoint requires the "DISCOVERY" feature to be present for the guild.
+  Future<void> crossPost() async =>
+      client.httpEndpoints.crossPostGuildMessage(this.channel.id, this.id);
 
   @override
   Future<void> dispose() => Future.value(null);
@@ -227,106 +324,4 @@ abstract class Message extends SnowflakeEntity implements Disposable, Convertabl
 
     return false;
   }
-
-  @override
-  int get hashCode => this.id.hashCode;
-}
-
-/// Message that is sent in dm channel or group dm channel
-class DMMessage extends Message {
-  @override
-  late final User author;
-
-  /// Returns clickable url to this message.
-  @override
-  String get url => "https://discordapp.com/channels/@me"
-      "/${this.channel.id}/${this.id}";
-
-  DMMessage._new(INyxx client, RawApiMap raw) : super._new(client, raw) {
-    final user = client.users[Snowflake(raw["author"]["id"])];
-
-    if (user == null) {
-      final authorData = raw["author"] as RawApiMap;
-      this.author = User._new(client, authorData);
-
-      if (client._cacheOptions.userCachePolicyLocation.objectConstructor) {
-        this.client.users[this.author.id] = this.author;
-      }
-    } else {
-      this.author = user;
-    }
-  }
-}
-
-/// Message that is sent in guild channel
-class GuildMessage extends Message {
-  /// The message's guild.
-  late final Cacheable<Snowflake, Guild> guild;
-
-  /// Reference to original message if this message cross posts other message
-  late final MessageReference? crossPostReference;
-
-  /// True if this message is cross posts other message
-  bool get isCrossPosting => this.crossPostReference != null;
-
-  /// Returns clickable url to this message.
-  @override
-  String get url => "https://discordapp.com/channels/${this.guild.id}"
-      "/${this.channel.id}/${this.id}";
-
-  /// The message's author. Can be instance of [User] or [Webhook]
-  @override
-  late final IMessageAuthor author;
-
-  /// Member data of message author
-  late final Member member;
-
-  // TODO: Consider how to handle properly webhooks as message authors.
-  /// True if message is sent by a webhook
-  bool get isByWebhook => author is Webhook;
-
-  /// Role mentions in this message
-  late final List<Cacheable<Snowflake, Role>> roleMentions;
-
-  GuildMessage._new(INyxx client, RawApiMap raw) : super._new(client, raw) {
-    if (raw["message_reference"] != null) {
-      this.crossPostReference = MessageReference._new(
-          raw["message_reference"] as RawApiMap, client);
-    }
-
-    this.guild = _GuildCacheable(client, Snowflake(raw["guild_id"]));
-
-    if (raw["webhook_id"] != null) {
-      this.author = Webhook._new(raw["author"] as RawApiMap, client);
-    } else {
-      this.author = User._new(client, raw["author"] as RawApiMap);
-
-      if (client._cacheOptions.userCachePolicyLocation.objectConstructor) {
-        this.client.users[this.author.id] = this.author as User;
-      }
-    }
-
-    if (raw["member"] != null) {
-      // In case member object doesnt have id property and we need it for member object
-      raw["member"]["user"] = <String, dynamic>{
-        "id": raw["author"]["id"]
-      };
-      this.member = Member._new(client, raw["member"] as RawApiMap, this.guild.id);
-
-      if (client._cacheOptions.memberCachePolicyLocation.objectConstructor && client._cacheOptions.memberCachePolicy.canCache(member)) {
-        this.guild.getFromCache()?.members[member.id] = member;
-      }
-    }
-
-    this.roleMentions = [
-      if (raw["mention_roles"] != null)
-        for (var roleId in raw["mention_roles"])
-          _RoleCacheable(client, Snowflake(roleId), this.guild)
-    ];
-  }
-
-  /// Cross post a Message into all guilds what follow the news channel indicated.
-  /// This endpoint requires the "DISCOVERY" feature to be present for the guild.
-  Future<void> crossPost() async =>
-      client.httpEndpoints.crossPostGuildMessage(this.channel.id, this.id);
 }

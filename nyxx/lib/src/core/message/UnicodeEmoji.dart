@@ -1,7 +1,7 @@
 part of nyxx;
 
 /// Represents unicode emoji. Contains only emoji code.
-class UnicodeEmoji implements IEmoji {
+class UnicodeEmoji implements IUnicodeEmoji, IEmoji {
   /// Codepoint for emoji
   final String code;
 

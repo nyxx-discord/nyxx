@@ -29,24 +29,44 @@ abstract class _HttpResponse {
   }
 }
 
+abstract class IHttpResponseSucess implements IHttpResponse {
+  /// Body of response
+  List<int> get body;
+
+  /// Response body as json
+  dynamic get jsonBody;
+}
+
 /// Returned when http request is successfully executed.
 class HttpResponseSuccess extends _HttpResponse {
   /// Body of response
+  @override
   List<int> get body => this._body;
 
   /// Response body as json
+  @override
   dynamic get jsonBody => this._jsonBody;
 
   HttpResponseSuccess._new(http.StreamedResponse response) : super._new(response);
+}
+
+abstract class IHttpResponseError implements IHttpResponse, Error {
+  /// Message why http request failed
+  String get errorMessage;
+
+  /// Error code of response
+  int get errorCode;
 }
 
 /// Returned when client fails to execute http request.
 /// Will contain reason why request failed.
 class HttpResponseError extends _HttpResponse implements Error {
   /// Message why http request failed
+  @override
   late String errorMessage;
 
   /// Error code of response
+  @override
   late int errorCode;
 
   HttpResponseError._new(http.StreamedResponse response) : super._new(response) {
@@ -71,8 +91,7 @@ class HttpResponseError extends _HttpResponse implements Error {
   }
 
   @override
-  String toString() =>
-    "[Code: $errorCode] [Message: $errorMessage]";
+  String toString() => "[Code: $errorCode] [Message: $errorMessage]";
 
   @override
   StackTrace? get stackTrace => null;

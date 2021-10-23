@@ -1,20 +1,33 @@
 part of nyxx;
 
-/// Sent when a shard disconnects from the websocket.
-class DisconnectEvent {
+import 'package:nyxx/src/internal/shard/Shard.dart';
+import 'package:nyxx/src/utils/IEnum.dart';
+
+abstract class IDisconnectEvent {
   /// The shard that got disconnected.
-  Shard shard;
+  IShard get shard;
 
   /// Reason of disconnection
-  DisconnectEventReason reason;
+  DisconnectEventReason get reason;
+}
 
-  DisconnectEvent._new(this.shard, this.reason);
+/// Sent when a shard disconnects from the websocket.
+class DisconnectEvent implements IDisconnectEvent {
+  /// The shard that got disconnected.
+  final IShard shard;
+
+  /// Reason of disconnection
+  final DisconnectEventReason reason;
+
+  /// Creates an instance of [DisconnectEvent]
+  DisconnectEvent(this.shard, this.reason);
 }
 
 /// Reason why shard was disconnected.
 class DisconnectEventReason extends IEnum<int> {
   /// When shard is disconnected due invalid shard session.
-  static const DisconnectEventReason invalidSession = const DisconnectEventReason._from(9);
+  static const DisconnectEventReason invalidSession = const DisconnectEventReason(9);
 
-  const DisconnectEventReason._from(int value) : super(value);
+  /// Create an instance of [DisconnectEventReason]
+  const DisconnectEventReason(int value) : super(value);
 }

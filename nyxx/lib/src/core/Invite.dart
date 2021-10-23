@@ -1,7 +1,7 @@
 part of nyxx;
 
 /// Represents invite to guild.
-class Invite {
+class Invite implements IInvite {
   /// The invite's code.
   late final String code;
 
@@ -23,29 +23,30 @@ class Invite {
   /// Returns url to invite
   String get url => "https://discord.gg/$code";
 
-  Invite._new(RawApiMap raw, this.client) {
+  /// Creates an instance of [Invite]
+  Invite(RawApiMap raw, this.client) {
     this.code = raw["code"] as String;
 
     if (raw["guild"] != null) {
-      this.guild = _GuildCacheable(client, Snowflake(raw["guild"]["id"]));
+      this.guild = GuildCacheable(client, Snowflake(raw["guild"]["id"]));
     } else {
       this.guild = null;
     }
 
     if (raw["channel"] != null) {
-      this.channel = _ChannelCacheable(client, Snowflake(raw["channel"]["id"]));
+      this.channel = ChannelCacheable(client, Snowflake(raw["channel"]["id"]));
     } else {
       this.channel = null;
     }
 
     if (raw["inviter"] != null) {
-      this.inviter = User._new(client, raw["inviter"] as RawApiMap);
+      this.inviter = User(client, raw["inviter"] as RawApiMap);
     } else {
       this.inviter = null;
     }
     
     if (raw["target_user"] != null) {
-      this.targetUser = _UserCacheable(client, Snowflake(raw["target_user"]["id"]));
+      this.targetUser = UserCacheable(client, Snowflake(raw["target_user"]["id"]));
     } else {
       this.targetUser = null;
     }
@@ -56,8 +57,31 @@ class Invite {
     client.httpEndpoints.deleteInvite(this.code, auditReason: auditReason);
 }
 
+abstract class IInviteWithMeta implements IInvite {
+  /// Date when invite was created
+  DateTime get createdAt;
+
+  /// Whether this invite only grants temporary membership
+  bool get temporary;
+
+  /// Number of uses of this invite
+  int get uses;
+
+  /// Max number of uses of this invite
+  int get maxUses;
+
+  /// Duration (in seconds) after which the invite expires
+  int get maxAge;
+
+  /// Date when invite will expire
+  DateTime get expiryDate;
+
+  /// True if Invite is valid and can be used
+  bool get isValid;
+}
+
 /// Invite object with additional metadata
-class InviteWithMeta extends Invite {
+class InviteWithMeta extends Invite implements IInviteWithMeta {
   /// Date when invite was created
   late final DateTime createdAt;
 
@@ -93,7 +117,8 @@ class InviteWithMeta extends Invite {
     return ageValidity && expiryValidity;
   }
 
-  InviteWithMeta._new(RawApiMap raw, INyxx client) : super._new(raw, client) {
+  /// Creates an instance of [InviteWithMeta]
+  InviteWithMeta(RawApiMap raw, INyxx client) : super(raw, client) {
     this.createdAt = DateTime.parse(raw["created_at"] as String);
     this.temporary = raw["temporary"] as bool;
     this.uses = raw["uses"] as int;

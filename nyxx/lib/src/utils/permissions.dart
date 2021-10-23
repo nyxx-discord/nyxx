@@ -32,7 +32,7 @@ class PermissionsUtils {
   }
 
   /// Returns List of [channel] permissions overrides for given [member].
-  static List<int> getOverrides(Member member, GuildChannel channel) {
+  static List<int> getOverrides(IMember member, IGuildChannel channel) {
     var allowRaw = 0;
     var denyRaw = 0;
 

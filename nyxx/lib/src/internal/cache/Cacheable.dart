@@ -4,12 +4,12 @@ part of nyxx;
 /// Always provides [id] of entity. `download()` method tries to get entity from API and returns it upon success or
 /// throws Error if something happens in the process.
 abstract class Cacheable<T extends Snowflake, S extends SnowflakeEntity> {
-  final INyxx _client;
+  final INyxx client;
 
   /// Id of entity
   final T id;
 
-  Cacheable._new(this._client, this.id);
+  Cacheable(this.client, this.id);
 
   /// Returns entity from cache or null if not present
   S? getFromCache();
@@ -42,10 +42,10 @@ class _RoleCacheable extends Cacheable<Snowflake, Role> {
   _RoleCacheable(INyxx client, Snowflake id, this.guild): super._new(client, id);
 
   @override
-  Future<Role> download() async => this._fetchGuildRole();
+  Future<IRole> download() async => this._fetchGuildRole();
 
   @override
-  Role? getFromCache() {
+  IRole? getFromCache() {
     final guildInstance = guild.getFromCache();
 
     if (guildInstance == null) {
@@ -56,8 +56,8 @@ class _RoleCacheable extends Cacheable<Snowflake, Role> {
   }
 
   // We cant download single role
-  Future<Role> _fetchGuildRole() async {
-    final roles = await _client.httpEndpoints.fetchGuildRoles(this.id).toList();
+  Future<IRole> _fetchGuildRole() async {
+    final roles = await client.httpEndpoints.fetchGuildRoles(this.id).toList();
 
     try {
       return roles.firstWhere((element) => element.id == this.id);
@@ -71,20 +71,20 @@ class _ChannelCacheable<T extends IChannel> extends Cacheable<Snowflake, T> {
   _ChannelCacheable(INyxx client, Snowflake id): super._new(client, id);
 
   @override
-  T? getFromCache() => this._client.channels[this.id] as T?;
+  T? getFromCache() => this.client.channels[this.id] as T?;
 
   @override
-  Future<T> download() => _client.httpEndpoints.fetchChannel<T>(this.id);
+  Future<T> download() => client.httpEndpoints.fetchChannel<T>(this.id);
 }
 
-class _GuildCacheable extends Cacheable<Snowflake, Guild> {
-  _GuildCacheable(INyxx client, Snowflake id): super._new(client, id);
+class GuildCacheable extends Cacheable<Snowflake, IGuild> {
+  GuildCacheable(INyxx client, Snowflake id): super(client, id);
 
   @override
-  Guild? getFromCache() => this._client.guilds[this.id];
+  IGuild? getFromCache() => this.client.guilds[this.id];
 
   @override
-  Future<Guild> download() => _client.httpEndpoints.fetchGuild(this.id);
+  Future<IGuild> download() => client.httpEndpoints.fetchGuild(this.id);
 }
 
 class _UserCacheable extends Cacheable<Snowflake, User> {
@@ -94,7 +94,7 @@ class _UserCacheable extends Cacheable<Snowflake, User> {
   Future<User> download() => _client.httpEndpoints.fetchUser(this.id);
 
   @override
-  User? getFromCache() => this._client.users[this.id];
+  IUser? getFromCache() => this.client.users[this.id];
 }
 
 class _MemberCacheable extends Cacheable<Snowflake, Member> {
@@ -124,13 +124,13 @@ class _MessageCacheable<U extends TextChannel> extends Cacheable<Snowflake, Mess
   _MessageCacheable(INyxx client, Snowflake id, this.channel) : super._new(client, id);
 
   @override
-  Future<Message> download() async {
+  Future<IMessage> download() async {
     final channelInstance = await this.channel.getOrDownload();
     return channelInstance.fetchMessage(this.id);
   }
 
   @override
-  Message? getFromCache() {
+  IMessage? getFromCache() {
     final channelInstance = this.channel.getFromCache();
 
     if (channelInstance != null) {

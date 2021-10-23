@@ -1,228 +1,301 @@
-part of nyxx;
+import 'package:nyxx/src/core/permissions/PermissionsConstants.dart';
+import 'package:nyxx/src/internal/interfaces/Convertable.dart';
+import 'package:nyxx/src/utils/builders/PermissionsBuilder.dart';
+import 'package:nyxx/src/utils/permissions.dart';
 
-/// Permissions for a role or channel override.
-class Permissions implements Convertable<PermissionsBuilder> {
+abstract class IPermissions implements Convertable<PermissionsBuilder> {
   /// The raw permission code.
   late final int raw;
 
   /// True if user can create InstantInvite
-  late final bool createInstantInvite;
+  bool get createInstantInvite;
 
   /// True if user can kick members
-  late final bool kickMembers;
+  bool get kickMembers;
 
   /// True if user can ban members
-  late final bool banMembers;
+  bool get banMembers;
 
   /// True if user is administrator
-  late final bool administrator;
+  bool get administrator;
 
   /// True if user can manager channels
-  late final bool manageChannels;
+  bool get manageChannels;
 
   /// True if user can manager guilds
-  late final bool manageGuild;
+  bool get manageGuild;
 
   /// Allows to add reactions
-  late final bool addReactions;
+  bool get addReactions;
 
   /// Allows for using priority speaker in a voice channel
-  late final bool prioritySpeaker;
+  bool get prioritySpeaker;
 
   /// Allow to view audit logs
-  late final bool viewAuditLog;
+  bool get viewAuditLog;
 
   /// Allow viewing channels (OLD READ_MESSAGES)
-  late final bool viewChannel;
+  bool get viewChannel;
 
   /// True if user can send messages
-  late final bool sendMessages;
+  bool get sendMessages;
 
   /// True if user can send messages in threads
-  late final bool sendMessagesInThreads;
+  bool get sendMessagesInThreads;
 
   /// True if user can send TTF messages
-  late final bool sendTtsMessages;
+  bool get sendTtsMessages;
 
   /// True if user can manage messages
-  late final bool manageMessages;
+  bool get manageMessages;
 
   /// True if user can send links in messages
-  late final bool embedLinks;
+  bool get embedLinks;
 
   /// True if user can attach files in messages
-  late final bool attachFiles;
+  bool get attachFiles;
 
   /// True if user can read messages history
-  late final bool readMessageHistory;
+  bool get readMessageHistory;
 
   /// True if user can mention everyone
-  late final bool mentionEveryone;
+  bool get mentionEveryone;
 
   /// True if user can use external emojis
-  late final bool useExternalEmojis;
+  bool get useExternalEmojis;
 
   /// True if user can connect to voice channel
-  late final bool connect;
+  bool get connect;
 
   /// True if user can speak
-  late final bool speak;
+  bool get speak;
 
   /// True if user can mute members
-  late final bool muteMembers;
+  bool get muteMembers;
 
   /// True if user can deafen members
-  late final bool deafenMembers;
+  bool get deafenMembers;
 
   /// True if user can move members
-  late final bool moveMembers;
+  bool get moveMembers;
 
   /// Allows for using voice-activity-detection in a voice channel
-  late final bool useVad;
+  bool get useVad;
 
   /// True if user can change nick
-  late final bool changeNickname;
+  bool get changeNickname;
 
   /// True if user can manager others nicknames
-  late final bool manageNicknames;
+  bool get manageNicknames;
 
   /// True if user can manage server's roles
-  late final bool manageRoles;
+  bool get manageRoles;
 
   /// True if user can manage webhooks
-  late final bool manageWebhooks;
+  bool get manageWebhooks;
 
   /// Allows management and editing of emojis
-  late final bool manageEmojis;
+  bool get manageEmojis;
 
   /// Allows the user to go live
-  late final bool stream;
+  bool get stream;
 
   /// Allows for viewing guild insights
-  late final bool viewGuildInsights;
+  bool get viewGuildInsights;
 
   /// Allows members to use slash commands in text channels
-  late final bool useSlashCommands;
+  bool get useSlashCommands;
 
   /// Allows for requesting to speak in stage channels
-  late final bool requestToSpeak;
+  bool get requestToSpeak;
 
   /// Allows for deleting and archiving threads, and viewing all private threads
-  late final bool manageThreads;
+  bool get manageThreads;
 
   /// Allows for creating and participating in threads
-  late final bool createPublicThreads;
+  bool get createPublicThreads;
 
   /// Allows for creating and participating in private threads
-  late final bool createPrivateThreads;
+  bool get createPrivateThreads;
 
   /// Allows the usage of custom stickers from other servers
-  late final bool useExternalStickers;
+  bool get useExternalStickers;
 
   /// Allows for launching activities in a voice channel
-  late final bool startEmbeddedActivities;
-	
-  /// Makes a [Permissions] object from a raw permission code.
-  factory Permissions.fromInt(int permissions) =>
-      Permissions._construct(permissions);
+  bool get startEmbeddedActivities;
+}
+
+/// Permissions for a role or channel override.
+class Permissions implements IPermissions {
+  /// The raw permission code.
+  late final int raw;
+
+  /// True if user can create InstantInvite
+  bool get createInstantInvite => PermissionsUtils.isApplied(
+      this.raw, PermissionsConstants.createInstantInvite);
+
+  /// True if user can kick members
+  bool get kickMembers => PermissionsUtils.isApplied(
+      this.raw, PermissionsConstants.kickMembers);
+
+  /// True if user can ban members
+  bool get banMembers => PermissionsUtils.isApplied(
+      this.raw, PermissionsConstants.banMembers);
+
+  /// True if user is administrator
+  bool get administrator => PermissionsUtils.isApplied(
+      this.raw, PermissionsConstants.administrator);
+
+  /// True if user can manager channels
+  bool get manageChannels => PermissionsUtils.isApplied(
+      this.raw, PermissionsConstants.manageChannels);
+
+  /// True if user can manager guilds
+  bool get manageGuild => PermissionsUtils.isApplied(
+      this.raw, PermissionsConstants.manageGuild);
+
+  /// Allows to add reactions
+  bool get addReactions => PermissionsUtils.isApplied(
+      this.raw, PermissionsConstants.addReactions);
+
+  /// Allows for using priority speaker in a voice channel
+  bool get prioritySpeaker => PermissionsUtils.isApplied(
+      this.raw, PermissionsConstants.prioritySpeaker);
+
+  /// Allow to view audit logs
+  bool get viewAuditLog => PermissionsUtils.isApplied(
+      this.raw, PermissionsConstants.viewAuditLog);
+
+  /// Allow viewing channels (OLD READ_MESSAGES)
+  bool get viewChannel => PermissionsUtils.isApplied(
+      this.raw, PermissionsConstants.viewChannel);
+
+  /// True if user can send messages
+  bool get sendMessages => PermissionsUtils.isApplied(
+      this.raw, PermissionsConstants.sendMessages);
+
+  /// True if user can send messages in threads
+  bool get sendMessagesInThreads => PermissionsUtils.isApplied(
+      this.raw, PermissionsConstants.sendMessagesInThread);
+
+  /// True if user can send TTF messages
+  bool get sendTtsMessages => PermissionsUtils.isApplied(
+      this.raw, PermissionsConstants.sendTtsMessages);
+
+  /// True if user can manage messages
+  bool get manageMessages => PermissionsUtils.isApplied(
+      this.raw, PermissionsConstants.manageMessages);
+
+  /// True if user can send links in messages
+  bool get embedLinks => PermissionsUtils.isApplied(
+      this.raw, PermissionsConstants.embedLinks);
+
+  /// True if user can attach files in messages
+  bool get attachFiles => PermissionsUtils.isApplied(
+      this.raw, PermissionsConstants.attachFiles);
+
+  /// True if user can read messages history
+  bool get readMessageHistory => PermissionsUtils.isApplied(
+      this.raw, PermissionsConstants.readMessageHistory);
+
+  /// True if user can mention everyone
+  bool get mentionEveryone => PermissionsUtils.isApplied(
+      this.raw, PermissionsConstants.mentionEveryone);
+
+  /// True if user can use external emojis
+  bool get useExternalEmojis => PermissionsUtils.isApplied(
+      this.raw, PermissionsConstants.externalEmojis);
+
+  /// True if user can connect to voice channel
+  bool get connect => PermissionsUtils.isApplied(this.raw, PermissionsConstants.connect);
+
+  /// True if user can speak
+  bool get speak => PermissionsUtils.isApplied(this.raw, PermissionsConstants.speak);
+
+  /// True if user can mute members
+  bool get muteMembers => PermissionsUtils.isApplied(
+      this.raw, PermissionsConstants.muteMembers);
+
+  /// True if user can deafen members
+  bool get deafenMembers => PermissionsUtils.isApplied(
+      this.raw, PermissionsConstants.deafenMembers);
+
+  /// True if user can move members
+  bool get moveMembers => PermissionsUtils.isApplied(
+      this.raw, PermissionsConstants.moveMembers);
+
+  /// Allows for using voice-activity-detection in a voice channel
+  bool get useVad => PermissionsUtils.isApplied(this.raw, PermissionsConstants.useVad);
+
+  /// True if user can change nick
+  bool get changeNickname => PermissionsUtils.isApplied(
+      this.raw, PermissionsConstants.changeNickname);
+
+  /// True if user can manager others nicknames
+  bool get manageNicknames => PermissionsUtils.isApplied(
+      this.raw, PermissionsConstants.manageNicknames);
+
+  /// True if user can manage server's roles
+  bool get manageRoles => PermissionsUtils.isApplied(
+      this.raw, PermissionsConstants.manageRolesOrPermissions);
+
+  /// True if user can manage webhooks
+  bool get manageWebhooks => PermissionsUtils.isApplied(
+      this.raw, PermissionsConstants.manageWebhooks);
+
+  /// Allows management and editing of emojis
+  bool get manageEmojis => PermissionsUtils.isApplied(
+      this.raw, PermissionsConstants.manageEmojis);
+
+  /// Allows the user to go live
+  bool get stream => PermissionsUtils.isApplied(this.raw, PermissionsConstants.stream);
+
+  /// Allows for viewing guild insights
+  bool get viewGuildInsights => PermissionsUtils.isApplied(
+      this.raw, PermissionsConstants.viewGuildInsights);
+
+  /// Allows members to use slash commands in text channels
+  bool get useSlashCommands => PermissionsUtils.isApplied(
+      this.raw, PermissionsConstants.useSlashCommands);
+
+  /// Allows for requesting to speak in stage channels
+  bool get requestToSpeak => PermissionsUtils.isApplied(
+      this.raw, PermissionsConstants.useSlashCommands);
+
+  /// Allows for deleting and archiving threads, and viewing all private threads
+  bool get manageThreads => PermissionsUtils.isApplied(
+      this.raw, PermissionsConstants.manageThreads);
+
+  /// Allows for creating and participating in threads
+  bool get createPublicThreads => PermissionsUtils.isApplied(
+      this.raw, PermissionsConstants.createPublicThreads);
+
+  /// Allows for creating and participating in private threads
+  bool get createPrivateThreads => PermissionsUtils.isApplied(
+      this.raw, PermissionsConstants.createPrivateThreads);
+
+  /// Allows the usage of custom stickers from other servers
+  bool get useExternalStickers => PermissionsUtils.isApplied(
+      this.raw, PermissionsConstants.useExternalStickers);
+
+  /// Allows for launching activities in a voice channel
+  bool get startEmbeddedActivities => PermissionsUtils.isApplied(
+      this.raw, PermissionsConstants.startEmbeddedActivities);
+
+  /// Creates an instance of [Permissions]
+  Permissions(this.raw);
 
   /// Permissions with value of 0
   factory Permissions.empty() =>
-      Permissions._construct(0);
+      Permissions(0);
 
   /// Permissions with max value
   factory Permissions.all() =>
-      Permissions._construct(PermissionsConstants.allPermissions);
+      Permissions(PermissionsConstants.allPermissions);
 
   /// Makes a [Permissions] object from overwrite object
   factory Permissions.fromOverwrite(int permissions, int allow, int deny) =>
-      Permissions._construct(PermissionsUtils.apply(permissions, allow, deny));
-
-  Permissions._construct(this.raw) {
-    this.createInstantInvite = PermissionsUtils.isApplied(
-        this.raw, PermissionsConstants.createInstantInvite);
-    this.kickMembers = PermissionsUtils.isApplied(
-        this.raw, PermissionsConstants.kickMembers);
-    this.banMembers = PermissionsUtils.isApplied(
-        this.raw, PermissionsConstants.banMembers);
-    this.administrator = PermissionsUtils.isApplied(
-        this.raw, PermissionsConstants.administrator);
-    this.manageChannels = PermissionsUtils.isApplied(
-        this.raw, PermissionsConstants.manageChannels);
-    this.manageGuild = PermissionsUtils.isApplied(
-        this.raw, PermissionsConstants.manageGuild);
-    this.addReactions = PermissionsUtils.isApplied(
-        this.raw, PermissionsConstants.addReactions);
-    this.viewAuditLog = PermissionsUtils.isApplied(
-        this.raw, PermissionsConstants.viewAuditLog);
-    this.viewChannel = PermissionsUtils.isApplied(
-        this.raw, PermissionsConstants.viewChannel);
-    this.sendMessages = PermissionsUtils.isApplied(
-        this.raw, PermissionsConstants.sendMessages);
-     this.sendMessagesInThreads = PermissionsUtils.isApplied(
-       this.raw, PermissionsConstants.sendMessagesInThread);
-    this.prioritySpeaker = PermissionsUtils.isApplied(
-        this.raw, PermissionsConstants.prioritySpeaker);
-    this.sendTtsMessages = PermissionsUtils.isApplied(
-        this.raw, PermissionsConstants.sendTtsMessages);
-    this.manageMessages = PermissionsUtils.isApplied(
-        this.raw, PermissionsConstants.manageMessages);
-    this.embedLinks = PermissionsUtils.isApplied(
-        this.raw, PermissionsConstants.embedLinks);
-    this.attachFiles = PermissionsUtils.isApplied(
-        this.raw, PermissionsConstants.attachFiles);
-    this.readMessageHistory = PermissionsUtils.isApplied(
-        this.raw, PermissionsConstants.readMessageHistory);
-    this.mentionEveryone = PermissionsUtils.isApplied(
-        this.raw, PermissionsConstants.mentionEveryone);
-    this.useExternalEmojis = PermissionsUtils.isApplied(
-        this.raw, PermissionsConstants.externalEmojis);
-    this.connect =
-        PermissionsUtils.isApplied(this.raw, PermissionsConstants.connect);
-    this.speak =
-        PermissionsUtils.isApplied(this.raw, PermissionsConstants.speak);
-    this.muteMembers = PermissionsUtils.isApplied(
-        this.raw, PermissionsConstants.muteMembers);
-    this.deafenMembers = PermissionsUtils.isApplied(
-        this.raw, PermissionsConstants.deafenMembers);
-    this.moveMembers = PermissionsUtils.isApplied(
-        this.raw, PermissionsConstants.moveMembers);
-    this.useVad =
-        PermissionsUtils.isApplied(this.raw, PermissionsConstants.useVad);
-    this.changeNickname = PermissionsUtils.isApplied(
-        this.raw, PermissionsConstants.changeNickname);
-    this.manageNicknames = PermissionsUtils.isApplied(
-        this.raw, PermissionsConstants.manageNicknames);
-    this.manageRoles = PermissionsUtils.isApplied(
-        this.raw, PermissionsConstants.manageRolesOrPermissions);
-    this.manageWebhooks = PermissionsUtils.isApplied(
-        this.raw, PermissionsConstants.manageWebhooks);
-
-    this.manageEmojis = PermissionsUtils.isApplied(
-        this.raw, PermissionsConstants.manageEmojis);
-    this.stream =
-        PermissionsUtils.isApplied(this.raw, PermissionsConstants.stream);
-    this.viewGuildInsights = PermissionsUtils.isApplied(
-        this.raw, PermissionsConstants.viewGuildInsights);
-
-    this.useSlashCommands = PermissionsUtils.isApplied(
-        this.raw, PermissionsConstants.useSlashCommands);
-    this.requestToSpeak = PermissionsUtils.isApplied(
-        this.raw, PermissionsConstants.useSlashCommands);
-
-    this.manageThreads = PermissionsUtils.isApplied(
-        this.raw, PermissionsConstants.manageThreads);
-    this.createPublicThreads = PermissionsUtils.isApplied(
-        this.raw, PermissionsConstants.createPublicThreads);
-    this.createPrivateThreads = PermissionsUtils.isApplied(
-        this.raw, PermissionsConstants.createPrivateThreads);
-		
-    this.useExternalStickers = PermissionsUtils.isApplied(
-        this.raw, PermissionsConstants.useExternalStickers);
-
-    this.startEmbeddedActivities = PermissionsUtils.isApplied(
-        this.raw, PermissionsConstants.startEmbeddedActivities);
-  }
+      Permissions(PermissionsUtils.apply(permissions, allow, deny));
 
   /// Returns true if this permissions has [permission]
   bool hasPermission(int permission) =>

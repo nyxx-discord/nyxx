@@ -2,15 +2,15 @@ part of nyxx;
 
 /// Used to represent a user"s voice connection status.
 /// If [channel] is null, it means that user left channel.
-class VoiceState {
+class VoiceState implements IVoiceState {
   /// User this voice state is for
-  late final Cacheable<Snowflake, User> user;
+  late final Cacheable<Snowflake, IUser> user;
 
   /// Session id for this voice state
   late final String sessionId;
 
   /// Guild this voice state update is
-  late final Cacheable<Snowflake, Guild>? guild;
+  late final Cacheable<Snowflake, IGuild>? guild;
 
   /// Channel id user is connected
   late final Cacheable<Snowflake, IChannel>? channel;

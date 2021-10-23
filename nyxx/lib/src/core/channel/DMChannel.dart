@@ -58,8 +58,8 @@ class DMChannel extends IChannel implements TextChannel {
   Future<Message> fetchMessage(Snowflake messageId) async {
     final message = await client.httpEndpoints.fetchMessage(this.id, messageId);
 
-    if(client._cacheOptions.messageCachePolicyLocation.http && client._cacheOptions.messageCachePolicy.canCache(message)) {
-      this.messageCache.put(message);
+    if(client.cacheOptions.messageCachePolicyLocation.http && client.cacheOptions.messageCachePolicy.canCache(message)) {
+      this.messageCache[messageId] = message;
     }
 
     return message;

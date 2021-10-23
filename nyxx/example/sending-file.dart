@@ -5,15 +5,15 @@ import "package:nyxx/nyxx.dart";
 // Main function
 void main() {
   // Create new bot instance
-  final bot = Nyxx("<TOKEN>", GatewayIntents.allUnprivileged);
+  final bot = NyxxFactory.createNyxxWebsocket("<TOKEN>", GatewayIntents.allUnprivileged);
 
   // Listen to ready event. Invoked when bot started listening to events.
-  bot.onReady.listen((ReadyEvent e) {
+  bot.eventsWs.onReady.listen((IReadyEvent e) {
     print("Ready!");
   });
 
   // Listen to all incoming messages via Dart Stream
-  bot.onMessageReceived.listen((MessageReceivedEvent e) {
+  bot.eventsWs.onMessageReceived.listen((IMessageReceivedEvent e) {
     // When receive specific message send new file to channel
     if (e.message.content == "!give-me-file") {
       // Files argument needs to be list of AttachmentBuilder object with

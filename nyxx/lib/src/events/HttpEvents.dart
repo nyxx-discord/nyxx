@@ -1,17 +1,29 @@
-part of nyxx;
+import 'package:nyxx/src/internal/http/HttpResponse.dart';
+
+abstract class IHttpErrorEvent {
+  /// The HTTP response.
+  HttpResponseError get response;
+}
 
 /// Sent when a failed HTTP response is received.
-class HttpErrorEvent {
+class HttpErrorEvent implements IHttpErrorEvent {
   /// The HTTP response.
-  HttpResponseError response;
+  final HttpResponseError response;
 
-  HttpErrorEvent._new(this.response);
+  /// Creates na instance of [HttpErrorEvent]
+  HttpErrorEvent(this.response);
+}
+
+abstract class IHttpResponseEvent {
+  /// The HTTP response.
+  HttpResponseSuccess get response;
 }
 
 /// Sent when a successful HTTP response is received.
-class HttpResponseEvent {
+class HttpResponseEvent implements IHttpResponseEvent {
   /// The HTTP response.
-  HttpResponseSuccess response;
+  final HttpResponseSuccess response;
 
-  HttpResponseEvent._new(this.response);
+  /// Creates na instance of [HttpResponseEvent]
+  HttpResponseEvent(this.response);
 }

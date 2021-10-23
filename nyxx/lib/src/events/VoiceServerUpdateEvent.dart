@@ -1,7 +1,7 @@
 part of nyxx;
 
 /// Emitted when guild's voice server changes
-class VoiceServerUpdateEvent {
+class VoiceServerUpdateEvent implements IVoiceServerUpdateEvent {
   /// Raw websocket event payload
   final RawApiMap raw;
 
@@ -12,11 +12,12 @@ class VoiceServerUpdateEvent {
   late final String endpoint;
 
   /// The guild this voice server update is for
-  late final Cacheable<Snowflake, Guild> guild;
+  late final Cacheable<Snowflake, IGuild> guild;
 
-  VoiceServerUpdateEvent._new(this.raw, Nyxx client) {
+  /// Creates na instance of [VoiceServerUpdateEvent]
+  VoiceServerUpdateEvent(this.raw, INyxx client) {
     this.token = raw["d"]["token"] as String;
     this.endpoint = raw["d"]["endpoint"] as String;
-    this.guild = _GuildCacheable(client, Snowflake(raw["d"]["guild_id"]));
+    this.guild = GuildCacheable(client, Snowflake(raw["d"]["guild_id"]));
   }
 }

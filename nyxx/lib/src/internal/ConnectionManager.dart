@@ -1,8 +1,8 @@
 part of nyxx;
 
 /// The WS manager for the client.
-class _ConnectionManager {
-  final Nyxx _client;
+class ConnectionManager {
+  final NyxxWebsocket client;
 
   /// The base websocket URL.
   late final String gateway;

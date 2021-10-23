@@ -55,11 +55,11 @@ abstract class IHttpEndpoints {
   /// Fetches [IChannel] from API. Channel cas be cast to wanted type using generics
   Future<T> fetchChannel<T>(Snowflake id);
 
-  /// Returns [IGuildEmoji] for given [emojiId]
-  Future<IGuildEmoji> fetchGuildEmoji(Snowflake guildId, Snowflake emojiId);
+  /// Returns [BaseGuildEmoji] for given [emojiId]
+  Future<IBaseGuildEmoji> fetchGuildEmoji(Snowflake guildId, Snowflake emojiId);
 
   /// Creates emoji in given guild
-  Future<GuildEmoji> createEmoji(Snowflake guildId, String name,
+  Future<IBaseGuildEmoji> createEmoji(Snowflake guildId, String name,
       {List<SnowflakeEntity>? roles,
       AttachmentBuilder? emojiAttachment});
 
@@ -76,12 +76,12 @@ abstract class IHttpEndpoints {
 
   Future<void> modifyCurrentMember(Snowflake guildId, {String? nick});
 
-  /// Get [Ban] object for given [bannedUserId]
-  Future<Ban> getGuildBan(Snowflake guildId, Snowflake bannedUserId);
+  /// Get [IBan] object for given [bannedUserId]
+  Future<IBan> getGuildBan(Snowflake guildId, Snowflake bannedUserId);
 
   /// Changes guild owner of guild from bot to [member].
   /// Bot needs to be owner of guild to use that endpoint.
-  Future<Guild> changeGuildOwner(Snowflake guildId, SnowflakeEntity member,
+  Future<IGuild> changeGuildOwner(Snowflake guildId, SnowflakeEntity member,
       {String? auditReason});
 
   /// Leaves guild with given id
@@ -91,10 +91,10 @@ abstract class IHttpEndpoints {
   Stream<Invite> fetchGuildInvites(Snowflake guildId);
 
   /// Creates an activity invite
-  Future<Invite> createVoiceActivityInvite(Snowflake activityId, Snowflake channelId, {int? maxAge, int? maxUses});
+  Future<IInvite> createVoiceActivityInvite(Snowflake activityId, Snowflake channelId, {int? maxAge, int? maxUses});
 
   /// Fetches audit logs of guild
-  Future<AuditLog> fetchAuditLogs(Snowflake guildId,
+  Future<IAuditLog> fetchAuditLogs(Snowflake guildId,
       {Snowflake? userId, int? actionType, Snowflake? before, int? limit});
 
   /// Creates new role
@@ -102,7 +102,7 @@ abstract class IHttpEndpoints {
       {String? auditReason});
 
   /// Returns list of all voice regions that guild has access to
-  Stream<VoiceRegion> fetchGuildVoiceRegions(Snowflake guildId);
+  Stream<IVoiceRegion> fetchGuildVoiceRegions(Snowflake guildId);
 
   /// Moves guild channel in hierachy.
   Future<void> moveGuildChannel(
@@ -121,7 +121,7 @@ abstract class IHttpEndpoints {
   Future<void> guildUnban(Snowflake guildId, Snowflake userId);
 
   /// Allows to edit basic guild properties
-  Future<Guild> editGuild(Snowflake guildId,
+  Future<IGuild> editGuild(Snowflake guildId,
       {String? name,
       int? verificationLevel,
       int? notificationLevel,
@@ -131,26 +131,26 @@ abstract class IHttpEndpoints {
       String? auditReason});
 
   /// Fetches [Member] object from guild
-  Future<Member> fetchGuildMember(Snowflake guildId, Snowflake memberId);
+  Future<IMember> fetchGuildMember(Snowflake guildId, Snowflake memberId);
 
   /// Fetches list of members from guild.
   /// Requires GUILD_MEMBERS intent to work properly.
-  Stream<Member> fetchGuildMembers(Snowflake guildId,
+  Stream<IMember> fetchGuildMembers(Snowflake guildId,
       {int limit = 1, Snowflake? after});
 
   /// Searches guild for user with [query] parameter
   /// Requires GUILD_MEMBERS intent to work properly.
-  Stream<Member> searchGuildMembers(Snowflake guildId, String query,
+  Stream<IMember> searchGuildMembers(Snowflake guildId, String query,
       {int limit = 1});
 
   /// Returns all [Webhook]s in given channel
-  Stream<Webhook> fetchChannelWebhooks(Snowflake channelId);
+  Stream<IWebhook> fetchChannelWebhooks(Snowflake channelId);
 
   /// Deletes guild. Requires bot to be owner of guild
   Future<void> deleteGuild(Snowflake guildId);
 
   /// Returns all roles of guild
-  Stream<Role> fetchGuildRoles(Snowflake guildId);
+  Stream<IRole> fetchGuildRoles(Snowflake guildId);
 
   /// Returns url to user avatar
   String userAvatarURL(Snowflake userId, String? avatarHash, int discriminator,
@@ -160,7 +160,7 @@ abstract class IHttpEndpoints {
   String memberAvatarURL(Snowflake memberId, Snowflake guildId, String avatarHash, {String format = "webp"});
 
   /// Fetches [User] object for given [userId]
-  Future<User> fetchUser(Snowflake userId);
+  Future<IUser> fetchUser(Snowflake userId);
 
   /// "Edits" guild member. Allows to manipulate other guild users.
   Future<void> editGuildMember(Snowflake guildId, Snowflake memberId,
@@ -177,7 +177,7 @@ abstract class IHttpEndpoints {
       {String? auditReason});
 
   /// Returns invites for given channel. Includes additional metadata.
-  Stream<InviteWithMeta> fetchChannelInvites(Snowflake channelId);
+  Stream<IInviteWithMeta> fetchChannelInvites(Snowflake channelId);
 
   /// Allows to edit permission for channel
   Future<void> editChannelPermissions(
@@ -194,7 +194,7 @@ abstract class IHttpEndpoints {
       {String? auditReason});
 
   /// Creates new invite for given [channelId]
-  Future<Invite> createInvite(Snowflake channelId,
+  Future<IInvite> createInvite(Snowflake channelId,
       {int? maxAge,
       int? maxUses,
       bool? temporary,
@@ -202,26 +202,26 @@ abstract class IHttpEndpoints {
       String? auditReason});
 
   /// Sends message in channel with given [channelId] using [builder]
-  Future<Message> sendMessage(Snowflake channelId, MessageBuilder builder);
+  Future<IMessage> sendMessage(Snowflake channelId, MessageBuilder builder);
 
   /// Fetches single message with given [messageId]
-  Future<Message> fetchMessage(Snowflake channelId, Snowflake messageId);
+  Future<IMessage> fetchMessage(Snowflake channelId, Snowflake messageId);
 
   /// Bulk removes messages in given [channelId].
   Future<void> bulkRemoveMessages(
       Snowflake channelId, Iterable<SnowflakeEntity> messagesIds);
 
   /// Downloads messages in given channel.
-  Stream<Message> downloadMessages(Snowflake channelId,
+  Stream<IMessage> downloadMessages(Snowflake channelId,
       {int limit = 50, Snowflake? after, Snowflake? before, Snowflake? around});
 
   /// Crates new webhook
-  Future<Webhook> createWebhook(Snowflake channelId, String name,
+  Future<IWebhook> createWebhook(Snowflake channelId, String name,
       {AttachmentBuilder? avatarAttachment,
       String? auditReason});
 
   /// Returns all pinned messages in channel
-  Stream<Message> fetchPinnedMessages(Snowflake channelId);
+  Stream<IMessage> fetchPinnedMessages(Snowflake channelId);
 
   /// Triggers typing indicator in channel
   Future<void> triggerTyping(Snowflake channelId);
@@ -230,13 +230,13 @@ abstract class IHttpEndpoints {
   Future<void> crossPostGuildMessage(Snowflake channelId, Snowflake messageId);
 
   /// Sends message and creates new thread in one action.
-  Future<ThreadPreviewChannel> createThreadWithMessage(Snowflake channelId, Snowflake messageId, ThreadBuilder builder);
+  Future<IThreadPreviewChannel> createThreadWithMessage(Snowflake channelId, Snowflake messageId, ThreadBuilder builder);
 
   /// Creates new thread.
-  Future<ThreadPreviewChannel> createThread(Snowflake channelId, ThreadBuilder builder);
+  Future<IThreadPreviewChannel> createThread(Snowflake channelId, ThreadBuilder builder);
 
   /// Returns all member of given thread
-  Stream<ThreadMember> getThreadMembers(Snowflake channelId, Snowflake guildId);
+  Stream<IThreadMember> getThreadMembers(Snowflake channelId, Snowflake guildId);
 
   /// Joins thread with given id
   Future<void> joinThread(Snowflake channelId);
@@ -251,23 +251,23 @@ abstract class IHttpEndpoints {
   Future<void> removeThreadMember(Snowflake channelId, Snowflake userId);
 
   /// Returns all active threads in given channel
-  Future<ThreadListResultWrapper> fetchActiveThreads(Snowflake channelId);
+  Future<IThreadListResultWrapper> fetchActiveThreads(Snowflake channelId);
 
   /// Returns all public archived thread in given channel
-  Future<ThreadListResultWrapper> fetchPublicArchivedThreads(Snowflake channelId, {DateTime? before, int? limit});
+  Future<IThreadListResultWrapper> fetchPublicArchivedThreads(Snowflake channelId, {DateTime? before, int? limit});
 
   /// Returns all private archived thread in given channel
-  Future<ThreadListResultWrapper> fetchPrivateArchivedThreads(Snowflake channelId, {DateTime? before, int? limit});
+  Future<IThreadListResultWrapper> fetchPrivateArchivedThreads(Snowflake channelId, {DateTime? before, int? limit});
 
   /// Returns all joined private archived thread in given channel
-  Future<ThreadListResultWrapper> fetchJoinedPrivateArchivedThreads(Snowflake channelId, {DateTime? before, int? limit});
+  Future<IThreadListResultWrapper> fetchJoinedPrivateArchivedThreads(Snowflake channelId, {DateTime? before, int? limit});
 
   /// Removes all embeds from given message
-  Future<Message> suppressMessageEmbeds(
+  Future<IMessage> suppressMessageEmbeds(
       Snowflake channelId, Snowflake messageId);
 
   /// Edits message with given id using [builder]
-  Future<Message> editMessage(Snowflake channelId, Snowflake messageId, MessageBuilder builder);
+  Future<IMessage> editMessage(Snowflake channelId, Snowflake messageId, MessageBuilder builder);
 
   /// Creates reaction with given [emoji] on given message
   Future<void> createMessageReaction(
@@ -296,7 +296,7 @@ abstract class IHttpEndpoints {
   Future<void> unpinMessage(Snowflake channelId, Snowflake messageId);
 
   /// Edits self user.
-  Future<User> editSelfUser(
+  Future<IUser> editSelfUser(
       {String? username,
       AttachmentBuilder? avatarAttachment});
 
@@ -306,7 +306,7 @@ abstract class IHttpEndpoints {
   /// Deletes webhook with given [id] using bot permissions or [token] if supplied
   Future<void> deleteWebhook(Snowflake id, {String token = "", String? auditReason});
 
-  Future<Webhook> editWebhook(Snowflake webhookId,
+  Future<IWebhook> editWebhook(Snowflake webhookId,
       {String token = "",
       String? name,
       SnowflakeEntity? channel,
@@ -319,7 +319,7 @@ abstract class IHttpEndpoints {
   /// execution.
   ///
   /// If [wait] is set to true -- request will return resulting message.
-  Future<Message?> executeWebhook(
+  Future<IMessage?> executeWebhook(
       Snowflake webhookId,
       MessageBuilder builder,
       {String? token,
@@ -332,10 +332,10 @@ abstract class IHttpEndpoints {
   /// If [token] is specified it will be used to fetch webhook data.
   /// If not authenticated or missing permissions
   /// for given webhook token can be used.
-  Future<Webhook> fetchWebhook(Snowflake id, {String token = ""});
+  Future<IWebhook> fetchWebhook(Snowflake id, {String token = ""});
 
   /// Fetches invite based on specified [code]
-  Future<Invite> fetchInvite(String code);
+  Future<IInvite> fetchInvite(String code);
 
   /// Returns url for sticker.
   String stickerUrl(Snowflake stickerId, String extension);
@@ -344,10 +344,10 @@ abstract class IHttpEndpoints {
   String emojiUrl(Snowflake emojiId);
 
   /// Creates and returns [DMChannel] for user with given [userId].
-  Future<DMChannel> createDMChannel(Snowflake userId);
+  Future<IDMChannel> createDMChannel(Snowflake userId);
 
   /// Used to send a request including standard bot authentication.
-  Future<_HttpResponse> sendRawRequest(
+  Future<IHttpResponse> sendRawRequest(
       String url,
       String method,
       {dynamic body,
@@ -357,7 +357,7 @@ abstract class IHttpEndpoints {
       );
 
   /// Fetches preview of guild
-  Future<GuildPreview> fetchGuildPreview(Snowflake guildId);
+  Future<IGuildPreview> fetchGuildPreview(Snowflake guildId);
 
   /// Allows to create guild channel.
   Future<IChannel> createGuildChannel(Snowflake guildId, ChannelBuilder channelBuilder);
@@ -366,37 +366,37 @@ abstract class IHttpEndpoints {
   Future<void> deleteChannel(Snowflake channelId);
 
   /// Gets the stage instance associated with the Stage channel, if it exists.
-  Future<StageChannelInstance> getStageChannelInstance(Snowflake channelId);
+  Future<IStageChannelInstance> getStageChannelInstance(Snowflake channelId);
 
   /// Deletes the Stage instance.
   Future<void> deleteStageChannelInstance(Snowflake channelId);
 
   /// Creates a new Stage instance associated to a Stage channel.
-  Future<StageChannelInstance> createStageChannelInstance(Snowflake channelId, String topic, {StageChannelInstancePrivacyLevel? privacyLevel});
+  Future<IStageChannelInstance> createStageChannelInstance(Snowflake channelId, String topic, {StageChannelInstancePrivacyLevel? privacyLevel});
 
   /// Updates fields of an existing Stage instance.
-  Future<StageChannelInstance> updateStageChannelInstance(Snowflake channelId, String topic, {StageChannelInstancePrivacyLevel? privacyLevel});
+  Future<IStageChannelInstance> updateStageChannelInstance(Snowflake channelId, String topic, {StageChannelInstancePrivacyLevel? privacyLevel});
 
   /// Allows to edit guild channel. Resulting updated channel can by cast using generics
-  Future<T> editGuildChannel<T extends GuildChannel>(Snowflake channelId, ChannelBuilder builder, {String? auditReason});
+  Future<T> editGuildChannel<T extends IGuildChannel>(Snowflake channelId, ChannelBuilder builder, {String? auditReason});
 
   /// Returns single nitro sticker
-  Future<StandardSticker> getSticker(Snowflake id);
+  Future<IStandardSticker> getSticker(Snowflake id);
 
   /// Returns all nitro sticker packs
-  Stream<StickerPack> listNitroStickerPacks();
+  Stream<IStickerPack> listNitroStickerPacks();
 
   /// Fetches all [GuildSticker]s in given [Guild]
-  Stream<GuildSticker> fetchGuildStickers(Snowflake guildId);
+  Stream<IGuildSticker> fetchGuildStickers(Snowflake guildId);
 
   /// Fetches [GuildSticker]
-  Future<GuildSticker> fetchGuildSticker(Snowflake guildId, Snowflake stickerId);
+  Future<IGuildSticker> fetchGuildSticker(Snowflake guildId, Snowflake stickerId);
 
   /// Creates [GuildSticker] in given [Guild]
-  Future<GuildSticker> createGuildSticker(Snowflake guildId, StickerBuilder builder);
+  Future<IGuildSticker> createGuildSticker(Snowflake guildId, StickerBuilder builder);
 
   /// Edits [GuildSticker]. Only allows to update sticker metadata
-  Future<GuildSticker> editGuildSticker(Snowflake guildId, Snowflake stickerId, StickerBuilder builder);
+  Future<IGuildSticker> editGuildSticker(Snowflake guildId, Snowflake stickerId, StickerBuilder builder);
 
   /// Deletes [GuildSticker] for [Guild]
   Future<void> deleteGuildSticker(Snowflake guildId, Snowflake stickerId);
@@ -525,7 +525,7 @@ class _HttpEndpoints implements IHttpEndpoints {
           auditLog: auditReason));
 
   @override
-  Future<Guild> fetchGuild(Snowflake guildId) async {
+  Future<IGuild> fetchGuild(Snowflake guildId) async {
     final response =
         await _httpClient._execute(BasicRequest._new("/guilds/$guildId"));
 
@@ -551,7 +551,7 @@ class _HttpEndpoints implements IHttpEndpoints {
   }
 
   @override
-  Future<IGuildEmoji> fetchGuildEmoji(
+  Future<IBaseGuildEmoji> fetchGuildEmoji(
       Snowflake guildId, Snowflake emojiId) async {
     final response = await _httpClient
         ._execute(BasicRequest._new("/guilds/$guildId/emojis/$emojiId"));
@@ -565,7 +565,7 @@ class _HttpEndpoints implements IHttpEndpoints {
   }
 
   @override
-  Future<GuildEmoji> createEmoji(Snowflake guildId, String name,
+  Future<IBaseGuildEmoji> createEmoji(Snowflake guildId, String name,
       {List<SnowflakeEntity>? roles,
        AttachmentBuilder? emojiAttachment}) async {
     final body = <String, dynamic>{
@@ -626,7 +626,7 @@ class _HttpEndpoints implements IHttpEndpoints {
   }
 
   @override
-  Stream<Ban> getGuildBans(Snowflake guildId) async* {
+  Stream<IBan> getGuildBans(Snowflake guildId) async* {
     final response =
         await _httpClient._execute(BasicRequest._new("/guilds/$guildId/bans"));
 
@@ -715,7 +715,7 @@ class _HttpEndpoints implements IHttpEndpoints {
 	}
 
   @override
-  Future<AuditLog> fetchAuditLogs(Snowflake guildId,
+  Future<IAuditLog> fetchAuditLogs(Snowflake guildId,
       {Snowflake? userId,
       int? actionType,
       Snowflake? before,
@@ -739,7 +739,7 @@ class _HttpEndpoints implements IHttpEndpoints {
   }
 
   @override
-  Future<Role> createGuildRole(Snowflake guildId, RoleBuilder roleBuilder,
+  Future<IRole> createGuildRole(Snowflake guildId, RoleBuilder roleBuilder,
       {String? auditReason}) async {
     final response = await _httpClient._execute(BasicRequest._new(
         "/guilds/$guildId/roles",
@@ -765,8 +765,8 @@ class _HttpEndpoints implements IHttpEndpoints {
       return;
     }
 
-    for (final raw in (response as HttpResponseSuccess)._jsonBody) {
-      yield VoiceRegion._new(raw as RawApiMap);
+    for (final raw in (response as HttpResponseSuccess).jsonBody) {
+      yield VoiceRegion(raw as RawApiMap);
     }
   }
 
@@ -800,7 +800,7 @@ class _HttpEndpoints implements IHttpEndpoints {
           BasicRequest._new("/guilds/$guildId/bans/$userId", method: "DELETE"));
 
   @override
-  Future<Guild> editGuild(Snowflake guildId,
+  Future<IGuild> editGuild(Snowflake guildId,
       {String? name,
       int? verificationLevel,
       int? notificationLevel,
@@ -864,7 +864,7 @@ class _HttpEndpoints implements IHttpEndpoints {
     }
 
     for (final rawMember
-        in (request as HttpResponseSuccess)._jsonBody as List<dynamic>) {
+        in (request as HttpResponseSuccess).jsonBody as List<dynamic>) {
       final member =
           Member._new(_client, rawMember as RawApiMap, guildId);
 
@@ -878,7 +878,7 @@ class _HttpEndpoints implements IHttpEndpoints {
   }
 
   @override
-  Stream<Member> searchGuildMembers(Snowflake guildId, String query, {int limit = 1}) async* {
+  Stream<IMember> searchGuildMembers(Snowflake guildId, String query, {int limit = 1}) async* {
     if (query.isEmpty) {
       yield* Stream.error(ArgumentError("`query` parameter cannot be empty. If you want to request all members use `fetchGuildMembers`"));
       return;
@@ -1051,7 +1051,7 @@ class _HttpEndpoints implements IHttpEndpoints {
   }
 
   @override
-  Future<Invite> createInvite(Snowflake channelId,
+  Future<IInviteWithMeta> createInvite(Snowflake channelId,
       {int? maxAge,
       int? maxUses,
       bool? temporary,
@@ -1074,20 +1074,20 @@ class _HttpEndpoints implements IHttpEndpoints {
       return Future.error(response);
     }
 
-    return InviteWithMeta._new(
+    return InviteWithMeta(
         (response as HttpResponseSuccess).jsonBody as RawApiMap,
         _client);
   }
 
   @override
-  Future<Message> sendMessage(Snowflake channelId, MessageBuilder builder) async {
+  Future<IMessage> sendMessage(Snowflake channelId, MessageBuilder builder) async {
     if (!builder.canBeUsedAsNewMessage()) {
       return Future.error(ArgumentError("Cannot sent message when MessageBuilder doesn't have set either content, embed or files"));
     }
 
-    _HttpResponse response;
-    if (builder._hasFiles()) {
-      response = await _httpClient._execute(MultipartRequest._new(
+    HttpResponse response;
+    if (builder.hasFiles()) {
+      response = await httpHandler.execute(MultipartRequest(
           "/channels/$channelId/messages", builder.files!.map((e) => e.getMultipartFile()).toList(),
           method: "POST", fields: builder.build(_client)));
     } else {
@@ -1131,7 +1131,7 @@ class _HttpEndpoints implements IHttpEndpoints {
   }
 
   @override
-  Stream<Message> downloadMessages(Snowflake channelId,
+  Stream<IMessage> downloadMessages(Snowflake channelId,
       {int limit = 50,
       Snowflake? after,
       Snowflake? before,
@@ -1173,7 +1173,7 @@ class _HttpEndpoints implements IHttpEndpoints {
   }
 
   @override
-  Future<Webhook> createWebhook(Snowflake channelId, String name,
+  Future<IWebhook> createWebhook(Snowflake channelId, String name,
       {AttachmentBuilder? avatarAttachment,
       String? auditReason}) async {
     if (name.isEmpty || name.length > 80) {
@@ -1209,7 +1209,7 @@ class _HttpEndpoints implements IHttpEndpoints {
       return;
     }
 
-    for (final val in (response as HttpResponseSuccess)._jsonBody.values.first
+    for (final val in (response as HttpResponseSuccess).jsonBody.values.first
         as Iterable<RawApiMap>) {
       yield Message._deserialize(_client, val);
     }
@@ -1225,7 +1225,7 @@ class _HttpEndpoints implements IHttpEndpoints {
           method: "POST"));
 
   @override
-  Future<ThreadPreviewChannel> createThreadWithMessage(
+  Future<IThreadPreviewChannel> createThreadWithMessage(
       Snowflake channelId, Snowflake messageId, ThreadBuilder builder) async {
     final response = await _httpClient._execute(BasicRequest._new(
         "/channels/$channelId/messages/$messageId/threads",
@@ -1240,7 +1240,7 @@ class _HttpEndpoints implements IHttpEndpoints {
 
 
   @override
-  Future<ThreadPreviewChannel> createThread(
+  Future<IThreadPreviewChannel> createThread(
       Snowflake channelId, ThreadBuilder builder) async {
     final response = await _httpClient._execute(BasicRequest._new(
       "/channels/$channelId/threads",
@@ -1270,8 +1270,7 @@ class _HttpEndpoints implements IHttpEndpoints {
 
   // TODO: Manage message flags better
   @override
-  Future<Message> suppressMessageEmbeds(
-      Snowflake channelId, Snowflake messageId) async {
+  Future<IMessage> suppressMessageEmbeds(Snowflake channelId, Snowflake messageId) async {
     final body = <String, dynamic>{"flags": 1 << 2};
 
     final response = await _httpClient._execute(BasicRequest._new(
@@ -1351,7 +1350,7 @@ class _HttpEndpoints implements IHttpEndpoints {
           method: "DELETE"));
 
   @override
-  Future<User> editSelfUser(
+  Future<IUser> editSelfUser(
       {String? username,
       AttachmentBuilder? avatarAttachment}) async {
     final body = <String, dynamic>{
@@ -1381,7 +1380,7 @@ class _HttpEndpoints implements IHttpEndpoints {
           method: "DELETE", auditLog: auditReason));
 
   @override
-  Future<Webhook> editWebhook(Snowflake webhookId,
+  Future<IWebhook> editWebhook(Snowflake webhookId,
       {String token = "",
       String? name,
       SnowflakeEntity? channel,
@@ -1453,7 +1452,7 @@ class _HttpEndpoints implements IHttpEndpoints {
   }
 
   @override
-  Future<Webhook> fetchWebhook(Snowflake id, {String token = ""}) async {
+  Future<IWebhook> fetchWebhook(Snowflake id, {String token = ""}) async {
     final response =
         await _httpClient._execute(BasicRequest._new("/webhooks/$id/$token"));
 
@@ -1465,7 +1464,7 @@ class _HttpEndpoints implements IHttpEndpoints {
   }
 
   @override
-  Future<Invite> fetchInvite(String code) async {
+  Future<IInvite> fetchInvite(String code) async {
     final response =
         await _httpClient._execute(BasicRequest._new("/invites/$code"));
 
@@ -1500,7 +1499,7 @@ class _HttpEndpoints implements IHttpEndpoints {
   }
 
   @override
-  Future<_HttpResponse> sendRawRequest(
+  Future<HttpResponse> sendRawRequest(
       String url,
       String method,
       {dynamic body,
@@ -1509,7 +1508,7 @@ class _HttpEndpoints implements IHttpEndpoints {
         Map<String, dynamic>? queryParams}
       ) async {
 
-    _HttpResponse response;
+    HttpResponse response;
     if (files.isNotEmpty) {
       response = await _httpClient._execute(MultipartRequest._new(
           url,
@@ -1572,7 +1571,7 @@ class _HttpEndpoints implements IHttpEndpoints {
   }
 
   @override
-  Future<StageChannelInstance> createStageChannelInstance(Snowflake channelId, String topic, {StageChannelInstancePrivacyLevel? privacyLevel}) async {
+  Future<IStageChannelInstance> createStageChannelInstance(Snowflake channelId, String topic, {StageChannelInstancePrivacyLevel? privacyLevel}) async {
     final body = {
       "topic": topic,
       "channel_id": channelId.toString(),
@@ -1613,7 +1612,7 @@ class _HttpEndpoints implements IHttpEndpoints {
   }
 
   @override
-  Future<StageChannelInstance> updateStageChannelInstance(Snowflake channelId, String topic, {StageChannelInstancePrivacyLevel? privacyLevel}) async {
+  Future<IStageChannelInstance> updateStageChannelInstance(Snowflake channelId, String topic, {StageChannelInstancePrivacyLevel? privacyLevel}) async {
     final body = {
       "topic": topic,
       if (privacyLevel != null) "privacy_level": privacyLevel.value
@@ -1760,7 +1759,7 @@ class _HttpEndpoints implements IHttpEndpoints {
   Future<GuildSticker> createGuildSticker(Snowflake guildId, StickerBuilder builder) async {
     final response = await _httpClient._execute(MultipartRequest._new(
       "/guilds/$guildId/stickers",
-      [builder._multipartFile],
+      [builder.file.getMultipartFile()],
       fields: builder.build(),
       method: "POST"
     ));

@@ -94,13 +94,13 @@ class ChannelCachePolicy extends CachePolicy<IChannel> {
   static final CachePolicy<IChannel> all = ChannelCachePolicy((channel) => true);
 
   /// Cache only voice channels
-  static final CachePolicy<IChannel> voice = ChannelCachePolicy((channel) => channel is VoiceGuildChannel);
+  static final CachePolicy<IChannel> voice = ChannelCachePolicy((channel) => channel is IVoiceGuildChannel);
 
   /// Cache only text channels
-  static final CachePolicy<IChannel> text = ChannelCachePolicy((channel) => channel is MinimalTextChannel);
+  static final CachePolicy<IChannel> text = ChannelCachePolicy((channel) => channel is ITextChannel);
 
   /// Cache only thread channels
-  static final CachePolicy<IChannel> thread = ChannelCachePolicy((channel) => channel is ThreadChannel);
+  static final CachePolicy<IChannel> thread = ChannelCachePolicy((channel) => channel is IThreadChannel);
 
   /// Default policy is [all]
   static final CachePolicy<IChannel> def = all;

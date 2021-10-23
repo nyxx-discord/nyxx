@@ -1,7 +1,36 @@
-part of nyxx;
+import 'package:nyxx/src/Nyxx.dart';
+import 'package:nyxx/src/core/Snowflake.dart';
+import 'package:nyxx/src/core/SnowflakeEntity.dart';
+import 'package:nyxx/src/core/guild/Guild.dart';
+import 'package:nyxx/src/core/user/User.dart';
+import 'package:nyxx/src/internal/cache/Cacheable.dart';
+import 'package:nyxx/src/utils/IEnum.dart';
+import 'package:nyxx/src/typedefs.dart';
+import 'package:nyxx/src/utils/builders/StickerBuilder.dart';
 
 /// Base interface for all sticker types
-abstract class ISticker extends SnowflakeEntity {
+abstract class ISticker implements SnowflakeEntity {
+  /// Reference to client
+  INyxx get client;
+
+  /// Name of the sticker
+  String get name;
+
+  /// Description of the sticker
+  String? get description;
+
+  /// Type of sticker
+  StickerType get type;
+
+  /// Format of sticker
+  StickerFormat get format;
+
+  /// Url for sticker image
+  String get stickerURL;
+}
+
+/// Base class for all sticker types
+abstract class Sticker extends SnowflakeEntity implements ISticker {
   /// Reference to client
   final INyxx client;
 
@@ -17,15 +46,18 @@ abstract class ISticker extends SnowflakeEntity {
   /// Format of sticker
   StickerFormat get format;
 
-  ISticker._new(RawApiMap raw, this.client) : super(Snowflake(raw["id"]));
-
   /// Url for sticker image
   String get stickerURL =>
       this.client.httpEndpoints.stickerUrl(this.id, format.getExtension());
+
+  /// Creates an instance of [Sticker]
+  Sticker(RawApiMap raw, this.client) : super(Snowflake(raw["id"]));
 }
 
+abstract class IPartialSticker implements ISticker {}
+
 /// Partial sticker for message object
-class PartialSticker extends ISticker {
+class PartialSticker extends Sticker implements IPartialSticker {
   /// Name of sticker
   @override
   late final String name;
@@ -42,12 +74,33 @@ class PartialSticker extends ISticker {
   @override
   StickerType get type => StickerType.partial;
 
-  PartialSticker._new(RawApiMap raw, INyxx client) : super._new(raw, client);
+  /// Creates an instance of [PartialSticker]
+  PartialSticker(RawApiMap raw, INyxx client) : super(raw, client);
+}
+
+abstract class IGuildSticker implements ISticker {
+  /// The Discord name of a unicode emoji representing the sticker's expression.
+  String get tags;
+
+  /// Whether this guild sticker can be used, may be false due to loss of Server Boosts
+  bool? get available;
+
+  /// Guild that owns this sticker
+  Cacheable<Snowflake, IGuild> get guild;
+
+  /// User that uploaded the guild sticker
+  IUser? get user;
+
+  /// Edits current sticker
+  Future<IGuildSticker> edit(StickerBuilder builder);
+
+  /// Removed current sticker
+  Future<void> delete();
 }
 
 /// Sticker that is available through guild and nitro users that joined that guild
 /// have access to them.
-class GuildSticker extends ISticker {
+class GuildSticker extends Sticker implements IGuildSticker {
   @override
   late final String name;
 
@@ -67,12 +120,13 @@ class GuildSticker extends ISticker {
   late final bool? available;
 
   /// Guild that owns this sticker
-  late final Cacheable<Snowflake, Guild> guild;
+  late final Cacheable<Snowflake, IGuild> guild;
 
   /// User that uploaded the guild sticker
-  late final User? user;
+  late final IUser? user;
 
-  GuildSticker._new(RawApiMap raw, INyxx client) : super._new(raw, client) {
+  /// Create an instance of [GuildSticker]
+  GuildSticker(RawApiMap raw, INyxx client) : super(raw, client) {
     this.name = raw["name"] as String;
     this.description = raw["description"] as String?;
     this.format = StickerFormat.from(raw["format_type"] as int);
@@ -80,16 +134,16 @@ class GuildSticker extends ISticker {
 
     this.tags = raw["tags"] as String;
     this.available = raw["available"] as bool?;
-    this.guild = _GuildCacheable(client, Snowflake(raw["guild_id"]));
+    this.guild = GuildCacheable(client, Snowflake(raw["guild_id"]));
     if (raw["user"] != null) {
-      this.user = User._new(client, raw["user"] as RawApiMap);
+      this.user = User(client, raw["user"] as RawApiMap);
     } else {
       this.user = null;
     }
   }
 
   /// Edits current sticker
-  Future<GuildSticker> edit(StickerBuilder builder) =>
+  Future<IGuildSticker> edit(StickerBuilder builder) =>
       client.httpEndpoints.editGuildSticker(this.guild.id, this.id, builder);
 
   /// Removed current sticker
@@ -97,8 +151,20 @@ class GuildSticker extends ISticker {
       client.httpEndpoints.deleteGuildSticker(this.guild.id, this.id);
 }
 
+abstract class IStandardSticker implements ISticker {
+  /// Id of the pack the sticker is from
+  Snowflake get packId;
+
+  /// Comma-separated list of tags for the sticker.
+  /// Available in list form: [tagsList].
+  String? get tags;
+
+  /// [StandardSticker] tags in list form
+  Iterable<String> get tagsList;
+}
+
 /// Animated (or not) image like emoji
-class StandardSticker extends ISticker {
+class StandardSticker extends Sticker implements IStandardSticker {
   @override
   late final String name;
 
@@ -121,7 +187,8 @@ class StandardSticker extends ISticker {
   /// [StandardSticker] tags in list form
   Iterable<String> get tagsList => tags!.split(", ").map((e) => e.trim());
 
-  StandardSticker._new(RawApiMap raw, INyxx client) : super._new(raw, client) {
+  /// Creates an instance of [StandardSticker]
+  StandardSticker(RawApiMap raw, INyxx client) : super(raw, client) {
     this.name = raw["name"] as String;
     this.description = raw["description"] as String;
     this.format = StickerFormat.from(raw["format_type"] as int);
@@ -132,8 +199,28 @@ class StandardSticker extends ISticker {
   }
 }
 
+abstract class IStickerPack implements SnowflakeEntity {
+  /// The stickers in the pack
+  List<StandardSticker> get stickers;
+
+  /// Name of the sticker pack
+  String get name;
+
+  /// Id of the pack's SKU
+  Snowflake get skuId;
+
+  /// Id of a sticker in the pack which is shown as the pack's icon
+  Snowflake get coverStickerId;
+
+  /// Description of the sticker pack
+  String get description;
+
+  /// Id of the sticker pack's banner image
+  Snowflake get bannerAssetId;
+}
+
 /// Represents a pack of standard stickers.
-class StickerPack extends SnowflakeEntity {
+class StickerPack extends SnowflakeEntity implements IStickerPack {
   /// The stickers in the pack
   late final List<StandardSticker> stickers;
 
@@ -152,10 +239,11 @@ class StickerPack extends SnowflakeEntity {
   /// Id of the sticker pack's banner image
   late final Snowflake bannerAssetId;
 
-  StickerPack._new(RawApiMap raw, INyxx client) : super(Snowflake(raw["id"])) {
+  /// Creates an instance of [StickerPack]
+  StickerPack(RawApiMap raw, INyxx client) : super(Snowflake(raw["id"])) {
     this.stickers = [
       for (final rawSticker in raw["stickers"])
-        StandardSticker._new(rawSticker as RawApiMap, client)
+        StandardSticker(rawSticker as RawApiMap, client)
     ];
     this.name = raw["name"] as String;
     this.skuId = Snowflake(raw["sku_id"]);

@@ -38,20 +38,18 @@ class ThreadBuilder extends Builder {
 
 /// Simplifies the process of setting an auto archive time.
 class ThreadArchiveTime extends IEnum<int> {
-  const ThreadArchiveTime._new(int value) : super(value);
+  /// Creates an instane of [ThreadArchiveTime]
+  const ThreadArchiveTime(int value) : super(value);
 
   /// Archive after an hour
-  static const ThreadArchiveTime hour = ThreadArchiveTime._new(60);
+  static const ThreadArchiveTime hour = ThreadArchiveTime(60);
 
   /// Archive after an day
-  static const ThreadArchiveTime day = ThreadArchiveTime._new(1440);
+  static const ThreadArchiveTime day = ThreadArchiveTime(1440);
 
   /// Archive after 3 days
-  static const ThreadArchiveTime threeDays = ThreadArchiveTime._new(4320);
+  static const ThreadArchiveTime threeDays = ThreadArchiveTime(4320);
 
   /// Archive after an week
-  static const ThreadArchiveTime week = ThreadArchiveTime._new(10080);
-
-  @override
-  String toString() => _value.toString();
+  static const ThreadArchiveTime week = ThreadArchiveTime(10080);
 }

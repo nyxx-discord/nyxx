@@ -2,82 +2,114 @@ part of nyxx;
 
 // TODO: Decide what about guild store channels
 /// Sent when a channel is created.
-class ChannelCreateEvent {
+class ChannelCreateEvent implements IChannelCreateEvent {
   /// The channel that was created, either a [GuildChannel] or [DMChannel]
   late final IChannel channel;
 
-  ChannelCreateEvent._new(RawApiMap raw, Nyxx client) {
-    this.channel = IChannel._deserialize(client, raw["d"] as RawApiMap);
+  /// Creates an instance of [ChannelCreateEvent]
+  ChannelCreateEvent(RawApiMap raw, INyxx client) {
+    this.channel = Channel.deserialize(client, raw["d"] as RawApiMap);
 
-    if (client._cacheOptions.channelCachePolicyLocation.event && client._cacheOptions.channelCachePolicy.canCache(this.channel)) {
+    if (client.cacheOptions.channelCachePolicyLocation.event && client.cacheOptions.channelCachePolicy.canCache(this.channel)) {
       client.channels[this.channel.id] = this.channel;
     }
   }
 }
 
 /// Sent when a channel is deleted.
-class ChannelDeleteEvent {
+abstract class IChannelDeleteEvent {
+  /// The channel that was deleted.
+  IChannel get channel;
+}
+
+/// Sent when a channel is deleted.
+class ChannelDeleteEvent implements IChannelDeleteEvent {
   /// The channel that was deleted.
   late final IChannel channel;
 
-  ChannelDeleteEvent._new(RawApiMap raw, Nyxx client) {
-    this.channel = IChannel._deserialize(client, raw["d"] as RawApiMap);
+  /// Creates an instance of [ChannelDeleteEvent]
+  ChannelDeleteEvent(RawApiMap raw, INyxx client) {
+    this.channel = Channel.deserialize(client, raw["d"] as RawApiMap);
 
     client.channels.remove(this.channel.id);
   }
 }
 
-/// Fired when channel"s pinned messages are updated
-class ChannelPinsUpdateEvent {
+abstract class IChannelPinsUpdateEvent {
   /// Channel where pins were updated
-  late final CacheableTextChannel<TextChannel> channel;
+  late final CacheableTextChannel<ITextChannel> channel;
 
   /// ID of channel pins were updated
-  late final Cacheable<Snowflake, Guild>? guild;
+  late final Cacheable<Snowflake, IGuild>? guild;
+
+  /// the time at which the most recent pinned message was pinned
+  late final DateTime? lastPingTimestamp;
+}
+
+/// Fired when channel"s pinned messages are updated
+class ChannelPinsUpdateEvent implements IChannelPinsUpdateEvent {
+  /// Channel where pins were updated
+  late final CacheableTextChannel<ITextChannel> channel;
+
+  /// ID of channel pins were updated
+  late final Cacheable<Snowflake, IGuild>? guild;
 
   /// the time at which the most recent pinned message was pinned
   late final DateTime? lastPingTimestamp;
 
-  ChannelPinsUpdateEvent._new(RawApiMap raw, Nyxx client) {
+  /// Creates na instance of [ChannelPinsUpdateEvent]
+  ChannelPinsUpdateEvent(RawApiMap raw, INyxx client) {
     if (raw["d"]["last_pin_timestamp"] != null) {
       this.lastPingTimestamp = DateTime.parse(raw["d"]["last_pin_timestamp"] as String);
     }
 
-    this.channel = CacheableTextChannel<TextChannel>._new(client, Snowflake(raw["d"]["channel_id"]));
+    this.channel = CacheableTextChannel<ITextChannel>(client, Snowflake(raw["d"]["channel_id"]));
 
     if (raw["d"]["guild_id"] != null) {
-      this.guild = _GuildCacheable(client, Snowflake(raw["d"]["guild_id"]));
+      this.guild = GuildCacheable(client, Snowflake(raw["d"]["guild_id"]));
     } else {
       this.guild = null;
     }
   }
 }
 
+abstract class IChannelUpdateEvent {
+  /// The channel after the update.
+  IChannel get updatedChannel;
+}
+
 /// Sent when a channel is updated.
-class ChannelUpdateEvent {
+class ChannelUpdateEvent implements IChannelUpdateEvent {
   /// The channel after the update.
   late final IChannel updatedChannel;
 
-  ChannelUpdateEvent._new(RawApiMap raw, Nyxx client) {
-    this.updatedChannel = IChannel._deserialize(client, raw["d"] as RawApiMap);
+  /// Creates na instance of [ChannelUpdateEvent]
+  ChannelUpdateEvent(RawApiMap raw, INyxx client) {
+    this.updatedChannel = Channel.deserialize(client, raw["d"] as RawApiMap);
 
     final oldChannel = client.channels[this.updatedChannel.id];
 
     // Move messages to new channel
-    if (this.updatedChannel is TextChannel && oldChannel is TextChannel) {
-      (this.updatedChannel as TextChannel).messageCache.addMap(oldChannel.messageCache.asMap);
+    if (this.updatedChannel is ITextChannel && oldChannel is ITextChannel) {
+      (this.updatedChannel as ITextChannel).messageCache.addAll(oldChannel.messageCache);
     }
 
     client.channels[this.updatedChannel.id] = updatedChannel;
   }
 }
 
-/// Event for actions related to stage channels
-class StageInstanceEvent {
-  /// [StageChannelInstance] related to event
-  late final StageChannelInstance stageChannelInstance;
+abstract class IStageInstanceEvent {
+  /// [IStageChannelInstance] related to event
+  IStageChannelInstance get stageChannelInstance;
+}
 
-  StageInstanceEvent._new(INyxx client, RawApiMap raw) {
-    this.stageChannelInstance = StageChannelInstance._new(client, raw);
+/// Event for actions related to stage channels
+class StageInstanceEvent implements IStageInstanceEvent {
+  /// [IStageChannelInstance] related to event
+  late final IStageChannelInstance stageChannelInstance;
+
+  /// Creates na instance of [StageInstanceEvent]
+  StageInstanceEvent(INyxx client, RawApiMap raw) {
+    this.stageChannelInstance = StageChannelInstance(client, raw);
   }
 }

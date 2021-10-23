@@ -1,7 +1,23 @@
-part of nyxx;
+import 'package:nyxx/src/internal/interfaces/Convertable.dart';
+import 'package:nyxx/src/typedefs.dart';
+import 'package:nyxx/src/utils/builders/EmbedAuthorBuilder.dart';
+
+abstract class IEmbedAuthor implements Convertable<EmbedAuthorBuilder> {
+  /// Name of embed author
+  String? get name;
+
+  /// Url to embed author
+  String? get url;
+
+  /// Url to author's url
+  String? get iconUrl;
+
+  /// Proxied icon url
+  String? get iconProxyUrl;
+}
 
 /// Author of embed. Can contain null elements.
-class EmbedAuthor implements Convertable<EmbedAuthorBuilder> {
+class EmbedAuthor implements IEmbedAuthor {
   /// Name of embed author
   String? name;
 
@@ -14,7 +30,8 @@ class EmbedAuthor implements Convertable<EmbedAuthorBuilder> {
   /// Proxied icon url
   String? iconProxyUrl;
 
-  EmbedAuthor._new(RawApiMap raw) {
+  /// Creates an instance of [EmbedAuthor]
+  EmbedAuthor(RawApiMap raw) {
     this.name = raw["name"] as String?;
     this.url = raw["url"] as String?;
     this.iconUrl = raw["icon_url"] as String?;

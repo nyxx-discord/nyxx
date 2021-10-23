@@ -1,36 +1,64 @@
-part of nyxx;
+import 'package:nyxx/src/Nyxx.dart';
+import 'package:nyxx/src/core/Snowflake.dart';
+import 'package:nyxx/src/core/SnowflakeEntity.dart';
+import 'package:nyxx/src/core/audit_logs/AuditLogChange.dart';
+import 'package:nyxx/src/core/user/User.dart';
+import 'package:nyxx/src/internal/cache/Cacheable.dart';
+import 'package:nyxx/src/utils/IEnum.dart';
+import 'package:nyxx/src/typedefs.dart';
+
+abstract class IAuditLogEntry implements SnowflakeEntity{
+  /// Id of the affected entity (webhook, user, role, etc.)
+  String get targetId;
+
+  /// Changes made to the target_id
+  List<IAuditLogChange> get changes;
+
+  /// The user who made the changes
+  Cacheable<Snowflake, IUser> get user;
+
+  /// Type of action that occurred
+  AuditLogEntryType get type;
+
+  /// Additional info for certain action types
+  String? get options;
+
+  /// The reason for the change
+  String? get reason;
+}
 
 /// Single entry of Audit Log
 ///
 /// /// [Look here for more](https://discordapp.com/developers/docs/resources/audit-log)
-class AuditLogEntry extends SnowflakeEntity {
+class AuditLogEntry extends SnowflakeEntity implements IAuditLogEntry {
   /// Id of the affected entity (webhook, user, role, etc.)
   late final String targetId;
 
   /// Changes made to the target_id
-  late final List<AuditLogChange> changes;
+  late final List<IAuditLogChange> changes;
 
   /// The user who made the changes
-  late final Cacheable<Snowflake, User> user;
+  late final Cacheable<Snowflake, IUser> user;
 
   /// Type of action that occurred
   late final AuditLogEntryType type;
 
   /// Additional info for certain action types
-  String? options;
+  late final String? options;
 
   /// The reason for the change
-  String? reason;
+  late final String? reason;
 
-  AuditLogEntry._new(RawApiMap raw, INyxx client) : super(Snowflake(raw["id"] as String)) {
+  /// Creates na instance of [AuditLogEntry]
+  AuditLogEntry(RawApiMap raw, INyxx client) : super(Snowflake(raw["id"] as String)) {
     this.targetId = raw["targetId"] as String;
 
     this.changes = [
       if (raw["changes"] != null)
-        for (var o in raw["changes"]) AuditLogChange._new(o as RawApiMap)
+        for (var o in raw["changes"]) AuditLogChange(o as RawApiMap)
     ];
 
-    this.user = _UserCacheable(client, Snowflake(raw["user_id"]));
+    this.user = UserCacheable(client, Snowflake(raw["user_id"]));
     this.type = AuditLogEntryType._create(raw["action_type"] as int);
 
     if (raw["options"] != null) {
@@ -80,7 +108,7 @@ class AuditLogEntryType extends IEnum<int> {
   @override
   bool operator ==(dynamic other) {
     if (other is int) {
-      return other == this._value;
+      return other == this.value;
     }
 
     return super == other;

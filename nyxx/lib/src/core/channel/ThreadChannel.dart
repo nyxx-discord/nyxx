@@ -6,7 +6,7 @@ class ThreadMember extends SnowflakeEntity {
   INyxx client;
 
   /// Reference to [ThreadChannel]
-  late final CacheableTextChannel<ThreadChannel> thread;
+  late final ICacheableTextChannel<IThreadChannel> thread;
 
   /// When member joined thread
   late final DateTime joinTimestamp;
@@ -15,26 +15,62 @@ class ThreadMember extends SnowflakeEntity {
   late final int flags;
 
   /// [ThreadMember]s [Guild]
-  final Cacheable<Snowflake, Guild> guild;
+  final Cacheable<Snowflake, IGuild> guild;
 
   /// [Cacheable] of [User]
-  Cacheable<Snowflake, User> get user => _UserCacheable(this.client, this.id);
+  Cacheable<Snowflake, IUser> get user => UserCacheable(this.client, this.id);
 
   /// [Cacheable] of [Member]
-  Cacheable<Snowflake, Member> get member => _MemberCacheable(this.client, this.id, this.guild);
+  Cacheable<Snowflake, IMember> get member => MemberCacheable(this.client, this.id, this.guild);
 
-  ThreadMember._new(this.client, RawApiMap raw, this.guild): super(Snowflake(raw["user_id"])) {
-    this.thread = CacheableTextChannel._new(client, Snowflake(raw["id"]));
+  /// Creates an instance of [ThreadMember]
+  ThreadMember(this.client, RawApiMap raw, this.guild): super(Snowflake(raw["user_id"])) {
+    this.thread = CacheableTextChannel(client, Snowflake(raw["id"]));
     this.joinTimestamp = DateTime.parse(raw["join_timestamp"] as String);
     this.flags = raw["flags"] as int;
   }
 }
 
-class ThreadChannel extends MinimalGuildChannel implements TextChannel {
+abstract class IThreadChannel implements MinimalGuildChannel, ITextChannel {
+  /// Owner of the thread
+  Cacheable<Snowflake, IMember> get owner;
+
+  /// Approximate message count
+  int get messageCount;
+
+  /// Approximate member count
+  int get memberCount;
+
+  /// True if thread is archived
+  bool get archived;
+
+  /// Date when thread was archived
+  DateTime get archiveAt;
+
+  /// Time after what thread will be archived
+  ThreadArchiveTime get archiveAfter;
+
+  /// Whether non-moderators can add other non-moderators to a thread; only available on private threads
+  bool get invitable;
+
+  /// Fetches from API current list of member that has access to that thread
+  Stream<IThreadMember> fetchMembers();
+
+  /// Leaves this thread channel
+  Future<void> leaveThread();
+
+  /// Removes [user] from [ThreadChannel]
+  Future<void> removeThreadMember(SnowflakeEntity user);
+
+  /// Adds [user] to [ThreadChannel]
+  Future<void> addThreadMember(SnowflakeEntity user);
+}
+
+class ThreadChannel extends MinimalGuildChannel implements IThreadChannel {
   Timer? _typing;
 
   /// Owner of the thread
-  late final Cacheable<Snowflake, Member> owner;
+  late final Cacheable<Snowflake, IMember> owner;
 
   /// Approximate message count
   late final int messageCount;
@@ -61,10 +97,11 @@ class ThreadChannel extends MinimalGuildChannel implements TextChannel {
   }
 
   @override
-  late final MessageCache messageCache = MessageCache._new(client._options.messageCacheSize);
+  late final MessageCache messageCache = MessageCache(client.options.messageCacheSize);
 
-  ThreadChannel._new(INyxx client, RawApiMap raw, [Snowflake? guildId]) : super._new(client, raw) {
-    this.owner = new _MemberCacheable(client, Snowflake(raw["owner_id"]), this.guild);
+  /// Creates an instance of [ThreadChannel]
+  ThreadChannel(INyxx client, RawApiMap raw, [Snowflake? guildId]) : super(client, raw) {
+    this.owner = MemberCacheable(client, Snowflake(raw["owner_id"]), this.guild);
 
     this.messageCount = raw["message_count"] as int;
     this.memberCount = raw["member_count"] as int;
@@ -72,12 +109,12 @@ class ThreadChannel extends MinimalGuildChannel implements TextChannel {
     final meta = raw["thread_metadata"];
     this.archived = meta["archived"] as bool;
     this.archiveAt = DateTime.parse(meta["archive_timestamp"] as String);
-    this.archiveAfter = ThreadArchiveTime._new(meta["auto_archive_duration"] as int);
+    this.archiveAfter = ThreadArchiveTime(meta["auto_archive_duration"] as int);
     this.invitable = raw["invitable"] as bool;
   }
 
   /// Fetches from API current list of member that has access to that thread
-  Stream<ThreadMember> fetchMembers() =>
+  Stream<IThreadMember> fetchMembers() =>
       client.httpEndpoints.getThreadMembers(this.id, this.guild.id);
 
   @override
@@ -85,24 +122,24 @@ class ThreadChannel extends MinimalGuildChannel implements TextChannel {
       client.httpEndpoints.bulkRemoveMessages(this.id, messages);
 
   @override
-  Stream<Message> downloadMessages({int limit = 50, Snowflake? after, Snowflake? around, Snowflake? before}) =>
+  Stream<IMessage> downloadMessages({int limit = 50, Snowflake? after, Snowflake? around, Snowflake? before}) =>
       client.httpEndpoints.downloadMessages(this.id, limit: limit, after: after, around: around, before: before);
 
   @override
-  Future<Message> fetchMessage(Snowflake messageId) async {
+  Future<IMessage> fetchMessage(Snowflake messageId) async {
     final message = await client.httpEndpoints.fetchMessage(this.id, messageId);
 
-    if(client._cacheOptions.messageCachePolicyLocation.http && client._cacheOptions.messageCachePolicy.canCache(message)) {
+    if(client.cacheOptions.messageCachePolicyLocation.http && client.cacheOptions.messageCachePolicy.canCache(message)) {
       this.messageCache.put(message);
     }
 
     return message;
   }
   @override
-  Message? getMessage(Snowflake id) => this.messageCache[id];
+  IMessage? getMessage(Snowflake id) => this.messageCache[id];
 
   @override
-  Future<Message> sendMessage(MessageBuilder builder) =>
+  Future<IMessage> sendMessage(MessageBuilder builder) =>
       client.httpEndpoints.sendMessage(this.id, builder);
 
   @override
@@ -130,6 +167,6 @@ class ThreadChannel extends MinimalGuildChannel implements TextChannel {
       client.httpEndpoints.addThreadMember(this.id, user.id);
 
   @override
-  Stream<Message> fetchPinnedMessages() =>
+  Stream<IMessage> fetchPinnedMessages() =>
       client.httpEndpoints.fetchPinnedMessages(this.id);
 }

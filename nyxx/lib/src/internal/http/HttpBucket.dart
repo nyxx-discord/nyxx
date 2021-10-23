@@ -24,8 +24,8 @@ class _HttpBucket {
       final waitTime = resetAt!.millisecondsSinceEpoch - now.millisecondsSinceEpoch;
 
       if (waitTime > 0) {
-        _httpHandler._client._onRateLimited.add(RatelimitEvent._new(request, true));
-        _httpHandler._logger.warning(
+        _httpHandler.client.eventsRest.onRateLimitedController.add(RatelimitEvent(request, true));
+        _httpHandler.logger.warning(
             "Rate limited internally on endpoint: ${request.uri}. Trying to send request again in $waitTime ms...");
 
         return Future.delayed(Duration(milliseconds: waitTime), () => _execute(request));
@@ -51,8 +51,8 @@ class _HttpBucket {
         final responseBody = jsonDecode(await response.stream.bytesToString());
         final retryAfter = ((responseBody["retry_after"] as double) * 1000).round();
 
-        _httpHandler._client._onRateLimited.add(RatelimitEvent._new(request, false, response));
-        _httpHandler._logger.warning(
+        _httpHandler.client.eventsRest.onRateLimitedController.add(RatelimitEvent(request, false, response));
+        _httpHandler.logger.warning(
             "Rate limited via 429 on endpoint: ${request.uri}. Trying to send request again in $retryAfter ms...");
 
         return Future.delayed(Duration(milliseconds: retryAfter), () => _execute(request));

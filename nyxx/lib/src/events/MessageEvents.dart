@@ -1,54 +1,84 @@
 part of nyxx;
 
 /// Sent when a new message is received.
-class MessageReceivedEvent {
+class MessageReceivedEvent implements IMessageReceivedEvent {
   /// The new message.
-  late final Message message;
+  late final IMessage message;
 
-  MessageReceivedEvent._new(RawApiMap raw, Nyxx client) {
-    this.message = Message._deserialize(client, raw["d"] as RawApiMap);
+  /// Creates an instance of [MessageReceivedEvent]
+  MessageReceivedEvent(RawApiMap raw, INyxx client) {
+    this.message = Message(client, raw["d"] as RawApiMap);
 
-    if(client._cacheOptions.messageCachePolicyLocation.event && client._cacheOptions.messageCachePolicy.canCache(this.message)) {
-      message.channel.getFromCache()?.messageCache.put(this.message);
+    if(client.cacheOptions.messageCachePolicyLocation.event && client.cacheOptions.messageCachePolicy.canCache(this.message)) {
+      message.channel.getFromCache()?.messageCache[this.message.id] = this.message;
     }
   }
 }
 
-/// Sent when a message is deleted.
-class MessageDeleteEvent {
+abstract class IMessageDeleteEvent {
   /// The message, if cached.
-  late final Message? message;
+  IMessage? get message;
+
+  /// The ID of the message.
+  Snowflake get messageId;
+
+  /// Channel where message was deleted
+  CacheableTextChannel<ITextChannel> get channel;
+}
+
+/// Sent when a message is deleted.
+class MessageDeleteEvent implements IMessageDeleteEvent {
+  /// The message, if cached.
+  late final IMessage? message;
 
   /// The ID of the message.
   late final Snowflake messageId;
 
   /// Channel where message was deleted
-  late final CacheableTextChannel<TextChannel> channel;
+  late final CacheableTextChannel<ITextChannel> channel;
 
-  MessageDeleteEvent._new(RawApiMap raw, Nyxx client) {
-    this.channel = CacheableTextChannel<TextChannel>._new(client, Snowflake(raw["d"]["channel_id"]));
+  /// Creates na instance of [MessageDeleteEvent]
+  MessageDeleteEvent(RawApiMap raw, INyxx client) {
+    this.channel = CacheableTextChannel<ITextChannel>(client, Snowflake(raw["d"]["channel_id"]));
     this.messageId = Snowflake(raw["d"]["id"]);
 
     this.message = channel.getFromCache()?.messageCache[this.messageId];
   }
 }
 
+abstract class IMessageDeleteBulkEvent {
+  /// List of deleted messages ids
+  Iterable<Snowflake> get deletedMessagesIds;
+
+  /// Channel on which messages were deleted.
+  CacheableTextChannel<ITextChannel> get channel;
+
+  /// Id of guild where event occurred
+  Cacheable<Snowflake, IGuild>? get guild;
+
+  /// Searches cache for deleted messages and returns those which are present in bots cache.
+  /// Will return empty collection if cannot obtain channel instance from cache.
+  /// It is not guaranteed that returned collection will have all deleted messages.
+  Iterable<IMessage> getDeletedMessages();
+}
+
 /// Emitted when multiple messages are deleted at once.
-class MessageDeleteBulkEvent {
+class MessageDeleteBulkEvent implements IMessageDeleteBulkEvent {
   /// List of deleted messages ids
   late final Iterable<Snowflake> deletedMessagesIds;
 
   /// Channel on which messages were deleted.
-  late final CacheableTextChannel<TextChannel> channel;
+  late final CacheableTextChannel<ITextChannel> channel;
 
   /// Id of guild where event occurred
-  late final Cacheable<Snowflake, Guild>? guild;
+  late final Cacheable<Snowflake, IGuild>? guild;
 
-  MessageDeleteBulkEvent._new(RawApiMap json, Nyxx client) {
-    this.channel = CacheableTextChannel<TextChannel>._new(client, Snowflake(json["d"]["channel_id"]));
+  /// Creates an instance of [MessageDeleteBulkEvent]
+  MessageDeleteBulkEvent(RawApiMap json, INyxx client) {
+    this.channel = CacheableTextChannel<ITextChannel>(client, Snowflake(json["d"]["channel_id"]));
 
     if (json["d"]["guild_id"] != null) {
-      this.guild = _GuildCacheable(client, Snowflake(json["d"]["guild_id"]));
+      this.guild = GuildCacheable(client, Snowflake(json["d"]["guild_id"]));
     } else {
       this.guild = null;
     }
@@ -59,44 +89,69 @@ class MessageDeleteBulkEvent {
   /// Searches cache for deleted messages and returns those which are present in bots cache.
   /// Will return empty collection if cannot obtain channel instance from cache.
   /// It is not guaranteed that returned collection will have all deleted messages.
-  Iterable<Message> getDeletedMessages() {
+  Iterable<IMessage> getDeletedMessages() {
     final channelInstance = this.channel.getFromCache();
 
     if (channelInstance == null) {
       return [];
     }
 
-    return channelInstance.messageCache.find((item) => this.deletedMessagesIds.contains(item.id));
+    return channelInstance.messageCache.values.where((item) => this.deletedMessagesIds.contains(item.id));
   }
 }
 
-/// Emitted when reaction is added or removed from message
-abstract class MessageReactionEvent {
+abstract class IMessageReactionEvent {
   /// Reference to user who is behind event
-  late final Cacheable<Snowflake, User> user;
+  Cacheable<Snowflake, IUser> get user;
 
   /// Channel on which event was fired
-  late final CacheableTextChannel<TextChannel> channel;
+  CacheableTextChannel<ITextChannel> get channel;
 
   // TODO: Probably not working
   /// Reference to guild if event happened in guild
-  late final Cacheable<Snowflake, Guild> guild;
+  Cacheable<Snowflake, IGuild> get guild;
 
   /// Message reference
-  late final Message? message;
+  late final IMessage? message;
 
   /// Id of message
   late final Snowflake messageId;
 
   /// The member who reacted if this happened in a guild
-  late final Member member;
+  late final IMember member;
+
+  /// Emoji object.
+  late final IEmoji emoji;
+}
+
+/// Emitted when reaction is added or removed from message
+abstract class MessageReactionEvent {
+  /// Reference to user who is behind event
+  late final Cacheable<Snowflake, IUser> user;
+
+  /// Channel on which event was fired
+  late final CacheableTextChannel<ITextChannel> channel;
+
+  // TODO: Probably not working
+  /// Reference to guild if event happened in guild
+  late final Cacheable<Snowflake, IGuild> guild;
+
+  /// Message reference
+  late final IMessage? message;
+
+  /// Id of message
+  late final Snowflake messageId;
+
+  /// The member who reacted if this happened in a guild
+  late final IMember member;
 
   /// Emoji object.
   late final IEmoji emoji;
 
-  MessageReactionEvent._new(RawApiMap json, Nyxx client) {
-    this.user = _UserCacheable(client, Snowflake(json["d"]["user_id"]));
-    this.channel = CacheableTextChannel<TextChannel>._new(client, Snowflake(json["d"]["channel_id"]));
+  /// Creates na instance of [MessageReactionEvent]
+  MessageReactionEvent(RawApiMap json, INyxx client) {
+    this.user = UserCacheable(client, Snowflake(json["d"]["user_id"]));
+    this.channel = CacheableTextChannel<ITextChannel>(client, Snowflake(json["d"]["channel_id"]));
 
     this.messageId = Snowflake(json["d"]["message_id"]);
 
@@ -110,31 +165,41 @@ abstract class MessageReactionEvent {
     if (json["d"]["emoji"]["id"] == null) {
       this.emoji = UnicodeEmoji(json["d"]["emoji"]["name"] as String);
     } else {
-      this.emoji = GuildEmojiPartial._new(json["d"]["emoji"] as RawApiMap);
+      this.emoji = GuildEmojiPartial(Snowflake(json["d"]["emoji"]['id']));
     }
   }
 }
 
+abstract class IMessageReactionAddedEvent implements IMessageReactionEvent {
+
+}
+
 /// Emitted when reaction is add to message
-class MessageReactionAddedEvent extends MessageReactionEvent {
-  MessageReactionAddedEvent._new(RawApiMap json, Nyxx client) : super._new(json, client) {
-    if (message == null) {
+class MessageReactionAddedEvent extends MessageReactionEvent implements IMessageReactionAddedEvent {
+  /// Creates na instance of [MessageReactionAddedEvent]
+  MessageReactionAddedEvent(RawApiMap raw, INyxx client) : super(raw, client) {
+    if (this.message == null) {
       return;
     }
 
     final r = message!.reactions.indexWhere((r) => r.emoji == emoji);
 
     if (r == -1) {
-      message!.reactions.add(Reaction._event(emoji, user == client.self));
+      message!.reactions.add(Reaction.event(emoji, user == (client as NyxxWebsocket).self));
     } else {
-      message!.reactions[r].count++;
+      (message!.reactions[r] as Reaction).count++;
     }
   }
 }
 
+abstract class IMessageReactionRemovedEvent implements IMessageReactionEvent {
+
+}
+
 /// Emitted when reaction is removed from message
-class MessageReactionRemovedEvent extends MessageReactionEvent {
-  MessageReactionRemovedEvent._new(RawApiMap json, Nyxx client) : super._new(json, client) {
+class MessageReactionRemovedEvent extends MessageReactionEvent implements IMessageReactionRemovedEvent {
+  /// Creates na instance of [MessageReactionRemovedEvent]
+  MessageReactionRemovedEvent(RawApiMap json, INyxx client) : super(json, client) {
     if (message == null) {
       return;
     }
@@ -145,27 +210,39 @@ class MessageReactionRemovedEvent extends MessageReactionEvent {
       if (message!.reactions[r].count == 1) {
         message!.reactions.removeAt(r);
       } else {
-        message!.reactions[r].count--;
+        (message!.reactions[r] as Reaction).count--;
       }
     }
   }
 }
 
-/// Emitted when all reaction are removed
-class MessageReactionsRemovedEvent {
+abstract class IMessageReactionsRemovedEvent {
   /// Channel on which event was fired
-  late CacheableTextChannel<TextChannel> channel;
+  CacheableTextChannel<ITextChannel> get channel;
 
   /// Message reference
-  late final Cacheable<Snowflake, Message> message;
+  Cacheable<Snowflake, IMessage> get message;
 
   /// Guild where event occurs
-  late final Cacheable<Snowflake, Guild>? guild;
+  Cacheable<Snowflake, IGuild>? get guild;
+}
 
-  MessageReactionsRemovedEvent._new(RawApiMap json, Nyxx client) {
-    this.channel = CacheableTextChannel<TextChannel>._new(client, Snowflake(json["d"]["channel_id"]));
-    this.guild = _GuildCacheable(client, Snowflake(json["d"]["guild_id"]));
-    this.message = _MessageCacheable(client, Snowflake(json["d"]["message_id"]), channel);
+/// Emitted when all reaction are removed
+class MessageReactionsRemovedEvent implements IMessageReactionsRemovedEvent {
+  /// Channel on which event was fired
+  late final CacheableTextChannel<ITextChannel> channel;
+
+  /// Message reference
+  late final Cacheable<Snowflake, IMessage> message;
+
+  /// Guild where event occurs
+  late final Cacheable<Snowflake, IGuild>? guild;
+
+  /// Creates na instance of [MessageReactionsRemovedEvent]
+  MessageReactionsRemovedEvent(RawApiMap json, INyxx client) {
+    this.channel = CacheableTextChannel<ITextChannel>(client, Snowflake(json["d"]["channel_id"]));
+    this.guild = GuildCacheable(client, Snowflake(json["d"]["guild_id"]));
+    this.message = MessageCacheable(client, Snowflake(json["d"]["message_id"]), channel);
 
     final messageInstance = this.message.getFromCache();
     if (messageInstance != null) {
@@ -174,29 +251,44 @@ class MessageReactionsRemovedEvent {
   }
 }
 
-/// Emitted when reactions of certain emoji are deleted
-class MessageReactionRemoveEmojiEvent {
+abstract class IMessageReactionRemoveEmojiEvent {
   /// Channel on which event was fired
-  late final CacheableTextChannel<TextChannel> channel;
+  CacheableTextChannel<ITextChannel> get channel;
 
   /// Message reference
-  late final Cacheable<Snowflake, Message> message;
+  Cacheable<Snowflake, IMessage> get message;
 
   /// Guild where event occurs
-  late final Cacheable<Snowflake, Guild>? guild;
+  Cacheable<Snowflake, IGuild>? get guild;
+
+  /// Removed emoji
+  IEmoji get emoji;
+}
+
+/// Emitted when reactions of certain emoji are deleted
+class MessageReactionRemoveEmojiEvent implements IMessageReactionRemoveEmojiEvent {
+  /// Channel on which event was fired
+  late final CacheableTextChannel<ITextChannel> channel;
+
+  /// Message reference
+  late final Cacheable<Snowflake, IMessage> message;
+
+  /// Guild where event occurs
+  late final Cacheable<Snowflake, IGuild>? guild;
 
   /// Removed emoji
   late final IEmoji emoji;
 
-  MessageReactionRemoveEmojiEvent._new(RawApiMap json, Nyxx client) {
-    this.channel = CacheableTextChannel<TextChannel>._new(client, Snowflake(json["d"]["channel_id"]));
-    this.guild = _GuildCacheable(client, Snowflake(json["d"]["guild_id"]));
-    this.message = _MessageCacheable(client, Snowflake(json["d"]["message_id"]), channel);
+  /// Creates na instance of [MessageReactionRemoveEmojiEvent]
+  MessageReactionRemoveEmojiEvent(RawApiMap json, INyxx client) {
+    this.channel = CacheableTextChannel<ITextChannel>(client, Snowflake(json["d"]["channel_id"]));
+    this.guild = GuildCacheable(client, Snowflake(json["d"]["guild_id"]));
+    this.message = MessageCacheable(client, Snowflake(json["d"]["message_id"]), channel);
 
     if (json["d"]["emoji"]["id"] == null) {
       this.emoji = UnicodeEmoji(json["d"]["emoji"]["name"] as String);
     } else {
-      this.emoji = GuildEmojiPartial._new(json["d"]["emoji"] as RawApiMap);
+      this.emoji = GuildEmojiPartial(Snowflake(json["d"]["emoji"]['id']));
     }
 
     final messageInstance = this.message.getFromCache();
@@ -206,20 +298,32 @@ class MessageReactionRemoveEmojiEvent {
   }
 }
 
-// TODO: FINISH
-/// Sent when a message is updated.
-class MessageUpdateEvent {
+abstract class IMessageUpdateEvent {
   /// Edited message with updated fields
-  late final Message? updatedMessage;
+  IMessage? get updatedMessage;
 
   /// Id of channel where message was edited
-  late final CacheableTextChannel<TextChannel> channel;
+  CacheableTextChannel<ITextChannel> get channel;
+
+  /// Id of edited message
+  Snowflake get messageId;
+}
+
+// TODO: FINISH
+/// Sent when a message is updated.
+class MessageUpdateEvent implements IMessageUpdateEvent {
+  /// Edited message with updated fields
+  late final IMessage? updatedMessage;
+
+  /// Id of channel where message was edited
+  late final CacheableTextChannel<ITextChannel> channel;
 
   /// Id of edited message
   late final Snowflake messageId;
 
-  MessageUpdateEvent._new(RawApiMap json, Nyxx client) {
-    this.channel = CacheableTextChannel<TextChannel>._new(client, Snowflake(json["d"]["channel_id"]));
+  /// Creates na instance of [MessageUpdateEvent]
+  MessageUpdateEvent(RawApiMap json, INyxx client) {
+    this.channel = CacheableTextChannel<ITextChannel>(client, Snowflake(json["d"]["channel_id"]));
     this.messageId = Snowflake(json["d"]["id"]);
 
     final channelInstance = channel.getFromCache();
@@ -233,12 +337,11 @@ class MessageUpdateEvent {
     }
 
     if (json["d"]["content"] != this.updatedMessage!.content) {
-      this.updatedMessage!.content = json["d"]["content"].toString();
+      (this.updatedMessage! as Message).content = json["d"]["content"].toString();
     }
 
     if (json["d"]["embeds"] != null) {
-      this.updatedMessage!.embeds =
-          (json["d"]["embeds"] as List<dynamic>).map((e) => Embed._new(e as RawApiMap)).toList();
+      (this.updatedMessage! as Message).embeds = (json["d"]["embeds"] as List<dynamic>).map((e) => Embed(e as RawApiMap)).toList();
     }
   }
 }

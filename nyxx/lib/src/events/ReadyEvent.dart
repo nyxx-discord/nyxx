@@ -2,6 +2,7 @@ part of nyxx;
 
 // TODO: ???
 /// Sent when the client is ready.
-class ReadyEvent {
-  ReadyEvent._new(Nyxx client);
+class ReadyEvent implements IReadyEvent {
+  /// Creates na instance of [ReadyEvent]
+  ReadyEvent(INyxx client);
 }

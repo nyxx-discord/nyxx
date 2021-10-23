@@ -2,7 +2,7 @@ part of nyxx;
 
 /// Returns guild  even if the user is not in the guild.
 /// This endpoint is only for Public guilds.
-class GuildPreview extends SnowflakeEntity {
+class GuildPreview extends SnowflakeEntity implements IGuildPreview {
   /// Reference to client
   final INyxx client;
 
@@ -33,7 +33,8 @@ class GuildPreview extends SnowflakeEntity {
   /// The description for the guild
   String? description;
 
-  GuildPreview._new(this.client, RawApiMap raw) : super(Snowflake(raw["id"])) {
+  /// Creates an instance of [GuildPreview]
+  GuildPreview(this.client, RawApiMap raw) : super(Snowflake(raw["id"])) {
     this.name = raw["name"] as String;
 
     if (this.iconHash != null) {

@@ -2,11 +2,12 @@ part of nyxx;
 
 // TODO: ???
 /// Emitted when user was updated
-class UserUpdateEvent {
+class UserUpdateEvent implements IUserUpdateEvent {
   /// User instance after update
   late final User user;
 
-  UserUpdateEvent._new(RawApiMap json, Nyxx client) {
-    this.user = User._new(client, json["d"] as RawApiMap);
+  /// Creates na instance of [UserUpdateEvent]
+  UserUpdateEvent(RawApiMap json, INyxx client) {
+    this.user = User(client, json["d"] as RawApiMap);
   }
 }

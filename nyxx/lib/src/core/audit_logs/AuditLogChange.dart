@@ -1,19 +1,32 @@
-part of nyxx;
+import 'package:nyxx/src/utils/IEnum.dart';
+import 'package:nyxx/src/typedefs.dart';
+
+abstract class IAuditLogChange {
+  /// New value
+  dynamic get newValue;
+
+  /// Old value
+  dynamic get oldValue;
+
+  /// type of audit log change hey
+  ChangeKeyType get key;
+}
 
 /// Represents change made in guild with old and new value
 ///
 /// [Look here for more](https://discordapp.com/developers/docs/resources/audit-log)
-class AuditLogChange {
+class AuditLogChange implements IAuditLogChange {
   /// New value
-  dynamic? newValue;
+  dynamic newValue;
 
   /// Old value
-  dynamic? oldValue;
+  dynamic oldValue;
 
   /// type of audit log change hey
   late final ChangeKeyType key;
 
-  AuditLogChange._new(RawApiMap raw) {
+  /// Creates na instance of [AuditLogChange]
+  AuditLogChange(RawApiMap raw) {
     if (raw["new_value"] != null) {
       newValue = raw["new_value"];
     }
@@ -80,7 +93,7 @@ class ChangeKeyType extends IEnum<String> {
   @override
   bool operator ==(dynamic other) {
     if (other is String) {
-      return other == this._value;
+      return other == this.value;
     }
 
     return super == other;

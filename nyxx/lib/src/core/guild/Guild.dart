@@ -1,4 +1,47 @@
-part of nyxx;
+import 'package:nyxx/src/core/Invite.dart';
+import 'package:nyxx/src/core/Snowflake.dart';
+import 'package:nyxx/src/core/SnowflakeEntity.dart';
+import 'package:nyxx/src/core/audit_logs/AuditLog.dart';
+import 'package:nyxx/src/core/channel/Channel.dart';
+import 'package:nyxx/src/core/channel/CacheableTextChannel.dart';
+import 'package:nyxx/src/core/channel/guild/GuildChannel.dart';
+import 'package:nyxx/src/core/channel/guild/TextGuildChannel.dart';
+import 'package:nyxx/src/core/channel/guild/VoiceChannel.dart';
+import 'package:nyxx/src/core/guild/Ban.dart';
+import 'package:nyxx/src/core/guild/GuildFeature.dart';
+import 'package:nyxx/src/core/guild/GuildNsfwLevel.dart';
+import 'package:nyxx/src/core/guild/GuildPreview.dart';
+import 'package:nyxx/src/core/guild/PremiumTier.dart';
+import 'package:nyxx/src/core/guild/Role.dart';
+import 'package:nyxx/src/core/message/GuildEmoji.dart';
+import 'package:nyxx/src/core/message/Sticker.dart';
+import 'package:nyxx/src/core/permissions/Permissions.dart';
+import 'package:nyxx/src/core/user/Member.dart';
+import 'package:nyxx/src/core/user/User.dart';
+import 'package:nyxx/src/core/voice/VoiceRegion.dart';
+import 'package:nyxx/src/core/voice/VoiceState.dart';
+import 'package:nyxx/src/internal/cache/Cache.dart';
+import 'package:nyxx/src/internal/cache/Cacheable.dart';
+import 'package:nyxx/src/internal/shard/Shard.dart';
+import 'package:nyxx/src/utils/builders/AttachmentBuilder.dart';
+import 'package:nyxx/src/utils/builders/GuildBuilder.dart';
+import 'package:nyxx/src/utils/builders/StickerBuilder.dart';
+import 'package:nyxx/src/Nyxx.dart';
+import 'package:nyxx/src/core/channel/ITextChannel.dart';
+import 'package:nyxx/src/typedefs.dart';
+
+abstract class IGuild implements SnowflakeEntity {
+  /// Reference to [NyxxWebsocket] instance
+  INyxx get client;
+
+  /// The guild's name.
+  String get name;
+
+  /// The guild's icon hash.
+  String? get icon;
+
+  /// Splash hash
+  String? get splash;
 
 class Guild extends SnowflakeEntity {
   /// Reference to [Nyxx] instance
@@ -23,7 +66,7 @@ class Guild extends SnowflakeEntity {
   late final Iterable<GuildFeature> features;
 
   /// The guild's afk channel ID, null if not set.
-  late Cacheable<Snowflake, VoiceGuildChannel>? afkChannel;
+  late Cacheable<Snowflake, IVoiceGuildChannel>? afkChannel;
 
   /// The guild's voice region.
   late String region;
@@ -53,22 +96,23 @@ class Guild extends SnowflakeEntity {
   late final int systemChannelFlags;
 
   /// Channel where "PUBLIC" guilds display rules and/or guidelines
-  late final Cacheable<Snowflake, TextChannel>? rulesChannel;
+  late final Cacheable<Snowflake, ITextChannel>? rulesChannel;
 
   /// The guild owner's ID
-  late final Cacheable<Snowflake, User> owner;
+  late final Cacheable<Snowflake, IUser> owner;
 
   /// The guild's members.
-  late final Cache<Snowflake, Member> members;
+  late final SnowflakeCache<Member> members;
 
   /// The guild's channels.
-  Iterable<GuildChannel> get channels => this.client.channels.find((item) => item is GuildChannel && item.guild.id == this.id).cast();
+  Iterable<IGuildChannel> get channels => this.client.channels.values
+      .where((item) => item is IGuildChannel && item.guild.id == this.id).cast();
 
   /// The guild's roles.
-  late final Cache<Snowflake, Role> roles;
+  late final Map<Snowflake, IRole> roles;
 
   /// Guild custom emojis
-  late final Cache<Snowflake, IGuildEmoji> emojis;
+  late final Map<Snowflake, BaseGuildEmoji> emojis;
 
   /// Boost level of guild
   late final PremiumTier premiumTier;
@@ -82,39 +126,39 @@ class Guild extends SnowflakeEntity {
 
   /// the id of the channel where admins and moderators
   /// of "PUBLIC" guilds receive notices from Discord
-  late final CacheableTextChannel<TextChannel>? publicUpdatesChannel;
+  late final CacheableTextChannel<ITextChannel>? publicUpdatesChannel;
 
   /// Permission of current(bot) user in this guild
-  late final Permissions? currentUserPermissions;
+  late final IPermissions? currentUserPermissions;
 
   /// Users state cache
-  late final Cache<Snowflake, VoiceState> voiceStates;
+  late final SnowflakeCache<IVoiceState> voiceStates;
 
   /// Stage instances in the guild
-  late final Iterable<StageChannelInstance> stageInstances;
+  late final Iterable<IStageChannelInstance> stageInstances;
 
   /// Nsfw level of guild
   late final GuildNsfwLevel guildNsfwLevel;
 
   /// Stickers of this guild
-  late final Iterable<GuildSticker> stickers;
+  late final Iterable<IGuildSticker> stickers;
 
   /// Returns url to this guild.
   String get url => "https://discordapp.com/channels/${this.id.toString()}";
 
   /// Getter for @everyone role
-  Role get everyoneRole => roles.values.firstWhere((r) => r.name == "@everyone");
+  IRole get everyoneRole => roles.values.firstWhere((r) => r.name == "@everyone");
 
   /// Returns member object for bot user
-  Cacheable<Snowflake, Member> get selfMember {
-    if (this.client is! Nyxx) {
+  Cacheable<Snowflake, IMember> get selfMember {
+    if (this.client is! NyxxWebsocket) {
       throw new UnsupportedError("Cannot use this property with NyxxRest");
     }
 
-    return _MemberCacheable(
+    return MemberCacheable(
         this.client,
-        (client as Nyxx).self.id,
-        _GuildCacheable(this.client, this.id)
+        (client as NyxxWebsocket).self.id,
+        GuildCacheable(this.client, this.id)
     );
   }
 
@@ -134,15 +178,16 @@ class Guild extends SnowflakeEntity {
   }
 
   /// Returns this guilds shard
-  Shard get shard {
-    if (this.client is! Nyxx) {
+  IShard get shard {
+    if (this.client is! NyxxWebsocket) {
       throw new UnsupportedError("Cannot use this property with NyxxRest");
     }
 
-    return (client as Nyxx).shardManager.shards.firstWhere((_shard) => _shard.guilds.contains(this.id));
+    return (client as NyxxWebsocket).shardManager.shards.firstWhere((_shard) => _shard.guilds.contains(this.id));
   }
 
-  Guild._new(this.client, RawApiMap raw, [bool guildCreate = false]) : super(Snowflake(raw["id"])) {
+  /// Creates an instance of [Guild]
+  Guild(this.client, RawApiMap raw, [bool guildCreate = false]) : super(Snowflake(raw["id"])) {
     this.name = raw["name"] as String;
     this.region = raw["region"] as String;
     this.afkTimeout = raw["afk_timeout"] as int;
@@ -160,102 +205,90 @@ class Guild extends SnowflakeEntity {
     this.premiumSubscriptionCount = raw["premium_subscription_count"] as int?;
     this.preferredLocale = raw["preferred_locale"] as String;
 
-    this.owner = _UserCacheable(client, Snowflake(raw["owner_id"]));
+    this.owner = UserCacheable(client, Snowflake(raw["owner_id"]));
 
-    this.roles = _SnowflakeCache<Role>();
+    this.roles = const SnowflakeCache<IRole>();
     if (raw["roles"] != null) {
       raw["roles"].forEach((o) {
-        final role = Role._new(client, o as RawApiMap, this.id);
+        final role = Role(client, o as RawApiMap, this.id);
         this.roles[role.id] = role;
       });
     }
 
-    this.emojis = _SnowflakeCache();
+    this.emojis = const SnowflakeCache();
     if (raw["emojis"] != null) {
       raw["emojis"].forEach((dynamic o) {
-        final emoji = GuildEmoji._new(client, o as RawApiMap, this.id);
+        final emoji = GuildEmoji(client, o as RawApiMap, this.id);
         this.emojis[emoji.id] = emoji;
       });
     }
 
     if (raw["embed_channel_id"] != null) {
-      this.embedChannel = _ChannelCacheable(client, Snowflake(raw["embed_channel_id"]));
+      this.embedChannel = ChannelCacheable(client, Snowflake(raw["embed_channel_id"]));
     }
 
     if (raw["system_channel_id"] != null) {
-      this.systemChannel = _ChannelCacheable(client, Snowflake(raw["system_channel_id"]));
+      this.systemChannel = ChannelCacheable(client, Snowflake(raw["system_channel_id"]));
     }
 
     this.features = (raw["features"] as List<dynamic>).map((e) => GuildFeature.from(e.toString()));
 
     if (raw["permissions"] != null) {
-      this.currentUserPermissions = Permissions.fromInt(raw["permissions"] as int);
+      this.currentUserPermissions = Permissions(raw["permissions"] as int);
     } else {
       this.currentUserPermissions = null;
     }
 
     if (raw["afk_channel_id"] != null) {
-      this.afkChannel = _ChannelCacheable(client, Snowflake(raw["afk_channel_id"]));
+      this.afkChannel = ChannelCacheable(client, Snowflake(raw["afk_channel_id"]));
     }
 
-    this.members = _SnowflakeCache();
-    this.voiceStates = _SnowflakeCache();
+    this.members = const SnowflakeCache();
+    this.voiceStates = const SnowflakeCache();
 
     this.guildNsfwLevel = GuildNsfwLevel.from(raw["nsfw_level"] as int);
 
     this.stickers = [
       if (raw["stickers"] != null)
         for (final rawSticker in raw["stickers"])
-          GuildSticker._new(rawSticker as RawApiMap, client)
+          GuildSticker(rawSticker as RawApiMap, client)
     ];
 
     if (!guildCreate) return;
 
     raw["channels"].forEach((o) {
-      final channel = IChannel._deserialize(this.client, o as RawApiMap, this.id);
+      final channel = Channel.deserialize(this.client, o as RawApiMap, this.id);
       client.channels[channel.id] = channel;
     });
 
-    if (client._cacheOptions.memberCachePolicyLocation.objectConstructor) {
+    if (client.cacheOptions.memberCachePolicyLocation.objectConstructor) {
       raw["members"].forEach((o) {
-        final member = Member._new(client, o as RawApiMap, this.id);
-        if (client._cacheOptions.memberCachePolicy.canCache(member)) {
+        final member = Member(client, o as RawApiMap, this.id);
+        if (client.cacheOptions.memberCachePolicy.canCache(member)) {
           this.members[member.id] = member;
         }
       });
     }
 
-    // TODO: do we need that?
-    // raw["presences"].forEach((o) {
-    //   final member = this.members[Snowflake(o["user"]["id"] as String)];
-    //   if (member != null) {
-    //     member.status = ClientStatus._deserialize(o["client_status"] as RawApiMap);
-    //
-    //     if (o["game"] != null) {
-    //       member.presence = Activity._new(o["game"] as RawApiMap);
-    //     }
-    //   }
-    // });
-
     if (raw["voice_states"] != null) {
       raw["voice_states"].forEach((o) {
-        final state = VoiceState._new(client, o as RawApiMap);
+        final state = VoiceState(client, o as RawApiMap);
         this.voiceStates[state.user.id] = state;
       });
     }
 
     if (raw["rules_channel_id"] != null) {
-      this.rulesChannel = _ChannelCacheable(client, Snowflake(raw["rules_channel_id"]));
+      this.rulesChannel = ChannelCacheable(client, Snowflake(raw["rules_channel_id"]));
     }
 
     if (raw["public_updates_channel_id"] != null) {
-      this.publicUpdatesChannel = CacheableTextChannel<TextChannel>._new(client, Snowflake(raw["public_updates_channel_id"]));
+      this.publicUpdatesChannel = CacheableTextChannel<ITextChannel>(client, Snowflake(raw["public_updates_channel_id"]));
     }
 
     this.stageInstances = [
       if (raw["stage_instances"] != null)
         for (final rawInstance in raw["stage_instances"])
-          StageChannelInstance._new(this.client, rawInstance as RawApiMap)
+          StageChannelInstance(this.client, rawInstance as RawApiMap)
     ];
   }
 
@@ -280,23 +313,23 @@ class Guild extends SnowflakeEntity {
       client.httpEndpoints.getGuildWidgetUrl(this.id, style);
 
   /// Fetches all stickers of current guild
-  Stream<GuildSticker> fetchStickers() =>
+  Stream<IGuildSticker> fetchStickers() =>
       client.httpEndpoints.fetchGuildStickers(this.id);
 
   /// Fetch sticker with given [id]
-  Future<GuildSticker> fetchSticker(Snowflake id) =>
+  Future<IGuildSticker> fetchSticker(Snowflake id) =>
       client.httpEndpoints.fetchGuildSticker(this.id, id);
 
   /// Fetches all roles that are in the server.
-  Stream<Role> fetchRoles() =>
+  Stream<IRole> fetchRoles() =>
       client.httpEndpoints.fetchGuildRoles(this.id);
 
   /// Creates sticker in current guild
-  Future<GuildSticker> createSticker(StickerBuilder builder) =>
+  Future<IGuildSticker> createSticker(StickerBuilder builder) =>
       client.httpEndpoints.createGuildSticker(this.id, builder);
 
   /// Fetches emoji from API
-  Future<IGuildEmoji> fetchEmoji(Snowflake emojiId) =>
+  Future<IBaseGuildEmoji> fetchEmoji(Snowflake emojiId) =>
       client.httpEndpoints.fetchGuildEmoji(this.id, emojiId);
 
   /// Allows to create new guild emoji. [name] is required and you have to specify one of other parameters: [imageFile], [imageBytes] or [encodedImage].
@@ -306,7 +339,7 @@ class Guild extends SnowflakeEntity {
   /// var emojiFile = new File("weed.png");
   /// vare emoji = await guild.createEmoji("weed, image: emojiFile");
   /// ```
-  Future<GuildEmoji> createEmoji(String name, {List<SnowflakeEntity>? roles, AttachmentBuilder? emojiAttachment}) =>
+  Future<IBaseGuildEmoji> createEmoji(String name, {List<SnowflakeEntity>? roles, AttachmentBuilder? emojiAttachment}) =>
       client.httpEndpoints.createEmoji(this.id, name, roles: roles, emojiAttachment: emojiAttachment);
 
   /// Returns [int] indicating the number of members that would be removed in a prune operation.
@@ -318,18 +351,18 @@ class Guild extends SnowflakeEntity {
       client.httpEndpoints.guildPrune(this.id, days, includeRoles: includeRoles, auditReason: auditReason);
 
   /// Get"s the guild's bans.
-  Stream<Ban> getBans() => client.httpEndpoints.getGuildBans(this.id);
+  Stream<IBan> getBans() => client.httpEndpoints.getGuildBans(this.id);
 
   /// Change self nickname in guild
   Future<void> modifyCurrentMember({String? nick}) async =>
       client.httpEndpoints.modifyCurrentMember(this.id, nick: nick);
 
   /// Gets single [Ban] object for given [bannedUserId]
-  Future<Ban> getBan(Snowflake bannedUserId) async =>
+  Future<IBan> getBan(Snowflake bannedUserId) async =>
       client.httpEndpoints.getGuildBan(this.id, bannedUserId);
 
   /// Change guild owner.
-  Future<Guild> changeOwner(SnowflakeEntity memberEntity, {String? auditReason}) =>
+  Future<IGuild> changeOwner(SnowflakeEntity memberEntity, {String? auditReason}) =>
       client.httpEndpoints.changeGuildOwner(this.id, memberEntity);
 
   /// Leaves the guild.
@@ -337,7 +370,7 @@ class Guild extends SnowflakeEntity {
       client.httpEndpoints.leaveGuild(this.id);
 
   /// Returns list of Guilds invites
-  Stream<Invite> fetchGuildInvites() =>
+  Stream<IInvite> fetchGuildInvites() =>
       client.httpEndpoints.fetchGuildInvites(this.id);
 
   /// Returns Audit logs.
@@ -346,7 +379,7 @@ class Guild extends SnowflakeEntity {
   /// ```
   /// var logs = await guild.getAuditLogs(actionType: 1);
   /// ```
-  Future<AuditLog> fetchAuditLogs({Snowflake? userId, int? actionType, Snowflake? before, int? limit}) =>
+  Future<IAuditLog> fetchAuditLogs({Snowflake? userId, int? actionType, Snowflake? before, int? limit}) =>
       client.httpEndpoints.fetchAuditLogs(this.id, userId: userId, actionType: actionType, before: before, limit: limit);
 
   /// Creates new role
@@ -359,11 +392,11 @@ class Guild extends SnowflakeEntity {
   ///
   /// var role = await guild.createRole(roleBuilder);
   /// ```
-  Future<Role> createRole(RoleBuilder roleBuilder, {String? auditReason}) =>
+  Future<IRole> createRole(RoleBuilder roleBuilder, {String? auditReason}) =>
       client.httpEndpoints.createGuildRole(this.id, roleBuilder, auditReason: auditReason);
 
   /// Returns list of available [VoiceRegion]s
-  Stream<VoiceRegion> getVoiceRegions() =>
+  Stream<IVoiceRegion> getVoiceRegions() =>
       client.httpEndpoints.fetchGuildVoiceRegions(this.id);
 
   /// Moves channel
@@ -393,7 +426,7 @@ class Guild extends SnowflakeEntity {
       client.httpEndpoints.guildUnban(this.id, userId);
 
   /// Edits the guild.
-  Future<Guild> edit(
+  Future<IGuild> edit(
       {String? name,
         int? verificationLevel,
         int? notificationLevel,
@@ -412,23 +445,23 @@ class Guild extends SnowflakeEntity {
       );
 
   /// Fetches member from API
-  Future<Member> fetchMember(Snowflake memberId) =>
+  Future<IMember> fetchMember(Snowflake memberId) =>
       client.httpEndpoints.fetchGuildMember(this.id, memberId);
 
   /// Allows to fetch guild members. In future will be restricted with `Privileged Intents`.
   /// [after] is used to continue from specified user id.
   /// By default limits to one user - use [limit] parameter to change that behavior.
-  Stream<Member> fetchMembers({int limit = 1, Snowflake? after}) =>
+  Stream<IMember> fetchMembers({int limit = 1, Snowflake? after}) =>
       client.httpEndpoints.fetchGuildMembers(this.id, limit: limit, after: after);
 
-  /// Returns a [Stream] of [Member]s objects whose username or nickname starts with a provided string.
+  /// Returns a [Stream] of [IMember]s objects whose username or nickname starts with a provided string.
   /// By default limits to one entry - can be changed with [limit] parameter.
-  Stream<Member> searchMembers(String query, {int limit = 1}) =>
+  Stream<IMember> searchMembers(String query, {int limit = 1}) =>
       client.httpEndpoints.searchGuildMembers(this.id, query, limit: limit);
 
-  /// Returns a [Stream] of [Member]s objects whose username or nickname starts with a provided string.
+  /// Returns a [Stream] of [IMember]s objects whose username or nickname starts with a provided string.
   /// By default limits to one entry - can be changed with [limit] parameter.
-  Stream<Member> searchMembersGateway(String query, {int limit = 0}) async* {
+  Stream<IMember> searchMembersGateway(String query, {int limit = 0}) async* {
     final nonce = "$query${id.toString()}";
     this.shard.requestMembers(this.id, query: query, limit: limit, nonce: nonce);
 
@@ -448,7 +481,7 @@ class Guild extends SnowflakeEntity {
   }
 
   /// Fetches guild preview for this guild. Allows to download approx member count in guild
-  Future<GuildPreview> fetchGuildPreview() async =>
+  Future<IGuildPreview> fetchGuildPreview() async =>
       this.client.httpEndpoints.fetchGuildPreview(this.id);
 
   /// Request members from gateway. Requires privileged intents in order to work.

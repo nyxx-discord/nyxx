@@ -157,9 +157,9 @@ class GatewayIntents {
 ///
 /// Executed most likely when process receives SIGINT (*nix) or SIGTERM (*nix and windows).
 /// Not guaranteed to be completed or executed at all.
-typedef ShutdownHook = Future<void> Function(Nyxx client);
+typedef ShutdownHook = Future<void> Function(NyxxWebsocket client);
 
 /// Hook executed when shard is disposing.
 ///
 /// It could be either when shards disconnects or when bots process shuts down (look [ShutdownHook].
-typedef ShutdownShardHook = Future<void> Function(Nyxx client, Shard shard);
+typedef ShutdownShardHook = Future<void> Function(NyxxWebsocket client, Shard shard);

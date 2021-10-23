@@ -1,4 +1,4 @@
-part of nyxx;
+import 'package:nyxx/src/utils/IEnum.dart';
 
 /// Represents messgae type
 class MessageType extends IEnum<int> {
@@ -34,7 +34,7 @@ class MessageType extends IEnum<int> {
   @override
   bool operator ==(dynamic other) {
     if (other is int) {
-      return other == _value;
+      return other == value;
     }
 
     return super == other;

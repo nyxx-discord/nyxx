@@ -1,7 +1,7 @@
 part of nyxx;
 
 /// Represents voice region on which discord guild takes place
-class VoiceRegion {
+class VoiceRegion implements IVoiceRegion {
   /// Unique id for region
   late final String id;
 
@@ -20,7 +20,8 @@ class VoiceRegion {
   /// Whether this is a custom voice region (used for events/etc)
   late final bool custom;
 
-  VoiceRegion._new(RawApiMap raw) {
+  /// Creates an instance of [VoiceRegion]
+  VoiceRegion(RawApiMap raw) {
     this.id = raw["id"] as String;
     this.name = raw["name"] as String;
     this.vip = raw["vip"] as bool;

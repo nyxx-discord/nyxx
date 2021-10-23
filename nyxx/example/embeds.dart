@@ -1,8 +1,8 @@
 import "package:nyxx/nyxx.dart";
 
-DiscordColor getColorForUserFromMessage(Message message) {
-  if (message is GuildMessage) {
-    return message.member.highestRole.color;
+DiscordColor getColorForUserFromMessage(IMessage message) {
+  if (message.guild != null) {
+    return message.member!.highestRole.color;
   }
 
   return DiscordColor.black;
@@ -11,15 +11,15 @@ DiscordColor getColorForUserFromMessage(Message message) {
 // Main function
 void main() {
   // Create new bot instance. Replace string with your token
-  final bot = Nyxx("<TOKEN>", GatewayIntents.allUnprivileged);
+  final bot = NyxxFactory.createNyxxWebsocket("<TOKEN>", GatewayIntents.allUnprivileged);
 
   // Listen to ready event. Invoked when bot is connected to all shards. Note that cache can be empty or not incomplete.
-  bot.onReady.listen((ReadyEvent e) {
+  bot.eventsWs.onReady.listen((IReadyEvent e) {
     print("Ready!");
   });
 
   // Listen to all incoming messages
-  bot.onMessageReceived.listen((MessageReceivedEvent e) {
+  bot.eventsWs.onMessageReceived.listen((IMessageReceivedEvent e) {
     // Check if message content equals "!embed"
     if (e.message.content == "!embed") {
 

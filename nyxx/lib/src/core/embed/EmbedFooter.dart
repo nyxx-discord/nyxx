@@ -1,7 +1,20 @@
-part of nyxx;
+import 'package:nyxx/src/internal/interfaces/Convertable.dart';
+import 'package:nyxx/src/utils/builders/EmbedFooterBuilder.dart';
+import 'package:nyxx/src/typedefs.dart';
+
+abstract class IEmbedFooter implements Convertable<EmbedFooterBuilder> {
+  /// Text inside footer
+  String? get text;
+
+  /// Url of icon which is next to text
+  String? get iconUrl;
+
+  /// Proxied url of icon url
+  String? get iconProxyUrl;
+}
 
 /// Embed's footer. Can contain null elements.
-class EmbedFooter implements Convertable<EmbedFooterBuilder> {
+class EmbedFooter implements IEmbedFooter {
   /// Text inside footer
   late final String? text;
 
@@ -11,20 +24,12 @@ class EmbedFooter implements Convertable<EmbedFooterBuilder> {
   /// Proxied url of icon url
   late final String? iconProxyUrl;
 
-  EmbedFooter._new(RawApiMap raw) {
+  /// Creates an instance of [EmbedFooter]
+  EmbedFooter(RawApiMap raw) {
     text = raw["text"] as String?;
     iconUrl = raw["icon_url"] as String?;
     iconProxyUrl = raw["icon_proxy_url"] as String?;
   }
-
-  @override
-  String toString() => text ?? "";
-
-  @override
-  int get hashCode => text.hashCode * 37 + iconUrl.hashCode * 37 + iconProxyUrl.hashCode * 37;
-
-  @override
-  bool operator ==(other) => other is EmbedFooter ? other.text == this.text && other.iconUrl == this.iconUrl : false;
 
   @override
   EmbedFooterBuilder toBuilder() =>

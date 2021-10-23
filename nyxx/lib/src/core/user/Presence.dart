@@ -2,7 +2,7 @@ part of nyxx;
 
 /// Presence is game or activity which user is playing/user participate.
 /// Can be game, eg. Dota 2, VS Code or activity like Listening to song on Spotify.
-class Activity {
+class Activity implements IActivity {
   /// The activity name.
   late final String name;
 
@@ -48,7 +48,8 @@ class Activity {
   /// Activity buttons. List of button labels
   late final Iterable<String> buttons;
 
-  Activity._new(RawApiMap raw) {
+  /// Creates na instance of [Activity]
+  Activity(RawApiMap raw) {
     this.name = raw["name"] as String;
     this.url = raw["url"] as String?;
     this.type = ActivityType.from(raw["type"] as int);
@@ -57,7 +58,7 @@ class Activity {
     this.state = raw["state"] as String?;
 
     if (raw["timestamps"] != null) {
-      this.timestamps = ActivityTimestamps._new(raw["timestamps"] as RawApiMap);
+      this.timestamps = ActivityTimestamps(raw["timestamps"] as RawApiMap);
     } else {
       this.timestamps = null;
     }
@@ -69,31 +70,31 @@ class Activity {
     }
 
     if (raw["emoji"] != null) {
-      this.customStatusEmoji = ActivityEmoji._new(raw["emoji"] as RawApiMap);
+      this.customStatusEmoji = ActivityEmoji(raw["emoji"] as RawApiMap);
     } else {
       this.customStatusEmoji = null;
     }
 
     if (raw["party"] != null) {
-      this.party = ActivityParty._new(raw["party"] as RawApiMap);
+      this.party = ActivityParty(raw["party"] as RawApiMap);
     } else {
       this.party = null;
     }
 
     if (raw["assets"] != null) {
-      this.assets = GameAssets._new(raw["assets"] as RawApiMap);
+      this.assets = GameAssets(raw["assets"] as RawApiMap);
     } else {
       this.assets = null;
     }
 
     if (raw["secrets"] != null) {
-      this.secrets = GameSecrets._new(raw["secrets"] as RawApiMap);
+      this.secrets = GameSecrets(raw["secrets"] as RawApiMap);
     } else {
       this.secrets = null;
     }
 
     this.instance = raw["instance"] as bool?;
-    this.activityFlags = ActivityFlags._new(raw["flags"] as int?);
+    this.activityFlags = ActivityFlags(raw["flags"] as int?);
     this.buttons = [
       if (raw["buttons"] != null)
         ...raw["buttons"].cast<String>()
@@ -101,32 +102,54 @@ class Activity {
   }
 }
 
+abstract class IActivityFlags {
+  /// Flags value
+  int get value;
+
+  bool get isInstance;
+  bool get isJoin;
+  bool get isSpectate;
+  bool get isJoinRequest;
+  bool get isSync;
+  bool get isPlay;
+}
+
 /// Flags of the activity
-class ActivityFlags {
+class ActivityFlags implements IActivityFlags {
   /// Flags value
   late final int value;
 
   bool get isInstance => PermissionsUtils.isApplied(this.value, 1 << 0);
   bool get isJoin => PermissionsUtils.isApplied(this.value, 1 << 1);
-  bool get isSpectate=> PermissionsUtils.isApplied(this.value, 1 << 2);
+  bool get isSpectate => PermissionsUtils.isApplied(this.value, 1 << 2);
   bool get isJoinRequest => PermissionsUtils.isApplied(this.value, 1 << 3);
   bool get isSync => PermissionsUtils.isApplied(this.value, 1 << 4);
   bool get isPlay => PermissionsUtils.isApplied(this.value, 1 << 5);
 
-  ActivityFlags._new(int? value) {
+  /// Creates na instance of [ActivityFlags]
+  ActivityFlags(int? value) {
     this.value = value ?? 0;
   }
 }
 
+abstract class IActivityEmoji {
+  /// Id of emoji.
+  Snowflake? get id;
+
+  /// True if emoji is animated
+  bool get animated;
+}
+
 /// Represent emoji within activity
-class ActivityEmoji {
+class ActivityEmoji implements IActivityEmoji {
   /// Id of emoji.
   late final Snowflake? id;
 
   /// True if emoji is animated
   late final bool animated;
 
-  ActivityEmoji._new(RawApiMap raw) {
+  /// Creates na instance of [ActivityEmoji]
+  ActivityEmoji(RawApiMap raw) {
     if (raw["id"] != null) {
       this.id = Snowflake(raw["id"]);
     }
@@ -137,15 +160,24 @@ class ActivityEmoji {
   }
 }
 
+abstract class IActivityTimestamps {
+  /// DateTime when activity started
+  DateTime? get start;
+
+  /// DateTime when activity ends
+  DateTime? get end;
+}
+
 /// Timestamp of activity
-class ActivityTimestamps {
+class ActivityTimestamps implements IActivityTimestamps {
   /// DateTime when activity started
   late final DateTime? start;
 
   /// DateTime when activity ends
   late final DateTime? end;
 
-  ActivityTimestamps._new(RawApiMap raw) {
+  /// Creates na instance of [ActivityTimestamps]
+  ActivityTimestamps(RawApiMap raw) {
     if (raw["start"] != null) {
       this.start = DateTime.fromMillisecondsSinceEpoch(raw["start"] as int);
     }
@@ -190,8 +222,19 @@ class ActivityType extends IEnum<int> {
   int get hashCode => this.value.hashCode;
 }
 
+abstract class IActivityParty {
+  /// Party id.
+  String? get id;
+
+  /// Current size of party.
+  int? get currentSize;
+
+  /// Max size of party.
+  int? get maxSize;
+}
+
 /// Represents party of game.
-class ActivityParty {
+class ActivityParty implements IActivityParty {
   /// Party id.
   late final String? id;
 
@@ -201,7 +244,8 @@ class ActivityParty {
   /// Max size of party.
   late final int? maxSize;
 
-  ActivityParty._new(RawApiMap raw) {
+  /// Creates na instance of [ActivityParty]
+  ActivityParty(RawApiMap raw) {
     this.id = raw["id"] as String?;
 
     if (raw["size"] != null) {
@@ -214,8 +258,22 @@ class ActivityParty {
   }
 }
 
+abstract class IGameAssets {
+  /// The id for a large asset of the activity, usually a snowflake.
+  String? get largeImage;
+
+  /// Text displayed when hovering over the large image of the activity.
+  String? get largeText;
+
+  /// The id for a small asset of the activity, usually a snowflake
+  String? get smallImage;
+
+  /// Text displayed when hovering over the small image of the activity
+  String? get smallText;
+}
+
 /// Presence"s assets
-class GameAssets {
+class GameAssets implements IGameAssets {
   /// The id for a large asset of the activity, usually a snowflake.
   late final String? largeImage;
 
@@ -228,7 +286,8 @@ class GameAssets {
   /// Text displayed when hovering over the small image of the activity
   late final String? smallText;
 
-  GameAssets._new(RawApiMap raw) {
+  /// Creates na instance of [GameAssets]
+  GameAssets(RawApiMap raw) {
     this.largeImage = raw["large_image"] as String?;
     this.largeText = raw["large_text"] as String?;
     this.smallImage = raw["small_image"] as String?;
@@ -236,8 +295,19 @@ class GameAssets {
   }
 }
 
+abstract class IGameSecrets {
+  /// Join secret
+  String get join;
+
+  /// Spectate secret
+  String get spectate;
+
+  /// Match secret
+  String get match;
+}
+
 /// Represents presence"s secrets
-class GameSecrets {
+class GameSecrets implements IGameSecrets {
   /// Join secret
   late final String join;
 
@@ -247,7 +317,8 @@ class GameSecrets {
   /// Match secret
   late final String match;
 
-  GameSecrets._new(RawApiMap raw) {
+  /// Creates na instance of [GameSecrets]
+  GameSecrets(RawApiMap raw) {
     this.join = raw["join"] as String;
     this.spectate = raw["spectate"] as String;
     this.match = raw["match"] as String;

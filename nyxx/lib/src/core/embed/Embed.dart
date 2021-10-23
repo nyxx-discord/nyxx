@@ -2,47 +2,48 @@ part of nyxx;
 
 /// A message embed.
 /// Can contain null elements.
-class Embed implements Convertable<EmbedBuilder> {
+class Embed implements IEmbed {
   /// The embed's title.
-  String? title;
+  late final String? title;
 
   /// The embed's type
-  String? type;
+  late final String? type;
 
   /// The embed's description.
-  String? description;
+  late final String? description;
 
   /// The embed's URL
-  String? url;
+  late final String? url;
 
   /// Timestamp of embed content
-  DateTime? timestamp;
+  late final DateTime? timestamp;
 
   /// Color of embed
-  DiscordColor? color;
+  late final DiscordColor? color;
 
   /// Embed's footer
-  EmbedFooter? footer;
+  late final IEmbedFooter? footer;
 
   /// The embed's thumbnail, if any.
-  EmbedThumbnail? thumbnail;
+  late final IEmbedThumbnail? thumbnail;
 
   /// The embed's provider, if any.
-  EmbedProvider? provider;
+  late final IEmbedProvider? provider;
 
   /// Embed image
-  EmbedThumbnail? image;
+  late final IEmbedThumbnail? image;
 
   /// Embed video
-  EmbedVideo? video;
+  late final IEmbedVideo? video;
 
   /// Embed author
-  EmbedAuthor? author;
+  late final IEmbedAuthor? author;
 
   /// Map of fields of embed. Map(name, field)
-  late final List<EmbedField> fields;
+  late final List<IEmbedField> fields;
 
-  Embed._new(RawApiMap raw) {
+  /// Creates an instance [Embed]
+  Embed(RawApiMap raw) {
     if (raw["title"] != null) {
       this.title = raw["title"] as String;
     }
@@ -68,53 +69,34 @@ class Embed implements Convertable<EmbedBuilder> {
     }
 
     if (raw["author"] != null) {
-      this.author = EmbedAuthor._new(raw["author"] as RawApiMap);
+      this.author = EmbedAuthor(raw["author"] as RawApiMap);
     }
 
     if (raw["video"] != null) {
-      this.video = EmbedVideo._new(raw["video"] as RawApiMap);
+      this.video = EmbedVideo(raw["video"] as RawApiMap);
     }
 
     if (raw["image"] != null) {
-      this.image = EmbedThumbnail._new(raw["image"] as RawApiMap);
+      this.image = EmbedThumbnail(raw["image"] as RawApiMap);
     }
 
     if (raw["footer"] != null) {
-      this.footer = EmbedFooter._new(raw["footer"] as RawApiMap);
+      this.footer = EmbedFooter(raw["footer"] as RawApiMap);
     }
 
     if (raw["thumbnail"] != null) {
-      this.thumbnail = EmbedThumbnail._new(raw["thumbnail"] as RawApiMap);
+      this.thumbnail = EmbedThumbnail(raw["thumbnail"] as RawApiMap);
     }
 
     if (raw["provider"] != null) {
-      this.provider = EmbedProvider._new(raw["provider"] as RawApiMap);
+      this.provider = EmbedProvider(raw["provider"] as RawApiMap);
     }
 
     fields = [
       if (raw["fields"] != null)
-        for (var obj in raw["fields"]) EmbedField._new(obj as RawApiMap)
+        for (var obj in raw["fields"]) EmbedField(obj as RawApiMap)
     ];
   }
-
-  /// Returns a string representation of this object.
-  @override
-  String toString() => this.title ?? "";
-
-  @override
-  int get hashCode =>
-      title.hashCode * 37 +
-      type.hashCode * 37 +
-      description.hashCode * 37 +
-      timestamp.hashCode * 37 +
-      color.hashCode * 37 +
-      footer.hashCode * 37 +
-      thumbnail.hashCode * 37 +
-      provider.hashCode * 37 +
-      image.hashCode * 37 +
-      video.hashCode * 37 +
-      author.hashCode * 37 +
-      fields.map((f) => f.hashCode * 37).reduce((f, s) => f + s);
 
   @override
   EmbedBuilder toBuilder() =>
@@ -130,7 +112,4 @@ class Embed implements Convertable<EmbedBuilder> {
       ..imageUrl = this.image?.url
       ..author = this.author?.toBuilder()
       ..fields = this.fields.map((field) => field.toBuilder()).toList();
-
-  @override
-  bool operator ==(other) => other is EmbedVideo ? other.url == this.url : false;
 }

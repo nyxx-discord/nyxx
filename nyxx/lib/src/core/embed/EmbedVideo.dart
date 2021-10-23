@@ -1,8 +1,18 @@
-part of nyxx;
+import 'package:nyxx/src/typedefs.dart';
 
-// TODO: NNBD - To consider
+abstract class IEmbedVideo {
+  /// The embed video's URL.
+  String? get url;
+
+  /// The embed video's height.
+  int? get height;
+
+  /// The embed video's width.
+  int? get width;
+}
+
 /// Video attached to embed. Can contain null elements.
-class EmbedVideo {
+class EmbedVideo implements IEmbedVideo {
   /// The embed video's URL.
   late final String? url;
 
@@ -12,18 +22,10 @@ class EmbedVideo {
   /// The embed video's width.
   late final int? width;
 
-  EmbedVideo._new(RawApiMap raw) {
+  /// Creates an instance of [EmbedVideo]
+  EmbedVideo(RawApiMap raw) {
     this.url = raw["url"] as String;
     this.height = raw["height"] as int;
     this.width = raw["width"] as int;
   }
-
-  @override
-  String toString() => url ?? "";
-
-  @override
-  int get hashCode => url.hashCode;
-
-  @override
-  bool operator ==(other) => other is EmbedVideo ? other.url == this.url : false;
 }

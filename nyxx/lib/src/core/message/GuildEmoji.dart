@@ -1,16 +1,34 @@
 part of nyxx;
 
-abstract class IGuildEmoji extends SnowflakeEntity implements IEmoji {
+import 'package:nyxx/src/Nyxx.dart';
+import 'package:nyxx/src/core/Snowflake.dart';
+import 'package:nyxx/src/core/SnowflakeEntity.dart';
+import 'package:nyxx/src/core/guild/Guild.dart';
+import 'package:nyxx/src/core/guild/Role.dart';
+import 'package:nyxx/src/core/message/Emoji.dart';
+import 'package:nyxx/src/internal/cache/Cacheable.dart';
+import 'package:nyxx/src/typedefs.dart';
+
+abstract class IBaseGuildEmoji implements SnowflakeEntity, IEmoji {
+  /// True if emoji is partial.
+  bool get isPartial;
+
+  /// Returns cdn url to emoji
+  String get cdnUrl;
+
+  /// Creates partial emoji from given String or Snowflake.
+  factory IBaseGuildEmoji.fromId(Snowflake id) => GuildEmojiPartial(id);
+}
+
+abstract class BaseGuildEmoji extends SnowflakeEntity implements IBaseGuildEmoji {
   /// True if emoji is partial.
   bool get isPartial;
 
   /// Returns cdn url to emoji
   String get cdnUrl => "https://cdn.discordapp.com/emojis/${this.id}.png";
 
-  IGuildEmoji._new(RawApiMap raw): super(Snowflake(raw["id"]));
-
-  /// Creates partial emoji from given String or Snowflake.
-  factory IGuildEmoji.fromId(dynamic id, [bool animated = false]) => GuildEmojiPartial._new({ "id": id.toString() });
+  /// Creates an instance of [BaseGuildEmoji]
+  BaseGuildEmoji(RawApiMap raw): super(Snowflake(raw["id"]));
 
   @override
   String formatForMessage() => "<:$id>";
@@ -23,22 +41,51 @@ abstract class IGuildEmoji extends SnowflakeEntity implements IEmoji {
   String toString() => this.formatForMessage();
 }
 
-class GuildEmojiPartial extends IGuildEmoji implements IEmoji {
+abstract class IGuildEmojiPartial implements IBaseGuildEmoji {}
+
+class GuildEmojiPartial extends BaseGuildEmoji implements IGuildEmojiPartial {
   @override
   bool get isPartial => true;
 
-  GuildEmojiPartial._new(RawApiMap raw): super._new(raw);
+  /// Creates an instance of [GuildEmojiPartial]
+  GuildEmojiPartial(Snowflake id): super({ "id": id.toString() });
 }
 
-class GuildEmoji extends GuildEmojiPartial implements IEmoji {
+abstract class IGuildEmoji implements IBaseGuildEmoji {
+  /// Reference to client
+  INyxx get client;
+
+  /// Reference to guild where emoji belongs to
+  Cacheable<Snowflake, IGuild> get guild;
+
+  /// Roles which can use this emote
+  Iterable<Cacheable<Snowflake, IRole>> get roles;
+
+  /// whether this emoji must be wrapped in colons
+  bool get requireColons;
+
+  /// whether this emoji is managed
+  bool get managed;
+
+  /// whether this emoji is animated
+  bool get animated;
+
+  /// Allows to delete guild emoji
+  Future<void> delete();
+
+  /// Allows to edit guild emoji
+  Future<void> edit({String? name, List<Snowflake>? roles});
+}
+
+class GuildEmoji extends BaseGuildEmoji implements IGuildEmoji {
   /// Reference to client
   final INyxx client;
 
   /// Reference to guild where emoji belongs to
-  late final Cacheable<Snowflake, Guild> guild;
+  late final Cacheable<Snowflake, IGuild> guild;
 
   /// Roles which can use this emote
-  late final Iterable<Cacheable<Snowflake, Role>> roles;
+  late final Iterable<Cacheable<Snowflake, IRole>> roles;
 
   /// whether this emoji must be wrapped in colons
   late final bool requireColons;
@@ -52,15 +99,16 @@ class GuildEmoji extends GuildEmojiPartial implements IEmoji {
   @override
   bool get isPartial => false;
 
-  GuildEmoji._new(this.client, RawApiMap raw, Snowflake guildId): super._new(raw) {
-    this.guild = _GuildCacheable(client, guildId);
+  /// Creates an instance of [GuildEmoji]
+  GuildEmoji(this.client, RawApiMap raw, Snowflake guildId): super(raw) {
+    this.guild = GuildCacheable(client, guildId);
 
     this.requireColons = raw["require_colons"] as bool? ?? false;
     this.managed = raw["managed"] as bool? ?? false;
     this.animated = raw["animated"] as bool? ?? false;
     this.roles = [
       for (final roleId in raw["roles"])
-        _RoleCacheable(client, Snowflake(roleId), guild)
+        RoleCacheable(client, Snowflake(roleId), guild)
     ];
   }
 

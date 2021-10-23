@@ -20,38 +20,42 @@ abstract class INyxx implements Disposable {
 
   /// All of the users the bot can see. Does not have offline users
   /// without `forceFetchUsers` enabled.
-  Cache<Snowflake, User> get users;
+  Map<Snowflake, IUser> get users;
 
-  /// Returns handler for all available REST API action.
-  IHttpEndpoints get httpEndpoints => this._httpEndpoints;
+  /// Datetime when bot has started
+  DateTime get startTime;
 
-  /// Emitted when a successful HTTP response is received.
-  late final StreamController<HttpResponseEvent> _onHttpResponse;
+  /// True if client is ready.
+  bool get ready;
+}
 
-  /// Emitted when a HTTP request failed.
-  late final StreamController<HttpErrorEvent> _onHttpError;
+abstract class INyxxRest implements INyxx {
+  /// When identifying to the gateway, you have to specify an intents parameter which
+  /// allows you to conditionally subscribe to pre-defined "intents", groups of events defined by Discord.
+  /// If you do not specify a certain intent, you will not receive any of the gateway events that are batched into that group.
+  /// Since api v8 its required upon connecting to gateway.
+  int get intents;
 
-  /// Sent when the client is rate limited, either by the rate limit handler itself,
-  /// or when a 429 is received.
-  late final StreamController<RatelimitEvent> _onRateLimited;
+  /// The current bot user.
+  IClientUser get self;
 
-  /// Emitted when a successful HTTP response is received.
-  late Stream<HttpResponseEvent> onHttpResponse;
+  /// The bot"s OAuth2 app.
+  IClientOAuth2Application get app;
 
-  /// Emitted when a HTTP request failed.
-  late Stream<HttpErrorEvent> onHttpError;
+  /// The current version of `nyxx`
+  String get version;
 
-  /// Sent when the client is rate limited, either by the rate limit handler itself,
-  /// or when a 429 is received.
-  late Stream<RatelimitEvent> onRateLimited;
+  /// Gets an bot invite link with zero permissions
+  String get inviteLink;
+
+  /// Reference of event controller
+  IRestEventController get eventsRest;
 }
 
 /// Lightweight client which do not start ws connections.
-class NyxxRest extends INyxx {
+class NyxxRest extends INyxxRest {
   @override
-  final String _token;
-
-  final DateTime _startTime = DateTime.now();
+  final String token;
 
   @override
   late final ClientOptions _options;
@@ -88,19 +92,23 @@ class NyxxRest extends INyxx {
   late final Cache<Snowflake, User> users;
 
   /// True if client is ready.
+  @override
   bool ready = false;
 
   /// The current version of `nyxx`
-  final String version = Constants.version;
-
-  /// Logger instance
-  final Logger _logger = Logger("Client");
+  String get version => Constants.version;
 
   /// Gets an bot invite link with zero permissions
   String get inviteLink => app.getInviteUrl();
 
-  /// Can be used to edit options after client initialised. Used by Nyxx.interactions to enable raw events
-  ClientOptions get options => this._options;
+  @override
+  late final RestEventController eventsRest;
+
+  /// Date time when bot was started
+  @override
+  final DateTime startTime = DateTime.now();
+
+  final Logger _logger = Logger("Client");
 
   /// Creates and logs in a new client. If [ignoreExceptions] is true (by default is)
   /// isolate will ignore all exceptions and continue to work.
@@ -154,25 +162,79 @@ class NyxxRest extends INyxx {
     this.channels = ChannelCache._new();
     this.users = _SnowflakeCache();
 
-    this._http = _HttpHandler._new(this);
-    this._httpEndpoints = _HttpEndpoints._new(this);
+    this.httpHandler = HttpHandler(this);
+    this.httpEndpoints = HttpEndpoints(this);
 
-    this._onHttpError = StreamController.broadcast();
-    this.onHttpError = _onHttpError.stream;
-
-    this._onHttpResponse = StreamController.broadcast();
-    this.onHttpResponse = _onHttpResponse.stream;
-
-    this._onRateLimited = StreamController.broadcast();
-    this.onRateLimited = _onRateLimited.stream;
+    this.eventsRest = RestEventController();
   }
 
   @override
-  Future<void> dispose() async {
-    await this._onHttpResponse.close();
-    await this._onHttpError.close();
-    await this._onRateLimited.close();
-  }
+  Future<void> dispose() async {}
+}
+
+abstract class INyxxWebsocket implements INyxxRest {
+  /// Event controller for websocket events
+  IWebsocketEventController get eventsWs;
+
+  /// Current client"s shard
+  IShardManager get shardManager;
+
+  /// This endpoint is only for public guilds if bot is not int the guild.
+  Future<IGuildPreview> fetchGuildPreview(Snowflake guildId);
+
+  /// Returns guild with given [guildId]
+  Future<IGuild> fetchGuild(Snowflake guildId);
+
+  /// Returns channel with specified id.
+  /// ```
+  /// var channel = await client.getChannel<TextChannel>(Snowflake("473853847115137024"));
+  /// ```
+  Future<T> fetchChannel<T extends IChannel>(Snowflake channelId);
+
+  /// Get user instance with specified id.
+  /// ```
+  /// var user = client.getUser(Snowflake("302359032612651009"));
+  /// ``;
+
+  /// Gets a webhook by its id and/or token.
+  /// If token is supplied authentication is not needed.
+  Future<IWebhook> fetchWebhook(Snowflake id, {String token = ""});
+
+  /// Gets an [Invite] object with given code.
+  /// If the [code] is in cache - it will be taken from it, otherwise API will be called.
+  ///
+  /// ```
+  /// var inv = client.getInvite("YMgffU8");
+  /// ```
+  Future<IInvite> getInvite(String code);
+
+  /// Returns number of shards
+  int get shards;
+
+  /// Sets presence for bot.
+  ///
+  /// Code below will display bot presence as `Playing Super duper game`:
+  /// ```dart
+  /// bot.setPresence(game: Activity.of("Super duper game"))
+  /// ```
+  ///
+  /// Bots cannot set custom status - only game, listening and stream available.
+  ///
+  /// To set bot presence to streaming use:
+  /// ```dart
+  /// bot.setPresence(game: Activity.of("Super duper game", type: ActivityType.streaming, url: "https://twitch.tv/l7ssha"))
+  /// ```
+  /// `url` property in `Activity` can be only set when type is set to `streaming`
+  void setPresence(PresenceBuilder presenceBuilder);
+
+  /// Join [ThreadChannel] with given [channelId]
+  Future<void> joinThread(Snowflake channelId);
+
+  /// Gets standard sticker with given id
+  Future<IStandardSticker> getSticker(Snowflake id);
+
+  /// List all nitro stickers packs
+  Stream<IStickerPack> listNitroStickerPacks();
 }
 
 /// The main place to start with interacting with the Discord API and creating discord bot.
@@ -192,9 +254,8 @@ class NyxxRest extends INyxx {
 /// });
 /// ```
 /// or setup `CommandsFramework` and `Voice`.
-class Nyxx extends NyxxRest {
-  late final _ConnectionManager _ws; // ignore: unused_field
-  late final _EventController _events;
+class NyxxWebsocket extends NyxxRest implements INyxxWebsocket {
+  late final ConnectionManager ws; // ignore: unused_field
 
   /// Current client"s shard
   late ShardManager shardManager;
@@ -327,7 +388,7 @@ class Nyxx extends NyxxRest {
 
   /// Creates and logs in a new client. If [ignoreExceptions] is true (by default is)
   /// isolate will ignore all exceptions and continue to work.
-  Nyxx(String token, int intents,
+  NyxxWebsocket(String token, int intents,
       {ClientOptions? options,
       CacheOptions? cacheOptions,
       bool ignoreExceptions = true,
@@ -335,28 +396,18 @@ class Nyxx extends NyxxRest {
         super(token, intents, options: options, cacheOptions: cacheOptions,
               ignoreExceptions: ignoreExceptions, useDefaultLogger: useDefaultLogger,
       ) {
-    this._events = _EventController(this);
 
-    this.onSelfMention = this.onMessageReceived
-        .where((event) => event.message.mentions.map((e) => e.id).contains(self.id));
-    this.onDmReceived = this.onMessageReceived
-        .where((event) => event.message is DMMessage);
+    this.eventsWs = WebsocketEventController();
 
-    this._ws = _ConnectionManager(this);
+    this.ws = ConnectionManager(this);
   }
-
-  /// The client's uptime.
-  Duration get uptime => DateTime.now().difference(_startTime);
-
-  /// [DateTime] when client was started
-  DateTime get startTime => _startTime;
 
   /// This endpoint is only for public guilds if bot is not int the guild.
   Future<GuildPreview> fetchGuildPreview(Snowflake guildId) async =>
     this.httpEndpoints.fetchGuildPreview(guildId);
 
   /// Returns guild with given [guildId]
-  Future<Guild> fetchGuild(Snowflake guildId) =>
+  Future<IGuild> fetchGuild(Snowflake guildId) =>
       this.httpEndpoints.fetchGuild(guildId);
 
   /// Returns channel with specified id.
@@ -370,12 +421,12 @@ class Nyxx extends NyxxRest {
   /// ```
   /// var user = client.getUser(Snowflake("302359032612651009"));
   /// ``
-  Future<User> fetchUser(Snowflake userId) =>
+  Future<IUser> fetchUser(Snowflake userId) =>
       this.httpEndpoints.fetchUser(userId);
 
   /// Gets a webhook by its id and/or token.
   /// If token is supplied authentication is not needed.
-  Future<Webhook> fetchWebhook(Snowflake id, {String token = ""}) =>
+  Future<IWebhook> fetchWebhook(Snowflake id, {String token = ""}) =>
       this.httpEndpoints.fetchWebhook(id, token: token);
 
   /// Gets an [Invite] object with given code.
@@ -384,11 +435,11 @@ class Nyxx extends NyxxRest {
   /// ```
   /// var inv = client.getInvite("YMgffU8");
   /// ```
-  Future<Invite> getInvite(String code) =>
+  Future<IInvite> getInvite(String code) =>
       this.httpEndpoints.fetchInvite(code);
 
   /// Returns number of shards
-  int get shards => this.shardManager._shards.length;
+  int get shards => this.shardManager.shards.length;
 
   /// Sets presence for bot.
   ///
@@ -413,25 +464,25 @@ class Nyxx extends NyxxRest {
       this.httpEndpoints.joinThread(channelId);
 
   /// Gets standard sticker with given id
-  Future<StandardSticker> getSticker(Snowflake id) =>
+  Future<IStandardSticker> getSticker(Snowflake id) =>
       this.httpEndpoints.getSticker(id);
 
   /// List all nitro stickers packs
-  Stream<StickerPack> listNitroStickerPacks() =>
+  Stream<IStickerPack> listNitroStickerPacks() =>
       this.httpEndpoints.listNitroStickerPacks();
 
   @override
   Future<void> dispose() async {
     this._logger.info("Disposing and closing bot...");
 
-    if (this._options.shutdownHook != null) {
-      await this._options.shutdownHook!(this);
+    if (this.options.shutdownHook != null) {
+      await this.options.shutdownHook!(this);
     }
 
     await shardManager.dispose();
-    await this._events.dispose();
-    await guilds.dispose();
-    await users.dispose();
+    await this.eventsRest.dispose();
+    // await guilds.dispose();
+    // await users.dispose();
 
     this._logger.info("Exiting...");
     exit(0);

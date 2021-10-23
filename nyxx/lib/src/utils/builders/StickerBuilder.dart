@@ -11,27 +11,8 @@ class StickerBuilder implements Builder {
   /// The Discord name of a unicode emoji representing the sticker's expression (2-200 characters)
   late String tags;
 
-  late List<int> _bytes;
-
-  StickerBuilder._new(this._bytes, this.name, this.description, this.tags);
-
-  /// Open file at [path] then read it's contents and prepare to send. Name will be automatically extracted from path if no name provided.
-  factory StickerBuilder.path(String path, {required String name, required String description, required String tags}) =>
-      StickerBuilder.file(File(path), name: name, description: description, tags: tags);
-
-  /// Create attachment from specified file instance. Name will be automatically extracted from path if no name provided.
-  factory StickerBuilder.file(File file, {required String name, required String description, required String tags}) {
-    final bytes = file.readAsBytesSync();
-
-    return StickerBuilder._new(bytes, name, description, tags);
-  }
-
-  /// Creates attachment from provided bytes
-  factory StickerBuilder.bytes(List<int> bytes, {required String name, required String description, required String tags}) =>
-      StickerBuilder._new(bytes, name, description, tags);
-
-  http.MultipartFile get _multipartFile =>
-      http.MultipartFile("file", Stream.value(_bytes), _bytes.length);
+  /// File that Sticker should be added to sticker
+  late final AttachmentBuilder file;
 
   @override
   RawApiMap build() => {

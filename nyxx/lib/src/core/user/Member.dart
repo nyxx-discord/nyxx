@@ -44,7 +44,7 @@ class Member extends SnowflakeEntity implements Mentionable {
   // TODO: is everything okay?
   /// Returns highest role of member.
   /// Uses ! on nullable properties and will throw if anything is missing from cache
-  Role get highestRole =>
+  IRole get highestRole =>
       this.roles.reduce((value, element) {
         final valueInstance = value.getFromCache();
         final elementInstance = element.getFromCache();
@@ -60,29 +60,29 @@ class Member extends SnowflakeEntity implements Mentionable {
     this.nickname = raw["nick"] as String?;
     this.deaf = raw["deaf"] as bool? ?? false;
     this.mute = raw["mute"] as bool? ?? false;
-    this.user = _UserCacheable(client, this.id);
-    this.guild = _GuildCacheable(client, guildId);
+    this.user = UserCacheable(client, this.id);
+    this.guild = GuildCacheable(client, guildId);
     this.boostingSince = DateTime.tryParse(raw["premium_since"] as String? ?? "");
     this.avatarHash = raw["avatar"] as String?;
 
     this.roles = [
       for (var id in raw["roles"])
-        _RoleCacheable(client, Snowflake(id), this.guild)
+        RoleCacheable(client, Snowflake(id), this.guild)
     ];
 
     if (raw["hoisted_role"] != null) {
-      this.hoistedRole = _RoleCacheable(client, Snowflake(raw["hoisted_role"]), this.guild);
+      this.hoistedRole = RoleCacheable(client, Snowflake(raw["hoisted_role"]), this.guild);
     }
 
     if (raw["joined_at"] != null) {
       this.joinedAt = DateTime.parse(raw["joined_at"] as String).toUtc();
     }
 
-    if (client._cacheOptions.userCachePolicyLocation.objectConstructor) {
+    if (client.cacheOptions.userCachePolicyLocation.objectConstructor) {
       final userRaw = raw["user"] as RawApiMap;
 
       if (userRaw["id"] != null && userRaw.length != 1) {
-        client.users.add(this.id, User._new(client, userRaw));
+        client.users[this.id] = User(client, userRaw);
       }
     }
   }
@@ -143,13 +143,13 @@ class Member extends SnowflakeEntity implements Mentionable {
   Future<void> edit({String? nick = "", List<SnowflakeEntity>? roles, bool? mute, bool? deaf, Snowflake? channel = const Snowflake.zero(), String? auditReason}) =>
       client.httpEndpoints.editGuildMember(this.guild.id, this.id, nick: nick, roles: roles, mute: mute, deaf: deaf, channel: channel, auditReason: auditReason);
 
-  void _updateMember(String? nickname, List<Snowflake> roles, DateTime? boostingSince) {
+  void updateMember(String? nickname, List<Snowflake> roles, DateTime? boostingSince) {
     if (this.nickname != nickname) {
       this.nickname = nickname;
     }
 
     if (this.roles != roles) {
-      this.roles = roles.map((e) => _RoleCacheable(client, e, this.guild));
+      this.roles = roles.map((e) => RoleCacheable(client, e, this.guild));
     }
 
     if (this.boostingSince == null && boostingSince != null) {

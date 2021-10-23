@@ -1,29 +1,30 @@
 part of nyxx;
 
 /// Sent when a user starts typing.
-class TypingEvent {
+class TypingEvent implements ITypingEvent {
   /// The channel that the user is typing in.
-  late final CacheableTextChannel<TextChannel> channel;
+  late final CacheableTextChannel<ITextChannel> channel;
 
   /// The user that is typing.
-  late final Cacheable<Snowflake, User> user;
+  late final Cacheable<Snowflake, IUser> user;
 
   /// The member who started typing if this happened in a guild
-  late final Member? member;
+  late final IMember? member;
 
   /// Timestamp when the user started typing
   late final DateTime timestamp;
 
   /// Reference to guild where typing occurred
-  late final Cacheable<Snowflake, Guild>? guild;
+  late final Cacheable<Snowflake, IGuild>? guild;
 
-  TypingEvent._new(RawApiMap raw, Nyxx client) {
-    this.channel = CacheableTextChannel._new(client, Snowflake(raw["d"]["channel_id"]), ChannelType.unknown);
-    this.user = _UserCacheable(client, Snowflake(raw["d"]["user_id"]));
+  /// Creates an instance of [TypingEvent]
+  TypingEvent(RawApiMap raw, INyxx client) {
+    this.channel = CacheableTextChannel(client, Snowflake(raw["d"]["channel_id"]));
+    this.user = UserCacheable(client, Snowflake(raw["d"]["user_id"]));
     this.timestamp = DateTime.fromMillisecondsSinceEpoch(raw["d"]["timestamp"] as int);
 
     if (raw["d"]["guild_id"] != null) {
-      this.guild = _GuildCacheable(client, Snowflake(raw["d"]["guild_id"]));
+      this.guild = GuildCacheable(client, Snowflake(raw["d"]["guild_id"]));
     } else {
       this.guild = null;
     }
@@ -33,8 +34,8 @@ class TypingEvent {
       return;
     }
 
-    this.member = Member._new(client, raw["d"]["member"] as RawApiMap, this.guild!.id);
-    if (client._cacheOptions.memberCachePolicyLocation.event && client._cacheOptions.memberCachePolicy.canCache(this.member!)) {
+    this.member = Member(client, raw["d"]["member"] as RawApiMap, this.guild!.id);
+    if (client.cacheOptions.memberCachePolicyLocation.event && client.cacheOptions.memberCachePolicy.canCache(this.member!)) {
       member!.guild.getFromCache()?.members[this.member!.id] = member!;
     }
   }

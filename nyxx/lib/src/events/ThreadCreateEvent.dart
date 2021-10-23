@@ -1,14 +1,15 @@
 part of nyxx;
 
 /// Fired when a thread is created
-class ThreadCreateEvent {
+class ThreadCreateEvent implements IThreadCreateEvent {
   /// The thread that was just created
-  late final ThreadChannel thread;
+  late final IThreadChannel thread;
 
-  ThreadCreateEvent._new(RawApiMap raw, Nyxx client) {
-    this.thread = ThreadChannel._new(client, raw["d"] as RawApiMap);
+  /// Creates an instance of [ThreadCreateEvent]
+  ThreadCreateEvent(RawApiMap raw, INyxx client) {
+    this.thread = ThreadChannel(client, raw["d"] as RawApiMap);
 
-    if (client._cacheOptions.channelCachePolicyLocation.event && client._cacheOptions.channelCachePolicy.canCache(this.thread)) {
+    if (client.cacheOptions.channelCachePolicyLocation.event && client.cacheOptions.channelCachePolicy.canCache(this.thread)) {
       client.channels[this.thread.id] = this.thread;
     }
   }

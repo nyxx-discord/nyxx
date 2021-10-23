@@ -1,15 +1,16 @@
 part of nyxx;
 
 /// Emitted when client connects/disconnects/mutes etc to voice channel
-class VoiceStateUpdateEvent {
+class VoiceStateUpdateEvent implements IVoiceStateUpdateEvent {
   /// Used to represent a user's voice connection status.
-  late final VoiceState state;
+  late final IVoiceState state;
 
   /// Raw gateway response
   final RawApiMap raw;
 
-  VoiceStateUpdateEvent._new(this.raw, Nyxx client) {
-    this.state = VoiceState._new(client, raw["d"] as RawApiMap);
+  /// Creates na instance of [VoiceStateUpdateEvent]
+  VoiceStateUpdateEvent(this.raw, INyxx client) {
+    this.state = VoiceState(client, raw["d"] as RawApiMap);
 
     if (state.channel != null) {
       state.guild?.getFromCache()?.voiceStates[this.state.user.id] = this.state;

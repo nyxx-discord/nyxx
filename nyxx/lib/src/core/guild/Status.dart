@@ -30,8 +30,22 @@ class UserStatus extends IEnum<String> {
   int get hashCode => this.value.hashCode;
 }
 
+abstract class IClientStatus {
+  /// The user's status set for an active desktop (Windows, Linux, Mac) application session
+  UserStatus get desktop;
+
+  /// The user's status set for an active mobile (iOS, Android) application session
+  UserStatus get web;
+
+  /// The user's status set for an active web (browser, bot account) application session
+  UserStatus get phone;
+
+  /// Returns if user is online
+  bool get isOnline;
+}
+
 /// Provides status of user on different devices
-class ClientStatus {
+class ClientStatus implements IClientStatus {
   /// The user's status set for an active desktop (Windows, Linux, Mac) application session
   late final UserStatus desktop;
 
@@ -41,14 +55,15 @@ class ClientStatus {
   /// The user's status set for an active web (browser, bot account) application session
   late final UserStatus phone;
 
-  ClientStatus._deserialize(RawApiMap raw) {
+  /// Returns if user is online
+  bool get isOnline => this.desktop.isOnline || this.phone.isOnline || this.web.isOnline;
+
+  /// Creates na instance of [ClientStatus]
+  ClientStatus(RawApiMap raw) {
     this.desktop = UserStatus.from(raw["desktop"] as String?);
     this.web = UserStatus.from(raw["web"] as String?);
     this.phone = UserStatus.from(raw["phone"] as String?);
   }
-
-  /// Returns if user is online
-  bool get isOnline => this.desktop.isOnline || this.phone.isOnline || this.web.isOnline;
 
   @override
   int get hashCode => desktop.hashCode * web.hashCode * phone.hashCode;

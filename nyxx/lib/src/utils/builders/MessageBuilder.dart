@@ -165,7 +165,7 @@ class MessageBuilder extends BuilderWithClient {
     };
   }
 
-  bool _hasFiles() => this.files != null && this.files!.isNotEmpty;
+  bool hasFiles() => this.files != null && this.files!.isNotEmpty;
 }
 
 /// Specifies formatting of String appended with [MessageBuilder]
@@ -194,8 +194,8 @@ class MessageDecoration extends IEnum<String> {
   const MessageDecoration._new(String value) : super(value);
 
   @override
-  String toString() => _value;
+  String toString() => value;
 
   /// Creates formatted string
-  String format(Object text) => "$_value$text$_value";
+  String format(String text) => "$value$text$value";
 }

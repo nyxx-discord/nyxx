@@ -8,28 +8,28 @@ part of nyxx;
 /// allows for splitting events across a number of gateway connections.
 /// Guild sharding is entirely user controlled, and requires no state-sharing
 /// between separate connections to operate.
-class ShardManager implements Disposable {
+class ShardManager implements IShardManager {
   /// Emitted when the shard is ready.
-  late final Stream<Shard> onConnected = this._onConnect.stream;
+  late final Stream<IShard> onConnected = this.onConnectController.stream;
 
   /// Emitted when the shard encounters a connection error.
-  late final Stream<Shard> onDisconnect = this._onDisconnect.stream;
+  late final Stream<IShard> onDisconnect = this.onDisconnectController.stream;
 
   /// Emitted when the shard resumed its connection
-  late final Stream<Shard> onResume = this._onDisconnect.stream;
+  late final Stream<IShard> onResume = this.onDisconnectController.stream;
 
   /// Emitted when shard receives member chunk.
-  late final Stream<MemberChunkEvent> onMemberChunk = this._onMemberChunk.stream;
+  late final Stream<IMemberChunkEvent> onMemberChunk = this.onMemberChunkController.stream;
 
   /// Raw gateway payloads. You have set `dispatchRawShardEvent` in [ClientOptions] to true otherwise stream won't receive any events.
   /// Also rawEvent is dispatched ONLY for payload that doesn't match any event built in into Nyxx.
-  late final Stream<RawEvent> rawEvent = this._onRawEvent.stream;
+  late final Stream<IRawEvent> rawEvent = this.onRawEventController.stream;
 
-  final StreamController<Shard> _onConnect = StreamController.broadcast();
-  final StreamController<Shard> _onDisconnect = StreamController.broadcast();
-  final StreamController<Shard> _onResume = StreamController.broadcast();
-  final StreamController<MemberChunkEvent> _onMemberChunk = StreamController.broadcast();
-  final StreamController<RawEvent> _onRawEvent = StreamController.broadcast();
+  final StreamController<IShard> onConnectController = StreamController.broadcast();
+  final StreamController<IShard> onDisconnectController = StreamController.broadcast();
+  final StreamController<IShard> onResumeController = StreamController.broadcast();
+  final StreamController<IMemberChunkEvent> onMemberChunkController = StreamController.broadcast();
+  final StreamController<IRawEvent> onRawEventController = StreamController.broadcast();
 
   final Logger _logger = Logger("Shard Manager");
 
@@ -37,8 +37,8 @@ class ShardManager implements Disposable {
   Iterable<Shard> get shards => UnmodifiableListView(this._shards.values);
 
   /// Average gateway latency across all shards
-  Duration get gatewayLatency
-    => Duration(milliseconds: (this.shards.map((e) => e.gatewayLatency.inMilliseconds)
+  Duration get gatewayLatency =>
+      Duration(milliseconds: (this.shards.map((e) => e.gatewayLatency.inMilliseconds)
         .fold<int>(0, (first, second) => first + second)) ~/ shards.length);
 
   /// The number of identify requests allowed per 5 seconds
@@ -91,14 +91,14 @@ class ShardManager implements Disposable {
     this._logger.info("Closing gateway connections...");
 
     for(final shard in this._shards.values) {
-      if(this._ws._client._options.shutdownShardHook != null) {
-        this._ws._client._options.shutdownShardHook!(this._ws._client, shard); // ignore: unawaited_futures
+      if(this.connectionManager.client.options.shutdownShardHook != null) {
+        this.connectionManager.client.options.shutdownShardHook!(this.connectionManager.client, shard); // ignore: unawaited_futures
       }
       shard.dispose(); // ignore: unawaited_futures
     }
 
-    await this._onConnect.close();
-    await this._onDisconnect.close();
-    await this._onMemberChunk.close();
+    await this.onConnectController.close();
+    await this.onDisconnectController.close();
+    await this.onMemberChunkController.close();
   }
 }
