@@ -185,8 +185,7 @@ class User extends SnowflakeEntity implements IUser {
   /// The user's avatar, represented as URL.
   /// In case if user does not have avatar, default discord avatar will be returned with specified size and png format.
   @override
-  String avatarURL({String format = "webp", int size = 128}) =>
-      client.httpEndpoints.userAvatarURL(id, avatar, discriminator, format: format, size: size);
+  String avatarURL({String format = "webp", int size = 128}) => client.httpEndpoints.userAvatarURL(id, avatar, discriminator, format: format, size: size);
 
   /// Sends a message to user.
   @override

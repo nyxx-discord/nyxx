@@ -25,8 +25,7 @@ class HttpBucket {
   HttpBucket(this.id, this._httpHandler);
 
   Future<http.StreamedResponse> execute(HttpRequest request) async {
-    _httpHandler
-        .logger
+    _httpHandler.logger
         .fine("Executing request: [${request.uri.toString()}]; Bucket ID: [$id]; Reset at: [$_resetAt]; Remaining: [$_remaining]; Reset after: [$_resetAfter]");
 
     // Get actual time and check if request can be executed based on data that bucket already have
