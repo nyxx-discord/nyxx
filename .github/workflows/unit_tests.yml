@@ -60,6 +60,7 @@ jobs:
         run: dart format --set-exit-if-changed -l 160 ./lib
 
   tests:
+    needs: [ format, analyze ]
     name: Tests
     runs-on: ubuntu-latest
     env:
@@ -99,7 +100,7 @@ jobs:
         env:
           SSH_PRIVATE_KEY: ${{ secrets.DEPLOY_SSH_SERVER_KEY }}
           ARGS: "-rltDzvO"
-          SOURCE: "coverage/coverage_gen"
+          SOURCE: "coverage/coverage_gen/"
           REMOTE_HOST: ${{ secrets.DEPLOY_REMOTE_HOST }}
           REMOTE_USER: ${{ secrets.DEPLOY_REMOTE_USER }}
           TARGET: "${{ secrets.DEPLOY_REMOTE_TARGET }}/coverage/nyxx/"
