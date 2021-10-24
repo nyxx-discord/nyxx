@@ -17,12 +17,14 @@ import 'package:nyxx/src/core/user/user.dart';
 import 'package:nyxx/src/internal/connection_manager.dart';
 import 'package:nyxx/src/internal/constants.dart';
 import 'package:nyxx/src/internal/event_controller.dart';
+import 'package:nyxx/src/internal/http/http_response.dart';
 import 'package:nyxx/src/internal/http_endpoints.dart';
 import 'package:nyxx/src/internal/exceptions/missing_token_error.dart';
 import 'package:nyxx/src/internal/http/http_handler.dart';
 import 'package:nyxx/src/internal/interfaces/disposable.dart';
 import 'package:nyxx/src/internal/shard/shard_manager.dart';
 import 'utils/builders/presence_builder.dart';
+import 'package:nyxx/src/typedefs.dart';
 
 class NyxxFactory {
   static INyxx createNyxxRest(String token, int intents,
@@ -160,7 +162,7 @@ class NyxxRest extends INyxxRest {
   /// Creates and logs in a new client. If [ignoreExceptions] is true (by default is)
   /// isolate will ignore all exceptions and continue to work.
   NyxxRest(this.token, this.intents, {ClientOptions? options, CacheOptions? cacheOptions, bool ignoreExceptions = true, bool useDefaultLogger = true}) {
-    this._logger.fine("Staring Nyxx: intents: [$intents]; ignoreExceptions: [$ignoreExceptions]; useDefaultLogger: [$useDefaultLogger]");
+    _logger.fine("Staring Nyxx: intents: [$intents]; ignoreExceptions: [$ignoreExceptions]; useDefaultLogger: [$useDefaultLogger]");
 
     if (token.isEmpty) {
       throw MissingTokenError();
@@ -172,16 +174,16 @@ class NyxxRest extends INyxxRest {
       });
     }
 
-    this._logger.info("Starting bot with pid: $pid. To stop the bot gracefully send SIGTERM or SIGKILL");
+    _logger.info("Starting bot with pid: $pid. To stop the bot gracefully send SIGTERM or SIGKILL");
 
     if (!Platform.isWindows) {
       ProcessSignal.sigterm.watch().forEach((event) async {
-        await this.dispose();
+        await dispose();
       });
     }
 
     ProcessSignal.sigint.watch().forEach((event) async {
-      await this.dispose();
+      await dispose();
     });
 
     if (ignoreExceptions) {
@@ -199,14 +201,28 @@ class NyxxRest extends INyxxRest {
     this.options = options ?? ClientOptions();
     this.cacheOptions = cacheOptions ?? CacheOptions();
 
-    this.guilds = {};
-    this.channels = {};
-    this.users = {};
+    guilds = {};
+    channels = {};
+    users = {};
 
-    this.httpHandler = HttpHandler(this);
-    this.httpEndpoints = HttpEndpoints(this);
+    connect();
+  }
 
-    this.eventsRest = RestEventController();
+  Future<void> connect() async {
+    httpHandler = HttpHandler(this);
+    httpEndpoints = HttpEndpoints(this);
+
+    eventsRest = RestEventController();
+
+    final httpResponse = await (httpEndpoints as HttpEndpoints).getMeApplication();
+
+    if (httpResponse is HttpResponseError) {
+      _logger.shout("Cannot get bot identity: `${httpResponse.toString()}`");
+      exit(1);
+    }
+
+    final response = httpResponse as HttpResponseSuccess;
+    app = ClientOAuth2Application(response.jsonBody as RawApiMap, this);
   }
 
   @override
@@ -315,37 +331,41 @@ class NyxxWebsocket extends NyxxRest implements INyxxWebsocket {
           cacheOptions: cacheOptions,
           ignoreExceptions: ignoreExceptions,
           useDefaultLogger: useDefaultLogger,
-        ) {
-    this.eventsWs = WebsocketEventController();
+        );
 
-    this.ws = ConnectionManager(this);
+  @override
+  Future<void> connect() async {
+    super.connect();
+
+    eventsWs = WebsocketEventController();
+    ws = ConnectionManager(this);
   }
 
   /// This endpoint is only for public guilds if bot is not int the guild.
   @override
-  Future<IGuildPreview> fetchGuildPreview(Snowflake guildId) async => this.httpEndpoints.fetchGuildPreview(guildId);
+  Future<IGuildPreview> fetchGuildPreview(Snowflake guildId) async => httpEndpoints.fetchGuildPreview(guildId);
 
   /// Returns guild with given [guildId]
   @override
-  Future<IGuild> fetchGuild(Snowflake guildId) => this.httpEndpoints.fetchGuild(guildId);
+  Future<IGuild> fetchGuild(Snowflake guildId) => httpEndpoints.fetchGuild(guildId);
 
   /// Returns channel with specified id.
   /// ```
   /// var channel = await client.getChannel<TextChannel>(Snowflake("473853847115137024"));
   /// ```
   @override
-  Future<T> fetchChannel<T extends IChannel>(Snowflake channelId) => this.httpEndpoints.fetchChannel(channelId);
+  Future<T> fetchChannel<T extends IChannel>(Snowflake channelId) => httpEndpoints.fetchChannel(channelId);
 
   /// Get user instance with specified id.
   /// ```
   /// var user = client.getUser(Snowflake("302359032612651009"));
   /// ``
-  Future<IUser> fetchUser(Snowflake userId) => this.httpEndpoints.fetchUser(userId);
+  Future<IUser> fetchUser(Snowflake userId) => httpEndpoints.fetchUser(userId);
 
   /// Gets a webhook by its id and/or token.
   /// If token is supplied authentication is not needed.
   @override
-  Future<IWebhook> fetchWebhook(Snowflake id, {String token = ""}) => this.httpEndpoints.fetchWebhook(id, token: token);
+  Future<IWebhook> fetchWebhook(Snowflake id, {String token = ""}) => httpEndpoints.fetchWebhook(id, token: token);
 
   /// Gets an [Invite] object with given code.
   /// If the [code] is in cache - it will be taken from it, otherwise API will be called.
@@ -354,11 +374,11 @@ class NyxxWebsocket extends NyxxRest implements INyxxWebsocket {
   /// var inv = client.getInvite("YMgffU8");
   /// ```
   @override
-  Future<IInvite> getInvite(String code) => this.httpEndpoints.fetchInvite(code);
+  Future<IInvite> getInvite(String code) => httpEndpoints.fetchInvite(code);
 
   /// Returns number of shards
   @override
-  int get shards => this.shardManager.shards.length;
+  int get shards => shardManager.shards.length;
 
   /// Sets presence for bot.
   ///
@@ -376,35 +396,35 @@ class NyxxWebsocket extends NyxxRest implements INyxxWebsocket {
   /// `url` property in `Activity` can be only set when type is set to `streaming`
   @override
   void setPresence(PresenceBuilder presenceBuilder) {
-    this.shardManager.setPresence(presenceBuilder);
+    shardManager.setPresence(presenceBuilder);
   }
 
   /// Join [ThreadChannel] with given [channelId]
   @override
-  Future<void> joinThread(Snowflake channelId) => this.httpEndpoints.joinThread(channelId);
+  Future<void> joinThread(Snowflake channelId) => httpEndpoints.joinThread(channelId);
 
   /// Gets standard sticker with given id
   @override
-  Future<IStandardSticker> getSticker(Snowflake id) => this.httpEndpoints.getSticker(id);
+  Future<IStandardSticker> getSticker(Snowflake id) => httpEndpoints.getSticker(id);
 
   /// List all nitro stickers packs
   @override
-  Stream<IStickerPack> listNitroStickerPacks() => this.httpEndpoints.listNitroStickerPacks();
+  Stream<IStickerPack> listNitroStickerPacks() => httpEndpoints.listNitroStickerPacks();
 
   @override
   Future<void> dispose() async {
-    this._logger.info("Disposing and closing bot...");
+    _logger.info("Disposing and closing bot...");
 
-    if (this.options.shutdownHook != null) {
-      await this.options.shutdownHook!(this);
+    if (options.shutdownHook != null) {
+      await options.shutdownHook!(this);
     }
 
     await shardManager.dispose();
-    await this.eventsRest.dispose();
+    await eventsRest.dispose();
     // await guilds.dispose();
     // await users.dispose();
 
-    this._logger.info("Exiting...");
+    _logger.info("Exiting...");
     exit(0);
   }
 }

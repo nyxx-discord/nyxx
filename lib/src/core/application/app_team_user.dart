@@ -29,9 +29,9 @@ class AppTeamUser extends SnowflakeEntity implements IAppTeamUser {
   late final String? avatar;
 
   /// Creates an instance of [AppTeamUser]
-  AppTeamUser(RawApiMap raw) : super(Snowflake(raw["id"] as String)) {
-    this.username = raw["username"] as String;
-    this.discriminator = raw["discriminator"] as String;
-    this.avatar = raw["avatar"] as String?;
+  AppTeamUser(RawApiMap raw) : super(Snowflake(raw["id"])) {
+    username = raw["username"] as String;
+    discriminator = raw["discriminator"] as String;
+    avatar = raw["avatar"] as String?;
   }
 }

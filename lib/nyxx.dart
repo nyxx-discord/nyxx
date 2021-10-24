@@ -15,8 +15,6 @@ export "src/core/application/app_team_member.dart" show IAppTeamMember;
 export "src/core/application/app_team_user.dart" show IAppTeamUser;
 export "src/core/application/client_oauth2_application.dart" show IClientOAuth2Application;
 export "src/core/application/oauth2_application.dart" show IOAuth2Application;
-export "src/core/application/oauth2_guild.dart" show IOAuth2Guild;
-export "src/core/application/oauth2_info.dart" show IOAuth2Info;
 export 'src/core/audit_logs/audit_log.dart' show IAuditLog;
 export 'src/core/audit_logs/audit_log_change.dart' show ChangeKeyType, IAuditLogChange;
 export 'src/core/audit_logs/audit_log_entry.dart' show IAuditLogEntry, AuditLogEntryType;

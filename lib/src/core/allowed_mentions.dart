@@ -20,39 +20,39 @@ class AllowedMentions extends Builder {
   /// Allow @role if [roles] is true
   void allow({bool? reply, bool? everyone, bool? users, bool? roles}) {
     if (everyone != null) {
-      this._allowEveryone = everyone;
+      _allowEveryone = everyone;
     }
 
     if (users != null) {
-      this._allowUsers = users;
+      _allowUsers = users;
     }
     if (roles != null) {
-      this._allowRoles = roles;
+      _allowRoles = roles;
     }
 
     if (reply != null) {
-      this._allowReply = reply;
+      _allowReply = reply;
     }
   }
 
   /// Suppress mentioning specific user by its id
   void suppressUser(Snowflake userId) {
-    this._users.add(userId);
+    _users.add(userId);
   }
 
   /// Suppress mentioning multiple users by their ids
   void suppressUsers(Iterable<Snowflake> userIds) {
-    this._users.addAll(userIds);
+    _users.addAll(userIds);
   }
 
   /// Suppress mentioning specific role by its id
   void suppressRole(Snowflake roleId) {
-    this._roles.add(roleId);
+    _roles.add(roleId);
   }
 
   /// Suppress mentioning multiple roles by their ids
   void suppressRoles(Iterable<Snowflake> roleIds) {
-    this._roles.addAll(roleIds);
+    _roles.addAll(roleIds);
   }
 
   @override
@@ -63,7 +63,7 @@ class AllowedMentions extends Builder {
         if (_allowRoles) "roles",
         if (_allowUsers) "users",
       ],
-      "replied_user": this._allowReply
+      "replied_user": _allowReply
     };
 
     if (_users.isNotEmpty) {

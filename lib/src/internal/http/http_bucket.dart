@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 import 'package:nyxx/src/events/ratelimit_event.dart';
+import 'package:nyxx/src/internal/event_controller.dart';
 import 'package:nyxx/src/internal/exceptions/http_client_exception.dart';
 
 import 'package:nyxx/src/internal/http/http_handler.dart';
@@ -12,6 +13,7 @@ class HttpBucket {
   int _remaining = 10;
   DateTime? _resetAt;
   double? _resetAfter;
+  RestEventController get _events => _httpHandler.client.eventsRest as RestEventController;
 
   // Bucket ID
   late final String id;
@@ -23,8 +25,7 @@ class HttpBucket {
   HttpBucket(this.id, this._httpHandler);
 
   Future<http.StreamedResponse> execute(HttpRequest request) async {
-    this
-        ._httpHandler
+    _httpHandler
         .logger
         .fine("Executing request: [${request.uri.toString()}]; Bucket ID: [$id]; Reset at: [$_resetAt]; Remaining: [$_remaining]; Reset after: [$_resetAfter]");
 
@@ -35,7 +36,7 @@ class HttpBucket {
       final waitTime = _resetAt!.millisecondsSinceEpoch - now.millisecondsSinceEpoch;
 
       if (waitTime > 0) {
-        _httpHandler.client.eventsRest.onRateLimitedController.add(RatelimitEvent(request, true));
+        _events.onRateLimitedController.add(RatelimitEvent(request, true));
         _httpHandler.logger.warning("Rate limited internally on endpoint: ${request.uri}. Trying to send request again in $waitTime ms...");
 
         return Future.delayed(Duration(milliseconds: waitTime), () => execute(request));
@@ -61,7 +62,7 @@ class HttpBucket {
         final responseBody = jsonDecode(await response.stream.bytesToString());
         final retryAfter = ((responseBody["retry_after"] as double) * 1000).round();
 
-        _httpHandler.client.eventsRest.onRateLimitedController.add(RatelimitEvent(request, false, response));
+        _events.onRateLimitedController.add(RatelimitEvent(request, false, response));
         _httpHandler.logger.warning("Rate limited via 429 on endpoint: ${request.uri}. Trying to send request again in $retryAfter ms...");
 
         return Future.delayed(Duration(milliseconds: retryAfter), () => execute(request));
@@ -75,20 +76,20 @@ class HttpBucket {
 
   void _setBucketValues(Map<String, String> headers) {
     if (headers["x-ratelimit-remaining"] != null) {
-      this._remaining = int.parse(headers["x-ratelimit-remaining"]!);
+      _remaining = int.parse(headers["x-ratelimit-remaining"]!);
     }
 
     // seconds since epoch
     if (headers["x-ratelimit-reset"] != null) {
       final secondsSinceEpoch = (double.parse(headers["x-ratelimit-reset"]!) * 1000000).toInt();
-      this._resetAt = DateTime.fromMicrosecondsSinceEpoch(secondsSinceEpoch);
+      _resetAt = DateTime.fromMicrosecondsSinceEpoch(secondsSinceEpoch);
     }
 
     if (headers["x-ratelimit-reset-after"] != null) {
-      this._resetAfter = double.parse(headers["x-ratelimit-reset-after"]!);
+      _resetAfter = double.parse(headers["x-ratelimit-reset-after"]!);
     }
 
-    this._httpHandler.logger.finer(
+    _httpHandler.logger.finer(
         "Added http header values: HTTP Bucket ID: [${headers['x-ratelimit-bucket']}]; Reset at: [$_resetAt]; Remaining: [$_remaining]; Reset after: [$_resetAfter]");
   }
 }

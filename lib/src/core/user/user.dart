@@ -36,11 +36,11 @@ abstract class IUser implements SnowflakeEntity, ISend, Mentionable, IMessageAut
 
   /// The string to mention the user.
   @override
-  String get mention => "<@!${this.id}>";
+  String get mention => "<@!${id}>";
 
   /// Returns String with username#discriminator
   @override
-  String get tag => "${this.username}#${this.formattedDiscriminator}";
+  String get tag => "${username}#${formattedDiscriminator}";
 
   /// Whether the user belongs to an OAuth2 application
   @override
@@ -105,11 +105,11 @@ class User extends SnowflakeEntity implements IUser {
 
   /// The string to mention the user.
   @override
-  String get mention => "<@!${this.id}>";
+  String get mention => "<@!${id}>";
 
   /// Returns String with username#discriminator
   @override
-  String get tag => "${this.username}#${this.formattedDiscriminator}";
+  String get tag => "${username}#${formattedDiscriminator}";
 
   /// Whether the user belongs to an OAuth2 application
   @override
@@ -146,29 +146,29 @@ class User extends SnowflakeEntity implements IUser {
 
   /// Creates an instance of [User]
   User(this.client, RawApiMap raw) : super(Snowflake(raw["id"])) {
-    this.username = raw["username"] as String;
-    this.discriminator = int.parse(raw["discriminator"] as String);
-    this.avatar = raw["avatar"] as String?;
-    this.bot = raw["bot"] as bool? ?? false;
-    this.system = raw["system"] as bool? ?? false;
+    username = raw["username"] as String;
+    discriminator = int.parse(raw["discriminator"] as String);
+    avatar = raw["avatar"] as String?;
+    bot = raw["bot"] as bool? ?? false;
+    system = raw["system"] as bool? ?? false;
 
     if (raw["public_flags"] != null) {
-      this.userFlags = UserFlags(raw["public_flags"] as int);
+      userFlags = UserFlags(raw["public_flags"] as int);
     } else {
-      this.userFlags = null;
+      userFlags = null;
     }
 
     if (raw["premium_type"] != null) {
-      this.nitroType = NitroType.from(raw["premium_type"] as int);
+      nitroType = NitroType.from(raw["premium_type"] as int);
     } else {
-      this.nitroType = null;
+      nitroType = null;
     }
 
-    this.bannerHash = raw["banner"] as String?;
+    bannerHash = raw["banner"] as String?;
     if (raw["accent_color"] != null) {
-      this.accentColor = DiscordColor.fromInt(raw["accent_color"] as int);
+      accentColor = DiscordColor.fromInt(raw["accent_color"] as int);
     } else {
-      this.accentColor = null;
+      accentColor = null;
     }
   }
 
@@ -178,7 +178,7 @@ class User extends SnowflakeEntity implements IUser {
     try {
       return client.channels.values.firstWhere((item) => item is IDMChannel && item.participants.contains(this)) as Future<IDMChannel>;
     } on StateError {
-      return client.httpEndpoints.createDMChannel(this.id);
+      return client.httpEndpoints.createDMChannel(id);
     }
   }
 
@@ -186,12 +186,12 @@ class User extends SnowflakeEntity implements IUser {
   /// In case if user does not have avatar, default discord avatar will be returned with specified size and png format.
   @override
   String avatarURL({String format = "webp", int size = 128}) =>
-      client.httpEndpoints.userAvatarURL(this.id, this.avatar, this.discriminator, format: format, size: size);
+      client.httpEndpoints.userAvatarURL(id, avatar, discriminator, format: format, size: size);
 
   /// Sends a message to user.
   @override
   Future<IMessage> sendMessage(MessageBuilder builder) async {
-    final channel = await this.dmChannel;
+    final channel = await dmChannel;
     return channel.sendMessage(builder);
   }
 }

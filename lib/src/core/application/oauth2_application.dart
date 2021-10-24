@@ -38,19 +38,19 @@ class OAuth2Application extends SnowflakeEntity implements IOAuth2Application {
   late final List<String>? rpcOrigins;
 
   /// Creates an instance of [OAuth2Application]
-  OAuth2Application(RawApiMap raw) : super(Snowflake(raw["id"] as String)) {
-    this.description = raw["description"] as String;
-    this.name = raw["name"] as String;
+  OAuth2Application(RawApiMap raw) : super(Snowflake(raw["id"])) {
+    description = raw["description"] as String;
+    name = raw["name"] as String;
 
-    this.icon = raw["icon"] as String?;
-    this.rpcOrigins = raw["rpcOrigins"] as List<String>?;
+    icon = raw["icon"] as String?;
+    rpcOrigins = raw["rpcOrigins"] as List<String>?;
   }
 
   /// Returns url to apps icon
   @override
   String? iconUrl({String format = "png", int size = 512}) {
-    if (this.icon != null) {
-      return "https://cdn.discordapp.com/app-icons/${this.id}/$icon.$format?size=$size";
+    if (icon != null) {
+      return "https://cdn.discordapp.com/app-icons/$id/$icon.$format?size=$size";
     }
 
     return null;

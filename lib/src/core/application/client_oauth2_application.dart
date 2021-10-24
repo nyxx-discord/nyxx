@@ -22,7 +22,7 @@ abstract class IClientOAuth2Application implements IOAuth2Application {
 class ClientOAuth2Application extends OAuth2Application implements IClientOAuth2Application {
   /// Reference to [NyxxWebsocket]
   @override
-  final NyxxWebsocket client;
+  final INyxx client;
 
   /// The app's flags.
   @override
@@ -34,11 +34,11 @@ class ClientOAuth2Application extends OAuth2Application implements IClientOAuth2
 
   /// Creates an instance of [ClientOAuth2Application]
   ClientOAuth2Application(RawApiMap raw, this.client) : super(raw) {
-    this.flags = raw["flags"] as int?;
-    this.owner = User(client, raw["owner"] as RawApiMap);
+    flags = raw["flags"] as int?;
+    owner = User(client, raw["owner"] as RawApiMap);
   }
 
   /// Creates an OAuth2 URL with the specified permissions.
   @override
-  String getInviteUrl([int? permissions]) => this.client.httpEndpoints.getApplicationInviteUrl(this.id, permissions);
+  String getInviteUrl([int? permissions]) => client.httpEndpoints.getApplicationInviteUrl(id, permissions);
 }

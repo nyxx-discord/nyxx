@@ -22,7 +22,7 @@ class AppTeamMember implements IAppTeamMember {
 
   /// Creates and instance of [AppTeamMember]
   AppTeamMember(RawApiMap raw) {
-    this.user = AppTeamUser(raw["user"] as RawApiMap);
-    this.membershipState = raw["membership_state"] as int;
+    user = AppTeamUser(raw["user"] as RawApiMap);
+    membershipState = raw["membership_state"] as int;
   }
 }

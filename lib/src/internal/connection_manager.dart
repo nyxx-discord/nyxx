@@ -30,54 +30,44 @@ class ConnectionManager {
   ConnectionManager(this.client) {
     (client.httpEndpoints as HttpEndpoints).getGatewayBot().then((httpResponse) {
       if (httpResponse is HttpResponseError) {
-        this._logger.severe("Cannot get gateway url: [${httpResponse.errorCode}; ${httpResponse.errorMessage}]");
+        _logger.severe("Cannot get gateway url: [${httpResponse.errorCode}; ${httpResponse.errorMessage}]");
         exit(1);
       }
 
       final response = httpResponse as HttpResponseSuccess;
 
-      this.gateway = response.jsonBody["url"] as String;
-      this.remaining = response.jsonBody["session_start_limit"]["remaining"] as int;
-      this.resetAt = DateTime.now().add(Duration(milliseconds: response.jsonBody["session_start_limit"]["reset_after"] as int));
-      this.recommendedShardsNum = response.jsonBody["shards"] as int;
-      this.maxConcurrency = response.jsonBody["session_start_limit"]["max_concurrency"] as int;
+      gateway = response.jsonBody["url"] as String;
+      remaining = response.jsonBody["session_start_limit"]["remaining"] as int;
+      resetAt = DateTime.now().add(Duration(milliseconds: response.jsonBody["session_start_limit"]["reset_after"] as int));
+      recommendedShardsNum = response.jsonBody["shards"] as int;
+      maxConcurrency = response.jsonBody["session_start_limit"]["max_concurrency"] as int;
 
-      this._logger.fine("Got gateway info: Url: [$gateway]; Recommended shard num: [$recommendedShardsNum]");
+      _logger.fine("Got gateway info: Url: [$gateway]; Recommended shard num: [$recommendedShardsNum]");
 
       checkForConnections();
 
-      this.client.shardManager = ShardManager(this, this.maxConcurrency);
+      client.shardManager = ShardManager(this, maxConcurrency);
     });
   }
 
   void checkForConnections() {
-    _logger.info("Remaining ${this.remaining} connections starts. Limit will reset at ${this.resetAt}");
+    _logger.info("Remaining $remaining connections starts. Limit will reset at $resetAt");
 
-    if (this.remaining < 50) {
+    if (remaining < 50) {
       _logger.warning("50 connection starts left.");
     }
 
-    if (this.remaining < 10) {
+    if (remaining < 10) {
       _logger.severe("Exiting to prevent API abuse. 10 connections starts left.");
       exit(1);
     }
   }
 
   Future<void> propagateReady() async {
-    this._shardsReady++;
-    if (client.ready || this._shardsReady < (client.options.shardCount ?? 1)) {
+    _shardsReady++;
+    if (client.ready || _shardsReady < (client.options.shardCount ?? 1)) {
       return;
     }
-
-    final httpResponse = await (client.httpEndpoints as HttpEndpoints).getMeApplication();
-
-    if (httpResponse is HttpResponseError) {
-      this._logger.shout("Cannot get bot identity: `${httpResponse.toString()}`");
-      exit(1);
-    }
-
-    final response = httpResponse as HttpResponseSuccess;
-    client.app = ClientOAuth2Application(response.jsonBody as RawApiMap, client);
 
     if (!client.ready) {
       (client.eventsWs as WebsocketEventController).onReadyController.add(ReadyEvent(client));

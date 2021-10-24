@@ -7,6 +7,6 @@ class MockMessage extends SnowflakeEntity with Fake implements IMessage {
   late String content;
 
   MockMessage(RawApiMap rawData, Snowflake id) : super(id) {
-		this.content = rawData["content"] as String;
+		content = rawData["content"] as String;
 	}
 }

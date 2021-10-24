@@ -18,7 +18,7 @@ class HttpHandler {
   late final InternalHttpClient _httpClient;
 
   final Logger logger = Logger("Http");
-  final NyxxRest client;
+  final INyxxRest client;
 
   /// Creates an instance of [HttpHandler]
   HttpHandler(this.client) {

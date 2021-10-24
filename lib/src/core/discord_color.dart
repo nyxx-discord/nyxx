@@ -43,25 +43,25 @@ class DiscordColor extends IEnum<int> {
   }
 
   /// Gets the blue component of this color as an integer.
-  int get r => (this.value >> 16) & 0xFF;
+  int get r => (value >> 16) & 0xFF;
 
   /// Gets the green component of this color as an integer.
-  int get g => (this.value >> 8) & 0xFF;
+  int get g => (value >> 8) & 0xFF;
 
   /// Gets the blue component of this color as an integer.
-  int get b => this.value & 0xFF;
+  int get b => value & 0xFF;
 
   @override
-  String toString() => this.asHexString();
+  String toString() => asHexString();
 
   /// Returns
   String asHexString() {
     final buffer = StringBuffer();
 
     buffer.write("#");
-    buffer.write(this.r.toRadixString(16).padLeft(2, "0"));
-    buffer.write(this.g.toRadixString(16).padLeft(2, "0"));
-    buffer.write(this.b.toRadixString(16).padLeft(2, "0"));
+    buffer.write(r.toRadixString(16).padLeft(2, "0"));
+    buffer.write(g.toRadixString(16).padLeft(2, "0"));
+    buffer.write(b.toRadixString(16).padLeft(2, "0"));
 
     return buffer.toString().toUpperCase();
   }

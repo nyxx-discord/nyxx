@@ -3,7 +3,7 @@ generate-coverage: coverage-tests coverage-format coverage-gen-html
 
 .PHONY: test-coverage
 coverage-tests:
-	dart run test --coverage="coverage" test/unit/**
+	(timeout 10s dart run test --coverage="coverage" --timeout=none test/unit; exit 0)
 
 .PHONY: coverage-format
 coverage-format:

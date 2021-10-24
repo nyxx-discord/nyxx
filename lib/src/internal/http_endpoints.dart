@@ -373,7 +373,7 @@ class HttpEndpoints implements IHttpEndpoints {
 
   /// Creates an instance of [HttpEndpoints]
   HttpEndpoints(this.client) {
-    this.httpHandler = this.client.httpHandler;
+    httpHandler = client.httpHandler;
   }
 
   @override

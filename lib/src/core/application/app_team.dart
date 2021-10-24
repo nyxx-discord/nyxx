@@ -38,13 +38,13 @@ class AppTeam extends SnowflakeEntity implements IAppTeam {
 
   /// Returns instance of [IAppTeamMember] of team owner
   @override
-  IAppTeamMember get ownerMember => this.members.firstWhere((element) => element.user.id == this.ownerId);
+  IAppTeamMember get ownerMember => members.firstWhere((element) => element.user.id == ownerId);
 
   /// Returns url to team icon
   @override
   String? get teamIconUrl {
     if (iconHash != null) {
-      return "https://cdn.${Constants.cdnHost}/team-icons/${this.id.toString()}/${this.iconHash}.png";
+      return "https://cdn.${Constants.cdnHost}/team-icons/${id.toString()}/$iconHash.png";
     }
 
     return null;
@@ -52,9 +52,9 @@ class AppTeam extends SnowflakeEntity implements IAppTeam {
 
   /// Creates an instance of [AppTeam]
   AppTeam(RawApiMap raw) : super(Snowflake(raw["id"])) {
-    this.iconHash = raw["icon"] as String?;
-    this.ownerId = Snowflake(raw["owner_user_id"]);
+    iconHash = raw["icon"] as String?;
+    ownerId = Snowflake(raw["owner_user_id"]);
 
-    this.members = [for (final rawMember in raw["members"]) AppTeamMember(rawMember as RawApiMap)];
+    members = [for (final rawMember in raw["members"]) AppTeamMember(rawMember as RawApiMap)];
   }
 }
