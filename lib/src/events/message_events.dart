@@ -28,10 +28,10 @@ class MessageReceivedEvent implements IMessageReceivedEvent {
 
   /// Creates an instance of [MessageReceivedEvent]
   MessageReceivedEvent(RawApiMap raw, INyxx client) {
-    this.message = Message(client, raw["d"] as RawApiMap);
+    message = Message(client, raw["d"] as RawApiMap);
 
-    if (client.cacheOptions.messageCachePolicyLocation.event && client.cacheOptions.messageCachePolicy.canCache(this.message)) {
-      message.channel.getFromCache()?.messageCache[this.message.id] = this.message;
+    if (client.cacheOptions.messageCachePolicyLocation.event && client.cacheOptions.messageCachePolicy.canCache(message)) {
+      message.channel.getFromCache()?.messageCache[message.id] = message;
     }
   }
 }
@@ -63,10 +63,10 @@ class MessageDeleteEvent implements IMessageDeleteEvent {
 
   /// Creates na instance of [MessageDeleteEvent]
   MessageDeleteEvent(RawApiMap raw, INyxx client) {
-    this.channel = CacheableTextChannel<ITextChannel>(client, Snowflake(raw["d"]["channel_id"]));
-    this.messageId = Snowflake(raw["d"]["id"]);
+    channel = CacheableTextChannel<ITextChannel>(client, Snowflake(raw["d"]["channel_id"]));
+    messageId = Snowflake(raw["d"]["id"]);
 
-    this.message = channel.getFromCache()?.messageCache[this.messageId];
+    message = channel.getFromCache()?.messageCache[messageId];
   }
 }
 
@@ -102,15 +102,15 @@ class MessageDeleteBulkEvent implements IMessageDeleteBulkEvent {
 
   /// Creates an instance of [MessageDeleteBulkEvent]
   MessageDeleteBulkEvent(RawApiMap json, INyxx client) {
-    this.channel = CacheableTextChannel<ITextChannel>(client, Snowflake(json["d"]["channel_id"]));
+    channel = CacheableTextChannel<ITextChannel>(client, Snowflake(json["d"]["channel_id"]));
 
     if (json["d"]["guild_id"] != null) {
-      this.guild = GuildCacheable(client, Snowflake(json["d"]["guild_id"]));
+      guild = GuildCacheable(client, Snowflake(json["d"]["guild_id"]));
     } else {
-      this.guild = null;
+      guild = null;
     }
 
-    this.deletedMessagesIds = (json["d"]["ids"] as List<dynamic>).map((stringId) => Snowflake(stringId));
+    deletedMessagesIds = (json["d"]["ids"] as List<dynamic>).map((stringId) => Snowflake(stringId));
   }
 
   /// Searches cache for deleted messages and returns those which are present in bots cache.
@@ -118,13 +118,13 @@ class MessageDeleteBulkEvent implements IMessageDeleteBulkEvent {
   /// It is not guaranteed that returned collection will have all deleted messages.
   @override
   Iterable<IMessage> getDeletedMessages() {
-    final channelInstance = this.channel.getFromCache();
+    final channelInstance = channel.getFromCache();
 
     if (channelInstance == null) {
       return [];
     }
 
-    return channelInstance.messageCache.values.where((item) => this.deletedMessagesIds.contains(item.id));
+    return channelInstance.messageCache.values.where((item) => deletedMessagesIds.contains(item.id));
   }
 }
 
@@ -178,22 +178,22 @@ abstract class MessageReactionEvent {
 
   /// Creates na instance of [MessageReactionEvent]
   MessageReactionEvent(RawApiMap json, INyxx client) {
-    this.user = UserCacheable(client, Snowflake(json["d"]["user_id"]));
-    this.channel = CacheableTextChannel<ITextChannel>(client, Snowflake(json["d"]["channel_id"]));
+    user = UserCacheable(client, Snowflake(json["d"]["user_id"]));
+    channel = CacheableTextChannel<ITextChannel>(client, Snowflake(json["d"]["channel_id"]));
 
-    this.messageId = Snowflake(json["d"]["message_id"]);
+    messageId = Snowflake(json["d"]["message_id"]);
 
-    final channelInstance = this.channel.getFromCache();
+    final channelInstance = channel.getFromCache();
     if (channelInstance != null) {
-      this.message = channelInstance.messageCache[this.messageId];
+      message = channelInstance.messageCache[messageId];
     } else {
-      this.message = null;
+      message = null;
     }
 
     if (json["d"]["emoji"]["id"] == null) {
-      this.emoji = UnicodeEmoji(json["d"]["emoji"]["name"] as String);
+      emoji = UnicodeEmoji(json["d"]["emoji"]["name"] as String);
     } else {
-      this.emoji = GuildEmojiPartial(Snowflake(json["d"]["emoji"]['id']));
+      emoji = GuildEmojiPartial(Snowflake(json["d"]["emoji"]['id']));
     }
   }
 }
@@ -204,7 +204,7 @@ abstract class IMessageReactionAddedEvent implements IMessageReactionEvent {}
 class MessageReactionAddedEvent extends MessageReactionEvent implements IMessageReactionAddedEvent {
   /// Creates na instance of [MessageReactionAddedEvent]
   MessageReactionAddedEvent(RawApiMap raw, INyxx client) : super(raw, client) {
-    if (this.message == null) {
+    if (message == null) {
       return;
     }
 
@@ -267,11 +267,11 @@ class MessageReactionsRemovedEvent implements IMessageReactionsRemovedEvent {
 
   /// Creates na instance of [MessageReactionsRemovedEvent]
   MessageReactionsRemovedEvent(RawApiMap json, INyxx client) {
-    this.channel = CacheableTextChannel<ITextChannel>(client, Snowflake(json["d"]["channel_id"]));
-    this.guild = GuildCacheable(client, Snowflake(json["d"]["guild_id"]));
-    this.message = MessageCacheable(client, Snowflake(json["d"]["message_id"]), channel);
+    channel = CacheableTextChannel<ITextChannel>(client, Snowflake(json["d"]["channel_id"]));
+    guild = GuildCacheable(client, Snowflake(json["d"]["guild_id"]));
+    message = MessageCacheable(client, Snowflake(json["d"]["message_id"]), channel);
 
-    final messageInstance = this.message.getFromCache();
+    final messageInstance = message.getFromCache();
     if (messageInstance != null) {
       messageInstance.reactions.clear();
     }
@@ -312,19 +312,19 @@ class MessageReactionRemoveEmojiEvent implements IMessageReactionRemoveEmojiEven
 
   /// Creates na instance of [MessageReactionRemoveEmojiEvent]
   MessageReactionRemoveEmojiEvent(RawApiMap json, INyxx client) {
-    this.channel = CacheableTextChannel<ITextChannel>(client, Snowflake(json["d"]["channel_id"]));
-    this.guild = GuildCacheable(client, Snowflake(json["d"]["guild_id"]));
-    this.message = MessageCacheable(client, Snowflake(json["d"]["message_id"]), channel);
+    channel = CacheableTextChannel<ITextChannel>(client, Snowflake(json["d"]["channel_id"]));
+    guild = GuildCacheable(client, Snowflake(json["d"]["guild_id"]));
+    message = MessageCacheable(client, Snowflake(json["d"]["message_id"]), channel);
 
     if (json["d"]["emoji"]["id"] == null) {
-      this.emoji = UnicodeEmoji(json["d"]["emoji"]["name"] as String);
+      emoji = UnicodeEmoji(json["d"]["emoji"]["name"] as String);
     } else {
-      this.emoji = GuildEmojiPartial(Snowflake(json["d"]["emoji"]['id']));
+      emoji = GuildEmojiPartial(Snowflake(json["d"]["emoji"]['id']));
     }
 
-    final messageInstance = this.message.getFromCache();
+    final messageInstance = message.getFromCache();
     if (messageInstance != null) {
-      messageInstance.reactions.removeWhere((element) => element.emoji == this.emoji);
+      messageInstance.reactions.removeWhere((element) => element.emoji == emoji);
     }
   }
 }
@@ -357,25 +357,25 @@ class MessageUpdateEvent implements IMessageUpdateEvent {
 
   /// Creates na instance of [MessageUpdateEvent]
   MessageUpdateEvent(RawApiMap json, INyxx client) {
-    this.channel = CacheableTextChannel<ITextChannel>(client, Snowflake(json["d"]["channel_id"]));
-    this.messageId = Snowflake(json["d"]["id"]);
+    channel = CacheableTextChannel<ITextChannel>(client, Snowflake(json["d"]["channel_id"]));
+    messageId = Snowflake(json["d"]["id"]);
 
     final channelInstance = channel.getFromCache();
     if (channelInstance == null) {
       return;
     }
 
-    this.updatedMessage = channelInstance.messageCache[this.messageId];
-    if (this.updatedMessage == null) {
+    updatedMessage = channelInstance.messageCache[messageId];
+    if (updatedMessage == null) {
       return;
     }
 
-    if (json["d"]["content"] != this.updatedMessage!.content) {
-      (this.updatedMessage! as Message).content = json["d"]["content"].toString();
+    if (json["d"]["content"] != updatedMessage!.content) {
+      (updatedMessage! as Message).content = json["d"]["content"].toString();
     }
 
     if (json["d"]["embeds"] != null) {
-      (this.updatedMessage! as Message).embeds = (json["d"]["embeds"] as List<dynamic>).map((e) => Embed(e as RawApiMap)).toList();
+      (updatedMessage! as Message).embeds = (json["d"]["embeds"] as List<dynamic>).map((e) => Embed(e as RawApiMap)).toList();
     }
   }
 }

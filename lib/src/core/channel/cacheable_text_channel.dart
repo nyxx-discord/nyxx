@@ -17,54 +17,54 @@ class CacheableTextChannel<S extends ITextChannel> extends Channel implements IC
   late Timer _typing;
 
   @override
-  DateTime get createdAt => this.id.timestamp;
+  DateTime get createdAt => id.timestamp;
 
   /// Creates an instance of [CacheableTextChannel]
   CacheableTextChannel(INyxx client, Snowflake id, [ChannelType type = ChannelType.unknown]) : super.raw(client, id, type);
 
   @override
-  S? getFromCache() => this.client.channels[this.id] as S;
+  S? getFromCache() => client.channels[id] as S?;
 
   @override
-  Future<S> download() => this.client.httpEndpoints.fetchChannel(this.id);
+  Future<S> download() => client.httpEndpoints.fetchChannel(id);
 
   @override
-  FutureOr<S> getOrDownload() async => this.getFromCache() ?? await this.download();
+  FutureOr<S> getOrDownload() async => getFromCache() ?? await download();
 
   @override
-  Future<void> bulkRemoveMessages(Iterable<SnowflakeEntity> messages) => this.client.httpEndpoints.bulkRemoveMessages(this.id, messages);
+  Future<void> bulkRemoveMessages(Iterable<SnowflakeEntity> messages) => client.httpEndpoints.bulkRemoveMessages(id, messages);
 
   @override
-  Future<void> delete() => this.client.httpEndpoints.deleteChannel(this.id);
+  Future<void> delete() => client.httpEndpoints.deleteChannel(id);
 
   @override
   Stream<IMessage> downloadMessages({int limit = 50, Snowflake? after, Snowflake? around, Snowflake? before}) =>
-      this.client.httpEndpoints.downloadMessages(this.id, limit: limit, after: after, around: around, before: before);
+      client.httpEndpoints.downloadMessages(id, limit: limit, after: after, around: around, before: before);
 
   @override
-  Future<IMessage> fetchMessage(Snowflake id) => this.client.httpEndpoints.fetchMessage(this.id, id);
+  Future<IMessage> fetchMessage(Snowflake id) => client.httpEndpoints.fetchMessage(this.id, id);
 
   /// Returns always null since this type of channel doesn't have cache.
   @override
   IMessage? getMessage(Snowflake id) => null;
 
   @override
-  Future<IMessage> sendMessage(MessageBuilder builder) => this.client.httpEndpoints.sendMessage(this.id, builder);
+  Future<IMessage> sendMessage(MessageBuilder builder) => client.httpEndpoints.sendMessage(id, builder);
 
   @override
-  Future<void> startTyping() => this.client.httpEndpoints.triggerTyping(this.id);
+  Future<void> startTyping() => client.httpEndpoints.triggerTyping(id);
 
   @override
   void startTypingLoop() {
     startTyping();
-    this._typing = Timer.periodic(const Duration(seconds: 7), (Timer t) => startTyping());
+    _typing = Timer.periodic(const Duration(seconds: 7), (Timer t) => startTyping());
   }
 
   @override
-  void stopTypingLoop() => this._typing.cancel();
+  void stopTypingLoop() => _typing.cancel();
 
   @override
-  Stream<IMessage> fetchPinnedMessages() => client.httpEndpoints.fetchPinnedMessages(this.id);
+  Stream<IMessage> fetchPinnedMessages() => client.httpEndpoints.fetchPinnedMessages(id);
 
   @override
   Future<void> dispose() async {

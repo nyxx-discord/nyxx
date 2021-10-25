@@ -15,11 +15,11 @@ class UnicodeEmoji implements IUnicodeEmoji, IEmoji {
   UnicodeEmoji(this.code);
 
   @override
-  String formatForMessage() => this.code;
+  String formatForMessage() => code;
 
   @override
-  String encodeForAPI() => this.code;
+  String encodeForAPI() => code;
 
   @override
-  String toString() => this.formatForMessage();
+  String toString() => formatForMessage();
 }
