@@ -26,7 +26,7 @@ class DisconnectEvent implements IDisconnectEvent {
 /// Reason why shard was disconnected.
 class DisconnectEventReason extends IEnum<int> {
   /// When shard is disconnected due invalid shard session.
-  static const DisconnectEventReason invalidSession = const DisconnectEventReason(9);
+  static const DisconnectEventReason invalidSession = DisconnectEventReason(9);
 
   /// Create an instance of [DisconnectEventReason]
   const DisconnectEventReason(int value) : super(value);

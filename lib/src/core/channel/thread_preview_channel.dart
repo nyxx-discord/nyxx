@@ -119,7 +119,7 @@ class ThreadPreviewChannel extends Channel implements IThreadPreviewChannel {
 
   /// Get the actual thread channel from the preview
   @override
-  ChannelCacheable<IThreadChannel> getThreadChannel() => new ChannelCacheable(client, this.id);
+  ChannelCacheable<IThreadChannel> getThreadChannel() => ChannelCacheable(client, this.id);
 
   @override
   Future<void> bulkRemoveMessages(Iterable<SnowflakeEntity> messages) => client.httpEndpoints.bulkRemoveMessages(this.id, messages);

@@ -271,13 +271,13 @@ class StickerPack extends SnowflakeEntity implements IStickerPack {
 /// Enumerates different possible format of sticker
 class StickerType extends IEnum<int> {
   /// Standard nitro sticker
-  static const StickerType standard = const StickerType._create(1);
+  static const StickerType standard = StickerType._create(1);
 
   /// Sticker that was upload to guild, available to nitro users.
-  static const StickerType guild = const StickerType._create(2);
+  static const StickerType guild = StickerType._create(2);
 
   /// Internal nyxx sticker type used in guilds
-  static const StickerType partial = const StickerType._create(99);
+  static const StickerType partial = StickerType._create(99);
 
   /// Creates [StickerType] from [value]
   StickerType.from(int value) : super(value);
@@ -286,9 +286,9 @@ class StickerType extends IEnum<int> {
 
 /// Enumerates different possible format of sticker
 class StickerFormat extends IEnum<int> {
-  static const StickerFormat png = const StickerFormat._create(1);
-  static const StickerFormat apng = const StickerFormat._create(2);
-  static const StickerFormat lottie = const StickerFormat._create(3);
+  static const StickerFormat png = StickerFormat._create(1);
+  static const StickerFormat apng = StickerFormat._create(2);
+  static const StickerFormat lottie = StickerFormat._create(3);
 
   /// Creates [StickerFormat] from [value]
   StickerFormat.from(int value) : super(value);

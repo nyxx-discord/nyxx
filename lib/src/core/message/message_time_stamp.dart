@@ -3,25 +3,25 @@ import 'package:nyxx/src/utils/enum.dart';
 /// Style of inline timestamp that can be embedded into message
 class TimeStampStyle extends IEnum<String> {
   /// Short Time
-  static const TimeStampStyle shortTime = const TimeStampStyle._create("t");
+  static const TimeStampStyle shortTime = TimeStampStyle._create("t");
 
   /// Long Time
-  static const TimeStampStyle longTime = const TimeStampStyle._create("T");
+  static const TimeStampStyle longTime = TimeStampStyle._create("T");
 
   /// Short Date
-  static const TimeStampStyle shortDate = const TimeStampStyle._create("d");
+  static const TimeStampStyle shortDate = TimeStampStyle._create("d");
 
   /// Long Date
-  static const TimeStampStyle longDate = const TimeStampStyle._create("D");
+  static const TimeStampStyle longDate = TimeStampStyle._create("D");
 
   /// Short Date/Time
-  static const TimeStampStyle shortDateTime = const TimeStampStyle._create("f");
+  static const TimeStampStyle shortDateTime = TimeStampStyle._create("f");
 
   /// Long Date/Time
-  static const TimeStampStyle longDateTime = const TimeStampStyle._create("F");
+  static const TimeStampStyle longDateTime = TimeStampStyle._create("F");
 
   /// Relative Time
-  static const TimeStampStyle relativeTime = const TimeStampStyle._create("R");
+  static const TimeStampStyle relativeTime = TimeStampStyle._create("R");
 
   /// Default style
   static const TimeStampStyle def = TimeStampStyle.shortDateTime;

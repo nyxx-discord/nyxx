@@ -427,7 +427,7 @@ class Guild extends SnowflakeEntity implements IGuild {
   @override
   Cacheable<Snowflake, IMember> get selfMember {
     if (this.client is! NyxxWebsocket) {
-      throw new UnsupportedError("Cannot use this property with NyxxRest");
+      throw UnsupportedError("Cannot use this property with NyxxRest");
     }
 
     return MemberCacheable(this.client, (client as NyxxWebsocket).self.id, GuildCacheable(this.client, this.id));
@@ -453,7 +453,7 @@ class Guild extends SnowflakeEntity implements IGuild {
   @override
   IShard get shard {
     if (this.client is! NyxxWebsocket) {
-      throw new UnsupportedError("Cannot use this property with NyxxRest");
+      throw UnsupportedError("Cannot use this property with NyxxRest");
     }
 
     return (client as NyxxWebsocket).shardManager.shards.firstWhere((_shard) => _shard.guilds.contains(this.id));

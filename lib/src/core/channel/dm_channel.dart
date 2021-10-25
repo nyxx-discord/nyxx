@@ -45,7 +45,7 @@ class DMChannel extends Channel implements IDMChannel {
 
   /// Returns other user in chat if channel is not group dm. Will throw [ArgumentError] if channel is group dm.
   @override
-  IUser get participant => !this.isGroupDM ? participants.first : throw new ArgumentError("Channel is not direct DM");
+  IUser get participant => !this.isGroupDM ? participants.first : throw ArgumentError("Channel is not direct DM");
 
   /// Creates an instance of [DMChannel]
   DMChannel(INyxx client, RawApiMap raw) : super(client, raw) {

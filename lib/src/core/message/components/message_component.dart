@@ -11,10 +11,10 @@ import 'package:nyxx/src/utils/enum.dart';
 /// Type of interaction component
 class ComponentType extends IEnum<int> {
   /// Row where other components can be placed
-  static const ComponentType row = const ComponentType._create(1);
+  static const ComponentType row = ComponentType._create(1);
 
-  static const ComponentType button = const ComponentType._create(2);
-  static const ComponentType select = const ComponentType._create(3);
+  static const ComponentType button = ComponentType._create(2);
+  static const ComponentType select = ComponentType._create(3);
 
   const ComponentType._create(int value) : super(value);
 
@@ -63,7 +63,7 @@ class MessageComponentEmoji implements IMessageComponentEmoji {
       return IBaseGuildEmoji.fromId(Snowflake(this.id));
     }
 
-    throw new ArgumentError("Tried to parse emojis from invalid payload");
+    throw ArgumentError("Tried to parse emojis from invalid payload");
   }
 
   /// Creates an instance of [MessageComponentEmoji]
@@ -98,7 +98,7 @@ abstract class MessageComponent implements IMessageComponent {
         return MessageMultiselect(raw);
     }
 
-    throw new ArgumentError("Unknown interaction type: [$type]: ${jsonEncode(raw)}");
+    throw ArgumentError("Unknown interaction type: [$type]: ${jsonEncode(raw)}");
   }
 }
 

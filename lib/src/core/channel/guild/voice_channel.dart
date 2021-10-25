@@ -28,7 +28,7 @@ class VoiceGuildChannel extends GuildChannel {
   /// Connects client to channel
   void connect({bool selfMute = false, bool selfDeafen = false}) {
     if (this.client is! NyxxWebsocket) {
-      throw new UnsupportedError("Cannot connect with NyxxRest");
+      throw UnsupportedError("Cannot connect with NyxxRest");
     }
 
     try {
@@ -43,7 +43,7 @@ class VoiceGuildChannel extends GuildChannel {
   /// Disconnects use from channel.
   void disconnect() {
     if (this.client is! NyxxWebsocket) {
-      throw new UnsupportedError("Cannot connect with NyxxRest");
+      throw UnsupportedError("Cannot connect with NyxxRest");
     }
 
     try {
@@ -143,10 +143,10 @@ class StageChannelInstance extends SnowflakeEntity implements IStageChannelInsta
 /// The privacy level of the Stage instance
 class StageChannelInstancePrivacyLevel extends IEnum<int> {
   /// The Stage instance is visible publicly, such as on Stage discovery.
-  static const StageChannelInstancePrivacyLevel public = const StageChannelInstancePrivacyLevel(1);
+  static const StageChannelInstancePrivacyLevel public = StageChannelInstancePrivacyLevel(1);
 
   /// The Stage instance is visible to only guild members.
-  static const StageChannelInstancePrivacyLevel guildOnly = const StageChannelInstancePrivacyLevel(2);
+  static const StageChannelInstancePrivacyLevel guildOnly = StageChannelInstancePrivacyLevel(2);
 
   /// Creates an instance of [StageChannelInstancePrivacyLevel]
   const StageChannelInstancePrivacyLevel(int value) : super(value);

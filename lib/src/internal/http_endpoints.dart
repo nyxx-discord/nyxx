@@ -1036,7 +1036,7 @@ class HttpEndpoints implements IHttpEndpoints {
     final response = await httpHandler.execute(BasicRequest("/channels/$channelId/thread-members"));
 
     if (response is HttpResponseSuccess) {
-      final guild = new GuildCacheable(client, guildId);
+      final guild = GuildCacheable(client, guildId);
 
       for (final rawThreadMember in response.jsonBody as List<dynamic>) {
         yield ThreadMember(client, rawThreadMember as RawApiMap, guild);
