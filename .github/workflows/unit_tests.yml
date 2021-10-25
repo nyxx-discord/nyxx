@@ -90,7 +90,6 @@ jobs:
         run: dart run test --coverage="coverage" test/unit/**
 
       - name: Integration tests
-        if: github.event_name != 'pull_request'
         run: dart run test --coverage="coverage" test/integration/**
 
       - name: Format coverage
