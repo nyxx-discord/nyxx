@@ -391,8 +391,7 @@ class Message extends SnowflakeEntity implements IMessage {
 
   /// Deletes reaction of given user.
   @override
-  Future<void> deleteUserReaction(IEmoji emoji, SnowflakeEntity entity) =>
-      client.httpEndpoints.deleteMessageUserReaction(channel.id, id, emoji, entity.id);
+  Future<void> deleteUserReaction(IEmoji emoji, SnowflakeEntity entity) => client.httpEndpoints.deleteMessageUserReaction(channel.id, id, emoji, entity.id);
 
   /// Deletes all reactions
   @override
