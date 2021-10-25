@@ -11,7 +11,7 @@ main() async {
 
   await bot.eventsWs.onReady.first;
 
-  final channel = await bot.fetchChannel<ITextGuildChannel>(Snowflake(422285619952222208));
+  final channel = await bot.fetchChannel<ITextGuildChannel>(Snowflake(846139169818017812));
 
   test("basic message functionality", () async {
     final messageBuilder = MessageBuilder()
