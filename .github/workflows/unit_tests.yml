@@ -106,7 +106,7 @@ jobs:
         uses: easingthemes/ssh-deploy@v2.1.5
         env:
           SSH_PRIVATE_KEY: ${{ secrets.DEPLOY_SSH_SERVER_KEY }}
-          ARGS: "-rltDzvO"
+          ARGS: '-rltDzvO --rsync-path="mkdir -p ${{ secrets.DEPLOY_REMOTE_TARGET }}/coverage/nyxx/${{ steps.extract_branch.outputs.branch }}/ && rsync"'
           SOURCE: "coverage/coverage_gen/"
           REMOTE_HOST: ${{ secrets.DEPLOY_REMOTE_HOST }}
           REMOTE_USER: ${{ secrets.DEPLOY_REMOTE_USER }}
