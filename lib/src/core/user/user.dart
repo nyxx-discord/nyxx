@@ -20,31 +20,11 @@ abstract class IUser implements SnowflakeEntity, ISend, Mentionable, IMessageAut
   /// Reference to client
   INyxx get client;
 
-  /// The user's username.
-  @override
-  String get username;
-
-  /// The user's discriminator.
-  @override
-  int get discriminator;
-
   /// Formatted discriminator with leading zeros if needed
-  String get formattedDiscriminator => discriminator.toString().padLeft(4, "0");
+  String get formattedDiscriminator;
 
   /// The user's avatar hash.
   String? get avatar;
-
-  /// The string to mention the user.
-  @override
-  String get mention => "<@!${id}>";
-
-  /// Returns String with username#discriminator
-  @override
-  String get tag => "${username}#${formattedDiscriminator}";
-
-  /// Whether the user belongs to an OAuth2 application
-  @override
-  bool get bot;
 
   /// Whether the user is an Official Discord System user (part of the urgent message system)
   bool get system;
@@ -70,15 +50,6 @@ abstract class IUser implements SnowflakeEntity, ISend, Mentionable, IMessageAut
 
   /// Gets the [DMChannel] for the user.
   FutureOr<IDMChannel> get dmChannel;
-
-  /// The user's avatar, represented as URL.
-  /// In case if user does not have avatar, default discord avatar will be returned with specified size and png format.
-  @override
-  String avatarURL({String format = "webp", int size = 128});
-
-  /// Sends a message to user.
-  @override
-  Future<IMessage> sendMessage(MessageBuilder builder);
 }
 
 /// Represents a single user of Discord, either a human or a bot, outside of any specific guild's context.
@@ -105,11 +76,11 @@ class User extends SnowflakeEntity implements IUser {
 
   /// The string to mention the user.
   @override
-  String get mention => "<@!${id}>";
+  String get mention => "<@!$id>";
 
   /// Returns String with username#discriminator
   @override
-  String get tag => "${username}#${formattedDiscriminator}";
+  String get tag => "$username#$formattedDiscriminator";
 
   /// Whether the user belongs to an OAuth2 application
   @override

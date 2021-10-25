@@ -97,6 +97,11 @@ jobs:
       - name: Generate coverage
         run: genhtml coverage/coverage.lcov -o coverage/coverage_gen
 
+      - name: Extract branch name
+        shell: bash
+        run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
+        id: extract_branch
+
       - name: Deploy code coverage
         uses: easingthemes/ssh-deploy@v2.1.5
         env:
@@ -105,4 +110,4 @@ jobs:
           SOURCE: "coverage/coverage_gen/"
           REMOTE_HOST: ${{ secrets.DEPLOY_REMOTE_HOST }}
           REMOTE_USER: ${{ secrets.DEPLOY_REMOTE_USER }}
-          TARGET: "${{ secrets.DEPLOY_REMOTE_TARGET }}/coverage/nyxx/"
+          TARGET: "${{ secrets.DEPLOY_REMOTE_TARGET }}/coverage/nyxx/${{ steps.extract_branch.outputs.branch }}/"

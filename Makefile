@@ -1,7 +1,11 @@
 .PHONY: generate-coverage
-generate-coverage: coverage-tests coverage-format coverage-gen-html
+generate-coverage: coverage-tests integration-coverage coverage-format coverage-gen-html
 
-.PHONY: test-coverage
+.PHONY: integration-coverage
+integration-coverage:
+	(timeout 20s dart run test --coverage="coverage" --timeout=none test/integration/integration.dart; exit 0)
+
+.PHONY: unit-coverage
 coverage-tests:
 	(timeout 10s dart run test --coverage="coverage" --timeout=none test/unit; exit 0)
 

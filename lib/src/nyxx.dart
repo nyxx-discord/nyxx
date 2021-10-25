@@ -251,7 +251,8 @@ abstract class INyxxWebsocket implements INyxxRest {
   /// Get user instance with specified id.
   /// ```
   /// var user = client.getUser(Snowflake("302359032612651009"));
-  /// ``;
+  /// ``
+  Future<IUser> fetchUser(Snowflake userId);
 
   /// Gets a webhook by its id and/or token.
   /// If token is supplied authentication is not needed.
@@ -285,7 +286,7 @@ abstract class INyxxWebsocket implements INyxxRest {
   void setPresence(PresenceBuilder presenceBuilder);
 
   /// Join [ThreadChannel] with given [channelId]
-  Future<void> joinThread(Snowflake channelId);
+  Future<void> joinThread(Snowflake channelId) => httpEndpoints.joinThread(channelId);
 
   /// Gets standard sticker with given id
   Future<IStandardSticker> getSticker(Snowflake id);

@@ -5,15 +5,22 @@ import 'package:nyxx/nyxx.dart';
 import 'package:test/expect.dart';
 import 'package:test/scaffolding.dart';
 
+final testChannelSnowflake = Snowflake(846139169818017812);
+final testGuildSnowflake = Snowflake(846136758470443069);
+final testUserBotSnowflake = Snowflake(476603965396746242);
+final testUserHumanSnowflake = Snowflake(302359032612651009);
+
 main() async {
   final bot = NyxxFactory.createNyxxWebsocket(Platform.environment["TEST_TOKEN"]!, GatewayIntents.guildMessages, ignoreExceptions: false);
   final random = Random();
 
   await bot.eventsWs.onReady.first;
 
-  final channel = await bot.fetchChannel<ITextGuildChannel>(Snowflake(846139169818017812));
+  // final guild = await bot.fetchGuild(testGuildSnowflake);
 
   test("basic message functionality", () async {
+    final channel = await bot.fetchChannel<ITextGuildChannel>(testChannelSnowflake);
+
     final messageBuilder = MessageBuilder()
         ..content = "Test content"
         ..nonce = random.nextInt(1000000).toString();
@@ -21,9 +28,18 @@ main() async {
     final wsMessageFuture = bot.eventsWs.onMessageReceived.firstWhere((element) => element.message.nonce == messageBuilder.nonce);
 
     final message = await channel.sendMessage(messageBuilder);
-    final wsMessage = await wsMessageFuture;
+    final wsMessage = (await wsMessageFuture).message;
 
-    expect(message.id, equals(wsMessage.message.id));
+    expect(message.id, equals(wsMessage.id));
+    expect(message.guild, isNull);
+    expect(wsMessage.guild, isNotNull);
+
+    expect(message.isByWebhook, equals(false));
+    expect(message.isCrossPosting, equals(false));
+    expect(
+        wsMessage.url,
+        equals("https://discordapp.com/channels/${wsMessage.guild!.id}/${message.channel.id}/${message.id}")
+    );
 
     final messageEditBuilder = MessageBuilder()
       ..content = 'Edit test'
@@ -41,5 +57,18 @@ main() async {
     await messageEdit.deleteSelfReaction(UnicodeEmoji("😂"));
 
     await messageEdit.delete();
+  });
+
+  test("user tests", () async {
+    final userBot = await bot.fetchUser(testUserBotSnowflake);
+
+    expect(userBot.discriminator, equals(1759));
+    expect(userBot.formattedDiscriminator, equals("1759"));
+    expect(userBot.bot, isTrue);
+    expect(userBot.mention, "<@!${testUserBotSnowflake.toString()}>");
+    expect(userBot.tag, equals("Running on Dart#1759"));
+    expect(userBot.avatarURL(), equals('https://cdn.discordapp.com/avatars/476603965396746242/be6107505d7b9d15292da4e54d88836e.webp?size=128'));
+
+    // final userHuman = await bot.fetchUser(testUserHumanSnowflake);
   });
 }
