@@ -373,6 +373,7 @@ class NyxxWebsocket extends NyxxRest implements INyxxWebsocket {
   /// ```
   /// var user = client.getUser(Snowflake("302359032612651009"));
   /// ``
+  @override
   Future<IUser> fetchUser(Snowflake userId) => httpEndpoints.fetchUser(userId);
 
   /// Gets a webhook by its id and/or token.
