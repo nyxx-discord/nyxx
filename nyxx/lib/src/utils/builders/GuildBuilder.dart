@@ -143,7 +143,7 @@ class ChannelBuilder extends Builder {
     if (userLimit != null) "user_limit": userLimit,
     if (rateLimitPerUser != null) "rate_limit_per_user": rateLimitPerUser,
     if (position != null) "position": position,
-    if (parentChannel != null) "parent_id": parentChannel!.id,
+    if (parentChannel != null) "parent_id": parentChannel!.id.toString(),
     if (nsfw != null) "nsfw": nsfw,
     if (overrides != null) "permission_overwrites" : overrides!.map((e) => e.build()),
     if (rtcRegion != "") "rtc_region": rtcRegion,
