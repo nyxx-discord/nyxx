@@ -1,3 +1,20 @@
+## 2.1.1
+__02.11.2021__
+
+- Fix #236
+- Fix #237
+
+## 2.1.0
+__22.10.2021__
+
+- Add pending to member (#224)
+- use case-insensitive name comparison in _registerCommandHandlers (#225)
+
+## 2.0.5
+_15.10.2021_
+
+- Move to Apache 2 license
+
 ## 2.0.4
 _09.10_2021_
 
