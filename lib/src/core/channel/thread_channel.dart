@@ -63,17 +63,17 @@ class ThreadMember extends SnowflakeEntity implements IThreadMember {
 
   /// [Cacheable] of [User]
   @override
-  Cacheable<Snowflake, IUser> get user => UserCacheable(this.client, this.id);
+  Cacheable<Snowflake, IUser> get user => UserCacheable(client, id);
 
   /// [Cacheable] of [Member]
   @override
-  Cacheable<Snowflake, IMember> get member => MemberCacheable(this.client, this.id, this.guild);
+  Cacheable<Snowflake, IMember> get member => MemberCacheable(client, id, guild);
 
   /// Creates an instance of [ThreadMember]
   ThreadMember(this.client, RawApiMap raw, this.guild) : super(Snowflake(raw["user_id"])) {
-    this.thread = CacheableTextChannel(client, Snowflake(raw["id"]));
-    this.joinTimestamp = DateTime.parse(raw["join_timestamp"] as String);
-    this.flags = raw["flags"] as int;
+    thread = CacheableTextChannel(client, Snowflake(raw["id"]));
+    joinTimestamp = DateTime.parse(raw["join_timestamp"] as String);
+    flags = raw["flags"] as int;
   }
 }
 
@@ -145,7 +145,7 @@ class ThreadChannel extends MinimalGuildChannel implements IThreadChannel {
 
   @override
   Future<int> get fileUploadLimit async {
-    final guildInstance = await this.guild.getOrDownload();
+    final guildInstance = await guild.getOrDownload();
     return guildInstance.fileUploadLimit;
   }
 
@@ -154,70 +154,70 @@ class ThreadChannel extends MinimalGuildChannel implements IThreadChannel {
 
   /// Creates an instance of [ThreadChannel]
   ThreadChannel(INyxx client, RawApiMap raw, [Snowflake? guildId]) : super(client, raw) {
-    this.owner = MemberCacheable(client, Snowflake(raw["owner_id"]), this.guild);
+    owner = MemberCacheable(client, Snowflake(raw["owner_id"]), guild);
 
-    this.messageCount = raw["message_count"] as int;
-    this.memberCount = raw["member_count"] as int;
+    messageCount = raw["message_count"] as int;
+    memberCount = raw["member_count"] as int;
 
     final meta = raw["thread_metadata"];
-    this.archived = meta["archived"] as bool;
-    this.archiveAt = DateTime.parse(meta["archive_timestamp"] as String);
-    this.archiveAfter = ThreadArchiveTime(meta["auto_archive_duration"] as int);
-    this.invitable = raw["invitable"] as bool;
+    archived = meta["archived"] as bool;
+    archiveAt = DateTime.parse(meta["archive_timestamp"] as String);
+    archiveAfter = ThreadArchiveTime(meta["auto_archive_duration"] as int);
+    invitable = raw["invitable"] as bool? ?? false;
   }
 
   /// Fetches from API current list of member that has access to that thread
   @override
-  Stream<IThreadMember> fetchMembers() => client.httpEndpoints.getThreadMembers(this.id, this.guild.id);
+  Stream<IThreadMember> fetchMembers() => client.httpEndpoints.getThreadMembers(id, guild.id);
 
   @override
-  Future<void> bulkRemoveMessages(Iterable<SnowflakeEntity> messages) => client.httpEndpoints.bulkRemoveMessages(this.id, messages);
+  Future<void> bulkRemoveMessages(Iterable<SnowflakeEntity> messages) => client.httpEndpoints.bulkRemoveMessages(id, messages);
 
   @override
   Stream<IMessage> downloadMessages({int limit = 50, Snowflake? after, Snowflake? around, Snowflake? before}) =>
-      client.httpEndpoints.downloadMessages(this.id, limit: limit, after: after, around: around, before: before);
+      client.httpEndpoints.downloadMessages(id, limit: limit, after: after, around: around, before: before);
 
   @override
   Future<IMessage> fetchMessage(Snowflake messageId) async {
-    final message = await client.httpEndpoints.fetchMessage(this.id, messageId);
+    final message = await client.httpEndpoints.fetchMessage(id, messageId);
 
     if (client.cacheOptions.messageCachePolicyLocation.http && client.cacheOptions.messageCachePolicy.canCache(message)) {
-      this.messageCache.put(message);
+      messageCache.put(message);
     }
 
     return message;
   }
 
   @override
-  IMessage? getMessage(Snowflake id) => this.messageCache[id];
+  IMessage? getMessage(Snowflake id) => messageCache[id];
 
   @override
-  Future<IMessage> sendMessage(MessageBuilder builder) => client.httpEndpoints.sendMessage(this.id, builder);
+  Future<IMessage> sendMessage(MessageBuilder builder) => client.httpEndpoints.sendMessage(id, builder);
 
   @override
-  Future<void> startTyping() async => client.httpEndpoints.triggerTyping(this.id);
+  Future<void> startTyping() async => client.httpEndpoints.triggerTyping(id);
 
   @override
   void startTypingLoop() {
     startTyping();
-    this._typing = Timer.periodic(const Duration(seconds: 7), (Timer t) => startTyping());
+    _typing = Timer.periodic(const Duration(seconds: 7), (Timer t) => startTyping());
   }
 
   @override
-  void stopTypingLoop() => this._typing?.cancel();
+  void stopTypingLoop() => _typing?.cancel();
 
   /// Leaves this thread channel
   @override
-  Future<void> leaveThread() => client.httpEndpoints.leaveGuild(this.id);
+  Future<void> leaveThread() => client.httpEndpoints.leaveGuild(id);
 
   /// Removes [user] from [ThreadChannel]
   @override
-  Future<void> removeThreadMember(SnowflakeEntity user) => client.httpEndpoints.removeThreadMember(this.id, user.id);
+  Future<void> removeThreadMember(SnowflakeEntity user) => client.httpEndpoints.removeThreadMember(id, user.id);
 
   /// Adds [user] to [ThreadChannel]
   @override
-  Future<void> addThreadMember(SnowflakeEntity user) => client.httpEndpoints.addThreadMember(this.id, user.id);
+  Future<void> addThreadMember(SnowflakeEntity user) => client.httpEndpoints.addThreadMember(id, user.id);
 
   @override
-  Stream<IMessage> fetchPinnedMessages() => client.httpEndpoints.fetchPinnedMessages(this.id);
+  Stream<IMessage> fetchPinnedMessages() => client.httpEndpoints.fetchPinnedMessages(id);
 }
