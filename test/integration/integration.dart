@@ -16,8 +16,6 @@ main() async {
 
   await bot.eventsWs.onReady.first;
 
-  // final guild = await bot.fetchGuild(testGuildSnowflake);
-
   test("basic message functionality", () async {
     final channel = await bot.fetchChannel<ITextGuildChannel>(testChannelSnowflake);
 

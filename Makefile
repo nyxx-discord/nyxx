@@ -13,7 +13,7 @@ generate-coverage: integration-tests unit-tests coverage-format coverage-gen-htm
 
 .PHONY: integration-tests
 integration-tests: ## Run integration tests with coverage
-	(timeout 20s dart run test --coverage="coverage" --timeout=none test/integration/integration.dart; exit 0)
+	(timeout 20s dart run test --coverage="coverage" --timeout=none test/integration/**; exit 0)
 
 .PHONY: unit-tests
 unit-tests: ## Run unit tests with coverage
