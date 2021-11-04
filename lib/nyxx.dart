@@ -123,7 +123,7 @@ export 'src/events/typing_event.dart' show ITypingEvent;
 export 'src/events/user_update_event.dart' show IUserUpdateEvent;
 export 'src/events/voice_server_update_event.dart' show IVoiceServerUpdateEvent;
 export 'src/events/voice_state_update_event.dart' show IVoiceStateUpdateEvent;
-export 'src/internal/constants.dart' show Constants;
+export 'src/internal/constants.dart' show Constants, OPCodes;
 export 'src/internal/event_controller.dart' show IWebsocketEventController, IRestEventController;
 export 'src/internal/http_endpoints.dart' show IHttpEndpoints;
 export 'src/internal/cache/cache.dart' show MessageCache, SnowflakeCache;
