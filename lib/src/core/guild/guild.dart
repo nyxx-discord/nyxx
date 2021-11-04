@@ -504,7 +504,7 @@ class Guild extends SnowflakeEntity implements IGuild {
       this.systemChannel = ChannelCacheable(client, Snowflake(raw["system_channel_id"]));
     }
 
-    this.features = (raw["features"] as List<dynamic>).map((e) => GuildFeature.from(e.toString()));
+    this.features = (raw["features"] as RawApiList).map((e) => GuildFeature.from(e.toString()));
 
     if (raw["permissions"] != null) {
       this.currentUserPermissions = Permissions(raw["permissions"] as int);

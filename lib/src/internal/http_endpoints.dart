@@ -720,7 +720,7 @@ class HttpEndpoints implements IHttpEndpoints {
       return;
     }
 
-    for (final rawMember in (request as HttpResponseSuccess).jsonBody as List<dynamic>) {
+    for (final rawMember in (request as HttpResponseSuccess).jsonBody as RawApiList) {
       final member = Member(client, rawMember as RawApiMap, guildId);
 
       if (client.cacheOptions.memberCachePolicyLocation.http && client.cacheOptions.memberCachePolicy.canCache(member)) {
@@ -1038,7 +1038,7 @@ class HttpEndpoints implements IHttpEndpoints {
     if (response is HttpResponseSuccess) {
       final guild = GuildCacheable(client, guildId);
 
-      for (final rawThreadMember in response.jsonBody as List<dynamic>) {
+      for (final rawThreadMember in response.jsonBody as RawApiList) {
         yield ThreadMember(client, rawThreadMember as RawApiMap, guild);
       }
     }
