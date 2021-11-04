@@ -9,3 +9,17 @@ class Utils {
     }
   }
 }
+
+extension ListSafeFirstWhere<E> on List<E> {
+  E? firstWhereSafe(bool Function(E element) test, {E? Function()? orElse}) {
+    try {
+      return firstWhere(test);
+    } on StateError {
+      if (orElse != null) {
+        return orElse();
+      }
+
+      return null;
+    }
+  }
+}

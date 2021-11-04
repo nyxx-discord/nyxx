@@ -47,7 +47,6 @@ abstract class IUserFlags {
   int get raw;
 }
 
-// TODO: just store int and in getter check if its applied
 /// Additional flags associated with user account. Describes if user has certain
 /// features like joined into one of houses or is discord employee.
 class UserFlags implements IUserFlags {

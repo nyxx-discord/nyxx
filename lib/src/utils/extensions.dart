@@ -20,7 +20,7 @@ extension StringExtensions on String {
 }
 
 /// Extensions on Iterable of Snowflakes entities
-extension SnowflakeEntityListExtensions<T> on Iterable<SnowflakeEntity> {
+extension SnowflakeEntityListExtensions on Iterable<SnowflakeEntity> {
   /// Returns Iterable of [SnowflakeEntity] as Iterable of IDs
   Iterable<Snowflake> asSnowflakes() => map((e) => e.id);
 }

@@ -67,9 +67,7 @@ class CacheableTextChannel<S extends ITextChannel> extends Channel implements IC
   Stream<IMessage> fetchPinnedMessages() => client.httpEndpoints.fetchPinnedMessages(id);
 
   @override
-  Future<void> dispose() async {
-    // TODO: Empty body
-  }
+  Future<void> dispose() async {}
 
   @override
   Future<int> get fileUploadLimit =>

@@ -1,6 +1,7 @@
 import 'package:nyxx/src/core/channel/guild/guild_channel.dart';
 import 'package:nyxx/src/core/guild/role.dart';
 import 'package:nyxx/src/core/user/member.dart';
+import 'package:nyxx/src/utils/utils.dart';
 
 /// Util function for manipulating permissions
 class PermissionsUtils {
@@ -38,37 +39,34 @@ class PermissionsUtils {
     var allowRaw = 0;
     var denyRaw = 0;
 
-    try {
-      final publicOverride = channel.permissionOverrides.firstWhere((ov) => ov.id == member.guild.getFromCache()?.everyoneRole.id);
+    final publicOverride = channel.permissionOverrides.firstWhereSafe((ov) => ov.id == member.guild.getFromCache()?.everyoneRole.id);
+
+    if (publicOverride != null) {
       allowRaw = publicOverride.allow;
       denyRaw = publicOverride.deny;
-      // ignore: avoid_catches_without_on_clauses, empty_catches
-    } on Error {}
+    }
 
     var allowRole = 0;
     var denyRole = 0;
 
     for (final role in member.roles) {
-      try {
-        final channelOverride = channel.permissionOverrides.firstWhere((f) => f.id == role.id);
+      final channelOverride = channel.permissionOverrides.firstWhereSafe((f) => f.id == role.id);
 
+      if (channelOverride != null) {
         denyRole |= channelOverride.deny;
         allowRole |= channelOverride.allow;
-        // ignore: avoid_catches_without_on_clauses, empty_catches
-      } on Error {}
+      }
     }
 
     allowRaw = (allowRaw & ~denyRole) | allowRole;
     denyRaw = (denyRaw & ~allowRole) | denyRole;
 
-    // TODO: NNBD: try-catch in where
-    try {
-      final memberOverride = channel.permissionOverrides.firstWhere((g) => g.id == member.id);
+    final memberOverride = channel.permissionOverrides.firstWhereSafe((g) => g.id == member.id);
 
+    if (memberOverride != null) {
       allowRaw = (allowRaw & ~memberOverride.deny) | memberOverride.allow;
       denyRaw = (denyRaw & ~memberOverride.allow) | memberOverride.deny;
-      // ignore: avoid_catches_without_on_clauses, empty_catches
-    } on Error {}
+    }
 
     return [allowRaw, denyRaw];
   }

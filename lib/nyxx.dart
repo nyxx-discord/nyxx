@@ -161,4 +161,4 @@ export 'src/utils/builders/sticker_builder.dart' show StickerBuilder;
 export 'src/utils/builders/thread_builder.dart' show ThreadArchiveTime, ThreadBuilder;
 export 'src/utils/extensions.dart' show IntExtensions, SnowflakeEntityListExtensions, StringExtensions;
 export 'src/utils/permissions.dart' show PermissionsUtils;
-export 'src/utils/utils.dart' show Utils;
+export 'src/utils/utils.dart' show Utils, ListSafeFirstWhere;

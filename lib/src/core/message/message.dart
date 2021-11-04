@@ -453,6 +453,5 @@ class Message extends SnowflakeEntity implements IMessage {
   }
 
   @override
-  // TODO: implement hashCode
   int get hashCode => super.hashCode;
 }

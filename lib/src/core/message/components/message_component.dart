@@ -55,12 +55,12 @@ class MessageComponentEmoji implements IMessageComponentEmoji {
   /// Returns emoji from button as emoji button native for nyxx
   @override
   IEmoji get parsedEmoji {
-    if (this.name != null) {
-      return UnicodeEmoji(this.name!);
+    if (name != null) {
+      return UnicodeEmoji(name!);
     }
 
-    if (this.id != null) {
-      return IBaseGuildEmoji.fromId(Snowflake(this.id));
+    if (id != null) {
+      return IBaseGuildEmoji.fromId(Snowflake(id));
     }
 
     throw ArgumentError("Tried to parse emojis from invalid payload");
@@ -68,9 +68,9 @@ class MessageComponentEmoji implements IMessageComponentEmoji {
 
   /// Creates an instance of [MessageComponentEmoji]
   MessageComponentEmoji(RawApiMap raw) {
-    this.name = raw["name"] as String?;
-    this.id = raw["id"] as String?;
-    this.animated = raw["animated"] as bool? ?? false;
+    name = raw["name"] as String?;
+    id = raw["id"] as String?;
+    animated = raw["animated"] as bool? ?? false;
   }
 }
 
@@ -142,16 +142,16 @@ class MessageMultiselectOption implements IMessageMultiselectOption {
 
   /// Creates an instance of [MessageMultiselectOption]
   MessageMultiselectOption(Map<String, dynamic> raw) {
-    this.label = raw["label"] as String;
-    this.value = raw["value"] as String;
+    label = raw["label"] as String;
+    value = raw["value"] as String;
 
-    this.description = raw["description"] as String?;
+    description = raw["description"] as String?;
     if (raw["emoji"] != null) {
-      this.emoji = MessageComponentEmoji(raw["emoji"] as Map<String, dynamic>);
+      emoji = MessageComponentEmoji(raw["emoji"] as Map<String, dynamic>);
     } else {
-      this.emoji = null;
+      emoji = null;
     }
-    this.isDefault = raw["default"] as bool? ?? false;
+    isDefault = raw["default"] as bool? ?? false;
   }
 }
 
@@ -198,11 +198,11 @@ class MessageMultiselect extends MessageComponent implements IMessageMultiselect
 
   /// Creates an instance of [MessageMultiselect]
   MessageMultiselect(Map<String, dynamic> raw) : super() {
-    this.customId = raw["custom_id"] as String;
-    this.placeholder = raw["placeholder"] as String?;
-    this.minValues = raw["min_values"] as int? ?? 1;
-    this.maxValues = raw["max_values"] as int? ?? 1;
-    this.options = [for (final rawOption in raw["options"]) MessageMultiselectOption(rawOption as Map<String, dynamic>)];
+    customId = raw["custom_id"] as String;
+    placeholder = raw["placeholder"] as String?;
+    minValues = raw["min_values"] as int? ?? 1;
+    maxValues = raw["max_values"] as int? ?? 1;
+    options = [for (final rawOption in raw["options"]) MessageMultiselectOption(rawOption as Map<String, dynamic>)];
   }
 }
 
@@ -251,16 +251,16 @@ class MessageButton extends MessageComponent implements IMessageButton {
 
   /// Creates an instance of [MessageButton]
   MessageButton(Map<String, dynamic> raw) : super() {
-    this.label = raw["label"] as String?;
-    this.style = ComponentStyle.from(raw["style"] as int);
+    label = raw["label"] as String?;
+    style = ComponentStyle.from(raw["style"] as int);
 
     if (raw["emoji"] != null) {
-      this.emoji = MessageComponentEmoji(raw["emoji"] as RawApiMap);
+      emoji = MessageComponentEmoji(raw["emoji"] as RawApiMap);
     } else {
-      this.emoji = null;
+      emoji = null;
     }
 
-    this.disabled = raw["disabled"] as bool? ?? false;
+    disabled = raw["disabled"] as bool? ?? false;
   }
 }
 
@@ -277,7 +277,7 @@ class CustomMessageButton extends MessageButton implements ICustomMessageButton 
 
   /// Creates an instance of [CustomMessageButton]
   CustomMessageButton(RawApiMap raw) : super(raw) {
-    this.customId = raw["custom_id"] as String;
+    customId = raw["custom_id"] as String;
   }
 }
 
@@ -301,6 +301,6 @@ class LinkMessageButton extends MessageButton implements ILinkMessageButton {
 
   /// Creates an instance of [LinkMessageButton]
   LinkMessageButton(RawApiMap raw) : super(raw) {
-    this.url = raw["url"] as String;
+    url = raw["url"] as String;
   }
 }
