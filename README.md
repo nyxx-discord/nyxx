@@ -1,6 +1,5 @@
 # nyxx
 
-[![Discord Shield](https://discordapp.com/api/guilds/846136758470443069/widget.png?style=shield)](https://discord.gg/m3tNPpwmRg)
 [![pub](https://img.shields.io/pub/v/nyxx.svg)](https://pub.dartlang.org/packages/nyxx)
 [![documentation](https://img.shields.io/badge/Documentation-nyxx-yellow.svg)](https://www.dartdocs.org/documentation/nyxx/latest/)
 [![documentation](https://img.shields.io/badge/Documentation-nyxx.commander-yellow.svg)](https://www.dartdocs.org/documentation/nyxx.commander/latest/)
@@ -34,7 +33,7 @@ void main() {
 
   bot.onMessageReceived.listen((event) {
     if (event.message.content == "!ping") {
-      event.message.channel.sendMessage(MessageBuilder.content("Pong!"));
+      event.message.channel.getFromCache()?.sendMessage(content: "Pong!");
     }
   });
 }
@@ -62,7 +61,7 @@ void main() {
   final bot = Nyxx("TOKEN", GatewayIntents.allUnprivileged);
 
   Commander(bot, prefix: "!!!")
-    ..registerCommand("ping", (context, message) => context.reply(MessageBuilder.content("Pong!")));
+    ..registerCommand("ping", (context, message) => context.reply(content: "Pong!"));
 }
 ```
 
@@ -70,9 +69,9 @@ void main() {
 
 Nyxx examples can be found [here](https://github.com/l7ssha/nyxx/tree/dev/nyxx/example).
 
-Commander examples can be found [here](https://github.com/l7ssha/nyxx/tree/dev/nyxx_commander/example)
+Commander examples can be found [here](https://github.com/l7ssha/nyxx/tree/dev/nyxx.commander/example)
 
-Slash commands (interactions) examples can be found [here](https://github.com/l7ssha/nyxx/tree/dev/nyxx_interactions/example)
+Slash commands (interactions) examples can be found [here](https://github.com/l7ssha/nyxx/tree/dev/nyxx.interactions/example)
 
 ### Example bots
 - [Running on Dart](https://github.com/l7ssha/running_on_dart)
@@ -101,6 +100,6 @@ Wiki documentation are designed to match the latest Nyxx release.
 
 Read [contributing document](https://github.com/l7ssha/nyxx/blob/development/CONTRIBUTING.md)
 
-## Credits 
+## Credits
 
- * [Hackzzila's](https://github.com/Hackzzila) for [nyx](https://github.com/Hackzzila/nyx).
+* [Hackzzila's](https://github.com/Hackzzila) for [nyx](https://github.com/Hackzzila/nyx).
