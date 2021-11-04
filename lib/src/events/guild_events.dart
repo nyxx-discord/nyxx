@@ -22,7 +22,7 @@ class GuildCreateEvent implements IGuildCreateEvent {
 
   /// Creates na instance of [GuildCreateEvent]
   GuildCreateEvent(RawApiMap raw, INyxx client) {
-    this.guild = Guild(client, raw["d"] as RawApiMap, true);
+    guild = Guild(client, raw["d"] as RawApiMap, true);
     client.guilds[guild.id] = guild;
   }
 }
@@ -40,11 +40,11 @@ class GuildUpdateEvent implements IGuildUpdateEvent {
 
   /// Creates na instance of [GuildUpdateEvent]
   GuildUpdateEvent(RawApiMap json, INyxx client) {
-    this.guild = Guild(client, json["d"] as RawApiMap);
+    guild = Guild(client, json["d"] as RawApiMap);
 
-    final oldGuild = client.guilds[this.guild.id];
+    final oldGuild = client.guilds[guild.id];
     if (oldGuild != null) {
-      this.guild.members.addAll(oldGuild.members);
+      guild.members.addAll(oldGuild.members);
     }
 
     client.guilds[guild.id] = guild;
@@ -73,8 +73,8 @@ class GuildDeleteEvent implements IGuildDeleteEvent {
 
   /// Creates na instance of [GuildDeleteEvent]
   GuildDeleteEvent(RawApiMap raw, INyxx client) {
-    this.unavailable = raw["d"]["unavailable"] as bool? ?? false;
-    this.guild = GuildCacheable(client, Snowflake(raw["d"]["id"]));
+    unavailable = raw["d"]["unavailable"] as bool? ?? false;
+    guild = GuildCacheable(client, Snowflake(raw["d"]["id"]));
 
     client.guilds.remove(guild.id);
   }
@@ -100,12 +100,12 @@ class GuildMemberRemoveEvent implements IGuildMemberRemoveEvent {
 
   /// Creates na instance of [GuildMemberRemoveEvent]
   GuildMemberRemoveEvent(RawApiMap json, INyxx client) {
-    this.user = User(client, json["d"]["user"] as RawApiMap);
-    this.guild = GuildCacheable(client, Snowflake(json["d"]["guild_id"]));
+    user = User(client, json["d"]["user"] as RawApiMap);
+    guild = GuildCacheable(client, Snowflake(json["d"]["guild_id"]));
 
-    final guildInstance = this.guild.getFromCache();
+    final guildInstance = guild.getFromCache();
     if (guildInstance != null) {
-      guildInstance.members.remove(this.user.id);
+      guildInstance.members.remove(user.id);
     }
   }
 }
@@ -137,20 +137,20 @@ class GuildMemberUpdateEvent implements IGuildMemberUpdateEvent {
 
   /// Creates na instance of [GuildMemberUpdateEvent]
   GuildMemberUpdateEvent(RawApiMap raw, INyxx client) {
-    this.guild = GuildCacheable(client, Snowflake(raw["d"]["guild_id"]));
-    this.member = MemberCacheable(client, Snowflake(raw["d"]["user"]["id"]), guild);
+    guild = GuildCacheable(client, Snowflake(raw["d"]["guild_id"]));
+    member = MemberCacheable(client, Snowflake(raw["d"]["user"]["id"]), guild);
 
     final user = User(client, raw["d"]["user"] as RawApiMap);
     if (client.cacheOptions.userCachePolicyLocation.event) {
       client.users[user.id] = user;
     }
 
-    final memberInstance = this.member.getFromCache();
+    final memberInstance = member.getFromCache();
     if (memberInstance == null) {
       return;
     }
 
-    final guildInstance = this.guild.getFromCache();
+    final guildInstance = guild.getFromCache();
     if (guildInstance == null) {
       return;
     }
@@ -190,21 +190,21 @@ class GuildMemberAddEvent implements IGuildMemberAddEvent {
 
   /// Creates na instance of [GuildMemberAddEvent]
   GuildMemberAddEvent(RawApiMap raw, INyxx client) {
-    this.guild = GuildCacheable(client, Snowflake(raw["d"]["guild_id"]));
-    this.member = Member(client, raw["d"] as RawApiMap, this.guild.id);
-    this.user = User(client, raw["d"]["user"] as RawApiMap);
+    guild = GuildCacheable(client, Snowflake(raw["d"]["guild_id"]));
+    member = Member(client, raw["d"] as RawApiMap, guild.id);
+    user = User(client, raw["d"]["user"] as RawApiMap);
 
     if (client.cacheOptions.userCachePolicyLocation.event) {
       client.users[user.id] = user;
     }
 
-    final guildInstance = this.guild.getFromCache();
+    final guildInstance = guild.getFromCache();
     if (guildInstance == null) {
       return;
     }
 
-    if (client.cacheOptions.memberCachePolicyLocation.event && client.cacheOptions.memberCachePolicy.canCache(this.member)) {
-      guildInstance.members[this.member.id] = member;
+    if (client.cacheOptions.memberCachePolicyLocation.event && client.cacheOptions.memberCachePolicy.canCache(member)) {
+      guildInstance.members[member.id] = member;
     }
   }
 }
@@ -229,8 +229,8 @@ class GuildBanAddEvent implements IGuildBanAddEvent {
 
   /// Creates na instance of [GuildBanAddEvent]
   GuildBanAddEvent(RawApiMap raw, INyxx client) {
-    this.guild = GuildCacheable(client, Snowflake(raw["d"]["guild_id"]));
-    this.user = User(client, raw["d"]["user"] as RawApiMap);
+    guild = GuildCacheable(client, Snowflake(raw["d"]["guild_id"]));
+    user = User(client, raw["d"]["user"] as RawApiMap);
   }
 }
 
@@ -254,8 +254,8 @@ class GuildBanRemoveEvent implements IGuildBanRemoveEvent {
 
   /// Creates na instance of [GuildBanRemoveEvent]
   GuildBanRemoveEvent(RawApiMap raw, INyxx client) {
-    this.guild = GuildCacheable(client, Snowflake(raw["d"]["guild_id"]));
-    this.user = User(client, raw["d"]["user"] as RawApiMap);
+    guild = GuildCacheable(client, Snowflake(raw["d"]["guild_id"]));
+    user = User(client, raw["d"]["user"] as RawApiMap);
   }
 }
 
@@ -279,13 +279,13 @@ class GuildEmojisUpdateEvent implements IGuildEmojisUpdateEvent {
 
   /// Creates na instance of [GuildEmojisUpdateEvent]
   GuildEmojisUpdateEvent(RawApiMap raw, INyxx client) {
-    this.guild = GuildCacheable(client, Snowflake(raw["d"]["guild_id"]));
+    guild = GuildCacheable(client, Snowflake(raw["d"]["guild_id"]));
 
-    final guildInstance = this.guild.getFromCache();
+    final guildInstance = guild.getFromCache();
     for (final rawEmoji in raw["d"]["emojis"]) {
-      final emoji = GuildEmoji(client, rawEmoji as RawApiMap, this.guild.id);
+      final emoji = GuildEmoji(client, rawEmoji as RawApiMap, guild.id);
 
-      this.emojis.add(emoji);
+      emojis.add(emoji);
 
       if (guildInstance != null) {
         guildInstance.emojis[emoji.id] = emoji;
@@ -314,9 +314,9 @@ class RoleCreateEvent implements IRoleCreateEvent {
 
   /// Creates na instance of [RoleCreateEvent]
   RoleCreateEvent(RawApiMap raw, INyxx client) {
-    this.guild = GuildCacheable(client, Snowflake(raw["d"]["guild_id"]));
+    guild = GuildCacheable(client, Snowflake(raw["d"]["guild_id"]));
 
-    this.role = Role(client, raw["d"]["role"] as RawApiMap, this.guild.id);
+    role = Role(client, raw["d"]["role"] as RawApiMap, guild.id);
 
     final guildInstance = guild.getFromCache();
     if (guildInstance != null) {
@@ -345,14 +345,14 @@ class RoleDeleteEvent implements IRoleDeleteEvent {
 
   /// Creates na instance of [RoleDeleteEvent]
   RoleDeleteEvent(RawApiMap raw, INyxx client) {
-    this.guild = GuildCacheable(client, Snowflake(raw["d"]["guild_id"]));
+    guild = GuildCacheable(client, Snowflake(raw["d"]["guild_id"]));
 
     final guildInstance = guild.getFromCache();
     if (guildInstance != null) {
-      this.role = this.role = RoleCacheable(client, Snowflake(raw["d"]["role_id"]), guild);
+      role = role = RoleCacheable(client, Snowflake(raw["d"]["role_id"]), guild);
       guildInstance.roles.remove(role!.id);
     } else {
-      this.role = null;
+      role = null;
     }
   }
 }
@@ -377,8 +377,8 @@ class RoleUpdateEvent implements IRoleUpdateEvent {
 
   /// Creates na instance of [RoleUpdateEvent]
   RoleUpdateEvent(RawApiMap raw, INyxx client) {
-    this.guild = GuildCacheable(client, Snowflake(raw["d"]["guild_id"]));
-    this.role = Role(client, raw["d"]["role"] as RawApiMap, this.guild.id);
+    guild = GuildCacheable(client, Snowflake(raw["d"]["guild_id"]));
+    role = Role(client, raw["d"]["role"] as RawApiMap, guild.id);
 
     final guildInstance = guild.getFromCache();
     if (guildInstance != null) {
@@ -407,7 +407,7 @@ class GuildStickerUpdate implements IGuildStickerUpdate {
 
   /// Creates na instance of [GuildStickerUpdate]
   GuildStickerUpdate(RawApiMap raw, INyxx client) {
-    this.guild = GuildCacheable(client, Snowflake(raw["d"]["guild_id"]));
-    this.stickers = [for (final rawSticker in raw["d"]["stickers"]) GuildSticker(rawSticker as RawApiMap, client)];
+    guild = GuildCacheable(client, Snowflake(raw["d"]["guild_id"]));
+    stickers = [for (final rawSticker in raw["d"]["stickers"]) GuildSticker(rawSticker as RawApiMap, client)];
   }
 }

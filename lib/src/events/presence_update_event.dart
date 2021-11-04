@@ -33,14 +33,14 @@ class PresenceUpdateEvent implements IPresenceUpdateEvent {
 
   /// Creates na instance of [PresenceUpdateEvent]
   PresenceUpdateEvent(RawApiMap raw, INyxx client) {
-    this.presences = [for (final rawActivity in raw["d"]["activities"]) Activity(rawActivity as RawApiMap)];
-    this.clientStatus = ClientStatus(raw["d"]["client_status"] as RawApiMap);
+    presences = [for (final rawActivity in raw["d"]["activities"]) Activity(rawActivity as RawApiMap)];
+    clientStatus = ClientStatus(raw["d"]["client_status"] as RawApiMap);
     this.user = UserCacheable(client, Snowflake(raw["d"]["user"]["id"]));
 
     final user = this.user.getFromCache();
     if (user != null) {
-      if (this.clientStatus != user.status) {
-        (user as User).status = this.clientStatus;
+      if (clientStatus != user.status) {
+        (user as User).status = clientStatus;
       }
 
       // TODO: Decide what to do with multiplace presences

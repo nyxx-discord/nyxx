@@ -20,26 +20,26 @@ abstract class IEmbedAuthor implements Convertable<EmbedAuthorBuilder> {
 class EmbedAuthor implements IEmbedAuthor {
   /// Name of embed author
   @override
-  String? name;
+  late final String? name;
 
   /// Url to embed author
   @override
-  String? url;
+  late final String? url;
 
   /// Url to author's url
   @override
-  String? iconUrl;
+  late final String? iconUrl;
 
   /// Proxied icon url
   @override
-  String? iconProxyUrl;
+  late final String? iconProxyUrl;
 
   /// Creates an instance of [EmbedAuthor]
   EmbedAuthor(RawApiMap raw) {
-    this.name = raw["name"] as String?;
-    this.url = raw["url"] as String?;
-    this.iconUrl = raw["icon_url"] as String?;
-    this.iconProxyUrl = raw["iconProxyUrl"] as String?;
+    name = raw["name"] as String?;
+    url = raw["url"] as String?;
+    iconUrl = raw["icon_url"] as String?;
+    iconProxyUrl = raw["iconProxyUrl"] as String?;
   }
 
   @override
@@ -49,11 +49,11 @@ class EmbedAuthor implements IEmbedAuthor {
   int get hashCode => url.hashCode * 37 + name.hashCode * 37 + iconUrl.hashCode * 37;
 
   @override
-  bool operator ==(other) => other is EmbedAuthor ? other.url == this.url && other.name == this.name && other.iconUrl == this.iconUrl : false;
+  bool operator ==(other) => other is EmbedAuthor ? other.url == url && other.name == name && other.iconUrl == iconUrl : false;
 
   @override
   EmbedAuthorBuilder toBuilder() => EmbedAuthorBuilder()
-    ..url = this.url
-    ..name = this.name
-    ..iconUrl = this.iconUrl;
+    ..url = url
+    ..name = name
+    ..iconUrl = iconUrl;
 }

@@ -36,8 +36,8 @@ class ThreadDeletedEvent implements IThreadDeletedEvent {
   ThreadDeletedEvent(RawApiMap raw, INyxx client) {
     final data = raw["d"] as RawApiMap;
 
-    this.thread = CacheableTextChannel(client, Snowflake(data["id"]));
-    this.parent = CacheableTextChannel(client, Snowflake(data["parent_id"]));
-    this.guild = GuildCacheable(client, Snowflake(data["guild_id"]));
+    thread = CacheableTextChannel(client, Snowflake(data["id"]));
+    parent = CacheableTextChannel(client, Snowflake(data["parent_id"]));
+    guild = GuildCacheable(client, Snowflake(data["guild_id"]));
   }
 }

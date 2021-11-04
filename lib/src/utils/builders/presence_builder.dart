@@ -28,9 +28,9 @@ class ActivityBuilder implements Builder {
 
   @override
   RawApiMap build() => {
-        "name": this.name,
-        "type": this.type.value,
-        if (this.type == ActivityType.streaming) "url": this.url,
+        "name": name,
+        "type": type.value,
+        if (type == ActivityType.streaming) "url": url,
       };
 }
 
@@ -65,9 +65,9 @@ class PresenceBuilder extends Builder {
   RawApiMap build() => <String, dynamic>{
         "status": (status != null) ? status.toString() : UserStatus.online.toString(),
         "afk": (afk != null) ? afk : false,
-        if (this.activity != null)
+        if (activity != null)
           "activities": [
-            this.activity!.build(),
+            activity!.build(),
           ],
         "since": (since != null) ? since!.millisecondsSinceEpoch : null
       };

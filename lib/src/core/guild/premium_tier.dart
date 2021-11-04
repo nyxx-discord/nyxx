@@ -20,5 +20,5 @@ class PremiumTier extends IEnum<int> {
   }
 
   @override
-  int get hashCode => this.value.hashCode;
+  int get hashCode => value.hashCode;
 }

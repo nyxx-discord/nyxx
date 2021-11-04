@@ -21,11 +21,11 @@ class EmbedProvider implements IEmbedProvider {
   /// Creates an instance of [EmbedProvider]
   EmbedProvider(RawApiMap raw) {
     if (raw["name"] != null) {
-      this.name = raw["name"] as String?;
+      name = raw["name"] as String?;
     }
 
     if (raw["url"] != null) {
-      this.url = raw["url"] as String?;
+      url = raw["url"] as String?;
     }
   }
 }

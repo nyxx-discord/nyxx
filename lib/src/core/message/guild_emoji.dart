@@ -25,7 +25,7 @@ abstract class BaseGuildEmoji extends SnowflakeEntity implements IBaseGuildEmoji
 
   /// Returns cdn url to emoji
   @override
-  String get cdnUrl => "https://cdn.discordapp.com/emojis/${this.id}.png";
+  String get cdnUrl => "https://cdn.discordapp.com/emojis/$id.png";
 
   /// Creates an instance of [BaseGuildEmoji]
   BaseGuildEmoji(RawApiMap raw) : super(Snowflake(raw["id"]));
@@ -38,7 +38,7 @@ abstract class BaseGuildEmoji extends SnowflakeEntity implements IBaseGuildEmoji
 
   /// Returns encoded string ready to send via message.
   @override
-  String toString() => this.formatForMessage();
+  String toString() => formatForMessage();
 }
 
 abstract class IGuildEmojiPartial implements IBaseGuildEmoji {}
@@ -107,19 +107,19 @@ class GuildEmoji extends BaseGuildEmoji implements IGuildEmoji {
 
   /// Creates an instance of [GuildEmoji]
   GuildEmoji(this.client, RawApiMap raw, Snowflake guildId) : super(raw) {
-    this.guild = GuildCacheable(client, guildId);
+    guild = GuildCacheable(client, guildId);
 
-    this.requireColons = raw["require_colons"] as bool? ?? false;
-    this.managed = raw["managed"] as bool? ?? false;
-    this.animated = raw["animated"] as bool? ?? false;
-    this.roles = [for (final roleId in raw["roles"]) RoleCacheable(client, Snowflake(roleId), guild)];
+    requireColons = raw["require_colons"] as bool? ?? false;
+    managed = raw["managed"] as bool? ?? false;
+    animated = raw["animated"] as bool? ?? false;
+    roles = [for (final roleId in raw["roles"]) RoleCacheable(client, Snowflake(roleId), guild)];
   }
 
   /// Allows to delete guild emoji
   @override
-  Future<void> delete() => client.httpEndpoints.deleteGuildEmoji(this.guild.id, this.id);
+  Future<void> delete() => client.httpEndpoints.deleteGuildEmoji(guild.id, id);
 
   /// Allows to edit guild emoji
   @override
-  Future<void> edit({String? name, List<Snowflake>? roles}) => client.httpEndpoints.editGuildEmoji(this.guild.id, this.id, name: name, roles: roles);
+  Future<void> edit({String? name, List<Snowflake>? roles}) => client.httpEndpoints.editGuildEmoji(guild.id, id, name: name, roles: roles);
 }

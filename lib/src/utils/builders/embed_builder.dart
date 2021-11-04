@@ -43,30 +43,30 @@ class EmbedBuilder extends Builder {
 
   /// Creates clean instance [EmbedBuilder]
   EmbedBuilder() {
-    this.fields = [];
+    fields = [];
   }
 
   /// Adds author to embed.
   void addAuthor(void Function(EmbedAuthorBuilder author) builder) {
-    this.author = EmbedAuthorBuilder();
-    builder(this.author!);
+    author = EmbedAuthorBuilder();
+    builder(author!);
   }
 
   /// Adds footer to embed
   void addFooter(void Function(EmbedFooterBuilder footer) builder) {
-    this.footer = EmbedFooterBuilder();
-    builder(this.footer!);
+    footer = EmbedFooterBuilder();
+    builder(footer!);
   }
 
   /// Adds field to embed. [name] and [content] fields are required. Inline is set to false by default.
   void addField({dynamic? name, dynamic? content, bool inline = false, Function(EmbedFieldBuilder field)? builder, EmbedFieldBuilder? field}) {
-    this.fields.add(_constructEmbedFieldBuilder(name: name, content: content, builder: builder, field: field, inline: inline));
+    fields.add(_constructEmbedFieldBuilder(name: name, content: content, builder: builder, field: field, inline: inline));
   }
 
   /// Replaces field where [name] witch provided new field.
   void replaceField({dynamic? name, dynamic? content, bool inline = false, Function(EmbedFieldBuilder field)? builder, EmbedFieldBuilder? field}) {
-    final index = this.fields.indexWhere((element) => element.name == name);
-    this.fields[index] = _constructEmbedFieldBuilder(name: name, content: content, builder: builder, field: field, inline: inline);
+    final index = fields.indexWhere((element) => element.name == name);
+    fields[index] = _constructEmbedFieldBuilder(name: name, content: content, builder: builder, field: field, inline: inline);
   }
 
   EmbedFieldBuilder _constructEmbedFieldBuilder(
@@ -86,29 +86,29 @@ class EmbedBuilder extends Builder {
 
   /// Total length of all text fields of embed
   int get length =>
-      (this.title?.length ?? 0) +
-      (this.description?.length ?? 0) +
-      (this.footer?.length ?? 0) +
-      (this.author?.length ?? 0) +
+      (title?.length ?? 0) +
+      (description?.length ?? 0) +
+      (footer?.length ?? 0) +
+      (author?.length ?? 0) +
       (fields.isEmpty ? 0 : fields.map((embed) => embed.length).reduce((f, s) => f + s));
 
   @override
 
   /// Builds object to Map() instance;
   RawApiMap build() {
-    if (this.title != null && this.title!.length > 256) {
+    if (title != null && title!.length > 256) {
       throw EmbedBuilderArgumentException("Embed title is too long (256 characters limit)");
     }
 
-    if (this.description != null && this.description!.length > 2048) {
+    if (description != null && description!.length > 2048) {
       throw EmbedBuilderArgumentException("Embed description is too long (2048 characters limit)");
     }
 
-    if (this.fields.length > 25) {
+    if (fields.length > 25) {
       throw EmbedBuilderArgumentException("Embed cannot contain more than 25 fields");
     }
 
-    if (this.length > 6000) {
+    if (length > 6000) {
       throw EmbedBuilderArgumentException("Total length of embed cannot exceed 6000 characters");
     }
 

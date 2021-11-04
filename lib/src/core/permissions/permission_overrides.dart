@@ -39,13 +39,13 @@ class PermissionsOverrides extends SnowflakeEntity implements IPermissionsOverri
 
   /// Creates an instance of [PermissionsOverrides]
   PermissionsOverrides(RawApiMap raw) : super(Snowflake(raw["id"] as String)) {
-    this.allow = int.parse(raw["allow"] as String);
-    this.deny = int.parse(raw["deny"] as String);
+    allow = int.parse(raw["allow"] as String);
+    deny = int.parse(raw["deny"] as String);
 
-    this.permissions = Permissions.fromOverwrite(0, allow, deny);
-    this.type = raw["type"] as int;
+    permissions = Permissions.fromOverwrite(0, allow, deny);
+    type = raw["type"] as int;
   }
 
   @override
-  PermissionOverrideBuilder toBuilder() => PermissionOverrideBuilder.from(this.type, this.id, this.permissions);
+  PermissionOverrideBuilder toBuilder() => PermissionOverrideBuilder.from(type, id, permissions);
 }

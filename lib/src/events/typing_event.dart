@@ -50,24 +50,24 @@ class TypingEvent implements ITypingEvent {
 
   /// Creates an instance of [TypingEvent]
   TypingEvent(RawApiMap raw, INyxx client) {
-    this.channel = CacheableTextChannel(client, Snowflake(raw["d"]["channel_id"]));
-    this.user = UserCacheable(client, Snowflake(raw["d"]["user_id"]));
-    this.timestamp = DateTime.fromMillisecondsSinceEpoch(raw["d"]["timestamp"] as int);
+    channel = CacheableTextChannel(client, Snowflake(raw["d"]["channel_id"]));
+    user = UserCacheable(client, Snowflake(raw["d"]["user_id"]));
+    timestamp = DateTime.fromMillisecondsSinceEpoch(raw["d"]["timestamp"] as int);
 
     if (raw["d"]["guild_id"] != null) {
-      this.guild = GuildCacheable(client, Snowflake(raw["d"]["guild_id"]));
+      guild = GuildCacheable(client, Snowflake(raw["d"]["guild_id"]));
     } else {
-      this.guild = null;
+      guild = null;
     }
 
     if (raw["d"]["member"] == null) {
-      this.member = null;
+      member = null;
       return;
     }
 
-    this.member = Member(client, raw["d"]["member"] as RawApiMap, this.guild!.id);
-    if (client.cacheOptions.memberCachePolicyLocation.event && client.cacheOptions.memberCachePolicy.canCache(this.member!)) {
-      member!.guild.getFromCache()?.members[this.member!.id] = member!;
+    member = Member(client, raw["d"]["member"] as RawApiMap, guild!.id);
+    if (client.cacheOptions.memberCachePolicyLocation.event && client.cacheOptions.memberCachePolicy.canCache(member!)) {
+      member!.guild.getFromCache()?.members[member!.id] = member!;
     }
   }
 }

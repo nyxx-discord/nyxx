@@ -34,9 +34,9 @@ class EmbedThumbnail implements IEmbedThumbnail {
 
   /// Creates an instance of [EmbedThumbnail]
   EmbedThumbnail(RawApiMap raw) {
-    this.url = raw["url"] as String?;
-    this.proxyUrl = raw["proxy_url"] as String?;
-    this.height = raw["height"] as int?;
-    this.width = raw["width"] as int?;
+    url = raw["url"] as String?;
+    proxyUrl = raw["proxy_url"] as String?;
+    height = raw["height"] as int?;
+    width = raw["width"] as int?;
   }
 }

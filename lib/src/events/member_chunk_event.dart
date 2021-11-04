@@ -62,19 +62,19 @@ class MemberChunkEvent implements IMemberChunkEvent {
   final int shardId;
 
   MemberChunkEvent(RawApiMap raw, INyxx client, this.shardId) {
-    this.chunkIndex = raw["d"]["chunk_index"] as int;
-    this.chunkCount = raw["d"]["chunk_count"] as int;
+    chunkIndex = raw["d"]["chunk_index"] as int;
+    chunkCount = raw["d"]["chunk_count"] as int;
 
-    this.guild = GuildCacheable(client, Snowflake(raw["d"]["guild_id"]));
+    guild = GuildCacheable(client, Snowflake(raw["d"]["guild_id"]));
 
     if (raw["d"]["not_found"] != null) {
-      this.invalidIds = [for (var id in raw["d"]["not_found"]) Snowflake(id)];
+      invalidIds = [for (var id in raw["d"]["not_found"]) Snowflake(id)];
     }
 
-    this.members = [for (var memberRaw in raw["d"]["members"]) Member(client, memberRaw as RawApiMap, this.guild.id)];
+    members = [for (var memberRaw in raw["d"]["members"]) Member(client, memberRaw as RawApiMap, guild.id)];
 
     if (client.cacheOptions.memberCachePolicyLocation.event) {
-      final guildInstance = this.guild.getFromCache();
+      final guildInstance = guild.getFromCache();
       // TODO: Thats probably redundant
       for (final member in members) {
         if (client.cacheOptions.memberCachePolicy.canCache(member)) {

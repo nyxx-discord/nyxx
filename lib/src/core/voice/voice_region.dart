@@ -48,11 +48,11 @@ class VoiceRegion implements IVoiceRegion {
 
   /// Creates an instance of [VoiceRegion]
   VoiceRegion(RawApiMap raw) {
-    this.id = raw["id"] as String;
-    this.name = raw["name"] as String;
-    this.vip = raw["vip"] as bool;
-    this.optimal = raw["optimal"] as bool;
-    this.deprecated = raw["deprecated"] as bool;
-    this.custom = raw["custom"] as bool;
+    id = raw["id"] as String;
+    name = raw["name"] as String;
+    vip = raw["vip"] as bool;
+    optimal = raw["optimal"] as bool;
+    deprecated = raw["deprecated"] as bool;
+    custom = raw["custom"] as bool;
   }
 }

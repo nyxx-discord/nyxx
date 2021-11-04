@@ -133,17 +133,17 @@ class Member extends SnowflakeEntity implements IMember {
 
   /// Voice state of member. Null if not connected to channel or voice state not cached
   @override
-  IVoiceState? get voiceState => this.guild.getFromCache()?.voiceStates[this.id];
+  IVoiceState? get voiceState => guild.getFromCache()?.voiceStates[id];
 
   /// The channel's mention string.
   @override
-  String get mention => "<@${this.id}>";
+  String get mention => "<@$id>";
 
   // TODO: is everything okay?
   /// Returns highest role of member.
   /// Uses ! on nullable properties and will throw if anything is missing from cache
   @override
-  IRole get highestRole => this.roles.reduce((value, element) {
+  IRole get highestRole => roles.reduce((value, element) {
         final valueInstance = value.getFromCache();
         final elementInstance = element.getFromCache();
 
@@ -179,29 +179,29 @@ class Member extends SnowflakeEntity implements IMember {
 
   /// Creates an instance of [Member]
   Member(this.client, RawApiMap raw, Snowflake guildId) : super(Snowflake(raw["user"]["id"])) {
-    this.nickname = raw["nick"] as String?;
-    this.deaf = raw["deaf"] as bool? ?? false;
-    this.mute = raw["mute"] as bool? ?? false;
-    this.user = UserCacheable(client, this.id);
-    this.guild = GuildCacheable(client, guildId);
-    this.boostingSince = DateTime.tryParse(raw["premium_since"] as String? ?? "");
-    this.avatarHash = raw["avatar"] as String?;
+    nickname = raw["nick"] as String?;
+    deaf = raw["deaf"] as bool? ?? false;
+    mute = raw["mute"] as bool? ?? false;
+    user = UserCacheable(client, id);
+    guild = GuildCacheable(client, guildId);
+    boostingSince = DateTime.tryParse(raw["premium_since"] as String? ?? "");
+    avatarHash = raw["avatar"] as String?;
 
-    this.roles = [for (var id in raw["roles"]) RoleCacheable(client, Snowflake(id), this.guild)];
+    roles = [for (var id in raw["roles"]) RoleCacheable(client, Snowflake(id), guild)];
 
     if (raw["hoisted_role"] != null) {
-      this.hoistedRole = RoleCacheable(client, Snowflake(raw["hoisted_role"]), this.guild);
+      hoistedRole = RoleCacheable(client, Snowflake(raw["hoisted_role"]), guild);
     }
 
     if (raw["joined_at"] != null) {
-      this.joinedAt = DateTime.parse(raw["joined_at"] as String).toUtc();
+      joinedAt = DateTime.parse(raw["joined_at"] as String).toUtc();
     }
 
     if (client.cacheOptions.userCachePolicyLocation.objectConstructor) {
       final userRaw = raw["user"] as RawApiMap;
 
       if (userRaw["id"] != null && userRaw.length != 1) {
-        client.users[this.id] = User(client, userRaw);
+        client.users[id] = User(client, userRaw);
       }
     }
   }
@@ -209,17 +209,17 @@ class Member extends SnowflakeEntity implements IMember {
   /// Returns url to member avatar
   @override
   String? avatarURL({String format = "webp"}) {
-    if (this.avatarHash == null) {
+    if (avatarHash == null) {
       return null;
     }
 
-    return this.client.httpEndpoints.memberAvatarURL(this.id, this.guild.id, this.avatarHash!, format: format);
+    return client.httpEndpoints.memberAvatarURL(id, guild.id, avatarHash!, format: format);
   }
 
   /// Bans the member and optionally deletes [deleteMessageDays] days worth of messages.
   @override
   Future<void> ban({int? deleteMessageDays, String? reason, String? auditReason}) async =>
-      client.httpEndpoints.guildBan(this.guild.id, this.id, auditReason: auditReason);
+      client.httpEndpoints.guildBan(guild.id, id, auditReason: auditReason);
 
   /// Adds role to user.
   ///
@@ -229,23 +229,23 @@ class Member extends SnowflakeEntity implements IMember {
   /// ```
   @override
   Future<void> addRole(SnowflakeEntity role, {String? auditReason}) =>
-      client.httpEndpoints.addRoleToUser(this.guild.id, role.id, this.id, auditReason: auditReason);
+      client.httpEndpoints.addRoleToUser(guild.id, role.id, id, auditReason: auditReason);
 
   /// Removes [role] from user.
   @override
   Future<void> removeRole(SnowflakeEntity role, {String? auditReason}) =>
-      client.httpEndpoints.removeRoleFromUser(this.guild.id, role.id, this.id, auditReason: auditReason);
+      client.httpEndpoints.removeRoleFromUser(guild.id, role.id, id, auditReason: auditReason);
 
   /// Kicks the member from guild
   @override
-  Future<void> kick({String? auditReason}) => client.httpEndpoints.guildKick(this.guild.id, this.id);
+  Future<void> kick({String? auditReason}) => client.httpEndpoints.guildKick(guild.id, id);
 
   /// Edits members. Allows to move user in voice channel, mute or deaf, change nick, roles.
   @override
   Future<void> edit(
           {String? nick = "", List<SnowflakeEntity>? roles, bool? mute, bool? deaf, Snowflake? channel = const Snowflake.zero(), String? auditReason}) =>
       client.httpEndpoints
-          .editGuildMember(this.guild.id, this.id, nick: nick, roles: roles, mute: mute, deaf: deaf, channel: channel, auditReason: auditReason);
+          .editGuildMember(guild.id, id, nick: nick, roles: roles, mute: mute, deaf: deaf, channel: channel, auditReason: auditReason);
 
   void updateMember(String? nickname, List<Snowflake> roles, DateTime? boostingSince) {
     if (this.nickname != nickname) {
@@ -253,7 +253,7 @@ class Member extends SnowflakeEntity implements IMember {
     }
 
     if (this.roles != roles) {
-      this.roles = roles.map((e) => RoleCacheable(client, e, this.guild));
+      this.roles = roles.map((e) => RoleCacheable(client, e, guild));
     }
 
     if (this.boostingSince == null && boostingSince != null) {

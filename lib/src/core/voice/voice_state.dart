@@ -91,29 +91,29 @@ class VoiceState implements IVoiceState {
   /// Creates an instance of [VoiceState]
   VoiceState(INyxx client, RawApiMap raw) {
     if (raw["channel_id"] != null) {
-      this.channel = ChannelCacheable(client, Snowflake(raw["channel_id"]));
+      channel = ChannelCacheable(client, Snowflake(raw["channel_id"]));
     } else {
-      this.channel = null;
+      channel = null;
     }
 
-    this.deaf = raw["deaf"] as bool;
-    this.selfDeaf = raw["self_deaf"] as bool;
-    this.selfMute = raw["self_mute"] as bool;
+    deaf = raw["deaf"] as bool;
+    selfDeaf = raw["self_deaf"] as bool;
+    selfMute = raw["self_mute"] as bool;
 
-    this.selfStream = raw["self_stream"] as bool? ?? false;
-    this.selfVideo = raw["self_video"] as bool;
+    selfStream = raw["self_stream"] as bool? ?? false;
+    selfVideo = raw["self_video"] as bool;
 
-    this.requestToSpeakTimeStamp = raw["request_to_speak_timestamp"] == null ? null : DateTime.parse(raw["request_to_speak_timestamp"] as String);
+    requestToSpeakTimeStamp = raw["request_to_speak_timestamp"] == null ? null : DateTime.parse(raw["request_to_speak_timestamp"] as String);
 
-    this.suppress = raw["suppress"] as bool;
-    this.sessionId = raw["session_id"] as String;
+    suppress = raw["suppress"] as bool;
+    sessionId = raw["session_id"] as String;
 
     if (raw["guild_id"] == null) {
-      this.guild = null;
+      guild = null;
     } else {
-      this.guild = GuildCacheable(client, Snowflake(raw["guild_id"]));
+      guild = GuildCacheable(client, Snowflake(raw["guild_id"]));
     }
 
-    this.user = UserCacheable(client, Snowflake(raw["user_id"]));
+    user = UserCacheable(client, Snowflake(raw["user_id"]));
   }
 }

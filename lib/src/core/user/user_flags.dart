@@ -42,6 +42,9 @@ abstract class IUserFlags {
 
   /// rue if user is Discord Certified Moderator
   bool get certifiedModerator;
+
+  /// Raw flags value
+  int get raw;
 }
 
 // TODO: just store int and in getter check if its applied
@@ -50,75 +53,64 @@ abstract class IUserFlags {
 class UserFlags implements IUserFlags {
   /// True if user is discord employee
   @override
-  late final bool discordEmployee;
+  bool get discordEmployee => PermissionsUtils.isApplied(raw, 1 << 0);
 
   /// True if user is discord partner
   @override
-  late final bool discordPartner;
+  bool get discordPartner => PermissionsUtils.isApplied(raw, 1 << 1);
 
   /// True if user has HypeSquad Events badge
   @override
-  late final bool hypeSquadEvents;
+  bool get hypeSquadEvents => PermissionsUtils.isApplied(raw, 1 << 2);
 
   /// True if user has level one of Bug Hunter badge
   @override
-  late final bool bugHunterLevel1;
+  bool get bugHunterLevel1 => PermissionsUtils.isApplied(raw, 1 << 3);
 
   /// True if user has HypeSquad Bravery badge
   @override
-  late final bool houseBravery;
+  bool get houseBravery => PermissionsUtils.isApplied(raw, 1 << 6);
 
   /// True if user has HypeSquad Brilliance badge
   @override
-  late final bool houseBrilliance;
+  bool get houseBrilliance => PermissionsUtils.isApplied(raw, 1 << 7);
 
   /// True if user has HypeSquad Balance badge
   @override
-  late final bool houseBalance;
+  bool get houseBalance => PermissionsUtils.isApplied(raw, 1 << 8);
 
   /// True if user has Early Supporter badge
   @override
-  late final bool earlySupporter;
+  bool get earlySupporter => PermissionsUtils.isApplied(raw, 1 << 9);
 
   /// TODO: ??
   @override
-  late final bool teamUser;
+  bool get teamUser => PermissionsUtils.isApplied(raw, 1 << 10);
 
   /// If user is system user
   @override
-  late final bool system;
+  bool get system => PermissionsUtils.isApplied(raw, 1 << 12);
 
   /// True if user has level two of Bug Hunter badge
   @override
-  late final bool bugHunterLevel2;
+  bool get bugHunterLevel2 => PermissionsUtils.isApplied(raw, 1 << 14);
 
   /// True if user is verified bot
   @override
-  late final bool verifiedBot;
+  bool get verifiedBot => PermissionsUtils.isApplied(raw, 1 << 16);
 
   /// True if user is Early Verified Bot Developer
   @override
-  late final bool earlyVerifiedBotDeveloper;
+  bool get earlyVerifiedBotDeveloper =>  PermissionsUtils.isApplied(raw, 1 << 17);
 
   /// rue if user is Discord Certified Moderator
   @override
-  late final bool certifiedModerator;
+  bool get certifiedModerator => PermissionsUtils.isApplied(raw, 1 << 18);
+
+  /// Raw flags value
+  @override
+  final int raw;
 
   /// Creates an instance of [UserFlags]
-  UserFlags(int raw) {
-    this.discordEmployee = PermissionsUtils.isApplied(raw, 1 << 0);
-    this.discordPartner = PermissionsUtils.isApplied(raw, 1 << 1);
-    this.hypeSquadEvents = PermissionsUtils.isApplied(raw, 1 << 2);
-    this.bugHunterLevel1 = PermissionsUtils.isApplied(raw, 1 << 3);
-    this.houseBravery = PermissionsUtils.isApplied(raw, 1 << 6);
-    this.houseBrilliance = PermissionsUtils.isApplied(raw, 1 << 7);
-    this.houseBalance = PermissionsUtils.isApplied(raw, 1 << 8);
-    this.earlySupporter = PermissionsUtils.isApplied(raw, 1 << 9);
-    this.teamUser = PermissionsUtils.isApplied(raw, 1 << 10);
-    this.system = PermissionsUtils.isApplied(raw, 1 << 12);
-    this.bugHunterLevel2 = PermissionsUtils.isApplied(raw, 1 << 14);
-    this.verifiedBot = PermissionsUtils.isApplied(raw, 1 << 16);
-    this.earlyVerifiedBotDeveloper = PermissionsUtils.isApplied(raw, 1 << 17);
-    this.certifiedModerator = PermissionsUtils.isApplied(raw, 1 << 18);
-  }
+  UserFlags(this.raw);
 }

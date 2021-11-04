@@ -19,11 +19,11 @@ abstract class HttpRequest {
 
   /// Creates and instance of [HttpRequest]
   HttpRequest(String path, {this.method = "GET", this.queryParams, this.auditLog, this.rateLimit = true}) {
-    this.uri = Uri.https(Constants.host, Constants.baseUri + path);
+    uri = Uri.https(Constants.host, Constants.baseUri + path);
   }
 
   Map<String, String> genHeaders() =>
-      {if (this.auditLog != null) "X-Audit-Log-Reason": this.auditLog!, "User-Agent": "Nyxx (${Constants.repoUrl}, ${Constants.version})"};
+      {if (auditLog != null) "X-Audit-Log-Reason": auditLog!, "User-Agent": "Nyxx (${Constants.repoUrl}, ${Constants.version})"};
 
   Future<http.StreamedResponse> execute();
 
@@ -40,18 +40,18 @@ class BasicRequest extends HttpRequest {
 
   @override
   Future<http.StreamedResponse> execute() async {
-    final request = http.Request(this.method, this.uri.replace(queryParameters: queryParams))..headers.addAll(genHeaders());
+    final request = http.Request(method, uri.replace(queryParameters: queryParams))..headers.addAll(genHeaders());
 
-    if (this.body != null && this.method != "GET") {
+    if (body != null && method != "GET") {
       request.headers.addAll(_getJsonContentTypeHeader());
-      if (this.body is String) {
-        request.body = this.body as String;
-      } else if (this.body is RawApiMap || this.body is List<dynamic>) {
-        request.body = jsonEncode(this.body);
+      if (body is String) {
+        request.body = body as String;
+      } else if (body is RawApiMap || body is List<dynamic>) {
+        request.body = jsonEncode(body);
       }
     }
 
-    return this._client.send(request);
+    return _client.send(request);
   }
 
   Map<String, String> _getJsonContentTypeHeader() => {"Content-Type": "application/json"};
@@ -71,14 +71,14 @@ class MultipartRequest extends HttpRequest {
 
   @override
   Future<http.StreamedResponse> execute() {
-    final request = http.MultipartRequest(this.method, this.uri.replace(queryParameters: queryParams))..headers.addAll(genHeaders());
+    final request = http.MultipartRequest(method, uri.replace(queryParameters: queryParams))..headers.addAll(genHeaders());
 
-    request.files.addAll(this.files);
+    request.files.addAll(files);
 
-    if (this.fields != null) {
-      request.fields.addAll({"payload_json": jsonEncode(this.fields)});
+    if (fields != null) {
+      request.fields.addAll({"payload_json": jsonEncode(fields)});
     }
 
-    return this._client.send(request);
+    return _client.send(request);
   }
 }

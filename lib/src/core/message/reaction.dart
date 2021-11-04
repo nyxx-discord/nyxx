@@ -29,12 +29,12 @@ class Reaction implements IReaction {
 
   /// Creates an instance of [Reaction]
   Reaction(RawApiMap raw) {
-    this.count = raw["count"] as int;
-    this.me = raw["me"] as bool;
+    count = raw["count"] as int;
+    me = raw["me"] as bool;
 
     final rawEmoji = raw["emoji"] as RawApiMap;
     if (rawEmoji["id"] == null) {
-      this.emoji = UnicodeEmoji(rawEmoji["name"] as String);
+      emoji = UnicodeEmoji(rawEmoji["name"] as String);
     } else {
       //TODO: EMOJIS STUUF
       //this.emoji = PartialGuildEmoji._new(rawEmoji);
@@ -43,6 +43,6 @@ class Reaction implements IReaction {
 
   /// Creates na instance of [Reaction]
   Reaction.event(this.emoji, this.me) {
-    this.count = 1;
+    count = 1;
   }
 }

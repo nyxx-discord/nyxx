@@ -31,17 +31,17 @@ abstract class Cacheable<T extends Snowflake, S extends SnowflakeEntity> {
   /// Returns entity from cache or tries to download from API if not found.
   /// If downloading is successful it caches results
   FutureOr<S> getOrDownload() async {
-    final cacheResult = this.getFromCache();
+    final cacheResult = getFromCache();
 
     if (cacheResult != null) {
       return cacheResult;
     }
 
-    return this.download();
+    return download();
   }
 
   @override
-  bool operator ==(Object other) => other is Cacheable && other.id == this.id;
+  bool operator ==(Object other) => other is Cacheable && other.id == id;
 
   @override
   int get hashCode => id.hashCode;
@@ -54,7 +54,7 @@ class RoleCacheable extends Cacheable<Snowflake, IRole> {
   RoleCacheable(INyxx client, Snowflake id, this.guild) : super(client, id);
 
   @override
-  Future<IRole> download() async => this._fetchGuildRole();
+  Future<IRole> download() async => _fetchGuildRole();
 
   @override
   IRole? getFromCache() {
@@ -64,17 +64,17 @@ class RoleCacheable extends Cacheable<Snowflake, IRole> {
       return null;
     }
 
-    return guildInstance.roles[this.id];
+    return guildInstance.roles[id];
   }
 
   // We cant download single role
   Future<IRole> _fetchGuildRole() async {
-    final roles = await client.httpEndpoints.fetchGuildRoles(this.id).toList();
+    final roles = await client.httpEndpoints.fetchGuildRoles(id).toList();
 
     try {
-      return roles.firstWhere((element) => element.id == this.id);
+      return roles.firstWhere((element) => element.id == id);
     } on Exception {
-      throw ArgumentError("Cannot fetch role with id `${this.id}` in guild with id `${this.guild.id}`");
+      throw ArgumentError("Cannot fetch role with id `${id}` in guild with id `${guild.id}`");
     }
   }
 }
@@ -84,20 +84,20 @@ class ChannelCacheable<T extends IChannel> extends Cacheable<Snowflake, T> {
   ChannelCacheable(INyxx client, Snowflake id) : super(client, id);
 
   @override
-  T? getFromCache() => this.client.channels[this.id] as T?;
+  T? getFromCache() => client.channels[id] as T?;
 
   @override
-  Future<T> download() => client.httpEndpoints.fetchChannel<T>(this.id);
+  Future<T> download() => client.httpEndpoints.fetchChannel<T>(id);
 }
 
 class GuildCacheable extends Cacheable<Snowflake, IGuild> {
   GuildCacheable(INyxx client, Snowflake id) : super(client, id);
 
   @override
-  IGuild? getFromCache() => this.client.guilds[this.id];
+  IGuild? getFromCache() => client.guilds[id];
 
   @override
-  Future<IGuild> download() => client.httpEndpoints.fetchGuild(this.id);
+  Future<IGuild> download() => client.httpEndpoints.fetchGuild(id);
 }
 
 class UserCacheable extends Cacheable<Snowflake, IUser> {
@@ -105,10 +105,10 @@ class UserCacheable extends Cacheable<Snowflake, IUser> {
   UserCacheable(INyxx client, Snowflake id) : super(client, id);
 
   @override
-  Future<IUser> download() => client.httpEndpoints.fetchUser(this.id);
+  Future<IUser> download() => client.httpEndpoints.fetchUser(id);
 
   @override
-  IUser? getFromCache() => this.client.users[this.id];
+  IUser? getFromCache() => client.users[id];
 }
 
 class MemberCacheable extends Cacheable<Snowflake, IMember> {
@@ -118,14 +118,14 @@ class MemberCacheable extends Cacheable<Snowflake, IMember> {
   MemberCacheable(INyxx client, Snowflake id, this.guild) : super(client, id);
 
   @override
-  Future<IMember> download() => this.client.httpEndpoints.fetchGuildMember(guild.id, id);
+  Future<IMember> download() => client.httpEndpoints.fetchGuildMember(guild.id, id);
 
   @override
   IMember? getFromCache() {
-    final guildInstance = this.guild.getFromCache();
+    final guildInstance = guild.getFromCache();
 
     if (guildInstance != null) {
-      return guildInstance.members[this.id];
+      return guildInstance.members[id];
     }
 
     return null;
@@ -140,16 +140,16 @@ class MessageCacheable<U extends ITextChannel> extends Cacheable<Snowflake, IMes
 
   @override
   Future<IMessage> download() async {
-    final channelInstance = await this.channel.getOrDownload();
-    return channelInstance.fetchMessage(this.id);
+    final channelInstance = await channel.getOrDownload();
+    return channelInstance.fetchMessage(id);
   }
 
   @override
   IMessage? getFromCache() {
-    final channelInstance = this.channel.getFromCache();
+    final channelInstance = channel.getFromCache();
 
     if (channelInstance != null) {
-      return channelInstance.messageCache[this.id];
+      return channelInstance.messageCache[id];
     }
 
     return null;

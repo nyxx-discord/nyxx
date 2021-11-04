@@ -22,7 +22,7 @@ class Ban implements IBan {
 
   /// Creates an instance of [Ban]
   Ban(RawApiMap raw, INyxx client) {
-    this.reason = raw["reason"] as String;
-    this.user = User(client, raw["user"] as RawApiMap);
+    reason = raw["reason"] as String;
+    user = User(client, raw["user"] as RawApiMap);
   }
 }

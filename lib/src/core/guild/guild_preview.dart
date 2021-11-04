@@ -95,35 +95,35 @@ class GuildPreview extends SnowflakeEntity implements IGuildPreview {
 
   /// Creates an instance of [GuildPreview]
   GuildPreview(this.client, RawApiMap raw) : super(Snowflake(raw["id"])) {
-    this.name = raw["name"] as String;
+    name = raw["name"] as String;
 
-    if (this.iconHash != null) {
-      this.iconHash = raw["icon"] as String;
+    if (iconHash != null) {
+      iconHash = raw["icon"] as String;
     }
 
-    if (this.splashHash != null) {
-      this.splashHash = raw["splash"] as String;
+    if (splashHash != null) {
+      splashHash = raw["splash"] as String;
     }
 
-    if (this.discoveryHash != null) {
-      this.discoveryHash = raw["discovery_splash"] as String;
+    if (discoveryHash != null) {
+      discoveryHash = raw["discovery_splash"] as String;
     }
 
-    this.emojis = [for (var rawEmoji in raw["emojis"]) GuildEmoji(client, rawEmoji as RawApiMap, this.id)];
+    emojis = [for (var rawEmoji in raw["emojis"]) GuildEmoji(client, rawEmoji as RawApiMap, id)];
 
-    this.features = (raw["features"] as RawApiList).map((e) => GuildFeature.from(e.toString()));
+    features = (raw["features"] as RawApiList).map((e) => GuildFeature.from(e.toString()));
 
-    this.approxMemberCount = raw["approximate_member_count"] as int;
-    this.approxOnlineMembers = raw["approximate_presence_count"] as int;
+    approxMemberCount = raw["approximate_member_count"] as int;
+    approxOnlineMembers = raw["approximate_presence_count"] as int;
 
-    this.description = raw["description"] as String?;
+    description = raw["description"] as String?;
   }
 
   /// The guild's icon, represented as URL.
   /// If guild doesn't have icon it returns null.
   @override
   String? iconURL({String format = "webp", int size = 128}) {
-    if (this.iconHash != null) {
+    if (iconHash != null) {
       return "https://cdn.${Constants.cdnHost}/icons/$id/$iconHash.$format?size=$size";
     }
 
@@ -134,7 +134,7 @@ class GuildPreview extends SnowflakeEntity implements IGuildPreview {
   /// If guild doesn't have splash it returns null.
   @override
   String? splashURL({String format = "webp", int size = 128}) {
-    if (this.splashHash != null) {
+    if (splashHash != null) {
       return "https://cdn.${Constants.cdnHost}/splashes/$id/$splashHash.$format?size=$size";
     }
 
@@ -145,7 +145,7 @@ class GuildPreview extends SnowflakeEntity implements IGuildPreview {
   /// If guild doesn't have splash it returns null.
   @override
   String? discoveryURL({String format = "webp", int size = 128}) {
-    if (this.discoveryHash != null) {
+    if (discoveryHash != null) {
       return "https://cdn.${Constants.cdnHost}/discovery-splashes/$id/$discoveryHash.$format?size=$size";
     }
 

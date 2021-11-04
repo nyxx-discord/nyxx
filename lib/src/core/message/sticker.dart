@@ -53,7 +53,7 @@ abstract class Sticker extends SnowflakeEntity implements ISticker {
 
   /// Url for sticker image
   @override
-  String get stickerURL => this.client.httpEndpoints.stickerUrl(this.id, format.getExtension());
+  String get stickerURL => client.httpEndpoints.stickerUrl(id, format.getExtension());
 
   /// Creates an instance of [Sticker]
   Sticker(RawApiMap raw, this.client) : super(Snowflake(raw["id"]));
@@ -136,28 +136,28 @@ class GuildSticker extends Sticker implements IGuildSticker {
 
   /// Create an instance of [GuildSticker]
   GuildSticker(RawApiMap raw, INyxx client) : super(raw, client) {
-    this.name = raw["name"] as String;
-    this.description = raw["description"] as String?;
-    this.format = StickerFormat.from(raw["format_type"] as int);
-    this.type = StickerType.from(raw["type"] as int);
+    name = raw["name"] as String;
+    description = raw["description"] as String?;
+    format = StickerFormat.from(raw["format_type"] as int);
+    type = StickerType.from(raw["type"] as int);
 
-    this.tags = raw["tags"] as String;
-    this.available = raw["available"] as bool?;
-    this.guild = GuildCacheable(client, Snowflake(raw["guild_id"]));
+    tags = raw["tags"] as String;
+    available = raw["available"] as bool?;
+    guild = GuildCacheable(client, Snowflake(raw["guild_id"]));
     if (raw["user"] != null) {
-      this.user = User(client, raw["user"] as RawApiMap);
+      user = User(client, raw["user"] as RawApiMap);
     } else {
-      this.user = null;
+      user = null;
     }
   }
 
   /// Edits current sticker
   @override
-  Future<IGuildSticker> edit(StickerBuilder builder) => client.httpEndpoints.editGuildSticker(this.guild.id, this.id, builder);
+  Future<IGuildSticker> edit(StickerBuilder builder) => client.httpEndpoints.editGuildSticker(guild.id, id, builder);
 
   /// Removed current sticker
   @override
-  Future<void> delete() => client.httpEndpoints.deleteGuildSticker(this.guild.id, this.id);
+  Future<void> delete() => client.httpEndpoints.deleteGuildSticker(guild.id, id);
 }
 
 abstract class IStandardSticker implements ISticker {
@@ -201,13 +201,13 @@ class StandardSticker extends Sticker implements IStandardSticker {
 
   /// Creates an instance of [StandardSticker]
   StandardSticker(RawApiMap raw, INyxx client) : super(raw, client) {
-    this.name = raw["name"] as String;
-    this.description = raw["description"] as String;
-    this.format = StickerFormat.from(raw["format_type"] as int);
-    this.type = StickerType.from(raw["type"] as int);
+    name = raw["name"] as String;
+    description = raw["description"] as String;
+    format = StickerFormat.from(raw["format_type"] as int);
+    type = StickerType.from(raw["type"] as int);
 
-    this.packId = Snowflake(raw["pack_id"]);
-    this.tags = raw["tags"] as String;
+    packId = Snowflake(raw["pack_id"]);
+    tags = raw["tags"] as String;
   }
 }
 
@@ -259,12 +259,12 @@ class StickerPack extends SnowflakeEntity implements IStickerPack {
 
   /// Creates an instance of [StickerPack]
   StickerPack(RawApiMap raw, INyxx client) : super(Snowflake(raw["id"])) {
-    this.stickers = [for (final rawSticker in raw["stickers"]) StandardSticker(rawSticker as RawApiMap, client)];
-    this.name = raw["name"] as String;
-    this.skuId = Snowflake(raw["sku_id"]);
-    this.coverStickerId = Snowflake(raw["cover_sticker_id"]);
-    this.description = raw["description"] as String;
-    this.bannerAssetId = Snowflake(raw["banner_asset_id"]);
+    stickers = [for (final rawSticker in raw["stickers"]) StandardSticker(rawSticker as RawApiMap, client)];
+    name = raw["name"] as String;
+    skuId = Snowflake(raw["sku_id"]);
+    coverStickerId = Snowflake(raw["cover_sticker_id"]);
+    description = raw["description"] as String;
+    bannerAssetId = Snowflake(raw["banner_asset_id"]);
   }
 }
 
@@ -296,7 +296,7 @@ class StickerFormat extends IEnum<int> {
 
   /// Returns extension for given Sticker type
   String getExtension() {
-    switch (this.value) {
+    switch (value) {
       case 1:
       case 2:
         return "png";

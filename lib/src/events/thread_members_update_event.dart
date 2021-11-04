@@ -51,15 +51,15 @@ class ThreadMembersUpdateEvent implements IThreadMembersUpdateEvent {
   ThreadMembersUpdateEvent(RawApiMap raw, INyxx client) {
     final data = raw["d"] as RawApiMap;
 
-    this.thread = CacheableTextChannel(client, Snowflake(data["id"]));
-    this.guild = GuildCacheable(client, Snowflake(data["guild_id"]));
+    thread = CacheableTextChannel(client, Snowflake(data["id"]));
+    guild = GuildCacheable(client, Snowflake(data["guild_id"]));
 
-    this.addedMembers = [
+    addedMembers = [
       if (data["added_members"] != null)
-        for (final memberData in data["added_members"] as RawApiList) MemberCacheable(client, Snowflake(memberData["user_id"]), this.guild)
+        for (final memberData in data["added_members"] as RawApiList) MemberCacheable(client, Snowflake(memberData["user_id"]), guild)
     ];
 
-    this.removedUsers = [
+    removedUsers = [
       if (data["removed_member_ids"] != null)
         for (final removedUserId in data["removed_member_ids"]) UserCacheable(client, Snowflake(removedUserId))
     ];

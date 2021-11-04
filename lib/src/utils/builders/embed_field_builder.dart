@@ -23,11 +23,11 @@ class EmbedFieldBuilder extends Builder {
 
   /// Builds object to Map() instance;
   RawApiMap build() {
-    if (this.name.toString().length > 256) {
+    if (name.toString().length > 256) {
       throw EmbedBuilderArgumentException("Field name is too long. (256 characters limit)");
     }
 
-    if (this.content.toString().length > 1024) {
+    if (content.toString().length > 1024) {
       throw EmbedBuilderArgumentException("Field content is too long. (1024 characters limit)");
     }
 

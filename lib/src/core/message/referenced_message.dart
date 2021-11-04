@@ -41,24 +41,24 @@ class ReferencedMessage implements IReferencedMessage {
 
   ReferencedMessage(INyxx client, RawApiMap raw) {
     if (!raw.containsKey("referenced_message")) {
-      this.message = null;
-      this.isBackendFetchError = true;
-      this.isDeleted = false;
+      message = null;
+      isBackendFetchError = true;
+      isDeleted = false;
       return;
     }
 
     if (raw["referenced_message"] == null) {
-      this.message = null;
-      this.isBackendFetchError = false;
-      this.isDeleted = true;
+      message = null;
+      isBackendFetchError = false;
+      isDeleted = true;
       return;
     }
 
-    this.message = Message(client, raw["referenced_message"] as RawApiMap);
-    this.isBackendFetchError = false;
-    this.isDeleted = false;
+    message = Message(client, raw["referenced_message"] as RawApiMap);
+    isBackendFetchError = false;
+    isDeleted = false;
   }
 
   @override
-  ReplyBuilder toBuilder() => ReplyBuilder(this.message?.id ?? Snowflake(0), false);
+  ReplyBuilder toBuilder() => ReplyBuilder(message?.id ?? Snowflake(0), false);
 }

@@ -62,24 +62,24 @@ abstract class IShardManager implements Disposable {
 class ShardManager implements IShardManager {
   /// Emitted when the shard is ready.
   @override
-  late final Stream<IShard> onConnected = this.onConnectController.stream;
+  late final Stream<IShard> onConnected = onConnectController.stream;
 
   /// Emitted when the shard encounters a connection error.
   @override
-  late final Stream<IShard> onDisconnect = this.onDisconnectController.stream;
+  late final Stream<IShard> onDisconnect = onDisconnectController.stream;
 
   /// Emitted when the shard resumed its connection
   @override
-  late final Stream<IShard> onResume = this.onDisconnectController.stream;
+  late final Stream<IShard> onResume = onDisconnectController.stream;
 
   /// Emitted when shard receives member chunk.
   @override
-  late final Stream<IMemberChunkEvent> onMemberChunk = this.onMemberChunkController.stream;
+  late final Stream<IMemberChunkEvent> onMemberChunk = onMemberChunkController.stream;
 
   /// Raw gateway payloads. You have set `dispatchRawShardEvent` in [ClientOptions] to true otherwise stream won't receive any events.
   /// Also rawEvent is dispatched ONLY for payload that doesn't match any event built in into Nyxx.
   @override
-  late final Stream<IRawEvent> rawEvent = this.onRawEventController.stream;
+  late final Stream<IRawEvent> rawEvent = onRawEventController.stream;
 
   final StreamController<IShard> onConnectController = StreamController.broadcast();
   final StreamController<IShard> onDisconnectController = StreamController.broadcast();
@@ -91,12 +91,12 @@ class ShardManager implements IShardManager {
 
   /// List of shards
   @override
-  Iterable<Shard> get shards => UnmodifiableListView(this._shards.values);
+  Iterable<Shard> get shards => UnmodifiableListView(_shards.values);
 
   /// Average gateway latency across all shards
   @override
   Duration get gatewayLatency =>
-      Duration(milliseconds: (this.shards.map((e) => e.gatewayLatency.inMilliseconds).fold<int>(0, (first, second) => first + second)) ~/ shards.length);
+      Duration(milliseconds: (shards.map((e) => e.gatewayLatency.inMilliseconds).fold<int>(0, (first, second) => first + second)) ~/ shards.length);
 
   /// The number of identify requests allowed per 5 seconds
   @override
@@ -113,22 +113,22 @@ class ShardManager implements IShardManager {
 
   Duration get _identifyDelay {
     /// 5s * 1000 / maxConcurrency + 250ms
-    final delay = (5 * 1000) ~/ this.maxConcurrency + 300;
+    final delay = (5 * 1000) ~/ maxConcurrency + 300;
     return Duration(milliseconds: delay);
   }
 
   /// Starts shard manager
   ShardManager(this.connectionManager, this.maxConcurrency) {
-    this.numShards = this.connectionManager.client.options.shardCount != null
-        ? this.connectionManager.client.options.shardCount!
-        : this.connectionManager.recommendedShardsNum;
+    numShards = connectionManager.client.options.shardCount != null
+        ? connectionManager.client.options.shardCount!
+        : connectionManager.recommendedShardsNum;
 
-    if (this.numShards < 1) {
-      this.logger.shout("Number of shards cannot be lower than 1.");
+    if (numShards < 1) {
+      logger.shout("Number of shards cannot be lower than 1.");
       exit(1);
     }
 
-    this.logger.fine("Starting shard manager. Number of shards to spawn: $numShards");
+    logger.fine("Starting shard manager. Number of shards to spawn: $numShards");
     _connect(numShards - 1);
   }
 
@@ -141,7 +141,7 @@ class ShardManager implements IShardManager {
   }
 
   void _connect(int shardId) {
-    this.logger.fine("Setting up shard with id: $shardId");
+    logger.fine("Setting up shard with id: $shardId");
 
     if (shardId < 0) {
       return;
@@ -149,22 +149,22 @@ class ShardManager implements IShardManager {
 
     _shards[shardId] = Shard(shardId, this, connectionManager.gateway);
 
-    Future.delayed(this._identifyDelay, () => _connect(shardId - 1));
+    Future.delayed(_identifyDelay, () => _connect(shardId - 1));
   }
 
   @override
   Future<void> dispose() async {
-    this.logger.info("Closing gateway connections...");
+    logger.info("Closing gateway connections...");
 
-    for (final shard in this._shards.values) {
-      if (this.connectionManager.client.options.shutdownShardHook != null) {
-        this.connectionManager.client.options.shutdownShardHook!(this.connectionManager.client, shard); // ignore: unawaited_futures
+    for (final shard in _shards.values) {
+      if (connectionManager.client.options.shutdownShardHook != null) {
+        connectionManager.client.options.shutdownShardHook!(connectionManager.client, shard); // ignore: unawaited_futures
       }
       shard.dispose(); // ignore: unawaited_futures
     }
 
-    await this.onConnectController.close();
-    await this.onDisconnectController.close();
-    await this.onMemberChunkController.close();
+    await onConnectController.close();
+    await onDisconnectController.close();
+    await onMemberChunkController.close();
   }
 }

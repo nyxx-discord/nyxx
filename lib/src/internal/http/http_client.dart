@@ -8,13 +8,13 @@ class InternalHttpClient extends http.BaseClient {
 
   // ignore: public_member_api_docs
   InternalHttpClient(String token) {
-    this._authHeader = {"Authorization": "Bot $token"};
+    _authHeader = {"Authorization": "Bot $token"};
   }
 
   @override
   Future<http.StreamedResponse> send(http.BaseRequest request) async {
-    request.headers.addAll(this._authHeader);
-    final response = await this._innerClient.send(request);
+    request.headers.addAll(_authHeader);
+    final response = await _innerClient.send(request);
 
     if (response.statusCode >= 400) {
       throw HttpClientException(response);

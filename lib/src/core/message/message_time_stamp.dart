@@ -31,7 +31,7 @@ class TimeStampStyle extends IEnum<String> {
   const TimeStampStyle._create(String value) : super(value);
 
   /// Return
-  String format(DateTime dateTime) => "<t:${dateTime.millisecondsSinceEpoch ~/ 1000}:${this.value}>";
+  String format(DateTime dateTime) => "<t:${dateTime.millisecondsSinceEpoch ~/ 1000}:${value}>";
 }
 
 abstract class IMessageTimestamp {
@@ -56,9 +56,9 @@ class MessageTimestamp implements IMessageTimestamp {
 
   /// Creates an instance of [MessageTimestamp]
   MessageTimestamp(Match match) {
-    this.timeStamp = DateTime.fromMillisecondsSinceEpoch(int.parse(match.group(1)!) * 1000);
+    timeStamp = DateTime.fromMillisecondsSinceEpoch(int.parse(match.group(1)!) * 1000);
 
     final styleMatch = match.group(3);
-    this.style = styleMatch != null ? TimeStampStyle.from(styleMatch) : TimeStampStyle.def;
+    style = styleMatch != null ? TimeStampStyle.from(styleMatch) : TimeStampStyle.def;
   }
 }

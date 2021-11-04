@@ -17,5 +17,5 @@ class StickerBuilder implements Builder {
   late final AttachmentBuilder file;
 
   @override
-  RawApiMap build() => {"name": this.name, "description": this.description, "tags": this.tags};
+  RawApiMap build() => {"name": name, "description": description, "tags": tags};
 }

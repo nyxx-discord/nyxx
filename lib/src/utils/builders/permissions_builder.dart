@@ -189,7 +189,7 @@ class PermissionsBuilder {
 
   /// Calculates permission int
   int calculatePermissionValue() {
-    final set = this.build();
+    final set = build();
 
     return set.allow & ~set.deny;
   }
@@ -197,39 +197,39 @@ class PermissionsBuilder {
   _PermissionsSet build() {
     final permissionSet = _PermissionsSet();
 
-    _apply(permissionSet, this.createInstantInvite, PermissionsConstants.createInstantInvite);
-    _apply(permissionSet, this.kickMembers, PermissionsConstants.kickMembers);
-    _apply(permissionSet, this.banMembers, PermissionsConstants.banMembers);
-    _apply(permissionSet, this.administrator, PermissionsConstants.administrator);
-    _apply(permissionSet, this.manageChannels, PermissionsConstants.manageChannels);
-    _apply(permissionSet, this.addReactions, PermissionsConstants.addReactions);
-    _apply(permissionSet, this.viewAuditLog, PermissionsConstants.viewAuditLog);
-    _apply(permissionSet, this.viewChannel, PermissionsConstants.viewChannel);
-    _apply(permissionSet, this.manageGuild, PermissionsConstants.manageGuild);
-    _apply(permissionSet, this.sendMessages, PermissionsConstants.sendMessages);
-    _apply(permissionSet, this.sendTtsMessages, PermissionsConstants.sendTtsMessages);
-    _apply(permissionSet, this.manageMessages, PermissionsConstants.manageMessages);
-    _apply(permissionSet, this.embedLinks, PermissionsConstants.embedLinks);
-    _apply(permissionSet, this.attachFiles, PermissionsConstants.attachFiles);
-    _apply(permissionSet, this.readMessageHistory, PermissionsConstants.readMessageHistory);
-    _apply(permissionSet, this.mentionEveryone, PermissionsConstants.mentionEveryone);
-    _apply(permissionSet, this.useExternalEmojis, PermissionsConstants.externalEmojis);
-    _apply(permissionSet, this.connect, PermissionsConstants.connect);
-    _apply(permissionSet, this.speak, PermissionsConstants.speak);
-    _apply(permissionSet, this.muteMembers, PermissionsConstants.muteMembers);
-    _apply(permissionSet, this.deafenMembers, PermissionsConstants.deafenMembers);
-    _apply(permissionSet, this.moveMembers, PermissionsConstants.moveMembers);
-    _apply(permissionSet, this.useVad, PermissionsConstants.useVad);
-    _apply(permissionSet, this.changeNickname, PermissionsConstants.changeNickname);
-    _apply(permissionSet, this.manageNicknames, PermissionsConstants.manageNicknames);
-    _apply(permissionSet, this.manageRoles, PermissionsConstants.manageRolesOrPermissions);
-    _apply(permissionSet, this.manageWebhooks, PermissionsConstants.manageWebhooks);
-    _apply(permissionSet, this.viewGuildInsights, PermissionsConstants.viewGuildInsights);
-    _apply(permissionSet, this.stream, PermissionsConstants.stream);
-    _apply(permissionSet, this.manageEmojis, PermissionsConstants.manageEmojis);
-    _apply(permissionSet, this.manageThreads, PermissionsConstants.manageThreads);
-    _apply(permissionSet, this.createPublicThreads, PermissionsConstants.createPublicThreads);
-    _apply(permissionSet, this.createPrivateThreads, PermissionsConstants.createPrivateThreads);
+    _apply(permissionSet, createInstantInvite, PermissionsConstants.createInstantInvite);
+    _apply(permissionSet, kickMembers, PermissionsConstants.kickMembers);
+    _apply(permissionSet, banMembers, PermissionsConstants.banMembers);
+    _apply(permissionSet, administrator, PermissionsConstants.administrator);
+    _apply(permissionSet, manageChannels, PermissionsConstants.manageChannels);
+    _apply(permissionSet, addReactions, PermissionsConstants.addReactions);
+    _apply(permissionSet, viewAuditLog, PermissionsConstants.viewAuditLog);
+    _apply(permissionSet, viewChannel, PermissionsConstants.viewChannel);
+    _apply(permissionSet, manageGuild, PermissionsConstants.manageGuild);
+    _apply(permissionSet, sendMessages, PermissionsConstants.sendMessages);
+    _apply(permissionSet, sendTtsMessages, PermissionsConstants.sendTtsMessages);
+    _apply(permissionSet, manageMessages, PermissionsConstants.manageMessages);
+    _apply(permissionSet, embedLinks, PermissionsConstants.embedLinks);
+    _apply(permissionSet, attachFiles, PermissionsConstants.attachFiles);
+    _apply(permissionSet, readMessageHistory, PermissionsConstants.readMessageHistory);
+    _apply(permissionSet, mentionEveryone, PermissionsConstants.mentionEveryone);
+    _apply(permissionSet, useExternalEmojis, PermissionsConstants.externalEmojis);
+    _apply(permissionSet, connect, PermissionsConstants.connect);
+    _apply(permissionSet, speak, PermissionsConstants.speak);
+    _apply(permissionSet, muteMembers, PermissionsConstants.muteMembers);
+    _apply(permissionSet, deafenMembers, PermissionsConstants.deafenMembers);
+    _apply(permissionSet, moveMembers, PermissionsConstants.moveMembers);
+    _apply(permissionSet, useVad, PermissionsConstants.useVad);
+    _apply(permissionSet, changeNickname, PermissionsConstants.changeNickname);
+    _apply(permissionSet, manageNicknames, PermissionsConstants.manageNicknames);
+    _apply(permissionSet, manageRoles, PermissionsConstants.manageRolesOrPermissions);
+    _apply(permissionSet, manageWebhooks, PermissionsConstants.manageWebhooks);
+    _apply(permissionSet, viewGuildInsights, PermissionsConstants.viewGuildInsights);
+    _apply(permissionSet, stream, PermissionsConstants.stream);
+    _apply(permissionSet, manageEmojis, PermissionsConstants.manageEmojis);
+    _apply(permissionSet, manageThreads, PermissionsConstants.manageThreads);
+    _apply(permissionSet, createPublicThreads, PermissionsConstants.createPublicThreads);
+    _apply(permissionSet, createPrivateThreads, PermissionsConstants.createPrivateThreads);
 
     return permissionSet;
   }

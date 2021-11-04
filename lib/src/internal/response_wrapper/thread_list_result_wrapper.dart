@@ -30,13 +30,13 @@ class ThreadListResultWrapper implements IThreadListResultWrapper {
 
   /// Create an instance of [ThreadListResultWrapper]
   ThreadListResultWrapper(INyxx client, RawApiMap raw) {
-    this.threads = [for (final rawThread in raw["threads"]) ThreadChannel(client, rawThread as RawApiMap)];
+    threads = [for (final rawThread in raw["threads"]) ThreadChannel(client, rawThread as RawApiMap)];
 
-    this.selfThreadMembers = [
+    selfThreadMembers = [
       for (final rawMember in raw["members"])
-        ThreadMember(client, rawMember as RawApiMap, ChannelCacheable(client, this.threads.firstWhere((element) => element.id == rawMember["id"]).id))
+        ThreadMember(client, rawMember as RawApiMap, ChannelCacheable(client, threads.firstWhere((element) => element.id == rawMember["id"]).id))
     ];
 
-    this.hasMore = raw["has_more"] as bool;
+    hasMore = raw["has_more"] as bool;
   }
 }

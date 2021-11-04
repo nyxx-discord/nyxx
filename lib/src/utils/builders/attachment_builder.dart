@@ -12,7 +12,7 @@ class AttachmentBuilder {
   late bool _spoiler;
 
   AttachmentBuilder._new(this._bytes, this._name, bool? spoiler) {
-    this._spoiler = spoiler ?? false;
+    _spoiler = spoiler ?? false;
 
     if (_spoiler) {
       _name = "SPOILER_$_name";

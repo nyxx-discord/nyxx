@@ -22,10 +22,10 @@ class VoiceStateUpdateEvent implements IVoiceStateUpdateEvent {
 
   /// Creates na instance of [VoiceStateUpdateEvent]
   VoiceStateUpdateEvent(this.raw, INyxx client) {
-    this.state = VoiceState(client, raw["d"] as RawApiMap);
+    state = VoiceState(client, raw["d"] as RawApiMap);
 
     if (state.channel != null) {
-      state.guild?.getFromCache()?.voiceStates[this.state.user.id] = this.state;
+      state.guild?.getFromCache()?.voiceStates[state.user.id] = state;
     } else {
       state.guild?.getFromCache()?.voiceStates.remove(state.user.id);
     }

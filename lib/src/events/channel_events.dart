@@ -22,10 +22,10 @@ class ChannelCreateEvent implements IChannelCreateEvent {
 
   /// Creates an instance of [ChannelCreateEvent]
   ChannelCreateEvent(RawApiMap raw, INyxx client) {
-    this.channel = Channel.deserialize(client, raw["d"] as RawApiMap);
+    channel = Channel.deserialize(client, raw["d"] as RawApiMap);
 
-    if (client.cacheOptions.channelCachePolicyLocation.event && client.cacheOptions.channelCachePolicy.canCache(this.channel)) {
-      client.channels[this.channel.id] = this.channel;
+    if (client.cacheOptions.channelCachePolicyLocation.event && client.cacheOptions.channelCachePolicy.canCache(channel)) {
+      client.channels[channel.id] = channel;
     }
   }
 }
@@ -44,9 +44,9 @@ class ChannelDeleteEvent implements IChannelDeleteEvent {
 
   /// Creates an instance of [ChannelDeleteEvent]
   ChannelDeleteEvent(RawApiMap raw, INyxx client) {
-    this.channel = Channel.deserialize(client, raw["d"] as RawApiMap);
+    channel = Channel.deserialize(client, raw["d"] as RawApiMap);
 
-    client.channels.remove(this.channel.id);
+    client.channels.remove(channel.id);
   }
 }
 
@@ -78,15 +78,15 @@ class ChannelPinsUpdateEvent implements IChannelPinsUpdateEvent {
   /// Creates na instance of [ChannelPinsUpdateEvent]
   ChannelPinsUpdateEvent(RawApiMap raw, INyxx client) {
     if (raw["d"]["last_pin_timestamp"] != null) {
-      this.lastPingTimestamp = DateTime.parse(raw["d"]["last_pin_timestamp"] as String);
+      lastPingTimestamp = DateTime.parse(raw["d"]["last_pin_timestamp"] as String);
     }
 
-    this.channel = CacheableTextChannel<ITextChannel>(client, Snowflake(raw["d"]["channel_id"]));
+    channel = CacheableTextChannel<ITextChannel>(client, Snowflake(raw["d"]["channel_id"]));
 
     if (raw["d"]["guild_id"] != null) {
-      this.guild = GuildCacheable(client, Snowflake(raw["d"]["guild_id"]));
+      guild = GuildCacheable(client, Snowflake(raw["d"]["guild_id"]));
     } else {
-      this.guild = null;
+      guild = null;
     }
   }
 }
@@ -104,16 +104,16 @@ class ChannelUpdateEvent implements IChannelUpdateEvent {
 
   /// Creates na instance of [ChannelUpdateEvent]
   ChannelUpdateEvent(RawApiMap raw, INyxx client) {
-    this.updatedChannel = Channel.deserialize(client, raw["d"] as RawApiMap);
+    updatedChannel = Channel.deserialize(client, raw["d"] as RawApiMap);
 
-    final oldChannel = client.channels[this.updatedChannel.id];
+    final oldChannel = client.channels[updatedChannel.id];
 
     // Move messages to new channel
-    if (this.updatedChannel is ITextChannel && oldChannel is ITextChannel) {
-      (this.updatedChannel as ITextChannel).messageCache.addAll(oldChannel.messageCache);
+    if (updatedChannel is ITextChannel && oldChannel is ITextChannel) {
+      (updatedChannel as ITextChannel).messageCache.addAll(oldChannel.messageCache);
     }
 
-    client.channels[this.updatedChannel.id] = updatedChannel;
+    client.channels[updatedChannel.id] = updatedChannel;
   }
 }
 
@@ -130,6 +130,6 @@ class StageInstanceEvent implements IStageInstanceEvent {
 
   /// Creates na instance of [StageInstanceEvent]
   StageInstanceEvent(INyxx client, RawApiMap raw) {
-    this.stageChannelInstance = StageChannelInstance(client, raw);
+    stageChannelInstance = StageChannelInstance(client, raw);
   }
 }

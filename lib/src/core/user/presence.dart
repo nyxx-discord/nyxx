@@ -115,52 +115,52 @@ class Activity implements IActivity {
 
   /// Creates na instance of [Activity]
   Activity(RawApiMap raw) {
-    this.name = raw["name"] as String;
-    this.url = raw["url"] as String?;
-    this.type = ActivityType.from(raw["type"] as int);
-    this.createdAt = DateTime.fromMillisecondsSinceEpoch(raw["created_at"] as int);
-    this.details = raw["details"] as String?;
-    this.state = raw["state"] as String?;
+    name = raw["name"] as String;
+    url = raw["url"] as String?;
+    type = ActivityType.from(raw["type"] as int);
+    createdAt = DateTime.fromMillisecondsSinceEpoch(raw["created_at"] as int);
+    details = raw["details"] as String?;
+    state = raw["state"] as String?;
 
     if (raw["timestamps"] != null) {
-      this.timestamps = ActivityTimestamps(raw["timestamps"] as RawApiMap);
+      timestamps = ActivityTimestamps(raw["timestamps"] as RawApiMap);
     } else {
-      this.timestamps = null;
+      timestamps = null;
     }
 
     if (raw["application_id"] != null) {
-      this.applicationId = Snowflake(raw["application_id"]);
+      applicationId = Snowflake(raw["application_id"]);
     } else {
-      this.applicationId = null;
+      applicationId = null;
     }
 
     if (raw["emoji"] != null) {
-      this.customStatusEmoji = ActivityEmoji(raw["emoji"] as RawApiMap);
+      customStatusEmoji = ActivityEmoji(raw["emoji"] as RawApiMap);
     } else {
-      this.customStatusEmoji = null;
+      customStatusEmoji = null;
     }
 
     if (raw["party"] != null) {
-      this.party = ActivityParty(raw["party"] as RawApiMap);
+      party = ActivityParty(raw["party"] as RawApiMap);
     } else {
-      this.party = null;
+      party = null;
     }
 
     if (raw["assets"] != null) {
-      this.assets = GameAssets(raw["assets"] as RawApiMap);
+      assets = GameAssets(raw["assets"] as RawApiMap);
     } else {
-      this.assets = null;
+      assets = null;
     }
 
     if (raw["secrets"] != null) {
-      this.secrets = GameSecrets(raw["secrets"] as RawApiMap);
+      secrets = GameSecrets(raw["secrets"] as RawApiMap);
     } else {
-      this.secrets = null;
+      secrets = null;
     }
 
-    this.instance = raw["instance"] as bool?;
-    this.activityFlags = ActivityFlags(raw["flags"] as int?);
-    this.buttons = [if (raw["buttons"] != null) ...raw["buttons"].cast<String>()];
+    instance = raw["instance"] as bool?;
+    activityFlags = ActivityFlags(raw["flags"] as int?);
+    buttons = [if (raw["buttons"] != null) ...raw["buttons"].cast<String>()];
   }
 }
 
@@ -183,17 +183,17 @@ class ActivityFlags implements IActivityFlags {
   late final int value;
 
   @override
-  bool get isInstance => PermissionsUtils.isApplied(this.value, 1 << 0);
+  bool get isInstance => PermissionsUtils.isApplied(value, 1 << 0);
   @override
-  bool get isJoin => PermissionsUtils.isApplied(this.value, 1 << 1);
+  bool get isJoin => PermissionsUtils.isApplied(value, 1 << 1);
   @override
-  bool get isSpectate => PermissionsUtils.isApplied(this.value, 1 << 2);
+  bool get isSpectate => PermissionsUtils.isApplied(value, 1 << 2);
   @override
-  bool get isJoinRequest => PermissionsUtils.isApplied(this.value, 1 << 3);
+  bool get isJoinRequest => PermissionsUtils.isApplied(value, 1 << 3);
   @override
-  bool get isSync => PermissionsUtils.isApplied(this.value, 1 << 4);
+  bool get isSync => PermissionsUtils.isApplied(value, 1 << 4);
   @override
-  bool get isPlay => PermissionsUtils.isApplied(this.value, 1 << 5);
+  bool get isPlay => PermissionsUtils.isApplied(value, 1 << 5);
 
   /// Creates na instance of [ActivityFlags]
   ActivityFlags(int? value) {
@@ -222,11 +222,11 @@ class ActivityEmoji implements IActivityEmoji {
   /// Creates na instance of [ActivityEmoji]
   ActivityEmoji(RawApiMap raw) {
     if (raw["id"] != null) {
-      this.id = Snowflake(raw["id"]);
+      id = Snowflake(raw["id"]);
     }
 
     if (raw["animated"] != null) {
-      this.animated = raw["animated"] as bool? ?? false;
+      animated = raw["animated"] as bool? ?? false;
     }
   }
 }
@@ -252,11 +252,11 @@ class ActivityTimestamps implements IActivityTimestamps {
   /// Creates na instance of [ActivityTimestamps]
   ActivityTimestamps(RawApiMap raw) {
     if (raw["start"] != null) {
-      this.start = DateTime.fromMillisecondsSinceEpoch(raw["start"] as int);
+      start = DateTime.fromMillisecondsSinceEpoch(raw["start"] as int);
     }
 
     if (raw["end"] != null) {
-      this.end = DateTime.fromMillisecondsSinceEpoch(raw["end"] as int);
+      end = DateTime.fromMillisecondsSinceEpoch(raw["end"] as int);
     }
   }
 }
@@ -285,14 +285,14 @@ class ActivityType extends IEnum<int> {
   @override
   bool operator ==(dynamic other) {
     if (other is int) {
-      return other == this.value;
+      return other == value;
     }
 
     return super == other;
   }
 
   @override
-  int get hashCode => this.value.hashCode;
+  int get hashCode => value.hashCode;
 }
 
 abstract class IActivityParty {
@@ -322,14 +322,14 @@ class ActivityParty implements IActivityParty {
 
   /// Creates na instance of [ActivityParty]
   ActivityParty(RawApiMap raw) {
-    this.id = raw["id"] as String?;
+    id = raw["id"] as String?;
 
     if (raw["size"] != null) {
-      this.currentSize = raw["size"].first as int;
-      this.maxSize = raw["size"].last as int;
+      currentSize = raw["size"].first as int;
+      maxSize = raw["size"].last as int;
     } else {
-      this.currentSize = null;
-      this.maxSize = null;
+      currentSize = null;
+      maxSize = null;
     }
   }
 }
@@ -368,10 +368,10 @@ class GameAssets implements IGameAssets {
 
   /// Creates na instance of [GameAssets]
   GameAssets(RawApiMap raw) {
-    this.largeImage = raw["large_image"] as String?;
-    this.largeText = raw["large_text"] as String?;
-    this.smallImage = raw["small_image"] as String?;
-    this.smallText = raw["small_text"] as String?;
+    largeImage = raw["large_image"] as String?;
+    largeText = raw["large_text"] as String?;
+    smallImage = raw["small_image"] as String?;
+    smallText = raw["small_text"] as String?;
   }
 }
 
@@ -402,8 +402,8 @@ class GameSecrets implements IGameSecrets {
 
   /// Creates na instance of [GameSecrets]
   GameSecrets(RawApiMap raw) {
-    this.join = raw["join"] as String;
-    this.spectate = raw["spectate"] as String;
-    this.match = raw["match"] as String;
+    join = raw["join"] as String;
+    spectate = raw["spectate"] as String;
+    match = raw["match"] as String;
   }
 }

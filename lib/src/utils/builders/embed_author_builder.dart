@@ -22,11 +22,11 @@ class EmbedAuthorBuilder extends Builder {
   /// Builds object to Map() instance;
   @override
   RawApiMap build() {
-    if (this.name == null || this.name!.isEmpty) {
+    if (name == null || name!.isEmpty) {
       throw EmbedBuilderArgumentException("Author name cannot be null or empty");
     }
 
-    if (this.length! > 256) {
+    if (length! > 256) {
       throw EmbedBuilderArgumentException("Author name is too long. (256 characters limit)");
     }
 

@@ -19,7 +19,7 @@ class InviteCreatedEvent implements IInviteCreatedEvent {
 
   /// Creates na instance of [InviteCreatedEvent]
   InviteCreatedEvent(RawApiMap raw, INyxx client) {
-    this.invite = Invite(raw["d"] as RawApiMap, client);
+    invite = Invite(raw["d"] as RawApiMap, client);
   }
 }
 
@@ -50,13 +50,13 @@ class InviteDeletedEvent implements IInviteDeletedEvent {
 
   /// Creates na instance of [InviteDeletedEvent]
   InviteDeletedEvent(RawApiMap raw, INyxx client) {
-    this.code = raw["d"]["code"] as String;
-    this.channel = ChannelCacheable(client, Snowflake(raw["d"]["channel_id"]));
+    code = raw["d"]["code"] as String;
+    channel = ChannelCacheable(client, Snowflake(raw["d"]["channel_id"]));
 
     if (raw["d"]["guild_id"] != null) {
-      this.guild = GuildCacheable(client, Snowflake(raw["d"]["guild_id"]));
+      guild = GuildCacheable(client, Snowflake(raw["d"]["guild_id"]));
     } else {
-      this.guild = null;
+      guild = null;
     }
   }
 }

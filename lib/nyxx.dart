@@ -99,7 +99,7 @@ export 'src/events/guild_events.dart'
         IRoleDeleteEvent,
         IRoleUpdateEvent;
 export 'src/events/http_events.dart' show IHttpResponseEvent, IHttpErrorEvent;
-export 'src/events/InviteEvents.dart' show IInviteCreatedEvent, IInviteDeletedEvent;
+export 'src/events/invite_events.dart' show IInviteCreatedEvent, IInviteDeletedEvent;
 export 'src/events/member_chunk_event.dart' show IMemberChunkEvent;
 export 'src/events/message_events.dart'
     show

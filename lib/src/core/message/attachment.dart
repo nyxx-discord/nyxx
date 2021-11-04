@@ -68,30 +68,30 @@ class Attachment extends SnowflakeEntity implements IAttachment {
 
   /// Creates an instance of [Attachment]
   Attachment(RawApiMap raw) : super(Snowflake(raw["id"] as String)) {
-    this.filename = raw["filename"] as String;
-    this.url = raw["url"] as String;
-    this.proxyUrl = raw["proxyUrl"] as String?;
-    this.size = raw["size"] as int;
+    filename = raw["filename"] as String;
+    url = raw["url"] as String;
+    proxyUrl = raw["proxyUrl"] as String?;
+    size = raw["size"] as int;
 
-    this.height = raw["height"] as int?;
-    this.width = raw["width"] as int?;
+    height = raw["height"] as int?;
+    width = raw["width"] as int?;
 
-    this.ephemeral = raw["ephemeral"] as bool? ?? false;
+    ephemeral = raw["ephemeral"] as bool? ?? false;
   }
 
   @override
   bool operator ==(other) {
     if (other is Attachment) {
-      return other.id == this.id;
+      return other.id == id;
     }
 
     if (other is Snowflake) {
-      return other == this.id;
+      return other == id;
     }
 
     return false;
   }
 
   @override
-  int get hashCode => this.id.hashCode;
+  int get hashCode => id.hashCode;
 }

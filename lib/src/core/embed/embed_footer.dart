@@ -36,6 +36,6 @@ class EmbedFooter implements IEmbedFooter {
 
   @override
   EmbedFooterBuilder toBuilder() => EmbedFooterBuilder()
-    ..text = this.text
-    ..iconUrl = this.iconUrl;
+    ..text = text
+    ..iconUrl = iconUrl;
 }

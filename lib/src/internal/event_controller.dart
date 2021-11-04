@@ -4,7 +4,7 @@ import 'package:nyxx/src/events/channel_events.dart';
 import 'package:nyxx/src/events/disconnect_event.dart';
 import 'package:nyxx/src/events/guild_events.dart';
 import 'package:nyxx/src/events/http_events.dart';
-import 'package:nyxx/src/events/InviteEvents.dart';
+import 'package:nyxx/src/events/invite_events.dart';
 import 'package:nyxx/src/events/message_events.dart';
 import 'package:nyxx/src/events/presence_update_event.dart';
 import 'package:nyxx/src/events/ratelimit_event.dart';

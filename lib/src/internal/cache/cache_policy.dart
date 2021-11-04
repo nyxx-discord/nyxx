@@ -30,18 +30,18 @@ class CachePolicyLocation {
 
   /// Enables all cache locations
   CachePolicyLocation.all() {
-    this.event = true;
-    this.objectConstructor = true;
-    this.other = true;
-    this.http = true;
+    event = true;
+    objectConstructor = true;
+    other = true;
+    http = true;
   }
 
   /// Disabled all cache locations
   CachePolicyLocation.none() {
-    this.event = false;
-    this.objectConstructor = false;
-    this.other = false;
-    this.http = false;
+    event = false;
+    objectConstructor = false;
+    other = false;
+    http = false;
   }
 }
 
@@ -56,10 +56,10 @@ class CachePolicy<T extends SnowflakeEntity> {
   bool canCache(T entity) => _predicate(entity);
 
   /// Convenience method to concatenate other policy
-  CachePolicy<T> or(CachePolicy<T> other) => CachePolicy((entity) => this.canCache(entity) || other.canCache(entity));
+  CachePolicy<T> or(CachePolicy<T> other) => CachePolicy((entity) => canCache(entity) || other.canCache(entity));
 
   /// Convenience method to require other policy
-  CachePolicy<T> and(CachePolicy<T> other) => CachePolicy((entity) => this.canCache(entity) && other.canCache(entity));
+  CachePolicy<T> and(CachePolicy<T> other) => CachePolicy((entity) => canCache(entity) && other.canCache(entity));
 
   /// Composes a policy by concatenating multiple other policies from list
   static CachePolicy<S> any<S extends SnowflakeEntity>(List<CachePolicy<S>> policies) =>

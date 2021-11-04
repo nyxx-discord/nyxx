@@ -27,8 +27,8 @@ class EmbedVideo implements IEmbedVideo {
 
   /// Creates an instance of [EmbedVideo]
   EmbedVideo(RawApiMap raw) {
-    this.url = raw["url"] as String;
-    this.height = raw["height"] as int;
-    this.width = raw["width"] as int;
+    url = raw["url"] as String;
+    height = raw["height"] as int;
+    width = raw["width"] as int;
   }
 }

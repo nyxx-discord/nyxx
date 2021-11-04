@@ -75,7 +75,7 @@ class MessageBuilder extends BuilderWithClient {
   void addEmbed(void Function(EmbedBuilder embed) builder) {
     final e = EmbedBuilder();
     builder(e);
-    this.embeds.add(e);
+    embeds.add(e);
   }
 
   /// Appends clear character. Can be used to skip first line in message body.
@@ -111,18 +111,18 @@ class MessageBuilder extends BuilderWithClient {
   }
 
   /// Appends [Mentionable] object to message
-  void appendMention(Mentionable mentionable) => this.append(mentionable.mention);
+  void appendMention(Mentionable mentionable) => append(mentionable.mention);
 
   /// Appends timestamp to message from [dateTime]
-  void appendTimestamp(DateTime dateTime, {TimeStampStyle style = TimeStampStyle.def}) => this.append(style.format(dateTime));
+  void appendTimestamp(DateTime dateTime, {TimeStampStyle style = TimeStampStyle.def}) => append(style.format(dateTime));
 
   /// Add attachment
   void addAttachment(AttachmentBuilder attachment) {
-    if (this.files == null) {
-      this.files = [];
+    if (files == null) {
+      files = [];
     }
 
-    this.files!.add(attachment);
+    files!.add(attachment);
   }
 
   /// Add attachment from specified file
@@ -144,7 +144,7 @@ class MessageBuilder extends BuilderWithClient {
   Future<IMessage> send(ISend entity) => entity.sendMessage(this);
 
   /// Returns if this instance of message builder can be used when editing message
-  bool canBeUsedAsNewMessage() => this.content.isNotEmpty || embeds.isNotEmpty || (this.files != null && this.files!.isNotEmpty);
+  bool canBeUsedAsNewMessage() => content.isNotEmpty || embeds.isNotEmpty || (files != null && files!.isNotEmpty);
 
   @override
   RawApiMap build(INyxx client) {
@@ -160,7 +160,7 @@ class MessageBuilder extends BuilderWithClient {
     };
   }
 
-  bool hasFiles() => this.files != null && this.files!.isNotEmpty;
+  bool hasFiles() => files != null && files!.isNotEmpty;
 }
 
 /// Specifies formatting of String appended with [MessageBuilder]

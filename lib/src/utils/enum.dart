@@ -17,11 +17,11 @@ abstract class IEnum<T> {
   @override
   bool operator ==(dynamic other) {
     if (other is IEnum<T>) {
-      return other._value == this._value;
+      return other._value == _value;
     }
 
     if (other is T) {
-      return other == this._value;
+      return other == _value;
     }
 
     return false;

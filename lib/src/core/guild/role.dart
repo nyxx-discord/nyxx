@@ -49,7 +49,7 @@ abstract class IRole implements SnowflakeEntity, Mentionable {
 
   /// Mention of role. If role cannot be mentioned it returns name of role (@name)
   @override
-  String get mention => mentionable ? "<@&${this.id}>" : "@$name";
+  String get mention => mentionable ? "<@&$id>" : "@$name";
 
   /// Returns url to role icon
   String? iconURL({String format = "webp", int size = 128});
@@ -113,45 +113,45 @@ class Role extends SnowflakeEntity implements IRole {
 
   /// Mention of role. If role cannot be mentioned it returns name of role (@name)
   @override
-  String get mention => mentionable ? "<@&${this.id}>" : "@$name";
+  String get mention => mentionable ? "<@&$id>" : "@$name";
 
   /// Creates an instance of [Role]
   Role(this.client, RawApiMap raw, Snowflake guildId) : super(Snowflake(raw["id"])) {
-    this.name = raw["name"] as String;
-    this.position = raw["position"] as int;
-    this.hoist = raw["hoist"] as bool;
-    this.managed = raw["managed"] as bool;
-    this.mentionable = raw["mentionable"] as bool? ?? false;
-    this.permissions = Permissions(int.parse(raw["permissions"] as String));
-    this.color = DiscordColor.fromInt(raw["color"] as int);
-    this.guild = GuildCacheable(client, guildId);
-    this.iconEmoji = raw["unicode_emoji"] as String?;
-    this.iconHash = raw["icon"] as String?;
+    name = raw["name"] as String;
+    position = raw["position"] as int;
+    hoist = raw["hoist"] as bool;
+    managed = raw["managed"] as bool;
+    mentionable = raw["mentionable"] as bool? ?? false;
+    permissions = Permissions(int.parse(raw["permissions"] as String));
+    color = DiscordColor.fromInt(raw["color"] as int);
+    guild = GuildCacheable(client, guildId);
+    iconEmoji = raw["unicode_emoji"] as String?;
+    iconHash = raw["icon"] as String?;
 
     if (raw["tags"] != null) {
-      this.roleTags = RoleTags(raw["tags"] as RawApiMap);
+      roleTags = RoleTags(raw["tags"] as RawApiMap);
     } else {
-      this.roleTags = null;
+      roleTags = null;
     }
   }
 
   /// Returns url to role icon
   @override
   String? iconURL({String format = "webp", int size = 128}) {
-    if (this.iconHash == null) {
+    if (iconHash == null) {
       return null;
     }
 
-    return this.client.httpEndpoints.getRoleIconUrl(this.id, this.iconHash!, format, size);
+    return client.httpEndpoints.getRoleIconUrl(id, iconHash!, format, size);
   }
 
   /// Edits the role.
   @override
-  Future<IRole> edit(RoleBuilder role, {String? auditReason}) async => client.httpEndpoints.editRole(this.guild.id, this.id, role, auditReason: auditReason);
+  Future<IRole> edit(RoleBuilder role, {String? auditReason}) async => client.httpEndpoints.editRole(guild.id, id, role, auditReason: auditReason);
 
   /// Deletes the role.
   @override
-  Future<void> delete() async => client.httpEndpoints.deleteRole(guild.id, this.id);
+  Future<void> delete() async => client.httpEndpoints.deleteRole(guild.id, id);
 }
 
 abstract class IRoleTags {
@@ -188,8 +188,8 @@ class RoleTags implements IRoleTags {
 
   /// Creates an instance of [RoleTags]
   RoleTags(RawApiMap raw) {
-    this.botId = raw["bot_id"] != null ? Snowflake(raw["bot_id"]) : null;
-    this.nitroRole = raw["premium_subscriber"] != null ? raw["premium_subscriber"] as bool : false;
-    this.integrationId = raw["integration_id"] != null ? Snowflake(raw["integration_id"]) : null;
+    botId = raw["bot_id"] != null ? Snowflake(raw["bot_id"]) : null;
+    nitroRole = raw["premium_subscriber"] != null ? raw["premium_subscriber"] as bool : false;
+    integrationId = raw["integration_id"] != null ? Snowflake(raw["integration_id"]) : null;
   }
 }

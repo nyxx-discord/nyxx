@@ -19,16 +19,16 @@ abstract class IClientUser implements IUser {
 class ClientUser extends User implements IClientUser {
   /// Weather or not the client user's account is verified.
   @override
-  bool? verified;
+  late final bool? verified;
 
   /// Weather or not the client user has MFA enabled.
   @override
-  bool? mfa;
+  late final bool? mfa;
 
   /// Creates an instance of [ClientUser]
   ClientUser(NyxxWebsocket client, RawApiMap raw) : super(client, raw) {
-    this.verified = raw["verified"] as bool;
-    this.mfa = raw["mfa_enabled"] as bool;
+    verified = raw["verified"] as bool;
+    mfa = raw["mfa_enabled"] as bool;
   }
 
   /// Edits current user. This changes user's username - not per guild nickname.

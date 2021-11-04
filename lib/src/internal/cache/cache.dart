@@ -11,8 +11,8 @@ class MessageCache extends SnowflakeCache<IMessage> {
   MessageCache(this.cacheSize) : super();
 
   IMessage put(IMessage message) {
-    if (this.length <= this.cacheSize) {
-      this.remove(this.keys.first);
+    if (length <= cacheSize) {
+      remove(keys.first);
       this[message.id] = message;
     }
 

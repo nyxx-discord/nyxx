@@ -16,6 +16,6 @@ class UserUpdateEvent implements IUserUpdateEvent {
 
   /// Creates na instance of [UserUpdateEvent]
   UserUpdateEvent(RawApiMap json, INyxx client) {
-    this.user = User(client, json["d"] as RawApiMap);
+    user = User(client, json["d"] as RawApiMap);
   }
 }

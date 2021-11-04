@@ -38,8 +38,8 @@ class VoiceServerUpdateEvent implements IVoiceServerUpdateEvent {
 
   /// Creates na instance of [VoiceServerUpdateEvent]
   VoiceServerUpdateEvent(this.raw, INyxx client) {
-    this.token = raw["d"]["token"] as String;
-    this.endpoint = raw["d"]["endpoint"] as String;
-    this.guild = GuildCacheable(client, Snowflake(raw["d"]["guild_id"]));
+    token = raw["d"]["token"] as String;
+    endpoint = raw["d"]["endpoint"] as String;
+    guild = GuildCacheable(client, Snowflake(raw["d"]["guild_id"]));
   }
 }

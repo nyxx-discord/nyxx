@@ -20,7 +20,7 @@ class EmbedFooterBuilder extends Builder {
 
   /// Builds object to Map() instance;
   RawApiMap build() {
-    if (this.text != null && this.length! > 2048) {
+    if (text != null && length! > 2048) {
       throw EmbedBuilderArgumentException("Footer text is too long. (1024 characters limit)");
     }
 

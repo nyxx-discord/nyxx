@@ -29,11 +29,11 @@ class EmbedField implements IEmbedField {
 
   /// Creates an instance of [EmbedField]
   EmbedField(RawApiMap raw) {
-    this.name = raw["name"] as String;
-    this.content = raw["value"] as String;
-    this.inline = raw["inline"] as bool?;
+    name = raw["name"] as String;
+    content = raw["value"] as String;
+    inline = raw["inline"] as bool?;
   }
 
   @override
-  EmbedFieldBuilder toBuilder() => EmbedFieldBuilder(this.name, this.content, this.inline);
+  EmbedFieldBuilder toBuilder() => EmbedFieldBuilder(name, content, inline);
 }

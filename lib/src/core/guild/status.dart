@@ -28,7 +28,7 @@ class UserStatus extends IEnum<String> {
   }
 
   @override
-  int get hashCode => this.value.hashCode;
+  int get hashCode => value.hashCode;
 }
 
 abstract class IClientStatus {
@@ -61,13 +61,13 @@ class ClientStatus implements IClientStatus {
 
   /// Returns if user is online
   @override
-  bool get isOnline => this.desktop.isOnline || this.phone.isOnline || this.web.isOnline;
+  bool get isOnline => desktop.isOnline || phone.isOnline || web.isOnline;
 
   /// Creates na instance of [ClientStatus]
   ClientStatus(RawApiMap raw) {
-    this.desktop = UserStatus.from(raw["desktop"] as String?);
-    this.web = UserStatus.from(raw["web"] as String?);
-    this.phone = UserStatus.from(raw["phone"] as String?);
+    desktop = UserStatus.from(raw["desktop"] as String?);
+    web = UserStatus.from(raw["web"] as String?);
+    phone = UserStatus.from(raw["phone"] as String?);
   }
 
   @override
@@ -76,7 +76,7 @@ class ClientStatus implements IClientStatus {
   @override
   bool operator ==(other) {
     if (other is ClientStatus) {
-      return other.desktop == this.desktop && other.phone == this.phone && other.web == this.web;
+      return other.desktop == desktop && other.phone == phone && other.web == web;
     }
 
     return false;

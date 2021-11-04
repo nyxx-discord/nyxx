@@ -20,7 +20,7 @@ class Snowflake implements Comparable<Snowflake> {
   DateTime get timestamp => DateTime.fromMillisecondsSinceEpoch((_id >> 22).toInt() + discordEpoch, isUtc: true);
 
   /// Returns true if snowflake is zero
-  bool get isZero => this.id == 0;
+  bool get isZero => id == 0;
 
   /// Creates new instance of [Snowflake].
   const Snowflake.value(this._id);
@@ -54,10 +54,10 @@ class Snowflake implements Comparable<Snowflake> {
   SnowflakeEntity toSnowflakeEntity() => SnowflakeEntity(this);
 
   /// Checks if given [Snowflake] [s] is created before this instance
-  bool isBefore(Snowflake s) => this.timestamp.isBefore(s.timestamp);
+  bool isBefore(Snowflake s) => timestamp.isBefore(s.timestamp);
 
   /// Checks if given [Snowflake] [s] is created after this instance
-  bool isAfter(Snowflake s) => this.timestamp.isAfter(s.timestamp);
+  bool isAfter(Snowflake s) => timestamp.isAfter(s.timestamp);
 
   /// Compares two Snowflakes based on creation date
   static int compareDates(Snowflake first, Snowflake second) => first.timestamp.compareTo(second.timestamp);
@@ -70,16 +70,16 @@ class Snowflake implements Comparable<Snowflake> {
 
   @override
   bool operator ==(dynamic other) {
-    if (other is Snowflake) return other.id == this._id;
-    if (other is int) return other == this._id;
-    if (other is String) return other == this._id.toString();
-    if (other is SnowflakeEntity) return other.id == this._id;
+    if (other is Snowflake) return other.id == _id;
+    if (other is int) return other == _id;
+    if (other is String) return other == _id.toString();
+    if (other is SnowflakeEntity) return other.id == _id;
 
     return false;
   }
 
   @override
-  int get hashCode => this._id.hashCode;
+  int get hashCode => _id.hashCode;
 
   @override
   int compareTo(Snowflake other) => compareDates(this, other);

@@ -17,20 +17,20 @@ class ThreadBuilder extends Builder {
 
   /// Create a private thread
   ThreadBuilder.private(this.name) {
-    this.private = true;
+    private = true;
   }
 
   /// Set the time after which the thread automatically archives itself.
-  void setArchiveAfter(ThreadArchiveTime time) => this.archiveAfter = time;
+  void setArchiveAfter(ThreadArchiveTime time) => archiveAfter = time;
 
   /// Make the thread private
-  void setPrivate() => this.private = true;
+  void setPrivate() => private = true;
 
   /// Make the thread public
-  void setPublic() => this.private = false;
+  void setPublic() => private = false;
 
   @override
-  RawApiMap build() => <String, dynamic>{"auto_archive_duration": this.archiveAfter.value, "name": name, "type": private ? 12 : 11};
+  RawApiMap build() => <String, dynamic>{"auto_archive_duration": archiveAfter.value, "name": name, "type": private ? 12 : 11};
 }
 
 /// Simplifies the process of setting an auto archive time.

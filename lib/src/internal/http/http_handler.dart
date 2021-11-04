@@ -22,18 +22,18 @@ class HttpHandler {
 
   /// Creates an instance of [HttpHandler]
   HttpHandler(this.client) {
-    this._noRateBucket = HttpBucket("", this);
-    this._httpClient = InternalHttpClient(client.token);
+    _noRateBucket = HttpBucket("", this);
+    _httpClient = InternalHttpClient(client.token);
   }
 
   Future<HttpResponse> execute(HttpRequest request) async {
-    request.passClient(this._httpClient);
+    request.passClient(_httpClient);
 
     if (!request.rateLimit) {
-      return _handle(await this._noRateBucket.execute(request));
+      return _handle(await _noRateBucket.execute(request));
     }
 
-    final bucket = this._getBucketForRequest(request);
+    final bucket = _getBucketForRequest(request);
     return _handle(await bucket.execute(request));
   }
 
@@ -43,7 +43,7 @@ class HttpHandler {
       final bucketMajorId = reactionsRegexMatch.group(1);
       final bucketMessageId = reactionsRegexMatch.group(2);
 
-      return this._findBucketById("reactions/$bucketMajorId/$bucketMessageId");
+      return _findBucketById("reactions/$bucketMajorId/$bucketMessageId");
     }
 
     final commandPermissionRegexMatch = _bucketCommandPermissions.firstMatch(request.uri.toString());
@@ -52,7 +52,7 @@ class HttpHandler {
       final bucketMajorId = commandPermissionRegexMatch.group(1);
       final bucketMessageId = commandPermissionRegexMatch.group(2);
 
-      return this._findBucketById("commands/permissions/$bucketMajorId/$bucketMessageId");
+      return _findBucketById("commands/permissions/$bucketMajorId/$bucketMessageId");
     }
 
     final bucketRegexMatch = _bucketRegexp.firstMatch(request.uri.toString());
@@ -66,7 +66,7 @@ class HttpHandler {
       bucketId = "${request.method}/$bucketName/$bucketMajorId";
     }
 
-    return this._findBucketById(bucketId);
+    return _findBucketById(bucketId);
   }
 
   HttpBucket _findBucketById(String bucketId) {
@@ -88,7 +88,7 @@ class HttpHandler {
       // TODO: fix this
       // _client._onHttpResponse.add(HttpResponseEvent._new(responseSuccess));
 
-      this.logger.finer("Got successful http response for endpoint: [${response.request?.url.toString()}]; Response: [${responseSuccess.jsonBody}]");
+      logger.finer("Got successful http response for endpoint: [${response.request?.url.toString()}]; Response: [${responseSuccess.jsonBody}]");
 
       return responseSuccess;
     }
@@ -99,7 +99,7 @@ class HttpHandler {
     // TODO: fix this
     // _client._onHttpError.add(HttpErrorEvent._new(responseError));
 
-    this.logger.finer("Got failure http response for endpoint: [${response.request?.url.toString()}]; Response: [${responseError.errorMessage}]");
+    logger.finer("Got failure http response for endpoint: [${response.request?.url.toString()}]; Response: [${responseError.errorMessage}]");
 
     return responseError;
   }

@@ -7,7 +7,7 @@ import 'package:nyxx/src/core/guild/client_user.dart';
 import 'package:nyxx/src/events/channel_events.dart';
 import 'package:nyxx/src/events/disconnect_event.dart';
 import 'package:nyxx/src/events/guild_events.dart';
-import 'package:nyxx/src/events/InviteEvents.dart';
+import 'package:nyxx/src/events/invite_events.dart';
 import 'package:nyxx/src/events/member_chunk_event.dart';
 import 'package:nyxx/src/events/message_events.dart';
 import 'package:nyxx/src/events/presence_update_event.dart';
@@ -87,15 +87,15 @@ class Shard implements IShard {
 
   /// Emitted when the shard encounters a connection error
   @override
-  late final Stream<IShard> onDisconnect = manager.onDisconnect.where((event) => event.id == this.id);
+  late final Stream<IShard> onDisconnect = manager.onDisconnect.where((event) => event.id == id);
 
   /// Emitted when shard receives member chunk.
   @override
-  late final Stream<IMemberChunkEvent> onMemberChunk = manager.onMemberChunk.where((event) => event.shardId == this.id);
+  late final Stream<IMemberChunkEvent> onMemberChunk = manager.onMemberChunk.where((event) => event.shardId == id);
 
   /// Emitted when the shard resumed its connection
   @override
-  late final Stream<IShard> onResume = manager.onResume.where((event) => event.id == this.id);
+  late final Stream<IShard> onResume = manager.onResume.where((event) => event.id == id);
 
   /// List of handled guild ids
   @override
@@ -130,18 +130,18 @@ class Shard implements IShard {
 
   /// Creates an instance of [Shard]
   Shard(this.id, this.manager, String gatewayUrl) {
-    this.manager.logger.finer("Starting shard with id: $id; url: $gatewayUrl");
+    manager.logger.finer("Starting shard with id: $id; url: $gatewayUrl");
 
-    this._receivePort = ReceivePort();
-    this._receiveStream = _receivePort.asBroadcastStream();
-    this._isolateSendPort = _receivePort.sendPort;
+    _receivePort = ReceivePort();
+    _receiveStream = _receivePort.asBroadcastStream();
+    _isolateSendPort = _receivePort.sendPort;
 
     Isolate.spawn(shardHandler, _isolateSendPort).then((isolate) async {
-      this._shardIsolate = isolate;
-      this._sendPort = await _receiveStream.first as SendPort;
+      _shardIsolate = isolate;
+      _sendPort = await _receiveStream.first as SendPort;
 
-      this._sendPort.send({"cmd": "INIT", "gatewayUrl": gatewayUrl, "compression": manager.connectionManager.client.options.compressedGatewayPayloads});
-      this._receiveStream.listen(_handle);
+      _sendPort.send({"cmd": "INIT", "gatewayUrl": gatewayUrl, "compression": manager.connectionManager.client.options.compressedGatewayPayloads});
+      _receiveStream.listen(_handle);
     });
   }
 
@@ -152,26 +152,26 @@ class Shard implements IShard {
       "cmd": "SEND",
       "data": {"op": opCode, "d": d}
     };
-    this.manager.logger.finest("Sending to shard isolate on shard [${this.id}]: [$rawData]");
-    this._sendPort.send(rawData);
+    manager.logger.finest("Sending to shard isolate on shard [${id}]: [$rawData]");
+    _sendPort.send(rawData);
   }
 
   /// Updates clients voice state for [Guild] with given [guildId]
   @override
   void changeVoiceState(Snowflake? guildId, Snowflake? channelId, {bool selfMute = false, bool selfDeafen = false}) {
-    this.send(OPCodes.voiceStateUpdate,
+    send(OPCodes.voiceStateUpdate,
         <String, dynamic>{"guild_id": guildId.toString(), "channel_id": channelId?.toString(), "self_mute": selfMute, "self_deaf": selfDeafen});
   }
 
   /// Allows to set presence for current shard.
   @override
   void setPresence(PresenceBuilder presenceBuilder) {
-    this.send(OPCodes.statusUpdate, presenceBuilder.build());
+    send(OPCodes.statusUpdate, presenceBuilder.build());
   }
 
   /// Syncs all guilds
   @override
-  void guildSync() => this.send(OPCodes.guildSync, this.guilds.map((e) => e.toString()));
+  void guildSync() => send(OPCodes.guildSync, guilds.map((e) => e.toString()));
 
   /// Allows to request members objects from gateway
   /// [guild] can be either Snowflake or Iterable<Snowflake>
@@ -185,13 +185,13 @@ class Shard implements IShard {
     dynamic guildPayload;
 
     if (guild is Snowflake) {
-      if (!this.guilds.contains(guild)) {
+      if (!guilds.contains(guild)) {
         throw InvalidShardException("Cannot request member for guild on wrong shard");
       }
 
       guildPayload = [guild.toString()];
     } else if (guild is Iterable<Snowflake>) {
-      if (!this.guilds.any((element) => guild.contains(element))) {
+      if (!guilds.any((element) => guild.contains(element))) {
         throw InvalidShardException("Cannot request member for guild on wrong shard");
       }
 
@@ -209,28 +209,28 @@ class Shard implements IShard {
       if (nonce != null) "nonce": nonce
     };
 
-    this.send(OPCodes.requestGuildMember, payload);
+    send(OPCodes.requestGuildMember, payload);
   }
 
   void _heartbeat() {
-    this.send(OPCodes.heartbeat, _sequence == 0 ? null : _sequence);
-    this._lastHeartbeatSent = DateTime.now();
+    send(OPCodes.heartbeat, _sequence == 0 ? null : _sequence);
+    _lastHeartbeatSent = DateTime.now();
 
-    if (!this._heartbeatAckReceived) {
-      manager.logger.warning("Not received previous heartbeat ack on shard: [${this.id}] on sequence: [{$_sequence}]");
+    if (!_heartbeatAckReceived) {
+      manager.logger.warning("Not received previous heartbeat ack on shard: [${id}] on sequence: [{$_sequence}]");
       return;
     }
 
-    this._heartbeatAckReceived = false;
+    _heartbeatAckReceived = false;
   }
 
   void _handleError(dynamic data) {
     final closeCode = data["errorCode"] as int;
 
-    this._connected = false;
-    this._heartbeatTimer.cancel();
+    _connected = false;
+    _heartbeatTimer.cancel();
     manager.logger.severe("Shard $id disconnected. Error: [${data['error']}] Error code: [${data['errorCode']}] | Error message: [${data['errorReason']}]");
-    this.manager.onDisconnectController.add(this);
+    manager.onDisconnectController.add(this);
 
     switch (closeCode) {
       case 4004:
@@ -259,19 +259,19 @@ class Shard implements IShard {
   // Connects to gateway
   void _connect() {
     manager.logger.info("Connecting to gateway on shard $id!");
-    this._resume = false;
-    Future.delayed(const Duration(seconds: 2), () => this._sendPort.send({"cmd": "CONNECT"}));
+    _resume = false;
+    Future.delayed(const Duration(seconds: 2), () => _sendPort.send({"cmd": "CONNECT"}));
   }
 
   // Reconnects to gateway
   void _reconnect() {
     manager.logger.info("Resuming connection to gateway on shard $id!");
-    this._resume = true;
-    Future.delayed(const Duration(seconds: 1), () => this._sendPort.send({"cmd": "CONNECT"}));
+    _resume = true;
+    Future.delayed(const Duration(seconds: 1), () => _sendPort.send({"cmd": "CONNECT"}));
   }
 
   Future<void> _handle(dynamic rawData) async {
-    this.manager.logger.finest("Received gateway payload on shard [${this.id}]: [$rawData]");
+    manager.logger.finest("Received gateway payload on shard [${id}]: [$rawData]");
 
     if (rawData["cmd"] == "CONNECT_ACK") {
       manager.logger.info("Shard $id connected to gateway!");
@@ -291,7 +291,7 @@ class Shard implements IShard {
     final discordPayload = rawData["jsonData"] as RawApiMap;
 
     if (discordPayload["s"] != null) {
-      this._sequence = discordPayload["s"] as int;
+      _sequence = discordPayload["s"] as int;
     }
 
     await _dispatch(discordPayload);
@@ -300,12 +300,12 @@ class Shard implements IShard {
   Future<void> _dispatch(RawApiMap rawPayload) async {
     switch (rawPayload["op"] as int) {
       case OPCodes.heartbeatAck:
-        this._heartbeatAckReceived = true;
-        this._gatewayLatency = DateTime.now().difference(this._lastHeartbeatSent);
+        _heartbeatAckReceived = true;
+        _gatewayLatency = DateTime.now().difference(_lastHeartbeatSent);
 
         break;
       case OPCodes.hello:
-        if (this._sessionId == null || !_resume) {
+        if (_sessionId == null || !_resume) {
           final identifyMsg = <String, dynamic>{
             "token": manager.connectionManager.client.token,
             "properties": <String, dynamic>{
@@ -317,18 +317,18 @@ class Shard implements IShard {
             "guild_subscriptions": manager.connectionManager.client.options.guildSubscriptions,
             "intents": manager.connectionManager.client.intents,
             if (manager.connectionManager.client.options.initialPresence != null) "presence": manager.connectionManager.client.options.initialPresence!.build(),
-            "shard": <int>[this.id, manager.numShards]
+            "shard": <int>[id, manager.numShards]
           };
 
-          this.send(OPCodes.identify, identifyMsg);
+          send(OPCodes.identify, identifyMsg);
 
-          this.manager.onConnectController.add(this);
+          manager.onConnectController.add(this);
         } else if (_resume) {
-          this.send(OPCodes.resume, <String, dynamic>{"token": manager.connectionManager.client.token, "session_id": this._sessionId, "seq": this._sequence});
+          send(OPCodes.resume, <String, dynamic>{"token": manager.connectionManager.client.token, "session_id": _sessionId, "seq": _sequence});
         }
 
         Future.delayed(const Duration(milliseconds: 100), () {
-          this._heartbeatTimer = Timer.periodic(Duration(milliseconds: rawPayload["d"]["heartbeat_interval"] as int), (Timer t) => this._heartbeat());
+          _heartbeatTimer = Timer.periodic(Duration(milliseconds: rawPayload["d"]["heartbeat_interval"] as int), (Timer t) => _heartbeat());
         });
         break;
       case OPCodes.invalidSession:
@@ -351,11 +351,11 @@ class Shard implements IShard {
 
         switch (dispatchType) {
           case "READY":
-            this._sessionId = rawPayload["d"]["session_id"] as String;
+            _sessionId = rawPayload["d"]["session_id"] as String;
             manager.connectionManager.client.self = ClientUser(manager.connectionManager.client, rawPayload["d"]["user"] as RawApiMap);
 
-            this._connected = true;
-            manager.logger.info("Shard ${this.id} ready!");
+            _connected = true;
+            manager.logger.info("Shard ${id} ready!");
 
             if (!_resume) {
               await manager.connectionManager.propagateReady();
@@ -363,149 +363,149 @@ class Shard implements IShard {
 
             break;
           case "RESUME":
-            this.manager.onResumeController.add(this);
+            manager.onResumeController.add(this);
             break;
 
           case "GUILD_MEMBERS_CHUNK":
-            manager.onMemberChunkController.add(MemberChunkEvent(rawPayload, manager.connectionManager.client, this.id));
+            manager.onMemberChunkController.add(MemberChunkEvent(rawPayload, manager.connectionManager.client, id));
             break;
 
           case "MESSAGE_REACTION_REMOVE_ALL":
-            this.eventController.onMessageReactionsRemovedController.add(MessageReactionsRemovedEvent(rawPayload, manager.connectionManager.client));
+            eventController.onMessageReactionsRemovedController.add(MessageReactionsRemovedEvent(rawPayload, manager.connectionManager.client));
             break;
 
           case "MESSAGE_REACTION_ADD":
-            this.eventController.onMessageReactionAddedController.add(MessageReactionAddedEvent(rawPayload, manager.connectionManager.client));
+            eventController.onMessageReactionAddedController.add(MessageReactionAddedEvent(rawPayload, manager.connectionManager.client));
             break;
 
           case "MESSAGE_REACTION_REMOVE":
-            this.eventController.onMessageReactionRemoveController.add(MessageReactionRemovedEvent(rawPayload, manager.connectionManager.client));
+            eventController.onMessageReactionRemoveController.add(MessageReactionRemovedEvent(rawPayload, manager.connectionManager.client));
             break;
 
           case "MESSAGE_DELETE_BULK":
-            this.eventController.onMessageDeleteBulkController.add(MessageDeleteBulkEvent(rawPayload, manager.connectionManager.client));
+            eventController.onMessageDeleteBulkController.add(MessageDeleteBulkEvent(rawPayload, manager.connectionManager.client));
             break;
 
           case "CHANNEL_PINS_UPDATE":
-            this.eventController.onChannelPinsUpdateController.add(ChannelPinsUpdateEvent(rawPayload, manager.connectionManager.client));
+            eventController.onChannelPinsUpdateController.add(ChannelPinsUpdateEvent(rawPayload, manager.connectionManager.client));
             break;
 
           case "VOICE_STATE_UPDATE":
-            this.eventController.onVoiceStateUpdateController.add(VoiceStateUpdateEvent(rawPayload, manager.connectionManager.client));
+            eventController.onVoiceStateUpdateController.add(VoiceStateUpdateEvent(rawPayload, manager.connectionManager.client));
             break;
 
           case "VOICE_SERVER_UPDATE":
-            this.eventController.onVoiceServerUpdateController.add(VoiceServerUpdateEvent(rawPayload, manager.connectionManager.client));
+            eventController.onVoiceServerUpdateController.add(VoiceServerUpdateEvent(rawPayload, manager.connectionManager.client));
             break;
 
           case "GUILD_EMOJIS_UPDATE":
-            this.eventController.onGuildEmojisUpdateController.add(GuildEmojisUpdateEvent(rawPayload, manager.connectionManager.client));
+            eventController.onGuildEmojisUpdateController.add(GuildEmojisUpdateEvent(rawPayload, manager.connectionManager.client));
             break;
 
           case "MESSAGE_CREATE":
-            this.eventController.onMessageReceivedController.add(MessageReceivedEvent(rawPayload, manager.connectionManager.client));
+            eventController.onMessageReceivedController.add(MessageReceivedEvent(rawPayload, manager.connectionManager.client));
             break;
 
           case "MESSAGE_DELETE":
-            this.eventController.onMessageDeleteController.add(MessageDeleteEvent(rawPayload, manager.connectionManager.client));
+            eventController.onMessageDeleteController.add(MessageDeleteEvent(rawPayload, manager.connectionManager.client));
             break;
 
           case "MESSAGE_UPDATE":
-            this.eventController.onMessageUpdateController.add(MessageUpdateEvent(rawPayload, manager.connectionManager.client));
+            eventController.onMessageUpdateController.add(MessageUpdateEvent(rawPayload, manager.connectionManager.client));
             break;
 
           case "GUILD_CREATE":
             final event = GuildCreateEvent(rawPayload, manager.connectionManager.client);
-            this.guilds.add(event.guild.id);
-            this.eventController.onGuildCreateController.add(event);
+            guilds.add(event.guild.id);
+            eventController.onGuildCreateController.add(event);
             break;
 
           case "GUILD_UPDATE":
-            this.eventController.onGuildUpdateController.add(GuildUpdateEvent(rawPayload, manager.connectionManager.client));
+            eventController.onGuildUpdateController.add(GuildUpdateEvent(rawPayload, manager.connectionManager.client));
             break;
 
           case "GUILD_DELETE":
-            this.eventController.onGuildDeleteController.add(GuildDeleteEvent(rawPayload, manager.connectionManager.client));
+            eventController.onGuildDeleteController.add(GuildDeleteEvent(rawPayload, manager.connectionManager.client));
             break;
 
           case "GUILD_BAN_ADD":
-            this.eventController.onGuildBanAddController.add(GuildBanAddEvent(rawPayload, manager.connectionManager.client));
+            eventController.onGuildBanAddController.add(GuildBanAddEvent(rawPayload, manager.connectionManager.client));
             break;
 
           case "GUILD_BAN_REMOVE":
-            this.eventController.onGuildBanRemoveController.add(GuildBanRemoveEvent(rawPayload, manager.connectionManager.client));
+            eventController.onGuildBanRemoveController.add(GuildBanRemoveEvent(rawPayload, manager.connectionManager.client));
             break;
 
           case "GUILD_MEMBER_ADD":
-            this.eventController.onGuildMemberAddController.add(GuildMemberAddEvent(rawPayload, manager.connectionManager.client));
+            eventController.onGuildMemberAddController.add(GuildMemberAddEvent(rawPayload, manager.connectionManager.client));
             break;
 
           case "GUILD_MEMBER_REMOVE":
-            this.eventController.onGuildMemberRemoveController.add(GuildMemberRemoveEvent(rawPayload, manager.connectionManager.client));
+            eventController.onGuildMemberRemoveController.add(GuildMemberRemoveEvent(rawPayload, manager.connectionManager.client));
             break;
 
           case "GUILD_MEMBER_UPDATE":
-            this.eventController.onGuildMemberUpdateController.add(GuildMemberUpdateEvent(rawPayload, manager.connectionManager.client));
+            eventController.onGuildMemberUpdateController.add(GuildMemberUpdateEvent(rawPayload, manager.connectionManager.client));
             break;
 
           case "CHANNEL_CREATE":
-            this.eventController.onChannelCreateController.add(ChannelCreateEvent(rawPayload, manager.connectionManager.client));
+            eventController.onChannelCreateController.add(ChannelCreateEvent(rawPayload, manager.connectionManager.client));
             break;
 
           case "CHANNEL_UPDATE":
-            this.eventController.onChannelUpdateController.add(ChannelUpdateEvent(rawPayload, manager.connectionManager.client));
+            eventController.onChannelUpdateController.add(ChannelUpdateEvent(rawPayload, manager.connectionManager.client));
             break;
 
           case "CHANNEL_DELETE":
-            this.eventController.onChannelDeleteController.add(ChannelDeleteEvent(rawPayload, manager.connectionManager.client));
+            eventController.onChannelDeleteController.add(ChannelDeleteEvent(rawPayload, manager.connectionManager.client));
             break;
 
           case "TYPING_START":
-            this.eventController.onTypingController.add(TypingEvent(rawPayload, manager.connectionManager.client));
+            eventController.onTypingController.add(TypingEvent(rawPayload, manager.connectionManager.client));
             break;
 
           case "PRESENCE_UPDATE":
-            this.eventController.onPresenceUpdateController.add(PresenceUpdateEvent(rawPayload, manager.connectionManager.client));
+            eventController.onPresenceUpdateController.add(PresenceUpdateEvent(rawPayload, manager.connectionManager.client));
             break;
 
           case "GUILD_ROLE_CREATE":
-            this.eventController.onRoleCreateController.add(RoleCreateEvent(rawPayload, manager.connectionManager.client));
+            eventController.onRoleCreateController.add(RoleCreateEvent(rawPayload, manager.connectionManager.client));
             break;
 
           case "GUILD_ROLE_UPDATE":
-            this.eventController.onRoleUpdateController.add(RoleUpdateEvent(rawPayload, manager.connectionManager.client));
+            eventController.onRoleUpdateController.add(RoleUpdateEvent(rawPayload, manager.connectionManager.client));
             break;
 
           case "GUILD_ROLE_DELETE":
-            this.eventController.onRoleDeleteController.add(RoleDeleteEvent(rawPayload, manager.connectionManager.client));
+            eventController.onRoleDeleteController.add(RoleDeleteEvent(rawPayload, manager.connectionManager.client));
             break;
 
           case "USER_UPDATE":
-            this.eventController.onUserUpdateController.add(UserUpdateEvent(rawPayload, manager.connectionManager.client));
+            eventController.onUserUpdateController.add(UserUpdateEvent(rawPayload, manager.connectionManager.client));
             break;
 
           case "INVITE_CREATE":
-            this.eventController.onInviteCreatedController.add(InviteCreatedEvent(rawPayload, manager.connectionManager.client));
+            eventController.onInviteCreatedController.add(InviteCreatedEvent(rawPayload, manager.connectionManager.client));
             break;
 
           case "INVITE_DELETE":
-            this.eventController.onInviteDeleteController.add(InviteDeletedEvent(rawPayload, manager.connectionManager.client));
+            eventController.onInviteDeleteController.add(InviteDeletedEvent(rawPayload, manager.connectionManager.client));
             break;
 
           case "MESSAGE_REACTION_REMOVE_EMOJI":
-            this.eventController.onMessageReactionRemoveEmojiController.add(MessageReactionRemoveEmojiEvent(rawPayload, manager.connectionManager.client));
+            eventController.onMessageReactionRemoveEmojiController.add(MessageReactionRemoveEmojiEvent(rawPayload, manager.connectionManager.client));
             break;
 
           case "THREAD_CREATE":
-            this.eventController.onThreadCreatedController.add(ThreadCreateEvent(rawPayload, manager.connectionManager.client));
+            eventController.onThreadCreatedController.add(ThreadCreateEvent(rawPayload, manager.connectionManager.client));
             break;
 
           case "THREAD_MEMBERS_UPDATE":
-            this.eventController.onThreadMembersUpdateController.add(ThreadMembersUpdateEvent(rawPayload, manager.connectionManager.client));
+            eventController.onThreadMembersUpdateController.add(ThreadMembersUpdateEvent(rawPayload, manager.connectionManager.client));
             break;
 
           case "THREAD_DELETE":
-            this.eventController.onThreadDeleteController.add(ThreadDeletedEvent(rawPayload, manager.connectionManager.client));
+            eventController.onThreadDeleteController.add(ThreadDeletedEvent(rawPayload, manager.connectionManager.client));
             break;
 
           case "THREAD_MEMBER_UPDATE":
@@ -513,8 +513,8 @@ class Shard implements IShard {
             break;
 
           default:
-            if (this.manager.connectionManager.client.options.dispatchRawShardEvent) {
-              this.manager.onRawEventController.add(RawEvent(this, rawPayload));
+            if (manager.connectionManager.client.options.dispatchRawShardEvent) {
+              manager.onRawEventController.add(RawEvent(this, rawPayload));
             } else {
               print("UNKNOWN OPCODE: $rawPayload");
             }
@@ -525,11 +525,11 @@ class Shard implements IShard {
 
   @override
   Future<void> dispose() async {
-    this.manager.logger.info("Started disposing shard $id...");
+    manager.logger.info("Started disposing shard $id...");
 
-    await this._receiveStream.firstWhere((element) => (element as RawApiMap)["cmd"] == "TERMINATE_OK");
-    this._shardIsolate.kill(priority: Isolate.immediate);
+    await _receiveStream.firstWhere((element) => (element as RawApiMap)["cmd"] == "TERMINATE_OK");
+    _shardIsolate.kill(priority: Isolate.immediate);
 
-    this.manager.logger.info("Shard $id disposed.");
+    manager.logger.info("Shard $id disposed.");
   }
 }
