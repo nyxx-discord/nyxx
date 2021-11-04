@@ -228,8 +228,7 @@ class Member extends SnowflakeEntity implements IMember {
   /// await member.addRole(r);
   /// ```
   @override
-  Future<void> addRole(SnowflakeEntity role, {String? auditReason}) =>
-      client.httpEndpoints.addRoleToUser(guild.id, role.id, id, auditReason: auditReason);
+  Future<void> addRole(SnowflakeEntity role, {String? auditReason}) => client.httpEndpoints.addRoleToUser(guild.id, role.id, id, auditReason: auditReason);
 
   /// Removes [role] from user.
   @override
@@ -244,8 +243,7 @@ class Member extends SnowflakeEntity implements IMember {
   @override
   Future<void> edit(
           {String? nick = "", List<SnowflakeEntity>? roles, bool? mute, bool? deaf, Snowflake? channel = const Snowflake.zero(), String? auditReason}) =>
-      client.httpEndpoints
-          .editGuildMember(guild.id, id, nick: nick, roles: roles, mute: mute, deaf: deaf, channel: channel, auditReason: auditReason);
+      client.httpEndpoints.editGuildMember(guild.id, id, nick: nick, roles: roles, mute: mute, deaf: deaf, channel: channel, auditReason: auditReason);
 
   void updateMember(String? nickname, List<Snowflake> roles, DateTime? boostingSince) {
     if (this.nickname != nickname) {

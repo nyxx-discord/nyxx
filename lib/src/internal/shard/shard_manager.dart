@@ -119,9 +119,7 @@ class ShardManager implements IShardManager {
 
   /// Starts shard manager
   ShardManager(this.connectionManager, this.maxConcurrency) {
-    numShards = connectionManager.client.options.shardCount != null
-        ? connectionManager.client.options.shardCount!
-        : connectionManager.recommendedShardsNum;
+    numShards = connectionManager.client.options.shardCount != null ? connectionManager.client.options.shardCount! : connectionManager.recommendedShardsNum;
 
     if (numShards < 1) {
       logger.shout("Number of shards cannot be lower than 1.");

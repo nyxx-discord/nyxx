@@ -668,8 +668,7 @@ class Guild extends SnowflakeEntity implements IGuild {
   /// var role = await guild.createRole(roleBuilder);
   /// ```
   @override
-  Future<IRole> createRole(RoleBuilder roleBuilder, {String? auditReason}) =>
-      client.httpEndpoints.createGuildRole(id, roleBuilder, auditReason: auditReason);
+  Future<IRole> createRole(RoleBuilder roleBuilder, {String? auditReason}) => client.httpEndpoints.createGuildRole(id, roleBuilder, auditReason: auditReason);
 
   /// Returns list of available [VoiceRegion]s
   @override

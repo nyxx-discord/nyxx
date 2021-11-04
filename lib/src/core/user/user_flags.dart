@@ -100,7 +100,7 @@ class UserFlags implements IUserFlags {
 
   /// True if user is Early Verified Bot Developer
   @override
-  bool get earlyVerifiedBotDeveloper =>  PermissionsUtils.isApplied(raw, 1 << 17);
+  bool get earlyVerifiedBotDeveloper => PermissionsUtils.isApplied(raw, 1 << 17);
 
   /// rue if user is Discord Certified Moderator
   @override
