@@ -14,11 +14,15 @@ main() async {
   final bot = NyxxFactory.createNyxxWebsocket(Platform.environment["TEST_TOKEN"]!, GatewayIntents.guildMessages, ignoreExceptions: false);
   final random = Random();
 
-  await bot.eventsWs.onReady.first;
+  late ITextChannel channel;
+  await bot.eventsWs.onReady.first.then((value) async {
+    channel = await bot.fetchChannel<ITextGuildChannel>(testChannelSnowflake);
+
+    final env = Platform.environment;
+    await channel.sendMessage(MessageBuilder.content("Running job [${env['GITHUB_RUN_ID']}] started by: [${env['GITHUB_ACTOR']}] on [${env['GITHUB_REF']}]"));
+  });
 
   test("basic message functionality", () async {
-    final channel = await bot.fetchChannel<ITextGuildChannel>(testChannelSnowflake);
-
     final messageBuilder = MessageBuilder()
       ..content = "Test content"
       ..nonce = random.nextInt(1000000).toString();
