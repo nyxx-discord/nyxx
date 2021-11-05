@@ -20,8 +20,8 @@ main() async {
     final channel = await bot.fetchChannel<ITextGuildChannel>(testChannelSnowflake);
 
     final messageBuilder = MessageBuilder()
-        ..content = "Test content"
-        ..nonce = random.nextInt(1000000).toString();
+      ..content = "Test content"
+      ..nonce = random.nextInt(1000000).toString();
 
     final wsMessageFuture = bot.eventsWs.onMessageReceived.firstWhere((element) => element.message.nonce == messageBuilder.nonce);
 
@@ -34,10 +34,7 @@ main() async {
 
     expect(message.isByWebhook, equals(false));
     expect(message.isCrossPosting, equals(false));
-    expect(
-        wsMessage.url,
-        equals("https://discordapp.com/channels/${wsMessage.guild!.id}/${message.channel.id}/${message.id}")
-    );
+    expect(wsMessage.url, equals("https://discordapp.com/channels/${wsMessage.guild!.id}/${message.channel.id}/${message.id}"));
 
     final messageEditBuilder = MessageBuilder()
       ..content = 'Edit test'

@@ -6,7 +6,7 @@ import 'package:test/scaffolding.dart';
 
 import '../mocks/nyyx_rest.mocks.dart';
 
-const exampleAppTeamPayload = <String, dynamic> {
+const exampleAppTeamPayload = <String, dynamic>{
   "id": 567,
   "icon": 'example_icon_hash',
   'owner_user_id': 987654321,
@@ -31,7 +31,7 @@ const exampleAppTeamPayload = <String, dynamic> {
   ]
 };
 
-const exampleClientOAuth2ApplicationPayload = <String, dynamic> {
+const exampleClientOAuth2ApplicationPayload = <String, dynamic>{
   "flags": 0x0101,
   "owner": {
     'username': 'l7ssha',
@@ -63,26 +63,14 @@ main() {
     final resultEntity = ClientOAuth2Application(exampleClientOAuth2ApplicationPayload, NyxxRestMock());
 
     expect(resultEntity, isA<ClientOAuth2Application>());
-    expect(
-        resultEntity.getInviteUrl(),
-        equals("https://${Constants.host}/oauth2/authorize?client_id=123456&scope=bot")
-    );
-    expect(
-        resultEntity.getInviteUrl(10),
-        equals("https://${Constants.host}/oauth2/authorize?client_id=123456&scope=bot&permissions=10")
-    );
-    expect(
-        resultEntity.iconUrl(),
-        isNull
-    );
+    expect(resultEntity.getInviteUrl(), equals("https://${Constants.host}/oauth2/authorize?client_id=123456&scope=bot"));
+    expect(resultEntity.getInviteUrl(10), equals("https://${Constants.host}/oauth2/authorize?client_id=123456&scope=bot&permissions=10"));
+    expect(resultEntity.iconUrl(), isNull);
 
     Map<String, dynamic> cloneExampleClientOAuth2ApplicationPayload = Map.from(exampleClientOAuth2ApplicationPayload);
     cloneExampleClientOAuth2ApplicationPayload['icon'] = 'test';
 
     final resultEntityWithIcon = ClientOAuth2Application(cloneExampleClientOAuth2ApplicationPayload, NyxxRestMock());
-    expect(
-        resultEntityWithIcon.iconUrl(),
-        "https://cdn.discordapp.com/app-icons/123456/test.png?size=512"
-    );
+    expect(resultEntityWithIcon.iconUrl(), "https://cdn.discordapp.com/app-icons/123456/test.png?size=512");
   });
 }

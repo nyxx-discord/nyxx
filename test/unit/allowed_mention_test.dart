@@ -23,8 +23,8 @@ main() {
 
   test('.suppressUser exception', () {
     final testAllowed = AllowedMentions()
-        ..allow(users: false)
-        ..suppressUser(Snowflake(123));
+      ..allow(users: false)
+      ..suppressUser(Snowflake(123));
 
     expect(() => testAllowed.build(), throwsA(isA<ArgumentError>()));
   });

@@ -5,9 +5,9 @@ import 'package:test/scaffolding.dart';
 import '../mocks/enum.mocks.dart';
 
 void main() {
-  final inputData = [1, 2, 3, 4];
-
   group("Utils", () {
+    final inputData = [1, 2, 3, 4];
+
     test(".firstWhereSafe has element", () {
       final result = inputData.firstWhereSafe((element) => element == 2);
 
@@ -35,7 +35,12 @@ void main() {
     test('chunk', () {
       final result = Utils.chunk([1, 2, 3, 4], 2);
 
-      expect(result, emitsInOrder([[1, 2], [3, 4]]));
+      expect(
+          result,
+          emitsInOrder([
+            [1, 2],
+            [3, 4]
+          ]));
     });
   });
 

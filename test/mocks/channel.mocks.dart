@@ -9,7 +9,7 @@ final Snowflake testChannelId = 896714099226992671.toSnowflake();
 const String testMessageContent = "Test Message.";
 
 class MockTextChannel extends SnowflakeEntity with Fake implements ITextChannel {
-	final bool shouldFail;
+  final bool shouldFail;
 
   MockTextChannel(Snowflake id, {this.shouldFail = false}) : super(id);
 
@@ -41,9 +41,7 @@ class MockTextChannel extends SnowflakeEntity with Fake implements ITextChannel 
 
   @override
   Future<IMessage> fetchMessage(Snowflake id) {
-    return Future.value(MockMessage({
-			"content": testMessageContent
-		}, id));
+    return Future.value(MockMessage({"content": testMessageContent}, id));
   }
 
   @override
@@ -56,13 +54,11 @@ class MockTextChannel extends SnowflakeEntity with Fake implements ITextChannel 
 
   @override
   IMessage? getMessage(Snowflake id) {
-    if(shouldFail) {
-			return null;
-		}
+    if (shouldFail) {
+      return null;
+    }
 
-		return MockMessage({
-			"content": testMessageContent
-		}, id);
+    return MockMessage({"content": testMessageContent}, id);
   }
 
   @override
@@ -78,9 +74,7 @@ class MockTextChannel extends SnowflakeEntity with Fake implements ITextChannel 
   Iterable<IUser> get participants => throw UnimplementedError();
 
   @override
-  Future<IMessage> sendMessage(MessageBuilder builder) => Future.value(MockMessage(<String, dynamic>{
-			"content": builder.content
-		}, testMessageId));
+  Future<IMessage> sendMessage(MessageBuilder builder) => Future.value(MockMessage(<String, dynamic>{"content": builder.content}, testMessageId));
 
   @override
   Future<void> startTyping() {
@@ -89,12 +83,11 @@ class MockTextChannel extends SnowflakeEntity with Fake implements ITextChannel 
 
   @override
   void startTypingLoop() {
-		throw UnimplementedError();
+    throw UnimplementedError();
   }
 
   @override
   void stopTypingLoop() {
-		throw UnimplementedError();
+    throw UnimplementedError();
   }
-
 }
