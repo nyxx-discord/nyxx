@@ -19,7 +19,7 @@ main() async {
     channel = await bot.fetchChannel<ITextGuildChannel>(testChannelSnowflake);
 
     final env = Platform.environment;
-    await channel.sendMessage(MessageBuilder.content("Running job [${env['GITHUB_RUN_ID']}] started by: [${env['GITHUB_ACTOR']}] on [${env['GITHUB_REF']}]"));
+    await channel.sendMessage(MessageBuilder.content("Running job `#${env['GITHUB_RUN_NUMBER']}` started by `${env['GITHUB_ACTOR']}` on `${env['GITHUB_REF']}` on commit: `${env['GITHUB_SHA']}`"));
   });
 
   test("basic message functionality", () async {
