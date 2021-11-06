@@ -10,7 +10,16 @@ import 'package:nyxx/src/internal/exceptions/invalid_shard_exception.dart';
 import 'package:nyxx/src/typedefs.dart';
 import 'package:nyxx/src/utils/enum.dart';
 
-abstract class IVoiceGuildChannel implements IGuildChannel {}
+abstract class IVoiceGuildChannel implements IGuildChannel {
+  /// Connects client to channel
+  void connect({bool selfMute = false, bool selfDeafen = false});
+
+  /// Disconnects use from channel.
+  void disconnect();
+
+  /// Creates activity invite. Currently in beta
+  Future<IInvite> createActivityInvite(VoiceActivityType type, {int? maxAge, int? maxUses});
+}
 
 class VoiceGuildChannel extends GuildChannel {
   /// The channel's bitrate.
@@ -21,20 +30,20 @@ class VoiceGuildChannel extends GuildChannel {
 
   /// Creates an instance of [VoiceGuildChannel]
   VoiceGuildChannel(INyxx client, RawApiMap raw, [Snowflake? guildId]) : super(client, raw, guildId) {
-    this.bitrate = raw["bitrate"] as int?;
-    this.userLimit = raw["user_limit"] as int?;
+    bitrate = raw["bitrate"] as int?;
+    userLimit = raw["user_limit"] as int?;
   }
 
   /// Connects client to channel
   void connect({bool selfMute = false, bool selfDeafen = false}) {
-    if (this.client is! NyxxWebsocket) {
+    if (client is! NyxxWebsocket) {
       throw UnsupportedError("Cannot connect with NyxxRest");
     }
 
     try {
-      final shard = (this.client as NyxxWebsocket).shardManager.shards.firstWhere((element) => element.guilds.contains(this.guild.id));
+      final shard = (client as NyxxWebsocket).shardManager.shards.firstWhere((element) => element.guilds.contains(guild.id));
 
-      shard.changeVoiceState(this.guild.id, this.id, selfMute: selfMute, selfDeafen: selfDeafen);
+      shard.changeVoiceState(guild.id, id, selfMute: selfMute, selfDeafen: selfDeafen);
     } on Error {
       throw InvalidShardException("Cannot find shard for this channel!");
     }
@@ -42,21 +51,21 @@ class VoiceGuildChannel extends GuildChannel {
 
   /// Disconnects use from channel.
   void disconnect() {
-    if (this.client is! NyxxWebsocket) {
+    if (client is! NyxxWebsocket) {
       throw UnsupportedError("Cannot connect with NyxxRest");
     }
 
     try {
-      final shard = (this.client as NyxxWebsocket).shardManager.shards.firstWhere((element) => element.guilds.contains(this.guild.id));
+      final shard = (client as NyxxWebsocket).shardManager.shards.firstWhere((element) => element.guilds.contains(guild.id));
 
-      shard.changeVoiceState(this.guild.id, null);
+      shard.changeVoiceState(guild.id, null);
     } on Error {
       throw InvalidShardException("Cannot find shard for this channel!");
     }
   }
 
   Future<IInvite> createActivityInvite(VoiceActivityType type, {int? maxAge, int? maxUses}) =>
-      this.client.httpEndpoints.createVoiceActivityInvite(Snowflake(type.value), this.id, maxAge: maxAge, maxUses: maxUses);
+      client.httpEndpoints.createVoiceActivityInvite(Snowflake(type.value), id, maxAge: maxAge, maxUses: maxUses);
 }
 
 abstract class IStageVoiceGuildChannel implements IVoiceGuildChannel {
@@ -77,18 +86,18 @@ class StageVoiceGuildChannel extends VoiceGuildChannel {
   StageVoiceGuildChannel(INyxx client, RawApiMap raw, [Snowflake? guildId]) : super(client, raw, guildId);
 
   /// Gets the stage instance associated with the Stage channel, if it exists.
-  Future<IStageChannelInstance> getStageChannelInstance() => this.client.httpEndpoints.getStageChannelInstance(this.id);
+  Future<IStageChannelInstance> getStageChannelInstance() => client.httpEndpoints.getStageChannelInstance(id);
 
   /// Deletes the Stage instance.
-  Future<void> deleteStageChannelInstance() => this.client.httpEndpoints.deleteStageChannelInstance(this.id);
+  Future<void> deleteStageChannelInstance() => client.httpEndpoints.deleteStageChannelInstance(id);
 
   /// Creates a new Stage instance associated to a Stage channel.
   Future<IStageChannelInstance> createStageChannelInstance(String topic, {StageChannelInstancePrivacyLevel? privacyLevel}) =>
-      this.client.httpEndpoints.createStageChannelInstance(this.id, topic, privacyLevel: privacyLevel);
+      client.httpEndpoints.createStageChannelInstance(id, topic, privacyLevel: privacyLevel);
 
   /// Updates fields of an existing Stage instance.
   Future<IStageChannelInstance> updateStageChannelInstance(String topic, {StageChannelInstancePrivacyLevel? privacyLevel}) =>
-      this.client.httpEndpoints.updateStageChannelInstance(this.id, topic, privacyLevel: privacyLevel);
+      client.httpEndpoints.updateStageChannelInstance(id, topic, privacyLevel: privacyLevel);
 }
 
 abstract class IStageChannelInstance implements SnowflakeEntity {
@@ -132,11 +141,11 @@ class StageChannelInstance extends SnowflakeEntity implements IStageChannelInsta
 
   /// Creates an instance of [StageChannelInstance]
   StageChannelInstance(INyxx client, RawApiMap raw) : super(Snowflake(raw["id"])) {
-    this.guild = GuildCacheable(client, Snowflake(raw["guild_id"]));
-    this.channel = ChannelCacheable(client, Snowflake(raw["channel_id"]));
-    this.topic = raw["topic"] as String;
-    this.privacyLevel = StageChannelInstancePrivacyLevel.from(raw["privacy_level"] as int);
-    this.disoverableDisabled = raw["discoverable_disabled"] as bool;
+    guild = GuildCacheable(client, Snowflake(raw["guild_id"]));
+    channel = ChannelCacheable(client, Snowflake(raw["channel_id"]));
+    topic = raw["topic"] as String;
+    privacyLevel = StageChannelInstancePrivacyLevel.from(raw["privacy_level"] as int);
+    disoverableDisabled = raw["discoverable_disabled"] as bool;
   }
 }
 
