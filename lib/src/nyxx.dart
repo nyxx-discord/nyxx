@@ -166,7 +166,8 @@ class NyxxRest extends INyxxRest {
   final DateTime startTime = DateTime.now();
 
   @override
-  late final Stream<IReadyEvent> onReady;
+  late final Stream<IReadyEvent> onReady = onReadyController.stream;
+  late final StreamController<IReadyEvent> onReadyController = StreamController.broadcast();
 
   @override
   Snowflake get appId => _appId;
@@ -240,7 +241,7 @@ class NyxxRest extends INyxxRest {
     final response = httpResponse as HttpResponseSuccess;
     app = ClientOAuth2Application(response.jsonBody as RawApiMap, this);
 
-    onReady = Stream.value(ReadyEvent(this));
+    onReadyController.add(ReadyEvent(this));
   }
 
   @override
