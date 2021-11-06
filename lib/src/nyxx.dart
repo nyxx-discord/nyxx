@@ -3,6 +3,7 @@ import 'dart:io';
 import 'dart:isolate';
 
 import 'package:logging/logging.dart';
+import 'package:nyxx/nyxx.dart';
 import 'package:nyxx/src/client_options.dart';
 import 'package:nyxx/src/core/channel/invite.dart';
 import 'package:nyxx/src/core/snowflake.dart';
@@ -14,6 +15,7 @@ import 'package:nyxx/src/core/guild/guild_preview.dart';
 import 'package:nyxx/src/core/guild/webhook.dart';
 import 'package:nyxx/src/core/message/sticker.dart';
 import 'package:nyxx/src/core/user/user.dart';
+import 'package:nyxx/src/events/ready_event.dart';
 import 'package:nyxx/src/internal/connection_manager.dart';
 import 'package:nyxx/src/internal/constants.dart';
 import 'package:nyxx/src/internal/event_controller.dart';
@@ -71,6 +73,9 @@ abstract class INyxx implements Disposable {
 
   /// Id of bots application
   Snowflake get appId;
+
+  /// Emitted when client is ready
+  Stream<IReadyEvent> get onReady;
 }
 
 abstract class INyxxRest implements INyxx {
@@ -161,6 +166,9 @@ class NyxxRest extends INyxxRest {
   final DateTime startTime = DateTime.now();
 
   @override
+  late final Stream<IReadyEvent> onReady;
+
+  @override
   Snowflake get appId => _appId;
 
   final Snowflake _appId;
@@ -231,6 +239,8 @@ class NyxxRest extends INyxxRest {
 
     final response = httpResponse as HttpResponseSuccess;
     app = ClientOAuth2Application(response.jsonBody as RawApiMap, this);
+
+    onReady = Stream.value(ReadyEvent(this));
   }
 
   @override
