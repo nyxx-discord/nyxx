@@ -56,21 +56,21 @@ class RestEventController extends IRestEventController {
 
   /// Creats an instance of [RestEventController]
   RestEventController() {
-    this.onHttpErrorController = StreamController.broadcast();
-    this.onHttpError = onHttpErrorController.stream;
+    onHttpErrorController = StreamController.broadcast();
+    onHttpError = onHttpErrorController.stream;
 
-    this.onHttpResponseController = StreamController.broadcast();
-    this.onHttpResponse = onHttpResponseController.stream;
+    onHttpResponseController = StreamController.broadcast();
+    onHttpResponse = onHttpResponseController.stream;
 
-    this.onRateLimitedController = StreamController.broadcast();
-    this.onRateLimited = onRateLimitedController.stream;
+    onRateLimitedController = StreamController.broadcast();
+    onRateLimited = onRateLimitedController.stream;
   }
 
   @override
   Future<void> dispose() async {
-    await this.onRateLimitedController.close();
-    await this.onHttpResponseController.close();
-    await this.onRateLimitedController.close();
+    await onRateLimitedController.close();
+    await onHttpResponseController.close();
+    await onRateLimitedController.close();
   }
 }
 
@@ -496,174 +496,174 @@ class WebsocketEventController extends RestEventController implements IWebsocket
 
   /// Makes a new `EventController`.
   WebsocketEventController() : super() {
-    this.onDisconnectController = StreamController.broadcast();
-    this.onDisconnect = this.onDisconnectController.stream;
+    onDisconnectController = StreamController.broadcast();
+    onDisconnect = onDisconnectController.stream;
 
-    this.onReadyController = StreamController.broadcast();
-    this.onReady = this.onReadyController.stream;
+    onReadyController = StreamController.broadcast();
+    onReady = onReadyController.stream;
 
-    this.onMessageReceivedController = StreamController.broadcast();
-    this.onMessageReceived = this.onMessageReceivedController.stream;
+    onMessageReceivedController = StreamController.broadcast();
+    onMessageReceived = onMessageReceivedController.stream;
 
-    this.onMessageUpdateController = StreamController.broadcast();
-    this.onMessageUpdate = this.onMessageUpdateController.stream;
+    onMessageUpdateController = StreamController.broadcast();
+    onMessageUpdate = onMessageUpdateController.stream;
 
-    this.onMessageDeleteController = StreamController.broadcast();
-    this.onMessageDelete = this.onMessageDeleteController.stream;
+    onMessageDeleteController = StreamController.broadcast();
+    onMessageDelete = onMessageDeleteController.stream;
 
-    this.onChannelCreateController = StreamController.broadcast();
-    this.onChannelCreate = this.onChannelCreateController.stream;
+    onChannelCreateController = StreamController.broadcast();
+    onChannelCreate = onChannelCreateController.stream;
 
-    this.onChannelUpdateController = StreamController.broadcast();
-    this.onChannelUpdate = this.onChannelUpdateController.stream;
+    onChannelUpdateController = StreamController.broadcast();
+    onChannelUpdate = onChannelUpdateController.stream;
 
-    this.onChannelDeleteController = StreamController.broadcast();
-    this.onChannelDelete = this.onChannelDeleteController.stream;
+    onChannelDeleteController = StreamController.broadcast();
+    onChannelDelete = onChannelDeleteController.stream;
 
-    this.onGuildBanAddController = StreamController.broadcast();
-    this.onGuildBanAdd = this.onGuildBanAddController.stream;
+    onGuildBanAddController = StreamController.broadcast();
+    onGuildBanAdd = onGuildBanAddController.stream;
 
-    this.onGuildBanRemoveController = StreamController.broadcast();
-    this.onGuildBanRemove = this.onGuildBanRemoveController.stream;
+    onGuildBanRemoveController = StreamController.broadcast();
+    onGuildBanRemove = onGuildBanRemoveController.stream;
 
-    this.onGuildCreateController = StreamController.broadcast();
-    this.onGuildCreate = this.onGuildCreateController.stream;
+    onGuildCreateController = StreamController.broadcast();
+    onGuildCreate = onGuildCreateController.stream;
 
-    this.onGuildUpdateController = StreamController.broadcast();
-    this.onGuildUpdate = this.onGuildUpdateController.stream;
+    onGuildUpdateController = StreamController.broadcast();
+    onGuildUpdate = onGuildUpdateController.stream;
 
-    this.onGuildDeleteController = StreamController.broadcast();
-    this.onGuildDelete = this.onGuildDeleteController.stream;
+    onGuildDeleteController = StreamController.broadcast();
+    onGuildDelete = onGuildDeleteController.stream;
 
-    this.onGuildMemberAddController = StreamController.broadcast();
-    this.onGuildMemberAdd = this.onGuildMemberAddController.stream;
+    onGuildMemberAddController = StreamController.broadcast();
+    onGuildMemberAdd = onGuildMemberAddController.stream;
 
-    this.onGuildMemberUpdateController = StreamController.broadcast();
-    this.onGuildMemberUpdate = this.onGuildMemberUpdateController.stream;
+    onGuildMemberUpdateController = StreamController.broadcast();
+    onGuildMemberUpdate = onGuildMemberUpdateController.stream;
 
-    this.onGuildMemberRemoveController = StreamController.broadcast();
-    this.onGuildMemberRemove = this.onGuildMemberRemoveController.stream;
+    onGuildMemberRemoveController = StreamController.broadcast();
+    onGuildMemberRemove = onGuildMemberRemoveController.stream;
 
-    this.onPresenceUpdateController = StreamController.broadcast();
-    this.onPresenceUpdate = this.onPresenceUpdateController.stream;
+    onPresenceUpdateController = StreamController.broadcast();
+    onPresenceUpdate = onPresenceUpdateController.stream;
 
-    this.onTypingController = StreamController.broadcast();
-    this.onTyping = this.onTypingController.stream;
+    onTypingController = StreamController.broadcast();
+    onTyping = onTypingController.stream;
 
-    this.onRoleCreateController = StreamController.broadcast();
-    this.onRoleCreate = this.onRoleCreateController.stream;
+    onRoleCreateController = StreamController.broadcast();
+    onRoleCreate = onRoleCreateController.stream;
 
-    this.onRoleUpdateController = StreamController.broadcast();
-    this.onRoleUpdate = this.onRoleUpdateController.stream;
+    onRoleUpdateController = StreamController.broadcast();
+    onRoleUpdate = onRoleUpdateController.stream;
 
-    this.onRoleDeleteController = StreamController.broadcast();
-    this.onRoleDelete = this.onRoleDeleteController.stream;
+    onRoleDeleteController = StreamController.broadcast();
+    onRoleDelete = onRoleDeleteController.stream;
 
-    this.onChannelPinsUpdateController = StreamController.broadcast();
-    this.onChannelPinsUpdate = this.onChannelPinsUpdateController.stream;
+    onChannelPinsUpdateController = StreamController.broadcast();
+    onChannelPinsUpdate = onChannelPinsUpdateController.stream;
 
-    this.onGuildEmojisUpdateController = StreamController.broadcast();
-    this.onGuildEmojisUpdate = this.onGuildEmojisUpdateController.stream;
+    onGuildEmojisUpdateController = StreamController.broadcast();
+    onGuildEmojisUpdate = onGuildEmojisUpdateController.stream;
 
-    this.onMessageDeleteBulkController = StreamController.broadcast();
-    this.onMessageDeleteBulk = this.onMessageDeleteBulkController.stream;
+    onMessageDeleteBulkController = StreamController.broadcast();
+    onMessageDeleteBulk = onMessageDeleteBulkController.stream;
 
-    this.onMessageReactionAddedController = StreamController.broadcast();
-    this.onMessageReactionAdded = this.onMessageReactionAddedController.stream;
+    onMessageReactionAddedController = StreamController.broadcast();
+    onMessageReactionAdded = onMessageReactionAddedController.stream;
 
-    this.onMessageReactionRemoveController = StreamController.broadcast();
-    this.onMessageReactionRemove = this.onMessageReactionRemoveController.stream;
+    onMessageReactionRemoveController = StreamController.broadcast();
+    onMessageReactionRemove = onMessageReactionRemoveController.stream;
 
-    this.onMessageReactionsRemovedController = StreamController.broadcast();
-    this.onMessageReactionsRemoved = this.onMessageReactionsRemovedController.stream;
+    onMessageReactionsRemovedController = StreamController.broadcast();
+    onMessageReactionsRemoved = onMessageReactionsRemovedController.stream;
 
-    this.onVoiceStateUpdateController = StreamController.broadcast();
-    this.onVoiceStateUpdate = this.onVoiceStateUpdateController.stream;
+    onVoiceStateUpdateController = StreamController.broadcast();
+    onVoiceStateUpdate = onVoiceStateUpdateController.stream;
 
-    this.onVoiceServerUpdateController = StreamController.broadcast();
-    this.onVoiceServerUpdate = this.onVoiceServerUpdateController.stream;
+    onVoiceServerUpdateController = StreamController.broadcast();
+    onVoiceServerUpdate = onVoiceServerUpdateController.stream;
 
-    this.onUserUpdateController = StreamController.broadcast();
-    this.onUserUpdate = this.onUserUpdateController.stream;
+    onUserUpdateController = StreamController.broadcast();
+    onUserUpdate = onUserUpdateController.stream;
 
-    this.onInviteCreatedController = StreamController.broadcast();
-    this.onInviteCreated = this.onInviteCreatedController.stream;
+    onInviteCreatedController = StreamController.broadcast();
+    onInviteCreated = onInviteCreatedController.stream;
 
-    this.onInviteDeleteController = StreamController.broadcast();
-    this.onInviteDeleted = this.onInviteDeleteController.stream;
+    onInviteDeleteController = StreamController.broadcast();
+    onInviteDeleted = onInviteDeleteController.stream;
 
-    this.onMessageReactionRemoveEmojiController = StreamController.broadcast();
-    this.onMessageReactionRemoveEmoji = this.onMessageReactionRemoveEmojiController.stream;
+    onMessageReactionRemoveEmojiController = StreamController.broadcast();
+    onMessageReactionRemoveEmoji = onMessageReactionRemoveEmojiController.stream;
 
-    this.onThreadCreatedController = StreamController.broadcast();
-    this.onThreadCreated = this.onThreadCreatedController.stream;
+    onThreadCreatedController = StreamController.broadcast();
+    onThreadCreated = onThreadCreatedController.stream;
 
-    this.onThreadMembersUpdateController = StreamController.broadcast();
-    this.onThreadMembersUpdate = this.onThreadMembersUpdateController.stream;
+    onThreadMembersUpdateController = StreamController.broadcast();
+    onThreadMembersUpdate = onThreadMembersUpdateController.stream;
 
-    this.onThreadDeleteController = StreamController.broadcast();
-    this.onThreadDelete = this.onThreadDeleteController.stream;
+    onThreadDeleteController = StreamController.broadcast();
+    onThreadDelete = onThreadDeleteController.stream;
 
-    this.onStageInstanceCreateController = StreamController.broadcast();
-    this.onStageInstanceCreate = this.onStageInstanceCreateController.stream;
+    onStageInstanceCreateController = StreamController.broadcast();
+    onStageInstanceCreate = onStageInstanceCreateController.stream;
 
-    this.onStageInstanceUpdateController = StreamController.broadcast();
-    this.onStageInstanceUpdate = this.onStageInstanceUpdateController.stream;
+    onStageInstanceUpdateController = StreamController.broadcast();
+    onStageInstanceUpdate = onStageInstanceUpdateController.stream;
 
-    this.onStageInstanceDeleteController = StreamController.broadcast();
-    this.onStageInstanceDelete = this.onStageInstanceDeleteController.stream;
+    onStageInstanceDeleteController = StreamController.broadcast();
+    onStageInstanceDelete = onStageInstanceDeleteController.stream;
 
-    this.onGuildStickersUpdateController = StreamController.broadcast();
-    this.onGuildStickersUpdate = this.onGuildStickersUpdateController.stream;
+    onGuildStickersUpdateController = StreamController.broadcast();
+    onGuildStickersUpdate = onGuildStickersUpdateController.stream;
   }
 
   @override
   Future<void> dispose() async {
     await super.dispose();
 
-    await this.onDisconnectController.close();
-    await this.onGuildUpdateController.close();
-    await this.onReadyController.close();
-    await this.onMessageReceivedController.close();
-    await this.onMessageUpdateController.close();
-    await this.onMessageDeleteController.close();
-    await this.onChannelCreateController.close();
-    await this.onChannelUpdateController.close();
-    await this.onChannelDeleteController.close();
-    await this.onGuildBanAddController.close();
-    await this.onGuildBanRemoveController.close();
-    await this.onGuildCreateController.close();
-    await this.onGuildUpdateController.close();
-    await this.onGuildDeleteController.close();
-    await this.onGuildMemberAddController.close();
-    await this.onGuildMemberUpdateController.close();
-    await this.onGuildMemberRemoveController.close();
-    await this.onPresenceUpdateController.close();
-    await this.onTypingController.close();
-    await this.onRoleCreateController.close();
-    await this.onRoleUpdateController.close();
-    await this.onRoleDeleteController.close();
+    await onDisconnectController.close();
+    await onGuildUpdateController.close();
+    await onReadyController.close();
+    await onMessageReceivedController.close();
+    await onMessageUpdateController.close();
+    await onMessageDeleteController.close();
+    await onChannelCreateController.close();
+    await onChannelUpdateController.close();
+    await onChannelDeleteController.close();
+    await onGuildBanAddController.close();
+    await onGuildBanRemoveController.close();
+    await onGuildCreateController.close();
+    await onGuildUpdateController.close();
+    await onGuildDeleteController.close();
+    await onGuildMemberAddController.close();
+    await onGuildMemberUpdateController.close();
+    await onGuildMemberRemoveController.close();
+    await onPresenceUpdateController.close();
+    await onTypingController.close();
+    await onRoleCreateController.close();
+    await onRoleUpdateController.close();
+    await onRoleDeleteController.close();
 
-    await this.onChannelPinsUpdateController.close();
-    await this.onGuildEmojisUpdateController.close();
+    await onChannelPinsUpdateController.close();
+    await onGuildEmojisUpdateController.close();
 
-    await this.onMessageDeleteBulkController.close();
-    await this.onMessageReactionAddedController.close();
-    await this.onMessageReactionRemoveController.close();
-    await this.onMessageReactionsRemovedController.close();
-    await this.onVoiceStateUpdateController.close();
-    await this.onVoiceServerUpdateController.close();
-    await this.onMessageReactionRemoveEmojiController.close();
+    await onMessageDeleteBulkController.close();
+    await onMessageReactionAddedController.close();
+    await onMessageReactionRemoveController.close();
+    await onMessageReactionsRemovedController.close();
+    await onVoiceStateUpdateController.close();
+    await onVoiceServerUpdateController.close();
+    await onMessageReactionRemoveEmojiController.close();
 
-    await this.onInviteCreatedController.close();
-    await this.onInviteDeleteController.close();
+    await onInviteCreatedController.close();
+    await onInviteDeleteController.close();
 
-    await this.onUserUpdateController.close();
+    await onUserUpdateController.close();
 
-    await this.onThreadCreatedController.close();
-    await this.onThreadMembersUpdateController.close();
-    await this.onThreadDeleteController.close();
+    await onThreadCreatedController.close();
+    await onThreadMembersUpdateController.close();
+    await onThreadDeleteController.close();
 
-    await this.onGuildStickersUpdateController.close();
+    await onGuildStickersUpdateController.close();
   }
 }

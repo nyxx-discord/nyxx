@@ -64,36 +64,36 @@ class Invite implements IInvite {
 
   /// Creates an instance of [Invite]
   Invite(RawApiMap raw, this.client) {
-    this.code = raw["code"] as String;
+    code = raw["code"] as String;
 
     if (raw["guild"] != null) {
-      this.guild = GuildCacheable(client, Snowflake(raw["guild"]["id"]));
+      guild = GuildCacheable(client, Snowflake(raw["guild"]["id"]));
     } else {
-      this.guild = null;
+      guild = null;
     }
 
     if (raw["channel"] != null) {
-      this.channel = ChannelCacheable(client, Snowflake(raw["channel"]["id"]));
+      channel = ChannelCacheable(client, Snowflake(raw["channel"]["id"]));
     } else {
-      this.channel = null;
+      channel = null;
     }
 
     if (raw["inviter"] != null) {
-      this.inviter = User(client, raw["inviter"] as RawApiMap);
+      inviter = User(client, raw["inviter"] as RawApiMap);
     } else {
-      this.inviter = null;
+      inviter = null;
     }
 
     if (raw["target_user"] != null) {
-      this.targetUser = UserCacheable(client, Snowflake(raw["target_user"]["id"]));
+      targetUser = UserCacheable(client, Snowflake(raw["target_user"]["id"]));
     } else {
-      this.targetUser = null;
+      targetUser = null;
     }
   }
 
   /// Deletes this [Invite].
   @override
-  Future<void> delete({String? auditReason}) async => client.httpEndpoints.deleteInvite(this.code, auditReason: auditReason);
+  Future<void> delete({String? auditReason}) async => client.httpEndpoints.deleteInvite(code, auditReason: auditReason);
 }
 
 abstract class IInviteWithMeta implements IInvite {
@@ -143,7 +143,7 @@ class InviteWithMeta extends Invite implements IInviteWithMeta {
 
   /// Date when invite will expire
   @override
-  DateTime get expiryDate => this.createdAt.add(Duration(seconds: maxAge));
+  DateTime get expiryDate => createdAt.add(Duration(seconds: maxAge));
 
   /// True if Invite is valid and can be used
   @override
@@ -151,11 +151,11 @@ class InviteWithMeta extends Invite implements IInviteWithMeta {
     var ageValidity = true;
     var expiryValidity = true;
 
-    if (this.maxUses > 0) {
-      ageValidity = this.uses <= this.maxUses;
+    if (maxUses > 0) {
+      ageValidity = uses <= maxUses;
     }
 
-    if (this.maxAge > 0) {
+    if (maxAge > 0) {
       expiryValidity = expiryDate.isAfter(DateTime.now());
     }
 
@@ -164,10 +164,10 @@ class InviteWithMeta extends Invite implements IInviteWithMeta {
 
   /// Creates an instance of [InviteWithMeta]
   InviteWithMeta(RawApiMap raw, INyxx client) : super(raw, client) {
-    this.createdAt = DateTime.parse(raw["created_at"] as String);
-    this.temporary = raw["temporary"] as bool;
-    this.uses = raw["uses"] as int;
-    this.maxUses = raw["max_uses"] as int;
-    this.maxAge = raw["max_age"] as int;
+    createdAt = DateTime.parse(raw["created_at"] as String);
+    temporary = raw["temporary"] as bool;
+    uses = raw["uses"] as int;
+    maxUses = raw["max_uses"] as int;
+    maxAge = raw["max_age"] as int;
   }
 }
