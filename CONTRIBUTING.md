@@ -2,6 +2,13 @@
 Nyxx is free and open-source project, and all contributions are welcome and highly appreciated.
 However, please conform to the following guidelines when possible.
 
+## Branches
+
+Repo contains few main protected branches:
+- `main` - for current stable version. Used for releasing new versions
+- `dev` - for changes for next minor or patch version release
+- `next` - for changes for next major version release
+
 ## Development cycle
 
 All changes should be discussed beforehand either in issue or pull request on github 
@@ -19,4 +26,4 @@ If adding new functionality or modifying existing, documentation should be added
 We attempt to conform [Effective Dart Coding Style](https://dart.dev/guides/language/effective-dart/style) where possible.
 However, code style rules are not enforcement and code should be readable and easy to maintain.
 
-**One exception to rules above is line limit - we use 120 character line limit instead of 80 chars.**
+**One exception to rules above is line limit - we use 160 character line limit instead of 80 chars.**
