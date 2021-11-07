@@ -2,7 +2,7 @@ import "package:nyxx/nyxx.dart";
 
 DiscordColor getColorForUserFromMessage(IMessage message) {
   if (message.guild != null) {
-    return message.member!.highestRole.color;
+    return PermissionsUtils.getMemberHighestRole(message.member!).color;
   }
 
   return DiscordColor.black;

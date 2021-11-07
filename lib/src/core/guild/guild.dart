@@ -512,9 +512,9 @@ class Guild extends SnowflakeEntity implements IGuild {
       currentUserPermissions = null;
     }
 
-    if (raw["afk_channel_id"] != null) {
-      afkChannel = ChannelCacheable(client, Snowflake(raw["afk_channel_id"]));
-    }
+    afkChannel = raw["afk_channel_id"] != null
+      ? ChannelCacheable(client, Snowflake(raw["afk_channel_id"]))
+      : null;
 
     members = SnowflakeCache();
     voiceStates = SnowflakeCache();

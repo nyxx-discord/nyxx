@@ -463,7 +463,7 @@ class HttpEndpoints implements IHttpEndpoints {
 
   @override
   Future<IGuild> fetchGuild(Snowflake guildId) async {
-    final response = await httpHandler.execute(BasicRequest("/guilds/$guildId"));
+    final response = await httpHandler.execute(BasicRequest("/guilds/${guildId.toString()}"));
 
     if (response is HttpResponseSuccess) {
       return Guild(client, response.jsonBody as RawApiMap);
@@ -775,14 +775,14 @@ class HttpEndpoints implements IHttpEndpoints {
 
   @override
   Stream<IRole> fetchGuildRoles(Snowflake guildId) async* {
-    final response = await httpHandler.execute(BasicRequest("/guilds/$guildId/roles"));
+    final response = await httpHandler.execute(BasicRequest("/guilds/${guildId.toString()}/roles"));
 
     if (response is HttpResponseError) {
       yield* Stream.error(response);
       return;
     }
 
-    for (final rawRole in (response as HttpResponseSuccess).jsonBody.values) {
+    for (final rawRole in (response as HttpResponseSuccess).jsonBody) {
       yield Role(client, rawRole as RawApiMap, guildId);
     }
   }

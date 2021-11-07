@@ -69,12 +69,19 @@ class RoleCacheable extends Cacheable<Snowflake, IRole> {
 
   // We cant download single role
   Future<IRole> _fetchGuildRole() async {
-    final roles = await client.httpEndpoints.fetchGuildRoles(id).toList();
+    final roles = await client.httpEndpoints.fetchGuildRoles(guild.id).toList();
+
+    final guildCacheable = client.guilds[guild.id];
+    if (guildCacheable != null) {
+      guildCacheable.roles.clear();
+
+      guildCacheable.roles.addEntries(roles.map((e) => MapEntry(e.id, e)));
+    }
 
     try {
       return roles.firstWhere((element) => element.id == id);
-    } on Exception {
-      throw ArgumentError("Cannot fetch role with id `${id}` in guild with id `${guild.id}`");
+    } on Error {
+      throw ArgumentError("Cannot fetch role with id `$id` in guild with id `${guild.id}`");
     }
   }
 }

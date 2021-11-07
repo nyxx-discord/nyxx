@@ -5,6 +5,28 @@ import 'package:nyxx/src/utils/utils.dart';
 
 /// Util function for manipulating permissions
 class PermissionsUtils {
+  static IRole getMemberHighestRole(IMember member) {
+    var currentRole = member.roles.first.getFromCache();
+
+    if (currentRole == null) {
+      return member.guild.getFromCache()!.everyoneRole;
+    }
+
+    for (final roleCacheable in member.roles.skip(1)) {
+      final nextRole = roleCacheable.getFromCache();
+
+      if (nextRole == null) {
+        continue;
+      }
+
+      if (nextRole.position > currentRole!.position) {
+        currentRole = nextRole;
+      }
+    }
+
+    return currentRole!;
+  }
+
   /// Allows to check if [issueMember] or [issueRole] can interact with [targetMember] or [targetRole].
   static bool canInteract({IMember? issueMember, IRole? issueRole, IMember? targetMember, IRole? targetRole}) {
     bool canInter(IRole role1, IRole role2) => role1.position > role2.position;
@@ -14,7 +36,7 @@ class PermissionsUtils {
         return false;
       }
 
-      return canInter(issueMember.highestRole, targetMember.highestRole);
+      return canInter(PermissionsUtils.getMemberHighestRole(issueMember), PermissionsUtils.getMemberHighestRole(targetMember));
     }
 
     if (issueMember != null && targetRole != null) {
@@ -22,7 +44,7 @@ class PermissionsUtils {
         return false;
       }
 
-      return canInter(issueMember.highestRole, targetRole);
+      return canInter(PermissionsUtils.getMemberHighestRole(issueMember), targetRole);
     }
 
     if (issueRole != null && targetRole != null) {

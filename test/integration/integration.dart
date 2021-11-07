@@ -18,8 +18,7 @@ main() async {
   await bot.eventsWs.onReady.first.then((value) async {
     channel = await bot.fetchChannel<ITextGuildChannel>(testChannelSnowflake);
 
-    final env = Platform.environment;
-    await channel.sendMessage(MessageBuilder.content("Running `nyxx` job `#${env['GITHUB_RUN_NUMBER']}` started by `${env['GITHUB_ACTOR']}` on `${env['GITHUB_REF']}` on commit `${env['GITHUB_SHA']}`"));
+    await channel.sendMessage(MessageBuilder.content(getChannelLogMessage()));
   });
 
   test("basic message functionality", () async {
@@ -67,7 +66,33 @@ main() async {
     expect(userBot.mention, "<@!${testUserBotSnowflake.toString()}>");
     expect(userBot.tag, equals("Running on Dart#1759"));
     expect(userBot.avatarURL(), equals('https://cdn.discordapp.com/avatars/476603965396746242/be6107505d7b9d15292da4e54d88836e.webp?size=128'));
-
-    // final userHuman = await bot.fetchUser(testUserHumanSnowflake);
   });
+
+  test('member and guild tests', () async {
+    final guild = await bot.fetchGuild(testGuildSnowflake);
+
+    expect(guild.afkChannel, isNull);
+    expect(guild.name, 'nyxx');
+    expect(guild.features, contains(GuildFeature.verified));
+
+    final memberBot = await guild.fetchMember(testUserBotSnowflake);
+
+    expect(memberBot.guild.id, equals(guild.id));
+    expect(memberBot.voiceState, isNull);
+    expect(memberBot.mention, "<@${memberBot.id.toString()}>");
+    expect(memberBot.avatarURL(), isNull);
+
+    final effectivePermissions = await memberBot.effectivePermissions;
+    expect(effectivePermissions.sendMessages, isTrue);
+  });
+}
+
+String getChannelLogMessage() {
+  final env = Platform.environment;
+
+  if (env['GITHUB_RUN_NUMBER'] == null) {
+    return "Testing new local build. Nothing to worry about 😀";
+  }
+
+  return "Running `nyxx` job `#${env['GITHUB_RUN_NUMBER']}` started by `${env['GITHUB_ACTOR']}` on `${env['GITHUB_REF']}` on commit `${env['GITHUB_SHA']}`";
 }

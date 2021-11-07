@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:nyxx/src/nyxx.dart';
 import 'package:nyxx/src/core/snowflake.dart';
 import 'package:nyxx/src/core/snowflake_entity.dart';
@@ -52,11 +54,6 @@ abstract class IMember implements SnowflakeEntity, Mentionable {
   /// The channel's mention string.
   @override
   String get mention;
-
-  // TODO: is everything okay?
-  /// Returns highest role of member.
-  /// Uses ! on nullable properties and will throw if anything is missing from cache
-  IRole get highestRole;
 
   /// Returns total permissions of user.
   Future<IPermissions> get effectivePermissions;
@@ -139,27 +136,12 @@ class Member extends SnowflakeEntity implements IMember {
   @override
   String get mention => "<@$id>";
 
-  // TODO: is everything okay?
-  /// Returns highest role of member.
-  /// Uses ! on nullable properties and will throw if anything is missing from cache
-  @override
-  IRole get highestRole => roles.reduce((value, element) {
-        final valueInstance = value.getFromCache();
-        final elementInstance = element.getFromCache();
-
-        if (valueInstance!.position > elementInstance!.position) {
-          return value;
-        }
-
-        return element;
-      }).getFromCache()!;
-
   /// Returns total permissions of user.
   @override
   Future<IPermissions> get effectivePermissions async {
     final guildInstance = await guild.getOrDownload();
     final owner = await guildInstance.owner.getOrDownload();
-    if (this == owner) {
+    if (id == owner.id) {
       return Permissions.all();
     }
 
