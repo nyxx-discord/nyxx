@@ -5,6 +5,8 @@ import 'package:nyxx/nyxx.dart';
 import 'package:test/expect.dart';
 import 'package:test/scaffolding.dart';
 
+import 'package:nyxx/src/internal/event_controller.dart';
+
 final testChannelSnowflake = Snowflake(846139169818017812);
 final testGuildSnowflake = Snowflake(846136758470443069);
 final testUserBotSnowflake = Snowflake(476603965396746242);
@@ -19,6 +21,39 @@ main() async {
     channel = await bot.fetchChannel<ITextGuildChannel>(testChannelSnowflake);
 
     await channel.sendMessage(MessageBuilder.content(getChannelLogMessage()));
+  });
+
+  test('base nyxx', () {
+    expect(bot.appId, equals(Snowflake(846158316467650561)));
+    expect(bot.ready, isTrue);
+    expect(bot.startTime.isBefore(DateTime.now()), isTrue);
+    expect(bot.inviteLink, contains('846158316467650561'));
+    expect(bot.version, isA<String>());
+    expect(bot.shards, equals(1));
+
+    expect(bot.eventsWs, isA<WebsocketEventController>());
+    expect(bot.eventsRest, isA<RestEventController>());
+    expect(bot.shardManager, isA<IShardManager>());
+  });
+
+  test('get invite', () async {
+    final invite = await bot.getInvite('nyxx');
+
+    expect(invite.code, equals('nyxx'));
+    expect(invite.guild?.id, isNotNull);
+    expect(invite.guild?.id, equals(Snowflake(846136758470443069)));
+    expect(invite.url, equals('https://discord.gg/nyxx'));
+  });
+
+  test('fetch guild preview', () async {
+    final guildPreview = await bot.fetchGuildPreview(testGuildSnowflake);
+
+    expect(guildPreview.id, equals(testGuildSnowflake));
+    expect(guildPreview.name, equals('nyxx'));
+
+    expect(guildPreview.discoveryURL(), isNull);
+    expect(guildPreview.splashURL(), isNull);
+    expect(guildPreview.iconURL(), isNull);
   });
 
   test("basic message functionality", () async {
