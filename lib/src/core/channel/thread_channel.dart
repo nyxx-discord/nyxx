@@ -182,7 +182,7 @@ class ThreadChannel extends MinimalGuildChannel implements IThreadChannel {
     final message = await client.httpEndpoints.fetchMessage(id, messageId);
 
     if (client.cacheOptions.messageCachePolicyLocation.http && client.cacheOptions.messageCachePolicy.canCache(message)) {
-      messageCache.put(message);
+      messageCache[messageId] = message;
     }
 
     return message;

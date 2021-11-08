@@ -10,13 +10,13 @@ class MessageCache extends SnowflakeCache<IMessage> {
   /// New entry will replace entries that are the longest in cache
   MessageCache(this.cacheSize) : super();
 
-  IMessage put(IMessage message) {
-    if (length <= cacheSize) {
-      remove(keys.first);
-      this[message.id] = message;
-    }
+  @override
+  void operator []=(Snowflake key, IMessage value) {
+      if (length <= cacheSize) {
+        remove(keys.first);
 
-    return message;
+        _map[key] = value;
+      }
   }
 }
 
