@@ -12,11 +12,11 @@ class MessageCache extends SnowflakeCache<IMessage> {
 
   @override
   void operator []=(Snowflake key, IMessage value) {
-      if (length >= cacheSize) {
-        remove(keys.first);
-      }
+    if (length >= cacheSize) {
+      remove(keys.first);
+    }
 
-      _map[key] = value;
+    _map[key] = value;
   }
 }
 
