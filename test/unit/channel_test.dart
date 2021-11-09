@@ -2,7 +2,7 @@ import 'package:nyxx/nyxx.dart';
 import 'package:test/scaffolding.dart';
 import 'package:test/test.dart';
 
-import '../mocks/channel.mocks.dart';
+import '../mocks/channel.mock.dart';
 
 void main() {
   group("Channel:Text", () {

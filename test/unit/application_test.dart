@@ -4,7 +4,7 @@ import 'package:nyxx/src/core/application/client_oauth2_application.dart';
 import 'package:test/expect.dart';
 import 'package:test/scaffolding.dart';
 
-import '../mocks/nyyx_rest.mocks.dart';
+import '../mocks/nyxx_rest.mock.dart';
 
 const exampleAppTeamPayload = <String, dynamic>{
   "id": 567,

@@ -150,7 +150,7 @@ class ThreadChannel extends MinimalGuildChannel implements IThreadChannel {
   }
 
   @override
-  late final MessageCache messageCache = MessageCache(client.options.messageCacheSize);
+  late final SnowflakeCache<IMessage> messageCache = SnowflakeCache<IMessage>(client.options.messageCacheSize);
 
   /// Creates an instance of [ThreadChannel]
   ThreadChannel(INyxx client, RawApiMap raw, [Snowflake? guildId]) : super(client, raw) {

@@ -56,14 +56,14 @@ abstract class INyxx implements Disposable {
   String get token;
 
   /// All of the guilds the bot is in. Can be empty or can miss guilds on (READY_EVENT).
-  Map<Snowflake, IGuild> get guilds;
+  SnowflakeCache<IGuild> get guilds;
 
   /// All of the channels the bot can see.
-  Map<Snowflake, IChannel> get channels;
+  SnowflakeCache<IChannel> get channels;
 
   /// All of the users the bot can see. Does not have offline users
   /// without `forceFetchUsers` enabled.
-  Map<Snowflake, IUser> get users;
+  SnowflakeCache<IUser> get users;
 
   /// Datetime when bot has started
   DateTime get startTime;
@@ -135,16 +135,16 @@ class NyxxRest extends INyxxRest {
 
   /// All of the guilds the bot is in. Can be empty or can miss guilds on (READY_EVENT).
   @override
-  late final Map<Snowflake, Guild> guilds;
+  late final SnowflakeCache<Guild> guilds;
 
   /// All of the channels the bot can see.
   @override
-  late final Map<Snowflake, IChannel> channels;
+  late final SnowflakeCache<IChannel> channels;
 
   /// All of the users the bot can see. Does not have offline users
   /// without `forceFetchUsers` enabled.
   @override
-  late final Map<Snowflake, IUser> users;
+  late final SnowflakeCache<IUser> users;
 
   /// True if client is ready.
   @override
@@ -218,9 +218,9 @@ class NyxxRest extends INyxxRest {
     this.options = options ?? ClientOptions();
     this.cacheOptions = cacheOptions ?? CacheOptions();
 
-    guilds = {};
-    channels = {};
-    users = {};
+    guilds = SnowflakeCache();
+    channels = SnowflakeCache();
+    users = SnowflakeCache();
 
     connect();
   }

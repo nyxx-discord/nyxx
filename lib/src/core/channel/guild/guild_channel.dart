@@ -16,7 +16,7 @@ import 'package:nyxx/src/utils/builders/permissions_builder.dart';
 import 'package:nyxx/src/utils/permissions.dart';
 import 'package:nyxx/src/utils/utils.dart';
 
-abstract class IGuildChannel implements MinimalGuildChannel {
+abstract class IGuildChannel implements IMinimalGuildChannel {
   /// Relative position of channel in context of channel list
   int get position;
 

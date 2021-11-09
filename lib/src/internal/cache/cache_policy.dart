@@ -116,20 +116,20 @@ class ChannelCachePolicy extends CachePolicy<IChannel> {
 
 class MessageCachePolicy extends CachePolicy<IMessage> {
   /// Do not any messages
-  static final CachePolicy<IMessage> none = MessageCachePolicy((channel) => false);
+  static final CachePolicy<IMessage> none = MessageCachePolicy((message) => false);
 
   /// Cache all messages
-  static final CachePolicy<IMessage> all = MessageCachePolicy((channel) => true);
+  static final CachePolicy<IMessage> all = MessageCachePolicy((message) => true);
 
   /// Cache only guild messages
-  static final CachePolicy<IMessage> guildMessages = MessageCachePolicy((channel) => channel is MinimalGuildChannel);
+  static final CachePolicy<IMessage> guildMessages = MessageCachePolicy((message) => message.guild != null || message.member != null);
 
   /// Cache only dm messages
-  static final CachePolicy<IMessage> dmMessages = MessageCachePolicy((channel) => channel is! MinimalGuildChannel);
+  static final CachePolicy<IMessage> dmMessages = MessageCachePolicy((message) => message.guild == null && message.member == null);
 
   /// Default policy is [all]
   static final CachePolicy<IMessage> def = all;
 
-  /// Constructor
+  /// Constructor0
   MessageCachePolicy(CachePolicyPredicate<IMessage> predicate) : super(predicate);
 }

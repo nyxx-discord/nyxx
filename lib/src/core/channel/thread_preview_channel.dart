@@ -96,69 +96,69 @@ class ThreadPreviewChannel extends Channel implements IThreadPreviewChannel {
   @override
   late final ThreadArchiveTime archivedAfter;
 
+  @override
+  late final SnowflakeCache<IMessage> messageCache = SnowflakeCache<IMessage>(0);
+
   /// Creates an instance of [ThreadPreviewChannel]
   ThreadPreviewChannel(INyxx client, RawApiMap raw) : super(client, raw) {
-    this.name = raw["name"] as String;
-    this.messageCount = raw["message_count"] as int;
-    this.memberCount = raw["member_count"] as int;
-    this.parentChannel = CacheableTextChannel(client, Snowflake(raw["parent_id"]));
-    this.guild = GuildCacheable(client, Snowflake(raw["guild_id"]));
-    this.owner = MemberCacheable(client, Snowflake(raw["owner_id"]), this.guild);
-    this.memberPreview = [];
+    name = raw["name"] as String;
+    messageCount = raw["message_count"] as int;
+    memberCount = raw["member_count"] as int;
+    parentChannel = CacheableTextChannel(client, Snowflake(raw["parent_id"]));
+    guild = GuildCacheable(client, Snowflake(raw["guild_id"]));
+    owner = MemberCacheable(client, Snowflake(raw["owner_id"]), guild);
+    memberPreview = [];
     if (raw["member_ids_preview"] != null) {
       for (final id in raw["member_ids_preview"] as List<String>) {
-        this.memberPreview.add(MemberCacheable(client, Snowflake(id), this.guild));
+        memberPreview.add(MemberCacheable(client, Snowflake(id), guild));
       }
     }
     final metadata = raw["thread_metadata"] as RawApiMap;
 
-    this.archived = metadata["archived"] as bool;
-    this.archivedTime = DateTime.parse(metadata["archive_timestamp"] as String);
-    this.archivedAfter = ThreadArchiveTime(metadata["auto_archive_duration"] as int);
+    archived = metadata["archived"] as bool;
+    archivedTime = DateTime.parse(metadata["archive_timestamp"] as String);
+    archivedAfter = ThreadArchiveTime(metadata["auto_archive_duration"] as int);
   }
 
   /// Get the actual thread channel from the preview
   @override
-  ChannelCacheable<IThreadChannel> getThreadChannel() => ChannelCacheable(client, this.id);
+  ChannelCacheable<IThreadChannel> getThreadChannel() => ChannelCacheable(client, id);
 
   @override
-  Future<void> bulkRemoveMessages(Iterable<SnowflakeEntity> messages) => client.httpEndpoints.bulkRemoveMessages(this.id, messages);
+  Future<void> bulkRemoveMessages(Iterable<SnowflakeEntity> messages) => client.httpEndpoints.bulkRemoveMessages(id, messages);
 
   @override
   Stream<IMessage> downloadMessages({int limit = 50, Snowflake? after, Snowflake? around, Snowflake? before}) =>
-      client.httpEndpoints.downloadMessages(this.id, limit: limit, after: after, around: around, before: before);
+      client.httpEndpoints.downloadMessages(id, limit: limit, after: after, around: around, before: before);
 
   @override
-  Future<IMessage> fetchMessage(Snowflake messageId) => client.httpEndpoints.fetchMessage(this.id, messageId);
+  Future<IMessage> fetchMessage(Snowflake messageId) => client.httpEndpoints.fetchMessage(id, messageId);
 
   @override
-  IMessage? getMessage(Snowflake id) => this.messageCache[id];
+  IMessage? getMessage(Snowflake id) => messageCache[id];
 
   @override
-  Future<IMessage> sendMessage(MessageBuilder builder) => client.httpEndpoints.sendMessage(this.id, builder);
+  Future<IMessage> sendMessage(MessageBuilder builder) => client.httpEndpoints.sendMessage(id, builder);
 
   @override
   Future<int> get fileUploadLimit async {
-    final guildInstance = await this.guild.getOrDownload();
+    final guildInstance = await guild.getOrDownload();
 
     return guildInstance.fileUploadLimit;
   }
 
   @override
-  late final MessageCache messageCache = MessageCache(0);
-
-  @override
-  Future<void> startTyping() async => client.httpEndpoints.triggerTyping(this.id);
+  Future<void> startTyping() async => client.httpEndpoints.triggerTyping(id);
 
   @override
   void startTypingLoop() {
     startTyping();
-    this._typing = Timer.periodic(const Duration(seconds: 7), (Timer t) => startTyping());
+    _typing = Timer.periodic(const Duration(seconds: 7), (Timer t) => startTyping());
   }
 
   @override
-  void stopTypingLoop() => this._typing?.cancel();
+  void stopTypingLoop() => _typing?.cancel();
 
   @override
-  Stream<IMessage> fetchPinnedMessages() => client.httpEndpoints.fetchPinnedMessages(this.id);
+  Stream<IMessage> fetchPinnedMessages() => client.httpEndpoints.fetchPinnedMessages(id);
 }

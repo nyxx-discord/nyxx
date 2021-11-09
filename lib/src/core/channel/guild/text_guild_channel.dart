@@ -76,7 +76,7 @@ class TextGuildChannel extends GuildChannel implements ITextGuildChannel {
       "/${id.toString()}";
 
   @override
-  late final MessageCache messageCache = MessageCache(client.options.messageCacheSize);
+  late final SnowflakeCache<IMessage> messageCache = SnowflakeCache(client.options.messageCacheSize);
 
   @override
   Future<int> get fileUploadLimit async {

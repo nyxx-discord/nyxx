@@ -2,7 +2,7 @@ import 'package:nyxx/nyxx.dart';
 import 'package:test/expect.dart';
 import 'package:test/scaffolding.dart';
 
-import '../mocks/enum.mocks.dart';
+import '../mocks/enum.mock.dart';
 
 void main() {
   group("Utils", () {
