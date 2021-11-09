@@ -11,11 +11,11 @@ class SnowflakeCache<V> extends InMemoryCache<Snowflake, V> {
 
   @override
   void operator []=(Snowflake key, V value) {
-    if (cacheSize <= 0) {
+    if (cacheSize == 0) {
       return;
     }
 
-    if (length >= cacheSize) {
+    if (cacheSize > 0 && length >= cacheSize) {
       remove(keys.first);
     }
 
