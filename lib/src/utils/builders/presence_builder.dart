@@ -53,14 +53,14 @@ class PresenceBuilder extends Builder {
 
   /// Default builder constructor.
   factory PresenceBuilder.of({UserStatus? status, ActivityBuilder? activity}) => PresenceBuilder()
-      ..status = status
-      ..activity = activity;
+    ..status = status
+    ..activity = activity;
 
   /// Sets client status to idle. [since] indicates how long client is afking
   factory PresenceBuilder.idle({required DateTime since}) => PresenceBuilder()
-      ..since = since
-      ..afk = true
-      ..status = UserStatus.idle;
+    ..since = since
+    ..afk = true
+    ..status = UserStatus.idle;
 
   @override
   RawApiMap build() => <String, dynamic>{
