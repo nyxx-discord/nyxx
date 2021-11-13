@@ -123,6 +123,9 @@ abstract class IPermissions implements Convertable<PermissionsBuilder> {
 
   /// Allows for launching activities in a voice channel
   bool get startEmbeddedActivities;
+
+  /// Returns true if this permissions has [permission]
+  bool hasPermission(int permission);
 }
 
 /// Permissions for a role or channel override.
@@ -300,6 +303,7 @@ class Permissions implements IPermissions {
   factory Permissions.fromOverwrite(int permissions, int allow, int deny) => Permissions(PermissionsUtils.apply(permissions, allow, deny));
 
   /// Returns true if this permissions has [permission]
+  @override
   bool hasPermission(int permission) => PermissionsUtils.isApplied(raw, permission);
 
   @override

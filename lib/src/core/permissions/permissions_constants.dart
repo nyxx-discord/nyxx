@@ -118,5 +118,5 @@ class PermissionsConstants {
   static const int startEmbeddedActivities = 1 << 39;
 
   /// All of the permissions
-  static int get allPermissions => int.parse("1".padRight(37, "1"), radix: 2);
+  static int get allPermissions => 1099511627775;
 }
