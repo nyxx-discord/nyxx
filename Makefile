@@ -11,6 +11,9 @@ format-check: format analyze
 .PHONY: generate-coverage
 generate-coverage: integration-tests unit-tests coverage-format coverage-gen-html ## Run all test and generate html code coverage
 
+.PHONY: generate-coverage-unit
+generate-coverage-unit: unit-tests coverage-format coverage-gen-html ## Run unit tests ad generate coverage
+
 .PHONY: integration-tests
 integration-tests: ## Run integration tests with coverage
 	(timeout 20s dart run test --coverage="coverage" --timeout=none test/integration/** ; exit 0)
@@ -34,6 +37,10 @@ format: ## Run dart format
 .PHONY: format-apply
 format-apply: ## Run dart format
 	dart format --fix -l 160 ./lib
+
+.PHONY: format-apply-tests
+format-apply-tests: ## Apply formatting to tests directory
+	dart format --fix -l 160 ./test
 
 .PHONY: analyze
 analyze: ## Run dart analyze

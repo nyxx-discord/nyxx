@@ -117,7 +117,6 @@ main() async {
     expect(memberBot.mention, "<@${memberBot.id.toString()}>");
     expect(memberBot.avatarURL(), isNull);
 
-
     final effectivePermissions = await memberBot.effectivePermissions;
     expect(effectivePermissions.sendMessages, isTrue);
   });
