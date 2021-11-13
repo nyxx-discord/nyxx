@@ -19,7 +19,7 @@ jobs:
           key: ${{ runner.os }}
 
       - name: Setup Dart Action
-        uses: cedx/setup-dart@v2.3.0
+        uses: dart-lang/setup-dart@v1
         with:
           release-channel: stable
 
@@ -45,7 +45,7 @@ jobs:
           key: ${{ runner.os }}
 
       - name: Setup Dart Action
-        uses: cedx/setup-dart@v2.3.0
+        uses: dart-lang/setup-dart@v1
         with:
           release-channel: stable
 
@@ -72,7 +72,7 @@ jobs:
           key: ${{ runner.os }}
 
       - name: Setup Dart Action
-        uses: cedx/setup-dart@v2.3.0
+        uses: dart-lang/setup-dart@v1
         with:
           release-channel: stable
 
