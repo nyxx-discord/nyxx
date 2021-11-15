@@ -667,7 +667,7 @@ class HttpEndpoints implements IHttpEndpoints {
 
   @override
   Future<void> guildKick(Snowflake guildId, Snowflake userId, {String? auditReason}) async =>
-      httpHandler.execute(BasicRequest("/guilds/$guildId/members/$userId", method: "DELTE", auditLog: auditReason));
+      httpHandler.execute(BasicRequest("/guilds/$guildId/members/$userId", method: "DELETE", auditLog: auditReason));
 
   @override
   Future<void> guildUnban(Snowflake guildId, Snowflake userId) async => httpHandler.execute(BasicRequest("/guilds/$guildId/bans/$userId", method: "DELETE"));
