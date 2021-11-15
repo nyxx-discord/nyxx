@@ -20,7 +20,7 @@ jobs:
           key: ${{ runner.os }}
 
       - name: Setup Dart Action
-        uses: cdart-lang/setup-dart@v1
+        uses: dart-lang/setup-dart@v1
 
       - name: Checkout
         uses: actions/checkout@v2.3.4
