@@ -123,5 +123,9 @@ Future<void> shardHandler(SendPort shardPort) async {
 
       continue;
     }
+
+    if (cmd == "KILL") {
+      await terminate();
+    }
   }
 }
