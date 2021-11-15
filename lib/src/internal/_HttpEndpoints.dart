@@ -792,7 +792,7 @@ class _HttpEndpoints implements IHttpEndpoints {
   Future<void> guildKick(Snowflake guildId, Snowflake userId,
           {String? auditReason}) async =>
       _httpClient._execute(BasicRequest._new("/guilds/$guildId/members/$userId",
-          method: "DELTE", auditLog: auditReason));
+          method: "DELETE", auditLog: auditReason));
 
   @override
   Future<void> guildUnban(Snowflake guildId, Snowflake userId) async =>
