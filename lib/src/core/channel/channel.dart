@@ -36,7 +36,7 @@ abstract class Channel extends SnowflakeEntity implements IChannel {
 
   /// Creates instance of [Channel]
   Channel(this.client, RawApiMap raw) : super(Snowflake(raw["id"])) {
-    this.channelType = ChannelType.from(raw["type"] as int);
+    channelType = ChannelType.from(raw["type"] as int);
   }
 
   /// Creates instance of [Channel] as raw
@@ -54,7 +54,7 @@ abstract class Channel extends SnowflakeEntity implements IChannel {
       case 5:
         return TextGuildChannel(client, raw, guildId);
       case 2:
-        return VoiceGuildChannel(client, raw, guildId);
+        return TextVoiceTextChannel(client, raw, guildId);
       case 13:
         return StageVoiceGuildChannel(client, raw, guildId);
       case 4:
@@ -70,7 +70,7 @@ abstract class Channel extends SnowflakeEntity implements IChannel {
 
   /// Deletes channel if guild channel or closes DM if DM channel
   @override
-  Future<void> delete() => this.client.httpEndpoints.deleteChannel(this.id);
+  Future<void> delete() => client.httpEndpoints.deleteChannel(id);
 
   @override
   Future<void> dispose() async {}
@@ -110,12 +110,12 @@ class ChannelType extends IEnum<int> {
   @override
   bool operator ==(dynamic other) {
     if (other is int) {
-      return this.value == other;
+      return value == other;
     }
 
     return super == other;
   }
 
   @override
-  int get hashCode => this.value.hashCode;
+  int get hashCode => value.hashCode;
 }
