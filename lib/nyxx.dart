@@ -28,7 +28,7 @@ export 'src/core/channel/guild/activity_types.dart' show VoiceActivityType;
 export 'src/core/channel/guild/category_guild_channel.dart' show ICategoryGuildChannel;
 export 'src/core/channel/guild/guild_channel.dart' show IGuildChannel, IMinimalGuildChannel;
 export 'src/core/channel/guild/text_guild_channel.dart' show ITextGuildChannel;
-export 'src/core/channel/guild/voice_channel.dart' show IVoiceGuildChannel, IStageChannelInstance, IStageVoiceGuildChannel;
+export 'src/core/channel/guild/voice_channel.dart' show IVoiceGuildChannel, IStageChannelInstance, IStageVoiceGuildChannel, ITextVoiceTextChannel;
 export 'src/core/embed/embed.dart' show IEmbed;
 export 'src/core/embed/embed_author.dart' show IEmbedAuthor;
 export 'src/core/embed/embed_field.dart' show IEmbedField;
