@@ -172,7 +172,6 @@ class TextVoiceTextChannel extends VoiceGuildChannel implements ITextVoiceTextCh
   @override
   Future<IMessage> sendMessage(MessageBuilder builder) => client.httpEndpoints.sendMessage(id, builder);
 
-
   @override
   @override
   Future<void> startTyping() async => client.httpEndpoints.triggerTyping(id);
