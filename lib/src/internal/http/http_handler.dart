@@ -1,6 +1,8 @@
 import 'package:http/http.dart' as http;
 
 import 'package:logging/logging.dart';
+import 'package:nyxx/src/events/http_events.dart';
+import 'package:nyxx/src/internal/event_controller.dart';
 import 'package:nyxx/src/nyxx.dart';
 import 'package:nyxx/src/internal/http/http_bucket.dart';
 import 'package:nyxx/src/internal/http/http_client.dart';
@@ -85,9 +87,7 @@ class HttpHandler {
       final responseSuccess = HttpResponseSuccess(response);
       await responseSuccess.finalize();
 
-      // TODO: fix this
-      // _client._onHttpResponse.add(HttpResponseEvent._new(responseSuccess));
-
+      (client.eventsRest as RestEventController).onHttpResponseController.add(HttpResponseEvent(responseSuccess));
       logger.finer("Got successful http response for endpoint: [${response.request?.url.toString()}]; Response: [${responseSuccess.jsonBody}]");
 
       return responseSuccess;
@@ -96,9 +96,7 @@ class HttpHandler {
     final responseError = HttpResponseError(response);
     await responseError.finalize();
 
-    // TODO: fix this
-    // _client._onHttpError.add(HttpErrorEvent._new(responseError));
-
+    (client.eventsRest as RestEventController).onHttpErrorController.add(HttpErrorEvent(responseError));
     logger.finer("Got failure http response for endpoint: [${response.request?.url.toString()}]; Response: [${responseError.errorMessage}]");
 
     return responseError;
