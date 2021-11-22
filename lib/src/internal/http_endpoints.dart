@@ -294,7 +294,7 @@ abstract class IHttpEndpoints {
   ///
   /// If [wait] is set to true -- request will return resulting message.
   Future<IMessage?> executeWebhook(Snowflake webhookId, MessageBuilder builder,
-      {String? token, bool? wait, String? avatarUrl, String? username, Snowflake? threadId});
+      {String token = "", bool? wait, String? avatarUrl, String? username, Snowflake? threadId});
 
   /// Fetches webhook using its [id] and optionally [token].
   /// If [token] is specified it will be used to fetch webhook data.
@@ -316,7 +316,7 @@ abstract class IHttpEndpoints {
 
   /// Used to send a request including standard bot authentication.
   Future<IHttpResponse> sendRawRequest(String url, String method,
-      {dynamic body, Map<String, dynamic>? headers, List<AttachmentBuilder> files = const [], Map<String, dynamic>? queryParams});
+      {dynamic body, Map<String, dynamic>? headers, List<AttachmentBuilder> files = const [], Map<String, dynamic>? queryParams, bool auth = false, bool rateLimit = true});
 
   /// Fetches preview of guild
   Future<IGuildPreview> fetchGuildPreview(Snowflake guildId);
@@ -1124,7 +1124,7 @@ class HttpEndpoints implements IHttpEndpoints {
 
   @override
   Future<void> deleteWebhook(Snowflake id, {String token = "", String? auditReason}) =>
-      executeSafe(BasicRequest("/webhooks/$id/$token", method: "DELETE", auditLog: auditReason));
+      executeSafe(BasicRequest("/webhooks/$id/$token", method: "DELETE", auditLog: auditReason, auth: token.isEmpty));
 
   @override
   Future<IWebhook> editWebhook(Snowflake webhookId,
@@ -1135,14 +1135,14 @@ class HttpEndpoints implements IHttpEndpoints {
       if (avatarAttachment != null) "avatar": avatarAttachment.getBase64(),
     };
 
-    final response = await httpHandler.execute(BasicRequest("/webhooks/$webhookId/$token", method: "PATCH", auditLog: auditReason, body: body));
+    final response = await httpHandler.execute(BasicRequest("/webhooks/$webhookId/$token", method: "PATCH", auditLog: auditReason, body: body, auth: token.isEmpty));
 
     return Future.error(response);
   }
 
   @override
   Future<IMessage?> executeWebhook(Snowflake webhookId, MessageBuilder builder,
-      {String? token, bool? wait, String? avatarUrl, String? username, Snowflake? threadId}) async {
+      {String token = "", bool? wait, String? avatarUrl, String? username, Snowflake? threadId}) async {
     final queryParams = {if (wait != null) "wait": wait, if (threadId != null) "thread_id": threadId};
 
     final body = {
@@ -1156,7 +1156,7 @@ class HttpEndpoints implements IHttpEndpoints {
       response = await httpHandler.execute(MultipartRequest("/webhooks/$webhookId/$token", builder.files!.map((e) => e.getMultipartFile()).toList(),
           method: "POST", fields: body, queryParams: queryParams));
     } else {
-      response = await httpHandler.execute(BasicRequest("/webhooks/$webhookId/$token", body: body, method: "POST", queryParams: queryParams));
+      response = await httpHandler.execute(BasicRequest("/webhooks/$webhookId/$token", body: body, method: "POST", queryParams: queryParams, auth: token.isEmpty));
     }
 
     if (response is HttpResponseSuccess) {
@@ -1172,7 +1172,7 @@ class HttpEndpoints implements IHttpEndpoints {
 
   @override
   Future<IWebhook> fetchWebhook(Snowflake id, {String token = ""}) async {
-    final response = await httpHandler.execute(BasicRequest("/webhooks/$id/$token"));
+    final response = await httpHandler.execute(BasicRequest("/webhooks/$id/$token", auth: token.isEmpty));
 
     if (response is HttpResponseSuccess) {
       return Webhook(response.jsonBody as RawApiMap, client);
@@ -1211,13 +1211,13 @@ class HttpEndpoints implements IHttpEndpoints {
 
   @override
   Future<HttpResponse> sendRawRequest(String url, String method,
-      {dynamic body, Map<String, dynamic>? headers, List<AttachmentBuilder> files = const [], Map<String, dynamic>? queryParams}) async {
+      {dynamic body, Map<String, dynamic>? headers, List<AttachmentBuilder> files = const [], Map<String, dynamic>? queryParams, bool auth = false, bool rateLimit = true}) async {
     HttpResponse response;
     if (files.isNotEmpty) {
       response = await httpHandler
-          .execute(MultipartRequest(url, files.map((e) => e.getMultipartFile()).toList(), method: method, fields: body, queryParams: queryParams));
+          .execute(MultipartRequest(url, files.map((e) => e.getMultipartFile()).toList(), method: method, fields: body, queryParams: queryParams, rateLimit: rateLimit, auth: auth));
     } else {
-      response = await httpHandler.execute(BasicRequest(url, body: body, method: method, queryParams: queryParams));
+      response = await httpHandler.execute(BasicRequest(url, body: body, method: method, queryParams: queryParams, rateLimit: rateLimit, auth: auth));
     }
 
     if (response is HttpResponseError) {

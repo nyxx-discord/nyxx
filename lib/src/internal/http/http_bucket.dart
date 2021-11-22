@@ -44,7 +44,7 @@ class HttpBucket {
 
     // Execute request
     try {
-      final response = await request.execute();
+      final response = await _httpHandler.httpClient.send(await request.prepareRequest());
 
       _setBucketValues(response.headers);
       return response;

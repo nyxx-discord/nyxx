@@ -3,7 +3,6 @@ import 'package:http/http.dart' as http;
 import 'package:logging/logging.dart';
 import 'package:nyxx/src/nyxx.dart';
 import 'package:nyxx/src/internal/http/http_bucket.dart';
-import 'package:nyxx/src/internal/http/http_client.dart';
 import 'package:nyxx/src/internal/http/http_request.dart';
 import 'package:nyxx/src/internal/http/http_response.dart';
 
@@ -15,7 +14,7 @@ class HttpHandler {
   final List<HttpBucket> _buckets = [];
   late final HttpBucket _noRateBucket;
 
-  late final InternalHttpClient _httpClient;
+  late final http.Client httpClient;
 
   final Logger logger = Logger("Http");
   final INyxxRest client;
@@ -23,11 +22,13 @@ class HttpHandler {
   /// Creates an instance of [HttpHandler]
   HttpHandler(this.client) {
     _noRateBucket = HttpBucket("", this);
-    _httpClient = InternalHttpClient(client.token);
+    httpClient = http.Client();
   }
 
   Future<HttpResponse> execute(HttpRequest request) async {
-    request.passClient(_httpClient);
+    if (request.auth) {
+      request.headers.addAll({"Authorization": "Bot ${client.token}"});
+    }
 
     if (!request.rateLimit) {
       return _handle(await _noRateBucket.execute(request));
@@ -47,7 +48,6 @@ class HttpHandler {
     }
 
     final commandPermissionRegexMatch = _bucketCommandPermissions.firstMatch(request.uri.toString());
-
     if (commandPermissionRegexMatch != null) {
       final bucketMajorId = commandPermissionRegexMatch.group(1);
       final bucketMessageId = commandPermissionRegexMatch.group(2);

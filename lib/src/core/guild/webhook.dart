@@ -37,7 +37,7 @@ class WebhookType extends IEnum<int> {
   }
 
   @override
-  int get hashCode => this.value.hashCode;
+  int get hashCode => value.hashCode;
 }
 
 ///Webhooks are a low-effort way to post messages to channels in Discord.
@@ -74,18 +74,16 @@ abstract class IWebhook implements SnowflakeEntity, IMessageAuthor {
   ///
   /// [wait] - waits for server confirmation of message send before response,
   /// and returns the created message body (defaults to false; when false a message that is not save does not return an error)
-  Future<IMessage?> execute(MessageBuilder builder, {bool? wait, Snowflake? threadId, String? avatarUrl, String? username}) =>
-      client.httpEndpoints.executeWebhook(this.id, builder, token: token, threadId: threadId, username: username, wait: wait, avatarUrl: avatarUrl);
+  Future<IMessage?> execute(MessageBuilder builder, {bool? wait, Snowflake? threadId, String? avatarUrl, String? username});
 
   @override
-  String avatarURL({String format = "webp", int size = 128}) => client.httpEndpoints.userAvatarURL(this.id, this.avatarHash, 0, format: format, size: size);
+  String avatarURL({String format = "webp", int size = 128});
 
   /// Edits the webhook.
-  Future<IWebhook> edit({String? name, SnowflakeEntity? channel, AttachmentBuilder? avatarAttachment, String? auditReason}) =>
-      client.httpEndpoints.editWebhook(this.id, token: this.token, name: name, channel: channel, avatarAttachment: avatarAttachment, auditReason: auditReason);
+  Future<IWebhook> edit({String? name, SnowflakeEntity? channel, AttachmentBuilder? avatarAttachment, String? auditReason});
 
   /// Deletes the webhook.
-  Future<void> delete({String? auditReason}) => client.httpEndpoints.deleteWebhook(this.id, token: token, auditReason: auditReason);
+  Future<void> delete({String? auditReason});
 }
 
 ///Webhooks are a low-effort way to post messages to channels in Discord.
@@ -124,7 +122,7 @@ class Webhook extends SnowflakeEntity implements IWebhook {
   int get defaultAvatarId => 0;
 
   @override
-  String get username => this.name.toString();
+  String get username => name.toString();
 
   @override
   int get discriminator => -1;
@@ -141,32 +139,32 @@ class Webhook extends SnowflakeEntity implements IWebhook {
 
   /// Creates an instance of [Webhook]
   Webhook(RawApiMap raw, this.client) : super(Snowflake(raw["id"] as String)) {
-    this.name = raw["name"] as String?;
-    this.token = raw["token"] as String? ?? "";
-    this.avatarHash = raw["avatar"] as String?;
+    name = raw["name"] as String?;
+    token = raw["token"] as String? ?? "";
+    avatarHash = raw["avatar"] as String?;
 
     if (raw["type"] != null) {
-      this.type = WebhookType.from(raw["type"] as int);
+      type = WebhookType.from(raw["type"] as int);
     } else {
-      this.type = null;
+      type = null;
     }
 
     if (raw["channel_id"] != null) {
-      this.channel = CacheableTextChannel<TextGuildChannel>(client, Snowflake(raw["channel_id"]), ChannelType.text);
+      channel = CacheableTextChannel<TextGuildChannel>(client, Snowflake(raw["channel_id"]), ChannelType.text);
     } else {
-      this.channel = null;
+      channel = null;
     }
 
     if (raw["guild_id"] != null) {
-      this.guild = GuildCacheable(client, Snowflake(raw["guild_id"] as String));
+      guild = GuildCacheable(client, Snowflake(raw["guild_id"] as String));
     } else {
-      this.guild = null;
+      guild = null;
     }
 
     if (raw["user"] != null) {
-      this.user = User(client, raw["user"] as RawApiMap);
+      user = User(client, raw["user"] as RawApiMap);
     } else {
-      this.user = null;
+      user = null;
     }
   }
 
@@ -176,17 +174,17 @@ class Webhook extends SnowflakeEntity implements IWebhook {
   /// and returns the created message body (defaults to false; when false a message that is not save does not return an error)
   @override
   Future<IMessage?> execute(MessageBuilder builder, {bool? wait, Snowflake? threadId, String? avatarUrl, String? username}) =>
-      client.httpEndpoints.executeWebhook(this.id, builder, token: token, threadId: threadId, username: username, wait: wait, avatarUrl: avatarUrl);
+      client.httpEndpoints.executeWebhook(id, builder, token: token, threadId: threadId, username: username, wait: wait, avatarUrl: avatarUrl);
 
   @override
-  String avatarURL({String format = "webp", int size = 128}) => client.httpEndpoints.userAvatarURL(this.id, this.avatarHash, 0, format: format, size: size);
+  String avatarURL({String format = "webp", int size = 128}) => client.httpEndpoints.userAvatarURL(id, avatarHash, 0, format: format, size: size);
 
   /// Edits the webhook.
   @override
   Future<IWebhook> edit({String? name, SnowflakeEntity? channel, AttachmentBuilder? avatarAttachment, String? auditReason}) =>
-      client.httpEndpoints.editWebhook(this.id, token: this.token, name: name, channel: channel, avatarAttachment: avatarAttachment, auditReason: auditReason);
+      client.httpEndpoints.editWebhook(id, token: token, name: name, channel: channel, avatarAttachment: avatarAttachment, auditReason: auditReason);
 
   /// Deletes the webhook.
   @override
-  Future<void> delete({String? auditReason}) => client.httpEndpoints.deleteWebhook(this.id, token: token, auditReason: auditReason);
+  Future<void> delete({String? auditReason}) => client.httpEndpoints.deleteWebhook(id, token: token, auditReason: auditReason);
 }
