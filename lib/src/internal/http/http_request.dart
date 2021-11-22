@@ -22,11 +22,8 @@ abstract class HttpRequest {
     this.headers = headers ?? {};
   }
 
-  Map<String, String> genHeaders() => {
-    ...headers,
-    if (auditLog != null) "X-Audit-Log-Reason": auditLog!,
-    "User-Agent": "Nyxx (${Constants.repoUrl}, ${Constants.version})"
-  };
+  Map<String, String> genHeaders() =>
+      {...headers, if (auditLog != null) "X-Audit-Log-Reason": auditLog!, "User-Agent": "Nyxx (${Constants.repoUrl}, ${Constants.version})"};
 
   Future<http.BaseRequest> prepareRequest();
 }
@@ -36,7 +33,8 @@ class BasicRequest extends HttpRequest {
   /// Body of request
   final dynamic body;
 
-  BasicRequest(String path, {String method = "GET", this.body, RawApiMap? queryParams, String? auditLog, Map<String, String>? headers, bool rateLimit = true, bool auth = true})
+  BasicRequest(String path,
+      {String method = "GET", this.body, RawApiMap? queryParams, String? auditLog, Map<String, String>? headers, bool rateLimit = true, bool auth = true})
       : super(path, method: method, queryParams: queryParams, auditLog: auditLog, headers: headers, rateLimit: rateLimit, auth: auth);
 
   @override
@@ -67,7 +65,8 @@ class MultipartRequest extends HttpRequest {
   final dynamic fields;
 
   /// Creates an instance of [MultipartRequest]
-  MultipartRequest(String path, this.files, {this.fields, String method = "GET", RawApiMap? queryParams, Map<String, String>? headers, String? auditLog, bool auth = true, bool rateLimit = true})
+  MultipartRequest(String path, this.files,
+      {this.fields, String method = "GET", RawApiMap? queryParams, Map<String, String>? headers, String? auditLog, bool auth = true, bool rateLimit = true})
       : super(path, method: method, queryParams: queryParams, headers: headers, auditLog: auditLog, rateLimit: rateLimit, auth: auth);
 
   @override
