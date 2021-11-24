@@ -27,8 +27,13 @@ Simple, robust framework for creating discord bots for Dart language.
 Basic usage:
 ```dart
 void main() {
-  final bot = Nyxx("TOKEN", GatewayIntents.allUnprivileged);
-
+  final bot = NyxxFactory.createNyxxWebsocket("<TOKEN>", GatewayIntents.allUnprivileged)
+    ..registerPlugin(Logging()) // Default logging plugin
+    ..registerPlugin(CliIntegration()) // Cli integration for nyxx allows stopping application via SIGTERM and SIGKILl
+    ..registerPlugin(IgnoreExceptions()) // Plugin that handles uncaught exceptions that may occur
+    ..connect();
+  
+  // Listen for message events
   bot.onMessageReceived.listen((event) {
     if (event.message.content == "!ping") {
       event.message.channel.sendMessage(MessageBuilder.content("Pong!"));

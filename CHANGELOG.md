@@ -1,3 +1,27 @@
+## 3.0.0-dev.0
+__24.11.2021__
+
+- Implemented new interface-based entity model. 
+  > All concrete implementations of entities are now hidden behind interfaces which exports only behavior which is 
+  > intended for end developer usage. For example: User is now not exported and its interface `IUser` is available for developers.
+  > This change shouldn't have impact of end developers. 
+- Implemented basic plugin system for reusable framework plugins (Currently available plugins: Logging, CliIntegration, IgnoreExceptions)
+  > INyxx now implements `IPluginManager` inteface which allows registering plugin via `registerPlugin`. Developers can create their
+  > own plugins which can access various hooks inside INyxx instance. For now plugins system allows hooking up to
+  > `onRegister`, `onBotStart` and `onBotStop`.
+- Improved cache system. Cache abstractions provided by nyxx are now compatible with `MapMixin<Snowflake, T>`
+  > `SnowflakeCache` now implements `MapMixin<Snowflake, T>` and is compatibile with Map
+- Allowed running bot as REST only. It enables extensions that only require nyxx entities and http capabilities.
+  > Internals of nyxx were rewritten to allow running entirely in REST mode without websocket connection.
+  > Previously similar behavior was available but wasn't working as intended.
+- Implemented ITextVoiceTextChannel.
+  > Discords beta feature `chat in voice channels` was implemented in form of `ITextVoiceTextChannel` interface 
+- Do not send auth header when it's not needed
+- Added support for Dart 2.15
+
+Other changes are initial implementation of unit and integration tests to assure correct behavior of internal framework
+processes. Also added `Makefile` with common commands that are run during development. 
+
 ## 2.1.1
 __02.11.2021__
 

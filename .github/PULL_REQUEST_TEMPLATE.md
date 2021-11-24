@@ -4,10 +4,10 @@ Please include a summary of the change and which issue is fixed. Please also inc
 
 Use smart commits here to manipulate issues (eg. Fixes #issue)
 
-## Connected issues & potential other potential problems
+## Connected issues & other potential problems
 
-If changes are connected to other issues or are affecting code in other parts of framework
-(e.g. in main package or any subpackage) make sure to link and describe where and why problem could be present
+If changes in PR are connected to other issues or are affecting code in other parts of framework
+(e.g. in main package or any other subpackage) make sure to link issue/PR and describe said problem 
 
 ## Type of change
 
