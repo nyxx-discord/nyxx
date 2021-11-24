@@ -175,8 +175,12 @@ class NyxxRest extends INyxxRest {
   @override
   Snowflake get appId => _appId;
 
+  @override
+  Iterable<BasePlugin> get plugins => _plugins;
+
   final Snowflake _appId;
   final Logger _logger = Logger("Client");
+  final List<BasePlugin> _plugins = [];
 
   /// Creates and logs in a new client. If [ignoreExceptions] is true (by default is)
   /// isolate will ignore all exceptions and continue to work.
@@ -219,11 +223,6 @@ class NyxxRest extends INyxxRest {
     await users.dispose();
     await channels.dispose();
   }
-
-  @override
-  Iterable<BasePlugin> get plugins => _plugins;
-
-  final List<BasePlugin> _plugins = [];
 
   @override
   void registerPlugin<T extends BasePlugin>(T pluginInstance) {
