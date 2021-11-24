@@ -126,7 +126,7 @@ export 'src/events/voice_state_update_event.dart' show IVoiceStateUpdateEvent;
 export 'src/internal/constants.dart' show Constants, OPCodes;
 export 'src/internal/event_controller.dart' show IWebsocketEventController, IRestEventController;
 export 'src/internal/http_endpoints.dart' show IHttpEndpoints;
-export 'src/internal/cache/cache.dart' show MessageCache, SnowflakeCache;
+export 'src/internal/cache/cache.dart' show SnowflakeCache, ICache, InMemoryCache;
 export 'src/internal/cache/cache_policy.dart'
     show CachePolicyPredicate, CachePolicyLocation, CachePolicy, ChannelCachePolicy, MemberCachePolicy, MessageCachePolicy;
 export 'src/internal/cache/cacheable.dart' show Cacheable;
@@ -135,6 +135,7 @@ export 'src/internal/exceptions/http_client_exception.dart' show HttpClientExcep
 export 'src/internal/exceptions/invalid_shard_exception.dart' show InvalidShardException;
 export 'src/internal/exceptions/invalid_snowflake_exception.dart' show InvalidSnowflakeException;
 export 'src/internal/exceptions/missing_token_error.dart' show MissingTokenError;
+export 'src/internal/exceptions/unrecoverable_nyxx_error.dart' show UnrecoverableNyxxError;
 export 'src/internal/http/http_response.dart' show IHttpResponse, IHttpResponseError, IHttpResponseSucess;
 export 'src/internal/interfaces/convertable.dart' show Convertable;
 export 'src/internal/interfaces/disposable.dart' show Disposable;
@@ -162,3 +163,9 @@ export 'src/utils/builders/thread_builder.dart' show ThreadArchiveTime, ThreadBu
 export 'src/utils/extensions.dart' show IntExtensions, SnowflakeEntityListExtensions, StringExtensions;
 export 'src/utils/permissions.dart' show PermissionsUtils;
 export 'src/utils/utils.dart' show Utils, ListSafeFirstWhere;
+
+export 'src/plugin/plugin.dart' show BasePlugin;
+export 'src/plugin/plugin_manger.dart' show IPluginManager;
+export 'src/plugin/plugins/cli_integration.dart' show CliIntegration;
+export 'src/plugin/plugins/ignore_exception.dart' show IgnoreExceptions;
+export 'src/plugin/plugins/logging.dart' show Logging;

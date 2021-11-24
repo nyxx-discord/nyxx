@@ -9,9 +9,10 @@ DiscordColor getColorForUserFromMessage(IMessage message) {
 }
 
 // Main function
-void main() {
+void main() async {
   // Create new bot instance. Replace string with your token
-  final bot = NyxxFactory.createNyxxWebsocket("<TOKEN>", GatewayIntents.allUnprivileged);
+  final bot = NyxxFactory.createNyxxWebsocket("<TOKEN>", GatewayIntents.allUnprivileged)
+    ..connect();
 
   // Listen to ready event. Invoked when bot is connected to all shards. Note that cache can be empty or not incomplete.
   bot.eventsWs.onReady.listen((IReadyEvent e) {
@@ -43,4 +44,6 @@ void main() {
       e.message.channel.sendMessage(MessageBuilder.embed(embed));
     }
   });
+
+  await bot.connect();
 }

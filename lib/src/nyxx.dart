@@ -25,6 +25,7 @@ import 'package:nyxx/src/internal/exceptions/missing_token_error.dart';
 import 'package:nyxx/src/internal/http/http_handler.dart';
 import 'package:nyxx/src/internal/interfaces/disposable.dart';
 import 'package:nyxx/src/internal/shard/shard_manager.dart';
+import 'package:nyxx/src/plugin/plugin.dart';
 import 'utils/builders/presence_builder.dart';
 import 'package:nyxx/src/typedefs.dart';
 
@@ -39,7 +40,7 @@ class NyxxFactory {
 }
 
 /// Generic interface for Nyxx. Represents basic functionality of Nyxx that are always available.
-abstract class INyxx implements Disposable {
+abstract class INyxx implements Disposable, IPluginManager {
   /// Reference to HttpHandler
   HttpHandler get httpHandler;
 
@@ -76,6 +77,8 @@ abstract class INyxx implements Disposable {
 
   /// Emitted when client is ready
   Stream<IReadyEvent> get onReady;
+
+  Future<void> connect();
 }
 
 abstract class INyxxRest implements INyxx {
@@ -172,8 +175,12 @@ class NyxxRest extends INyxxRest {
   @override
   Snowflake get appId => _appId;
 
+  @override
+  Iterable<BasePlugin> get plugins => _plugins;
+
   final Snowflake _appId;
   final Logger _logger = Logger("Client");
+  final List<BasePlugin> _plugins = [];
 
   /// Creates and logs in a new client. If [ignoreExceptions] is true (by default is)
   /// isolate will ignore all exceptions and continue to work.
@@ -185,67 +192,43 @@ class NyxxRest extends INyxxRest {
       throw MissingTokenError();
     }
 
-    if (useDefaultLogger) {
-      Logger.root.onRecord.listen((LogRecord rec) {
-        print("[${rec.time}] [${rec.level.name}] [${rec.loggerName}] ${rec.message}");
-      });
-    }
-
-    _logger.info("Starting bot with pid: $pid. To stop the bot gracefully send SIGTERM or SIGKILL");
-
-    if (!Platform.isWindows) {
-      ProcessSignal.sigterm.watch().forEach((event) async {
-        await dispose();
-      });
-    }
-
-    ProcessSignal.sigint.watch().forEach((event) async {
-      await dispose();
-    });
-
-    if (ignoreExceptions) {
-      Isolate.current.setErrorsFatal(false);
-
-      final errorsPort = ReceivePort();
-      errorsPort.listen((err) {
-        final stackTrace = err[1] != null ? ". Stacktrace: \n${err[1]}" : "";
-
-        _logger.shout("Got Error: Message: [${err[0]}]$stackTrace");
-      });
-      Isolate.current.addErrorListener(errorsPort.sendPort);
-    }
-
     this.options = options ?? ClientOptions();
     this.cacheOptions = cacheOptions ?? CacheOptions();
 
     guilds = SnowflakeCache();
     channels = SnowflakeCache();
     users = SnowflakeCache();
-
-    connect();
-  }
-
-  Future<void> connect() async {
-    httpHandler = HttpHandler(this);
-    httpEndpoints = HttpEndpoints(this);
-
-    eventsRest = RestEventController();
-
-    final httpResponse = await (httpEndpoints as HttpEndpoints).getMeApplication();
-
-    if (httpResponse is HttpResponseError) {
-      _logger.shout("Cannot get bot identity: `${httpResponse.toString()}`");
-      exit(1);
-    }
-
-    final response = httpResponse as HttpResponseSuccess;
-    app = ClientOAuth2Application(response.jsonBody as RawApiMap, this);
-
-    onReadyController.add(ReadyEvent(this));
   }
 
   @override
-  Future<void> dispose() async {}
+  Future<void> connect() async {
+    httpHandler = HttpHandler(this);
+    httpEndpoints = HttpEndpoints(this);
+    eventsRest = RestEventController();
+
+    onReadyController.add(ReadyEvent(this));
+
+    for (final plugin in _plugins) {
+      await plugin.onBotStart(this, _logger);
+    }
+  }
+
+  @override
+  Future<void> dispose() async {
+    for (final plugin in _plugins) {
+      await plugin.onBotStop(this, _logger);
+    }
+
+    await guilds.dispose();
+    await users.dispose();
+    await channels.dispose();
+  }
+
+  @override
+  void registerPlugin<T extends BasePlugin>(T pluginInstance) {
+    pluginInstance.onRegister(this, _logger);
+    _plugins.add(pluginInstance);
+  }
 }
 
 abstract class INyxxWebsocket implements INyxxRest {
@@ -362,7 +345,16 @@ class NyxxWebsocket extends NyxxRest implements INyxxWebsocket {
     super.connect();
 
     eventsWs = WebsocketEventController();
+
+    final httpResponse = await (httpEndpoints as HttpEndpoints).getMeApplication();
+    if (httpResponse is HttpResponseSuccess) {
+      app = ClientOAuth2Application(httpResponse.jsonBody as RawApiMap, this);
+    } else {
+      _logger.shout("Cannot get bot identity: `${httpResponse.toString()}`");
+    }
+
     ws = ConnectionManager(this);
+    await ws.connect();
   }
 
   /// This endpoint is only for public guilds if bot is not int the guild.
@@ -446,8 +438,6 @@ class NyxxWebsocket extends NyxxRest implements INyxxWebsocket {
 
     await shardManager.dispose();
     await eventsRest.dispose();
-    // await guilds.dispose();
-    // await users.dispose();
 
     _logger.info("Exiting...");
     exit(0);

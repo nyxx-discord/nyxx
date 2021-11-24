@@ -13,7 +13,10 @@ final testUserBotSnowflake = Snowflake(476603965396746242);
 final testUserHumanSnowflake = Snowflake(302359032612651009);
 
 main() async {
-  final bot = NyxxFactory.createNyxxWebsocket(Platform.environment["TEST_TOKEN"]!, GatewayIntents.guildMessages, ignoreExceptions: false);
+  final bot = NyxxFactory.createNyxxWebsocket(Platform.environment["TEST_TOKEN"]!, GatewayIntents.guildMessages, ignoreExceptions: false)
+    ..registerPlugin(Logging())
+    ..connect();
+
   final random = Random();
 
   late ITextChannel channel;
@@ -88,6 +91,23 @@ main() async {
 
     await messageEdit.createReaction(UnicodeEmoji("😂"));
     await messageEdit.deleteSelfReaction(UnicodeEmoji("😂"));
+
+    await messageEdit.suppressEmbeds();
+
+    await messageEdit.pinMessage();
+    final pinnedMessages = await (await messageEdit.channel.getOrDownload()).fetchPinnedMessages().toList();
+    expect(pinnedMessages, hasLength(1));
+    expect(pinnedMessages.first.pinned, isTrue);
+    expect(pinnedMessages.first.id, messageEdit.id);
+    await messageEdit.unpinMessage();
+
+    await messageEdit.dispose(); // it does nothing
+
+    expect(messageEdit.hashCode, equals(messageEdit.id.hashCode));
+    expect(messageEdit, equals(messageEditWs));
+
+    final toBuilder = messageEdit.toBuilder();
+    expect(toBuilder.content, equals("Edit test"));
 
     await messageEdit.delete();
   });

@@ -1,5 +1,6 @@
 import 'dart:collection';
 
+import 'package:nyxx/nyxx.dart';
 import 'package:nyxx/src/core/snowflake.dart';
 
 class SnowflakeCache<V> extends InMemoryCache<Snowflake, V> {
@@ -40,6 +41,9 @@ abstract class InMemoryCache<K, V> extends MapMixin<K, V> implements ICache<K, V
 
   @override
   V? remove(Object? key) => _map.remove(key);
+
+  @override
+  Future<void> dispose() async => _map.clear();
 }
 
-abstract class ICache<K, V> implements MapMixin<K, V> {}
+abstract class ICache<K, V> implements MapMixin<K, V>, Disposable {}

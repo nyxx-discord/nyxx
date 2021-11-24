@@ -3,6 +3,7 @@ import 'dart:collection';
 import 'dart:io';
 
 import 'package:logging/logging.dart';
+import 'package:nyxx/nyxx.dart';
 import 'package:nyxx/src/events/member_chunk_event.dart';
 import 'package:nyxx/src/events/raw_event.dart';
 import 'package:nyxx/src/internal/connection_manager.dart';
@@ -122,8 +123,7 @@ class ShardManager implements IShardManager {
     numShards = connectionManager.client.options.shardCount != null ? connectionManager.client.options.shardCount! : connectionManager.recommendedShardsNum;
 
     if (numShards < 1) {
-      logger.shout("Number of shards cannot be lower than 1.");
-      exit(1);
+      throw UnrecoverableNyxxError("Number of shards cannot be lower than 1.");
     }
 
     logger.fine("Starting shard manager. Number of shards to spawn: $numShards");

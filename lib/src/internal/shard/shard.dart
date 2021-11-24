@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:isolate';
 
+import 'package:nyxx/nyxx.dart';
 import 'package:nyxx/src/core/snowflake.dart';
 import 'package:nyxx/src/core/guild/client_user.dart';
 import 'package:nyxx/src/events/channel_events.dart';
@@ -235,18 +236,17 @@ class Shard implements IShard {
     switch (closeCode) {
       case 4004:
       case 4010:
-        exit(1);
+        throw UnrecoverableNyxxError("Gateway error: 4010");
       case 4013:
-        manager.logger.shout("Cannot connect to gateway due intent value is invalid. "
+        throw UnrecoverableNyxxError("Gateway error: 4013: Cannot connect to gateway due intent value is invalid. "
             "Check https://discordapp.com/developers/docs/topics/gateway#gateway-intents for more info.");
-        exit(1);
       case 4014:
-        manager.logger.shout("You sent a disallowed intent for a Gateway Intent. "
+        throw UnrecoverableNyxxError("Gateway error: 4014: You sent a disallowed intent for a Gateway Intent. "
             "You may have tried to specify an intent that you have not enabled or are not whitelisted for. "
             "Check https://discordapp.com/developers/docs/topics/gateway#gateway-intents for more info.");
-        exit(1);
       case 4007:
       case 4009:
+      case 1005:
       case 1001:
         _reconnect();
         break;
@@ -527,8 +527,12 @@ class Shard implements IShard {
   Future<void> dispose() async {
     manager.logger.info("Started disposing shard $id...");
 
-    await _receiveStream.firstWhere((element) => (element as RawApiMap)["cmd"] == "TERMINATE_OK");
+    // TODO: check if it works as it should
+    _sendPort.send({"cmd": "KILL"});
+
+    final killFuture = _receiveStream.firstWhere((element) => (element as RawApiMap)["cmd"] == "TERMINATE_OK");
     _shardIsolate.kill(priority: Isolate.immediate);
+    await killFuture;
 
     manager.logger.info("Shard $id disposed.");
   }

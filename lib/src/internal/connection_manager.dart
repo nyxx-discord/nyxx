@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:logging/logging.dart';
+import 'package:nyxx/nyxx.dart';
 import 'package:nyxx/src/nyxx.dart';
 import 'package:nyxx/src/core/application/client_oauth2_application.dart';
 import 'package:nyxx/src/events/ready_event.dart';
@@ -27,27 +28,28 @@ class ConnectionManager {
   int _shardsReady = 0;
 
   /// Makes a new WS manager.
-  ConnectionManager(this.client) {
-    (client.httpEndpoints as HttpEndpoints).getGatewayBot().then((httpResponse) {
-      if (httpResponse is HttpResponseError) {
-        _logger.severe("Cannot get gateway url: [${httpResponse.errorCode}; ${httpResponse.errorMessage}]");
-        exit(1);
-      }
+  ConnectionManager(this.client);
 
-      final response = httpResponse as HttpResponseSuccess;
+  Future<void> connect() async {
+    final httpResponse = await (client.httpEndpoints as HttpEndpoints).getGatewayBot();
 
-      gateway = response.jsonBody["url"] as String;
-      remaining = response.jsonBody["session_start_limit"]["remaining"] as int;
-      resetAt = DateTime.now().add(Duration(milliseconds: response.jsonBody["session_start_limit"]["reset_after"] as int));
-      recommendedShardsNum = response.jsonBody["shards"] as int;
-      maxConcurrency = response.jsonBody["session_start_limit"]["max_concurrency"] as int;
+    if (httpResponse is HttpResponseError) {
+      throw UnrecoverableNyxxError("Cannot get gateway url: [${httpResponse.errorCode}; ${httpResponse.errorMessage}]");
+    }
 
-      _logger.fine("Got gateway info: Url: [$gateway]; Recommended shard num: [$recommendedShardsNum]");
+    final response = httpResponse as HttpResponseSuccess;
 
-      checkForConnections();
+    gateway = response.jsonBody["url"] as String;
+    remaining = response.jsonBody["session_start_limit"]["remaining"] as int;
+    resetAt = DateTime.now().add(Duration(milliseconds: response.jsonBody["session_start_limit"]["reset_after"] as int));
+    recommendedShardsNum = response.jsonBody["shards"] as int;
+    maxConcurrency = response.jsonBody["session_start_limit"]["max_concurrency"] as int;
 
-      client.shardManager = ShardManager(this, maxConcurrency);
-    });
+    _logger.fine("Got gateway info: Url: [$gateway]; Recommended shard num: [$recommendedShardsNum]");
+
+    checkForConnections();
+
+    client.shardManager = ShardManager(this, maxConcurrency);
   }
 
   void checkForConnections() {
