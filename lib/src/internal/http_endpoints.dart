@@ -899,8 +899,8 @@ class HttpEndpoints implements IHttpEndpoints {
 
     HttpResponse response;
     if (builder.hasFiles()) {
-      response = await httpHandler.execute(MultipartRequest("/channels/$channelId/messages", builder.getMappedFiles().toList(),
-          method: "POST", fields: builder.build(client)));
+      response = await httpHandler
+          .execute(MultipartRequest("/channels/$channelId/messages", builder.getMappedFiles().toList(), method: "POST", fields: builder.build(client)));
     } else {
       response = await httpHandler.execute(BasicRequest("/channels/$channelId/messages", body: builder.build(client), method: "POST"));
     }
@@ -1075,8 +1075,8 @@ class HttpEndpoints implements IHttpEndpoints {
   Future<IMessage> editMessage(Snowflake channelId, Snowflake messageId, MessageBuilder builder) async {
     HttpResponse response;
     if (builder.hasFiles()) {
-      response = await httpHandler.execute(MultipartRequest("/channels/$channelId/messages/$messageId", builder.getMappedFiles().toList(),
-          method: "PATCH", fields: builder.build(client)));
+      response = await httpHandler.execute(
+          MultipartRequest("/channels/$channelId/messages/$messageId", builder.getMappedFiles().toList(), method: "PATCH", fields: builder.build(client)));
     } else {
       response = await httpHandler.execute(BasicRequest("/channels/$channelId/messages/$messageId", body: builder.build(client), method: "PATCH"));
     }
@@ -1165,8 +1165,8 @@ class HttpEndpoints implements IHttpEndpoints {
 
     HttpResponse response;
     if (builder.files != null && builder.files!.isNotEmpty) {
-      response = await httpHandler.execute(MultipartRequest("/webhooks/$webhookId/$token", builder.getMappedFiles().toList(),
-          method: "POST", fields: body, queryParams: queryParams));
+      response = await httpHandler
+          .execute(MultipartRequest("/webhooks/$webhookId/$token", builder.getMappedFiles().toList(), method: "POST", fields: body, queryParams: queryParams));
     } else {
       response =
           await httpHandler.execute(BasicRequest("/webhooks/$webhookId/$token", body: body, method: "POST", queryParams: queryParams, auth: token.isEmpty));

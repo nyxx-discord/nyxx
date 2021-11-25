@@ -159,10 +159,7 @@ class MessageBuilder extends BuilderWithClient {
       if (replyBuilder != null) "message_reference": replyBuilder!.build(),
       if (tts != null) "tts": tts,
       if (nonce != null) "nonce": nonce,
-      if (attachments != null) "attachments": [
-          for (final attachmentBuilder in attachments!)
-            attachmentBuilder.build()
-      ],
+      if (attachments != null) "attachments": [for (final attachmentBuilder in attachments!) attachmentBuilder.build()],
     };
   }
 
