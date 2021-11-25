@@ -899,7 +899,7 @@ class HttpEndpoints implements IHttpEndpoints {
 
     HttpResponse response;
     if (builder.hasFiles()) {
-      response = await httpHandler.execute(MultipartRequest("/channels/$channelId/messages", builder.files!.map((e) => e.getMultipartFile()).toList(),
+      response = await httpHandler.execute(MultipartRequest("/channels/$channelId/messages", builder.getMappedFiles().toList(),
           method: "POST", fields: builder.build(client)));
     } else {
       response = await httpHandler.execute(BasicRequest("/channels/$channelId/messages", body: builder.build(client), method: "POST"));
@@ -1073,7 +1073,13 @@ class HttpEndpoints implements IHttpEndpoints {
 
   @override
   Future<IMessage> editMessage(Snowflake channelId, Snowflake messageId, MessageBuilder builder) async {
-    final response = await httpHandler.execute(BasicRequest("/channels/$channelId/messages/$messageId", method: "PATCH", body: builder.build(client)));
+    HttpResponse response;
+    if (builder.hasFiles()) {
+      response = await httpHandler.execute(MultipartRequest("/channels/$channelId/messages/$messageId", builder.getMappedFiles().toList(),
+          method: "PATCH", fields: builder.build(client)));
+    } else {
+      response = await httpHandler.execute(BasicRequest("/channels/$channelId/messages/$messageId", body: builder.build(client), method: "PATCH"));
+    }
 
     if (response is HttpResponseSuccess) {
       return Message(client, response.jsonBody as RawApiMap);
@@ -1159,7 +1165,7 @@ class HttpEndpoints implements IHttpEndpoints {
 
     HttpResponse response;
     if (builder.files != null && builder.files!.isNotEmpty) {
-      response = await httpHandler.execute(MultipartRequest("/webhooks/$webhookId/$token", builder.files!.map((e) => e.getMultipartFile()).toList(),
+      response = await httpHandler.execute(MultipartRequest("/webhooks/$webhookId/$token", builder.getMappedFiles().toList(),
           method: "POST", fields: body, queryParams: queryParams));
     } else {
       response =
@@ -1226,7 +1232,7 @@ class HttpEndpoints implements IHttpEndpoints {
       bool rateLimit = true}) async {
     HttpResponse response;
     if (files.isNotEmpty) {
-      response = await httpHandler.execute(MultipartRequest(url, files.map((e) => e.getMultipartFile()).toList(),
+      response = await httpHandler.execute(MultipartRequest(url, mapMessageBuilderAttachments(files).toList(),
           method: method, fields: body, queryParams: queryParams, rateLimit: rateLimit, auth: auth));
     } else {
       response = await httpHandler.execute(BasicRequest(url, body: body, method: method, queryParams: queryParams, rateLimit: rateLimit, auth: auth));

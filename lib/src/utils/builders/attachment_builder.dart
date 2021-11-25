@@ -2,7 +2,25 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:http/http.dart' as http;
+import 'package:nyxx/nyxx.dart';
 import 'package:path/path.dart' as path_utils;
+
+class AttachmentMetadataBuilder implements Builder {
+  Snowflake id;
+  String filename;
+  late String description;
+
+  AttachmentMetadataBuilder(this.id, this.filename, [String? description]) {
+    this.description = description ?? filename;
+  }
+
+  @override
+  RawApiMap build() => {
+    'id': id.id == 0 ? 0 : id.toString(),
+    'filename': filename,
+    'description': description,
+  };
+}
 
 /// Helper for sending attachment in messages. Allows to create attachment from path, [File] or bytes.
 class AttachmentBuilder {
@@ -37,7 +55,7 @@ class AttachmentBuilder {
   factory AttachmentBuilder.bytes(List<int> bytes, String name, {bool? spoiler}) => AttachmentBuilder._new(bytes, name, spoiler);
 
   /// creates instance of MultipartFile from attachment
-  http.MultipartFile getMultipartFile() => http.MultipartFile(_name, Stream.value(_bytes), _bytes.length, filename: _name);
+  http.MultipartFile getMultipartFile([int? index]) => http.MultipartFile(index != null ? "file[$index]" : _name, Stream.value(_bytes), _bytes.length, filename: _name);
 
   /// Returns attachment encoded in Data URI scheme format
   /// See: https://discord.com/developers/docs/reference#image-data

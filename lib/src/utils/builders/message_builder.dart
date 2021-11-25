@@ -1,5 +1,7 @@
 import 'dart:io';
 
+import 'package:http/http.dart' as http;
+import 'package:nyxx/nyxx.dart';
 import 'package:nyxx/src/nyxx.dart';
 import 'package:nyxx/src/core/allowed_mentions.dart';
 import 'package:nyxx/src/core/message/message.dart';
@@ -36,6 +38,8 @@ class MessageBuilder extends BuilderWithClient {
   /// A nonce that can be used for optimistic message sending (up to 25 characters)
   /// You will be able to identify that message when receiving it through gateway
   String? nonce;
+
+  List<AttachmentMetadataBuilder>? attachments;
 
   final _content = StringBuffer();
 
@@ -118,9 +122,7 @@ class MessageBuilder extends BuilderWithClient {
 
   /// Add attachment
   void addAttachment(AttachmentBuilder attachment) {
-    if (files == null) {
-      files = [];
-    }
+    files ??= [];
 
     files!.add(attachment);
   }
@@ -156,11 +158,23 @@ class MessageBuilder extends BuilderWithClient {
       if (allowedMentions != null) "allowed_mentions": allowedMentions!.build(),
       if (replyBuilder != null) "message_reference": replyBuilder!.build(),
       if (tts != null) "tts": tts,
-      if (nonce != null) "nonce": nonce
+      if (nonce != null) "nonce": nonce,
+      if (attachments != null) "attachments": [
+          for (final attachmentBuilder in attachments!)
+            attachmentBuilder.build()
+      ],
     };
   }
 
   bool hasFiles() => files != null && files!.isNotEmpty;
+
+  Iterable<http.MultipartFile> getMappedFiles() {
+    if (!hasFiles()) {
+      return [];
+    }
+
+    return mapMessageBuilderAttachments(files!);
+  }
 }
 
 /// Specifies formatting of String appended with [MessageBuilder]
@@ -193,4 +207,12 @@ class MessageDecoration extends IEnum<String> {
 
   /// Creates formatted string
   String format(String text) => "$value$text$value";
+}
+
+Iterable<http.MultipartFile> mapMessageBuilderAttachments(List<AttachmentBuilder> files) sync* {
+  for (var i = 0; i < files.length; i++) {
+    final file = files[i];
+
+    yield file.getMultipartFile(i);
+  }
 }

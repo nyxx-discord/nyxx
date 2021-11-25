@@ -112,6 +112,27 @@ main() async {
     await messageEdit.delete();
   });
 
+  test("file upload tests", () async {
+    final messageBuilder = MessageBuilder.files([
+      AttachmentBuilder.path('test/files/1.png'),
+      AttachmentBuilder.path('test/files/2.png'),
+    ]);
+
+    final message = await channel.sendMessage(messageBuilder);
+
+    expect(message.attachments, hasLength(2));
+
+    final editedMessage = await message.edit(
+      MessageBuilder()
+          ..attachments = [message.attachments.first.toBuilder()]
+          ..files = [AttachmentBuilder.path('test/files/3.png')]
+    );
+
+    expect(editedMessage.attachments, hasLength(2));
+
+    await editedMessage.delete();
+  });
+
   test("user tests", () async {
     final userBot = await bot.fetchUser(testUserBotSnowflake);
 

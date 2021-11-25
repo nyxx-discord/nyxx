@@ -1,8 +1,9 @@
+import 'package:nyxx/nyxx.dart';
 import 'package:nyxx/src/core/snowflake.dart';
 import 'package:nyxx/src/core/snowflake_entity.dart';
 import 'package:nyxx/src/typedefs.dart';
 
-abstract class IAttachment implements SnowflakeEntity {
+abstract class IAttachment implements SnowflakeEntity, Convertable<AttachmentMetadataBuilder> {
   /// The attachment's filename.
   String get filename;
 
@@ -28,6 +29,9 @@ abstract class IAttachment implements SnowflakeEntity {
 
   /// Indicates if attachment is spoiler
   bool get isSpoiler;
+
+  /// Description for the file
+  String? get description;
 }
 
 /// A message attachment.
@@ -62,6 +66,10 @@ class Attachment extends SnowflakeEntity implements IAttachment {
   @override
   late final bool ephemeral;
 
+  /// Description for the file
+  @override
+  late final String? description;
+
   /// Indicates if attachment is spoiler
   @override
   bool get isSpoiler => filename.startsWith("SPOILER_");
@@ -72,6 +80,7 @@ class Attachment extends SnowflakeEntity implements IAttachment {
     url = raw["url"] as String;
     proxyUrl = raw["proxyUrl"] as String?;
     size = raw["size"] as int;
+    description = raw['description'] as String?;
 
     height = raw["height"] as int?;
     width = raw["width"] as int?;
@@ -94,4 +103,7 @@ class Attachment extends SnowflakeEntity implements IAttachment {
 
   @override
   int get hashCode => id.hashCode;
+
+  @override
+  AttachmentMetadataBuilder toBuilder() => AttachmentMetadataBuilder(id, filename);
 }
