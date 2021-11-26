@@ -451,7 +451,23 @@ class Message extends SnowflakeEntity implements IMessage {
 
     return false;
   }
+}
 
+class WebhookMessage extends Message {
+  final Snowflake webhookId;
+  final Snowflake? threadId;
+  late final String? token;
+
+  WebhookMessage(INyxx client, RawApiMap raw, this.webhookId, String? token, this.threadId) : super(client, raw) {
+    this.token = token != null && token.isEmpty ? null : token;
+  }
+
+  /// Edits the message.
   @override
-  int get hashCode => super.hashCode;
+  Future<IMessage> edit(MessageBuilder builder) => client.httpEndpoints.editWebhookMessage(webhookId, id, builder, token: token, threadId: threadId);
+
+  /// Deletes the message.
+  @override
+  Future<void> delete({String? auditReason}) =>
+      client.httpEndpoints.deleteWebhookMessage(webhookId, id, token: token, threadId: threadId, auditReason: auditReason);
 }

@@ -254,6 +254,9 @@ abstract class IHttpEndpoints {
   /// Edits message with given id using [builder]
   Future<IMessage> editMessage(Snowflake channelId, Snowflake messageId, MessageBuilder builder);
 
+  /// Edits message sent by webhook
+  Future<IMessage> editWebhookMessage(Snowflake webhookId, Snowflake messageId, MessageBuilder builder, {String? token, Snowflake? threadId});
+
   /// Creates reaction with given [emoji] on given message
   Future<void> createMessageReaction(Snowflake channelId, Snowflake messageId, IEmoji emoji);
 
@@ -268,6 +271,9 @@ abstract class IHttpEndpoints {
 
   /// Deletes message from given channel
   Future<void> deleteMessage(Snowflake channelId, Snowflake messageId, {String? auditReason});
+
+  /// Deletes message sent by webhook
+  Future<void> deleteWebhookMessage(Snowflake webhookId, Snowflake messageId, {String? auditReason, String? token, Snowflake? threadId});
 
   /// Pins message in channel
   Future<void> pinMessage(Snowflake channelId, Snowflake messageId);
@@ -294,7 +300,7 @@ abstract class IHttpEndpoints {
   ///
   /// If [wait] is set to true -- request will return resulting message.
   Future<IMessage?> executeWebhook(Snowflake webhookId, MessageBuilder builder,
-      {String token = "", bool? wait, String? avatarUrl, String? username, Snowflake? threadId});
+      {String token = "", bool wait = true, String? avatarUrl, String? username, Snowflake? threadId});
 
   /// Fetches webhook using its [id] and optionally [token].
   /// If [token] is specified it will be used to fetch webhook data.
@@ -1089,6 +1095,25 @@ class HttpEndpoints implements IHttpEndpoints {
   }
 
   @override
+  Future<IMessage> editWebhookMessage(Snowflake webhookId, Snowflake messageId, MessageBuilder builder, {String? token, Snowflake? threadId}) async {
+    HttpResponse response;
+    if (builder.hasFiles()) {
+      response = await httpHandler.execute(MultipartRequest(
+          "/webhooks/$webhookId/${token != null ? '$token/' : ''}messages/$messageId", builder.getMappedFiles().toList(),
+          method: "PATCH", fields: builder.build(client), queryParams: {if (threadId != null) 'thread_id': threadId}));
+    } else {
+      response = await httpHandler.execute(BasicRequest("/webhooks/$webhookId/${token != null ? '$token/' : ''}messages/$messageId",
+          body: builder.build(client), method: "PATCH", queryParams: {if (threadId != null) 'thread_id': threadId}));
+    }
+
+    if (response is HttpResponseSuccess) {
+      return Message(client, response.jsonBody as RawApiMap);
+    }
+
+    return Future.error(response);
+  }
+
+  @override
   Future<void> createMessageReaction(Snowflake channelId, Snowflake messageId, IEmoji emoji) =>
       executeSafe(BasicRequest("/channels/$channelId/messages/$messageId/reactions/${emoji.encodeForAPI()}/@me", method: "PUT"));
 
@@ -1107,6 +1132,11 @@ class HttpEndpoints implements IHttpEndpoints {
   @override
   Future<void> deleteMessage(Snowflake channelId, Snowflake messageId, {String? auditReason}) =>
       executeSafe(BasicRequest("/channels/$channelId/messages/$messageId", method: "DELETE", auditLog: auditReason));
+
+  @override
+  Future<void> deleteWebhookMessage(Snowflake webhookId, Snowflake messageId, {String? auditReason, String? token, Snowflake? threadId}) =>
+      executeSafe(BasicRequest("/webhooks/$webhookId/${token != null ? '$token/' : ''}messages/$messageId",
+          method: "DELETE", auditLog: auditReason, queryParams: {if (threadId != null) 'thread_id': threadId}));
 
   @override
   Future<void> pinMessage(Snowflake channelId, Snowflake messageId) => executeSafe(BasicRequest("/channels/$channelId/pins/$messageId", method: "PUT"));
@@ -1154,8 +1184,8 @@ class HttpEndpoints implements IHttpEndpoints {
 
   @override
   Future<IMessage?> executeWebhook(Snowflake webhookId, MessageBuilder builder,
-      {String token = "", bool? wait, String? avatarUrl, String? username, Snowflake? threadId}) async {
-    final queryParams = {if (wait != null) "wait": wait, if (threadId != null) "thread_id": threadId};
+      {String token = "", bool wait = true, String? avatarUrl, String? username, Snowflake? threadId}) async {
+    final queryParams = {"wait": wait, if (threadId != null) "thread_id": threadId};
 
     final body = {
       ...builder.build(client),
@@ -1174,7 +1204,7 @@ class HttpEndpoints implements IHttpEndpoints {
 
     if (response is HttpResponseSuccess) {
       if (wait == true) {
-        return Message(client, response.jsonBody as RawApiMap);
+        return WebhookMessage(client, response.jsonBody as RawApiMap, webhookId, token, threadId);
       }
 
       return null;
