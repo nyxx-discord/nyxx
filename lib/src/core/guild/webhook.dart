@@ -173,7 +173,7 @@ class Webhook extends SnowflakeEntity implements IWebhook {
   /// [wait] - waits for server confirmation of message send before response,
   /// and returns the created message body (defaults to false; when false a message that is not save does not return an error)
   @override
-  Future<IMessage?> execute(MessageBuilder builder, {bool? wait, Snowflake? threadId, String? avatarUrl, String? username}) =>
+  Future<IMessage?> execute(MessageBuilder builder, {bool wait = true, Snowflake? threadId, String? avatarUrl, String? username}) =>
       client.httpEndpoints.executeWebhook(id, builder, token: token, threadId: threadId, username: username, wait: wait, avatarUrl: avatarUrl);
 
   @override
