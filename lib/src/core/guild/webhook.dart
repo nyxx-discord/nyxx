@@ -74,7 +74,7 @@ abstract class IWebhook implements SnowflakeEntity, IMessageAuthor {
   ///
   /// [wait] - waits for server confirmation of message send before response,
   /// and returns the created message body (defaults to false; when false a message that is not save does not return an error)
-  Future<IMessage?> execute(MessageBuilder builder, {bool? wait, Snowflake? threadId, String? avatarUrl, String? username});
+  Future<IMessage?> execute(MessageBuilder builder, {bool wait = true, Snowflake? threadId, String? avatarUrl, String? username});
 
   @override
   String avatarURL({String format = "webp", int size = 128});
