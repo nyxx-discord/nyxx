@@ -102,6 +102,9 @@ abstract class IThreadChannel implements MinimalGuildChannel, ITextChannel {
   /// Fetches from API current list of member that has access to that thread
   Stream<IThreadMember> fetchMembers();
 
+  /// Fetches thread member from the API
+  Future<IThreadMember> fetchMember(Snowflake memberId);
+
   /// Leaves this thread channel
   Future<void> leaveThread();
 
@@ -168,7 +171,9 @@ class ThreadChannel extends MinimalGuildChannel implements IThreadChannel {
 
   /// Fetches from API current list of member that has access to that thread
   @override
-  Stream<IThreadMember> fetchMembers() => client.httpEndpoints.getThreadMembers(id, guild.id);
+  Stream<IThreadMember> fetchMembers() => client.httpEndpoints.fetchThreadMembers(id, guild.id);
+
+  Future<IThreadMember> fetchMember(Snowflake memberId) => client.httpEndpoints.fetchThreadMember(id, guild.id, memberId);
 
   @override
   Future<void> bulkRemoveMessages(Iterable<SnowflakeEntity> messages) => client.httpEndpoints.bulkRemoveMessages(id, messages);

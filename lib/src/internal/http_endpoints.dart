@@ -222,7 +222,10 @@ abstract class IHttpEndpoints {
   Future<IThreadPreviewChannel> createThread(Snowflake channelId, ThreadBuilder builder);
 
   /// Returns all member of given thread
-  Stream<IThreadMember> getThreadMembers(Snowflake channelId, Snowflake guildId);
+  Stream<IThreadMember> fetchThreadMembers(Snowflake channelId, Snowflake guildId);
+
+  /// Fetches single thread member
+  Future<IThreadMember> fetchThreadMember(Snowflake channelId, Snowflake guildId, Snowflake memberId);
 
   /// Joins thread with given id
   Future<void> joinThread(Snowflake channelId);
@@ -1049,7 +1052,7 @@ class HttpEndpoints implements IHttpEndpoints {
   }
 
   @override
-  Stream<IThreadMember> getThreadMembers(Snowflake channelId, Snowflake guildId) async* {
+  Stream<IThreadMember> fetchThreadMembers(Snowflake channelId, Snowflake guildId) async* {
     final response = await httpHandler.execute(BasicRequest("/channels/$channelId/thread-members"));
 
     if (response is HttpResponseSuccess) {
@@ -1536,4 +1539,15 @@ class HttpEndpoints implements IHttpEndpoints {
 
   @override
   String getRoleIconUrl(Snowflake roleId, String iconHash, String format, int size) => "${Constants.cdnUrl}/role-icons/$roleId/$iconHash.$format?size=$size";
+
+  @override
+  Future<IThreadMember> fetchThreadMember(Snowflake channelId, Snowflake guildId, Snowflake memberId) async {
+    final result = await httpHandler.execute(BasicRequest('/channels/$channelId/thread-members/$memberId'));
+
+    if (result is IHttpResponseError) {
+      return Future.error(result);
+    }
+
+    return ThreadMember(client, (result as IHttpResponseSucess).jsonBody as RawApiMap, GuildCacheable(client, guildId));
+  }
 }
