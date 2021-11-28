@@ -7,10 +7,23 @@ class ThreadBuilder extends Builder {
   String? name;
 
   /// Whether or not the thread is private
-  bool private = false;
+  bool? private;
+
+  /// Whether the thread is archived
+  bool? archived;
+
+  /// Whether the thread is locked; when a thread is locked, only users with MANAGE_THREADS can unarchive it
+  bool? locked;
+
+  /// Whether non-moderators can add other non-moderators to a thread; only available on private threads
+  bool? invitable;
+
+  /// Amount of seconds a user has to wait before sending another message (0-21600);
+  /// bots, as well as users with the permission manage_messages, manage_thread, or manage_channel, are unaffected
+  int? rateLimitPerUser;
 
   /// The time after which the thread is automatically archived.
-  ThreadArchiveTime archiveAfter = ThreadArchiveTime.day;
+  ThreadArchiveTime? archiveAfter;
 
   /// Create a public thread
   ThreadBuilder(this.name);
@@ -20,22 +33,20 @@ class ThreadBuilder extends Builder {
     private = true;
   }
 
-  /// Set the time after which the thread automatically archives itself.
-  void setArchiveAfter(ThreadArchiveTime time) => archiveAfter = time;
-
-  /// Make the thread private
-  void setPrivate() => private = true;
-
-  /// Make the thread public
-  void setPublic() => private = false;
-
   @override
-  RawApiMap build() => <String, dynamic>{"auto_archive_duration": archiveAfter.value, "name": name, "type": private ? 12 : 11};
+  RawApiMap build() => <String, dynamic>{
+        if (archiveAfter != null) "auto_archive_duration": archiveAfter!.value,
+        if (name != null) "name": name,
+        if (private != null) "type": private! ? 12 : 11,
+        if (archived != null) "archived": archived!,
+        if (invitable != null) "invitable": invitable!,
+        if (rateLimitPerUser != null) 'rate_limit_per_user': rateLimitPerUser!
+      };
 }
 
 /// Simplifies the process of setting an auto archive time.
 class ThreadArchiveTime extends IEnum<int> {
-  /// Creates an instane of [ThreadArchiveTime]
+  /// Creates an instance of [ThreadArchiveTime]
   const ThreadArchiveTime(int value) : super(value);
 
   /// Archive after an hour

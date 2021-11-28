@@ -4,6 +4,7 @@ import 'package:nyxx/src/core/channel/channel.dart';
 import 'package:nyxx/src/typedefs.dart';
 import 'package:nyxx/src/utils/builders/attachment_builder.dart';
 import 'package:nyxx/src/utils/builders/builder.dart';
+import 'package:nyxx/src/utils/builders/channel_builder.dart';
 import 'package:nyxx/src/utils/builders/permissions_builder.dart';
 import 'package:nyxx/src/utils/builders/thread_builder.dart';
 
@@ -91,67 +92,5 @@ class RoleBuilder extends Builder {
         if (mentionable != null) "mentionable": mentionable,
         if (roleIcon != null) "icon": roleIcon!.getBase64(),
         if (roleIconEmoji != null) "unicode_emoji": roleIconEmoji
-      };
-}
-
-/// Builder for creating mini channel instance
-class ChannelBuilder extends Builder {
-  /// Name of channel
-  String? name;
-
-  /// Type of channel
-  ChannelType? type;
-
-  /// Channel topic (0-1024 characters)
-  String? topic;
-
-  /// The bitrate (in bits) of the voice channel (voice only)
-  int? bitrate;
-
-  /// The user limit of the voice channel (voice only)
-  int? userLimit;
-
-  /// Amount of seconds a user has to wait before sending another message (0-21600);
-  /// bots, as well as users with the permission manage_messages or manage_channel, are unaffected
-  int? rateLimitPerUser;
-
-  /// Sorting position of the channel
-  int? position;
-
-  /// Id of the parent category for a channel
-  SnowflakeEntity? parentChannel;
-
-  /// The channel's permission overwrites
-  List<PermissionOverrideBuilder>? overrides;
-
-  /// Whether the channel is nsfw
-  bool? nsfw;
-
-  /// Channel voice region id, automatic when set to null
-  String? rtcRegion = "";
-
-  /// The default duration for newly created threads in the channel
-  /// to automatically archive the thread after recent activity
-  ThreadArchiveTime? defaultAutoArchiveDuration;
-
-  /// Builder for editing channel
-  ChannelBuilder();
-
-  /// Builder for creating channel
-  ChannelBuilder.create({required this.name, required this.type});
-
-  @override
-  RawApiMap build() => {
-        if (name != null) "name": name,
-        if (type != null) "type": type!.value,
-        if (topic != null) "topic": topic,
-        if (bitrate != null) "bitrate": bitrate,
-        if (userLimit != null) "user_limit": userLimit,
-        if (rateLimitPerUser != null) "rate_limit_per_user": rateLimitPerUser,
-        if (position != null) "position": position,
-        if (parentChannel != null) "parent_id": parentChannel!.id.toString(),
-        if (nsfw != null) "nsfw": nsfw,
-        if (overrides != null) "permission_overwrites": overrides!.map((e) => e.build()),
-        if (rtcRegion != "") "rtc_region": rtcRegion,
       };
 }

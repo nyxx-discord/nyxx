@@ -50,19 +50,19 @@ abstract class Channel extends SnowflakeEntity implements IChannel {
       case 1:
       case 3:
         return DMChannel(client, raw);
+      case 2:
+        return TextVoiceTextChannel(client, raw, guildId);
       case 0:
       case 5:
         return TextGuildChannel(client, raw, guildId);
-      case 2:
-        return TextVoiceTextChannel(client, raw, guildId);
-      case 13:
-        return StageVoiceGuildChannel(client, raw, guildId);
       case 4:
         return CategoryGuildChannel(client, raw, guildId);
       case 10:
       case 11:
       case 12:
-        return ThreadChannel(client, raw, guildId);
+        return ThreadChannel(client, raw);
+      case 13:
+        return StageVoiceGuildChannel(client, raw, guildId);
       default:
         return _InternalChannel._new(client, raw, guildId);
     }

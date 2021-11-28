@@ -113,6 +113,8 @@ abstract class IThreadChannel implements MinimalGuildChannel, ITextChannel {
 
   /// Adds [user] to [ThreadChannel]
   Future<void> addThreadMember(SnowflakeEntity user);
+
+  Future<ThreadChannel> edit(ThreadBuilder builder);
 }
 
 class ThreadChannel extends MinimalGuildChannel implements IThreadChannel {
@@ -156,7 +158,7 @@ class ThreadChannel extends MinimalGuildChannel implements IThreadChannel {
   late final SnowflakeCache<IMessage> messageCache = SnowflakeCache<IMessage>(client.options.messageCacheSize);
 
   /// Creates an instance of [ThreadChannel]
-  ThreadChannel(INyxx client, RawApiMap raw, [Snowflake? guildId]) : super(client, raw) {
+  ThreadChannel(INyxx client, RawApiMap raw) : super(client, raw) {
     owner = MemberCacheable(client, Snowflake(raw["owner_id"]), guild);
 
     messageCount = raw["message_count"] as int;
@@ -173,6 +175,7 @@ class ThreadChannel extends MinimalGuildChannel implements IThreadChannel {
   @override
   Stream<IThreadMember> fetchMembers() => client.httpEndpoints.fetchThreadMembers(id, guild.id);
 
+  @override
   Future<IThreadMember> fetchMember(Snowflake memberId) => client.httpEndpoints.fetchThreadMember(id, guild.id, memberId);
 
   @override
@@ -225,4 +228,7 @@ class ThreadChannel extends MinimalGuildChannel implements IThreadChannel {
 
   @override
   Stream<IMessage> fetchPinnedMessages() => client.httpEndpoints.fetchPinnedMessages(id);
+
+  @override
+  Future<ThreadChannel> edit(ThreadBuilder builder) => client.httpEndpoints.editThreadChannel(id, builder);
 }

@@ -27,6 +27,7 @@ import 'package:nyxx/src/internal/cache/cacheable.dart';
 import 'package:nyxx/src/internal/shard/shard.dart';
 import 'package:nyxx/src/typedefs.dart';
 import 'package:nyxx/src/utils/builders/attachment_builder.dart';
+import 'package:nyxx/src/utils/builders/channel_builder.dart';
 import 'package:nyxx/src/utils/builders/guild_builder.dart';
 import 'package:nyxx/src/utils/builders/sticker_builder.dart';
 

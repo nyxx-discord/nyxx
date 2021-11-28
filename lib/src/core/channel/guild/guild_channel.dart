@@ -11,7 +11,7 @@ import 'package:nyxx/src/core/permissions/permissions_constants.dart';
 import 'package:nyxx/src/core/user/member.dart';
 import 'package:nyxx/src/internal/cache/cacheable.dart';
 import 'package:nyxx/src/typedefs.dart';
-import 'package:nyxx/src/utils/builders/guild_builder.dart';
+import 'package:nyxx/src/utils/builders/channel_builder.dart';
 import 'package:nyxx/src/utils/builders/permissions_builder.dart';
 import 'package:nyxx/src/utils/permissions.dart';
 import 'package:nyxx/src/utils/utils.dart';

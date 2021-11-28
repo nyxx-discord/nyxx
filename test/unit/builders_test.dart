@@ -12,12 +12,12 @@ import '../mocks/nyxx_rest.mock.dart';
 main() {
   test("ThreadBuilder", () {
     final publicBuilder = ThreadBuilder('test name')
-      ..setArchiveAfter(ThreadArchiveTime.threeDays)
-      ..setPublic();
+      ..archiveAfter = ThreadArchiveTime.threeDays
+      ..private = false;
     expect(publicBuilder.build(), equals({"auto_archive_duration": ThreadArchiveTime.threeDays.value, "name": 'test name', "type": 11}));
 
-    final privateBuilder = ThreadBuilder("second name")..setPrivate();
-    expect(privateBuilder.build(), equals({"auto_archive_duration": ThreadArchiveTime.day.value, "name": 'second name', "type": 12}));
+    final privateBuilder = ThreadBuilder("second name")..private = true;
+    expect(privateBuilder.build(), equals({"name": 'second name', "type": 12}));
   });
 
   test('StickerBuilder', () {

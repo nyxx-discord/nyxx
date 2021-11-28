@@ -29,6 +29,7 @@ import 'package:nyxx/src/internal/http/http_response.dart';
 import 'package:nyxx/src/internal/response_wrapper/thread_list_result_wrapper.dart';
 import 'package:nyxx/src/typedefs.dart';
 import 'package:nyxx/src/utils/builders/attachment_builder.dart';
+import 'package:nyxx/src/utils/builders/channel_builder.dart';
 import 'package:nyxx/src/utils/builders/guild_builder.dart';
 import 'package:nyxx/src/utils/builders/message_builder.dart';
 import 'package:nyxx/src/utils/builders/permissions_builder.dart';
@@ -355,6 +356,9 @@ abstract class IHttpEndpoints {
 
   /// Allows to edit guild channel. Resulting updated channel can by cast using generics
   Future<T> editGuildChannel<T extends IGuildChannel>(Snowflake channelId, ChannelBuilder builder, {String? auditReason});
+
+  /// Allows editing thread channel.
+  Future<ThreadChannel> editThreadChannel(Snowflake channelId, ThreadBuilder builder, {String auditReason});
 
   /// Returns single nitro sticker
   Future<IStandardSticker> getSticker(Snowflake id);
@@ -1549,5 +1553,16 @@ class HttpEndpoints implements IHttpEndpoints {
     }
 
     return ThreadMember(client, (result as IHttpResponseSucess).jsonBody as RawApiMap, GuildCacheable(client, guildId));
+  }
+
+  @override
+  Future<ThreadChannel> editThreadChannel(Snowflake channelId, ThreadBuilder builder, {String? auditReason}) async {
+    final response = await httpHandler.execute(BasicRequest("/channels/$channelId", method: "PATCH", body: builder.build(), auditLog: auditReason));
+
+    if (response is HttpResponseSuccess) {
+      return ThreadChannel(client, response.jsonBody as RawApiMap);
+    }
+
+    return Future.error(response);
   }
 }
