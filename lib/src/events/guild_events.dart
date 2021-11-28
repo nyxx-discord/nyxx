@@ -349,7 +349,7 @@ class RoleDeleteEvent implements IRoleDeleteEvent {
 
     final guildInstance = guild.getFromCache();
     if (guildInstance != null) {
-      role = role = RoleCacheable(client, Snowflake(raw["d"]["role_id"]), guild);
+      role = RoleCacheable(client, Snowflake(raw["d"]["role_id"]), guild);
       guildInstance.roles.remove(role!.id);
     } else {
       role = null;
