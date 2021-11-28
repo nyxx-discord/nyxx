@@ -45,7 +45,7 @@ class BasicRequest extends HttpRequest {
       request.headers.addAll(_getJsonContentTypeHeader());
       if (body is String) {
         request.body = body as String;
-      } else if (body is RawApiMap || body is List<dynamic>) {
+      } else if (body is RawApiMap || body is RawApiList) {
         request.body = jsonEncode(body);
       }
     }

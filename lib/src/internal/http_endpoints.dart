@@ -1009,7 +1009,7 @@ class HttpEndpoints implements IHttpEndpoints {
       return;
     }
 
-    for (final val in (response as HttpResponseSuccess).jsonBody as List<dynamic>) {
+    for (final val in (response as HttpResponseSuccess).jsonBody as RawApiList) {
       yield Message(client, val as RawApiMap);
     }
   }
