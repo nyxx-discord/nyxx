@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:collection';
-import 'dart:io';
 
 import 'package:logging/logging.dart';
 import 'package:nyxx/nyxx.dart';

@@ -31,7 +31,7 @@ class TimeStampStyle extends IEnum<String> {
   const TimeStampStyle._create(String value) : super(value);
 
   /// Return
-  String format(DateTime dateTime) => "<t:${dateTime.millisecondsSinceEpoch ~/ 1000}:${value}>";
+  String format(DateTime dateTime) => "<t:${dateTime.millisecondsSinceEpoch ~/ 1000}:$value>";
 }
 
 abstract class IMessageTimestamp {

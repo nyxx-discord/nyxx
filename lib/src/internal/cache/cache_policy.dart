@@ -2,7 +2,6 @@ import 'package:nyxx/src/core/snowflake_entity.dart';
 import 'package:nyxx/src/core/channel/channel.dart';
 import 'package:nyxx/src/core/channel/text_channel.dart';
 import 'package:nyxx/src/core/channel/thread_channel.dart';
-import 'package:nyxx/src/core/channel/guild/guild_channel.dart';
 import 'package:nyxx/src/core/channel/guild/voice_channel.dart';
 import 'package:nyxx/src/core/message/message.dart';
 import 'package:nyxx/src/core/user/member.dart';

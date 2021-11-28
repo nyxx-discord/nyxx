@@ -3,13 +3,11 @@ import 'dart:io';
 import 'package:logging/logging.dart';
 import 'package:nyxx/nyxx.dart';
 import 'package:nyxx/src/nyxx.dart';
-import 'package:nyxx/src/core/application/client_oauth2_application.dart';
 import 'package:nyxx/src/events/ready_event.dart';
 import 'package:nyxx/src/internal/event_controller.dart';
 import 'package:nyxx/src/internal/http_endpoints.dart';
 import 'package:nyxx/src/internal/http/http_response.dart';
 import 'package:nyxx/src/internal/shard/shard_manager.dart';
-import 'package:nyxx/src/typedefs.dart';
 
 /// The WS manager for the client.
 class ConnectionManager {

@@ -34,18 +34,18 @@ class MessageReference implements IMessageReference {
 
   /// Creates an instance of [MessageReference]
   MessageReference(RawApiMap raw, INyxx client) {
-    this.channel = CacheableTextChannel<ITextChannel>(client, Snowflake(raw["channel_id"]));
+    channel = CacheableTextChannel<ITextChannel>(client, Snowflake(raw["channel_id"]));
 
     if (raw["message_id"] != null) {
-      this.message = MessageCacheable(client, Snowflake(raw["message_id"]), this.channel);
+      message = MessageCacheable(client, Snowflake(raw["message_id"]), channel);
     } else {
-      this.message = null;
+      message = null;
     }
 
     if (raw["guild_id"] != null) {
-      this.guild = GuildCacheable(client, Snowflake(raw["guild_id"]));
+      guild = GuildCacheable(client, Snowflake(raw["guild_id"]));
     } else {
-      this.guild = null;
+      guild = null;
     }
   }
 }

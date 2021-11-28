@@ -938,7 +938,7 @@ class HttpEndpoints implements IHttpEndpoints {
 
   @override
   Future<void> bulkRemoveMessages(Snowflake channelId, Iterable<SnowflakeEntity> messagesIds) async {
-    await for (final chunk in Utils.chunk(messagesIds.toList(), 90)) {
+    await for (final chunk in messagesIds.toList().chunk(90)) {
       final response = await httpHandler
           .execute(BasicRequest("/channels/$channelId/messages/bulk-delete", method: "POST", body: {"messages": chunk.map((f) => f.id.toString()).toList()}));
 

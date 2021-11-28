@@ -451,6 +451,9 @@ class Message extends SnowflakeEntity implements IMessage {
 
     return false;
   }
+
+  @override
+  int get hashCode => id.hashCode;
 }
 
 class WebhookMessage extends Message {

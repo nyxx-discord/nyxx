@@ -153,7 +153,7 @@ class Shard implements IShard {
       "cmd": "SEND",
       "data": {"op": opCode, "d": d}
     };
-    manager.logger.finest("Sending to shard isolate on shard [${id}]: [$rawData]");
+    manager.logger.finest("Sending to shard isolate on shard [$id]: [$rawData]");
     _sendPort.send(rawData);
   }
 
@@ -218,7 +218,7 @@ class Shard implements IShard {
     _lastHeartbeatSent = DateTime.now();
 
     if (!_heartbeatAckReceived) {
-      manager.logger.warning("Not received previous heartbeat ack on shard: [${id}] on sequence: [{$_sequence}]");
+      manager.logger.warning("Not received previous heartbeat ack on shard: [$id] on sequence: [{$_sequence}]");
       return;
     }
 
@@ -271,7 +271,7 @@ class Shard implements IShard {
   }
 
   Future<void> _handle(dynamic rawData) async {
-    manager.logger.finest("Received gateway payload on shard [${id}]: [$rawData]");
+    manager.logger.finest("Received gateway payload on shard [$id]: [$rawData]");
 
     if (rawData["cmd"] == "CONNECT_ACK") {
       manager.logger.info("Shard $id connected to gateway!");
@@ -355,7 +355,7 @@ class Shard implements IShard {
             manager.connectionManager.client.self = ClientUser(manager.connectionManager.client, rawPayload["d"]["user"] as RawApiMap);
 
             _connected = true;
-            manager.logger.info("Shard ${id} ready!");
+            manager.logger.info("Shard $id ready!");
 
             if (!_resume) {
               await manager.connectionManager.propagateReady();

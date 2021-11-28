@@ -33,7 +33,7 @@ void main() {
     });
 
     test('chunk', () {
-      final result = Utils.chunk([1, 2, 3, 4], 2);
+      final result = [1, 2, 3, 4].chunk(2);
 
       expect(
           result,

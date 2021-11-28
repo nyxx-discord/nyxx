@@ -57,21 +57,21 @@ class AuditLogEntry extends SnowflakeEntity implements IAuditLogEntry {
 
   /// Creates na instance of [AuditLogEntry]
   AuditLogEntry(RawApiMap raw, INyxx client) : super(Snowflake(raw["id"] as String)) {
-    this.targetId = raw["targetId"] as String;
+    targetId = raw["targetId"] as String;
 
-    this.changes = [
+    changes = [
       if (raw["changes"] != null)
         for (var o in raw["changes"]) AuditLogChange(o as RawApiMap)
     ];
 
-    this.user = UserCacheable(client, Snowflake(raw["user_id"]));
-    this.type = AuditLogEntryType._create(raw["action_type"] as int);
+    user = UserCacheable(client, Snowflake(raw["user_id"]));
+    type = AuditLogEntryType._create(raw["action_type"] as int);
 
     if (raw["options"] != null) {
-      this.options = raw["options"] as String;
+      options = raw["options"] as String;
     }
 
-    this.reason = raw["reason"] as String;
+    reason = raw["reason"] as String;
   }
 }
 
@@ -114,12 +114,12 @@ class AuditLogEntryType extends IEnum<int> {
   @override
   bool operator ==(dynamic other) {
     if (other is int) {
-      return other == this.value;
+      return other == value;
     }
 
     return super == other;
   }
 
   @override
-  int get hashCode => this.value.hashCode;
+  int get hashCode => value.hashCode;
 }

@@ -53,7 +53,7 @@ Future<void> shardHandler(SendPort shardPort) async {
   final gatewayUri = Constants.gatewayUri(initData["gatewayUrl"] as String, initData["compression"] as bool);
 
   WebSocket? _socket;
-  StreamSubscription? _socketSubscription;
+  StreamSubscription<dynamic>? _socketSubscription;
 
   Future<void> terminate() async {
     await _socketSubscription?.cancel();

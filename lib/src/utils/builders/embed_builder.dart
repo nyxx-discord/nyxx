@@ -59,18 +59,18 @@ class EmbedBuilder extends Builder {
   }
 
   /// Adds field to embed. [name] and [content] fields are required. Inline is set to false by default.
-  void addField({dynamic? name, dynamic? content, bool inline = false, Function(EmbedFieldBuilder field)? builder, EmbedFieldBuilder? field}) {
+  void addField({dynamic name, dynamic content, bool inline = false, Function(EmbedFieldBuilder field)? builder, EmbedFieldBuilder? field}) {
     fields.add(_constructEmbedFieldBuilder(name: name, content: content, builder: builder, field: field, inline: inline));
   }
 
   /// Replaces field where [name] witch provided new field.
-  void replaceField({dynamic? name, dynamic? content, bool inline = false, Function(EmbedFieldBuilder field)? builder, EmbedFieldBuilder? field}) {
+  void replaceField({dynamic name, dynamic content, bool inline = false, Function(EmbedFieldBuilder field)? builder, EmbedFieldBuilder? field}) {
     final index = fields.indexWhere((element) => element.name == name);
     fields[index] = _constructEmbedFieldBuilder(name: name, content: content, builder: builder, field: field, inline: inline);
   }
 
   EmbedFieldBuilder _constructEmbedFieldBuilder(
-      {dynamic? name, dynamic? content, bool inline = false, Function(EmbedFieldBuilder field)? builder, EmbedFieldBuilder? field}) {
+      {dynamic name, dynamic content, bool inline = false, Function(EmbedFieldBuilder field)? builder, EmbedFieldBuilder? field}) {
     if (field != null) {
       return field;
     }

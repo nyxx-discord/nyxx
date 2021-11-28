@@ -153,7 +153,7 @@ export 'src/utils/builders/embed_author_builder.dart' show EmbedAuthorBuilder;
 export 'src/utils/builders/embed_builder.dart' show EmbedBuilder;
 export 'src/utils/builders/embed_field_builder.dart' show EmbedFieldBuilder;
 export 'src/utils/builders/embed_footer_builder.dart' show EmbedFooterBuilder;
-export 'src/utils/builders/guild_builder.dart' show GuildBuilder, ChannelBuilder, RoleBuilder;
+export 'src/utils/builders/guild_builder.dart' show GuildBuilder, RoleBuilder;
 export 'src/utils/builders/channel_builder.dart';
 export 'src/utils/builders/message_builder.dart' show MessageBuilder, MessageDecoration;
 export 'src/utils/builders/permissions_builder.dart' show PermissionOverrideBuilder, PermissionsBuilder;
@@ -163,7 +163,7 @@ export 'src/utils/builders/sticker_builder.dart' show StickerBuilder;
 export 'src/utils/builders/thread_builder.dart' show ThreadArchiveTime, ThreadBuilder;
 export 'src/utils/extensions.dart' show IntExtensions, SnowflakeEntityListExtensions, StringExtensions;
 export 'src/utils/permissions.dart' show PermissionsUtils;
-export 'src/utils/utils.dart' show Utils, ListSafeFirstWhere;
+export 'src/utils/utils.dart' show ListSafeFirstWhere;
 
 export 'src/plugin/plugin.dart' show BasePlugin;
 export 'src/plugin/plugin_manger.dart' show IPluginManager;

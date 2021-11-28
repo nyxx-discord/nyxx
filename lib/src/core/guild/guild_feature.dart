@@ -73,5 +73,5 @@ class GuildFeature extends IEnum<String> {
   }
 
   @override
-  int get hashCode => this.value.hashCode;
+  int get hashCode => value.hashCode;
 }

@@ -38,7 +38,7 @@ class AuditLogChange implements IAuditLogChange {
       oldValue = raw["old_value"];
     }
 
-    this.key = ChangeKeyType.from(raw["key"] as String);
+    key = ChangeKeyType.from(raw["key"] as String);
   }
 }
 
@@ -96,12 +96,12 @@ class ChangeKeyType extends IEnum<String> {
   @override
   bool operator ==(dynamic other) {
     if (other is String) {
-      return other == this.value;
+      return other == value;
     }
 
     return super == other;
   }
 
   @override
-  int get hashCode => this.value.hashCode;
+  int get hashCode => value.hashCode;
 }

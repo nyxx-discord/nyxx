@@ -5,10 +5,10 @@ import 'package:nyxx/src/utils/builders/builder.dart';
 /// Builder for embed Field.
 class EmbedFieldBuilder extends Builder {
   /// Field name/title
-  dynamic? name;
+  dynamic name;
 
   /// Field content
-  dynamic? content;
+  dynamic content;
 
   /// Whether or not this field should display inline
   bool? inline;
