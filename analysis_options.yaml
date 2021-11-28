@@ -3,6 +3,7 @@ include: package:lints/recommended.yaml
 linter:
   rules:
     unrelated_type_equality_checks: false
+    implementation_imports: false
 
 analyzer:
   exclude: [build/**, example/**]
