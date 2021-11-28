@@ -75,7 +75,6 @@ class MemberChunkEvent implements IMemberChunkEvent {
 
     if (client.cacheOptions.memberCachePolicyLocation.event) {
       final guildInstance = guild.getFromCache();
-      // TODO: Thats probably redundant
       for (final member in members) {
         if (client.cacheOptions.memberCachePolicy.canCache(member)) {
           guildInstance?.members[member.id] = member;

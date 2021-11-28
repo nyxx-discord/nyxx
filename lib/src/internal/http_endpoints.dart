@@ -1070,7 +1070,6 @@ class HttpEndpoints implements IHttpEndpoints {
     yield* Stream.error(response);
   }
 
-  // TODO: Manage message flags better
   @override
   Future<IMessage> suppressMessageEmbeds(Snowflake channelId, Snowflake messageId) async {
     final body = <String, dynamic>{"flags": 1 << 2};

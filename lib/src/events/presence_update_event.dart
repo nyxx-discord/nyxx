@@ -43,8 +43,7 @@ class PresenceUpdateEvent implements IPresenceUpdateEvent {
         (user as User).status = clientStatus;
       }
 
-      // TODO: Decide what to do with multiplace presences
-      // user.presence = this.presences.first;
+      (user as User).presence = presences.first;
     }
   }
 }

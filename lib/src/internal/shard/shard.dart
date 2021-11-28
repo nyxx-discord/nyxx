@@ -527,7 +527,6 @@ class Shard implements IShard {
   Future<void> dispose() async {
     manager.logger.info("Started disposing shard $id...");
 
-    // TODO: check if it works as it should
     _sendPort.send({"cmd": "KILL"});
 
     final killFuture = _receiveStream.firstWhere((element) => (element as RawApiMap)["cmd"] == "TERMINATE_OK");

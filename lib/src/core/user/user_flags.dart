@@ -25,7 +25,7 @@ abstract class IUserFlags {
   /// True if user has Early Supporter badge
   bool get earlySupporter;
 
-  /// TODO: ??
+  /// Team User
   bool get teamUser;
 
   /// If user is system user
@@ -82,7 +82,6 @@ class UserFlags implements IUserFlags {
   @override
   bool get earlySupporter => PermissionsUtils.isApplied(raw, 1 << 9);
 
-  /// TODO: ??
   @override
   bool get teamUser => PermissionsUtils.isApplied(raw, 1 << 10);
 

@@ -1,6 +1,5 @@
 import 'package:nyxx/src/core/snowflake_entity.dart';
 
-//TODO: Consider what should be here and what should not
 /// Could be either [User], [Member] or [Webhook].
 /// [Webhook] will have most of field missing.
 abstract class IMessageAuthor implements SnowflakeEntity {

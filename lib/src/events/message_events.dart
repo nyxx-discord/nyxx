@@ -1,3 +1,6 @@
+import 'package:nyxx/nyxx.dart';
+import 'package:nyxx/src/core/message/attachment.dart';
+import 'package:nyxx/src/core/message/components/message_component.dart';
 import 'package:nyxx/src/nyxx.dart';
 import 'package:nyxx/src/core/snowflake.dart';
 import 'package:nyxx/src/core/channel/cacheable_text_channel.dart';
@@ -135,7 +138,6 @@ abstract class IMessageReactionEvent {
   /// Channel on which event was fired
   CacheableTextChannel<ITextChannel> get channel;
 
-  // TODO: Probably not working
   /// Reference to guild if event happened in guild
   Cacheable<Snowflake, IGuild> get guild;
 
@@ -160,7 +162,6 @@ abstract class MessageReactionEvent {
   /// Channel on which event was fired
   late final CacheableTextChannel<ITextChannel> channel;
 
-  // TODO: Probably not working
   /// Reference to guild if event happened in guild
   late final Cacheable<Snowflake, IGuild> guild;
 
@@ -340,7 +341,6 @@ abstract class IMessageUpdateEvent {
   Snowflake get messageId;
 }
 
-// TODO: FINISH
 /// Sent when a message is updated.
 class MessageUpdateEvent implements IMessageUpdateEvent {
   /// Edited message with updated fields
@@ -356,9 +356,9 @@ class MessageUpdateEvent implements IMessageUpdateEvent {
   late final Snowflake messageId;
 
   /// Creates na instance of [MessageUpdateEvent]
-  MessageUpdateEvent(RawApiMap json, INyxx client) {
-    channel = CacheableTextChannel<ITextChannel>(client, Snowflake(json["d"]["channel_id"]));
-    messageId = Snowflake(json["d"]["id"]);
+  MessageUpdateEvent(RawApiMap raw, INyxx client) {
+    channel = CacheableTextChannel<ITextChannel>(client, Snowflake(raw["d"]["channel_id"]));
+    messageId = Snowflake(raw["d"]["id"]);
 
     final channelInstance = channel.getFromCache();
     if (channelInstance == null) {
@@ -370,12 +370,34 @@ class MessageUpdateEvent implements IMessageUpdateEvent {
       return;
     }
 
-    if (json["d"]["content"] != updatedMessage!.content) {
-      (updatedMessage! as Message).content = json["d"]["content"].toString();
+    if (raw["d"]["content"] != updatedMessage!.content) {
+      (updatedMessage! as Message).content = raw["d"]["content"].toString();
     }
 
-    if (json["d"]["embeds"] != null) {
-      (updatedMessage! as Message).embeds = (json["d"]["embeds"] as RawApiList).map((e) => Embed(e as RawApiMap)).toList();
+    if (raw["d"]["embeds"] != null) {
+      (updatedMessage! as Message).embeds = (raw["d"]["embeds"] as RawApiList).map((e) => Embed(e as RawApiMap)).toList();
+    }
+
+    if (raw['d']['edited_timestamp'] != null) {
+      (updatedMessage as Message).editedTimestamp = DateTime.parse(raw['d']['edited_timestamp'] as String);
+    }
+
+    if (raw['d']['attachments'] != null) {
+      (updatedMessage as Message).attachments = [for (final attachment in raw['d']['attachments']) Attachment(attachment as RawApiMap)];
+    }
+
+    if (raw['d']['pinned'] != null) {
+      (updatedMessage as Message).pinned = raw['d']['pinned'] as bool;
+    }
+
+    if (raw['d']['flags'] != null) {
+      (updatedMessage as Message).flags = MessageFlags(raw['d']['flags'] as int);
+    }
+
+    if (raw['d']['components'] != null) {
+      (updatedMessage as Message).components = [
+        for (final rawRow in raw["components"]) [for (final componentRaw in rawRow["components"]) MessageComponent.deserialize(componentRaw as RawApiMap)]
+      ];
     }
   }
 }

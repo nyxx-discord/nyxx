@@ -106,7 +106,6 @@ abstract class IMessage implements SnowflakeEntity, Disposable, Convertable<Mess
   /// True if this message is cross posts other message
   bool get isCrossPosting;
 
-  // TODO: Consider how to handle properly webhooks as message authors.
   /// True if message is sent by a webhook
   bool get isByWebhook;
 
@@ -170,7 +169,7 @@ class Message extends SnowflakeEntity implements IMessage {
 
   /// The timestamp of when the message was last edited, null if not edited.
   @override
-  late final DateTime? editedTimestamp;
+  late DateTime? editedTimestamp;
 
   /// The mentions in the message.
   @override
@@ -182,11 +181,11 @@ class Message extends SnowflakeEntity implements IMessage {
 
   /// The attachments in the message.
   @override
-  late final List<Attachment> attachments;
+  late List<Attachment> attachments;
 
   /// Whether or not the message is pinned.
   @override
-  late final bool pinned;
+  late bool pinned;
 
   /// Whether or not the message was sent with TTS enabled.
   @override
@@ -258,7 +257,6 @@ class Message extends SnowflakeEntity implements IMessage {
   @override
   late final IMember? member;
 
-  // TODO: Consider how to handle properly webhooks as message authors.
   /// True if message is sent by a webhook
   @override
   bool get isByWebhook => author is IWebhook;

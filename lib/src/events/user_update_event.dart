@@ -7,7 +7,6 @@ abstract class IUserUpdateEvent {
   IUser get user;
 }
 
-// TODO: ???
 /// Emitted when user was updated
 class UserUpdateEvent implements IUserUpdateEvent {
   /// User instance after update

@@ -13,7 +13,6 @@ abstract class IChannelCreateEvent {
   IChannel get channel;
 }
 
-// TODO: Decide what about guild store channels
 /// Sent when a channel is created.
 class ChannelCreateEvent implements IChannelCreateEvent {
   /// The channel that was created, either a [GuildChannel] or [DMChannel]

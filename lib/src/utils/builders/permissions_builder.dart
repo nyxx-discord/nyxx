@@ -234,7 +234,6 @@ class PermissionsBuilder {
     return permissionSet;
   }
 
-  // TODO: NNBD - To consider
   void _apply(_PermissionsSet perm, bool? applies, int constant) {
     if (applies == null) {
       return;

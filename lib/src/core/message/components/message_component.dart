@@ -32,7 +32,6 @@ abstract class IMessageComponentEmoji {
   /// True if emoji is animated
   bool get animated;
 
-  // TODO: handle animated in partial emojis
   /// Returns emoji from button as emoji button native for nyxx
   IEmoji get parsedEmoji;
 }
@@ -51,7 +50,6 @@ class MessageComponentEmoji implements IMessageComponentEmoji {
   @override
   late final bool animated;
 
-  // TODO: handle animated in partial emojis
   /// Returns emoji from button as emoji button native for nyxx
   @override
   IEmoji get parsedEmoji {
