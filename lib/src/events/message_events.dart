@@ -394,7 +394,7 @@ class MessageUpdateEvent implements IMessageUpdateEvent {
       (updatedMessage as Message).flags = MessageFlags(raw['d']['flags'] as int);
     }
 
-    if (raw['d']['components'] != null) {
+    if (raw['d']['components'] != null || (raw['d']['components'] as RawApiList).isNotEmpty) {
       (updatedMessage as Message).components = [
         for (final rawRow in raw["components"]) [for (final componentRaw in rawRow["components"]) MessageComponent.deserialize(componentRaw as RawApiMap)]
       ];
