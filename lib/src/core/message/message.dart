@@ -205,7 +205,7 @@ class Message extends SnowflakeEntity implements IMessage {
 
   /// Extra features of the message
   @override
-  late final MessageFlags? flags;
+  late MessageFlags? flags;
 
   /// The stickers sent with the message
   @override
@@ -217,7 +217,7 @@ class Message extends SnowflakeEntity implements IMessage {
 
   /// List of components attached to message.
   @override
-  late final List<List<IMessageComponent>> components;
+  late List<List<IMessageComponent>> components;
 
   /// A nonce that can be used for optimistic message sending (up to 25 characters)
   /// You will be able to identify that message when receiving it through gateway
@@ -280,13 +280,8 @@ class Message extends SnowflakeEntity implements IMessage {
         for (final rawSticker in raw["sticker_items"]) PartialSticker(rawSticker as RawApiMap, client)
     ];
 
-    if (raw["flags"] != null) {
-      flags = MessageFlags(raw["flags"] as int);
-    }
-
-    if (raw["edited_timestamp"] != null) {
-      editedTimestamp = DateTime.parse(raw["edited_timestamp"] as String).toUtc();
-    }
+    flags = raw["flags"] != null ? MessageFlags(raw["flags"] as int) : null;
+    editedTimestamp = raw["edited_timestamp"] != null ? DateTime.parse(raw["edited_timestamp"] as String).toUtc() : null;
 
     embeds = [
       if (raw["embeds"] != null && raw["embeds"].isNotEmpty as bool)
