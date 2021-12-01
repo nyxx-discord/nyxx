@@ -280,13 +280,8 @@ class Message extends SnowflakeEntity implements IMessage {
         for (final rawSticker in raw["sticker_items"]) PartialSticker(rawSticker as RawApiMap, client)
     ];
 
-    if (raw["flags"] != null) {
-      flags = MessageFlags(raw["flags"] as int);
-    }
-
-    if (raw["edited_timestamp"] != null) {
-      editedTimestamp = DateTime.parse(raw["edited_timestamp"] as String).toUtc();
-    }
+    flags = raw["flags"] != null ? MessageFlags(raw["flags"] as int) : null;
+    editedTimestamp = raw["edited_timestamp"] != null ? DateTime.parse(raw["edited_timestamp"] as String).toUtc() : null;
 
     embeds = [
       if (raw["embeds"] != null && raw["embeds"].isNotEmpty as bool)
