@@ -205,7 +205,7 @@ class Message extends SnowflakeEntity implements IMessage {
 
   /// Extra features of the message
   @override
-  late final MessageFlags? flags;
+  late MessageFlags? flags;
 
   /// The stickers sent with the message
   @override
