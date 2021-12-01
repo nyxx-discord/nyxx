@@ -197,13 +197,14 @@ class NyxxRest extends INyxxRest {
     guilds = SnowflakeCache();
     channels = SnowflakeCache();
     users = SnowflakeCache();
+
+    eventsRest = RestEventController();
   }
 
   @override
   Future<void> connect() async {
     httpHandler = HttpHandler(this);
     httpEndpoints = HttpEndpoints(this);
-    eventsRest = RestEventController();
 
     onReadyController.add(ReadyEvent(this));
 
@@ -337,13 +338,13 @@ class NyxxWebsocket extends NyxxRest implements INyxxWebsocket {
           cacheOptions: cacheOptions,
           ignoreExceptions: ignoreExceptions,
           useDefaultLogger: useDefaultLogger,
-        );
+        ) {
+    eventsWs = WebsocketEventController();
+  }
 
   @override
   Future<void> connect() async {
-    super.connect();
-
-    eventsWs = WebsocketEventController();
+    await super.connect();
 
     final httpResponse = await (httpEndpoints as HttpEndpoints).getMeApplication();
     if (httpResponse is HttpResponseSuccess) {
