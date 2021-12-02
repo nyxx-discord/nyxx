@@ -350,7 +350,7 @@ class NyxxWebsocket extends NyxxRest implements INyxxWebsocket {
     if (httpResponse is HttpResponseSuccess) {
       app = ClientOAuth2Application(httpResponse.jsonBody as RawApiMap, this);
     } else {
-      _logger.shout("Cannot get bot identity: `${httpResponse.toString()}`");
+      throw UnrecoverableNyxxError("Cannot get bot identity: `${httpResponse.toString()}`");
     }
 
     ws = ConnectionManager(this);
