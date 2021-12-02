@@ -1,3 +1,13 @@
+## 3.0.0-dev.1
+__02.12.2021__
+
+- Implement multiple files uploads. Fixes #226
+- Implement missing webhook endpoints. Fixes #235
+- Implement get thread member endpoint; Fixes #234
+- Implement edit thread channel functionality; Fixes #247
+- Fix few message update event deserialization bugs
+- Fix TODOs and all analyzer issues
+
 ## 3.0.0-dev.0
 __24.11.2021__
 
