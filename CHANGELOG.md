@@ -1,3 +1,8 @@
+## 3.0.0-dev.2
+__02.12.2021__ 
+
+- Fixup message update payload deserialization
+
 ## 3.0.0-dev.1
 __02.12.2021__
 
