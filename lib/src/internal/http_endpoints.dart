@@ -406,7 +406,7 @@ class HttpEndpoints implements IHttpEndpoints {
 
   @override
   String getApplicationInviteUrl(Snowflake applicationId, [int? permissions]) {
-    var baseLink = "https://${Constants.host}/oauth2/authorize?client_id=${applicationId.toString()}&scope=bot";
+    var baseLink = "https://${Constants.host}/oauth2/authorize?client_id=${applicationId.toString()}&scope=bot%20applications.commands";
 
     if (permissions != null) {
       baseLink += "&permissions=$permissions";
