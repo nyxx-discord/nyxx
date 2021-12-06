@@ -6,7 +6,7 @@ import 'package:nyxx/src/core/user/user.dart';
 import 'package:nyxx/src/internal/cache/cacheable.dart';
 
 /// A representation of a scheduled event in a guild.
-abstract class IScheduledEvent implements SnowflakeEntity {
+abstract class IGuildEvent implements SnowflakeEntity {
   /// The guild id which the scheduled event belongs to
   Cacheable<Snowflake, Guild> get guild;
 
@@ -44,8 +44,8 @@ abstract class IScheduledEvent implements SnowflakeEntity {
 class GuildEventPrivacyLevel extends IEnum<int> {
   static const guildOnly = GuildEventPrivacyLevel(2);
 
-  const GuildEventPrivacyLevel(int value): super(value);
-  GuildEventPrivacyLevel.from(int value): super(value);
+  const GuildEventPrivacyLevel(int value) : super(value);
+  GuildEventPrivacyLevel.from(int value) : super(value);
 }
 
 class GuildEventStatus extends IEnum<int> {
@@ -54,8 +54,8 @@ class GuildEventStatus extends IEnum<int> {
   static const completed = GuildEventStatus(3);
   static const canceled = GuildEventStatus(4);
 
-  const GuildEventStatus(int value): super(value);
-  GuildEventStatus.from(int value): super(value);
+  const GuildEventStatus(int value) : super(value);
+  GuildEventStatus.from(int value) : super(value);
 }
 
 class GuildEventType extends IEnum<int> {
@@ -63,6 +63,6 @@ class GuildEventType extends IEnum<int> {
   static const voice = GuildEventType(2);
   static const external = GuildEventType(3);
 
-  const GuildEventType(int value): super(value);
-  GuildEventType.from(int value): super(value);
+  const GuildEventType(int value) : super(value);
+  GuildEventType.from(int value) : super(value);
 }
