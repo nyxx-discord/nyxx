@@ -389,9 +389,9 @@ abstract class IHttpEndpoints {
   Stream<GuildEvent> fetchGuildEvents(Snowflake guildId, {bool withUserCount = false});
   Future<GuildEvent> createGuildEvent(Snowflake guildId, GuildEventBuilder builder);
   Future<GuildEvent> fetchGuildEvent(Snowflake guildId, Snowflake guildEventId);
-  Future<GuildEvent> editGuildEvent(Snowflake guildId, GuildEventBuilder builder);
-  Future<GuildEvent> deleteGuildEvent(Snowflake guildId, Snowflake guildEventId);
-  Stream<GuildEventUser> fetchGuildEventUsers(Snowflake guildId, Snowflake guildEventId);
+  Future<GuildEvent> editGuildEvent(Snowflake guildId, Snowflake guildEventId, GuildEventBuilder builder);
+  Future<void> deleteGuildEvent(Snowflake guildId, Snowflake guildEventId);
+  Stream<GuildEventUser> fetchGuildEventUsers(Snowflake guildId, Snowflake guildEventId, {int limit = 100, bool withMember = false, Snowflake? before, Snowflake? after});
 }
 
 class HttpEndpoints implements IHttpEndpoints {
@@ -1575,38 +1575,73 @@ class HttpEndpoints implements IHttpEndpoints {
   }
 
   @override
-  Future<GuildEvent> createGuildEvent(Snowflake guildId, GuildEventBuilder builder) {
-    // TODO: implement createGuildEvent
-    throw UnimplementedError();
+  Future<GuildEvent> createGuildEvent(Snowflake guildId, GuildEventBuilder builder) async {
+    final response = await httpHandler.execute(BasicRequest("/guilds/${guildId.toString()}/scheduled-events", method: 'POST', body: builder.build()));
+
+    if (response is IHttpResponseError) {
+      return Future.error(response);
+    }
+
+    return GuildEvent((response as IHttpResponseSucess).jsonBody as RawApiMap, client);
   }
 
   @override
-  Future<GuildEvent> deleteGuildEvent(Snowflake guildId, Snowflake guildEventId) {
-    // TODO: implement deleteGuildEvent
-    throw UnimplementedError();
+  Future<void> deleteGuildEvent(Snowflake guildId, Snowflake guildEventId) => executeSafe(
+    BasicRequest("/guilds/$guildId/scheduled-events/$guildEventId", method: 'DELETE')
+  );
+
+  @override
+  Future<GuildEvent> editGuildEvent(Snowflake guildId, Snowflake guildEventId, GuildEventBuilder builder) async {
+    final response = await httpHandler.execute(BasicRequest("/guilds/$guildId/scheduled-events/$guildEventId", method: 'PATCH', body: builder.build()));
+
+    if (response is IHttpResponseError) {
+      return Future.error(response);
+    }
+
+    return GuildEvent((response as IHttpResponseSucess).jsonBody as RawApiMap, client);
   }
 
   @override
-  Future<GuildEvent> editGuildEvent(Snowflake guildId, GuildEventBuilder builder) {
-    // TODO: implement editGuildEvent
-    throw UnimplementedError();
+  Future<GuildEvent> fetchGuildEvent(Snowflake guildId, Snowflake guildEventId) async {
+    final response = await httpHandler.execute(BasicRequest("/guilds/$guildId/scheduled-events/$guildEventId", method: 'GET'));
+
+    if (response is IHttpResponseError) {
+      return Future.error(response);
+    }
+
+    return GuildEvent((response as IHttpResponseSucess).jsonBody as RawApiMap, client);
   }
 
   @override
-  Future<GuildEvent> fetchGuildEvent(Snowflake guildId, Snowflake guildEventId) {
-    // TODO: implement fetchGuildEvent
-    throw UnimplementedError();
+  Stream<GuildEventUser> fetchGuildEventUsers(Snowflake guildId, Snowflake guildEventId, {int limit = 100, bool withMember = false, Snowflake? before, Snowflake? after}) async* {
+    final response = await httpHandler.execute(BasicRequest("/guilds/$guildId/scheduled-events/$guildEventId/users", method: 'GET', queryParams: {
+      'limit': limit,
+      'with_member': withMember,
+      if (before != null) 'before': before.toString(),
+      if (after != null) 'after': after.toString(),
+    }));
+
+    if (response is IHttpResponseError) {
+      yield* Stream.error(response);
+    }
+
+    for (final rawGuildEventUser in (response as IHttpResponseSucess).jsonBody as RawApiList) {
+      yield GuildEventUser(rawGuildEventUser as RawApiMap, client, guildId);
+    }
   }
 
   @override
-  Stream<GuildEventUser> fetchGuildEventUsers(Snowflake guildId, Snowflake guildEventId) {
-    // TODO: implement fetchGuildEventUsers
-    throw UnimplementedError();
-  }
+  Stream<GuildEvent> fetchGuildEvents(Snowflake guildId, {bool withUserCount = false}) async* {
+    final response = await httpHandler.execute(BasicRequest("/guilds/$guildId/scheduled-events", method: 'GET', queryParams: {
+      'with_user_count': withUserCount
+    }));
 
-  @override
-  Stream<GuildEvent> fetchGuildEvents(Snowflake guildId, {bool withUserCount = false}) {
-    // TODO: implement fetchGuildEvents
-    throw UnimplementedError();
+    if (response is IHttpResponseError) {
+      yield* Stream.error(response);
+    }
+
+    for (final rawGuildEvent in (response as IHttpResponseSucess).jsonBody as RawApiList) {
+      yield GuildEvent(rawGuildEvent as RawApiMap, client);
+    }
   }
 }

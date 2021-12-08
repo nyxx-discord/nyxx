@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:math';
 
+import 'package:logging/logging.dart';
 import 'package:nyxx/nyxx.dart';
 import 'package:test/expect.dart';
 import 'package:test/scaffolding.dart';
@@ -20,6 +21,7 @@ main() async {
   final random = Random();
 
   late ITextChannel channel;
+
   await bot.eventsWs.onReady.first.then((value) async {
     channel = await bot.fetchChannel<ITextGuildChannel>(testChannelSnowflake);
 
@@ -160,6 +162,16 @@ main() async {
 
     final effectivePermissions = await memberBot.effectivePermissions;
     expect(effectivePermissions.sendMessages, isTrue);
+  });
+
+  test("guild events tests", () async {
+    final guild = await bot.fetchGuild(testGuildSnowflake);
+
+    final events = await guild.fetchGuildEvents().toList();
+
+    print(events);
+
+    expect(events, isEmpty);
   });
 }
 

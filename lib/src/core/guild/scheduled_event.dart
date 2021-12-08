@@ -8,6 +8,9 @@ import 'package:nyxx/src/internal/cache/cacheable.dart';
 
 /// A representation of a scheduled event in a guild.
 abstract class IGuildEvent implements SnowflakeEntity {
+  /// Reference to [INyxx]
+  INyxx get client;
+
   /// The guild id which the scheduled event belongs to
   Cacheable<Snowflake, IGuild> get guild;
 
@@ -49,9 +52,21 @@ abstract class IGuildEvent implements SnowflakeEntity {
 
   /// Additional metadata for the guild scheduled event
   IEntityMetadata? get metadata;
+
+  /// Deletes guild event
+  Future<void> delete();
+
+  /// Allows editing guild event details and transitioning event between states
+  Future<GuildEvent> edit(GuildEventBuilder builder);
+
+  /// Allows getting users that are taking part in event
+  Stream<GuildEventUser> fetchUsers({int limit = 100, bool withMember = false, Snowflake? before, Snowflake? after});
 }
 
 class GuildEvent extends SnowflakeEntity implements IGuildEvent {
+  @override
+  final INyxx client;
+
   @override
   late final IUser? creator;
 
@@ -94,7 +109,7 @@ class GuildEvent extends SnowflakeEntity implements IGuildEvent {
   @override
   late final IEntityMetadata? metadata;
 
-  GuildEvent(RawApiMap raw, INyxx client) : super(Snowflake(raw['id'])) {
+  GuildEvent(RawApiMap raw, this.client) : super(Snowflake(raw['id'])) {
     creator = raw['creator'] != null ? User(client, raw['creator'] as RawApiMap) : null;
     creatorId = raw['creator_id'] != null ? UserCacheable(client, Snowflake(raw['creator_id'])) : null;
     entityId = raw['entity_id'] != null ? Snowflake(raw['entity_id']) : null;
@@ -113,6 +128,16 @@ class GuildEvent extends SnowflakeEntity implements IGuildEvent {
 
     metadata = raw['entity_metadata'] != null ? EntityMetadata(raw['entity_metadata'] as RawApiMap) : null;
   }
+
+  @override
+  Future<void> delete() => client.httpEndpoints.deleteGuildEvent(guild.id, id);
+
+  @override
+  Future<GuildEvent> edit(GuildEventBuilder builder) => client.httpEndpoints.editGuildEvent(guild.id, id, builder);
+
+  @override
+  Stream<GuildEventUser> fetchUsers({int limit = 100, bool withMember = false, Snowflake? before, Snowflake? after}) =>
+      client.httpEndpoints.fetchGuildEventUsers(guild.id, id, limit: limit, withMember: withMember, before: before, after: after);
 }
 
 abstract class IEntityMetadata {
