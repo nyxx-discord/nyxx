@@ -1,3 +1,4 @@
+import 'package:nyxx/src/core/guild/scheduled_event.dart';
 import 'package:nyxx/src/nyxx.dart';
 import 'package:nyxx/src/core/channel/invite.dart';
 import 'package:nyxx/src/core/snowflake.dart';
@@ -31,6 +32,7 @@ import 'package:nyxx/src/typedefs.dart';
 import 'package:nyxx/src/utils/builders/attachment_builder.dart';
 import 'package:nyxx/src/utils/builders/channel_builder.dart';
 import 'package:nyxx/src/utils/builders/guild_builder.dart';
+import 'package:nyxx/src/utils/builders/guild_event_builder.dart';
 import 'package:nyxx/src/utils/builders/message_builder.dart';
 import 'package:nyxx/src/utils/builders/permissions_builder.dart';
 import 'package:nyxx/src/utils/builders/sticker_builder.dart';
@@ -383,6 +385,13 @@ abstract class IHttpEndpoints {
 
   /// Returns url of user banner
   String getUserBannerURL(Snowflake userId, String hash, {String format = "png"});
+
+  Stream<GuildEvent> fetchGuildEvents(Snowflake guildId, {bool withUserCount = false});
+  Future<GuildEvent> createGuildEvent(Snowflake guildId, GuildEventBuilder builder);
+  Future<GuildEvent> fetchGuildEvent(Snowflake guildId, Snowflake guildEventId);
+  Future<GuildEvent> editGuildEvent(Snowflake guildId, GuildEventBuilder builder);
+  Future<GuildEvent> deleteGuildEvent(Snowflake guildId, Snowflake guildEventId);
+  Stream<GuildEventUser> fetchGuildEventUsers(Snowflake guildId, Snowflake guildEventId);
 }
 
 class HttpEndpoints implements IHttpEndpoints {
@@ -1563,5 +1572,41 @@ class HttpEndpoints implements IHttpEndpoints {
     }
 
     return Future.error(response);
+  }
+
+  @override
+  Future<GuildEvent> createGuildEvent(Snowflake guildId, GuildEventBuilder builder) {
+    // TODO: implement createGuildEvent
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<GuildEvent> deleteGuildEvent(Snowflake guildId, Snowflake guildEventId) {
+    // TODO: implement deleteGuildEvent
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<GuildEvent> editGuildEvent(Snowflake guildId, GuildEventBuilder builder) {
+    // TODO: implement editGuildEvent
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<GuildEvent> fetchGuildEvent(Snowflake guildId, Snowflake guildEventId) {
+    // TODO: implement fetchGuildEvent
+    throw UnimplementedError();
+  }
+
+  @override
+  Stream<GuildEventUser> fetchGuildEventUsers(Snowflake guildId, Snowflake guildEventId) {
+    // TODO: implement fetchGuildEventUsers
+    throw UnimplementedError();
+  }
+
+  @override
+  Stream<GuildEvent> fetchGuildEvents(Snowflake guildId, {bool withUserCount = false}) {
+    // TODO: implement fetchGuildEvents
+    throw UnimplementedError();
   }
 }

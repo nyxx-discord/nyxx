@@ -2,19 +2,23 @@ import 'package:nyxx/nyxx.dart';
 import 'package:nyxx/src/core/guild/guild.dart';
 import 'package:nyxx/src/core/snowflake.dart';
 import 'package:nyxx/src/core/snowflake_entity.dart';
+import 'package:nyxx/src/core/user/member.dart';
 import 'package:nyxx/src/core/user/user.dart';
 import 'package:nyxx/src/internal/cache/cacheable.dart';
 
 /// A representation of a scheduled event in a guild.
 abstract class IGuildEvent implements SnowflakeEntity {
   /// The guild id which the scheduled event belongs to
-  Cacheable<Snowflake, Guild> get guild;
+  Cacheable<Snowflake, IGuild> get guild;
 
   ///	The id of the user that created the scheduled event
-  Cacheable<Snowflake, User>? get creatorId;
+  Cacheable<Snowflake, IUser>? get creatorId;
+
+  /// The channel id in which the scheduled event will be hosted, or null if scheduled entity type is EXTERNAL
+  Cacheable<Snowflake, IVoiceGuildChannel>? get channel;
 
   /// The user that created the scheduled event
-  User? get creator;
+  IUser? get creator;
 
   /// The name of the scheduled event
   String get name;
@@ -24,6 +28,9 @@ abstract class IGuildEvent implements SnowflakeEntity {
 
   /// The time the scheduled event will start
   DateTime get startDate;
+
+  /// The time the scheduled event will start
+  DateTime? get endDate;
 
   /// The privacy level of the scheduled event
   GuildEventPrivacyLevel get privacyLevel;
@@ -38,7 +45,116 @@ abstract class IGuildEvent implements SnowflakeEntity {
   Snowflake? get entityId;
 
   /// The number of users subscribed to the scheduled event
-  int get userCount;
+  int? get userCount;
+
+  /// Additional metadata for the guild scheduled event
+  IEntityMetadata? get metadata;
+}
+
+class GuildEvent extends SnowflakeEntity implements IGuildEvent {
+  @override
+  late final IUser? creator;
+
+  @override
+  late final Cacheable<Snowflake, IUser>? creatorId;
+
+  @override
+  late final Cacheable<Snowflake, IVoiceGuildChannel>? channel;
+
+  @override
+  late final String? description;
+
+  @override
+  late final Snowflake? entityId;
+
+  @override
+  late final Cacheable<Snowflake, IGuild> guild;
+
+  @override
+  late final String name;
+
+  @override
+  late final GuildEventPrivacyLevel privacyLevel;
+
+  @override
+  late final DateTime startDate;
+
+  @override
+  late final DateTime? endDate;
+
+  @override
+  late final GuildEventStatus status;
+
+  @override
+  late final GuildEventType type;
+
+  @override
+  late final int? userCount;
+
+  @override
+  late final IEntityMetadata? metadata;
+
+  GuildEvent(RawApiMap raw, INyxx client) : super(Snowflake(raw['id'])) {
+    creator = raw['creator'] != null ? User(client, raw['creator'] as RawApiMap) : null;
+    creatorId = raw['creator_id'] != null ? UserCacheable(client, Snowflake(raw['creator_id'])) : null;
+    entityId = raw['entity_id'] != null ? Snowflake(raw['entity_id']) : null;
+    description = raw['description'] as String?;
+    guild = GuildCacheable(client, Snowflake(raw['guild_id']));
+    name = raw['name'] as String;
+    privacyLevel = GuildEventPrivacyLevel.from(raw['privacy_level'] as int);
+    startDate = DateTime.parse(raw['scheduled_start_time'] as String);
+    status = GuildEventStatus.from(raw['status'] as int);
+    type = GuildEventType.from(raw['entity_type'] as int);
+    userCount = raw['user_count'] as int?;
+
+    channel = raw['channel_id'] != null ? ChannelCacheable(client, Snowflake(raw['channel_id'])) : null;
+
+    endDate = raw['scheduled_end_time'] != null ? DateTime.parse(raw['scheduled_end_time'] as String) : null;
+
+    metadata = raw['entity_metadata'] != null ? EntityMetadata(raw['entity_metadata'] as RawApiMap) : null;
+  }
+}
+
+abstract class IEntityMetadata {
+  /// Location of the event
+  String get location;
+}
+
+class EntityMetadata implements IEntityMetadata {
+  @override
+  late final String location;
+
+  EntityMetadata(RawApiMap raw) {
+    location = raw['location'] as String;
+  }
+}
+
+abstract class IGuildEventUser {
+  /// The scheduled event id which the user subscribed to
+  Snowflake get scheduledEventId;
+
+  /// User which subscribed to an event
+  IUser get user;
+
+  /// Guild member data for this user for the guild which this event belongs to, if any
+  IMember? get member;
+}
+
+class GuildEventUser implements IGuildEventUser {
+  @override
+  late final Snowflake scheduledEventId;
+
+  @override
+  late final IUser user;
+
+  @override
+  late final IMember? member;
+
+  GuildEventUser(RawApiMap raw, INyxx client, Snowflake guildId) {
+    scheduledEventId = Snowflake(raw['guild_scheduled_event_id']);
+    user = User(client, raw['user'] as RawApiMap);
+    member = raw['member'] != null ? Member(client, raw['member'] as RawApiMap, guildId) : null;
+  }
 }
 
 class GuildEventPrivacyLevel extends IEnum<int> {
