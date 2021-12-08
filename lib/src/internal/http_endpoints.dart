@@ -391,7 +391,8 @@ abstract class IHttpEndpoints {
   Future<GuildEvent> fetchGuildEvent(Snowflake guildId, Snowflake guildEventId);
   Future<GuildEvent> editGuildEvent(Snowflake guildId, Snowflake guildEventId, GuildEventBuilder builder);
   Future<void> deleteGuildEvent(Snowflake guildId, Snowflake guildEventId);
-  Stream<GuildEventUser> fetchGuildEventUsers(Snowflake guildId, Snowflake guildEventId, {int limit = 100, bool withMember = false, Snowflake? before, Snowflake? after});
+  Stream<GuildEventUser> fetchGuildEventUsers(Snowflake guildId, Snowflake guildEventId,
+      {int limit = 100, bool withMember = false, Snowflake? before, Snowflake? after});
 }
 
 class HttpEndpoints implements IHttpEndpoints {
@@ -1586,9 +1587,8 @@ class HttpEndpoints implements IHttpEndpoints {
   }
 
   @override
-  Future<void> deleteGuildEvent(Snowflake guildId, Snowflake guildEventId) => executeSafe(
-    BasicRequest("/guilds/$guildId/scheduled-events/$guildEventId", method: 'DELETE')
-  );
+  Future<void> deleteGuildEvent(Snowflake guildId, Snowflake guildEventId) =>
+      executeSafe(BasicRequest("/guilds/$guildId/scheduled-events/$guildEventId", method: 'DELETE'));
 
   @override
   Future<GuildEvent> editGuildEvent(Snowflake guildId, Snowflake guildEventId, GuildEventBuilder builder) async {
@@ -1613,7 +1613,8 @@ class HttpEndpoints implements IHttpEndpoints {
   }
 
   @override
-  Stream<GuildEventUser> fetchGuildEventUsers(Snowflake guildId, Snowflake guildEventId, {int limit = 100, bool withMember = false, Snowflake? before, Snowflake? after}) async* {
+  Stream<GuildEventUser> fetchGuildEventUsers(Snowflake guildId, Snowflake guildEventId,
+      {int limit = 100, bool withMember = false, Snowflake? before, Snowflake? after}) async* {
     final response = await httpHandler.execute(BasicRequest("/guilds/$guildId/scheduled-events/$guildEventId/users", method: 'GET', queryParams: {
       'limit': limit,
       'with_member': withMember,
@@ -1632,9 +1633,8 @@ class HttpEndpoints implements IHttpEndpoints {
 
   @override
   Stream<GuildEvent> fetchGuildEvents(Snowflake guildId, {bool withUserCount = false}) async* {
-    final response = await httpHandler.execute(BasicRequest("/guilds/$guildId/scheduled-events", method: 'GET', queryParams: {
-      'with_user_count': withUserCount
-    }));
+    final response =
+        await httpHandler.execute(BasicRequest("/guilds/$guildId/scheduled-events", method: 'GET', queryParams: {'with_user_count': withUserCount.toString()}));
 
     if (response is IHttpResponseError) {
       yield* Stream.error(response);

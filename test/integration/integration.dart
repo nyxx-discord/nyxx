@@ -168,9 +168,6 @@ main() async {
     final guild = await bot.fetchGuild(testGuildSnowflake);
 
     final events = await guild.fetchGuildEvents().toList();
-
-    print(events);
-
     expect(events, isEmpty);
   });
 }
