@@ -1,3 +1,4 @@
+import 'package:nyxx/src/core/guild/scheduled_event.dart';
 import 'package:nyxx/src/nyxx.dart';
 import 'package:nyxx/src/core/snowflake.dart';
 import 'package:nyxx/src/core/guild/guild.dart';
@@ -409,5 +410,44 @@ class GuildStickerUpdate implements IGuildStickerUpdate {
   GuildStickerUpdate(RawApiMap raw, INyxx client) {
     guild = GuildCacheable(client, Snowflake(raw["d"]["guild_id"]));
     stickers = [for (final rawSticker in raw["d"]["stickers"]) GuildSticker(rawSticker as RawApiMap, client)];
+  }
+}
+
+abstract class IGuildEventCreateEvent {
+  IGuildEvent get event;
+}
+
+class GuildEventCreateEvent implements IGuildEventCreateEvent {
+  @override
+  late final IGuildEvent event;
+
+  GuildEventCreateEvent(RawApiMap raw, INyxx client) {
+    event = GuildEvent(raw['d'] as RawApiMap, client);
+  }
+}
+
+abstract class IGuildEventUpdateEvent {
+  IGuildEvent get event;
+}
+
+class GuildEventUpdateEvent implements IGuildEventUpdateEvent {
+  @override
+  late final IGuildEvent event;
+
+  GuildEventUpdateEvent(RawApiMap raw, INyxx client) {
+    event = GuildEvent(raw['d'] as RawApiMap, client);
+  }
+}
+
+abstract class IGuildEventDeleteEvent {
+  IGuildEvent get event;
+}
+
+class GuildEventDeleteEvent implements IGuildEventDeleteEvent {
+  @override
+  late final IGuildEvent event;
+
+  GuildEventDeleteEvent(RawApiMap raw, INyxx client) {
+    event = GuildEvent(raw['d'] as RawApiMap, client);
   }
 }

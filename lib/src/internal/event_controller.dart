@@ -201,6 +201,15 @@ abstract class IWebsocketEventController implements IRestEventController {
 
   /// Emitted when stage channel instance is deleted
   Stream<IGuildStickerUpdate> get onGuildStickersUpdate;
+
+  /// Emitted when stage channel instance is deleted
+  Stream<IGuildEventCreateEvent> get onGuildEventCreate;
+
+  /// Emitted when stage channel instance is deleted
+  Stream<IGuildEventUpdateEvent> get onGuildEventUpdate;
+
+  /// Emitted when stage channel instance is deleted
+  Stream<IGuildEventDeleteEvent> get onGuildEventDelete;
 }
 
 /// A controller for all events.
@@ -324,6 +333,15 @@ class WebsocketEventController extends RestEventController implements IWebsocket
 
   /// Emitted when guild stickers are update
   late final StreamController<IGuildStickerUpdate> onGuildStickersUpdateController;
+
+  /// Guild scheduled event was created
+  late final StreamController<IGuildEventCreateEvent> onGuildEventCreateController;
+
+  /// Guild scheduled event was deleted
+  late final StreamController<IGuildEventDeleteEvent> onGuildEventDeleteController;
+
+  /// Guild scheduled event was updated
+  late final StreamController<IGuildEventUpdateEvent> onGuildEventUpdateController;
 
   /// Emitted when a shard is disconnected from the websocket.
   @override
@@ -494,6 +512,18 @@ class WebsocketEventController extends RestEventController implements IWebsocket
   @override
   late final Stream<IGuildStickerUpdate> onGuildStickersUpdate;
 
+  /// Guild scheduled event was created
+  @override
+  late final Stream<IGuildEventCreateEvent> onGuildEventCreate;
+
+  /// Guild scheduled event was deleted
+  @override
+  late final Stream<IGuildEventDeleteEvent> onGuildEventDelete;
+
+  /// Guild scheduled event was updated
+  @override
+  late final Stream<IGuildEventUpdateEvent> onGuildEventUpdate;
+
   /// Makes a new `EventController`.
   WebsocketEventController() : super() {
     onDisconnectController = StreamController.broadcast();
@@ -615,6 +645,15 @@ class WebsocketEventController extends RestEventController implements IWebsocket
 
     onGuildStickersUpdateController = StreamController.broadcast();
     onGuildStickersUpdate = onGuildStickersUpdateController.stream;
+
+    onGuildEventCreateController = StreamController.broadcast();
+    onGuildEventCreate = onGuildEventCreateController.stream;
+
+    onGuildEventUpdateController = StreamController.broadcast();
+    onGuildEventUpdate = onGuildEventUpdateController.stream;
+
+    onGuildEventDeleteController = StreamController.broadcast();
+    onGuildEventDelete = onGuildEventDeleteController.stream;
   }
 
   @override
@@ -665,5 +704,9 @@ class WebsocketEventController extends RestEventController implements IWebsocket
     await onThreadDeleteController.close();
 
     await onGuildStickersUpdateController.close();
+
+    await onGuildEventCreateController.close();
+    await onGuildEventUpdateController.close();
+    await onGuildEventDeleteController.close();
   }
 }

@@ -1,3 +1,4 @@
+import 'package:nyxx/src/core/guild/scheduled_event.dart';
 import 'package:nyxx/src/nyxx.dart';
 import 'package:nyxx/src/core/channel/invite.dart';
 import 'package:nyxx/src/core/snowflake.dart';
@@ -29,6 +30,7 @@ import 'package:nyxx/src/typedefs.dart';
 import 'package:nyxx/src/utils/builders/attachment_builder.dart';
 import 'package:nyxx/src/utils/builders/channel_builder.dart';
 import 'package:nyxx/src/utils/builders/guild_builder.dart';
+import 'package:nyxx/src/utils/builders/guild_event_builder.dart';
 import 'package:nyxx/src/utils/builders/sticker_builder.dart';
 
 abstract class IGuild implements SnowflakeEntity {
@@ -283,6 +285,15 @@ abstract class IGuild implements SnowflakeEntity {
 
   /// Deletes the guild.
   Future<void> delete();
+
+  /// Creates guild event using [builder]
+  Future<GuildEvent> createGuildEvent(GuildEventBuilder builder);
+
+  /// Fetches and returns from api single event with given id
+  Future<GuildEvent> fetchGuildEvent(Snowflake guildEventId);
+
+  /// Fetches from api list of events in guild
+  Stream<GuildEvent> fetchGuildEvents({bool withUserCount = false});
 }
 
 class Guild extends SnowflakeEntity implements IGuild {
@@ -764,4 +775,13 @@ class Guild extends SnowflakeEntity implements IGuild {
   /// Deletes the guild.
   @override
   Future<void> delete() => client.httpEndpoints.deleteGuild(id);
+
+  @override
+  Future<GuildEvent> createGuildEvent(GuildEventBuilder builder) => client.httpEndpoints.createGuildEvent(id, builder);
+
+  @override
+  Future<GuildEvent> fetchGuildEvent(Snowflake guildEventId) => client.httpEndpoints.fetchGuildEvent(id, guildEventId);
+
+  @override
+  Stream<GuildEvent> fetchGuildEvents({bool withUserCount = false}) => client.httpEndpoints.fetchGuildEvents(id);
 }

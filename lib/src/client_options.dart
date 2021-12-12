@@ -134,6 +134,9 @@ class GatewayIntents {
   /// Includes events: `TYPING_START`
   static const int directMessageTyping = 1 << 14;
 
+  /// Includes events: `GUILD_SCHEDULED_EVENT_CREATE`, `GUILD_SCHEDULED_EVENT_DELETE`, `GUILD_SCHEDULED_EVENT_UPDATE`, `GUILD_SCHEDULED_EVENT_USER_ADD`, `GUILD_SCHEDULED_EVENT_USER_REMOVE`
+  static const int guildScheduledEvents = 1 << 16;
+
   /// All unprivileged intents
   static const int allUnprivileged = guilds |
       guildBans |
@@ -147,7 +150,8 @@ class GatewayIntents {
       guildMessageTyping |
       directMessages |
       directMessageReactions |
-      directMessageTyping;
+      directMessageTyping |
+      guildScheduledEvents;
 
   /// All privileged intents
   static const int allPrivileged = guildMembers | guildPresences;

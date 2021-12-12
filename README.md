@@ -34,7 +34,7 @@ void main() {
     ..connect();
   
   // Listen for message events
-  bot.onMessageReceived.listen((event) {
+  bot.eventsWs.onMessageReceived.listen((event) {
     if (event.message.content == "!ping") {
       event.message.channel.sendMessage(MessageBuilder.content("Pong!"));
     }

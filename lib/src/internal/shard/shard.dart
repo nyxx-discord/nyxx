@@ -512,6 +512,18 @@ class Shard implements IShard {
             // Catch unnecessary OP, could be needed in future but unsure.
             break;
 
+          case "GUILD_SCHEDULED_EVENT_CREATE":
+            eventController.onGuildEventCreateController.add(GuildEventCreateEvent(rawPayload, manager.connectionManager.client));
+            break;
+
+          case "GUILD_SCHEDULED_EVENT_UPDATE":
+            eventController.onGuildEventUpdateController.add(GuildEventUpdateEvent(rawPayload, manager.connectionManager.client));
+            break;
+
+          case "GUILD_SCHEDULED_EVENT_DELETE":
+            eventController.onGuildEventDeleteController.add(GuildEventDeleteEvent(rawPayload, manager.connectionManager.client));
+            break;
+
           default:
             if (manager.connectionManager.client.options.dispatchRawShardEvent) {
               manager.onRawEventController.add(RawEvent(this, rawPayload));
