@@ -9,6 +9,14 @@ jobs:
   nyxx_publish:
     runs-on: ubuntu-latest
     steps:
+      - name: Cache
+        uses: actions/cache@v2
+        with:
+          path: ~/.pub_cache
+          key: ${{ runner.os }}-pubspec-${{ hashFiles('**/pubspec.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-pubspec-
+
       - name: 'Check if version in constants.dart is correct'
         run: |
           apt-get update -y

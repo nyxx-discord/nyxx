@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - dev
+      - next
 
 jobs:
   deploy-docs:
@@ -14,7 +15,9 @@ jobs:
         uses: actions/cache@v2
         with:
           path: ~/.pub_cache
-          key: ${{ runner.os }}
+          key: ${{ runner.os }}-pubspec-${{ hashFiles('**/pubspec.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-pubspec-
 
       - name: Setup Dart Action
         uses: dart-lang/setup-dart@v1
@@ -28,6 +31,11 @@ jobs:
       - name: Generate docs
         run: dartdoc
 
+      - name: Extract branch name
+        shell: bash
+        run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
+        id: extract_branch
+
       - name: Deploy nyxx dev docs
         uses: easingthemes/ssh-deploy@v2.1.5
         env:
@@ -36,4 +44,4 @@ jobs:
           SOURCE: "doc/api/"
           REMOTE_HOST: ${{ secrets.DEPLOY_REMOTE_HOST }}
           REMOTE_USER: ${{ secrets.DEPLOY_REMOTE_USER }}
-          TARGET: "${{ secrets.DEPLOY_REMOTE_TARGET }}/dartdocs/nyxx/"
+          TARGET: "${{ secrets.DEPLOY_REMOTE_TARGET }}/dartdocs/nyxx/${{ steps.extract_branch.outputs.branch }}/"

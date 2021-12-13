@@ -16,7 +16,9 @@ jobs:
         uses: actions/cache@v2
         with:
           path: ~/.pub_cache
-          key: ${{ runner.os }}
+          key: ${{ runner.os }}-pubspec-${{ hashFiles('**/pubspec.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-pubspec-
 
       - name: Setup Dart Action
         uses: dart-lang/setup-dart@v1
@@ -40,7 +42,9 @@ jobs:
         uses: actions/cache@v2
         with:
           path: ~/.pub_cache
-          key: ${{ runner.os }}
+          key: ${{ runner.os }}-pubspec-${{ hashFiles('**/pubspec.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-pubspec-
 
       - name: Setup Dart Action
         uses: dart-lang/setup-dart@v1
@@ -65,7 +69,9 @@ jobs:
         uses: actions/cache@v2
         with:
           path: ~/.pub_cache
-          key: ${{ runner.os }}
+          key: ${{ runner.os }}-pubspec-${{ hashFiles('**/pubspec.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-pubspec-
 
       - name: Setup Dart Action
         uses: dart-lang/setup-dart@v1
