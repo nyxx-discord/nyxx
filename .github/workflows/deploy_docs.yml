@@ -20,7 +20,7 @@ jobs:
       - name: Cache
         uses: actions/cache@v2
         with:
-          path: ~/.pub_cache
+          path: ~/.pub-cache
           key: ${{ runner.os }}-pubspec-${{ hashFiles('**/pubspec.lock') }}
           restore-keys: |
             ${{ runner.os }}-pubspec-
