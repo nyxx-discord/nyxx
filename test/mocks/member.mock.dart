@@ -8,5 +8,9 @@ class MockMember extends SnowflakeEntity with Fake implements IMember {
   @override
   Cacheable<Snowflake, IUser> get user => UserCacheable(NyxxRestEmptyMock(), Snowflake.zero());
 
+  // TODO: not ideal way of handling these kind of stuff. Should be moved to some kind of helper to maintain single logic for formatting everywhere
+  @override
+  String get mention => '<@$id>';
+
   MockMember(Snowflake id) : super(id);
 }

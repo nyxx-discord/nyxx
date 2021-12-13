@@ -1,3 +1,6 @@
+import 'dart:io';
+import 'dart:math';
+
 import 'package:nyxx/nyxx.dart';
 import 'package:nyxx/src/core/permissions/permissions.dart';
 import 'package:nyxx/src/internal/cache/cacheable.dart';
@@ -100,5 +103,46 @@ main() {
 
     expect(ofBuilder.build().build(), equals({"allow": 1 << 11, "deny": 1 << 6}));
     expect(ofBuilder.calculatePermissionValue(), equals(1 << 11));
+  });
+
+  group('MessageBuilder', () {
+    test('clear character', () {
+      final builder = MessageBuilder.empty();
+      expect(builder.content, equals(MessageBuilder.clearCharacter));
+    });
+
+    test('embeds', () {
+      final builder = MessageBuilder.embed(EmbedBuilder()..description = 'test1');
+      builder.addEmbed((embed) => embed.description = 'test2');
+
+      final result = builder.build();
+
+      expect(result, equals({'embeds': [{'description': 'test1'}, {'description': 'test2'}]}));
+    });
+
+    test('text', () {
+      final builder = MessageBuilder()
+          ..appendSpoiler('spoiler')
+          ..appendNewLine()
+          ..appendItalics('italics')
+          ..appendBold('bold')
+          ..appendStrike('strike')
+          ..appendCodeSimple('this is code simple')
+          ..appendMention(MockMember(Snowflake.zero()))
+          ..appendTimestamp(DateTime(2000))
+          ..appendCode('dart', 'final int = 124;');
+
+      expect(builder.build(), equals({
+        'content': '||spoiler||\n'
+            '*italics***bold**~~strike~~`this is code simple`<@0><t:946681200:f>\n'
+            '```dart\n'
+            'final int = 124;```'
+      }));
+
+      expect(builder.getMappedFiles(), isEmpty);
+      expect(builder.canBeUsedAsNewMessage(), isTrue);
+
+      expect(MessageDecoration.bold.format('test'), equals('**test**'));
+    });
   });
 }

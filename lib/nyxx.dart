@@ -148,7 +148,7 @@ export 'src/internal/shard/shard_manager.dart' show IShardManager;
 export 'src/typedefs.dart' show RawApiMap;
 export 'src/utils/enum.dart' show IEnum;
 export 'src/utils/builders/attachment_builder.dart' show AttachmentBuilder, AttachmentMetadataBuilder;
-export 'src/utils/builders/builder.dart' show Builder, BuilderWithClient;
+export 'src/utils/builders/builder.dart' show Builder;
 export 'src/utils/builders/embed_author_builder.dart' show EmbedAuthorBuilder;
 export 'src/utils/builders/embed_builder.dart' show EmbedBuilder;
 export 'src/utils/builders/embed_field_builder.dart' show EmbedFieldBuilder;

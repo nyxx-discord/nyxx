@@ -923,9 +923,9 @@ class HttpEndpoints implements IHttpEndpoints {
     HttpResponse response;
     if (builder.hasFiles()) {
       response = await httpHandler
-          .execute(MultipartRequest("/channels/$channelId/messages", builder.getMappedFiles().toList(), method: "POST", fields: builder.build(client)));
+          .execute(MultipartRequest("/channels/$channelId/messages", builder.getMappedFiles().toList(), method: "POST", fields: builder.build(client.options.allowedMentions)));
     } else {
-      response = await httpHandler.execute(BasicRequest("/channels/$channelId/messages", body: builder.build(client), method: "POST"));
+      response = await httpHandler.execute(BasicRequest("/channels/$channelId/messages", body: builder.build(client.options.allowedMentions), method: "POST"));
     }
 
     if (response is HttpResponseSuccess) {
@@ -1098,9 +1098,9 @@ class HttpEndpoints implements IHttpEndpoints {
     HttpResponse response;
     if (builder.hasFiles()) {
       response = await httpHandler.execute(
-          MultipartRequest("/channels/$channelId/messages/$messageId", builder.getMappedFiles().toList(), method: "PATCH", fields: builder.build(client)));
+          MultipartRequest("/channels/$channelId/messages/$messageId", builder.getMappedFiles().toList(), method: "PATCH", fields: builder.build(client.options.allowedMentions)));
     } else {
-      response = await httpHandler.execute(BasicRequest("/channels/$channelId/messages/$messageId", body: builder.build(client), method: "PATCH"));
+      response = await httpHandler.execute(BasicRequest("/channels/$channelId/messages/$messageId", body: builder.build(client.options.allowedMentions), method: "PATCH"));
     }
 
     if (response is HttpResponseSuccess) {
@@ -1116,10 +1116,10 @@ class HttpEndpoints implements IHttpEndpoints {
     if (builder.hasFiles()) {
       response = await httpHandler.execute(MultipartRequest(
           "/webhooks/$webhookId/${token != null ? '$token/' : ''}messages/$messageId", builder.getMappedFiles().toList(),
-          method: "PATCH", fields: builder.build(client), queryParams: {if (threadId != null) 'thread_id': threadId}));
+          method: "PATCH", fields: builder.build(client.options.allowedMentions), queryParams: {if (threadId != null) 'thread_id': threadId}));
     } else {
       response = await httpHandler.execute(BasicRequest("/webhooks/$webhookId/${token != null ? '$token/' : ''}messages/$messageId",
-          body: builder.build(client), method: "PATCH", queryParams: {if (threadId != null) 'thread_id': threadId}));
+          body: builder.build(client.options.allowedMentions), method: "PATCH", queryParams: {if (threadId != null) 'thread_id': threadId}));
     }
 
     if (response is HttpResponseSuccess) {
@@ -1204,7 +1204,7 @@ class HttpEndpoints implements IHttpEndpoints {
     final queryParams = {"wait": wait, if (threadId != null) "thread_id": threadId};
 
     final body = {
-      ...builder.build(client),
+      ...builder.build(client.options.allowedMentions),
       if (avatarUrl != null) "avatar_url": avatarUrl,
       if (username != null) "username": username,
     };

@@ -16,7 +16,7 @@ import 'package:nyxx/src/utils/builders/embed_builder.dart';
 import 'package:nyxx/src/utils/builders/reply_builder.dart';
 
 /// Allows to create pre built custom messages which can be passed to classes which inherits from [ISend].
-class MessageBuilder extends BuilderWithClient {
+class MessageBuilder {
   /// Clear character which can be used to skip first line in message body or sanitize message content
   static const clearCharacter = "‎";
 
@@ -83,7 +83,7 @@ class MessageBuilder extends BuilderWithClient {
   }
 
   /// Appends clear character. Can be used to skip first line in message body.
-  void appendClearCharacter() => _content.writeln(clearCharacter);
+  void appendClearCharacter() => _content.write(clearCharacter);
 
   /// Appends empty line to message
   void appendNewLine() => _content.writeln();
@@ -97,6 +97,7 @@ class MessageBuilder extends BuilderWithClient {
   /// Appends italic text to message
   void appendItalics(Object text) => appendWithDecoration(text, MessageDecoration.italics);
 
+  // TODO: bug: when placed next to italics additional space should be generated
   /// Appends bold text to message
   void appendBold(Object text) => appendWithDecoration(text, MessageDecoration.bold);
 
@@ -107,7 +108,10 @@ class MessageBuilder extends BuilderWithClient {
   void appendCodeSimple(Object text) => appendWithDecoration(text, MessageDecoration.codeSimple);
 
   /// Appends code block to message
-  void appendCode(Object language, Object code) => appendWithDecoration("$language\n$code", MessageDecoration.codeLong);
+  void appendCode(Object language, Object code) {
+    appendNewLine();
+    appendWithDecoration("$language\n$code", MessageDecoration.codeLong);
+  }
 
   /// Appends formatted text to message
   void appendWithDecoration(Object text, MessageDecoration decoration) {
@@ -148,9 +152,8 @@ class MessageBuilder extends BuilderWithClient {
   /// Returns if this instance of message builder can be used when editing message
   bool canBeUsedAsNewMessage() => content.isNotEmpty || embeds.isNotEmpty || (files != null && files!.isNotEmpty);
 
-  @override
-  RawApiMap build(INyxx client) {
-    allowedMentions ??= client.options.allowedMentions;
+  RawApiMap build([AllowedMentions? defaultAllowedMentions]) {
+    allowedMentions ??= defaultAllowedMentions;
 
     return <String, dynamic>{
       if (content.isNotEmpty) "content": content.toString(),
