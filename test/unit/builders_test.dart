@@ -121,6 +121,8 @@ main() {
     });
 
     test('text', () {
+      final dateTime = DateTime(2000);
+
       final builder = MessageBuilder()
           ..appendSpoiler('spoiler')
           ..appendNewLine()
@@ -129,12 +131,12 @@ main() {
           ..appendStrike('strike')
           ..appendCodeSimple('this is code simple')
           ..appendMention(MockMember(Snowflake.zero()))
-          ..appendTimestamp(DateTime(2000))
+          ..appendTimestamp(dateTime)
           ..appendCode('dart', 'final int = 124;');
 
       expect(builder.build(), equals({
         'content': '||spoiler||\n'
-            '*italics***bold**~~strike~~`this is code simple`<@0><t:946681200:f>\n'
+            '*italics***bold**~~strike~~`this is code simple`<@0><t:${dateTime.millisecondsSinceEpoch ~/ 1000}:f>\n'
             '```dart\n'
             'final int = 124;```'
       }));

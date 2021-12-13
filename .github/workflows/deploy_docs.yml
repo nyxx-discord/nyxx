@@ -11,6 +11,12 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Setup Dart Action
+        uses: dart-lang/setup-dart@v1
+
+      - name: Checkout
+        uses: actions/checkout@v2.3.4
+
       - name: Cache
         uses: actions/cache@v2
         with:
@@ -18,12 +24,6 @@ jobs:
           key: ${{ runner.os }}-pubspec-${{ hashFiles('**/pubspec.lock') }}
           restore-keys: |
             ${{ runner.os }}-pubspec-
-
-      - name: Setup Dart Action
-        uses: dart-lang/setup-dart@v1
-
-      - name: Checkout
-        uses: actions/checkout@v2.3.4
 
       - name: Install dependencies
         run: dart pub get

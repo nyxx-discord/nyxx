@@ -9,6 +9,15 @@ jobs:
   nyxx_publish:
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: 'Check if version in constants.dart is correct'
+        run: |
+          apt-get update -y
+          apt install pcregrep -y
+          (if [ $(pcregrep -o1 'static const String version = "(.+)";' < lib/src/internal/constants.dart) != $(pcregrep -o1 'version: (.+)$' < pubspec.yaml) ]; then exit 1; fi)
+
       - name: Cache
         uses: actions/cache@v2
         with:
@@ -17,13 +26,6 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-pubspec-
 
-      - name: 'Check if version in constants.dart is correct'
-        run: |
-          apt-get update -y
-          apt install pcregrep -y
-          (if [ $(pcregrep -o1 'static const String version = "(.+)";' < lib/src/internal/constants.dart) != $(pcregrep -o1 'version: (.+)$' < pubspec.yaml) ]; then exit 1; fi)
-
-      - uses: actions/checkout@v2
       - name: 'publish nyxx package to pub.dev'
         id: publish
         uses: k-paxian/dart-package-publisher@master
