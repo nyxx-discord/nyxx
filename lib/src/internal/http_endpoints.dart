@@ -922,8 +922,8 @@ class HttpEndpoints implements IHttpEndpoints {
 
     HttpResponse response;
     if (builder.hasFiles()) {
-      response = await httpHandler
-          .execute(MultipartRequest("/channels/$channelId/messages", builder.getMappedFiles().toList(), method: "POST", fields: builder.build(client.options.allowedMentions)));
+      response = await httpHandler.execute(MultipartRequest("/channels/$channelId/messages", builder.getMappedFiles().toList(),
+          method: "POST", fields: builder.build(client.options.allowedMentions)));
     } else {
       response = await httpHandler.execute(BasicRequest("/channels/$channelId/messages", body: builder.build(client.options.allowedMentions), method: "POST"));
     }
@@ -1097,10 +1097,11 @@ class HttpEndpoints implements IHttpEndpoints {
   Future<IMessage> editMessage(Snowflake channelId, Snowflake messageId, MessageBuilder builder) async {
     HttpResponse response;
     if (builder.hasFiles()) {
-      response = await httpHandler.execute(
-          MultipartRequest("/channels/$channelId/messages/$messageId", builder.getMappedFiles().toList(), method: "PATCH", fields: builder.build(client.options.allowedMentions)));
+      response = await httpHandler.execute(MultipartRequest("/channels/$channelId/messages/$messageId", builder.getMappedFiles().toList(),
+          method: "PATCH", fields: builder.build(client.options.allowedMentions)));
     } else {
-      response = await httpHandler.execute(BasicRequest("/channels/$channelId/messages/$messageId", body: builder.build(client.options.allowedMentions), method: "PATCH"));
+      response = await httpHandler
+          .execute(BasicRequest("/channels/$channelId/messages/$messageId", body: builder.build(client.options.allowedMentions), method: "PATCH"));
     }
 
     if (response is HttpResponseSuccess) {
