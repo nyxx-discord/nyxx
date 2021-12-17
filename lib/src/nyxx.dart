@@ -28,7 +28,7 @@ import 'package:nyxx/src/plugin/plugin.dart';
 import 'utils/builders/presence_builder.dart';
 import 'package:nyxx/src/typedefs.dart';
 
-class NyxxFactory {
+abstract class NyxxFactory {
   static INyxx createNyxxRest(String token, int intents, Snowflake appId,
           {ClientOptions? options, CacheOptions? cacheOptions, bool ignoreExceptions = true, bool useDefaultLogger = true}) =>
       NyxxRest(token, intents, appId, options: options, cacheOptions: cacheOptions, ignoreExceptions: ignoreExceptions, useDefaultLogger: useDefaultLogger);
@@ -440,6 +440,6 @@ class NyxxWebsocket extends NyxxRest implements INyxxWebsocket {
     await eventsRest.dispose();
 
     _logger.info("Exiting...");
-    exit(0);
+    throw UnrecoverableNyxxError('Exiting nyxx...');
   }
 }
