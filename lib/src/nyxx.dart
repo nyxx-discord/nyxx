@@ -76,7 +76,7 @@ abstract class INyxx implements Disposable, IPluginManager {
   /// Emitted when client is ready
   Stream<IReadyEvent> get onReady;
 
-  Future<void> connect();
+  Future<void> connect({bool propagateReady = true});
 }
 
 abstract class INyxxRest implements INyxx {
@@ -201,11 +201,13 @@ class NyxxRest extends INyxxRest {
   }
 
   @override
-  Future<void> connect() async {
+  Future<void> connect({bool propagateReady = true}) async {
     httpHandler = HttpHandler(this);
     httpEndpoints = HttpEndpoints(this);
 
-    onReadyController.add(ReadyEvent(this));
+    if (propagateReady) {
+      onReadyController.add(ReadyEvent(this));
+    }
 
     for (final plugin in _plugins) {
       await plugin.onBotStart(this, _logger);
@@ -342,8 +344,8 @@ class NyxxWebsocket extends NyxxRest implements INyxxWebsocket {
   }
 
   @override
-  Future<void> connect() async {
-    await super.connect();
+  Future<void> connect({bool propagateReady = true}) async {
+    await super.connect(propagateReady: false);
 
     final httpResponse = await (httpEndpoints as HttpEndpoints).getMeApplication();
     if (httpResponse is HttpResponseSuccess) {
@@ -354,6 +356,10 @@ class NyxxWebsocket extends NyxxRest implements INyxxWebsocket {
 
     ws = ConnectionManager(this);
     await ws.connect();
+
+    if (propagateReady) {
+      onReadyController.add(ReadyEvent(this));
+    }
   }
 
   /// This endpoint is only for public guilds if bot is not int the guild.
