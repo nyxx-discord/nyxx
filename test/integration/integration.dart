@@ -1,7 +1,6 @@
 import 'dart:io';
 import 'dart:math';
 
-import 'package:logging/logging.dart';
 import 'package:nyxx/nyxx.dart';
 import 'package:test/expect.dart';
 import 'package:test/scaffolding.dart';

@@ -1,4 +1,3 @@
-import 'package:nyxx/src/nyxx.dart';
 import 'package:nyxx/src/typedefs.dart';
 
 /// Provides abstraction for builders
