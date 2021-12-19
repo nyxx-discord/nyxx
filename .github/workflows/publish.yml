@@ -12,12 +12,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - name: 'Check if version in constants.dart is correct'
-        run: |
-          apt-get update -y
-          apt install pcregrep -y
-          (if [ $(pcregrep -o1 'static const String version = "(.+)";' < lib/src/internal/constants.dart) != $(pcregrep -o1 'version: (.+)$' < pubspec.yaml) ]; then exit 1; fi)
-
       - name: Cache
         uses: actions/cache@v2
         with:
