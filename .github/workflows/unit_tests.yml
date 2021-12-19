@@ -4,26 +4,27 @@ on:
   push:
     branches-ignore:
       - main
-  pull_request:
 
 jobs:
-  test-nyxx:
-    name: Test main nyxx package
+  analyze:
+    name: Analyze
     runs-on: ubuntu-latest
     env:
       TEST_TOKEN: ${{ secrets.TEST_TOKEN }}
     steps:
-      - name: Cache
-        uses: actions/cache@v2
-        with:
-          path: ~/.pub_cache
-          key: ${{ runner.os }}
-
       - name: Setup Dart Action
         uses: dart-lang/setup-dart@v1
 
       - name: Checkout
         uses: actions/checkout@v2.3.4
+
+      - name: Cache
+        uses: actions/cache@v2
+        with:
+          path: ~/.pub-cache
+          key: ${{ runner.os }}-pubspec-${{ hashFiles('**/pubspec.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-pubspec-
 
       - name: Install dependencies
         run: dart pub get
@@ -31,5 +32,82 @@ jobs:
       - name: Analyze project source
         run: dart analyze
 
+  format:
+    name: Format
+    runs-on: ubuntu-latest
+    env:
+      TEST_TOKEN: ${{ secrets.TEST_TOKEN }}
+    steps:
+      - name: Setup Dart Action
+        uses: dart-lang/setup-dart@v1
+
+      - name: Checkout
+        uses: actions/checkout@v2.3.4
+
+      - name: Cache
+        uses: actions/cache@v2
+        with:
+          path: ~/.pub-cache
+          key: ${{ runner.os }}-pubspec-${{ hashFiles('**/pubspec.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-pubspec-
+
+      - name: Install dependencies
+        run: dart pub get
+
+      - name: Format
+        run: dart format --set-exit-if-changed -l 160 ./lib
+
+  tests:
+    needs: [ format, analyze ]
+    name: Tests
+    runs-on: ubuntu-latest
+    env:
+      TEST_TOKEN: ${{ secrets.TEST_TOKEN }}
+    steps:
+      - name: Setup Dart Action
+        uses: dart-lang/setup-dart@v1
+
+      - name: Install lcov
+        run: sudo apt-get install -y lcov
+
+      - name: Checkout
+        uses: actions/checkout@v2.3.4
+
+      - name: Cache
+        uses: actions/cache@v2
+        with:
+          path: ~/.pub-cache
+          key: ${{ runner.os }}-pubspec-${{ hashFiles('**/pubspec.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-pubspec-
+
+      - name: Install dependencies
+        run: dart pub get
+
       - name: Unit tests
-        run: dart test test/unit.dart
+        run: dart run test --coverage="coverage" test/unit/**
+
+      - name: Integration tests
+        run: dart run test --coverage="coverage" test/integration/**
+
+      - name: Format coverage
+        run: dart run coverage:format_coverage --lcov --in=coverage --out=coverage/coverage.lcov --packages=.packages --report-on=lib
+
+      - name: Generate coverage
+        run: genhtml coverage/coverage.lcov -o coverage/coverage_gen
+
+      - name: Extract branch name
+        shell: bash
+        run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
+        id: extract_branch
+
+      - name: Deploy code coverage
+        uses: easingthemes/ssh-deploy@v2.1.5
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.DEPLOY_SSH_SERVER_KEY }}
+          ARGS: '-rltDzvO --rsync-path="mkdir -p ${{ secrets.DEPLOY_REMOTE_TARGET }}/coverage/nyxx/${{ steps.extract_branch.outputs.branch }}/ && rsync"'
+          SOURCE: "coverage/coverage_gen/"
+          REMOTE_HOST: ${{ secrets.DEPLOY_REMOTE_HOST }}
+          REMOTE_USER: ${{ secrets.DEPLOY_REMOTE_USER }}
+          TARGET: "${{ secrets.DEPLOY_REMOTE_TARGET }}/coverage/nyxx/${{ steps.extract_branch.outputs.branch }}/"

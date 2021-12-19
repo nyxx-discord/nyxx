@@ -1,17 +1,42 @@
-part of nyxx;
+import 'package:nyxx/src/core/channel/guild/guild_channel.dart';
+import 'package:nyxx/src/core/guild/role.dart';
+import 'package:nyxx/src/core/user/member.dart';
+import 'package:nyxx/src/utils/utils.dart';
 
 /// Util function for manipulating permissions
 class PermissionsUtils {
+  static IRole getMemberHighestRole(IMember member) {
+    var currentRole = member.roles.first.getFromCache();
+
+    if (currentRole == null) {
+      return member.guild.getFromCache()!.everyoneRole;
+    }
+
+    for (final roleCacheable in member.roles.skip(1)) {
+      final nextRole = roleCacheable.getFromCache();
+
+      if (nextRole == null) {
+        continue;
+      }
+
+      if (nextRole.position > currentRole!.position) {
+        currentRole = nextRole;
+      }
+    }
+
+    return currentRole!;
+  }
+
   /// Allows to check if [issueMember] or [issueRole] can interact with [targetMember] or [targetRole].
-  static bool canInteract({Member? issueMember, Role? issueRole, Member? targetMember, Role? targetRole}) {
-    bool canInter(Role role1, Role role2) => role1.position > role2.position;
+  static bool canInteract({IMember? issueMember, IRole? issueRole, IMember? targetMember, IRole? targetRole}) {
+    bool canInter(IRole role1, IRole role2) => role1.position > role2.position;
 
     if (issueMember != null && targetMember != null) {
       if (issueMember.guild != targetMember.guild) {
         return false;
       }
 
-      return canInter(issueMember.highestRole, targetMember.highestRole);
+      return canInter(PermissionsUtils.getMemberHighestRole(issueMember), PermissionsUtils.getMemberHighestRole(targetMember));
     }
 
     if (issueMember != null && targetRole != null) {
@@ -19,7 +44,7 @@ class PermissionsUtils {
         return false;
       }
 
-      return canInter(issueMember.highestRole, targetRole);
+      return canInter(PermissionsUtils.getMemberHighestRole(issueMember), targetRole);
     }
 
     if (issueRole != null && targetRole != null) {
@@ -32,41 +57,38 @@ class PermissionsUtils {
   }
 
   /// Returns List of [channel] permissions overrides for given [member].
-  static List<int> getOverrides(Member member, GuildChannel channel) {
+  static List<int> getOverrides(IMember member, IGuildChannel channel) {
     var allowRaw = 0;
     var denyRaw = 0;
 
-    try {
-      final publicOverride = channel.permissionOverrides.firstWhere((ov) => ov.id == member.guild.getFromCache()?.everyoneRole.id);
+    final publicOverride = channel.permissionOverrides.firstWhereSafe((ov) => ov.id == member.guild.getFromCache()?.everyoneRole.id);
+
+    if (publicOverride != null) {
       allowRaw = publicOverride.allow;
       denyRaw = publicOverride.deny;
-      // ignore: avoid_catches_without_on_clauses, empty_catches
-    } on Error { }
+    }
 
     var allowRole = 0;
     var denyRole = 0;
 
     for (final role in member.roles) {
-      try {
-        final channelOverride = channel.permissionOverrides.firstWhere((f) => f.id == role.id);
+      final channelOverride = channel.permissionOverrides.firstWhereSafe((f) => f.id == role.id);
 
+      if (channelOverride != null) {
         denyRole |= channelOverride.deny;
         allowRole |= channelOverride.allow;
-        // ignore: avoid_catches_without_on_clauses, empty_catches
-      } on Error { }
+      }
     }
 
     allowRaw = (allowRaw & ~denyRole) | allowRole;
     denyRaw = (denyRaw & ~allowRole) | denyRole;
 
-    // TODO: NNBD: try-catch in where
-    try {
-      final memberOverride = channel.permissionOverrides.firstWhere((g) => g.id == member.id);
+    final memberOverride = channel.permissionOverrides.firstWhereSafe((g) => g.id == member.id);
 
+    if (memberOverride != null) {
       allowRaw = (allowRaw & ~memberOverride.deny) | memberOverride.allow;
       denyRaw = (denyRaw & ~memberOverride.allow) | memberOverride.deny;
-      // ignore: avoid_catches_without_on_clauses, empty_catches
-    } on Error { }
+    }
 
     return [allowRaw, denyRaw];
   }

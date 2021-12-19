@@ -1,10 +1,8 @@
 # nyxx
 
+[![Discord Shield](https://discordapp.com/api/guilds/846136758470443069/widget.png?style=shield)](https://discord.gg/nyxx)
 [![pub](https://img.shields.io/pub/v/nyxx.svg)](https://pub.dartlang.org/packages/nyxx)
 [![documentation](https://img.shields.io/badge/Documentation-nyxx-yellow.svg)](https://www.dartdocs.org/documentation/nyxx/latest/)
-[![documentation](https://img.shields.io/badge/Documentation-nyxx.commander-yellow.svg)](https://www.dartdocs.org/documentation/nyxx.commander/latest/)
-[![documentation](https://img.shields.io/badge/Documentation-nyxx.interactions-yellow.svg)](https://www.dartdocs.org/documentation/nyxx.interactions/latest/)
-[![documentation](https://img.shields.io/badge/Documentation-nyxx.extentions-yellow.svg)](https://www.dartdocs.org/documentation/nyxx.extensions/latest/)
 
 Simple, robust framework for creating discord bots for Dart language.
 
@@ -29,57 +27,46 @@ Simple, robust framework for creating discord bots for Dart language.
 Basic usage:
 ```dart
 void main() {
-  final bot = Nyxx("TOKEN", GatewayIntents.allUnprivileged);
-
-  bot.onMessageReceived.listen((event) {
+  final bot = NyxxFactory.createNyxxWebsocket("<TOKEN>", GatewayIntents.allUnprivileged)
+    ..registerPlugin(Logging()) // Default logging plugin
+    ..registerPlugin(CliIntegration()) // Cli integration for nyxx allows stopping application via SIGTERM and SIGKILl
+    ..registerPlugin(IgnoreExceptions()) // Plugin that handles uncaught exceptions that may occur
+    ..connect();
+  
+  // Listen for message events
+  bot.eventsWs.onMessageReceived.listen((event) {
     if (event.message.content == "!ping") {
-      event.message.channel.getFromCache()?.sendMessage(content: "Pong!");
+      event.message.channel.sendMessage(MessageBuilder.content("Pong!"));
     }
   });
 }
 ```
 
-Slash commands:
-```dart
-void main() {
-  final bot = Nyxx("<%TOKEN%>", GatewayIntents.allUnprivileged);
-  Interactions(bot)
-    ..registerSlashCommand(
-        SlashCommandBuilder("hi", "This is example slash command", [])
-            ..registerHandler((event) async {
-              await event.acknowledge();
-              
-              await event.respond(MessageBuilder.content("Hello World!"));
-            })
-    );
-}
-```
+## Other nyxx packages
 
-Commands:
-```dart
-void main() {
-  final bot = Nyxx("TOKEN", GatewayIntents.allUnprivileged);
-
-  Commander(bot, prefix: "!!!")
-    ..registerCommand("ping", (context, message) => context.reply(content: "Pong!"));
-}
-```
+- [nyxx_interactions](https://github.com/nyxx-discord/nyxx_interactions)
+- [nyxx_commander](https://github.com/nyxx-discord/nyxx_commander)
+- [nyxx_extensions](https://github.com/nyxx-discord/nyxx_extensions)
+- [nyxx_lavalink](https://github.com/nyxx-discord/nyxx_lavalink)
+- [nyxx_pagination](https://github.com/nyxx-discord/nyxx_pagination)
 
 ## More examples
 
-Nyxx examples can be found [here](https://github.com/l7ssha/nyxx/tree/dev/nyxx/example).
-
-Commander examples can be found [here](https://github.com/l7ssha/nyxx/tree/dev/nyxx.commander/example)
-
-Slash commands (interactions) examples can be found [here](https://github.com/l7ssha/nyxx/tree/dev/nyxx.interactions/example)
+Nyxx examples can be found [here](https://github.com/nyxx-discord/nyxx/tree/dev/example).
 
 ### Example bots
 - [Running on Dart](https://github.com/l7ssha/running_on_dart)
 
 ## Documentation, help and examples
 
-**Dartdoc documentation is hosted on [pub](https://www.dartdocs.org/documentation/nyxx/latest/).
-This wiki just fills gap in docs with more descriptive guides and tutorials.**
+**Dartdoc documentation for latest stable version is hosted on [pub](https://www.dartdocs.org/documentation/nyxx/latest/)**
+
+#### [Docs and wiki](https://nyxx.l7ssha.xyz)
+You can read docs and wiki articles for latest stable version on my website. This website also hosts docs for latest
+dev changes to framework (`dev` branch)
+
+#### [Official nyxx discord server](https://discord.gg/nyxx)
+If you need assistance in developing bot using nyxx you can join official nyxx discord guild.
 
 #### [Discord API docs](https://discordapp.com/developers/docs/intro)
 Discord API documentation features rich descriptions about all topics that nyxx covers.
@@ -90,16 +77,10 @@ The unofficial guild for Discord Bot developers. To get help with nyxx check `#d
 #### [Dartdocs](https://www.dartdocs.org/documentation/nyxx/latest/)
 The dartdocs page will always have the documentation for the latest release.
 
-#### [Dev docs](https://nyxx.l7ssha.xyz)
-You can read about upcoming changes in the library on my website.
-
-#### [Wiki](https://github.com/l7ssha/nyxx/wiki)
-Wiki documentation are designed to match the latest Nyxx release.
-
 ## Contributing to Nyxx
 
 Read [contributing document](https://github.com/l7ssha/nyxx/blob/development/CONTRIBUTING.md)
 
-## Credits
+## Credits 
 
-* [Hackzzila's](https://github.com/Hackzzila) for [nyx](https://github.com/Hackzzila/nyx).
+ * [Hackzzila's](https://github.com/Hackzzila) for [nyx](https://github.com/Hackzzila/nyx).

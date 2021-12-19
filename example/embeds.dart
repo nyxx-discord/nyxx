@@ -1,25 +1,29 @@
 import "package:nyxx/nyxx.dart";
 
-DiscordColor getColorForUserFromMessage(Message message) {
-  if (message is GuildMessage) {
-    return message.member.highestRole.color;
+DiscordColor getColorForUserFromMessage(IMessage message) {
+  if (message.guild != null) {
+    return PermissionsUtils.getMemberHighestRole(message.member!).color;
   }
 
   return DiscordColor.black;
 }
 
 // Main function
-void main() {
+void main() async {
   // Create new bot instance. Replace string with your token
-  final bot = Nyxx("<TOKEN>", GatewayIntents.allUnprivileged);
+  final bot = NyxxFactory.createNyxxWebsocket("<TOKEN>", GatewayIntents.allUnprivileged)
+    ..registerPlugin(Logging()) // Default logging plugin
+    ..registerPlugin(CliIntegration()) // Cli integration for nyxx allows stopping application via SIGTERM and SIGKILl
+    ..registerPlugin(IgnoreExceptions()) // Plugin that handles uncaught exceptions that may occur
+    ..connect();
 
   // Listen to ready event. Invoked when bot is connected to all shards. Note that cache can be empty or not incomplete.
-  bot.onReady.listen((ReadyEvent e) {
+  bot.eventsWs.onReady.listen((IReadyEvent e) {
     print("Ready!");
   });
 
   // Listen to all incoming messages
-  bot.onMessageReceived.listen((MessageReceivedEvent e) {
+  bot.eventsWs.onMessageReceived.listen((IMessageReceivedEvent e) {
     // Check if message content equals "!embed"
     if (e.message.content == "!embed") {
 
@@ -43,4 +47,6 @@ void main() {
       e.message.channel.sendMessage(MessageBuilder.embed(embed));
     }
   });
+
+  await bot.connect();
 }

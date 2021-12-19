@@ -1,4 +1,5 @@
-part of nyxx;
+import 'package:nyxx/src/core/snowflake.dart';
+import 'package:nyxx/src/core/snowflake_entity.dart';
 
 /// Extension on int
 extension IntExtensions on int {
@@ -6,7 +7,7 @@ extension IntExtensions on int {
   Snowflake toSnowflake() => Snowflake(this);
 
   /// Converts int to [SnowflakeEntity]
-  SnowflakeEntity toSnowflakeEntity() => SnowflakeEntity(this.toSnowflake());
+  SnowflakeEntity toSnowflakeEntity() => SnowflakeEntity(toSnowflake());
 }
 
 /// Extension on int
@@ -15,11 +16,11 @@ extension StringExtensions on String {
   Snowflake toSnowflake() => Snowflake(this);
 
   /// Converts String to [SnowflakeEntity]
-  SnowflakeEntity toSnowflakeEntity() => SnowflakeEntity(this.toSnowflake());
+  SnowflakeEntity toSnowflakeEntity() => SnowflakeEntity(toSnowflake());
 }
 
 /// Extensions on Iterable of Snowflakes entities
-extension SnowflakeEntityListExtensions<T> on Iterable<SnowflakeEntity> {
+extension SnowflakeEntityListExtensions on Iterable<SnowflakeEntity> {
   /// Returns Iterable of [SnowflakeEntity] as Iterable of IDs
-  Iterable<Snowflake> asSnowflakes() => this.map((e) => e.id);
+  Iterable<Snowflake> asSnowflakes() => map((e) => e.id);
 }
