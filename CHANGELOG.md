@@ -16,6 +16,7 @@ __19.12.2021__
   > Previously similar behavior was available but wasn't working as intended.
 - Implemented ITextVoiceTextChannel.
   > Discords beta feature `chat in voice channels` was implemented in form of `ITextVoiceTextChannel` interface
+- Added support for Guild Scheduled Events
 - Do not send auth header when it's not needed
 - Added support for Dart 2.15
 - Fixup message update payload deserialization
