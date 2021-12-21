@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 import 'dart:isolate';
 
 import 'package:logging/logging.dart';
@@ -15,6 +16,10 @@ class IgnoreExceptions extends BasePlugin {
       final stackTrace = err[1] != null ? ". Stacktrace: \n${err[1]}" : "";
 
       logger.shout("Got Error: Message: [${err[0]}]$stackTrace");
+
+      if (err[0].startsWith('UnrecoverableNyxxError') as bool) {
+        Isolate.current.kill();
+      }
     });
 
     Isolate.current.addErrorListener(errorsPort.sendPort);
