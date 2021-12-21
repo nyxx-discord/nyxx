@@ -528,7 +528,7 @@ class Shard implements IShard {
             if (manager.connectionManager.client.options.dispatchRawShardEvent) {
               manager.onRawEventController.add(RawEvent(this, rawPayload));
             } else {
-              print("UNKNOWN OPCODE: $rawPayload");
+              manager.logger.info("UNKNOWN OPCODE: $rawPayload");
             }
         }
         break;
