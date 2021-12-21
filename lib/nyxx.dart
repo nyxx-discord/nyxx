@@ -167,7 +167,7 @@ export 'src/utils/permissions.dart' show PermissionsUtils;
 export 'src/utils/utils.dart' show ListSafeFirstWhere;
 
 export 'src/plugin/plugin.dart' show BasePlugin;
-export 'src/plugin/plugin_manger.dart' show IPluginManager;
+export 'src/plugin/plugin_manager.dart' show IPluginManager;
 export 'src/plugin/plugins/cli_integration.dart' show CliIntegration;
 export 'src/plugin/plugins/ignore_exception.dart' show IgnoreExceptions;
 export 'src/plugin/plugins/logging.dart' show Logging;
