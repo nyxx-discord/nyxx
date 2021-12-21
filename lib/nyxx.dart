@@ -28,8 +28,7 @@ export 'src/core/channel/guild/activity_types.dart' show VoiceActivityType;
 export 'src/core/channel/guild/category_guild_channel.dart' show ICategoryGuildChannel;
 export 'src/core/channel/guild/guild_channel.dart' show IGuildChannel, IMinimalGuildChannel;
 export 'src/core/channel/guild/text_guild_channel.dart' show ITextGuildChannel;
-export 'src/core/channel/guild/voice_channel.dart'
-    show IVoiceGuildChannel, IStageChannelInstance, IStageVoiceGuildChannel, ITextVoiceTextChannel;
+export 'src/core/channel/guild/voice_channel.dart' show IVoiceGuildChannel, IStageChannelInstance, IStageVoiceGuildChannel, ITextVoiceTextChannel;
 export 'src/core/embed/embed.dart' show IEmbed;
 export 'src/core/embed/embed_author.dart' show IEmbedAuthor;
 export 'src/core/embed/embed_field.dart' show IEmbedField;
@@ -57,8 +56,7 @@ export 'src/core/message/message_time_stamp.dart' show IMessageTimestamp, TimeSt
 export 'src/core/message/message_type.dart' show MessageType;
 export 'src/core/message/reaction.dart' show IReaction;
 export 'src/core/message/referenced_message.dart' show IReferencedMessage;
-export 'src/core/message/sticker.dart'
-    show IStandardSticker, IStickerPack, ISticker, IGuildSticker, IPartialSticker;
+export 'src/core/message/sticker.dart' show IStandardSticker, IStickerPack, ISticker, IGuildSticker, IPartialSticker;
 export 'src/core/message/unicode_emoji.dart' show IUnicodeEmoji, UnicodeEmoji;
 export 'src/core/message/components/component_style.dart' show ComponentStyle;
 export 'src/core/message/components/message_component.dart'
@@ -78,26 +76,12 @@ export 'src/core/permissions/permissions_constants.dart' show PermissionsConstan
 export 'src/core/user/member.dart' show IMember;
 export 'src/core/user/nitro_type.dart' show NitroType;
 export 'src/core/user/presence.dart'
-    show
-        IActivity,
-        IActivityEmoji,
-        IActivityFlags,
-        IActivityParty,
-        IActivityTimestamps,
-        IGameAssets,
-        IGameSecrets,
-        ActivityType;
+    show IActivity, IActivityEmoji, IActivityFlags, IActivityParty, IActivityTimestamps, IGameAssets, IGameSecrets, ActivityType;
 export 'src/core/user/user.dart' show IUser;
 export 'src/core/user/user_flags.dart' show IUserFlags;
 export 'src/core/voice/voice_region.dart' show IVoiceRegion;
 export 'src/core/voice/voice_state.dart' show IVoiceState;
-export 'src/events/channel_events.dart'
-    show
-        IChannelCreateEvent,
-        IChannelDeleteEvent,
-        IChannelPinsUpdateEvent,
-        IChannelUpdateEvent,
-        IStageInstanceEvent;
+export 'src/events/channel_events.dart' show IChannelCreateEvent, IChannelDeleteEvent, IChannelPinsUpdateEvent, IChannelUpdateEvent, IStageInstanceEvent;
 export 'src/events/disconnect_event.dart' show IDisconnectEvent, DisconnectEventReason;
 export 'src/events/guild_events.dart'
     show
@@ -144,36 +128,26 @@ export 'src/internal/event_controller.dart' show IWebsocketEventController, IRes
 export 'src/internal/http_endpoints.dart' show IHttpEndpoints;
 export 'src/internal/cache/cache.dart' show SnowflakeCache, ICache, InMemoryCache;
 export 'src/internal/cache/cache_policy.dart'
-    show
-        CachePolicyPredicate,
-        CachePolicyLocation,
-        CachePolicy,
-        ChannelCachePolicy,
-        MemberCachePolicy,
-        MessageCachePolicy;
+    show CachePolicyPredicate, CachePolicyLocation, CachePolicy, ChannelCachePolicy, MemberCachePolicy, MessageCachePolicy;
 export 'src/internal/cache/cacheable.dart' show Cacheable;
-export 'src/internal/exceptions/embed_builder_argument_exception.dart'
-    show EmbedBuilderArgumentException;
+export 'src/internal/exceptions/embed_builder_argument_exception.dart' show EmbedBuilderArgumentException;
 export 'src/internal/exceptions/http_client_exception.dart' show HttpClientException;
 export 'src/internal/exceptions/invalid_shard_exception.dart' show InvalidShardException;
 export 'src/internal/exceptions/invalid_snowflake_exception.dart' show InvalidSnowflakeException;
 export 'src/internal/exceptions/missing_token_error.dart' show MissingTokenError;
 export 'src/internal/exceptions/unrecoverable_nyxx_error.dart' show UnrecoverableNyxxError;
-export 'src/internal/http/http_response.dart'
-    show IHttpResponse, IHttpResponseError, IHttpResponseSucess;
+export 'src/internal/http/http_response.dart' show IHttpResponse, IHttpResponseError, IHttpResponseSucess;
 export 'src/internal/interfaces/convertable.dart' show Convertable;
 export 'src/internal/interfaces/disposable.dart' show Disposable;
 export 'src/internal/interfaces/message_author.dart' show IMessageAuthor;
 export 'src/internal/interfaces/send.dart' show ISend;
 export 'src/internal/interfaces/mentionable.dart' show Mentionable;
-export 'src/internal/response_wrapper/thread_list_result_wrapper.dart'
-    show IThreadListResultWrapper;
+export 'src/internal/response_wrapper/thread_list_result_wrapper.dart' show IThreadListResultWrapper;
 export 'src/internal/shard/shard.dart' show IShard;
 export 'src/internal/shard/shard_manager.dart' show IShardManager;
 export 'src/typedefs.dart' show RawApiMap;
 export 'src/utils/enum.dart' show IEnum;
-export 'src/utils/builders/attachment_builder.dart'
-    show AttachmentBuilder, AttachmentMetadataBuilder;
+export 'src/utils/builders/attachment_builder.dart' show AttachmentBuilder, AttachmentMetadataBuilder;
 export 'src/utils/builders/builder.dart' show Builder;
 export 'src/utils/builders/embed_author_builder.dart' show EmbedAuthorBuilder;
 export 'src/utils/builders/embed_builder.dart' show EmbedBuilder;
@@ -182,15 +156,13 @@ export 'src/utils/builders/embed_footer_builder.dart' show EmbedFooterBuilder;
 export 'src/utils/builders/guild_builder.dart' show GuildBuilder, RoleBuilder;
 export 'src/utils/builders/channel_builder.dart';
 export 'src/utils/builders/message_builder.dart' show MessageBuilder, MessageDecoration;
-export 'src/utils/builders/permissions_builder.dart'
-    show PermissionOverrideBuilder, PermissionsBuilder;
+export 'src/utils/builders/permissions_builder.dart' show PermissionOverrideBuilder, PermissionsBuilder;
 export 'src/utils/builders/presence_builder.dart' show PresenceBuilder;
 export 'src/utils/builders/reply_builder.dart' show ReplyBuilder;
 export 'src/utils/builders/sticker_builder.dart' show StickerBuilder;
 export 'src/utils/builders/thread_builder.dart' show ThreadArchiveTime, ThreadBuilder;
 export 'src/utils/builders/guild_event_builder.dart' show GuildEventBuilder;
-export 'src/utils/extensions.dart'
-    show IntExtensions, SnowflakeEntityListExtensions, StringExtensions;
+export 'src/utils/extensions.dart' show IntExtensions, SnowflakeEntityListExtensions, StringExtensions;
 export 'src/utils/permissions.dart' show PermissionsUtils;
 export 'src/utils/utils.dart' show ListSafeFirstWhere;
 
