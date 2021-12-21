@@ -226,7 +226,12 @@ class Shard implements IShard {
   }
 
   void _handleError(dynamic data) {
-    final closeCode = data["errorCode"] as int;
+    final closeCode = data["errorCode"] as int?;
+
+    if (closeCode == null) {
+      manager.logger.warning("Received null close = client is probably closing. Payload: `$data`");
+      return;
+    }
 
     _connected = false;
     _heartbeatTimer.cancel();
