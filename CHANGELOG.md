@@ -1,3 +1,12 @@
+## 3.0.1
+__21.12.2021__
+
+- Fix CliItegration plugin not working with IgnoreExceptions (#256)
+- Use logger instead of print (#259)
+- Fix typo in file name (#260)
+- Nullable close code (#261)
+- Missing ActivityBuilder (#262)
+
 ## 3.0.0
 __19.12.2021__
 
