@@ -157,7 +157,7 @@ export 'src/utils/builders/guild_builder.dart' show GuildBuilder, RoleBuilder;
 export 'src/utils/builders/channel_builder.dart';
 export 'src/utils/builders/message_builder.dart' show MessageBuilder, MessageDecoration;
 export 'src/utils/builders/permissions_builder.dart' show PermissionOverrideBuilder, PermissionsBuilder;
-export 'src/utils/builders/presence_builder.dart' show PresenceBuilder;
+export 'src/utils/builders/presence_builder.dart' show PresenceBuilder, ActivityBuilder;
 export 'src/utils/builders/reply_builder.dart' show ReplyBuilder;
 export 'src/utils/builders/sticker_builder.dart' show StickerBuilder;
 export 'src/utils/builders/thread_builder.dart' show ThreadArchiveTime, ThreadBuilder;
