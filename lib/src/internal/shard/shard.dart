@@ -229,7 +229,7 @@ class Shard implements IShard {
     final closeCode = data["errorCode"] as int?;
 
     if (closeCode == null) {
-      manager.logger.fine("Received null close. Payload: `$data`");
+      manager.logger.warning("Received null close = client is probably closing. Payload: `$data`");
       return;
     }
 
