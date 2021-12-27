@@ -127,8 +127,6 @@ main() {
     });
 
     test('roles serialization', () {
-      final now = DateTime.now();
-
       final builder = MemberBuilder()
         ..roles = [Snowflake(1), Snowflake(2)];
 

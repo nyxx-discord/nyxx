@@ -21,11 +21,11 @@ class MemberBuilder implements Builder {
 
   @override
   RawApiMap build() => {
-    if (nick != null) 'nick': nick,
-    if (roles != null) 'roles': roles!.map((e) => e.toString()).toList(),
-    if (mute != null) 'mute': mute,
-    if (deaf != null) 'deaf': deaf,
-    if (channel != Snowflake.zero()) 'channel_id': channel,
-    if (timeoutUntil?.millisecondsSinceEpoch != 0) 'communication_disabled_until': timeoutUntil?.toIso8601String(),
-  };
+        if (nick != null) 'nick': nick,
+        if (roles != null) 'roles': roles!.map((e) => e.toString()).toList(),
+        if (mute != null) 'mute': mute,
+        if (deaf != null) 'deaf': deaf,
+        if (channel != Snowflake.zero()) 'channel_id': channel,
+        if (timeoutUntil?.millisecondsSinceEpoch != 0) 'communication_disabled_until': timeoutUntil?.toIso8601String(),
+      };
 }

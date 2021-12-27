@@ -175,7 +175,13 @@ abstract class IHttpEndpoints {
 
   /// "Edits" guild member. Allows to manipulate other guild users.
   Future<void> editGuildMember(Snowflake guildId, Snowflake memberId,
-      {String? nick, List<SnowflakeEntity>? roles, bool? mute, bool? deaf, Snowflake? channel = const Snowflake.zero(), MemberBuilder? builder, String? auditReason});
+      {String? nick,
+      List<SnowflakeEntity>? roles,
+      bool? mute,
+      bool? deaf,
+      Snowflake? channel = const Snowflake.zero(),
+      MemberBuilder? builder,
+      String? auditReason});
 
   /// Removes role from user
   Future<void> removeRoleFromUser(Snowflake guildId, Snowflake roleId, Snowflake userId, {String? auditReason});
@@ -845,8 +851,13 @@ class HttpEndpoints implements IHttpEndpoints {
 
   @override
   Future<void> editGuildMember(Snowflake guildId, Snowflake memberId,
-      {String? nick = "", List<SnowflakeEntity>? roles, bool? mute, bool? deaf, Snowflake? channel = const Snowflake.zero(), MemberBuilder? builder, String? auditReason}) {
-
+      {String? nick = "",
+      List<SnowflakeEntity>? roles,
+      bool? mute,
+      bool? deaf,
+      Snowflake? channel = const Snowflake.zero(),
+      MemberBuilder? builder,
+      String? auditReason}) {
     final finalBuilder = builder ?? MemberBuilder()
       ..nick = nick
       ..roles = roles?.map((e) => e.id).toList()

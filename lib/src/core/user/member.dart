@@ -143,7 +143,7 @@ class Member extends SnowflakeEntity implements IMember {
   String get mention => "<@$id>";
 
   @override
-  bool get isTimedOut =>  timeoutUntil != null && timeoutUntil!.isAfter(DateTime.now());
+  bool get isTimedOut => timeoutUntil != null && timeoutUntil!.isAfter(DateTime.now());
 
   @override
   late final DateTime? timeoutUntil;
@@ -180,9 +180,7 @@ class Member extends SnowflakeEntity implements IMember {
     guild = GuildCacheable(client, guildId);
     boostingSince = DateTime.tryParse(raw["premium_since"] as String? ?? "");
     avatarHash = raw["avatar"] as String?;
-    timeoutUntil = raw['communication_disabled_until'] != null
-      ? DateTime.parse( raw['communication_disabled_until'] as String)
-      : null;
+    timeoutUntil = raw['communication_disabled_until'] != null ? DateTime.parse(raw['communication_disabled_until'] as String) : null;
 
     roles = [for (var id in raw["roles"]) RoleCacheable(client, Snowflake(id), guild)];
 
