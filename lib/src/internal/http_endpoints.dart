@@ -175,11 +175,11 @@ abstract class IHttpEndpoints {
 
   /// "Edits" guild member. Allows to manipulate other guild users.
   Future<void> editGuildMember(Snowflake guildId, Snowflake memberId,
-      {String? nick,
-      List<SnowflakeEntity>? roles,
-      bool? mute,
-      bool? deaf,
-      Snowflake? channel = const Snowflake.zero(),
+      {@Deprecated('Use "builder" parameter') String? nick,
+      @Deprecated('Use "builder" parameter') List<SnowflakeEntity>? roles,
+      @Deprecated('Use "builder" parameter') bool? mute,
+      @Deprecated('Use "builder" parameter') bool? deaf,
+      @Deprecated('Use "builder" parameter') Snowflake? channel = const Snowflake.zero(),
       MemberBuilder? builder,
       String? auditReason});
 

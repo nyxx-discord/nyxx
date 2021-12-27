@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:nyxx/nyxx.dart';
 import 'package:nyxx/src/nyxx.dart';
 import 'package:nyxx/src/core/snowflake.dart';
 import 'package:nyxx/src/core/snowflake_entity.dart';
@@ -237,8 +238,15 @@ class Member extends SnowflakeEntity implements IMember {
   /// Edits members. Allows to move user in voice channel, mute or deaf, change nick, roles.
   @override
   Future<void> edit(
-          {String? nick = "", List<SnowflakeEntity>? roles, bool? mute, bool? deaf, Snowflake? channel = const Snowflake.zero(), String? auditReason}) =>
-      client.httpEndpoints.editGuildMember(guild.id, id, nick: nick, roles: roles, mute: mute, deaf: deaf, channel: channel, auditReason: auditReason);
+          {@Deprecated('Use "builder" parameter') String? nick = "",
+          @Deprecated('Use "builder" parameter') List<SnowflakeEntity>? roles,
+          @Deprecated('Use "builder" parameter') bool? mute,
+          @Deprecated('Use "builder" parameter') bool? deaf,
+          @Deprecated('Use "builder" parameter') Snowflake? channel = const Snowflake.zero(),
+          MemberBuilder? builder,
+          String? auditReason}) =>
+      client.httpEndpoints
+          .editGuildMember(guild.id, id, nick: nick, roles: roles, mute: mute, deaf: deaf, channel: channel, builder: builder, auditReason: auditReason);
 
   void updateMember(String? nickname, List<Snowflake> roles, DateTime? boostingSince) {
     if (this.nickname != nickname) {
