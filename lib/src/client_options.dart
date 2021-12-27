@@ -42,7 +42,7 @@ class ClientOptions {
   int? shardCount;
 
   /// A list of shards to spawn on this instance of nyxx.
-  List<int>? shards;
+  List<int>? shardIds;
 
   /// The number of messages to cache for each channel.
   int messageCacheSize;
@@ -85,7 +85,7 @@ class ClientOptions {
       this.shutdownHook,
       this.shutdownShardHook,
       this.dispatchRawShardEvent = false,
-      this.shards});
+      this.shardIds});
 }
 
 /// When identifying to the gateway, you can specify an intents parameter which

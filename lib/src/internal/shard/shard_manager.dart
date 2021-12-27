@@ -127,7 +127,7 @@ class ShardManager implements IShardManager {
   /// Starts shard manager
   ShardManager(this.connectionManager, this.maxConcurrency) {
     totalNumShards = connectionManager.client.options.shardCount ?? connectionManager.recommendedShardsNum;
-    numShards = connectionManager.client.options.shards?.length ?? totalNumShards;
+    numShards = connectionManager.client.options.shardIds?.length ?? totalNumShards;
 
     if (totalNumShards < 1) {
       throw UnrecoverableNyxxError("Number of shards cannot be lower than 1.");
@@ -140,19 +140,19 @@ class ShardManager implements IShardManager {
   }
 
   List<int> _getShardsToSpawn() {
-    if (connectionManager.client.options.shards != null) {
+    if (connectionManager.client.options.shardIds != null) {
       if (connectionManager.client.options.shardCount == null) {
         throw UnrecoverableNyxxError('Cannot specify shards to spawn without specifying total number of shards');
       }
 
-      for (final id in connectionManager.client.options.shards!) {
+      for (final id in connectionManager.client.options.shardIds!) {
         if (id < 0 || id >= totalNumShards) {
           throw UnrecoverableNyxxError('Invalid shard ID: $id');
         }
       }
 
       // Clone list to prevent original list from being modified with removeLast()
-      return List.of(connectionManager.client.options.shards!);
+      return List.of(connectionManager.client.options.shardIds!);
     } else {
       return List.generate(totalNumShards, (id) => id);
     }
