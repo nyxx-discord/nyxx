@@ -1,4 +1,5 @@
 import 'package:nyxx/src/core/guild/scheduled_event.dart';
+import 'package:nyxx/src/internal/exceptions/invalid_shard_exception.dart';
 import 'package:nyxx/src/nyxx.dart';
 import 'package:nyxx/src/core/channel/invite.dart';
 import 'package:nyxx/src/core/snowflake.dart';
@@ -468,7 +469,10 @@ class Guild extends SnowflakeEntity implements IGuild {
       throw UnsupportedError("Cannot use this property with NyxxRest");
     }
 
-    return (client as NyxxWebsocket).shardManager.shards.firstWhere((_shard) => _shard.guilds.contains(id));
+    return (client as NyxxWebsocket).shardManager.shards.firstWhere(
+          (_shard) => _shard.guilds.contains(id),
+          orElse: throw InvalidShardException('Cannot find shard for this guild!'),
+        );
   }
 
   /// Creates an instance of [Guild]
