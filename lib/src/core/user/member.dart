@@ -58,6 +58,12 @@ abstract class IMember implements SnowflakeEntity, Mentionable {
   /// Returns total permissions of user.
   Future<IPermissions> get effectivePermissions;
 
+  /// When the user's timeout will expire and the user will be able to communicate in the guild again, null or a time in the past if the user is not timed out
+  DateTime? get timeoutUntil;
+
+  /// True if user is timed out
+  bool get isTimedOut;
+
   /// Returns url to member avatar
   String? avatarURL({String format = "webp"});
 
@@ -136,6 +142,12 @@ class Member extends SnowflakeEntity implements IMember {
   @override
   String get mention => "<@$id>";
 
+  @override
+  bool get isTimedOut =>  timeoutUntil != null && timeoutUntil!.isAfter(DateTime.now());
+
+  @override
+  late final DateTime? timeoutUntil;
+
   /// Returns total permissions of user.
   @override
   Future<IPermissions> get effectivePermissions async {
@@ -168,6 +180,9 @@ class Member extends SnowflakeEntity implements IMember {
     guild = GuildCacheable(client, guildId);
     boostingSince = DateTime.tryParse(raw["premium_since"] as String? ?? "");
     avatarHash = raw["avatar"] as String?;
+    timeoutUntil = raw['communication_disabled_until'] != null
+      ? DateTime.parse( raw['communication_disabled_until'] as String)
+      : null;
 
     roles = [for (var id in raw["roles"]) RoleCacheable(client, Snowflake(id), guild)];
 

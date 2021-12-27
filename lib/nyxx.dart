@@ -156,6 +156,7 @@ export 'src/utils/builders/embed_footer_builder.dart' show EmbedFooterBuilder;
 export 'src/utils/builders/guild_builder.dart' show GuildBuilder, RoleBuilder;
 export 'src/utils/builders/channel_builder.dart';
 export 'src/utils/builders/message_builder.dart' show MessageBuilder, MessageDecoration;
+export 'src/utils/builders/member_builder.dart' show MemberBuilder;
 export 'src/utils/builders/permissions_builder.dart' show PermissionOverrideBuilder, PermissionsBuilder;
 export 'src/utils/builders/presence_builder.dart' show PresenceBuilder, ActivityBuilder;
 export 'src/utils/builders/reply_builder.dart' show ReplyBuilder;

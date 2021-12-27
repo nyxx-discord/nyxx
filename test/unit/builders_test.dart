@@ -102,6 +102,40 @@ main() {
     expect(ofBuilder.calculatePermissionValue(), equals(1 << 11));
   });
 
+  group('MemberBuilder', () {
+    test('channel empty', () {
+      final builder = MemberBuilder()
+          ..channel = Snowflake.zero();
+
+      expect({}, builder.build());
+    });
+
+    test('channel with value', () {
+      final builder = MemberBuilder()
+        ..channel = Snowflake(123);
+
+      expect({'channel_id': '123'}, builder.build());
+    });
+
+    test('timeout empty', () {
+      final now = DateTime.now();
+
+      final builder = MemberBuilder()
+        ..timeoutUntil = now;
+
+      expect({'communication_disabled_until': now.toIso8601String()}, builder.build());
+    });
+
+    test('roles serialization', () {
+      final now = DateTime.now();
+
+      final builder = MemberBuilder()
+        ..roles = [Snowflake(1), Snowflake(2)];
+
+      expect({'roles': ['1', '2']}, builder.build());
+    });
+  });
+
   group('MessageBuilder', () {
     test('clear character', () {
       final builder = MessageBuilder.empty();
