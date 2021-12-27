@@ -133,25 +133,29 @@ class ShardManager implements IShardManager {
       throw UnrecoverableNyxxError("Number of shards cannot be lower than 1.");
     }
 
-    List<int> toSpawn;
+    List<int> toSpawn = _getShardsToSpawn();
+
+    logger.fine("Starting shard manager. Number of shards to spawn: $numShards");
+    _connect(toSpawn);
+  }
+
+  List<int> _getShardsToSpawn() {
     if (connectionManager.client.options.shards != null) {
       if (connectionManager.client.options.shardCount == null) {
         throw UnrecoverableNyxxError('Cannot specify shards to spawn without specifying total number of shards');
       }
-      // Clone list to prevent original list from being modified with removeLast()
-      toSpawn = List.of(connectionManager.client.options.shards!);
 
-      for (final id in toSpawn) {
+      for (final id in connectionManager.client.options.shards!) {
         if (id < 0 || id >= totalNumShards) {
           throw UnrecoverableNyxxError('Invalid shard ID: $id');
         }
       }
-    } else {
-      toSpawn = List.generate(totalNumShards, (id) => id);
-    }
 
-    logger.fine("Starting shard manager. Number of shards to spawn: $numShards");
-    _connect(toSpawn);
+      // Clone list to prevent original list from being modified with removeLast()
+      return List.of(connectionManager.client.options.shards!);
+    } else {
+      return List.generate(totalNumShards, (id) => id);
+    }
   }
 
   /// Sets presences on every shard
