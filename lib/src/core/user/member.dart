@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:nyxx/nyxx.dart';
 import 'package:nyxx/src/nyxx.dart';
 import 'package:nyxx/src/core/snowflake.dart';
 import 'package:nyxx/src/core/snowflake_entity.dart';
@@ -57,6 +58,12 @@ abstract class IMember implements SnowflakeEntity, Mentionable {
 
   /// Returns total permissions of user.
   Future<IPermissions> get effectivePermissions;
+
+  /// When the user's timeout will expire and the user will be able to communicate in the guild again, null or a time in the past if the user is not timed out
+  DateTime? get timeoutUntil;
+
+  /// True if user is timed out
+  bool get isTimedOut;
 
   /// Returns url to member avatar
   String? avatarURL({String format = "webp"});
@@ -136,6 +143,12 @@ class Member extends SnowflakeEntity implements IMember {
   @override
   String get mention => "<@$id>";
 
+  @override
+  bool get isTimedOut => timeoutUntil != null && timeoutUntil!.isAfter(DateTime.now());
+
+  @override
+  late final DateTime? timeoutUntil;
+
   /// Returns total permissions of user.
   @override
   Future<IPermissions> get effectivePermissions async {
@@ -168,6 +181,7 @@ class Member extends SnowflakeEntity implements IMember {
     guild = GuildCacheable(client, guildId);
     boostingSince = DateTime.tryParse(raw["premium_since"] as String? ?? "");
     avatarHash = raw["avatar"] as String?;
+    timeoutUntil = raw['communication_disabled_until'] != null ? DateTime.parse(raw['communication_disabled_until'] as String) : null;
 
     roles = [for (var id in raw["roles"]) RoleCacheable(client, Snowflake(id), guild)];
 
@@ -224,8 +238,15 @@ class Member extends SnowflakeEntity implements IMember {
   /// Edits members. Allows to move user in voice channel, mute or deaf, change nick, roles.
   @override
   Future<void> edit(
-          {String? nick = "", List<SnowflakeEntity>? roles, bool? mute, bool? deaf, Snowflake? channel = const Snowflake.zero(), String? auditReason}) =>
-      client.httpEndpoints.editGuildMember(guild.id, id, nick: nick, roles: roles, mute: mute, deaf: deaf, channel: channel, auditReason: auditReason);
+          {@Deprecated('Use "builder" parameter') String? nick = "",
+          @Deprecated('Use "builder" parameter') List<SnowflakeEntity>? roles,
+          @Deprecated('Use "builder" parameter') bool? mute,
+          @Deprecated('Use "builder" parameter') bool? deaf,
+          @Deprecated('Use "builder" parameter') Snowflake? channel = const Snowflake.zero(),
+          MemberBuilder? builder,
+          String? auditReason}) =>
+      client.httpEndpoints
+          .editGuildMember(guild.id, id, nick: nick, roles: roles, mute: mute, deaf: deaf, channel: channel, builder: builder, auditReason: auditReason);
 
   void updateMember(String? nickname, List<Snowflake> roles, DateTime? boostingSince) {
     if (this.nickname != nickname) {
