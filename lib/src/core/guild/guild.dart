@@ -148,6 +148,9 @@ abstract class IGuild implements SnowflakeEntity {
   /// Returns this guilds shard
   IShard get shard;
 
+  /// Whether the guild has the boost progress bar enabled
+  bool get boostProgressBarEnabled;
+
   /// The guild's icon, represented as URL.
   /// If guild doesn't have icon it returns null.
   String? iconURL({String format = "webp", int size = 128});
@@ -428,6 +431,9 @@ class Guild extends SnowflakeEntity implements IGuild {
   @override
   late final Iterable<IGuildSticker> stickers;
 
+  @override
+  late final bool boostProgressBarEnabled;
+
   /// Returns url to this guild.
   @override
   String get url => "https://discordapp.com/channels/${id.toString()}";
@@ -493,6 +499,7 @@ class Guild extends SnowflakeEntity implements IGuild {
     premiumTier = PremiumTier.from(raw["premium_tier"] as int);
     premiumSubscriptionCount = raw["premium_subscription_count"] as int?;
     preferredLocale = raw["preferred_locale"] as String;
+    boostProgressBarEnabled = raw['premium_progress_bar_enabled'] as bool;
 
     owner = UserCacheable(client, Snowflake(raw["owner_id"]));
 
