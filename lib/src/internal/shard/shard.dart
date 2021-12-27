@@ -322,7 +322,7 @@ class Shard implements IShard {
             "guild_subscriptions": manager.connectionManager.client.options.guildSubscriptions,
             "intents": manager.connectionManager.client.intents,
             if (manager.connectionManager.client.options.initialPresence != null) "presence": manager.connectionManager.client.options.initialPresence!.build(),
-            "shard": <int>[id, manager.numShards]
+            "shard": <int>[id, manager.totalNumShards]
           };
 
           send(OPCodes.identify, identifyMsg);
