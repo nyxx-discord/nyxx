@@ -6,6 +6,7 @@ __28.12.2021__
 - Implement timeouts (#267)
   - deprecation of edit method parameters in favor of `MemberBuilder` class. In next major release all parameters except `builder`
     and `auditReason` will be removed 
+- Fix incorrectly initialised onDmReceived and onSelfMention streams (#270)
 
 ## 3.0.1
 __21.12.2021__
