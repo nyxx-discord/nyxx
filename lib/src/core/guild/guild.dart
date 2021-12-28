@@ -1,4 +1,5 @@
 import 'package:nyxx/src/core/guild/scheduled_event.dart';
+import 'package:nyxx/src/internal/exceptions/invalid_shard_exception.dart';
 import 'package:nyxx/src/nyxx.dart';
 import 'package:nyxx/src/core/channel/invite.dart';
 import 'package:nyxx/src/core/snowflake.dart';
@@ -146,6 +147,9 @@ abstract class IGuild implements SnowflakeEntity {
 
   /// Returns this guilds shard
   IShard get shard;
+
+  /// Whether the guild has the boost progress bar enabled
+  bool get boostProgressBarEnabled;
 
   /// The guild's icon, represented as URL.
   /// If guild doesn't have icon it returns null.
@@ -427,6 +431,9 @@ class Guild extends SnowflakeEntity implements IGuild {
   @override
   late final Iterable<IGuildSticker> stickers;
 
+  @override
+  late final bool boostProgressBarEnabled;
+
   /// Returns url to this guild.
   @override
   String get url => "https://discordapp.com/channels/${id.toString()}";
@@ -468,7 +475,10 @@ class Guild extends SnowflakeEntity implements IGuild {
       throw UnsupportedError("Cannot use this property with NyxxRest");
     }
 
-    return (client as NyxxWebsocket).shardManager.shards.firstWhere((_shard) => _shard.guilds.contains(id));
+    return (client as NyxxWebsocket).shardManager.shards.firstWhere(
+          (_shard) => _shard.guilds.contains(id),
+          orElse: throw InvalidShardException('Cannot find shard for this guild!'),
+        );
   }
 
   /// Creates an instance of [Guild]
@@ -489,6 +499,7 @@ class Guild extends SnowflakeEntity implements IGuild {
     premiumTier = PremiumTier.from(raw["premium_tier"] as int);
     premiumSubscriptionCount = raw["premium_subscription_count"] as int?;
     preferredLocale = raw["preferred_locale"] as String;
+    boostProgressBarEnabled = raw['premium_progress_bar_enabled'] as bool;
 
     owner = UserCacheable(client, Snowflake(raw["owner_id"]));
 

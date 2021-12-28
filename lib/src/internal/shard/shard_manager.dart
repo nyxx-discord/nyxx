@@ -47,6 +47,9 @@ abstract class IShardManager implements Disposable {
   /// Number of shards spawned
   int get numShards;
 
+  /// Total number of shards for this client
+  int get totalNumShards;
+
   /// Sets presences on every shard
   void setPresence(PresenceBuilder presenceBuilder);
 }
@@ -109,6 +112,10 @@ class ShardManager implements IShardManager {
   @override
   late final int numShards;
 
+  /// Total number of shards for this client
+  @override
+  late final int totalNumShards;
+
   final Map<int, Shard> _shards = {};
 
   Duration get _identifyDelay {
@@ -119,14 +126,36 @@ class ShardManager implements IShardManager {
 
   /// Starts shard manager
   ShardManager(this.connectionManager, this.maxConcurrency) {
-    numShards = connectionManager.client.options.shardCount != null ? connectionManager.client.options.shardCount! : connectionManager.recommendedShardsNum;
+    totalNumShards = connectionManager.client.options.shardCount ?? connectionManager.recommendedShardsNum;
+    numShards = connectionManager.client.options.shardIds?.length ?? totalNumShards;
 
-    if (numShards < 1) {
+    if (totalNumShards < 1) {
       throw UnrecoverableNyxxError("Number of shards cannot be lower than 1.");
     }
 
+    List<int> toSpawn = _getShardsToSpawn();
+
     logger.fine("Starting shard manager. Number of shards to spawn: $numShards");
-    _connect(numShards - 1);
+    _connect(toSpawn);
+  }
+
+  List<int> _getShardsToSpawn() {
+    if (connectionManager.client.options.shardIds != null) {
+      if (connectionManager.client.options.shardCount == null) {
+        throw UnrecoverableNyxxError('Cannot specify shards to spawn without specifying total number of shards');
+      }
+
+      for (final id in connectionManager.client.options.shardIds!) {
+        if (id < 0 || id >= totalNumShards) {
+          throw UnrecoverableNyxxError('Invalid shard ID: $id');
+        }
+      }
+
+      // Clone list to prevent original list from being modified with removeLast()
+      return List.of(connectionManager.client.options.shardIds!);
+    } else {
+      return List.generate(totalNumShards, (id) => id);
+    }
   }
 
   /// Sets presences on every shard
@@ -137,16 +166,18 @@ class ShardManager implements IShardManager {
     }
   }
 
-  void _connect(int shardId) {
-    logger.fine("Setting up shard with id: $shardId");
-
-    if (shardId < 0) {
+  void _connect(List<int> toSpawn) {
+    if (toSpawn.isEmpty) {
       return;
     }
 
+    int shardId = toSpawn.removeLast();
+
+    logger.fine("Setting up shard with id: $shardId");
+
     _shards[shardId] = Shard(shardId, this, connectionManager.gateway);
 
-    Future.delayed(_identifyDelay, () => _connect(shardId - 1));
+    Future.delayed(_identifyDelay, () => _connect(toSpawn));
   }
 
   @override

@@ -1,3 +1,13 @@
+## 3.1.0
+__28.12.2021__
+
+- Implement patches needed for external sharding feature (#266)
+- Implement boost progress bar (#266)
+- Implement timeouts (#267)
+  - deprecation of edit method parameters in favor of `MemberBuilder` class. In next major release all parameters except `builder`
+    and `auditReason` will be removed 
+- Fix incorrectly initialised onDmReceived and onSelfMention streams (#270)
+
 ## 3.0.1
 __21.12.2021__
 

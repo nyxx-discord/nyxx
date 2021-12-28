@@ -63,13 +63,12 @@ class ConnectionManager {
 
   Future<void> propagateReady() async {
     _shardsReady++;
-    if (client.ready || _shardsReady < (client.options.shardCount ?? 1)) {
+    if (client.ready || _shardsReady < client.shardManager.numShards) {
       return;
     }
 
-    if (!client.ready) {
-      (client.eventsWs as WebsocketEventController).onReadyController.add(ReadyEvent(client));
-    }
+    (client.eventsWs as WebsocketEventController).onReadyController.add(ReadyEvent(client));
+
     client.ready = true;
     _logger.info("Connected and ready! Logged as `${client.self.tag}`");
   }
