@@ -340,7 +340,7 @@ class NyxxWebsocket extends NyxxRest implements INyxxWebsocket {
           ignoreExceptions: ignoreExceptions,
           useDefaultLogger: useDefaultLogger,
         ) {
-    eventsWs = WebsocketEventController();
+    eventsWs = WebsocketEventController(this);
   }
 
   @override
