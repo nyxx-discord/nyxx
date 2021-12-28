@@ -17,6 +17,7 @@ import 'package:nyxx/src/events/user_update_event.dart';
 import 'package:nyxx/src/events/voice_server_update_event.dart';
 import 'package:nyxx/src/events/voice_state_update_event.dart';
 import 'package:nyxx/src/internal/interfaces/disposable.dart';
+import 'package:nyxx/src/nyxx.dart';
 
 abstract class IRestEventController implements Disposable {
   /// Emitted when a successful HTTP response is received.
@@ -357,7 +358,7 @@ class WebsocketEventController extends RestEventController implements IWebsocket
 
   /// Emitted when private message is received.
   @override
-  late final Stream<IMessageReceivedEvent> onDmReceived;
+  late final Stream<IMessageReceivedEvent> onDmReceived = onMessageReceived.where((event) => event.message.guild == null);
 
   /// Emitted when channel"s pins are updated.
   @override
@@ -470,7 +471,8 @@ class WebsocketEventController extends RestEventController implements IWebsocket
 
   /// Emitted when bot is mentioned
   @override
-  late final Stream<IMessageReceivedEvent> onSelfMention;
+  late final Stream<IMessageReceivedEvent> onSelfMention =
+      onMessageReceived.where((event) => event.message.mentions.map((e) => e.id).contains(_client.self.id));
 
   /// Emitted when invite is created
   @override
@@ -524,8 +526,10 @@ class WebsocketEventController extends RestEventController implements IWebsocket
   @override
   late final Stream<IGuildEventUpdateEvent> onGuildEventUpdate;
 
+  final INyxxWebsocket _client;
+
   /// Makes a new `EventController`.
-  WebsocketEventController() : super() {
+  WebsocketEventController(this._client) : super() {
     onDisconnectController = StreamController.broadcast();
     onDisconnect = onDisconnectController.stream;
 
