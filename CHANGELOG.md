@@ -1,3 +1,8 @@
+## 3.1.1
+__29.12.2021__
+
+- Correctly expose `builder` parameter in `IMember#edit`
+
 ## 3.1.0
 __28.12.2021__
 

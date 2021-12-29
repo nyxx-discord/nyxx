@@ -87,7 +87,13 @@ abstract class IMember implements SnowflakeEntity, Mentionable {
 
   /// Edits members. Allows to move user in voice channel, mute or deaf, change nick, roles.
   Future<void> edit(
-      {String? nick = "", List<SnowflakeEntity>? roles, bool? mute, bool? deaf, Snowflake? channel = const Snowflake.zero(), String? auditReason});
+      {@Deprecated('Use "builder" parameter') String? nick = "",
+      @Deprecated('Use "builder" parameter') List<SnowflakeEntity>? roles,
+      @Deprecated('Use "builder" parameter') bool? mute,
+      @Deprecated('Use "builder" parameter') bool? deaf,
+      @Deprecated('Use "builder" parameter') Snowflake? channel = const Snowflake.zero(),
+      MemberBuilder? builder,
+      String? auditReason});
 }
 
 class Member extends SnowflakeEntity implements IMember {
