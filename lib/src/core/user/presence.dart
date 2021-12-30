@@ -272,6 +272,9 @@ class ActivityType extends IEnum<int> {
   /// Status type when listening to Spotify
   static const ActivityType listening = ActivityType._create(2);
 
+  /// Status type when watching
+  static const ActivityType watching = ActivityType._create(3);
+
   /// Custom status, not supported for bot accounts
   static const ActivityType custom = ActivityType._create(4);
 
