@@ -24,6 +24,9 @@ abstract class IVoiceGuildChannel implements IGuildChannel {
   /// The channel's user limit.
   int? get userLimit;
 
+  /// Channel voice region id, automatic when set to null
+  Snowflake? get rtcRegion;
+
   /// Connects client to channel
   void connect({bool selfMute = false, bool selfDeafen = false});
 
@@ -43,10 +46,14 @@ class VoiceGuildChannel extends GuildChannel implements IVoiceGuildChannel {
   @override
   late final int? userLimit;
 
+  @override
+  late final Snowflake? rtcRegion;
+
   /// Creates an instance of [VoiceGuildChannel]
   VoiceGuildChannel(INyxx client, RawApiMap raw, [Snowflake? guildId]) : super(client, raw, guildId) {
     bitrate = raw["bitrate"] as int?;
     userLimit = raw["user_limit"] as int?;
+    rtcRegion = raw['rtc_region'] != null ? Snowflake(raw['rtc_region']) : null;
   }
 
   /// Connects client to channel

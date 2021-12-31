@@ -60,6 +60,7 @@ abstract class IGuild implements SnowflakeEntity {
   Cacheable<Snowflake, IVoiceGuildChannel>? get afkChannel;
 
   /// The guild's voice region.
+  @Deprecated('User IVoiceChannel.rtcRegion')
   String get region;
 
   /// The channel ID for the guild's widget if enabled.
@@ -484,7 +485,7 @@ class Guild extends SnowflakeEntity implements IGuild {
   /// Creates an instance of [Guild]
   Guild(this.client, RawApiMap raw, [bool guildCreate = false]) : super(Snowflake(raw["id"])) {
     name = raw["name"] as String;
-    region = raw["region"] as String;
+    region = "";
     afkTimeout = raw["afk_timeout"] as int;
     mfaLevel = raw["mfa_level"] as int;
     verificationLevel = raw["verification_level"] as int;
