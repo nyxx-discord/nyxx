@@ -26,6 +26,9 @@ class ActivityBuilder implements Builder {
   /// Sets activity to listening
   factory ActivityBuilder.listening(String name) => ActivityBuilder(name, ActivityType.listening);
 
+  /// Sets activity to watching
+  factory ActivityBuilder.watching(String name) => ActivityBuilder(name, ActivityType.watching);
+
   @override
   RawApiMap build() => {
         "name": name,
