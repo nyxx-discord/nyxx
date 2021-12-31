@@ -43,7 +43,10 @@ class PresenceUpdateEvent implements IPresenceUpdateEvent {
         (user as User).status = clientStatus;
       }
 
-      (user as User).presence = presences.first;
+      (user as User).presence = presences.isNotEmpty
+        ? presences.first
+        : null;
+
     }
   }
 }
