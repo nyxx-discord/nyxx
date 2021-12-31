@@ -1,3 +1,10 @@
+## 3.2.0
+__31.12.2021__
+
+- Add missing ActivityTypes (#275)
+- Fix deserialization of presence update event (#277)
+- Implement voice channel region (#278)
+
 ## 3.1.1
 __29.12.2021__
 
