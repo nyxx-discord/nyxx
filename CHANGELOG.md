@@ -1,3 +1,8 @@
+## 3.2.1
+__01.01.2022__
+
+- Fixup bug with deserialization of new field on voice guild channel introduced in previous release
+
 ## 3.2.0
 __31.12.2021__
 
