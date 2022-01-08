@@ -1,3 +1,9 @@
+## 3.2.2
+__08.01.2022__
+
+- Fix message edit behavior (#283)
+- Fix `addEmbed` behavior on message builder (#284)
+
 ## 3.2.1
 __01.01.2022__
 
