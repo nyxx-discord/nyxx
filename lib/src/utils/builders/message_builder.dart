@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:http/http.dart' as http;
@@ -73,10 +74,11 @@ class MessageBuilder {
     ..embeds = message.embeds.map((e) => e.toBuilder()).toList()
     ..replyBuilder = message.referencedMessage?.toBuilder();
 
-  /// Allows to add embed to message
-  void addEmbed(void Function(EmbedBuilder embed) builder) {
+  /// Allows to add embed to message.
+  /// Warning: Completes future synchronously!
+  FutureOr<void> addEmbed(FutureOr<void> Function(EmbedBuilder embed) builder) async {
     final e = EmbedBuilder();
-    builder(e);
+    await builder(e);
     embeds.add(e);
   }
 
