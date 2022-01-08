@@ -78,7 +78,7 @@ class MessageBuilder {
   /// Warning: Completes future synchronously!
   void addEmbed(FutureOr<void> Function(EmbedBuilder embed) builder) {
     final e = EmbedBuilder();
-    Completer.sync().complete(() async => builder(e));
+    Completer.sync().complete(() async => await builder(e));
     embeds.add(e);
   }
 
