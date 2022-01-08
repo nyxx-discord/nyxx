@@ -76,9 +76,9 @@ class MessageBuilder {
 
   /// Allows to add embed to message.
   /// Warning: Completes future synchronously!
-  void addEmbed(FutureOr<void> Function(EmbedBuilder embed) builder) {
+  FutureOr<void> addEmbed(FutureOr<void> Function(EmbedBuilder embed) builder) async {
     final e = EmbedBuilder();
-    Completer.sync().complete(() async => await builder(e));
+    await builder(e);
     embeds.add(e);
   }
 
