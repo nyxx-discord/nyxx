@@ -140,9 +140,9 @@ main() {
       expect(builder.content, equals(MessageBuilder.clearCharacter));
     });
 
-    test('embeds', () {
+    test('embeds', () async {
       final builder = MessageBuilder.embed(EmbedBuilder()..description = 'test1');
-      builder.addEmbed((embed) => embed.description = 'test2');
+      await builder.addEmbed((embed) => embed.description = 'test2');
 
       final result = builder.build();
 
