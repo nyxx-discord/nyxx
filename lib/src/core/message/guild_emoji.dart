@@ -31,7 +31,7 @@ abstract class BaseGuildEmoji extends SnowflakeEntity implements IBaseGuildEmoji
   BaseGuildEmoji(RawApiMap raw) : super(Snowflake(raw["id"]));
 
   @override
-  String formatForMessage() => "<:$id>";
+  String formatForMessage() => "<:nyxx:$id>";
 
   @override
   String encodeForAPI() => id.toString();
