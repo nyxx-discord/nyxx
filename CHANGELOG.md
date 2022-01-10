@@ -1,3 +1,8 @@
+## 3.2.3
+__10.01.2022__
+
+- Fixup invalid formatting of emoji in BaseGuildEmoji.formatForMessage (#286)
+
 ## 3.2.2
 __08.01.2022__
 
