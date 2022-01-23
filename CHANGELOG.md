@@ -1,3 +1,10 @@
+## 3.2.4
+__23.01.2022__
+
+- bugfix: Properly serialize member edit payload. Fixes #291
+- bugfix: Improve shard searching mechanism. Fixes #290
+- bugfix: Fix message deserialization bug with roleMentions. Fixes #289
+
 ## 3.2.3
 __10.01.2022__
 
