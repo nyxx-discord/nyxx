@@ -865,7 +865,7 @@ class HttpEndpoints implements IHttpEndpoints {
       ..deaf = deaf
       ..channel = channel;
 
-    return executeSafe(BasicRequest("/guilds/$guildId/members/$memberId", method: "PATCH", auditLog: auditReason, body: finalBuilder));
+    return executeSafe(BasicRequest("/guilds/$guildId/members/$memberId", method: "PATCH", auditLog: auditReason, body: finalBuilder.build()));
   }
 
   @override
