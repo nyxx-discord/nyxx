@@ -479,9 +479,10 @@ class Guild extends SnowflakeEntity implements IGuild {
     final shardId = (id.id >> 22) % (client as NyxxWebsocket).shardManager.shards.length;
 
     return (client as NyxxWebsocket).shardManager.shards.firstWhere(
-      (element) => element.id == shardId,
-      orElse: () => throw InvalidShardException('Cannot find shard for this guild! Calculated shard id for this guild is: $shardId but no such shard exist'),
-    );
+          (element) => element.id == shardId,
+          orElse: () =>
+              throw InvalidShardException('Cannot find shard for this guild! Calculated shard id for this guild is: $shardId but no such shard exist'),
+        );
   }
 
   /// Creates an instance of [Guild]
