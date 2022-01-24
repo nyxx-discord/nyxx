@@ -25,7 +25,7 @@ class MemberBuilder implements Builder {
         if (roles != null) 'roles': roles!.map((e) => e.toString()).toList(),
         if (mute != null) 'mute': mute,
         if (deaf != null) 'deaf': deaf,
-        if (channel != Snowflake.zero()) 'channel_id': channel,
+        if (channel != Snowflake.zero()) 'channel_id': channel.toString(),
         if (timeoutUntil?.millisecondsSinceEpoch != 0) 'communication_disabled_until': timeoutUntil?.toIso8601String(),
       };
 }
