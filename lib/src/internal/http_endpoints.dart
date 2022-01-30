@@ -890,18 +890,14 @@ class HttpEndpoints implements IHttpEndpoints {
 
   @override
   Future<void> editChannelPermissions(Snowflake channelId, PermissionsBuilder perms, SnowflakeEntity entity, {String? auditReason}) async {
-    final permSet = perms.build();
-
     await executeSafe(BasicRequest("/channels/$channelId/permissions/${entity.id.toString()}",
-        method: "PUT", body: {"type": entity is Role ? "role" : "member", "allow": permSet.allow, "deny": permSet.deny}, auditLog: auditReason));
+        method: "PUT", body: {"type": entity is IRole ? 0 : 1, ...perms.build()}, auditLog: auditReason));
   }
 
   @override
   Future<void> editChannelPermissionOverrides(Snowflake channelId, PermissionOverrideBuilder permissionBuilder, {String? auditReason}) async {
-    final permSet = permissionBuilder.build();
-
     await executeSafe(BasicRequest("/channels/$channelId/permissions/${permissionBuilder.id.toString()}",
-        method: "PUT", body: {"type": permissionBuilder.type, "allow": permSet.allow, "deny": permSet.deny}, auditLog: auditReason));
+        method: "PUT", body: permissionBuilder.build(), auditLog: auditReason));
   }
 
   @override

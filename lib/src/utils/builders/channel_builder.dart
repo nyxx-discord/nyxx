@@ -1,5 +1,4 @@
 import 'package:nyxx/nyxx.dart';
-import 'package:nyxx/src/core/channel/channel.dart';
 
 /// Builder for creating mini channel instance
 abstract class ChannelBuilder implements Builder {
@@ -20,7 +19,7 @@ abstract class ChannelBuilder implements Builder {
         if (type != null) "type": type!.value,
         if (position != null) "position": position,
         if (parentChannel != null) "parent_id": parentChannel!.id.toString(),
-        if (permissionOverrides != null) "permission_overwrites": permissionOverrides!.map((e) => e.build().build()).toList(),
+        if (permissionOverrides != null) "permission_overwrites": permissionOverrides!.map((e) => e.build()).toList(),
       };
 }
 
