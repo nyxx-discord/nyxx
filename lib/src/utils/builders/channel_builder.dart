@@ -20,7 +20,7 @@ abstract class ChannelBuilder implements Builder {
         if (type != null) "type": type!.value,
         if (position != null) "position": position,
         if (parentChannel != null) "parent_id": parentChannel!.id.toString(),
-        if (permissionOverrides != null) "permission_overwrites": permissionOverrides!.map((e) => e.build()),
+        if (permissionOverrides != null) "permission_overwrites": permissionOverrides!.map((e) => e.build().build()).toList(),
       };
 }
 
