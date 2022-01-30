@@ -1,3 +1,9 @@
+## 3.2.5
+__30.01.2022__
+
+- bugfix: Serialization error with permissions on ChannelBuilder. Fixes #294
+- bugfix: Fix MemberBuilder serialization json error
+
 ## 3.2.4
 __23.01.2022__
 

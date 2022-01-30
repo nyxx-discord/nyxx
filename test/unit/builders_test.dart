@@ -41,6 +41,16 @@ main() {
     expect(cacheableBuilder.build(), equals({"message_id": '123', "fail_if_not_exists": true}));
   });
 
+  group("channel builder", () {
+    test('ChannelBuilder', () {
+      final builder = TextChannelBuilder.create("test");
+      builder.permissionOverrides = [PermissionOverrideBuilder.from(0, Snowflake.zero(), Permissions.empty())];
+
+      final expectedResult = {'permission_overwrites': [{'allow': 0, 'deny': 122406567679}], 'name': 'test'};
+      expect(builder.build(), expectedResult);
+    });
+  });
+
   group('presence_builder.dart', () {
     test('PresenceBuilder', () {
       final activityBuilder = ActivityBuilder.game("test game name");
