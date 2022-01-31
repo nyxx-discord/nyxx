@@ -46,7 +46,12 @@ main() {
       final builder = TextChannelBuilder.create("test");
       builder.permissionOverrides = [PermissionOverrideBuilder.from(0, Snowflake.zero(), Permissions.empty())];
 
-      final expectedResult = {'permission_overwrites': [{'allow': 0, 'deny': 122406567679}], 'name': 'test'};
+      final expectedResult = {
+        'permission_overwrites': [
+          {'allow': "0", 'deny': "122406567679", 'id': '0', 'type': 0}
+        ],
+        'name': 'test'
+      };
       expect(builder.build(), expectedResult);
     });
   });
@@ -98,31 +103,29 @@ main() {
 
   test('PermissionOverrideBuilder', () {
     final builder = PermissionOverrideBuilder(0, Snowflake.zero());
-    expect(builder.build().build(), equals({"allow": 0, "deny": 0}));
+    expect(builder.build(), equals({"allow": "0", "deny": "0", 'id': '0', 'type': 0}));
 
     final fromBuilder = PermissionOverrideBuilder.from(0, Snowflake.zero(), Permissions.empty());
-    expect(fromBuilder.build().build(), equals({"allow": 0, "deny": 122406567679}));
+    expect(fromBuilder.build(), equals({"allow": "0", "deny": "122406567679", 'id': '0', 'type': 0}));
     expect(fromBuilder.calculatePermissionValue(), equals(0));
 
     final ofBuilder = PermissionOverrideBuilder.of(MockMember(Snowflake.zero()))
       ..sendMessages = true
       ..addReactions = false;
 
-    expect(ofBuilder.build().build(), equals({"allow": 1 << 11, "deny": 1 << 6}));
+    expect(ofBuilder.build(), equals({"allow": (1 << 11).toString(), "deny": (1 << 6).toString(), 'id': '0', 'type': 1}));
     expect(ofBuilder.calculatePermissionValue(), equals(1 << 11));
   });
 
   group('MemberBuilder', () {
     test('channel empty', () {
-      final builder = MemberBuilder()
-          ..channel = Snowflake.zero();
+      final builder = MemberBuilder()..channel = Snowflake.zero();
 
       expect({}, builder.build());
     });
 
     test('channel with value', () {
-      final builder = MemberBuilder()
-        ..channel = Snowflake(123);
+      final builder = MemberBuilder()..channel = Snowflake(123);
 
       expect({'channel_id': '123'}, builder.build());
     });
@@ -130,17 +133,17 @@ main() {
     test('timeout empty', () {
       final now = DateTime.now();
 
-      final builder = MemberBuilder()
-        ..timeoutUntil = now;
+      final builder = MemberBuilder()..timeoutUntil = now;
 
       expect({'communication_disabled_until': now.toIso8601String()}, builder.build());
     });
 
     test('roles serialization', () {
-      final builder = MemberBuilder()
-        ..roles = [Snowflake(1), Snowflake(2)];
+      final builder = MemberBuilder()..roles = [Snowflake(1), Snowflake(2)];
 
-      expect({'roles': ['1', '2']}, builder.build());
+      expect({
+        'roles': ['1', '2']
+      }, builder.build());
     });
   });
 
@@ -156,29 +159,38 @@ main() {
 
       final result = builder.build();
 
-      expect(result, equals({'embeds': [{'description': 'test1'}, {'description': 'test2'}]}));
+      expect(
+          result,
+          equals({
+            'embeds': [
+              {'description': 'test1'},
+              {'description': 'test2'}
+            ]
+          }));
     });
 
     test('text', () {
       final dateTime = DateTime(2000);
 
       final builder = MessageBuilder()
-          ..appendSpoiler('spoiler')
-          ..appendNewLine()
-          ..appendItalics('italics')
-          ..appendBold('bold')
-          ..appendStrike('strike')
-          ..appendCodeSimple('this is code simple')
-          ..appendMention(MockMember(Snowflake.zero()))
-          ..appendTimestamp(dateTime)
-          ..appendCode('dart', 'final int = 124;');
+        ..appendSpoiler('spoiler')
+        ..appendNewLine()
+        ..appendItalics('italics')
+        ..appendBold('bold')
+        ..appendStrike('strike')
+        ..appendCodeSimple('this is code simple')
+        ..appendMention(MockMember(Snowflake.zero()))
+        ..appendTimestamp(dateTime)
+        ..appendCode('dart', 'final int = 124;');
 
-      expect(builder.build(), equals({
-        'content': '||spoiler||\n'
-            '*italics***bold**~~strike~~`this is code simple`<@0><t:${dateTime.millisecondsSinceEpoch ~/ 1000}:f>\n'
-            '```dart\n'
-            'final int = 124;```'
-      }));
+      expect(
+          builder.build(),
+          equals({
+            'content': '||spoiler||\n'
+                '*italics***bold**~~strike~~`this is code simple`<@0><t:${dateTime.millisecondsSinceEpoch ~/ 1000}:f>\n'
+                '```dart\n'
+                'final int = 124;```'
+          }));
 
       expect(builder.getMappedFiles(), isEmpty);
       expect(builder.canBeUsedAsNewMessage(), isTrue);
