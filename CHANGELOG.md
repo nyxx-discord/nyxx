@@ -1,3 +1,8 @@
+## 3.2.6
+__01.02.2022__
+
+- bugfix: Fix permission serialisation
+
 ## 3.2.5
 __30.01.2022__
 

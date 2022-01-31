@@ -1,9 +1,6 @@
-import 'package:nyxx/src/core/snowflake.dart';
-import 'package:nyxx/src/core/snowflake_entity.dart';
+import 'package:nyxx/nyxx.dart';
 import 'package:nyxx/src/core/guild/role.dart';
 import 'package:nyxx/src/core/permissions/permissions.dart';
-import 'package:nyxx/src/core/permissions/permissions_constants.dart';
-import 'package:nyxx/src/typedefs.dart';
 
 /// Set of permissions ints
 class _PermissionsSet {
@@ -32,10 +29,17 @@ class PermissionOverrideBuilder extends PermissionsBuilder {
       : type = entity is IRole ? 0 : 1,
         id = entity.id,
         super();
+
+  @override
+  RawApiMap build() => {
+        ...super.build(),
+        "id": id.toString(),
+        "type": type,
+      };
 }
 
 /// Builder for permissions.
-class PermissionsBuilder {
+class PermissionsBuilder extends Builder {
   /// The raw permission code.
   int? raw;
 
@@ -189,12 +193,12 @@ class PermissionsBuilder {
 
   /// Calculates permission int
   int calculatePermissionValue() {
-    final set = build();
+    final set = _calculatePermissionSet();
 
     return set.allow & ~set.deny;
   }
 
-  _PermissionsSet build() {
+  _PermissionsSet _calculatePermissionSet() {
     final permissionSet = _PermissionsSet();
 
     _apply(permissionSet, createInstantInvite, PermissionsConstants.createInstantInvite);
@@ -232,6 +236,16 @@ class PermissionsBuilder {
     _apply(permissionSet, createPrivateThreads, PermissionsConstants.createPrivateThreads);
 
     return permissionSet;
+  }
+
+  @override
+  RawApiMap build() {
+    _PermissionsSet permissionSet = _calculatePermissionSet();
+
+    return {
+      "allow": permissionSet.allow.toString(),
+      "deny": permissionSet.deny.toString(),
+    };
   }
 
   void _apply(_PermissionsSet perm, bool? applies, int constant) {
