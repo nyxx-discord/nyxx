@@ -18,7 +18,7 @@ void main() async {
   bot.eventsWs.onMessageReceived.listen((IMessageReceivedEvent e) async {
     // Check if message content equals "!embed"
     if (e.message.content == "!create_channel") {
-      // Make sure that message was sent in guild not im dm, because we cant add roles in dms
+      // Make sure that message was sent in guild not in dm, because we cant add roles in dms
       if(e.message.guild != null) {
         return;
       }
