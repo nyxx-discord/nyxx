@@ -1,3 +1,8 @@
+## 3.2.7
+__08.02.2022__
+
+- bugfix: Remove noop constructor parameters. Deprecate old parameters on INyxxFactory
+
 ## 3.2.6
 __01.02.2022__
 
