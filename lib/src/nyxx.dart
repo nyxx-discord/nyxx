@@ -29,12 +29,18 @@ import 'package:nyxx/src/typedefs.dart';
 
 abstract class NyxxFactory {
   static INyxx createNyxxRest(String token, int intents, Snowflake appId,
-          {ClientOptions? options, CacheOptions? cacheOptions, bool ignoreExceptions = true, bool useDefaultLogger = true}) =>
-      NyxxRest(token, intents, appId, options: options, cacheOptions: cacheOptions, ignoreExceptions: ignoreExceptions, useDefaultLogger: useDefaultLogger);
+          {ClientOptions? options,
+          CacheOptions? cacheOptions,
+          @Deprecated("Use IgnoreException plugin") bool ignoreExceptions = true,
+          @Deprecated("Use Logging plugin") bool useDefaultLogger = true}) =>
+      NyxxRest(token, intents, appId, options: options, cacheOptions: cacheOptions);
 
   static INyxxWebsocket createNyxxWebsocket(String token, int intents,
-          {ClientOptions? options, CacheOptions? cacheOptions, bool ignoreExceptions = true, bool useDefaultLogger = true}) =>
-      NyxxWebsocket(token, intents, options: options, cacheOptions: cacheOptions, ignoreExceptions: ignoreExceptions, useDefaultLogger: useDefaultLogger);
+          {ClientOptions? options,
+          CacheOptions? cacheOptions,
+          @Deprecated("Use IgnoreException plugin") bool ignoreExceptions = true,
+          @Deprecated("Use Logging plugin") bool useDefaultLogger = true}) =>
+      NyxxWebsocket(token, intents, options: options, cacheOptions: cacheOptions);
 }
 
 /// Generic interface for Nyxx. Represents basic functionality of Nyxx that are always available.
@@ -182,9 +188,8 @@ class NyxxRest extends INyxxRest {
 
   /// Creates and logs in a new client. If [ignoreExceptions] is true (by default is)
   /// isolate will ignore all exceptions and continue to work.
-  NyxxRest(this.token, this.intents, this._appId,
-      {ClientOptions? options, CacheOptions? cacheOptions, bool ignoreExceptions = true, bool useDefaultLogger = true}) {
-    _logger.fine("Staring Nyxx: intents: [$intents]; ignoreExceptions: [$ignoreExceptions]; useDefaultLogger: [$useDefaultLogger]");
+  NyxxRest(this.token, this.intents, this._appId, {ClientOptions? options, CacheOptions? cacheOptions}) {
+    _logger.fine("Staring Nyxx: intents: [$intents]");
 
     if (token.isEmpty) {
       throw MissingTokenError();
@@ -330,16 +335,8 @@ class NyxxWebsocket extends NyxxRest implements INyxxWebsocket {
 
   /// Creates and logs in a new client. If [ignoreExceptions] is true (by default is)
   /// isolate will ignore all exceptions and continue to work.
-  NyxxWebsocket(String token, int intents, {ClientOptions? options, CacheOptions? cacheOptions, bool ignoreExceptions = true, bool useDefaultLogger = true})
-      : super(
-          token,
-          intents,
-          Snowflake.zero(),
-          options: options,
-          cacheOptions: cacheOptions,
-          ignoreExceptions: ignoreExceptions,
-          useDefaultLogger: useDefaultLogger,
-        ) {
+  NyxxWebsocket(String token, int intents, {ClientOptions? options, CacheOptions? cacheOptions})
+      : super(token, intents, Snowflake.zero(), options: options, cacheOptions: cacheOptions) {
     eventsWs = WebsocketEventController(this);
   }
 
