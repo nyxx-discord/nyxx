@@ -1,3 +1,26 @@
+## 3.2.7
+__08.02.2022__
+
+- bugfix: Remove noop constructor parameters. Deprecate old parameters on INyxxFactory
+
+## 3.2.6
+__01.02.2022__
+
+- bugfix: Fix permission serialisation
+
+## 3.2.5
+__30.01.2022__
+
+- bugfix: Serialization error with permissions on ChannelBuilder. Fixes #294
+- bugfix: Fix MemberBuilder serialization json error
+
+## 3.2.4
+__23.01.2022__
+
+- bugfix: Properly serialize member edit payload. Fixes #291
+- bugfix: Improve shard searching mechanism. Fixes #290
+- bugfix: Fix message deserialization bug with roleMentions. Fixes #289
+
 ## 3.2.3
 __10.01.2022__
 

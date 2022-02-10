@@ -361,7 +361,7 @@ class Message extends SnowflakeEntity implements IMessage {
     }
 
     roleMentions = [
-      if (raw["mention_roles"] != null)
+      if (raw["mention_roles"] != null && guild != null)
         for (var roleId in raw["mention_roles"]) RoleCacheable(client, Snowflake(roleId), guild!)
     ];
   }

@@ -85,7 +85,7 @@ class RoleBuilder extends Builder {
         if (color != null) "color": color!.value,
         if (hoist != null) "hoist": hoist,
         if (position != null) "position": position,
-        if (permission != null) "permission": permission!.build().build(),
+        if (permission != null) "permissions": permission!.calculatePermissionValue().toString(),
         if (mentionable != null) "mentionable": mentionable,
         if (roleIcon != null) "icon": roleIcon!.getBase64(),
         if (roleIconEmoji != null) "unicode_emoji": roleIconEmoji
