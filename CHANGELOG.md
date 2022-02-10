@@ -1,3 +1,8 @@
+## 3.3.0-dev.0
+__08.02.2022__
+
+- feature: Implement TextInput component type
+
 ## 3.2.7
 __08.02.2022__
 
