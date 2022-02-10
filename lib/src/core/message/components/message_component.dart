@@ -238,7 +238,7 @@ abstract class IMessageButton implements IMessageComponent {
   String? get label;
 
   /// Component style, appearance
-  ComponentStyle get style;
+  ButtonStyle get style;
 
   /// Additional emoji that will be displayed before label
   IMessageComponentEmoji? get emoji;
@@ -258,7 +258,7 @@ class MessageButton extends MessageComponent implements IMessageButton {
 
   /// Component style, appearance
   @override
-  late final ComponentStyle style;
+  late final ButtonStyle style;
 
   /// Additional emoji that will be displayed before label
   @override
@@ -269,7 +269,7 @@ class MessageButton extends MessageComponent implements IMessageButton {
   late final bool disabled;
 
   factory MessageButton.deserialize(RawApiMap raw) {
-    if (raw["style"] == ComponentStyle.link.value) {
+    if (raw["style"] == ButtonStyle.link.value) {
       return LinkMessageButton(raw);
     }
 
@@ -279,7 +279,7 @@ class MessageButton extends MessageComponent implements IMessageButton {
   /// Creates an instance of [MessageButton]
   MessageButton(RawApiMap raw) : super() {
     label = raw["label"] as String?;
-    style = ComponentStyle.from(raw["style"] as int);
+    style = ButtonStyle.from(raw["style"] as int);
 
     if (raw["emoji"] != null) {
       emoji = MessageComponentEmoji(raw["emoji"] as RawApiMap);

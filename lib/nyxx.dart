@@ -58,7 +58,7 @@ export 'src/core/message/reaction.dart' show IReaction;
 export 'src/core/message/referenced_message.dart' show IReferencedMessage;
 export 'src/core/message/sticker.dart' show IStandardSticker, IStickerPack, ISticker, IGuildSticker, IPartialSticker;
 export 'src/core/message/unicode_emoji.dart' show IUnicodeEmoji, UnicodeEmoji;
-export 'src/core/message/components/component_style.dart' show ComponentStyle, ButtonStyle;
+export 'src/core/message/components/component_style.dart' show ButtonStyle;
 export 'src/core/message/components/message_component.dart'
     show
         IMessageButton,
