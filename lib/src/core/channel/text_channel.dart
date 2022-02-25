@@ -72,10 +72,10 @@ abstract class ITextChannel implements IChannel, ISend {
   @override
   Future<IMessage> sendMessage(MessageBuilder builder);
 
-  /// Bulk removes many messages by its ids. [messages] is list of messages ids to delete.
+  /// Bulk removes many referenced messages. Where [messages] is list of messages to delete.
   ///
   /// ```
-  /// var toDelete = channel.messages.take(5);
+  /// var toDelete = channel.messageCache.take(5);
   /// await channel.bulkRemoveMessages(toDelete);
   /// ```
   Future<void> bulkRemoveMessages(Iterable<IMessage> messages);
