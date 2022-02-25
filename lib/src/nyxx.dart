@@ -281,16 +281,23 @@ abstract class INyxxWebsocket implements INyxxRest {
   ///
   /// Code below will display bot presence as `Playing Super duper game`:
   /// ```dart
-  /// bot.setPresence(game: Activity.of("Super duper game"))
+  /// bot.setPresence(
+  ///   PresenceBuilder.of(
+  ///     activity: ActivityBuilder.game("Super duper game"),
+  ///   ),
+  /// );
   /// ```
   ///
   /// Bots cannot set custom status - only game, listening and stream available.
   ///
   /// To set bot presence to streaming use:
   /// ```dart
-  /// bot.setPresence(game: Activity.of("Super duper game", type: ActivityType.streaming, url: "https://twitch.tv/l7ssha"))
+  /// bot.setPresence(
+  ///   PresenceBuilder.of(
+  ///     activity: ActivityBuilder.streaming("Super duper game", "https://twitch.tv/l7ssha"),
+  ///   ),
+  /// );
   /// ```
-  /// `url` property in `Activity` can be only set when type is set to `streaming`
   void setPresence(PresenceBuilder presenceBuilder);
 
   /// Join [ThreadChannel] with given [channelId]
