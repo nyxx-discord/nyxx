@@ -220,7 +220,7 @@ abstract class IGuild implements SnowflakeEntity {
   /// https://discordapp.com/developers/docs/resources/audit-log
   ///
   /// ```
-  /// var logs = await guild.getAuditLogs(actionType: 1);
+  /// var logs = await guild.fetchAuditLogs(actionType: 1);
   /// ```
   Future<IAuditLog> fetchAuditLogs({Snowflake? userId, int? actionType, Snowflake? before, int? limit});
 
@@ -676,7 +676,7 @@ class Guild extends SnowflakeEntity implements IGuild {
   /// https://discordapp.com/developers/docs/resources/audit-log
   ///
   /// ```
-  /// var logs = await guild.getAuditLogs(actionType: 1);
+  /// var logs = await guild.fetchAuditLogs(actionType: 1);
   /// ```
   @override
   Future<IAuditLog> fetchAuditLogs({Snowflake? userId, int? actionType, Snowflake? before, int? limit}) =>
