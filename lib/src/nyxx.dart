@@ -252,7 +252,7 @@ abstract class INyxxWebsocket implements INyxxRest {
 
   /// Returns channel with specified id.
   /// ```
-  /// var channel = await client.getChannel<TextChannel>(Snowflake("473853847115137024"));
+  /// var channel = await client.fetchChannel<ITextChannel>(Snowflake("473853847115137024"));
   /// ```
   Future<T> fetchChannel<T extends IChannel>(Snowflake channelId);
 
@@ -376,7 +376,7 @@ class NyxxWebsocket extends NyxxRest implements INyxxWebsocket {
 
   /// Returns channel with specified id.
   /// ```
-  /// var channel = await client.getChannel<TextChannel>(Snowflake("473853847115137024"));
+  /// var channel = await client.fetchChannel<ITextChannel>(Snowflake("473853847115137024"));
   /// ```
   @override
   Future<T> fetchChannel<T extends IChannel>(Snowflake channelId) => httpEndpoints.fetchChannel(channelId);
