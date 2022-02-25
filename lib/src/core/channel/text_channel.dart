@@ -80,8 +80,7 @@ abstract class ITextChannel implements IChannel, ISend {
   /// ```
   Future<void> bulkRemoveMessages(Iterable<IMessage> messages);
 
-  /// Gets several [IMessage] objects from API. Only one of [after], [before], [around] can be specified,
-  /// otherwise, it will throw.
+  /// Gets several [IMessage] objects from API.
   ///
   /// ```
   /// var messages = await channel.downloadMessages(limit: 100, after: Snowflake("222078108977594368"));
