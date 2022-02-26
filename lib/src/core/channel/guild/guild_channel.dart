@@ -35,7 +35,7 @@ abstract class IGuildChannel implements IMinimalGuildChannel {
   /// Fetches and returns all channel"s [Invite]s
   ///
   /// ```
-  /// var invites = await chan.getChannelInvites();
+  /// var invites = await chan.fetchChannelInvites();
   /// ```
   Stream<IInviteWithMeta> fetchChannelInvites();
 
