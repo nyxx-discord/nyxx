@@ -14,6 +14,9 @@ abstract class IBaseGuildEmoji implements SnowflakeEntity, IEmoji {
   /// Returns cdn url to emoji
   String get cdnUrl;
 
+  /// The name of the emoji.
+  String get name;
+
   /// Creates partial emoji from given String or Snowflake.
   factory IBaseGuildEmoji.fromId(Snowflake id) => GuildEmojiPartial(id);
 }
@@ -27,11 +30,15 @@ abstract class BaseGuildEmoji extends SnowflakeEntity implements IBaseGuildEmoji
   @override
   String get cdnUrl => "https://cdn.discordapp.com/emojis/$id.png";
 
+  /// The name of the emoji.
+  @override
+  String get name;
+
   /// Creates an instance of [BaseGuildEmoji]
   BaseGuildEmoji(RawApiMap raw) : super(Snowflake(raw["id"]));
 
   @override
-  String formatForMessage() => "<:nyxx:$id>";
+  String formatForMessage() => "<:$name:$id>";
 
   @override
   String encodeForAPI() => id.toString();
@@ -46,6 +53,9 @@ abstract class IGuildEmojiPartial implements IBaseGuildEmoji {}
 class GuildEmojiPartial extends BaseGuildEmoji implements IGuildEmojiPartial {
   @override
   bool get isPartial => true;
+
+  @override
+  String get name => "nyxx";
 
   /// Creates an instance of [GuildEmojiPartial]
   GuildEmojiPartial(Snowflake id) : super({"id": id.toString()});
@@ -102,6 +112,10 @@ class GuildEmoji extends BaseGuildEmoji implements IGuildEmoji {
   @override
   late final bool animated;
 
+  /// The name of the emoji.
+  @override
+  late final String name;
+
   @override
   bool get isPartial => false;
 
@@ -109,6 +123,7 @@ class GuildEmoji extends BaseGuildEmoji implements IGuildEmoji {
   GuildEmoji(this.client, RawApiMap raw, Snowflake guildId) : super(raw) {
     guild = GuildCacheable(client, guildId);
 
+    name = raw["name"] as String;
     requireColons = raw["require_colons"] as bool? ?? false;
     managed = raw["managed"] as bool? ?? false;
     animated = raw["animated"] as bool? ?? false;
