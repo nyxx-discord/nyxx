@@ -257,9 +257,9 @@ abstract class INyxxWebsocket implements INyxxRest {
   Future<T> fetchChannel<T extends IChannel>(Snowflake channelId);
 
   /// Get user instance with specified id.
+  /// ```dart
+  /// var user = await client.fetchUser(Snowflake("302359032612651009"));
   /// ```
-  /// var user = client.getUser(Snowflake("302359032612651009"));
-  /// ``
   Future<IUser> fetchUser(Snowflake userId);
 
   /// Gets a webhook by its id and/or token.
