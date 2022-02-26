@@ -630,7 +630,7 @@ class Guild extends SnowflakeEntity implements IGuild {
 
   /// Allows to create new guild emoji. [name] is required. You can allow to set [roles] to restrict emoji usage.
   /// Put your image in [emojiAttachment] field.
-  /// 
+  ///
   /// ```
   /// var emojiFile = File("weed.png");
   /// var emoji = await guild.createEmoji("weed", emojiAttachment: AttachmentBuilder.file(emojiFile));
