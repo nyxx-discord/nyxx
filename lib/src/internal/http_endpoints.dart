@@ -470,7 +470,7 @@ class HttpEndpoints implements IHttpEndpoints {
 
     final body = <String, dynamic>{
       if (name != null) "name": name,
-      if (roles != null) "roles": roles.map((r) => r.toString()),
+      if (roles != null) "roles": roles.map((r) => r.toString()).toList(),
       if (avatarAttachment != null) "avatar": avatarAttachment.getBase64()
     };
 
@@ -543,7 +543,7 @@ class HttpEndpoints implements IHttpEndpoints {
   Future<IBaseGuildEmoji> createEmoji(Snowflake guildId, String name, {List<SnowflakeEntity>? roles, AttachmentBuilder? emojiAttachment}) async {
     final body = <String, dynamic>{
       "name": name,
-      if (roles != null) "roles": roles.map((r) => r.id.toString()),
+      if (roles != null) "roles": roles.map((r) => r.id.toString()).toList(),
       if (emojiAttachment != null) "image": emojiAttachment.getBase64()
     };
 
