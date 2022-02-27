@@ -119,6 +119,8 @@ class GuildEmoji extends BaseGuildEmoji implements IGuildEmoji {
   @override
   bool get isPartial => false;
 
+  String formatForMessage() => "<${animated ? 'a' : ''}:$name:$id>";
+
   /// Creates an instance of [GuildEmoji]
   GuildEmoji(this.client, RawApiMap raw, Snowflake guildId) : super(raw) {
     guild = GuildCacheable(client, guildId);
