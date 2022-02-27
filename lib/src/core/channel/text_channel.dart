@@ -26,7 +26,7 @@ abstract class ITextChannel implements IChannel, ISend {
   /// Can be used in combination with Emoji. Just run `toString()` on Emoji instance:
   /// ```
   /// final emoji = guild.emojis.findOne((e) => e.name.startsWith("dart"));
-  /// await channel.send(MessageBuilder.content("Dart is superb! ${emoji.toString()}"));
+  /// await channel.sendMessage(MessageBuilder.content("Dart is superb! ${emoji.toString()}"));
   /// ```
   /// Embeds can be sent very easily:
   /// ```
