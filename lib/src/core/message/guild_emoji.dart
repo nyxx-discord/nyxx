@@ -126,6 +126,10 @@ class GuildEmoji extends BaseGuildEmoji implements IGuildEmoji {
   @override
   bool get isPartial => false;
 
+  /// Returns cdn url to emoji
+  @override
+  String get cdnUrl => "https://cdn.discordapp.com/emojis/$id.${animated ? "gif" : "png"}";
+
   /// The user that created this emoji, not present if [fetchCreator] has not been called
   @override
   late Cacheable<Snowflake, IUser>? creator;
