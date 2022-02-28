@@ -23,6 +23,9 @@ abstract class IBaseGuildEmoji implements SnowflakeEntity, IEmoji {
 }
 
 abstract class BaseGuildEmoji extends SnowflakeEntity implements IBaseGuildEmoji {
+  /// Reference to [NyxxWebsocket]
+  INyxx? get client;
+
   /// True if emoji is partial.
   @override
   bool get isPartial;
@@ -47,11 +50,18 @@ abstract class BaseGuildEmoji extends SnowflakeEntity implements IBaseGuildEmoji
   /// Returns encoded string ready to send via message.
   @override
   String toString() => formatForMessage();
+
+  /// Resolves this [GuildEmojiPartial] to [GuildEmoji]
+  GuildEmoji? resolve();
 }
 
 abstract class IGuildEmojiPartial implements IBaseGuildEmoji {}
 
 class GuildEmojiPartial extends BaseGuildEmoji implements IGuildEmojiPartial {
+  /// Reference to [INyxxWebsocket]
+  @override
+  INyxx? client;
+
   @override
   bool get isPartial => true;
 
@@ -60,7 +70,18 @@ class GuildEmojiPartial extends BaseGuildEmoji implements IGuildEmojiPartial {
   String get name => "nyxx";
 
   /// Creates an instance of [GuildEmojiPartial]
-  GuildEmojiPartial(Snowflake id) : super({"id": id.toString()});
+  GuildEmojiPartial(Snowflake id, [INyxx? clientInstance]) : super({"id": id.toString()}) {
+    client = clientInstance;
+  }
+
+  /// Resolves this [GuildEmojiPartial] to [GuildEmoji]
+  @override
+  GuildEmoji? resolve() {
+    if (client != null) {
+      return client!.emojis[Snowflake(id)] as GuildEmoji?;
+    }
+    return null;
+  }
 }
 
 abstract class IGuildEmoji implements IBaseGuildEmoji {
@@ -152,6 +173,11 @@ class GuildEmoji extends BaseGuildEmoji implements IGuildEmoji {
   /// Fetches the creator of this emoji
   @override
   Future<IUser> fetchCreator() => client.httpEndpoints.fetchEmojiCreator(guild.id, id);
+
+
+  /// Resolve this emoji to [GuildEmoji]
+  @override
+  GuildEmoji resolve() => this;
 
   /// Allows to delete guild emoji
   @override
