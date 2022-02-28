@@ -22,7 +22,7 @@ abstract class IBaseGuildEmoji implements SnowflakeEntity, IEmoji {
   factory IBaseGuildEmoji.fromId(Snowflake id) => GuildEmojiPartial(id);
 
   /// Resolves this [GuildEmojiPartial] to [GuildEmoji].
-  GuildEmoji? resolve();
+  IGuildEmoji? resolve();
 }
 
 abstract class BaseGuildEmoji extends SnowflakeEntity implements IBaseGuildEmoji {
@@ -56,7 +56,7 @@ abstract class BaseGuildEmoji extends SnowflakeEntity implements IBaseGuildEmoji
 
   /// Resolves this [GuildEmojiPartial] to [GuildEmoji]
   @override
-  GuildEmoji? resolve();
+  IGuildEmoji? resolve();
 }
 
 abstract class IGuildEmojiPartial implements IBaseGuildEmoji {}
@@ -80,9 +80,9 @@ class GuildEmojiPartial extends BaseGuildEmoji implements IGuildEmojiPartial {
 
   /// Resolves this [GuildEmojiPartial] to [GuildEmoji]
   @override
-  GuildEmoji? resolve() {
+  IGuildEmoji? resolve() {
     if (client != null) {
-      return client!.emojis[Snowflake(id)] as GuildEmoji?;
+      return client!.emojis[Snowflake(id)];
     }
     return null;
   }
@@ -181,7 +181,7 @@ class GuildEmoji extends BaseGuildEmoji implements IGuildEmoji {
 
   /// Resolve this emoji to [GuildEmoji]
   @override
-  GuildEmoji resolve() => this;
+  IGuildEmoji resolve() => this;
 
   /// Allows to delete guild emoji
   @override
