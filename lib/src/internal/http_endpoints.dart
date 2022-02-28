@@ -973,8 +973,7 @@ class HttpEndpoints implements IHttpEndpoints {
   @override
   Future<IMessage> fetchMessage(Snowflake channelId, Snowflake messageId) async {
     final response = await httpHandler.execute(BasicRequest("/channels/$channelId/messages/$messageId"));
-    final channel = client.channels[Snowflake(channelId)] as ITextChannel?;
-    channel?.messageCache[Snowflake(messageId)] = Message(client, (response as HttpResponseSuccess).jsonBody as RawApiMap);
+
 
     if (response is HttpResponseError) {
       return Future.error(response);
