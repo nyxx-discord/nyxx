@@ -114,6 +114,7 @@ abstract class IThreadChannel implements MinimalGuildChannel, ITextChannel {
   /// Adds [user] to [ThreadChannel]
   Future<void> addThreadMember(SnowflakeEntity user);
 
+  /// Edits this [ThreadChannel] and returns the edited [ThreadChannel]
   Future<ThreadChannel> edit(ThreadBuilder builder);
 }
 

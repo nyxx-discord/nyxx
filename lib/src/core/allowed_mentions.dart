@@ -18,6 +18,7 @@ class AllowedMentions extends Builder {
   /// Allow @everyone and @here if [everyone] is true
   /// Allow @user if [users] is true
   /// Allow @role if [roles] is true
+  /// Mention the user on reply if [reply] is true
   void allow({bool? reply, bool? everyone, bool? users, bool? roles}) {
     if (everyone != null) {
       _allowEveryone = everyone;

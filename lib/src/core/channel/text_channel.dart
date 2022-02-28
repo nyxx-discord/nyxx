@@ -17,16 +17,16 @@ abstract class ITextChannel implements IChannel, ISend {
   /// Returns [IMessage] downloaded from API
   Future<IMessage> fetchMessage(Snowflake id);
 
-  /// Sends message to channel. Performs `toString()` on thing passed to [content]. Allows to send embeds with [embed] field.
+  /// Sends message to channel. Allows to send embeds with [MessageBuilder.embed()] method.
   ///
   /// ```
-  /// await channel.sendMessage(content: "Very nice message!");
+  /// await channel.sendMessage(MessageBuilder.content("Very nice message!"));
   /// ```
   ///
   /// Can be used in combination with Emoji. Just run `toString()` on Emoji instance:
   /// ```
   /// final emoji = guild.emojis.findOne((e) => e.name.startsWith("dart"));
-  /// await channel.send(content: "Dart is superb! ${emoji.toString()}");
+  /// await channel.sendMessage(MessageBuilder.content("Dart is superb! ${emoji.toString()}"));
   /// ```
   /// Embeds can be sent very easily:
   /// ```
@@ -34,35 +34,53 @@ abstract class ITextChannel implements IChannel, ISend {
   ///   ..title = "Example Title"
   ///   ..addField(name: "Memory usage", value: "${ProcessInfo.currentRss / 1024 / 1024}MB");
   ///
-  /// await channel.sendMessage(embed: embed);
+  /// await channel.sendMessage(MessageBuilder.embed(embed));
   /// ```
   ///
-  /// Method also allows to send file and optional [content] with [embed].
-  /// Use `expandAttachment(String file)` method to expand file names in embed
+  /// Method also allows to send multiple files and optional [content] with [embed].
   ///
   /// ```
-  /// await channel.sendMessage(files: [new File("kitten.png"), new File("kitten.jpg")], content: "Kittens ^-^"]);
+  /// await event.message.channel.sendMessage(
+  ///   MessageBuilder.files(
+  ///     [
+  ///       AttachmentBuilder.file(
+  ///         File("kitten.png"),
+  ///         name: "kitten.png",
+  ///       ),
+  ///     ],
+  ///   )..content = "Kittens ^-^",
+  /// );
   /// ```
+  /// You can refer the sent attachments in embeds by prefixing them with `attachment://`:
   /// ```
-  /// var embed = new nyxx.EmbedBuilder()
+  /// var embed = EmbedBuilder()
   ///   ..title = "Example Title"
-  ///   ..thumbnailUrl = "${attach("kitten.jpg")}";
+  ///   ..thumbnailUrl = "attachment://kitten.jpg";
   ///
-  /// channel.sendMessage(files: [new File("kitten.jpg")], embed: embed, content: "HEJKA!");
+  /// await event.message.channel.sendMessage(
+  ///   MessageBuilder.files(
+  ///     [
+  ///       AttachmentBuilder.file(
+  ///         File("kitten.jpg"),
+  ///       ),
+  ///     ],
+  ///   )
+  ///     ..embeds = [embed]
+  ///     ..content = "HEJKA!",
+  /// );
   /// ```
   @override
   Future<IMessage> sendMessage(MessageBuilder builder);
 
-  /// Bulk removes many messages by its ids. [messages] is list of messages ids to delete.
+  /// Bulk removes many referenced messages. Where [messages] is list of messages to delete.
   ///
   /// ```
-  /// var toDelete = channel.messages.take(5);
+  /// var toDelete = channel.messageCache.take(5);
   /// await channel.bulkRemoveMessages(toDelete);
   /// ```
   Future<void> bulkRemoveMessages(Iterable<IMessage> messages);
 
-  /// Gets several [IMessage] objects from API. Only one of [after], [before], [around] can be specified,
-  /// otherwise, it will throw.
+  /// Gets several [IMessage] objects from API.
   ///
   /// ```
   /// var messages = await channel.downloadMessages(limit: 100, after: Snowflake("222078108977594368"));
