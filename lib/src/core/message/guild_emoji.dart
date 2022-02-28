@@ -149,6 +149,7 @@ class GuildEmoji extends BaseGuildEmoji implements IGuildEmoji {
     roles = [for (final roleId in raw["roles"]) RoleCacheable(client, Snowflake(roleId), guild)];
   }
 
+  /// Fetches the creator of this emoji
   @override
   Future<IUser> fetchCreator() => client.httpEndpoints.fetchEmojiCreator(guild.id, id);
 
