@@ -520,6 +520,7 @@ class Guild extends SnowflakeEntity implements IGuild {
       raw["emojis"].forEach((dynamic o) {
         final emoji = GuildEmoji(client, o as RawApiMap, id);
         emojis[emoji.id] = emoji;
+        client.emojis[emoji.id] = emoji;
       });
     }
 
