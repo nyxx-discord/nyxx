@@ -183,12 +183,12 @@ abstract class IGuild implements SnowflakeEntity {
   /// Fetches emoji from API
   Future<IBaseGuildEmoji> fetchEmoji(Snowflake emojiId);
 
-  /// Allows to create new guild emoji. [name] is required and you have to specify one of other parameters: [imageFile], [imageBytes] or [encodedImage].
-  /// [imageBytes] can be useful if you want to create image from http response.
+  /// Allows to create new guild emoji. [name] is required. You can allow to set [roles] to restrict emoji usage.
+  /// Put your image in [emojiAttachment] field.
   ///
   /// ```
-  /// var emojiFile = new File("weed.png");
-  /// vare emoji = await guild.createEmoji("weed, image: emojiFile");
+  /// var emojiFile = File("weed.png");
+  /// var emoji = await guild.createEmoji("weed", emojiAttachment: AttachmentBuilder.file(emojiFile));
   /// ```
   Future<IBaseGuildEmoji> createEmoji(String name, {List<SnowflakeEntity>? roles, AttachmentBuilder? emojiAttachment});
 
@@ -220,7 +220,7 @@ abstract class IGuild implements SnowflakeEntity {
   /// https://discordapp.com/developers/docs/resources/audit-log
   ///
   /// ```
-  /// var logs = await guild.getAuditLogs(actionType: 1);
+  /// var logs = await guild.fetchAuditLogs(actionType: 1);
   /// ```
   Future<IAuditLog> fetchAuditLogs({Snowflake? userId, int? actionType, Snowflake? before, int? limit});
 
@@ -628,12 +628,12 @@ class Guild extends SnowflakeEntity implements IGuild {
   @override
   Future<IBaseGuildEmoji> fetchEmoji(Snowflake emojiId) => client.httpEndpoints.fetchGuildEmoji(id, emojiId);
 
-  /// Allows to create new guild emoji. [name] is required and you have to specify one of other parameters: [imageFile], [imageBytes] or [encodedImage].
-  /// [imageBytes] can be useful if you want to create image from http response.
+  /// Allows to create new guild emoji. [name] is required. You can allow to set [roles] to restrict emoji usage.
+  /// Put your image in [emojiAttachment] field.
   ///
   /// ```
-  /// var emojiFile = new File("weed.png");
-  /// vare emoji = await guild.createEmoji("weed, image: emojiFile");
+  /// var emojiFile = File("weed.png");
+  /// var emoji = await guild.createEmoji("weed", emojiAttachment: AttachmentBuilder.file(emojiFile));
   /// ```
   @override
   Future<IBaseGuildEmoji> createEmoji(String name, {List<SnowflakeEntity>? roles, AttachmentBuilder? emojiAttachment}) =>
@@ -676,7 +676,7 @@ class Guild extends SnowflakeEntity implements IGuild {
   /// https://discordapp.com/developers/docs/resources/audit-log
   ///
   /// ```
-  /// var logs = await guild.getAuditLogs(actionType: 1);
+  /// var logs = await guild.fetchAuditLogs(actionType: 1);
   /// ```
   @override
   Future<IAuditLog> fetchAuditLogs({Snowflake? userId, int? actionType, Snowflake? before, int? limit}) =>

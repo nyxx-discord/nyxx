@@ -252,14 +252,14 @@ abstract class INyxxWebsocket implements INyxxRest {
 
   /// Returns channel with specified id.
   /// ```
-  /// var channel = await client.getChannel<TextChannel>(Snowflake("473853847115137024"));
+  /// var channel = await client.fetchChannel<ITextChannel>(Snowflake("473853847115137024"));
   /// ```
   Future<T> fetchChannel<T extends IChannel>(Snowflake channelId);
 
   /// Get user instance with specified id.
+  /// ```dart
+  /// var user = await client.fetchUser(Snowflake("302359032612651009"));
   /// ```
-  /// var user = client.getUser(Snowflake("302359032612651009"));
-  /// ``
   Future<IUser> fetchUser(Snowflake userId);
 
   /// Gets a webhook by its id and/or token.
@@ -281,16 +281,23 @@ abstract class INyxxWebsocket implements INyxxRest {
   ///
   /// Code below will display bot presence as `Playing Super duper game`:
   /// ```dart
-  /// bot.setPresence(game: Activity.of("Super duper game"))
+  /// bot.setPresence(
+  ///   PresenceBuilder.of(
+  ///     activity: ActivityBuilder.game("Super duper game"),
+  ///   ),
+  /// );
   /// ```
   ///
   /// Bots cannot set custom status - only game, listening and stream available.
   ///
   /// To set bot presence to streaming use:
   /// ```dart
-  /// bot.setPresence(game: Activity.of("Super duper game", type: ActivityType.streaming, url: "https://twitch.tv/l7ssha"))
+  /// bot.setPresence(
+  ///   PresenceBuilder.of(
+  ///     activity: ActivityBuilder.streaming("Super duper game", "https://twitch.tv/l7ssha"),
+  ///   ),
+  /// );
   /// ```
-  /// `url` property in `Activity` can be only set when type is set to `streaming`
   void setPresence(PresenceBuilder presenceBuilder);
 
   /// Join [ThreadChannel] with given [channelId]
@@ -369,7 +376,7 @@ class NyxxWebsocket extends NyxxRest implements INyxxWebsocket {
 
   /// Returns channel with specified id.
   /// ```
-  /// var channel = await client.getChannel<TextChannel>(Snowflake("473853847115137024"));
+  /// var channel = await client.fetchChannel<ITextChannel>(Snowflake("473853847115137024"));
   /// ```
   @override
   Future<T> fetchChannel<T extends IChannel>(Snowflake channelId) => httpEndpoints.fetchChannel(channelId);
