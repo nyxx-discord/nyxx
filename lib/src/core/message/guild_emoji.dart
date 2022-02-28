@@ -55,6 +55,7 @@ class GuildEmojiPartial extends BaseGuildEmoji implements IGuildEmojiPartial {
   @override
   bool get isPartial => true;
 
+  // If name is not avaliable; works for static emojis
   @override
   String get name => "nyxx";
 
