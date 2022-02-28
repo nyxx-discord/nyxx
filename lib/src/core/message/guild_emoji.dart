@@ -48,7 +48,7 @@ abstract class BaseGuildEmoji extends SnowflakeEntity implements IBaseGuildEmoji
   String formatForMessage() => "<:$name:$id>";
 
   @override
-  String encodeForAPI() => id.toString();
+  String encodeForAPI() => '$name:$id';
 
   /// Returns encoded string ready to send via message.
   @override
