@@ -194,7 +194,7 @@ abstract class MessageReactionEvent {
     if (json["d"]["emoji"]["id"] == null) {
       emoji = UnicodeEmoji(json["d"]["emoji"]["name"] as String);
     } else {
-      emoji = GuildEmojiPartial(Snowflake(json["d"]["emoji"]['id']));
+      emoji = GuildEmojiPartial(Snowflake(json["d"]["emoji"]['id']), client);
     }
   }
 }
@@ -320,7 +320,7 @@ class MessageReactionRemoveEmojiEvent implements IMessageReactionRemoveEmojiEven
     if (json["d"]["emoji"]["id"] == null) {
       emoji = UnicodeEmoji(json["d"]["emoji"]["name"] as String);
     } else {
-      emoji = GuildEmojiPartial(Snowflake(json["d"]["emoji"]['id']));
+      emoji = GuildEmojiPartial(Snowflake(json["d"]["emoji"]['id']), client);
     }
 
     final messageInstance = message.getFromCache();
