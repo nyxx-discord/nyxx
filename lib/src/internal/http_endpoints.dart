@@ -569,7 +569,7 @@ class HttpEndpoints implements IHttpEndpoints {
     if(emoji.managed) {
       return Future.error(Exception("Cannot fetch the creator of a managed emoji"));
     }
-    final selfMember = await client.guilds[Snowflake(guildId)]?.selfMember.getOrDownload();
+    final selfMember = await guild?.selfMember.getOrDownload();
     final selfMemberPermissions = await selfMember?.effectivePermissions;
     if(selfMember != null && !selfMemberPermissions!.manageEmojis) {
       return Future.error(Exception("Cannot fetch the creator of an emoji if the bot does not have the permission to manage emojis and stikers"));
