@@ -20,6 +20,9 @@ abstract class IBaseGuildEmoji implements SnowflakeEntity, IEmoji {
 
   /// Creates partial emoji from given String or Snowflake.
   factory IBaseGuildEmoji.fromId(Snowflake id) => GuildEmojiPartial(id);
+
+  /// Resolves this [GuildEmojiPartial] to [GuildEmoji].
+  GuildEmoji? resolve();
 }
 
 abstract class BaseGuildEmoji extends SnowflakeEntity implements IBaseGuildEmoji {
@@ -52,6 +55,7 @@ abstract class BaseGuildEmoji extends SnowflakeEntity implements IBaseGuildEmoji
   String toString() => formatForMessage();
 
   /// Resolves this [GuildEmojiPartial] to [GuildEmoji]
+  @override
   GuildEmoji? resolve();
 }
 
