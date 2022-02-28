@@ -61,7 +61,7 @@ class HttpResponseSuccess extends HttpResponse implements IHttpResponseSucess {
   HttpResponseSuccess(http.StreamedResponse response) : super(response);
 }
 
-abstract class IHttpResponseError implements IHttpResponse, Error {
+abstract class IHttpResponseError implements IHttpResponse, Error, Exception {
   /// Message why http request failed
   String get errorMessage;
 
