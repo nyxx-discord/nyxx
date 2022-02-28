@@ -81,7 +81,7 @@ abstract class IGuildEmoji implements IBaseGuildEmoji {
   /// whether this emoji is animated
   bool get animated;
 
-  /// The user that created this emoji
+  /// The user that created this emoji, not present if [fetchCreator] was not called
   Cacheable<Snowflake, IUser>? get creator;
 
   /// Fetches the creator of this emoji
