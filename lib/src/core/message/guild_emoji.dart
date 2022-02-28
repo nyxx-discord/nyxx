@@ -1,3 +1,4 @@
+import 'package:nyxx/src/core/user/user.dart';
 import 'package:nyxx/src/nyxx.dart';
 import 'package:nyxx/src/core/snowflake.dart';
 import 'package:nyxx/src/core/snowflake_entity.dart';
@@ -80,6 +81,12 @@ abstract class IGuildEmoji implements IBaseGuildEmoji {
   /// whether this emoji is animated
   bool get animated;
 
+  /// The user that created this emoji
+  Cacheable<Snowflake, IUser>? get creator;
+
+  /// Fetches the creator of this emoji
+  Future<IUser> fetchCreator();
+
   /// Allows to delete guild emoji
   Future<void> delete();
 
@@ -119,6 +126,11 @@ class GuildEmoji extends BaseGuildEmoji implements IGuildEmoji {
   @override
   bool get isPartial => false;
 
+  /// The user that created this emoji, not present if [fetchCreator] has not been called
+  @override
+  late Cacheable<Snowflake, IUser>? creator;
+
+  @override
   String formatForMessage() => "<${animated ? 'a' : ''}:$name:$id>";
 
   /// Creates an instance of [GuildEmoji]
@@ -131,6 +143,9 @@ class GuildEmoji extends BaseGuildEmoji implements IGuildEmoji {
     animated = raw["animated"] as bool? ?? false;
     roles = [for (final roleId in raw["roles"]) RoleCacheable(client, Snowflake(roleId), guild)];
   }
+
+  @override
+  Future<IUser> fetchCreator() => client.httpEndpoints.fetchEmojiCreator(guild.id, id);
 
   /// Allows to delete guild emoji
   @override

@@ -92,6 +92,9 @@ abstract class IHttpEndpoints {
   /// Creates emoji in given guild
   Future<IBaseGuildEmoji> createEmoji(Snowflake guildId, String name, {List<SnowflakeEntity>? roles, AttachmentBuilder? emojiAttachment});
 
+  /// Fetches a [IUser] that created the emoji from the given [emojiId]
+  Future<IUser> fetchEmojiCreator(Snowflake guildId, Snowflake emojiId);
+
   /// Returns how many user will be pruned in prune operation
   Future<int> guildPruneCount(Snowflake guildId, int days, {Iterable<Snowflake>? includeRoles});
 
@@ -551,6 +554,30 @@ class HttpEndpoints implements IHttpEndpoints {
 
     if (response is HttpResponseSuccess) {
       return GuildEmoji(client, response.jsonBody as RawApiMap, guildId);
+    }
+
+    return Future.error(response);
+  }
+
+  @override
+  Future<IUser> fetchEmojiCreator(Snowflake guildId, Snowflake emojiId) async {
+    final response = await httpHandler.execute(BasicRequest("/guilds/$guildId/emojis/$emojiId"));
+
+    final guild = client.guilds[Snowflake(guildId)];
+    final emoji = guild?.emojis[Snowflake(emojiId)] as GuildEmoji;
+
+    if(emoji.managed) {
+      return Future.error(Exception("Cannot fetch the creator of a managed emoji"));
+    }
+    final selfMember = await client.guilds[Snowflake(guildId)]?.selfMember.getOrDownload();
+    final selfMemberPermissions = await selfMember?.effectivePermissions;
+    if(selfMember != null && !selfMemberPermissions!.manageEmojis) {
+      return Future.error(Exception("Cannot fetch the creator of an emoji if the bot does not have the permission to manage emojis and stikers"));
+    }
+
+    if (response is HttpResponseSuccess) {
+      emoji.creator = UserCacheable(client, Snowflake(response.jsonBody["user"]["id"] as String));
+      return User(client, response.jsonBody["user"] as RawApiMap);
     }
 
     return Future.error(response);
