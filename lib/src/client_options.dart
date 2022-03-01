@@ -1,11 +1,6 @@
+import 'package:nyxx/nyxx.dart';
 import 'package:nyxx/src/nyxx.dart';
-import 'package:nyxx/src/core/allowed_mentions.dart';
-import 'package:nyxx/src/core/channel/channel.dart';
-import 'package:nyxx/src/core/message/message.dart';
-import 'package:nyxx/src/core/user/member.dart';
-import 'package:nyxx/src/internal/cache/cache_policy.dart';
 import 'package:nyxx/src/internal/shard/shard.dart';
-import 'package:nyxx/src/utils/builders/presence_builder.dart';
 
 /// Options for configuring cache. Allows to specify where and which entities should be cached and preserved in cache
 class CacheOptions {
@@ -29,6 +24,12 @@ class CacheOptions {
 
   /// Defines which members are preserved in cache
   CachePolicy<IMessage> messageCachePolicy = MessageCachePolicy.def;
+
+  /// Defines in which locations emojis will be cached
+  CachePolicyLocation emojiCachePolicyLocation = CachePolicyLocation();
+
+  /// Defines which emojis are preserved in cache
+  CachePolicy<IGuildEmoji> emojiCachePolicy = EmojiCachePolicy.def;
 }
 
 /// Optional client settings which can be used when creating new instance

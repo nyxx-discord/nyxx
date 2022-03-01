@@ -129,7 +129,7 @@ export 'src/internal/event_controller.dart' show IWebsocketEventController, IRes
 export 'src/internal/http_endpoints.dart' show IHttpEndpoints;
 export 'src/internal/cache/cache.dart' show SnowflakeCache, ICache, InMemoryCache;
 export 'src/internal/cache/cache_policy.dart'
-    show CachePolicyPredicate, CachePolicyLocation, CachePolicy, ChannelCachePolicy, MemberCachePolicy, MessageCachePolicy;
+    show CachePolicyPredicate, CachePolicyLocation, CachePolicy, ChannelCachePolicy, MemberCachePolicy, MessageCachePolicy, EmojiCachePolicy;
 export 'src/internal/cache/cacheable.dart' show Cacheable;
 export 'src/internal/exceptions/embed_builder_argument_exception.dart' show EmbedBuilderArgumentException;
 export 'src/internal/exceptions/http_client_exception.dart' show HttpClientException;

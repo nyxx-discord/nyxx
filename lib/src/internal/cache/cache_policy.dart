@@ -1,3 +1,4 @@
+import 'package:nyxx/nyxx.dart';
 import 'package:nyxx/src/core/snowflake_entity.dart';
 import 'package:nyxx/src/core/channel/channel.dart';
 import 'package:nyxx/src/core/channel/text_channel.dart';
@@ -129,6 +130,20 @@ class MessageCachePolicy extends CachePolicy<IMessage> {
   /// Default policy is [all]
   static final CachePolicy<IMessage> def = all;
 
-  /// Constructor0
+  /// Constructor
   MessageCachePolicy(CachePolicyPredicate<IMessage> predicate) : super(predicate);
+}
+
+class EmojiCachePolicy extends CachePolicy<IGuildEmoji> {
+  /// Do not cache emojis
+  static final CachePolicy<IGuildEmoji> none = EmojiCachePolicy((emoji) => false);
+
+  /// Cache all emojis
+  static final CachePolicy<IGuildEmoji> all = EmojiCachePolicy((emoji) => true);
+
+  /// Default policy is [all]
+  static final CachePolicy<IGuildEmoji> def = all;
+
+  /// Constructor
+  EmojiCachePolicy(CachePolicyPredicate<IGuildEmoji> predicate) : super(predicate);
 }
