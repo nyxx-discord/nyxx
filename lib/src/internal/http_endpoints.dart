@@ -564,7 +564,11 @@ class HttpEndpoints implements IHttpEndpoints {
     final response = await httpHandler.execute(BasicRequest("/guilds/$guildId/emojis/$emojiId"));
 
     final guild = client.guilds[Snowflake(guildId)];
-    final emoji = guild?.emojis[Snowflake(emojiId)] as GuildEmoji;
+    final emoji = guild?.emojis[Snowflake(emojiId)] as GuildEmoji?;
+
+    if(emoji == null) {
+      return Future.error(Exception("Emoji not found"));
+    }
 
     if(emoji.managed) {
       return Future.error(Exception("Cannot fetch the creator of a managed emoji"));
