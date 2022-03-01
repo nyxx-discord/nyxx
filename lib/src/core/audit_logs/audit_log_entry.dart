@@ -89,6 +89,9 @@ class AuditLogEntryType extends IEnum<int> {
   static const AuditLogEntryType memberBanRemove = AuditLogEntryType._create(23);
   static const AuditLogEntryType memberUpdate = AuditLogEntryType._create(24);
   static const AuditLogEntryType memberRoleUpdate = AuditLogEntryType._create(25);
+  static const AuditLogEntryType memberMove = AuditLogEntryType._create(26);
+  static const AuditLogEntryType memberDisconnect = AuditLogEntryType._create(27);
+  static const AuditLogEntryType botAdd = AuditLogEntryType._create(28);
   static const AuditLogEntryType roleCreate = AuditLogEntryType._create(30);
   static const AuditLogEntryType roleUpdate = AuditLogEntryType._create(31);
   static const AuditLogEntryType roleDelete = AuditLogEntryType._create(32);
@@ -108,6 +111,18 @@ class AuditLogEntryType extends IEnum<int> {
   static const AuditLogEntryType integrationCreate = AuditLogEntryType._create(80);
   static const AuditLogEntryType integrationUpdate = AuditLogEntryType._create(81);
   static const AuditLogEntryType integrationDelete = AuditLogEntryType._create(82);
+  static const AuditLogEntryType stageInstanceCreate = AuditLogEntryType._create(83);
+  static const AuditLogEntryType stageInstanceUpdate = AuditLogEntryType._create(84);
+  static const AuditLogEntryType stageInstanceDelete = AuditLogEntryType._create(85);
+  static const AuditLogEntryType stickerCreate = AuditLogEntryType._create(90);
+  static const AuditLogEntryType stickerUpdate = AuditLogEntryType._create(91);
+  static const AuditLogEntryType stickerDelete = AuditLogEntryType._create(92);
+  static const AuditLogEntryType guildScheduledEventCreate = AuditLogEntryType._create(100);
+  static const AuditLogEntryType guildScheduledEventUpdate = AuditLogEntryType._create(101);
+  static const AuditLogEntryType guildScheduledEventDelete = AuditLogEntryType._create(102);
+  static const AuditLogEntryType threadCreate = AuditLogEntryType._create(110);
+  static const AuditLogEntryType threadUpdate = AuditLogEntryType._create(111);
+  static const AuditLogEntryType threadDelete = AuditLogEntryType._create(112);
 
   const AuditLogEntryType._create(int value) : super(value);
 
