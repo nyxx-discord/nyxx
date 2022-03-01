@@ -57,7 +57,7 @@ class AuditLogEntry extends SnowflakeEntity implements IAuditLogEntry {
 
   /// Creates na instance of [AuditLogEntry]
   AuditLogEntry(RawApiMap raw, INyxx client) : super(Snowflake(raw["id"] as String)) {
-    targetId = raw["targetId"] as String;
+    targetId = raw["target_id"] as String;
 
     changes = [
       if (raw["changes"] != null)
