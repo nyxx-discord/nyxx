@@ -22,7 +22,7 @@ abstract class IBaseGuildEmoji implements SnowflakeEntity, IEmoji {
   bool get animated;
 
   /// Creates partial emoji from given String or Snowflake.
-  factory IBaseGuildEmoji.from(RawApiMap raw) => GuildEmojiPartial(raw);
+  factory IBaseGuildEmoji.fromId(Snowflake id) => GuildEmojiPartial({"id": id});
 
   /// Resolves this [GuildEmojiPartial] to [GuildEmoji].
   IGuildEmoji? resolve();

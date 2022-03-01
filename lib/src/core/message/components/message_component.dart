@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:nyxx/nyxx.dart';
 import 'package:nyxx/src/core/message/emoji.dart';
 import 'package:nyxx/src/core/message/guild_emoji.dart';
 import 'package:nyxx/src/core/message/unicode_emoji.dart';
@@ -59,11 +60,7 @@ class MessageComponentEmoji implements IMessageComponentEmoji {
     }
 
     if (id != null) {
-      return IBaseGuildEmoji.from({
-        'id': id,
-        'animated': animated,
-        'name': name,
-      });
+      return IBaseGuildEmoji.fromId(Snowflake(id));
     }
 
     throw ArgumentError("Tried to parse emojis from invalid payload");
