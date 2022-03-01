@@ -188,7 +188,6 @@ class GuildEmoji extends BaseGuildEmoji implements IGuildEmoji {
   @override
   Future<IUser> fetchCreator() => client.httpEndpoints.fetchEmojiCreator(guild.id, id);
 
-
   /// Resolve this emoji to [GuildEmoji]
   @override
   IGuildEmoji resolve() => this;

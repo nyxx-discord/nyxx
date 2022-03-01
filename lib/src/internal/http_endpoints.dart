@@ -566,16 +566,16 @@ class HttpEndpoints implements IHttpEndpoints {
     final guild = client.guilds[Snowflake(guildId)];
     final emoji = guild?.emojis[Snowflake(emojiId)] as GuildEmoji?;
 
-    if(emoji == null) {
+    if (emoji == null) {
       return Future.error(Exception("Emoji not found"));
     }
 
-    if(emoji.managed) {
+    if (emoji.managed) {
       return Future.error(Exception("Cannot fetch the creator of a managed emoji"));
     }
     final selfMember = await guild?.selfMember.getOrDownload();
     final selfMemberPermissions = await selfMember?.effectivePermissions;
-    if(selfMember != null && !selfMemberPermissions!.manageEmojis) {
+    if (selfMember != null && !selfMemberPermissions!.manageEmojis) {
       return Future.error(Exception("Cannot fetch the creator of an emoji if the bot does not have the permission to manage emojis and stikers"));
     }
 
@@ -977,7 +977,6 @@ class HttpEndpoints implements IHttpEndpoints {
   @override
   Future<IMessage> fetchMessage(Snowflake channelId, Snowflake messageId) async {
     final response = await httpHandler.execute(BasicRequest("/channels/$channelId/messages/$messageId"));
-
 
     if (response is HttpResponseError) {
       return Future.error(response);
