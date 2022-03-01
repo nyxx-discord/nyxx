@@ -18,8 +18,11 @@ abstract class IBaseGuildEmoji implements SnowflakeEntity, IEmoji {
   /// The name of the emoji.
   String get name;
 
+  /// Whether this emoji is animated.
+  bool get animated;
+
   /// Creates partial emoji from given String or Snowflake.
-  factory IBaseGuildEmoji.fromId(Snowflake id) => GuildEmojiPartial(id);
+  factory IBaseGuildEmoji.from(RawApiMap raw) => GuildEmojiPartial(raw);
 
   /// Resolves this [GuildEmojiPartial] to [GuildEmoji].
   IGuildEmoji? resolve();
@@ -33,9 +36,13 @@ abstract class BaseGuildEmoji extends SnowflakeEntity implements IBaseGuildEmoji
   @override
   bool get isPartial;
 
+  /// Whether this emoji is animated.
+  @override
+  bool get animated;
+
   /// Returns cdn url to emoji
   @override
-  String get cdnUrl => "https://cdn.discordapp.com/emojis/$id.png";
+  String get cdnUrl => "https://cdn.discordapp.com/emojis/$id.${animated ? 'gif' : 'png'}";
 
   /// The name of the emoji.
   @override
@@ -45,7 +52,7 @@ abstract class BaseGuildEmoji extends SnowflakeEntity implements IBaseGuildEmoji
   BaseGuildEmoji(RawApiMap raw) : super(Snowflake(raw["id"]));
 
   @override
-  String formatForMessage() => "<:$name:$id>";
+  String formatForMessage() => "<${animated ? 'a' : ''}:$name:$id>";
 
   @override
   String encodeForAPI() => '$name:$id';
@@ -69,13 +76,16 @@ class GuildEmojiPartial extends BaseGuildEmoji implements IGuildEmojiPartial {
   @override
   bool get isPartial => true;
 
-  // If name is not avaliable; works for static emojis
   @override
-  String get name => "nyxx";
+  late final String name;
+
+  @override
+  late final bool animated;
 
   /// Creates an instance of [GuildEmojiPartial]
-  GuildEmojiPartial(Snowflake id, [INyxx? clientInstance]) : super({"id": id.toString()}) {
-    client = clientInstance;
+  GuildEmojiPartial(RawApiMap raw, [this.client]) : super({"id": raw["id"].toString()}) {
+    name = raw["name"] as String? ?? "nyxx";
+    animated = raw["animated"] as bool? ?? false;
   }
 
   /// Resolves this [GuildEmojiPartial] to [GuildEmoji]
