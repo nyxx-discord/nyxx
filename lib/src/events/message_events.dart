@@ -212,7 +212,7 @@ class MessageReactionAddedEvent extends MessageReactionEvent implements IMessage
     final r = message!.reactions.indexWhere((r) => r.emoji == emoji);
 
     if (r == -1) {
-      message!.reactions.add(Reaction.event(emoji, user == (client as NyxxWebsocket).self));
+      message!.reactions.add(Reaction.event(emoji, user == (client as NyxxWebsocket).self, client));
     } else {
       (message!.reactions[r] as Reaction).count++;
     }

@@ -23,7 +23,7 @@ abstract class IReaction {
 class Reaction implements IReaction {
   /// Reference to [NyxxWebsocket]
   @override
-  late final INyxx client;
+  final INyxx client;
 
   /// Time this emoji has been used to react
   @override
@@ -51,7 +51,7 @@ class Reaction implements IReaction {
   }
 
   /// Creates na instance of [Reaction]
-  Reaction.event(this.emoji, this.me) {
+  Reaction.event(this.emoji, this.me, this.client) {
     count = 1;
   }
 }
