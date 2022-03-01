@@ -14,15 +14,21 @@ void main(List<String> args) {
   bot.eventsWs.onMessageReceived.listen((event) {
     if(event.message.content == '!emoji') {
       final emoji = bot.emojis.values.firstWhere((emo) => emo.name == 'some_emoji');
-      event.message.channel.sendMessage('Look at this emoji: $emoji');
+      final msg = await event.message.channel.sendMessage(MessageBuilder.content('Look at this emoji: $emoji'));
+      msg.createReaction(emoji);
+      // For unicode emoji use `UnicodeEmoji` class
+      msg.createReaction(UnicodeEmoji('🤔'));
     }
   });
 
   // This event is called when a reaction has been added to a message
   bot.eventsWs.onMessageReactionAdded.listen((event) {
-    final IGuildEmoji emoji = (event.emoji as IGuildEmojiPartial).isPartial ? (event.emoji as IGuildEmojiPartial).resolve() : event.emoji;
-    if(emoji.name == 'some_emoji') {
-      event.message.channel.sendMessage('Someone added some_emoji to this message!');
+    final emoji = (event.emoji as IGuildEmojiPartial).isPartial ? (event.emoji as IGuildEmojiPartial).resolve() : event.emoji;
+    if(emoji is UnicodeEmoji) {
+      event.message?.channel?.sendMessage(MessageBuilder.content('Woah! This is a unicode emoji: ${event.emoji}'));
+    }
+    if((emoji as IGuildEmoji).name == 'some_emoji') {
+      event.message.channel.sendMessage(MessageBuilder.content('Woah! This is a custom emoji: $emoji'));
     }
   });
 }
