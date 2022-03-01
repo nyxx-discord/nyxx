@@ -168,7 +168,7 @@ class GuildEmoji extends BaseGuildEmoji implements IGuildEmoji {
 
   /// The user that created this emoji, not present if [fetchCreator] has not been called
   @override
-  late Cacheable<Snowflake, IUser>? creator;
+  Cacheable<Snowflake, IUser>? creator;
 
   @override
   String formatForMessage() => "<${animated ? 'a' : ''}:$name:$id>";
