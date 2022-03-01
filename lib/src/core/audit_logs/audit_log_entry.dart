@@ -6,6 +6,7 @@ import 'package:nyxx/src/core/user/user.dart';
 import 'package:nyxx/src/internal/cache/cacheable.dart';
 import 'package:nyxx/src/typedefs.dart';
 import 'package:nyxx/src/utils/enum.dart';
+import 'package:nyxx/src/core/audit_logs/audit_log_options.dart';
 
 abstract class IAuditLogEntry implements SnowflakeEntity {
   /// Id of the affected entity (webhook, user, role, etc.)
@@ -21,7 +22,7 @@ abstract class IAuditLogEntry implements SnowflakeEntity {
   AuditLogEntryType get type;
 
   /// Additional info for certain action types
-  String? get options;
+  IAuditLogOptions? get options;
 
   /// The reason for the change
   String? get reason;
@@ -49,7 +50,7 @@ class AuditLogEntry extends SnowflakeEntity implements IAuditLogEntry {
 
   /// Additional info for certain action types
   @override
-  late final String? options;
+  late final IAuditLogOptions? options;
 
   /// The reason for the change
   @override
@@ -68,10 +69,17 @@ class AuditLogEntry extends SnowflakeEntity implements IAuditLogEntry {
     type = AuditLogEntryType._create(raw["action_type"] as int);
 
     if (raw["options"] != null) {
-      options = raw["options"] as String;
+      options = AuditLogOptions(raw["options"] as RawApiMap);
+    } else {
+      options = null;
     }
+    
 
-    reason = raw["reason"] as String;
+    if(raw["reason"] != null) {
+      reason = raw["reason"] as String;
+    } else {
+      reason = null;
+    }
   }
 }
 

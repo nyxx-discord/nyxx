@@ -18,6 +18,7 @@ export "src/core/application/oauth2_application.dart" show IOAuth2Application;
 export 'src/core/audit_logs/audit_log.dart' show IAuditLog;
 export 'src/core/audit_logs/audit_log_change.dart' show ChangeKeyType, IAuditLogChange;
 export 'src/core/audit_logs/audit_log_entry.dart' show IAuditLogEntry, AuditLogEntryType;
+export 'src/core/audit_logs/audit_log_options.dart' show IAuditLogOptions;
 export 'src/core/channel/cacheable_text_channel.dart' show ICacheableTextChannel;
 export 'src/core/channel/channel.dart' show IChannel, ChannelType;
 export 'src/core/channel/dm_channel.dart' show IDMChannel;
