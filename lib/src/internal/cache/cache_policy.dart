@@ -1,11 +1,4 @@
 import 'package:nyxx/nyxx.dart';
-import 'package:nyxx/src/core/snowflake_entity.dart';
-import 'package:nyxx/src/core/channel/channel.dart';
-import 'package:nyxx/src/core/channel/text_channel.dart';
-import 'package:nyxx/src/core/channel/thread_channel.dart';
-import 'package:nyxx/src/core/channel/guild/voice_channel.dart';
-import 'package:nyxx/src/core/message/message.dart';
-import 'package:nyxx/src/core/user/member.dart';
 
 /// Predicate which will decide if entity could be cached
 typedef CachePolicyPredicate<T extends SnowflakeEntity> = bool Function(T);
@@ -132,18 +125,4 @@ class MessageCachePolicy extends CachePolicy<IMessage> {
 
   /// Constructor
   MessageCachePolicy(CachePolicyPredicate<IMessage> predicate) : super(predicate);
-}
-
-class EmojiCachePolicy extends CachePolicy<IGuildEmoji> {
-  /// Do not cache emojis
-  static final CachePolicy<IGuildEmoji> none = EmojiCachePolicy((emoji) => false);
-
-  /// Cache all emojis
-  static final CachePolicy<IGuildEmoji> all = EmojiCachePolicy((emoji) => true);
-
-  /// Default policy is [all]
-  static final CachePolicy<IGuildEmoji> def = all;
-
-  /// Constructor
-  EmojiCachePolicy(CachePolicyPredicate<IGuildEmoji> predicate) : super(predicate);
 }

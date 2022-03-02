@@ -71,9 +71,6 @@ abstract class INyxx implements Disposable, IPluginManager {
   /// without `forceFetchUsers` enabled.
   SnowflakeCache<IUser> get users;
 
-  /// All of the emojis the bot can access to.
-  SnowflakeCache<IGuildEmoji> get emojis;
-
   /// Datetime when bot has started
   DateTime get startTime;
 
@@ -157,10 +154,6 @@ class NyxxRest extends INyxxRest {
   @override
   late final SnowflakeCache<IUser> users;
 
-  /// All of the emojis the bot can access to.
-  @override
-  late final SnowflakeCache<IGuildEmoji> emojis;
-
   /// True if client is ready.
   @override
   bool ready = false;
@@ -209,7 +202,6 @@ class NyxxRest extends INyxxRest {
     guilds = SnowflakeCache();
     channels = SnowflakeCache();
     users = SnowflakeCache();
-    emojis = SnowflakeCache();
 
     eventsRest = RestEventController();
   }
@@ -237,7 +229,6 @@ class NyxxRest extends INyxxRest {
     await guilds.dispose();
     await users.dispose();
     await channels.dispose();
-    await emojis.dispose();
   }
 
   @override

@@ -24,12 +24,6 @@ class CacheOptions {
 
   /// Defines which members are preserved in cache
   CachePolicy<IMessage> messageCachePolicy = MessageCachePolicy.def;
-
-  /// Defines in which locations emojis will be cached
-  CachePolicyLocation emojiCachePolicyLocation = CachePolicyLocation();
-
-  /// Defines which emojis are preserved in cache
-  CachePolicy<IGuildEmoji> emojiCachePolicy = EmojiCachePolicy.def;
 }
 
 /// Optional client settings which can be used when creating new instance
