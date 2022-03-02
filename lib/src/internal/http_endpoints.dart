@@ -565,11 +565,11 @@ class HttpEndpoints implements IHttpEndpoints {
 
     if (response is HttpResponseSuccess) {
       if (response.jsonBody["managed"] as bool) {
-        return Future.error("Emoji is managed");
+        return Future.error(ArgumentError("Emoji is managed"));
       }
 
       if (response.jsonBody["user"] == null) {
-        return Future.error("Could not find user creaor, make sure you have the correct permissions");
+        return Future.error(ArgumentError("Could not find user creator, make sure you have the correct permissions"));
       }
 
       return User(client, response.jsonBody["user"] as RawApiMap);
