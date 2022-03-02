@@ -93,6 +93,7 @@ abstract class IHttpEndpoints {
   Future<IBaseGuildEmoji> createEmoji(Snowflake guildId, String name, {List<SnowflakeEntity>? roles, AttachmentBuilder? emojiAttachment});
 
   /// Fetches a [IUser] that created the emoji from the given [emojiId]
+  /// May be slower than normal fetching because it makes additional checks under the hood.
   Future<IUser> fetchEmojiCreator(Snowflake guildId, Snowflake emojiId);
 
   /// Returns how many user will be pruned in prune operation
@@ -576,7 +577,7 @@ class HttpEndpoints implements IHttpEndpoints {
     if (selfMember != null && !selfMemberPermissions!.manageEmojis) {
       return Future.error(Exception("Cannot fetch the creator of an emoji if the bot does not have the permission to manage emojis and stikers"));
     }
-    
+
     final response = await httpHandler.execute(BasicRequest("/guilds/$guildId/emojis/$emojiId"));
 
     if (response is HttpResponseSuccess) {
