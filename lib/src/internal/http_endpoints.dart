@@ -561,8 +561,6 @@ class HttpEndpoints implements IHttpEndpoints {
 
   @override
   Future<IUser> fetchEmojiCreator(Snowflake guildId, Snowflake emojiId) async {
-    final response = await httpHandler.execute(BasicRequest("/guilds/$guildId/emojis/$emojiId"));
-
     final guild = client.guilds[Snowflake(guildId)];
     final emoji = guild?.emojis[Snowflake(emojiId)] as GuildEmoji?;
 
@@ -578,9 +576,10 @@ class HttpEndpoints implements IHttpEndpoints {
     if (selfMember != null && !selfMemberPermissions!.manageEmojis) {
       return Future.error(Exception("Cannot fetch the creator of an emoji if the bot does not have the permission to manage emojis and stikers"));
     }
+    
+    final response = await httpHandler.execute(BasicRequest("/guilds/$guildId/emojis/$emojiId"));
 
     if (response is HttpResponseSuccess) {
-      emoji.creator = UserCacheable(client, Snowflake(response.jsonBody["user"]["id"] as String));
       return User(client, response.jsonBody["user"] as RawApiMap);
     }
 
