@@ -564,11 +564,11 @@ class HttpEndpoints implements IHttpEndpoints {
     final response = await httpHandler.execute(BasicRequest("/guilds/$guildId/emojis/$emojiId"));
 
     if (response is HttpResponseSuccess) {
-      if(response.jsonBody["managed"] as bool) {
+      if (response.jsonBody["managed"] as bool) {
         return Future.error("Emoji is managed");
       }
 
-      if(response.jsonBody["user"] == null) {
+      if (response.jsonBody["user"] == null) {
         return Future.error("Could not find user creaor, make sure you have the correct permissions");
       }
 

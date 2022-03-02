@@ -64,7 +64,6 @@ abstract class IGuildEmojiPartial implements IBaseGuildEmoji {
   bool get isResolvable;
 }
 
-
 abstract class IResolvableGuildEmojiPartial implements IGuildEmojiPartial {
   /// Resolves this [IResolvableGuildEmojiPartial] to [IGuildEmoji]
   IGuildEmoji resolve();
@@ -98,8 +97,6 @@ class GuildEmojiPartial extends BaseGuildEmoji implements IGuildEmojiPartial {
   }
 }
 
-
-
 class ResolvableGuildEmojiPartial extends BaseGuildEmoji implements IResolvableGuildEmojiPartial {
   /// Whether this emoji is animated.
   @override
@@ -124,7 +121,7 @@ class ResolvableGuildEmojiPartial extends BaseGuildEmoji implements IResolvableG
   /// Resolves this [IResolvableGuildEmojiPartial] to [IGuildEmoji]
   @override
   IGuildEmoji resolve() => client.guilds.values.expand((guild) => guild.emojis.values).toList().firstWhere((emoji) => emoji.id == id) as IGuildEmoji;
-  
+
   /// Creates an instance of [ResolvableGuildEmojiPartial]
   ResolvableGuildEmojiPartial(RawApiMap raw, this.client) : super(raw) {
     name = raw["name"] as String? ?? "nyxx";
