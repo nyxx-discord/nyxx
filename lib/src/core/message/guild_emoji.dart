@@ -59,6 +59,9 @@ abstract class BaseGuildEmoji extends SnowflakeEntity implements IBaseGuildEmoji
 abstract class IGuildEmojiPartial implements IBaseGuildEmoji {}
 
 abstract class IResolvableGuildEmojiPartial implements IGuildEmojiPartial {
+  /// Reference to [INyxx]
+  INyxx get client;
+
   /// Resolves this [IResolvableGuildEmojiPartial] to [IGuildEmoji]
   IGuildEmoji resolve();
 }
