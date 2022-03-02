@@ -30,10 +30,12 @@ void main(List<String> args) {
         ),
       );
     } else if (event.emoji is IGuildEmojiPartial) {
-      final emoji = (event.emoji as IGuildEmojiPartial).isResolvable ? (event.emoji as IResolvableGuildEmojiPartial).resolve() : (event.emoji as IGuildEmojiPartial);
-      if (emoji.name == 'nyxx') {
+      if(event.emoji is IResolvableGuildEmojiPartial) {
+        final emoji = (event.emoji as IResolvableGuildEmojiPartial).resolve();
         event.message?.channel.sendMessage(
-          MessageBuilder.content('Woah! This is a custom emoji: $emoji'),
+          MessageBuilder.content(
+            'Woah! This is a custom emoji: ${emoji.name}',
+          ),
         );
       }
     }

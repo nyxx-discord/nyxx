@@ -59,10 +59,7 @@ abstract class BaseGuildEmoji extends SnowflakeEntity implements IBaseGuildEmoji
   String toString() => formatForMessage();
 }
 
-abstract class IGuildEmojiPartial implements IBaseGuildEmoji {
-  /// Whether this emoji can be resolved to a [IGuildEmoji]
-  bool get isResolvable;
-}
+abstract class IGuildEmojiPartial implements IBaseGuildEmoji {}
 
 abstract class IResolvableGuildEmojiPartial implements IGuildEmojiPartial {
   /// Resolves this [IResolvableGuildEmojiPartial] to [IGuildEmoji]
@@ -73,10 +70,6 @@ class GuildEmojiPartial extends BaseGuildEmoji implements IGuildEmojiPartial {
   /// Reference to [INyxxWebsocket]
   @override
   INyxx? client;
-
-  /// Whether this emoji can be resolved to a [IGuildEmoji]
-  @override
-  bool get isResolvable => this is IResolvableGuildEmojiPartial && client != null;
 
   /// True if emoji is partial.
   @override
@@ -105,10 +98,6 @@ class ResolvableGuildEmojiPartial extends BaseGuildEmoji implements IResolvableG
   /// Reference to [INyxxWebsocket]
   @override
   final INyxx client;
-
-  /// Whether this emoji can be resolved to a [IGuildEmoji]
-  @override
-  bool get isResolvable => true;
 
   /// Whether this emoji is partial.
   @override
