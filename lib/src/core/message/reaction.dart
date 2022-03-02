@@ -46,7 +46,7 @@ class Reaction implements IReaction {
     if (rawEmoji["id"] == null) {
       emoji = UnicodeEmoji(rawEmoji["name"] as String);
     } else {
-      emoji = GuildEmojiPartial(rawEmoji, client);
+      emoji = ResolvableGuildEmojiPartial(rawEmoji, client);
     }
   }
 

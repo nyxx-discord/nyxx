@@ -48,7 +48,7 @@ export 'src/core/guild/status.dart' show IClientStatus, UserStatus;
 export 'src/core/guild/webhook.dart' show IWebhook, WebhookType;
 export 'src/core/message/attachment.dart' show IAttachment;
 export 'src/core/message/emoji.dart' show IEmoji;
-export 'src/core/message/guild_emoji.dart' show IBaseGuildEmoji, IGuildEmoji, IGuildEmojiPartial;
+export 'src/core/message/guild_emoji.dart' show IBaseGuildEmoji, IGuildEmoji, IGuildEmojiPartial, IResolvableGuildEmojiPartial;
 export 'src/core/message/message.dart' show IMessage;
 export 'src/core/message/message_flags.dart' show MessageFlags;
 export 'src/core/message/message_reference.dart' show IMessageReference;
@@ -129,7 +129,7 @@ export 'src/internal/event_controller.dart' show IWebsocketEventController, IRes
 export 'src/internal/http_endpoints.dart' show IHttpEndpoints;
 export 'src/internal/cache/cache.dart' show SnowflakeCache, ICache, InMemoryCache;
 export 'src/internal/cache/cache_policy.dart'
-    show CachePolicyPredicate, CachePolicyLocation, CachePolicy, ChannelCachePolicy, MemberCachePolicy, MessageCachePolicy, EmojiCachePolicy;
+    show CachePolicyPredicate, CachePolicyLocation, CachePolicy, ChannelCachePolicy, MemberCachePolicy, MessageCachePolicy;
 export 'src/internal/cache/cacheable.dart' show Cacheable;
 export 'src/internal/exceptions/embed_builder_argument_exception.dart' show EmbedBuilderArgumentException;
 export 'src/internal/exceptions/http_client_exception.dart' show HttpClientException;
