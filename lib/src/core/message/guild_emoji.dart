@@ -26,9 +26,6 @@ abstract class IBaseGuildEmoji implements SnowflakeEntity, IEmoji {
 }
 
 abstract class BaseGuildEmoji extends SnowflakeEntity implements IBaseGuildEmoji {
-  /// Reference to [NyxxWebsocket]
-  INyxx? get client;
-
   /// True if emoji is partial.
   @override
   bool get isPartial;
@@ -67,10 +64,6 @@ abstract class IResolvableGuildEmojiPartial implements IGuildEmojiPartial {
 }
 
 class GuildEmojiPartial extends BaseGuildEmoji implements IGuildEmojiPartial {
-  /// Reference to [INyxxWebsocket]
-  @override
-  INyxx? client;
-
   /// True if emoji is partial.
   @override
   bool get isPartial => true;
@@ -84,7 +77,7 @@ class GuildEmojiPartial extends BaseGuildEmoji implements IGuildEmojiPartial {
   late final bool animated;
 
   /// Creates an instance of [GuildEmojiPartial]
-  GuildEmojiPartial(RawApiMap raw, [this.client]) : super({"id": raw["id"].toString()}) {
+  GuildEmojiPartial(RawApiMap raw) : super({"id": raw["id"].toString()}) {
     name = raw["name"] as String? ?? "nyxx";
     animated = raw["animated"] as bool? ?? false;
   }
@@ -95,7 +88,7 @@ class ResolvableGuildEmojiPartial extends BaseGuildEmoji implements IResolvableG
   @override
   late final bool animated;
 
-  /// Reference to [INyxxWebsocket]
+  /// Reference to [INyxx]
   @override
   final INyxx client;
 
@@ -119,7 +112,7 @@ class ResolvableGuildEmojiPartial extends BaseGuildEmoji implements IResolvableG
 }
 
 abstract class IGuildEmoji implements IBaseGuildEmoji {
-  /// Reference to client
+  /// Reference to [INyxx]
   INyxx get client;
 
   /// Reference to guild where emoji belongs to
@@ -145,7 +138,7 @@ abstract class IGuildEmoji implements IBaseGuildEmoji {
 }
 
 class GuildEmoji extends BaseGuildEmoji implements IGuildEmoji {
-  /// Reference to client
+  /// Reference to [INyxx]
   @override
   final INyxx client;
 
