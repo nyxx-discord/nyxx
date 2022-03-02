@@ -120,7 +120,7 @@ class ResolvableGuildEmojiPartial extends BaseGuildEmoji implements IResolvableG
 
   /// Resolves this [IResolvableGuildEmojiPartial] to [IGuildEmoji]
   @override
-  IGuildEmoji resolve() => client.guilds.values.expand((guild) => guild.emojis.values).toList().firstWhere((emoji) => emoji.id == id) as IGuildEmoji;
+  IGuildEmoji resolve() => client.guilds.values.expand((guild) => guild.emojis.values).firstWhere((emoji) => emoji.id == id) as IGuildEmoji;
 
   /// Creates an instance of [ResolvableGuildEmojiPartial]
   ResolvableGuildEmojiPartial(RawApiMap raw, this.client) : super(raw) {
