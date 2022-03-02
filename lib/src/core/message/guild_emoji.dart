@@ -1,3 +1,4 @@
+import 'package:nyxx/nyxx.dart';
 import 'package:nyxx/src/core/user/user.dart';
 import 'package:nyxx/src/nyxx.dart';
 import 'package:nyxx/src/core/snowflake.dart';
@@ -13,7 +14,7 @@ abstract class IBaseGuildEmoji implements SnowflakeEntity, IEmoji {
   bool get isPartial;
 
   /// Returns cdn url to emoji
-  String get cdnUrl;
+  String cdnUrl({String? format = "webp", int? size = 128});
 
   /// The name of the emoji.
   String get name;
@@ -36,7 +37,7 @@ abstract class BaseGuildEmoji extends SnowflakeEntity implements IBaseGuildEmoji
 
   /// Returns cdn url to emoji
   @override
-  String get cdnUrl => "https://cdn.discordapp.com/emojis/$id.${animated ? 'gif' : 'png'}";
+  String cdnUrl({String? format = "webp", int? size = 128}) => "${Constants.cdnUrl}/emojis/$id.$format?size=$size";
 
   /// The name of the emoji.
   @override
@@ -171,10 +172,6 @@ class GuildEmoji extends BaseGuildEmoji implements IGuildEmoji {
 
   @override
   bool get isPartial => false;
-
-  /// Returns cdn url to emoji
-  @override
-  String get cdnUrl => "https://cdn.discordapp.com/emojis/$id.${animated ? "gif" : "png"}";
 
   @override
   String formatForMessage() => "<${animated ? 'a' : ''}:$name:$id>";
