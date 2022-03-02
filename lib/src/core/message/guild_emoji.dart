@@ -1,13 +1,5 @@
 import 'package:nyxx/nyxx.dart';
-import 'package:nyxx/src/core/user/user.dart';
-import 'package:nyxx/src/nyxx.dart';
-import 'package:nyxx/src/core/snowflake.dart';
-import 'package:nyxx/src/core/snowflake_entity.dart';
-import 'package:nyxx/src/core/guild/guild.dart';
-import 'package:nyxx/src/core/guild/role.dart';
-import 'package:nyxx/src/core/message/emoji.dart';
 import 'package:nyxx/src/internal/cache/cacheable.dart';
-import 'package:nyxx/src/typedefs.dart';
 
 abstract class IBaseGuildEmoji implements SnowflakeEntity, IEmoji {
   /// True if emoji is partial.
