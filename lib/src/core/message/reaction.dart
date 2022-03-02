@@ -1,14 +1,7 @@
 import 'package:nyxx/nyxx.dart';
-import 'package:nyxx/src/core/message/emoji.dart';
-import 'package:nyxx/src/core/message/unicode_emoji.dart';
-import 'package:nyxx/src/nyxx.dart';
-import 'package:nyxx/src/typedefs.dart';
 import 'package:nyxx/src/core/message/guild_emoji.dart';
 
 abstract class IReaction {
-  /// Reference to [NyxxWebsocket]
-  INyxx get client;
-
   /// Time this emoji has been used to react
   int get count;
 
@@ -21,10 +14,6 @@ abstract class IReaction {
 
 /// Reaction object. [emoji] field can be partial [GuildEmoji].
 class Reaction implements IReaction {
-  /// Reference to [NyxxWebsocket]
-  @override
-  final INyxx client;
-
   /// Time this emoji has been used to react
   @override
   late int count;
@@ -38,7 +27,7 @@ class Reaction implements IReaction {
   late final IEmoji emoji;
 
   /// Creates an instance of [Reaction]
-  Reaction(RawApiMap raw, this.client) {
+  Reaction(RawApiMap raw, INyxx client) {
     count = raw["count"] as int;
     me = raw["me"] as bool;
 
@@ -51,7 +40,7 @@ class Reaction implements IReaction {
   }
 
   /// Creates na instance of [Reaction]
-  Reaction.event(this.emoji, this.me, this.client) {
+  Reaction.event(this.emoji, this.me) {
     count = 1;
   }
 }
