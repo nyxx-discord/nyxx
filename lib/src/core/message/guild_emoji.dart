@@ -27,9 +27,6 @@ abstract class BaseGuildEmoji extends SnowflakeEntity implements IBaseGuildEmoji
   @override
   bool get animated;
 
-  /// Returns cdn url to emoji
-  @override
-  String cdnUrl({String? format = "webp", int? size = 128}) => "${Constants.cdnUrl}/emojis/$id.$format?size=$size";
 
   /// The name of the emoji.
   @override
@@ -37,6 +34,10 @@ abstract class BaseGuildEmoji extends SnowflakeEntity implements IBaseGuildEmoji
 
   /// Creates an instance of [BaseGuildEmoji]
   BaseGuildEmoji(RawApiMap raw) : super(Snowflake(raw["id"]));
+
+  /// Returns cdn url to emoji
+  @override
+  String cdnUrl({String? format = "webp", int? size = 128}) => "${Constants.cdnUrl}/emojis/$id.$format?size=$size";
 
   @override
   String formatForMessage() => "<${animated ? 'a' : ''}:$name:$id>";
