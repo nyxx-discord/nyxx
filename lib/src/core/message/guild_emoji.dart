@@ -27,7 +27,6 @@ abstract class BaseGuildEmoji extends SnowflakeEntity implements IBaseGuildEmoji
   @override
   bool get animated;
 
-
   /// The name of the emoji.
   @override
   String get name;
