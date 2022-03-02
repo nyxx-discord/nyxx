@@ -23,9 +23,6 @@ abstract class IBaseGuildEmoji implements SnowflakeEntity, IEmoji {
 
   /// Creates partial emoji from given String or Snowflake.
   factory IBaseGuildEmoji.fromId(Snowflake id) => GuildEmojiPartial({"id": id});
-
-  /// Resolves this [GuildEmojiPartial] to [GuildEmoji].
-  IGuildEmoji? resolve();
 }
 
 abstract class BaseGuildEmoji extends SnowflakeEntity implements IBaseGuildEmoji {
@@ -60,10 +57,6 @@ abstract class BaseGuildEmoji extends SnowflakeEntity implements IBaseGuildEmoji
   /// Returns encoded string ready to send via message.
   @override
   String toString() => formatForMessage();
-
-  /// Resolves this [GuildEmojiPartial] to [GuildEmoji]
-  @override
-  IGuildEmoji? resolve();
 }
 
 abstract class IGuildEmojiPartial implements IBaseGuildEmoji {}
@@ -117,9 +110,6 @@ abstract class IGuildEmoji implements IBaseGuildEmoji {
   /// whether this emoji is animated
   bool get animated;
 
-  /// The user that created this emoji, not present if [fetchCreator] was not called
-  Cacheable<Snowflake, IUser>? get creator;
-
   /// Fetches the creator of this emoji
   Future<IUser> fetchCreator();
 
@@ -166,10 +156,6 @@ class GuildEmoji extends BaseGuildEmoji implements IGuildEmoji {
   @override
   String get cdnUrl => "https://cdn.discordapp.com/emojis/$id.${animated ? "gif" : "png"}";
 
-  /// The user that created this emoji, not present if [fetchCreator] has not been called
-  @override
-  Cacheable<Snowflake, IUser>? creator;
-
   @override
   String formatForMessage() => "<${animated ? 'a' : ''}:$name:$id>";
 
@@ -187,10 +173,6 @@ class GuildEmoji extends BaseGuildEmoji implements IGuildEmoji {
   /// Fetches the creator of this emoji
   @override
   Future<IUser> fetchCreator() => client.httpEndpoints.fetchEmojiCreator(guild.id, id);
-
-  /// Resolve this emoji to [GuildEmoji]
-  @override
-  IGuildEmoji resolve() => this;
 
   /// Allows to delete guild emoji
   @override
