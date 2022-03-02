@@ -13,9 +13,9 @@ void main(List<String> args) {
   // This event is called when a message is received
   bot.eventsWs.onMessageReceived.listen((event) async {
     if(event.message.content == '!emoji') {
-      final emoji = bot.emojis.values.firstWhere((emo) => emo.name == 'some_emoji');
+      final emoji = event.message.guild?.getFromCache()?.emojis.values.firstWhere((emo) => emo.name == 'nyxx');
       final msg = await event.message.channel.sendMessage(MessageBuilder.content('Look at this emoji: $emoji'));
-      msg.createReaction(emoji);
+      msg.createReaction(emoji!);
       // For unicode emoji use `UnicodeEmoji` class
       msg.createReaction(UnicodeEmoji('🤔'));
     }
@@ -30,8 +30,8 @@ void main(List<String> args) {
         ),
       );
     } else if (event.emoji is IGuildEmojiPartial) {
-      final emoji = (event.emoji as IGuildEmojiPartial).resolve();
-      if (emoji?.name == 'some_emoji') {
+      final emoji = (event.emoji as IGuildEmojiPartial).isResolvable ? (event.emoji as IResolvableGuildEmojiPartial).resolve() : (event.emoji as IGuildEmojiPartial);
+      if (emoji.name == 'nyxx') {
         event.message?.channel.sendMessage(
           MessageBuilder.content('Woah! This is a custom emoji: $emoji'),
         );
