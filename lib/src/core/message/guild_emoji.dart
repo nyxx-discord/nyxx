@@ -96,15 +96,15 @@ class ResolvableGuildEmojiPartial extends BaseGuildEmoji implements IResolvableG
   @override
   late final String name;
 
-  /// Resolves this [IResolvableGuildEmojiPartial] to [IGuildEmoji]
-  @override
-  IGuildEmoji resolve() => client.guilds.values.expand((guild) => guild.emojis.values).firstWhere((emoji) => emoji.id == id) as IGuildEmoji;
-
   /// Creates an instance of [ResolvableGuildEmojiPartial]
   ResolvableGuildEmojiPartial(RawApiMap raw, this.client) : super(raw) {
     name = raw["name"] as String? ?? "nyxx";
     animated = raw["animated"] as bool? ?? false;
   }
+
+  /// Resolves this [IResolvableGuildEmojiPartial] to [IGuildEmoji]
+  @override
+  IGuildEmoji resolve() => client.guilds.values.expand((guild) => guild.emojis.values).firstWhere((emoji) => emoji.id == id) as IGuildEmoji;
 }
 
 abstract class IGuildEmoji implements IBaseGuildEmoji {
@@ -162,11 +162,9 @@ class GuildEmoji extends BaseGuildEmoji implements IGuildEmoji {
   @override
   late final String name;
 
+  /// True if emoji is partial.
   @override
   bool get isPartial => false;
-
-  @override
-  String formatForMessage() => "<${animated ? 'a' : ''}:$name:$id>";
 
   /// Creates an instance of [GuildEmoji]
   GuildEmoji(this.client, RawApiMap raw, Snowflake guildId) : super(raw) {
@@ -178,6 +176,10 @@ class GuildEmoji extends BaseGuildEmoji implements IGuildEmoji {
     animated = raw["animated"] as bool? ?? false;
     roles = [for (final roleId in raw["roles"]) RoleCacheable(client, Snowflake(roleId), guild)];
   }
+
+  /// Returns encoded emoji for usage in message
+  @override
+  String formatForMessage() => "<${animated ? 'a' : ''}:$name:$id>";
 
   /// Fetches the creator of this emoji
   @override
