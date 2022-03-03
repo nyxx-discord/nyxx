@@ -36,7 +36,25 @@ abstract class BaseGuildEmoji extends SnowflakeEntity implements IBaseGuildEmoji
 
   /// Returns cdn url to emoji
   @override
-  String cdnUrl({String? format = "webp", int? size = 128}) => "${Constants.cdnUrl}/emojis/$id.$format?size=$size";
+  String cdnUrl({String? format = "webp", int? size = 128}) {
+    var url = "${Constants.cdnUrl}/emojis/$id.";
+
+    if (format == null) {
+      if (animated) {
+        url += "gif";
+      } else {
+        url += "webp";
+      }
+    } else {
+      url += format;
+    }
+
+    if (size != null) {
+      url += "?size=$size";
+    }
+
+    return url;
+  }
 
   @override
   String formatForMessage() => "<${animated ? 'a' : ''}:$name:$id>";
