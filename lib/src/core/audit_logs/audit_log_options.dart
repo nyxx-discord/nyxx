@@ -24,7 +24,7 @@ abstract class IAuditLogOptions {
   String? get roleName;
 
   /// Type of overwritten entity.
-  /// One of: 
+  /// One of:
   ///   - `role`
   ///   - `member`
   String? get overwrittenType;
@@ -66,8 +66,8 @@ class AuditLogOptions implements IAuditLogOptions {
     pruneCount = (raw['members_removed'] as String?) != null ? int.parse(raw['members_removed'] as String) : null;
     messageId = (raw['message_id'] as String?)?.toSnowflake();
     roleName = raw['role_name'] as String?;
-    if(raw['type'] != null) {
-      switch(raw['type']) {
+    if (raw['type'] != null) {
+      switch (raw['type']) {
         case '0':
           overwrittenType = 'role';
           break;
