@@ -5,9 +5,6 @@ abstract class IBaseGuildEmoji implements SnowflakeEntity, IEmoji {
   /// True if emoji is partial.
   bool get isPartial;
 
-  /// Returns cdn url to emoji
-  String cdnUrl({String? format = "webp", int? size = 128});
-
   /// The name of the emoji.
   String get name;
 
@@ -16,6 +13,9 @@ abstract class IBaseGuildEmoji implements SnowflakeEntity, IEmoji {
 
   /// Creates partial emoji from given String or Snowflake.
   factory IBaseGuildEmoji.fromId(Snowflake id) => GuildEmojiPartial({"id": id});
+
+  /// Returns cdn url to emoji
+  String cdnUrl({String? format = "webp", int? size = 128});
 }
 
 abstract class BaseGuildEmoji extends SnowflakeEntity implements IBaseGuildEmoji {
