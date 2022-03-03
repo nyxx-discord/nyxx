@@ -74,12 +74,7 @@ class AuditLogEntry extends SnowflakeEntity implements IAuditLogEntry {
       options = null;
     }
     
-
-    if(raw["reason"] != null) {
-      reason = raw["reason"] as String;
-    } else {
-      reason = null;
-    }
+    reason = raw["reason"] as String?;
   }
 }
 
