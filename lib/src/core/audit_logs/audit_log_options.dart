@@ -50,6 +50,8 @@ abstract class IAuditLogOptions {
   ///   - `member`
   ///
   /// Shows only in: 
+  /// - [AuditLogEntryType.channelOverwriteCreate];
+  /// - [AuditLogEntryType.channelOverwriteUpdate] and [AuditLogEntryType.channelOverwriteDelete] action types
   String? get overwrittenType;
 
   /// The constructor for the [IAuditLogOptions]
