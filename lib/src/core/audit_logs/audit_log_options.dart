@@ -62,7 +62,7 @@ class AuditLogOptions implements IAuditLogOptions {
 
   AuditLogOptions(RawApiMap raw) {
     channelId = (raw['channel_id'] as String?)?.toSnowflake();
-    count = raw['count']  != null ? int.parse(raw['count'] as String) : null;
+    count = raw['count'] != null ? int.parse(raw['count'] as String) : null;
     deleteMemberDelay = raw['delete_member_days'] as String?;
     id = (raw['id'] as String?)?.toSnowflake();
     pruneCount = (raw['members_removed'] as String?) != null ? int.parse(raw['members_removed'] as String) : null;
