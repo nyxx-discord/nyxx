@@ -11,7 +11,7 @@ abstract class IAuditLogOptions {
   int? get count;
 
   /// The number of days after which inactive users will be kicked.
-  String? get deleteMemberDelay;
+  Duration? get deleteMemberDays;
 
   /// Id of the overwritten entity.
   Snowflake? get id;
@@ -43,7 +43,7 @@ class AuditLogOptions implements IAuditLogOptions {
   late final int? count;
 
   @override
-  late final String? deleteMemberDelay;
+  late final Duration? deleteMemberDays;
 
   @override
   late final Snowflake? id;
@@ -63,7 +63,7 @@ class AuditLogOptions implements IAuditLogOptions {
   AuditLogOptions(RawApiMap raw) {
     channelId = (raw['channel_id'] as String?)?.toSnowflake();
     count = raw['count'] != null ? int.parse(raw['count'] as String) : null;
-    deleteMemberDelay = raw['delete_member_days'] as String?;
+    deleteMemberDays = (raw['delete_member_days'] as String?) != null ? Duration(days: int.parse(raw['delete_member_days'] as String)) : null;
     id = (raw['id'] as String?)?.toSnowflake();
     pruneCount = (raw['members_removed'] as String?) != null ? int.parse(raw['members_removed'] as String) : null;
     messageId = (raw['message_id'] as String?)?.toSnowflake();
