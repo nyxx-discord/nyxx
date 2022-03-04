@@ -36,27 +36,38 @@ abstract class IAuditLogOptions {
 }
 
 class AuditLogOptions implements IAuditLogOptions {
+  /// The channel in which the entites were targeted.
   @override
   late final Snowflake? channelId;
 
+  /// The number of entities targeted.
   @override
   late final int? count;
 
+  /// The number of days after which inactive users will be kicked.
   @override
   late final Duration? deleteMemberDays;
 
+  /// Id of the overwritten entity.
   @override
   late final Snowflake? id;
 
+  /// The number of the members removed by the prune.
   @override
   late final int? pruneCount;
 
+  /// The id of the message that was targeted.
   @override
   late final Snowflake? messageId;
 
+  /// The name of the role that was targeted. (Not present if [overwrittenType] is `member`).
   @override
   late final String? roleName;
 
+  /// Type of overwritten entity.
+  /// One of:
+  ///  - `role`
+  /// - `member`
   @override
   late final String? overwrittenType;
 
