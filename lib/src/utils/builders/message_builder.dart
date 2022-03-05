@@ -193,10 +193,10 @@ class MessageDecoration extends IEnum<String> {
   /// Strike text is surrounded with `~~`
   static const MessageDecoration strike = MessageDecoration._new("~~");
 
-  /// Inline code text is surrounded with ```
+  /// Inline code text is surrounded with `` ` ``
   static const MessageDecoration codeSimple = MessageDecoration._new("`");
 
-  /// Multiline code block is surrounded with `````
+  /// Multiline code block is surrounded with `` ``` ``
   static const MessageDecoration codeLong = MessageDecoration._new("```");
 
   /// Underlined text is surrounded with `__`

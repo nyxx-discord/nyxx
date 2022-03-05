@@ -92,6 +92,9 @@ abstract class IHttpEndpoints {
   /// Creates emoji in given guild
   Future<IBaseGuildEmoji> createEmoji(Snowflake guildId, String name, {List<SnowflakeEntity>? roles, AttachmentBuilder? emojiAttachment});
 
+  /// Fetches a [IUser] that created the emoji from the given [emojiId]
+  Future<IUser> fetchEmojiCreator(Snowflake guildId, Snowflake emojiId);
+
   /// Returns how many user will be pruned in prune operation
   Future<int> guildPruneCount(Snowflake guildId, int days, {Iterable<Snowflake>? includeRoles});
 
@@ -470,7 +473,7 @@ class HttpEndpoints implements IHttpEndpoints {
 
     final body = <String, dynamic>{
       if (name != null) "name": name,
-      if (roles != null) "roles": roles.map((r) => r.toString()),
+      if (roles != null) "roles": roles.map((r) => r.toString()).toList(),
       if (avatarAttachment != null) "avatar": avatarAttachment.getBase64()
     };
 
@@ -543,7 +546,7 @@ class HttpEndpoints implements IHttpEndpoints {
   Future<IBaseGuildEmoji> createEmoji(Snowflake guildId, String name, {List<SnowflakeEntity>? roles, AttachmentBuilder? emojiAttachment}) async {
     final body = <String, dynamic>{
       "name": name,
-      if (roles != null) "roles": roles.map((r) => r.id.toString()),
+      if (roles != null) "roles": roles.map((r) => r.id.toString()).toList(),
       if (emojiAttachment != null) "image": emojiAttachment.getBase64()
     };
 
@@ -551,6 +554,25 @@ class HttpEndpoints implements IHttpEndpoints {
 
     if (response is HttpResponseSuccess) {
       return GuildEmoji(client, response.jsonBody as RawApiMap, guildId);
+    }
+
+    return Future.error(response);
+  }
+
+  @override
+  Future<IUser> fetchEmojiCreator(Snowflake guildId, Snowflake emojiId) async {
+    final response = await httpHandler.execute(BasicRequest("/guilds/$guildId/emojis/$emojiId"));
+
+    if (response is HttpResponseSuccess) {
+      if (response.jsonBody["managed"] as bool) {
+        return Future.error(ArgumentError("Emoji is managed"));
+      }
+
+      if (response.jsonBody["user"] == null) {
+        return Future.error(ArgumentError("Could not find user creator, make sure you have the correct permissions"));
+      }
+
+      return User(client, response.jsonBody["user"] as RawApiMap);
     }
 
     return Future.error(response);

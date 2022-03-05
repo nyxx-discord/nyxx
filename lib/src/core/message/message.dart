@@ -295,7 +295,7 @@ class Message extends SnowflakeEntity implements IMessage {
 
     reactions = [
       if (raw["reactions"] != null && raw["reactions"].isNotEmpty as bool)
-        for (var r in raw["reactions"]) Reaction(r as RawApiMap)
+        for (var r in raw["reactions"]) Reaction(r as RawApiMap, client)
     ];
 
     if (raw["mentions"] != null && raw["mentions"].isNotEmpty as bool) {
