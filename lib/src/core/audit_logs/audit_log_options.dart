@@ -30,9 +30,6 @@ abstract class IAuditLogOptions {
   ///   - `role`
   ///   - `member`
   String? get overwrittenType;
-
-  /// The constructor for the [IAuditLogOptions]
-  IAuditLogOptions(RawApiMap raw);
 }
 
 class AuditLogOptions implements IAuditLogOptions {
