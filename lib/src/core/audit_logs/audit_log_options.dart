@@ -67,7 +67,7 @@ class AuditLogOptions implements IAuditLogOptions {
   /// Type of overwritten entity.
   /// One of:
   ///  - `role`
-  /// - `member`
+  ///  - `member`
   @override
   late final String? overwrittenType;
 
