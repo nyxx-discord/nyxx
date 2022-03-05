@@ -4,6 +4,7 @@ import 'package:logging/logging.dart';
 import 'package:nyxx/nyxx.dart';
 import 'package:nyxx/src/client_options.dart';
 import 'package:nyxx/src/core/channel/invite.dart';
+import 'package:nyxx/src/core/message/guild_emoji.dart';
 import 'package:nyxx/src/core/snowflake.dart';
 import 'package:nyxx/src/core/application/client_oauth2_application.dart';
 import 'package:nyxx/src/core/channel/channel.dart';

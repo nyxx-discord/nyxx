@@ -49,7 +49,7 @@ export 'src/core/guild/status.dart' show IClientStatus, UserStatus;
 export 'src/core/guild/webhook.dart' show IWebhook, WebhookType;
 export 'src/core/message/attachment.dart' show IAttachment;
 export 'src/core/message/emoji.dart' show IEmoji;
-export 'src/core/message/guild_emoji.dart' show IBaseGuildEmoji, IGuildEmoji, IGuildEmojiPartial;
+export 'src/core/message/guild_emoji.dart' show IBaseGuildEmoji, IGuildEmoji, IGuildEmojiPartial, IResolvableGuildEmojiPartial;
 export 'src/core/message/message.dart' show IMessage;
 export 'src/core/message/message_flags.dart' show MessageFlags;
 export 'src/core/message/message_reference.dart' show IMessageReference;

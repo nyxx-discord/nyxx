@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:nyxx/src/core/snowflake.dart';
+import 'package:nyxx/nyxx.dart';
 import 'package:nyxx/src/core/message/emoji.dart';
 import 'package:nyxx/src/core/message/guild_emoji.dart';
 import 'package:nyxx/src/core/message/unicode_emoji.dart';

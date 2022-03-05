@@ -1,6 +1,5 @@
-import 'package:nyxx/src/core/message/emoji.dart';
-import 'package:nyxx/src/core/message/unicode_emoji.dart';
-import 'package:nyxx/src/typedefs.dart';
+import 'package:nyxx/nyxx.dart';
+import 'package:nyxx/src/core/message/guild_emoji.dart';
 
 abstract class IReaction {
   /// Time this emoji has been used to react
@@ -28,7 +27,7 @@ class Reaction implements IReaction {
   late final IEmoji emoji;
 
   /// Creates an instance of [Reaction]
-  Reaction(RawApiMap raw) {
+  Reaction(RawApiMap raw, INyxx client) {
     count = raw["count"] as int;
     me = raw["me"] as bool;
 
@@ -36,8 +35,7 @@ class Reaction implements IReaction {
     if (rawEmoji["id"] == null) {
       emoji = UnicodeEmoji(rawEmoji["name"] as String);
     } else {
-      //TODO: EMOJIS STUUF
-      //this.emoji = PartialGuildEmoji._new(rawEmoji);
+      emoji = ResolvableGuildEmojiPartial(rawEmoji, client);
     }
   }
 

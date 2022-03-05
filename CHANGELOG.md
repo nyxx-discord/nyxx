@@ -1,3 +1,13 @@
+## 3.3.0-dev.1
+__05.03.2022__
+
+- feature: Guild emoji improvements (#305)
+  - Added missing properties on `IBaseGuildEmoji`. 
+  - Partial emoji can be now resolved to it's full instance with `resolve()` method
+  - Author of emoji can be now resolved with `fetchCreator()`
+- bug: Make IHttpResponseError subclass Exception (#303)
+- bug: Update documentation (#302)
+
 ## 3.3.0-dev.0
 __08.02.2022__
 

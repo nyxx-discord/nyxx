@@ -108,7 +108,7 @@ class GuildCacheable extends Cacheable<Snowflake, IGuild> {
 }
 
 class UserCacheable extends Cacheable<Snowflake, IUser> {
-  /// Creates an instance of [ChannelCacheable]
+  /// Creates an instance of [UserCacheable]
   UserCacheable(INyxx client, Snowflake id) : super(client, id);
 
   @override
