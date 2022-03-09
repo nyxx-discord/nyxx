@@ -1,12 +1,12 @@
-import 'package:nyxx/src/nyxx.dart';
+import 'package:nyxx/src/core/guild/guild.dart';
 import 'package:nyxx/src/core/snowflake.dart';
 import 'package:nyxx/src/core/snowflake_entity.dart';
-import 'package:nyxx/src/core/guild/guild.dart';
 import 'package:nyxx/src/core/user/user.dart';
 import 'package:nyxx/src/internal/cache/cacheable.dart';
+import 'package:nyxx/src/nyxx.dart';
 import 'package:nyxx/src/typedefs.dart';
-import 'package:nyxx/src/utils/enum.dart';
 import 'package:nyxx/src/utils/builders/sticker_builder.dart';
+import 'package:nyxx/src/utils/enum.dart';
 
 /// Base interface for all sticker types
 abstract class ISticker implements SnowflakeEntity {
@@ -80,7 +80,10 @@ class PartialSticker extends Sticker implements IPartialSticker {
   StickerType get type => StickerType.partial;
 
   /// Creates an instance of [PartialSticker]
-  PartialSticker(RawApiMap raw, INyxx client) : super(raw, client);
+  PartialSticker(RawApiMap raw, INyxx client) : super(raw, client) {
+    name = raw["name"] as String;
+    format = StickerFormat.from(raw["format_type"] as int);
+  }
 }
 
 abstract class IGuildSticker implements ISticker {
