@@ -6,6 +6,9 @@ abstract class IVoiceStateUpdateEvent {
   /// Used to represent a user's voice connection status.
   IVoiceState get state;
 
+  /// The previous voice state, if it was cached.
+  IVoiceState? get oldState;
+
   /// Raw gateway response
   RawApiMap get raw;
 }
@@ -16,6 +19,9 @@ class VoiceStateUpdateEvent implements IVoiceStateUpdateEvent {
   @override
   late final IVoiceState state;
 
+  @override
+  late final IVoiceState? oldState;
+
   /// Raw gateway response
   @override
   final RawApiMap raw;
@@ -23,6 +29,8 @@ class VoiceStateUpdateEvent implements IVoiceStateUpdateEvent {
   /// Creates na instance of [VoiceStateUpdateEvent]
   VoiceStateUpdateEvent(this.raw, INyxx client) {
     state = VoiceState(client, raw["d"] as RawApiMap);
+
+    oldState = state.guild?.getFromCache()?.voiceStates[state.user.id];
 
     if (state.channel != null) {
       state.guild?.getFromCache()?.voiceStates[state.user.id] = state;

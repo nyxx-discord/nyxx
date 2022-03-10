@@ -366,6 +366,32 @@ class Message extends SnowflakeEntity implements IMessage {
     ];
   }
 
+  Message.copy(Message other)
+      : client = other.client,
+        super(other.id) {
+    author = other.author;
+    content = other.content;
+    channel = other.channel;
+    editedTimestamp = other.editedTimestamp;
+    mentions = other.mentions;
+    embeds = other.embeds;
+    attachments = other.attachments;
+    pinned = other.pinned;
+    tts = other.tts;
+    mentionEveryone = other.mentionEveryone;
+    reactions = other.reactions;
+    type = other.type;
+    flags = other.flags;
+    partialStickers = other.partialStickers;
+    referencedMessage = other.referencedMessage;
+    components = other.components;
+    nonce = other.nonce;
+    applicationId = other.applicationId;
+    crossPostReference = other.crossPostReference;
+    member = other.member;
+    roleMentions = other.roleMentions;
+  }
+
   /// Suppresses embeds in message. Can be executed in other users messages.
   @override
   Future<IMessage> suppressEmbeds() => client.httpEndpoints.suppressMessageEmbeds(channel.id, id);
