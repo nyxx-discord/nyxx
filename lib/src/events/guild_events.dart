@@ -31,6 +31,9 @@ class GuildCreateEvent implements IGuildCreateEvent {
 abstract class IGuildUpdateEvent {
   /// The guild after the update.
   IGuild get guild;
+
+  /// The guild before the update, if it was cached.
+  IGuild? get oldGuild;
 }
 
 /// Sent when a guild is updated.
@@ -39,13 +42,16 @@ class GuildUpdateEvent implements IGuildUpdateEvent {
   @override
   late final IGuild guild;
 
+  @override
+  late final IGuild? oldGuild;
+
   /// Creates na instance of [GuildUpdateEvent]
   GuildUpdateEvent(RawApiMap json, INyxx client) {
     guild = Guild(client, json["d"] as RawApiMap);
 
-    final oldGuild = client.guilds[guild.id];
+    oldGuild = client.guilds[guild.id];
     if (oldGuild != null) {
-      guild.members.addAll(oldGuild.members);
+      guild.members.addAll(oldGuild!.members);
     }
 
     client.guilds[guild.id] = guild;
@@ -115,8 +121,11 @@ abstract class IGuildMemberUpdateEvent {
   /// The member after the update if member is updated.
   Cacheable<Snowflake, IMember> get member;
 
-  /// User if user is updated. Will be null if member is not null.
+  /// The user of the updated member.
   IUser get user;
+
+  /// The user of the member before it was updated, if it was cached.
+  IUser? get oldUser;
 
   /// Guild in which member is
   Cacheable<Snowflake, IGuild> get guild;
@@ -132,6 +141,9 @@ class GuildMemberUpdateEvent implements IGuildMemberUpdateEvent {
   @override
   late final IUser user;
 
+  @override
+  late final IUser? oldUser;
+
   /// Guild in which member is
   @override
   late final Cacheable<Snowflake, IGuild> guild;
@@ -140,8 +152,10 @@ class GuildMemberUpdateEvent implements IGuildMemberUpdateEvent {
   GuildMemberUpdateEvent(RawApiMap raw, INyxx client) {
     guild = GuildCacheable(client, Snowflake(raw["d"]["guild_id"]));
     member = MemberCacheable(client, Snowflake(raw["d"]["user"]["id"]), guild);
+    user = User(client, raw["d"]["user"] as RawApiMap);
 
-    final user = User(client, raw["d"]["user"] as RawApiMap);
+    oldUser = client.users[user.id];
+
     if (client.cacheOptions.userCachePolicyLocation.event) {
       client.users[user.id] = user;
     }
@@ -362,6 +376,9 @@ abstract class IRoleUpdateEvent {
   /// The role after the update.
   IRole get role;
 
+  /// The role before it was updated, if it was cached.
+  IRole? get oldRole;
+
   /// The guild that the member was banned from.
   Cacheable<Snowflake, IGuild> get guild;
 }
@@ -371,6 +388,9 @@ class RoleUpdateEvent implements IRoleUpdateEvent {
   /// The role after the update.
   @override
   late final IRole role;
+
+  @override
+  late final IRole? oldRole;
 
   /// The guild that the member was banned from.
   @override
@@ -383,6 +403,7 @@ class RoleUpdateEvent implements IRoleUpdateEvent {
 
     final guildInstance = guild.getFromCache();
     if (guildInstance != null) {
+      oldRole = guildInstance.roles[role.id];
       guildInstance.roles[role.id] = role;
     }
   }
