@@ -192,11 +192,6 @@ class Member extends SnowflakeEntity implements IMember {
 
     roles = [for (var id in raw["roles"]) RoleCacheable(client, Snowflake(id), guild)];
 
-    // TODO: remove this; hoisted_role is never present in member object
-    // if (raw["hoisted_role"] != null) {
-    //   hoistedRole = RoleCacheable(client, Snowflake(raw["hoisted_role"]), guild);
-    // }
-
     joinedAt = DateTime.parse(raw["joined_at"] as String).toUtc();
 
     if (client.cacheOptions.userCachePolicyLocation.objectConstructor) {
