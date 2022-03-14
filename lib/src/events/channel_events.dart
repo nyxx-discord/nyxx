@@ -78,6 +78,8 @@ class ChannelPinsUpdateEvent implements IChannelPinsUpdateEvent {
   ChannelPinsUpdateEvent(RawApiMap raw, INyxx client) {
     if (raw["d"]["last_pin_timestamp"] != null) {
       lastPingTimestamp = DateTime.parse(raw["d"]["last_pin_timestamp"] as String);
+    } else {
+      lastPingTimestamp = null;
     }
 
     channel = CacheableTextChannel<ITextChannel>(client, Snowflake(raw["d"]["channel_id"]));

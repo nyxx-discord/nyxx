@@ -107,52 +107,60 @@ class Embed implements IEmbed {
 
   /// Creates an instance [Embed]
   Embed(RawApiMap raw) {
-    if (raw["title"] != null) {
-      title = raw["title"] as String;
-    }
+    title = raw["title"] as String?;
 
-    if (raw["url"] != null) {
-      url = raw["url"] as String;
-    }
+    url = raw["url"] as String?;
 
-    if (raw["type"] != null) {
-      type = raw["type"] as String;
-    }
+    type = raw["type"] as String?;
 
-    if (raw["description"] != null) {
-      description = raw["description"] as String;
-    }
+    description = raw["description"] as String?;
 
     if (raw["timestamp"] != null) {
       timestamp = DateTime.parse(raw["timestamp"] as String);
+    } else {
+      timestamp = null;
     }
 
     if (raw["color"] != null) {
       color = DiscordColor.fromInt(raw["color"] as int);
+    } else {
+      color = null;
     }
 
     if (raw["author"] != null) {
       author = EmbedAuthor(raw["author"] as RawApiMap);
+    } else {
+      author = null;
     }
 
     if (raw["video"] != null) {
       video = EmbedVideo(raw["video"] as RawApiMap);
+    } else {
+      video = null;
     }
 
     if (raw["image"] != null) {
       image = EmbedThumbnail(raw["image"] as RawApiMap);
+    } else {
+      image = null;
     }
 
     if (raw["footer"] != null) {
       footer = EmbedFooter(raw["footer"] as RawApiMap);
+    } else {
+      footer = null;
     }
 
     if (raw["thumbnail"] != null) {
       thumbnail = EmbedThumbnail(raw["thumbnail"] as RawApiMap);
+    } else {
+      thumbnail = null;
     }
 
     if (raw["provider"] != null) {
       provider = EmbedProvider(raw["provider"] as RawApiMap);
+    } else {
+      provider = null;
     }
 
     fields = [

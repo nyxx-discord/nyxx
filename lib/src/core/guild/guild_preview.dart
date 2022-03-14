@@ -97,19 +97,13 @@ class GuildPreview extends SnowflakeEntity implements IGuildPreview {
   GuildPreview(this.client, RawApiMap raw) : super(Snowflake(raw["id"])) {
     name = raw["name"] as String;
 
-    if (iconHash != null) {
-      iconHash = raw["icon"] as String;
-    }
+    iconHash = raw["icon"] as String?;
 
-    if (splashHash != null) {
-      splashHash = raw["splash"] as String;
-    }
+    splashHash = raw["splash"] as String?;
 
-    if (discoveryHash != null) {
-      discoveryHash = raw["discovery_splash"] as String;
-    }
+    discoveryHash = raw["discovery_splash"] as String?;
 
-    emojis = [for (var rawEmoji in raw["emojis"]) GuildEmoji(client, rawEmoji as RawApiMap, id)];
+    emojis = [for (final rawEmoji in raw["emojis"]) GuildEmoji(client, rawEmoji as RawApiMap, id)];
 
     features = (raw["features"] as RawApiList).map((e) => GuildFeature.from(e.toString()));
 
