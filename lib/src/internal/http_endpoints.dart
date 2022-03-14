@@ -1125,6 +1125,10 @@ class HttpEndpoints implements IHttpEndpoints {
 
   @override
   Future<IMessage> editMessage(Snowflake channelId, Snowflake messageId, MessageBuilder builder) async {
+    if (!builder.canBeUsedAsNewMessage()) {
+      return Future.error(ArgumentError("Cannot edit a message to have neither content nor embeds"));
+    }
+
     HttpResponse response;
     if (builder.hasFiles()) {
       response = await httpHandler.execute(MultipartRequest("/channels/$channelId/messages/$messageId", builder.getMappedFiles().toList(),

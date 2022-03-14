@@ -152,13 +152,13 @@ class MessageBuilder {
   Future<IMessage> send(ISend entity) => entity.sendMessage(this);
 
   /// Returns if this instance of message builder can be used when editing message
-  bool canBeUsedAsNewMessage() => content.isNotEmpty || embeds != null || (files != null && files!.isNotEmpty);
+  bool canBeUsedAsNewMessage() => content.isNotEmpty || (embeds != null && embeds!.isNotEmpty) || (files != null && files!.isNotEmpty);
 
   RawApiMap build([AllowedMentions? defaultAllowedMentions]) {
     allowedMentions ??= defaultAllowedMentions;
 
     return <String, dynamic>{
-      if (content.isNotEmpty) "content": content.toString(),
+      "content": content.toString(),
       if (embeds != null) "embeds": [for (final e in embeds!) e.build()],
       if (allowedMentions != null) "allowed_mentions": allowedMentions!.build(),
       if (replyBuilder != null) "message_reference": replyBuilder!.build(),
