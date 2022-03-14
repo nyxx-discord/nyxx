@@ -57,7 +57,7 @@ main() async {
 
     expect(guildPreview.discoveryURL(), isNull);
     expect(guildPreview.splashURL(), isNull);
-    expect(guildPreview.iconURL(), isNull);
+    expect(guildPreview.iconURL(), isNotNull);
   });
 
   test("basic message functionality", () async {
@@ -123,11 +123,9 @@ main() async {
 
     expect(message.attachments, hasLength(2));
 
-    final editedMessage = await message.edit(
-      MessageBuilder()
-          ..attachments = [message.attachments.first.toBuilder()]
-          ..files = [AttachmentBuilder.path('test/files/3.png')]
-    );
+    final editedMessage = await message.edit(MessageBuilder()
+      ..attachments = [message.attachments.first.toBuilder()]
+      ..files = [AttachmentBuilder.path('test/files/3.png')]);
 
     expect(editedMessage.attachments, hasLength(2));
 
