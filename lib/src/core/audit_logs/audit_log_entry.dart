@@ -67,11 +67,9 @@ class AuditLogEntry extends SnowflakeEntity implements IAuditLogEntry {
     user = UserCacheable(client, Snowflake(raw["user_id"]));
     type = AuditLogEntryType._create(raw["action_type"] as int);
 
-    if (raw["options"] != null) {
-      options = raw["options"] as String;
-    }
+    options = raw["options"] as String?;
 
-    reason = raw["reason"] as String;
+    reason = raw["reason"] as String?;
   }
 }
 
