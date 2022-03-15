@@ -48,7 +48,7 @@ export 'src/core/guild/status.dart' show IClientStatus, UserStatus;
 export 'src/core/guild/webhook.dart' show IWebhook, WebhookType;
 export 'src/core/message/attachment.dart' show IAttachment;
 export 'src/core/message/emoji.dart' show IEmoji;
-export 'src/core/message/guild_emoji.dart' show IBaseGuildEmoji, IGuildEmoji, IGuildEmojiPartial;
+export 'src/core/message/guild_emoji.dart' show IBaseGuildEmoji, IGuildEmoji, IGuildEmojiPartial, IResolvableGuildEmojiPartial;
 export 'src/core/message/message.dart' show IMessage;
 export 'src/core/message/message_flags.dart' show MessageFlags;
 export 'src/core/message/message_reference.dart' show IMessageReference;
@@ -58,7 +58,7 @@ export 'src/core/message/reaction.dart' show IReaction;
 export 'src/core/message/referenced_message.dart' show IReferencedMessage;
 export 'src/core/message/sticker.dart' show IStandardSticker, IStickerPack, ISticker, IGuildSticker, IPartialSticker;
 export 'src/core/message/unicode_emoji.dart' show IUnicodeEmoji, UnicodeEmoji;
-export 'src/core/message/components/component_style.dart' show ComponentStyle;
+export 'src/core/message/components/component_style.dart' show ButtonStyle;
 export 'src/core/message/components/message_component.dart'
     show
         IMessageButton,
@@ -69,7 +69,8 @@ export 'src/core/message/components/message_component.dart'
         IMessageMultiselect,
         IMessageMultiselectOption,
         MessageComponentEmoji,
-        ComponentType;
+        ComponentType,
+        IMessageTextInput;
 export 'src/core/permissions/permission_overrides.dart' show IPermissionsOverrides;
 export 'src/core/permissions/permissions.dart' show IPermissions;
 export 'src/core/permissions/permissions_constants.dart' show PermissionsConstants;

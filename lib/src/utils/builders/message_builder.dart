@@ -152,13 +152,13 @@ class MessageBuilder {
   Future<IMessage> send(ISend entity) => entity.sendMessage(this);
 
   /// Returns if this instance of message builder can be used when editing message
-  bool canBeUsedAsNewMessage() => content.isNotEmpty || embeds != null || (files != null && files!.isNotEmpty);
+  bool canBeUsedAsNewMessage() => content.isNotEmpty || (embeds != null && embeds!.isNotEmpty) || (files != null && files!.isNotEmpty);
 
   RawApiMap build([AllowedMentions? defaultAllowedMentions]) {
     allowedMentions ??= defaultAllowedMentions;
 
     return <String, dynamic>{
-      if (content.isNotEmpty) "content": content.toString(),
+      "content": content.toString(),
       if (embeds != null) "embeds": [for (final e in embeds!) e.build()],
       if (allowedMentions != null) "allowed_mentions": allowedMentions!.build(),
       if (replyBuilder != null) "message_reference": replyBuilder!.build(),
@@ -193,10 +193,10 @@ class MessageDecoration extends IEnum<String> {
   /// Strike text is surrounded with `~~`
   static const MessageDecoration strike = MessageDecoration._new("~~");
 
-  /// Inline code text is surrounded with ```
+  /// Inline code text is surrounded with `` ` ``
   static const MessageDecoration codeSimple = MessageDecoration._new("`");
 
-  /// Multiline code block is surrounded with `````
+  /// Multiline code block is surrounded with `` ``` ``
   static const MessageDecoration codeLong = MessageDecoration._new("```");
 
   /// Underlined text is surrounded with `__`

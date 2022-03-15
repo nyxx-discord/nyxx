@@ -78,6 +78,8 @@ class ChannelPinsUpdateEvent implements IChannelPinsUpdateEvent {
   ChannelPinsUpdateEvent(RawApiMap raw, INyxx client) {
     if (raw["d"]["last_pin_timestamp"] != null) {
       lastPingTimestamp = DateTime.parse(raw["d"]["last_pin_timestamp"] as String);
+    } else {
+      lastPingTimestamp = null;
     }
 
     channel = CacheableTextChannel<ITextChannel>(client, Snowflake(raw["d"]["channel_id"]));
@@ -93,6 +95,9 @@ class ChannelPinsUpdateEvent implements IChannelPinsUpdateEvent {
 abstract class IChannelUpdateEvent {
   /// The channel after the update.
   IChannel get updatedChannel;
+
+  /// The channel before the update, if it was cached.
+  IChannel? get oldChannel;
 }
 
 /// Sent when a channel is updated.
@@ -101,15 +106,18 @@ class ChannelUpdateEvent implements IChannelUpdateEvent {
   @override
   late final IChannel updatedChannel;
 
+  @override
+  late final IChannel? oldChannel;
+
   /// Creates na instance of [ChannelUpdateEvent]
   ChannelUpdateEvent(RawApiMap raw, INyxx client) {
     updatedChannel = Channel.deserialize(client, raw["d"] as RawApiMap);
 
-    final oldChannel = client.channels[updatedChannel.id];
+    oldChannel = client.channels[updatedChannel.id];
 
     // Move messages to new channel
     if (updatedChannel is ITextChannel && oldChannel is ITextChannel) {
-      (updatedChannel as ITextChannel).messageCache.addAll(oldChannel.messageCache);
+      (updatedChannel as ITextChannel).messageCache.addAll((oldChannel as ITextChannel).messageCache);
     }
 
     client.channels[updatedChannel.id] = updatedChannel;

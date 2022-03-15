@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:nyxx/src/core/snowflake.dart';
+import 'package:nyxx/nyxx.dart';
 import 'package:nyxx/src/core/message/emoji.dart';
 import 'package:nyxx/src/core/message/guild_emoji.dart';
 import 'package:nyxx/src/core/message/unicode_emoji.dart';
@@ -15,6 +15,8 @@ class ComponentType extends IEnum<int> {
 
   static const ComponentType button = ComponentType._create(2);
   static const ComponentType select = ComponentType._create(3);
+
+  static const ComponentType text = ComponentType._create(4);
 
   const ComponentType._create(int value) : super(value);
 
@@ -86,7 +88,7 @@ abstract class MessageComponent implements IMessageComponent {
   /// Empty constructor
   MessageComponent();
 
-  factory MessageComponent.deserialize(Map<String, dynamic> raw) {
+  factory MessageComponent.deserialize(RawApiMap raw) {
     final type = raw["type"] as int;
 
     switch (type) {
@@ -94,9 +96,36 @@ abstract class MessageComponent implements IMessageComponent {
         return MessageButton.deserialize(raw);
       case 3:
         return MessageMultiselect(raw);
+      case 4:
+        return MessageTextInput(raw);
     }
 
     throw ArgumentError("Unknown interaction type: [$type]: ${jsonEncode(raw)}");
+  }
+}
+
+/// Text input component
+abstract class IMessageTextInput implements IMessageComponent {
+  /// Custom id of components set by user
+  String get customId;
+
+  /// Value of component
+  String get value;
+}
+
+class MessageTextInput extends MessageComponent implements IMessageTextInput {
+  @override
+  ComponentType get type => ComponentType.text;
+
+  @override
+  late final String customId;
+
+  @override
+  late final String value;
+
+  MessageTextInput(RawApiMap raw) {
+    customId = raw['custom_id'] as String;
+    value = raw['value'] as String;
   }
 }
 
@@ -139,7 +168,7 @@ class MessageMultiselectOption implements IMessageMultiselectOption {
   late final bool isDefault;
 
   /// Creates an instance of [MessageMultiselectOption]
-  MessageMultiselectOption(Map<String, dynamic> raw) {
+  MessageMultiselectOption(RawApiMap raw) {
     label = raw["label"] as String;
     value = raw["value"] as String;
 
@@ -195,7 +224,7 @@ class MessageMultiselect extends MessageComponent implements IMessageMultiselect
   late final Iterable<IMessageMultiselectOption> options;
 
   /// Creates an instance of [MessageMultiselect]
-  MessageMultiselect(Map<String, dynamic> raw) : super() {
+  MessageMultiselect(RawApiMap raw) : super() {
     customId = raw["custom_id"] as String;
     placeholder = raw["placeholder"] as String?;
     minValues = raw["min_values"] as int? ?? 1;
@@ -209,7 +238,7 @@ abstract class IMessageButton implements IMessageComponent {
   String? get label;
 
   /// Component style, appearance
-  ComponentStyle get style;
+  ButtonStyle get style;
 
   /// Additional emoji that will be displayed before label
   IMessageComponentEmoji? get emoji;
@@ -229,7 +258,7 @@ class MessageButton extends MessageComponent implements IMessageButton {
 
   /// Component style, appearance
   @override
-  late final ComponentStyle style;
+  late final ButtonStyle style;
 
   /// Additional emoji that will be displayed before label
   @override
@@ -240,7 +269,7 @@ class MessageButton extends MessageComponent implements IMessageButton {
   late final bool disabled;
 
   factory MessageButton.deserialize(RawApiMap raw) {
-    if (raw["style"] == ComponentStyle.link.value) {
+    if (raw["style"] == ButtonStyle.link.value) {
       return LinkMessageButton(raw);
     }
 
@@ -248,9 +277,9 @@ class MessageButton extends MessageComponent implements IMessageButton {
   }
 
   /// Creates an instance of [MessageButton]
-  MessageButton(Map<String, dynamic> raw) : super() {
+  MessageButton(RawApiMap raw) : super() {
     label = raw["label"] as String?;
-    style = ComponentStyle.from(raw["style"] as int);
+    style = ButtonStyle.from(raw["style"] as int);
 
     if (raw["emoji"] != null) {
       emoji = MessageComponentEmoji(raw["emoji"] as RawApiMap);

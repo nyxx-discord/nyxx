@@ -295,7 +295,7 @@ class Message extends SnowflakeEntity implements IMessage {
 
     reactions = [
       if (raw["reactions"] != null && raw["reactions"].isNotEmpty as bool)
-        for (var r in raw["reactions"]) Reaction(r as RawApiMap)
+        for (var r in raw["reactions"]) Reaction(r as RawApiMap, client)
     ];
 
     if (raw["mentions"] != null && raw["mentions"].isNotEmpty as bool) {
@@ -364,6 +364,32 @@ class Message extends SnowflakeEntity implements IMessage {
       if (raw["mention_roles"] != null && guild != null)
         for (var roleId in raw["mention_roles"]) RoleCacheable(client, Snowflake(roleId), guild!)
     ];
+  }
+
+  Message.copy(Message other)
+      : client = other.client,
+        super(other.id) {
+    author = other.author;
+    content = other.content;
+    channel = other.channel;
+    editedTimestamp = other.editedTimestamp;
+    mentions = other.mentions;
+    embeds = other.embeds;
+    attachments = other.attachments;
+    pinned = other.pinned;
+    tts = other.tts;
+    mentionEveryone = other.mentionEveryone;
+    reactions = other.reactions;
+    type = other.type;
+    flags = other.flags;
+    partialStickers = other.partialStickers;
+    referencedMessage = other.referencedMessage;
+    components = other.components;
+    nonce = other.nonce;
+    applicationId = other.applicationId;
+    crossPostReference = other.crossPostReference;
+    member = other.member;
+    roleMentions = other.roleMentions;
   }
 
   /// Suppresses embeds in message. Can be executed in other users messages.
