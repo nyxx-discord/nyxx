@@ -1,4 +1,5 @@
 import 'package:nyxx/src/core/guild/scheduled_event.dart';
+import 'package:nyxx/src/events/presence_update_event.dart';
 import 'package:nyxx/src/internal/exceptions/invalid_shard_exception.dart';
 import 'package:nyxx/src/nyxx.dart';
 import 'package:nyxx/src/core/channel/invite.dart';
@@ -60,7 +61,7 @@ abstract class IGuild implements SnowflakeEntity {
   Cacheable<Snowflake, IVoiceGuildChannel>? get afkChannel;
 
   /// The guild's voice region.
-  @Deprecated('User IVoiceChannel.rtcRegion')
+  @Deprecated('Use IVoiceChannel.rtcRegion')
   String get region;
 
   /// The channel ID for the guild's widget if enabled.
@@ -152,6 +153,9 @@ abstract class IGuild implements SnowflakeEntity {
   /// Whether the guild has the boost progress bar enabled
   bool get boostProgressBarEnabled;
 
+  /// The banner hash of the guild, if any.
+  String? get banner;
+
   /// The guild's icon, represented as URL.
   /// If guild doesn't have icon it returns null.
   String? iconURL({String format = "webp", int size = 128});
@@ -163,6 +167,10 @@ abstract class IGuild implements SnowflakeEntity {
   /// URL to guilds discovery splash
   /// If guild doesn't have splash it returns null.
   String? discoveryURL({String format = "webp", int size = 128});
+
+  /// URL to guild's banner.
+  /// If guild doesn't have banner it returns null.
+  String? bannerUrl({String? format, int? size});
 
   /// Allows to download [Guild] widget aka advert png
   /// Possible options for [style]: shield (default), banner1, banner2, banner3, banner4
@@ -198,7 +206,7 @@ abstract class IGuild implements SnowflakeEntity {
   /// Prunes the guild, returns the amount of members pruned.
   Future<int> prune(int days, {Iterable<Snowflake>? includeRoles, String? auditReason});
 
-  /// Get"s the guild's bans.
+  /// Gets the guild's bans.
   Stream<IBan> getBans();
 
   /// Change self nickname in guild
@@ -435,6 +443,9 @@ class Guild extends SnowflakeEntity implements IGuild {
   @override
   late final bool boostProgressBarEnabled;
 
+  /// The banner hash of the guild. If any.
+  @override
+  late final String? banner;
   /// Returns url to this guild.
   @override
   String get url => "https://discordapp.com/channels/${id.toString()}";
@@ -498,13 +509,14 @@ class Guild extends SnowflakeEntity implements IGuild {
     icon = raw["icon"] as String?;
     discoverySplash = raw["discoverySplash"] as String?;
     splash = raw["splash"] as String?;
-    embedEnabled = raw["embed_enabled"] as bool?;
+    embedEnabled = raw["widget_enabled"] as bool?;
 
     systemChannelFlags = raw["system_channel_flags"] as int;
     premiumTier = PremiumTier.from(raw["premium_tier"] as int);
     premiumSubscriptionCount = raw["premium_subscription_count"] as int?;
     preferredLocale = raw["preferred_locale"] as String;
     boostProgressBarEnabled = raw['premium_progress_bar_enabled'] as bool;
+    banner = raw['banner'] as String?;
 
     owner = UserCacheable(client, Snowflake(raw["owner_id"]));
 
@@ -616,6 +628,11 @@ class Guild extends SnowflakeEntity implements IGuild {
   /// Possible options for [style]: shield (default), banner1, banner2, banner3, banner4
   @override
   String guildWidgetUrl([String style = "shield"]) => client.httpEndpoints.getGuildWidgetUrl(id, style);
+
+  /// Returns the URL to guild's banner.
+  /// If guild doesn't have banner it returns null.
+  @override
+  String? bannerUrl({String? format, int? size}) => client.httpEndpoints.getGuildBannerUrl(id, banner, format: format, size: size);
 
   /// Fetches all stickers of current guild
   @override

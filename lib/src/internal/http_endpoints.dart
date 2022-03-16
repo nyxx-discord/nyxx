@@ -65,6 +65,11 @@ abstract class IHttpEndpoints {
   /// Returns url to guild widget for given [guildId]. Additionally accepts [style] parameter.
   String getGuildWidgetUrl(Snowflake guildId, [String style = "shield"]);
 
+  /// Returns cnd url for given [guildId] and [bannerHash].
+  /// Requires to specify format and size of returned image.
+  /// Format can be webp, png. Size should be power of 2, eg. 512, 1024
+  String? getGuildBannerUrl(Snowflake guildId, String? bannerHash, {String? format, int? size});
+
   /// Allows to modify guild emoji.
   Future<BaseGuildEmoji> editGuildEmoji(Snowflake guildId, Snowflake emojiId, {String? name, List<Snowflake>? roles, AttachmentBuilder? avatarAttachment});
 
@@ -459,6 +464,25 @@ class HttpEndpoints implements IHttpEndpoints {
       return "https://cdn.${Constants.cdnHost}/discovery-splashes/$guildId/$splashHash.$format?size=$size";
     }
 
+    return null;
+  }
+
+  @override
+  String? getGuildBannerUrl(Snowflake guildId, String? bannerHash, {String? format, int? size}) {
+    if (bannerHash != null) {
+      var url = "${Constants.cdnUrl}/banners/$guildId/$bannerHash.";
+      if (bannerHash.startsWith('a_')) {
+        url += "gif";
+      } else {
+        url += format ?? "webp";
+      }
+
+      if (size != null) {
+        url += "?size=$size";
+      }
+
+      return url;
+    }
     return null;
   }
 
