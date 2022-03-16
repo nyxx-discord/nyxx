@@ -1,7 +1,11 @@
+import 'package:nyxx/nyxx.dart';
+import 'package:nyxx/src/core/guild/status.dart';
 import 'package:nyxx/src/core/snowflake.dart';
+import 'package:nyxx/src/internal/cache/cacheable.dart';
 import 'package:nyxx/src/typedefs.dart';
 import 'package:nyxx/src/utils/enum.dart';
 import 'package:nyxx/src/utils/permissions.dart';
+import 'package:nyxx/src/core/user/user.dart';
 
 abstract class IActivity {
   /// The activity name.
@@ -408,5 +412,56 @@ class GameSecrets implements IGameSecrets {
     join = raw["join"] as String;
     spectate = raw["spectate"] as String;
     match = raw["match"] as String;
+  }
+}
+
+abstract class IPartialPresence {
+  /// Reference to [INyxx]
+  INyxx get client;
+
+  /// The [IUser] object
+  Cacheable<Snowflake, IUser>? get user;
+
+  /// The status of the user indicating the platform they are on.
+  IClientStatus? get clientStatus;
+
+  /// The status of the user eg. online, idle, dnd, invisible, offline
+  UserStatus? get status;
+
+  List<IActivity?> get activities;
+}
+
+class PartialPresence implements IPartialPresence {
+  /// Reference to [INyxx]
+  @override
+  final INyxx client;
+
+  /// The [IUser] object
+  @override
+  late final Cacheable<Snowflake, IUser>? user;
+
+  /// The status of the user indicating the platform they are on.
+  @override
+  late final IClientStatus? clientStatus;
+
+  /// The status of the user eg. online, idle, dnd, invisible, offline
+  @override
+  late final UserStatus? status;
+
+  /// The activities of the user
+  @override
+  late final List<IActivity?> activities;
+
+  /// Creates na instance of [PartialPresence]
+  PartialPresence(RawApiMap raw, this.client) {
+    user = raw["user"] != null ? UserCacheable(client, Snowflake(raw['user']['id'])) : null;
+    clientStatus = raw["client_status"] != null ? ClientStatus(raw["client_status"] as RawApiMap) : null;
+    status = raw["status"] != null ? UserStatus.from(raw["status"] as String) : null;
+
+    if (raw["activities"] != null) {
+      activities = [for (final activity in raw["activities"]) Activity(activity as RawApiMap)];
+    } else {
+      activities = [];
+    }
   }
 }

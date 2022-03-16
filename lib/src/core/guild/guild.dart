@@ -1,5 +1,7 @@
+import 'package:nyxx/nyxx.dart';
+import 'package:nyxx/src/core/guild/guild_welcome_screen.dart';
 import 'package:nyxx/src/core/guild/scheduled_event.dart';
-import 'package:nyxx/src/events/presence_update_event.dart';
+import 'package:nyxx/src/core/user/presence.dart';
 import 'package:nyxx/src/internal/exceptions/invalid_shard_exception.dart';
 import 'package:nyxx/src/nyxx.dart';
 import 'package:nyxx/src/core/channel/invite.dart';
@@ -156,8 +158,27 @@ abstract class IGuild implements SnowflakeEntity {
   /// The banner hash of the guild, if any.
   String? get banner;
 
-  /// List of partial [IPresenceUpdateEvent]
-  List<IPresenceUpdateEvent?> get presences;
+  /// List of partial [IPartialPresence].
+  ///
+  /// Will only include non-offline members if the size of the guild is greater than [ClientOptions.largeThreshold]
+  List<IPartialPresence?> get presences;
+
+  /// If this guild is considered large.
+  bool get large;
+
+  /// The maximum amount of members that can be in this guild.
+  int get maximumMembers;
+
+  /// The maximum amount of presences that can be in this guild.
+  ///
+  /// (`null` is always returned for non-large guilds)
+  int? get maximumPresences;
+
+  /// The welcome screen of a community guild, shown to new members.
+  IGuildWelcomeScreen? get welcomeScreen;
+
+  /// Explicit content filter level of this guild.
+  ExplicitContentFilterLevel get explicitContentFilterLevel;
 
   /// The guild's icon, represented as URL.
   /// If guild doesn't have icon it returns null.
@@ -450,9 +471,33 @@ class Guild extends SnowflakeEntity implements IGuild {
   @override
   late final String? banner;
 
-  /// List of partial [IPresenceUpdateEvent]
+  /// List of partial [IPartialPresence].
+  ///
+  /// Will only include non-offline members if the size of the guild is greater than [ClientOptions.largeThreshold]
   @override
-  late final List<IPresenceUpdateEvent?> presences;
+  late final List<IPartialPresence?> presences;
+
+  /// If this guild is considered large.
+  @override
+  late final bool large;
+
+  /// The maximum amount of members that can be in this guild.
+  @override
+  late final int maximumMembers;
+
+  /// The maximum amount of presences that can be in this guild.
+  ///
+  /// (`null` is always returned if the guild is not large)
+  @override
+  late final int? maximumPresences;
+
+  /// The welcome screen of a community guild, shown to new members.
+  @override
+  late final IGuildWelcomeScreen? welcomeScreen;
+
+  /// Explicit content filter level of guild
+  @override
+  late final ExplicitContentFilterLevel explicitContentFilterLevel;
 
   /// Returns url to this guild.
   @override
@@ -525,6 +570,10 @@ class Guild extends SnowflakeEntity implements IGuild {
     preferredLocale = raw["preferred_locale"] as String;
     boostProgressBarEnabled = raw['premium_progress_bar_enabled'] as bool;
     banner = raw['banner'] as String?;
+    large = raw["large"] as bool? ?? false;
+    maximumMembers = raw["max_members"] as int;
+    maximumPresences = raw["max_presences"] as int?;
+    explicitContentFilterLevel = ExplicitContentFilterLevel.from(raw["explicit_content_filter"] as int);
 
     owner = UserCacheable(client, Snowflake(raw["owner_id"]));
 
@@ -611,11 +660,15 @@ class Guild extends SnowflakeEntity implements IGuild {
       publicUpdatesChannel = null;
     }
 
-    if(raw['presences'] != null) {
-      // TODO: PartialPresenceUpdate instead of PresenceUpdate
-      presences = [for(final presence in raw['presences']) PresenceUpdateEvent(presence as RawApiMap, client)];
+    presences = [
+      if (raw['presences'] != null)
+        for (final presence in raw['presences']) PartialPresence(presence as RawApiMap, client)
+    ];
+
+    if (raw['welcome_screen'] != null) {
+      welcomeScreen = GuildWelcomeScreen(raw['welcome_screen'] as RawApiMap);
     } else {
-      presences = [];
+      welcomeScreen = null;
     }
 
     stageInstances = [
