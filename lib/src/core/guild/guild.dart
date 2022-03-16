@@ -156,6 +156,9 @@ abstract class IGuild implements SnowflakeEntity {
   /// The banner hash of the guild, if any.
   String? get banner;
 
+  /// List of partial [IPresenceUpdateEvent]
+  List<IPresenceUpdateEvent?> get presences;
+
   /// The guild's icon, represented as URL.
   /// If guild doesn't have icon it returns null.
   String? iconURL({String format = "webp", int size = 128});
@@ -446,6 +449,11 @@ class Guild extends SnowflakeEntity implements IGuild {
   /// The banner hash of the guild. If any.
   @override
   late final String? banner;
+
+  /// List of partial [IPresenceUpdateEvent]
+  @override
+  late final List<IPresenceUpdateEvent?> presences;
+
   /// Returns url to this guild.
   @override
   String get url => "https://discordapp.com/channels/${id.toString()}";
@@ -601,6 +609,13 @@ class Guild extends SnowflakeEntity implements IGuild {
       publicUpdatesChannel = CacheableTextChannel<ITextChannel>(client, Snowflake(raw["public_updates_channel_id"]));
     } else {
       publicUpdatesChannel = null;
+    }
+
+    if(raw['presences'] != null) {
+      // TODO: PartialPresenceUpdate instead of PresenceUpdate
+      presences = [for(final presence in raw['presences']) PresenceUpdateEvent(presence as RawApiMap, client)];
+    } else {
+      presences = [];
     }
 
     stageInstances = [
