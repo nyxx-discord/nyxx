@@ -11,10 +11,11 @@ class GuildBuilder extends Builder {
   String? name;
 
   /// Voice region id
+  @Deprecated('Create the guild and after that, use IVoiceChannel.rtcRegion instead')
   String? region;
 
   /// Base64 encoded 128x128 image
-  String? icon;
+  AttachmentBuilder? icon;
 
   /// Verification level
   int? verificationLevel;
@@ -35,7 +36,7 @@ class GuildBuilder extends Builder {
   RawApiMap build() => <String, dynamic>{
         if (name != null) "name": name,
         if (region != null) "region": region,
-        if (icon != null) "icon": icon,
+        if (icon != null) "icon": icon!.getBase64(),
         if (verificationLevel != null) "verification_level": verificationLevel,
         if (defaultMessageNotifications != null) "default_message_notifications": defaultMessageNotifications,
         if (explicitContentFilter != null) "explicit_content_filter": explicitContentFilter,
