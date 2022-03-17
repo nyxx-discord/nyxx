@@ -609,8 +609,8 @@ class Guild extends SnowflakeEntity implements IGuild {
       });
     }
 
-    if (raw["embed_channel_id"] != null) {
-      embedChannel = ChannelCacheable(client, Snowflake(raw["embed_channel_id"]));
+    if (raw["widget_channel_id"] != null) {
+      embedChannel = ChannelCacheable(client, Snowflake(raw["widget_channel_id"]));
     } else {
       embedChannel = null;
     }
