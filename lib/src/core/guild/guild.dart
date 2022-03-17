@@ -180,6 +180,12 @@ abstract class IGuild implements SnowflakeEntity {
   /// Explicit content filter level of this guild.
   ExplicitContentFilterLevel get explicitContentFilterLevel;
 
+  /// The vanity URL code of this guild. If any.
+  String? get vanityUrlCode;
+
+  /// The description of this guild. If it's a community guild.
+  String? get description;
+
   /// The guild's icon, represented as URL.
   /// If guild doesn't have icon it returns null.
   String? iconURL({String format = "webp", int size = 128});
@@ -499,6 +505,14 @@ class Guild extends SnowflakeEntity implements IGuild {
   @override
   late final ExplicitContentFilterLevel explicitContentFilterLevel;
 
+  /// The vanity URL code of the guild. If any.
+  @override
+  late final String? vanityUrlCode;
+
+  /// The description of the guild. If it's a community guild.
+  @override
+  late final String? description;
+
   /// Returns url to this guild.
   @override
   String get url => "https://discordapp.com/channels/${id.toString()}";
@@ -560,7 +574,7 @@ class Guild extends SnowflakeEntity implements IGuild {
     available = !(raw["unavailable"] as bool? ?? false);
 
     icon = raw["icon"] as String?;
-    discoverySplash = raw["discoverySplash"] as String?;
+    discoverySplash = raw["discovery_splash"] as String?;
     splash = raw["splash"] as String?;
     embedEnabled = raw["widget_enabled"] as bool?;
 
@@ -574,6 +588,8 @@ class Guild extends SnowflakeEntity implements IGuild {
     maximumMembers = raw["max_members"] as int;
     maximumPresences = raw["max_presences"] as int?;
     explicitContentFilterLevel = ExplicitContentFilterLevel.from(raw["explicit_content_filter"] as int);
+    vanityUrlCode = raw["vanity_url_code"] as String?;
+    description = raw["description"] as String?;
 
     owner = UserCacheable(client, Snowflake(raw["owner_id"]));
 
