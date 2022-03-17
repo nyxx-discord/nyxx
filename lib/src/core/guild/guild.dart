@@ -178,7 +178,7 @@ abstract class IGuild implements SnowflakeEntity {
   IGuildWelcomeScreen? get welcomeScreen;
 
   /// Explicit content filter level of this guild.
-  ExplicitContentFilterLevel get explicitContentFilterLevel;
+  int get explicitContentFilterLevel;
 
   /// The vanity URL code of this guild. If any.
   String? get vanityUrlCode;
@@ -503,7 +503,7 @@ class Guild extends SnowflakeEntity implements IGuild {
 
   /// Explicit content filter level of guild
   @override
-  late final ExplicitContentFilterLevel explicitContentFilterLevel;
+  late final int explicitContentFilterLevel;
 
   /// The vanity URL code of the guild. If any.
   @override
@@ -587,7 +587,7 @@ class Guild extends SnowflakeEntity implements IGuild {
     large = raw["large"] as bool? ?? false;
     maximumMembers = raw["max_members"] as int;
     maximumPresences = raw["max_presences"] as int?;
-    explicitContentFilterLevel = ExplicitContentFilterLevel.from(raw["explicit_content_filter"] as int);
+    explicitContentFilterLevel = raw["explicit_content_filter"] as int;
     vanityUrlCode = raw["vanity_url_code"] as String?;
     description = raw["description"] as String?;
 
