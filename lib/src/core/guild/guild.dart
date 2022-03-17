@@ -795,7 +795,7 @@ class Guild extends SnowflakeEntity implements IGuild {
   /// Creates new role
   ///
   /// ```
-  /// var rb = new RoleBuilder()
+  /// var rb = RoleBuilder()
   ///   ..name = "Dartyy"
   ///   ..color = DiscordColor.fromInt(0xFF04F2)
   ///   ..hoist = true;
