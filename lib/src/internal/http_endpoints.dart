@@ -121,6 +121,9 @@ abstract class IHttpEndpoints {
   /// Leaves guild with given id
   Future<void> leaveGuild(Snowflake guildId);
 
+  /// Creates a new guild.
+  Future<IGuild> createGuild(GuildBuilder builder);
+
   /// Returns list of all guild invites
   Stream<IInvite> fetchGuildInvites(Snowflake guildId);
 
@@ -671,6 +674,19 @@ class HttpEndpoints implements IHttpEndpoints {
 
   @override
   Future<void> leaveGuild(Snowflake guildId) async => executeSafe(BasicRequest("/users/@me/guilds/$guildId", method: "DELETE"));
+
+  @override
+  Future<IGuild> createGuild(GuildBuilder builder) async {
+    final response = await httpHandler.execute(BasicRequest("/guilds", method: "POST", body: builder.build()));
+
+    if (response is HttpResponseSuccess) {
+      final guild = Guild(client, response.jsonBody as RawApiMap);
+      client.guilds[guild.id] = guild;
+      return guild;
+    }
+
+    return Future.error(response);
+  }
 
   @override
   Stream<IInvite> fetchGuildInvites(Snowflake guildId) async* {
