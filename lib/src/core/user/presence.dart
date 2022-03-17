@@ -458,10 +458,9 @@ class PartialPresence implements IPartialPresence {
     clientStatus = raw["client_status"] != null ? ClientStatus(raw["client_status"] as RawApiMap) : null;
     status = raw["status"] != null ? UserStatus.from(raw["status"] as String) : null;
 
-    if (raw["activities"] != null) {
-      activities = [for (final activity in raw["activities"]) Activity(activity as RawApiMap)];
-    } else {
-      activities = [];
-    }
+    activities = [
+      if (raw['activities'] != null)
+        for (final activity in raw["activities"]) Activity(activity as RawApiMap)
+    ];
   }
 }
