@@ -251,6 +251,15 @@ abstract class INyxxWebsocket implements INyxxRest {
   /// Returns guild with given [guildId]
   Future<IGuild> fetchGuild(Snowflake guildId);
 
+  /// Creates a guild.
+  ///
+  /// **⚠️ This endpoint can only be used by bots that are in ten guilds or fewer.**
+  /// ```dart
+  /// var gb = GuildBuilder()..name = "Test Guild";
+  /// var guild = await client.createGuild(gb);
+  /// ```
+  Future<IGuild> createGuild(GuildBuilder builder);
+
   /// Returns channel with specified id.
   /// ```
   /// var channel = await client.fetchChannel<ITextChannel>(Snowflake("473853847115137024"));
@@ -388,6 +397,16 @@ class NyxxWebsocket extends NyxxRest implements INyxxWebsocket {
   /// ``
   @override
   Future<IUser> fetchUser(Snowflake userId) => httpEndpoints.fetchUser(userId);
+
+  /// Creates a guild.
+  ///
+  /// **⚠️ This endpoint can only be used by bots that are in ten guilds or fewer.**
+  /// ```dart
+  /// var gb = GuildBuilder()..name = "Test Guild";
+  /// var guild = await client.createGuild(gb);
+  /// ```
+  @override
+  Future<IGuild> createGuild(GuildBuilder builder) => httpEndpoints.createGuild(builder);
 
   /// Gets a webhook by its id and/or token.
   /// If token is supplied authentication is not needed.
