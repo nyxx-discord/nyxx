@@ -428,6 +428,7 @@ abstract class IPartialPresence {
   /// The status of the user eg. online, idle, dnd, invisible, offline
   UserStatus? get status;
 
+  /// The activities of the user
   List<IActivity?> get activities;
 }
 
