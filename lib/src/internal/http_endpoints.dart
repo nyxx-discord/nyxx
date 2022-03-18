@@ -16,6 +16,7 @@ import 'package:nyxx/src/core/guild/guild.dart';
 import 'package:nyxx/src/core/guild/guild_preview.dart';
 import 'package:nyxx/src/core/guild/role.dart';
 import 'package:nyxx/src/core/guild/webhook.dart';
+import 'package:nyxx/src/core/guild/guild_welcome_screen.dart';
 import 'package:nyxx/src/core/message/emoji.dart';
 import 'package:nyxx/src/core/message/guild_emoji.dart';
 import 'package:nyxx/src/core/message/message.dart';
@@ -93,6 +94,9 @@ abstract class IHttpEndpoints {
 
   /// Returns [BaseGuildEmoji] for given [emojiId]
   Future<IBaseGuildEmoji> fetchGuildEmoji(Snowflake guildId, Snowflake emojiId);
+
+  /// Fetches a [IGuildWelcomeScreen] from the given [guildId]
+  Future<IGuildWelcomeScreen?> fetchGuildWelcomeScreen(Snowflake guildId);
 
   /// Creates emoji in given guild
   Future<IBaseGuildEmoji> createEmoji(Snowflake guildId, String name, {List<SnowflakeEntity>? roles, AttachmentBuilder? emojiAttachment});
@@ -564,6 +568,17 @@ class HttpEndpoints implements IHttpEndpoints {
 
     if (response is HttpResponseSuccess) {
       return GuildEmoji(client, response.jsonBody as RawApiMap, guildId);
+    }
+
+    return Future.error(response);
+  }
+
+  @override
+  Future<IGuildWelcomeScreen?> fetchGuildWelcomeScreen(Snowflake guildId) async {
+    final response = await httpHandler.execute(BasicRequest("/guilds/$guildId/welcome-screen"));
+
+    if (response is HttpResponseSuccess) {
+      return GuildWelcomeScreen(response.jsonBody as RawApiMap, client);
     }
 
     return Future.error(response);

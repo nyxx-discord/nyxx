@@ -337,6 +337,9 @@ abstract class IGuild implements SnowflakeEntity {
 
   /// Fetches from api list of events in guild
   Stream<GuildEvent> fetchGuildEvents({bool withUserCount = false});
+
+  /// Fetches the welcome screen of this guild if it's a community guild.
+  Future<IGuildWelcomeScreen?> fetchWelcomeScreen();
 }
 
 class Guild extends SnowflakeEntity implements IGuild {
@@ -682,7 +685,8 @@ class Guild extends SnowflakeEntity implements IGuild {
     ];
 
     if (raw['welcome_screen'] != null) {
-      welcomeScreen = GuildWelcomeScreen(raw['welcome_screen'] as RawApiMap);
+      // TODO: Remove this when `@fetchWelcomeScreen` will be implemented
+      welcomeScreen = GuildWelcomeScreen(raw['welcome_screen'] as RawApiMap, client);
     } else {
       welcomeScreen = null;
     }
@@ -909,4 +913,7 @@ class Guild extends SnowflakeEntity implements IGuild {
 
   @override
   Stream<GuildEvent> fetchGuildEvents({bool withUserCount = false}) => client.httpEndpoints.fetchGuildEvents(id);
+
+  @override
+  Future<IGuildWelcomeScreen?> fetchWelcomeScreen() => client.httpEndpoints.fetchGuildWelcomeScreen(id);
 }
