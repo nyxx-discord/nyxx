@@ -1,41 +1,21 @@
 import 'package:nyxx/nyxx.dart';
-import 'package:nyxx/src/core/guild/guild_welcome_screen.dart';
 import 'package:nyxx/src/core/guild/scheduled_event.dart';
 import 'package:nyxx/src/core/user/presence.dart';
-import 'package:nyxx/src/internal/exceptions/invalid_shard_exception.dart';
 import 'package:nyxx/src/nyxx.dart';
-import 'package:nyxx/src/core/channel/invite.dart';
-import 'package:nyxx/src/core/snowflake.dart';
-import 'package:nyxx/src/core/snowflake_entity.dart';
-import 'package:nyxx/src/core/audit_logs/audit_log.dart';
 import 'package:nyxx/src/core/channel/cacheable_text_channel.dart';
 import 'package:nyxx/src/core/channel/channel.dart';
-import 'package:nyxx/src/core/channel/text_channel.dart';
-import 'package:nyxx/src/core/channel/guild/guild_channel.dart';
 import 'package:nyxx/src/core/channel/guild/text_guild_channel.dart';
 import 'package:nyxx/src/core/channel/guild/voice_channel.dart';
 import 'package:nyxx/src/core/guild/ban.dart';
-import 'package:nyxx/src/core/guild/guild_feature.dart';
-import 'package:nyxx/src/core/guild/guild_nsfw_level.dart';
-import 'package:nyxx/src/core/guild/guild_preview.dart';
-import 'package:nyxx/src/core/guild/premium_tier.dart';
 import 'package:nyxx/src/core/guild/role.dart';
 import 'package:nyxx/src/core/message/guild_emoji.dart';
 import 'package:nyxx/src/core/message/sticker.dart';
 import 'package:nyxx/src/core/permissions/permissions.dart';
 import 'package:nyxx/src/core/user/member.dart';
-import 'package:nyxx/src/core/user/user.dart';
 import 'package:nyxx/src/core/voice/voice_region.dart';
 import 'package:nyxx/src/core/voice/voice_state.dart';
-import 'package:nyxx/src/internal/cache/cache.dart';
 import 'package:nyxx/src/internal/cache/cacheable.dart';
-import 'package:nyxx/src/internal/shard/shard.dart';
 import 'package:nyxx/src/typedefs.dart';
-import 'package:nyxx/src/utils/builders/attachment_builder.dart';
-import 'package:nyxx/src/utils/builders/channel_builder.dart';
-import 'package:nyxx/src/utils/builders/guild_builder.dart';
-import 'package:nyxx/src/utils/builders/guild_event_builder.dart';
-import 'package:nyxx/src/utils/builders/sticker_builder.dart';
 
 abstract class IGuild implements SnowflakeEntity {
   /// Reference to [NyxxWebsocket] instance
