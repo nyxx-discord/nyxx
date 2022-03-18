@@ -186,6 +186,9 @@ abstract class IGuild implements SnowflakeEntity {
   /// The description of this guild. If it's a community guild.
   String? get description;
 
+  /// The total amount of members in this guild.
+  int get memberCount;
+
   /// The guild's icon, represented as URL.
   /// If guild doesn't have icon it returns null.
   String? iconURL({String format = "webp", int size = 128});
@@ -516,6 +519,10 @@ class Guild extends SnowflakeEntity implements IGuild {
   @override
   late final String? description;
 
+  /// The total amount of members in the guild.
+  @override
+  late final int memberCount;
+
   /// Returns url to this guild.
   @override
   String get url => "https://discordapp.com/channels/${id.toString()}";
@@ -593,6 +600,7 @@ class Guild extends SnowflakeEntity implements IGuild {
     explicitContentFilterLevel = raw["explicit_content_filter"] as int;
     vanityUrlCode = raw["vanity_url_code"] as String?;
     description = raw["description"] as String?;
+    memberCount = raw["member_count"] as int? ?? raw['approximate_member_count'] as int;
 
     owner = UserCacheable(client, Snowflake(raw["owner_id"]));
 
@@ -683,13 +691,6 @@ class Guild extends SnowflakeEntity implements IGuild {
       if (raw['presences'] != null)
         for (final presence in raw['presences']) PartialPresence(presence as RawApiMap, client)
     ];
-
-    if (raw['welcome_screen'] != null) {
-      // TODO: Remove this when `@fetchWelcomeScreen` will be implemented
-      welcomeScreen = GuildWelcomeScreen(raw['welcome_screen'] as RawApiMap, client);
-    } else {
-      welcomeScreen = null;
-    }
 
     stageInstances = [
       if (raw["stage_instances"] != null)
