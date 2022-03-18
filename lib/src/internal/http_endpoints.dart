@@ -478,7 +478,7 @@ class HttpEndpoints implements IHttpEndpoints {
   String? getGuildBannerUrl(Snowflake guildId, String? bannerHash, {String? format, int? size}) {
     if (bannerHash != null) {
       var url = "${Constants.cdnUrl}/banners/$guildId/$bannerHash.";
-      if (bannerHash.startsWith('a_')) {
+      if (format == null && bannerHash.startsWith('a_')) {
         url += "gif";
       } else {
         url += format ?? "webp";
