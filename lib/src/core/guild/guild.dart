@@ -169,11 +169,6 @@ abstract class IGuild implements SnowflakeEntity {
   /// The maximum amount of members that can be in this guild.
   int get maximumMembers;
 
-  /// The maximum amount of presences that can be in this guild.
-  ///
-  /// (`null` is always returned for non-large guilds)
-  int? get maximumPresences;
-
   /// The welcome screen of a community guild, shown to new members.
   IGuildWelcomeScreen? get welcomeScreen;
 
@@ -497,12 +492,6 @@ class Guild extends SnowflakeEntity implements IGuild {
   @override
   late final int maximumMembers;
 
-  /// The maximum amount of presences that can be in this guild.
-  ///
-  /// (`null` is always returned if the guild is not large)
-  @override
-  late final int? maximumPresences;
-
   /// The welcome screen of a community guild, shown to new members.
   @override
   late final IGuildWelcomeScreen? welcomeScreen;
@@ -596,7 +585,6 @@ class Guild extends SnowflakeEntity implements IGuild {
     banner = raw['banner'] as String?;
     large = raw["large"] as bool? ?? false;
     maximumMembers = raw["max_members"] as int;
-    maximumPresences = raw["max_presences"] as int?;
     explicitContentFilterLevel = raw["explicit_content_filter"] as int;
     vanityUrlCode = raw["vanity_url_code"] as String?;
     description = raw["description"] as String?;
