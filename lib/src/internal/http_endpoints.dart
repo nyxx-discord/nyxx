@@ -581,6 +581,10 @@ class HttpEndpoints implements IHttpEndpoints {
       return GuildWelcomeScreen(response.jsonBody as RawApiMap, client);
     }
 
+    if (response.statusCode == 404) {
+      return null;
+    }
+
     return Future.error(response);
   }
 
