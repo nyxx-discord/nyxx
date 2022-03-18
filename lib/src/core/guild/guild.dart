@@ -561,7 +561,6 @@ class Guild extends SnowflakeEntity implements IGuild {
     explicitContentFilterLevel = raw["explicit_content_filter"] as int;
     vanityUrlCode = raw["vanity_url_code"] as String?;
     description = raw["description"] as String?;
-    memberCount = raw["member_count"] as int? ?? raw['approximate_member_count'] as int;
 
     owner = UserCacheable(client, Snowflake(raw["owner_id"]));
 
@@ -614,6 +613,8 @@ class Guild extends SnowflakeEntity implements IGuild {
     ];
 
     if (!guildCreate) return;
+
+    memberCount = raw["member_count"] as int;
 
     raw["channels"].forEach((o) {
       final channel = Channel.deserialize(client, o as RawApiMap, id);
