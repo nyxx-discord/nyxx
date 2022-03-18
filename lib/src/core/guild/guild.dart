@@ -739,7 +739,7 @@ class Guild extends SnowflakeEntity implements IGuild {
 
   /// Change guild owner.
   @override
-  Future<IGuild> changeOwner(SnowflakeEntity memberEntity, {String? auditReason}) => client.httpEndpoints.changeGuildOwner(id, memberEntity);
+  Future<IGuild> changeOwner(SnowflakeEntity memberEntity, {String? auditReason}) => client.httpEndpoints.changeGuildOwner(id, memberEntity, auditReason: auditReason);
 
   /// Leaves the guild.
   @override
