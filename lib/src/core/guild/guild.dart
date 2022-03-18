@@ -158,9 +158,9 @@ abstract class IGuild implements SnowflakeEntity {
   /// The banner hash of the guild, if any.
   String? get banner;
 
-  /// List of partial [IPartialPresence].
+  /// List of partial presences.
   ///
-  /// Will only include non-offline members if the size of the guild is greater than [ClientOptions.largeThreshold]
+  /// Will only include non-offline members if the size of the guild is greater than the [ClientOptions.largeThreshold] option.
   List<IPartialPresence?> get presences;
 
   /// If this guild is considered large.
@@ -475,9 +475,9 @@ class Guild extends SnowflakeEntity implements IGuild {
   @override
   late final String? banner;
 
-  /// List of partial [IPartialPresence].
+  /// List of partial presences.
   ///
-  /// Will only include non-offline members if the size of the guild is greater than [ClientOptions.largeThreshold]
+  /// Will only include non-offline members if the size of the guild is greater than the [ClientOptions.largeThreshold] option.
   @override
   late final List<IPartialPresence?> presences;
 
