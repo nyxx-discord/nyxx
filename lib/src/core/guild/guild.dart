@@ -169,9 +169,6 @@ abstract class IGuild implements SnowflakeEntity {
   /// The maximum amount of members that can be in this guild.
   int get maximumMembers;
 
-  /// The welcome screen of a community guild, shown to new members.
-  IGuildWelcomeScreen? get welcomeScreen;
-
   /// Explicit content filter level of this guild.
   int get explicitContentFilterLevel;
 
@@ -491,10 +488,6 @@ class Guild extends SnowflakeEntity implements IGuild {
   /// The maximum amount of members that can be in this guild.
   @override
   late final int maximumMembers;
-
-  /// The welcome screen of a community guild, shown to new members.
-  @override
-  late final IGuildWelcomeScreen? welcomeScreen;
 
   /// Explicit content filter level of guild
   @override
