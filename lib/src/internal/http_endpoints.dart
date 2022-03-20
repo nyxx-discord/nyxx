@@ -682,7 +682,8 @@ class HttpEndpoints implements IHttpEndpoints {
 
   @override
   Future<IGuild> changeGuildOwner(Snowflake guildId, SnowflakeEntity member, {String? auditReason}) async {
-    final response = await httpHandler.execute(BasicRequest("/guilds/$guildId", method: "PATCH", auditLog: auditReason, body: {"owner_id": member.id.toString()}));
+    final response =
+        await httpHandler.execute(BasicRequest("/guilds/$guildId", method: "PATCH", auditLog: auditReason, body: {"owner_id": member.id.toString()}));
 
     if (response is HttpResponseSuccess) {
       return Guild(client, response.jsonBody as RawApiMap);
