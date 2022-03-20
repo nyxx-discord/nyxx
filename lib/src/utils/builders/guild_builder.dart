@@ -1,14 +1,9 @@
-import 'package:nyxx/src/core/discord_color.dart';
-import 'package:nyxx/src/typedefs.dart';
-import 'package:nyxx/src/utils/builders/attachment_builder.dart';
-import 'package:nyxx/src/utils/builders/builder.dart';
-import 'package:nyxx/src/utils/builders/channel_builder.dart';
-import 'package:nyxx/src/utils/builders/permissions_builder.dart';
+import 'package:nyxx/nyxx.dart';
 
 /// Allows to build guild object for creating new one or modifying existing
 class GuildBuilder extends Builder {
   /// Name of Guild
-  String? name;
+  final String name;
 
   /// Voice region id
   @Deprecated('IGuild.region is deprecated, consider using IVoiceChannel.rtcRegion instead')
@@ -32,15 +27,34 @@ class GuildBuilder extends Builder {
   /// List of channel to create at guild creation
   List<ChannelBuilder>? channels;
 
+  /// The channel id to use for the afk channel
+  Snowflake? afkChannelId;
+
+  /// The afk timeout in seconds
+  int? afkTimeout;
+
+  /// The id of the system channel
+  Snowflake? systemChannelId;
+
+  /// The [SystemChannelFlags] to apply
+  SystemChannelFlags? systemChannelFlags;
+
+  /// Create new instance of [GuildBuilder]
+  GuildBuilder(this.name);
+
   @override
   RawApiMap build() => <String, dynamic>{
-        if (name != null) "name": name,
+        "name": name,
         if (icon != null) "icon": icon!.getBase64(),
         if (verificationLevel != null) "verification_level": verificationLevel,
         if (defaultMessageNotifications != null) "default_message_notifications": defaultMessageNotifications,
         if (explicitContentFilter != null) "explicit_content_filter": explicitContentFilter,
-        if (roles != null) "roles": _genIterable(roles!),
-        if (channels != null) "channels": _genIterable(channels!)
+        if (roles != null) "roles": _genIterable(roles!).toList(),
+        if (channels != null) "channels": _genIterable(channels!).toList(),
+        if (afkChannelId != null) "afk_channel_id": afkChannelId,
+        if (afkTimeout != null) "afk_timeout": afkTimeout,
+        if (systemChannelId != null) "system_channel_id": systemChannelId,
+        if (systemChannelFlags != null) "system_channel_flags": systemChannelFlags!.value,
       };
 
   Iterable<RawApiMap> _genIterable(List<Builder> list) sync* {
@@ -70,7 +84,7 @@ class RoleBuilder extends Builder {
   /// Whether role is mentionable
   bool? mentionable;
 
-  /// ole icon attachment
+  /// Role icon attachment
   AttachmentBuilder? roleIcon;
 
   /// Role icon emoji
