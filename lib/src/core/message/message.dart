@@ -358,6 +358,8 @@ class Message extends SnowflakeEntity implements IMessage {
       if (client.cacheOptions.memberCachePolicyLocation.objectConstructor && client.cacheOptions.memberCachePolicy.canCache(member!)) {
         guild?.getFromCache()?.members[member!.id] = member!;
       }
+    } else {
+      member = null;
     }
 
     roleMentions = [
