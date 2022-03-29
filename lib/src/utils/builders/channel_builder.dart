@@ -25,6 +25,7 @@ abstract class ChannelBuilder implements Builder {
   @override
   RawApiMap build() => {
         if (name != null) "name": name,
+        if(id != null) "id": id!.id,
         if (type != null) "type": type!.value,
         if (position != null) "position": position,
         if (parentChannel != null) "parent_id": parentChannel!.id.toString(),
