@@ -21,7 +21,8 @@ class GuildBuilder extends Builder {
   /// Explicit content filter level
   int? explicitContentFilter;
 
-  /// List of roles to create at guild creation
+  /// List of roles to create at guild creation.
+  /// When using this parameter, the first member of the list is the `@everyone` role - So all the permissions that you give to this role will be applied to all the members of the guild.
   List<RoleBuilder>? roles;
 
   /// List of channel to create at guild creation
@@ -69,6 +70,11 @@ class RoleBuilder extends Builder {
   /// Name of role
   String name;
 
+  /// When using the `roles` parameter in [INyxxWebsocket.createGuild], this field is required. It is a [Snowflake] placeholder for the role and will be replaced by the API consumption.
+  ///
+  /// Its purpose is to allow overwrite a role's permission in a channel when also passing the `channels` list.
+  Snowflake? id;
+
   /// Integer representation of hexadecimal color code
   DiscordColor? color;
 
@@ -102,6 +108,7 @@ class RoleBuilder extends Builder {
         if (permission != null) "permissions": permission!.calculatePermissionValue().toString(),
         if (mentionable != null) "mentionable": mentionable,
         if (roleIcon != null) "icon": roleIcon!.getBase64(),
-        if (roleIconEmoji != null) "unicode_emoji": roleIconEmoji
+        if (roleIconEmoji != null) "unicode_emoji": roleIconEmoji,
+        if (id != null) "id": id!.id,
       };
 }
