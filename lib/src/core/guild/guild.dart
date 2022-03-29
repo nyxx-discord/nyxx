@@ -240,8 +240,7 @@ abstract class IGuild implements SnowflakeEntity {
   /// Creates new role
   ///
   /// ```
-  /// var rb = new RoleBuilder()
-  ///   ..name = "Dartyy"
+  /// var rb = new RoleBuilder("Dartyy")
   ///   ..color = DiscordColor.fromInt(0xFF04F2)
   ///   ..hoist = true;
   ///
@@ -763,8 +762,7 @@ class Guild extends SnowflakeEntity implements IGuild {
   /// Creates new role
   ///
   /// ```
-  /// var rb = RoleBuilder()
-  ///   ..name = "Dartyy"
+  /// var rb = RoleBuilder("Dartyy")
   ///   ..color = DiscordColor.fromInt(0xFF04F2)
   ///   ..hoist = true;
   ///
