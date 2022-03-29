@@ -148,6 +148,7 @@ export 'src/internal/shard/shard.dart' show IShard;
 export 'src/internal/shard/shard_manager.dart' show IShardManager;
 export 'src/typedefs.dart' show RawApiMap;
 export 'src/utils/enum.dart' show IEnum;
+export 'src/internal/http/http_route.dart' show HttpRoute, HttpRoutePart, HttpRouteParam;
 export 'src/utils/builders/attachment_builder.dart' show AttachmentBuilder, AttachmentMetadataBuilder;
 export 'src/utils/builders/builder.dart' show Builder;
 export 'src/utils/builders/embed_author_builder.dart' show EmbedAuthorBuilder;

@@ -9,86 +9,67 @@ import 'package:nyxx/src/internal/http/http_handler.dart';
 import 'package:nyxx/src/internal/http/http_request.dart';
 
 class HttpBucket {
-  // Rate limits
-  int _remaining = 10;
-  DateTime? _resetAt;
-  double? _resetAfter;
-  RestEventController get _events => _httpHandler.client.eventsRest as RestEventController;
+  static const String xRateLimitBucket = "x-ratelimit-bucket";
+  static const String xRateLimitLimit = "x-ratelimit-limit";
+  static const String xRateLimitRemaining = "x-ratelimit-remaining";
+  static const String xRateLimitReset = "x-ratelimit-reset";
+  static const String xRateLimitResetAfter = "x-ratelimit-reset-after";
 
-  // Bucket ID
-  late final String id;
+  int _limit;
+  int _remaining;
+  DateTime _reset;
+  Duration _resetAfter;
+  final String _bucketId;
 
-  // Reference to http handler
-  final HttpHandler _httpHandler;
+  final List<HttpRequest> _inFlightRequests = [];
 
-  /// Creates an instance of [HttpBucket]
-  HttpBucket(this.id, this._httpHandler);
+  int get remaining => _remaining - _inFlightRequests.length;
 
-  Future<http.StreamedResponse> execute(HttpRequest request) async {
-    _httpHandler.logger.fine(
-        "Executing request: [${request.uri.toString()}]; Bucket ID: [$id]; Reset at: [$_resetAt]; Remaining: [$_remaining]; Reset after: [$_resetAfter]; Body: [${request is BasicRequest && request.body != null ? request.body : 'EMPTY'}]");
+  DateTime get reset => _reset;
 
-    // Get actual time and check if request can be executed based on data that bucket already have
-    // and wait if rate limit could be possibly hit
-    final now = DateTime.now();
-    if ((_resetAt != null && _resetAt!.isAfter(now)) && _remaining < 2) {
-      final waitTime = _resetAt!.millisecondsSinceEpoch - now.millisecondsSinceEpoch;
+  Duration get resetAfter => _resetAfter;
 
-      if (waitTime > 0) {
-        _events.onRateLimitedController.add(RatelimitEvent(request, true));
-        _httpHandler.logger.warning("Rate limited internally on endpoint: ${request.uri}. Trying to send request again in $waitTime ms...");
+  String get id => _bucketId;
 
-        return Future.delayed(Duration(milliseconds: waitTime), () => execute(request));
-      }
-    }
+  HttpBucket(this._limit, this._remaining, this._reset, this._resetAfter, this._bucketId);
 
-    // Execute request
-    try {
-      final response = await _httpHandler.httpClient.send(await request.prepareRequest());
-
-      _setBucketValues(response.headers);
-      return response;
-    } on HttpClientException catch (e) {
-      if (e.response == null) {
-        _httpHandler.logger.warning("Http Error on endpoint: ${request.uri}. Error: [${e.message.toString()}].");
-        return Future.error(e);
-      }
-
-      final response = e.response as http.StreamedResponse;
-
-      // Check for 429, emmit events and wait given in response body time
-      if (response.statusCode == 429) {
-        final responseBody = jsonDecode(await response.stream.bytesToString());
-        final retryAfter = ((responseBody["retry_after"] as double) * 1000).round();
-
-        _events.onRateLimitedController.add(RatelimitEvent(request, false, response));
-        _httpHandler.logger.warning("Rate limited via 429 on endpoint: ${request.uri}. Trying to send request again in $retryAfter ms...");
-
-        return Future.delayed(Duration(milliseconds: retryAfter), () => execute(request));
-      }
-
-      // Return http error
-      _setBucketValues(response.headers);
-      return response;
-    }
+  static HttpBucket? fromResponseSafe(http.StreamedResponse response) {
+    int? limit = getLimitFromHeaders(response.headers);
+    int? remaining = getRemainingFromHeaders(response.headers);
+    DateTime? reset = getResetFromHeaders(response.headers);
+    Duration? resetAfter = getResetAfterFromHeaders(response.headers);
+    String? bucketId = getBucketIdFromHeaders(response.headers);
+    return limit == null || remaining == null || reset == null || resetAfter == null || bucketId == null ? null : HttpBucket(limit, remaining, reset, resetAfter, bucketId);
   }
 
-  void _setBucketValues(Map<String, String> headers) {
-    if (headers["x-ratelimit-remaining"] != null) {
-      _remaining = int.parse(headers["x-ratelimit-remaining"]!);
-    }
+  static String? getBucketIdFromHeaders(Map<String, String> headers) => headers[xRateLimitBucket];
 
-    // seconds since epoch
-    if (headers["x-ratelimit-reset"] != null) {
-      final secondsSinceEpoch = (double.parse(headers["x-ratelimit-reset"]!) * 1000000).toInt();
-      _resetAt = DateTime.fromMicrosecondsSinceEpoch(secondsSinceEpoch);
-    }
+  static int? getLimitFromHeaders(Map<String, String> headers) => headers[xRateLimitLimit] == null ? null : int.parse(headers[xRateLimitLimit]!);
 
-    if (headers["x-ratelimit-reset-after"] != null) {
-      _resetAfter = double.parse(headers["x-ratelimit-reset-after"]!);
-    }
+  static int? getRemainingFromHeaders(Map<String, String> headers) => headers[xRateLimitRemaining] == null ? null : int.parse(headers[xRateLimitRemaining]!);
 
-    _httpHandler.logger.finer(
-        "Added http header values: HTTP Bucket ID: [${headers['x-ratelimit-bucket']}]; Reset at: [$_resetAt]; Remaining: [$_remaining]; Reset after: [$_resetAfter]");
+  // Server-Client clock drift makes headers.reset useless, build reset from headers.resetAfter and DateTime.now()
+  static DateTime? getResetFromHeaders(Map<String, String> headers) => headers[xRateLimitResetAfter] == null ? null : DateTime.now().add(getResetAfterFromHeaders(headers)!);
+
+  static Duration? getResetAfterFromHeaders(Map<String, String> headers) => headers[xRateLimitResetAfter] == null ? null : Duration(milliseconds: (double.parse(headers[xRateLimitResetAfter]!) * 1000).ceil());
+
+  void addInFlightRequest(HttpRequest httpRequest) => _inFlightRequests.add(httpRequest);
+
+  void removeInFlightRequest(HttpRequest httpRequest) => _inFlightRequests.remove(httpRequest);
+
+  bool isInBucket(http.StreamedResponse response) {
+    return getBucketIdFromHeaders(response.headers) == _bucketId;
+  }
+
+  updateRateLimit(http.StreamedResponse response) {
+    if (!isInBucket(response)) {
+      return;
+    } else {
+      _remaining = getRemainingFromHeaders(response.headers) ?? _remaining;
+
+      _reset = getResetFromHeaders(response.headers) ?? _reset;
+
+      _resetAfter = getResetAfterFromHeaders(response.headers) ?? _resetAfter;
+    }
   }
 }
