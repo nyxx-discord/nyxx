@@ -5,6 +5,11 @@ abstract class ChannelBuilder implements Builder {
   /// Name of the channel
   String? name;
 
+  /// Id of the channel.
+  /// When using the `channels` parameter on [GuildBuilder], this field within each channel object may be set to an integer placeholder, and will be replaced by the API upon consumption. 
+  /// Its purpose is to allow you to create `GUILD_CATEGORY` channels by setting the [parentChannel.id] field on any children to the category's id field. Category channels must be listed before any children.
+  Snowflake? id;
+
   /// Type of channel
   ChannelType? type;
 
