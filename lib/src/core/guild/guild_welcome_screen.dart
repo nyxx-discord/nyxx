@@ -8,7 +8,7 @@ abstract class IGuildWelcomeScreen {
 
   /// The channels shown in the welcome screen.
   /// Up to 5 channels.
-  List<IWelcomeChannel> get channels;
+  List<IGuildWelcomeChannel> get channels;
 }
 
 class GuildWelcomeScreen implements IGuildWelcomeScreen {
@@ -19,16 +19,16 @@ class GuildWelcomeScreen implements IGuildWelcomeScreen {
   /// The channels shown in the welcome screen.
   /// Up to 5 channels.
   @override
-  late final List<IWelcomeChannel> channels;
+  late final List<IGuildWelcomeChannel> channels;
 
   /// Creates an instance of [GuildWelcomeScreen]
   GuildWelcomeScreen(RawApiMap raw, INyxx client) {
     description = raw["description"] as String?;
-    channels = [for (final rawChannel in raw["welcome_channels"]) WelcomeChannel(rawChannel as RawApiMap, client)];
+    channels = [for (final rawChannel in raw["welcome_channels"]) GuildWelcomeChannel(rawChannel as RawApiMap, client)];
   }
 }
 
-abstract class IWelcomeChannel {
+abstract class IGuildWelcomeChannel {
   /// The channel id.
   Cacheable<Snowflake, IChannel> get channel;
 
@@ -47,7 +47,7 @@ abstract class IWelcomeChannel {
   IEmoji? get emoji;
 }
 
-class WelcomeChannel implements IWelcomeChannel {
+class GuildWelcomeChannel implements IGuildWelcomeChannel {
   /// The channel id.
   @override
   late final Cacheable<Snowflake, IChannel> channel;
@@ -71,7 +71,7 @@ class WelcomeChannel implements IWelcomeChannel {
   late final IEmoji? emoji;
 
   /// Creates an instance of [WelcomeChannel]
-  WelcomeChannel(RawApiMap raw, INyxx client) {
+  GuildWelcomeChannel(RawApiMap raw, INyxx client) {
     channel = ChannelCacheable(client, Snowflake(raw["channel_id"]));
     description = raw["description"] as String?;
     emojiName = raw["emoji_name"] as String?;

@@ -46,7 +46,7 @@ export 'src/core/guild/premium_tier.dart' show PremiumTier;
 export 'src/core/guild/role.dart' show IRole, IRoleTags;
 export 'src/core/guild/status.dart' show IClientStatus, UserStatus;
 export 'src/core/guild/webhook.dart' show IWebhook, WebhookType;
-export 'src/core/guild/guild_welcome_screen.dart' show IGuildWelcomeScreen, IWelcomeChannel;
+export 'src/core/guild/guild_welcome_screen.dart' show IGuildWelcomeScreen, IGuildWelcomeChannel;
 export 'src/core/guild/system_channel_flags.dart' show SystemChannelFlags;
 export 'src/core/message/attachment.dart' show IAttachment;
 export 'src/core/message/emoji.dart' show IEmoji;
