@@ -26,6 +26,8 @@ class GuildBuilder extends Builder {
   List<RoleBuilder>? roles;
 
   /// List of channel to create at guild creation
+  /// When using this field, the `position` field of the channel is ignored.
+  /// And none of the default channels are created.
   List<ChannelBuilder>? channels;
 
   /// The channel id to use for the afk channel
@@ -70,7 +72,7 @@ class RoleBuilder extends Builder {
   /// Name of role
   String name;
 
-  /// When using the `roles` parameter in [INyxxWebsocket.createGuild], this field is required. It is a [Snowflake] placeholder for the role and will be replaced by the API consumption.
+  /// When using the `roles` parameter in [GuildBuilder], this field is required. It is a [Snowflake] placeholder for the role and will be replaced by the API consumption.
   ///
   /// Its purpose is to allow overwrite a role's permission in a channel when also passing the `channels` list.
   Snowflake? id;
