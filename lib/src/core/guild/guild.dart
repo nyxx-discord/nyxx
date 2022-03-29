@@ -879,5 +879,5 @@ class Guild extends SnowflakeEntity implements IGuild {
   Stream<GuildEvent> fetchGuildEvents({bool withUserCount = false}) => client.httpEndpoints.fetchGuildEvents(id);
 
   @override
-  Future<IGuildWelcomeScreen?> fetchWelcomeScreen() => client.httpEndpoints.fetchGuildWelcomeScreen(id);
+  Future<IGuildWelcomeScreen> fetchWelcomeScreen() => client.httpEndpoints.fetchGuildWelcomeScreen(id);
 }

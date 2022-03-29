@@ -96,7 +96,7 @@ abstract class IHttpEndpoints {
   Future<IBaseGuildEmoji> fetchGuildEmoji(Snowflake guildId, Snowflake emojiId);
 
   /// Fetches a [IGuildWelcomeScreen] from the given [guildId]
-  Future<IGuildWelcomeScreen?> fetchGuildWelcomeScreen(Snowflake guildId);
+  Future<IGuildWelcomeScreen> fetchGuildWelcomeScreen(Snowflake guildId);
 
   /// Creates emoji in given guild
   Future<IBaseGuildEmoji> createEmoji(Snowflake guildId, String name, {List<SnowflakeEntity>? roles, AttachmentBuilder? emojiAttachment});
@@ -574,15 +574,11 @@ class HttpEndpoints implements IHttpEndpoints {
   }
 
   @override
-  Future<IGuildWelcomeScreen?> fetchGuildWelcomeScreen(Snowflake guildId) async {
+  Future<IGuildWelcomeScreen> fetchGuildWelcomeScreen(Snowflake guildId) async {
     final response = await httpHandler.execute(BasicRequest("/guilds/$guildId/welcome-screen"));
 
     if (response is HttpResponseSuccess) {
       return GuildWelcomeScreen(response.jsonBody as RawApiMap, client);
-    }
-
-    if (response.statusCode == 404) {
-      return null;
     }
 
     return Future.error(response);
