@@ -249,7 +249,8 @@ abstract class INyxxWebsocket implements INyxxRest {
   Future<IGuildPreview> fetchGuildPreview(Snowflake guildId);
 
   /// Returns guild with given [guildId]
-  Future<IGuild> fetchGuild(Snowflake guildId);
+  /// If [withCounts] is set to true, then guild will have [IGuild.approximateMemberCount] and [IGuild.approximatePresenceCount] present.
+  Future<IGuild> fetchGuild(Snowflake guildId, {bool? withCounts = true});
 
   /// Creates a guild.
   ///
@@ -381,8 +382,9 @@ class NyxxWebsocket extends NyxxRest implements INyxxWebsocket {
   Future<IGuildPreview> fetchGuildPreview(Snowflake guildId) async => httpEndpoints.fetchGuildPreview(guildId);
 
   /// Returns guild with given [guildId]
+  /// If [withCounts] is set to true, then guild will have [IGuild.approximateMemberCount] and [IGuild.approximatePresenceCount] present.
   @override
-  Future<IGuild> fetchGuild(Snowflake guildId) => httpEndpoints.fetchGuild(guildId);
+  Future<IGuild> fetchGuild(Snowflake guildId, {bool? withCounts = true}) => httpEndpoints.fetchGuild(guildId, withCounts: withCounts);
 
   /// Returns channel with specified id.
   /// ```

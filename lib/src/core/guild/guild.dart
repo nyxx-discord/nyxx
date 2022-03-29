@@ -149,6 +149,9 @@ abstract class IGuild implements SnowflakeEntity {
   /// The maximum amount of members that can be in this guild.
   int get maximumMembers;
 
+  /// The maximum amount of presences that can be in this guild.
+  int? get maximumPresences;
+
   /// Explicit content filter level of this guild.
   int get explicitContentFilterLevel;
 
@@ -159,7 +162,13 @@ abstract class IGuild implements SnowflakeEntity {
   String? get description;
 
   /// The total amount of members in this guild.
-  int get memberCount;
+  int? get memberCount;
+
+  /// The approximate amount of members in this guild.
+  int? get approximateMemberCount;
+
+  /// The approximate amount of presences in the guild.
+  int? get approximatePresenceCount;
 
   /// The guild's icon, represented as URL.
   /// If guild doesn't have icon it returns null.
@@ -468,6 +477,18 @@ class Guild extends SnowflakeEntity implements IGuild {
   @override
   late final int maximumMembers;
 
+  /// The approximate amount of members in this guild.
+  @override
+  late final int? approximateMemberCount;
+
+  /// The approximate amount of presences in this guild.
+  @override
+  late final int? approximatePresenceCount;
+
+  /// The maximum amount of presences that can be in this guild.
+  @override
+  late final int? maximumPresences;
+
   /// Explicit content filter level of guild
   @override
   late final int explicitContentFilterLevel;
@@ -482,11 +503,11 @@ class Guild extends SnowflakeEntity implements IGuild {
 
   /// The total amount of members in the guild.
   @override
-  late final int memberCount;
+  late final int? memberCount;
 
   /// Returns url to this guild.
   @override
-  String get url => "https://discordapp.com/channels/${id.toString()}";
+  String get url => "https://discordapp.com/guilds/${id.toString()}";
 
   /// Getter for @everyone role
   @override
@@ -557,9 +578,13 @@ class Guild extends SnowflakeEntity implements IGuild {
     banner = raw['banner'] as String?;
     large = raw["large"] as bool? ?? false;
     maximumMembers = raw["max_members"] as int;
+    maximumPresences = raw["max_presences"] as int?;
     explicitContentFilterLevel = raw["explicit_content_filter"] as int;
     vanityUrlCode = raw["vanity_url_code"] as String?;
     description = raw["description"] as String?;
+    memberCount = raw["member_count"] as int?;
+    approximateMemberCount = raw["approximate_member_count"] as int?;
+    approximatePresenceCount = raw["approximate_presence_count"] as int?;
 
     owner = UserCacheable(client, Snowflake(raw["owner_id"]));
 
@@ -613,7 +638,6 @@ class Guild extends SnowflakeEntity implements IGuild {
 
     if (!guildCreate) return;
 
-    memberCount = raw["member_count"] as int;
 
     raw["channels"].forEach((o) {
       final channel = Channel.deserialize(client, o as RawApiMap, id);

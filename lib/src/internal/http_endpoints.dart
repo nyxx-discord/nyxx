@@ -87,7 +87,7 @@ abstract class IHttpEndpoints {
   Future<void> addRoleToUser(Snowflake guildId, Snowflake roleId, Snowflake userId, {String? auditReason});
 
   /// Fetches [Guild] object from API
-  Future<IGuild> fetchGuild(Snowflake guildId);
+  Future<IGuild> fetchGuild(Snowflake guildId, {bool? withCounts = true});
 
   /// Fetches [IChannel] from API. Channel cas be cast to wanted type using generics
   Future<T> fetchChannel<T>(Snowflake id);
@@ -540,8 +540,8 @@ class HttpEndpoints implements IHttpEndpoints {
       executeSafe(BasicRequest("/guilds/$guildId/members/$userId/roles/$roleId", method: "PUT", auditLog: auditReason));
 
   @override
-  Future<IGuild> fetchGuild(Snowflake guildId) async {
-    final response = await httpHandler.execute(BasicRequest("/guilds/${guildId.toString()}"));
+  Future<IGuild> fetchGuild(Snowflake guildId, {bool? withCounts = true}) async {
+    final response = await httpHandler.execute(BasicRequest("/guilds/${guildId.toString()}", queryParams: {"with_counts": (withCounts ?? true).toString()}));
 
     if (response is HttpResponseSuccess) {
       return Guild(client, response.jsonBody as RawApiMap);
