@@ -9,7 +9,7 @@ class GuildBuilder extends Builder {
   @Deprecated('IGuild.region is deprecated, consider using IVoiceChannel.rtcRegion instead')
   String? region;
 
-  /// Base64 encoded 128x128 image
+  /// The 128x128 icon for the guild
   AttachmentBuilder? icon;
 
   /// Verification level
