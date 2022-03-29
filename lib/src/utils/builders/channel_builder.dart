@@ -2,7 +2,7 @@ import 'package:nyxx/nyxx.dart';
 
 /// Builder for creating mini channel instance
 abstract class ChannelBuilder implements Builder {
-  /// Name of the channel
+  /// Name of the channel (1-100 characters)
   String? name;
 
   /// Id of the channel.
