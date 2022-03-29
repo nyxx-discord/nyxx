@@ -255,7 +255,7 @@ abstract class INyxxWebsocket implements INyxxRest {
   ///
   /// **⚠️ This endpoint can only be used by bots that are in ten guilds or fewer.**
   /// ```dart
-  /// var gb = GuildBuilder()..name = "Test Guild";
+  /// var gb = GuildBuilder("Test Guild");
   /// var guild = await client.createGuild(gb);
   /// ```
   Future<IGuild> createGuild(GuildBuilder builder);
@@ -402,7 +402,7 @@ class NyxxWebsocket extends NyxxRest implements INyxxWebsocket {
   ///
   /// **⚠️ This endpoint can only be used by bots that are in ten guilds or fewer.**
   /// ```dart
-  /// var gb = GuildBuilder()..name = "Test Guild";
+  /// var gb = GuildBuilder("Test Guild");
   /// var guild = await client.createGuild(gb);
   /// ```
   @override
