@@ -1,3 +1,8 @@
+## 3.3.1
+__30.03.2022__
+
+- bug: Fix member not being initialized in IMessage (#315)
+
 ## 3.3.0
 __15.03.2022__
 
