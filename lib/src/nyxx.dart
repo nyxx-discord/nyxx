@@ -1,10 +1,8 @@
 import 'dart:async';
 
 import 'package:logging/logging.dart';
-import 'package:nyxx/nyxx.dart';
 import 'package:nyxx/src/client_options.dart';
 import 'package:nyxx/src/core/channel/invite.dart';
-import 'package:nyxx/src/core/message/guild_emoji.dart';
 import 'package:nyxx/src/core/snowflake.dart';
 import 'package:nyxx/src/core/application/client_oauth2_application.dart';
 import 'package:nyxx/src/core/channel/channel.dart';
@@ -15,9 +13,11 @@ import 'package:nyxx/src/core/guild/webhook.dart';
 import 'package:nyxx/src/core/message/sticker.dart';
 import 'package:nyxx/src/core/user/user.dart';
 import 'package:nyxx/src/events/ready_event.dart';
+import 'package:nyxx/src/internal/cache/cache.dart';
 import 'package:nyxx/src/internal/connection_manager.dart';
 import 'package:nyxx/src/internal/constants.dart';
 import 'package:nyxx/src/internal/event_controller.dart';
+import 'package:nyxx/src/internal/exceptions/unrecoverable_nyxx_error.dart';
 import 'package:nyxx/src/internal/http/http_response.dart';
 import 'package:nyxx/src/internal/http_endpoints.dart';
 import 'package:nyxx/src/internal/exceptions/missing_token_error.dart';
@@ -25,6 +25,7 @@ import 'package:nyxx/src/internal/http/http_handler.dart';
 import 'package:nyxx/src/internal/interfaces/disposable.dart';
 import 'package:nyxx/src/internal/shard/shard_manager.dart';
 import 'package:nyxx/src/plugin/plugin.dart';
+import 'package:nyxx/src/plugin/plugin_manager.dart';
 import 'utils/builders/presence_builder.dart';
 import 'package:nyxx/src/typedefs.dart';
 
