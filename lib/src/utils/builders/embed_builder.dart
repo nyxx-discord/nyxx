@@ -39,7 +39,7 @@ class EmbedBuilder extends Builder {
   EmbedAuthorBuilder? author;
 
   /// Embed custom fields;
-  late final List<EmbedFieldBuilder> fields;
+  late List<EmbedFieldBuilder> fields;
 
   /// Creates clean instance [EmbedBuilder]
   EmbedBuilder() {

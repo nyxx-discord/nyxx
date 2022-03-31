@@ -162,6 +162,7 @@ main() {
       expect(
           result,
           equals({
+            'content': '',
             'embeds': [
               {'description': 'test1'},
               {'description': 'test2'}

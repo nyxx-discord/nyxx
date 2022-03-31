@@ -334,6 +334,9 @@ abstract class IMessageUpdateEvent {
   /// Edited message with updated fields
   IMessage? get updatedMessage;
 
+  /// The message before it was updated, if it was cached.
+  IMessage? get oldMessage;
+
   /// Id of channel where message was edited
   CacheableTextChannel<ITextChannel> get channel;
 
@@ -346,6 +349,9 @@ class MessageUpdateEvent implements IMessageUpdateEvent {
   /// Edited message with updated fields
   @override
   late final IMessage? updatedMessage;
+
+  @override
+  late final IMessage? oldMessage;
 
   /// Id of channel where message was edited
   @override
@@ -365,10 +371,13 @@ class MessageUpdateEvent implements IMessageUpdateEvent {
       return;
     }
 
-    updatedMessage = channelInstance.messageCache[messageId];
-    if (updatedMessage == null) {
+    oldMessage = channelInstance.messageCache[messageId];
+
+    if (oldMessage == null) {
       return;
     }
+
+    updatedMessage = Message.copy(oldMessage as Message);
 
     if (raw["d"]["content"] != updatedMessage!.content) {
       (updatedMessage! as Message).content = raw["d"]["content"].toString();
@@ -399,5 +408,7 @@ class MessageUpdateEvent implements IMessageUpdateEvent {
         for (final rawRow in raw['d']["components"]) [for (final componentRaw in rawRow["components"]) MessageComponent.deserialize(componentRaw as RawApiMap)]
       ];
     }
+
+    channelInstance.messageCache[messageId] = updatedMessage!;
   }
 }

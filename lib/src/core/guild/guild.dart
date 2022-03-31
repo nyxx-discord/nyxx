@@ -493,6 +493,7 @@ class Guild extends SnowflakeEntity implements IGuild {
     mfaLevel = raw["mfa_level"] as int;
     verificationLevel = raw["verification_level"] as int;
     notificationLevel = raw["default_message_notifications"] as int;
+    available = !(raw["unavailable"] as bool? ?? false);
 
     icon = raw["icon"] as String?;
     discoverySplash = raw["discoverySplash"] as String?;
@@ -525,10 +526,14 @@ class Guild extends SnowflakeEntity implements IGuild {
 
     if (raw["embed_channel_id"] != null) {
       embedChannel = ChannelCacheable(client, Snowflake(raw["embed_channel_id"]));
+    } else {
+      embedChannel = null;
     }
 
     if (raw["system_channel_id"] != null) {
       systemChannel = ChannelCacheable(client, Snowflake(raw["system_channel_id"]));
+    } else {
+      systemChannel = null;
     }
 
     features = (raw["features"] as RawApiList).map((e) => GuildFeature.from(e.toString()));
@@ -576,10 +581,14 @@ class Guild extends SnowflakeEntity implements IGuild {
 
     if (raw["rules_channel_id"] != null) {
       rulesChannel = ChannelCacheable(client, Snowflake(raw["rules_channel_id"]));
+    } else {
+      rulesChannel = null;
     }
 
     if (raw["public_updates_channel_id"] != null) {
       publicUpdatesChannel = CacheableTextChannel<ITextChannel>(client, Snowflake(raw["public_updates_channel_id"]));
+    } else {
+      publicUpdatesChannel = null;
     }
 
     stageInstances = [
