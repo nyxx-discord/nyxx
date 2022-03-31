@@ -1,3 +1,8 @@
+## 4.0.0-dev.0
+__31.03.2022__
+
+- feature: Fix target id property and add guild audit logs options (#307)
+
 ## 3.3.1
 __30.03.2022__
 
