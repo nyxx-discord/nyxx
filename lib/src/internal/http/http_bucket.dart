@@ -53,9 +53,11 @@ class HttpBucket {
   static int? getRemainingFromHeaders(Map<String, String> headers) => headers[kRateLimitRemaining] == null ? null : int.parse(headers[kRateLimitRemaining]!);
 
   // Server-Client clock drift makes headers.reset useless, build reset from headers.resetAfter and DateTime.now()
-  static DateTime? getResetFromHeaders(Map<String, String> headers) => headers[kRateLimitResetAfter] == null ? null : DateTime.now().add(getResetAfterFromHeaders(headers)!);
+  static DateTime? getResetFromHeaders(Map<String, String> headers) =>
+      headers[kRateLimitResetAfter] == null ? null : DateTime.now().add(getResetAfterFromHeaders(headers)!);
 
-  static Duration? getResetAfterFromHeaders(Map<String, String> headers) => headers[kRateLimitResetAfter] == null ? null : Duration(milliseconds: (double.parse(headers[kRateLimitResetAfter]!) * 1000).ceil());
+  static Duration? getResetAfterFromHeaders(Map<String, String> headers) =>
+      headers[kRateLimitResetAfter] == null ? null : Duration(milliseconds: (double.parse(headers[kRateLimitResetAfter]!) * 1000).ceil());
 
   void addInFlightRequest(HttpRequest httpRequest) => _inFlightRequests.add(httpRequest);
 

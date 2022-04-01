@@ -1,7 +1,6 @@
 import 'http_route_param.dart';
 import 'http_route_part.dart';
 
-
 /// Builds routes according to Discord's dynamic bucket rate limiting scheme.
 ///
 /// Use builder syntax such as:

@@ -31,7 +31,8 @@ class HttpHandler {
 
   HttpBucket? _upsertBucket(HttpRequest request, http.StreamedResponse response) {
     //Get or Create Bucket
-    HttpBucket? bucket = _bucketByRequestRateLimitId.values.toList().firstWhereSafe((bucket) => bucket?.isInBucket(response) ?? false) ?? HttpBucket.fromResponseSafe(response);
+    HttpBucket? bucket =
+        _bucketByRequestRateLimitId.values.toList().firstWhereSafe((bucket) => bucket?.isInBucket(response) ?? false) ?? HttpBucket.fromResponseSafe(response);
     //Update Bucket
     bucket?.updateRateLimit(response);
 

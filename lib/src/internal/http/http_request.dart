@@ -69,7 +69,13 @@ class MultipartRequest extends HttpRequest {
 
   /// Creates an instance of [MultipartRequest]
   MultipartRequest(HttpRoute route, this.files,
-      {this.fields, String method = "GET", RawApiMap? queryParams, Map<String, String>? headers, String? auditLog, bool auth = true, bool globalRateLimit = true})
+      {this.fields,
+      String method = "GET",
+      RawApiMap? queryParams,
+      Map<String, String>? headers,
+      String? auditLog,
+      bool auth = true,
+      bool globalRateLimit = true})
       : super(route, method: method, queryParams: queryParams, headers: headers, auditLog: auditLog, globalRateLimit: globalRateLimit, auth: auth);
 
   @override
