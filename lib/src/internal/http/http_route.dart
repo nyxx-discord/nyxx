@@ -1,7 +1,20 @@
+import 'http_route_param.dart';
+import 'http_route_part.dart';
+
+
+/// Builds routes according to Discord's dynamic bucket rate limiting scheme.
+///
+/// Use builder syntax such as:
+/// ```dart
+/// var route = HttpRoute()..guilds(id: id)..members()..search();
+/// ```
+/// to keep route definitions brief while reusing route rate limiting definitions.
+/// If creating custom routes with [add], remember to comply with Discord's
+/// rate limiting scheme by toggling the appropriate [HttpRouteParam.isMajor].
 class HttpRoute {
   final List<HttpRoutePart> _httpRouteParts = [];
 
-  List<String> get pathSegments => _httpRouteParts //
+  List<String> get pathSegments => _httpRouteParts
       .expand((part) => [
             part.path,
             ...part.params.map((param) => param.param),
@@ -10,7 +23,7 @@ class HttpRoute {
 
   String get path => "/" + pathSegments.join("/");
 
-  String get routeId => _httpRouteParts //
+  String get routeId => _httpRouteParts
       .expand((part) => [
             part.path,
             ...List.generate(
@@ -19,8 +32,6 @@ class HttpRoute {
             ),
           ])
       .join("/");
-
-  HttpRoute();
 
   void add(HttpRoutePart httpRoutePart) => _httpRouteParts.add(httpRoutePart);
 
@@ -103,18 +114,4 @@ class HttpRoute {
   void public() => add(HttpRoutePart("public"));
 
   void stickerpacks() => add(HttpRoutePart("sticker-packs"));
-}
-
-class HttpRoutePart {
-  final String path;
-  final List<HttpRouteParam> params;
-
-  HttpRoutePart(this.path, [this.params = const <HttpRouteParam>[]]);
-}
-
-class HttpRouteParam {
-  final String param;
-  final bool isMajor;
-
-  HttpRouteParam(this.param, {this.isMajor = false});
 }

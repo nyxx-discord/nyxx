@@ -21,7 +21,7 @@ class HttpHandler {
 
   RestEventController get _events => client.eventsRest as RestEventController;
 
-  final Map<String, HttpBucket?> _bucketByRequestRateLimitId = <String, HttpBucket?>{};
+  final Map<String, HttpBucket?> _bucketByRequestRateLimitId = {};
   DateTime globalRateLimitReset = DateTime.fromMillisecondsSinceEpoch(0);
 
   /// Creates an instance of [HttpHandler]
@@ -52,7 +52,7 @@ class HttpHandler {
       request.headers.addAll({"Authorization": "Bot ${client.token}"});
     }
 
-    HttpBucket? currentBucket = _bucketByRequestRateLimitId.putIfAbsent(request.rateLimitId, () => null);
+    HttpBucket? currentBucket = _bucketByRequestRateLimitId[request.rateLimitId];
     logger.fine(
         "Executing request: [${request.uri.toString()}]; Bucket ID: [${currentBucket?.id}]; Reset at: [${currentBucket?.reset}]; Remaining: [${currentBucket?.remaining}]; Reset after: [${currentBucket?.resetAfter}]; Body: [${request is BasicRequest && request.body != null ? request.body : 'EMPTY'}]");
 
@@ -61,8 +61,12 @@ class HttpHandler {
     final now = DateTime.now();
     Duration globalWaitTime = request.globalRateLimit ? globalRateLimitReset.difference(now) : Duration.zero;
     Duration bucketWaitTime = (currentBucket?.remaining ?? 1) > 0 ? Duration.zero : currentBucket!.reset.difference(now);
-    if (globalWaitTime > Duration.zero) logger.warning("Global rate limit reached on endpoint: ${request.uri}");
-    if (bucketWaitTime > Duration.zero) logger.warning("Bucket rate limit reached on endpoint: ${request.uri}");
+    if (globalWaitTime > Duration.zero) {
+      logger.warning("Global rate limit reached on endpoint: ${request.uri}");
+    }
+    if (bucketWaitTime > Duration.zero) {
+      logger.warning("Bucket rate limit reached on endpoint: ${request.uri}");
+    }
     Duration waitTime = globalWaitTime.compareTo(bucketWaitTime) > 0 ? globalWaitTime : bucketWaitTime;
     if (waitTime > Duration.zero) {
       logger.warning("Trying to send request again in $waitTime");
@@ -93,7 +97,9 @@ class HttpHandler {
         final retryAfter = Duration(milliseconds: ((responseBody["retry_after"] as double) * 1000).ceil());
         final isGlobal = responseBody["global"] as bool;
 
-        if (isGlobal) globalRateLimitReset = DateTime.now().add(retryAfter);
+        if (isGlobal) {
+          globalRateLimitReset = DateTime.now().add(retryAfter);
+        }
 
         _events.onRateLimitedController.add(RatelimitEvent(request, false, response));
         logger.warning("${isGlobal ? "Global" : ""} Rate limited via 429 on endpoint: ${request.uri}. Trying to send request again in $retryAfter");

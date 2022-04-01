@@ -335,11 +335,7 @@ abstract class IHttpEndpoints {
   Future<IDMChannel> createDMChannel(Snowflake userId);
 
   /// Used to send a request including standard bot authentication.
-  Future<HttpResponse> sendCustomRequest(HttpRoute route, String method, {dynamic body, Map<String, dynamic>? headers, List<AttachmentBuilder> files = const [], Map<String, dynamic>? queryParams, bool auth = false, bool rateLimit = true});
-
-  /// Used to send a request including standard bot authentication.
-  @Deprecated("Using this will partially break rate limiting, prefer sendCustomRequest")
-  Future<IHttpResponse> sendRawRequest(String url, String method, {dynamic body, Map<String, dynamic>? headers, List<AttachmentBuilder> files = const [], Map<String, dynamic>? queryParams, bool auth = false, bool rateLimit = true});
+  Future<HttpResponse> sendRawRequest(HttpRoute route, String method, {dynamic body, Map<String, dynamic>? headers, List<AttachmentBuilder> files = const [], Map<String, dynamic>? queryParams, bool auth = false, bool rateLimit = true});
 
   /// Fetches preview of guild
   Future<IGuildPreview> fetchGuildPreview(Snowflake guildId);
@@ -490,16 +486,16 @@ class HttpEndpoints implements IHttpEndpoints {
   @override
   Future<void> deleteGuildEmoji(Snowflake guildId, Snowflake emojiId) async => executeSafe(BasicRequest(
       HttpRoute()
-        ..guilds(id: "$guildId")
-        ..emojis(id: "$emojiId"),
+        ..guilds(id: guildId.toString())
+        ..emojis(id: emojiId.toString()),
       method: "DELETE"));
 
   @override
   Future<Role> editRole(Snowflake guildId, Snowflake roleId, RoleBuilder role, {String? auditReason}) async {
     final response = await httpHandler.execute(BasicRequest(
         HttpRoute()
-          ..guilds(id: "$guildId")
-          ..roles(id: "$roleId"),
+          ..guilds(id: guildId.toString())
+          ..roles(id: roleId.toString()),
         method: "PATCH",
         body: role.build(),
         auditLog: auditReason));
@@ -514,23 +510,23 @@ class HttpEndpoints implements IHttpEndpoints {
   @override
   Future<void> deleteRole(Snowflake guildId, Snowflake roleId, {String? auditReason}) async => executeSafe(BasicRequest(
       HttpRoute()
-        ..guilds(id: "$guildId")
-        ..roles(id: "$roleId"),
+        ..guilds(id: guildId.toString())
+        ..roles(id: roleId.toString()),
       method: "DELETE",
       auditLog: auditReason));
 
   @override
   Future<void> addRoleToUser(Snowflake guildId, Snowflake roleId, Snowflake userId, {String? auditReason}) async => executeSafe(BasicRequest(
       HttpRoute()
-        ..guilds(id: "$guildId")
-        ..members(id: "$userId")
-        ..roles(id: "$roleId"),
+        ..guilds(id: guildId.toString())
+        ..members(id: userId.toString())
+        ..roles(id: roleId.toString()),
       method: "PUT",
       auditLog: auditReason));
 
   @override
   Future<IGuild> fetchGuild(Snowflake guildId) async {
-    final response = await httpHandler.execute(BasicRequest(HttpRoute()..guilds(id: "$guildId")));
+    final response = await httpHandler.execute(BasicRequest(HttpRoute()..guilds(id: guildId.toString())));
 
     if (response is HttpResponseSuccess) {
       return Guild(client, response.jsonBody as RawApiMap);
@@ -541,7 +537,7 @@ class HttpEndpoints implements IHttpEndpoints {
 
   @override
   Future<T> fetchChannel<T>(Snowflake id) async {
-    final response = await httpHandler.execute(BasicRequest(HttpRoute()..channels(id: "$id")));
+    final response = await httpHandler.execute(BasicRequest(HttpRoute()..channels(id: id.toString())));
 
     if (response is HttpResponseError) {
       return Future.error(response);
@@ -554,8 +550,8 @@ class HttpEndpoints implements IHttpEndpoints {
   @override
   Future<IBaseGuildEmoji> fetchGuildEmoji(Snowflake guildId, Snowflake emojiId) async {
     final response = await httpHandler.execute(BasicRequest(HttpRoute()
-      ..guilds(id: "$guildId")
-      ..emojis(id: "$emojiId")));
+      ..guilds(id: guildId.toString())
+      ..emojis(id: emojiId.toString())));
 
     if (response is HttpResponseSuccess) {
       return GuildEmoji(client, response.jsonBody as RawApiMap, guildId);
@@ -570,7 +566,7 @@ class HttpEndpoints implements IHttpEndpoints {
 
     final response = await httpHandler.execute(BasicRequest(
         HttpRoute()
-          ..guilds(id: "$guildId")
+          ..guilds(id: guildId.toString())
           ..emojis(),
         method: "POST",
         body: body));
@@ -585,8 +581,8 @@ class HttpEndpoints implements IHttpEndpoints {
   @override
   Future<IUser> fetchEmojiCreator(Snowflake guildId, Snowflake emojiId) async {
     final response = await httpHandler.execute(BasicRequest(HttpRoute()
-      ..guilds(id: "$guildId")
-      ..emojis(id: "$emojiId")));
+      ..guilds(id: guildId.toString())
+      ..emojis(id: emojiId.toString())));
 
     if (response is HttpResponseSuccess) {
       if (response.jsonBody["managed"] as bool) {
@@ -607,7 +603,7 @@ class HttpEndpoints implements IHttpEndpoints {
   Future<int> guildPruneCount(Snowflake guildId, int days, {Iterable<Snowflake>? includeRoles}) async {
     final response = await httpHandler.execute(BasicRequest(
         HttpRoute()
-          ..guilds(id: "$guildId")
+          ..guilds(id: guildId.toString())
           ..prune(),
         queryParams: {"days": days.toString(), if (includeRoles != null) "include_roles": includeRoles.map((e) => e.id.toString())}));
 
@@ -622,7 +618,7 @@ class HttpEndpoints implements IHttpEndpoints {
   Future<int> guildPrune(Snowflake guildId, int days, {Iterable<Snowflake>? includeRoles, String? auditReason}) async {
     final response = await httpHandler.execute(BasicRequest(
         HttpRoute()
-          ..guilds(id: "$guildId")
+          ..guilds(id: guildId.toString())
           ..prune(),
         method: "POST",
         auditLog: auditReason,
@@ -639,7 +635,7 @@ class HttpEndpoints implements IHttpEndpoints {
   @override
   Stream<IBan> getGuildBans(Snowflake guildId) async* {
     final response = await httpHandler.execute(BasicRequest(HttpRoute()
-      ..guilds(id: "$guildId")
+      ..guilds(id: guildId.toString())
       ..bans()));
 
     if (response is HttpResponseError) {
@@ -655,7 +651,7 @@ class HttpEndpoints implements IHttpEndpoints {
   @override
   Future<void> modifyCurrentMember(Snowflake guildId, {String? nick}) async => executeSafe(BasicRequest(
       HttpRoute()
-        ..guilds(id: "$guildId")
+        ..guilds(id: guildId.toString())
         ..members(id: "@me")
         ..nick(),
       method: "PATCH",
@@ -664,7 +660,7 @@ class HttpEndpoints implements IHttpEndpoints {
   @override
   Future<IBan> getGuildBan(Snowflake guildId, Snowflake bannedUserId) async {
     final response = await httpHandler.execute(BasicRequest(HttpRoute()
-      ..guilds(id: "guildId")
+      ..guilds(id: guildId.toString())
       ..bans(id: "$bannedUserId")));
 
     if (response is HttpResponseSuccess) {
@@ -676,7 +672,7 @@ class HttpEndpoints implements IHttpEndpoints {
 
   @override
   Future<IGuild> changeGuildOwner(Snowflake guildId, SnowflakeEntity member, {String? auditReason}) async {
-    final response = await httpHandler.execute(BasicRequest(HttpRoute()..guilds(id: "$guildId"), method: "PATCH", auditLog: auditReason, body: {"owner_id": member.id}));
+    final response = await httpHandler.execute(BasicRequest(HttpRoute()..guilds(id: guildId.toString()), method: "PATCH", auditLog: auditReason, body: {"owner_id": member.id}));
 
     if (response is HttpResponseSuccess) {
       return Guild(client, response.jsonBody as RawApiMap);
@@ -689,13 +685,13 @@ class HttpEndpoints implements IHttpEndpoints {
   Future<void> leaveGuild(Snowflake guildId) async => executeSafe(BasicRequest(
       HttpRoute()
         ..users(id: "@me")
-        ..guilds(id: "$guildId"),
+        ..guilds(id: guildId.toString()),
       method: "DELETE"));
 
   @override
   Stream<IInvite> fetchGuildInvites(Snowflake guildId) async* {
     final response = await httpHandler.execute(BasicRequest(HttpRoute()
-      ..guilds(id: "$guildId")
+      ..guilds(id: guildId.toString())
       ..invites()));
 
     if (response is HttpResponseError) {
@@ -712,7 +708,7 @@ class HttpEndpoints implements IHttpEndpoints {
   Future<IInvite> createVoiceActivityInvite(Snowflake activityId, Snowflake channelId, {int? maxAge, int? maxUses}) async {
     final response = await httpHandler.execute(BasicRequest(
         HttpRoute()
-          ..channels(id: "$channelId")
+          ..channels(id: channelId.toString())
           ..invites(),
         method: "POST",
         body: {
@@ -740,7 +736,7 @@ class HttpEndpoints implements IHttpEndpoints {
 
     final response = await httpHandler.execute(BasicRequest(
         HttpRoute()
-          ..guilds(id: "$guildId")
+          ..guilds(id: guildId.toString())
           ..auditlogs(),
         queryParams: queryParams));
 
@@ -755,7 +751,7 @@ class HttpEndpoints implements IHttpEndpoints {
   Future<IRole> createGuildRole(Snowflake guildId, RoleBuilder roleBuilder, {String? auditReason}) async {
     final response = await httpHandler.execute(BasicRequest(
         HttpRoute()
-          ..guilds(id: "$guildId")
+          ..guilds(id: guildId.toString())
           ..roles(),
         method: "POST",
         auditLog: auditReason,
@@ -771,7 +767,7 @@ class HttpEndpoints implements IHttpEndpoints {
   @override
   Stream<IVoiceRegion> fetchGuildVoiceRegions(Snowflake guildId) async* {
     final response = await httpHandler.execute(BasicRequest(HttpRoute()
-      ..guilds(id: "$guildId")
+      ..guilds(id: guildId.toString())
       ..regions()));
 
     if (response is HttpResponseError) {
@@ -787,7 +783,7 @@ class HttpEndpoints implements IHttpEndpoints {
   @override
   Future<void> moveGuildChannel(Snowflake guildId, Snowflake channelId, int position, {String? auditReason}) async => executeSafe(BasicRequest(
       HttpRoute()
-        ..guilds(id: "$guildId")
+        ..guilds(id: guildId.toString())
         ..channels(),
       method: "PATCH",
       auditLog: auditReason,
@@ -1519,31 +1515,9 @@ class HttpEndpoints implements IHttpEndpoints {
   }
 
   @override
-  Future<HttpResponse> sendCustomRequest(HttpRoute route, String method,
+  Future<HttpResponse> sendRawRequest(HttpRoute route, String method,
       {dynamic body, Map<String, dynamic>? headers, List<AttachmentBuilder> files = const [], Map<String, dynamic>? queryParams, bool auth = false, bool rateLimit = true}) async {
     HttpResponse response;
-    if (files.isNotEmpty) {
-      response = await httpHandler.execute(MultipartRequest(route, mapMessageBuilderAttachments(files).toList(), method: method, fields: body, queryParams: queryParams, globalRateLimit: rateLimit, auth: auth));
-    } else {
-      response = await httpHandler.execute(BasicRequest(route, body: body, method: method, queryParams: queryParams, globalRateLimit: rateLimit, auth: auth));
-    }
-
-    if (response is HttpResponseError) {
-      return Future.error(response);
-    }
-
-    return response;
-  }
-
-  @override
-  @Deprecated("Using this will partially break rate limiting, prefer sendCustomRequest")
-  Future<HttpResponse> sendRawRequest(String url, String method, {dynamic body, Map<String, dynamic>? headers, List<AttachmentBuilder> files = const [], Map<String, dynamic>? queryParams, bool auth = false, bool rateLimit = true}) async {
-    HttpResponse response;
-
-    // TODO: This is a hack - migrate off of it
-    HttpRoute route = HttpRoute();
-    url.split("/").where((e) => e.isNotEmpty).forEach((element) => route.add(HttpRoutePart(element)));
-
     if (files.isNotEmpty) {
       response = await httpHandler.execute(MultipartRequest(route, mapMessageBuilderAttachments(files).toList(), method: method, fields: body, queryParams: queryParams, globalRateLimit: rateLimit, auth: auth));
     } else {
