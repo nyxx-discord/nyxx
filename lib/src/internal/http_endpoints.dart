@@ -170,6 +170,9 @@ abstract class IHttpEndpoints {
   /// Returns url to user avatar
   String userAvatarURL(Snowflake userId, String? avatarHash, int discriminator, {String format = "webp", int size = 128});
 
+  /// Returns url to user banner
+  String? userBannerURL(Snowflake userId, String? bannerHash, {String? format, int? size});
+
   /// Returns url to member avatar url
   String memberAvatarURL(Snowflake memberId, Snowflake guildId, String avatarHash, {String format = "webp"});
 
@@ -858,6 +861,31 @@ class HttpEndpoints implements IHttpEndpoints {
     }
 
     return "https://cdn.${Constants.cdnHost}/embed/avatars/${discriminator % 5}.png?size=$size";
+  }
+
+  @override
+  String? userBannerURL(Snowflake userId, String? bannerHash, {String? format, int? size}) {
+    if (bannerHash != null) {
+      var url = "${Constants.cdnUrl}/banners/$userId/$bannerHash.";
+
+      if (format == null) {
+        if (bannerHash.startsWith("a_")) {
+          url += "gif";
+        } else {
+          url += "webp";
+        }
+      } else {
+        url += format;
+      }
+
+      if (size != null) {
+        url += "?size=$size";
+      }
+
+      return url;
+    }
+
+    return null;
   }
 
   @override
