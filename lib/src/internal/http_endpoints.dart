@@ -170,9 +170,6 @@ abstract class IHttpEndpoints {
   /// Returns url to user avatar
   String userAvatarURL(Snowflake userId, String? avatarHash, int discriminator, {String format = "webp", int size = 128});
 
-  /// Returns url to user banner
-  String? userBannerURL(Snowflake userId, String? bannerHash, {String? format, int? size});
-
   /// Returns url to member avatar url
   String memberAvatarURL(Snowflake memberId, Snowflake guildId, String avatarHash, {String format = "webp"});
 
@@ -397,7 +394,7 @@ abstract class IHttpEndpoints {
   Future<void> deleteGuildSticker(Snowflake guildId, Snowflake stickerId);
 
   /// Returns url of user banner
-  String getUserBannerURL(Snowflake userId, String hash, {String format = "png"});
+  String? getUserBannerURL(Snowflake userId, String? hash, {String? format, int? size});
 
   Stream<GuildEvent> fetchGuildEvents(Snowflake guildId, {bool withUserCount = false});
   Future<GuildEvent> createGuildEvent(Snowflake guildId, GuildEventBuilder builder);
@@ -861,31 +858,6 @@ class HttpEndpoints implements IHttpEndpoints {
     }
 
     return "https://cdn.${Constants.cdnHost}/embed/avatars/${discriminator % 5}.png?size=$size";
-  }
-
-  @override
-  String? userBannerURL(Snowflake userId, String? bannerHash, {String? format, int? size}) {
-    if (bannerHash != null) {
-      var url = "${Constants.cdnUrl}/banners/$userId/$bannerHash.";
-
-      if (format == null) {
-        if (bannerHash.startsWith("a_")) {
-          url += "gif";
-        } else {
-          url += "webp";
-        }
-      } else {
-        url += format;
-      }
-
-      if (size != null) {
-        url += "?size=$size";
-      }
-
-      return url;
-    }
-
-    return null;
   }
 
   @override
@@ -1611,7 +1583,29 @@ class HttpEndpoints implements IHttpEndpoints {
       "${Constants.cdnUrl}/guilds/$guildId/users/$memberId/avatars/$avatarHash.$format";
 
   @override
-  String getUserBannerURL(Snowflake userId, String hash, {String format = "png"}) => "${Constants.cdnUrl}/banners/$userId/$hash.$format";
+  String? getUserBannerURL(Snowflake userId, String? hash, {String? format, int? size}) {
+    if (hash != null) {
+      var url = "${Constants.cdnUrl}/banners/$userId/$hash.";
+
+      if (format == null) {
+        if (hash.startsWith("a_")) {
+          url += "gif";
+        } else {
+          url += "webp";
+        }
+      } else {
+        url += format;
+      }
+
+      if (size != null) {
+        url += "?size=$size";
+      }
+
+      return url;
+    }
+
+    return null;
+  }
 
   @override
   String getRoleIconUrl(Snowflake roleId, String iconHash, String format, int size) => "${Constants.cdnUrl}/role-icons/$roleId/$iconHash.$format?size=$size";

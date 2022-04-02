@@ -163,7 +163,7 @@ class User extends SnowflakeEntity implements IUser {
 
   /// The user's banner url.
   @override
-  String? bannerUrl({String? format, int? size}) => client.httpEndpoints.userBannerURL(id, bannerHash, format: format, size: size);
+  String? bannerUrl({String? format, int? size}) => client.httpEndpoints.getUserBannerURL(id, bannerHash, format: format, size: size);
 
   /// Sends a message to user.
   @override
