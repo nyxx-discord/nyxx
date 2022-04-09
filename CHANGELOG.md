@@ -1,3 +1,12 @@
+## 4.0.0-dev.1
+__09.05.2022__
+
+- feature: Handle no internet on websocket (#321)
+- bug: Remove Error form IHttpResponseError (#324)
+  - Fixup field names on IHttpResponseError 
+  - Fixup IHttpResponseSuccess name 
+- feature: Move to API v10 (#325)
+
 ## 4.0.0-dev.0
 __31.03.2022__
 
