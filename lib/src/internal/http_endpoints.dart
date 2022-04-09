@@ -102,7 +102,7 @@ abstract class IHttpEndpoints {
   Future<int> guildPrune(Snowflake guildId, int days, {Iterable<Snowflake>? includeRoles, String? auditReason});
 
   /// Get all guild bans.
-  Stream<IBan> getGuildBans(Snowflake guildId);
+  Stream<IBan> getGuildBans(Snowflake guildId, {int limit = 1000, Snowflake? before, Snowflake? after});
 
   Future<void> modifyCurrentMember(Snowflake guildId, {String? nick});
 
@@ -606,8 +606,12 @@ class HttpEndpoints implements IHttpEndpoints {
   }
 
   @override
-  Stream<IBan> getGuildBans(Snowflake guildId) async* {
-    final response = await httpHandler.execute(BasicRequest("/guilds/$guildId/bans"));
+  Stream<IBan> getGuildBans(Snowflake guildId, {int limit = 1000, Snowflake? before, Snowflake? after}) async* {
+    final response = await httpHandler.execute(BasicRequest("/guilds/$guildId/bans", queryParams: {
+      "limit": limit,
+      if (before != null) "before": before,
+      if (after != null) "after": after,
+    }));
 
     if (response is HttpResponseError) {
       yield* Stream.error(response);
