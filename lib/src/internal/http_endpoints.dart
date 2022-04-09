@@ -394,7 +394,7 @@ abstract class IHttpEndpoints {
   Future<void> deleteGuildSticker(Snowflake guildId, Snowflake stickerId);
 
   /// Returns url of user banner
-  String getUserBannerURL(Snowflake userId, String hash, {String format = "png"});
+  String? userBannerURL(Snowflake userId, String? hash, {String? format, int? size});
 
   Stream<GuildEvent> fetchGuildEvents(Snowflake guildId, {bool withUserCount = false});
   Future<GuildEvent> createGuildEvent(Snowflake guildId, GuildEventBuilder builder);
@@ -1583,7 +1583,30 @@ class HttpEndpoints implements IHttpEndpoints {
       "${Constants.cdnUrl}/guilds/$guildId/users/$memberId/avatars/$avatarHash.$format";
 
   @override
-  String getUserBannerURL(Snowflake userId, String hash, {String format = "png"}) => "${Constants.cdnUrl}/banners/$userId/$hash.$format";
+
+  @override
+  String? userBannerURL(Snowflake userId, String? hash, {String? format, int? size}) {
+    if (hash == null) {
+      return null;
+    }
+    var url = "${Constants.cdnUrl}/banners/$userId/$hash.";
+
+    if (format == null) {
+      if (hash.startsWith("a_")) {
+        url += "gif";
+      } else {
+        url += "webp";
+      }
+    } else {
+      url += format;
+    }
+
+    if (size != null) {
+      url += "?size=$size";
+    }
+
+    return url;
+  }
 
   @override
   String getRoleIconUrl(Snowflake roleId, String iconHash, String format, int size) => "${Constants.cdnUrl}/role-icons/$roleId/$iconHash.$format?size=$size";
