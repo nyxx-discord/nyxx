@@ -136,33 +136,29 @@ class GatewayIntents {
   /// Includes public content of messages in guilds (content, embeds, attachments, components)
   /// If your bot is mentioned it will always receive full message
   /// If you are not opted in for message content intent you will receive empty fields
-  static const int messageContent =  1 << 15;
+  static const int messageContent = 1 << 15;
 
   /// Includes events: `GUILD_SCHEDULED_EVENT_CREATE`, `GUILD_SCHEDULED_EVENT_DELETE`, `GUILD_SCHEDULED_EVENT_UPDATE`, `GUILD_SCHEDULED_EVENT_USER_ADD`, `GUILD_SCHEDULED_EVENT_USER_REMOVE`
   static const int guildScheduledEvents = 1 << 16;
 
   /// All unprivileged intents
-  static const int allUnprivileged =
-    guilds |
-    guildBans |
-    guildEmojis |
-    guildIntegrations |
-    guildWebhooks |
-    guildInvites |
-    guildVoiceState |
-    guildMessages |
-    guildMessageReactions |
-    guildMessageTyping |
-    directMessages |
-    directMessageReactions |
-    directMessageTyping |
-    guildScheduledEvents;
+  static const int allUnprivileged = guilds |
+      guildBans |
+      guildEmojis |
+      guildIntegrations |
+      guildWebhooks |
+      guildInvites |
+      guildVoiceState |
+      guildMessages |
+      guildMessageReactions |
+      guildMessageTyping |
+      directMessages |
+      directMessageReactions |
+      directMessageTyping |
+      guildScheduledEvents;
 
   /// All privileged intents
-  static const int allPrivileged =
-    guildMembers |
-    guildPresences |
-    messageContent;
+  static const int allPrivileged = guildMembers | guildPresences | messageContent;
 
   /// All intents
   static const int all = allUnprivileged | allPrivileged;

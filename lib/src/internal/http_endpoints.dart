@@ -1,4 +1,3 @@
-import 'package:nyxx/nyxx.dart';
 import 'package:nyxx/src/core/guild/scheduled_event.dart';
 import 'package:nyxx/src/nyxx.dart';
 import 'package:nyxx/src/core/channel/invite.dart';
@@ -251,9 +250,6 @@ abstract class IHttpEndpoints {
 
   /// Removes member from thread given bot has sufficient permissions
   Future<void> removeThreadMember(Snowflake channelId, Snowflake userId);
-
-  /// Returns all active threads in given channel
-  Future<IThreadListResultWrapper> fetchActiveThreads(Snowflake channelId);
 
   /// Returns all public archived thread in given channel
   Future<IThreadListResultWrapper> fetchPublicArchivedThreads(Snowflake channelId, {DateTime? before, int? limit});
