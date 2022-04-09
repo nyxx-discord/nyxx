@@ -133,6 +133,11 @@ class GatewayIntents {
   /// Includes events: `TYPING_START`
   static const int directMessageTyping = 1 << 14;
 
+  /// Includes public content of messages in guilds (content, embeds, attachments, components)
+  /// If your bot is mentioned it will always receive full message
+  /// If you are not opted in for message content intent you will receive empty fields
+  static const int messageContent = 1 << 15;
+
   /// Includes events: `GUILD_SCHEDULED_EVENT_CREATE`, `GUILD_SCHEDULED_EVENT_DELETE`, `GUILD_SCHEDULED_EVENT_UPDATE`, `GUILD_SCHEDULED_EVENT_USER_ADD`, `GUILD_SCHEDULED_EVENT_USER_REMOVE`
   static const int guildScheduledEvents = 1 << 16;
 
@@ -153,7 +158,7 @@ class GatewayIntents {
       guildScheduledEvents;
 
   /// All privileged intents
-  static const int allPrivileged = guildMembers | guildPresences;
+  static const int allPrivileged = guildMembers | guildPresences | messageContent;
 
   /// All intents
   static const int all = allUnprivileged | allPrivileged;

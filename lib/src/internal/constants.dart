@@ -30,7 +30,7 @@ class Constants {
   static const String baseUri = "/api/v$apiVersion";
 
   /// Version of API
-  static const int apiVersion = 9;
+  static const int apiVersion = 10;
 
   /// Version of Nyxx
   static const String version = "4.0.0-dev.0";

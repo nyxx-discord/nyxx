@@ -30,18 +30,10 @@ import 'utils/builders/presence_builder.dart';
 import 'package:nyxx/src/typedefs.dart';
 
 abstract class NyxxFactory {
-  static INyxx createNyxxRest(String token, int intents, Snowflake appId,
-          {ClientOptions? options,
-          CacheOptions? cacheOptions,
-          @Deprecated("Use IgnoreException plugin") bool ignoreExceptions = true,
-          @Deprecated("Use Logging plugin") bool useDefaultLogger = true}) =>
+  static INyxx createNyxxRest(String token, int intents, Snowflake appId, {ClientOptions? options, CacheOptions? cacheOptions}) =>
       NyxxRest(token, intents, appId, options: options, cacheOptions: cacheOptions);
 
-  static INyxxWebsocket createNyxxWebsocket(String token, int intents,
-          {ClientOptions? options,
-          CacheOptions? cacheOptions,
-          @Deprecated("Use IgnoreException plugin") bool ignoreExceptions = true,
-          @Deprecated("Use Logging plugin") bool useDefaultLogger = true}) =>
+  static INyxxWebsocket createNyxxWebsocket(String token, int intents, {ClientOptions? options, CacheOptions? cacheOptions}) =>
       NyxxWebsocket(token, intents, options: options, cacheOptions: cacheOptions);
 }
 

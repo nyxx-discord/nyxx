@@ -1,6 +1,6 @@
-import 'package:nyxx/nyxx.dart';
 import 'package:nyxx/src/core/message/attachment.dart';
 import 'package:nyxx/src/core/message/components/message_component.dart';
+import 'package:nyxx/src/core/message/message_flags.dart';
 import 'package:nyxx/src/nyxx.dart';
 import 'package:nyxx/src/core/snowflake.dart';
 import 'package:nyxx/src/core/channel/cacheable_text_channel.dart';
