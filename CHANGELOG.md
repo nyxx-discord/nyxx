@@ -3,14 +3,20 @@ __09.05.2022__
 
 - feature: Handle no internet on websocket (#321)
 - bug: Remove Error form IHttpResponseError (#324)
-  - Fixup field names on IHttpResponseError 
-  - Fixup IHttpResponseSuccess name 
+  - Fixup field names on IHttpResponseError
+  - Fixup IHttpResponseSuccess name
 - feature: Move to API v10 (#325)
 
 ## 4.0.0-dev.0
 __31.03.2022__
 
 - feature: Fix target id property and add guild audit logs options (#307)
+
+## 3.4.0
+__09.04.2022__
+
+- feature: Add `@bannerUrl()` method (#318)
+- feature: Implement paginated bans (#326)
 
 ## 3.3.1
 __30.03.2022__
