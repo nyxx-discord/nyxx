@@ -77,6 +77,7 @@ Future<void> shardHandler(SendPort shardPort) async {
   Future<void> _connect() async {
     try {
       _socket = await WebSocket.connect(gatewayUri.toString());
+      _socket!.pingInterval = const Duration(seconds: 20);
       final zlibDecoder = RawZLibFilter.inflateFilter(); // Create zlib decoder specific to this connection. New connection should get new zlib context
 
       // ignore: unawaited_futures
@@ -95,6 +96,8 @@ Future<void> shardHandler(SendPort shardPort) async {
       shardPort.send({"cmd": "CONNECT_ACK"});
     } on WebSocketException catch (err) {
       shardPort.send({"cmd": "ERROR", "error": err.toString(), "errorCode": _socket!.closeCode, "errorReason": _socket!.closeReason});
+    } on SocketException catch (err) {
+      shardPort.send({"cmd": "ERROR", "error": err.toString(), "errorCode": -1, "errorReason": "SocketException"});
     } on Exception catch (err) {
       print(err);
     } on Error catch (err) {

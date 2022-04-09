@@ -255,6 +255,9 @@ class Shard implements IShard {
       case 1001:
         _reconnect();
         break;
+      case -1:
+        _connect(delay: 10);
+        break;
       default:
         _connect();
         break;
@@ -262,10 +265,10 @@ class Shard implements IShard {
   }
 
   // Connects to gateway
-  void _connect() {
+  void _connect({int delay = 2}) {
     manager.logger.info("Connecting to gateway on shard $id!");
     _resume = false;
-    Future.delayed(const Duration(seconds: 2), () => _sendPort.send({"cmd": "CONNECT"}));
+    Future.delayed(Duration(seconds: delay), () => _sendPort.send({"cmd": "CONNECT"}));
   }
 
   // Reconnects to gateway
