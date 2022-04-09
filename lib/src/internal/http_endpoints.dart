@@ -1596,7 +1596,7 @@ class HttpEndpoints implements IHttpEndpoints {
       return Future.error(result);
     }
 
-    return ThreadMember(client, (result as IHttpResponseSucess).jsonBody as RawApiMap, GuildCacheable(client, guildId));
+    return ThreadMember(client, (result as IHttpResponseSuccess).jsonBody as RawApiMap, GuildCacheable(client, guildId));
   }
 
   @override
@@ -1618,7 +1618,7 @@ class HttpEndpoints implements IHttpEndpoints {
       return Future.error(response);
     }
 
-    return GuildEvent((response as IHttpResponseSucess).jsonBody as RawApiMap, client);
+    return GuildEvent((response as IHttpResponseSuccess).jsonBody as RawApiMap, client);
   }
 
   @override
@@ -1633,7 +1633,7 @@ class HttpEndpoints implements IHttpEndpoints {
       return Future.error(response);
     }
 
-    return GuildEvent((response as IHttpResponseSucess).jsonBody as RawApiMap, client);
+    return GuildEvent((response as IHttpResponseSuccess).jsonBody as RawApiMap, client);
   }
 
   @override
@@ -1644,7 +1644,7 @@ class HttpEndpoints implements IHttpEndpoints {
       return Future.error(response);
     }
 
-    return GuildEvent((response as IHttpResponseSucess).jsonBody as RawApiMap, client);
+    return GuildEvent((response as IHttpResponseSuccess).jsonBody as RawApiMap, client);
   }
 
   @override
@@ -1661,7 +1661,7 @@ class HttpEndpoints implements IHttpEndpoints {
       yield* Stream.error(response);
     }
 
-    for (final rawGuildEventUser in (response as IHttpResponseSucess).jsonBody as RawApiList) {
+    for (final rawGuildEventUser in (response as IHttpResponseSuccess).jsonBody as RawApiList) {
       yield GuildEventUser(rawGuildEventUser as RawApiMap, client, guildId);
     }
   }
@@ -1675,7 +1675,7 @@ class HttpEndpoints implements IHttpEndpoints {
       yield* Stream.error(response);
     }
 
-    for (final rawGuildEvent in (response as IHttpResponseSucess).jsonBody as RawApiList) {
+    for (final rawGuildEvent in (response as IHttpResponseSuccess).jsonBody as RawApiList) {
       yield GuildEvent(rawGuildEvent as RawApiMap, client);
     }
   }

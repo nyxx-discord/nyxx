@@ -138,7 +138,7 @@ export 'src/internal/exceptions/invalid_shard_exception.dart' show InvalidShardE
 export 'src/internal/exceptions/invalid_snowflake_exception.dart' show InvalidSnowflakeException;
 export 'src/internal/exceptions/missing_token_error.dart' show MissingTokenError;
 export 'src/internal/exceptions/unrecoverable_nyxx_error.dart' show UnrecoverableNyxxError;
-export 'src/internal/http/http_response.dart' show IHttpResponse, IHttpResponseError, IHttpResponseSucess;
+export 'src/internal/http/http_response.dart' show IHttpResponse, IHttpResponseError, IHttpResponseSuccess;
 export 'src/internal/interfaces/convertable.dart' show Convertable;
 export 'src/internal/interfaces/disposable.dart' show Disposable;
 export 'src/internal/interfaces/message_author.dart' show IMessageAuthor;
