@@ -1583,7 +1583,6 @@ class HttpEndpoints implements IHttpEndpoints {
       "${Constants.cdnUrl}/guilds/$guildId/users/$memberId/avatars/$avatarHash.$format";
 
   @override
-
   @override
   String? userBannerURL(Snowflake userId, String? hash, {String? format, int? size}) {
     if (hash == null) {
