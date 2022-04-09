@@ -1417,17 +1417,6 @@ class HttpEndpoints implements IHttpEndpoints {
   }
 
   @override
-  Future<IThreadListResultWrapper> fetchActiveThreads(Snowflake channelId) async {
-    final response = await httpHandler.execute(BasicRequest("/channels/$channelId/threads/active"));
-
-    if (response is HttpResponseError) {
-      return Future.error(response);
-    }
-
-    return ThreadListResultWrapper(client, (response as HttpResponseSuccess).jsonBody as RawApiMap);
-  }
-
-  @override
   Future<IThreadListResultWrapper> fetchJoinedPrivateArchivedThreads(Snowflake channelId, {DateTime? before, int? limit}) async {
     final response = await httpHandler.execute(BasicRequest("/channels/$channelId/users/@me/threads/archived/private",
         queryParams: {if (before != null) "before": before.toIso8601String(), if (limit != null) "limit": limit}));
