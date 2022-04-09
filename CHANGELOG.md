@@ -1,3 +1,9 @@
+## 3.4.0
+__09.04.2022__
+
+- feature: Add `@bannerUrl()` method (#318)
+- feature: Implement paginated bans (#326)
+
 ## 3.3.1
 __30.03.2022__
 
