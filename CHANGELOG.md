@@ -1,3 +1,8 @@
+## 3.4.1
+__10.04.2022__
+
+- bug: bugfix: failed to edit guild members (#328)
+
 ## 3.4.0
 __09.04.2022__
 
