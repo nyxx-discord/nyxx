@@ -12,6 +12,11 @@ __31.03.2022__
 
 - feature: Fix target id property and add guild audit logs options (#307)
 
+## 3.4.1
+__10.04.2022__
+
+- bug: bugfix: failed to edit guild members (#328)
+
 ## 3.4.0
 __09.04.2022__
 
