@@ -884,12 +884,12 @@ class HttpEndpoints implements IHttpEndpoints {
       Snowflake? channel = const Snowflake.zero(),
       MemberBuilder? builder,
       String? auditReason}) {
-    final finalBuilder = builder ?? MemberBuilder()
+    final finalBuilder = builder ?? (MemberBuilder()
       ..nick = nick
       ..roles = roles?.map((e) => e.id).toList()
       ..mute = mute
       ..deaf = deaf
-      ..channel = channel;
+      ..channel = channel);
 
     return executeSafe(BasicRequest("/guilds/$guildId/members/$memberId", method: "PATCH", auditLog: auditReason, body: finalBuilder.build()));
   }
