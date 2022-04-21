@@ -1,3 +1,4 @@
+import 'package:nyxx/src/core/channel/guild/forum/forum_tag.dart';
 import 'package:nyxx/src/core/channel/guild/guild_channel.dart';
 import 'package:nyxx/src/core/channel/thread_channel.dart';
 import 'package:nyxx/src/core/channel/thread_preview_channel.dart';
@@ -9,6 +10,9 @@ import 'package:nyxx/src/typedefs.dart';
 import 'package:nyxx/src/utils/builders/thread_builder.dart';
 
 abstract class IForumChannel implements IGuildChannel, Mentionable {
+  /// Tags available to assign to forum posts
+  List<IForumTag> get availableTags;
+
   /// Creates a thread in a channel, that only retrieves a [ThreadPreviewChannel]
   Future<IThreadPreviewChannel> createThread(ThreadBuilder builder);
 
@@ -26,8 +30,16 @@ abstract class IForumChannel implements IGuildChannel, Mentionable {
 }
 
 class ForumChannel extends GuildChannel implements IForumChannel {
+  @override
+  late final List<IForumTag> availableTags;
+
   /// Creates an instance of [TextGuildChannel]
-  ForumChannel(INyxx client, RawApiMap raw, [Snowflake? guildId]) : super(client, raw, guildId);
+  ForumChannel(INyxx client, RawApiMap raw, [Snowflake? guildId]) : super(client, raw, guildId) {
+    availableTags = (raw['available_tags'] as List<dynamic>)
+        .cast<RawApiMap>()
+        .map((e) => ForumTag(e))
+        .toList();
+  }
 
   /// The channel's mention string.
   @override

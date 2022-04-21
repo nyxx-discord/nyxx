@@ -1,4 +1,4 @@
-import 'package:nyxx/src/core/channel/guild/forum_channel.dart';
+import 'package:nyxx/src/core/channel/guild/forum/forum_channel.dart';
 import 'package:nyxx/src/nyxx.dart';
 import 'package:nyxx/src/core/snowflake.dart';
 import 'package:nyxx/src/core/snowflake_entity.dart';

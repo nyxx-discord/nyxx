@@ -23,7 +23,8 @@ export 'src/core/channel/cacheable_text_channel.dart' show ICacheableTextChannel
 export 'src/core/channel/channel.dart' show IChannel, ChannelType;
 export 'src/core/channel/dm_channel.dart' show IDMChannel;
 export 'src/core/channel/text_channel.dart' show ITextChannel;
-export 'src/core/channel/guild/forum_channel.dart' show IForumChannel;
+export 'src/core/channel/guild/forum/forum_channel.dart' show IForumChannel;
+export 'src/core/channel/guild/forum/forum_tag.dart' show IForumTag;
 export 'src/core/channel/thread_channel.dart' show IThreadMember, IThreadChannel;
 export 'src/core/channel/thread_preview_channel.dart' show IThreadPreviewChannel;
 export 'src/core/channel/guild/activity_types.dart' show VoiceActivityType;
