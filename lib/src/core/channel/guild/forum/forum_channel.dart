@@ -35,10 +35,7 @@ class ForumChannel extends GuildChannel implements IForumChannel {
 
   /// Creates an instance of [TextGuildChannel]
   ForumChannel(INyxx client, RawApiMap raw, [Snowflake? guildId]) : super(client, raw, guildId) {
-    availableTags = (raw['available_tags'] as List<dynamic>)
-        .cast<RawApiMap>()
-        .map((e) => ForumTag(e))
-        .toList();
+    availableTags = (raw['available_tags'] as List<dynamic>).cast<RawApiMap>().map((e) => ForumTag(e)).toList();
   }
 
   /// The channel's mention string.
