@@ -90,6 +90,7 @@ jobs:
         run: dart run test --coverage="coverage" test/unit/**
 
       - name: Integration tests
+        if: secrets.TEST_TOKEN != ''
         run: dart run test --coverage="coverage" test/integration/**
 
       - name: Format coverage
