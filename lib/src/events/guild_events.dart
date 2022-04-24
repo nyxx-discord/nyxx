@@ -45,7 +45,7 @@ class GuildUpdateEvent implements IGuildUpdateEvent {
   @override
   late final IGuild? oldGuild;
 
-  /// Creates na instance of [GuildUpdateEvent]
+  /// Creates an instance of [GuildUpdateEvent]
   GuildUpdateEvent(RawApiMap json, INyxx client) {
     guild = Guild(client, json["d"] as RawApiMap);
 
