@@ -11,7 +11,7 @@ class HttpErrorEvent implements IHttpErrorEvent {
   @override
   final HttpResponseError response;
 
-  /// Creates na instance of [HttpErrorEvent]
+  /// Creates an instance of [HttpErrorEvent]
   HttpErrorEvent(this.response);
 }
 
@@ -26,6 +26,6 @@ class HttpResponseEvent implements IHttpResponseEvent {
   @override
   final HttpResponseSuccess response;
 
-  /// Creates na instance of [HttpResponseEvent]
+  /// Creates an instance of [HttpResponseEvent]
   HttpResponseEvent(this.response);
 }

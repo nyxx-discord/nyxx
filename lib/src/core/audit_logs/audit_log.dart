@@ -35,7 +35,7 @@ class AuditLog implements IAuditLog {
   @override
   late final Map<Snowflake, IAuditLogEntry> entries;
 
-  /// Creates na instance of [AuditLog]
+  /// Creates an instance of [AuditLog]
   AuditLog(RawApiMap raw, INyxx client) {
     webhooks = {};
     users = {};
