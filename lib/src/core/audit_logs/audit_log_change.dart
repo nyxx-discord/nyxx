@@ -28,7 +28,7 @@ class AuditLogChange implements IAuditLogChange {
   @override
   late final ChangeKeyType key;
 
-  /// Creates na instance of [AuditLogChange]
+  /// Creates an instance of [AuditLogChange]
   AuditLogChange(RawApiMap raw) {
     if (raw["new_value"] != null) {
       newValue = raw["new_value"];

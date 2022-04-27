@@ -32,7 +32,7 @@ class ThreadDeletedEvent implements IThreadDeletedEvent {
   @override
   late final Cacheable<Snowflake, IGuild> guild;
 
-  /// Creates na instance of [ThreadDeletedEvent]
+  /// Creates an instance of [ThreadDeletedEvent]
   ThreadDeletedEvent(RawApiMap raw, INyxx client) {
     final data = raw["d"] as RawApiMap;
 

@@ -17,7 +17,7 @@ class InviteCreatedEvent implements IInviteCreatedEvent {
   @override
   late final IInvite invite;
 
-  /// Creates na instance of [InviteCreatedEvent]
+  /// Creates an instance of [InviteCreatedEvent]
   InviteCreatedEvent(RawApiMap raw, INyxx client) {
     invite = Invite(raw["d"] as RawApiMap, client);
   }
@@ -48,7 +48,7 @@ class InviteDeletedEvent implements IInviteDeletedEvent {
   @override
   late final String code;
 
-  /// Creates na instance of [InviteDeletedEvent]
+  /// Creates an instance of [InviteDeletedEvent]
   InviteDeletedEvent(RawApiMap raw, INyxx client) {
     code = raw["d"]["code"] as String;
     channel = ChannelCacheable(client, Snowflake(raw["d"]["channel_id"]));

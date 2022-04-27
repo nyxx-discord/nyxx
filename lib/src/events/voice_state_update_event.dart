@@ -26,7 +26,7 @@ class VoiceStateUpdateEvent implements IVoiceStateUpdateEvent {
   @override
   final RawApiMap raw;
 
-  /// Creates na instance of [VoiceStateUpdateEvent]
+  /// Creates an instance of [VoiceStateUpdateEvent]
   VoiceStateUpdateEvent(this.raw, INyxx client) {
     state = VoiceState(client, raw["d"] as RawApiMap);
 

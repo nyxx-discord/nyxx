@@ -74,7 +74,7 @@ class ChannelPinsUpdateEvent implements IChannelPinsUpdateEvent {
   @override
   late final DateTime? lastPingTimestamp;
 
-  /// Creates na instance of [ChannelPinsUpdateEvent]
+  /// Creates an instance of [ChannelPinsUpdateEvent]
   ChannelPinsUpdateEvent(RawApiMap raw, INyxx client) {
     if (raw["d"]["last_pin_timestamp"] != null) {
       lastPingTimestamp = DateTime.parse(raw["d"]["last_pin_timestamp"] as String);
@@ -109,7 +109,7 @@ class ChannelUpdateEvent implements IChannelUpdateEvent {
   @override
   late final IChannel? oldChannel;
 
-  /// Creates na instance of [ChannelUpdateEvent]
+  /// Creates an instance of [ChannelUpdateEvent]
   ChannelUpdateEvent(RawApiMap raw, INyxx client) {
     updatedChannel = Channel.deserialize(client, raw["d"] as RawApiMap);
 
@@ -135,7 +135,7 @@ class StageInstanceEvent implements IStageInstanceEvent {
   @override
   late final IStageChannelInstance stageChannelInstance;
 
-  /// Creates na instance of [StageInstanceEvent]
+  /// Creates an instance of [StageInstanceEvent]
   StageInstanceEvent(INyxx client, RawApiMap raw) {
     stageChannelInstance = StageChannelInstance(client, raw);
   }

@@ -112,7 +112,7 @@ abstract class IHttpEndpoints {
   Future<int> guildPrune(Snowflake guildId, int days, {Iterable<Snowflake>? includeRoles, String? auditReason});
 
   /// Get all guild bans.
-  Stream<IBan> getGuildBans(Snowflake guildId);
+  Stream<IBan> getGuildBans(Snowflake guildId, {int limit = 1000, Snowflake? before, Snowflake? after});
 
   Future<void> modifyCurrentMember(Snowflake guildId, {String? nick});
 
@@ -406,7 +406,7 @@ abstract class IHttpEndpoints {
   Future<void> deleteGuildSticker(Snowflake guildId, Snowflake stickerId);
 
   /// Returns url of user banner
-  String getUserBannerURL(Snowflake userId, String hash, {String format = "png"});
+  String? userBannerURL(Snowflake userId, String? hash, {String? format, int? size});
 
   Stream<GuildEvent> fetchGuildEvents(Snowflake guildId, {bool withUserCount = false});
   Future<GuildEvent> createGuildEvent(Snowflake guildId, GuildEventBuilder builder);
@@ -648,8 +648,12 @@ class HttpEndpoints implements IHttpEndpoints {
   }
 
   @override
-  Stream<IBan> getGuildBans(Snowflake guildId) async* {
-    final response = await httpHandler.execute(BasicRequest("/guilds/$guildId/bans"));
+  Stream<IBan> getGuildBans(Snowflake guildId, {int limit = 1000, Snowflake? before, Snowflake? after}) async* {
+    final response = await httpHandler.execute(BasicRequest("/guilds/$guildId/bans", queryParams: {
+      "limit": limit,
+      if (before != null) "before": before,
+      if (after != null) "after": after,
+    }));
 
     if (response is HttpResponseError) {
       yield* Stream.error(response);
@@ -926,12 +930,13 @@ class HttpEndpoints implements IHttpEndpoints {
       Snowflake? channel = const Snowflake.zero(),
       MemberBuilder? builder,
       String? auditReason}) {
-    final finalBuilder = builder ?? MemberBuilder()
-      ..nick = nick
-      ..roles = roles?.map((e) => e.id).toList()
-      ..mute = mute
-      ..deaf = deaf
-      ..channel = channel;
+    final finalBuilder = builder ??
+        (MemberBuilder()
+          ..nick = nick
+          ..roles = roles?.map((e) => e.id).toList()
+          ..mute = mute
+          ..deaf = deaf
+          ..channel = channel);
 
     return executeSafe(BasicRequest("/guilds/$guildId/members/$memberId", method: "PATCH", auditLog: auditReason, body: finalBuilder.build()));
   }
@@ -1629,7 +1634,29 @@ class HttpEndpoints implements IHttpEndpoints {
       "${Constants.cdnUrl}/guilds/$guildId/users/$memberId/avatars/$avatarHash.$format";
 
   @override
-  String getUserBannerURL(Snowflake userId, String hash, {String format = "png"}) => "${Constants.cdnUrl}/banners/$userId/$hash.$format";
+  @override
+  String? userBannerURL(Snowflake userId, String? hash, {String? format, int? size}) {
+    if (hash == null) {
+      return null;
+    }
+    var url = "${Constants.cdnUrl}/banners/$userId/$hash.";
+
+    if (format == null) {
+      if (hash.startsWith("a_")) {
+        url += "gif";
+      } else {
+        url += "webp";
+      }
+    } else {
+      url += format;
+    }
+
+    if (size != null) {
+      url += "?size=$size";
+    }
+
+    return url;
+  }
 
   @override
   String getRoleIconUrl(Snowflake roleId, String iconHash, String format, int size) => "${Constants.cdnUrl}/role-icons/$roleId/$iconHash.$format?size=$size";

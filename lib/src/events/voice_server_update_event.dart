@@ -36,7 +36,7 @@ class VoiceServerUpdateEvent implements IVoiceServerUpdateEvent {
   @override
   late final Cacheable<Snowflake, IGuild> guild;
 
-  /// Creates na instance of [VoiceServerUpdateEvent]
+  /// Creates an instance of [VoiceServerUpdateEvent]
   VoiceServerUpdateEvent(this.raw, INyxx client) {
     token = raw["d"]["token"] as String;
     endpoint = raw["d"]["endpoint"] as String;
