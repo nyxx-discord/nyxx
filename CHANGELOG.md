@@ -1,3 +1,8 @@
+## 3.4.2
+__22.04.2022__
+
+- bug: Fix setting `channel` to `null` in MemberBuilder causing errors
+
 ## 3.4.1
 __10.04.2022__
 
