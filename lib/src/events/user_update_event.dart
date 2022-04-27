@@ -13,7 +13,7 @@ class UserUpdateEvent implements IUserUpdateEvent {
   @override
   late final User user;
 
-  /// Creates na instance of [UserUpdateEvent]
+  /// Creates an instance of [UserUpdateEvent]
   UserUpdateEvent(RawApiMap json, INyxx client) {
     user = User(client, json["d"] as RawApiMap);
   }
