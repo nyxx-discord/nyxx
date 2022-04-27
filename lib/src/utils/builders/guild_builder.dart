@@ -31,12 +31,14 @@ class GuildBuilder extends Builder {
   List<ChannelBuilder>? channels;
 
   /// The channel id to use for the afk channel
+  /// The id provided sould be the same of a given id in [channels].
   Snowflake? afkChannelId;
 
   /// The afk timeout in seconds
   int? afkTimeout;
 
   /// The id of the system channel
+  /// The id provided sould be the same of a given id in [channels].
   Snowflake? systemChannelId;
 
   /// The [SystemChannelFlags] to apply
