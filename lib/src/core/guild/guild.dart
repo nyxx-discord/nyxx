@@ -829,7 +829,7 @@ class Guild extends SnowflakeEntity implements IGuild {
   Future<void> ban(SnowflakeEntity user, {int deleteMessageDays = 0, String? auditReason}) =>
       client.httpEndpoints.guildBan(id, user.id, deleteMessageDays: deleteMessageDays, auditReason: auditReason);
 
-  /// Kicks user from guild. Member is removed from guild and he is able to rejoin
+  /// Kicks user from guild. Member is removed from guild and they're able to rejoin if they have a valid invite link.
   ///
   /// ```dart
   /// await guild.kick(member);
