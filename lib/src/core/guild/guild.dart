@@ -1,6 +1,20 @@
-import 'package:nyxx/nyxx.dart';
+import 'package:nyxx/src/core/audit_logs/audit_log.dart';
+import 'package:nyxx/src/core/channel/guild/guild_channel.dart';
+import 'package:nyxx/src/core/channel/invite.dart';
+import 'package:nyxx/src/core/channel/text_channel.dart';
+import 'package:nyxx/src/core/guild/guild_feature.dart';
+import 'package:nyxx/src/core/guild/guild_nsfw_level.dart';
+import 'package:nyxx/src/core/guild/guild_preview.dart';
+import 'package:nyxx/src/core/guild/guild_welcome_screen.dart';
+import 'package:nyxx/src/core/guild/premium_tier.dart';
 import 'package:nyxx/src/core/guild/scheduled_event.dart';
+import 'package:nyxx/src/core/snowflake.dart';
+import 'package:nyxx/src/core/snowflake_entity.dart';
 import 'package:nyxx/src/core/user/presence.dart';
+import 'package:nyxx/src/core/user/user.dart';
+import 'package:nyxx/src/internal/cache/cache.dart';
+import 'package:nyxx/src/internal/exceptions/invalid_shard_exception.dart';
+import 'package:nyxx/src/internal/shard/shard.dart';
 import 'package:nyxx/src/nyxx.dart';
 import 'package:nyxx/src/core/channel/cacheable_text_channel.dart';
 import 'package:nyxx/src/core/channel/channel.dart';
@@ -16,6 +30,11 @@ import 'package:nyxx/src/core/voice/voice_region.dart';
 import 'package:nyxx/src/core/voice/voice_state.dart';
 import 'package:nyxx/src/internal/cache/cacheable.dart';
 import 'package:nyxx/src/typedefs.dart';
+import 'package:nyxx/src/utils/builders/attachment_builder.dart';
+import 'package:nyxx/src/utils/builders/channel_builder.dart';
+import 'package:nyxx/src/utils/builders/guild_builder.dart';
+import 'package:nyxx/src/utils/builders/guild_event_builder.dart';
+import 'package:nyxx/src/utils/builders/sticker_builder.dart';
 
 abstract class IGuild implements SnowflakeEntity {
   /// Reference to [NyxxWebsocket] instance
@@ -281,8 +300,7 @@ abstract class IGuild implements SnowflakeEntity {
   Future<void> unban(Snowflake id, Snowflake userId);
 
   /// Edits the guild.
-  Future<IGuild> edit(
-      {String? name, int? verificationLevel, int? notificationLevel, SnowflakeEntity? afkChannel, int? afkTimeout, String? icon, String? auditReason});
+  Future<IGuild> edit(GuildBuilder builder, {String? auditReason});
 
   /// Fetches member from API
   Future<IMember> fetchMember(Snowflake memberId);
@@ -638,7 +656,6 @@ class Guild extends SnowflakeEntity implements IGuild {
 
     if (!guildCreate) return;
 
-
     raw["channels"].forEach((o) {
       final channel = Channel.deserialize(client, o as RawApiMap, id);
       client.channels[channel.id] = channel;
@@ -805,8 +822,7 @@ class Guild extends SnowflakeEntity implements IGuild {
       client.httpEndpoints.moveGuildChannel(id, channel.id, position, auditReason: auditReason);
 
   /// Bans a user and allows to delete messages from [deleteMessageDays] number of days.
-  /// ```
-  ///
+  /// ```dart
   /// await guild.ban(member);
   /// ```
   @override
@@ -815,7 +831,7 @@ class Guild extends SnowflakeEntity implements IGuild {
 
   /// Kicks user from guild. Member is removed from guild and he is able to rejoin
   ///
-  /// ```
+  /// ```dart
   /// await guild.kick(member);
   /// ```
   @override
@@ -827,16 +843,7 @@ class Guild extends SnowflakeEntity implements IGuild {
 
   /// Edits the guild.
   @override
-  Future<IGuild> edit(
-          {String? name, int? verificationLevel, int? notificationLevel, SnowflakeEntity? afkChannel, int? afkTimeout, String? icon, String? auditReason}) =>
-      client.httpEndpoints.editGuild(id,
-          name: name,
-          verificationLevel: verificationLevel,
-          notificationLevel: notificationLevel,
-          afkChannel: afkChannel,
-          afkTimeout: afkTimeout,
-          icon: icon,
-          auditReason: auditReason);
+  Future<IGuild> edit(GuildBuilder builder, {String? auditReason}) => client.httpEndpoints.editGuild(id, builder, auditReason: auditReason);
 
   /// Fetches member from API
   @override

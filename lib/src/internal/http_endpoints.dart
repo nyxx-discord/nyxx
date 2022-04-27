@@ -1,4 +1,3 @@
-import 'package:nyxx/nyxx.dart';
 import 'package:nyxx/src/core/guild/scheduled_event.dart';
 import 'package:nyxx/src/nyxx.dart';
 import 'package:nyxx/src/core/channel/invite.dart';
@@ -35,6 +34,7 @@ import 'package:nyxx/src/utils/builders/attachment_builder.dart';
 import 'package:nyxx/src/utils/builders/channel_builder.dart';
 import 'package:nyxx/src/utils/builders/guild_builder.dart';
 import 'package:nyxx/src/utils/builders/guild_event_builder.dart';
+import 'package:nyxx/src/utils/builders/member_builder.dart';
 import 'package:nyxx/src/utils/builders/message_builder.dart';
 import 'package:nyxx/src/utils/builders/permissions_builder.dart';
 import 'package:nyxx/src/utils/builders/sticker_builder.dart';
@@ -156,8 +156,7 @@ abstract class IHttpEndpoints {
   Future<void> guildUnban(Snowflake guildId, Snowflake userId);
 
   /// Allows to edit basic guild properties
-  Future<IGuild> editGuild(Snowflake guildId,
-      {String? name, int? verificationLevel, int? notificationLevel, SnowflakeEntity? afkChannel, int? afkTimeout, String? icon, String? auditReason});
+  Future<IGuild> editGuild(Snowflake guildId, GuildBuilder builder, {String? auditReason});
 
   /// Fetches [Member] object from guild
   Future<IMember> fetchGuildMember(Snowflake guildId, Snowflake memberId);
@@ -793,18 +792,8 @@ class HttpEndpoints implements IHttpEndpoints {
   Future<void> guildUnban(Snowflake guildId, Snowflake userId) async => executeSafe(BasicRequest("/guilds/$guildId/bans/$userId", method: "DELETE"));
 
   @override
-  Future<IGuild> editGuild(Snowflake guildId,
-      {String? name, int? verificationLevel, int? notificationLevel, SnowflakeEntity? afkChannel, int? afkTimeout, String? icon, String? auditReason}) async {
-    final body = <String, dynamic>{
-      if (name != null) "name": name,
-      if (verificationLevel != null) "verification_level": verificationLevel,
-      if (notificationLevel != null) "default_message_notifications": notificationLevel,
-      if (afkChannel != null) "afk_channel_id": afkChannel,
-      if (afkTimeout != null) "afk_timeout": afkTimeout,
-      if (icon != null) "icon": icon
-    };
-
-    final response = await httpHandler.execute(BasicRequest("/guilds/$guildId", method: "PATCH", auditLog: auditReason, body: body));
+  Future<IGuild> editGuild(Snowflake guildId, GuildBuilder builder, {String? auditReason}) async {
+    final response = await httpHandler.execute(BasicRequest("/guilds/$guildId", method: "PATCH", auditLog: auditReason, body: builder.build()));
 
     if (response is HttpResponseSuccess) {
       return Guild(client, response.jsonBody as RawApiMap);
