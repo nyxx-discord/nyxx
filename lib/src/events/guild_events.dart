@@ -21,7 +21,7 @@ class GuildCreateEvent implements IGuildCreateEvent {
   @override
   late final IGuild guild;
 
-  /// Creates na instance of [GuildCreateEvent]
+  /// Creates an instance of [GuildCreateEvent]
   GuildCreateEvent(RawApiMap raw, INyxx client) {
     guild = Guild(client, raw["d"] as RawApiMap, true);
     client.guilds[guild.id] = guild;
@@ -78,7 +78,7 @@ class GuildDeleteEvent implements IGuildDeleteEvent {
   @override
   late final bool unavailable;
 
-  /// Creates na instance of [GuildDeleteEvent]
+  /// Creates an instance of [GuildDeleteEvent]
   GuildDeleteEvent(RawApiMap raw, INyxx client) {
     unavailable = raw["d"]["unavailable"] as bool? ?? false;
     guild = GuildCacheable(client, Snowflake(raw["d"]["id"]));
@@ -105,7 +105,7 @@ class GuildMemberRemoveEvent implements IGuildMemberRemoveEvent {
   @override
   late final IUser user;
 
-  /// Creates na instance of [GuildMemberRemoveEvent]
+  /// Creates an instance of [GuildMemberRemoveEvent]
   GuildMemberRemoveEvent(RawApiMap json, INyxx client) {
     user = User(client, json["d"]["user"] as RawApiMap);
     guild = GuildCacheable(client, Snowflake(json["d"]["guild_id"]));
@@ -148,7 +148,7 @@ class GuildMemberUpdateEvent implements IGuildMemberUpdateEvent {
   @override
   late final Cacheable<Snowflake, IGuild> guild;
 
-  /// Creates na instance of [GuildMemberUpdateEvent]
+  /// Creates an instance of [GuildMemberUpdateEvent]
   GuildMemberUpdateEvent(RawApiMap raw, INyxx client) {
     guild = GuildCacheable(client, Snowflake(raw["d"]["guild_id"]));
     member = MemberCacheable(client, Snowflake(raw["d"]["user"]["id"]), guild);
@@ -203,7 +203,7 @@ class GuildMemberAddEvent implements IGuildMemberAddEvent {
   @override
   late final Cacheable<Snowflake, IGuild> guild;
 
-  /// Creates na instance of [GuildMemberAddEvent]
+  /// Creates an instance of [GuildMemberAddEvent]
   GuildMemberAddEvent(RawApiMap raw, INyxx client) {
     guild = GuildCacheable(client, Snowflake(raw["d"]["guild_id"]));
     member = Member(client, raw["d"] as RawApiMap, guild.id);
@@ -242,7 +242,7 @@ class GuildBanAddEvent implements IGuildBanAddEvent {
   @override
   late final IUser user;
 
-  /// Creates na instance of [GuildBanAddEvent]
+  /// Creates an instance of [GuildBanAddEvent]
   GuildBanAddEvent(RawApiMap raw, INyxx client) {
     guild = GuildCacheable(client, Snowflake(raw["d"]["guild_id"]));
     user = User(client, raw["d"]["user"] as RawApiMap);
@@ -267,7 +267,7 @@ class GuildBanRemoveEvent implements IGuildBanRemoveEvent {
   @override
   late final IUser user;
 
-  /// Creates na instance of [GuildBanRemoveEvent]
+  /// Creates an instance of [GuildBanRemoveEvent]
   GuildBanRemoveEvent(RawApiMap raw, INyxx client) {
     guild = GuildCacheable(client, Snowflake(raw["d"]["guild_id"]));
     user = User(client, raw["d"]["user"] as RawApiMap);
@@ -292,7 +292,7 @@ class GuildEmojisUpdateEvent implements IGuildEmojisUpdateEvent {
   @override
   late final Cacheable<Snowflake, IGuild> guild;
 
-  /// Creates na instance of [GuildEmojisUpdateEvent]
+  /// Creates an instance of [GuildEmojisUpdateEvent]
   GuildEmojisUpdateEvent(RawApiMap raw, INyxx client) {
     guild = GuildCacheable(client, Snowflake(raw["d"]["guild_id"]));
 
@@ -327,7 +327,7 @@ class RoleCreateEvent implements IRoleCreateEvent {
   @override
   late final Cacheable<Snowflake, IGuild> guild;
 
-  /// Creates na instance of [RoleCreateEvent]
+  /// Creates an instance of [RoleCreateEvent]
   RoleCreateEvent(RawApiMap raw, INyxx client) {
     guild = GuildCacheable(client, Snowflake(raw["d"]["guild_id"]));
 
@@ -358,7 +358,7 @@ class RoleDeleteEvent implements IRoleDeleteEvent {
   @override
   late final Cacheable<Snowflake, IGuild> guild;
 
-  /// Creates na instance of [RoleDeleteEvent]
+  /// Creates an instance of [RoleDeleteEvent]
   RoleDeleteEvent(RawApiMap raw, INyxx client) {
     guild = GuildCacheable(client, Snowflake(raw["d"]["guild_id"]));
 
@@ -396,7 +396,7 @@ class RoleUpdateEvent implements IRoleUpdateEvent {
   @override
   late final Cacheable<Snowflake, IGuild> guild;
 
-  /// Creates na instance of [RoleUpdateEvent]
+  /// Creates an instance of [RoleUpdateEvent]
   RoleUpdateEvent(RawApiMap raw, INyxx client) {
     guild = GuildCacheable(client, Snowflake(raw["d"]["guild_id"]));
     role = Role(client, raw["d"]["role"] as RawApiMap, guild.id);
@@ -427,7 +427,7 @@ class GuildStickerUpdate implements IGuildStickerUpdate {
   @override
   late final List<IGuildSticker> stickers;
 
-  /// Creates na instance of [GuildStickerUpdate]
+  /// Creates an instance of [GuildStickerUpdate]
   GuildStickerUpdate(RawApiMap raw, INyxx client) {
     guild = GuildCacheable(client, Snowflake(raw["d"]["guild_id"]));
     stickers = [for (final rawSticker in raw["d"]["stickers"]) GuildSticker(rawSticker as RawApiMap, client)];

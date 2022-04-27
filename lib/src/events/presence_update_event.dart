@@ -31,7 +31,7 @@ class PresenceUpdateEvent implements IPresenceUpdateEvent {
   @override
   late final IClientStatus clientStatus;
 
-  /// Creates na instance of [PresenceUpdateEvent]
+  /// Creates an instance of [PresenceUpdateEvent]
   PresenceUpdateEvent(RawApiMap raw, INyxx client) {
     presences = [for (final rawActivity in raw["d"]["activities"]) Activity(rawActivity as RawApiMap)];
     clientStatus = ClientStatus(raw["d"]["client_status"] as RawApiMap);

@@ -55,7 +55,7 @@ class AuditLogEntry extends SnowflakeEntity implements IAuditLogEntry {
   @override
   late final String? reason;
 
-  /// Creates na instance of [AuditLogEntry]
+  /// Creates an instance of [AuditLogEntry]
   AuditLogEntry(RawApiMap raw, INyxx client) : super(Snowflake(raw["id"] as String)) {
     targetId = raw["targetId"] as String;
 
