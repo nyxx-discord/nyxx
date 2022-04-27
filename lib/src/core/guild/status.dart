@@ -63,7 +63,7 @@ class ClientStatus implements IClientStatus {
   @override
   bool get isOnline => desktop.isOnline || phone.isOnline || web.isOnline;
 
-  /// Creates na instance of [ClientStatus]
+  /// Creates an instance of [ClientStatus]
   ClientStatus(RawApiMap raw) {
     desktop = UserStatus.from(raw["desktop"] as String?);
     web = UserStatus.from(raw["web"] as String?);

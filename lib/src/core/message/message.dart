@@ -265,7 +265,7 @@ class Message extends SnowflakeEntity implements IMessage {
   @override
   late final List<Cacheable<Snowflake, IRole>> roleMentions;
 
-  /// Creates na instance of [Message]
+  /// Creates an instance of [Message]
   Message(this.client, RawApiMap raw) : super(Snowflake(raw["id"])) {
     content = raw["content"] as String;
     channel = CacheableTextChannel<ITextChannel>(client, Snowflake(raw["channel_id"]));
@@ -358,6 +358,8 @@ class Message extends SnowflakeEntity implements IMessage {
       if (client.cacheOptions.memberCachePolicyLocation.objectConstructor && client.cacheOptions.memberCachePolicy.canCache(member!)) {
         guild?.getFromCache()?.members[member!.id] = member!;
       }
+    } else {
+      member = null;
     }
 
     roleMentions = [

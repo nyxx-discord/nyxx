@@ -117,7 +117,7 @@ class Activity implements IActivity {
   @override
   late final Iterable<String> buttons;
 
-  /// Creates na instance of [Activity]
+  /// Creates an instance of [Activity]
   Activity(RawApiMap raw) {
     name = raw["name"] as String;
     url = raw["url"] as String?;
@@ -199,7 +199,7 @@ class ActivityFlags implements IActivityFlags {
   @override
   bool get isPlay => PermissionsUtils.isApplied(value, 1 << 5);
 
-  /// Creates na instance of [ActivityFlags]
+  /// Creates an instance of [ActivityFlags]
   ActivityFlags(int? value) {
     this.value = value ?? 0;
   }
@@ -223,7 +223,7 @@ class ActivityEmoji implements IActivityEmoji {
   @override
   late final bool animated;
 
-  /// Creates na instance of [ActivityEmoji]
+  /// Creates an instance of [ActivityEmoji]
   ActivityEmoji(RawApiMap raw) {
     if (raw["id"] != null) {
       id = Snowflake(raw["id"]);
@@ -253,7 +253,7 @@ class ActivityTimestamps implements IActivityTimestamps {
   @override
   late final DateTime? end;
 
-  /// Creates na instance of [ActivityTimestamps]
+  /// Creates an instance of [ActivityTimestamps]
   ActivityTimestamps(RawApiMap raw) {
     if (raw["start"] != null) {
       start = DateTime.fromMillisecondsSinceEpoch(raw["start"] as int);
@@ -327,7 +327,7 @@ class ActivityParty implements IActivityParty {
   @override
   late final int? maxSize;
 
-  /// Creates na instance of [ActivityParty]
+  /// Creates an instance of [ActivityParty]
   ActivityParty(RawApiMap raw) {
     id = raw["id"] as String?;
 
@@ -373,7 +373,7 @@ class GameAssets implements IGameAssets {
   @override
   late final String? smallText;
 
-  /// Creates na instance of [GameAssets]
+  /// Creates an instance of [GameAssets]
   GameAssets(RawApiMap raw) {
     largeImage = raw["large_image"] as String?;
     largeText = raw["large_text"] as String?;
@@ -407,7 +407,7 @@ class GameSecrets implements IGameSecrets {
   @override
   late final String match;
 
-  /// Creates na instance of [GameSecrets]
+  /// Creates an instance of [GameSecrets]
   GameSecrets(RawApiMap raw) {
     join = raw["join"] as String;
     spectate = raw["spectate"] as String;

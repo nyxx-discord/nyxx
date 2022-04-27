@@ -240,8 +240,8 @@ abstract class IGuild implements SnowflakeEntity {
   /// Prunes the guild, returns the amount of members pruned.
   Future<int> prune(int days, {Iterable<Snowflake>? includeRoles, String? auditReason});
 
-  /// Gets the guild's bans.
-  Stream<IBan> getBans();
+  /// Get"s the guild's bans.
+  Stream<IBan> getBans({int limit = 1000, Snowflake? before, Snowflake? after});
 
   /// Change self nickname in guild
   Future<void> modifyCurrentMember({String? nick});
@@ -764,7 +764,8 @@ class Guild extends SnowflakeEntity implements IGuild {
 
   /// Gets the guild's bans.
   @override
-  Stream<IBan> getBans() => client.httpEndpoints.getGuildBans(id);
+  Stream<IBan> getBans({int limit = 1000, Snowflake? before, Snowflake? after}) =>
+      client.httpEndpoints.getGuildBans(id, limit: limit, before: before, after: after);
 
   /// Change self nickname in guild
   @override
