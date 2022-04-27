@@ -29,7 +29,7 @@ class GuildWelcomeScreen implements IGuildWelcomeScreen {
 }
 
 abstract class IGuildWelcomeChannel {
-  /// The channel id.
+  /// The channel of this welcome screen.
   Cacheable<Snowflake, IChannel> get channel;
 
   /// The description shown for the channel.
@@ -48,7 +48,7 @@ abstract class IGuildWelcomeChannel {
 }
 
 class GuildWelcomeChannel implements IGuildWelcomeChannel {
-  /// The channel id.
+  /// The channel of this welcome screen.
   @override
   late final Cacheable<Snowflake, IChannel> channel;
 
@@ -70,7 +70,7 @@ class GuildWelcomeChannel implements IGuildWelcomeChannel {
   @override
   late final IEmoji? emoji;
 
-  /// Creates an instance of [WelcomeChannel]
+  /// Creates an instance of [GuildWelcomeChannel]
   GuildWelcomeChannel(RawApiMap raw, INyxx client) {
     channel = ChannelCacheable(client, Snowflake(raw["channel_id"]));
     description = raw["description"] as String?;
@@ -79,10 +79,7 @@ class GuildWelcomeChannel implements IGuildWelcomeChannel {
     if (raw['emoji_id'] != null) {
       emojiId = Snowflake(raw['emoji_id']);
       // Used because ResolvableEmoji takes a map and not a sole id
-      final emojiMap = {
-        'id': emojiId,
-      };
-      emoji = ResolvableGuildEmojiPartial(emojiMap, client);
+      emoji = ResolvableGuildEmojiPartial({'id': emojiId}, client);
     } else {
       emoji = UnicodeEmoji(emojiName!);
     }
