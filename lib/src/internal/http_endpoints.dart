@@ -1,3 +1,4 @@
+import 'package:nyxx/src/core/audit_logs/audit_log_entry.dart';
 import 'package:nyxx/src/core/guild/scheduled_event.dart';
 import 'package:nyxx/src/nyxx.dart';
 import 'package:nyxx/src/core/channel/invite.dart';
@@ -135,7 +136,7 @@ abstract class IHttpEndpoints {
   Future<IInvite> createVoiceActivityInvite(Snowflake activityId, Snowflake channelId, {int? maxAge, int? maxUses});
 
   /// Fetches audit logs of guild
-  Future<IAuditLog> fetchAuditLogs(Snowflake guildId, {Snowflake? userId, int? actionType, Snowflake? before, int? limit});
+  Future<IAuditLog> fetchAuditLogs(Snowflake guildId, {Snowflake? userId, AuditLogEntryType? auditType, Snowflake? before, int? limit});
 
   /// Creates new role
   Future<IRole> createGuildRole(Snowflake guildId, RoleBuilder roleBuilder, {String? auditReason});
@@ -734,10 +735,10 @@ class HttpEndpoints implements IHttpEndpoints {
   }
 
   @override
-  Future<IAuditLog> fetchAuditLogs(Snowflake guildId, {Snowflake? userId, int? actionType, Snowflake? before, int? limit}) async {
-    final queryParams = <String, String>{
+  Future<IAuditLog> fetchAuditLogs(Snowflake guildId, {Snowflake? userId, AuditLogEntryType? auditType, Snowflake? before, int? limit}) async {
+    final queryParams = <String, dynamic>{
       if (userId != null) "user_id": userId.toString(),
-      if (actionType != null) "action_type": actionType.toString(),
+      if (auditType != null) "action_type": auditType.value,
       if (before != null) "before": before.toString(),
       if (limit != null) "limit": limit.toString()
     };

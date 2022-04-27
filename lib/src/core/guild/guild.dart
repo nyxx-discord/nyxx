@@ -1,4 +1,5 @@
 import 'package:nyxx/src/core/audit_logs/audit_log.dart';
+import 'package:nyxx/src/core/audit_logs/audit_log_entry.dart';
 import 'package:nyxx/src/core/channel/guild/guild_channel.dart';
 import 'package:nyxx/src/core/channel/invite.dart';
 import 'package:nyxx/src/core/channel/text_channel.dart';
@@ -259,15 +260,13 @@ abstract class IGuild implements SnowflakeEntity {
 
   /// Returns Audit logs.
   /// https://discordapp.com/developers/docs/resources/audit-log
-  ///
+  /// ```dart
+  /// var logs = await guild.fetchAuditLogs(auditType: AuditLogEntryType.guildUpdate);
   /// ```
-  /// var logs = await guild.fetchAuditLogs(actionType: 1);
-  /// ```
-  Future<IAuditLog> fetchAuditLogs({Snowflake? userId, int? actionType, Snowflake? before, int? limit});
+  Future<IAuditLog> fetchAuditLogs({Snowflake? userId, AuditLogEntryType? auditType, Snowflake? before, int? limit});
 
   /// Creates new role
-  ///
-  /// ```
+  /// ```dart
   /// var rb = new RoleBuilder("Dartyy")
   ///   ..color = DiscordColor.fromInt(0xFF04F2)
   ///   ..hoist = true;
@@ -283,15 +282,13 @@ abstract class IGuild implements SnowflakeEntity {
   Future<void> moveChannel(IChannel channel, int position, {String? auditReason});
 
   /// Bans a user and allows to delete messages from [deleteMessageDays] number of days.
-  /// ```
-  ///
+  /// ```dart
   /// await guild.ban(member);
   /// ```
   Future<void> ban(SnowflakeEntity user, {int deleteMessageDays = 0, String? auditReason});
 
-  /// Kicks user from guild. Member is removed from guild and he is able to rejoin
-  ///
-  /// ```
+  /// Kicks user from guild. Member is removed from guild and they're able to rejoin if they have a valid invite link.
+  /// ```dart
   /// await guild.kick(member);
   /// ```
   Future<void> kick(SnowflakeEntity user, {String? auditReason});
@@ -748,7 +745,7 @@ class Guild extends SnowflakeEntity implements IGuild {
   /// Allows to create new guild emoji. [name] is required. You can allow to set [roles] to restrict emoji usage.
   /// Put your image in [emojiAttachment] field.
   ///
-  /// ```
+  /// ```dart
   /// var emojiFile = File("weed.png");
   /// var emoji = await guild.createEmoji("weed", emojiAttachment: AttachmentBuilder.file(emojiFile));
   /// ```
@@ -765,7 +762,7 @@ class Guild extends SnowflakeEntity implements IGuild {
   Future<int> prune(int days, {Iterable<Snowflake>? includeRoles, String? auditReason}) =>
       client.httpEndpoints.guildPrune(id, days, includeRoles: includeRoles, auditReason: auditReason);
 
-  /// Get"s the guild's bans.
+  /// Gets the guild's bans.
   @override
   Stream<IBan> getBans() => client.httpEndpoints.getGuildBans(id);
 
@@ -794,11 +791,11 @@ class Guild extends SnowflakeEntity implements IGuild {
   /// https://discordapp.com/developers/docs/resources/audit-log
   ///
   /// ```dart
-  /// var logs = await guild.fetchAuditLogs(actionType: 1);
+  /// var logs = await guild.fetchAuditLogs(auditType: AuditLogEntryType.guildUpdate);
   /// ```
   @override
-  Future<IAuditLog> fetchAuditLogs({Snowflake? userId, int? actionType, Snowflake? before, int? limit}) =>
-      client.httpEndpoints.fetchAuditLogs(id, userId: userId, actionType: actionType, before: before, limit: limit);
+  Future<IAuditLog> fetchAuditLogs({Snowflake? userId, AuditLogEntryType? auditType, Snowflake? before, int? limit}) =>
+      client.httpEndpoints.fetchAuditLogs(id, userId: userId, auditType: auditType, before: before, limit: limit);
 
   /// Creates new role
   ///
