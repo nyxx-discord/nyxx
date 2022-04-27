@@ -185,10 +185,10 @@ abstract class IGuild implements SnowflakeEntity {
   int? get memberCount;
 
   /// The approximate amount of members in this guild.
-  int? get approximateMemberCount;
+  int? get approxMemberCount;
 
   /// The approximate amount of presences in the guild.
-  int? get approximatePresenceCount;
+  int? get approxPresenceCount;
 
   /// The guild's icon, represented as URL.
   /// If guild doesn't have icon it returns null.
@@ -494,11 +494,11 @@ class Guild extends SnowflakeEntity implements IGuild {
 
   /// The approximate amount of members in this guild.
   @override
-  late final int? approximateMemberCount;
+  late final int? approxMemberCount;
 
   /// The approximate amount of presences in this guild.
   @override
-  late final int? approximatePresenceCount;
+  late final int? approxPresenceCount;
 
   /// The maximum amount of presences that can be in this guild.
   @override
@@ -598,8 +598,8 @@ class Guild extends SnowflakeEntity implements IGuild {
     vanityUrlCode = raw["vanity_url_code"] as String?;
     description = raw["description"] as String?;
     memberCount = raw["member_count"] as int?;
-    approximateMemberCount = raw["approximate_member_count"] as int?;
-    approximatePresenceCount = raw["approximate_presence_count"] as int?;
+    approxMemberCount = raw["approximate_member_count"] as int?;
+    approxPresenceCount = raw["approximate_presence_count"] as int?;
 
     owner = UserCacheable(client, Snowflake(raw["owner_id"]));
 
