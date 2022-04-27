@@ -793,7 +793,7 @@ class Guild extends SnowflakeEntity implements IGuild {
   /// Returns Audit logs.
   /// https://discordapp.com/developers/docs/resources/audit-log
   ///
-  /// ```
+  /// ```dart
   /// var logs = await guild.fetchAuditLogs(actionType: 1);
   /// ```
   @override
@@ -802,7 +802,7 @@ class Guild extends SnowflakeEntity implements IGuild {
 
   /// Creates new role
   ///
-  /// ```
+  /// ```dart
   /// var rb = RoleBuilder("Dartyy")
   ///   ..color = DiscordColor.fromInt(0xFF04F2)
   ///   ..hoist = true;
@@ -816,7 +816,7 @@ class Guild extends SnowflakeEntity implements IGuild {
   @override
   Stream<IVoiceRegion> getVoiceRegions() => client.httpEndpoints.fetchGuildVoiceRegions(id);
 
-  /// Moves channel
+  /// Moves the [position] from the given [channel].
   @override
   Future<void> moveChannel(IChannel channel, int position, {String? auditReason}) =>
       client.httpEndpoints.moveGuildChannel(id, channel.id, position, auditReason: auditReason);
