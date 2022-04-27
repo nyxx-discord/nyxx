@@ -453,7 +453,7 @@ class PartialPresence implements IPartialPresence {
   @override
   late final List<IActivity?> activities;
 
-  /// Creates na instance of [PartialPresence]
+  /// Creates an instance of [PartialPresence]
   PartialPresence(RawApiMap raw, this.client) {
     user = raw["user"] != null ? UserCacheable(client, Snowflake(raw['user']['id'])) : null;
     clientStatus = raw["client_status"] != null ? ClientStatus(raw["client_status"] as RawApiMap) : null;
