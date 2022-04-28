@@ -389,7 +389,7 @@ class NyxxWebsocket extends NyxxRest implements INyxxWebsocket {
   /// Get user instance with specified id.
   /// ```
   /// var user = client.getUser(Snowflake("302359032612651009"));
-  /// ``
+  /// ```
   @override
   Future<IUser> fetchUser(Snowflake userId) => httpEndpoints.fetchUser(userId);
 
