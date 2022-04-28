@@ -26,7 +26,8 @@ import 'package:nyxx/src/internal/interfaces/disposable.dart';
 import 'package:nyxx/src/internal/shard/shard_manager.dart';
 import 'package:nyxx/src/plugin/plugin.dart';
 import 'package:nyxx/src/plugin/plugin_manager.dart';
-import 'utils/builders/presence_builder.dart';
+import 'package:nyxx/src/utils/builders/guild_builder.dart';
+import 'package:nyxx/src/utils/builders/presence_builder.dart';
 import 'package:nyxx/src/typedefs.dart';
 
 abstract class NyxxFactory {
