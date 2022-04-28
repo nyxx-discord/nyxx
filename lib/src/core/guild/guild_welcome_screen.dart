@@ -1,6 +1,11 @@
-import 'package:nyxx/nyxx.dart';
+import 'package:nyxx/src/core/channel/channel.dart';
+import 'package:nyxx/src/core/message/emoji.dart';
+import 'package:nyxx/src/core/message/unicode_emoji.dart';
 import 'package:nyxx/src/core/message/guild_emoji.dart';
+import 'package:nyxx/src/core/snowflake.dart';
 import 'package:nyxx/src/internal/cache/cacheable.dart';
+import 'package:nyxx/src/nyxx.dart';
+import 'package:nyxx/src/typedefs.dart';
 
 abstract class IGuildWelcomeScreen {
   /// The server description shown in the welcome screen.
