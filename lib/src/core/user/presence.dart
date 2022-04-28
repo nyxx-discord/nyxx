@@ -419,7 +419,7 @@ abstract class IPartialPresence {
   /// Reference to [INyxx]
   INyxx get client;
 
-  /// The [IUser] object
+  /// The [IPartialPresence]'s [IUser]
   Cacheable<Snowflake, IUser>? get user;
 
   /// The status of the user indicating the platform they are on.
@@ -437,7 +437,7 @@ class PartialPresence implements IPartialPresence {
   @override
   final INyxx client;
 
-  /// The [IUser] object
+  /// The [IPartialPresence]'s [IUser]
   @override
   late final Cacheable<Snowflake, IUser>? user;
 
