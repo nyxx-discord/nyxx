@@ -1,7 +1,7 @@
-import 'package:nyxx/nyxx.dart';
 import 'package:nyxx/src/core/guild/status.dart';
 import 'package:nyxx/src/core/snowflake.dart';
 import 'package:nyxx/src/internal/cache/cacheable.dart';
+import 'package:nyxx/src/nyxx.dart';
 import 'package:nyxx/src/typedefs.dart';
 import 'package:nyxx/src/utils/enum.dart';
 import 'package:nyxx/src/utils/permissions.dart';
