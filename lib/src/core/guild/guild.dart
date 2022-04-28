@@ -805,7 +805,7 @@ class Guild extends SnowflakeEntity implements IGuild {
   @override
   Stream<IVoiceRegion> getVoiceRegions() => client.httpEndpoints.fetchGuildVoiceRegions(id);
 
-  /// Moves the [position] from the given [channel].
+  /// Moves the [channel] for the given [position].
   @override
   Future<void> moveChannel(IChannel channel, int position, {String? auditReason}) =>
       client.httpEndpoints.moveGuildChannel(id, channel.id, position, auditReason: auditReason);
