@@ -26,7 +26,8 @@ import 'package:nyxx/src/internal/interfaces/disposable.dart';
 import 'package:nyxx/src/internal/shard/shard_manager.dart';
 import 'package:nyxx/src/plugin/plugin.dart';
 import 'package:nyxx/src/plugin/plugin_manager.dart';
-import 'utils/builders/presence_builder.dart';
+import 'package:nyxx/src/utils/builders/guild_builder.dart';
+import 'package:nyxx/src/utils/builders/presence_builder.dart';
 import 'package:nyxx/src/typedefs.dart';
 
 abstract class NyxxFactory {
@@ -242,7 +243,17 @@ abstract class INyxxWebsocket implements INyxxRest {
   Future<IGuildPreview> fetchGuildPreview(Snowflake guildId);
 
   /// Returns guild with given [guildId]
-  Future<IGuild> fetchGuild(Snowflake guildId);
+  /// If [withCounts] is set to true, then guild will have [IGuild.approximateMemberCount] and [IGuild.approximatePresenceCount] present.
+  Future<IGuild> fetchGuild(Snowflake guildId, {bool? withCounts = true});
+
+  /// Creates a guild.
+  ///
+  /// **⚠️ This endpoint can only be used by bots that are in ten guilds or fewer.**
+  /// ```dart
+  /// var gb = GuildBuilder("Test Guild");
+  /// var guild = await client.createGuild(gb);
+  /// ```
+  Future<IGuild> createGuild(GuildBuilder builder);
 
   /// Returns channel with specified id.
   /// ```
@@ -365,8 +376,9 @@ class NyxxWebsocket extends NyxxRest implements INyxxWebsocket {
   Future<IGuildPreview> fetchGuildPreview(Snowflake guildId) async => httpEndpoints.fetchGuildPreview(guildId);
 
   /// Returns guild with given [guildId]
+  /// If [withCounts] is set to true, then guild will have [IGuild.approximateMemberCount] and [IGuild.approximatePresenceCount] present.
   @override
-  Future<IGuild> fetchGuild(Snowflake guildId) => httpEndpoints.fetchGuild(guildId);
+  Future<IGuild> fetchGuild(Snowflake guildId, {bool? withCounts = true}) => httpEndpoints.fetchGuild(guildId, withCounts: withCounts);
 
   /// Returns channel with specified id.
   /// ```
@@ -378,9 +390,19 @@ class NyxxWebsocket extends NyxxRest implements INyxxWebsocket {
   /// Get user instance with specified id.
   /// ```
   /// var user = client.getUser(Snowflake("302359032612651009"));
-  /// ``
+  /// ```
   @override
   Future<IUser> fetchUser(Snowflake userId) => httpEndpoints.fetchUser(userId);
+
+  /// Creates a guild.
+  ///
+  /// **⚠️ This endpoint can only be used by bots that are in ten guilds or fewer.**
+  /// ```dart
+  /// var gb = GuildBuilder("Test Guild");
+  /// var guild = await client.createGuild(gb);
+  /// ```
+  @override
+  Future<IGuild> createGuild(GuildBuilder builder) => httpEndpoints.createGuild(builder);
 
   /// Gets a webhook by its id and/or token.
   /// If token is supplied authentication is not needed.
