@@ -355,7 +355,7 @@ abstract class IGameAssets {
   String? get smallText;
 }
 
-/// Presence"s assets
+/// Presences assets
 class GameAssets implements IGameAssets {
   /// The id for a large asset of the activity, usually a snowflake.
   @override
@@ -393,7 +393,7 @@ abstract class IGameSecrets {
   String get match;
 }
 
-/// Represents presence"s secrets
+/// Represents presences secrets
 class GameSecrets implements IGameSecrets {
   /// Join secret
   @override
