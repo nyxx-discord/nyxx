@@ -733,7 +733,7 @@ class HttpEndpoints implements IHttpEndpoints {
   Future<IAuditLog> fetchAuditLogs(Snowflake guildId, {Snowflake? userId, AuditLogEntryType? auditType, Snowflake? before, int? limit}) async {
     final queryParams = <String, dynamic>{
       if (userId != null) "user_id": userId.toString(),
-      if (auditType != null) "action_type": auditType.value,
+      if (auditType != null) "action_type": auditType.value.toString(),
       if (before != null) "before": before.toString(),
       if (limit != null) "limit": limit.toString()
     };
