@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:http/http.dart' as http;
-import 'package:nyxx/nyxx.dart';
 import 'package:nyxx/src/core/allowed_mentions.dart';
 import 'package:nyxx/src/core/message/message.dart';
 import 'package:nyxx/src/core/message/message_time_stamp.dart';
