@@ -62,6 +62,7 @@ main() {
         'permission_overwrites': [
           {'allow': "0", 'deny': "122406567679", 'id': '0', 'type': 0}
         ],
+        'type': 0,
         'name': 'test'
       };
       expect(builder.build(), expectedResult);
