@@ -6,6 +6,7 @@ import 'package:nyxx/src/core/user/presence.dart';
 import 'package:nyxx/src/internal/cache/cacheable.dart';
 import 'package:nyxx/src/utils/builders/channel_builder.dart';
 import 'package:nyxx/src/utils/builders/embed_builder.dart';
+import 'package:nyxx/src/utils/builders/forum_thread_builder.dart';
 import 'package:nyxx/src/utils/builders/member_builder.dart';
 import 'package:nyxx/src/utils/builders/message_builder.dart';
 import 'package:nyxx/src/utils/builders/permissions_builder.dart';
@@ -208,6 +209,22 @@ main() {
       expect(builder.canBeUsedAsNewMessage(), isTrue);
 
       expect(MessageDecoration.bold.format('test'), equals('**test**'));
+    });
+
+    test("ForumThreadBuilder", () {
+      final builder = ForumThreadBuilder()
+        ..name = "test"
+        ..message = MessageBuilder.content("test");
+
+      expect(
+          builder.build(),
+          equals({
+            'name': 'test',
+            'message': {
+              'content': 'test'
+            }
+          })
+      );
     });
   });
 }

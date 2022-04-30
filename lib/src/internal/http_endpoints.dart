@@ -31,6 +31,7 @@ import 'package:nyxx/src/internal/response_wrapper/thread_list_result_wrapper.da
 import 'package:nyxx/src/typedefs.dart';
 import 'package:nyxx/src/utils/builders/attachment_builder.dart';
 import 'package:nyxx/src/utils/builders/channel_builder.dart';
+import 'package:nyxx/src/utils/builders/forum_thread_builder.dart';
 import 'package:nyxx/src/utils/builders/guild_builder.dart';
 import 'package:nyxx/src/utils/builders/guild_event_builder.dart';
 import 'package:nyxx/src/utils/builders/message_builder.dart';
@@ -226,6 +227,9 @@ abstract class IHttpEndpoints {
 
   /// Creates new thread.
   Future<IThreadPreviewChannel> createThread(Snowflake channelId, ThreadBuilder builder);
+
+  /// Creates new thread in forum channel
+  Future<IThreadChannel> startForumThread(Snowflake channelId, ForumThreadBuilder builder);
 
   /// Returns all member of given thread
   Stream<IThreadMember> fetchThreadMembers(Snowflake channelId, Snowflake guildId);
@@ -485,6 +489,23 @@ class HttpEndpoints implements IHttpEndpoints {
 
     if (response is HttpResponseSuccess) {
       return Role(client, response.jsonBody as RawApiMap, guildId);
+    }
+
+    return Future.error(response);
+  }
+
+  @override
+  Future<IThreadChannel> startForumThread(Snowflake channelId, ForumThreadBuilder builder) async {
+    final response = await httpHandler.execute(
+      BasicRequest(
+        "/channels/$channelId/threads",
+        method: "POST",
+        body: builder.build(),
+      ),
+    );
+
+    if (response is HttpResponseSuccess) {
+      return ThreadChannel(client, response.jsonBody as RawApiMap);
     }
 
     return Future.error(response);

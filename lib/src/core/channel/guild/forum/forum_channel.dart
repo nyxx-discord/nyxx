@@ -7,17 +7,14 @@ import 'package:nyxx/src/internal/interfaces/mentionable.dart';
 import 'package:nyxx/src/internal/response_wrapper/thread_list_result_wrapper.dart';
 import 'package:nyxx/src/nyxx.dart';
 import 'package:nyxx/src/typedefs.dart';
-import 'package:nyxx/src/utils/builders/thread_builder.dart';
+import 'package:nyxx/src/utils/builders/forum_thread_builder.dart';
 
 abstract class IForumChannel implements IGuildChannel, Mentionable {
   /// Tags available to assign to forum posts
   List<IForumTag> get availableTags;
 
   /// Creates a thread in a channel, that only retrieves a [ThreadPreviewChannel]
-  Future<IThreadPreviewChannel> createThread(ThreadBuilder builder);
-
-  /// Creates a thread in a message
-  Future<IThreadChannel> createAndGetThread(ThreadBuilder builder);
+  Future<IThreadChannel> createThread(ForumThreadBuilder builder);
 
   /// Fetches joined private and archived thread channels
   Future<IThreadListResultWrapper> fetchJoinedPrivateArchivedThreads({DateTime? before, int? limit});
@@ -44,14 +41,8 @@ class ForumChannel extends GuildChannel implements IForumChannel {
 
   /// Creates a thread in a channel, that only retrieves a [ThreadPreviewChannel]
   @override
-  Future<IThreadPreviewChannel> createThread(ThreadBuilder builder) => client.httpEndpoints.createThread(id, builder);
-
-  /// Creates a thread in a message
-  @override
-  Future<IThreadChannel> createAndGetThread(ThreadBuilder builder) async {
-    final preview = await client.httpEndpoints.createThread(id, builder);
-    return preview.getThreadChannel().getOrDownload();
-  }
+  Future<IThreadChannel> createThread(ForumThreadBuilder builder) =>
+      client.httpEndpoints.startForumThread(id, builder);
 
   /// Fetches joined private and archived thread channels
   @override

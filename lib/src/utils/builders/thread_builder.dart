@@ -3,7 +3,7 @@ import 'package:nyxx/src/utils/enum.dart';
 import 'package:nyxx/src/utils/builders/builder.dart';
 
 class ThreadBuilder extends Builder {
-  /// The name fo the thread
+  /// The name for the thread
   String? name;
 
   /// Whether or not the thread is private
