@@ -1,3 +1,4 @@
+import 'package:nyxx/src/core/audit_logs/audit_log_entry.dart';
 import 'package:nyxx/src/core/guild/scheduled_event.dart';
 import 'package:nyxx/src/nyxx.dart';
 import 'package:nyxx/src/core/channel/invite.dart';
@@ -15,6 +16,7 @@ import 'package:nyxx/src/core/guild/guild.dart';
 import 'package:nyxx/src/core/guild/guild_preview.dart';
 import 'package:nyxx/src/core/guild/role.dart';
 import 'package:nyxx/src/core/guild/webhook.dart';
+import 'package:nyxx/src/core/guild/guild_welcome_screen.dart';
 import 'package:nyxx/src/core/message/emoji.dart';
 import 'package:nyxx/src/core/message/guild_emoji.dart';
 import 'package:nyxx/src/core/message/message.dart';
@@ -34,6 +36,7 @@ import 'package:nyxx/src/utils/builders/channel_builder.dart';
 import 'package:nyxx/src/utils/builders/forum_thread_builder.dart';
 import 'package:nyxx/src/utils/builders/guild_builder.dart';
 import 'package:nyxx/src/utils/builders/guild_event_builder.dart';
+import 'package:nyxx/src/utils/builders/member_builder.dart';
 import 'package:nyxx/src/utils/builders/message_builder.dart';
 import 'package:nyxx/src/utils/builders/permissions_builder.dart';
 import 'package:nyxx/src/utils/builders/sticker_builder.dart';
@@ -66,6 +69,11 @@ abstract class IHttpEndpoints {
   /// Returns url to guild widget for given [guildId]. Additionally accepts [style] parameter.
   String getGuildWidgetUrl(Snowflake guildId, [String style = "shield"]);
 
+  /// Returns cnd url for given [guildId] and [bannerHash].
+  /// Requires to specify format and size of returned image.
+  /// Format can be webp, png. Size should be power of 2, eg. 512, 1024
+  String? getGuildBannerUrl(Snowflake guildId, String? bannerHash, {String? format, int? size});
+
   /// Allows to modify guild emoji.
   Future<BaseGuildEmoji> editGuildEmoji(Snowflake guildId, Snowflake emojiId, {String? name, List<Snowflake>? roles, AttachmentBuilder? avatarAttachment});
 
@@ -82,13 +90,16 @@ abstract class IHttpEndpoints {
   Future<void> addRoleToUser(Snowflake guildId, Snowflake roleId, Snowflake userId, {String? auditReason});
 
   /// Fetches [Guild] object from API
-  Future<IGuild> fetchGuild(Snowflake guildId);
+  Future<IGuild> fetchGuild(Snowflake guildId, {bool? withCounts = true});
 
   /// Fetches [IChannel] from API. Channel cas be cast to wanted type using generics
   Future<T> fetchChannel<T>(Snowflake id);
 
   /// Returns [BaseGuildEmoji] for given [emojiId]
   Future<IBaseGuildEmoji> fetchGuildEmoji(Snowflake guildId, Snowflake emojiId);
+
+  /// Fetches a [IGuildWelcomeScreen] from the given [guildId]
+  Future<IGuildWelcomeScreen> fetchGuildWelcomeScreen(Snowflake guildId);
 
   /// Creates emoji in given guild
   Future<IBaseGuildEmoji> createEmoji(Snowflake guildId, String name, {List<SnowflakeEntity>? roles, AttachmentBuilder? emojiAttachment});
@@ -117,6 +128,9 @@ abstract class IHttpEndpoints {
   /// Leaves guild with given id
   Future<void> leaveGuild(Snowflake guildId);
 
+  /// Creates a new guild.
+  Future<IGuild> createGuild(GuildBuilder builder);
+
   /// Returns list of all guild invites
   Stream<IInvite> fetchGuildInvites(Snowflake guildId);
 
@@ -124,7 +138,7 @@ abstract class IHttpEndpoints {
   Future<IInvite> createVoiceActivityInvite(Snowflake activityId, Snowflake channelId, {int? maxAge, int? maxUses});
 
   /// Fetches audit logs of guild
-  Future<IAuditLog> fetchAuditLogs(Snowflake guildId, {Snowflake? userId, int? actionType, Snowflake? before, int? limit});
+  Future<IAuditLog> fetchAuditLogs(Snowflake guildId, {Snowflake? userId, AuditLogEntryType? auditType, Snowflake? before, int? limit});
 
   /// Creates new role
   Future<IRole> createGuildRole(Snowflake guildId, RoleBuilder roleBuilder, {String? auditReason});
@@ -145,8 +159,7 @@ abstract class IHttpEndpoints {
   Future<void> guildUnban(Snowflake guildId, Snowflake userId);
 
   /// Allows to edit basic guild properties
-  Future<IGuild> editGuild(Snowflake guildId,
-      {String? name, int? verificationLevel, int? notificationLevel, SnowflakeEntity? afkChannel, int? afkTimeout, String? icon, String? auditReason});
+  Future<IGuild> editGuild(Snowflake guildId, GuildBuilder builder, {String? auditReason});
 
   /// Fetches [Member] object from guild
   Future<IMember> fetchGuildMember(Snowflake guildId, Snowflake memberId);
@@ -457,6 +470,25 @@ class HttpEndpoints implements IHttpEndpoints {
   }
 
   @override
+  String? getGuildBannerUrl(Snowflake guildId, String? bannerHash, {String? format, int? size}) {
+    if (bannerHash != null) {
+      var url = "${Constants.cdnUrl}/banners/$guildId/$bannerHash.";
+      if (format == null && bannerHash.startsWith('a_')) {
+        url += "gif";
+      } else {
+        url += format ?? "webp";
+      }
+
+      if (size != null) {
+        url += "?size=$size";
+      }
+
+      return url;
+    }
+    return null;
+  }
+
+  @override
   String getGuildWidgetUrl(Snowflake guildId, [String style = "shield"]) => "https://cdn.${Constants.cdnHost}/guilds/$guildId/widget.png?style=$style";
 
   @override
@@ -520,8 +552,8 @@ class HttpEndpoints implements IHttpEndpoints {
       executeSafe(BasicRequest("/guilds/$guildId/members/$userId/roles/$roleId", method: "PUT", auditLog: auditReason));
 
   @override
-  Future<IGuild> fetchGuild(Snowflake guildId) async {
-    final response = await httpHandler.execute(BasicRequest("/guilds/${guildId.toString()}"));
+  Future<IGuild> fetchGuild(Snowflake guildId, {bool? withCounts = true}) async {
+    final response = await httpHandler.execute(BasicRequest("/guilds/${guildId.toString()}", queryParams: {"with_counts": (withCounts ?? true).toString()}));
 
     if (response is HttpResponseSuccess) {
       return Guild(client, response.jsonBody as RawApiMap);
@@ -548,6 +580,17 @@ class HttpEndpoints implements IHttpEndpoints {
 
     if (response is HttpResponseSuccess) {
       return GuildEmoji(client, response.jsonBody as RawApiMap, guildId);
+    }
+
+    return Future.error(response);
+  }
+
+  @override
+  Future<IGuildWelcomeScreen> fetchGuildWelcomeScreen(Snowflake guildId) async {
+    final response = await httpHandler.execute(BasicRequest("/guilds/$guildId/welcome-screen"));
+
+    if (response is HttpResponseSuccess) {
+      return GuildWelcomeScreen(response.jsonBody as RawApiMap, client);
     }
 
     return Future.error(response);
@@ -651,7 +694,8 @@ class HttpEndpoints implements IHttpEndpoints {
 
   @override
   Future<IGuild> changeGuildOwner(Snowflake guildId, SnowflakeEntity member, {String? auditReason}) async {
-    final response = await httpHandler.execute(BasicRequest("/guilds/$guildId", method: "PATCH", auditLog: auditReason, body: {"owner_id": member.id}));
+    final response =
+        await httpHandler.execute(BasicRequest("/guilds/$guildId", method: "PATCH", auditLog: auditReason, body: {"owner_id": member.id.toString()}));
 
     if (response is HttpResponseSuccess) {
       return Guild(client, response.jsonBody as RawApiMap);
@@ -662,6 +706,19 @@ class HttpEndpoints implements IHttpEndpoints {
 
   @override
   Future<void> leaveGuild(Snowflake guildId) async => executeSafe(BasicRequest("/users/@me/guilds/$guildId", method: "DELETE"));
+
+  @override
+  Future<IGuild> createGuild(GuildBuilder builder) async {
+    final response = await httpHandler.execute(BasicRequest("/guilds", method: "POST", body: builder.build()));
+
+    if (response is HttpResponseSuccess) {
+      final guild = Guild(client, response.jsonBody as RawApiMap);
+      client.guilds[guild.id] = guild;
+      return guild;
+    }
+
+    return Future.error(response);
+  }
 
   @override
   Stream<IInvite> fetchGuildInvites(Snowflake guildId) async* {
@@ -694,10 +751,10 @@ class HttpEndpoints implements IHttpEndpoints {
   }
 
   @override
-  Future<IAuditLog> fetchAuditLogs(Snowflake guildId, {Snowflake? userId, int? actionType, Snowflake? before, int? limit}) async {
-    final queryParams = <String, String>{
+  Future<IAuditLog> fetchAuditLogs(Snowflake guildId, {Snowflake? userId, AuditLogEntryType? auditType, Snowflake? before, int? limit}) async {
+    final queryParams = <String, dynamic>{
       if (userId != null) "user_id": userId.toString(),
-      if (actionType != null) "action_type": actionType.toString(),
+      if (auditType != null) "action_type": auditType.value.toString(),
       if (before != null) "before": before.toString(),
       if (limit != null) "limit": limit.toString()
     };
@@ -752,18 +809,8 @@ class HttpEndpoints implements IHttpEndpoints {
   Future<void> guildUnban(Snowflake guildId, Snowflake userId) async => executeSafe(BasicRequest("/guilds/$guildId/bans/$userId", method: "DELETE"));
 
   @override
-  Future<IGuild> editGuild(Snowflake guildId,
-      {String? name, int? verificationLevel, int? notificationLevel, SnowflakeEntity? afkChannel, int? afkTimeout, String? icon, String? auditReason}) async {
-    final body = <String, dynamic>{
-      if (name != null) "name": name,
-      if (verificationLevel != null) "verification_level": verificationLevel,
-      if (notificationLevel != null) "default_message_notifications": notificationLevel,
-      if (afkChannel != null) "afk_channel_id": afkChannel,
-      if (afkTimeout != null) "afk_timeout": afkTimeout,
-      if (icon != null) "icon": icon
-    };
-
-    final response = await httpHandler.execute(BasicRequest("/guilds/$guildId", method: "PATCH", auditLog: auditReason, body: body));
+  Future<IGuild> editGuild(Snowflake guildId, GuildBuilder builder, {String? auditReason}) async {
+    final response = await httpHandler.execute(BasicRequest("/guilds/$guildId", method: "PATCH", auditLog: auditReason, body: builder.build()));
 
     if (response is HttpResponseSuccess) {
       return Guild(client, response.jsonBody as RawApiMap);

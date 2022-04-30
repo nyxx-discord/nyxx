@@ -2,6 +2,14 @@ import 'package:nyxx/nyxx.dart';
 
 /// Builder for creating mini channel instance
 abstract class ChannelBuilder implements Builder {
+  /// Name of the channel (1-100 characters)
+  String? name;
+
+  /// Id of the channel.
+  /// When using the `channels` parameter on [GuildBuilder], this field within each channel object may be set to an integer placeholder, and will be replaced by the API upon consumption.
+  /// Its purpose is to allow you to create `GUILD_CATEGORY` channels by setting the [parentChannel.id] field on any children to the category's id field. Category channels must be listed before any children.
+  Snowflake? id;
+
   /// Type of channel
   ChannelType? type;
 
@@ -16,6 +24,8 @@ abstract class ChannelBuilder implements Builder {
 
   @override
   RawApiMap build() => {
+        if (name != null) "name": name,
+        if (id != null) "id": id!.toString(),
         if (type != null) "type": type!.value,
         if (position != null) "position": position,
         if (parentChannel != null) "parent_id": parentChannel!.id.toString(),
@@ -24,6 +34,11 @@ abstract class ChannelBuilder implements Builder {
 }
 
 class VoiceChannelBuilder extends ChannelBuilder {
+  /// Type of channel
+  @override
+  // ignore: overridden_fields
+  ChannelType? type = ChannelType.voice;
+
   /// The bitrate (in bits) of the voice channel (voice only)
   int? bitrate;
 
@@ -48,8 +63,10 @@ class VoiceChannelBuilder extends ChannelBuilder {
 }
 
 class TextChannelBuilder extends ChannelBuilder {
-  /// Name of channel
-  String? name;
+  /// Type of channel
+  @override
+  // ignore: overridden_fields
+  ChannelType? type = ChannelType.text;
 
   /// Channel topic (0-1024 characters)
   String? topic;
@@ -58,12 +75,15 @@ class TextChannelBuilder extends ChannelBuilder {
   bool? nsfw;
 
   TextChannelBuilder();
-  TextChannelBuilder.create(this.name);
+  factory TextChannelBuilder.create(String name) {
+    final builder = TextChannelBuilder();
+    builder.name = name;
+    return builder;
+  }
 
   @override
   RawApiMap build() => {
         ...super.build(),
-        if (name != null) "name": name,
         if (topic != null) "topic": topic,
         if (nsfw != null) "nsfw": nsfw,
       };

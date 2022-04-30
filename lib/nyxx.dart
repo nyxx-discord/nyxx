@@ -49,6 +49,8 @@ export 'src/core/guild/premium_tier.dart' show PremiumTier;
 export 'src/core/guild/role.dart' show IRole, IRoleTags;
 export 'src/core/guild/status.dart' show IClientStatus, UserStatus;
 export 'src/core/guild/webhook.dart' show IWebhook, WebhookType;
+export 'src/core/guild/guild_welcome_screen.dart' show IGuildWelcomeScreen, IGuildWelcomeChannel;
+export 'src/core/guild/system_channel_flags.dart' show SystemChannelFlags;
 export 'src/core/message/attachment.dart' show IAttachment;
 export 'src/core/message/emoji.dart' show IEmoji;
 export 'src/core/message/guild_emoji.dart' show IBaseGuildEmoji, IGuildEmoji, IGuildEmojiPartial, IResolvableGuildEmojiPartial;
@@ -80,7 +82,7 @@ export 'src/core/permissions/permissions_constants.dart' show PermissionsConstan
 export 'src/core/user/member.dart' show IMember;
 export 'src/core/user/nitro_type.dart' show NitroType;
 export 'src/core/user/presence.dart'
-    show IActivity, IActivityEmoji, IActivityFlags, IActivityParty, IActivityTimestamps, IGameAssets, IGameSecrets, ActivityType;
+    show IActivity, IActivityEmoji, IActivityFlags, IActivityParty, IActivityTimestamps, IGameAssets, IGameSecrets, ActivityType, IPartialPresence;
 export 'src/core/user/user.dart' show IUser;
 export 'src/core/user/user_flags.dart' show IUserFlags;
 export 'src/core/voice/voice_region.dart' show IVoiceRegion;
