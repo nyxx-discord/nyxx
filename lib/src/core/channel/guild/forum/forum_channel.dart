@@ -41,8 +41,7 @@ class ForumChannel extends GuildChannel implements IForumChannel {
 
   /// Creates a thread in a channel, that only retrieves a [ThreadPreviewChannel]
   @override
-  Future<IThreadChannel> createThread(ForumThreadBuilder builder) =>
-      client.httpEndpoints.startForumThread(id, builder);
+  Future<IThreadChannel> createThread(ForumThreadBuilder builder) => client.httpEndpoints.startForumThread(id, builder);
 
   /// Fetches joined private and archived thread channels
   @override
