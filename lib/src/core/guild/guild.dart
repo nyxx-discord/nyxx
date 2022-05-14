@@ -1,32 +1,35 @@
-import 'package:nyxx/src/core/guild/scheduled_event.dart';
-import 'package:nyxx/src/internal/exceptions/invalid_shard_exception.dart';
-import 'package:nyxx/src/nyxx.dart';
-import 'package:nyxx/src/core/channel/invite.dart';
-import 'package:nyxx/src/core/snowflake.dart';
-import 'package:nyxx/src/core/snowflake_entity.dart';
 import 'package:nyxx/src/core/audit_logs/audit_log.dart';
-import 'package:nyxx/src/core/channel/cacheable_text_channel.dart';
-import 'package:nyxx/src/core/channel/channel.dart';
-import 'package:nyxx/src/core/channel/text_channel.dart';
+import 'package:nyxx/src/core/audit_logs/audit_log_entry.dart';
 import 'package:nyxx/src/core/channel/guild/guild_channel.dart';
-import 'package:nyxx/src/core/channel/guild/text_guild_channel.dart';
-import 'package:nyxx/src/core/channel/guild/voice_channel.dart';
-import 'package:nyxx/src/core/guild/ban.dart';
+import 'package:nyxx/src/core/channel/invite.dart';
+import 'package:nyxx/src/core/channel/text_channel.dart';
 import 'package:nyxx/src/core/guild/guild_feature.dart';
 import 'package:nyxx/src/core/guild/guild_nsfw_level.dart';
 import 'package:nyxx/src/core/guild/guild_preview.dart';
+import 'package:nyxx/src/core/guild/guild_welcome_screen.dart';
 import 'package:nyxx/src/core/guild/premium_tier.dart';
+import 'package:nyxx/src/core/guild/scheduled_event.dart';
+import 'package:nyxx/src/core/snowflake.dart';
+import 'package:nyxx/src/core/snowflake_entity.dart';
+import 'package:nyxx/src/core/user/presence.dart';
+import 'package:nyxx/src/core/user/user.dart';
+import 'package:nyxx/src/internal/cache/cache.dart';
+import 'package:nyxx/src/internal/exceptions/invalid_shard_exception.dart';
+import 'package:nyxx/src/internal/shard/shard.dart';
+import 'package:nyxx/src/nyxx.dart';
+import 'package:nyxx/src/core/channel/cacheable_text_channel.dart';
+import 'package:nyxx/src/core/channel/channel.dart';
+import 'package:nyxx/src/core/channel/guild/text_guild_channel.dart';
+import 'package:nyxx/src/core/channel/guild/voice_channel.dart';
+import 'package:nyxx/src/core/guild/ban.dart';
 import 'package:nyxx/src/core/guild/role.dart';
 import 'package:nyxx/src/core/message/guild_emoji.dart';
 import 'package:nyxx/src/core/message/sticker.dart';
 import 'package:nyxx/src/core/permissions/permissions.dart';
 import 'package:nyxx/src/core/user/member.dart';
-import 'package:nyxx/src/core/user/user.dart';
 import 'package:nyxx/src/core/voice/voice_region.dart';
 import 'package:nyxx/src/core/voice/voice_state.dart';
-import 'package:nyxx/src/internal/cache/cache.dart';
 import 'package:nyxx/src/internal/cache/cacheable.dart';
-import 'package:nyxx/src/internal/shard/shard.dart';
 import 'package:nyxx/src/typedefs.dart';
 import 'package:nyxx/src/utils/builders/attachment_builder.dart';
 import 'package:nyxx/src/utils/builders/channel_builder.dart';
@@ -58,10 +61,6 @@ abstract class IGuild implements SnowflakeEntity {
 
   /// The guild's afk channel ID, null if not set.
   Cacheable<Snowflake, IVoiceGuildChannel>? get afkChannel;
-
-  /// The guild's voice region.
-  @Deprecated('User IVoiceChannel.rtcRegion')
-  String get region;
 
   /// The channel ID for the guild's widget if enabled.
   Cacheable<Snowflake, ITextGuildChannel>? get embedChannel;
@@ -152,6 +151,41 @@ abstract class IGuild implements SnowflakeEntity {
   /// Whether the guild has the boost progress bar enabled
   bool get boostProgressBarEnabled;
 
+  /// The banner hash of the guild, if any.
+  String? get banner;
+
+  /// List of partial presences.
+  ///
+  /// Will only include non-offline members if the size of the guild is greater than the [ClientOptions.largeThreshold] option.
+  List<IPartialPresence?> get presences;
+
+  /// If this guild is considered large.
+  bool get large;
+
+  /// The maximum amount of members that can be in this guild.
+  int get maximumMembers;
+
+  /// The maximum amount of presences that can be in this guild.
+  int? get maximumPresences;
+
+  /// Explicit content filter level of this guild.
+  int get explicitContentFilterLevel;
+
+  /// The vanity URL code of this guild. If any.
+  String? get vanityUrlCode;
+
+  /// The description of this guild. If it's a community guild.
+  String? get description;
+
+  /// The total amount of members in this guild.
+  int? get memberCount;
+
+  /// The approximate amount of members in this guild.
+  int? get approxMemberCount;
+
+  /// The approximate amount of presences in the guild.
+  int? get approxPresenceCount;
+
   /// The guild's icon, represented as URL.
   /// If guild doesn't have icon it returns null.
   String? iconURL({String format = "webp", int size = 128});
@@ -163,6 +197,10 @@ abstract class IGuild implements SnowflakeEntity {
   /// URL to guilds discovery splash
   /// If guild doesn't have splash it returns null.
   String? discoveryURL({String format = "webp", int size = 128});
+
+  /// URL to guild's banner.
+  /// If guild doesn't have banner it returns null.
+  String? bannerUrl({String? format, int? size});
 
   /// Allows to download [Guild] widget aka advert png
   /// Possible options for [style]: shield (default), banner1, banner2, banner3, banner4
@@ -198,8 +236,8 @@ abstract class IGuild implements SnowflakeEntity {
   /// Prunes the guild, returns the amount of members pruned.
   Future<int> prune(int days, {Iterable<Snowflake>? includeRoles, String? auditReason});
 
-  /// Get"s the guild's bans.
-  Stream<IBan> getBans();
+  /// Gets the guild's bans.
+  Stream<IBan> getBans({int limit = 1000, Snowflake? before, Snowflake? after});
 
   /// Change self nickname in guild
   Future<void> modifyCurrentMember({String? nick});
@@ -218,17 +256,14 @@ abstract class IGuild implements SnowflakeEntity {
 
   /// Returns Audit logs.
   /// https://discordapp.com/developers/docs/resources/audit-log
-  ///
+  /// ```dart
+  /// var logs = await guild.fetchAuditLogs(auditType: AuditLogEntryType.guildUpdate);
   /// ```
-  /// var logs = await guild.fetchAuditLogs(actionType: 1);
-  /// ```
-  Future<IAuditLog> fetchAuditLogs({Snowflake? userId, int? actionType, Snowflake? before, int? limit});
+  Future<IAuditLog> fetchAuditLogs({Snowflake? userId, AuditLogEntryType? auditType, Snowflake? before, int? limit});
 
   /// Creates new role
-  ///
-  /// ```
-  /// var rb = new RoleBuilder()
-  ///   ..name = "Dartyy"
+  /// ```dart
+  /// var rb = new RoleBuilder("Dartyy")
   ///   ..color = DiscordColor.fromInt(0xFF04F2)
   ///   ..hoist = true;
   ///
@@ -243,25 +278,22 @@ abstract class IGuild implements SnowflakeEntity {
   Future<void> moveChannel(IChannel channel, int position, {String? auditReason});
 
   /// Bans a user and allows to delete messages from [deleteMessageDays] number of days.
-  /// ```
-  ///
+  /// ```dart
   /// await guild.ban(member);
   /// ```
   Future<void> ban(SnowflakeEntity user, {int deleteMessageDays = 0, String? auditReason});
 
-  /// Kicks user from guild. Member is removed from guild and he is able to rejoin
-  ///
-  /// ```
+  /// Kicks user from guild. Member is removed from guild and they're able to rejoin if they have a valid invite link.
+  /// ```dart
   /// await guild.kick(member);
   /// ```
   Future<void> kick(SnowflakeEntity user, {String? auditReason});
 
   /// Unbans a user by ID.
-  Future<void> unban(Snowflake id, Snowflake userId);
+  Future<void> unban(Snowflake userId);
 
   /// Edits the guild.
-  Future<IGuild> edit(
-      {String? name, int? verificationLevel, int? notificationLevel, SnowflakeEntity? afkChannel, int? afkTimeout, String? icon, String? auditReason});
+  Future<IGuild> edit(GuildBuilder builder, {String? auditReason});
 
   /// Fetches member from API
   Future<IMember> fetchMember(Snowflake memberId);
@@ -299,6 +331,9 @@ abstract class IGuild implements SnowflakeEntity {
 
   /// Fetches from api list of events in guild
   Stream<GuildEvent> fetchGuildEvents({bool withUserCount = false});
+
+  /// Fetches the welcome screen of this guild if it's a community guild.
+  Future<IGuildWelcomeScreen?> fetchWelcomeScreen();
 }
 
 class Guild extends SnowflakeEntity implements IGuild {
@@ -333,10 +368,6 @@ class Guild extends SnowflakeEntity implements IGuild {
   /// The guild's afk channel ID, null if not set.
   @override
   late Cacheable<Snowflake, IVoiceGuildChannel>? afkChannel;
-
-  /// The guild's voice region.
-  @override
-  late String region;
 
   /// The channel ID for the guild's widget if enabled.
   @override
@@ -435,9 +466,55 @@ class Guild extends SnowflakeEntity implements IGuild {
   @override
   late final bool boostProgressBarEnabled;
 
+  /// The banner hash of the guild. If any.
+  @override
+  late final String? banner;
+
+  /// List of partial presences.
+  ///
+  /// Will only include non-offline members if the size of the guild is greater than the [ClientOptions.largeThreshold] option.
+  @override
+  late final List<IPartialPresence?> presences;
+
+  /// If this guild is considered large.
+  @override
+  late final bool large;
+
+  /// The maximum amount of members that can be in this guild.
+  @override
+  late final int maximumMembers;
+
+  /// The approximate amount of members in this guild.
+  @override
+  late final int? approxMemberCount;
+
+  /// The approximate amount of presences in this guild.
+  @override
+  late final int? approxPresenceCount;
+
+  /// The maximum amount of presences that can be in this guild.
+  @override
+  late final int? maximumPresences;
+
+  /// Explicit content filter level of guild
+  @override
+  late final int explicitContentFilterLevel;
+
+  /// The vanity URL code of the guild. If any.
+  @override
+  late final String? vanityUrlCode;
+
+  /// The description of the guild. If it's a community guild.
+  @override
+  late final String? description;
+
+  /// The total amount of members in the guild.
+  @override
+  late final int? memberCount;
+
   /// Returns url to this guild.
   @override
-  String get url => "https://discordapp.com/channels/${id.toString()}";
+  String get url => "https://discordapp.com/guilds/${id.toString()}";
 
   /// Getter for @everyone role
   @override
@@ -488,7 +565,6 @@ class Guild extends SnowflakeEntity implements IGuild {
   /// Creates an instance of [Guild]
   Guild(this.client, RawApiMap raw, [bool guildCreate = false]) : super(Snowflake(raw["id"])) {
     name = raw["name"] as String;
-    region = "";
     afkTimeout = raw["afk_timeout"] as int;
     mfaLevel = raw["mfa_level"] as int;
     verificationLevel = raw["verification_level"] as int;
@@ -496,15 +572,25 @@ class Guild extends SnowflakeEntity implements IGuild {
     available = !(raw["unavailable"] as bool? ?? false);
 
     icon = raw["icon"] as String?;
-    discoverySplash = raw["discoverySplash"] as String?;
+    discoverySplash = raw["discovery_splash"] as String?;
     splash = raw["splash"] as String?;
-    embedEnabled = raw["embed_enabled"] as bool?;
+    embedEnabled = raw["widget_enabled"] as bool?;
 
     systemChannelFlags = raw["system_channel_flags"] as int;
     premiumTier = PremiumTier.from(raw["premium_tier"] as int);
     premiumSubscriptionCount = raw["premium_subscription_count"] as int?;
     preferredLocale = raw["preferred_locale"] as String;
     boostProgressBarEnabled = raw['premium_progress_bar_enabled'] as bool;
+    banner = raw['banner'] as String?;
+    large = raw["large"] as bool? ?? false;
+    maximumMembers = raw["max_members"] as int;
+    maximumPresences = raw["max_presences"] as int?;
+    explicitContentFilterLevel = raw["explicit_content_filter"] as int;
+    vanityUrlCode = raw["vanity_url_code"] as String?;
+    description = raw["description"] as String?;
+    memberCount = raw["member_count"] as int?;
+    approxMemberCount = raw["approximate_member_count"] as int?;
+    approxPresenceCount = raw["approximate_presence_count"] as int?;
 
     owner = UserCacheable(client, Snowflake(raw["owner_id"]));
 
@@ -524,8 +610,8 @@ class Guild extends SnowflakeEntity implements IGuild {
       });
     }
 
-    if (raw["embed_channel_id"] != null) {
-      embedChannel = ChannelCacheable(client, Snowflake(raw["embed_channel_id"]));
+    if (raw["widget_channel_id"] != null) {
+      embedChannel = ChannelCacheable(client, Snowflake(raw["widget_channel_id"]));
     } else {
       embedChannel = null;
     }
@@ -591,6 +677,11 @@ class Guild extends SnowflakeEntity implements IGuild {
       publicUpdatesChannel = null;
     }
 
+    presences = [
+      if (raw['presences'] != null)
+        for (final presence in raw['presences']) PartialPresence(presence as RawApiMap, client)
+    ];
+
     stageInstances = [
       if (raw["stage_instances"] != null)
         for (final rawInstance in raw["stage_instances"]) StageChannelInstance(client, rawInstance as RawApiMap)
@@ -617,6 +708,11 @@ class Guild extends SnowflakeEntity implements IGuild {
   @override
   String guildWidgetUrl([String style = "shield"]) => client.httpEndpoints.getGuildWidgetUrl(id, style);
 
+  /// Returns the URL to guild's banner.
+  /// If guild doesn't have banner it returns null.
+  @override
+  String? bannerUrl({String? format, int? size}) => client.httpEndpoints.getGuildBannerUrl(id, banner, format: format, size: size);
+
   /// Fetches all stickers of current guild
   @override
   Stream<IGuildSticker> fetchStickers() => client.httpEndpoints.fetchGuildStickers(id);
@@ -640,7 +736,7 @@ class Guild extends SnowflakeEntity implements IGuild {
   /// Allows to create new guild emoji. [name] is required. You can allow to set [roles] to restrict emoji usage.
   /// Put your image in [emojiAttachment] field.
   ///
-  /// ```
+  /// ```dart
   /// var emojiFile = File("weed.png");
   /// var emoji = await guild.createEmoji("weed", emojiAttachment: AttachmentBuilder.file(emojiFile));
   /// ```
@@ -657,9 +753,10 @@ class Guild extends SnowflakeEntity implements IGuild {
   Future<int> prune(int days, {Iterable<Snowflake>? includeRoles, String? auditReason}) =>
       client.httpEndpoints.guildPrune(id, days, includeRoles: includeRoles, auditReason: auditReason);
 
-  /// Get"s the guild's bans.
+  /// Gets the guild's bans.
   @override
-  Stream<IBan> getBans() => client.httpEndpoints.getGuildBans(id);
+  Stream<IBan> getBans({int limit = 1000, Snowflake? before, Snowflake? after}) =>
+      client.httpEndpoints.getGuildBans(id, limit: limit, before: before, after: after);
 
   /// Change self nickname in guild
   @override
@@ -671,7 +768,8 @@ class Guild extends SnowflakeEntity implements IGuild {
 
   /// Change guild owner.
   @override
-  Future<IGuild> changeOwner(SnowflakeEntity memberEntity, {String? auditReason}) => client.httpEndpoints.changeGuildOwner(id, memberEntity);
+  Future<IGuild> changeOwner(SnowflakeEntity memberEntity, {String? auditReason}) =>
+      client.httpEndpoints.changeGuildOwner(id, memberEntity, auditReason: auditReason);
 
   /// Leaves the guild.
   @override
@@ -684,18 +782,17 @@ class Guild extends SnowflakeEntity implements IGuild {
   /// Returns Audit logs.
   /// https://discordapp.com/developers/docs/resources/audit-log
   ///
-  /// ```
-  /// var logs = await guild.fetchAuditLogs(actionType: 1);
+  /// ```dart
+  /// var logs = await guild.fetchAuditLogs(auditType: AuditLogEntryType.guildUpdate);
   /// ```
   @override
-  Future<IAuditLog> fetchAuditLogs({Snowflake? userId, int? actionType, Snowflake? before, int? limit}) =>
-      client.httpEndpoints.fetchAuditLogs(id, userId: userId, actionType: actionType, before: before, limit: limit);
+  Future<IAuditLog> fetchAuditLogs({Snowflake? userId, AuditLogEntryType? auditType, Snowflake? before, int? limit}) =>
+      client.httpEndpoints.fetchAuditLogs(id, userId: userId, auditType: auditType, before: before, limit: limit);
 
   /// Creates new role
   ///
-  /// ```
-  /// var rb = new RoleBuilder()
-  ///   ..name = "Dartyy"
+  /// ```dart
+  /// var rb = RoleBuilder("Dartyy")
   ///   ..color = DiscordColor.fromInt(0xFF04F2)
   ///   ..hoist = true;
   ///
@@ -708,23 +805,22 @@ class Guild extends SnowflakeEntity implements IGuild {
   @override
   Stream<IVoiceRegion> getVoiceRegions() => client.httpEndpoints.fetchGuildVoiceRegions(id);
 
-  /// Moves channel
+  /// Moves the [channel] for the given [position].
   @override
   Future<void> moveChannel(IChannel channel, int position, {String? auditReason}) =>
       client.httpEndpoints.moveGuildChannel(id, channel.id, position, auditReason: auditReason);
 
   /// Bans a user and allows to delete messages from [deleteMessageDays] number of days.
-  /// ```
-  ///
+  /// ```dart
   /// await guild.ban(member);
   /// ```
   @override
   Future<void> ban(SnowflakeEntity user, {int deleteMessageDays = 0, String? auditReason}) =>
       client.httpEndpoints.guildBan(id, user.id, deleteMessageDays: deleteMessageDays, auditReason: auditReason);
 
-  /// Kicks user from guild. Member is removed from guild and he is able to rejoin
+  /// Kicks user from guild. Member is removed from guild and they're able to rejoin if they have a valid invite link.
   ///
-  /// ```
+  /// ```dart
   /// await guild.kick(member);
   /// ```
   @override
@@ -732,20 +828,11 @@ class Guild extends SnowflakeEntity implements IGuild {
 
   /// Unbans a user by ID.
   @override
-  Future<void> unban(Snowflake id, Snowflake userId) => client.httpEndpoints.guildUnban(this.id, userId);
+  Future<void> unban(Snowflake userId) => client.httpEndpoints.guildUnban(id, userId);
 
   /// Edits the guild.
   @override
-  Future<IGuild> edit(
-          {String? name, int? verificationLevel, int? notificationLevel, SnowflakeEntity? afkChannel, int? afkTimeout, String? icon, String? auditReason}) =>
-      client.httpEndpoints.editGuild(id,
-          name: name,
-          verificationLevel: verificationLevel,
-          notificationLevel: notificationLevel,
-          afkChannel: afkChannel,
-          afkTimeout: afkTimeout,
-          icon: icon,
-          auditReason: auditReason);
+  Future<IGuild> edit(GuildBuilder builder, {String? auditReason}) => client.httpEndpoints.editGuild(id, builder, auditReason: auditReason);
 
   /// Fetches member from API
   @override
@@ -808,4 +895,7 @@ class Guild extends SnowflakeEntity implements IGuild {
 
   @override
   Stream<GuildEvent> fetchGuildEvents({bool withUserCount = false}) => client.httpEndpoints.fetchGuildEvents(id);
+
+  @override
+  Future<IGuildWelcomeScreen> fetchWelcomeScreen() => client.httpEndpoints.fetchGuildWelcomeScreen(id);
 }

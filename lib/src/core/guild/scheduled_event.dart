@@ -1,10 +1,14 @@
-import 'package:nyxx/nyxx.dart';
+import 'package:nyxx/src/core/channel/guild/voice_channel.dart';
 import 'package:nyxx/src/core/guild/guild.dart';
 import 'package:nyxx/src/core/snowflake.dart';
 import 'package:nyxx/src/core/snowflake_entity.dart';
 import 'package:nyxx/src/core/user/member.dart';
 import 'package:nyxx/src/core/user/user.dart';
 import 'package:nyxx/src/internal/cache/cacheable.dart';
+import 'package:nyxx/src/nyxx.dart';
+import 'package:nyxx/src/typedefs.dart';
+import 'package:nyxx/src/utils/builders/guild_event_builder.dart';
+import 'package:nyxx/src/utils/enum.dart';
 
 /// A representation of a scheduled event in a guild.
 abstract class IGuildEvent implements SnowflakeEntity {

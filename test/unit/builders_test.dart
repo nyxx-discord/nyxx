@@ -1,7 +1,18 @@
-import 'package:nyxx/nyxx.dart';
+import 'package:nyxx/src/core/channel/text_channel.dart';
+import 'package:nyxx/src/core/guild/status.dart';
 import 'package:nyxx/src/core/permissions/permissions.dart';
+import 'package:nyxx/src/core/snowflake.dart';
+import 'package:nyxx/src/core/user/presence.dart';
 import 'package:nyxx/src/internal/cache/cacheable.dart';
+import 'package:nyxx/src/utils/builders/channel_builder.dart';
+import 'package:nyxx/src/utils/builders/embed_builder.dart';
+import 'package:nyxx/src/utils/builders/member_builder.dart';
+import 'package:nyxx/src/utils/builders/message_builder.dart';
+import 'package:nyxx/src/utils/builders/permissions_builder.dart';
 import 'package:nyxx/src/utils/builders/presence_builder.dart';
+import 'package:nyxx/src/utils/builders/reply_builder.dart';
+import 'package:nyxx/src/utils/builders/sticker_builder.dart';
+import 'package:nyxx/src/utils/builders/thread_builder.dart';
 import 'package:test/expect.dart';
 import 'package:test/scaffolding.dart';
 
@@ -50,6 +61,7 @@ main() {
         'permission_overwrites': [
           {'allow': "0", 'deny': "122406567679", 'id': '0', 'type': 0}
         ],
+        'type': 0,
         'name': 'test'
       };
       expect(builder.build(), expectedResult);

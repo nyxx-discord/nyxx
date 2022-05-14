@@ -1,7 +1,11 @@
+import 'package:nyxx/src/core/guild/status.dart';
 import 'package:nyxx/src/core/snowflake.dart';
+import 'package:nyxx/src/internal/cache/cacheable.dart';
+import 'package:nyxx/src/nyxx.dart';
 import 'package:nyxx/src/typedefs.dart';
 import 'package:nyxx/src/utils/enum.dart';
 import 'package:nyxx/src/utils/permissions.dart';
+import 'package:nyxx/src/core/user/user.dart';
 
 abstract class IActivity {
   /// The activity name.
@@ -113,7 +117,7 @@ class Activity implements IActivity {
   @override
   late final Iterable<String> buttons;
 
-  /// Creates na instance of [Activity]
+  /// Creates an instance of [Activity]
   Activity(RawApiMap raw) {
     name = raw["name"] as String;
     url = raw["url"] as String?;
@@ -195,7 +199,7 @@ class ActivityFlags implements IActivityFlags {
   @override
   bool get isPlay => PermissionsUtils.isApplied(value, 1 << 5);
 
-  /// Creates na instance of [ActivityFlags]
+  /// Creates an instance of [ActivityFlags]
   ActivityFlags(int? value) {
     this.value = value ?? 0;
   }
@@ -219,7 +223,7 @@ class ActivityEmoji implements IActivityEmoji {
   @override
   late final bool animated;
 
-  /// Creates na instance of [ActivityEmoji]
+  /// Creates an instance of [ActivityEmoji]
   ActivityEmoji(RawApiMap raw) {
     if (raw["id"] != null) {
       id = Snowflake(raw["id"]);
@@ -249,7 +253,7 @@ class ActivityTimestamps implements IActivityTimestamps {
   @override
   late final DateTime? end;
 
-  /// Creates na instance of [ActivityTimestamps]
+  /// Creates an instance of [ActivityTimestamps]
   ActivityTimestamps(RawApiMap raw) {
     if (raw["start"] != null) {
       start = DateTime.fromMillisecondsSinceEpoch(raw["start"] as int);
@@ -323,7 +327,7 @@ class ActivityParty implements IActivityParty {
   @override
   late final int? maxSize;
 
-  /// Creates na instance of [ActivityParty]
+  /// Creates an instance of [ActivityParty]
   ActivityParty(RawApiMap raw) {
     id = raw["id"] as String?;
 
@@ -351,7 +355,7 @@ abstract class IGameAssets {
   String? get smallText;
 }
 
-/// Presence"s assets
+/// Presences assets
 class GameAssets implements IGameAssets {
   /// The id for a large asset of the activity, usually a snowflake.
   @override
@@ -369,7 +373,7 @@ class GameAssets implements IGameAssets {
   @override
   late final String? smallText;
 
-  /// Creates na instance of [GameAssets]
+  /// Creates an instance of [GameAssets]
   GameAssets(RawApiMap raw) {
     largeImage = raw["large_image"] as String?;
     largeText = raw["large_text"] as String?;
@@ -389,7 +393,7 @@ abstract class IGameSecrets {
   String get match;
 }
 
-/// Represents presence"s secrets
+/// Represents presences secrets
 class GameSecrets implements IGameSecrets {
   /// Join secret
   @override
@@ -403,10 +407,61 @@ class GameSecrets implements IGameSecrets {
   @override
   late final String match;
 
-  /// Creates na instance of [GameSecrets]
+  /// Creates an instance of [GameSecrets]
   GameSecrets(RawApiMap raw) {
     join = raw["join"] as String;
     spectate = raw["spectate"] as String;
     match = raw["match"] as String;
+  }
+}
+
+abstract class IPartialPresence {
+  /// Reference to [INyxx]
+  INyxx get client;
+
+  /// The [IPartialPresence]'s [IUser]
+  Cacheable<Snowflake, IUser>? get user;
+
+  /// The status of the user indicating the platform they are on.
+  IClientStatus? get clientStatus;
+
+  /// The status of the user eg. online, idle, dnd, invisible, offline
+  UserStatus? get status;
+
+  /// The activities of the user
+  List<IActivity?> get activities;
+}
+
+class PartialPresence implements IPartialPresence {
+  /// Reference to [INyxx]
+  @override
+  final INyxx client;
+
+  /// The [IPartialPresence]'s [IUser]
+  @override
+  late final Cacheable<Snowflake, IUser>? user;
+
+  /// The status of the user indicating the platform they are on.
+  @override
+  late final IClientStatus? clientStatus;
+
+  /// The status of the user eg. online, idle, dnd, invisible, offline
+  @override
+  late final UserStatus? status;
+
+  /// The activities of the user
+  @override
+  late final List<IActivity?> activities;
+
+  /// Creates an instance of [PartialPresence]
+  PartialPresence(RawApiMap raw, this.client) {
+    user = raw["user"] != null ? UserCacheable(client, Snowflake(raw['user']['id'])) : null;
+    clientStatus = raw["client_status"] != null ? ClientStatus(raw["client_status"] as RawApiMap) : null;
+    status = raw["status"] != null ? UserStatus.from(raw["status"] as String) : null;
+
+    activities = [
+      if (raw['activities'] != null)
+        for (final activity in raw["activities"]) Activity(activity as RawApiMap)
+    ];
   }
 }

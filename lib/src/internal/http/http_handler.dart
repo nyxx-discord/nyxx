@@ -128,7 +128,7 @@ class HttpHandler {
     await responseError.finalize();
 
     (client.eventsRest as RestEventController).onHttpErrorController.add(HttpErrorEvent(responseError));
-    logger.finer("Got failure http response for endpoint: [${response.request?.url.toString()}]; Response: [${responseError.errorMessage}]");
+    logger.finer("Got failure http response for endpoint: [${response.request?.url.toString()}]; Response: [${responseError.message}]");
 
     return responseError;
   }

@@ -1,6 +1,6 @@
-import 'package:nyxx/nyxx.dart';
 import 'package:nyxx/src/core/message/attachment.dart';
 import 'package:nyxx/src/core/message/components/message_component.dart';
+import 'package:nyxx/src/core/message/message_flags.dart';
 import 'package:nyxx/src/nyxx.dart';
 import 'package:nyxx/src/core/snowflake.dart';
 import 'package:nyxx/src/core/channel/cacheable_text_channel.dart';
@@ -64,7 +64,7 @@ class MessageDeleteEvent implements IMessageDeleteEvent {
   @override
   late final CacheableTextChannel<ITextChannel> channel;
 
-  /// Creates na instance of [MessageDeleteEvent]
+  /// Creates an instance of [MessageDeleteEvent]
   MessageDeleteEvent(RawApiMap raw, INyxx client) {
     channel = CacheableTextChannel<ITextChannel>(client, Snowflake(raw["d"]["channel_id"]));
     messageId = Snowflake(raw["d"]["id"]);
@@ -177,7 +177,7 @@ abstract class MessageReactionEvent {
   /// Emoji object.
   late final IEmoji emoji;
 
-  /// Creates na instance of [MessageReactionEvent]
+  /// Creates an instance of [MessageReactionEvent]
   MessageReactionEvent(RawApiMap json, INyxx client) {
     user = UserCacheable(client, Snowflake(json["d"]["user_id"]));
     channel = CacheableTextChannel<ITextChannel>(client, Snowflake(json["d"]["channel_id"]));
@@ -203,7 +203,7 @@ abstract class IMessageReactionAddedEvent implements IMessageReactionEvent {}
 
 /// Emitted when reaction is add to message
 class MessageReactionAddedEvent extends MessageReactionEvent implements IMessageReactionAddedEvent {
-  /// Creates na instance of [MessageReactionAddedEvent]
+  /// Creates an instance of [MessageReactionAddedEvent]
   MessageReactionAddedEvent(RawApiMap raw, INyxx client) : super(raw, client) {
     if (message == null) {
       return;
@@ -223,7 +223,7 @@ abstract class IMessageReactionRemovedEvent implements IMessageReactionEvent {}
 
 /// Emitted when reaction is removed from message
 class MessageReactionRemovedEvent extends MessageReactionEvent implements IMessageReactionRemovedEvent {
-  /// Creates na instance of [MessageReactionRemovedEvent]
+  /// Creates an instance of [MessageReactionRemovedEvent]
   MessageReactionRemovedEvent(RawApiMap json, INyxx client) : super(json, client) {
     if (message == null) {
       return;
@@ -266,7 +266,7 @@ class MessageReactionsRemovedEvent implements IMessageReactionsRemovedEvent {
   @override
   late final Cacheable<Snowflake, IGuild>? guild;
 
-  /// Creates na instance of [MessageReactionsRemovedEvent]
+  /// Creates an instance of [MessageReactionsRemovedEvent]
   MessageReactionsRemovedEvent(RawApiMap json, INyxx client) {
     channel = CacheableTextChannel<ITextChannel>(client, Snowflake(json["d"]["channel_id"]));
     guild = GuildCacheable(client, Snowflake(json["d"]["guild_id"]));
@@ -311,7 +311,7 @@ class MessageReactionRemoveEmojiEvent implements IMessageReactionRemoveEmojiEven
   @override
   late final IEmoji emoji;
 
-  /// Creates na instance of [MessageReactionRemoveEmojiEvent]
+  /// Creates an instance of [MessageReactionRemoveEmojiEvent]
   MessageReactionRemoveEmojiEvent(RawApiMap json, INyxx client) {
     channel = CacheableTextChannel<ITextChannel>(client, Snowflake(json["d"]["channel_id"]));
     guild = GuildCacheable(client, Snowflake(json["d"]["guild_id"]));
@@ -361,7 +361,7 @@ class MessageUpdateEvent implements IMessageUpdateEvent {
   @override
   late final Snowflake messageId;
 
-  /// Creates na instance of [MessageUpdateEvent]
+  /// Creates an instance of [MessageUpdateEvent]
   MessageUpdateEvent(RawApiMap raw, INyxx client) {
     channel = CacheableTextChannel<ITextChannel>(client, Snowflake(raw["d"]["channel_id"]));
     messageId = Snowflake(raw["d"]["id"]);

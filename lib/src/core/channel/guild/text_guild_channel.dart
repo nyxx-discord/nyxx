@@ -44,9 +44,6 @@ abstract class ITextGuildChannel implements IGuildChannel, ITextChannel, Mention
   /// Creates a thread in a message
   Future<IThreadChannel> createAndGetThread(ThreadBuilder builder);
 
-  /// Fetches all active threads in this channel
-  Future<IThreadListResultWrapper> fetchActiveThreads();
-
   /// Fetches joined private and archived thread channels
   Future<IThreadListResultWrapper> fetchJoinedPrivateArchivedThreads({DateTime? before, int? limit});
 
@@ -158,10 +155,6 @@ class TextGuildChannel extends GuildChannel implements ITextGuildChannel {
 
   @override
   Future<IMessage> sendMessage(MessageBuilder builder) => client.httpEndpoints.sendMessage(id, builder);
-
-  /// Fetches all active threads in this channel
-  @override
-  Future<IThreadListResultWrapper> fetchActiveThreads() => client.httpEndpoints.fetchActiveThreads(id);
 
   /// Fetches joined private and archived thread channels
   @override

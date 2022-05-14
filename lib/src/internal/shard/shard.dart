@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:isolate';
 
-import 'package:nyxx/nyxx.dart';
 import 'package:nyxx/src/core/snowflake.dart';
 import 'package:nyxx/src/core/guild/client_user.dart';
 import 'package:nyxx/src/events/channel_events.dart';
@@ -23,6 +22,7 @@ import 'package:nyxx/src/events/voice_state_update_event.dart';
 import 'package:nyxx/src/internal/constants.dart';
 import 'package:nyxx/src/internal/event_controller.dart';
 import 'package:nyxx/src/internal/exceptions/invalid_shard_exception.dart';
+import 'package:nyxx/src/internal/exceptions/unrecoverable_nyxx_error.dart';
 import 'package:nyxx/src/internal/interfaces/disposable.dart';
 import 'package:nyxx/src/internal/shard/shard_manager.dart';
 import 'package:nyxx/src/internal/shard/shard_handler.dart';
@@ -255,6 +255,9 @@ class Shard implements IShard {
       case 1001:
         _reconnect();
         break;
+      case -1:
+        _connect(delay: 10);
+        break;
       default:
         _connect();
         break;
@@ -262,10 +265,10 @@ class Shard implements IShard {
   }
 
   // Connects to gateway
-  void _connect() {
+  void _connect({int delay = 2}) {
     manager.logger.info("Connecting to gateway on shard $id!");
     _resume = false;
-    Future.delayed(const Duration(seconds: 2), () => _sendPort.send({"cmd": "CONNECT"}));
+    Future.delayed(Duration(seconds: delay), () => _sendPort.send({"cmd": "CONNECT"}));
   }
 
   // Reconnects to gateway

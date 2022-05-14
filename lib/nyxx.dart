@@ -18,6 +18,7 @@ export "src/core/application/oauth2_application.dart" show IOAuth2Application;
 export 'src/core/audit_logs/audit_log.dart' show IAuditLog;
 export 'src/core/audit_logs/audit_log_change.dart' show ChangeKeyType, IAuditLogChange;
 export 'src/core/audit_logs/audit_log_entry.dart' show IAuditLogEntry, AuditLogEntryType;
+export 'src/core/audit_logs/audit_log_options.dart' show IAuditLogOptions;
 export 'src/core/channel/cacheable_text_channel.dart' show ICacheableTextChannel;
 export 'src/core/channel/channel.dart' show IChannel, ChannelType;
 export 'src/core/channel/dm_channel.dart' show IDMChannel;
@@ -46,6 +47,8 @@ export 'src/core/guild/premium_tier.dart' show PremiumTier;
 export 'src/core/guild/role.dart' show IRole, IRoleTags;
 export 'src/core/guild/status.dart' show IClientStatus, UserStatus;
 export 'src/core/guild/webhook.dart' show IWebhook, WebhookType;
+export 'src/core/guild/guild_welcome_screen.dart' show IGuildWelcomeScreen, IGuildWelcomeChannel;
+export 'src/core/guild/system_channel_flags.dart' show SystemChannelFlags;
 export 'src/core/message/attachment.dart' show IAttachment;
 export 'src/core/message/emoji.dart' show IEmoji;
 export 'src/core/message/guild_emoji.dart' show IBaseGuildEmoji, IGuildEmoji, IGuildEmojiPartial, IResolvableGuildEmojiPartial;
@@ -77,7 +80,7 @@ export 'src/core/permissions/permissions_constants.dart' show PermissionsConstan
 export 'src/core/user/member.dart' show IMember;
 export 'src/core/user/nitro_type.dart' show NitroType;
 export 'src/core/user/presence.dart'
-    show IActivity, IActivityEmoji, IActivityFlags, IActivityParty, IActivityTimestamps, IGameAssets, IGameSecrets, ActivityType;
+    show IActivity, IActivityEmoji, IActivityFlags, IActivityParty, IActivityTimestamps, IGameAssets, IGameSecrets, ActivityType, IPartialPresence;
 export 'src/core/user/user.dart' show IUser;
 export 'src/core/user/user_flags.dart' show IUserFlags;
 export 'src/core/voice/voice_region.dart' show IVoiceRegion;
@@ -137,7 +140,7 @@ export 'src/internal/exceptions/invalid_shard_exception.dart' show InvalidShardE
 export 'src/internal/exceptions/invalid_snowflake_exception.dart' show InvalidSnowflakeException;
 export 'src/internal/exceptions/missing_token_error.dart' show MissingTokenError;
 export 'src/internal/exceptions/unrecoverable_nyxx_error.dart' show UnrecoverableNyxxError;
-export 'src/internal/http/http_response.dart' show IHttpResponse, IHttpResponseError, IHttpResponseSucess;
+export 'src/internal/http/http_response.dart' show IHttpResponse, IHttpResponseError, IHttpResponseSuccess;
 export 'src/internal/interfaces/convertable.dart' show Convertable;
 export 'src/internal/interfaces/disposable.dart' show Disposable;
 export 'src/internal/interfaces/message_author.dart' show IMessageAuthor;

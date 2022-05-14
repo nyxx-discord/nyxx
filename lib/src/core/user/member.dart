@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:nyxx/nyxx.dart';
 import 'package:nyxx/src/nyxx.dart';
 import 'package:nyxx/src/core/snowflake.dart';
 import 'package:nyxx/src/core/snowflake_entity.dart';
@@ -13,6 +12,7 @@ import 'package:nyxx/src/core/voice/voice_state.dart';
 import 'package:nyxx/src/internal/cache/cacheable.dart';
 import 'package:nyxx/src/internal/interfaces/mentionable.dart';
 import 'package:nyxx/src/typedefs.dart';
+import 'package:nyxx/src/utils/builders/member_builder.dart';
 import 'package:nyxx/src/utils/permissions.dart';
 
 abstract class IMember implements SnowflakeEntity, Mentionable {
@@ -39,9 +39,6 @@ abstract class IMember implements SnowflakeEntity, Mentionable {
 
   /// Roles of member
   Iterable<Cacheable<Snowflake, IRole>> get roles;
-
-  /// Highest role of member
-  Cacheable<Snowflake, IRole> get hoistedRole;
 
   /// When the user starting boosting the guild
   DateTime? get boostingSince;
@@ -86,14 +83,7 @@ abstract class IMember implements SnowflakeEntity, Mentionable {
   Future<void> kick({String? auditReason});
 
   /// Edits members. Allows to move user in voice channel, mute or deaf, change nick, roles.
-  Future<void> edit(
-      {@Deprecated('Use "builder" parameter') String? nick = "",
-      @Deprecated('Use "builder" parameter') List<SnowflakeEntity>? roles,
-      @Deprecated('Use "builder" parameter') bool? mute,
-      @Deprecated('Use "builder" parameter') bool? deaf,
-      @Deprecated('Use "builder" parameter') Snowflake? channel = const Snowflake.zero(),
-      MemberBuilder? builder,
-      String? auditReason});
+  Future<void> edit({required MemberBuilder builder, String? auditReason});
 }
 
 class Member extends SnowflakeEntity implements IMember {
@@ -128,11 +118,6 @@ class Member extends SnowflakeEntity implements IMember {
   /// Roles of member
   @override
   late Iterable<Cacheable<Snowflake, IRole>> roles;
-
-  /// Highest role of member
-  @override
-  @Deprecated('Use `roles` and sort by position instead. Attempting to use this field will throw an error.')
-  late final Cacheable<Snowflake, IRole> hoistedRole;
 
   /// When the user starting boosting the guild
   @override
@@ -238,16 +223,8 @@ class Member extends SnowflakeEntity implements IMember {
 
   /// Edits members. Allows to move user in voice channel, mute or deaf, change nick, roles.
   @override
-  Future<void> edit(
-          {@Deprecated('Use "builder" parameter') String? nick = "",
-          @Deprecated('Use "builder" parameter') List<SnowflakeEntity>? roles,
-          @Deprecated('Use "builder" parameter') bool? mute,
-          @Deprecated('Use "builder" parameter') bool? deaf,
-          @Deprecated('Use "builder" parameter') Snowflake? channel = const Snowflake.zero(),
-          MemberBuilder? builder,
-          String? auditReason}) =>
-      client.httpEndpoints
-          .editGuildMember(guild.id, id, nick: nick, roles: roles, mute: mute, deaf: deaf, channel: channel, builder: builder, auditReason: auditReason);
+  Future<void> edit({required MemberBuilder builder, String? auditReason}) =>
+      client.httpEndpoints.editGuildMember(guild.id, id, builder: builder, auditReason: auditReason);
 
   void updateMember(String? nickname, List<Snowflake> roles, DateTime? boostingSince) {
     if (this.nickname != nickname) {

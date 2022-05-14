@@ -1,10 +1,8 @@
 import 'dart:async';
 
 import 'package:logging/logging.dart';
-import 'package:nyxx/nyxx.dart';
 import 'package:nyxx/src/client_options.dart';
 import 'package:nyxx/src/core/channel/invite.dart';
-import 'package:nyxx/src/core/message/guild_emoji.dart';
 import 'package:nyxx/src/core/snowflake.dart';
 import 'package:nyxx/src/core/application/client_oauth2_application.dart';
 import 'package:nyxx/src/core/channel/channel.dart';
@@ -15,9 +13,11 @@ import 'package:nyxx/src/core/guild/webhook.dart';
 import 'package:nyxx/src/core/message/sticker.dart';
 import 'package:nyxx/src/core/user/user.dart';
 import 'package:nyxx/src/events/ready_event.dart';
+import 'package:nyxx/src/internal/cache/cache.dart';
 import 'package:nyxx/src/internal/connection_manager.dart';
 import 'package:nyxx/src/internal/constants.dart';
 import 'package:nyxx/src/internal/event_controller.dart';
+import 'package:nyxx/src/internal/exceptions/unrecoverable_nyxx_error.dart';
 import 'package:nyxx/src/internal/http/http_response.dart';
 import 'package:nyxx/src/internal/http_endpoints.dart';
 import 'package:nyxx/src/internal/exceptions/missing_token_error.dart';
@@ -25,22 +25,16 @@ import 'package:nyxx/src/internal/http/http_handler.dart';
 import 'package:nyxx/src/internal/interfaces/disposable.dart';
 import 'package:nyxx/src/internal/shard/shard_manager.dart';
 import 'package:nyxx/src/plugin/plugin.dart';
-import 'utils/builders/presence_builder.dart';
+import 'package:nyxx/src/plugin/plugin_manager.dart';
+import 'package:nyxx/src/utils/builders/guild_builder.dart';
+import 'package:nyxx/src/utils/builders/presence_builder.dart';
 import 'package:nyxx/src/typedefs.dart';
 
 abstract class NyxxFactory {
-  static INyxx createNyxxRest(String token, int intents, Snowflake appId,
-          {ClientOptions? options,
-          CacheOptions? cacheOptions,
-          @Deprecated("Use IgnoreException plugin") bool ignoreExceptions = true,
-          @Deprecated("Use Logging plugin") bool useDefaultLogger = true}) =>
+  static INyxx createNyxxRest(String token, int intents, Snowflake appId, {ClientOptions? options, CacheOptions? cacheOptions}) =>
       NyxxRest(token, intents, appId, options: options, cacheOptions: cacheOptions);
 
-  static INyxxWebsocket createNyxxWebsocket(String token, int intents,
-          {ClientOptions? options,
-          CacheOptions? cacheOptions,
-          @Deprecated("Use IgnoreException plugin") bool ignoreExceptions = true,
-          @Deprecated("Use Logging plugin") bool useDefaultLogger = true}) =>
+  static INyxxWebsocket createNyxxWebsocket(String token, int intents, {ClientOptions? options, CacheOptions? cacheOptions}) =>
       NyxxWebsocket(token, intents, options: options, cacheOptions: cacheOptions);
 }
 
@@ -249,7 +243,17 @@ abstract class INyxxWebsocket implements INyxxRest {
   Future<IGuildPreview> fetchGuildPreview(Snowflake guildId);
 
   /// Returns guild with given [guildId]
-  Future<IGuild> fetchGuild(Snowflake guildId);
+  /// If [withCounts] is set to true, then guild will have [IGuild.approximateMemberCount] and [IGuild.approximatePresenceCount] present.
+  Future<IGuild> fetchGuild(Snowflake guildId, {bool? withCounts = true});
+
+  /// Creates a guild.
+  ///
+  /// **⚠️ This endpoint can only be used by bots that are in ten guilds or fewer.**
+  /// ```dart
+  /// var gb = GuildBuilder("Test Guild");
+  /// var guild = await client.createGuild(gb);
+  /// ```
+  Future<IGuild> createGuild(GuildBuilder builder);
 
   /// Returns channel with specified id.
   /// ```
@@ -372,8 +376,9 @@ class NyxxWebsocket extends NyxxRest implements INyxxWebsocket {
   Future<IGuildPreview> fetchGuildPreview(Snowflake guildId) async => httpEndpoints.fetchGuildPreview(guildId);
 
   /// Returns guild with given [guildId]
+  /// If [withCounts] is set to true, then guild will have [IGuild.approximateMemberCount] and [IGuild.approximatePresenceCount] present.
   @override
-  Future<IGuild> fetchGuild(Snowflake guildId) => httpEndpoints.fetchGuild(guildId);
+  Future<IGuild> fetchGuild(Snowflake guildId, {bool? withCounts = true}) => httpEndpoints.fetchGuild(guildId, withCounts: withCounts);
 
   /// Returns channel with specified id.
   /// ```
@@ -385,9 +390,19 @@ class NyxxWebsocket extends NyxxRest implements INyxxWebsocket {
   /// Get user instance with specified id.
   /// ```
   /// var user = client.getUser(Snowflake("302359032612651009"));
-  /// ``
+  /// ```
   @override
   Future<IUser> fetchUser(Snowflake userId) => httpEndpoints.fetchUser(userId);
+
+  /// Creates a guild.
+  ///
+  /// **⚠️ This endpoint can only be used by bots that are in ten guilds or fewer.**
+  /// ```dart
+  /// var gb = GuildBuilder("Test Guild");
+  /// var guild = await client.createGuild(gb);
+  /// ```
+  @override
+  Future<IGuild> createGuild(GuildBuilder builder) => httpEndpoints.createGuild(builder);
 
   /// Gets a webhook by its id and/or token.
   /// If token is supplied authentication is not needed.

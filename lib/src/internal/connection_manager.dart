@@ -30,7 +30,7 @@ class ConnectionManager {
     final httpResponse = await (client.httpEndpoints as HttpEndpoints).getGatewayBot();
 
     if (httpResponse is HttpResponseError) {
-      throw UnrecoverableNyxxError("Cannot get gateway url: [${httpResponse.errorCode}; ${httpResponse.errorMessage}]");
+      throw UnrecoverableNyxxError("Cannot get gateway url: [${httpResponse.code}; ${httpResponse.message}]");
     }
 
     final response = httpResponse as HttpResponseSuccess;

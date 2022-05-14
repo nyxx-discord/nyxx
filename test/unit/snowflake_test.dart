@@ -1,5 +1,4 @@
 import 'package:nyxx/nyxx.dart';
-import 'package:nyxx/src/utils/extensions.dart';
 import 'package:test/expect.dart';
 import 'package:test/scaffolding.dart';
 

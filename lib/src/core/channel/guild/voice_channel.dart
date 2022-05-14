@@ -207,20 +207,24 @@ abstract class IStageVoiceGuildChannel implements IVoiceGuildChannel {
   Future<IStageChannelInstance> updateStageChannelInstance(String topic, {StageChannelInstancePrivacyLevel? privacyLevel});
 }
 
-class StageVoiceGuildChannel extends VoiceGuildChannel {
+class StageVoiceGuildChannel extends VoiceGuildChannel implements IStageVoiceGuildChannel {
   StageVoiceGuildChannel(INyxx client, RawApiMap raw, [Snowflake? guildId]) : super(client, raw, guildId);
 
   /// Gets the stage instance associated with the Stage channel, if it exists.
+  @override
   Future<IStageChannelInstance> getStageChannelInstance() => client.httpEndpoints.getStageChannelInstance(id);
 
   /// Deletes the Stage instance.
+  @override
   Future<void> deleteStageChannelInstance() => client.httpEndpoints.deleteStageChannelInstance(id);
 
   /// Creates a new Stage instance associated to a Stage channel.
+  @override
   Future<IStageChannelInstance> createStageChannelInstance(String topic, {StageChannelInstancePrivacyLevel? privacyLevel}) =>
       client.httpEndpoints.createStageChannelInstance(id, topic, privacyLevel: privacyLevel);
 
   /// Updates fields of an existing Stage instance.
+  @override
   Future<IStageChannelInstance> updateStageChannelInstance(String topic, {StageChannelInstancePrivacyLevel? privacyLevel}) =>
       client.httpEndpoints.updateStageChannelInstance(id, topic, privacyLevel: privacyLevel);
 }

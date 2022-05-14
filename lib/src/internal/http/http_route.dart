@@ -129,6 +129,9 @@ abstract class IHttpRoute {
 
   /// Adds the [`sticker-packs`](https://discord.com/developers/docs/resources/sticker#list-nitro-sticker-packs) part to this [IHttpRoute].
   void stickerpacks();
+
+  /// Adds the [`welcome-screen`](https://discord.com/developers/docs/resources/guild#get-guild-welcome-screen) part to this [IHttpRoute].
+  void welcomeScreen();
 }
 
 class HttpRoute implements IHttpRoute {
@@ -272,4 +275,7 @@ class HttpRoute implements IHttpRoute {
 
   @override
   void stickerpacks() => add(HttpRoutePart("sticker-packs"));
+
+  @override
+  void welcomeScreen() => add(HttpRoutePart('welcome-screen'));
 }

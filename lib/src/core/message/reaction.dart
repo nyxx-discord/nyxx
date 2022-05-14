@@ -39,7 +39,7 @@ class Reaction implements IReaction {
     }
   }
 
-  /// Creates na instance of [Reaction]
+  /// Creates an instance of [Reaction]
   Reaction.event(this.emoji, this.me) {
     count = 1;
   }
