@@ -1,15 +1,9 @@
-import 'dart:convert';
-
 import 'package:http/http.dart' as http;
-import 'package:nyxx/src/events/ratelimit_event.dart';
-import 'package:nyxx/src/internal/event_controller.dart';
-import 'package:nyxx/src/internal/exceptions/http_client_exception.dart';
 
-import 'package:nyxx/src/internal/http/http_handler.dart';
 import 'package:nyxx/src/internal/http/http_request.dart';
 
 class HttpBucket {
-  static const String kRateLimitBucket = "x-ratelimit-bucket";
+  static const String xRateLimitBucket = "x-ratelimit-bucket";
   static const String kRateLimitLimit = "x-ratelimit-limit";
   static const String kRateLimitRemaining = "x-ratelimit-remaining";
   static const String kRateLimitReset = "x-ratelimit-reset";
@@ -39,14 +33,15 @@ class HttpBucket {
     DateTime? reset = getResetFromHeaders(response.headers);
     Duration? resetAfter = getResetAfterFromHeaders(response.headers);
     String? bucketId = getBucketIdFromHeaders(response.headers);
+
     if (limit == null || remaining == null || reset == null || resetAfter == null || bucketId == null) {
       return null;
-    } else {
-      return HttpBucket(limit, remaining, reset, resetAfter, bucketId);
     }
+
+    return HttpBucket(limit, remaining, reset, resetAfter, bucketId);
   }
 
-  static String? getBucketIdFromHeaders(Map<String, String> headers) => headers[kRateLimitBucket];
+  static String? getBucketIdFromHeaders(Map<String, String> headers) => headers[xRateLimitBucket];
 
   static int? getLimitFromHeaders(Map<String, String> headers) => headers[kRateLimitLimit] == null ? null : int.parse(headers[kRateLimitLimit]!);
 

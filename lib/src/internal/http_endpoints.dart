@@ -338,7 +338,7 @@ abstract class IHttpEndpoints {
   Future<IDMChannel> createDMChannel(Snowflake userId);
 
   /// Used to send a request including standard bot authentication.
-  Future<HttpResponse> sendRawRequest(HttpRoute route, String method,
+  Future<IHttpResponse> sendRawRequest(IHttpRoute route, String method,
       {dynamic body,
       Map<String, dynamic>? headers,
       List<AttachmentBuilder> files = const [],
@@ -485,8 +485,8 @@ class HttpEndpoints implements IHttpEndpoints {
 
     final response = await httpHandler.execute(BasicRequest(
         HttpRoute()
-          ..guilds(id: "$guildId")
-          ..emojis(id: "$emojiId"),
+          ..guilds(id: guildId.toString())
+          ..emojis(id: emojiId.toString()),
         method: "PATCH",
         body: body));
 
@@ -679,7 +679,7 @@ class HttpEndpoints implements IHttpEndpoints {
   Future<IBan> getGuildBan(Snowflake guildId, Snowflake bannedUserId) async {
     final response = await httpHandler.execute(BasicRequest(HttpRoute()
       ..guilds(id: guildId.toString())
-      ..bans(id: "$bannedUserId")));
+      ..bans(id: bannedUserId.toString())));
 
     if (response is HttpResponseSuccess) {
       return Ban(response.jsonBody as RawApiMap, client);
@@ -733,7 +733,7 @@ class HttpEndpoints implements IHttpEndpoints {
         body: {
           "max_age": maxAge ?? 0,
           "max_uses": maxUses ?? 0,
-          "target_application_id": "$activityId",
+          "target_application_id": activityId.toString(),
           "target_type": 2,
         }));
 
@@ -1556,7 +1556,7 @@ class HttpEndpoints implements IHttpEndpoints {
   }
 
   @override
-  Future<HttpResponse> sendRawRequest(HttpRoute route, String method,
+  Future<HttpResponse> sendRawRequest(covariant HttpRoute route, String method,
       {dynamic body,
       Map<String, dynamic>? headers,
       List<AttachmentBuilder> files = const [],

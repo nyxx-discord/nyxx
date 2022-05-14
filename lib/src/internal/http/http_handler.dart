@@ -21,7 +21,7 @@ class HttpHandler {
 
   RestEventController get _events => client.eventsRest as RestEventController;
 
-  final Map<String, HttpBucket?> _bucketByRequestRateLimitId = {};
+  final Map<String, HttpBucket> _bucketByRequestRateLimitId = {};
   DateTime globalRateLimitReset = DateTime.fromMillisecondsSinceEpoch(0);
 
   /// Creates an instance of [HttpHandler]
@@ -32,7 +32,7 @@ class HttpHandler {
   HttpBucket? _upsertBucket(HttpRequest request, http.StreamedResponse response) {
     //Get or Create Bucket
     HttpBucket? bucket =
-        _bucketByRequestRateLimitId.values.toList().firstWhereSafe((bucket) => bucket?.isInBucket(response) ?? false) ?? HttpBucket.fromResponseSafe(response);
+        _bucketByRequestRateLimitId.values.toList().firstWhereSafe((bucket) => bucket.isInBucket(response)) ?? HttpBucket.fromResponseSafe(response);
     //Update Bucket
     bucket?.updateRateLimit(response);
 
