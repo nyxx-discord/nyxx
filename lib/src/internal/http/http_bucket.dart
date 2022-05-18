@@ -4,10 +4,10 @@ import 'package:nyxx/src/internal/http/http_request.dart';
 
 class HttpBucket {
   static const String xRateLimitBucket = "x-ratelimit-bucket";
-  static const String kRateLimitLimit = "x-ratelimit-limit";
-  static const String kRateLimitRemaining = "x-ratelimit-remaining";
-  static const String kRateLimitReset = "x-ratelimit-reset";
-  static const String kRateLimitResetAfter = "x-ratelimit-reset-after";
+  static const String xRateLimitLimit = "x-ratelimit-limit";
+  static const String xRateLimitRemaining = "x-ratelimit-remaining";
+  static const String xRateLimitReset = "x-ratelimit-reset";
+  static const String xRateLimitResetAfter = "x-ratelimit-reset-after";
 
   int _limit;
   int _remaining;
@@ -43,16 +43,16 @@ class HttpBucket {
 
   static String? getBucketIdFromHeaders(Map<String, String> headers) => headers[xRateLimitBucket];
 
-  static int? getLimitFromHeaders(Map<String, String> headers) => headers[kRateLimitLimit] == null ? null : int.parse(headers[kRateLimitLimit]!);
+  static int? getLimitFromHeaders(Map<String, String> headers) => headers[xRateLimitLimit] == null ? null : int.parse(headers[xRateLimitLimit]!);
 
-  static int? getRemainingFromHeaders(Map<String, String> headers) => headers[kRateLimitRemaining] == null ? null : int.parse(headers[kRateLimitRemaining]!);
+  static int? getRemainingFromHeaders(Map<String, String> headers) => headers[xRateLimitRemaining] == null ? null : int.parse(headers[xRateLimitRemaining]!);
 
   // Server-Client clock drift makes headers.reset useless, build reset from headers.resetAfter and DateTime.now()
   static DateTime? getResetFromHeaders(Map<String, String> headers) =>
-      headers[kRateLimitResetAfter] == null ? null : DateTime.now().add(getResetAfterFromHeaders(headers)!);
+      headers[xRateLimitResetAfter] == null ? null : DateTime.now().add(getResetAfterFromHeaders(headers)!);
 
   static Duration? getResetAfterFromHeaders(Map<String, String> headers) =>
-      headers[kRateLimitResetAfter] == null ? null : Duration(milliseconds: (double.parse(headers[kRateLimitResetAfter]!) * 1000).ceil());
+      headers[xRateLimitResetAfter] == null ? null : Duration(milliseconds: (double.parse(headers[xRateLimitResetAfter]!) * 1000).ceil());
 
   void addInFlightRequest(HttpRequest httpRequest) => _inFlightRequests.add(httpRequest);
 
@@ -62,7 +62,7 @@ class HttpBucket {
     return getBucketIdFromHeaders(response.headers) == _bucketId;
   }
 
-  updateRateLimit(http.StreamedResponse response) {
+  void updateRateLimit(http.StreamedResponse response) {
     if (isInBucket(response)) {
       _remaining = getRemainingFromHeaders(response.headers) ?? _remaining;
 

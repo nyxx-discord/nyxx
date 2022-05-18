@@ -31,8 +31,7 @@ class HttpHandler {
 
   HttpBucket? _upsertBucket(HttpRequest request, http.StreamedResponse response) {
     //Get or Create Bucket
-    HttpBucket? bucket =
-        _bucketByRequestRateLimitId.values.toList().firstWhereSafe((bucket) => bucket.isInBucket(response)) ?? HttpBucket.fromResponseSafe(response);
+    final bucket = _bucketByRequestRateLimitId.values.toList().firstWhereSafe((bucket) => bucket.isInBucket(response)) ?? HttpBucket.fromResponseSafe(response);
     //Update Bucket
     bucket?.updateRateLimit(response);
 
@@ -60,15 +59,18 @@ class HttpHandler {
     // Get actual time and check if request can be executed based on data that bucket already have
     // and wait if rate limit could be possibly hit
     final now = DateTime.now();
-    Duration globalWaitTime = request.globalRateLimit ? globalRateLimitReset.difference(now) : Duration.zero;
-    Duration bucketWaitTime = (currentBucket?.remaining ?? 1) > 0 ? Duration.zero : currentBucket!.reset.difference(now);
+    final globalWaitTime = request.globalRateLimit ? globalRateLimitReset.difference(now) : Duration.zero;
+    final bucketWaitTime = (currentBucket?.remaining ?? 1) > 0 ? Duration.zero : currentBucket!.reset.difference(now);
+    final waitTime = globalWaitTime.compareTo(bucketWaitTime) > 0 ? globalWaitTime : bucketWaitTime;
+
     if (globalWaitTime > Duration.zero) {
       logger.warning("Global rate limit reached on endpoint: ${request.uri}");
     }
+
     if (bucketWaitTime > Duration.zero) {
       logger.warning("Bucket rate limit reached on endpoint: ${request.uri}");
     }
-    Duration waitTime = globalWaitTime.compareTo(bucketWaitTime) > 0 ? globalWaitTime : bucketWaitTime;
+
     if (waitTime > Duration.zero) {
       logger.warning("Trying to send request again in $waitTime");
       _events.onRateLimitedController.add(RatelimitEvent(request, true));
