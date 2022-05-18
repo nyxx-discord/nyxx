@@ -28,11 +28,11 @@ class HttpBucket {
   HttpBucket(this._limit, this._remaining, this._reset, this._resetAfter, this._bucketId);
 
   static HttpBucket? fromResponseSafe(http.StreamedResponse response) {
-    int? limit = getLimitFromHeaders(response.headers);
-    int? remaining = getRemainingFromHeaders(response.headers);
-    DateTime? reset = getResetFromHeaders(response.headers);
-    Duration? resetAfter = getResetAfterFromHeaders(response.headers);
-    String? bucketId = getBucketIdFromHeaders(response.headers);
+    final limit = getLimitFromHeaders(response.headers);
+    final remaining = getRemainingFromHeaders(response.headers);
+    final reset = getResetFromHeaders(response.headers);
+    final resetAfter = getResetAfterFromHeaders(response.headers);
+    final bucketId = getBucketIdFromHeaders(response.headers);
 
     if (limit == null || remaining == null || reset == null || resetAfter == null || bucketId == null) {
       return null;
