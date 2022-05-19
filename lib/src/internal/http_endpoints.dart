@@ -412,6 +412,8 @@ abstract class IHttpEndpoints {
 
   Stream<GuildEventUser> fetchGuildEventUsers(Snowflake guildId, Snowflake guildEventId,
       {int limit = 100, bool withMember = false, Snowflake? before, Snowflake? after});
+
+  Future<IThreadChannel> startForumThread(Snowflake channelId, ForumThreadBuilder builder);
 }
 
 class HttpEndpoints implements IHttpEndpoints {
@@ -547,7 +549,9 @@ class HttpEndpoints implements IHttpEndpoints {
   Future<IThreadChannel> startForumThread(Snowflake channelId, ForumThreadBuilder builder) async {
     final response = await httpHandler.execute(
       BasicRequest(
-        "/channels/$channelId/threads",
+        HttpRoute()
+          ..channels(id: channelId.toString())
+          ..threads(),
         method: "POST",
         body: builder.build(),
       ),
