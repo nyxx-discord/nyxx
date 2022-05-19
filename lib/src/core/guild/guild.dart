@@ -290,7 +290,7 @@ abstract class IGuild implements SnowflakeEntity {
   Future<void> kick(SnowflakeEntity user, {String? auditReason});
 
   /// Unbans a user by ID.
-  Future<void> unban(Snowflake id, Snowflake userId);
+  Future<void> unban(Snowflake userId);
 
   /// Edits the guild.
   Future<IGuild> edit(GuildBuilder builder, {String? auditReason});
@@ -828,7 +828,7 @@ class Guild extends SnowflakeEntity implements IGuild {
 
   /// Unbans a user by ID.
   @override
-  Future<void> unban(Snowflake id, Snowflake userId) => client.httpEndpoints.guildUnban(this.id, userId);
+  Future<void> unban(Snowflake userId) => client.httpEndpoints.guildUnban(id, userId);
 
   /// Edits the guild.
   @override
