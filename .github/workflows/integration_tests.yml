@@ -4,7 +4,6 @@ on:
   push:
     branches-ignore:
       - main
-  pull_request:
 
 jobs:
   analyze:
@@ -83,5 +82,5 @@ jobs:
       - name: Install dependencies
         run: dart pub get
 
-      - name: Unit tests
-        run: dart run test test/unit/**
+      - name: Integration tests
+        run: dart run test test/integration/**
