@@ -69,9 +69,6 @@ jobs:
       - name: Setup Dart Action
         uses: dart-lang/setup-dart@v1
 
-      - name: Install lcov
-        run: sudo apt-get install -y lcov
-
       - name: Checkout
         uses: actions/checkout@v2.3.4
 
@@ -88,28 +85,3 @@ jobs:
 
       - name: Unit tests
         run: dart run test --coverage="coverage" test/unit/**
-
-      - name: Integration tests
-        if: ${{ env.TEST_TOKEN }} != ''
-        run: dart run test --coverage="coverage" test/integration/**
-
-      - name: Format coverage
-        run: dart run coverage:format_coverage --lcov --in=coverage --out=coverage/coverage.lcov --packages=.packages --report-on=lib
-
-      - name: Generate coverage
-        run: genhtml coverage/coverage.lcov -o coverage/coverage_gen
-
-      - name: Extract branch name
-        shell: bash
-        run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
-        id: extract_branch
-
-      - name: Deploy code coverage
-        uses: easingthemes/ssh-deploy@v2.1.5
-        env:
-          SSH_PRIVATE_KEY: ${{ secrets.DEPLOY_SSH_SERVER_KEY }}
-          ARGS: '-rltDzvO --rsync-path="mkdir -p ${{ secrets.DEPLOY_REMOTE_TARGET }}/coverage/nyxx/${{ steps.extract_branch.outputs.branch }}/ && rsync"'
-          SOURCE: "coverage/coverage_gen/"
-          REMOTE_HOST: ${{ secrets.DEPLOY_REMOTE_HOST }}
-          REMOTE_USER: ${{ secrets.DEPLOY_REMOTE_USER }}
-          TARGET: "${{ secrets.DEPLOY_REMOTE_TARGET }}/coverage/nyxx/${{ steps.extract_branch.outputs.branch }}/"
