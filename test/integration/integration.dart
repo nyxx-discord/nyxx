@@ -166,7 +166,7 @@ main() async {
 
     final events = await guild.fetchGuildEvents().toList();
     expect(events, isEmpty);
-  });
+  }, skip: 'Rete limits problems');
 }
 
 String getChannelLogMessage() {
