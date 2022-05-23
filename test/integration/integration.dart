@@ -111,7 +111,7 @@ main() async {
     expect(toBuilder.content, equals("Edit test"));
 
     await messageEdit.delete();
-  });
+  }, skip: 'Rate limits problems');
 
   test("file upload tests", () async {
     final messageBuilder = MessageBuilder.files([
