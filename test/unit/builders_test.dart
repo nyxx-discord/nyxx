@@ -213,9 +213,7 @@ main() {
     });
 
     test("ForumThreadBuilder", () {
-      final builder = ForumThreadBuilder()
-        ..name = "test"
-        ..message = MessageBuilder.content("test");
+      final builder = ForumThreadBuilder("test", MessageBuilder.content("test"));
 
       expect(
           builder.build(),

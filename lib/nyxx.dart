@@ -169,6 +169,7 @@ export 'src/utils/builders/reply_builder.dart' show ReplyBuilder;
 export 'src/utils/builders/sticker_builder.dart' show StickerBuilder;
 export 'src/utils/builders/thread_builder.dart' show ThreadArchiveTime, ThreadBuilder;
 export 'src/utils/builders/guild_event_builder.dart' show GuildEventBuilder;
+export 'src/utils/builders/forum_thread_builder.dart' show ForumThreadBuilder;
 export 'src/utils/extensions.dart' show IntExtensions, SnowflakeEntityListExtensions, StringExtensions;
 export 'src/utils/permissions.dart' show PermissionsUtils;
 export 'src/utils/utils.dart' show ListSafeFirstWhere;
