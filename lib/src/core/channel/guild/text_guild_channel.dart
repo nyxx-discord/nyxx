@@ -34,7 +34,7 @@ abstract class ITextGuildChannel implements IGuildChannel, ITextChannel, Mention
   /// Valid file types for [avatarFile] are jpeg, gif and png.
   ///
   /// ```
-  /// final webhook = await channnel.createWebhook("!a Send nudes kek6407");
+  /// final webhook = await channel.createWebhook("!a Send nudes kek6407");
   /// ```
   Future<IWebhook> createWebhook(String name, {AttachmentBuilder? avatarAttachment, String? auditReason});
 
