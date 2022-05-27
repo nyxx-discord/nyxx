@@ -290,7 +290,7 @@ abstract class IHttpEndpoints {
   Future<void> deleteMessageAllReactions(Snowflake channelId, Snowflake messageId);
 
   /// Fetches all reactions with a given emoji on a message
-  Future<List<IUser>> fetchMessageReactions(
+  Stream<IUser> fetchMessageReactionUsers(
     Snowflake channelId,
     Snowflake messageId,
     IEmoji emoji, {
@@ -1476,14 +1476,14 @@ class HttpEndpoints implements IHttpEndpoints {
       method: "DELETE"));
 
   @override
-  Future<List<IUser>> fetchMessageReactions(
+  Stream<IUser> fetchMessageReactionUsers(
     Snowflake channelId,
     Snowflake messageId,
     IEmoji emoji, {
     Snowflake? after,
     Snowflake? before,
     int? limit,
-  }) async {
+  }) async* {
     final response = await executeSafe(BasicRequest(
       HttpRoute()
         ..channels(id: channelId.toString())
@@ -1496,15 +1496,12 @@ class HttpEndpoints implements IHttpEndpoints {
     ));
 
     if (response is HttpResponseSuccess) {
-      List<User> users = [];
-
       for (final rawUser in (response.jsonBody as RawApiList).cast<RawApiMap>()) {
-        users.add(User(client, rawUser));
+        yield User(client, rawUser);
       }
-      return users;
     }
 
-    return Future.error(response);
+    yield* Stream.error(response);
   }
 
   @override

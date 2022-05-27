@@ -135,7 +135,7 @@ abstract class IMessage implements SnowflakeEntity, Disposable, Convertable<Mess
   Future<void> deleteAllReactions();
 
   /// Fetches the users that reacted to this message with a given emoji.
-  Future<List<IUser>> fetchReactions(IEmoji emoji);
+  Stream<IUser> fetchReactionUsers(IEmoji emoji);
 
   /// Deletes reactions to this message with a given emoji
   Future<void> deleteReactions(IEmoji emoji);
@@ -425,7 +425,7 @@ class Message extends SnowflakeEntity implements IMessage {
   Future<void> deleteAllReactions() => client.httpEndpoints.deleteMessageAllReactions(channel.id, id);
 
   @override
-  Future<List<IUser>> fetchReactions(IEmoji emoji) => client.httpEndpoints.fetchMessageReactions(channel.id, id, emoji);
+  Stream<IUser> fetchReactionUsers(IEmoji emoji) => client.httpEndpoints.fetchMessageReactionUsers(channel.id, id, emoji);
 
   @override
   Future<void> deleteReactions(IEmoji emoji) => client.httpEndpoints.deleteMessageReactions(channel.id, id, emoji);
