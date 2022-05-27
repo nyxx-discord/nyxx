@@ -1481,7 +1481,6 @@ class HttpEndpoints implements IHttpEndpoints {
     Snowflake messageId,
     IEmoji emoji, {
     Snowflake? after,
-    Snowflake? before,
     int? limit,
   }) async* {
     final response = await executeSafe(BasicRequest(
