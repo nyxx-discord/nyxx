@@ -289,6 +289,18 @@ abstract class IHttpEndpoints {
   /// Deletes all reactions on given message
   Future<void> deleteMessageAllReactions(Snowflake channelId, Snowflake messageId);
 
+  /// Fetches all reactions with a given emoji on a message
+  Future<List<IUser>> fetchMessageReactions(
+    Snowflake channelId,
+    Snowflake messageId,
+    IEmoji emoji, {
+    Snowflake? after,
+    int? limit,
+  });
+
+  /// Deletes all reactions with a given emoji on a message
+  Future<void> deleteMessageReactions(Snowflake channelId, Snowflake messageId, IEmoji emoji);
+
   /// Deletes message from given channel
   Future<void> deleteMessage(Snowflake channelId, Snowflake messageId, {String? auditReason});
 
@@ -1462,6 +1474,47 @@ class HttpEndpoints implements IHttpEndpoints {
         ..messages(id: messageId.toString())
         ..reactions(),
       method: "DELETE"));
+
+  @override
+  Future<List<IUser>> fetchMessageReactions(
+    Snowflake channelId,
+    Snowflake messageId,
+    IEmoji emoji, {
+    Snowflake? after,
+    Snowflake? before,
+    int? limit,
+  }) async {
+    final response = await executeSafe(BasicRequest(
+      HttpRoute()
+        ..channels(id: channelId.toString())
+        ..messages(id: messageId.toString())
+        ..reactions(emoji: emoji.encodeForAPI()),
+      queryParams: {
+        if (after != null) "after": after.toString(),
+        if (limit != null) "limit": limit,
+      },
+    ));
+
+    if (response is HttpResponseSuccess) {
+      List<User> users = [];
+
+      for (final rawUser in (response.jsonBody as RawApiList).cast<RawApiMap>()) {
+        users.add(User(client, rawUser));
+      }
+      return users;
+    }
+
+    return Future.error(response);
+  }
+
+  @override
+  Future<void> deleteMessageReactions(Snowflake channelId, Snowflake messageId, IEmoji emoji) => executeSafe(BasicRequest(
+        HttpRoute()
+          ..channels(id: channelId.toString())
+          ..messages(id: messageId.toString())
+          ..reactions(emoji: emoji.encodeForAPI()),
+        method: "DELETE",
+      ));
 
   @override
   Future<void> deleteMessage(Snowflake channelId, Snowflake messageId, {String? auditReason}) => executeSafe(BasicRequest(
