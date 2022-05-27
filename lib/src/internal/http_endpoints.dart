@@ -280,7 +280,7 @@ abstract class IHttpEndpoints {
   /// Creates reaction with given [emoji] on given message
   Future<void> createMessageReaction(Snowflake channelId, Snowflake messageId, IEmoji emoji);
 
-  /// Deletes all reactions for given [emoji] from message
+  /// Deletes the bot's reaction with a given [emoji] from message
   Future<void> deleteMessageReaction(Snowflake channelId, Snowflake messageId, IEmoji emoji);
 
   /// Deletes all reactions of given user from message.
