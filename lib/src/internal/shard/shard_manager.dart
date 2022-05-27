@@ -186,9 +186,9 @@ class ShardManager implements IShardManager {
 
     for (final shard in _shards.values) {
       if (connectionManager.client.options.shutdownShardHook != null) {
-        connectionManager.client.options.shutdownShardHook!(connectionManager.client, shard); // ignore: unawaited_futures
+        await connectionManager.client.options.shutdownShardHook!(connectionManager.client, shard);
       }
-      shard.dispose(); // ignore: unawaited_futures
+      await shard.dispose();
     }
 
     await onConnectController.close();
