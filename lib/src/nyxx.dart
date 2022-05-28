@@ -220,6 +220,10 @@ class NyxxRest extends INyxxRest {
       await plugin.onBotStop(this, _logger);
     }
 
+    await eventsRest.dispose();
+
+    onReadyController.close();
+
     await guilds.dispose();
     await users.dispose();
     await channels.dispose();
@@ -333,7 +337,7 @@ abstract class INyxxWebsocket implements INyxxRest {
 /// ```
 /// or setup `CommandsFramework` and `Voice`.
 class NyxxWebsocket extends NyxxRest implements INyxxWebsocket {
-  late final ConnectionManager ws; // ignore: unused_field
+  late final ConnectionManager ws;
 
   /// Current client"s shard
   @override
@@ -457,14 +461,15 @@ class NyxxWebsocket extends NyxxRest implements INyxxWebsocket {
   Future<void> dispose() async {
     _logger.info("Disposing and closing bot...");
 
+    await super.dispose();
+
     if (options.shutdownHook != null) {
       await options.shutdownHook!(this);
     }
 
     await shardManager.dispose();
-    await eventsRest.dispose();
+    await eventsWs.dispose();
 
-    _logger.info("Exiting...");
-    throw UnrecoverableNyxxError('Exiting nyxx...');
+    _logger.info("Bot disposed.");
   }
 }

@@ -550,8 +550,10 @@ class Shard implements IShard {
     _sendPort.send({"cmd": "KILL"});
 
     final killFuture = _receiveStream.firstWhere((element) => (element as RawApiMap)["cmd"] == "TERMINATE_OK");
-    _shardIsolate.kill(priority: Isolate.immediate);
     await killFuture;
+
+    _receivePort.close();
+    _heartbeatTimer.cancel();
 
     manager.logger.info("Shard $id disposed.");
   }
