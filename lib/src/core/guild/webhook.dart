@@ -176,7 +176,8 @@ class Webhook extends SnowflakeEntity implements IWebhook {
   /// and returns the created message body (defaults to false; when false a message that is not save does not return an error)
   @override
   Future<IMessage?> execute(MessageBuilder builder, {bool wait = true, Snowflake? threadId, String? threadName, String? avatarUrl, String? username}) =>
-      client.httpEndpoints.executeWebhook(id, builder, token: token, threadId: threadId, username: username, wait: wait, avatarUrl: avatarUrl, threadName: threadName);
+      client.httpEndpoints
+          .executeWebhook(id, builder, token: token, threadId: threadId, username: username, wait: wait, avatarUrl: avatarUrl, threadName: threadName);
 
   @override
   String avatarURL({String format = "webp", int size = 128}) => client.httpEndpoints.userAvatarURL(id, avatarHash, 0, format: format, size: size);
