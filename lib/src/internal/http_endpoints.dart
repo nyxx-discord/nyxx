@@ -332,7 +332,7 @@ abstract class IHttpEndpoints {
   ///
   /// If [wait] is set to true -- request will return resulting message.
   Future<IMessage?> executeWebhook(Snowflake webhookId, MessageBuilder builder,
-      {String token = "", bool wait = true, String? avatarUrl, String? username, Snowflake? threadId});
+      {String token = "", bool wait = true, String? avatarUrl, String? username, Snowflake? threadId, String? threadName});
 
   /// Fetches webhook using its [id] and optionally [token].
   /// If [token] is specified it will be used to fetch webhook data.
@@ -1585,13 +1585,14 @@ class HttpEndpoints implements IHttpEndpoints {
 
   @override
   Future<IMessage?> executeWebhook(Snowflake webhookId, MessageBuilder builder,
-      {String token = "", bool wait = true, String? avatarUrl, String? username, Snowflake? threadId}) async {
+      {String token = "", bool wait = true, String? avatarUrl, String? username, Snowflake? threadId, String? threadName}) async {
     final queryParams = {"wait": wait, if (threadId != null) "thread_id": threadId};
 
     final body = {
       ...builder.build(client.options.allowedMentions),
       if (avatarUrl != null) "avatar_url": avatarUrl,
       if (username != null) "username": username,
+      if (threadName != null) 'thread_name': threadName,
     };
 
     HttpResponse response;

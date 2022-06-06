@@ -74,7 +74,9 @@ abstract class IWebhook implements SnowflakeEntity, IMessageAuthor {
   ///
   /// [wait] - waits for server confirmation of message send before response,
   /// and returns the created message body (defaults to false; when false a message that is not save does not return an error)
-  Future<IMessage?> execute(MessageBuilder builder, {bool wait = true, Snowflake? threadId, String? avatarUrl, String? username});
+  /// [threadId] is the id of thread in the channel to send to.
+  /// If [threadName] is specified, this will create a thread in the forum channel with the given name - **this is only available for forum channels.**
+  Future<IMessage?> execute(MessageBuilder builder, {bool wait = true, Snowflake? threadId, String? threadName, String? avatarUrl, String? username});
 
   @override
   String avatarURL({String format = "webp", int size = 128});
@@ -173,8 +175,9 @@ class Webhook extends SnowflakeEntity implements IWebhook {
   /// [wait] - waits for server confirmation of message send before response,
   /// and returns the created message body (defaults to false; when false a message that is not save does not return an error)
   @override
-  Future<IMessage?> execute(MessageBuilder builder, {bool wait = true, Snowflake? threadId, String? avatarUrl, String? username}) =>
-      client.httpEndpoints.executeWebhook(id, builder, token: token, threadId: threadId, username: username, wait: wait, avatarUrl: avatarUrl);
+  Future<IMessage?> execute(MessageBuilder builder, {bool wait = true, Snowflake? threadId, String? threadName, String? avatarUrl, String? username}) =>
+      client.httpEndpoints
+          .executeWebhook(id, builder, token: token, threadId: threadId, username: username, wait: wait, avatarUrl: avatarUrl, threadName: threadName);
 
   @override
   String avatarURL({String format = "webp", int size = 128}) => client.httpEndpoints.userAvatarURL(id, avatarHash, 0, format: format, size: size);
