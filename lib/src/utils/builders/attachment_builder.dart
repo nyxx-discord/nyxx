@@ -62,7 +62,7 @@ class AttachmentBuilder {
   /// See: https://discord.com/developers/docs/reference#image-data
   String getBase64() {
     final encodedData = base64Encode(_bytes);
-    final extension = path_utils.extension(_name);
+    final extension = path_utils.extension(_name).substring(1);
     return "data:image/$extension;base64,$encodedData";
   }
 }
