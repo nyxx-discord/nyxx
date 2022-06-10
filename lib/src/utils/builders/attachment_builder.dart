@@ -60,8 +60,7 @@ class AttachmentBuilder {
 
   /// Returns attachment encoded in Data URI scheme format
   /// See: https://discord.com/developers/docs/reference#image-data
-  String getBase64({String? defaultFormat = 'png'}) {
-    defaultFormat ??= 'png';
+  String getBase64({String defaultFormat = 'png'}) {
     final encodedData = base64Encode(_bytes);
     final fileExtension = path_utils.extension(_name);
     final extension = fileExtension.isNotEmpty ? fileExtension.substring(1) : defaultFormat;
