@@ -42,7 +42,12 @@ class BasicRequest extends HttpRequest {
 
   @override
   Future<http.BaseRequest> prepareRequest() async {
-    final request = http.Request(method, uri.replace(queryParameters: queryParams))..headers.addAll(genHeaders());
+    final request = http.Request(
+        method,
+        uri.replace(
+            queryParameters: queryParams?.map((key, value) => MapEntry(key, value.toString()))
+        )
+    )..headers.addAll(genHeaders());
 
     if (body != null && method != "GET") {
       request.headers.addAll(_getJsonContentTypeHeader());
