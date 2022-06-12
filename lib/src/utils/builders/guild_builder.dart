@@ -63,9 +63,9 @@ class GuildBuilder extends Builder {
         if (explicitContentFilter != null) "explicit_content_filter": explicitContentFilter,
         if (roles != null) "roles": _genIterable(roles!).toList(),
         if (channels != null) "channels": _genIterable(channels!).toList(),
-        if (afkChannelId != null) "afk_channel_id": afkChannelId,
+        if (afkChannelId != null) "afk_channel_id": afkChannelId!.toString(),
         if (afkTimeout != null) "afk_timeout": afkTimeout,
-        if (systemChannelId != null) "system_channel_id": systemChannelId,
+        if (systemChannelId != null) "system_channel_id": systemChannelId.toString(),
         if (systemChannelFlags != null) "system_channel_flags": systemChannelFlags!.value,
       };
 

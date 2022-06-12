@@ -38,7 +38,7 @@ class GuildEventBuilder implements Builder {
         if (startDate != null) 'scheduled_start_time': startDate!.toIso8601String(),
         if (endDate != null) 'scheduled_end_time': endDate!.toIso8601String(),
         if (description != null) 'description': description,
-        if (type != null) 'entity_type': type,
+        if (type != null) 'entity_type': type!.value,
         if (status != null) 'status': status!.value
       };
 }
