@@ -1,3 +1,18 @@
+## 4.0.0-dev.2
+__12.06.2022__
+
+- feature: Add missing emoji endpoints (#346)
+- feature: Add `threadName` on `IWebhook#execute()` (#348)
+- feature: Implement graceful shutdown (#347)
+- feature: Implement forum channels (#332)
+- feature: Implement Dynamic Bucket Rate Limits (#316)
+- feature: Implement paginated bans (#326)
+- feature: Implement missing guild properties
+- bug: Fixed disconnecting user from voice
+- bug: failed to edit guild members (#328)
+- bug: Invalid serialization of query params (#352)
+- bug: Fix some serialization bugs (#351)
+
 ## 4.0.0-dev.1
 __09.05.2022__
 
