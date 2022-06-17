@@ -53,6 +53,9 @@ class GuildFeature extends IEnum<String> {
   /// Guild is a Student Hub
   static const GuildFeature studentHub = GuildFeature._create("HUB");
 
+  /// Guild has Auto Moderation
+  static const GuildFeature autoModeration = GuildFeature._create("AUTO_MODERATION");
+
   /// Creates instance of [GuildFeature] from [value].
   GuildFeature.from(String? value) : super(value ?? "");
   const GuildFeature._create(String? value) : super(value ?? "");
