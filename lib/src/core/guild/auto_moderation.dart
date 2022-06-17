@@ -57,10 +57,13 @@ enum EventTypes {
 enum TriggerTypes {
   /// Check if content contains words from a user defined list of keywords
   keyword(1),
+
   /// Check if content contains any harmful links
   harmfulLink(2),
+
   /// Check if content represents generic spam
   spam(3),
+
   /// Check if content contains words from internal pre-defined wordsets
   keywordPreset(4);
 
@@ -89,8 +92,10 @@ enum TriggerTypes {
 enum KeywordPresets {
   /// Words that may be considered forms of swearing or cursing
   profanity(1),
+
   /// Words that refer to sexually explicit behavior or activity
   sexualContent(2),
+
   /// Personal insults or words that may be considered hate speech
   slurs(3);
 

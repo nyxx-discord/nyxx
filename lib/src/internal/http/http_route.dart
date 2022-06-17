@@ -76,7 +76,7 @@ abstract class IHttpRoute {
   /// Adds the [`scheduled-events`](https://discord.com/developers/docs/resources/guild-scheduled-event#get-guild-scheduled-event) part to this [IHttpRoute].
   void scheduledEvents({String? id});
 
-  /// Adds the [`rule`](https://discord.com/developers/docs/resources/auto-moderation#auto-moderation) part to this [IHttpRoute].
+  /// Adds the [`rules`](https://discord.com/developers/docs/resources/auto-moderation#get-auto-moderation-rule) part to this [IHttpRoute].
   void rules({String? id});
 
   /// Adds the [`prune`](https://discord.com/developers/docs/resources/guild#get-guild-prune-count) part to this [IHttpRoute].
@@ -136,7 +136,7 @@ abstract class IHttpRoute {
   /// Adds the [`welcome-screen`](https://discord.com/developers/docs/resources/guild#get-guild-welcome-screen) part to this [IHttpRoute].
   void welcomeScreen();
 
-  /// Adds the [`auto-moderation`](https://discord.com/developers/docs/resources/auto-moderation#auto-moderation) part to this [IHttpRoute].
+  /// Adds the [`auto-moderation`](https://discord.com/developers/docs/resources/auto-moderation#list-auto-moderation-rules-for-guild) part to this [IHttpRoute].
   void autoModeration();
 }
 
