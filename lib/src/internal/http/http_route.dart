@@ -76,6 +76,9 @@ abstract class IHttpRoute {
   /// Adds the [`scheduled-events`](https://discord.com/developers/docs/resources/guild-scheduled-event#get-guild-scheduled-event) part to this [IHttpRoute].
   void scheduledEvents({String? id});
 
+  /// Adds the [`rule`](https://discord.com/developers/docs/resources/auto-moderation#auto-moderation) part to this [IHttpRoute].
+  void rules({String? id});
+
   /// Adds the [`prune`](https://discord.com/developers/docs/resources/guild#get-guild-prune-count) part to this [IHttpRoute].
   void prune();
 
@@ -132,6 +135,9 @@ abstract class IHttpRoute {
 
   /// Adds the [`welcome-screen`](https://discord.com/developers/docs/resources/guild#get-guild-welcome-screen) part to this [IHttpRoute].
   void welcomeScreen();
+
+  /// Adds the [`auto-moderation`](https://discord.com/developers/docs/resources/auto-moderation#auto-moderation) part to this [IHttpRoute].
+  void autoModeration();
 }
 
 class HttpRoute implements IHttpRoute {
@@ -223,6 +229,9 @@ class HttpRoute implements IHttpRoute {
   void scheduledEvents({String? id}) => add(HttpRoutePart("scheduled-events", [if (id != null) HttpRouteParam(id)]));
 
   @override
+  void rules({String? id}) => add(HttpRoutePart('rules', [if (id != null) HttpRouteParam(id)]));
+
+  @override
   void prune() => add(HttpRoutePart("prune"));
 
   @override
@@ -278,4 +287,7 @@ class HttpRoute implements IHttpRoute {
 
   @override
   void welcomeScreen() => add(HttpRoutePart('welcome-screen'));
+
+  @override
+  void autoModeration() => add(HttpRoutePart('auto-moderation'));
 }
