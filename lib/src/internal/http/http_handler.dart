@@ -83,7 +83,7 @@ class HttpHandler {
       final response = await httpClient.send(await request.prepareRequest());
       currentBucket?.removeInFlightRequest(request);
       currentBucket = _upsertBucket(request, response);
-      return _handle(response);
+      return _handle(request, response);
     } on HttpClientException catch (e) {
       currentBucket?.removeInFlightRequest(request);
       if (e.response == null) {
@@ -94,28 +94,12 @@ class HttpHandler {
       final response = e.response as http.StreamedResponse;
       _upsertBucket(request, response);
 
-      // Check for 429, emmit events and wait given in response body time
-      if (response.statusCode == 429) {
-        final responseBody = jsonDecode(await response.stream.bytesToString());
-        final retryAfter = Duration(milliseconds: ((responseBody["retry_after"] as double) * 1000).ceil());
-        final isGlobal = responseBody["global"] as bool;
-
-        if (isGlobal) {
-          globalRateLimitReset = DateTime.now().add(retryAfter);
-        }
-
-        _events.onRateLimitedController.add(RatelimitEvent(request, false, response));
-        logger.warning("${isGlobal ? "Global" : ""} Rate limited via 429 on endpoint: ${request.uri}. Trying to send request again in $retryAfter");
-
-        return Future.delayed(retryAfter, () => execute(request));
-      }
-
       // Return http error
-      return _handle(response);
+      return _handle(request, response);
     }
   }
 
-  Future<HttpResponse> _handle(http.StreamedResponse response) async {
+  Future<HttpResponse> _handle(HttpRequest request, http.StreamedResponse response) async {
     if (response.statusCode >= 200 && response.statusCode < 300) {
       final responseSuccess = HttpResponseSuccess(response);
       await responseSuccess.finalize();
@@ -124,6 +108,22 @@ class HttpHandler {
       logger.finer("Got successful http response for endpoint: [${response.request?.url.toString()}]; Response: [${responseSuccess.jsonBody}]");
 
       return responseSuccess;
+    }
+
+    // Check for 429, emmit events and wait given in response body time
+    if (response.statusCode == 429) {
+      final responseBody = jsonDecode(await response.stream.bytesToString());
+      final retryAfter = Duration(milliseconds: ((responseBody["retry_after"] as double) * 1000).ceil());
+      final isGlobal = responseBody["global"] as bool;
+
+      if (isGlobal) {
+        globalRateLimitReset = DateTime.now().add(retryAfter);
+      }
+
+      _events.onRateLimitedController.add(RatelimitEvent(request, false, response));
+      logger.warning("${isGlobal ? "Global " : ""}Rate limited via 429 on endpoint: ${request.uri}. Trying to send request again in $retryAfter");
+
+      return Future.delayed(retryAfter, () => execute(request));
     }
 
     final responseError = HttpResponseError(response);
