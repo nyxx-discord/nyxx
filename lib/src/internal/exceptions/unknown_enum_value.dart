@@ -8,7 +8,6 @@ class UnknownEnumValue implements Error {
   /// Creates a new instance of [UnknownEnumValue].
   const UnknownEnumValue(this.value);
 
-
   @override
   String toString() => 'Unknown enum value: $value';
 }

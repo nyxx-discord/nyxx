@@ -2155,8 +2155,6 @@ class HttpEndpoints implements IHttpEndpoints {
       return Future.error(response);
     }
 
-    return ((response as IHttpResponseSuccess).jsonBody as RawApiList)
-        .map((rule) => AutoModerationRule(rule as RawApiMap))
-        .toList();
+    return ((response as IHttpResponseSuccess).jsonBody as RawApiList).map((rule) => AutoModerationRule(rule as RawApiMap)).toList();
   }
 }
