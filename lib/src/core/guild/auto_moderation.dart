@@ -1,9 +1,9 @@
 import 'package:nyxx/src/core/snowflake.dart';
+import 'package:nyxx/src/core/snowflake_entity.dart';
+import 'package:nyxx/src/internal/exceptions/unknown_enum_value.dart';
+import 'package:nyxx/src/typedefs.dart';
 
-abstract class IAutoModerationRule {
-  /// The id of this rule.
-  Snowflake get id;
-
+abstract class IAutoModerationRule implements SnowflakeEntity {
   /// The guild's id this rule is applied to.
   Snowflake get guildId;
 
@@ -14,10 +14,10 @@ abstract class IAutoModerationRule {
   Snowflake get creatorId;
 
   /// The rule event type.
-  EventTypes get eventTypes;
+  EventTypes get eventType;
 
   /// The rule trigger type.
-  TriggerTypes get triggerTypes;
+  TriggerTypes get triggerType;
 
   /// The trigger metadata.
   ITriggerMetadata get triggerMetadata;
@@ -46,7 +46,7 @@ enum EventTypes {
       case 1:
         return EventTypes.messageSend;
       default:
-        throw Exception('Unknown enum value: $value');
+        throw UnknownEnumValue(value.toString());
     }
   }
 
@@ -81,7 +81,7 @@ enum TriggerTypes {
       case 4:
         return TriggerTypes.keywordPreset;
       default:
-        throw Exception('Unknown enum value: $value');
+        throw UnknownEnumValue(value.toString());
     }
   }
 
@@ -111,7 +111,7 @@ enum KeywordPresets {
       case 3:
         return KeywordPresets.slurs;
       default:
-        throw Exception('Unknown enum value: $value');
+        throw UnknownEnumValue(value.toString());
     }
   }
 
@@ -136,7 +136,7 @@ enum ActionTypes {
       case 3:
         return ActionTypes.timeout;
       default:
-        throw Exception('Unknown enum value: $value');
+        throw UnknownEnumValue(value.toString());
     }
   }
 
@@ -159,7 +159,7 @@ abstract class IActionStructure {
   ActionTypes get actionType;
 
   /// Additionnal metadata needed during execution for this specific action type.
-  IActionMetadata get actionMetadata;
+  IActionMetadata? get actionMetadata;
 }
 
 abstract class IActionMetadata {
@@ -169,5 +169,92 @@ abstract class IActionMetadata {
 
   /// The timeout duration - maximum duration is 4 weeks (2,419,200 seconds).
   /// It's associated action type is [ActionTypes.timeout].
-  Duration get duration;
+  Duration? get duration;
+}
+
+class AutoModerationRule extends SnowflakeEntity implements IAutoModerationRule {
+  @override
+  late final Snowflake guildId;
+
+  @override
+  late final String name;
+
+  @override
+  late final Snowflake creatorId;
+
+  @override
+  late final EventTypes eventType;
+
+  @override
+  late final TriggerTypes triggerType;
+
+  @override
+  late final ITriggerMetadata triggerMetadata;
+
+  @override
+  late final List<IActionStructure> actions;
+
+  @override
+  late final bool enabled;
+
+  @override
+  late final List<Snowflake> ignoredRoles;
+
+  @override
+  late final List<Snowflake> ignoredChannels;
+
+  AutoModerationRule(RawApiMap rawData) : super(Snowflake(rawData['id'])) {
+    guildId = Snowflake(rawData['guild_id']);
+    name = rawData['name'] as String;
+    creatorId = Snowflake(rawData['creator_id']);
+    eventType = EventTypes._fromValue(rawData['event_type'] as int);
+    triggerType = TriggerTypes._fromValue(rawData['trigger_type'] as int);
+    triggerMetadata = TriggerMetadata(rawData['trigger_metadata'] as RawApiMap);
+    actions = [...?(rawData['actions'] as RawApiList?)?.map((a) => ActionStructure(a as RawApiMap))];
+    enabled = rawData['enabled'] as bool;
+    ignoredRoles = (rawData['exempt_roles'] as RawApiList).isNotEmpty ? [...(rawData['exempt_roles'] as RawApiList).map((r) => Snowflake(r))] : [];
+    ignoredChannels = (rawData['exempt_channels'] as RawApiList).isNotEmpty ? [...(rawData['exempt_channels'] as RawApiList).map((r) => Snowflake(r))] : [];
+  }
+}
+
+class TriggerMetadata implements ITriggerMetadata {
+  @override
+  late final List<KeywordPresets> keywordPresets;
+
+  @override
+  late final List<String> keywordsFilter;
+
+  /// Creates an instance of [TriggerMetadata]
+  TriggerMetadata(RawApiMap data) {
+    keywordsFilter = (data['keyword_filter'] as RawApiList).cast<String>();
+    keywordPresets = [...?(data['presets'] as List<int>?)?.map((p) => KeywordPresets._fromValue(p))];
+  }
+}
+
+class ActionStructure implements IActionStructure {
+  @override
+  late final IActionMetadata? actionMetadata;
+
+  @override
+  late final ActionTypes actionType;
+
+  /// Creates an instance of [ActionStructure].
+  ActionStructure(RawApiMap data) {
+    actionType = ActionTypes._fromValue(data['type'] as int);
+    actionMetadata = (data['metadata'] != null && (data['metadata'] as RawApiMap).isNotEmpty) ? ActionMetadata(data['metadata'] as RawApiMap) : null;
+  }
+}
+
+class ActionMetadata implements IActionMetadata {
+  @override
+  late final Snowflake channelId;
+
+  @override
+  late final Duration? duration;
+
+  /// Creates an instance of [ActionMetadata].
+  ActionMetadata(RawApiMap data) {
+    channelId = Snowflake(data['channel_id']);
+    duration = data['duration_seconds'] != null ? Duration(seconds: data['duration_seconds'] as int) : null;
+  }
 }

@@ -3,6 +3,7 @@ import 'package:nyxx/src/core/audit_logs/audit_log_entry.dart';
 import 'package:nyxx/src/core/channel/guild/guild_channel.dart';
 import 'package:nyxx/src/core/channel/invite.dart';
 import 'package:nyxx/src/core/channel/text_channel.dart';
+import 'package:nyxx/src/core/guild/auto_moderation.dart';
 import 'package:nyxx/src/core/guild/guild_feature.dart';
 import 'package:nyxx/src/core/guild/guild_nsfw_level.dart';
 import 'package:nyxx/src/core/guild/guild_preview.dart';
@@ -334,6 +335,10 @@ abstract class IGuild implements SnowflakeEntity {
 
   /// Fetches the welcome screen of this guild if it's a community guild.
   Future<IGuildWelcomeScreen?> fetchWelcomeScreen();
+
+  /// Fetches the auto moderation rules.
+  /// 404 if no rules are found
+  Future<List<IAutoModerationRule>> fetchAutoModerationRules();
 }
 
 class Guild extends SnowflakeEntity implements IGuild {
@@ -898,4 +903,7 @@ class Guild extends SnowflakeEntity implements IGuild {
 
   @override
   Future<IGuildWelcomeScreen> fetchWelcomeScreen() => client.httpEndpoints.fetchGuildWelcomeScreen(id);
+
+  @override
+  Future<List<IAutoModerationRule>> fetchAutoModerationRules() => client.httpEndpoints.fetchAutoModerationRules(id);
 }

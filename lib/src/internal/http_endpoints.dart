@@ -1,4 +1,5 @@
 import 'package:nyxx/src/core/audit_logs/audit_log_entry.dart';
+import 'package:nyxx/src/core/guild/auto_moderation.dart';
 import 'package:nyxx/src/core/guild/scheduled_event.dart';
 import 'package:nyxx/src/internal/http/http_route.dart';
 import 'package:nyxx/src/nyxx.dart';
@@ -426,6 +427,8 @@ abstract class IHttpEndpoints {
       {int limit = 100, bool withMember = false, Snowflake? before, Snowflake? after});
 
   Future<IThreadChannel> startForumThread(Snowflake channelId, ForumThreadBuilder builder);
+
+  Future<List<IAutoModerationRule>> fetchAutoModerationRules(Snowflake guildId);
 }
 
 class HttpEndpoints implements IHttpEndpoints {
@@ -2136,5 +2139,24 @@ class HttpEndpoints implements IHttpEndpoints {
     for (final rawGuildEvent in (response as IHttpResponseSuccess).jsonBody as RawApiList) {
       yield GuildEvent(rawGuildEvent as RawApiMap, client);
     }
+  }
+
+  Future<List<IAutoModerationRule>> fetchAutoModerationRules(Snowflake guildId) async {
+    final response = await httpHandler.execute(
+      BasicRequest(
+        HttpRoute()
+          ..guilds(id: guildId.toString())
+          ..autoModeration()
+          ..rules(),
+      ),
+    );
+
+    if (response is IHttpResponseError) {
+      return Future.error(response);
+    }
+
+    return ((response as IHttpResponseSuccess).jsonBody as RawApiList)
+        .map((rule) => AutoModerationRule(rule as RawApiMap))
+        .toList();
   }
 }
