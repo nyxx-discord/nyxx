@@ -125,6 +125,17 @@ class MessageBuilder {
   /// Appends timestamp to message from [dateTime]
   void appendTimestamp(DateTime dateTime, {TimeStampStyle style = TimeStampStyle.def}) => append(style.format(dateTime));
 
+  void limitLength({int length = 2000, String? ellipsis = '...'}) {
+    if (_content.length < length) {
+      return;
+    }
+
+    ellipsis ??= '';
+
+    final cutContent = content.substring(0, length - ellipsis.length);
+    content = cutContent + ellipsis;
+  }
+
   /// Add attachment
   void addAttachment(AttachmentBuilder attachment) {
     files ??= [];
