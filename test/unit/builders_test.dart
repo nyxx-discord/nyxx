@@ -212,6 +212,16 @@ main() {
       expect(MessageDecoration.bold.format('test'), equals('**test**'));
     });
 
+    test('limitLength', () {
+      final builder = MessageBuilder.content('abc' * 1000)..limitLength(ellipsis: null);
+
+      expect(builder.content, equals(('abc' * 1000).substring(0, 2000)));
+
+      builder.limitLength(length: 10, ellipsis: '...');
+
+      expect(builder.content, equals('abcabca...'));
+    });
+
     test("ForumThreadBuilder", () {
       final builder = ForumThreadBuilder("test", MessageBuilder.content("test"));
 
@@ -219,11 +229,8 @@ main() {
           builder.build(),
           equals({
             'name': 'test',
-            'message': {
-              'content': 'test'
-            }
-          })
-      );
+            'message': {'content': 'test'}
+          }));
     });
   });
 }
