@@ -405,6 +405,8 @@ class RoleUpdateEvent implements IRoleUpdateEvent {
     if (guildInstance != null) {
       oldRole = guildInstance.roles[role.id];
       guildInstance.roles[role.id] = role;
+    } else {
+      oldRole = null;
     }
   }
 }
