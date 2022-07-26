@@ -4,6 +4,9 @@ ___20.07.2022__
 - breaking: Fix typo in `IHttpResponseSucess`
 - breaking: Remove `threeDayThreadArchive` and `sevenDayThreadArchive` guild features
 - breaking: Remove all deprecated members
+- bug: Fix ratelimiting
+  - breaking: All calls to the API are now made via `IHttpRoute`s instead of `String`s.
+  - Construct routes by creating an `IHttpRoute()` and `add`ing `HttpRoutePart`s or by calling the helper methods on the route.
 - feature: Move to Gateway & API v10
   - Added the Message Content privileged intent
 - feature: Add guild Audit Log options
@@ -19,10 +22,10 @@ ___20.07.2022__
 - feature: Add `limitLength` to `MessageBuilder`
 - feature: Add paginated bans
 - bug: Fix incorrect guild URLs
-- bug: Fix ratelimiting
 - bug: Fix incorrect file encoding
 - bug: Fix member editing
 - bug: Fix serialization issues
+- bug: Fix uninitialized fields
 
 ## 4.0.0-dev.2
 __12.06.2022__
