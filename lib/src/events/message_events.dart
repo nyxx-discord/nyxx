@@ -139,19 +139,19 @@ abstract class IMessageReactionEvent {
   CacheableTextChannel<ITextChannel> get channel;
 
   /// Reference to guild if event happened in guild
-  Cacheable<Snowflake, IGuild> get guild;
+  Cacheable<Snowflake, IGuild>? get guild;
 
   /// Message reference
-  late final IMessage? message;
+  IMessage? get message;
 
   /// Id of message
-  late final Snowflake messageId;
+  Snowflake get messageId;
 
   /// The member who reacted if this happened in a guild
-  late final IMember member;
+  IMember? get member;
 
   /// Emoji object.
-  late final IEmoji emoji;
+  IEmoji get emoji;
 }
 
 /// Emitted when reaction is added or removed from message
@@ -163,7 +163,7 @@ abstract class MessageReactionEvent {
   late final CacheableTextChannel<ITextChannel> channel;
 
   /// Reference to guild if event happened in guild
-  late final Cacheable<Snowflake, IGuild> guild;
+  late final Cacheable<Snowflake, IGuild>? guild;
 
   /// Message reference
   late final IMessage? message;
@@ -172,7 +172,7 @@ abstract class MessageReactionEvent {
   late final Snowflake messageId;
 
   /// The member who reacted if this happened in a guild
-  late final IMember member;
+  late final IMember? member;
 
   /// Emoji object.
   late final IEmoji emoji;
@@ -181,6 +181,13 @@ abstract class MessageReactionEvent {
   MessageReactionEvent(RawApiMap json, INyxx client) {
     user = UserCacheable(client, Snowflake(json["d"]["user_id"]));
     channel = CacheableTextChannel<ITextChannel>(client, Snowflake(json["d"]["channel_id"]));
+    guild = GuildCacheable(client, Snowflake(json["d"]["guild_id"]));
+
+    if (json["d"]["member"] != null) {
+      member = Member(client, json["d"]["member"] as RawApiMap, guild!.id);
+    } else {
+      member = null;
+    }
 
     messageId = Snowflake(json["d"]["message_id"]);
 
@@ -368,12 +375,15 @@ class MessageUpdateEvent implements IMessageUpdateEvent {
 
     final channelInstance = channel.getFromCache();
     if (channelInstance == null) {
+      updatedMessage = null;
+      oldMessage = null;
       return;
     }
 
     oldMessage = channelInstance.messageCache[messageId];
 
     if (oldMessage == null) {
+      updatedMessage = null;
       return;
     }
 

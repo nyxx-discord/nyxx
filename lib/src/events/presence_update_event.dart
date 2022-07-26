@@ -35,15 +35,15 @@ class PresenceUpdateEvent implements IPresenceUpdateEvent {
   PresenceUpdateEvent(RawApiMap raw, INyxx client) {
     presences = [for (final rawActivity in raw["d"]["activities"]) Activity(rawActivity as RawApiMap)];
     clientStatus = ClientStatus(raw["d"]["client_status"] as RawApiMap);
-    this.user = UserCacheable(client, Snowflake(raw["d"]["user"]["id"]));
+    user = UserCacheable(client, Snowflake(raw["d"]["user"]["id"]));
 
-    final user = this.user.getFromCache();
-    if (user != null) {
-      if (clientStatus != user.status) {
-        (user as User).status = clientStatus;
+    final cachedUser = user.getFromCache();
+    if (cachedUser != null) {
+      if (clientStatus != cachedUser.status) {
+        (cachedUser as User).status = clientStatus;
       }
 
-      (user as User).presence = presences.isNotEmpty ? presences.first : null;
+      (cachedUser as User).presence = presences.isNotEmpty ? presences.first : null;
     }
   }
 }
