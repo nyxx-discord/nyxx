@@ -165,7 +165,7 @@ abstract class ITriggerMetadata {
   /// The associated trigger type is [TriggerTypes.keywordPreset].
   List<String> get allowList;
 
-  /// The total number of mentions (either role or user) allowed per message.
+  /// The total number of mentions (either role and user) allowed per message.
   /// (Maximum of 50)
   /// The associated trigger type is [TriggerTypes.mentionSpam]
   // Pr still not merged
