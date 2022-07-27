@@ -123,8 +123,13 @@ enum KeywordPresets {
 }
 
 enum ActionTypes {
+  /// Blocks the content of a message according to the rule.
   blockMessage(1),
+
+  /// Logs user's sended message to a specified channel.
   sendAlertMessage(2),
+
+  /// Timeout user for a specified duration.
   timeout(3);
 
   final int value;
@@ -159,6 +164,12 @@ abstract class ITriggerMetadata {
   /// Substrings which will be exempt from triggering the preset trigger type.
   /// The associated trigger type is [TriggerTypes.keywordPreset].
   List<String> get allowList;
+
+  /// The total number of mentions (either role or user) allowed per message.
+  /// (Maximum of 50)
+  /// The associated trigger type is [TriggerTypes.mentionSpam]
+  // Pr still not merged
+  int get mentionLimit;
 }
 
 abstract class IActionStructure {
@@ -235,11 +246,15 @@ class TriggerMetadata implements ITriggerMetadata {
   @override
   late final List<String> allowList;
 
+  @override
+  late final int mentionLimit;
+
   /// Creates an instance of [TriggerMetadata]
   TriggerMetadata(RawApiMap data) {
     keywordsFilter = data['keyword_filter'] != null ? [...data['keyword_filter']] : null;
     keywordPresets = [...?(data['presets'] as List<int>?)?.map((p) => KeywordPresets._fromValue(p))];
     allowList = (data['allow_list'] as List<String>);
+    mentionLimit = data['mention_total_limit'] as int;
   }
 }
 
