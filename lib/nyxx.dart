@@ -40,6 +40,8 @@ export 'src/core/embed/embed_provider.dart' show IEmbedProvider;
 export 'src/core/embed/embed_thumbnail.dart' show IEmbedThumbnail;
 export 'src/core/embed/embed_video.dart' show IEmbedVideo;
 export 'src/core/guild/ban.dart' show IBan;
+export 'src/core/guild/auto_moderation.dart'
+    show IActionMetadata, IActionStructure, IAutoModerationRule, ITriggerMetadata, ActionTypes, EventTypes, TriggerTypes;
 export 'src/core/guild/client_user.dart' show IClientUser;
 export 'src/core/guild/guild.dart' show IGuild;
 export 'src/core/guild/guild_feature.dart' show GuildFeature;

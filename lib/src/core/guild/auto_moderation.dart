@@ -55,17 +55,20 @@ enum EventTypes {
 }
 
 enum TriggerTypes {
-  /// Check if content contains words from a user defined list of keywords
+  /// Check if content contains words from a user defined list of keywords.
   keyword(1),
 
-  /// Check if content contains any harmful links
+  /// Check if content contains any harmful links.
   harmfulLink(2),
 
-  /// Check if content represents generic spam
+  /// Check if content represents generic spam.
   spam(3),
 
-  /// Check if content contains words from internal pre-defined wordsets
-  keywordPreset(4);
+  /// Check if content contains words from internal pre-defined wordsets.
+  keywordPreset(4),
+
+  /// Check if content contains more mentions than allowed.
+  mentionSpam(5);
 
   final int value;
   const TriggerTypes(this.value);
@@ -90,13 +93,13 @@ enum TriggerTypes {
 }
 
 enum KeywordPresets {
-  /// Words that may be considered forms of swearing or cursing
+  /// Words that may be considered forms of swearing or cursing.
   profanity(1),
 
-  /// Words that refer to sexually explicit behavior or activity
+  /// Words that refer to sexually explicit behavior or activity.
   sexualContent(2),
 
-  /// Personal insults or words that may be considered hate speech
+  /// Personal insults or words that may be considered hate speech.
   slurs(3);
 
   final int value;
@@ -147,11 +150,15 @@ enum ActionTypes {
 abstract class ITriggerMetadata {
   /// Substrings wich will be searched for in the content.
   /// The associated trigger type is [TriggerTypes.keyword].
-  List<String> get keywordsFilter;
+  List<String>? get keywordsFilter;
 
   /// The internally pre-defined wordsets which will be searched for in content.
   /// The associated trigger type is [TriggerTypes.keywordPreset].
   List<KeywordPresets> get keywordPresets;
+
+  /// Substrings which will be exempt from triggering the preset trigger type.
+  /// The associated trigger type is [TriggerTypes.keywordPreset].
+  List<String> get allowList;
 }
 
 abstract class IActionStructure {
@@ -165,7 +172,7 @@ abstract class IActionStructure {
 abstract class IActionMetadata {
   /// The channel if to wich user content should be logged.
   /// The associated action type is [ActionTypes.sendAlertMessage].
-  Snowflake get channelId;
+  Snowflake? get channelId;
 
   /// The timeout duration - maximum duration is 4 weeks (2,419,200 seconds).
   /// It's associated action type is [ActionTypes.timeout].
@@ -218,16 +225,21 @@ class AutoModerationRule extends SnowflakeEntity implements IAutoModerationRule 
 }
 
 class TriggerMetadata implements ITriggerMetadata {
+  // Maybe return null instead of empty list
   @override
   late final List<KeywordPresets> keywordPresets;
 
   @override
-  late final List<String> keywordsFilter;
+  late final List<String>? keywordsFilter;
+
+  @override
+  late final List<String> allowList;
 
   /// Creates an instance of [TriggerMetadata]
   TriggerMetadata(RawApiMap data) {
-    keywordsFilter = (data['keyword_filter'] as RawApiList).cast<String>();
+    keywordsFilter = data['keyword_filter'] != null ? [...data['keyword_filter']] : null;
     keywordPresets = [...?(data['presets'] as List<int>?)?.map((p) => KeywordPresets._fromValue(p))];
+    allowList = (data['allow_list'] as List<String>);
   }
 }
 
@@ -241,20 +253,21 @@ class ActionStructure implements IActionStructure {
   /// Creates an instance of [ActionStructure].
   ActionStructure(RawApiMap data) {
     actionType = ActionTypes._fromValue(data['type'] as int);
+    // TODO: Refactor this with an if statement
     actionMetadata = (data['metadata'] != null && (data['metadata'] as RawApiMap).isNotEmpty) ? ActionMetadata(data['metadata'] as RawApiMap) : null;
   }
 }
 
 class ActionMetadata implements IActionMetadata {
   @override
-  late final Snowflake channelId;
+  late final Snowflake? channelId;
 
   @override
   late final Duration? duration;
 
   /// Creates an instance of [ActionMetadata].
   ActionMetadata(RawApiMap data) {
-    channelId = Snowflake(data['channel_id']);
+    channelId = data['channel_id'] != null ? Snowflake(data['channel_id']) : null;
     duration = data['duration_seconds'] != null ? Duration(seconds: data['duration_seconds'] as int) : null;
   }
 }
