@@ -441,7 +441,7 @@ class Guild extends SnowflakeEntity implements IGuild {
 
   /// Getter for @everyone role
   @override
-  IRole get everyoneRole => roles.values.firstWhere((r) => r.name == "@everyone");
+  IRole get everyoneRole => roles[id]!;
 
   /// Returns member object for bot user
   @override
