@@ -3,6 +3,8 @@
 /// Main library which contains all stuff needed to connect and interact with Discord API.
 library nyxx;
 
+import 'package:nyxx/src/internal/shard/shard.dart';
+
 export 'src/client_options.dart' show CacheOptions, ClientOptions, GatewayIntents;
 export 'src/nyxx.dart' show INyxx, INyxxRest, INyxxWebsocket, NyxxFactory;
 export 'src/core/allowed_mentions.dart' show AllowedMentions;
@@ -172,6 +174,7 @@ export 'src/utils/builders/sticker_builder.dart' show StickerBuilder;
 export 'src/utils/builders/thread_builder.dart' show ThreadArchiveTime, ThreadBuilder;
 export 'src/utils/builders/guild_event_builder.dart' show GuildEventBuilder;
 export 'src/utils/builders/forum_thread_builder.dart' show ForumThreadBuilder;
+export 'src/utils/builders/auto_moderation_builder.dart' show ActionMetadataBuilder, ActionStructureBuilder, AutoModerationRuleBuilder, TriggerMetadataBuilder;
 export 'src/utils/extensions.dart' show IntExtensions, SnowflakeEntityListExtensions, StringExtensions;
 export 'src/utils/permissions.dart' show PermissionsUtils;
 export 'src/utils/utils.dart' show ListSafeFirstWhere;
