@@ -1,13 +1,15 @@
-import 'package:nyxx/src/core/guild/scheduled_event.dart';
-import 'package:nyxx/src/nyxx.dart';
-import 'package:nyxx/src/core/snowflake.dart';
+import 'package:nyxx/src/core/channel/text_channel.dart';
+import 'package:nyxx/src/core/guild/auto_moderation.dart';
 import 'package:nyxx/src/core/guild/guild.dart';
 import 'package:nyxx/src/core/guild/role.dart';
+import 'package:nyxx/src/core/guild/scheduled_event.dart';
 import 'package:nyxx/src/core/message/guild_emoji.dart';
 import 'package:nyxx/src/core/message/sticker.dart';
+import 'package:nyxx/src/core/snowflake.dart';
 import 'package:nyxx/src/core/user/member.dart';
 import 'package:nyxx/src/core/user/user.dart';
 import 'package:nyxx/src/internal/cache/cacheable.dart';
+import 'package:nyxx/src/nyxx.dart';
 import 'package:nyxx/src/typedefs.dart';
 
 abstract class IGuildCreateEvent {
@@ -470,5 +472,69 @@ class GuildEventDeleteEvent implements IGuildEventDeleteEvent {
 
   GuildEventDeleteEvent(RawApiMap raw, INyxx client) {
     event = GuildEvent(raw['d'] as RawApiMap, client);
+  }
+}
+
+abstract class IAutoModerationRuleCreateEvent {
+  /// The created rule.
+  IAutoModerationRule get rule;
+}
+
+class AutoModerationRuleCreateEvent implements IAutoModerationRuleCreateEvent {
+  @override
+  late final IAutoModerationRule rule;
+
+  AutoModerationRuleCreateEvent(RawApiMap raw, INyxx client) {
+    rule = AutoModerationRule(raw['d'] as RawApiMap, client);
+  }
+}
+
+abstract class IAutoModerationRuleUpdateEvent {
+  /// The updated rule.
+  IAutoModerationRule get rule;
+}
+
+class AutoModerationRuleUpdateEvent implements IAutoModerationRuleUpdateEvent {
+  @override
+  late final IAutoModerationRule rule;
+
+  AutoModerationRuleUpdateEvent(RawApiMap raw, INyxx client) {
+    rule = AutoModerationRule(raw['d'] as RawApiMap, client);
+  }
+}
+
+abstract class IAutoModerationRuleDeleteEvent {
+  /// The deleted rule.
+  IAutoModerationRule get rule;
+}
+
+class AutoModerationRuleDeleteEvent implements IAutoModerationRuleDeleteEvent {
+  @override
+  late final IAutoModerationRule rule;
+
+  AutoModerationRuleDeleteEvent(RawApiMap raw, INyxx client) {
+    rule = AutoModerationRule(raw['d'] as RawApiMap, client);
+  }
+}
+
+/// When a webhook is created, updated or deleted.
+abstract class IWebhookUpdateEvent {
+  /// The channel that points this webhook to.
+  ChannelCacheable<ITextChannel> get channel;
+
+  /// The guild this webhook was created/updated/deleted.
+  GuildCacheable get guild;
+}
+
+class WebhookUpdateEvent implements IWebhookUpdateEvent {
+  @override
+  late final ChannelCacheable<ITextChannel> channel;
+
+  @override
+  late final GuildCacheable guild;
+
+  WebhookUpdateEvent(RawApiMap raw, INyxx client) {
+    channel = ChannelCacheable(client, Snowflake(raw['d']['channel_id'] as String));
+    guild = GuildCacheable(client, Snowflake(raw['d']['guild_id'] as String));
   }
 }

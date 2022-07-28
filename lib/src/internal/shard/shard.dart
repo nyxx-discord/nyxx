@@ -532,6 +532,22 @@ class Shard implements IShard {
             eventController.onGuildEventDeleteController.add(GuildEventDeleteEvent(rawPayload, manager.connectionManager.client));
             break;
 
+          case 'WEBHOOKS_UPDATE':
+            eventController.onWebhookUpdateController.add(WebhookUpdateEvent(rawPayload, manager.connectionManager.client));
+            break;
+
+          case 'AUTO_MODERATION_RULE_CREATE':
+            eventController.onAutoModerationRuleCreateController.add(AutoModerationRuleCreateEvent(rawPayload, manager.connectionManager.client));
+            break;
+
+          case 'AUTO_MODERATION_RULE_UPDATE':
+            eventController.onAutoModerationRuleUpdateController.add(AutoModerationRuleUpdateEvent(rawPayload, manager.connectionManager.client));
+            break;
+
+          case 'AUTO_MODERATION_RULE_DELETE':
+            eventController.onAutoModerationRuleDeleteController.add(AutoModerationRuleDeleteEvent(rawPayload, manager.connectionManager.client));
+            break;
+
           default:
             if (manager.connectionManager.client.options.dispatchRawShardEvent) {
               manager.onRawEventController.add(RawEvent(this, rawPayload));
