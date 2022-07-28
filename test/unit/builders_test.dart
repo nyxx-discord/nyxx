@@ -1,9 +1,11 @@
 import 'package:nyxx/src/core/channel/text_channel.dart';
+import 'package:nyxx/src/core/guild/auto_moderation.dart';
 import 'package:nyxx/src/core/guild/status.dart';
 import 'package:nyxx/src/core/permissions/permissions.dart';
 import 'package:nyxx/src/core/snowflake.dart';
 import 'package:nyxx/src/core/user/presence.dart';
 import 'package:nyxx/src/internal/cache/cacheable.dart';
+import 'package:nyxx/src/utils/builders/auto_moderation_builder.dart';
 import 'package:nyxx/src/utils/builders/channel_builder.dart';
 import 'package:nyxx/src/utils/builders/embed_builder.dart';
 import 'package:nyxx/src/utils/builders/forum_thread_builder.dart';
@@ -224,6 +226,53 @@ main() {
             }
           })
       );
+    });
+  });
+
+  test('AutoModerationRuleBuilder', () {
+    final rb = AutoModerationRuleBuilder(
+      'Super cool rule',
+      eventType: EventTypes.messageSend,
+      triggerType: TriggerTypes.keyword,
+      actions: [
+        ActionStructureBuilder(
+          ActionTypes.timeout,
+          ActionMetadataBuilder(
+            duration: Duration(
+              days: 1,
+            ),
+          ),
+        ),
+      ],
+    )
+      ..triggerMetadata = (TriggerMetadataBuilder()
+        ..keywordFilter = ['hey', '*looks', 'wildcards!!*']
+        ..allowList = ['wow*', 'im', 'allowed!']
+        ..presets = [KeywordPresets.slurs])
+      ..ignoredChannels = [Snowflake.zero()]
+      ..ignoredRoles = [Snowflake.zero()]
+      ..enabled = true;
+    
+    expect(rb.build(), {
+      'name': 'Super cool rule',
+      'event_type': 1,
+      'trigger_type': 1,
+      'actions': [
+        {
+          'type': 3,
+          'metadata': {
+            'duration_seconds': 86400,
+          }
+        }
+      ],
+      'trigger_metadata': {
+        'keyword_filter': ['hey', '*looks', 'wildcards!!*'],
+        'presets': [3],
+        'allow_list': ['wow*', 'im', 'allowed!']
+      },
+      'enabled': true,
+      'exempt_channels': ['0'],
+      'exempt_roles': ['0']
     });
   });
 }
