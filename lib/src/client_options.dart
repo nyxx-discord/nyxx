@@ -141,6 +141,9 @@ class GatewayIntents {
   /// Includes events: `GUILD_SCHEDULED_EVENT_CREATE`, `GUILD_SCHEDULED_EVENT_DELETE`, `GUILD_SCHEDULED_EVENT_UPDATE`, `GUILD_SCHEDULED_EVENT_USER_ADD`, `GUILD_SCHEDULED_EVENT_USER_REMOVE`
   static const int guildScheduledEvents = 1 << 16;
 
+  /// Includes events: `AUTO_MODERATION_RULE_CREATE`, `AUTO_MODERATION_RULE_UPDATE`, `AUTO_MODERATION_RULE_DELETE`
+  static const int autoModerationConfiguration = 1 << 20;
+
   /// All unprivileged intents
   static const int allUnprivileged = guilds |
       guildBans |
@@ -155,7 +158,8 @@ class GatewayIntents {
       directMessages |
       directMessageReactions |
       directMessageTyping |
-      guildScheduledEvents;
+      guildScheduledEvents |
+      autoModerationConfiguration;
 
   /// All privileged intents
   static const int allPrivileged = guildMembers | guildPresences | messageContent;
