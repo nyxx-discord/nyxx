@@ -34,6 +34,7 @@ import 'package:nyxx/src/internal/http/http_response.dart';
 import 'package:nyxx/src/internal/response_wrapper/thread_list_result_wrapper.dart';
 import 'package:nyxx/src/typedefs.dart';
 import 'package:nyxx/src/utils/builders/attachment_builder.dart';
+import 'package:nyxx/src/utils/builders/auto_moderation_builder.dart';
 import 'package:nyxx/src/utils/builders/channel_builder.dart';
 import 'package:nyxx/src/utils/builders/forum_thread_builder.dart';
 import 'package:nyxx/src/utils/builders/guild_builder.dart';
@@ -429,6 +430,10 @@ abstract class IHttpEndpoints {
   Future<IThreadChannel> startForumThread(Snowflake channelId, ForumThreadBuilder builder);
 
   Future<List<IAutoModerationRule>> fetchAutoModerationRules(Snowflake guildId);
+
+  Future<IAutoModerationRule> fetchAutoModerationRule(Snowflake guildId, Snowflake ruleId);
+
+  Future<IAutoModerationRule> createAutoModerationRule(Snowflake guildId, AutoModerationRuleBuilder builder, {String? auditReason});
 }
 
 class HttpEndpoints implements IHttpEndpoints {
@@ -2141,6 +2146,7 @@ class HttpEndpoints implements IHttpEndpoints {
     }
   }
 
+  @override
   Future<List<IAutoModerationRule>> fetchAutoModerationRules(Snowflake guildId) async {
     final response = await httpHandler.execute(
       BasicRequest(
@@ -2156,5 +2162,44 @@ class HttpEndpoints implements IHttpEndpoints {
     }
 
     return ((response as IHttpResponseSuccess).jsonBody as RawApiList).map((rule) => AutoModerationRule(rule as RawApiMap)).toList();
+  }
+
+  @override
+  Future<IAutoModerationRule> fetchAutoModerationRule(Snowflake guildId, Snowflake ruleId) async {
+    final response = await httpHandler.execute(
+      BasicRequest(
+        HttpRoute()
+          ..guilds(id: guildId.toString())
+          ..autoModeration()
+          ..rules(id: ruleId.toString()),
+      ),
+    );
+
+    if (response is IHttpResponseError) {
+      return Future.error(response);
+    }
+
+    return AutoModerationRule((response as IHttpResponseSuccess).jsonBody as RawApiMap);
+  }
+
+  @override
+  Future<IAutoModerationRule> createAutoModerationRule(Snowflake guildId, AutoModerationRuleBuilder builder, {String? auditReason}) async {
+    final response = await httpHandler.execute(
+      BasicRequest(
+        HttpRoute()
+          ..guilds(id: guildId.toString())
+          ..autoModeration()
+          ..rules(),
+        method: 'POST',
+        auditLog: auditReason,
+        body: builder.build(),
+      ),
+    );
+
+    if (response is IHttpResponseError) {
+      return Future.error(response);
+    }
+
+    return AutoModerationRule((response as IHttpResponseSuccess).jsonBody as RawApiMap);
   }
 }
