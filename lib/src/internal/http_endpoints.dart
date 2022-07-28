@@ -434,6 +434,10 @@ abstract class IHttpEndpoints {
   Future<IAutoModerationRule> fetchAutoModerationRule(Snowflake guildId, Snowflake ruleId);
 
   Future<IAutoModerationRule> createAutoModerationRule(Snowflake guildId, AutoModerationRuleBuilder builder, {String? auditReason});
+
+  Future<IAutoModerationRule> editAutoModerationRule(Snowflake guildId, Snowflake ruleId, AutoModerationRuleBuilder builder, {String? auditReason});
+
+  Future<void> deleteAutoModerationRule(Snowflake guildId, Snowflake ruleId, {String? auditReason});
 }
 
 class HttpEndpoints implements IHttpEndpoints {
@@ -2201,5 +2205,43 @@ class HttpEndpoints implements IHttpEndpoints {
     }
 
     return AutoModerationRule((response as IHttpResponseSuccess).jsonBody as RawApiMap, client);
+  }
+
+  @override
+  Future<IAutoModerationRule> editAutoModerationRule(Snowflake guildId, Snowflake ruleId, AutoModerationRuleBuilder builder, {String? auditReason}) async {
+    final response = await httpHandler.execute(
+      BasicRequest(
+        HttpRoute()
+          ..guilds(id: guildId.toString())
+          ..autoModeration()
+          ..rules(id: ruleId.toString()),
+        body: builder.build(),
+        auditLog: auditReason,
+        method: 'PATCH',
+      ),
+    );
+
+    if (response is IHttpResponseError) {
+      return Future.error(response);
+    }
+
+    return AutoModerationRule((response as IHttpResponseSuccess).jsonBody as RawApiMap, client);
+  }
+
+  @override
+  Future<void> deleteAutoModerationRule(Snowflake guildId, Snowflake ruleId, {String? auditReason}) async {
+    final response = await httpHandler.execute(
+      BasicRequest(
+          HttpRoute()
+            ..guilds(id: guildId.toString())
+            ..autoModeration()
+            ..rules(id: ruleId.toString()),
+          auditLog: auditReason,
+          method: 'DELETE'),
+    );
+
+    if (response is IHttpResponseError) {
+      return Future.error(response);
+    }
   }
 }

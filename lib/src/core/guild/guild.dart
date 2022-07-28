@@ -33,6 +33,7 @@ import 'package:nyxx/src/core/voice/voice_state.dart';
 import 'package:nyxx/src/internal/cache/cacheable.dart';
 import 'package:nyxx/src/typedefs.dart';
 import 'package:nyxx/src/utils/builders/attachment_builder.dart';
+import 'package:nyxx/src/utils/builders/auto_moderation_builder.dart';
 import 'package:nyxx/src/utils/builders/channel_builder.dart';
 import 'package:nyxx/src/utils/builders/guild_builder.dart';
 import 'package:nyxx/src/utils/builders/guild_event_builder.dart';
@@ -338,6 +339,18 @@ abstract class IGuild implements SnowflakeEntity {
 
   /// Fetches the auto moderation rules.
   Future<List<IAutoModerationRule>> fetchAutoModerationRules();
+
+  /// Fetches a sole moderation rule.
+  Future<IAutoModerationRule> fetchAutoModerationRule(Snowflake ruleId);
+
+  /// Creates an auto moderation rule.
+  Future<IAutoModerationRule> createAutoModerationRule(AutoModerationRuleBuilder builder, {String? reason});
+
+  /// Edits an auto moderation rule.
+  Future<IAutoModerationRule> editAutoModerationRule(AutoModerationRuleBuilder builder, Snowflake ruleId, {String? reason});
+
+  /// Deletes an auto moderation rule.
+  Future<void> deleteAutoModerationRule(Snowflake ruleId, {String? reason});
 }
 
 class Guild extends SnowflakeEntity implements IGuild {
@@ -905,4 +918,18 @@ class Guild extends SnowflakeEntity implements IGuild {
 
   @override
   Future<List<IAutoModerationRule>> fetchAutoModerationRules() => client.httpEndpoints.fetchAutoModerationRules(id);
+
+  @override
+  Future<IAutoModerationRule> fetchAutoModerationRule(Snowflake ruleId) => client.httpEndpoints.fetchAutoModerationRule(id, ruleId);
+
+  @override
+  Future<IAutoModerationRule> createAutoModerationRule(AutoModerationRuleBuilder builder, {String? reason}) =>
+      client.httpEndpoints.createAutoModerationRule(id, builder, auditReason: reason);
+
+  @override
+  Future<IAutoModerationRule> editAutoModerationRule(AutoModerationRuleBuilder builder, Snowflake ruleId, {String? reason}) =>
+      client.httpEndpoints.editAutoModerationRule(id, ruleId, builder, auditReason: reason);
+
+  @override
+  Future<void> deleteAutoModerationRule(Snowflake ruleId, {String? reason}) => client.httpEndpoints.deleteAutoModerationRule(id, ruleId, auditReason: reason);
 }
