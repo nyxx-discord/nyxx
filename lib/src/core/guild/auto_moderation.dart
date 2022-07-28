@@ -1,17 +1,19 @@
+import 'package:nyxx/nyxx.dart';
 import 'package:nyxx/src/core/snowflake.dart';
 import 'package:nyxx/src/core/snowflake_entity.dart';
+import 'package:nyxx/src/internal/cache/cacheable.dart';
 import 'package:nyxx/src/internal/exceptions/unknown_enum_value.dart';
 import 'package:nyxx/src/typedefs.dart';
 
 abstract class IAutoModerationRule implements SnowflakeEntity {
   /// The guild's id this rule is applied to.
-  Snowflake get guildId;
+  GuildCacheable get guild;
 
   /// The name of this rule.
   String get name;
 
   /// The user which first created this rule.
-  Snowflake get creatorId;
+  MemberCacheable get creator;
 
   /// The rule event type.
   EventTypes get eventType;
@@ -29,13 +31,14 @@ abstract class IAutoModerationRule implements SnowflakeEntity {
   bool get enabled;
 
   /// The role ids that should not be affected by the rule (Maximum of 20).
-  List<Snowflake> get ignoredRoles;
+  List<RoleCacheable> get ignoredRoles;
 
   /// The channel ids that should not be affected by the rule (Maximum of 50).
-  List<Snowflake> get ignoredChannels;
+  List<ChannelCacheable<ITextGuildChannel>> get ignoredChannels;
 }
 
 enum EventTypes {
+  /// When a member sends or edits a message in a guild.
   messageSend(1);
 
   final int value;
@@ -159,17 +162,17 @@ abstract class ITriggerMetadata {
 
   /// The internally pre-defined wordsets which will be searched for in content.
   /// The associated trigger type is [TriggerTypes.keywordPreset].
-  List<KeywordPresets> get keywordPresets;
+  List<KeywordPresets>? get keywordPresets;
 
   /// Substrings which will be exempt from triggering the preset trigger type.
   /// The associated trigger type is [TriggerTypes.keywordPreset].
-  List<String> get allowList;
+  List<String>? get allowList;
 
   /// The total number of mentions (either role and user) allowed per message.
   /// (Maximum of 50)
   /// The associated trigger type is [TriggerTypes.mentionSpam]
   // Pr still not merged
-  int get mentionLimit;
+  int? get mentionLimit;
 }
 
 abstract class IActionStructure {
@@ -192,13 +195,13 @@ abstract class IActionMetadata {
 
 class AutoModerationRule extends SnowflakeEntity implements IAutoModerationRule {
   @override
-  late final Snowflake guildId;
+  late final GuildCacheable guild;
 
   @override
   late final String name;
 
   @override
-  late final Snowflake creatorId;
+  late final MemberCacheable creator;
 
   @override
   late final EventTypes eventType;
@@ -216,46 +219,56 @@ class AutoModerationRule extends SnowflakeEntity implements IAutoModerationRule 
   late final bool enabled;
 
   @override
-  late final List<Snowflake> ignoredRoles;
+  late final List<RoleCacheable> ignoredRoles;
 
   @override
-  late final List<Snowflake> ignoredChannels;
+  late final List<ChannelCacheable<ITextGuildChannel>> ignoredChannels;
 
-  AutoModerationRule(RawApiMap rawData) : super(Snowflake(rawData['id'])) {
-    guildId = Snowflake(rawData['guild_id']);
+  AutoModerationRule(RawApiMap rawData, INyxx client) : super(Snowflake(rawData['id'])) {
+    guild = GuildCacheable(client, Snowflake(rawData['guild_id']));
     name = rawData['name'] as String;
-    creatorId = Snowflake(rawData['creator_id']);
+    creator = MemberCacheable(client, Snowflake(rawData['creator_id']), guild);
     eventType = EventTypes._fromValue(rawData['event_type'] as int);
     triggerType = TriggerTypes._fromValue(rawData['trigger_type'] as int);
     triggerMetadata = TriggerMetadata(rawData['trigger_metadata'] as RawApiMap);
     actions = [...?(rawData['actions'] as RawApiList?)?.map((a) => ActionStructure(a as RawApiMap))];
     enabled = rawData['enabled'] as bool;
-    ignoredRoles = (rawData['exempt_roles'] as RawApiList).isNotEmpty ? [...(rawData['exempt_roles'] as RawApiList).map((r) => Snowflake(r))] : [];
-    ignoredChannels = (rawData['exempt_channels'] as RawApiList).isNotEmpty ? [...(rawData['exempt_channels'] as RawApiList).map((r) => Snowflake(r))] : [];
+    ignoredRoles = (rawData['exempt_roles'] as RawApiList).isNotEmpty
+        ? [...(rawData['exempt_roles'] as RawApiList).map((r) => RoleCacheable(client, Snowflake(r), guild))]
+        : [];
+    ignoredChannels = (rawData['exempt_channels'] as RawApiList).isNotEmpty
+        ? [...(rawData['exempt_channels'] as RawApiList).map((r) => ChannelCacheable(client, Snowflake(r)))]
+        : [];
   }
+
+  @override
+  String toString() => 'IAutoModerationRule(id: $id, guildId: ${guild.id}, name: $name, triggerMetadata: $triggerMetadata)';
 }
 
 class TriggerMetadata implements ITriggerMetadata {
   // Maybe return null instead of empty list
   @override
-  late final List<KeywordPresets> keywordPresets;
+  late final List<KeywordPresets>? keywordPresets;
 
   @override
   late final List<String>? keywordsFilter;
 
   @override
-  late final List<String> allowList;
+  late final List<String>? allowList;
 
   @override
-  late final int mentionLimit;
+  late final int? mentionLimit;
 
   /// Creates an instance of [TriggerMetadata]
   TriggerMetadata(RawApiMap data) {
     keywordsFilter = data['keyword_filter'] != null ? [...data['keyword_filter']] : null;
-    keywordPresets = [...?(data['presets'] as List<int>?)?.map((p) => KeywordPresets._fromValue(p))];
-    allowList = (data['allow_list'] as List<String>);
-    mentionLimit = data['mention_total_limit'] as int;
+    keywordPresets = data['presets'] != null ? [...(data['presets'] as RawApiList).map((p) => KeywordPresets._fromValue(p as int))] : null;
+    allowList = (data['allow_list'] as RawApiList?)?.cast<String>().toList();
+    mentionLimit = data['mention_total_limit'] as int?;
   }
+
+  @override
+  String toString() => 'ITriggerMetadata(keywordPresets: $keywordPresets, keywordFilter: $keywordsFilter, allowList: $allowList, mentionLimit: $mentionLimit)';
 }
 
 class ActionStructure implements IActionStructure {
