@@ -337,7 +337,6 @@ abstract class IGuild implements SnowflakeEntity {
   Future<IGuildWelcomeScreen?> fetchWelcomeScreen();
 
   /// Fetches the auto moderation rules.
-  /// 404 if no rules are found
   Future<List<IAutoModerationRule>> fetchAutoModerationRules();
 }
 
