@@ -3,8 +3,6 @@
 /// Main library which contains all stuff needed to connect and interact with Discord API.
 library nyxx;
 
-import 'package:nyxx/src/internal/shard/shard.dart';
-
 export 'src/client_options.dart' show CacheOptions, ClientOptions, GatewayIntents;
 export 'src/nyxx.dart' show INyxx, INyxxRest, INyxxWebsocket, NyxxFactory;
 export 'src/core/allowed_mentions.dart' show AllowedMentions;
