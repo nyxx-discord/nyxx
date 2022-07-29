@@ -79,6 +79,7 @@ class AuditLogEntry extends SnowflakeEntity implements IAuditLogEntry {
 }
 
 class AuditLogEntryType extends IEnum<int> {
+  static const AuditLogEntryType unknown = AuditLogEntryType._create(0);
   static const AuditLogEntryType guildUpdate = AuditLogEntryType._create(1);
   static const AuditLogEntryType channelCreate = AuditLogEntryType._create(10);
   static const AuditLogEntryType channelUpdate = AuditLogEntryType._create(11);
