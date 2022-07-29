@@ -189,7 +189,7 @@ abstract class IGuild implements SnowflakeEntity {
   int? get approxPresenceCount;
 
   /// The cached auto moderation rules in the guild.
-  /// `null` if none where fetched or added by events.
+  /// An empty map is returned if none where fetched or added by events.
   Map<Snowflake, IAutoModerationRule> get autoModerationRules;
 
   /// The guild's icon, represented as URL.
