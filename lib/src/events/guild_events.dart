@@ -5,6 +5,7 @@ import 'package:nyxx/src/core/guild/guild.dart';
 import 'package:nyxx/src/core/guild/role.dart';
 import 'package:nyxx/src/core/guild/scheduled_event.dart';
 import 'package:nyxx/src/core/message/guild_emoji.dart';
+import 'package:nyxx/src/core/message/message.dart';
 import 'package:nyxx/src/core/message/sticker.dart';
 import 'package:nyxx/src/core/snowflake.dart';
 import 'package:nyxx/src/core/snowflake_entity.dart';
@@ -522,18 +523,18 @@ class AutoModerationRuleDeleteEvent implements IAutoModerationRuleDeleteEvent {
 /// When a webhook is created, updated or deleted.
 abstract class IWebhookUpdateEvent {
   /// The channel that points this webhook to.
-  ChannelCacheable<ITextChannel> get channel;
+  Cacheable<Snowflake, ITextChannel> get channel;
 
   /// The guild this webhook was created/updated/deleted.
-  GuildCacheable get guild;
+  Cacheable<Snowflake, IGuild> get guild;
 }
 
 class WebhookUpdateEvent implements IWebhookUpdateEvent {
   @override
-  late final ChannelCacheable<ITextChannel> channel;
+  late final Cacheable<Snowflake, ITextChannel> channel;
 
   @override
-  late final GuildCacheable guild;
+  late final Cacheable<Snowflake, IGuild> guild;
 
   WebhookUpdateEvent(RawApiMap raw, INyxx client) {
     channel = ChannelCacheable(client, Snowflake(raw['d']['channel_id'] as String));
@@ -543,7 +544,7 @@ class WebhookUpdateEvent implements IWebhookUpdateEvent {
 
 abstract class IAutoModerationActionExecutionEvent implements SnowflakeEntity {
   /// The guild where this action was executed.
-  GuildCacheable get guild;
+  Cacheable<Snowflake, IGuild> get guild;
 
   /// The action which was executed.
   ActionStructure get action;
@@ -552,15 +553,15 @@ abstract class IAutoModerationActionExecutionEvent implements SnowflakeEntity {
   TriggerTypes get triggerType;
 
   /// The member which generated the content which triggered the rule.
-  MemberCacheable get member;
+  Cacheable<Snowflake, IMember> get member;
 
   /// The channel in which user content was posted.
-  ChannelCacheable<ITextGuildChannel>? get channel;
+  Cacheable<Snowflake, ITextGuildChannel>? get channel;
 
   /// The message of any user message which content belongs to.
   ///
   /// This will not be present if the message was blocked by automod or the content was not part of the message.
-  MessageCacheable? get message;
+  Cacheable<Snowflake, IMessage>? get message;
 
   /// The message id of any system auto moderation messages posted as a result of this action.
   ///
@@ -583,7 +584,7 @@ abstract class IAutoModerationActionExecutionEvent implements SnowflakeEntity {
 
 class AutoModeratioActionExecutionEvent extends SnowflakeEntity implements IAutoModerationActionExecutionEvent {
   @override
-  late final GuildCacheable guild;
+  late final Cacheable<Snowflake, IGuild> guild;
 
   @override
   late final ActionStructure action;
@@ -592,13 +593,13 @@ class AutoModeratioActionExecutionEvent extends SnowflakeEntity implements IAuto
   late final TriggerTypes triggerType;
 
   @override
-  late final MemberCacheable member;
+  late final Cacheable<Snowflake, IMember> member;
 
   @override
-  late final ChannelCacheable<ITextGuildChannel>? channel;
+  late final Cacheable<Snowflake, ITextGuildChannel>? channel;
 
   @override
-  late final MessageCacheable? message;
+  late final Cacheable<Snowflake, IMessage>? message;
 
   @override
   late final Snowflake? alertSystemMessage;
@@ -615,7 +616,7 @@ class AutoModeratioActionExecutionEvent extends SnowflakeEntity implements IAuto
   AutoModeratioActionExecutionEvent(RawApiMap rawPayload, INyxx client) : super(Snowflake(rawPayload['d']['rule_id'])) {
     final raw = rawPayload['d'];
     guild = GuildCacheable(client, Snowflake(raw['guild_id'] as String));
-    action = ActionStructure(raw['action'] as RawApiMap);
+    action = ActionStructure(raw['action'] as RawApiMap, client);
     triggerType = TriggerTypes.fromValue(raw['rule_trigger_type'] as int);
     member = MemberCacheable(client, Snowflake(raw['user_id'] as Snowflake), guild);
     channel = raw['channel_id'] != null ? ChannelCacheable(client, Snowflake(raw['channel_id'])) : null;

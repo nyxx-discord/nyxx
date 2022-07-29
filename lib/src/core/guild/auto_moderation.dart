@@ -7,13 +7,13 @@ import 'package:nyxx/src/typedefs.dart';
 
 abstract class IAutoModerationRule implements SnowflakeEntity {
   /// The guild's id this rule is applied to.
-  GuildCacheable get guild;
+  Cacheable<Snowflake, IGuild> get guild;
 
   /// The name of this rule.
   String get name;
 
   /// The user which first created this rule.
-  MemberCacheable get creator;
+  Cacheable<Snowflake, IMember> get creator;
 
   /// The rule event type.
   EventTypes get eventType;
@@ -187,7 +187,7 @@ abstract class IActionStructure {
 abstract class IActionMetadata {
   /// The channel if to wich user content should be logged.
   /// The associated action type is [ActionTypes.sendAlertMessage].
-  Snowflake? get channelId;
+  Cacheable<Snowflake, ITextGuildChannel>? get channelId;
 
   /// The timeout duration - maximum duration is 4 weeks (2,419,200 seconds).
   /// It's associated action type is [ActionTypes.timeout].
@@ -196,13 +196,13 @@ abstract class IActionMetadata {
 
 class AutoModerationRule extends SnowflakeEntity implements IAutoModerationRule {
   @override
-  late final GuildCacheable guild;
+  late final Cacheable<Snowflake, IGuild> guild;
 
   @override
   late final String name;
 
   @override
-  late final MemberCacheable creator;
+  late final Cacheable<Snowflake, IMember> creator;
 
   @override
   late final EventTypes eventType;
@@ -232,7 +232,7 @@ class AutoModerationRule extends SnowflakeEntity implements IAutoModerationRule 
     eventType = EventTypes._fromValue(rawData['event_type'] as int);
     triggerType = TriggerTypes.fromValue(rawData['trigger_type'] as int);
     triggerMetadata = TriggerMetadata(rawData['trigger_metadata'] as RawApiMap);
-    actions = [...?(rawData['actions'] as RawApiList?)?.map((a) => ActionStructure(a as RawApiMap))];
+    actions = [...?(rawData['actions'] as RawApiList?)?.map((a) => ActionStructure(a as RawApiMap, client))];
     enabled = rawData['enabled'] as bool;
     ignoredRoles = (rawData['exempt_roles'] as RawApiList).isNotEmpty
         ? [...(rawData['exempt_roles'] as RawApiList).map((r) => RoleCacheable(client, Snowflake(r), guild))]
@@ -280,23 +280,26 @@ class ActionStructure implements IActionStructure {
   late final ActionTypes actionType;
 
   /// Creates an instance of [ActionStructure].
-  ActionStructure(RawApiMap data) {
+  ActionStructure(RawApiMap data, INyxx client) {
     actionType = ActionTypes._fromValue(data['type'] as int);
-    // TODO: Refactor this with an if statement
-    actionMetadata = (data['metadata'] != null && (data['metadata'] as RawApiMap).isNotEmpty) ? ActionMetadata(data['metadata'] as RawApiMap) : null;
+    if (data['metadata'] != null && (data['metadata'] as RawApiMap).isNotEmpty) {
+      actionMetadata = ActionMetadata(data['metadata'] as RawApiMap, client);
+    } else {
+      actionMetadata = null;
+    }
   }
 }
 
 class ActionMetadata implements IActionMetadata {
   @override
-  late final Snowflake? channelId;
+  late final Cacheable<Snowflake, ITextGuildChannel>? channelId;
 
   @override
   late final Duration? duration;
 
   /// Creates an instance of [ActionMetadata].
-  ActionMetadata(RawApiMap data) {
-    channelId = data['channel_id'] != null ? Snowflake(data['channel_id']) : null;
+  ActionMetadata(RawApiMap data, INyxx client) {
+    channelId = data['channel_id'] != null ? ChannelCacheable(client, Snowflake(data['channel_id'])) : null;
     duration = data['duration_seconds'] != null ? Duration(seconds: data['duration_seconds'] as int) : null;
   }
 }
