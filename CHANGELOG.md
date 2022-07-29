@@ -1,3 +1,34 @@
+## 4.0.0
+___29.07.2022__
+
+- breaking: Fix typo in `IHttpResponseSucess`
+- breaking: Remove `threeDayThreadArchive` and `sevenDayThreadArchive` guild features
+- breaking: Remove all deprecated members
+- bug: Fix ratelimiting
+  - breaking: All calls to the API are now made via `IHttpRoute`s instead of `String`s.
+  - Construct routes by creating an `IHttpRoute()` and `add`ing `HttpRoutePart`s or by calling the helper methods on the route.
+- feature: Move to Gateway & API v10
+  - Added the Message Content privileged intent
+- feature: Add guild Audit Log options
+- feature: Implement forum channels
+- feature: Implement guild Welcome Screen & Channel
+- feature: Add missing Audit log types
+- feature: Implement guild Banners
+- feature: Implement partial presences
+- feature: Add missing guild properties
+- feature: Add missing reaction endpoints
+- feature: Handle websocket disconnections
+- feature: Implement clean client shutdown
+- feature: Add `limitLength` to `MessageBuilder`
+- feature: Add paginated bans
+- feature: Remove dollar prefix for identify payload (#361)
+- bug: Fix mention string, and use a better approach to retrieve everyone role (#360)
+- bug: Fix incorrect guild URLs
+- bug: Fix incorrect file encoding
+- bug: Fix member editing
+- bug: Fix serialization issues
+- bug: Fix uninitialized fields
+
 ## 4.0.0-dev.2
 __12.06.2022__
 
