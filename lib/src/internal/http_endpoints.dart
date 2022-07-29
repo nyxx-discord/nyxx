@@ -2212,7 +2212,11 @@ class HttpEndpoints implements IHttpEndpoints {
       return Future.error(response);
     }
 
-    return AutoModerationRule((response as IHttpResponseSuccess).jsonBody as RawApiMap, client);
+    final rule = AutoModerationRule((response as IHttpResponseSuccess).jsonBody as RawApiMap, client);
+
+    client.guilds[guildId]?.autoModerationRules[rule.id] = rule;
+
+    return rule;
   }
 
   @override
@@ -2233,7 +2237,11 @@ class HttpEndpoints implements IHttpEndpoints {
       return Future.error(response);
     }
 
-    return AutoModerationRule((response as IHttpResponseSuccess).jsonBody as RawApiMap, client);
+    final rule = AutoModerationRule((response as IHttpResponseSuccess).jsonBody as RawApiMap, client);
+
+    client.guilds[guildId]?.autoModerationRules[ruleId] = rule;
+
+    return rule;
   }
 
   @override
@@ -2252,5 +2260,7 @@ class HttpEndpoints implements IHttpEndpoints {
     if (response is IHttpResponseError) {
       return Future.error(response);
     }
+
+    client.guilds[guildId]?.autoModerationRules.remove(ruleId);
   }
 }
