@@ -2240,12 +2240,13 @@ class HttpEndpoints implements IHttpEndpoints {
   Future<void> deleteAutoModerationRule(Snowflake guildId, Snowflake ruleId, {String? auditReason}) async {
     final response = await httpHandler.execute(
       BasicRequest(
-          HttpRoute()
-            ..guilds(id: guildId.toString())
-            ..autoModeration()
-            ..rules(id: ruleId.toString()),
-          auditLog: auditReason,
-          method: 'DELETE'),
+        HttpRoute()
+          ..guilds(id: guildId.toString())
+          ..autoModeration()
+          ..rules(id: ruleId.toString()),
+        auditLog: auditReason,
+        method: 'DELETE',
+      ),
     );
 
     if (response is IHttpResponseError) {
