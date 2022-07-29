@@ -145,7 +145,7 @@ class GatewayIntents {
   static const int autoModerationConfiguration = 1 << 20;
 
   /// Includes events: `AUTO_MODERATION_ACTION_EXECUTION`
-  static const int autoModerationExecution = 1 << 22;
+  static const int autoModerationExecution = 1 << 21;
 
   /// All unprivileged intents
   static const int allUnprivileged = guilds |
