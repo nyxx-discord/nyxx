@@ -1,19 +1,23 @@
-import 'package:nyxx/src/nyxx.dart';
-import 'package:nyxx/src/core/snowflake.dart';
 import 'package:nyxx/src/core/audit_logs/audit_log_entry.dart';
+import 'package:nyxx/src/core/guild/auto_moderation.dart';
 import 'package:nyxx/src/core/guild/webhook.dart';
+import 'package:nyxx/src/core/snowflake.dart';
 import 'package:nyxx/src/core/user/user.dart';
+import 'package:nyxx/src/nyxx.dart';
 import 'package:nyxx/src/typedefs.dart';
 
 abstract class IAuditLog {
-  /// List of webhooks found in the audit log
+  /// Map of webhooks found in the audit log
   late final Map<Snowflake, IWebhook> webhooks;
 
-  /// List of users found in the audit log
+  /// Map of users found in the audit log
   late final Map<Snowflake, IUser> users;
 
-  /// List of audit log entries
+  /// Map of audit log entries
   late final Map<Snowflake, IAuditLogEntry> entries;
+  
+  /// Map of auto moderation rules referenced in the audit log
+  late final Map<Snowflake, IAutoModerationRule> autoModerationRules;
 
   /// Filters audit log by [users]
   Iterable<IAuditLogEntry> filter(bool Function(IAuditLogEntry) test);
@@ -23,17 +27,21 @@ abstract class IAuditLog {
 ///
 /// [Look here for more](https://discordapp.com/developers/docs/resources/audit-log)
 class AuditLog implements IAuditLog {
-  /// List of webhooks found in the audit log
+  /// Map of webhooks found in the audit log
   @override
   late final Map<Snowflake, IWebhook> webhooks;
 
-  /// List of users found in the audit log
+  /// Map of users found in the audit log
   @override
   late final Map<Snowflake, IUser> users;
 
-  /// List of audit log entries
+  /// Map of audit log entries
   @override
   late final Map<Snowflake, IAuditLogEntry> entries;
+
+  /// Map of auto moderation rules referenced in the audit log
+  @override
+  late final Map<Snowflake, IAutoModerationRule> autoModerationRules;
 
   /// Creates an instance of [AuditLog]
   AuditLog(RawApiMap raw, INyxx client) {
@@ -51,6 +59,10 @@ class AuditLog implements IAuditLog {
 
     raw["audit_log_entries"].forEach((o) {
       entries[Snowflake(o["id"] as String)] = AuditLogEntry(o as RawApiMap, client);
+    });
+
+    raw['auto_moderation_rules'].forEach((o) {
+      autoModerationRules[Snowflake(o['id'] as String)] = AutoModerationRule(o as RawApiMap, client);
     });
   }
 
