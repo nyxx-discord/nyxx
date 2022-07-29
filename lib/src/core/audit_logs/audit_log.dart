@@ -69,27 +69,27 @@ class AuditLog implements IAuditLog {
     threads = {};
 
     raw["webhooks"].forEach((o) {
-      webhooks[Snowflake(o["id"] as String)] = Webhook(o as RawApiMap, client);
+      webhooks[Snowflake(o["id"])] = Webhook(o as RawApiMap, client);
     });
 
     raw["users"].forEach((o) {
-      users[Snowflake(o["id"] as String)] = User(client, o as RawApiMap);
+      users[Snowflake(o["id"])] = User(client, o as RawApiMap);
     });
 
     raw["audit_log_entries"].forEach((o) {
-      entries[Snowflake(o["id"] as String)] = AuditLogEntry(o as RawApiMap, client);
+      entries[Snowflake(o["id"])] = AuditLogEntry(o as RawApiMap, client);
     });
 
     raw['auto_moderation_rules'].forEach((o) {
-      autoModerationRules[Snowflake(o['id'] as String)] = AutoModerationRule(o as RawApiMap, client);
+      autoModerationRules[Snowflake(o['id'])] = AutoModerationRule(o as RawApiMap, client);
     });
 
     raw['guild_scheduled_events'].forEach((o) {
-      events[Snowflake(o['id'] as String)] = GuildEvent(o as RawApiMap, client);
+      events[Snowflake(o['id'])] = GuildEvent(o as RawApiMap, client);
     });
 
     raw['threads'].forEach((o) {
-      threads[Snowflake(o['id'] as String)] = ThreadChannel(client, o as RawApiMap);
+      threads[Snowflake(o['id'])] = ThreadChannel(client, o as RawApiMap);
     });
   }
 
