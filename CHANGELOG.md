@@ -1,5 +1,5 @@
 ## 4.0.0
-___20.07.2022__
+___29.07.2022__
 
 - breaking: Fix typo in `IHttpResponseSucess`
 - breaking: Remove `threeDayThreadArchive` and `sevenDayThreadArchive` guild features
@@ -21,6 +21,8 @@ ___20.07.2022__
 - feature: Implement clean client shutdown
 - feature: Add `limitLength` to `MessageBuilder`
 - feature: Add paginated bans
+- feature: Remove dollar prefix for identify payload (#361)
+- bug: Fix mention string, and use a better approach to retrieve everyone role (#360)
 - bug: Fix incorrect guild URLs
 - bug: Fix incorrect file encoding
 - bug: Fix member editing
