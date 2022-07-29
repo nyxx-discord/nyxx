@@ -489,20 +489,33 @@ class AutoModerationRuleCreateEvent implements IAutoModerationRuleCreateEvent {
 
   AutoModerationRuleCreateEvent(RawApiMap raw, INyxx client) {
     rule = AutoModerationRule(raw['d'] as RawApiMap, client);
+    client.guilds[rule.guild.id]?.autoModerationRules[rule.id] = rule;
   }
 }
 
 abstract class IAutoModerationRuleUpdateEvent {
   /// The updated rule.
   IAutoModerationRule get rule;
+
+  /// The old rule before it's update.
+  IAutoModerationRule? get oldRule;
 }
 
 class AutoModerationRuleUpdateEvent implements IAutoModerationRuleUpdateEvent {
   @override
   late final IAutoModerationRule rule;
 
+  @override
+  late final IAutoModerationRule? oldRule;
+
   AutoModerationRuleUpdateEvent(RawApiMap raw, INyxx client) {
     rule = AutoModerationRule(raw['d'] as RawApiMap, client);
+    final guild = client.guilds[rule.guild.id];
+    oldRule = guild?.autoModerationRules[rule.id];
+    if (guild == null) {
+      return;
+    }
+    guild.autoModerationRules.remove(rule.id);
   }
 }
 
@@ -517,6 +530,7 @@ class AutoModerationRuleDeleteEvent implements IAutoModerationRuleDeleteEvent {
 
   AutoModerationRuleDeleteEvent(RawApiMap raw, INyxx client) {
     rule = AutoModerationRule(raw['d'] as RawApiMap, client);
+    client.guilds[rule.guild.id]?.autoModerationRules.remove(rule.id);
   }
 }
 

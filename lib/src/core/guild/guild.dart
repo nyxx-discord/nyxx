@@ -188,6 +188,10 @@ abstract class IGuild implements SnowflakeEntity {
   /// The approximate amount of presences in the guild.
   int? get approxPresenceCount;
 
+  /// The cached auto moderation rules in the guild.
+  /// `null` if none where fetched or added by events.
+  Map<Snowflake, IAutoModerationRule> get autoModerationRules;
+
   /// The guild's icon, represented as URL.
   /// If guild doesn't have icon it returns null.
   String? iconURL({String format = "webp", int size = 128});
@@ -579,6 +583,9 @@ class Guild extends SnowflakeEntity implements IGuild {
         );
   }
 
+  @override
+  late final Map<Snowflake, IAutoModerationRule> autoModerationRules;
+
   /// Creates an instance of [Guild]
   Guild(this.client, RawApiMap raw, [bool guildCreate = false]) : super(Snowflake(raw["id"])) {
     name = raw["name"] as String;
@@ -703,6 +710,8 @@ class Guild extends SnowflakeEntity implements IGuild {
       if (raw["stage_instances"] != null)
         for (final rawInstance in raw["stage_instances"]) StageChannelInstance(client, rawInstance as RawApiMap)
     ];
+
+    autoModerationRules = SnowflakeCache<IAutoModerationRule>();
   }
 
   /// The guild's icon, represented as URL.
