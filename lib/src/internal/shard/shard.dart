@@ -317,9 +317,9 @@ class Shard implements IShard {
           final identifyMsg = <String, dynamic>{
             "token": manager.connectionManager.client.token,
             "properties": <String, dynamic>{
-              "\$os": Platform.operatingSystem,
-              "\$browser": "nyxx",
-              "\$device": "nyxx",
+              "os": Platform.operatingSystem,
+              "browser": "nyxx",
+              "device": "nyxx",
             },
             "large_threshold": manager.connectionManager.client.options.largeThreshold,
             "guild_subscriptions": manager.connectionManager.client.options.guildSubscriptions,
