@@ -612,7 +612,7 @@ class AutoModeratioActionExecutionEvent extends SnowflakeEntity implements IAuto
   @override
   late final String matchedContent;
 
-  AutoModeratioActionExecutionEvent(RawApiMap rawPayload, INyxx client): super(Snowflake(rawPayload['d']['rule_id'])) {
+  AutoModeratioActionExecutionEvent(RawApiMap rawPayload, INyxx client) : super(Snowflake(rawPayload['d']['rule_id'])) {
     final raw = rawPayload['d'];
     guild = GuildCacheable(client, Snowflake(raw['guild_id'] as String));
     action = ActionStructure(raw['action'] as RawApiMap);
