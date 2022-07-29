@@ -49,7 +49,7 @@ abstract class IRole implements SnowflakeEntity, Mentionable {
 
   /// Mention of role. If role cannot be mentioned it returns name of role (@name)
   @override
-  String get mention => mentionable ? "<@&$id>" : "@$name";
+  String get mention;
 
   /// Returns url to role icon
   String? iconURL({String format = "webp", int size = 128});
@@ -113,7 +113,25 @@ class Role extends SnowflakeEntity implements IRole {
 
   /// Mention of role. If role cannot be mentioned it returns name of role (@name)
   @override
-  String get mention => mentionable ? "<@&$id>" : "@$name";
+  String get mention {
+    String mentionString;
+
+    if (mentionable) {
+      if (id == guild.id) {
+        mentionString = name;
+      } else {
+        mentionString = '<@&$id>';
+      }
+    } else {
+      if (id == guild.id) {
+        mentionString = name;
+      } else {
+        mentionString = '@$name';
+      }
+    }
+
+    return mentionString;
+  }
 
   /// Creates an instance of [Role]
   Role(this.client, RawApiMap raw, Snowflake guildId) : super(Snowflake(raw["id"])) {
