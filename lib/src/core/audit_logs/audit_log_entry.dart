@@ -126,6 +126,11 @@ class AuditLogEntryType extends IEnum<int> {
   static const AuditLogEntryType threadCreate = AuditLogEntryType._create(110);
   static const AuditLogEntryType threadUpdate = AuditLogEntryType._create(111);
   static const AuditLogEntryType threadDelete = AuditLogEntryType._create(112);
+  static const AuditLogEntryType applicationCommandPermissionUpdate = AuditLogEntryType._create(121);
+  static const AuditLogEntryType autoModerationRuleCreate = AuditLogEntryType._create(140);
+  static const AuditLogEntryType autoModerationRuleUpdate = AuditLogEntryType._create(141);
+  static const AuditLogEntryType autoModerationRuleDelete = AuditLogEntryType._create(142);
+  static const AuditLogEntryType autoModerationBlockMessage = AuditLogEntryType._create(143);
 
   const AuditLogEntryType._create(int value) : super(value);
 
