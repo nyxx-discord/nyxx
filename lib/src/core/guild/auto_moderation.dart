@@ -262,7 +262,7 @@ class TriggerMetadata implements ITriggerMetadata {
 
   /// Creates an instance of [TriggerMetadata]
   TriggerMetadata(RawApiMap data) {
-    keywordsFilter = data['keyword_filter'] != null ? [...data['keyword_filter']] : null;
+    keywordsFilter = data['keyword_filter'] != null ? (data['keyword_filter'] as RawApiList).cast<String>() : null;
     keywordPresets = data['presets'] != null ? [...(data['presets'] as RawApiList).map((p) => KeywordPresets._fromValue(p as int))] : null;
     allowList = (data['allow_list'] as RawApiList?)?.cast<String>().toList();
     mentionLimit = data['mention_total_limit'] as int?;
