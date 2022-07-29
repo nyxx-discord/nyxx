@@ -2165,7 +2165,11 @@ class HttpEndpoints implements IHttpEndpoints {
       return Future.error(response);
     }
 
-    return ((response as IHttpResponseSuccess).jsonBody as RawApiList).map((rule) => AutoModerationRule(rule as RawApiMap, client)).toList();
+    return ((response as IHttpResponseSuccess).jsonBody as RawApiList).map((r) {
+      final rule = AutoModerationRule(r as RawApiMap, client);
+      client.guilds[guildId]?.autoModerationRules[rule.id] = rule;
+      return rule;
+    }).toList();
   }
 
   @override
@@ -2183,7 +2187,11 @@ class HttpEndpoints implements IHttpEndpoints {
       return Future.error(response);
     }
 
-    return AutoModerationRule((response as IHttpResponseSuccess).jsonBody as RawApiMap, client);
+    final rule = AutoModerationRule((response as IHttpResponseSuccess).jsonBody as RawApiMap, client);
+
+    client.guilds[guildId]?.autoModerationRules[ruleId] = rule;
+
+    return rule;
   }
 
   @override
