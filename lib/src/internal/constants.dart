@@ -30,10 +30,10 @@ class Constants {
   static const String baseUri = "/api/v$apiVersion";
 
   /// Version of API
-  static const int apiVersion = 9;
+  static const int apiVersion = 10;
 
   /// Version of Nyxx
-  static const String version = "3.4.1";
+  static const String version = "4.0.0";
 
   /// Url to Nyxx repo
   static const String repoUrl = "https://github.com/nyxx-discord/nyxx";

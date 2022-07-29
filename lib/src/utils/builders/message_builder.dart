@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:http/http.dart' as http;
-import 'package:nyxx/nyxx.dart';
 import 'package:nyxx/src/core/allowed_mentions.dart';
 import 'package:nyxx/src/core/message/message.dart';
 import 'package:nyxx/src/core/message/message_time_stamp.dart';
@@ -125,6 +124,21 @@ class MessageBuilder {
 
   /// Appends timestamp to message from [dateTime]
   void appendTimestamp(DateTime dateTime, {TimeStampStyle style = TimeStampStyle.def}) => append(style.format(dateTime));
+
+  /// Limits the length of the content of the builder to [length].
+  ///
+  /// If [content] is shorter than [length], this method does nothing. Else, it truncates content and appends [ellipsis] (if non-null) in a way that the new
+  /// content length equals [length].
+  void limitLength({int length = 2000, String? ellipsis = '...'}) {
+    if (_content.length < length) {
+      return;
+    }
+
+    ellipsis ??= '';
+
+    final cutContent = content.substring(0, length - ellipsis.length);
+    content = cutContent + ellipsis;
+  }
 
   /// Add attachment
   void addAttachment(AttachmentBuilder attachment) {

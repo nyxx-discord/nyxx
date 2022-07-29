@@ -58,28 +58,17 @@ Future<void> shardHandler(SendPort shardPort) async {
   Future<void> terminate() async {
     await _socketSubscription?.cancel();
     await _socket?.close(1000);
+    receivePort.close();
     shardPort.send({"cmd": "TERMINATE_OK"});
   }
-
-  if (!Platform.isWindows) {
-    // ignore: unawaited_futures
-    ProcessSignal.sigterm.watch().forEach((event) async {
-      await terminate();
-    });
-  }
-
-  // ignore: unawaited_futures
-  ProcessSignal.sigint.watch().forEach((event) async {
-    await terminate();
-  });
 
   // Attempts to connect to ws
   Future<void> _connect() async {
     try {
       _socket = await WebSocket.connect(gatewayUri.toString());
+      _socket!.pingInterval = const Duration(seconds: 20);
       final zlibDecoder = RawZLibFilter.inflateFilter(); // Create zlib decoder specific to this connection. New connection should get new zlib context
 
-      // ignore: unawaited_futures
       _socket!.done.then((value) {
         shardPort.send({"cmd": "DISCONNECTED", "errorCode": _socket!.closeCode, "errorReason": _socket!.closeReason});
       });
@@ -95,6 +84,8 @@ Future<void> shardHandler(SendPort shardPort) async {
       shardPort.send({"cmd": "CONNECT_ACK"});
     } on WebSocketException catch (err) {
       shardPort.send({"cmd": "ERROR", "error": err.toString(), "errorCode": _socket!.closeCode, "errorReason": _socket!.closeReason});
+    } on SocketException catch (err) {
+      shardPort.send({"cmd": "ERROR", "error": err.toString(), "errorCode": -1, "errorReason": "SocketException"});
     } on Exception catch (err) {
       print(err);
     } on Error catch (err) {

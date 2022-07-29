@@ -208,7 +208,7 @@ abstract class MinimalGuildChannel extends Channel implements IMinimalGuildChann
       guild = GuildCacheable(client, guildId);
     } else {
       throw Exception(
-          "Cannot initialize instance of GuildChannelNex due missing `guild_id` in json payload and/or missing optional guildId parameter. Report this issue to developer");
+          "Cannot initialize instance of GuildChannel due missing `guild_id` in json payload and/or missing optional guildId parameter. Report this issue to developer");
     }
 
     if (raw["parent_id"] != null) {

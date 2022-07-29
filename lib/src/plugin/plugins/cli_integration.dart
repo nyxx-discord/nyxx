@@ -6,18 +6,23 @@ import 'package:nyxx/src/nyxx.dart';
 import 'package:nyxx/src/plugin/plugin.dart';
 
 class CliIntegration extends BasePlugin {
+  StreamSubscription<ProcessSignal>? _sigtermSubscription;
+  StreamSubscription<ProcessSignal>? _sigintSubscription;
+
   @override
-  FutureOr<void> onRegister(INyxx nyxx, Logger logger) {
+  void onRegister(INyxx nyxx, Logger logger) {
     if (!Platform.isWindows) {
-      ProcessSignal.sigterm.watch().forEach((event) async {
-        await nyxx.dispose();
-      });
+      _sigtermSubscription = ProcessSignal.sigterm.watch().listen((event) => nyxx.dispose());
     }
 
-    ProcessSignal.sigint.watch().forEach((event) async {
-      await nyxx.dispose();
-    });
+    _sigintSubscription = ProcessSignal.sigint.watch().listen((event) => nyxx.dispose());
 
     logger.info("Starting bot with pid: $pid. To stop the bot gracefully send SIGTERM or SIGKILL");
+  }
+
+  @override
+  void onBotStop(INyxx nyxx, Logger logger) {
+    _sigintSubscription?.cancel();
+    _sigtermSubscription?.cancel();
   }
 }

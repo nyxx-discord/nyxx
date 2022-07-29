@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 import 'package:nyxx/src/internal/constants.dart';
+import 'package:nyxx/src/internal/http/http_route.dart';
 import 'package:nyxx/src/typedefs.dart';
 
 abstract class HttpRequest {
@@ -14,11 +15,13 @@ abstract class HttpRequest {
   final String? auditLog;
 
   final bool auth;
-  final bool rateLimit;
+  final bool globalRateLimit;
+  final HttpRoute route;
+  String get rateLimitId => method + route.routeId;
 
   /// Creates and instance of [HttpRequest]
-  HttpRequest(String path, {this.method = "GET", this.queryParams, Map<String, String>? headers, this.auditLog, this.rateLimit = true, this.auth = true}) {
-    uri = Uri.https(Constants.host, Constants.baseUri + path);
+  HttpRequest(this.route, {this.method = "GET", this.queryParams, Map<String, String>? headers, this.auditLog, this.globalRateLimit = true, this.auth = true}) {
+    uri = Uri.https(Constants.host, Constants.baseUri + route.path);
     this.headers = headers ?? {};
   }
 
@@ -33,13 +36,14 @@ class BasicRequest extends HttpRequest {
   /// Body of request
   final dynamic body;
 
-  BasicRequest(String path,
-      {String method = "GET", this.body, RawApiMap? queryParams, String? auditLog, Map<String, String>? headers, bool rateLimit = true, bool auth = true})
-      : super(path, method: method, queryParams: queryParams, auditLog: auditLog, headers: headers, rateLimit: rateLimit, auth: auth);
+  BasicRequest(HttpRoute route,
+      {String method = "GET", this.body, RawApiMap? queryParams, String? auditLog, Map<String, String>? headers, bool globalRateLimit = true, bool auth = true})
+      : super(route, method: method, queryParams: queryParams, auditLog: auditLog, headers: headers, globalRateLimit: globalRateLimit, auth: auth);
 
   @override
   Future<http.BaseRequest> prepareRequest() async {
-    final request = http.Request(method, uri.replace(queryParameters: queryParams))..headers.addAll(genHeaders());
+    final request = http.Request(method, uri.replace(queryParameters: queryParams?.map((key, value) => MapEntry(key, value.toString()))))
+      ..headers.addAll(genHeaders());
 
     if (body != null && method != "GET") {
       request.headers.addAll(_getJsonContentTypeHeader());
@@ -65,9 +69,15 @@ class MultipartRequest extends HttpRequest {
   final dynamic fields;
 
   /// Creates an instance of [MultipartRequest]
-  MultipartRequest(String path, this.files,
-      {this.fields, String method = "GET", RawApiMap? queryParams, Map<String, String>? headers, String? auditLog, bool auth = true, bool rateLimit = true})
-      : super(path, method: method, queryParams: queryParams, headers: headers, auditLog: auditLog, rateLimit: rateLimit, auth: auth);
+  MultipartRequest(HttpRoute route, this.files,
+      {this.fields,
+      String method = "GET",
+      RawApiMap? queryParams,
+      Map<String, String>? headers,
+      String? auditLog,
+      bool auth = true,
+      bool globalRateLimit = true})
+      : super(route, method: method, queryParams: queryParams, headers: headers, auditLog: auditLog, globalRateLimit: globalRateLimit, auth: auth);
 
   @override
   Future<http.BaseRequest> prepareRequest() async {

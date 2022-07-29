@@ -13,7 +13,7 @@ final testUserBotSnowflake = Snowflake(476603965396746242);
 final testUserHumanSnowflake = Snowflake(302359032612651009);
 
 main() async {
-  final bot = NyxxFactory.createNyxxWebsocket(Platform.environment["TEST_TOKEN"]!, GatewayIntents.guildMessages, ignoreExceptions: false)
+  final bot = NyxxFactory.createNyxxWebsocket(Platform.environment["TEST_TOKEN"]!, GatewayIntents.guildMessages)
     ..registerPlugin(Logging())
     ..connect();
 

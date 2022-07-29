@@ -39,7 +39,7 @@ abstract class HttpResponse implements IHttpResponse {
   }
 }
 
-abstract class IHttpResponseSucess implements IHttpResponse {
+abstract class IHttpResponseSuccess implements IHttpResponse {
   /// Body of response
   List<int> get body;
 
@@ -48,7 +48,7 @@ abstract class IHttpResponseSucess implements IHttpResponse {
 }
 
 /// Returned when http request is successfully executed.
-class HttpResponseSuccess extends HttpResponse implements IHttpResponseSucess {
+class HttpResponseSuccess extends HttpResponse implements IHttpResponseSuccess {
   /// Body of response
   @override
   List<int> get body => _body;
@@ -61,12 +61,12 @@ class HttpResponseSuccess extends HttpResponse implements IHttpResponseSucess {
   HttpResponseSuccess(http.StreamedResponse response) : super(response);
 }
 
-abstract class IHttpResponseError implements IHttpResponse, Error, Exception {
+abstract class IHttpResponseError implements IHttpResponse, Exception {
   /// Message why http request failed
-  String get errorMessage;
+  String get message;
 
   /// Error code of response
-  int get errorCode;
+  int get code;
 }
 
 /// Returned when client fails to execute http request.
@@ -74,20 +74,20 @@ abstract class IHttpResponseError implements IHttpResponse, Error, Exception {
 class HttpResponseError extends HttpResponse implements IHttpResponseError {
   /// Message why http request failed
   @override
-  late String errorMessage;
+  late String message;
 
   /// Error code of response
   @override
-  late int errorCode;
+  late int code;
 
   /// Creates an instance of [HttpResponseError]
   HttpResponseError(http.StreamedResponse response) : super(response) {
     if (response.headers["Content-Type"] == "application/json") {
-      errorCode = _jsonBody["code"] as int;
-      errorMessage = _jsonBody["message"] as String;
+      code = _jsonBody["code"] as int;
+      message = _jsonBody["message"] as String;
     } else {
-      errorMessage = "";
-      errorCode = response.statusCode;
+      message = "";
+      code = response.statusCode;
     }
   }
 
@@ -95,16 +95,13 @@ class HttpResponseError extends HttpResponse implements IHttpResponseError {
   Future<void> finalize() async {
     await super.finalize();
 
-    if (errorMessage.isEmpty) {
+    if (message.isEmpty) {
       try {
-        errorMessage = utf8.decode(_body);
+        message = utf8.decode(_body);
       } on Exception {} // ignore: empty_catches
     }
   }
 
   @override
-  String toString() => "[Code: $errorCode] [Message: $errorMessage]";
-
-  @override
-  StackTrace? get stackTrace => null;
+  String toString() => "[Code: $code] [Message: $message]";
 }

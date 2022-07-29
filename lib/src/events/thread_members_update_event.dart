@@ -53,6 +53,7 @@ class ThreadMembersUpdateEvent implements IThreadMembersUpdateEvent {
 
     thread = CacheableTextChannel(client, Snowflake(data["id"]));
     guild = GuildCacheable(client, Snowflake(data["guild_id"]));
+    approxMemberCount = data["member_count"] as int;
 
     addedMembers = [
       if (data["added_members"] != null)

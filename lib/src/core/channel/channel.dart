@@ -1,3 +1,4 @@
+import 'package:nyxx/src/core/channel/guild/forum/forum_channel.dart';
 import 'package:nyxx/src/nyxx.dart';
 import 'package:nyxx/src/core/snowflake.dart';
 import 'package:nyxx/src/core/snowflake_entity.dart';
@@ -63,6 +64,8 @@ abstract class Channel extends SnowflakeEntity implements IChannel {
         return ThreadChannel(client, raw);
       case 13:
         return StageVoiceGuildChannel(client, raw, guildId);
+      case 15:
+        return ForumChannel(client, raw, guildId);
       default:
         return _InternalChannel._new(client, raw, guildId);
     }
@@ -99,6 +102,8 @@ class ChannelType extends IEnum<int> {
 
   /// Channel in a Student Hub containing the listed servers
   static const ChannelType guildDirectory = ChannelType._create(14);
+
+  static const ChannelType forumChannel = ChannelType._create(15);
 
   /// Type of channel is unknown
   static const ChannelType unknown = ChannelType._create(1337);

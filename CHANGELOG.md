@@ -1,3 +1,63 @@
+## 4.0.0
+___29.07.2022__
+
+- breaking: Fix typo in `IHttpResponseSucess`
+- breaking: Remove `threeDayThreadArchive` and `sevenDayThreadArchive` guild features
+- breaking: Remove all deprecated members
+- bug: Fix ratelimiting
+  - breaking: All calls to the API are now made via `IHttpRoute`s instead of `String`s.
+  - Construct routes by creating an `IHttpRoute()` and `add`ing `HttpRoutePart`s or by calling the helper methods on the route.
+- feature: Move to Gateway & API v10
+  - Added the Message Content privileged intent
+- feature: Add guild Audit Log options
+- feature: Implement forum channels
+- feature: Implement guild Welcome Screen & Channel
+- feature: Add missing Audit log types
+- feature: Implement guild Banners
+- feature: Implement partial presences
+- feature: Add missing guild properties
+- feature: Add missing reaction endpoints
+- feature: Handle websocket disconnections
+- feature: Implement clean client shutdown
+- feature: Add `limitLength` to `MessageBuilder`
+- feature: Add paginated bans
+- feature: Remove dollar prefix for identify payload (#361)
+- bug: Fix mention string, and use a better approach to retrieve everyone role (#360)
+- bug: Fix incorrect guild URLs
+- bug: Fix incorrect file encoding
+- bug: Fix member editing
+- bug: Fix serialization issues
+- bug: Fix uninitialized fields
+
+## 4.0.0-dev.2
+__12.06.2022__
+
+- feature: Add missing emoji endpoints (#346)
+- feature: Add `threadName` on `IWebhook#execute()` (#348)
+- feature: Implement graceful shutdown (#347)
+- feature: Implement forum channels (#332)
+- feature: Implement Dynamic Bucket Rate Limits (#316)
+- feature: Implement paginated bans (#326)
+- feature: Implement missing guild properties
+- bug: Fixed disconnecting user from voice
+- bug: failed to edit guild members (#328)
+- bug: Invalid serialization of query params (#352)
+- bug: Fix some serialization bugs (#351)
+
+## 4.0.0-dev.1
+__09.05.2022__
+
+- feature: Handle no internet on websocket (#321)
+- bug: Remove Error form IHttpResponseError (#324)
+  - Fixup field names on IHttpResponseError
+  - Fixup IHttpResponseSuccess name
+- feature: Move to API v10 (#325)
+
+## 4.0.0-dev.0
+__31.03.2022__
+
+- feature: Fix target id property and add guild audit logs options (#307)
+
 ## 3.4.2
 __22.04.2022__
 
