@@ -31,10 +31,10 @@ abstract class IAutoModerationRule implements SnowflakeEntity {
   bool get enabled;
 
   /// The role ids that should not be affected by the rule (Maximum of 20).
-  List<RoleCacheable> get ignoredRoles;
+  Iterable<RoleCacheable> get ignoredRoles;
 
   /// The channel ids that should not be affected by the rule (Maximum of 50).
-  List<ChannelCacheable<ITextGuildChannel>> get ignoredChannels;
+  Iterable<ChannelCacheable<ITextGuildChannel>> get ignoredChannels;
 }
 
 enum EventTypes {
@@ -220,10 +220,10 @@ class AutoModerationRule extends SnowflakeEntity implements IAutoModerationRule 
   late final bool enabled;
 
   @override
-  late final List<RoleCacheable> ignoredRoles;
+  late final Iterable<RoleCacheable> ignoredRoles;
 
   @override
-  late final List<ChannelCacheable<ITextGuildChannel>> ignoredChannels;
+  late final Iterable<ChannelCacheable<ITextGuildChannel>> ignoredChannels;
 
   AutoModerationRule(RawApiMap rawData, INyxx client) : super(Snowflake(rawData['id'])) {
     guild = GuildCacheable(client, Snowflake(rawData['guild_id']));
@@ -235,10 +235,10 @@ class AutoModerationRule extends SnowflakeEntity implements IAutoModerationRule 
     actions = [...?(rawData['actions'] as RawApiList?)?.map((a) => ActionStructure(a as RawApiMap, client))];
     enabled = rawData['enabled'] as bool;
     ignoredRoles = (rawData['exempt_roles'] as RawApiList).isNotEmpty
-        ? [...(rawData['exempt_roles'] as RawApiList).map((r) => RoleCacheable(client, Snowflake(r), guild))]
+        ? (rawData['exempt_roles'] as RawApiList).map((r) => RoleCacheable(client, Snowflake(r), guild))
         : [];
     ignoredChannels = (rawData['exempt_channels'] as RawApiList).isNotEmpty
-        ? [...(rawData['exempt_channels'] as RawApiList).map((r) => ChannelCacheable(client, Snowflake(r)))]
+        ? (rawData['exempt_channels'] as RawApiList).map((r) => ChannelCacheable(client, Snowflake(r)))
         : [];
   }
 
