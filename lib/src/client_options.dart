@@ -144,6 +144,9 @@ class GatewayIntents {
   /// Includes events: `AUTO_MODERATION_RULE_CREATE`, `AUTO_MODERATION_RULE_UPDATE`, `AUTO_MODERATION_RULE_DELETE`
   static const int autoModerationConfiguration = 1 << 20;
 
+  /// Includes events: `AUTO_MODERATION_ACTION_EXECUTION`
+  static const int autoModerationExecution = 1 << 22;
+
   /// All unprivileged intents
   static const int allUnprivileged = guilds |
       guildBans |
@@ -159,7 +162,8 @@ class GatewayIntents {
       directMessageReactions |
       directMessageTyping |
       guildScheduledEvents |
-      autoModerationConfiguration;
+      autoModerationConfiguration |
+      autoModerationExecution;
 
   /// All privileged intents
   static const int allPrivileged = guildMembers | guildPresences | messageContent;

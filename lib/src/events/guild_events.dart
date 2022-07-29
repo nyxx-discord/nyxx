@@ -1,3 +1,4 @@
+import 'package:nyxx/nyxx.dart';
 import 'package:nyxx/src/core/channel/text_channel.dart';
 import 'package:nyxx/src/core/guild/auto_moderation.dart';
 import 'package:nyxx/src/core/guild/guild.dart';
@@ -6,6 +7,7 @@ import 'package:nyxx/src/core/guild/scheduled_event.dart';
 import 'package:nyxx/src/core/message/guild_emoji.dart';
 import 'package:nyxx/src/core/message/sticker.dart';
 import 'package:nyxx/src/core/snowflake.dart';
+import 'package:nyxx/src/core/snowflake_entity.dart';
 import 'package:nyxx/src/core/user/member.dart';
 import 'package:nyxx/src/core/user/user.dart';
 import 'package:nyxx/src/internal/cache/cacheable.dart';
@@ -536,5 +538,91 @@ class WebhookUpdateEvent implements IWebhookUpdateEvent {
   WebhookUpdateEvent(RawApiMap raw, INyxx client) {
     channel = ChannelCacheable(client, Snowflake(raw['d']['channel_id'] as String));
     guild = GuildCacheable(client, Snowflake(raw['d']['guild_id'] as String));
+  }
+}
+
+abstract class IAutoModerationActionExecutionEvent implements SnowflakeEntity {
+  /// The guild where this action was executed.
+  GuildCacheable get guild;
+
+  /// The action which was executed.
+  ActionStructure get action;
+
+  /// The trigger type of rule which was triggered.
+  TriggerTypes get triggerType;
+
+  /// The member which generated the content which triggered the rule.
+  MemberCacheable get member;
+
+  /// The channel in which user content was posted.
+  ChannelCacheable<ITextGuildChannel>? get channel;
+
+  /// The message of any user message which content belongs to.
+  ///
+  /// This will not be present if the message was blocked by automod or the content was not part of the message.
+  MessageCacheable? get message;
+
+  /// The message id of any system auto moderation messages posted as a result of this action.
+  ///
+  /// `null` if the [action.actionType] is not [ActionTypes.sendAlertMessage].
+  Snowflake? get alertSystemMessage;
+
+  /// The member generated text content.
+  ///
+  /// An empty string if you have not the message content privilegied intent.
+  String get content;
+
+  /// The word or phrase configured in the rule that triggered the rule
+  String? get matchedKeyword;
+
+  /// The substring in content that triggered the rule.
+  ///
+  /// An empty string if you have not the message content privilegied intent.
+  String get matchedContent;
+}
+
+class AutoModeratioActionExecutionEvent extends SnowflakeEntity implements IAutoModerationActionExecutionEvent {
+  @override
+  late final GuildCacheable guild;
+
+  @override
+  late final ActionStructure action;
+
+  @override
+  late final TriggerTypes triggerType;
+
+  @override
+  late final MemberCacheable member;
+
+  @override
+  late final ChannelCacheable<ITextGuildChannel>? channel;
+
+  @override
+  late final MessageCacheable? message;
+
+  @override
+  late final Snowflake? alertSystemMessage;
+
+  @override
+  late final String content;
+
+  @override
+  late final String? matchedKeyword;
+
+  @override
+  late final String matchedContent;
+
+  AutoModeratioActionExecutionEvent(RawApiMap rawPayload, INyxx client): super(Snowflake(rawPayload['d']['rule_id'])) {
+    final raw = rawPayload['d'];
+    guild = GuildCacheable(client, Snowflake(raw['guild_id'] as String));
+    action = ActionStructure(raw['action'] as RawApiMap);
+    triggerType = TriggerTypes.fromValue(raw['rule_trigger_type'] as int);
+    member = MemberCacheable(client, Snowflake(raw['user_id'] as Snowflake), guild);
+    channel = raw['channel_id'] != null ? ChannelCacheable(client, Snowflake(raw['channel_id'])) : null;
+    message = raw['message_id'] != null && channel != null ? MessageCacheable(client, Snowflake(raw['message_id']), channel!) : null;
+    alertSystemMessage = raw['alert_system_message_id'] != null ? Snowflake(raw['alert_system_message_id']) : null;
+    content = raw['content'] != null ? raw['content'] as String : '';
+    matchedKeyword = raw['matched_keyword'] != null ? raw['matched_keyword'] as String : null;
+    matchedContent = raw['matched_content'] != null ? raw['matched_content'] as String : '';
   }
 }

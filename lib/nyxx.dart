@@ -3,6 +3,8 @@
 /// Main library which contains all stuff needed to connect and interact with Discord API.
 library nyxx;
 
+import 'package:nyxx/src/events/guild_events.dart';
+
 export 'src/client_options.dart' show CacheOptions, ClientOptions, GatewayIntents;
 export 'src/nyxx.dart' show INyxx, INyxxRest, INyxxWebsocket, NyxxFactory;
 export 'src/core/allowed_mentions.dart' show AllowedMentions;
@@ -105,7 +107,15 @@ export 'src/events/guild_events.dart'
         IGuildUpdateEvent,
         IRoleCreateEvent,
         IRoleDeleteEvent,
-        IRoleUpdateEvent;
+        IRoleUpdateEvent,
+        IAutoModerationRuleCreateEvent,
+        IAutoModerationRuleUpdateEvent,
+        IAutoModerationRuleDeleteEvent,
+        IAutoModerationActionExecutionEvent,
+        IGuildEventCreateEvent,
+        IGuildEventUpdateEvent,
+        IGuildEventDeleteEvent,
+        IWebhookUpdateEvent;
 export 'src/events/http_events.dart' show IHttpResponseEvent, IHttpErrorEvent;
 export 'src/events/invite_events.dart' show IInviteCreatedEvent, IInviteDeletedEvent;
 export 'src/events/member_chunk_event.dart' show IMemberChunkEvent;

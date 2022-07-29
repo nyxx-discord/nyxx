@@ -223,6 +223,9 @@ abstract class IWebsocketEventController implements IRestEventController {
 
   /// Emitted when a webhook is created, updated or deleted.
   Stream<IWebhookUpdateEvent> get onWebhookUpdate;
+
+  /// Emitted when an auto moderation rule was triggered and an action was executed (e.g. a message was blocked).
+  Stream<IAutoModerationActionExecutionEvent> get onAutoModerationActionExecution;
 }
 
 /// A controller for all events.
@@ -363,6 +366,8 @@ class WebsocketEventController extends RestEventController implements IWebsocket
   late final StreamController<IAutoModerationRuleDeleteEvent> onAutoModerationRuleDeleteController;
 
   late final StreamController<IWebhookUpdateEvent> onWebhookUpdateController;
+
+  late final StreamController<IAutoModerationActionExecutionEvent> onAutoModerationActionExecutionController;
 
   /// Emitted when a shard is disconnected from the websocket.
   @override
@@ -558,6 +563,9 @@ class WebsocketEventController extends RestEventController implements IWebsocket
   @override
   late final Stream<IWebhookUpdateEvent> onWebhookUpdate;
 
+  @override
+  late final Stream<IAutoModerationActionExecutionEvent> onAutoModerationActionExecution;
+
   final INyxxWebsocket _client;
 
   /// Makes a new `EventController`.
@@ -702,6 +710,9 @@ class WebsocketEventController extends RestEventController implements IWebsocket
 
     onWebhookUpdateController = StreamController.broadcast();
     onWebhookUpdate = onWebhookUpdateController.stream;
+
+    onAutoModerationActionExecutionController = StreamController.broadcast();
+    onAutoModerationActionExecution = onAutoModerationActionExecutionController.stream;
   }
 
   @override
@@ -762,5 +773,7 @@ class WebsocketEventController extends RestEventController implements IWebsocket
     await onAutoModerationRuleUpdateController.close();
 
     await onWebhookUpdateController.close();
+
+    await onAutoModerationActionExecutionController.close();
   }
 }

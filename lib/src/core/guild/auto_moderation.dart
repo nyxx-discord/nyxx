@@ -76,7 +76,8 @@ enum TriggerTypes {
   final int value;
   const TriggerTypes(this.value);
 
-  static TriggerTypes _fromValue(int value) {
+  // Not private because used in guild events
+  static TriggerTypes fromValue(int value) {
     switch (value) {
       case 1:
         return TriggerTypes.keyword;
@@ -229,7 +230,7 @@ class AutoModerationRule extends SnowflakeEntity implements IAutoModerationRule 
     name = rawData['name'] as String;
     creator = MemberCacheable(client, Snowflake(rawData['creator_id']), guild);
     eventType = EventTypes._fromValue(rawData['event_type'] as int);
-    triggerType = TriggerTypes._fromValue(rawData['trigger_type'] as int);
+    triggerType = TriggerTypes.fromValue(rawData['trigger_type'] as int);
     triggerMetadata = TriggerMetadata(rawData['trigger_metadata'] as RawApiMap);
     actions = [...?(rawData['actions'] as RawApiList?)?.map((a) => ActionStructure(a as RawApiMap))];
     enabled = rawData['enabled'] as bool;

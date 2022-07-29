@@ -548,6 +548,10 @@ class Shard implements IShard {
             eventController.onAutoModerationRuleDeleteController.add(AutoModerationRuleDeleteEvent(rawPayload, manager.connectionManager.client));
             break;
 
+          case 'AUTO_MODERATION_ACTION_EXECUTION':
+            eventController.onAutoModerationActionExecutionController.add(AutoModeratioActionExecutionEvent(rawPayload, manager.connectionManager.client));
+            break;
+
           default:
             if (manager.connectionManager.client.options.dispatchRawShardEvent) {
               manager.onRawEventController.add(RawEvent(this, rawPayload));
