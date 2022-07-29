@@ -64,6 +64,9 @@ class AuditLog implements IAuditLog {
     webhooks = {};
     users = {};
     entries = {};
+    autoModerationRules = {};
+    events = {};
+    threads = {};
 
     raw["webhooks"].forEach((o) {
       webhooks[Snowflake(o["id"] as String)] = Webhook(o as RawApiMap, client);

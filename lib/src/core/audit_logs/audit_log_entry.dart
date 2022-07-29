@@ -10,7 +10,7 @@ import 'package:nyxx/src/core/audit_logs/audit_log_options.dart';
 
 abstract class IAuditLogEntry implements SnowflakeEntity {
   /// Id of the affected entity (webhook, user, role, etc.)
-  String get targetId;
+  String? get targetId;
 
   /// Changes made to the target_id
   List<IAuditLogChange> get changes;
@@ -34,7 +34,7 @@ abstract class IAuditLogEntry implements SnowflakeEntity {
 class AuditLogEntry extends SnowflakeEntity implements IAuditLogEntry {
   /// Id of the affected entity (webhook, user, role, etc.)
   @override
-  late final String targetId;
+  late final String? targetId;
 
   /// Changes made to the target_id
   @override
@@ -58,7 +58,7 @@ class AuditLogEntry extends SnowflakeEntity implements IAuditLogEntry {
 
   /// Creates an instance of [AuditLogEntry]
   AuditLogEntry(RawApiMap raw, INyxx client) : super(Snowflake(raw["id"] as String)) {
-    targetId = raw["target_id"] as String;
+    targetId = raw["target_id"] as String?;
 
     changes = [
       if (raw["changes"] != null)
