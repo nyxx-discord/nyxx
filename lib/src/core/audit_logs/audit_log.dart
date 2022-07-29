@@ -1,4 +1,5 @@
 import 'package:nyxx/src/core/audit_logs/audit_log_entry.dart';
+import 'package:nyxx/src/core/channel/thread_channel.dart';
 import 'package:nyxx/src/core/guild/auto_moderation.dart';
 import 'package:nyxx/src/core/guild/scheduled_event.dart';
 import 'package:nyxx/src/core/guild/webhook.dart';
@@ -22,6 +23,9 @@ abstract class IAuditLog {
 
   /// Map of guild scheduled events referenced in the audit log.
   late final Map<Snowflake, IGuildEvent> events;
+
+  /// Map of threads referenced in the audit log.
+  late final Map<Snowflake, IThreadChannel> threads;
 
   /// Filters audit log by [users]
   Iterable<IAuditLogEntry> filter(bool Function(IAuditLogEntry) test);
@@ -51,6 +55,10 @@ class AuditLog implements IAuditLog {
   @override
   late final Map<Snowflake, IGuildEvent> events;
 
+  /// Map of threads referenced in the audit log.
+  @override
+  late final Map<Snowflake, IThreadChannel> threads;
+
   /// Creates an instance of [AuditLog]
   AuditLog(RawApiMap raw, INyxx client) {
     webhooks = {};
@@ -75,6 +83,10 @@ class AuditLog implements IAuditLog {
 
     raw['guild_scheduled_events'].forEach((o) {
       events[Snowflake(o['id'] as String)] = GuildEvent(o as RawApiMap, client);
+    });
+
+    raw['threads'].forEach((o) {
+      threads[Snowflake(o['id'] as String)] = ThreadChannel(client, o as RawApiMap);
     });
   }
 
