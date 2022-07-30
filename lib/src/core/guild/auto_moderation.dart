@@ -196,12 +196,8 @@ class AutoModerationRule extends SnowflakeEntity implements IAutoModerationRule 
     triggerMetadata = TriggerMetadata(rawData['trigger_metadata'] as RawApiMap);
     actions = (rawData['actions'] as RawApiList?)?.map((a) => ActionStructure(a as RawApiMap, client)).toList();
     enabled = rawData['enabled'] as bool;
-    ignoredRoles = (rawData['exempt_roles'] as RawApiList).isNotEmpty
-        ? (rawData['exempt_roles'] as RawApiList).map((r) => RoleCacheable(client, Snowflake(r), guild))
-        : [];
-    ignoredChannels = (rawData['exempt_channels'] as RawApiList).isNotEmpty
-        ? (rawData['exempt_channels'] as RawApiList).map((r) => ChannelCacheable(client, Snowflake(r)))
-        : [];
+    ignoredRoles = (rawData['exempt_roles'] as RawApiList).map((r) => RoleCacheable(client, Snowflake(r), guild));
+    ignoredChannels = (rawData['exempt_channels'] as RawApiList).map((r) => ChannelCacheable(client, Snowflake(r)));
   }
 
   @override
