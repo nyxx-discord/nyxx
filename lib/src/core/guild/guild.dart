@@ -584,7 +584,7 @@ class Guild extends SnowflakeEntity implements IGuild {
   }
 
   @override
-  late final Map<Snowflake, IAutoModerationRule> autoModerationRules;
+  late final ICache<Snowflake, IAutoModerationRule> autoModerationRules;
 
   /// Creates an instance of [Guild]
   Guild(this.client, RawApiMap raw, [bool guildCreate = false]) : super(Snowflake(raw["id"])) {
