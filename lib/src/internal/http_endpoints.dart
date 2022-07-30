@@ -429,7 +429,7 @@ abstract class IHttpEndpoints {
 
   Future<IThreadChannel> startForumThread(Snowflake channelId, ForumThreadBuilder builder);
 
-  Future<List<IAutoModerationRule>> fetchAutoModerationRules(Snowflake guildId);
+  Stream<IAutoModerationRule> fetchAutoModerationRules(Snowflake guildId);
 
   Future<IAutoModerationRule> fetchAutoModerationRule(Snowflake guildId, Snowflake ruleId);
 
@@ -2151,7 +2151,7 @@ class HttpEndpoints implements IHttpEndpoints {
   }
 
   @override
-  Future<List<IAutoModerationRule>> fetchAutoModerationRules(Snowflake guildId) async {
+  Stream<IAutoModerationRule> fetchAutoModerationRules(Snowflake guildId) async* {
     final response = await httpHandler.execute(
       BasicRequest(
         HttpRoute()
@@ -2162,14 +2162,14 @@ class HttpEndpoints implements IHttpEndpoints {
     );
 
     if (response is IHttpResponseError) {
-      return Future.error(response);
+      yield* Stream.error(response);
     }
 
-    return ((response as IHttpResponseSuccess).jsonBody as RawApiList).map((r) {
-      final rule = AutoModerationRule(r as RawApiMap, client);
+    for (final rawRule in (response as IHttpResponseSuccess).jsonBody as RawApiList) {
+      final rule = AutoModerationRule(rawRule as RawApiMap, client);
       client.guilds[guildId]?.autoModerationRules[rule.id] = rule;
-      return rule;
-    }).toList();
+      yield rule;
+    }
   }
 
   @override

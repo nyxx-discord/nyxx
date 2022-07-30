@@ -342,7 +342,7 @@ abstract class IGuild implements SnowflakeEntity {
   Future<IGuildWelcomeScreen?> fetchWelcomeScreen();
 
   /// Fetches the auto moderation rules.
-  Future<List<IAutoModerationRule>> fetchAutoModerationRules();
+  Stream<IAutoModerationRule> fetchAutoModerationRules();
 
   /// Fetches a sole moderation rule.
   Future<IAutoModerationRule> fetchAutoModerationRule(Snowflake ruleId);
@@ -926,7 +926,7 @@ class Guild extends SnowflakeEntity implements IGuild {
   Future<IGuildWelcomeScreen> fetchWelcomeScreen() => client.httpEndpoints.fetchGuildWelcomeScreen(id);
 
   @override
-  Future<List<IAutoModerationRule>> fetchAutoModerationRules() => client.httpEndpoints.fetchAutoModerationRules(id);
+  Stream<IAutoModerationRule> fetchAutoModerationRules() => client.httpEndpoints.fetchAutoModerationRules(id);
 
   @override
   Future<IAutoModerationRule> fetchAutoModerationRule(Snowflake ruleId) => client.httpEndpoints.fetchAutoModerationRule(id, ruleId);
