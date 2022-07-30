@@ -1,8 +1,11 @@
-import 'package:nyxx/nyxx.dart';
+import 'package:nyxx/src/core/channel/guild/text_guild_channel.dart';
+import 'package:nyxx/src/core/guild/guild.dart';
 import 'package:nyxx/src/core/snowflake.dart';
 import 'package:nyxx/src/core/snowflake_entity.dart';
+import 'package:nyxx/src/core/user/member.dart';
 import 'package:nyxx/src/internal/cache/cacheable.dart';
 import 'package:nyxx/src/internal/exceptions/unknown_enum_value.dart';
+import 'package:nyxx/src/nyxx.dart';
 import 'package:nyxx/src/typedefs.dart';
 
 abstract class IAutoModerationRule implements SnowflakeEntity {
@@ -44,14 +47,7 @@ enum EventTypes {
   final int value;
   const EventTypes(this.value);
 
-  static EventTypes _fromValue(int value) {
-    switch (value) {
-      case 1:
-        return EventTypes.messageSend;
-      default:
-        throw UnknownEnumValue(value.toString());
-    }
-  }
+  static EventTypes _fromValue(int value) => values.firstWhere((v) => v.value == value, orElse: () => throw UnknownEnumValue(value));
 
   @override
   String toString() => 'EventTypes[$value]';
@@ -77,20 +73,7 @@ enum TriggerTypes {
   const TriggerTypes(this.value);
 
   // Not private because used in guild events
-  static TriggerTypes fromValue(int value) {
-    switch (value) {
-      case 1:
-        return TriggerTypes.keyword;
-      case 2:
-        return TriggerTypes.harmfulLink;
-      case 3:
-        return TriggerTypes.spam;
-      case 4:
-        return TriggerTypes.keywordPreset;
-      default:
-        throw UnknownEnumValue(value.toString());
-    }
-  }
+  static TriggerTypes fromValue(int value) => values.firstWhere((v) => v.value == value, orElse: () => throw UnknownEnumValue(value));
 
   @override
   String toString() => 'TriggerTypes[$value]';
@@ -109,18 +92,7 @@ enum KeywordPresets {
   final int value;
   const KeywordPresets(this.value);
 
-  static KeywordPresets _fromValue(int value) {
-    switch (value) {
-      case 1:
-        return KeywordPresets.profanity;
-      case 2:
-        return KeywordPresets.sexualContent;
-      case 3:
-        return KeywordPresets.slurs;
-      default:
-        throw UnknownEnumValue(value.toString());
-    }
-  }
+  static KeywordPresets _fromValue(int value) => values.firstWhere((v) => v == value, orElse: () => throw UnknownEnumValue(value));
 
   @override
   String toString() => 'KeywordPresets[$value]';
@@ -139,18 +111,7 @@ enum ActionTypes {
   final int value;
   const ActionTypes(this.value);
 
-  static ActionTypes _fromValue(int value) {
-    switch (value) {
-      case 1:
-        return ActionTypes.blockMessage;
-      case 2:
-        return ActionTypes.sendAlertMessage;
-      case 3:
-        return ActionTypes.timeout;
-      default:
-        throw UnknownEnumValue(value.toString());
-    }
-  }
+  static ActionTypes _fromValue(int value) => values.firstWhere((v) => v.value == value, orElse: () => throw UnknownEnumValue(value));
 
   @override
   String toString() => 'ActionTypes[$value]';
