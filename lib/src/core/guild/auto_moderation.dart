@@ -48,7 +48,7 @@ enum EventTypes {
   final int value;
   const EventTypes(this.value);
 
-  static EventTypes _fromValue(int value) => values.firstWhere((v) => v.value == value, orElse: () => throw UnknownEnumValue(value));
+  static EventTypes _fromValue(int value) => values.firstWhere((v) => v.value == value, orElse: () => throw UnknownEnumValueError(value));
 
   @override
   String toString() => 'EventTypes[$value]';
@@ -74,7 +74,7 @@ enum TriggerTypes {
   const TriggerTypes(this.value);
 
   // Not private because used in guild events
-  static TriggerTypes fromValue(int value) => values.firstWhere((v) => v.value == value, orElse: () => throw UnknownEnumValue(value));
+  static TriggerTypes fromValue(int value) => values.firstWhere((v) => v.value == value, orElse: () => throw UnknownEnumValueError(value));
 
   @override
   String toString() => 'TriggerTypes[$value]';
@@ -93,7 +93,7 @@ enum KeywordPresets {
   final int value;
   const KeywordPresets(this.value);
 
-  static KeywordPresets _fromValue(int value) => values.firstWhere((v) => v.value == value, orElse: () => throw UnknownEnumValue(value));
+  static KeywordPresets _fromValue(int value) => values.firstWhere((v) => v.value == value, orElse: () => throw UnknownEnumValueError(value));
 
   @override
   String toString() => 'KeywordPresets[$value]';
@@ -112,7 +112,7 @@ enum ActionTypes {
   final int value;
   const ActionTypes(this.value);
 
-  static ActionTypes _fromValue(int value) => values.firstWhere((v) => v.value == value, orElse: () => throw UnknownEnumValue(value));
+  static ActionTypes _fromValue(int value) => values.firstWhere((v) => v.value == value, orElse: () => throw UnknownEnumValueError(value));
 
   @override
   String toString() => 'ActionTypes[$value]';
