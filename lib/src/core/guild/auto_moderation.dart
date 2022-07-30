@@ -34,10 +34,10 @@ abstract class IAutoModerationRule implements SnowflakeEntity {
   /// Whether this rule is enabled.
   bool get enabled;
 
-  /// The role ids that should not be affected by the rule (Maximum of 20).
+  /// The role that should not be affected by the rule (Maximum of 20).
   Iterable<Cacheable<Snowflake, IRole>> get ignoredRoles;
 
-  /// The channel ids that should not be affected by the rule (Maximum of 50).
+  /// The channel that should not be affected by the rule (Maximum of 50).
   Iterable<Cacheable<Snowflake, ITextGuildChannel>> get ignoredChannels;
 }
 
