@@ -632,7 +632,7 @@ class AutoModeratioActionExecutionEvent extends SnowflakeEntity implements IAuto
     guild = GuildCacheable(client, Snowflake(raw['guild_id'] as String));
     action = ActionStructure(raw['action'] as RawApiMap, client);
     triggerType = TriggerTypes.fromValue(raw['rule_trigger_type'] as int);
-    member = MemberCacheable(client, Snowflake(raw['user_id'] as Snowflake), guild);
+    member = MemberCacheable(client, Snowflake(raw['user_id'] as String), guild);
     channel = raw['channel_id'] != null ? ChannelCacheable(client, Snowflake(raw['channel_id'])) : null;
     message = raw['message_id'] != null && channel != null ? MessageCacheable(client, Snowflake(raw['message_id']), channel!) : null;
     alertSystemMessage = raw['alert_system_message_id'] != null ? Snowflake(raw['alert_system_message_id']) : null;

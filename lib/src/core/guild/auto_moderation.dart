@@ -93,7 +93,7 @@ enum KeywordPresets {
   final int value;
   const KeywordPresets(this.value);
 
-  static KeywordPresets _fromValue(int value) => values.firstWhere((v) => v == value, orElse: () => throw UnknownEnumValue(value));
+  static KeywordPresets _fromValue(int value) => values.firstWhere((v) => v.value == value, orElse: () => throw UnknownEnumValue(value));
 
   @override
   String toString() => 'KeywordPresets[$value]';
