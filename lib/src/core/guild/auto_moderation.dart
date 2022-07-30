@@ -1,5 +1,6 @@
 import 'package:nyxx/src/core/channel/guild/text_guild_channel.dart';
 import 'package:nyxx/src/core/guild/guild.dart';
+import 'package:nyxx/src/core/guild/role.dart';
 import 'package:nyxx/src/core/snowflake.dart';
 import 'package:nyxx/src/core/snowflake_entity.dart';
 import 'package:nyxx/src/core/user/member.dart';
@@ -28,16 +29,16 @@ abstract class IAutoModerationRule implements SnowflakeEntity {
   ITriggerMetadata get triggerMetadata;
 
   /// The actions which will execute when the rule is triggered.
-  List<IActionStructure> get actions;
+  List<IActionStructure>? get actions;
 
   /// Whether this rule is enabled.
   bool get enabled;
 
   /// The role ids that should not be affected by the rule (Maximum of 20).
-  Iterable<RoleCacheable> get ignoredRoles;
+  Iterable<Cacheable<Snowflake, IRole>> get ignoredRoles;
 
   /// The channel ids that should not be affected by the rule (Maximum of 50).
-  Iterable<ChannelCacheable<ITextGuildChannel>> get ignoredChannels;
+  Iterable<Cacheable<Snowflake, ITextGuildChannel>> get ignoredChannels;
 }
 
 enum EventTypes {
@@ -175,16 +176,16 @@ class AutoModerationRule extends SnowflakeEntity implements IAutoModerationRule 
   late final ITriggerMetadata triggerMetadata;
 
   @override
-  late final List<IActionStructure> actions;
+  late final List<IActionStructure>? actions;
 
   @override
   late final bool enabled;
 
   @override
-  late final Iterable<RoleCacheable> ignoredRoles;
+  late final Iterable<Cacheable<Snowflake, IRole>> ignoredRoles;
 
   @override
-  late final Iterable<ChannelCacheable<ITextGuildChannel>> ignoredChannels;
+  late final Iterable<Cacheable<Snowflake, ITextGuildChannel>> ignoredChannels;
 
   AutoModerationRule(RawApiMap rawData, INyxx client) : super(Snowflake(rawData['id'])) {
     guild = GuildCacheable(client, Snowflake(rawData['guild_id']));
@@ -193,7 +194,7 @@ class AutoModerationRule extends SnowflakeEntity implements IAutoModerationRule 
     eventType = EventTypes._fromValue(rawData['event_type'] as int);
     triggerType = TriggerTypes.fromValue(rawData['trigger_type'] as int);
     triggerMetadata = TriggerMetadata(rawData['trigger_metadata'] as RawApiMap);
-    actions = [...?(rawData['actions'] as RawApiList?)?.map((a) => ActionStructure(a as RawApiMap, client))];
+    actions = (rawData['actions'] as RawApiList?)?.map((a) => ActionStructure(a as RawApiMap, client)).toList();
     enabled = rawData['enabled'] as bool;
     ignoredRoles = (rawData['exempt_roles'] as RawApiList).isNotEmpty
         ? (rawData['exempt_roles'] as RawApiList).map((r) => RoleCacheable(client, Snowflake(r), guild))
