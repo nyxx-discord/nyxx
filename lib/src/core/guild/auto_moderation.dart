@@ -125,7 +125,7 @@ abstract class ITriggerMetadata {
 
   /// The internally pre-defined wordsets which will be searched for in content.
   /// The associated trigger type is [TriggerTypes.keywordPreset].
-  List<KeywordPresets>? get keywordPresets;
+  Iterable<KeywordPresets>? get keywordPresets;
 
   /// Substrings which will be exempt from triggering the preset trigger type.
   /// The associated trigger type is [TriggerTypes.keywordPreset].
@@ -207,7 +207,7 @@ class AutoModerationRule extends SnowflakeEntity implements IAutoModerationRule 
 class TriggerMetadata implements ITriggerMetadata {
   // Maybe return null instead of empty list
   @override
-  late final List<KeywordPresets>? keywordPresets;
+  late final Iterable<KeywordPresets>? keywordPresets;
 
   @override
   late final List<String>? keywordsFilter;
@@ -221,7 +221,7 @@ class TriggerMetadata implements ITriggerMetadata {
   /// Creates an instance of [TriggerMetadata]
   TriggerMetadata(RawApiMap data) {
     keywordsFilter = data['keyword_filter'] != null ? (data['keyword_filter'] as RawApiList).cast<String>() : null;
-    keywordPresets = data['presets'] != null ? [...(data['presets'] as RawApiList).map((p) => KeywordPresets._fromValue(p as int))] : null;
+    keywordPresets = data['presets'] != null ? (data['presets'] as RawApiList).map((p) => KeywordPresets._fromValue(p as int)) : null;
     allowList = (data['allow_list'] as RawApiList?)?.cast<String>().toList();
     mentionLimit = data['mention_total_limit'] as int?;
   }
