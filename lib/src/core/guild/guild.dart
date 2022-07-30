@@ -190,7 +190,7 @@ abstract class IGuild implements SnowflakeEntity {
 
   /// The cached auto moderation rules in the guild.
   /// An empty map is returned if none where fetched or added by events.
-  Map<Snowflake, IAutoModerationRule> get autoModerationRules;
+  ICache<Snowflake, IAutoModerationRule> get autoModerationRules;
 
   /// The guild's icon, represented as URL.
   /// If guild doesn't have icon it returns null.

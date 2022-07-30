@@ -515,7 +515,7 @@ class AutoModerationRuleUpdateEvent implements IAutoModerationRuleUpdateEvent {
     if (guild == null) {
       return;
     }
-    guild.autoModerationRules.remove(rule.id);
+    guild.autoModerationRules.update(rule.id, (_) => rule, ifAbsent: () => rule);
   }
 }
 
