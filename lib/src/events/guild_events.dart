@@ -636,8 +636,8 @@ class AutoModeratioActionExecutionEvent extends SnowflakeEntity implements IAuto
     channel = raw['channel_id'] != null ? ChannelCacheable(client, Snowflake(raw['channel_id'])) : null;
     message = raw['message_id'] != null && channel != null ? MessageCacheable(client, Snowflake(raw['message_id']), channel!) : null;
     alertSystemMessage = raw['alert_system_message_id'] != null ? Snowflake(raw['alert_system_message_id']) : null;
-    content = raw['content'] != null ? raw['content'] as String : '';
+    content = raw['content'] as String;
     matchedKeyword = raw['matched_keyword'] != null ? raw['matched_keyword'] as String : null;
-    matchedContent = raw['matched_content'] != null ? raw['matched_content'] as String : '';
+    matchedContent = raw['matched_content'] as String;
   }
 }
