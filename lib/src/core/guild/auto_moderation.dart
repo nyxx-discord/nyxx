@@ -119,7 +119,7 @@ enum ActionTypes {
 }
 
 abstract class ITriggerMetadata {
-  /// Substrings wich will be searched for in the content.
+  /// Substrings which will be searched for in the content.
   /// The associated trigger type is [TriggerTypes.keyword].
   List<String>? get keywordsFilter;
 
@@ -142,12 +142,12 @@ abstract class IActionStructure {
   /// The type of the action.
   ActionTypes get actionType;
 
-  /// Additionnal metadata needed during execution for this specific action type.
+  /// Additional metadata needed during execution for this specific action type.
   IActionMetadata? get actionMetadata;
 }
 
 abstract class IActionMetadata {
-  /// The channel if to wich user content should be logged.
+  /// The channel if to which user content should be logged.
   /// The associated action type is [ActionTypes.sendAlertMessage].
   Cacheable<Snowflake, ITextGuildChannel>? get channelId;
 

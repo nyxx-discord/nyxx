@@ -21,7 +21,7 @@ class AutoModerationRuleBuilder implements Builder {
   /// Can be omitted as it is based on [triggerType].
   TriggerMetadataBuilder? triggerMetadata;
 
-  /// Wether this rule is enabled. `false` by default.
+  /// Whether this rule is enabled. `false` by default.
   bool? enabled;
 
   /// The role IDs that should not be affected by the rule. (Maximum of 20).
@@ -62,13 +62,13 @@ class ActionStructureBuilder implements Builder {
 }
 
 class ActionMetadataBuilder implements Builder {
-  /// Channel to wich messages content should be logged.
+  /// Channel to which messages content should be logged.
   ///
   /// (Works only when it's action type is [ActionTypes.sendAlertMessage]).
   Snowflake? channelId;
 
   /// The duration of the timeout.
-  /// This cannot exeed 4 weeks!
+  /// This cannot exceed 4 weeks!
   ///
   /// (Works only when it's action type is [ActionTypes.timeout]).
   Duration? duration;
