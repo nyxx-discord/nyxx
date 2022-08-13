@@ -33,7 +33,7 @@ abstract class IAuditLogOptions {
 }
 
 class AuditLogOptions implements IAuditLogOptions {
-  /// The channel in which the entiites were targeted.
+  /// The channel in which the entities were targeted.
   @override
   late final Snowflake? channelId;
 
