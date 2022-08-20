@@ -10,7 +10,7 @@ import 'package:nyxx/src/core/audit_logs/audit_log_options.dart';
 
 abstract class IAuditLogEntry implements SnowflakeEntity {
   /// Id of the affected entity (webhook, user, role, etc.)
-  String get targetId;
+  String? get targetId;
 
   /// Changes made to the target_id
   List<IAuditLogChange> get changes;
@@ -34,7 +34,7 @@ abstract class IAuditLogEntry implements SnowflakeEntity {
 class AuditLogEntry extends SnowflakeEntity implements IAuditLogEntry {
   /// Id of the affected entity (webhook, user, role, etc.)
   @override
-  late final String targetId;
+  late final String? targetId;
 
   /// Changes made to the target_id
   @override
@@ -58,7 +58,7 @@ class AuditLogEntry extends SnowflakeEntity implements IAuditLogEntry {
 
   /// Creates an instance of [AuditLogEntry]
   AuditLogEntry(RawApiMap raw, INyxx client) : super(Snowflake(raw["id"] as String)) {
-    targetId = raw["target_id"] as String;
+    targetId = raw["target_id"] as String?;
 
     changes = [
       if (raw["changes"] != null)
@@ -79,6 +79,7 @@ class AuditLogEntry extends SnowflakeEntity implements IAuditLogEntry {
 }
 
 class AuditLogEntryType extends IEnum<int> {
+  static const AuditLogEntryType unknown = AuditLogEntryType._create(0);
   static const AuditLogEntryType guildUpdate = AuditLogEntryType._create(1);
   static const AuditLogEntryType channelCreate = AuditLogEntryType._create(10);
   static const AuditLogEntryType channelUpdate = AuditLogEntryType._create(11);
@@ -126,6 +127,11 @@ class AuditLogEntryType extends IEnum<int> {
   static const AuditLogEntryType threadCreate = AuditLogEntryType._create(110);
   static const AuditLogEntryType threadUpdate = AuditLogEntryType._create(111);
   static const AuditLogEntryType threadDelete = AuditLogEntryType._create(112);
+  static const AuditLogEntryType applicationCommandPermissionUpdate = AuditLogEntryType._create(121);
+  static const AuditLogEntryType autoModerationRuleCreate = AuditLogEntryType._create(140);
+  static const AuditLogEntryType autoModerationRuleUpdate = AuditLogEntryType._create(141);
+  static const AuditLogEntryType autoModerationRuleDelete = AuditLogEntryType._create(142);
+  static const AuditLogEntryType autoModerationBlockMessage = AuditLogEntryType._create(143);
 
   const AuditLogEntryType._create(int value) : super(value);
 

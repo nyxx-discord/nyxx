@@ -4,7 +4,7 @@ import 'package:nyxx/src/utils/builders/message_builder.dart';
 import 'package:nyxx/src/utils/builders/thread_builder.dart';
 
 class ForumThreadBuilder implements Builder {
-  /// The name fo the thread
+  /// The name of the thread
   String name;
 
   /// First message in thread
