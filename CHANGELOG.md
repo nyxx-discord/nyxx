@@ -1,5 +1,10 @@
+## 4.1.0-dev.0
+__20.08.2022__
+
+- feature: feature: auto moderation (#353)
+
 ## 4.0.0
-___29.07.2022__
+__29.07.2022__
 
 - breaking: Fix typo in `IHttpResponseSucess`
 - breaking: Remove `threeDayThreadArchive` and `sevenDayThreadArchive` guild features
