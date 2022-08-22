@@ -1,8 +1,6 @@
 import 'dart:async';
-import 'dart:html';
 import 'dart:io';
 import 'dart:isolate';
-import 'dart:js';
 
 import 'package:nyxx/src/core/snowflake.dart';
 import 'package:nyxx/src/core/guild/client_user.dart';
@@ -115,6 +113,7 @@ class Shard implements IShard {
   @override
   bool get connected => _connected;
 
+  // ignore: unused_field
   late final Isolate _shardIsolate; // Reference to isolate
   late final Stream<dynamic> _receiveStream; // Broadcast stream on which data from isolate is received
   late final ReceivePort _receivePort; // Port on which data from isolate is received
