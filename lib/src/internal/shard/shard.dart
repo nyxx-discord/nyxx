@@ -30,10 +30,12 @@ import 'package:nyxx/src/internal/shard/shard_manager.dart';
 import 'package:nyxx/src/typedefs.dart';
 import 'package:nyxx/src/utils/builders/presence_builder.dart';
 
-/// Shard is single connection to discord gateway. Since bots can grow big, handling thousand of guild on same websocket connections would be very hand.
-/// Traffic can be split into different connections which can be run on different processes or even different machines.
+/// A connection to the [Discord Gateway](https://discord.com/developers/docs/topics/gateway).
+///
+/// One client can have multiple shards. Each shard moves the decompressing and decoding steps of the Gateway connection to their own thread which can lessen
+/// the load on the main thread for large bots which might receive thousands of events per minute.
 abstract class IShard implements Disposable {
-  /// Id of shard
+  /// The ID of this shard.
   int get id;
 
   /// Reference to [ShardManager]
@@ -116,6 +118,7 @@ class Shard implements IShard {
   Shard(this.id, this.manager, this.gatewayHost) {
     readyFuture = spawn();
 
+    // Automatically connect once the shard runner is ready.
     readyFuture.then((_) => execute(
           ShardMessage(ManagerToShard.connect, data: {
             'gatewayHost': gatewayHost,
@@ -123,6 +126,7 @@ class Shard implements IShard {
           }),
         ));
 
+    // Start handling messages from the shard.
     readyFuture.then((_) => shardMessages.listen(handle));
   }
 
@@ -148,7 +152,31 @@ class Shard implements IShard {
     sendPort.send(message);
   }
 
+  /// Triggers a reconnection to the shard.
+  ///
+  /// If the connection is to be resumed, [resumeGatewayUrl] is used as the connection. Otherwise, [gatewayHost] is used.
+  void reconnect() {
+    manager.logger.info('Reconnecting to gateway on shard $id');
+    resetConnectionProperties();
+
+    execute(ShardMessage(
+      ManagerToShard.reconnect,
+      data: {
+        'gatewayHost': shouldResume && canResume ? resumeGatewayUrl : gatewayHost,
+        'useCompression': manager.connectionManager.client.options.compressedGatewayPayloads,
+      },
+    ));
+  }
+
+  void resetConnectionProperties() {
+    connected = false;
+    heartbeatTimer?.cancel();
+    lastHeartbeatSent = null;
+  }
+
   /// Handler for incoming messages from the isolate.
+  ///
+  /// These messages are not raw messages from the websocket! Those are handled in [handlePayload].
   Future<void> handle(ShardMessage<ShardToManager> message) async {
     manager.logger.finest('Got message ${message.type}${message.data == null ? '' : ' with data ${message.data}'} on shard $id');
 
@@ -167,10 +195,9 @@ class Shard implements IShard {
     }
   }
 
+  /// A handler for when the shard connection disconnects.
   Future<void> handleDisconnect(int closeCode, String? closeReason) async {
-    connected = false;
-    heartbeatTimer?.cancel();
-    lastHeartbeatSent = null;
+    resetConnectionProperties();
 
     manager.onDisconnectController.add(this);
 
@@ -207,9 +234,11 @@ class Shard implements IShard {
       shouldResume = true;
     }
 
+    // Reconnect by default
     reconnect();
   }
 
+  /// A handler for when the shard establishes a connection to the Gateway.
   Future<void> handleConnected() async {
     manager.logger.info('Shard $id connected to gateway');
     connected = true;
@@ -219,6 +248,7 @@ class Shard implements IShard {
     lastHeartbeatAcked = true;
   }
 
+  /// A handler for when the shard encounters an error. These can occur if the runner is in an invalid state or fails to open the websocket connection.
   Future<void> handleError(String message, bool? shouldReconnect) async {
     manager.logger.shout('Shard $id reported error: $message');
 
@@ -227,18 +257,7 @@ class Shard implements IShard {
     }
   }
 
-  void reconnect() {
-    manager.logger.info('Reconnecting to gateway on shard $id');
-
-    execute(ShardMessage(
-      ManagerToShard.reconnect,
-      data: {
-        'gatewayHost': gatewayHost,
-        'useCompression': manager.connectionManager.client.options.compressedGatewayPayloads,
-      },
-    ));
-  }
-
+  /// A handler for when a payload from the gateway is received.
   Future<void> handlePayload(dynamic data) async {
     final opcode = data['op'] as int;
     final d = data['d'];
@@ -247,6 +266,7 @@ class Shard implements IShard {
       case OPCodes.dispatch:
         dispatch(data['s'] as int, data['t'] as String, data as RawApiMap);
         break;
+
       case OPCodes.heartbeat:
         heartbeat();
         break;
@@ -260,11 +280,18 @@ class Shard implements IShard {
         break;
 
       case OPCodes.invalidSession:
+        // https://discord.com/developers/docs/topics/gateway#invalid-session
         shouldResume = d as bool;
-        Future.delayed(
-          Duration(seconds: 1) + Duration(seconds: 4) * Random().nextDouble(),
-          identify,
-        );
+
+        if (shouldResume) {
+          reconnect();
+        } else {
+          // https://discord.com/developers/docs/topics/gateway#resuming
+          Future.delayed(
+            Duration(seconds: 1) + Duration(seconds: 4) * Random().nextDouble(),
+            identify,
+          );
+        }
         break;
 
       case OPCodes.reconnect:
@@ -278,11 +305,18 @@ class Shard implements IShard {
     }
   }
 
+  /// The timer than handles sending regular heartbeats to the gateway.
   Timer? heartbeatTimer;
+
+  /// Whether this shard should attempt to resume upon connecting.
+  ///
+  /// Note that a result will only be sent if this shard [shouldResume] and [canResume].
   bool shouldResume = false;
 
+  /// Whether this shard can resume upon connecting.
   bool get canResume => seqNum != null && sessionId != null && resumeGatewayUrl != null;
 
+  /// A handler for [OPCodes.hello].
   void hello(int heartbeatInterval) {
     // https://discord.com/developers/docs/topics/gateway#heartbeating
     final heartbeatDuration = Duration(milliseconds: heartbeatInterval);
@@ -297,12 +331,12 @@ class Shard implements IShard {
 
     if (shouldResume && canResume) {
       resume();
-      return;
+    } else {
+      identify();
     }
-
-    identify();
   }
 
+  /// Sends the identify payload to the gateway.
   // https://discord.com/developers/docs/topics/gateway#identifying
   void identify() => send(OPCodes.identify, {
         "token": manager.connectionManager.client.token,
@@ -317,6 +351,9 @@ class Shard implements IShard {
         "shard": <int>[id, manager.totalNumShards]
       });
 
+  /// Sends the resume payload to the gateway.
+  ///
+  /// Will throw if [canResume] is false.
   // https://discord.com/developers/docs/topics/gateway#resuming
   void resume() => send(OPCodes.resume, {
         "token": manager.connectionManager.client.token,
@@ -324,9 +361,20 @@ class Shard implements IShard {
         "seq": seqNum!,
       });
 
+  /// The time at which the last heartbeat was sent.
+  ///
+  /// Used for calculating gateway latency.
   DateTime? lastHeartbeatSent;
+
+  /// Whether the last heartbeat sent has been acknowledged.
   bool lastHeartbeatAcked = true;
 
+  /// A handler for [OPCodes.heartbeat].
+  ///
+  /// Also called regularly in the callback of [heartbeatTimer].
+  ///
+  /// Triggers a reconnect if it is invoked before the last heartbeat was acked. See
+  /// https://discord.com/developers/docs/topics/gateway#heartbeating-example-gateway-heartbeat-ack.
   void heartbeat() {
     send(OPCodes.heartbeat, seqNum);
 
@@ -340,16 +388,24 @@ class Shard implements IShard {
     lastHeartbeatAcked = false;
   }
 
+  /// A handler for [OPCodes.heartbeatAck].
+  ///
+  /// Updates the gateway latency.
   void heartbeatAck() {
     gatewayLatency = DateTime.now().difference(lastHeartbeatSent!);
     lastHeartbeatAcked = true;
   }
 
+  /// The session ID found in the READY event.
   String? sessionId;
+
+  /// The URL to use for resuming gateway connections, found in the READY event.
   String? resumeGatewayUrl;
 
+  /// The last known sequence number.
   int? seqNum;
 
+  /// A handler for [OPCodes.dispatch].
   void dispatch(int seqNum, String type, RawApiMap data) async {
     final eventController = manager.connectionManager.client.eventsWs as WebsocketEventController;
 
