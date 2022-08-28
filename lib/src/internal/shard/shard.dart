@@ -113,6 +113,7 @@ class Shard implements IShard {
   @override
   bool get connected => _connected;
 
+  // ignore: unused_field
   late final Isolate _shardIsolate; // Reference to isolate
   late final Stream<dynamic> _receiveStream; // Broadcast stream on which data from isolate is received
   late final ReceivePort _receivePort; // Port on which data from isolate is received
@@ -233,10 +234,18 @@ class Shard implements IShard {
       return;
     }
 
+    final closeReason = data['errorReason'] as String?;
+    final socketError = data['error'] as String?;
+
+    for (final plugin in manager.connectionManager.client.plugins) {
+      plugin.onConnectionChange(manager.connectionManager.client, manager.logger, closeCode, closeReason, socketError);
+    }
+
     _connected = false;
     _heartbeatTimer.cancel();
-    manager.logger.severe("Shard $id disconnected. Error: [${data['error']}] Error code: [${data['errorCode']}] | Error message: [${data['errorReason']}]");
     manager.onDisconnectController.add(this);
+
+    manager.logger.severe("Shard $id disconnected. Error: [$socketError] Error code: [$closeCode] | Error message: [$closeReason]");
 
     switch (closeCode) {
       case 4004:
