@@ -49,6 +49,7 @@ class ClientOptions {
   bool compressedGatewayPayloads;
 
   /// Enables dispatching of guild subscription events (presence and typing events)
+  @Deprecated('No longer has any effect, use intents instead.')
   bool guildSubscriptions;
 
   /// Initial bot presence

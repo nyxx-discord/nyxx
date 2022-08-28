@@ -1,11 +1,11 @@
 import 'dart:async';
 import 'dart:io';
 import 'dart:isolate';
+import 'dart:math';
 
-import 'package:nyxx/src/core/snowflake.dart';
 import 'package:nyxx/src/core/guild/client_user.dart';
+import 'package:nyxx/src/core/snowflake.dart';
 import 'package:nyxx/src/events/channel_events.dart';
-import 'package:nyxx/src/events/disconnect_event.dart';
 import 'package:nyxx/src/events/guild_events.dart';
 import 'package:nyxx/src/events/invite_events.dart';
 import 'package:nyxx/src/events/member_chunk_event.dart';
@@ -24,13 +24,18 @@ import 'package:nyxx/src/internal/event_controller.dart';
 import 'package:nyxx/src/internal/exceptions/invalid_shard_exception.dart';
 import 'package:nyxx/src/internal/exceptions/unrecoverable_nyxx_error.dart';
 import 'package:nyxx/src/internal/interfaces/disposable.dart';
-import 'package:nyxx/src/internal/shard/shard_manager.dart';
+import 'package:nyxx/src/internal/shard/message.dart';
 import 'package:nyxx/src/internal/shard/shard_handler.dart';
+import 'package:nyxx/src/internal/shard/shard_manager.dart';
 import 'package:nyxx/src/typedefs.dart';
 import 'package:nyxx/src/utils/builders/presence_builder.dart';
 
+/// A connection to the [Discord Gateway](https://discord.com/developers/docs/topics/gateway).
+///
+/// One client can have multiple shards. Each shard moves the decompressing and decoding steps of the Gateway connection to their own thread which can lessen
+/// the load on the main thread for large bots which might receive thousands of events per minute.
 abstract class IShard implements Disposable {
-  /// Id of shard
+  /// The ID of this shard.
   int get id;
 
   /// Reference to [ShardManager]
@@ -75,135 +80,607 @@ abstract class IShard implements Disposable {
       {String? query, Iterable<Snowflake>? userIds, int limit = 0, bool presences = false, String? nonce});
 }
 
-/// Shard is single connection to discord gateway. Since bots can grow big, handling thousand of guild on same websocket connections would be very hand.
-/// Traffic can be split into different connections which can be run on different processes or even different machines.
 class Shard implements IShard {
-  /// Id of shard
   @override
   final int id;
 
-  /// Reference to [ShardManager]
   @override
   final ShardManager manager;
 
-  /// Emitted when the shard encounters a connection error
-  @override
-  late final Stream<IShard> onDisconnect = manager.onDisconnect.where((event) => event.id == id);
-
-  /// Emitted when shard receives member chunk.
-  @override
-  late final Stream<IMemberChunkEvent> onMemberChunk = manager.onMemberChunk.where((event) => event.shardId == id);
-
-  /// Emitted when the shard resumed its connection
-  @override
-  late final Stream<IShard> onResume = manager.onResume.where((event) => event.id == id);
-
-  /// List of handled guild ids
   @override
   final List<Snowflake> guilds = [];
 
-  /// Gets the latest gateway latency.
+  @override
+  Duration gatewayLatency = Duration.zero;
+
+  @override
+  bool connected = false;
+
+  /// The receive port on which events from the isolate will be received.
+  final ReceivePort receivePort = ReceivePort();
+
+  /// A stream on which events from the shard will be received.
   ///
-  /// To calculate the gateway latency, nyxx measures the time it takes for Discord to answer the gateway
-  /// heartbeat packet with a heartbeat ack packet. Note this value is updated each time gateway responses to ack.
-  @override
-  Duration get gatewayLatency => _gatewayLatency;
+  /// Should only be accessed after [readyFuture] has completed.
+  late final Stream<ShardMessage<ShardToManager>> shardMessages;
 
-  /// Returns true if shard is connected to websocket
-  @override
-  bool get connected => _connected;
+  /// The send port on which messages to the isolate should be added.
+  ///
+  /// Should only be accessed after [readyFuture] has completed.
+  late final SendPort sendPort;
 
-  // ignore: unused_field
-  late final Isolate _shardIsolate; // Reference to isolate
-  late final Stream<dynamic> _receiveStream; // Broadcast stream on which data from isolate is received
-  late final ReceivePort _receivePort; // Port on which data from isolate is received
-  late final SendPort _isolateSendPort; // Port on which data can be sent to isolate
-  late SendPort _sendPort; // Send Port for isolate
-  String? _sessionId; // Id of gateway session
-  int _sequence = 0; // Event sequence
-  late Timer _heartbeatTimer; // Heartbeat time
-  bool _connected = false; // Connection status
-  bool _resume = false; // Resume status
-  Duration _gatewayLatency = const Duration(); // latency of discord
-  late DateTime _lastHeartbeatSent; // Datetime when last heartbeat was sent
-  bool _heartbeatAckReceived = true; // True if last heartbeat was acked
+  /// A future that completes once the handler isolate is running.
+  late final Future<void> readyFuture;
 
-  WebsocketEventController get eventController => manager.connectionManager.client.eventsWs as WebsocketEventController;
+  /// The URL to which this shard should make the initial connection.
+  final String gatewayHost;
 
-  /// Creates an instance of [Shard]
-  Shard(this.id, this.manager, String gatewayUrl) {
-    manager.logger.finer("Starting shard with id: $id; url: $gatewayUrl");
+  Shard(this.id, this.manager, this.gatewayHost) {
+    readyFuture = spawn();
 
-    _receivePort = ReceivePort();
-    _receiveStream = _receivePort.asBroadcastStream();
-    _isolateSendPort = _receivePort.sendPort;
+    // Automatically connect once the shard runner is ready.
+    readyFuture.then((_) => execute(
+          ShardMessage(ManagerToShard.connect, data: {
+            'gatewayHost': gatewayHost,
+            'useCompression': manager.connectionManager.client.options.compressedGatewayPayloads,
+          }),
+        ));
 
-    Isolate.spawn(shardHandler, _isolateSendPort).then((isolate) async {
-      _shardIsolate = isolate;
-      _sendPort = await _receiveStream.first as SendPort;
-
-      _sendPort.send({"cmd": "INIT", "gatewayUrl": gatewayUrl, "compression": manager.connectionManager.client.options.compressedGatewayPayloads});
-      _receiveStream.listen(_handle);
-    });
+    // Start handling messages from the shard.
+    readyFuture.then((_) => shardMessages.listen(handle));
   }
 
-  /// Sends WS data.
-  @override
-  void send(int opCode, dynamic d) {
-    final rawData = {
-      "cmd": "SEND",
-      "data": {"op": opCode, "d": d}
+  /// Spawns the handler isolate and initializes [sendPort] and [shardMessages];
+  Future<void> spawn() async {
+    manager.logger.fine("Starting shard $id...");
+
+    await Isolate.spawn(shardHandler, receivePort.sendPort, debugName: "Shard Runner #$id");
+
+    final rawShardMessages = receivePort.asBroadcastStream();
+
+    sendPort = await rawShardMessages.first as SendPort;
+    shardMessages = rawShardMessages.cast<ShardMessage<ShardToManager>>();
+
+    manager.logger.fine("Shard $id ready");
+  }
+
+  /// Sends a message to the shard isolate.
+  void execute(ShardMessage<ManagerToShard> message) async {
+    await readyFuture;
+
+    manager.logger.finest("Sending message ${message.type}${message.data == null ? '' : ' with data ${message.data}'} to shard $id");
+    sendPort.send(message);
+  }
+
+  /// Triggers a reconnection to the shard.
+  ///
+  /// If the connection is to be resumed, [resumeGatewayUrl] is used as the connection. Otherwise, [gatewayHost] is used.
+  void reconnect() {
+    manager.logger.info('Reconnecting to gateway on shard $id');
+    resetConnectionProperties();
+
+    execute(ShardMessage(
+      ManagerToShard.reconnect,
+      data: {
+        'gatewayHost': shouldResume && canResume ? resumeGatewayUrl : gatewayHost,
+        'useCompression': manager.connectionManager.client.options.compressedGatewayPayloads,
+      },
+    ));
+  }
+
+  void resetConnectionProperties() {
+    connected = false;
+    heartbeatTimer?.cancel();
+    lastHeartbeatSent = null;
+  }
+
+  /// Handler for incoming messages from the isolate.
+  ///
+  /// These messages are not raw messages from the websocket! Those are handled in [handlePayload].
+  Future<void> handle(ShardMessage<ShardToManager> message) async {
+    manager.logger.finest('Got message ${message.type}${message.data == null ? '' : ' with data ${message.data}'} on shard $id');
+
+    switch (message.type) {
+      case ShardToManager.received:
+        return handlePayload(message.data);
+      case ShardToManager.connected:
+        return handleConnected();
+      case ShardToManager.disconnected:
+        return handleDisconnect(message.data['closeCode'] as int, message.data['closeReason'] as String?);
+      case ShardToManager.error:
+        return handleError(message.data['message'] as String, message.data['shouldReconnect'] as bool?);
+      case ShardToManager.disposed:
+        manager.logger.info("Shard $id disposed.");
+        break;
+    }
+  }
+
+  /// A handler for when the shard connection disconnects.
+  Future<void> handleDisconnect(int closeCode, String? closeReason) async {
+    resetConnectionProperties();
+
+    manager.onDisconnectController.add(this);
+
+    // https://discord.com/developers/docs/topics/opcodes-and-status-codes#gateway-gateway-close-event-codes
+    const warnings = <int, String>{
+      4000: 'Unknown error',
+      4001: 'Unknown opcode',
+      4002: 'Decode error (invalid payload)',
+      4003: 'Payload sent before authentication',
+      4005: 'Already authenticated',
+      4007: 'Invalid seq',
+      4008: 'Rate limited',
+      4009: 'Session timed out',
     };
-    manager.logger.finest("Sending to shard isolate on shard [$id]: [$rawData]");
-    _sendPort.send(rawData);
+
+    const errors = <int, String>{
+      4004: 'Invalid authentication',
+      4010: 'Invalid shard',
+      4011: 'Sharding required',
+      4012: 'Invalid API version',
+      4013: 'Invalid intents',
+      4014: 'Disallowed intent',
+    };
+
+    if (errors.containsKey(closeCode)) {
+      throw UnrecoverableNyxxError('Shard $id disconnected: ${errors[closeCode]!}');
+    } else if (warnings.containsKey(closeCode)) {
+      manager.logger.warning('Shard $id disconnected: ${warnings[closeCode]!}');
+
+      // Try to resume on all warnings apart from invalid sequence, which prevents us from resuming
+      shouldResume = closeCode != 4007;
+    } else {
+      // If we get an unknown error, try to resume.
+      shouldResume = true;
+    }
+
+    // Reconnect by default
+    reconnect();
   }
 
-  /// Updates clients voice state for [Guild] with given [guildId]
+  /// A handler for when the shard establishes a connection to the Gateway.
+  Future<void> handleConnected() async {
+    manager.logger.info('Shard $id connected to gateway');
+    connected = true;
+
+    // There was no previous heartbeat on a new connection.
+    // Setting this to true prevents us from reconnecting upon receiving the first heartbeat due to the previous heartbeat "not being acked".
+    lastHeartbeatAcked = true;
+  }
+
+  /// A handler for when the shard encounters an error. These can occur if the runner is in an invalid state or fails to open the websocket connection.
+  Future<void> handleError(String message, bool? shouldReconnect) async {
+    manager.logger.shout('Shard $id reported error: $message');
+
+    if (shouldReconnect ?? false) {
+      Future.delayed(const Duration(seconds: 10), reconnect);
+    }
+  }
+
+  /// A handler for when a payload from the gateway is received.
+  Future<void> handlePayload(dynamic data) async {
+    final opcode = data['op'] as int;
+    final d = data['d'];
+
+    switch (opcode) {
+      case OPCodes.dispatch:
+        dispatch(data['s'] as int, data['t'] as String, data as RawApiMap);
+        break;
+
+      case OPCodes.heartbeat:
+        heartbeat();
+        break;
+
+      case OPCodes.hello:
+        hello(d['heartbeat_interval'] as int);
+        break;
+
+      case OPCodes.heartbeatAck:
+        heartbeatAck();
+        break;
+
+      case OPCodes.invalidSession:
+        // https://discord.com/developers/docs/topics/gateway#invalid-session
+        shouldResume = d as bool;
+
+        if (shouldResume) {
+          reconnect();
+        } else {
+          // https://discord.com/developers/docs/topics/gateway#resuming
+          Future.delayed(
+            Duration(seconds: 1) + Duration(seconds: 4) * Random().nextDouble(),
+            identify,
+          );
+        }
+        break;
+
+      case OPCodes.reconnect:
+        shouldResume = true;
+        reconnect();
+        break;
+
+      default:
+        manager.logger.severe('Unhandled opcode $opcode');
+        break;
+    }
+  }
+
+  /// The timer than handles sending regular heartbeats to the gateway.
+  Timer? heartbeatTimer;
+
+  /// Whether this shard should attempt to resume upon connecting.
+  ///
+  /// Note that a result will only be sent if this shard [shouldResume] and [canResume].
+  bool shouldResume = false;
+
+  /// Whether this shard can resume upon connecting.
+  bool get canResume => seqNum != null && sessionId != null && resumeGatewayUrl != null;
+
+  /// A handler for [OPCodes.hello].
+  void hello(int heartbeatInterval) {
+    // https://discord.com/developers/docs/topics/gateway#heartbeating
+    final heartbeatDuration = Duration(milliseconds: heartbeatInterval);
+
+    final jitter = Random().nextDouble();
+
+    heartbeatTimer = Timer(heartbeatDuration * jitter, () {
+      heartbeat();
+
+      heartbeatTimer = Timer.periodic(heartbeatDuration, (timer) => heartbeat());
+    });
+
+    if (shouldResume && canResume) {
+      resume();
+    } else {
+      identify();
+    }
+  }
+
+  /// Sends the identify payload to the gateway.
+  // https://discord.com/developers/docs/topics/gateway#identifying
+  void identify() => send(OPCodes.identify, {
+        "token": manager.connectionManager.client.token,
+        "properties": {
+          "os": Platform.operatingSystem,
+          "browser": "nyxx",
+          "device": "nyxx",
+        },
+        "large_threshold": manager.connectionManager.client.options.largeThreshold,
+        "intents": manager.connectionManager.client.intents,
+        if (manager.connectionManager.client.options.initialPresence != null) "presence": manager.connectionManager.client.options.initialPresence!.build(),
+        "shard": <int>[id, manager.totalNumShards]
+      });
+
+  /// Sends the resume payload to the gateway.
+  ///
+  /// Will throw if [canResume] is false.
+  // https://discord.com/developers/docs/topics/gateway#resuming
+  void resume() => send(OPCodes.resume, {
+        "token": manager.connectionManager.client.token,
+        "session_id": sessionId!,
+        "seq": seqNum!,
+      });
+
+  /// The time at which the last heartbeat was sent.
+  ///
+  /// Used for calculating gateway latency.
+  DateTime? lastHeartbeatSent;
+
+  /// Whether the last heartbeat sent has been acknowledged.
+  bool lastHeartbeatAcked = true;
+
+  /// A handler for [OPCodes.heartbeat].
+  ///
+  /// Also called regularly in the callback of [heartbeatTimer].
+  ///
+  /// Triggers a reconnect if it is invoked before the last heartbeat was acked. See
+  /// https://discord.com/developers/docs/topics/gateway#heartbeating-example-gateway-heartbeat-ack.
+  void heartbeat() {
+    send(OPCodes.heartbeat, seqNum);
+
+    if (!lastHeartbeatAcked) {
+      shouldResume = true;
+      reconnect();
+      return;
+    }
+
+    lastHeartbeatSent = DateTime.now();
+    lastHeartbeatAcked = false;
+  }
+
+  /// A handler for [OPCodes.heartbeatAck].
+  ///
+  /// Updates the gateway latency.
+  void heartbeatAck() {
+    gatewayLatency = DateTime.now().difference(lastHeartbeatSent!);
+    lastHeartbeatAcked = true;
+  }
+
+  /// The session ID found in the READY event.
+  String? sessionId;
+
+  /// The URL to use for resuming gateway connections, found in the READY event.
+  String? resumeGatewayUrl;
+
+  /// The last known sequence number.
+  int? seqNum;
+
+  /// A handler for [OPCodes.dispatch].
+  void dispatch(int seqNum, String type, RawApiMap data) async {
+    final eventController = manager.connectionManager.client.eventsWs as WebsocketEventController;
+
+    this.seqNum = seqNum;
+
+    switch (type) {
+      case "READY":
+        sessionId = data["d"]["session_id"] as String;
+        resumeGatewayUrl = data["d"]["resume_gateway_url"] as String;
+
+        manager.connectionManager.client.self = ClientUser(manager.connectionManager.client, data["d"]["user"] as RawApiMap);
+
+        manager.logger.info("Shard $id ready!");
+
+        if (!shouldResume) {
+          await manager.connectionManager.propagateReady();
+        }
+
+        break;
+      case "RESUMED":
+        shouldResume = false;
+        manager.onResumeController.add(this);
+        break;
+
+      case "GUILD_MEMBERS_CHUNK":
+        manager.onMemberChunkController.add(MemberChunkEvent(data, manager.connectionManager.client, id));
+        break;
+
+      case "MESSAGE_REACTION_REMOVE_ALL":
+        eventController.onMessageReactionsRemovedController.add(MessageReactionsRemovedEvent(data, manager.connectionManager.client));
+        break;
+
+      case "MESSAGE_REACTION_ADD":
+        eventController.onMessageReactionAddedController.add(MessageReactionAddedEvent(data, manager.connectionManager.client));
+        break;
+
+      case "MESSAGE_REACTION_REMOVE":
+        eventController.onMessageReactionRemoveController.add(MessageReactionRemovedEvent(data, manager.connectionManager.client));
+        break;
+
+      case "MESSAGE_DELETE_BULK":
+        eventController.onMessageDeleteBulkController.add(MessageDeleteBulkEvent(data, manager.connectionManager.client));
+        break;
+
+      case "CHANNEL_PINS_UPDATE":
+        eventController.onChannelPinsUpdateController.add(ChannelPinsUpdateEvent(data, manager.connectionManager.client));
+        break;
+
+      case "VOICE_STATE_UPDATE":
+        eventController.onVoiceStateUpdateController.add(VoiceStateUpdateEvent(data, manager.connectionManager.client));
+        break;
+
+      case "VOICE_SERVER_UPDATE":
+        eventController.onVoiceServerUpdateController.add(VoiceServerUpdateEvent(data, manager.connectionManager.client));
+        break;
+
+      case "GUILD_EMOJIS_UPDATE":
+        eventController.onGuildEmojisUpdateController.add(GuildEmojisUpdateEvent(data, manager.connectionManager.client));
+        break;
+
+      case "MESSAGE_CREATE":
+        eventController.onMessageReceivedController.add(MessageReceivedEvent(data, manager.connectionManager.client));
+        break;
+
+      case "MESSAGE_DELETE":
+        eventController.onMessageDeleteController.add(MessageDeleteEvent(data, manager.connectionManager.client));
+        break;
+
+      case "MESSAGE_UPDATE":
+        eventController.onMessageUpdateController.add(MessageUpdateEvent(data, manager.connectionManager.client));
+        break;
+
+      case "GUILD_CREATE":
+        final event = GuildCreateEvent(data, manager.connectionManager.client);
+        guilds.add(event.guild.id);
+        eventController.onGuildCreateController.add(event);
+        break;
+
+      case "GUILD_UPDATE":
+        eventController.onGuildUpdateController.add(GuildUpdateEvent(data, manager.connectionManager.client));
+        break;
+
+      case "GUILD_DELETE":
+        eventController.onGuildDeleteController.add(GuildDeleteEvent(data, manager.connectionManager.client));
+        break;
+
+      case "GUILD_BAN_ADD":
+        eventController.onGuildBanAddController.add(GuildBanAddEvent(data, manager.connectionManager.client));
+        break;
+
+      case "GUILD_BAN_REMOVE":
+        eventController.onGuildBanRemoveController.add(GuildBanRemoveEvent(data, manager.connectionManager.client));
+        break;
+
+      case "GUILD_MEMBER_ADD":
+        eventController.onGuildMemberAddController.add(GuildMemberAddEvent(data, manager.connectionManager.client));
+        break;
+
+      case "GUILD_MEMBER_REMOVE":
+        eventController.onGuildMemberRemoveController.add(GuildMemberRemoveEvent(data, manager.connectionManager.client));
+        break;
+
+      case "GUILD_MEMBER_UPDATE":
+        eventController.onGuildMemberUpdateController.add(GuildMemberUpdateEvent(data, manager.connectionManager.client));
+        break;
+
+      case "CHANNEL_CREATE":
+        eventController.onChannelCreateController.add(ChannelCreateEvent(data, manager.connectionManager.client));
+        break;
+
+      case "CHANNEL_UPDATE":
+        eventController.onChannelUpdateController.add(ChannelUpdateEvent(data, manager.connectionManager.client));
+        break;
+
+      case "CHANNEL_DELETE":
+        eventController.onChannelDeleteController.add(ChannelDeleteEvent(data, manager.connectionManager.client));
+        break;
+
+      case "TYPING_START":
+        eventController.onTypingController.add(TypingEvent(data, manager.connectionManager.client));
+        break;
+
+      case "PRESENCE_UPDATE":
+        eventController.onPresenceUpdateController.add(PresenceUpdateEvent(data, manager.connectionManager.client));
+        break;
+
+      case "GUILD_ROLE_CREATE":
+        eventController.onRoleCreateController.add(RoleCreateEvent(data, manager.connectionManager.client));
+        break;
+
+      case "GUILD_ROLE_UPDATE":
+        eventController.onRoleUpdateController.add(RoleUpdateEvent(data, manager.connectionManager.client));
+        break;
+
+      case "GUILD_ROLE_DELETE":
+        eventController.onRoleDeleteController.add(RoleDeleteEvent(data, manager.connectionManager.client));
+        break;
+
+      case "USER_UPDATE":
+        eventController.onUserUpdateController.add(UserUpdateEvent(data, manager.connectionManager.client));
+        break;
+
+      case "INVITE_CREATE":
+        eventController.onInviteCreatedController.add(InviteCreatedEvent(data, manager.connectionManager.client));
+        break;
+
+      case "INVITE_DELETE":
+        eventController.onInviteDeleteController.add(InviteDeletedEvent(data, manager.connectionManager.client));
+        break;
+
+      case "MESSAGE_REACTION_REMOVE_EMOJI":
+        eventController.onMessageReactionRemoveEmojiController.add(MessageReactionRemoveEmojiEvent(data, manager.connectionManager.client));
+        break;
+
+      case "THREAD_CREATE":
+        eventController.onThreadCreatedController.add(ThreadCreateEvent(data, manager.connectionManager.client));
+        break;
+
+      case "THREAD_MEMBERS_UPDATE":
+        eventController.onThreadMembersUpdateController.add(ThreadMembersUpdateEvent(data, manager.connectionManager.client));
+        break;
+
+      case "THREAD_DELETE":
+        eventController.onThreadDeleteController.add(ThreadDeletedEvent(data, manager.connectionManager.client));
+        break;
+
+      case "THREAD_MEMBER_UPDATE":
+        // Catch unnecessary OP, could be needed in future but unsure.
+        break;
+
+      case "GUILD_SCHEDULED_EVENT_CREATE":
+        eventController.onGuildEventCreateController.add(GuildEventCreateEvent(data, manager.connectionManager.client));
+        break;
+
+      case "GUILD_SCHEDULED_EVENT_UPDATE":
+        eventController.onGuildEventUpdateController.add(GuildEventUpdateEvent(data, manager.connectionManager.client));
+        break;
+
+      case "GUILD_SCHEDULED_EVENT_DELETE":
+        eventController.onGuildEventDeleteController.add(GuildEventDeleteEvent(data, manager.connectionManager.client));
+        break;
+
+      case 'WEBHOOKS_UPDATE':
+        eventController.onWebhookUpdateController.add(WebhookUpdateEvent(data, manager.connectionManager.client));
+        break;
+
+      case 'AUTO_MODERATION_RULE_CREATE':
+        eventController.onAutoModerationRuleCreateController.add(AutoModerationRuleCreateEvent(data, manager.connectionManager.client));
+        break;
+
+      case 'AUTO_MODERATION_RULE_UPDATE':
+        eventController.onAutoModerationRuleUpdateController.add(AutoModerationRuleUpdateEvent(data, manager.connectionManager.client));
+        break;
+
+      case 'AUTO_MODERATION_RULE_DELETE':
+        eventController.onAutoModerationRuleDeleteController.add(AutoModerationRuleDeleteEvent(data, manager.connectionManager.client));
+        break;
+
+      case 'AUTO_MODERATION_ACTION_EXECUTION':
+        eventController.onAutoModerationActionExecutionController.add(AutoModeratioActionExecutionEvent(data, manager.connectionManager.client));
+        break;
+
+      default:
+        if (manager.connectionManager.client.options.dispatchRawShardEvent) {
+          manager.onRawEventController.add(RawEvent(this, data));
+        } else {
+          manager.logger.info("UNKNOWN OPCODE: $data");
+        }
+    }
+  }
+
   @override
-  void changeVoiceState(Snowflake? guildId, Snowflake? channelId, {bool selfMute = false, bool selfDeafen = false}) {
-    send(OPCodes.voiceStateUpdate,
-        <String, dynamic>{"guild_id": guildId.toString(), "channel_id": channelId?.toString(), "self_mute": selfMute, "self_deaf": selfDeafen});
-  }
+  void send(int opCode, dynamic d) => execute(ShardMessage(
+        ManagerToShard.send,
+        data: {
+          "op": opCode,
+          "d": d,
+        },
+      ));
 
-  /// Allows to set presence for current shard.
   @override
-  void setPresence(PresenceBuilder presenceBuilder) {
-    send(OPCodes.statusUpdate, presenceBuilder.build());
-  }
+  Stream<IShard> get onDisconnect => manager.onDisconnect.where((event) => event.id == id);
 
-  /// Syncs all guilds
+  @override
+  Stream<IMemberChunkEvent> get onMemberChunk => manager.onMemberChunk.where((event) => event.shardId == id);
+
+  @override
+  Stream<IShard> get onResume => manager.onResume.where((event) => event.id == id);
+
   @override
   void guildSync() => send(OPCodes.guildSync, guilds.map((e) => e.toString()));
 
-  /// Allows to request members objects from gateway
-  /// [guild] can be either Snowflake or Iterable<Snowflake>
   @override
-  void requestMembers(/* Snowflake|Iterable<Snowflake> */ dynamic guild,
-      {String? query, Iterable<Snowflake>? userIds, int limit = 0, bool presences = false, String? nonce}) {
+  void setPresence(PresenceBuilder presenceBuilder) => send(OPCodes.statusUpdate, presenceBuilder.build());
+
+  @override
+  void changeVoiceState(Snowflake? guildId, Snowflake? channelId, {bool selfMute = false, bool selfDeafen = false}) => send(
+        OPCodes.voiceStateUpdate,
+        <String, dynamic>{
+          "guild_id": guildId?.toString(),
+          "channel_id": channelId?.toString(),
+          "self_mute": selfMute,
+          "self_deaf": selfDeafen,
+        },
+      );
+
+  @override
+  void requestMembers(
+    /* Snowflake|Iterable<Snowflake> */ dynamic guild, {
+    String? query,
+    Iterable<Snowflake>? userIds,
+    int limit = 0,
+    bool presences = false,
+    String? nonce,
+  }) {
     if (query != null && userIds != null) {
-      throw ArgumentError("Both `query` and userIds cannot be specified.");
+      throw ArgumentError("At most one of `query` and `userIds` may be set");
     }
 
-    dynamic guildPayload;
-
-    if (guild is Snowflake) {
-      if (!guilds.contains(guild)) {
-        throw InvalidShardException("Cannot request member for guild on wrong shard");
+    if (guild is! Iterable<Snowflake>) {
+      if (guild is! Snowflake) {
+        throw ArgumentError("`guild` must be a Snowflake or an Iterable<Snowflake>");
       }
 
-      guildPayload = [guild.toString()];
-    } else if (guild is Iterable<Snowflake>) {
-      if (!guilds.any((element) => guild.contains(element))) {
-        throw InvalidShardException("Cannot request member for guild on wrong shard");
-      }
+      guild = [guild];
+    }
 
-      guildPayload = guild.map((e) => e.toString()).toList();
-    } else {
-      throw ArgumentError("Guild has to be either Snowflake or Iterable<Snowflake>");
+    for (final id in guild) {
+      if (!guilds.contains(id)) {
+        throw InvalidShardException("Cannot request guild $id on shard ${this.id} because it does not exist on this shard");
+      }
     }
 
     final payload = <String, dynamic>{
-      "guild_id": guildPayload,
+      "guild_id": guild.map((id) => id.toString()).toList(),
       "limit": limit,
       "presences": presences,
       if (query != null) "query": query,
@@ -214,376 +691,13 @@ class Shard implements IShard {
     send(OPCodes.requestGuildMember, payload);
   }
 
-  void _heartbeat() {
-    send(OPCodes.heartbeat, _sequence == 0 ? null : _sequence);
-    _lastHeartbeatSent = DateTime.now();
-
-    if (!_heartbeatAckReceived) {
-      manager.logger.warning("Not received previous heartbeat ack on shard: [$id] on sequence: [{$_sequence}]");
-      return;
-    }
-
-    _heartbeatAckReceived = false;
-  }
-
-  void _handleError(dynamic data) {
-    final closeCode = data["errorCode"] as int?;
-
-    if (closeCode == null) {
-      manager.logger.warning("Received null close = client is probably closing. Payload: `$data`");
-      return;
-    }
-
-    final closeReason = data['errorReason'] as String?;
-    final socketError = data['error'] as String?;
-
-    for (final plugin in manager.connectionManager.client.plugins) {
-      plugin.onConnectionChange(manager.connectionManager.client, manager.logger, closeCode, closeReason, socketError);
-    }
-
-    _connected = false;
-    _heartbeatTimer.cancel();
-    manager.onDisconnectController.add(this);
-
-    manager.logger.severe("Shard $id disconnected. Error: [$socketError] Error code: [$closeCode] | Error message: [$closeReason]");
-
-    switch (closeCode) {
-      case 4004:
-      case 4010:
-        throw UnrecoverableNyxxError("Gateway error: 4010");
-      case 4013:
-        throw UnrecoverableNyxxError("Gateway error: 4013: Cannot connect to gateway due intent value is invalid. "
-            "Check https://discordapp.com/developers/docs/topics/gateway#gateway-intents for more info.");
-      case 4014:
-        throw UnrecoverableNyxxError("Gateway error: 4014: You sent a disallowed intent for a Gateway Intent. "
-            "You may have tried to specify an intent that you have not enabled or are not whitelisted for. "
-            "Check https://discordapp.com/developers/docs/topics/gateway#gateway-intents for more info.");
-      case 4007:
-      case 4009:
-      case 1005:
-      case 1001:
-        _reconnect();
-        break;
-      case -1:
-        _connect(delay: 10);
-        break;
-      default:
-        _connect();
-        break;
-    }
-  }
-
-  // Connects to gateway
-  void _connect({int delay = 2}) {
-    manager.logger.info("Connecting to gateway on shard $id!");
-    _resume = false;
-    Future.delayed(Duration(seconds: delay), () => _sendPort.send({"cmd": "CONNECT"}));
-  }
-
-  // Reconnects to gateway
-  void _reconnect() {
-    manager.logger.info("Resuming connection to gateway on shard $id!");
-    _resume = true;
-    Future.delayed(const Duration(seconds: 1), () => _sendPort.send({"cmd": "CONNECT"}));
-  }
-
-  Future<void> _handle(dynamic rawData) async {
-    manager.logger.finest("Received gateway payload on shard [$id]: [$rawData]");
-
-    if (rawData["cmd"] == "CONNECT_ACK") {
-      manager.logger.info("Shard $id connected to gateway!");
-
-      return;
-    }
-
-    if (rawData["cmd"] == "ERROR" || rawData["cmd"] == "DISCONNECTED") {
-      _handleError(rawData);
-      return;
-    }
-
-    if (rawData["jsonData"] == null) {
-      return;
-    }
-
-    final discordPayload = rawData["jsonData"] as RawApiMap;
-
-    if (discordPayload["s"] != null) {
-      _sequence = discordPayload["s"] as int;
-    }
-
-    await _dispatch(discordPayload);
-  }
-
-  Future<void> _dispatch(RawApiMap rawPayload) async {
-    switch (rawPayload["op"] as int) {
-      case OPCodes.heartbeatAck:
-        _heartbeatAckReceived = true;
-        _gatewayLatency = DateTime.now().difference(_lastHeartbeatSent);
-
-        break;
-      case OPCodes.hello:
-        if (_sessionId == null || !_resume) {
-          final identifyMsg = <String, dynamic>{
-            "token": manager.connectionManager.client.token,
-            "properties": <String, dynamic>{
-              "os": Platform.operatingSystem,
-              "browser": "nyxx",
-              "device": "nyxx",
-            },
-            "large_threshold": manager.connectionManager.client.options.largeThreshold,
-            "guild_subscriptions": manager.connectionManager.client.options.guildSubscriptions,
-            "intents": manager.connectionManager.client.intents,
-            if (manager.connectionManager.client.options.initialPresence != null) "presence": manager.connectionManager.client.options.initialPresence!.build(),
-            "shard": <int>[id, manager.totalNumShards]
-          };
-
-          send(OPCodes.identify, identifyMsg);
-
-          manager.onConnectController.add(this);
-        } else if (_resume) {
-          send(OPCodes.resume, <String, dynamic>{"token": manager.connectionManager.client.token, "session_id": _sessionId, "seq": _sequence});
-        }
-
-        Future.delayed(const Duration(milliseconds: 100), () {
-          _heartbeatTimer = Timer.periodic(Duration(milliseconds: rawPayload["d"]["heartbeat_interval"] as int), (Timer t) => _heartbeat());
-        });
-        break;
-      case OPCodes.invalidSession:
-        manager.logger.severe("Invalid session on shard $id. ${(rawPayload["d"] as bool) ? "Resuming..." : "Reconnecting..."}");
-        _heartbeatTimer.cancel();
-        (manager.connectionManager.client.eventsWs as WebsocketEventController)
-            .onDisconnectController
-            .add(DisconnectEvent(this, DisconnectEventReason.invalidSession));
-
-        if (rawPayload["d"] as bool) {
-          _reconnect();
-        } else {
-          _connect();
-        }
-
-        break;
-
-      case OPCodes.dispatch:
-        final dispatchType = rawPayload["t"] as String;
-
-        switch (dispatchType) {
-          case "READY":
-            _sessionId = rawPayload["d"]["session_id"] as String;
-            manager.connectionManager.client.self = ClientUser(manager.connectionManager.client, rawPayload["d"]["user"] as RawApiMap);
-
-            _connected = true;
-            manager.logger.info("Shard $id ready!");
-
-            if (!_resume) {
-              await manager.connectionManager.propagateReady();
-            }
-
-            break;
-          case "RESUME":
-            manager.onResumeController.add(this);
-            break;
-
-          case "GUILD_MEMBERS_CHUNK":
-            manager.onMemberChunkController.add(MemberChunkEvent(rawPayload, manager.connectionManager.client, id));
-            break;
-
-          case "MESSAGE_REACTION_REMOVE_ALL":
-            eventController.onMessageReactionsRemovedController.add(MessageReactionsRemovedEvent(rawPayload, manager.connectionManager.client));
-            break;
-
-          case "MESSAGE_REACTION_ADD":
-            eventController.onMessageReactionAddedController.add(MessageReactionAddedEvent(rawPayload, manager.connectionManager.client));
-            break;
-
-          case "MESSAGE_REACTION_REMOVE":
-            eventController.onMessageReactionRemoveController.add(MessageReactionRemovedEvent(rawPayload, manager.connectionManager.client));
-            break;
-
-          case "MESSAGE_DELETE_BULK":
-            eventController.onMessageDeleteBulkController.add(MessageDeleteBulkEvent(rawPayload, manager.connectionManager.client));
-            break;
-
-          case "CHANNEL_PINS_UPDATE":
-            eventController.onChannelPinsUpdateController.add(ChannelPinsUpdateEvent(rawPayload, manager.connectionManager.client));
-            break;
-
-          case "VOICE_STATE_UPDATE":
-            eventController.onVoiceStateUpdateController.add(VoiceStateUpdateEvent(rawPayload, manager.connectionManager.client));
-            break;
-
-          case "VOICE_SERVER_UPDATE":
-            eventController.onVoiceServerUpdateController.add(VoiceServerUpdateEvent(rawPayload, manager.connectionManager.client));
-            break;
-
-          case "GUILD_EMOJIS_UPDATE":
-            eventController.onGuildEmojisUpdateController.add(GuildEmojisUpdateEvent(rawPayload, manager.connectionManager.client));
-            break;
-
-          case "MESSAGE_CREATE":
-            eventController.onMessageReceivedController.add(MessageReceivedEvent(rawPayload, manager.connectionManager.client));
-            break;
-
-          case "MESSAGE_DELETE":
-            eventController.onMessageDeleteController.add(MessageDeleteEvent(rawPayload, manager.connectionManager.client));
-            break;
-
-          case "MESSAGE_UPDATE":
-            eventController.onMessageUpdateController.add(MessageUpdateEvent(rawPayload, manager.connectionManager.client));
-            break;
-
-          case "GUILD_CREATE":
-            final event = GuildCreateEvent(rawPayload, manager.connectionManager.client);
-            guilds.add(event.guild.id);
-            eventController.onGuildCreateController.add(event);
-            break;
-
-          case "GUILD_UPDATE":
-            eventController.onGuildUpdateController.add(GuildUpdateEvent(rawPayload, manager.connectionManager.client));
-            break;
-
-          case "GUILD_DELETE":
-            eventController.onGuildDeleteController.add(GuildDeleteEvent(rawPayload, manager.connectionManager.client));
-            break;
-
-          case "GUILD_BAN_ADD":
-            eventController.onGuildBanAddController.add(GuildBanAddEvent(rawPayload, manager.connectionManager.client));
-            break;
-
-          case "GUILD_BAN_REMOVE":
-            eventController.onGuildBanRemoveController.add(GuildBanRemoveEvent(rawPayload, manager.connectionManager.client));
-            break;
-
-          case "GUILD_MEMBER_ADD":
-            eventController.onGuildMemberAddController.add(GuildMemberAddEvent(rawPayload, manager.connectionManager.client));
-            break;
-
-          case "GUILD_MEMBER_REMOVE":
-            eventController.onGuildMemberRemoveController.add(GuildMemberRemoveEvent(rawPayload, manager.connectionManager.client));
-            break;
-
-          case "GUILD_MEMBER_UPDATE":
-            eventController.onGuildMemberUpdateController.add(GuildMemberUpdateEvent(rawPayload, manager.connectionManager.client));
-            break;
-
-          case "CHANNEL_CREATE":
-            eventController.onChannelCreateController.add(ChannelCreateEvent(rawPayload, manager.connectionManager.client));
-            break;
-
-          case "CHANNEL_UPDATE":
-            eventController.onChannelUpdateController.add(ChannelUpdateEvent(rawPayload, manager.connectionManager.client));
-            break;
-
-          case "CHANNEL_DELETE":
-            eventController.onChannelDeleteController.add(ChannelDeleteEvent(rawPayload, manager.connectionManager.client));
-            break;
-
-          case "TYPING_START":
-            eventController.onTypingController.add(TypingEvent(rawPayload, manager.connectionManager.client));
-            break;
-
-          case "PRESENCE_UPDATE":
-            eventController.onPresenceUpdateController.add(PresenceUpdateEvent(rawPayload, manager.connectionManager.client));
-            break;
-
-          case "GUILD_ROLE_CREATE":
-            eventController.onRoleCreateController.add(RoleCreateEvent(rawPayload, manager.connectionManager.client));
-            break;
-
-          case "GUILD_ROLE_UPDATE":
-            eventController.onRoleUpdateController.add(RoleUpdateEvent(rawPayload, manager.connectionManager.client));
-            break;
-
-          case "GUILD_ROLE_DELETE":
-            eventController.onRoleDeleteController.add(RoleDeleteEvent(rawPayload, manager.connectionManager.client));
-            break;
-
-          case "USER_UPDATE":
-            eventController.onUserUpdateController.add(UserUpdateEvent(rawPayload, manager.connectionManager.client));
-            break;
-
-          case "INVITE_CREATE":
-            eventController.onInviteCreatedController.add(InviteCreatedEvent(rawPayload, manager.connectionManager.client));
-            break;
-
-          case "INVITE_DELETE":
-            eventController.onInviteDeleteController.add(InviteDeletedEvent(rawPayload, manager.connectionManager.client));
-            break;
-
-          case "MESSAGE_REACTION_REMOVE_EMOJI":
-            eventController.onMessageReactionRemoveEmojiController.add(MessageReactionRemoveEmojiEvent(rawPayload, manager.connectionManager.client));
-            break;
-
-          case "THREAD_CREATE":
-            eventController.onThreadCreatedController.add(ThreadCreateEvent(rawPayload, manager.connectionManager.client));
-            break;
-
-          case "THREAD_MEMBERS_UPDATE":
-            eventController.onThreadMembersUpdateController.add(ThreadMembersUpdateEvent(rawPayload, manager.connectionManager.client));
-            break;
-
-          case "THREAD_DELETE":
-            eventController.onThreadDeleteController.add(ThreadDeletedEvent(rawPayload, manager.connectionManager.client));
-            break;
-
-          case "THREAD_MEMBER_UPDATE":
-            // Catch unnecessary OP, could be needed in future but unsure.
-            break;
-
-          case "GUILD_SCHEDULED_EVENT_CREATE":
-            eventController.onGuildEventCreateController.add(GuildEventCreateEvent(rawPayload, manager.connectionManager.client));
-            break;
-
-          case "GUILD_SCHEDULED_EVENT_UPDATE":
-            eventController.onGuildEventUpdateController.add(GuildEventUpdateEvent(rawPayload, manager.connectionManager.client));
-            break;
-
-          case "GUILD_SCHEDULED_EVENT_DELETE":
-            eventController.onGuildEventDeleteController.add(GuildEventDeleteEvent(rawPayload, manager.connectionManager.client));
-            break;
-
-          case 'WEBHOOKS_UPDATE':
-            eventController.onWebhookUpdateController.add(WebhookUpdateEvent(rawPayload, manager.connectionManager.client));
-            break;
-
-          case 'AUTO_MODERATION_RULE_CREATE':
-            eventController.onAutoModerationRuleCreateController.add(AutoModerationRuleCreateEvent(rawPayload, manager.connectionManager.client));
-            break;
-
-          case 'AUTO_MODERATION_RULE_UPDATE':
-            eventController.onAutoModerationRuleUpdateController.add(AutoModerationRuleUpdateEvent(rawPayload, manager.connectionManager.client));
-            break;
-
-          case 'AUTO_MODERATION_RULE_DELETE':
-            eventController.onAutoModerationRuleDeleteController.add(AutoModerationRuleDeleteEvent(rawPayload, manager.connectionManager.client));
-            break;
-
-          case 'AUTO_MODERATION_ACTION_EXECUTION':
-            eventController.onAutoModerationActionExecutionController.add(AutoModeratioActionExecutionEvent(rawPayload, manager.connectionManager.client));
-            break;
-
-          default:
-            if (manager.connectionManager.client.options.dispatchRawShardEvent) {
-              manager.onRawEventController.add(RawEvent(this, rawPayload));
-            } else {
-              manager.logger.info("UNKNOWN OPCODE: $rawPayload");
-            }
-        }
-        break;
-    }
-  }
-
   @override
   Future<void> dispose() async {
-    manager.logger.info("Started disposing shard $id...");
+    execute(ShardMessage(ManagerToShard.dispose));
 
-    _sendPort.send({"cmd": "KILL"});
+    // Wait for shard to dispose correctly
+    await shardMessages.firstWhere((message) => message.type == ShardToManager.disposed);
 
-    final killFuture = _receiveStream.firstWhere((element) => (element as RawApiMap)["cmd"] == "TERMINATE_OK");
-    await killFuture;
-
-    _receivePort.close();
-    _heartbeatTimer.cancel();
-
-    manager.logger.info("Shard $id disposed.");
+    receivePort.close();
   }
 }
