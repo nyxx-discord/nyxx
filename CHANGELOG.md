@@ -1,3 +1,9 @@
+## 4.1.0-dev.1
+__28.08.2022__
+
+- feature: Refactor internal shard system (#368)
+- feature: Event to notify change of connection status (#364)
+
 ## 4.1.0-dev.0
 __20.08.2022__
 
