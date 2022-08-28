@@ -201,6 +201,10 @@ class Shard implements IShard {
 
     manager.onDisconnectController.add(this);
 
+    for (final element in manager.connectionManager.client.plugins) {
+      element.onConnectionClose(manager.connectionManager.client, manager.logger, closeCode, closeReason);
+    }
+
     // https://discord.com/developers/docs/topics/opcodes-and-status-codes#gateway-gateway-close-event-codes
     const warnings = <int, String>{
       4000: 'Unknown error',
@@ -251,6 +255,10 @@ class Shard implements IShard {
   /// A handler for when the shard encounters an error. These can occur if the runner is in an invalid state or fails to open the websocket connection.
   Future<void> handleError(String message, bool? shouldReconnect) async {
     manager.logger.shout('Shard $id reported error: $message');
+
+    for (final element in manager.connectionManager.client.plugins) {
+      element.onConnectionError(manager.connectionManager.client, manager.logger, message);
+    }
 
     if (shouldReconnect ?? false) {
       Future.delayed(const Duration(seconds: 10), reconnect);

@@ -1,3 +1,8 @@
+## 4.1.0-dev.2
+__28.08.2022__
+
+- bug: Fixup shard disconnect event
+
 ## 4.1.0-dev.1
 __28.08.2022__
 
