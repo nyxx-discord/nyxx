@@ -2066,7 +2066,9 @@ class HttpEndpoints implements IHttpEndpoints {
       return Future.error(response);
     }
 
-    return GuildEvent((response as IHttpResponseSuccess).jsonBody as RawApiMap, client);
+    final event = GuildEvent((response as IHttpResponseSuccess).jsonBody as RawApiMap, client);
+    client.guilds[guildId]?.scheduledEvents[event.id] = event;
+    return event;
   }
 
   @override
@@ -2089,39 +2091,43 @@ class HttpEndpoints implements IHttpEndpoints {
       return Future.error(response);
     }
 
-    return GuildEvent((response as IHttpResponseSuccess).jsonBody as RawApiMap, client);
+    final event = GuildEvent((response as IHttpResponseSuccess).jsonBody as RawApiMap, client);
+    client.guilds[guildId]?.scheduledEvents[guildEventId] = event;
+    return event;
   }
 
   @override
   Future<GuildEvent> fetchGuildEvent(Snowflake guildId, Snowflake guildEventId) async {
     final response = await httpHandler.execute(BasicRequest(
-        HttpRoute()
-          ..guilds(id: guildId.toString())
-          ..scheduledEvents(id: guildEventId.toString()),
-        method: 'GET'));
+      HttpRoute()
+        ..guilds(id: guildId.toString())
+        ..scheduledEvents(id: guildEventId.toString()),
+    ));
 
     if (response is IHttpResponseError) {
       return Future.error(response);
     }
 
-    return GuildEvent((response as IHttpResponseSuccess).jsonBody as RawApiMap, client);
+    final event = GuildEvent((response as IHttpResponseSuccess).jsonBody as RawApiMap, client);
+    client.guilds[guildId]?.scheduledEvents[event.id] = event;
+    return event;
   }
 
   @override
   Stream<GuildEventUser> fetchGuildEventUsers(Snowflake guildId, Snowflake guildEventId,
       {int limit = 100, bool withMember = false, Snowflake? before, Snowflake? after}) async* {
     final response = await httpHandler.execute(BasicRequest(
-        HttpRoute()
-          ..guilds(id: guildId.toString())
-          ..scheduledEvents(id: guildEventId.toString())
-          ..users(),
-        method: 'GET',
-        queryParams: {
-          'limit': limit,
-          'with_member': withMember,
-          if (before != null) 'before': before.toString(),
-          if (after != null) 'after': after.toString(),
-        }));
+      HttpRoute()
+        ..guilds(id: guildId.toString())
+        ..scheduledEvents(id: guildEventId.toString())
+        ..users(),
+      queryParams: {
+        'limit': limit,
+        'with_member': withMember,
+        if (before != null) 'before': before.toString(),
+        if (after != null) 'after': after.toString(),
+      },
+    ));
 
     if (response is IHttpResponseError) {
       yield* Stream.error(response);
@@ -2146,7 +2152,9 @@ class HttpEndpoints implements IHttpEndpoints {
     }
 
     for (final rawGuildEvent in (response as IHttpResponseSuccess).jsonBody as RawApiList) {
-      yield GuildEvent(rawGuildEvent as RawApiMap, client);
+      final event = GuildEvent(rawGuildEvent as RawApiMap, client);
+      client.guilds[guildId]?.scheduledEvents[event.id] = event;
+      yield event;
     }
   }
 
