@@ -451,19 +451,29 @@ class GuildEventCreateEvent implements IGuildEventCreateEvent {
 
   GuildEventCreateEvent(RawApiMap raw, INyxx client) {
     event = GuildEvent(raw['d'] as RawApiMap, client);
+    event.guild.getFromCache()?.scheduledEvents[event.id] = event;
   }
 }
 
 abstract class IGuildEventUpdateEvent {
+  /// The newly edited event.
   IGuildEvent get event;
+
+  /// The old event before it's update.
+  IGuildEvent? get oldEvent;
 }
 
 class GuildEventUpdateEvent implements IGuildEventUpdateEvent {
   @override
   late final IGuildEvent event;
 
+  @override
+  late final IGuildEvent? oldEvent;
+
   GuildEventUpdateEvent(RawApiMap raw, INyxx client) {
     event = GuildEvent(raw['d'] as RawApiMap, client);
+    oldEvent = event.guild.getFromCache()?.scheduledEvents[event.id];
+    event.guild.getFromCache()?.scheduledEvents.update(event.id, (_) => event, ifAbsent: () => event);
   }
 }
 
@@ -477,6 +487,7 @@ class GuildEventDeleteEvent implements IGuildEventDeleteEvent {
 
   GuildEventDeleteEvent(RawApiMap raw, INyxx client) {
     event = GuildEvent(raw['d'] as RawApiMap, client);
+    event.guild.getFromCache()?.scheduledEvents.remove(event.id);
   }
 }
 

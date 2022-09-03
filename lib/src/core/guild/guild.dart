@@ -40,7 +40,7 @@ import 'package:nyxx/src/utils/builders/guild_event_builder.dart';
 import 'package:nyxx/src/utils/builders/sticker_builder.dart';
 
 abstract class IGuild implements SnowflakeEntity {
-  /// Reference to [NyxxWebsocket] instance
+  /// Reference to [INyxxWebsocket] instance
   INyxx get client;
 
   /// The guild's name.
@@ -191,6 +191,10 @@ abstract class IGuild implements SnowflakeEntity {
   /// The cached auto moderation rules in the guild.
   /// An empty map is returned if none where fetched or added by events.
   ICache<Snowflake, IAutoModerationRule> get autoModerationRules;
+
+  /// The cached guild events in the guild.
+  /// An empty map is returned if none where fetched or added by events.
+  ICache<Snowflake, IGuildEvent> get scheduledEvents;
 
   /// The guild's icon, represented as URL.
   /// If guild doesn't have icon it returns null.
@@ -586,6 +590,9 @@ class Guild extends SnowflakeEntity implements IGuild {
   @override
   late final ICache<Snowflake, IAutoModerationRule> autoModerationRules;
 
+  @override
+  late final ICache<Snowflake, IGuildEvent> scheduledEvents;
+
   /// Creates an instance of [Guild]
   Guild(this.client, RawApiMap raw, [bool guildCreate = false]) : super(Snowflake(raw["id"])) {
     name = raw["name"] as String;
@@ -712,6 +719,7 @@ class Guild extends SnowflakeEntity implements IGuild {
     ];
 
     autoModerationRules = SnowflakeCache<IAutoModerationRule>();
+    scheduledEvents = SnowflakeCache<IGuildEvent>();
   }
 
   /// The guild's icon, represented as URL.
