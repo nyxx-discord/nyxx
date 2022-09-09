@@ -56,6 +56,9 @@ class GuildFeature extends IEnum<String> {
   /// Guild has Auto Moderation
   static const GuildFeature autoModeration = GuildFeature._create("AUTO_MODERATION");
 
+  /// Guild has paused invites, preventing new users from joining
+  static const GuildFeature invitesDisabled = GuildFeature._create('INVITES_DISABLED');
+
   /// Creates instance of [GuildFeature] from [value].
   GuildFeature.from(String? value) : super(value ?? "");
   const GuildFeature._create(String? value) : super(value ?? "");
