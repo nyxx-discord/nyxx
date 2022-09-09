@@ -70,10 +70,10 @@ class GuildFeature extends IEnum<String> {
 
   /// Guild has access to use commerce features (i.e. create store channels)
   @Deprecated('''
-    Discord no longer offers the ability to purchase a license to sell PC games.
 
-    See [aa](https://support-dev.discord.com/hc/en-us/articles/6309018858647-Self-serve-Game-Selling-Deprecation) for more information
-''')
+Discord no longer offers the ability to purchase a license to sell PC games.
+
+See https://support-dev.discord.com/hc/en-us/articles/6309018858647-Self-serve-Game-Selling-Deprecation for more information''')
   static const GuildFeature commerce = GuildFeature._create("COMMERCE");
 
   /// Guild cannot be public
