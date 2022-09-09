@@ -84,7 +84,6 @@ See https://support-dev.discord.com/hc/en-us/articles/6309018858647-Self-serve-G
   @Deprecated("Was not documented but exists, this can be removed at any time")
   static const GuildFeature studentHub = GuildFeature._create("HUB");
 
-
   /// Creates instance of [GuildFeature] from [value].
   GuildFeature.from(String? value) : super(value ?? "");
   const GuildFeature._create(String? value) : super(value ?? "");
