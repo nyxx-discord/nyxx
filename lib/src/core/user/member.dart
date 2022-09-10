@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:nyxx/nyxx.dart';
 import 'package:nyxx/src/nyxx.dart';
 import 'package:nyxx/src/core/snowflake.dart';
 import 'package:nyxx/src/core/snowflake_entity.dart';
