@@ -1,5 +1,3 @@
-import 'package:nyxx/src/internal/http/http_route.dart';
-
 /// Gateway constants
 class OPCodes {
   static const int dispatch = 0;
