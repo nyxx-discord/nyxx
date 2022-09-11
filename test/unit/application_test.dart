@@ -69,8 +69,10 @@ main() {
 
     Map<String, dynamic> cloneExampleClientOAuth2ApplicationPayload = Map.from(exampleClientOAuth2ApplicationPayload);
     cloneExampleClientOAuth2ApplicationPayload['icon'] = 'test';
+    cloneExampleClientOAuth2ApplicationPayload['cover_image'] = 'test_cover';
 
     final resultEntityWithIcon = ClientOAuth2Application(cloneExampleClientOAuth2ApplicationPayload, NyxxRestMock());
-    expect(resultEntityWithIcon.iconUrl(), "https://cdn.discordapp.com/app-icons/123456/test.png?size=512");
+    expect(resultEntityWithIcon.iconUrl(), "https://cdn.discordapp.com/app-icons/123456/test.webp");
+    expect(resultEntityWithIcon.coverImageUrl(), 'https://cdn.discordapp.com/app-icons/123456/test_cover.webp');
   });
 }

@@ -5,9 +5,6 @@ import 'package:nyxx/src/typedefs.dart';
 
 /// The client's OAuth2 app, if the client is a bot.
 abstract class IClientOAuth2Application implements IOAuth2Application {
-  /// Reference to [NyxxWebsocket]
-  INyxx get client;
-
   /// The app's flags.
   int? get flags;
 
@@ -20,10 +17,6 @@ abstract class IClientOAuth2Application implements IOAuth2Application {
 
 /// The client's OAuth2 app, if the client is a bot.
 class ClientOAuth2Application extends OAuth2Application implements IClientOAuth2Application {
-  /// Reference to [NyxxWebsocket]
-  @override
-  final INyxx client;
-
   /// The app's flags.
   @override
   late final int? flags;
@@ -33,7 +26,7 @@ class ClientOAuth2Application extends OAuth2Application implements IClientOAuth2
   late final IUser owner;
 
   /// Creates an instance of [ClientOAuth2Application]
-  ClientOAuth2Application(RawApiMap raw, this.client) : super(raw, client) {
+  ClientOAuth2Application(RawApiMap raw, INyxx client) : super(raw, client) {
     flags = raw["flags"] as int?;
     owner = User(client, raw["owner"] as RawApiMap);
   }
