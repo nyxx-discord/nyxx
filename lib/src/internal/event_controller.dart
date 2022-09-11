@@ -133,7 +133,7 @@ abstract class IWebsocketEventController implements IRestEventController {
 
   /// Emitted when a member joins a guild but passed member screening
   /// https://support.discord.com/hc/en-us/articles/1500000466882
-  Stream<IGuildMemberAddEvent> get onGuildMemberAddPassedScreening;
+  Stream<IGuildMemberUpdateEvent> get onGuildMemberAddPassedScreening;
 
   /// Emitted when a member is updated.
   Stream<IGuildMemberUpdateEvent> get onGuildMemberUpdate;
@@ -578,7 +578,7 @@ class WebsocketEventController extends RestEventController implements IWebsocket
   late final Stream<IGuildMemberAddEvent> onGuildMemberAddScreening;
 
   @override
-  late final Stream<IGuildMemberAddEvent> onGuildMemberAddPassedScreening;
+  late final Stream<IGuildMemberUpdateEvent> onGuildMemberAddPassedScreening;
 
   final INyxxWebsocket _client;
 
@@ -729,7 +729,7 @@ class WebsocketEventController extends RestEventController implements IWebsocket
     onAutoModerationActionExecution = onAutoModerationActionExecutionController.stream;
 
     onGuildMemberAddScreening = onGuildMemberAdd.where((event) => event.member.isPending);
-    onGuildMemberAddPassedScreening = onGuildMemberAdd.where((event) => !event.member.isPending);
+    onGuildMemberAddPassedScreening = onGuildMemberUpdate.where((event) => !(event.member.getFromCache()?.isPending ?? true));
   }
 
   @override
