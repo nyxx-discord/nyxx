@@ -13,7 +13,7 @@ abstract class ICdnHttpEndpoints {
 
   String channelIcon(Snowflake channelId, String iconHash, {String? format, int? size});
 
-  String defaultAvatar(int discriminator);
+  String defaultAvatar(int discriminator, {int? size});
 
   String discoverySplash(Snowflake guildId, String splashHash, {String? format, int? size});
 
@@ -116,11 +116,13 @@ class CdnHttpEndpoints implements ICdnHttpEndpoints {
       );
 
   @override
-  String defaultAvatar(int discriminator) => _makeCdnUrl(
+  String defaultAvatar(int discriminator, {int? size}) => _makeCdnUrl(
         ICdnHttpRoute()
           ..embed()
           ..avatars()
           ..addHash(hash: (discriminator % 5).toString()),
+        format: 'png',
+        size: size,
       );
 
   @override

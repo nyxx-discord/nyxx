@@ -140,7 +140,7 @@ main() async {
     expect(userBot.bot, isTrue);
     expect(userBot.mention, "<@!${testUserBotSnowflake.toString()}>");
     expect(userBot.tag, equals("Running on Dart#1759"));
-    expect(userBot.avatarURL(), equals('https://cdn.discordapp.com/avatars/476603965396746242/be6107505d7b9d15292da4e54d88836e.webp?size=128'));
+    expect(userBot.avatarUrl(), equals('https://cdn.discordapp.com/avatars/476603965396746242/be6107505d7b9d15292da4e54d88836e.webp'));
   });
 
   test('member and guild tests', () async {

@@ -15,6 +15,8 @@ abstract class IMessageAuthor implements SnowflakeEntity {
   /// User tag: `l7ssha#6712`
   String get tag;
 
-  /// Url to user avatar
-  String avatarURL({String format = "webp", int size = 128});
+  /// The user's avatar, represented as URL.
+  /// In case if user does not have avatar, default discord avatar will be returned with specified size and png format.
+  /// If [animatable] is set as `true`, if available, the url will be a gif, otherwise the [format] or fallback to "webp".
+  String avatarUrl({String? format, int? size, bool animatable = false});
 }
