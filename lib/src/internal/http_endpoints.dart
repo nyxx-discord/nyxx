@@ -1991,7 +1991,7 @@ class HttpEndpoints implements IHttpEndpoints {
       yield* Stream.error(response);
     }
 
-    for (final rawSticker in (response as HttpResponseSuccess).jsonBody) {
+    for (final rawSticker in (response as HttpResponseSuccess).jsonBody['sticker_packs']) {
       yield StickerPack(rawSticker as RawApiMap, client);
     }
   }

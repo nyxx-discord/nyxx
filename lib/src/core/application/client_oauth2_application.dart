@@ -33,7 +33,7 @@ class ClientOAuth2Application extends OAuth2Application implements IClientOAuth2
   late final IUser owner;
 
   /// Creates an instance of [ClientOAuth2Application]
-  ClientOAuth2Application(RawApiMap raw, this.client) : super(raw) {
+  ClientOAuth2Application(RawApiMap raw, this.client) : super(raw, client) {
     flags = raw["flags"] as int?;
     owner = User(client, raw["owner"] as RawApiMap);
   }

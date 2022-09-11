@@ -1,3 +1,5 @@
+import 'package:nyxx/src/internal/http/http_route.dart';
+
 /// Gateway constants
 class OPCodes {
   static const int dispatch = 0;
@@ -48,4 +50,15 @@ class Constants {
 
     return Uri.parse(uriString);
   }
+}
+
+class CdnConstants {
+  /// The allowed extensions for the CDN urls.
+  static const List<String> allowedExtensions = ['webp', 'png', 'gif', 'jpg', 'jpeg'];
+
+  /// The allowed extensions for the stickers.
+  static const List<String> allowedExtensionsForSickers = ['png', 'json'];
+
+  /// The allowed sizes.
+  static const List<int> allowedSizes = [16, 32, 64, 128, 256, 512, 1024, 2048, 4096];
 }

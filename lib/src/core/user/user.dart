@@ -33,7 +33,7 @@ abstract class IUser implements SnowflakeEntity, ISend, Mentionable, IMessageAut
   IClientStatus? get status;
 
   /// The member's presence.
-  Activity? get presence;
+  IActivity? get presence;
 
   /// Additional flags associated with user account. Describes if user has certain
   /// features like joined into one of houses or is discord employee.
@@ -99,7 +99,7 @@ class User extends SnowflakeEntity implements IUser {
 
   /// The member's presence.
   @override
-  Activity? presence;
+  IActivity? presence;
 
   /// Additional flags associated with user account. Describes if user has certain
   /// features like joined into one of houses or is discord employee.

@@ -14,6 +14,7 @@ import 'package:nyxx/src/core/message/sticker.dart';
 import 'package:nyxx/src/core/user/user.dart';
 import 'package:nyxx/src/events/ready_event.dart';
 import 'package:nyxx/src/internal/cache/cache.dart';
+import 'package:nyxx/src/internal/cdn_http_endpoints.dart';
 import 'package:nyxx/src/internal/connection_manager.dart';
 import 'package:nyxx/src/internal/constants.dart';
 import 'package:nyxx/src/internal/event_controller.dart';
@@ -45,6 +46,9 @@ abstract class INyxx implements Disposable, IPluginManager {
 
   /// Returns handler for all available REST API action.
   IHttpEndpoints get httpEndpoints;
+
+  /// Returns handler for all available CDN endpoints for Discord.
+  ICdnHttpEndpoints get cdnHttpEndpoints;
 
   /// Can be used to edit options after client initialised. Used by Nyxx.interactions to enable raw events
   ClientOptions get options;
@@ -119,6 +123,9 @@ class NyxxRest extends INyxxRest {
 
   @override
   late final IHttpEndpoints httpEndpoints;
+
+  @override
+  late final ICdnHttpEndpoints cdnHttpEndpoints;
 
   /// When identifying to the gateway, you have to specify an intents parameter which
   /// allows you to conditionally subscribe to pre-defined "intents", groups of events defined by Discord.
@@ -204,6 +211,7 @@ class NyxxRest extends INyxxRest {
   Future<void> connect({bool propagateReady = true}) async {
     httpHandler = HttpHandler(this);
     httpEndpoints = HttpEndpoints(this);
+    cdnHttpEndpoints = CdnHttpEndpoints();
 
     if (propagateReady) {
       onReadyController.add(ReadyEvent(this));

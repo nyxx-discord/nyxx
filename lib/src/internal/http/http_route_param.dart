@@ -15,3 +15,17 @@ class HttpRouteParam {
 
   HttpRouteParam(this.param, {this.isMajor = false});
 }
+
+/// Represents a HTTP CDN route.
+///
+/// These routes does not complain to global/bucket rate-limits as they're static.
+class CdnHttpRouteParam implements HttpRouteParam {
+  /// The value of this parameter.
+  @override
+  final String param;
+
+  CdnHttpRouteParam(this.param);
+
+  @override
+  bool get isMajor => throw UnimplementedError();
+}

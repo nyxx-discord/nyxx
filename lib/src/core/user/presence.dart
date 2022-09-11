@@ -52,6 +52,9 @@ abstract class IActivity {
 
   /// Activity buttons. List of button labels
   Iterable<String> get buttons;
+
+  /// Reference to [INyxx].
+  INyxx get client;
 }
 
 /// Presence is game or activity which user is playing/user participate.
@@ -117,8 +120,11 @@ class Activity implements IActivity {
   @override
   late final Iterable<String> buttons;
 
+  @override
+  final INyxx client;
+
   /// Creates an instance of [Activity]
-  Activity(RawApiMap raw) {
+  Activity(RawApiMap raw, this.client) {
     name = raw["name"] as String;
     url = raw["url"] as String?;
     type = ActivityType.from(raw["type"] as int);
@@ -151,7 +157,7 @@ class Activity implements IActivity {
     }
 
     if (raw["assets"] != null) {
-      assets = GameAssets(raw["assets"] as RawApiMap);
+      assets = GameAssets(raw["assets"] as RawApiMap, this);
     } else {
       assets = null;
     }
@@ -353,6 +359,15 @@ abstract class IGameAssets {
 
   /// Text displayed when hovering over the small image of the activity
   String? get smallText;
+
+  /// Reference to the [IActivity].
+  IActivity get activity;
+
+  /// Returns CDN url to the small image.
+  String? smallImageUrl({String? format, int? size});
+
+  /// Returns CDN url to the large image.
+  String? largeImageUrl({String? format, int? size});
 }
 
 /// Presences assets
@@ -373,12 +388,57 @@ class GameAssets implements IGameAssets {
   @override
   late final String? smallText;
 
+  @override
+  final IActivity activity;
+
   /// Creates an instance of [GameAssets]
-  GameAssets(RawApiMap raw) {
+  GameAssets(RawApiMap raw, this.activity) {
     largeImage = raw["large_image"] as String?;
     largeText = raw["large_text"] as String?;
     smallImage = raw["small_image"] as String?;
     smallText = raw["small_text"] as String?;
+  }
+
+  @override
+  String? smallImageUrl({String? format, int? size}) {
+    if (smallImage == null) {
+      return null;
+    }
+    if (smallImage!.contains(':')) {
+      final splitted = smallImage!.split(':');
+
+      // The platform the user is currently on; e.g: spotify
+      switch (splitted[0]) {
+        case 'mp':
+          return 'https://media.discordapp.com/${splitted[1]}';
+        default:
+          // Not related to discord
+          return null;
+      }
+    }
+
+    return activity.client.cdnHttpEndpoints.appAsset(activity.applicationId!, smallImage!, format: format, size: size);
+  }
+
+  @override
+  String? largeImageUrl({String? format, int? size}) {
+    if (largeImage == null) {
+      return null;
+    }
+    if (largeImage!.contains(':')) {
+      final splitted = largeImage!.split(':');
+
+      // The platform the user is currently on; e.g: spotify
+      switch (splitted[0]) {
+        case 'mp':
+          return 'https://media.discordapp.com/${splitted[1]}';
+        default:
+          // Not related to discord
+          return null;
+      }
+    }
+
+    return activity.client.cdnHttpEndpoints.appAsset(activity.applicationId!, largeImage!, format: format, size: size);
   }
 }
 
@@ -461,7 +521,7 @@ class PartialPresence implements IPartialPresence {
 
     activities = [
       if (raw['activities'] != null)
-        for (final activity in raw["activities"]) Activity(activity as RawApiMap)
+        for (final activity in raw["activities"]) Activity(activity as RawApiMap, client)
     ];
   }
 }

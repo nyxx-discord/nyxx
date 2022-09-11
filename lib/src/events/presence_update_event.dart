@@ -11,7 +11,7 @@ abstract class IPresenceUpdateEvent {
   Cacheable<Snowflake, IUser> get user;
 
   /// Users current activities
-  Iterable<Activity> get presences;
+  Iterable<IActivity> get presences;
 
   /// Status of client
   IClientStatus get clientStatus;
@@ -25,7 +25,7 @@ class PresenceUpdateEvent implements IPresenceUpdateEvent {
 
   /// Users current activities
   @override
-  late final Iterable<Activity> presences;
+  late final Iterable<IActivity> presences;
 
   /// Status of client
   @override
@@ -33,7 +33,7 @@ class PresenceUpdateEvent implements IPresenceUpdateEvent {
 
   /// Creates an instance of [PresenceUpdateEvent]
   PresenceUpdateEvent(RawApiMap raw, INyxx client) {
-    presences = [for (final rawActivity in raw["d"]["activities"]) Activity(rawActivity as RawApiMap)];
+    presences = [for (final rawActivity in raw["d"]["activities"]) Activity(rawActivity as RawApiMap, client)];
     clientStatus = ClientStatus(raw["d"]["client_status"] as RawApiMap);
     user = UserCacheable(client, Snowflake(raw["d"]["user"]["id"]));
 
