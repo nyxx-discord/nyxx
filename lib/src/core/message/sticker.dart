@@ -163,6 +163,7 @@ class GuildSticker extends Sticker implements IGuildSticker {
   Future<void> delete() => client.httpEndpoints.deleteGuildSticker(guild.id, id);
 }
 
+/// Animated (or not) image like emoji
 abstract class IStandardSticker implements ISticker {
   /// Id of the pack the sticker is from
   Snowflake get packId;
@@ -171,7 +172,7 @@ abstract class IStandardSticker implements ISticker {
   /// Available in list form: [tagsList].
   String? get tags;
 
-  /// [StandardSticker] tags in list form
+  /// [IStandardSticker] tags in list form
   Iterable<String> get tagsList;
 }
 
@@ -216,7 +217,7 @@ class StandardSticker extends Sticker implements IStandardSticker {
 
 abstract class IStickerPack implements SnowflakeEntity {
   /// The stickers in the pack
-  List<StandardSticker> get stickers;
+  List<IStandardSticker> get stickers;
 
   /// Name of the sticker pack
   String get name;
@@ -232,13 +233,19 @@ abstract class IStickerPack implements SnowflakeEntity {
 
   /// Id of the sticker pack's banner image
   Snowflake get bannerAssetId;
+
+  /// Returns the banner url for this pack, with specified [format] and [size].
+  String bannerUrl({String? format, int? size});
 }
 
 /// Represents a pack of standard stickers.
 class StickerPack extends SnowflakeEntity implements IStickerPack {
+  /// Reference to [INyxx].
+  final INyxx client;
+
   /// The stickers in the pack
   @override
-  late final List<StandardSticker> stickers;
+  late final List<IStandardSticker> stickers;
 
   /// Name of the sticker pack
   @override
@@ -261,13 +268,17 @@ class StickerPack extends SnowflakeEntity implements IStickerPack {
   late final Snowflake bannerAssetId;
 
   /// Creates an instance of [StickerPack]
-  StickerPack(RawApiMap raw, INyxx client) : super(Snowflake(raw["id"])) {
+  StickerPack(RawApiMap raw, this.client) : super(Snowflake(raw["id"])) {
     stickers = [for (final rawSticker in raw["stickers"]) StandardSticker(rawSticker as RawApiMap, client)];
     name = raw["name"] as String;
     skuId = Snowflake(raw["sku_id"]);
     coverStickerId = Snowflake(raw["cover_sticker_id"]);
     description = raw["description"] as String;
     bannerAssetId = Snowflake(raw["banner_asset_id"]);
+  }
+
+  String bannerUrl({String? format, int? size}) {
+    return client.cdnHttpEndpoints.stickerPackBanner(bannerAssetId, format: format, size: size);
   }
 }
 

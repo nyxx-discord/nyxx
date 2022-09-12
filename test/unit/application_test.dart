@@ -53,7 +53,7 @@ const exampleClientOAuth2ApplicationPayload = <String, dynamic>{
 
 main() {
   test("test constructor AppTeam", () {
-    final resultEntity = AppTeam(exampleAppTeamPayload);
+    final resultEntity = AppTeam(exampleAppTeamPayload, NyxxRestMock());
 
     expect(resultEntity.ownerMember.user.id, equals(resultEntity.ownerId));
     expect(resultEntity.teamIconUrl, equals("https://cdn.${Constants.cdnHost}/team-icons/567/example_icon_hash.png"));

@@ -30,6 +30,8 @@ abstract class ICdnHttpEndpoints {
   String stickerPackBanner(Snowflake bannerId, {String? format, int? size});
 
   String teamIcon(Snowflake teamId, String teamIconHash, {String? format, int? size});
+
+  String guildEventCoverImage(Snowflake eventId, String eventCoverHash, {String? format, int? size});
 }
 
 class CdnHttpEndpoints implements ICdnHttpEndpoints {
@@ -192,9 +194,18 @@ class CdnHttpEndpoints implements ICdnHttpEndpoints {
 
   @override
   String teamIcon(Snowflake teamId, String teamIconHash, {String? format, int? size}) => _makeCdnUrl(
-        CdnHttpRoute()
+        ICdnHttpRoute()
           ..teamIcons(id: teamId.toString())
           ..addHash(hash: teamIconHash),
+        format: format,
+        size: size,
+      );
+
+  @override
+  String guildEventCoverImage(Snowflake eventId, String eventCoverHash, {String? format, int? size}) => _makeCdnUrl(
+        ICdnHttpRoute()
+          ..guildEvents(id: eventId.toString())
+          ..addHash(hash: eventCoverHash),
         format: format,
         size: size,
       );
