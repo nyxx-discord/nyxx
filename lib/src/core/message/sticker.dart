@@ -277,6 +277,7 @@ class StickerPack extends SnowflakeEntity implements IStickerPack {
     bannerAssetId = Snowflake(raw["banner_asset_id"]);
   }
 
+  @override
   String bannerUrl({String? format, int? size}) {
     return client.cdnHttpEndpoints.stickerPackBanner(bannerAssetId, format: format, size: size);
   }

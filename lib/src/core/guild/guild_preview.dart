@@ -23,7 +23,7 @@ abstract class IGuildPreview implements SnowflakeEntity {
   String? get discoveryHash;
 
   /// List of guild's emojis
-  List<BaseGuildEmoji> get emojis;
+  List<IBaseGuildEmoji> get emojis;
 
   /// List of guild's features
   Iterable<GuildFeature> get features;
@@ -75,7 +75,7 @@ class GuildPreview extends SnowflakeEntity implements IGuildPreview {
 
   /// List of guild's emojis
   @override
-  late final List<GuildEmoji> emojis;
+  late final List<IGuildEmoji> emojis;
 
   /// List of guild's features
   @override

@@ -694,7 +694,13 @@ class HttpEndpoints implements IHttpEndpoints {
         return Future.error(ArgumentError("Could not find user creator, make sure you have the correct permissions"));
       }
 
-      return User(client, response.jsonBody["user"] as RawApiMap);
+      final user = User(client, response.jsonBody["user"] as RawApiMap);
+      
+      if (client.cacheOptions.userCachePolicyLocation.http) {
+        return client.users.putIfAbsent(user.id, () => user);
+      }
+
+      return user;
     }
 
     return Future.error(response);

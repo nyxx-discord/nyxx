@@ -44,9 +44,11 @@ class AppTeamUser extends SnowflakeEntity implements IAppTeamUser {
   }
 
   @override
-  String? avatarUrl({String? format, int? size}) {
+  String? avatarUrl({String? format, int? size, bool animatable = false}) {
     if (avatar == null) {
       return null;
     }
+
+    return client.cdnHttpEndpoints.avatar(id, avatar!, format: format, size: size, animatable: animatable);
   }
 }

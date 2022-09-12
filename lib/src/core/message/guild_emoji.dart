@@ -1,7 +1,17 @@
-import 'package:nyxx/nyxx.dart';
+import 'package:nyxx/src/core/guild/guild.dart';
+import 'package:nyxx/src/core/guild/role.dart';
+import 'package:nyxx/src/core/message/emoji.dart';
+import 'package:nyxx/src/core/snowflake.dart';
+import 'package:nyxx/src/core/snowflake_entity.dart';
+import 'package:nyxx/src/core/user/user.dart';
 import 'package:nyxx/src/internal/cache/cacheable.dart';
+import 'package:nyxx/src/nyxx.dart';
+import 'package:nyxx/src/typedefs.dart';
 
 abstract class IBaseGuildEmoji implements SnowflakeEntity, IEmoji {
+  /// Reference to [INyxx].
+  INyxx get client;
+
   /// True if emoji is partial.
   bool get isPartial;
 
@@ -12,13 +22,17 @@ abstract class IBaseGuildEmoji implements SnowflakeEntity, IEmoji {
   bool get animated;
 
   /// Creates partial emoji from given String or Snowflake.
-  factory IBaseGuildEmoji.fromId(Snowflake id) => GuildEmojiPartial({"id": id.toString()});
+  // TODO: Replace this
+  factory IBaseGuildEmoji.fromId(Snowflake id) => GuildEmojiPartial({"id": id.toString()}, NyxxWebsocket('', 0));
 
   /// Returns cdn url to emoji
   String cdnUrl({String? format, int? size});
 }
 
 abstract class BaseGuildEmoji extends SnowflakeEntity implements IBaseGuildEmoji {
+  @override
+  final INyxx client;
+
   /// True if emoji is partial.
   @override
   bool get isPartial;
@@ -32,28 +46,12 @@ abstract class BaseGuildEmoji extends SnowflakeEntity implements IBaseGuildEmoji
   String get name;
 
   /// Creates an instance of [BaseGuildEmoji]
-  BaseGuildEmoji(RawApiMap raw) : super(Snowflake(raw["id"]));
+  BaseGuildEmoji(RawApiMap raw, this.client) : super(Snowflake(raw["id"]));
 
   /// Returns cdn url to emoji
   @override
   String cdnUrl({String? format, int? size}) {
-    var url = "${Constants.cdnUrl}/emojis/$id.";
-
-    if (format == null) {
-      if (animated) {
-        url += "gif";
-      } else {
-        url += "webp";
-      }
-    } else {
-      url += format;
-    }
-
-    if (size != null) {
-      url += "?size=$size";
-    }
-
-    return url;
+    return 'client.cdnHttpEndpoints';
   }
 
   @override
@@ -70,14 +68,14 @@ abstract class BaseGuildEmoji extends SnowflakeEntity implements IBaseGuildEmoji
 abstract class IGuildEmojiPartial implements IBaseGuildEmoji {}
 
 abstract class IResolvableGuildEmojiPartial implements IGuildEmojiPartial {
-  /// Reference to [INyxx]
-  INyxx get client;
-
   /// Resolves this [IResolvableGuildEmojiPartial] to [IGuildEmoji]
   IGuildEmoji resolve();
 }
 
 class GuildEmojiPartial extends BaseGuildEmoji implements IGuildEmojiPartial {
+  @override
+  final INyxx client;
+
   /// True if emoji is partial.
   @override
   bool get isPartial => true;
@@ -91,7 +89,7 @@ class GuildEmojiPartial extends BaseGuildEmoji implements IGuildEmojiPartial {
   late final bool animated;
 
   /// Creates an instance of [GuildEmojiPartial]
-  GuildEmojiPartial(RawApiMap raw) : super({"id": raw["id"].toString()}) {
+  GuildEmojiPartial(RawApiMap raw, this.client) : super({"id": raw["id"]}, client) {
     name = raw["name"] as String? ?? "nyxx";
     animated = raw["animated"] as bool? ?? false;
   }
@@ -115,7 +113,7 @@ class ResolvableGuildEmojiPartial extends BaseGuildEmoji implements IResolvableG
   late final String name;
 
   /// Creates an instance of [ResolvableGuildEmojiPartial]
-  ResolvableGuildEmojiPartial(RawApiMap raw, this.client) : super(raw) {
+  ResolvableGuildEmojiPartial(RawApiMap raw, this.client) : super(raw, client) {
     name = raw["name"] as String? ?? "nyxx";
     animated = raw["animated"] as bool? ?? false;
   }
@@ -126,9 +124,6 @@ class ResolvableGuildEmojiPartial extends BaseGuildEmoji implements IResolvableG
 }
 
 abstract class IGuildEmoji implements IBaseGuildEmoji {
-  /// Reference to [INyxx]
-  INyxx get client;
-
   /// Reference to guild where emoji belongs to
   Cacheable<Snowflake, IGuild> get guild;
 
@@ -152,10 +147,6 @@ abstract class IGuildEmoji implements IBaseGuildEmoji {
 }
 
 class GuildEmoji extends BaseGuildEmoji implements IGuildEmoji {
-  /// Reference to [INyxx]
-  @override
-  final INyxx client;
-
   /// Reference to guild where emoji belongs to
   @override
   late final Cacheable<Snowflake, IGuild> guild;
@@ -185,7 +176,7 @@ class GuildEmoji extends BaseGuildEmoji implements IGuildEmoji {
   bool get isPartial => false;
 
   /// Creates an instance of [GuildEmoji]
-  GuildEmoji(this.client, RawApiMap raw, Snowflake guildId) : super(raw) {
+  GuildEmoji(INyxx client, RawApiMap raw, Snowflake guildId) : super(raw, client) {
     guild = GuildCacheable(client, guildId);
 
     name = raw["name"] as String;

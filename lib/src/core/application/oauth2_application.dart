@@ -3,7 +3,6 @@ import 'package:nyxx/src/core/snowflake.dart';
 import 'package:nyxx/src/core/snowflake_entity.dart';
 import 'package:nyxx/src/nyxx.dart';
 import 'package:nyxx/src/typedefs.dart';
-import 'package:nyxx/src/utils/permissions.dart';
 
 abstract class IOAuth2Application implements SnowflakeEntity {
   /// The app's description.
