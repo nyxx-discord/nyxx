@@ -9,6 +9,7 @@ import '../mocks/nyxx_rest.mock.dart';
 const exampleAppTeamPayload = <String, dynamic>{
   "id": 567,
   "icon": 'example_icon_hash',
+  'name': 'this-is-app-team-name',
   'owner_user_id': 987654321,
   "members": [
     {
@@ -46,10 +47,11 @@ const exampleClientOAuth2ApplicationPayload = <String, dynamic>{
   },
   'description': "this is example description",
   'name': 'this-is-app-name',
-  'icon': 'example_icon_hash',
   'rpcOrigins': null,
   'id': 123456,
   'verify_key': 'aaaaaabbbb',
+  'bot_public': false,
+  'bot_require_code_grant': false,
 };
 
 main() {
