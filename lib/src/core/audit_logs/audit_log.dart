@@ -1,19 +1,31 @@
-import 'package:nyxx/src/nyxx.dart';
-import 'package:nyxx/src/core/snowflake.dart';
 import 'package:nyxx/src/core/audit_logs/audit_log_entry.dart';
+import 'package:nyxx/src/core/channel/thread_channel.dart';
+import 'package:nyxx/src/core/guild/auto_moderation.dart';
+import 'package:nyxx/src/core/guild/scheduled_event.dart';
 import 'package:nyxx/src/core/guild/webhook.dart';
+import 'package:nyxx/src/core/snowflake.dart';
 import 'package:nyxx/src/core/user/user.dart';
+import 'package:nyxx/src/nyxx.dart';
 import 'package:nyxx/src/typedefs.dart';
 
 abstract class IAuditLog {
-  /// List of webhooks found in the audit log
+  /// Map of webhooks found in the audit log.
   late final Map<Snowflake, IWebhook> webhooks;
 
-  /// List of users found in the audit log
+  /// Map of users found in the audit log.
   late final Map<Snowflake, IUser> users;
 
-  /// List of audit log entries
+  /// Map of audit log entries.
   late final Map<Snowflake, IAuditLogEntry> entries;
+
+  /// Map of auto moderation rules referenced in the audit log.
+  late final Map<Snowflake, IAutoModerationRule> autoModerationRules;
+
+  /// Map of guild scheduled events referenced in the audit log.
+  late final Map<Snowflake, IGuildEvent> events;
+
+  /// Map of threads referenced in the audit log.
+  late final Map<Snowflake, IThreadChannel> threads;
 
   /// Filters audit log by [users]
   Iterable<IAuditLogEntry> filter(bool Function(IAuditLogEntry) test);
@@ -23,38 +35,65 @@ abstract class IAuditLog {
 ///
 /// [Look here for more](https://discordapp.com/developers/docs/resources/audit-log)
 class AuditLog implements IAuditLog {
-  /// List of webhooks found in the audit log
+  /// Map of webhooks found in the audit log
   @override
   late final Map<Snowflake, IWebhook> webhooks;
 
-  /// List of users found in the audit log
+  /// Map of users found in the audit log
   @override
   late final Map<Snowflake, IUser> users;
 
-  /// List of audit log entries
+  /// Map of audit log entries
   @override
   late final Map<Snowflake, IAuditLogEntry> entries;
+
+  /// Map of auto moderation rules referenced in the audit log
+  @override
+  late final Map<Snowflake, IAutoModerationRule> autoModerationRules;
+
+  /// Map of guild scheduled events referenced in the audit log
+  @override
+  late final Map<Snowflake, IGuildEvent> events;
+
+  /// Map of threads referenced in the audit log.
+  @override
+  late final Map<Snowflake, IThreadChannel> threads;
 
   /// Creates an instance of [AuditLog]
   AuditLog(RawApiMap raw, INyxx client) {
     webhooks = {};
     users = {};
     entries = {};
+    autoModerationRules = {};
+    events = {};
+    threads = {};
 
     raw["webhooks"].forEach((o) {
-      webhooks[Snowflake(o["id"] as String)] = Webhook(o as RawApiMap, client);
+      webhooks[Snowflake(o["id"])] = Webhook(o as RawApiMap, client);
     });
 
     raw["users"].forEach((o) {
-      users[Snowflake(o["id"] as String)] = User(client, o as RawApiMap);
+      users[Snowflake(o["id"])] = User(client, o as RawApiMap);
     });
 
     raw["audit_log_entries"].forEach((o) {
-      entries[Snowflake(o["id"] as String)] = AuditLogEntry(o as RawApiMap, client);
+      entries[Snowflake(o["id"])] = AuditLogEntry(o as RawApiMap, client);
+    });
+
+    raw['auto_moderation_rules'].forEach((o) {
+      autoModerationRules[Snowflake(o['id'])] = AutoModerationRule(o as RawApiMap, client);
+    });
+
+    raw['guild_scheduled_events'].forEach((o) {
+      events[Snowflake(o['id'])] = GuildEvent(o as RawApiMap, client);
+    });
+
+    raw['threads'].forEach((o) {
+      threads[Snowflake(o['id'])] = ThreadChannel(client, o as RawApiMap);
     });
   }
 
-  /// Filters audit log by [users]
+  /// Filters audit log by [entries]
   @override
   Iterable<IAuditLogEntry> filter(bool Function(IAuditLogEntry) test) => entries.values.where(test);
 }

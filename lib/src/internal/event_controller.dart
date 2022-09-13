@@ -127,6 +127,14 @@ abstract class IWebsocketEventController implements IRestEventController {
   /// Emitted when a member joins a guild.
   Stream<IGuildMemberAddEvent> get onGuildMemberAdd;
 
+  /// Emitted when a member joins a guild but is not yet screened by:
+  /// https://support.discord.com/hc/en-us/articles/1500000466882
+  Stream<IGuildMemberAddEvent> get onGuildMemberAddScreening;
+
+  /// Emitted when a member joins a guild but passed member screening
+  /// https://support.discord.com/hc/en-us/articles/1500000466882
+  Stream<IGuildMemberUpdateEvent> get onGuildMemberAddPassedScreening;
+
   /// Emitted when a member is updated.
   Stream<IGuildMemberUpdateEvent> get onGuildMemberUpdate;
 
@@ -211,6 +219,21 @@ abstract class IWebsocketEventController implements IRestEventController {
 
   /// Emitted when stage channel instance is deleted
   Stream<IGuildEventDeleteEvent> get onGuildEventDelete;
+
+  /// Emitted when an auto moderation rule is created
+  Stream<IAutoModerationRuleCreateEvent> get onAutoModerationRuleCreate;
+
+  /// Emitted when an auto moderation rule is updated
+  Stream<IAutoModerationRuleUpdateEvent> get onAutoModerationRuleUpdate;
+
+  /// Emitted when an auto moderation rule is deleted
+  Stream<IAutoModerationRuleDeleteEvent> get onAutoModerationRuleDelete;
+
+  /// Emitted when a webhook is created, updated or deleted.
+  Stream<IWebhookUpdateEvent> get onWebhookUpdate;
+
+  /// Emitted when an auto moderation rule was triggered and an action was executed (e.g. a message was blocked).
+  Stream<IAutoModerationActionExecutionEvent> get onAutoModerationActionExecution;
 }
 
 /// A controller for all events.
@@ -343,6 +366,16 @@ class WebsocketEventController extends RestEventController implements IWebsocket
 
   /// Guild scheduled event was updated
   late final StreamController<IGuildEventUpdateEvent> onGuildEventUpdateController;
+
+  late final StreamController<IAutoModerationRuleCreateEvent> onAutoModerationRuleCreateController;
+
+  late final StreamController<IAutoModerationRuleUpdateEvent> onAutoModerationRuleUpdateController;
+
+  late final StreamController<IAutoModerationRuleDeleteEvent> onAutoModerationRuleDeleteController;
+
+  late final StreamController<IWebhookUpdateEvent> onWebhookUpdateController;
+
+  late final StreamController<IAutoModerationActionExecutionEvent> onAutoModerationActionExecutionController;
 
   /// Emitted when a shard is disconnected from the websocket.
   @override
@@ -526,6 +559,27 @@ class WebsocketEventController extends RestEventController implements IWebsocket
   @override
   late final Stream<IGuildEventUpdateEvent> onGuildEventUpdate;
 
+  @override
+  late final Stream<IAutoModerationRuleCreateEvent> onAutoModerationRuleCreate;
+
+  @override
+  late final Stream<IAutoModerationRuleUpdateEvent> onAutoModerationRuleUpdate;
+
+  @override
+  late final Stream<IAutoModerationRuleDeleteEvent> onAutoModerationRuleDelete;
+
+  @override
+  late final Stream<IWebhookUpdateEvent> onWebhookUpdate;
+
+  @override
+  late final Stream<IAutoModerationActionExecutionEvent> onAutoModerationActionExecution;
+
+  @override
+  late final Stream<IGuildMemberAddEvent> onGuildMemberAddScreening;
+
+  @override
+  late final Stream<IGuildMemberUpdateEvent> onGuildMemberAddPassedScreening;
+
   final INyxxWebsocket _client;
 
   /// Makes a new `EventController`.
@@ -658,6 +712,24 @@ class WebsocketEventController extends RestEventController implements IWebsocket
 
     onGuildEventDeleteController = StreamController.broadcast();
     onGuildEventDelete = onGuildEventDeleteController.stream;
+
+    onAutoModerationRuleCreateController = StreamController.broadcast();
+    onAutoModerationRuleCreate = onAutoModerationRuleCreateController.stream;
+
+    onAutoModerationRuleUpdateController = StreamController.broadcast();
+    onAutoModerationRuleUpdate = onAutoModerationRuleUpdateController.stream;
+
+    onAutoModerationRuleDeleteController = StreamController.broadcast();
+    onAutoModerationRuleDelete = onAutoModerationRuleDeleteController.stream;
+
+    onWebhookUpdateController = StreamController.broadcast();
+    onWebhookUpdate = onWebhookUpdateController.stream;
+
+    onAutoModerationActionExecutionController = StreamController.broadcast();
+    onAutoModerationActionExecution = onAutoModerationActionExecutionController.stream;
+
+    onGuildMemberAddScreening = onGuildMemberAdd.where((event) => event.member.isPending);
+    onGuildMemberAddPassedScreening = onGuildMemberUpdate.where((event) => !(event.member.getFromCache()?.isPending ?? true));
   }
 
   @override
@@ -712,5 +784,13 @@ class WebsocketEventController extends RestEventController implements IWebsocket
     await onGuildEventCreateController.close();
     await onGuildEventUpdateController.close();
     await onGuildEventDeleteController.close();
+
+    await onAutoModerationRuleCreateController.close();
+    await onAutoModerationRuleDeleteController.close();
+    await onAutoModerationRuleUpdateController.close();
+
+    await onWebhookUpdateController.close();
+
+    await onAutoModerationActionExecutionController.close();
   }
 }

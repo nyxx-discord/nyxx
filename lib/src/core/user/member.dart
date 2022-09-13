@@ -62,6 +62,10 @@ abstract class IMember implements SnowflakeEntity, Mentionable {
   /// True if user is timed out
   bool get isTimedOut;
 
+  /// True if member is currently pending by [Membership Screening](https://discord.com/developers/docs/resources/guild#membership-screening-object).
+  /// When completed, an [IGuildMemberUpdateEvent] will be fired with [isPending] set to `false`.
+  bool get isPending;
+
   /// Returns url to member avatar
   String? avatarURL({String format = "webp"});
 
@@ -164,6 +168,9 @@ class Member extends SnowflakeEntity implements IMember {
     return Permissions(total);
   }
 
+  @override
+  late final bool isPending;
+
   /// Creates an instance of [Member]
   Member(this.client, RawApiMap raw, Snowflake guildId) : super(Snowflake(raw["user"]["id"])) {
     nickname = raw["nick"] as String?;
@@ -186,6 +193,8 @@ class Member extends SnowflakeEntity implements IMember {
         client.users[id] = User(client, userRaw);
       }
     }
+
+    isPending = (raw['pending'] as bool?) ?? false;
   }
 
   /// Returns url to member avatar

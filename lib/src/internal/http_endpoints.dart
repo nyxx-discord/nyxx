@@ -1,4 +1,5 @@
 import 'package:nyxx/src/core/audit_logs/audit_log_entry.dart';
+import 'package:nyxx/src/core/guild/auto_moderation.dart';
 import 'package:nyxx/src/core/guild/scheduled_event.dart';
 import 'package:nyxx/src/internal/http/http_route.dart';
 import 'package:nyxx/src/nyxx.dart';
@@ -33,6 +34,7 @@ import 'package:nyxx/src/internal/http/http_response.dart';
 import 'package:nyxx/src/internal/response_wrapper/thread_list_result_wrapper.dart';
 import 'package:nyxx/src/typedefs.dart';
 import 'package:nyxx/src/utils/builders/attachment_builder.dart';
+import 'package:nyxx/src/utils/builders/auto_moderation_builder.dart';
 import 'package:nyxx/src/utils/builders/channel_builder.dart';
 import 'package:nyxx/src/utils/builders/forum_thread_builder.dart';
 import 'package:nyxx/src/utils/builders/guild_builder.dart';
@@ -426,6 +428,16 @@ abstract class IHttpEndpoints {
       {int limit = 100, bool withMember = false, Snowflake? before, Snowflake? after});
 
   Future<IThreadChannel> startForumThread(Snowflake channelId, ForumThreadBuilder builder);
+
+  Stream<IAutoModerationRule> fetchAutoModerationRules(Snowflake guildId);
+
+  Future<IAutoModerationRule> fetchAutoModerationRule(Snowflake guildId, Snowflake ruleId);
+
+  Future<IAutoModerationRule> createAutoModerationRule(Snowflake guildId, AutoModerationRuleBuilder builder, {String? auditReason});
+
+  Future<IAutoModerationRule> editAutoModerationRule(Snowflake guildId, Snowflake ruleId, AutoModerationRuleBuilder builder, {String? auditReason});
+
+  Future<void> deleteAutoModerationRule(Snowflake guildId, Snowflake ruleId, {String? auditReason});
 }
 
 class HttpEndpoints implements IHttpEndpoints {
@@ -2054,7 +2066,9 @@ class HttpEndpoints implements IHttpEndpoints {
       return Future.error(response);
     }
 
-    return GuildEvent((response as IHttpResponseSuccess).jsonBody as RawApiMap, client);
+    final event = GuildEvent((response as IHttpResponseSuccess).jsonBody as RawApiMap, client);
+    client.guilds[guildId]?.scheduledEvents[event.id] = event;
+    return event;
   }
 
   @override
@@ -2077,39 +2091,43 @@ class HttpEndpoints implements IHttpEndpoints {
       return Future.error(response);
     }
 
-    return GuildEvent((response as IHttpResponseSuccess).jsonBody as RawApiMap, client);
+    final event = GuildEvent((response as IHttpResponseSuccess).jsonBody as RawApiMap, client);
+    client.guilds[guildId]?.scheduledEvents[guildEventId] = event;
+    return event;
   }
 
   @override
   Future<GuildEvent> fetchGuildEvent(Snowflake guildId, Snowflake guildEventId) async {
     final response = await httpHandler.execute(BasicRequest(
-        HttpRoute()
-          ..guilds(id: guildId.toString())
-          ..scheduledEvents(id: guildEventId.toString()),
-        method: 'GET'));
+      HttpRoute()
+        ..guilds(id: guildId.toString())
+        ..scheduledEvents(id: guildEventId.toString()),
+    ));
 
     if (response is IHttpResponseError) {
       return Future.error(response);
     }
 
-    return GuildEvent((response as IHttpResponseSuccess).jsonBody as RawApiMap, client);
+    final event = GuildEvent((response as IHttpResponseSuccess).jsonBody as RawApiMap, client);
+    client.guilds[guildId]?.scheduledEvents[event.id] = event;
+    return event;
   }
 
   @override
   Stream<GuildEventUser> fetchGuildEventUsers(Snowflake guildId, Snowflake guildEventId,
       {int limit = 100, bool withMember = false, Snowflake? before, Snowflake? after}) async* {
     final response = await httpHandler.execute(BasicRequest(
-        HttpRoute()
-          ..guilds(id: guildId.toString())
-          ..scheduledEvents(id: guildEventId.toString())
-          ..users(),
-        method: 'GET',
-        queryParams: {
-          'limit': limit,
-          'with_member': withMember,
-          if (before != null) 'before': before.toString(),
-          if (after != null) 'after': after.toString(),
-        }));
+      HttpRoute()
+        ..guilds(id: guildId.toString())
+        ..scheduledEvents(id: guildEventId.toString())
+        ..users(),
+      queryParams: {
+        'limit': limit,
+        'with_member': withMember,
+        if (before != null) 'before': before.toString(),
+        if (after != null) 'after': after.toString(),
+      },
+    ));
 
     if (response is IHttpResponseError) {
       yield* Stream.error(response);
@@ -2134,7 +2152,123 @@ class HttpEndpoints implements IHttpEndpoints {
     }
 
     for (final rawGuildEvent in (response as IHttpResponseSuccess).jsonBody as RawApiList) {
-      yield GuildEvent(rawGuildEvent as RawApiMap, client);
+      final event = GuildEvent(rawGuildEvent as RawApiMap, client);
+      client.guilds[guildId]?.scheduledEvents[event.id] = event;
+      yield event;
     }
+  }
+
+  @override
+  Stream<IAutoModerationRule> fetchAutoModerationRules(Snowflake guildId) async* {
+    final response = await httpHandler.execute(
+      BasicRequest(
+        HttpRoute()
+          ..guilds(id: guildId.toString())
+          ..autoModeration()
+          ..rules(),
+      ),
+    );
+
+    if (response is IHttpResponseError) {
+      yield* Stream.error(response);
+    }
+
+    for (final rawRule in (response as IHttpResponseSuccess).jsonBody as RawApiList) {
+      final rule = AutoModerationRule(rawRule as RawApiMap, client);
+      client.guilds[guildId]?.autoModerationRules[rule.id] = rule;
+      yield rule;
+    }
+  }
+
+  @override
+  Future<IAutoModerationRule> fetchAutoModerationRule(Snowflake guildId, Snowflake ruleId) async {
+    final response = await httpHandler.execute(
+      BasicRequest(
+        HttpRoute()
+          ..guilds(id: guildId.toString())
+          ..autoModeration()
+          ..rules(id: ruleId.toString()),
+      ),
+    );
+
+    if (response is IHttpResponseError) {
+      return Future.error(response);
+    }
+
+    final rule = AutoModerationRule((response as IHttpResponseSuccess).jsonBody as RawApiMap, client);
+
+    client.guilds[guildId]?.autoModerationRules[ruleId] = rule;
+
+    return rule;
+  }
+
+  @override
+  Future<IAutoModerationRule> createAutoModerationRule(Snowflake guildId, AutoModerationRuleBuilder builder, {String? auditReason}) async {
+    final response = await httpHandler.execute(
+      BasicRequest(
+        HttpRoute()
+          ..guilds(id: guildId.toString())
+          ..autoModeration()
+          ..rules(),
+        method: 'POST',
+        auditLog: auditReason,
+        body: builder.build(),
+      ),
+    );
+
+    if (response is IHttpResponseError) {
+      return Future.error(response);
+    }
+
+    final rule = AutoModerationRule((response as IHttpResponseSuccess).jsonBody as RawApiMap, client);
+
+    client.guilds[guildId]?.autoModerationRules[rule.id] = rule;
+
+    return rule;
+  }
+
+  @override
+  Future<IAutoModerationRule> editAutoModerationRule(Snowflake guildId, Snowflake ruleId, AutoModerationRuleBuilder builder, {String? auditReason}) async {
+    final response = await httpHandler.execute(
+      BasicRequest(
+        HttpRoute()
+          ..guilds(id: guildId.toString())
+          ..autoModeration()
+          ..rules(id: ruleId.toString()),
+        body: builder.build(),
+        auditLog: auditReason,
+        method: 'PATCH',
+      ),
+    );
+
+    if (response is IHttpResponseError) {
+      return Future.error(response);
+    }
+
+    final rule = AutoModerationRule((response as IHttpResponseSuccess).jsonBody as RawApiMap, client);
+
+    client.guilds[guildId]?.autoModerationRules[ruleId] = rule;
+
+    return rule;
+  }
+
+  @override
+  Future<void> deleteAutoModerationRule(Snowflake guildId, Snowflake ruleId, {String? auditReason}) async {
+    final response = await httpHandler.execute(
+      BasicRequest(
+        HttpRoute()
+          ..guilds(id: guildId.toString())
+          ..autoModeration()
+          ..rules(id: ruleId.toString()),
+        auditLog: auditReason,
+        method: 'DELETE',
+      ),
+    );
+
+    if (response is IHttpResponseError) {
+      return Future.error(response);
+    }
+
+    client.guilds[guildId]?.autoModerationRules.remove(ruleId);
   }
 }

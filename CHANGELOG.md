@@ -1,5 +1,26 @@
+## 4.1.0-dev.3
+__03.09.2022__
+
+- feature: Cache guild events (#369)
+
+## 4.1.0-dev.2
+__28.08.2022__
+
+- bug: Fixup shard disconnect event
+
+## 4.1.0-dev.1
+__28.08.2022__
+
+- feature: Refactor internal shard system (#368)
+- feature: Event to notify change of connection status (#364)
+
+## 4.1.0-dev.0
+__20.08.2022__
+
+- feature: feature: auto moderation (#353)
+
 ## 4.0.0
-___29.07.2022__
+__29.07.2022__
 
 - breaking: Fix typo in `IHttpResponseSucess`
 - breaking: Remove `threeDayThreadArchive` and `sevenDayThreadArchive` guild features

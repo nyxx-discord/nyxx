@@ -3,6 +3,7 @@ import 'package:nyxx/src/core/audit_logs/audit_log_entry.dart';
 import 'package:nyxx/src/core/channel/guild/guild_channel.dart';
 import 'package:nyxx/src/core/channel/invite.dart';
 import 'package:nyxx/src/core/channel/text_channel.dart';
+import 'package:nyxx/src/core/guild/auto_moderation.dart';
 import 'package:nyxx/src/core/guild/guild_feature.dart';
 import 'package:nyxx/src/core/guild/guild_nsfw_level.dart';
 import 'package:nyxx/src/core/guild/guild_preview.dart';
@@ -32,13 +33,14 @@ import 'package:nyxx/src/core/voice/voice_state.dart';
 import 'package:nyxx/src/internal/cache/cacheable.dart';
 import 'package:nyxx/src/typedefs.dart';
 import 'package:nyxx/src/utils/builders/attachment_builder.dart';
+import 'package:nyxx/src/utils/builders/auto_moderation_builder.dart';
 import 'package:nyxx/src/utils/builders/channel_builder.dart';
 import 'package:nyxx/src/utils/builders/guild_builder.dart';
 import 'package:nyxx/src/utils/builders/guild_event_builder.dart';
 import 'package:nyxx/src/utils/builders/sticker_builder.dart';
 
 abstract class IGuild implements SnowflakeEntity {
-  /// Reference to [NyxxWebsocket] instance
+  /// Reference to [INyxxWebsocket] instance
   INyxx get client;
 
   /// The guild's name.
@@ -185,6 +187,14 @@ abstract class IGuild implements SnowflakeEntity {
 
   /// The approximate amount of presences in the guild.
   int? get approxPresenceCount;
+
+  /// The cached auto moderation rules in the guild.
+  /// An empty map is returned if none where fetched or added by events.
+  ICache<Snowflake, IAutoModerationRule> get autoModerationRules;
+
+  /// The cached guild events in the guild.
+  /// An empty map is returned if none where fetched or added by events.
+  ICache<Snowflake, IGuildEvent> get scheduledEvents;
 
   /// The guild's icon, represented as URL.
   /// If guild doesn't have icon it returns null.
@@ -334,6 +344,21 @@ abstract class IGuild implements SnowflakeEntity {
 
   /// Fetches the welcome screen of this guild if it's a community guild.
   Future<IGuildWelcomeScreen?> fetchWelcomeScreen();
+
+  /// Fetches the auto moderation rules.
+  Stream<IAutoModerationRule> fetchAutoModerationRules();
+
+  /// Fetches a sole moderation rule.
+  Future<IAutoModerationRule> fetchAutoModerationRule(Snowflake ruleId);
+
+  /// Creates an auto moderation rule.
+  Future<IAutoModerationRule> createAutoModerationRule(AutoModerationRuleBuilder builder, {String? reason});
+
+  /// Edits an auto moderation rule.
+  Future<IAutoModerationRule> editAutoModerationRule(AutoModerationRuleBuilder builder, Snowflake ruleId, {String? reason});
+
+  /// Deletes an auto moderation rule.
+  Future<void> deleteAutoModerationRule(Snowflake ruleId, {String? reason});
 }
 
 class Guild extends SnowflakeEntity implements IGuild {
@@ -562,6 +587,12 @@ class Guild extends SnowflakeEntity implements IGuild {
         );
   }
 
+  @override
+  late final ICache<Snowflake, IAutoModerationRule> autoModerationRules;
+
+  @override
+  late final ICache<Snowflake, IGuildEvent> scheduledEvents;
+
   /// Creates an instance of [Guild]
   Guild(this.client, RawApiMap raw, [bool guildCreate = false]) : super(Snowflake(raw["id"])) {
     name = raw["name"] as String;
@@ -686,6 +717,9 @@ class Guild extends SnowflakeEntity implements IGuild {
       if (raw["stage_instances"] != null)
         for (final rawInstance in raw["stage_instances"]) StageChannelInstance(client, rawInstance as RawApiMap)
     ];
+
+    autoModerationRules = SnowflakeCache<IAutoModerationRule>();
+    scheduledEvents = SnowflakeCache<IGuildEvent>();
   }
 
   /// The guild's icon, represented as URL.
@@ -898,4 +932,21 @@ class Guild extends SnowflakeEntity implements IGuild {
 
   @override
   Future<IGuildWelcomeScreen> fetchWelcomeScreen() => client.httpEndpoints.fetchGuildWelcomeScreen(id);
+
+  @override
+  Stream<IAutoModerationRule> fetchAutoModerationRules() => client.httpEndpoints.fetchAutoModerationRules(id);
+
+  @override
+  Future<IAutoModerationRule> fetchAutoModerationRule(Snowflake ruleId) => client.httpEndpoints.fetchAutoModerationRule(id, ruleId);
+
+  @override
+  Future<IAutoModerationRule> createAutoModerationRule(AutoModerationRuleBuilder builder, {String? reason}) =>
+      client.httpEndpoints.createAutoModerationRule(id, builder, auditReason: reason);
+
+  @override
+  Future<IAutoModerationRule> editAutoModerationRule(AutoModerationRuleBuilder builder, Snowflake ruleId, {String? reason}) =>
+      client.httpEndpoints.editAutoModerationRule(id, ruleId, builder, auditReason: reason);
+
+  @override
+  Future<void> deleteAutoModerationRule(Snowflake ruleId, {String? reason}) => client.httpEndpoints.deleteAutoModerationRule(id, ruleId, auditReason: reason);
 }

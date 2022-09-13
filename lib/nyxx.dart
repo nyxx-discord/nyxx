@@ -40,6 +40,8 @@ export 'src/core/embed/embed_provider.dart' show IEmbedProvider;
 export 'src/core/embed/embed_thumbnail.dart' show IEmbedThumbnail;
 export 'src/core/embed/embed_video.dart' show IEmbedVideo;
 export 'src/core/guild/ban.dart' show IBan;
+export 'src/core/guild/auto_moderation.dart'
+    show IActionMetadata, IActionStructure, IAutoModerationRule, ITriggerMetadata, ActionTypes, EventTypes, TriggerTypes;
 export 'src/core/guild/client_user.dart' show IClientUser;
 export 'src/core/guild/guild.dart' show IGuild;
 export 'src/core/guild/guild_feature.dart' show GuildFeature;
@@ -103,7 +105,15 @@ export 'src/events/guild_events.dart'
         IGuildUpdateEvent,
         IRoleCreateEvent,
         IRoleDeleteEvent,
-        IRoleUpdateEvent;
+        IRoleUpdateEvent,
+        IAutoModerationRuleCreateEvent,
+        IAutoModerationRuleUpdateEvent,
+        IAutoModerationRuleDeleteEvent,
+        IAutoModerationActionExecutionEvent,
+        IGuildEventCreateEvent,
+        IGuildEventUpdateEvent,
+        IGuildEventDeleteEvent,
+        IWebhookUpdateEvent;
 export 'src/events/http_events.dart' show IHttpResponseEvent, IHttpErrorEvent;
 export 'src/events/invite_events.dart' show IInviteCreatedEvent, IInviteDeletedEvent;
 export 'src/events/member_chunk_event.dart' show IMemberChunkEvent;
@@ -173,6 +183,7 @@ export 'src/utils/builders/sticker_builder.dart' show StickerBuilder;
 export 'src/utils/builders/thread_builder.dart' show ThreadArchiveTime, ThreadBuilder;
 export 'src/utils/builders/guild_event_builder.dart' show GuildEventBuilder;
 export 'src/utils/builders/forum_thread_builder.dart' show ForumThreadBuilder;
+export 'src/utils/builders/auto_moderation_builder.dart' show ActionMetadataBuilder, ActionStructureBuilder, AutoModerationRuleBuilder, TriggerMetadataBuilder;
 export 'src/utils/extensions.dart' show IntExtensions, SnowflakeEntityListExtensions, StringExtensions;
 export 'src/utils/permissions.dart' show PermissionsUtils;
 export 'src/utils/utils.dart' show ListSafeFirstWhere;
