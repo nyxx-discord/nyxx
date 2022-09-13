@@ -155,7 +155,7 @@ main() async {
     expect(memberBot.guild.id, equals(guild.id));
     expect(memberBot.voiceState, isNull);
     expect(memberBot.mention, "<@${memberBot.id.toString()}>");
-    expect(memberBot.avatarURL(), isNull);
+    expect(memberBot.avatarUrl(), isNull);
 
     final effectivePermissions = await memberBot.effectivePermissions;
     expect(effectivePermissions.sendMessages, isTrue);
