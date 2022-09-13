@@ -115,7 +115,7 @@ class OAuth2Application extends SnowflakeEntity implements IOAuth2Application {
     verifyKey = raw['verify_key'] as String;
     guildId = raw['guild_id'] != null ? Snowflake(raw['guild_id']) : null;
     primarySkuId = raw['primary_sku_id'] != null ? Snowflake(raw['primary_sku_id']) : null;
-    slug = raw['slug'] as String;
+    slug = raw['slug'] as String?;
   }
 
   /// Returns url to apps icon

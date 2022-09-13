@@ -5,6 +5,7 @@ import 'package:nyxx/src/core/message/guild_emoji.dart';
 import 'package:nyxx/src/core/message/unicode_emoji.dart';
 import 'package:nyxx/src/core/message/components/component_style.dart';
 import 'package:nyxx/src/core/snowflake.dart';
+import 'package:nyxx/src/nyxx.dart';
 import 'package:nyxx/src/typedefs.dart';
 import 'package:nyxx/src/utils/enum.dart';
 
@@ -25,6 +26,9 @@ class ComponentType extends IEnum<int> {
 }
 
 abstract class IMessageComponentEmoji {
+  /// Reference to [INyxx].
+  INyxx get client;
+
   /// Name of the emoji if unicode emoji
   String? get name;
 
@@ -40,6 +44,9 @@ abstract class IMessageComponentEmoji {
 
 /// Spacial emoji object for [MessageComponent]
 class MessageComponentEmoji implements IMessageComponentEmoji {
+  @override
+  final INyxx client;
+
   /// Name of the emoji if unicode emoji
   @override
   late final String? name;
@@ -60,14 +67,14 @@ class MessageComponentEmoji implements IMessageComponentEmoji {
     }
 
     if (id != null) {
-      return IBaseGuildEmoji.fromId(Snowflake(id));
+      return IBaseGuildEmoji.fromId(Snowflake(id), client);
     }
 
     throw ArgumentError("Tried to parse emojis from invalid payload");
   }
 
   /// Creates an instance of [MessageComponentEmoji]
-  MessageComponentEmoji(RawApiMap raw) {
+  MessageComponentEmoji(RawApiMap raw, this.client) {
     name = raw["name"] as String?;
     id = raw["id"] as String?;
     animated = raw["animated"] as bool? ?? false;
@@ -88,14 +95,14 @@ abstract class MessageComponent implements IMessageComponent {
   /// Empty constructor
   MessageComponent();
 
-  factory MessageComponent.deserialize(RawApiMap raw) {
+  factory MessageComponent.deserialize(RawApiMap raw, INyxx client) {
     final type = raw["type"] as int;
 
     switch (type) {
       case 2:
-        return MessageButton.deserialize(raw);
+        return MessageButton.deserialize(raw, client);
       case 3:
-        return MessageMultiselect(raw);
+        return MessageMultiselect(raw, client);
       case 4:
         return MessageTextInput(raw);
     }
@@ -130,6 +137,9 @@ class MessageTextInput extends MessageComponent implements IMessageTextInput {
 }
 
 abstract class IMessageMultiselectOption {
+  /// Reference to [INyxx].
+  INyxx get client;
+
   /// Option label
   String get label;
 
@@ -147,6 +157,9 @@ abstract class IMessageMultiselectOption {
 }
 
 class MessageMultiselectOption implements IMessageMultiselectOption {
+  @override
+  final INyxx client;
+
   /// Option label
   @override
   late final String label;
@@ -168,13 +181,13 @@ class MessageMultiselectOption implements IMessageMultiselectOption {
   late final bool isDefault;
 
   /// Creates an instance of [MessageMultiselectOption]
-  MessageMultiselectOption(RawApiMap raw) {
+  MessageMultiselectOption(RawApiMap raw, this.client) {
     label = raw["label"] as String;
     value = raw["value"] as String;
 
     description = raw["description"] as String?;
     if (raw["emoji"] != null) {
-      emoji = MessageComponentEmoji(raw["emoji"] as Map<String, dynamic>);
+      emoji = MessageComponentEmoji(raw["emoji"] as Map<String, dynamic>, client);
     } else {
       emoji = null;
     }
@@ -183,6 +196,9 @@ class MessageMultiselectOption implements IMessageMultiselectOption {
 }
 
 abstract class IMessageMultiselect implements IMessageComponent {
+  /// Reference to [INyxx].
+  INyxx get client;
+
   /// A dev-defined unique string sent on click (max 100 characters)
   String get customId;
 
@@ -200,6 +216,9 @@ abstract class IMessageMultiselect implements IMessageComponent {
 }
 
 class MessageMultiselect extends MessageComponent implements IMessageMultiselect {
+  @override
+  final INyxx client;
+
   @override
   ComponentType get type => ComponentType.select;
 
@@ -224,12 +243,12 @@ class MessageMultiselect extends MessageComponent implements IMessageMultiselect
   late final Iterable<IMessageMultiselectOption> options;
 
   /// Creates an instance of [MessageMultiselect]
-  MessageMultiselect(RawApiMap raw) : super() {
+  MessageMultiselect(RawApiMap raw, this.client) : super() {
     customId = raw["custom_id"] as String;
     placeholder = raw["placeholder"] as String?;
     minValues = raw["min_values"] as int? ?? 1;
     maxValues = raw["max_values"] as int? ?? 1;
-    options = [for (final rawOption in raw["options"]) MessageMultiselectOption(rawOption as Map<String, dynamic>)];
+    options = [for (final rawOption in raw["options"]) MessageMultiselectOption(rawOption as Map<String, dynamic>, client)];
   }
 }
 
@@ -268,21 +287,21 @@ class MessageButton extends MessageComponent implements IMessageButton {
   @override
   late final bool disabled;
 
-  factory MessageButton.deserialize(RawApiMap raw) {
+  factory MessageButton.deserialize(RawApiMap raw, INyxx client) {
     if (raw["style"] == ButtonStyle.link.value) {
-      return LinkMessageButton(raw);
+      return LinkMessageButton(raw, client);
     }
 
-    return MessageButton(raw);
+    return MessageButton(raw, client);
   }
 
   /// Creates an instance of [MessageButton]
-  MessageButton(RawApiMap raw) : super() {
+  MessageButton(RawApiMap raw, INyxx client) : super() {
     label = raw["label"] as String?;
     style = ButtonStyle.from(raw["style"] as int);
 
     if (raw["emoji"] != null) {
-      emoji = MessageComponentEmoji(raw["emoji"] as RawApiMap);
+      emoji = MessageComponentEmoji(raw["emoji"] as RawApiMap, client);
     } else {
       emoji = null;
     }
@@ -303,7 +322,7 @@ class CustomMessageButton extends MessageButton implements ICustomMessageButton 
   late final String customId;
 
   /// Creates an instance of [CustomMessageButton]
-  CustomMessageButton(RawApiMap raw) : super(raw) {
+  CustomMessageButton(RawApiMap raw, INyxx client) : super(raw, client) {
     customId = raw["custom_id"] as String;
   }
 }
@@ -327,7 +346,7 @@ class LinkMessageButton extends MessageButton implements ILinkMessageButton {
   Uri get uri => Uri.parse(url);
 
   /// Creates an instance of [LinkMessageButton]
-  LinkMessageButton(RawApiMap raw) : super(raw) {
+  LinkMessageButton(RawApiMap raw, INyxx client) : super(raw, client) {
     url = raw["url"] as String;
   }
 }

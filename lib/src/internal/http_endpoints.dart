@@ -695,7 +695,7 @@ class HttpEndpoints implements IHttpEndpoints {
       }
 
       final user = User(client, response.jsonBody["user"] as RawApiMap);
-      
+
       if (client.cacheOptions.userCachePolicyLocation.http) {
         return client.users.putIfAbsent(user.id, () => user);
       }

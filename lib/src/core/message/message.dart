@@ -332,7 +332,8 @@ class Message extends SnowflakeEntity implements IMessage {
 
     if (raw["components"] != null) {
       components = [
-        for (final rawRow in raw["components"]) [for (final componentRaw in rawRow["components"]) MessageComponent.deserialize(componentRaw as RawApiMap)]
+        for (final rawRow in raw["components"])
+          [for (final componentRaw in rawRow["components"]) MessageComponent.deserialize(componentRaw as RawApiMap, client)]
       ];
     } else {
       components = [];

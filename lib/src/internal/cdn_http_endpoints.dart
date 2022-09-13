@@ -15,6 +15,8 @@ abstract class ICdnHttpEndpoints {
 
   String defaultAvatar(int discriminator, {int? size});
 
+  String emoji(Snowflake emojiId, {String? format, int? size});
+
   String discoverySplash(Snowflake guildId, String splashHash, {String? format, int? size});
 
   String memberAvatar(Snowflake guildId, Snowflake userId, String avatarHash, {String? format, int? size, bool animatable = false});
@@ -135,6 +137,9 @@ class CdnHttpEndpoints implements ICdnHttpEndpoints {
         format: format,
         size: size,
       );
+
+  @override
+  String emoji(Snowflake emojiId, {String? format, int? size}) => _makeCdnUrl(ICdnHttpRoute()..emojis(id: emojiId.toString()), format: format, size: size);
 
   @override
   String memberAvatar(Snowflake guildId, Snowflake userId, String avatarHash, {String? format, int? size, bool animatable = false}) => _makeAnimatableCdnUrl(

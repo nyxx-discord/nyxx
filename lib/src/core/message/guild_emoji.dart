@@ -22,11 +22,10 @@ abstract class IBaseGuildEmoji implements SnowflakeEntity, IEmoji {
   bool get animated;
 
   /// Creates partial emoji from given String or Snowflake.
-  // TODO: Replace this
-  factory IBaseGuildEmoji.fromId(Snowflake id) => GuildEmojiPartial({"id": id.toString()}, NyxxWebsocket('', 0));
+  factory IBaseGuildEmoji.fromId(Snowflake id, INyxx client) => GuildEmojiPartial({"id": id.toString()}, client);
 
   /// Returns cdn url to emoji
-  String cdnUrl({String? format, int? size});
+  String cdnUrl({String? format, int? size, bool animatable = false});
 }
 
 abstract class BaseGuildEmoji extends SnowflakeEntity implements IBaseGuildEmoji {
@@ -50,8 +49,8 @@ abstract class BaseGuildEmoji extends SnowflakeEntity implements IBaseGuildEmoji
 
   /// Returns cdn url to emoji
   @override
-  String cdnUrl({String? format, int? size}) {
-    return 'client.cdnHttpEndpoints';
+  String cdnUrl({String? format, int? size, bool animatable = false}) {
+    return client.cdnHttpEndpoints.emoji(id, format: animatable && animated ? 'gif' : format, size: size);
   }
 
   @override
@@ -73,9 +72,6 @@ abstract class IResolvableGuildEmojiPartial implements IGuildEmojiPartial {
 }
 
 class GuildEmojiPartial extends BaseGuildEmoji implements IGuildEmojiPartial {
-  @override
-  final INyxx client;
-
   /// True if emoji is partial.
   @override
   bool get isPartial => true;
@@ -89,7 +85,7 @@ class GuildEmojiPartial extends BaseGuildEmoji implements IGuildEmojiPartial {
   late final bool animated;
 
   /// Creates an instance of [GuildEmojiPartial]
-  GuildEmojiPartial(RawApiMap raw, this.client) : super({"id": raw["id"]}, client) {
+  GuildEmojiPartial(RawApiMap raw, INyxx client) : super({"id": raw["id"]}, client) {
     name = raw["name"] as String? ?? "nyxx";
     animated = raw["animated"] as bool? ?? false;
   }
@@ -100,10 +96,6 @@ class ResolvableGuildEmojiPartial extends BaseGuildEmoji implements IResolvableG
   @override
   late final bool animated;
 
-  /// Reference to [INyxx]
-  @override
-  final INyxx client;
-
   /// Whether this emoji is partial.
   @override
   bool get isPartial => true;
@@ -113,7 +105,7 @@ class ResolvableGuildEmojiPartial extends BaseGuildEmoji implements IResolvableG
   late final String name;
 
   /// Creates an instance of [ResolvableGuildEmojiPartial]
-  ResolvableGuildEmojiPartial(RawApiMap raw, this.client) : super(raw, client) {
+  ResolvableGuildEmojiPartial(RawApiMap raw, INyxx client) : super(raw, client) {
     name = raw["name"] as String? ?? "nyxx";
     animated = raw["animated"] as bool? ?? false;
   }
