@@ -52,7 +52,7 @@ abstract class IRole implements SnowflakeEntity, Mentionable {
   String get mention;
 
   /// Returns url to role icon
-  String? iconURL({String format = "webp", int size = 128});
+  String? iconUrl({String? format, int? size});
 
   /// Edits the role.
   Future<IRole> edit(RoleBuilder role, {String? auditReason});
@@ -155,12 +155,12 @@ class Role extends SnowflakeEntity implements IRole {
 
   /// Returns url to role icon
   @override
-  String? iconURL({String format = "webp", int size = 128}) {
+  String? iconUrl({String? format, int? size}) {
     if (iconHash == null) {
       return null;
     }
 
-    return client.httpEndpoints.getRoleIconUrl(id, iconHash!, format, size);
+    return client.cdnHttpEndpoints.roleIcon(id, iconHash!, format: format, size: size);
   }
 
   /// Edits the role.

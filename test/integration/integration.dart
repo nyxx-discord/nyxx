@@ -55,9 +55,9 @@ main() async {
     expect(guildPreview.id, equals(testGuildSnowflake));
     expect(guildPreview.name, equals('nyxx'));
 
-    expect(guildPreview.discoveryURL(), isNull);
-    expect(guildPreview.splashURL(), isNull);
-    expect(guildPreview.iconURL(), isNotNull);
+    expect(guildPreview.discoveryUrl(), isNull);
+    expect(guildPreview.splashUrl(), isNull);
+    expect(guildPreview.iconUrl(), isNotNull);
   });
 
   test("basic message functionality", () async {
