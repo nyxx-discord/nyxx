@@ -182,7 +182,7 @@ class Webhook extends SnowflakeEntity implements IWebhook {
   @override
   String avatarUrl({String? format, int? size, bool animatable = false}) {
     if (avatarHash == null) {
-      return client.cdnHttpEndpoints.defaultAvatar(discriminator + 1, size: size);
+      return client.cdnHttpEndpoints.defaultAvatar(defaultAvatarId, size: size);
     }
 
     return client.cdnHttpEndpoints.avatar(id, avatarHash!, format: format, size: size, animatable: animatable);
