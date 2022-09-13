@@ -46,9 +46,10 @@ const exampleClientOAuth2ApplicationPayload = <String, dynamic>{
   },
   'description': "this is example description",
   'name': 'this-is-app-name',
-  'icon': null,
+  'icon': 'example_icon_hash',
   'rpcOrigins': null,
   'id': 123456,
+  'verify_key': 'aaaaaabbbb',
 };
 
 main() {
@@ -56,7 +57,7 @@ main() {
     final resultEntity = AppTeam(exampleAppTeamPayload, NyxxRestMock());
 
     expect(resultEntity.ownerMember.user.id, equals(resultEntity.ownerId));
-    expect(resultEntity.iconUrl(), equals("https://cdn.${Constants.cdnHost}/team-icons/567/example_icon_hash.png"));
+    expect(resultEntity.iconUrl(), equals("https://cdn.${Constants.cdnHost}/team-icons/567/example_icon_hash.webp"));
   });
 
   test("test constructor OAuth2Info", () {
