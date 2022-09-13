@@ -198,19 +198,19 @@ abstract class IGuild implements SnowflakeEntity {
 
   /// The guild's icon, represented as URL.
   /// If guild doesn't have icon it returns null.
-  String? iconURL({String format = "webp", int size = 128});
+  String? iconUrl({String? format, int? size, bool animatable = false});
 
   /// URL to guild's splash.
   /// If guild doesn't have splash it returns null.
-  String? splashURL({String format = "webp", int size = 128});
+  String? splashUrl({String? format, int? size});
 
   /// URL to guilds discovery splash
   /// If guild doesn't have splash it returns null.
-  String? discoveryURL({String format = "webp", int size = 128});
+  String? discoveryUrl({String? format, int? size});
 
   /// URL to guild's banner.
   /// If guild doesn't have banner it returns null.
-  String? bannerUrl({String? format, int? size});
+  String? bannerUrl({String? format, int? size, bool animatable = false});
 
   /// Allows to download [Guild] widget aka advert png
   /// Possible options for [style]: shield (default), banner1, banner2, banner3, banner4
@@ -725,17 +725,35 @@ class Guild extends SnowflakeEntity implements IGuild {
   /// The guild's icon, represented as URL.
   /// If guild doesn't have icon it returns null.
   @override
-  String? iconURL({String format = "webp", int size = 128}) => client.httpEndpoints.getGuildIconUrl(id, icon, format, size);
+  String? iconUrl({String? format, int? size, bool animatable = false}) {
+    if (icon == null) {
+      return null;
+    }
+
+    return client.cdnHttpEndpoints.icon(id, icon!, format: format, size: size, animatable: animatable);
+  }
 
   /// URL to guild's splash.
   /// If guild doesn't have splash it returns null.
   @override
-  String? splashURL({String format = "webp", int size = 128}) => client.httpEndpoints.getGuildSplashURL(id, splash, format, size);
+  String? splashUrl({String? format, int? size}) {
+    if (splash == null) {
+      return null;
+    }
+
+    return client.cdnHttpEndpoints.splash(id, splash!, format: format, size: size);
+  }
 
   /// URL to guilds discovery splash
   /// If guild doesn't have splash it returns null.
   @override
-  String? discoveryURL({String format = "webp", int size = 128}) => client.httpEndpoints.getGuildDiscoveryURL(id, splash, format: format, size: size);
+  String? discoveryUrl({String? format, int? size}) {
+    if (discoverySplash == null) {
+      return null;
+    }
+
+    return client.cdnHttpEndpoints.discoverySplash(id, discoverySplash!, format: format, size: size);
+  }
 
   /// Allows to download [Guild] widget aka advert png
   /// Possible options for [style]: shield (default), banner1, banner2, banner3, banner4
@@ -745,7 +763,13 @@ class Guild extends SnowflakeEntity implements IGuild {
   /// Returns the URL to guild's banner.
   /// If guild doesn't have banner it returns null.
   @override
-  String? bannerUrl({String? format, int? size}) => client.httpEndpoints.getGuildBannerUrl(id, banner, format: format, size: size);
+  String? bannerUrl({String? format, int? size, bool animatable = false}) {
+    if (banner == null) {
+      return null;
+    }
+
+    return client.cdnHttpEndpoints.banner(id, banner!, format: format, size: size, animatable: animatable);
+  }
 
   /// Fetches all stickers of current guild
   @override
