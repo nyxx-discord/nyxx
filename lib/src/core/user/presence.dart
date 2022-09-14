@@ -405,12 +405,12 @@ class GameAssets implements IGameAssets {
       return null;
     }
     if (smallImage!.contains(':')) {
-      final splitted = smallImage!.split(':');
+      final smallImageSplitted = smallImage!.split(':');
 
       // The platform the user is currently on; e.g: spotify
-      switch (splitted[0]) {
+      switch (smallImageSplitted[0]) {
         case 'mp':
-          return 'https://media.discordapp.com/${splitted[1]}';
+          return 'https://media.discordapp.com/${smallImageSplitted[1]}';
         default:
           // Not related to discord
           return null;
@@ -426,12 +426,12 @@ class GameAssets implements IGameAssets {
       return null;
     }
     if (largeImage!.contains(':')) {
-      final splitted = largeImage!.split(':');
+      final largeImageSplitted = largeImage!.split(':');
 
       // The platform the user is currently on; e.g: spotify
-      switch (splitted[0]) {
+      switch (largeImageSplitted[0]) {
         case 'mp':
-          return 'https://media.discordapp.com/${splitted[1]}';
+          return 'https://media.discordapp.com/${largeImageSplitted[1]}';
         default:
           // Not related to discord
           return null;
