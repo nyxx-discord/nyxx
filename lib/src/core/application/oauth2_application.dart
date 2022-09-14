@@ -102,7 +102,7 @@ class OAuth2Application extends SnowflakeEntity implements IOAuth2Application {
     name = raw["name"] as String;
 
     icon = raw["icon"] as String?;
-    rpcOrigins = raw["rpc_origins"] as List<String>?;
+    rpcOrigins = (raw["rpc_origins"] as List?)?.cast<String>();
     coverImage = raw['cover_image'] as String?;
     if (raw['team'] != null) {
       team = AppTeam(raw['team'] as RawApiMap, client);
