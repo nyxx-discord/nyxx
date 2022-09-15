@@ -1,3 +1,10 @@
+## 4.1.0-dev.4
+__15.09.2022__
+
+- feature: Add `invitesDisabled` feature (#370)
+- feature: Add pending for member screening (#371)
+- feature: member screening events (#372)
+
 ## 4.1.0-dev.3
 __03.09.2022__
 
