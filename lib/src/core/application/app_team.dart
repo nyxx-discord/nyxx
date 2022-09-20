@@ -25,7 +25,7 @@ abstract class IAppTeam implements SnowflakeEntity {
   String get name;
 
   /// Returns URL to team icon with given [format] and [size].
-  String? iconUrl({String? format, int? size});
+  String? iconUrl({String format = 'webp', int? size});
 }
 
 /// Object of team that manages given app
@@ -63,7 +63,7 @@ class AppTeam extends SnowflakeEntity implements IAppTeam {
 
   /// Returns url to team icon
   @override
-  String? iconUrl({String? format, int? size}) {
+  String? iconUrl({String format = 'webp', int? size}) {
     if (iconHash == null) {
       return null;
     }

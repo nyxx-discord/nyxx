@@ -45,10 +45,10 @@ abstract class IOAuth2Application implements SnowflakeEntity {
   String? get slug;
 
   /// Returns URL to app's icon.
-  String? iconUrl({String? format, int? size});
+  String? iconUrl({String format = 'webp', int? size});
 
   /// Returns the cover image URL of the app.
-  String? coverImageUrl({String? format, int? size});
+  String? coverImageUrl({String format = 'webp', int? size});
 }
 
 /// An OAuth2 application.
@@ -120,7 +120,7 @@ class OAuth2Application extends SnowflakeEntity implements IOAuth2Application {
 
   /// Returns url to apps icon
   @override
-  String? iconUrl({String? format, int? size}) {
+  String? iconUrl({String format = 'webp', int? size}) {
     if (icon == null) {
       return null;
     }
@@ -129,7 +129,7 @@ class OAuth2Application extends SnowflakeEntity implements IOAuth2Application {
   }
 
   @override
-  String? coverImageUrl({String? format, int? size}) {
+  String? coverImageUrl({String format = 'webp', int? size}) {
     if (coverImage == null) {
       return null;
     }

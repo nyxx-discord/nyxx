@@ -19,7 +19,7 @@ abstract class IAppTeamUser implements SnowflakeEntity {
   /// The user's avatar, represented as URL.
   /// In case if user does not have avatar, default discord avatar will be returned; [format], [size] and [animated] will no longer affectng this URL.
   /// If [animated] is set as `true`, if available, the url will be a gif, otherwise the [format] or fallback to "webp".
-  String avatarUrl({String? format, int? size});
+  String avatarUrl({String format = 'webp', int? size});
 }
 
 /// Represent user in member context
@@ -47,7 +47,7 @@ class AppTeamUser extends SnowflakeEntity implements IAppTeamUser {
   }
 
   @override
-  String avatarUrl({String? format, int? size, bool animated = false}) {
+  String avatarUrl({String format = 'webp', int? size, bool animated = false}) {
     if (avatar == null) {
       return client.cdnHttpEndpoints.defaultAvatar(int.tryParse(discriminator) ?? 0);
     }

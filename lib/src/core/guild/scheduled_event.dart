@@ -70,7 +70,7 @@ abstract class IGuildEvent implements SnowflakeEntity {
   Stream<GuildEventUser> fetchUsers({int limit = 100, bool withMember = false, Snowflake? before, Snowflake? after});
 
   /// Returns URL to the cover, with given [format] and [size].
-  String? coverUrl({String? format, int? size});
+  String? coverUrl({String format = 'webp', int? size});
 }
 
 class GuildEvent extends SnowflakeEntity implements IGuildEvent {
@@ -154,7 +154,7 @@ class GuildEvent extends SnowflakeEntity implements IGuildEvent {
       client.httpEndpoints.fetchGuildEventUsers(guild.id, id, limit: limit, withMember: withMember, before: before, after: after);
 
   @override
-  String? coverUrl({String? format, int? size}) {
+  String? coverUrl({String format = 'webp', int? size}) {
     if (image == null) {
       return null;
     }

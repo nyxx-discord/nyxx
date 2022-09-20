@@ -198,19 +198,19 @@ abstract class IGuild implements SnowflakeEntity {
 
   /// The guild's icon, represented as URL.
   /// If guild doesn't have icon it returns null.
-  String? iconUrl({String? format, int? size, bool animated = false});
+  String? iconUrl({String format = 'webp', int? size, bool animated = false});
 
   /// URL to guild's splash.
   /// If guild doesn't have splash it returns null.
-  String? splashUrl({String? format, int? size});
+  String? splashUrl({String format = 'webp', int? size});
 
   /// URL to guilds discovery splash
   /// If guild doesn't have splash it returns null.
-  String? discoveryUrl({String? format, int? size});
+  String? discoveryUrl({String format = 'webp', int? size});
 
   /// URL to guild's banner.
   /// If guild doesn't have banner it returns null.
-  String? bannerUrl({String? format, int? size, bool animated = false});
+  String? bannerUrl({String format = 'webp', int? size, bool animated = false});
 
   /// Allows to download [IGuild] widget aka advert png
   /// Possible options for [style]: shield (default), banner1, banner2, banner3, banner4
@@ -725,7 +725,7 @@ class Guild extends SnowflakeEntity implements IGuild {
   /// The guild's icon, represented as URL.
   /// If guild doesn't have icon it returns null.
   @override
-  String? iconUrl({String? format, int? size, bool animated = false}) {
+  String? iconUrl({String format = 'webp', int? size, bool animated = false}) {
     if (icon == null) {
       return null;
     }
@@ -736,7 +736,7 @@ class Guild extends SnowflakeEntity implements IGuild {
   /// URL to guild's splash.
   /// If guild doesn't have splash it returns null.
   @override
-  String? splashUrl({String? format, int? size}) {
+  String? splashUrl({String format = 'webp', int? size}) {
     if (splash == null) {
       return null;
     }
@@ -747,7 +747,7 @@ class Guild extends SnowflakeEntity implements IGuild {
   /// URL to guilds discovery splash
   /// If guild doesn't have splash it returns null.
   @override
-  String? discoveryUrl({String? format, int? size}) {
+  String? discoveryUrl({String format = 'webp', int? size}) {
     if (discoverySplash == null) {
       return null;
     }
@@ -763,7 +763,7 @@ class Guild extends SnowflakeEntity implements IGuild {
   /// Returns the URL to guild's banner.
   /// If guild doesn't have banner it returns null.
   @override
-  String? bannerUrl({String? format, int? size, bool animated = false}) {
+  String? bannerUrl({String format = 'webp', int? size, bool animated = false}) {
     if (banner == null) {
       return null;
     }

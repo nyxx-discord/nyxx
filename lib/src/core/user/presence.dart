@@ -364,10 +364,10 @@ abstract class IGameAssets {
   IActivity get activity;
 
   /// Returns CDN URL to the small image.
-  String? smallImageUrl({String? format, int? size});
+  String? smallImageUrl({String format = 'webp', int? size});
 
   /// Returns CDN URL to the large image.
-  String? largeImageUrl({String? format, int? size});
+  String? largeImageUrl({String format = 'webp', int? size});
 }
 
 /// Presences assets
@@ -400,7 +400,7 @@ class GameAssets implements IGameAssets {
   }
 
   @override
-  String? smallImageUrl({String? format, int? size}) {
+  String? smallImageUrl({String format = 'webp', int? size}) {
     if (smallImage == null) {
       return null;
     }
@@ -421,7 +421,7 @@ class GameAssets implements IGameAssets {
   }
 
   @override
-  String? largeImageUrl({String? format, int? size}) {
+  String? largeImageUrl({String format = 'webp', int? size}) {
     if (largeImage == null) {
       return null;
     }

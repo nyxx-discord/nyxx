@@ -12,23 +12,23 @@ abstract class ICdnHttpEndpoints {
 
   /// Returns URL to ``/app-assets/[assetHash]``.
   /// With given [format] and [size].
-  String appAsset(Snowflake clientId, String assetHash, {String? format, int? size});
+  String appAsset(Snowflake clientId, String assetHash, {String format = 'webp', int? size});
 
   /// Returns URL to ``/app-icons/[iconHash]``.
   /// With given [format] and [size].
-  String appIcon(Snowflake clientId, String iconHash, {String? format, int? size});
+  String appIcon(Snowflake clientId, String iconHash, {String format = 'webp', int? size});
 
   /// Returns URL to ``/avatars/[avatarHash]``.
   /// With given [format], [size] and whether or not returns the animated version (if applicable) of this URL with [animated].
-  String avatar(Snowflake id, String avatarHash, {String? format, int? size, bool animated = false});
+  String avatar(Snowflake id, String avatarHash, {String format = 'webp', int? size, bool animated = false});
 
   /// Returns URL to ``/banners/[bannerHash]``.
   /// With given [format], [size] and whether or not returns the animated version (if applicable) of this URL with [animated].
-  String banner(Snowflake guildOrUserId, String hash, {String? format, int? size, bool animated = false});
+  String banner(Snowflake guildOrUserId, String hash, {String format = 'webp', int? size, bool animated = false});
 
   /// Returns URL to ``/channel-icons/[iconHash]``.
   /// With given [format] and [size].
-  String channelIcon(Snowflake channelId, String iconHash, {String? format, int? size});
+  String channelIcon(Snowflake channelId, String iconHash, {String format = 'webp', int? size});
 
   /// Returns URL to ``/embed/avatars/[discriminator]``.
   /// 
@@ -43,47 +43,47 @@ abstract class ICdnHttpEndpoints {
 
   /// Returns URL to ``/emojis/[emojiId]``.
   /// With given [format] and [size].
-  String emoji(Snowflake emojiId, {String? format, int? size});
+  String emoji(Snowflake emojiId, {String format = 'webp', int? size});
 
   /// Returns URL to ``/discovery-splashes/[splashHash]``.
   /// With given [format] and [size].
-  String discoverySplash(Snowflake guildId, String splashHash, {String? format, int? size});
+  String discoverySplash(Snowflake guildId, String splashHash, {String format = 'webp', int? size});
 
   /// Returns URL to ``/guilds/[guildId]/users/[userId]/[avatarHash]``.
   /// With given [format], [size] and whether or not returns the animated version (if applicable) of this URL with [animated].
-  String memberAvatar(Snowflake guildId, Snowflake userId, String avatarHash, {String? format, int? size, bool animated = false});
+  String memberAvatar(Snowflake guildId, Snowflake userId, String avatarHash, {String format = 'webp', int? size, bool animated = false});
 
   /// Returns URL tp ``/icons/[iconHash]``.
   /// With given [format], [size] and whether or not returns the animated version (if applicable) of this URL with [animated].
-  String icon(Snowflake id, String iconHash, {String? format, int? size, bool animated = false});
+  String icon(Snowflake id, String iconHash, {String format = 'webp', int? size, bool animated = false});
 
   /// Returns URL to ``/role-icons/[roleIconHash]``.
   /// With given [format] and [size].
-  String roleIcon(Snowflake roleId, String roleIconHash, {String? format, int? size});
+  String roleIcon(Snowflake roleId, String roleIconHash, {String format = 'webp', int? size});
 
   /// Returns URL to ``/splashes/[splashHash]``.
   /// With given [format] and [size].
-  String splash(Snowflake guildId, String splashHash, {String? format, int? size});
+  String splash(Snowflake guildId, String splashHash, {String format = 'webp', int? size});
 
   /// Returns URL to ``/stickers/[stickerId]``.
   /// With given [format], must be `png` or `json`.
-  String sticker(Snowflake stickerId, {String? format = 'png'});
+  String sticker(Snowflake stickerId, {String format = 'png'});
 
   /// Returns URL to ``/app-assets/710982414301790216/[bannerId]``.
   /// With given [format] and [size].
-  String stickerPackBanner(Snowflake bannerId, {String? format, int? size});
+  String stickerPackBanner(Snowflake bannerId, {String format = 'webp', int? size});
 
   /// Returns URL to ``/team-icons/[teamId]/[teamIconHash]``.
   /// With given [format] and [size].
-  String teamIcon(Snowflake teamId, String teamIconHash, {String? format, int? size});
+  String teamIcon(Snowflake teamId, String teamIconHash, {String format = 'webp', int? size});
 
   /// Returns URL to ``/guild-events/[eventId]/[eventCoverHash]``.
   /// With given [format] and [size].
-  String guildEventCoverImage(Snowflake eventId, String eventCoverHash, {String? format, int? size});
+  String guildEventCoverImage(Snowflake eventId, String eventCoverHash, {String format = 'webp', int? size});
 }
 
 class CdnHttpEndpoints implements ICdnHttpEndpoints {
-  String _makeAnimatedCdnUrl(ICdnHttpRoute fragment, String hash, {String? format = 'webp', int? size, bool animated = false}) {
+  String _makeAnimatedCdnUrl(ICdnHttpRoute fragment, String hash, {String format = 'webp', int? size, bool animated = false}) {
     if (hash.startsWith('a_') && animated) {
       animated = true;
     } else {
@@ -93,8 +93,7 @@ class CdnHttpEndpoints implements ICdnHttpEndpoints {
     return _makeCdnUrl(fragment, format: format, size: size, animated: animated);
   }
 
-  String _makeCdnUrl(ICdnHttpRoute fragments, {String? format = 'webp', int? size, bool animated = false}) {
-    format ??= 'webp';
+  String _makeCdnUrl(ICdnHttpRoute fragments, {String format = 'webp', int? size, bool animated = false}) {
     if (!CdnConstants.allowedExtensions.contains(format)) {
       throw Exception('Invalid extension provided, must be one of ${CdnConstants.allowedExtensions.and()}; given: $format');
     }
@@ -117,7 +116,7 @@ class CdnHttpEndpoints implements ICdnHttpEndpoints {
   }
 
   @override
-  String appAsset(Snowflake clientId, String assetHash, {String? format, int? size}) => _makeCdnUrl(
+  String appAsset(Snowflake clientId, String assetHash, {String format = 'webp', int? size}) => _makeCdnUrl(
         ICdnHttpRoute()
           ..appAssets(id: clientId.toString())
           ..addHash(hash: assetHash),
@@ -126,7 +125,7 @@ class CdnHttpEndpoints implements ICdnHttpEndpoints {
       );
 
   @override
-  String appIcon(Snowflake clientId, String iconHash, {String? format, int? size}) => _makeCdnUrl(
+  String appIcon(Snowflake clientId, String iconHash, {String format = 'webp', int? size}) => _makeCdnUrl(
         ICdnHttpRoute()
           ..appIcons(id: clientId.toString())
           ..addHash(hash: iconHash),
@@ -135,7 +134,7 @@ class CdnHttpEndpoints implements ICdnHttpEndpoints {
       );
 
   @override
-  String avatar(Snowflake id, String avatarHash, {String? format, int? size, bool animated = false}) => _makeAnimatedCdnUrl(
+  String avatar(Snowflake id, String avatarHash, {String format = 'webp', int? size, bool animated = false}) => _makeAnimatedCdnUrl(
         ICdnHttpRoute()
           ..avatars(id: id.toString())
           ..addHash(hash: avatarHash),
@@ -146,7 +145,7 @@ class CdnHttpEndpoints implements ICdnHttpEndpoints {
       );
 
   @override
-  String banner(Snowflake guildOrUserId, String hash, {String? format, int? size, bool animated = false}) => _makeAnimatedCdnUrl(
+  String banner(Snowflake guildOrUserId, String hash, {String format = 'webp', int? size, bool animated = false}) => _makeAnimatedCdnUrl(
         ICdnHttpRoute()
           ..banners(id: guildOrUserId.toString())
           ..addHash(hash: hash),
@@ -157,7 +156,7 @@ class CdnHttpEndpoints implements ICdnHttpEndpoints {
       );
 
   @override
-  String channelIcon(Snowflake channelId, String iconHash, {String? format, int? size}) => _makeCdnUrl(
+  String channelIcon(Snowflake channelId, String iconHash, {String format = 'webp', int? size}) => _makeCdnUrl(
         ICdnHttpRoute()
           ..channelIcons(id: channelId.toString())
           ..addHash(hash: iconHash),
@@ -175,7 +174,7 @@ class CdnHttpEndpoints implements ICdnHttpEndpoints {
       );
 
   @override
-  String discoverySplash(Snowflake guildId, String splashHash, {String? format, int? size}) => _makeCdnUrl(
+  String discoverySplash(Snowflake guildId, String splashHash, {String format = 'webp', int? size}) => _makeCdnUrl(
         ICdnHttpRoute()
           ..discoverySplashes(id: guildId.toString())
           ..addHash(hash: splashHash),
@@ -184,7 +183,7 @@ class CdnHttpEndpoints implements ICdnHttpEndpoints {
       );
 
   @override
-  String memberAvatar(Snowflake guildId, Snowflake userId, String avatarHash, {String? format, int? size, bool animated = false}) => _makeAnimatedCdnUrl(
+  String memberAvatar(Snowflake guildId, Snowflake userId, String avatarHash, {String format = 'webp', int? size, bool animated = false}) => _makeAnimatedCdnUrl(
         ICdnHttpRoute()
           ..guilds(id: guildId.toString())
           ..users(id: userId.toString())
@@ -196,10 +195,10 @@ class CdnHttpEndpoints implements ICdnHttpEndpoints {
       );
 
   @override
-  String emoji(Snowflake emojiId, {String? format, int? size}) => _makeCdnUrl(ICdnHttpRoute()..emojis(id: emojiId.toString()), format: format, size: size);
+  String emoji(Snowflake emojiId, {String format = 'webp', int? size}) => _makeCdnUrl(ICdnHttpRoute()..emojis(id: emojiId.toString()), format: format, size: size);
 
   @override
-  String icon(Snowflake id, String iconHash, {String? format, int? size, bool animated = false}) => _makeAnimatedCdnUrl(
+  String icon(Snowflake id, String iconHash, {String format = 'webp', int? size, bool animated = false}) => _makeAnimatedCdnUrl(
         ICdnHttpRoute()
           ..icons(id: id.toString())
           ..addHash(hash: iconHash),
@@ -210,7 +209,7 @@ class CdnHttpEndpoints implements ICdnHttpEndpoints {
       );
 
   @override
-  String roleIcon(Snowflake roleId, String roleIconHash, {String? format, int? size}) => _makeCdnUrl(
+  String roleIcon(Snowflake roleId, String roleIconHash, {String format = 'webp', int? size}) => _makeCdnUrl(
         ICdnHttpRoute()
           ..roleIcons(id: roleId.toString())
           ..addHash(hash: roleIconHash),
@@ -219,7 +218,7 @@ class CdnHttpEndpoints implements ICdnHttpEndpoints {
       );
 
   @override
-  String splash(Snowflake guildId, String splashHash, {String? format, int? size}) => _makeCdnUrl(
+  String splash(Snowflake guildId, String splashHash, {String format = 'webp', int? size}) => _makeCdnUrl(
         ICdnHttpRoute()
           ..splashes(id: guildId.toString())
           ..addHash(hash: splashHash),
@@ -227,13 +226,13 @@ class CdnHttpEndpoints implements ICdnHttpEndpoints {
         size: size,
       );
   @override
-  String sticker(Snowflake stickerId, {String? format = 'png'}) => _makeCdnUrl(
+  String sticker(Snowflake stickerId, {String format = 'png'}) => _makeCdnUrl(
         ICdnHttpRoute()..stickers(id: stickerId.toString()),
-        format: format ?? 'png',
+        format: format,
       );
 
   @override
-  String stickerPackBanner(Snowflake bannerId, {String? format, int? size}) => _makeCdnUrl(
+  String stickerPackBanner(Snowflake bannerId, {String format = 'webp', int? size}) => _makeCdnUrl(
         ICdnHttpRoute()
           ..appAssets(id: '710982414301790216')
           ..store(id: bannerId.toString()),
@@ -242,7 +241,7 @@ class CdnHttpEndpoints implements ICdnHttpEndpoints {
       );
 
   @override
-  String teamIcon(Snowflake teamId, String teamIconHash, {String? format, int? size}) => _makeCdnUrl(
+  String teamIcon(Snowflake teamId, String teamIconHash, {String format = 'webp', int? size}) => _makeCdnUrl(
         ICdnHttpRoute()
           ..teamIcons(id: teamId.toString())
           ..addHash(hash: teamIconHash),
@@ -251,7 +250,7 @@ class CdnHttpEndpoints implements ICdnHttpEndpoints {
       );
 
   @override
-  String guildEventCoverImage(Snowflake eventId, String eventCoverHash, {String? format, int? size}) => _makeCdnUrl(
+  String guildEventCoverImage(Snowflake eventId, String eventCoverHash, {String format = 'webp', int? size}) => _makeCdnUrl(
         ICdnHttpRoute()
           ..guildEvents(id: eventId.toString())
           ..addHash(hash: eventCoverHash),

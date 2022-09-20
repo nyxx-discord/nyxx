@@ -235,7 +235,7 @@ abstract class IStickerPack implements SnowflakeEntity {
   Snowflake get bannerAssetId;
 
   /// Returns the banner URL for this pack, with specified [format] and [size].
-  String bannerUrl({String? format, int? size});
+  String bannerUrl({String format = 'webp', int? size});
 }
 
 /// Represents a pack of standard stickers.
@@ -278,7 +278,7 @@ class StickerPack extends SnowflakeEntity implements IStickerPack {
   }
 
   @override
-  String bannerUrl({String? format, int? size}) {
+  String bannerUrl({String format = 'webp', int? size}) {
     return client.cdnHttpEndpoints.stickerPackBanner(bannerAssetId, format: format, size: size);
   }
 }

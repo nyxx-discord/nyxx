@@ -52,7 +52,7 @@ abstract class IUser implements SnowflakeEntity, ISend, Mentionable, IMessageAut
   FutureOr<IDMChannel> get dmChannel;
 
   /// The user's banner url.
-  String? bannerUrl({String? format, int? size, bool animated = false});
+  String? bannerUrl({String format = 'webp', int? size, bool animated = false});
 }
 
 /// Represents a single user of Discord, either a human or a bot, outside of any specific guild's context.
@@ -159,7 +159,7 @@ class User extends SnowflakeEntity implements IUser {
   /// The user's avatar, represented as URL.
   /// In case if user does not have avatar, default discord avatar will be returned with specified size and png format.
   @override
-  String avatarUrl({String? format, int? size, bool animated = false}) {
+  String avatarUrl({String format = 'webp', int? size, bool animated = false}) {
     if (avatar == null) {
       return client.cdnHttpEndpoints.defaultAvatar(discriminator);
     }
@@ -169,7 +169,7 @@ class User extends SnowflakeEntity implements IUser {
 
   /// The user's banner url.
   @override
-  String? bannerUrl({String? format, int? size, bool animated = false}) {
+  String? bannerUrl({String format = 'webp', int? size, bool animated = false}) {
     if (bannerHash == null) {
       return null;
     }
