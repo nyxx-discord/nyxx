@@ -1,3 +1,8 @@
+## 5.0.0-dev.0
+__20.09.2022__
+
+- refactor: Make CDN urls more reliable (#373)
+
 ## 4.1.0-dev.4
 __15.09.2022__
 
