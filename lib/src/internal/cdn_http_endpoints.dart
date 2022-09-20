@@ -6,10 +6,9 @@ import 'package:nyxx/src/utils/utils.dart';
 /// All known routes for Discord's CDN endpoints.
 /// Theses are used internally by specific classes; however it's possible to use
 /// them like [IHttpEndpoints].
-/// 
+///
 /// The docs assume the root (`/`) is `https://cdn.discordapp.com/`.
 abstract class ICdnHttpEndpoints {
-
   /// Returns URL to ``/app-assets/[assetHash]``.
   /// With given [format] and [size].
   String appAsset(Snowflake clientId, String assetHash, {String format = 'webp', int? size});
@@ -31,15 +30,14 @@ abstract class ICdnHttpEndpoints {
   String channelIcon(Snowflake channelId, String iconHash, {String format = 'webp', int? size});
 
   /// Returns URL to ``/embed/avatars/[discriminator]``.
-  /// 
+  ///
   /// The [discriminator] is passed as modulo 5 (`% 5`); and will lead to 0,1,2,3,4. (There's 5, but % modulo 5 will never give 5).
-  /// 
+  ///
   /// E.g:
   /// ```dart
   /// client.cdnHttpEndpoints.defaultAvatar(6712); // https://cdn.discordapp.com/embed/avatars/2.png
   /// ```
   String defaultAvatar(int discriminator);
-
 
   /// Returns URL to ``/emojis/[emojiId]``.
   /// With given [format] and [size].
@@ -183,7 +181,8 @@ class CdnHttpEndpoints implements ICdnHttpEndpoints {
       );
 
   @override
-  String memberAvatar(Snowflake guildId, Snowflake userId, String avatarHash, {String format = 'webp', int? size, bool animated = false}) => _makeAnimatedCdnUrl(
+  String memberAvatar(Snowflake guildId, Snowflake userId, String avatarHash, {String format = 'webp', int? size, bool animated = false}) =>
+      _makeAnimatedCdnUrl(
         ICdnHttpRoute()
           ..guilds(id: guildId.toString())
           ..users(id: userId.toString())
@@ -195,7 +194,8 @@ class CdnHttpEndpoints implements ICdnHttpEndpoints {
       );
 
   @override
-  String emoji(Snowflake emojiId, {String format = 'webp', int? size}) => _makeCdnUrl(ICdnHttpRoute()..emojis(id: emojiId.toString()), format: format, size: size);
+  String emoji(Snowflake emojiId, {String format = 'webp', int? size}) =>
+      _makeCdnUrl(ICdnHttpRoute()..emojis(id: emojiId.toString()), format: format, size: size);
 
   @override
   String icon(Snowflake id, String iconHash, {String format = 'webp', int? size, bool animated = false}) => _makeAnimatedCdnUrl(

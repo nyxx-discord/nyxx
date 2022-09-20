@@ -299,7 +299,7 @@ abstract class ICdnHttpRoute implements IHttpRoute {
   void appIcons({required String id});
 
   /// Adds the hash to any [ICdnHttpRoute].
-  /// 
+  ///
   /// This route is generated dynamically and does not well conform to [CdnHttpRoutePart.path].
   void addHash({required String hash});
 
