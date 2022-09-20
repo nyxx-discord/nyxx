@@ -198,7 +198,7 @@ abstract class IGuild implements SnowflakeEntity {
 
   /// The guild's icon, represented as URL.
   /// If guild doesn't have icon it returns null.
-  String? iconUrl({String? format, int? size, bool animatable = false});
+  String? iconUrl({String? format, int? size, bool animated = false});
 
   /// URL to guild's splash.
   /// If guild doesn't have splash it returns null.
@@ -210,7 +210,7 @@ abstract class IGuild implements SnowflakeEntity {
 
   /// URL to guild's banner.
   /// If guild doesn't have banner it returns null.
-  String? bannerUrl({String? format, int? size, bool animatable = false});
+  String? bannerUrl({String? format, int? size, bool animated = false});
 
   /// Allows to download [Guild] widget aka advert png
   /// Possible options for [style]: shield (default), banner1, banner2, banner3, banner4
@@ -725,12 +725,12 @@ class Guild extends SnowflakeEntity implements IGuild {
   /// The guild's icon, represented as URL.
   /// If guild doesn't have icon it returns null.
   @override
-  String? iconUrl({String? format, int? size, bool animatable = false}) {
+  String? iconUrl({String? format, int? size, bool animated = false}) {
     if (icon == null) {
       return null;
     }
 
-    return client.cdnHttpEndpoints.icon(id, icon!, format: format, size: size, animatable: animatable);
+    return client.cdnHttpEndpoints.icon(id, icon!, format: format, size: size, animated: animated);
   }
 
   /// URL to guild's splash.
@@ -763,12 +763,12 @@ class Guild extends SnowflakeEntity implements IGuild {
   /// Returns the URL to guild's banner.
   /// If guild doesn't have banner it returns null.
   @override
-  String? bannerUrl({String? format, int? size, bool animatable = false}) {
+  String? bannerUrl({String? format, int? size, bool animated = false}) {
     if (banner == null) {
       return null;
     }
 
-    return client.cdnHttpEndpoints.banner(id, banner!, format: format, size: size, animatable: animatable);
+    return client.cdnHttpEndpoints.banner(id, banner!, format: format, size: size, animated: animated);
   }
 
   /// Fetches all stickers of current guild

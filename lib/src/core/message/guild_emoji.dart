@@ -25,7 +25,7 @@ abstract class IBaseGuildEmoji implements SnowflakeEntity, IEmoji {
   factory IBaseGuildEmoji.fromId(Snowflake id, INyxx client) => GuildEmojiPartial({"id": id.toString()}, client);
 
   /// Returns cdn url to emoji
-  String cdnUrl({String? format, int? size, bool animatable = false});
+  String cdnUrl({String? format, int? size, bool animated = false});
 }
 
 abstract class BaseGuildEmoji extends SnowflakeEntity implements IBaseGuildEmoji {
@@ -49,8 +49,8 @@ abstract class BaseGuildEmoji extends SnowflakeEntity implements IBaseGuildEmoji
 
   /// Returns cdn url to emoji
   @override
-  String cdnUrl({String? format, int? size, bool animatable = false}) {
-    return client.cdnHttpEndpoints.emoji(id, format: animatable && animated ? 'gif' : format, size: size);
+  String cdnUrl({String? format, int? size, bool animated = false}) {
+    return client.cdnHttpEndpoints.emoji(id, format: animated && animated ? 'gif' : format, size: size);
   }
 
   @override

@@ -52,7 +52,7 @@ abstract class IUser implements SnowflakeEntity, ISend, Mentionable, IMessageAut
   FutureOr<IDMChannel> get dmChannel;
 
   /// The user's banner url.
-  String? bannerUrl({String? format, int? size, bool animatable = false});
+  String? bannerUrl({String? format, int? size, bool animated = false});
 }
 
 /// Represents a single user of Discord, either a human or a bot, outside of any specific guild's context.
@@ -159,22 +159,22 @@ class User extends SnowflakeEntity implements IUser {
   /// The user's avatar, represented as URL.
   /// In case if user does not have avatar, default discord avatar will be returned with specified size and png format.
   @override
-  String avatarUrl({String? format, int? size, bool animatable = false}) {
+  String avatarUrl({String? format, int? size, bool animated = false}) {
     if (avatar == null) {
       return client.cdnHttpEndpoints.defaultAvatar(discriminator, size: size);
     }
 
-    return client.cdnHttpEndpoints.avatar(id, avatar!, format: format, size: size, animatable: animatable);
+    return client.cdnHttpEndpoints.avatar(id, avatar!, format: format, size: size, animated: animated);
   }
 
   /// The user's banner url.
   @override
-  String? bannerUrl({String? format, int? size, bool animatable = false}) {
+  String? bannerUrl({String? format, int? size, bool animated = false}) {
     if (bannerHash == null) {
       return null;
     }
 
-    return client.cdnHttpEndpoints.banner(id, bannerHash!, format: format, size: size, animatable: animatable);
+    return client.cdnHttpEndpoints.banner(id, bannerHash!, format: format, size: size, animated: animated);
   }
 
   /// Sends a message to user.

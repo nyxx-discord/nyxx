@@ -318,12 +318,6 @@ abstract class IHttpEndpoints {
   /// Fetches invite based on specified [code]
   Future<IInvite> fetchInvite(String code);
 
-  /// Returns url for sticker.
-  String stickerUrl(Snowflake stickerId, String extension);
-
-  /// Returns url for given [emojiId]
-  String emojiUrl(Snowflake emojiId);
-
   /// Creates and returns [DMChannel] for user with given [userId].
   Future<IDMChannel> createDMChannel(Snowflake userId);
 
@@ -1570,12 +1564,6 @@ class HttpEndpoints implements IHttpEndpoints {
 
     return Future.error(response);
   }
-
-  @override
-  String stickerUrl(Snowflake stickerId, String extension) => "https://cdn.${Constants.cdnHost}/stickers/$stickerId.$extension";
-
-  @override
-  String emojiUrl(Snowflake emojiId) => "https://cdn.discordapp.com/emojis/$emojiId.png";
 
   @override
   Future<IDMChannel> createDMChannel(Snowflake userId) async {

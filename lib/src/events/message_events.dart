@@ -113,7 +113,7 @@ class MessageDeleteBulkEvent implements IMessageDeleteBulkEvent {
       guild = null;
     }
 
-    deletedMessagesIds = (json["d"]["ids"] as RawApiList).map((stringId) => Snowflake(stringId));
+    deletedMessagesIds = (json["d"]["ids"] as RawApiList).map(Snowflake.new);
   }
 
   /// Searches cache for deleted messages and returns those which are present in bots cache.

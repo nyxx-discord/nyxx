@@ -67,7 +67,7 @@ abstract class IMember implements SnowflakeEntity, Mentionable {
   bool get isPending;
 
   /// Returns url to member avatar
-  String? avatarUrl({String? format, int? size, bool animatable = false});
+  String? avatarUrl({String? format, int? size, bool animated = false});
 
   /// Bans the member and optionally deletes [deleteMessageDays] days worth of messages.
   Future<void> ban({int? deleteMessageDays, String? reason, String? auditReason});
@@ -199,12 +199,12 @@ class Member extends SnowflakeEntity implements IMember {
 
   /// Returns url to member avatar
   @override
-  String? avatarUrl({String? format, int? size, bool animatable = false}) {
+  String? avatarUrl({String? format, int? size, bool animated = false}) {
     if (avatarHash == null) {
       return null;
     }
 
-    return client.cdnHttpEndpoints.memberAvatar(guild.id, id, avatarHash!, format: format, size: size, animatable: animatable);
+    return client.cdnHttpEndpoints.memberAvatar(guild.id, id, avatarHash!, format: format, size: size, animated: animated);
   }
 
   /// Bans the member and optionally deletes [deleteMessageDays] days worth of messages.
