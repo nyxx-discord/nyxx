@@ -1,11 +1,14 @@
 import 'package:nyxx/src/core/snowflake.dart';
 import 'package:nyxx/src/core/snowflake_entity.dart';
 import 'package:nyxx/src/core/application/app_team_member.dart';
-import 'package:nyxx/src/internal/constants.dart';
+import 'package:nyxx/src/nyxx.dart';
 import 'package:nyxx/src/typedefs.dart';
 
 /// Object of team that manages given app
 abstract class IAppTeam implements SnowflakeEntity {
+  /// Reference to [INyxx].
+  INyxx get client;
+
   /// Hash of team icon
   String? get iconHash;
 
@@ -18,8 +21,11 @@ abstract class IAppTeam implements SnowflakeEntity {
   /// Returns instance of [IAppTeamMember] of team owner
   IAppTeamMember get ownerMember;
 
-  /// Returns url to team icon
-  String? get teamIconUrl;
+  /// The team's name.
+  String get name;
+
+  /// Returns URL to team icon with given [format] and [size].
+  String? iconUrl({String format = 'webp', int? size});
 }
 
 /// Object of team that manages given app
@@ -40,21 +46,28 @@ class AppTeam extends SnowflakeEntity implements IAppTeam {
   @override
   IAppTeamMember get ownerMember => members.firstWhere((element) => element.user.id == ownerId);
 
-  /// Returns url to team icon
   @override
-  String? get teamIconUrl {
-    if (iconHash != null) {
-      return "https://cdn.${Constants.cdnHost}/team-icons/${id.toString()}/$iconHash.png";
-    }
+  final INyxx client;
 
-    return null;
-  }
+  @override
+  late final String name;
 
   /// Creates an instance of [AppTeam]
-  AppTeam(RawApiMap raw) : super(Snowflake(raw["id"])) {
+  AppTeam(RawApiMap raw, this.client) : super(Snowflake(raw["id"])) {
     iconHash = raw["icon"] as String?;
     ownerId = Snowflake(raw["owner_user_id"]);
+    name = raw['name'] as String;
 
-    members = [for (final rawMember in raw["members"]) AppTeamMember(rawMember as RawApiMap)];
+    members = [for (final rawMember in raw["members"]) AppTeamMember(rawMember as RawApiMap, client)];
+  }
+
+  /// Returns url to team icon
+  @override
+  String? iconUrl({String format = 'webp', int? size}) {
+    if (iconHash == null) {
+      return null;
+    }
+
+    return client.cdnHttpEndpoints.teamIcon(id, iconHash!, format: format, size: size);
   }
 }

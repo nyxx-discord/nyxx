@@ -57,6 +57,9 @@ abstract class IGuildEvent implements SnowflakeEntity {
   /// Additional metadata for the guild scheduled event
   IEntityMetadata? get metadata;
 
+  /// The cover image hash.
+  String? get image;
+
   /// Deletes guild event
   Future<void> delete();
 
@@ -65,6 +68,9 @@ abstract class IGuildEvent implements SnowflakeEntity {
 
   /// Allows getting users that are taking part in event
   Stream<GuildEventUser> fetchUsers({int limit = 100, bool withMember = false, Snowflake? before, Snowflake? after});
+
+  /// Returns URL to the cover, with given [format] and [size].
+  String? coverUrl({String format = 'webp', int? size});
 }
 
 class GuildEvent extends SnowflakeEntity implements IGuildEvent {
@@ -113,6 +119,9 @@ class GuildEvent extends SnowflakeEntity implements IGuildEvent {
   @override
   late final IEntityMetadata? metadata;
 
+  @override
+  late final String? image;
+
   GuildEvent(RawApiMap raw, this.client) : super(Snowflake(raw['id'])) {
     creator = raw['creator'] != null ? User(client, raw['creator'] as RawApiMap) : null;
     creatorId = raw['creator_id'] != null ? UserCacheable(client, Snowflake(raw['creator_id'])) : null;
@@ -131,6 +140,7 @@ class GuildEvent extends SnowflakeEntity implements IGuildEvent {
     endDate = raw['scheduled_end_time'] != null ? DateTime.parse(raw['scheduled_end_time'] as String) : null;
 
     metadata = raw['entity_metadata'] != null ? EntityMetadata(raw['entity_metadata'] as RawApiMap) : null;
+    image = raw['image'] as String?;
   }
 
   @override
@@ -142,6 +152,15 @@ class GuildEvent extends SnowflakeEntity implements IGuildEvent {
   @override
   Stream<GuildEventUser> fetchUsers({int limit = 100, bool withMember = false, Snowflake? before, Snowflake? after}) =>
       client.httpEndpoints.fetchGuildEventUsers(guild.id, id, limit: limit, withMember: withMember, before: before, after: after);
+
+  @override
+  String? coverUrl({String format = 'webp', int? size}) {
+    if (image == null) {
+      return null;
+    }
+
+    return client.cdnHttpEndpoints.guildEventCoverImage(id, image!, format: format, size: size);
+  }
 }
 
 abstract class IEntityMetadata {

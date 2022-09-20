@@ -68,11 +68,6 @@ abstract class IHttpRoute {
   /// Adds the [`stickers`](https://discord.com/developers/docs/resources/sticker#get-sticker) part to this [IHttpRoute].
   void stickers({String? id});
 
-  /// Adds the `avatars` part to this [IHttpRoute].
-  ///
-  /// Note: this part only exists for the Discord CDN.
-  void avatars();
-
   /// Adds the [`scheduled-events`](https://discord.com/developers/docs/resources/guild-scheduled-event#get-guild-scheduled-event) part to this [IHttpRoute].
   void scheduledEvents({String? id});
 
@@ -223,9 +218,6 @@ class HttpRoute implements IHttpRoute {
   void stickers({String? id}) => add(HttpRoutePart("stickers", [if (id != null) HttpRouteParam(id)]));
 
   @override
-  void avatars() => add(HttpRoutePart("avatars"));
-
-  @override
   void scheduledEvents({String? id}) => add(HttpRoutePart("scheduled-events", [if (id != null) HttpRouteParam(id)]));
 
   @override
@@ -290,4 +282,116 @@ class HttpRoute implements IHttpRoute {
 
   @override
   void autoModeration() => add(HttpRoutePart('auto-moderation'));
+}
+
+/// Build static cdn routes that are not constrained by rate-limits.
+abstract class ICdnHttpRoute implements IHttpRoute {
+  factory ICdnHttpRoute() = CdnHttpRoute;
+
+  /// Adds a [CdnHttpRoutePart] to this [ICdnHttpRoute].
+  @override
+  void add(HttpRoutePart part);
+
+  /// Adds the `app-assets` part to this [ICdnHttpRoute].
+  void appAssets({required String id});
+
+  /// Adds the `app-icons` part to this [ICdnHttpRoute].
+  void appIcons({required String id});
+
+  /// Adds the hash to any [ICdnHttpRoute].
+  ///
+  /// This route is generated dynamically and does not well conform to [CdnHttpRoutePart.path].
+  void addHash({required String hash});
+
+  /// Adds the `avatars` part to this [ICdnHttpRoute].
+  void avatars({String? id});
+
+  /// Adds the `banners` part to this [ICdnHttpRoute].
+  void banners({required String id});
+
+  /// Adds the `channel-icons` part to this [ICdnHttpRoute].
+  void channelIcons({required String id});
+
+  /// Adds the `discovery-splashes` part to this [ICdnHttpRoute].
+  void discoverySplashes({required String id});
+
+  /// Adds the `embed` part to this [ICdnHttpRoute].
+  void embed();
+
+  /// Adds the `icons` part to this [ICdnHttpRoute].
+  void icons({required String id});
+
+  /// Adds the `role-icons` part to this [ICdnHttpRoute].
+  void roleIcons({required String id});
+
+  /// Adds the `splashes` part to this [ICdnHttpRoute].
+  void splashes({required String id});
+
+  /// Adds the `store` part to this [ICdnHttpRoute].
+  void store({String? id});
+
+  /// Adds the `team-icons` part to this [ICdnHttpRoute].
+  void teamIcons({required String id});
+
+  /// Adds the `guild-events` part to this [ICdnHttpRoute].
+  void guildEvents({required String id});
+}
+
+class CdnHttpRoute extends HttpRoute implements ICdnHttpRoute {
+  final List<HttpRoutePart> _httpCdnRouteParts = [];
+
+  @override
+  List<String> get pathSegments => _httpCdnRouteParts
+      .expand((part) => [
+            part.path,
+            ...part.params.map((param) => param.param),
+          ])
+      .toList();
+
+  @override
+  // Cannot use "covariant CdnHttpRoutePart" here because some methods are called from [HttpRoute]; therefore throw an error as "HttpRoutePart" is not a subtype of "CdnHttpRoutePart".
+  // ignore: avoid_renaming_method_parameters
+  void add(/* covariant CdnHttpRoutePart */ HttpRoutePart cdnHttpRoutePart) => _httpCdnRouteParts.add(cdnHttpRoutePart);
+
+  @override
+  void appAssets({required String id}) => add(CdnHttpRoutePart('app-assets', [CdnHttpRouteParam(id)]));
+
+  @override
+  void addHash({required String hash}) => add(CdnHttpRoutePart(hash));
+
+  @override
+  void appIcons({required String id}) => add(CdnHttpRoutePart('app-icons', [CdnHttpRouteParam(id)]));
+
+  @override
+  void avatars({String? id}) => add(CdnHttpRoutePart('avatars', [if (id != null) CdnHttpRouteParam(id)]));
+
+  @override
+  void banners({required String id}) => add(CdnHttpRoutePart('banners', [CdnHttpRouteParam(id)]));
+
+  @override
+  void channelIcons({required String id}) => add(CdnHttpRoutePart('channel-icons', [CdnHttpRouteParam(id)]));
+
+  @override
+  void discoverySplashes({required String id}) => add(CdnHttpRoutePart('discovery-splashes', [CdnHttpRouteParam(id)]));
+
+  @override
+  void embed() => add(CdnHttpRoutePart('embed'));
+
+  @override
+  void icons({required String id}) => add(CdnHttpRoutePart('icons', [CdnHttpRouteParam(id)]));
+
+  @override
+  void roleIcons({required String id}) => add(CdnHttpRoutePart('role-icons', [CdnHttpRouteParam(id)]));
+
+  @override
+  void splashes({required String id}) => add(CdnHttpRoutePart('splashes', [CdnHttpRouteParam(id)]));
+
+  @override
+  void store({String? id}) => add(CdnHttpRoutePart('store', [if (id != null) CdnHttpRouteParam(id)]));
+
+  @override
+  void teamIcons({required String id}) => add(CdnHttpRoutePart('team-icons', [CdnHttpRouteParam(id)]));
+
+  @override
+  void guildEvents({required String id}) => add(CdnHttpRoutePart('guild-events', [CdnHttpRouteParam(id)]));
 }

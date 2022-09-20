@@ -113,7 +113,7 @@ class MessageDeleteBulkEvent implements IMessageDeleteBulkEvent {
       guild = null;
     }
 
-    deletedMessagesIds = (json["d"]["ids"] as RawApiList).map((stringId) => Snowflake(stringId));
+    deletedMessagesIds = (json["d"]["ids"] as RawApiList).map(Snowflake.new);
   }
 
   /// Searches cache for deleted messages and returns those which are present in bots cache.
@@ -415,7 +415,8 @@ class MessageUpdateEvent implements IMessageUpdateEvent {
 
     if (raw['d']['components'] != null && (raw['d']['components'] as RawApiList).isNotEmpty) {
       (updatedMessage as Message).components = [
-        for (final rawRow in raw['d']["components"]) [for (final componentRaw in rawRow["components"]) MessageComponent.deserialize(componentRaw as RawApiMap)]
+        for (final rawRow in raw['d']["components"])
+          [for (final componentRaw in rawRow["components"]) MessageComponent.deserialize(componentRaw as RawApiMap, client)]
       ];
     }
 

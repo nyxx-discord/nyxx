@@ -55,9 +55,9 @@ main() async {
     expect(guildPreview.id, equals(testGuildSnowflake));
     expect(guildPreview.name, equals('nyxx'));
 
-    expect(guildPreview.discoveryURL(), isNull);
-    expect(guildPreview.splashURL(), isNull);
-    expect(guildPreview.iconURL(), isNotNull);
+    expect(guildPreview.discoveryUrl(), isNull);
+    expect(guildPreview.splashUrl(), isNull);
+    expect(guildPreview.iconUrl(), isNotNull);
   });
 
   test("basic message functionality", () async {
@@ -140,7 +140,7 @@ main() async {
     expect(userBot.bot, isTrue);
     expect(userBot.mention, "<@!${testUserBotSnowflake.toString()}>");
     expect(userBot.tag, equals("Running on Dart#1759"));
-    expect(userBot.avatarURL(), equals('https://cdn.discordapp.com/avatars/476603965396746242/be6107505d7b9d15292da4e54d88836e.webp?size=128'));
+    expect(userBot.avatarUrl(), equals('https://cdn.discordapp.com/avatars/476603965396746242/be6107505d7b9d15292da4e54d88836e.webp'));
   });
 
   test('member and guild tests', () async {
@@ -155,7 +155,7 @@ main() async {
     expect(memberBot.guild.id, equals(guild.id));
     expect(memberBot.voiceState, isNull);
     expect(memberBot.mention, "<@${memberBot.id.toString()}>");
-    expect(memberBot.avatarURL(), isNull);
+    expect(memberBot.avatarUrl(), isNull);
 
     final effectivePermissions = await memberBot.effectivePermissions;
     expect(effectivePermissions.sendMessages, isTrue);

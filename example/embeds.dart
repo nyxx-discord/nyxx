@@ -36,7 +36,7 @@ void main() async {
         })
         ..addAuthor((author) {
           author.name = e.message.author.username;
-          author.iconUrl = e.message.author.avatarURL();
+          author.iconUrl = e.message.author.avatarUrl();
         })
         ..addFooter((footer) {
           footer.text = "Footer example, good";
