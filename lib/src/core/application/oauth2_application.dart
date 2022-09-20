@@ -44,10 +44,10 @@ abstract class IOAuth2Application implements SnowflakeEntity {
   /// If this application is a game sold on Discord, this field will be the URL slug that links to the store page.
   String? get slug;
 
-  /// Returns url to app's icon.
+  /// Returns URL to app's icon.
   String? iconUrl({String? format, int? size});
 
-  /// Returns the cover image url of the app.
+  /// Returns the cover image URL of the app.
   String? coverImageUrl({String? format, int? size});
 }
 

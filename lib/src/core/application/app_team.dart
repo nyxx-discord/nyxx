@@ -24,7 +24,7 @@ abstract class IAppTeam implements SnowflakeEntity {
   /// The team's name.
   String get name;
 
-  /// Returns url to team icon with given [format] and [size].
+  /// Returns URL to team icon with given [format] and [size].
   String? iconUrl({String? format, int? size});
 }
 

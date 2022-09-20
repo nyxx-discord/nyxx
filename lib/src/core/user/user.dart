@@ -161,7 +161,7 @@ class User extends SnowflakeEntity implements IUser {
   @override
   String avatarUrl({String? format, int? size, bool animated = false}) {
     if (avatar == null) {
-      return client.cdnHttpEndpoints.defaultAvatar(discriminator, size: size);
+      return client.cdnHttpEndpoints.defaultAvatar(discriminator);
     }
 
     return client.cdnHttpEndpoints.avatar(id, avatar!, format: format, size: size, animated: animated);

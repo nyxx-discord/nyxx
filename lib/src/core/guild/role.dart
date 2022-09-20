@@ -51,7 +51,7 @@ abstract class IRole implements SnowflakeEntity, Mentionable {
   @override
   String get mention;
 
-  /// Returns url to role icon
+  /// Returns URL to role icon.
   String? iconUrl({String? format, int? size});
 
   /// Edits the role.

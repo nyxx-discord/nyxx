@@ -295,10 +295,12 @@ abstract class ICdnHttpRoute implements IHttpRoute {
   /// Adds the `app-assets` part to this [ICdnHttpRoute].
   void appAssets({required String id});
 
-  /// Adds the `app-icon` part to this [ICdnHttpRoute].
+  /// Adds the `app-icons` part to this [ICdnHttpRoute].
   void appIcons({required String id});
 
   /// Adds the hash to any [ICdnHttpRoute].
+  /// 
+  /// This route is generated dynamically and does not well conform to [CdnHttpRoutePart.path].
   void addHash({required String hash});
 
   /// Adds the `avatars` part to this [ICdnHttpRoute].

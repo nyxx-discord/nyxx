@@ -363,10 +363,10 @@ abstract class IGameAssets {
   /// Reference to the [IActivity].
   IActivity get activity;
 
-  /// Returns CDN url to the small image.
+  /// Returns CDN URL to the small image.
   String? smallImageUrl({String? format, int? size});
 
-  /// Returns CDN url to the large image.
+  /// Returns CDN URL to the large image.
   String? largeImageUrl({String? format, int? size});
 }
 

@@ -69,6 +69,7 @@ abstract class IGuildEvent implements SnowflakeEntity {
   /// Allows getting users that are taking part in event
   Stream<GuildEventUser> fetchUsers({int limit = 100, bool withMember = false, Snowflake? before, Snowflake? after});
 
+  /// Returns URL to the cover, with given [format] and [size].
   String? coverUrl({String? format, int? size});
 }
 

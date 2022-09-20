@@ -26,7 +26,7 @@ abstract class ISticker implements SnowflakeEntity {
   StickerFormat get format;
 
   /// Url for sticker image
-  String stickerUrl({int? size});
+  String stickerUrl();
 }
 
 /// Base class for all sticker types
@@ -53,7 +53,7 @@ abstract class Sticker extends SnowflakeEntity implements ISticker {
 
   /// Url for sticker image
   @override
-  String stickerUrl({int? size}) => client.cdnHttpEndpoints.sticker(id, format: format.getExtension());
+  String stickerUrl() => client.cdnHttpEndpoints.sticker(id, format: format.getExtension());
 
   /// Creates an instance of [Sticker]
   Sticker(RawApiMap raw, this.client) : super(Snowflake(raw["id"]));
@@ -234,7 +234,7 @@ abstract class IStickerPack implements SnowflakeEntity {
   /// Id of the sticker pack's banner image
   Snowflake get bannerAssetId;
 
-  /// Returns the banner url for this pack, with specified [format] and [size].
+  /// Returns the banner URL for this pack, with specified [format] and [size].
   String bannerUrl({String? format, int? size});
 }
 

@@ -45,7 +45,7 @@ abstract class IGuildPreview implements SnowflakeEntity {
   String? splashUrl({String? format, int? size});
 
   /// URL to guild's splash.
-  /// If guild doesn't have splash it returns null.
+  /// If guild doesn't have discovery it returns null.
   String? discoveryUrl({String? format, int? size});
 }
 

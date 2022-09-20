@@ -212,7 +212,7 @@ abstract class IGuild implements SnowflakeEntity {
   /// If guild doesn't have banner it returns null.
   String? bannerUrl({String? format, int? size, bool animated = false});
 
-  /// Allows to download [Guild] widget aka advert png
+  /// Allows to download [IGuild] widget aka advert png
   /// Possible options for [style]: shield (default), banner1, banner2, banner3, banner4
   String guildWidgetUrl([String style = "shield"]);
 
@@ -755,7 +755,7 @@ class Guild extends SnowflakeEntity implements IGuild {
     return client.cdnHttpEndpoints.discoverySplash(id, discoverySplash!, format: format, size: size);
   }
 
-  /// Allows to download [Guild] widget aka advert png
+  /// Allows to download [IGuild] widget aka advert png
   /// Possible options for [style]: shield (default), banner1, banner2, banner3, banner4
   @override
   String guildWidgetUrl([String style = "shield"]) => client.httpEndpoints.getGuildWidgetUrl(id, style);
