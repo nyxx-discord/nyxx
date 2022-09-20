@@ -67,7 +67,7 @@ abstract class ICdnHttpEndpoints {
   /// With given [format], must be `png` or `json`.
   String sticker(Snowflake stickerId, {String format = 'png'});
 
-  /// Returns URL to ``/app-assets/710982414301790216/[bannerId]``.
+  /// Returns URL to ``/app-assets/710982414301790216/store/[bannerId]``.
   /// With given [format] and [size].
   String stickerPackBanner(Snowflake bannerId, {String format = 'webp', int? size});
 
