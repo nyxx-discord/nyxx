@@ -1,3 +1,15 @@
+## 4.1.0
+__25.09.2022__
+
+- feature: Add `invitesDisabled` feature (#370)
+- feature: Add pending for member screening (#371)
+- feature: member screening events (#372)
+- feature: Cache guild events (#369)
+- feature: Refactor internal shard system (#368)
+- feature: Event to notify change of connection status (#364)
+- feature: feature: auto moderation (#353)
+- bug: Fixup shard disconnect event
+
 ## 4.1.0-dev.4
 __15.09.2022__
 
