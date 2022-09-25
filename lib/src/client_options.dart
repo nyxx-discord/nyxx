@@ -49,6 +49,7 @@ class ClientOptions {
   bool compressedGatewayPayloads;
 
   /// Enables dispatching of guild subscription events (presence and typing events)
+  @Deprecated('No longer has any effect, use intents instead.')
   bool guildSubscriptions;
 
   /// Initial bot presence
@@ -141,6 +142,12 @@ class GatewayIntents {
   /// Includes events: `GUILD_SCHEDULED_EVENT_CREATE`, `GUILD_SCHEDULED_EVENT_DELETE`, `GUILD_SCHEDULED_EVENT_UPDATE`, `GUILD_SCHEDULED_EVENT_USER_ADD`, `GUILD_SCHEDULED_EVENT_USER_REMOVE`
   static const int guildScheduledEvents = 1 << 16;
 
+  /// Includes events: `AUTO_MODERATION_RULE_CREATE`, `AUTO_MODERATION_RULE_UPDATE`, `AUTO_MODERATION_RULE_DELETE`
+  static const int autoModerationConfiguration = 1 << 20;
+
+  /// Includes events: `AUTO_MODERATION_ACTION_EXECUTION`
+  static const int autoModerationExecution = 1 << 21;
+
   /// All unprivileged intents
   static const int allUnprivileged = guilds |
       guildBans |
@@ -155,7 +162,9 @@ class GatewayIntents {
       directMessages |
       directMessageReactions |
       directMessageTyping |
-      guildScheduledEvents;
+      guildScheduledEvents |
+      autoModerationConfiguration |
+      autoModerationExecution;
 
   /// All privileged intents
   static const int allPrivileged = guildMembers | guildPresences | messageContent;

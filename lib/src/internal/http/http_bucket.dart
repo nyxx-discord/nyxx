@@ -9,7 +9,6 @@ class HttpBucket {
   static const String xRateLimitReset = "x-ratelimit-reset";
   static const String xRateLimitResetAfter = "x-ratelimit-reset-after";
 
-  int _limit;
   int _remaining;
   DateTime _reset;
   Duration _resetAfter;
@@ -25,7 +24,7 @@ class HttpBucket {
 
   String get id => _bucketId;
 
-  HttpBucket(this._limit, this._remaining, this._reset, this._resetAfter, this._bucketId);
+  HttpBucket(this._remaining, this._reset, this._resetAfter, this._bucketId);
 
   static HttpBucket? fromResponseSafe(http.StreamedResponse response) {
     final limit = getLimitFromHeaders(response.headers);
@@ -38,7 +37,7 @@ class HttpBucket {
       return null;
     }
 
-    return HttpBucket(limit, remaining, reset, resetAfter, bucketId);
+    return HttpBucket(remaining, reset, resetAfter, bucketId);
   }
 
   static String? getBucketIdFromHeaders(Map<String, String> headers) => headers[xRateLimitBucket];

@@ -1,10 +1,10 @@
 import 'package:nyxx/nyxx.dart';
 
-/// Additionnal info for certain action types
+/// Additional info for certain action types
 ///
 /// [Look here for more](https://discord.com/developers/docs/resources/audit-log#audit-log-entry-object-audit-log-events)
 abstract class IAuditLogOptions {
-  /// The channel in which the entites were targeted.
+  /// The channel in which the entities were targeted.
   Snowflake? get channelId;
 
   /// The number of entities targeted.
@@ -33,7 +33,7 @@ abstract class IAuditLogOptions {
 }
 
 class AuditLogOptions implements IAuditLogOptions {
-  /// The channel in which the entites were targeted.
+  /// The channel in which the entities were targeted.
   @override
   late final Snowflake? channelId;
 

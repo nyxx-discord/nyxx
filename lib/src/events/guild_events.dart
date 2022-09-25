@@ -1,13 +1,18 @@
-import 'package:nyxx/src/core/guild/scheduled_event.dart';
-import 'package:nyxx/src/nyxx.dart';
-import 'package:nyxx/src/core/snowflake.dart';
+import 'package:nyxx/src/core/channel/guild/text_guild_channel.dart';
+import 'package:nyxx/src/core/channel/text_channel.dart';
+import 'package:nyxx/src/core/guild/auto_moderation.dart';
 import 'package:nyxx/src/core/guild/guild.dart';
 import 'package:nyxx/src/core/guild/role.dart';
+import 'package:nyxx/src/core/guild/scheduled_event.dart';
 import 'package:nyxx/src/core/message/guild_emoji.dart';
+import 'package:nyxx/src/core/message/message.dart';
 import 'package:nyxx/src/core/message/sticker.dart';
+import 'package:nyxx/src/core/snowflake.dart';
+import 'package:nyxx/src/core/snowflake_entity.dart';
 import 'package:nyxx/src/core/user/member.dart';
 import 'package:nyxx/src/core/user/user.dart';
 import 'package:nyxx/src/internal/cache/cacheable.dart';
+import 'package:nyxx/src/nyxx.dart';
 import 'package:nyxx/src/typedefs.dart';
 
 abstract class IGuildCreateEvent {
@@ -446,19 +451,29 @@ class GuildEventCreateEvent implements IGuildEventCreateEvent {
 
   GuildEventCreateEvent(RawApiMap raw, INyxx client) {
     event = GuildEvent(raw['d'] as RawApiMap, client);
+    event.guild.getFromCache()?.scheduledEvents[event.id] = event;
   }
 }
 
 abstract class IGuildEventUpdateEvent {
+  /// The newly edited event.
   IGuildEvent get event;
+
+  /// The old event before it's update.
+  IGuildEvent? get oldEvent;
 }
 
 class GuildEventUpdateEvent implements IGuildEventUpdateEvent {
   @override
   late final IGuildEvent event;
 
+  @override
+  late final IGuildEvent? oldEvent;
+
   GuildEventUpdateEvent(RawApiMap raw, INyxx client) {
     event = GuildEvent(raw['d'] as RawApiMap, client);
+    oldEvent = event.guild.getFromCache()?.scheduledEvents[event.id];
+    event.guild.getFromCache()?.scheduledEvents.update(event.id, (_) => event, ifAbsent: () => event);
   }
 }
 
@@ -472,5 +487,170 @@ class GuildEventDeleteEvent implements IGuildEventDeleteEvent {
 
   GuildEventDeleteEvent(RawApiMap raw, INyxx client) {
     event = GuildEvent(raw['d'] as RawApiMap, client);
+    event.guild.getFromCache()?.scheduledEvents.remove(event.id);
+  }
+}
+
+abstract class IAutoModerationRuleCreateEvent {
+  /// The created rule.
+  IAutoModerationRule get rule;
+}
+
+class AutoModerationRuleCreateEvent implements IAutoModerationRuleCreateEvent {
+  @override
+  late final IAutoModerationRule rule;
+
+  AutoModerationRuleCreateEvent(RawApiMap raw, INyxx client) {
+    rule = AutoModerationRule(raw['d'] as RawApiMap, client);
+    client.guilds[rule.guild.id]?.autoModerationRules[rule.id] = rule;
+  }
+}
+
+abstract class IAutoModerationRuleUpdateEvent {
+  /// The updated rule.
+  IAutoModerationRule get rule;
+
+  /// The old rule before it's update.
+  IAutoModerationRule? get oldRule;
+}
+
+class AutoModerationRuleUpdateEvent implements IAutoModerationRuleUpdateEvent {
+  @override
+  late final IAutoModerationRule rule;
+
+  @override
+  late final IAutoModerationRule? oldRule;
+
+  AutoModerationRuleUpdateEvent(RawApiMap raw, INyxx client) {
+    rule = AutoModerationRule(raw['d'] as RawApiMap, client);
+    final guild = client.guilds[rule.guild.id];
+    oldRule = guild?.autoModerationRules[rule.id];
+    if (guild == null) {
+      return;
+    }
+    guild.autoModerationRules.update(rule.id, (_) => rule, ifAbsent: () => rule);
+  }
+}
+
+abstract class IAutoModerationRuleDeleteEvent {
+  /// The deleted rule.
+  IAutoModerationRule get rule;
+}
+
+class AutoModerationRuleDeleteEvent implements IAutoModerationRuleDeleteEvent {
+  @override
+  late final IAutoModerationRule rule;
+
+  AutoModerationRuleDeleteEvent(RawApiMap raw, INyxx client) {
+    rule = AutoModerationRule(raw['d'] as RawApiMap, client);
+    client.guilds[rule.guild.id]?.autoModerationRules.remove(rule.id);
+  }
+}
+
+/// When a webhook is created, updated or deleted.
+abstract class IWebhookUpdateEvent {
+  /// The channel that points this webhook to.
+  Cacheable<Snowflake, ITextChannel> get channel;
+
+  /// The guild this webhook was created/updated/deleted.
+  Cacheable<Snowflake, IGuild> get guild;
+}
+
+class WebhookUpdateEvent implements IWebhookUpdateEvent {
+  @override
+  late final Cacheable<Snowflake, ITextChannel> channel;
+
+  @override
+  late final Cacheable<Snowflake, IGuild> guild;
+
+  WebhookUpdateEvent(RawApiMap raw, INyxx client) {
+    channel = ChannelCacheable(client, Snowflake(raw['d']['channel_id'] as String));
+    guild = GuildCacheable(client, Snowflake(raw['d']['guild_id'] as String));
+  }
+}
+
+abstract class IAutoModerationActionExecutionEvent implements SnowflakeEntity {
+  /// The guild where this action was executed.
+  Cacheable<Snowflake, IGuild> get guild;
+
+  /// The action which was executed.
+  ActionStructure get action;
+
+  /// The trigger type of rule which was triggered.
+  TriggerTypes get triggerType;
+
+  /// The member which generated the content which triggered the rule.
+  Cacheable<Snowflake, IMember> get member;
+
+  /// The channel in which user content was posted.
+  Cacheable<Snowflake, ITextGuildChannel>? get channel;
+
+  /// The message of any user message which content belongs to.
+  ///
+  /// This will not be present if the message was blocked by automod or the content was not part of the message.
+  Cacheable<Snowflake, IMessage>? get message;
+
+  /// The message id of any system auto moderation messages posted as a result of this action.
+  ///
+  /// `null` if the [action.actionType] is not [ActionTypes.sendAlertMessage].
+  Snowflake? get alertSystemMessage;
+
+  /// The member generated text content.
+  ///
+  /// An empty string if you have not the message content privilegied intent.
+  String get content;
+
+  /// The word or phrase configured in the rule that triggered the rule
+  String? get matchedKeyword;
+
+  /// The substring in content that triggered the rule.
+  ///
+  /// An empty string if you have not the message content privilegied intent.
+  String get matchedContent;
+}
+
+class AutoModeratioActionExecutionEvent extends SnowflakeEntity implements IAutoModerationActionExecutionEvent {
+  @override
+  late final Cacheable<Snowflake, IGuild> guild;
+
+  @override
+  late final ActionStructure action;
+
+  @override
+  late final TriggerTypes triggerType;
+
+  @override
+  late final Cacheable<Snowflake, IMember> member;
+
+  @override
+  late final Cacheable<Snowflake, ITextGuildChannel>? channel;
+
+  @override
+  late final Cacheable<Snowflake, IMessage>? message;
+
+  @override
+  late final Snowflake? alertSystemMessage;
+
+  @override
+  late final String content;
+
+  @override
+  late final String? matchedKeyword;
+
+  @override
+  late final String matchedContent;
+
+  AutoModeratioActionExecutionEvent(RawApiMap rawPayload, INyxx client) : super(Snowflake(rawPayload['d']['rule_id'])) {
+    final raw = rawPayload['d'];
+    guild = GuildCacheable(client, Snowflake(raw['guild_id'] as String));
+    action = ActionStructure(raw['action'] as RawApiMap, client);
+    triggerType = TriggerTypes.fromValue(raw['rule_trigger_type'] as int);
+    member = MemberCacheable(client, Snowflake(raw['user_id'] as String), guild);
+    channel = raw['channel_id'] != null ? ChannelCacheable(client, Snowflake(raw['channel_id'])) : null;
+    message = raw['message_id'] != null && channel != null ? MessageCacheable(client, Snowflake(raw['message_id']), channel!) : null;
+    alertSystemMessage = raw['alert_system_message_id'] != null ? Snowflake(raw['alert_system_message_id']) : null;
+    content = raw['content'] as String;
+    matchedKeyword = raw['matched_keyword'] != null ? raw['matched_keyword'] as String : null;
+    matchedContent = raw['matched_content'] as String;
   }
 }
