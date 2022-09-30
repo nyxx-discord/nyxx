@@ -44,6 +44,6 @@ jobs:
         with:
           tag_name: ${{steps.publish.outputs.package}}-${{steps.publish.outputs.localVersion}}
           release_name: ${{steps.publish.outputs.localVersion}}
-          body: See CHANGELOG.md for the changes in this version.e
+          body: See CHANGELOG.md for the changes in this version.
           draft: false
           prerelease: false
