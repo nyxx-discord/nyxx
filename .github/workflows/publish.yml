@@ -35,3 +35,15 @@ jobs:
         env:
           TAG: ${{steps.publish.outputs.package}}-${{steps.publish.outputs.localVersion}}
           GITHUB_TOKEN: ${{ secrets.TAG_RELEASE_TOKEN }}
+
+      - name: 'Create Release'
+        if: steps.publish.outputs.success
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.TAG_RELEASE_TOKEN }}
+        with:
+          tag_name: ${{steps.publish.outputs.package}}-${{steps.publish.outputs.localVersion}}
+          release_name: ${{steps.publish.outputs.localVersion}}
+          body: See CHANGELOG.md for the changes in this version.
+          draft: false
+          prerelease: false
