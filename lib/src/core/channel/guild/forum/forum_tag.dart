@@ -31,7 +31,7 @@ class ForumTag implements IForumTag {
   ForumTag(RawApiMap raw) {
     id = Snowflake(raw['id']);
     name = raw['string'] as String?;
-    emojiId = raw['emoji_id'] != 0 ? Snowflake(raw['emoji_id']) : null;
+    emojiId = raw['emoji_id'] != null ? Snowflake(raw['emoji_id']) : null;
     emojiName = raw['emoji_name'] as String?;
   }
 }
