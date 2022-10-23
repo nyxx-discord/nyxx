@@ -1,3 +1,8 @@
+## 4.1.1
+__23.10.2022__
+
+- bug: Fix deserialize the emoji id of the forum tag (#378)
+
 ## 4.1.0
 __25.09.2022__
 
