@@ -96,11 +96,7 @@ abstract class IMessageComponent {
   ComponentType get type;
 
   /// The custom id of this component, set by the user.
-  late final String customId;
-
-  IMessageComponent._(RawApiMap raw) {
-    customId = raw['custom_id'] as String;
-  }
+  String get customId;
 }
 
 /// Generic container for components that can be attached to message
@@ -109,7 +105,12 @@ abstract class MessageComponent extends IMessageComponent {
   @override
   ComponentType get type;
 
-  MessageComponent(RawApiMap raw) : super._(raw);
+  @override
+  late final String customId; 
+
+  MessageComponent(RawApiMap raw) {
+    customId = raw['custom_id'] as String;
+  }
 
   factory MessageComponent.deserialize(RawApiMap raw) {
     final type = raw["type"] as int;
