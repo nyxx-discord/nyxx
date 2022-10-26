@@ -239,7 +239,7 @@ abstract class IMessageMultiselect implements MultiSelectAbstract {
 
 class MessageMultiselect extends MultiSelectAbstract implements IMessageMultiselect {
   @override
-  ComponentType get type => ComponentType.select;
+  ComponentType get type => ComponentType.multiSelect;
 
   /// Possible options of multiselect
   @override
