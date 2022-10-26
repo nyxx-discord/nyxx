@@ -110,7 +110,7 @@ abstract class MessageComponent implements IMessageComponent {
   ComponentType get type;
 
   @override
-  late final String customId; 
+  late final String customId;
 
   MessageComponent(RawApiMap raw) {
     customId = raw['custom_id'] as String;
