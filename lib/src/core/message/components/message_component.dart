@@ -18,22 +18,26 @@ class ComponentType extends IEnum<int> {
   static const ComponentType button = ComponentType._create(2);
 
   /// Select menu for picking from defined text options.
+  @Deprecated('Use "multiSelect" instead')
   static const ComponentType select = ComponentType._create(3);
+
+  /// Select menu for picking from defined text options.
+  static const ComponentType multiSelect = ComponentType._create(3);
 
   /// Text input object.
   static const ComponentType text = ComponentType._create(4);
 
   /// Select menu for users.
-  static const ComponentType userSelect = ComponentType._create(5);
+  static const ComponentType userMultiSelect = ComponentType._create(5);
 
   /// Select menu for roles.
-  static const ComponentType roleSelect = ComponentType._create(6);
+  static const ComponentType roleMultiSelect = ComponentType._create(6);
 
   /// Select menu for mentionables (users and roles).
-  static const ComponentType mentionableSelect = ComponentType._create(7);
+  static const ComponentType mentionableMultiSelect = ComponentType._create(7);
 
   /// Select menu for channels.
-  static const ComponentType channelSelect = ComponentType._create(8);
+  static const ComponentType channelMultiSelect = ComponentType._create(8);
 
   const ComponentType._create(int value) : super(value);
 
