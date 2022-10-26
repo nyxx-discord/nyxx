@@ -291,7 +291,7 @@ class MessageChannelMultiSelect extends MultiSelectAbstract implements IMessageC
   late final Iterable<ChannelType>? channelTypes;
 
   MessageChannelMultiSelect(RawApiMap raw) : super(raw) {
-    channelTypes = raw['channel_types'] != null ? (raw['channel_types'] as List).cast<int>().map((type) => ChannelType.from(type)) : null;
+    channelTypes = raw['channel_types'] != null ? (raw['channel_types'] as List).cast<int>().map(ChannelType.from) : null;
   }
 }
 
