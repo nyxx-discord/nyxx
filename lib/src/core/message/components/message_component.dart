@@ -100,7 +100,7 @@ abstract class IMessageComponent {
 }
 
 /// Generic container for components that can be attached to message
-abstract class MessageComponent extends IMessageComponent {
+abstract class MessageComponent implements IMessageComponent {
   /// Type of component.
   @override
   ComponentType get type;
