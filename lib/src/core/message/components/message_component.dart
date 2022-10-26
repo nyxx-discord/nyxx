@@ -255,7 +255,7 @@ abstract class IMessageUserMultiSelect implements MultiSelectAbstract {}
 
 class MessageUserMultiSelect extends MultiSelectAbstract implements IMessageUserMultiSelect {
   @override
-  ComponentType get type => ComponentType.userSelect;
+  ComponentType get type => ComponentType.userMultiSelect;
 
   MessageUserMultiSelect(super.raw);
 }
@@ -264,7 +264,7 @@ abstract class IMessageRoleMultiSelect implements MultiSelectAbstract {}
 
 class MessageRoleMultiSelect extends MultiSelectAbstract implements IMessageRoleMultiSelect {
   @override
-  ComponentType get type => ComponentType.roleSelect;
+  ComponentType get type => ComponentType.roleMultiSelect;
 
   MessageRoleMultiSelect(super.raw);
 }
@@ -273,7 +273,7 @@ abstract class IMessageMentionableMultiSelect implements MultiSelectAbstract {}
 
 class MessageMentionableMultiSelect extends MultiSelectAbstract implements IMessageMentionableMultiSelect {
   @override
-  ComponentType get type => ComponentType.mentionableSelect;
+  ComponentType get type => ComponentType.mentionableMultiSelect;
 
   MessageMentionableMultiSelect(super.raw);
 }
@@ -285,7 +285,7 @@ abstract class IMessageChannelMultiSelect implements MultiSelectAbstract {
 
 class MessageChannelMultiSelect extends MultiSelectAbstract implements IMessageChannelMultiSelect {
   @override
-  ComponentType get type => ComponentType.channelSelect;
+  ComponentType get type => ComponentType.channelMultiSelect;
 
   @override
   late final Iterable<ChannelType>? channelTypes;
