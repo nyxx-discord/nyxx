@@ -1,3 +1,8 @@
+## 4.1.2
+__30.10.2022__
+
+- bug: Correctly emit connected event in `ShardManager`
+
 ## 4.1.1
 __23.10.2022__
 
