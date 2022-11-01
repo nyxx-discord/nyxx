@@ -246,6 +246,7 @@ class Shard implements IShard {
   Future<void> handleConnected() async {
     manager.logger.info('Shard $id connected to gateway');
     connected = true;
+    manager.onConnectController.add(this);
 
     // There was no previous heartbeat on a new connection.
     // Setting this to true prevents us from reconnecting upon receiving the first heartbeat due to the previous heartbeat "not being acked".

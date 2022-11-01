@@ -98,7 +98,22 @@ class ShardRunner implements Disposable {
       });
 
       if (useCompression) {
-        connectionSubscription = connection!.cast<List<int>>().transform(ZLibDecoder()).transform(utf8.decoder).listen(receive);
+        final filter = RawZLibFilter.inflateFilter();
+
+        connectionSubscription = connection!
+            .cast<List<int>>()
+            .map((rawPayload) {
+              filter.process(rawPayload, 0, rawPayload.length);
+
+              final buffer = <int>[];
+              for (List<int>? decoded = []; decoded != null; decoded = filter.processed()) {
+                buffer.addAll(decoded);
+              }
+
+              return buffer;
+            })
+            .transform(utf8.decoder)
+            .listen(receive);
       } else {
         connectionSubscription = connection!.cast<String>().listen(receive);
       }
