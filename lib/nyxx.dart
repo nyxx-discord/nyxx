@@ -69,7 +69,6 @@ export 'src/core/message/components/component_style.dart' show ButtonStyle;
 export 'src/core/message/components/message_component.dart'
     show
         IMessageButton,
-        ICustomMessageButton,
         ILinkMessageButton,
         IMessageComponent,
         IMessageComponentEmoji,
@@ -77,7 +76,11 @@ export 'src/core/message/components/message_component.dart'
         IMessageMultiselectOption,
         MessageComponentEmoji,
         ComponentType,
-        IMessageTextInput;
+        IMessageTextInput,
+        IMessageUserMultiSelect,
+        IMessageRoleMultiSelect,
+        IMessageMentionableMultiSelect,
+        IMessageChannelMultiSelect;
 export 'src/core/permissions/permission_overrides.dart' show IPermissionsOverrides;
 export 'src/core/permissions/permissions.dart' show IPermissions;
 export 'src/core/permissions/permissions_constants.dart' show PermissionsConstants;
