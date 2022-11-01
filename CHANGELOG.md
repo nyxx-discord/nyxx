@@ -1,3 +1,8 @@
+## 4.1.3
+__01.11.2022__
+
+- bug: Combine decompressed gateway payloads before parsing them
+
 ## 4.1.2
 __30.10.2022__
 
