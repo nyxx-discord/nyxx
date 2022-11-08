@@ -140,7 +140,7 @@ class User extends SnowflakeEntity implements IUser {
 
     bannerHash = raw["banner"] as String?;
     if (raw["accent_color"] != null) {
-      accentColor = DiscordColor.fromInt(raw["accent_color"] as int);
+      accentColor = DiscordColor.fromInt(int.parse(raw["accent_color"] as String));
     } else {
       accentColor = null;
     }
