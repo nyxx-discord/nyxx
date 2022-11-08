@@ -1071,13 +1071,7 @@ class HttpEndpoints implements IHttpEndpoints {
       return Future.error(response);
     }
 
-    final user = User(client, (response as HttpResponseSuccess).jsonBody as RawApiMap);
-
-    if (client.cacheOptions.userCachePolicyLocation.http) {
-      client.users[user.id] = user;
-    }
-
-    return user;
+    return User(client, (response as HttpResponseSuccess).jsonBody as RawApiMap);
   }
 
   @override
