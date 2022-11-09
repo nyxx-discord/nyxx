@@ -37,6 +37,11 @@ class ShardRunner implements Disposable {
   /// [ShardToManager.disconnected] will not be dispatched if this is true.
   bool reconnecting = false;
 
+  /// Whether this shard is currently disposing itself.
+  ///
+  /// [ShardToManager.disconnected] will not be dispatched if this is true.
+  bool disposing = false;
+
   ShardRunner(this.sendPort) {
     managerMessages.listen(handle);
   }
@@ -84,7 +89,7 @@ class ShardRunner implements Disposable {
       connection!.pingInterval = const Duration(seconds: 20);
 
       connection!.done.then((_) {
-        if (reconnecting) {
+        if (reconnecting || disposing) {
           return;
         }
 
@@ -175,6 +180,8 @@ class ShardRunner implements Disposable {
   /// Sends [ShardToManager.disposed] upon completion.
   @override
   Future<void> dispose() async {
+    disposing = true;
+
     if (connected) {
       await disconnect();
     }
