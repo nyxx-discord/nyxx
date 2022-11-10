@@ -17,6 +17,7 @@ import 'package:nyxx/src/utils/builders/forum_thread_builder.dart';
 enum ForumSortOrder {
   /// Sort forum posts by activity
   latestActivity(0),
+
   /// Sort forum posts by creation time (from most recent to oldest)
   creationDate(1);
 
@@ -73,9 +74,7 @@ class ForumChannel extends GuildChannel implements IForumChannel {
   ForumChannel(INyxx client, RawApiMap raw, [Snowflake? guildId]) : super(client, raw, guildId) {
     availableTags = (raw['available_tags'] as List<dynamic>).cast<RawApiMap>().map((e) => ForumTag(e)).toList();
     forumChannelFlags = ForumChannelTags(raw['flags'] as int);
-    defaultSortOrder = raw['default_sort_order'] == null
-      ? null
-      : ForumSortOrder._fromValue(raw['default_sort_order'] as int);
+    defaultSortOrder = raw['default_sort_order'] == null ? null : ForumSortOrder._fromValue(raw['default_sort_order'] as int);
 
     if (raw['default_reaction_emoji'] != null) {
       final rawDefaultEmoji = raw['default_reaction_emoji'] as RawApiMap;

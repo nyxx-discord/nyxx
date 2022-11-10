@@ -1,12 +1,12 @@
 .PHONY: help
-help:
-	@fgrep -h "##" $(MAKEFILE_LIST) | sed -e 's/\(\:.*\#\#\)/\:\ /' | fgrep -v fgrep | sed -e 's/\\$$//' | sed -e 's/##//'
+help: ## display help
+	@grep -F -h "##" $(MAKEFILE_LIST) | sed -e 's/\(\:.*\#\#\)/\:\ /' | grep -F -v fgrep | sed -e 's/\\$$//' | sed -e 's/##//'
 
-.PHONY: app-check ## Run basic format checks and then generate code coverage
-app-check: format-check generate-coverage
+.PHONY: app-check
+app-check: format-check generate-coverage  ## Run basic format checks and then generate code coverage
 
-.PHONY: format-check ## Check basic format
-format-check: format analyze
+.PHONY: format-check
+format-check: format analyze  ## Check basic format
 
 .PHONY: generate-coverage
 generate-coverage: integration-tests unit-tests coverage-format coverage-gen-html ## Run all test and generate html code coverage
