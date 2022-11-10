@@ -1,7 +1,17 @@
+import 'package:nyxx/src/core/channel/guild/forum/forum_tag.dart';
+import 'package:nyxx/src/core/snowflake.dart';
 import 'package:nyxx/src/typedefs.dart';
 import 'package:nyxx/src/utils/builders/builder.dart';
 import 'package:nyxx/src/utils/builders/message_builder.dart';
 import 'package:nyxx/src/utils/builders/thread_builder.dart';
+
+class ForumTagBuilder {
+  Snowflake id;
+
+  ForumTagBuilder(this.id);
+
+  factory ForumTagBuilder.fromForumTag(ForumTag forumTag) => ForumTagBuilder(forumTag.id);
+}
 
 class ForumThreadBuilder implements Builder {
   /// The name of the thread
@@ -17,6 +27,9 @@ class ForumThreadBuilder implements Builder {
   /// The time after which the thread is automatically archived.
   ThreadArchiveTime? archiveAfter;
 
+  /// Set of tags that have been applied to a thread
+  Iterable<ForumTagBuilder>? appliedTags;
+
   ForumThreadBuilder(this.name, this.message);
 
   @override
@@ -25,7 +38,8 @@ class ForumThreadBuilder implements Builder {
       "name": name,
       "message": message.build(),
       if (archiveAfter != null) "auto_archive_duration": archiveAfter!.value,
-      if (rateLimitPerUser != null) 'rate_limit_per_user': rateLimitPerUser!
+      if (rateLimitPerUser != null) 'rate_limit_per_user': rateLimitPerUser!,
+      if (appliedTags != null) 'applied_tags': appliedTags!.map((e) => e.id.toString()).toList()
     };
   }
 }

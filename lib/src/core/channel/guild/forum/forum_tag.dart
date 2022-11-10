@@ -1,7 +1,9 @@
 import 'package:nyxx/src/core/snowflake.dart';
+import 'package:nyxx/src/internal/interfaces/convertable.dart';
 import 'package:nyxx/src/typedefs.dart';
+import 'package:nyxx/src/utils/builders/forum_thread_builder.dart';
 
-abstract class IForumTag {
+abstract class IForumTag implements Convertable<ForumTagBuilder> {
   /// Id of forum tag
   Snowflake get id;
 
@@ -34,4 +36,7 @@ class ForumTag implements IForumTag {
     emojiId = raw['emoji_id'] != null ? Snowflake(raw['emoji_id']) : null;
     emojiName = raw['emoji_name'] as String?;
   }
+
+  @override
+  ForumTagBuilder toBuilder() => ForumTagBuilder.fromForumTag(this);
 }
