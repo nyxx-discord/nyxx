@@ -67,7 +67,8 @@ main() {
 
     expect(resultEntity, isA<ClientOAuth2Application>());
     expect(resultEntity.getInviteUrl(), equals("https://${Constants.host}/oauth2/authorize?client_id=123456&scope=bot%20applications.commands"));
-    expect(resultEntity.getInviteUrl(10), equals("https://${Constants.host}/oauth2/authorize?client_id=123456&scope=bot%20applications.commands&permissions=10"));
+    expect(
+        resultEntity.getInviteUrl(10), equals("https://${Constants.host}/oauth2/authorize?client_id=123456&scope=bot%20applications.commands&permissions=10"));
     expect(resultEntity.iconUrl(), isNull);
 
     Map<String, dynamic> cloneExampleClientOAuth2ApplicationPayload = Map.from(exampleClientOAuth2ApplicationPayload);

@@ -40,7 +40,8 @@ class ThreadBuilder extends Builder {
         if (private != null) "type": private! ? 12 : 11,
         if (archived != null) "archived": archived!,
         if (invitable != null) "invitable": invitable!,
-        if (rateLimitPerUser != null) 'rate_limit_per_user': rateLimitPerUser!
+        if (rateLimitPerUser != null) 'rate_limit_per_user': rateLimitPerUser!,
+        if (locked != null) "locked": locked
       };
 }
 

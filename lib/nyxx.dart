@@ -23,7 +23,8 @@ export 'src/core/channel/cacheable_text_channel.dart' show ICacheableTextChannel
 export 'src/core/channel/channel.dart' show IChannel, ChannelType;
 export 'src/core/channel/dm_channel.dart' show IDMChannel;
 export 'src/core/channel/text_channel.dart' show ITextChannel;
-export 'src/core/channel/guild/forum/forum_channel.dart' show IForumChannel;
+export 'src/core/channel/guild/forum/forum_channel.dart' show IForumChannel, ForumSortOrder;
+export 'src/core/channel/guild/forum/forum_channel_tags.dart' show IForumChannelTags;
 export 'src/core/channel/guild/forum/forum_tag.dart' show IForumTag;
 export 'src/core/channel/thread_channel.dart' show IThreadMember, IThreadChannel;
 export 'src/core/channel/thread_preview_channel.dart' show IThreadPreviewChannel;
@@ -69,7 +70,6 @@ export 'src/core/message/components/component_style.dart' show ButtonStyle;
 export 'src/core/message/components/message_component.dart'
     show
         IMessageButton,
-        ICustomMessageButton,
         ILinkMessageButton,
         IMessageComponent,
         IMessageComponentEmoji,
@@ -77,7 +77,11 @@ export 'src/core/message/components/message_component.dart'
         IMessageMultiselectOption,
         MessageComponentEmoji,
         ComponentType,
-        IMessageTextInput;
+        IMessageTextInput,
+        IMessageUserMultiSelect,
+        IMessageRoleMultiSelect,
+        IMessageMentionableMultiSelect,
+        IMessageChannelMultiSelect;
 export 'src/core/permissions/permission_overrides.dart' show IPermissionsOverrides;
 export 'src/core/permissions/permissions.dart' show IPermissions;
 export 'src/core/permissions/permissions_constants.dart' show PermissionsConstants;
@@ -183,7 +187,7 @@ export 'src/utils/builders/reply_builder.dart' show ReplyBuilder;
 export 'src/utils/builders/sticker_builder.dart' show StickerBuilder;
 export 'src/utils/builders/thread_builder.dart' show ThreadArchiveTime, ThreadBuilder;
 export 'src/utils/builders/guild_event_builder.dart' show GuildEventBuilder;
-export 'src/utils/builders/forum_thread_builder.dart' show ForumThreadBuilder;
+export 'src/utils/builders/forum_thread_builder.dart' show ForumThreadBuilder, ForumTagBuilder;
 export 'src/utils/builders/auto_moderation_builder.dart' show ActionMetadataBuilder, ActionStructureBuilder, AutoModerationRuleBuilder, TriggerMetadataBuilder;
 export 'src/utils/extensions.dart' show IntExtensions, SnowflakeEntityListExtensions, StringExtensions;
 export 'src/utils/permissions.dart' show PermissionsUtils;

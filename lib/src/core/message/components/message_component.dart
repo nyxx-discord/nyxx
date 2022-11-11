@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:nyxx/src/core/channel/channel.dart';
 import 'package:nyxx/src/core/message/emoji.dart';
 import 'package:nyxx/src/core/message/guild_emoji.dart';
 import 'package:nyxx/src/core/message/unicode_emoji.dart';
@@ -14,10 +15,30 @@ class ComponentType extends IEnum<int> {
   /// Row where other components can be placed
   static const ComponentType row = ComponentType._create(1);
 
+  /// Button object.
   static const ComponentType button = ComponentType._create(2);
-  static const ComponentType select = ComponentType._create(3);
 
+  /// Select menu for picking from defined text options.
+  @Deprecated('Use "multiSelect" instead')
+  static const ComponentType select = multiSelect;
+
+  /// Select menu for picking from defined text options.
+  static const ComponentType multiSelect = ComponentType._create(3);
+
+  /// Text input object.
   static const ComponentType text = ComponentType._create(4);
+
+  /// Select menu for users.
+  static const ComponentType userMultiSelect = ComponentType._create(5);
+
+  /// Select menu for roles.
+  static const ComponentType roleMultiSelect = ComponentType._create(6);
+
+  /// Select menu for mentionables (users and roles).
+  static const ComponentType mentionableMultiSelect = ComponentType._create(7);
+
+  /// Select menu for channels.
+  static const ComponentType channelMultiSelect = ComponentType._create(8);
 
   const ComponentType._create(int value) : super(value);
 
@@ -84,16 +105,23 @@ class MessageComponentEmoji implements IMessageComponentEmoji {
 abstract class IMessageComponent {
   /// The [ComponentType]
   ComponentType get type;
+
+  /// The custom id of this component, set by the user.
+  String get customId;
 }
 
 /// Generic container for components that can be attached to message
 abstract class MessageComponent implements IMessageComponent {
-  /// [ComponentType]
+  /// Type of component.
   @override
   ComponentType get type;
 
-  /// Empty constructor
-  MessageComponent();
+  @override
+  late final String customId;
+
+  MessageComponent(RawApiMap raw) {
+    customId = raw['custom_id'] as String;
+  }
 
   factory MessageComponent.deserialize(RawApiMap raw, INyxx client) {
     final type = raw["type"] as int;
@@ -105,17 +133,43 @@ abstract class MessageComponent implements IMessageComponent {
         return MessageMultiselect(raw, client);
       case 4:
         return MessageTextInput(raw);
+      case 5:
+        return MessageUserMultiSelect(raw);
+      case 6:
+        return MessageRoleMultiSelect(raw);
+      case 7:
+        return MessageMentionableMultiSelect(raw);
+      case 8:
+        return MessageChannelMultiSelect(raw);
     }
 
     throw ArgumentError("Unknown interaction type: [$type]: ${jsonEncode(raw)}");
   }
 }
 
+abstract class MultiSelectAbstract extends MessageComponent {
+  /// Custom placeholder when no option selected
+  late final String? placeholder;
+
+  /// Min value of selected options
+  late final int minValues;
+
+  /// Max value of selected options
+  late final int maxValues;
+
+  /// Whether this multiselect is disabled.
+  late final bool isDisabled;
+
+  MultiSelectAbstract(RawApiMap raw) : super(raw) {
+    placeholder = raw['placeholder'] as String?;
+    minValues = raw['min_values'] as int? ?? 1;
+    maxValues = raw['max_values'] as int? ?? 1;
+    isDisabled = raw['disabled'] as bool? ?? false;
+  }
+}
+
 /// Text input component
 abstract class IMessageTextInput implements IMessageComponent {
-  /// Custom id of components set by user
-  String get customId;
-
   /// Value of component
   String get value;
 }
@@ -125,13 +179,9 @@ class MessageTextInput extends MessageComponent implements IMessageTextInput {
   ComponentType get type => ComponentType.text;
 
   @override
-  late final String customId;
-
-  @override
   late final String value;
 
-  MessageTextInput(RawApiMap raw) {
-    customId = raw['custom_id'] as String;
+  MessageTextInput(RawApiMap raw) : super(raw) {
     value = raw['value'] as String;
   }
 }
@@ -195,60 +245,72 @@ class MessageMultiselectOption implements IMessageMultiselectOption {
   }
 }
 
-abstract class IMessageMultiselect implements IMessageComponent {
+abstract class IMessageMultiselect implements MultiSelectAbstract {
   /// Reference to [INyxx].
   INyxx get client;
 
-  /// A dev-defined unique string sent on click (max 100 characters)
-  String get customId;
-
-  /// Custom placeholder when no option selected
-  String? get placeholder;
-
-  /// Min value of selected options
-  int get minValues;
-
-  /// Max value of selected options
-  int get maxValues;
-
-  /// Possible options of multiselect
+  /// Possible options of multiselect.
   Iterable<IMessageMultiselectOption> get options;
 }
 
-class MessageMultiselect extends MessageComponent implements IMessageMultiselect {
+class MessageMultiselect extends MultiSelectAbstract implements IMessageMultiselect {
   @override
   final INyxx client;
 
   @override
-  ComponentType get type => ComponentType.select;
-
-  /// A dev-defined unique string sent on click (max 100 characters)
-  @override
-  late final String customId;
-
-  /// Custom placeholder when no option selected
-  @override
-  late final String? placeholder;
-
-  /// Min value of selected options
-  @override
-  late final int minValues;
-
-  /// Max value of selected options
-  @override
-  late final int maxValues;
+  ComponentType get type => ComponentType.multiSelect;
 
   /// Possible options of multiselect
   @override
   late final Iterable<IMessageMultiselectOption> options;
 
   /// Creates an instance of [MessageMultiselect]
-  MessageMultiselect(RawApiMap raw, this.client) : super() {
-    customId = raw["custom_id"] as String;
-    placeholder = raw["placeholder"] as String?;
-    minValues = raw["min_values"] as int? ?? 1;
-    maxValues = raw["max_values"] as int? ?? 1;
+  MessageMultiselect(RawApiMap raw, this.client) : super(raw) {
     options = [for (final rawOption in raw["options"]) MessageMultiselectOption(rawOption as Map<String, dynamic>, client)];
+  }
+}
+
+abstract class IMessageUserMultiSelect implements MultiSelectAbstract {}
+
+class MessageUserMultiSelect extends MultiSelectAbstract implements IMessageUserMultiSelect {
+  @override
+  ComponentType get type => ComponentType.userMultiSelect;
+
+  MessageUserMultiSelect(super.raw);
+}
+
+abstract class IMessageRoleMultiSelect implements MultiSelectAbstract {}
+
+class MessageRoleMultiSelect extends MultiSelectAbstract implements IMessageRoleMultiSelect {
+  @override
+  ComponentType get type => ComponentType.roleMultiSelect;
+
+  MessageRoleMultiSelect(super.raw);
+}
+
+abstract class IMessageMentionableMultiSelect implements MultiSelectAbstract {}
+
+class MessageMentionableMultiSelect extends MultiSelectAbstract implements IMessageMentionableMultiSelect {
+  @override
+  ComponentType get type => ComponentType.mentionableMultiSelect;
+
+  MessageMentionableMultiSelect(super.raw);
+}
+
+abstract class IMessageChannelMultiSelect implements MultiSelectAbstract {
+  /// The channel types of this select.
+  Iterable<ChannelType>? get channelTypes;
+}
+
+class MessageChannelMultiSelect extends MultiSelectAbstract implements IMessageChannelMultiSelect {
+  @override
+  ComponentType get type => ComponentType.channelMultiSelect;
+
+  @override
+  late final Iterable<ChannelType>? channelTypes;
+
+  MessageChannelMultiSelect(RawApiMap raw) : super(raw) {
+    channelTypes = raw['channel_types'] != null ? (raw['channel_types'] as List).cast<int>().map(ChannelType.from) : null;
   }
 }
 
@@ -296,7 +358,7 @@ class MessageButton extends MessageComponent implements IMessageButton {
   }
 
   /// Creates an instance of [MessageButton]
-  MessageButton(RawApiMap raw, INyxx client) : super() {
+  MessageButton(RawApiMap raw, INyxx client) : super(raw) {
     label = raw["label"] as String?;
     style = ButtonStyle.from(raw["style"] as int);
 
@@ -307,23 +369,6 @@ class MessageButton extends MessageComponent implements IMessageButton {
     }
 
     disabled = raw["disabled"] as bool? ?? false;
-  }
-}
-
-abstract class ICustomMessageButton implements IMessageButton {
-  ///  a dev-defined unique string sent on click (max 100 characters)
-  String get customId;
-}
-
-/// Represents button that has attached metadata and will generate interaction event
-class CustomMessageButton extends MessageButton implements ICustomMessageButton {
-  ///  a dev-defined unique string sent on click (max 100 characters)
-  @override
-  late final String customId;
-
-  /// Creates an instance of [CustomMessageButton]
-  CustomMessageButton(RawApiMap raw, INyxx client) : super(raw, client) {
-    customId = raw["custom_id"] as String;
   }
 }
 

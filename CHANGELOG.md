@@ -1,3 +1,9 @@
+## 4.2.0-dev.0
+__11.11.2022__
+
+- feature: missing forum channel features (#387)
+- bug: Cache user when fetching (#384)
+
 ## 4.1.3
 __01.11.2022__
 
