@@ -887,7 +887,7 @@ class HttpEndpoints implements IHttpEndpoints {
   Future<IUser> fetchUser(Snowflake userId) async {
     final response = await executeSafe(BasicRequest(HttpRoute()..users(id: userId.toString())));
 
-    final user = User(client, (response as HttpResponseSuccess).jsonBody as RawApiMap);
+    final user = User(client, response.jsonBody as RawApiMap);
 
     if (client.cacheOptions.userCachePolicyLocation.http) {
       client.users[user.id] = user;
