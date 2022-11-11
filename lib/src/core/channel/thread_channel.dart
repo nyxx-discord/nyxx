@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:nyxx/src/nyxx.dart';
 import 'package:nyxx/src/core/snowflake.dart';
 import 'package:nyxx/src/core/snowflake_entity.dart';
 import 'package:nyxx/src/core/channel/cacheable_text_channel.dart';
@@ -12,6 +11,7 @@ import 'package:nyxx/src/core/user/member.dart';
 import 'package:nyxx/src/core/user/user.dart';
 import 'package:nyxx/src/internal/cache/cache.dart';
 import 'package:nyxx/src/internal/cache/cacheable.dart';
+import 'package:nyxx/src/nyxx.dart';
 import 'package:nyxx/src/typedefs.dart';
 import 'package:nyxx/src/utils/builders/message_builder.dart';
 import 'package:nyxx/src/utils/builders/thread_builder.dart';
@@ -87,6 +87,13 @@ abstract class IThreadChannel implements MinimalGuildChannel, ITextChannel {
   /// Approximate member count
   int get memberCount;
 
+  /// Number of messages ever sent in a thread.
+  /// It's similar to message_count on message creation, but will not decrement the number when a message is deleted
+  int get totalMessagesSent;
+
+  /// The IDs of the set of tags that have been applied to a thread in a GUILD_FORUM channel
+  List<Snowflake> get appliedTags;
+
   /// True if thread is archived
   bool get archived;
 
@@ -121,33 +128,32 @@ abstract class IThreadChannel implements MinimalGuildChannel, ITextChannel {
 class ThreadChannel extends MinimalGuildChannel implements IThreadChannel {
   Timer? _typing;
 
-  /// Owner of the thread
   @override
   late final Cacheable<Snowflake, IMember> owner;
 
-  /// Approximate message count
   @override
   late final int messageCount;
 
-  /// Approximate member count
   @override
   late final int memberCount;
 
-  /// True if thread is archived
   @override
   late final bool archived;
 
-  /// Date when thread was archived
   @override
   late final DateTime archiveAt;
 
-  /// Time after what thread will be archived
   @override
   late final ThreadArchiveTime archiveAfter;
 
-  /// Whether non-moderators can add other non-moderators to a thread; only available on private threads
   @override
   late final bool invitable;
+
+  @override
+  late final int totalMessagesSent;
+
+  @override
+  late final List<Snowflake> appliedTags;
 
   @override
   Future<int> get fileUploadLimit async {
@@ -170,6 +176,9 @@ class ThreadChannel extends MinimalGuildChannel implements IThreadChannel {
     archiveAt = DateTime.parse(meta["archive_timestamp"] as String);
     archiveAfter = ThreadArchiveTime(meta["auto_archive_duration"] as int);
     invitable = raw["invitable"] as bool? ?? false;
+
+    totalMessagesSent = raw['total_message_sent'] as int? ?? 0;
+    appliedTags = (raw['applied_tags'] as List<dynamic>? ?? []).map((e) => Snowflake(e)).toList();
   }
 
   /// Fetches from API current list of member that has access to that thread
