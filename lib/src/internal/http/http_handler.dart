@@ -88,7 +88,7 @@ class HttpHandler {
       currentBucket?.removeInFlightRequest(request);
       if (e.response == null) {
         logger.warning("Http Error on endpoint: ${request.uri}. Error: [${e.message.toString()}].");
-        return Future.error(e);
+        rethrow;
       }
 
       final response = e.response as http.StreamedResponse;
