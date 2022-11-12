@@ -3,7 +3,7 @@ import "package:nyxx/nyxx.dart";
 // Main function
 void main() {
   // Create new bot instance
-  final bot = NyxxFactory.createNyxxWebsocket("<TOKEN>", GatewayIntents.allUnprivileged)
+  final bot = NyxxFactory.createNyxxWebsocket("<TOKEN>", GatewayIntents.allUnprivileged | GatewayIntents.messageContent) // Here we use the privilegied intent message content to receive incoming messages.
     ..registerPlugin(Logging()) // Default logging plugin
     ..registerPlugin(CliIntegration()) // Cli integration for nyxx allows stopping application via SIGTERM and SIGKILl
     ..registerPlugin(IgnoreExceptions()) // Plugin that handles uncaught exceptions that may occur
@@ -15,11 +15,11 @@ void main() {
   });
 
   // Listen to all incoming messages
-  bot.eventsWs.onMessageReceived.listen((e) {
+  bot.eventsWs.onMessageReceived.listen((e) async {
     // Check if message content equals "!ping"
     if (e.message.content == "!ping") {
       // Send "Pong!" to channel where message was received
-      e.message.channel.sendMessage(MessageBuilder.content("Pong!"));
+      await e.message.channel.sendMessage(MessageBuilder.content("Pong!"));
     }
   });
 }

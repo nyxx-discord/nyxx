@@ -3,7 +3,7 @@ import "package:nyxx/nyxx.dart";
 // Main function
 void main() {
   // Create new bot instance. Replace string with your token
-  final bot = NyxxFactory.createNyxxWebsocket("<TOKEN>", GatewayIntents.allUnprivileged)
+  final bot = NyxxFactory.createNyxxWebsocket("<TOKEN>", GatewayIntents.allUnprivileged | GatewayIntents.messageContent) // Here we use the privilegied intent message content to receive incoming messages.
     ..registerPlugin(Logging()) // Default logging plugin
     ..registerPlugin(CliIntegration()) // Cli integration for nyxx allows stopping application via SIGTERM and SIGKILl
     ..registerPlugin(IgnoreExceptions()) // Plugin that handles uncaught exceptions that may occur
@@ -24,7 +24,7 @@ void main() {
       final messageBuilder = MessageBuilder.content("This is how replies work")
         ..replyBuilder = replyBuilder;
 
-      // If you dont want to mention user that invoked that command user AllowedMentions
+      // If you dont want to mention user that invoked that command, use AllowedMentions
       final allowedMentionsBuilder = AllowedMentions()
         ..allow(reply: false);
 
