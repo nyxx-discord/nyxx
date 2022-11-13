@@ -79,9 +79,8 @@ class HttpHandler {
 
     // Execute request
     currentBucket?.addInFlightRequest(request);
-    final rawRequest = await request.prepareRequest();
     final response = await client.options.httpRetryOptions.retry(
-      () => httpClient.send(rawRequest),
+      () async => httpClient.send(await request.prepareRequest()),
       onRetry: (ex) => logger.shout('Exception when sending HTTP request (retrying automatically): $ex'),
     );
     currentBucket?.removeInFlightRequest(request);
