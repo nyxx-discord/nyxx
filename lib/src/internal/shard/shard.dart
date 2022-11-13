@@ -115,15 +115,23 @@ class Shard implements IShard {
   /// The URL to which this shard should make the initial connection.
   final String gatewayHost;
 
+  /// The last sequence number
+  // Start at 0 and count up to avoid collisions with seq from the shard handler
+  int seq = 0;
+
   Shard(this.id, this.manager, this.gatewayHost) {
     readyFuture = spawn();
 
     // Automatically connect once the shard runner is ready.
     readyFuture.then((_) => execute(
-          ShardMessage(ManagerToShard.connect, data: {
-            'gatewayHost': gatewayHost,
-            'useCompression': manager.connectionManager.client.options.compressedGatewayPayloads,
-          }),
+          ShardMessage(
+            ManagerToShard.connect,
+            seq: seq++,
+            data: {
+              'gatewayHost': gatewayHost,
+              'useCompression': manager.connectionManager.client.options.compressedGatewayPayloads,
+            },
+          ),
         ));
 
     // Start handling messages from the shard.
@@ -155,12 +163,15 @@ class Shard implements IShard {
   /// Triggers a reconnection to the shard.
   ///
   /// If the connection is to be resumed, [resumeGatewayUrl] is used as the connection. Otherwise, [gatewayHost] is used.
-  void reconnect() {
+  Future<void> reconnect([int? seq]) async {
     manager.logger.info('Reconnecting to gateway on shard $id');
     resetConnectionProperties();
 
+    seq ??= (this.seq++);
+
     execute(ShardMessage(
       ManagerToShard.reconnect,
+      seq: seq++,
       data: {
         'gatewayHost': shouldResume && canResume ? resumeGatewayUrl : gatewayHost,
         'useCompression': manager.connectionManager.client.options.compressedGatewayPayloads,
@@ -184,11 +195,12 @@ class Shard implements IShard {
       case ShardToManager.received:
         return handlePayload(message.data);
       case ShardToManager.connected:
+      case ShardToManager.reconnected:
         return handleConnected();
       case ShardToManager.disconnected:
-        return handleDisconnect(message.data['closeCode'] as int, message.data['closeReason'] as String?);
+        return handleDisconnect(message.data['closeCode'] as int, message.data['closeReason'] as String?, message.seq);
       case ShardToManager.error:
-        return handleError(message.data['message'] as String, message.data['shouldReconnect'] as bool?);
+        return handleError(message.data['message'] as String, message.data['shouldReconnect'] as bool?, message.seq);
       case ShardToManager.disposed:
         manager.logger.info("Shard $id disposed.");
         break;
@@ -196,7 +208,7 @@ class Shard implements IShard {
   }
 
   /// A handler for when the shard connection disconnects.
-  Future<void> handleDisconnect(int closeCode, String? closeReason) async {
+  Future<void> handleDisconnect(int closeCode, String? closeReason, int seq) async {
     resetConnectionProperties();
 
     manager.onDisconnectController.add(this);
@@ -239,7 +251,7 @@ class Shard implements IShard {
     }
 
     // Reconnect by default
-    reconnect();
+    reconnect(seq);
   }
 
   /// A handler for when the shard establishes a connection to the Gateway.
@@ -254,7 +266,7 @@ class Shard implements IShard {
   }
 
   /// A handler for when the shard encounters an error. These can occur if the runner is in an invalid state or fails to open the websocket connection.
-  Future<void> handleError(String message, bool? shouldReconnect) async {
+  Future<void> handleError(String message, bool? shouldReconnect, int seq) async {
     manager.logger.shout('Shard $id reported error: $message');
 
     for (final element in manager.connectionManager.client.plugins) {
@@ -262,7 +274,7 @@ class Shard implements IShard {
     }
 
     if (shouldReconnect ?? false) {
-      Future.delayed(const Duration(seconds: 10), reconnect);
+      Future.delayed(const Duration(seconds: 10), () => reconnect(seq));
     }
   }
 
@@ -629,6 +641,7 @@ class Shard implements IShard {
   @override
   void send(int opCode, dynamic d) => execute(ShardMessage(
         ManagerToShard.send,
+        seq: seq++,
         data: {
           "op": opCode,
           "d": d,
@@ -702,7 +715,7 @@ class Shard implements IShard {
 
   @override
   Future<void> dispose() async {
-    execute(ShardMessage(ManagerToShard.dispose));
+    execute(ShardMessage(ManagerToShard.dispose, seq: seq++));
 
     // Wait for shard to dispose correctly
     await shardMessages.firstWhere((message) => message.type == ShardToManager.disposed);
