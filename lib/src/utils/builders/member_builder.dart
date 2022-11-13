@@ -20,13 +20,13 @@ class MemberBuilder implements Builder {
   DateTime? timeoutUntil = DateTime.fromMillisecondsSinceEpoch(0);
 
   MemberBuilder({
-    this.channel,
+    this.channel = const Snowflake.zero(),
     this.deaf,
     this.mute,
     this.nick,
     this.roles,
-    this.timeoutUntil,
-  });
+    DateTime? timeoutUntil,
+  }) : timeoutUntil = timeoutUntil ?? DateTime.fromMicrosecondsSinceEpoch(0);
 
   @override
   RawApiMap build() => {

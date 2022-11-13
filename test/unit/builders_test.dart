@@ -63,7 +63,7 @@ main() {
 
       final expectedResult = {
         'permission_overwrites': [
-          {'allow': "0", 'deny': "122406567679", 'id': '0', 'type': 0}
+          {'allow': "0", 'deny': "1649267441663", 'id': '0', 'type': 0}
         ],
         'type': 0,
         'name': 'test'
@@ -122,7 +122,7 @@ main() {
     expect(builder.build(), equals({"allow": "0", "deny": "0", 'id': '0', 'type': 0}));
 
     final fromBuilder = PermissionOverrideBuilder.from(0, Snowflake.zero(), Permissions.empty());
-    expect(fromBuilder.build(), equals({"allow": "0", "deny": "122406567679", 'id': '0', 'type': 0}));
+    expect(fromBuilder.build(), equals({"allow": "0", "deny": "1649267441663", 'id': '0', 'type': 0}));
     expect(fromBuilder.calculatePermissionValue(), equals(0));
 
     final ofBuilder = PermissionOverrideBuilder.of(MockMember(Snowflake.zero()))

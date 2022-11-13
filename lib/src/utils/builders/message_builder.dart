@@ -52,7 +52,7 @@ class MessageBuilder {
 
   /// Generic constructor for [MessageBuilder]
   MessageBuilder({
-    String? content,
+    String? content = '',
     this.allowedMentions,
     this.attachments,
     this.embeds,
