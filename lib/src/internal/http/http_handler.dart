@@ -78,25 +78,11 @@ class HttpHandler {
     }
 
     // Execute request
-    try {
-      currentBucket?.addInFlightRequest(request);
-      final response = await httpClient.send(await request.prepareRequest());
-      currentBucket?.removeInFlightRequest(request);
-      currentBucket = _upsertBucket(request, response);
-      return _handle(request, response);
-    } on HttpClientException catch (e) {
-      currentBucket?.removeInFlightRequest(request);
-      if (e.response == null) {
-        logger.warning("Http Error on endpoint: ${request.uri}. Error: [${e.message.toString()}].");
-        rethrow;
-      }
-
-      final response = e.response as http.StreamedResponse;
-      _upsertBucket(request, response);
-
-      // Return http error
-      return _handle(request, response);
-    }
+    currentBucket?.addInFlightRequest(request);
+    final response = await httpClient.send(await request.prepareRequest());
+    currentBucket?.removeInFlightRequest(request);
+    currentBucket = _upsertBucket(request, response);
+    return _handle(request, response);
   }
 
   Future<HttpResponse> _handle(HttpRequest request, http.StreamedResponse response) async {
