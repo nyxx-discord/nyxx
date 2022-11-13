@@ -30,7 +30,13 @@ class ForumThreadBuilder implements Builder {
   /// Set of tags that have been applied to a thread
   Iterable<ForumTagBuilder>? appliedTags;
 
-  ForumThreadBuilder(this.name, this.message);
+  ForumThreadBuilder(
+    this.name,
+    this.message, {
+    this.appliedTags,
+    this.archiveAfter,
+    this.rateLimitPerUser,
+  });
 
   @override
   RawApiMap build() {

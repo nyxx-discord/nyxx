@@ -14,7 +14,7 @@ class EmbedFooterBuilder extends Builder {
   int? get length => text?.length;
 
   /// Create empty [EmbedFooterBuilder]
-  EmbedFooterBuilder();
+  EmbedFooterBuilder({this.iconUrl, this.text});
 
   @override
 

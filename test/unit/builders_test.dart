@@ -1,3 +1,4 @@
+import 'package:nyxx/nyxx.dart';
 import 'package:nyxx/src/core/channel/text_channel.dart';
 import 'package:nyxx/src/core/guild/auto_moderation.dart';
 import 'package:nyxx/src/core/guild/status.dart';
@@ -35,12 +36,12 @@ main() {
   });
 
   test('StickerBuilder', () {
-    final builder = StickerBuilder()
+    final builder = StickerBuilder(file: AttachmentBuilder.bytes([], 'foo'))
       ..name = "this is name"
       ..description = "this is description"
       ..tags = "tags";
 
-    expect(builder.build(), equals({"name": "this is name", "description": "this is description", "tags": "tags"}));
+    expect(builder.build(), equals({"name": "this is name", "description": "this is description", "tags": "tags", 'file': 'data:image/png;base64,'}));
   });
 
   test("ReplyBuilder", () {

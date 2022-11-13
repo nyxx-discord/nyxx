@@ -29,6 +29,18 @@ class GuildEventBuilder implements Builder {
   /// The status of the scheduled event
   GuildEventStatus? status;
 
+  GuildEventBuilder({
+    this.channelId,
+    this.description,
+    this.endDate,
+    this.metadata,
+    this.name,
+    this.privacyLevel,
+    this.startDate,
+    this.status,
+    this.type,
+  });
+
   @override
   RawApiMap build() => {
         if (channelId?.id == 0) "channel_id": channelId.toString(),

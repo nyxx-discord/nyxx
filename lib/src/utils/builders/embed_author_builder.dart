@@ -17,7 +17,11 @@ class EmbedAuthorBuilder extends Builder {
   int? get length => name?.length;
 
   /// Create empty [EmbedAuthorBuilder]
-  EmbedAuthorBuilder();
+  EmbedAuthorBuilder({
+    this.iconUrl,
+    this.name,
+    this.url,
+  });
 
   /// Builds object to Map() instance;
   @override

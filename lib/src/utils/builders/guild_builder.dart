@@ -13,7 +13,7 @@ class GuildBuilder extends Builder {
   final String name;
 
   /// Voice region id
-  @Deprecated('IGuild.region is deprecated, consider using IVoiceChannel.rtcRegion instead')
+  @Deprecated('GuildBuilder.region is deprecated, consider using VoiceChannelBuilder.rtcRegion instead')
   String? region;
 
   /// The 128x128 icon for the guild
@@ -52,7 +52,20 @@ class GuildBuilder extends Builder {
   SystemChannelFlags? systemChannelFlags;
 
   /// Create new instance of [GuildBuilder]
-  GuildBuilder(this.name);
+  GuildBuilder(
+    this.name, {
+    this.afkChannelId,
+    this.afkTimeout,
+    this.channels,
+    this.defaultMessageNotifications,
+    this.explicitContentFilter,
+    this.icon,
+    @Deprecated('GuildBuilder.region is deprecated, consider using VoiceChannelBuilder.rtcRegion instead') this.region,
+    this.roles,
+    this.systemChannelFlags,
+    this.systemChannelId,
+    this.verificationLevel,
+  });
 
   @override
   RawApiMap build() => <String, dynamic>{
@@ -108,7 +121,17 @@ class RoleBuilder extends Builder {
   String? roleIconEmoji;
 
   /// Creates role
-  RoleBuilder(this.name);
+  RoleBuilder(
+    this.name, {
+    this.color,
+    this.hoist,
+    this.id,
+    this.mentionable,
+    this.permission,
+    this.position,
+    this.roleIcon,
+    this.roleIconEmoji,
+  });
 
   @override
   RawApiMap build() => <String, dynamic>{

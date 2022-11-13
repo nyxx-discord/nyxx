@@ -30,7 +30,8 @@ class AutoModerationRuleBuilder implements Builder {
   /// The channel ids that should not be affected by the rule. (Maximum of 50).
   List<Snowflake>? ignoredChannels;
 
-  AutoModerationRuleBuilder(this.name, {required this.eventType, required this.triggerType, required this.actions});
+  AutoModerationRuleBuilder(this.name,
+      {required this.eventType, required this.triggerType, required this.actions, this.triggerMetadata, this.enabled, this.ignoredChannels, this.ignoredRoles});
 
   @override
   RawApiMap build() => {
@@ -96,6 +97,13 @@ class TriggerMetadataBuilder implements Builder {
   /// (Maximum of 50)
   // Pr still not merged
   int? mentionLimit;
+
+  TriggerMetadataBuilder({
+    this.allowList,
+    this.keywordFilter,
+    this.mentionLimit,
+    this.presets,
+  });
 
   @override
   RawApiMap build() => {

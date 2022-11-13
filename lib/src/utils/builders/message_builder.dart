@@ -42,7 +42,7 @@ class MessageBuilder {
   final _content = StringBuffer();
 
   /// Clears current content of message and sets new
-  set content(Object content) {
+  set content(Object? content) {
     _content.clear();
     _content.write(content);
   }
@@ -51,7 +51,18 @@ class MessageBuilder {
   String get content => _content.toString();
 
   /// Generic constructor for [MessageBuilder]
-  MessageBuilder();
+  MessageBuilder({
+    String? content,
+    this.allowedMentions,
+    this.attachments,
+    this.embeds,
+    this.files,
+    this.nonce,
+    this.replyBuilder,
+    this.tts,
+  }) {
+    this.content = content;
+  }
 
   /// Creates [MessageBuilder] with only content
   factory MessageBuilder.content(String content) => MessageBuilder()..content = content;
