@@ -234,7 +234,8 @@ class TriggerMetadata implements ITriggerMetadata {
   }
 
   @override
-  String toString() => 'ITriggerMetadata(keywordPresets: $keywordPresets, keywordFilter: $keywordsFilter, allowList: $allowList, mentionLimit: $mentionLimit, regexPatterns: $regexPatterns)';
+  String toString() =>
+      'ITriggerMetadata(keywordPresets: $keywordPresets, keywordFilter: $keywordsFilter, allowList: $allowList, mentionLimit: $mentionLimit, regexPatterns: $regexPatterns)';
 }
 
 class ActionStructure implements IActionStructure {
