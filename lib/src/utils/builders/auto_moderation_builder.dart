@@ -30,8 +30,16 @@ class AutoModerationRuleBuilder implements Builder {
   /// The channel ids that should not be affected by the rule. (Maximum of 50).
   List<Snowflake>? ignoredChannels;
 
-  AutoModerationRuleBuilder(this.name,
-      {required this.eventType, required this.triggerType, required this.actions, this.triggerMetadata, this.enabled, this.ignoredChannels, this.ignoredRoles});
+  AutoModerationRuleBuilder(
+    this.name, {
+    required this.eventType,
+    required this.triggerType,
+    required this.actions,
+    this.triggerMetadata,
+    this.enabled,
+    this.ignoredChannels,
+    this.ignoredRoles,
+  });
 
   @override
   RawApiMap build() => {
@@ -74,7 +82,10 @@ class ActionMetadataBuilder implements Builder {
   /// (Works only when it's action type is [ActionTypes.timeout]).
   Duration? duration;
 
-  ActionMetadataBuilder({this.channelId, this.duration});
+  ActionMetadataBuilder({
+    this.channelId,
+    this.duration,
+  });
 
   @override
   RawApiMap build() => {
