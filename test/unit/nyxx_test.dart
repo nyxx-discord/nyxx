@@ -7,8 +7,7 @@ import 'package:test/scaffolding.dart';
 
 main() {
   test("nyxx rest constructor", () {
-    expect(() => NyxxFactory.createNyxxRest("", 0, Snowflake.zero(), options: ClientOptions()),
-        throwsA(isA<MissingTokenError>()));
+    expect(() => NyxxFactory.createNyxxRest("", 0, Snowflake.zero(), options: ClientOptions()), throwsA(isA<MissingTokenError>()));
     expect(() => NyxxFactory.createNyxxRest("test", 0, Snowflake.zero(), options: ClientOptions()), isNotNull);
   });
 }

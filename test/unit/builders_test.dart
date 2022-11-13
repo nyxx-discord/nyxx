@@ -259,7 +259,7 @@ main() {
       ..ignoredChannels = [Snowflake.zero()]
       ..ignoredRoles = [Snowflake.zero()]
       ..enabled = true;
-    
+
     expect(rb.build(), {
       'name': 'Super cool rule',
       'event_type': 1,

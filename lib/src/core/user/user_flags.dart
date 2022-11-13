@@ -40,8 +40,11 @@ abstract class IUserFlags {
   /// True if user is Early Verified Bot Developer
   bool get earlyVerifiedBotDeveloper;
 
-  /// rue if user is Discord Certified Moderator
+  /// True if user is Discord Certified Moderator
   bool get certifiedModerator;
+
+  /// True if user is an [Active Developer](https://support-dev.discord.com/hc/articles/10113997751447).
+  bool get activeDeveloper;
 
   /// Raw flags value
   int get raw;
@@ -104,6 +107,9 @@ class UserFlags implements IUserFlags {
   /// rue if user is Discord Certified Moderator
   @override
   bool get certifiedModerator => PermissionsUtils.isApplied(raw, 1 << 18);
+
+  @override
+  bool get activeDeveloper => PermissionsUtils.isApplied(raw, 1 << 22);
 
   /// Raw flags value
   @override
