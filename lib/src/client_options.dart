@@ -73,6 +73,12 @@ class ClientOptions {
   /// The [RetryOptions] to use when a shard fails to connect to the gateway.
   RetryOptions shardReconnectOptions;
 
+  /// The [RetryOptions] to use when a HTTP request fails.
+  ///
+  /// Note that this will not retry requests that fail because of their HTTP response code (e.g  a 4xx response) but rather requests that fail due to native
+  /// errors (e.g failed host lookup) which can occur if there is no internet.
+  RetryOptions httpRetryOptions;
+
   /// Makes a new `ClientOptions` object.
   ClientOptions({
     this.allowedMentions,
@@ -87,6 +93,7 @@ class ClientOptions {
     this.dispatchRawShardEvent = false,
     this.shardIds,
     this.shardReconnectOptions = const RetryOptions(maxAttempts: 50), // 50 attempts won't ever reasonably be reached
+    this.httpRetryOptions = const RetryOptions(maxAttempts: 50),
   });
 }
 

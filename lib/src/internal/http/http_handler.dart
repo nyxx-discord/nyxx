@@ -79,7 +79,8 @@ class HttpHandler {
 
     // Execute request
     currentBucket?.addInFlightRequest(request);
-    final response = await httpClient.send(await request.prepareRequest());
+    final rawRequest = await request.prepareRequest();
+    final response = await client.options.httpRetryOptions.retry(() => httpClient.send(rawRequest));
     currentBucket?.removeInFlightRequest(request);
     currentBucket = _upsertBucket(request, response);
     return _handle(request, response);
