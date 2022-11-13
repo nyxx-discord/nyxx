@@ -123,16 +123,7 @@ class Shard implements IShard {
     readyFuture = spawn();
 
     // Automatically connect once the shard runner is ready.
-    readyFuture.then((_) => execute(
-          ShardMessage(
-            ManagerToShard.connect,
-            seq: seq++,
-            data: {
-              'gatewayHost': gatewayHost,
-              'useCompression': manager.connectionManager.client.options.compressedGatewayPayloads,
-            },
-          ),
-        ));
+    readyFuture.then((_) => connect());
 
     // Start handling messages from the shard.
     readyFuture.then((_) => shardMessages.listen(handle));
@@ -160,6 +151,48 @@ class Shard implements IShard {
     sendPort.send(message);
   }
 
+  Future<void> _connectReconnectHelper(int seq, {required bool isReconnect}) async {
+    // These need to be accessible both in the main callback, in retryIf and in the catch block below
+    bool shouldReconnect = false;
+    late String errorMessage;
+
+    try {
+      await manager.connectionManager.client.options.shardReconnectOptions.retry(
+        retryIf: (_) => shouldReconnect,
+        () async {
+          execute(ShardMessage(
+            isReconnect ? ManagerToShard.reconnect : ManagerToShard.connect,
+            seq: seq,
+            data: {
+              'gatewayHost': shouldResume && canResume ? resumeGatewayUrl : gatewayHost,
+              'useCompression': manager.connectionManager.client.options.compressedGatewayPayloads,
+            },
+          ));
+
+          final message = await shardMessages.firstWhere((element) => element.seq == seq);
+
+          switch (message.type) {
+            case ShardToManager.connected:
+            case ShardToManager.reconnected:
+              return;
+            case ShardToManager.error:
+              shouldReconnect = message.data['shouldReconnect'] as bool? ?? false;
+              errorMessage = message.data['message'] as String;
+              throw Exception();
+            default:
+              assert(false, 'Unreachable');
+              return;
+          }
+        },
+      );
+    } on Exception {
+      // Callback failed too many times, throw an unrecoverable error with the message we were given
+      throw UnrecoverableNyxxError(errorMessage);
+    }
+  }
+
+  Future<void> connect() => _connectReconnectHelper(seq, isReconnect: false);
+
   /// Triggers a reconnection to the shard.
   ///
   /// If the connection is to be resumed, [resumeGatewayUrl] is used as the connection. Otherwise, [gatewayHost] is used.
@@ -167,16 +200,9 @@ class Shard implements IShard {
     manager.logger.info('Reconnecting to gateway on shard $id');
     resetConnectionProperties();
 
-    seq ??= (this.seq++);
+    int realSeq = seq ?? (this.seq++);
 
-    execute(ShardMessage(
-      ManagerToShard.reconnect,
-      seq: seq++,
-      data: {
-        'gatewayHost': shouldResume && canResume ? resumeGatewayUrl : gatewayHost,
-        'useCompression': manager.connectionManager.client.options.compressedGatewayPayloads,
-      },
-    ));
+    await _connectReconnectHelper(realSeq, isReconnect: true);
   }
 
   void resetConnectionProperties() {
@@ -200,7 +226,7 @@ class Shard implements IShard {
       case ShardToManager.disconnected:
         return handleDisconnect(message.data['closeCode'] as int, message.data['closeReason'] as String?, message.seq);
       case ShardToManager.error:
-        return handleError(message.data['message'] as String, message.data['shouldReconnect'] as bool?, message.seq);
+        return handleError(message.data['message'] as String, message.seq);
       case ShardToManager.disposed:
         manager.logger.info("Shard $id disposed.");
         break;
@@ -266,15 +292,11 @@ class Shard implements IShard {
   }
 
   /// A handler for when the shard encounters an error. These can occur if the runner is in an invalid state or fails to open the websocket connection.
-  Future<void> handleError(String message, bool? shouldReconnect, int seq) async {
+  Future<void> handleError(String message, int seq) async {
     manager.logger.shout('Shard $id reported error: $message');
 
     for (final element in manager.connectionManager.client.plugins) {
       element.onConnectionError(manager.connectionManager.client, manager.logger, message);
-    }
-
-    if (shouldReconnect ?? false) {
-      Future.delayed(const Duration(seconds: 10), () => reconnect(seq));
     }
   }
 

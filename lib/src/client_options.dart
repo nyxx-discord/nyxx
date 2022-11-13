@@ -1,6 +1,7 @@
 import 'package:nyxx/nyxx.dart';
 import 'package:nyxx/src/nyxx.dart';
 import 'package:nyxx/src/internal/shard/shard.dart';
+import 'package:retry/retry.dart';
 
 /// Options for configuring cache. Allows to specify where and which entities should be cached and preserved in cache
 class CacheOptions {
@@ -69,19 +70,24 @@ class ClientOptions {
   /// Allows to enable receiving raw gateway event
   bool dispatchRawShardEvent;
 
+  /// The [RetryOptions] to use when a shard fails to connect to the gateway.
+  RetryOptions shardReconnectOptions;
+
   /// Makes a new `ClientOptions` object.
-  ClientOptions(
-      {this.allowedMentions,
-      this.shardCount,
-      this.messageCacheSize = 100,
-      this.largeThreshold = 50,
-      this.compressedGatewayPayloads = true,
-      this.guildSubscriptions = true,
-      this.initialPresence,
-      this.shutdownHook,
-      this.shutdownShardHook,
-      this.dispatchRawShardEvent = false,
-      this.shardIds});
+  ClientOptions({
+    this.allowedMentions,
+    this.shardCount,
+    this.messageCacheSize = 100,
+    this.largeThreshold = 50,
+    this.compressedGatewayPayloads = true,
+    this.guildSubscriptions = true,
+    this.initialPresence,
+    this.shutdownHook,
+    this.shutdownShardHook,
+    this.dispatchRawShardEvent = false,
+    this.shardIds,
+    this.shardReconnectOptions = const RetryOptions(maxAttempts: 50), // 50 attempts won't ever reasonably be reached
+  });
 }
 
 /// When identifying to the gateway, you can specify an intents parameter which
