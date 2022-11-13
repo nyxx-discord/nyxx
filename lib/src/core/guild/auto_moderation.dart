@@ -134,8 +134,11 @@ abstract class ITriggerMetadata {
   /// The total number of mentions (either role and user) allowed per message.
   /// (Maximum of 50)
   /// The associated trigger type is [TriggerTypes.mentionSpam]
-  // Pr still not merged
   int? get mentionLimit;
+
+  /// Regular expression patterns which will be matched against content
+  /// The associated trigger type is [TriggerTypes.keyword]
+  Iterable<String>? get regexPatterns;
 }
 
 abstract class IActionStructure {
@@ -218,16 +221,20 @@ class TriggerMetadata implements ITriggerMetadata {
   @override
   late final int? mentionLimit;
 
+  @override
+  late final Iterable<String>? regexPatterns;
+
   /// Creates an instance of [TriggerMetadata]
   TriggerMetadata(RawApiMap data) {
     keywordsFilter = data['keyword_filter'] != null ? (data['keyword_filter'] as RawApiList).cast<String>() : null;
     keywordPresets = data['presets'] != null ? (data['presets'] as RawApiList).map((p) => KeywordPresets._fromValue(p as int)) : null;
     allowList = (data['allow_list'] as RawApiList?)?.cast<String>().toList();
     mentionLimit = data['mention_total_limit'] as int?;
+    regexPatterns = data['regex_patterns'] != null ? (data['regex_patterns'] as RawApiList).cast<String>() : null;
   }
 
   @override
-  String toString() => 'ITriggerMetadata(keywordPresets: $keywordPresets, keywordFilter: $keywordsFilter, allowList: $allowList, mentionLimit: $mentionLimit)';
+  String toString() => 'ITriggerMetadata(keywordPresets: $keywordPresets, keywordFilter: $keywordsFilter, allowList: $allowList, mentionLimit: $mentionLimit, regexPatterns: $regexPatterns)';
 }
 
 class ActionStructure implements IActionStructure {
