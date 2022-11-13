@@ -42,6 +42,9 @@ class ShardRunner implements Disposable {
   /// [ShardToManager.disconnected] will not be dispatched if this is true.
   bool disposing = false;
 
+  /// Whether this shard is currently connecting to the gateway.
+  bool connecting = false;
+
   ShardRunner(this.sendPort) {
     managerMessages.listen(handle);
   }
@@ -81,6 +84,13 @@ class ShardRunner implements Disposable {
       execute(ShardMessage(ShardToManager.error, data: {'message': 'Shard is already connected'}));
       return;
     }
+
+    if (connecting) {
+      execute(ShardMessage(ShardToManager.error, data: {'message': 'Shard is already connecting'}));
+      return;
+    }
+
+    connecting = true;
 
     try {
       final gatewayUri = Constants.gatewayUri(gatewayHost, useCompression);
@@ -131,6 +141,8 @@ class ShardRunner implements Disposable {
     } catch (err) {
       execute(ShardMessage(ShardToManager.error, data: {'message': 'Unhanded exception $err'}));
     }
+
+    connecting = false;
   }
 
   /// Reconnect to the server, closing the connection if necessary.
