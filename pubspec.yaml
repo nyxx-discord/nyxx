@@ -18,5 +18,5 @@ dev_dependencies:
   test: ^1.19.0
   mockito: ^5.0.16
   build_runner: ^2.1.4
-  lints: ^1.0.1
+  lints: ^2.0.0
   coverage: ^1.0.3
