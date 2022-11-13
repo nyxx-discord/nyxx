@@ -11,11 +11,10 @@ DiscordColor getColorForUserFromMessage(IMessage message) {
 // Main function
 void main() async {
   // Create new bot instance. Replace string with your token
-  final bot = NyxxFactory.createNyxxWebsocket("<TOKEN>", GatewayIntents.allUnprivileged)
+  final bot = NyxxFactory.createNyxxWebsocket("<TOKEN>", GatewayIntents.allUnprivileged | GatewayIntents.messageContent) // Here we use the privilegied intent message content to receive incoming messages.
     ..registerPlugin(Logging()) // Default logging plugin
     ..registerPlugin(CliIntegration()) // Cli integration for nyxx allows stopping application via SIGTERM and SIGKILl
     ..registerPlugin(IgnoreExceptions()) // Plugin that handles uncaught exceptions that may occur
-    ..connect();
 
   // Listen to ready event. Invoked when bot is connected to all shards. Note that cache can be empty or not incomplete.
   bot.eventsWs.onReady.listen((IReadyEvent e) {
@@ -23,7 +22,7 @@ void main() async {
   });
 
   // Listen to all incoming messages
-  bot.eventsWs.onMessageReceived.listen((IMessageReceivedEvent e) {
+  bot.eventsWs.onMessageReceived.listen((IMessageReceivedEvent e) async {
     // Check if message content equals "!embed"
     if (e.message.content == "!embed") {
 
@@ -44,7 +43,7 @@ void main() async {
         ..color = getColorForUserFromMessage(e.message);
 
       // Sent an embed to channel where message received was sent
-      e.message.channel.sendMessage(MessageBuilder.embed(embed));
+      await e.message.channel.sendMessage(MessageBuilder.embed(embed));
     }
   });
 

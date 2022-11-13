@@ -1,3 +1,14 @@
+## 4.2.0
+__13.11.2022__
+
+- feature: missing forum channel features (#387)
+- feature: Add `activeDeveloper` flag (#388)
+- feature: Add support for new select menus components (#380
+- feature: Prefer using throw over returning Future.error
+- bug: Fix null-assert error on shard disposal; don't reconnect shard after disposing
+- bug: Cache user when fetching (#384)
+- bug: add message content to client (#389)
+
 ## 4.2.0-dev.0
 __11.11.2022__
 
