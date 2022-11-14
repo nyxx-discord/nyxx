@@ -92,8 +92,8 @@ class ClientOptions {
     this.shutdownShardHook,
     this.dispatchRawShardEvent = false,
     this.shardIds,
-    this.shardReconnectOptions = const RetryOptions(maxAttempts: 50), // 50 attempts won't ever reasonably be reached
-    this.httpRetryOptions = const RetryOptions(maxAttempts: 50),
+    this.shardReconnectOptions = const RetryOptions(),
+    this.httpRetryOptions = const RetryOptions(),
   });
 }
 
