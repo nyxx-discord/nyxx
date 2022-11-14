@@ -14,7 +14,7 @@ void main() async {
   final bot = NyxxFactory.createNyxxWebsocket("<TOKEN>", GatewayIntents.allUnprivileged | GatewayIntents.messageContent) // Here we use the privilegied intent message content to receive incoming messages.
     ..registerPlugin(Logging()) // Default logging plugin
     ..registerPlugin(CliIntegration()) // Cli integration for nyxx allows stopping application via SIGTERM and SIGKILl
-    ..registerPlugin(IgnoreExceptions()) // Plugin that handles uncaught exceptions that may occur
+    ..registerPlugin(IgnoreExceptions()); // Plugin that handles uncaught exceptions that may occur
 
   // Listen to ready event. Invoked when bot is connected to all shards. Note that cache can be empty or not incomplete.
   bot.eventsWs.onReady.listen((IReadyEvent e) {

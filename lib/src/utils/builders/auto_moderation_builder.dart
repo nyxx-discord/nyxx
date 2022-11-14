@@ -94,8 +94,11 @@ class TriggerMetadataBuilder implements Builder {
 
   /// The total number of mentions (either role and user) allowed per message.
   /// (Maximum of 50)
-  // Pr still not merged
   int? mentionLimit;
+
+  /// Regular expression patterns which will be matched against content
+  ///(Maximum of 10)
+  List<String>? regexPatterns;
 
   @override
   RawApiMap build() => {
@@ -103,5 +106,6 @@ class TriggerMetadataBuilder implements Builder {
         if (presets != null) 'presets': presets!.map((e) => e.value).toList(),
         if (allowList != null) 'allow_list': allowList,
         if (mentionLimit != null) 'mention_total_limit': mentionLimit,
+        if (regexPatterns != null) 'regex_patterns': regexPatterns
       };
 }
