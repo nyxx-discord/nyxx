@@ -15,6 +15,12 @@ abstract class IMessageAuthor implements SnowflakeEntity {
   /// User tag: `l7ssha#6712`
   String get tag;
 
+  /// Whether this [IMessageAuthor] is a webhook received by an interaction.
+  bool get isInteractionWebhook;
+
+  /// Formatted discriminator with leading zeros if needed
+  String get formattedDiscriminator;
+
   /// Url to user avatar
   String avatarURL({String format = "webp", int size = 128});
 }
