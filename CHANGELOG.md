@@ -1,3 +1,10 @@
+## 4.3.0-dev.0
+__14.11.2022
+
+- feature: Add retry with backoff to network operations (gateway and http) (#395)
+- feature: automoderation regexes (#393)
+- bug: Emit bot start to plugins only when ready
+
 ## 4.2.0
 __13.11.2022__
 
