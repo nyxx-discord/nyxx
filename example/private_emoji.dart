@@ -20,7 +20,7 @@ void main() {
 
       e.message.guild?.getFromCache()?.shard;
       // Send "Pong!" to channel where message was received
-      e.message.channel.sendMessage(MessageBuilder.content(IBaseGuildEmoji.fromId(Snowflake(502563517774299156)).formatForMessage()));
+      e.message.channel.sendMessage(MessageBuilder.content(IBaseGuildEmoji.fromId(Snowflake(502563517774299156), bot).formatForMessage()));
     }
 
     print(await (await e.message.guild?.getOrDownload())! .getBans().toList());
