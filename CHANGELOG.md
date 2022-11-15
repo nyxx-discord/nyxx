@@ -1,3 +1,6 @@
+## 4.2.1
+- hotfix: fix component deserialization failing when `customId` is `null`
+
 ## 4.3.0-dev.0
 __14.11.2022
 
