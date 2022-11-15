@@ -215,10 +215,10 @@ class NyxxRest extends INyxxRest {
 
     if (propagateReady) {
       onReadyController.add(ReadyEvent(this));
-    }
 
-    for (final plugin in _plugins) {
-      await plugin.onBotStart(this, _logger);
+      for (final plugin in _plugins) {
+        await plugin.onBotStart(this, _logger);
+      }
     }
   }
 
@@ -380,6 +380,10 @@ class NyxxWebsocket extends NyxxRest implements INyxxWebsocket {
 
     if (propagateReady) {
       onReadyController.add(ReadyEvent(this));
+
+      for (final plugin in _plugins) {
+        await plugin.onBotStart(this, _logger);
+      }
     }
   }
 

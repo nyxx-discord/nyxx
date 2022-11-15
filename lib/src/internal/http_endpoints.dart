@@ -924,10 +924,10 @@ class HttpEndpoints implements IHttpEndpoints {
         ..invites(),
     ));
 
-    final bodyValues = response.jsonBody.values.first;
+    final bodyValues = response.jsonBody;
 
-    for (final val in bodyValues as Iterable<RawApiMap>) {
-      yield InviteWithMeta(val, client);
+    for (final val in bodyValues) {
+      yield InviteWithMeta(val as RawApiMap, client);
     }
   }
 

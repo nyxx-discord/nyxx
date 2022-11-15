@@ -15,6 +15,12 @@ abstract class IMessageAuthor implements SnowflakeEntity {
   /// User tag: `l7ssha#6712`
   String get tag;
 
+  /// Whether this [IMessageAuthor] is a webhook received by an interaction.
+  bool get isInteractionWebhook;
+
+  /// Formatted discriminator with leading zeros if needed
+  String get formattedDiscriminator;
+
   /// The user's avatar, represented as URL.
   /// In case if user does not have avatar, default discord avatar will be returned; [format], [size] and [animated] will no longer affectng this URL.
   /// If [animated] is set as `true`, if available, the url will be a gif, otherwise the [format] or fallback to "webp".

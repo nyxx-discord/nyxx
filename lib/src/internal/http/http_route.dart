@@ -145,7 +145,7 @@ class HttpRoute implements IHttpRoute {
           ])
       .toList();
 
-  String get path => "/" + pathSegments.join("/");
+  String get path => "/${pathSegments.join("/")}";
 
   String get routeId => _httpRouteParts
       .expand((part) => [

@@ -1,3 +1,4 @@
+// ignore_for_file: unused_local_variable
 import "package:nyxx/nyxx.dart";
 
 // Main function
@@ -34,7 +35,7 @@ void main() {
       final permissions = await messageChannel.effectivePermissions(member);
 
       // Get current member permissions as builder
-      final permissionsAsBuilder = permissions.toBuilder()..sendMessages = true;
+      final permissionsAsBuilder = permissions.toBuilder()..sendMessages = true; // @ig
 
       // Get first channel override as builder and edit sendMessages property to allow sending messages for entities included in this override
       final channelOverridesAsBuilder = messageChannel.permissionOverrides.first.toBuilder()..sendMessages = true;
