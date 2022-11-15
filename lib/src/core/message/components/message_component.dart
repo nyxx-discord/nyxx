@@ -99,7 +99,8 @@ abstract class IMessageComponent {
   /// The [ComponentType]
   ComponentType get type;
 
-  /// The custom id of this component, set by the user.
+  /// The custom id of this component, set by the user, if there isn't one, an empty string is returned.
+  // TODO: Add nullable string in next major release.
   String get customId;
 }
 
@@ -113,7 +114,7 @@ abstract class MessageComponent implements IMessageComponent {
   late final String customId;
 
   MessageComponent(RawApiMap raw) {
-    customId = raw['custom_id'] as String;
+    customId = raw['custom_id'] as String? ?? '';
   }
 
   factory MessageComponent.deserialize(RawApiMap raw) {
