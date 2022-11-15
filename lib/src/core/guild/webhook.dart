@@ -127,7 +127,7 @@ class Webhook extends SnowflakeEntity implements IWebhook {
   String get username => name.toString();
 
   @override
-  int get discriminator => -1;
+  late final int discriminator;
 
   @override
   bool get bot => true;
@@ -139,11 +139,18 @@ class Webhook extends SnowflakeEntity implements IWebhook {
   @override
   final INyxx client;
 
+  @override
+  bool get isInteractionWebhook => discriminator != -1;
+
+  @override
+  String get formattedDiscriminator => discriminator.toString().padLeft(4, "0");
+
   /// Creates an instance of [Webhook]
   Webhook(RawApiMap raw, this.client) : super(Snowflake(raw["id"] as String)) {
-    name = raw["name"] as String?;
+    name = raw["name"] as String? ?? raw['username'] as String?;
     token = raw["token"] as String? ?? "";
     avatarHash = raw["avatar"] as String?;
+    discriminator = int.tryParse(raw['discriminator'] as String? ?? '-1') ?? -1;
 
     if (raw["type"] != null) {
       type = WebhookType.from(raw["type"] as int);
