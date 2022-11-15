@@ -1,10 +1,18 @@
+## 4.3.0-dev.1
+__15.11.2022__
+
+- feature: add support for interaction webhooks (#397)
+- bug: Fixed bug when getting IInviteWithMeta (#398)
+
+This version also includes fixes from 4.2.1
+
 ## 4.2.1
 __15.11.2022__
 
 - hotfix: fix component deserialization failing when `customId` is `null`
 
 ## 4.3.0-dev.0
-__14.11.2022
+__14.11.2022__
 
 - feature: Add retry with backoff to network operations (gateway and http) (#395)
 - feature: automoderation regexes (#393)
