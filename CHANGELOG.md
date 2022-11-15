@@ -2,7 +2,7 @@
 __15.11.2022__
 
 - feature: add support for interaction webhooks (#397)
-- bug: Fixed bug when getting IInviteWithMeta (#398
+- bug: Fixed bug when getting IInviteWithMeta (#398)
 
 This version also includes fixes from 4.2.1
 
