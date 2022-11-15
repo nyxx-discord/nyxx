@@ -108,15 +108,16 @@ class TriggerMetadataBuilder implements Builder {
   /// (Maximum of 50)
   int? mentionLimit;
 
+  /// Regular expression patterns which will be matched against content.
+  ///(Maximum of 10)
+  List<String>? regexPatterns;
+
   TriggerMetadataBuilder({
     this.allowList,
     this.keywordFilter,
     this.mentionLimit,
     this.presets,
   });
-  /// Regular expression patterns which will be matched against content
-  ///(Maximum of 10)
-  List<String>? regexPatterns;
 
   @override
   RawApiMap build() => {

@@ -133,11 +133,11 @@ abstract class ITriggerMetadata {
 
   /// The total number of mentions (either role and user) allowed per message.
   /// (Maximum of 50)
-  /// The associated trigger type is [TriggerTypes.mentionSpam]
+  /// The associated trigger type is [TriggerTypes.mentionSpam].
   int? get mentionLimit;
 
-  /// Regular expression patterns which will be matched against content
-  /// The associated trigger type is [TriggerTypes.keyword]
+  /// Regular expression patterns which will be matched against content.
+  /// The associated trigger type is [TriggerTypes.keyword].
   Iterable<String>? get regexPatterns;
 }
 
