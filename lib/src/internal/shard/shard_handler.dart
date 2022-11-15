@@ -42,6 +42,13 @@ class ShardRunner implements Disposable {
   /// [ShardToManager.disconnected] will not be dispatched if this is true.
   bool disposing = false;
 
+  /// Whether this shard is currently connecting to the gateway.
+  bool connecting = false;
+
+  /// The last sequence number
+  // Start at -1 and count down to avoid collisions with seq from the shard handler
+  int seq = -1;
+
   ShardRunner(this.sendPort) {
     managerMessages.listen(handle);
   }
@@ -54,6 +61,7 @@ class ShardRunner implements Disposable {
   /// Calls jsonDecode and sends the data back to the manager.
   void receive(String payload) => execute(ShardMessage(
         ShardToManager.received,
+        seq: seq--,
         data: jsonDecode(payload),
       ));
 
@@ -61,26 +69,41 @@ class ShardRunner implements Disposable {
   Future<void> handle(ShardMessage<ManagerToShard> message) async {
     switch (message.type) {
       case ManagerToShard.send:
-        return send(message.data);
+        return send(message.data, message.seq);
       case ManagerToShard.connect:
-        return connect(message.data['gatewayHost'] as String, message.data['useCompression'] as bool);
+        return connect(message.data['gatewayHost'] as String, message.data['useCompression'] as bool, message.seq);
       case ManagerToShard.reconnect:
-        return reconnect(message.data['gatewayHost'] as String, message.data['useCompression'] as bool);
+        return reconnect(message.data['gatewayHost'] as String, message.data['useCompression'] as bool, message.seq);
       case ManagerToShard.disconnect:
-        return disconnect();
+        return disconnect(message.seq);
       case ManagerToShard.dispose:
-        return dispose();
+        return dispose(message.seq);
     }
   }
 
   /// Initiate the connection on this shard.
   ///
   /// Sends [ShardToManager.connected] upon completion.
-  Future<void> connect(String gatewayHost, bool useCompression) async {
+  Future<void> connect(String gatewayHost, bool useCompression, int seq) async {
     if (connected) {
-      execute(ShardMessage(ShardToManager.error, data: {'message': 'Shard is already connected'}));
+      execute(ShardMessage(
+        ShardToManager.error,
+        seq: seq,
+        data: {'message': 'Shard is already connected'},
+      ));
       return;
     }
+
+    if (connecting) {
+      execute(ShardMessage(
+        ShardToManager.error,
+        seq: seq,
+        data: {'message': 'Shard is already connecting'},
+      ));
+      return;
+    }
+
+    connecting = true;
 
     try {
       final gatewayUri = Constants.gatewayUri(gatewayHost, useCompression);
@@ -95,6 +118,7 @@ class ShardRunner implements Disposable {
 
         execute(ShardMessage(
           ShardToManager.disconnected,
+          seq: seq,
           data: {
             'closeCode': connection!.closeCode!,
             'closeReason': connection!.closeReason,
@@ -123,38 +147,49 @@ class ShardRunner implements Disposable {
         connectionSubscription = connection!.cast<String>().listen(receive);
       }
 
-      execute(ShardMessage(ShardToManager.connected));
+      execute(ShardMessage(reconnecting ? ShardToManager.reconnected : ShardToManager.connected, seq: seq));
     } on WebSocketException catch (err) {
-      execute(ShardMessage(ShardToManager.error, data: {'message': err.message, 'shouldReconnect': true}));
+      execute(ShardMessage(ShardToManager.error, seq: seq, data: {'message': err.message, 'shouldReconnect': true}));
     } on SocketException catch (err) {
-      execute(ShardMessage(ShardToManager.error, data: {'message': err.message, 'shouldReconnect': true}));
+      execute(ShardMessage(ShardToManager.error, seq: seq, data: {'message': err.message, 'shouldReconnect': true}));
     } catch (err) {
-      execute(ShardMessage(ShardToManager.error, data: {'message': 'Unhanded exception $err'}));
+      execute(ShardMessage(ShardToManager.error, seq: seq, data: {'message': 'Unhanded exception $err'}));
     }
+
+    connecting = false;
   }
 
   /// Reconnect to the server, closing the connection if necessary.
-  Future<void> reconnect(String gatewayHost, bool useCompression) async {
+  Future<void> reconnect(String gatewayHost, bool useCompression, int seq) async {
     if (reconnecting) {
-      execute(ShardMessage(ShardToManager.error, data: {'message': 'Shard is already reconnecting'}));
+      execute(ShardMessage(
+        ShardToManager.error,
+        seq: seq,
+        data: {'message': 'Shard is already reconnecting'},
+      ));
     }
 
     reconnecting = true;
     if (connected) {
       // Don't send a normal close code so that the bot doesn't appear offline during the reconnect.
-      await disconnect(3001);
+      await disconnect(seq, 3001);
     }
 
-    await connect(gatewayHost, useCompression);
+    // Sends reconnected instead of connected so we don't have to send it here
+    await connect(gatewayHost, useCompression, seq);
     reconnecting = false;
   }
 
   /// Terminate the connection on this shard.
   ///
   /// Sends [ShardToManager.disconnected].
-  Future<void> disconnect([int closeCode = 1000]) async {
+  Future<void> disconnect(int seq, [int closeCode = 1000]) async {
     if (!connected) {
-      execute(ShardMessage(ShardToManager.error, data: {'message': 'Cannot disconnect shard if no connection is active'}));
+      execute(ShardMessage(
+        ShardToManager.error,
+        seq: seq,
+        data: {'message': 'Cannot disconnect shard if no connection is active'},
+      ));
     }
 
     // Closing the connection will trigger the `connection.done` future we listened to when connecting, which will execute the [ShardToManager.disconnected]
@@ -167,9 +202,13 @@ class ShardRunner implements Disposable {
   }
 
   /// Sends data on this shard.
-  Future<void> send(dynamic data) async {
+  Future<void> send(dynamic data, int seq) async {
     if (!connected) {
-      execute(ShardMessage(ShardToManager.error, data: {'message': 'Cannot send data when connection is closed'}));
+      execute(ShardMessage(
+        ShardToManager.error,
+        seq: seq,
+        data: {'message': 'Cannot send data when connection is closed'},
+      ));
     }
 
     connection!.add(jsonEncode(data));
@@ -179,14 +218,15 @@ class ShardRunner implements Disposable {
   ///
   /// Sends [ShardToManager.disposed] upon completion.
   @override
-  Future<void> dispose() async {
+  Future<void> dispose([int? seq]) async {
     disposing = true;
+    seq ??= (this.seq--);
 
     if (connected) {
-      await disconnect();
+      await disconnect(seq);
     }
 
     receivePort.close();
-    execute(ShardMessage(ShardToManager.disposed));
+    execute(ShardMessage(ShardToManager.disposed, seq: seq));
   }
 }

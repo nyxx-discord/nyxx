@@ -1,3 +1,34 @@
+## 4.3.0-dev.1
+__15.11.2022__
+
+- feature: add support for interaction webhooks (#397)
+- bug: Fixed bug when getting IInviteWithMeta (#398)
+
+This version also includes fixes from 4.2.1
+
+## 4.2.1
+__15.11.2022__
+
+- hotfix: fix component deserialization failing when `customId` is `null`
+
+## 4.3.0-dev.0
+__14.11.2022__
+
+- feature: Add retry with backoff to network operations (gateway and http) (#395)
+- feature: automoderation regexes (#393)
+- bug: Emit bot start to plugins only when ready
+
+## 4.2.0
+__13.11.2022__
+
+- feature: missing forum channel features (#387)
+- feature: Add `activeDeveloper` flag (#388)
+- feature: Add support for new select menus components (#380
+- feature: Prefer using throw over returning Future.error
+- bug: Fix null-assert error on shard disposal; don't reconnect shard after disposing
+- bug: Cache user when fetching (#384)
+- bug: add message content to client (#389)
+
 ## 4.2.0-dev.0
 __11.11.2022__
 

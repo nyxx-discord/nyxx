@@ -115,16 +115,15 @@ class Shard implements IShard {
   /// The URL to which this shard should make the initial connection.
   final String gatewayHost;
 
+  /// The last sequence number
+  // Start at 0 and count up to avoid collisions with seq from the shard handler
+  int seq = 0;
+
   Shard(this.id, this.manager, this.gatewayHost) {
     readyFuture = spawn();
 
     // Automatically connect once the shard runner is ready.
-    readyFuture.then((_) => execute(
-          ShardMessage(ManagerToShard.connect, data: {
-            'gatewayHost': gatewayHost,
-            'useCompression': manager.connectionManager.client.options.compressedGatewayPayloads,
-          }),
-        ));
+    readyFuture.then((_) => connect());
 
     // Start handling messages from the shard.
     readyFuture.then((_) => shardMessages.listen(handle));
@@ -152,20 +151,58 @@ class Shard implements IShard {
     sendPort.send(message);
   }
 
+  Future<void> _connectReconnectHelper(int seq, {required bool isReconnect}) async {
+    // These need to be accessible both in the main callback, in retryIf and in the catch block below
+    bool shouldReconnect = false;
+    late String errorMessage;
+
+    try {
+      await manager.connectionManager.client.options.shardReconnectOptions.retry(
+        retryIf: (_) => shouldReconnect,
+        () async {
+          execute(ShardMessage(
+            isReconnect ? ManagerToShard.reconnect : ManagerToShard.connect,
+            seq: seq,
+            data: {
+              'gatewayHost': shouldResume && canResume ? resumeGatewayUrl : gatewayHost,
+              'useCompression': manager.connectionManager.client.options.compressedGatewayPayloads,
+            },
+          ));
+
+          final message = await shardMessages.firstWhere((element) => element.seq == seq);
+
+          switch (message.type) {
+            case ShardToManager.connected:
+            case ShardToManager.reconnected:
+              return;
+            case ShardToManager.error:
+              shouldReconnect = message.data['shouldReconnect'] as bool? ?? false;
+              errorMessage = message.data['message'] as String;
+              throw Exception();
+            default:
+              assert(false, 'Unreachable');
+              return;
+          }
+        },
+      );
+    } on Exception {
+      // Callback failed too many times, throw an unrecoverable error with the message we were given
+      throw UnrecoverableNyxxError(errorMessage);
+    }
+  }
+
+  Future<void> connect() => _connectReconnectHelper(seq, isReconnect: false);
+
   /// Triggers a reconnection to the shard.
   ///
   /// If the connection is to be resumed, [resumeGatewayUrl] is used as the connection. Otherwise, [gatewayHost] is used.
-  void reconnect() {
+  Future<void> reconnect([int? seq]) async {
     manager.logger.info('Reconnecting to gateway on shard $id');
     resetConnectionProperties();
 
-    execute(ShardMessage(
-      ManagerToShard.reconnect,
-      data: {
-        'gatewayHost': shouldResume && canResume ? resumeGatewayUrl : gatewayHost,
-        'useCompression': manager.connectionManager.client.options.compressedGatewayPayloads,
-      },
-    ));
+    int realSeq = seq ?? (this.seq++);
+
+    await _connectReconnectHelper(realSeq, isReconnect: true);
   }
 
   void resetConnectionProperties() {
@@ -184,11 +221,12 @@ class Shard implements IShard {
       case ShardToManager.received:
         return handlePayload(message.data);
       case ShardToManager.connected:
+      case ShardToManager.reconnected:
         return handleConnected();
       case ShardToManager.disconnected:
-        return handleDisconnect(message.data['closeCode'] as int, message.data['closeReason'] as String?);
+        return handleDisconnect(message.data['closeCode'] as int, message.data['closeReason'] as String?, message.seq);
       case ShardToManager.error:
-        return handleError(message.data['message'] as String, message.data['shouldReconnect'] as bool?);
+        return handleError(message.data['message'] as String, message.seq);
       case ShardToManager.disposed:
         manager.logger.info("Shard $id disposed.");
         break;
@@ -196,7 +234,7 @@ class Shard implements IShard {
   }
 
   /// A handler for when the shard connection disconnects.
-  Future<void> handleDisconnect(int closeCode, String? closeReason) async {
+  Future<void> handleDisconnect(int closeCode, String? closeReason, int seq) async {
     resetConnectionProperties();
 
     manager.onDisconnectController.add(this);
@@ -239,7 +277,7 @@ class Shard implements IShard {
     }
 
     // Reconnect by default
-    reconnect();
+    reconnect(seq);
   }
 
   /// A handler for when the shard establishes a connection to the Gateway.
@@ -254,15 +292,11 @@ class Shard implements IShard {
   }
 
   /// A handler for when the shard encounters an error. These can occur if the runner is in an invalid state or fails to open the websocket connection.
-  Future<void> handleError(String message, bool? shouldReconnect) async {
+  Future<void> handleError(String message, int seq) async {
     manager.logger.shout('Shard $id reported error: $message');
 
     for (final element in manager.connectionManager.client.plugins) {
       element.onConnectionError(manager.connectionManager.client, manager.logger, message);
-    }
-
-    if (shouldReconnect ?? false) {
-      Future.delayed(const Duration(seconds: 10), reconnect);
     }
   }
 
@@ -629,6 +663,7 @@ class Shard implements IShard {
   @override
   void send(int opCode, dynamic d) => execute(ShardMessage(
         ManagerToShard.send,
+        seq: seq++,
         data: {
           "op": opCode,
           "d": d,
@@ -702,7 +737,7 @@ class Shard implements IShard {
 
   @override
   Future<void> dispose() async {
-    execute(ShardMessage(ManagerToShard.dispose));
+    execute(ShardMessage(ManagerToShard.dispose, seq: seq++));
 
     // Wait for shard to dispose correctly
     await shardMessages.firstWhere((message) => message.type == ShardToManager.disposed);

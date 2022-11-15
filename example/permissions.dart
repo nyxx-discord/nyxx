@@ -1,9 +1,10 @@
+// ignore_for_file: unused_local_variable
 import "package:nyxx/nyxx.dart";
 
 // Main function
 void main() {
   // Create new bot instance. Replace string with your token
-  final bot = NyxxFactory.createNyxxWebsocket("<TOKEN>", GatewayIntents.allUnprivileged)
+  final bot = NyxxFactory.createNyxxWebsocket("<TOKEN>", GatewayIntents.allUnprivileged | GatewayIntents.messageContent) // Here we use the privilegied intent message content to receive incoming messages.
     ..registerPlugin(Logging()) // Default logging plugin
     ..registerPlugin(CliIntegration()) // Cli integration for nyxx allows stopping application via SIGTERM and SIGKILl
     ..registerPlugin(IgnoreExceptions()) // Plugin that handles uncaught exceptions that may occur
@@ -34,7 +35,7 @@ void main() {
       final permissions = await messageChannel.effectivePermissions(member);
 
       // Get current member permissions as builder
-      final permissionsAsBuilder = permissions.toBuilder()..sendMessages = true;
+      final permissionsAsBuilder = permissions.toBuilder()..sendMessages = true; // @ig
 
       // Get first channel override as builder and edit sendMessages property to allow sending messages for entities included in this override
       final channelOverridesAsBuilder = messageChannel.permissionOverrides.first.toBuilder()..sendMessages = true;
