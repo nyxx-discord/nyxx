@@ -16,6 +16,13 @@ class StickerBuilder implements Builder {
   /// File that Sticker should be added to sticker
   late final AttachmentBuilder file;
 
+  StickerBuilder({this.description = '', required this.file, this.name = '', this.tags = ''});
+
   @override
-  RawApiMap build() => {"name": name, "description": description, "tags": tags};
+  RawApiMap build() => {
+        "name": name,
+        "description": description,
+        "tags": tags,
+        'file': file.getBase64(),
+      };
 }

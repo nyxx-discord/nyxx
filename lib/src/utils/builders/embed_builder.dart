@@ -42,7 +42,19 @@ class EmbedBuilder extends Builder {
   late List<EmbedFieldBuilder> fields;
 
   /// Creates clean instance [EmbedBuilder]
-  EmbedBuilder() {
+  EmbedBuilder({
+    this.author,
+    this.color,
+    this.description,
+    this.fields = const [],
+    this.footer,
+    this.imageUrl,
+    this.thumbnailUrl,
+    this.timestamp,
+    this.title,
+    this.type,
+    this.url,
+  }) {
     fields = [];
   }
 

@@ -19,6 +19,15 @@ class MemberBuilder implements Builder {
   /// When the user's timeout will expire and the user will be able to communicate in the guild again (up to 28 days in the future), set to null to remove timeout
   DateTime? timeoutUntil = DateTime.fromMillisecondsSinceEpoch(0);
 
+  MemberBuilder({
+    this.channel = const Snowflake.zero(),
+    this.deaf,
+    this.mute,
+    this.nick,
+    this.roles,
+    DateTime? timeoutUntil,
+  }) : timeoutUntil = timeoutUntil ?? DateTime.fromMicrosecondsSinceEpoch(0);
+
   @override
   RawApiMap build() => {
         if (nick != null) 'nick': nick,

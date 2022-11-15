@@ -5,16 +5,19 @@ import 'package:nyxx/src/utils/builders/builder.dart';
 /// Builder for embed Field.
 class EmbedFieldBuilder extends Builder {
   /// Field name/title
-  dynamic name;
+  Object? name;
 
   /// Field content
-  dynamic content;
+  Object? content;
 
   /// Whether or not this field should display inline
   bool? inline;
 
   /// Constructs new instance of Field
   EmbedFieldBuilder([this.name, this.content, this.inline]);
+
+  /// Constructs new instance of Field
+  EmbedFieldBuilder.named({this.name, this.content, this.inline});
 
   /// Length of current field
   int get length => name.toString().length + content.toString().length;

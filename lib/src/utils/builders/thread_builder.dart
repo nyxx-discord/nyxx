@@ -26,10 +26,25 @@ class ThreadBuilder extends Builder {
   ThreadArchiveTime? archiveAfter;
 
   /// Create a public thread
-  ThreadBuilder(this.name);
+  ThreadBuilder(
+    this.name, {
+    this.archiveAfter,
+    this.archived,
+    this.invitable,
+    this.locked,
+    this.private,
+    this.rateLimitPerUser,
+  });
 
   /// Create a private thread
-  ThreadBuilder.private(this.name) {
+  ThreadBuilder.private(
+    this.name, {
+    this.archiveAfter,
+    this.archived,
+    this.invitable,
+    this.locked,
+    this.rateLimitPerUser,
+  }) {
     private = true;
   }
 
