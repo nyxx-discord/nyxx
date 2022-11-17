@@ -2,6 +2,8 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:http/http.dart' as http;
+import 'package:nyxx/nyxx.dart';
+import 'package:nyxx/src/internal/response_wrapper/error_response_wrapper.dart';
 
 /// Represents a HTTP result from the API.
 abstract class IHttpResponse {
@@ -106,21 +108,38 @@ abstract class IHttpResponseError implements IHttpResponse, Exception {
   ///
   /// If Discord sets its own status code, this can be found here. Otherwise, this is equal to [statusCode].
   int get errorCode;
+
+  /// Additional information about the error, if any.
+  IHttpErrorData? get errorData;
 }
 
 /// Returned when client fails to execute http request.
 /// Will contain reason why request failed.
 class HttpResponseError extends HttpResponse implements IHttpResponseError {
   @override
-  String get message => (jsonBody?['message'] as String?) ?? response.reasonPhrase ?? textBody!;
+  String get message => errorData?.errorMessage ?? response.reasonPhrase ?? textBody!;
 
   @override
-  int get errorCode => (jsonBody?['code'] as int?) ?? statusCode;
+  int get errorCode => errorData?.errorCode ?? statusCode;
 
   @override
   int get code => errorCode;
 
-  HttpResponseError({required super.body, required super.response});
+  @override
+  late final HttpErrorData? errorData;
+
+  HttpResponseError({required super.body, required super.response}) {
+    HttpErrorData? errorData;
+    if (hasJsonBody) {
+      try {
+        errorData = HttpErrorData(jsonBody as RawApiMap);
+      } on TypeError {
+        // ignore: Response was not a valid error object. We'll just fall back to the response status code and message.
+      }
+    }
+
+    this.errorData = errorData;
+  }
 
   static Future<HttpResponseError> fromResponse(http.StreamedResponse response) async => HttpResponseError(
         body: await response.stream.toBytes(),
@@ -128,5 +147,18 @@ class HttpResponseError extends HttpResponse implements IHttpResponseError {
       );
 
   @override
-  String toString() => '$errorCode ($message) ${request.method} ${request.url}';
+  String toString() {
+    final result = StringBuffer('$message ($errorCode) ${request.method} ${request.url}\n');
+
+    if (errorData?.fieldErrors.isNotEmpty ?? false) {
+      result.writeln('Errors:');
+
+      for (final field in errorData!.fieldErrors.values) {
+        result.writeln('  ${field.name}: ${field.errorMessage} (${field.errorCode})');
+      }
+    }
+
+    // Trim trailing newline
+    return result.toString().trim();
+  }
 }
