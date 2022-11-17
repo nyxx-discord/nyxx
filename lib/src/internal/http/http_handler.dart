@@ -6,7 +6,6 @@ import 'package:logging/logging.dart';
 import 'package:nyxx/src/events/http_events.dart';
 import 'package:nyxx/src/events/ratelimit_event.dart';
 import 'package:nyxx/src/internal/event_controller.dart';
-import 'package:nyxx/src/internal/exceptions/http_client_exception.dart';
 import 'package:nyxx/src/nyxx.dart';
 import 'package:nyxx/src/internal/http/http_bucket.dart';
 import 'package:nyxx/src/internal/http/http_request.dart';
@@ -90,8 +89,7 @@ class HttpHandler {
 
   Future<HttpResponse> _handle(HttpRequest request, http.StreamedResponse response) async {
     if (response.statusCode >= 200 && response.statusCode < 300) {
-      final responseSuccess = HttpResponseSuccess(response);
-      await responseSuccess.finalize();
+      final responseSuccess = await HttpResponseSuccess.fromResponse(response);
 
       (client.eventsRest as RestEventController).onHttpResponseController.add(HttpResponseEvent(responseSuccess));
       logger.finer("Got successful http response for endpoint: [${response.request?.url.toString()}]; Response: [${responseSuccess.jsonBody}]");
@@ -99,7 +97,7 @@ class HttpHandler {
       return responseSuccess;
     }
 
-    // Check for 429, emmit events and wait given in response body time
+    // Check for 429, emit events and wait given in response body time
     if (response.statusCode == 429) {
       final responseBody = jsonDecode(await response.stream.bytesToString());
       final retryAfter = Duration(milliseconds: ((responseBody["retry_after"] as double) * 1000).ceil());
@@ -115,8 +113,7 @@ class HttpHandler {
       return Future.delayed(retryAfter, () => execute(request));
     }
 
-    final responseError = HttpResponseError(response);
-    await responseError.finalize();
+    final responseError = await HttpResponseError.fromResponse(response);
 
     (client.eventsRest as RestEventController).onHttpErrorController.add(HttpErrorEvent(responseError));
     logger.finer("Got failure http response for endpoint: [${response.request?.url.toString()}]; Response: [${responseError.message}]");
