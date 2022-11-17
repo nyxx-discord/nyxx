@@ -21,9 +21,10 @@ class IgnoreExceptions extends BasePlugin {
   ReceivePort _getErrorPort(Logger logger) {
     final errorsPort = ReceivePort();
     errorsPort.listen((err) {
-      final stackTrace = err[1] != null ? ". Stacktrace: \n${err[1]}" : "";
+      final stackTrace = err[1] != null ? StackTrace.fromString(err[1] as String) : null;
+      final stackTraceMessage = stackTrace != null ? ". Stacktrace: \n$stackTrace" : "";
 
-      logger.shout("Got Error: Message: [${err[0]}]$stackTrace");
+      logger.shout("Got Error: Message: [${err[0]}]$stackTraceMessage", err[0], stackTrace);
 
       if (err[0].startsWith('UnrecoverableNyxxError') as bool) {
         _stop();

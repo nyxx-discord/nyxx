@@ -293,7 +293,7 @@ class Shard implements IShard {
 
   /// A handler for when the shard encounters an error. These can occur if the runner is in an invalid state or fails to open the websocket connection.
   Future<void> handleError(String message, int seq) async {
-    manager.logger.shout('Shard $id reported error: $message');
+    manager.logger.shout('Shard $id reported error: $message', message);
 
     for (final element in manager.connectionManager.client.plugins) {
       element.onConnectionError(manager.connectionManager.client, manager.logger, message);

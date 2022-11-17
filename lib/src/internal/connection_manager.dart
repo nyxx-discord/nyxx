@@ -56,8 +56,9 @@ class ConnectionManager {
     }
 
     if (remaining < 10) {
-      _logger.severe("Exiting to prevent API abuse. 10 connections starts left.");
-      throw UnrecoverableNyxxError('Exiting nyxx to prevent API ban. Remaining less that 10 connection to gateway');
+      final error = UnrecoverableNyxxError('Exiting nyxx to prevent API ban. Remaining less that 10 connection to gateway');
+      _logger.severe("Exiting to prevent API abuse. 10 connections starts left.", error);
+      throw error;
     }
   }
 
