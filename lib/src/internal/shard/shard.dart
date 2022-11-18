@@ -154,7 +154,6 @@ class Shard implements IShard {
     logger.finer([
       'Sequence: ${message.seq}',
       if (message.data != null) 'Data: ${message.data}',
-      '',
     ].join('\n'));
 
     sendPort.send(message);
