@@ -1,6 +1,7 @@
 import 'dart:isolate';
 
 import 'package:logging/logging.dart';
+import 'package:nyxx/src/internal/exceptions/unrecoverable_nyxx_error.dart';
 import 'package:nyxx/src/nyxx.dart';
 import 'package:nyxx/src/plugin/plugin.dart';
 
@@ -22,14 +23,13 @@ class IgnoreExceptions extends BasePlugin {
     final errorsPort = ReceivePort();
     errorsPort.listen((err) {
       final stackTrace = err[1] != null ? StackTrace.fromString(err[1] as String) : null;
-      final stackTraceMessage = stackTrace != null ? ". Stacktrace: \n$stackTrace" : "";
+      final message = err[0] as String;
 
-      logger.shout("Got Error: Message: [${err[0]}]$stackTraceMessage", err[0], stackTrace);
+      logger.shout('Unhandled exception was thrown', message, stackTrace);
 
-      if (err[0].startsWith('UnrecoverableNyxxError') as bool) {
+      if (message.startsWith('UnrecoverableNyxxError')) {
         _stop();
-
-        throw err[0] as String;
+        throw UnrecoverableNyxxError(message);
       }
     });
 
