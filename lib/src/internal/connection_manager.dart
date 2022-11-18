@@ -62,7 +62,7 @@ class ConnectionManager {
     }
 
     if (remaining < 10) {
-      throw UnrecoverableNyxxError('Exiting nyxx to prevent API ban. Less that 10 connections to gateway ($remaining)');
+      throw UnrecoverableNyxxError('Exiting nyxx to prevent API ban. Less than 10 connections to gateway ($remaining)');
     }
   }
 
