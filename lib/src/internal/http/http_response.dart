@@ -147,7 +147,11 @@ class HttpResponseError extends HttpResponse implements IHttpResponseError {
       );
 
   @override
-  String toString() {
+  String toString({bool short = false}) {
+    if (short) {
+      return super.toString();
+    }
+
     final result = StringBuffer('$message ($errorCode) ${request.method} ${request.url}\n');
 
     if (errorData?.fieldErrors.isNotEmpty ?? false) {

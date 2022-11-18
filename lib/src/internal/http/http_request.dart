@@ -29,6 +29,9 @@ abstract class HttpRequest {
       {...headers, if (auditLog != null) "X-Audit-Log-Reason": auditLog!, "User-Agent": "Nyxx (${Constants.repoUrl}, ${Constants.version})"};
 
   Future<http.BaseRequest> prepareRequest();
+
+  @override
+  String toString() => '$method $uri';
 }
 
 /// [BasicRequest] with json body

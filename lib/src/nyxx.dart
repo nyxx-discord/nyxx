@@ -184,8 +184,6 @@ class NyxxRest extends INyxxRest {
   /// Creates and logs in a new client. If [ignoreExceptions] is true (by default is)
   /// isolate will ignore all exceptions and continue to work.
   NyxxRest(this.token, this.intents, this._appId, {ClientOptions? options, CacheOptions? cacheOptions}) {
-    _logger.fine("Staring Nyxx: intents: [$intents]");
-
     if (token.isEmpty) {
       throw MissingTokenError();
     }
@@ -202,6 +200,12 @@ class NyxxRest extends INyxxRest {
 
   @override
   Future<void> connect({bool propagateReady = true}) async {
+    _logger.config([
+      'Token: $token',
+      'Intents: $intents',
+      'Application ID: $_appId',
+    ].join('\n'));
+
     httpHandler = HttpHandler(this);
     httpEndpoints = HttpEndpoints(this);
 
@@ -216,6 +220,8 @@ class NyxxRest extends INyxxRest {
 
   @override
   Future<void> dispose() async {
+    _logger.info('Disposing and closing client...');
+
     for (final plugin in _plugins) {
       await plugin.onBotStop(this, plugin.logger);
     }
@@ -463,8 +469,6 @@ class NyxxWebsocket extends NyxxRest implements INyxxWebsocket {
 
   @override
   Future<void> dispose() async {
-    _logger.info("Disposing and closing bot...");
-
     await super.dispose();
 
     if (options.shutdownHook != null) {

@@ -3,6 +3,7 @@ import 'dart:io';
 import 'dart:isolate';
 import 'dart:math';
 
+import 'package:logging/logging.dart';
 import 'package:nyxx/src/core/guild/client_user.dart';
 import 'package:nyxx/src/core/snowflake.dart';
 import 'package:nyxx/src/events/channel_events.dart';
@@ -115,6 +116,8 @@ class Shard implements IShard {
   /// The URL to which this shard should make the initial connection.
   final String gatewayHost;
 
+  late final Logger logger = Logger('Shard $id');
+
   /// The last sequence number
   // Start at 0 and count up to avoid collisions with seq from the shard handler
   int seq = 0;
@@ -131,7 +134,7 @@ class Shard implements IShard {
 
   /// Spawns the handler isolate and initializes [sendPort] and [shardMessages];
   Future<void> spawn() async {
-    manager.logger.fine("Starting shard $id...");
+    logger.fine("Starting shard runner...");
 
     await Isolate.spawn(shardHandler, receivePort.sendPort, debugName: "Shard Runner #$id");
 
@@ -140,14 +143,20 @@ class Shard implements IShard {
     sendPort = await rawShardMessages.first as SendPort;
     shardMessages = rawShardMessages.cast<ShardMessage<ShardToManager>>();
 
-    manager.logger.fine("Shard $id ready");
+    logger.fine("Shard runner ready");
   }
 
   /// Sends a message to the shard isolate.
   void execute(ShardMessage<ManagerToShard> message) async {
     await readyFuture;
 
-    manager.logger.finest("Sending message ${message.type}${message.data == null ? '' : ' with data ${message.data}'} to shard $id");
+    logger.fine('Sending ${message.type.name} message to runner');
+    logger.finer([
+      'Sequence: ${message.seq}',
+      if (message.data != null) 'Data: ${message.data}',
+      '',
+    ].join('\n'));
+
     sendPort.send(message);
   }
 
@@ -197,7 +206,7 @@ class Shard implements IShard {
   ///
   /// If the connection is to be resumed, [resumeGatewayUrl] is used as the connection. Otherwise, [gatewayHost] is used.
   Future<void> reconnect([int? seq]) async {
-    manager.logger.info('Reconnecting to gateway on shard $id');
+    logger.info('Reconnecting to gateway on shard $id');
     resetConnectionProperties();
 
     int realSeq = seq ?? (this.seq++);
@@ -215,7 +224,11 @@ class Shard implements IShard {
   ///
   /// These messages are not raw messages from the websocket! Those are handled in [handlePayload].
   Future<void> handle(ShardMessage<ShardToManager> message) async {
-    manager.logger.finest('Got message ${message.type}${message.data == null ? '' : ' with data ${message.data}'} on shard $id');
+    logger.fine('Handling ${message.type.name} message from runner');
+    logger.finer([
+      'Sequence: ${message.seq}',
+      if (message.data != null) 'Data: ${message.data}',
+    ].join('\n'));
 
     switch (message.type) {
       case ShardToManager.received:
@@ -228,7 +241,7 @@ class Shard implements IShard {
       case ShardToManager.error:
         return handleError(message.data['message'] as String, message.seq);
       case ShardToManager.disposed:
-        manager.logger.info("Shard $id disposed.");
+        logger.info("Shard $id disposed.");
         break;
     }
   }
@@ -267,7 +280,7 @@ class Shard implements IShard {
     if (errors.containsKey(closeCode)) {
       throw UnrecoverableNyxxError('Shard $id disconnected: ${errors[closeCode]!}');
     } else if (warnings.containsKey(closeCode)) {
-      manager.logger.warning('Shard $id disconnected: ${warnings[closeCode]!}');
+      logger.warning('Shard disconnected: ${warnings[closeCode]!}');
 
       // Try to resume on all warnings apart from invalid sequence, which prevents us from resuming
       shouldResume = closeCode != 4007;
@@ -282,7 +295,7 @@ class Shard implements IShard {
 
   /// A handler for when the shard establishes a connection to the Gateway.
   Future<void> handleConnected() async {
-    manager.logger.info('Shard $id connected to gateway');
+    logger.info('Shard connected to gateway');
     connected = true;
     manager.onConnectController.add(this);
 
@@ -293,7 +306,7 @@ class Shard implements IShard {
 
   /// A handler for when the shard encounters an error. These can occur if the runner is in an invalid state or fails to open the websocket connection.
   Future<void> handleError(String message, int seq) async {
-    manager.logger.shout('Shard $id reported error: $message', message);
+    logger.shout('Shard reported error', message);
 
     for (final element in manager.connectionManager.client.plugins) {
       element.onConnectionError(manager.connectionManager.client, element.logger, message);
@@ -343,7 +356,7 @@ class Shard implements IShard {
         break;
 
       default:
-        manager.logger.severe('Unhandled opcode $opcode');
+        logger.severe('Unhandled opcode $opcode');
         break;
     }
   }
@@ -461,7 +474,7 @@ class Shard implements IShard {
 
         manager.connectionManager.client.self = ClientUser(manager.connectionManager.client, data["d"]["user"] as RawApiMap);
 
-        manager.logger.info("Shard $id ready!");
+        logger.info("Shard ready!");
 
         if (!shouldResume) {
           await manager.connectionManager.propagateReady();
@@ -655,7 +668,7 @@ class Shard implements IShard {
         if (manager.connectionManager.client.options.dispatchRawShardEvent) {
           manager.onRawEventController.add(RawEvent(this, data));
         } else {
-          manager.logger.info("UNKNOWN OPCODE: $data");
+          logger.severe("UNKNOWN OPCODE: $data");
         }
     }
   }
