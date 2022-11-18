@@ -31,7 +31,7 @@ import 'package:nyxx/src/utils/builders/presence_builder.dart';
 import 'package:nyxx/src/typedefs.dart';
 
 abstract class NyxxFactory {
-  static INyxx createNyxxRest(String token, int intents, Snowflake appId, {ClientOptions? options, CacheOptions? cacheOptions}) =>
+  static INyxxRest createNyxxRest(String token, int intents, Snowflake appId, {ClientOptions? options, CacheOptions? cacheOptions}) =>
       NyxxRest(token, intents, appId, options: options, cacheOptions: cacheOptions);
 
   static INyxxWebsocket createNyxxWebsocket(String token, int intents, {ClientOptions? options, CacheOptions? cacheOptions}) =>
