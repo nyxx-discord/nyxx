@@ -199,5 +199,6 @@ export 'src/plugin/plugins/cli_integration.dart' show CliIntegration;
 export 'src/plugin/plugins/ignore_exception.dart' show IgnoreExceptions;
 export 'src/plugin/plugins/logging.dart' show Logging;
 
-// Forward `RetryOptions` to allow the usage of the class without importing the package
+// Export classes used in the nyxx API to avoid users having to import the package themselves
 export 'package:retry/retry.dart' show RetryOptions;
+export 'package:logging/logging.dart' show Level;
