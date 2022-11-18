@@ -46,21 +46,23 @@ class Logging extends BasePlugin {
 
       final error = rec.error;
       if (error != null) {
-        // Indent error
-        final errorMessage = 'Error: $error'.replaceAll('\n', '\n  ');
-        message.writeln(errorMessage);
+        message.write('Error: ');
+
+        final errorMessage = error.toString();
 
         if (errorMessage.contains('\n')) {
-          // Add newline for extra readability if error message contains newlines
+          // Add newlines for extra readability if error message contains newlines
           message.writeln();
+          message.writeln(errorMessage);
+          message.writeln();
+        } else {
+          message.writeln(errorMessage);
         }
       }
 
       final stackTrace = (error is Error ? error.stackTrace : null) ?? rec.stackTrace;
       if (stackTrace != null) {
-        // Indent stack trace
-        message.writeln('Stack trace:\n$stackTrace'.replaceAll('\n', '\n  '));
-        message.writeln();
+        message.writeln('Stack trace:\n$stackTrace\n');
       }
 
       final outSink = rec.level > stderrLevel ? stderr : stdout;
