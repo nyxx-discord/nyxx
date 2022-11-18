@@ -12,6 +12,9 @@ class Logging extends BasePlugin {
 
   final int? truncateLogsAt;
 
+  @override
+  String get name => 'Logging';
+
   Logging({
     this.stderrLevel = Level.WARNING,
     this.stackTraceLevel = Level.SEVERE,

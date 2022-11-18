@@ -240,7 +240,7 @@ class Shard implements IShard {
     manager.onDisconnectController.add(this);
 
     for (final element in manager.connectionManager.client.plugins) {
-      element.onConnectionClose(manager.connectionManager.client, manager.logger, closeCode, closeReason);
+      element.onConnectionClose(manager.connectionManager.client, element.logger, closeCode, closeReason);
     }
 
     // https://discord.com/developers/docs/topics/opcodes-and-status-codes#gateway-gateway-close-event-codes
@@ -296,7 +296,7 @@ class Shard implements IShard {
     manager.logger.shout('Shard $id reported error: $message', message);
 
     for (final element in manager.connectionManager.client.plugins) {
-      element.onConnectionError(manager.connectionManager.client, manager.logger, message);
+      element.onConnectionError(manager.connectionManager.client, element.logger, message);
     }
   }
 

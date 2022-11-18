@@ -209,7 +209,7 @@ class NyxxRest extends INyxxRest {
       onReadyController.add(ReadyEvent(this));
 
       for (final plugin in _plugins) {
-        await plugin.onBotStart(this, _logger);
+        await plugin.onBotStart(this, plugin.logger);
       }
     }
   }
@@ -217,7 +217,7 @@ class NyxxRest extends INyxxRest {
   @override
   Future<void> dispose() async {
     for (final plugin in _plugins) {
-      await plugin.onBotStop(this, _logger);
+      await plugin.onBotStop(this, plugin.logger);
     }
 
     await eventsRest.dispose();
@@ -231,7 +231,7 @@ class NyxxRest extends INyxxRest {
 
   @override
   void registerPlugin<T extends BasePlugin>(T pluginInstance) {
-    pluginInstance.onRegister(this, _logger);
+    pluginInstance.onRegister(this, pluginInstance.logger);
     _plugins.add(pluginInstance);
   }
 }
@@ -374,7 +374,7 @@ class NyxxWebsocket extends NyxxRest implements INyxxWebsocket {
       onReadyController.add(ReadyEvent(this));
 
       for (final plugin in _plugins) {
-        await plugin.onBotStart(this, _logger);
+        await plugin.onBotStart(this, plugin.logger);
       }
     }
   }

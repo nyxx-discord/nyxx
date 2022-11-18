@@ -6,6 +6,9 @@ import 'package:nyxx/src/nyxx.dart';
 import 'package:nyxx/src/plugin/plugin.dart';
 
 class IgnoreExceptions extends BasePlugin {
+  @override
+  String get name => 'IgnoreExceptions';
+
   late final ReceivePort _errorsPort;
 
   @override
