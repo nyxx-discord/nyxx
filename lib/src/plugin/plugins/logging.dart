@@ -12,6 +12,8 @@ class Logging extends BasePlugin {
 
   final int? truncateLogsAt;
 
+  final bool censorToken;
+
   @override
   String get name => 'Logging';
 
@@ -20,6 +22,7 @@ class Logging extends BasePlugin {
     this.stackTraceLevel = Level.SEVERE,
     this.logLevel = Level.INFO,
     this.truncateLogsAt = 1000,
+    this.censorToken = true,
   });
 
   Level? _oldStacktraceLevel;
@@ -65,8 +68,13 @@ class Logging extends BasePlugin {
         message.writeln('Stack trace:\n$stackTrace\n');
       }
 
+      var messageString = message.toString();
+      if (censorToken) {
+        messageString = messageString.replaceAll(nyxx.token, '<token>');
+      }
+
       final outSink = rec.level > stderrLevel ? stderr : stdout;
-      outSink.write(message.toString());
+      outSink.write(messageString);
     });
   }
 
