@@ -995,7 +995,7 @@ class HttpEndpoints implements IHttpEndpoints {
           ..members(id: memberId.toString()),
         method: "PATCH",
         auditLog: auditReason,
-        body: builder));
+        body: builder.build()));
   }
 
   @override
