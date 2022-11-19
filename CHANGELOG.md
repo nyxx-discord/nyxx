@@ -1,3 +1,14 @@
+## 4.3.0
+__19.11.2022__
+
+- feature: Add retry with backoff to network operations (gateway and http) (#395)
+- feature: automoderation regexes (#393)
+- feature: add support for interaction webhooks (#397)
+- feature: Forward `RetryOptions`
+- bug: Fixed bug when getting IInviteWithMeta (#398)
+- bug: Emit bot start to plugins only when ready
+- bug: fix builder not building when editing a guild member (#405)
+
 ## 4.3.0-dev.1
 __15.11.2022__
 
