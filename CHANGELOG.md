@@ -1,7 +1,33 @@
+## 4.3.0
+__19.11.2022__
+
+- feature: Add retry with backoff to network operations (gateway and http) (#395)
+- feature: automoderation regexes (#393)
+- feature: add support for interaction webhooks (#397)
+- feature: Forward `RetryOptions`
+- bug: Fixed bug when getting IInviteWithMeta (#398)
+- bug: Emit bot start to plugins only when ready
+- bug: fix builder not building when editing a guild member (#405)
+
+## 4.3.0-dev.1
+__15.11.2022__
+
+- feature: add support for interaction webhooks (#397)
+- bug: Fixed bug when getting IInviteWithMeta (#398)
+
+This version also includes fixes from 4.2.1
+
 ## 4.2.1
 __15.11.2022__
 
 - hotfix: fix component deserialization failing when `customId` is `null`
+
+## 4.3.0-dev.0
+__14.11.2022__
+
+- feature: Add retry with backoff to network operations (gateway and http) (#395)
+- feature: automoderation regexes (#393)
+- bug: Emit bot start to plugins only when ready
 
 ## 4.2.0
 __13.11.2022__

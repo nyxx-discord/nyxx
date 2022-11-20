@@ -2,7 +2,9 @@ class ShardMessage<T> {
   final T type;
   final dynamic data;
 
-  const ShardMessage(this.type, {this.data});
+  final int seq;
+
+  const ShardMessage(this.type, {required this.seq, this.data});
 }
 
 enum ShardToManager {
@@ -27,6 +29,9 @@ enum ShardToManager {
 
   /// Sent when the shard is connected
   connected,
+
+  /// Send when the shard successfully reconnects
+  reconnected,
 
   /// Send when the shard is disconnected
   ///

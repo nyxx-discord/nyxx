@@ -20,9 +20,6 @@ abstract class IUser implements SnowflakeEntity, ISend, Mentionable, IMessageAut
   /// Reference to client
   INyxx get client;
 
-  /// Formatted discriminator with leading zeros if needed
-  String get formattedDiscriminator;
-
   /// The user's avatar hash.
   String? get avatar;
 
@@ -117,6 +114,9 @@ class User extends SnowflakeEntity implements IUser {
   /// Color of the banner
   @override
   late final DiscordColor? accentColor;
+
+  @override
+  bool get isInteractionWebhook => false;
 
   /// Creates an instance of [User]
   User(this.client, RawApiMap raw) : super(Snowflake(raw["id"])) {

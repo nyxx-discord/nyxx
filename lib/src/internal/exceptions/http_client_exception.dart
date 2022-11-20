@@ -1,6 +1,7 @@
 import 'package:http/http.dart' as http;
 
 /// Exception of http client
+@Deprecated('Unused, will be removed in the next major release')
 class HttpClientException extends http.ClientException {
   /// Raw response from server
   final http.BaseResponse? response;
