@@ -1,4 +1,5 @@
 import 'package:http/http.dart' as http;
+import 'package:logging/logging.dart';
 
 import 'package:nyxx/src/internal/http/http_request.dart';
 
@@ -23,6 +24,8 @@ class HttpBucket {
   Duration get resetAfter => _resetAfter;
 
   String get id => _bucketId;
+
+  late final Logger _logger = Logger('HttpBucket $id');
 
   HttpBucket(this._remaining, this._reset, this._resetAfter, this._bucketId);
 
@@ -63,11 +66,19 @@ class HttpBucket {
 
   void updateRateLimit(http.StreamedResponse response) {
     if (isInBucket(response)) {
+      _logger.finest('Updating bucket');
+
       _remaining = getRemainingFromHeaders(response.headers) ?? _remaining;
 
       _reset = getResetFromHeaders(response.headers) ?? _reset;
 
       _resetAfter = getResetAfterFromHeaders(response.headers) ?? _resetAfter;
+
+      _logger.finest([
+        'Remaining: $_remaining',
+        'Reset at: $_reset',
+        'Reset after: $_resetAfter',
+      ].join('\n'));
     }
   }
 }

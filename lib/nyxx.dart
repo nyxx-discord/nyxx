@@ -165,6 +165,7 @@ export 'src/internal/interfaces/disposable.dart' show Disposable;
 export 'src/internal/interfaces/message_author.dart' show IMessageAuthor;
 export 'src/internal/interfaces/send.dart' show ISend;
 export 'src/internal/interfaces/mentionable.dart' show Mentionable;
+export 'src/internal/response_wrapper/error_response_wrapper.dart' show IHttpErrorData, IFieldError;
 export 'src/internal/response_wrapper/thread_list_result_wrapper.dart' show IThreadListResultWrapper;
 export 'src/internal/shard/shard.dart' show IShard;
 export 'src/internal/shard/shard_manager.dart' show IShardManager;
@@ -198,5 +199,6 @@ export 'src/plugin/plugins/cli_integration.dart' show CliIntegration;
 export 'src/plugin/plugins/ignore_exception.dart' show IgnoreExceptions;
 export 'src/plugin/plugins/logging.dart' show Logging;
 
-// Forward `RetryOptions` to allow the usage of the class without importing the package
+// Export classes used in the nyxx API to avoid users having to import the package themselves
 export 'package:retry/retry.dart' show RetryOptions;
+export 'package:logging/logging.dart' show Level;
