@@ -32,7 +32,7 @@ import 'package:nyxx/src/utils/builders/presence_builder.dart';
 import 'package:nyxx/src/typedefs.dart';
 
 abstract class NyxxFactory {
-  static INyxx createNyxxRest(String token, int intents, Snowflake appId, {ClientOptions? options, CacheOptions? cacheOptions}) =>
+  static INyxxRest createNyxxRest(String token, int intents, Snowflake appId, {ClientOptions? options, CacheOptions? cacheOptions}) =>
       NyxxRest(token, intents, appId, options: options, cacheOptions: cacheOptions);
 
   static INyxxWebsocket createNyxxWebsocket(String token, int intents, {ClientOptions? options, CacheOptions? cacheOptions}) =>
@@ -191,8 +191,6 @@ class NyxxRest extends INyxxRest {
   /// Creates and logs in a new client. If [ignoreExceptions] is true (by default is)
   /// isolate will ignore all exceptions and continue to work.
   NyxxRest(this.token, this.intents, this._appId, {ClientOptions? options, CacheOptions? cacheOptions}) {
-    _logger.fine("Staring Nyxx: intents: [$intents]");
-
     if (token.isEmpty) {
       throw MissingTokenError();
     }
@@ -209,6 +207,12 @@ class NyxxRest extends INyxxRest {
 
   @override
   Future<void> connect({bool propagateReady = true}) async {
+    _logger.config([
+      'Token: $token',
+      'Intents: $intents',
+      'Application ID: $_appId',
+    ].join('\n'));
+
     httpHandler = HttpHandler(this);
     httpEndpoints = HttpEndpoints(this);
     cdnHttpEndpoints = CdnHttpEndpoints();
@@ -217,15 +221,17 @@ class NyxxRest extends INyxxRest {
       onReadyController.add(ReadyEvent(this));
 
       for (final plugin in _plugins) {
-        await plugin.onBotStart(this, _logger);
+        await plugin.onBotStart(this, plugin.logger);
       }
     }
   }
 
   @override
   Future<void> dispose() async {
+    _logger.info('Disposing and closing client...');
+
     for (final plugin in _plugins) {
-      await plugin.onBotStop(this, _logger);
+      await plugin.onBotStop(this, plugin.logger);
     }
 
     await eventsRest.dispose();
@@ -239,7 +245,7 @@ class NyxxRest extends INyxxRest {
 
   @override
   void registerPlugin<T extends BasePlugin>(T pluginInstance) {
-    pluginInstance.onRegister(this, _logger);
+    pluginInstance.onRegister(this, pluginInstance.logger);
     _plugins.add(pluginInstance);
   }
 }
@@ -382,7 +388,7 @@ class NyxxWebsocket extends NyxxRest implements INyxxWebsocket {
       onReadyController.add(ReadyEvent(this));
 
       for (final plugin in _plugins) {
-        await plugin.onBotStart(this, _logger);
+        await plugin.onBotStart(this, plugin.logger);
       }
     }
   }
@@ -471,8 +477,6 @@ class NyxxWebsocket extends NyxxRest implements INyxxWebsocket {
 
   @override
   Future<void> dispose() async {
-    _logger.info("Disposing and closing bot...");
-
     await super.dispose();
 
     if (options.shutdownHook != null) {

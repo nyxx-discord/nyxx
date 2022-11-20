@@ -6,7 +6,6 @@ import 'package:logging/logging.dart';
 import 'package:nyxx/src/events/http_events.dart';
 import 'package:nyxx/src/events/ratelimit_event.dart';
 import 'package:nyxx/src/internal/event_controller.dart';
-import 'package:nyxx/src/internal/exceptions/http_client_exception.dart';
 import 'package:nyxx/src/nyxx.dart';
 import 'package:nyxx/src/internal/http/http_bucket.dart';
 import 'package:nyxx/src/internal/http/http_request.dart';
@@ -53,8 +52,26 @@ class HttpHandler {
     }
 
     HttpBucket? currentBucket = _bucketByRequestRateLimitId[request.rateLimitId];
-    logger.fine(
-        "Executing request: [${request.uri.toString()}]; Bucket ID: [${currentBucket?.id}]; Reset at: [${currentBucket?.reset}]; Remaining: [${currentBucket?.remaining}]; Reset after: [${currentBucket?.resetAfter}]; Body: [${request is BasicRequest && request.body != null ? request.body : 'EMPTY'}]");
+
+    logger.fine('Executing request $request');
+    logger.finer([
+      'Headers: ${request.headers}',
+      'Authenticated: ${request.auth}',
+      if (request.auditLog != null) 'Audit Log Reason: ${request.auditLog}',
+      'Global rate limit: ${request.globalRateLimit}',
+      'Rate limit ID: ${request.rateLimitId}',
+      'Rate limit bucket: ${currentBucket?.id}',
+      if (currentBucket != null) ...[
+        'Reset at: ${currentBucket.reset}',
+        'Reset after: ${currentBucket.resetAfter}',
+        'Remaining: ${currentBucket.remaining}',
+      ],
+      if (request is BasicRequest) 'Request body: ${request.body}',
+      if (request is MultipartRequest) ...[
+        'Request body: ${request.fields}',
+        'Files: ${request.files.map((file) => file.filename).join(', ')}',
+      ],
+    ].join('\n'));
 
     // Get actual time and check if request can be executed based on data that bucket already have
     // and wait if rate limit could be possibly hit
@@ -81,7 +98,7 @@ class HttpHandler {
     currentBucket?.addInFlightRequest(request);
     final response = await client.options.httpRetryOptions.retry(
       () async => httpClient.send(await request.prepareRequest()),
-      onRetry: (ex) => logger.shout('Exception when sending HTTP request (retrying automatically): $ex'),
+      onRetry: (ex) => logger.warning('Exception when sending HTTP request (retrying automatically)', ex),
     );
     currentBucket?.removeInFlightRequest(request);
     currentBucket = _upsertBucket(request, response);
@@ -89,17 +106,21 @@ class HttpHandler {
   }
 
   Future<HttpResponse> _handle(HttpRequest request, http.StreamedResponse response) async {
+    logger.fine('Handling response (${response.statusCode}) from request $request');
+    logger.finer('Headers: ${response.headers}');
+
     if (response.statusCode >= 200 && response.statusCode < 300) {
-      final responseSuccess = HttpResponseSuccess(response);
-      await responseSuccess.finalize();
+      final responseSuccess = await HttpResponseSuccess.fromResponse(response);
 
       (client.eventsRest as RestEventController).onHttpResponseController.add(HttpResponseEvent(responseSuccess));
-      logger.finer("Got successful http response for endpoint: [${response.request?.url.toString()}]; Response: [${responseSuccess.jsonBody}]");
+      logger.finest('Successful response: $responseSuccess');
 
       return responseSuccess;
     }
 
-    // Check for 429, emmit events and wait given in response body time
+    final responseError = await HttpResponseError.fromResponse(response);
+
+    // Check for 429, emit events and wait given in response body time
     if (response.statusCode == 429) {
       final responseBody = jsonDecode(await response.stream.bytesToString());
       final retryAfter = Duration(milliseconds: ((responseBody["retry_after"] as double) * 1000).ceil());
@@ -110,16 +131,17 @@ class HttpHandler {
       }
 
       _events.onRateLimitedController.add(RatelimitEvent(request, false, response));
-      logger.warning("${isGlobal ? "Global " : ""}Rate limited via 429 on endpoint: ${request.uri}. Trying to send request again in $retryAfter");
+
+      logger.warning(
+        "${isGlobal ? "Global " : ""}Rate limited via 429 on endpoint: ${request.uri}. Trying to send request again in $retryAfter",
+        responseError,
+      );
 
       return Future.delayed(retryAfter, () => execute(request));
     }
 
-    final responseError = HttpResponseError(response);
-    await responseError.finalize();
-
     (client.eventsRest as RestEventController).onHttpErrorController.add(HttpErrorEvent(responseError));
-    logger.finer("Got failure http response for endpoint: [${response.request?.url.toString()}]; Response: [${responseError.message}]");
+    logger.finest('Unknown/error response: ${responseError.toString(short: true)}', responseError);
 
     return responseError;
   }

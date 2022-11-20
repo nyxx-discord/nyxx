@@ -19,7 +19,7 @@ class ConnectionManager {
   late final int recommendedShardsNum;
   late final int maxConcurrency;
 
-  final Logger _logger = Logger("Client");
+  final Logger _logger = Logger("Connection Manager");
 
   int _shardsReady = 0;
 
@@ -30,7 +30,7 @@ class ConnectionManager {
     final httpResponse = await (client.httpEndpoints as HttpEndpoints).getGatewayBot();
 
     if (httpResponse is HttpResponseError) {
-      throw UnrecoverableNyxxError("Cannot get gateway url: [${httpResponse.code}; ${httpResponse.message}]");
+      throw UnrecoverableNyxxError("Cannot get gateway url: $httpResponse");
     }
 
     final response = httpResponse as HttpResponseSuccess;
@@ -41,7 +41,13 @@ class ConnectionManager {
     recommendedShardsNum = response.jsonBody["shards"] as int;
     maxConcurrency = response.jsonBody["session_start_limit"]["max_concurrency"] as int;
 
-    _logger.fine("Got gateway info: Url: [$gateway]; Recommended shard num: [$recommendedShardsNum]");
+    _logger.config([
+      'Got gateway info:',
+      'Gateway URL: $gateway',
+      'Remaining connections: $remaining (reset at $resetAt)',
+      'Recommended shard count: $recommendedShardsNum',
+      'Max concurrency: $maxConcurrency',
+    ].join('\n'));
 
     checkForConnections();
 
@@ -56,8 +62,7 @@ class ConnectionManager {
     }
 
     if (remaining < 10) {
-      _logger.severe("Exiting to prevent API abuse. 10 connections starts left.");
-      throw UnrecoverableNyxxError('Exiting nyxx to prevent API ban. Remaining less that 10 connection to gateway');
+      throw UnrecoverableNyxxError('Exiting nyxx to prevent API ban. Less than 10 connections to gateway ($remaining)');
     }
   }
 
