@@ -1,3 +1,8 @@
+## 4.4.0-dev.0
+__20.11.2022__
+
+- feature: Improve error handling and logging (#403)
+
 ## 4.3.0
 __19.11.2022__
 
