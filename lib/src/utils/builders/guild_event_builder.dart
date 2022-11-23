@@ -31,7 +31,7 @@ class GuildEventBuilder implements Builder {
 
   @override
   RawApiMap build() => {
-        if (channelId?.id == 0) "channel_id": channelId.toString(),
+        if (channelId?.id != 0) "channel_id": channelId.toString(),
         if (metadata != null) 'entity_metadata': metadata!.build(),
         if (name != null) 'name': name,
         if (privacyLevel != null) 'privacy_level': privacyLevel!.value,
