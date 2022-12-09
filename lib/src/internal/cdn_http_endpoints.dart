@@ -31,7 +31,7 @@ abstract class ICdnHttpEndpoints {
 
   /// Returns URL to ``/embed/avatars/[discriminator]``.
   ///
-  /// The [discriminator] is passed as modulo 5 (`% 5`); and will lead to 0,1,2,3,4. (There's 5, but % modulo 5 will never give 5).
+  /// The [discriminator] is passed as modulo 5 (`% 5`); and will lead to 0,1,2,3,4. (There's 5, but 5 modulo 5 will never give 5).
   ///
   /// E.g:
   /// ```dart
@@ -78,6 +78,10 @@ abstract class ICdnHttpEndpoints {
   /// Returns URL to ``/guild-events/[eventId]/[eventCoverHash]``.
   /// With given [format] and [size].
   String guildEventCoverImage(Snowflake eventId, String eventCoverHash, {String format = 'webp', int? size});
+
+  /// Returns URL to ``/avatar-decorations/[userId]/[decorationHash]``.
+  /// With given [size].
+  String avatarDecoration(Snowflake userId, String decorationHash, {int? size});
 }
 
 class CdnHttpEndpoints implements ICdnHttpEndpoints {
@@ -255,6 +259,14 @@ class CdnHttpEndpoints implements ICdnHttpEndpoints {
           ..guildEvents(id: eventId.toString())
           ..addHash(hash: eventCoverHash),
         format: format,
+        size: size,
+      );
+
+  @override
+  String avatarDecoration(Snowflake userId, String decorationHash, {int? size}) => _makeCdnUrl(
+        ICdnHttpRoute()
+          ..avatarDecorations(id: userId.toString())
+          ..addHash(hash: decorationHash),
         size: size,
       );
 }

@@ -335,6 +335,9 @@ abstract class ICdnHttpRoute implements IHttpRoute {
 
   /// Adds the `guild-events` part to this [ICdnHttpRoute].
   void guildEvents({required String id});
+
+  /// Adds the `avatar-decorations` part to this [ICdnHttpRoute].
+  void avatarDecorations({required String id});
 }
 
 class CdnHttpRoute extends HttpRoute implements ICdnHttpRoute {
@@ -394,4 +397,7 @@ class CdnHttpRoute extends HttpRoute implements ICdnHttpRoute {
 
   @override
   void guildEvents({required String id}) => add(CdnHttpRoutePart('guild-events', [CdnHttpRouteParam(id)]));
+
+  @override
+  void avatarDecorations({required String id}) => add(CdnHttpRoutePart('avatar-decorations', [CdnHttpRouteParam(id)]));
 }

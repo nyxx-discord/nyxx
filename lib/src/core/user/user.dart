@@ -48,8 +48,14 @@ abstract class IUser implements SnowflakeEntity, ISend, Mentionable, IMessageAut
   /// Gets the [DMChannel] for the user.
   FutureOr<IDMChannel> get dmChannel;
 
+  /// The hash of the user's avatar decoration.
+  String? avatarDecorationHash;
+
   /// The user's banner url.
   String? bannerUrl({String format = 'webp', int? size, bool animated = false});
+
+  /// The user's avatar decoration url, if any.
+  String? avatarDecorationUrl({int size});
 }
 
 /// Represents a single user of Discord, either a human or a bot, outside of any specific guild's context.
@@ -118,6 +124,9 @@ class User extends SnowflakeEntity implements IUser {
   @override
   bool get isInteractionWebhook => false;
 
+  @override
+  late final String? avatarDecorationHash;
+
   /// Creates an instance of [User]
   User(this.client, RawApiMap raw) : super(Snowflake(raw["id"])) {
     username = raw["username"] as String;
@@ -144,6 +153,8 @@ class User extends SnowflakeEntity implements IUser {
     } else {
       accentColor = null;
     }
+
+    avatarDecorationHash = raw['avatar_decoration'] as String?;
   }
 
   /// Gets the [DMChannel] for the user.
@@ -182,5 +193,14 @@ class User extends SnowflakeEntity implements IUser {
   Future<IMessage> sendMessage(MessageBuilder builder) async {
     final channel = await dmChannel;
     return channel.sendMessage(builder);
+  }
+
+  @override
+  String? avatarDecorationUrl({int? size}) {
+    if (avatarDecorationHash == null) {
+      return null;
+    }
+
+    return client.cdnHttpEndpoints.avatarDecoration(id, avatarDecorationHash!, size: size);
   }
 }
