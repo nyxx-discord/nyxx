@@ -4,6 +4,9 @@ import 'package:logging/logging.dart';
 import 'package:nyxx/nyxx.dart';
 
 abstract class BasePlugin {
+  Logger get logger => Logger(name);
+  String get name => runtimeType.toString();
+
   FutureOr<void> onRegister(INyxx nyxx, Logger logger) async {}
 
   FutureOr<void> onBotStart(INyxx nyxx, Logger logger) async {}

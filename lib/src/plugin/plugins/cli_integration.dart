@@ -6,6 +6,9 @@ import 'package:nyxx/src/nyxx.dart';
 import 'package:nyxx/src/plugin/plugin.dart';
 
 class CliIntegration extends BasePlugin {
+  @override
+  String get name => 'CliIntegration';
+
   StreamSubscription<ProcessSignal>? _sigtermSubscription;
   StreamSubscription<ProcessSignal>? _sigintSubscription;
 
