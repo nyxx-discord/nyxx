@@ -1,3 +1,10 @@
+## 4.4.0
+__12.12.2022__
+
+- feature: Improve error handling and logging (#403)
+- bug: Fix build() for GuildEventBuilder
+- bug: Update exports
+
 ## 4.4.0-dev.0
 __20.11.2022__
 
