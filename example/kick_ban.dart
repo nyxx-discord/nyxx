@@ -38,7 +38,7 @@ void main() {
       final userToBan = getUserToKickOrBan(e.message);
 
       // Ban user using variable initialized before
-      await e.message.guild.getFromCache()!.ban(userToBan);
+      await e.message.guild!.getFromCache()!.ban(userToBan);
 
       // Send feedback
       await e.message.channel.sendMessage(MessageBuilder.content("👍"));
