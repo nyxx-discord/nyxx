@@ -23,8 +23,7 @@ void main() async {
         return;
       }
 
-      // Creating role with RoleBuilder. We have to cast `e.message` to GuildMessage because we want to access guild property
-      // and generic dont have that.
+      // Creating a role with RoleBuilder with a given color.
       final role = await e.message.guild.getFromCache()!.createRole(RoleBuilder("testRole")..color = DiscordColor.chartreuse);
 
       // Cast message author to member because webhook can also be message author. And add role to user
