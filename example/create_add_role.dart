@@ -24,7 +24,7 @@ void main() async {
       }
 
       // Creating a role with RoleBuilder with a given color.
-      final role = await e.message.guild.getFromCache()!.createRole(RoleBuilder("testRole")..color = DiscordColor.chartreuse);
+      final role = await e.message.guild!.getFromCache()!.createRole(RoleBuilder("testRole")..color = DiscordColor.chartreuse);
 
       // Add role to member.
       await e.message.member!.addRole(role);
