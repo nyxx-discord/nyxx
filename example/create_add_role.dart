@@ -26,7 +26,7 @@ void main() async {
       // Creating a role with RoleBuilder with a given color.
       final role = await e.message.guild.getFromCache()!.createRole(RoleBuilder("testRole")..color = DiscordColor.chartreuse);
 
-      // Cast message author to member because webhook can also be message author. And add role to user
+      // Add role to member.
       await e.message.member!.addRole(role);
 
       // Send message with confirmation of given action
