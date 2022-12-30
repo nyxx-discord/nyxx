@@ -24,7 +24,7 @@ void main() async {
       }
 
       // Get guild object from message
-      final guild = e.message.guild.getFromCache()!;
+      final guild = e.message.guild!.getFromCache()!;
 
       // Created text channel. Remember discord will lower the case of name and replace spaces with - and do other sanitization
       final channel = await guild.createChannel(TextChannelBuilder.create("Test channel")) as ITextGuildChannel;
