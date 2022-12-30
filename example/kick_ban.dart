@@ -55,7 +55,7 @@ void main() {
       final userToBan = getUserToKickOrBan(e.message);
 
       // Kick user
-      await e.message.guild.getFromCache()!.kick(userToBan);
+      await e.message.guild!.getFromCache()!.kick(userToBan);
 
       // Send feedback
       await e.message.channel.sendMessage(MessageBuilder.content("👍"));
