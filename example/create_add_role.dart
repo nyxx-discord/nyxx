@@ -18,15 +18,14 @@ void main() async {
   bot.eventsWs.onMessageReceived.listen((IMessageReceivedEvent e) async {
     // Check if message content equals "!embed"
     if (e.message.content == "!role") {
-
-      // Make sure that message was sent in guild not im dm, because we cant add roles in dms
-      if (e.message.guild != null) {
+      // Make sure that the message was sent in a guild and not in a dm, because we cant add roles in dms
+      if (e.message.guild == null) {
         return;
       }
 
       // Creating role with RoleBuilder. We have to cast `e.message` to GuildMessage because we want to access guild property
       // and generic dont have that.
-      final role = await e.message.guild!.getFromCache()!.createRole(RoleBuilder("testRole")..color = DiscordColor.chartreuse);
+      final role = await e.message.guild.getFromCache()!.createRole(RoleBuilder("testRole")..color = DiscordColor.chartreuse);
 
       // Cast message author to member because webhook can also be message author. And add role to user
       await e.message.member!.addRole(role);

@@ -18,13 +18,13 @@ void main() async {
   bot.eventsWs.onMessageReceived.listen((IMessageReceivedEvent e) async {
     // Check if message content equals "!embed"
     if (e.message.content == "!create_channel") {
-      // Make sure that message was sent in guild not in dm, because we cant add roles in dms
-      if(e.message.guild != null) {
+      // Make sure that the message was sent in a guild and not in a dm, because we can only create channels in guilds
+      if (e.message.guild == null) {
         return;
       }
 
       // Get guild object from message
-      final guild = e.message.guild!.getFromCache()!;
+      final guild = e.message.guild.getFromCache()!;
 
       // Created text channel. Remember discord will lower the case of name and replace spaces with - and do other sanitization
       final channel = await guild.createChannel(TextChannelBuilder.create("Test channel")) as ITextGuildChannel;
