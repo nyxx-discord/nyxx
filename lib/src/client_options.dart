@@ -79,7 +79,6 @@ class ClientOptions {
   /// errors (e.g failed host lookup) which can occur if there is no internet.
   RetryOptions httpRetryOptions;
 
-
   /// The encoding protocol to use when receiving/sending payloads.
   Encoding payloadEncoding;
 

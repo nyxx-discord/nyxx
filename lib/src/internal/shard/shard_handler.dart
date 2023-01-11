@@ -134,26 +134,24 @@ class ShardRunner implements Disposable {
       if (useCompression) {
         final filter = RawZLibFilter.inflateFilter();
 
-        final mappedConnection = connection!
-            .cast<List<int>>()
-            .map((rawPayload) {
-              filter.process(rawPayload, 0, rawPayload.length);
+        final mappedConnection = connection!.cast<List<int>>().map((rawPayload) {
+          filter.process(rawPayload, 0, rawPayload.length);
 
-              final buffer = <int>[];
-              for (List<int>? decoded = []; decoded != null; decoded = filter.processed()) {
-                buffer.addAll(decoded);
-              }
+          final buffer = <int>[];
+          for (List<int>? decoded = []; decoded != null; decoded = filter.processed()) {
+            buffer.addAll(decoded);
+          }
 
-              return buffer;
-            });
+          return buffer;
+        });
 
-            Stream<dynamic> stream;
+        Stream<dynamic> stream;
 
-            if (encoding == Encoding.etf) {
-              stream = mappedConnection.transform(eterl.unpacker<RawApiMap>());
-            } else {
-              stream = mappedConnection.transform(utf8.decoder);
-            }
+        if (encoding == Encoding.etf) {
+          stream = mappedConnection.transform(eterl.unpacker<RawApiMap>());
+        } else {
+          stream = mappedConnection.transform(utf8.decoder);
+        }
 
         connectionSubscription = stream.listen(receive);
       } else {

@@ -56,7 +56,7 @@ enum Encoding {
   /// It's more performant on a ton of servers, use it if you want to optimise your bot scaling.
   etf,
 
-  /// JSON (JavaScript Object Notation) is an universal data transferring model, 
+  /// JSON (JavaScript Object Notation) is an universal data transferring model,
   /// it can be used on production too.
   json
 }
