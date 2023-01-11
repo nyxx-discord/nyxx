@@ -405,7 +405,7 @@ class Shard implements IShard {
         "intents": manager.connectionManager.client.intents,
         if (manager.connectionManager.client.options.initialPresence != null) "presence": manager.connectionManager.client.options.initialPresence!.build(),
         "shard": <int>[id, manager.totalNumShards],
-        if (manager.connectionManager.client.options.payloadEncoding == Encoding.json)
+        if (manager.connectionManager.client.options.payloadEncoding == Encoding.json && !manager.connectionManager.client.options.compressedGatewayPayloads)
           "compresstion": manager.connectionManager.client.options.payloadCompression,
       });
 
