@@ -4,10 +4,10 @@ import 'dart:io';
 import 'dart:isolate';
 
 import 'package:eterl/eterl.dart';
-import 'package:nyxx/nyxx.dart';
 import 'package:nyxx/src/internal/constants.dart';
 import 'package:nyxx/src/internal/interfaces/disposable.dart';
 import 'package:nyxx/src/internal/shard/message.dart';
+import 'package:nyxx/src/typedefs.dart';
 
 void shardHandler(SendPort sendPort) {
   final runner = ShardRunner(sendPort);
