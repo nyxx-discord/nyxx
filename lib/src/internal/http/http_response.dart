@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:http/http.dart' as http;
+import 'package:eterl/eterl.dart';
 import 'package:nyxx/nyxx.dart';
 import 'package:nyxx/src/internal/response_wrapper/error_response_wrapper.dart';
 
