@@ -175,6 +175,9 @@ class Shard implements IShard {
               'gatewayHost': shouldResume && canResume ? resumeGatewayUrl : gatewayHost,
               'useCompression': manager.connectionManager.client.options.compressedGatewayPayloads,
               'encoding': manager.connectionManager.client.options.payloadEncoding,
+              'usePayloadCompression': manager.connectionManager.client.options.payloadCompression &&
+                  manager.connectionManager.client.options.payloadEncoding == Encoding.json &&
+                  !manager.connectionManager.client.options.compressedGatewayPayloads,
             },
           ));
 
@@ -406,7 +409,7 @@ class Shard implements IShard {
         if (manager.connectionManager.client.options.initialPresence != null) "presence": manager.connectionManager.client.options.initialPresence!.build(),
         "shard": <int>[id, manager.totalNumShards],
         if (manager.connectionManager.client.options.payloadEncoding == Encoding.json && !manager.connectionManager.client.options.compressedGatewayPayloads)
-          "compression": manager.connectionManager.client.options.compressedGatewayPayloads,
+          "compress": manager.connectionManager.client.options.payloadCompression,
       });
 
   /// Sends the resume payload to the gateway.
