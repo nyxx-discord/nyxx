@@ -85,7 +85,7 @@ class ShardRunner implements Disposable {
             message.data['usePayloadCompression'] as bool);
       case ManagerToShard.reconnect:
         return reconnect(message.data['gatewayHost'] as String, message.data['useCompression'] as bool, message.seq, message.data['encoding'] as Encoding,
-            message.data['useCompressedPayloads'] as bool);
+            message.data['usePayloadCompression'] as bool);
       case ManagerToShard.disconnect:
         return disconnect(message.seq);
       case ManagerToShard.dispose:
@@ -184,7 +184,7 @@ class ShardRunner implements Disposable {
   }
 
   /// Reconnect to the server, closing the connection if necessary.
-  Future<void> reconnect(String gatewayHost, bool useCompression, int seq, Encoding encoding, bool useCompressedPayloads) async {
+  Future<void> reconnect(String gatewayHost, bool useCompression, int seq, Encoding encoding, bool usePayloadCompression) async {
     if (reconnecting) {
       execute(ShardMessage(
         ShardToManager.error,
@@ -200,7 +200,7 @@ class ShardRunner implements Disposable {
     }
 
     // Sends reconnected instead of connected so we don't have to send it here
-    await connect(gatewayHost, useCompression, seq, encoding, useCompressedPayloads);
+    await connect(gatewayHost, useCompression, seq, encoding, usePayloadCompression);
     reconnecting = false;
   }
 
