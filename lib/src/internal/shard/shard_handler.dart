@@ -63,7 +63,7 @@ class ShardRunner implements Disposable {
   /// Handler for uncompressed messages received from Discord.
   ///
   /// Calls jsonDecode and sends the data back to the manager.
-  void receive(dynamic payload) => execute(ShardMessage(
+  void receive(/* RawApiMap|Sting */ dynamic payload) => execute(ShardMessage(
         ShardToManager.received,
         seq: seq--,
         data: payload is String ? jsonDecode(payload) : payload,
@@ -145,7 +145,7 @@ class ShardRunner implements Disposable {
           return buffer;
         });
 
-        Stream<dynamic> stream;
+        Stream</* RawApiMap|String */ dynamic> stream;
 
         if (encoding == Encoding.etf) {
           stream = mappedConnection.transform(eterl.unpacker<RawApiMap>());
@@ -222,7 +222,7 @@ class ShardRunner implements Disposable {
       ));
     }
 
-    connection!.add(_encoding == Encoding.json ? jsonEncode(data) : eterl.pack(data, 1000));
+    connection!.add(_encoding == Encoding.json ? jsonEncode(data) : eterl.pack(data));
   }
 
   /// Disposes of this shard.
