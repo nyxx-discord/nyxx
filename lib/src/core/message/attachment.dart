@@ -76,7 +76,7 @@ class Attachment extends SnowflakeEntity implements IAttachment {
   bool get isSpoiler => filename.startsWith("SPOILER_");
 
   /// Creates an instance of [Attachment]
-  Attachment(RawApiMap raw) : super(Snowflake(raw["id"] as String)) {
+  Attachment(RawApiMap raw) : super(Snowflake(raw["id"])) {
     filename = raw["filename"] as String;
     url = raw["url"] as String;
     proxyUrl = raw["proxyUrl"] as String?;

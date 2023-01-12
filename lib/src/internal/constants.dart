@@ -39,8 +39,8 @@ class Constants {
   static const String repoUrl = "https://github.com/nyxx-discord/nyxx";
 
   /// Returns [Uri] to gateway
-  static Uri gatewayUri(String gatewayHost, bool useCompression) {
-    var uriString = "$gatewayHost?v=$apiVersion&encoding=json";
+  static Uri gatewayUri(String gatewayHost, bool useCompression, [Encoding encoding = Encoding.json]) {
+    var uriString = "$gatewayHost?v=$apiVersion&encoding=${encoding.name}";
 
     if (useCompression) {
       uriString += "&compress=zlib-stream";
@@ -48,4 +48,15 @@ class Constants {
 
     return Uri.parse(uriString);
   }
+}
+
+/// The type of encoding to receive/send payloads to discord.
+enum Encoding {
+  /// ETF (External Term Format) encoding
+  /// It's more performant on a ton of servers, use it if you want to optimise your bot scaling.
+  etf,
+
+  /// JSON (JavaScript Object Notation) is an universal data transferring model,
+  /// it can be used on production too.
+  json
 }

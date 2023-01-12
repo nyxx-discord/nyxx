@@ -69,12 +69,27 @@ class AuditLogOptions implements IAuditLogOptions {
   late final String? overwrittenType;
 
   AuditLogOptions(RawApiMap raw) {
-    channelId = (raw['channel_id'] as String?)?.toSnowflake();
+    if (raw['channel_id'] != null) {
+      channelId = Snowflake(raw['channel_id']);
+    } else {
+      channelId = null;
+    }
+
     count = raw['count'] != null ? int.parse(raw['count'] as String) : null;
     deleteMemberDuration = (raw['delete_member_days'] as String?) != null ? Duration(days: int.parse(raw['delete_member_days'] as String)) : null;
-    id = (raw['id'] as String?)?.toSnowflake();
+    if (raw['id'] != null) {
+      id = Snowflake(raw['id']);
+    } else {
+      id = null;
+    }
+
     pruneCount = (raw['members_removed'] as String?) != null ? int.parse(raw['members_removed'] as String) : null;
-    messageId = (raw['message_id'] as String?)?.toSnowflake();
+    if (raw['message_id'] != null) {
+      messageId = Snowflake(raw['message_id']);
+    } else {
+      messageId = null;
+    }
+
     roleName = raw['role_name'] as String?;
     switch (raw['type']) {
       case '0':
