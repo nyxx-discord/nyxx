@@ -406,7 +406,7 @@ class Shard implements IShard {
         if (manager.connectionManager.client.options.initialPresence != null) "presence": manager.connectionManager.client.options.initialPresence!.build(),
         "shard": <int>[id, manager.totalNumShards],
         if (manager.connectionManager.client.options.payloadEncoding == Encoding.json && !manager.connectionManager.client.options.compressedGatewayPayloads)
-          "compresstion": manager.connectionManager.client.options.payloadCompression,
+          "compression": manager.connectionManager.client.options.payloadCompression,
       });
 
   /// Sends the resume payload to the gateway.
