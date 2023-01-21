@@ -86,7 +86,7 @@ class ThreadMemberWithMember extends ThreadMember implements IThreadMember {
   late final Member fetchedMember;
 
   ThreadMemberWithMember(INyxx client, RawApiMap raw, Cacheable<Snowflake, IGuild> guild) : super(client, raw, guild) {
-    fetchedMember = Member(client, raw['client'] as RawApiMap, guild.id);
+    fetchedMember = Member(client, raw['member'] as RawApiMap, guild.id);
 
     if (client.cacheOptions.memberCachePolicyLocation.http && client.cacheOptions.memberCachePolicy.canCache(fetchedMember)) {
       fetchedMember.guild.getFromCache()?.members[member.id] = fetchedMember;
