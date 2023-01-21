@@ -16,6 +16,7 @@ import 'package:nyxx/src/core/user/presence.dart';
 import 'package:nyxx/src/core/user/user.dart';
 import 'package:nyxx/src/internal/cache/cache.dart';
 import 'package:nyxx/src/internal/exceptions/invalid_shard_exception.dart';
+import 'package:nyxx/src/internal/response_wrapper/thread_list_result_wrapper.dart';
 import 'package:nyxx/src/internal/shard/shard.dart';
 import 'package:nyxx/src/nyxx.dart';
 import 'package:nyxx/src/core/channel/cacheable_text_channel.dart';
@@ -359,6 +360,10 @@ abstract class IGuild implements SnowflakeEntity {
 
   /// Deletes an auto moderation rule.
   Future<void> deleteAutoModerationRule(Snowflake ruleId, {String? reason});
+
+  /// Returns all active threads in the guild, including public and private threads.
+  /// Threads are ordered by their id, in descending order.
+  Future<IThreadListResultWrapper> fetchActiveThreads();
 }
 
 class Guild extends SnowflakeEntity implements IGuild {
@@ -949,4 +954,7 @@ class Guild extends SnowflakeEntity implements IGuild {
 
   @override
   Future<void> deleteAutoModerationRule(Snowflake ruleId, {String? reason}) => client.httpEndpoints.deleteAutoModerationRule(id, ruleId, auditReason: reason);
+
+  @override
+  Future<IThreadListResultWrapper> fetchActiveThreads() => client.httpEndpoints.fetchGuildActiveThreads(id);
 }
