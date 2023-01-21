@@ -79,7 +79,7 @@ class ThreadMember extends SnowflakeEntity implements IThreadMember {
 
 abstract class IThreadMemberWithMember extends IThreadMember {
   /// Fetched member from API
-  Member get fetchedMember;
+  IMember get fetchedMember;
 }
 
 class ThreadMemberWithMember extends ThreadMember implements IThreadMember {
