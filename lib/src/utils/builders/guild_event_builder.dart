@@ -1,5 +1,7 @@
-import 'package:nyxx/nyxx.dart';
 import 'package:nyxx/src/core/guild/scheduled_event.dart';
+import 'package:nyxx/src/core/snowflake.dart';
+import 'package:nyxx/src/typedefs.dart';
+import 'package:nyxx/src/utils/builders/builder.dart';
 
 class GuildEventBuilder implements Builder {
   /// The channel id of the scheduled event, set to null if changing entity type to EXTERNAL

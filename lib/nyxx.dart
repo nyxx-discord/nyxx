@@ -31,8 +31,8 @@ export 'src/core/channel/guild/category_guild_channel.dart' show ICategoryGuildC
 export 'src/core/channel/guild/guild_channel.dart' show IGuildChannel, IMinimalGuildChannel;
 export 'src/core/channel/guild/text_guild_channel.dart' show ITextGuildChannel;
 export 'src/core/channel/guild/voice_channel.dart'
-    show IVoiceGuildChannel, IStageChannelInstance, IStageVoiceGuildChannel, ITextVoiceTextChannel, StageChannelInstancePrivacyLevel;
-export 'src/core/channel/guild/forum/forum_channel.dart' show IForumChannel, ForumSortOrder;
+    show IVoiceGuildChannel, IStageChannelInstance, IStageVoiceGuildChannel, ITextVoiceTextChannel, StageChannelInstancePrivacyLevel, VideoQualityMode;
+export 'src/core/channel/guild/forum/forum_channel.dart' show IForumChannel, ForumSortOrder, ForumLayout;
 export 'src/core/channel/guild/forum/forum_channel_tags.dart' show IForumChannelTags;
 export 'src/core/channel/guild/forum/forum_tag.dart' show IForumTag;
 export 'src/core/embed/embed.dart' show IEmbed;
@@ -180,7 +180,7 @@ export 'src/utils/builders/embed_builder.dart' show EmbedBuilder;
 export 'src/utils/builders/embed_field_builder.dart' show EmbedFieldBuilder;
 export 'src/utils/builders/embed_footer_builder.dart' show EmbedFooterBuilder;
 export 'src/utils/builders/guild_builder.dart' show GuildBuilder, RoleBuilder;
-export 'src/utils/builders/channel_builder.dart' show ChannelBuilder, TextChannelBuilder, VoiceChannelBuilder;
+export 'src/utils/builders/channel_builder.dart' show ChannelBuilder, TextChannelBuilder, VoiceChannelBuilder, ForumChannelBuilder;
 export 'src/utils/builders/message_builder.dart' show MessageBuilder, MessageDecoration;
 export 'src/utils/builders/member_builder.dart' show MemberBuilder;
 export 'src/utils/builders/permissions_builder.dart' show PermissionOverrideBuilder, PermissionsBuilder;
@@ -189,7 +189,7 @@ export 'src/utils/builders/reply_builder.dart' show ReplyBuilder;
 export 'src/utils/builders/sticker_builder.dart' show StickerBuilder;
 export 'src/utils/builders/thread_builder.dart' show ThreadArchiveTime, ThreadBuilder;
 export 'src/utils/builders/guild_event_builder.dart' show GuildEventBuilder, EntityMetadataBuilder;
-export 'src/utils/builders/forum_thread_builder.dart' show ForumThreadBuilder, ForumTagBuilder;
+export 'src/utils/builders/forum_thread_builder.dart' show ForumThreadBuilder, ForumTagBuilder, AvailableTagBuilder;
 export 'src/utils/builders/auto_moderation_builder.dart' show ActionMetadataBuilder, ActionStructureBuilder, AutoModerationRuleBuilder, TriggerMetadataBuilder;
 export 'src/utils/extensions.dart' show IntExtensions, SnowflakeEntityListExtensions, StringExtensions;
 export 'src/utils/permissions.dart' show PermissionsUtils;
