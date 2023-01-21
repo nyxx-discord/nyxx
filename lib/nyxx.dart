@@ -24,7 +24,7 @@ export 'src/core/channel/channel.dart' show IChannel, ChannelType;
 export 'src/core/channel/dm_channel.dart' show IDMChannel;
 export 'src/core/channel/invite.dart' show IInviteWithMeta, IInvite;
 export 'src/core/channel/text_channel.dart' show ITextChannel;
-export 'src/core/channel/thread_channel.dart' show IThreadMember, IThreadChannel;
+export 'src/core/channel/thread_channel.dart' show IThreadMember, IThreadChannel, IThreadMemberWithMember;
 export 'src/core/channel/thread_preview_channel.dart' show IThreadPreviewChannel;
 export 'src/core/channel/guild/activity_types.dart' show VoiceActivityType;
 export 'src/core/channel/guild/category_guild_channel.dart' show ICategoryGuildChannel;

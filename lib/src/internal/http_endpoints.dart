@@ -244,10 +244,12 @@ abstract class IHttpEndpoints {
   Future<IThreadPreviewChannel> createThread(Snowflake channelId, ThreadBuilder builder);
 
   /// Returns all member of given thread
-  Stream<IThreadMember> fetchThreadMembers(Snowflake channelId, Snowflake guildId);
+  /// Returns [IThreadMemberWithMember] when [withMembers] set to true
+  Stream<IThreadMember> fetchThreadMembers(Snowflake channelId, Snowflake guildId, {bool withMembers = false, Snowflake? after, int limit = 100});
 
   /// Fetches single thread member
-  Future<IThreadMember> fetchThreadMember(Snowflake channelId, Snowflake guildId, Snowflake memberId);
+  /// Returns [IThreadMemberWithMember] when [withMembers] set to true
+  Future<IThreadMember> fetchThreadMember(Snowflake channelId, Snowflake guildId, Snowflake memberId, {bool withMembers = false});
 
   /// Joins thread with given id
   Future<void> joinThread(Snowflake channelId);
@@ -1232,15 +1234,17 @@ class HttpEndpoints implements IHttpEndpoints {
   }
 
   @override
-  Stream<IThreadMember> fetchThreadMembers(Snowflake channelId, Snowflake guildId) async* {
-    final response = await executeSafe(BasicRequest(HttpRoute()
-      ..channels(id: channelId.toString())
-      ..threadMembers()));
+  Stream<IThreadMember> fetchThreadMembers(Snowflake channelId, Snowflake guildId, {bool withMembers = false, Snowflake? after, int limit = 100}) async* {
+    final response = await executeSafe(BasicRequest(
+        HttpRoute()
+          ..channels(id: channelId.toString())
+          ..threadMembers(),
+        queryParams: {'with_member': withMembers, if (withMembers) 'limit': limit, if (withMembers && after != null) 'after': after.toString()}));
 
     final guild = GuildCacheable(client, guildId);
 
     for (final rawThreadMember in response.jsonBody as RawApiList) {
-      yield ThreadMember(client, rawThreadMember as RawApiMap, guild);
+      yield withMembers ? ThreadMemberWithMember(client, rawThreadMember as RawApiMap, guild) : ThreadMember(client, rawThreadMember as RawApiMap, guild);
     }
   }
 
@@ -1588,19 +1592,19 @@ class HttpEndpoints implements IHttpEndpoints {
   Future<IStageChannelInstance> createStageChannelInstance(Snowflake channelId, String topic, {StageChannelInstancePrivacyLevel? privacyLevel}) async {
     final body = {"topic": topic, "channel_id": channelId.toString(), if (privacyLevel != null) "privacy_level": privacyLevel.value};
 
-    final response = await executeSafe(BasicRequest(HttpRoute()..stageinstances(), method: "POST", body: body));
+    final response = await executeSafe(BasicRequest(HttpRoute()..stageInstances(), method: "POST", body: body));
 
     return StageChannelInstance(client, response.jsonBody as RawApiMap);
   }
 
   @override
   Future<void> deleteStageChannelInstance(Snowflake channelId) async {
-    await executeSafe(BasicRequest(HttpRoute()..stageinstances(id: channelId.toString()), method: "DELETE"));
+    await executeSafe(BasicRequest(HttpRoute()..stageInstances(id: channelId.toString()), method: "DELETE"));
   }
 
   @override
   Future<IStageChannelInstance> getStageChannelInstance(Snowflake channelId) async {
-    final response = await executeSafe(BasicRequest(HttpRoute()..stageinstances(id: channelId.toString())));
+    final response = await executeSafe(BasicRequest(HttpRoute()..stageInstances(id: channelId.toString())));
 
     return StageChannelInstance(client, response.jsonBody as RawApiMap);
   }
@@ -1609,7 +1613,7 @@ class HttpEndpoints implements IHttpEndpoints {
   Future<IStageChannelInstance> updateStageChannelInstance(Snowflake channelId, String topic, {StageChannelInstancePrivacyLevel? privacyLevel}) async {
     final body = {"topic": topic, if (privacyLevel != null) "privacy_level": privacyLevel.value};
 
-    final response = await executeSafe(BasicRequest(HttpRoute()..stageinstances(id: channelId.toString()), method: "POST", body: body));
+    final response = await executeSafe(BasicRequest(HttpRoute()..stageInstances(id: channelId.toString()), method: "POST", body: body));
 
     return StageChannelInstance(client, response.jsonBody as RawApiMap);
   }
@@ -1805,12 +1809,19 @@ class HttpEndpoints implements IHttpEndpoints {
   String getRoleIconUrl(Snowflake roleId, String iconHash, String format, int size) => "${Constants.cdnUrl}/role-icons/$roleId/$iconHash.$format?size=$size";
 
   @override
-  Future<IThreadMember> fetchThreadMember(Snowflake channelId, Snowflake guildId, Snowflake memberId) async {
-    final result = await executeSafe(BasicRequest(HttpRoute()
-      ..channels(id: channelId.toString())
-      ..threadMembers(id: memberId.toString())));
+  Future<IThreadMember> fetchThreadMember(Snowflake channelId, Snowflake guildId, Snowflake memberId, {bool withMembers = false}) async {
+    final result = await executeSafe(BasicRequest(
+        HttpRoute()
+          ..channels(id: channelId.toString())
+          ..threadMembers(id: memberId.toString()),
+        queryParams: {'with_member': withMembers}));
 
-    return ThreadMember(client, result.jsonBody as RawApiMap, GuildCacheable(client, guildId));
+    final guildCacheable = GuildCacheable(client, guildId);
+    if (withMembers) {
+      return ThreadMemberWithMember(client, result.jsonBody as RawApiMap, guildCacheable);
+    }
+
+    return ThreadMember(client, result.jsonBody as RawApiMap, guildCacheable);
   }
 
   @override
