@@ -121,8 +121,8 @@ class HttpHandler {
     final responseError = await HttpResponseError.fromResponse(response);
 
     // Check for 429, emit events and wait given in response body time
-    if (response.statusCode == 429) {
-      final responseBody = jsonDecode(await response.stream.bytesToString());
+    if (responseError.statusCode == 429) {
+      final responseBody = responseError.jsonBody;
       final retryAfter = Duration(milliseconds: ((responseBody["retry_after"] as double) * 1000).ceil());
       final isGlobal = responseBody["global"] as bool;
 
