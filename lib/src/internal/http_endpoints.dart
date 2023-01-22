@@ -272,6 +272,10 @@ abstract class IHttpEndpoints {
   /// Returns all joined private archived thread in given channel
   Future<IThreadListResultWrapper> fetchJoinedPrivateArchivedThreads(Snowflake channelId, {DateTime? before, int? limit});
 
+  /// Returns all active threads in the guild, including public and private threads.
+  /// Threads are ordered by their id, in descending order.
+  Future<IThreadListResultWrapper> fetchGuildActiveThreads(Snowflake guildId);
+
   /// Removes all embeds from given message
   Future<IMessage> suppressMessageEmbeds(Snowflake channelId, Snowflake messageId);
 
@@ -1626,6 +1630,16 @@ class HttpEndpoints implements IHttpEndpoints {
         ..threadMembers(id: userId.toString()),
       method: "PUT",
     ));
+  }
+
+  @override
+  Future<IThreadListResultWrapper> fetchGuildActiveThreads(Snowflake guildId) async {
+    final response = await executeSafe(BasicRequest(HttpRoute()
+      ..guilds(id: guildId.toString())
+      ..threads()
+      ..active()));
+
+    return ThreadListResultWrapper(client, response.jsonBody as RawApiMap);
   }
 
   @override
