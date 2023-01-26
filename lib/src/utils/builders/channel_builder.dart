@@ -1,4 +1,15 @@
-import 'package:nyxx/nyxx.dart';
+import 'package:nyxx/src/core/channel/channel.dart';
+import 'package:nyxx/src/core/channel/guild/forum/forum_channel.dart';
+import 'package:nyxx/src/core/channel/guild/voice_channel.dart';
+import 'package:nyxx/src/core/message/emoji.dart';
+import 'package:nyxx/src/core/message/guild_emoji.dart';
+import 'package:nyxx/src/core/message/unicode_emoji.dart';
+import 'package:nyxx/src/core/snowflake.dart';
+import 'package:nyxx/src/core/snowflake_entity.dart';
+import 'package:nyxx/src/typedefs.dart';
+import 'package:nyxx/src/utils/builders/builder.dart';
+import 'package:nyxx/src/utils/builders/forum_thread_builder.dart';
+import 'package:nyxx/src/utils/builders/permissions_builder.dart';
 
 /// Builder for creating mini channel instance
 abstract class ChannelBuilder implements Builder {
@@ -74,6 +85,8 @@ class TextChannelBuilder extends ChannelBuilder {
   /// Whether the channel is nsfw
   bool? nsfw;
 
+  VideoQualityMode? videoQualityMode;
+
   TextChannelBuilder();
   factory TextChannelBuilder.create(String name) {
     final builder = TextChannelBuilder();
@@ -86,5 +99,35 @@ class TextChannelBuilder extends ChannelBuilder {
         ...super.build(),
         if (topic != null) "topic": topic,
         if (nsfw != null) "nsfw": nsfw,
+        if (videoQualityMode != null) "video_quality_mode": videoQualityMode!.value,
+      };
+}
+
+class ForumChannelBuilder extends TextChannelBuilder {
+  /// Type of channel
+  @override
+  // ignore: overridden_fields
+  ChannelType? type = ChannelType.forumChannel;
+
+  /// The default sort order type used to order posts in GUILD_FORUM channels.
+  /// Defaults to null, which indicates a preferred sort order hasn't been set by a channel admin
+  ForumSortOrder? defaultSortOrder;
+
+  /// The emoji to show in the add reaction button on a thread in a GUILD_FORUM channel
+  IEmoji? defaultReactionEmoji;
+
+  /// Tags available to assign to forum posts
+  List<AvailableTagBuilder>? availableTags;
+
+  @override
+  RawApiMap build() => {
+        ...super.build(),
+        if (defaultSortOrder != null) "default_sort_order": defaultSortOrder!.value,
+        if (defaultReactionEmoji != null)
+          "default_reaction_emoji": {
+            if (defaultReactionEmoji is UnicodeEmoji) "emoji_name": defaultReactionEmoji!.encodeForAPI(),
+            if (defaultReactionEmoji is BaseGuildEmoji) "emoji_id": (defaultReactionEmoji as BaseGuildEmoji).id
+          },
+        if (availableTags != null) "available_tags": availableTags!.map((e) => e.build()).toList()
       };
 }
