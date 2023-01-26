@@ -62,7 +62,7 @@ class ThreadMembersUpdateEvent implements IThreadMembersUpdateEvent {
 
     removedUsers = [
       if (data["removed_member_ids"] != null)
-        for (final removedUserId in data["removed_member_ids"]) UserCacheable(client, Snowflake(removedUserId))
+        for (final removedUserId in data["removed_member_ids"] as RawApiList) UserCacheable(client, Snowflake(removedUserId))
     ];
   }
 }

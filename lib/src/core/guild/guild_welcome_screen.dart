@@ -29,7 +29,7 @@ class GuildWelcomeScreen implements IGuildWelcomeScreen {
   /// Creates an instance of [GuildWelcomeScreen]
   GuildWelcomeScreen(RawApiMap raw, INyxx client) {
     description = raw["description"] as String?;
-    channels = [for (final rawChannel in raw["welcome_channels"]) GuildWelcomeChannel(rawChannel as RawApiMap, client)];
+    channels = [for (final rawChannel in raw["welcome_channels"] as RawApiList) GuildWelcomeChannel(rawChannel as RawApiMap, client)];
   }
 }
 

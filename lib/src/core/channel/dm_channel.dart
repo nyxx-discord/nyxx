@@ -50,7 +50,7 @@ class DMChannel extends Channel implements IDMChannel {
   /// Creates an instance of [DMChannel]
   DMChannel(INyxx client, RawApiMap raw) : super(client, raw) {
     if (raw["recipients"] != null) {
-      participants = [for (final userRaw in raw["recipients"]) User(this.client, userRaw as RawApiMap)];
+      participants = [for (final userRaw in raw["recipients"] as RawApiList) User(this.client, userRaw as RawApiMap)];
     } else {
       participants = [User(client, raw["recipient"] as RawApiMap)];
     }

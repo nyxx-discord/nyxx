@@ -170,7 +170,7 @@ class Activity implements IActivity {
 
     instance = raw["instance"] as bool?;
     activityFlags = ActivityFlags(raw["flags"] as int?);
-    buttons = [if (raw["buttons"] != null) ...raw["buttons"].cast<String>()];
+    buttons = [if (raw["buttons"] != null) ...(raw["buttons"] as RawApiList).cast<String>()];
   }
 }
 
@@ -521,7 +521,7 @@ class PartialPresence implements IPartialPresence {
 
     activities = [
       if (raw['activities'] != null)
-        for (final activity in raw["activities"]) Activity(activity as RawApiMap, client)
+        for (final activity in raw["activities"] as RawApiList) Activity(activity as RawApiMap, client)
     ];
   }
 }

@@ -68,10 +68,10 @@ class MemberChunkEvent implements IMemberChunkEvent {
     guild = GuildCacheable(client, Snowflake(raw["d"]["guild_id"]));
 
     if (raw["d"]["not_found"] != null) {
-      invalidIds = [for (var id in raw["d"]["not_found"]) Snowflake(id)];
+      invalidIds = [for (var id in raw["d"]["not_found"] as RawApiList) Snowflake(id)];
     }
 
-    members = [for (var memberRaw in raw["d"]["members"]) Member(client, memberRaw as RawApiMap, guild.id)];
+    members = [for (var memberRaw in raw["d"]["members"] as RawApiList) Member(client, memberRaw as RawApiMap, guild.id)];
 
     if (client.cacheOptions.memberCachePolicyLocation.event) {
       final guildInstance = guild.getFromCache();

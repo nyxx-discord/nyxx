@@ -267,7 +267,7 @@ class MessageMultiselect extends MultiSelectAbstract implements IMessageMultisel
 
   /// Creates an instance of [MessageMultiselect]
   MessageMultiselect(RawApiMap raw, this.client) : super(raw) {
-    options = [for (final rawOption in raw["options"]) MessageMultiselectOption(rawOption as Map<String, dynamic>, client)];
+    options = [for (final rawOption in raw["options"] as RawApiList) MessageMultiselectOption(rawOption as Map<String, dynamic>, client)];
   }
 }
 

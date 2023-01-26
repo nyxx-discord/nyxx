@@ -30,10 +30,10 @@ class ThreadListResultWrapper implements IThreadListResultWrapper {
 
   /// Create an instance of [ThreadListResultWrapper]
   ThreadListResultWrapper(INyxx client, RawApiMap raw) {
-    threads = [for (final rawThread in raw["threads"]) ThreadChannel(client, rawThread as RawApiMap)];
+    threads = [for (final rawThread in raw["threads"] as RawApiList) ThreadChannel(client, rawThread as RawApiMap)];
 
     selfThreadMembers = [
-      for (final rawMember in raw["members"])
+      for (final rawMember in raw["members"] as RawApiList)
         ThreadMember(client, rawMember as RawApiMap, ChannelCacheable(client, threads.firstWhere((element) => element.id == rawMember["id"]).id))
     ];
 

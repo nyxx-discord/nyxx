@@ -675,7 +675,7 @@ class Guild extends SnowflakeEntity implements IGuild {
 
     stickers = [
       if (raw["stickers"] != null)
-        for (final rawSticker in raw["stickers"]) GuildSticker(rawSticker as RawApiMap, client)
+        for (final rawSticker in raw["stickers"] as RawApiList) GuildSticker(rawSticker as RawApiMap, client)
     ];
 
     if (!guildCreate) return;
@@ -715,12 +715,12 @@ class Guild extends SnowflakeEntity implements IGuild {
 
     presences = [
       if (raw['presences'] != null)
-        for (final presence in raw['presences']) PartialPresence(presence as RawApiMap, client)
+        for (final presence in raw['presences'] as RawApiList) PartialPresence(presence as RawApiMap, client)
     ];
 
     stageInstances = [
       if (raw["stage_instances"] != null)
-        for (final rawInstance in raw["stage_instances"]) StageChannelInstance(client, rawInstance as RawApiMap)
+        for (final rawInstance in raw["stage_instances"] as RawApiList) StageChannelInstance(client, rawInstance as RawApiMap)
     ];
 
     autoModerationRules = SnowflakeCache<IAutoModerationRule>();

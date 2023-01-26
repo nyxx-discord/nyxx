@@ -74,7 +74,7 @@ abstract class GuildChannel extends MinimalGuildChannel implements IGuildChannel
 
     permissionOverrides = [
       if (raw["permission_overwrites"] != null)
-        for (var obj in raw["permission_overwrites"]) PermissionsOverrides(obj as RawApiMap)
+        for (var obj in raw["permission_overwrites"] as RawApiList) PermissionsOverrides(obj as RawApiMap)
     ];
   }
 

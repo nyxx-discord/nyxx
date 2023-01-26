@@ -58,7 +58,7 @@ class AppTeam extends SnowflakeEntity implements IAppTeam {
     ownerId = Snowflake(raw["owner_user_id"]);
     name = raw['name'] as String;
 
-    members = [for (final rawMember in raw["members"]) AppTeamMember(rawMember as RawApiMap, client)];
+    members = [for (final rawMember in raw["members"] as RawApiList) AppTeamMember(rawMember as RawApiMap, client)];
   }
 
   /// Returns url to team icon

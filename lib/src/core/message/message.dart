@@ -283,7 +283,7 @@ class Message extends SnowflakeEntity implements IMessage {
 
     partialStickers = [
       if (raw["sticker_items"] != null)
-        for (final rawSticker in raw["sticker_items"]) PartialSticker(rawSticker as RawApiMap, client)
+        for (final rawSticker in raw["sticker_items"] as RawApiList) PartialSticker(rawSticker as RawApiMap, client)
     ];
 
     flags = raw["flags"] != null ? MessageFlags(raw["flags"] as int) : null;
@@ -291,21 +291,21 @@ class Message extends SnowflakeEntity implements IMessage {
 
     embeds = [
       if (raw["embeds"] != null && raw["embeds"].isNotEmpty as bool)
-        for (var r in raw["embeds"]) Embed(r as RawApiMap)
+        for (var r in raw["embeds"] as RawApiList) Embed(r as RawApiMap)
     ];
 
     attachments = [
       if (raw["attachments"] != null && raw["attachments"].isNotEmpty as bool)
-        for (var r in raw["attachments"]) Attachment(r as RawApiMap)
+        for (var r in raw["attachments"] as RawApiList) Attachment(r as RawApiMap)
     ];
 
     reactions = [
       if (raw["reactions"] != null && raw["reactions"].isNotEmpty as bool)
-        for (var r in raw["reactions"]) Reaction(r as RawApiMap, client)
+        for (var r in raw["reactions"] as RawApiList) Reaction(r as RawApiMap, client)
     ];
 
     if (raw["mentions"] != null && raw["mentions"].isNotEmpty as bool) {
-      for (final rawUser in raw["mentions"]) {
+      for (final rawUser in raw["mentions"] as RawApiList) {
         final user = User(client, rawUser as RawApiMap);
 
         if (client.cacheOptions.userCachePolicyLocation.objectConstructor) {
@@ -332,8 +332,8 @@ class Message extends SnowflakeEntity implements IMessage {
 
     if (raw["components"] != null) {
       components = [
-        for (final rawRow in raw["components"])
-          [for (final componentRaw in rawRow["components"]) MessageComponent.deserialize(componentRaw as RawApiMap, client)]
+        for (final rawRow in raw["components"] as RawApiList)
+          [for (final componentRaw in rawRow["components"] as RawApiList) MessageComponent.deserialize(componentRaw as RawApiMap, client)]
       ];
     } else {
       components = [];
@@ -371,7 +371,7 @@ class Message extends SnowflakeEntity implements IMessage {
 
     roleMentions = [
       if (raw["mention_roles"] != null && guild != null)
-        for (var roleId in raw["mention_roles"]) RoleCacheable(client, Snowflake(roleId), guild!)
+        for (var roleId in raw["mention_roles"] as RawApiList) RoleCacheable(client, Snowflake(roleId), guild!)
     ];
   }
 

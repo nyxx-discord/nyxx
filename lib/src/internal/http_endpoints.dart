@@ -632,7 +632,7 @@ class HttpEndpoints implements IHttpEndpoints {
       },
     ));
 
-    for (final obj in response.jsonBody) {
+    for (final obj in response.jsonBody as RawApiList) {
       yield Ban(obj as RawApiMap, client);
     }
   }
@@ -693,7 +693,7 @@ class HttpEndpoints implements IHttpEndpoints {
         ..invites(),
     ));
 
-    for (final raw in response.jsonBody) {
+    for (final raw in response.jsonBody as RawApiList) {
       yield Invite(raw as RawApiMap, client);
     }
   }
@@ -754,7 +754,7 @@ class HttpEndpoints implements IHttpEndpoints {
         ..regions(),
     ));
 
-    for (final raw in response.jsonBody) {
+    for (final raw in response.jsonBody as RawApiList) {
       yield VoiceRegion(raw as RawApiMap);
     }
   }
@@ -849,7 +849,7 @@ class HttpEndpoints implements IHttpEndpoints {
       queryParams: {"query": query, "limit": limit.toString()},
     ));
 
-    for (final RawApiMap memberData in response.jsonBody) {
+    for (final RawApiMap memberData in response.jsonBody as RawApiListOfMaps) {
       final member = Member(client, memberData, guildId);
 
       if (client.cacheOptions.memberCachePolicyLocation.http && client.cacheOptions.memberCachePolicy.canCache(member)) {
@@ -868,7 +868,7 @@ class HttpEndpoints implements IHttpEndpoints {
         ..webhooks(),
     ));
 
-    for (final raw in response.jsonBody) {
+    for (final raw in response.jsonBody as RawApiList) {
       yield Webhook(raw as RawApiMap, client);
     }
   }
@@ -884,7 +884,7 @@ class HttpEndpoints implements IHttpEndpoints {
         ..roles(),
     ));
 
-    for (final rawRole in response.jsonBody) {
+    for (final rawRole in response.jsonBody as RawApiList) {
       yield Role(client, rawRole as RawApiMap, guildId);
     }
   }
@@ -932,7 +932,7 @@ class HttpEndpoints implements IHttpEndpoints {
 
     final bodyValues = response.jsonBody;
 
-    for (final val in bodyValues) {
+    for (final val in bodyValues as RawApiList) {
       yield InviteWithMeta(val as RawApiMap, client);
     }
   }
@@ -1052,7 +1052,7 @@ class HttpEndpoints implements IHttpEndpoints {
       queryParams: queryParams,
     ));
 
-    for (final val in response.jsonBody) {
+    for (final val in response.jsonBody as RawApiList) {
       yield Message(client, val as RawApiMap);
     }
   }
@@ -1668,7 +1668,7 @@ class HttpEndpoints implements IHttpEndpoints {
         ..stickers(),
     ));
 
-    for (final rawSticker in response.jsonBody) {
+    for (final rawSticker in response.jsonBody as RawApiList) {
       yield GuildSticker(rawSticker as RawApiMap, client);
     }
   }
@@ -1688,7 +1688,7 @@ class HttpEndpoints implements IHttpEndpoints {
       HttpRoute()..stickerpacks(),
     ));
 
-    for (final rawSticker in response.jsonBody['sticker_packs']) {
+    for (final rawSticker in response.jsonBody['sticker_packs'] as RawApiList) {
       yield StickerPack(rawSticker as RawApiMap, client);
     }
   }

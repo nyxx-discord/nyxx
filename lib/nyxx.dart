@@ -5,7 +5,7 @@ library nyxx;
 
 export 'src/client_options.dart' show CacheOptions, ClientOptions, GatewayIntents;
 export 'src/nyxx.dart' show INyxx, INyxxRest, INyxxWebsocket, NyxxFactory;
-export 'src/typedefs.dart' show RawApiMap, RawApiList;
+export 'src/typedefs.dart' show RawApiMap, RawApiList, RawApiListOfMaps;
 export 'src/core/allowed_mentions.dart' show AllowedMentions;
 export 'src/core/discord_color.dart' show DiscordColor;
 export 'src/core/snowflake.dart' show Snowflake;
@@ -155,7 +155,6 @@ export 'src/internal/cache/cache_policy.dart'
     show CachePolicyPredicate, CachePolicyLocation, CachePolicy, ChannelCachePolicy, MemberCachePolicy, MessageCachePolicy;
 export 'src/internal/cache/cacheable.dart' show Cacheable;
 export 'src/internal/exceptions/embed_builder_argument_exception.dart' show EmbedBuilderArgumentException;
-export 'src/internal/exceptions/http_client_exception.dart' show HttpClientException;
 export 'src/internal/exceptions/invalid_shard_exception.dart' show InvalidShardException;
 export 'src/internal/exceptions/invalid_snowflake_exception.dart' show InvalidSnowflakeException;
 export 'src/internal/exceptions/missing_token_error.dart' show MissingTokenError;

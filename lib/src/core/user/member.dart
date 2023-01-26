@@ -183,7 +183,7 @@ class Member extends SnowflakeEntity implements IMember {
     avatarHash = raw["avatar"] as String?;
     timeoutUntil = raw['communication_disabled_until'] != null ? DateTime.parse(raw['communication_disabled_until'] as String) : null;
 
-    roles = [for (var id in raw["roles"]) RoleCacheable(client, Snowflake(id), guild)];
+    roles = [for (var id in raw["roles"] as RawApiList) RoleCacheable(client, Snowflake(id), guild)];
 
     joinedAt = DateTime.parse(raw["joined_at"] as String).toUtc();
 

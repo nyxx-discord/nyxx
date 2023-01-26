@@ -176,7 +176,7 @@ class GuildEmoji extends BaseGuildEmoji implements IGuildEmoji {
     requireColons = raw["require_colons"] as bool? ?? false;
     managed = raw["managed"] as bool? ?? false;
     animated = raw["animated"] as bool? ?? false;
-    roles = [for (final roleId in raw["roles"]) RoleCacheable(client, Snowflake(roleId), guild)];
+    roles = [for (final roleId in raw["roles"] as RawApiList) RoleCacheable(client, Snowflake(roleId), guild)];
   }
 
   /// Returns encoded emoji for usage in message

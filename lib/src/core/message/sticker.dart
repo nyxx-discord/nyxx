@@ -269,7 +269,7 @@ class StickerPack extends SnowflakeEntity implements IStickerPack {
 
   /// Creates an instance of [StickerPack]
   StickerPack(RawApiMap raw, this.client) : super(Snowflake(raw["id"])) {
-    stickers = [for (final rawSticker in raw["stickers"]) StandardSticker(rawSticker as RawApiMap, client)];
+    stickers = [for (final rawSticker in raw["stickers"] as RawApiList) StandardSticker(rawSticker as RawApiMap, client)];
     name = raw["name"] as String;
     skuId = Snowflake(raw["sku_id"]);
     coverStickerId = Snowflake(raw["cover_sticker_id"]);

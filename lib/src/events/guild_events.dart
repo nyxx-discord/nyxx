@@ -302,7 +302,7 @@ class GuildEmojisUpdateEvent implements IGuildEmojisUpdateEvent {
     guild = GuildCacheable(client, Snowflake(raw["d"]["guild_id"]));
 
     final guildInstance = guild.getFromCache();
-    for (final rawEmoji in raw["d"]["emojis"]) {
+    for (final rawEmoji in raw["d"]["emojis"] as RawApiList) {
       final emoji = GuildEmoji(client, rawEmoji as RawApiMap, guild.id);
 
       emojis.add(emoji);
@@ -437,7 +437,7 @@ class GuildStickerUpdate implements IGuildStickerUpdate {
   /// Creates an instance of [GuildStickerUpdate]
   GuildStickerUpdate(RawApiMap raw, INyxx client) {
     guild = GuildCacheable(client, Snowflake(raw["d"]["guild_id"]));
-    stickers = [for (final rawSticker in raw["d"]["stickers"]) GuildSticker(rawSticker as RawApiMap, client)];
+    stickers = [for (final rawSticker in raw["d"]["stickers"] as RawApiList) GuildSticker(rawSticker as RawApiMap, client)];
   }
 }
 

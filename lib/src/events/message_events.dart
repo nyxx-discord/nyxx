@@ -402,7 +402,7 @@ class MessageUpdateEvent implements IMessageUpdateEvent {
     }
 
     if (raw['d']['attachments'] != null) {
-      (updatedMessage as Message).attachments = [for (final attachment in raw['d']['attachments']) Attachment(attachment as RawApiMap)];
+      (updatedMessage as Message).attachments = [for (final attachment in raw['d']['attachments'] as RawApiList) Attachment(attachment as RawApiMap)];
     }
 
     if (raw['d']['pinned'] != null) {
@@ -415,8 +415,8 @@ class MessageUpdateEvent implements IMessageUpdateEvent {
 
     if (raw['d']['components'] != null && (raw['d']['components'] as RawApiList).isNotEmpty) {
       (updatedMessage as Message).components = [
-        for (final rawRow in raw['d']["components"])
-          [for (final componentRaw in rawRow["components"]) MessageComponent.deserialize(componentRaw as RawApiMap, client)]
+        for (final rawRow in raw['d']["components"] as RawApiList)
+          [for (final componentRaw in rawRow["components"] as RawApiList) MessageComponent.deserialize(componentRaw as RawApiMap, client)]
       ];
     }
 
