@@ -18,8 +18,8 @@ void main() {
   bot.eventsWs.onMessageReceived.listen((IMessageReceivedEvent e) async {
     // Check if message content equals "!create_channel"
     if (e.message.content == "!create_channel") {
-      // Make sure that message was sent in guild not im dm, because we cant add roles in dms
-      if (e.message.guild != null) {
+      // Make sure that the message was sent in a guild and not in a dm, because we cant make invites in dms
+      if (e.message.guild == null) {
         return;
       }
 

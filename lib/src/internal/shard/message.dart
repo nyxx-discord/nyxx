@@ -63,6 +63,8 @@ enum ManagerToShard {
   ///     The URL on which to connect to the gateway
   /// - `useCompression`: bool
   ///     Whether to use compression on this gateway connection
+  /// - `encoding`: Encoding
+  ///     The encoding type du use to receive/send payloads
   connect,
 
   /// Sent to request the shard to reconnect, closing the current connection if any.

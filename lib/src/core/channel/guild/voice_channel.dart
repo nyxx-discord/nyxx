@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:nyxx/src/core/channel/text_channel.dart';
 import 'package:nyxx/src/core/message/message.dart';
 import 'package:nyxx/src/internal/cache/cache.dart';
+import 'package:nyxx/src/internal/exceptions/unknown_enum_value.dart';
 import 'package:nyxx/src/internal/interfaces/mentionable.dart';
 import 'package:nyxx/src/nyxx.dart';
 import 'package:nyxx/src/core/channel/invite.dart';
@@ -17,6 +18,19 @@ import 'package:nyxx/src/typedefs.dart';
 import 'package:nyxx/src/utils/builders/message_builder.dart';
 import 'package:nyxx/src/utils/enum.dart';
 
+enum VideoQualityMode {
+  auto(1),
+  full(2);
+
+  final int value;
+  const VideoQualityMode(this.value);
+
+  static VideoQualityMode _fromValue(int value) => values.firstWhere((v) => v.value == value, orElse: () => throw UnknownEnumValueError(value));
+
+  @override
+  String toString() => 'VideoQualityMode[$value]';
+}
+
 abstract class IVoiceGuildChannel implements IGuildChannel {
   /// The channel's bitrate.
   int? get bitrate;
@@ -26,6 +40,9 @@ abstract class IVoiceGuildChannel implements IGuildChannel {
 
   /// Channel voice region id, automatic when set to null
   String? get rtcRegion;
+
+  /// The camera video quality mode of the voice channel, 1 when not present
+  VideoQualityMode get videoQualityMode;
 
   /// Connects client to channel
   void connect({bool selfMute = false, bool selfDeafen = false});
@@ -38,25 +55,26 @@ abstract class IVoiceGuildChannel implements IGuildChannel {
 }
 
 class VoiceGuildChannel extends GuildChannel implements IVoiceGuildChannel {
-  /// The channel's bitrate.
   @override
   late final int? bitrate;
 
-  /// The channel's user limit.
   @override
   late final int? userLimit;
 
   @override
   late final String? rtcRegion;
 
+  @override
+  late final VideoQualityMode videoQualityMode;
+
   /// Creates an instance of [VoiceGuildChannel]
   VoiceGuildChannel(INyxx client, RawApiMap raw, [Snowflake? guildId]) : super(client, raw, guildId) {
     bitrate = raw["bitrate"] as int?;
     userLimit = raw["user_limit"] as int?;
     rtcRegion = raw['rtc_region'] as String?;
+    videoQualityMode = raw['video_quality_mode'] == null ? VideoQualityMode.auto : VideoQualityMode._fromValue(raw['video_quality_mode'] as int);
   }
 
-  /// Connects client to channel
   @override
   void connect({bool selfMute = false, bool selfDeafen = false}) {
     if (client is! NyxxWebsocket) {
@@ -72,7 +90,6 @@ class VoiceGuildChannel extends GuildChannel implements IVoiceGuildChannel {
     }
   }
 
-  /// Disconnects use from channel.
   @override
   void disconnect() {
     if (client is! NyxxWebsocket) {

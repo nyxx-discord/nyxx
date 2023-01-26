@@ -174,6 +174,10 @@ class Shard implements IShard {
             data: {
               'gatewayHost': shouldResume && canResume ? resumeGatewayUrl : gatewayHost,
               'useCompression': manager.connectionManager.client.options.compressedGatewayPayloads,
+              'encoding': manager.connectionManager.client.options.payloadEncoding,
+              'usePayloadCompression': manager.connectionManager.client.options.payloadCompression &&
+                  manager.connectionManager.client.options.payloadEncoding == Encoding.json &&
+                  !manager.connectionManager.client.options.compressedGatewayPayloads,
             },
           ));
 
@@ -231,7 +235,7 @@ class Shard implements IShard {
 
     switch (message.type) {
       case ShardToManager.received:
-        return handlePayload(message.data);
+        return handlePayload(message.data as RawApiMap);
       case ShardToManager.connected:
       case ShardToManager.reconnected:
         return handleConnected();
@@ -313,13 +317,13 @@ class Shard implements IShard {
   }
 
   /// A handler for when a payload from the gateway is received.
-  Future<void> handlePayload(dynamic data) async {
+  Future<void> handlePayload(RawApiMap data) async {
     final opcode = data['op'] as int;
     final d = data['d'];
 
     switch (opcode) {
       case OPCodes.dispatch:
-        dispatch(data['s'] as int, data['t'] as String, data as RawApiMap);
+        dispatch(data['s'] as int, data['t'] as String, data);
         break;
 
       case OPCodes.heartbeat:
@@ -403,7 +407,9 @@ class Shard implements IShard {
         "large_threshold": manager.connectionManager.client.options.largeThreshold,
         "intents": manager.connectionManager.client.intents,
         if (manager.connectionManager.client.options.initialPresence != null) "presence": manager.connectionManager.client.options.initialPresence!.build(),
-        "shard": <int>[id, manager.totalNumShards]
+        "shard": <int>[id, manager.totalNumShards],
+        if (manager.connectionManager.client.options.payloadEncoding == Encoding.json && !manager.connectionManager.client.options.compressedGatewayPayloads)
+          "compress": manager.connectionManager.client.options.payloadCompression,
       });
 
   /// Sends the resume payload to the gateway.

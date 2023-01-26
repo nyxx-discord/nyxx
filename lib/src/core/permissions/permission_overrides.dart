@@ -38,7 +38,7 @@ class PermissionsOverrides extends SnowflakeEntity implements IPermissionsOverri
   late final int deny;
 
   /// Creates an instance of [PermissionsOverrides]
-  PermissionsOverrides(RawApiMap raw) : super(Snowflake(raw["id"] as String)) {
+  PermissionsOverrides(RawApiMap raw) : super(Snowflake(raw["id"])) {
     allow = int.parse(raw["allow"] as String);
     deny = int.parse(raw["deny"] as String);
 

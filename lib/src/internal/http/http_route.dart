@@ -60,7 +60,7 @@ abstract class IHttpRoute {
   void applications({String? id});
 
   /// Adds the [`stage-instances`](https://discord.com/developers/docs/resources/stage-instance#get-stage-instance) part to this [IHttpRoute].
-  void stageinstances({String? id});
+  void stageInstances({String? id});
 
   /// Adds the [`thread-members`](https://discord.com/developers/docs/resources/channel#get-thread-member) part to this [IHttpRoute].
   void threadMembers({String? id});
@@ -209,7 +209,7 @@ class HttpRoute implements IHttpRoute {
   void applications({String? id}) => add(HttpRoutePart("applications", [if (id != null) HttpRouteParam(id)]));
 
   @override
-  void stageinstances({String? id}) => add(HttpRoutePart("stage-instances", [if (id != null) HttpRouteParam(id)]));
+  void stageInstances({String? id}) => add(HttpRoutePart("stage-instances", [if (id != null) HttpRouteParam(id)]));
 
   @override
   void threadMembers({String? id}) => add(HttpRoutePart("thread-members", [if (id != null) HttpRouteParam(id)]));

@@ -3,9 +3,11 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:isolate';
 
+import 'package:eterl/eterl.dart';
 import 'package:nyxx/src/internal/constants.dart';
 import 'package:nyxx/src/internal/interfaces/disposable.dart';
 import 'package:nyxx/src/internal/shard/message.dart';
+import 'package:nyxx/src/typedefs.dart';
 
 void shardHandler(SendPort sendPort) {
   final runner = ShardRunner(sendPort);
@@ -27,7 +29,7 @@ class ShardRunner implements Disposable {
   WebSocket? connection;
 
   /// The subscription to the current active connection.
-  StreamSubscription<String>? connectionSubscription;
+  StreamSubscription<dynamic>? connectionSubscription;
 
   /// Whether this shard is currently connected to Discord.
   bool get connected => connection?.readyState == WebSocket.open;
@@ -49,6 +51,8 @@ class ShardRunner implements Disposable {
   // Start at -1 and count down to avoid collisions with seq from the shard handler
   int seq = -1;
 
+  late Encoding _encoding;
+
   ShardRunner(this.sendPort) {
     managerMessages.listen(handle);
   }
@@ -59,11 +63,17 @@ class ShardRunner implements Disposable {
   /// Handler for uncompressed messages received from Discord.
   ///
   /// Calls jsonDecode and sends the data back to the manager.
-  void receive(String payload) => execute(ShardMessage(
-        ShardToManager.received,
-        seq: seq--,
-        data: jsonDecode(payload),
-      ));
+  void receive(/* List<int>|RawApiMap|String */ dynamic payload) {
+    if (payload is List<int>) {
+      payload = utf8.decode(zlib.decode(payload));
+    }
+
+    return execute(ShardMessage(
+      ShardToManager.received,
+      seq: seq--,
+      data: payload is String ? jsonDecode(payload) : payload,
+    ));
+  }
 
   /// Handler for incoming messages from the manager.
   Future<void> handle(ShardMessage<ManagerToShard> message) async {
@@ -71,9 +81,11 @@ class ShardRunner implements Disposable {
       case ManagerToShard.send:
         return send(message.data, message.seq);
       case ManagerToShard.connect:
-        return connect(message.data['gatewayHost'] as String, message.data['useCompression'] as bool, message.seq);
+        return connect(message.data['gatewayHost'] as String, message.data['useCompression'] as bool, message.seq, message.data['encoding'] as Encoding,
+            message.data['usePayloadCompression'] as bool);
       case ManagerToShard.reconnect:
-        return reconnect(message.data['gatewayHost'] as String, message.data['useCompression'] as bool, message.seq);
+        return reconnect(message.data['gatewayHost'] as String, message.data['useCompression'] as bool, message.seq, message.data['encoding'] as Encoding,
+            message.data['usePayloadCompression'] as bool);
       case ManagerToShard.disconnect:
         return disconnect(message.seq);
       case ManagerToShard.dispose:
@@ -84,7 +96,8 @@ class ShardRunner implements Disposable {
   /// Initiate the connection on this shard.
   ///
   /// Sends [ShardToManager.connected] upon completion.
-  Future<void> connect(String gatewayHost, bool useCompression, int seq) async {
+  Future<void> connect(String gatewayHost, bool useCompression, int seq, Encoding encoding, bool usePayloadCompression) async {
+    _encoding = encoding;
     if (connected) {
       execute(ShardMessage(
         ShardToManager.error,
@@ -106,7 +119,7 @@ class ShardRunner implements Disposable {
     connecting = true;
 
     try {
-      final gatewayUri = Constants.gatewayUri(gatewayHost, useCompression);
+      final gatewayUri = Constants.gatewayUri(gatewayHost, useCompression, encoding);
 
       connection = await WebSocket.connect(gatewayUri.toString());
       connection!.pingInterval = const Duration(seconds: 20);
@@ -129,22 +142,33 @@ class ShardRunner implements Disposable {
       if (useCompression) {
         final filter = RawZLibFilter.inflateFilter();
 
-        connectionSubscription = connection!
-            .cast<List<int>>()
-            .map((rawPayload) {
-              filter.process(rawPayload, 0, rawPayload.length);
+        final mappedConnection = connection!.cast<List<int>>().map((rawPayload) {
+          filter.process(rawPayload, 0, rawPayload.length);
 
-              final buffer = <int>[];
-              for (List<int>? decoded = []; decoded != null; decoded = filter.processed()) {
-                buffer.addAll(decoded);
-              }
+          final buffer = <int>[];
+          for (List<int>? decoded = []; decoded != null; decoded = filter.processed()) {
+            buffer.addAll(decoded);
+          }
 
-              return buffer;
-            })
-            .transform(utf8.decoder)
-            .listen(receive);
+          return buffer;
+        });
+
+        Stream< /* RawApiMap|String */ dynamic> stream;
+
+        if (encoding == Encoding.etf) {
+          stream = mappedConnection.transform(eterl.unpacker<RawApiMap>());
+        } else {
+          stream = mappedConnection.transform(utf8.decoder);
+        }
+
+        connectionSubscription = stream.listen(receive);
       } else {
-        connectionSubscription = connection!.cast<String>().listen(receive);
+        if (usePayloadCompression) {
+          connectionSubscription = connection!.listen(receive);
+        } else {
+          connectionSubscription =
+              (encoding == Encoding.json ? connection!.cast<String>() : connection!.cast<List<int>>().transform(eterl.unpacker<RawApiMap>())).listen(receive);
+        }
       }
 
       execute(ShardMessage(reconnecting ? ShardToManager.reconnected : ShardToManager.connected, seq: seq));
@@ -160,7 +184,7 @@ class ShardRunner implements Disposable {
   }
 
   /// Reconnect to the server, closing the connection if necessary.
-  Future<void> reconnect(String gatewayHost, bool useCompression, int seq) async {
+  Future<void> reconnect(String gatewayHost, bool useCompression, int seq, Encoding encoding, bool usePayloadCompression) async {
     if (reconnecting) {
       execute(ShardMessage(
         ShardToManager.error,
@@ -176,7 +200,7 @@ class ShardRunner implements Disposable {
     }
 
     // Sends reconnected instead of connected so we don't have to send it here
-    await connect(gatewayHost, useCompression, seq);
+    await connect(gatewayHost, useCompression, seq, encoding, usePayloadCompression);
     reconnecting = false;
   }
 
@@ -211,7 +235,7 @@ class ShardRunner implements Disposable {
       ));
     }
 
-    connection!.add(jsonEncode(data));
+    connection!.add(_encoding == Encoding.json ? jsonEncode(data) : eterl.pack(data));
   }
 
   /// Disposes of this shard.
