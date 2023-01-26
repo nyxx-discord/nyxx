@@ -33,7 +33,7 @@ class Constants {
   static const int apiVersion = 10;
 
   /// Version of Nyxx
-  static const String version = "4.4.1";
+  static const String version = "4.5.0-dev.0";
 
   /// Url to Nyxx repo
   static const String repoUrl = "https://github.com/nyxx-discord/nyxx";
