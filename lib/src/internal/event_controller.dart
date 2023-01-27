@@ -234,148 +234,62 @@ abstract class IWebsocketEventController implements IRestEventController {
 
   /// Emitted when an auto moderation rule was triggered and an action was executed (e.g. a message was blocked).
   Stream<IAutoModerationActionExecutionEvent> get onAutoModerationActionExecution;
+
+  /// Sent when a guild audit log entry is created.
+  Stream<IAuditLogEntryCreateEvent> get onAuditLogEntryCreate;
 }
 
 /// A controller for all events.
 class WebsocketEventController extends RestEventController implements IWebsocketEventController {
-  /// Emitted when a shard is disconnected from the websocket.
   late final StreamController<IDisconnectEvent> onDisconnectController;
-
-  /// Emitted when the client is ready.
   late final StreamController<IReadyEvent> onReadyController;
-
-  /// Emitted when a message is received.
   late final StreamController<IMessageReceivedEvent> onMessageReceivedController;
-
-  /// Emitted when channel's pins are updated.
   late final StreamController<IChannelPinsUpdateEvent> onChannelPinsUpdateController;
-
-  /// Emitted when guild's emojis are changed.
   late final StreamController<IGuildEmojisUpdateEvent> onGuildEmojisUpdateController;
-
-  /// Emitted when a message is edited.
   late final StreamController<IMessageUpdateEvent> onMessageUpdateController;
-
-  /// Emitted when a message is edited.
   late final StreamController<IMessageDeleteEvent> onMessageDeleteController;
-
-  /// Emitted when a channel is created.
   late final StreamController<IChannelCreateEvent> onChannelCreateController;
-
-  /// Emitted when a channel is updated.
   late final StreamController<IChannelUpdateEvent> onChannelUpdateController;
-
-  /// Emitted when a channel is deleted.
   late final StreamController<IChannelDeleteEvent> onChannelDeleteController;
-
-  /// Emitted when a member is banned.
   late final StreamController<IGuildBanAddEvent> onGuildBanAddController;
-
-  /// Emitted when a user is unbanned.
   late final StreamController<IGuildBanRemoveEvent> onGuildBanRemoveController;
-
-  /// Emitted when the client joins a guild.
   late final StreamController<IGuildCreateEvent> onGuildCreateController;
-
-  /// Emitted when a guild is updated..
   late final StreamController<IGuildUpdateEvent> onGuildUpdateController;
-
-  /// Emitted when the client leaves a guild.
   late final StreamController<IGuildDeleteEvent> onGuildDeleteController;
-
-  /// Emitted when a member joins a guild.
   late final StreamController<IGuildMemberAddEvent> onGuildMemberAddController;
-
-  /// Emitted when a member is updated.
   late final StreamController<IGuildMemberUpdateEvent> onGuildMemberUpdateController;
-
-  /// Emitted when a user leaves a guild.
   late final StreamController<IGuildMemberRemoveEvent> onGuildMemberRemoveController;
-
-  /// Emitted when a member's presence is updated.
   late final StreamController<IPresenceUpdateEvent> onPresenceUpdateController;
-
-  /// Emitted when a user starts typing.
   late final StreamController<ITypingEvent> onTypingController;
-
-  /// Emitted when a role is updated.
   late final StreamController<IRoleCreateEvent> onRoleCreateController;
-
-  /// Emitted when a role is created.
   late final StreamController<IRoleUpdateEvent> onRoleUpdateController;
-
-  /// Emitted when a role is deleted.
   late final StreamController<IRoleDeleteEvent> onRoleDeleteController;
-
-  /// Emitted when many messages are deleted at once
   late final StreamController<IMessageDeleteBulkEvent> onMessageDeleteBulkController;
-
-  /// Emitted when a user adds a reaction to a message.
   late final StreamController<IMessageReactionEvent> onMessageReactionAddedController;
-
-  /// Emitted when a user deletes a reaction to a message.
   late final StreamController<IMessageReactionEvent> onMessageReactionRemoveController;
-
-  /// Emitted when a user explicitly removes all reactions from a message.
   late final StreamController<IMessageReactionsRemovedEvent> onMessageReactionsRemovedController;
-
-  /// Emitted when someone joins/leaves/moves voice channels.
   late final StreamController<IVoiceStateUpdateEvent> onVoiceStateUpdateController;
-
-  /// Emitted when a guild's voice server is updated. This is sent when initially connecting to voice, and when the current voice instance fails over to a new server.
   late final StreamController<IVoiceServerUpdateEvent> onVoiceServerUpdateController;
-
-  /// Emitted when user was updated
   late final StreamController<IUserUpdateEvent> onUserUpdateController;
-
-  /// Emitted when invite is creating
   late final StreamController<IInviteCreatedEvent> onInviteCreatedController;
-
-  /// Emitted when invite is deleted
   late final StreamController<IInviteDeletedEvent> onInviteDeleteController;
-
-  /// Emitted when a bot removes all instances of a given emoji from the reactions of a message
   late final StreamController<IMessageReactionRemoveEmojiEvent> onMessageReactionRemoveEmojiController;
-
-  /// Emitted when a thread is created
   late final StreamController<IThreadCreateEvent> onThreadCreatedController;
-
-  /// Fired when a thread has a member added/removed
   late final StreamController<IThreadMembersUpdateEvent> onThreadMembersUpdateController;
-
-  /// Fired when a thread gets deleted
   late final StreamController<IThreadDeletedEvent> onThreadDeleteController;
-
-  /// Emitted when stage channel instance is created
   late final StreamController<IStageInstanceEvent> onStageInstanceCreateController;
-
-  /// Emitted when stage channel instance is updated
   late final StreamController<IStageInstanceEvent> onStageInstanceUpdateController;
-
-  /// Emitted when stage channel instance is deleted
   late final StreamController<IStageInstanceEvent> onStageInstanceDeleteController;
-
-  /// Emitted when guild stickers are update
   late final StreamController<IGuildStickerUpdate> onGuildStickersUpdateController;
-
-  /// Guild scheduled event was created
   late final StreamController<IGuildEventCreateEvent> onGuildEventCreateController;
-
-  /// Guild scheduled event was deleted
   late final StreamController<IGuildEventDeleteEvent> onGuildEventDeleteController;
-
-  /// Guild scheduled event was updated
   late final StreamController<IGuildEventUpdateEvent> onGuildEventUpdateController;
-
   late final StreamController<IAutoModerationRuleCreateEvent> onAutoModerationRuleCreateController;
-
   late final StreamController<IAutoModerationRuleUpdateEvent> onAutoModerationRuleUpdateController;
-
   late final StreamController<IAutoModerationRuleDeleteEvent> onAutoModerationRuleDeleteController;
-
   late final StreamController<IWebhookUpdateEvent> onWebhookUpdateController;
-
   late final StreamController<IAutoModerationActionExecutionEvent> onAutoModerationActionExecutionController;
+  late final StreamController<IAuditLogEntryCreateEvent> onAuditLogEntryCreateController;
 
   /// Emitted when a shard is disconnected from the websocket.
   @override
@@ -580,6 +494,9 @@ class WebsocketEventController extends RestEventController implements IWebsocket
   @override
   late final Stream<IGuildMemberUpdateEvent> onGuildMemberAddPassedScreening;
 
+  @override
+  late final Stream<IAuditLogEntryCreateEvent> onAuditLogEntryCreate;
+
   final INyxxWebsocket _client;
 
   /// Makes a new `EventController`.
@@ -730,6 +647,9 @@ class WebsocketEventController extends RestEventController implements IWebsocket
 
     onGuildMemberAddScreening = onGuildMemberAdd.where((event) => event.member.isPending);
     onGuildMemberAddPassedScreening = onGuildMemberUpdate.where((event) => !(event.member.getFromCache()?.isPending ?? true));
+
+    onAuditLogEntryCreateController = StreamController.broadcast();
+    onAuditLogEntryCreate = onAuditLogEntryCreateController.stream;
   }
 
   @override
@@ -792,5 +712,7 @@ class WebsocketEventController extends RestEventController implements IWebsocket
     await onWebhookUpdateController.close();
 
     await onAutoModerationActionExecutionController.close();
+
+    await onAuditLogEntryCreateController.close();
   }
 }
