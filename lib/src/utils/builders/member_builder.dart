@@ -1,4 +1,7 @@
-import 'package:nyxx/nyxx.dart';
+import 'package:nyxx/src/core/snowflake.dart';
+import 'package:nyxx/src/typedefs.dart';
+import 'package:nyxx/src/utils/builders/builder.dart';
+import 'package:nyxx/src/core/user/member_flags.dart';
 
 class MemberBuilder implements Builder {
   /// Value to set user's nickname to
@@ -19,6 +22,9 @@ class MemberBuilder implements Builder {
   /// When the user's timeout will expire and the user will be able to communicate in the guild again (up to 28 days in the future), set to null to remove timeout
   DateTime? timeoutUntil = DateTime.fromMillisecondsSinceEpoch(0);
 
+  /// The [flags](https://discord.com/developers/docs/resources/guild#guild-member-object-guild-member-flags) to add/remove from the member.
+  MemberFlagsBuilder? flags;
+
   @override
   RawApiMap build() => {
         if (nick != null) 'nick': nick,
@@ -27,5 +33,34 @@ class MemberBuilder implements Builder {
         if (deaf != null) 'deaf': deaf,
         if (channel != Snowflake.zero()) 'channel_id': channel?.toString(),
         if (timeoutUntil?.millisecondsSinceEpoch != 0) 'communication_disabled_until': timeoutUntil?.toIso8601String(),
+        if (flags != null) 'flags': flags!.toBitField(),
       };
+}
+
+/// Flags that can be applied or removed from a member.
+class MemberFlagsBuilder {
+  final bool bypassesVerification;
+  final bool startedOnBoarding;
+
+  const MemberFlagsBuilder({
+    this.bypassesVerification = false,
+    this.startedOnBoarding = false,
+  });
+
+  int toBitField() {
+    var bitField = 0;
+
+    if (bypassesVerification) {
+      bitField |= 1 << 2;
+    }
+
+    if (startedOnBoarding) {
+      bitField |= 1 << 3;
+    }
+
+    return bitField;
+  }
+
+  @override
+  String toString() => 'PatchableMemberFlags(bypassesVerification: $bypassesVerification, startedOnBoarding: $startedOnBoarding)';
 }

@@ -94,6 +94,7 @@ export 'src/core/user/presence.dart'
     show IActivity, IActivityEmoji, IActivityFlags, IActivityParty, IActivityTimestamps, IGameAssets, IGameSecrets, ActivityType, IPartialPresence;
 export 'src/core/user/user.dart' show IUser;
 export 'src/core/user/user_flags.dart' show IUserFlags;
+export 'src/core/user/member_flags.dart' show IMemberFlags;
 export 'src/core/voice/voice_region.dart' show IVoiceRegion;
 export 'src/core/voice/voice_state.dart' show IVoiceState;
 export 'src/events/channel_events.dart' show IChannelCreateEvent, IChannelDeleteEvent, IChannelPinsUpdateEvent, IChannelUpdateEvent, IStageInstanceEvent;
@@ -182,7 +183,7 @@ export 'src/utils/builders/embed_footer_builder.dart' show EmbedFooterBuilder;
 export 'src/utils/builders/guild_builder.dart' show GuildBuilder, RoleBuilder;
 export 'src/utils/builders/channel_builder.dart' show ChannelBuilder, TextChannelBuilder, VoiceChannelBuilder, ForumChannelBuilder;
 export 'src/utils/builders/message_builder.dart' show MessageBuilder, MessageDecoration;
-export 'src/utils/builders/member_builder.dart' show MemberBuilder;
+export 'src/utils/builders/member_builder.dart' show MemberBuilder, MemberFlagsBuilder;
 export 'src/utils/builders/permissions_builder.dart' show PermissionOverrideBuilder, PermissionsBuilder;
 export 'src/utils/builders/presence_builder.dart' show PresenceBuilder, ActivityBuilder;
 export 'src/utils/builders/reply_builder.dart' show ReplyBuilder;
