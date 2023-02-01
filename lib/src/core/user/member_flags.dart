@@ -8,7 +8,7 @@ abstract class IMemberFlags {
   /// Whether the member has completed onboarding.
   bool get completedOnboarding;
 
-  /// Whether the member is exempt from guild verification requireemnts.
+  /// Whether the member is exempt from guild verification requirements.
   bool get bypassesVerification;
 
   /// Wether the member has started onboarding.
