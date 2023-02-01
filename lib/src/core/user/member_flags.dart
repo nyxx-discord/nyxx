@@ -36,31 +36,3 @@ class MemberFlags implements IMemberFlags {
   String toString() => 'MemberFlags(didRejoin: $didRejoin,'
       ' completedOnboarding: $completedOnboarding, bypassesVerification: $bypassesVerification, startedOnBoarding: $startedOnBoarding)';
 }
-
-/// Flags that can be applied or removed from a member.
-class PatchableMemberFlags {
-  final bool bypassesVerification;
-  final bool startedOnBoarding;
-
-  PatchableMemberFlags({
-    this.bypassesVerification = false,
-    this.startedOnBoarding = false,
-  });
-
-  int toBitField() {
-    var bitField = 0;
-
-    if (bypassesVerification) {
-      bitField |= 1 << 2;
-    }
-
-    if (startedOnBoarding) {
-      bitField |= 1 << 3;
-    }
-
-    return bitField;
-  }
-
-  @override
-  String toString() => 'PatchableMemberFlags(bypassesVerification: $bypassesVerification, startedOnBoarding: $startedOnBoarding)';
-}

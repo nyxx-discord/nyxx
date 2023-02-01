@@ -23,7 +23,7 @@ class MemberBuilder implements Builder {
   DateTime? timeoutUntil = DateTime.fromMillisecondsSinceEpoch(0);
 
   /// The [flags](https://discord.com/developers/docs/resources/guild#guild-member-object-guild-member-flags) to add/remove from the member.
-  PatchableMemberFlags? flags;
+  MemberFlagsBuilder? flags;
 
   @override
   RawApiMap build() => {
@@ -35,4 +35,32 @@ class MemberBuilder implements Builder {
         if (timeoutUntil?.millisecondsSinceEpoch != 0) 'communication_disabled_until': timeoutUntil?.toIso8601String(),
         if (flags != null) 'flags': flags!.toBitField(),
       };
+}
+
+/// Flags that can be applied or removed from a member.
+class MemberFlagsBuilder {
+  final bool bypassesVerification;
+  final bool startedOnBoarding;
+
+  const MemberFlagsBuilder({
+    this.bypassesVerification = false,
+    this.startedOnBoarding = false,
+  });
+
+  int toBitField() {
+    var bitField = 0;
+
+    if (bypassesVerification) {
+      bitField |= 1 << 2;
+    }
+
+    if (startedOnBoarding) {
+      bitField |= 1 << 3;
+    }
+
+    return bitField;
+  }
+
+  @override
+  String toString() => 'PatchableMemberFlags(bypassesVerification: $bypassesVerification, startedOnBoarding: $startedOnBoarding)';
 }
