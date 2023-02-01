@@ -33,8 +33,7 @@ class MemberFlags implements IMemberFlags {
   const MemberFlags(this.raw);
 
   @override
-  String toString() =>
-      'MemberFlags(didRejoin: $didRejoin,' 
+  String toString() => 'MemberFlags(didRejoin: $didRejoin,'
       ' completedOnboarding: $completedOnboarding, bypassesVerification: $bypassesVerification, startedOnBoarding: $startedOnBoarding)';
 }
 
