@@ -248,7 +248,7 @@ class Member extends SnowflakeEntity implements IMember {
       this.nickname = nickname;
     }
 
-    if (this.roles != roles) {
+    if (!this.roles.every((role) => roles.contains(role.id))) {
       this.roles = roles.map((e) => RoleCacheable(client, e, guild));
     }
 

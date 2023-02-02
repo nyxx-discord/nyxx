@@ -176,8 +176,8 @@ class GuildMemberUpdateEvent implements IGuildMemberUpdateEvent {
       return;
     }
 
-    final nickname = raw["d"]["nickname"] as String?;
-    final roles = (raw["d"]["roles"] as RawApiList).map((str) => Snowflake(str)).toList();
+    final nickname = raw["d"]["nick"] as String?;
+    final roles = (raw["d"]["roles"] as RawApiList).map(Snowflake.new).toList();
     final boostingSince = DateTime.tryParse(raw["premium_since"] as String? ?? "");
 
     (memberInstance as Member).updateMember(nickname, roles, boostingSince);
