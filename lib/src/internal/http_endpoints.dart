@@ -277,6 +277,7 @@ abstract class IHttpEndpoints {
   Future<IThreadListResultWrapper> fetchGuildActiveThreads(Snowflake guildId);
 
   /// Removes all embeds from given message
+  @Deprecated("Use MessageBuilder flags")
   Future<IMessage> suppressMessageEmbeds(Snowflake channelId, Snowflake messageId);
 
   /// Edits message with given id using [builder]
