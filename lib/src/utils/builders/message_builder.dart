@@ -8,10 +8,31 @@ import 'package:nyxx/src/core/message/message_time_stamp.dart';
 import 'package:nyxx/src/internal/interfaces/send.dart';
 import 'package:nyxx/src/internal/interfaces/mentionable.dart';
 import 'package:nyxx/src/typedefs.dart';
+import 'package:nyxx/src/utils/builders/builder.dart';
 import 'package:nyxx/src/utils/enum.dart';
 import 'package:nyxx/src/utils/builders/attachment_builder.dart';
 import 'package:nyxx/src/utils/builders/embed_builder.dart';
 import 'package:nyxx/src/utils/builders/reply_builder.dart';
+
+class MessageFlagBuilder implements Builder {
+  bool suppressNotifications = false;
+  bool suppressEmbeds = false;
+
+  @override
+  RawApiMap build() {
+    var bitset = 0;
+
+    if (suppressNotifications) {
+      bitset |= (1 << 12);
+    }
+
+    if (suppressEmbeds) {
+      bitset |= (1 << 2);
+    }
+
+    return {if (bitset > 0) "flags": bitset};
+  }
+}
 
 /// Allows to create pre built custom messages which can be passed to classes which inherits from [ISend].
 class MessageBuilder {
@@ -37,7 +58,11 @@ class MessageBuilder {
   /// You will be able to identify that message when receiving it through gateway
   String? nonce;
 
+  /// List of attachments to send with message
   List<AttachmentMetadataBuilder>? attachments;
+
+  /// Flags to attach to message
+  MessageFlagBuilder? flags;
 
   final _content = StringBuffer();
 
@@ -172,6 +197,7 @@ class MessageBuilder {
     allowedMentions ??= defaultAllowedMentions;
 
     return <String, dynamic>{
+      ...?flags?.build(),
       "content": content.toString(),
       if (embeds != null) "embeds": [for (final e in embeds!) e.build()],
       if (allowedMentions != null) "allowed_mentions": allowedMentions!.build(),

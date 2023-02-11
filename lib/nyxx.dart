@@ -182,7 +182,7 @@ export 'src/utils/builders/embed_field_builder.dart' show EmbedFieldBuilder;
 export 'src/utils/builders/embed_footer_builder.dart' show EmbedFooterBuilder;
 export 'src/utils/builders/guild_builder.dart' show GuildBuilder, RoleBuilder;
 export 'src/utils/builders/channel_builder.dart' show ChannelBuilder, TextChannelBuilder, VoiceChannelBuilder, ForumChannelBuilder;
-export 'src/utils/builders/message_builder.dart' show MessageBuilder, MessageDecoration;
+export 'src/utils/builders/message_builder.dart' show MessageBuilder, MessageDecoration, MessageFlagBuilder;
 export 'src/utils/builders/member_builder.dart' show MemberBuilder, MemberFlagsBuilder;
 export 'src/utils/builders/permissions_builder.dart' show PermissionOverrideBuilder, PermissionsBuilder;
 export 'src/utils/builders/presence_builder.dart' show PresenceBuilder, ActivityBuilder;
