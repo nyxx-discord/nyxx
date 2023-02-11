@@ -117,7 +117,6 @@ abstract class IMessage implements SnowflakeEntity, Disposable, Convertable<Mess
   Future<void> crossPost();
 
   /// Suppresses embeds in message. Can be executed in other users messages.
-  @Deprecated("Use MessageBuilder flags")
   Future<IMessage> suppressEmbeds();
 
   /// Edits the message.
