@@ -248,7 +248,9 @@ class Member extends SnowflakeEntity implements IMember {
       this.nickname = nickname;
     }
 
-    if (this.roles != roles) {
+    // Check if new collection has different length (removing adding new roles) or if every role is same
+    // as in old collection (removing and adding new roles at the same time)
+    if (this.roles.length != roles.length || !this.roles.every((role) => roles.contains(role.id))) {
       this.roles = roles.map((e) => RoleCacheable(client, e, guild));
     }
 
