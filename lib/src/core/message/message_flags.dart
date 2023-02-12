@@ -29,6 +29,12 @@ class MessageFlags {
   /// This message is an Interaction Response and the bot is "thinking"
   bool get loading => PermissionsUtils.isApplied(raw, 1 << 7);
 
+  /// This message failed to mention some roles and add their members to the thread
+  bool get failedToMentionSomeRolesInThread => PermissionsUtils.isApplied(raw, 1 << 8);
+
+  /// This message will not trigger push and desktop notifications
+  bool get suppressNotifications => PermissionsUtils.isApplied(raw, 1 << 12);
+
   /// Creates an instance of [MessageFlags]
   MessageFlags(this.raw);
 }

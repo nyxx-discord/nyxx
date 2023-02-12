@@ -1,7 +1,6 @@
 import 'package:nyxx/src/core/snowflake.dart';
 import 'package:nyxx/src/typedefs.dart';
 import 'package:nyxx/src/utils/builders/builder.dart';
-import 'package:nyxx/src/core/user/member_flags.dart';
 
 class MemberBuilder implements Builder {
   /// Value to set user's nickname to
