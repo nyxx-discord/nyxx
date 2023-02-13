@@ -93,7 +93,7 @@ class ForumChannel extends GuildChannel implements IForumChannel {
 
   /// Creates an instance of [TextGuildChannel]
   ForumChannel(INyxx client, RawApiMap raw, [Snowflake? guildId]) : super(client, raw, guildId) {
-    availableTags = (raw['available_tags'] as List<dynamic>).cast<RawApiMap>().map((e) => ForumTag(e)).toList();
+    availableTags = (raw['available_tags'] as List<dynamic>? ?? []).cast<RawApiMap>().map((e) => ForumTag(e)).toList();
     forumChannelFlags = ForumChannelTags(raw['flags'] as int);
     defaultSortOrder = raw['default_sort_order'] == null ? null : ForumSortOrder._fromValue(raw['default_sort_order'] as int);
     defaultForumLayout = raw['default_sort_order'] == null ? ForumLayout.notSet : ForumLayout._fromValue(raw['default_sort_order'] as int);
