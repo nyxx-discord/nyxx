@@ -11,7 +11,7 @@ abstract class IThreadListResultWrapper {
   List<IThreadMember> get selfThreadMembers;
 
   /// Whether there are potentially additional threads that could be returned on a subsequent call
-  bool? get hasMore;
+  bool get hasMore;
 }
 
 /// Wrapper of threads listing results.
@@ -26,7 +26,7 @@ class ThreadListResultWrapper implements IThreadListResultWrapper {
 
   /// Whether there are potentially additional threads that could be returned on a subsequent call
   @override
-  late final bool? hasMore;
+  late final bool hasMore;
 
   /// Create an instance of [ThreadListResultWrapper]
   ThreadListResultWrapper(INyxx client, RawApiMap raw) {
@@ -37,6 +37,6 @@ class ThreadListResultWrapper implements IThreadListResultWrapper {
         ThreadMember(client, rawMember as RawApiMap, ChannelCacheable(client, threads.firstWhere((element) => element.id == rawMember["id"]).id))
     ];
 
-    hasMore = raw["has_more"] as bool?;
+    hasMore = (raw["has_more"] as bool?) ?? false;
   }
 }
