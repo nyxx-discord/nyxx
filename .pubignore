@@ -37,3 +37,4 @@ test-*.dart
 coverage.json
 lcov.info
 .github/
+.vscode/
