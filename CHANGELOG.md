@@ -1,3 +1,23 @@
+## 4.5.0
+__18.02.2023__
+
+- feature: New message types (#431)
+- feature: Thread members details (#432)
+- feature: Implement guild active threads endpoint (#434)
+- feature: Implement missing forum features (#433)
+- feature: ETF Encoding (#420)
+- feature: ETF encoding stability and payload compression (#421)
+- feature: Implement @silent messages (#442)
+- feature: Implement newly created and member fields in thread create event (#441)
+- feature: Add flags property to member (#437)
+- feature: Audit log create event (#436)
+- bug: hasMore is optional for guild.fetchActiveThreads() (#443)
+- bug: Mirror fix #352 to multipart request (#445)
+- bug: bug: Fix forum channel available tags deserialization
+- bug: Fix update member roles equality (#438)
+- documentation: Fix comments and nullability in examples (#416)
+- documentation: Add message intent to readme (#428)
+
 ## 4.5.0-dev.0
 __26.01.2023__
 
