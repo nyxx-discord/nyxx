@@ -1,3 +1,4 @@
+import 'package:nyxx/src/core/audit_logs/audit_log_entry.dart';
 import 'package:nyxx/src/core/channel/guild/text_guild_channel.dart';
 import 'package:nyxx/src/core/channel/text_channel.dart';
 import 'package:nyxx/src/core/guild/auto_moderation.dart';
@@ -652,5 +653,20 @@ class AutoModeratioActionExecutionEvent extends SnowflakeEntity implements IAuto
     content = raw['content'] as String;
     matchedKeyword = raw['matched_keyword'] != null ? raw['matched_keyword'] as String : null;
     matchedContent = raw['matched_content'] as String;
+  }
+}
+
+/// Sent when a guild audit log entry is created.
+/// This event is only sent to bots with the VIEW_AUDIT_LOG permission.
+abstract class IAuditLogEntryCreateEvent {
+  AuditLogEntry get auditLogEntry;
+}
+
+class AuditLogEntryCreateEvent implements IAuditLogEntryCreateEvent {
+  @override
+  late final AuditLogEntry auditLogEntry;
+
+  AuditLogEntryCreateEvent(RawApiMap raw, INyxx client) {
+    auditLogEntry = AuditLogEntry(raw['d'] as RawApiMap, client);
   }
 }

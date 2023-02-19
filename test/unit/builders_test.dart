@@ -170,7 +170,8 @@ main() {
     });
 
     test('embeds', () async {
-      final builder = MessageBuilder.embed(EmbedBuilder()..description = 'test1');
+      final builder = MessageBuilder.embed(EmbedBuilder()..description = 'test1')
+        ..flags = (MessageFlagBuilder()..suppressEmbeds = true..suppressNotifications = true);
       await builder.addEmbed((embed) => embed.description = 'test2');
 
       final result = builder.build();
@@ -182,7 +183,8 @@ main() {
             'embeds': [
               {'description': 'test1'},
               {'description': 'test2'}
-            ]
+            ],
+            'flags': 1 << 2 | 1 << 12
           }));
     });
 

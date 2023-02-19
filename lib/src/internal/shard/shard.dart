@@ -669,6 +669,10 @@ class Shard implements IShard {
         eventController.onAutoModerationActionExecutionController.add(AutoModeratioActionExecutionEvent(data, manager.connectionManager.client));
         break;
 
+      case 'GUILD_AUDIT_LOG_ENTRY_CREATE':
+        eventController.onAuditLogEntryCreateController.add(AuditLogEntryCreateEvent(data, manager.connectionManager.client));
+        break;
+
       default:
         if (manager.connectionManager.client.options.dispatchRawShardEvent) {
           manager.onRawEventController.add(RawEvent(this, data));

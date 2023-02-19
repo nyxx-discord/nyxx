@@ -37,6 +37,6 @@ class ThreadListResultWrapper implements IThreadListResultWrapper {
         ThreadMember(client, rawMember as RawApiMap, ChannelCacheable(client, threads.firstWhere((element) => element.id == rawMember["id"]).id))
     ];
 
-    hasMore = raw["has_more"] as bool;
+    hasMore = (raw["has_more"] as bool?) ?? false;
   }
 }
