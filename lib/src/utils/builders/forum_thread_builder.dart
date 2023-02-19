@@ -1,4 +1,7 @@
 import 'package:nyxx/src/core/channel/guild/forum/forum_tag.dart';
+import 'package:nyxx/src/core/message/emoji.dart';
+import 'package:nyxx/src/core/message/guild_emoji.dart';
+import 'package:nyxx/src/core/message/unicode_emoji.dart';
 import 'package:nyxx/src/core/snowflake.dart';
 import 'package:nyxx/src/typedefs.dart';
 import 'package:nyxx/src/utils/builders/builder.dart';
@@ -11,6 +14,27 @@ class ForumTagBuilder {
   ForumTagBuilder(this.id);
 
   factory ForumTagBuilder.fromForumTag(ForumTag forumTag) => ForumTagBuilder(forumTag.id);
+}
+
+class AvailableTagBuilder implements Builder {
+  /// The name of the tag (0-20 characters)
+  String name;
+
+  /// Whether this tag can only be added to or removed from threads by a member with the MANAGE_THREADS permission
+  bool moderated;
+
+  /// Emoji for tag
+  IEmoji? emoji;
+
+  AvailableTagBuilder(this.name, this.moderated);
+
+  @override
+  RawApiMap build() => {
+        "name": name,
+        "moderated": moderated,
+        if (emoji is UnicodeEmoji) "emoji_name": emoji!.encodeForAPI(),
+        if (emoji is BaseGuildEmoji) "emoji_name": (emoji as BaseGuildEmoji).id
+      };
 }
 
 class ForumThreadBuilder implements Builder {

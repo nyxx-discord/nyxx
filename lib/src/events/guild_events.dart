@@ -1,3 +1,4 @@
+import 'package:nyxx/src/core/audit_logs/audit_log_entry.dart';
 import 'package:nyxx/src/core/channel/guild/text_guild_channel.dart';
 import 'package:nyxx/src/core/channel/text_channel.dart';
 import 'package:nyxx/src/core/guild/auto_moderation.dart';
@@ -175,8 +176,8 @@ class GuildMemberUpdateEvent implements IGuildMemberUpdateEvent {
       return;
     }
 
-    final nickname = raw["d"]["nickname"] as String?;
-    final roles = (raw["d"]["roles"] as RawApiList).map((str) => Snowflake(str)).toList();
+    final nickname = raw["d"]["nick"] as String?;
+    final roles = (raw["d"]["roles"] as RawApiList).map(Snowflake.new).toList();
     final boostingSince = DateTime.tryParse(raw["premium_since"] as String? ?? "");
 
     (memberInstance as Member).updateMember(nickname, roles, boostingSince);
@@ -564,8 +565,8 @@ class WebhookUpdateEvent implements IWebhookUpdateEvent {
   late final Cacheable<Snowflake, IGuild> guild;
 
   WebhookUpdateEvent(RawApiMap raw, INyxx client) {
-    channel = ChannelCacheable(client, Snowflake(raw['d']['channel_id'] as String));
-    guild = GuildCacheable(client, Snowflake(raw['d']['guild_id'] as String));
+    channel = ChannelCacheable(client, Snowflake(raw['d']['channel_id']));
+    guild = GuildCacheable(client, Snowflake(raw['d']['guild_id']));
   }
 }
 
@@ -645,12 +646,27 @@ class AutoModeratioActionExecutionEvent extends SnowflakeEntity implements IAuto
     guild = GuildCacheable(client, Snowflake(raw['guild_id'] as String));
     action = ActionStructure(raw['action'] as RawApiMap, client);
     triggerType = TriggerTypes.fromValue(raw['rule_trigger_type'] as int);
-    member = MemberCacheable(client, Snowflake(raw['user_id'] as String), guild);
+    member = MemberCacheable(client, Snowflake(raw['user_id']), guild);
     channel = raw['channel_id'] != null ? ChannelCacheable(client, Snowflake(raw['channel_id'])) : null;
     message = raw['message_id'] != null && channel != null ? MessageCacheable(client, Snowflake(raw['message_id']), channel!) : null;
     alertSystemMessage = raw['alert_system_message_id'] != null ? Snowflake(raw['alert_system_message_id']) : null;
     content = raw['content'] as String;
     matchedKeyword = raw['matched_keyword'] != null ? raw['matched_keyword'] as String : null;
     matchedContent = raw['matched_content'] as String;
+  }
+}
+
+/// Sent when a guild audit log entry is created.
+/// This event is only sent to bots with the VIEW_AUDIT_LOG permission.
+abstract class IAuditLogEntryCreateEvent {
+  AuditLogEntry get auditLogEntry;
+}
+
+class AuditLogEntryCreateEvent implements IAuditLogEntryCreateEvent {
+  @override
+  late final AuditLogEntry auditLogEntry;
+
+  AuditLogEntryCreateEvent(RawApiMap raw, INyxx client) {
+    auditLogEntry = AuditLogEntry(raw['d'] as RawApiMap, client);
   }
 }

@@ -26,6 +26,15 @@ class MessageType extends IEnum<int> {
   static const MessageType threadStarterMessage = MessageType._create(21);
   static const MessageType guildInviteRemainder = MessageType._create(22);
   static const MessageType contextMenuCommand = MessageType._create(23);
+  static const MessageType autoModerationAction = MessageType._create(24);
+  static const MessageType roleSubscriptionPurchase = MessageType._create(25);
+  static const MessageType interactionPremiumUpsell = MessageType._create(26);
+  static const MessageType stageStart = MessageType._create(27);
+  static const MessageType stageEnd = MessageType._create(28);
+  static const MessageType stageSpeaker = MessageType._create(29);
+  static const MessageType stageRaiseHand = MessageType._create(30);
+  static const MessageType stageTopic = MessageType._create(31);
+  static const MessageType guildApplicationPremiumSubscription = MessageType._create(32);
 
   /// Creates instance of [MessageType] from [value].
   MessageType.from(int? value) : super(value ?? 0);

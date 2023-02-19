@@ -77,6 +77,23 @@ class ThreadMember extends SnowflakeEntity implements IThreadMember {
   }
 }
 
+abstract class IThreadMemberWithMember extends IThreadMember {
+  /// Fetched member from API
+  IMember get fetchedMember;
+}
+
+class ThreadMemberWithMember extends ThreadMember implements IThreadMember {
+  late final Member fetchedMember;
+
+  ThreadMemberWithMember(INyxx client, RawApiMap raw, Cacheable<Snowflake, IGuild> guild) : super(client, raw, guild) {
+    fetchedMember = Member(client, raw['member'] as RawApiMap, guild.id);
+
+    if (client.cacheOptions.memberCachePolicyLocation.http && client.cacheOptions.memberCachePolicy.canCache(fetchedMember)) {
+      fetchedMember.guild.getFromCache()?.members[member.id] = fetchedMember;
+    }
+  }
+}
+
 abstract class IThreadChannel implements MinimalGuildChannel, ITextChannel {
   /// Owner of the thread
   Cacheable<Snowflake, IMember> get owner;
@@ -107,10 +124,12 @@ abstract class IThreadChannel implements MinimalGuildChannel, ITextChannel {
   bool get invitable;
 
   /// Fetches from API current list of member that has access to that thread
-  Stream<IThreadMember> fetchMembers();
+  /// Returns [IThreadMemberWithMember] when [withMembers] set to true
+  Stream<IThreadMember> fetchMembers({bool withMembers = false, Snowflake? after, int limit = 100});
 
   /// Fetches thread member from the API
-  Future<IThreadMember> fetchMember(Snowflake memberId);
+  /// Returns [IThreadMemberWithMember] when [withMembers] set to true
+  Future<IThreadMember> fetchMember(Snowflake memberId, {bool withMembers = false});
 
   /// Leaves this thread channel
   Future<void> leaveThread();
@@ -183,10 +202,12 @@ class ThreadChannel extends MinimalGuildChannel implements IThreadChannel {
 
   /// Fetches from API current list of member that has access to that thread
   @override
-  Stream<IThreadMember> fetchMembers() => client.httpEndpoints.fetchThreadMembers(id, guild.id);
+  Stream<IThreadMember> fetchMembers({bool withMembers = false, Snowflake? after, int limit = 100}) =>
+      client.httpEndpoints.fetchThreadMembers(id, guild.id, withMembers: withMembers, after: after, limit: limit);
 
   @override
-  Future<IThreadMember> fetchMember(Snowflake memberId) => client.httpEndpoints.fetchThreadMember(id, guild.id, memberId);
+  Future<IThreadMember> fetchMember(Snowflake memberId, {bool withMembers = false}) =>
+      client.httpEndpoints.fetchThreadMember(id, guild.id, memberId, withMembers: withMembers);
 
   @override
   Future<void> bulkRemoveMessages(Iterable<SnowflakeEntity> messages) => client.httpEndpoints.bulkRemoveMessages(id, messages);

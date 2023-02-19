@@ -1,6 +1,12 @@
-import 'package:nyxx/nyxx.dart';
+import 'package:nyxx/src/core/allowed_mentions.dart';
+import 'package:nyxx/src/core/channel/channel.dart';
+import 'package:nyxx/src/core/message/message.dart';
+import 'package:nyxx/src/core/user/member.dart';
+import 'package:nyxx/src/internal/cache/cache_policy.dart';
+import 'package:nyxx/src/internal/constants.dart';
 import 'package:nyxx/src/nyxx.dart';
 import 'package:nyxx/src/internal/shard/shard.dart';
+import 'package:nyxx/src/utils/builders/presence_builder.dart';
 import 'package:retry/retry.dart';
 
 /// Options for configuring cache. Allows to specify where and which entities should be cached and preserved in cache
@@ -79,6 +85,14 @@ class ClientOptions {
   /// errors (e.g failed host lookup) which can occur if there is no internet.
   RetryOptions httpRetryOptions;
 
+  /// The encoding protocol to use when receiving/sending payloads.
+  Encoding payloadEncoding;
+
+  /// Enable payload compression.
+  /// This cannot be used with the [Encoding.etf] encoding.
+  /// This will also be disabled if [compressedGatewayPayloads] is used.
+  bool payloadCompression;
+
   /// Makes a new `ClientOptions` object.
   ClientOptions({
     this.allowedMentions,
@@ -94,6 +108,8 @@ class ClientOptions {
     this.shardIds,
     this.shardReconnectOptions = const RetryOptions(),
     this.httpRetryOptions = const RetryOptions(),
+    this.payloadEncoding = Encoding.json,
+    this.payloadCompression = false,
   });
 }
 

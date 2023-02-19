@@ -14,6 +14,7 @@ import 'package:nyxx/src/internal/interfaces/mentionable.dart';
 import 'package:nyxx/src/typedefs.dart';
 import 'package:nyxx/src/utils/builders/member_builder.dart';
 import 'package:nyxx/src/utils/permissions.dart';
+import 'package:nyxx/src/core/user/member_flags.dart';
 
 abstract class IMember implements SnowflakeEntity, Mentionable {
   /// Reference to client
@@ -65,6 +66,9 @@ abstract class IMember implements SnowflakeEntity, Mentionable {
   /// True if member is currently pending by [Membership Screening](https://discord.com/developers/docs/resources/guild#membership-screening-object).
   /// When completed, an [IGuildMemberUpdateEvent] will be fired with [isPending] set to `false`.
   bool get isPending;
+
+  /// [Guild member flags](https://discord.com/developers/docs/resources/guild#guild-member-object-guild-member-flags)
+  IMemberFlags get flags;
 
   /// Returns url to member avatar
   String? avatarURL({String format = "webp"});
@@ -171,6 +175,9 @@ class Member extends SnowflakeEntity implements IMember {
   @override
   late final bool isPending;
 
+  @override
+  late final IMemberFlags flags;
+
   /// Creates an instance of [Member]
   Member(this.client, RawApiMap raw, Snowflake guildId) : super(Snowflake(raw["user"]["id"])) {
     nickname = raw["nick"] as String?;
@@ -195,6 +202,7 @@ class Member extends SnowflakeEntity implements IMember {
     }
 
     isPending = (raw['pending'] as bool?) ?? false;
+    flags = MemberFlags(raw['flags'] as int);
   }
 
   /// Returns url to member avatar
@@ -240,7 +248,9 @@ class Member extends SnowflakeEntity implements IMember {
       this.nickname = nickname;
     }
 
-    if (this.roles != roles) {
+    // Check if new collection has different length (removing adding new roles) or if every role is same
+    // as in old collection (removing and adding new roles at the same time)
+    if (this.roles.length != roles.length || !this.roles.every((role) => roles.contains(role.id))) {
       this.roles = roles.map((e) => RoleCacheable(client, e, guild));
     }
 

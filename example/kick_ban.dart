@@ -29,9 +29,8 @@ void main() {
   bot.eventsWs.onMessageReceived.listen((IMessageReceivedEvent e) async {
     // Check if message content equals "!ban"
     if (e.message.content == "!ban") {
-
-      // Make sure that message was sent in guild not im dm, because we cant add roles in dms
-      if (e.message.guild != null) {
+      // Make sure that the message was sent in a guild and not in a dm, because we cant ban people in dms
+      if (e.message.guild == null) {
         return;
       }
 
@@ -47,8 +46,8 @@ void main() {
 
     // Check if message content equals "!kick"
     if (e.message.content == "!kick") {
-      // Make sure that message was sent in guild not im dm, because we cant add roles in dms
-      if (e.message.guild != null) {
+      // Make sure that the message was sent in a guild and not in a dm, because we cant kick people in dms
+      if (e.message.guild == null) {
         return;
       }
 
