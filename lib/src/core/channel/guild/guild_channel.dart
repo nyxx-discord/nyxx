@@ -32,7 +32,7 @@ abstract class IGuildChannel implements IMinimalGuildChannel {
   /// Returns effective permissions for [role] to this channel including channel overrides.
   Future<IPermissions> effectivePermissionForRole(IRole role);
 
-  /// Fetches and returns all channel"s [Invite]s
+  /// Fetches and returns all channel's [Invite]s
   ///
   /// ```
   /// var invites = await chan.fetchChannelInvites();
@@ -50,10 +50,24 @@ abstract class IGuildChannel implements IMinimalGuildChannel {
   /// Throws if [entity] isn't [User] or [Role]
   Future<void> deleteChannelPermission(SnowflakeEntity entity, {String? auditReason});
 
-  /// Creates new [IInvite] for [IChannel] and returns it"s instance
+  /// Creates new [IInvite] for [IChannel] and returns it's instance.
+  ///
+  /// Requires the `CREATE_INSTANT_INVITE` permission.
+  ///
+  /// [maxAge] in seconds can be between 0 and 604800 (7 days).
+  /// If set to 0, the invite will never expire. The default is 24 hours.
+  ///
+  /// [maxUses] can be between 0 and 100. If set to 0, the invite will have
+  /// unlimited uses. The default is 0 (unlimited).
+  ///
+  /// [temporary] determines whether this invite only grants temporary
+  /// membership.
+  ///
+  /// If [unique] is true, Discord won't try to reuse a similar invite and will
+  /// instead always generate a new invite in the request.
   ///
   /// ```
-  /// var invite = await channel.createInvite(maxUses: 2137);
+  /// var invite = await channel.createInvite(maxUses: 100);
   /// ```
   Future<IInvite> createInvite({int? maxAge, int? maxUses, bool? temporary, bool? unique, String? auditReason});
 }
@@ -132,7 +146,7 @@ abstract class GuildChannel extends MinimalGuildChannel implements IGuildChannel
     return Permissions(permissions);
   }
 
-  /// Fetches and returns all channel"s [Invite]s
+  /// Fetches and returns all channel's [Invite]s
   ///
   /// ```
   /// var invites = await chan.getChannelInvites();
@@ -157,10 +171,24 @@ abstract class GuildChannel extends MinimalGuildChannel implements IGuildChannel
   Future<void> deleteChannelPermission(SnowflakeEntity entity, {String? auditReason}) =>
       client.httpEndpoints.deleteChannelPermission(id, entity, auditReason: auditReason);
 
-  /// Creates new [Invite] for [IChannel] and returns it"s instance
+  /// Creates new [Invite] for [IChannel] and returns it's instance.
+  ///
+  /// Requires the `CREATE_INSTANT_INVITE` permission.
+  ///
+  /// [maxAge] in seconds can be between 0 and 604800 (7 days).
+  /// If set to 0, the invite will never expire. The default is 24 hours.
+  ///
+  /// [maxUses] can be between 0 and 100. If set to 0, the invite will have
+  /// unlimited uses. The default is 0 (unlimited).
+  ///
+  /// [temporary] determines whether this invite only grants temporary
+  /// membership.
+  ///
+  /// If [unique] is true, Discord won't try to reuse a similar invite and will
+  /// instead always generate a new invite in the request.
   ///
   /// ```
-  /// var invite = await channel.createInvite(maxUses: 2137);
+  /// var invite = await channel.createInvite(maxUses: 100);
   /// ```
   @override
   Future<IInvite> createInvite({int? maxAge, int? maxUses, bool? temporary, bool? unique, String? auditReason}) =>
