@@ -674,7 +674,9 @@ class Shard implements IShard {
         break;
 
       default:
-        logger.severe("UNKNOWN GATEWAY EVENT: $data");
+        if (!manager.connectionManager.client.options.dispatchRawShardEvent) {
+          logger.severe("UNKNOWN GATEWAY EVENT: $data");
+        }
     }
 
     if (manager.connectionManager.client.options.dispatchRawShardEvent) {
