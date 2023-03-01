@@ -674,11 +674,13 @@ class Shard implements IShard {
         break;
 
       default:
-        if (manager.connectionManager.client.options.dispatchRawShardEvent) {
-          manager.onRawEventController.add(RawEvent(this, data));
-        } else {
-          logger.severe("UNKNOWN OPCODE: $data");
+        if (!manager.connectionManager.client.options.dispatchRawShardEvent) {
+          logger.severe("UNKNOWN GATEWAY EVENT: $data");
         }
+    }
+
+    if (manager.connectionManager.client.options.dispatchRawShardEvent) {
+      manager.onRawEventController.add(RawEvent(this, data));
     }
   }
 
