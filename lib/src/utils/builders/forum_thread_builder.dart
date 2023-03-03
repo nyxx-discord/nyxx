@@ -42,7 +42,7 @@ class ForumThreadBuilder implements Builder {
   String name;
 
   /// First message in thread
-  MessageBuilder message;
+  MessageBuilder? message;
 
   /// Amount of seconds a user has to wait before sending another message (0-21600);
   /// bots, as well as users with the permission manage_messages, manage_thread, or manage_channel, are unaffected
@@ -55,8 +55,8 @@ class ForumThreadBuilder implements Builder {
   Iterable<ForumTagBuilder>? appliedTags;
 
   ForumThreadBuilder(
-    this.name,
-    this.message, {
+    this.name, {
+    this.message,
     this.appliedTags,
     this.archiveAfter,
     this.rateLimitPerUser,
@@ -66,7 +66,7 @@ class ForumThreadBuilder implements Builder {
   RawApiMap build() {
     return {
       "name": name,
-      "message": message.build(),
+      if (message != null) "message": message!.build(),
       if (archiveAfter != null) "auto_archive_duration": archiveAfter!.value,
       if (rateLimitPerUser != null) 'rate_limit_per_user': rateLimitPerUser!,
       if (appliedTags != null) 'applied_tags': appliedTags!.map((e) => e.id.toString()).toList()

@@ -23,10 +23,18 @@ void main() {
       e.message.channel.sendMessage(MessageBuilder.content(IBaseGuildEmoji.fromId(Snowflake(502563517774299156), bot).formatForMessage()));
     }
 
-    print(await (await e.message.guild?.getOrDownload())! .getBans().toList());
+    print(await (await e.message.guild?.getOrDownload())!.getBans().toList());
 
     if (e.message.content == "!create-thread") {
-      bot.httpEndpoints.startForumThread(Snowflake(961916452967944223), ForumThreadBuilder('test', MessageBuilder.content('this is test content <@${e.message.author.id}>')));
+      bot.httpEndpoints.startForumThread(
+        Snowflake(961916452967944223),
+        ForumThreadBuilder(
+          'test',
+          message: MessageBuilder.content(
+            'this is test content <@${e.message.author.id}>',
+          ),
+        ),
+      );
     }
   });
 }
