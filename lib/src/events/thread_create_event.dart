@@ -36,3 +36,28 @@ class ThreadCreateEvent implements IThreadCreateEvent {
     }
   }
 }
+
+abstract class IThreadUpdateEvent {
+  /// The thread that was just updated
+  IThreadChannel get thread;
+
+  /// The thread as it was before it was updated, if it was cached.
+  IThreadChannel? get oldThread;
+}
+
+class ThreadUpdateEvent implements IThreadUpdateEvent {
+  @override
+  late final IThreadChannel thread;
+
+  @override
+  late final IThreadChannel? oldThread;
+
+  ThreadUpdateEvent(RawApiMap raw, INyxx client) {
+    thread = ThreadChannel(client, raw["d"] as RawApiMap);
+    oldThread = client.channels[thread.id] as IThreadChannel?;
+
+    if (client.cacheOptions.channelCachePolicyLocation.event && client.cacheOptions.channelCachePolicy.canCache(thread)) {
+      client.channels[thread.id] = thread;
+    }
+  }
+}

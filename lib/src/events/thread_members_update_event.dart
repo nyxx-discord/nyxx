@@ -66,3 +66,21 @@ class ThreadMembersUpdateEvent implements IThreadMembersUpdateEvent {
     ];
   }
 }
+
+abstract class IThreadMemberUpdateEvent {
+  /// The current user's thread member that was updated.
+  IThreadMember get member;
+}
+
+class ThreadMemberUpdateEvent implements IThreadMemberUpdateEvent {
+  @override
+  late final ThreadMember member;
+
+  ThreadMemberUpdateEvent(RawApiMap raw, INyxx client) {
+    member = ThreadMember(
+      client,
+      raw,
+      GuildCacheable(client, Snowflake(raw['guild_id'])),
+    );
+  }
+}

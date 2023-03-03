@@ -171,7 +171,9 @@ main() {
 
     test('embeds', () async {
       final builder = MessageBuilder.embed(EmbedBuilder()..description = 'test1')
-        ..flags = (MessageFlagBuilder()..suppressEmbeds = true..suppressNotifications = true);
+        ..flags = (MessageFlagBuilder()
+          ..suppressEmbeds = true
+          ..suppressNotifications = true);
       await builder.addEmbed((embed) => embed.description = 'test2');
 
       final result = builder.build();
@@ -228,7 +230,7 @@ main() {
     });
 
     test("ForumThreadBuilder", () {
-      final builder = ForumThreadBuilder("test", MessageBuilder.content("test"));
+      final builder = ForumThreadBuilder("test", message: MessageBuilder.content("test"));
 
       expect(
           builder.build(),
