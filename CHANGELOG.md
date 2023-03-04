@@ -1,3 +1,12 @@
+## 5.0.0
+__04.03.2023__
+
+- feature: Add named arguments anywhere we can (#396)
+- feature: Make CDN urls more reliable (#373)
+- feature: Dispatch raw events (#447)
+- feature: Implement missing thread features (#429)
+- feature:  Add avatar decorations to cdn endpoints (#410)
+
 ## 4.5.0
 __18.02.2023__
 
