@@ -97,9 +97,6 @@ abstract class IPermissions implements Convertable<PermissionsBuilder> {
   /// True if user can manage webhooks.
   bool get manageWebhooks;
 
-  @Deprecated('Use "manageEmojisAndStickers" instead')
-  bool get manageEmojis;
-
   /// Allows management and editing of emojis and stickers.
   bool get manageEmojisAndStickers;
 
@@ -258,10 +255,6 @@ class Permissions implements IPermissions {
   /// True if user can manage webhooks.
   @override
   bool get manageWebhooks => PermissionsUtils.isApplied(raw, PermissionsConstants.manageWebhooks);
-
-  @Deprecated('Use "manageEmojisAndStickers" instead')
-  @override
-  bool get manageEmojis => manageEmojisAndStickers;
 
   @override
   bool get manageEmojisAndStickers => PermissionsUtils.isApplied(raw, PermissionsConstants.manageEmojisAndStickers);

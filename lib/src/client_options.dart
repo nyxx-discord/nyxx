@@ -55,10 +55,6 @@ class ClientOptions {
   /// Allows to receive compressed payloads from gateway
   bool compressedGatewayPayloads;
 
-  /// Enables dispatching of guild subscription events (presence and typing events)
-  @Deprecated('No longer has any effect, use intents instead.')
-  bool guildSubscriptions;
-
   /// Initial bot presence
   PresenceBuilder? initialPresence;
 
@@ -100,7 +96,6 @@ class ClientOptions {
     this.messageCacheSize = 100,
     this.largeThreshold = 50,
     this.compressedGatewayPayloads = true,
-    this.guildSubscriptions = true,
     this.initialPresence,
     this.shutdownHook,
     this.shutdownShardHook,

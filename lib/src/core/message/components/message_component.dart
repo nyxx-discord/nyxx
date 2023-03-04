@@ -19,10 +19,6 @@ class ComponentType extends IEnum<int> {
   static const ComponentType button = ComponentType._create(2);
 
   /// Select menu for picking from defined text options.
-  @Deprecated('Use "multiSelect" instead')
-  static const ComponentType select = multiSelect;
-
-  /// Select menu for picking from defined text options.
   static const ComponentType multiSelect = ComponentType._create(3);
 
   /// Text input object.

@@ -137,10 +137,6 @@ class PermissionsBuilder extends Builder {
   /// True if user can manage webhooks.
   bool? manageWebhooks;
 
-  /// Allows management and editing of emojis.
-  @Deprecated('Use "manageEmojisAndStickers" instead')
-  bool? manageEmojis;
-
   /// Allows management and editing of emojis & stickers.
   bool? manageEmojisAndStickers;
 
@@ -182,7 +178,6 @@ class PermissionsBuilder extends Builder {
     this.embedLinks,
     this.kickMembers,
     this.manageChannels,
-    @Deprecated('Use "manageEmojisAndStickers" instead') this.manageEmojis,
     this.manageEmojisAndStickers,
     this.manageEvents,
     this.manageGuild,

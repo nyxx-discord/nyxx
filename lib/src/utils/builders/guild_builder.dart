@@ -12,10 +12,6 @@ class GuildBuilder extends Builder {
   /// Name of Guild
   final String name;
 
-  /// Voice region id
-  @Deprecated('GuildBuilder.region is deprecated, consider using VoiceChannelBuilder.rtcRegion instead')
-  String? region;
-
   /// The 128x128 icon for the guild
   AttachmentBuilder? icon;
 
@@ -60,7 +56,6 @@ class GuildBuilder extends Builder {
     this.defaultMessageNotifications,
     this.explicitContentFilter,
     this.icon,
-    @Deprecated('GuildBuilder.region is deprecated, consider using VoiceChannelBuilder.rtcRegion instead') this.region,
     this.roles,
     this.systemChannelFlags,
     this.systemChannelId,

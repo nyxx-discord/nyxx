@@ -57,9 +57,6 @@ class PermissionsConstants {
   /// Allows the usage of custom emojis from other servers.
   static const int useExternalEmojis = 1 << 18;
 
-  @Deprecated('Use "useExternalEMojis" instead')
-  static const int externalEmojis = useExternalEmojis;
-
   /// Allows for viewing guild insights.
   static const int viewGuildInsights = 1 << 19;
 
@@ -87,9 +84,6 @@ class PermissionsConstants {
   /// Allows for modification of other users nicknames.
   static const int manageNicknames = 1 << 27;
 
-  @Deprecated('Use "manageRoles" instead')
-  static const int manageRolesOrPermissions = manageRoles;
-
   /// Allows management and editing of roles.
   static const int manageRoles = 1 << 28;
 
@@ -97,9 +91,6 @@ class PermissionsConstants {
   static const int manageWebhooks = 1 << 29;
 
   static const int manageEmojisAndStickers = 1 << 30;
-
-  @Deprecated('Use "manageEmojisAndStickers" instead')
-  static const int manageEmojis = manageEmojisAndStickers;
 
   /// Allows members to use slash commands in text channels.
   static const int useSlashCommands = 1 << 31;
@@ -121,9 +112,6 @@ class PermissionsConstants {
 
   /// Allows the usage of custom stickers from other servers.
   static const int useExternalStickers = 1 << 37;
-
-  @Deprecated('Use "sendMessagesInThreads instead')
-  static const int sendMessagesInThread = sendMessagesInThreads;
 
   /// Allows to send messages in threads.
   static const int sendMessagesInThreads = 1 << 38;
