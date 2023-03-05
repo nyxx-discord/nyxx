@@ -1,8 +1,12 @@
 import 'package:nyxx/src/core/application/app_team_user.dart';
+import 'package:nyxx/src/nyxx.dart';
 import 'package:nyxx/src/typedefs.dart';
 
 /// Represent membership of user in app team
 abstract class IAppTeamMember {
+  /// Reference to [INyxx].
+  INyxx get client;
+
   /// Basic information of user
   IAppTeamUser get user;
 
@@ -20,9 +24,12 @@ class AppTeamMember implements IAppTeamMember {
   @override
   late final int membershipState;
 
+  @override
+  final INyxx client;
+
   /// Creates and instance of [AppTeamMember]
-  AppTeamMember(RawApiMap raw) {
-    user = AppTeamUser(raw["user"] as RawApiMap);
+  AppTeamMember(RawApiMap raw, this.client) {
+    user = AppTeamUser(raw["user"] as RawApiMap, client);
     membershipState = raw["membership_state"] as int;
   }
 }

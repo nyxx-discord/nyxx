@@ -52,29 +52,8 @@ abstract class IHttpEndpoints {
   /// Creates an OAuth2 URL with the specified permissions.
   String getApplicationInviteUrl(Snowflake applicationId, [int? permissions]);
 
-  /// Returns cdn url for given icon hash of role
-  String getRoleIconUrl(Snowflake roleId, String iconHash, String format, int size);
-
-  /// Returns cdn url for given [guildId] and [iconHash].
-  /// Requires to specify format and size of returned image.
-  /// Format can be webp, png. Size should be power of 2, eg. 512, 1024
-  String? getGuildIconUrl(Snowflake guildId, String? iconHash, String format, int size);
-
-  /// Returns cdn url for given [guildId] and [splashHash].
-  /// Requires to specify format and size of returned image.
-  /// Format can be webp, png. Size should be power of 2, eg. 512, 1024
-  String? getGuildSplashURL(Snowflake guildId, String? splashHash, String format, int size);
-
-  /// Returns discovery url for given [guildId] and [splashHash]. Allows to additionally specify [format] and [size] of returned image.
-  String? getGuildDiscoveryURL(Snowflake guildId, String? splashHash, {String format = "webp", int size = 128});
-
   /// Returns url to guild widget for given [guildId]. Additionally accepts [style] parameter.
   String getGuildWidgetUrl(Snowflake guildId, [String style = "shield"]);
-
-  /// Returns cnd url for given [guildId] and [bannerHash].
-  /// Requires to specify format and size of returned image.
-  /// Format can be webp, png. Size should be power of 2, eg. 512, 1024
-  String? getGuildBannerUrl(Snowflake guildId, String? bannerHash, {String? format, int? size});
 
   /// Allows to modify guild emoji.
   Future<BaseGuildEmoji> editGuildEmoji(Snowflake guildId, Snowflake emojiId, {String? name, List<Snowflake>? roles, AttachmentBuilder? avatarAttachment});
@@ -182,12 +161,6 @@ abstract class IHttpEndpoints {
 
   /// Returns all roles of guild
   Stream<IRole> fetchGuildRoles(Snowflake guildId);
-
-  /// Returns url to user avatar
-  String userAvatarURL(Snowflake userId, String? avatarHash, int discriminator, {String format = "webp", int size = 128});
-
-  /// Returns url to member avatar url
-  String memberAvatarURL(Snowflake memberId, Snowflake guildId, String avatarHash, {String format = "webp"});
 
   /// Fetches [User] object for given [userId]
   Future<IUser> fetchUser(Snowflake userId);
@@ -351,12 +324,6 @@ abstract class IHttpEndpoints {
   /// Fetches invite based on specified [code]
   Future<IInvite> fetchInvite(String code);
 
-  /// Returns url for sticker.
-  String stickerUrl(Snowflake stickerId, String extension);
-
-  /// Returns url for given [emojiId]
-  String emojiUrl(Snowflake emojiId);
-
   /// Creates and returns [DMChannel] for user with given [userId].
   Future<IDMChannel> createDMChannel(Snowflake userId);
 
@@ -417,9 +384,6 @@ abstract class IHttpEndpoints {
   /// Deletes [GuildSticker] for [Guild]
   Future<void> deleteGuildSticker(Snowflake guildId, Snowflake stickerId);
 
-  /// Returns url of user banner
-  String? userBannerURL(Snowflake userId, String? hash, {String? format, int? size});
-
   Stream<GuildEvent> fetchGuildEvents(Snowflake guildId, {bool withUserCount = false});
 
   Future<GuildEvent> createGuildEvent(Snowflake guildId, GuildEventBuilder builder);
@@ -474,52 +438,6 @@ class HttpEndpoints implements IHttpEndpoints {
     }
 
     return baseLink;
-  }
-
-  @override
-  String? getGuildIconUrl(Snowflake guildId, String? iconHash, String format, int size) {
-    if (iconHash != null) {
-      return "https://cdn.${Constants.cdnHost}/icons/$guildId/$iconHash.$format?size=$size";
-    }
-
-    return null;
-  }
-
-  @override
-  String? getGuildSplashURL(Snowflake guildId, String? splashHash, String format, int size) {
-    if (splashHash != null) {
-      return "https://cdn.${Constants.cdnHost}/splashes/$guildId/$splashHash.$format?size=$size";
-    }
-
-    return null;
-  }
-
-  @override
-  String? getGuildDiscoveryURL(Snowflake guildId, String? splashHash, {String format = "webp", int size = 128}) {
-    if (splashHash != null) {
-      return "https://cdn.${Constants.cdnHost}/discovery-splashes/$guildId/$splashHash.$format?size=$size";
-    }
-
-    return null;
-  }
-
-  @override
-  String? getGuildBannerUrl(Snowflake guildId, String? bannerHash, {String? format, int? size}) {
-    if (bannerHash != null) {
-      var url = "${Constants.cdnUrl}/banners/$guildId/$bannerHash.";
-      if (format == null && bannerHash.startsWith('a_')) {
-        url += "gif";
-      } else {
-        url += format ?? "webp";
-      }
-
-      if (size != null) {
-        url += "?size=$size";
-      }
-
-      return url;
-    }
-    return null;
   }
 
   @override
@@ -714,7 +632,7 @@ class HttpEndpoints implements IHttpEndpoints {
       },
     ));
 
-    for (final obj in response.jsonBody) {
+    for (final obj in response.jsonBody as RawApiList) {
       yield Ban(obj as RawApiMap, client);
     }
   }
@@ -775,7 +693,7 @@ class HttpEndpoints implements IHttpEndpoints {
         ..invites(),
     ));
 
-    for (final raw in response.jsonBody) {
+    for (final raw in response.jsonBody as RawApiList) {
       yield Invite(raw as RawApiMap, client);
     }
   }
@@ -836,7 +754,7 @@ class HttpEndpoints implements IHttpEndpoints {
         ..regions(),
     ));
 
-    for (final raw in response.jsonBody) {
+    for (final raw in response.jsonBody as RawApiList) {
       yield VoiceRegion(raw as RawApiMap);
     }
   }
@@ -931,7 +849,7 @@ class HttpEndpoints implements IHttpEndpoints {
       queryParams: {"query": query, "limit": limit.toString()},
     ));
 
-    for (final RawApiMap memberData in response.jsonBody) {
+    for (final RawApiMap memberData in response.jsonBody as RawApiListOfMaps) {
       final member = Member(client, memberData, guildId);
 
       if (client.cacheOptions.memberCachePolicyLocation.http && client.cacheOptions.memberCachePolicy.canCache(member)) {
@@ -950,7 +868,7 @@ class HttpEndpoints implements IHttpEndpoints {
         ..webhooks(),
     ));
 
-    for (final raw in response.jsonBody) {
+    for (final raw in response.jsonBody as RawApiList) {
       yield Webhook(raw as RawApiMap, client);
     }
   }
@@ -966,18 +884,9 @@ class HttpEndpoints implements IHttpEndpoints {
         ..roles(),
     ));
 
-    for (final rawRole in response.jsonBody) {
+    for (final rawRole in response.jsonBody as RawApiList) {
       yield Role(client, rawRole as RawApiMap, guildId);
     }
-  }
-
-  @override
-  String userAvatarURL(Snowflake userId, String? avatarHash, int discriminator, {String format = "webp", int size = 128}) {
-    if (avatarHash != null) {
-      return "https://cdn.${Constants.cdnHost}/avatars/$userId/$avatarHash.$format?size=$size";
-    }
-
-    return "https://cdn.${Constants.cdnHost}/embed/avatars/${discriminator % 5}.png?size=$size";
   }
 
   @override
@@ -1023,7 +932,7 @@ class HttpEndpoints implements IHttpEndpoints {
 
     final bodyValues = response.jsonBody;
 
-    for (final val in bodyValues) {
+    for (final val in bodyValues as RawApiList) {
       yield InviteWithMeta(val as RawApiMap, client);
     }
   }
@@ -1143,7 +1052,7 @@ class HttpEndpoints implements IHttpEndpoints {
       queryParams: queryParams,
     ));
 
-    for (final val in response.jsonBody) {
+    for (final val in response.jsonBody as RawApiList) {
       yield Message(client, val as RawApiMap);
     }
   }
@@ -1508,12 +1417,6 @@ class HttpEndpoints implements IHttpEndpoints {
   }
 
   @override
-  String stickerUrl(Snowflake stickerId, String extension) => "https://cdn.${Constants.cdnHost}/stickers/$stickerId.$extension";
-
-  @override
-  String emojiUrl(Snowflake emojiId) => "https://cdn.discordapp.com/emojis/$emojiId.png";
-
-  @override
   Future<IDMChannel> createDMChannel(Snowflake userId) async {
     final response = await executeSafe(BasicRequest(
       HttpRoute()
@@ -1765,7 +1668,7 @@ class HttpEndpoints implements IHttpEndpoints {
         ..stickers(),
     ));
 
-    for (final rawSticker in response.jsonBody) {
+    for (final rawSticker in response.jsonBody as RawApiList) {
       yield GuildSticker(rawSticker as RawApiMap, client);
     }
   }
@@ -1785,42 +1688,10 @@ class HttpEndpoints implements IHttpEndpoints {
       HttpRoute()..stickerpacks(),
     ));
 
-    for (final rawSticker in response.jsonBody['sticker_packs']) {
+    for (final rawSticker in response.jsonBody['sticker_packs'] as RawApiList) {
       yield StickerPack(rawSticker as RawApiMap, client);
     }
   }
-
-  @override
-  String memberAvatarURL(Snowflake memberId, Snowflake guildId, String avatarHash, {String format = "webp"}) =>
-      "${Constants.cdnUrl}/guilds/$guildId/users/$memberId/avatars/$avatarHash.$format";
-
-  @override
-  @override
-  String? userBannerURL(Snowflake userId, String? hash, {String? format, int? size}) {
-    if (hash == null) {
-      return null;
-    }
-    var url = "${Constants.cdnUrl}/banners/$userId/$hash.";
-
-    if (format == null) {
-      if (hash.startsWith("a_")) {
-        url += "gif";
-      } else {
-        url += "webp";
-      }
-    } else {
-      url += format;
-    }
-
-    if (size != null) {
-      url += "?size=$size";
-    }
-
-    return url;
-  }
-
-  @override
-  String getRoleIconUrl(Snowflake roleId, String iconHash, String format, int size) => "${Constants.cdnUrl}/role-icons/$roleId/$iconHash.$format?size=$size";
 
   @override
   Future<IThreadMember> fetchThreadMember(Snowflake channelId, Snowflake guildId, Snowflake memberId, {bool withMembers = false}) async {

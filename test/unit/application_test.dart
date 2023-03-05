@@ -9,6 +9,7 @@ import '../mocks/nyxx_rest.mock.dart';
 const exampleAppTeamPayload = <String, dynamic>{
   "id": 567,
   "icon": 'example_icon_hash',
+  'name': 'this-is-app-team-name',
   'owner_user_id': 987654321,
   "members": [
     {
@@ -46,17 +47,19 @@ const exampleClientOAuth2ApplicationPayload = <String, dynamic>{
   },
   'description': "this is example description",
   'name': 'this-is-app-name',
-  'icon': null,
   'rpcOrigins': null,
   'id': 123456,
+  'verify_key': 'aaaaaabbbb',
+  'bot_public': false,
+  'bot_require_code_grant': false,
 };
 
 main() {
   test("test constructor AppTeam", () {
-    final resultEntity = AppTeam(exampleAppTeamPayload);
+    final resultEntity = AppTeam(exampleAppTeamPayload, NyxxRestMock());
 
     expect(resultEntity.ownerMember.user.id, equals(resultEntity.ownerId));
-    expect(resultEntity.teamIconUrl, equals("https://cdn.${Constants.cdnHost}/team-icons/567/example_icon_hash.png"));
+    expect(resultEntity.iconUrl(), equals("https://cdn.${Constants.cdnHost}/team-icons/567/example_icon_hash.webp"));
   });
 
   test("test constructor OAuth2Info", () {
@@ -70,8 +73,10 @@ main() {
 
     Map<String, dynamic> cloneExampleClientOAuth2ApplicationPayload = Map.from(exampleClientOAuth2ApplicationPayload);
     cloneExampleClientOAuth2ApplicationPayload['icon'] = 'test';
+    cloneExampleClientOAuth2ApplicationPayload['cover_image'] = 'test_cover';
 
     final resultEntityWithIcon = ClientOAuth2Application(cloneExampleClientOAuth2ApplicationPayload, NyxxRestMock());
-    expect(resultEntityWithIcon.iconUrl(), "https://cdn.discordapp.com/app-icons/123456/test.png?size=512");
+    expect(resultEntityWithIcon.iconUrl(), "https://cdn.discordapp.com/app-icons/123456/test.webp");
+    expect(resultEntityWithIcon.coverImageUrl(), 'https://cdn.discordapp.com/app-icons/123456/test_cover.webp');
   });
 }

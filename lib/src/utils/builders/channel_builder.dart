@@ -33,6 +33,15 @@ abstract class ChannelBuilder implements Builder {
   /// The channel's permission overwrites
   List<PermissionOverrideBuilder>? permissionOverrides;
 
+  ChannelBuilder._({
+    this.id,
+    this.name,
+    this.parentChannel,
+    this.permissionOverrides,
+    this.position,
+    this.type,
+  });
+
   @override
   RawApiMap build() => {
         if (name != null) "name": name,
@@ -63,6 +72,18 @@ class VoiceChannelBuilder extends ChannelBuilder {
   /// Channel voice region id, automatic when set to null
   String? rtcRegion = "";
 
+  VoiceChannelBuilder({
+    super.id,
+    super.name,
+    super.parentChannel,
+    super.permissionOverrides,
+    super.position,
+    this.bitrate,
+    this.rateLimitPerUser,
+    this.rtcRegion,
+    this.userLimit,
+  }) : super._();
+
   @override
   RawApiMap build() => {
         ...super.build(),
@@ -87,7 +108,15 @@ class TextChannelBuilder extends ChannelBuilder {
 
   VideoQualityMode? videoQualityMode;
 
-  TextChannelBuilder();
+  TextChannelBuilder({
+    super.id,
+    super.name,
+    super.parentChannel,
+    super.permissionOverrides,
+    super.position,
+    this.nsfw,
+    this.topic,
+  }) : super._();
   factory TextChannelBuilder.create(String name) {
     final builder = TextChannelBuilder();
     builder.name = name;

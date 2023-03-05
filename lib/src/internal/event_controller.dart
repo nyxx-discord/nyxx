@@ -11,6 +11,7 @@ import 'package:nyxx/src/events/ratelimit_event.dart';
 import 'package:nyxx/src/events/ready_event.dart';
 import 'package:nyxx/src/events/thread_create_event.dart';
 import 'package:nyxx/src/events/thread_deleted_event.dart';
+import 'package:nyxx/src/events/thread_list_sync_event.dart';
 import 'package:nyxx/src/events/thread_members_update_event.dart';
 import 'package:nyxx/src/events/typing_event.dart';
 import 'package:nyxx/src/events/user_update_event.dart';
@@ -237,6 +238,15 @@ abstract class IWebsocketEventController implements IRestEventController {
 
   /// Sent when a guild audit log entry is created.
   Stream<IAuditLogEntryCreateEvent> get onAuditLogEntryCreate;
+
+  /// Emitted when the thread member for the current user is updated in a guild.
+  Stream<IThreadMemberUpdateEvent> get onThreadMemberUpdate;
+
+  /// Emitted when a thread the user is in is updated.
+  Stream<IThreadUpdateEvent> get onThreadUpdate;
+
+  /// Sent when the thread list for a guild is synchronised.
+  Stream<IThreadListSyncEvent> get onThreadListSync;
 }
 
 /// A controller for all events.
@@ -290,6 +300,9 @@ class WebsocketEventController extends RestEventController implements IWebsocket
   late final StreamController<IWebhookUpdateEvent> onWebhookUpdateController;
   late final StreamController<IAutoModerationActionExecutionEvent> onAutoModerationActionExecutionController;
   late final StreamController<IAuditLogEntryCreateEvent> onAuditLogEntryCreateController;
+  late final StreamController<IThreadMemberUpdateEvent> onThreadMemberUpdateController;
+  late final StreamController<IThreadUpdateEvent> onThreadUpdateController;
+  late final StreamController<IThreadListSyncEvent> onThreadListSyncController;
 
   /// Emitted when a shard is disconnected from the websocket.
   @override
@@ -497,6 +510,15 @@ class WebsocketEventController extends RestEventController implements IWebsocket
   @override
   late final Stream<IAuditLogEntryCreateEvent> onAuditLogEntryCreate;
 
+  @override
+  late final Stream<IThreadMemberUpdateEvent> onThreadMemberUpdate;
+
+  @override
+  late final Stream<IThreadUpdateEvent> onThreadUpdate;
+
+  @override
+  late final Stream<IThreadListSyncEvent> onThreadListSync;
+
   final INyxxWebsocket _client;
 
   /// Makes a new `EventController`.
@@ -650,6 +672,15 @@ class WebsocketEventController extends RestEventController implements IWebsocket
 
     onAuditLogEntryCreateController = StreamController.broadcast();
     onAuditLogEntryCreate = onAuditLogEntryCreateController.stream;
+
+    onThreadMemberUpdateController = StreamController.broadcast();
+    onThreadMemberUpdate = onThreadMemberUpdateController.stream;
+
+    onThreadUpdateController = StreamController.broadcast();
+    onThreadUpdate = onThreadUpdateController.stream;
+
+    onThreadListSyncController = StreamController.broadcast();
+    onThreadListSync = onThreadListSyncController.stream;
   }
 
   @override
@@ -714,5 +745,9 @@ class WebsocketEventController extends RestEventController implements IWebsocket
     await onAutoModerationActionExecutionController.close();
 
     await onAuditLogEntryCreateController.close();
+
+    await onThreadMemberUpdateController.close();
+    await onThreadUpdateController.close();
+    await onThreadListSyncController.close();
   }
 }

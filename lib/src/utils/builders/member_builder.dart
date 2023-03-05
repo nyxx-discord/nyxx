@@ -24,6 +24,16 @@ class MemberBuilder implements Builder {
   /// The [flags](https://discord.com/developers/docs/resources/guild#guild-member-object-guild-member-flags) to add/remove from the member.
   MemberFlagsBuilder? flags;
 
+  MemberBuilder({
+    this.channel = const Snowflake.zero(),
+    this.deaf,
+    this.mute,
+    this.nick,
+    this.roles,
+    DateTime? timeoutUntil,
+    this.flags,
+  }) : timeoutUntil = timeoutUntil ?? DateTime.fromMicrosecondsSinceEpoch(0);
+
   @override
   RawApiMap build() => {
         if (nick != null) 'nick': nick,

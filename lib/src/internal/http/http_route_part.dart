@@ -13,3 +13,16 @@ class HttpRoutePart {
 
   HttpRoutePart(this.path, [this.params = const <HttpRouteParam>[]]);
 }
+
+/// Represents a static CDN HTTP route part.
+class CdnHttpRoutePart implements HttpRoutePart {
+  /// The unchanging part of this route part.
+  @override
+  final String path;
+
+  /// The parameters of this route. May change across invocations of this route.
+  @override
+  final List<CdnHttpRouteParam> params;
+
+  CdnHttpRoutePart(this.path, [this.params = const <CdnHttpRouteParam>[]]);
+}

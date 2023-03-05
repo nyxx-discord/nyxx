@@ -102,7 +102,7 @@ class ForumChannel extends GuildChannel implements IForumChannel {
       final rawDefaultEmoji = raw['default_reaction_emoji'] as RawApiMap;
 
       if (rawDefaultEmoji['emoji_id'] != null) {
-        defaultReactionEmoji = GuildEmojiPartial({'id': rawDefaultEmoji['emoji_id']});
+        defaultReactionEmoji = GuildEmojiPartial({'id': rawDefaultEmoji['emoji_id']}, client);
       } else {
         defaultReactionEmoji = UnicodeEmoji(rawDefaultEmoji['emoji_name'] as String);
       }

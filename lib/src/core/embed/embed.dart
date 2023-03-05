@@ -165,7 +165,7 @@ class Embed implements IEmbed {
 
     fields = [
       if (raw["fields"] != null)
-        for (var obj in raw["fields"]) EmbedField(obj as RawApiMap)
+        for (var obj in raw["fields"] as RawApiList) EmbedField(obj as RawApiMap)
     ];
   }
 

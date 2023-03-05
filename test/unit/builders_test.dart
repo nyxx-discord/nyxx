@@ -5,6 +5,7 @@ import 'package:nyxx/src/core/permissions/permissions.dart';
 import 'package:nyxx/src/core/snowflake.dart';
 import 'package:nyxx/src/core/user/presence.dart';
 import 'package:nyxx/src/internal/cache/cacheable.dart';
+import 'package:nyxx/src/utils/builders/attachment_builder.dart';
 import 'package:nyxx/src/utils/builders/auto_moderation_builder.dart';
 import 'package:nyxx/src/utils/builders/channel_builder.dart';
 import 'package:nyxx/src/utils/builders/embed_builder.dart';
@@ -35,12 +36,12 @@ main() {
   });
 
   test('StickerBuilder', () {
-    final builder = StickerBuilder()
+    final builder = StickerBuilder(file: AttachmentBuilder.bytes([], 'foo'))
       ..name = "this is name"
       ..description = "this is description"
       ..tags = "tags";
 
-    expect(builder.build(), equals({"name": "this is name", "description": "this is description", "tags": "tags"}));
+    expect(builder.build(), equals({"name": "this is name", "description": "this is description", "tags": "tags", 'file': 'data:image/png;base64,'}));
   });
 
   test("ReplyBuilder", () {
@@ -62,7 +63,7 @@ main() {
 
       final expectedResult = {
         'permission_overwrites': [
-          {'allow': "0", 'deny': "122406567679", 'id': '0', 'type': 0}
+          {'allow': "0", 'deny': "1649267441663", 'id': '0', 'type': 0}
         ],
         'type': 0,
         'name': 'test'
@@ -121,7 +122,7 @@ main() {
     expect(builder.build(), equals({"allow": "0", "deny": "0", 'id': '0', 'type': 0}));
 
     final fromBuilder = PermissionOverrideBuilder.from(0, Snowflake.zero(), Permissions.empty());
-    expect(fromBuilder.build(), equals({"allow": "0", "deny": "122406567679", 'id': '0', 'type': 0}));
+    expect(fromBuilder.build(), equals({"allow": "0", "deny": "1649267441663", 'id': '0', 'type': 0}));
     expect(fromBuilder.calculatePermissionValue(), equals(0));
 
     final ofBuilder = PermissionOverrideBuilder.of(MockMember(Snowflake.zero()))
@@ -170,7 +171,9 @@ main() {
 
     test('embeds', () async {
       final builder = MessageBuilder.embed(EmbedBuilder()..description = 'test1')
-        ..flags = (MessageFlagBuilder()..suppressEmbeds = true..suppressNotifications = true);
+        ..flags = (MessageFlagBuilder()
+          ..suppressEmbeds = true
+          ..suppressNotifications = true);
       await builder.addEmbed((embed) => embed.description = 'test2');
 
       final result = builder.build();
@@ -227,7 +230,7 @@ main() {
     });
 
     test("ForumThreadBuilder", () {
-      final builder = ForumThreadBuilder("test", MessageBuilder.content("test"));
+      final builder = ForumThreadBuilder("test", message: MessageBuilder.content("test"));
 
       expect(
           builder.build(),

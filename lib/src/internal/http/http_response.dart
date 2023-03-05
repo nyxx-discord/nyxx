@@ -101,9 +101,6 @@ abstract class IHttpResponseError implements IHttpResponse, Exception {
   /// Message why http request failed
   String get message;
 
-  @Deprecated('Use errorCode instead')
-  int get code;
-
   /// Error code of response
   ///
   /// If Discord sets its own status code, this can be found here. Otherwise, this is equal to [statusCode].
@@ -121,9 +118,6 @@ class HttpResponseError extends HttpResponse implements IHttpResponseError {
 
   @override
   int get errorCode => errorData?.errorCode ?? statusCode;
-
-  @override
-  int get code => errorCode;
 
   @override
   late final HttpErrorData? errorData;

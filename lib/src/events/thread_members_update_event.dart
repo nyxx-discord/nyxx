@@ -62,7 +62,25 @@ class ThreadMembersUpdateEvent implements IThreadMembersUpdateEvent {
 
     removedUsers = [
       if (data["removed_member_ids"] != null)
-        for (final removedUserId in data["removed_member_ids"]) UserCacheable(client, Snowflake(removedUserId))
+        for (final removedUserId in data["removed_member_ids"] as RawApiList) UserCacheable(client, Snowflake(removedUserId))
     ];
+  }
+}
+
+abstract class IThreadMemberUpdateEvent {
+  /// The current user's thread member that was updated.
+  IThreadMember get member;
+}
+
+class ThreadMemberUpdateEvent implements IThreadMemberUpdateEvent {
+  @override
+  late final ThreadMember member;
+
+  ThreadMemberUpdateEvent(RawApiMap raw, INyxx client) {
+    member = ThreadMember(
+      client,
+      raw,
+      GuildCacheable(client, Snowflake(raw['guild_id'])),
+    );
   }
 }

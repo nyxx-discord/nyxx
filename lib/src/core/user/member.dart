@@ -70,8 +70,9 @@ abstract class IMember implements SnowflakeEntity, Mentionable {
   /// [Guild member flags](https://discord.com/developers/docs/resources/guild#guild-member-object-guild-member-flags)
   IMemberFlags get flags;
 
-  /// Returns url to member avatar
-  String? avatarURL({String format = "webp"});
+  /// The member's avatar, represented as URL. With given [format] and [size].
+  /// If [animated] is set as `true`, if available, the url will be a gif, otherwise the [format] or fallback to "webp".
+  String? avatarUrl({String format = 'webp', int? size, bool animated = false});
 
   /// Bans the member and optionally deletes [deleteMessageDays] days worth of messages.
   Future<void> ban({int? deleteMessageDays, String? reason, String? auditReason});
@@ -189,7 +190,7 @@ class Member extends SnowflakeEntity implements IMember {
     avatarHash = raw["avatar"] as String?;
     timeoutUntil = raw['communication_disabled_until'] != null ? DateTime.parse(raw['communication_disabled_until'] as String) : null;
 
-    roles = [for (var id in raw["roles"]) RoleCacheable(client, Snowflake(id), guild)];
+    roles = [for (var id in raw["roles"] as RawApiList) RoleCacheable(client, Snowflake(id), guild)];
 
     joinedAt = DateTime.parse(raw["joined_at"] as String).toUtc();
 
@@ -207,12 +208,12 @@ class Member extends SnowflakeEntity implements IMember {
 
   /// Returns url to member avatar
   @override
-  String? avatarURL({String format = "webp"}) {
+  String? avatarUrl({String format = 'webp', int? size, bool animated = false}) {
     if (avatarHash == null) {
       return null;
     }
 
-    return client.httpEndpoints.memberAvatarURL(id, guild.id, avatarHash!, format: format);
+    return client.cdnHttpEndpoints.memberAvatar(guild.id, id, avatarHash!, format: format, size: size, animated: animated);
   }
 
   /// Bans the member and optionally deletes [deleteMessageDays] days worth of messages.

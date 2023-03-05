@@ -69,19 +69,14 @@ class GuildFeature extends IEnum<String> {
   static const GuildFeature welcomeScreenEnabled = GuildFeature._create("WELCOME_SCREEN_ENABLED");
 
   /// Guild has access to use commerce features (i.e. create store channels)
-  @Deprecated('''
-
-Discord no longer offers the ability to purchase a license to sell PC games.
-
-See https://support-dev.discord.com/hc/en-us/articles/6309018858647-Self-serve-Game-Selling-Deprecation for more information''')
+  /// Discord no longer offers the ability to purchase a license to sell PC games.
+  /// See https://support-dev.discord.com/hc/en-us/articles/6309018858647-Self-serve-Game-Selling-Deprecation for more information
   static const GuildFeature commerce = GuildFeature._create("COMMERCE");
 
-  /// Guild cannot be public
-  @Deprecated('No longer has meaning')
+  /// Guild cannot be public - No longer has meaning
   static const GuildFeature publicDisabled = GuildFeature._create("PUBLIC_DISABLED");
 
-  /// Guild is a Student Hub
-  @Deprecated("Was not documented but exists, this can be removed at any time")
+  /// Guild is a Student Hub - Was not documented but exists, this can be removed at any time
   static const GuildFeature studentHub = GuildFeature._create("HUB");
 
   /// Creates instance of [GuildFeature] from [value].

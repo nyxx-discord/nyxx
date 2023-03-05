@@ -33,7 +33,7 @@ class Constants {
   static const int apiVersion = 10;
 
   /// Version of Nyxx
-  static const String version = "4.5.0";
+  static const String version = "5.0.0";
 
   /// Url to Nyxx repo
   static const String repoUrl = "https://github.com/nyxx-discord/nyxx";
@@ -48,6 +48,17 @@ class Constants {
 
     return Uri.parse(uriString);
   }
+}
+
+class CdnConstants {
+  /// The allowed extensions for the CDN urls.
+  static const List<String> allowedExtensions = ['webp', 'png', 'gif', 'jpg', 'jpeg'];
+
+  /// The allowed extensions for the stickers.
+  static const List<String> allowedExtensionsForSickers = ['png', 'json'];
+
+  /// The allowed sizes.
+  static const List<int> allowedSizes = [16, 32, 48, 64, 80, 96, 128, 160, 240, 256, 320, 480, 512, 640, 1024, 1280, 1536, 2048, 3072, 4096];
 }
 
 /// The type of encoding to receive/send payloads to discord.

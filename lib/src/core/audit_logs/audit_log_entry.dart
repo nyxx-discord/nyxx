@@ -62,7 +62,7 @@ class AuditLogEntry extends SnowflakeEntity implements IAuditLogEntry {
 
     changes = [
       if (raw["changes"] != null)
-        for (var o in raw["changes"]) AuditLogChange(o as RawApiMap)
+        for (var o in raw["changes"] as RawApiList) AuditLogChange(o as RawApiMap)
     ];
 
     user = UserCacheable(client, Snowflake(raw["user_id"]));

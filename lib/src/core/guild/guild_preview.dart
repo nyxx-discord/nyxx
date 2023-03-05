@@ -3,7 +3,6 @@ import 'package:nyxx/src/core/snowflake.dart';
 import 'package:nyxx/src/core/snowflake_entity.dart';
 import 'package:nyxx/src/core/guild/guild_feature.dart';
 import 'package:nyxx/src/core/message/guild_emoji.dart';
-import 'package:nyxx/src/internal/constants.dart';
 import 'package:nyxx/src/typedefs.dart';
 
 abstract class IGuildPreview implements SnowflakeEntity {
@@ -13,17 +12,17 @@ abstract class IGuildPreview implements SnowflakeEntity {
   /// Guild name
   String get name;
 
-  /// Hash of guild icon. To get url use [iconURL]
+  /// Hash of guild icon. To get url use [iconUrl]
   String? get iconHash;
 
-  /// Hash of guild spash image. To get url use [splashURL]
+  /// Hash of guild spash image. To get url use [splashUrl]
   String? get splashHash;
 
-  /// Hash of guild discovery image. To get url use [discoveryURL]
+  /// Hash of guild discovery image. To get url use [discoveryUrl]
   String? get discoveryHash;
 
   /// List of guild's emojis
-  List<BaseGuildEmoji> get emojis;
+  List<IBaseGuildEmoji> get emojis;
 
   /// List of guild's features
   Iterable<GuildFeature> get features;
@@ -39,15 +38,15 @@ abstract class IGuildPreview implements SnowflakeEntity {
 
   /// The guild's icon, represented as URL.
   /// If guild doesn't have icon it returns null.
-  String? iconURL({String format = "webp", int size = 128});
+  String? iconUrl({String format = 'webp', int? size, bool animated = false});
 
   /// URL to guild's splash.
   /// If guild doesn't have splash it returns null.
-  String? splashURL({String format = "webp", int size = 128});
+  String? splashUrl({String format = 'webp', int? size});
 
   /// URL to guild's splash.
-  /// If guild doesn't have splash it returns null.
-  String? discoveryURL({String format = "webp", int size = 128});
+  /// If guild doesn't have discovery it returns null.
+  String? discoveryUrl({String format = 'webp', int? size});
 }
 
 /// Returns guild  even if the user is not in the guild.
@@ -61,21 +60,21 @@ class GuildPreview extends SnowflakeEntity implements IGuildPreview {
   @override
   late final String name;
 
-  /// Hash of guild icon. To get url use [iconURL]
+  /// Hash of guild icon. To get url use [iconUrl]
   @override
   String? iconHash;
 
-  /// Hash of guild spash image. To get url use [splashURL]
+  /// Hash of guild spash image. To get url use [splashUrl]
   @override
   String? splashHash;
 
-  /// Hash of guild discovery image. To get url use [discoveryURL]
+  /// Hash of guild discovery image. To get url use [discoveryUrl]
   @override
   String? discoveryHash;
 
   /// List of guild's emojis
   @override
-  late final List<GuildEmoji> emojis;
+  late final List<IGuildEmoji> emojis;
 
   /// List of guild's features
   @override
@@ -103,7 +102,7 @@ class GuildPreview extends SnowflakeEntity implements IGuildPreview {
 
     discoveryHash = raw["discovery_splash"] as String?;
 
-    emojis = [for (final rawEmoji in raw["emojis"]) GuildEmoji(client, rawEmoji as RawApiMap, id)];
+    emojis = [for (final rawEmoji in raw["emojis"] as RawApiList) GuildEmoji(client, rawEmoji as RawApiMap, id)];
 
     features = (raw["features"] as RawApiList).map((e) => GuildFeature.from(e.toString()));
 
@@ -116,33 +115,33 @@ class GuildPreview extends SnowflakeEntity implements IGuildPreview {
   /// The guild's icon, represented as URL.
   /// If guild doesn't have icon it returns null.
   @override
-  String? iconURL({String format = "webp", int size = 128}) {
-    if (iconHash != null) {
-      return "https://cdn.${Constants.cdnHost}/icons/$id/$iconHash.$format?size=$size";
+  String? iconUrl({String format = 'webp', int? size, bool animated = false}) {
+    if (iconHash == null) {
+      return null;
     }
 
-    return null;
+    return client.cdnHttpEndpoints.icon(id, iconHash!, format: format, size: size, animated: animated);
   }
 
   /// URL to guild's splash.
   /// If guild doesn't have splash it returns null.
   @override
-  String? splashURL({String format = "webp", int size = 128}) {
-    if (splashHash != null) {
-      return "https://cdn.${Constants.cdnHost}/splashes/$id/$splashHash.$format?size=$size";
+  String? splashUrl({String format = 'webp', int? size}) {
+    if (splashHash == null) {
+      return null;
     }
 
-    return null;
+    return client.cdnHttpEndpoints.splash(id, splashHash!, format: format, size: size);
   }
 
   /// URL to guild's splash.
   /// If guild doesn't have splash it returns null.
   @override
-  String? discoveryURL({String format = "webp", int size = 128}) {
-    if (discoveryHash != null) {
-      return "https://cdn.${Constants.cdnHost}/discovery-splashes/$id/$discoveryHash.$format?size=$size";
+  String? discoveryUrl({String format = 'webp', int? size}) {
+    if (discoveryHash == null) {
+      return null;
     }
 
-    return null;
+    return client.cdnHttpEndpoints.discoverySplash(id, discoveryHash!, format: format, size: size);
   }
 }

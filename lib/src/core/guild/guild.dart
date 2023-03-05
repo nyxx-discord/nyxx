@@ -199,21 +199,21 @@ abstract class IGuild implements SnowflakeEntity {
 
   /// The guild's icon, represented as URL.
   /// If guild doesn't have icon it returns null.
-  String? iconURL({String format = "webp", int size = 128});
+  String? iconUrl({String format = 'webp', int? size, bool animated = false});
 
   /// URL to guild's splash.
   /// If guild doesn't have splash it returns null.
-  String? splashURL({String format = "webp", int size = 128});
+  String? splashUrl({String format = 'webp', int? size});
 
   /// URL to guilds discovery splash
   /// If guild doesn't have splash it returns null.
-  String? discoveryURL({String format = "webp", int size = 128});
+  String? discoveryUrl({String format = 'webp', int? size});
 
   /// URL to guild's banner.
   /// If guild doesn't have banner it returns null.
-  String? bannerUrl({String? format, int? size});
+  String? bannerUrl({String format = 'webp', int? size, bool animated = false});
 
-  /// Allows to download [Guild] widget aka advert png
+  /// Allows to download [IGuild] widget aka advert png
   /// Possible options for [style]: shield (default), banner1, banner2, banner3, banner4
   String guildWidgetUrl([String style = "shield"]);
 
@@ -675,7 +675,7 @@ class Guild extends SnowflakeEntity implements IGuild {
 
     stickers = [
       if (raw["stickers"] != null)
-        for (final rawSticker in raw["stickers"]) GuildSticker(rawSticker as RawApiMap, client)
+        for (final rawSticker in raw["stickers"] as RawApiList) GuildSticker(rawSticker as RawApiMap, client)
     ];
 
     if (!guildCreate) return;
@@ -715,12 +715,12 @@ class Guild extends SnowflakeEntity implements IGuild {
 
     presences = [
       if (raw['presences'] != null)
-        for (final presence in raw['presences']) PartialPresence(presence as RawApiMap, client)
+        for (final presence in raw['presences'] as RawApiList) PartialPresence(presence as RawApiMap, client)
     ];
 
     stageInstances = [
       if (raw["stage_instances"] != null)
-        for (final rawInstance in raw["stage_instances"]) StageChannelInstance(client, rawInstance as RawApiMap)
+        for (final rawInstance in raw["stage_instances"] as RawApiList) StageChannelInstance(client, rawInstance as RawApiMap)
     ];
 
     autoModerationRules = SnowflakeCache<IAutoModerationRule>();
@@ -730,19 +730,37 @@ class Guild extends SnowflakeEntity implements IGuild {
   /// The guild's icon, represented as URL.
   /// If guild doesn't have icon it returns null.
   @override
-  String? iconURL({String format = "webp", int size = 128}) => client.httpEndpoints.getGuildIconUrl(id, icon, format, size);
+  String? iconUrl({String format = 'webp', int? size, bool animated = false}) {
+    if (icon == null) {
+      return null;
+    }
+
+    return client.cdnHttpEndpoints.icon(id, icon!, format: format, size: size, animated: animated);
+  }
 
   /// URL to guild's splash.
   /// If guild doesn't have splash it returns null.
   @override
-  String? splashURL({String format = "webp", int size = 128}) => client.httpEndpoints.getGuildSplashURL(id, splash, format, size);
+  String? splashUrl({String format = 'webp', int? size}) {
+    if (splash == null) {
+      return null;
+    }
+
+    return client.cdnHttpEndpoints.splash(id, splash!, format: format, size: size);
+  }
 
   /// URL to guilds discovery splash
   /// If guild doesn't have splash it returns null.
   @override
-  String? discoveryURL({String format = "webp", int size = 128}) => client.httpEndpoints.getGuildDiscoveryURL(id, splash, format: format, size: size);
+  String? discoveryUrl({String format = 'webp', int? size}) {
+    if (discoverySplash == null) {
+      return null;
+    }
 
-  /// Allows to download [Guild] widget aka advert png
+    return client.cdnHttpEndpoints.discoverySplash(id, discoverySplash!, format: format, size: size);
+  }
+
+  /// Allows to download [IGuild] widget aka advert png
   /// Possible options for [style]: shield (default), banner1, banner2, banner3, banner4
   @override
   String guildWidgetUrl([String style = "shield"]) => client.httpEndpoints.getGuildWidgetUrl(id, style);
@@ -750,7 +768,13 @@ class Guild extends SnowflakeEntity implements IGuild {
   /// Returns the URL to guild's banner.
   /// If guild doesn't have banner it returns null.
   @override
-  String? bannerUrl({String? format, int? size}) => client.httpEndpoints.getGuildBannerUrl(id, banner, format: format, size: size);
+  String? bannerUrl({String format = 'webp', int? size, bool animated = false}) {
+    if (banner == null) {
+      return null;
+    }
+
+    return client.cdnHttpEndpoints.banner(id, banner!, format: format, size: size, animated: animated);
+  }
 
   /// Fetches all stickers of current guild
   @override

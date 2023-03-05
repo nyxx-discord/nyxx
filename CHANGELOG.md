@@ -1,3 +1,12 @@
+## 5.0.0
+__04.03.2023__
+
+- feature: Add named arguments anywhere we can (#396)
+- feature: Make CDN urls more reliable (#373)
+- feature: Dispatch raw events (#447)
+- feature: Implement missing thread features (#429)
+- feature:  Add avatar decorations to cdn endpoints (#410)
+
 ## 4.5.0
 __18.02.2023__
 
@@ -17,6 +26,11 @@ __18.02.2023__
 - bug: Fix update member roles equality (#438)
 - documentation: Fix comments and nullability in examples (#416)
 - documentation: Add message intent to readme (#428)
+
+## 5.0.0-dev.2
+__26.01.2023__
+
+- sync with dev branch (up to 4.5.0-dev.0)
 
 ## 4.5.0-dev.0
 __26.01.2023__
@@ -57,6 +71,13 @@ __19.11.2022__
 - bug: Fixed bug when getting IInviteWithMeta (#398)
 - bug: Emit bot start to plugins only when ready
 - bug: fix builder not building when editing a guild member (#405)
+
+## 5.0.0-dev.1
+__15.11.2022__
+
+- feature: Add named arguments anywhere we can (#396)
+
+This version also includes fixes from 4.2.1
 
 ## 4.3.0-dev.1
 __15.11.2022__
@@ -121,6 +142,11 @@ __25.09.2022__
 - feature: Event to notify change of connection status (#364)
 - feature: feature: auto moderation (#353)
 - bug: Fixup shard disconnect event
+
+## 5.0.0-dev.0
+__20.09.2022__
+
+- refactor: Make CDN urls more reliable (#373)
 
 ## 4.1.0-dev.4
 __15.09.2022__

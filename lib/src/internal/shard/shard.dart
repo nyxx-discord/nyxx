@@ -15,6 +15,7 @@ import 'package:nyxx/src/events/presence_update_event.dart';
 import 'package:nyxx/src/events/raw_event.dart';
 import 'package:nyxx/src/events/thread_create_event.dart';
 import 'package:nyxx/src/events/thread_deleted_event.dart';
+import 'package:nyxx/src/events/thread_list_sync_event.dart';
 import 'package:nyxx/src/events/thread_members_update_event.dart';
 import 'package:nyxx/src/events/typing_event.dart';
 import 'package:nyxx/src/events/user_update_event.dart';
@@ -633,10 +634,6 @@ class Shard implements IShard {
         eventController.onThreadDeleteController.add(ThreadDeletedEvent(data, manager.connectionManager.client));
         break;
 
-      case "THREAD_MEMBER_UPDATE":
-        // Catch unnecessary OP, could be needed in future but unsure.
-        break;
-
       case "GUILD_SCHEDULED_EVENT_CREATE":
         eventController.onGuildEventCreateController.add(GuildEventCreateEvent(data, manager.connectionManager.client));
         break;
@@ -673,12 +670,26 @@ class Shard implements IShard {
         eventController.onAuditLogEntryCreateController.add(AuditLogEntryCreateEvent(data, manager.connectionManager.client));
         break;
 
+      case 'THREAD_MEMBER_UPDATE':
+        eventController.onThreadMemberUpdateController.add(ThreadMemberUpdateEvent(data, manager.connectionManager.client));
+        break;
+
+      case 'THREAD_UPDATE':
+        eventController.onThreadUpdateController.add(ThreadUpdateEvent(data, manager.connectionManager.client));
+        break;
+
+      case 'THREAD_LIST_SYNC':
+        eventController.onThreadListSyncController.add(ThreadListSyncEvent(data, manager.connectionManager.client));
+        break;
+
       default:
-        if (manager.connectionManager.client.options.dispatchRawShardEvent) {
-          manager.onRawEventController.add(RawEvent(this, data));
-        } else {
-          logger.severe("UNKNOWN OPCODE: $data");
+        if (!manager.connectionManager.client.options.dispatchRawShardEvent) {
+          logger.severe("UNKNOWN GATEWAY EVENT: $data");
         }
+    }
+
+    if (manager.connectionManager.client.options.dispatchRawShardEvent) {
+      manager.onRawEventController.add(RawEvent(this, data));
     }
   }
 
