@@ -74,15 +74,12 @@ abstract class IGuildChannel implements IMinimalGuildChannel {
 
 /// Represents channel within [Guild]. Shares logic for both [TextGuildChannel] and [VoiceGuildChannel].
 abstract class GuildChannel extends MinimalGuildChannel implements IGuildChannel {
-  /// Relative position of channel in context of channel list
   @override
   late final int position;
 
-  /// Permission override for channel
   @override
   late final List<IPermissionsOverrides> permissionOverrides;
 
-  /// Creates an instance of [GuildChannel]
   GuildChannel(INyxx client, RawApiMap raw, [Snowflake? guildId]) : super(client, raw, guildId) {
     position = raw["position"] as int;
 
@@ -92,12 +89,10 @@ abstract class GuildChannel extends MinimalGuildChannel implements IGuildChannel
     ];
   }
 
-  /// Edits channel
   @override
   Future<T> edit<T extends GuildChannel>(ChannelBuilder builder, {String? auditReason}) =>
       client.httpEndpoints.editGuildChannel(id, builder, auditReason: auditReason);
 
-  /// Returns effective permissions for [member] to this channel including channel overrides.
   @override
   Future<IPermissions> effectivePermissions(IMember member) async {
     if (member.guild != guild) {
@@ -121,7 +116,6 @@ abstract class GuildChannel extends MinimalGuildChannel implements IGuildChannel
     return PermissionsUtils.isApplied(rawMemberPerms, PermissionsConstants.viewChannel) ? Permissions(rawMemberPerms) : Permissions.empty();
   }
 
-  /// Returns effective permissions for [role] to this channel including channel overrides.
   @override
   Future<IPermissions> effectivePermissionForRole(IRole role) async {
     if (role.guild != guild) {
@@ -146,50 +140,21 @@ abstract class GuildChannel extends MinimalGuildChannel implements IGuildChannel
     return Permissions(permissions);
   }
 
-  /// Fetches and returns all channel's [Invite]s
-  ///
-  /// ```
-  /// var invites = await chan.getChannelInvites();
-  /// ```
   @override
   Stream<IInviteWithMeta> fetchChannelInvites() => client.httpEndpoints.fetchChannelInvites(id);
 
-  /// Allows to set or edit permissions for channel. [id] can be either User or Role
-  /// Throws if [id] isn't [User] or [Role]
   @override
   Future<void> editChannelPermissions(PermissionsBuilder perms, SnowflakeEntity entity, {String? auditReason}) =>
       client.httpEndpoints.editChannelPermissions(id, perms, entity, auditReason: auditReason);
 
-  /// Allows to edit or set channel permission overrides.
   @override
   Future<void> editChannelPermissionOverrides(PermissionOverrideBuilder permissionBuilder, {String? auditReason}) =>
       client.httpEndpoints.editChannelPermissionOverrides(id, permissionBuilder, auditReason: auditReason);
 
-  /// Deletes permission overwrite for given User or Role [entity]
-  /// Throws if [entity] isn't [User] or [Role]
   @override
   Future<void> deleteChannelPermission(SnowflakeEntity entity, {String? auditReason}) =>
       client.httpEndpoints.deleteChannelPermission(id, entity, auditReason: auditReason);
 
-  /// Creates new [Invite] for [IChannel] and returns it's instance.
-  ///
-  /// Requires the `CREATE_INSTANT_INVITE` permission.
-  ///
-  /// [maxAge] in seconds can be between 0 and 604800 (7 days).
-  /// If set to 0, the invite will never expire. The default is 24 hours.
-  ///
-  /// [maxUses] can be between 0 and 100. If set to 0, the invite will have
-  /// unlimited uses. The default is 0 (unlimited).
-  ///
-  /// [temporary] determines whether this invite only grants temporary
-  /// membership.
-  ///
-  /// If [unique] is true, Discord won't try to reuse a similar invite and will
-  /// instead always generate a new invite in the request.
-  ///
-  /// ```
-  /// var invite = await channel.createInvite(maxUses: 100);
-  /// ```
   @override
   Future<IInvite> createInvite({int? maxAge, int? maxUses, bool? temporary, bool? unique, String? auditReason}) =>
       client.httpEndpoints.createInvite(id, maxAge: maxAge, maxUses: maxUses, temporary: temporary, unique: unique, auditReason: auditReason);
