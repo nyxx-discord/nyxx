@@ -52,7 +52,7 @@ abstract class IGuildChannel implements IMinimalGuildChannel {
 
   /// Creates new [IInvite] for [IChannel] and returns it's instance.
   ///
-  /// Requires the `CREATE_INSTANT_INVITE` permission.
+  /// Requires the [PermissionsConstants.createInstantInvite] permission.
   ///
   /// [maxAge] in seconds can be between 0 and 604800 (7 days).
   /// If set to 0, the invite will never expire. The default is 24 hours.
