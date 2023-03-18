@@ -1,3 +1,9 @@
+## 5.0.1
+__18.03.2023__
+
+- documentation: Channel invites (#448)
+- bug: Correctly dispose all resources on bot stop (#451)
+
 ## 5.0.0
 __04.03.2023__
 

@@ -219,7 +219,6 @@ class ShardRunner implements Disposable {
     // Closing the connection will trigger the `connection.done` future we listened to when connecting, which will execute the [ShardToManager.disconnected]
     // message.
     await connection!.close(closeCode);
-    await connectionSubscription!.cancel();
 
     connection = null;
     connectionSubscription = null;
