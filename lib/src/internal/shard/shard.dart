@@ -770,8 +770,9 @@ class Shard implements IShard {
 
   @override
   Future<void> dispose() async {
-    execute(ShardMessage(ManagerToShard.dispose, seq: seq++));
+    heartbeatTimer?.cancel();
 
+    execute(ShardMessage(ManagerToShard.dispose, seq: seq++));
     // Wait for shard to dispose correctly
     await shardMessages.firstWhere((message) => message.type == ShardToManager.disposed);
 

@@ -235,8 +235,9 @@ class NyxxRest extends INyxxRest {
     }
 
     await eventsRest.dispose();
+    await httpHandler.dispose();
 
-    onReadyController.close();
+    await onReadyController.close();
 
     await guilds.dispose();
     await users.dispose();
