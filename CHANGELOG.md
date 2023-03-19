@@ -1,3 +1,8 @@
+## 4.5.1
+__19.03.2023__
+
+- bug: Correctly dispose all resources on bot stop (#451)
+
 ## 4.5.0
 __18.02.2023__
 
