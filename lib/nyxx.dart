@@ -1,6 +1,6 @@
-export 'src/api_options.dart' show ApiOptions;
+export 'src/api_options.dart' show ApiOptions, RestApiOptions;
 export 'src/client.dart' show Nyxx, NyxxRest;
-export 'src/client_options.dart' show ClientOptions;
+export 'src/client_options.dart' show ClientOptions, RestClientOptions;
 
 export 'src/builders/builder.dart' show Builder, CreateBuilder, UpdateBuilder;
 export 'src/builders/image.dart' show ImageBuilder;
