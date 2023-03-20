@@ -56,7 +56,7 @@ The new system for the HTTP API is split into three parts:
 As an example, let's implement the https://discord.com/developers/docs/resources/user (users) page. The first step in adding a new model is creating the model classes, in `lib/src/models/feature_name/*`:
 
 - If the type is a SnowflakeEntity (an entity with a snowflake ID):
-    - A `class PartialXXX extends SnowflakeEntity<XXX> with SnowflakeEntityImpl<XXX>` (ensure the `SnowflakeEntityImpl` import is from `snowflake_entity.dart`)
+    - A `class PartialXXX extends SnowflakeEntity<XXX> with SnowflakeEntityMixin<XXX>` (ensure the `SnowflakeEntityMixin` import is from `snowflake_entity.dart`)
     - A `class XXX extends PartialXXX`
       Both classes should have a constructor with named parameters for every field, and no other logic.
       The `PartialXXX` class should have a `@override final XXXManager manager` field. We will implement the `XXXManager` next.

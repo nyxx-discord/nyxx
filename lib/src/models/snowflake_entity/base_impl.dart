@@ -4,7 +4,7 @@ import 'package:nyxx/src/models/snowflake_entity/snowflake_entity.dart';
 ///
 /// This is as a separate mixin to give us access to the type of the actual object `T` which is used
 /// in [operator==] and [toString].
-mixin SnowflakeEntityImpl<T extends SnowflakeEntity<T>> on SnowflakeEntity<T> {
+mixin SnowflakeEntityMixin<T extends SnowflakeEntity<T>> on SnowflakeEntity<T> {
   @override
   bool operator ==(Object other) => identical(this, other) || (other is T && other.id == id);
 
