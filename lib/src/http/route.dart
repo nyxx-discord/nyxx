@@ -90,12 +90,10 @@ class HttpRouteParam {
 /// Helper methods for constructing [HttpRoute]s.
 extension RouteHelpers on HttpRoute {
   /// Adds the [`guilds`](https://discord.com/developers/docs/resources/guild#get-guild) part to this [HttpRoute].
-  void guilds({String? id}) =>
-      add(HttpRoutePart("guilds", [if (id != null) HttpRouteParam(id, isMajor: true)]));
+  void guilds({String? id}) => add(HttpRoutePart("guilds", [if (id != null) HttpRouteParam(id, isMajor: true)]));
 
   /// Adds the [`channels`](https://discord.com/developers/docs/resources/channel#get-channel) part to this [HttpRoute].
-  void channels({String? id}) =>
-      add(HttpRoutePart("channels", [if (id != null) HttpRouteParam(id, isMajor: true)]));
+  void channels({String? id}) => add(HttpRoutePart("channels", [if (id != null) HttpRouteParam(id, isMajor: true)]));
 
   /// Adds the [`webhooks`](https://discord.com/developers/docs/resources/webhook#get-webhook) part to this [HttpRoute].
   void webhooks({String? id, String? token}) => add(HttpRoutePart("webhooks", [
@@ -125,12 +123,10 @@ extension RouteHelpers on HttpRoute {
   void users({String? id}) => add(HttpRoutePart("users", [if (id != null) HttpRouteParam(id)]));
 
   /// Adds the [`permissions`](https://discord.com/developers/docs/interactions/application-commands#get-guild-application-command-permissions) part to this [HttpRoute].
-  void permissions({String? id}) =>
-      add(HttpRoutePart("permissions", [if (id != null) HttpRouteParam(id)]));
+  void permissions({String? id}) => add(HttpRoutePart("permissions", [if (id != null) HttpRouteParam(id)]));
 
   /// Adds the [`messages`](https://discord.com/developers/docs/resources/channel#get-channel-messages) part to this [HttpRoute].
-  void messages({String? id}) =>
-      add(HttpRoutePart("messages", [if (id != null) HttpRouteParam(id)]));
+  void messages({String? id}) => add(HttpRoutePart("messages", [if (id != null) HttpRouteParam(id)]));
 
   /// Adds the [`pins`](https://discord.com/developers/docs/resources/channel#get-pinned-messages) part to this [HttpRoute].
   void pins({String? id}) => add(HttpRoutePart("pins", [if (id != null) HttpRouteParam(id)]));
@@ -139,24 +135,19 @@ extension RouteHelpers on HttpRoute {
   void invites({String? id}) => add(HttpRoutePart("invites", [if (id != null) HttpRouteParam(id)]));
 
   /// Adds the [`applications`](https://discord.com/developers/docs/topics/oauth2#get-current-bot-application-information) part to this [HttpRoute].
-  void applications({String? id}) =>
-      add(HttpRoutePart("applications", [if (id != null) HttpRouteParam(id)]));
+  void applications({String? id}) => add(HttpRoutePart("applications", [if (id != null) HttpRouteParam(id)]));
 
   /// Adds the [`stage-instances`](https://discord.com/developers/docs/resources/stage-instance#get-stage-instance) part to this [HttpRoute].
-  void stageInstances({String? id}) =>
-      add(HttpRoutePart("stage-instances", [if (id != null) HttpRouteParam(id)]));
+  void stageInstances({String? id}) => add(HttpRoutePart("stage-instances", [if (id != null) HttpRouteParam(id)]));
 
   /// Adds the [`thread-members`](https://discord.com/developers/docs/resources/channel#get-thread-member) part to this [HttpRoute].
-  void threadMembers({String? id}) =>
-      add(HttpRoutePart("thread-members", [if (id != null) HttpRouteParam(id)]));
+  void threadMembers({String? id}) => add(HttpRoutePart("thread-members", [if (id != null) HttpRouteParam(id)]));
 
   /// Adds the [`stickers`](https://discord.com/developers/docs/resources/sticker#get-sticker) part to this [HttpRoute].
-  void stickers({String? id}) =>
-      add(HttpRoutePart("stickers", [if (id != null) HttpRouteParam(id)]));
+  void stickers({String? id}) => add(HttpRoutePart("stickers", [if (id != null) HttpRouteParam(id)]));
 
   /// Adds the [`scheduled-events`](https://discord.com/developers/docs/resources/guild-scheduled-event#get-guild-scheduled-event) part to this [HttpRoute].
-  void scheduledEvents({String? id}) =>
-      add(HttpRoutePart("scheduled-events", [if (id != null) HttpRouteParam(id)]));
+  void scheduledEvents({String? id}) => add(HttpRoutePart("scheduled-events", [if (id != null) HttpRouteParam(id)]));
 
   /// Adds the [`rules`](https://discord.com/developers/docs/resources/auto-moderation#get-auto-moderation-rule) part to this [HttpRoute].
   void rules({String? id}) => add(HttpRoutePart('rules', [if (id != null) HttpRouteParam(id)]));

@@ -11,8 +11,7 @@ export 'src/cache/cache.dart' show Cache;
 export 'src/http/bucket.dart' show HttpBucket;
 export 'src/http/handler.dart' show HttpHandler;
 export 'src/http/request.dart' show BasicRequest, HttpRequest, MultipartRequest;
-export 'src/http/response.dart'
-    show FieldError, HttpErrorData, HttpResponse, HttpResponseError, HttpResponseSuccess;
+export 'src/http/response.dart' show FieldError, HttpErrorData, HttpResponse, HttpResponseError, HttpResponseSuccess;
 export 'src/http/route.dart' show HttpRoute, HttpRouteParam, HttpRoutePart;
 export 'src/http/managers/manager.dart' show Manager, ReadOnlyManager;
 export 'src/http/managers/user_manager.dart' show UserManager;

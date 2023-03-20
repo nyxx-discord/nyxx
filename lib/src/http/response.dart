@@ -66,8 +66,7 @@ abstract class HttpResponse {
   }
 
   @override
-  String toString() =>
-      '$statusCode (${response.reasonPhrase}) ${request.method} ${response.request!.url}';
+  String toString() => '$statusCode (${response.reasonPhrase}) ${request.method} ${response.request!.url}';
 }
 
 /// A successful [HttpResponse].
@@ -132,8 +131,7 @@ class HttpResponseError extends HttpResponse implements Exception {
       return super.toString();
     }
 
-    final result =
-        StringBuffer('$message ($errorCode) ${request.method} ${response.request!.url}\n');
+    final result = StringBuffer('$message ($errorCode) ${request.method} ${response.request!.url}\n');
 
     if (errorData?.fieldErrors.isNotEmpty ?? false) {
       result.writeln('Errors:');

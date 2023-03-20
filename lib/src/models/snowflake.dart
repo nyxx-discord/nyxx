@@ -131,8 +131,7 @@ class Snowflake implements Comparable<Snowflake> {
   bool operator >(Snowflake other) => isAfter(other);
 
   @override
-  bool operator ==(Object other) =>
-      identical(this, other) || (other is Snowflake && other.value == value);
+  bool operator ==(Object other) => identical(this, other) || (other is Snowflake && other.value == value);
 
   @override
   int get hashCode => value.hashCode;
