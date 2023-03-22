@@ -67,6 +67,8 @@ class Cache<T extends SnowflakeEntity<T>> with MapMixin<Snowflake, T> {
 
   @override
   void operator []=(Snowflake key, T value) {
+    assert(key == value.id, 'Mismatched entity key in cache');
+
     if (config.shouldCache?.call(value) == false) {
       return;
     }

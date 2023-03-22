@@ -18,6 +18,6 @@ dependencies:
 
 dev_dependencies:
   test: ^1.22.0
-  mockito: ^5.0.16
-  build_runner: ^2.3.0
   lints: ^2.0.0
+  nock: ^1.2.1
+  mocktail: ^0.3.0

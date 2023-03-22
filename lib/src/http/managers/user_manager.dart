@@ -21,7 +21,7 @@ class UserManager extends ReadOnlyManager<User> {
 
   @override
   User parse(Map<String, Object?> raw) {
-    final hasAccentColor = raw['accentColor'] != null;
+    final hasAccentColor = raw['accent_color'] != null;
     final hasLocale = raw['locale'] != null;
     final hasFlags = raw['flags'] != null;
     final hasPremiumType = raw['premium_type'] != null;
@@ -37,7 +37,7 @@ class UserManager extends ReadOnlyManager<User> {
       isSystem: raw['system'] as bool? ?? false,
       hasMfaEnabled: raw['mfa_enabled'] as bool? ?? false,
       bannerHash: raw['banner'] as String?,
-      accentColor: hasAccentColor ? DiscordColor(raw['accentColor'] as int) : null,
+      accentColor: hasAccentColor ? DiscordColor(raw['accent_color'] as int) : null,
       locale: hasLocale ? Locale.parse(raw['locale'] as String) : null,
       flags: hasFlags ? UserFlags(raw['flags'] as int) : null,
       nitroType: hasPremiumType ? NitroType.parse(raw['premium_type'] as int) : NitroType.none,
@@ -65,8 +65,10 @@ class UserManager extends ReadOnlyManager<User> {
     final request = BasicRequest(route);
 
     final response = await client.httpHandler.executeSafe(request);
+    final user = parse(response.jsonBody as Map<String, Object?>);
 
-    return parse(response.jsonBody as Map<String, Object?>);
+    cache[user.id] = user;
+    return user;
   }
 
   /// Fetch the current user from the API.
@@ -75,8 +77,10 @@ class UserManager extends ReadOnlyManager<User> {
     final request = BasicRequest(route);
 
     final response = await client.httpHandler.executeSafe(request);
+    final user = parse(response.jsonBody as Map<String, Object?>);
 
-    return parse(response.jsonBody as Map<String, Object?>);
+    cache[user.id] = user;
+    return user;
   }
 
   /// Update the current user.
@@ -92,7 +96,6 @@ class UserManager extends ReadOnlyManager<User> {
     final user = parse(response.jsonBody as Map<String, Object?>);
 
     cache[user.id] = user;
-
     return user;
   }
 

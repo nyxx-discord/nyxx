@@ -8,6 +8,12 @@ class Flags<T extends Flags<T>> {
 
   /// Returns `true` if this [Flags] has the [flag] enabled, `false` otherwise.
   bool has(Flag<T> flag) => value & flag.value != 0;
+
+  @override
+  bool operator ==(Object other) => identical(this, other) || (other is Flags<T> && other.value == value);
+
+  @override
+  int get hashCode => value.hashCode;
 }
 
 /// A flag within a set of [Flags].

@@ -175,14 +175,14 @@ class UserFlags extends Flags<UserFlags> {
 
 /// The types of Discord Nitro subscription a user can have.
 enum NitroType {
-  none(0),
-  classic(1),
-  nitro(2),
-  basic(3);
+  none._(0),
+  classic._(1),
+  nitro._(2),
+  basic._(3);
 
   final int value;
 
-  const NitroType(this.value);
+  const NitroType._(this.value);
 
   /// Parse an integer from the API to a [NitroType].
   ///

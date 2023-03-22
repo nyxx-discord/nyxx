@@ -162,6 +162,8 @@ class HttpErrorData {
   final Map<String, FieldError> fieldErrors = {};
 
   /// Parse a JSON error response to an instance of [HttpErrorData].
+  ///
+  /// Throws a [TypeError] if [raw] is not a valid error response.
   HttpErrorData.parse(Map<String, Object?> raw)
       : errorCode = raw['code'] as int,
         errorMessage = raw['message'] as String {

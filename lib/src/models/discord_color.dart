@@ -77,4 +77,10 @@ class DiscordColor {
 
   @override
   String toString() => 'DiscordColor(${toHexString()})';
+
+  @override
+  bool operator ==(Object other) => identical(this, other) || (other is DiscordColor && other.value == value);
+
+  @override
+  int get hashCode => value.hashCode;
 }

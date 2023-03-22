@@ -16,6 +16,9 @@ abstract class HttpRequest {
   /// The name of the header containing the authentication for a request.
   static const authorization = 'Authorization';
 
+  /// The name of the header containing the user agent for a request.
+  static const userAgent = 'User-Agent';
+
   /// The route for this request.
   final HttpRoute route;
 
@@ -66,10 +69,11 @@ abstract class HttpRequest {
   Uri _getUri(Nyxx client) => Uri.https(
         client.apiOptions.host,
         client.apiOptions.baseUri + route.path,
-        queryParameters,
+        queryParameters.isNotEmpty ? queryParameters : null,
       );
 
   Map<String, String> _getHeaders(Nyxx client) => {
+        userAgent: client.apiOptions.userAgent,
         if (auditLogReason != null) xAuditLogReason: auditLogReason!,
         if (authenticated) authorization: client.apiOptions.authorizationHeader,
         ...headers,

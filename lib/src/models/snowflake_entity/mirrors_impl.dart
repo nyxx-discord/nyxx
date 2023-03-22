@@ -9,7 +9,7 @@ import 'package:nyxx/src/utils/to_string_helper/mirrors_impl.dart';
 /// in [operator==] and [toString].
 mixin SnowflakeEntityMixin<T extends SnowflakeEntity<T>> on SnowflakeEntity<T> {
   @override
-  bool operator ==(Object other) => identical(this, other) || (other is T && other.id == id);
+  bool operator ==(Object other) => identical(this, other) || (other is SnowflakeEntity<T> && other.id == id);
 
   @override
   int get hashCode => id.hashCode;
