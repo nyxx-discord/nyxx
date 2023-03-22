@@ -1,5 +1,4 @@
 import 'package:mocktail/mocktail.dart';
-import 'package:nock/nock.dart';
 import 'package:nyxx/nyxx.dart';
 import 'package:nyxx/src/cache/cache.dart';
 import 'package:test/test.dart';

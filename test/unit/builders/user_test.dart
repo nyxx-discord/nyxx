@@ -1,5 +1,4 @@
 import 'package:nyxx/nyxx.dart';
-import 'package:nyxx/src/builders/user.dart';
 import 'package:test/test.dart';
 
 void main() {

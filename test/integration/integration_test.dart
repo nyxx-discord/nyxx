@@ -18,7 +18,7 @@ void main() {
     'NyxxRest',
     skip: testToken != null ? false : 'No test token provided',
     () {
-      late final NyxxRest client;
+      late NyxxRest client;
 
       setUp(() async {
         client = await Nyxx.connectRest(testToken!);
