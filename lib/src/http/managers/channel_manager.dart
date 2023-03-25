@@ -59,12 +59,14 @@ class ChannelManager extends ReadOnlyManager<Channel> {
       defaultThreadRateLimitPerUser:
           maybeParse<Duration?, int>(raw['default_thread_rate_limit_per_user'], (value) => value == 0 ? null : Duration(seconds: value)),
       guildId: Snowflake.parse(raw['guild_id'] as String),
-      isNsfw: raw['nsfw'] as bool,
+      isNsfw: raw['nsfw'] as bool? ?? false,
       lastMessageId: maybeParse(raw['last_message_id'], Snowflake.parse),
       lastPinTimestamp: maybeParse(raw['last_pin_timestamp'], DateTime.parse),
       name: raw['name'] as String,
       parentId: maybeParse(raw['parent_id'], Snowflake.parse),
-      permissionOverwrites: parseMany(raw['permission_overwrites'] as List, parsePermissionOverwrite),
+      permissionOverwrites:
+          maybeParse<List<PermissionOverwrite>, List<dynamic>>(raw['permission_overwrites'], (overwrites) => parseMany(overwrites, parsePermissionOverwrite)) ??
+              [],
       position: raw['position'] as int,
       rateLimitPerUser: maybeParse<Duration?, int>(raw['rate_limit_per_user'], (value) => value == 0 ? null : Duration(seconds: value)),
     );
@@ -91,16 +93,18 @@ class ChannelManager extends ReadOnlyManager<Channel> {
       manager: this,
       bitrate: raw['bitrate'] as int,
       guildId: Snowflake.parse(raw['guild_id'] as String),
-      isNsfw: raw['nsfw'] as bool,
+      isNsfw: raw['nsfw'] as bool? ?? false,
       lastMessageId: maybeParse(raw['last_message_id'], Snowflake.parse),
       lastPinTimestamp: maybeParse(raw['last_pin_timestamp'], DateTime.parse),
       name: raw['name'] as String,
       parentId: maybeParse(raw['parent_id'], Snowflake.parse),
-      permissionOverwrites: parseMany(raw['permission_overwrites'] as List, parsePermissionOverwrite),
+      permissionOverwrites:
+          maybeParse<List<PermissionOverwrite>, List<dynamic>>(raw['permission_overwrites'], (overwrites) => parseMany(overwrites, parsePermissionOverwrite)) ??
+              [],
       position: raw['position'] as int,
       rateLimitPerUser: maybeParse<Duration?, int>(raw['rate_limit_per_user'], (value) => value == 0 ? null : Duration(seconds: value)),
       rtcRegion: raw['rtc_region'] as String?,
-      userLimit: raw['user_limit'] as int?,
+      userLimit: raw['user_limit'] == 0 ? null : raw['user_limit'] as int?,
       videoQualityMode: maybeParse(raw['video_quality_mode'], VideoQualityMode.parse) ?? VideoQualityMode.auto,
     );
   }
@@ -130,10 +134,12 @@ class ChannelManager extends ReadOnlyManager<Channel> {
       id: Snowflake.parse(raw['id'] as String),
       manager: this,
       guildId: Snowflake.parse(raw['guild_id'] as String),
-      isNsfw: raw['nsfw'] as bool,
+      isNsfw: raw['nsfw'] as bool? ?? false,
       name: raw['name'] as String,
       parentId: maybeParse(raw['parent_id'], Snowflake.parse),
-      permissionOverwrites: parseMany(raw['permission_overwrites'] as List, parsePermissionOverwrite),
+      permissionOverwrites:
+          maybeParse<List<PermissionOverwrite>, List<dynamic>>(raw['permission_overwrites'], (overwrites) => parseMany(overwrites, parsePermissionOverwrite)) ??
+              [],
       position: raw['position'] as int,
     );
   }
@@ -149,12 +155,14 @@ class ChannelManager extends ReadOnlyManager<Channel> {
       defaultThreadRateLimitPerUser:
           maybeParse<Duration?, int>(raw['default_thread_rate_limit_per_user'], (value) => value == 0 ? null : Duration(seconds: value)),
       guildId: Snowflake.parse(raw['guild_id'] as String),
-      isNsfw: raw['nsfw'] as bool,
+      isNsfw: raw['nsfw'] as bool? ?? false,
       lastMessageId: maybeParse(raw['last_message_id'], Snowflake.parse),
       lastPinTimestamp: maybeParse(raw['last_pin_timestamp'], DateTime.parse),
       name: raw['name'] as String,
       parentId: maybeParse(raw['parent_id'], Snowflake.parse),
-      permissionOverwrites: parseMany(raw['permission_overwrites'] as List, parsePermissionOverwrite),
+      permissionOverwrites:
+          maybeParse<List<PermissionOverwrite>, List<dynamic>>(raw['permission_overwrites'], (overwrites) => parseMany(overwrites, parsePermissionOverwrite)) ??
+              [],
       position: raw['position'] as int,
       rateLimitPerUser: maybeParse<Duration?, int>(raw['rate_limit_per_user'], (value) => value == 0 ? null : Duration(seconds: value)),
     );
@@ -168,21 +176,23 @@ class ChannelManager extends ReadOnlyManager<Channel> {
       manager: this,
       appliedTags: maybeParse<List<Snowflake>, List<dynamic>>(raw['applied_tags'], (tags) => parseMany(tags, Snowflake.parse)),
       approximateMemberCount: raw['member_count'] as int,
-      archiveTimestamp: DateTime.parse((raw['metadata'] as Map)['archive_timestamp'] as String),
-      autoArchiveDuration: Duration(minutes: (raw['metadata'] as Map)['auto_archive_duration'] as int),
-      createdAt: maybeParse((raw['metadata'] as Map)['create_timestamp'], DateTime.parse) ?? DateTime(2022, 1, 9),
+      archiveTimestamp: DateTime.parse((raw['thread_metadata'] as Map)['archive_timestamp'] as String),
+      autoArchiveDuration: Duration(minutes: (raw['thread_metadata'] as Map)['auto_archive_duration'] as int),
+      createdAt: maybeParse((raw['thread_metadata'] as Map)['create_timestamp'], DateTime.parse) ?? DateTime(2022, 1, 9),
       guildId: Snowflake.parse(raw['guild_id'] as String),
-      isArchived: (raw['metadata'] as Map)['archived'] as bool,
-      isLocked: (raw['metadata'] as Map)['locked'] as bool,
-      isNsfw: raw['nsfw'] as bool,
+      isArchived: (raw['thread_metadata'] as Map)['archived'] as bool,
+      isLocked: (raw['thread_metadata'] as Map)['locked'] as bool,
+      isNsfw: raw['nsfw'] as bool? ?? false,
       lastMessageId: maybeParse(raw['last_message_id'], Snowflake.parse),
       lastPinTimestamp: maybeParse(raw['last_pin_timestamp'], DateTime.parse),
       messageCount: raw['message_count'] as int,
       name: raw['name'] as String,
       ownerId: Snowflake.parse(raw['owner_id'] as String),
       parentId: maybeParse(raw['parent_id'], Snowflake.parse),
-      permissionOverwrites: parseMany(raw['permission_overwrites'] as List, parsePermissionOverwrite),
-      position: raw['position'] as int,
+      permissionOverwrites:
+          maybeParse<List<PermissionOverwrite>, List<dynamic>>(raw['permission_overwrites'], (overwrites) => parseMany(overwrites, parsePermissionOverwrite)) ??
+              [],
+      position: -1,
       rateLimitPerUser: maybeParse<Duration?, int>(raw['rate_limit_per_user'], (value) => value == 0 ? null : Duration(seconds: value)),
       totalMessagesSent: raw['total_message_sent'] as int,
     );
@@ -196,21 +206,23 @@ class ChannelManager extends ReadOnlyManager<Channel> {
       manager: this,
       appliedTags: maybeParse<List<Snowflake>, List<dynamic>>(raw['applied_tags'], (tags) => parseMany(tags, Snowflake.parse)),
       approximateMemberCount: raw['member_count'] as int,
-      archiveTimestamp: DateTime.parse((raw['metadata'] as Map)['archive_timestamp'] as String),
-      autoArchiveDuration: Duration(minutes: (raw['metadata'] as Map)['auto_archive_duration'] as int),
-      createdAt: maybeParse((raw['metadata'] as Map)['create_timestamp'], DateTime.parse) ?? DateTime(2022, 1, 9),
+      archiveTimestamp: DateTime.parse((raw['thread_metadata'] as Map)['archive_timestamp'] as String),
+      autoArchiveDuration: Duration(minutes: (raw['thread_metadata'] as Map)['auto_archive_duration'] as int),
+      createdAt: maybeParse((raw['thread_metadata'] as Map)['create_timestamp'], DateTime.parse) ?? DateTime(2022, 1, 9),
       guildId: Snowflake.parse(raw['guild_id'] as String),
-      isArchived: (raw['metadata'] as Map)['archived'] as bool,
-      isLocked: (raw['metadata'] as Map)['locked'] as bool,
-      isNsfw: raw['nsfw'] as bool,
+      isArchived: (raw['thread_metadata'] as Map)['archived'] as bool,
+      isLocked: (raw['thread_metadata'] as Map)['locked'] as bool,
+      isNsfw: raw['nsfw'] as bool? ?? false,
       lastMessageId: maybeParse(raw['last_message_id'], Snowflake.parse),
       lastPinTimestamp: maybeParse(raw['last_pin_timestamp'], DateTime.parse),
       messageCount: raw['message_count'] as int,
       name: raw['name'] as String,
       ownerId: Snowflake.parse(raw['owner_id'] as String),
       parentId: maybeParse(raw['parent_id'], Snowflake.parse),
-      permissionOverwrites: parseMany(raw['permission_overwrites'] as List, parsePermissionOverwrite),
-      position: raw['position'] as int,
+      permissionOverwrites:
+          maybeParse<List<PermissionOverwrite>, List<dynamic>>(raw['permission_overwrites'], (overwrites) => parseMany(overwrites, parsePermissionOverwrite)) ??
+              [],
+      position: -1,
       rateLimitPerUser: maybeParse<Duration?, int>(raw['rate_limit_per_user'], (value) => value == 0 ? null : Duration(seconds: value)),
       totalMessagesSent: raw['total_message_sent'] as int,
     );
@@ -222,24 +234,26 @@ class ChannelManager extends ReadOnlyManager<Channel> {
     return PrivateThread(
       id: Snowflake.parse(raw['id'] as String),
       manager: this,
-      isInvitable: (raw['metadata'] as Map)['invitable'] as bool,
+      isInvitable: (raw['thread_metadata'] as Map)['invitable'] as bool,
       appliedTags: maybeParse<List<Snowflake>, List<dynamic>>(raw['applied_tags'], (tags) => parseMany(tags, Snowflake.parse)),
       approximateMemberCount: raw['member_count'] as int,
-      archiveTimestamp: DateTime.parse((raw['metadata'] as Map)['archive_timestamp'] as String),
-      autoArchiveDuration: Duration(minutes: (raw['metadata'] as Map)['auto_archive_duration'] as int),
-      createdAt: maybeParse((raw['metadata'] as Map)['create_timestamp'], DateTime.parse) ?? DateTime(2022, 1, 9),
+      archiveTimestamp: DateTime.parse((raw['thread_metadata'] as Map)['archive_timestamp'] as String),
+      autoArchiveDuration: Duration(minutes: (raw['thread_metadata'] as Map)['auto_archive_duration'] as int),
+      createdAt: maybeParse((raw['thread_metadata'] as Map)['create_timestamp'], DateTime.parse) ?? DateTime(2022, 1, 9),
       guildId: Snowflake.parse(raw['guild_id'] as String),
-      isArchived: (raw['metadata'] as Map)['archived'] as bool,
-      isLocked: (raw['metadata'] as Map)['locked'] as bool,
-      isNsfw: raw['nsfw'] as bool,
+      isArchived: (raw['thread_metadata'] as Map)['archived'] as bool,
+      isLocked: (raw['thread_metadata'] as Map)['locked'] as bool,
+      isNsfw: raw['nsfw'] as bool? ?? false,
       lastMessageId: maybeParse(raw['last_message_id'], Snowflake.parse),
       lastPinTimestamp: maybeParse(raw['last_pin_timestamp'], DateTime.parse),
       messageCount: raw['message_count'] as int,
       name: raw['name'] as String,
       ownerId: Snowflake.parse(raw['owner_id'] as String),
       parentId: maybeParse(raw['parent_id'], Snowflake.parse),
-      permissionOverwrites: parseMany(raw['permission_overwrites'] as List, parsePermissionOverwrite),
-      position: raw['position'] as int,
+      permissionOverwrites:
+          maybeParse<List<PermissionOverwrite>, List<dynamic>>(raw['permission_overwrites'], (overwrites) => parseMany(overwrites, parsePermissionOverwrite)) ??
+              [],
+      position: -1,
       rateLimitPerUser: maybeParse<Duration?, int>(raw['rate_limit_per_user'], (value) => value == 0 ? null : Duration(seconds: value)),
       totalMessagesSent: raw['total_message_sent'] as int,
     );
@@ -253,16 +267,18 @@ class ChannelManager extends ReadOnlyManager<Channel> {
       manager: this,
       bitrate: raw['bitrate'] as int,
       guildId: Snowflake.parse(raw['guild_id'] as String),
-      isNsfw: raw['nsfw'] as bool,
+      isNsfw: raw['nsfw'] as bool? ?? false,
       lastMessageId: maybeParse(raw['last_message_id'], Snowflake.parse),
       lastPinTimestamp: maybeParse(raw['last_pin_timestamp'], DateTime.parse),
       name: raw['name'] as String,
       parentId: maybeParse(raw['parent_id'], Snowflake.parse),
-      permissionOverwrites: parseMany(raw['permission_overwrites'] as List, parsePermissionOverwrite),
+      permissionOverwrites:
+          maybeParse<List<PermissionOverwrite>, List<dynamic>>(raw['permission_overwrites'], (overwrites) => parseMany(overwrites, parsePermissionOverwrite)) ??
+              [],
       position: raw['position'] as int,
       rateLimitPerUser: maybeParse<Duration?, int>(raw['rate_limit_per_user'], (value) => value == 0 ? null : Duration(seconds: value)),
       rtcRegion: raw['rtc_region'] as String?,
-      userLimit: raw['user_limit'] as int?,
+      userLimit: raw['user_limit'] == 0 ? null : raw['user_limit'] as int?,
       videoQualityMode: maybeParse(raw['video_quality_mode'], VideoQualityMode.parse) ?? VideoQualityMode.auto,
     );
   }
@@ -292,10 +308,12 @@ class ChannelManager extends ReadOnlyManager<Channel> {
       defaultThreadRateLimitPerUser:
           maybeParse<Duration?, int>(raw['default_thread_rate_limit_per_user'], (value) => value == 0 ? null : Duration(seconds: value)),
       guildId: Snowflake.parse(raw['guild_id'] as String),
-      isNsfw: raw['nsfw'] as bool,
+      isNsfw: raw['nsfw'] as bool? ?? false,
       name: raw['name'] as String,
       parentId: maybeParse(raw['parent_id'], Snowflake.parse),
-      permissionOverwrites: parseMany(raw['permission_overwrites'] as List, parsePermissionOverwrite),
+      permissionOverwrites:
+          maybeParse<List<PermissionOverwrite>, List<dynamic>>(raw['permission_overwrites'], (overwrites) => parseMany(overwrites, parsePermissionOverwrite)) ??
+              [],
       position: raw['position'] as int,
     );
   }

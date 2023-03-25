@@ -209,7 +209,7 @@ void main() {
     expect(channel.id, equals(Snowflake(41771983423143937)));
     expect(channel.appliedTags, isNull);
     expect(channel.approximateMemberCount, equals(5));
-    expect(channel.archiveTimestamp, equals(DateTime.utc(2020, 04, 12, 23, 40, 39, 855, 793)));
+    expect(channel.archiveTimestamp, equals(DateTime.utc(2021, 04, 12, 23, 40, 39, 855, 793)));
     expect(channel.autoArchiveDuration, equals(Duration(minutes: 1440)));
     expect(channel.createdAt, equals(DateTime(2022, 01, 09)));
     expect(channel.guildId, equals(Snowflake(41771983423143937)));
@@ -224,7 +224,7 @@ void main() {
     expect(channel.parentId, equals(Snowflake(41771983423143937)));
     expect(channel.permissionOverwrites, equals([]));
     expect(channel.position, equals(-1));
-    expect(channel.rateLimitPerUser, isNull);
+    expect(channel.rateLimitPerUser, equals(Duration(seconds: 2)));
     expect(channel.totalMessagesSent, equals(1));
   }
 

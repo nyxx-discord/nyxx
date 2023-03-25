@@ -22,12 +22,12 @@ enum ChannelType {
   groupDm._(3),
   guildCategory._(4),
   guildAnnouncement._(5),
-  announcementThread._(0),
-  publicThread._(1),
-  privateThread._(2),
-  guildStageVoice._(3),
-  guildDirectory._(4),
-  guildForum._(5);
+  announcementThread._(10),
+  publicThread._(11),
+  privateThread._(12),
+  guildStageVoice._(13),
+  guildDirectory._(14),
+  guildForum._(15);
 
   final int value;
 
