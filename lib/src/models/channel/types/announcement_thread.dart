@@ -48,7 +48,7 @@ class AnnouncementThread extends PartialAnnouncementThread implements Thread {
   final String name;
 
   @override
-  final Snowflake owner;
+  final Snowflake ownerId;
 
   @override
   final Snowflake? parentId;
@@ -84,7 +84,7 @@ class AnnouncementThread extends PartialAnnouncementThread implements Thread {
     required this.lastPinTimestamp,
     required this.messageCount,
     required this.name,
-    required this.owner,
+    required this.ownerId,
     required this.parentId,
     required this.permissionOverwrites,
     required this.position,

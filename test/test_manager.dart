@@ -4,6 +4,7 @@ import 'package:mocktail/mocktail.dart';
 import 'package:nock/nock.dart';
 import 'package:nyxx/nyxx.dart';
 import 'package:nyxx/src/cache/cache.dart';
+import 'package:nyxx/src/manager_mixin.dart';
 import 'package:test/test.dart';
 
 import 'mocks/client.dart';
@@ -55,7 +56,7 @@ class EndpointTest<T extends ReadOnlyManager<dynamic>, U, V> {
 
 Future<void> testReadOnlyManager<T extends SnowflakeEntity<T>, U extends ReadOnlyManager<T>>(
   String name,
-  U Function(CacheConfig<T>, Nyxx) create,
+  U Function(CacheConfig<T>, NyxxRest) create,
   Pattern baseUrlMatcher, {
   required Map<String, Object?> sampleObject,
   required void Function(T) sampleMatches,

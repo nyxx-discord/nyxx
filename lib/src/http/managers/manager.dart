@@ -12,7 +12,7 @@ abstract class ReadOnlyManager<T extends SnowflakeEntity<T>> {
   final Cache<T> cache;
 
   /// The client this manager belongs to.
-  final Nyxx client;
+  final NyxxRest client;
 
   /// Create a new read-only manager.
   ReadOnlyManager(CacheConfig<T> config, this.client) : cache = Cache(config);

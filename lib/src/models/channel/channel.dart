@@ -1,3 +1,4 @@
+import 'package:nyxx/src/http/managers/channel_manager.dart';
 import 'package:nyxx/src/models/snowflake_entity/snowflake_entity.dart';
 import 'package:nyxx/src/utils/flags.dart';
 
@@ -31,6 +32,11 @@ enum ChannelType {
   final int value;
 
   const ChannelType._(this.value);
+
+  factory ChannelType.parse(int value) => ChannelType.values.firstWhere(
+        (type) => type.value == value,
+        orElse: () => throw FormatException('Unknown channel type', value),
+      );
 
   @override
   String toString() => 'ChannelType($value)';

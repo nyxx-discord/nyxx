@@ -3,13 +3,20 @@ import 'dart:convert';
 import 'package:mocktail/mocktail.dart';
 import 'package:nock/nock.dart';
 import 'package:nyxx/nyxx.dart';
+import 'package:nyxx/src/manager_mixin.dart';
 import 'package:test/test.dart';
 
 import 'package:nock/src/interceptor.dart';
 
 import 'mocks/client.dart';
 
-Future<void> testEndpoint(Pattern endpointMatcher, Future<void> Function(Nyxx) run, {required Object? response, String? name, String method = 'get'}) async {
+Future<void> testEndpoint(
+  Pattern endpointMatcher,
+  Future<void> Function(NyxxRest) run, {
+  required Object? response,
+  String? name,
+  String method = 'get',
+}) async {
   group(name ?? endpointMatcher, () {
     setUpAll(() => nock.init());
     tearDownAll(() => nock.cleanAll());

@@ -8,7 +8,7 @@ class PartialThread extends PartialTextChannel implements PartialGuildChannel {
 }
 
 abstract class Thread extends PartialThread implements TextChannel, GuildChannel {
-  final Snowflake owner;
+  final Snowflake ownerId;
 
   final int messageCount;
 
@@ -31,7 +31,7 @@ abstract class Thread extends PartialThread implements TextChannel, GuildChannel
   Thread({
     required super.id,
     required super.manager,
-    required this.owner,
+    required this.ownerId,
     required this.messageCount,
     required this.approximateMemberCount,
     required this.isArchived,

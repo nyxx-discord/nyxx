@@ -31,6 +31,11 @@ enum VideoQualityMode {
 
   const VideoQualityMode._(this.value);
 
+  factory VideoQualityMode.parse(int value) => VideoQualityMode.values.firstWhere(
+        (mode) => mode.value == value,
+        orElse: () => throw FormatException('Unknown VideoQualityMode', value),
+      );
+
   @override
   String toString() => 'VideoQualityMode($value)';
 }

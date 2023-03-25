@@ -8,5 +8,5 @@ mixin ManagerMixin implements Nyxx {
   RestClientOptions get options;
 
   /// A [UserManager] that manages users for this client.
-  late final UserManager users = UserManager(options.userCacheConfig, this);
+  late final UserManager users = UserManager(options.userCacheConfig, this as NyxxRest);
 }

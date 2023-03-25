@@ -27,6 +27,11 @@ enum PermissionOverwriteType {
 
   const PermissionOverwriteType._(this.value);
 
+  factory PermissionOverwriteType.parse(int value) => PermissionOverwriteType.values.firstWhere(
+        (type) => type.value == value,
+        orElse: () => throw FormatException('Unknown PermissionOverwriteType', value),
+      );
+
   @override
   String toString() => 'PermissionOverwriteType($value)';
 }
