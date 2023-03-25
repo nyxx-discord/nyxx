@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:mocktail/mocktail.dart';
 import 'package:nock/nock.dart';
 import 'package:nyxx/nyxx.dart';
-import 'package:nyxx/src/manager_mixin.dart';
 import 'package:test/test.dart';
 
 import 'package:nock/src/interceptor.dart';
@@ -24,6 +23,7 @@ Future<void> testEndpoint(
     test('respects response status', () async {
       final client = MockNyxx();
       when(() => client.apiOptions).thenReturn(RestApiOptions(token: 'TEST_TOKEN'));
+      when(() => client.options).thenReturn(RestClientOptions());
       when(() => client.httpHandler).thenReturn(HttpHandler(client));
 
       final interceptor = Interceptor(RequestMatcher(
@@ -41,6 +41,7 @@ Future<void> testEndpoint(
     test('works', () async {
       final client = MockNyxx();
       when(() => client.apiOptions).thenReturn(RestApiOptions(token: 'TEST_TOKEN'));
+      when(() => client.options).thenReturn(RestClientOptions());
       when(() => client.httpHandler).thenReturn(HttpHandler(client));
 
       final interceptor = Interceptor(RequestMatcher(

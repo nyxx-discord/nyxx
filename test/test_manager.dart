@@ -4,7 +4,6 @@ import 'package:mocktail/mocktail.dart';
 import 'package:nock/nock.dart';
 import 'package:nyxx/nyxx.dart';
 import 'package:nyxx/src/cache/cache.dart';
-import 'package:nyxx/src/manager_mixin.dart';
 import 'package:test/test.dart';
 
 import 'mocks/client.dart';
@@ -74,6 +73,7 @@ Future<void> testReadOnlyManager<T extends SnowflakeEntity<T>, U extends ReadOnl
     test('parse', () {
       final client = MockNyxx();
       when(() => client.apiOptions).thenReturn(RestApiOptions(token: 'TEST_TOKEN'));
+      when(() => client.options).thenReturn(RestClientOptions());
       final config = CacheConfig<T>();
 
       final manager = create(config, client);
@@ -95,6 +95,7 @@ Future<void> testReadOnlyManager<T extends SnowflakeEntity<T>, U extends ReadOnl
         test(parsingTest.name, () {
           final client = MockNyxx();
           when(() => client.apiOptions).thenReturn(RestApiOptions(token: 'TEST_TOKEN'));
+          when(() => client.options).thenReturn(RestClientOptions());
           final config = CacheConfig<T>();
 
           final manager = create(config, client);
@@ -118,6 +119,7 @@ Future<void> testReadOnlyManager<T extends SnowflakeEntity<T>, U extends ReadOnl
     test('fetch caches entity', () async {
       final client = MockNyxx();
       when(() => client.apiOptions).thenReturn(RestApiOptions(token: 'TEST_TOKEN'));
+      when(() => client.options).thenReturn(RestClientOptions());
       when(() => client.httpHandler).thenReturn(HttpHandler(client));
 
       nock('https://discord.com/api/v${client.apiOptions.apiVersion}').get(baseUrlMatcher).reply(200, jsonEncode(sampleObject));
