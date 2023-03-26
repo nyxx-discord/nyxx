@@ -23,7 +23,7 @@ void main() {
         'locked': false,
         'invitable': true,
         'rate_limit_per_user': null,
-        'flags': 1,
+        'flags': 2,
         'applied_tags': ['0'],
       }),
     );

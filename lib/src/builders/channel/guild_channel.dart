@@ -149,13 +149,13 @@ class ForumChannelUpdateBuilder extends GuildChannelUpdateBuilder {
         if (flags != null) 'flags': flags!.value,
         if (tags != null) 'tags': tags!.map((e) => e.build()).toList(),
         if (!identical(defaultReaction, sentinelDefaultReaction))
-          'defaultReaction': defaultReaction == null
+          'default_reaction_emoji': defaultReaction == null
               ? null
               : {
                   if (defaultReaction!.emojiId != null) 'emoji_id': defaultReaction!.emojiId!.toString(),
                   if (defaultReaction!.emojiName != null) 'emoji_name': defaultReaction!.emojiName,
                 },
-        if (defaultThreadRateLimitPerUser != null) 'defaultThreadRateLimitPerUser': defaultThreadRateLimitPerUser!.inSeconds,
+        if (defaultThreadRateLimitPerUser != null) 'default_thread_rate_limit_per_user': defaultThreadRateLimitPerUser!.inSeconds,
         if (defaultSortOrder != null) 'default_sort_order': defaultSortOrder!.value,
         if (defaultLayout != null) 'default_forum_layout': defaultLayout!.value,
       };
@@ -181,7 +181,7 @@ class GuildVoiceChannelUpdateBuilder extends GuildChannelUpdateBuilder {
     this.isNsfw,
     this.bitRate,
     this.userLimit,
-    this.parentId,
+    this.parentId = sentinelSnowflake,
     this.rtcRegion = sentinelString,
     this.videoQualityMode,
   });
@@ -192,6 +192,7 @@ class GuildVoiceChannelUpdateBuilder extends GuildChannelUpdateBuilder {
         if (isNsfw != null) 'nsfw': isNsfw,
         if (bitRate != null) 'bitrate': bitRate,
         if (userLimit != null) 'user_limit': userLimit,
+        if (!identical(parentId, sentinelSnowflake)) 'parent_id': parentId?.toString(),
         if (!identical(rtcRegion, sentinelString)) 'rtc_region': rtcRegion,
         if (videoQualityMode != null) 'video_quality_mode': videoQualityMode!.value,
       };

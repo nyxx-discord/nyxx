@@ -5,6 +5,6 @@ void main() {
   test('GroupDmUpdateBuilder', () {
     final builder = GroupDmUpdateBuilder(name: 'test', icon: [0, 1, 2]);
 
-    expect(builder.build, equals({'name': 'test', 'icon': 'MCwxLDI='}));
+    expect(builder.build(), equals({'name': 'test', 'icon': 'AAEC'}));
   });
 }
