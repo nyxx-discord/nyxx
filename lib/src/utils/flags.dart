@@ -1,4 +1,6 @@
-abstract class FlagCombinable<T extends Flags<T>> {
+import 'package:nyxx/src/utils/to_string_helper/to_string_helper.dart';
+
+abstract class FlagCombinable<T extends Flags<T>> with ToStringHelper {
   int get value;
 
   const FlagCombinable();
@@ -28,20 +30,13 @@ class Flags<T extends Flags<T>> extends FlagCombinable<T> {
 }
 
 /// A flag within a set of [Flags].
-class Flag<T extends Flags<T>> extends FlagCombinable<T> {
-  /// The value of this flag.
-  @override
-  final int value;
-
+class Flag<T extends Flags<T>> extends Flags<T> {
   /// Create a new [Flag].
-  const Flag(this.value);
+  const Flag(super.value);
 
   /// Create a new [Flag] from an offset into the bitfield.
-  const Flag.fromOffset(int offset) : value = 1 << offset;
+  const Flag.fromOffset(int offset) : super(1 << offset);
 
   @override
-  bool operator ==(Object other) => identical(this, other) || (other is Flag<T> && other.value == value);
-
-  @override
-  int get hashCode => value.hashCode;
+  String toString() => 'Flag<$T>($value)';
 }
