@@ -32,6 +32,7 @@ export 'src/http/managers/channel_manager.dart' show ChannelManager;
 export 'src/models/discord_color.dart' show DiscordColor;
 export 'src/models/locale.dart' show Locale;
 export 'src/models/snowflake.dart' show Snowflake;
+export 'src/models/permissions.dart' show Permissions;
 export 'src/models/snowflake_entity/snowflake_entity.dart' show SnowflakeEntity;
 export 'src/models/user/application_role_connection.dart' show ApplicationRoleConnection;
 export 'src/models/user/connection.dart' show Connection, ConnectionType, ConnectionVisibility;
@@ -54,6 +55,8 @@ export 'src/models/channel/types/guild_text.dart' show GuildTextChannel, Partial
 export 'src/models/channel/types/guild_voice.dart' show GuildVoiceChannel, PartialGuildVoiceChannel;
 export 'src/models/channel/types/private_thread.dart' show PartialPrivateThread, PrivateThread;
 export 'src/models/channel/types/public_thread.dart' show PartialPublicThread, PublicThread;
+
+export 'src/utils/flags.dart' show Flag, FlagCombinable, Flags;
 
 // Types also used in the nyxx API from other packages
 export 'package:http/http.dart'

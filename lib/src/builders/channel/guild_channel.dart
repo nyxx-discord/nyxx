@@ -5,6 +5,7 @@ import 'package:nyxx/src/models/channel/types/forum.dart';
 import 'package:nyxx/src/models/channel/voice_channel.dart';
 import 'package:nyxx/src/models/permission_overwrite.dart';
 import 'package:nyxx/src/models/snowflake.dart';
+import 'package:nyxx/src/utils/flags.dart';
 
 class GuildChannelUpdateBuilder extends UpdateBuilder<GuildChannel> {
   final String? name;
@@ -108,7 +109,7 @@ class ForumChannelUpdateBuilder extends GuildChannelUpdateBuilder {
 
   final Duration? defaultAutoArchiveDuration;
 
-  final ChannelFlags? flags;
+  final Flags<ChannelFlags>? flags;
 
   final List<CreateBuilder<ForumTag>>? tags;
 

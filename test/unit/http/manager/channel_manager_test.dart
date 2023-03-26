@@ -238,6 +238,15 @@ void main() {
     additionalSampleObjects: [sampleGuildAnnouncement, sampleGuildVoice, sampleDm, sampleGroupDm, sampleCategory, sampleThread],
     additionalSampleMatchers: [checkGuildAnnouncement, checkGuildVoice, checkDm, checkGroupDm, checkCategory, checkThread],
     additionalParsingTests: [],
-    additionalEndpointTests: [],
+    additionalEndpointTests: [
+      EndpointTest<ChannelManager, Channel, Map<String, Object?>>(
+        name: 'update',
+        method: 'patch',
+        source: sampleGuildText,
+        urlMatcher: '/channels/0',
+        execute: (manager) => manager.update(Snowflake.zero, GuildTextChannelUpdateBuilder()),
+        check: checkGuildText,
+      ),
+    ],
   );
 }

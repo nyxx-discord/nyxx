@@ -1,5 +1,8 @@
-import 'package:nyxx/nyxx.dart';
 import 'package:nyxx/src/builders/builder.dart';
+import 'package:nyxx/src/models/channel/channel.dart';
+import 'package:nyxx/src/models/channel/thread.dart';
+import 'package:nyxx/src/models/snowflake.dart';
+import 'package:nyxx/src/utils/flags.dart';
 
 class ThreadUpdateBuilder extends UpdateBuilder<Thread> {
   final String? name;
@@ -14,7 +17,7 @@ class ThreadUpdateBuilder extends UpdateBuilder<Thread> {
 
   final Duration? rateLimitPerUser;
 
-  final ChannelFlags? flags;
+  final Flags<ChannelFlags>? flags;
 
   final List<Snowflake>? appliedTags;
 
