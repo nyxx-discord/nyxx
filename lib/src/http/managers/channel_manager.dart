@@ -64,9 +64,7 @@ class ChannelManager extends ReadOnlyManager<Channel> {
       lastPinTimestamp: maybeParse(raw['last_pin_timestamp'], DateTime.parse),
       name: raw['name'] as String,
       parentId: maybeParse(raw['parent_id'], Snowflake.parse),
-      permissionOverwrites:
-          maybeParse<List<PermissionOverwrite>, List<dynamic>>(raw['permission_overwrites'], (overwrites) => parseMany(overwrites, parsePermissionOverwrite)) ??
-              [],
+      permissionOverwrites: maybeParseMany(raw['permission_overwrites'], parsePermissionOverwrite) ?? [],
       position: raw['position'] as int,
       rateLimitPerUser: maybeParse<Duration?, int>(raw['rate_limit_per_user'], (value) => value == 0 ? null : Duration(seconds: value)),
     );
@@ -98,9 +96,7 @@ class ChannelManager extends ReadOnlyManager<Channel> {
       lastPinTimestamp: maybeParse(raw['last_pin_timestamp'], DateTime.parse),
       name: raw['name'] as String,
       parentId: maybeParse(raw['parent_id'], Snowflake.parse),
-      permissionOverwrites:
-          maybeParse<List<PermissionOverwrite>, List<dynamic>>(raw['permission_overwrites'], (overwrites) => parseMany(overwrites, parsePermissionOverwrite)) ??
-              [],
+      permissionOverwrites: maybeParseMany(raw['permission_overwrites'], parsePermissionOverwrite) ?? [],
       position: raw['position'] as int,
       rateLimitPerUser: maybeParse<Duration?, int>(raw['rate_limit_per_user'], (value) => value == 0 ? null : Duration(seconds: value)),
       rtcRegion: raw['rtc_region'] as String?,
@@ -137,9 +133,7 @@ class ChannelManager extends ReadOnlyManager<Channel> {
       isNsfw: raw['nsfw'] as bool? ?? false,
       name: raw['name'] as String,
       parentId: maybeParse(raw['parent_id'], Snowflake.parse),
-      permissionOverwrites:
-          maybeParse<List<PermissionOverwrite>, List<dynamic>>(raw['permission_overwrites'], (overwrites) => parseMany(overwrites, parsePermissionOverwrite)) ??
-              [],
+      permissionOverwrites: maybeParseMany(raw['permission_overwrites'], parsePermissionOverwrite) ?? [],
       position: raw['position'] as int,
     );
   }
@@ -160,9 +154,7 @@ class ChannelManager extends ReadOnlyManager<Channel> {
       lastPinTimestamp: maybeParse(raw['last_pin_timestamp'], DateTime.parse),
       name: raw['name'] as String,
       parentId: maybeParse(raw['parent_id'], Snowflake.parse),
-      permissionOverwrites:
-          maybeParse<List<PermissionOverwrite>, List<dynamic>>(raw['permission_overwrites'], (overwrites) => parseMany(overwrites, parsePermissionOverwrite)) ??
-              [],
+      permissionOverwrites: maybeParseMany(raw['permission_overwrites'], parsePermissionOverwrite) ?? [],
       position: raw['position'] as int,
       rateLimitPerUser: maybeParse<Duration?, int>(raw['rate_limit_per_user'], (value) => value == 0 ? null : Duration(seconds: value)),
     );
@@ -189,9 +181,7 @@ class ChannelManager extends ReadOnlyManager<Channel> {
       name: raw['name'] as String,
       ownerId: Snowflake.parse(raw['owner_id'] as String),
       parentId: maybeParse(raw['parent_id'], Snowflake.parse),
-      permissionOverwrites:
-          maybeParse<List<PermissionOverwrite>, List<dynamic>>(raw['permission_overwrites'], (overwrites) => parseMany(overwrites, parsePermissionOverwrite)) ??
-              [],
+      permissionOverwrites: maybeParseMany(raw['permission_overwrites'], parsePermissionOverwrite) ?? [],
       position: -1,
       rateLimitPerUser: maybeParse<Duration?, int>(raw['rate_limit_per_user'], (value) => value == 0 ? null : Duration(seconds: value)),
       totalMessagesSent: raw['total_message_sent'] as int,
@@ -219,9 +209,7 @@ class ChannelManager extends ReadOnlyManager<Channel> {
       name: raw['name'] as String,
       ownerId: Snowflake.parse(raw['owner_id'] as String),
       parentId: maybeParse(raw['parent_id'], Snowflake.parse),
-      permissionOverwrites:
-          maybeParse<List<PermissionOverwrite>, List<dynamic>>(raw['permission_overwrites'], (overwrites) => parseMany(overwrites, parsePermissionOverwrite)) ??
-              [],
+      permissionOverwrites: maybeParseMany(raw['permission_overwrites'], parsePermissionOverwrite) ?? [],
       position: -1,
       rateLimitPerUser: maybeParse<Duration?, int>(raw['rate_limit_per_user'], (value) => value == 0 ? null : Duration(seconds: value)),
       totalMessagesSent: raw['total_message_sent'] as int,
@@ -250,9 +238,7 @@ class ChannelManager extends ReadOnlyManager<Channel> {
       name: raw['name'] as String,
       ownerId: Snowflake.parse(raw['owner_id'] as String),
       parentId: maybeParse(raw['parent_id'], Snowflake.parse),
-      permissionOverwrites:
-          maybeParse<List<PermissionOverwrite>, List<dynamic>>(raw['permission_overwrites'], (overwrites) => parseMany(overwrites, parsePermissionOverwrite)) ??
-              [],
+      permissionOverwrites: maybeParseMany(raw['permission_overwrites'], parsePermissionOverwrite) ?? [],
       position: -1,
       rateLimitPerUser: maybeParse<Duration?, int>(raw['rate_limit_per_user'], (value) => value == 0 ? null : Duration(seconds: value)),
       totalMessagesSent: raw['total_message_sent'] as int,
@@ -272,9 +258,7 @@ class ChannelManager extends ReadOnlyManager<Channel> {
       lastPinTimestamp: maybeParse(raw['last_pin_timestamp'], DateTime.parse),
       name: raw['name'] as String,
       parentId: maybeParse(raw['parent_id'], Snowflake.parse),
-      permissionOverwrites:
-          maybeParse<List<PermissionOverwrite>, List<dynamic>>(raw['permission_overwrites'], (overwrites) => parseMany(overwrites, parsePermissionOverwrite)) ??
-              [],
+      permissionOverwrites: maybeParseMany(raw['permission_overwrites'], parsePermissionOverwrite) ?? [],
       position: raw['position'] as int,
       rateLimitPerUser: maybeParse<Duration?, int>(raw['rate_limit_per_user'], (value) => value == 0 ? null : Duration(seconds: value)),
       rtcRegion: raw['rtc_region'] as String?,
@@ -311,9 +295,7 @@ class ChannelManager extends ReadOnlyManager<Channel> {
       isNsfw: raw['nsfw'] as bool? ?? false,
       name: raw['name'] as String,
       parentId: maybeParse(raw['parent_id'], Snowflake.parse),
-      permissionOverwrites:
-          maybeParse<List<PermissionOverwrite>, List<dynamic>>(raw['permission_overwrites'], (overwrites) => parseMany(overwrites, parsePermissionOverwrite)) ??
-              [],
+      permissionOverwrites: maybeParseMany(raw['permission_overwrites'], parsePermissionOverwrite) ?? [],
       position: raw['position'] as int,
     );
   }

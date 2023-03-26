@@ -24,3 +24,5 @@ List<T> parseMany<T, U>(List<dynamic> objects, T Function(U) parse) {
     },
   );
 }
+
+List<T>? maybeParseMany<T, U>(dynamic object, T Function(U) parse) => maybeParse<List<T>, List<dynamic>>(object, (object) => parseMany(object, parse));
