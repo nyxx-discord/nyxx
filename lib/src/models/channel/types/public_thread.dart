@@ -66,6 +66,9 @@ class PublicThread extends PartialPublicThread implements Thread {
   final int totalMessagesSent;
 
   @override
+  final ChannelFlags? flags;
+
+  @override
   ChannelType get type => ChannelType.publicThread;
 
   PublicThread({
@@ -90,5 +93,6 @@ class PublicThread extends PartialPublicThread implements Thread {
     required this.position,
     required this.rateLimitPerUser,
     required this.totalMessagesSent,
+    required this.flags,
   });
 }

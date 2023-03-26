@@ -99,7 +99,7 @@ class DefaultReaction with ToStringHelper {
 
 enum ForumSort {
   latestActivity._(0),
-  creadtionDate._(1);
+  creationDate._(1);
 
   final int value;
 

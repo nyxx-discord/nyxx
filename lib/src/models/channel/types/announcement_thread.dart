@@ -66,6 +66,9 @@ class AnnouncementThread extends PartialAnnouncementThread implements Thread {
   final int totalMessagesSent;
 
   @override
+  final ChannelFlags? flags;
+
+  @override
   ChannelType get type => ChannelType.announcementThread;
 
   AnnouncementThread({
@@ -90,5 +93,6 @@ class AnnouncementThread extends PartialAnnouncementThread implements Thread {
     required this.position,
     required this.rateLimitPerUser,
     required this.totalMessagesSent,
+    required this.flags,
   });
 }

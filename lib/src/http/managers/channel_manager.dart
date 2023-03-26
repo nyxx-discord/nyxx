@@ -185,6 +185,7 @@ class ChannelManager extends ReadOnlyManager<Channel> {
       position: -1,
       rateLimitPerUser: maybeParse<Duration?, int>(raw['rate_limit_per_user'], (value) => value == 0 ? null : Duration(seconds: value)),
       totalMessagesSent: raw['total_message_sent'] as int,
+      flags: maybeParse(raw['flags'], ChannelFlags.new),
     );
   }
 
@@ -213,6 +214,7 @@ class ChannelManager extends ReadOnlyManager<Channel> {
       position: -1,
       rateLimitPerUser: maybeParse<Duration?, int>(raw['rate_limit_per_user'], (value) => value == 0 ? null : Duration(seconds: value)),
       totalMessagesSent: raw['total_message_sent'] as int,
+      flags: maybeParse(raw['flags'], ChannelFlags.new),
     );
   }
 
@@ -242,6 +244,7 @@ class ChannelManager extends ReadOnlyManager<Channel> {
       position: -1,
       rateLimitPerUser: maybeParse<Duration?, int>(raw['rate_limit_per_user'], (value) => value == 0 ? null : Duration(seconds: value)),
       totalMessagesSent: raw['total_message_sent'] as int,
+      flags: maybeParse(raw['flags'], ChannelFlags.new),
     );
   }
 

@@ -42,7 +42,7 @@ enum ChannelType {
   String toString() => 'ChannelType($value)';
 }
 
-// Currently only used in forum channels
+// Currently only used in forum channels and threads
 class ChannelFlags extends Flags<ChannelFlags> {
   static const pinned = Flag<ChannelFlags>.fromOffset(1);
   static const requireTag = Flag<ChannelFlags>.fromOffset(4);

@@ -67,6 +67,12 @@ class PrivateThread extends PartialPrivateThread implements Thread {
   @override
   final int totalMessagesSent;
 
+  @override
+  final ChannelFlags? flags;
+
+  @override
+  ChannelType get type => ChannelType.privateThread;
+
   PrivateThread({
     required super.id,
     required super.manager,
@@ -90,8 +96,6 @@ class PrivateThread extends PartialPrivateThread implements Thread {
     required this.position,
     required this.rateLimitPerUser,
     required this.totalMessagesSent,
+    required this.flags,
   });
-
-  @override
-  ChannelType get type => ChannelType.privateThread;
 }

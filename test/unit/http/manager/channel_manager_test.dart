@@ -226,6 +226,7 @@ void main() {
     expect(channel.position, equals(-1));
     expect(channel.rateLimitPerUser, equals(Duration(seconds: 2)));
     expect(channel.totalMessagesSent, equals(1));
+    expect(channel.flags, equals(ChannelFlags(0)));
   }
 
   testReadOnlyManager<Channel, ChannelManager>(

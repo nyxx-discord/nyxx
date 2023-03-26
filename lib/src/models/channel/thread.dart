@@ -1,3 +1,4 @@
+import 'package:nyxx/src/models/channel/channel.dart';
 import 'package:nyxx/src/models/channel/guild_channel.dart';
 import 'package:nyxx/src/models/channel/text_channel.dart';
 import 'package:nyxx/src/models/snowflake.dart';
@@ -28,6 +29,8 @@ abstract class Thread extends PartialThread implements TextChannel, GuildChannel
 
   final List<Snowflake>? appliedTags;
 
+  final ChannelFlags? flags;
+
   Thread({
     required super.id,
     required super.manager,
@@ -41,6 +44,7 @@ abstract class Thread extends PartialThread implements TextChannel, GuildChannel
     required this.createdAt,
     required this.totalMessagesSent,
     required this.appliedTags,
+    required this.flags,
   });
 }
 
