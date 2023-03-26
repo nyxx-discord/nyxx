@@ -5,6 +5,18 @@ export 'src/client_options.dart' show ClientOptions, RestClientOptions;
 export 'src/builders/builder.dart' show Builder, CreateBuilder, UpdateBuilder;
 export 'src/builders/image.dart' show ImageBuilder;
 export 'src/builders/user.dart' show UserUpdateBuilder;
+export 'src/builders/permission_overwrite.dart' show PermissionOverwriteBuilder;
+export 'src/builders/channel/forum_tag.dart' show ForumTagBuilder;
+export 'src/builders/channel/group_dm.dart' show GroupDmUpdateBuilder;
+export 'src/builders/channel/guild_channel.dart'
+    show
+        ForumChannelUpdateBuilder,
+        GuildAnnouncementChannelUpdateBuilder,
+        GuildChannelUpdateBuilder,
+        GuildTextChannelUpdateBuilder,
+        GuildVoiceChannelUpdateBuilder,
+        GuildStageChannelUpdateBuilder;
+export 'src/builders/channel/thread.dart' show ThreadUpdateBuilder;
 
 export 'src/cache/cache.dart' show Cache;
 

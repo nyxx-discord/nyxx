@@ -1,3 +1,6 @@
+import 'dart:convert';
+
+import 'package:nyxx/src/builders/builder.dart';
 import 'package:nyxx/src/http/managers/manager.dart';
 import 'package:nyxx/src/http/request.dart';
 import 'package:nyxx/src/http/route.dart';
@@ -333,6 +336,22 @@ class ChannelManager extends ReadOnlyManager<Channel> {
   Future<Channel> fetch(Snowflake id) async {
     final route = HttpRoute()..channels(id: id.toString());
     final request = BasicRequest(route);
+
+    final response = await client.httpHandler.executeSafe(request);
+    final channel = parse(response.jsonBody as Map<String, Object?>);
+
+    cache[channel.id] = channel;
+    return channel;
+  }
+
+  Future<Channel> update(Snowflake id, UpdateBuilder<Channel> builder, {String? auditLogReason}) async {
+    final route = HttpRoute()..channels(id: id.toString());
+    final request = BasicRequest(
+      route,
+      method: 'PATCH',
+      body: jsonEncode(builder.build()),
+      auditLogReason: auditLogReason,
+    );
 
     final response = await client.httpHandler.executeSafe(request);
     final channel = parse(response.jsonBody as Map<String, Object?>);
