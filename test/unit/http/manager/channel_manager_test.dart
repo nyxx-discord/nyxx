@@ -247,6 +247,14 @@ void main() {
         execute: (manager) => manager.update(Snowflake.zero, GuildTextChannelUpdateBuilder()),
         check: checkGuildText,
       ),
+      EndpointTest<ChannelManager, Channel, Map<String, Object?>>(
+        name: 'delete',
+        method: 'delete',
+        source: sampleGuildText,
+        urlMatcher: '/channels/0',
+        execute: (manager) => manager.delete(Snowflake.zero),
+        check: checkGuildText,
+      ),
     ],
   );
 }

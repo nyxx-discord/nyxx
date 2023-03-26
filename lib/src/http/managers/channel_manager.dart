@@ -359,4 +359,19 @@ class ChannelManager extends ReadOnlyManager<Channel> {
     cache[channel.id] = channel;
     return channel;
   }
+
+  Future<Channel> delete(Snowflake id, {String? auditLogReason}) async {
+    final route = HttpRoute()..channels(id: id.toString());
+    final request = BasicRequest(
+      route,
+      method: 'DELETE',
+      auditLogReason: auditLogReason,
+    );
+
+    final response = await client.httpHandler.executeSafe(request);
+    final channel = parse(response.jsonBody as Map<String, Object?>);
+
+    cache.remove(channel.id);
+    return channel;
+  }
 }
