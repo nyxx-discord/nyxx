@@ -21,6 +21,11 @@ enum MessageActivityType {
 
   const MessageActivityType._(this.value);
 
+  factory MessageActivityType.parse(int value) => MessageActivityType.values.firstWhere(
+        (type) => type.value == value,
+        orElse: () => throw FormatException('Unknown MessageActivityType', value),
+      );
+
   @override
   String toString() => 'MessageActivityType($value)';
 }

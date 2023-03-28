@@ -1,7 +1,14 @@
+import 'package:nyxx/src/http/managers/message_manager.dart';
 import 'package:nyxx/src/models/channel/channel.dart';
 import 'package:nyxx/src/models/snowflake.dart';
 
 class PartialTextChannel extends PartialChannel {
+  late final MessageManager messages = MessageManager(
+    manager.client.options.messageCacheConfig,
+    manager.client,
+    channelId: id,
+  );
+
   PartialTextChannel({required super.id, required super.manager});
 }
 

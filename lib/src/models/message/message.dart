@@ -1,3 +1,4 @@
+import 'package:nyxx/src/http/managers/message_manager.dart';
 import 'package:nyxx/src/models/channel/thread.dart';
 import 'package:nyxx/src/models/message/activity.dart';
 import 'package:nyxx/src/models/message/attachment.dart';
@@ -147,6 +148,11 @@ enum MessageType {
   final int value;
 
   const MessageType._(this.value);
+
+  factory MessageType.parse(int value) => MessageType.values.firstWhere(
+        (type) => type.value == value,
+        orElse: () => throw FormatException('Unknown MessageType', value),
+      );
 
   @override
   String toString() => 'MessageType($value)';

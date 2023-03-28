@@ -4,7 +4,7 @@ import 'package:nyxx/src/utils/to_string_helper/to_string_helper.dart';
 class MessageReference with ToStringHelper {
   final Snowflake? messageId;
 
-  final Snowflake? channelId;
+  final Snowflake channelId;
 
   final Snowflake? guildId;
 

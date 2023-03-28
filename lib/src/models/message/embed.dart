@@ -57,6 +57,11 @@ enum EmbedType {
 
   const EmbedType._(this.value);
 
+  factory EmbedType.parse(String value) => EmbedType.values.firstWhere(
+        (type) => type.value == value,
+        orElse: () => throw FormatException('Unknown EmbedType', value),
+      );
+
   @override
   String toString() => 'EmbedType($value)';
 }
