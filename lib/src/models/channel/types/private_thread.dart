@@ -3,11 +3,7 @@ import 'package:nyxx/src/models/channel/thread.dart';
 import 'package:nyxx/src/models/permission_overwrite.dart';
 import 'package:nyxx/src/models/snowflake.dart';
 
-class PartialPrivateThread extends PartialThread {
-  PartialPrivateThread({required super.id, required super.manager});
-}
-
-class PrivateThread extends PartialPrivateThread implements Thread {
+class PrivateThread extends Channel implements Thread {
   final bool isInvitable;
 
   @override

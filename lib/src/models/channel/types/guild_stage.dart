@@ -5,11 +5,7 @@ import 'package:nyxx/src/models/channel/voice_channel.dart';
 import 'package:nyxx/src/models/permission_overwrite.dart';
 import 'package:nyxx/src/models/snowflake.dart';
 
-class PartialGuildStageChannel extends PartialTextChannel implements PartialVoiceChannel, PartialGuildChannel {
-  PartialGuildStageChannel({required super.id, required super.manager});
-}
-
-class GuildStageChannel extends PartialGuildStageChannel implements TextChannel, VoiceChannel, GuildChannel {
+class GuildStageChannel extends Channel implements TextChannel, VoiceChannel, GuildChannel {
   @override
   final int bitrate;
 

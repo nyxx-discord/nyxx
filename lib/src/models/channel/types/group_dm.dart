@@ -3,11 +3,7 @@ import 'package:nyxx/src/models/channel/text_channel.dart';
 import 'package:nyxx/src/models/snowflake.dart';
 import 'package:nyxx/src/models/user/user.dart';
 
-class PartialGroupDmChannel extends PartialTextChannel {
-  PartialGroupDmChannel({required super.id, required super.manager});
-}
-
-class GroupDmChannel extends PartialGroupDmChannel implements TextChannel {
+class GroupDmChannel extends Channel implements TextChannel {
   final String name;
 
   final List<User> recipients;

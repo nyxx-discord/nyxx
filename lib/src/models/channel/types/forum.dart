@@ -5,11 +5,7 @@ import 'package:nyxx/src/models/permission_overwrite.dart';
 import 'package:nyxx/src/models/snowflake.dart';
 import 'package:nyxx/src/utils/to_string_helper/to_string_helper.dart';
 
-class PartialForumChannel extends PartialGuildChannel implements PartialHasThreadsChannel {
-  PartialForumChannel({required super.id, required super.manager});
-}
-
-class ForumChannel extends PartialForumChannel implements GuildChannel, HasThreadsChannel {
+class ForumChannel extends Channel implements GuildChannel, HasThreadsChannel {
   final String topic;
 
   final Snowflake? lastThreadId;

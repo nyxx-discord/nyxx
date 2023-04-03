@@ -4,48 +4,28 @@ import 'package:nyxx/src/models/channel/text_channel.dart';
 import 'package:nyxx/src/models/snowflake.dart';
 import 'package:nyxx/src/utils/flags.dart';
 
-class PartialThread extends PartialTextChannel implements PartialGuildChannel {
-  PartialThread({required super.id, required super.manager});
-}
+abstract class Thread implements TextChannel, GuildChannel {
+  Snowflake get ownerId;
 
-abstract class Thread extends PartialThread implements TextChannel, GuildChannel {
-  final Snowflake ownerId;
+  int get messageCount;
 
-  final int messageCount;
+  int get approximateMemberCount;
 
-  final int approximateMemberCount;
+  bool get isArchived;
 
-  final bool isArchived;
+  Duration get autoArchiveDuration;
 
-  final Duration autoArchiveDuration;
+  DateTime get archiveTimestamp;
 
-  final DateTime archiveTimestamp;
+  bool get isLocked;
 
-  final bool isLocked;
+  DateTime get createdAt;
 
-  final DateTime createdAt;
+  int get totalMessagesSent;
 
-  final int totalMessagesSent;
+  List<Snowflake>? get appliedTags;
 
-  final List<Snowflake>? appliedTags;
-
-  final ChannelFlags? flags;
-
-  Thread({
-    required super.id,
-    required super.manager,
-    required this.ownerId,
-    required this.messageCount,
-    required this.approximateMemberCount,
-    required this.isArchived,
-    required this.autoArchiveDuration,
-    required this.archiveTimestamp,
-    required this.isLocked,
-    required this.createdAt,
-    required this.totalMessagesSent,
-    required this.appliedTags,
-    required this.flags,
-  });
+  ChannelFlags? get flags;
 }
 
 class PartialThreadMember {

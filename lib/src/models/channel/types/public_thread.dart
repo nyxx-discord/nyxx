@@ -3,11 +3,7 @@ import 'package:nyxx/src/models/channel/thread.dart';
 import 'package:nyxx/src/models/permission_overwrite.dart';
 import 'package:nyxx/src/models/snowflake.dart';
 
-class PartialPublicThread extends PartialThread {
-  PartialPublicThread({required super.id, required super.manager});
-}
-
-class PublicThread extends PartialPublicThread implements Thread {
+class PublicThread extends Channel implements Thread {
   @override
   final List<Snowflake>? appliedTags;
 

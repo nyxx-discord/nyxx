@@ -1,26 +1,13 @@
 import 'package:nyxx/src/models/channel/channel.dart';
 
-class PartialVoiceChannel extends PartialChannel {
-  PartialVoiceChannel({required super.id, required super.manager});
-}
+abstract class VoiceChannel implements Channel {
+  int get bitrate;
 
-abstract class VoiceChannel extends PartialVoiceChannel implements Channel {
-  final int bitrate;
+  int? get userLimit;
 
-  final int? userLimit;
+  String? get rtcRegion;
 
-  final String? rtcRegion;
-
-  final VideoQualityMode videoQualityMode;
-
-  VoiceChannel({
-    required super.id,
-    required super.manager,
-    required this.bitrate,
-    required this.userLimit,
-    required this.rtcRegion,
-    required this.videoQualityMode,
-  });
+  VideoQualityMode get videoQualityMode;
 }
 
 enum VideoQualityMode {

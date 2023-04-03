@@ -3,11 +3,7 @@ import 'package:nyxx/src/models/channel/guild_channel.dart';
 import 'package:nyxx/src/models/permission_overwrite.dart';
 import 'package:nyxx/src/models/snowflake.dart';
 
-class PartialGuildCategory extends PartialGuildChannel {
-  PartialGuildCategory({required super.id, required super.manager});
-}
-
-class GuildCategory extends PartialGuildCategory implements GuildChannel {
+class GuildCategory extends Channel implements GuildChannel {
   @override
   final Snowflake guildId;
 

@@ -3,11 +3,7 @@ import 'package:nyxx/src/models/channel/text_channel.dart';
 import 'package:nyxx/src/models/snowflake.dart';
 import 'package:nyxx/src/models/user/user.dart';
 
-class PartialDmChannel extends PartialTextChannel {
-  PartialDmChannel({required super.id, required super.manager});
-}
-
-class DmChannel extends PartialDmChannel implements TextChannel {
+class DmChannel extends Channel implements TextChannel {
   final User recipient;
 
   @override

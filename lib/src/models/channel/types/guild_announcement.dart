@@ -5,11 +5,7 @@ import 'package:nyxx/src/models/channel/has_threads_channel.dart';
 import 'package:nyxx/src/models/permission_overwrite.dart';
 import 'package:nyxx/src/models/snowflake.dart';
 
-class PartialGuildAnnouncementChannel extends PartialTextChannel implements PartialGuildChannel, PartialHasThreadsChannel {
-  PartialGuildAnnouncementChannel({required super.id, required super.manager});
-}
-
-class GuildAnnouncementChannel extends PartialGuildAnnouncementChannel implements TextChannel, GuildChannel, HasThreadsChannel {
+class GuildAnnouncementChannel extends Channel implements TextChannel, GuildChannel, HasThreadsChannel {
   final String topic;
 
   @override
