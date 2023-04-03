@@ -229,6 +229,56 @@ void main() {
     expect(channel.flags, isNull);
   }
 
+  final samplePermissionOverwrite = {
+    'id': '0',
+    'type': 1,
+    'allow': '100',
+    'deny': '11',
+  };
+
+  void checkPermissionOverwrite(PermissionOverwrite overwrite) {
+    expect(overwrite.id, equals(Snowflake.zero));
+    expect(overwrite.type, equals(PermissionOverwriteType.member));
+    expect(overwrite.allow, equals(Permissions(100)));
+    expect(overwrite.deny, equals(Permissions(11)));
+  }
+
+  final sampleForumTag = {
+    'id': '0',
+    'name': 'test tag',
+    'moderated': false,
+    'emoji_id': null,
+    'emoji_name': 'slight_smile',
+  };
+
+  void checkForumTag(ForumTag tag) {
+    expect(tag.id, equals(Snowflake.zero));
+    expect(tag.name, equals('test tag'));
+    expect(tag.isModerated, isFalse);
+    expect(tag.emojiId, isNull);
+    expect(tag.emojiName, equals('slight_smile'));
+  }
+
+  final sampleDefaultReaction = {
+    'emoji_id': '0',
+    'emoji_name': null,
+  };
+
+  void checkDefaultReaction(DefaultReaction reaction) {
+    expect(reaction.emojiId, equals(Snowflake.zero));
+    expect(reaction.emojiName, isNull);
+  }
+
+  final sampleFollowedChannel = {
+    'channel_id': '0',
+    'webhook_id': '1',
+  };
+
+  void checkFollowedChannel(FollowedChannel followedChannel) {
+    expect(followedChannel.channelId, equals(Snowflake.zero));
+    expect(followedChannel.webhookId, equals(Snowflake(1)));
+  }
+
   final sampleThreadMember = {
     'id': '0',
     'user_id': '1',
@@ -268,7 +318,44 @@ void main() {
     sampleMatches: checkGuildText,
     additionalSampleObjects: [sampleGuildAnnouncement, sampleGuildVoice, sampleDm, sampleGroupDm, sampleCategory, sampleThread],
     additionalSampleMatchers: [checkGuildAnnouncement, checkGuildVoice, checkDm, checkGroupDm, checkCategory, checkThread],
-    additionalParsingTests: [],
+    additionalParsingTests: [
+      ParsingTest<ChannelManager, PermissionOverwrite, Map<String, Object?>>(
+        name: 'parsePermissionOverwrite',
+        source: samplePermissionOverwrite,
+        parse: (manager) => manager.parsePermissionOverwrite,
+        check: checkPermissionOverwrite,
+      ),
+      ParsingTest<ChannelManager, ForumTag, Map<String, Object?>>(
+        name: 'parseForumTag',
+        source: sampleForumTag,
+        parse: (manager) => manager.parseForumTag,
+        check: checkForumTag,
+      ),
+      ParsingTest<ChannelManager, DefaultReaction, Map<String, Object?>>(
+        name: 'parseDefaultReaction',
+        source: sampleDefaultReaction,
+        parse: (manager) => manager.parseDefaultReaction,
+        check: checkDefaultReaction,
+      ),
+      ParsingTest<ChannelManager, FollowedChannel, Map<String, Object?>>(
+        name: 'parseFollowedChannel',
+        source: sampleFollowedChannel,
+        parse: (manager) => manager.parseFollowedChannel,
+        check: checkFollowedChannel,
+      ),
+      ParsingTest<ChannelManager, ThreadMember, Map<String, Object?>>(
+        name: 'parseThreadMember',
+        source: sampleThreadMember,
+        parse: (manager) => manager.parseThreadMember,
+        check: checkThreadMember,
+      ),
+      ParsingTest<ChannelManager, ThreadList, Map<String, Object?>>(
+        name: 'parseThreadList',
+        source: sampleThreadList,
+        parse: (manager) => manager.parseThreadList,
+        check: checkThreadList,
+      ),
+    ],
     additionalEndpointTests: [
       EndpointTest<ChannelManager, Channel, Map<String, Object?>>(
         name: 'update',
@@ -306,13 +393,10 @@ void main() {
       EndpointTest<ChannelManager, FollowedChannel, Map<String, Object?>>(
         name: 'followChannel',
         method: 'post',
-        source: {'channel_id': '0', 'webhook_id': '1'},
+        source: sampleFollowedChannel,
         urlMatcher: '/channels/0/followers',
         execute: (manager) => manager.followChannel(Snowflake(1), Snowflake.zero),
-        check: (followedChannel) {
-          expect(followedChannel.channelId, equals(Snowflake.zero));
-          expect(followedChannel.webhookId, equals(Snowflake(1)));
-        },
+        check: checkFollowedChannel,
       ),
       EndpointTest<ChannelManager, void, void>(
         name: 'triggerTyping',
