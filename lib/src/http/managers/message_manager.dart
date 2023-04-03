@@ -330,12 +330,12 @@ class MessageManager extends Manager<Message> {
     return message;
   }
 
-  Future<void> bulkDelete(Iterable<Snowflake> messageIds) async {
+  Future<void> bulkDelete(Iterable<Snowflake> ids) async {
     final route = HttpRoute()
       ..channels(id: channelId.toString())
       ..messages()
-      ..bulkdelete();
-    final request = BasicRequest(route, method: 'POST', body: jsonEncode(messageIds.map((e) => e.toString()).toList()));
+      ..bulkDelete();
+    final request = BasicRequest(route, method: 'POST', body: jsonEncode(ids.map((e) => e.toString()).toList()));
 
     await client.httpHandler.executeSafe(request);
   }
@@ -355,19 +355,19 @@ class MessageManager extends Manager<Message> {
     return messages;
   }
 
-  Future<void> pin(Snowflake messageId, {String? auditLogReason}) async {
+  Future<void> pin(Snowflake id, {String? auditLogReason}) async {
     final route = HttpRoute()
       ..channels(id: channelId.toString())
-      ..pins(id: messageId.toString());
+      ..pins(id: id.toString());
     final request = BasicRequest(route, method: 'PUT', auditLogReason: auditLogReason);
 
     await client.httpHandler.executeSafe(request);
   }
 
-  Future<void> unpin(Snowflake messageId, {String? auditLogReason}) async {
+  Future<void> unpin(Snowflake id, {String? auditLogReason}) async {
     final route = HttpRoute()
       ..channels(id: channelId.toString())
-      ..pins(id: messageId.toString());
+      ..pins(id: id.toString());
     final request = BasicRequest(route, method: 'DELETE', auditLogReason: auditLogReason);
 
     await client.httpHandler.executeSafe(request);

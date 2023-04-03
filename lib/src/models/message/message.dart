@@ -1,3 +1,4 @@
+import 'package:nyxx/src/builders/message/message.dart';
 import 'package:nyxx/src/http/managers/message_manager.dart';
 import 'package:nyxx/src/models/channel/thread.dart';
 import 'package:nyxx/src/models/message/activity.dart';
@@ -20,6 +21,19 @@ class PartialMessage extends SnowflakeEntity<Message> with SnowflakeEntityMixin<
   Snowflake get channelId => manager.channelId;
 
   PartialMessage({required super.id, required this.manager});
+
+  Future<Message> update(MessageUpdateBuilder builder) => manager.update(id, builder);
+
+  // An often-used alias to update
+  Future<Message> edit(MessageUpdateBuilder builder) => update(builder);
+
+  Future<void> delete({String? auditLogReason}) => manager.delete(id, auditLogReason: auditLogReason);
+
+  Future<void> crosspost() => manager.crosspost(id);
+
+  Future<void> pin({String? auditLogReason}) => manager.pin(id, auditLogReason: auditLogReason);
+
+  Future<void> unpin({String? auditLogReason}) => manager.unpin(id, auditLogReason: auditLogReason);
 }
 
 class Message extends PartialMessage {

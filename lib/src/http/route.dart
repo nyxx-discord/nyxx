@@ -168,7 +168,7 @@ extension RouteHelpers on HttpRoute {
   void search() => add(HttpRoutePart("search"));
 
   /// Adds the [`bulk-delete`](https://discord.com/developers/docs/resources/channel#bulk-delete-messages) part to this [HttpRoute].
-  void bulkdelete() => add(HttpRoutePart("bulk-delete"));
+  void bulkDelete() => add(HttpRoutePart("bulk-delete"));
 
   /// Adds the [`typing`](https://discord.com/developers/docs/resources/channel#trigger-typing-indicator) part to this [HttpRoute].
   void typing() => add(HttpRoutePart("typing"));

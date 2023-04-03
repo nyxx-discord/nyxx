@@ -415,10 +415,10 @@ class ChannelManager extends ReadOnlyManager<Channel> {
     await client.httpHandler.executeSafe(request);
   }
 
-  Future<void> deletePermissionOverwrite(Snowflake channelId, Snowflake id) async {
+  Future<void> deletePermissionOverwrite(Snowflake id, Snowflake permissionId) async {
     final route = HttpRoute()
-      ..channels(id: channelId.toString())
-      ..permissions(id: id.toString());
+      ..channels(id: id.toString())
+      ..permissions(id: permissionId.toString());
     final request = BasicRequest(route, method: 'DELETE');
 
     await client.httpHandler.executeSafe(request);
@@ -426,11 +426,11 @@ class ChannelManager extends ReadOnlyManager<Channel> {
 
   // TODO Implement invite endpoints
 
-  Future<FollowedChannel> followChannel(Snowflake channelId, Snowflake toFollow) async {
+  Future<FollowedChannel> followChannel(Snowflake id, Snowflake toFollow) async {
     final route = HttpRoute()
       ..channels(id: toFollow.toString())
       ..followers();
-    final request = BasicRequest(route, method: 'POST', body: jsonEncode({'webhook_channel_id': channelId.toString()}));
+    final request = BasicRequest(route, method: 'POST', body: jsonEncode({'webhook_channel_id': id.toString()}));
 
     final response = await client.httpHandler.executeSafe(request);
 
@@ -446,9 +446,9 @@ class ChannelManager extends ReadOnlyManager<Channel> {
     await client.httpHandler.executeSafe(request);
   }
 
-  Future<Thread> startThreadFromMessage(Snowflake channelId, Snowflake messageId, ThreadFromMessageBuilder builder) async {
+  Future<Thread> createThreadFromMessage(Snowflake id, Snowflake messageId, ThreadFromMessageBuilder builder) async {
     final route = HttpRoute()
-      ..channels(id: channelId.toString())
+      ..channels(id: id.toString())
       ..messages(id: messageId.toString())
       ..threads();
     final request = BasicRequest(route, method: 'POST', body: jsonEncode(builder.build()));
@@ -460,9 +460,9 @@ class ChannelManager extends ReadOnlyManager<Channel> {
     return thread;
   }
 
-  Future<Thread> startThread(Snowflake channelId, ThreadBuilder builder) async {
+  Future<Thread> createThread(Snowflake id, ThreadBuilder builder) async {
     final route = HttpRoute()
-      ..channels(id: channelId.toString())
+      ..channels(id: id.toString())
       ..threads();
     final request = BasicRequest(route, method: 'POST', body: jsonEncode(builder.build()));
 
@@ -473,9 +473,9 @@ class ChannelManager extends ReadOnlyManager<Channel> {
     return thread;
   }
 
-  Future<Thread> startForumThread(Snowflake channelId, ForumThreadBuilder builder) async {
+  Future<Thread> createForumThread(Snowflake id, ForumThreadBuilder builder) async {
     final route = HttpRoute()
-      ..channels(id: channelId.toString())
+      ..channels(id: id.toString())
       ..threads();
 
     final HttpRequest request;
@@ -511,45 +511,45 @@ class ChannelManager extends ReadOnlyManager<Channel> {
     return thread;
   }
 
-  Future<void> joinThread(Snowflake threadId) async {
+  Future<void> joinThread(Snowflake id) async {
     final route = HttpRoute()
-      ..channels(id: threadId.toString())
+      ..channels(id: id.toString())
       ..threadMembers(id: '@me');
     final request = BasicRequest(route, method: 'PUT');
 
     await client.httpHandler.executeSafe(request);
   }
 
-  Future<void> addThreadMember(Snowflake threadId, Snowflake memberId) async {
+  Future<void> addThreadMember(Snowflake id, Snowflake memberId) async {
     final route = HttpRoute()
-      ..channels(id: threadId.toString())
+      ..channels(id: id.toString())
       ..threadMembers(id: memberId.toString());
     final request = BasicRequest(route, method: 'PUT');
 
     await client.httpHandler.executeSafe(request);
   }
 
-  Future<void> leaveThread(Snowflake threadId) async {
+  Future<void> leaveThread(Snowflake id) async {
     final route = HttpRoute()
-      ..channels(id: threadId.toString())
+      ..channels(id: id.toString())
       ..threadMembers(id: '@me');
     final request = BasicRequest(route, method: 'DELETE');
 
     await client.httpHandler.executeSafe(request);
   }
 
-  Future<void> removeThreadMember(Snowflake threadId, Snowflake memberId) async {
+  Future<void> removeThreadMember(Snowflake id, Snowflake memberId) async {
     final route = HttpRoute()
-      ..channels(id: threadId.toString())
+      ..channels(id: id.toString())
       ..threadMembers(id: memberId.toString());
     final request = BasicRequest(route, method: 'DELETE');
 
     await client.httpHandler.executeSafe(request);
   }
 
-  Future<ThreadMember> fetchThreadMember(Snowflake threadId, Snowflake memberId, {bool? withMember}) async {
+  Future<ThreadMember> fetchThreadMember(Snowflake id, Snowflake memberId, {bool? withMember}) async {
     final route = HttpRoute()
-      ..channels(id: threadId.toString())
+      ..channels(id: id.toString())
       ..threadMembers(id: memberId.toString());
     final request = BasicRequest(
       route,
@@ -562,9 +562,9 @@ class ChannelManager extends ReadOnlyManager<Channel> {
     return parseThreadMember(response.jsonBody as Map<String, Object?>);
   }
 
-  Future<List<ThreadMember>> listThreadMembers(Snowflake threadId, {bool? withMembers, Snowflake? after, int? limit}) async {
+  Future<List<ThreadMember>> listThreadMembers(Snowflake id, {bool? withMembers, Snowflake? after, int? limit}) async {
     final route = HttpRoute()
-      ..channels(id: threadId.toString())
+      ..channels(id: id.toString())
       ..threadMembers();
     final request = BasicRequest(
       route,
@@ -579,9 +579,9 @@ class ChannelManager extends ReadOnlyManager<Channel> {
     return parseMany(response.jsonBody as List, parseThreadMember);
   }
 
-  Future<ThreadList> listPublicArchivedThreads(Snowflake channelId, {DateTime? before, int? limit}) async {
+  Future<ThreadList> listPublicArchivedThreads(Snowflake id, {DateTime? before, int? limit}) async {
     final route = HttpRoute()
-      ..channels(id: channelId.toString())
+      ..channels(id: id.toString())
       ..threads()
       ..archived()
       ..public();
@@ -597,9 +597,9 @@ class ChannelManager extends ReadOnlyManager<Channel> {
     return parseThreadList(response.jsonBody as Map<String, Object?>);
   }
 
-  Future<ThreadList> listPrivateArchivedThreads(Snowflake channelId, {DateTime? before, int? limit}) async {
+  Future<ThreadList> listPrivateArchivedThreads(Snowflake id, {DateTime? before, int? limit}) async {
     final route = HttpRoute()
-      ..channels(id: channelId.toString())
+      ..channels(id: id.toString())
       ..threads()
       ..archived()
       ..private();
