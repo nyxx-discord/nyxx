@@ -311,7 +311,7 @@ abstract class IGuild implements SnowflakeEntity {
 
   /// Allows to fetch guild members. Restricted with [GatewayIntents.guildMembers].
   /// [after] is used to continue from specified user id.
-  /// By default limits to one user—use [limit] parameter to change that behavior.
+  /// By default limits to one user - use [limit] parameter to change that behavior.
   Stream<IMember> fetchMembers({int limit = 1, Snowflake? after});
 
   /// Returns a [Stream] of [Member]s objects whose username or nickname starts with a provided string.
