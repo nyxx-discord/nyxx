@@ -1,10 +1,13 @@
 import 'package:nyxx/src/http/managers/channel_manager.dart';
+import 'package:nyxx/src/http/managers/message_manager.dart';
 import 'package:nyxx/src/models/snowflake_entity/snowflake_entity.dart';
 import 'package:nyxx/src/utils/flags.dart';
 
 class PartialChannel extends SnowflakeEntity<Channel> with SnowflakeEntityMixin<Channel> {
   @override
   final ChannelManager manager;
+
+  late final MessageManager messages = MessageManager(manager.client.options.messageCacheConfig, manager.client, channelId: id);
 
   PartialChannel({required super.id, required this.manager});
 }
