@@ -309,7 +309,7 @@ abstract class IGuild implements SnowflakeEntity {
   /// Fetches member from API
   Future<IMember> fetchMember(Snowflake memberId);
 
-  /// Allows to fetch guild members. In future will be restricted with `Privileged Intents`.
+  /// Allows to fetch guild members. Restricted with [GatewayIntents.guildMembers].
   /// [after] is used to continue from specified user id.
   /// By default limits to one user - use [limit] parameter to change that behavior.
   Stream<IMember> fetchMembers({int limit = 1, Snowflake? after});
@@ -320,7 +320,7 @@ abstract class IGuild implements SnowflakeEntity {
 
   /// Returns a [Stream] of [Member]s objects whose username or nickname starts with a provided string.
   /// By default limits to one entry - can be changed with [limit] parameter.
-  Stream<IMember> searchMembersGateway(String query, {int limit = 0});
+  Stream<IMember> searchMembersGateway(String query, {int limit = 1});
 
   /// Fetches guild preview for this guild. Allows to download approx member count in guild
   Future<IGuildPreview> fetchGuildPreview();
@@ -915,7 +915,7 @@ class Guild extends SnowflakeEntity implements IGuild {
   /// Returns a [Stream] of [IMember]s objects whose username or nickname starts with a provided string.
   /// By default limits to one entry - can be changed with [limit] parameter.
   @override
-  Stream<IMember> searchMembersGateway(String query, {int limit = 0}) async* {
+  Stream<IMember> searchMembersGateway(String query, {int limit = 1}) async* {
     final nonce = "$query${id.toString()}";
     shard.requestMembers(id, query: query, limit: limit, nonce: nonce);
 
