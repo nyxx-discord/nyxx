@@ -1,5 +1,10 @@
-import 'package:nyxx/src/builders/builder.dart';
+import 'dart:convert';
+
+import 'package:http/http.dart' show MultipartFile;
+import 'package:nyxx/src/builders/message/message.dart';
 import 'package:nyxx/src/http/managers/manager.dart';
+import 'package:nyxx/src/http/request.dart';
+import 'package:nyxx/src/http/route.dart';
 import 'package:nyxx/src/models/channel/channel.dart';
 import 'package:nyxx/src/models/channel/thread.dart';
 import 'package:nyxx/src/models/discord_color.dart';
@@ -189,26 +194,184 @@ class MessageManager extends Manager<Message> {
   }
 
   @override
-  Future<Message> create(CreateBuilder<Message> builder) {
-    // TODO: implement create
-    throw UnimplementedError();
+  Future<Message> create(MessageBuilder builder) async {
+    final route = HttpRoute()
+      ..channels(id: channelId.toString())
+      ..messages();
+
+    final HttpRequest request;
+    if (builder.attachments?.isNotEmpty == true) {
+      final attachments = builder.attachments!;
+      final payload = builder.build();
+
+      final files = <MultipartFile>[];
+      for (int i = 0; i < attachments.length; i++) {
+        files.add(MultipartFile.fromBytes(
+          'files[$i]',
+          attachments[i].data,
+          filename: attachments[i].fileName,
+        ));
+
+        ((payload['attachments'] as List)[i] as Map)['id'] = i.toString();
+      }
+
+      request = MultipartRequest(
+        route,
+        method: 'POST',
+        jsonPayload: jsonEncode(payload),
+        files: files,
+      );
+    } else {
+      request = BasicRequest(route, method: 'POST', body: jsonEncode(builder.build()));
+    }
+
+    final response = await client.httpHandler.executeSafe(request);
+    final message = parse(response.jsonBody as Map<String, Object?>);
+
+    cache[message.id] = message;
+    return message;
   }
 
   @override
-  Future<Message> fetch(Snowflake id) {
-    // TODO: implement fetch
-    throw UnimplementedError();
+  Future<Message> fetch(Snowflake id) async {
+    final route = HttpRoute()
+      ..channels(id: channelId.toString())
+      ..messages(id: id.toString());
+    final request = BasicRequest(route);
+
+    final response = await client.httpHandler.executeSafe(request);
+    final message = parse(response.jsonBody as Map<String, Object?>);
+
+    cache[message.id] = message;
+    return message;
   }
 
   @override
-  Future<Message> update(Snowflake id, UpdateBuilder<Message> builder) {
-    // TODO: implement update
-    throw UnimplementedError();
+  Future<Message> update(Snowflake id, MessageUpdateBuilder builder) async {
+    final route = HttpRoute()
+      ..channels(id: channelId.toString())
+      ..messages(id: id.toString());
+
+    final HttpRequest request;
+    if (builder.attachments?.isNotEmpty == true) {
+      final attachments = builder.attachments!;
+      final payload = builder.build();
+
+      final files = <MultipartFile>[];
+      for (int i = 0; i < attachments.length; i++) {
+        files.add(MultipartFile.fromBytes(
+          'files[$i]',
+          attachments[i].data,
+          filename: attachments[i].fileName,
+        ));
+
+        ((payload['attachments'] as List)[i] as Map)['id'] = i.toString();
+      }
+
+      request = MultipartRequest(
+        route,
+        method: 'PATCH',
+        jsonPayload: jsonEncode(payload),
+        files: files,
+      );
+    } else {
+      request = BasicRequest(route, method: 'PATCH', body: jsonEncode(builder.build()));
+    }
+
+    final response = await client.httpHandler.executeSafe(request);
+    final message = parse(response.jsonBody as Map<String, Object?>);
+
+    cache[message.id] = message;
+    return message;
   }
 
   @override
-  Future<void> delete(Snowflake id) {
-    // TODO: implement delete
-    throw UnimplementedError();
+  Future<void> delete(Snowflake id, {String? auditLogReason}) async {
+    final route = HttpRoute()
+      ..channels(id: channelId.toString())
+      ..messages(id: id.toString());
+    final request = BasicRequest(route, method: 'DELETE');
+
+    await client.httpHandler.executeSafe(request);
   }
+
+  Future<List<Message>> fetchMany({Snowflake? around, Snowflake? before, Snowflake? after, int? limit}) async {
+    final route = HttpRoute()
+      ..channels(id: channelId.toString())
+      ..messages();
+    final request = BasicRequest(
+      route,
+      queryParameters: {
+        if (around != null) 'around': around.toString(),
+        if (before != null) 'before': before.toString(),
+        if (after != null) 'after': after.toString(),
+        if (limit != null) 'limit': limit.toString(),
+      },
+    );
+
+    final response = await client.httpHandler.executeSafe(request);
+    final messages = parseMany(response.jsonBody as List, parse);
+
+    cache.addEntries(messages.map((message) => MapEntry(message.id, message)));
+    return messages;
+  }
+
+  Future<Message> crosspost(Snowflake id) async {
+    final route = HttpRoute()
+      ..channels(id: channelId.toString())
+      ..messages(id: id.toString())
+      ..crosspost();
+    final request = BasicRequest(route);
+
+    final response = await client.httpHandler.executeSafe(request);
+    final message = parse(response.jsonBody as Map<String, Object?>);
+
+    cache[message.id] = message;
+    return message;
+  }
+
+  Future<void> bulkDelete(Iterable<Snowflake> messageIds) async {
+    final route = HttpRoute()
+      ..channels(id: channelId.toString())
+      ..messages()
+      ..bulkdelete();
+    final request = BasicRequest(route, method: 'POST', body: jsonEncode(messageIds.map((e) => e.toString()).toList()));
+
+    await client.httpHandler.executeSafe(request);
+  }
+
+  // TODO once emojis are implemented, add reaction endpoints
+
+  Future<List<Message>> getPins() async {
+    final route = HttpRoute()
+      ..channels(id: channelId.toString())
+      ..pins();
+    final request = BasicRequest(route);
+
+    final response = await client.httpHandler.executeSafe(request);
+    final messages = parseMany(response.jsonBody as List, parse);
+
+    cache.addEntries(messages.map((message) => MapEntry(message.id, message)));
+    return messages;
+  }
+
+  Future<void> pin(Snowflake messageId, {String? auditLogReason}) async {
+    final route = HttpRoute()
+      ..channels(id: channelId.toString())
+      ..pins(id: messageId.toString());
+    final request = BasicRequest(route, method: 'PUT', auditLogReason: auditLogReason);
+
+    await client.httpHandler.executeSafe(request);
+  }
+
+  Future<void> unpin(Snowflake messageId, {String? auditLogReason}) async {
+    final route = HttpRoute()
+      ..channels(id: channelId.toString())
+      ..pins(id: messageId.toString());
+    final request = BasicRequest(route, method: 'DELETE', auditLogReason: auditLogReason);
+
+    await client.httpHandler.executeSafe(request);
+  }
+
+  // TODO once oauth2 is implemented: Group DM control endpoints
 }

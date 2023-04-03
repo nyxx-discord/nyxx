@@ -47,3 +47,12 @@ class _SentinelDefaultReaction implements DefaultReaction {
   @override
   void noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }
+
+const sentinelList = _SentinelList();
+
+class _SentinelList implements List<Never> {
+  const _SentinelList();
+
+  @override
+  void noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
+}

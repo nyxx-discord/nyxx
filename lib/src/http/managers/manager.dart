@@ -57,12 +57,12 @@ abstract class Manager<T extends SnowflakeEntity<T>> extends ReadOnlyManager<T> 
   /// {@template ensure_cache_updated}
   /// Implementers should ensure this method updates the [cache].
   /// {@endtemplate}
-  Future<T> create(CreateBuilder<T> builder);
+  Future<T> create(covariant CreateBuilder<T> builder);
 
   /// Update the item with the given [id] in the API.
   ///
   /// {@macro ensure_cache_updated}
-  Future<T> update(Snowflake id, UpdateBuilder<T> builder);
+  Future<T> update(Snowflake id, covariant UpdateBuilder<T> builder);
 
   /// Delete the item with the given [id] from the API.
   ///

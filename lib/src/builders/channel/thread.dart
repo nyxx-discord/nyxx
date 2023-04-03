@@ -1,8 +1,72 @@
 import 'package:nyxx/src/builders/builder.dart';
+import 'package:nyxx/src/builders/message/message.dart';
 import 'package:nyxx/src/models/channel/channel.dart';
 import 'package:nyxx/src/models/channel/thread.dart';
 import 'package:nyxx/src/models/snowflake.dart';
 import 'package:nyxx/src/utils/flags.dart';
+
+class ThreadFromMessageBuilder extends CreateBuilder<Thread> {
+  final String name;
+
+  final Duration? autoArchiveDuration;
+
+  final Duration? rateLimitPerUser;
+
+  ThreadFromMessageBuilder({required this.name, this.autoArchiveDuration, this.rateLimitPerUser});
+
+  @override
+  Map<String, Object?> build() => {
+        'name': name,
+        if (autoArchiveDuration != null) 'auto_archive_duration': autoArchiveDuration!.inMinutes,
+        if (rateLimitPerUser != null) 'rate_limit_per_user': rateLimitPerUser!.inSeconds,
+      };
+}
+
+class ThreadBuilder extends CreateBuilder<Thread> {
+  final String name;
+
+  final Duration? autoArchiveDuration;
+
+  final ChannelType type;
+
+  final bool? invitable;
+
+  final Duration? rateLimitPerUser;
+
+  ThreadBuilder({required this.name, this.autoArchiveDuration, required this.type, this.invitable, this.rateLimitPerUser});
+
+  @override
+  Map<String, Object?> build() => {
+        'name': name,
+        if (autoArchiveDuration != null) 'auto_archive_duration': autoArchiveDuration!.inMinutes,
+        'type': type.value,
+        if (invitable != null) 'invitable': invitable,
+        if (rateLimitPerUser != null) 'rate_limit_per_user': rateLimitPerUser!.inSeconds,
+      };
+}
+
+class ForumThreadBuilder extends CreateBuilder<Thread> {
+  final String name;
+
+  final Duration? autoArchiveDuration;
+
+  final Duration? rateLimitPerUser;
+
+  final MessageBuilder message;
+
+  final List<Snowflake>? appliedTags;
+
+  ForumThreadBuilder({required this.name, this.autoArchiveDuration, this.rateLimitPerUser, required this.message, this.appliedTags});
+
+  @override
+  Map<String, Object?> build() => {
+        'name': name,
+        if (autoArchiveDuration != null) 'auto_archive_duration': autoArchiveDuration!.inMinutes,
+        if (rateLimitPerUser != null) 'rate_limit_per_user': rateLimitPerUser!.inSeconds,
+        'message': message.build(),
+        if (appliedTags != null) 'applied_tags': appliedTags!.map((e) => e.toString()).toList(),
+      };
+}
 
 class ThreadUpdateBuilder extends UpdateBuilder<Thread> {
   final String? name;

@@ -1,10 +1,16 @@
 import 'dart:convert';
 
+import 'package:http/http.dart' show MultipartFile;
 import 'package:nyxx/src/builders/builder.dart';
+import 'package:nyxx/src/builders/channel/thread.dart';
+import 'package:nyxx/src/builders/permission_overwrite.dart';
 import 'package:nyxx/src/http/managers/manager.dart';
 import 'package:nyxx/src/http/request.dart';
 import 'package:nyxx/src/http/route.dart';
 import 'package:nyxx/src/models/channel/channel.dart';
+import 'package:nyxx/src/models/channel/followed_channel.dart';
+import 'package:nyxx/src/models/channel/thread.dart';
+import 'package:nyxx/src/models/channel/thread_list.dart';
 import 'package:nyxx/src/models/channel/types/announcement_thread.dart';
 import 'package:nyxx/src/models/channel/types/directory.dart';
 import 'package:nyxx/src/models/channel/types/dm.dart';
@@ -21,6 +27,7 @@ import 'package:nyxx/src/models/channel/voice_channel.dart';
 import 'package:nyxx/src/models/permission_overwrite.dart';
 import 'package:nyxx/src/models/permissions.dart';
 import 'package:nyxx/src/models/snowflake.dart';
+import 'package:nyxx/src/utils/flags.dart';
 import 'package:nyxx/src/utils/parsing_helpers.dart';
 
 class ChannelManager extends ReadOnlyManager<Channel> {
@@ -332,6 +339,30 @@ class ChannelManager extends ReadOnlyManager<Channel> {
     );
   }
 
+  FollowedChannel parseFollowedChannel(Map<String, Object?> raw) {
+    return FollowedChannel(
+      channelId: Snowflake.parse(raw['channel_id'] as String),
+      webhookId: Snowflake.parse(raw['webhook_id'] as String),
+    );
+  }
+
+  ThreadMember parseThreadMember(Map<String, Object?> raw) {
+    return ThreadMember(
+      joinTimestamp: DateTime.parse(raw['join_timestamp'] as String),
+      flags: Flags<Never>(raw['flags'] as int),
+      threadId: Snowflake.parse(raw['id'] as String),
+      userId: Snowflake.parse(raw['user_id'] as String),
+    );
+  }
+
+  ThreadList parseThreadList(Map<String, Object?> raw) {
+    return ThreadList(
+      threads: parseMany(raw['threads'] as List, parse).cast<Thread>(),
+      members: parseMany(raw['members'] as List, parseThreadMember),
+      hasMore: raw['has_more'] as bool,
+    );
+  }
+
   @override
   Future<Channel> fetch(Snowflake id) async {
     final route = HttpRoute()..channels(id: id.toString());
@@ -373,5 +404,214 @@ class ChannelManager extends ReadOnlyManager<Channel> {
 
     cache.remove(channel.id);
     return channel;
+  }
+
+  Future<void> updatePermissionOverwrite(Snowflake id, PermissionOverwriteBuilder builder) async {
+    final route = HttpRoute()
+      ..channels(id: id.toString())
+      ..permissions(id: builder.id.toString());
+    final request = BasicRequest(route, method: 'PUT', body: jsonEncode(builder.build()));
+
+    await client.httpHandler.executeSafe(request);
+  }
+
+  Future<void> deletePermissionOverwrite(Snowflake channelId, Snowflake id) async {
+    final route = HttpRoute()
+      ..channels(id: channelId.toString())
+      ..permissions(id: id.toString());
+    final request = BasicRequest(route, method: 'DELETE');
+
+    await client.httpHandler.executeSafe(request);
+  }
+
+  // TODO Implement invite endpoints
+
+  Future<FollowedChannel> followChannel(Snowflake channelId, Snowflake toFollow) async {
+    final route = HttpRoute()
+      ..channels(id: toFollow.toString())
+      ..followers();
+    final request = BasicRequest(route, method: 'POST', body: jsonEncode({'webhook_channel_id': channelId.toString()}));
+
+    final response = await client.httpHandler.executeSafe(request);
+
+    return parseFollowedChannel(response.jsonBody as Map<String, Object?>);
+  }
+
+  Future<void> triggerTyping(Snowflake channelId) async {
+    final route = HttpRoute()
+      ..channels(id: channelId.toString())
+      ..typing();
+    final request = BasicRequest(route, method: 'POST');
+
+    await client.httpHandler.executeSafe(request);
+  }
+
+  Future<Thread> startThreadFromMessage(Snowflake channelId, Snowflake messageId, ThreadFromMessageBuilder builder) async {
+    final route = HttpRoute()
+      ..channels(id: channelId.toString())
+      ..messages(id: messageId.toString())
+      ..threads();
+    final request = BasicRequest(route, method: 'POST', body: jsonEncode(builder.build()));
+
+    final response = await client.httpHandler.executeSafe(request);
+    final thread = parse(response.jsonBody as Map<String, Object?>) as Thread;
+
+    cache[thread.id] = thread;
+    return thread;
+  }
+
+  Future<Thread> startThread(Snowflake channelId, ThreadBuilder builder) async {
+    final route = HttpRoute()
+      ..channels(id: channelId.toString())
+      ..threads();
+    final request = BasicRequest(route, method: 'POST', body: jsonEncode(builder.build()));
+
+    final response = await client.httpHandler.executeSafe(request);
+    final thread = parse(response.jsonBody as Map<String, Object?>) as Thread;
+
+    cache[thread.id] = thread;
+    return thread;
+  }
+
+  Future<Thread> startForumThread(Snowflake channelId, ForumThreadBuilder builder) async {
+    final route = HttpRoute()
+      ..channels(id: channelId.toString())
+      ..threads();
+
+    final HttpRequest request;
+    if (builder.message.attachments?.isNotEmpty == true) {
+      final attachments = builder.message.attachments!;
+      final payload = builder.build();
+
+      final files = <MultipartFile>[];
+      for (int i = 0; i < attachments.length; i++) {
+        files.add(MultipartFile.fromBytes(
+          'files[$i]',
+          attachments[i].data,
+          filename: attachments[i].fileName,
+        ));
+
+        (((payload['message'] as Map)['attachments'] as List)[i] as Map)['id'] = i.toString();
+      }
+
+      request = MultipartRequest(
+        route,
+        method: 'PATCH',
+        jsonPayload: jsonEncode(payload),
+        files: files,
+      );
+    } else {
+      request = BasicRequest(route, method: 'POST', body: jsonEncode(builder.build()));
+    }
+
+    final response = await client.httpHandler.executeSafe(request);
+    final thread = parse(response.jsonBody as Map<String, Object?>) as Thread;
+
+    cache[thread.id] = thread;
+    return thread;
+  }
+
+  Future<void> joinThread(Snowflake threadId) async {
+    final route = HttpRoute()
+      ..channels(id: threadId.toString())
+      ..threadMembers(id: '@me');
+    final request = BasicRequest(route, method: 'PUT');
+
+    await client.httpHandler.executeSafe(request);
+  }
+
+  Future<void> addThreadMember(Snowflake threadId, Snowflake memberId) async {
+    final route = HttpRoute()
+      ..channels(id: threadId.toString())
+      ..threadMembers(id: memberId.toString());
+    final request = BasicRequest(route, method: 'PUT');
+
+    await client.httpHandler.executeSafe(request);
+  }
+
+  Future<void> leaveThread(Snowflake threadId) async {
+    final route = HttpRoute()
+      ..channels(id: threadId.toString())
+      ..threadMembers(id: '@me');
+    final request = BasicRequest(route, method: 'DELETE');
+
+    await client.httpHandler.executeSafe(request);
+  }
+
+  Future<void> removeThreadMember(Snowflake threadId, Snowflake memberId) async {
+    final route = HttpRoute()
+      ..channels(id: threadId.toString())
+      ..threadMembers(id: memberId.toString());
+    final request = BasicRequest(route, method: 'DELETE');
+
+    await client.httpHandler.executeSafe(request);
+  }
+
+  Future<ThreadMember> fetchThreadMember(Snowflake threadId, Snowflake memberId, {bool? withMember}) async {
+    final route = HttpRoute()
+      ..channels(id: threadId.toString())
+      ..threadMembers(id: memberId.toString());
+    final request = BasicRequest(
+      route,
+      queryParameters: {
+        if (withMember != null) 'with_member': withMember.toString(),
+      },
+    );
+
+    final response = await client.httpHandler.executeSafe(request);
+    return parseThreadMember(response.jsonBody as Map<String, Object?>);
+  }
+
+  Future<List<ThreadMember>> listThreadMembers(Snowflake threadId, {bool? withMembers, Snowflake? after, int? limit}) async {
+    final route = HttpRoute()
+      ..channels(id: threadId.toString())
+      ..threadMembers();
+    final request = BasicRequest(
+      route,
+      queryParameters: {
+        if (withMembers != null) 'with_member': withMembers.toString(),
+        if (after != null) 'after': after.toString(),
+        if (limit != null) 'limit': limit.toString(),
+      },
+    );
+
+    final response = await client.httpHandler.executeSafe(request);
+    return parseMany(response.jsonBody as List, parseThreadMember);
+  }
+
+  Future<ThreadList> listPublicArchivedThreads(Snowflake channelId, {DateTime? before, int? limit}) async {
+    final route = HttpRoute()
+      ..channels(id: channelId.toString())
+      ..threads()
+      ..archived()
+      ..public();
+    final request = BasicRequest(
+      route,
+      queryParameters: {
+        if (before != null) 'before': before.toIso8601String(),
+        if (limit != null) 'limit': limit.toString(),
+      },
+    );
+
+    final response = await client.httpHandler.executeSafe(request);
+    return parseThreadList(response.jsonBody as Map<String, Object?>);
+  }
+
+  Future<ThreadList> listPrivateArchivedThreads(Snowflake channelId, {DateTime? before, int? limit}) async {
+    final route = HttpRoute()
+      ..channels(id: channelId.toString())
+      ..threads()
+      ..archived()
+      ..private();
+    final request = BasicRequest(
+      route,
+      queryParameters: {
+        if (before != null) 'before': before.toIso8601String(),
+        if (limit != null) 'limit': limit.toString(),
+      },
+    );
+
+    final response = await client.httpHandler.executeSafe(request);
+    return parseThreadList(response.jsonBody as Map<String, Object?>);
   }
 }

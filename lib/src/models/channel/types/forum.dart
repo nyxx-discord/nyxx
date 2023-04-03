@@ -1,8 +1,8 @@
-import 'package:nyxx/nyxx.dart';
 import 'package:nyxx/src/models/channel/channel.dart';
 import 'package:nyxx/src/models/channel/guild_channel.dart';
 import 'package:nyxx/src/models/channel/has_threads_channel.dart';
 import 'package:nyxx/src/models/permission_overwrite.dart';
+import 'package:nyxx/src/models/snowflake.dart';
 import 'package:nyxx/src/utils/to_string_helper/to_string_helper.dart';
 
 class PartialForumChannel extends PartialGuildChannel implements PartialHasThreadsChannel {
