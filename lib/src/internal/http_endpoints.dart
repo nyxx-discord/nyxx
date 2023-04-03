@@ -148,7 +148,7 @@ abstract class IHttpEndpoints {
   /// Fetches list of members from guild.
   /// Restricted with [GatewayIntents.guildMembers].
   /// [after] is used to continue from specified user id.
-  /// By default limits to one user—use [limit] parameter to change that behavior.
+  /// By default limits to one user - use [limit] parameter to change that behavior.
   Stream<IMember> fetchGuildMembers(Snowflake guildId, {int limit = 1, Snowflake? after});
 
   /// Searches guild for user with [query] parameter
