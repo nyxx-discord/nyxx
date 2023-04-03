@@ -93,7 +93,7 @@ Note that these methods should update the cache (for now regardless of config, t
 Note that HTTP requests should be made using `client.httpHandler.executeSafe`.
 
 Additional methods & caches can be added to the manager for other types, for example `fetchCurrentUserConnections` in `UserManager`.
-Prefer using `CreateBuilder<XXX>` and `UpdateBuilder<XXX>` instead of a specific builder type. The type argument will guarantee only builders intended for this method are passed.
+Prefer using a specific builder type for documentation reasons.
 
 ##### 3. Adding builders
 
