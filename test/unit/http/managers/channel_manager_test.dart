@@ -229,6 +229,37 @@ void main() {
     expect(channel.flags, isNull);
   }
 
+  final sampleThreadMember = {
+    'id': '0',
+    'user_id': '1',
+    'join_timestamp': '2023-04-03T10:49:41+00:00',
+    'flags': 17,
+    'member': null, // TODO
+  };
+
+  void checkThreadMember(ThreadMember member) {
+    expect(member.threadId, equals(Snowflake.zero));
+    expect(member.userId, equals(Snowflake(1)));
+    expect(member.flags.value, equals(17));
+    expect(member.joinTimestamp, equals(DateTime.utc(2023, 04, 03, 10, 49, 41)));
+  }
+
+  final sampleThreadList = {
+    'threads': [sampleThread],
+    'members': [sampleThreadMember],
+    'has_more': false,
+  };
+
+  void checkThreadList(ThreadList list) {
+    expect(list.threads, hasLength(1));
+    checkThread(list.threads.single);
+
+    expect(list.members, hasLength(1));
+    checkThreadMember(list.members.single);
+
+    expect(list.hasMore, isFalse);
+  }
+
   testReadOnlyManager<Channel, ChannelManager>(
     'ChannelManager',
     ChannelManager.new,
@@ -254,6 +285,129 @@ void main() {
         urlMatcher: '/channels/0',
         execute: (manager) => manager.delete(Snowflake.zero),
         check: checkGuildText,
+      ),
+      EndpointTest<ChannelManager, void, void>(
+        name: 'updatePermissionOverwrite',
+        method: 'put',
+        source: null,
+        urlMatcher: '/channels/0/permissions/1',
+        execute: (manager) =>
+            manager.updatePermissionOverwrite(Snowflake.zero, PermissionOverwriteBuilder(id: Snowflake(1), type: PermissionOverwriteType.role)),
+        check: (_) {},
+      ),
+      EndpointTest<ChannelManager, void, void>(
+        name: 'deletePermissionOverwrite',
+        method: 'delete',
+        source: null,
+        urlMatcher: '/channels/0/permissions/1',
+        execute: (manager) => manager.deletePermissionOverwrite(Snowflake.zero, Snowflake(1)),
+        check: (_) {},
+      ),
+      EndpointTest<ChannelManager, FollowedChannel, Map<String, Object?>>(
+        name: 'followChannel',
+        method: 'post',
+        source: {'channel_id': '0', 'webhook_id': '1'},
+        urlMatcher: '/channels/0/followers',
+        execute: (manager) => manager.followChannel(Snowflake(1), Snowflake.zero),
+        check: (followedChannel) {
+          expect(followedChannel.channelId, equals(Snowflake.zero));
+          expect(followedChannel.webhookId, equals(Snowflake(1)));
+        },
+      ),
+      EndpointTest<ChannelManager, void, void>(
+        name: 'triggerTyping',
+        method: 'post',
+        source: null,
+        urlMatcher: '/channels/0/typing',
+        execute: (manager) => manager.triggerTyping(Snowflake.zero),
+        check: (_) {},
+      ),
+      EndpointTest<ChannelManager, Thread, Map<String, Object?>>(
+        name: 'createThreadFromMessage',
+        method: 'post',
+        source: sampleThread,
+        urlMatcher: '/channels/0/messages/1/threads',
+        execute: (manager) => manager.createThreadFromMessage(Snowflake.zero, Snowflake(1), ThreadFromMessageBuilder(name: 'test')),
+        check: checkThread,
+      ),
+      EndpointTest<ChannelManager, Thread, Map<String, Object?>>(
+        name: 'createThread',
+        method: 'post',
+        source: sampleThread,
+        urlMatcher: '/channels/0/threads',
+        execute: (manager) => manager.createThread(Snowflake.zero, ThreadBuilder(name: 'test', type: ChannelType.publicThread)),
+        check: checkThread,
+      ),
+      EndpointTest<ChannelManager, Thread, Map<String, Object?>>(
+        name: 'createForumThread',
+        method: 'post',
+        source: sampleThread,
+        urlMatcher: '/channels/0/threads',
+        execute: (manager) => manager.createForumThread(Snowflake.zero, ForumThreadBuilder(name: 'test', message: MessageBuilder())),
+        check: checkThread,
+      ),
+      EndpointTest<ChannelManager, void, void>(
+        name: 'joinThread',
+        method: 'put',
+        source: null,
+        urlMatcher: '/channels/0/thread-members/@me',
+        execute: (manager) => manager.joinThread(Snowflake.zero),
+        check: (_) {},
+      ),
+      EndpointTest<ChannelManager, void, void>(
+        name: 'addThreadMember',
+        method: 'put',
+        source: null,
+        urlMatcher: '/channels/0/thread-members/1',
+        execute: (manager) => manager.addThreadMember(Snowflake.zero, Snowflake(1)),
+        check: (_) {},
+      ),
+      EndpointTest<ChannelManager, void, void>(
+        name: 'leaveThread',
+        method: 'delete',
+        source: null,
+        urlMatcher: '/channels/0/thread-members/@me',
+        execute: (manager) => manager.leaveThread(Snowflake.zero),
+        check: (_) {},
+      ),
+      EndpointTest<ChannelManager, void, void>(
+        name: 'removeThreadMember',
+        method: 'delete',
+        source: null,
+        urlMatcher: '/channels/0/thread-members/1',
+        execute: (manager) => manager.removeThreadMember(Snowflake.zero, Snowflake(1)),
+        check: (_) {},
+      ),
+      EndpointTest<ChannelManager, ThreadMember, Map<String, Object?>>(
+        name: 'fetchThreadMember',
+        source: sampleThreadMember,
+        urlMatcher: '/channels/0/thread-members/1',
+        execute: (manager) => manager.fetchThreadMember(Snowflake.zero, Snowflake(1)),
+        check: checkThreadMember,
+      ),
+      EndpointTest<ChannelManager, List<ThreadMember>, List<Object?>>(
+        name: 'listThreadMembers',
+        source: [sampleThreadMember],
+        urlMatcher: '/channels/0/thread-members',
+        execute: (manager) => manager.listThreadMembers(Snowflake.zero),
+        check: (list) {
+          expect(list, hasLength(1));
+          checkThreadMember(list.single);
+        },
+      ),
+      EndpointTest<ChannelManager, ThreadList, Map<String, Object?>>(
+        name: 'listPublicArchivedThreads',
+        source: sampleThreadList,
+        urlMatcher: '/channels/0/threads/archived/public',
+        execute: (manager) => manager.listPublicArchivedThreads(Snowflake.zero),
+        check: checkThreadList,
+      ),
+      EndpointTest<ChannelManager, ThreadList, Map<String, Object?>>(
+        name: 'listPrivateArchivedThreads',
+        source: sampleThreadList,
+        urlMatcher: '/channels/0/threads/archived/private',
+        execute: (manager) => manager.listPrivateArchivedThreads(Snowflake.zero),
+        check: checkThreadList,
       ),
     ],
   );

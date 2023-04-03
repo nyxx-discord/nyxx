@@ -94,7 +94,7 @@ void main() {
         'default_reaction_emoji': null,
         'default_thread_rate_limit_per_user': 0,
         'default_sort_order': 1,
-        'default_layout': 2,
+        'default_forum_layout': 2,
       }),
     );
   });
