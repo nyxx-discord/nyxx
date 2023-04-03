@@ -127,7 +127,7 @@ abstract class IHttpEndpoints {
   /// Returns list of all voice regions that guild has access to
   Stream<IVoiceRegion> fetchGuildVoiceRegions(Snowflake guildId);
 
-  /// Moves guild channel in hierachy.
+  /// Moves guild channel in hierarchy.
   Future<void> moveGuildChannel(Snowflake guildId, Snowflake channelId, int position, {String? auditReason});
 
   /// Ban user with given id
@@ -146,11 +146,13 @@ abstract class IHttpEndpoints {
   Future<IMember> fetchGuildMember(Snowflake guildId, Snowflake memberId);
 
   /// Fetches list of members from guild.
-  /// Requires GUILD_MEMBERS intent to work properly.
+  /// Restricted with [GatewayIntents.guildMembers].
+  /// [after] is used to continue from specified user id.
+  /// By default limits to one user—use [limit] parameter to change that behavior.
   Stream<IMember> fetchGuildMembers(Snowflake guildId, {int limit = 1, Snowflake? after});
 
   /// Searches guild for user with [query] parameter
-  /// Requires GUILD_MEMBERS intent to work properly.
+  /// Requires [GatewayIntents.guildMembers] intent to work properly.
   Stream<IMember> searchGuildMembers(Snowflake guildId, String query, {int limit = 1});
 
   /// Returns all [Webhook]s in given channel
