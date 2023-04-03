@@ -1,4 +1,5 @@
 import 'package:nyxx/src/builders/builder.dart';
+import 'package:nyxx/src/builders/sentinels.dart';
 import 'package:nyxx/src/models/channel/channel.dart';
 import 'package:nyxx/src/models/channel/guild_channel.dart';
 import 'package:nyxx/src/models/channel/types/forum.dart';

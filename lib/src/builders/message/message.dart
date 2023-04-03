@@ -1,6 +1,7 @@
 import 'package:nyxx/src/builders/builder.dart';
 import 'package:nyxx/src/builders/message/allowed_mentions.dart';
 import 'package:nyxx/src/builders/message/attachment.dart';
+import 'package:nyxx/src/builders/sentinels.dart';
 import 'package:nyxx/src/models/message/embed.dart';
 import 'package:nyxx/src/models/message/message.dart';
 import 'package:nyxx/src/models/snowflake.dart';

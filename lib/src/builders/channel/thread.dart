@@ -1,5 +1,6 @@
 import 'package:nyxx/src/builders/builder.dart';
 import 'package:nyxx/src/builders/message/message.dart';
+import 'package:nyxx/src/builders/sentinels.dart';
 import 'package:nyxx/src/models/channel/channel.dart';
 import 'package:nyxx/src/models/channel/thread.dart';
 import 'package:nyxx/src/models/snowflake.dart';
