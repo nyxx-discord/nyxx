@@ -135,7 +135,7 @@ Future<void> testReadOnlyManager<T extends SnowflakeEntity<T>, U extends ReadOnl
       final matcher = additionalSampleMatchers![i];
 
       testEndpoint(
-        name: 'fetch',
+        name: 'fetch ($i)',
         baseUrlMatcher,
         response: sample,
         (client) async {
@@ -161,5 +161,113 @@ Future<void> testReadOnlyManager<T extends SnowflakeEntity<T>, U extends ReadOnl
         );
       }
     }
+  });
+}
+
+Future<void> testManager<T extends SnowflakeEntity<T>, U extends Manager<T>>(
+  String name,
+  U Function(CacheConfig<T>, NyxxRest) create,
+  Pattern baseUrlMatcher, {
+  required Map<String, Object?> sampleObject,
+  required void Function(T) sampleMatches,
+  List<Map<String, Object?>>? additionalSampleObjects,
+  List<void Function(T)>? additionalSampleMatchers,
+  required List<ParsingTest<U, dynamic, dynamic>>? additionalParsingTests,
+  required List<EndpointTest<U, dynamic, dynamic>>? additionalEndpointTests,
+  required CreateBuilder<T> createBuilder,
+  required UpdateBuilder<T> updateBuilder,
+}) async {
+  await testReadOnlyManager<T, U>(
+    name,
+    create,
+    baseUrlMatcher,
+    sampleObject: sampleObject,
+    sampleMatches: sampleMatches,
+    additionalSampleObjects: additionalSampleObjects,
+    additionalSampleMatchers: additionalSampleMatchers,
+    additionalParsingTests: additionalParsingTests,
+    additionalEndpointTests: additionalEndpointTests,
+  );
+
+  testEndpoint(
+    name: 'create',
+    method: 'POST',
+    baseUrlMatcher,
+    response: sampleObject,
+    (client) async {
+      final manager = create(CacheConfig(), client);
+
+      final entity = await manager.create(createBuilder);
+      sampleMatches(entity);
+    },
+  );
+
+  test('create caches entity', () async {
+    final client = MockNyxx();
+    when(() => client.apiOptions).thenReturn(RestApiOptions(token: 'TEST_TOKEN'));
+    when(() => client.options).thenReturn(RestClientOptions());
+    when(() => client.httpHandler).thenReturn(HttpHandler(client));
+
+    nock('https://discord.com/api/v${client.apiOptions.apiVersion}').post(baseUrlMatcher).reply(200, jsonEncode(sampleObject));
+
+    final manager = create(CacheConfig(), client);
+    final entity = await manager.create(createBuilder);
+
+    expect(manager.cache.containsKey(entity.id), isTrue);
+  });
+
+  testEndpoint(
+    name: 'update',
+    method: 'PATCH',
+    baseUrlMatcher,
+    response: sampleObject,
+    (client) async {
+      final manager = create(CacheConfig(), client);
+
+      final entity = await manager.update(Snowflake.zero, updateBuilder);
+      sampleMatches(entity);
+    },
+  );
+
+  test('update caches entity', () async {
+    final client = MockNyxx();
+    when(() => client.apiOptions).thenReturn(RestApiOptions(token: 'TEST_TOKEN'));
+    when(() => client.options).thenReturn(RestClientOptions());
+    when(() => client.httpHandler).thenReturn(HttpHandler(client));
+
+    nock('https://discord.com/api/v${client.apiOptions.apiVersion}').patch(baseUrlMatcher).reply(200, jsonEncode(sampleObject));
+
+    final manager = create(CacheConfig(), client);
+    final entity = await manager.update(Snowflake.zero, updateBuilder);
+
+    expect(manager.cache.containsKey(entity.id), isTrue);
+  });
+
+  testEndpoint(
+    name: 'delete',
+    method: 'DELETE',
+    baseUrlMatcher,
+    response: null,
+    (client) async {
+      final manager = create(CacheConfig(), client);
+
+      await manager.delete(Snowflake.zero);
+    },
+  );
+
+  test('delete caches entity', () async {
+    final client = MockNyxx();
+    when(() => client.apiOptions).thenReturn(RestApiOptions(token: 'TEST_TOKEN'));
+    when(() => client.options).thenReturn(RestClientOptions());
+    when(() => client.httpHandler).thenReturn(HttpHandler(client));
+
+    nock('https://discord.com/api/v${client.apiOptions.apiVersion}').delete(baseUrlMatcher).reply(200, jsonEncode(sampleObject));
+
+    final manager = create(CacheConfig(), client);
+    manager.cache[Snowflake.zero] = manager.parse(sampleObject);
+
+    await manager.delete(Snowflake.zero);
+
+    expect(manager.cache.containsKey(Snowflake.zero), isFalse);
   });
 }
