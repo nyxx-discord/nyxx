@@ -129,9 +129,62 @@ void main() {
     sampleMatches: checkMessage,
     additionalSampleObjects: [sampleCrosspostedMessage],
     additionalSampleMatchers: [checkCrosspostedMessage],
-    additionalParsingTests: [],
-    additionalEndpointTests: [],
     createBuilder: MessageBuilder(),
     updateBuilder: MessageUpdateBuilder(),
+    additionalParsingTests: [],
+    additionalEndpointTests: [
+      EndpointTest<MessageManager, List<Message>, List<Object?>>(
+        name: 'fetchMany',
+        source: [sampleMessage],
+        urlMatcher: '/channels/0/messages',
+        execute: (manager) => manager.fetchMany(),
+        check: (list) {
+          expect(list, hasLength(1));
+          checkMessage(list.single);
+        },
+      ),
+      EndpointTest<MessageManager, Message, Map<String, Object?>>(
+        name: 'crosspost',
+        method: 'post',
+        source: sampleCrosspostedMessage,
+        urlMatcher: '/channels/0/messages/1/crosspost',
+        execute: (manager) => manager.crosspost(Snowflake(1)),
+        check: checkCrosspostedMessage,
+      ),
+      EndpointTest<MessageManager, void, void>(
+        name: 'bulkDelete',
+        method: 'post',
+        source: null,
+        urlMatcher: '/channels/0/messages/bulk-delete',
+        execute: (manager) => manager.bulkDelete([Snowflake.zero]),
+        check: (_) {},
+      ),
+      EndpointTest<MessageManager, List<Message>, List<Object?>>(
+        name: 'getPins',
+        source: [sampleMessage],
+        urlMatcher: '/channels/0/pins',
+        execute: (manager) => manager.getPins(),
+        check: (list) {
+          expect(list, hasLength(1));
+          checkMessage(list.single);
+        },
+      ),
+      EndpointTest<MessageManager, void, void>(
+        name: 'pin',
+        method: 'put',
+        source: null,
+        urlMatcher: '/channels/0/pins/1',
+        execute: (manager) => manager.pin(Snowflake(1)),
+        check: (_) {},
+      ),
+      EndpointTest<MessageManager, void, void>(
+        name: 'unpin',
+        method: 'delete',
+        source: null,
+        urlMatcher: '/channels/0/pins/1',
+        execute: (manager) => manager.unpin(Snowflake(1)),
+        check: (_) {},
+      ),
+    ],
   );
 }
