@@ -29,8 +29,9 @@ export 'src/http/request.dart' show BasicRequest, HttpRequest, MultipartRequest;
 export 'src/http/response.dart' show FieldError, HttpErrorData, HttpResponse, HttpResponseError, HttpResponseSuccess;
 export 'src/http/route.dart' show HttpRoute, HttpRouteParam, HttpRoutePart;
 export 'src/http/managers/manager.dart' show Manager, ReadOnlyManager;
-export 'src/http/managers/user_manager.dart' show UserManager;
 export 'src/http/managers/channel_manager.dart' show ChannelManager;
+export 'src/http/managers/message_manager.dart' show MessageManager;
+export 'src/http/managers/user_manager.dart' show UserManager;
 
 export 'src/models/discord_color.dart' show DiscordColor;
 export 'src/models/locale.dart' show Locale;
@@ -61,6 +62,15 @@ export 'src/models/channel/types/guild_text.dart' show GuildTextChannel;
 export 'src/models/channel/types/guild_voice.dart' show GuildVoiceChannel;
 export 'src/models/channel/types/private_thread.dart' show PrivateThread;
 export 'src/models/channel/types/public_thread.dart' show PublicThread;
+export 'src/models/message/activity.dart' show MessageActivity, MessageActivityType;
+export 'src/models/message/attachment.dart' show Attachment;
+export 'src/models/message/author.dart' show MessageAuthor;
+export 'src/models/message/channel_mention.dart' show ChannelMention;
+export 'src/models/message/embed.dart' show Embed, EmbedAuthor, EmbedField, EmbedFooter, EmbedImage, EmbedProvider, EmbedThumbnail, EmbedVideo, EmbedType;
+export 'src/models/message/message.dart' show Message, MessageFlags, PartialMessage, MessageType;
+export 'src/models/message/reaction.dart' show Reaction;
+export 'src/models/message/reference.dart' show MessageReference;
+export 'src/models/message/role_subscription_data.dart' show RoleSubscriptionData;
 
 export 'src/utils/flags.dart' show Flag, FlagCombinable, Flags;
 
