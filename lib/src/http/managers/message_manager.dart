@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:http/http.dart' show MultipartFile;
 import 'package:nyxx/src/builders/message/message.dart';
+import 'package:nyxx/src/builders/sentinels.dart';
 import 'package:nyxx/src/http/managers/manager.dart';
 import 'package:nyxx/src/http/request.dart';
 import 'package:nyxx/src/http/route.dart';
@@ -200,7 +201,7 @@ class MessageManager extends Manager<Message> {
       ..messages();
 
     final HttpRequest request;
-    if (builder.attachments?.isNotEmpty == true) {
+    if (!identical(builder.attachments, sentinelList) && builder.attachments?.isNotEmpty == true) {
       final attachments = builder.attachments!;
       final payload = builder.build();
 
@@ -253,7 +254,7 @@ class MessageManager extends Manager<Message> {
       ..messages(id: id.toString());
 
     final HttpRequest request;
-    if (builder.attachments?.isNotEmpty == true) {
+    if (!identical(builder.attachments, sentinelList) && builder.attachments?.isNotEmpty == true) {
       final attachments = builder.attachments!;
       final payload = builder.build();
 
@@ -293,6 +294,8 @@ class MessageManager extends Manager<Message> {
     final request = BasicRequest(route, method: 'DELETE');
 
     await client.httpHandler.executeSafe(request);
+
+    cache.remove(id);
   }
 
   Future<List<Message>> fetchMany({Snowflake? around, Snowflake? before, Snowflake? after, int? limit}) async {
@@ -321,7 +324,7 @@ class MessageManager extends Manager<Message> {
       ..channels(id: channelId.toString())
       ..messages(id: id.toString())
       ..crosspost();
-    final request = BasicRequest(route);
+    final request = BasicRequest(route, method: 'POST');
 
     final response = await client.httpHandler.executeSafe(request);
     final message = parse(response.jsonBody as Map<String, Object?>);

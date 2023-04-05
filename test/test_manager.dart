@@ -167,7 +167,8 @@ Future<void> testReadOnlyManager<T extends SnowflakeEntity<T>, U extends ReadOnl
 Future<void> testManager<T extends SnowflakeEntity<T>, U extends Manager<T>>(
   String name,
   U Function(CacheConfig<T>, NyxxRest) create,
-  Pattern baseUrlMatcher, {
+  Pattern baseUrlMatcher,
+  Pattern createUrlMatcher, {
   required Map<String, Object?> sampleObject,
   required void Function(T) sampleMatches,
   List<Map<String, Object?>>? additionalSampleObjects,
@@ -192,7 +193,7 @@ Future<void> testManager<T extends SnowflakeEntity<T>, U extends Manager<T>>(
   testEndpoint(
     name: 'create',
     method: 'POST',
-    baseUrlMatcher,
+    createUrlMatcher,
     response: sampleObject,
     (client) async {
       final manager = create(CacheConfig(), client);
@@ -208,7 +209,7 @@ Future<void> testManager<T extends SnowflakeEntity<T>, U extends Manager<T>>(
     when(() => client.options).thenReturn(RestClientOptions());
     when(() => client.httpHandler).thenReturn(HttpHandler(client));
 
-    nock('https://discord.com/api/v${client.apiOptions.apiVersion}').post(baseUrlMatcher).reply(200, jsonEncode(sampleObject));
+    nock('https://discord.com/api/v${client.apiOptions.apiVersion}').post(createUrlMatcher, (_) => true).reply(200, jsonEncode(sampleObject));
 
     final manager = create(CacheConfig(), client);
     final entity = await manager.create(createBuilder);
@@ -235,7 +236,7 @@ Future<void> testManager<T extends SnowflakeEntity<T>, U extends Manager<T>>(
     when(() => client.options).thenReturn(RestClientOptions());
     when(() => client.httpHandler).thenReturn(HttpHandler(client));
 
-    nock('https://discord.com/api/v${client.apiOptions.apiVersion}').patch(baseUrlMatcher).reply(200, jsonEncode(sampleObject));
+    nock('https://discord.com/api/v${client.apiOptions.apiVersion}').patch(baseUrlMatcher, (_) => true).reply(200, jsonEncode(sampleObject));
 
     final manager = create(CacheConfig(), client);
     final entity = await manager.update(Snowflake.zero, updateBuilder);
@@ -264,10 +265,13 @@ Future<void> testManager<T extends SnowflakeEntity<T>, U extends Manager<T>>(
     nock('https://discord.com/api/v${client.apiOptions.apiVersion}').delete(baseUrlMatcher).reply(200, jsonEncode(sampleObject));
 
     final manager = create(CacheConfig(), client);
-    manager.cache[Snowflake.zero] = manager.parse(sampleObject);
+    final entity = manager.parse(sampleObject);
+    manager.cache[entity.id] = entity;
 
-    await manager.delete(Snowflake.zero);
+    await manager.delete(entity.id);
 
-    expect(manager.cache.containsKey(Snowflake.zero), isFalse);
+    await null;
+
+    expect(manager.cache.containsKey(entity.id), isFalse);
   });
 }

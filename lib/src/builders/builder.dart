@@ -1,6 +1,3 @@
-import 'package:nyxx/src/models/channel/types/forum.dart';
-import 'package:nyxx/src/models/snowflake.dart';
-
 abstract class Builder<T> {
   const Builder();
 

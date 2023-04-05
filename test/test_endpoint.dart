@@ -47,7 +47,7 @@ Future<void> testEndpoint(
       final interceptor = Interceptor(RequestMatcher(
         method,
         UriMatcher('https://discord.com/api/v${client.apiOptions.apiVersion}', endpointMatcher),
-        BodyMatcher((_, __) => true),
+        BodyMatcher((_) => true),
       ))
         ..reply(200, jsonEncode(response));
 

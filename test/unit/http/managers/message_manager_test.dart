@@ -124,7 +124,8 @@ void main() {
   testManager<Message, MessageManager>(
     'MessageManager',
     (config, client) => MessageManager(config, client, channelId: Snowflake.zero),
-    RegExp(r'/channels/0/message/\d+'),
+    RegExp(r'/channels/0/messages/\d+'),
+    '/channels/0/messages',
     sampleObject: sampleMessage,
     sampleMatches: checkMessage,
     additionalSampleObjects: [sampleCrosspostedMessage],
