@@ -7,6 +7,8 @@ class AllowedMentions {
 
   final List<Snowflake>? roles;
 
+  // TODO: Should this be nullable?
+  // The docs don't seem to require this to be present so we could make it nullable but it seems easier to have it non-nullable.
   final bool repliedUser;
 
   AllowedMentions({this.parse, this.users, this.roles, this.repliedUser = false});
@@ -33,6 +35,47 @@ class AllowedMentions {
       users: users,
       roles: roles,
       repliedUser: repliedUser || other.repliedUser,
+    );
+  }
+
+  AllowedMentions operator &(AllowedMentions other) {
+    List<String>? parse;
+    if (this.parse != null && other.parse != null) {
+      // If both this and other provide parse, perform the intersection
+      parse = this.parse!.where((element) => other.parse!.contains(element)).toList();
+    } else if ((this.parse == null) ^ (other.parse == null)) {
+      // If only one of this and other supply parse, don't allow anything.
+      parse = [];
+    }
+
+    List<Snowflake>? users;
+    if (this.users != null && other.users != null) {
+      // If both this an other provide users, perform the intersection
+      users = this.users!.where(other.users!.contains).toList();
+    } else if (this.parse?.contains('users') == null || other.parse?.contains('users') == true) {
+      // Otherwise, if one of this or other supplies user and the other has 'users' in its parse, use the users from whichever provides it.
+      // This assumes correctly formatted AllowedMentions that don't both provide users and have 'users' in its parse
+      users = this.users ?? other.users;
+    } else if ((this.users == null) ^ (other.users == null)) {
+      // If only one of this and other provide users, don't allow anything.
+      users = [];
+    }
+
+    List<Snowflake>? roles;
+    // Same as above
+    if (this.roles != null && other.roles != null) {
+      roles = this.users!.where(other.roles!.contains).toList();
+    } else if (this.parse?.contains('roles') == true || other.parse?.contains('roles') == true) {
+      roles = this.roles ?? other.roles;
+    } else if ((this.roles == null) ^ (other.roles == null)) {
+      roles = [];
+    }
+
+    return AllowedMentions(
+      parse: parse,
+      roles: roles,
+      users: users,
+      repliedUser: repliedUser && other.repliedUser,
     );
   }
 
