@@ -55,7 +55,6 @@ class MessageBuilder extends CreateBuilder<Message> {
         for (final embed in this.embeds!)
           {
             if (embed.title != null) 'title': embed.title,
-            'type': embed.type.value,
             if (embed.description != null) 'description': embed.description,
             if (embed.url != null) 'url': embed.url.toString(),
             if (embed.timestamp != null) 'timestamp': embed.timestamp!.toIso8601String(),
@@ -165,7 +164,6 @@ class MessageUpdateBuilder extends UpdateBuilder<Message> {
           for (final embed in this.embeds!)
             {
               if (embed.title != null) 'title': embed.title,
-              'type': embed.type.value,
               if (embed.description != null) 'description': embed.description,
               if (embed.url != null) 'url': embed.url.toString(),
               if (embed.timestamp != null) 'timestamp': embed.timestamp!.toIso8601String(),

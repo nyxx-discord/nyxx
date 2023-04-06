@@ -4,8 +4,6 @@ import 'package:nyxx/src/utils/to_string_helper/to_string_helper.dart';
 class Embed {
   final String? title;
 
-  final EmbedType type;
-
   final String? description;
 
   final Uri? url;
@@ -30,7 +28,6 @@ class Embed {
 
   Embed({
     required this.title,
-    required this.type,
     required this.description,
     required this.url,
     required this.timestamp,
@@ -43,27 +40,6 @@ class Embed {
     required this.author,
     required this.fields,
   });
-}
-
-enum EmbedType {
-  rich._('rich'),
-  image._('image'),
-  video._('video'),
-  gif._('gifv'),
-  article._('article'),
-  link._('link');
-
-  final String value;
-
-  const EmbedType._(this.value);
-
-  factory EmbedType.parse(String value) => EmbedType.values.firstWhere(
-        (type) => type.value == value,
-        orElse: () => throw FormatException('Unknown EmbedType', value),
-      );
-
-  @override
-  String toString() => 'EmbedType($value)';
 }
 
 class EmbedFooter with ToStringHelper {

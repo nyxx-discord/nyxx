@@ -66,7 +66,7 @@ export 'src/models/message/activity.dart' show MessageActivity, MessageActivityT
 export 'src/models/message/attachment.dart' show Attachment;
 export 'src/models/message/author.dart' show MessageAuthor;
 export 'src/models/message/channel_mention.dart' show ChannelMention;
-export 'src/models/message/embed.dart' show Embed, EmbedAuthor, EmbedField, EmbedFooter, EmbedImage, EmbedProvider, EmbedThumbnail, EmbedVideo, EmbedType;
+export 'src/models/message/embed.dart' show Embed, EmbedAuthor, EmbedField, EmbedFooter, EmbedImage, EmbedProvider, EmbedThumbnail, EmbedVideo;
 export 'src/models/message/message.dart' show Message, MessageFlags, PartialMessage, MessageType;
 export 'src/models/message/reaction.dart' show Reaction;
 export 'src/models/message/reference.dart' show MessageReference;
