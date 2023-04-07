@@ -33,11 +33,11 @@ void main() {
       group(
         'channels',
         skip: testTextChannel != null ? false : 'No test channel provided',
-        () async {
+        () {
           final channelId = Snowflake.parse(testTextChannel!);
 
           final env = Platform.environment;
-          await client.channels[channelId].sendMessage(MessageBuilder(
+          client.channels[channelId].sendMessage(MessageBuilder(
             content: env['GITHUB_RUN_NUMBER'] == null
                 ? "Testing new local build. Nothing to worry about 😀"
                 : "Running `nyxx` job `#${env['GITHUB_RUN_NUMBER']}` started by `${env['GITHUB_ACTOR']}` on `${env['GITHUB_REF']}` on commit `${env['GITHUB_SHA']}`",
