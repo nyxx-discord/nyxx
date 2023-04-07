@@ -34,14 +34,18 @@ void main() {
         'channels',
         skip: testTextChannel != null ? false : 'No test channel provided',
         () {
-          final channelId = Snowflake.parse(testTextChannel!);
+          late final Snowflake channelId;
 
-          final env = Platform.environment;
-          client.channels[channelId].sendMessage(MessageBuilder(
-            content: env['GITHUB_RUN_NUMBER'] == null
-                ? "Testing new local build. Nothing to worry about 😀"
-                : "Running `nyxx` job `#${env['GITHUB_RUN_NUMBER']}` started by `${env['GITHUB_ACTOR']}` on `${env['GITHUB_REF']}` on commit `${env['GITHUB_SHA']}`",
-          ));
+          setUpAll(() async {
+            channelId = Snowflake.parse(testTextChannel!);
+
+            final env = Platform.environment;
+            await client.channels[channelId].sendMessage(MessageBuilder(
+              content: env['GITHUB_RUN_NUMBER'] == null
+                  ? "Testing new local build. Nothing to worry about 😀"
+                  : "Running `nyxx` job `#${env['GITHUB_RUN_NUMBER']}` started by `${env['GITHUB_ACTOR']}` on `${env['GITHUB_REF']}` on commit `${env['GITHUB_SHA']}`",
+            ));
+          });
 
           test('fetch', () => expect(client.channels.fetch(channelId), completes));
 
