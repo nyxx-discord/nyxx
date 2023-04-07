@@ -229,6 +229,116 @@ void main() {
     expect(channel.flags, isNull);
   }
 
+  final sampleAnnouncementThread = {
+    "id": "1093553602909442119",
+    "guild_id": "1033681997136146462",
+    "parent_id": "1093553555270545438",
+    "owner_id": "506759329068613643",
+    "type": 10,
+    "name": "Wow, such announcement",
+    "last_message_id": "1093553605472170094",
+    "thread_metadata": {
+      "archived": false,
+      "archive_timestamp": "2023-04-06T15:11:36.177000+00:00",
+      "auto_archive_duration": 4320,
+      "locked": false,
+      "create_timestamp": "2023-04-06T15:11:36.177000+00:00"
+    },
+    "message_count": 1,
+    "member_count": 1,
+    "rate_limit_per_user": 0,
+    "flags": 0,
+    "total_message_sent": 1,
+  };
+
+  void checkAnnouncementThread(Channel channel) {
+    expect(channel, isA<AnnouncementThread>());
+
+    channel as AnnouncementThread;
+
+    expect(channel.id, equals(Snowflake(1093553602909442119)));
+    expect(channel.appliedTags, isNull);
+    expect(channel.approximateMemberCount, equals(1));
+    expect(channel.archiveTimestamp, equals(DateTime.utc(2023, 04, 06, 15, 11, 36, 177)));
+    expect(channel.autoArchiveDuration, equals(Duration(minutes: 4320)));
+    expect(channel.createdAt, equals(DateTime.utc(2023, 04, 06, 15, 11, 36, 177)));
+    expect(channel.guildId, equals(Snowflake(1033681997136146462)));
+    expect(channel.isArchived, isFalse);
+    expect(channel.isLocked, isFalse);
+    expect(channel.isNsfw, isFalse);
+    expect(channel.lastMessageId, equals(Snowflake(1093553605472170094)));
+    expect(channel.lastPinTimestamp, isNull);
+    expect(channel.messageCount, equals(1));
+    expect(channel.name, equals('Wow, such announcement'));
+    expect(channel.ownerId, equals(Snowflake(506759329068613643)));
+    expect(channel.parentId, equals(Snowflake(1093553555270545438)));
+    expect(channel.permissionOverwrites, equals([]));
+    expect(channel.position, equals(-1));
+    expect(channel.rateLimitPerUser, isNull);
+    expect(channel.totalMessagesSent, equals(1));
+    expect(channel.flags, equals(ChannelFlags(0)));
+  }
+
+  final samplePrivateThread = {
+    "id": "1093556383640715314",
+    "guild_id": "1033681997136146462",
+    "parent_id": "1038831656682930227",
+    "owner_id": "506759329068613643",
+    "type": 12,
+    "name": "blah",
+    "last_message_id": "1093556580290670633",
+    "thread_metadata": {
+      "archived": false,
+      "archive_timestamp": "2023-04-06T15:22:39.155000+00:00",
+      "auto_archive_duration": 4320,
+      "locked": false,
+      "create_timestamp": "2023-04-06T15:22:39.155000+00:00",
+      "invitable": true
+    },
+    "message_count": 2,
+    "member_count": 2,
+    "rate_limit_per_user": 0,
+    "flags": 0,
+    "total_message_sent": 2,
+    "member": {
+      "id": "1093556383640715314",
+      "flags": 0,
+      "join_timestamp": "2023-04-06T15:23:26.010000+00:00",
+      "user_id": "1033681843708510238",
+      "muted": false,
+      "mute_config": null
+    },
+  };
+
+  void checkPrivateThread(Channel channel) {
+    expect(channel, isA<PrivateThread>());
+
+    channel as PrivateThread;
+
+    expect(channel.id, equals(Snowflake(1093556383640715314)));
+    expect(channel.isInvitable, isTrue);
+    expect(channel.appliedTags, isNull);
+    expect(channel.approximateMemberCount, equals(2));
+    expect(channel.archiveTimestamp, equals(DateTime.utc(2023, 04, 06, 15, 22, 39, 155)));
+    expect(channel.autoArchiveDuration, equals(Duration(minutes: 4320)));
+    expect(channel.createdAt, equals(DateTime.utc(2023, 04, 06, 15, 22, 39, 155)));
+    expect(channel.guildId, equals(Snowflake(1033681997136146462)));
+    expect(channel.isArchived, isFalse);
+    expect(channel.isLocked, isFalse);
+    expect(channel.isNsfw, isFalse);
+    expect(channel.lastMessageId, equals(Snowflake(1093556580290670633)));
+    expect(channel.lastPinTimestamp, isNull);
+    expect(channel.messageCount, equals(1));
+    expect(channel.name, equals('blah'));
+    expect(channel.ownerId, equals(Snowflake(506759329068613643)));
+    expect(channel.parentId, equals(Snowflake(1038831656682930227)));
+    expect(channel.permissionOverwrites, equals([]));
+    expect(channel.position, equals(-1));
+    expect(channel.rateLimitPerUser, isNull);
+    expect(channel.totalMessagesSent, equals(1));
+    expect(channel.flags, equals(ChannelFlags(0)));
+  }
+
   final samplePermissionOverwrite = {
     'id': '0',
     'type': 1,
@@ -316,8 +426,26 @@ void main() {
     RegExp(r'/channels/\d+'),
     sampleObject: sampleGuildText,
     sampleMatches: checkGuildText,
-    additionalSampleObjects: [sampleGuildAnnouncement, sampleGuildVoice, sampleDm, sampleGroupDm, sampleCategory, sampleThread],
-    additionalSampleMatchers: [checkGuildAnnouncement, checkGuildVoice, checkDm, checkGroupDm, checkCategory, checkThread],
+    additionalSampleObjects: [
+      sampleGuildAnnouncement,
+      sampleGuildVoice,
+      sampleDm,
+      sampleGroupDm,
+      sampleCategory,
+      sampleThread,
+      sampleAnnouncementThread,
+      samplePrivateThread,
+    ],
+    additionalSampleMatchers: [
+      checkGuildAnnouncement,
+      checkGuildVoice,
+      checkDm,
+      checkGroupDm,
+      checkCategory,
+      checkThread,
+      checkAnnouncementThread,
+      checkPrivateThread,
+    ],
     additionalParsingTests: [
       ParsingTest<ChannelManager, PermissionOverwrite, Map<String, Object?>>(
         name: 'parsePermissionOverwrite',

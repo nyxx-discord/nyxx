@@ -52,7 +52,7 @@ class AllowedMentions {
     if (this.users != null && other.users != null) {
       // If both this an other provide users, perform the intersection
       users = this.users!.where(other.users!.contains).toList();
-    } else if (this.parse?.contains('users') == null || other.parse?.contains('users') == true) {
+    } else if (this.parse?.contains('users') == true || other.parse?.contains('users') == true) {
       // Otherwise, if one of this or other supplies user and the other has 'users' in its parse, use the users from whichever provides it.
       // This assumes correctly formatted AllowedMentions that don't both provide users and have 'users' in its parse
       users = this.users ?? other.users;

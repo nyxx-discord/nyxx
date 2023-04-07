@@ -65,7 +65,8 @@ class ChannelManager extends ReadOnlyManager<Channel> {
       id: Snowflake.parse(raw['id'] as String),
       manager: this,
       topic: raw['topic'] as String,
-      defaultAutoArchiveDuration: Duration(minutes: raw['default_auto_archive_duration'] as int),
+      // Discord doesn't seem to include this field if the default 3 day expiration is used (3 days = 4320 minutes)
+      defaultAutoArchiveDuration: Duration(minutes: raw['default_auto_archive_duration'] as int? ?? 4320),
       defaultThreadRateLimitPerUser:
           maybeParse<Duration?, int>(raw['default_thread_rate_limit_per_user'], (value) => value == 0 ? null : Duration(seconds: value)),
       guildId: Snowflake.parse(raw['guild_id'] as String),
@@ -155,7 +156,8 @@ class ChannelManager extends ReadOnlyManager<Channel> {
       id: Snowflake.parse(raw['id'] as String),
       manager: this,
       topic: raw['topic'] as String,
-      defaultAutoArchiveDuration: Duration(minutes: raw['default_auto_archive_duration'] as int),
+      // Discord doesn't seem to include this field if the default 3 day expiration is used (3 days = 4320 minutes)
+      defaultAutoArchiveDuration: Duration(minutes: raw['default_auto_archive_duration'] as int? ?? 4320),
       defaultThreadRateLimitPerUser:
           maybeParse<Duration?, int>(raw['default_thread_rate_limit_per_user'], (value) => value == 0 ? null : Duration(seconds: value)),
       guildId: Snowflake.parse(raw['guild_id'] as String),
@@ -295,13 +297,14 @@ class ChannelManager extends ReadOnlyManager<Channel> {
     return ForumChannel(
       id: Snowflake.parse(raw['id'] as String),
       manager: this,
-      topic: raw['topic'] as String,
+      topic: raw['topic'] as String?,
       lastThreadId: maybeParse(raw['last_message_id'], Snowflake.parse),
       lastPinTimestamp: maybeParse(raw['last_pin_timestamp'], DateTime.parse),
       flags: ChannelFlags(raw['flags'] as int),
       availableTags: parseMany(raw['available_tags'] as List, parseForumTag),
       defaultReaction: maybeParse(raw['default_reaction_emoji'], parseDefaultReaction),
-      defaultAutoArchiveDuration: Duration(minutes: raw['default_auto_archive_duration'] as int),
+      // Discord doesn't seem to include this field if the default 3 day expiration is used (3 days = 4320 minutes)
+      defaultAutoArchiveDuration: Duration(minutes: raw['default_auto_archive_duration'] as int? ?? 4320),
       defaultThreadRateLimitPerUser:
           maybeParse<Duration?, int>(raw['default_thread_rate_limit_per_user'], (value) => value == 0 ? null : Duration(seconds: value)),
       guildId: Snowflake.parse(raw['guild_id'] as String),

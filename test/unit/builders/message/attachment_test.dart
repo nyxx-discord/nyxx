@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:nyxx/nyxx.dart';
 import 'package:test/test.dart';
 
@@ -16,5 +18,12 @@ void main() {
         'description': 'A test description',
       }),
     );
+  });
+
+  test('AttachmentBuilder.fromFile', () async {
+    final builder = await AttachmentBuilder.fromFile(File('test/files/1.png'));
+
+    expect(builder.data, equals(await File('test/files/1.png').readAsBytes()));
+    expect(builder.fileName, equals('1.png'));
   });
 }
