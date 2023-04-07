@@ -328,14 +328,14 @@ void main() {
     expect(channel.isNsfw, isFalse);
     expect(channel.lastMessageId, equals(Snowflake(1093556580290670633)));
     expect(channel.lastPinTimestamp, isNull);
-    expect(channel.messageCount, equals(1));
+    expect(channel.messageCount, equals(2));
     expect(channel.name, equals('blah'));
     expect(channel.ownerId, equals(Snowflake(506759329068613643)));
     expect(channel.parentId, equals(Snowflake(1038831656682930227)));
     expect(channel.permissionOverwrites, equals([]));
     expect(channel.position, equals(-1));
     expect(channel.rateLimitPerUser, isNull);
-    expect(channel.totalMessagesSent, equals(1));
+    expect(channel.totalMessagesSent, equals(2));
     expect(channel.flags, equals(ChannelFlags(0)));
   }
 
