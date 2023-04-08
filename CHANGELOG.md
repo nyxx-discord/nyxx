@@ -1,3 +1,9 @@
+## 5.0.2
+__08.04.2023__
+
+- bug: TextChannelBuilder and VoiceChannel builder had rateLimitPerUser and videoQualityMode swapped (#471)
+- documentation: Guild members (#470)
+
 ## 5.0.1
 __18.03.2023__
 
