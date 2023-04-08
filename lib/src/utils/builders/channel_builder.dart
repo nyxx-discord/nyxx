@@ -69,6 +69,7 @@ class VoiceChannelBuilder extends ChannelBuilder {
 
   /// Amount of seconds a user has to wait before sending another message (0-21600);
   /// bots, as well as users with the permission manage_messages or manage_channel, are unaffected
+  @Deprecated("Use TextChannelBuilder instead")
   int? rateLimitPerUser;
 
   /// Channel voice region id, automatic when set to null
@@ -113,6 +114,7 @@ class TextChannelBuilder extends ChannelBuilder {
   /// Whether the channel is nsfw
   bool? nsfw;
 
+  @Deprecated("Use VoiceChannelBuilder instead")
   VideoQualityMode? videoQualityMode;
 
   int? rateLimitPerUser;
