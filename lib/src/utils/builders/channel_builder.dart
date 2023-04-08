@@ -49,7 +49,9 @@ abstract class ChannelBuilder implements Builder {
         if (type != null) "type": type!.value,
         if (position != null) "position": position,
         if (parentChannel != null) "parent_id": parentChannel!.id.toString(),
-        if (permissionOverrides != null) "permission_overwrites": permissionOverrides!.map((e) => e.build()).toList(),
+        if (permissionOverrides != null)
+          "permission_overwrites":
+              permissionOverrides!.map((e) => e.build()).toList(),
       };
 }
 
@@ -72,6 +74,8 @@ class VoiceChannelBuilder extends ChannelBuilder {
   /// Channel voice region id, automatic when set to null
   String? rtcRegion = "";
 
+  VideoQualityMode? videoQualityMode;
+
   VoiceChannelBuilder({
     super.id,
     super.name,
@@ -82,6 +86,7 @@ class VoiceChannelBuilder extends ChannelBuilder {
     this.rateLimitPerUser,
     this.rtcRegion,
     this.userLimit,
+    this.videoQualityMode,
   }) : super._();
 
   @override
@@ -91,6 +96,8 @@ class VoiceChannelBuilder extends ChannelBuilder {
         if (userLimit != null) "user_limit": userLimit,
         if (rateLimitPerUser != null) "rate_limit_per_user": rateLimitPerUser,
         if (rtcRegion != "") "rtc_region": rtcRegion,
+        if (videoQualityMode != null)
+          "video_quality_mode": videoQualityMode!.value,
       };
 }
 
@@ -108,6 +115,8 @@ class TextChannelBuilder extends ChannelBuilder {
 
   VideoQualityMode? videoQualityMode;
 
+  int? rateLimitPerUser;
+
   TextChannelBuilder({
     super.id,
     super.name,
@@ -116,6 +125,7 @@ class TextChannelBuilder extends ChannelBuilder {
     super.position,
     this.nsfw,
     this.topic,
+    this.rateLimitPerUser,
   }) : super._();
   factory TextChannelBuilder.create(String name) {
     final builder = TextChannelBuilder();
@@ -128,7 +138,9 @@ class TextChannelBuilder extends ChannelBuilder {
         ...super.build(),
         if (topic != null) "topic": topic,
         if (nsfw != null) "nsfw": nsfw,
-        if (videoQualityMode != null) "video_quality_mode": videoQualityMode!.value,
+        if (videoQualityMode != null)
+          "video_quality_mode": videoQualityMode!.value,
+        if (rateLimitPerUser != null) "rate_limit_per_user": rateLimitPerUser,
       };
 }
 
@@ -151,12 +163,16 @@ class ForumChannelBuilder extends TextChannelBuilder {
   @override
   RawApiMap build() => {
         ...super.build(),
-        if (defaultSortOrder != null) "default_sort_order": defaultSortOrder!.value,
+        if (defaultSortOrder != null)
+          "default_sort_order": defaultSortOrder!.value,
         if (defaultReactionEmoji != null)
           "default_reaction_emoji": {
-            if (defaultReactionEmoji is UnicodeEmoji) "emoji_name": defaultReactionEmoji!.encodeForAPI(),
-            if (defaultReactionEmoji is BaseGuildEmoji) "emoji_id": (defaultReactionEmoji as BaseGuildEmoji).id
+            if (defaultReactionEmoji is UnicodeEmoji)
+              "emoji_name": defaultReactionEmoji!.encodeForAPI(),
+            if (defaultReactionEmoji is BaseGuildEmoji)
+              "emoji_id": (defaultReactionEmoji as BaseGuildEmoji).id
           },
-        if (availableTags != null) "available_tags": availableTags!.map((e) => e.build()).toList()
+        if (availableTags != null)
+          "available_tags": availableTags!.map((e) => e.build()).toList()
       };
 }
