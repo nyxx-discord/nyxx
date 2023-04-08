@@ -1,7 +1,18 @@
+## 5.0.2
+__08.04.2023__
+
+- bug: TextChannelBuilder and VoiceChannel builder had rateLimitPerUser and videoQualityMode swapped (#471)
+- documentation: Guild members (#470)
+
 ## 5.0.1
 __18.03.2023__
 
 - documentation: Channel invites (#448)
+- bug: Correctly dispose all resources on bot stop (#451)
+
+## 4.5.1
+__19.03.2023__
+
 - bug: Correctly dispose all resources on bot stop (#451)
 
 ## 5.0.0

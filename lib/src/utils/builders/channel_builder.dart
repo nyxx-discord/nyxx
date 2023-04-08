@@ -67,10 +67,13 @@ class VoiceChannelBuilder extends ChannelBuilder {
 
   /// Amount of seconds a user has to wait before sending another message (0-21600);
   /// bots, as well as users with the permission manage_messages or manage_channel, are unaffected
+  @Deprecated("Use TextChannelBuilder instead")
   int? rateLimitPerUser;
 
   /// Channel voice region id, automatic when set to null
   String? rtcRegion = "";
+
+  VideoQualityMode? videoQualityMode;
 
   VoiceChannelBuilder({
     super.id,
@@ -82,6 +85,7 @@ class VoiceChannelBuilder extends ChannelBuilder {
     this.rateLimitPerUser,
     this.rtcRegion,
     this.userLimit,
+    this.videoQualityMode,
   }) : super._();
 
   @override
@@ -91,6 +95,7 @@ class VoiceChannelBuilder extends ChannelBuilder {
         if (userLimit != null) "user_limit": userLimit,
         if (rateLimitPerUser != null) "rate_limit_per_user": rateLimitPerUser,
         if (rtcRegion != "") "rtc_region": rtcRegion,
+        if (videoQualityMode != null) "video_quality_mode": videoQualityMode!.value,
       };
 }
 
@@ -106,7 +111,10 @@ class TextChannelBuilder extends ChannelBuilder {
   /// Whether the channel is nsfw
   bool? nsfw;
 
+  @Deprecated("Use VoiceChannelBuilder instead")
   VideoQualityMode? videoQualityMode;
+
+  int? rateLimitPerUser;
 
   TextChannelBuilder({
     super.id,
@@ -116,6 +124,7 @@ class TextChannelBuilder extends ChannelBuilder {
     super.position,
     this.nsfw,
     this.topic,
+    this.rateLimitPerUser,
   }) : super._();
   factory TextChannelBuilder.create(String name) {
     final builder = TextChannelBuilder();
@@ -129,6 +138,7 @@ class TextChannelBuilder extends ChannelBuilder {
         if (topic != null) "topic": topic,
         if (nsfw != null) "nsfw": nsfw,
         if (videoQualityMode != null) "video_quality_mode": videoQualityMode!.value,
+        if (rateLimitPerUser != null) "rate_limit_per_user": rateLimitPerUser,
       };
 }
 
