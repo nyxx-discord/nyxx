@@ -26,6 +26,14 @@ abstract class Thread implements TextChannel, GuildChannel {
   List<Snowflake>? get appliedTags;
 
   ChannelFlags? get flags;
+
+  Future<void> addThreadMember(Snowflake memberId);
+
+  Future<void> removeThreadMember(Snowflake memberId);
+
+  Future<void> fetchThreadMember(Snowflake memberId);
+
+  Future<List<ThreadMember>> listThreadMembers({bool? withMembers, Snowflake? after, int? limit});
 }
 
 class PartialThreadMember {

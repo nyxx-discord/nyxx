@@ -1,3 +1,4 @@
+import 'package:nyxx/src/builders/permission_overwrite.dart';
 import 'package:nyxx/src/models/channel/channel.dart';
 import 'package:nyxx/src/models/channel/guild_channel.dart';
 import 'package:nyxx/src/models/permission_overwrite.dart';
@@ -21,6 +22,8 @@ class GuildCategory extends Channel implements GuildChannel {
 
   @override
   final int position;
+  @override
+  ChannelType get type => ChannelType.guildCategory;
 
   GuildCategory({
     required super.id,
@@ -34,5 +37,8 @@ class GuildCategory extends Channel implements GuildChannel {
   });
 
   @override
-  ChannelType get type => ChannelType.guildCategory;
+  Future<void> deletePermissionOverwrite(Snowflake id) => manager.deletePermissionOverwrite(this.id, id);
+
+  @override
+  Future<void> updatePermissionOverwrite(PermissionOverwriteBuilder builder) => manager.updatePermissionOverwrite(id, builder);
 }

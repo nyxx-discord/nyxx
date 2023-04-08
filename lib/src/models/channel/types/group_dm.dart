@@ -1,9 +1,15 @@
+import 'package:nyxx/src/builders/message/message.dart';
+import 'package:nyxx/src/http/managers/message_manager.dart';
 import 'package:nyxx/src/models/channel/channel.dart';
 import 'package:nyxx/src/models/channel/text_channel.dart';
+import 'package:nyxx/src/models/message/message.dart';
 import 'package:nyxx/src/models/snowflake.dart';
 import 'package:nyxx/src/models/user/user.dart';
 
 class GroupDmChannel extends Channel implements TextChannel {
+  @override
+  late final MessageManager messages = MessageManager(manager.client.options.messageCacheConfig, manager.client, channelId: id);
+
   final String name;
 
   final List<User> recipients;
@@ -41,4 +47,10 @@ class GroupDmChannel extends Channel implements TextChannel {
     required this.lastPinTimestamp,
     required this.rateLimitPerUser,
   });
+
+  @override
+  Future<Message> sendMessage(MessageBuilder builder) => messages.create(builder);
+
+  @override
+  Future<void> triggerTyping() => manager.triggerTyping(id);
 }

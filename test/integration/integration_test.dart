@@ -40,7 +40,7 @@ void main() {
             channelId = Snowflake.parse(testTextChannel!);
 
             final env = Platform.environment;
-            await client.channels[channelId].sendMessage(MessageBuilder(
+            await (await client.channels.get(channelId) as TextChannel).sendMessage(MessageBuilder(
               content: env['GITHUB_RUN_NUMBER'] == null
                   ? "Testing new local build. Nothing to worry about 😀"
                   : "Running `nyxx` job `#${env['GITHUB_RUN_NUMBER']}` started by `${env['GITHUB_ACTOR']}` on `${env['GITHUB_REF']}` on commit `${env['GITHUB_SHA']}`",
@@ -50,7 +50,7 @@ void main() {
           test('fetch', () => expect(client.channels.fetch(channelId), completes));
 
           test('basic message functionality', () async {
-            Message message = await client.channels[channelId].sendMessage(MessageBuilder(
+            Message message = await (await client.channels.get(channelId) as TextChannel).sendMessage(MessageBuilder(
               content: 'A test message',
             ));
 
@@ -66,7 +66,7 @@ void main() {
           });
 
           test('upload files', () async {
-            final message = await client.channels[channelId].sendMessage(MessageBuilder(
+            final message = await (await client.channels.get(channelId) as TextChannel).sendMessage(MessageBuilder(
               attachments: [
                 await AttachmentBuilder.fromFile(File('test/files/1.png')),
               ],

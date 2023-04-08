@@ -1,9 +1,16 @@
+import 'package:nyxx/src/builders/message/message.dart';
+import 'package:nyxx/src/builders/permission_overwrite.dart';
+import 'package:nyxx/src/http/managers/message_manager.dart';
 import 'package:nyxx/src/models/channel/channel.dart';
 import 'package:nyxx/src/models/channel/thread.dart';
+import 'package:nyxx/src/models/message/message.dart';
 import 'package:nyxx/src/models/permission_overwrite.dart';
 import 'package:nyxx/src/models/snowflake.dart';
 
 class AnnouncementThread extends Channel implements Thread {
+  @override
+  late final MessageManager messages = MessageManager(manager.client.options.messageCacheConfig, manager.client, channelId: id);
+
   @override
   final List<Snowflake>? appliedTags;
 
@@ -91,4 +98,29 @@ class AnnouncementThread extends Channel implements Thread {
     required this.totalMessagesSent,
     required this.flags,
   });
+
+  @override
+  Future<void> addThreadMember(Snowflake memberId) => manager.addThreadMember(id, memberId);
+
+  @override
+  Future<void> deletePermissionOverwrite(Snowflake id) => manager.deletePermissionOverwrite(this.id, id);
+
+  @override
+  Future<void> fetchThreadMember(Snowflake memberId) => manager.fetchThreadMember(id, memberId);
+
+  @override
+  Future<List<ThreadMember>> listThreadMembers({bool? withMembers, Snowflake? after, int? limit}) =>
+      manager.listThreadMembers(id, after: after, limit: limit, withMembers: withMembers);
+
+  @override
+  Future<void> removeThreadMember(Snowflake memberId) => manager.removeThreadMember(id, memberId);
+
+  @override
+  Future<Message> sendMessage(MessageBuilder builder) => messages.create(builder);
+
+  @override
+  Future<void> triggerTyping() => manager.triggerTyping(id);
+
+  @override
+  Future<void> updatePermissionOverwrite(PermissionOverwriteBuilder builder) => manager.updatePermissionOverwrite(id, builder);
 }

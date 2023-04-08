@@ -1,6 +1,10 @@
+import 'package:nyxx/src/builders/channel/thread.dart';
+import 'package:nyxx/src/builders/permission_overwrite.dart';
 import 'package:nyxx/src/models/channel/channel.dart';
 import 'package:nyxx/src/models/channel/guild_channel.dart';
 import 'package:nyxx/src/models/channel/has_threads_channel.dart';
+import 'package:nyxx/src/models/channel/thread.dart';
+import 'package:nyxx/src/models/channel/thread_list.dart';
 import 'package:nyxx/src/models/permission_overwrite.dart';
 import 'package:nyxx/src/models/snowflake.dart';
 import 'package:nyxx/src/utils/to_string_helper/to_string_helper.dart';
@@ -63,6 +67,27 @@ class ForumChannel extends Channel implements GuildChannel, HasThreadsChannel {
     required this.permissionOverwrites,
     required this.position,
   });
+
+  Future<Thread> createForumThread(ForumThreadBuilder builder) => manager.createForumThread(id, builder);
+
+  @override
+  Future<Thread> createThread(ThreadBuilder builder) => throw UnsupportedError('Cannot create a non forum thread in a forum channel');
+
+  @override
+  Future<Thread> createThreadFromMessage(Snowflake messageId, ThreadFromMessageBuilder builder) =>
+      throw UnsupportedError('Cannot create a non forum thread in a forum channel');
+
+  @override
+  Future<void> deletePermissionOverwrite(Snowflake id) => manager.deletePermissionOverwrite(this.id, id);
+
+  @override
+  Future<ThreadList> listPrivateArchivedThreads({DateTime? before, int? limit}) => manager.listPrivateArchivedThreads(id, before: before, limit: limit);
+
+  @override
+  Future<ThreadList> listPublicArchivedThreads({DateTime? before, int? limit}) => manager.listPublicArchivedThreads(id, before: before, limit: limit);
+
+  @override
+  Future<void> updatePermissionOverwrite(PermissionOverwriteBuilder builder) => manager.updatePermissionOverwrite(id, builder);
 }
 
 class ForumTag with ToStringHelper {
