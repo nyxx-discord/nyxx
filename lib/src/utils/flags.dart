@@ -1,19 +1,8 @@
 import 'package:nyxx/src/utils/to_string_helper/to_string_helper.dart';
 
-abstract class FlagCombinable<T extends Flags<T>> with ToStringHelper {
-  int get value;
-
-  const FlagCombinable();
-
-  Flags<T> operator |(FlagCombinable<T> other) => Flags(value | other.value);
-
-  Flags<T> operator &(FlagCombinable<T> other) => Flags(value & other.value);
-}
-
 /// A set of flags that can be either enabled or disabled.
-class Flags<T extends Flags<T>> extends FlagCombinable<T> {
+class Flags<T extends Flags<T>> with ToStringHelper {
   /// The integer value encoding the flags as a bitfield.
-  @override
   final int value;
 
   /// Create a new [Flags].
@@ -21,6 +10,10 @@ class Flags<T extends Flags<T>> extends FlagCombinable<T> {
 
   /// Returns `true` if this [Flags] has the [flag] enabled, `false` otherwise.
   bool has(Flag<T> flag) => value & flag.value != 0;
+
+  Flags<T> operator |(Flags<T> other) => Flags(value | other.value);
+
+  Flags<T> operator &(Flags<T> other) => Flags(value & other.value);
 
   @override
   bool operator ==(Object other) => identical(this, other) || (other is Flags<T> && other.value == value);

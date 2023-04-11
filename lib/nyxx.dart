@@ -72,7 +72,7 @@ export 'src/models/message/reaction.dart' show Reaction;
 export 'src/models/message/reference.dart' show MessageReference;
 export 'src/models/message/role_subscription_data.dart' show RoleSubscriptionData;
 
-export 'src/utils/flags.dart' show Flag, FlagCombinable, Flags;
+export 'src/utils/flags.dart' show Flag, Flags;
 
 // Types also used in the nyxx API from other packages
 export 'package:http/http.dart'
