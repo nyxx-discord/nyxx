@@ -181,8 +181,7 @@ class CdnHttpEndpoints implements ICdnHttpEndpoints {
       );
 
   @override
-  String memberAvatar(Snowflake guildId, Snowflake userId, String avatarHash, {String format = 'webp', int? size, bool animated = true}) =>
-      _makeAnimatedCdnUrl(
+  String memberAvatar(Snowflake guildId, Snowflake userId, String avatarHash, {String format = 'webp', int? size, bool animated = true}) => _makeAnimatedCdnUrl(
         ICdnHttpRoute()
           ..guilds(id: guildId.toString())
           ..users(id: userId.toString())
