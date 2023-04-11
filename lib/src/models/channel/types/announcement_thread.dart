@@ -9,7 +9,7 @@ import 'package:nyxx/src/models/snowflake.dart';
 
 class AnnouncementThread extends Channel implements Thread {
   @override
-  late final MessageManager messages = MessageManager(manager.client.options.messageCacheConfig, manager.client, channelId: id);
+  MessageManager get messages => MessageManager(manager.client.options.messageCacheConfig, manager.client, channelId: id);
 
   @override
   final List<Snowflake>? appliedTags;

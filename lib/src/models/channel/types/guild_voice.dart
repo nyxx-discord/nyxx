@@ -11,7 +11,7 @@ import 'package:nyxx/src/models/snowflake.dart';
 
 class GuildVoiceChannel extends Channel implements TextChannel, GuildChannel, VoiceChannel {
   @override
-  late final MessageManager messages = MessageManager(manager.client.options.messageCacheConfig, manager.client, channelId: id);
+  MessageManager get messages => MessageManager(manager.client.options.messageCacheConfig, manager.client, channelId: id);
 
   @override
   final int bitrate;

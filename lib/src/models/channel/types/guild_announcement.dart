@@ -14,7 +14,7 @@ import 'package:nyxx/src/models/snowflake.dart';
 
 class GuildAnnouncementChannel extends Channel implements TextChannel, GuildChannel, HasThreadsChannel {
   @override
-  late final MessageManager messages = MessageManager(manager.client.options.messageCacheConfig, manager.client, channelId: id);
+  MessageManager get messages => MessageManager(manager.client.options.messageCacheConfig, manager.client, channelId: id);
 
   final String topic;
 
