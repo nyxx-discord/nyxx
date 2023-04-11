@@ -52,7 +52,7 @@ abstract class IUser implements SnowflakeEntity, ISend, Mentionable, IMessageAut
   String? avatarDecorationHash;
 
   /// The user's banner url.
-  String? bannerUrl({String format = 'webp', int? size, bool animated = false});
+  String? bannerUrl({String format = 'webp', int? size, bool? animated});
 
   /// The user's avatar decoration url, if any.
   String? avatarDecorationUrl({int size});
@@ -170,20 +170,24 @@ class User extends SnowflakeEntity implements IUser {
   /// The user's avatar, represented as URL.
   /// In case if user does not have avatar, default discord avatar will be returned with specified size and png format.
   @override
-  String avatarUrl({String format = 'webp', int? size, bool animated = false}) {
+  String avatarUrl({String format = 'webp', int? size, bool? animated}) {
     if (avatar == null) {
       return client.cdnHttpEndpoints.defaultAvatar(discriminator);
     }
+
+    animated ??= avatar?.startsWith("a_") ?? false;
 
     return client.cdnHttpEndpoints.avatar(id, avatar!, format: format, size: size, animated: animated);
   }
 
   /// The user's banner url.
   @override
-  String? bannerUrl({String format = 'webp', int? size, bool animated = false}) {
+  String? bannerUrl({String format = 'webp', int? size, bool? animated}) {
     if (bannerHash == null) {
       return null;
     }
+
+    animated ??= bannerHash?.startsWith("a_") ?? false;
 
     return client.cdnHttpEndpoints.banner(id, bannerHash!, format: format, size: size, animated: animated);
   }

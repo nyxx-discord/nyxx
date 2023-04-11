@@ -199,7 +199,7 @@ abstract class IGuild implements SnowflakeEntity {
 
   /// The guild's icon, represented as URL.
   /// If guild doesn't have icon it returns null.
-  String? iconUrl({String format = 'webp', int? size, bool animated = false});
+  String? iconUrl({String format = 'webp', int? size, bool? animated});
 
   /// URL to guild's splash.
   /// If guild doesn't have splash it returns null.
@@ -211,7 +211,7 @@ abstract class IGuild implements SnowflakeEntity {
 
   /// URL to guild's banner.
   /// If guild doesn't have banner it returns null.
-  String? bannerUrl({String format = 'webp', int? size, bool animated = false});
+  String? bannerUrl({String format = 'webp', int? size, bool? animated});
 
   /// Allows to download [IGuild] widget aka advert png
   /// Possible options for [style]: shield (default), banner1, banner2, banner3, banner4
@@ -730,10 +730,12 @@ class Guild extends SnowflakeEntity implements IGuild {
   /// The guild's icon, represented as URL.
   /// If guild doesn't have icon it returns null.
   @override
-  String? iconUrl({String format = 'webp', int? size, bool animated = false}) {
+  String? iconUrl({String format = 'webp', int? size, bool? animated}) {
     if (icon == null) {
       return null;
     }
+
+    animated ??= icon?.startsWith("a_") ?? false;
 
     return client.cdnHttpEndpoints.icon(id, icon!, format: format, size: size, animated: animated);
   }
@@ -768,10 +770,12 @@ class Guild extends SnowflakeEntity implements IGuild {
   /// Returns the URL to guild's banner.
   /// If guild doesn't have banner it returns null.
   @override
-  String? bannerUrl({String format = 'webp', int? size, bool animated = false}) {
+  String? bannerUrl({String format = 'webp', int? size, bool? animated}) {
     if (banner == null) {
       return null;
     }
+
+    animated ??= banner?.startsWith("a_") ?? false;
 
     return client.cdnHttpEndpoints.banner(id, banner!, format: format, size: size, animated: animated);
   }

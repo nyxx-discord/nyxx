@@ -72,7 +72,7 @@ abstract class IMember implements SnowflakeEntity, Mentionable {
 
   /// The member's avatar, represented as URL. With given [format] and [size].
   /// If [animated] is set as `true`, if available, the url will be a gif, otherwise the [format] or fallback to "webp".
-  String? avatarUrl({String format = 'webp', int? size, bool animated = false});
+  String? avatarUrl({String format = 'webp', int? size, bool? animated});
 
   /// Bans the member and optionally deletes [deleteMessageDays] days worth of messages.
   Future<void> ban({int? deleteMessageDays, String? reason, String? auditReason});
@@ -208,10 +208,12 @@ class Member extends SnowflakeEntity implements IMember {
 
   /// Returns url to member avatar
   @override
-  String? avatarUrl({String format = 'webp', int? size, bool animated = false}) {
+  String? avatarUrl({String format = 'webp', int? size, bool? animated}) {
     if (avatarHash == null) {
       return null;
     }
+
+    animated ??= avatarHash?.startsWith("a_") ?? false;
 
     return client.cdnHttpEndpoints.memberAvatar(guild.id, id, avatarHash!, format: format, size: size, animated: animated);
   }
