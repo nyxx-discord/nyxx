@@ -38,7 +38,7 @@ abstract class IGuildPreview implements SnowflakeEntity {
 
   /// The guild's icon, represented as URL.
   /// If guild doesn't have icon it returns null.
-  String? iconUrl({String format = 'webp', int? size, bool animated = false});
+  String? iconUrl({String format = 'webp', int? size, bool? animated});
 
   /// URL to guild's splash.
   /// If guild doesn't have splash it returns null.
@@ -115,10 +115,12 @@ class GuildPreview extends SnowflakeEntity implements IGuildPreview {
   /// The guild's icon, represented as URL.
   /// If guild doesn't have icon it returns null.
   @override
-  String? iconUrl({String format = 'webp', int? size, bool animated = false}) {
+  String? iconUrl({String format = 'webp', int? size, bool? animated}) {
     if (iconHash == null) {
       return null;
     }
+
+    animated ??= iconHash?.startsWith("a_") ?? false;
 
     return client.cdnHttpEndpoints.icon(id, iconHash!, format: format, size: size, animated: animated);
   }
