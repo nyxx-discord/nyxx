@@ -19,11 +19,11 @@ abstract class ICdnHttpEndpoints {
 
   /// Returns URL to ``/avatars/[avatarHash]``.
   /// With given [format], [size] and whether or not returns the animated version (if applicable) of this URL with [animated].
-  String avatar(Snowflake id, String avatarHash, {String format = 'webp', int? size, bool animated = false});
+  String avatar(Snowflake id, String avatarHash, {String format = 'webp', int? size, bool animated = true});
 
   /// Returns URL to ``/banners/[bannerHash]``.
   /// With given [format], [size] and whether or not returns the animated version (if applicable) of this URL with [animated].
-  String banner(Snowflake guildOrUserId, String hash, {String format = 'webp', int? size, bool animated = false});
+  String banner(Snowflake guildOrUserId, String hash, {String format = 'webp', int? size, bool animated = true});
 
   /// Returns URL to ``/channel-icons/[iconHash]``.
   /// With given [format] and [size].
@@ -49,11 +49,11 @@ abstract class ICdnHttpEndpoints {
 
   /// Returns URL to ``/guilds/[guildId]/users/[userId]/[avatarHash]``.
   /// With given [format], [size] and whether or not returns the animated version (if applicable) of this URL with [animated].
-  String memberAvatar(Snowflake guildId, Snowflake userId, String avatarHash, {String format = 'webp', int? size, bool animated = false});
+  String memberAvatar(Snowflake guildId, Snowflake userId, String avatarHash, {String format = 'webp', int? size, bool animated = true});
 
   /// Returns URL tp ``/icons/[iconHash]``.
   /// With given [format], [size] and whether or not returns the animated version (if applicable) of this URL with [animated].
-  String icon(Snowflake id, String iconHash, {String format = 'webp', int? size, bool animated = false});
+  String icon(Snowflake id, String iconHash, {String format = 'webp', int? size, bool animated = true});
 
   /// Returns URL to ``/role-icons/[roleIconHash]``.
   /// With given [format] and [size].
@@ -85,13 +85,13 @@ abstract class ICdnHttpEndpoints {
 }
 
 class CdnHttpEndpoints implements ICdnHttpEndpoints {
-  String _makeAnimatedCdnUrl(ICdnHttpRoute fragment, String hash, {String format = 'webp', int? size, bool animated = false}) {
+  String _makeAnimatedCdnUrl(ICdnHttpRoute fragment, String hash, {String format = 'webp', int? size, bool animated = true}) {
     final isAnimated = animated && hash.startsWith('a_');
 
     return _makeCdnUrl(fragment, format: format, size: size, animated: isAnimated);
   }
 
-  String _makeCdnUrl(ICdnHttpRoute fragments, {String format = 'webp', int? size, bool animated = false}) {
+  String _makeCdnUrl(ICdnHttpRoute fragments, {String format = 'webp', int? size, bool animated = true}) {
     if (!CdnConstants.allowedExtensions.contains(format)) {
       throw Exception('Invalid extension provided, must be one of ${CdnConstants.allowedExtensions.and()}; given: $format');
     }
@@ -132,7 +132,7 @@ class CdnHttpEndpoints implements ICdnHttpEndpoints {
       );
 
   @override
-  String avatar(Snowflake id, String avatarHash, {String format = 'webp', int? size, bool animated = false}) => _makeAnimatedCdnUrl(
+  String avatar(Snowflake id, String avatarHash, {String format = 'webp', int? size, bool animated = true}) => _makeAnimatedCdnUrl(
         ICdnHttpRoute()
           ..avatars(id: id.toString())
           ..addHash(hash: avatarHash),
@@ -143,7 +143,7 @@ class CdnHttpEndpoints implements ICdnHttpEndpoints {
       );
 
   @override
-  String banner(Snowflake guildOrUserId, String hash, {String format = 'webp', int? size, bool animated = false}) => _makeAnimatedCdnUrl(
+  String banner(Snowflake guildOrUserId, String hash, {String format = 'webp', int? size, bool animated = true}) => _makeAnimatedCdnUrl(
         ICdnHttpRoute()
           ..banners(id: guildOrUserId.toString())
           ..addHash(hash: hash),
@@ -181,7 +181,7 @@ class CdnHttpEndpoints implements ICdnHttpEndpoints {
       );
 
   @override
-  String memberAvatar(Snowflake guildId, Snowflake userId, String avatarHash, {String format = 'webp', int? size, bool animated = false}) =>
+  String memberAvatar(Snowflake guildId, Snowflake userId, String avatarHash, {String format = 'webp', int? size, bool animated = true}) =>
       _makeAnimatedCdnUrl(
         ICdnHttpRoute()
           ..guilds(id: guildId.toString())
@@ -198,7 +198,7 @@ class CdnHttpEndpoints implements ICdnHttpEndpoints {
       _makeCdnUrl(ICdnHttpRoute()..emojis(id: emojiId.toString()), format: format, size: size);
 
   @override
-  String icon(Snowflake id, String iconHash, {String format = 'webp', int? size, bool animated = false}) => _makeAnimatedCdnUrl(
+  String icon(Snowflake id, String iconHash, {String format = 'webp', int? size, bool animated = true}) => _makeAnimatedCdnUrl(
         ICdnHttpRoute()
           ..icons(id: id.toString())
           ..addHash(hash: iconHash),
