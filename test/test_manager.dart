@@ -63,6 +63,7 @@ Future<void> testReadOnlyManager<T extends SnowflakeEntity<T>, U extends ReadOnl
   List<void Function(T)>? additionalSampleMatchers,
   required List<ParsingTest<U, dynamic, dynamic>>? additionalParsingTests,
   required List<EndpointTest<U, dynamic, dynamic>>? additionalEndpointTests,
+  void Function()? extraRun,
 }) async {
   assert(
     additionalSampleMatchers?.length == additionalSampleObjects?.length,
@@ -70,6 +71,8 @@ Future<void> testReadOnlyManager<T extends SnowflakeEntity<T>, U extends ReadOnl
   );
 
   group(name, () {
+    tearDown(() => Cache.testClearAllCaches());
+
     test('parse', () {
       final client = MockNyxx();
       when(() => client.apiOptions).thenReturn(RestApiOptions(token: 'TEST_TOKEN'));
@@ -188,90 +191,91 @@ Future<void> testManager<T extends SnowflakeEntity<T>, U extends Manager<T>>(
     additionalSampleMatchers: additionalSampleMatchers,
     additionalParsingTests: additionalParsingTests,
     additionalEndpointTests: additionalEndpointTests,
-  );
+    extraRun: () {
+      testEndpoint(
+        name: 'create',
+        method: 'POST',
+        createUrlMatcher,
+        response: sampleObject,
+        (client) async {
+          final manager = create(CacheConfig(), client);
 
-  testEndpoint(
-    name: 'create',
-    method: 'POST',
-    createUrlMatcher,
-    response: sampleObject,
-    (client) async {
-      final manager = create(CacheConfig(), client);
+          final entity = await manager.create(createBuilder);
+          sampleMatches(entity);
+        },
+      );
 
-      final entity = await manager.create(createBuilder);
-      sampleMatches(entity);
+      test('create caches entity', () async {
+        final client = MockNyxx();
+        when(() => client.apiOptions).thenReturn(RestApiOptions(token: 'TEST_TOKEN'));
+        when(() => client.options).thenReturn(RestClientOptions());
+        when(() => client.httpHandler).thenReturn(HttpHandler(client));
+
+        nock('https://discord.com/api/v${client.apiOptions.apiVersion}').post(createUrlMatcher, (_) => true).reply(200, jsonEncode(sampleObject));
+
+        final manager = create(CacheConfig(), client);
+        final entity = await manager.create(createBuilder);
+
+        expect(manager.cache.containsKey(entity.id), isTrue);
+      });
+
+      testEndpoint(
+        name: 'update',
+        method: 'PATCH',
+        baseUrlMatcher,
+        response: sampleObject,
+        (client) async {
+          final manager = create(CacheConfig(), client);
+
+          final entity = await manager.update(Snowflake.zero, updateBuilder);
+          sampleMatches(entity);
+        },
+      );
+
+      test('update caches entity', () async {
+        final client = MockNyxx();
+        when(() => client.apiOptions).thenReturn(RestApiOptions(token: 'TEST_TOKEN'));
+        when(() => client.options).thenReturn(RestClientOptions());
+        when(() => client.httpHandler).thenReturn(HttpHandler(client));
+
+        nock('https://discord.com/api/v${client.apiOptions.apiVersion}').patch(baseUrlMatcher, (_) => true).reply(200, jsonEncode(sampleObject));
+
+        final manager = create(CacheConfig(), client);
+        final entity = await manager.update(Snowflake.zero, updateBuilder);
+
+        expect(manager.cache.containsKey(entity.id), isTrue);
+      });
+
+      testEndpoint(
+        name: 'delete',
+        method: 'DELETE',
+        baseUrlMatcher,
+        response: null,
+        (client) async {
+          final manager = create(CacheConfig(), client);
+
+          await manager.delete(Snowflake.zero);
+        },
+      );
+
+      test('delete caches entity', () async {
+        final client = MockNyxx();
+        when(() => client.apiOptions).thenReturn(RestApiOptions(token: 'TEST_TOKEN'));
+        when(() => client.options).thenReturn(RestClientOptions());
+        when(() => client.httpHandler).thenReturn(HttpHandler(client));
+
+        nock('https://discord.com/api/v${client.apiOptions.apiVersion}').delete(baseUrlMatcher).reply(200, jsonEncode(sampleObject));
+
+        final manager = create(CacheConfig(), client);
+        final entity = manager.parse(sampleObject);
+        manager.cache[entity.id] = entity;
+
+        await manager.delete(entity.id);
+
+        await null;
+
+        expect(manager.cache.containsKey(entity.id), isFalse);
+      });
     },
   );
-
-  test('create caches entity', () async {
-    final client = MockNyxx();
-    when(() => client.apiOptions).thenReturn(RestApiOptions(token: 'TEST_TOKEN'));
-    when(() => client.options).thenReturn(RestClientOptions());
-    when(() => client.httpHandler).thenReturn(HttpHandler(client));
-
-    nock('https://discord.com/api/v${client.apiOptions.apiVersion}').post(createUrlMatcher, (_) => true).reply(200, jsonEncode(sampleObject));
-
-    final manager = create(CacheConfig(), client);
-    final entity = await manager.create(createBuilder);
-
-    expect(manager.cache.containsKey(entity.id), isTrue);
-  });
-
-  testEndpoint(
-    name: 'update',
-    method: 'PATCH',
-    baseUrlMatcher,
-    response: sampleObject,
-    (client) async {
-      final manager = create(CacheConfig(), client);
-
-      final entity = await manager.update(Snowflake.zero, updateBuilder);
-      sampleMatches(entity);
-    },
-  );
-
-  test('update caches entity', () async {
-    final client = MockNyxx();
-    when(() => client.apiOptions).thenReturn(RestApiOptions(token: 'TEST_TOKEN'));
-    when(() => client.options).thenReturn(RestClientOptions());
-    when(() => client.httpHandler).thenReturn(HttpHandler(client));
-
-    nock('https://discord.com/api/v${client.apiOptions.apiVersion}').patch(baseUrlMatcher, (_) => true).reply(200, jsonEncode(sampleObject));
-
-    final manager = create(CacheConfig(), client);
-    final entity = await manager.update(Snowflake.zero, updateBuilder);
-
-    expect(manager.cache.containsKey(entity.id), isTrue);
-  });
-
-  testEndpoint(
-    name: 'delete',
-    method: 'DELETE',
-    baseUrlMatcher,
-    response: null,
-    (client) async {
-      final manager = create(CacheConfig(), client);
-
-      await manager.delete(Snowflake.zero);
-    },
-  );
-
-  test('delete caches entity', () async {
-    final client = MockNyxx();
-    when(() => client.apiOptions).thenReturn(RestApiOptions(token: 'TEST_TOKEN'));
-    when(() => client.options).thenReturn(RestClientOptions());
-    when(() => client.httpHandler).thenReturn(HttpHandler(client));
-
-    nock('https://discord.com/api/v${client.apiOptions.apiVersion}').delete(baseUrlMatcher).reply(200, jsonEncode(sampleObject));
-
-    final manager = create(CacheConfig(), client);
-    final entity = manager.parse(sampleObject);
-    manager.cache[entity.id] = entity;
-
-    await manager.delete(entity.id);
-
-    await null;
-
-    expect(manager.cache.containsKey(entity.id), isFalse);
-  });
 }

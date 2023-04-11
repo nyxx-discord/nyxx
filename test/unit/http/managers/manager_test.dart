@@ -20,6 +20,8 @@ class MockSnowflakeEntity extends SnowflakeEntity<MockSnowflakeEntity> with Fake
 
 void main() {
   group('Manager', () {
+    tearDown(() => Cache.testClearAllCaches());
+
     test('get only calls API when entity is not cached', () {
       final manager = MockManager(CacheConfig(), MockNyxx());
 

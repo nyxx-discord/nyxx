@@ -34,7 +34,7 @@ void main() {
         'channels',
         skip: testTextChannel != null ? false : 'No test channel provided',
         () {
-          late final Snowflake channelId;
+          late Snowflake channelId;
 
           setUpAll(() async {
             channelId = Snowflake.parse(testTextChannel!);
