@@ -30,7 +30,9 @@ import 'package:nyxx/src/models/snowflake.dart';
 import 'package:nyxx/src/utils/flags.dart';
 import 'package:nyxx/src/utils/parsing_helpers.dart';
 
+/// A manager for [Channel]s.
 class ChannelManager extends ReadOnlyManager<Channel> {
+  /// Create a new [ChannelManager].
   ChannelManager(super.config, super.client);
 
   @override
@@ -378,6 +380,7 @@ class ChannelManager extends ReadOnlyManager<Channel> {
     return channel;
   }
 
+  /// Update a channel using the provided [builder].
   Future<Channel> update(Snowflake id, UpdateBuilder<Channel> builder, {String? auditLogReason}) async {
     final route = HttpRoute()..channels(id: id.toString());
     final request = BasicRequest(
@@ -394,6 +397,7 @@ class ChannelManager extends ReadOnlyManager<Channel> {
     return channel;
   }
 
+  /// Delete a guild channel or close a DM channel.
   Future<Channel> delete(Snowflake id, {String? auditLogReason}) async {
     final route = HttpRoute()..channels(id: id.toString());
     final request = BasicRequest(
@@ -409,6 +413,7 @@ class ChannelManager extends ReadOnlyManager<Channel> {
     return channel;
   }
 
+  /// Update a permission overwrite in a channel.
   Future<void> updatePermissionOverwrite(Snowflake id, PermissionOverwriteBuilder builder) async {
     final route = HttpRoute()
       ..channels(id: id.toString())
@@ -418,6 +423,7 @@ class ChannelManager extends ReadOnlyManager<Channel> {
     await client.httpHandler.executeSafe(request);
   }
 
+  /// Delete a permission overwrite in a channel.
   Future<void> deletePermissionOverwrite(Snowflake id, Snowflake permissionId) async {
     final route = HttpRoute()
       ..channels(id: id.toString())
@@ -429,6 +435,7 @@ class ChannelManager extends ReadOnlyManager<Channel> {
 
   // TODO Implement invite endpoints
 
+  /// Add a channel to another channel's followers.
   Future<FollowedChannel> followChannel(Snowflake id, Snowflake toFollow) async {
     final route = HttpRoute()
       ..channels(id: toFollow.toString())
@@ -440,6 +447,7 @@ class ChannelManager extends ReadOnlyManager<Channel> {
     return parseFollowedChannel(response.jsonBody as Map<String, Object?>);
   }
 
+  /// Trigger the typing indicator for the current user in a channel.
   Future<void> triggerTyping(Snowflake channelId) async {
     final route = HttpRoute()
       ..channels(id: channelId.toString())
@@ -449,6 +457,7 @@ class ChannelManager extends ReadOnlyManager<Channel> {
     await client.httpHandler.executeSafe(request);
   }
 
+  /// Create a thread from a message in a channel.
   Future<Thread> createThreadFromMessage(Snowflake id, Snowflake messageId, ThreadFromMessageBuilder builder) async {
     final route = HttpRoute()
       ..channels(id: id.toString())
@@ -463,6 +472,7 @@ class ChannelManager extends ReadOnlyManager<Channel> {
     return thread;
   }
 
+  /// Create a thread in a channel.
   Future<Thread> createThread(Snowflake id, ThreadBuilder builder) async {
     final route = HttpRoute()
       ..channels(id: id.toString())
@@ -476,6 +486,7 @@ class ChannelManager extends ReadOnlyManager<Channel> {
     return thread;
   }
 
+  /// Create a thread in a forum channel.
   Future<Thread> createForumThread(Snowflake id, ForumThreadBuilder builder) async {
     final route = HttpRoute()
       ..channels(id: id.toString())
@@ -514,6 +525,7 @@ class ChannelManager extends ReadOnlyManager<Channel> {
     return thread;
   }
 
+  /// Add the current user to a thread.
   Future<void> joinThread(Snowflake id) async {
     final route = HttpRoute()
       ..channels(id: id.toString())
@@ -523,6 +535,7 @@ class ChannelManager extends ReadOnlyManager<Channel> {
     await client.httpHandler.executeSafe(request);
   }
 
+  /// Add a member to a thread.
   Future<void> addThreadMember(Snowflake id, Snowflake memberId) async {
     final route = HttpRoute()
       ..channels(id: id.toString())
@@ -532,6 +545,7 @@ class ChannelManager extends ReadOnlyManager<Channel> {
     await client.httpHandler.executeSafe(request);
   }
 
+  /// Remove the current user from a thread.
   Future<void> leaveThread(Snowflake id) async {
     final route = HttpRoute()
       ..channels(id: id.toString())
@@ -541,6 +555,7 @@ class ChannelManager extends ReadOnlyManager<Channel> {
     await client.httpHandler.executeSafe(request);
   }
 
+  /// Remove a member from a thread.
   Future<void> removeThreadMember(Snowflake id, Snowflake memberId) async {
     final route = HttpRoute()
       ..channels(id: id.toString())
@@ -550,6 +565,7 @@ class ChannelManager extends ReadOnlyManager<Channel> {
     await client.httpHandler.executeSafe(request);
   }
 
+  /// Fetch information about a member in a thread.
   Future<ThreadMember> fetchThreadMember(Snowflake id, Snowflake memberId, {bool? withMember}) async {
     final route = HttpRoute()
       ..channels(id: id.toString())
@@ -565,6 +581,7 @@ class ChannelManager extends ReadOnlyManager<Channel> {
     return parseThreadMember(response.jsonBody as Map<String, Object?>);
   }
 
+  /// List the members of a thread.
   Future<List<ThreadMember>> listThreadMembers(Snowflake id, {bool? withMembers, Snowflake? after, int? limit}) async {
     final route = HttpRoute()
       ..channels(id: id.toString())
@@ -582,6 +599,7 @@ class ChannelManager extends ReadOnlyManager<Channel> {
     return parseMany(response.jsonBody as List, parseThreadMember);
   }
 
+  /// List the public archived threads in a channel.
   Future<ThreadList> listPublicArchivedThreads(Snowflake id, {DateTime? before, int? limit}) async {
     final route = HttpRoute()
       ..channels(id: id.toString())
@@ -600,6 +618,7 @@ class ChannelManager extends ReadOnlyManager<Channel> {
     return parseThreadList(response.jsonBody as Map<String, Object?>);
   }
 
+  /// List the private archived threads in a channel.
   Future<ThreadList> listPrivateArchivedThreads(Snowflake id, {DateTime? before, int? limit}) async {
     final route = HttpRoute()
       ..channels(id: id.toString())
@@ -618,6 +637,7 @@ class ChannelManager extends ReadOnlyManager<Channel> {
     return parseThreadList(response.jsonBody as Map<String, Object?>);
   }
 
+  /// List the private archived threads the current user has joined in a channel.
   Future<ThreadList> listJoinedPrivateArchivedThreads(Snowflake id, {DateTime? before, int? limit}) async {
     final route = HttpRoute()
       ..channels(id: id.toString())

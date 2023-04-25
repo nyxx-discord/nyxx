@@ -20,9 +20,12 @@ import 'package:nyxx/src/models/message/role_subscription_data.dart';
 import 'package:nyxx/src/models/snowflake.dart';
 import 'package:nyxx/src/utils/parsing_helpers.dart';
 
+/// A manager for [Message]s in a [TextChannel].
 class MessageManager extends Manager<Message> {
+  /// The ID of the [TextChannel] this manager is attached to.
   final Snowflake channelId;
 
+  /// Create a new [MessageManager].
   MessageManager(super.config, super.client, {required this.channelId});
 
   @override
@@ -296,6 +299,7 @@ class MessageManager extends Manager<Message> {
     cache.remove(id);
   }
 
+  /// Fetch multiple messages in this channel.
   Future<List<Message>> fetchMany({Snowflake? around, Snowflake? before, Snowflake? after, int? limit}) async {
     final route = HttpRoute()
       ..channels(id: channelId.toString())
@@ -317,6 +321,7 @@ class MessageManager extends Manager<Message> {
     return messages;
   }
 
+  /// Crosspost a message to all channels following the channel it was sent in.
   Future<Message> crosspost(Snowflake id) async {
     final route = HttpRoute()
       ..channels(id: channelId.toString())
@@ -331,6 +336,9 @@ class MessageManager extends Manager<Message> {
     return message;
   }
 
+  /// Bulk delete many messages at once
+  ///
+  /// This will throw an error if any of [ids] is not a valid message ID or if any of the messages are from before [Snowflake.bulkDeleteLimit].
   Future<void> bulkDelete(Iterable<Snowflake> ids) async {
     final route = HttpRoute()
       ..channels(id: channelId.toString())
@@ -343,6 +351,7 @@ class MessageManager extends Manager<Message> {
 
   // TODO once emojis are implemented, add reaction endpoints
 
+  /// Get the pinned messages in the channel.
   Future<List<Message>> getPins() async {
     final route = HttpRoute()
       ..channels(id: channelId.toString())
@@ -356,6 +365,7 @@ class MessageManager extends Manager<Message> {
     return messages;
   }
 
+  /// Pin a message in the channel.
   Future<void> pin(Snowflake id, {String? auditLogReason}) async {
     final route = HttpRoute()
       ..channels(id: channelId.toString())
@@ -365,6 +375,7 @@ class MessageManager extends Manager<Message> {
     await client.httpHandler.executeSafe(request);
   }
 
+  /// Unpin a message in the channel.
   Future<void> unpin(Snowflake id, {String? auditLogReason}) async {
     final route = HttpRoute()
       ..channels(id: channelId.toString())
