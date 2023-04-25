@@ -35,7 +35,17 @@ class NyxxRest with ManagerMixin implements Nyxx {
 
   NyxxRest._(String token, this.options) : apiOptions = RestApiOptions(token: token);
 
+  /// Add the current user to the thread with the ID [id].
+  ///
+  /// External references:
+  /// * [ChannelManager.joinThread]
+  /// * Discord API Reference: https://discord.com/developers/docs/resources/channel#join-thread
   Future<void> joinThread(Snowflake id) => channels.joinThread(id);
 
+  /// Remove the current user from the thread with the ID [id].
+  ///
+  /// External references:
+  /// * [ChannelManager.leaveThread]
+  /// * Discord API Reference: https://discord.com/developers/docs/resources/channel#leave-thread
   Future<void> leaveThread(Snowflake id) => channels.leaveThread(id);
 }

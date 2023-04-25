@@ -44,7 +44,7 @@ void main() {
     expect(message.reactions.single.count, equals(1));
     expect(message.reactions.single.me, isFalse);
     expect(message.nonce, isNull);
-    expect(message.pinned, isFalse);
+    expect(message.isPinned, isFalse);
     expect(message.webhookId, isNull);
     expect(message.type, equals(MessageType.normal));
     expect(message.activity, isNull);
@@ -106,7 +106,7 @@ void main() {
     expect(message.reactions.single.count, equals(1));
     expect(message.reactions.single.me, isFalse);
     expect(message.nonce, isNull);
-    expect(message.pinned, isFalse);
+    expect(message.isPinned, isFalse);
     expect(message.webhookId, isNull);
     expect(message.type, equals(MessageType.normal));
     expect(message.activity, isNull);

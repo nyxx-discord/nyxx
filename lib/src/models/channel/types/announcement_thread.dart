@@ -106,7 +106,7 @@ class AnnouncementThread extends Channel implements Thread {
   Future<void> deletePermissionOverwrite(Snowflake id) => manager.deletePermissionOverwrite(this.id, id);
 
   @override
-  Future<void> fetchThreadMember(Snowflake memberId) => manager.fetchThreadMember(id, memberId);
+  Future<ThreadMember> fetchThreadMember(Snowflake memberId) => manager.fetchThreadMember(id, memberId);
 
   @override
   Future<List<ThreadMember>> listThreadMembers({bool? withMembers, Snowflake? after, int? limit}) =>

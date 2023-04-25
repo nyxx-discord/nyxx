@@ -99,7 +99,7 @@ class UserManager extends ReadOnlyManager<User> {
     return user;
   }
 
-  /// Fetch the current user's connections
+  /// Fetch the current user's connections.
   Future<List<Connection>> fetchCurrentUserConnections() async {
     final route = HttpRoute()
       ..users(id: '@me')

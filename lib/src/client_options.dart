@@ -11,8 +11,10 @@ class RestClientOptions implements ClientOptions {
   /// The [CacheConfig] to use for the cache of the [NyxxRest.users] manager.
   final CacheConfig<User> userCacheConfig;
 
+  /// The [CacheConfig] to use for the cache of the [NyxxRest.channels] manager.
   final CacheConfig<Channel> channelCacheConfig;
 
+  /// The [CacheConfig] to use for the cache of [TextChannel.messages] managers.
   final CacheConfig<Message> messageCacheConfig;
 
   /// Create a new [RestClientOptions].

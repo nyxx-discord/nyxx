@@ -24,6 +24,11 @@ class ThreadFromMessageBuilder extends CreateBuilder<Thread> {
 }
 
 class ThreadBuilder extends CreateBuilder<Thread> {
+  static const archiveOneHour = Duration(minutes: 60);
+  static const archiveOneDay = Duration(minutes: 1440);
+  static const archiveThreeDays = Duration(minutes: 4320);
+  static const archiveOneWeek = Duration(minutes: 10080);
+
   final String name;
 
   final Duration? autoArchiveDuration;

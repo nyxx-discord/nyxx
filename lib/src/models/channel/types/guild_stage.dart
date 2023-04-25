@@ -9,6 +9,9 @@ import 'package:nyxx/src/models/message/message.dart';
 import 'package:nyxx/src/models/permission_overwrite.dart';
 import 'package:nyxx/src/models/snowflake.dart';
 
+/// {@template guild_stage_channel}
+/// A stage channel.
+/// {@endtemplate}
 class GuildStageChannel extends Channel implements TextChannel, VoiceChannel, GuildChannel {
   @override
   MessageManager get messages => MessageManager(manager.client.options.messageCacheConfig, manager.client, channelId: id);
@@ -55,6 +58,7 @@ class GuildStageChannel extends Channel implements TextChannel, VoiceChannel, Gu
   @override
   ChannelType get type => ChannelType.guildStageVoice;
 
+  /// {@macro guild_stage_channel}
   GuildStageChannel({
     required super.id,
     required super.manager,

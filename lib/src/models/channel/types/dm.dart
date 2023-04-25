@@ -6,10 +6,14 @@ import 'package:nyxx/src/models/message/message.dart';
 import 'package:nyxx/src/models/snowflake.dart';
 import 'package:nyxx/src/models/user/user.dart';
 
+/// {@template dm_channel}
+/// A DM channel.
+/// {@endtemplate}
 class DmChannel extends Channel implements TextChannel {
   @override
   MessageManager get messages => MessageManager(manager.client.options.messageCacheConfig, manager.client, channelId: id);
 
+  /// The recipient of this channel.
   final User recipient;
 
   @override
@@ -24,6 +28,7 @@ class DmChannel extends Channel implements TextChannel {
   @override
   ChannelType get type => ChannelType.dm;
 
+  /// {@macro dm_channel}
   DmChannel({
     required super.id,
     required super.manager,

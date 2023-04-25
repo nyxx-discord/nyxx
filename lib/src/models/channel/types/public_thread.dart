@@ -7,6 +7,9 @@ import 'package:nyxx/src/models/message/message.dart';
 import 'package:nyxx/src/models/permission_overwrite.dart';
 import 'package:nyxx/src/models/snowflake.dart';
 
+/// {@template public_thread}
+/// A public [Thread] channel.
+/// {@endtemplate}
 class PublicThread extends Channel implements Thread {
   @override
   MessageManager get messages => MessageManager(manager.client.options.messageCacheConfig, manager.client, channelId: id);
@@ -74,6 +77,7 @@ class PublicThread extends Channel implements Thread {
   @override
   ChannelType get type => ChannelType.publicThread;
 
+  /// {@macro public_thread}
   PublicThread({
     required super.id,
     required super.manager,
@@ -106,7 +110,7 @@ class PublicThread extends Channel implements Thread {
   Future<void> deletePermissionOverwrite(Snowflake id) => manager.deletePermissionOverwrite(this.id, id);
 
   @override
-  Future<void> fetchThreadMember(Snowflake memberId) => manager.fetchThreadMember(id, memberId);
+  Future<ThreadMember> fetchThreadMember(Snowflake memberId) => manager.fetchThreadMember(id, memberId);
 
   @override
   Future<List<ThreadMember>> listThreadMembers({bool? withMembers, Snowflake? after, int? limit}) =>

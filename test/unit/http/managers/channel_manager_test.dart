@@ -621,6 +621,13 @@ void main() {
         execute: (manager) => manager.listPrivateArchivedThreads(Snowflake.zero),
         check: checkThreadList,
       ),
+      EndpointTest<ChannelManager, ThreadList, Map<String, Object?>>(
+        name: 'listJoinedPrivateArchivedThreads',
+        source: sampleThreadList,
+        urlMatcher: '/channels/0/users/@me/threads/archived/private',
+        execute: (manager) => manager.listJoinedPrivateArchivedThreads(Snowflake.zero),
+        check: checkThreadList,
+      ),
     ],
   );
 }

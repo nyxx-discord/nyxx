@@ -12,10 +12,14 @@ import 'package:nyxx/src/models/message/message.dart';
 import 'package:nyxx/src/models/permission_overwrite.dart';
 import 'package:nyxx/src/models/snowflake.dart';
 
+/// {@template guild_text_channel}
+/// A [TextChannel] in a [Guild].
+/// {@endtemplate}
 class GuildTextChannel extends Channel implements TextChannel, GuildChannel, HasThreadsChannel {
   @override
   MessageManager get messages => MessageManager(manager.client.options.messageCacheConfig, manager.client, channelId: id);
 
+  /// The topic of this channel.
   final String topic;
 
   @override
@@ -54,6 +58,7 @@ class GuildTextChannel extends Channel implements TextChannel, GuildChannel, Has
   @override
   ChannelType get type => ChannelType.guildText;
 
+  /// {@macro guild_text_channel}
   GuildTextChannel({
     required super.id,
     required super.manager,
@@ -85,6 +90,10 @@ class GuildTextChannel extends Channel implements TextChannel, GuildChannel, Has
 
   @override
   Future<ThreadList> listPublicArchivedThreads({DateTime? before, int? limit}) => manager.listPublicArchivedThreads(id, before: before, limit: limit);
+
+  @override
+  Future<ThreadList> listJoinedPrivateArchivedThreads({DateTime? before, int? limit}) =>
+      manager.listJoinedPrivateArchivedThreads(id, before: before, limit: limit);
 
   @override
   Future<Message> sendMessage(MessageBuilder builder) => messages.create(builder);

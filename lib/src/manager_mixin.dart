@@ -11,5 +11,6 @@ mixin ManagerMixin implements Nyxx {
   /// A [UserManager] that manages users for this client.
   UserManager get users => UserManager(options.userCacheConfig, this as NyxxRest);
 
+  /// A [ChannelManager] that manages channels for this client.
   ChannelManager get channels => ChannelManager(options.channelCacheConfig, this as NyxxRest);
 }

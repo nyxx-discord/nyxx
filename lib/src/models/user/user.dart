@@ -183,6 +183,7 @@ enum NitroType {
   nitro._(2),
   basic._(3);
 
+  /// The value of this [NitroType].
   final int value;
 
   const NitroType._(this.value);

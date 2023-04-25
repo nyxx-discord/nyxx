@@ -46,7 +46,7 @@ class MessageManager extends Manager<Message> {
       embeds: parseMany(raw['embeds'] as List, parseEmbed),
       reactions: maybeParseMany(raw['reactions'], parseReaction) ?? [],
       nonce: raw['nonce'] /* as int | String */,
-      pinned: raw['pinned'] as bool,
+      isPinned: raw['pinned'] as bool,
       webhookId: maybeParse(raw['webhook_id'], Snowflake.parse),
       type: MessageType.parse(raw['type'] as int),
       activity: maybeParse(raw['activity'], parseMessageActivity),
@@ -81,7 +81,7 @@ class MessageManager extends Manager<Message> {
       proxiedUrl: Uri.parse(raw['proxy_url'] as String),
       height: raw['height'] as int?,
       width: raw['width'] as int?,
-      ephemeral: raw['ephemeral'] as bool? ?? false,
+      isEphemeral: raw['ephemeral'] as bool? ?? false,
     );
   }
 

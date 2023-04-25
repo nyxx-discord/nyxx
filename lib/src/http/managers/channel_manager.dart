@@ -617,4 +617,23 @@ class ChannelManager extends ReadOnlyManager<Channel> {
     final response = await client.httpHandler.executeSafe(request);
     return parseThreadList(response.jsonBody as Map<String, Object?>);
   }
+
+  Future<ThreadList> listJoinedPrivateArchivedThreads(Snowflake id, {DateTime? before, int? limit}) async {
+    final route = HttpRoute()
+      ..channels(id: id.toString())
+      ..users(id: '@me')
+      ..threads()
+      ..archived()
+      ..private();
+    final request = BasicRequest(
+      route,
+      queryParameters: {
+        if (before != null) 'before': before.toIso8601String(),
+        if (limit != null) 'limit': limit.toString(),
+      },
+    );
+
+    final response = await client.httpHandler.executeSafe(request);
+    return parseThreadList(response.jsonBody as Map<String, Object?>);
+  }
 }

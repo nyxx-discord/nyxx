@@ -11,8 +11,10 @@ class Flags<T extends Flags<T>> with ToStringHelper {
   /// Returns `true` if this [Flags] has the [flag] enabled, `false` otherwise.
   bool has(Flag<T> flag) => value & flag.value != 0;
 
+  /// Return a set of flags that has all the flags set in either `this` or [other].
   Flags<T> operator |(Flags<T> other) => Flags(value | other.value);
 
+  /// Return a set of flags that has all the flags set in both `this` and [other].
   Flags<T> operator &(Flags<T> other) => Flags(value & other.value);
 
   @override

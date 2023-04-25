@@ -9,6 +9,9 @@ import 'package:nyxx/src/models/message/message.dart';
 import 'package:nyxx/src/models/permission_overwrite.dart';
 import 'package:nyxx/src/models/snowflake.dart';
 
+/// {@template guild_voice_channel}
+/// A [VoiceChannel] in a [Guild].
+/// {@endtemplate}
 class GuildVoiceChannel extends Channel implements TextChannel, GuildChannel, VoiceChannel {
   @override
   MessageManager get messages => MessageManager(manager.client.options.messageCacheConfig, manager.client, channelId: id);
@@ -55,6 +58,7 @@ class GuildVoiceChannel extends Channel implements TextChannel, GuildChannel, Vo
   @override
   ChannelType get type => ChannelType.guildVoice;
 
+  /// {@macro guild_voice_channel}
   GuildVoiceChannel({
     required super.id,
     required super.manager,
