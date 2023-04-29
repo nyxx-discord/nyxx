@@ -1,3 +1,5 @@
+import 'package:runtime_type/runtime_type.dart';
+
 /// An internal helper which parses [object] using [parse] if it is not null.
 ///
 /// Prefer using this over a ternary (`raw['field'] == null ? null : parse(raw['field'])`).
@@ -17,7 +19,16 @@ T? maybeParse<T, U>(dynamic object, T Function(U) parse) {
 ///
 /// Prefer using this over an iterable map (`(raw['field'] as List).map(parse).toList()`) or a list literal
 /// (`[for (final element in raw['field'] as List) parse(element)]`)
-List<T> parseMany<T, U>(List<dynamic> objects, T Function(U) parse) {
+List<T> parseMany<T, U>(List<dynamic> objects, [T Function(U)? parse]) {
+  if (parse == null) {
+    assert(
+      !RuntimeType<U>().isSubtypeOf(RuntimeType<T>()),
+      'Missing parse function ($U is not $T)',
+    );
+
+    parse = (value) => value as T;
+  }
+
   return List.generate(
     objects.length,
     (index) {
@@ -27,10 +38,10 @@ List<T> parseMany<T, U>(List<dynamic> objects, T Function(U) parse) {
         throw FormatException('Unexpected type (expected $U)', raw);
       }
 
-      return parse(raw);
+      return parse!(raw);
     },
   );
 }
 
 /// An internal helper which parses each element of [object] using [parse] if it is not null.
-List<T>? maybeParseMany<T, U>(dynamic object, T Function(U) parse) => maybeParse<List<T>, List<dynamic>>(object, (object) => parseMany(object, parse));
+List<T>? maybeParseMany<T, U>(dynamic object, [T Function(U)? parse]) => maybeParse<List<T>, List<dynamic>>(object, (object) => parseMany(object, parse));
