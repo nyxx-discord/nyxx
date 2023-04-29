@@ -9,7 +9,7 @@ import 'package:test/test.dart';
 import 'mocks/client.dart';
 import 'test_endpoint.dart';
 
-class ParsingTest<T extends ReadOnlyManager<dynamic>, U, V> {
+class ParsingTest<T, U, V> {
   final String name;
 
   final V source;
@@ -23,13 +23,13 @@ class ParsingTest<T extends ReadOnlyManager<dynamic>, U, V> {
     required this.check,
   });
 
-  void _runWithManager(T manager) {
+  void runWithManager(T manager) {
     final object = parse(manager)(source);
     check(object);
   }
 }
 
-class EndpointTest<T extends ReadOnlyManager<dynamic>, U, V> {
+class EndpointTest<T, U, V> {
   final String name;
 
   final String method;
@@ -47,7 +47,7 @@ class EndpointTest<T extends ReadOnlyManager<dynamic>, U, V> {
     required this.check,
   });
 
-  Future<void> _runWithManager(T manager) async {
+  Future<void> runWithManager(T manager) async {
     final entity = await execute(manager);
     check(entity);
   }
@@ -102,7 +102,7 @@ Future<void> testReadOnlyManager<T extends SnowflakeEntity<T>, U extends ReadOnl
           final config = CacheConfig<T>();
 
           final manager = create(config, client);
-          parsingTest._runWithManager(manager);
+          parsingTest.runWithManager(manager);
         });
       }
     }
@@ -159,7 +159,7 @@ Future<void> testReadOnlyManager<T extends SnowflakeEntity<T>, U extends ReadOnl
           response: endpointTest.source,
           (client) async {
             final manager = create(CacheConfig(), client);
-            await endpointTest._runWithManager(manager);
+            await endpointTest.runWithManager(manager);
           },
         );
       }
