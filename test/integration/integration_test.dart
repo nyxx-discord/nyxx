@@ -1,7 +1,9 @@
 import 'dart:io';
 
 import 'package:nyxx/nyxx.dart';
-import 'package:test/test.dart';
+import 'package:test/test.dart' hide completes;
+
+import '../function_completes.dart';
 
 void main() {
   final testToken = Platform.environment['TEST_TOKEN'];
@@ -25,60 +27,118 @@ void main() {
         client = await Nyxx.connectRest(testToken!);
       });
 
-      group('users', () {
-        test('fetchCurrentUser', () => expect(client.users.fetchCurrentUser(), completes));
-        test('fetchCurrentUserConnections', () => expect(client.users.fetchCurrentUserConnections(), completes));
+      test('users', () async {
+        await expectLater(client.users.fetchCurrentUser(), completes);
+        await expectLater(client.users.fetchCurrentUserConnections(), completes);
       });
 
-      group(
-        'channels',
-        skip: testTextChannel != null ? false : 'No test channel provided',
-        () {
-          late Snowflake channelId;
+      test('channels', skip: testTextChannel != null ? false : 'No test channel provided', () async {
+        final channelId = Snowflake.parse(testTextChannel!);
 
-          setUpAll(() async {
-            channelId = Snowflake.parse(testTextChannel!);
+        await expectLater(client.channels.fetch(channelId), completes);
+      });
 
-            final env = Platform.environment;
-            await (await client.channels.get(channelId) as TextChannel).sendMessage(MessageBuilder(
-              content: env['GITHUB_RUN_NUMBER'] == null
-                  ? "Testing new local build. Nothing to worry about 😀"
-                  : "Running `nyxx` job `#${env['GITHUB_RUN_NUMBER']}` started by `${env['GITHUB_ACTOR']}` on `${env['GITHUB_REF']}` on commit `${env['GITHUB_SHA']}`",
-            ));
-          });
+      test('messages', skip: testTextChannel != null ? false : 'No test channel provided', () async {
+        final channelId = Snowflake.parse(testTextChannel!);
+        final channel = await client.channels.get(channelId) as TextChannel;
 
-          test('fetch', () => expect(client.channels.fetch(channelId), completes));
+        final env = Platform.environment;
 
-          test('basic message functionality', () async {
-            Message message = await (await client.channels.get(channelId) as TextChannel).sendMessage(MessageBuilder(
-              content: 'A test message',
-            ));
+        await expectLater(
+          channel.sendMessage(MessageBuilder(
+            content: env['GITHUB_RUN_NUMBER'] == null
+                ? "Testing new local build. Nothing to worry about 😀"
+                : "Running `nyxx` job `#${env['GITHUB_RUN_NUMBER']}` started by `${env['GITHUB_ACTOR']}` on `${env['GITHUB_REF']}` on commit `${env['GITHUB_SHA']}`",
+          )),
+          completes,
+        );
 
-            expect(message.content, equals('A test message'));
+        late Message message;
+        await expectLater(
+          () async => message = await channel.sendMessage(MessageBuilder(content: 'Test message')),
+          completes,
+        );
 
-            message = await message.update(MessageUpdateBuilder(
-              content: 'Some different content',
-            ));
+        expect(message.content, equals('Test message'));
 
-            expect(message.content, equals('Some different content'));
+        await expectLater(
+          () async => message = await message.update(MessageUpdateBuilder(content: 'New content')),
+          completes,
+        );
 
-            expect(message.delete(), completes);
-          });
+        expect(message.content, equals('New content'));
 
-          test('upload files', () async {
-            final message = await (await client.channels.get(channelId) as TextChannel).sendMessage(MessageBuilder(
-              attachments: [
-                await AttachmentBuilder.fromFile(File('test/files/1.png')),
-              ],
-            ));
+        await expectLater(message.pin(), completes);
+        await expectLater(message.unpin(), completes);
 
-            expect(message.attachments, hasLength(1));
-            expect(message.attachments.single.fileName, equals('1.png'));
+        await expectLater(message.delete(), completes);
 
-            await message.delete();
-          });
-        },
-      );
+        await expectLater(
+          () async => message = await channel.sendMessage(MessageBuilder(
+            attachments: [
+              await AttachmentBuilder.fromFile(File('test/files/1.png')),
+            ],
+          )),
+          completes,
+        );
+
+        expect(message.attachments, hasLength(1));
+        expect(message.attachments.first.fileName, equals('1.png'));
+
+        await expectLater(message.delete(), completes);
+      });
+
+      test('webhooks', skip: testTextChannel != null ? false : 'No test channel provided', () async {
+        final channelId = Snowflake.parse(testTextChannel!);
+
+        late Webhook webhook;
+        await expectLater(
+          () async => webhook = await client.webhooks.create(WebhookBuilder(
+            name: 'Test webhook',
+            channelId: channelId,
+          )),
+          completes,
+        );
+
+        expect(webhook.name, equals('Test webhook'));
+        expect(webhook.token, isNotNull);
+
+        await expectLater(
+          () async => webhook = await webhook.update(WebhookUpdateBuilder(name: 'New name')),
+          completes,
+        );
+
+        expect(webhook.name, equals('New name'));
+        expect(webhook.token, isNotNull);
+
+        final token = webhook.token!;
+
+        late Message message;
+        await expectLater(
+          () async => message = (await webhook.execute(token: token, wait: true, MessageBuilder(content: 'Test webhook message')))!,
+          completes,
+        );
+
+        expect(message.content, equals('Test webhook message'));
+        expect(message.author.id, equals(webhook.id));
+
+        await expectLater(
+          () async => message = await webhook.updateMessage(message.id, token: token, MessageUpdateBuilder(content: 'New webhook content')),
+          completes,
+        );
+
+        expect(message.content, equals('New webhook content'));
+
+        await expectLater(
+          webhook.deleteMessage(message.id, token: token),
+          completes,
+        );
+
+        await expectLater(
+          webhook.delete(),
+          completes,
+        );
+      });
     },
   );
 }
