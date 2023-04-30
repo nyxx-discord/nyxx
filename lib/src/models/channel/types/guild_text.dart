@@ -21,7 +21,7 @@ class GuildTextChannel extends Channel implements TextChannel, GuildChannel, Has
   MessageManager get messages => MessageManager(manager.client.options.messageCacheConfig, manager.client, channelId: id);
 
   /// The topic of this channel.
-  final String topic;
+  final String? topic;
 
   @override
   final Duration defaultAutoArchiveDuration;

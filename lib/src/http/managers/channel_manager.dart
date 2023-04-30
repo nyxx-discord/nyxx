@@ -66,7 +66,7 @@ class ChannelManager extends ReadOnlyManager<Channel> {
     return GuildTextChannel(
       id: Snowflake.parse(raw['id'] as String),
       manager: this,
-      topic: raw['topic'] as String,
+      topic: raw['topic'] as String?,
       // Discord doesn't seem to include this field if the default 3 day expiration is used (3 days = 4320 minutes)
       defaultAutoArchiveDuration: Duration(minutes: raw['default_auto_archive_duration'] as int? ?? 4320),
       defaultThreadRateLimitPerUser:

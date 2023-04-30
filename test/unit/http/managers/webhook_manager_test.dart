@@ -74,7 +74,7 @@ void checkApplicationWebhook(Webhook webhook) {
   expect(webhook.channelId, isNull);
   expect(webhook.user, isNull);
   expect(webhook.name, equals('Clyde'));
-  expect(webhook.avatarHash, isNull);
+  expect(webhook.avatarHash, equals('689161dc90ac261d00f1608694ac6bfd'));
   expect(webhook.token, isNull);
   expect(webhook.applicationId, equals(Snowflake(658822586720976555)));
   expect(webhook.sourceChannel, isNull);

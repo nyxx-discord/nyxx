@@ -35,7 +35,7 @@ class WebhookManager extends Manager<Webhook> {
       token: raw['token'] as String?,
       applicationId: maybeParse(raw['application_id'], Snowflake.parse),
       sourceChannel: maybeParse(
-        raw['source_chanel'],
+        raw['source_channel'],
         (Map<String, Object?> raw) => PartialChannel(
           id: Snowflake.parse(raw['id'] as String),
           manager: client.channels,
@@ -62,7 +62,9 @@ class WebhookManager extends Manager<Webhook> {
 
   @override
   Future<Webhook> create(WebhookBuilder builder) async {
-    final route = HttpRoute()..channels(id: builder.channelId.toString());
+    final route = HttpRoute()
+      ..channels(id: builder.channelId.toString())
+      ..webhooks();
     final request = BasicRequest(route, method: 'POST', body: jsonEncode(builder.build()));
 
     final response = await client.httpHandler.executeSafe(request);

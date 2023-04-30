@@ -164,6 +164,8 @@ Future<void> testReadOnlyManager<T extends SnowflakeEntity<T>, U extends ReadOnl
         );
       }
     }
+
+    extraRun?.call();
   });
 }
 
