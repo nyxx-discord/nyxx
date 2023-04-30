@@ -139,6 +139,10 @@ void main() {
           completes,
         );
       });
+
+      test('voice', () async {
+        await expectLater(client.voice.listRegions(), completes);
+      });
     },
   );
 }
