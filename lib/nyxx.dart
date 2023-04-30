@@ -35,6 +35,7 @@ export 'src/http/managers/message_manager.dart' show MessageManager;
 export 'src/http/managers/user_manager.dart' show UserManager;
 export 'src/http/managers/webhook_manager.dart' show WebhookManager;
 export 'src/http/managers/application_manager.dart' show ApplicationManager;
+export 'src/http/managers/voice_manager.dart' show VoiceManager;
 
 export 'src/models/discord_color.dart' show DiscordColor;
 export 'src/models/locale.dart' show Locale;
@@ -76,6 +77,8 @@ export 'src/models/message/reference.dart' show MessageReference;
 export 'src/models/message/role_subscription_data.dart' show RoleSubscriptionData;
 export 'src/models/webhook.dart' show PartialWebhook, Webhook, WebhookType;
 export 'src/models/application.dart' show Application, ApplicationFlags, InstallationParameters, PartialApplication;
+export 'src/models/voice/voice_state.dart' show VoiceState;
+export 'src/models/voice/voice_region.dart' show VoiceRegion;
 
 export 'src/utils/flags.dart' show Flag, Flags;
 

@@ -4,6 +4,7 @@ import 'package:nyxx/src/http/managers/application_manager.dart';
 import 'package:nyxx/src/http/managers/channel_manager.dart';
 import 'package:nyxx/src/http/managers/user_manager.dart';
 import 'package:nyxx/src/http/managers/webhook_manager.dart';
+import 'package:nyxx/src/http/managers/voice_manager.dart';
 
 /// An internal mixin to add managers to a [Nyxx] instance.
 mixin ManagerMixin implements Nyxx {
@@ -21,4 +22,7 @@ mixin ManagerMixin implements Nyxx {
 
   /// An [ApplicationManager] that manages applications for this client.
   ApplicationManager get applications => ApplicationManager(this as NyxxRest);
+
+  /// A [VoiceManager] that manages voice states for this client.
+  VoiceManager get voice => VoiceManager(this as NyxxRest);
 }
