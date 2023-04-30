@@ -6,11 +6,15 @@ import 'package:nyxx/src/models/voice/voice_region.dart';
 import 'package:nyxx/src/models/voice/voice_state.dart';
 import 'package:nyxx/src/utils/parsing_helpers.dart';
 
+/// A manager for [VoiceState]s.
 class VoiceManager {
+  /// The client this manager belongs to.
   final NyxxRest client;
 
+  /// Create a new [VoiceManager].
   VoiceManager(this.client);
 
+  /// Parse a [VoiceState] from a [Map].
   VoiceState parseVoiceState(Map<String, Object?> raw) {
     return VoiceState(
       guildId: maybeParse(raw['guild_id'], Snowflake.parse),
@@ -28,6 +32,7 @@ class VoiceManager {
     );
   }
 
+  /// Parse a [VoiceRegion] from a [Map].
   VoiceRegion parseVoiceRegion(Map<String, Object?> raw) {
     return VoiceRegion(
       id: raw['id'] as String,
@@ -38,6 +43,7 @@ class VoiceManager {
     );
   }
 
+  /// List all the available voice regions.
   Future<List<VoiceRegion>> listRegions() async {
     final route = HttpRoute()
       ..voice()
