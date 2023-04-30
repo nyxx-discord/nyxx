@@ -15,7 +15,9 @@ import 'package:nyxx/src/models/snowflake.dart';
 import 'package:nyxx/src/models/webhook.dart';
 import 'package:nyxx/src/utils/parsing_helpers.dart';
 
+/// A manager for [Webhook]s.
 class WebhookManager extends Manager<Webhook> {
+  /// Create a new [WebhookManager].
   WebhookManager(super.config, super.client);
 
   @override
@@ -90,18 +92,19 @@ class WebhookManager extends Manager<Webhook> {
   }
 
   @override
-  Future<void> delete(Snowflake id, {String? token}) async {
+  Future<void> delete(Snowflake id, {String? token, String? auditLogReason}) async {
     final route = HttpRoute()..webhooks(id: id.toString());
     if (token != null) {
       route.add(HttpRoutePart(token));
     }
-    final request = BasicRequest(route, method: 'DELETE', authenticated: token == null);
+    final request = BasicRequest(route, method: 'DELETE', authenticated: token == null, auditLogReason: auditLogReason);
 
     await client.httpHandler.executeSafe(request);
 
     cache.remove(id);
   }
 
+  /// Fetch the webhooks in a channel.
   Future<List<Webhook>> fetchChannelWebhooks(Snowflake channelId) async {
     final route = HttpRoute()
       ..channels(id: channelId.toString())
@@ -115,6 +118,7 @@ class WebhookManager extends Manager<Webhook> {
     return webhooks;
   }
 
+  /// Fetch the webhooks in a guild.
   Future<List<Webhook>> fetchGuildWebhooks(Snowflake guildId) async {
     final route = HttpRoute()
       ..guilds(id: guildId.toString())
@@ -128,6 +132,7 @@ class WebhookManager extends Manager<Webhook> {
     return webhooks;
   }
 
+  /// Execute a webhook.
   Future<Message?> execute(Snowflake id, MessageBuilder builder, {required String token, bool? wait, Snowflake? threadId}) async {
     final route = HttpRoute()
       ..webhooks(id: id.toString())
@@ -185,6 +190,7 @@ class WebhookManager extends Manager<Webhook> {
     return message;
   }
 
+  /// Fetch a message sent by a webhook.
   Future<Message> fetchWebhookMessage(Snowflake webhookId, Snowflake messageId, {required String token, Snowflake? threadId}) async {
     final route = HttpRoute()
       ..webhooks(id: webhookId.toString())
@@ -208,6 +214,7 @@ class WebhookManager extends Manager<Webhook> {
     return message;
   }
 
+  /// Update a message sent by a webhook.
   Future<Message> updateWebhookMessage(
     Snowflake webhookId,
     Snowflake messageId,
@@ -267,6 +274,7 @@ class WebhookManager extends Manager<Webhook> {
     return message;
   }
 
+  /// Delete a message sent by a webhook.
   Future<void> deleteWebhookMessage(Snowflake webhookId, Snowflake messageId, {required String token, Snowflake? threadId}) async {
     final route = HttpRoute()
       ..webhooks(id: webhookId.toString())
