@@ -2,6 +2,7 @@ import 'package:nyxx/src/builders/permission_overwrite.dart';
 import 'package:nyxx/src/models/channel/channel.dart';
 import 'package:nyxx/src/models/permission_overwrite.dart';
 import 'package:nyxx/src/models/snowflake.dart';
+import 'package:nyxx/src/models/webhook.dart';
 
 /// A channel in a [Guild].
 abstract class GuildChannel implements Channel {
@@ -38,4 +39,6 @@ abstract class GuildChannel implements Channel {
   /// * [ChannelManager.deletePermissionOverwrite]
   /// * Discord API Reference: https://discord.com/developers/docs/resources/channel#delete-channel-permission
   Future<void> deletePermissionOverwrite(Snowflake id);
+
+  Future<List<Webhook>> fetchWebhooks();
 }

@@ -11,6 +11,7 @@ import 'package:nyxx/src/models/channel/thread_list.dart';
 import 'package:nyxx/src/models/message/message.dart';
 import 'package:nyxx/src/models/permission_overwrite.dart';
 import 'package:nyxx/src/models/snowflake.dart';
+import 'package:nyxx/src/models/webhook.dart';
 
 /// {@template guild_text_channel}
 /// A [TextChannel] in a [Guild].
@@ -103,4 +104,7 @@ class GuildTextChannel extends Channel implements TextChannel, GuildChannel, Has
 
   @override
   Future<void> updatePermissionOverwrite(PermissionOverwriteBuilder builder) => manager.updatePermissionOverwrite(id, builder);
+
+  @override
+  Future<List<Webhook>> fetchWebhooks() => manager.client.webhooks.fetchChannelWebhooks(id);
 }

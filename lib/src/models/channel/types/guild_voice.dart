@@ -8,6 +8,7 @@ import 'package:nyxx/src/models/channel/voice_channel.dart';
 import 'package:nyxx/src/models/message/message.dart';
 import 'package:nyxx/src/models/permission_overwrite.dart';
 import 'package:nyxx/src/models/snowflake.dart';
+import 'package:nyxx/src/models/webhook.dart';
 
 /// {@template guild_voice_channel}
 /// A [VoiceChannel] in a [Guild].
@@ -88,4 +89,7 @@ class GuildVoiceChannel extends Channel implements TextChannel, GuildChannel, Vo
 
   @override
   Future<void> updatePermissionOverwrite(PermissionOverwriteBuilder builder) => manager.updatePermissionOverwrite(id, builder);
+
+  @override
+  Future<List<Webhook>> fetchWebhooks() => manager.client.webhooks.fetchChannelWebhooks(id);
 }
