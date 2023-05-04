@@ -1,5 +1,6 @@
 import 'package:nyxx/src/client.dart';
 import 'package:nyxx/src/client_options.dart';
+import 'package:nyxx/src/http/managers/application_manager.dart';
 import 'package:nyxx/src/http/managers/channel_manager.dart';
 import 'package:nyxx/src/http/managers/user_manager.dart';
 import 'package:nyxx/src/http/managers/webhook_manager.dart';
@@ -14,6 +15,9 @@ mixin ManagerMixin implements Nyxx {
 
   /// A [ChannelManager] that manages channels for this client.
   ChannelManager get channels => ChannelManager(options.channelCacheConfig, this as NyxxRest);
+
+  /// An [ApplicationManager] that manages applications for this client.
+  ApplicationManager get applications => ApplicationManager(this as NyxxRest);
 
   /// A [WebhookManager] that manages webhooks for this client.
   WebhookManager get webhooks => WebhookManager(options.webhookCacheConfig, this as NyxxRest);
