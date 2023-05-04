@@ -1,5 +1,9 @@
 import 'dart:mirrors';
 
+import 'package:nyxx/src/http/managers/manager.dart';
+import 'package:runtime_type/mirrors.dart';
+import 'package:runtime_type/runtime_type.dart';
+
 /// An internal mixin containing a [toString] implementation when dart:mirrors is available.
 mixin ToStringHelper {
   @override
@@ -17,7 +21,10 @@ String stringifyInstance(InstanceMirror mirror, [String? type]) {
   const blockedGetters = [#manager, #hashCode, #runtimeType];
 
   final outputtedGetters = List.of(
-    getters.where((getter) => !getter.isPrivate && !blockedGetters.contains(getter.simpleName)),
+    getters.where(
+      (getter) =>
+          !getter.isPrivate && !blockedGetters.contains(getter.simpleName) && !getter.returnType.toRuntimeType().isSubtypeOf(RuntimeType<ReadOnlyManager>()),
+    ),
   );
 
   if (outputtedGetters.isEmpty) {

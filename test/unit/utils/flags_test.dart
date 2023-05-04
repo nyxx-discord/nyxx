@@ -24,5 +24,11 @@ void main() {
     test('equality', () {
       expect(Flags<Never>(1), equals(Flags<Never>(1)));
     });
+
+    test('|', () {
+      final flags = Flags<Never>(3) | Flag<Never>.fromOffset(2) | Flags<Never>(0xff00);
+
+      expect(flags, equals(Flags<Never>(0xff07)));
+    });
   });
 }

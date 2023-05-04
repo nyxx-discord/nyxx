@@ -1,6 +1,7 @@
 import 'package:nyxx/src/http/managers/user_manager.dart';
 import 'package:nyxx/src/models/discord_color.dart';
 import 'package:nyxx/src/models/locale.dart';
+import 'package:nyxx/src/models/message/author.dart';
 import 'package:nyxx/src/models/snowflake_entity/snowflake_entity.dart';
 import 'package:nyxx/src/utils/flags.dart';
 
@@ -20,14 +21,16 @@ class PartialUser extends SnowflakeEntity<User> with SnowflakeEntityMixin<User> 
 ///
 /// External references:
 /// * Discord API Reference: https://discord.com/developers/docs/resources/user#users-resource
-class User extends PartialUser {
+class User extends PartialUser implements MessageAuthor {
   /// The user's username.
+  @override
   final String username;
 
   /// The user's discriminator.
   final String discriminator;
 
   /// The user's avatar hash, if they have an avatar.
+  @override
   final String? avatarHash;
 
   /// Whether the user is a bot.
@@ -180,6 +183,7 @@ enum NitroType {
   nitro._(2),
   basic._(3);
 
+  /// The value of this [NitroType].
   final int value;
 
   const NitroType._(this.value);
