@@ -217,4 +217,7 @@ extension RouteHelpers on HttpRoute {
 
   /// Adds the [`followers`](https://discord.com/developers/docs/resources/channel#follow-announcement-channel) part to this [HttpRoute].
   void followers() => add(HttpRoutePart('followers'));
+
+  /// Adds the [`voice`](https://discord.com/developers/docs/resources/voice#list-voice-regions) part to this [HttpRoute].
+  void voice() => add(HttpRoutePart('voice'));
 }
