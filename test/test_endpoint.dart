@@ -9,7 +9,13 @@ import 'package:nock/src/interceptor.dart';
 
 import 'mocks/client.dart';
 
-Future<void> testEndpoint(Pattern endpointMatcher, Future<void> Function(Nyxx) run, {required Object? response, String? name, String method = 'get'}) async {
+Future<void> testEndpoint(
+  Pattern endpointMatcher,
+  Future<void> Function(NyxxRest) run, {
+  required Object? response,
+  String? name,
+  String method = 'get',
+}) async {
   group(name ?? endpointMatcher, () {
     setUpAll(() => nock.init());
     tearDownAll(() => nock.cleanAll());
@@ -17,6 +23,7 @@ Future<void> testEndpoint(Pattern endpointMatcher, Future<void> Function(Nyxx) r
     test('respects response status', () async {
       final client = MockNyxx();
       when(() => client.apiOptions).thenReturn(RestApiOptions(token: 'TEST_TOKEN'));
+      when(() => client.options).thenReturn(RestClientOptions());
       when(() => client.httpHandler).thenReturn(HttpHandler(client));
 
       final interceptor = Interceptor(RequestMatcher(
@@ -34,12 +41,13 @@ Future<void> testEndpoint(Pattern endpointMatcher, Future<void> Function(Nyxx) r
     test('works', () async {
       final client = MockNyxx();
       when(() => client.apiOptions).thenReturn(RestApiOptions(token: 'TEST_TOKEN'));
+      when(() => client.options).thenReturn(RestClientOptions());
       when(() => client.httpHandler).thenReturn(HttpHandler(client));
 
       final interceptor = Interceptor(RequestMatcher(
         method,
         UriMatcher('https://discord.com/api/v${client.apiOptions.apiVersion}', endpointMatcher),
-        BodyMatcher((_, __) => true),
+        BodyMatcher((_) => true),
       ))
         ..reply(200, jsonEncode(response));
 

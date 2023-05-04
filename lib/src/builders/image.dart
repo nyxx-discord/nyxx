@@ -15,8 +15,8 @@ class ImageBuilder {
 
   const ImageBuilder.gif(this.data) : format = 'gif';
 
-  static Future<ImageBuilder> fromFile(String path, {String? format}) async {
-    format ??= p.extension(path);
+  static Future<ImageBuilder> fromFile(File file, {String? format}) async {
+    format ??= p.extension(file.path);
 
     const formats = {
       'png': 'png',
@@ -31,7 +31,7 @@ class ImageBuilder {
       throw ArgumentError('Invalid format $format');
     }
 
-    final data = await File(path).readAsBytes();
+    final data = await file.readAsBytes();
 
     return ImageBuilder(data: data, format: actualFormat);
   }
