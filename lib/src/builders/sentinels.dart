@@ -1,7 +1,8 @@
-// ASCII encoded "nyxx"
+import 'package:nyxx/src/builders/image.dart';
 import 'package:nyxx/src/models/channel/types/forum.dart';
 import 'package:nyxx/src/models/snowflake.dart';
 
+// ASCII encoded "nyxx"
 const sentinelInteger = 0x6E797878;
 
 // ESC-"nyxx"
@@ -38,6 +39,15 @@ const sentinelList = _SentinelList();
 
 class _SentinelList implements List<Never> {
   const _SentinelList();
+
+  @override
+  void noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
+}
+
+const sentinelImageBuilder = _SentinelImageBuilder();
+
+class _SentinelImageBuilder implements ImageBuilder {
+  const _SentinelImageBuilder();
 
   @override
   void noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);

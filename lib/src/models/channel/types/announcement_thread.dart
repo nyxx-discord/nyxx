@@ -6,6 +6,7 @@ import 'package:nyxx/src/models/channel/thread.dart';
 import 'package:nyxx/src/models/message/message.dart';
 import 'package:nyxx/src/models/permission_overwrite.dart';
 import 'package:nyxx/src/models/snowflake.dart';
+import 'package:nyxx/src/models/webhook.dart';
 
 class AnnouncementThread extends Channel implements Thread {
   @override
@@ -123,4 +124,7 @@ class AnnouncementThread extends Channel implements Thread {
 
   @override
   Future<void> updatePermissionOverwrite(PermissionOverwriteBuilder builder) => manager.updatePermissionOverwrite(id, builder);
+
+  @override
+  Future<List<Webhook>> fetchWebhooks() => manager.client.webhooks.fetchChannelWebhooks(id);
 }
