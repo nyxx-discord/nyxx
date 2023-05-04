@@ -3,6 +3,7 @@ import 'package:nyxx/src/models/channel/channel.dart';
 import 'package:nyxx/src/models/channel/guild_channel.dart';
 import 'package:nyxx/src/models/permission_overwrite.dart';
 import 'package:nyxx/src/models/snowflake.dart';
+import 'package:nyxx/src/models/webhook.dart';
 
 /// {@template guild_category}
 /// A category for organizing other [Channel]s in a [Guild].
@@ -46,4 +47,7 @@ class GuildCategory extends Channel implements GuildChannel {
 
   @override
   Future<void> updatePermissionOverwrite(PermissionOverwriteBuilder builder) => manager.updatePermissionOverwrite(id, builder);
+
+  @override
+  Future<List<Webhook>> fetchWebhooks() => throw UnsupportedError('Cannot fetch webhooks in guild category');
 }
