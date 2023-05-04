@@ -20,6 +20,7 @@ Future<void> testEndpoint(
     setUpAll(() => nock.init());
     tearDownAll(() => nock.cleanAll());
 
+    // This test ensures code uses HttpHandler.executeSafe instead of HttpHandler.execute
     test('respects response status', () async {
       final client = MockNyxx();
       when(() => client.apiOptions).thenReturn(RestApiOptions(token: 'TEST_TOKEN'));
