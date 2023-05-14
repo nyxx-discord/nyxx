@@ -1,9 +1,10 @@
 import 'package:nyxx/src/models/user/user.dart';
 import 'package:nyxx/src/models/invite/stage_instance.dart';
+import 'package:nyxx/src/utils/to_string_helper/to_string_helper.dart';
 
 /// An invite to a [Guild] or [Channel].
 /// If the invite is to a [Channel], this will be a [ChannelType.groupDm] channel.
-class Invite {
+class Invite with ToStringHelper {
   /// The invite's code. This is a unique identifier.
   final String code;
 
