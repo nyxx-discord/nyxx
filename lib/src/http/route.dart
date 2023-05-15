@@ -220,4 +220,7 @@ extension RouteHelpers on HttpRoute {
 
   /// Adds the [`mfa`](https://discord.com/developers/docs/resources/guild#modify-guild-mfa-level) part to this [HttpRoute].
   void mfa() => add(HttpRoutePart('mfa'));
+
+  /// Adds the [`voice`](https://discord.com/developers/docs/resources/voice#list-voice-regions) part to this [HttpRoute].
+  void voice() => add(HttpRoutePart('voice'));
 }
