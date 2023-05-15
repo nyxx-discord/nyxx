@@ -21,8 +21,9 @@ export 'src/builders/message/allowed_mentions.dart' show AllowedMentions;
 export 'src/builders/message/attachment.dart' show AttachmentBuilder;
 export 'src/builders/message/message.dart' show MessageBuilder, MessageUpdateBuilder;
 export 'src/builders/webhook.dart' show WebhookBuilder, WebhookUpdateBuilder;
+export 'src/builders/guild.dart' show GuildBuilder, GuildUpdateBuilder;
 
-export 'src/cache/cache.dart' show Cache;
+export 'src/cache/cache.dart' show Cache, CacheConfig;
 
 export 'src/http/bucket.dart' show HttpBucket;
 export 'src/http/handler.dart' show HttpHandler;
@@ -34,6 +35,7 @@ export 'src/http/managers/channel_manager.dart' show ChannelManager;
 export 'src/http/managers/message_manager.dart' show MessageManager;
 export 'src/http/managers/user_manager.dart' show UserManager;
 export 'src/http/managers/webhook_manager.dart' show WebhookManager;
+export 'src/http/managers/guild_manager.dart' show GuildManager;
 
 export 'src/models/discord_color.dart' show DiscordColor;
 export 'src/models/locale.dart' show Locale;
@@ -74,6 +76,20 @@ export 'src/models/message/reaction.dart' show Reaction;
 export 'src/models/message/reference.dart' show MessageReference;
 export 'src/models/message/role_subscription_data.dart' show RoleSubscriptionData;
 export 'src/models/webhook.dart' show PartialWebhook, Webhook, WebhookType;
+export 'src/models/guild/guild_preview.dart';
+export 'src/models/guild/guild.dart'
+    show
+        Guild,
+        GuildFeatures,
+        PartialGuild,
+        SystemChannelFlags,
+        ExplicitContentFilterLevel,
+        MessageNotificationLevel,
+        MfaLevel,
+        NsfwLevel,
+        PremiumTier,
+        VerificationLevel;
+export 'src/models/guild/welcome_screen.dart' show WelcomeScreen, WelcomeScreenChannel;
 
 export 'src/utils/flags.dart' show Flag, Flags;
 

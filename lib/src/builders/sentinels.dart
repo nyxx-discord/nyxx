@@ -52,3 +52,12 @@ class _SentinelImageBuilder implements ImageBuilder {
   @override
   void noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }
+
+const sentinelDateTime = _SentinelDateTime();
+
+class _SentinelDateTime implements DateTime {
+  const _SentinelDateTime();
+
+  @override
+  void noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
+}

@@ -30,5 +30,13 @@ void main() {
 
       expect(flags, equals(Flags<Never>(0xff07)));
     });
+
+    test('iterator', () {
+      final flags = Flag<Never>.fromOffset(3) | Flag<Never>.fromOffset(2) | Flag<Never>.fromOffset(10);
+
+      expect(flags, hasLength(3));
+      expect(flags.first, equals(Flag<Never>.fromOffset(2)));
+      expect(flags.last, equals(Flag<Never>.fromOffset(10)));
+    });
   });
 }

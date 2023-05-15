@@ -90,7 +90,7 @@ void main() {
         'parent_id': '0',
         'default_auto_archive_duration': 0,
         'flags': 1 << 4,
-        'tags': [],
+        'available_tags': [],
         'default_reaction_emoji': null,
         'default_thread_rate_limit_per_user': 0,
         'default_sort_order': 1,

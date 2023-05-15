@@ -1,6 +1,7 @@
 import 'package:nyxx/src/client.dart';
 import 'package:nyxx/src/client_options.dart';
 import 'package:nyxx/src/http/managers/channel_manager.dart';
+import 'package:nyxx/src/http/managers/guild_manager.dart';
 import 'package:nyxx/src/http/managers/user_manager.dart';
 import 'package:nyxx/src/http/managers/webhook_manager.dart';
 
@@ -17,4 +18,6 @@ mixin ManagerMixin implements Nyxx {
 
   /// A [WebhookManager] that manages webhooks for this client.
   WebhookManager get webhooks => WebhookManager(options.webhookCacheConfig, this as NyxxRest);
+
+  GuildManager get guilds => GuildManager(options.guildCacheConfig, this as NyxxRest, banConfig: options.banCacheConfig);
 }

@@ -217,4 +217,7 @@ extension RouteHelpers on HttpRoute {
 
   /// Adds the [`followers`](https://discord.com/developers/docs/resources/channel#follow-announcement-channel) part to this [HttpRoute].
   void followers() => add(HttpRoutePart('followers'));
+
+  /// Adds the [`mfa`](https://discord.com/developers/docs/resources/guild#modify-guild-mfa-level) part to this [HttpRoute].
+  void mfa() => add(HttpRoutePart('mfa'));
 }
