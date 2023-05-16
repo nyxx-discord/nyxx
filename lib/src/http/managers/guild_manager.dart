@@ -56,6 +56,7 @@ class GuildManager extends Manager<Guild> {
       verificationLevel: VerificationLevel.parse(raw['verification_level'] as int),
       defaultMessageNotificationLevel: MessageNotificationLevel.parse(raw['default_message_notifications'] as int),
       explicitContentFilterLevel: ExplicitContentFilterLevel.parse(raw['explicit_content_filter'] as int),
+      roleList: parseMany(raw['roles'] as List, this[Snowflake.zero].roles.parse),
       features: parseGuildFeatures(raw['features'] as List),
       mfaLevel: MfaLevel.parse(raw['mfa_level'] as int),
       applicationId: maybeParse(raw['application_id'], Snowflake.parse),
@@ -81,7 +82,7 @@ class GuildManager extends Manager<Guild> {
     );
   }
 
-  final Map<String, Flag<GuildFeatures>> _nameToGuildFeature = {
+  static final Map<String, Flag<GuildFeatures>> _nameToGuildFeature = {
     'ANIMATED_BANNER': GuildFeatures.animatedBanner,
     'ANIMATED_ICON': GuildFeatures.animatedIcon,
     'APPLICATION_COMMAND_PERMISSIONS_V2': GuildFeatures.applicationCommandPermissionsV2,
@@ -110,7 +111,7 @@ class GuildManager extends Manager<Guild> {
     'WELCOME_SCREEN_ENABLED': GuildFeatures.welcomeScreenEnabled,
   };
 
-  late final Map<Flag<GuildFeatures>, String> _guildFeatureToName = {
+  static final Map<Flag<GuildFeatures>, String> _guildFeatureToName = {
     for (final entry in _nameToGuildFeature.entries) entry.value: entry.key,
   };
 
@@ -125,11 +126,11 @@ class GuildManager extends Manager<Guild> {
     return _nameToGuildFeature[raw]!; // ?? Flag<GuildFeatures>(0);
   }
 
-  List<String> serializeGuildFeatures(GuildFeatures source) {
+  static List<String> serializeGuildFeatures(Flags<GuildFeatures> source) {
     return source.map(serializeGuildFeature).toList();
   }
 
-  String serializeGuildFeature(Flag<GuildFeatures> source) {
+  static String serializeGuildFeature(Flag<GuildFeatures> source) {
     return _guildFeatureToName[source]!;
   }
 

@@ -9,6 +9,7 @@ import 'package:nyxx/src/models/message/author.dart';
 import 'package:nyxx/src/models/message/reference.dart';
 import 'package:nyxx/src/models/message/reaction.dart';
 import 'package:nyxx/src/models/message/role_subscription_data.dart';
+import 'package:nyxx/src/models/role.dart';
 import 'package:nyxx/src/models/snowflake.dart';
 import 'package:nyxx/src/models/snowflake_entity/snowflake_entity.dart';
 import 'package:nyxx/src/models/user/user.dart';
@@ -78,8 +79,7 @@ class Message extends PartialMessage {
   /// A list of users specifically mentioned in this message.
   final List<User> mentions;
 
-  // TODO
-  //final List<Role> roleMentions;
+  final List<Role> roleMentions;
 
   /// A list of channels specifically mentioned in this message.
   final List<ChannelMention> channelMentions;
@@ -159,6 +159,7 @@ class Message extends PartialMessage {
     required this.isTts,
     required this.mentionsEveryone,
     required this.mentions,
+    required this.roleMentions,
     required this.channelMentions,
     required this.attachments,
     required this.embeds,

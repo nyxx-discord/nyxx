@@ -20,6 +20,7 @@ class VoiceManager {
       guildId: maybeParse(raw['guild_id'], Snowflake.parse),
       channelId: maybeParse(raw['channel_id'], Snowflake.parse),
       userId: Snowflake.parse(raw['user_id'] as String),
+      member: client.guilds[Snowflake.zero].members.parse(raw['member'] as Map<String, Object?>),
       sessionId: raw['session_id'] as String,
       isServerDeafened: raw['deaf'] as bool,
       isServerMuted: raw['mute'] as bool,

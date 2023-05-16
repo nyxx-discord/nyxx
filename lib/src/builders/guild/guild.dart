@@ -1,6 +1,7 @@
 import 'package:nyxx/src/builders/builder.dart';
 import 'package:nyxx/src/builders/image.dart';
 import 'package:nyxx/src/builders/sentinels.dart';
+import 'package:nyxx/src/http/managers/guild_manager.dart';
 import 'package:nyxx/src/models/guild/guild.dart';
 import 'package:nyxx/src/models/locale.dart';
 import 'package:nyxx/src/models/snowflake.dart';
@@ -136,7 +137,7 @@ class GuildUpdateBuilder extends UpdateBuilder<Guild> {
         if (rulesChannelId != null) 'rulesChannelId': rulesChannelId!.toString(),
         if (publicUpdatesChannelId != null) 'publicUpdatesChannelId': publicUpdatesChannelId!.toString(),
         if (preferredLocale != null) 'preferredLocale': preferredLocale!.identifier,
-        if (features != null) 'features': features!.value, // TODO
+        if (features != null) 'features': GuildManager.serializeGuildFeatures(features!),
         if (!identical(description, sentinelString)) 'description': description,
         if (premiumProgressBarEnabled != null) 'premiumProgressBarEnabled': premiumProgressBarEnabled,
       };

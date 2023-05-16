@@ -4,6 +4,7 @@ import 'package:nyxx/src/http/managers/role_manager.dart';
 import 'package:nyxx/src/models/guild/welcome_screen.dart';
 import 'package:nyxx/src/models/locale.dart';
 import 'package:nyxx/src/models/permissions.dart';
+import 'package:nyxx/src/models/role.dart';
 import 'package:nyxx/src/models/snowflake.dart';
 import 'package:nyxx/src/models/snowflake_entity/snowflake_entity.dart';
 import 'package:nyxx/src/utils/flags.dart';
@@ -48,8 +49,8 @@ class Guild extends PartialGuild {
 
   final ExplicitContentFilterLevel explicitContentFilterLevel;
 
-  // TODO
-  //final List<Role> roles;
+  // Renamed to avoid conflict with the roles manager.
+  final List<Role> roleList;
 
   // TODO
   //final List<Emoji> emojis;
@@ -118,6 +119,7 @@ class Guild extends PartialGuild {
     required this.verificationLevel,
     required this.defaultMessageNotificationLevel,
     required this.explicitContentFilterLevel,
+    required this.roleList,
     required this.features,
     required this.mfaLevel,
     required this.applicationId,
