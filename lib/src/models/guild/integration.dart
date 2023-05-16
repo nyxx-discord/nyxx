@@ -17,7 +17,7 @@ class Integration with ToStringHelper {
 
   final bool? enableEmoticons;
 
-  final IntegrationExpireBehavior? expireBehaviour;
+  final IntegrationExpireBehavior? expireBehavior;
 
   final Duration? expireGracePeriod;
 
@@ -43,7 +43,7 @@ class Integration with ToStringHelper {
     required this.isSyncing,
     required this.roleId,
     required this.enableEmoticons,
-    required this.expireBehaviour,
+    required this.expireBehavior,
     required this.expireGracePeriod,
     required this.user,
     required this.account,
@@ -62,6 +62,11 @@ enum IntegrationExpireBehavior {
   final int value;
 
   const IntegrationExpireBehavior._(this.value);
+
+  factory IntegrationExpireBehavior.parse(int value) => IntegrationExpireBehavior.values.firstWhere(
+        (behavior) => behavior.value == value,
+        orElse: () => throw FormatException('Unknown integration expire behavior', value),
+      );
 
   @override
   String toString() => 'IntegrationExpireBehavior($value)';

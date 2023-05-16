@@ -52,6 +52,11 @@ enum OnboardingPromptType {
 
   const OnboardingPromptType._(this.value);
 
+  factory OnboardingPromptType.parse(int value) => OnboardingPromptType.values.firstWhere(
+        (type) => type.value == value,
+        orElse: () => throw FormatException('Unknown onboarding prompt type', value),
+      );
+
   @override
   String toString() => 'OnboardingPromptType($value)';
 }

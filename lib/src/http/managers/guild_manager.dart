@@ -1,21 +1,31 @@
 import 'dart:convert';
+import 'dart:typed_data';
 
 import 'package:nyxx/src/builders/channel/channel_position.dart';
 import 'package:nyxx/src/builders/channel/guild_channel.dart';
-import 'package:nyxx/src/builders/guild.dart';
+import 'package:nyxx/src/builders/guild/guild.dart';
+import 'package:nyxx/src/builders/guild/welcome_screen.dart';
+import 'package:nyxx/src/builders/guild/widget.dart';
+import 'package:nyxx/src/builders/voice.dart';
 import 'package:nyxx/src/cache/cache.dart';
 import 'package:nyxx/src/http/managers/manager.dart';
 import 'package:nyxx/src/http/request.dart';
 import 'package:nyxx/src/http/route.dart';
+import 'package:nyxx/src/models/channel/channel.dart';
 import 'package:nyxx/src/models/channel/guild_channel.dart';
 import 'package:nyxx/src/models/channel/thread_list.dart';
 import 'package:nyxx/src/models/guild/ban.dart';
 import 'package:nyxx/src/models/guild/guild.dart';
 import 'package:nyxx/src/models/guild/guild_preview.dart';
+import 'package:nyxx/src/models/guild/guild_widget.dart';
+import 'package:nyxx/src/models/guild/integration.dart';
+import 'package:nyxx/src/models/guild/onboarding.dart';
 import 'package:nyxx/src/models/guild/welcome_screen.dart';
 import 'package:nyxx/src/models/locale.dart';
 import 'package:nyxx/src/models/permissions.dart';
 import 'package:nyxx/src/models/snowflake.dart';
+import 'package:nyxx/src/models/user/user.dart';
+import 'package:nyxx/src/models/voice/voice_region.dart';
 import 'package:nyxx/src/utils/flags.dart';
 import 'package:nyxx/src/utils/parsing_helpers.dart';
 
@@ -158,6 +168,99 @@ class GuildManager extends Manager<Guild> {
     return Ban(
       reason: raw['reason'] as String,
       user: client.users.parse(raw['user'] as Map<String, Object?>),
+    );
+  }
+
+  Integration parseIntegration(Map<String, Object?> raw) {
+    return Integration(
+      id: Snowflake.parse(raw['id'] as String),
+      name: raw['name'] as String,
+      type: raw['type'] as String,
+      isEnabled: raw['enabled'] as bool,
+      isSyncing: raw['syncing'] as bool?,
+      roleId: maybeParse(raw['role_id'], Snowflake.parse),
+      enableEmoticons: raw['enable_emoticons'] as bool?,
+      expireBehavior: maybeParse(raw['expire_behavior'], IntegrationExpireBehavior.parse),
+      expireGracePeriod: maybeParse(raw['expire_grace_period'], (int value) => Duration(days: value)),
+      user: maybeParse(raw['user'], client.users.parse),
+      account: parseIntegrationAccount(raw['account'] as Map<String, Object?>),
+      syncedAt: maybeParse(raw['synced_at'], DateTime.parse),
+      subscriberCount: raw['subscriber_count'] as int?,
+      isRevoked: raw['revoked'] as bool?,
+      application: maybeParse(raw['application'], parseIntegrationApplication),
+      scopes: parseMany(raw['scopes'] as List),
+    );
+  }
+
+  IntegrationAccount parseIntegrationAccount(Map<String, Object?> raw) {
+    return IntegrationAccount(
+      id: Snowflake.parse(raw['id'] as String),
+      name: raw['name'] as String,
+    );
+  }
+
+  IntegrationApplication parseIntegrationApplication(Map<String, Object?> raw) {
+    return IntegrationApplication(
+      id: Snowflake.parse(raw['id'] as String),
+      name: raw['name'] as String,
+      iconHash: raw['icon'] as String?,
+      description: raw['description'] as String,
+      bot: maybeParse(raw['bot'], client.users.parse),
+    );
+  }
+
+  WidgetSettings parseWidgetSettings(Map<String, Object?> raw) {
+    return WidgetSettings(
+      isEnabled: raw['enabled'] as bool,
+      channelId: maybeParse(raw['channel_id'], Snowflake.parse),
+    );
+  }
+
+  GuildWidget parseGuildWidget(Map<String, Object?> raw) {
+    return GuildWidget(
+      guildId: Snowflake.parse(raw['id'] as String),
+      name: raw['name'] as String,
+      invite: raw['instant_invite'] as String?,
+      channels: parseMany(
+        raw['channels'] as List,
+        (Map<String, Object?> raw) => PartialChannel(id: Snowflake.parse(raw['id'] as String), manager: client.channels),
+      ),
+      users: parseMany(
+        raw['users'] as List,
+        (Map<String, Object?> raw) => PartialUser(id: Snowflake.parse(raw['id'] as String), manager: client.users),
+      ),
+      presenceCount: raw['presence_count'] as int,
+    );
+  }
+
+  Onboarding parseOnboarding(Map<String, Object?> raw) {
+    return Onboarding(
+      guildId: Snowflake.parse(raw['guild_id'] as String),
+      prompts: parseMany(raw['prompts'] as List, parseOnboardingPrompt),
+      defaultChannelIds: parseMany(raw['default_channel_ids'] as List, Snowflake.parse),
+      isEnabled: raw['enabled'] as bool,
+    );
+  }
+
+  OnboardingPrompt parseOnboardingPrompt(Map<String, Object?> raw) {
+    return OnboardingPrompt(
+      id: Snowflake.parse(raw['id'] as String),
+      type: OnboardingPromptType.parse(raw['type'] as int),
+      options: parseMany(raw['options'] as List, parseOnboardingPromptOption),
+      title: raw['title'] as String,
+      isSingleSelect: raw['single_select'] as bool,
+      isRequired: raw['required	'] as bool,
+      isInOnboarding: raw['in_onboarding'] as bool,
+    );
+  }
+
+  OnboardingPromptOption parseOnboardingPromptOption(Map<String, Object?> raw) {
+    return OnboardingPromptOption(
+      id: Snowflake.parse(raw['id'] as String),
+      channelIds: parseMany(raw['channel_ids'] as List, Snowflake.parse),
+      roleIds: parseMany(raw['role_ids'] as List, Snowflake.parse),
+      title: raw['title'] as String,
+      description: raw['description'] as String?,
     );
   }
 
@@ -366,5 +469,132 @@ class GuildManager extends Manager<Guild> {
 
     final response = await client.httpHandler.executeSafe(request);
     return (response.jsonBody as Map<String, Object?>)['pruned'] as int?;
+  }
+
+  Future<List<VoiceRegion>> listVoiceRegions(Snowflake id) async {
+    final route = HttpRoute()
+      ..guilds(id: id.toString())
+      ..regions();
+    final request = BasicRequest(route);
+
+    final response = await client.httpHandler.executeSafe(request);
+    return parseMany(response.jsonBody as List, client.voice.parseVoiceRegion);
+  }
+
+  // TODO
+  //Future<List<Invite>> listInvites(Snowflake id) async { ... }
+
+  Future<List<Integration>> listIntegrations(Snowflake id) async {
+    final route = HttpRoute()
+      ..guilds(id: id.toString())
+      ..integrations();
+    final request = BasicRequest(route);
+
+    final response = await client.httpHandler.executeSafe(request);
+    return parseMany(response.jsonBody as List, parseIntegration);
+  }
+
+  Future<void> deleteIntegration(Snowflake id, Snowflake integrationId, {String? auditLogReason}) async {
+    final route = HttpRoute()
+      ..guilds(id: id.toString())
+      ..integrations(id: integrationId.toString());
+    final request = BasicRequest(route, method: 'DELETE', auditLogReason: auditLogReason);
+
+    await client.httpHandler.executeSafe(request);
+  }
+
+  Future<WidgetSettings> fetchWidgetSettings(Snowflake id) async {
+    final route = HttpRoute()
+      ..guilds(id: id.toString())
+      ..widget();
+    final request = BasicRequest(route);
+
+    final response = await client.httpHandler.executeSafe(request);
+    return parseWidgetSettings(response.jsonBody as Map<String, Object?>);
+  }
+
+  Future<WidgetSettings> updateWidgetSettings(Snowflake id, WidgetSettingsUpdateBuilder builder, {String? auditLogReason}) async {
+    final route = HttpRoute()
+      ..guilds(id: id.toString())
+      ..widget();
+    final request = BasicRequest(route, method: 'PATCH', auditLogReason: auditLogReason, body: jsonEncode(builder.build()));
+
+    final response = await client.httpHandler.executeSafe(request);
+    return parseWidgetSettings(response.jsonBody as Map<String, Object?>);
+  }
+
+  Future<GuildWidget> fetchGuildWidget(Snowflake id) async {
+    final route = HttpRoute()
+      ..guilds(id: id.toString())
+      ..widget();
+    final request = BasicRequest(route);
+
+    final response = await client.httpHandler.executeSafe(request);
+    return parseGuildWidget(response.jsonBody as Map<String, Object?>);
+  }
+
+  // TODO
+  //Future<PartialInvite> fetchVanityUrl(Snowflake id) async { ... }
+
+  Future<Uint8List> fetchGuildWidgetImage(Snowflake id, {WidgetImageStyle? style}) async {
+    final route = HttpRoute()
+      ..guilds(id: id.toString())
+      ..widgetPng();
+    final request = BasicRequest(
+      route,
+      authenticated: false,
+      queryParameters: {if (style != null) 'style': style.value},
+    );
+
+    final response = await client.httpHandler.executeSafe(request);
+    return response.body;
+  }
+
+  Future<WelcomeScreen> fetchWelcomeScreen(Snowflake id) async {
+    final route = HttpRoute()
+      ..guilds(id: id.toString())
+      ..welcomeScreen();
+    final request = BasicRequest(route);
+
+    final response = await client.httpHandler.execute(request);
+    return parseWelcomeScreen(response.jsonBody as Map<String, Object?>);
+  }
+
+  Future<WelcomeScreen> updateWelcomeScreen(Snowflake id, WelcomeScreenUpdateBuilder builder, {String? auditLogReason}) async {
+    final route = HttpRoute()
+      ..guilds(id: id.toString())
+      ..welcomeScreen();
+    final request = BasicRequest(route, method: 'PATCH', auditLogReason: auditLogReason, body: jsonEncode(builder.build()));
+
+    final response = await client.httpHandler.execute(request);
+    return parseWelcomeScreen(response.jsonBody as Map<String, Object?>);
+  }
+
+  Future<Onboarding> fetchOnboarding(Snowflake id) async {
+    final route = HttpRoute()
+      ..guilds(id: id.toString())
+      ..onboarding();
+    final request = BasicRequest(route);
+
+    final response = await client.httpHandler.executeSafe(request);
+    return parseOnboarding(response.jsonBody as Map<String, Object?>);
+  }
+
+  Future<void> updateCurrentUserVoiceState(Snowflake id, CurrentUserVoiceStateUpdateBuilder builder) async {
+    final route = HttpRoute()
+      ..guilds(id: id.toString())
+      ..voiceStates(id: '@me');
+    final request = BasicRequest(route, method: 'PATCH', body: jsonEncode(builder.build()));
+
+    await client.httpHandler.executeSafe(request);
+  }
+
+  Future<void> updateVoiceState(Snowflake id, Snowflake userId, VoiceStateUpdateBuilder builder) async {
+    final route = HttpRoute()
+      ..guilds(id: id.toString())
+      ..voiceStates(id: userId.toString());
+    final request = BasicRequest(route, method: 'PATCH', body: jsonEncode(builder.build()));
+
+    await client.httpHandler.executeSafe(request);
   }
 }

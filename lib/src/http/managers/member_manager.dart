@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:nyxx/src/builders/member.dart';
+import 'package:nyxx/src/builders/guild/member.dart';
 import 'package:nyxx/src/http/managers/manager.dart';
 import 'package:nyxx/src/http/request.dart';
 import 'package:nyxx/src/http/route.dart';

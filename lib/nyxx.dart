@@ -21,7 +21,7 @@ export 'src/builders/message/allowed_mentions.dart' show AllowedMentions;
 export 'src/builders/message/attachment.dart' show AttachmentBuilder;
 export 'src/builders/message/message.dart' show MessageBuilder, MessageUpdateBuilder;
 export 'src/builders/webhook.dart' show WebhookBuilder, WebhookUpdateBuilder;
-export 'src/builders/guild.dart' show GuildBuilder, GuildUpdateBuilder;
+export 'src/builders/guild/guild.dart' show GuildBuilder, GuildUpdateBuilder;
 
 export 'src/cache/cache.dart' show Cache, CacheConfig;
 

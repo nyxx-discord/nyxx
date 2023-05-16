@@ -36,3 +36,18 @@ class WidgetSettings with ToStringHelper {
     required this.channelId,
   });
 }
+
+enum WidgetImageStyle {
+  sheild._('shield'),
+  banner1._('banner1'),
+  banner2._('banner2'),
+  banner3._('banner3'),
+  banner4._('banner4');
+
+  final String value;
+
+  const WidgetImageStyle._(this.value);
+
+  @override
+  String toString() => 'WidgetImageStyle($value)';
+}
