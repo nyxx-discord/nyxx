@@ -1,12 +1,27 @@
+import 'dart:typed_data';
+
+import 'package:nyxx/src/builders/channel/channel_position.dart';
+import 'package:nyxx/src/builders/channel/guild_channel.dart';
+import 'package:nyxx/src/builders/guild/welcome_screen.dart';
+import 'package:nyxx/src/builders/guild/widget.dart';
+import 'package:nyxx/src/builders/voice.dart';
 import 'package:nyxx/src/http/managers/guild_manager.dart';
 import 'package:nyxx/src/http/managers/member_manager.dart';
 import 'package:nyxx/src/http/managers/role_manager.dart';
+import 'package:nyxx/src/models/channel/guild_channel.dart';
+import 'package:nyxx/src/models/channel/thread_list.dart';
+import 'package:nyxx/src/models/guild/ban.dart';
+import 'package:nyxx/src/models/guild/guild_preview.dart';
+import 'package:nyxx/src/models/guild/guild_widget.dart';
+import 'package:nyxx/src/models/guild/integration.dart';
+import 'package:nyxx/src/models/guild/onboarding.dart';
 import 'package:nyxx/src/models/guild/welcome_screen.dart';
 import 'package:nyxx/src/models/locale.dart';
 import 'package:nyxx/src/models/permissions.dart';
 import 'package:nyxx/src/models/role.dart';
 import 'package:nyxx/src/models/snowflake.dart';
 import 'package:nyxx/src/models/snowflake_entity/snowflake_entity.dart';
+import 'package:nyxx/src/models/voice/voice_region.dart';
 import 'package:nyxx/src/utils/flags.dart';
 
 class PartialGuild extends SnowflakeEntity<Guild> with SnowflakeEntityMixin<Guild> {
@@ -18,6 +33,62 @@ class PartialGuild extends SnowflakeEntity<Guild> with SnowflakeEntityMixin<Guil
   RoleManager get roles => RoleManager(manager.client.options.roleCacheConfig, manager.client, guildId: id);
 
   PartialGuild({required super.id, required this.manager});
+
+  Future<GuildPreview> fetchPreview() => manager.fetchGuildPreview(id);
+
+  Future<List<GuildChannel>> fetchChannels() => manager.fetchGuildChannels(id);
+
+  Future<T> createChannel<T extends GuildChannel>(GuildChannelBuilder<T> builder, {String? auditLogReason}) =>
+      manager.createGuildChannel(id, builder, auditLogReason: auditLogReason);
+
+  Future<void> updateChannelPositions(List<ChannelPositionBuilder> positions) => manager.updateChannelPositions(id, positions);
+
+  Future<ThreadList> listActiveThreads() => manager.listActiveThreads(id);
+
+  Future<List<Ban>> listBans() => manager.listBans(id);
+
+  Future<void> createBan(Snowflake userId, {Duration? deleteMessages, String? auditLogReason}) =>
+      manager.createBan(id, userId, auditLogReason: auditLogReason, deleteMessages: deleteMessages);
+
+  Future<void> deleteBan(Snowflake userId, {String? auditLogReason}) => manager.deleteBan(id, userId, auditLogReason: auditLogReason);
+
+  Future<void> updateMfaLevel(MfaLevel level, {String? auditLogReason}) => manager.updateMfaLevel(id, level, auditLogReason: auditLogReason);
+
+  Future<int> fetchPruneCount({int? days, List<Snowflake>? roleIds}) => manager.fetchPruneCount(id, days: days, roleIds: roleIds);
+
+  Future<int?> startPrune({int? days, bool? computeCount, List<Snowflake>? roleIds, String? auditLogReason}) => manager.startGuildPrune(
+        id,
+        auditLogReason: auditLogReason,
+        computeCount: computeCount,
+        days: days,
+        roleIds: roleIds,
+      );
+
+  Future<List<VoiceRegion>> listVoiceRegions() => manager.listVoiceRegions(id);
+
+  Future<List<Integration>> listIntegrations() => manager.listIntegrations(id);
+
+  Future<void> deleteIntegration(Snowflake integrationId, {String? auditLogReason}) => manager.deleteIntegration(id, integrationId);
+
+  Future<WidgetSettings> fetchWidgetSettings() => manager.fetchWidgetSettings(id);
+
+  Future<WidgetSettings> updateWidgetSettings(WidgetSettingsUpdateBuilder builder, {String? auditLogReason}) =>
+      manager.updateWidgetSettings(id, builder, auditLogReason: auditLogReason);
+
+  Future<GuildWidget> fetchWidget() => manager.fetchGuildWidget(id);
+
+  Future<Uint8List> fetchWidgetImage({WidgetImageStyle? style}) => manager.fetchGuildWidgetImage(id, style: style);
+
+  Future<WelcomeScreen> fetchWelcomeScreen() => manager.fetchWelcomeScreen(id);
+
+  Future<WelcomeScreen> updateWelcomeScreen(WelcomeScreenUpdateBuilder builder, {String? auditLogReason}) =>
+      manager.updateWelcomeScreen(id, builder, auditLogReason: auditLogReason);
+
+  Future<Onboarding> fetchOnboarding() => manager.fetchOnboarding(id);
+
+  Future<void> updateCurrentUserVoiceState(CurrentUserVoiceStateUpdateBuilder builder) => manager.updateCurrentUserVoiceState(id, builder);
+
+  Future<void> updateVoiceState(Snowflake userId, VoiceStateUpdateBuilder builder) => manager.updateVoiceState(id, userId, builder);
 }
 
 class Guild extends PartialGuild {

@@ -10,6 +10,14 @@ class PartialMember extends SnowflakeEntity<Member> with SnowflakeEntityMixin<Me
   final MemberManager manager;
 
   PartialMember({required super.id, required this.manager});
+
+  Future<void> addRole(Snowflake roleId, {String? auditLogReason}) => manager.addRole(id, roleId, auditLogReason: auditLogReason);
+
+  Future<void> removeRole(Snowflake roleId, {String? auditLogReason}) => manager.removeRole(id, roleId);
+
+  Future<void> ban({String? auditLogReason}) => manager.client.guilds[manager.guildId].createBan(id, auditLogReason: auditLogReason);
+
+  Future<void> unban({String? auditLogReason}) => manager.client.guilds[manager.guildId].deleteBan(id, auditLogReason: auditLogReason);
 }
 
 class Member extends PartialMember {
