@@ -8,6 +8,7 @@ import '../function_completes.dart';
 void main() {
   final testToken = Platform.environment['TEST_TOKEN'];
   final testTextChannel = Platform.environment['TEST_TEXT_CHANNEL'];
+  final testGuild = Platform.environment['TEST_GUILD'];
 
   test(
     'NyxxRest.connect',
@@ -143,6 +144,51 @@ void main() {
       test('voice', () async {
         await expectLater(client.voice.listRegions(), completes);
       });
+
+      test(
+        'guilds',
+        skip: testGuild != null ? false : 'No test guild provided',
+        () async {
+          final guildId = Snowflake.parse(testGuild!);
+
+          late Guild guild;
+          await expectLater(() async => guild = await client.guilds.fetch(guildId), completes);
+
+          await expectLater(guild.fetchPreview(), completes);
+          await expectLater(guild.fetchChannels(), completes);
+          await expectLater(guild.listActiveThreads(), completes);
+          await expectLater(guild.listBans(), completes);
+          await expectLater(guild.fetchPruneCount(), completes);
+          await expectLater(guild.fetchPruneCount(days: 1, roleIds: [guild.id]), completes);
+          await expectLater(guild.listVoiceRegions(), completes);
+          await expectLater(guild.listIntegrations(), completes);
+
+          if (guild.isWidgetEnabled) {
+            await expectLater(guild.fetchWidgetSettings(), completes);
+            await expectLater(guild.fetchWidget(), completes);
+            await expectLater(guild.fetchWidgetImage(), completes);
+          }
+
+          if (guild.features.hasWelcomeScreenEnabled) {
+            await expectLater(guild.fetchWelcomeScreen(), completes);
+          }
+
+          await expectLater(guild.fetchOnboarding(), completes);
+        },
+      );
+
+      test(
+        'members',
+        skip: testGuild != null ? false : 'No test guild provided',
+        () async {
+          final guildId = Snowflake.parse(testGuild!);
+
+          final user = await client.users.fetchCurrentUser();
+          await expectLater(client.guilds[guildId].members.fetch(user.id), completes);
+
+          await expectLater(client.guilds[guildId].members.list(), completes);
+        },
+      );
     },
   );
 }

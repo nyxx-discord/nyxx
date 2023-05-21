@@ -365,7 +365,7 @@ class ChannelManager extends ReadOnlyManager<Channel> {
     return ThreadList(
       threads: parseMany(raw['threads'] as List, parse).cast<Thread>(),
       members: parseMany(raw['members'] as List, parseThreadMember),
-      hasMore: raw['has_more'] as bool,
+      hasMore: raw['has_more'] as bool? ?? false,
     );
   }
 
