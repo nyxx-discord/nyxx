@@ -189,6 +189,16 @@ void main() {
           await expectLater(client.guilds[guildId].members.list(), completes);
         },
       );
+
+      test(
+        'roles',
+        skip: testGuild != null ? false : 'No test guild provided',
+        () async {
+          final guildId = Snowflake.parse(testGuild!);
+
+          await expectLater(client.guilds[guildId].roles.list(), completes);
+        },
+      );
     },
   );
 }

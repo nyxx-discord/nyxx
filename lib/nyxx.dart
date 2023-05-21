@@ -116,6 +116,7 @@ export 'src/models/guild/welcome_screen.dart' show WelcomeScreen, WelcomeScreenC
 export 'src/models/application.dart' show Application, ApplicationFlags, InstallationParameters, PartialApplication;
 export 'src/models/voice/voice_state.dart' show VoiceState;
 export 'src/models/voice/voice_region.dart' show VoiceRegion;
+export 'src/models/role.dart' show PartialRole, Role, RoleTags;
 
 export 'src/utils/flags.dart' show Flag, Flags;
 

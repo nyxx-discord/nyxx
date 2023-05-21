@@ -73,7 +73,7 @@ class RoleManager extends Manager<Role> {
     final route = HttpRoute()
       ..guilds(id: guildId.toString())
       ..roles();
-    final request = BasicRequest(route, method: 'PUT', auditLogReason: auditLogReason, body: jsonEncode(builder.build()));
+    final request = BasicRequest(route, method: 'POST', auditLogReason: auditLogReason, body: jsonEncode(builder.build()));
 
     final response = await client.httpHandler.executeSafe(request);
     final role = parse(response.jsonBody as Map<String, Object?>);

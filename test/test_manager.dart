@@ -65,6 +65,7 @@ Future<void> testReadOnlyManager<T extends SnowflakeEntity<T>, U extends ReadOnl
   required List<ParsingTest<U, dynamic, dynamic>>? additionalParsingTests,
   required List<EndpointTest<U, dynamic, dynamic>>? additionalEndpointTests,
   void Function()? extraRun,
+  Object? fetchObjectOverride,
 }) async {
   assert(
     additionalSampleMatchers?.length == additionalSampleObjects?.length,
@@ -111,7 +112,7 @@ Future<void> testReadOnlyManager<T extends SnowflakeEntity<T>, U extends ReadOnl
     testEndpoint(
       name: 'fetch',
       baseUrlMatcher,
-      response: sampleObject,
+      response: fetchObjectOverride ?? sampleObject,
       (client) async {
         final manager = create(CacheConfig(), client);
 
@@ -126,7 +127,7 @@ Future<void> testReadOnlyManager<T extends SnowflakeEntity<T>, U extends ReadOnl
       when(() => client.options).thenReturn(RestClientOptions());
       when(() => client.httpHandler).thenReturn(HttpHandler(client));
 
-      nock('https://discord.com/api/v${client.apiOptions.apiVersion}').get(baseUrlMatcher).reply(200, jsonEncode(sampleObject));
+      nock('https://discord.com/api/v${client.apiOptions.apiVersion}').get(baseUrlMatcher).reply(200, jsonEncode(fetchObjectOverride  ?? sampleObject));
 
       final manager = create(CacheConfig(), client);
       final entity = await manager.fetch(Snowflake.zero);
@@ -184,6 +185,7 @@ Future<void> testManager<T extends SnowflakeEntity<T>, U extends Manager<T>>(
   required CreateBuilder<T> createBuilder,
   required UpdateBuilder<T> updateBuilder,
   String createMethod = 'POST',
+  Object? fetchObjectOverride,
 }) async {
   await testReadOnlyManager<T, U>(
     name,
@@ -195,6 +197,7 @@ Future<void> testManager<T extends SnowflakeEntity<T>, U extends Manager<T>>(
     additionalSampleMatchers: additionalSampleMatchers,
     additionalParsingTests: additionalParsingTests,
     additionalEndpointTests: additionalEndpointTests,
+    fetchObjectOverride: fetchObjectOverride,
     extraRun: () {
       testEndpoint(
         name: 'create',
