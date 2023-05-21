@@ -227,7 +227,7 @@ class GuildManager extends Manager<Guild> {
         (Map<String, Object?> raw) => PartialChannel(id: Snowflake.parse(raw['id'] as String), manager: client.channels),
       ),
       users: parseMany(
-        raw['users'] as List,
+        raw['members'] as List,
         (Map<String, Object?> raw) => PartialUser(id: Snowflake.parse(raw['id'] as String), manager: client.users),
       ),
       presenceCount: raw['presence_count'] as int,
@@ -250,7 +250,7 @@ class GuildManager extends Manager<Guild> {
       options: parseMany(raw['options'] as List, parseOnboardingPromptOption),
       title: raw['title'] as String,
       isSingleSelect: raw['single_select'] as bool,
-      isRequired: raw['required	'] as bool,
+      isRequired: raw['required'] as bool,
       isInOnboarding: raw['in_onboarding'] as bool,
     );
   }

@@ -290,6 +290,130 @@ void checkGuildPreview(GuildPreview preview) {
   expect(preview.description, equals('The official place to report Discord Bugs!'));
 }
 
+final sampleWidgetSettings = {"enabled": true, "channel_id": "41771983444115456"};
+
+void checkWidgetSettings(WidgetSettings settings) {
+  expect(settings.isEnabled, isTrue);
+  expect(settings.channelId, equals(Snowflake(41771983444115456)));
+}
+
+final sampleGuildWidget = {
+  "id": "290926798626999250",
+  "name": "Test Server",
+  "instant_invite": "https://discord.com/invite/abcdefg",
+  "channels": [
+    {"id": "705216630279993882", "name": "elephant", "position": 2},
+    {"id": "669583461748992190", "name": "groovy-music", "position": 1}
+  ],
+  "members": [
+    {
+      "id": "0",
+      "username": "1234",
+      "discriminator": "0000",
+      "avatar": null,
+      "status": "online",
+      "avatar_url":
+          "https://cdn.discordapp.com/widget-avatars/FfvURgcr3Za92K3JtoCppqnYMppMDc5B-Rll74YrGCU/C-1DyBZPQ6t5q2RuATFuMFgq0_uEMZVzd_6LbGN_uJKvZflobA9diAlTjhf6CAESLLeTuu4dLuHFWOb_PNLteooNfhC4C6k5QgAGuxEOP12tVVVCvX6t64k14PMXZrGTDq8pWZhukP40Wg"
+    }
+  ],
+  "presence_count": 1
+};
+
+void checkGuildWidget(GuildWidget widget) {
+  expect(widget.guildId, equals(Snowflake(290926798626999250)));
+  expect(widget.name, equals('Test Server'));
+  expect(widget.invite, equals('https://discord.com/invite/abcdefg'));
+  expect(widget.presenceCount, equals(1));
+
+  expect(widget.channels, hasLength(2));
+
+  expect(widget.users, hasLength(1));
+}
+
+final sampleBan = {
+  "reason": "mentioning b1nzy",
+  "user": {"username": "Mason", "discriminator": "9999", "id": "53908099506183680", "avatar": "a_bab14f271d565501444b2ca3be944b25", "public_flags": 131141}
+};
+
+void checkBan(Ban ban) {
+  expect(ban.reason, equals('mentioning b1nzy'));
+  expect(ban.user.id, equals(Snowflake(53908099506183680)));
+}
+
+final sampleOnboarding = {
+  "guild_id": "960007075288915998",
+  "prompts": [
+    {
+      "id": "1067461047608422473",
+      "title": "What do you want to do in this community?",
+      "options": [
+        {
+          "id": "1067461047608422476",
+          "title": "Chat with Friends",
+          "description": "",
+          "emoji": {"id": "1070002302032826408", "name": "chat", "animated": false},
+          "role_ids": [],
+          "channel_ids": ["962007075288916001"]
+        },
+        {
+          "id": "1070004843541954678",
+          "title": "Get Gud",
+          "description": "We have excellent teachers!",
+          "emoji": {"id": null, "name": "😀", "animated": false},
+          "role_ids": ["982014491980083211"],
+          "channel_ids": []
+        }
+      ],
+      "single_select": false,
+      "required": false,
+      "in_onboarding": true,
+      "type": 0
+    }
+  ],
+  "default_channel_ids": [
+    "998678771706110023",
+    "998678693058719784",
+    "1070008122577518632",
+    "998678764340912138",
+    "998678704446263309",
+    "998678683592171602",
+    "998678699715067986"
+  ],
+  "enabled": true
+};
+
+void checkOnboarding(Onboarding onboarding) {
+  expect(onboarding.guildId, equals(Snowflake(960007075288915998)));
+  expect(onboarding.isEnabled, isTrue);
+  expect(
+    onboarding.defaultChannelIds,
+    equals([
+      Snowflake(998678771706110023),
+      Snowflake(998678693058719784),
+      Snowflake(1070008122577518632),
+      Snowflake(998678764340912138),
+      Snowflake(998678704446263309),
+      Snowflake(998678683592171602),
+      Snowflake(998678699715067986),
+    ]),
+  );
+
+  expect(onboarding.prompts, hasLength(1));
+  final prompt = onboarding.prompts.first;
+
+  expect(prompt.id, equals(Snowflake(1067461047608422473)));
+  expect(prompt.title, equals('What do you want to do in this community?'));
+
+  expect(prompt.options, hasLength(2));
+  final option = prompt.options.first;
+
+  expect(option.id, equals(Snowflake(1067461047608422476)));
+  expect(option.title, equals('Chat with Friends'));
+  expect(option.description, equals(''));
+  expect(option.roleIds, equals([]));
+  expect(option.channelIds, equals([Snowflake(962007075288916001)]));
+}
+
 void main() {
   testManager<Guild, GuildManager>(
     'GuildManager',
@@ -312,6 +436,30 @@ void main() {
         source: sampleGuildPreview,
         parse: (manager) => manager.parseGuildPreview,
         check: checkGuildPreview,
+      ),
+      ParsingTest<GuildManager, WidgetSettings, Map<String, Object?>>(
+        name: 'parseWidgetSettings',
+        source: sampleWidgetSettings,
+        parse: (manager) => manager.parseWidgetSettings,
+        check: checkWidgetSettings,
+      ),
+      ParsingTest<GuildManager, GuildWidget, Map<String, Object?>>(
+        name: 'parseGuildWidget',
+        source: sampleGuildWidget,
+        parse: (manager) => manager.parseGuildWidget,
+        check: checkGuildWidget,
+      ),
+      ParsingTest<GuildManager, Ban, Map<String, Object?>>(
+        name: 'parseBan',
+        source: sampleBan,
+        parse: (manager) => manager.parseBan,
+        check: checkBan,
+      ),
+      ParsingTest<GuildManager, Onboarding, Map<String, Object?>>(
+        name: 'parseOnboarding',
+        source: sampleOnboarding,
+        parse: (manager) => manager.parseOnboarding,
+        check: checkOnboarding,
       ),
     ],
     additionalEndpointTests: [],

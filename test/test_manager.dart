@@ -5,6 +5,8 @@ import 'package:nock/nock.dart';
 import 'package:nyxx/nyxx.dart';
 import 'package:test/test.dart';
 
+import 'package:nock/src/interceptor.dart';
+
 import 'mocks/client.dart';
 import 'test_endpoint.dart';
 
@@ -181,6 +183,7 @@ Future<void> testManager<T extends SnowflakeEntity<T>, U extends Manager<T>>(
   required List<EndpointTest<U, dynamic, dynamic>>? additionalEndpointTests,
   required CreateBuilder<T> createBuilder,
   required UpdateBuilder<T> updateBuilder,
+  String createMethod = 'POST',
 }) async {
   await testReadOnlyManager<T, U>(
     name,
@@ -195,7 +198,7 @@ Future<void> testManager<T extends SnowflakeEntity<T>, U extends Manager<T>>(
     extraRun: () {
       testEndpoint(
         name: 'create',
-        method: 'POST',
+        method: createMethod,
         createUrlMatcher,
         response: sampleObject,
         (client) async {
@@ -207,17 +210,25 @@ Future<void> testManager<T extends SnowflakeEntity<T>, U extends Manager<T>>(
       );
 
       test('create caches entity', () async {
+        nock.init();
+
         final client = MockNyxx();
         when(() => client.apiOptions).thenReturn(RestApiOptions(token: 'TEST_TOKEN'));
         when(() => client.options).thenReturn(RestClientOptions());
         when(() => client.httpHandler).thenReturn(HttpHandler(client));
 
-        nock('https://discord.com/api/v${client.apiOptions.apiVersion}').post(createUrlMatcher, (_) => true).reply(200, jsonEncode(sampleObject));
+        Interceptor(RequestMatcher(
+          createMethod,
+          UriMatcher('https://discord.com/api/v${client.apiOptions.apiVersion}', createUrlMatcher),
+          BodyMatcher((_, __) => true),
+        )).reply(200, jsonEncode(sampleObject));
 
         final manager = create(CacheConfig(), client);
         final entity = await manager.create(createBuilder);
 
         expect(manager.cache.containsKey(entity.id), isTrue);
+
+        nock.cleanAll();
       });
 
       testEndpoint(

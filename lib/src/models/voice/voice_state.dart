@@ -18,7 +18,7 @@ class VoiceState with ToStringHelper {
   /// The ID of the user this state is for.
   final Snowflake userId;
 
-  final Member member;
+  final Member? member;
 
   /// This state's session ID.
   final String sessionId;

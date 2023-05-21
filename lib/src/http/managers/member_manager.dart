@@ -20,7 +20,7 @@ class MemberManager extends Manager<Member> {
   @override
   Member parse(Map<String, Object?> raw) {
     return Member(
-      id: Snowflake.parse(raw['id'] as String),
+      id: Snowflake.parse((raw['user'] as Map<String, Object?>)['id'] as String),
       manager: this,
       user: maybeParse(raw['user'], client.users.parse),
       nick: raw['nick'] as String?,
@@ -32,7 +32,7 @@ class MemberManager extends Manager<Member> {
       isMute: raw['mute'] as bool,
       flags: MemberFlags(raw['flags'] as int),
       isPending: raw['pending'] as bool? ?? false,
-      permissions: Permissions(int.parse(raw['permissions'] as String)),
+      permissions: maybeParse(raw['permissions'], (String raw) => Permissions(int.parse(raw))),
       communicationDisabledUntil: maybeParse(raw['communication_disabled_until'], DateTime.parse),
     );
   }
@@ -88,7 +88,7 @@ class MemberManager extends Manager<Member> {
     final route = HttpRoute()
       ..guilds(id: guildId.toString())
       ..members(id: id.toString());
-    final request = BasicRequest(route, method: 'PATCH', auditLogReason: auditLogReason, body: jsonEncode(builder.build));
+    final request = BasicRequest(route, method: 'PATCH', auditLogReason: auditLogReason, body: jsonEncode(builder.build()));
 
     final response = await client.httpHandler.executeSafe(request);
     final member = parse(response.jsonBody as Map<String, Object?>);

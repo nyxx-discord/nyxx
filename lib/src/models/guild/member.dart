@@ -41,7 +41,7 @@ class Member extends PartialMember {
 
   final bool isPending;
 
-  final Permissions permissions;
+  final Permissions? permissions;
 
   final DateTime? communicationDisabledUntil;
 
