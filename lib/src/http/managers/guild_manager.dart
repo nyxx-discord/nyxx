@@ -189,7 +189,7 @@ class GuildManager extends Manager<Guild> {
       subscriberCount: raw['subscriber_count'] as int?,
       isRevoked: raw['revoked'] as bool?,
       application: maybeParse(raw['application'], parseIntegrationApplication),
-      scopes: parseMany(raw['scopes'] as List),
+      scopes: maybeParseMany(raw['scopes']),
     );
   }
 
@@ -420,7 +420,7 @@ class GuildManager extends Manager<Guild> {
     await client.httpHandler.executeSafe(request);
   }
 
-  Future<void> updateMfaLevel(Snowflake id, MfaLevel level, {String? auditLogReason}) async {
+  Future<MfaLevel> updateMfaLevel(Snowflake id, MfaLevel level, {String? auditLogReason}) async {
     final route = HttpRoute()
       ..guilds(id: id.toString())
       ..mfa();
@@ -431,7 +431,8 @@ class GuildManager extends Manager<Guild> {
       body: jsonEncode({'level': level.value}),
     );
 
-    await client.httpHandler.executeSafe(request);
+    final response = await client.httpHandler.executeSafe(request);
+    return MfaLevel.parse(response.jsonBody as int);
   }
 
   Future<int> fetchPruneCount(Snowflake id, {int? days, List<Snowflake>? roleIds}) async {
@@ -527,7 +528,7 @@ class GuildManager extends Manager<Guild> {
   Future<GuildWidget> fetchGuildWidget(Snowflake id) async {
     final route = HttpRoute()
       ..guilds(id: id.toString())
-      ..widget();
+      ..widgetJson();
     final request = BasicRequest(route);
 
     final response = await client.httpHandler.executeSafe(request);
@@ -557,7 +558,7 @@ class GuildManager extends Manager<Guild> {
       ..welcomeScreen();
     final request = BasicRequest(route);
 
-    final response = await client.httpHandler.execute(request);
+    final response = await client.httpHandler.executeSafe(request);
     return parseWelcomeScreen(response.jsonBody as Map<String, Object?>);
   }
 
@@ -567,7 +568,7 @@ class GuildManager extends Manager<Guild> {
       ..welcomeScreen();
     final request = BasicRequest(route, method: 'PATCH', auditLogReason: auditLogReason, body: jsonEncode(builder.build()));
 
-    final response = await client.httpHandler.execute(request);
+    final response = await client.httpHandler.executeSafe(request);
     return parseWelcomeScreen(response.jsonBody as Map<String, Object?>);
   }
 

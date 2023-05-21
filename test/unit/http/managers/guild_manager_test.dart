@@ -1,7 +1,12 @@
+import 'dart:convert';
+import 'dart:typed_data';
+
 import 'package:nyxx/nyxx.dart';
 import 'package:test/test.dart';
 
 import '../../../test_manager.dart';
+import 'channel_manager_test.dart';
+import 'voice_manager_test.dart';
 
 final sampleGuild = {
   "id": "197038439483310086",
@@ -414,6 +419,36 @@ void checkOnboarding(Onboarding onboarding) {
   expect(option.channelIds, equals([Snowflake(962007075288916001)]));
 }
 
+final sampleIntegration = {
+  "id": "0",
+  "name": "test",
+  "type": "youtube",
+  "enabled": true,
+  "account": {
+    "id": "0",
+    "name": "account name",
+  },
+};
+
+void checkIntegration(Integration integration) {
+  expect(integration.id, equals(Snowflake(0)));
+  expect(integration.name, equals("test"));
+  expect(integration.type, equals("youtube"));
+  expect(integration.isEnabled, isTrue);
+  expect(integration.isSyncing, isNull);
+  expect(integration.roleId, isNull);
+  expect(integration.enableEmoticons, isNull);
+  expect(integration.expireBehavior, isNull);
+  expect(integration.expireGracePeriod, isNull);
+  expect(integration.user, isNull);
+  expect(integration.account.id, equals(Snowflake(0)));
+  expect(integration.syncedAt, isNull);
+  expect(integration.subscriberCount, isNull);
+  expect(integration.isRevoked, isNull);
+  expect(integration.application, isNull);
+  expect(integration.scopes, isNull);
+}
+
 void main() {
   testManager<Guild, GuildManager>(
     'GuildManager',
@@ -462,7 +497,208 @@ void main() {
         check: checkOnboarding,
       ),
     ],
-    additionalEndpointTests: [],
+    additionalEndpointTests: [
+      EndpointTest<GuildManager, GuildPreview, Map<String, Object?>>(
+        name: 'fetchGuildPreview',
+        source: sampleGuildPreview,
+        urlMatcher: '/guilds/0/preview',
+        execute: (manager) => manager.fetchGuildPreview(Snowflake.zero),
+        check: checkGuildPreview,
+      ),
+      EndpointTest<GuildManager, List<GuildChannel>, List<Object?>>(
+        name: 'fetchGuildChannels',
+        source: [sampleGuildText],
+        urlMatcher: '/guilds/0/channels',
+        execute: (manager) => manager.fetchGuildChannels(Snowflake.zero),
+        check: (list) {
+          expect(list, hasLength(1));
+
+          checkGuildText(list.first);
+        },
+      ),
+      EndpointTest<GuildManager, GuildTextChannel, Map<String, Object?>>(
+        name: 'createGuildChannel',
+        source: sampleGuildText,
+        method: 'POST',
+        urlMatcher: '/guilds/0/channels',
+        execute: (manager) => manager.createGuildChannel(Snowflake.zero, GuildTextChannelBuilder(name: 'test')),
+        check: checkGuildText,
+      ),
+      EndpointTest<GuildManager, void, void>(
+        name: 'updateChannelPositions',
+        source: null,
+        method: 'PATCH',
+        urlMatcher: '/guilds/0/channels',
+        execute: (manager) => manager.updateChannelPositions(Snowflake.zero, []),
+        check: (_) {},
+      ),
+      EndpointTest<GuildManager, ThreadList, Map<String, Object?>>(
+        name: 'listActiveThreads',
+        source: sampleThreadList,
+        urlMatcher: '/guilds/0/threads/active',
+        execute: (manager) => manager.listActiveThreads(Snowflake.zero),
+        check: checkThreadList,
+      ),
+      EndpointTest<GuildManager, List<Ban>, List<Object?>>(
+        name: 'listBans',
+        source: [sampleBan],
+        urlMatcher: '/guilds/0/bans',
+        execute: (manager) => manager.listBans(Snowflake.zero),
+        check: (list) {
+          expect(list, hasLength(1));
+
+          checkBan(list.first);
+        },
+      ),
+      EndpointTest<GuildManager, Ban, Map<String, Object?>>(
+        name: 'fetchBan',
+        source: sampleBan,
+        urlMatcher: '/guilds/0/bans/0',
+        execute: (manager) => manager.fetchBan(Snowflake.zero, Snowflake.zero),
+        check: checkBan,
+      ),
+      EndpointTest<GuildManager, void, void>(
+        name: 'createBan',
+        method: 'PUT',
+        source: null,
+        urlMatcher: '/guilds/0/bans/0',
+        execute: (manager) => manager.createBan(Snowflake.zero, Snowflake.zero),
+        check: (_) {},
+      ),
+      EndpointTest<GuildManager, void, void>(
+        name: 'deleteBan',
+        method: 'DELETE',
+        source: null,
+        urlMatcher: '/guilds/0/bans/0',
+        execute: (manager) => manager.deleteBan(Snowflake.zero, Snowflake.zero),
+        check: (_) {},
+      ),
+      EndpointTest<GuildManager, MfaLevel, int>(
+        name: 'updateMfaLevel',
+        method: 'POST',
+        source: 0,
+        urlMatcher: '/guilds/0/mfa',
+        execute: (manager) => manager.updateMfaLevel(Snowflake.zero, MfaLevel.none),
+        check: (level) => expect(level, equals(MfaLevel.none)),
+      ),
+      EndpointTest<GuildManager, int, Map<String, Object?>>(
+        name: 'fetchPruneCount',
+        source: {'pruned': 0},
+        urlMatcher: '/guilds/0/prune',
+        execute: (manager) => manager.fetchPruneCount(Snowflake.zero),
+        check: (count) => expect(count, equals(0)),
+      ),
+      EndpointTest<GuildManager, int?, Map<String, Object?>>(
+        name: 'startGuildPrune',
+        method: 'POST',
+        source: {'pruned': null},
+        urlMatcher: '/guilds/0/prune',
+        execute: (manager) => manager.startGuildPrune(Snowflake.zero),
+        check: (count) => expect(count, isNull),
+      ),
+      EndpointTest<GuildManager, List<VoiceRegion>, List<Object?>>(
+        name: 'listVoiceRegions',
+        source: [sampleVoiceRegion],
+        urlMatcher: '/guilds/0/regions',
+        execute: (manager) => manager.listVoiceRegions(Snowflake.zero),
+        check: (list) {
+          expect(list, hasLength(1));
+
+          checkVoiceRegion(list.first);
+        },
+      ),
+      EndpointTest<GuildManager, List<Integration>, List<Object?>>(
+        name: 'listIntegrations',
+        source: [sampleIntegration],
+        urlMatcher: '/guilds/0/integrations',
+        execute: (manager) => manager.listIntegrations(Snowflake.zero),
+        check: (list) {
+          expect(list, hasLength(1));
+
+          checkIntegration(list.first);
+        },
+      ),
+      EndpointTest<GuildManager, void, void>(
+        name: 'deleteIntegration',
+        method: 'DELETE',
+        source: null,
+        urlMatcher: '/guilds/0/integrations/0',
+        execute: (manager) => manager.deleteIntegration(Snowflake.zero, Snowflake.zero),
+        check: (_) {},
+      ),
+      EndpointTest<GuildManager, WidgetSettings, Map<String, Object?>>(
+        name: 'fetchWidgetSettings',
+        source: sampleWidgetSettings,
+        urlMatcher: '/guilds/0/widget',
+        execute: (manager) => manager.fetchWidgetSettings(Snowflake.zero),
+        check: checkWidgetSettings,
+      ),
+      EndpointTest<GuildManager, WidgetSettings, Map<String, Object?>>(
+        name: 'updateWidgetSettings',
+        method: 'PATCH',
+        source: sampleWidgetSettings,
+        urlMatcher: '/guilds/0/widget',
+        execute: (manager) => manager.updateWidgetSettings(Snowflake.zero, WidgetSettingsUpdateBuilder()),
+        check: checkWidgetSettings,
+      ),
+      EndpointTest<GuildManager, GuildWidget, Map<String, Object?>>(
+        name: 'fetchGuildWidget',
+        source: sampleGuildWidget,
+        urlMatcher: '/guilds/0/widget.json',
+        execute: (manager) => manager.fetchGuildWidget(Snowflake.zero),
+        check: checkGuildWidget,
+      ),
+      EndpointTest<GuildManager, Uint8List, String>(
+        name: 'fetchGuildWidgetImage',
+        source: '""',
+        urlMatcher: '/guilds/0/widget.png',
+        execute: (manager) => manager.fetchGuildWidgetImage(Snowflake.zero),
+        check: (data) {
+          // We can't pass arbitrary bytes to [source], so reconstruct what the binary data
+          // for the value we did pass would be.
+          final expectedData = utf8.encode(jsonEncode('""'));
+          expect(data, equals(expectedData));
+        },
+      ),
+      EndpointTest<GuildManager, WelcomeScreen, Map<String, Object?>>(
+        name: 'fetchWelcomeScreen',
+        source: sampleWelcomeScreen,
+        urlMatcher: '/guilds/0/welcome-screen',
+        execute: (manager) => manager.fetchWelcomeScreen(Snowflake.zero),
+        check: checkWelcomeScreen,
+      ),
+      EndpointTest<GuildManager, WelcomeScreen, Map<String, Object?>>(
+        name: 'updateWelcomeScreen',
+        method: 'PATCH',
+        source: sampleWelcomeScreen,
+        urlMatcher: '/guilds/0/welcome-screen',
+        execute: (manager) => manager.updateWelcomeScreen(Snowflake.zero, WelcomeScreenUpdateBuilder()),
+        check: checkWelcomeScreen,
+      ),
+      EndpointTest<GuildManager, Onboarding, Map<String, Object?>>(
+        name: 'fetchOnboarding',
+        source: sampleOnboarding,
+        urlMatcher: '/guilds/0/onboarding',
+        execute: (manager) => manager.fetchOnboarding(Snowflake.zero),
+        check: checkOnboarding,
+      ),
+      EndpointTest<GuildManager, void, void>(
+        name: 'updateCurrentUserVoiceState',
+        method: 'PATCH',
+        source: null,
+        urlMatcher: '/guilds/0/voice-states/@me',
+        execute: (manager) => manager.updateCurrentUserVoiceState(Snowflake.zero, CurrentUserVoiceStateUpdateBuilder()),
+        check: (_) {},
+      ),
+      EndpointTest<GuildManager, void, void>(
+        name: 'updateVoiceState',
+        method: 'PATCH',
+        source: null,
+        urlMatcher: '/guilds/0/voice-states/0',
+        execute: (manager) => manager.updateVoiceState(Snowflake.zero, Snowflake.zero, VoiceStateUpdateBuilder()),
+        check: (_) {},
+      ),
+    ],
     createBuilder: GuildBuilder(name: 'Test guild'),
     updateBuilder: GuildUpdateBuilder(),
   );

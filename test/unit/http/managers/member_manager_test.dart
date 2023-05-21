@@ -46,7 +46,54 @@ void main() {
     sampleObject: sampleMember,
     sampleMatches: checkMember,
     additionalParsingTests: [],
-    additionalEndpointTests: [],
+    additionalEndpointTests: [
+      EndpointTest<MemberManager, List<Member>, List<Object?>>(
+        name: 'listMembers',
+        source: [sampleMember],
+        urlMatcher: '/guilds/0/members',
+        execute: (manager) => manager.list(),
+        check: (list) {
+          expect(list, hasLength(1));
+
+          checkMember(list.first);
+        },
+      ),
+      EndpointTest<MemberManager, List<Member>, List<Object?>>(
+        name: 'searchMembers',
+        source: [sampleMember],
+        urlMatcher: '/guilds/0/members/search?query=test',
+        execute: (manager) => manager.search('test'),
+        check: (list) {
+          expect(list, hasLength(1));
+
+          checkMember(list.first);
+        },
+      ),
+      EndpointTest<MemberManager, Member, Map<String, Object?>>(
+        name: 'updateCurrentMember',
+        method: 'PATCH',
+        source: sampleMember,
+        urlMatcher: '/guilds/0/members/@me',
+        execute: (manager) => manager.updateCurrentMember(CurrentMemberUpdateBuilder()),
+        check: checkMember,
+      ),
+      EndpointTest<MemberManager, void, void>(
+        name: 'addRole',
+        method: 'PUT',
+        source: null,
+        urlMatcher: '/guilds/0/members/0/roles/0',
+        execute: (manager) => manager.addRole(Snowflake.zero, Snowflake.zero),
+        check: (_) {},
+      ),
+      EndpointTest<MemberManager, void, void>(
+        name: 'addRole',
+        method: 'DELETE',
+        source: null,
+        urlMatcher: '/guilds/0/members/0/roles/0',
+        execute: (manager) => manager.removeRole(Snowflake.zero, Snowflake.zero),
+        check: (_) {},
+      ),
+    ],
     createBuilder: MemberBuilder(accessToken: 'TEST_ACCESS_TOKEN', userId: Snowflake.zero),
     updateBuilder: MemberUpdateBuilder(),
   );

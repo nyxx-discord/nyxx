@@ -108,6 +108,17 @@ class MemberManager extends Manager<Member> {
     cache.remove(id);
   }
 
+  Future<List<Member>> search(String query, {int? limit}) async {
+    final route = HttpRoute()
+      ..guilds(id: guildId.toString())
+      ..members()
+      ..search();
+    final request = BasicRequest(route, queryParameters: {'query': query, if (limit != null) 'limit': limit.toString()});
+
+    final response = await client.httpHandler.executeSafe(request);
+    return parseMany(response.jsonBody as List, parse);
+  }
+
   Future<Member> updateCurrentMember(CurrentMemberUpdateBuilder builder) async {
     final route = HttpRoute()
       ..guilds(id: guildId.toString())
