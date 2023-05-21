@@ -157,11 +157,12 @@ void main() {
           await expectLater(guild.fetchPreview(), completes);
           await expectLater(guild.fetchChannels(), completes);
           await expectLater(guild.listActiveThreads(), completes);
-          await expectLater(guild.listBans(), completes);
-          await expectLater(guild.fetchPruneCount(), completes);
-          await expectLater(guild.fetchPruneCount(days: 1, roleIds: [guild.id]), completes);
+          // Admin endpoints are not tested by default
+          //await expectLater(guild.listBans(), completes);
+          //await expectLater(guild.fetchPruneCount(), completes);
+          //await expectLater(guild.fetchPruneCount(days: 1, roleIds: [guild.id]), completes);
           await expectLater(guild.listVoiceRegions(), completes);
-          await expectLater(guild.listIntegrations(), completes);
+          //await expectLater(guild.listIntegrations(), completes);
 
           if (guild.isWidgetEnabled) {
             await expectLater(guild.fetchWidgetSettings(), completes);
