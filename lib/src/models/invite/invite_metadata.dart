@@ -7,8 +7,8 @@ class InviteMetadata extends Invite {
   /// The max number of times this invite can be used.
   final int maxUses;
 
-  /// The duration (in seconds) after which the invite expires.
-  final int maxAge;
+  /// The duration after which the invite expires.
+  final Duration maxAge;
 
   /// Whether this invite only grants temporary membership.
   final bool isTemporary;
@@ -19,16 +19,15 @@ class InviteMetadata extends Invite {
   InviteMetadata({
     required super.code,
     required super.guild,
-    // required super.channel,
-    super.inviter,
-    super.targetType,
-    super.targetUser,
-    super.targetApplication,
-    super.approximateMemberCount,
-    super.approximatePresenceCount,
-    super.expiresAt,
-    super.stageInstance,
-    super.guildScheduledEvent,
+    required super.channel,
+    required super.inviter,
+    required super.targetType,
+    required super.targetUser,
+    required super.targetApplication,
+    required super.approximateMemberCount,
+    required super.approximatePresenceCount,
+    required super.expiresAt,
+    required super.guildScheduledEvent,
     required this.uses,
     required this.maxUses,
     required this.maxAge,
