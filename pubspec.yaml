@@ -15,9 +15,12 @@ dependencies:
   path: ^1.8.3
   retry: ^3.1.0
   eterl: ^1.0.1
+  runtime_type: ^1.0.1
+  meta: ^1.9.1
 
 dev_dependencies:
   test: ^1.22.0
   lints: ^2.0.0
   nock: ^1.2.1
   mocktail: ^0.3.0
+  test_api: ^0.5.2

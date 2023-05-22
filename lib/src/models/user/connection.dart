@@ -1,6 +1,9 @@
 import 'package:nyxx/src/utils/to_string_helper/to_string_helper.dart';
 
 /// A link to an account on a service other than Discord.
+///
+/// External references:
+/// * Discord API Reference: https://discord.com/developers/docs/resources/user#connection-object
 class Connection with ToStringHelper {
   /// The ID of the account on the target service.
   final String id;
@@ -47,6 +50,9 @@ class Connection with ToStringHelper {
 }
 
 /// The type of a connection.
+///
+/// External references:
+/// * Discord API Reference: https://discord.com/developers/docs/resources/user#connection-object-services
 enum ConnectionType {
   battleNet._('battlenet', 'Battle.net'),
   ebay._('ebay', 'eBay'),
@@ -89,6 +95,9 @@ enum ConnectionType {
 }
 
 /// The visibility level of a connection.
+///
+/// External references:
+/// * Discord API Reference: https://discord.com/developers/docs/resources/user#connection-object-visibility-types
 enum ConnectionVisibility {
   none._(0),
   everyone._(1);

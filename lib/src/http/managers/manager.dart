@@ -12,10 +12,11 @@ abstract class ReadOnlyManager<T extends SnowflakeEntity<T>> {
   final Cache<T> cache;
 
   /// The client this manager belongs to.
-  final Nyxx client;
+  final NyxxRest client;
 
   /// Create a new read-only manager.
-  ReadOnlyManager(CacheConfig<T> config, this.client) : cache = Cache(config);
+  // TODO: Do we really want to use `T.toString()` as the cache identifier?
+  ReadOnlyManager(CacheConfig<T> config, this.client) : cache = Cache(T.toString(), config);
 
   /// Parse the [raw] data received from the API into an instance of the type of this manager.
   T parse(Map<String, Object?> raw);
@@ -57,12 +58,12 @@ abstract class Manager<T extends SnowflakeEntity<T>> extends ReadOnlyManager<T> 
   /// {@template ensure_cache_updated}
   /// Implementers should ensure this method updates the [cache].
   /// {@endtemplate}
-  Future<T> create(CreateBuilder<T> builder);
+  Future<T> create(covariant CreateBuilder<T> builder);
 
   /// Update the item with the given [id] in the API.
   ///
   /// {@macro ensure_cache_updated}
-  Future<T> update(Snowflake id, UpdateBuilder<T> builder);
+  Future<T> update(Snowflake id, covariant UpdateBuilder<T> builder);
 
   /// Delete the item with the given [id] from the API.
   ///

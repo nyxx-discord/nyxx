@@ -93,7 +93,7 @@ Note that these methods should update the cache (for now regardless of config, t
 Note that HTTP requests should be made using `client.httpHandler.executeSafe`.
 
 Additional methods & caches can be added to the manager for other types, for example `fetchCurrentUserConnections` in `UserManager`.
-Prefer using `CreateBuilder<XXX>` and `UpdateBuilder<XXX>` instead of a specific builder type. The type argument will guarantee only builders intended for this method are passed.
+Prefer using a specific builder type for documentation reasons.
 
 ##### 3. Adding builders
 
@@ -108,7 +108,7 @@ The `fetch` and `get` utility methods are implemented by `SnowflakeEntity`, so w
 ##### 5. Adding the manager to the client
 
 To add the manager to the client, edit `lib/src/client_options.dart` (the `RestClientOptions` class), and add a `CacheOptions<XXX>` for each manager.
-Next, edit `lib/src/manager_mixin.dart` and add the manager as a `late final` field to the client. Do **not** use a getter, as that will discard the cache every time the manager is accessed.
+Next, edit `lib/src/manager_mixin.dart` and add the manager as a getter to the client.
 
 Things to note:
 - Models (ideally the partial class) can have other managers as fields. This allows for nested structures like guilds/messages/channels

@@ -9,8 +9,10 @@ class MockSnowflakeEntity extends SnowflakeEntity<MockSnowflakeEntity> with Fake
 
 void main() {
   group('Cache', () {
+    tearDown(() => Cache.testClearAllCaches());
+
     test('stores entities', () async {
-      final cache = Cache<MockSnowflakeEntity>(CacheConfig());
+      final cache = Cache<MockSnowflakeEntity>('test', CacheConfig());
 
       final entity = MockSnowflakeEntity(id: Snowflake.zero);
 
@@ -25,7 +27,7 @@ void main() {
     });
 
     test('respects maximum size', () async {
-      final cache = Cache<MockSnowflakeEntity>(CacheConfig(maxSize: 3));
+      final cache = Cache<MockSnowflakeEntity>('test', CacheConfig(maxSize: 3));
 
       final entity1 = MockSnowflakeEntity(id: Snowflake(1));
       final entity2 = MockSnowflakeEntity(id: Snowflake(2));
@@ -43,7 +45,7 @@ void main() {
     });
 
     test('keeps most used items', () async {
-      final cache = Cache<MockSnowflakeEntity>(CacheConfig(maxSize: 3));
+      final cache = Cache<MockSnowflakeEntity>('test', CacheConfig(maxSize: 3));
 
       final entity1 = MockSnowflakeEntity(id: Snowflake(1));
       final entity2 = MockSnowflakeEntity(id: Snowflake(2));
@@ -73,7 +75,7 @@ void main() {
     });
 
     test("doesn't cache items if a filter is provided", () {
-      final cache = Cache<MockSnowflakeEntity>(CacheConfig(shouldCache: (e) => e.id.value > 3));
+      final cache = Cache<MockSnowflakeEntity>('test', CacheConfig(shouldCache: (e) => e.id.value > 3));
 
       final entity1 = MockSnowflakeEntity(id: Snowflake(1));
       final entity2 = MockSnowflakeEntity(id: Snowflake(2));
@@ -91,6 +93,16 @@ void main() {
 
       expect(cache.containsKey(entity4.id), isTrue);
       expect(cache.containsKey(entity5.id), isTrue);
+    });
+
+    test('shares resources with the same identifier', () {
+      final cache1 = Cache<MockSnowflakeEntity>('test', CacheConfig());
+      final cache2 = Cache<MockSnowflakeEntity>('test', CacheConfig());
+
+      final entity = MockSnowflakeEntity(id: Snowflake.zero);
+
+      cache1[entity.id] = entity;
+      expect(cache2[entity.id], equals(entity));
     });
   });
 }

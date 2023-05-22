@@ -2,6 +2,7 @@ import 'package:nyxx/src/client_options.dart';
 import 'package:nyxx/src/http/handler.dart';
 import 'package:nyxx/src/manager_mixin.dart';
 import 'package:nyxx/src/api_options.dart';
+import 'package:nyxx/src/models/snowflake.dart';
 
 /// The base class for clients interacting with the Discord API.
 abstract class Nyxx {
@@ -33,4 +34,18 @@ class NyxxRest with ManagerMixin implements Nyxx {
   late final HttpHandler httpHandler = HttpHandler(this);
 
   NyxxRest._(String token, this.options) : apiOptions = RestApiOptions(token: token);
+
+  /// Add the current user to the thread with the ID [id].
+  ///
+  /// External references:
+  /// * [ChannelManager.joinThread]
+  /// * Discord API Reference: https://discord.com/developers/docs/resources/channel#join-thread
+  Future<void> joinThread(Snowflake id) => channels.joinThread(id);
+
+  /// Remove the current user from the thread with the ID [id].
+  ///
+  /// External references:
+  /// * [ChannelManager.leaveThread]
+  /// * Discord API Reference: https://discord.com/developers/docs/resources/channel#leave-thread
+  Future<void> leaveThread(Snowflake id) => channels.leaveThread(id);
 }

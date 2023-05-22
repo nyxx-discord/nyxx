@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:nyxx/src/builders/builder.dart';
+import 'package:nyxx/src/builders/user.dart';
 import 'package:nyxx/src/http/managers/manager.dart';
 import 'package:nyxx/src/http/request.dart';
 import 'package:nyxx/src/http/route.dart';
@@ -84,7 +84,7 @@ class UserManager extends ReadOnlyManager<User> {
   }
 
   /// Update the current user.
-  Future<User> updateCurrentUser(UpdateBuilder<User> builder) async {
+  Future<User> updateCurrentUser(UserUpdateBuilder builder) async {
     final route = HttpRoute()..users(id: '@me');
     final request = BasicRequest(
       route,
@@ -99,7 +99,7 @@ class UserManager extends ReadOnlyManager<User> {
     return user;
   }
 
-  /// Fetch the current user's connections
+  /// Fetch the current user's connections.
   Future<List<Connection>> fetchCurrentUserConnections() async {
     final route = HttpRoute()
       ..users(id: '@me')
