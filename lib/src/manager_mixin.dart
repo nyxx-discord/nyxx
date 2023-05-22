@@ -2,6 +2,7 @@ import 'package:nyxx/src/client.dart';
 import 'package:nyxx/src/client_options.dart';
 import 'package:nyxx/src/http/managers/application_manager.dart';
 import 'package:nyxx/src/http/managers/channel_manager.dart';
+import 'package:nyxx/src/http/managers/invite_manager.dart';
 import 'package:nyxx/src/http/managers/user_manager.dart';
 import 'package:nyxx/src/http/managers/webhook_manager.dart';
 import 'package:nyxx/src/http/managers/voice_manager.dart';
@@ -25,4 +26,7 @@ mixin ManagerMixin implements Nyxx {
 
   /// A [VoiceManager] that manages voice states for this client.
   VoiceManager get voice => VoiceManager(this as NyxxRest);
+
+  /// An [InviteManager] that manages invites for this client.
+  InviteManager get invites => InviteManager(this as NyxxRest);
 }

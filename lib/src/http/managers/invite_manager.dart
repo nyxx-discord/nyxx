@@ -1,4 +1,6 @@
 import 'package:nyxx/src/client.dart';
+import 'package:nyxx/src/http/request.dart';
+import 'package:nyxx/src/http/route.dart';
 import 'package:nyxx/src/models/application.dart';
 import 'package:nyxx/src/models/channel/channel.dart';
 import 'package:nyxx/src/models/invite/invite.dart';
@@ -17,7 +19,7 @@ class InviteManager {
       code: raw['code'] as String,
       // TODO: is object
       guild: raw['guild'],
-      channel: PartialChannel(id: Snowflake.parse(raw['channel'] as String), manager: client.channels),
+      channel: PartialChannel(id: Snowflake.parse((raw['channel'] as Map<String, Object?>)['id'] as String), manager: client.channels),
       inviter: maybeParse(
         raw['inviter'],
         client.users.parse,
@@ -64,5 +66,25 @@ class InviteManager {
       isTemporary: raw['temporary'] as bool,
       createdAt: DateTime.parse(raw['created_at'] as String),
     );
+  }
+
+  Future<Invite> fetch(String code, {bool? withCounts, bool? withExpiration, Snowflake? guildSchedueledEventId}) async {
+    final route = HttpRoute()..invites(id: code);
+    final request = BasicRequest(route, queryParameters: {
+      if (withCounts != null) 'with_counts': withCounts.toString(),
+      if (withExpiration != null) 'with_expiration': withExpiration.toString(),
+      if (guildSchedueledEventId != null) 'guild_scheduled_event_id': guildSchedueledEventId.toString(),
+    });
+
+    final response = await client.httpHandler.executeSafe(request);
+    return parse(response.jsonBody as Map<String, Object?>);
+  }
+
+  Future<Invite> delete(String code) async {
+    final route = HttpRoute()..invites(id: code);
+    final request = BasicRequest(route, method: 'DELETE');
+
+    final response = await client.httpHandler.executeSafe(request);
+    return parse(response.jsonBody as Map<String, Object?>);
   }
 }
