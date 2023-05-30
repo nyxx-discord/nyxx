@@ -39,4 +39,5 @@ void main() async {
   // documentation improvements could be possible.
 
   // This all takes time though so... what do you think?
+  print(await client.guilds.fetch(Snowflake(1033681997136146462)));
 }

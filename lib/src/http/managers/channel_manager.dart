@@ -357,6 +357,7 @@ class ChannelManager extends ReadOnlyManager<Channel> {
       flags: Flags<Never>(raw['flags'] as int),
       threadId: Snowflake.parse(raw['id'] as String),
       userId: Snowflake.parse(raw['user_id'] as String),
+      member: maybeParse(raw['member'], client.guilds[Snowflake.zero].members.parse),
     );
   }
 
@@ -364,7 +365,7 @@ class ChannelManager extends ReadOnlyManager<Channel> {
     return ThreadList(
       threads: parseMany(raw['threads'] as List, parse).cast<Thread>(),
       members: parseMany(raw['members'] as List, parseThreadMember),
-      hasMore: raw['has_more'] as bool,
+      hasMore: raw['has_more'] as bool? ?? false,
     );
   }
 

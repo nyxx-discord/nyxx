@@ -6,7 +6,7 @@ import 'package:nyxx/src/models/snowflake.dart';
 import 'package:nyxx/src/models/snowflake_entity/snowflake_entity.dart';
 
 /// The configuration for a [Cache] instance.
-class CacheConfig<T extends SnowflakeEntity<T>> {
+class CacheConfig<T> {
   /// The maximum amount of items allowed in the cache.
   final int? maxSize;
 
@@ -23,7 +23,8 @@ class CacheConfig<T extends SnowflakeEntity<T>> {
 }
 
 /// A simple cache for [SnowflakeEntity]s.
-class Cache<T extends SnowflakeEntity<T>> with MapMixin<Snowflake, T> {
+class Cache<T> with MapMixin<Snowflake, T> {
+  // TODO: These are global. Caches should be per client.
   static final Map<String, SplayTreeMap<Snowflake, dynamic>> _stores = HashMap();
   static final Map<String, HashMap<Snowflake, int>> _counts = HashMap();
 
@@ -79,7 +80,13 @@ class Cache<T extends SnowflakeEntity<T>> with MapMixin<Snowflake, T> {
 
   @override
   void operator []=(Snowflake key, T value) {
-    assert(key == value.id, 'Mismatched entity key in cache');
+    assert(() {
+      try {
+        return (value as dynamic).id == key;
+      } on NoSuchMethodError {
+        return true;
+      }
+    }(), 'Mismatched entity key in cache');
 
     if (config.shouldCache?.call(value) == false) {
       return;

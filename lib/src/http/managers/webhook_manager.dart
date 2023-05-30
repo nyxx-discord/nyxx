@@ -10,6 +10,7 @@ import 'package:nyxx/src/http/managers/message_manager.dart';
 import 'package:nyxx/src/http/request.dart';
 import 'package:nyxx/src/http/route.dart';
 import 'package:nyxx/src/models/channel/channel.dart';
+import 'package:nyxx/src/models/guild/guild.dart';
 import 'package:nyxx/src/models/message/message.dart';
 import 'package:nyxx/src/models/snowflake.dart';
 import 'package:nyxx/src/models/webhook.dart';
@@ -36,6 +37,13 @@ class WebhookManager extends Manager<Webhook> {
       avatarHash: raw['avatar'] as String?,
       token: raw['token'] as String?,
       applicationId: maybeParse(raw['application_id'], Snowflake.parse),
+      sourceGuild: maybeParse(
+        raw['source_guild'],
+        (Map<String, Object?> raw) => PartialGuild(
+          id: Snowflake.parse(raw['id'] as String),
+          manager: client.guilds,
+        ),
+      ),
       sourceChannel: maybeParse(
         raw['source_channel'],
         (Map<String, Object?> raw) => PartialChannel(

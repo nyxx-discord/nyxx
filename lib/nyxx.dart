@@ -6,6 +6,7 @@ export 'src/builders/builder.dart' show Builder, CreateBuilder, UpdateBuilder;
 export 'src/builders/image.dart' show ImageBuilder;
 export 'src/builders/user.dart' show UserUpdateBuilder;
 export 'src/builders/permission_overwrite.dart' show PermissionOverwriteBuilder;
+export 'src/builders/channel/channel_position.dart' show ChannelPositionBuilder;
 export 'src/builders/channel/forum_tag.dart' show ForumTagBuilder;
 export 'src/builders/channel/group_dm.dart' show GroupDmUpdateBuilder;
 export 'src/builders/channel/guild_channel.dart'
@@ -15,14 +16,28 @@ export 'src/builders/channel/guild_channel.dart'
         GuildChannelUpdateBuilder,
         GuildTextChannelUpdateBuilder,
         GuildVoiceChannelUpdateBuilder,
-        GuildStageChannelUpdateBuilder;
+        GuildStageChannelUpdateBuilder,
+        ForumChannelBuilder,
+        GuildAnnouncementChannelBuilder,
+        GuildCategoryBuilder,
+        GuildCategoryUpdateBuilder,
+        GuildChannelBuilder,
+        GuildStageChannelBuilder,
+        GuildTextChannelBuilder,
+        GuildVoiceChannelBuilder;
 export 'src/builders/channel/thread.dart' show ThreadUpdateBuilder, ForumThreadBuilder, ThreadBuilder, ThreadFromMessageBuilder;
 export 'src/builders/message/allowed_mentions.dart' show AllowedMentions;
 export 'src/builders/message/attachment.dart' show AttachmentBuilder;
 export 'src/builders/message/message.dart' show MessageBuilder, MessageUpdateBuilder;
 export 'src/builders/webhook.dart' show WebhookBuilder, WebhookUpdateBuilder;
+export 'src/builders/guild/guild.dart' show GuildBuilder, GuildUpdateBuilder;
+export 'src/builders/guild/member.dart' show CurrentMemberUpdateBuilder, MemberBuilder, MemberUpdateBuilder;
+export 'src/builders/guild/welcome_screen.dart' show WelcomeScreenUpdateBuilder;
+export 'src/builders/guild/widget.dart' show WidgetSettingsUpdateBuilder;
+export 'src/builders/role.dart' show RoleBuilder, RoleUpdateBuilder;
+export 'src/builders/voice.dart' show CurrentUserVoiceStateUpdateBuilder, VoiceStateUpdateBuilder;
 
-export 'src/cache/cache.dart' show Cache;
+export 'src/cache/cache.dart' show Cache, CacheConfig;
 
 export 'src/http/bucket.dart' show HttpBucket;
 export 'src/http/handler.dart' show HttpHandler;
@@ -34,8 +49,11 @@ export 'src/http/managers/channel_manager.dart' show ChannelManager;
 export 'src/http/managers/message_manager.dart' show MessageManager;
 export 'src/http/managers/user_manager.dart' show UserManager;
 export 'src/http/managers/webhook_manager.dart' show WebhookManager;
+export 'src/http/managers/guild_manager.dart' show GuildManager;
 export 'src/http/managers/application_manager.dart' show ApplicationManager;
 export 'src/http/managers/voice_manager.dart' show VoiceManager;
+export 'src/http/managers/member_manager.dart' show MemberManager;
+export 'src/http/managers/role_manager.dart' show RoleManager;
 
 export 'src/models/discord_color.dart' show DiscordColor;
 export 'src/models/locale.dart' show Locale;
@@ -76,9 +94,29 @@ export 'src/models/message/reaction.dart' show Reaction;
 export 'src/models/message/reference.dart' show MessageReference;
 export 'src/models/message/role_subscription_data.dart' show RoleSubscriptionData;
 export 'src/models/webhook.dart' show PartialWebhook, Webhook, WebhookType;
+export 'src/models/guild/ban.dart' show Ban;
+export 'src/models/guild/guild_preview.dart' show GuildPreview;
+export 'src/models/guild/guild_widget.dart' show GuildWidget, WidgetSettings, WidgetImageStyle;
+export 'src/models/guild/guild.dart'
+    show
+        Guild,
+        GuildFeatures,
+        PartialGuild,
+        SystemChannelFlags,
+        ExplicitContentFilterLevel,
+        MessageNotificationLevel,
+        MfaLevel,
+        NsfwLevel,
+        PremiumTier,
+        VerificationLevel;
+export 'src/models/guild/integration.dart' show Integration, IntegrationAccount, IntegrationApplication, IntegrationExpireBehavior;
+export 'src/models/guild/member.dart' show Member, MemberFlags, PartialMember;
+export 'src/models/guild/onboarding.dart' show Onboarding, OnboardingPrompt, OnboardingPromptOption, OnboardingPromptType;
+export 'src/models/guild/welcome_screen.dart' show WelcomeScreen, WelcomeScreenChannel;
 export 'src/models/application.dart' show Application, ApplicationFlags, InstallationParameters, PartialApplication;
 export 'src/models/voice/voice_state.dart' show VoiceState;
 export 'src/models/voice/voice_region.dart' show VoiceRegion;
+export 'src/models/role.dart' show PartialRole, Role, RoleTags;
 
 export 'src/utils/flags.dart' show Flag, Flags;
 

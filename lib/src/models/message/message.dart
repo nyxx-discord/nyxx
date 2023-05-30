@@ -9,6 +9,7 @@ import 'package:nyxx/src/models/message/author.dart';
 import 'package:nyxx/src/models/message/reference.dart';
 import 'package:nyxx/src/models/message/reaction.dart';
 import 'package:nyxx/src/models/message/role_subscription_data.dart';
+import 'package:nyxx/src/models/role.dart';
 import 'package:nyxx/src/models/snowflake.dart';
 import 'package:nyxx/src/models/snowflake_entity/snowflake_entity.dart';
 import 'package:nyxx/src/models/user/user.dart';
@@ -27,17 +28,25 @@ class PartialMessage extends SnowflakeEntity<Message> with SnowflakeEntityMixin<
   /// {@macro partial_message}
   PartialMessage({required super.id, required this.manager});
 
+  /// {@template message_update}
+  /// Update this message with new content, and return the new message.
+  /// {@endtemplate}
   Future<Message> update(MessageUpdateBuilder builder) => manager.update(id, builder);
 
+  /// {@macro message_update}
   // An often-used alias to update
   Future<Message> edit(MessageUpdateBuilder builder) => update(builder);
 
+  /// Delete this message.
   Future<void> delete({String? auditLogReason}) => manager.delete(id, auditLogReason: auditLogReason);
 
+  /// Crosspost this message to all channels following the channel this message was sent in.
   Future<void> crosspost() => manager.crosspost(id);
 
+  /// Pin this message.
   Future<void> pin({String? auditLogReason}) => manager.pin(id, auditLogReason: auditLogReason);
 
+  /// Unpin this message.
   Future<void> unpin({String? auditLogReason}) => manager.unpin(id, auditLogReason: auditLogReason);
 }
 
@@ -78,8 +87,7 @@ class Message extends PartialMessage {
   /// A list of users specifically mentioned in this message.
   final List<User> mentions;
 
-  // TODO
-  //final List<Role> roleMentions;
+  final List<Role> roleMentions;
 
   /// A list of channels specifically mentioned in this message.
   final List<ChannelMention> channelMentions;
@@ -159,6 +167,7 @@ class Message extends PartialMessage {
     required this.isTts,
     required this.mentionsEveryone,
     required this.mentions,
+    required this.roleMentions,
     required this.channelMentions,
     required this.attachments,
     required this.embeds,

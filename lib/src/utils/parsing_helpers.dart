@@ -22,7 +22,7 @@ T? maybeParse<T, U>(dynamic object, T Function(U) parse) {
 List<T> parseMany<T, U>(List<dynamic> objects, [T Function(U)? parse]) {
   if (parse == null) {
     assert(
-      !RuntimeType<U>().isSubtypeOf(RuntimeType<T>()),
+      !RuntimeType<U>.allowingDynamic().isSubtypeOf(RuntimeType<T>()),
       'Missing parse function ($U is not $T)',
     );
 

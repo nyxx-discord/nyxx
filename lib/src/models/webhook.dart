@@ -1,6 +1,7 @@
 import 'package:nyxx/src/builders/message/message.dart';
 import 'package:nyxx/src/builders/webhook.dart';
 import 'package:nyxx/src/models/channel/channel.dart';
+import 'package:nyxx/src/models/guild/guild.dart';
 import 'package:nyxx/src/models/message/message.dart';
 import 'package:nyxx/src/models/snowflake.dart';
 import 'package:nyxx/src/models/snowflake_entity/snowflake_entity.dart';
@@ -103,8 +104,7 @@ class Webhook extends PartialWebhook {
   /// The ID of the application that created this webhook.
   final Snowflake? applicationId;
 
-  // TODO
-  // final PartialGuild? sourceGuild;
+  final PartialGuild? sourceGuild;
 
   /// If this is a [WebhookType.channelFollower], this webhook's source channel.
   final PartialChannel? sourceChannel;
@@ -124,6 +124,7 @@ class Webhook extends PartialWebhook {
     required this.avatarHash,
     required this.token,
     required this.applicationId,
+    required this.sourceGuild,
     required this.sourceChannel,
     required this.url,
   });

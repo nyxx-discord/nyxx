@@ -1,7 +1,9 @@
+import 'dart:collection';
+
 import 'package:nyxx/src/utils/to_string_helper/to_string_helper.dart';
 
 /// A set of flags that can be either enabled or disabled.
-class Flags<T extends Flags<T>> with ToStringHelper {
+class Flags<T extends Flags<T>> extends IterableBase<Flag<T>> with ToStringHelper {
   /// The integer value encoding the flags as a bitfield.
   final int value;
 
@@ -10,6 +12,9 @@ class Flags<T extends Flags<T>> with ToStringHelper {
 
   /// Returns `true` if this [Flags] has the [flag] enabled, `false` otherwise.
   bool has(Flag<T> flag) => value & flag.value != 0;
+
+  @override
+  Iterator<Flag<T>> get iterator => _FlagIterator(this);
 
   /// Return a set of flags that has all the flags set in either `this` or [other].
   Flags<T> operator |(Flags<T> other) => Flags(value | other.value);
@@ -34,4 +39,34 @@ class Flag<T extends Flags<T>> extends Flags<T> {
 
   @override
   String toString() => 'Flag<$T>($value)';
+}
+
+class _FlagIterator<T extends Flags<T>> implements Iterator<Flag<T>> {
+  final Flags<T> source;
+
+  _FlagIterator(this.source);
+
+  static const maxOffset = 64;
+
+  int? offset;
+
+  @override
+  bool moveNext() {
+    do {
+      if (offset == null) {
+        offset = 0;
+      } else {
+        offset = offset! + 1;
+      }
+
+      if (offset! > maxOffset) {
+        return false;
+      }
+    } while (!source.has(current));
+
+    return true;
+  }
+
+  @override
+  Flag<T> get current => Flag<T>.fromOffset(offset!);
 }
