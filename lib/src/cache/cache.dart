@@ -24,6 +24,7 @@ class CacheConfig<T> {
 
 /// A simple cache for [SnowflakeEntity]s.
 class Cache<T> with MapMixin<Snowflake, T> {
+  // TODO: These are global. Caches should be per client.
   static final Map<String, SplayTreeMap<Snowflake, dynamic>> _stores = HashMap();
   static final Map<String, HashMap<Snowflake, int>> _counts = HashMap();
 

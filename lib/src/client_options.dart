@@ -25,12 +25,16 @@ class RestClientOptions implements ClientOptions {
   /// The [CacheConfig] to use for the cache of the [NyxxRest.webhooks] manager.
   final CacheConfig<Webhook> webhookCacheConfig;
 
+  /// The [CacheConfig] to use for the cache of the [NyxxRest.guilds] manager.
   final CacheConfig<Guild> guildCacheConfig;
 
+  /// The [CacheConfig] to use for the [Guild.members] manager.
   final CacheConfig<Member> memberCacheConfig;
 
+  /// The [CacheConfig] to use for the [Guild.roles] manager.
   final CacheConfig<Role> roleCacheConfig;
 
+  /// The [CacheConfig] to use for [Ban]s in the [NyxxRest.guilds] manager.
   final CacheConfig<Ban> banCacheConfig;
 
   /// Create a new [RestClientOptions].

@@ -9,7 +9,9 @@ import 'package:nyxx/src/models/permissions.dart';
 import 'package:nyxx/src/models/snowflake.dart';
 import 'package:nyxx/src/utils/parsing_helpers.dart';
 
+/// A manager for [Member]s.
 class MemberManager extends Manager<Member> {
+  /// The ID of the [Guild] this manager is for.
   final Snowflake guildId;
 
   MemberManager(super.config, super.client, {required this.guildId});
@@ -51,6 +53,7 @@ class MemberManager extends Manager<Member> {
     return member;
   }
 
+  /// List the members in the guild.
   Future<List<Member>> list({int? limit, Snowflake? after}) async {
     final route = HttpRoute()
       ..guilds(id: guildId.toString())
@@ -108,6 +111,7 @@ class MemberManager extends Manager<Member> {
     cache.remove(id);
   }
 
+  /// Search for members whose username begins with [query].
   Future<List<Member>> search(String query, {int? limit}) async {
     final route = HttpRoute()
       ..guilds(id: guildId.toString())
@@ -119,6 +123,7 @@ class MemberManager extends Manager<Member> {
     return parseMany(response.jsonBody as List, parse);
   }
 
+  /// Update the current member in the guild.
   Future<Member> updateCurrentMember(CurrentMemberUpdateBuilder builder) async {
     final route = HttpRoute()
       ..guilds(id: guildId.toString())
@@ -132,6 +137,7 @@ class MemberManager extends Manager<Member> {
     return member;
   }
 
+  /// Add a role to a member in the guild.
   Future<void> addRole(Snowflake id, Snowflake roleId, {String? auditLogReason}) async {
     final route = HttpRoute()
       ..guilds(id: guildId.toString())
@@ -142,6 +148,7 @@ class MemberManager extends Manager<Member> {
     await client.httpHandler.executeSafe(request);
   }
 
+  /// Remove a role from a member in the guild.
   Future<void> removeRole(Snowflake id, Snowflake roleId, {String? auditLogReason}) async {
     final route = HttpRoute()
       ..guilds(id: guildId.toString())

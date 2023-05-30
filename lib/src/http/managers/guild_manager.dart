@@ -29,15 +29,18 @@ import 'package:nyxx/src/models/voice/voice_region.dart';
 import 'package:nyxx/src/utils/flags.dart';
 import 'package:nyxx/src/utils/parsing_helpers.dart';
 
+/// A manager for [Guild]s.
 class GuildManager extends Manager<Guild> {
+  /// A cache for [Ban]s in this manager.
   final Cache<Ban> banCache;
 
+  /// Create a new [GuildManager].
   GuildManager(super.config, super.client, {required CacheConfig<Ban> banConfig}) : banCache = Cache('Ban', banConfig);
 
   @override
   PartialGuild operator [](Snowflake id) => PartialGuild(id: id, manager: this);
 
-  @override
+  /// Parse an [Guild] from [raw].@override
   Guild parse(Map<String, Object?> raw) {
     return Guild(
       id: Snowflake.parse(raw['id'] as String),
@@ -101,6 +104,7 @@ class GuildManager extends Manager<Guild> {
     'NEWS': GuildFeatures.news,
     'PARTNERED': GuildFeatures.partnered,
     'PREVIEW_ENABLED': GuildFeatures.previewEnabled,
+    'RAID_ALERTS_DISABLED': GuildFeatures.raidAlertsDisabled,
     'ROLE_ICONS': GuildFeatures.roleIcons,
     'ROLE_SUBSCRIPTIONS_AVAILABLE_FOR_PURCHASE': GuildFeatures.roleSubscriptionsAvailableForPurchase,
     'ROLE_SUBSCRIPTIONS_ENABLED': GuildFeatures.roleSubscriptionsEnabled,
@@ -115,25 +119,30 @@ class GuildManager extends Manager<Guild> {
     for (final entry in _nameToGuildFeature.entries) entry.value: entry.key,
   };
 
+  /// Parse an [GuildFeatures] from [raw]./// Parse [GuildFeatures] from [raw].
   GuildFeatures parseGuildFeatures(List<Object?> raw) {
     final featureFlags = parseMany(raw, parseGuildFeature);
 
     return GuildFeatures(featureFlags.fold(0, (value, element) => value | element.value));
   }
 
+  /// Parse a [Flag]<GuildFeature> from [raw].
   Flag<GuildFeatures> parseGuildFeature(String raw) {
     // TODO: Add support for parsing unknown guild features.
     return _nameToGuildFeature[raw]!; // ?? Flag<GuildFeatures>(0);
   }
 
+  /// Serialize [source] to a [List]<String>.
   static List<String> serializeGuildFeatures(Flags<GuildFeatures> source) {
     return source.map(serializeGuildFeature).toList();
   }
 
+  /// Serialize [source] to a [String].
   static String serializeGuildFeature(Flag<GuildFeatures> source) {
     return _guildFeatureToName[source]!;
   }
 
+  /// Parse a [WelcomeScreen] from [raw].
   WelcomeScreen parseWelcomeScreen(Map<String, Object?> raw) {
     return WelcomeScreen(
       description: raw['description'] as String?,
@@ -141,6 +150,7 @@ class GuildManager extends Manager<Guild> {
     );
   }
 
+  /// Parse a [WelcomeScreenChannel] from [raw].
   WelcomeScreenChannel parseWelcomeScreenChannel(Map<String, Object?> raw) {
     return WelcomeScreenChannel(
       channelId: Snowflake.parse(raw['channel_id'] as String),
@@ -150,6 +160,7 @@ class GuildManager extends Manager<Guild> {
     );
   }
 
+  /// Parse a [GuildPreview] from [raw].
   GuildPreview parseGuildPreview(Map<String, Object?> raw) {
     return GuildPreview(
       id: Snowflake.parse(raw['id'] as String),
@@ -165,6 +176,7 @@ class GuildManager extends Manager<Guild> {
     );
   }
 
+  /// Parse a [Ban] from [raw].
   Ban parseBan(Map<String, Object?> raw) {
     return Ban(
       reason: raw['reason'] as String,
@@ -172,6 +184,7 @@ class GuildManager extends Manager<Guild> {
     );
   }
 
+  /// Parse an [Integration] from [raw].
   Integration parseIntegration(Map<String, Object?> raw) {
     return Integration(
       id: Snowflake.parse(raw['id'] as String),
@@ -193,6 +206,7 @@ class GuildManager extends Manager<Guild> {
     );
   }
 
+  /// Parse an [IntegrationAccount] from [raw].
   IntegrationAccount parseIntegrationAccount(Map<String, Object?> raw) {
     return IntegrationAccount(
       id: Snowflake.parse(raw['id'] as String),
@@ -200,6 +214,7 @@ class GuildManager extends Manager<Guild> {
     );
   }
 
+  /// Parse an [IntegrationApplication] from [raw].
   IntegrationApplication parseIntegrationApplication(Map<String, Object?> raw) {
     return IntegrationApplication(
       id: Snowflake.parse(raw['id'] as String),
@@ -210,6 +225,7 @@ class GuildManager extends Manager<Guild> {
     );
   }
 
+  /// Parse a [WidgetSettings] from [raw].
   WidgetSettings parseWidgetSettings(Map<String, Object?> raw) {
     return WidgetSettings(
       isEnabled: raw['enabled'] as bool,
@@ -217,6 +233,7 @@ class GuildManager extends Manager<Guild> {
     );
   }
 
+  /// Parse a [GuildWidget] from [raw].
   GuildWidget parseGuildWidget(Map<String, Object?> raw) {
     return GuildWidget(
       guildId: Snowflake.parse(raw['id'] as String),
@@ -234,6 +251,7 @@ class GuildManager extends Manager<Guild> {
     );
   }
 
+  /// Parse an [Onboarding] from [raw].
   Onboarding parseOnboarding(Map<String, Object?> raw) {
     return Onboarding(
       guildId: Snowflake.parse(raw['guild_id'] as String),
@@ -243,6 +261,7 @@ class GuildManager extends Manager<Guild> {
     );
   }
 
+  /// Parse an [OnboardingPrompt] from [raw].
   OnboardingPrompt parseOnboardingPrompt(Map<String, Object?> raw) {
     return OnboardingPrompt(
       id: Snowflake.parse(raw['id'] as String),
@@ -255,6 +274,7 @@ class GuildManager extends Manager<Guild> {
     );
   }
 
+  /// Parse an [OnboardingPromptOption] from [raw].
   OnboardingPromptOption parseOnboardingPromptOption(Map<String, Object?> raw) {
     return OnboardingPromptOption(
       id: Snowflake.parse(raw['id'] as String),
@@ -310,6 +330,7 @@ class GuildManager extends Manager<Guild> {
     cache.remove(id);
   }
 
+  /// Fetch a guild's preview.
   Future<GuildPreview> fetchGuildPreview(Snowflake id) async {
     final route = HttpRoute()
       ..guilds(id: id.toString())
@@ -320,6 +341,7 @@ class GuildManager extends Manager<Guild> {
     return parseGuildPreview(response.jsonBody as Map<String, Object?>);
   }
 
+  /// Fetch the channels in a guild.
   Future<List<GuildChannel>> fetchGuildChannels(Snowflake id) async {
     final route = HttpRoute()
       ..guilds(id: id.toString())
@@ -333,6 +355,7 @@ class GuildManager extends Manager<Guild> {
     return channels;
   }
 
+  /// Create a channel in a guild.
   Future<T> createGuildChannel<T extends GuildChannel>(Snowflake id, GuildChannelBuilder<T> builder, {String? auditLogReason}) async {
     final route = HttpRoute()
       ..guilds(id: id.toString())
@@ -346,6 +369,7 @@ class GuildManager extends Manager<Guild> {
     return channel;
   }
 
+  ///Update the positions of channels in a guild.
   Future<void> updateChannelPositions(Snowflake id, List<ChannelPositionBuilder> positions) async {
     final route = HttpRoute()
       ..guilds(id: id.toString())
@@ -355,6 +379,7 @@ class GuildManager extends Manager<Guild> {
     await client.httpHandler.executeSafe(request);
   }
 
+  /// List the active threads in a guild.
   Future<ThreadList> listActiveThreads(Snowflake id) async {
     final route = HttpRoute()
       ..guilds(id: id.toString())
@@ -369,6 +394,7 @@ class GuildManager extends Manager<Guild> {
     return list;
   }
 
+  /// List the bans in a guild.
   Future<List<Ban>> listBans(Snowflake id, {int? limit, Snowflake? after, Snowflake? before}) async {
     final route = HttpRoute()
       ..guilds(id: id.toString())
@@ -382,6 +408,7 @@ class GuildManager extends Manager<Guild> {
     return bans;
   }
 
+  /// Fetch a ban in a guild.
   Future<Ban> fetchBan(Snowflake id, Snowflake userId) async {
     final route = HttpRoute()
       ..guilds(id: id.toString())
@@ -395,6 +422,7 @@ class GuildManager extends Manager<Guild> {
     return ban;
   }
 
+  /// Create a ban in a guild.
   Future<void> createBan(Snowflake id, Snowflake userId, {Duration? deleteMessages, String? auditLogReason}) async {
     final route = HttpRoute()
       ..guilds(id: id.toString())
@@ -411,6 +439,7 @@ class GuildManager extends Manager<Guild> {
     await client.httpHandler.executeSafe(request);
   }
 
+  /// Delete a ban in a guild.
   Future<void> deleteBan(Snowflake id, Snowflake userId, {String? auditLogReason}) async {
     final route = HttpRoute()
       ..guilds(id: id.toString())
@@ -420,6 +449,7 @@ class GuildManager extends Manager<Guild> {
     await client.httpHandler.executeSafe(request);
   }
 
+  /// Update a guild's MFA level.
   Future<MfaLevel> updateMfaLevel(Snowflake id, MfaLevel level, {String? auditLogReason}) async {
     final route = HttpRoute()
       ..guilds(id: id.toString())
@@ -435,6 +465,7 @@ class GuildManager extends Manager<Guild> {
     return MfaLevel.parse(response.jsonBody as int);
   }
 
+  /// Fetch the prune count in a guild.
   Future<int> fetchPruneCount(Snowflake id, {int? days, List<Snowflake>? roleIds}) async {
     final route = HttpRoute()
       ..guilds(id: id.toString())
@@ -448,6 +479,7 @@ class GuildManager extends Manager<Guild> {
     return (response.jsonBody as Map<String, Object?>)['pruned'] as int;
   }
 
+  /// Start a prune in a guild.
   Future<int?> startGuildPrune(
     Snowflake id, {
     int? days,
@@ -473,6 +505,7 @@ class GuildManager extends Manager<Guild> {
     return (response.jsonBody as Map<String, Object?>)['pruned'] as int?;
   }
 
+  /// List the voice regions in a guild.
   Future<List<VoiceRegion>> listVoiceRegions(Snowflake id) async {
     final route = HttpRoute()
       ..guilds(id: id.toString())
@@ -486,6 +519,7 @@ class GuildManager extends Manager<Guild> {
   // TODO
   //Future<List<Invite>> listInvites(Snowflake id) async { ... }
 
+  /// List the integrations in a guild.
   Future<List<Integration>> listIntegrations(Snowflake id) async {
     final route = HttpRoute()
       ..guilds(id: id.toString())
@@ -496,6 +530,7 @@ class GuildManager extends Manager<Guild> {
     return parseMany(response.jsonBody as List, parseIntegration);
   }
 
+  /// Delete an integration from a guild.
   Future<void> deleteIntegration(Snowflake id, Snowflake integrationId, {String? auditLogReason}) async {
     final route = HttpRoute()
       ..guilds(id: id.toString())
@@ -505,6 +540,7 @@ class GuildManager extends Manager<Guild> {
     await client.httpHandler.executeSafe(request);
   }
 
+  /// Fetch a guild's widget settings.
   Future<WidgetSettings> fetchWidgetSettings(Snowflake id) async {
     final route = HttpRoute()
       ..guilds(id: id.toString())
@@ -515,6 +551,7 @@ class GuildManager extends Manager<Guild> {
     return parseWidgetSettings(response.jsonBody as Map<String, Object?>);
   }
 
+  /// Update a guild's widget settings.
   Future<WidgetSettings> updateWidgetSettings(Snowflake id, WidgetSettingsUpdateBuilder builder, {String? auditLogReason}) async {
     final route = HttpRoute()
       ..guilds(id: id.toString())
@@ -525,6 +562,7 @@ class GuildManager extends Manager<Guild> {
     return parseWidgetSettings(response.jsonBody as Map<String, Object?>);
   }
 
+  /// Fetch a guild's widget.
   Future<GuildWidget> fetchGuildWidget(Snowflake id) async {
     final route = HttpRoute()
       ..guilds(id: id.toString())
@@ -538,6 +576,7 @@ class GuildManager extends Manager<Guild> {
   // TODO
   //Future<PartialInvite> fetchVanityUrl(Snowflake id) async { ... }
 
+  /// Fetch the image for a guild's widget.
   Future<Uint8List> fetchGuildWidgetImage(Snowflake id, {WidgetImageStyle? style}) async {
     final route = HttpRoute()
       ..guilds(id: id.toString())
@@ -552,6 +591,7 @@ class GuildManager extends Manager<Guild> {
     return response.body;
   }
 
+  /// Fetch a guild's welcome screen.
   Future<WelcomeScreen> fetchWelcomeScreen(Snowflake id) async {
     final route = HttpRoute()
       ..guilds(id: id.toString())
@@ -562,6 +602,7 @@ class GuildManager extends Manager<Guild> {
     return parseWelcomeScreen(response.jsonBody as Map<String, Object?>);
   }
 
+  /// Update a guild's welcome screen.
   Future<WelcomeScreen> updateWelcomeScreen(Snowflake id, WelcomeScreenUpdateBuilder builder, {String? auditLogReason}) async {
     final route = HttpRoute()
       ..guilds(id: id.toString())
@@ -572,6 +613,7 @@ class GuildManager extends Manager<Guild> {
     return parseWelcomeScreen(response.jsonBody as Map<String, Object?>);
   }
 
+  /// Fetch a guild's onboarding.
   Future<Onboarding> fetchOnboarding(Snowflake id) async {
     final route = HttpRoute()
       ..guilds(id: id.toString())
@@ -582,6 +624,7 @@ class GuildManager extends Manager<Guild> {
     return parseOnboarding(response.jsonBody as Map<String, Object?>);
   }
 
+  /// Update the current user's voice state in a guild.
   Future<void> updateCurrentUserVoiceState(Snowflake id, CurrentUserVoiceStateUpdateBuilder builder) async {
     final route = HttpRoute()
       ..guilds(id: id.toString())
@@ -591,6 +634,7 @@ class GuildManager extends Manager<Guild> {
     await client.httpHandler.executeSafe(request);
   }
 
+  /// Update a member's voice state in a guild.
   Future<void> updateVoiceState(Snowflake id, Snowflake userId, VoiceStateUpdateBuilder builder) async {
     final route = HttpRoute()
       ..guilds(id: id.toString())

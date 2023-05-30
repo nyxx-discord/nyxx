@@ -21,6 +21,7 @@ mixin ManagerMixin implements Nyxx {
   /// A [WebhookManager] that manages webhooks for this client.
   WebhookManager get webhooks => WebhookManager(options.webhookCacheConfig, this as NyxxRest);
 
+  /// A [GuildManager] that manages guilds for this client.
   GuildManager get guilds => GuildManager(options.guildCacheConfig, this as NyxxRest, banConfig: options.banCacheConfig);
 
   /// An [ApplicationManager] that manages applications for this client.

@@ -10,9 +10,12 @@ import 'package:nyxx/src/models/role.dart';
 import 'package:nyxx/src/models/snowflake.dart';
 import 'package:nyxx/src/utils/parsing_helpers.dart';
 
+/// A manager for [Role]s.
 class RoleManager extends Manager<Role> {
+  /// The ID of the guild this manager is for.
   final Snowflake guildId;
 
+  /// Create a new [RoleManager].
   RoleManager(super.config, super.client, {required this.guildId});
 
   @override
@@ -35,6 +38,7 @@ class RoleManager extends Manager<Role> {
     );
   }
 
+  /// Parse [RoleTags] from [raw].
   RoleTags parseRoleTags(Map<String, Object?> raw) {
     return RoleTags(
       botId: maybeParse(raw['bot_id'], Snowflake.parse),
@@ -43,6 +47,7 @@ class RoleManager extends Manager<Role> {
     );
   }
 
+  /// List the roles in this guild.
   Future<List<Role>> list() async {
     final route = HttpRoute()
       ..guilds(id: guildId.toString())
@@ -107,6 +112,7 @@ class RoleManager extends Manager<Role> {
     cache.remove(id);
   }
 
+  /// Update the positions of the roles in this guild.
   // TODO: This may need to be converted to a builder in the future.
   Future<List<Role>> updatePositions(Map<Snowflake, int> positions, {String? auditLogReason}) async {
     final route = HttpRoute()

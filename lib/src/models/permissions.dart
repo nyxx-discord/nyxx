@@ -263,5 +263,6 @@ class Permissions extends Flags<Permissions> {
   /// Whether this set of permissions has the [useSoundboard] permission.
   bool get canUseSoundboard => has(useSoundboard);
 
+  /// Create a new [Permissions] from a permissions value.
   const Permissions(super.value);
 }
