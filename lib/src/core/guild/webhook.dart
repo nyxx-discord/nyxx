@@ -79,7 +79,7 @@ abstract class IWebhook implements SnowflakeEntity, IMessageAuthor {
   Future<IMessage?> execute(MessageBuilder builder, {bool wait = true, Snowflake? threadId, String? threadName, String? avatarUrl, String? username});
 
   @override
-  String avatarUrl({String format = 'webp', int? size, bool animated = true});
+  String avatarUrl({String format = 'webp', int? size, bool animated = false});
 
   /// Edits the webhook.
   Future<IWebhook> edit({String? name, SnowflakeEntity? channel, AttachmentBuilder? avatarAttachment, String? auditReason});
@@ -187,7 +187,7 @@ class Webhook extends SnowflakeEntity implements IWebhook {
           .executeWebhook(id, builder, token: token, threadId: threadId, username: username, wait: wait, avatarUrl: avatarUrl, threadName: threadName);
 
   @override
-  String avatarUrl({String format = 'webp', int? size, bool animated = true}) {
+  String avatarUrl({String format = 'webp', int? size, bool animated = false}) {
     if (avatarHash == null) {
       return client.cdnHttpEndpoints.defaultAvatar(defaultAvatarId);
     }
