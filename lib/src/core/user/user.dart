@@ -161,7 +161,7 @@ class User extends SnowflakeEntity implements IUser {
   @override
   FutureOr<IDMChannel> get dmChannel {
     try {
-      return client.channels.values.firstWhere((item) => item is IDMChannel && item.participants.contains(this)) as Future<IDMChannel>;
+      return client.channels.values.firstWhere((item) => item is IDMChannel && item.participants.contains(this)) as IDMChannel;
     } on StateError {
       return client.httpEndpoints.createDMChannel(id);
     }
