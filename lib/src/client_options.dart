@@ -49,3 +49,16 @@ class RestClientOptions implements ClientOptions {
     this.banCacheConfig = const CacheConfig(),
   });
 }
+
+class GatewayClientOptions extends RestClientOptions {
+  GatewayClientOptions({
+    super.userCacheConfig,
+    super.channelCacheConfig,
+    super.messageCacheConfig,
+    super.webhookCacheConfig,
+    super.guildCacheConfig,
+    super.memberCacheConfig,
+    super.roleCacheConfig,
+    super.banCacheConfig,
+  });
+}
