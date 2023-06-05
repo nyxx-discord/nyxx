@@ -1,7 +1,8 @@
+import 'package:nyxx/src/models/gateway/opcodes.dart';
 import 'package:nyxx/src/utils/to_string_helper/to_string_helper.dart';
 
 abstract class GatewayEvent with ToStringHelper {
-  final int opcode;
+  final Opcodes opcode;
 
   GatewayEvent({required this.opcode});
 }
@@ -13,11 +14,11 @@ class RawDispatchEvent extends GatewayEvent {
 
   final Map<String, Object?> payload;
 
-  RawDispatchEvent({required this.seq, required this.name, required this.payload}) : super(opcode: 0);
+  RawDispatchEvent({required this.seq, required this.name, required this.payload}) : super(opcode: Opcodes.dispatch);
 }
 
 abstract class DispatchEvent extends GatewayEvent {
-  DispatchEvent() : super(opcode: 0);
+  DispatchEvent() : super(opcode: Opcodes.dispatch);
 }
 
 class UnknownDispatchEvent extends DispatchEvent {
@@ -27,25 +28,25 @@ class UnknownDispatchEvent extends DispatchEvent {
 }
 
 class HeartbeatEvent extends GatewayEvent {
-  HeartbeatEvent() : super(opcode: 1);
+  HeartbeatEvent() : super(opcode: Opcodes.heartbeat);
 }
 
 class ReconnectEvent extends GatewayEvent {
-  ReconnectEvent() : super(opcode: 7);
+  ReconnectEvent() : super(opcode: Opcodes.reconnect);
 }
 
 class InvalidSessionEvent extends GatewayEvent {
   final bool isResumable;
 
-  InvalidSessionEvent({required this.isResumable}) : super(opcode: 9);
+  InvalidSessionEvent({required this.isResumable}) : super(opcode: Opcodes.invalidSession);
 }
 
 class HelloEvent extends GatewayEvent {
   final Duration heartbeatInterval;
 
-  HelloEvent({required this.heartbeatInterval}) : super(opcode: 10);
+  HelloEvent({required this.heartbeatInterval}) : super(opcode: Opcodes.hello);
 }
 
 class HeartbeatAckEvent extends GatewayEvent {
-  HeartbeatAckEvent() : super(opcode: 11);
+  HeartbeatAckEvent() : super(opcode: Opcodes.heartbeatAck);
 }

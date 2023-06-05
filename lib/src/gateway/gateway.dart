@@ -1,6 +1,8 @@
 import 'dart:async';
 
 import 'package:nyxx/src/api_options.dart';
+import 'package:nyxx/src/builders/presence.dart';
+import 'package:nyxx/src/builders/voice.dart';
 import 'package:nyxx/src/client.dart';
 import 'package:nyxx/src/gateway/event_parser.dart';
 import 'package:nyxx/src/gateway/message.dart';
@@ -27,6 +29,7 @@ import 'package:nyxx/src/models/gateway/events/ready.dart';
 import 'package:nyxx/src/models/gateway/events/stage_instance.dart';
 import 'package:nyxx/src/models/gateway/events/voice.dart';
 import 'package:nyxx/src/models/gateway/events/webhook.dart';
+import 'package:nyxx/src/models/gateway/opcodes.dart';
 import 'package:nyxx/src/models/guild/guild.dart';
 import 'package:nyxx/src/models/guild/member.dart';
 import 'package:nyxx/src/models/presence.dart';
@@ -173,6 +176,10 @@ class Gateway extends GatewayManager with EventParser {
     await Future.wait(shards.map((shard) => shard.close()));
     _messagesController.close();
   }
+
+  int shardIdFor(Snowflake guildId) => (guildId.value >> 22) % totalShards;
+
+  Shard shardFor(Snowflake guildId) => shards.singleWhere((shard) => shard.id == shardIdFor(guildId));
 
   DispatchEvent parseDispatchEvent(RawDispatchEvent raw) {
     final mapping = {
@@ -732,5 +739,59 @@ class Gateway extends GatewayManager with EventParser {
 
   StageInstanceDeleteEvent parseStageInstanceDelete(Map<String, Object?> raw) {
     return StageInstanceDeleteEvent();
+  }
+
+  Stream<Member> listGuildMembers(
+    Snowflake guildId, {
+    String? query,
+    int? limit,
+    List<Snowflake>? userIds,
+    bool? includePresences,
+    String? nonce,
+  }) async* {
+    if (userIds == null) {
+      query ??= '';
+    }
+
+    nonce ??= '${Snowflake.now()}$guildId';
+
+    final shard = shardFor(guildId);
+    shard.add(Send(opcode: Opcodes.requestGuildMembers, data: {
+      'guild_id': guildId.toString(),
+      if (query != null) 'query': query,
+      if (limit != null) 'limit': limit,
+      if (includePresences != null) 'presences': includePresences,
+      if (userIds != null) 'user_ids': userIds.map((e) => e.toString()).toList(),
+      'nonce': nonce,
+    }));
+
+    int chunksReceived = 0;
+
+    await for (final event in events) {
+      if (event is! GuildMembersChunkEvent || event.nonce != nonce) {
+        continue;
+      }
+
+      yield* Stream.fromIterable(event.members);
+
+      chunksReceived++;
+      if (chunksReceived == event.chunkCount) {
+        break;
+      }
+    }
+  }
+
+  void updateVoiceState(Snowflake guildId, GatewayVoiceStateBuilder builder) {
+    final shard = shardFor(guildId);
+    shard.add(Send(opcode: Opcodes.voiceStateUpdate, data: {
+      'guild_id': guildId.toString(),
+      ...builder.build(),
+    }));
+  }
+
+  void updatePresence(PresenceBuilder builder) {
+    for (final shard in shards) {
+      shard.add(Send(opcode: Opcodes.presenceUpdate, data: builder.build()));
+    }
   }
 }

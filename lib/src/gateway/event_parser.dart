@@ -1,14 +1,15 @@
 import 'package:nyxx/src/models/gateway/event.dart';
+import 'package:nyxx/src/models/gateway/opcodes.dart';
 
 mixin class EventParser {
   GatewayEvent parseGatewayEvent(Map<String, Object?> raw) {
     final mapping = {
-      0: parseDispatch,
-      1: parseHeartbeat,
-      7: parseReconnect,
-      9: parseInvalidSession,
-      10: parseHello,
-      11: parseHeartbeatAck,
+      Opcodes.dispatch.value: parseDispatch,
+      Opcodes.heartbeat.value: parseHeartbeat,
+      Opcodes.reconnect.value: parseReconnect,
+      Opcodes.invalidSession.value: parseInvalidSession,
+      Opcodes.hello.value: parseHello,
+      Opcodes.heartbeatAck.value: parseHeartbeatAck,
     };
 
     return mapping[raw['op'] as int]!(raw);

@@ -28,3 +28,20 @@ class CurrentUserVoiceStateUpdateBuilder extends VoiceStateUpdateBuilder {
         if (!identical(requestToSpeakTimeStamp, sentinelDateTime)) 'request_to_speak_timestamp': requestToSpeakTimeStamp?.toIso8601String(),
       };
 }
+
+class GatewayVoiceStateBuilder extends CreateBuilder<VoiceState> {
+  final Snowflake? channelId;
+
+  final bool isMuted;
+
+  final bool isDeafened;
+
+  GatewayVoiceStateBuilder({required this.channelId, required this.isMuted, required this.isDeafened});
+
+  @override
+  Map<String, Object?> build() => {
+        'channel_id': channelId?.toString(),
+        'mute': isMuted,
+        'deaf': isDeafened,
+      };
+}
