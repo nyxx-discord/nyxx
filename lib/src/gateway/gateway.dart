@@ -781,13 +781,7 @@ class Gateway extends GatewayManager with EventParser {
     }
   }
 
-  void updateVoiceState(Snowflake guildId, GatewayVoiceStateBuilder builder) {
-    final shard = shardFor(guildId);
-    shard.add(Send(opcode: Opcodes.voiceStateUpdate, data: {
-      'guild_id': guildId.toString(),
-      ...builder.build(),
-    }));
-  }
+  void updateVoiceState(Snowflake guildId, GatewayVoiceStateBuilder builder) => shardFor(guildId).updateVoiceState(guildId, builder);
 
   void updatePresence(PresenceBuilder builder) {
     for (final shard in shards) {

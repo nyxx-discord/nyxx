@@ -1,3 +1,5 @@
+import 'package:nyxx/src/builders/presence.dart';
+import 'package:nyxx/src/builders/voice.dart';
 import 'package:nyxx/src/client_options.dart';
 import 'package:nyxx/src/event_mixin.dart';
 import 'package:nyxx/src/gateway/gateway.dart';
@@ -94,6 +96,10 @@ class NyxxGateway with ManagerMixin, EventMixin implements NyxxRest {
 
   @override
   Future<void> leaveThread(Snowflake id) => channels.leaveThread(id);
+
+  void updateVoiceState(Snowflake guildId, GatewayVoiceStateBuilder builder) => gateway.updateVoiceState(guildId, builder);
+
+  void updatePresence(PresenceBuilder builder) => gateway.updatePresence(builder);
 
   @override
   Future<void> close() async {

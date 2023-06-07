@@ -2,8 +2,11 @@ import 'dart:async';
 import 'dart:isolate';
 
 import 'package:nyxx/src/api_options.dart';
+import 'package:nyxx/src/builders/voice.dart';
 import 'package:nyxx/src/gateway/message.dart';
 import 'package:nyxx/src/gateway/shard_runner.dart';
+import 'package:nyxx/src/models/gateway/opcodes.dart';
+import 'package:nyxx/src/models/snowflake.dart';
 
 // TODO: Handle ErrorReceived events
 class Shard extends Stream<ShardMessage> implements StreamSink<GatewayMessage> {
@@ -52,6 +55,13 @@ class Shard extends Stream<ShardMessage> implements StreamSink<GatewayMessage> {
     final sendPort = await receiveStream.first as SendPort;
 
     return Shard(id, isolate, receiveStream, sendPort);
+  }
+
+  void updateVoiceState(Snowflake guildId, GatewayVoiceStateBuilder builder) {
+    add(Send(opcode: Opcodes.voiceStateUpdate, data: {
+      'guild_id': guildId.toString(),
+      ...builder.build(),
+    }));
   }
 
   @override
