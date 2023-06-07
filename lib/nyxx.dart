@@ -193,6 +193,8 @@ export 'src/models/gateway/events/ready.dart' show ReadyEvent, ResumedEvent;
 export 'src/models/gateway/events/stage_instance.dart' show StageInstanceCreateEvent, StageInstanceDeleteEvent, StageInstanceUpdateEvent;
 export 'src/models/gateway/events/voice.dart' show VoiceServerUpdateEvent, VoiceStateUpdateEvent;
 export 'src/models/gateway/events/webhook.dart' show WebhooksUpdateEvent;
+export 'src/models/presence.dart'
+    show Activity, ActivityAssets, ActivityButton, ActivityFlags, ActivityParty, ActivitySecrets, ActivityTimestamps, ClientStatus, ActivityType, UserStatus;
 
 export 'src/utils/flags.dart' show Flag, Flags;
 export 'src/intents.dart' show GatewayIntents;

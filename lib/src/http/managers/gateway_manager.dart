@@ -1,7 +1,9 @@
-import 'package:nyxx/nyxx.dart';
+import 'package:nyxx/src/client.dart';
+import 'package:nyxx/src/http/request.dart';
 import 'package:nyxx/src/http/route.dart';
 import 'package:nyxx/src/models/gateway/gateway.dart';
 import 'package:nyxx/src/models/presence.dart';
+import 'package:nyxx/src/models/snowflake.dart';
 import 'package:nyxx/src/utils/parsing_helpers.dart';
 
 // Use an abstract class so the client getter can be abstract,
@@ -42,7 +44,7 @@ abstract class GatewayManager {
       name: raw['name'] as String,
       type: ActivityType.parse(raw['type'] as int),
       url: tryParse(raw['url'], Uri.parse),
-      createdAt: DateTime.fromMillisecondsSinceEpoch(raw['created_at'] as int),
+      createdAt: tryParse(raw['created_at'], DateTime.fromMillisecondsSinceEpoch),
       timestamps: tryParse(raw['timestamps'], parseActivityTimestamps),
       applicationId: tryParse(raw['application_id'], Snowflake.parse),
       details: tryParse(raw['details']),
@@ -50,7 +52,7 @@ abstract class GatewayManager {
       party: tryParse(raw['party'], parseActivityParty),
       assets: tryParse(raw['assets'], parseActivityAssets),
       secrets: tryParse(raw['secrets'], parseActivitySecrets),
-      isInstance: raw['instance'] as bool?,
+      isInstance: tryParse(raw['instance']),
       flags: tryParse(raw['flags'], ActivityFlags.new),
       buttons: tryParseMany(raw['buttons'], parseActivityButton),
     );

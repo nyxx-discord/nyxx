@@ -10,7 +10,7 @@ environment:
   sdk: '>=3.0.0 <4.0.0'
 
 dependencies:
-  http: ^0.13.3
+  http: ^1.0.0
   logging: ^1.0.1
   path: ^1.8.3
   retry: ^3.1.0
@@ -23,4 +23,4 @@ dev_dependencies:
   lints: ^2.0.0
   nock: ^1.2.1
   mocktail: ^0.3.0
-  test_api: ^0.5.2
+  matcher: ^0.12.16

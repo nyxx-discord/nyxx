@@ -37,7 +37,7 @@ class Activity with ToStringHelper {
 
   final Uri? url;
 
-  final DateTime createdAt;
+  final DateTime? createdAt;
 
   final ActivityTimestamps? timestamps;
 
