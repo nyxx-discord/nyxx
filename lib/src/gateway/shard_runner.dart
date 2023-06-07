@@ -9,7 +9,7 @@ import 'package:nyxx/src/errors.dart';
 import 'package:nyxx/src/gateway/event_parser.dart';
 import 'package:nyxx/src/gateway/message.dart';
 import 'package:nyxx/src/models/gateway/event.dart';
-import 'package:nyxx/src/models/gateway/opcodes.dart';
+import 'package:nyxx/src/models/gateway/opcode.dart';
 
 /// Contains the logic for running a shard.
 ///
@@ -139,7 +139,7 @@ class ShardRunner {
             } else if (event is HeartbeatAckEvent) {
               lastHeartbeatAcked = true;
             } else if (event is HeartbeatEvent) {
-              connection!.add(Send(opcode: Opcodes.heartbeat, data: seq));
+              connection!.add(Send(opcode: Opcode.heartbeat, data: seq));
             }
 
             controller.add(EventReceived(event: event));
@@ -193,7 +193,7 @@ class ShardRunner {
       return;
     }
 
-    connection!.add(Send(opcode: Opcodes.heartbeat, data: seq));
+    connection!.add(Send(opcode: Opcode.heartbeat, data: seq));
     lastHeartbeatAcked = false;
   }
 
@@ -207,7 +207,7 @@ class ShardRunner {
 
   void sendIdentify() {
     connection!.add(Send(
-      opcode: Opcodes.identify,
+      opcode: Opcode.identify,
       data: {
         'token': data.apiOptions.token,
         'properties': {
@@ -228,7 +228,7 @@ class ShardRunner {
   void sendResume() {
     assert(sessionId != null && seq != null);
     connection!.add(Send(
-      opcode: Opcodes.resume,
+      opcode: Opcode.resume,
       data: {
         'token': data.apiOptions.token,
         'session_id': sessionId,

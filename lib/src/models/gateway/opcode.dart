@@ -1,4 +1,4 @@
-enum Opcodes {
+enum Opcode {
   dispatch._(0),
   heartbeat._(1),
   identify._(2),
@@ -13,5 +13,5 @@ enum Opcodes {
 
   final int value;
 
-  const Opcodes._(this.value);
+  const Opcode._(this.value);
 }

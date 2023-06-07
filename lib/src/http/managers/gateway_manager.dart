@@ -1,6 +1,6 @@
 import 'package:nyxx/nyxx.dart';
 import 'package:nyxx/src/http/route.dart';
-import 'package:nyxx/src/models/gateway.dart';
+import 'package:nyxx/src/models/gateway/gateway.dart';
 import 'package:nyxx/src/models/presence.dart';
 import 'package:nyxx/src/utils/parsing_helpers.dart';
 

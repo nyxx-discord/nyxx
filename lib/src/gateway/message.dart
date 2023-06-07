@@ -1,6 +1,6 @@
 import 'package:nyxx/src/api_options.dart';
 import 'package:nyxx/src/models/gateway/event.dart';
-import 'package:nyxx/src/models/gateway/opcodes.dart';
+import 'package:nyxx/src/models/gateway/opcode.dart';
 import 'package:nyxx/src/utils/to_string_helper/to_string_helper.dart';
 
 class ShardData with ToStringHelper {
@@ -45,7 +45,7 @@ class Disconnecting extends ShardMessage {
 class GatewayMessage with ToStringHelper {}
 
 class Send extends GatewayMessage {
-  final Opcodes opcode;
+  final Opcode opcode;
 
   final dynamic data;
 

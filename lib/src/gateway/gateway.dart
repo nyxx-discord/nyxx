@@ -14,7 +14,7 @@ import 'package:nyxx/src/models/application.dart';
 import 'package:nyxx/src/models/channel/channel.dart';
 import 'package:nyxx/src/models/channel/guild_channel.dart';
 import 'package:nyxx/src/models/channel/thread.dart';
-import 'package:nyxx/src/models/gateway.dart';
+import 'package:nyxx/src/models/gateway/gateway.dart';
 import 'package:nyxx/src/models/gateway/event.dart';
 import 'package:nyxx/src/models/gateway/events/application_command.dart';
 import 'package:nyxx/src/models/gateway/events/auto_moderation.dart';
@@ -29,7 +29,7 @@ import 'package:nyxx/src/models/gateway/events/ready.dart';
 import 'package:nyxx/src/models/gateway/events/stage_instance.dart';
 import 'package:nyxx/src/models/gateway/events/voice.dart';
 import 'package:nyxx/src/models/gateway/events/webhook.dart';
-import 'package:nyxx/src/models/gateway/opcodes.dart';
+import 'package:nyxx/src/models/gateway/opcode.dart';
 import 'package:nyxx/src/models/guild/guild.dart';
 import 'package:nyxx/src/models/guild/member.dart';
 import 'package:nyxx/src/models/presence.dart';
@@ -756,7 +756,7 @@ class Gateway extends GatewayManager with EventParser {
     nonce ??= '${Snowflake.now()}$guildId';
 
     final shard = shardFor(guildId);
-    shard.add(Send(opcode: Opcodes.requestGuildMembers, data: {
+    shard.add(Send(opcode: Opcode.requestGuildMembers, data: {
       'guild_id': guildId.toString(),
       if (query != null) 'query': query,
       if (limit != null) 'limit': limit,
@@ -785,7 +785,7 @@ class Gateway extends GatewayManager with EventParser {
 
   void updatePresence(PresenceBuilder builder) {
     for (final shard in shards) {
-      shard.add(Send(opcode: Opcodes.presenceUpdate, data: builder.build()));
+      shard.add(Send(opcode: Opcode.presenceUpdate, data: builder.build()));
     }
   }
 }

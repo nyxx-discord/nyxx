@@ -1,6 +1,7 @@
-export 'src/api_options.dart' show ApiOptions, RestApiOptions;
-export 'src/client.dart' show Nyxx, NyxxRest;
-export 'src/client_options.dart' show ClientOptions, RestClientOptions;
+export 'src/api_options.dart' show ApiOptions, RestApiOptions, GatewayApiOptions, GatewayCompression, GatewayPayloadFormat;
+export 'src/client.dart' show Nyxx, NyxxRest, NyxxGateway;
+export 'src/client_options.dart' show ClientOptions, RestClientOptions, GatewayClientOptions;
+export 'src/errors.dart' show NyxxException, InvalidEvent;
 
 export 'src/builders/builder.dart' show Builder, CreateBuilder, UpdateBuilder;
 export 'src/builders/image.dart' show ImageBuilder;
@@ -35,7 +36,8 @@ export 'src/builders/guild/member.dart' show CurrentMemberUpdateBuilder, MemberB
 export 'src/builders/guild/welcome_screen.dart' show WelcomeScreenUpdateBuilder;
 export 'src/builders/guild/widget.dart' show WidgetSettingsUpdateBuilder;
 export 'src/builders/role.dart' show RoleBuilder, RoleUpdateBuilder;
-export 'src/builders/voice.dart' show CurrentUserVoiceStateUpdateBuilder, VoiceStateUpdateBuilder;
+export 'src/builders/voice.dart' show CurrentUserVoiceStateUpdateBuilder, VoiceStateUpdateBuilder, GatewayVoiceStateBuilder;
+export 'src/builders/presence.dart' show PresenceBuilder, CurrentUserStatus;
 
 export 'src/cache/cache.dart' show Cache, CacheConfig;
 
@@ -54,6 +56,11 @@ export 'src/http/managers/application_manager.dart' show ApplicationManager;
 export 'src/http/managers/voice_manager.dart' show VoiceManager;
 export 'src/http/managers/member_manager.dart' show MemberManager;
 export 'src/http/managers/role_manager.dart' show RoleManager;
+export 'src/http/managers/gateway_manager.dart' show GatewayManager;
+
+export 'src/gateway/gateway.dart' show Gateway;
+export 'src/gateway/message.dart' show Disconnecting, Dispose, ErrorReceived, EventReceived, GatewayMessage, Send, ShardData, ShardMessage;
+export 'src/gateway/shard.dart' show Shard;
 
 export 'src/models/discord_color.dart' show DiscordColor;
 export 'src/models/locale.dart' show Locale;
@@ -117,8 +124,78 @@ export 'src/models/application.dart' show Application, ApplicationFlags, Install
 export 'src/models/voice/voice_state.dart' show VoiceState;
 export 'src/models/voice/voice_region.dart' show VoiceRegion;
 export 'src/models/role.dart' show PartialRole, Role, RoleTags;
+export 'src/models/gateway/gateway.dart' show GatewayBot, GatewayConfiguration, SessionStartLimit;
+export 'src/models/gateway/event.dart'
+    show
+        DispatchEvent,
+        GatewayEvent,
+        HeartbeatAckEvent,
+        HeartbeatEvent,
+        HelloEvent,
+        InvalidSessionEvent,
+        RawDispatchEvent,
+        ReconnectEvent,
+        UnknownDispatchEvent;
+export 'src/models/gateway/opcode.dart' show Opcode;
+export 'src/models/gateway/events/application_command.dart' show ApplicationCommandPermissionsUpdateEvent;
+export 'src/models/gateway/events/auto_moderation.dart'
+    show AutoModerationActionExecutionEvent, AutoModerationRuleCreateEvent, AutoModerationRuleDeleteEvent, AutoModerationRuleUpdateEvent;
+export 'src/models/gateway/events/channel.dart'
+    show
+        ChannelCreateEvent,
+        ChannelDeleteEvent,
+        ChannelPinsUpdateEvent,
+        ChannelUpdateEvent,
+        ThreadCreateEvent,
+        ThreadDeleteEvent,
+        ThreadListSyncEvent,
+        ThreadMemberUpdateEvent,
+        ThreadMembersUpdateEvent,
+        ThreadUpdateEvent;
+export 'src/models/gateway/events/guild.dart'
+    show
+        GuildBanAddEvent,
+        GuildBanRemoveEvent,
+        GuildCreateEvent,
+        GuildDeleteEvent,
+        GuildEmojisUpdateEvent,
+        GuildIntegrationsUpdateEvent,
+        GuildMemberAddEvent,
+        GuildMemberRemoveEvent,
+        GuildMemberUpdateEvent,
+        GuildMembersChunkEvent,
+        GuildRoleCreateEvent,
+        GuildRoleDeleteEvent,
+        GuildRoleUpdateEvent,
+        GuildScheduledEventCreateEvent,
+        GuildScheduledEventDeleteEvent,
+        GuildScheduledEventUpdateEvent,
+        GuildScheduledEventUserAddEvent,
+        GuildScheduledEventUserRemoveEvent,
+        GuildStickersUpdateEvent,
+        GuildUpdateEvent,
+        UnavailableGuildCreateEvent;
+export 'src/models/gateway/events/integration.dart' show IntegrationCreateEvent, IntegrationDeleteEvent, IntegrationUpdateEvent;
+export 'src/models/gateway/events/interaction.dart' show InteractionCreateEvent;
+export 'src/models/gateway/events/invite.dart' show InviteCreateEvent, InviteDeleteEvent;
+export 'src/models/gateway/events/message.dart'
+    show
+        MessageBulkDeleteEvent,
+        MessageCreateEvent,
+        MessageDeleteEvent,
+        MessageReactionAddEvent,
+        MessageReactionRemoveAllEvent,
+        MessageReactionRemoveEmojiEvent,
+        MessageReactionRemoveEvent,
+        MessageUpdateEvent;
+export 'src/models/gateway/events/presence.dart' show PresenceUpdateEvent, TypingStartEvent, UserUpdateEvent;
+export 'src/models/gateway/events/ready.dart' show ReadyEvent, ResumedEvent;
+export 'src/models/gateway/events/stage_instance.dart' show StageInstanceCreateEvent, StageInstanceDeleteEvent, StageInstanceUpdateEvent;
+export 'src/models/gateway/events/voice.dart' show VoiceServerUpdateEvent, VoiceStateUpdateEvent;
+export 'src/models/gateway/events/webhook.dart' show WebhooksUpdateEvent;
 
 export 'src/utils/flags.dart' show Flag, Flags;
+export 'src/intents.dart' show GatewayIntents;
 
 // Types also used in the nyxx API from other packages
 export 'package:http/http.dart'
