@@ -92,7 +92,7 @@ class Gateway extends GatewayManager with EventParser {
 
           await client.close();
 
-          throw ShardDisconnected(shard);
+          throw ShardDisconnectedError(shard);
         },
       );
     }

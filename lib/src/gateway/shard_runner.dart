@@ -88,7 +88,7 @@ class ShardRunner {
           // Obtain the heartbeat interval from the HELLO event and start heartbeating.
           final hello = await connection!.first;
           if (hello is! HelloEvent) {
-            throw InvalidEvent('Expected HELLO on connection.');
+            throw InvalidEventException('Expected HELLO on connection.');
           }
           controller.add(EventReceived(event: hello));
 

@@ -13,14 +13,14 @@ class NyxxException implements Exception {
 }
 
 /// An exception thrown when an unexpected event is received on the Gateway.
-class InvalidEvent extends NyxxException {
-  /// Create a new [InvalidEvent] with the provided [message].
-  InvalidEvent(String message) : super('Invalid gateway event: $message');
+class InvalidEventException extends NyxxException {
+  /// Create a new [InvalidEventException] with the provided [message].
+  InvalidEventException(String message) : super('Invalid gateway event: $message');
 }
 
 /// An error thrown when a shard disconnects unexpectedly.
-class ShardDisconnected extends Error {
+class ShardDisconnectedError extends Error {
   final Shard shard;
 
-  ShardDisconnected(this.shard);
+  ShardDisconnectedError(this.shard);
 }
