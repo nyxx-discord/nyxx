@@ -99,6 +99,9 @@ mixin EventMixin implements Nyxx {
   /// A [Stream] of [GuildDeleteEvent]s received by this client.
   Stream<GuildDeleteEvent> get onGuildDelete => onEvent.whereType<GuildDeleteEvent>();
 
+  /// A [Stream] of [GuildAuditLogCreateEvent]s received by this client.
+  Stream<GuildAuditLogCreateEvent> get onGuildAuditLogCreate => onEvent.whereType<GuildAuditLogCreateEvent>();
+
   /// A [Stream] of [GuildBanAddEvent]s received by this client.
   Stream<GuildBanAddEvent> get onGuildBanAdd => onEvent.whereType<GuildBanAddEvent>();
 

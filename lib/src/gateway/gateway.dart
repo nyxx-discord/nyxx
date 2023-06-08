@@ -224,6 +224,7 @@ class Gateway extends GatewayManager with EventParser {
       'GUILD_CREATE': parseGuildCreate,
       'GUILD_UPDATE': parseGuildUpdate,
       'GUILD_DELETE': parseGuildDelete,
+      'GUILD_AUDIT_LOG_ENTRY_CREATE': parseGuildAuditLogCreate,
       'GUILD_BAN_ADD': parseGuildBanAdd,
       'GUILD_BAN_REMOVE': parseGuildBanRemove,
       'GUILD_EMOJIS_UPDATE': parseGuildEmojisUpdate,
@@ -435,6 +436,10 @@ class Gateway extends GatewayManager with EventParser {
       guild: PartialGuild(id: Snowflake.parse(raw['id'] as String), manager: client.guilds),
       isUnavailable: raw['unavailable'] as bool,
     );
+  }
+
+  GuildAuditLogCreateEvent parseGuildAuditLogCreate(Map<String, Object?> raw) {
+    return GuildAuditLogCreateEvent();
   }
 
   GuildBanAddEvent parseGuildBanAdd(Map<String, Object?> raw) {

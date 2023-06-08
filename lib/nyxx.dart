@@ -158,6 +158,7 @@ export 'src/models/gateway/events/guild.dart'
         GuildBanRemoveEvent,
         GuildCreateEvent,
         GuildDeleteEvent,
+        GuildAuditLogCreateEvent,
         GuildEmojisUpdateEvent,
         GuildIntegrationsUpdateEvent,
         GuildMemberAddEvent,

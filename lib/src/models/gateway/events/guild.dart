@@ -98,6 +98,17 @@ class GuildDeleteEvent extends DispatchEvent {
   GuildDeleteEvent({required this.guild, required this.isUnavailable});
 }
 
+/// {@template guild_audit_log_create_event}
+/// Emitted when an audit log entry is created in a guild.
+/// {@endtemplate}
+class GuildAuditLogCreateEvent extends DispatchEvent {
+  // TODO
+  //final AuditLogEntry entry;
+
+  /// {@macro guild_audit_log_create_event}
+  GuildAuditLogCreateEvent();
+}
+
 /// {@template guild_ban_add_event}
 /// Emitted when a user is banned in a guild.
 /// {@endtemplate}
