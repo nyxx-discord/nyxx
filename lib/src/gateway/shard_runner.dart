@@ -11,9 +11,7 @@ import 'package:nyxx/src/gateway/message.dart';
 import 'package:nyxx/src/models/gateway/event.dart';
 import 'package:nyxx/src/models/gateway/opcode.dart';
 
-/// Contains the logic for running a shard.
-///
-/// {@macro shard} TODO
+/// An internal class that contains the logic for running a shard.
 ///
 /// This class handles opening the connection, heartbeating and any connection lifecycle events.
 class ShardRunner {

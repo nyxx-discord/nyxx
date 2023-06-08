@@ -8,18 +8,25 @@ import 'package:nyxx/src/gateway/shard_runner.dart';
 import 'package:nyxx/src/models/gateway/opcode.dart';
 import 'package:nyxx/src/models/snowflake.dart';
 
-// TODO: Handle ErrorReceived events
+/// {@template shard}
+/// A single connection to Discord's Gateway.
+/// {@endtemplate}
 class Shard extends Stream<ShardMessage> implements StreamSink<GatewayMessage> {
+  /// The ID of this shard.
   final int id;
 
+  /// The isolate this shard's handler is running in.
   final Isolate isolate;
 
+  /// The stream on which events from the runner are received.
   final Stream<dynamic> receiveStream;
 
+  /// The port on which events are sent to the runner.
   final SendPort sendPort;
 
   final Completer<void> _doneCompleter = Completer();
 
+  /// Create a new [Shard].
   Shard(this.id, this.isolate, this.receiveStream, this.sendPort) {
     drain().then((value) {
       // Can happen if the shard closes unexpectedly.
@@ -30,6 +37,7 @@ class Shard extends Stream<ShardMessage> implements StreamSink<GatewayMessage> {
     });
   }
 
+  /// Connect to the Gateway using the provided parameters.
   static Future<Shard> connect(int id, int totalShards, GatewayApiOptions apiOptions, Uri connectionUri) async {
     final receivePort = ReceivePort('Shard #$id message stream (main)');
     final receiveStream = receivePort.asBroadcastStream();
@@ -57,6 +65,7 @@ class Shard extends Stream<ShardMessage> implements StreamSink<GatewayMessage> {
     return Shard(id, isolate, receiveStream, sendPort);
   }
 
+  /// Update the client's voice state on this shard.
   void updateVoiceState(Snowflake guildId, GatewayVoiceStateBuilder builder) {
     add(Send(opcode: Opcode.voiceStateUpdate, data: {
       'guild_id': guildId.toString(),
@@ -68,10 +77,14 @@ class Shard extends Stream<ShardMessage> implements StreamSink<GatewayMessage> {
   void add(GatewayMessage event) => sendPort.send(event);
 
   @override
-  void addError(Object error, [StackTrace? stackTrace]) => throw UnimplementedError();
-
-  @override
-  Future<void> addStream(Stream<GatewayMessage> stream) => throw UnimplementedError();
+  StreamSubscription<ShardMessage> listen(
+    void Function(ShardMessage event)? onData, {
+    Function? onError,
+    void Function()? onDone,
+    bool? cancelOnError,
+  }) {
+    return receiveStream.cast<ShardMessage>().listen(onData, onError: onError, onDone: onDone, cancelOnError: cancelOnError);
+  }
 
   @override
   Future<void> close() {
@@ -102,14 +115,10 @@ class Shard extends Stream<ShardMessage> implements StreamSink<GatewayMessage> {
   Future<void> get done => _doneCompleter.future;
 
   @override
-  StreamSubscription<ShardMessage> listen(
-    void Function(ShardMessage event)? onData, {
-    Function? onError,
-    void Function()? onDone,
-    bool? cancelOnError,
-  }) {
-    return receiveStream.cast<ShardMessage>().listen(onData, onError: onError, onDone: onDone, cancelOnError: cancelOnError);
-  }
+  void addError(Object error, [StackTrace? stackTrace]) => throw UnimplementedError();
+
+  @override
+  Future<void> addStream(Stream<GatewayMessage> stream) => stream.forEach(add);
 }
 
 class _IsolateSpawnData extends ShardData {

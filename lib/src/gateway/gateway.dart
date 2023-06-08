@@ -38,21 +38,31 @@ import 'package:nyxx/src/models/user/user.dart';
 import 'package:nyxx/src/utils/iterable_extension.dart';
 import 'package:nyxx/src/utils/parsing_helpers.dart';
 
+/// Handles the connection to Discord's Gateway with shards, manages the client's cache based on Gateway events and provides an interface to the Gateway.
+// TODO: Handle ErrorReceived events
+// TODO: Potentially withold events until we have a listener?
 class Gateway extends GatewayManager with EventParser {
   @override
   final NyxxGateway client;
 
+  /// The [GatewayBot] instance used to configure this [Gateway].
   final GatewayBot gatewayBot;
 
+  /// The total number of shards running in the client's session.
   final int totalShards;
 
+  /// The IDs of the shards running in this [Gateway].
   final List<int> shardIds;
 
+  /// The shards running in this [Gateway].
   final List<Shard> shards;
 
+  /// A stream of messages received from all shards.
   Stream<ShardMessage> get messages => _messagesController.stream;
+
   final StreamController<ShardMessage> _messagesController = StreamController.broadcast();
 
+  /// A stream of dispatch events received from all shards.
   Stream<DispatchEvent> get events => messages.map((message) {
         if (message is! EventReceived) {
           return null;
@@ -68,6 +78,7 @@ class Gateway extends GatewayManager with EventParser {
 
   bool _closing = false;
 
+  /// Create a new [Gateway].
   Gateway(this.client, this.gatewayBot, this.shards, this.totalShards, this.shardIds) : super.create() {
     for (final shard in shards) {
       shard.listen(
@@ -95,6 +106,7 @@ class Gateway extends GatewayManager with EventParser {
     // ApplicationCommandPermissionsUpdateEvent, AutoModerationRuleCreateEvent, AutoModerationRuleUpdateEvent, AutoModerationRuleDeleteEvent,
     // AutoModerationActionExecutionEvent
 
+    // Handle all events which should update cache.
     events.listen((event) => switch (event) {
           ReadyEvent(:final user) => client.users.cache[user.id] = user,
           ChannelCreateEvent(:final channel) || ChannelUpdateEvent(:final channel) => client.channels.cache[channel.id] = channel,
@@ -136,6 +148,7 @@ class Gateway extends GatewayManager with EventParser {
         });
   }
 
+  /// Connect to the gateway using the provided [client] and [gatewayBot] configuration.
   static Future<Gateway> connect(NyxxGateway client, GatewayBot gatewayBot) async {
     final totalShards = client.apiOptions.totalShards ?? gatewayBot.shards;
     final List<int> shardIds = client.apiOptions.shards ?? List.generate(totalShards, (i) => i);
@@ -174,14 +187,19 @@ class Gateway extends GatewayManager with EventParser {
     return Gateway(client, gatewayBot, await Future.wait(shards), totalShards, shardIds);
   }
 
+  /// Close this [Gateway] instance, disconnecting all shards and closing the event streams.
   Future<void> close() async {
     _closing = true;
     await Future.wait(shards.map((shard) => shard.close()));
     _messagesController.close();
   }
 
+  /// Compute the ID of the shard that handles events for [guildId].
   int shardIdFor(Snowflake guildId) => (guildId.value >> 22) % totalShards;
 
+  /// Return the shard that handles events for [guildId].
+  ///
+  /// Throws an error if the shard handling events for [guildId] is not in this [Gateway] instance.
   Shard shardFor(Snowflake guildId) => shards.singleWhere((shard) => shard.id == shardIdFor(guildId));
 
   DispatchEvent parseDispatchEvent(RawDispatchEvent raw) {
@@ -749,6 +767,9 @@ class Gateway extends GatewayManager with EventParser {
     return StageInstanceDeleteEvent();
   }
 
+  /// Stream all members in a guild that match [query] or [userIds].
+  ///
+  /// If neither is provided, all members in the guild are returned.
   Stream<Member> listGuildMembers(
     Snowflake guildId, {
     String? query,
@@ -789,8 +810,10 @@ class Gateway extends GatewayManager with EventParser {
     }
   }
 
+  /// Update the client's voice state in the guild with ID [guildId].
   void updateVoiceState(Snowflake guildId, GatewayVoiceStateBuilder builder) => shardFor(guildId).updateVoiceState(guildId, builder);
 
+  /// Update the client's presence on all shards.
   void updatePresence(PresenceBuilder builder) {
     for (final shard in shards) {
       shard.add(Send(opcode: Opcode.presenceUpdate, data: builder.build()));
