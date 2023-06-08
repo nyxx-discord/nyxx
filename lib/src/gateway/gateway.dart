@@ -4,6 +4,7 @@ import 'package:nyxx/src/api_options.dart';
 import 'package:nyxx/src/builders/presence.dart';
 import 'package:nyxx/src/builders/voice.dart';
 import 'package:nyxx/src/client.dart';
+import 'package:nyxx/src/errors.dart';
 import 'package:nyxx/src/gateway/event_parser.dart';
 import 'package:nyxx/src/gateway/message.dart';
 import 'package:nyxx/src/gateway/shard.dart';
@@ -89,10 +90,9 @@ class Gateway extends GatewayManager with EventParser {
             return;
           }
 
-          // Shard went down
-          // TODO: Throw an error
+          await client.close();
 
-          await close();
+          throw ShardDisconnected(shard);
         },
       );
     }

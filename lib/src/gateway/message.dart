@@ -42,9 +42,8 @@ class EventReceived extends ShardMessage {
 
 /// A shard message sent when the shard encounters an error.
 class ErrorReceived extends ShardMessage {
-  /// The stringified representation of the error.
-  // TODO: Try passing the original error here.
-  final String error;
+  /// The error encountered.
+  final Object error;
 
   /// The stack trace where the error occurred.
   final StackTrace stackTrace;

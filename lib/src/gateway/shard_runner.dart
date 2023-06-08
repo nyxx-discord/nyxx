@@ -166,7 +166,7 @@ class ShardRunner {
             return;
           }
         } catch (error, stackTrace) {
-          controller.add(ErrorReceived(error: error.toString(), stackTrace: stackTrace));
+          controller.add(ErrorReceived(error: error, stackTrace: stackTrace));
         } finally {
           // Reset connection properties.
           connection?.close();

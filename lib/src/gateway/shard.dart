@@ -140,7 +140,16 @@ void _isolateMain(_IsolateSpawnData data) async {
   final runner = ShardRunner(data);
 
   runner.run(receivePort.cast<GatewayMessage>()).listen(
-        data.sendPort.send,
-        onDone: () => receivePort.close(),
-      );
+    (message) {
+      try {
+        data.sendPort.send(message);
+      } on ArgumentError {
+        // The only message with anything custom should be ErrorReceived
+        assert(message is ErrorReceived);
+        message = message as ErrorReceived;
+        data.sendPort.send(ErrorReceived(error: message.error.toString(), stackTrace: message.stackTrace));
+      }
+    },
+    onDone: () => receivePort.close(),
+  );
 }
