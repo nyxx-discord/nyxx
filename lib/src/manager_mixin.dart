@@ -31,5 +31,6 @@ mixin ManagerMixin implements Nyxx {
   /// A [VoiceManager] that manages voice states for this client.
   VoiceManager get voice => VoiceManager(this as NyxxRest);
 
+  /// A [GatewayManager] that manages gateway metadata for this client.
   GatewayManager get gateway => GatewayManager(this as NyxxRest);
 }

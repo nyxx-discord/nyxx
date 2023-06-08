@@ -29,6 +29,8 @@ abstract class Nyxx {
     return NyxxRest._(token, options ?? RestClientOptions());
   }
 
+  /// Create an instance of [NyxxGateway] that can perform requests to the HTTP API, connects
+  /// to the gateway and is authenticated with a bot token.
   // TODO: Allow passing any GatewayApiOptions as configuration
   static Future<NyxxGateway> connectGateway(String token, Flags<GatewayIntents> intents, {GatewayClientOptions? options}) async {
     final client = NyxxGateway._(token, intents, options ?? GatewayClientOptions());
@@ -41,6 +43,9 @@ abstract class Nyxx {
     return client..gateway = gateway;
   }
 
+  /// Close this client and any underlying resources.
+  ///
+  /// The client should not be used after this is called and unexpected behavior may occur.
   Future<void> close();
 }
 
@@ -75,6 +80,7 @@ class NyxxRest with ManagerMixin implements Nyxx {
   Future<void> close() async => httpHandler.httpClient.close();
 }
 
+/// A client that can make requests to the HTTP API, connects to the Gateway and is authenticated with a bot token.
 class NyxxGateway with ManagerMixin, EventMixin implements NyxxRest {
   @override
   final GatewayApiOptions apiOptions;
@@ -85,6 +91,7 @@ class NyxxGateway with ManagerMixin, EventMixin implements NyxxRest {
   @override
   late final HttpHandler httpHandler = HttpHandler(this);
 
+  /// The [Gateway] used by this client to send and receive Gateway events.
   // Initialized in connectGateway due to a circular dependency
   @override
   late final Gateway gateway;
@@ -97,8 +104,10 @@ class NyxxGateway with ManagerMixin, EventMixin implements NyxxRest {
   @override
   Future<void> leaveThread(Snowflake id) => channels.leaveThread(id);
 
+  /// Update the client's voice state in the guild with the ID [guildId].
   void updateVoiceState(Snowflake guildId, GatewayVoiceStateBuilder builder) => gateway.updateVoiceState(guildId, builder);
 
+  /// Update the client's presence on all shards.
   void updatePresence(PresenceBuilder builder) => gateway.updatePresence(builder);
 
   @override

@@ -9,6 +9,7 @@ void main() {
   final testToken = Platform.environment['TEST_TOKEN'];
   final testGuild = Platform.environment['TEST_GUILD'];
 
+  // TODO: When we can pass arbitrary GatewayApiOptions, test all configurations of payload format and compression
   test('Nyxx.connectGateway', skip: testToken != null ? false : 'No test token provided', () async {
     late NyxxGateway client;
 

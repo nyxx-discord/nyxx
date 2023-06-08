@@ -45,7 +45,7 @@ class Shard extends Stream<ShardMessage> implements StreamSink<GatewayMessage> {
       ),
     );
 
-    final exitPort = ReceivePort('Shard $id exit listener');
+    final exitPort = ReceivePort('Shard #$id exit listener');
     isolate.addOnExitListener(exitPort.sendPort);
     exitPort.listen((_) {
       receivePort.close();

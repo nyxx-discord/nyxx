@@ -6,15 +6,18 @@ import 'package:nyxx/src/models/presence.dart';
 import 'package:nyxx/src/models/snowflake.dart';
 import 'package:nyxx/src/utils/parsing_helpers.dart';
 
+/// A [Manager] for gateway information.
 // Use an abstract class so the client getter can be abstract,
 // allowing us to override it in Gateway to have a more specific type.
 abstract class GatewayManager {
+  /// The client this manager is for.
   NyxxRest get client;
 
   /// @nodoc
   // We need a constructor to be allowed to use this class as a superclass.
   GatewayManager.create();
 
+  /// Create a new [GatewayManager].
   factory GatewayManager(NyxxRest client) = _GatewayManagerImpl;
 
   GatewayConfiguration parseGatewayConfiguration(Map<String, Object?> raw) {
@@ -105,6 +108,7 @@ abstract class GatewayManager {
     );
   }
 
+  /// Fetch the current gateway configuration.
   Future<GatewayConfiguration> fetchGatewayConfiguration() async {
     final route = HttpRoute()..gateway();
     final request = BasicRequest(route, authenticated: false);
@@ -113,6 +117,7 @@ abstract class GatewayManager {
     return parseGatewayConfiguration(response.jsonBody as Map<String, Object?>);
   }
 
+  /// Fetch the current gateway configuration for the client.
   Future<GatewayBot> fetchGatewayBot() async {
     final route = HttpRoute()
       ..gateway()

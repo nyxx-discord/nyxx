@@ -50,6 +50,7 @@ class RestClientOptions implements ClientOptions {
   });
 }
 
+/// Options for controlling the behavior of a [NyxxWebsocket] client.
 class GatewayClientOptions extends RestClientOptions {
   GatewayClientOptions({
     super.userCacheConfig,

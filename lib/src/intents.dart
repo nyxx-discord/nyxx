@@ -1,5 +1,6 @@
 import 'package:nyxx/src/utils/flags.dart';
 
+/// Flags used to set the intents when opening a Gateway session.
 class GatewayIntents extends Flags<GatewayIntents> {
   static const guilds = Flag<GatewayIntents>.fromOffset(0);
   static const guildMembers = Flag<GatewayIntents>.fromOffset(1);
@@ -21,10 +22,18 @@ class GatewayIntents extends Flags<GatewayIntents> {
   static const autoModerationConfiguration = Flag<GatewayIntents>.fromOffset(20);
   static const autoModerationExecution = Flag<GatewayIntents>.fromOffset(21);
 
+  /// A [GatewayIntents] with all intents enabled.
   static const all = GatewayIntents(0x1fffff);
+
+  /// A [GatewayIntents] with all unprivileged intents enabled.
   static const allUnprivileged = GatewayIntents(0x317efd);
+
+  /// A [GatewayIntents] with all privileged intents enabled.
   static const allPrivileged = GatewayIntents(0x8102);
+
+  /// A [GatewayIntents] with no intents enabled.
   static const none = GatewayIntents(0);
 
+  /// Create a new [GatewayIntents].
   const GatewayIntents(super.value);
 }

@@ -91,9 +91,12 @@ class Gateway extends GatewayManager with EventParser {
     // TODO: GuildEmojisUpdateEvent, GuildStickersUpdateEvent, GuildScheduledEventCreateEvent, GuildScheduledEventUpdateEvent, GuildScheduledEventDeleteEvent,
     // GuildScheduledEventUserAddEvent, GuildScheduledEventUserRemoveEvent, IntegrationCreateEvent, IntegrationUpdateEvent, IntegrationDeleteEvent,
     // InviteCreateEvent, InviteDeleteEvent, MessageReactionAddEvent, MessageReactionRemoveEvent, MessageReactionRemoveAllEvent,MessageReactionRemoveEmojiEvent,
-    // PresenceUpdateEvent, VoiceStateUpdateEvent, StageInstanceCreateEvent, StageInstanceUpdateEvent, StageInstanceDeleteEvent
+    // PresenceUpdateEvent, VoiceStateUpdateEvent, StageInstanceCreateEvent, StageInstanceUpdateEvent, StageInstanceDeleteEvent,
+    // ApplicationCommandPermissionsUpdateEvent, AutoModerationRuleCreateEvent, AutoModerationRuleUpdateEvent, AutoModerationRuleDeleteEvent,
+    // AutoModerationActionExecutionEvent
 
     events.listen((event) => switch (event) {
+          ReadyEvent(:final user) => client.users.cache[user.id] = user,
           ChannelCreateEvent(:final channel) || ChannelUpdateEvent(:final channel) => client.channels.cache[channel.id] = channel,
           ChannelDeleteEvent(:final channel) => client.channels.cache.remove(channel.id),
           ThreadCreateEvent(:final thread) || ThreadUpdateEvent(:final thread) => client.channels.cache[thread.id] = thread,
@@ -600,11 +603,12 @@ class Gateway extends GatewayManager with EventParser {
 
   MessageUpdateEvent parseMessageUpdate(Map<String, Object?> raw) {
     final guildId = maybeParse(raw['guild_id'], Snowflake.parse);
-    final message = MessageManager(
+    final manager = MessageManager(
       client.options.messageCacheConfig,
       client,
       channelId: Snowflake.parse(raw['channel_id'] as String),
-    ).parse(raw);
+    );
+    final message = manager.parse(raw);
 
     return MessageUpdateEvent(
       guildId: guildId,
@@ -617,6 +621,7 @@ class Gateway extends GatewayManager with EventParser {
       ),
       mentions: parseMany(raw['mentions'] as List<Object?>, client.users.parse),
       message: message,
+      oldMessage: manager.cache[message.id],
     );
   }
 
@@ -699,8 +704,11 @@ class Gateway extends GatewayManager with EventParser {
   }
 
   UserUpdateEvent parseUserUpdate(Map<String, Object?> raw) {
+    final user = client.users.parse(raw);
+
     return UserUpdateEvent(
-      user: client.users.parse(raw),
+      oldUser: client.users.cache[user.id],
+      user: user,
     );
   }
 
