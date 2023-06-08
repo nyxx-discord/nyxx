@@ -22,17 +22,24 @@ void main() {
 
     // Use setUpAll and tearDownAll to minimize the number of sessions opened on the test token.
     setUpAll(() async {
-      client = await Nyxx.connectGateway(testToken!, GatewayIntents.allPrivileged);
+      client = await Nyxx.connectGateway(testToken!, GatewayIntents.allUnprivileged);
+
+      if (testGuild != null) {
+        await client.onGuildCreate.firstWhere((event) => event is GuildCreateEvent && event.guild.id == Snowflake.parse(testGuild));
+      }
     });
 
     tearDownAll(() async {
       await client.close();
     });
 
-    test('listGuildMembers', skip: testGuild != null ? false : 'No test guild provided', () async {
+    test('listGuildMembers', skip: testGuild != null ? false : 'No test guild provided', timeout: Timeout(Duration(minutes: 10)), () async {
       final guildId = Snowflake.parse(testGuild!);
 
-      await expectLater(client.gateway.listGuildMembers(guildId).toList(), completes);
+      // We can't list all guild members since we don't have the GUILD_MEMBERS intent, so just search for the current user
+      final currentUser = await client.users.fetchCurrentUser();
+
+      await expectLater(client.gateway.listGuildMembers(guildId, query: currentUser.username).drain(), completes);
     });
 
     test('updatePresence', () async {

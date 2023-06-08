@@ -23,7 +23,8 @@ class ClientStatus with ToStringHelper {
 enum UserStatus {
   online._('online'),
   idle._('idle'),
-  dnd._('dnd');
+  dnd._('dnd'),
+  offline._('offline');
 
   /// The value of this [UserStatus].
   final String value;

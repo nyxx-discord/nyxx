@@ -787,13 +787,14 @@ class Gateway extends GatewayManager with EventParser {
       query ??= '';
     }
 
-    nonce ??= '${Snowflake.now()}$guildId';
+    limit ??= 0;
+    nonce ??= '${Snowflake.now().value.toRadixString(36)}${guildId.value.toRadixString(36)}';
 
     final shard = shardFor(guildId);
     shard.add(Send(opcode: Opcode.requestGuildMembers, data: {
       'guild_id': guildId.toString(),
       if (query != null) 'query': query,
-      if (limit != null) 'limit': limit,
+      'limit': limit,
       if (includePresences != null) 'presences': includePresences,
       if (userIds != null) 'user_ids': userIds.map((e) => e.toString()).toList(),
       'nonce': nonce,

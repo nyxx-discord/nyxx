@@ -90,8 +90,10 @@ mixin EventMixin implements Nyxx {
   /// A [Stream] of [ChannelPinsUpdateEvent]s received by this client.
   Stream<ChannelPinsUpdateEvent> get onChannelPinsUpdate => onEvent.whereType<ChannelPinsUpdateEvent>();
 
-  /// A [Stream] of [GuildCreateEvent]s received by this client.
-  Stream<GuildCreateEvent> get onGuildCreate => onEvent.whereType<GuildCreateEvent>();
+  /// A [Stream] of [UnavailableGuildCreateEvent]s received by this client.
+  ///
+  /// This stream also emits [GuildCreateEvent]s, as they are a subtype of [UnavailableGuildCreateEvent].
+  Stream<UnavailableGuildCreateEvent> get onGuildCreate => onEvent.whereType<UnavailableGuildCreateEvent>();
 
   /// A [Stream] of [GuildUpdateEvent]s received by this client.
   Stream<GuildUpdateEvent> get onGuildUpdate => onEvent.whereType<GuildUpdateEvent>();

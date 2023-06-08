@@ -20,11 +20,15 @@ void main() {
   group('NyxxRest', skip: testToken != null ? false : 'No test token provided', () {
     late NyxxRest client;
 
-    setUp(() async {
+    // package:test doesn't seem to re-run the body of the group for each test, so
+    // the tests end up conflicting & closing each other's clients since they all
+    // refer to the same variable if we use setUp and tearDown. use the All variants
+    // to mitigate this.
+    setUpAll(() async {
       client = await Nyxx.connectRest(testToken!);
     });
 
-    tearDown(() async {
+    tearDownAll(() async {
       await client.close();
     });
 
