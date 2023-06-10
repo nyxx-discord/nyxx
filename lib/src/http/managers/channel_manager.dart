@@ -687,6 +687,7 @@ class ChannelManager extends ReadOnlyManager<Channel> {
     return parseThreadList(response.jsonBody as Map<String, Object?>);
   }
 
+  /// Start a stage instance in a channel.
   Future<StageInstance> createStageInstance(Snowflake channelId, StageInstanceBuilder builder, {String? auditLogReason}) async {
     final route = HttpRoute()..stageInstances();
     final request = BasicRequest(
@@ -703,6 +704,7 @@ class ChannelManager extends ReadOnlyManager<Channel> {
     return stageInstance;
   }
 
+  /// Fetch the current stage instance for a channel.
   Future<StageInstance> fetchStageInstance(Snowflake channelId) async {
     final route = HttpRoute()..stageInstances(id: channelId.toString());
     final request = BasicRequest(route);
@@ -714,6 +716,7 @@ class ChannelManager extends ReadOnlyManager<Channel> {
     return stageInstance;
   }
 
+  /// Update the stage instance for a channel.
   Future<StageInstance> updateStageInstance(Snowflake channelId, StageInstanceUpdateBuilder builder, {String? auditLogReason}) async {
     final route = HttpRoute()..stageInstances(id: channelId.toString());
     final request = BasicRequest(
@@ -730,6 +733,7 @@ class ChannelManager extends ReadOnlyManager<Channel> {
     return stageInstance;
   }
 
+  /// Delete the stage instance for a channel.
   Future<void> deleteStageInstance(Snowflake channelId, {String? auditLogReason}) async {
     final route = HttpRoute()..stageInstances(id: channelId.toString());
     final request = BasicRequest(route, method: 'DELETE', auditLogReason: auditLogReason);
