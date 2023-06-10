@@ -420,10 +420,29 @@ void checkThreadList(ThreadList list) {
   expect(list.hasMore, isFalse);
 }
 
+final sampleStageInstance = {
+  "id": "840647391636226060",
+  "guild_id": "197038439483310086",
+  "channel_id": "733488538393510049",
+  "topic": "Testing Testing, 123",
+  "privacy_level": 1,
+  "discoverable_disabled": false,
+  "guild_scheduled_event_id": "947656305244532806"
+};
+
+void checkStageInstance(StageInstance instance) {
+  expect(instance.id, equals(Snowflake(840647391636226060)));
+  expect(instance.guildId, equals(Snowflake(197038439483310086)));
+  expect(instance.channelId, equals(Snowflake(733488538393510049)));
+  expect(instance.topic, equals('Testing Testing, 123'));
+  expect(instance.privacyLevel, equals(PrivacyLevel.public));
+  expect(instance.scheduledEventId, equals(Snowflake(947656305244532806)));
+}
+
 void main() {
   testReadOnlyManager<Channel, ChannelManager>(
     'ChannelManager',
-    ChannelManager.new,
+    (config, client) => ChannelManager(config, client, stageInstanceConfig: CacheConfig()),
     RegExp(r'/channels/\d+'),
     sampleObject: sampleGuildText,
     sampleMatches: checkGuildText,
@@ -483,6 +502,12 @@ void main() {
         source: sampleThreadList,
         parse: (manager) => manager.parseThreadList,
         check: checkThreadList,
+      ),
+      ParsingTest<ChannelManager, StageInstance, Map<String, Object?>>(
+        name: 'parseStageInstance',
+        source: sampleStageInstance,
+        parse: (manager) => manager.parseStageInstance,
+        check: checkStageInstance,
       ),
     ],
     additionalEndpointTests: [
@@ -629,10 +654,41 @@ void main() {
         execute: (manager) => manager.listJoinedPrivateArchivedThreads(Snowflake.zero),
         check: checkThreadList,
       ),
+      EndpointTest<ChannelManager, StageInstance, Map<String, Object?>>(
+        name: 'createStageInstance',
+        method: 'POST',
+        source: sampleStageInstance,
+        urlMatcher: '/stage-instances',
+        execute: (manager) => manager.createStageInstance(Snowflake.zero, StageInstanceBuilder(topic: 'test')),
+        check: checkStageInstance,
+      ),
+      EndpointTest<ChannelManager, StageInstance, Map<String, Object?>>(
+        name: 'fetchStageInstance',
+        source: sampleStageInstance,
+        urlMatcher: '/stage-instances/0',
+        execute: (manager) => manager.fetchStageInstance(Snowflake.zero),
+        check: checkStageInstance,
+      ),
+      EndpointTest<ChannelManager, StageInstance, Map<String, Object?>>(
+        name: 'updateStageInstance',
+        method: 'PATCH',
+        source: sampleStageInstance,
+        urlMatcher: '/stage-instances/0',
+        execute: (manager) => manager.updateStageInstance(Snowflake.zero, StageInstanceUpdateBuilder()),
+        check: checkStageInstance,
+      ),
+      EndpointTest<ChannelManager, void, void>(
+        name: 'deleteStageInstance',
+        method: 'DELETE',
+        source: null,
+        urlMatcher: '/stage-instances/0',
+        execute: (manager) => manager.deleteStageInstance(Snowflake.zero),
+        check: (_) {},
+      ),
     ],
     extraRun: () {
       test('[] returns PartialTextChannel', () {
-        final manager = ChannelManager(const CacheConfig(), MockNyxx());
+        final manager = ChannelManager(const CacheConfig(), MockNyxx(), stageInstanceConfig: const CacheConfig());
 
         expect(manager[Snowflake.zero], isA<PartialTextChannel>());
       });

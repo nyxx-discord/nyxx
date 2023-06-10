@@ -5,7 +5,14 @@ import 'package:runtime_type/mirrors.dart';
 import 'package:runtime_type/runtime_type.dart';
 
 /// An internal mixin containing a [toString] implementation when dart:mirrors is available.
+///
+/// Override [defaultToString] to change the output when dart:mirrors is not enabled.
 mixin ToStringHelper {
+  /// Same as [toString], but only called when dart:mirrors is not available.
+  ///
+  /// If dart:mirrors is available, it will be used to print a complete representation of this object.
+  String defaultToString() => super.toString();
+
   @override
   String toString() => stringifyInstance(reflect(this));
 }
@@ -14,14 +21,14 @@ final _stringifyStack = <Object?>[];
 
 /// An internal function used when dart:mirrors is available to stringify the instance reflected by
 /// [mirror].
-String stringifyInstance(InstanceMirror mirror, [String? type]) {
+String stringifyInstance(InstanceMirror mirror) {
   final existingIndex = _stringifyStack.indexOf(mirror.reflectee);
   if (existingIndex >= 0) {
     return '<Recursive #$existingIndex>';
   }
   _stringifyStack.add(mirror.reflectee);
 
-  type ??= MirrorSystem.getName(mirror.type.simpleName);
+  final type = MirrorSystem.getName(mirror.type.simpleName);
 
   final buffer = StringBuffer('$type(\n');
 

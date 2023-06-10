@@ -18,7 +18,7 @@ import 'package:nyxx/src/utils/flags.dart';
 /// {@template partial_message}
 /// A partial [Message] object.
 /// {@endtemplate}
-class PartialMessage extends SnowflakeEntity<Message> with SnowflakeEntityMixin<Message> {
+class PartialMessage extends WritableSnowflakeEntity<Message> {
   @override
   final MessageManager manager;
 
@@ -28,17 +28,9 @@ class PartialMessage extends SnowflakeEntity<Message> with SnowflakeEntityMixin<
   /// {@macro partial_message}
   PartialMessage({required super.id, required this.manager});
 
-  /// {@template message_update}
-  /// Update this message with new content, and return the new message.
-  /// {@endtemplate}
-  Future<Message> update(MessageUpdateBuilder builder) => manager.update(id, builder);
-
-  /// {@macro message_update}
+  /// Update this message.
   // An often-used alias to update
   Future<Message> edit(MessageUpdateBuilder builder) => update(builder);
-
-  /// Delete this message.
-  Future<void> delete({String? auditLogReason}) => manager.delete(id, auditLogReason: auditLogReason);
 
   /// Crosspost this message to all channels following the channel this message was sent in.
   Future<void> crosspost() => manager.crosspost(id);

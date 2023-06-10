@@ -6,7 +6,7 @@ import 'package:nyxx/src/models/snowflake_entity/snowflake_entity.dart';
 import 'package:nyxx/src/utils/to_string_helper/to_string_helper.dart';
 
 /// A partial [Role].
-class PartialRole extends SnowflakeEntity<Role> with SnowflakeEntityMixin<Role> {
+class PartialRole extends WritableSnowflakeEntity<Role> {
   @override
   final RoleManager manager;
 

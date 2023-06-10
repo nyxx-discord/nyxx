@@ -2,7 +2,7 @@ import 'package:mocktail/mocktail.dart';
 import 'package:nyxx/nyxx.dart';
 import 'package:test/test.dart';
 
-class MockSnowflakeEntity extends SnowflakeEntity<MockSnowflakeEntity> with Fake {
+class MockSnowflakeEntity extends ManagedSnowflakeEntity<MockSnowflakeEntity> with Fake {
   MockSnowflakeEntity({required super.id});
 }
 

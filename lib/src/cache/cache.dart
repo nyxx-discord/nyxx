@@ -80,13 +80,7 @@ class Cache<T> with MapMixin<Snowflake, T> {
 
   @override
   void operator []=(Snowflake key, T value) {
-    assert(() {
-      try {
-        return (value as dynamic).id == key;
-      } on NoSuchMethodError {
-        return true;
-      }
-    }(), 'Mismatched entity key in cache');
+    assert(value is! ManagedSnowflakeEntity || value.id == key, 'Mismatched entity key in cache');
 
     if (config.shouldCache?.call(value) == false) {
       return;

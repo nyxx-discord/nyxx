@@ -27,6 +27,9 @@ class Flags<T extends Flags<T>> extends IterableBase<Flag<T>> with ToStringHelpe
 
   @override
   int get hashCode => value.hashCode;
+
+  @override
+  String defaultToString() => 'Flags<$T>($value)';
 }
 
 /// A flag within a set of [Flags].

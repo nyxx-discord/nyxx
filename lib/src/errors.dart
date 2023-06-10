@@ -20,7 +20,9 @@ class InvalidEventException extends NyxxException {
 
 /// An error thrown when a shard disconnects unexpectedly.
 class ShardDisconnectedError extends Error {
+  /// The shard that was disconnected.
   final Shard shard;
 
+  /// Create a new [ShardDisconnectedError].
   ShardDisconnectedError(this.shard);
 }

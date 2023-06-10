@@ -2,13 +2,16 @@ import 'dart:convert';
 
 import 'package:http/http.dart' show MultipartFile;
 import 'package:nyxx/src/builders/builder.dart';
+import 'package:nyxx/src/builders/channel/stage_instance.dart';
 import 'package:nyxx/src/builders/channel/thread.dart';
 import 'package:nyxx/src/builders/permission_overwrite.dart';
+import 'package:nyxx/src/cache/cache.dart';
 import 'package:nyxx/src/http/managers/manager.dart';
 import 'package:nyxx/src/http/request.dart';
 import 'package:nyxx/src/http/route.dart';
 import 'package:nyxx/src/models/channel/channel.dart';
 import 'package:nyxx/src/models/channel/followed_channel.dart';
+import 'package:nyxx/src/models/channel/stage_instance.dart';
 import 'package:nyxx/src/models/channel/text_channel.dart';
 import 'package:nyxx/src/models/channel/thread.dart';
 import 'package:nyxx/src/models/channel/thread_list.dart';
@@ -33,8 +36,11 @@ import 'package:nyxx/src/utils/parsing_helpers.dart';
 
 /// A manager for [Channel]s.
 class ChannelManager extends ReadOnlyManager<Channel> {
+  final Cache<StageInstance> stageInstanceCache;
+
   /// Create a new [ChannelManager].
-  ChannelManager(super.config, super.client);
+  ChannelManager(super.config, super.client, {required CacheConfig<StageInstance> stageInstanceConfig})
+      : stageInstanceCache = Cache((StageInstance).toString(), stageInstanceConfig);
 
   /// Return a partial instance of the entity with ID [id] containing no data.
   ///
@@ -380,6 +386,18 @@ class ChannelManager extends ReadOnlyManager<Channel> {
     );
   }
 
+  StageInstance parseStageInstance(Map<String, Object?> raw) {
+    return StageInstance(
+      id: Snowflake.parse(raw['id'] as String),
+      manager: this,
+      guildId: Snowflake.parse(raw['guild_id'] as String),
+      channelId: Snowflake.parse(raw['channel_id'] as String),
+      topic: raw['topic'] as String,
+      privacyLevel: PrivacyLevel.parse(raw['privacy_level'] as int),
+      scheduledEventId: maybeParse(raw['guild_scheduled_event_id'], Snowflake.parse),
+    );
+  }
+
   @override
   Future<Channel> fetch(Snowflake id) async {
     final route = HttpRoute()..channels(id: id.toString());
@@ -667,5 +685,61 @@ class ChannelManager extends ReadOnlyManager<Channel> {
 
     final response = await client.httpHandler.executeSafe(request);
     return parseThreadList(response.jsonBody as Map<String, Object?>);
+  }
+
+  /// Start a stage instance in a channel.
+  Future<StageInstance> createStageInstance(Snowflake channelId, StageInstanceBuilder builder, {String? auditLogReason}) async {
+    final route = HttpRoute()..stageInstances();
+    final request = BasicRequest(
+      route,
+      method: 'POST',
+      body: jsonEncode({'channel_id': channelId.toString(), ...builder.build()}),
+      auditLogReason: auditLogReason,
+    );
+
+    final response = await client.httpHandler.executeSafe(request);
+    final stageInstance = parseStageInstance(response.jsonBody as Map<String, Object?>);
+
+    stageInstanceCache[stageInstance.channelId] = stageInstance;
+    return stageInstance;
+  }
+
+  /// Fetch the current stage instance for a channel.
+  Future<StageInstance> fetchStageInstance(Snowflake channelId) async {
+    final route = HttpRoute()..stageInstances(id: channelId.toString());
+    final request = BasicRequest(route);
+
+    final response = await client.httpHandler.executeSafe(request);
+    final stageInstance = parseStageInstance(response.jsonBody as Map<String, Object?>);
+
+    stageInstanceCache[stageInstance.channelId] = stageInstance;
+    return stageInstance;
+  }
+
+  /// Update the stage instance for a channel.
+  Future<StageInstance> updateStageInstance(Snowflake channelId, StageInstanceUpdateBuilder builder, {String? auditLogReason}) async {
+    final route = HttpRoute()..stageInstances(id: channelId.toString());
+    final request = BasicRequest(
+      route,
+      method: 'PATCH',
+      body: jsonEncode(builder.build()),
+      auditLogReason: auditLogReason,
+    );
+
+    final response = await client.httpHandler.executeSafe(request);
+    final stageInstance = parseStageInstance(response.jsonBody as Map<String, Object?>);
+
+    stageInstanceCache[stageInstance.channelId] = stageInstance;
+    return stageInstance;
+  }
+
+  /// Delete the stage instance for a channel.
+  Future<void> deleteStageInstance(Snowflake channelId, {String? auditLogReason}) async {
+    final route = HttpRoute()..stageInstances(id: channelId.toString());
+    final request = BasicRequest(route, method: 'DELETE', auditLogReason: auditLogReason);
+
+    await client.httpHandler.executeSafe(request);
+
+    stageInstanceCache.remove(channelId);
   }
 }
