@@ -33,7 +33,7 @@ class ScheduledEventManager extends Manager<ScheduledEvent> {
       scheduledEndTime: maybeParse(raw['scheduled_end_time'], DateTime.parse),
       privacyLevel: PrivacyLevel.parse(raw['privacy_level'] as int),
       status: EventStatus.parse(raw['status'] as int),
-      type: ScheduledEntityType.parse(raw['type'] as int),
+      type: ScheduledEntityType.parse(raw['entity_type'] as int),
       entityId: maybeParse(raw['entity_id'], Snowflake.parse),
       metadata: maybeParse(raw['entity_metadata'], parseEntityMetadata),
       creator: maybeParse(raw['creator'], client.users.parse),

@@ -59,7 +59,7 @@ void main() {
     'ScheduledEventManager',
     (config, client) => ScheduledEventManager(config, client, guildId: Snowflake.zero),
     RegExp(r'/guilds/0/scheduled-events/\d+'),
-    '/guilds/0/scheduled-events/',
+    '/guilds/0/scheduled-events',
     sampleObject: sampleScheduledEvent,
     sampleMatches: checkScheduledEvent,
     additionalParsingTests: [
