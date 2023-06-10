@@ -1,11 +1,8 @@
-import 'package:nyxx/src/builders/message/message.dart';
 import 'package:nyxx/src/builders/permission_overwrite.dart';
-import 'package:nyxx/src/http/managers/message_manager.dart';
 import 'package:nyxx/src/models/channel/channel.dart';
 import 'package:nyxx/src/models/channel/guild_channel.dart';
 import 'package:nyxx/src/models/channel/text_channel.dart';
 import 'package:nyxx/src/models/channel/voice_channel.dart';
-import 'package:nyxx/src/models/message/message.dart';
 import 'package:nyxx/src/models/permission_overwrite.dart';
 import 'package:nyxx/src/models/snowflake.dart';
 import 'package:nyxx/src/models/webhook.dart';
@@ -13,10 +10,7 @@ import 'package:nyxx/src/models/webhook.dart';
 /// {@template guild_stage_channel}
 /// A stage channel.
 /// {@endtemplate}
-class GuildStageChannel extends Channel implements TextChannel, VoiceChannel, GuildChannel {
-  @override
-  MessageManager get messages => MessageManager(manager.client.options.messageCacheConfig, manager.client, channelId: id);
-
+class GuildStageChannel extends TextChannel implements VoiceChannel, GuildChannel {
   @override
   final int bitrate;
 
@@ -80,12 +74,6 @@ class GuildStageChannel extends Channel implements TextChannel, VoiceChannel, Gu
 
   @override
   Future<void> deletePermissionOverwrite(Snowflake id) => manager.deletePermissionOverwrite(this.id, id);
-
-  @override
-  Future<Message> sendMessage(MessageBuilder builder) => messages.create(builder);
-
-  @override
-  Future<void> triggerTyping() => manager.triggerTyping(id);
 
   @override
   Future<void> updatePermissionOverwrite(PermissionOverwriteBuilder builder) => manager.updatePermissionOverwrite(id, builder);

@@ -9,6 +9,7 @@ import 'package:nyxx/src/http/request.dart';
 import 'package:nyxx/src/http/route.dart';
 import 'package:nyxx/src/models/channel/channel.dart';
 import 'package:nyxx/src/models/channel/followed_channel.dart';
+import 'package:nyxx/src/models/channel/text_channel.dart';
 import 'package:nyxx/src/models/channel/thread.dart';
 import 'package:nyxx/src/models/channel/thread_list.dart';
 import 'package:nyxx/src/models/channel/types/announcement_thread.dart';
@@ -35,8 +36,18 @@ class ChannelManager extends ReadOnlyManager<Channel> {
   /// Create a new [ChannelManager].
   ChannelManager(super.config, super.client);
 
+  /// Return a partial instance of the entity with ID [id] containing no data.
+  ///
+  /// This allows performing API operations without fetching an instance from the API.
+  ///
+  /// Because this method doesn't perform any API checks, there might be no real entity with the
+  /// correct [id]. In this case, the object returned may not work with the API correctly.
+  ///
+  /// While this method's return type is [PartialChannel], a [PartialTextChannel] is always returned.
+  /// If you are sure the channel you are requesting is a text channel, the returned value can safely
+  /// be cast to a [PartialTextChannel] to access the channel's messages.
   @override
-  PartialChannel operator [](Snowflake id) => PartialChannel(id: id, manager: this);
+  PartialChannel operator [](Snowflake id) => PartialTextChannel(id: id, manager: this);
 
   @override
   Channel parse(Map<String, Object?> raw) {

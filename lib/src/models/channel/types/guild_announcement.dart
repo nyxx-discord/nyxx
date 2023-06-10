@@ -1,14 +1,11 @@
 import 'package:nyxx/src/builders/channel/thread.dart';
-import 'package:nyxx/src/builders/message/message.dart';
 import 'package:nyxx/src/builders/permission_overwrite.dart';
-import 'package:nyxx/src/http/managers/message_manager.dart';
 import 'package:nyxx/src/models/channel/channel.dart';
 import 'package:nyxx/src/models/channel/guild_channel.dart';
 import 'package:nyxx/src/models/channel/text_channel.dart';
 import 'package:nyxx/src/models/channel/has_threads_channel.dart';
 import 'package:nyxx/src/models/channel/thread.dart';
 import 'package:nyxx/src/models/channel/thread_list.dart';
-import 'package:nyxx/src/models/message/message.dart';
 import 'package:nyxx/src/models/permission_overwrite.dart';
 import 'package:nyxx/src/models/snowflake.dart';
 import 'package:nyxx/src/models/webhook.dart';
@@ -16,10 +13,7 @@ import 'package:nyxx/src/models/webhook.dart';
 /// {@template guild_announcement_channel}
 /// An announcement channel in a [Guild].
 /// {@endtemplate}
-class GuildAnnouncementChannel extends Channel implements TextChannel, GuildChannel, HasThreadsChannel {
-  @override
-  MessageManager get messages => MessageManager(manager.client.options.messageCacheConfig, manager.client, channelId: id);
-
+class GuildAnnouncementChannel extends TextChannel implements GuildChannel, HasThreadsChannel {
   /// The topic of this channel.
   final String topic;
 
@@ -95,12 +89,6 @@ class GuildAnnouncementChannel extends Channel implements TextChannel, GuildChan
   @override
   Future<ThreadList> listJoinedPrivateArchivedThreads({DateTime? before, int? limit}) =>
       manager.listJoinedPrivateArchivedThreads(id, before: before, limit: limit);
-
-  @override
-  Future<Message> sendMessage(MessageBuilder builder) => messages.create(builder);
-
-  @override
-  Future<void> triggerTyping() => manager.triggerTyping(id);
 
   @override
   Future<void> updatePermissionOverwrite(PermissionOverwriteBuilder builder) => manager.updatePermissionOverwrite(id, builder);
