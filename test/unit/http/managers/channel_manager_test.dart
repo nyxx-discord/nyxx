@@ -1,6 +1,7 @@
 import 'package:nyxx/nyxx.dart';
 import 'package:test/test.dart';
 
+import '../../../mocks/client.dart';
 import '../../../test_manager.dart';
 
 final sampleGuildText = {
@@ -629,5 +630,12 @@ void main() {
         check: checkThreadList,
       ),
     ],
+    extraRun: () {
+      test('[] returns PartialTextChannel', () {
+        final manager = ChannelManager(const CacheConfig(), MockNyxx());
+
+        expect(manager[Snowflake.zero], isA<PartialTextChannel>());
+      });
+    },
   );
 }

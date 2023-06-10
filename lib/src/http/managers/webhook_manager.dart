@@ -6,10 +6,10 @@ import 'package:nyxx/src/builders/message/message.dart';
 import 'package:nyxx/src/builders/sentinels.dart';
 import 'package:nyxx/src/builders/webhook.dart';
 import 'package:nyxx/src/http/managers/manager.dart';
-import 'package:nyxx/src/http/managers/message_manager.dart';
 import 'package:nyxx/src/http/request.dart';
 import 'package:nyxx/src/http/route.dart';
 import 'package:nyxx/src/models/channel/channel.dart';
+import 'package:nyxx/src/models/channel/text_channel.dart';
 import 'package:nyxx/src/models/guild/guild.dart';
 import 'package:nyxx/src/models/message/message.dart';
 import 'package:nyxx/src/models/snowflake.dart';
@@ -187,11 +187,8 @@ class WebhookManager extends Manager<Webhook> {
       return null;
     }
 
-    final messageManager = MessageManager(
-      client.options.messageCacheConfig,
-      client,
-      channelId: Snowflake.parse((response.jsonBody as Map<String, Object?>)['channel_id'] as String),
-    );
+    final channelId = Snowflake.parse((response.jsonBody as Map<String, Object?>)['channel_id'] as String);
+    final messageManager = (client.channels[channelId] as PartialTextChannel).messages;
     final message = messageManager.parse(response.jsonBody as Map<String, Object?>);
 
     messageManager.cache[message.id] = message;
@@ -211,11 +208,8 @@ class WebhookManager extends Manager<Webhook> {
     );
 
     final response = await client.httpHandler.executeSafe(request);
-    final messageManager = MessageManager(
-      client.options.messageCacheConfig,
-      client,
-      channelId: Snowflake.parse((response.jsonBody as Map<String, Object?>)['channel_id'] as String),
-    );
+    final channelId = Snowflake.parse((response.jsonBody as Map<String, Object?>)['channel_id'] as String);
+    final messageManager = (client.channels[channelId] as PartialTextChannel).messages;
     final message = messageManager.parse(response.jsonBody as Map<String, Object?>);
 
     messageManager.cache[message.id] = message;
@@ -271,11 +265,8 @@ class WebhookManager extends Manager<Webhook> {
     }
 
     final response = await client.httpHandler.executeSafe(request);
-    final messageManager = MessageManager(
-      client.options.messageCacheConfig,
-      client,
-      channelId: Snowflake.parse((response.jsonBody as Map<String, Object?>)['channel_id'] as String),
-    );
+    final channelId = Snowflake.parse((response.jsonBody as Map<String, Object?>)['channel_id'] as String);
+    final messageManager = (client.channels[channelId] as PartialTextChannel).messages;
     final message = messageManager.parse(response.jsonBody as Map<String, Object?>);
 
     messageManager.cache[message.id] = message;
