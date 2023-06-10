@@ -102,7 +102,7 @@ class Gateway extends GatewayManager with EventParser {
     // TODO: GuildEmojisUpdateEvent, GuildStickersUpdateEvent, GuildScheduledEventCreateEvent, GuildScheduledEventUpdateEvent, GuildScheduledEventDeleteEvent,
     // GuildScheduledEventUserAddEvent, GuildScheduledEventUserRemoveEvent, IntegrationCreateEvent, IntegrationUpdateEvent, IntegrationDeleteEvent,
     // InviteCreateEvent, InviteDeleteEvent, MessageReactionAddEvent, MessageReactionRemoveEvent, MessageReactionRemoveAllEvent,MessageReactionRemoveEmojiEvent,
-    // PresenceUpdateEvent, VoiceStateUpdateEvent, StageInstanceCreateEvent, StageInstanceUpdateEvent, StageInstanceDeleteEvent,
+    // PresenceUpdateEvent, VoiceStateUpdateEvent,
     // ApplicationCommandPermissionsUpdateEvent, AutoModerationRuleCreateEvent, AutoModerationRuleUpdateEvent, AutoModerationRuleDeleteEvent,
     // AutoModerationActionExecutionEvent
 
@@ -144,6 +144,9 @@ class Gateway extends GatewayManager with EventParser {
             // ignore: avoid_function_literals_in_foreach_calls
             messageIds.forEach((messageId) => MessageManager(client.options.messageCacheConfig, client, channelId: channelId).cache.remove(messageId)),
           UserUpdateEvent(:final user) => client.users.cache[user.id] = user,
+          StageInstanceCreateEvent(:final instance) || StageInstanceUpdateEvent(:final instance) => client.channels.stageInstanceCache[instance.channelId] =
+              instance,
+          StageInstanceDeleteEvent(:final instance) => client.channels.stageInstanceCache.remove(instance.channelId),
           _ => null,
         });
   }
@@ -761,15 +764,24 @@ class Gateway extends GatewayManager with EventParser {
   }
 
   StageInstanceCreateEvent parseStageInstanceCreate(Map<String, Object?> raw) {
-    return StageInstanceCreateEvent();
+    return StageInstanceCreateEvent(
+      instance: client.channels.parseStageInstance(raw),
+    );
   }
 
   StageInstanceUpdateEvent parseStageInstanceUpdate(Map<String, Object?> raw) {
-    return StageInstanceUpdateEvent();
+    final instance = client.channels.parseStageInstance(raw);
+
+    return StageInstanceUpdateEvent(
+      oldInstance: client.channels.stageInstanceCache[instance.channelId],
+      instance: instance,
+    );
   }
 
   StageInstanceDeleteEvent parseStageInstanceDelete(Map<String, Object?> raw) {
-    return StageInstanceDeleteEvent();
+    return StageInstanceDeleteEvent(
+      instance: client.channels.parseStageInstance(raw),
+    );
   }
 
   /// Stream all members in a guild that match [query] or [userIds].
