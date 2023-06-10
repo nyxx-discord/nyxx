@@ -18,7 +18,7 @@ import 'package:nyxx/src/utils/flags.dart';
 /// {@template partial_message}
 /// A partial [Message] object.
 /// {@endtemplate}
-class PartialMessage extends WritableSnowflakeEntity<Message> with SnowflakeEntityMixin<Message> {
+class PartialMessage extends WritableSnowflakeEntity<Message> {
   @override
   final MessageManager manager;
 

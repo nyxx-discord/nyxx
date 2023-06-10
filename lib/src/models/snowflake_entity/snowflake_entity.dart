@@ -3,10 +3,9 @@ import 'dart:async';
 import 'package:nyxx/src/builders/builder.dart';
 import 'package:nyxx/src/http/managers/manager.dart';
 import 'package:nyxx/src/models/snowflake.dart';
+import 'package:nyxx/src/utils/to_string_helper/to_string_helper.dart';
 
-export 'base_impl.dart' if (dart.library.mirrors) 'mirrors_impl.dart';
-
-abstract class SnowflakeEntity<T extends SnowflakeEntity<T>> {
+abstract class SnowflakeEntity<T extends SnowflakeEntity<T>> with ToStringHelper {
   /// The id of this entity.
   final Snowflake id;
 
@@ -24,6 +23,9 @@ abstract class SnowflakeEntity<T extends SnowflakeEntity<T>> {
 
   @override
   int get hashCode => id.hashCode;
+
+  @override
+  String defaultToString() => '$T($id)';
 }
 
 /// The base class for all entities in the API identified by a [Snowflake].

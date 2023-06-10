@@ -9,7 +9,7 @@ import 'package:nyxx/src/http/managers/webhook_manager.dart';
 import 'package:nyxx/src/models/user/user.dart';
 
 /// A partial [Webhook].
-class PartialWebhook extends WritableSnowflakeEntity<Webhook> with SnowflakeEntityMixin<Webhook> {
+class PartialWebhook extends WritableSnowflakeEntity<Webhook> {
   @override
   final WebhookManager manager;
 

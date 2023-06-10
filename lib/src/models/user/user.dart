@@ -6,7 +6,7 @@ import 'package:nyxx/src/models/snowflake_entity/snowflake_entity.dart';
 import 'package:nyxx/src/utils/flags.dart';
 
 /// A partial [User] object.
-class PartialUser extends ManagedSnowflakeEntity<User> with SnowflakeEntityMixin<User> {
+class PartialUser extends ManagedSnowflakeEntity<User> {
   @override
   final UserManager manager;
 

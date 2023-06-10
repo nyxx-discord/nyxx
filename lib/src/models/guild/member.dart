@@ -6,7 +6,7 @@ import 'package:nyxx/src/models/user/user.dart';
 import 'package:nyxx/src/utils/flags.dart';
 
 /// A partial [Member].
-class PartialMember extends WritableSnowflakeEntity<Member> with SnowflakeEntityMixin<Member> {
+class PartialMember extends WritableSnowflakeEntity<Member> {
   @override
   final MemberManager manager;
 

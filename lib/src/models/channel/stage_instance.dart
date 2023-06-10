@@ -4,7 +4,7 @@ import 'package:nyxx/src/http/managers/channel_manager.dart';
 import 'package:nyxx/src/models/snowflake.dart';
 import 'package:nyxx/src/models/snowflake_entity/snowflake_entity.dart';
 
-class StageInstance extends SnowflakeEntity<StageInstance> with SnowflakeEntityMixin<StageInstance> {
+class StageInstance extends SnowflakeEntity<StageInstance> {
   final ChannelManager manager;
 
   final Snowflake guildId;
