@@ -5,10 +5,12 @@ import 'package:nyxx/src/http/managers/manager.dart';
 import 'package:nyxx/src/models/snowflake.dart';
 import 'package:nyxx/src/utils/to_string_helper/to_string_helper.dart';
 
+/// The base class for all entities in the API identified by a [Snowflake].
 abstract class SnowflakeEntity<T extends SnowflakeEntity<T>> with ToStringHelper {
   /// The id of this entity.
   final Snowflake id;
 
+  /// Create a new [SnowflakeEntity].
   SnowflakeEntity({required this.id});
 
   /// If this entity exists in the manager's cache, return the cached instance. Otherwise, [fetch]
@@ -28,7 +30,7 @@ abstract class SnowflakeEntity<T extends SnowflakeEntity<T>> with ToStringHelper
   String defaultToString() => '$T($id)';
 }
 
-/// The base class for all entities in the API identified by a [Snowflake].
+/// The base class for all [SnowflakeEntity]'s that have a dedicated [ReadOnlyManager].
 abstract class ManagedSnowflakeEntity<T extends ManagedSnowflakeEntity<T>> extends SnowflakeEntity<T> {
   /// The manager for this entity.
   ReadOnlyManager<T> get manager;
@@ -43,13 +45,17 @@ abstract class ManagedSnowflakeEntity<T extends ManagedSnowflakeEntity<T>> exten
   Future<T> fetch() => manager.fetch(id);
 }
 
+/// The base class for all [SnowflakeEntity]'s that have a dedicated [Manager].
 abstract class WritableSnowflakeEntity<T extends WritableSnowflakeEntity<T>> extends ManagedSnowflakeEntity<T> {
   @override
   Manager<T> get manager;
 
+  /// Create a new [WritableSnowflakeEntity].
   WritableSnowflakeEntity({required super.id});
 
+  /// Update this entity using the provided builder and return the updated entity.
   Future<T> update(covariant UpdateBuilder<T> builder) => manager.update(id, builder);
 
+  /// Delete this entity.
   Future<void> delete() => manager.delete(id);
 }

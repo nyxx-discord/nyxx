@@ -38,6 +38,7 @@ class RestClientOptions implements ClientOptions {
   /// The [CacheConfig] to use for [Ban]s in the [NyxxRest.guilds] manager.
   final CacheConfig<Ban> banCacheConfig;
 
+  /// The [CacheConfig] to use for [StageInstance]s in the [NyxxRest.channels] manager.
   final CacheConfig<StageInstance> stageInstanceCacheConfig;
 
   /// Create a new [RestClientOptions].
