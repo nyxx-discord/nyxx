@@ -80,7 +80,7 @@ class Cache<T> with MapMixin<Snowflake, T> {
 
   @override
   void operator []=(Snowflake key, T value) {
-    assert(value is! SnowflakeEntity || value.id == key, 'Mismatched entity key in cache');
+    assert(value is! ManagedSnowflakeEntity || value.id == key, 'Mismatched entity key in cache');
 
     if (config.shouldCache?.call(value) == false) {
       return;

@@ -5,7 +5,7 @@ import 'package:nyxx/src/models/snowflake_entity/snowflake_entity.dart';
 import 'package:nyxx/src/utils/flags.dart';
 
 /// A partial [Channel] object.
-class PartialChannel extends SnowflakeEntity<Channel> with SnowflakeEntityMixin<Channel> {
+class PartialChannel extends ManagedSnowflakeEntity<Channel> with SnowflakeEntityMixin<Channel> {
   @override
   final ChannelManager manager;
 

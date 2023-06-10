@@ -68,7 +68,7 @@ export 'src/models/locale.dart' show Locale;
 export 'src/models/permission_overwrite.dart' show PermissionOverwrite, PermissionOverwriteType;
 export 'src/models/snowflake.dart' show Snowflake;
 export 'src/models/permissions.dart' show Permissions;
-export 'src/models/snowflake_entity/snowflake_entity.dart' show SnowflakeEntity;
+export 'src/models/snowflake_entity/snowflake_entity.dart' show SnowflakeEntity, ManagedSnowflakeEntity, WritableSnowflakeEntity;
 export 'src/models/user/application_role_connection.dart' show ApplicationRoleConnection;
 export 'src/models/user/connection.dart' show Connection, ConnectionType, ConnectionVisibility;
 export 'src/models/user/user.dart' show PartialUser, User, UserFlags, NitroType;

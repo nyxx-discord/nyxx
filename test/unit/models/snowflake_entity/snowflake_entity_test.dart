@@ -3,7 +3,7 @@ import 'package:nyxx/nyxx.dart';
 import 'package:nyxx/src/models/snowflake_entity/snowflake_entity.dart';
 import 'package:test/test.dart';
 
-class PartialMockSnowflakeEntity extends SnowflakeEntity<MockSnowflakeEntity> with SnowflakeEntityMixin<MockSnowflakeEntity> {
+class PartialMockSnowflakeEntity extends WritableSnowflakeEntity<MockSnowflakeEntity> with SnowflakeEntityMixin<MockSnowflakeEntity> {
   @override
   final MockSnowflakeEntityManager manager = MockSnowflakeEntityManager();
 

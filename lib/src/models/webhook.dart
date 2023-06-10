@@ -9,7 +9,7 @@ import 'package:nyxx/src/http/managers/webhook_manager.dart';
 import 'package:nyxx/src/models/user/user.dart';
 
 /// A partial [Webhook].
-class PartialWebhook extends SnowflakeEntity<Webhook> with SnowflakeEntityMixin<Webhook> {
+class PartialWebhook extends WritableSnowflakeEntity<Webhook> with SnowflakeEntityMixin<Webhook> {
   @override
   final WebhookManager manager;
 
@@ -21,6 +21,7 @@ class PartialWebhook extends SnowflakeEntity<Webhook> with SnowflakeEntityMixin<
   /// External references:
   /// * [WebhookManager.update]
   /// * Discord API Reference: https://discord.com/developers/docs/resources/webhook#modify-webhook
+  @override
   Future<Webhook> update(WebhookUpdateBuilder builder, {String? token}) => manager.update(id, builder, token: token);
 
   /// Delete this webhook.
@@ -28,6 +29,7 @@ class PartialWebhook extends SnowflakeEntity<Webhook> with SnowflakeEntityMixin<
   /// External references:
   /// * [WebhookManager.delete]
   /// * Discord API Reference: https://discord.com/developers/docs/resources/webhook#delete-webhook
+  @override
   Future<void> delete({String? token, String? auditLogReason}) => manager.delete(id, token: token, auditLogReason: auditLogReason);
 
   /// Execute this webhook using its [token].

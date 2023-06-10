@@ -13,7 +13,7 @@ class MockManager extends Manager<MockSnowflakeEntity> with Fake {
   Future<MockSnowflakeEntity> fetch(Snowflake id) => throw TestFetchException();
 }
 
-class MockSnowflakeEntity extends SnowflakeEntity<MockSnowflakeEntity> with Fake {
+class MockSnowflakeEntity extends WritableSnowflakeEntity<MockSnowflakeEntity> with Fake {
   MockSnowflakeEntity({required super.id});
 }
 

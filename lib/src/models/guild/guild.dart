@@ -25,7 +25,7 @@ import 'package:nyxx/src/models/voice/voice_region.dart';
 import 'package:nyxx/src/utils/flags.dart';
 
 /// A partial [Guild].
-class PartialGuild extends SnowflakeEntity<Guild> with SnowflakeEntityMixin<Guild> {
+class PartialGuild extends WritableSnowflakeEntity<Guild> with SnowflakeEntityMixin<Guild> {
   @override
   final GuildManager manager;
 

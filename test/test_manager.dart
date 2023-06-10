@@ -54,7 +54,7 @@ class EndpointTest<T, U, V> {
   }
 }
 
-Future<void> testReadOnlyManager<T extends SnowflakeEntity<T>, U extends ReadOnlyManager<T>>(
+Future<void> testReadOnlyManager<T extends ManagedSnowflakeEntity<T>, U extends ReadOnlyManager<T>>(
   String name,
   U Function(CacheConfig<T>, NyxxRest) create,
   Pattern baseUrlMatcher, {
@@ -127,7 +127,7 @@ Future<void> testReadOnlyManager<T extends SnowflakeEntity<T>, U extends ReadOnl
       when(() => client.options).thenReturn(RestClientOptions());
       when(() => client.httpHandler).thenReturn(HttpHandler(client));
 
-      nock('https://discord.com/api/v${client.apiOptions.apiVersion}').get(baseUrlMatcher).reply(200, jsonEncode(fetchObjectOverride  ?? sampleObject));
+      nock('https://discord.com/api/v${client.apiOptions.apiVersion}').get(baseUrlMatcher).reply(200, jsonEncode(fetchObjectOverride ?? sampleObject));
 
       final manager = create(CacheConfig(), client);
       final entity = await manager.fetch(Snowflake.zero);
@@ -171,7 +171,7 @@ Future<void> testReadOnlyManager<T extends SnowflakeEntity<T>, U extends ReadOnl
   });
 }
 
-Future<void> testManager<T extends SnowflakeEntity<T>, U extends Manager<T>>(
+Future<void> testManager<T extends WritableSnowflakeEntity<T>, U extends Manager<T>>(
   String name,
   U Function(CacheConfig<T>, NyxxRest) create,
   Pattern baseUrlMatcher,
