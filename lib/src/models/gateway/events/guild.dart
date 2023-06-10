@@ -3,6 +3,7 @@ import 'package:nyxx/src/models/channel/thread.dart';
 import 'package:nyxx/src/models/gateway/event.dart';
 import 'package:nyxx/src/models/guild/guild.dart';
 import 'package:nyxx/src/models/guild/member.dart';
+import 'package:nyxx/src/models/guild/scheduled_event.dart';
 import 'package:nyxx/src/models/role.dart';
 import 'package:nyxx/src/models/snowflake.dart';
 import 'package:nyxx/src/models/user/user.dart';
@@ -54,8 +55,7 @@ class GuildCreateEvent extends DispatchEvent implements UnavailableGuildCreateEv
   // TODO
   //final List<StageInstance> stageInstances;
 
-  // TODO
-  //final List<ScheduledEvent> scheduledEvents;
+  final List<ScheduledEvent> scheduledEvents;
 
   /// {@macro guild_create_event}
   GuildCreateEvent({
@@ -67,6 +67,7 @@ class GuildCreateEvent extends DispatchEvent implements UnavailableGuildCreateEv
     required this.members,
     required this.channels,
     required this.threads,
+    required this.scheduledEvents,
   });
 }
 
@@ -306,24 +307,36 @@ class GuildRoleDeleteEvent extends DispatchEvent {
 /// Emitted when a scheduled event is created.
 /// {@endtemplate}
 class GuildScheduledEventCreateEvent extends DispatchEvent {
-  // TODO
-  //final ScheduledEvent event;
+  /// The event that was created.
+  final ScheduledEvent event;
+
+  /// {@macro guild_scheduled_event_create_event}
+  GuildScheduledEventCreateEvent({required this.event});
 }
 
 /// {@template guild_scheduled_event_update_event}
 /// Emitted when a scheduled event is updated.
 /// {@endtemplate}
 class GuildScheduledEventUpdateEvent extends DispatchEvent {
-  // TODO
-  //final ScheduledEvent event;
+  /// The event as it was in the cache before it was updated.
+  final ScheduledEvent? oldEvent;
+
+  /// The updated event.
+  final ScheduledEvent event;
+
+  /// {@macro guild_scheduled_event_update_event}
+  GuildScheduledEventUpdateEvent({required this.oldEvent, required this.event});
 }
 
 /// {@template guild_scheduled_event_delete_event}
 /// Emitted when a scheduled event is deleted.
 /// {@endtemplate}
 class GuildScheduledEventDeleteEvent extends DispatchEvent {
-  // TODO
-  //final ScheduledEvent event;
+  /// The event that was deleted.
+  final ScheduledEvent event;
+
+  /// {@macro guild_scheduled_event_delete_event}
+  GuildScheduledEventDeleteEvent({required this.event});
 }
 
 /// {@template guild_scheduled_event_user_add_event}

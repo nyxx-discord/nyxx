@@ -4,6 +4,7 @@ import 'package:nyxx/src/models/channel/stage_instance.dart';
 import 'package:nyxx/src/models/guild/ban.dart';
 import 'package:nyxx/src/models/guild/guild.dart';
 import 'package:nyxx/src/models/guild/member.dart';
+import 'package:nyxx/src/models/guild/scheduled_event.dart';
 import 'package:nyxx/src/models/message/message.dart';
 import 'package:nyxx/src/models/role.dart';
 import 'package:nyxx/src/models/user/user.dart';
@@ -41,6 +42,9 @@ class RestClientOptions implements ClientOptions {
   /// The [CacheConfig] to use for [StageInstance]s in the [NyxxRest.channels] manager.
   final CacheConfig<StageInstance> stageInstanceCacheConfig;
 
+  /// The [CacheConfig] to use for the [Guild.scheduledEvents] manager.
+  final CacheConfig<ScheduledEvent> scheduledEventCacheConfig;
+
   /// Create a new [RestClientOptions].
   RestClientOptions({
     this.userCacheConfig = const CacheConfig(),
@@ -52,6 +56,7 @@ class RestClientOptions implements ClientOptions {
     this.roleCacheConfig = const CacheConfig(),
     this.banCacheConfig = const CacheConfig(),
     this.stageInstanceCacheConfig = const CacheConfig(),
+    this.scheduledEventCacheConfig = const CacheConfig(),
   });
 }
 
