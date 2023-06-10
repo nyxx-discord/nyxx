@@ -46,6 +46,7 @@ class _FlagIterator<T extends Flags<T>> implements Iterator<Flag<T>> {
 
   _FlagIterator(this.source);
 
+  // TODO: Rewrite this to avoid hardcoding a max offset.
   static const maxOffset = 64;
 
   int? offset;

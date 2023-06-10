@@ -1,6 +1,6 @@
 import 'package:test/test.dart' hide completes;
 import 'package:test/test.dart' as test show completes;
-import 'package:test_api/src/expect/async_matcher.dart' show AsyncMatcher;
+import 'package:matcher/src/expect/async_matcher.dart' show AsyncMatcher;
 
 /// A simple wrapper around [test.completes] that invokes functions and tests their result instead of failing.
 const completes = _FunctionCompletes();

@@ -40,7 +40,7 @@ class GuildManager extends Manager<Guild> {
   @override
   PartialGuild operator [](Snowflake id) => PartialGuild(id: id, manager: this);
 
-  /// Parse an [Guild] from [raw].@override
+  @override
   Guild parse(Map<String, Object?> raw) {
     return Guild(
       id: Snowflake.parse(raw['id'] as String),
