@@ -1,5 +1,6 @@
 import 'package:nyxx/src/builders/image.dart';
 import 'package:nyxx/src/models/channel/types/forum.dart';
+import 'package:nyxx/src/models/guild/scheduled_event.dart';
 import 'package:nyxx/src/models/snowflake.dart';
 
 // ASCII encoded "nyxx"
@@ -57,6 +58,15 @@ const sentinelDateTime = _SentinelDateTime();
 
 class _SentinelDateTime implements DateTime {
   const _SentinelDateTime();
+
+  @override
+  void noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
+}
+
+const sentinelEntityMetadata = _SentinelEntityMetadata();
+
+class _SentinelEntityMetadata implements EntityMetadata {
+  const _SentinelEntityMetadata();
 
   @override
   void noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);

@@ -36,6 +36,7 @@ export 'src/builders/guild/guild.dart' show GuildBuilder, GuildUpdateBuilder;
 export 'src/builders/guild/member.dart' show CurrentMemberUpdateBuilder, MemberBuilder, MemberUpdateBuilder;
 export 'src/builders/guild/welcome_screen.dart' show WelcomeScreenUpdateBuilder;
 export 'src/builders/guild/widget.dart' show WidgetSettingsUpdateBuilder;
+export 'src/builders/guild/scheduled_event.dart' show ScheduledEventBuilder, ScheduledEventUpdateBuilder;
 export 'src/builders/role.dart' show RoleBuilder, RoleUpdateBuilder;
 export 'src/builders/voice.dart' show CurrentUserVoiceStateUpdateBuilder, VoiceStateUpdateBuilder, GatewayVoiceStateBuilder;
 export 'src/builders/presence.dart' show PresenceBuilder, CurrentUserStatus;
@@ -58,6 +59,7 @@ export 'src/http/managers/voice_manager.dart' show VoiceManager;
 export 'src/http/managers/member_manager.dart' show MemberManager;
 export 'src/http/managers/role_manager.dart' show RoleManager;
 export 'src/http/managers/gateway_manager.dart' show GatewayManager;
+export 'src/http/managers/scheduled_event_manager.dart' show ScheduledEventManager;
 
 export 'src/gateway/gateway.dart' show Gateway;
 export 'src/gateway/message.dart' show Disconnecting, Dispose, ErrorReceived, EventReceived, GatewayMessage, Send, ShardData, ShardMessage;
@@ -122,6 +124,7 @@ export 'src/models/guild/integration.dart' show Integration, IntegrationAccount,
 export 'src/models/guild/member.dart' show Member, MemberFlags, PartialMember;
 export 'src/models/guild/onboarding.dart' show Onboarding, OnboardingPrompt, OnboardingPromptOption, OnboardingPromptType;
 export 'src/models/guild/welcome_screen.dart' show WelcomeScreen, WelcomeScreenChannel;
+export 'src/models/guild/scheduled_event.dart' show EntityMetadata, PartialScheduledEvent, ScheduledEvent, ScheduledEventUser, EventStatus, ScheduledEntityType;
 export 'src/models/application.dart' show Application, ApplicationFlags, InstallationParameters, PartialApplication;
 export 'src/models/voice/voice_state.dart' show VoiceState;
 export 'src/models/voice/voice_region.dart' show VoiceRegion;
