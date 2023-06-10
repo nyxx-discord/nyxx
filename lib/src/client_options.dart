@@ -42,6 +42,7 @@ class RestClientOptions implements ClientOptions {
   /// The [CacheConfig] to use for [StageInstance]s in the [NyxxRest.channels] manager.
   final CacheConfig<StageInstance> stageInstanceCacheConfig;
 
+  /// The [CacheConfig] to use for the [Guild.scheduledEvents] manager.
   final CacheConfig<ScheduledEvent> scheduledEventCacheConfig;
 
   /// Create a new [RestClientOptions].

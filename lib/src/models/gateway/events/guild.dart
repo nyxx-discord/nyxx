@@ -307,8 +307,10 @@ class GuildRoleDeleteEvent extends DispatchEvent {
 /// Emitted when a scheduled event is created.
 /// {@endtemplate}
 class GuildScheduledEventCreateEvent extends DispatchEvent {
+  /// The event that was created.
   final ScheduledEvent event;
 
+  /// {@macro guild_scheduled_event_create_event}
   GuildScheduledEventCreateEvent({required this.event});
 }
 
@@ -316,10 +318,13 @@ class GuildScheduledEventCreateEvent extends DispatchEvent {
 /// Emitted when a scheduled event is updated.
 /// {@endtemplate}
 class GuildScheduledEventUpdateEvent extends DispatchEvent {
+  /// The event as it was in the cache before it was updated.
   final ScheduledEvent? oldEvent;
 
+  /// The updated event.
   final ScheduledEvent event;
 
+  /// {@macro guild_scheduled_event_update_event}
   GuildScheduledEventUpdateEvent({required this.oldEvent, required this.event});
 }
 
@@ -327,8 +332,10 @@ class GuildScheduledEventUpdateEvent extends DispatchEvent {
 /// Emitted when a scheduled event is deleted.
 /// {@endtemplate}
 class GuildScheduledEventDeleteEvent extends DispatchEvent {
+  /// The event that was deleted.
   final ScheduledEvent event;
 
+  /// {@macro guild_scheduled_event_delete_event}
   GuildScheduledEventDeleteEvent({required this.event});
 }
 

@@ -9,9 +9,11 @@ import 'package:nyxx/src/models/guild/scheduled_event.dart';
 import 'package:nyxx/src/models/snowflake.dart';
 import 'package:nyxx/src/utils/parsing_helpers.dart';
 
+/// A [Manager] for [ScheduledEvent]s.
 class ScheduledEventManager extends Manager<ScheduledEvent> {
   final Snowflake guildId;
 
+  /// Create a new [ScheduledEventManager].
   ScheduledEventManager(super.config, super.client, {required this.guildId});
 
   @override
@@ -68,6 +70,7 @@ class ScheduledEventManager extends Manager<ScheduledEvent> {
     return event;
   }
 
+  /// List the [ScheduledEvent]s in the guild.
   Future<List<ScheduledEvent>> list({bool? withUserCounts}) async {
     final route = HttpRoute()
       ..guilds(id: guildId.toString())
@@ -121,6 +124,7 @@ class ScheduledEventManager extends Manager<ScheduledEvent> {
     cache.remove(id);
   }
 
+  /// List the users that have followed an event.
   Future<List<ScheduledEventUser>> listEventUsers(Snowflake id, {int? limit, bool? withMembers, Snowflake? before, Snowflake? after}) async {
     final route = HttpRoute()
       ..guilds(id: guildId.toString())
