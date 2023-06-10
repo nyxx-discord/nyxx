@@ -11,6 +11,9 @@ class PartialScheduledEvent extends WritableSnowflakeEntity<ScheduledEvent> {
   final ScheduledEventManager manager;
 
   PartialScheduledEvent({required super.id, required this.manager});
+
+  Future<List<ScheduledEventUser>> listUsers({int? limit, bool? withMembers, Snowflake? before, Snowflake? after}) =>
+      manager.listEventUsers(id, withMembers: withMembers, after: after, before: before, limit: limit);
 }
 
 class ScheduledEvent extends PartialScheduledEvent {
