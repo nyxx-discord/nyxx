@@ -99,7 +99,7 @@ class Gateway extends GatewayManager with EventParser {
 
     // TODO: Add ThreadMember cache for ThreadListSyncEvent, ThreadMemberUpdateEvent, ThreadMembersUpdateEvent
     // TODO: GuildBanAddEvent and GuildBanRemoveEvent need to update cache
-    // TODO: GuildEmojisUpdateEvent, GuildStickersUpdateEvent, GuildScheduledEventCreateEvent, GuildScheduledEventUpdateEvent, GuildScheduledEventDeleteEvent,
+    // TODO: GuildEmojisUpdateEvent, GuildStickersUpdateEvent,
     // GuildScheduledEventUserAddEvent, GuildScheduledEventUserRemoveEvent, IntegrationCreateEvent, IntegrationUpdateEvent, IntegrationDeleteEvent,
     // InviteCreateEvent, InviteDeleteEvent, MessageReactionAddEvent, MessageReactionRemoveEvent, MessageReactionRemoveAllEvent,MessageReactionRemoveEmojiEvent,
     // PresenceUpdateEvent, VoiceStateUpdateEvent,
@@ -147,6 +147,10 @@ class Gateway extends GatewayManager with EventParser {
           StageInstanceCreateEvent(:final instance) || StageInstanceUpdateEvent(:final instance) => client.channels.stageInstanceCache[instance.channelId] =
               instance,
           StageInstanceDeleteEvent(:final instance) => client.channels.stageInstanceCache.remove(instance.channelId),
+          GuildScheduledEventCreateEvent(:final event) ||
+          GuildScheduledEventUpdateEvent(:final event) =>
+            client.guilds[event.guildId].scheduledEvents.cache[event.id] = event,
+          GuildScheduledEventDeleteEvent(:final event) => client.guilds[event.guildId].scheduledEvents.cache.remove(event.id),
           _ => null,
         });
   }
@@ -414,15 +418,15 @@ class Gateway extends GatewayManager with EventParser {
     final guild = client.guilds.parse(raw);
 
     return GuildCreateEvent(
-      guild: guild,
-      joinedAt: DateTime.parse(raw['joined_at'] as String),
-      isLarge: raw['large'] as bool,
-      memberCount: raw['member_count'] as int,
-      voiceStates: parseMany(raw['voice_states'] as List<Object?>, client.voice.parseVoiceState),
-      members: parseMany(raw['members'] as List<Object?>, client.guilds[Snowflake.zero].members.parse),
-      channels: parseMany(raw['channels'] as List<Object?>, (Map<String, Object?> raw) => client.channels.parse(raw, guildId: guild.id) as GuildChannel),
-      threads: parseMany(raw['threads'] as List<Object?>, (Map<String, Object?> raw) => client.channels.parse(raw, guildId: guild.id) as Thread),
-    );
+        guild: guild,
+        joinedAt: DateTime.parse(raw['joined_at'] as String),
+        isLarge: raw['large'] as bool,
+        memberCount: raw['member_count'] as int,
+        voiceStates: parseMany(raw['voice_states'] as List<Object?>, client.voice.parseVoiceState),
+        members: parseMany(raw['members'] as List<Object?>, client.guilds[guild.id].members.parse),
+        channels: parseMany(raw['channels'] as List<Object?>, (Map<String, Object?> raw) => client.channels.parse(raw, guildId: guild.id) as GuildChannel),
+        threads: parseMany(raw['threads'] as List<Object?>, (Map<String, Object?> raw) => client.channels.parse(raw, guildId: guild.id) as Thread),
+        scheduledEvents: parseMany(raw['guild_scheduled_events'] as List<Object?>, client.guilds[guild.id].scheduledEvents.parse));
   }
 
   GuildUpdateEvent parseGuildUpdate(Map<String, Object?> raw) {
@@ -544,15 +548,29 @@ class Gateway extends GatewayManager with EventParser {
   }
 
   GuildScheduledEventCreateEvent parseGuildScheduledEventCreate(Map<String, Object?> raw) {
-    return GuildScheduledEventCreateEvent();
+    final guildId = Snowflake.parse(raw['guild_id'] as String);
+
+    return GuildScheduledEventCreateEvent(
+      event: client.guilds[guildId].scheduledEvents.parse(raw),
+    );
   }
 
   GuildScheduledEventUpdateEvent parseGuildScheduledEventUpdate(Map<String, Object?> raw) {
-    return GuildScheduledEventUpdateEvent();
+    final guildId = Snowflake.parse(raw['guild_id'] as String);
+    final event = client.guilds[guildId].scheduledEvents.parse(raw);
+
+    return GuildScheduledEventUpdateEvent(
+      oldEvent: client.guilds[guildId].scheduledEvents.cache[event.id],
+      event: event,
+    );
   }
 
   GuildScheduledEventDeleteEvent parseGuildScheduledEventDelete(Map<String, Object?> raw) {
-    return GuildScheduledEventDeleteEvent();
+    final guildId = Snowflake.parse(raw['guild_id'] as String);
+
+    return GuildScheduledEventDeleteEvent(
+      event: client.guilds[guildId].scheduledEvents.parse(raw),
+    );
   }
 
   GuildScheduledEventUserAddEvent parseGuildScheduledEventUserAdd(Map<String, Object?> raw) {
