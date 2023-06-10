@@ -1,8 +1,11 @@
-import 'package:nyxx/src/models/snowflake.dart';
-import 'package:nyxx/src/utils/to_string_helper/to_string_helper.dart';
+import 'dart:async';
 
-class StageInstance with ToStringHelper {
-  final Snowflake id;
+import 'package:nyxx/src/http/managers/channel_manager.dart';
+import 'package:nyxx/src/models/snowflake.dart';
+import 'package:nyxx/src/models/snowflake_entity/snowflake_entity.dart';
+
+class StageInstance extends SnowflakeEntity<StageInstance> with SnowflakeEntityMixin<StageInstance> {
+  final ChannelManager manager;
 
   final Snowflake guildId;
 
@@ -15,13 +18,20 @@ class StageInstance with ToStringHelper {
   final Snowflake? scheduledEventId;
 
   StageInstance({
-    required this.id,
+    required super.id,
+    required this.manager,
     required this.guildId,
     required this.channelId,
     required this.topic,
     required this.privacyLevel,
     required this.scheduledEventId,
   });
+
+  @override
+  Future<StageInstance> fetch() => manager.fetchStageInstance(channelId);
+
+  @override
+  FutureOr<StageInstance> get() async => manager.stageInstanceCache[channelId] ?? await fetch();
 }
 
 enum PrivacyLevel {

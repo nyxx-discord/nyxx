@@ -389,6 +389,7 @@ class ChannelManager extends ReadOnlyManager<Channel> {
   StageInstance parseStageInstance(Map<String, Object?> raw) {
     return StageInstance(
       id: Snowflake.parse(raw['id'] as String),
+      manager: this,
       guildId: Snowflake.parse(raw['guild_id'] as String),
       channelId: Snowflake.parse(raw['channel_id'] as String),
       topic: raw['topic'] as String,
