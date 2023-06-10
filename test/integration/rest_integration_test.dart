@@ -197,5 +197,12 @@ void main() {
       await expectLater(client.gateway.fetchGatewayBot(), completes);
       await expectLater(client.gateway.fetchGatewayConfiguration(), completes);
     });
+
+    test('scheduledEvents', skip: testGuild != null ? false : 'No test guild provided', () async {
+      final guildId = Snowflake.parse(testGuild!);
+      final guild = client.guilds[guildId];
+
+      await expectLater(guild.scheduledEvents.list(), completes);
+    });
   });
 }
