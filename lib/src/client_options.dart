@@ -1,5 +1,6 @@
 import 'package:nyxx/src/cache/cache.dart';
 import 'package:nyxx/src/models/channel/channel.dart';
+import 'package:nyxx/src/models/channel/stage_instance.dart';
 import 'package:nyxx/src/models/guild/ban.dart';
 import 'package:nyxx/src/models/guild/guild.dart';
 import 'package:nyxx/src/models/guild/member.dart';
@@ -37,6 +38,8 @@ class RestClientOptions implements ClientOptions {
   /// The [CacheConfig] to use for [Ban]s in the [NyxxRest.guilds] manager.
   final CacheConfig<Ban> banCacheConfig;
 
+  final CacheConfig<StageInstance> stageInstanceCacheConfig;
+
   /// Create a new [RestClientOptions].
   RestClientOptions({
     this.userCacheConfig = const CacheConfig(),
@@ -47,6 +50,7 @@ class RestClientOptions implements ClientOptions {
     this.memberCacheConfig = const CacheConfig(),
     this.roleCacheConfig = const CacheConfig(),
     this.banCacheConfig = const CacheConfig(),
+    this.stageInstanceCacheConfig = const CacheConfig(),
   });
 }
 

@@ -26,6 +26,7 @@ export 'src/builders/channel/guild_channel.dart'
         GuildStageChannelBuilder,
         GuildTextChannelBuilder,
         GuildVoiceChannelBuilder;
+export 'src/builders/channel/stage_instance.dart' show StageInstanceBuilder, StageInstanceUpdateBuilder;
 export 'src/builders/channel/thread.dart' show ThreadUpdateBuilder, ForumThreadBuilder, ThreadBuilder, ThreadFromMessageBuilder;
 export 'src/builders/message/allowed_mentions.dart' show AllowedMentions;
 export 'src/builders/message/attachment.dart' show AttachmentBuilder;
@@ -79,6 +80,7 @@ export 'src/models/channel/text_channel.dart' show PartialTextChannel, TextChann
 export 'src/models/channel/thread_list.dart' show ThreadList;
 export 'src/models/channel/thread.dart' show PartialThreadMember, Thread, ThreadMember;
 export 'src/models/channel/voice_channel.dart' show VoiceChannel, VideoQualityMode;
+export 'src/models/channel/stage_instance.dart' show StageInstance, PrivacyLevel;
 export 'src/models/channel/types/announcement_thread.dart' show AnnouncementThread;
 export 'src/models/channel/types/directory.dart' show DirectoryChannel;
 export 'src/models/channel/types/dm.dart' show DmChannel;
