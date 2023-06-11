@@ -449,6 +449,88 @@ void checkIntegration(Integration integration) {
   expect(integration.scopes, isNull);
 }
 
+final sampleGuildTemplate = {
+  "code": "hgM48av5Q69A",
+  "name": "Friends & Family",
+  "description": "",
+  "usage_count": 49605,
+  "creator_id": "132837293881950208",
+  "creator": {"id": "132837293881950208", "username": "hoges", "avatar": "79b0d9f8c340f2d43e1f78b09f175b62", "discriminator": "0001", "public_flags": 129},
+  "created_at": "2020-04-02T21:10:38+00:00",
+  "updated_at": "2020-05-01T17:57:38+00:00",
+  "source_guild_id": "678070694164299796",
+  "serialized_source_guild": {
+    "name": "Friends & Family",
+    "description": null,
+    "region": "us-west",
+    "verification_level": 0,
+    "default_message_notifications": 0,
+    "explicit_content_filter": 0,
+    "preferred_locale": "en-US",
+    "afk_timeout": 300,
+    "roles": [
+      {
+        "id": '0',
+        "name": "@everyone",
+        "permissions": "104324689",
+        "color": 0,
+        "hoist": false,
+        "mentionable": false,
+
+        // TODO: Is this included in real templates?
+        "position": 1,
+      }
+    ],
+    "channels": [
+      {
+        "name": "Text Channels",
+        "position": 1,
+        "topic": null,
+        "bitrate": 64000,
+        "user_limit": 0,
+        "nsfw": false,
+        "rate_limit_per_user": 0,
+        "parent_id": null,
+        "permission_overwrites": [],
+        "id": '1',
+        "type": 4
+      },
+      {
+        "name": "general",
+        "position": 1,
+        "topic": null,
+        "bitrate": 64000,
+        "user_limit": 0,
+        "nsfw": false,
+        "rate_limit_per_user": 0,
+        "parent_id": 1,
+        "permission_overwrites": [],
+        "id": '2',
+        "type": 0
+      }
+    ],
+    "afk_channel_id": null,
+    "system_channel_id": '2',
+    "system_channel_flags": 0,
+    "icon_hash": null
+  },
+  "is_dirty": null
+};
+
+void checkGuildTemplate(GuildTemplate template) {
+  expect(template.code, equals('hgM48av5Q69A'));
+  expect(template.name, equals('Friends & Family'));
+  expect(template.description, equals(''));
+  expect(template.usageCount, equals(49605));
+  expect(template.creatorId, equals(Snowflake(132837293881950208)));
+  expect(template.creator.id, equals(Snowflake(132837293881950208)));
+  expect(template.createdAt, equals(DateTime.utc(2020, 04, 02, 21, 10, 38)));
+  expect(template.updatedAt, equals(DateTime.utc(2020, 05, 01, 17, 57, 38)));
+  expect(template.sourceGuildId, equals(Snowflake(678070694164299796)));
+  expect(template.serializedSourceGuild.name, equals('Friends & Family'));
+  expect(template.isDirty, isNull);
+}
+
 void main() {
   testManager<Guild, GuildManager>(
     'GuildManager',
@@ -495,6 +577,12 @@ void main() {
         source: sampleOnboarding,
         parse: (manager) => manager.parseOnboarding,
         check: checkOnboarding,
+      ),
+      ParsingTest<GuildManager, GuildTemplate, Map<String, Object?>>(
+        name: 'parseGuildTemplate',
+        source: sampleGuildTemplate,
+        parse: (manager) => manager.parseGuildTemplate,
+        check: checkGuildTemplate,
       ),
     ],
     additionalEndpointTests: [
@@ -697,6 +785,63 @@ void main() {
         urlMatcher: '/guilds/0/voice-states/0',
         execute: (manager) => manager.updateVoiceState(Snowflake.zero, Snowflake.zero, VoiceStateUpdateBuilder()),
         check: (_) {},
+      ),
+      EndpointTest<GuildManager, GuildTemplate, Map<String, Object?>>(
+        name: 'fetchGuildTemplate',
+        source: sampleGuildTemplate,
+        urlMatcher: '/guilds/templates/test',
+        execute: (manager) => manager.fetchGuildTemplate('test'),
+        check: checkGuildTemplate,
+      ),
+      EndpointTest<GuildManager, Guild, Map<String, Object?>>(
+        name: 'createGuildFromTemplate',
+        method: 'POST',
+        source: sampleGuild,
+        urlMatcher: '/guilds/templates/test',
+        execute: (manager) => manager.createGuildFromTemplate('test', name: 'test guild'),
+        check: checkGuild,
+      ),
+      EndpointTest<GuildManager, List<GuildTemplate>, List<Object?>>(
+        name: 'listGuildTemplates',
+        source: [sampleGuildTemplate],
+        urlMatcher: '/guilds/0/templates',
+        execute: (manager) => manager.listGuildTemplates(Snowflake.zero),
+        check: (list) {
+          expect(list, hasLength(1));
+          checkGuildTemplate(list.single);
+        },
+      ),
+      EndpointTest<GuildManager, GuildTemplate, Map<String, Object?>>(
+        name: 'createGuildTemplate',
+        method: 'POST',
+        source: sampleGuildTemplate,
+        urlMatcher: '/guilds/0/templates',
+        execute: (manager) => manager.createGuildTemplate(Snowflake.zero, GuildTemplateBuilder(name: 'test')),
+        check: checkGuildTemplate,
+      ),
+      EndpointTest<GuildManager, GuildTemplate, Map<String, Object?>>(
+        name: 'syncGuildTemplate',
+        method: 'PUT',
+        source: sampleGuildTemplate,
+        urlMatcher: '/guilds/0/templates/test',
+        execute: (manager) => manager.syncGuildTemplate(Snowflake.zero, 'test'),
+        check: checkGuildTemplate,
+      ),
+      EndpointTest<GuildManager, GuildTemplate, Map<String, Object?>>(
+        name: 'updateGuildTemplate',
+        method: 'PATCH',
+        source: sampleGuildTemplate,
+        urlMatcher: '/guilds/0/templates/test',
+        execute: (manager) => manager.updateGuildTemplate(Snowflake.zero, 'test', GuildTemplateUpdateBuilder()),
+        check: checkGuildTemplate,
+      ),
+      EndpointTest<GuildManager, GuildTemplate, Map<String, Object?>>(
+        name: 'deleteGuildTemplate',
+        method: 'DELETE',
+        source: sampleGuildTemplate,
+        urlMatcher: '/guilds/0/templates/test',
+        execute: (manager) => manager.deleteGuildTemplate(Snowflake.zero, 'test'),
+        check: checkGuildTemplate,
       ),
     ],
     createBuilder: GuildBuilder(name: 'Test guild'),
