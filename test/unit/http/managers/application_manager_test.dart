@@ -71,7 +71,7 @@ final sampleRoleConnectionMetadata = {
 
 void checkRoleConnectionMetadata(ApplicationRoleConnectionMetadata metadata) {
   expect(metadata.type, equals(ConnectionMetadataType.integerLessThanOrEqual));
-  expect(metadata.key, equals('ley'));
+  expect(metadata.key, equals('key'));
   expect(metadata.name, equals('test name'));
   expect(metadata.localizedNames, isNull);
   expect(metadata.description, equals('test description'));
@@ -110,7 +110,7 @@ void main() {
       '/applications/0/role-connections/metadata',
       name: 'fetchApplicationRoleConnectionMetadata',
       (client) => client.applications.fetchApplicationRoleConnectionMetadata(Snowflake.zero),
-      response: sampleRoleConnectionMetadata,
+      response: [sampleRoleConnectionMetadata],
     );
 
     testEndpoint(
@@ -118,7 +118,7 @@ void main() {
       method: 'PUT',
       name: 'updateApplicationRoleConnectionMetadata',
       (client) => client.applications.updateApplicationRoleConnectionMetadata(Snowflake.zero),
-      response: sampleRoleConnectionMetadata,
+      response: [sampleRoleConnectionMetadata],
     );
   });
 }
