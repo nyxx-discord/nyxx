@@ -293,6 +293,7 @@ class GuildManager extends Manager<Guild> {
 
     return GuildTemplate(
       code: raw['code'] as String,
+      manager: this,
       name: raw['name'] as String,
       description: raw['description'] as String?,
       usageCount: raw['usage_count'] as int,
@@ -675,6 +676,7 @@ class GuildManager extends Manager<Guild> {
     await client.httpHandler.executeSafe(request);
   }
 
+  /// Fetch a guild template by [code].
   Future<GuildTemplate> fetchGuildTemplate(String code) async {
     final route = HttpRoute()
       ..guilds()
@@ -685,6 +687,7 @@ class GuildManager extends Manager<Guild> {
     return parseGuildTemplate(response.jsonBody as Map<String, Object?>);
   }
 
+  /// Create a guild from a guild template.
   Future<Guild> createGuildFromTemplate(String code, {required String name, ImageBuilder? icon}) async {
     final route = HttpRoute()
       ..guilds()
@@ -698,6 +701,7 @@ class GuildManager extends Manager<Guild> {
     return guild;
   }
 
+  /// List the templates in a guild.
   Future<List<GuildTemplate>> listGuildTemplates(Snowflake id) async {
     final route = HttpRoute()
       ..guilds(id: id.toString())
@@ -708,6 +712,7 @@ class GuildManager extends Manager<Guild> {
     return parseMany(response.jsonBody as List<Object?>, parseGuildTemplate);
   }
 
+  /// Create a guild template from a guild.
   Future<GuildTemplate> createGuildTemplate(Snowflake id, GuildTemplateBuilder builder) async {
     final route = HttpRoute()
       ..guilds(id: id.toString())
@@ -718,6 +723,7 @@ class GuildManager extends Manager<Guild> {
     return parseGuildTemplate(response.jsonBody as Map<String, Object?>);
   }
 
+  /// Sync a guild template to the source guild.
   Future<GuildTemplate> syncGuildTemplate(Snowflake id, String code) async {
     final route = HttpRoute()
       ..guilds(id: id.toString())
@@ -728,6 +734,7 @@ class GuildManager extends Manager<Guild> {
     return parseGuildTemplate(response.jsonBody as Map<String, Object?>);
   }
 
+  /// Update a guild template.
   Future<GuildTemplate> updateGuildTemplate(Snowflake id, String code, GuildTemplateUpdateBuilder builder) async {
     final route = HttpRoute()
       ..guilds(id: id.toString())
@@ -738,6 +745,7 @@ class GuildManager extends Manager<Guild> {
     return parseGuildTemplate(response.jsonBody as Map<String, Object?>);
   }
 
+  /// Delete a guild template.
   Future<GuildTemplate> deleteGuildTemplate(Snowflake id, String code) async {
     final route = HttpRoute()
       ..guilds(id: id.toString())
