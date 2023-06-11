@@ -31,6 +31,7 @@ import 'package:nyxx/src/models/gateway/events/stage_instance.dart';
 import 'package:nyxx/src/models/gateway/events/voice.dart';
 import 'package:nyxx/src/models/gateway/events/webhook.dart';
 import 'package:nyxx/src/models/gateway/opcode.dart';
+import 'package:nyxx/src/models/guild/auto_moderation.dart';
 import 'package:nyxx/src/models/guild/guild.dart';
 import 'package:nyxx/src/models/guild/member.dart';
 import 'package:nyxx/src/models/presence.dart';
@@ -103,8 +104,7 @@ class Gateway extends GatewayManager with EventParser {
     // GuildScheduledEventUserAddEvent, GuildScheduledEventUserRemoveEvent, IntegrationCreateEvent, IntegrationUpdateEvent, IntegrationDeleteEvent,
     // InviteCreateEvent, InviteDeleteEvent, MessageReactionAddEvent, MessageReactionRemoveEvent, MessageReactionRemoveAllEvent,MessageReactionRemoveEmojiEvent,
     // PresenceUpdateEvent, VoiceStateUpdateEvent,
-    // ApplicationCommandPermissionsUpdateEvent, AutoModerationRuleCreateEvent, AutoModerationRuleUpdateEvent, AutoModerationRuleDeleteEvent,
-    // AutoModerationActionExecutionEvent
+    // ApplicationCommandPermissionsUpdateEvent
 
     // Handle all events which should update cache.
     events.listen((event) => switch (event) {
@@ -151,6 +151,10 @@ class Gateway extends GatewayManager with EventParser {
           GuildScheduledEventUpdateEvent(:final event) =>
             client.guilds[event.guildId].scheduledEvents.cache[event.id] = event,
           GuildScheduledEventDeleteEvent(:final event) => client.guilds[event.guildId].scheduledEvents.cache.remove(event.id),
+          AutoModerationRuleCreateEvent(:final rule) ||
+          AutoModerationRuleUpdateEvent(:final rule) =>
+            client.guilds[rule.guildId].autoModerationRules.cache[rule.id] = rule,
+          AutoModerationRuleDeleteEvent(:final rule) => client.guilds[rule.guildId].autoModerationRules.cache.remove(rule.id),
           _ => null,
         });
   }
@@ -302,21 +306,39 @@ class Gateway extends GatewayManager with EventParser {
   }
 
   AutoModerationRuleCreateEvent parseAutoModerationRuleCreate(Map<String, Object?> raw) {
-    return AutoModerationRuleCreateEvent();
+    final guildId = Snowflake.parse(raw['guild_id'] as String);
+
+    return AutoModerationRuleCreateEvent(
+      rule: client.guilds[guildId].autoModerationRules.parse(raw),
+    );
   }
 
   AutoModerationRuleUpdateEvent parseAutoModerationRuleUpdate(Map<String, Object?> raw) {
-    return AutoModerationRuleUpdateEvent();
+    final guildId = Snowflake.parse(raw['guild_id'] as String);
+    final rule = client.guilds[guildId].autoModerationRules.parse(raw);
+
+    return AutoModerationRuleUpdateEvent(
+      oldRule: client.guilds[guildId].autoModerationRules.cache[rule.id],
+      rule: rule,
+    );
   }
 
   AutoModerationRuleDeleteEvent parseAutoModerationRuleDelete(Map<String, Object?> raw) {
-    return AutoModerationRuleDeleteEvent();
+    final guildId = Snowflake.parse(raw['guild_id'] as String);
+
+    return AutoModerationRuleDeleteEvent(
+      rule: client.guilds[guildId].autoModerationRules.parse(raw),
+    );
   }
 
   AutoModerationActionExecutionEvent parseAutoModerationActionExecution(Map<String, Object?> raw) {
+    final guildId = Snowflake.parse(raw['guild_id'] as String);
+
     return AutoModerationActionExecutionEvent(
-      guildId: Snowflake.parse(raw['guild_id'] as String),
+      guildId: guildId,
+      action: client.guilds[guildId].autoModerationRules.parseAutoModerationAction(raw['action'] as Map<String, Object?>),
       ruleId: Snowflake.parse(raw['rule_id'] as String),
+      triggerType: TriggerType.parse(raw['rule_trigger_type'] as int),
       userId: Snowflake.parse(raw['user_id'] as String),
       channelId: maybeParse(raw['channel_id'], Snowflake.parse),
       messageId: maybeParse(raw['message_id'], Snowflake.parse),
