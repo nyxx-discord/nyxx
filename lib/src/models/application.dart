@@ -1,3 +1,5 @@
+import 'package:nyxx/src/http/managers/application_manager.dart';
+import 'package:nyxx/src/models/locale.dart';
 import 'package:nyxx/src/models/permissions.dart';
 import 'package:nyxx/src/models/snowflake.dart';
 import 'package:nyxx/src/models/team.dart';
@@ -12,8 +14,17 @@ class PartialApplication with ToStringHelper {
   /// The ID of this application.
   final Snowflake id;
 
+  /// The manager for this application.
+  final ApplicationManager manager;
+
   /// Create a new [PartialApplication].
-  PartialApplication({required this.id});
+  PartialApplication({required this.id, required this.manager});
+
+  /// Fetch this application's role connection metadata.
+  Future<List<ApplicationRoleConnectionMetadata>> fetchRoleConnectionMetadata() => manager.fetchApplicationRoleConnectionMetadata(id);
+
+  /// Update and fetch this application's role connection metadata.
+  Future<List<ApplicationRoleConnectionMetadata>> updateRoleConnectionMetadata() => manager.updateApplicationRoleConnectionMetadata(id);
 }
 
 /// {@template application}
@@ -85,6 +96,7 @@ class Application extends PartialApplication {
   /// {@macro application}
   Application({
     required super.id,
+    required super.manager,
     required this.name,
     required this.iconHash,
     required this.description,
@@ -189,4 +201,65 @@ class InstallationParameters with ToStringHelper {
     required this.scopes,
     required this.permissions,
   });
+}
+
+/// {@template application_role_connection_metadata}
+/// Metadata for an app's role connections.
+/// {@endtemplate}
+class ApplicationRoleConnectionMetadata with ToStringHelper {
+  /// The type of connection.
+  final ConnectionMetadataType type;
+
+  /// The key of the entry in the metadata to check.
+  final String key;
+
+  /// The name of this role connection.
+  final String name;
+
+  /// A localized map of names for this role connection.
+  final Map<Locale, String>? localizedNames;
+
+  /// A description of this role connection.
+  final String description;
+
+  /// A localized map of descriptions for this role connection.
+  final Map<Locale, String>? localizedDescriptions;
+
+  /// {@macro application_role_connection_metadata}
+  ApplicationRoleConnectionMetadata({
+    required this.type,
+    required this.key,
+    required this.name,
+    required this.localizedNames,
+    required this.description,
+    required this.localizedDescriptions,
+  });
+}
+
+/// The type of an [ApplicationRoleConnectionMetadata].
+enum ConnectionMetadataType {
+  integerLessThanOrEqual._(1),
+  integerGreaterThanOrEqual._(2),
+  integerEqual._(3),
+  integerNotEqual._(4),
+  dateTimeLessThanOrEqual._(5),
+  dateTimeGreaterThanOrEqual._(6),
+  booleanEqual._(7),
+  booleanNotEqual._(8);
+
+  /// The value of this [ConnectionMetadataType].
+  final int value;
+
+  const ConnectionMetadataType._(this.value);
+
+  /// Parse a [ConnectionMetadataType] from an [int].
+  ///
+  /// The [value] must be a valid connection metadata type.
+  factory ConnectionMetadataType.parse(int value) => ConnectionMetadataType.values.firstWhere(
+        (type) => type.value == value,
+        orElse: () => throw FormatException('Unknown connection metadata type', value),
+      );
+
+  @override
+  String toString() => 'ConnectionMetadataType($value)';
 }

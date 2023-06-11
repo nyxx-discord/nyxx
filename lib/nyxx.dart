@@ -128,6 +128,8 @@ export 'src/models/guild/member.dart' show Member, MemberFlags, PartialMember;
 export 'src/models/guild/onboarding.dart' show Onboarding, OnboardingPrompt, OnboardingPromptOption, OnboardingPromptType;
 export 'src/models/guild/welcome_screen.dart' show WelcomeScreen, WelcomeScreenChannel;
 export 'src/models/guild/scheduled_event.dart' show EntityMetadata, PartialScheduledEvent, ScheduledEvent, ScheduledEventUser, EventStatus, ScheduledEntityType;
+export 'src/models/application.dart'
+    show Application, ApplicationFlags, InstallationParameters, PartialApplication, ApplicationRoleConnectionMetadata, ConnectionMetadataType;
 export 'src/models/guild/template.dart' show GuildTemplate;
 export 'src/models/guild/auto_moderation.dart'
     show
