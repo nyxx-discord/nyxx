@@ -5,6 +5,7 @@ import 'package:nyxx/src/builders/channel/guild_channel.dart';
 import 'package:nyxx/src/builders/guild/welcome_screen.dart';
 import 'package:nyxx/src/builders/guild/widget.dart';
 import 'package:nyxx/src/builders/voice.dart';
+import 'package:nyxx/src/http/managers/auto_moderation_manager.dart';
 import 'package:nyxx/src/http/managers/guild_manager.dart';
 import 'package:nyxx/src/http/managers/member_manager.dart';
 import 'package:nyxx/src/http/managers/role_manager.dart';
@@ -36,7 +37,11 @@ class PartialGuild extends WritableSnowflakeEntity<Guild> {
   /// A [RoleManager] for the roles of this guild.
   RoleManager get roles => RoleManager(manager.client.options.roleCacheConfig, manager.client, guildId: id);
 
+  /// A [ScheduledEventManager] for the scheduled events of this guild.
   ScheduledEventManager get scheduledEvents => ScheduledEventManager(manager.client.options.scheduledEventCacheConfig, manager.client, guildId: id);
+
+  /// An [AutoModerationManager] for the auto moderation rules of this guild.
+  AutoModerationManager get autoModerationRules => AutoModerationManager(manager.client.options.autoModerationRuleConfig, manager.client, guildId: id);
 
   /// Create a new [PartialGuild].
   PartialGuild({required super.id, required this.manager});
