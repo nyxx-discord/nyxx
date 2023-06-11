@@ -241,4 +241,12 @@ extension RouteHelpers on HttpRoute {
 
   /// Adds the [`voice-states`](https://discord.com/developers/docs/resources/guild#modify-current-user-voice-state) part to this [HttpRoute].
   void voiceStates({String? id}) => add(HttpRoutePart('voice-states', [if (id != null) HttpRouteParam(id)]));
+
+  /// Adds the [`role-connections`](https://discord.com/developers/docs/resources/application-role-connection-metadata#get-application-role-connection-metadata-records)
+  /// part to this [HttpRoute].
+  void roleConnections() => add(HttpRoutePart('role-connections'));
+
+  /// Adds the [`metadata`](https://discord.com/developers/docs/resources/application-role-connection-metadata#get-application-role-connection-metadata-records)
+  /// part to this [HttpRoute].
+  void metadata() => add(HttpRoutePart('metadata'));
 }
