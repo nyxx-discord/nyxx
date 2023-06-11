@@ -4,8 +4,10 @@ import 'dart:typed_data';
 import 'package:nyxx/src/builders/channel/channel_position.dart';
 import 'package:nyxx/src/builders/channel/guild_channel.dart';
 import 'package:nyxx/src/builders/guild/guild.dart';
+import 'package:nyxx/src/builders/guild/template.dart';
 import 'package:nyxx/src/builders/guild/welcome_screen.dart';
 import 'package:nyxx/src/builders/guild/widget.dart';
+import 'package:nyxx/src/builders/image.dart';
 import 'package:nyxx/src/builders/voice.dart';
 import 'package:nyxx/src/cache/cache.dart';
 import 'package:nyxx/src/http/managers/manager.dart';
@@ -20,6 +22,7 @@ import 'package:nyxx/src/models/guild/guild_preview.dart';
 import 'package:nyxx/src/models/guild/guild_widget.dart';
 import 'package:nyxx/src/models/guild/integration.dart';
 import 'package:nyxx/src/models/guild/onboarding.dart';
+import 'package:nyxx/src/models/guild/template.dart';
 import 'package:nyxx/src/models/guild/welcome_screen.dart';
 import 'package:nyxx/src/models/locale.dart';
 import 'package:nyxx/src/models/permissions.dart';
@@ -282,6 +285,35 @@ class GuildManager extends Manager<Guild> {
       roleIds: parseMany(raw['role_ids'] as List, Snowflake.parse),
       title: raw['title'] as String,
       description: raw['description'] as String?,
+    );
+  }
+
+  GuildTemplate parseGuildTemplate(Map<String, Object?> raw) {
+    final sourceGuildId = Snowflake.parse(raw['source_guild_id'] as String);
+
+    return GuildTemplate(
+      code: raw['code'] as String,
+      manager: this,
+      name: raw['name'] as String,
+      description: raw['description'] as String?,
+      usageCount: raw['usage_count'] as int,
+      creatorId: Snowflake.parse(raw['creator_id'] as String),
+      creator: client.users.parse(raw['creator'] as Map<String, Object?>),
+      createdAt: DateTime.parse(raw['created_at'] as String),
+      updatedAt: DateTime.parse(raw['updated_at'] as String),
+      sourceGuildId: sourceGuildId,
+      // Add synthetic fields so we can parse the (mostly complete) partial guild as a full guild
+      serializedSourceGuild: parse({
+        'id': sourceGuildId.toString(),
+        'owner_id': Snowflake.zero.toString(),
+        'features': [],
+        'mfa_level': MfaLevel.none.value,
+        'premium_tier': PremiumTier.none.value,
+        'nsfw_level': NsfwLevel.unset.value,
+        'premium_progress_bar_enabled': false,
+        ...(raw['serialized_source_guild'] as Map<String, Object?>),
+      }),
+      isDirty: raw['is_dirty'] as bool?,
     );
   }
 
@@ -642,5 +674,85 @@ class GuildManager extends Manager<Guild> {
     final request = BasicRequest(route, method: 'PATCH', body: jsonEncode(builder.build()));
 
     await client.httpHandler.executeSafe(request);
+  }
+
+  /// Fetch a guild template by [code].
+  Future<GuildTemplate> fetchGuildTemplate(String code) async {
+    final route = HttpRoute()
+      ..guilds()
+      ..templates(code: code);
+    final request = BasicRequest(route);
+
+    final response = await client.httpHandler.executeSafe(request);
+    return parseGuildTemplate(response.jsonBody as Map<String, Object?>);
+  }
+
+  /// Create a guild from a guild template.
+  Future<Guild> createGuildFromTemplate(String code, {required String name, ImageBuilder? icon}) async {
+    final route = HttpRoute()
+      ..guilds()
+      ..templates(code: code);
+    final request = BasicRequest(route, method: 'POST', body: jsonEncode({'name': name, if (icon != null) 'icon': icon.build()}));
+
+    final response = await client.httpHandler.executeSafe(request);
+    final guild = parse(response.jsonBody as Map<String, Object?>);
+
+    cache[guild.id] = guild;
+    return guild;
+  }
+
+  /// List the templates in a guild.
+  Future<List<GuildTemplate>> listGuildTemplates(Snowflake id) async {
+    final route = HttpRoute()
+      ..guilds(id: id.toString())
+      ..templates();
+    final request = BasicRequest(route);
+
+    final response = await client.httpHandler.executeSafe(request);
+    return parseMany(response.jsonBody as List<Object?>, parseGuildTemplate);
+  }
+
+  /// Create a guild template from a guild.
+  Future<GuildTemplate> createGuildTemplate(Snowflake id, GuildTemplateBuilder builder) async {
+    final route = HttpRoute()
+      ..guilds(id: id.toString())
+      ..templates();
+    final request = BasicRequest(route, method: 'POST', body: jsonEncode(builder.build()));
+
+    final response = await client.httpHandler.executeSafe(request);
+    return parseGuildTemplate(response.jsonBody as Map<String, Object?>);
+  }
+
+  /// Sync a guild template to the source guild.
+  Future<GuildTemplate> syncGuildTemplate(Snowflake id, String code) async {
+    final route = HttpRoute()
+      ..guilds(id: id.toString())
+      ..templates(code: code);
+    final request = BasicRequest(route, method: 'PUT');
+
+    final response = await client.httpHandler.executeSafe(request);
+    return parseGuildTemplate(response.jsonBody as Map<String, Object?>);
+  }
+
+  /// Update a guild template.
+  Future<GuildTemplate> updateGuildTemplate(Snowflake id, String code, GuildTemplateUpdateBuilder builder) async {
+    final route = HttpRoute()
+      ..guilds(id: id.toString())
+      ..templates(code: code);
+    final request = BasicRequest(route, method: 'PATCH', body: jsonEncode(builder.build()));
+
+    final response = await client.httpHandler.executeSafe(request);
+    return parseGuildTemplate(response.jsonBody as Map<String, Object?>);
+  }
+
+  /// Delete a guild template.
+  Future<GuildTemplate> deleteGuildTemplate(Snowflake id, String code) async {
+    final route = HttpRoute()
+      ..guilds(id: id.toString())
+      ..templates(code: code);
+    final request = BasicRequest(route, method: 'DELETE');
+
+    final response = await client.httpHandler.executeSafe(request);
+    return parseGuildTemplate(response.jsonBody as Map<String, Object?>);
   }
 }

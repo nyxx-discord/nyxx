@@ -2,6 +2,7 @@ import 'dart:typed_data';
 
 import 'package:nyxx/src/builders/channel/channel_position.dart';
 import 'package:nyxx/src/builders/channel/guild_channel.dart';
+import 'package:nyxx/src/builders/guild/template.dart';
 import 'package:nyxx/src/builders/guild/welcome_screen.dart';
 import 'package:nyxx/src/builders/guild/widget.dart';
 import 'package:nyxx/src/builders/voice.dart';
@@ -17,6 +18,7 @@ import 'package:nyxx/src/models/guild/guild_preview.dart';
 import 'package:nyxx/src/models/guild/guild_widget.dart';
 import 'package:nyxx/src/models/guild/integration.dart';
 import 'package:nyxx/src/models/guild/onboarding.dart';
+import 'package:nyxx/src/models/guild/template.dart';
 import 'package:nyxx/src/models/guild/welcome_screen.dart';
 import 'package:nyxx/src/models/locale.dart';
 import 'package:nyxx/src/models/permissions.dart';
@@ -131,6 +133,21 @@ class PartialGuild extends WritableSnowflakeEntity<Guild> {
 
   /// Update a member's voice state in this guild.
   Future<void> updateVoiceState(Snowflake userId, VoiceStateUpdateBuilder builder) => manager.updateVoiceState(id, userId, builder);
+
+  /// List the templates in this guild.
+  Future<List<GuildTemplate>> listTemplates() => manager.listGuildTemplates(id);
+
+  /// Create a template in this guild.
+  Future<GuildTemplate> createTemplate(GuildTemplateBuilder builder) => manager.createGuildTemplate(id, builder);
+
+  /// Sync a template in this guild.
+  Future<GuildTemplate> syncTemplate(String code) => manager.syncGuildTemplate(id, code);
+
+  /// Update a template in this guild.
+  Future<GuildTemplate> updateTemplate(String code, GuildTemplateUpdateBuilder builder) => manager.updateGuildTemplate(id, code, builder);
+
+  /// Delete a template in this guild.
+  Future<GuildTemplate> deleteTemplate(String code) => manager.deleteGuildTemplate(id, code);
 }
 
 /// {@template guild}
