@@ -1,6 +1,7 @@
 import 'package:nyxx/src/cache/cache.dart';
 import 'package:nyxx/src/models/channel/channel.dart';
 import 'package:nyxx/src/models/channel/stage_instance.dart';
+import 'package:nyxx/src/models/guild/auto_moderation.dart';
 import 'package:nyxx/src/models/guild/ban.dart';
 import 'package:nyxx/src/models/guild/guild.dart';
 import 'package:nyxx/src/models/guild/member.dart';
@@ -45,6 +46,9 @@ class RestClientOptions implements ClientOptions {
   /// The [CacheConfig] to use for the [Guild.scheduledEvents] manager.
   final CacheConfig<ScheduledEvent> scheduledEventCacheConfig;
 
+  /// The [CacheConfig] to use for the [Guild.autoModerationRules] manager.
+  final CacheConfig<AutoModerationRule> autoModerationRuleConfig;
+
   /// Create a new [RestClientOptions].
   RestClientOptions({
     this.userCacheConfig = const CacheConfig(),
@@ -57,6 +61,7 @@ class RestClientOptions implements ClientOptions {
     this.banCacheConfig = const CacheConfig(),
     this.stageInstanceCacheConfig = const CacheConfig(),
     this.scheduledEventCacheConfig = const CacheConfig(),
+    this.autoModerationRuleConfig = const CacheConfig(),
   });
 }
 
@@ -71,5 +76,8 @@ class GatewayClientOptions extends RestClientOptions {
     super.memberCacheConfig,
     super.roleCacheConfig,
     super.banCacheConfig,
+    super.stageInstanceCacheConfig,
+    super.scheduledEventCacheConfig,
+    super.autoModerationRuleConfig,
   });
 }
