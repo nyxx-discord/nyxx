@@ -37,6 +37,8 @@ export 'src/builders/guild/member.dart' show CurrentMemberUpdateBuilder, MemberB
 export 'src/builders/guild/welcome_screen.dart' show WelcomeScreenUpdateBuilder;
 export 'src/builders/guild/widget.dart' show WidgetSettingsUpdateBuilder;
 export 'src/builders/guild/scheduled_event.dart' show ScheduledEventBuilder, ScheduledEventUpdateBuilder;
+export 'src/builders/guild/template.dart' show GuildTemplateBuilder, GuildTemplateUpdateBuilder;
+export 'src/builders/guild/auto_moderation.dart' show AutoModerationRuleBuilder, AutoModerationRuleUpdateBuilder;
 export 'src/builders/role.dart' show RoleBuilder, RoleUpdateBuilder;
 export 'src/builders/voice.dart' show CurrentUserVoiceStateUpdateBuilder, VoiceStateUpdateBuilder, GatewayVoiceStateBuilder;
 export 'src/builders/presence.dart' show PresenceBuilder, CurrentUserStatus;
@@ -60,6 +62,7 @@ export 'src/http/managers/member_manager.dart' show MemberManager;
 export 'src/http/managers/role_manager.dart' show RoleManager;
 export 'src/http/managers/gateway_manager.dart' show GatewayManager;
 export 'src/http/managers/scheduled_event_manager.dart' show ScheduledEventManager;
+export 'src/http/managers/auto_moderation_manager.dart' show AutoModerationManager;
 
 export 'src/gateway/gateway.dart' show Gateway;
 export 'src/gateway/message.dart' show Disconnecting, Dispose, ErrorReceived, EventReceived, GatewayMessage, Send, ShardData, ShardMessage;
@@ -127,6 +130,19 @@ export 'src/models/guild/welcome_screen.dart' show WelcomeScreen, WelcomeScreenC
 export 'src/models/guild/scheduled_event.dart' show EntityMetadata, PartialScheduledEvent, ScheduledEvent, ScheduledEventUser, EventStatus, ScheduledEntityType;
 export 'src/models/application.dart'
     show Application, ApplicationFlags, InstallationParameters, PartialApplication, ApplicationRoleConnectionMetadata, ConnectionMetadataType;
+export 'src/models/guild/template.dart' show GuildTemplate;
+export 'src/models/guild/auto_moderation.dart'
+    show
+        ActionMetadata,
+        AutoModerationAction,
+        AutoModerationRule,
+        PartialAutoModerationRule,
+        TriggerMetadata,
+        ActionType,
+        AutoModerationEventType,
+        KeywordPresetType,
+        TriggerType;
+export 'src/models/application.dart' show Application, ApplicationFlags, InstallationParameters, PartialApplication;
 export 'src/models/voice/voice_state.dart' show VoiceState;
 export 'src/models/voice/voice_region.dart' show VoiceRegion;
 export 'src/models/role.dart' show PartialRole, Role, RoleTags;

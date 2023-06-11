@@ -249,4 +249,7 @@ extension RouteHelpers on HttpRoute {
   /// Adds the [`metadata`](https://discord.com/developers/docs/resources/application-role-connection-metadata#get-application-role-connection-metadata-records)
   /// part to this [HttpRoute].
   void metadata() => add(HttpRoutePart('metadata'));
+
+  /// Adds the [`templates`](https://discord.com/developers/docs/resources/guild-template#get-guild-template) part to this [HttpRoute].
+  void templates({String? code}) => add(HttpRoutePart('templates', [if (code != null) HttpRouteParam(code)]));
 }
