@@ -40,6 +40,27 @@ class PartialMessage extends WritableSnowflakeEntity<Message> {
 
   /// Unpin this message.
   Future<void> unpin({String? auditLogReason}) => manager.unpin(id, auditLogReason: auditLogReason);
+
+  /// Creates a reaction on this message.
+  /// ```dart
+  /// await message.react('👍');
+  /// ```
+  /// or
+  /// ```dart
+  /// final emoji = await client.emoji.fetch(Snowflake(123456789012345678));
+  /// await message.react(emoji.toString());
+  /// ```
+  Future<void> react(String emoji) => manager.addReaction(id, emoji);
+
+  /// Deletes a reaction by a user, if specified on this message.
+  /// Otherwise deletes reactions by [emoji].
+  Future<void> deleteReaction(String emoji, {Snowflake? userId}) => userId == null ? manager.deleteReaction(id, emoji) : manager.deleteReactionForUser(id, userId, emoji);
+
+  /// Deletes all reactions on this message.
+  Future<void> deleteAllReactions() => manager.deleteAllReactions(id);
+
+  /// Deletes reaction the current user has made on this message.
+  Future<void> deleteOwnReaction(String emoji) => manager.deleteOwnReaction(id, emoji);
 }
 
 /// {@template message}

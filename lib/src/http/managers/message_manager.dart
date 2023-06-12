@@ -18,6 +18,7 @@ import 'package:nyxx/src/models/message/reaction.dart';
 import 'package:nyxx/src/models/message/reference.dart';
 import 'package:nyxx/src/models/message/role_subscription_data.dart';
 import 'package:nyxx/src/models/snowflake.dart';
+import 'package:nyxx/src/models/user/user.dart';
 import 'package:nyxx/src/utils/parsing_helpers.dart';
 
 /// A manager for [Message]s in a [TextChannel].
@@ -166,9 +167,14 @@ class MessageManager extends Manager<Message> {
   }
 
   Reaction parseReaction(Map<String, Object?> raw) {
+    final bool isUnicode = (raw['emoji'] as Map<String, Object?>)['id'] == null;
+
+    final parseEmoji = isUnicode ? client.emojis.parseText : client.emojis.parse;
+
     return Reaction(
       count: raw['count'] as int,
       me: raw['me'] as bool,
+      emoji: parseEmoji(raw['emoji'] as Map<String, Object?>),
     );
   }
 
@@ -350,8 +356,6 @@ class MessageManager extends Manager<Message> {
     await client.httpHandler.executeSafe(request);
   }
 
-  // TODO once emojis are implemented, add reaction endpoints
-
   /// Get the pinned messages in the channel.
   Future<List<Message>> getPins() async {
     final route = HttpRoute()
@@ -386,5 +390,89 @@ class MessageManager extends Manager<Message> {
     await client.httpHandler.executeSafe(request);
   }
 
+  /// Adds a reaction to a message.
+  Future<void> addReaction(Snowflake id, String emoji) async {
+    final route = HttpRoute()
+      ..channels(id: channelId.toString())
+      ..messages(id: id.toString())
+      ..reactions(emoji: _encodeForAPI(emoji), userId: '@me');
+
+    final request = BasicRequest(route, method: 'PUT');
+
+    await client.httpHandler.executeSafe(request);
+  }
+
+  /// Deletes our own reaction from a message.
+  Future<void> deleteOwnReaction(Snowflake id, String emoji) async {
+    final route = HttpRoute()
+      ..channels(id: channelId.toString())
+      ..messages(id: id.toString())
+      ..reactions(emoji: _encodeForAPI(emoji), userId: '@me');
+
+    final request = BasicRequest(route, method: 'DELETE');
+
+    await client.httpHandler.executeSafe(request);
+  }
+
+  /// Deletes all reactions on a message.
+  Future<void> deleteAllReactions(Snowflake id) async {
+    final route = HttpRoute()
+      ..channels(id: channelId.toString())
+      ..messages(id: id.toString())
+      ..reactions();
+    final request = BasicRequest(route, method: 'DELETE');
+
+    await client.httpHandler.executeSafe(request);
+  }
+
+  /// Deletes all reactions for a given emoji on a message.
+  Future<void> deleteReactionForUser(Snowflake id, Snowflake userId, String emoji) async {
+    final route = HttpRoute()
+      ..channels(id: channelId.toString())
+      ..messages(id: id.toString())
+      ..reactions(emoji: _encodeForAPI(emoji), userId: userId.toString());
+
+    final request = BasicRequest(route, method: 'DELETE');
+
+    await client.httpHandler.executeSafe(request);
+  }
+
+  /// Deletes all reations for a given emoji on a message.
+  Future<void> deleteReaction(Snowflake id, String emoji) async {
+    final route = HttpRoute()
+      ..channels(id: channelId.toString())
+      ..messages(id: id.toString())
+      ..reactions(emoji: _encodeForAPI(emoji));
+
+    final request = BasicRequest(route, method: 'DELETE');
+
+    await client.httpHandler.executeSafe(request);
+  }
+
+  /// Get a list of users that reacted with a given emoji on a message.
+  Future<List<User>> fetchReactions(Snowflake id, String emoji) async {
+    final route = HttpRoute()
+      ..channels(id: channelId.toString())
+      ..messages(id: id.toString())
+      ..reactions(emoji: _encodeForAPI(emoji));
+    final request = BasicRequest(route);
+
+    final response = await client.httpHandler.executeSafe(request);
+
+    return parseMany(response.jsonBody as List, client.users.parse);
+  }
+
   // TODO once oauth2 is implemented: Group DM control endpoints
+}
+
+
+String _encodeForAPI(String emoji) {
+  final emojiRegex = RegExp(r'<a?:(?<name>\w{2,32}):(?<id>\d+)>');
+
+  if (emojiRegex.hasMatch(emoji)) {
+    final match = emojiRegex.firstMatch(emoji)!;
+    return '${match.namedGroup('name')}:${match.namedGroup('id')}';
+  } else {
+    return emoji;
+  }
 }

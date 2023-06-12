@@ -1,3 +1,4 @@
+import 'package:nyxx/src/models/emoji/emoji.dart';
 import 'package:nyxx/src/models/gateway/event.dart';
 import 'package:nyxx/src/models/guild/member.dart';
 import 'package:nyxx/src/models/message/message.dart';
@@ -106,11 +107,11 @@ class MessageReactionAddEvent extends DispatchEvent {
   /// The member that added the reaction to the message.
   final Member? member;
 
-  // TODO
-  //final PartialEmoji emoji;
+  /// The emoji that was added.
+  final PartialEmoji emoji;
 
   /// {@macro message_reaction_add_event}
-  MessageReactionAddEvent({required this.userId, required this.channelId, required this.messageId, required this.guildId, required this.member});
+  MessageReactionAddEvent({required this.userId, required this.channelId, required this.messageId, required this.guildId, required this.member, required this.emoji});
 }
 
 /// {@template message_reaction_remove_event}
@@ -129,11 +130,10 @@ class MessageReactionRemoveEvent extends DispatchEvent {
   /// The ID of the guild the message is in.
   final Snowflake? guildId;
 
-  // TODO
-  //final PartialEmoji emoji;
+  final PartialEmoji emoji;
 
   /// {@macro message_reaction_remove_event}
-  MessageReactionRemoveEvent({required this.userId, required this.channelId, required this.messageId, required this.guildId});
+  MessageReactionRemoveEvent({required this.userId, required this.channelId, required this.messageId, required this.guildId, required this.emoji});
 }
 
 /// {@template message_reaction_remove_all_event}
@@ -166,9 +166,8 @@ class MessageReactionRemoveEmojiEvent extends DispatchEvent {
   /// The ID of the guild the message is in.
   final Snowflake? guildId;
 
-  // TODO
-  //final PartialEmoji emoji;
+  final PartialEmoji emoji;
 
   /// {@macro message_reaction_remove_emoji_event}
-  MessageReactionRemoveEmojiEvent({required this.channelId, required this.messageId, required this.guildId});
+  MessageReactionRemoveEmojiEvent({required this.channelId, required this.messageId, required this.guildId, required this.emoji});
 }
