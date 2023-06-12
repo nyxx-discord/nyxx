@@ -1,5 +1,6 @@
 import 'package:nyxx/src/cache/cache.dart';
 import 'package:nyxx/src/models/channel/channel.dart';
+import 'package:nyxx/src/models/emoji/emoji.dart';
 import 'package:nyxx/src/models/channel/stage_instance.dart';
 import 'package:nyxx/src/models/guild/auto_moderation.dart';
 import 'package:nyxx/src/models/guild/ban.dart';
@@ -40,6 +41,12 @@ class RestClientOptions implements ClientOptions {
   /// The [CacheConfig] to use for [Ban]s in the [NyxxRest.guilds] manager.
   final CacheConfig<Ban> banCacheConfig;
 
+  /// The [CacheConfig] to use for the [Emoji]s in the [Guild.emojis] manager.
+  final CacheConfig<Emoji> emojiCacheConfig;
+
+  /// The [CacheConfig] to use for the global [Emoji]s in the [NyxxRest.emojis] manager.
+  final CacheConfig<Emoji> globalEmojiCacheConfig;
+
   /// The [CacheConfig] to use for [StageInstance]s in the [NyxxRest.channels] manager.
   final CacheConfig<StageInstance> stageInstanceCacheConfig;
 
@@ -59,6 +66,8 @@ class RestClientOptions implements ClientOptions {
     this.memberCacheConfig = const CacheConfig(),
     this.roleCacheConfig = const CacheConfig(),
     this.banCacheConfig = const CacheConfig(),
+    this.emojiCacheConfig = const CacheConfig(),
+    this.globalEmojiCacheConfig = const CacheConfig(),
     this.stageInstanceCacheConfig = const CacheConfig(),
     this.scheduledEventCacheConfig = const CacheConfig(),
     this.autoModerationRuleConfig = const CacheConfig(),
