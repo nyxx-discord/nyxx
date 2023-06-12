@@ -85,6 +85,7 @@ class GuildManager extends Manager<Guild> {
       welcomeScreen: maybeParse(raw['welcome_screen'], parseWelcomeScreen),
       nsfwLevel: NsfwLevel.parse(raw['nsfw_level'] as int),
       hasPremiumProgressBarEnabled: raw['premium_progress_bar_enabled'] as bool,
+      emojiList: parseMany(raw['emojis'] as List, this[Snowflake.zero].emojis.parse),
     );
   }
 

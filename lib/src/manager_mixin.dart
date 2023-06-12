@@ -1,6 +1,7 @@
 import 'package:nyxx/src/client.dart';
 import 'package:nyxx/src/client_options.dart';
 import 'package:nyxx/src/http/managers/channel_manager.dart';
+import 'package:nyxx/src/http/managers/emoji_manager.dart';
 import 'package:nyxx/src/http/managers/gateway_manager.dart';
 import 'package:nyxx/src/http/managers/guild_manager.dart';
 import 'package:nyxx/src/http/managers/user_manager.dart';
@@ -33,4 +34,7 @@ mixin ManagerMixin implements Nyxx {
 
   /// A [GatewayManager] that manages gateway metadata for this client.
   GatewayManager get gateway => GatewayManager(this as NyxxRest);
+
+  /// A [ClientEmojiManager] that manages global emojis for this client.
+  ClientEmojiManager get emojis => ClientEmojiManager(this as NyxxRest, guilds.cache.values.map((g) => g.emojis));
 }
