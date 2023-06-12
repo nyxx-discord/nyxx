@@ -719,6 +719,7 @@ class Gateway extends GatewayManager with EventParser {
       messageId: Snowflake.parse(raw['message_id'] as String),
       guildId: guildId,
       member: maybeParse(raw['member'], client.guilds[guildId ?? Snowflake.zero].members.parse),
+      emoji: client.emojis.parse(raw['emoji'] as Map<String, Object?>),
     );
   }
 
@@ -728,6 +729,7 @@ class Gateway extends GatewayManager with EventParser {
       channelId: Snowflake.parse(raw['channel_id'] as String),
       messageId: Snowflake.parse(raw['message_id'] as String),
       guildId: maybeParse(raw['guild_id'], Snowflake.parse),
+      emoji: client.emojis.parse(raw['emoji'] as Map<String, Object?>),
     );
   }
 
@@ -744,6 +746,7 @@ class Gateway extends GatewayManager with EventParser {
       channelId: Snowflake.parse(raw['channel_id'] as String),
       messageId: Snowflake.parse(raw['message_id'] as String),
       guildId: maybeParse(raw['guild_id'], Snowflake.parse),
+      emoji: client.emojis.parse(raw['emoji'] as Map<String, Object?>),
     );
   }
 
