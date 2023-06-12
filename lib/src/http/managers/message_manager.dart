@@ -465,7 +465,6 @@ class MessageManager extends Manager<Message> {
   // TODO once oauth2 is implemented: Group DM control endpoints
 }
 
-
 String _encodeForAPI(String emoji) {
   final emojiRegex = RegExp(r'<a?:(?<name>\w{2,32}):(?<id>\d+)>');
 

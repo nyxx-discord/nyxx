@@ -54,7 +54,8 @@ class PartialMessage extends WritableSnowflakeEntity<Message> {
 
   /// Deletes a reaction by a user, if specified on this message.
   /// Otherwise deletes reactions by [emoji].
-  Future<void> deleteReaction(String emoji, {Snowflake? userId}) => userId == null ? manager.deleteReaction(id, emoji) : manager.deleteReactionForUser(id, userId, emoji);
+  Future<void> deleteReaction(String emoji, {Snowflake? userId}) =>
+      userId == null ? manager.deleteReaction(id, emoji) : manager.deleteReactionForUser(id, userId, emoji);
 
   /// Deletes all reactions on this message.
   Future<void> deleteAllReactions() => manager.deleteAllReactions(id);

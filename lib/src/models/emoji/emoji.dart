@@ -64,7 +64,7 @@ class GuildEmoji extends PartialEmoji {
 class Emoji extends PartialEmoji implements TextEmoji, GuildEmoji {
   @override
   final String name;
-  
+
   @override
   final List<Snowflake>? roles;
 

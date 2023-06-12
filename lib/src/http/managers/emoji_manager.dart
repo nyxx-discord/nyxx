@@ -29,9 +29,7 @@ class ClientEmojiManager {
   TextEmoji parseText(Map<String, Object?> raw) => _managers.first.parseText(raw);
 }
 
-
 class EmojiManager extends Manager<Emoji> {
-
   final Snowflake guildId;
 
   EmojiManager(super.config, super.client, {required this.guildId});
@@ -63,7 +61,9 @@ class EmojiManager extends Manager<Emoji> {
 
   @override
   Future<Emoji> fetch(Snowflake id) async {
-    final route = HttpRoute()..guilds(id: guildId.toString())..emojis(id: id.toString());
+    final route = HttpRoute()
+      ..guilds(id: guildId.toString())
+      ..emojis(id: id.toString());
     final request = BasicRequest(route);
 
     final response = await client.httpHandler.executeSafe(request);
@@ -74,7 +74,9 @@ class EmojiManager extends Manager<Emoji> {
   }
 
   Future<List<Emoji>> fetchAll() async {
-    final route = HttpRoute()..guilds(id: guildId.toString())..emojis();
+    final route = HttpRoute()
+      ..guilds(id: guildId.toString())
+      ..emojis();
     final request = BasicRequest(route);
 
     final response = await client.httpHandler.executeSafe(request);
@@ -85,7 +87,9 @@ class EmojiManager extends Manager<Emoji> {
 
   @override
   Future<Emoji> create(EmojiBuilder builder, {String? audiReason}) async {
-    final route = HttpRoute()..guilds(id: guildId.toString())..emojis();
+    final route = HttpRoute()
+      ..guilds(id: guildId.toString())
+      ..emojis();
     final request = BasicRequest(route, method: 'POST', body: jsonEncode(builder.build()));
 
     final response = await client.httpHandler.executeSafe(request);
@@ -97,7 +101,9 @@ class EmojiManager extends Manager<Emoji> {
 
   @override
   Future<void> delete(Snowflake id, {String? auditReason}) async {
-    final route = HttpRoute()..guilds(id: guildId.toString())..emojis(id: id.toString());
+    final route = HttpRoute()
+      ..guilds(id: guildId.toString())
+      ..emojis(id: id.toString());
     final request = BasicRequest(route, method: 'DELETE');
 
     await client.httpHandler.executeSafe(request);
@@ -106,7 +112,9 @@ class EmojiManager extends Manager<Emoji> {
 
   @override
   Future<Emoji> update(Snowflake id, EmojiUpdateBuilder builder, {String? auditReason}) async {
-    final route = HttpRoute()..guilds(id: guildId.toString())..emojis(id: builder.toString());
+    final route = HttpRoute()
+      ..guilds(id: guildId.toString())
+      ..emojis(id: builder.toString());
     final request = BasicRequest(route, method: 'PATCH', body: jsonEncode(builder.build()));
 
     final response = await client.httpHandler.executeSafe(request);

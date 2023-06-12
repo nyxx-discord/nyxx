@@ -111,7 +111,8 @@ class MessageReactionAddEvent extends DispatchEvent {
   final PartialEmoji emoji;
 
   /// {@macro message_reaction_add_event}
-  MessageReactionAddEvent({required this.userId, required this.channelId, required this.messageId, required this.guildId, required this.member, required this.emoji});
+  MessageReactionAddEvent(
+      {required this.userId, required this.channelId, required this.messageId, required this.guildId, required this.member, required this.emoji});
 }
 
 /// {@template message_reaction_remove_event}
