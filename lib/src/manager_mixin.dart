@@ -34,7 +34,4 @@ mixin ManagerMixin implements Nyxx {
 
   /// A [GatewayManager] that manages gateway metadata for this client.
   GatewayManager get gateway => GatewayManager(this as NyxxRest);
-
-  /// A [ClientEmojiManager] that manages global emojis for this client.
-  ClientEmojiManager get emojis => ClientEmojiManager(this as NyxxRest, guilds.cache.values.map((g) => g.emojis));
 }

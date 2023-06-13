@@ -1,8 +1,6 @@
 import 'dart:convert';
 
 import 'package:nyxx/src/builders/emoji/emoji.dart';
-import 'package:nyxx/src/cache/cache.dart';
-import 'package:nyxx/src/client.dart';
 import 'package:nyxx/src/http/request.dart';
 import 'package:nyxx/src/http/route.dart';
 import 'package:nyxx/src/models/emoji/emoji.dart';
@@ -10,24 +8,6 @@ import 'package:nyxx/src/models/snowflake.dart';
 import 'package:nyxx/src/utils/parsing_helpers.dart';
 
 import 'manager.dart';
-
-class ClientEmojiManager {
-  final NyxxRest client;
-
-  final Iterable<EmojiManager> _managers;
-
-  Cache<Emoji> get cache => Cache<Emoji>('ClientEmoji', client.options.emojiCacheConfig);
-
-  ClientEmojiManager(this.client, this._managers) {
-    for (final manager in _managers) {
-      cache.addAll(manager.cache);
-    }
-  }
-
-  Emoji parse(Map<String, Object?> raw) => _managers.first.parse(raw);
-
-  TextEmoji parseText(Map<String, Object?> raw) => _managers.first.parseText(raw);
-}
 
 class EmojiManager extends Manager<Emoji> {
   final Snowflake guildId;
