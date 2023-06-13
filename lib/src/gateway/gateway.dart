@@ -113,7 +113,7 @@ class Gateway extends GatewayManager with EventParser {
           ChannelDeleteEvent(:final channel) => client.channels.cache.remove(channel.id),
           ThreadCreateEvent(:final thread) || ThreadUpdateEvent(:final thread) => client.channels.cache[thread.id] = thread,
           ThreadDeleteEvent(:final thread) => client.channels.cache.remove(thread.id),
-          ThreadListSyncEvent(:final threads) => client.channels.cache.addEntries(threads.map((thread) => MapEntry(thread.id, thread))),
+          ThreadListSyncEvent(:final threads) => client.channels.cache..addEntries(threads.map((thread) => MapEntry(thread.id, thread))),
           final GuildCreateEvent event => () {
               client.guilds.cache[event.guild.id] = event.guild;
 
@@ -129,8 +129,8 @@ class Gateway extends GatewayManager with EventParser {
           GuildMemberUpdateEvent(:final guildId, :final member) =>
             client.guilds[guildId].members.cache[member.id] = member,
           GuildMemberRemoveEvent(:final guildId, :final user) => client.guilds[guildId].members.cache.remove(user.id),
-          GuildMembersChunkEvent(:final guildId, :final members) =>
-            client.guilds[guildId].members.cache.addEntries(members.map((member) => MapEntry(member.id, member))),
+          GuildMembersChunkEvent(:final guildId, :final members) => client.guilds[guildId].members.cache
+            ..addEntries(members.map((member) => MapEntry(member.id, member))),
           GuildRoleCreateEvent(:final guildId, :final role) ||
           GuildRoleUpdateEvent(:final guildId, :final role) =>
             client.guilds[guildId].roles.cache[role.id] = role,
@@ -142,7 +142,7 @@ class Gateway extends GatewayManager with EventParser {
             MessageManager(client.options.messageCacheConfig, client, channelId: channelId).cache.remove(messageId),
           MessageBulkDeleteEvent(ids: final messageIds, :final channelId) =>
             // ignore: avoid_function_literals_in_foreach_calls
-            messageIds.forEach((messageId) => MessageManager(client.options.messageCacheConfig, client, channelId: channelId).cache.remove(messageId)),
+            messageIds..forEach((messageId) => MessageManager(client.options.messageCacheConfig, client, channelId: channelId).cache.remove(messageId)),
           UserUpdateEvent(:final user) => client.users.cache[user.id] = user,
           StageInstanceCreateEvent(:final instance) || StageInstanceUpdateEvent(:final instance) => client.channels.stageInstanceCache[instance.channelId] =
               instance,
@@ -719,17 +719,18 @@ class Gateway extends GatewayManager with EventParser {
       messageId: Snowflake.parse(raw['message_id'] as String),
       guildId: guildId,
       member: maybeParse(raw['member'], client.guilds[guildId ?? Snowflake.zero].members.parse),
-      emoji: client.emojis.parse(raw['emoji'] as Map<String, Object?>),
+      emoji: client.guilds[guildId ?? Snowflake.zero].emojis.parse(raw['emoji'] as Map<String, Object?>),
     );
   }
 
   MessageReactionRemoveEvent parseMessageReactionRemove(Map<String, Object?> raw) {
+    final guildId = maybeParse(raw['guild_id'], Snowflake.parse);
     return MessageReactionRemoveEvent(
       userId: Snowflake.parse(raw['user_id'] as String),
       channelId: Snowflake.parse(raw['channel_id'] as String),
       messageId: Snowflake.parse(raw['message_id'] as String),
-      guildId: maybeParse(raw['guild_id'], Snowflake.parse),
-      emoji: client.emojis.parse(raw['emoji'] as Map<String, Object?>),
+      guildId: guildId,
+      emoji: client.guilds[guildId ?? Snowflake.zero].emojis.parse(raw['emoji'] as Map<String, Object?>),
     );
   }
 
@@ -742,11 +743,12 @@ class Gateway extends GatewayManager with EventParser {
   }
 
   MessageReactionRemoveEmojiEvent parseMessageReactionRemoveEmoji(Map<String, Object?> raw) {
+    final guildId = maybeParse(raw['guild_id'], Snowflake.parse);
     return MessageReactionRemoveEmojiEvent(
       channelId: Snowflake.parse(raw['channel_id'] as String),
       messageId: Snowflake.parse(raw['message_id'] as String),
       guildId: maybeParse(raw['guild_id'], Snowflake.parse),
-      emoji: client.emojis.parse(raw['emoji'] as Map<String, Object?>),
+      emoji: client.guilds[guildId ?? Snowflake.zero].emojis.parse(raw['emoji'] as Map<String, Object?>),
     );
   }
 
