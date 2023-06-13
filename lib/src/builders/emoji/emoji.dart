@@ -23,7 +23,7 @@ class EmojiBuilder implements CreateBuilder<Emoji> {
   Map<String, Object?> build() => {
         'name': name,
         'image': image.build(),
-        'roles': roles.toList(),
+        'roles': roles.map((s) => s.toString()).toList(),
       };
 }
 
@@ -42,6 +42,6 @@ class EmojiUpdateBuilder implements UpdateBuilder<Emoji> {
   @override
   Map<String, Object?> build() => {
         'name': name,
-        if (roles != null) 'roles': roles!.toList(),
+        if (roles != null) 'roles': roles!.map((s) => s.toString()).toList(),
       };
 }
