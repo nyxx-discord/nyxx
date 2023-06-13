@@ -73,7 +73,7 @@ class EmojiManager extends Manager<Emoji> {
     return emoji;
   }
 
-  Future<List<Emoji>> fetchAll() async {
+  Future<List<Emoji>> list() async {
     final route = HttpRoute()
       ..guilds(id: guildId.toString())
       ..emojis();
@@ -100,14 +100,14 @@ class EmojiManager extends Manager<Emoji> {
   }
 
   @override
-  Future<void> delete(Snowflake id, {String? auditReason}) async {
+  Future<Emoji?> delete(Snowflake id, {String? auditReason}) async {
     final route = HttpRoute()
       ..guilds(id: guildId.toString())
       ..emojis(id: id.toString());
     final request = BasicRequest(route, method: 'DELETE');
 
     await client.httpHandler.executeSafe(request);
-    cache.remove(id);
+    return cache.remove(id);
   }
 
   @override
