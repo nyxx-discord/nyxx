@@ -1,3 +1,6 @@
+import 'dart:async';
+
+import 'package:nyxx/src/builders/builder.dart';
 import 'package:nyxx/src/http/managers/emoji_manager.dart';
 import 'package:nyxx/src/models/snowflake.dart';
 import 'package:nyxx/src/models/snowflake_entity/snowflake_entity.dart';
@@ -12,24 +15,52 @@ class PartialEmoji extends WritableSnowflakeEntity<Emoji> {
   PartialEmoji({required super.id, required this.manager});
 }
 
-/// A text emoji, such as `❤️`.
-class TextEmoji extends PartialEmoji {
-  static const zeroSnowflake = Snowflake.zero;
+/// An emoji. Either a [TextEmoji] or a [GuildEmoji].
+class Emoji extends PartialEmoji {
+  /// The emoji's name. Can be `dartlang` for a custom emoji, or `❤️` for a text emoji.
+  final String? name;
 
-  /// The emoji's name.
+  Emoji({
+    required super.id,
+    required super.manager,
+    required this.name,
+  });
+}
+
+/// A text emoji, such as `❤️`.
+class TextEmoji implements Emoji {
+  @override
   final String name;
+
+  @override
+  final EmojiManager manager;
+
+  @override
+  final Snowflake id = Snowflake.zero;
 
   TextEmoji({
     required this.name,
-    required super.manager,
-  }) : super(id: zeroSnowflake);
+    required this.manager,
+  });
+
+  @override
+  Future<Emoji> fetch() => throw UnsupportedError('Cannot fetch a text emoji.');
+
+  @override
+  String defaultToString() => name;
+
+  @override
+  Future<void> delete() => throw UnsupportedError('Cannot delete a text emoji.');
+
+  @override
+  FutureOr<Emoji> get() => this;
+
+  @override
+  Future<Emoji> update(covariant UpdateBuilder<Emoji> builder) => throw UnsupportedError('Cannot update a text emoji.');
 }
 
 /// A custom guild emoji.
-class GuildEmoji extends PartialEmoji {
-  /// The emoji's name.
-  final String? name;
-
+class GuildEmoji extends Emoji {
   // Id of roles allowed to use this emoji.
   final List<Snowflake>? roles;
 
@@ -51,42 +82,7 @@ class GuildEmoji extends PartialEmoji {
   GuildEmoji({
     required super.id,
     required super.manager,
-    required this.name,
-    required this.roles,
-    required this.user,
-    required this.requiresColons,
-    required this.isManaged,
-    required this.isAnimated,
-    required this.isAvailable,
-  });
-}
-
-class Emoji extends PartialEmoji implements TextEmoji, GuildEmoji {
-  @override
-  final String name;
-
-  @override
-  final List<Snowflake>? roles;
-
-  @override
-  final User? user;
-
-  @override
-  final bool? requiresColons;
-
-  @override
-  final bool? isManaged;
-
-  @override
-  final bool? isAnimated;
-
-  @override
-  final bool? isAvailable;
-
-  Emoji({
-    required super.id,
-    required super.manager,
-    required this.name,
+    required super.name,
     required this.roles,
     required this.user,
     required this.requiresColons,
@@ -96,5 +92,5 @@ class Emoji extends PartialEmoji implements TextEmoji, GuildEmoji {
   });
 
   @override
-  String toString() => '<${isAnimated != null && isAnimated! ? 'a' : ''}:$name:$id>';
+  String defaultToString() => '<${isAnimated == true ? 'a' : ''}:$name:$id>';
 }
