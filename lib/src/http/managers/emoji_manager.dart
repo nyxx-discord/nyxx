@@ -39,24 +39,26 @@ class EmojiManager extends Manager<Emoji> {
 
   @override
   Emoji parse(Map<String, Object?> raw) {
-    return Emoji(
-      id: Snowflake.parse(raw['id'] as String),
-      manager: this,
-      user: maybeParse(raw['user'], client.users.parse),
-      isAnimated: raw['animated'] as bool?,
-      isAvailable: raw['available'] as bool?,
-      isManaged: raw['managed'] as bool?,
-      requiresColons: raw['require_colons'] as bool?,
-      name: raw['name'] as String,
-      roles: maybeParseMany(raw['roles'], Snowflake.parse),
-    );
-  }
+    final isUnicode = raw['id'] == null;
 
-  TextEmoji parseText(Map<String, Object?> raw) {
-    return TextEmoji(
-      name: raw['name'] as String,
-      manager: this,
-    );
+    if (isUnicode) {
+      return TextEmoji(
+        name: raw['name'] as String,
+        manager: this,
+      );
+    } else {
+      return GuildEmoji(
+        id: Snowflake.parse(raw['id'] as String),
+        manager: this,
+        user: maybeParse(raw['user'], client.users.parse),
+        isAnimated: raw['animated'] as bool?,
+        isAvailable: raw['available'] as bool?,
+        isManaged: raw['managed'] as bool?,
+        requiresColons: raw['require_colons'] as bool?,
+        name: raw['name'] as String,
+        roles: maybeParseMany(raw['roles'], Snowflake.parse),
+      );
+    }
   }
 
   @override
