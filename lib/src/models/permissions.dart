@@ -6,133 +6,133 @@ import 'package:nyxx/src/utils/flags.dart';
 /// * Discord API Reference: https://discord.com/developers/docs/topics/permissions
 class Permissions extends Flags<Permissions> {
   /// Allows creation of instant invites.
-  static const createInstantInvite = Flag<Permissions>.fromOffset(0);
+  static final createInstantInvite = Flag<Permissions>.fromOffset(0);
 
   /// Allows kicking members.
-  static const kickMembers = Flag<Permissions>.fromOffset(1);
+  static final kickMembers = Flag<Permissions>.fromOffset(1);
 
   /// Allows banning members.
-  static const banMembers = Flag<Permissions>.fromOffset(2);
+  static final banMembers = Flag<Permissions>.fromOffset(2);
 
   /// Allows all permissions and bypasses channel permission overwrites.
-  static const administrator = Flag<Permissions>.fromOffset(3);
+  static final administrator = Flag<Permissions>.fromOffset(3);
 
   /// Allows management and editing of channels.
-  static const manageChannels = Flag<Permissions>.fromOffset(4);
+  static final manageChannels = Flag<Permissions>.fromOffset(4);
 
   /// Allows management and editing of the guild.
-  static const manageGuild = Flag<Permissions>.fromOffset(5);
+  static final manageGuild = Flag<Permissions>.fromOffset(5);
 
   /// Allows for the addition of reactions to messages.
-  static const addReactions = Flag<Permissions>.fromOffset(6);
+  static final addReactions = Flag<Permissions>.fromOffset(6);
 
   /// Allows for viewing of audit logs.
-  static const viewAuditLog = Flag<Permissions>.fromOffset(7);
+  static final viewAuditLog = Flag<Permissions>.fromOffset(7);
 
   /// Allows for using priority speaker in a voice channel.
-  static const prioritySpeaker = Flag<Permissions>.fromOffset(8);
+  static final prioritySpeaker = Flag<Permissions>.fromOffset(8);
 
   /// Allows the user to go live.
-  static const stream = Flag<Permissions>.fromOffset(9);
+  static final stream = Flag<Permissions>.fromOffset(9);
 
   /// Allows guild members to view a channel, which includes reading messages in text channels and joining voice channels.
-  static const viewChannel = Flag<Permissions>.fromOffset(10);
+  static final viewChannel = Flag<Permissions>.fromOffset(10);
 
   /// Allows for sending messages in a channel and creating threads in a forum (does not allow sending messages in threads).
-  static const sendMessages = Flag<Permissions>.fromOffset(11);
+  static final sendMessages = Flag<Permissions>.fromOffset(11);
 
   /// Allows for sending of /tts messages.
-  static const sendTtsMessages = Flag<Permissions>.fromOffset(12);
+  static final sendTtsMessages = Flag<Permissions>.fromOffset(12);
 
   /// Allows for deletion of other users messages.
-  static const manageMessages = Flag<Permissions>.fromOffset(13);
+  static final manageMessages = Flag<Permissions>.fromOffset(13);
 
   /// Links sent by users with this permission will be auto-embedded.
-  static const embedLinks = Flag<Permissions>.fromOffset(14);
+  static final embedLinks = Flag<Permissions>.fromOffset(14);
 
   /// Allows for uploading images and files.
-  static const attachFiles = Flag<Permissions>.fromOffset(15);
+  static final attachFiles = Flag<Permissions>.fromOffset(15);
 
   /// Allows for reading of message history.
-  static const readMessageHistory = Flag<Permissions>.fromOffset(16);
+  static final readMessageHistory = Flag<Permissions>.fromOffset(16);
 
   /// Allows for using the @everyone tag to notify all users in a channel, and the @here tag to notify all online users in a channel.
-  static const mentionEveryone = Flag<Permissions>.fromOffset(17);
+  static final mentionEveryone = Flag<Permissions>.fromOffset(17);
 
   /// Allows the usage of custom emojis from other servers.
-  static const useExternalEmojis = Flag<Permissions>.fromOffset(18);
+  static final useExternalEmojis = Flag<Permissions>.fromOffset(18);
 
   /// Allows for viewing guild insights.
-  static const viewGuildInsights = Flag<Permissions>.fromOffset(19);
+  static final viewGuildInsights = Flag<Permissions>.fromOffset(19);
 
   /// Allows for joining of a voice channel.
-  static const connect = Flag<Permissions>.fromOffset(20);
+  static final connect = Flag<Permissions>.fromOffset(20);
 
   /// Allows for speaking in a voice channel.
-  static const speak = Flag<Permissions>.fromOffset(21);
+  static final speak = Flag<Permissions>.fromOffset(21);
 
   /// Allows for muting members in a voice channel.
-  static const muteMembers = Flag<Permissions>.fromOffset(22);
+  static final muteMembers = Flag<Permissions>.fromOffset(22);
 
   /// Allows for deafening of members in a voice channel.
-  static const deafenMembers = Flag<Permissions>.fromOffset(23);
+  static final deafenMembers = Flag<Permissions>.fromOffset(23);
 
   /// Allows for moving of members between voice channels.
-  static const moveMembers = Flag<Permissions>.fromOffset(24);
+  static final moveMembers = Flag<Permissions>.fromOffset(24);
 
   /// Allows for using voice-activity-detection in a voice channel.
-  static const useVad = Flag<Permissions>.fromOffset(25);
+  static final useVad = Flag<Permissions>.fromOffset(25);
 
   /// Allows for modification of own nickname.
-  static const changeNickname = Flag<Permissions>.fromOffset(26);
+  static final changeNickname = Flag<Permissions>.fromOffset(26);
 
   /// Allows for modification of other users nicknames.
-  static const manageNicknames = Flag<Permissions>.fromOffset(27);
+  static final manageNicknames = Flag<Permissions>.fromOffset(27);
 
   /// Allows management and editing of roles.
-  static const manageRoles = Flag<Permissions>.fromOffset(28);
+  static final manageRoles = Flag<Permissions>.fromOffset(28);
 
   /// Allows management and editing of webhooks.
-  static const manageWebhooks = Flag<Permissions>.fromOffset(29);
+  static final manageWebhooks = Flag<Permissions>.fromOffset(29);
 
   /// Allows management and editing of emojis, stickers, and soundboard sounds.
-  static const manageEmojisAndStickers = Flag<Permissions>.fromOffset(30);
+  static final manageEmojisAndStickers = Flag<Permissions>.fromOffset(30);
 
   /// Allows members to use application commands, including slash commands and context menu commands..
-  static const useApplicationCommands = Flag<Permissions>.fromOffset(31);
+  static final useApplicationCommands = Flag<Permissions>.fromOffset(31);
 
   /// Allows for requesting to speak in stage channels. (This permission is under active development and may be changed or removed.).
-  static const requestToSpeak = Flag<Permissions>.fromOffset(32);
+  static final requestToSpeak = Flag<Permissions>.fromOffset(32);
 
   /// Allows for creating, editing, and deleting scheduled events.
-  static const manageEvents = Flag<Permissions>.fromOffset(33);
+  static final manageEvents = Flag<Permissions>.fromOffset(33);
 
   /// Allows for deleting and archiving threads, and viewing all private threads.
-  static const manageThreads = Flag<Permissions>.fromOffset(34);
+  static final manageThreads = Flag<Permissions>.fromOffset(34);
 
   /// Allows for creating public and announcement threads.
-  static const createPublicThreads = Flag<Permissions>.fromOffset(35);
+  static final createPublicThreads = Flag<Permissions>.fromOffset(35);
 
   /// Allows for creating private threads.
-  static const createPrivateThreads = Flag<Permissions>.fromOffset(36);
+  static final createPrivateThreads = Flag<Permissions>.fromOffset(36);
 
   /// Allows the usage of custom stickers from other servers.
-  static const useExternalStickers = Flag<Permissions>.fromOffset(37);
+  static final useExternalStickers = Flag<Permissions>.fromOffset(37);
 
   /// Allows for sending messages in threads.
-  static const sendMessagesInThreads = Flag<Permissions>.fromOffset(38);
+  static final sendMessagesInThreads = Flag<Permissions>.fromOffset(38);
 
   /// Allows for using Activities (applications with the EMBEDDED flag) in a voice channel.
-  static const useEmbeddedActivities = Flag<Permissions>.fromOffset(39);
+  static final useEmbeddedActivities = Flag<Permissions>.fromOffset(39);
 
   /// Allows for timing out users to prevent them from sending or reacting to messages in chat and threads, and from speaking in voice and stage channels.
-  static const moderateMembers = Flag<Permissions>.fromOffset(40);
+  static final moderateMembers = Flag<Permissions>.fromOffset(40);
 
   /// Allows for viewing role subscription insights.
-  static const viewCreatorMonetizationAnalytics = Flag<Permissions>.fromOffset(41);
+  static final viewCreatorMonetizationAnalytics = Flag<Permissions>.fromOffset(41);
 
   /// Allows for using soundboard in a voice channel.
-  static const useSoundboard = Flag<Permissions>.fromOffset(42);
+  static final useSoundboard = Flag<Permissions>.fromOffset(42);
 
   /// Whether this set of permissions has the [createInstantInvite] permission.
   bool get canCreateInstantInvite => has(createInstantInvite);
@@ -264,5 +264,5 @@ class Permissions extends Flags<Permissions> {
   bool get canUseSoundboard => has(useSoundboard);
 
   /// Create a new [Permissions] from a permissions value.
-  const Permissions(super.value);
+  Permissions(super.value);
 }

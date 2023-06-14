@@ -55,7 +55,7 @@ void checkApplication(Application application) {
   expect(application.primarySkuId, equals(Snowflake(172150183260323840)));
   expect(application.slug, equals('test'));
   expect(application.coverImageHash, equals('31deabb7e45b6c8ecfef77d2f99c81a5'));
-  expect(application.flags, equals(ApplicationFlags(0)));
+  expect(application.flags, equals(ApplicationFlags(BigInt.zero)));
   expect(application.tags, isNull);
   expect(application.installationParameters, isNull);
   expect(application.customInstallUrl, isNull);

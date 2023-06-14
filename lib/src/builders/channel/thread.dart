@@ -110,7 +110,7 @@ class ThreadUpdateBuilder extends UpdateBuilder<Thread> {
         if (isLocked != null) 'locked': isLocked,
         if (isInvitable != null) 'invitable': isInvitable,
         if (!identical(rateLimitPerUser, sentinelDuration)) 'rate_limit_per_user': rateLimitPerUser?.inSeconds,
-        if (flags != null) 'flags': flags!.value,
+        if (flags != null) 'flags': flags!.value.toInt(),
         if (appliedTags != null) 'applied_tags': appliedTags!.map((e) => e.toString()).toList(),
       };
 }

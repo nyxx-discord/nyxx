@@ -290,7 +290,7 @@ class ForumChannelUpdateBuilder extends GuildChannelUpdateBuilder<ForumChannel> 
         if (!identical(rateLimitPerUser, sentinelDuration)) 'rate_limit_per_user': rateLimitPerUser?.inSeconds,
         if (!identical(parentId, sentinelSnowflake)) 'parent_id': parentId?.toString(),
         if (!identical(defaultAutoArchiveDuration, sentinelDuration)) 'default_auto_archive_duration': defaultAutoArchiveDuration?.inMinutes,
-        if (flags != null) 'flags': flags!.value,
+        if (flags != null) 'flags': flags!.value.toInt(),
         if (tags != null) 'available_tags': tags!.map((e) => e.build()).toList(),
         if (!identical(defaultReaction, sentinelDefaultReaction))
           'default_reaction_emoji': defaultReaction == null

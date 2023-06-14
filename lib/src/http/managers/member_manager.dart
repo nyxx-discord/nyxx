@@ -32,9 +32,9 @@ class MemberManager extends Manager<Member> {
       premiumSince: maybeParse(raw['premium_since'], DateTime.parse),
       isDeaf: raw['deaf'] as bool,
       isMute: raw['mute'] as bool,
-      flags: MemberFlags(raw['flags'] as int),
+      flags: MemberFlags(BigInt.from(raw['flags'] as int)),
       isPending: raw['pending'] as bool? ?? false,
-      permissions: maybeParse(raw['permissions'], (String raw) => Permissions(int.parse(raw))),
+      permissions: maybeParse(raw['permissions'], (String raw) => Permissions(BigInt.parse(raw))),
       communicationDisabledUntil: maybeParse(raw['communication_disabled_until'], DateTime.parse),
     );
   }

@@ -4,9 +4,9 @@ import 'package:test/test.dart';
 void main() {
   group('Flag', () {
     test('fromOffset gives the correct value', () {
-      expect(Flag<Never>.fromOffset(0).value, equals(1 << 0));
-      expect(Flag<Never>.fromOffset(1).value, equals(1 << 1));
-      expect(Flag<Never>.fromOffset(10).value, equals(1 << 10));
+      expect(Flag<Never>.fromOffset(0).value, equals(BigInt.one << 0));
+      expect(Flag<Never>.fromOffset(1).value, equals(BigInt.one << 1));
+      expect(Flag<Never>.fromOffset(10).value, equals(BigInt.one << 10));
     });
   });
 
@@ -15,20 +15,20 @@ void main() {
       final zeroFlag = Flag<Never>.fromOffset(0);
       final oneFlag = Flag<Never>.fromOffset(1);
 
-      final flags = Flags<Never>(1);
+      final flags = Flags<Never>(BigInt.one);
 
       expect(flags.has(zeroFlag), isTrue);
       expect(flags.has(oneFlag), isFalse);
     });
 
     test('equality', () {
-      expect(Flags<Never>(1), equals(Flags<Never>(1)));
+      expect(Flags<Never>(BigInt.one), equals(Flags<Never>(BigInt.one)));
     });
 
     test('|', () {
-      final flags = Flags<Never>(3) | Flag<Never>.fromOffset(2) | Flags<Never>(0xff00);
+      final flags = Flags<Never>(BigInt.from(3)) | Flag<Never>.fromOffset(2) | Flags<Never>(BigInt.from(0xff00));
 
-      expect(flags, equals(Flags<Never>(0xff07)));
+      expect(flags, equals(Flags<Never>(BigInt.from(0xff07))));
     });
 
     test('iterator', () {
@@ -37,6 +37,15 @@ void main() {
       expect(flags, hasLength(3));
       expect(flags.first, equals(Flag<Never>.fromOffset(2)));
       expect(flags.last, equals(Flag<Never>.fromOffset(10)));
+    });
+
+    test('does not overflow', () {
+      // 128 enabled flags
+      final flags = Flags<Never>(BigInt.parse('ffffffffffffffffffffffffffffffff', radix: 16));
+
+      expect(flags.has(Flag<Never>.fromOffset(0)), isTrue);
+      expect(flags.has(Flag<Never>.fromOffset(64)), isTrue);
+      expect(flags.has(Flag<Never>.fromOffset(127)), isTrue);
     });
   });
 }

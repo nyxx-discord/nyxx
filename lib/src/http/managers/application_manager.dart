@@ -47,7 +47,7 @@ class ApplicationManager {
       primarySkuId: maybeParse(raw['primary_sku_id'], Snowflake.parse),
       slug: raw['slug'] as String?,
       coverImageHash: raw['cover_image'] as String?,
-      flags: ApplicationFlags(raw['flags'] as int? ?? 0),
+      flags: ApplicationFlags(BigInt.from(raw['flags'] as int? ?? 0)),
       tags: maybeParseMany(raw['tags']),
       installationParameters: maybeParse(raw['install_params'], parseInstallationParameters),
       customInstallUrl: maybeParse(raw['custom_install_url'], Uri.parse),
@@ -76,7 +76,7 @@ class ApplicationManager {
   InstallationParameters parseInstallationParameters(Map<String, Object?> raw) {
     return InstallationParameters(
       scopes: parseMany(raw['scopes'] as List),
-      permissions: Permissions(int.parse(raw['permissions'] as String)),
+      permissions: Permissions(BigInt.parse(raw['permissions'] as String)),
     );
   }
 

@@ -88,16 +88,16 @@ class Member extends PartialMember {
 /// Flags that can be applied to a [Member].
 class MemberFlags extends Flags<MemberFlags> {
   /// This member has left and rejoined the guild.
-  static const didRejoin = Flag<MemberFlags>.fromOffset(0);
+  static final didRejoin = Flag<MemberFlags>.fromOffset(0);
 
   /// This member completed the guild's onboarding process.
-  static const completedOnboarding = Flag<MemberFlags>.fromOffset(1);
+  static final completedOnboarding = Flag<MemberFlags>.fromOffset(1);
 
   /// This member is exempt from guild verification requirements.
-  static const bypassesVerification = Flag<MemberFlags>.fromOffset(2);
+  static final bypassesVerification = Flag<MemberFlags>.fromOffset(2);
 
   /// This member has started the guild's onboarding process.
-  static const startedOnboarding = Flag<MemberFlags>.fromOffset(3);
+  static final startedOnboarding = Flag<MemberFlags>.fromOffset(3);
 
   /// Whether this member has the [didRejoin] flag.
   bool get hasRejoined => has(didRejoin);
@@ -112,5 +112,5 @@ class MemberFlags extends Flags<MemberFlags> {
   bool get didStartOnboarding => has(startedOnboarding);
 
   /// Create a new [MemberFlags].
-  const MemberFlags(super.value);
+  MemberFlags(super.value);
 }

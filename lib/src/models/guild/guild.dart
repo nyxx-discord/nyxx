@@ -404,88 +404,88 @@ enum ExplicitContentFilterLevel {
 // Artificial flags for guild features. The values are arbitrary, and are associated with the strings from the API in [GuildManager].
 class GuildFeatures extends Flags<GuildFeatures> {
   /// The guild has an animated banner.
-  static const animatedBanner = Flag<GuildFeatures>.fromOffset(0);
+  static final animatedBanner = Flag<GuildFeatures>.fromOffset(0);
 
   /// The guild has an animated icon.
-  static const animatedIcon = Flag<GuildFeatures>.fromOffset(1);
+  static final animatedIcon = Flag<GuildFeatures>.fromOffset(1);
 
   /// The guild has the Application Command Permissions V2.
-  static const applicationCommandPermissionsV2 = Flag<GuildFeatures>.fromOffset(2);
+  static final applicationCommandPermissionsV2 = Flag<GuildFeatures>.fromOffset(2);
 
   /// The guild has auto moderation.
-  static const autoModeration = Flag<GuildFeatures>.fromOffset(3);
+  static final autoModeration = Flag<GuildFeatures>.fromOffset(3);
 
   /// The guild has a banner.
-  static const banner = Flag<GuildFeatures>.fromOffset(4);
+  static final banner = Flag<GuildFeatures>.fromOffset(4);
 
   /// The guild is a community guild.
-  static const community = Flag<GuildFeatures>.fromOffset(5);
+  static final community = Flag<GuildFeatures>.fromOffset(5);
 
   /// The guild has enabled monetization.
-  static const creatorMonetizableProvisional = Flag<GuildFeatures>.fromOffset(6);
+  static final creatorMonetizableProvisional = Flag<GuildFeatures>.fromOffset(6);
 
   /// The guild has enabled the role subscription promo page.
-  static const creatorStorePage = Flag<GuildFeatures>.fromOffset(7);
+  static final creatorStorePage = Flag<GuildFeatures>.fromOffset(7);
 
   /// The guild has been set as a support server on the App Directory.
-  static const developerSupportServer = Flag<GuildFeatures>.fromOffset(8);
+  static final developerSupportServer = Flag<GuildFeatures>.fromOffset(8);
 
   /// The guild is able to be discovered in the directory.
-  static const discoverable = Flag<GuildFeatures>.fromOffset(9);
+  static final discoverable = Flag<GuildFeatures>.fromOffset(9);
 
   /// The guild is able to be featured in the directory.
-  static const featurable = Flag<GuildFeatures>.fromOffset(10);
+  static final featurable = Flag<GuildFeatures>.fromOffset(10);
 
   /// The guild has paused invites, preventing new users from joining.
-  static const invitesDisabled = Flag<GuildFeatures>.fromOffset(11);
+  static final invitesDisabled = Flag<GuildFeatures>.fromOffset(11);
 
   /// The guild has access to set an invite splash background.
-  static const inviteSplash = Flag<GuildFeatures>.fromOffset(12);
+  static final inviteSplash = Flag<GuildFeatures>.fromOffset(12);
 
   /// The guild has enabled Membership Screening.
-  static const memberVerificationGateEnabled = Flag<GuildFeatures>.fromOffset(13);
+  static final memberVerificationGateEnabled = Flag<GuildFeatures>.fromOffset(13);
 
   /// The guild has increased custom sticker slots.
-  static const moreStickers = Flag<GuildFeatures>.fromOffset(14);
+  static final moreStickers = Flag<GuildFeatures>.fromOffset(14);
 
   /// The guild has access to create announcement channels.
-  static const news = Flag<GuildFeatures>.fromOffset(15);
+  static final news = Flag<GuildFeatures>.fromOffset(15);
 
   /// The guild is partnered.
-  static const partnered = Flag<GuildFeatures>.fromOffset(16);
+  static final partnered = Flag<GuildFeatures>.fromOffset(16);
 
   /// The guild can be previewed before joining via Membership Screening or the directory.
-  static const previewEnabled = Flag<GuildFeatures>.fromOffset(17);
+  static final previewEnabled = Flag<GuildFeatures>.fromOffset(17);
 
   /// The guild has disabled alerts for join raids in the configured safety alerts channel.
-  static const raidAlertsDisabled = Flag<GuildFeatures>.fromOffset(18);
+  static final raidAlertsDisabled = Flag<GuildFeatures>.fromOffset(18);
 
   /// The guild is able to set role icons.
-  static const roleIcons = Flag<GuildFeatures>.fromOffset(19);
+  static final roleIcons = Flag<GuildFeatures>.fromOffset(19);
 
   /// The guild has role subscriptions that can be purchased.
-  static const roleSubscriptionsAvailableForPurchase = Flag<GuildFeatures>.fromOffset(20);
+  static final roleSubscriptionsAvailableForPurchase = Flag<GuildFeatures>.fromOffset(20);
 
   /// The guild has enabled role subscriptions.
-  static const roleSubscriptionsEnabled = Flag<GuildFeatures>.fromOffset(21);
+  static final roleSubscriptionsEnabled = Flag<GuildFeatures>.fromOffset(21);
 
   /// The guild has enabled ticketed events.
-  static const ticketedEventsEnabled = Flag<GuildFeatures>.fromOffset(22);
+  static final ticketedEventsEnabled = Flag<GuildFeatures>.fromOffset(22);
 
   /// The guild has access to set a vanity URL.
-  static const vanityUrl = Flag<GuildFeatures>.fromOffset(23);
+  static final vanityUrl = Flag<GuildFeatures>.fromOffset(23);
 
   /// The guild is verified.
-  static const verified = Flag<GuildFeatures>.fromOffset(24);
+  static final verified = Flag<GuildFeatures>.fromOffset(24);
 
   /// The guild has access to set 384kbps bitrate in voice (previously VIP voice servers).
-  static const vipRegions = Flag<GuildFeatures>.fromOffset(25);
+  static final vipRegions = Flag<GuildFeatures>.fromOffset(25);
 
   /// The guild has enabled the welcome screen.
-  static const welcomeScreenEnabled = Flag<GuildFeatures>.fromOffset(26);
+  static final welcomeScreenEnabled = Flag<GuildFeatures>.fromOffset(26);
 
   /// Create a new [GuildFeatures].
-  const GuildFeatures(super.value);
+  GuildFeatures(super.value);
 
   /// Whether this guild has the [animatedBanner] feature.
   bool get hasAnimatedBanner => has(animatedBanner);
@@ -594,25 +594,25 @@ enum MfaLevel {
 /// The configuration of a guild's system channel.
 class SystemChannelFlags extends Flags<SystemChannelFlags> {
   /// Suppress member join notifications.
-  static const suppressJoinNotifications = Flag<SystemChannelFlags>.fromOffset(0);
+  static final suppressJoinNotifications = Flag<SystemChannelFlags>.fromOffset(0);
 
   /// Suppress server boost notifications.
-  static const suppressPremiumSubscriptions = Flag<SystemChannelFlags>.fromOffset(1);
+  static final suppressPremiumSubscriptions = Flag<SystemChannelFlags>.fromOffset(1);
 
   /// Suppress server setup tips.
-  static const suppressGuildReminderNotifications = Flag<SystemChannelFlags>.fromOffset(2);
+  static final suppressGuildReminderNotifications = Flag<SystemChannelFlags>.fromOffset(2);
 
   /// Hide member join sticker reply buttons.
-  static const suppressJoinNotificationReplies = Flag<SystemChannelFlags>.fromOffset(3);
+  static final suppressJoinNotificationReplies = Flag<SystemChannelFlags>.fromOffset(3);
 
   /// Suppress role subscription purchase and renewal notifications.
-  static const suppressRoleSubscriptionPurchaseNotifications = Flag<SystemChannelFlags>.fromOffset(4);
+  static final suppressRoleSubscriptionPurchaseNotifications = Flag<SystemChannelFlags>.fromOffset(4);
 
   /// Hide role subscription sticker reply buttons.
-  static const suppressRoleSubscriptionPurchaseNotificationReplies = Flag<SystemChannelFlags>.fromOffset(5);
+  static final suppressRoleSubscriptionPurchaseNotificationReplies = Flag<SystemChannelFlags>.fromOffset(5);
 
   /// Create a new [SystemChannelFlags].
-  const SystemChannelFlags(super.value);
+  SystemChannelFlags(super.value);
 
   /// Whether this configuration has the [suppressJoinNotifications] flag.
   bool get shouldSuppressJoinNotifications => has(suppressJoinNotifications);

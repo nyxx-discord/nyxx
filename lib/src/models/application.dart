@@ -123,34 +123,34 @@ class Application extends PartialApplication {
 /// Flags for an [Application].
 class ApplicationFlags extends Flags<ApplicationFlags> {
   /// Indicates if an app uses the Auto Moderation API.
-  static const applicationAutoModerationRuleCreateBadge = Flag<ApplicationFlags>.fromOffset(6);
+  static final applicationAutoModerationRuleCreateBadge = Flag<ApplicationFlags>.fromOffset(6);
 
   /// Intent required for bots in 100 or more servers to receive presence_update events.
-  static const gatewayPresence = Flag<ApplicationFlags>.fromOffset(12);
+  static final gatewayPresence = Flag<ApplicationFlags>.fromOffset(12);
 
   /// Intent required for bots in under 100 servers to receive presence_update events, found on the Bot page in your app's settings.
-  static const gatewayPresenceLimited = Flag<ApplicationFlags>.fromOffset(13);
+  static final gatewayPresenceLimited = Flag<ApplicationFlags>.fromOffset(13);
 
   /// Intent required for bots in 100 or more servers to receive member-related events like guild_member_add. See the list of member-related events under GUILD_MEMBERS.
-  static const gatewayGuildMembers = Flag<ApplicationFlags>.fromOffset(14);
+  static final gatewayGuildMembers = Flag<ApplicationFlags>.fromOffset(14);
 
   /// Intent required for bots in under 100 servers to receive member-related events like guild_member_add, found on the Bot page in your app's settings. See the list of member-related events under GUILD_MEMBERS.
-  static const gatewayGuildMembersLimited = Flag<ApplicationFlags>.fromOffset(15);
+  static final gatewayGuildMembersLimited = Flag<ApplicationFlags>.fromOffset(15);
 
   /// Indicates unusual growth of an app that prevents verification.
-  static const verificationPendingGuildLimit = Flag<ApplicationFlags>.fromOffset(16);
+  static final verificationPendingGuildLimit = Flag<ApplicationFlags>.fromOffset(16);
 
   /// Indicates if an app is embedded within the Discord client (currently unavailable publicly).
-  static const embedded = Flag<ApplicationFlags>.fromOffset(17);
+  static final embedded = Flag<ApplicationFlags>.fromOffset(17);
 
   /// Intent required for bots in 100 or more servers to receive message content.
-  static const gatewayMessageContent = Flag<ApplicationFlags>.fromOffset(18);
+  static final gatewayMessageContent = Flag<ApplicationFlags>.fromOffset(18);
 
   /// Intent required for bots in under 100 servers to receive message content, found on the Bot page in your app's settings.
-  static const gatewayMessageContentLimited = Flag<ApplicationFlags>.fromOffset(19);
+  static final gatewayMessageContentLimited = Flag<ApplicationFlags>.fromOffset(19);
 
   /// Indicates if an app has registered global application commands.
-  static const applicationCommandBadge = Flag<ApplicationFlags>.fromOffset(23);
+  static final applicationCommandBadge = Flag<ApplicationFlags>.fromOffset(23);
 
   /// Whether this application has the [applicationAutoModerationRuleCreateBadge] flag set.
   bool get usesApplicationAutoModerationRuleCreateBadge => has(applicationAutoModerationRuleCreateBadge);

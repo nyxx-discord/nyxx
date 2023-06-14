@@ -276,7 +276,7 @@ void checkAnnouncementThread(Channel channel) {
   expect(channel.position, equals(-1));
   expect(channel.rateLimitPerUser, isNull);
   expect(channel.totalMessagesSent, equals(1));
-  expect(channel.flags, equals(ChannelFlags(0)));
+  expect(channel.flags, equals(ChannelFlags(BigInt.zero)));
 }
 
 final samplePrivateThread = {
@@ -336,7 +336,7 @@ void checkPrivateThread(Channel channel) {
   expect(channel.position, equals(-1));
   expect(channel.rateLimitPerUser, isNull);
   expect(channel.totalMessagesSent, equals(2));
-  expect(channel.flags, equals(ChannelFlags(0)));
+  expect(channel.flags, equals(ChannelFlags(BigInt.zero)));
 }
 
 final samplePermissionOverwrite = {
@@ -349,8 +349,8 @@ final samplePermissionOverwrite = {
 void checkPermissionOverwrite(PermissionOverwrite overwrite) {
   expect(overwrite.id, equals(Snowflake.zero));
   expect(overwrite.type, equals(PermissionOverwriteType.member));
-  expect(overwrite.allow, equals(Permissions(100)));
-  expect(overwrite.deny, equals(Permissions(11)));
+  expect(overwrite.allow, equals(Permissions(BigInt.from(100))));
+  expect(overwrite.deny, equals(Permissions(BigInt.from(11))));
 }
 
 final sampleForumTag = {
@@ -400,7 +400,7 @@ final sampleThreadMember = {
 void checkThreadMember(ThreadMember member) {
   expect(member.threadId, equals(Snowflake.zero));
   expect(member.userId, equals(Snowflake(1)));
-  expect(member.flags.value, equals(17));
+  expect(member.flags.value, equals(BigInt.from(17)));
   expect(member.joinTimestamp, equals(DateTime.utc(2023, 04, 03, 10, 49, 41)));
 }
 

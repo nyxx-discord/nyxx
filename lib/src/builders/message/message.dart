@@ -125,8 +125,8 @@ class MessageBuilder extends CreateBuilder<Message> {
       if (stickerIds != null) 'sticker_ids': stickerIds!.map((e) => e.toString()).toList(),
       if (attachments != null) 'attachments': attachments!.map((e) => e.build()).toList(),
       if (suppressEmbeds != null || suppressNotifications != null)
-        'flags':
-            (suppressEmbeds == true ? MessageFlags.suppressEmbeds.value : 0) | (suppressNotifications == true ? MessageFlags.suppressNotifications.value : 0),
+        'flags': (suppressEmbeds == true ? MessageFlags.suppressEmbeds.value.toInt() : 0) |
+            (suppressNotifications == true ? MessageFlags.suppressNotifications.value.toInt() : 0),
     };
   }
 }
@@ -226,7 +226,7 @@ class MessageUpdateBuilder extends UpdateBuilder<Message> {
       if (!identical(embeds, sentinelList)) 'embeds': embeds,
       if (allowedMentions != null) 'allowed_mentions': allowedMentions!.build(),
       if (!identical(attachments, sentinelList)) 'attachments': attachments!.map((e) => e.build()).toList(),
-      if (suppressEmbeds != null) 'flags': (suppressEmbeds == true ? MessageFlags.suppressEmbeds.value : 0),
+      if (suppressEmbeds != null) 'flags': (suppressEmbeds == true ? MessageFlags.suppressEmbeds.value.toInt() : 0),
     };
   }
 }

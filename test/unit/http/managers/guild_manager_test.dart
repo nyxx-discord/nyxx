@@ -89,7 +89,7 @@ void checkGuild(Guild guild) {
   expect(guild.mfaLevel, equals(MfaLevel.elevated));
   expect(guild.applicationId, isNull);
   expect(guild.systemChannelId, isNull);
-  expect(guild.systemChannelFlags, equals(SystemChannelFlags(0)));
+  expect(guild.systemChannelFlags, equals(SystemChannelFlags(BigInt.zero)));
   expect(guild.rulesChannelId, equals(Snowflake(441688182833020939)));
   expect(guild.maxPresences, equals(40000));
   expect(guild.maxMembers, equals(250000));
@@ -202,7 +202,7 @@ void checkGuild2(Guild guild) {
   expect(guild.mfaLevel, equals(MfaLevel.none));
   expect(guild.applicationId, isNull);
   expect(guild.systemChannelId, isNull);
-  expect(guild.systemChannelFlags, equals(SystemChannelFlags(0)));
+  expect(guild.systemChannelFlags, equals(SystemChannelFlags(BigInt.zero)));
   expect(guild.rulesChannelId, isNull);
   expect(guild.maxPresences, isNull);
   expect(guild.maxMembers, equals(250000));

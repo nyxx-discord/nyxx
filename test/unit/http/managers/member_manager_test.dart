@@ -27,7 +27,7 @@ void checkMember(Member member) {
   expect(member.premiumSince, isNull);
   expect(member.isDeaf, isFalse);
   expect(member.isMute, isFalse);
-  expect(member.flags, equals(MemberFlags(0)));
+  expect(member.flags, equals(MemberFlags(BigInt.zero)));
   expect(member.isPending, isFalse);
   expect(member.permissions, isNull);
   expect(member.communicationDisabledUntil, isNull);

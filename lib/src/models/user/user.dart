@@ -84,50 +84,50 @@ class User extends PartialUser implements MessageAuthor {
 /// A set of [Flags] a user can have.
 class UserFlags extends Flags<UserFlags> {
   /// The user is a Discord employee.
-  static const staff = Flag<UserFlags>.fromOffset(0);
+  static final staff = Flag<UserFlags>.fromOffset(0);
 
   /// The user is a Partnered Server Owner.
-  static const partner = Flag<UserFlags>.fromOffset(1);
+  static final partner = Flag<UserFlags>.fromOffset(1);
 
   /// The user is a Hypesquad Events Member.
-  static const hypesquad = Flag<UserFlags>.fromOffset(2);
+  static final hypesquad = Flag<UserFlags>.fromOffset(2);
 
   /// The user has the Bug Hunter level 1 badge.
-  static const bugHunter1 = Flag<UserFlags>.fromOffset(3);
+  static final bugHunter1 = Flag<UserFlags>.fromOffset(3);
 
   /// The user is a House of Bravery Member.
-  static const hypesquadHouse1 = Flag<UserFlags>.fromOffset(6);
+  static final hypesquadHouse1 = Flag<UserFlags>.fromOffset(6);
 
   /// The user is a House of Brilliance Member.
-  static const hypesquadHouse2 = Flag<UserFlags>.fromOffset(7);
+  static final hypesquadHouse2 = Flag<UserFlags>.fromOffset(7);
 
   /// The user is a House of Balance Member.
-  static const hypesquadHouse3 = Flag<UserFlags>.fromOffset(8);
+  static final hypesquadHouse3 = Flag<UserFlags>.fromOffset(8);
 
   /// The user is an Early Nitro Supporter.
-  static const earlySupporter = Flag<UserFlags>.fromOffset(9);
+  static final earlySupporter = Flag<UserFlags>.fromOffset(9);
 
   /// The user is a pseudo-user for a [Team].
-  static const teamUser = Flag<UserFlags>.fromOffset(10);
+  static final teamUser = Flag<UserFlags>.fromOffset(10);
 
   /// The user has the Bug Hunter level 2 badge.
-  static const bugHunter2 = Flag<UserFlags>.fromOffset(14);
+  static final bugHunter2 = Flag<UserFlags>.fromOffset(14);
 
   /// The user is a verified bot.
-  static const verifiedBot = Flag<UserFlags>.fromOffset(16);
+  static final verifiedBot = Flag<UserFlags>.fromOffset(16);
 
   /// The user is an Early Verified Bot Developer.
-  static const verifiedDeveloper = Flag<UserFlags>.fromOffset(17);
+  static final verifiedDeveloper = Flag<UserFlags>.fromOffset(17);
 
   /// The user is a Moderator Programs Alumni.
-  static const certifierModerator = Flag<UserFlags>.fromOffset(18);
+  static final certifierModerator = Flag<UserFlags>.fromOffset(18);
 
   /// The user is a bot which uses only HTTP interactions, and as such is shown as online in the
   /// member list.
-  static const botHttpInteractions = Flag<UserFlags>.fromOffset(19);
+  static final botHttpInteractions = Flag<UserFlags>.fromOffset(19);
 
   /// The user is an Active Developer.
-  static const activeDeveloper = Flag<UserFlags>.fromOffset(22);
+  static final activeDeveloper = Flag<UserFlags>.fromOffset(22);
 
   /// Whether the user is a Discord employee.
   bool get isStaff => has(staff);
@@ -175,7 +175,7 @@ class UserFlags extends Flags<UserFlags> {
   bool get isActiveDeveloper => has(activeDeveloper);
 
   /// Create a new [UserFlags].
-  const UserFlags(super.value);
+  UserFlags(super.value);
 }
 
 /// The types of Discord Nitro subscription a user can have.

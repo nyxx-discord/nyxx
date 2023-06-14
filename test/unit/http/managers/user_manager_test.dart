@@ -28,9 +28,9 @@ void checkSampleUser(User user) {
   expect(user.bannerHash, equals('06c16474723fe537c283b8efa61a30c8'));
   expect(user.accentColor, equals(DiscordColor(16711680)));
   expect(user.locale, isNull);
-  expect(user.flags, equals(UserFlags(64)));
+  expect(user.flags, equals(UserFlags(BigInt.from(64))));
   expect(user.nitroType, equals(NitroType.classic));
-  expect(user.publicFlags, equals(UserFlags(64)));
+  expect(user.publicFlags, equals(UserFlags(BigInt.from(64))));
 }
 
 final sampleConnection = {

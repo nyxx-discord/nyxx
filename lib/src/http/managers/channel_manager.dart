@@ -216,7 +216,7 @@ class ChannelManager extends ReadOnlyManager<Channel> {
       position: -1,
       rateLimitPerUser: maybeParse<Duration?, int>(raw['rate_limit_per_user'], (value) => value == 0 ? null : Duration(seconds: value)),
       totalMessagesSent: raw['total_message_sent'] as int,
-      flags: maybeParse(raw['flags'], ChannelFlags.new),
+      flags: maybeParse(raw['flags'], (int value) => ChannelFlags(BigInt.from(value))),
     );
   }
 
@@ -245,7 +245,7 @@ class ChannelManager extends ReadOnlyManager<Channel> {
       position: -1,
       rateLimitPerUser: maybeParse<Duration?, int>(raw['rate_limit_per_user'], (value) => value == 0 ? null : Duration(seconds: value)),
       totalMessagesSent: raw['total_message_sent'] as int,
-      flags: maybeParse(raw['flags'], ChannelFlags.new),
+      flags: maybeParse(raw['flags'], (int value) => ChannelFlags(BigInt.from(value))),
     );
   }
 
@@ -275,7 +275,7 @@ class ChannelManager extends ReadOnlyManager<Channel> {
       position: -1,
       rateLimitPerUser: maybeParse<Duration?, int>(raw['rate_limit_per_user'], (value) => value == 0 ? null : Duration(seconds: value)),
       totalMessagesSent: raw['total_message_sent'] as int,
-      flags: maybeParse(raw['flags'], ChannelFlags.new),
+      flags: maybeParse(raw['flags'], (int value) => ChannelFlags(BigInt.from(value))),
     );
   }
 
@@ -319,7 +319,7 @@ class ChannelManager extends ReadOnlyManager<Channel> {
       topic: raw['topic'] as String?,
       lastThreadId: maybeParse(raw['last_message_id'], Snowflake.parse),
       lastPinTimestamp: maybeParse(raw['last_pin_timestamp'], DateTime.parse),
-      flags: ChannelFlags(raw['flags'] as int),
+      flags: ChannelFlags(BigInt.from(raw['flags'] as int)),
       availableTags: parseMany(raw['available_tags'] as List, parseForumTag),
       defaultReaction: maybeParse(raw['default_reaction_emoji'], parseDefaultReaction),
       // Discord doesn't seem to include this field if the default 3 day expiration is used (3 days = 4320 minutes)
@@ -339,8 +339,8 @@ class ChannelManager extends ReadOnlyManager<Channel> {
     return PermissionOverwrite(
       id: Snowflake.parse(raw['id'] as String),
       type: PermissionOverwriteType.parse(raw['type'] as int),
-      allow: Permissions(int.parse(raw['allow'] as String)),
-      deny: Permissions(int.parse(raw['deny'] as String)),
+      allow: Permissions(BigInt.parse(raw['allow'] as String)),
+      deny: Permissions(BigInt.parse(raw['deny'] as String)),
     );
   }
 
@@ -371,7 +371,7 @@ class ChannelManager extends ReadOnlyManager<Channel> {
   ThreadMember parseThreadMember(Map<String, Object?> raw) {
     return ThreadMember(
       joinTimestamp: DateTime.parse(raw['join_timestamp'] as String),
-      flags: Flags<Never>(raw['flags'] as int),
+      flags: Flags<Never>(BigInt.from(raw['flags'] as int)),
       threadId: Snowflake.parse(raw['id'] as String),
       userId: Snowflake.parse(raw['user_id'] as String),
       member: maybeParse(raw['member'], client.guilds[Snowflake.zero].members.parse),

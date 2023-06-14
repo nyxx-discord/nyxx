@@ -56,7 +56,7 @@ class MessageManager extends Manager<Message> {
       activity: maybeParse(raw['activity'], parseMessageActivity),
       applicationId: maybeParse(raw['application_id'], Snowflake.parse),
       reference: maybeParse(raw['message_reference'], parseMessageReference),
-      flags: MessageFlags(raw['flags'] as int? ?? 0),
+      flags: MessageFlags(BigInt.from(raw['flags'] as int? ?? 0)),
       referencedMessage: maybeParse(raw['referenced_message'], parse),
       thread: maybeParse(raw['thread'], client.channels.parse) as Thread?,
       position: raw['position'] as int?,

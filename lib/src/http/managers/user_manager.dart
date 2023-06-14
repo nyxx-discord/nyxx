@@ -39,9 +39,9 @@ class UserManager extends ReadOnlyManager<User> {
       bannerHash: raw['banner'] as String?,
       accentColor: hasAccentColor ? DiscordColor(raw['accent_color'] as int) : null,
       locale: hasLocale ? Locale.parse(raw['locale'] as String) : null,
-      flags: hasFlags ? UserFlags(raw['flags'] as int) : null,
+      flags: hasFlags ? UserFlags(BigInt.from(raw['flags'] as int)) : null,
       nitroType: hasPremiumType ? NitroType.parse(raw['premium_type'] as int) : NitroType.none,
-      publicFlags: hasPublicFlags ? UserFlags(raw['public_flags'] as int) : null,
+      publicFlags: hasPublicFlags ? UserFlags(BigInt.from(raw['public_flags'] as int)) : null,
     );
   }
 

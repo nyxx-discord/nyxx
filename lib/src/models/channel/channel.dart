@@ -104,10 +104,10 @@ enum ChannelType {
 // Currently only used in forum channels and threads
 class ChannelFlags extends Flags<ChannelFlags> {
   /// The channel is pinned in a forum channel.
-  static const pinned = Flag<ChannelFlags>.fromOffset(1);
+  static final pinned = Flag<ChannelFlags>.fromOffset(1);
 
   /// The forum channel requires threads to have tags.
-  static const requireTag = Flag<ChannelFlags>.fromOffset(4);
+  static final requireTag = Flag<ChannelFlags>.fromOffset(4);
 
   /// Whether this channel has the [pinned] flag set.
   bool get isPinned => has(pinned);
@@ -116,5 +116,5 @@ class ChannelFlags extends Flags<ChannelFlags> {
   bool get requiresTag => has(requireTag);
 
   /// Create a new [ChannelFlags].
-  const ChannelFlags(super.value);
+  ChannelFlags(super.value);
 }

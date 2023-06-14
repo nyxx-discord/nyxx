@@ -239,34 +239,34 @@ enum MessageType {
 /// * Discord API Reference: https://discord.com/developers/docs/resources/channel#message-object-message-flags
 class MessageFlags extends Flags<MessageFlags> {
   /// This message has been published to subscribed channels (via Channel Following).
-  static const crossposted = Flag<MessageFlags>.fromOffset(0);
+  static final crossposted = Flag<MessageFlags>.fromOffset(0);
 
   /// This message originated from a message in another channel (via Channel Following).
-  static const isCrosspost = Flag<MessageFlags>.fromOffset(1);
+  static final isCrosspost = Flag<MessageFlags>.fromOffset(1);
 
   /// Do not include any embeds when serializing this message.
-  static const suppressEmbeds = Flag<MessageFlags>.fromOffset(2);
+  static final suppressEmbeds = Flag<MessageFlags>.fromOffset(2);
 
   /// The source message for this crosspost has been deleted (via Channel Following).
-  static const sourceMessageDeleted = Flag<MessageFlags>.fromOffset(3);
+  static final sourceMessageDeleted = Flag<MessageFlags>.fromOffset(3);
 
   /// This message came from the urgent message system.
-  static const urgent = Flag<MessageFlags>.fromOffset(4);
+  static final urgent = Flag<MessageFlags>.fromOffset(4);
 
   /// This message has an associated thread, with the same id as the message.
-  static const hasThread = Flag<MessageFlags>.fromOffset(5);
+  static final hasThread = Flag<MessageFlags>.fromOffset(5);
 
   /// This message is only visible to the user who invoked the Interaction.
-  static const ephemeral = Flag<MessageFlags>.fromOffset(6);
+  static final ephemeral = Flag<MessageFlags>.fromOffset(6);
 
   /// This message is an Interaction Response and the bot is "thinking".
-  static const loading = Flag<MessageFlags>.fromOffset(7);
+  static final loading = Flag<MessageFlags>.fromOffset(7);
 
   /// This message failed to mention some roles and add their members to the thread.
-  static const failedToMentionSomeRolesInThread = Flag<MessageFlags>.fromOffset(8);
+  static final failedToMentionSomeRolesInThread = Flag<MessageFlags>.fromOffset(8);
 
   /// This message will not trigger push and desktop notifications.
-  static const suppressNotifications = Flag<MessageFlags>.fromOffset(12);
+  static final suppressNotifications = Flag<MessageFlags>.fromOffset(12);
 
   /// Whether this set of flags has the [crossposted] flag set.
   bool get wasCrossposted => has(crossposted);
@@ -299,5 +299,5 @@ class MessageFlags extends Flags<MessageFlags> {
   bool get suppressesNotifications => has(suppressNotifications);
 
   /// Create a new [MessageFlags].
-  const MessageFlags(super.value);
+  MessageFlags(super.value);
 }

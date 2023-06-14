@@ -54,7 +54,7 @@ class GuildManager extends Manager<Guild> {
       discoverySplashHash: raw['discovery_splash'] as String?,
       isOwnedByCurrentUser: raw['owner'] as bool?,
       ownerId: Snowflake.parse(raw['owner_id'] as String),
-      currentUserPermissions: maybeParse(raw['permissions'], (String permissions) => Permissions(int.parse(permissions))),
+      currentUserPermissions: maybeParse(raw['permissions'], (String permissions) => Permissions(BigInt.parse(permissions))),
       afkChannelId: maybeParse(raw['afk_channel_id'], Snowflake.parse),
       afkTimeout: Duration(seconds: raw['afk_timeout'] as int),
       isWidgetEnabled: raw['widget_enabled'] as bool? ?? false,
@@ -67,7 +67,7 @@ class GuildManager extends Manager<Guild> {
       mfaLevel: MfaLevel.parse(raw['mfa_level'] as int),
       applicationId: maybeParse(raw['application_id'], Snowflake.parse),
       systemChannelId: maybeParse(raw['system_channel_id'], Snowflake.parse),
-      systemChannelFlags: SystemChannelFlags(raw['system_channel_flags'] as int),
+      systemChannelFlags: SystemChannelFlags(BigInt.from(raw['system_channel_flags'] as int)),
       rulesChannelId: maybeParse(raw['rules_channel_id'], Snowflake.parse),
       maxPresences: raw['max_presences'] as int?,
       maxMembers: raw['max_members'] as int?,
@@ -126,7 +126,7 @@ class GuildManager extends Manager<Guild> {
   GuildFeatures parseGuildFeatures(List<Object?> raw) {
     final featureFlags = parseMany(raw, parseGuildFeature);
 
-    return GuildFeatures(featureFlags.fold(0, (value, element) => value | element.value));
+    return GuildFeatures(featureFlags.fold(BigInt.zero, (value, element) => value | element.value));
   }
 
   /// Parse a [Flag]<GuildFeature> from [raw].

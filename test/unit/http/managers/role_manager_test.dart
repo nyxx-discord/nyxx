@@ -25,7 +25,7 @@ void checkRole(Role role) {
   expect(role.iconHash, equals('cf3ced8600b777c9486c6d8d84fb4327'));
   expect(role.unicodeEmoji, isNull);
   expect(role.position, equals(1));
-  expect(role.permissions, equals(Permissions(66321471)));
+  expect(role.permissions, equals(Permissions(BigInt.from(66321471))));
   expect(role.isMentionable, isFalse);
   expect(role.tags, isNull);
 }

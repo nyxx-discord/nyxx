@@ -215,21 +215,21 @@ class ActivitySecrets with ToStringHelper {
 /// Information about the data in an [Activity] instance.
 class ActivityFlags extends Flags<ActivityFlags> {
   /// The activity is an instanced game session.
-  static const instance = Flag<ActivityFlags>.fromOffset(0);
+  static final instance = Flag<ActivityFlags>.fromOffset(0);
 
   /// The activity can be joined.
-  static const canJoin = Flag<ActivityFlags>.fromOffset(1);
+  static final canJoin = Flag<ActivityFlags>.fromOffset(1);
 
   /// The activity can be spectated.
-  static const spectate = Flag<ActivityFlags>.fromOffset(2);
+  static final spectate = Flag<ActivityFlags>.fromOffset(2);
 
   /// The client can request to join the activity.
-  static const joinRequest = Flag<ActivityFlags>.fromOffset(3);
-  static const sync = Flag<ActivityFlags>.fromOffset(4);
-  static const play = Flag<ActivityFlags>.fromOffset(5);
-  static const partyPrivacyFriends = Flag<ActivityFlags>.fromOffset(6);
-  static const partyPrivacyVoiceChannel = Flag<ActivityFlags>.fromOffset(7);
-  static const embedded = Flag<ActivityFlags>.fromOffset(8);
+  static final joinRequest = Flag<ActivityFlags>.fromOffset(3);
+  static final sync = Flag<ActivityFlags>.fromOffset(4);
+  static final play = Flag<ActivityFlags>.fromOffset(5);
+  static final partyPrivacyFriends = Flag<ActivityFlags>.fromOffset(6);
+  static final partyPrivacyVoiceChannel = Flag<ActivityFlags>.fromOffset(7);
+  static final embedded = Flag<ActivityFlags>.fromOffset(8);
 
   /// Create a new [ActivityFlags].
   ActivityFlags(super.value);

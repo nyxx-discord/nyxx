@@ -32,7 +32,7 @@ class RoleManager extends Manager<Role> {
       iconHash: raw['icon'] as String?,
       unicodeEmoji: raw['unicode_emoji'] as String?,
       position: raw['position'] as int,
-      permissions: Permissions(int.parse(raw['permissions'] as String)),
+      permissions: Permissions(BigInt.parse(raw['permissions'] as String)),
       isMentionable: raw['mentionable'] as bool,
       tags: maybeParse(raw['tags'], parseRoleTags),
     );

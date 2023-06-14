@@ -49,7 +49,7 @@ void checkMessage(Message message) {
   expect(message.activity, isNull);
   expect(message.applicationId, isNull);
   expect(message.reference, isNull);
-  expect(message.flags, equals(MessageFlags(0)));
+  expect(message.flags, equals(MessageFlags(BigInt.zero)));
   expect(message.referencedMessage, isNull);
   expect(message.thread, isNull);
   expect(message.position, isNull);
@@ -113,7 +113,7 @@ void checkCrosspostedMessage(Message message) {
   expect(message.reference?.channelId, equals(Snowflake(278325129692446722)));
   expect(message.reference?.guildId, equals(Snowflake(278325129692446720)));
   expect(message.reference?.messageId, equals(Snowflake(306588351130107906)));
-  expect(message.flags, equals(MessageFlags(2)));
+  expect(message.flags, equals(MessageFlags(BigInt.from(2))));
   expect(message.referencedMessage, isNull);
   expect(message.thread, isNull);
   expect(message.position, isNull);
