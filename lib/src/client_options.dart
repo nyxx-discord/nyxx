@@ -50,6 +50,7 @@ class RestClientOptions implements ClientOptions {
   /// The [CacheConfig] to use for the [Guild.autoModerationRules] manager.
   final CacheConfig<AutoModerationRule> autoModerationRuleConfig;
 
+  /// The [CacheConfig] to use for the [Guild.auditLogs] manager.
   final CacheConfig<AuditLogEntry> auditLogEntryConfig;
 
   /// Create a new [RestClientOptions].

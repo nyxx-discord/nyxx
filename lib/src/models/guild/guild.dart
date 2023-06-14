@@ -46,6 +46,7 @@ class PartialGuild extends WritableSnowflakeEntity<Guild> {
   /// An [AutoModerationManager] for the auto moderation rules of this guild.
   AutoModerationManager get autoModerationRules => AutoModerationManager(manager.client.options.autoModerationRuleConfig, manager.client, guildId: id);
 
+  /// An [AuditLogManager] for the audit log of this guild.
   AuditLogManager get auditLogs => AuditLogManager(manager.client.options.auditLogEntryConfig, manager.client, guildId: id);
 
   /// Create a new [PartialGuild].

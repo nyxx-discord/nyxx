@@ -4,26 +4,38 @@ import 'package:nyxx/src/models/snowflake.dart';
 import 'package:nyxx/src/models/snowflake_entity/snowflake_entity.dart';
 import 'package:nyxx/src/utils/to_string_helper/to_string_helper.dart';
 
+/// A partial [AuditLogEntry].
 class PartialAuditLogEntry extends ManagedSnowflakeEntity<AuditLogEntry> {
   @override
   final AuditLogManager manager;
 
+  /// Create a new [PartialAuditLogEntry].
   PartialAuditLogEntry({required super.id, required this.manager});
 }
 
+/// {@template audit_log_entry}
+/// An entry in a [Guild]'s audit log.
+/// {@endtemplate}
 class AuditLogEntry extends PartialAuditLogEntry {
+  /// The ID of the targeted entity.
   final Snowflake? targetId;
 
+  /// A list of changes made to the entity.
   final List<AuditLogChange>? changes;
 
+  /// The ID of the user that triggered the action.
   final Snowflake? userId;
 
+  /// The type of action taken.
   final AuditLogEvent actionType;
 
+  /// Additional information associated with this entry.
   final AuditLogEntryInfo? options;
 
+  /// The reason for this action.
   final String? reason;
 
+  /// {@macro audit_log_entry}
   AuditLogEntry({
     required super.id,
     required super.manager,
@@ -36,13 +48,20 @@ class AuditLogEntry extends PartialAuditLogEntry {
   });
 }
 
+/// {@template audit_log_change}
+/// A change to an object's field in an [AuditLogEntry].
+/// {@endtemplate}
 class AuditLogChange with ToStringHelper {
+  /// The old, unparsed value of the field.
   final dynamic oldValue;
 
+  /// The new, unparsed value of the field.
   final dynamic newValue;
 
+  /// The name of the affected field.
   final String key;
 
+  /// {@macro audit_log_change}
   AuditLogChange({
     required this.oldValue,
     required this.newValue,
@@ -50,6 +69,7 @@ class AuditLogChange with ToStringHelper {
   });
 }
 
+/// The type of event an [AuditLogEntry] represents.
 enum AuditLogEvent {
   guildUpdate._(1),
   channelCreate._(10),
@@ -106,10 +126,14 @@ enum AuditLogEvent {
   autoModerationFlagToChannel._(144),
   autoModerationUserCommunicationDisabled._(145);
 
+  /// The value of this [AuditLogEvent].
   final int value;
 
   const AuditLogEvent._(this.value);
 
+  /// Parse an [AuditLogEvent] from an [int].
+  ///
+  /// The [value] must be a valid audit log event.
   factory AuditLogEvent.parse(int value) => AuditLogEvent.values.firstWhere(
         (event) => event.value == value,
         orElse: () => throw FormatException('Unknown audit log event', value),
@@ -119,29 +143,44 @@ enum AuditLogEvent {
   String toString() => 'AuditLogEvent($value)';
 }
 
+/// {@template audit_log_entry_info}
+/// Extra information associated with an [AuditLogEntry].
+/// {@endtemplate}
 class AuditLogEntryInfo with ToStringHelper {
+  /// The ID of the application whose permissions were targeted.
   final Snowflake? applicationId;
 
+  /// The name of the Auto Moderation rule that was triggered.
   final String? autoModerationRuleName;
 
+  /// The trigger type of the Auto Moderation rule that was triggered.
   final String? autoModerationTriggerType;
 
+  /// The ID of the channel in which entities were targeted.
   final Snowflake? channelId;
 
+  /// The number of targeted entities.
   final String? count;
 
+  /// The number of days after which inactive members were kicked.
   final String? deleteMemberDays;
 
+  /// The ID of the overwritten entity.
   final Snowflake? id;
 
+  /// The number of members removed by a prune.
   final String? membersRemoved;
 
+  /// The ID of the targeted message.
   final Snowflake? messageId;
 
+  /// The name of the role.
   final String? roleName;
 
+  // The type of overwrite that was targeted.
   final PermissionOverwriteType? overwriteType;
 
+  /// {@macro audit_log_entry_info}
   AuditLogEntryInfo({
     required this.applicationId,
     required this.autoModerationRuleName,
