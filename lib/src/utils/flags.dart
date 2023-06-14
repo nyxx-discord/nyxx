@@ -49,9 +49,6 @@ class _FlagIterator<T extends Flags<T>> implements Iterator<Flag<T>> {
 
   _FlagIterator(this.source);
 
-  // TODO: Rewrite this to avoid hardcoding a max offset.
-  static const maxOffset = 64;
-
   int? offset;
 
   @override
@@ -63,7 +60,7 @@ class _FlagIterator<T extends Flags<T>> implements Iterator<Flag<T>> {
         offset = offset! + 1;
       }
 
-      if (offset! > maxOffset) {
+      if (source.value >> offset! == BigInt.zero) {
         return false;
       }
     } while (!source.has(current));
