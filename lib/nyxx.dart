@@ -63,6 +63,7 @@ export 'src/http/managers/role_manager.dart' show RoleManager;
 export 'src/http/managers/gateway_manager.dart' show GatewayManager;
 export 'src/http/managers/scheduled_event_manager.dart' show ScheduledEventManager;
 export 'src/http/managers/auto_moderation_manager.dart' show AutoModerationManager;
+export 'src/http/managers/audit_log_manager.dart' show AuditLogManager;
 
 export 'src/gateway/gateway.dart' show Gateway;
 export 'src/gateway/message.dart' show Disconnecting, Dispose, ErrorReceived, EventReceived, GatewayMessage, Send, ShardData, ShardMessage;
@@ -128,6 +129,7 @@ export 'src/models/guild/member.dart' show Member, MemberFlags, PartialMember;
 export 'src/models/guild/onboarding.dart' show Onboarding, OnboardingPrompt, OnboardingPromptOption, OnboardingPromptType;
 export 'src/models/guild/welcome_screen.dart' show WelcomeScreen, WelcomeScreenChannel;
 export 'src/models/guild/scheduled_event.dart' show EntityMetadata, PartialScheduledEvent, ScheduledEvent, ScheduledEventUser, EventStatus, ScheduledEntityType;
+export 'src/models/guild/audit_log.dart' show AuditLogChange, AuditLogEntry, AuditLogEntryInfo, PartialAuditLogEntry, AuditLogEvent;
 export 'src/models/application.dart'
     show Application, ApplicationFlags, InstallationParameters, PartialApplication, ApplicationRoleConnectionMetadata, ConnectionMetadataType;
 export 'src/models/guild/template.dart' show GuildTemplate;

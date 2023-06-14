@@ -1,6 +1,7 @@
 import 'package:nyxx/src/cache/cache.dart';
 import 'package:nyxx/src/models/channel/channel.dart';
 import 'package:nyxx/src/models/channel/stage_instance.dart';
+import 'package:nyxx/src/models/guild/audit_log.dart';
 import 'package:nyxx/src/models/guild/auto_moderation.dart';
 import 'package:nyxx/src/models/guild/ban.dart';
 import 'package:nyxx/src/models/guild/guild.dart';
@@ -49,6 +50,8 @@ class RestClientOptions implements ClientOptions {
   /// The [CacheConfig] to use for the [Guild.autoModerationRules] manager.
   final CacheConfig<AutoModerationRule> autoModerationRuleConfig;
 
+  final CacheConfig<AuditLogEntry> auditLogEntryConfig;
+
   /// Create a new [RestClientOptions].
   RestClientOptions({
     this.userCacheConfig = const CacheConfig(),
@@ -62,6 +65,7 @@ class RestClientOptions implements ClientOptions {
     this.stageInstanceCacheConfig = const CacheConfig(),
     this.scheduledEventCacheConfig = const CacheConfig(),
     this.autoModerationRuleConfig = const CacheConfig(),
+    this.auditLogEntryConfig = const CacheConfig(),
   });
 }
 
@@ -79,5 +83,6 @@ class GatewayClientOptions extends RestClientOptions {
     super.stageInstanceCacheConfig,
     super.scheduledEventCacheConfig,
     super.autoModerationRuleConfig,
+    super.auditLogEntryConfig,
   });
 }
