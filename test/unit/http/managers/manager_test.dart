@@ -7,7 +7,7 @@ import '../../../mocks/client.dart';
 class TestFetchException implements Exception {}
 
 class MockManager extends Manager<MockSnowflakeEntity> with Fake {
-  MockManager(super.config, super.client);
+  MockManager(super.config, super.client) : super(identifier: 'MOCK_IDENTIFIER');
 
   @override
   Future<MockSnowflakeEntity> fetch(Snowflake id) => throw TestFetchException();

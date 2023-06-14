@@ -16,7 +16,7 @@ class RoleManager extends Manager<Role> {
   final Snowflake guildId;
 
   /// Create a new [RoleManager].
-  RoleManager(super.config, super.client, {required this.guildId});
+  RoleManager(super.config, super.client, {required this.guildId}) : super(identifier: '$guildId.roles');
 
   @override
   PartialRole operator [](Snowflake id) => PartialRole(id: id, manager: this);

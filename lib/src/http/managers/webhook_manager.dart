@@ -19,7 +19,7 @@ import 'package:nyxx/src/utils/parsing_helpers.dart';
 /// A manager for [Webhook]s.
 class WebhookManager extends Manager<Webhook> {
   /// Create a new [WebhookManager].
-  WebhookManager(super.config, super.client);
+  WebhookManager(super.config, super.client) : super(identifier: 'webhooks');
 
   @override
   PartialWebhook operator [](Snowflake id) => PartialWebhook(id: id, manager: this);

@@ -40,7 +40,8 @@ class ChannelManager extends ReadOnlyManager<Channel> {
 
   /// Create a new [ChannelManager].
   ChannelManager(super.config, super.client, {required CacheConfig<StageInstance> stageInstanceConfig})
-      : stageInstanceCache = Cache(client, (StageInstance).toString(), stageInstanceConfig);
+      : stageInstanceCache = Cache(client, 'channels.stageInstances', stageInstanceConfig),
+        super(identifier: 'channels');
 
   /// Return a partial instance of the entity with ID [id] containing no data.
   ///
