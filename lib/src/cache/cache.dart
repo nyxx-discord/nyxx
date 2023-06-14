@@ -98,9 +98,7 @@ class Cache<T> with MapMixin<Snowflake, T> {
       return null;
     }
 
-    final store = _stores[identifier]!;
-
-    final value = store[key] as T?;
+    final value = _store[key];
     if (value != null) {
       _count.update(key, (value) => value + 1);
     }
@@ -109,8 +107,8 @@ class Cache<T> with MapMixin<Snowflake, T> {
 
   @override
   void clear() {
-    _stores[identifier]!.clear();
-    _counts[identifier]!.clear();
+    _store.clear();
+    _count.clear();
   }
 
   @override
@@ -118,7 +116,7 @@ class Cache<T> with MapMixin<Snowflake, T> {
 
   @override
   T? remove(Object? key) {
-    _counts[identifier]!.remove(key);
-    return _stores[identifier]!.remove(key) as T?;
+    _count.remove(key);
+    return _store.remove(key);
   }
 }
