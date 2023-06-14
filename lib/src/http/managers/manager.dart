@@ -16,7 +16,7 @@ abstract class ReadOnlyManager<T extends ManagedSnowflakeEntity<T>> {
 
   /// Create a new read-only manager.
   // TODO: Do we really want to use `T.toString()` as the cache identifier?
-  ReadOnlyManager(CacheConfig<T> config, this.client) : cache = Cache(T.toString(), config);
+  ReadOnlyManager(CacheConfig<T> config, this.client) : cache = Cache(client, T.toString(), config);
 
   /// Parse the [raw] data received from the API into an instance of the type of this manager.
   T parse(Map<String, Object?> raw);

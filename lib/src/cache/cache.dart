@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:collection';
 
-import 'package:meta/meta.dart';
+import 'package:nyxx/src/client.dart';
 import 'package:nyxx/src/models/snowflake.dart';
 import 'package:nyxx/src/models/snowflake_entity/snowflake_entity.dart';
 
@@ -24,9 +24,12 @@ class CacheConfig<T> {
 
 /// A simple cache for [SnowflakeEntity]s.
 class Cache<T> with MapMixin<Snowflake, T> {
-  // TODO: These are global. Caches should be per client.
-  static final Map<String, SplayTreeMap<Snowflake, dynamic>> _stores = HashMap();
-  static final Map<String, HashMap<Snowflake, int>> _counts = HashMap();
+  static final Expando<Map<String, Map<Snowflake, dynamic>>> _stores = Expando('Cache stores');
+  static final Expando<Map<String, Map<Snowflake, int>>> _counts = Expando('Cache counts');
+
+  // References to the backing store for this Cache instance to avoid looking up the client & identifier every time.
+  late final Map<Snowflake, T> _store = ((_stores[client] ??= {})[identifier] ??= <Snowflake, T>{}) as Map<Snowflake, T>;
+  late final Map<Snowflake, int> _count = (_counts[client] ??= {})[identifier] ??= {};
 
   /// The configuration for this cache.
   final CacheConfig<T> config;
@@ -36,29 +39,26 @@ class Cache<T> with MapMixin<Snowflake, T> {
   /// Caches with the same identifier will use the same backing store, so this allows for multiple caches pointing to the same resource to exist.
   final String identifier;
 
+  /// The client this cache is associated with.
+  final Nyxx client;
+
   /// Create a new cache with the provided config.
-  Cache(this.identifier, this.config) {
-    _stores[identifier] ??= SplayTreeMap<Snowflake, T>();
-    _counts[identifier] ??= HashMap();
-  }
+  Cache(this.client, this.identifier, this.config);
 
   /// Filter the items in the cache so that it obeys the [config].
   ///
   /// Items are retained based on the number of accesses they have until the [CacheConfig.maxSize]
   /// is respected.
   void filterItems() {
-    final store = _stores[identifier]! as Map<Snowflake, T>;
-    final count = _counts[identifier]!;
+    if (config.maxSize != null && _store.length > config.maxSize!) {
+      final items = List.of(_store.keys);
+      items.sort((a, b) => _count[a]!.compareTo(_count[b]!));
 
-    if (config.maxSize != null && store.length > config.maxSize!) {
-      final items = List.of(store.keys);
-      items.sort((a, b) => count[a]!.compareTo(count[b]!));
-
-      final overflow = store.length - config.maxSize!;
+      final overflow = _store.length - config.maxSize!;
 
       for (final item in items.take(overflow)) {
-        store.remove(item);
-        count.remove(item);
+        _store.remove(item);
+        _count.remove(item);
       }
     }
   }
@@ -86,8 +86,8 @@ class Cache<T> with MapMixin<Snowflake, T> {
       return;
     }
 
-    _stores[identifier]![key] = value;
-    _counts[identifier]![key] ??= 0;
+    _store[key] = value;
+    _count[key] ??= 0;
 
     scheduleFilterItems();
   }
@@ -102,7 +102,7 @@ class Cache<T> with MapMixin<Snowflake, T> {
 
     final value = store[key] as T?;
     if (value != null) {
-      _counts[identifier]!.update(key, (value) => value + 1);
+      _count.update(key, (value) => value + 1);
     }
     return value;
   }
@@ -114,20 +114,11 @@ class Cache<T> with MapMixin<Snowflake, T> {
   }
 
   @override
-  Iterable<Snowflake> get keys => _stores[identifier]!.keys;
+  Iterable<Snowflake> get keys => _store.keys;
 
   @override
   T? remove(Object? key) {
     _counts[identifier]!.remove(key);
     return _stores[identifier]!.remove(key) as T?;
-  }
-
-  /// (For testing only) Clear the backing store of every cache.
-  ///
-  /// Cache instances may not function correctly after this call.
-  @visibleForTesting
-  static void testClearAllCaches() {
-    _stores.clear();
-    _counts.clear();
   }
 }

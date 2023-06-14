@@ -2,16 +2,16 @@ import 'package:mocktail/mocktail.dart';
 import 'package:nyxx/nyxx.dart';
 import 'package:test/test.dart';
 
+import '../../mocks/client.dart';
+
 class MockSnowflakeEntity extends ManagedSnowflakeEntity<MockSnowflakeEntity> with Fake {
   MockSnowflakeEntity({required super.id});
 }
 
 void main() {
   group('Cache', () {
-    tearDown(() => Cache.testClearAllCaches());
-
     test('stores entities', () async {
-      final cache = Cache<MockSnowflakeEntity>('test', CacheConfig());
+      final cache = Cache<MockSnowflakeEntity>(MockNyxx(), 'test', CacheConfig());
 
       final entity = MockSnowflakeEntity(id: Snowflake.zero);
 
@@ -26,7 +26,7 @@ void main() {
     });
 
     test('respects maximum size', () async {
-      final cache = Cache<MockSnowflakeEntity>('test', CacheConfig(maxSize: 3));
+      final cache = Cache<MockSnowflakeEntity>(MockNyxx(), 'test', CacheConfig(maxSize: 3));
 
       final entity1 = MockSnowflakeEntity(id: Snowflake(1));
       final entity2 = MockSnowflakeEntity(id: Snowflake(2));
@@ -44,7 +44,7 @@ void main() {
     });
 
     test('keeps most used items', () async {
-      final cache = Cache<MockSnowflakeEntity>('test', CacheConfig(maxSize: 3));
+      final cache = Cache<MockSnowflakeEntity>(MockNyxx(), 'test', CacheConfig(maxSize: 3));
 
       final entity1 = MockSnowflakeEntity(id: Snowflake(1));
       final entity2 = MockSnowflakeEntity(id: Snowflake(2));
@@ -74,7 +74,7 @@ void main() {
     });
 
     test("doesn't cache items if a filter is provided", () {
-      final cache = Cache<MockSnowflakeEntity>('test', CacheConfig(shouldCache: (e) => e.id.value > 3));
+      final cache = Cache<MockSnowflakeEntity>(MockNyxx(), 'test', CacheConfig(shouldCache: (e) => e.id.value > 3));
 
       final entity1 = MockSnowflakeEntity(id: Snowflake(1));
       final entity2 = MockSnowflakeEntity(id: Snowflake(2));
@@ -95,8 +95,8 @@ void main() {
     });
 
     test('shares resources with the same identifier', () {
-      final cache1 = Cache<MockSnowflakeEntity>('test', CacheConfig());
-      final cache2 = Cache<MockSnowflakeEntity>('test', CacheConfig());
+      final cache1 = Cache<MockSnowflakeEntity>(MockNyxx(), 'test', CacheConfig());
+      final cache2 = Cache<MockSnowflakeEntity>(MockNyxx(), 'test', CacheConfig());
 
       final entity = MockSnowflakeEntity(id: Snowflake.zero);
 

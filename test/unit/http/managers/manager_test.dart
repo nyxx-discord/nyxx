@@ -19,8 +19,6 @@ class MockSnowflakeEntity extends WritableSnowflakeEntity<MockSnowflakeEntity> w
 
 void main() {
   group('Manager', () {
-    tearDown(() => Cache.testClearAllCaches());
-
     test('get only calls API when entity is not cached', () {
       final manager = MockManager(CacheConfig(), MockNyxx());
 
