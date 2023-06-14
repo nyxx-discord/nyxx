@@ -206,7 +206,7 @@ class Gateway extends GatewayManager with EventParser {
   }
 
   /// Compute the ID of the shard that handles events for [guildId].
-  int shardIdFor(Snowflake guildId) => (guildId.value >> 22) % totalShards;
+  int shardIdFor(Snowflake guildId) => ((guildId.value >> 22) % BigInt.from(totalShards)).toInt();
 
   /// Return the shard that handles events for [guildId].
   ///

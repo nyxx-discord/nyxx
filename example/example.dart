@@ -20,7 +20,7 @@ void main() async {
   // Support for partial objects (at minimum with only an ID). These can be accessed for an
   // arbitrary id on a manager with the `[]` operator and allow API operations without fetching the
   // entire object from the API.
-  const abitofevrythingId = Snowflake(506759329068613643);
+  final abitofevrythingId = Snowflake(506759329068613643);
   final partialAbitofevrything = client.users[abitofevrythingId];
 
   // There are no API operations for arbitrary users other then fetch so... this is our demo. But

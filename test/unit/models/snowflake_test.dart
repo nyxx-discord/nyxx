@@ -4,12 +4,12 @@ import 'package:test/test.dart';
 void main() {
   group('Snowflake', () {
     test('zero has correct value', () {
-      expect(Snowflake.zero.value, isZero);
+      expect(Snowflake.zero.value, equals(BigInt.zero));
       expect(Snowflake.zero.isZero, isTrue);
     });
 
     test('structure is parsed correctly', () {
-      const snowflake = Snowflake(175928847299117063);
+      final snowflake = Snowflake(175928847299117063);
 
       expect(snowflake.increment, equals(7));
       expect(snowflake.processId, equals(0));
@@ -18,7 +18,7 @@ void main() {
     });
 
     test('timestamp is parsed correctly', () {
-      const snowflake = Snowflake(175928847299117063);
+      final snowflake = Snowflake(175928847299117063);
 
       expect(snowflake.timestamp, DateTime.utc(2016, 04, 30, 11, 18, 25, 796));
     });

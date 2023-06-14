@@ -74,7 +74,7 @@ void main() {
     });
 
     test("doesn't cache items if a filter is provided", () {
-      final cache = Cache<MockSnowflakeEntity>('test', CacheConfig(shouldCache: (e) => e.id.value > 3));
+      final cache = Cache<MockSnowflakeEntity>('test', CacheConfig(shouldCache: (e) => e.id.value > BigInt.from(3)));
 
       final entity1 = MockSnowflakeEntity(id: Snowflake(1));
       final entity2 = MockSnowflakeEntity(id: Snowflake(2));

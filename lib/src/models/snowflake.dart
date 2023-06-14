@@ -23,12 +23,12 @@ class Snowflake implements Comparable<Snowflake> {
   static const bulkDeleteLimit = Duration(days: 14);
 
   /// A snowflake with a value of 0.
-  static const zero = Snowflake(0);
+  static final zero = Snowflake(0);
 
   /// The value of this snowflake.
   ///
-  /// While this is stored in a signed [int], Discord treats this as an unsigned value.
-  final int value;
+  /// This will always be positive.
+  final BigInt value;
 
   /// The time at which this snowflake was created.
   DateTime get timestamp => epoch.add(Duration(milliseconds: millisecondsSinceEpoch));
@@ -38,46 +38,53 @@ class Snowflake implements Comparable<Snowflake> {
   /// Discord uses a non-standard epoch for their snowflakes. As such,
   /// [DateTime.fromMillisecondsSinceEpoch] will not work with this value. Users should instead use
   /// the [timestamp] getter.
-  int get millisecondsSinceEpoch => value >> 22;
+  int get millisecondsSinceEpoch => (value >> 22).toInt();
+
+  static final _workerIdMask = BigInt.from(0x3E0000);
+  static final _processIdMask = BigInt.from(0x1F000);
+  static final _incrementMask = BigInt.from(0xFFF);
 
   /// The internal worker ID for this snowflake.
   ///
   /// {@template internal_field}
   /// This is an internal field and has no practical application.
   /// {@endtemplate}
-  int get workerId => (value & 0x3E0000) >> 17;
+  int get workerId => ((value & _workerIdMask) >> 17).toInt();
 
   /// The internal process ID for this snowflake.
   ///
   /// {@macro internal_field}
-  int get processId => (value & 0x1F000) >> 12;
+  int get processId => ((value & _processIdMask) >> 12).toInt();
 
   /// The internal increment value for this snowflake.
   ///
   /// {@macro internal_field}
-  int get increment => value & 0xFFF;
+  int get increment => (value & _incrementMask).toInt();
 
   /// Whether this snowflake has a value of `0`.
-  bool get isZero => value == 0;
+  bool get isZero => value == BigInt.zero;
 
   /// Create a new snowflake from an integer value.
   ///
   /// {@macro snowflake}
-  const Snowflake(this.value);
+  factory Snowflake(int value) => Snowflake.fromBigInt(BigInt.from(value));
 
   /// Parse a string value to a snowflake.
   ///
   /// The [value] must be a valid integer as per [int.parse].
   ///
   /// {@macro snowflake}
-  // TODO: This method will fail once snowflakes become larger than 2^63.
-  // We need to parse the unsigned [value] into a signed [int].
-  factory Snowflake.parse(String value) => Snowflake(int.parse(value));
+  factory Snowflake.parse(String value) => Snowflake.fromBigInt(BigInt.parse(value));
 
   /// Create a snowflake with a timestamp equal to the current time.
   ///
   /// {@macro snowflake}
   factory Snowflake.now() => Snowflake.fromDateTime(DateTime.now());
+
+  /// Create a snowflake from a [BigInt].
+  ///
+  /// {@macro snowflake}
+  const Snowflake.fromBigInt(this.value);
 
   /// Create a snowflake with a timestamp equal to [dateTime].
   ///
