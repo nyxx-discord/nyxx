@@ -38,7 +38,9 @@ class GuildManager extends Manager<Guild> {
   final Cache<Ban> banCache;
 
   /// Create a new [GuildManager].
-  GuildManager(super.config, super.client, {required CacheConfig<Ban> banConfig}) : banCache = Cache('Ban', banConfig);
+  GuildManager(super.config, super.client, {required CacheConfig<Ban> banConfig})
+      : banCache = Cache(client, 'guilds.bans', banConfig),
+        super(identifier: 'guilds');
 
   @override
   PartialGuild operator [](Snowflake id) => PartialGuild(id: id, manager: this);

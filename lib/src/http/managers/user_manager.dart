@@ -14,7 +14,7 @@ import 'package:nyxx/src/models/user/user.dart';
 /// A manager for [User]s.
 class UserManager extends ReadOnlyManager<User> {
   /// Create a new [UserManager].
-  UserManager(super.config, super.client);
+  UserManager(super.config, super.client) : super(identifier: 'users');
 
   @override
   PartialUser operator [](Snowflake id) => PartialUser(id: id, manager: this);
