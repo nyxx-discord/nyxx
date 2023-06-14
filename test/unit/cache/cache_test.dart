@@ -95,8 +95,10 @@ void main() {
     });
 
     test('shares resources with the same identifier', () {
-      final cache1 = Cache<MockSnowflakeEntity>(MockNyxx(), 'test', CacheConfig());
-      final cache2 = Cache<MockSnowflakeEntity>(MockNyxx(), 'test', CacheConfig());
+      final client = MockNyxx();
+
+      final cache1 = Cache<MockSnowflakeEntity>(client, 'test', CacheConfig());
+      final cache2 = Cache<MockSnowflakeEntity>(client, 'test', CacheConfig());
 
       final entity = MockSnowflakeEntity(id: Snowflake.zero);
 
