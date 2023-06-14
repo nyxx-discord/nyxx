@@ -105,5 +105,15 @@ void main() {
       cache1[entity.id] = entity;
       expect(cache2[entity.id], equals(entity));
     });
+
+    test("doesn't share resources across clients", () {
+      final cache1 = Cache<MockSnowflakeEntity>(MockNyxx(), 'test', CacheConfig());
+      final cache2 = Cache<MockSnowflakeEntity>(MockNyxx(), 'test', CacheConfig());
+
+      final entity = MockSnowflakeEntity(id: Snowflake.zero);
+
+      cache1[entity.id] = entity;
+      expect(cache2.containsKey(entity.id), isFalse);
+    });
   });
 }
