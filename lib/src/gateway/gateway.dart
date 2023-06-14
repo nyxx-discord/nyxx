@@ -155,6 +155,7 @@ class Gateway extends GatewayManager with EventParser {
           AutoModerationRuleUpdateEvent(:final rule) =>
             client.guilds[rule.guildId].autoModerationRules.cache[rule.id] = rule,
           AutoModerationRuleDeleteEvent(:final rule) => client.guilds[rule.guildId].autoModerationRules.cache.remove(rule.id),
+          GuildAuditLogCreateEvent(:final entry, :final guildId) => client.guilds[guildId].auditLogs.cache[entry.id] = entry,
           _ => null,
         });
   }
@@ -471,7 +472,12 @@ class Gateway extends GatewayManager with EventParser {
   }
 
   GuildAuditLogCreateEvent parseGuildAuditLogCreate(Map<String, Object?> raw) {
-    return GuildAuditLogCreateEvent();
+    final guildId = Snowflake.parse(raw['guild_id'] as String);
+
+    return GuildAuditLogCreateEvent(
+      entry: client.guilds[guildId].auditLogs.parse(raw),
+      guildId: guildId,
+    );
   }
 
   GuildBanAddEvent parseGuildBanAdd(Map<String, Object?> raw) {
