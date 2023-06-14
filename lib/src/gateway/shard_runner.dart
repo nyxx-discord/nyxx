@@ -218,7 +218,7 @@ class ShardRunner {
         'shard': [data.id, data.totalShards],
         // TODO
         //'presence': ...,
-        'intents': data.apiOptions.intents.value,
+        'intents': data.apiOptions.intents.value.toInt(),
       },
     ));
   }
