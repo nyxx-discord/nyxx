@@ -14,7 +14,7 @@ class MemberManager extends Manager<Member> {
   /// The ID of the [Guild] this manager is for.
   final Snowflake guildId;
 
-  MemberManager(super.config, super.client, {required this.guildId});
+  MemberManager(super.config, super.client, {required this.guildId}) : super(identifier: '$guildId.members');
 
   @override
   PartialMember operator [](Snowflake id) => PartialMember(id: id, manager: this);

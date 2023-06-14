@@ -26,7 +26,7 @@ class MessageManager extends Manager<Message> {
   final Snowflake channelId;
 
   /// Create a new [MessageManager].
-  MessageManager(super.config, super.client, {required this.channelId});
+  MessageManager(super.config, super.client, {required this.channelId}) : super(identifier: '$channelId.messages');
 
   @override
   PartialMessage operator [](Snowflake id) => PartialMessage(id: id, manager: this);

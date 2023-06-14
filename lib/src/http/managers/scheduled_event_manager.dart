@@ -14,7 +14,7 @@ class ScheduledEventManager extends Manager<ScheduledEvent> {
   final Snowflake guildId;
 
   /// Create a new [ScheduledEventManager].
-  ScheduledEventManager(super.config, super.client, {required this.guildId});
+  ScheduledEventManager(super.config, super.client, {required this.guildId}) : super(identifier: '$guildId.scheduledEvents');
 
   @override
   PartialScheduledEvent operator [](Snowflake id) => PartialScheduledEvent(id: id, manager: this);

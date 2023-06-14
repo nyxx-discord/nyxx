@@ -11,7 +11,7 @@ import 'package:nyxx/src/utils/parsing_helpers.dart';
 class AutoModerationManager extends Manager<AutoModerationRule> {
   final Snowflake guildId;
 
-  AutoModerationManager(super.config, super.client, {required this.guildId});
+  AutoModerationManager(super.config, super.client, {required this.guildId}) : super(identifier: '$guildId.autoModerationRules');
 
   @override
   PartialAutoModerationRule operator [](Snowflake id) => PartialAutoModerationRule(id: id, manager: this);
