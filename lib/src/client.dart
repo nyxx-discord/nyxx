@@ -24,16 +24,21 @@ abstract class Nyxx {
 
   /// Create an instance of [NyxxRest] that can perform requests to the HTTP API and is
   /// authenticated with a bot token.
-  // TODO: Allow passing any RestApiOptions as configuration
-  static Future<NyxxRest> connectRest(String token, {RestClientOptions? options}) async {
-    return NyxxRest._(token, options ?? RestClientOptions());
+  static Future<NyxxRest> connectRest(String token, {RestClientOptions? options}) => connectRestWithOptions(RestApiOptions(token: token), options);
+
+  /// Create an instance of [NyxxRest] using the provided options.
+  static Future<NyxxRest> connectRestWithOptions(RestApiOptions apiOptions, [RestClientOptions? clientOptions]) async {
+    return NyxxRest._(apiOptions, clientOptions ?? RestClientOptions());
   }
 
   /// Create an instance of [NyxxGateway] that can perform requests to the HTTP API, connects
   /// to the gateway and is authenticated with a bot token.
-  // TODO: Allow passing any GatewayApiOptions as configuration
-  static Future<NyxxGateway> connectGateway(String token, Flags<GatewayIntents> intents, {GatewayClientOptions? options}) async {
-    final client = NyxxGateway._(token, intents, options ?? GatewayClientOptions());
+  static Future<NyxxGateway> connectGateway(String token, Flags<GatewayIntents> intents, {GatewayClientOptions? options}) =>
+      connectGatewayWithOptions(GatewayApiOptions(token: token, intents: intents), options);
+
+  /// Create an instance of [NyxxGateway] using the provided options.
+  static Future<NyxxGateway> connectGatewayWithOptions(GatewayApiOptions apiOptions, [GatewayClientOptions? clientOptions]) async {
+    final client = NyxxGateway._(apiOptions, clientOptions ?? GatewayClientOptions());
     // We can't use client.gateway as it is not initialized yet
     final gatewayManager = GatewayManager(client);
 
@@ -60,7 +65,7 @@ class NyxxRest with ManagerMixin implements Nyxx {
   @override
   late final HttpHandler httpHandler = HttpHandler(this);
 
-  NyxxRest._(String token, this.options) : apiOptions = RestApiOptions(token: token);
+  NyxxRest._(this.apiOptions, this.options);
 
   /// Add the current user to the thread with the ID [id].
   ///
@@ -96,7 +101,7 @@ class NyxxGateway with ManagerMixin, EventMixin implements NyxxRest {
   @override
   late final Gateway gateway;
 
-  NyxxGateway._(String token, Flags<GatewayIntents> intents, this.options) : apiOptions = GatewayApiOptions(token: token, intents: intents);
+  NyxxGateway._(this.apiOptions, this.options);
 
   @override
   Future<void> joinThread(Snowflake id) => channels.joinThread(id);
