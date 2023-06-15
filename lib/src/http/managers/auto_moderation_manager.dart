@@ -19,11 +19,11 @@ class AutoModerationManager extends Manager<AutoModerationRule> {
   @override
   AutoModerationRule parse(Map<String, Object?> raw) {
     return AutoModerationRule(
-      id: Snowflake.parse(raw['id'] as String),
+      id: Snowflake.parse(raw['id']!),
       manager: this,
-      guildId: Snowflake.parse(raw['guild_id'] as String),
+      guildId: Snowflake.parse(raw['guild_id']!),
       name: raw['name'] as String,
-      creatorId: Snowflake.parse(raw['creator_id'] as String),
+      creatorId: Snowflake.parse(raw['creator_id']!),
       eventType: AutoModerationEventType.parse(raw['event_type'] as int),
       triggerType: TriggerType.parse(raw['trigger_type'] as int),
       metadata: parseTriggerMetadata(raw['trigger_metadata'] as Map<String, Object?>),

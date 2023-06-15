@@ -82,14 +82,14 @@ class ChannelManager extends ReadOnlyManager<Channel> {
     assert(raw['type'] == ChannelType.guildText.value, 'Invalid type for GuildTextChannel');
 
     return GuildTextChannel(
-      id: Snowflake.parse(raw['id'] as String),
+      id: Snowflake.parse(raw['id']!),
       manager: this,
       topic: raw['topic'] as String?,
       // Discord doesn't seem to include this field if the default 3 day expiration is used (3 days = 4320 minutes)
       defaultAutoArchiveDuration: Duration(minutes: raw['default_auto_archive_duration'] as int? ?? 4320),
       defaultThreadRateLimitPerUser:
           maybeParse<Duration?, int>(raw['default_thread_rate_limit_per_user'], (value) => value == 0 ? null : Duration(seconds: value)),
-      guildId: guildId ?? Snowflake.parse(raw['guild_id'] as String),
+      guildId: guildId ?? Snowflake.parse(raw['guild_id']!),
       isNsfw: raw['nsfw'] as bool? ?? false,
       lastMessageId: maybeParse(raw['last_message_id'], Snowflake.parse),
       lastPinTimestamp: maybeParse(raw['last_pin_timestamp'], DateTime.parse),
@@ -105,7 +105,7 @@ class ChannelManager extends ReadOnlyManager<Channel> {
     assert(raw['type'] == ChannelType.dm.value, 'Invalid type for DmChannel');
 
     return DmChannel(
-      id: Snowflake.parse(raw['id'] as String),
+      id: Snowflake.parse(raw['id']!),
       manager: this,
       recipient: client.users.parse((raw['recipients'] as List).single as Map<String, Object?>),
       lastMessageId: maybeParse(raw['last_message_id'], Snowflake.parse),
@@ -118,10 +118,10 @@ class ChannelManager extends ReadOnlyManager<Channel> {
     assert(raw['type'] == ChannelType.guildVoice.value, 'Invalid type for GuildVoiceChannel');
 
     return GuildVoiceChannel(
-      id: Snowflake.parse(raw['id'] as String),
+      id: Snowflake.parse(raw['id']!),
       manager: this,
       bitrate: raw['bitrate'] as int,
-      guildId: guildId ?? Snowflake.parse(raw['guild_id'] as String),
+      guildId: guildId ?? Snowflake.parse(raw['guild_id']!),
       isNsfw: raw['nsfw'] as bool? ?? false,
       lastMessageId: maybeParse(raw['last_message_id'], Snowflake.parse),
       lastPinTimestamp: maybeParse(raw['last_pin_timestamp'], DateTime.parse),
@@ -140,12 +140,12 @@ class ChannelManager extends ReadOnlyManager<Channel> {
     assert(raw['type'] == ChannelType.groupDm.value, 'Invalid type for GroupDmChannel');
 
     return GroupDmChannel(
-      id: Snowflake.parse(raw['id'] as String),
+      id: Snowflake.parse(raw['id']!),
       manager: this,
       name: raw['name'] as String,
       recipients: parseMany(raw['recipients'] as List, client.users.parse),
       iconHash: raw['icon'] as String?,
-      ownerId: Snowflake.parse(raw['owner_id'] as String),
+      ownerId: Snowflake.parse(raw['owner_id']!),
       applicationId: maybeParse(raw['application_id'], Snowflake.parse),
       isManaged: raw['managed'] as bool? ?? false,
       lastMessageId: maybeParse(raw['last_message_id'], Snowflake.parse),
@@ -158,9 +158,9 @@ class ChannelManager extends ReadOnlyManager<Channel> {
     assert(raw['type'] == ChannelType.guildCategory.value, 'Invalid type for GuildCategory');
 
     return GuildCategory(
-      id: Snowflake.parse(raw['id'] as String),
+      id: Snowflake.parse(raw['id']!),
       manager: this,
-      guildId: guildId ?? Snowflake.parse(raw['guild_id'] as String),
+      guildId: guildId ?? Snowflake.parse(raw['guild_id']!),
       isNsfw: raw['nsfw'] as bool? ?? false,
       name: raw['name'] as String,
       parentId: maybeParse(raw['parent_id'], Snowflake.parse),
@@ -173,14 +173,14 @@ class ChannelManager extends ReadOnlyManager<Channel> {
     assert(raw['type'] == ChannelType.guildAnnouncement.value, 'Invalid type for GuildAnnouncementChannel');
 
     return GuildAnnouncementChannel(
-      id: Snowflake.parse(raw['id'] as String),
+      id: Snowflake.parse(raw['id']!),
       manager: this,
       topic: raw['topic'] as String,
       // Discord doesn't seem to include this field if the default 3 day expiration is used (3 days = 4320 minutes)
       defaultAutoArchiveDuration: Duration(minutes: raw['default_auto_archive_duration'] as int? ?? 4320),
       defaultThreadRateLimitPerUser:
           maybeParse<Duration?, int>(raw['default_thread_rate_limit_per_user'], (value) => value == 0 ? null : Duration(seconds: value)),
-      guildId: guildId ?? Snowflake.parse(raw['guild_id'] as String),
+      guildId: guildId ?? Snowflake.parse(raw['guild_id']!),
       isNsfw: raw['nsfw'] as bool? ?? false,
       lastMessageId: maybeParse(raw['last_message_id'], Snowflake.parse),
       lastPinTimestamp: maybeParse(raw['last_pin_timestamp'], DateTime.parse),
@@ -196,14 +196,14 @@ class ChannelManager extends ReadOnlyManager<Channel> {
     assert(raw['type'] == ChannelType.announcementThread.value, 'Invalid type for AnnouncementThread');
 
     return AnnouncementThread(
-      id: Snowflake.parse(raw['id'] as String),
+      id: Snowflake.parse(raw['id']!),
       manager: this,
       appliedTags: maybeParse<List<Snowflake>, List<dynamic>>(raw['applied_tags'], (tags) => parseMany(tags, Snowflake.parse)),
       approximateMemberCount: raw['member_count'] as int,
       archiveTimestamp: DateTime.parse((raw['thread_metadata'] as Map)['archive_timestamp'] as String),
       autoArchiveDuration: Duration(minutes: (raw['thread_metadata'] as Map)['auto_archive_duration'] as int),
       createdAt: maybeParse((raw['thread_metadata'] as Map)['create_timestamp'], DateTime.parse) ?? DateTime(2022, 1, 9),
-      guildId: guildId ?? Snowflake.parse(raw['guild_id'] as String),
+      guildId: guildId ?? Snowflake.parse(raw['guild_id']!),
       isArchived: (raw['thread_metadata'] as Map)['archived'] as bool,
       isLocked: (raw['thread_metadata'] as Map)['locked'] as bool,
       isNsfw: raw['nsfw'] as bool? ?? false,
@@ -211,7 +211,7 @@ class ChannelManager extends ReadOnlyManager<Channel> {
       lastPinTimestamp: maybeParse(raw['last_pin_timestamp'], DateTime.parse),
       messageCount: raw['message_count'] as int,
       name: raw['name'] as String,
-      ownerId: Snowflake.parse(raw['owner_id'] as String),
+      ownerId: Snowflake.parse(raw['owner_id']!),
       parentId: maybeParse(raw['parent_id'], Snowflake.parse),
       permissionOverwrites: maybeParseMany(raw['permission_overwrites'], parsePermissionOverwrite) ?? [],
       position: -1,
@@ -225,14 +225,14 @@ class ChannelManager extends ReadOnlyManager<Channel> {
     assert(raw['type'] == ChannelType.publicThread.value, 'Invalid type for PublicThread');
 
     return PublicThread(
-      id: Snowflake.parse(raw['id'] as String),
+      id: Snowflake.parse(raw['id']!),
       manager: this,
       appliedTags: maybeParse<List<Snowflake>, List<dynamic>>(raw['applied_tags'], (tags) => parseMany(tags, Snowflake.parse)),
       approximateMemberCount: raw['member_count'] as int,
       archiveTimestamp: DateTime.parse((raw['thread_metadata'] as Map)['archive_timestamp'] as String),
       autoArchiveDuration: Duration(minutes: (raw['thread_metadata'] as Map)['auto_archive_duration'] as int),
       createdAt: maybeParse((raw['thread_metadata'] as Map)['create_timestamp'], DateTime.parse) ?? DateTime(2022, 1, 9),
-      guildId: guildId ?? Snowflake.parse(raw['guild_id'] as String),
+      guildId: guildId ?? Snowflake.parse(raw['guild_id']!),
       isArchived: (raw['thread_metadata'] as Map)['archived'] as bool,
       isLocked: (raw['thread_metadata'] as Map)['locked'] as bool,
       isNsfw: raw['nsfw'] as bool? ?? false,
@@ -240,7 +240,7 @@ class ChannelManager extends ReadOnlyManager<Channel> {
       lastPinTimestamp: maybeParse(raw['last_pin_timestamp'], DateTime.parse),
       messageCount: raw['message_count'] as int,
       name: raw['name'] as String,
-      ownerId: Snowflake.parse(raw['owner_id'] as String),
+      ownerId: Snowflake.parse(raw['owner_id']!),
       parentId: maybeParse(raw['parent_id'], Snowflake.parse),
       permissionOverwrites: maybeParseMany(raw['permission_overwrites'], parsePermissionOverwrite) ?? [],
       position: -1,
@@ -254,7 +254,7 @@ class ChannelManager extends ReadOnlyManager<Channel> {
     assert(raw['type'] == ChannelType.privateThread.value, 'Invalid type for PrivateThread');
 
     return PrivateThread(
-      id: Snowflake.parse(raw['id'] as String),
+      id: Snowflake.parse(raw['id']!),
       manager: this,
       isInvitable: (raw['thread_metadata'] as Map)['invitable'] as bool,
       appliedTags: maybeParse<List<Snowflake>, List<dynamic>>(raw['applied_tags'], (tags) => parseMany(tags, Snowflake.parse)),
@@ -262,7 +262,7 @@ class ChannelManager extends ReadOnlyManager<Channel> {
       archiveTimestamp: DateTime.parse((raw['thread_metadata'] as Map)['archive_timestamp'] as String),
       autoArchiveDuration: Duration(minutes: (raw['thread_metadata'] as Map)['auto_archive_duration'] as int),
       createdAt: maybeParse((raw['thread_metadata'] as Map)['create_timestamp'], DateTime.parse) ?? DateTime(2022, 1, 9),
-      guildId: guildId ?? Snowflake.parse(raw['guild_id'] as String),
+      guildId: guildId ?? Snowflake.parse(raw['guild_id']!),
       isArchived: (raw['thread_metadata'] as Map)['archived'] as bool,
       isLocked: (raw['thread_metadata'] as Map)['locked'] as bool,
       isNsfw: raw['nsfw'] as bool? ?? false,
@@ -270,7 +270,7 @@ class ChannelManager extends ReadOnlyManager<Channel> {
       lastPinTimestamp: maybeParse(raw['last_pin_timestamp'], DateTime.parse),
       messageCount: raw['message_count'] as int,
       name: raw['name'] as String,
-      ownerId: Snowflake.parse(raw['owner_id'] as String),
+      ownerId: Snowflake.parse(raw['owner_id']!),
       parentId: maybeParse(raw['parent_id'], Snowflake.parse),
       permissionOverwrites: maybeParseMany(raw['permission_overwrites'], parsePermissionOverwrite) ?? [],
       position: -1,
@@ -284,10 +284,10 @@ class ChannelManager extends ReadOnlyManager<Channel> {
     assert(raw['type'] == ChannelType.guildStageVoice.value, 'Invalid type for GuildStageChannel');
 
     return GuildStageChannel(
-      id: Snowflake.parse(raw['id'] as String),
+      id: Snowflake.parse(raw['id']!),
       manager: this,
       bitrate: raw['bitrate'] as int,
-      guildId: guildId ?? Snowflake.parse(raw['guild_id'] as String),
+      guildId: guildId ?? Snowflake.parse(raw['guild_id']!),
       isNsfw: raw['nsfw'] as bool? ?? false,
       lastMessageId: maybeParse(raw['last_message_id'], Snowflake.parse),
       lastPinTimestamp: maybeParse(raw['last_pin_timestamp'], DateTime.parse),
@@ -306,7 +306,7 @@ class ChannelManager extends ReadOnlyManager<Channel> {
     assert(raw['type'] == ChannelType.guildDirectory.value, 'Invalid type for DirectoryChannel');
 
     return DirectoryChannel(
-      id: Snowflake.parse(raw['id'] as String),
+      id: Snowflake.parse(raw['id']!),
       manager: this,
     );
   }
@@ -315,7 +315,7 @@ class ChannelManager extends ReadOnlyManager<Channel> {
     assert(raw['type'] == ChannelType.guildForum.value, 'Invalid type for ForumChanel');
 
     return ForumChannel(
-      id: Snowflake.parse(raw['id'] as String),
+      id: Snowflake.parse(raw['id']!),
       manager: this,
       topic: raw['topic'] as String?,
       lastThreadId: maybeParse(raw['last_message_id'], Snowflake.parse),
@@ -327,7 +327,7 @@ class ChannelManager extends ReadOnlyManager<Channel> {
       defaultAutoArchiveDuration: Duration(minutes: raw['default_auto_archive_duration'] as int? ?? 4320),
       defaultThreadRateLimitPerUser:
           maybeParse<Duration?, int>(raw['default_thread_rate_limit_per_user'], (value) => value == 0 ? null : Duration(seconds: value)),
-      guildId: guildId ?? Snowflake.parse(raw['guild_id'] as String),
+      guildId: guildId ?? Snowflake.parse(raw['guild_id']!),
       isNsfw: raw['nsfw'] as bool? ?? false,
       name: raw['name'] as String,
       parentId: maybeParse(raw['parent_id'], Snowflake.parse),
@@ -338,7 +338,7 @@ class ChannelManager extends ReadOnlyManager<Channel> {
 
   PermissionOverwrite parsePermissionOverwrite(Map<String, Object?> raw) {
     return PermissionOverwrite(
-      id: Snowflake.parse(raw['id'] as String),
+      id: Snowflake.parse(raw['id']!),
       type: PermissionOverwriteType.parse(raw['type'] as int),
       allow: Permissions(int.parse(raw['allow'] as String)),
       deny: Permissions(int.parse(raw['deny'] as String)),
@@ -347,7 +347,7 @@ class ChannelManager extends ReadOnlyManager<Channel> {
 
   ForumTag parseForumTag(Map<String, Object?> raw) {
     return ForumTag(
-      id: Snowflake.parse(raw['id'] as String),
+      id: Snowflake.parse(raw['id']!),
       name: raw['name'] as String,
       isModerated: raw['moderated'] as bool,
       emojiId: maybeParse(raw['emoji_id'], Snowflake.parse),
@@ -364,8 +364,8 @@ class ChannelManager extends ReadOnlyManager<Channel> {
 
   FollowedChannel parseFollowedChannel(Map<String, Object?> raw) {
     return FollowedChannel(
-      channelId: Snowflake.parse(raw['channel_id'] as String),
-      webhookId: Snowflake.parse(raw['webhook_id'] as String),
+      channelId: Snowflake.parse(raw['channel_id']!),
+      webhookId: Snowflake.parse(raw['webhook_id']!),
     );
   }
 
@@ -373,8 +373,8 @@ class ChannelManager extends ReadOnlyManager<Channel> {
     return ThreadMember(
       joinTimestamp: DateTime.parse(raw['join_timestamp'] as String),
       flags: Flags<Never>(raw['flags'] as int),
-      threadId: Snowflake.parse(raw['id'] as String),
-      userId: Snowflake.parse(raw['user_id'] as String),
+      threadId: Snowflake.parse(raw['id']!),
+      userId: Snowflake.parse(raw['user_id']!),
       member: maybeParse(raw['member'], client.guilds[Snowflake.zero].members.parse),
     );
   }
@@ -389,10 +389,10 @@ class ChannelManager extends ReadOnlyManager<Channel> {
 
   StageInstance parseStageInstance(Map<String, Object?> raw) {
     return StageInstance(
-      id: Snowflake.parse(raw['id'] as String),
+      id: Snowflake.parse(raw['id']!),
       manager: this,
-      guildId: Snowflake.parse(raw['guild_id'] as String),
-      channelId: Snowflake.parse(raw['channel_id'] as String),
+      guildId: Snowflake.parse(raw['guild_id']!),
+      channelId: Snowflake.parse(raw['channel_id']!),
       topic: raw['topic'] as String,
       privacyLevel: PrivacyLevel.parse(raw['privacy_level'] as int),
       scheduledEventId: maybeParse(raw['guild_scheduled_event_id'], Snowflake.parse),

@@ -24,7 +24,7 @@ class ApplicationManager {
   /// Parse an [Application] from [raw].
   Application parse(Map<String, Object?> raw) {
     return Application(
-      id: Snowflake.parse(raw['id'] as String),
+      id: Snowflake.parse(raw['id']!),
       manager: this,
       name: raw['name'] as String,
       iconHash: raw['icon'] as String?,
@@ -37,7 +37,7 @@ class ApplicationManager {
       owner: maybeParse(
         raw['owner'],
         (Map<String, Object?> raw) => PartialUser(
-          id: Snowflake.parse(raw['id'] as String),
+          id: Snowflake.parse(raw['id']!),
           manager: client.users,
         ),
       ),
@@ -58,18 +58,18 @@ class ApplicationManager {
   Team parseTeam(Map<String, Object?> raw) {
     return Team(
       iconHash: raw['icon'] as String?,
-      id: Snowflake.parse(raw['id'] as String),
+      id: Snowflake.parse(raw['id']!),
       members: parseMany(raw['members'] as List, parseTeamMember),
       name: raw['name'] as String,
-      ownerId: Snowflake.parse(raw['owner_user_id'] as String),
+      ownerId: Snowflake.parse(raw['owner_user_id']!),
     );
   }
 
   TeamMember parseTeamMember(Map<String, Object?> raw) {
     return TeamMember(
       membershipState: TeamMembershipState.parse(raw['membership_state'] as int),
-      teamId: Snowflake.parse(raw['team_id'] as String),
-      user: PartialUser(id: Snowflake.parse((raw['user'] as Map<String, Object?>)['id'] as String), manager: client.users),
+      teamId: Snowflake.parse(raw['team_id']!),
+      user: PartialUser(id: Snowflake.parse((raw['user'] as Map<String, Object?>)['id']!), manager: client.users),
     );
   }
 

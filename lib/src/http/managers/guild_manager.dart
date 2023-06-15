@@ -48,14 +48,14 @@ class GuildManager extends Manager<Guild> {
   @override
   Guild parse(Map<String, Object?> raw) {
     return Guild(
-      id: Snowflake.parse(raw['id'] as String),
+      id: Snowflake.parse(raw['id']!),
       manager: this,
       name: raw['name'] as String,
       iconHash: (raw['icon'] ?? raw['icon_hash']) as String?,
       splashHash: raw['splash'] as String?,
       discoverySplashHash: raw['discovery_splash'] as String?,
       isOwnedByCurrentUser: raw['owner'] as bool?,
-      ownerId: Snowflake.parse(raw['owner_id'] as String),
+      ownerId: Snowflake.parse(raw['owner_id']!),
       currentUserPermissions: maybeParse(raw['permissions'], (String permissions) => Permissions(int.parse(permissions))),
       afkChannelId: maybeParse(raw['afk_channel_id'], Snowflake.parse),
       afkTimeout: Duration(seconds: raw['afk_timeout'] as int),
@@ -158,7 +158,7 @@ class GuildManager extends Manager<Guild> {
   /// Parse a [WelcomeScreenChannel] from [raw].
   WelcomeScreenChannel parseWelcomeScreenChannel(Map<String, Object?> raw) {
     return WelcomeScreenChannel(
-      channelId: Snowflake.parse(raw['channel_id'] as String),
+      channelId: Snowflake.parse(raw['channel_id']!),
       description: raw['description'] as String,
       emojiId: maybeParse(raw['emoji_id'], Snowflake.parse),
       emojiName: raw['emoji_name'] as String?,
@@ -168,7 +168,7 @@ class GuildManager extends Manager<Guild> {
   /// Parse a [GuildPreview] from [raw].
   GuildPreview parseGuildPreview(Map<String, Object?> raw) {
     return GuildPreview(
-      id: Snowflake.parse(raw['id'] as String),
+      id: Snowflake.parse(raw['id']!),
       manager: this,
       name: raw['name'] as String,
       iconHash: raw['icon'] as String?,
@@ -192,7 +192,7 @@ class GuildManager extends Manager<Guild> {
   /// Parse an [Integration] from [raw].
   Integration parseIntegration(Map<String, Object?> raw) {
     return Integration(
-      id: Snowflake.parse(raw['id'] as String),
+      id: Snowflake.parse(raw['id']!),
       name: raw['name'] as String,
       type: raw['type'] as String,
       isEnabled: raw['enabled'] as bool,
@@ -214,7 +214,7 @@ class GuildManager extends Manager<Guild> {
   /// Parse an [IntegrationAccount] from [raw].
   IntegrationAccount parseIntegrationAccount(Map<String, Object?> raw) {
     return IntegrationAccount(
-      id: Snowflake.parse(raw['id'] as String),
+      id: Snowflake.parse(raw['id']!),
       name: raw['name'] as String,
     );
   }
@@ -222,7 +222,7 @@ class GuildManager extends Manager<Guild> {
   /// Parse an [IntegrationApplication] from [raw].
   IntegrationApplication parseIntegrationApplication(Map<String, Object?> raw) {
     return IntegrationApplication(
-      id: Snowflake.parse(raw['id'] as String),
+      id: Snowflake.parse(raw['id']!),
       name: raw['name'] as String,
       iconHash: raw['icon'] as String?,
       description: raw['description'] as String,
@@ -241,16 +241,16 @@ class GuildManager extends Manager<Guild> {
   /// Parse a [GuildWidget] from [raw].
   GuildWidget parseGuildWidget(Map<String, Object?> raw) {
     return GuildWidget(
-      guildId: Snowflake.parse(raw['id'] as String),
+      guildId: Snowflake.parse(raw['id']!),
       name: raw['name'] as String,
       invite: raw['instant_invite'] as String?,
       channels: parseMany(
         raw['channels'] as List,
-        (Map<String, Object?> raw) => PartialChannel(id: Snowflake.parse(raw['id'] as String), manager: client.channels),
+        (Map<String, Object?> raw) => PartialChannel(id: Snowflake.parse(raw['id']!), manager: client.channels),
       ),
       users: parseMany(
         raw['members'] as List,
-        (Map<String, Object?> raw) => PartialUser(id: Snowflake.parse(raw['id'] as String), manager: client.users),
+        (Map<String, Object?> raw) => PartialUser(id: Snowflake.parse(raw['id']!), manager: client.users),
       ),
       presenceCount: raw['presence_count'] as int,
     );
@@ -259,7 +259,7 @@ class GuildManager extends Manager<Guild> {
   /// Parse an [Onboarding] from [raw].
   Onboarding parseOnboarding(Map<String, Object?> raw) {
     return Onboarding(
-      guildId: Snowflake.parse(raw['guild_id'] as String),
+      guildId: Snowflake.parse(raw['guild_id']!),
       prompts: parseMany(raw['prompts'] as List, parseOnboardingPrompt),
       defaultChannelIds: parseMany(raw['default_channel_ids'] as List, Snowflake.parse),
       isEnabled: raw['enabled'] as bool,
@@ -269,7 +269,7 @@ class GuildManager extends Manager<Guild> {
   /// Parse an [OnboardingPrompt] from [raw].
   OnboardingPrompt parseOnboardingPrompt(Map<String, Object?> raw) {
     return OnboardingPrompt(
-      id: Snowflake.parse(raw['id'] as String),
+      id: Snowflake.parse(raw['id']!),
       type: OnboardingPromptType.parse(raw['type'] as int),
       options: parseMany(raw['options'] as List, parseOnboardingPromptOption),
       title: raw['title'] as String,
@@ -282,7 +282,7 @@ class GuildManager extends Manager<Guild> {
   /// Parse an [OnboardingPromptOption] from [raw].
   OnboardingPromptOption parseOnboardingPromptOption(Map<String, Object?> raw) {
     return OnboardingPromptOption(
-      id: Snowflake.parse(raw['id'] as String),
+      id: Snowflake.parse(raw['id']!),
       channelIds: parseMany(raw['channel_ids'] as List, Snowflake.parse),
       roleIds: parseMany(raw['role_ids'] as List, Snowflake.parse),
       title: raw['title'] as String,
@@ -291,7 +291,7 @@ class GuildManager extends Manager<Guild> {
   }
 
   GuildTemplate parseGuildTemplate(Map<String, Object?> raw) {
-    final sourceGuildId = Snowflake.parse(raw['source_guild_id'] as String);
+    final sourceGuildId = Snowflake.parse(raw['source_guild_id']!);
 
     return GuildTemplate(
       code: raw['code'] as String,
@@ -299,7 +299,7 @@ class GuildManager extends Manager<Guild> {
       name: raw['name'] as String,
       description: raw['description'] as String?,
       usageCount: raw['usage_count'] as int,
-      creatorId: Snowflake.parse(raw['creator_id'] as String),
+      creatorId: Snowflake.parse(raw['creator_id']!),
       creator: client.users.parse(raw['creator'] as Map<String, Object?>),
       createdAt: DateTime.parse(raw['created_at'] as String),
       updatedAt: DateTime.parse(raw['updated_at'] as String),
