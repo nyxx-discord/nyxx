@@ -19,8 +19,8 @@ Future<T> _doConnect<T extends Nyxx>(Future<T> Function() connect, List<NyxxPlug
 }
 
 /// A helper function to nest and execute calls to plugin close methods.
-Future<void> _doClose(Future<void> Function() close, List<NyxxPlugin> plugins) {
-  close = plugins.fold(close, (previousClose, plugin) => () => plugin.close(previousClose));
+Future<void> _doClose(Nyxx client, Future<void> Function() close, List<NyxxPlugin> plugins) {
+  close = plugins.fold(close, (previousClose, plugin) => () => plugin.close(client, previousClose));
   return close();
 }
 
@@ -101,7 +101,7 @@ class NyxxRest with ManagerMixin implements Nyxx {
   Future<void> leaveThread(Snowflake id) => channels.leaveThread(id);
 
   @override
-  Future<void> close() => _doClose(() async => httpHandler.httpClient.close(), options.plugins);
+  Future<void> close() => _doClose(this, () async => httpHandler.httpClient.close(), options.plugins);
 }
 
 /// A client that can make requests to the HTTP API, connects to the Gateway and is authenticated with a bot token.
@@ -135,7 +135,7 @@ class NyxxGateway with ManagerMixin, EventMixin implements NyxxRest {
   void updatePresence(PresenceBuilder builder) => gateway.updatePresence(builder);
 
   @override
-  Future<void> close() => _doClose(() async {
+  Future<void> close() => _doClose(this, () async {
         await gateway.close();
         httpHandler.httpClient.close();
       }, options.plugins);
