@@ -1,4 +1,5 @@
 import 'package:nyxx/src/cache/cache.dart';
+import 'package:nyxx/src/client.dart';
 import 'package:nyxx/src/models/channel/channel.dart';
 import 'package:nyxx/src/models/channel/stage_instance.dart';
 import 'package:nyxx/src/models/guild/auto_moderation.dart';
@@ -10,12 +11,19 @@ import 'package:nyxx/src/models/message/message.dart';
 import 'package:nyxx/src/models/role.dart';
 import 'package:nyxx/src/models/user/user.dart';
 import 'package:nyxx/src/models/webhook.dart';
+import 'package:nyxx/src/plugin/plugin.dart';
 
 /// Options for controlling the behavior of a [Nyxx] client.
-abstract class ClientOptions {}
+abstract class ClientOptions {
+  /// The plugins to use for this client.
+  final List<NyxxPlugin> plugins;
+
+  /// Create a new [ClientOptions].
+  const ClientOptions({this.plugins = const []});
+}
 
 /// Options for controlling the behavior of a [NyxxRest] client.
-class RestClientOptions implements ClientOptions {
+class RestClientOptions extends ClientOptions {
   /// The [CacheConfig] to use for the cache of the [NyxxRest.users] manager.
   final CacheConfig<User> userCacheConfig;
 
@@ -50,7 +58,8 @@ class RestClientOptions implements ClientOptions {
   final CacheConfig<AutoModerationRule> autoModerationRuleConfig;
 
   /// Create a new [RestClientOptions].
-  RestClientOptions({
+  const RestClientOptions({
+    super.plugins,
     this.userCacheConfig = const CacheConfig(),
     this.channelCacheConfig = const CacheConfig(),
     this.messageCacheConfig = const CacheConfig(),
@@ -67,7 +76,8 @@ class RestClientOptions implements ClientOptions {
 
 /// Options for controlling the behavior of a [NyxxWebsocket] client.
 class GatewayClientOptions extends RestClientOptions {
-  GatewayClientOptions({
+  const GatewayClientOptions({
+    super.plugins,
     super.userCacheConfig,
     super.channelCacheConfig,
     super.messageCacheConfig,
