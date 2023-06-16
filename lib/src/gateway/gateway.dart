@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:logging/logging.dart';
 import 'package:nyxx/src/api_options.dart';
 import 'package:nyxx/src/builders/presence.dart';
 import 'package:nyxx/src/builders/voice.dart';
@@ -161,8 +162,14 @@ class Gateway extends GatewayManager with EventParser {
 
   /// Connect to the gateway using the provided [client] and [gatewayBot] configuration.
   static Future<Gateway> connect(NyxxGateway client, GatewayBot gatewayBot) async {
+    final logger = Logger('${client.options.loggerName}.Gateway');
+
     final totalShards = client.apiOptions.totalShards ?? gatewayBot.shards;
     final List<int> shardIds = client.apiOptions.shards ?? List.generate(totalShards, (i) => i);
+
+    logger
+      ..info('Connecting ${shardIds.length}/$totalShards shards')
+      ..fine('Shard IDs: $shardIds');
 
     assert(
       shardIds.every((element) => element < totalShards),
@@ -191,7 +198,7 @@ class Gateway extends GatewayManager with EventParser {
 
       return Future.delayed(
         identifyDelay * (index ~/ gatewayBot.sessionStartLimit.maxConcurrency),
-        () => Shard.connect(id, totalShards, client.apiOptions, gatewayBot.url),
+        () => Shard.connect(id, totalShards, client.apiOptions, gatewayBot.url, client),
       );
     });
 

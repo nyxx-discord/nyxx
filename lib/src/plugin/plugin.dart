@@ -2,6 +2,9 @@ import 'package:nyxx/src/client.dart';
 
 /// Provides access to the connection and closing process for implementing plugins.
 abstract class NyxxPlugin {
+  /// The name of this plugin.
+  String get name;
+
   /// Perform the connection operation.
   ///
   /// The function passed as an argument should be called to obtain the underlying client.

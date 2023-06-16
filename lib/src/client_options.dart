@@ -1,3 +1,4 @@
+import 'package:logging/logging.dart';
 import 'package:nyxx/src/cache/cache.dart';
 import 'package:nyxx/src/client.dart';
 import 'package:nyxx/src/models/channel/channel.dart';
@@ -18,8 +19,14 @@ abstract class ClientOptions {
   /// The plugins to use for this client.
   final List<NyxxPlugin> plugins;
 
+  /// The name of the logger to use for this client.
+  final String loggerName;
+
+  /// The logger to use for this client.
+  Logger get logger => Logger(loggerName);
+
   /// Create a new [ClientOptions].
-  const ClientOptions({this.plugins = const []});
+  const ClientOptions({this.plugins = const [], this.loggerName = 'Nyxx'});
 }
 
 /// Options for controlling the behavior of a [NyxxRest] client.
@@ -60,6 +67,7 @@ class RestClientOptions extends ClientOptions {
   /// Create a new [RestClientOptions].
   const RestClientOptions({
     super.plugins,
+    super.loggerName,
     this.userCacheConfig = const CacheConfig(),
     this.channelCacheConfig = const CacheConfig(),
     this.messageCacheConfig = const CacheConfig(),
@@ -78,6 +86,7 @@ class RestClientOptions extends ClientOptions {
 class GatewayClientOptions extends RestClientOptions {
   const GatewayClientOptions({
     super.plugins,
+    super.loggerName,
     super.userCacheConfig,
     super.channelCacheConfig,
     super.messageCacheConfig,
