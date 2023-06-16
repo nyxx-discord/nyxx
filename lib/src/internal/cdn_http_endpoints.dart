@@ -29,15 +29,16 @@ abstract class ICdnHttpEndpoints {
   /// With given [format] and [size].
   String channelIcon(Snowflake channelId, String iconHash, {String format = 'webp', int? size});
 
-  /// Returns URL to ``/embed/avatars/[discriminator]``.
+  /// Returns URL to ``/embed/avatars/{index}``.
   ///
-  /// The [discriminator] is passed as modulo 5 (`% 5`); and will lead to 0,1,2,3,4. (There's 5, but 5 modulo 5 will never give 5).
+  /// For non-migrated users to the new username system, the [discriminator] is passed as modulo 5 (`% 5`); and will lead to 0,1,2,3,4. (There's 5, but 5 modulo 5 will never give 5).
+  /// For migrated users, the [id] is passed and is left shifted by 22 bits and then the result is modulo 6 (`% 6`). (For pink avatar).
   ///
   /// E.g:
   /// ```dart
-  /// client.cdnHttpEndpoints.defaultAvatar(6712); // https://cdn.discordapp.com/embed/avatars/2.png
+  /// client.cdnHttpEndpoints.defaultAvatar(6712, 123456789123456789); // https://cdn.discordapp.com/embed/avatars/2.png
   /// ```
-  String defaultAvatar(int discriminator);
+  String defaultAvatar(int discriminator, int id);
 
   /// Returns URL to ``/emojis/[emojiId]``.
   /// With given [format] and [size].
@@ -163,13 +164,19 @@ class CdnHttpEndpoints implements ICdnHttpEndpoints {
       );
 
   @override
-  String defaultAvatar(int discriminator) => _makeCdnUrl(
-        ICdnHttpRoute()
-          ..embed()
-          ..avatars()
-          ..addHash(hash: (discriminator % 5).toString()),
-        format: 'png',
-      );
+  // TODO: Remove [discriminator] once migration is done?
+  String defaultAvatar(int discriminator, int id) {
+    final isPomelo = discriminator == 0;
+    final index = isPomelo ? (id >> 22) % 6 : discriminator % 5;
+
+    return _makeCdnUrl(
+      ICdnHttpRoute()
+        ..embed()
+        ..avatars(id: index.toString()),
+      format: 'png',
+      animated: false,
+    );
+  }
 
   @override
   String discoverySplash(Snowflake guildId, String splashHash, {String format = 'webp', int? size}) => _makeCdnUrl(

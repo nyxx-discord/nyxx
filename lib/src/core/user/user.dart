@@ -49,7 +49,10 @@ abstract class IUser implements SnowflakeEntity, ISend, Mentionable, IMessageAut
   FutureOr<IDMChannel> get dmChannel;
 
   /// The hash of the user's avatar decoration.
-  String? avatarDecorationHash;
+  String? get avatarDecorationHash;
+
+  /// The user's display name, if it set.
+  String? get globalName;
 
   /// The user's banner url.
   String? bannerUrl({String format = 'webp', int? size, bool animated = false});
@@ -82,11 +85,15 @@ class User extends SnowflakeEntity implements IUser {
 
   /// The string to mention the user.
   @override
-  String get mention => "<@!$id>";
+  String get mention => "<@$id>";
 
-  /// Returns String with username#discriminator
+  /// Returns the complete username of user with discriminator for non-migrated users on the new username system (e.g. `Username#0001`).
+  /// For migrated users it returns the global name if it's set, otherwise it returns the username.
   @override
-  String get tag => "$username#$formattedDiscriminator";
+  String get tag {
+    final isPomelo = discriminator == 0;
+    return isPomelo ? (globalName ?? username) : "$username#$formattedDiscriminator";
+  }
 
   /// Whether the user belongs to an OAuth2 application
   @override
@@ -127,6 +134,9 @@ class User extends SnowflakeEntity implements IUser {
   @override
   late final String? avatarDecorationHash;
 
+  @override
+  late final String? globalName;
+
   /// Creates an instance of [User]
   User(this.client, RawApiMap raw) : super(Snowflake(raw["id"])) {
     username = raw["username"] as String;
@@ -134,6 +144,7 @@ class User extends SnowflakeEntity implements IUser {
     avatar = raw["avatar"] as String?;
     bot = raw["bot"] as bool? ?? false;
     system = raw["system"] as bool? ?? false;
+    globalName = raw["global_name"] as String?;
 
     if (raw["public_flags"] != null) {
       userFlags = UserFlags(raw["public_flags"] as int);
@@ -172,7 +183,7 @@ class User extends SnowflakeEntity implements IUser {
   @override
   String avatarUrl({String format = 'webp', int? size, bool animated = false}) {
     if (avatar == null) {
-      return client.cdnHttpEndpoints.defaultAvatar(discriminator);
+      return client.cdnHttpEndpoints.defaultAvatar(discriminator, id.id);
     }
 
     return client.cdnHttpEndpoints.avatar(id, avatar!, format: format, size: size, animated: animated);
