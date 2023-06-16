@@ -14,8 +14,8 @@ import 'package:nyxx/src/plugin/plugin.dart';
 import 'package:nyxx/src/utils/flags.dart';
 
 /// A helper function to nest and execute calls to plugin connect methods.
-Future<T> _doConnect<T extends Nyxx>(Future<T> Function() connect, List<NyxxPlugin> plugins) {
-  connect = plugins.fold(connect, (previousConnect, plugin) => () => plugin.connect(previousConnect));
+Future<T> _doConnect<T extends Nyxx>(ApiOptions apiOptions, ClientOptions clientOptions, Future<T> Function() connect, List<NyxxPlugin> plugins) {
+  connect = plugins.fold(connect, (previousConnect, plugin) => () => plugin.connect(apiOptions, clientOptions, previousConnect));
   return connect();
 }
 
@@ -51,7 +51,7 @@ abstract class Nyxx {
       ..fine('Token: ${apiOptions.token}, Authorization: ${apiOptions.authorizationHeader}, User-Agent: ${apiOptions.userAgent}')
       ..fine('Plugins: ${clientOptions.plugins.map((plugin) => plugin.name).join(', ')}');
 
-    return _doConnect(() async => NyxxRest._(apiOptions, clientOptions), clientOptions.plugins);
+    return _doConnect(apiOptions, clientOptions, () async => NyxxRest._(apiOptions, clientOptions), clientOptions.plugins);
   }
 
   /// Create an instance of [NyxxGateway] that can perform requests to the HTTP API, connects
@@ -73,7 +73,7 @@ abstract class Nyxx {
       )
       ..fine('Plugins: ${clientOptions.plugins.map((plugin) => plugin.name).join(', ')}');
 
-    return _doConnect(() async {
+    return _doConnect(apiOptions, clientOptions, () async {
       final client = NyxxGateway._(apiOptions, clientOptions);
       // We can't use client.gateway as it is not initialized yet
       final gatewayManager = GatewayManager(client);

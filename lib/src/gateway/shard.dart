@@ -37,7 +37,7 @@ class Shard extends Stream<ShardMessage> implements StreamSink<GatewayMessage> {
   Shard(this.id, this.isolate, this.receiveStream, this.sendPort, this.client) {
     final subscription = listen((message) {
       if (message is ErrorReceived) {
-        logger.warning('Error: ${message.error}');
+        logger.warning('Error: ${message.error}', message.error, message.stackTrace);
       } else if (message is Disconnecting) {
         logger.info('Disconnecting: ${message.reason}');
       } else if (message is EventReceived) {

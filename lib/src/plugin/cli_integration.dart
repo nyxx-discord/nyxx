@@ -1,7 +1,9 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:nyxx/src/api_options.dart';
 import 'package:nyxx/src/client.dart';
+import 'package:nyxx/src/client_options.dart';
 import 'package:nyxx/src/plugin/plugin.dart';
 
 /// A global instance of the [CliIntegration] plugin.
@@ -45,7 +47,7 @@ class CliIntegration extends NyxxPlugin {
   }
 
   @override
-  Future<ClientType> connect<ClientType extends Nyxx>(Future<ClientType> Function() connect) async {
+  Future<ClientType> connect<ClientType extends Nyxx>(ApiOptions apiOptions, ClientOptions clientOptions, Future<ClientType> Function() connect) async {
     _ensureListening();
 
     try {
