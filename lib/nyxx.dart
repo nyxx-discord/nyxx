@@ -222,6 +222,11 @@ export 'src/models/presence.dart'
 export 'src/utils/flags.dart' show Flag, Flags;
 export 'src/intents.dart' show GatewayIntents;
 
+export 'src/plugin/plugin.dart' show NyxxPlugin;
+export 'src/plugin/logging.dart' show Logging, logging;
+export 'src/plugin/cli_integration.dart' show CliIntegration, cliIntegration;
+export 'src/plugin/ignore_exceptions.dart' show IgnoreExceptions, ignoreExceptions;
+
 // Types also used in the nyxx API from other packages
 export 'package:http/http.dart'
     // Don't export MultipartRequest as it conflicts with our MultipartRequest
@@ -231,3 +236,4 @@ export 'package:http/http.dart'
         MultipartFile,
         BaseResponse,
         StreamedResponse;
+export 'package:logging/logging.dart' show Logger, Level;
