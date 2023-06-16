@@ -174,7 +174,6 @@ class CdnHttpEndpoints implements ICdnHttpEndpoints {
         ..embed()
         ..avatars(id: index.toString()),
       format: 'png',
-      animated: false,
     );
   }
 
