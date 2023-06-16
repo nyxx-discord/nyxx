@@ -133,8 +133,7 @@ class GuildManager extends Manager<Guild> {
 
   /// Parse a [Flag]<GuildFeature> from [raw].
   Flag<GuildFeatures> parseGuildFeature(String raw) {
-    // TODO: Add support for parsing unknown guild features.
-    return _nameToGuildFeature[raw]!; // ?? Flag<GuildFeatures>(0);
+    return _nameToGuildFeature[raw] ?? Flag<GuildFeatures>(0);
   }
 
   /// Serialize [source] to a [List]<String>.
