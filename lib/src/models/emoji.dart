@@ -1,6 +1,3 @@
-import 'dart:async';
-
-import 'package:nyxx/src/builders/builder.dart';
 import 'package:nyxx/src/http/managers/emoji_manager.dart';
 import 'package:nyxx/src/models/snowflake.dart';
 import 'package:nyxx/src/models/snowflake_entity/snowflake_entity.dart';
@@ -16,53 +13,39 @@ class PartialEmoji extends WritableSnowflakeEntity<Emoji> {
 }
 
 /// An emoji. Either a [TextEmoji] or a [GuildEmoji].
-class Emoji extends PartialEmoji {
+abstract class Emoji extends PartialEmoji {
   /// The emoji's name. Can be `dartlang` for a custom emoji, or `❤️` for a text emoji.
-  final String? name;
+  String? get name;
 
   Emoji({
     required super.id,
     required super.manager,
-    required this.name,
   });
 }
 
 /// A text emoji, such as `❤️`.
-class TextEmoji implements Emoji {
+class TextEmoji extends Emoji {
   @override
   final String name;
 
-  @override
-  final EmojiManager manager;
-
-  @override
-  final Snowflake id = Snowflake.zero;
-
   TextEmoji({
+    required super.id,
+    required super.manager,
     required this.name,
-    required this.manager,
   });
 
+  // Intercept fetch since the manager will throw if we attempt to fetch a text emoji
   @override
-  Future<Emoji> fetch() => throw UnsupportedError('Cannot fetch a text emoji.');
-
-  @override
-  String defaultToString() => name;
-
-  @override
-  Future<void> delete() => throw UnsupportedError('Cannot delete a text emoji.');
-
-  @override
-  FutureOr<Emoji> get() => this;
-
-  @override
-  Future<Emoji> update(covariant UpdateBuilder<Emoji> builder) => throw UnsupportedError('Cannot update a text emoji.');
+  Future<TextEmoji> fetch() async => this;
 }
 
 /// A custom guild emoji.
 class GuildEmoji extends Emoji {
-  // Id of roles allowed to use this emoji.
-  final List<Snowflake>? roles;
+  @override
+  final String? name;
+
+  /// Id of roles allowed to use this emoji.
+  final List<Snowflake>? roleIds;
 
   /// The user that created this emoji.
   final User? user;
@@ -82,15 +65,12 @@ class GuildEmoji extends Emoji {
   GuildEmoji({
     required super.id,
     required super.manager,
-    required super.name,
-    required this.roles,
+    required this.name,
+    required this.roleIds,
     required this.user,
     required this.requiresColons,
     required this.isManaged,
     required this.isAnimated,
     required this.isAvailable,
   });
-
-  @override
-  String defaultToString() => '<${isAnimated == true ? 'a' : ''}:$name:$id>';
 }

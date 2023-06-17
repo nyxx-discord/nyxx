@@ -167,14 +167,10 @@ class MessageManager extends Manager<Message> {
   }
 
   Reaction parseReaction(Map<String, Object?> raw) {
-    final bool isUnicode = (raw['emoji'] as Map<String, Object?>)['id'] == null;
-
-    final parseEmoji = isUnicode ? client.emojis.parseText : client.emojis.parse;
-
     return Reaction(
       count: raw['count'] as int,
       me: raw['me'] as bool,
-      emoji: parseEmoji(raw['emoji'] as Map<String, Object?>),
+      emoji: client.guilds[Snowflake.zero].emojis.parse(raw['emoji'] as Map<String, Object?>),
     );
   }
 
