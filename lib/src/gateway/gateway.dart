@@ -507,9 +507,10 @@ class Gateway extends GatewayManager with EventParser {
   }
 
   GuildMemberAddEvent parseGuildMemberAdd(Map<String, Object?> raw) {
+    final guildId = Snowflake.parse(raw['guild_id'] as String);
     return GuildMemberAddEvent(
-      guildId: Snowflake.parse(raw['guild_id'] as String),
-      member: client.guilds[Snowflake.zero].members.parse(raw),
+      guildId: guildId,
+      member: client.guilds[guildId].members.parse(raw),
     );
   }
 
@@ -719,7 +720,7 @@ class Gateway extends GatewayManager with EventParser {
       messageId: Snowflake.parse(raw['message_id'] as String),
       guildId: guildId,
       member: maybeParse(raw['member'], client.guilds[guildId ?? Snowflake.zero].members.parse),
-      emoji: client.guilds[guildId ?? Snowflake.zero].emojis.parse(raw['emoji'] as Map<String, Object?>),
+      emoji: client.guilds[Snowflake.zero].emojis.parse(raw['emoji'] as Map<String, Object?>),
     );
   }
 
@@ -730,7 +731,7 @@ class Gateway extends GatewayManager with EventParser {
       channelId: Snowflake.parse(raw['channel_id'] as String),
       messageId: Snowflake.parse(raw['message_id'] as String),
       guildId: guildId,
-      emoji: client.guilds[guildId ?? Snowflake.zero].emojis.parse(raw['emoji'] as Map<String, Object?>),
+      emoji: client.guilds[Snowflake.zero].emojis.parse(raw['emoji'] as Map<String, Object?>),
     );
   }
 
@@ -743,12 +744,11 @@ class Gateway extends GatewayManager with EventParser {
   }
 
   MessageReactionRemoveEmojiEvent parseMessageReactionRemoveEmoji(Map<String, Object?> raw) {
-    final guildId = maybeParse(raw['guild_id'], Snowflake.parse);
     return MessageReactionRemoveEmojiEvent(
       channelId: Snowflake.parse(raw['channel_id'] as String),
       messageId: Snowflake.parse(raw['message_id'] as String),
       guildId: maybeParse(raw['guild_id'], Snowflake.parse),
-      emoji: client.guilds[guildId ?? Snowflake.zero].emojis.parse(raw['emoji'] as Map<String, Object?>),
+      emoji: client.guilds[Snowflake.zero].emojis.parse(raw['emoji'] as Map<String, Object?>),
     );
   }
 
