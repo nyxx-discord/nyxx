@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:nyxx/src/builders/emoji/emoji.dart';
 import 'package:nyxx/src/http/request.dart';
 import 'package:nyxx/src/http/route.dart';
-import 'package:nyxx/src/models/emoji/emoji.dart';
+import 'package:nyxx/src/models/emoji.dart';
 import 'package:nyxx/src/models/snowflake.dart';
 import 'package:nyxx/src/utils/parsing_helpers.dart';
 

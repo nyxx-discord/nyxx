@@ -14,7 +14,7 @@ import 'package:nyxx/src/http/managers/role_manager.dart';
 import 'package:nyxx/src/http/managers/scheduled_event_manager.dart';
 import 'package:nyxx/src/models/channel/guild_channel.dart';
 import 'package:nyxx/src/models/channel/thread_list.dart';
-import 'package:nyxx/src/models/emoji/emoji.dart';
+import 'package:nyxx/src/models/emoji.dart';
 import 'package:nyxx/src/models/guild/ban.dart';
 import 'package:nyxx/src/models/guild/guild_preview.dart';
 import 'package:nyxx/src/models/guild/guild_widget.dart';

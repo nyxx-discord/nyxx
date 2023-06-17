@@ -1,6 +1,6 @@
 import 'package:nyxx/src/cache/cache.dart';
 import 'package:nyxx/src/models/channel/channel.dart';
-import 'package:nyxx/src/models/emoji/emoji.dart';
+import 'package:nyxx/src/models/emoji.dart';
 import 'package:nyxx/src/models/channel/stage_instance.dart';
 import 'package:nyxx/src/models/guild/auto_moderation.dart';
 import 'package:nyxx/src/models/guild/ban.dart';

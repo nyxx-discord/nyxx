@@ -1,4 +1,4 @@
-import 'package:nyxx/src/models/emoji/emoji.dart';
+import 'package:nyxx/src/models/emoji.dart';
 import 'package:nyxx/src/utils/to_string_helper/to_string_helper.dart';
 
 /// {@template reaction}

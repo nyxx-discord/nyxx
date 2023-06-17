@@ -1,4 +1,4 @@
-import 'package:nyxx/src/models/emoji/emoji.dart';
+import 'package:nyxx/src/models/emoji.dart';
 import 'package:nyxx/src/models/gateway/event.dart';
 import 'package:nyxx/src/models/guild/member.dart';
 import 'package:nyxx/src/models/message/message.dart';

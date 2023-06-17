@@ -1,6 +1,6 @@
 import 'package:nyxx/src/builders/builder.dart';
 import 'package:nyxx/src/builders/image.dart';
-import 'package:nyxx/src/models/emoji/emoji.dart';
+import 'package:nyxx/src/models/emoji.dart';
 import 'package:nyxx/src/models/snowflake.dart';
 
 class EmojiBuilder implements CreateBuilder<Emoji> {
