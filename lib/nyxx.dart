@@ -42,6 +42,7 @@ export 'src/builders/guild/auto_moderation.dart' show AutoModerationRuleBuilder,
 export 'src/builders/role.dart' show RoleBuilder, RoleUpdateBuilder;
 export 'src/builders/voice.dart' show CurrentUserVoiceStateUpdateBuilder, VoiceStateUpdateBuilder, GatewayVoiceStateBuilder;
 export 'src/builders/presence.dart' show PresenceBuilder, CurrentUserStatus;
+export 'src/builders/emoji/emoji.dart' show EmojiBuilder, EmojiUpdateBuilder;
 
 export 'src/cache/cache.dart' show Cache, CacheConfig;
 
@@ -63,6 +64,7 @@ export 'src/http/managers/role_manager.dart' show RoleManager;
 export 'src/http/managers/gateway_manager.dart' show GatewayManager;
 export 'src/http/managers/scheduled_event_manager.dart' show ScheduledEventManager;
 export 'src/http/managers/auto_moderation_manager.dart' show AutoModerationManager;
+export 'src/http/managers/emoji_manager.dart' show EmojiManager;
 
 export 'src/gateway/gateway.dart' show Gateway;
 export 'src/gateway/message.dart' show Disconnecting, Dispose, ErrorReceived, EventReceived, GatewayMessage, Send, ShardData, ShardMessage;
@@ -218,6 +220,7 @@ export 'src/models/gateway/events/voice.dart' show VoiceServerUpdateEvent, Voice
 export 'src/models/gateway/events/webhook.dart' show WebhooksUpdateEvent;
 export 'src/models/presence.dart'
     show Activity, ActivityAssets, ActivityButton, ActivityFlags, ActivityParty, ActivitySecrets, ActivityTimestamps, ClientStatus, ActivityType, UserStatus;
+export 'src/models/emoji.dart' show Emoji, GuildEmoji, PartialEmoji, TextEmoji;
 
 export 'src/utils/flags.dart' show Flag, Flags;
 export 'src/intents.dart' show GatewayIntents;

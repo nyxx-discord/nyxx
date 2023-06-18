@@ -3,7 +3,7 @@ import 'package:nyxx/src/builders/image.dart';
 import 'package:nyxx/src/models/emoji.dart';
 import 'package:nyxx/src/models/snowflake.dart';
 
-class EmojiBuilder implements CreateBuilder<Emoji> {
+class EmojiBuilder implements CreateBuilder<GuildEmoji> {
   /// The name of the emoji.
   final String name;
 
@@ -27,21 +27,21 @@ class EmojiBuilder implements CreateBuilder<Emoji> {
       };
 }
 
-class EmojiUpdateBuilder implements UpdateBuilder<Emoji> {
+class EmojiUpdateBuilder implements UpdateBuilder<GuildEmoji> {
   /// The name of the emoji.
-  final String name;
+  final String? name;
 
   /// The roles allowed to use this emoji.
   final Iterable<Snowflake>? roles;
 
   const EmojiUpdateBuilder({
-    required this.name,
-    required this.roles,
+    this.name,
+    this.roles,
   });
 
   @override
   Map<String, Object?> build() => {
-        'name': name,
+        if (name != null) 'name': name,
         if (roles != null) 'roles': roles!.map((s) => s.toString()).toList(),
       };
 }

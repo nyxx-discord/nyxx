@@ -37,7 +37,7 @@ class EmojiManager extends Manager<Emoji> {
         isAvailable: raw['available'] as bool?,
         isManaged: raw['managed'] as bool?,
         requiresColons: raw['require_colons'] as bool?,
-        name: raw['name'] as String,
+        name: raw['name'] as String?,
         roleIds: maybeParseMany(raw['roles'], Snowflake.parse),
       );
     }
@@ -109,7 +109,7 @@ class EmojiManager extends Manager<Emoji> {
 
     final route = HttpRoute()
       ..guilds(id: guildId.toString())
-      ..emojis(id: builder.toString());
+      ..emojis(id: id.toString());
     final request = BasicRequest(route, method: 'PATCH', body: jsonEncode(builder.build()));
 
     final response = await client.httpHandler.executeSafe(request);

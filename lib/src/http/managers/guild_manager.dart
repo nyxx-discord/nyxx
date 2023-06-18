@@ -313,6 +313,7 @@ class GuildManager extends Manager<Guild> {
         'premium_tier': PremiumTier.none.value,
         'nsfw_level': NsfwLevel.unset.value,
         'premium_progress_bar_enabled': false,
+        'emojis': [],
         ...(raw['serialized_source_guild'] as Map<String, Object?>),
       }),
       isDirty: raw['is_dirty'] as bool?,
