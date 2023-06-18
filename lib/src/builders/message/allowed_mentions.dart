@@ -7,11 +7,9 @@ class AllowedMentions {
 
   final List<Snowflake>? roles;
 
-  // TODO: Should this be nullable?
-  // The docs don't seem to require this to be present so we could make it nullable but it seems easier to have it non-nullable.
-  final bool repliedUser;
+  final bool? repliedUser;
 
-  AllowedMentions({this.parse, this.users, this.roles, this.repliedUser = false});
+  AllowedMentions({this.parse, this.users, this.roles, this.repliedUser});
 
   factory AllowedMentions.users([List<Snowflake>? users]) => AllowedMentions(parse: users == null ? ['users'] : null, users: users);
 
@@ -30,11 +28,18 @@ class AllowedMentions {
       parse.remove('parse');
     }
 
+    bool? repliedUser = this.repliedUser;
+    if (repliedUser != null && other.repliedUser != null) {
+      repliedUser = repliedUser || other.repliedUser!;
+    } else {
+      repliedUser ??= other.repliedUser;
+    }
+
     return AllowedMentions(
       parse: parse,
       users: users,
       roles: roles,
-      repliedUser: repliedUser || other.repliedUser,
+      repliedUser: repliedUser,
     );
   }
 
@@ -75,7 +80,7 @@ class AllowedMentions {
       parse: parse,
       roles: roles,
       users: users,
-      repliedUser: repliedUser && other.repliedUser,
+      repliedUser: repliedUser == true && other.repliedUser == true,
     );
   }
 
@@ -83,6 +88,6 @@ class AllowedMentions {
         if (parse != null) 'parse': parse,
         if (users != null && users!.isNotEmpty) 'users': users!.map((e) => e.toString()).toList(),
         if (roles != null && roles!.isNotEmpty) 'roles': roles!.map((e) => e.toString()).toList(),
-        'replied_user': repliedUser,
+        if (repliedUser != null) 'replied_user': repliedUser,
       };
 }
