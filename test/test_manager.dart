@@ -73,8 +73,6 @@ Future<void> testReadOnlyManager<T extends ManagedSnowflakeEntity<T>, U extends 
   );
 
   group(name, () {
-    tearDown(() => Cache.testClearAllCaches());
-
     test('parse', () {
       final client = MockNyxx();
       when(() => client.apiOptions).thenReturn(RestApiOptions(token: 'TEST_TOKEN'));
