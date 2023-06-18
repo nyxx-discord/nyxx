@@ -17,3 +17,9 @@ extension IterableExtension<T> on Iterable<T> {
     return null;
   }
 }
+
+/// An internal extension adding utility methods to [Stream].
+extension StreamExtension<T> on Stream<T> {
+  /// Equivalent to [Iterable.whereType].
+  Stream<U> whereType<U>() => where((event) => event is U).cast<U>();
+}

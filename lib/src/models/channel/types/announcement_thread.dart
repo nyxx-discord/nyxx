@@ -1,17 +1,12 @@
-import 'package:nyxx/src/builders/message/message.dart';
 import 'package:nyxx/src/builders/permission_overwrite.dart';
-import 'package:nyxx/src/http/managers/message_manager.dart';
 import 'package:nyxx/src/models/channel/channel.dart';
+import 'package:nyxx/src/models/channel/text_channel.dart';
 import 'package:nyxx/src/models/channel/thread.dart';
-import 'package:nyxx/src/models/message/message.dart';
 import 'package:nyxx/src/models/permission_overwrite.dart';
 import 'package:nyxx/src/models/snowflake.dart';
 import 'package:nyxx/src/models/webhook.dart';
 
-class AnnouncementThread extends Channel implements Thread {
-  @override
-  MessageManager get messages => MessageManager(manager.client.options.messageCacheConfig, manager.client, channelId: id);
-
+class AnnouncementThread extends TextChannel implements Thread {
   @override
   final List<Snowflake>? appliedTags;
 
@@ -115,12 +110,6 @@ class AnnouncementThread extends Channel implements Thread {
 
   @override
   Future<void> removeThreadMember(Snowflake memberId) => manager.removeThreadMember(id, memberId);
-
-  @override
-  Future<Message> sendMessage(MessageBuilder builder) => messages.create(builder);
-
-  @override
-  Future<void> triggerTyping() => manager.triggerTyping(id);
 
   @override
   Future<void> updatePermissionOverwrite(PermissionOverwriteBuilder builder) => manager.updatePermissionOverwrite(id, builder);

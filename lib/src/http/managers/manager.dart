@@ -7,7 +7,7 @@ import 'package:nyxx/src/models/snowflake.dart';
 import 'package:nyxx/src/models/snowflake_entity/snowflake_entity.dart';
 
 /// A [Manager] that provides only read access to the API.
-abstract class ReadOnlyManager<T extends SnowflakeEntity<T>> {
+abstract class ReadOnlyManager<T extends ManagedSnowflakeEntity<T>> {
   /// The cache for this manager.
   final Cache<T> cache;
 
@@ -15,8 +15,7 @@ abstract class ReadOnlyManager<T extends SnowflakeEntity<T>> {
   final NyxxRest client;
 
   /// Create a new read-only manager.
-  // TODO: Do we really want to use `T.toString()` as the cache identifier?
-  ReadOnlyManager(CacheConfig<T> config, this.client) : cache = Cache(T.toString(), config);
+  ReadOnlyManager(CacheConfig<T> config, this.client, {required String identifier}) : cache = Cache(client, identifier, config);
 
   /// Parse the [raw] data received from the API into an instance of the type of this manager.
   T parse(Map<String, Object?> raw);
@@ -35,7 +34,7 @@ abstract class ReadOnlyManager<T extends SnowflakeEntity<T>> {
   ///
   /// Because this method doesn't perform any API checks, there might be no real entity with the
   /// correct [id]. In this case, the object returned may not work with the API correctly.
-  SnowflakeEntity<T> operator [](Snowflake id);
+  ManagedSnowflakeEntity<T> operator [](Snowflake id);
 }
 
 /// Provides the means to interact with the API for a given entity type.
@@ -47,11 +46,11 @@ abstract class ReadOnlyManager<T extends SnowflakeEntity<T>> {
 /// [parse] can be used to convert a raw API response into an instance of the managed type.
 ///
 /// {@endtemplate}
-abstract class Manager<T extends SnowflakeEntity<T>> extends ReadOnlyManager<T> {
+abstract class Manager<T extends WritableSnowflakeEntity<T>> extends ReadOnlyManager<T> {
   /// Create a new manager.
   ///
   /// {@macro manager}
-  Manager(super.config, super.client);
+  Manager(super.config, super.client, {required super.identifier});
 
   /// Create a new instance of the type of this manager.
   ///
@@ -69,4 +68,7 @@ abstract class Manager<T extends SnowflakeEntity<T>> extends ReadOnlyManager<T> 
   ///
   /// {@macro ensure_cache_updated}
   Future<void> delete(Snowflake id);
+
+  @override
+  WritableSnowflakeEntity<T> operator [](Snowflake id);
 }

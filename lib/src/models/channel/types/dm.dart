@@ -1,18 +1,12 @@
-import 'package:nyxx/src/builders/message/message.dart';
-import 'package:nyxx/src/http/managers/message_manager.dart';
 import 'package:nyxx/src/models/channel/channel.dart';
 import 'package:nyxx/src/models/channel/text_channel.dart';
-import 'package:nyxx/src/models/message/message.dart';
 import 'package:nyxx/src/models/snowflake.dart';
 import 'package:nyxx/src/models/user/user.dart';
 
 /// {@template dm_channel}
 /// A DM channel.
 /// {@endtemplate}
-class DmChannel extends Channel implements TextChannel {
-  @override
-  MessageManager get messages => MessageManager(manager.client.options.messageCacheConfig, manager.client, channelId: id);
-
+class DmChannel extends TextChannel {
   /// The recipient of this channel.
   final User recipient;
 
@@ -37,10 +31,4 @@ class DmChannel extends Channel implements TextChannel {
     required this.lastPinTimestamp,
     required this.rateLimitPerUser,
   });
-
-  @override
-  Future<Message> sendMessage(MessageBuilder builder) => messages.create(builder);
-
-  @override
-  Future<void> triggerTyping() => manager.triggerTyping(id);
 }

@@ -218,6 +218,38 @@ extension RouteHelpers on HttpRoute {
   /// Adds the [`followers`](https://discord.com/developers/docs/resources/channel#follow-announcement-channel) part to this [HttpRoute].
   void followers() => add(HttpRoutePart('followers'));
 
+  /// Adds the [`mfa`](https://discord.com/developers/docs/resources/guild#modify-guild-mfa-level) part to this [HttpRoute].
+  void mfa() => add(HttpRoutePart('mfa'));
+
   /// Adds the [`voice`](https://discord.com/developers/docs/resources/voice#list-voice-regions) part to this [HttpRoute].
   void voice() => add(HttpRoutePart('voice'));
+
+  /// Adds the [`integrations`](https://discord.com/developers/docs/resources/guild#get-guild-integrations) part to this [HttpRoute].
+  void integrations({String? id}) => add(HttpRoutePart('integrations', [if (id != null) HttpRouteParam(id)]));
+
+  /// Adds the [`widget`](https://discord.com/developers/docs/resources/guild#get-guild-widget-settings) part to this [HttpRoute].
+  void widget() => add(HttpRoutePart('widget'));
+
+  /// Adds the [`widget.json`](https://discord.com/developers/docs/resources/guild#get-guild-widget) part to this [HttpRoute].
+  void widgetJson() => add(HttpRoutePart('widget.json'));
+
+  /// Adds the [`widget.png`](https://discord.com/developers/docs/resources/guild#get-guild-widget-image) part to this [HttpRoute].
+  void widgetPng() => add(HttpRoutePart('widget.png'));
+
+  /// Adds the [`onboarding`](https://discord.com/developers/docs/resources/guild#get-guild-onboarding) part to this [HttpRoute].
+  void onboarding() => add(HttpRoutePart('onboarding'));
+
+  /// Adds the [`voice-states`](https://discord.com/developers/docs/resources/guild#modify-current-user-voice-state) part to this [HttpRoute].
+  void voiceStates({String? id}) => add(HttpRoutePart('voice-states', [if (id != null) HttpRouteParam(id)]));
+
+  /// Adds the [`role-connections`](https://discord.com/developers/docs/resources/application-role-connection-metadata#get-application-role-connection-metadata-records)
+  /// part to this [HttpRoute].
+  void roleConnections() => add(HttpRoutePart('role-connections'));
+
+  /// Adds the [`metadata`](https://discord.com/developers/docs/resources/application-role-connection-metadata#get-application-role-connection-metadata-records)
+  /// part to this [HttpRoute].
+  void metadata() => add(HttpRoutePart('metadata'));
+
+  /// Adds the [`templates`](https://discord.com/developers/docs/resources/guild-template#get-guild-template) part to this [HttpRoute].
+  void templates({String? code}) => add(HttpRoutePart('templates', [if (code != null) HttpRouteParam(code)]));
 }

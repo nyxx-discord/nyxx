@@ -1,6 +1,7 @@
 import 'package:nyxx/src/builders/message/message.dart';
 import 'package:nyxx/src/builders/webhook.dart';
 import 'package:nyxx/src/models/channel/channel.dart';
+import 'package:nyxx/src/models/guild/guild.dart';
 import 'package:nyxx/src/models/message/message.dart';
 import 'package:nyxx/src/models/snowflake.dart';
 import 'package:nyxx/src/models/snowflake_entity/snowflake_entity.dart';
@@ -8,7 +9,7 @@ import 'package:nyxx/src/http/managers/webhook_manager.dart';
 import 'package:nyxx/src/models/user/user.dart';
 
 /// A partial [Webhook].
-class PartialWebhook extends SnowflakeEntity<Webhook> with SnowflakeEntityMixin<Webhook> {
+class PartialWebhook extends WritableSnowflakeEntity<Webhook> {
   @override
   final WebhookManager manager;
 
@@ -20,6 +21,7 @@ class PartialWebhook extends SnowflakeEntity<Webhook> with SnowflakeEntityMixin<
   /// External references:
   /// * [WebhookManager.update]
   /// * Discord API Reference: https://discord.com/developers/docs/resources/webhook#modify-webhook
+  @override
   Future<Webhook> update(WebhookUpdateBuilder builder, {String? token}) => manager.update(id, builder, token: token);
 
   /// Delete this webhook.
@@ -27,6 +29,7 @@ class PartialWebhook extends SnowflakeEntity<Webhook> with SnowflakeEntityMixin<
   /// External references:
   /// * [WebhookManager.delete]
   /// * Discord API Reference: https://discord.com/developers/docs/resources/webhook#delete-webhook
+  @override
   Future<void> delete({String? token, String? auditLogReason}) => manager.delete(id, token: token, auditLogReason: auditLogReason);
 
   /// Execute this webhook using its [token].
@@ -103,8 +106,7 @@ class Webhook extends PartialWebhook {
   /// The ID of the application that created this webhook.
   final Snowflake? applicationId;
 
-  // TODO
-  // final PartialGuild? sourceGuild;
+  final PartialGuild? sourceGuild;
 
   /// If this is a [WebhookType.channelFollower], this webhook's source channel.
   final PartialChannel? sourceChannel;
@@ -124,6 +126,7 @@ class Webhook extends PartialWebhook {
     required this.avatarHash,
     required this.token,
     required this.applicationId,
+    required this.sourceGuild,
     required this.sourceChannel,
     required this.url,
   });

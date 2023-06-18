@@ -6,7 +6,7 @@ import 'package:nyxx/src/models/snowflake_entity/snowflake_entity.dart';
 import 'package:nyxx/src/utils/flags.dart';
 
 /// A partial [User] object.
-class PartialUser extends SnowflakeEntity<User> with SnowflakeEntityMixin<User> {
+class PartialUser extends ManagedSnowflakeEntity<User> {
   @override
   final UserManager manager;
 
@@ -14,6 +14,7 @@ class PartialUser extends SnowflakeEntity<User> with SnowflakeEntityMixin<User> 
   PartialUser({required super.id, required this.manager});
 }
 
+/// {@template user}
 /// A single user, outside of a [Guild]'s context.
 ///
 /// [User]s can be actual users, bots or teams. See [isBot] and [UserFlags.isTeamUser] to check for
@@ -21,6 +22,7 @@ class PartialUser extends SnowflakeEntity<User> with SnowflakeEntityMixin<User> 
 ///
 /// External references:
 /// * Discord API Reference: https://discord.com/developers/docs/resources/user#users-resource
+/// {@endtemplate}
 class User extends PartialUser implements MessageAuthor {
   /// The user's username.
   @override
@@ -60,7 +62,7 @@ class User extends PartialUser implements MessageAuthor {
   /// The public [UserFlags] on the user's account.
   final UserFlags? publicFlags;
 
-  /// Create a new [User].
+  /// {@macro user}
   User({
     required super.manager,
     required super.id,

@@ -26,7 +26,7 @@ class MessageManager extends Manager<Message> {
   final Snowflake channelId;
 
   /// Create a new [MessageManager].
-  MessageManager(super.config, super.client, {required this.channelId});
+  MessageManager(super.config, super.client, {required this.channelId}) : super(identifier: '$channelId.messages');
 
   @override
   PartialMessage operator [](Snowflake id) => PartialMessage(id: id, manager: this);
@@ -44,6 +44,7 @@ class MessageManager extends Manager<Message> {
       isTts: raw['tts'] as bool,
       mentionsEveryone: raw['mention_everyone'] as bool,
       mentions: parseMany(raw['mentions'] as List, client.users.parse),
+      roleMentions: parseMany(raw['mention_roles'] as List, client.guilds[Snowflake.zero].roles.parse),
       channelMentions: maybeParseMany(raw['mention_channels'], parseChannelMention) ?? [],
       attachments: parseMany(raw['attachments'] as List, parseAttachment),
       embeds: parseMany(raw['embeds'] as List, parseEmbed),

@@ -4,11 +4,33 @@ import 'package:nyxx/src/models/channel/channel.dart';
 import 'package:nyxx/src/models/message/message.dart';
 import 'package:nyxx/src/models/snowflake.dart';
 
-//// A text channel
-abstract class TextChannel implements Channel {
+/// A partial [TextChannel].
+class PartialTextChannel extends PartialChannel {
   /// A [Manager] for the [Message]s of this channel.
-  MessageManager get messages;
+  MessageManager get messages => MessageManager(manager.client.options.messageCacheConfig, manager.client, channelId: id);
 
+  /// Create a new [PartialTextChannel].
+  PartialTextChannel({required super.id, required super.manager});
+
+  /// Send a message to this channel.
+  ///
+  /// Returns the created message.
+  ///
+  /// External references:
+  /// * [MessageManager.create]
+  /// * Discord API Reference: https://discord.com/developers/docs/resources/channel#create-message
+  Future<Message> sendMessage(MessageBuilder builder) => messages.create(builder);
+
+  /// Trigger a typing indicator in this channel from the current user.
+  ///
+  /// External references:
+  /// * [ChannelManager.triggerTyping]
+  /// * Discord API Reference: https://discord.com/developers/docs/resources/channel#trigger-typing-indicator
+  Future<void> triggerTyping() => manager.triggerTyping(id);
+}
+
+//// A text channel
+abstract class TextChannel extends PartialTextChannel implements Channel {
   /// The ID of the last [Message] snt in this channel, or `null` if no messages have been sent.
   Snowflake? get lastMessageId;
 
@@ -18,19 +40,5 @@ abstract class TextChannel implements Channel {
   /// The time at which the last message was pinned, or `null` if no messages have been pinned.
   DateTime? get lastPinTimestamp;
 
-  /// Send a message to this channel.
-  ///
-  /// Returns the created message.
-  ///
-  /// External references:
-  /// * [MessageManager.create]
-  /// * Discord API Reference: https://discord.com/developers/docs/resources/channel#create-message
-  Future<Message> sendMessage(MessageBuilder builder);
-
-  /// Trigger a typing indicator in this channel from the current user.
-  ///
-  /// External references:
-  /// * [ChannelManager.triggerTyping]
-  /// * Discord API Reference: https://discord.com/developers/docs/resources/channel#trigger-typing-indicator
-  Future<void> triggerTyping();
+  TextChannel({required super.id, required super.manager});
 }

@@ -1,3 +1,4 @@
+import 'package:nyxx/src/models/guild/member.dart';
 import 'package:nyxx/src/models/snowflake.dart';
 import 'package:nyxx/src/utils/to_string_helper/to_string_helper.dart';
 
@@ -17,8 +18,7 @@ class VoiceState with ToStringHelper {
   /// The ID of the user this state is for.
   final Snowflake userId;
 
-  // TODO
-  //final Member member;
+  final Member? member;
 
   /// This state's session ID.
   final String sessionId;
@@ -52,6 +52,7 @@ class VoiceState with ToStringHelper {
     required this.guildId,
     required this.channelId,
     required this.userId,
+    required this.member,
     required this.sessionId,
     required this.isServerDeafened,
     required this.isServerMuted,

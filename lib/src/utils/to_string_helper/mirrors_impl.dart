@@ -5,15 +5,30 @@ import 'package:runtime_type/mirrors.dart';
 import 'package:runtime_type/runtime_type.dart';
 
 /// An internal mixin containing a [toString] implementation when dart:mirrors is available.
+///
+/// Override [defaultToString] to change the output when dart:mirrors is not enabled.
 mixin ToStringHelper {
+  /// Same as [toString], but only called when dart:mirrors is not available.
+  ///
+  /// If dart:mirrors is available, it will be used to print a complete representation of this object.
+  String defaultToString() => super.toString();
+
   @override
   String toString() => stringifyInstance(reflect(this));
 }
 
+final _stringifyStack = <Object?>[];
+
 /// An internal function used when dart:mirrors is available to stringify the instance reflected by
 /// [mirror].
-String stringifyInstance(InstanceMirror mirror, [String? type]) {
-  type ??= MirrorSystem.getName(mirror.type.simpleName);
+String stringifyInstance(InstanceMirror mirror) {
+  final existingIndex = _stringifyStack.indexOf(mirror.reflectee);
+  if (existingIndex >= 0) {
+    return '<Recursive #$existingIndex>';
+  }
+  _stringifyStack.add(mirror.reflectee);
+
+  final type = MirrorSystem.getName(mirror.type.simpleName);
 
   final buffer = StringBuffer('$type(\n');
 
@@ -28,6 +43,7 @@ String stringifyInstance(InstanceMirror mirror, [String? type]) {
   );
 
   if (outputtedGetters.isEmpty) {
+    _stringifyStack.removeLast();
     return 'Instance of $type';
   }
 
@@ -47,15 +63,19 @@ String stringifyInstance(InstanceMirror mirror, [String? type]) {
   });
 
   for (final identifier in outputtedGetters.map((getter) => getter.simpleName)) {
-    final value = mirror.getField(identifier);
-    final String representation;
+    late final String representation;
+    try {
+      final value = mirror.getField(identifier);
 
-    // If the value has a custom `toString` implementation, call that. Otherwise recursively
-    // stringify the value.
-    if (value.type.instanceMembers[#toString]!.owner != reflectClass(Object)) {
-      representation = value.reflectee.toString();
-    } else {
-      representation = stringifyInstance(value);
+      // If the value has a custom `toString` implementation, call that. Otherwise recursively
+      // stringify the value.
+      if (value.type.instanceMembers[#toString]!.owner != reflectClass(Object)) {
+        representation = value.reflectee.toString();
+      } else {
+        representation = stringifyInstance(value);
+      }
+    } catch (e) {
+      representation = '<$e>';
     }
 
     buffer.write('  ${MirrorSystem.getName(identifier)}: ');
@@ -64,5 +84,6 @@ String stringifyInstance(InstanceMirror mirror, [String? type]) {
   }
 
   buffer.write(')');
+  _stringifyStack.removeLast();
   return buffer.toString();
 }

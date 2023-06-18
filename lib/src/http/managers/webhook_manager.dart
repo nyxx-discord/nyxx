@@ -6,10 +6,11 @@ import 'package:nyxx/src/builders/message/message.dart';
 import 'package:nyxx/src/builders/sentinels.dart';
 import 'package:nyxx/src/builders/webhook.dart';
 import 'package:nyxx/src/http/managers/manager.dart';
-import 'package:nyxx/src/http/managers/message_manager.dart';
 import 'package:nyxx/src/http/request.dart';
 import 'package:nyxx/src/http/route.dart';
 import 'package:nyxx/src/models/channel/channel.dart';
+import 'package:nyxx/src/models/channel/text_channel.dart';
+import 'package:nyxx/src/models/guild/guild.dart';
 import 'package:nyxx/src/models/message/message.dart';
 import 'package:nyxx/src/models/snowflake.dart';
 import 'package:nyxx/src/models/webhook.dart';
@@ -18,7 +19,7 @@ import 'package:nyxx/src/utils/parsing_helpers.dart';
 /// A manager for [Webhook]s.
 class WebhookManager extends Manager<Webhook> {
   /// Create a new [WebhookManager].
-  WebhookManager(super.config, super.client);
+  WebhookManager(super.config, super.client) : super(identifier: 'webhooks');
 
   @override
   PartialWebhook operator [](Snowflake id) => PartialWebhook(id: id, manager: this);
@@ -36,6 +37,13 @@ class WebhookManager extends Manager<Webhook> {
       avatarHash: raw['avatar'] as String?,
       token: raw['token'] as String?,
       applicationId: maybeParse(raw['application_id'], Snowflake.parse),
+      sourceGuild: maybeParse(
+        raw['source_guild'],
+        (Map<String, Object?> raw) => PartialGuild(
+          id: Snowflake.parse(raw['id'] as String),
+          manager: client.guilds,
+        ),
+      ),
       sourceChannel: maybeParse(
         raw['source_channel'],
         (Map<String, Object?> raw) => PartialChannel(
@@ -179,11 +187,8 @@ class WebhookManager extends Manager<Webhook> {
       return null;
     }
 
-    final messageManager = MessageManager(
-      client.options.messageCacheConfig,
-      client,
-      channelId: Snowflake.parse((response.jsonBody as Map<String, Object?>)['channel_id'] as String),
-    );
+    final channelId = Snowflake.parse((response.jsonBody as Map<String, Object?>)['channel_id'] as String);
+    final messageManager = (client.channels[channelId] as PartialTextChannel).messages;
     final message = messageManager.parse(response.jsonBody as Map<String, Object?>);
 
     messageManager.cache[message.id] = message;
@@ -203,11 +208,8 @@ class WebhookManager extends Manager<Webhook> {
     );
 
     final response = await client.httpHandler.executeSafe(request);
-    final messageManager = MessageManager(
-      client.options.messageCacheConfig,
-      client,
-      channelId: Snowflake.parse((response.jsonBody as Map<String, Object?>)['channel_id'] as String),
-    );
+    final channelId = Snowflake.parse((response.jsonBody as Map<String, Object?>)['channel_id'] as String);
+    final messageManager = (client.channels[channelId] as PartialTextChannel).messages;
     final message = messageManager.parse(response.jsonBody as Map<String, Object?>);
 
     messageManager.cache[message.id] = message;
@@ -263,11 +265,8 @@ class WebhookManager extends Manager<Webhook> {
     }
 
     final response = await client.httpHandler.executeSafe(request);
-    final messageManager = MessageManager(
-      client.options.messageCacheConfig,
-      client,
-      channelId: Snowflake.parse((response.jsonBody as Map<String, Object?>)['channel_id'] as String),
-    );
+    final channelId = Snowflake.parse((response.jsonBody as Map<String, Object?>)['channel_id'] as String);
+    final messageManager = (client.channels[channelId] as PartialTextChannel).messages;
     final message = messageManager.parse(response.jsonBody as Map<String, Object?>);
 
     messageManager.cache[message.id] = message;

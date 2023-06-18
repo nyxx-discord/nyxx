@@ -3,12 +3,42 @@ import 'package:nyxx/src/builders/sentinels.dart';
 import 'package:nyxx/src/models/channel/channel.dart';
 import 'package:nyxx/src/models/channel/guild_channel.dart';
 import 'package:nyxx/src/models/channel/types/forum.dart';
+import 'package:nyxx/src/models/channel/types/guild_announcement.dart';
+import 'package:nyxx/src/models/channel/types/guild_category.dart';
+import 'package:nyxx/src/models/channel/types/guild_stage.dart';
+import 'package:nyxx/src/models/channel/types/guild_text.dart';
+import 'package:nyxx/src/models/channel/types/guild_voice.dart';
 import 'package:nyxx/src/models/channel/voice_channel.dart';
 import 'package:nyxx/src/models/permission_overwrite.dart';
 import 'package:nyxx/src/models/snowflake.dart';
 import 'package:nyxx/src/utils/flags.dart';
 
-class GuildChannelUpdateBuilder extends UpdateBuilder<GuildChannel> {
+class GuildChannelBuilder<T extends GuildChannel> extends CreateBuilder<T> {
+  final String name;
+
+  final ChannelType type;
+
+  final int? position;
+
+  final List<CreateBuilder<PermissionOverwrite>>? permissionOverwrites;
+
+  GuildChannelBuilder({
+    required this.name,
+    required this.type,
+    this.position,
+    this.permissionOverwrites,
+  });
+
+  @override
+  Map<String, Object?> build() => {
+        'name': name,
+        'type': type.value,
+        if (position != null) 'position': position,
+        if (permissionOverwrites != null) 'permission_overwrites': permissionOverwrites!.map((e) => e.build()).toList(),
+      };
+}
+
+class GuildChannelUpdateBuilder<T extends GuildChannel> extends UpdateBuilder<T> {
   final String? name;
 
   final int? position;
@@ -25,7 +55,40 @@ class GuildChannelUpdateBuilder extends UpdateBuilder<GuildChannel> {
       };
 }
 
-class GuildTextChannelUpdateBuilder extends GuildChannelUpdateBuilder {
+class GuildTextChannelBuilder extends GuildChannelBuilder<GuildTextChannel> {
+  final String? topic;
+
+  final Duration? rateLimitPerUser;
+
+  final Snowflake? parentId;
+
+  final bool? isNsfw;
+
+  final Duration? defaultAutoArchiveDuration;
+
+  GuildTextChannelBuilder({
+    required super.name,
+    super.position,
+    super.permissionOverwrites,
+    this.topic,
+    this.rateLimitPerUser,
+    this.parentId,
+    this.isNsfw,
+    this.defaultAutoArchiveDuration,
+  }) : super(type: ChannelType.guildText);
+
+  @override
+  Map<String, Object?> build() => {
+        ...super.build(),
+        if (topic != null) 'topic': topic,
+        if (rateLimitPerUser != null) 'rate_limit_per_user': rateLimitPerUser!.inSeconds,
+        if (parentId != null) 'parent_id': parentId!.toString(),
+        if (isNsfw != null) 'nsfw': isNsfw,
+        if (defaultAutoArchiveDuration != null) 'default_auto_archive_duration': defaultAutoArchiveDuration!.inMinutes,
+      };
+}
+
+class GuildTextChannelUpdateBuilder extends GuildChannelUpdateBuilder<GuildTextChannel> {
   final ChannelType? type;
 
   final String? topic;
@@ -66,7 +129,36 @@ class GuildTextChannelUpdateBuilder extends GuildChannelUpdateBuilder {
       };
 }
 
-class GuildAnnouncementChannelUpdateBuilder extends GuildChannelUpdateBuilder {
+class GuildAnnouncementChannelBuilder extends GuildChannelBuilder<GuildAnnouncementChannel> {
+  final String? topic;
+
+  final Snowflake? parentId;
+
+  final bool? isNsfw;
+
+  final Duration? defaultAutoArchiveDuration;
+
+  GuildAnnouncementChannelBuilder({
+    required super.name,
+    super.position,
+    super.permissionOverwrites,
+    this.topic,
+    this.parentId,
+    this.isNsfw,
+    this.defaultAutoArchiveDuration,
+  }) : super(type: ChannelType.guildAnnouncement);
+
+  @override
+  Map<String, Object?> build() => {
+        ...super.build(),
+        if (topic != null) 'topic': topic,
+        if (parentId != null) 'parent_id': parentId!.toString(),
+        if (isNsfw != null) 'nsfw': isNsfw,
+        if (defaultAutoArchiveDuration != null) 'default_auto_archive_duration': defaultAutoArchiveDuration!.inMinutes,
+      };
+}
+
+class GuildAnnouncementChannelUpdateBuilder extends GuildChannelUpdateBuilder<GuildAnnouncementChannel> {
   final ChannelType? type;
 
   final String? topic;
@@ -99,7 +191,58 @@ class GuildAnnouncementChannelUpdateBuilder extends GuildChannelUpdateBuilder {
       };
 }
 
-class ForumChannelUpdateBuilder extends GuildChannelUpdateBuilder {
+class ForumChannelBuilder extends GuildChannelBuilder<ForumChannel> {
+  final String? topic;
+
+  final Duration? rateLimitPerUser;
+
+  final Snowflake? parentId;
+
+  final bool? isNsfw;
+
+  final Duration? defaultAutoArchiveDuration;
+
+  final DefaultReaction? defaultReaction;
+
+  final List<CreateBuilder<ForumTag>>? tags;
+
+  final ForumSort? defaultSortOrder;
+
+  ForumChannelBuilder({
+    required super.name,
+    super.position,
+    super.permissionOverwrites,
+    this.topic,
+    this.rateLimitPerUser,
+    this.parentId,
+    this.isNsfw,
+    this.defaultAutoArchiveDuration,
+    this.defaultReaction,
+    this.tags,
+    this.defaultSortOrder,
+  }) : super(type: ChannelType.guildForum);
+
+  @override
+  Map<String, Object?> build() => {
+        ...super.build(),
+        if (topic != null) 'topic': topic,
+        if (rateLimitPerUser != null) 'rate_limit_per_user': rateLimitPerUser!.inSeconds,
+        if (parentId != null) 'parent_id': parentId!.toString(),
+        if (isNsfw != null) 'nsfw': isNsfw,
+        if (defaultAutoArchiveDuration != null) 'default_auto_archive_duration': defaultAutoArchiveDuration!.inMinutes,
+        if (!identical(defaultReaction, sentinelDefaultReaction))
+          'default_reaction_emoji': defaultReaction == null
+              ? null
+              : {
+                  if (defaultReaction!.emojiId != null) 'emoji_id': defaultReaction!.emojiId!.toString(),
+                  if (defaultReaction!.emojiName != null) 'emoji_name': defaultReaction!.emojiName,
+                },
+        if (tags != null) 'available_tags': tags!.map((e) => e.build()).toList(),
+        if (defaultSortOrder != null) 'default_sort_order': defaultSortOrder!.value,
+      };
+}
+
+class ForumChannelUpdateBuilder extends GuildChannelUpdateBuilder<ForumChannel> {
   final String? topic;
 
   final bool? isNsfw;
@@ -148,7 +291,7 @@ class ForumChannelUpdateBuilder extends GuildChannelUpdateBuilder {
         if (!identical(parentId, sentinelSnowflake)) 'parent_id': parentId?.toString(),
         if (!identical(defaultAutoArchiveDuration, sentinelDuration)) 'default_auto_archive_duration': defaultAutoArchiveDuration?.inMinutes,
         if (flags != null) 'flags': flags!.value,
-        if (tags != null) 'tags': tags!.map((e) => e.build()).toList(),
+        if (tags != null) 'available_tags': tags!.map((e) => e.build()).toList(),
         if (!identical(defaultReaction, sentinelDefaultReaction))
           'default_reaction_emoji': defaultReaction == null
               ? null
@@ -162,7 +305,73 @@ class ForumChannelUpdateBuilder extends GuildChannelUpdateBuilder {
       };
 }
 
-class GuildVoiceChannelUpdateBuilder extends GuildChannelUpdateBuilder {
+abstract class _GuildVoiceOrStageChannelBuilder<T extends GuildChannel> extends GuildChannelBuilder<T> {
+  final int? bitRate;
+
+  final int? userLimit;
+
+  final Snowflake? parentId;
+
+  final bool? isNsfw;
+
+  final String? rtcRegion;
+
+  final VideoQualityMode? videoQualityMode;
+
+  _GuildVoiceOrStageChannelBuilder({
+    required super.name,
+    required super.type,
+    super.position,
+    super.permissionOverwrites,
+    this.bitRate,
+    this.userLimit,
+    this.parentId,
+    this.isNsfw,
+    this.rtcRegion,
+    this.videoQualityMode,
+  });
+
+  @override
+  Map<String, Object?> build() => {
+        ...super.build(),
+        if (isNsfw != null) 'nsfw': isNsfw,
+        if (bitRate != null) 'bitrate': bitRate,
+        if (userLimit != null) 'user_limit': userLimit,
+        if (parentId != null) 'parent_id': parentId?.toString(),
+        if (rtcRegion != null) 'rtc_region': rtcRegion,
+        if (videoQualityMode != null) 'video_quality_mode': videoQualityMode!.value,
+      };
+}
+
+class GuildVoiceChannelBuilder extends _GuildVoiceOrStageChannelBuilder<GuildVoiceChannel> {
+  GuildVoiceChannelBuilder({
+    required super.name,
+    super.position,
+    super.permissionOverwrites,
+    super.bitRate,
+    super.userLimit,
+    super.parentId,
+    super.isNsfw,
+    super.rtcRegion,
+    super.videoQualityMode,
+  }) : super(type: ChannelType.guildVoice);
+}
+
+class GuildStageChannelBuilder extends _GuildVoiceOrStageChannelBuilder<GuildStageChannel> {
+  GuildStageChannelBuilder({
+    required super.name,
+    super.position,
+    super.permissionOverwrites,
+    super.bitRate,
+    super.userLimit,
+    super.parentId,
+    super.isNsfw,
+    super.rtcRegion,
+    super.videoQualityMode,
+  }) : super(type: ChannelType.guildStageVoice);
+}
+
+class _GuildVoiceOrStageChannelUpdateBuilder<T extends GuildChannel> extends GuildChannelUpdateBuilder<T> {
   final bool? isNsfw;
 
   final int? bitRate;
@@ -175,7 +384,7 @@ class GuildVoiceChannelUpdateBuilder extends GuildChannelUpdateBuilder {
 
   final VideoQualityMode? videoQualityMode;
 
-  GuildVoiceChannelUpdateBuilder({
+  _GuildVoiceOrStageChannelUpdateBuilder({
     super.name,
     super.position,
     super.permissionOverwrites,
@@ -199,6 +408,42 @@ class GuildVoiceChannelUpdateBuilder extends GuildChannelUpdateBuilder {
       };
 }
 
-// For now, these two are identical. This might change in the future though, so we reserve the name for the stage channel update builder.
-// Also helps to avoid confusion as every other guild channel type gets its own UpdateBuilder.
-typedef GuildStageChannelUpdateBuilder = GuildVoiceChannelUpdateBuilder;
+class GuildVoiceChannelUpdateBuilder extends _GuildVoiceOrStageChannelUpdateBuilder<GuildVoiceChannel> {
+  GuildVoiceChannelUpdateBuilder({
+    super.name,
+    super.position,
+    super.permissionOverwrites,
+    super.isNsfw,
+    super.bitRate,
+    super.userLimit,
+    super.parentId = sentinelSnowflake,
+    super.rtcRegion = sentinelString,
+    super.videoQualityMode,
+  });
+}
+
+class GuildStageChannelUpdateBuilder extends _GuildVoiceOrStageChannelUpdateBuilder<GuildStageChannel> {
+  GuildStageChannelUpdateBuilder({
+    super.name,
+    super.position,
+    super.permissionOverwrites,
+    super.isNsfw,
+    super.bitRate,
+    super.userLimit,
+    super.parentId = sentinelSnowflake,
+    super.rtcRegion = sentinelString,
+    super.videoQualityMode,
+  });
+}
+
+class GuildCategoryBuilder extends GuildChannelBuilder<GuildCategory> {
+  GuildCategoryBuilder({
+    required super.name,
+    super.position,
+    super.permissionOverwrites,
+  }) : super(type: ChannelType.guildCategory);
+}
+
+class GuildCategoryUpdateBuilder extends GuildChannelUpdateBuilder<GuildCategory> {
+  GuildCategoryUpdateBuilder({super.name, super.position, super.permissionOverwrites});
+}

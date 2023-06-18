@@ -1,6 +1,7 @@
 import 'package:nyxx/src/models/channel/channel.dart';
 import 'package:nyxx/src/models/channel/guild_channel.dart';
 import 'package:nyxx/src/models/channel/text_channel.dart';
+import 'package:nyxx/src/models/guild/member.dart';
 import 'package:nyxx/src/models/snowflake.dart';
 import 'package:nyxx/src/utils/flags.dart';
 
@@ -96,8 +97,7 @@ class ThreadMember extends PartialThreadMember {
   /// The ID of the user associated with this thread member.
   final Snowflake userId;
 
-  // TODO
-  // final Member? member;
+  final Member? member;
 
   /// {@macro thread_member}
   ThreadMember({
@@ -105,5 +105,6 @@ class ThreadMember extends PartialThreadMember {
     required super.flags,
     required this.threadId,
     required this.userId,
+    required this.member,
   });
 }

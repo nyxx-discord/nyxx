@@ -3,8 +3,9 @@ import 'dart:convert';
 import 'package:mocktail/mocktail.dart';
 import 'package:nock/nock.dart';
 import 'package:nyxx/nyxx.dart';
-import 'package:nyxx/src/cache/cache.dart';
 import 'package:test/test.dart';
+
+import 'package:nock/src/interceptor.dart';
 
 import 'mocks/client.dart';
 import 'test_endpoint.dart';
@@ -53,7 +54,7 @@ class EndpointTest<T, U, V> {
   }
 }
 
-Future<void> testReadOnlyManager<T extends SnowflakeEntity<T>, U extends ReadOnlyManager<T>>(
+Future<void> testReadOnlyManager<T extends ManagedSnowflakeEntity<T>, U extends ReadOnlyManager<T>>(
   String name,
   U Function(CacheConfig<T>, NyxxRest) create,
   Pattern baseUrlMatcher, {
@@ -64,6 +65,7 @@ Future<void> testReadOnlyManager<T extends SnowflakeEntity<T>, U extends ReadOnl
   required List<ParsingTest<U, dynamic, dynamic>>? additionalParsingTests,
   required List<EndpointTest<U, dynamic, dynamic>>? additionalEndpointTests,
   void Function()? extraRun,
+  Object? fetchObjectOverride,
 }) async {
   assert(
     additionalSampleMatchers?.length == additionalSampleObjects?.length,
@@ -71,8 +73,6 @@ Future<void> testReadOnlyManager<T extends SnowflakeEntity<T>, U extends ReadOnl
   );
 
   group(name, () {
-    tearDown(() => Cache.testClearAllCaches());
-
     test('parse', () {
       final client = MockNyxx();
       when(() => client.apiOptions).thenReturn(RestApiOptions(token: 'TEST_TOKEN'));
@@ -110,7 +110,7 @@ Future<void> testReadOnlyManager<T extends SnowflakeEntity<T>, U extends ReadOnl
     testEndpoint(
       name: 'fetch',
       baseUrlMatcher,
-      response: sampleObject,
+      response: fetchObjectOverride ?? sampleObject,
       (client) async {
         final manager = create(CacheConfig(), client);
 
@@ -125,7 +125,7 @@ Future<void> testReadOnlyManager<T extends SnowflakeEntity<T>, U extends ReadOnl
       when(() => client.options).thenReturn(RestClientOptions());
       when(() => client.httpHandler).thenReturn(HttpHandler(client));
 
-      nock('https://discord.com/api/v${client.apiOptions.apiVersion}').get(baseUrlMatcher).reply(200, jsonEncode(sampleObject));
+      nock('https://discord.com/api/v${client.apiOptions.apiVersion}').get(baseUrlMatcher).reply(200, jsonEncode(fetchObjectOverride ?? sampleObject));
 
       final manager = create(CacheConfig(), client);
       final entity = await manager.fetch(Snowflake.zero);
@@ -169,7 +169,7 @@ Future<void> testReadOnlyManager<T extends SnowflakeEntity<T>, U extends ReadOnl
   });
 }
 
-Future<void> testManager<T extends SnowflakeEntity<T>, U extends Manager<T>>(
+Future<void> testManager<T extends WritableSnowflakeEntity<T>, U extends Manager<T>>(
   String name,
   U Function(CacheConfig<T>, NyxxRest) create,
   Pattern baseUrlMatcher,
@@ -182,6 +182,8 @@ Future<void> testManager<T extends SnowflakeEntity<T>, U extends Manager<T>>(
   required List<EndpointTest<U, dynamic, dynamic>>? additionalEndpointTests,
   required CreateBuilder<T> createBuilder,
   required UpdateBuilder<T> updateBuilder,
+  String createMethod = 'POST',
+  Object? fetchObjectOverride,
 }) async {
   await testReadOnlyManager<T, U>(
     name,
@@ -193,10 +195,11 @@ Future<void> testManager<T extends SnowflakeEntity<T>, U extends Manager<T>>(
     additionalSampleMatchers: additionalSampleMatchers,
     additionalParsingTests: additionalParsingTests,
     additionalEndpointTests: additionalEndpointTests,
+    fetchObjectOverride: fetchObjectOverride,
     extraRun: () {
       testEndpoint(
         name: 'create',
-        method: 'POST',
+        method: createMethod,
         createUrlMatcher,
         response: sampleObject,
         (client) async {
@@ -208,17 +211,25 @@ Future<void> testManager<T extends SnowflakeEntity<T>, U extends Manager<T>>(
       );
 
       test('create caches entity', () async {
+        nock.init();
+
         final client = MockNyxx();
         when(() => client.apiOptions).thenReturn(RestApiOptions(token: 'TEST_TOKEN'));
         when(() => client.options).thenReturn(RestClientOptions());
         when(() => client.httpHandler).thenReturn(HttpHandler(client));
 
-        nock('https://discord.com/api/v${client.apiOptions.apiVersion}').post(createUrlMatcher, (_) => true).reply(200, jsonEncode(sampleObject));
+        Interceptor(RequestMatcher(
+          createMethod,
+          UriMatcher('https://discord.com/api/v${client.apiOptions.apiVersion}', createUrlMatcher),
+          BodyMatcher((_, __) => true),
+        )).reply(200, jsonEncode(sampleObject));
 
         final manager = create(CacheConfig(), client);
         final entity = await manager.create(createBuilder);
 
         expect(manager.cache.containsKey(entity.id), isTrue);
+
+        nock.cleanAll();
       });
 
       testEndpoint(
