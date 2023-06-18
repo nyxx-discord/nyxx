@@ -43,6 +43,7 @@ export 'src/builders/role.dart' show RoleBuilder, RoleUpdateBuilder;
 export 'src/builders/voice.dart' show CurrentUserVoiceStateUpdateBuilder, VoiceStateUpdateBuilder, GatewayVoiceStateBuilder;
 export 'src/builders/presence.dart' show PresenceBuilder, CurrentUserStatus;
 export 'src/builders/emoji/emoji.dart' show EmojiBuilder, EmojiUpdateBuilder;
+export 'src/builders/emoji/reaction.dart' show ReactionBuilder;
 
 export 'src/cache/cache.dart' show Cache, CacheConfig;
 

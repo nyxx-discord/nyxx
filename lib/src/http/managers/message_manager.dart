@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:http/http.dart' show MultipartFile;
+import 'package:nyxx/src/builders/emoji/reaction.dart';
 import 'package:nyxx/src/builders/message/message.dart';
 import 'package:nyxx/src/builders/sentinels.dart';
 import 'package:nyxx/src/http/managers/manager.dart';
@@ -387,11 +388,11 @@ class MessageManager extends Manager<Message> {
   }
 
   /// Adds a reaction to a message.
-  Future<void> addReaction(Snowflake id, String emoji) async {
+  Future<void> addReaction(Snowflake id, ReactionBuilder emoji) async {
     final route = HttpRoute()
       ..channels(id: channelId.toString())
       ..messages(id: id.toString())
-      ..reactions(emoji: _encodeForAPI(emoji), userId: '@me');
+      ..reactions(emoji: emoji.build(), userId: '@me');
 
     final request = BasicRequest(route, method: 'PUT');
 
@@ -399,11 +400,11 @@ class MessageManager extends Manager<Message> {
   }
 
   /// Deletes our own reaction from a message.
-  Future<void> deleteOwnReaction(Snowflake id, String emoji) async {
+  Future<void> deleteOwnReaction(Snowflake id, ReactionBuilder emoji) async {
     final route = HttpRoute()
       ..channels(id: channelId.toString())
       ..messages(id: id.toString())
-      ..reactions(emoji: _encodeForAPI(emoji), userId: '@me');
+      ..reactions(emoji: emoji.build(), userId: '@me');
 
     final request = BasicRequest(route, method: 'DELETE');
 
@@ -422,11 +423,11 @@ class MessageManager extends Manager<Message> {
   }
 
   /// Deletes all reactions for a given emoji on a message.
-  Future<void> deleteReactionForUser(Snowflake id, Snowflake userId, String emoji) async {
+  Future<void> deleteReactionForUser(Snowflake id, Snowflake userId, ReactionBuilder emoji) async {
     final route = HttpRoute()
       ..channels(id: channelId.toString())
       ..messages(id: id.toString())
-      ..reactions(emoji: _encodeForAPI(emoji), userId: userId.toString());
+      ..reactions(emoji: emoji.build(), userId: userId.toString());
 
     final request = BasicRequest(route, method: 'DELETE');
 
@@ -434,11 +435,11 @@ class MessageManager extends Manager<Message> {
   }
 
   /// Deletes all reations for a given emoji on a message.
-  Future<void> deleteReaction(Snowflake id, String emoji) async {
+  Future<void> deleteReaction(Snowflake id, ReactionBuilder emoji) async {
     final route = HttpRoute()
       ..channels(id: channelId.toString())
       ..messages(id: id.toString())
-      ..reactions(emoji: _encodeForAPI(emoji));
+      ..reactions(emoji: emoji.build());
 
     final request = BasicRequest(route, method: 'DELETE');
 
@@ -446,11 +447,11 @@ class MessageManager extends Manager<Message> {
   }
 
   /// Get a list of users that reacted with a given emoji on a message.
-  Future<List<User>> fetchReactions(Snowflake id, String emoji) async {
+  Future<List<User>> fetchReactions(Snowflake id, ReactionBuilder emoji) async {
     final route = HttpRoute()
       ..channels(id: channelId.toString())
       ..messages(id: id.toString())
-      ..reactions(emoji: _encodeForAPI(emoji));
+      ..reactions(emoji: emoji.build());
     final request = BasicRequest(route);
 
     final response = await client.httpHandler.executeSafe(request);
@@ -459,15 +460,4 @@ class MessageManager extends Manager<Message> {
   }
 
   // TODO once oauth2 is implemented: Group DM control endpoints
-}
-
-String _encodeForAPI(String emoji) {
-  final emojiRegex = RegExp(r'<a?:(?<name>\w{2,32}):(?<id>\d+)>');
-
-  if (emojiRegex.hasMatch(emoji)) {
-    final match = emojiRegex.firstMatch(emoji)!;
-    return '${match.namedGroup('name')}:${match.namedGroup('id')}';
-  } else {
-    return emoji;
-  }
 }
