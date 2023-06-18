@@ -216,8 +216,7 @@ class ShardRunner {
         if (data.apiOptions.compression == GatewayCompression.payload) 'compress': true,
         if (data.apiOptions.largeThreshold != null) 'large_threshold': data.apiOptions.largeThreshold,
         'shard': [data.id, data.totalShards],
-        // TODO
-        //'presence': ...,
+        if (data.apiOptions.initialPresence != null) 'presence': data.apiOptions.initialPresence!.build(),
         'intents': data.apiOptions.intents.value,
       },
     ));
