@@ -1,5 +1,7 @@
 import 'package:nyxx/src/builders/builder.dart';
+import 'package:nyxx/src/builders/channel/guild_channel.dart';
 import 'package:nyxx/src/builders/image.dart';
+import 'package:nyxx/src/builders/role.dart';
 import 'package:nyxx/src/builders/sentinels.dart';
 import 'package:nyxx/src/http/managers/guild_manager.dart';
 import 'package:nyxx/src/models/guild/guild.dart';
@@ -18,11 +20,9 @@ class GuildBuilder extends CreateBuilder<Guild> {
 
   final ExplicitContentFilterLevel? explicitContentFilterLevel;
 
-  // TODO
-  //final List<Role> roles;
+  final List<RoleBuilder>? roles;
 
-  // TODO
-  //final List<GuildChannel> channels;
+  final List<GuildChannelBuilder>? channels;
 
   final Snowflake? afkChannelId;
 
@@ -38,6 +38,8 @@ class GuildBuilder extends CreateBuilder<Guild> {
     this.verificationLevel,
     this.defaultMessageNotificationLevel,
     this.explicitContentFilterLevel,
+    this.roles,
+    this.channels,
     this.afkChannelId,
     this.afkTimeout,
     this.systemChannelId,
@@ -51,6 +53,8 @@ class GuildBuilder extends CreateBuilder<Guild> {
         if (verificationLevel != null) 'verification_level': verificationLevel!.value,
         if (defaultMessageNotificationLevel != null) 'default_message_notification_level': defaultMessageNotificationLevel!.value,
         if (explicitContentFilterLevel != null) 'explicit_content_filter_level': explicitContentFilterLevel!.value,
+        if (roles != null) 'roles': roles!.map((b) => b.build()).toList(),
+        if (channels != null) 'channels': channels!.map((b) => b.build()).toList(),
         if (afkChannelId != null) 'afk_channel_id': afkChannelId!.toString(),
         if (afkTimeout != null) 'afk_timeout': afkTimeout!.inSeconds,
         if (systemChannelId != null) 'system_channel_id': systemChannelId!.toString(),
