@@ -58,5 +58,20 @@ void main() {
         source: sampleInvite,
       ).runWithManager(manager);
     });
+
+    testEndpoint(
+      '/invites/0vCdhLbwjZZTWZLD',
+      name: 'fetch',
+      (client) => client.invites.fetch('0vCdhLbwjZZTWZLD'),
+      response: sampleInvite,
+    );
+
+    testEndpoint(
+      '/invites/0vCdhLbwjZZTWZLD',
+      name: 'delete',
+      method: 'DELETE',
+      (client) => client.invites.delete('0vCdhLbwjZZTWZLD'),
+      response: sampleInvite,
+    );
   });
 }

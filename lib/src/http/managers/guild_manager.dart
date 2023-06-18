@@ -24,6 +24,7 @@ import 'package:nyxx/src/models/guild/integration.dart';
 import 'package:nyxx/src/models/guild/onboarding.dart';
 import 'package:nyxx/src/models/guild/template.dart';
 import 'package:nyxx/src/models/guild/welcome_screen.dart';
+import 'package:nyxx/src/models/invite/invite.dart';
 import 'package:nyxx/src/models/locale.dart';
 import 'package:nyxx/src/models/permissions.dart';
 import 'package:nyxx/src/models/snowflake.dart';
@@ -550,8 +551,16 @@ class GuildManager extends Manager<Guild> {
     return parseMany(response.jsonBody as List, client.voice.parseVoiceRegion);
   }
 
-  // TODO
-  //Future<List<Invite>> listInvites(Snowflake id) async { ... }
+  /// List the invites in a guild.
+  Future<List<Invite>> listInvites(Snowflake id) async {
+    final route = HttpRoute()
+      ..guilds(id: id.toString())
+      ..invites();
+    final request = BasicRequest(route);
+
+    final response = await client.httpHandler.executeSafe(request);
+    return parseMany(response.jsonBody as List, client.invites.parse);
+  }
 
   /// List the integrations in a guild.
   Future<List<Integration>> listIntegrations(Snowflake id) async {

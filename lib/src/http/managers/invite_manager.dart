@@ -3,6 +3,7 @@ import 'package:nyxx/src/http/request.dart';
 import 'package:nyxx/src/http/route.dart';
 import 'package:nyxx/src/models/application.dart';
 import 'package:nyxx/src/models/channel/channel.dart';
+import 'package:nyxx/src/models/guild/guild.dart';
 import 'package:nyxx/src/models/invite/invite.dart';
 import 'package:nyxx/src/models/invite/invite_metadata.dart';
 import 'package:nyxx/src/models/snowflake.dart';
@@ -10,39 +11,34 @@ import 'package:nyxx/src/utils/parsing_helpers.dart';
 
 /// A manager for [Invite]s.
 class InviteManager {
+  /// The client this [InviteManager] is for.
   final NyxxRest client;
 
+  /// Create a new [InviteManager].
   InviteManager(this.client);
 
+  /// Parse an [Invite] from [raw].
   Invite parse(Map<String, Object?> raw) {
+    final guild = maybeParse(
+      raw['guild'],
+      (Map<String, Object?> raw) => PartialGuild(id: Snowflake.parse(raw['id'] as String), manager: client.guilds),
+    );
+
     return Invite(
       code: raw['code'] as String,
-      // TODO: is object
-      guild: raw['guild'],
+      guild: guild,
       channel: PartialChannel(id: Snowflake.parse((raw['channel'] as Map<String, Object?>)['id'] as String), manager: client.channels),
-      inviter: maybeParse(
-        raw['inviter'],
-        client.users.parse,
-      ),
-      targetType: maybeParse(
-        raw['target_type'],
-        TargetType.parse,
-      ),
-      targetUser: maybeParse(
-        raw['target_user'],
-        client.users.parse,
-      ),
+      inviter: maybeParse(raw['inviter'], client.users.parse),
+      targetType: maybeParse(raw['target_type'], TargetType.parse),
+      targetUser: maybeParse(raw['target_user'], client.users.parse),
       targetApplication: maybeParse(
         raw['target_application'],
-        (Map<String, Object?> raw) => PartialApplication(
-          id: Snowflake.parse(raw['id'] as String),
-        ),
+        (Map<String, Object?> raw) => PartialApplication(id: Snowflake.parse(raw['id'] as String), manager: client.applications),
       ),
       approximatePresenceCount: raw['approximate_presence_count'] as int?,
       approximateMemberCount: raw['approximate_member_count'] as int?,
       expiresAt: maybeParse(raw['expires_at'], DateTime.parse),
-      // TODO: is object
-      guildScheduledEvent: raw['guild_scheduled_event'],
+      guildScheduledEvent: maybeParse(raw['guild_scheduled_event'], client.guilds[guild?.id ?? Snowflake.zero].scheduledEvents.parse),
     );
   }
 
@@ -68,18 +64,20 @@ class InviteManager {
     );
   }
 
-  Future<Invite> fetch(String code, {bool? withCounts, bool? withExpiration, Snowflake? guildSchedueledEventId}) async {
+  /// Fetch an invite.
+  Future<Invite> fetch(String code, {bool? withCounts, bool? withExpiration, Snowflake? scheduledEventId}) async {
     final route = HttpRoute()..invites(id: code);
     final request = BasicRequest(route, queryParameters: {
       if (withCounts != null) 'with_counts': withCounts.toString(),
       if (withExpiration != null) 'with_expiration': withExpiration.toString(),
-      if (guildSchedueledEventId != null) 'guild_scheduled_event_id': guildSchedueledEventId.toString(),
+      if (scheduledEventId != null) 'guild_scheduled_event_id': scheduledEventId.toString(),
     });
 
     final response = await client.httpHandler.executeSafe(request);
     return parse(response.jsonBody as Map<String, Object?>);
   }
 
+  /// Delete an invite.
   Future<Invite> delete(String code) async {
     final route = HttpRoute()..invites(id: code);
     final request = BasicRequest(route, method: 'DELETE');
