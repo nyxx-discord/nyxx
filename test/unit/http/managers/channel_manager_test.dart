@@ -3,6 +3,7 @@ import 'package:test/test.dart';
 
 import '../../../mocks/client.dart';
 import '../../../test_manager.dart';
+import 'member_manager_test.dart';
 
 final sampleGuildText = {
   "id": "41771983423143937",
@@ -394,7 +395,7 @@ final sampleThreadMember = {
   'user_id': '1',
   'join_timestamp': '2023-04-03T10:49:41+00:00',
   'flags': 17,
-  'member': null, // TODO
+  'member': sampleMember,
 };
 
 void checkThreadMember(ThreadMember member) {
@@ -402,6 +403,7 @@ void checkThreadMember(ThreadMember member) {
   expect(member.userId, equals(Snowflake(1)));
   expect(member.flags.value, equals(17));
   expect(member.joinTimestamp, equals(DateTime.utc(2023, 04, 03, 10, 49, 41)));
+  checkMember(member.member!);
 }
 
 final sampleThreadList = {
