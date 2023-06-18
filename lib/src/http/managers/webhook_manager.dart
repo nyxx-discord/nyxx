@@ -287,6 +287,5 @@ class WebhookManager extends Manager<Webhook> {
     );
 
     await client.httpHandler.executeSafe(request);
-    // TODO: Can we delete the message from the cache?
   }
 }

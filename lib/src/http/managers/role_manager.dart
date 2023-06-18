@@ -114,7 +114,6 @@ class RoleManager extends Manager<Role> {
   }
 
   /// Update the positions of the roles in this guild.
-  // TODO: This may need to be converted to a builder in the future.
   Future<List<Role>> updatePositions(Map<Snowflake, int> positions, {String? auditLogReason}) async {
     final route = HttpRoute()
       ..guilds(id: guildId.toString())
