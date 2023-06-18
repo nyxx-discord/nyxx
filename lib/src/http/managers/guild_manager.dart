@@ -314,6 +314,13 @@ class GuildManager extends Manager<Guild> {
         'nsfw_level': NsfwLevel.unset.value,
         'premium_progress_bar_enabled': false,
         ...(raw['serialized_source_guild'] as Map<String, Object?>),
+        'roles': [
+          for (final role in ((raw['serialized_source_guild'] as Map<String, Object?>)['roles'] as List).cast<Map<String, Object?>>())
+            {
+              'position': 0,
+              ...role,
+            },
+        ],
       }),
       isDirty: raw['is_dirty'] as bool?,
     );

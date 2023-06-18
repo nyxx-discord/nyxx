@@ -476,9 +476,6 @@ final sampleGuildTemplate = {
         "color": 0,
         "hoist": false,
         "mentionable": false,
-
-        // TODO: Is this included in real templates?
-        "position": 1,
       }
     ],
     "channels": [
