@@ -13,7 +13,7 @@ import 'manager.dart';
 class EmojiManager extends Manager<Emoji> {
   final Snowflake guildId;
 
-  EmojiManager(super.config, super.client, {required this.guildId});
+  EmojiManager(super.config, super.client, {required this.guildId}) : super(identifier: '$guildId.emojis');
 
   @override
   PartialEmoji operator [](Snowflake id) => PartialEmoji(id: id, manager: this);
