@@ -31,6 +31,17 @@ class MemberAlreadyExistsException extends NyxxException {
   MemberAlreadyExistsException(this.guildId, this.memberId) : super('Member $memberId already exists in guild $guildId');
 }
 
+/// An exception thrown when a role is not found in a guild.
+class RoleNotFoundException extends NyxxException {
+  /// The ID of the guild.
+  final Snowflake guildId;
+
+  /// The ID of the role.
+  final Snowflake roleId;
+
+  RoleNotFoundException(this.guildId, this.roleId) : super('Role $roleId not found in guild $guildId');
+}
+
 /// An error thrown when a shard disconnects unexpectedly.
 class ShardDisconnectedError extends Error {
   /// The shard that was disconnected.

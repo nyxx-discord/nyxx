@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:nyxx/src/builders/role.dart';
+import 'package:nyxx/src/errors.dart';
 import 'package:nyxx/src/http/managers/manager.dart';
 import 'package:nyxx/src/http/request.dart';
 import 'package:nyxx/src/http/route.dart';
@@ -67,9 +68,9 @@ class RoleManager extends Manager<Role> {
     // and return the matching role.
     final roles = await list();
 
-    // TODO: Add an exception for when the role is not found
     return roles.firstWhere(
       (role) => role.id == id,
+      orElse: () => throw RoleNotFoundException(guildId, id),
     );
   }
 
