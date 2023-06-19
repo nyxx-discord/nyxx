@@ -22,10 +22,10 @@ class ScheduledEventManager extends Manager<ScheduledEvent> {
   @override
   ScheduledEvent parse(Map<String, Object?> raw) {
     return ScheduledEvent(
-      id: Snowflake.parse(raw['id'] as String),
+      id: Snowflake.parse(raw['id']!),
       manager: this,
-      guildId: Snowflake.parse(raw['guild_id'] as String),
-      channelId: Snowflake.parse(raw['channel_id'] as String),
+      guildId: Snowflake.parse(raw['guild_id']!),
+      channelId: Snowflake.parse(raw['channel_id']!),
       creatorId: maybeParse(raw['creator_id'], Snowflake.parse),
       name: raw['name'] as String,
       description: raw['description'] as String?,
@@ -50,7 +50,7 @@ class ScheduledEventManager extends Manager<ScheduledEvent> {
 
   ScheduledEventUser parseScheduledEventUser(Map<String, Object?> raw) {
     return ScheduledEventUser(
-      scheduledEventId: Snowflake.parse(raw['guild_scheduled_event_id'] as String),
+      scheduledEventId: Snowflake.parse(raw['guild_scheduled_event_id']!),
       user: client.users.parse(raw['user'] as Map<String, Object?>),
       member: maybeParse(raw['member'], client.guilds[guildId].members.parse),
     );

@@ -22,7 +22,7 @@ class MemberManager extends Manager<Member> {
   @override
   Member parse(Map<String, Object?> raw) {
     return Member(
-      id: Snowflake.parse((raw['user'] as Map<String, Object?>)['id'] as String),
+      id: Snowflake.parse((raw['user'] as Map<String, Object?>)['id']!),
       manager: this,
       user: maybeParse(raw['user'], client.users.parse),
       nick: raw['nick'] as String?,

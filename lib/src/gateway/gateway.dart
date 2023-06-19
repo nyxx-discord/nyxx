@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:logging/logging.dart';
 import 'package:nyxx/src/api_options.dart';
 import 'package:nyxx/src/builders/presence.dart';
 import 'package:nyxx/src/builders/voice.dart';
@@ -161,8 +162,14 @@ class Gateway extends GatewayManager with EventParser {
 
   /// Connect to the gateway using the provided [client] and [gatewayBot] configuration.
   static Future<Gateway> connect(NyxxGateway client, GatewayBot gatewayBot) async {
+    final logger = Logger('${client.options.loggerName}.Gateway');
+
     final totalShards = client.apiOptions.totalShards ?? gatewayBot.shards;
     final List<int> shardIds = client.apiOptions.shards ?? List.generate(totalShards, (i) => i);
+
+    logger
+      ..info('Connecting ${shardIds.length}/$totalShards shards')
+      ..fine('Shard IDs: $shardIds');
 
     assert(
       shardIds.every((element) => element < totalShards),
@@ -191,7 +198,7 @@ class Gateway extends GatewayManager with EventParser {
 
       return Future.delayed(
         identifyDelay * (index ~/ gatewayBot.sessionStartLimit.maxConcurrency),
-        () => Shard.connect(id, totalShards, client.apiOptions, gatewayBot.url),
+        () => Shard.connect(id, totalShards, client.apiOptions, gatewayBot.url, client),
       );
     });
 
@@ -287,14 +294,14 @@ class Gateway extends GatewayManager with EventParser {
       user: client.users.parse(raw['user'] as Map<String, Object?>),
       guilds: parseMany(
         raw['guilds'] as List<Object?>,
-        (Map<String, Object?> raw) => PartialGuild(id: Snowflake.parse(raw['id'] as String), manager: client.guilds),
+        (Map<String, Object?> raw) => PartialGuild(id: Snowflake.parse(raw['id']!), manager: client.guilds),
       ),
       sessionId: raw['session_id'] as String,
       gatewayResumeUrl: Uri.parse(raw['resume_gateway_url'] as String),
       shardId: (raw['shard'] as List<Object?>?)?[0] as int?,
       totalShards: (raw['shard'] as List<Object?>?)?[1] as int?,
       application: PartialApplication(
-        id: Snowflake.parse((raw['application'] as Map<String, Object?>)['id'] as String),
+        id: Snowflake.parse((raw['application'] as Map<String, Object?>)['id']!),
         manager: client.applications,
       ),
     );
@@ -309,7 +316,7 @@ class Gateway extends GatewayManager with EventParser {
   }
 
   AutoModerationRuleCreateEvent parseAutoModerationRuleCreate(Map<String, Object?> raw) {
-    final guildId = Snowflake.parse(raw['guild_id'] as String);
+    final guildId = Snowflake.parse(raw['guild_id']!);
 
     return AutoModerationRuleCreateEvent(
       rule: client.guilds[guildId].autoModerationRules.parse(raw),
@@ -317,7 +324,7 @@ class Gateway extends GatewayManager with EventParser {
   }
 
   AutoModerationRuleUpdateEvent parseAutoModerationRuleUpdate(Map<String, Object?> raw) {
-    final guildId = Snowflake.parse(raw['guild_id'] as String);
+    final guildId = Snowflake.parse(raw['guild_id']!);
     final rule = client.guilds[guildId].autoModerationRules.parse(raw);
 
     return AutoModerationRuleUpdateEvent(
@@ -327,7 +334,7 @@ class Gateway extends GatewayManager with EventParser {
   }
 
   AutoModerationRuleDeleteEvent parseAutoModerationRuleDelete(Map<String, Object?> raw) {
-    final guildId = Snowflake.parse(raw['guild_id'] as String);
+    final guildId = Snowflake.parse(raw['guild_id']!);
 
     return AutoModerationRuleDeleteEvent(
       rule: client.guilds[guildId].autoModerationRules.parse(raw),
@@ -335,14 +342,14 @@ class Gateway extends GatewayManager with EventParser {
   }
 
   AutoModerationActionExecutionEvent parseAutoModerationActionExecution(Map<String, Object?> raw) {
-    final guildId = Snowflake.parse(raw['guild_id'] as String);
+    final guildId = Snowflake.parse(raw['guild_id']!);
 
     return AutoModerationActionExecutionEvent(
       guildId: guildId,
       action: client.guilds[guildId].autoModerationRules.parseAutoModerationAction(raw['action'] as Map<String, Object?>),
-      ruleId: Snowflake.parse(raw['rule_id'] as String),
+      ruleId: Snowflake.parse(raw['rule_id']!),
       triggerType: TriggerType.parse(raw['rule_trigger_type'] as int),
-      userId: Snowflake.parse(raw['user_id'] as String),
+      userId: Snowflake.parse(raw['user_id']!),
       channelId: maybeParse(raw['channel_id'], Snowflake.parse),
       messageId: maybeParse(raw['message_id'], Snowflake.parse),
       alertSystemMessageId: maybeParse(raw['alert_system_message_id'], Snowflake.parse),
@@ -391,14 +398,14 @@ class Gateway extends GatewayManager with EventParser {
   ThreadDeleteEvent parseThreadDelete(Map<String, Object?> raw) {
     return ThreadDeleteEvent(
       thread: PartialChannel(
-        id: Snowflake.parse(raw['id'] as String),
+        id: Snowflake.parse(raw['id']!),
         manager: client.channels,
       ),
     );
   }
 
   ThreadListSyncEvent parseThreadListSync(Map<String, Object?> raw) {
-    final guildId = Snowflake.parse(raw['guild_id'] as String);
+    final guildId = Snowflake.parse(raw['guild_id']!);
 
     return ThreadListSyncEvent(
       guildId: guildId,
@@ -419,8 +426,8 @@ class Gateway extends GatewayManager with EventParser {
 
   ThreadMembersUpdateEvent parseThreadMembersUpdate(Map<String, Object?> raw) {
     return ThreadMembersUpdateEvent(
-      id: Snowflake.parse(raw['id'] as String),
-      guildId: Snowflake.parse(raw['guild_id'] as String),
+      id: Snowflake.parse(raw['id']!),
+      guildId: Snowflake.parse(raw['guild_id']!),
       memberCount: raw['member_count'] as int,
       addedMembers: maybeParseMany(raw['added_members'], client.channels.parseThreadMember),
       removedMemberIds: maybeParseMany(raw['removed_member_ids'], Snowflake.parse),
@@ -430,14 +437,14 @@ class Gateway extends GatewayManager with EventParser {
   ChannelPinsUpdateEvent parseChannelPinsUpdate(Map<String, Object?> raw) {
     return ChannelPinsUpdateEvent(
       guildId: maybeParse(raw['guild_id'], Snowflake.parse),
-      channelId: Snowflake.parse(raw['channel_id'] as String),
+      channelId: Snowflake.parse(raw['channel_id']!),
       lastPinTimestamp: maybeParse(raw['last_pin_timestamp'], DateTime.parse),
     );
   }
 
   UnavailableGuildCreateEvent parseGuildCreate(Map<String, Object?> raw) {
     if (raw['unavailable'] == true) {
-      return UnavailableGuildCreateEvent(guild: PartialGuild(id: Snowflake.parse(raw['id'] as String), manager: client.guilds));
+      return UnavailableGuildCreateEvent(guild: PartialGuild(id: Snowflake.parse(raw['id']!), manager: client.guilds));
     }
 
     final guild = client.guilds.parse(raw);
@@ -465,7 +472,7 @@ class Gateway extends GatewayManager with EventParser {
 
   GuildDeleteEvent parseGuildDelete(Map<String, Object?> raw) {
     return GuildDeleteEvent(
-      guild: PartialGuild(id: Snowflake.parse(raw['id'] as String), manager: client.guilds),
+      guild: PartialGuild(id: Snowflake.parse(raw['id']!), manager: client.guilds),
       isUnavailable: raw['unavailable'] as bool,
     );
   }
@@ -476,52 +483,52 @@ class Gateway extends GatewayManager with EventParser {
 
   GuildBanAddEvent parseGuildBanAdd(Map<String, Object?> raw) {
     return GuildBanAddEvent(
-      guildId: Snowflake.parse(raw['guild_id'] as String),
+      guildId: Snowflake.parse(raw['guild_id']!),
       user: client.users.parse(raw['user'] as Map<String, Object?>),
     );
   }
 
   GuildBanRemoveEvent parseGuildBanRemove(Map<String, Object?> raw) {
     return GuildBanRemoveEvent(
-      guildId: Snowflake.parse(raw['guild_id'] as String),
+      guildId: Snowflake.parse(raw['guild_id']!),
       user: client.users.parse(raw['user'] as Map<String, Object?>),
     );
   }
 
   GuildEmojisUpdateEvent parseGuildEmojisUpdate(Map<String, Object?> raw) {
     return GuildEmojisUpdateEvent(
-      guildId: Snowflake.parse(raw['guild_id'] as String),
+      guildId: Snowflake.parse(raw['guild_id']!),
     );
   }
 
   GuildStickersUpdateEvent parseGuildStickersUpdate(Map<String, Object?> raw) {
     return GuildStickersUpdateEvent(
-      guildId: Snowflake.parse(raw['guild_id'] as String),
+      guildId: Snowflake.parse(raw['guild_id']!),
     );
   }
 
   GuildIntegrationsUpdateEvent parseGuildIntegrationsUpdate(Map<String, Object?> raw) {
     return GuildIntegrationsUpdateEvent(
-      guildId: Snowflake.parse(raw['guild_id'] as String),
+      guildId: Snowflake.parse(raw['guild_id']!),
     );
   }
 
   GuildMemberAddEvent parseGuildMemberAdd(Map<String, Object?> raw) {
     return GuildMemberAddEvent(
-      guildId: Snowflake.parse(raw['guild_id'] as String),
+      guildId: Snowflake.parse(raw['guild_id']!),
       member: client.guilds[Snowflake.zero].members.parse(raw),
     );
   }
 
   GuildMemberRemoveEvent parseGuildMemberRemove(Map<String, Object?> raw) {
     return GuildMemberRemoveEvent(
-      guildId: Snowflake.parse(raw['guild_id'] as String),
+      guildId: Snowflake.parse(raw['guild_id']!),
       user: client.users.parse(raw['user'] as Map<String, Object?>),
     );
   }
 
   GuildMemberUpdateEvent parseGuildMemberUpdate(Map<String, Object?> raw) {
-    final guildId = Snowflake.parse(raw['guild_id'] as String);
+    final guildId = Snowflake.parse(raw['guild_id']!);
     // TODO: The member received from the update has mute and deaf as nullable fields, which this parser does not.
     final member = client.guilds[guildId].members.parse(raw);
 
@@ -533,7 +540,7 @@ class Gateway extends GatewayManager with EventParser {
   }
 
   GuildMembersChunkEvent parseGuildMembersChunk(Map<String, Object?> raw) {
-    final guildId = Snowflake.parse(raw['guild_id'] as String);
+    final guildId = Snowflake.parse(raw['guild_id']!);
 
     return GuildMembersChunkEvent(
       guildId: guildId,
@@ -546,7 +553,7 @@ class Gateway extends GatewayManager with EventParser {
   }
 
   GuildRoleCreateEvent parseGuildRoleCreate(Map<String, Object?> raw) {
-    final guildId = Snowflake.parse(raw['guild_id'] as String);
+    final guildId = Snowflake.parse(raw['guild_id']!);
 
     return GuildRoleCreateEvent(
       guildId: guildId,
@@ -555,7 +562,7 @@ class Gateway extends GatewayManager with EventParser {
   }
 
   GuildRoleUpdateEvent parseGuildRoleUpdate(Map<String, Object?> raw) {
-    final guildId = Snowflake.parse(raw['guild_id'] as String);
+    final guildId = Snowflake.parse(raw['guild_id']!);
     final role = client.guilds[guildId].roles.parse(raw['role'] as Map<String, Object?>);
 
     return GuildRoleUpdateEvent(
@@ -567,13 +574,13 @@ class Gateway extends GatewayManager with EventParser {
 
   GuildRoleDeleteEvent parseGuildRoleDelete(Map<String, Object?> raw) {
     return GuildRoleDeleteEvent(
-      roleId: Snowflake.parse(raw['role_id'] as String),
-      guildId: Snowflake.parse(raw['guild_id'] as String),
+      roleId: Snowflake.parse(raw['role_id']!),
+      guildId: Snowflake.parse(raw['guild_id']!),
     );
   }
 
   GuildScheduledEventCreateEvent parseGuildScheduledEventCreate(Map<String, Object?> raw) {
-    final guildId = Snowflake.parse(raw['guild_id'] as String);
+    final guildId = Snowflake.parse(raw['guild_id']!);
 
     return GuildScheduledEventCreateEvent(
       event: client.guilds[guildId].scheduledEvents.parse(raw),
@@ -581,7 +588,7 @@ class Gateway extends GatewayManager with EventParser {
   }
 
   GuildScheduledEventUpdateEvent parseGuildScheduledEventUpdate(Map<String, Object?> raw) {
-    final guildId = Snowflake.parse(raw['guild_id'] as String);
+    final guildId = Snowflake.parse(raw['guild_id']!);
     final event = client.guilds[guildId].scheduledEvents.parse(raw);
 
     return GuildScheduledEventUpdateEvent(
@@ -591,7 +598,7 @@ class Gateway extends GatewayManager with EventParser {
   }
 
   GuildScheduledEventDeleteEvent parseGuildScheduledEventDelete(Map<String, Object?> raw) {
-    final guildId = Snowflake.parse(raw['guild_id'] as String);
+    final guildId = Snowflake.parse(raw['guild_id']!);
 
     return GuildScheduledEventDeleteEvent(
       event: client.guilds[guildId].scheduledEvents.parse(raw),
@@ -600,38 +607,38 @@ class Gateway extends GatewayManager with EventParser {
 
   GuildScheduledEventUserAddEvent parseGuildScheduledEventUserAdd(Map<String, Object?> raw) {
     return GuildScheduledEventUserAddEvent(
-      scheduledEventId: Snowflake.parse(raw['guild_scheduled_event_id'] as String),
-      userId: Snowflake.parse(raw['user_id'] as String),
-      guildId: Snowflake.parse(raw['guild_id'] as String),
+      scheduledEventId: Snowflake.parse(raw['guild_scheduled_event_id']!),
+      userId: Snowflake.parse(raw['user_id']!),
+      guildId: Snowflake.parse(raw['guild_id']!),
     );
   }
 
   GuildScheduledEventUserRemoveEvent parseGuildScheduledEventUserRemove(Map<String, Object?> raw) {
     return GuildScheduledEventUserRemoveEvent(
-      scheduledEventId: Snowflake.parse(raw['guild_scheduled_event_id'] as String),
-      userId: Snowflake.parse(raw['user_id'] as String),
-      guildId: Snowflake.parse(raw['guild_id'] as String),
+      scheduledEventId: Snowflake.parse(raw['guild_scheduled_event_id']!),
+      userId: Snowflake.parse(raw['user_id']!),
+      guildId: Snowflake.parse(raw['guild_id']!),
     );
   }
 
   IntegrationCreateEvent parseIntegrationCreate(Map<String, Object?> raw) {
     return IntegrationCreateEvent(
-      guildId: Snowflake.parse(raw['guild_id'] as String),
+      guildId: Snowflake.parse(raw['guild_id']!),
       integration: client.guilds.parseIntegration(raw),
     );
   }
 
   IntegrationUpdateEvent parseIntegrationUpdate(Map<String, Object?> raw) {
     return IntegrationUpdateEvent(
-      guildId: Snowflake.parse(raw['guild_id'] as String),
+      guildId: Snowflake.parse(raw['guild_id']!),
       integration: client.guilds.parseIntegration(raw),
     );
   }
 
   IntegrationDeleteEvent parseIntegrationDelete(Map<String, Object?> raw) {
     return IntegrationDeleteEvent(
-      id: Snowflake.parse(raw['id'] as String),
-      guildId: Snowflake.parse(raw['guild_id'] as String),
+      id: Snowflake.parse(raw['id']!),
+      guildId: Snowflake.parse(raw['guild_id']!),
       applicationId: maybeParse(raw['application_id'], Snowflake.parse),
     );
   }
@@ -642,7 +649,7 @@ class Gateway extends GatewayManager with EventParser {
 
   InviteDeleteEvent parseInviteDelete(Map<String, Object?> raw) {
     return InviteDeleteEvent(
-      channelId: Snowflake.parse(raw['channel_id'] as String),
+      channelId: Snowflake.parse(raw['channel_id']!),
       guildId: maybeParse(raw['guild_id'], Snowflake.parse),
       code: raw['code'] as String,
     );
@@ -653,7 +660,7 @@ class Gateway extends GatewayManager with EventParser {
     final message = MessageManager(
       client.options.messageCacheConfig,
       client,
-      channelId: Snowflake.parse(raw['channel_id'] as String),
+      channelId: Snowflake.parse(raw['channel_id']!),
     ).parse(raw);
 
     return MessageCreateEvent(
@@ -675,7 +682,7 @@ class Gateway extends GatewayManager with EventParser {
     final manager = MessageManager(
       client.options.messageCacheConfig,
       client,
-      channelId: Snowflake.parse(raw['channel_id'] as String),
+      channelId: Snowflake.parse(raw['channel_id']!),
     );
     final message = manager.parse(raw);
 
@@ -696,8 +703,8 @@ class Gateway extends GatewayManager with EventParser {
 
   MessageDeleteEvent parseMessageDelete(Map<String, Object?> raw) {
     return MessageDeleteEvent(
-      id: Snowflake.parse(raw['id'] as String),
-      channelId: Snowflake.parse(raw['channel_id'] as String),
+      id: Snowflake.parse(raw['id']!),
+      channelId: Snowflake.parse(raw['channel_id']!),
       guildId: maybeParse(raw['guild_id'], Snowflake.parse),
     );
   }
@@ -705,7 +712,7 @@ class Gateway extends GatewayManager with EventParser {
   MessageBulkDeleteEvent parseMessageBulkDelete(Map<String, Object?> raw) {
     return MessageBulkDeleteEvent(
       ids: parseMany(raw['ids'] as List<Object?>, Snowflake.parse),
-      channelId: Snowflake.parse(raw['channel_id'] as String),
+      channelId: Snowflake.parse(raw['channel_id']!),
       guildId: maybeParse(raw['guild_id'], Snowflake.parse),
     );
   }
@@ -714,9 +721,9 @@ class Gateway extends GatewayManager with EventParser {
     final guildId = maybeParse(raw['guild_id'], Snowflake.parse);
 
     return MessageReactionAddEvent(
-      userId: Snowflake.parse(raw['user_id'] as String),
-      channelId: Snowflake.parse(raw['channel_id'] as String),
-      messageId: Snowflake.parse(raw['message_id'] as String),
+      userId: Snowflake.parse(raw['user_id']!),
+      channelId: Snowflake.parse(raw['channel_id']!),
+      messageId: Snowflake.parse(raw['message_id']!),
       guildId: guildId,
       member: maybeParse(raw['member'], client.guilds[guildId ?? Snowflake.zero].members.parse),
     );
@@ -724,25 +731,25 @@ class Gateway extends GatewayManager with EventParser {
 
   MessageReactionRemoveEvent parseMessageReactionRemove(Map<String, Object?> raw) {
     return MessageReactionRemoveEvent(
-      userId: Snowflake.parse(raw['user_id'] as String),
-      channelId: Snowflake.parse(raw['channel_id'] as String),
-      messageId: Snowflake.parse(raw['message_id'] as String),
+      userId: Snowflake.parse(raw['user_id']!),
+      channelId: Snowflake.parse(raw['channel_id']!),
+      messageId: Snowflake.parse(raw['message_id']!),
       guildId: maybeParse(raw['guild_id'], Snowflake.parse),
     );
   }
 
   MessageReactionRemoveAllEvent parseMessageReactionRemoveAll(Map<String, Object?> raw) {
     return MessageReactionRemoveAllEvent(
-      channelId: Snowflake.parse(raw['channel_id'] as String),
-      messageId: Snowflake.parse(raw['message_id'] as String),
+      channelId: Snowflake.parse(raw['channel_id']!),
+      messageId: Snowflake.parse(raw['message_id']!),
       guildId: maybeParse(raw['guild_id'], Snowflake.parse),
     );
   }
 
   MessageReactionRemoveEmojiEvent parseMessageReactionRemoveEmoji(Map<String, Object?> raw) {
     return MessageReactionRemoveEmojiEvent(
-      channelId: Snowflake.parse(raw['channel_id'] as String),
-      messageId: Snowflake.parse(raw['message_id'] as String),
+      channelId: Snowflake.parse(raw['channel_id']!),
+      messageId: Snowflake.parse(raw['message_id']!),
       guildId: maybeParse(raw['guild_id'], Snowflake.parse),
     );
   }
@@ -751,7 +758,7 @@ class Gateway extends GatewayManager with EventParser {
     return PresenceUpdateEvent(
       user: maybeParse(
         raw['user'],
-        (Map<String, Object?> raw) => PartialUser(id: Snowflake.parse(raw['id'] as String), manager: client.users),
+        (Map<String, Object?> raw) => PartialUser(id: Snowflake.parse(raw['id']!), manager: client.users),
       ),
       guildId: maybeParse(raw['guild_id'], Snowflake.parse),
       status: maybeParse(raw['status'], UserStatus.parse),
@@ -764,9 +771,9 @@ class Gateway extends GatewayManager with EventParser {
     var guildId = maybeParse(raw['guild_id'], Snowflake.parse);
 
     return TypingStartEvent(
-      channelId: Snowflake.parse(raw['channel_id'] as String),
+      channelId: Snowflake.parse(raw['channel_id']!),
       guildId: guildId,
-      userId: Snowflake.parse(raw['user_id'] as String),
+      userId: Snowflake.parse(raw['user_id']!),
       timestamp: DateTime.fromMillisecondsSinceEpoch((raw['timestamp'] as int) * Duration.millisecondsPerSecond),
       member: maybeParse(raw['member'], client.guilds[guildId ?? Snowflake.zero].members.parse),
     );
@@ -790,15 +797,15 @@ class Gateway extends GatewayManager with EventParser {
   VoiceServerUpdateEvent parseVoiceServerUpdate(Map<String, Object?> raw) {
     return VoiceServerUpdateEvent(
       token: raw['token'] as String,
-      guildId: Snowflake.parse(raw['guild_id'] as String),
+      guildId: Snowflake.parse(raw['guild_id']!),
       endpoint: raw['endpoint'] as String?,
     );
   }
 
   WebhooksUpdateEvent parseWebhooksUpdate(Map<String, Object?> raw) {
     return WebhooksUpdateEvent(
-      guildId: Snowflake.parse(raw['guild_id'] as String),
-      channelId: Snowflake.parse(raw['channel_id'] as String),
+      guildId: Snowflake.parse(raw['guild_id']!),
+      channelId: Snowflake.parse(raw['channel_id']!),
     );
   }
 

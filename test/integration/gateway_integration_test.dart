@@ -9,12 +9,65 @@ void main() {
   final testToken = Platform.environment['TEST_TOKEN'];
   final testGuild = Platform.environment['TEST_GUILD'];
 
-  // TODO: When we can pass arbitrary GatewayApiOptions, test all configurations of payload format and compression
-  test('Nyxx.connectGateway', skip: testToken != null ? false : 'No test token provided', () async {
-    late NyxxGateway client;
+  group('Nyxx.connectGateway', skip: testToken != null ? false : 'No test token provided', () {
+    Future<void> testClient(GatewayApiOptions options) async {
+      late NyxxGateway client;
 
-    await expectLater(() async => client = await Nyxx.connectGateway(testToken!, GatewayIntents.none), completes);
-    await expectLater(client.close(), completes);
+      await expectLater(() async => client = await Nyxx.connectGatewayWithOptions(options), completes);
+      expect(client.gateway.messages.where((event) => event is ErrorReceived), emitsDone);
+      await expectLater(client.onEvent, emits(isA<ReadyEvent>()));
+      await expectLater(client.close(), completes);
+    }
+
+    test(
+      'JSON (uncompressed)',
+      () => testClient(GatewayApiOptions(
+        token: testToken!,
+        intents: GatewayIntents.none,
+        compression: GatewayCompression.none,
+        payloadFormat: GatewayPayloadFormat.json,
+      )),
+    );
+
+    test(
+      'JSON (payload compression)',
+      () => testClient(GatewayApiOptions(
+        token: testToken!,
+        intents: GatewayIntents.none,
+        compression: GatewayCompression.payload,
+        payloadFormat: GatewayPayloadFormat.json,
+      )),
+    );
+
+    test(
+      'JSON (transport compression)',
+      () => testClient(GatewayApiOptions(
+        token: testToken!,
+        intents: GatewayIntents.none,
+        compression: GatewayCompression.transport,
+        payloadFormat: GatewayPayloadFormat.json,
+      )),
+    );
+
+    test(
+      'ETF (uncompressed)',
+      () => testClient(GatewayApiOptions(
+        token: testToken!,
+        intents: GatewayIntents.none,
+        compression: GatewayCompression.none,
+        payloadFormat: GatewayPayloadFormat.etf,
+      )),
+    );
+
+    test(
+      'ETF (transport compression)',
+      () => testClient(GatewayApiOptions(
+        token: testToken!,
+        intents: GatewayIntents.none,
+        compression: GatewayCompression.transport,
+        payloadFormat: GatewayPayloadFormat.etf,
+      )),
+    );
   });
 
   group('NyxxGateway', skip: testToken != null ? false : 'No test token provided', () {

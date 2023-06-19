@@ -15,7 +15,7 @@ import 'package:nyxx/src/models/webhook.dart';
 /// {@endtemplate}
 class GuildAnnouncementChannel extends TextChannel implements GuildChannel, HasThreadsChannel {
   /// The topic of this channel.
-  final String topic;
+  final String? topic;
 
   @override
   final Duration defaultAutoArchiveDuration;

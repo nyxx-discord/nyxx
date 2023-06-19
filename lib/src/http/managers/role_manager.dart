@@ -24,7 +24,7 @@ class RoleManager extends Manager<Role> {
   @override
   Role parse(Map<String, Object?> raw) {
     return Role(
-      id: Snowflake.parse(raw['id'] as String),
+      id: Snowflake.parse(raw['id']!),
       manager: this,
       name: raw['name'] as String,
       color: DiscordColor(raw['color'] as int),

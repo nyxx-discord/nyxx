@@ -29,7 +29,7 @@ class UserManager extends ReadOnlyManager<User> {
 
     return User(
       manager: this,
-      id: Snowflake.parse(raw['id'] as String),
+      id: Snowflake.parse(raw['id']!),
       username: raw['username'] as String,
       discriminator: raw['discriminator'] as String,
       avatarHash: raw['avatar'] as String?,
