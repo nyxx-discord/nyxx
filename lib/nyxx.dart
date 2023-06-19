@@ -58,6 +58,7 @@ export 'src/http/managers/webhook_manager.dart' show WebhookManager;
 export 'src/http/managers/guild_manager.dart' show GuildManager;
 export 'src/http/managers/application_manager.dart' show ApplicationManager;
 export 'src/http/managers/voice_manager.dart' show VoiceManager;
+export 'src/http/managers/invite_manager.dart' show InviteManager;
 export 'src/http/managers/member_manager.dart' show MemberManager;
 export 'src/http/managers/role_manager.dart' show RoleManager;
 export 'src/http/managers/gateway_manager.dart' show GatewayManager;
@@ -107,6 +108,8 @@ export 'src/models/message/message.dart' show Message, MessageFlags, PartialMess
 export 'src/models/message/reaction.dart' show Reaction;
 export 'src/models/message/reference.dart' show MessageReference;
 export 'src/models/message/role_subscription_data.dart' show RoleSubscriptionData;
+export 'src/models/invite/invite.dart' show Invite, TargetType;
+export 'src/models/invite/invite_metadata.dart' show InviteMetadata;
 export 'src/models/webhook.dart' show PartialWebhook, Webhook, WebhookType;
 export 'src/models/guild/ban.dart' show Ban;
 export 'src/models/guild/guild_preview.dart' show GuildPreview;
