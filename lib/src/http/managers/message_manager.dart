@@ -6,6 +6,7 @@ import 'package:nyxx/src/builders/sentinels.dart';
 import 'package:nyxx/src/http/managers/manager.dart';
 import 'package:nyxx/src/http/request.dart';
 import 'package:nyxx/src/http/route.dart';
+import 'package:nyxx/src/models/application.dart';
 import 'package:nyxx/src/models/channel/channel.dart';
 import 'package:nyxx/src/models/channel/thread.dart';
 import 'package:nyxx/src/models/discord_color.dart';
@@ -54,6 +55,10 @@ class MessageManager extends Manager<Message> {
       webhookId: maybeParse(raw['webhook_id'], Snowflake.parse),
       type: MessageType.parse(raw['type'] as int),
       activity: maybeParse(raw['activity'], parseMessageActivity),
+      application: maybeParse(
+        raw['application'],
+        (Map<String, Object?> raw) => PartialApplication(id: Snowflake.parse(raw['id'] as String), manager: client.applications),
+      ),
       applicationId: maybeParse(raw['application_id'], Snowflake.parse),
       reference: maybeParse(raw['message_reference'], parseMessageReference),
       flags: MessageFlags(raw['flags'] as int? ?? 0),
