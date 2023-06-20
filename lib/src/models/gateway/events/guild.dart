@@ -1,6 +1,8 @@
 import 'package:nyxx/src/models/channel/guild_channel.dart';
+import 'package:nyxx/src/models/channel/stage_instance.dart';
 import 'package:nyxx/src/models/channel/thread.dart';
 import 'package:nyxx/src/models/gateway/event.dart';
+import 'package:nyxx/src/models/gateway/events/presence.dart';
 import 'package:nyxx/src/models/guild/audit_log.dart';
 import 'package:nyxx/src/models/guild/guild.dart';
 import 'package:nyxx/src/models/guild/member.dart';
@@ -38,7 +40,6 @@ class GuildCreateEvent extends DispatchEvent implements UnavailableGuildCreateEv
   final int memberCount;
 
   /// A list of the [VoiceState]s of members currently in voice channels.
-  // TODO: These are partial
   final List<VoiceState> voiceStates;
 
   /// A list of members in the guild.
@@ -50,12 +51,13 @@ class GuildCreateEvent extends DispatchEvent implements UnavailableGuildCreateEv
   /// A list of threads in the guild.
   final List<Thread> threads;
 
-  // TODO
-  //final List<PartialPresence> presences;
+  /// A list of initial presence update events in the guild.
+  final List<PresenceUpdateEvent> presences;
 
-  // TODO
-  //final List<StageInstance> stageInstances;
+  /// A list of stage instances in the guild.
+  final List<StageInstance> stageInstances;
 
+  /// A list of scheduled events in the guild.
   final List<ScheduledEvent> scheduledEvents;
 
   /// {@macro guild_create_event}
@@ -68,6 +70,8 @@ class GuildCreateEvent extends DispatchEvent implements UnavailableGuildCreateEv
     required this.members,
     required this.channels,
     required this.threads,
+    required this.presences,
+    required this.stageInstances,
     required this.scheduledEvents,
   });
 }

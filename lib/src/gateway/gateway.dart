@@ -125,7 +125,8 @@ class Gateway extends GatewayManager with EventParser {
               event.guild.members.cache.addEntries(event.members.map((member) => MapEntry(member.id, member)));
               client.channels.cache.addEntries(event.channels.map((channel) => MapEntry(channel.id, channel)));
               client.channels.cache.addEntries(event.threads.map((thread) => MapEntry(thread.id, thread)));
-              // TODO: stageInstances, scheduledEvents
+              client.channels.stageInstanceCache.addEntries(event.stageInstances.map((instance) => MapEntry(instance.id, instance)));
+              event.guild.scheduledEvents.cache.addEntries(event.scheduledEvents.map((event) => MapEntry(event.id, event)));
             }(),
           GuildUpdateEvent(:final guild) => client.guilds.cache[guild.id] = guild,
           // TODO: Do we want to remove guilds from the cache when they are only unavailable?
@@ -459,15 +460,18 @@ class Gateway extends GatewayManager with EventParser {
     final guild = client.guilds.parse(raw);
 
     return GuildCreateEvent(
-        guild: guild,
-        joinedAt: DateTime.parse(raw['joined_at'] as String),
-        isLarge: raw['large'] as bool,
-        memberCount: raw['member_count'] as int,
-        voiceStates: parseMany(raw['voice_states'] as List<Object?>, client.voice.parseVoiceState),
-        members: parseMany(raw['members'] as List<Object?>, client.guilds[guild.id].members.parse),
-        channels: parseMany(raw['channels'] as List<Object?>, (Map<String, Object?> raw) => client.channels.parse(raw, guildId: guild.id) as GuildChannel),
-        threads: parseMany(raw['threads'] as List<Object?>, (Map<String, Object?> raw) => client.channels.parse(raw, guildId: guild.id) as Thread),
-        scheduledEvents: parseMany(raw['guild_scheduled_events'] as List<Object?>, client.guilds[guild.id].scheduledEvents.parse));
+      guild: guild,
+      joinedAt: DateTime.parse(raw['joined_at'] as String),
+      isLarge: raw['large'] as bool,
+      memberCount: raw['member_count'] as int,
+      voiceStates: parseMany(raw['voice_states'] as List<Object?>, client.voice.parseVoiceState),
+      members: parseMany(raw['members'] as List<Object?>, client.guilds[guild.id].members.parse),
+      channels: parseMany(raw['channels'] as List<Object?>, (Map<String, Object?> raw) => client.channels.parse(raw, guildId: guild.id) as GuildChannel),
+      threads: parseMany(raw['threads'] as List<Object?>, (Map<String, Object?> raw) => client.channels.parse(raw, guildId: guild.id) as Thread),
+      presences: parseMany(raw['presences'] as List<Object?>, parsePresenceUpdate),
+      stageInstances: parseMany(raw['stage_instances'] as List<Object?>, client.channels.parseStageInstance),
+      scheduledEvents: parseMany(raw['guild_scheduled_events'] as List<Object?>, client.guilds[guild.id].scheduledEvents.parse),
+    );
   }
 
   GuildUpdateEvent parseGuildUpdate(Map<String, Object?> raw) {
