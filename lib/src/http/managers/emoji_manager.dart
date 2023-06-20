@@ -28,19 +28,19 @@ class EmojiManager extends Manager<Emoji> {
         manager: this,
         id: Snowflake.zero,
       );
-    } else {
-      return GuildEmoji(
-        id: Snowflake.parse(raw['id'] as String),
-        manager: this,
-        user: maybeParse(raw['user'], client.users.parse),
-        isAnimated: raw['animated'] as bool?,
-        isAvailable: raw['available'] as bool?,
-        isManaged: raw['managed'] as bool?,
-        requiresColons: raw['require_colons'] as bool?,
-        name: raw['name'] as String?,
-        roleIds: maybeParseMany(raw['roles'], Snowflake.parse),
-      );
     }
+
+    return GuildEmoji(
+      id: Snowflake.parse(raw['id'] as String),
+      manager: this,
+      user: maybeParse(raw['user'], client.users.parse),
+      isAnimated: raw['animated'] as bool?,
+      isAvailable: raw['available'] as bool?,
+      isManaged: raw['managed'] as bool?,
+      requiresColons: raw['require_colons'] as bool?,
+      name: raw['name'] as String?,
+      roleIds: maybeParseMany(raw['roles'], Snowflake.parse),
+    );
   }
 
   void _checkIsConcrete([Snowflake? id]) {
