@@ -108,7 +108,7 @@ class Gateway extends GatewayManager with EventParser {
     // TODO: GuildEmojisUpdateEvent, GuildStickersUpdateEvent,
     // GuildScheduledEventUserAddEvent, GuildScheduledEventUserRemoveEvent,
     // InviteCreateEvent, InviteDeleteEvent, MessageReactionAddEvent, MessageReactionRemoveEvent, MessageReactionRemoveAllEvent,MessageReactionRemoveEmojiEvent,
-    // PresenceUpdateEvent, VoiceStateUpdateEvent,
+    // PresenceUpdateEvent,
     // ApplicationCommandPermissionsUpdateEvent
 
     // Handle all events which should update cache.
@@ -127,6 +127,7 @@ class Gateway extends GatewayManager with EventParser {
               client.channels.cache.addEntries(event.threads.map((thread) => MapEntry(thread.id, thread)));
               client.channels.stageInstanceCache.addEntries(event.stageInstances.map((instance) => MapEntry(instance.id, instance)));
               event.guild.scheduledEvents.cache.addEntries(event.scheduledEvents.map((event) => MapEntry(event.id, event)));
+              client.voice.cache.addEntries(event.voiceStates.map((state) => MapEntry(state.cacheKey, state)));
             }(),
           GuildUpdateEvent(:final guild) => client.guilds.cache[guild.id] = guild,
           // TODO: Do we want to remove guilds from the cache when they are only unavailable?
@@ -166,6 +167,7 @@ class Gateway extends GatewayManager with EventParser {
             client.guilds[guildId].integrations.cache[integration.id] = integration,
           IntegrationDeleteEvent(:final id, :final guildId) => client.guilds[guildId].integrations.cache.remove(id),
           GuildAuditLogCreateEvent(:final entry, :final guildId) => client.guilds[guildId].auditLogs.cache[entry.id] = entry,
+          VoiceStateUpdateEvent(:final state) => client.voice.cache[state.cacheKey] = state,
           _ => null,
         });
   }
@@ -820,8 +822,11 @@ class Gateway extends GatewayManager with EventParser {
   }
 
   VoiceStateUpdateEvent parseVoiceStateUpdate(Map<String, Object?> raw) {
+    final voiceState = client.voice.parseVoiceState(raw);
+
     return VoiceStateUpdateEvent(
-      state: client.voice.parseVoiceState(raw),
+      oldState: client.voice.cache[voiceState.cacheKey],
+      state: voiceState,
     );
   }
 

@@ -14,6 +14,7 @@ import 'package:nyxx/src/models/guild/scheduled_event.dart';
 import 'package:nyxx/src/models/message/message.dart';
 import 'package:nyxx/src/models/role.dart';
 import 'package:nyxx/src/models/user/user.dart';
+import 'package:nyxx/src/models/voice/voice_state.dart';
 import 'package:nyxx/src/models/webhook.dart';
 import 'package:nyxx/src/plugin/plugin.dart';
 
@@ -76,6 +77,9 @@ class RestClientOptions extends ClientOptions {
   /// The [CacheConfig] to use for the [Guild.auditLogs] manager.
   final CacheConfig<AuditLogEntry> auditLogEntryConfig;
 
+  /// The [CacheConfig] to use for the [NyxxRest.voice] manager.
+  final CacheConfig<VoiceState> voiceStateConfig;
+
   /// Create a new [RestClientOptions].
   const RestClientOptions({
     super.plugins,
@@ -94,6 +98,7 @@ class RestClientOptions extends ClientOptions {
     this.autoModerationRuleConfig = const CacheConfig(),
     this.integrationConfig = const CacheConfig(),
     this.auditLogEntryConfig = const CacheConfig(),
+    this.voiceStateConfig = const CacheConfig(),
   });
 }
 
@@ -115,5 +120,6 @@ class GatewayClientOptions extends RestClientOptions {
     super.autoModerationRuleConfig,
     super.integrationConfig,
     super.auditLogEntryConfig,
+    super.voiceStateConfig,
   });
 }
