@@ -2,7 +2,14 @@ export 'src/api_options.dart' show ApiOptions, RestApiOptions, GatewayApiOptions
 export 'src/client.dart' show Nyxx, NyxxRest, NyxxGateway;
 export 'src/client_options.dart' show ClientOptions, RestClientOptions, GatewayClientOptions;
 export 'src/errors.dart'
-    show NyxxException, InvalidEventException, MemberAlreadyExistsException, ShardDisconnectedError, RoleNotFoundException, AuditLogEntryNotFoundException;
+    show
+        NyxxException,
+        InvalidEventException,
+        MemberAlreadyExistsException,
+        ShardDisconnectedError,
+        RoleNotFoundException,
+        AuditLogEntryNotFoundException,
+        OutOfRemainingSessionsError;
 
 export 'src/builders/builder.dart' show Builder, CreateBuilder, UpdateBuilder;
 export 'src/builders/image.dart' show ImageBuilder;

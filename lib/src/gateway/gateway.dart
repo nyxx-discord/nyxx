@@ -182,7 +182,19 @@ class Gateway extends GatewayManager with EventParser {
 
     logger
       ..info('Connecting ${shardIds.length}/$totalShards shards')
-      ..fine('Shard IDs: $shardIds');
+      ..fine('Shard IDs: $shardIds')
+      ..fine(
+        'Gateway URL: ${gatewayBot.url}, Recommended Shards: ${gatewayBot.shards}, Max Concurrency: ${gatewayBot.sessionStartLimit.maxConcurrency},'
+        ' Remaining Session Starts: ${gatewayBot.sessionStartLimit.remaining}, Reset After: ${gatewayBot.sessionStartLimit.resetAfter}',
+      );
+
+    if (gatewayBot.sessionStartLimit.remaining < 50) {
+      logger.warning('${gatewayBot.sessionStartLimit.remaining} session starts remaining');
+    }
+
+    if (gatewayBot.sessionStartLimit.remaining < client.options.minimumSessionStarts) {
+      throw OutOfRemainingSessionsError(gatewayBot);
+    }
 
     assert(
       shardIds.every((element) => element < totalShards),

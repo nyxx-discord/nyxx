@@ -1,4 +1,5 @@
 import 'package:nyxx/src/gateway/shard.dart';
+import 'package:nyxx/src/models/gateway/gateway.dart';
 import 'package:nyxx/src/models/snowflake.dart';
 
 /// The base class for all exceptions thrown by nyxx.
@@ -77,4 +78,18 @@ class ShardDisconnectedError extends Error {
 
   @override
   String toString() => 'Shard ${shard.id} disconnected unexpectedly';
+}
+
+/// An error thrown when the number of remaining sessions becomes too low.
+///
+/// The threshold for this can be configured in [GatewayClientOptions.minimumSessionStarts].
+class OutOfRemainingSessionsError extends Error {
+  /// The [GatewayBot] containing the information that triggered the error.
+  final GatewayBot gatewayBot;
+
+  /// Create a new [OutOfRemainingSessionsError].
+  OutOfRemainingSessionsError(this.gatewayBot);
+
+  @override
+  String toString() => 'Out of remaining session starts (${gatewayBot.sessionStartLimit.remaining} left)';
 }

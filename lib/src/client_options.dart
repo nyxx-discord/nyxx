@@ -99,7 +99,15 @@ class RestClientOptions extends ClientOptions {
 
 /// Options for controlling the behavior of a [NyxxWebsocket] client.
 class GatewayClientOptions extends RestClientOptions {
+  /// The minimum number of session starts this client needs to connect.
+  ///
+  /// This is a safety feature to avoid API bans due to excessive connection starts.
+  ///
+  /// If the remaining number of session starts is below this number, an error will be thrown when connecting.
+  final int minimumSessionStarts;
+
   const GatewayClientOptions({
+    this.minimumSessionStarts = 10,
     super.plugins,
     super.loggerName,
     super.userCacheConfig,
