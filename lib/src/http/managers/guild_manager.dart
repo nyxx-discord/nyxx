@@ -16,6 +16,7 @@ import 'package:nyxx/src/http/route.dart';
 import 'package:nyxx/src/models/channel/channel.dart';
 import 'package:nyxx/src/models/channel/guild_channel.dart';
 import 'package:nyxx/src/models/channel/thread_list.dart';
+import 'package:nyxx/src/models/emoji.dart';
 import 'package:nyxx/src/models/guild/ban.dart';
 import 'package:nyxx/src/models/guild/guild.dart';
 import 'package:nyxx/src/models/guild/guild_preview.dart';
@@ -219,20 +220,22 @@ class GuildManager extends Manager<Guild> {
 
   /// Parse an [Onboarding] from [raw].
   Onboarding parseOnboarding(Map<String, Object?> raw) {
+    final guildId = Snowflake.parse(raw['guild_id']!);
+
     return Onboarding(
-      guildId: Snowflake.parse(raw['guild_id']!),
-      prompts: parseMany(raw['prompts'] as List, parseOnboardingPrompt),
+      guildId: guildId,
+      prompts: parseMany(raw['prompts'] as List, (Map<String, Object?> raw) => parseOnboardingPrompt(raw, guildId: guildId)),
       defaultChannelIds: parseMany(raw['default_channel_ids'] as List, Snowflake.parse),
       isEnabled: raw['enabled'] as bool,
     );
   }
 
   /// Parse an [OnboardingPrompt] from [raw].
-  OnboardingPrompt parseOnboardingPrompt(Map<String, Object?> raw) {
+  OnboardingPrompt parseOnboardingPrompt(Map<String, Object?> raw, {Snowflake? guildId}) {
     return OnboardingPrompt(
       id: Snowflake.parse(raw['id']!),
       type: OnboardingPromptType.parse(raw['type'] as int),
-      options: parseMany(raw['options'] as List, parseOnboardingPromptOption),
+      options: parseMany(raw['options'] as List, (Map<String, Object?> raw) => parseOnboardingPromptOption(raw, guildId: guildId)),
       title: raw['title'] as String,
       isSingleSelect: raw['single_select'] as bool,
       isRequired: raw['required'] as bool,
@@ -241,11 +244,20 @@ class GuildManager extends Manager<Guild> {
   }
 
   /// Parse an [OnboardingPromptOption] from [raw].
-  OnboardingPromptOption parseOnboardingPromptOption(Map<String, Object?> raw) {
+  OnboardingPromptOption parseOnboardingPromptOption(Map<String, Object?> raw, {Snowflake? guildId}) {
+    Emoji? emoji;
+    final rawEmoji = raw['emoji'] as Map<String, Object>;
+
+    // Discord passes an "empty" emoji object when unset instead of null
+    if (rawEmoji['id'] != null || rawEmoji['name'] != null) {
+      emoji = this[guildId ?? Snowflake.zero].emojis.parse(raw['emoji'] as Map<String, Object?>);
+    }
+
     return OnboardingPromptOption(
       id: Snowflake.parse(raw['id']!),
       channelIds: parseMany(raw['channel_ids'] as List, Snowflake.parse),
       roleIds: parseMany(raw['role_ids'] as List, Snowflake.parse),
+      emoji: emoji,
       title: raw['title'] as String,
       description: raw['description'] as String?,
     );
