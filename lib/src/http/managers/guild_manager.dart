@@ -170,13 +170,16 @@ class GuildManager extends Manager<Guild> {
 
   /// Parse a [GuildPreview] from [raw].
   GuildPreview parseGuildPreview(Map<String, Object?> raw) {
+    final id = Snowflake.parse(raw['id']!);
+
     return GuildPreview(
-      id: Snowflake.parse(raw['id']!),
+      id: id,
       manager: this,
       name: raw['name'] as String,
       iconHash: raw['icon'] as String?,
       splashHash: raw['splash'] as String?,
       discoverySplashHash: raw['discovery_splash'] as String?,
+      emojiList: parseMany(raw['emojis'] as List, this[id].emojis.parse),
       features: parseGuildFeatures(raw['features'] as List),
       description: raw['description'] as String?,
       approximateMemberCount: raw['approximate_member_count'] as int,
