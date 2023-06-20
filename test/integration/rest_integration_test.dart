@@ -34,6 +34,10 @@ void main() {
 
     test('users', () async {
       await expectLater(client.users.fetchCurrentUser(), completes);
+      await expectLater(client.users.listCurrentUserGuilds(), completes);
+      if (testGuild != null) {
+        await expectLater(client.users.fetchCurrentUserMember(Snowflake.parse(testGuild)), completes);
+      }
       await expectLater(client.users.fetchCurrentUserConnections(), completes);
     });
 

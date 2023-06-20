@@ -18,6 +18,7 @@ import 'package:nyxx/src/models/channel/thread_list.dart';
 import 'package:nyxx/src/models/guild/ban.dart';
 import 'package:nyxx/src/models/guild/guild_preview.dart';
 import 'package:nyxx/src/models/guild/guild_widget.dart';
+import 'package:nyxx/src/models/guild/member.dart';
 import 'package:nyxx/src/models/guild/onboarding.dart';
 import 'package:nyxx/src/models/guild/template.dart';
 import 'package:nyxx/src/models/guild/welcome_screen.dart';
@@ -153,6 +154,12 @@ class PartialGuild extends WritableSnowflakeEntity<Guild> {
 
   /// List the invites to this guild.
   Future<List<Invite>> listInvites() => manager.listInvites(id);
+
+  /// Fetch the current user's member in this guild.
+  Future<Member> fetchCurrentMember() => manager.client.users.fetchCurrentUserMember(id);
+
+  /// Leave this guild.
+  Future<void> leave() => manager.client.users.leaveGuild(id);
 }
 
 /// {@template guild}

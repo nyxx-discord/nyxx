@@ -256,4 +256,7 @@ extension RouteHelpers on HttpRoute {
   /// Adds the [`role-connection`](https://discord.com/developers/docs/resources/user#get-user-application-role-connection)
   /// part to this [HttpRoute].
   void roleConnection() => add(HttpRoutePart('role-connection'));
+
+  /// Adds the [`member`](https://discord.com/developers/docs/resources/user#get-current-user-guild-member) part to this [HttpRoute].
+  void member() => add(HttpRoutePart("member"));
 }

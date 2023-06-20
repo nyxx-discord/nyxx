@@ -6,8 +6,12 @@ import 'package:nyxx/src/builders/user.dart';
 import 'package:nyxx/src/http/managers/manager.dart';
 import 'package:nyxx/src/http/request.dart';
 import 'package:nyxx/src/http/route.dart';
+import 'package:nyxx/src/models/channel/types/dm.dart';
+import 'package:nyxx/src/models/channel/types/group_dm.dart';
 import 'package:nyxx/src/models/discord_color.dart';
+import 'package:nyxx/src/models/guild/guild.dart';
 import 'package:nyxx/src/models/guild/integration.dart';
+import 'package:nyxx/src/models/guild/member.dart';
 import 'package:nyxx/src/models/locale.dart';
 import 'package:nyxx/src/models/snowflake.dart';
 import 'package:nyxx/src/models/user/application_role_connection.dart';
@@ -118,6 +122,83 @@ class UserManager extends ReadOnlyManager<User> {
 
     cache[user.id] = user;
     return user;
+  }
+
+  /// List the guilds the current user is a member of.
+  Future<List<PartialGuild>> listCurrentUserGuilds({Snowflake? after, Snowflake? before, int? limit}) async {
+    final route = HttpRoute()
+      ..users(id: '@me')
+      ..guilds();
+    final request = BasicRequest(route, queryParameters: {
+      if (before != null) 'before': before.toString(),
+      if (after != null) 'after': after.toString(),
+      if (limit != null) 'limit': limit.toString(),
+    });
+
+    final response = await client.httpHandler.executeSafe(request);
+    return parseMany(
+      response.jsonBody as List,
+      (Map<String, Object?> raw) => PartialGuild(id: Snowflake.parse(raw['id'] as String), manager: client.guilds),
+    );
+  }
+
+  /// Fetch the current user's member for a guild.
+  Future<Member> fetchCurrentUserMember(Snowflake guildId) async {
+    final route = HttpRoute()
+      ..users(id: '@me')
+      ..guilds(id: guildId.toString())
+      ..member();
+    final request = BasicRequest(route);
+
+    final response = await client.httpHandler.executeSafe(request);
+    return client.guilds[guildId].members.parse(response.jsonBody as Map<String, Object?>);
+  }
+
+  /// Leave a guild.
+  Future<void> leaveGuild(Snowflake guildId) async {
+    final route = HttpRoute()
+      ..users(id: '@me')
+      ..guilds(id: guildId.toString());
+    final request = BasicRequest(route, method: 'DELETE');
+
+    await client.httpHandler.executeSafe(request);
+  }
+
+  /// Create a DM channel with another user.
+  Future<DmChannel> createDm(Snowflake recipientId) async {
+    final route = HttpRoute()
+      ..users(id: '@me')
+      ..channels();
+    final request = BasicRequest(route, method: 'POST', body: jsonEncode({'recipient_id': recipientId.toString()}));
+
+    final response = await client.httpHandler.executeSafe(request);
+    final channel = client.channels.parse(response.jsonBody as Map<String, Object?>) as DmChannel;
+
+    client.channels.cache[channel.id] = channel;
+    return channel;
+  }
+
+  /// Create a DM channel with multiple other users.
+  Future<GroupDmChannel> createGroupDm(List<String> tokens, Map<Snowflake, String> nicks) async {
+    final route = HttpRoute()
+      ..users(id: '@me')
+      ..channels();
+    final request = BasicRequest(
+      route,
+      method: 'POST',
+      body: jsonEncode({
+        'access_tokens': tokens,
+        'nicks': {
+          for (final entry in nicks.entries) entry.key.toString(): entry.value,
+        }
+      }),
+    );
+
+    final response = await client.httpHandler.executeSafe(request);
+    final channel = client.channels.parse(response.jsonBody as Map<String, Object?>) as GroupDmChannel;
+
+    client.channels.cache[channel.id] = channel;
+    return channel;
   }
 
   /// Fetch the current user's connections.
