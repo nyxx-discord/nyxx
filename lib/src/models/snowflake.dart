@@ -65,14 +65,24 @@ class Snowflake implements Comparable<Snowflake> {
   /// {@macro snowflake}
   const Snowflake(this.value);
 
-  /// Parse a string value to a snowflake.
+  /// Parse a string or integer value to a snowflake.
   ///
-  /// The [value] must be a valid integer as per [int.parse].
+  /// Both data types are accepted as Discord's Gateway can transmit Snowflakes as strings or integers when using the [GatewayPayloadFormat.etf] payload format.
+  ///
+  /// The [value] must be an [int] or a [String] parsable by [int.parse].
   ///
   /// {@macro snowflake}
   // TODO: This method will fail once snowflakes become larger than 2^63.
   // We need to parse the unsigned [value] into a signed [int].
-  factory Snowflake.parse(String value) => Snowflake(int.parse(value));
+  factory Snowflake.parse(Object /* String | int */ value) {
+    assert(value is String || value is int);
+
+    if (value is! int) {
+      value = int.parse(value.toString());
+    }
+
+    return Snowflake(value);
+  }
 
   /// Create a snowflake with a timestamp equal to the current time.
   ///

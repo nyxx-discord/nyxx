@@ -6,6 +6,7 @@ import 'package:test/test.dart';
 
 import '../../../test_manager.dart';
 import 'channel_manager_test.dart';
+import 'invite_manager_test.dart';
 import 'voice_manager_test.dart';
 
 final sampleGuild = {
@@ -840,6 +841,17 @@ void main() {
         execute: (manager) => manager.deleteGuildTemplate(Snowflake.zero, 'test'),
         check: checkGuildTemplate,
       ),
+      EndpointTest<GuildManager, List<Invite>, List<Object?>>(
+        name: 'listInvites',
+        source: [sampleInvite],
+        urlMatcher: '/guilds/0/invites',
+        execute: (manager) => manager.listInvites(Snowflake.zero),
+        check: (list) {
+          expect(list, hasLength(1));
+
+          checkInvite(list.single);
+        },
+      )
     ],
     createBuilder: GuildBuilder(name: 'Test guild'),
     updateBuilder: GuildUpdateBuilder(),

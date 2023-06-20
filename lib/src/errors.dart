@@ -49,4 +49,7 @@ class ShardDisconnectedError extends Error {
 
   /// Create a new [ShardDisconnectedError].
   ShardDisconnectedError(this.shard);
+
+  @override
+  String toString() => 'Shard ${shard.id} disconnected unexpectedly';
 }

@@ -1,10 +1,13 @@
 import 'dart:async';
 import 'dart:isolate';
 
+import 'package:logging/logging.dart';
 import 'package:nyxx/src/api_options.dart';
 import 'package:nyxx/src/builders/voice.dart';
+import 'package:nyxx/src/client.dart';
 import 'package:nyxx/src/gateway/message.dart';
 import 'package:nyxx/src/gateway/shard_runner.dart';
+import 'package:nyxx/src/models/gateway/event.dart';
 import 'package:nyxx/src/models/gateway/opcode.dart';
 import 'package:nyxx/src/models/snowflake.dart';
 
@@ -24,11 +27,55 @@ class Shard extends Stream<ShardMessage> implements StreamSink<GatewayMessage> {
   /// The port on which events are sent to the runner.
   final SendPort sendPort;
 
+  final NyxxGateway client;
+
+  Logger get logger => Logger('${client.options.loggerName}.Shards[$id]');
+
   final Completer<void> _doneCompleter = Completer();
 
   /// Create a new [Shard].
-  Shard(this.id, this.isolate, this.receiveStream, this.sendPort) {
-    drain().then((value) {
+  Shard(this.id, this.isolate, this.receiveStream, this.sendPort, this.client) {
+    final subscription = listen((message) {
+      if (message is ErrorReceived) {
+        logger.warning('Error: ${message.error}', message.error, message.stackTrace);
+      } else if (message is Disconnecting) {
+        logger.info('Disconnecting: ${message.reason}');
+      } else if (message is EventReceived) {
+        final event = message.event;
+
+        if (event is! RawDispatchEvent) {
+          logger.finer('Receive: ${event.opcode.name}');
+
+          switch (event) {
+            case InvalidSessionEvent():
+              logger.finest('Resumable: ${event.isResumable}');
+              if (event.isResumable) {
+                logger.info('Reconnecting: invalid session');
+              } else {
+                logger.severe('Unresumable invalid session, disconnecting');
+              }
+            case HelloEvent():
+              logger.finest('Heartbeat Interval: ${event.heartbeatInterval}');
+            case ReconnectEvent():
+              logger.info('Reconnecting: reconnect requested');
+            default:
+              break;
+          }
+        } else {
+          logger
+            ..fine('Receive event: ${event.name}')
+            ..finer('Seq: ${event.seq}, Data: ${event.payload}');
+
+          if (event.name == 'READY') {
+            logger.info('Connected to Gateway');
+          } else if (event.name == 'RESUMED') {
+            logger.info('Reconnected to Gateway');
+          }
+        }
+      }
+    });
+
+    subscription.asFuture().then((value) {
       // Can happen if the shard closes unexpectedly.
       // Prevents further calls to close() from attempting to add events.
       if (!_doneCompleter.isCompleted) {
@@ -38,7 +85,11 @@ class Shard extends Stream<ShardMessage> implements StreamSink<GatewayMessage> {
   }
 
   /// Connect to the Gateway using the provided parameters.
-  static Future<Shard> connect(int id, int totalShards, GatewayApiOptions apiOptions, Uri connectionUri) async {
+  static Future<Shard> connect(int id, int totalShards, GatewayApiOptions apiOptions, Uri connectionUri, NyxxGateway client) async {
+    final logger = Logger('${client.options.loggerName}.Shards[$id]');
+
+    logger.info('Connecting to Gateway');
+
     final receivePort = ReceivePort('Shard #$id message stream (main)');
     final receiveStream = receivePort.asBroadcastStream();
 
@@ -56,13 +107,15 @@ class Shard extends Stream<ShardMessage> implements StreamSink<GatewayMessage> {
     final exitPort = ReceivePort('Shard #$id exit listener');
     isolate.addOnExitListener(exitPort.sendPort);
     exitPort.listen((_) {
+      logger.info('Shard exited');
+
       receivePort.close();
       exitPort.close();
     });
 
     final sendPort = await receiveStream.first as SendPort;
 
-    return Shard(id, isolate, receiveStream, sendPort);
+    return Shard(id, isolate, receiveStream, sendPort, client);
   }
 
   /// Update the client's voice state on this shard.
@@ -74,7 +127,16 @@ class Shard extends Stream<ShardMessage> implements StreamSink<GatewayMessage> {
   }
 
   @override
-  void add(GatewayMessage event) => sendPort.send(event);
+  void add(GatewayMessage event) {
+    if (event is Send) {
+      logger
+        ..fine('Send: ${event.opcode.name}')
+        ..finer('Opcode: ${event.opcode.value}, Data: ${event.data}');
+    } else if (event is Dispose) {
+      logger.info('Disposing');
+    }
+    sendPort.send(event);
+  }
 
   @override
   StreamSubscription<ShardMessage> listen(
