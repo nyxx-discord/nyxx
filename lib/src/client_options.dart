@@ -4,6 +4,7 @@ import 'package:nyxx/src/client.dart';
 import 'package:nyxx/src/models/channel/channel.dart';
 import 'package:nyxx/src/models/emoji.dart';
 import 'package:nyxx/src/models/channel/stage_instance.dart';
+import 'package:nyxx/src/models/guild/audit_log.dart';
 import 'package:nyxx/src/models/guild/auto_moderation.dart';
 import 'package:nyxx/src/models/guild/ban.dart';
 import 'package:nyxx/src/models/guild/guild.dart';
@@ -68,6 +69,9 @@ class RestClientOptions extends ClientOptions {
   /// The [CacheConfig] to use for the [Guild.autoModerationRules] manager.
   final CacheConfig<AutoModerationRule> autoModerationRuleConfig;
 
+  /// The [CacheConfig] to use for the [Guild.auditLogs] manager.
+  final CacheConfig<AuditLogEntry> auditLogEntryConfig;
+
   /// Create a new [RestClientOptions].
   const RestClientOptions({
     super.plugins,
@@ -84,6 +88,7 @@ class RestClientOptions extends ClientOptions {
     this.stageInstanceCacheConfig = const CacheConfig(),
     this.scheduledEventCacheConfig = const CacheConfig(),
     this.autoModerationRuleConfig = const CacheConfig(),
+    this.auditLogEntryConfig = const CacheConfig(),
   });
 }
 
@@ -103,5 +108,6 @@ class GatewayClientOptions extends RestClientOptions {
     super.stageInstanceCacheConfig,
     super.scheduledEventCacheConfig,
     super.autoModerationRuleConfig,
+    super.auditLogEntryConfig,
   });
 }

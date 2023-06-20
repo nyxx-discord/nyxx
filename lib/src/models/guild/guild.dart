@@ -6,6 +6,7 @@ import 'package:nyxx/src/builders/guild/template.dart';
 import 'package:nyxx/src/builders/guild/welcome_screen.dart';
 import 'package:nyxx/src/builders/guild/widget.dart';
 import 'package:nyxx/src/builders/voice.dart';
+import 'package:nyxx/src/http/managers/audit_log_manager.dart';
 import 'package:nyxx/src/http/managers/auto_moderation_manager.dart';
 import 'package:nyxx/src/http/managers/emoji_manager.dart';
 import 'package:nyxx/src/http/managers/guild_manager.dart';
@@ -50,6 +51,9 @@ class PartialGuild extends WritableSnowflakeEntity<Guild> {
 
   /// An [EmojiManager] for the emojis of this guild.
   EmojiManager get emojis => EmojiManager(manager.client.options.emojiCacheConfig, manager.client, guildId: id);
+
+  /// An [AuditLogManager] for the audit log of this guild.
+  AuditLogManager get auditLogs => AuditLogManager(manager.client.options.auditLogEntryConfig, manager.client, guildId: id);
 
   /// Create a new [PartialGuild].
   PartialGuild({required super.id, required this.manager});
