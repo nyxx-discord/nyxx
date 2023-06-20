@@ -39,7 +39,20 @@ class RoleNotFoundException extends NyxxException {
   /// The ID of the role.
   final Snowflake roleId;
 
+  /// Create a new [RoleNotFoundException].
   RoleNotFoundException(this.guildId, this.roleId) : super('Role $roleId not found in guild $guildId');
+}
+
+/// An exception thrown when a integration is not found in a guild.
+class IntegrationNotFoundException extends NyxxException {
+  /// The ID of the guild.
+  final Snowflake guildId;
+
+  /// The ID of the integration.
+  final Snowflake integrationId;
+
+  /// Create a new [IntegrationNotFoundException].
+  IntegrationNotFoundException(this.guildId, this.integrationId) : super('Integration $integrationId not found in guild $guildId');
 }
 
 /// An error thrown when a shard disconnects unexpectedly.

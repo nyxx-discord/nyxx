@@ -6,10 +6,12 @@ import 'package:nyxx/src/http/managers/manager.dart';
 import 'package:nyxx/src/http/request.dart';
 import 'package:nyxx/src/http/route.dart';
 import 'package:nyxx/src/models/discord_color.dart';
+import 'package:nyxx/src/models/guild/integration.dart';
 import 'package:nyxx/src/models/locale.dart';
 import 'package:nyxx/src/models/snowflake.dart';
 import 'package:nyxx/src/models/user/connection.dart';
 import 'package:nyxx/src/models/user/user.dart';
+import 'package:nyxx/src/utils/parsing_helpers.dart';
 
 /// A manager for [User]s.
 class UserManager extends ReadOnlyManager<User> {
@@ -51,6 +53,14 @@ class UserManager extends ReadOnlyManager<User> {
       name: raw['name'] as String,
       type: ConnectionType.parse(raw['type'] as String),
       isRevoked: raw['revoked'] as bool?,
+      integrations: maybeParseMany(
+        raw['integrations'],
+        (Map<String, Object?> raw) => PartialIntegration(
+          id: Snowflake.parse(raw['id'] as String),
+          // TODO: Can we know what guild the integrations are from?
+          manager: client.guilds[Snowflake.zero].integrations,
+        ),
+      ),
       isVerified: raw['verified'] as bool,
       isFriendSyncEnabled: raw['friend_sync'] as bool,
       showActivity: raw['show_activity'] as bool,

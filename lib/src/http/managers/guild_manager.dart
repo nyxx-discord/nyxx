@@ -20,7 +20,6 @@ import 'package:nyxx/src/models/guild/ban.dart';
 import 'package:nyxx/src/models/guild/guild.dart';
 import 'package:nyxx/src/models/guild/guild_preview.dart';
 import 'package:nyxx/src/models/guild/guild_widget.dart';
-import 'package:nyxx/src/models/guild/integration.dart';
 import 'package:nyxx/src/models/guild/onboarding.dart';
 import 'package:nyxx/src/models/guild/template.dart';
 import 'package:nyxx/src/models/guild/welcome_screen.dart';
@@ -186,47 +185,6 @@ class GuildManager extends Manager<Guild> {
     return Ban(
       reason: raw['reason'] as String,
       user: client.users.parse(raw['user'] as Map<String, Object?>),
-    );
-  }
-
-  /// Parse an [Integration] from [raw].
-  Integration parseIntegration(Map<String, Object?> raw) {
-    return Integration(
-      id: Snowflake.parse(raw['id']!),
-      name: raw['name'] as String,
-      type: raw['type'] as String,
-      isEnabled: raw['enabled'] as bool,
-      isSyncing: raw['syncing'] as bool?,
-      roleId: maybeParse(raw['role_id'], Snowflake.parse),
-      enableEmoticons: raw['enable_emoticons'] as bool?,
-      expireBehavior: maybeParse(raw['expire_behavior'], IntegrationExpireBehavior.parse),
-      expireGracePeriod: maybeParse(raw['expire_grace_period'], (int value) => Duration(days: value)),
-      user: maybeParse(raw['user'], client.users.parse),
-      account: parseIntegrationAccount(raw['account'] as Map<String, Object?>),
-      syncedAt: maybeParse(raw['synced_at'], DateTime.parse),
-      subscriberCount: raw['subscriber_count'] as int?,
-      isRevoked: raw['revoked'] as bool?,
-      application: maybeParse(raw['application'], parseIntegrationApplication),
-      scopes: maybeParseMany(raw['scopes']),
-    );
-  }
-
-  /// Parse an [IntegrationAccount] from [raw].
-  IntegrationAccount parseIntegrationAccount(Map<String, Object?> raw) {
-    return IntegrationAccount(
-      id: Snowflake.parse(raw['id']!),
-      name: raw['name'] as String,
-    );
-  }
-
-  /// Parse an [IntegrationApplication] from [raw].
-  IntegrationApplication parseIntegrationApplication(Map<String, Object?> raw) {
-    return IntegrationApplication(
-      id: Snowflake.parse(raw['id']!),
-      name: raw['name'] as String,
-      iconHash: raw['icon'] as String?,
-      description: raw['description'] as String,
-      bot: maybeParse(raw['bot'], client.users.parse),
     );
   }
 
@@ -566,27 +524,6 @@ class GuildManager extends Manager<Guild> {
 
     final response = await client.httpHandler.executeSafe(request);
     return parseMany(response.jsonBody as List, client.invites.parse);
-  }
-
-  /// List the integrations in a guild.
-  Future<List<Integration>> listIntegrations(Snowflake id) async {
-    final route = HttpRoute()
-      ..guilds(id: id.toString())
-      ..integrations();
-    final request = BasicRequest(route);
-
-    final response = await client.httpHandler.executeSafe(request);
-    return parseMany(response.jsonBody as List, parseIntegration);
-  }
-
-  /// Delete an integration from a guild.
-  Future<void> deleteIntegration(Snowflake id, Snowflake integrationId, {String? auditLogReason}) async {
-    final route = HttpRoute()
-      ..guilds(id: id.toString())
-      ..integrations(id: integrationId.toString());
-    final request = BasicRequest(route, method: 'DELETE', auditLogReason: auditLogReason);
-
-    await client.httpHandler.executeSafe(request);
   }
 
   /// Fetch a guild's widget settings.

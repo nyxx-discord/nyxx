@@ -102,7 +102,7 @@ class Gateway extends GatewayManager with EventParser {
     // TODO: Add ThreadMember cache for ThreadListSyncEvent, ThreadMemberUpdateEvent, ThreadMembersUpdateEvent
     // TODO: GuildBanAddEvent and GuildBanRemoveEvent need to update cache
     // TODO: GuildEmojisUpdateEvent, GuildStickersUpdateEvent,
-    // GuildScheduledEventUserAddEvent, GuildScheduledEventUserRemoveEvent, IntegrationCreateEvent, IntegrationUpdateEvent, IntegrationDeleteEvent,
+    // GuildScheduledEventUserAddEvent, GuildScheduledEventUserRemoveEvent,
     // InviteCreateEvent, InviteDeleteEvent, MessageReactionAddEvent, MessageReactionRemoveEvent, MessageReactionRemoveAllEvent,MessageReactionRemoveEmojiEvent,
     // PresenceUpdateEvent, VoiceStateUpdateEvent,
     // ApplicationCommandPermissionsUpdateEvent
@@ -156,6 +156,10 @@ class Gateway extends GatewayManager with EventParser {
           AutoModerationRuleUpdateEvent(:final rule) =>
             client.guilds[rule.guildId].autoModerationRules.cache[rule.id] = rule,
           AutoModerationRuleDeleteEvent(:final rule) => client.guilds[rule.guildId].autoModerationRules.cache.remove(rule.id),
+          IntegrationCreateEvent(:final guildId, :final integration) ||
+          IntegrationUpdateEvent(:final guildId, :final integration) =>
+            client.guilds[guildId].integrations.cache[integration.id] = integration,
+          IntegrationDeleteEvent(:final id, :final guildId) => client.guilds[guildId].integrations.cache.remove(id),
           _ => null,
         });
   }
@@ -622,16 +626,22 @@ class Gateway extends GatewayManager with EventParser {
   }
 
   IntegrationCreateEvent parseIntegrationCreate(Map<String, Object?> raw) {
+    final guildId = Snowflake.parse(raw['guild_id']!);
+
     return IntegrationCreateEvent(
-      guildId: Snowflake.parse(raw['guild_id']!),
-      integration: client.guilds.parseIntegration(raw),
+      guildId: guildId,
+      integration: client.guilds[guildId].integrations.parse(raw),
     );
   }
 
   IntegrationUpdateEvent parseIntegrationUpdate(Map<String, Object?> raw) {
+    final guildId = Snowflake.parse(raw['guild_id']!);
+    final integration = client.guilds[guildId].integrations.parse(raw);
+
     return IntegrationUpdateEvent(
-      guildId: Snowflake.parse(raw['guild_id']!),
-      integration: client.guilds.parseIntegration(raw),
+      guildId: guildId,
+      oldIntegration: client.guilds[guildId].integrations.cache[integration.id],
+      integration: integration,
     );
   }
 

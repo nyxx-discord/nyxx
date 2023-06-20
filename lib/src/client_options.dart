@@ -6,6 +6,7 @@ import 'package:nyxx/src/models/channel/stage_instance.dart';
 import 'package:nyxx/src/models/guild/auto_moderation.dart';
 import 'package:nyxx/src/models/guild/ban.dart';
 import 'package:nyxx/src/models/guild/guild.dart';
+import 'package:nyxx/src/models/guild/integration.dart';
 import 'package:nyxx/src/models/guild/member.dart';
 import 'package:nyxx/src/models/guild/scheduled_event.dart';
 import 'package:nyxx/src/models/message/message.dart';
@@ -64,6 +65,9 @@ class RestClientOptions extends ClientOptions {
   /// The [CacheConfig] to use for the [Guild.autoModerationRules] manager.
   final CacheConfig<AutoModerationRule> autoModerationRuleConfig;
 
+  /// The [CacheConfig] to use for the [Guild.integrations] manager.
+  final CacheConfig<Integration> integrationConfig;
+
   /// Create a new [RestClientOptions].
   const RestClientOptions({
     super.plugins,
@@ -79,6 +83,7 @@ class RestClientOptions extends ClientOptions {
     this.stageInstanceCacheConfig = const CacheConfig(),
     this.scheduledEventCacheConfig = const CacheConfig(),
     this.autoModerationRuleConfig = const CacheConfig(),
+    this.integrationConfig = const CacheConfig(),
   });
 }
 
@@ -98,5 +103,6 @@ class GatewayClientOptions extends RestClientOptions {
     super.stageInstanceCacheConfig,
     super.scheduledEventCacheConfig,
     super.autoModerationRuleConfig,
+    super.integrationConfig,
   });
 }
