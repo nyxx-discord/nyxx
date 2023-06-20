@@ -55,6 +55,18 @@ class IntegrationNotFoundException extends NyxxException {
   IntegrationNotFoundException(this.guildId, this.integrationId) : super('Integration $integrationId not found in guild $guildId');
 }
 
+/// An exception thrown when an audit log entry is not found in a guild.
+class AuditLogEntryNotFoundException extends NyxxException {
+  /// The ID of the guild.
+  final Snowflake guildId;
+
+  /// The ID of the audit log entry.
+  final Snowflake auditLogEntryId;
+
+  /// Create a new [AuditLogEntryNotFoundException].
+  AuditLogEntryNotFoundException(this.guildId, this.auditLogEntryId) : super('Audit log entry $auditLogEntryId not found in guild $guildId');
+}
+
 /// An error thrown when a shard disconnects unexpectedly.
 class ShardDisconnectedError extends Error {
   /// The shard that was disconnected.
