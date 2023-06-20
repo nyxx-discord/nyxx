@@ -36,6 +36,7 @@ class UserManager extends ReadOnlyManager<User> {
       id: Snowflake.parse(raw['id']!),
       username: raw['username'] as String,
       discriminator: raw['discriminator'] as String,
+      globalName: raw['global_name'] as String?,
       avatarHash: raw['avatar'] as String?,
       isBot: raw['bot'] as bool? ?? false,
       isSystem: raw['system'] as bool? ?? false,

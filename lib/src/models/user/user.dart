@@ -31,6 +31,9 @@ class User extends PartialUser implements MessageAuthor {
   /// The user's discriminator.
   final String discriminator;
 
+  /// The user's global display name, if it is set.
+  final String? globalName;
+
   /// The user's avatar hash, if they have an avatar.
   @override
   final String? avatarHash;
@@ -68,6 +71,7 @@ class User extends PartialUser implements MessageAuthor {
     required super.id,
     required this.username,
     required this.discriminator,
+    required this.globalName,
     required this.avatarHash,
     required this.isBot,
     required this.isSystem,

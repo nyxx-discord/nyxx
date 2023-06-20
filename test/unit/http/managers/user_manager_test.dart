@@ -21,6 +21,7 @@ void checkSampleUser(User user) {
   expect(user.id, equals(Snowflake(80351110224678912)));
   expect(user.username, equals('Nelly'));
   expect(user.discriminator, equals('1337'));
+  expect(user.globalName, isNull);
   expect(user.avatarHash, equals('8342729096ea3675442027381ff50dfe'));
   expect(user.isBot, isFalse);
   expect(user.isSystem, isFalse);
