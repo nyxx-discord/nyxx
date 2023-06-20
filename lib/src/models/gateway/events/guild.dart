@@ -249,8 +249,8 @@ class GuildMembersChunkEvent extends DispatchEvent {
   /// A list of IDs that were not found in the guild.
   final List<Snowflake>? notFound;
 
-  // TODO
-  //final List<Presence> presences;
+  /// A list of presences for the [members] in this chunk.
+  final List<PresenceUpdateEvent>? presences;
 
   /// The custom nonce set when requesting the members.
   final String? nonce;
@@ -262,6 +262,7 @@ class GuildMembersChunkEvent extends DispatchEvent {
     required this.chunkIndex,
     required this.chunkCount,
     required this.notFound,
+    required this.presences,
     required this.nonce,
   });
 }

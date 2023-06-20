@@ -571,6 +571,7 @@ class Gateway extends GatewayManager with EventParser {
       chunkIndex: raw['chunk_index'] as int,
       chunkCount: raw['chunk_count'] as int,
       notFound: maybeParseMany(raw['not_found'], Snowflake.parse),
+      presences: maybeParseMany(raw['presences'], parsePresenceUpdate),
       nonce: raw['nonce'] as String?,
     );
   }
