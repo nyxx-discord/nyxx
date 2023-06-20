@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:http/http.dart';
+import 'package:nyxx/src/errors.dart';
 import 'package:nyxx/src/http/request.dart';
 
 /// A response to a [HttpRequest] from the Discord API.
@@ -87,8 +88,9 @@ class HttpResponseSuccess extends HttpResponse {
 }
 
 /// An [HttpResponse] which represents an error from the API.
-class HttpResponseError extends HttpResponse implements Exception {
+class HttpResponseError extends HttpResponse implements NyxxException {
   /// A message containing details about why the request failed.
+  @override
   String get message => errorData?.errorMessage ?? response.reasonPhrase ?? textBody!;
 
   /// The error code of this response.
