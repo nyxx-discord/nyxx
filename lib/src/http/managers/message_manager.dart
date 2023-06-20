@@ -443,7 +443,7 @@ class MessageManager extends Manager<Message> {
     await client.httpHandler.executeSafe(request);
   }
 
-  /// Deletes all reations for a given emoji on a message.
+  /// Deletes all reactions for a given emoji on a message.
   Future<void> deleteReaction(Snowflake id, ReactionBuilder emoji) async {
     final route = HttpRoute()
       ..channels(id: channelId.toString())
