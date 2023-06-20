@@ -9,7 +9,7 @@ import 'package:nyxx/src/utils/parsing_helpers.dart';
 class AuditLogManager extends ReadOnlyManager<AuditLogEntry> {
   final Snowflake guildId;
 
-  AuditLogManager(super.config, super.client, {required this.guildId});
+  AuditLogManager(super.config, super.client, {required this.guildId}) : super(identifier: '$guildId.auditLogEntries');
 
   @override
   PartialAuditLogEntry operator [](Snowflake id) => PartialAuditLogEntry(id: id, manager: this);
