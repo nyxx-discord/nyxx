@@ -4,8 +4,8 @@ import 'package:test/test.dart';
 import '../../../test_manager.dart';
 
 final sampleIntegration = {
-  // Changed to 1 so we find it when testing fetch()
-  "id": "1",
+  // Changed to 0 so we find it when testing fetch()
+  "id": "0",
   "name": "test",
   "type": "youtube",
   "enabled": true,
@@ -16,7 +16,7 @@ final sampleIntegration = {
 };
 
 void checkIntegration(Integration integration) {
-  expect(integration.id, equals(Snowflake(1)));
+  expect(integration.id, equals(Snowflake(0)));
   expect(integration.name, equals("test"));
   expect(integration.type, equals("youtube"));
   expect(integration.isEnabled, isTrue);
@@ -41,6 +41,8 @@ void main() {
     '/guilds/0/integrations',
     sampleObject: sampleIntegration,
     sampleMatches: checkIntegration,
+    // Fetch internally uses list(), so we return a list
+    fetchObjectOverride: [sampleIntegration],
     additionalParsingTests: [],
     additionalEndpointTests: [
       EndpointTest<IntegrationManager, List<Integration>, List<Object?>>(
