@@ -227,6 +227,7 @@ export 'src/models/gateway/events/webhook.dart' show WebhooksUpdateEvent;
 export 'src/models/presence.dart'
     show Activity, ActivityAssets, ActivityButton, ActivityFlags, ActivityParty, ActivitySecrets, ActivityTimestamps, ClientStatus, ActivityType, UserStatus;
 export 'src/models/emoji.dart' show Emoji, GuildEmoji, PartialEmoji, TextEmoji;
+export 'src/models/sticker/sticker.dart' show Sticker, StickerType, StickerFormatType;
 
 export 'src/utils/flags.dart' show Flag, Flags;
 export 'src/intents.dart' show GatewayIntents;
