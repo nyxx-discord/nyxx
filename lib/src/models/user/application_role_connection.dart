@@ -13,13 +13,13 @@ class ApplicationRoleConnection with ToStringHelper {
   /// The username of the user on the platform a bot has connected.
   final String? platformUsername;
 
-  // TODO
-  // final Map<String, Object?> metadata;
+  /// A mapping of [ApplicationRoleConnectionMetadata] keys to their stringified values.
+  final Map<String, String> metadata;
 
   /// {@macro application_role_connection}
   ApplicationRoleConnection({
     required this.platformName,
     required this.platformUsername,
-    // required this.metadata,
+    required this.metadata,
   });
 }

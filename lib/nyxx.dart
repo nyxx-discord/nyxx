@@ -42,6 +42,7 @@ export 'src/builders/guild/auto_moderation.dart' show AutoModerationRuleBuilder,
 export 'src/builders/role.dart' show RoleBuilder, RoleUpdateBuilder;
 export 'src/builders/voice.dart' show CurrentUserVoiceStateUpdateBuilder, VoiceStateUpdateBuilder, GatewayVoiceStateBuilder;
 export 'src/builders/presence.dart' show PresenceBuilder, CurrentUserStatus;
+export 'src/builders/application_role_connection.dart' show ApplicationRoleConnectionUpdateBuilder;
 
 export 'src/cache/cache.dart' show Cache, CacheConfig;
 

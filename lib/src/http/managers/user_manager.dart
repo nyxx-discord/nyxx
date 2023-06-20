@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:nyxx/src/builders/application_role_connection.dart';
 import 'package:nyxx/src/builders/user.dart';
 import 'package:nyxx/src/http/managers/manager.dart';
 import 'package:nyxx/src/http/request.dart';
@@ -9,6 +10,7 @@ import 'package:nyxx/src/models/discord_color.dart';
 import 'package:nyxx/src/models/guild/integration.dart';
 import 'package:nyxx/src/models/locale.dart';
 import 'package:nyxx/src/models/snowflake.dart';
+import 'package:nyxx/src/models/user/application_role_connection.dart';
 import 'package:nyxx/src/models/user/connection.dart';
 import 'package:nyxx/src/models/user/user.dart';
 import 'package:nyxx/src/utils/parsing_helpers.dart';
@@ -69,6 +71,14 @@ class UserManager extends ReadOnlyManager<User> {
     );
   }
 
+  ApplicationRoleConnection parseApplicationRoleConnection(Map<String, Object?> raw) {
+    return ApplicationRoleConnection(
+      platformName: raw['platform_name'] as String?,
+      platformUsername: raw['platform_username'] as String?,
+      metadata: (raw['metadata'] as Map).cast<String, String>(),
+    );
+  }
+
   @override
   Future<User> fetch(Snowflake id) async {
     final route = HttpRoute()..users(id: id.toString());
@@ -123,5 +133,29 @@ class UserManager extends ReadOnlyManager<User> {
       rawObjects.length,
       (index) => parseConnection(rawObjects[index] as Map<String, Object?>),
     );
+  }
+
+  /// Fetch the current user's application role connection for an application.
+  Future<ApplicationRoleConnection> fetchCurrentUserApplicationRoleConnection(Snowflake applicationId) async {
+    final route = HttpRoute()
+      ..users(id: '@me')
+      ..applications(id: applicationId.toString())
+      ..roleConnection();
+    final request = BasicRequest(route);
+
+    final response = await client.httpHandler.executeSafe(request);
+    return parseApplicationRoleConnection(response.jsonBody as Map<String, Object?>);
+  }
+
+  /// Update the current user's application role connection for an application.
+  Future<ApplicationRoleConnection> updateCurrentUserApplicationRoleConnection(Snowflake applicationId, ApplicationRoleConnectionUpdateBuilder builder) async {
+    final route = HttpRoute()
+      ..users(id: '@me')
+      ..applications(id: applicationId.toString())
+      ..roleConnection();
+    final request = BasicRequest(route, method: 'PUT', body: jsonEncode(builder.build()));
+
+    final response = await client.httpHandler.executeSafe(request);
+    return parseApplicationRoleConnection(response.jsonBody as Map<String, Object?>);
   }
 }
