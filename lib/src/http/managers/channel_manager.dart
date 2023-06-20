@@ -4,6 +4,7 @@ import 'package:http/http.dart' show MultipartFile;
 import 'package:nyxx/src/builders/builder.dart';
 import 'package:nyxx/src/builders/channel/stage_instance.dart';
 import 'package:nyxx/src/builders/channel/thread.dart';
+import 'package:nyxx/src/builders/invite.dart';
 import 'package:nyxx/src/builders/permission_overwrite.dart';
 import 'package:nyxx/src/cache/cache.dart';
 import 'package:nyxx/src/http/managers/manager.dart';
@@ -28,6 +29,8 @@ import 'package:nyxx/src/models/channel/types/guild_voice.dart';
 import 'package:nyxx/src/models/channel/types/private_thread.dart';
 import 'package:nyxx/src/models/channel/types/public_thread.dart';
 import 'package:nyxx/src/models/channel/voice_channel.dart';
+import 'package:nyxx/src/models/invite/invite.dart';
+import 'package:nyxx/src/models/invite/invite_metadata.dart';
 import 'package:nyxx/src/models/permission_overwrite.dart';
 import 'package:nyxx/src/models/permissions.dart';
 import 'package:nyxx/src/models/snowflake.dart';
@@ -464,7 +467,27 @@ class ChannelManager extends ReadOnlyManager<Channel> {
     await client.httpHandler.executeSafe(request);
   }
 
-  // TODO Implement invite endpoints
+  /// List the invites in a guild channel.
+  Future<List<InviteWithMetadata>> listInvites(Snowflake id) async {
+    final route = HttpRoute()
+      ..channels(id: id.toString())
+      ..invites();
+    final request = BasicRequest(route);
+
+    final response = await client.httpHandler.executeSafe(request);
+    return parseMany(response.jsonBody as List<Object?>, client.invites.parseWithMetadata);
+  }
+
+  /// Create an invite in a guild channel.
+  Future<Invite> createInvite(Snowflake id, InviteBuilder builder, {String? auditLogReason}) async {
+    final route = HttpRoute()
+      ..channels(id: id.toString())
+      ..invites();
+    final request = BasicRequest(route, method: 'POST', auditLogReason: auditLogReason, body: jsonEncode(builder.build()));
+
+    final response = await client.httpHandler.executeSafe(request);
+    return client.invites.parse(response.jsonBody as Map<String, Object?>);
+  }
 
   /// Add a channel to another channel's followers.
   Future<FollowedChannel> followChannel(Snowflake id, Snowflake toFollow) async {

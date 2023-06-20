@@ -46,6 +46,7 @@ export 'src/builders/presence.dart' show PresenceBuilder, CurrentUserStatus;
 export 'src/builders/application_role_connection.dart' show ApplicationRoleConnectionUpdateBuilder;
 export 'src/builders/emoji/emoji.dart' show EmojiBuilder, EmojiUpdateBuilder;
 export 'src/builders/emoji/reaction.dart' show ReactionBuilder;
+export 'src/builders/invite.dart' show InviteBuilder;
 
 export 'src/cache/cache.dart' show Cache, CacheConfig;
 

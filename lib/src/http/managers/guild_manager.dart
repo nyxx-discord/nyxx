@@ -249,7 +249,7 @@ class GuildManager extends Manager<Guild> {
   /// Parse an [OnboardingPromptOption] from [raw].
   OnboardingPromptOption parseOnboardingPromptOption(Map<String, Object?> raw, {Snowflake? guildId}) {
     Emoji? emoji;
-    final rawEmoji = raw['emoji'] as Map<String, Object>;
+    final rawEmoji = raw['emoji'] as Map<String, Object?>;
 
     // Discord passes an "empty" emoji object when unset instead of null
     if (rawEmoji['id'] != null || rawEmoji['name'] != null) {

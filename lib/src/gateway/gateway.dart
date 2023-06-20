@@ -680,7 +680,7 @@ class Gateway extends GatewayManager with EventParser {
 
   InviteCreateEvent parseInviteCreate(Map<String, Object?> raw) {
     return InviteCreateEvent(
-      invite: client.invites.parseMetadata({
+      invite: client.invites.parseWithMetadata({
         'channel': {'id': raw['channel_id']},
         'guild': {'id': raw['guild_id']},
         ...raw,

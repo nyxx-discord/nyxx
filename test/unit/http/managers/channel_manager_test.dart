@@ -3,6 +3,7 @@ import 'package:test/test.dart';
 
 import '../../../mocks/client.dart';
 import '../../../test_manager.dart';
+import 'invite_manager_test.dart';
 import 'member_manager_test.dart';
 
 final sampleGuildText = {
@@ -545,6 +546,25 @@ void main() {
         urlMatcher: '/channels/0/permissions/1',
         execute: (manager) => manager.deletePermissionOverwrite(Snowflake.zero, Snowflake(1)),
         check: (_) {},
+      ),
+      EndpointTest<ChannelManager, List<InviteWithMetadata>, List<Object?>>(
+        name: 'listInvites',
+        source: [sampleInviteWithMetadata],
+        urlMatcher: '/channels/0/invites',
+        execute: (manager) => manager.listInvites(Snowflake.zero),
+        check: (list) {
+          expect(list, hasLength(1));
+
+          checkInviteWithMetadata(list.single);
+        },
+      ),
+      EndpointTest<ChannelManager, Invite, Map<String, Object?>>(
+        name: 'createInvite',
+        method: 'POST',
+        source: sampleInvite,
+        urlMatcher: '/channels/0/invites',
+        execute: (manager) => manager.createInvite(Snowflake.zero, InviteBuilder()),
+        check: checkInvite,
       ),
       EndpointTest<ChannelManager, FollowedChannel, Map<String, Object?>>(
         name: 'followChannel',
