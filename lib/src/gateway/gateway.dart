@@ -106,7 +106,7 @@ class Gateway extends GatewayManager with EventParser {
 
     // TODO: Add ThreadMember cache for ThreadListSyncEvent, ThreadMemberUpdateEvent, ThreadMembersUpdateEvent
     // TODO: GuildBanAddEvent and GuildBanRemoveEvent need to update cache
-    // TODO: GuildEmojisUpdateEvent, GuildStickersUpdateEvent,
+    // TODO: GuildStickersUpdateEvent,
     // GuildScheduledEventUserAddEvent, GuildScheduledEventUserRemoveEvent,
     // InviteCreateEvent, InviteDeleteEvent, MessageReactionAddEvent, MessageReactionRemoveEvent, MessageReactionRemoveAllEvent,MessageReactionRemoveEmojiEvent,
     // PresenceUpdateEvent,
@@ -169,6 +169,9 @@ class Gateway extends GatewayManager with EventParser {
           IntegrationDeleteEvent(:final id, :final guildId) => client.guilds[guildId].integrations.cache.remove(id),
           GuildAuditLogCreateEvent(:final entry, :final guildId) => client.guilds[guildId].auditLogs.cache[entry.id] = entry,
           VoiceStateUpdateEvent(:final state) => client.voice.cache[state.cacheKey] = state,
+          GuildEmojisUpdateEvent(:final guildId, :final emojis) => client.guilds[guildId].emojis.cache
+            ..clear()
+            ..addEntries(emojis.map((emoji) => MapEntry(emoji.id, emoji))),
           _ => null,
         });
   }
@@ -517,8 +520,11 @@ class Gateway extends GatewayManager with EventParser {
   }
 
   GuildEmojisUpdateEvent parseGuildEmojisUpdate(Map<String, Object?> raw) {
+    final guildId = Snowflake.parse(raw['guild_id']!);
+
     return GuildEmojisUpdateEvent(
-      guildId: Snowflake.parse(raw['guild_id']!),
+      guildId: guildId,
+      emojis: parseMany(raw['emojis'] as List<Object?>, client.guilds[guildId].emojis.parse),
     );
   }
 

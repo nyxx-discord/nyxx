@@ -1,6 +1,7 @@
 import 'package:nyxx/src/models/channel/guild_channel.dart';
 import 'package:nyxx/src/models/channel/stage_instance.dart';
 import 'package:nyxx/src/models/channel/thread.dart';
+import 'package:nyxx/src/models/emoji.dart';
 import 'package:nyxx/src/models/gateway/event.dart';
 import 'package:nyxx/src/models/gateway/events/presence.dart';
 import 'package:nyxx/src/models/guild/audit_log.dart';
@@ -153,11 +154,11 @@ class GuildEmojisUpdateEvent extends DispatchEvent {
   /// The ID of the guild.
   final Snowflake guildId;
 
-  // TODO
-  //final List<Emoji> emojis;
+  /// The updated emojis.
+  final List<Emoji> emojis;
 
   /// {@macro guild_emojis_update_event}
-  GuildEmojisUpdateEvent({required this.guildId});
+  GuildEmojisUpdateEvent({required this.guildId, required this.emojis});
 }
 
 /// {@template guild_stickers_update_event}
