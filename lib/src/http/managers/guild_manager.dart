@@ -47,8 +47,10 @@ class GuildManager extends Manager<Guild> {
 
   @override
   Guild parse(Map<String, Object?> raw) {
+    final id = Snowflake.parse(raw['id'] as String);
+
     return Guild(
-      id: Snowflake.parse(raw['id']!),
+      id: id,
       manager: this,
       name: raw['name'] as String,
       iconHash: (raw['icon'] ?? raw['icon_hash']) as String?,
@@ -64,7 +66,7 @@ class GuildManager extends Manager<Guild> {
       verificationLevel: VerificationLevel.parse(raw['verification_level'] as int),
       defaultMessageNotificationLevel: MessageNotificationLevel.parse(raw['default_message_notifications'] as int),
       explicitContentFilterLevel: ExplicitContentFilterLevel.parse(raw['explicit_content_filter'] as int),
-      roleList: parseMany(raw['roles'] as List, this[Snowflake.zero].roles.parse),
+      roleList: parseMany(raw['roles'] as List, this[id].roles.parse),
       features: parseGuildFeatures(raw['features'] as List),
       mfaLevel: MfaLevel.parse(raw['mfa_level'] as int),
       applicationId: maybeParse(raw['application_id'], Snowflake.parse),
@@ -87,6 +89,7 @@ class GuildManager extends Manager<Guild> {
       welcomeScreen: maybeParse(raw['welcome_screen'], parseWelcomeScreen),
       nsfwLevel: NsfwLevel.parse(raw['nsfw_level'] as int),
       hasPremiumProgressBarEnabled: raw['premium_progress_bar_enabled'] as bool,
+      emojiList: parseMany(raw['emojis'] as List, this[id].emojis.parse),
     );
   }
 
@@ -271,6 +274,7 @@ class GuildManager extends Manager<Guild> {
         'premium_tier': PremiumTier.none.value,
         'nsfw_level': NsfwLevel.unset.value,
         'premium_progress_bar_enabled': false,
+        'emojis': [],
         ...(raw['serialized_source_guild'] as Map<String, Object?>),
         'roles': [
           for (final role in ((raw['serialized_source_guild'] as Map<String, Object?>)['roles'] as List).cast<Map<String, Object?>>())

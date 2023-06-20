@@ -114,7 +114,7 @@ Future<void> testReadOnlyManager<T extends ManagedSnowflakeEntity<T>, U extends 
       (client) async {
         final manager = create(CacheConfig(), client);
 
-        final entity = await manager.fetch(Snowflake.zero);
+        final entity = await manager.fetch(Snowflake(1));
         sampleMatches(entity);
       },
     );
@@ -128,7 +128,7 @@ Future<void> testReadOnlyManager<T extends ManagedSnowflakeEntity<T>, U extends 
       nock('https://discord.com/api/v${client.apiOptions.apiVersion}').get(baseUrlMatcher).reply(200, jsonEncode(fetchObjectOverride ?? sampleObject));
 
       final manager = create(CacheConfig(), client);
-      final entity = await manager.fetch(Snowflake.zero);
+      final entity = await manager.fetch(Snowflake(1));
 
       expect(manager.cache.containsKey(entity.id), isTrue);
     });
@@ -144,7 +144,7 @@ Future<void> testReadOnlyManager<T extends ManagedSnowflakeEntity<T>, U extends 
         (client) async {
           final manager = create(CacheConfig(), client);
 
-          final entity = await manager.fetch(Snowflake.zero);
+          final entity = await manager.fetch(Snowflake(1));
           matcher(entity);
         },
       );
@@ -240,7 +240,7 @@ Future<void> testManager<T extends WritableSnowflakeEntity<T>, U extends Manager
         (client) async {
           final manager = create(CacheConfig(), client);
 
-          final entity = await manager.update(Snowflake.zero, updateBuilder);
+          final entity = await manager.update(Snowflake(1), updateBuilder);
           sampleMatches(entity);
         },
       );
@@ -254,7 +254,7 @@ Future<void> testManager<T extends WritableSnowflakeEntity<T>, U extends Manager
         nock('https://discord.com/api/v${client.apiOptions.apiVersion}').patch(baseUrlMatcher, (_) => true).reply(200, jsonEncode(sampleObject));
 
         final manager = create(CacheConfig(), client);
-        final entity = await manager.update(Snowflake.zero, updateBuilder);
+        final entity = await manager.update(Snowflake(1), updateBuilder);
 
         expect(manager.cache.containsKey(entity.id), isTrue);
       });
@@ -267,7 +267,7 @@ Future<void> testManager<T extends WritableSnowflakeEntity<T>, U extends Manager
         (client) async {
           final manager = create(CacheConfig(), client);
 
-          await manager.delete(Snowflake.zero);
+          await manager.delete(Snowflake(1));
         },
       );
 

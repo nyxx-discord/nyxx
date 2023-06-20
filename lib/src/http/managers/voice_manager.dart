@@ -16,11 +16,13 @@ class VoiceManager {
 
   /// Parse a [VoiceState] from a [Map].
   VoiceState parseVoiceState(Map<String, Object?> raw) {
+    final guildId = maybeParse(raw['guild_id'], Snowflake.parse);
+
     return VoiceState(
-      guildId: maybeParse(raw['guild_id'], Snowflake.parse),
+      guildId: guildId,
       channelId: maybeParse(raw['channel_id'], Snowflake.parse),
-      userId: Snowflake.parse(raw['user_id']!),
-      member: maybeParse(raw['member'], client.guilds[Snowflake.zero].members.parse),
+      userId: Snowflake.parse(raw['user_id'] as String),
+      member: maybeParse(raw['member'], client.guilds[guildId ?? Snowflake.zero].members.parse),
       sessionId: raw['session_id'] as String,
       isServerDeafened: raw['deaf'] as bool,
       isServerMuted: raw['mute'] as bool,

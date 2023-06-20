@@ -8,6 +8,7 @@ import 'package:nyxx/src/builders/guild/widget.dart';
 import 'package:nyxx/src/builders/voice.dart';
 import 'package:nyxx/src/http/managers/audit_log_manager.dart';
 import 'package:nyxx/src/http/managers/auto_moderation_manager.dart';
+import 'package:nyxx/src/http/managers/emoji_manager.dart';
 import 'package:nyxx/src/http/managers/guild_manager.dart';
 import 'package:nyxx/src/http/managers/integration_manager.dart';
 import 'package:nyxx/src/http/managers/member_manager.dart';
@@ -15,6 +16,7 @@ import 'package:nyxx/src/http/managers/role_manager.dart';
 import 'package:nyxx/src/http/managers/scheduled_event_manager.dart';
 import 'package:nyxx/src/models/channel/guild_channel.dart';
 import 'package:nyxx/src/models/channel/thread_list.dart';
+import 'package:nyxx/src/models/emoji.dart';
 import 'package:nyxx/src/models/guild/ban.dart';
 import 'package:nyxx/src/models/guild/guild_preview.dart';
 import 'package:nyxx/src/models/guild/guild_widget.dart';
@@ -50,6 +52,9 @@ class PartialGuild extends WritableSnowflakeEntity<Guild> {
 
   /// An [IntegrationManager] for the integrations of this guild.
   IntegrationManager get integrations => IntegrationManager(manager.client.options.integrationConfig, manager.client, guildId: id);
+
+  /// An [EmojiManager] for the emojis of this guild.
+  EmojiManager get emojis => EmojiManager(manager.client.options.emojiCacheConfig, manager.client, guildId: id);
 
   /// An [AuditLogManager] for the audit log of this guild.
   AuditLogManager get auditLogs => AuditLogManager(manager.client.options.auditLogEntryConfig, manager.client, guildId: id);
@@ -220,8 +225,9 @@ class Guild extends PartialGuild {
   // Renamed to avoid conflict with the roles manager.
   final List<Role> roleList;
 
-  // TODO
-  //final List<Emoji> emojis;
+  /// A list of emojis in this guild.
+  // Renamed to avoid conflict with the emojis manager.
+  final List<Emoji> emojiList;
 
   /// A set of features enabled in this guild.
   final GuildFeatures features;
@@ -339,6 +345,7 @@ class Guild extends PartialGuild {
     required this.welcomeScreen,
     required this.nsfwLevel,
     required this.hasPremiumProgressBarEnabled,
+    required this.emojiList,
   });
 }
 

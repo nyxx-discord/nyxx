@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:http/http.dart' show MultipartFile;
+import 'package:nyxx/src/builders/emoji/reaction.dart';
 import 'package:nyxx/src/builders/message/message.dart';
 import 'package:nyxx/src/builders/sentinels.dart';
 import 'package:nyxx/src/http/managers/manager.dart';
@@ -19,6 +20,7 @@ import 'package:nyxx/src/models/message/reaction.dart';
 import 'package:nyxx/src/models/message/reference.dart';
 import 'package:nyxx/src/models/message/role_subscription_data.dart';
 import 'package:nyxx/src/models/snowflake.dart';
+import 'package:nyxx/src/models/user/user.dart';
 import 'package:nyxx/src/utils/parsing_helpers.dart';
 
 /// A manager for [Message]s in a [TextChannel].
@@ -174,6 +176,7 @@ class MessageManager extends Manager<Message> {
     return Reaction(
       count: raw['count'] as int,
       me: raw['me'] as bool,
+      emoji: client.guilds[Snowflake.zero].emojis.parse(raw['emoji'] as Map<String, Object?>),
     );
   }
 
@@ -355,8 +358,6 @@ class MessageManager extends Manager<Message> {
     await client.httpHandler.executeSafe(request);
   }
 
-  // TODO once emojis are implemented, add reaction endpoints
-
   /// Get the pinned messages in the channel.
   Future<List<Message>> getPins() async {
     final route = HttpRoute()
@@ -389,6 +390,78 @@ class MessageManager extends Manager<Message> {
     final request = BasicRequest(route, method: 'DELETE', auditLogReason: auditLogReason);
 
     await client.httpHandler.executeSafe(request);
+  }
+
+  /// Adds a reaction to a message.
+  Future<void> addReaction(Snowflake id, ReactionBuilder emoji) async {
+    final route = HttpRoute()
+      ..channels(id: channelId.toString())
+      ..messages(id: id.toString())
+      ..reactions(emoji: emoji.build(), userId: '@me');
+
+    final request = BasicRequest(route, method: 'PUT');
+
+    await client.httpHandler.executeSafe(request);
+  }
+
+  /// Deletes our own reaction from a message.
+  Future<void> deleteOwnReaction(Snowflake id, ReactionBuilder emoji) async {
+    final route = HttpRoute()
+      ..channels(id: channelId.toString())
+      ..messages(id: id.toString())
+      ..reactions(emoji: emoji.build(), userId: '@me');
+
+    final request = BasicRequest(route, method: 'DELETE');
+
+    await client.httpHandler.executeSafe(request);
+  }
+
+  /// Deletes all reactions on a message.
+  Future<void> deleteAllReactions(Snowflake id) async {
+    final route = HttpRoute()
+      ..channels(id: channelId.toString())
+      ..messages(id: id.toString())
+      ..reactions();
+    final request = BasicRequest(route, method: 'DELETE');
+
+    await client.httpHandler.executeSafe(request);
+  }
+
+  /// Deletes all reactions for a given emoji on a message.
+  Future<void> deleteReactionForUser(Snowflake id, Snowflake userId, ReactionBuilder emoji) async {
+    final route = HttpRoute()
+      ..channels(id: channelId.toString())
+      ..messages(id: id.toString())
+      ..reactions(emoji: emoji.build(), userId: userId.toString());
+
+    final request = BasicRequest(route, method: 'DELETE');
+
+    await client.httpHandler.executeSafe(request);
+  }
+
+  /// Deletes all reations for a given emoji on a message.
+  Future<void> deleteReaction(Snowflake id, ReactionBuilder emoji) async {
+    final route = HttpRoute()
+      ..channels(id: channelId.toString())
+      ..messages(id: id.toString())
+      ..reactions(emoji: emoji.build());
+
+    final request = BasicRequest(route, method: 'DELETE');
+
+    await client.httpHandler.executeSafe(request);
+  }
+
+  /// Get a list of users that reacted with a given emoji on a message.
+  Future<List<User>> fetchReactions(Snowflake id, ReactionBuilder emoji) async {
+    final route = HttpRoute()
+      ..channels(id: channelId.toString())
+      ..messages(id: id.toString())
+      ..reactions(emoji: emoji.build());
+    final request = BasicRequest(route);
+
+    final response = await client.httpHandler.executeSafe(request);
+
+    return parseMany(response.jsonBody as List, client.users.parse);
   }
 
   // TODO once oauth2 is implemented: Group DM control endpoints

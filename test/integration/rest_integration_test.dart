@@ -208,5 +208,11 @@ void main() {
 
       await expectLater(guild.scheduledEvents.list(), completes);
     });
+
+    test('emojis', skip: testGuild != null ? false : 'No test guild provided', () async {
+      final guildId = Snowflake.parse(testGuild!);
+
+      await expectLater(client.guilds[guildId].emojis.list(), completes);
+    });
   });
 }
