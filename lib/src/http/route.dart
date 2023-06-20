@@ -159,7 +159,7 @@ extension RouteHelpers on HttpRoute {
   void nick() => add(HttpRoutePart("nick"));
 
   /// Adds the [`audit-logs`](https://discord.com/developers/docs/resources/audit-log#get-guild-audit-log) part to this [HttpRoute].
-  void auditlogs() => add(HttpRoutePart("audit-logs"));
+  void auditLogs() => add(HttpRoutePart("audit-logs"));
 
   /// Adds the [`regions`](https://discord.com/developers/docs/resources/voice#list-voice-regions) part to this [HttpRoute].
   void regions() => add(HttpRoutePart("regions"));

@@ -1,6 +1,7 @@
 import 'package:nyxx/src/models/channel/guild_channel.dart';
 import 'package:nyxx/src/models/channel/thread.dart';
 import 'package:nyxx/src/models/gateway/event.dart';
+import 'package:nyxx/src/models/guild/audit_log.dart';
 import 'package:nyxx/src/models/guild/guild.dart';
 import 'package:nyxx/src/models/guild/member.dart';
 import 'package:nyxx/src/models/guild/scheduled_event.dart';
@@ -103,11 +104,14 @@ class GuildDeleteEvent extends DispatchEvent {
 /// Emitted when an audit log entry is created in a guild.
 /// {@endtemplate}
 class GuildAuditLogCreateEvent extends DispatchEvent {
-  // TODO
-  //final AuditLogEntry entry;
+  /// The entry that was created.
+  final AuditLogEntry entry;
+
+  /// The ID of the guild in which the entry was created.
+  final Snowflake guildId;
 
   /// {@macro guild_audit_log_create_event}
-  GuildAuditLogCreateEvent();
+  GuildAuditLogCreateEvent({required this.entry, required this.guildId});
 }
 
 /// {@template guild_ban_add_event}
