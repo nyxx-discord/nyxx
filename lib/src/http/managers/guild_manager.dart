@@ -578,8 +578,16 @@ class GuildManager extends Manager<Guild> {
     return parseGuildWidget(response.jsonBody as Map<String, Object?>);
   }
 
-  // TODO
-  //Future<PartialInvite> fetchVanityUrl(Snowflake id) async { ... }
+  /// Fetch a guild's vanity invite code.
+  Future<String?> fetchVanityCode(Snowflake id) async {
+    final route = HttpRoute()
+      ..guilds(id: id.toString())
+      ..vanityUrl();
+    final request = BasicRequest(route);
+
+    final response = await client.httpHandler.executeSafe(request);
+    return (response.jsonBody as Map<String, Object?>)['code'] as String?;
+  }
 
   /// Fetch the image for a guild's widget.
   Future<Uint8List> fetchGuildWidgetImage(Snowflake id, {WidgetImageStyle? style}) async {

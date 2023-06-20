@@ -165,6 +165,9 @@ class PartialGuild extends WritableSnowflakeEntity<Guild> {
 
   /// Leave this guild.
   Future<void> leave() => manager.client.users.leaveGuild(id);
+
+  /// Fetch this guild's vanity invite code.
+  Future<String?> fetchVanityCode() => manager.fetchVanityCode(id);
 }
 
 /// {@template guild}
