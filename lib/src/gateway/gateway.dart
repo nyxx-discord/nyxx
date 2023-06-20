@@ -42,8 +42,6 @@ import 'package:nyxx/src/utils/iterable_extension.dart';
 import 'package:nyxx/src/utils/parsing_helpers.dart';
 
 /// Handles the connection to Discord's Gateway with shards, manages the client's cache based on Gateway events and provides an interface to the Gateway.
-// TODO: Handle ErrorReceived events
-// TODO: Potentially withold events until we have a listener?
 class Gateway extends GatewayManager with EventParser {
   @override
   final NyxxGateway client;
@@ -85,7 +83,13 @@ class Gateway extends GatewayManager with EventParser {
   Gateway(this.client, this.gatewayBot, this.shards, this.totalShards, this.shardIds) : super.create() {
     for (final shard in shards) {
       shard.listen(
-        _messagesController.add,
+        (message) {
+          if (message is ErrorReceived) {
+            shard.logger.warning('Received error: ${message.error}', message.error, message.stackTrace);
+          }
+
+          _messagesController.add(message);
+        },
         onError: _messagesController.addError,
         onDone: () async {
           if (_closing) {
