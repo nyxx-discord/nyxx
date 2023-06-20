@@ -48,9 +48,12 @@ class IgnoreExceptions extends NyxxPlugin {
 
   @override
   Future<ClientType> connect<ClientType extends Nyxx>(ApiOptions apiOptions, ClientOptions clientOptions, Future<ClientType> Function() connect) async {
+    final client = await connect();
+
     _clients++;
     _listenIfNeeded();
-    return await connect();
+
+    return client;
   }
 
   @override
