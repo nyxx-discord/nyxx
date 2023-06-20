@@ -1,3 +1,4 @@
+import 'package:logging/logging.dart';
 import 'package:nyxx/src/builders/presence.dart';
 import 'package:nyxx/src/builders/voice.dart';
 import 'package:nyxx/src/client_options.dart';
@@ -9,7 +10,20 @@ import 'package:nyxx/src/intents.dart';
 import 'package:nyxx/src/manager_mixin.dart';
 import 'package:nyxx/src/api_options.dart';
 import 'package:nyxx/src/models/snowflake.dart';
+import 'package:nyxx/src/plugin/plugin.dart';
 import 'package:nyxx/src/utils/flags.dart';
+
+/// A helper function to nest and execute calls to plugin connect methods.
+Future<T> _doConnect<T extends Nyxx>(ApiOptions apiOptions, ClientOptions clientOptions, Future<T> Function() connect, List<NyxxPlugin> plugins) {
+  connect = plugins.fold(connect, (previousConnect, plugin) => () => plugin.connect(apiOptions, clientOptions, previousConnect));
+  return connect();
+}
+
+/// A helper function to nest and execute calls to plugin close methods.
+Future<void> _doClose(Nyxx client, Future<void> Function() close, List<NyxxPlugin> plugins) {
+  close = plugins.fold(close, (previousClose, plugin) => () => plugin.close(client, previousClose));
+  return close();
+}
 
 /// The base class for clients interacting with the Discord API.
 abstract class Nyxx {
@@ -22,25 +36,53 @@ abstract class Nyxx {
   /// The options controlling the behavior of this client.
   ClientOptions get options;
 
+  /// The logger for this client.
+  Logger get logger;
+
   /// Create an instance of [NyxxRest] that can perform requests to the HTTP API and is
   /// authenticated with a bot token.
-  // TODO: Allow passing any RestApiOptions as configuration
-  static Future<NyxxRest> connectRest(String token, {RestClientOptions? options}) async {
-    return NyxxRest._(token, options ?? RestClientOptions());
+  static Future<NyxxRest> connectRest(String token, {RestClientOptions options = const RestClientOptions()}) =>
+      connectRestWithOptions(RestApiOptions(token: token), options);
+
+  /// Create an instance of [NyxxRest] using the provided options.
+  static Future<NyxxRest> connectRestWithOptions(RestApiOptions apiOptions, [RestClientOptions clientOptions = const RestClientOptions()]) async {
+    clientOptions.logger
+      ..info('Connecting to the REST API')
+      ..fine('Token: ${apiOptions.token}, Authorization: ${apiOptions.authorizationHeader}, User-Agent: ${apiOptions.userAgent}')
+      ..fine('Plugins: ${clientOptions.plugins.map((plugin) => plugin.name).join(', ')}');
+
+    return _doConnect(apiOptions, clientOptions, () async => NyxxRest._(apiOptions, clientOptions), clientOptions.plugins);
   }
 
   /// Create an instance of [NyxxGateway] that can perform requests to the HTTP API, connects
   /// to the gateway and is authenticated with a bot token.
-  // TODO: Allow passing any GatewayApiOptions as configuration
-  static Future<NyxxGateway> connectGateway(String token, Flags<GatewayIntents> intents, {GatewayClientOptions? options}) async {
-    final client = NyxxGateway._(token, intents, options ?? GatewayClientOptions());
-    // We can't use client.gateway as it is not initialized yet
-    final gatewayManager = GatewayManager(client);
+  static Future<NyxxGateway> connectGateway(String token, Flags<GatewayIntents> intents, {GatewayClientOptions options = const GatewayClientOptions()}) =>
+      connectGatewayWithOptions(GatewayApiOptions(token: token, intents: intents), options);
 
-    final gatewayBot = await gatewayManager.fetchGatewayBot();
-    final gateway = await Gateway.connect(client, gatewayBot);
+  /// Create an instance of [NyxxGateway] using the provided options.
+  static Future<NyxxGateway> connectGatewayWithOptions(
+    GatewayApiOptions apiOptions, [
+    GatewayClientOptions clientOptions = const GatewayClientOptions(),
+  ]) async {
+    clientOptions.logger
+      ..info('Connecting to the Gateway API')
+      ..fine(
+        'Token: ${apiOptions.token}, Authorization: ${apiOptions.authorizationHeader}, User-Agent: ${apiOptions.userAgent},'
+        ' Intents: ${apiOptions.intents.value}, Payloads: ${apiOptions.payloadFormat.value}, Compression: ${apiOptions.compression.name},'
+        ' Shards: ${apiOptions.shards?.join(', ')}, Total shards: ${apiOptions.totalShards}, Large threshold: ${apiOptions.largeThreshold}',
+      )
+      ..fine('Plugins: ${clientOptions.plugins.map((plugin) => plugin.name).join(', ')}');
 
-    return client..gateway = gateway;
+    return _doConnect(apiOptions, clientOptions, () async {
+      final client = NyxxGateway._(apiOptions, clientOptions);
+      // We can't use client.gateway as it is not initialized yet
+      final gatewayManager = GatewayManager(client);
+
+      final gatewayBot = await gatewayManager.fetchGatewayBot();
+      final gateway = await Gateway.connect(client, gatewayBot);
+
+      return client..gateway = gateway;
+    }, clientOptions.plugins);
   }
 
   /// Close this client and any underlying resources.
@@ -60,7 +102,10 @@ class NyxxRest with ManagerMixin implements Nyxx {
   @override
   late final HttpHandler httpHandler = HttpHandler(this);
 
-  NyxxRest._(String token, this.options) : apiOptions = RestApiOptions(token: token);
+  @override
+  Logger get logger => options.logger;
+
+  NyxxRest._(this.apiOptions, this.options);
 
   /// Add the current user to the thread with the ID [id].
   ///
@@ -77,7 +122,10 @@ class NyxxRest with ManagerMixin implements Nyxx {
   Future<void> leaveThread(Snowflake id) => channels.leaveThread(id);
 
   @override
-  Future<void> close() async => httpHandler.httpClient.close();
+  Future<void> close() {
+    logger.info('Closing client');
+    return _doClose(this, () async => httpHandler.httpClient.close(), options.plugins);
+  }
 }
 
 /// A client that can make requests to the HTTP API, connects to the Gateway and is authenticated with a bot token.
@@ -96,7 +144,10 @@ class NyxxGateway with ManagerMixin, EventMixin implements NyxxRest {
   @override
   late final Gateway gateway;
 
-  NyxxGateway._(String token, Flags<GatewayIntents> intents, this.options) : apiOptions = GatewayApiOptions(token: token, intents: intents);
+  @override
+  Logger get logger => options.logger;
+
+  NyxxGateway._(this.apiOptions, this.options);
 
   @override
   Future<void> joinThread(Snowflake id) => channels.joinThread(id);
@@ -111,8 +162,11 @@ class NyxxGateway with ManagerMixin, EventMixin implements NyxxRest {
   void updatePresence(PresenceBuilder builder) => gateway.updatePresence(builder);
 
   @override
-  Future<void> close() async {
-    await gateway.close();
-    httpHandler.httpClient.close();
+  Future<void> close() {
+    logger.info('Closing client');
+    return _doClose(this, () async {
+      await gateway.close();
+      httpHandler.httpClient.close();
+    }, options.plugins);
   }
 }

@@ -17,6 +17,7 @@ class VoiceManager {
   /// Parse a [VoiceState] from a [Map].
   VoiceState parseVoiceState(Map<String, Object?> raw) {
     final guildId = maybeParse(raw['guild_id'], Snowflake.parse);
+
     return VoiceState(
       guildId: guildId,
       channelId: maybeParse(raw['channel_id'], Snowflake.parse),

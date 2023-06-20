@@ -22,6 +22,7 @@ import 'package:nyxx/src/models/guild/integration.dart';
 import 'package:nyxx/src/models/guild/onboarding.dart';
 import 'package:nyxx/src/models/guild/template.dart';
 import 'package:nyxx/src/models/guild/welcome_screen.dart';
+import 'package:nyxx/src/models/invite/invite.dart';
 import 'package:nyxx/src/models/locale.dart';
 import 'package:nyxx/src/models/permissions.dart';
 import 'package:nyxx/src/models/role.dart';
@@ -153,6 +154,9 @@ class PartialGuild extends WritableSnowflakeEntity<Guild> {
 
   /// Delete a template in this guild.
   Future<GuildTemplate> deleteTemplate(String code) => manager.deleteGuildTemplate(id, code);
+
+  /// List the invites to this guild.
+  Future<List<Invite>> listInvites() => manager.listInvites(id);
 }
 
 /// {@template guild}

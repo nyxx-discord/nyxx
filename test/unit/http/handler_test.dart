@@ -29,6 +29,7 @@ void main() {
         final client = MockNyxx();
         final handler = HttpHandler(client);
         when(() => client.apiOptions).thenReturn(RestApiOptions(token: 'test token'));
+        when(() => client.options).thenReturn(RestClientOptions());
 
         final interceptor = nock('https://discord.com/api/v${client.apiOptions.apiVersion}').get('/test')..reply(200, jsonEncode({'message': 'success'}));
 
@@ -47,6 +48,7 @@ void main() {
         final client = MockNyxx();
         final handler = HttpHandler(client);
         when(() => client.apiOptions).thenReturn(RestApiOptions(token: 'test token'));
+        when(() => client.options).thenReturn(RestClientOptions());
 
         final scope = nock('https://discord.com/api/v${client.apiOptions.apiVersion}');
         final successInterceptor = scope.get('/succeed')..reply(200, jsonEncode({'message': 'success'}));
@@ -70,6 +72,7 @@ void main() {
       final client = MockNyxx();
       final handler = HttpHandler(client);
       when(() => client.apiOptions).thenReturn(RestApiOptions(token: 'test token'));
+      when(() => client.options).thenReturn(RestClientOptions());
 
       nock('https://discord.com/api/v${client.apiOptions.apiVersion}')
         ..get('/succeed').reply(200, jsonEncode({'message': 'success'}))
@@ -87,6 +90,7 @@ void main() {
         final client = MockNyxx();
         final handler = HttpHandler(client);
         when(() => client.apiOptions).thenReturn(RestApiOptions(token: 'test token'));
+        when(() => client.options).thenReturn(RestClientOptions());
 
         nock('https://discord.com/api/v${client.apiOptions.apiVersion}').get('/test').reply(
           200,
@@ -112,6 +116,7 @@ void main() {
         final client = MockNyxx();
         final handler = HttpHandler(client);
         when(() => client.apiOptions).thenReturn(RestApiOptions(token: 'test token'));
+        when(() => client.options).thenReturn(RestClientOptions());
 
         nock('https://discord.com/api/v${client.apiOptions.apiVersion}').get('/test').reply(
           200,
@@ -151,6 +156,7 @@ void main() {
         final client = MockNyxx();
         final handler = HttpHandler(client);
         when(() => client.apiOptions).thenReturn(RestApiOptions(token: 'test token'));
+        when(() => client.options).thenReturn(RestClientOptions());
 
         nock('https://discord.com/api/v${client.apiOptions.apiVersion}').get('/test').reply(
           429,
@@ -197,6 +203,7 @@ void main() {
         final client = MockNyxx();
         final handler = HttpHandler(client);
         when(() => client.apiOptions).thenReturn(RestApiOptions(token: 'test token'));
+        when(() => client.options).thenReturn(RestClientOptions());
 
         nock('https://discord.com/api/v${client.apiOptions.apiVersion}').get('/test').reply(
           429,

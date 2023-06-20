@@ -36,7 +36,7 @@ class MessageManager extends Manager<Message> {
   @override
   Message parse(Map<String, Object?> raw) {
     return Message(
-      id: Snowflake.parse(raw['id'] as String),
+      id: Snowflake.parse(raw['id']!),
       manager: this,
       // TODO: Could be a webhook
       author: client.users.parse(raw['author'] as Map<String, Object?>),
@@ -68,9 +68,9 @@ class MessageManager extends Manager<Message> {
 
   ChannelMention parseChannelMention(Map<String, Object?> raw) {
     return ChannelMention(
-      id: Snowflake.parse(raw['id'] as String),
+      id: Snowflake.parse(raw['id']!),
       manager: client.channels,
-      guildId: Snowflake.parse(raw['guild_id'] as String),
+      guildId: Snowflake.parse(raw['guild_id']!),
       type: ChannelType.parse(raw['type'] as int),
       name: raw['name'] as String,
     );
@@ -78,7 +78,7 @@ class MessageManager extends Manager<Message> {
 
   Attachment parseAttachment(Map<String, Object?> raw) {
     return Attachment(
-      id: Snowflake.parse(raw['id'] as String),
+      id: Snowflake.parse(raw['id']!),
       fileName: raw['filename'] as String,
       description: raw['description'] as String?,
       contentType: raw['content_type'] as String?,
@@ -185,14 +185,14 @@ class MessageManager extends Manager<Message> {
   MessageReference parseMessageReference(Map<String, Object?> raw) {
     return MessageReference(
       messageId: maybeParse(raw['message_id'], Snowflake.parse),
-      channelId: Snowflake.parse(raw['channel_id'] as String),
+      channelId: Snowflake.parse(raw['channel_id']!),
       guildId: maybeParse(raw['guild_id'], Snowflake.parse),
     );
   }
 
   RoleSubscriptionData parseRoleSubscriptionData(Map<String, Object?> raw) {
     return RoleSubscriptionData(
-      listingId: Snowflake.parse(raw['role_subscription_listing_id'] as String),
+      listingId: Snowflake.parse(raw['role_subscription_listing_id']!),
       tierName: raw['tier_name'] as String,
       totalMonthsSubscribed: raw['total_months_subscribed'] as int,
       isRenewal: raw['is_renewal'] as bool,

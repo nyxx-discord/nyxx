@@ -27,7 +27,7 @@ class WebhookManager extends Manager<Webhook> {
   @override
   Webhook parse(Map<String, Object?> raw) {
     return Webhook(
-      id: Snowflake.parse(raw['id'] as String),
+      id: Snowflake.parse(raw['id']!),
       manager: this,
       type: WebhookType.parse(raw['type'] as int),
       guildId: maybeParse(raw['guild_id'], Snowflake.parse),
@@ -40,14 +40,14 @@ class WebhookManager extends Manager<Webhook> {
       sourceGuild: maybeParse(
         raw['source_guild'],
         (Map<String, Object?> raw) => PartialGuild(
-          id: Snowflake.parse(raw['id'] as String),
+          id: Snowflake.parse(raw['id']!),
           manager: client.guilds,
         ),
       ),
       sourceChannel: maybeParse(
         raw['source_channel'],
         (Map<String, Object?> raw) => PartialChannel(
-          id: Snowflake.parse(raw['id'] as String),
+          id: Snowflake.parse(raw['id']!),
           manager: client.channels,
         ),
       ),
@@ -187,7 +187,7 @@ class WebhookManager extends Manager<Webhook> {
       return null;
     }
 
-    final channelId = Snowflake.parse((response.jsonBody as Map<String, Object?>)['channel_id'] as String);
+    final channelId = Snowflake.parse((response.jsonBody as Map<String, Object?>)['channel_id']!);
     final messageManager = (client.channels[channelId] as PartialTextChannel).messages;
     final message = messageManager.parse(response.jsonBody as Map<String, Object?>);
 
@@ -208,7 +208,7 @@ class WebhookManager extends Manager<Webhook> {
     );
 
     final response = await client.httpHandler.executeSafe(request);
-    final channelId = Snowflake.parse((response.jsonBody as Map<String, Object?>)['channel_id'] as String);
+    final channelId = Snowflake.parse((response.jsonBody as Map<String, Object?>)['channel_id']!);
     final messageManager = (client.channels[channelId] as PartialTextChannel).messages;
     final message = messageManager.parse(response.jsonBody as Map<String, Object?>);
 
@@ -265,7 +265,7 @@ class WebhookManager extends Manager<Webhook> {
     }
 
     final response = await client.httpHandler.executeSafe(request);
-    final channelId = Snowflake.parse((response.jsonBody as Map<String, Object?>)['channel_id'] as String);
+    final channelId = Snowflake.parse((response.jsonBody as Map<String, Object?>)['channel_id']!);
     final messageManager = (client.channels[channelId] as PartialTextChannel).messages;
     final message = messageManager.parse(response.jsonBody as Map<String, Object?>);
 
