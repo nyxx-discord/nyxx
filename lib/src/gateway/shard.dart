@@ -164,7 +164,7 @@ class Shard extends Stream<ShardMessage> implements StreamSink<GatewayMessage> {
       try {
         await drain().timeout(const Duration(seconds: 5));
       } on TimeoutException {
-        // TODO: Log a warning here
+        logger.warning('Isolate took too long to shut down, killing it');
         isolate.kill(priority: Isolate.immediate);
       }
     }
