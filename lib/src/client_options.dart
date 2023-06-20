@@ -6,7 +6,6 @@ import 'package:nyxx/src/models/emoji.dart';
 import 'package:nyxx/src/models/channel/stage_instance.dart';
 import 'package:nyxx/src/models/guild/audit_log.dart';
 import 'package:nyxx/src/models/guild/auto_moderation.dart';
-import 'package:nyxx/src/models/guild/ban.dart';
 import 'package:nyxx/src/models/guild/guild.dart';
 import 'package:nyxx/src/models/guild/integration.dart';
 import 'package:nyxx/src/models/guild/member.dart';
@@ -56,9 +55,6 @@ class RestClientOptions extends ClientOptions {
   /// The [CacheConfig] to use for the [Guild.roles] manager.
   final CacheConfig<Role> roleCacheConfig;
 
-  /// The [CacheConfig] to use for [Ban]s in the [NyxxRest.guilds] manager.
-  final CacheConfig<Ban> banCacheConfig;
-
   /// The [CacheConfig] to use for the [Emoji]s in the [Guild.emojis] manager.
   final CacheConfig<Emoji> emojiCacheConfig;
 
@@ -91,7 +87,6 @@ class RestClientOptions extends ClientOptions {
     this.guildCacheConfig = const CacheConfig(),
     this.memberCacheConfig = const CacheConfig(),
     this.roleCacheConfig = const CacheConfig(),
-    this.banCacheConfig = const CacheConfig(),
     this.emojiCacheConfig = const CacheConfig(),
     this.stageInstanceCacheConfig = const CacheConfig(),
     this.scheduledEventCacheConfig = const CacheConfig(),
@@ -114,7 +109,6 @@ class GatewayClientOptions extends RestClientOptions {
     super.guildCacheConfig,
     super.memberCacheConfig,
     super.roleCacheConfig,
-    super.banCacheConfig,
     super.stageInstanceCacheConfig,
     super.scheduledEventCacheConfig,
     super.autoModerationRuleConfig,

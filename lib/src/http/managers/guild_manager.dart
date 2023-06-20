@@ -9,7 +9,6 @@ import 'package:nyxx/src/builders/guild/welcome_screen.dart';
 import 'package:nyxx/src/builders/guild/widget.dart';
 import 'package:nyxx/src/builders/image.dart';
 import 'package:nyxx/src/builders/voice.dart';
-import 'package:nyxx/src/cache/cache.dart';
 import 'package:nyxx/src/http/managers/manager.dart';
 import 'package:nyxx/src/http/request.dart';
 import 'package:nyxx/src/http/route.dart';
@@ -35,13 +34,8 @@ import 'package:nyxx/src/utils/parsing_helpers.dart';
 
 /// A manager for [Guild]s.
 class GuildManager extends Manager<Guild> {
-  /// A cache for [Ban]s in this manager.
-  final Cache<Ban> banCache;
-
   /// Create a new [GuildManager].
-  GuildManager(super.config, super.client, {required CacheConfig<Ban> banConfig})
-      : banCache = Cache(client, 'guilds.bans', banConfig),
-        super(identifier: 'guilds');
+  GuildManager(super.config, super.client) : super(identifier: 'guilds');
 
   @override
   PartialGuild operator [](Snowflake id) => PartialGuild(id: id, manager: this);
@@ -420,10 +414,7 @@ class GuildManager extends Manager<Guild> {
     final request = BasicRequest(route);
 
     final response = await client.httpHandler.executeSafe(request);
-    final bans = parseMany(response.jsonBody as List, parseBan);
-
-    banCache.addEntries(bans.map((e) => MapEntry(e.user.id, e)));
-    return bans;
+    return parseMany(response.jsonBody as List, parseBan);
   }
 
   /// Fetch a ban in a guild.
@@ -434,10 +425,7 @@ class GuildManager extends Manager<Guild> {
     final request = BasicRequest(route);
 
     final response = await client.httpHandler.executeSafe(request);
-    final ban = parseBan(response.jsonBody as Map<String, Object?>);
-
-    banCache[ban.user.id] = ban;
-    return ban;
+    return parseBan(response.jsonBody as Map<String, Object?>);
   }
 
   /// Create a ban in a guild.

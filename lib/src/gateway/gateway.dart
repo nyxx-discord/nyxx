@@ -104,10 +104,8 @@ class Gateway extends GatewayManager with EventParser {
     }
 
     // TODO: Add ThreadMember cache for ThreadListSyncEvent, ThreadMemberUpdateEvent, ThreadMembersUpdateEvent
-    // TODO: GuildBanAddEvent and GuildBanRemoveEvent need to update cache
     // TODO: GuildStickersUpdateEvent,
     // GuildScheduledEventUserAddEvent, GuildScheduledEventUserRemoveEvent,
-    // InviteCreateEvent, InviteDeleteEvent, MessageReactionAddEvent, MessageReactionRemoveEvent, MessageReactionRemoveAllEvent,MessageReactionRemoveEmojiEvent,
     // PresenceUpdateEvent,
     // ApplicationCommandPermissionsUpdateEvent
 

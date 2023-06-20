@@ -502,7 +502,7 @@ void checkGuildTemplate(GuildTemplate template) {
 void main() {
   testManager<Guild, GuildManager>(
     'GuildManager',
-    (client, config) => GuildManager(client, config, banConfig: const CacheConfig()),
+    (client, config) => GuildManager(client, config),
     RegExp(r'/guilds/\d+'),
     '/guilds',
     sampleObject: sampleGuild,
