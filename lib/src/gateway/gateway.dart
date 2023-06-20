@@ -35,6 +35,7 @@ import 'package:nyxx/src/models/gateway/opcode.dart';
 import 'package:nyxx/src/models/guild/auto_moderation.dart';
 import 'package:nyxx/src/models/guild/guild.dart';
 import 'package:nyxx/src/models/guild/member.dart';
+import 'package:nyxx/src/models/invite/invite.dart';
 import 'package:nyxx/src/models/presence.dart';
 import 'package:nyxx/src/models/snowflake.dart';
 import 'package:nyxx/src/models/user/user.dart';
@@ -672,7 +673,25 @@ class Gateway extends GatewayManager with EventParser {
   }
 
   InviteCreateEvent parseInviteCreate(Map<String, Object?> raw) {
-    return InviteCreateEvent();
+    return InviteCreateEvent(
+      invite: Invite(
+        code: raw['code'] as String,
+        guild: maybeParse(raw['guild_id'], (Object raw) => PartialGuild(id: Snowflake.parse(raw), manager: client.guilds)),
+        channel: PartialChannel(id: Snowflake.parse(raw['channel_id']!), manager: client.channels),
+        inviter: maybeParse(raw['inviter'], client.users.parse),
+        targetType: maybeParse(raw['target_type'], TargetType.parse),
+        targetUser: maybeParse(raw['target_user'], client.users.parse),
+        targetApplication: maybeParse(
+          raw['target_application'],
+          (Map<String, Object?> raw) => PartialApplication(id: Snowflake.parse(raw['id']!), manager: client.applications),
+        ),
+        approximateMemberCount: null,
+        approximatePresenceCount: null,
+        expiresAt: null,
+        guildScheduledEvent: null,
+      ),
+      metadata: client.invites.parseMetadata(raw),
+    );
   }
 
   InviteDeleteEvent parseInviteDelete(Map<String, Object?> raw) {
