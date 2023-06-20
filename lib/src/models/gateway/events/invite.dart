@@ -1,5 +1,4 @@
 import 'package:nyxx/src/models/gateway/event.dart';
-import 'package:nyxx/src/models/invite/invite.dart';
 import 'package:nyxx/src/models/invite/invite_metadata.dart';
 import 'package:nyxx/src/models/snowflake.dart';
 
@@ -8,13 +7,10 @@ import 'package:nyxx/src/models/snowflake.dart';
 /// {@endtemplate}
 class InviteCreateEvent extends DispatchEvent {
   /// The invite that was created.
-  final Invite invite;
-
-  /// Extra metadata about the invite.
-  final InviteMetadata metadata;
+  final InviteWithMetadata invite;
 
   /// {@macro invite_create_event}
-  InviteCreateEvent({required this.invite, required this.metadata});
+  InviteCreateEvent({required this.invite});
 }
 
 /// {@template invite_delete_event}

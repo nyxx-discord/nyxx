@@ -116,7 +116,7 @@ export 'src/models/message/reaction.dart' show Reaction;
 export 'src/models/message/reference.dart' show MessageReference;
 export 'src/models/message/role_subscription_data.dart' show RoleSubscriptionData;
 export 'src/models/invite/invite.dart' show Invite, TargetType;
-export 'src/models/invite/invite_metadata.dart' show InviteMetadata;
+export 'src/models/invite/invite_metadata.dart' show InviteWithMetadata;
 export 'src/models/webhook.dart' show PartialWebhook, Webhook, WebhookType, WebhookAuthor;
 export 'src/models/guild/ban.dart' show Ban;
 export 'src/models/guild/guild_preview.dart' show GuildPreview;

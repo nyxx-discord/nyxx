@@ -1,6 +1,6 @@
 import 'invite.dart';
 
-class InviteMetadata extends Invite {
+class InviteWithMetadata extends Invite {
   /// The number of times this invite has been used.
   final int uses;
 
@@ -16,7 +16,7 @@ class InviteMetadata extends Invite {
   /// When this invite was created.
   final DateTime createdAt;
 
-  InviteMetadata({
+  InviteWithMetadata({
     required super.code,
     required super.guild,
     required super.channel,
