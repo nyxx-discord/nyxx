@@ -4,8 +4,8 @@ import 'package:test/test.dart';
 import '../../../test_manager.dart';
 
 final sampleRole = {
-  // Changed to 0 so tests find the role with ID 0
-  "id": "0",
+  // Changed to 1 so tests find the role with ID 1
+  "id": "1",
   "name": "WE DEM BOYZZ!!!!!!",
   "color": 3447003,
   "hoist": true,
@@ -18,7 +18,7 @@ final sampleRole = {
 };
 
 void checkRole(Role role) {
-  expect(role.id, equals(Snowflake(0)));
+  expect(role.id, equals(Snowflake(1)));
   expect(role.name, equals('WE DEM BOYZZ!!!!!!'));
   expect(role.color, equals(DiscordColor(3447003)));
   expect(role.isHoisted, isTrue);
