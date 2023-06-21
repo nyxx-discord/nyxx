@@ -2,6 +2,7 @@ import 'package:nyxx/src/builders/invite.dart';
 import 'package:nyxx/src/builders/permission_overwrite.dart';
 import 'package:nyxx/src/models/channel/channel.dart';
 import 'package:nyxx/src/models/channel/guild_channel.dart';
+import 'package:nyxx/src/models/guild/guild.dart';
 import 'package:nyxx/src/models/invite/invite.dart';
 import 'package:nyxx/src/models/invite/invite_metadata.dart';
 import 'package:nyxx/src/models/permission_overwrite.dart';
@@ -44,6 +45,12 @@ class GuildCategory extends Channel implements GuildChannel {
     required this.permissionOverwrites,
     required this.position,
   });
+
+  @override
+  PartialGuild get guild => manager.client.guilds[guildId];
+
+  @override
+  PartialChannel? get parent => parentId == null ? null : manager.client.channels[parentId!];
 
   @override
   Future<void> deletePermissionOverwrite(Snowflake id) => manager.deletePermissionOverwrite(this.id, id);

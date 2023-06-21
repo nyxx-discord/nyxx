@@ -1,5 +1,6 @@
 import 'package:nyxx/src/builders/message/message.dart';
 import 'package:nyxx/src/builders/webhook.dart';
+import 'package:nyxx/src/models/application.dart';
 import 'package:nyxx/src/models/channel/channel.dart';
 import 'package:nyxx/src/models/guild/guild.dart';
 import 'package:nyxx/src/models/message/author.dart';
@@ -143,6 +144,15 @@ class Webhook extends PartialWebhook {
     required this.sourceChannel,
     required this.url,
   });
+
+  /// The guild this webhook is for, if any.
+  PartialGuild? get guild => guildId == null ? null : manager.client.guilds[guildId!];
+
+  /// The channel this webhook is for, if any.
+  PartialChannel? get channel => channelId == null ? null : manager.client.channels[channelId!];
+
+  /// The application that created this webhook.
+  PartialApplication? get application => applicationId == null ? null : manager.client.applications[applicationId!];
 }
 
 /// The type of a [Webhook].

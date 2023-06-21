@@ -3,10 +3,14 @@ import 'package:nyxx/src/builders/permission_overwrite.dart';
 import 'package:nyxx/src/models/channel/channel.dart';
 import 'package:nyxx/src/models/channel/text_channel.dart';
 import 'package:nyxx/src/models/channel/thread.dart';
+import 'package:nyxx/src/models/guild/guild.dart';
+import 'package:nyxx/src/models/guild/member.dart';
 import 'package:nyxx/src/models/invite/invite.dart';
 import 'package:nyxx/src/models/invite/invite_metadata.dart';
+import 'package:nyxx/src/models/message/message.dart';
 import 'package:nyxx/src/models/permission_overwrite.dart';
 import 'package:nyxx/src/models/snowflake.dart';
+import 'package:nyxx/src/models/user/user.dart';
 import 'package:nyxx/src/models/webhook.dart';
 
 /// {@template private_thread}
@@ -104,6 +108,21 @@ class PrivateThread extends TextChannel implements Thread {
     required this.totalMessagesSent,
     required this.flags,
   });
+
+  @override
+  PartialGuild get guild => manager.client.guilds[guildId];
+
+  @override
+  PartialMessage? get lastMessage => lastMessageId == null ? null : messages[lastMessageId!];
+
+  @override
+  PartialUser get owner => manager.client.users[ownerId];
+
+  @override
+  PartialMember get ownerMember => guild.members[ownerId];
+
+  @override
+  PartialChannel? get parent => parentId == null ? null : manager.client.channels[parentId!];
 
   @override
   Future<void> addThreadMember(Snowflake memberId) => manager.addThreadMember(id, memberId);

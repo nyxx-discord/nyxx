@@ -6,6 +6,7 @@ import 'package:nyxx/src/models/channel/guild_channel.dart';
 import 'package:nyxx/src/models/channel/has_threads_channel.dart';
 import 'package:nyxx/src/models/channel/thread.dart';
 import 'package:nyxx/src/models/channel/thread_list.dart';
+import 'package:nyxx/src/models/guild/guild.dart';
 import 'package:nyxx/src/models/invite/invite.dart';
 import 'package:nyxx/src/models/invite/invite_metadata.dart';
 import 'package:nyxx/src/models/permission_overwrite.dart';
@@ -81,6 +82,12 @@ class ForumChannel extends Channel implements GuildChannel, HasThreadsChannel {
     required this.permissionOverwrites,
     required this.position,
   });
+
+  @override
+  PartialGuild get guild => manager.client.guilds[guildId];
+
+  @override
+  PartialChannel? get parent => parentId == null ? null : manager.client.channels[parentId!];
 
   /// Create a thread in this forum channel.
   ///

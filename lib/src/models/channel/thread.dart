@@ -1,8 +1,10 @@
+import 'package:nyxx/src/http/managers/channel_manager.dart';
 import 'package:nyxx/src/models/channel/channel.dart';
 import 'package:nyxx/src/models/channel/guild_channel.dart';
 import 'package:nyxx/src/models/channel/text_channel.dart';
 import 'package:nyxx/src/models/guild/member.dart';
 import 'package:nyxx/src/models/snowflake.dart';
+import 'package:nyxx/src/models/user/user.dart';
 import 'package:nyxx/src/utils/flags.dart';
 
 /// A thread channel.
@@ -43,6 +45,12 @@ abstract class Thread implements TextChannel, GuildChannel {
 
   /// The flags this thread has applied.
   ChannelFlags? get flags;
+
+  /// The user that created this thread.
+  PartialUser get owner;
+
+  /// The member for the user that created this thread.
+  PartialMember get ownerMember;
 
   /// Add a member to this thread.
   ///
@@ -91,6 +99,9 @@ class PartialThreadMember {
 /// Additional information associated with a [Member] in a [Thread].
 /// {@endtemplate thread_member}
 class ThreadMember extends PartialThreadMember {
+  /// The manager for this [ThreadMember].
+  final ChannelManager manager;
+
   /// The ID of the thread this member is in.
   final Snowflake threadId;
 
@@ -103,8 +114,15 @@ class ThreadMember extends PartialThreadMember {
   ThreadMember({
     required super.joinTimestamp,
     required super.flags,
+    required this.manager,
     required this.threadId,
     required this.userId,
     required this.member,
   });
+
+  /// The thread this member is in.
+  PartialChannel get thread => manager.client.channels[threadId];
+
+  /// The user associated with this thread member.
+  PartialUser get user => manager.client.users[userId];
 }

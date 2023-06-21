@@ -1,5 +1,6 @@
 import 'package:nyxx/src/models/channel/channel.dart';
 import 'package:nyxx/src/models/channel/text_channel.dart';
+import 'package:nyxx/src/models/message/message.dart';
 import 'package:nyxx/src/models/snowflake.dart';
 import 'package:nyxx/src/models/user/user.dart';
 
@@ -31,4 +32,7 @@ class DmChannel extends TextChannel {
     required this.lastPinTimestamp,
     required this.rateLimitPerUser,
   });
+
+  @override
+  PartialMessage? get lastMessage => lastMessageId == null ? null : messages[lastMessageId!];
 }

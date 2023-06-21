@@ -4,8 +4,10 @@ import 'package:nyxx/src/models/channel/channel.dart';
 import 'package:nyxx/src/models/channel/guild_channel.dart';
 import 'package:nyxx/src/models/channel/text_channel.dart';
 import 'package:nyxx/src/models/channel/voice_channel.dart';
+import 'package:nyxx/src/models/guild/guild.dart';
 import 'package:nyxx/src/models/invite/invite.dart';
 import 'package:nyxx/src/models/invite/invite_metadata.dart';
+import 'package:nyxx/src/models/message/message.dart';
 import 'package:nyxx/src/models/permission_overwrite.dart';
 import 'package:nyxx/src/models/snowflake.dart';
 import 'package:nyxx/src/models/webhook.dart';
@@ -74,6 +76,15 @@ class GuildStageChannel extends TextChannel implements VoiceChannel, GuildChanne
     required this.userLimit,
     required this.videoQualityMode,
   });
+
+  @override
+  PartialGuild get guild => manager.client.guilds[guildId];
+
+  @override
+  PartialMessage? get lastMessage => lastMessageId == null ? null : messages[lastMessageId!];
+
+  @override
+  PartialChannel? get parent => parentId == null ? null : manager.client.channels[parentId!];
 
   @override
   Future<void> deletePermissionOverwrite(Snowflake id) => manager.deletePermissionOverwrite(this.id, id);
