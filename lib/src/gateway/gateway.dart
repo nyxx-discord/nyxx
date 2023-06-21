@@ -103,11 +103,7 @@ class Gateway extends GatewayManager with EventParser {
       );
     }
 
-    // TODO: Add ThreadMember cache for ThreadListSyncEvent, ThreadMemberUpdateEvent, ThreadMembersUpdateEvent
-    // TODO: GuildStickersUpdateEvent,
-    // GuildScheduledEventUserAddEvent, GuildScheduledEventUserRemoveEvent,
-    // PresenceUpdateEvent,
-    // ApplicationCommandPermissionsUpdateEvent
+    // TODO: GuildStickersUpdateEvent, ApplicationCommandPermissionsUpdateEvent
 
     // Handle all events which should update cache.
     events.listen((event) => switch (event) {
@@ -128,7 +124,6 @@ class Gateway extends GatewayManager with EventParser {
               client.voice.cache.addEntries(event.voiceStates.map((state) => MapEntry(state.cacheKey, state)));
             }(),
           GuildUpdateEvent(:final guild) => client.guilds.cache[guild.id] = guild,
-          // TODO: Do we want to remove guilds from the cache when they are only unavailable?
           GuildDeleteEvent(:final guild, isUnavailable: false) => client.guilds.cache.remove(guild.id),
           GuildMemberAddEvent(:final guildId, :final member) ||
           GuildMemberUpdateEvent(:final guildId, :final member) =>
