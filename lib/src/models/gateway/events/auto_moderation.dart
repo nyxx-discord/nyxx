@@ -1,6 +1,12 @@
+import 'package:nyxx/src/models/channel/channel.dart';
+import 'package:nyxx/src/models/channel/text_channel.dart';
 import 'package:nyxx/src/models/gateway/event.dart';
 import 'package:nyxx/src/models/guild/auto_moderation.dart';
+import 'package:nyxx/src/models/guild/guild.dart';
+import 'package:nyxx/src/models/guild/member.dart';
+import 'package:nyxx/src/models/message/message.dart';
 import 'package:nyxx/src/models/snowflake.dart';
+import 'package:nyxx/src/models/user/user.dart';
 
 /// {@template auto_moderation_rule_create_event}
 /// Emitted when an auto moderation rule is created.
@@ -90,4 +96,22 @@ class AutoModerationActionExecutionEvent extends DispatchEvent {
     required this.matchedKeyword,
     required this.matchedContent,
   });
+
+  /// The guild the rule was triggered in.
+  PartialGuild get guild => gateway.client.guilds[guildId];
+
+  /// The rule that was triggered.
+  PartialAutoModerationRule get rule => guild.autoModerationRules[ruleId];
+
+  /// The user that triggered the rule.
+  PartialUser get user => gateway.client.users[userId];
+
+  /// The member that triggered the rule.
+  PartialMember get member => guild.members[userId];
+
+  /// The channel in which the rule was triggered.
+  PartialChannel? get channel => channelId == null ? null : gateway.client.channels[channelId!];
+
+  /// The message that triggered the rule.
+  PartialMessage? get message => messageId == null ? null : (channel as PartialTextChannel?)?.messages[messageId!];
 }

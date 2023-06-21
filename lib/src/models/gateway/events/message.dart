@@ -1,5 +1,8 @@
+import 'package:nyxx/src/models/channel/channel.dart';
+import 'package:nyxx/src/models/channel/text_channel.dart';
 import 'package:nyxx/src/models/emoji.dart';
 import 'package:nyxx/src/models/gateway/event.dart';
+import 'package:nyxx/src/models/guild/guild.dart';
 import 'package:nyxx/src/models/guild/member.dart';
 import 'package:nyxx/src/models/message/message.dart';
 import 'package:nyxx/src/models/snowflake.dart';
@@ -23,6 +26,9 @@ class MessageCreateEvent extends DispatchEvent {
 
   /// {@macro message_create_event}
   MessageCreateEvent({required super.gateway, required this.guildId, required this.member, required this.mentions, required this.message});
+
+  /// The guild the message was sent in.
+  PartialGuild? get guild => guildId == null ? null : gateway.client.guilds[guildId!];
 }
 
 /// {@template message_update_event}
@@ -53,6 +59,9 @@ class MessageUpdateEvent extends DispatchEvent {
     required this.message,
     required this.oldMessage,
   });
+
+  /// The guild the message was updated in.
+  PartialGuild? get guild => guildId == null ? null : gateway.client.guilds[guildId!];
 }
 
 /// {@template message_delete_event}
@@ -70,6 +79,12 @@ class MessageDeleteEvent extends DispatchEvent {
 
   /// {@macro message_delete_event}
   MessageDeleteEvent({required super.gateway, required this.id, required this.channelId, required this.guildId});
+
+  /// The guild the message was deleted in.
+  PartialGuild? get guild => guildId == null ? null : gateway.client.guilds[guildId!];
+
+  /// The channel the message was deleted in.
+  PartialChannel get channel => gateway.client.channels[channelId];
 }
 
 /// {@template message_bulk_delete_event}
@@ -87,6 +102,12 @@ class MessageBulkDeleteEvent extends DispatchEvent {
 
   /// {@macro message_bulk_delete_event}
   MessageBulkDeleteEvent({required super.gateway, required this.ids, required this.channelId, required this.guildId});
+
+  /// The guild the messages were deleted in.
+  PartialGuild? get guild => guildId == null ? null : gateway.client.guilds[guildId!];
+
+  /// The channel the messages were deleted in.
+  PartialChannel get channel => gateway.client.channels[channelId];
 }
 
 /// {@template message_reaction_add_event}
@@ -121,6 +142,18 @@ class MessageReactionAddEvent extends DispatchEvent {
     required this.member,
     required this.emoji,
   });
+
+  /// The guild the message is in.
+  PartialGuild? get guild => guildId == null ? null : gateway.client.guilds[guildId!];
+
+  /// The channel the message is in.
+  PartialTextChannel get channel => gateway.client.channels[channelId] as PartialTextChannel;
+
+  /// The user that added the reaction.
+  PartialUser get user => gateway.client.users[userId];
+
+  /// The message the reaction was added to.
+  PartialMessage get message => channel.messages[messageId];
 }
 
 /// {@template message_reaction_remove_event}
@@ -139,6 +172,7 @@ class MessageReactionRemoveEvent extends DispatchEvent {
   /// The ID of the guild the message is in.
   final Snowflake? guildId;
 
+  /// The emoji that was removed.
   final PartialEmoji emoji;
 
   /// {@macro message_reaction_remove_event}
@@ -150,6 +184,18 @@ class MessageReactionRemoveEvent extends DispatchEvent {
     required this.guildId,
     required this.emoji,
   });
+
+  /// The guild the message is in.
+  PartialGuild? get guild => guildId == null ? null : gateway.client.guilds[guildId!];
+
+  /// The channel the message is in.
+  PartialTextChannel get channel => gateway.client.channels[channelId] as PartialTextChannel;
+
+  /// The user that removed the reaction.
+  PartialUser get user => gateway.client.users[userId];
+
+  /// The message the reaction was removed from.
+  PartialMessage get message => channel.messages[messageId];
 }
 
 /// {@template message_reaction_remove_all_event}
@@ -172,6 +218,15 @@ class MessageReactionRemoveAllEvent extends DispatchEvent {
     required this.messageId,
     required this.guildId,
   });
+
+  /// The guild the message is in.
+  PartialGuild? get guild => guildId == null ? null : gateway.client.guilds[guildId!];
+
+  /// The channel the message is in.
+  PartialTextChannel get channel => gateway.client.channels[channelId] as PartialTextChannel;
+
+  /// The message the reactions were removed from.
+  PartialMessage get message => channel.messages[messageId];
 }
 
 /// {@template message_reaction_remove_emoji_event}
@@ -197,4 +252,13 @@ class MessageReactionRemoveEmojiEvent extends DispatchEvent {
     required this.guildId,
     required this.emoji,
   });
+
+  /// The guild the message is in.
+  PartialGuild? get guild => guildId == null ? null : gateway.client.guilds[guildId!];
+
+  /// The channel the message is in.
+  PartialTextChannel get channel => gateway.client.channels[channelId] as PartialTextChannel;
+
+  /// The message the reactions were removed from.
+  PartialMessage get message => channel.messages[messageId];
 }

@@ -1,5 +1,6 @@
 import 'package:nyxx/src/http/managers/member_manager.dart';
 import 'package:nyxx/src/models/permissions.dart';
+import 'package:nyxx/src/models/role.dart';
 import 'package:nyxx/src/models/snowflake.dart';
 import 'package:nyxx/src/models/snowflake_entity/snowflake_entity.dart';
 import 'package:nyxx/src/models/user/user.dart';
@@ -83,6 +84,9 @@ class Member extends PartialMember {
     required this.permissions,
     required this.communicationDisabledUntil,
   });
+
+  /// The roles this member has.
+  List<PartialRole> get roles => roleIds.map((e) => manager.client.guilds[manager.guildId].roles[e]).toList();
 }
 
 /// Flags that can be applied to a [Member].

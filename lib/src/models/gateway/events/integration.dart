@@ -1,4 +1,6 @@
+import 'package:nyxx/src/models/application.dart';
 import 'package:nyxx/src/models/gateway/event.dart';
+import 'package:nyxx/src/models/guild/guild.dart';
 import 'package:nyxx/src/models/guild/integration.dart';
 import 'package:nyxx/src/models/snowflake.dart';
 
@@ -14,6 +16,9 @@ class IntegrationCreateEvent extends DispatchEvent {
 
   /// {@macro integration_create_event}
   IntegrationCreateEvent({required super.gateway, required this.guildId, required this.integration});
+
+  /// The guild the integration was created in.
+  PartialGuild get guild => gateway.client.guilds[guildId];
 }
 
 /// {@template integration_update_event}
@@ -31,6 +36,9 @@ class IntegrationUpdateEvent extends DispatchEvent {
 
   /// {@macro integration_update_event}
   IntegrationUpdateEvent({required super.gateway, required this.guildId, required this.oldIntegration, required this.integration});
+
+  /// The guild the integration was updated in.
+  PartialGuild get guild => gateway.client.guilds[guildId];
 }
 
 /// {@template integration_delete_event}
@@ -48,4 +56,10 @@ class IntegrationDeleteEvent extends DispatchEvent {
 
   /// {@macro integration_delete_event}
   IntegrationDeleteEvent({required super.gateway, required this.id, required this.guildId, required this.applicationId});
+
+  /// The guild the integration was deleted from.
+  PartialGuild get guild => gateway.client.guilds[guildId];
+
+  /// The application associated with the integration.
+  PartialApplication? get application => applicationId == null ? null : gateway.client.applications[applicationId!];
 }

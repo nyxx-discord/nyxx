@@ -1,4 +1,5 @@
 import 'package:nyxx/src/models/channel/channel.dart';
+import 'package:nyxx/src/models/guild/guild.dart';
 import 'package:nyxx/src/models/snowflake.dart';
 
 /// {@template channel_mention}
@@ -25,4 +26,7 @@ class ChannelMention extends PartialChannel {
     required this.type,
     required this.name,
   });
+
+  /// The guild containing the mentioned channel.
+  PartialGuild get guild => manager.client.guilds[guildId];
 }

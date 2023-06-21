@@ -1,7 +1,12 @@
 import 'package:nyxx/src/http/managers/audit_log_manager.dart';
+import 'package:nyxx/src/models/application.dart';
+import 'package:nyxx/src/models/channel/channel.dart';
+import 'package:nyxx/src/models/channel/text_channel.dart';
+import 'package:nyxx/src/models/message/message.dart';
 import 'package:nyxx/src/models/permission_overwrite.dart';
 import 'package:nyxx/src/models/snowflake.dart';
 import 'package:nyxx/src/models/snowflake_entity/snowflake_entity.dart';
+import 'package:nyxx/src/models/user/user.dart';
 import 'package:nyxx/src/utils/to_string_helper/to_string_helper.dart';
 
 /// A partial [AuditLogEntry].
@@ -46,6 +51,9 @@ class AuditLogEntry extends PartialAuditLogEntry {
     required this.options,
     required this.reason,
   });
+
+  /// The user that triggered the action.
+  PartialUser? get user => userId == null ? null : manager.client.users[userId!];
 }
 
 /// {@template audit_log_change}
@@ -147,6 +155,9 @@ enum AuditLogEvent {
 /// Extra information associated with an [AuditLogEntry].
 /// {@endtemplate}
 class AuditLogEntryInfo with ToStringHelper {
+  /// The manager for this [AuditLogEntryInfo].
+  final AuditLogManager manager;
+
   /// The ID of the application whose permissions were targeted.
   final Snowflake? applicationId;
 
@@ -182,6 +193,7 @@ class AuditLogEntryInfo with ToStringHelper {
 
   /// {@macro audit_log_entry_info}
   AuditLogEntryInfo({
+    required this.manager,
     required this.applicationId,
     required this.autoModerationRuleName,
     required this.autoModerationTriggerType,
@@ -194,4 +206,13 @@ class AuditLogEntryInfo with ToStringHelper {
     required this.roleName,
     required this.overwriteType,
   });
+
+  /// The application whose permissions were targeted.
+  PartialApplication? get application => applicationId == null ? null : manager.client.applications[applicationId!];
+
+  /// The channel in which entities were targeted.
+  PartialChannel? get channel => channelId == null ? null : manager.client.channels[channelId!];
+
+  /// The targeted message.
+  PartialMessage? get message => messageId == null ? null : (channel as PartialTextChannel?)?.messages[messageId!];
 }

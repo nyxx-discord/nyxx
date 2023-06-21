@@ -14,6 +14,8 @@ import 'package:nyxx/src/http/managers/integration_manager.dart';
 import 'package:nyxx/src/http/managers/member_manager.dart';
 import 'package:nyxx/src/http/managers/role_manager.dart';
 import 'package:nyxx/src/http/managers/scheduled_event_manager.dart';
+import 'package:nyxx/src/models/application.dart';
+import 'package:nyxx/src/models/channel/channel.dart';
 import 'package:nyxx/src/models/channel/guild_channel.dart';
 import 'package:nyxx/src/models/channel/thread_list.dart';
 import 'package:nyxx/src/models/emoji.dart';
@@ -30,6 +32,7 @@ import 'package:nyxx/src/models/permissions.dart';
 import 'package:nyxx/src/models/role.dart';
 import 'package:nyxx/src/models/snowflake.dart';
 import 'package:nyxx/src/models/snowflake_entity/snowflake_entity.dart';
+import 'package:nyxx/src/models/user/user.dart';
 import 'package:nyxx/src/models/voice/voice_region.dart';
 import 'package:nyxx/src/utils/flags.dart';
 
@@ -350,6 +353,30 @@ class Guild extends PartialGuild {
     required this.hasPremiumProgressBarEnabled,
     required this.emojiList,
   });
+
+  /// The owner of the guild.
+  PartialUser get owner => manager.client.users[ownerId];
+
+  /// The member for the owner of the guild.
+  PartialMember get ownerMember => members[ownerId];
+
+  /// The AFK channel.
+  PartialChannel? get afkChannel => afkChannelId == null ? null : manager.client.channels[afkChannelId!];
+
+  /// The channel this guild's widget will send users to.
+  PartialChannel? get widgetChannel => widgetChannelId == null ? null : manager.client.channels[widgetChannelId!];
+
+  /// The application that created this guild.
+  PartialApplication? get application => applicationId == null ? null : manager.client.applications[applicationId!];
+
+  /// The channel system messages are sent to.
+  PartialChannel? get systemChannel => systemChannelId == null ? null : manager.client.channels[systemChannelId!];
+
+  /// The rules channel in a community server.
+  PartialChannel? get rulesChannel => rulesChannelId == null ? null : manager.client.channels[rulesChannelId!];
+
+  /// The public updates channel in a community server.
+  PartialChannel? get publicUpdatesChannel => publicUpdatesChannelId == null ? null : manager.client.channels[publicUpdatesChannelId!];
 }
 
 /// The verification level for a guild.

@@ -1,4 +1,6 @@
+import 'package:nyxx/src/models/channel/channel.dart';
 import 'package:nyxx/src/models/gateway/event.dart';
+import 'package:nyxx/src/models/guild/guild.dart';
 import 'package:nyxx/src/models/invite/invite_metadata.dart';
 import 'package:nyxx/src/models/snowflake.dart';
 
@@ -28,4 +30,10 @@ class InviteDeleteEvent extends DispatchEvent {
 
   /// {@macro invite_delete_event}
   InviteDeleteEvent({required super.gateway, required this.channelId, required this.guildId, required this.code});
+
+  /// The channel the invite was for.
+  PartialChannel get channel => gateway.client.channels[channelId];
+
+  /// The guild the invite was for.
+  PartialGuild? get guild => guildId == null ? null : gateway.client.guilds[guildId!];
 }

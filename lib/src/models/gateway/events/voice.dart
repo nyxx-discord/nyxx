@@ -1,4 +1,5 @@
 import 'package:nyxx/src/models/gateway/event.dart';
+import 'package:nyxx/src/models/guild/guild.dart';
 import 'package:nyxx/src/models/snowflake.dart';
 import 'package:nyxx/src/models/voice/voice_state.dart';
 
@@ -31,4 +32,7 @@ class VoiceServerUpdateEvent extends DispatchEvent {
 
   /// {@macro voice_server_update_event}
   VoiceServerUpdateEvent({required super.gateway, required this.token, required this.guildId, required this.endpoint});
+
+  /// The guild.
+  PartialGuild get guild => gateway.client.guilds[guildId];
 }

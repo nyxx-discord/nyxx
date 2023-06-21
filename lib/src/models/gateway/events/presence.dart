@@ -1,4 +1,6 @@
+import 'package:nyxx/src/models/channel/text_channel.dart';
 import 'package:nyxx/src/models/gateway/event.dart';
+import 'package:nyxx/src/models/guild/guild.dart';
 import 'package:nyxx/src/models/guild/member.dart';
 import 'package:nyxx/src/models/presence.dart';
 import 'package:nyxx/src/models/snowflake.dart';
@@ -32,6 +34,9 @@ class PresenceUpdateEvent extends DispatchEvent {
     required this.activities,
     required this.clientStatus,
   });
+
+  /// The guild the presence was updated in.
+  PartialGuild? get guild => guildId == null ? null : gateway.client.guilds[guildId!];
 }
 
 /// {@template typing_start_event}
@@ -62,6 +67,15 @@ class TypingStartEvent extends DispatchEvent {
     required this.timestamp,
     required this.member,
   });
+
+  /// The guild the user started typing in.
+  PartialGuild? get guild => guildId == null ? null : gateway.client.guilds[guildId!];
+
+  /// The channel the user started typing in.
+  PartialTextChannel get channel => gateway.client.channels[channelId] as PartialTextChannel;
+
+  /// The user that started typing.
+  PartialUser get user => gateway.client.users[userId];
 }
 
 /// {@template user_update_event}
