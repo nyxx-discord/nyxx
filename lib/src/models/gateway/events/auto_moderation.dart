@@ -10,7 +10,7 @@ class AutoModerationRuleCreateEvent extends DispatchEvent {
   final AutoModerationRule rule;
 
   /// {@macro auto_moderation_rule_create_event}
-  AutoModerationRuleCreateEvent({required this.rule});
+  AutoModerationRuleCreateEvent({required super.gateway, required this.rule});
 }
 
 /// {@template auto_moderation_rule_update_event}
@@ -24,7 +24,7 @@ class AutoModerationRuleUpdateEvent extends DispatchEvent {
   final AutoModerationRule rule;
 
   /// {@macro auto_moderation_rule_update_event}
-  AutoModerationRuleUpdateEvent({required this.oldRule, required this.rule});
+  AutoModerationRuleUpdateEvent({required super.gateway, required this.oldRule, required this.rule});
 }
 
 /// {@template auto_moderation_rule_delete_event}
@@ -35,7 +35,7 @@ class AutoModerationRuleDeleteEvent extends DispatchEvent {
   final AutoModerationRule rule;
 
   /// {@macro auto_moderation_rule_delete_event}
-  AutoModerationRuleDeleteEvent({required this.rule});
+  AutoModerationRuleDeleteEvent({required super.gateway, required this.rule});
 }
 
 /// {@template auto_moderation_action_execution_event}
@@ -77,6 +77,7 @@ class AutoModerationActionExecutionEvent extends DispatchEvent {
 
   /// {@macro auto_moderation_action_execution_event}
   AutoModerationActionExecutionEvent({
+    required super.gateway,
     required this.guildId,
     required this.action,
     required this.ruleId,

@@ -11,7 +11,7 @@ class ChannelCreateEvent extends DispatchEvent {
   final Channel channel;
 
   /// {@macro channel_create_event}
-  ChannelCreateEvent({required this.channel});
+  ChannelCreateEvent({required super.gateway, required this.channel});
 }
 
 /// {@template channel_update_event}
@@ -25,7 +25,7 @@ class ChannelUpdateEvent extends DispatchEvent {
   final Channel channel;
 
   /// {@macro channel_update_event}
-  ChannelUpdateEvent({required this.oldChannel, required this.channel});
+  ChannelUpdateEvent({required super.gateway, required this.oldChannel, required this.channel});
 }
 
 /// {@template channel_delete_event}
@@ -36,7 +36,7 @@ class ChannelDeleteEvent extends DispatchEvent {
   final Channel channel;
 
   /// {@macro channel_delete_event}
-  ChannelDeleteEvent({required this.channel});
+  ChannelDeleteEvent({required super.gateway, required this.channel});
 }
 
 /// {@template thread_create_event}
@@ -47,7 +47,7 @@ class ThreadCreateEvent extends DispatchEvent {
   final Thread thread;
 
   /// {@macro thread_create_event}
-  ThreadCreateEvent({required this.thread});
+  ThreadCreateEvent({required super.gateway, required this.thread});
 }
 
 /// {@template thread_update_event}
@@ -61,7 +61,7 @@ class ThreadUpdateEvent extends DispatchEvent {
   final Thread thread;
 
   /// {@macro thread_update_event}
-  ThreadUpdateEvent({required this.oldThread, required this.thread});
+  ThreadUpdateEvent({required super.gateway, required this.oldThread, required this.thread});
 }
 
 /// {@template thread_delete_event}
@@ -72,7 +72,7 @@ class ThreadDeleteEvent extends DispatchEvent {
   final PartialChannel thread;
 
   /// {@macro thread_delete_event}
-  ThreadDeleteEvent({required this.thread});
+  ThreadDeleteEvent({required super.gateway, required this.thread});
 }
 
 /// {@template thread_list_sync_event}
@@ -93,6 +93,7 @@ class ThreadListSyncEvent extends DispatchEvent {
 
   /// {@macro thread_list_sync_event}
   ThreadListSyncEvent({
+    required super.gateway,
     required this.guildId,
     required this.channelIds,
     required this.threads,
@@ -108,7 +109,7 @@ class ThreadMemberUpdateEvent extends DispatchEvent {
   final ThreadMember member;
 
   /// {@macro thread_member_update_event}
-  ThreadMemberUpdateEvent({required this.member});
+  ThreadMemberUpdateEvent({required super.gateway, required this.member});
 }
 
 /// {@template thread_members_update_event}
@@ -132,6 +133,7 @@ class ThreadMembersUpdateEvent extends DispatchEvent {
 
   /// {@macro thread_members_update_event}
   ThreadMembersUpdateEvent({
+    required super.gateway,
     required this.id,
     required this.guildId,
     required this.memberCount,
@@ -154,5 +156,5 @@ class ChannelPinsUpdateEvent extends DispatchEvent {
   final DateTime? lastPinTimestamp;
 
   /// {@macro channel_pins_update_event}
-  ChannelPinsUpdateEvent({required this.guildId, required this.channelId, required this.lastPinTimestamp});
+  ChannelPinsUpdateEvent({required super.gateway, required this.guildId, required this.channelId, required this.lastPinTimestamp});
 }

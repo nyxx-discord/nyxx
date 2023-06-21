@@ -22,7 +22,7 @@ class MessageCreateEvent extends DispatchEvent {
   final Message message;
 
   /// {@macro message_create_event}
-  MessageCreateEvent({required this.guildId, required this.member, required this.mentions, required this.message});
+  MessageCreateEvent({required super.gateway, required this.guildId, required this.member, required this.mentions, required this.message});
 }
 
 /// {@template message_update_event}
@@ -46,6 +46,7 @@ class MessageUpdateEvent extends DispatchEvent {
 
   /// {@macro message_update_event}
   MessageUpdateEvent({
+    required super.gateway,
     required this.guildId,
     required this.member,
     required this.mentions,
@@ -68,7 +69,7 @@ class MessageDeleteEvent extends DispatchEvent {
   final Snowflake? guildId;
 
   /// {@macro message_delete_event}
-  MessageDeleteEvent({required this.id, required this.channelId, required this.guildId});
+  MessageDeleteEvent({required super.gateway, required this.id, required this.channelId, required this.guildId});
 }
 
 /// {@template message_bulk_delete_event}
@@ -85,7 +86,7 @@ class MessageBulkDeleteEvent extends DispatchEvent {
   final Snowflake? guildId;
 
   /// {@macro message_bulk_delete_event}
-  MessageBulkDeleteEvent({required this.ids, required this.channelId, required this.guildId});
+  MessageBulkDeleteEvent({required super.gateway, required this.ids, required this.channelId, required this.guildId});
 }
 
 /// {@template message_reaction_add_event}
@@ -111,8 +112,15 @@ class MessageReactionAddEvent extends DispatchEvent {
   final PartialEmoji emoji;
 
   /// {@macro message_reaction_add_event}
-  MessageReactionAddEvent(
-      {required this.userId, required this.channelId, required this.messageId, required this.guildId, required this.member, required this.emoji});
+  MessageReactionAddEvent({
+    required super.gateway,
+    required this.userId,
+    required this.channelId,
+    required this.messageId,
+    required this.guildId,
+    required this.member,
+    required this.emoji,
+  });
 }
 
 /// {@template message_reaction_remove_event}
@@ -134,7 +142,14 @@ class MessageReactionRemoveEvent extends DispatchEvent {
   final PartialEmoji emoji;
 
   /// {@macro message_reaction_remove_event}
-  MessageReactionRemoveEvent({required this.userId, required this.channelId, required this.messageId, required this.guildId, required this.emoji});
+  MessageReactionRemoveEvent({
+    required super.gateway,
+    required this.userId,
+    required this.channelId,
+    required this.messageId,
+    required this.guildId,
+    required this.emoji,
+  });
 }
 
 /// {@template message_reaction_remove_all_event}
@@ -151,7 +166,12 @@ class MessageReactionRemoveAllEvent extends DispatchEvent {
   final Snowflake? guildId;
 
   /// {@macro message_reaction_remove_all_event}
-  MessageReactionRemoveAllEvent({required this.channelId, required this.messageId, required this.guildId});
+  MessageReactionRemoveAllEvent({
+    required super.gateway,
+    required this.channelId,
+    required this.messageId,
+    required this.guildId,
+  });
 }
 
 /// {@template message_reaction_remove_emoji_event}
@@ -170,5 +190,11 @@ class MessageReactionRemoveEmojiEvent extends DispatchEvent {
   final PartialEmoji emoji;
 
   /// {@macro message_reaction_remove_emoji_event}
-  MessageReactionRemoveEmojiEvent({required this.channelId, required this.messageId, required this.guildId, required this.emoji});
+  MessageReactionRemoveEmojiEvent({
+    required super.gateway,
+    required this.channelId,
+    required this.messageId,
+    required this.guildId,
+    required this.emoji,
+  });
 }

@@ -13,7 +13,7 @@ class IntegrationCreateEvent extends DispatchEvent {
   final Integration integration;
 
   /// {@macro integration_create_event}
-  IntegrationCreateEvent({required this.guildId, required this.integration});
+  IntegrationCreateEvent({required super.gateway, required this.guildId, required this.integration});
 }
 
 /// {@template integration_update_event}
@@ -30,7 +30,7 @@ class IntegrationUpdateEvent extends DispatchEvent {
   final Integration integration;
 
   /// {@macro integration_update_event}
-  IntegrationUpdateEvent({required this.guildId, required this.oldIntegration, required this.integration});
+  IntegrationUpdateEvent({required super.gateway, required this.guildId, required this.oldIntegration, required this.integration});
 }
 
 /// {@template integration_delete_event}
@@ -47,5 +47,5 @@ class IntegrationDeleteEvent extends DispatchEvent {
   final Snowflake? applicationId;
 
   /// {@macro integration_delete_event}
-  IntegrationDeleteEvent({required this.id, required this.guildId, required this.applicationId});
+  IntegrationDeleteEvent({required super.gateway, required this.id, required this.guildId, required this.applicationId});
 }

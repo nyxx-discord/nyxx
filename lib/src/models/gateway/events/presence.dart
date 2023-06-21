@@ -25,6 +25,7 @@ class PresenceUpdateEvent extends DispatchEvent {
 
   /// {@macro presence_update_event}
   PresenceUpdateEvent({
+    required super.gateway,
     required this.user,
     required this.guildId,
     required this.status,
@@ -54,6 +55,7 @@ class TypingStartEvent extends DispatchEvent {
 
   /// {@macro typing_start_event}
   TypingStartEvent({
+    required super.gateway,
     required this.channelId,
     required this.guildId,
     required this.userId,
@@ -73,5 +75,5 @@ class UserUpdateEvent extends DispatchEvent {
   final User user;
 
   /// {@macro user_update_event}
-  UserUpdateEvent({required this.oldUser, required this.user});
+  UserUpdateEvent({required super.gateway, required this.oldUser, required this.user});
 }

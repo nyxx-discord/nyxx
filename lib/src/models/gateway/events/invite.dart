@@ -10,7 +10,7 @@ class InviteCreateEvent extends DispatchEvent {
   final InviteWithMetadata invite;
 
   /// {@macro invite_create_event}
-  InviteCreateEvent({required this.invite});
+  InviteCreateEvent({required super.gateway, required this.invite});
 }
 
 /// {@template invite_delete_event}
@@ -27,5 +27,5 @@ class InviteDeleteEvent extends DispatchEvent {
   final String code;
 
   /// {@macro invite_delete_event}
-  InviteDeleteEvent({required this.channelId, required this.guildId, required this.code});
+  InviteDeleteEvent({required super.gateway, required this.channelId, required this.guildId, required this.code});
 }
