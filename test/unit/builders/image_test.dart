@@ -9,7 +9,7 @@ void main() {
         data: [0, 0, 0, 255, 255, 255],
       );
 
-      expect(builder.build(), equals('data:image/png;base64,AAAA////'));
+      expect(builder.buildDataString(), equals('data:image/png;base64,AAAA////'));
     });
   });
 }

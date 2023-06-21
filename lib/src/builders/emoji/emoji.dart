@@ -22,7 +22,7 @@ class EmojiBuilder implements CreateBuilder<GuildEmoji> {
   @override
   Map<String, Object?> build() => {
         'name': name,
-        'image': image.build(),
+        'image': image.buildDataString(),
         'roles': roles.map((s) => s.toString()).toList(),
       };
 }

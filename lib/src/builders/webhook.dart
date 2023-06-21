@@ -17,7 +17,7 @@ class WebhookBuilder extends CreateBuilder<Webhook> {
   @override
   Map<String, Object?> build() => {
         'name': name,
-        if (avatar != null) 'avatar': avatar!.build(),
+        if (avatar != null) 'avatar': avatar!.buildDataString(),
       };
 }
 
@@ -37,7 +37,7 @@ class WebhookUpdateBuilder extends UpdateBuilder<Webhook> {
   @override
   Map<String, Object?> build() => {
         if (name != null) 'name': name,
-        if (!identical(avatar, sentinelImageBuilder)) 'avatar': avatar?.build(),
+        if (!identical(avatar, sentinelImageBuilder)) 'avatar': avatar?.buildDataString(),
         if (channelId != null) 'channel_id': channelId.toString(),
       };
 }

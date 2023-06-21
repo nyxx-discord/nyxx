@@ -706,7 +706,7 @@ class GuildManager extends Manager<Guild> {
     final route = HttpRoute()
       ..guilds()
       ..templates(code: code);
-    final request = BasicRequest(route, method: 'POST', body: jsonEncode({'name': name, if (icon != null) 'icon': icon.build()}));
+    final request = BasicRequest(route, method: 'POST', body: jsonEncode({'name': name, if (icon != null) 'icon': icon.buildDataString()}));
 
     final response = await client.httpHandler.executeSafe(request);
     final guild = parse(response.jsonBody as Map<String, Object?>);

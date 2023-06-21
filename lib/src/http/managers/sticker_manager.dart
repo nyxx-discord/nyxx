@@ -1,9 +1,10 @@
+import 'package:http/http.dart';
 import 'package:nyxx/src/builders/builder.dart';
+import 'package:nyxx/src/builders/sticker.dart';
 import 'package:nyxx/src/http/managers/manager.dart';
 import 'package:nyxx/src/http/request.dart';
 import 'package:nyxx/src/http/route.dart';
 import 'package:nyxx/src/models/snowflake.dart';
-import 'package:nyxx/src/models/snowflake_entity/snowflake_entity.dart';
 import 'package:nyxx/src/models/sticker/sticker.dart';
 import 'package:nyxx/src/utils/parsing_helpers.dart';
 
@@ -13,12 +14,24 @@ class StickerManger extends Manager<Sticker> {
   StickerManger(super.config, super.client, {required this.guildId}) : super(identifier: guildId != null ? "$guildId.stickers" : "stickers");
 
   @override
-  WritableSnowflakeEntity<Sticker> operator [](Snowflake id) => PartialSticker(id: id, manager: this);
+  PartialSticker operator [](Snowflake id) => PartialSticker(id: id, manager: this);
 
   @override
-  Future<Sticker> create(covariant CreateBuilder<Sticker> builder) {
-    // TODO: implement update
-    throw UnimplementedError();
+  Future<Sticker> create(StickerCreateBuilder builder) async {
+    _checkForGuild();
+
+    final route = HttpRoute()
+      ..guilds(id: guildId!.toString())
+      ..stickers();
+
+    final request = FormDataRequest(route,
+        method: 'POST', formParams: builder.build().cast<String, String>(), files: [MultipartFile.fromBytes('file', builder.file.buildRawData())]);
+    final response = await client.httpHandler.executeSafe(request);
+
+    final sticker = parse(response.jsonBody as Map<String, Object?>);
+    cache[sticker.id] = sticker;
+
+    return sticker;
   }
 
   Future<List<Sticker>> list() async {

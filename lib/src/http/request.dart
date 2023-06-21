@@ -119,19 +119,18 @@ class BasicRequest extends HttpRequest {
   }
 }
 
-/// An [HttpRequest] with files & a JSON payload.
-class MultipartRequest extends HttpRequest {
+class FormDataRequest extends HttpRequest {
   /// A list of files to be sent in this request.
   final List<MultipartFile> files;
 
-  /// The JSON-encoded payload to be sent in this request.
-  final String? jsonPayload;
+  /// Form params to send with http request
+  final Map<String, String> formParams;
 
-  /// Create a new [MultipartRequest].
-  MultipartRequest(
+  /// Create a new [FormDataRequest].
+  FormDataRequest(
     super.route, {
+    this.formParams = const {},
     this.files = const [],
-    this.jsonPayload,
     super.applyGlobalRateLimit,
     super.auditLogReason,
     super.authenticated,
@@ -145,12 +144,25 @@ class MultipartRequest extends HttpRequest {
     final request = http.MultipartRequest(method, _getUri(client));
     request
       ..headers.addAll(_getHeaders(client))
+      ..fields.addAll(formParams)
       ..files.addAll(files);
-
-    if (jsonPayload != null) {
-      request.fields.addAll({'payload_json': jsonPayload!});
-    }
 
     return request;
   }
+}
+
+/// An [HttpRequest] with files & a JSON payload.
+class MultipartRequest extends FormDataRequest {
+  /// Create a new [MultipartRequest].
+  MultipartRequest(
+    super.route, {
+    String? jsonPayload,
+    super.files,
+    super.applyGlobalRateLimit,
+    super.auditLogReason,
+    super.authenticated,
+    super.headers,
+    super.method,
+    super.queryParameters,
+  }) : super(formParams: jsonPayload != null ? {'payload_json': jsonPayload} : {});
 }

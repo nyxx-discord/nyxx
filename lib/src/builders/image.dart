@@ -23,6 +23,7 @@ class ImageBuilder {
       'jpeg': 'jpeg',
       'jpg': 'jpeg',
       'gif': 'gif',
+      'json': 'lottie',
     };
 
     final actualFormat = formats[format];
@@ -36,5 +37,7 @@ class ImageBuilder {
     return ImageBuilder(data: data, format: actualFormat);
   }
 
-  String build() => 'data:image/$format;base64,${base64Encode(data)}';
+  String buildDataString() => 'data:image/$format;base64,${base64Encode(data)}';
+
+  List<int> buildRawData() => data;
 }
