@@ -55,7 +55,7 @@ class PartialSticker extends WritableSnowflakeEntity<Sticker> {
 }
 
 /// {@template sticker}
-/// An Sticker that can be sent in messages.
+/// A sticker that can be sent in messages.
 /// {@endtemplate}
 class Sticker extends PartialSticker {
   final String? packId;
