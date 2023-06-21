@@ -1,5 +1,6 @@
+import 'dart:convert';
+
 import 'package:http/http.dart';
-import 'package:nyxx/src/builders/builder.dart';
 import 'package:nyxx/src/builders/sticker.dart';
 import 'package:nyxx/src/http/managers/manager.dart';
 import 'package:nyxx/src/http/request.dart';
@@ -99,9 +100,20 @@ class StickerManger extends Manager<Sticker> {
   }
 
   @override
-  Future<Sticker> update(Snowflake id, covariant UpdateBuilder<Sticker> builder) {
-    // TODO: implement update
-    throw UnimplementedError();
+  Future<Sticker> update(Snowflake id, StickerUpdateBuilder builder) async {
+    _checkForGuild();
+
+    final route = HttpRoute()
+      ..guilds(id: guildId!.toString())
+      ..stickers(id: id.toString());
+
+    final request = BasicRequest(route, body: jsonEncode(builder.build()), method: 'PATCH');
+    final response = await client.httpHandler.executeSafe(request);
+
+    final sticker = parse(response.jsonBody as Map<String, Object?>);
+
+    cache[sticker.id] = sticker;
+    return sticker;
   }
 
   void _checkForGuild() {

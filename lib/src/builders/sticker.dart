@@ -24,3 +24,23 @@ class StickerCreateBuilder implements CreateBuilder<Sticker> {
         "tags": tags,
       };
 }
+
+class StickerUpdateBuilder implements UpdateBuilder<Sticker> {
+  /// Name of the sticker (2-30 characters)
+  final String name;
+
+  /// Description of the sticker (empty or 2-100 characters)
+  final String? description;
+
+  /// Autocomplete/suggestion tags for the sticker (max 200 characters)
+  final String tags;
+
+  StickerUpdateBuilder({required this.name, this.description = '', required this.tags});
+
+  @override
+  Map<String, Object?> build() => {
+        "name": name,
+        if (description?.isNotEmpty ?? true) "description": description,
+        "tags": tags,
+      };
+}
