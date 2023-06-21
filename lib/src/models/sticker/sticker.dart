@@ -1,6 +1,3 @@
-import 'package:nyxx/src/http/managers/sticker_manager.dart';
-import 'package:nyxx/src/models/snowflake.dart';
-import 'package:nyxx/src/models/snowflake_entity/snowflake_entity.dart';
 import 'package:nyxx/src/models/user/user.dart';
 
 enum StickerType {
@@ -47,51 +44,30 @@ enum StickerFormatType {
   String toString() => 'StickerFormatType($value)';
 }
 
-class PartialSticker extends WritableSnowflakeEntity<Sticker> {
-  @override
-  final StickerManger manager;
+mixin Sticker {
+  /// Name of the sticker
+  String get name;
 
-  PartialSticker({required super.id, required this.manager});
-}
+  /// Description of the sticker
+  String? get description;
 
-/// {@template sticker}
-/// A sticker that can be sent in messages.
-/// {@endtemplate}
-class Sticker extends PartialSticker {
-  final String? packId;
+  /// Autocomplete/suggestion tags for the sticker (comma separated string)
+  String get tags;
 
-  final String name;
+  /// Type of sticker
+  StickerType get type;
 
-  final String? description;
+  /// Type of sticker format
+  StickerFormatType get formatType;
 
-  final String tags;
+  /// Whether this guild sticker can be used, may be false due to loss of Server Boosts
+  bool get available;
 
-  final StickerType type;
+  /// The user that uploaded the guild sticker
+  PartialUser? get user;
 
-  final StickerFormatType formatType;
-
-  final bool available;
-
-  final Snowflake? guildId;
-
-  final PartialUser? user;
-
-  final int? sortValue;
-
-  /// {@macro application}
-  Sticker(
-      {required super.id,
-      required super.manager,
-      required this.packId,
-      required this.name,
-      required this.description,
-      required this.tags,
-      required this.type,
-      required this.formatType,
-      required this.available,
-      required this.guildId,
-      required this.user,
-      required this.sortValue});
+  /// The standard sticker's sort order within its pack
+  int? get sortValue;
 
   /// Returns tags in list format since [tags] field is comma-separated string
   List<String> getTags() => tags.split(',');

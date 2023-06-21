@@ -1,8 +1,8 @@
 import 'package:nyxx/src/builders/builder.dart';
 import 'package:nyxx/src/builders/image.dart';
-import 'package:nyxx/src/models/sticker/sticker.dart';
+import 'package:nyxx/src/models/sticker/guild_sticker.dart';
 
-class StickerCreateBuilder implements CreateBuilder<Sticker> {
+class StickerCreateBuilder implements CreateBuilder<GuildSticker> {
   /// Name of the sticker (2-30 characters)
   final String name;
 
@@ -25,7 +25,7 @@ class StickerCreateBuilder implements CreateBuilder<Sticker> {
       };
 }
 
-class StickerUpdateBuilder implements UpdateBuilder<Sticker> {
+class StickerUpdateBuilder implements UpdateBuilder<GuildSticker> {
   /// Name of the sticker (2-30 characters)
   final String name;
 

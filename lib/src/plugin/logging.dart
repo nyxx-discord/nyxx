@@ -2,7 +2,9 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:logging/logging.dart';
-import 'package:nyxx/nyxx.dart';
+import 'package:nyxx/src/api_options.dart';
+import 'package:nyxx/src/client.dart';
+import 'package:nyxx/src/client_options.dart';
 import 'package:nyxx/src/plugin/plugin.dart';
 
 /// A global instance of the [Logging] plugin.

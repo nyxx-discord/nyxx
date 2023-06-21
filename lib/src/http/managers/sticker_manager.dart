@@ -6,23 +6,24 @@ import 'package:nyxx/src/http/managers/manager.dart';
 import 'package:nyxx/src/http/request.dart';
 import 'package:nyxx/src/http/route.dart';
 import 'package:nyxx/src/models/snowflake.dart';
+import 'package:nyxx/src/models/sticker/global_sticker.dart';
+import 'package:nyxx/src/models/sticker/guild_sticker.dart';
 import 'package:nyxx/src/models/sticker/sticker.dart';
+import 'package:nyxx/src/models/sticker/sticker_pack.dart';
 import 'package:nyxx/src/utils/parsing_helpers.dart';
 
-class StickerManger extends Manager<Sticker> {
-  final Snowflake? guildId;
+class GuildStickerManager extends Manager<GuildSticker> {
+  final Snowflake guildId;
 
-  StickerManger(super.config, super.client, {required this.guildId}) : super(identifier: guildId != null ? "$guildId.stickers" : "stickers");
-
-  @override
-  PartialSticker operator [](Snowflake id) => PartialSticker(id: id, manager: this);
+  GuildStickerManager(super.config, super.client, {required this.guildId}) : super(identifier: "$guildId.stickers");
 
   @override
-  Future<Sticker> create(StickerCreateBuilder builder) async {
-    _checkForGuild();
+  PartialGuildSticker operator [](Snowflake id) => PartialGuildSticker(id: id, manager: this);
 
+  @override
+  Future<GuildSticker> create(StickerCreateBuilder builder) async {
     final route = HttpRoute()
-      ..guilds(id: guildId!.toString())
+      ..guilds(id: guildId.toString())
       ..stickers();
 
     final request = FormDataRequest(route,
@@ -35,11 +36,9 @@ class StickerManger extends Manager<Sticker> {
     return sticker;
   }
 
-  Future<List<Sticker>> list() async {
-    _checkForGuild();
-
+  Future<List<GuildSticker>> list() async {
     final route = HttpRoute()
-      ..guilds(id: guildId!.toString())
+      ..guilds(id: guildId.toString())
       ..stickers();
 
     final request = BasicRequest(route);
@@ -53,8 +52,6 @@ class StickerManger extends Manager<Sticker> {
 
   @override
   Future<void> delete(Snowflake id) async {
-    _checkForGuild();
-
     final route = HttpRoute()
       ..guilds(id: guildId.toString())
       ..stickers(id: id.toString());
@@ -65,11 +62,9 @@ class StickerManger extends Manager<Sticker> {
   }
 
   @override
-  Future<Sticker> fetch(Snowflake id) async {
-    _checkForGuild();
-
+  Future<GuildSticker> fetch(Snowflake id) async {
     final route = HttpRoute()
-      ..guilds(id: guildId!.toString())
+      ..guilds(id: guildId.toString())
       ..stickers(id: id.toString());
 
     final request = BasicRequest(route);
@@ -82,11 +77,10 @@ class StickerManger extends Manager<Sticker> {
   }
 
   @override
-  Sticker parse(Map<String, Object?> raw) {
-    return Sticker(
+  GuildSticker parse(Map<String, Object?> raw) {
+    return GuildSticker(
       manager: this,
       id: Snowflake.parse(raw['id'] as String),
-      packId: raw['pack_id'] as String?,
       name: raw['name'] as String,
       description: raw['description'] as String,
       tags: raw['tags'] as String,
@@ -100,11 +94,9 @@ class StickerManger extends Manager<Sticker> {
   }
 
   @override
-  Future<Sticker> update(Snowflake id, StickerUpdateBuilder builder) async {
-    _checkForGuild();
-
+  Future<GuildSticker> update(Snowflake id, StickerUpdateBuilder builder) async {
     final route = HttpRoute()
-      ..guilds(id: guildId!.toString())
+      ..guilds(id: guildId.toString())
       ..stickers(id: id.toString());
 
     final request = BasicRequest(route, body: jsonEncode(builder.build()), method: 'PATCH');
@@ -115,10 +107,58 @@ class StickerManger extends Manager<Sticker> {
     cache[sticker.id] = sticker;
     return sticker;
   }
+}
 
-  void _checkForGuild() {
-    if (guildId == null) {
-      throw UnsupportedError("Cannot perform this operation on global sticker");
-    }
+class GlobalStickerManager extends ReadOnlyManager<GlobalSticker> {
+  GlobalStickerManager(super.config, super.client) : super(identifier: 'stickers');
+
+  @override
+  PartialGlobalSticker operator [](Snowflake id) => PartialGlobalSticker(id: id, manager: this);
+
+  @override
+  Future<GlobalSticker> fetch(Snowflake id) async {
+    final route = HttpRoute()..stickers(id: id.toString());
+
+    final request = BasicRequest(route);
+    final response = await client.httpHandler.executeSafe(request);
+
+    final sticker = parse(response.jsonBody as Map<String, Object?>);
+
+    cache[sticker.id] = sticker;
+    return sticker;
+  }
+
+  Future<StickerPack> fetchStickerPack(Snowflake id) async {
+    final route = HttpRoute()..stickers(id: id.toString());
+
+    final request = BasicRequest(route);
+    final response = (await client.httpHandler.executeSafe(request)).jsonBody as Map<String, Object?>;
+
+    return StickerPack(
+      id: Snowflake.parse(response['id'] as String),
+      stickers: (response['stickers'] as List).map((e) => parse(e as Map<String, Object?>)).toList(),
+      name: response['name'] as String,
+      skuId: Snowflake.parse(response['sku_id'] as String),
+      coverStickerId: response['cover_sticker_id'] != null ? Snowflake.parse(response['cover_sticker_id'] as String) : null,
+      description: response['description'] as String,
+      bannerAssetId: response['banner_asset_id'] != null ? Snowflake.parse(response['banner_asset_id'] as String) : null,
+    );
+  }
+
+  @override
+  GlobalSticker parse(Map<String, Object?> raw) {
+    return GlobalSticker(
+      manager: this,
+      id: Snowflake.parse(raw['id'] as String),
+      packId: raw['pack_id'] as String?,
+      name: raw['name'] as String,
+      description: raw['description'] as String,
+      tags: raw['tags'] as String,
+      type: StickerType.parse(raw['type'] as int),
+      formatType: StickerFormatType.parse(raw['format_type'] as int),
+      available: raw['available'] as bool? ?? false,
+      user: ((raw['user'] ?? {}) as Map)['id'] != null ? client.users[Snowflake.parse((raw['user'] as Map)['id'] as String)] : null,
+      sortValue: raw['sort_value'] as int?,
+    );
   }
 }

@@ -12,6 +12,8 @@ import 'package:nyxx/src/models/guild/member.dart';
 import 'package:nyxx/src/models/guild/scheduled_event.dart';
 import 'package:nyxx/src/models/message/message.dart';
 import 'package:nyxx/src/models/role.dart';
+import 'package:nyxx/src/models/sticker/global_sticker.dart';
+import 'package:nyxx/src/models/sticker/guild_sticker.dart';
 import 'package:nyxx/src/models/user/user.dart';
 import 'package:nyxx/src/models/webhook.dart';
 import 'package:nyxx/src/plugin/plugin.dart';
@@ -60,6 +62,12 @@ class RestClientOptions extends ClientOptions {
   /// The [CacheConfig] to use for the [Emoji]s in the [Guild.emojis] manager.
   final CacheConfig<Emoji> emojiCacheConfig;
 
+  /// The [CacheConfig] to use for the [GuildSticker]s in the [Guild.stickers] manager.
+  final CacheConfig<GuildSticker> stickerCacheConfig;
+
+  /// The [CacheConfig] to use for the [GlobalSticker]s in the [NyxxRest.stickers] manager.
+  final CacheConfig<GlobalSticker> globalStickerCacheConfig;
+
   /// The [CacheConfig] to use for [StageInstance]s in the [NyxxRest.channels] manager.
   final CacheConfig<StageInstance> stageInstanceCacheConfig;
 
@@ -89,6 +97,8 @@ class RestClientOptions extends ClientOptions {
     this.scheduledEventCacheConfig = const CacheConfig(),
     this.autoModerationRuleConfig = const CacheConfig(),
     this.auditLogEntryConfig = const CacheConfig(),
+    this.stickerCacheConfig = const CacheConfig(),
+    this.globalStickerCacheConfig = const CacheConfig(),
   });
 }
 

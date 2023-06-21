@@ -68,6 +68,7 @@ export 'src/http/managers/scheduled_event_manager.dart' show ScheduledEventManag
 export 'src/http/managers/auto_moderation_manager.dart' show AutoModerationManager;
 export 'src/http/managers/emoji_manager.dart' show EmojiManager;
 export 'src/http/managers/audit_log_manager.dart' show AuditLogManager;
+export 'src/http/managers/sticker_manager.dart' show GuildStickerManager, GlobalStickerManager;
 
 export 'src/gateway/gateway.dart' show Gateway;
 export 'src/gateway/message.dart' show Disconnecting, Dispose, ErrorReceived, EventReceived, GatewayMessage, Send, ShardData, ShardMessage;
@@ -227,7 +228,10 @@ export 'src/models/gateway/events/webhook.dart' show WebhooksUpdateEvent;
 export 'src/models/presence.dart'
     show Activity, ActivityAssets, ActivityButton, ActivityFlags, ActivityParty, ActivitySecrets, ActivityTimestamps, ClientStatus, ActivityType, UserStatus;
 export 'src/models/emoji.dart' show Emoji, GuildEmoji, PartialEmoji, TextEmoji;
+export 'src/models/sticker/guild_sticker.dart' show GuildSticker, PartialGuildSticker;
+export 'src/models/sticker/global_sticker.dart' show GlobalSticker, PartialGlobalSticker;
 export 'src/models/sticker/sticker.dart' show Sticker, StickerType, StickerFormatType;
+export 'src/models/sticker/sticker_pack.dart' show StickerPack;
 
 export 'src/utils/flags.dart' show Flag, Flags;
 export 'src/intents.dart' show GatewayIntents;
