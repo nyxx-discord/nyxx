@@ -193,6 +193,7 @@ class MessageManager extends Manager<Message> {
 
   MessageReference parseMessageReference(Map<String, Object?> raw) {
     return MessageReference(
+      manager: this,
       messageId: maybeParse(raw['message_id'], Snowflake.parse),
       channelId: Snowflake.parse(raw['channel_id']!),
       guildId: maybeParse(raw['guild_id'], Snowflake.parse),

@@ -54,6 +54,7 @@ class AutoModerationManager extends Manager<AutoModerationRule> {
 
   ActionMetadata parseActionMetadata(Map<String, Object?> raw) {
     return ActionMetadata(
+      manager: this,
       channelId: maybeParse(raw['channel_id'], Snowflake.parse),
       duration: maybeParse(raw['duration_seconds'], (int seconds) => Duration(seconds: seconds)),
       customMessage: raw['custom_message'] as String?,
