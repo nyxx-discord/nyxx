@@ -1,4 +1,3 @@
-import 'package:nyxx/src/models/channel/channel.dart';
 import 'package:nyxx/src/models/channel/text_channel.dart';
 import 'package:nyxx/src/models/emoji.dart';
 import 'package:nyxx/src/models/gateway/event.dart';
@@ -84,7 +83,7 @@ class MessageDeleteEvent extends DispatchEvent {
   PartialGuild? get guild => guildId == null ? null : gateway.client.guilds[guildId!];
 
   /// The channel the message was deleted in.
-  PartialChannel get channel => gateway.client.channels[channelId];
+  PartialTextChannel get channel => gateway.client.channels[channelId] as PartialTextChannel;
 }
 
 /// {@template message_bulk_delete_event}
@@ -107,7 +106,7 @@ class MessageBulkDeleteEvent extends DispatchEvent {
   PartialGuild? get guild => guildId == null ? null : gateway.client.guilds[guildId!];
 
   /// The channel the messages were deleted in.
-  PartialChannel get channel => gateway.client.channels[channelId];
+  PartialTextChannel get channel => gateway.client.channels[channelId] as PartialTextChannel;
 }
 
 /// {@template message_reaction_add_event}

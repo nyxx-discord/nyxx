@@ -121,7 +121,7 @@ class ThreadMember extends PartialThreadMember {
   });
 
   /// The thread this member is in.
-  PartialChannel get thread => manager.client.channels[threadId];
+  PartialTextChannel get thread => manager.client.channels[threadId] as PartialTextChannel;
 
   /// The user associated with this thread member.
   PartialUser get user => manager.client.users[userId];

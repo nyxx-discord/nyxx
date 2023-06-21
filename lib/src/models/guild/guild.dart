@@ -17,6 +17,7 @@ import 'package:nyxx/src/http/managers/scheduled_event_manager.dart';
 import 'package:nyxx/src/models/application.dart';
 import 'package:nyxx/src/models/channel/channel.dart';
 import 'package:nyxx/src/models/channel/guild_channel.dart';
+import 'package:nyxx/src/models/channel/text_channel.dart';
 import 'package:nyxx/src/models/channel/thread_list.dart';
 import 'package:nyxx/src/models/emoji.dart';
 import 'package:nyxx/src/models/guild/ban.dart';
@@ -370,13 +371,14 @@ class Guild extends PartialGuild {
   PartialApplication? get application => applicationId == null ? null : manager.client.applications[applicationId!];
 
   /// The channel system messages are sent to.
-  PartialChannel? get systemChannel => systemChannelId == null ? null : manager.client.channels[systemChannelId!];
+  PartialTextChannel? get systemChannel => systemChannelId == null ? null : manager.client.channels[systemChannelId!] as PartialTextChannel?;
 
   /// The rules channel in a community server.
-  PartialChannel? get rulesChannel => rulesChannelId == null ? null : manager.client.channels[rulesChannelId!];
+  PartialTextChannel? get rulesChannel => rulesChannelId == null ? null : manager.client.channels[rulesChannelId!] as PartialTextChannel?;
 
   /// The public updates channel in a community server.
-  PartialChannel? get publicUpdatesChannel => publicUpdatesChannelId == null ? null : manager.client.channels[publicUpdatesChannelId!];
+  PartialTextChannel? get publicUpdatesChannel =>
+      publicUpdatesChannelId == null ? null : manager.client.channels[publicUpdatesChannelId!] as PartialTextChannel?;
 }
 
 /// The verification level for a guild.
