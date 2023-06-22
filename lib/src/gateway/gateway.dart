@@ -15,6 +15,7 @@ import 'package:nyxx/src/http/managers/message_manager.dart';
 import 'package:nyxx/src/models/application.dart';
 import 'package:nyxx/src/models/channel/channel.dart';
 import 'package:nyxx/src/models/channel/guild_channel.dart';
+import 'package:nyxx/src/models/channel/text_channel.dart';
 import 'package:nyxx/src/models/channel/thread.dart';
 import 'package:nyxx/src/models/gateway/gateway.dart';
 import 'package:nyxx/src/models/gateway/event.dart';
@@ -136,9 +137,7 @@ class Gateway extends GatewayManager with EventParser {
           GuildRoleUpdateEvent(:final guildId, :final role) =>
             client.guilds[guildId].roles.cache[role.id] = role,
           GuildRoleDeleteEvent(:final guildId, :final roleId) => client.guilds[guildId].roles.cache.remove(roleId),
-          MessageCreateEvent(:final message) ||
-          MessageUpdateEvent(:final message) =>
-            MessageManager(client.options.messageCacheConfig, client, channelId: message.channelId).cache[message.id] = message,
+          MessageCreateEvent(:final message) => (client.channels[message.channelId] as PartialTextChannel).messages.cache[message.id] = message,
           MessageDeleteEvent(id: final messageId, :final channelId) =>
             MessageManager(client.options.messageCacheConfig, client, channelId: channelId).cache.remove(messageId),
           MessageBulkDeleteEvent(ids: final messageIds, :final channelId) =>
@@ -687,25 +686,21 @@ class Gateway extends GatewayManager with EventParser {
 
   MessageUpdateEvent parseMessageUpdate(Map<String, Object?> raw) {
     final guildId = maybeParse(raw['guild_id'], Snowflake.parse);
-    final manager = MessageManager(
-      client.options.messageCacheConfig,
-      client,
-      channelId: Snowflake.parse(raw['channel_id']!),
-    );
-    final message = manager.parse(raw);
+    final channelId = Snowflake.parse(raw['channel_id']!);
+    final id = Snowflake.parse(raw['id']!);
 
     return MessageUpdateEvent(
       guildId: guildId,
       member: maybeParse(
         raw['member'],
         (Map<String, Object?> raw) => PartialMember(
-          id: message.author.id,
-          manager: MemberManager(client.options.memberCacheConfig, client, guildId: guildId!),
+          id: Snowflake.parse((raw['author'] as Map<String, Object?>)['id']!),
+          manager: client.guilds[guildId ?? Snowflake.zero].members,
         ),
       ),
       mentions: parseMany(raw['mentions'] as List<Object?>, client.users.parse),
-      message: message,
-      oldMessage: manager.cache[message.id],
+      message: (client.channels[channelId] as PartialTextChannel).messages[id],
+      oldMessage: (client.channels[channelId] as PartialTextChannel).messages.cache[id],
     );
   }
 
