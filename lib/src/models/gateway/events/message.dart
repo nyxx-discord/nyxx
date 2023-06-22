@@ -39,9 +39,9 @@ class MessageUpdateEvent extends DispatchEvent {
   final List<User> mentions;
 
   /// The updated message.
-  final Message message;
+  final PartialMessage message;
 
-  /// The message as it was cached before the updated.
+  /// The message as it was cached before the update.
   final Message? oldMessage;
 
   /// {@macro message_update_event}
