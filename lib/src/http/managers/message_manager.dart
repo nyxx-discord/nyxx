@@ -7,11 +7,13 @@ import 'package:nyxx/src/builders/sentinels.dart';
 import 'package:nyxx/src/http/managers/manager.dart';
 import 'package:nyxx/src/http/request.dart';
 import 'package:nyxx/src/http/route.dart';
+import 'package:nyxx/src/models/application.dart';
 import 'package:nyxx/src/models/channel/channel.dart';
 import 'package:nyxx/src/models/channel/thread.dart';
 import 'package:nyxx/src/models/discord_color.dart';
 import 'package:nyxx/src/models/message/activity.dart';
 import 'package:nyxx/src/models/message/attachment.dart';
+import 'package:nyxx/src/models/message/author.dart';
 import 'package:nyxx/src/models/message/channel_mention.dart';
 import 'package:nyxx/src/models/message/embed.dart';
 import 'package:nyxx/src/models/message/message.dart';
@@ -35,11 +37,14 @@ class MessageManager extends Manager<Message> {
 
   @override
   Message parse(Map<String, Object?> raw) {
+    final webhookId = maybeParse(raw['webhook_id'], Snowflake.parse);
+
     return Message(
       id: Snowflake.parse(raw['id']!),
       manager: this,
-      // TODO: Could be a webhook
-      author: client.users.parse(raw['author'] as Map<String, Object?>),
+      author: (webhookId == null
+          ? client.users.parse(raw['author'] as Map<String, Object?>)
+          : client.webhooks.parseWebhookAuthor(raw['author'] as Map<String, Object?>)) as MessageAuthor,
       content: raw['content'] as String,
       timestamp: DateTime.parse(raw['timestamp'] as String),
       editedTimestamp: maybeParse(raw['edited_timestamp'], DateTime.parse),
@@ -53,9 +58,13 @@ class MessageManager extends Manager<Message> {
       reactions: maybeParseMany(raw['reactions'], parseReaction) ?? [],
       nonce: raw['nonce'] /* as int | String */,
       isPinned: raw['pinned'] as bool,
-      webhookId: maybeParse(raw['webhook_id'], Snowflake.parse),
+      webhookId: webhookId,
       type: MessageType.parse(raw['type'] as int),
       activity: maybeParse(raw['activity'], parseMessageActivity),
+      application: maybeParse(
+        raw['application'],
+        (Map<String, Object?> raw) => PartialApplication(id: Snowflake.parse(raw['id'] as String), manager: client.applications),
+      ),
       applicationId: maybeParse(raw['application_id'], Snowflake.parse),
       reference: maybeParse(raw['message_reference'], parseMessageReference),
       flags: MessageFlags(raw['flags'] as int? ?? 0),
@@ -434,7 +443,7 @@ class MessageManager extends Manager<Message> {
     await client.httpHandler.executeSafe(request);
   }
 
-  /// Deletes all reations for a given emoji on a message.
+  /// Deletes all reactions for a given emoji on a message.
   Future<void> deleteReaction(Snowflake id, ReactionBuilder emoji) async {
     final route = HttpRoute()
       ..channels(id: channelId.toString())

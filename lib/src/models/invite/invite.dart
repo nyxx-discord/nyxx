@@ -17,7 +17,6 @@ class Invite with ToStringHelper {
   final PartialGuild? guild;
 
   /// The [PartialChannel] this invite is for.
-  // TODO
   final PartialChannel channel;
 
   /// The [User] who created this invite.
@@ -30,7 +29,6 @@ class Invite with ToStringHelper {
   final User? targetUser;
 
   /// The [PartialApplication] to open for this voice channel embedded application invite.
-  // TODO
   final PartialApplication? targetApplication;
 
   /// The approximate count of members in the [Guild] this invite is for.

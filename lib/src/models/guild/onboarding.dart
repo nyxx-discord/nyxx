@@ -1,3 +1,4 @@
+import 'package:nyxx/src/models/emoji.dart';
 import 'package:nyxx/src/models/snowflake.dart';
 import 'package:nyxx/src/utils/to_string_helper/to_string_helper.dart';
 
@@ -100,8 +101,8 @@ class OnboardingPromptOption with ToStringHelper {
   /// The IDs of the roles the user is given.
   final List<Snowflake> roleIds;
 
-  // TODO
-  //final Emoji emoji;
+  /// The emoji associated with this onboarding prompt.
+  final Emoji? emoji;
 
   /// The title of this option.
   final String title;
@@ -114,6 +115,7 @@ class OnboardingPromptOption with ToStringHelper {
     required this.id,
     required this.channelIds,
     required this.roleIds,
+    required this.emoji,
     required this.title,
     required this.description,
   });

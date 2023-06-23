@@ -1,3 +1,4 @@
+import 'package:nyxx/src/cache/cache.dart';
 import 'package:nyxx/src/client.dart';
 import 'package:nyxx/src/http/request.dart';
 import 'package:nyxx/src/http/route.dart';
@@ -11,8 +12,11 @@ class VoiceManager {
   /// The client this manager belongs to.
   final NyxxRest client;
 
+  /// The cache for voice states.
+  final Cache<VoiceState> cache;
+
   /// Create a new [VoiceManager].
-  VoiceManager(this.client);
+  VoiceManager(this.client) : cache = Cache(client, 'voiceStates', client.options.voiceStateConfig);
 
   /// Parse a [VoiceState] from a [Map].
   VoiceState parseVoiceState(Map<String, Object?> raw) {

@@ -9,6 +9,7 @@ import 'package:nyxx/src/http/managers/gateway_manager.dart';
 import 'package:nyxx/src/intents.dart';
 import 'package:nyxx/src/manager_mixin.dart';
 import 'package:nyxx/src/api_options.dart';
+import 'package:nyxx/src/models/guild/guild.dart';
 import 'package:nyxx/src/models/snowflake.dart';
 import 'package:nyxx/src/plugin/plugin.dart';
 import 'package:nyxx/src/utils/flags.dart';
@@ -121,6 +122,10 @@ class NyxxRest with ManagerMixin implements Nyxx {
   /// * Discord API Reference: https://discord.com/developers/docs/resources/channel#leave-thread
   Future<void> leaveThread(Snowflake id) => channels.leaveThread(id);
 
+  /// List the guilds the current user is a member of.
+  Future<List<PartialGuild>> listGuilds({Snowflake? before, Snowflake? after, int? limit}) =>
+      users.listCurrentUserGuilds(before: before, after: after, limit: limit);
+
   @override
   Future<void> close() {
     logger.info('Closing client');
@@ -154,6 +159,10 @@ class NyxxGateway with ManagerMixin, EventMixin implements NyxxRest {
 
   @override
   Future<void> leaveThread(Snowflake id) => channels.leaveThread(id);
+
+  @override
+  Future<List<PartialGuild>> listGuilds({Snowflake? before, Snowflake? after, int? limit}) =>
+      users.listCurrentUserGuilds(before: before, after: after, limit: limit);
 
   /// Update the client's voice state in the guild with the ID [guildId].
   void updateVoiceState(Snowflake guildId, GatewayVoiceStateBuilder builder) => gateway.updateVoiceState(guildId, builder);

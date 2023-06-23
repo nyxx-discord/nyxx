@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:nyxx/src/builders/role.dart';
+import 'package:nyxx/src/errors.dart';
 import 'package:nyxx/src/http/managers/manager.dart';
 import 'package:nyxx/src/http/request.dart';
 import 'package:nyxx/src/http/route.dart';
@@ -67,9 +68,9 @@ class RoleManager extends Manager<Role> {
     // and return the matching role.
     final roles = await list();
 
-    // TODO: Add an exception for when the role is not found
     return roles.firstWhere(
       (role) => role.id == id,
+      orElse: () => throw RoleNotFoundException(guildId, id),
     );
   }
 
@@ -113,7 +114,6 @@ class RoleManager extends Manager<Role> {
   }
 
   /// Update the positions of the roles in this guild.
-  // TODO: This may need to be converted to a builder in the future.
   Future<List<Role>> updatePositions(Map<Snowflake, int> positions, {String? auditLogReason}) async {
     final route = HttpRoute()
       ..guilds(id: guildId.toString())

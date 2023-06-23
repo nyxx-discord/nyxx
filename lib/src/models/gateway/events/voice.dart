@@ -9,11 +9,11 @@ class VoiceStateUpdateEvent extends DispatchEvent {
   /// The updated voice state.
   final VoiceState state;
 
-  // TODO
-  //final VoiceState? oldState;
+  /// The voice state as it was cached before the update.
+  final VoiceState? oldState;
 
   /// {@macro voice_state_update_event}
-  VoiceStateUpdateEvent({required this.state});
+  VoiceStateUpdateEvent({required this.oldState, required this.state});
 }
 
 /// {@template voice_server_update_event}

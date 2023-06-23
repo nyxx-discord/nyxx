@@ -55,6 +55,15 @@ class WebhookManager extends Manager<Webhook> {
     );
   }
 
+  WebhookAuthor parseWebhookAuthor(Map<String, Object?> raw) {
+    return WebhookAuthor(
+      id: Snowflake.parse(raw['id']!),
+      manager: this,
+      avatarHash: raw['avatar'] as String?,
+      username: raw['username'] as String,
+    );
+  }
+
   @override
   Future<Webhook> fetch(Snowflake id, {String? token}) async {
     final route = HttpRoute()..webhooks(id: id.toString());
@@ -287,6 +296,5 @@ class WebhookManager extends Manager<Webhook> {
     );
 
     await client.httpHandler.executeSafe(request);
-    // TODO: Can we delete the message from the cache?
   }
 }

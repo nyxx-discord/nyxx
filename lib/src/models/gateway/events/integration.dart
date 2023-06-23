@@ -20,17 +20,17 @@ class IntegrationCreateEvent extends DispatchEvent {
 /// Emitted when an integration is updated.
 /// {@endtemplate}
 class IntegrationUpdateEvent extends DispatchEvent {
-  /// The ID of the guild.
+  /// The ID of the guild
   final Snowflake guildId;
 
-  // TODO
-  //final Integration? oldIntegration;
+  /// The integration as it was cached before the update.
+  final Integration? oldIntegration;
 
   /// The updated integration.
   final Integration integration;
 
   /// {@macro integration_update_event}
-  IntegrationUpdateEvent({required this.guildId, required this.integration});
+  IntegrationUpdateEvent({required this.guildId, required this.oldIntegration, required this.integration});
 }
 
 /// {@template integration_delete_event}

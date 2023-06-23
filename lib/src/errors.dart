@@ -1,4 +1,6 @@
 import 'package:nyxx/src/gateway/shard.dart';
+import 'package:nyxx/src/models/gateway/gateway.dart';
+import 'package:nyxx/src/models/snowflake.dart';
 
 /// The base class for all exceptions thrown by nyxx.
 class NyxxException implements Exception {
@@ -18,6 +20,54 @@ class InvalidEventException extends NyxxException {
   InvalidEventException(String message) : super('Invalid gateway event: $message');
 }
 
+/// An exception thrown when a member already exists in a guild.
+class MemberAlreadyExistsException extends NyxxException {
+  /// The ID of the guild.
+  final Snowflake guildId;
+
+  /// The ID of the member.
+  final Snowflake memberId;
+
+  /// Create a new [MemberAlreadyExistsException].
+  MemberAlreadyExistsException(this.guildId, this.memberId) : super('Member $memberId already exists in guild $guildId');
+}
+
+/// An exception thrown when a role is not found in a guild.
+class RoleNotFoundException extends NyxxException {
+  /// The ID of the guild.
+  final Snowflake guildId;
+
+  /// The ID of the role.
+  final Snowflake roleId;
+
+  /// Create a new [RoleNotFoundException].
+  RoleNotFoundException(this.guildId, this.roleId) : super('Role $roleId not found in guild $guildId');
+}
+
+/// An exception thrown when a integration is not found in a guild.
+class IntegrationNotFoundException extends NyxxException {
+  /// The ID of the guild.
+  final Snowflake guildId;
+
+  /// The ID of the integration.
+  final Snowflake integrationId;
+
+  /// Create a new [IntegrationNotFoundException].
+  IntegrationNotFoundException(this.guildId, this.integrationId) : super('Integration $integrationId not found in guild $guildId');
+}
+
+/// An exception thrown when an audit log entry is not found in a guild.
+class AuditLogEntryNotFoundException extends NyxxException {
+  /// The ID of the guild.
+  final Snowflake guildId;
+
+  /// The ID of the audit log entry.
+  final Snowflake auditLogEntryId;
+
+  /// Create a new [AuditLogEntryNotFoundException].
+  AuditLogEntryNotFoundException(this.guildId, this.auditLogEntryId) : super('Audit log entry $auditLogEntryId not found in guild $guildId');
+}
+
 /// An error thrown when a shard disconnects unexpectedly.
 class ShardDisconnectedError extends Error {
   /// The shard that was disconnected.
@@ -28,4 +78,18 @@ class ShardDisconnectedError extends Error {
 
   @override
   String toString() => 'Shard ${shard.id} disconnected unexpectedly';
+}
+
+/// An error thrown when the number of remaining sessions becomes too low.
+///
+/// The threshold for this can be configured in [GatewayClientOptions.minimumSessionStarts].
+class OutOfRemainingSessionsError extends Error {
+  /// The [GatewayBot] containing the information that triggered the error.
+  final GatewayBot gatewayBot;
+
+  /// Create a new [OutOfRemainingSessionsError].
+  OutOfRemainingSessionsError(this.gatewayBot);
+
+  @override
+  String toString() => 'Out of remaining session starts (${gatewayBot.sessionStartLimit.remaining} left)';
 }

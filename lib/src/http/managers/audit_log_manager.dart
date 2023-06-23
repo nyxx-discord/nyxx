@@ -1,3 +1,4 @@
+import 'package:nyxx/src/errors.dart';
 import 'package:nyxx/src/http/managers/manager.dart';
 import 'package:nyxx/src/http/request.dart';
 import 'package:nyxx/src/http/route.dart';
@@ -54,12 +55,12 @@ class AuditLogManager extends ReadOnlyManager<AuditLogEntry> {
 
   @override
   Future<AuditLogEntry> fetch(Snowflake id) async {
-    // TODO: Is before inclusive? If so, we can remove the + duration
-    final entries = await list(before: id + const Duration(milliseconds: 1));
+    // Add one because before and after are exclusive.
+    final entries = await list(before: Snowflake(id.value + 1));
 
-    // TODO: Add an exception when not found
     return entries.firstWhere(
       (entry) => entry.id == id,
+      orElse: () => throw AuditLogEntryNotFoundException(guildId, id),
     );
   }
 

@@ -7,8 +7,6 @@ import 'package:nyxx/src/models/user/user.dart';
 /// {@template presence_update_event}
 /// Emitted when a user updates their presence.
 /// {@endtemplate}
-// TODO: Docs say everything is optional, but is it really?
-// Pre-6.0.0 nyxx had everything non-nullable and we never had any issues.
 class PresenceUpdateEvent extends DispatchEvent {
   /// The user that updated their presence.
   final PartialUser? user;

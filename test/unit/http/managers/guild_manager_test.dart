@@ -420,36 +420,6 @@ void checkOnboarding(Onboarding onboarding) {
   expect(option.channelIds, equals([Snowflake(962007075288916001)]));
 }
 
-final sampleIntegration = {
-  "id": "0",
-  "name": "test",
-  "type": "youtube",
-  "enabled": true,
-  "account": {
-    "id": "0",
-    "name": "account name",
-  },
-};
-
-void checkIntegration(Integration integration) {
-  expect(integration.id, equals(Snowflake(0)));
-  expect(integration.name, equals("test"));
-  expect(integration.type, equals("youtube"));
-  expect(integration.isEnabled, isTrue);
-  expect(integration.isSyncing, isNull);
-  expect(integration.roleId, isNull);
-  expect(integration.enableEmoticons, isNull);
-  expect(integration.expireBehavior, isNull);
-  expect(integration.expireGracePeriod, isNull);
-  expect(integration.user, isNull);
-  expect(integration.account.id, equals(Snowflake(0)));
-  expect(integration.syncedAt, isNull);
-  expect(integration.subscriberCount, isNull);
-  expect(integration.isRevoked, isNull);
-  expect(integration.application, isNull);
-  expect(integration.scopes, isNull);
-}
-
 final sampleGuildTemplate = {
   "code": "hgM48av5Q69A",
   "name": "Friends & Family",
@@ -477,9 +447,6 @@ final sampleGuildTemplate = {
         "color": 0,
         "hoist": false,
         "mentionable": false,
-
-        // TODO: Is this included in real templates?
-        "position": 1,
       }
     ],
     "channels": [
@@ -535,7 +502,7 @@ void checkGuildTemplate(GuildTemplate template) {
 void main() {
   testManager<Guild, GuildManager>(
     'GuildManager',
-    (client, config) => GuildManager(client, config, banConfig: const CacheConfig()),
+    (client, config) => GuildManager(client, config),
     RegExp(r'/guilds/\d+'),
     '/guilds',
     sampleObject: sampleGuild,
@@ -695,25 +662,6 @@ void main() {
 
           checkVoiceRegion(list.first);
         },
-      ),
-      EndpointTest<GuildManager, List<Integration>, List<Object?>>(
-        name: 'listIntegrations',
-        source: [sampleIntegration],
-        urlMatcher: '/guilds/0/integrations',
-        execute: (manager) => manager.listIntegrations(Snowflake.zero),
-        check: (list) {
-          expect(list, hasLength(1));
-
-          checkIntegration(list.first);
-        },
-      ),
-      EndpointTest<GuildManager, void, void>(
-        name: 'deleteIntegration',
-        method: 'DELETE',
-        source: null,
-        urlMatcher: '/guilds/0/integrations/0',
-        execute: (manager) => manager.deleteIntegration(Snowflake.zero, Snowflake.zero),
-        check: (_) {},
       ),
       EndpointTest<GuildManager, WidgetSettings, Map<String, Object?>>(
         name: 'fetchWidgetSettings',

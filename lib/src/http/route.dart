@@ -252,4 +252,14 @@ extension RouteHelpers on HttpRoute {
 
   /// Adds the [`templates`](https://discord.com/developers/docs/resources/guild-template#get-guild-template) part to this [HttpRoute].
   void templates({String? code}) => add(HttpRoutePart('templates', [if (code != null) HttpRouteParam(code)]));
+
+  /// Adds the [`role-connection`](https://discord.com/developers/docs/resources/user#get-user-application-role-connection)
+  /// part to this [HttpRoute].
+  void roleConnection() => add(HttpRoutePart('role-connection'));
+
+  /// Adds the [`member`](https://discord.com/developers/docs/resources/user#get-current-user-guild-member) part to this [HttpRoute].
+  void member() => add(HttpRoutePart("member"));
+
+  /// Adds the [`vanity-url`](https://discord.com/developers/docs/resources/guild#get-guild-vanity-url) part to this [HttpRoute].
+  void vanityUrl() => add(HttpRoutePart('vanity-url'));
 }

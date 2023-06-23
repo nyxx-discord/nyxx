@@ -1,5 +1,8 @@
+import 'package:nyxx/src/builders/invite.dart';
 import 'package:nyxx/src/builders/permission_overwrite.dart';
 import 'package:nyxx/src/models/channel/channel.dart';
+import 'package:nyxx/src/models/invite/invite.dart';
+import 'package:nyxx/src/models/invite/invite_metadata.dart';
 import 'package:nyxx/src/models/permission_overwrite.dart';
 import 'package:nyxx/src/models/snowflake.dart';
 import 'package:nyxx/src/models/webhook.dart';
@@ -40,5 +43,12 @@ abstract class GuildChannel implements Channel {
   /// * Discord API Reference: https://discord.com/developers/docs/resources/channel#delete-channel-permission
   Future<void> deletePermissionOverwrite(Snowflake id);
 
+  /// List the webhooks in this channel.
   Future<List<Webhook>> fetchWebhooks();
+
+  /// List the invites in this channel.
+  Future<List<InviteWithMetadata>> listInvites();
+
+  /// Create an invite to this channel.
+  Future<Invite> createInvite(InviteBuilder builder, {String? auditLogReason});
 }

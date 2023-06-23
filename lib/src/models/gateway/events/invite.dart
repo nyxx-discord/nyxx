@@ -1,12 +1,16 @@
 import 'package:nyxx/src/models/gateway/event.dart';
+import 'package:nyxx/src/models/invite/invite_metadata.dart';
 import 'package:nyxx/src/models/snowflake.dart';
 
 /// {@template invite_create_event}
 /// Emitted when an invite is created.
 /// {@endtemplate}
 class InviteCreateEvent extends DispatchEvent {
-  // TODO
-  //final Invite invite;
+  /// The invite that was created.
+  final InviteWithMetadata invite;
+
+  /// {@macro invite_create_event}
+  InviteCreateEvent({required this.invite});
 }
 
 /// {@template invite_delete_event}
