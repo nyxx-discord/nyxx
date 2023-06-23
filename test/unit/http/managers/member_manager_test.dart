@@ -5,7 +5,7 @@ import '../../../test_manager.dart';
 import 'user_manager_test.dart';
 
 final sampleMember = {
-  "user": sampleUser, // TODO: Not in the provided sample - can we be sure this is always a valid user?
+  "user": sampleUser,
   "nick": "NOT API SUPPORT",
   "avatar": null,
   "roles": [],

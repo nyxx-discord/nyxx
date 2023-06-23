@@ -1,3 +1,4 @@
+import 'package:nyxx/src/builders/presence.dart';
 import 'package:nyxx/src/intents.dart';
 import 'package:nyxx/src/utils/flags.dart';
 
@@ -79,6 +80,9 @@ class GatewayApiOptions extends RestApiOptions {
   /// The threshold after which guilds are considered large in the Gateway.
   final int? largeThreshold;
 
+  /// The presence the client will set after first connecting to the Gateway.
+  final PresenceBuilder? initialPresence;
+
   /// The query parameters to append to the Gateway connection URL.
   Map<String, String> get gatewayConnectionOptions => {
         'v': apiVersion.toString(),
@@ -96,6 +100,7 @@ class GatewayApiOptions extends RestApiOptions {
     this.shards,
     this.totalShards,
     this.largeThreshold,
+    this.initialPresence,
   });
 }
 

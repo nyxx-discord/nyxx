@@ -2,6 +2,8 @@ import 'package:nyxx/nyxx.dart';
 import 'package:test/test.dart';
 
 import '../../../test_manager.dart';
+import 'channel_manager_test.dart';
+import 'member_manager_test.dart';
 
 final sampleUser = {
   "id": "80351110224678912",
@@ -21,6 +23,7 @@ void checkSampleUser(User user) {
   expect(user.id, equals(Snowflake(80351110224678912)));
   expect(user.username, equals('Nelly'));
   expect(user.discriminator, equals('1337'));
+  expect(user.globalName, isNull);
   expect(user.avatarHash, equals('8342729096ea3675442027381ff50dfe'));
   expect(user.isBot, isFalse);
   expect(user.isSystem, isFalse);
@@ -56,6 +59,18 @@ void checkSampleConnection(connection) {
   expect(connection.visibility, ConnectionVisibility.none);
 }
 
+final sampleApplicationRoleConnection = {
+  'platform_name': 'test',
+  'platform_username': 'user',
+  'metadata': {},
+};
+
+void checkApplicationRoleConnection(ApplicationRoleConnection connection) {
+  expect(connection.platformName, equals('test'));
+  expect(connection.platformUsername, equals('user'));
+  expect(connection.metadata, equals({}));
+}
+
 void main() {
   testReadOnlyManager<User, UserManager>(
     'UserManager',
@@ -87,6 +102,49 @@ void main() {
         execute: (manager) => manager.updateCurrentUser(UserUpdateBuilder()),
         check: checkSampleUser,
       ),
+      EndpointTest<UserManager, List<PartialGuild>, List<Object?>>(
+        name: 'listCurrentUserGuilds',
+        source: [
+          {'id': '0'}
+        ],
+        urlMatcher: '/users/@me/guilds',
+        execute: (manager) => manager.listCurrentUserGuilds(),
+        check: (list) {
+          expect(list, hasLength(1));
+          expect(list.single.id, equals(Snowflake.zero));
+        },
+      ),
+      EndpointTest<UserManager, Member, Map<String, Object?>>(
+        name: 'fetchCurrentUserMember',
+        source: sampleMember,
+        urlMatcher: '/users/@me/guilds/0/member',
+        execute: (manager) => manager.fetchCurrentUserMember(Snowflake.zero),
+        check: checkMember,
+      ),
+      EndpointTest<UserManager, void, void>(
+        name: 'leaveGuild',
+        method: 'DELETE',
+        source: null,
+        urlMatcher: '/users/@me/guilds/0',
+        execute: (manager) => manager.leaveGuild(Snowflake.zero),
+        check: (_) {},
+      ),
+      EndpointTest<UserManager, DmChannel, Map<String, Object?>>(
+        name: 'createDm',
+        source: sampleDm,
+        method: 'POST',
+        urlMatcher: '/users/@me/channels',
+        execute: (manager) => manager.createDm(Snowflake.zero),
+        check: checkDm,
+      ),
+      EndpointTest<UserManager, GroupDmChannel, Map<String, Object?>>(
+        name: 'createGroupDm',
+        source: sampleGroupDm,
+        method: 'POST',
+        urlMatcher: '/users/@me/channels',
+        execute: (manager) => manager.createGroupDm([], {}),
+        check: checkGroupDm,
+      ),
       EndpointTest<UserManager, List<Connection>, List<Map<String, Object?>>>(
         name: 'fetchCurrentUserConnections',
         source: [sampleConnection],
@@ -96,6 +154,21 @@ void main() {
           expect(connections, hasLength(1));
           checkSampleConnection(connections.single);
         },
+      ),
+      EndpointTest<UserManager, ApplicationRoleConnection, Map<String, Object?>>(
+        name: 'fetchCurrentUserApplicationRoleConnection',
+        source: sampleApplicationRoleConnection,
+        urlMatcher: '/users/@me/applications/0/role-connection',
+        execute: (manager) => manager.fetchCurrentUserApplicationRoleConnection(Snowflake.zero),
+        check: checkApplicationRoleConnection,
+      ),
+      EndpointTest<UserManager, ApplicationRoleConnection, Map<String, Object?>>(
+        name: 'updateCurrentUserApplicationRoleConnection',
+        method: 'PUT',
+        source: sampleApplicationRoleConnection,
+        urlMatcher: '/users/@me/applications/0/role-connection',
+        execute: (manager) => manager.updateCurrentUserApplicationRoleConnection(Snowflake.zero, ApplicationRoleConnectionUpdateBuilder()),
+        check: checkApplicationRoleConnection,
       ),
     ],
   );

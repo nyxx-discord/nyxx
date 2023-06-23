@@ -1,3 +1,4 @@
+import 'package:nyxx/src/models/emoji.dart';
 import 'package:nyxx/src/models/guild/guild.dart';
 
 /// {@template guild_preview}
@@ -16,8 +17,8 @@ class GuildPreview extends PartialGuild {
   /// The hash of the guild's discovery splash image.
   final String? discoverySplashHash;
 
-  // TODO
-  //final List<Emoji> emojis;
+  /// The emojis in the guild.
+  final List<Emoji> emojiList;
 
   /// The features enabled in the guild.
   final GuildFeatures features;
@@ -42,6 +43,7 @@ class GuildPreview extends PartialGuild {
     required this.iconHash,
     required this.splashHash,
     required this.discoverySplashHash,
+    required this.emojiList,
     required this.features,
     required this.approximateMemberCount,
     required this.approximatePresenceCount,

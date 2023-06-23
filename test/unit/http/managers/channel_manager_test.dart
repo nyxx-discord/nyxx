@@ -3,6 +3,8 @@ import 'package:test/test.dart';
 
 import '../../../mocks/client.dart';
 import '../../../test_manager.dart';
+import 'invite_manager_test.dart';
+import 'member_manager_test.dart';
 
 final sampleGuildText = {
   "id": "41771983423143937",
@@ -394,7 +396,7 @@ final sampleThreadMember = {
   'user_id': '1',
   'join_timestamp': '2023-04-03T10:49:41+00:00',
   'flags': 17,
-  'member': null, // TODO
+  'member': sampleMember,
 };
 
 void checkThreadMember(ThreadMember member) {
@@ -402,6 +404,7 @@ void checkThreadMember(ThreadMember member) {
   expect(member.userId, equals(Snowflake(1)));
   expect(member.flags.value, equals(17));
   expect(member.joinTimestamp, equals(DateTime.utc(2023, 04, 03, 10, 49, 41)));
+  checkMember(member.member!);
 }
 
 final sampleThreadList = {
@@ -543,6 +546,25 @@ void main() {
         urlMatcher: '/channels/0/permissions/1',
         execute: (manager) => manager.deletePermissionOverwrite(Snowflake.zero, Snowflake(1)),
         check: (_) {},
+      ),
+      EndpointTest<ChannelManager, List<InviteWithMetadata>, List<Object?>>(
+        name: 'listInvites',
+        source: [sampleInviteWithMetadata],
+        urlMatcher: '/channels/0/invites',
+        execute: (manager) => manager.listInvites(Snowflake.zero),
+        check: (list) {
+          expect(list, hasLength(1));
+
+          checkInviteWithMetadata(list.single);
+        },
+      ),
+      EndpointTest<ChannelManager, Invite, Map<String, Object?>>(
+        name: 'createInvite',
+        method: 'POST',
+        source: sampleInvite,
+        urlMatcher: '/channels/0/invites',
+        execute: (manager) => manager.createInvite(Snowflake.zero, InviteBuilder()),
+        check: checkInvite,
       ),
       EndpointTest<ChannelManager, FollowedChannel, Map<String, Object?>>(
         name: 'followChannel',

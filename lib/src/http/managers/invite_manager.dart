@@ -42,9 +42,10 @@ class InviteManager {
     );
   }
 
-  InviteMetadata parseMetadata(Map<String, Object?> raw) {
+  InviteWithMetadata parseWithMetadata(Map<String, Object?> raw) {
     final invite = parse(raw);
-    return InviteMetadata(
+
+    return InviteWithMetadata(
       code: invite.code,
       guild: invite.guild,
       channel: invite.channel,

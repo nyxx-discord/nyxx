@@ -1,7 +1,10 @@
+import 'package:nyxx/src/builders/invite.dart';
 import 'package:nyxx/src/builders/permission_overwrite.dart';
 import 'package:nyxx/src/models/channel/channel.dart';
 import 'package:nyxx/src/models/channel/text_channel.dart';
 import 'package:nyxx/src/models/channel/thread.dart';
+import 'package:nyxx/src/models/invite/invite.dart';
+import 'package:nyxx/src/models/invite/invite_metadata.dart';
 import 'package:nyxx/src/models/permission_overwrite.dart';
 import 'package:nyxx/src/models/snowflake.dart';
 import 'package:nyxx/src/models/webhook.dart';
@@ -116,4 +119,10 @@ class AnnouncementThread extends TextChannel implements Thread {
 
   @override
   Future<List<Webhook>> fetchWebhooks() => manager.client.webhooks.fetchChannelWebhooks(id);
+
+  @override
+  Future<List<InviteWithMetadata>> listInvites() => manager.listInvites(id);
+
+  @override
+  Future<Invite> createInvite(InviteBuilder builder, {String? auditLogReason}) => manager.createInvite(id, builder, auditLogReason: auditLogReason);
 }

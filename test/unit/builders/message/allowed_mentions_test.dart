@@ -27,7 +27,6 @@ void main() {
         builder2.build(),
         equals({
           'roles': ['0'],
-          'replied_user': false,
         }),
       );
 
@@ -37,7 +36,6 @@ void main() {
         builder3.build(),
         equals({
           'parse': ['users'],
-          'replied_user': false
         }),
       );
     });

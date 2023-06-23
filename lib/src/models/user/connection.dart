@@ -1,3 +1,4 @@
+import 'package:nyxx/src/models/guild/integration.dart';
 import 'package:nyxx/src/utils/to_string_helper/to_string_helper.dart';
 
 /// A link to an account on a service other than Discord.
@@ -17,8 +18,8 @@ class Connection with ToStringHelper {
   /// Whether the connection is revoked.
   final bool? isRevoked;
 
-  // TODO
-  // final List<PartialIntegration> integrations;
+  /// A list of integrations associated with this connection.
+  final List<PartialIntegration>? integrations;
 
   /// Whether the connection is verified.
   final bool isVerified;
@@ -41,6 +42,7 @@ class Connection with ToStringHelper {
     required this.name,
     required this.type,
     required this.isRevoked,
+    required this.integrations,
     required this.isVerified,
     required this.isFriendSyncEnabled,
     required this.showActivity,

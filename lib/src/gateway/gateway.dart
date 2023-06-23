@@ -43,8 +43,6 @@ import 'package:nyxx/src/utils/iterable_extension.dart';
 import 'package:nyxx/src/utils/parsing_helpers.dart';
 
 /// Handles the connection to Discord's Gateway with shards, manages the client's cache based on Gateway events and provides an interface to the Gateway.
-// TODO: Handle ErrorReceived events
-// TODO: Potentially withold events until we have a listener?
 class Gateway extends GatewayManager with EventParser {
   @override
   final NyxxGateway client;
@@ -86,7 +84,13 @@ class Gateway extends GatewayManager with EventParser {
   Gateway(this.client, this.gatewayBot, this.shards, this.totalShards, this.shardIds) : super.create() {
     for (final shard in shards) {
       shard.listen(
-        _messagesController.add,
+        (message) {
+          if (message is ErrorReceived) {
+            shard.logger.warning('Received error: ${message.error}', message.error, message.stackTrace);
+          }
+
+          _messagesController.add(message);
+        },
         onError: _messagesController.addError,
         onDone: () async {
           if (_closing) {
@@ -100,13 +104,7 @@ class Gateway extends GatewayManager with EventParser {
       );
     }
 
-    // TODO: Add ThreadMember cache for ThreadListSyncEvent, ThreadMemberUpdateEvent, ThreadMembersUpdateEvent
-    // TODO: GuildBanAddEvent and GuildBanRemoveEvent need to update cache
-    // TODO: GuildEmojisUpdateEvent, GuildStickersUpdateEvent,
-    // GuildScheduledEventUserAddEvent, GuildScheduledEventUserRemoveEvent, IntegrationCreateEvent, IntegrationUpdateEvent, IntegrationDeleteEvent,
-    // InviteCreateEvent, InviteDeleteEvent, MessageReactionAddEvent, MessageReactionRemoveEvent, MessageReactionRemoveAllEvent,MessageReactionRemoveEmojiEvent,
-    // PresenceUpdateEvent, VoiceStateUpdateEvent,
-    // ApplicationCommandPermissionsUpdateEvent
+    // TODO: GuildStickersUpdateEvent, ApplicationCommandPermissionsUpdateEvent
 
     // Handle all events which should update cache.
     events.listen((event) => switch (event) {
@@ -122,10 +120,11 @@ class Gateway extends GatewayManager with EventParser {
               event.guild.members.cache.addEntries(event.members.map((member) => MapEntry(member.id, member)));
               client.channels.cache.addEntries(event.channels.map((channel) => MapEntry(channel.id, channel)));
               client.channels.cache.addEntries(event.threads.map((thread) => MapEntry(thread.id, thread)));
-              // TODO: stageInstances, scheduledEvents
+              client.channels.stageInstanceCache.addEntries(event.stageInstances.map((instance) => MapEntry(instance.id, instance)));
+              event.guild.scheduledEvents.cache.addEntries(event.scheduledEvents.map((event) => MapEntry(event.id, event)));
+              client.voice.cache.addEntries(event.voiceStates.map((state) => MapEntry(state.cacheKey, state)));
             }(),
           GuildUpdateEvent(:final guild) => client.guilds.cache[guild.id] = guild,
-          // TODO: Do we want to remove guilds from the cache when they are only unavailable?
           GuildDeleteEvent(:final guild, isUnavailable: false) => client.guilds.cache.remove(guild.id),
           GuildMemberAddEvent(:final guildId, :final member) ||
           GuildMemberUpdateEvent(:final guildId, :final member) =>
@@ -155,7 +154,15 @@ class Gateway extends GatewayManager with EventParser {
           AutoModerationRuleUpdateEvent(:final rule) =>
             client.guilds[rule.guildId].autoModerationRules.cache[rule.id] = rule,
           AutoModerationRuleDeleteEvent(:final rule) => client.guilds[rule.guildId].autoModerationRules.cache.remove(rule.id),
+          IntegrationCreateEvent(:final guildId, :final integration) ||
+          IntegrationUpdateEvent(:final guildId, :final integration) =>
+            client.guilds[guildId].integrations.cache[integration.id] = integration,
+          IntegrationDeleteEvent(:final id, :final guildId) => client.guilds[guildId].integrations.cache.remove(id),
           GuildAuditLogCreateEvent(:final entry, :final guildId) => client.guilds[guildId].auditLogs.cache[entry.id] = entry,
+          VoiceStateUpdateEvent(:final state) => client.voice.cache[state.cacheKey] = state,
+          GuildEmojisUpdateEvent(:final guildId, :final emojis) => client.guilds[guildId].emojis.cache
+            ..clear()
+            ..addEntries(emojis.map((emoji) => MapEntry(emoji.id, emoji))),
           _ => null,
         });
   }
@@ -169,7 +176,19 @@ class Gateway extends GatewayManager with EventParser {
 
     logger
       ..info('Connecting ${shardIds.length}/$totalShards shards')
-      ..fine('Shard IDs: $shardIds');
+      ..fine('Shard IDs: $shardIds')
+      ..fine(
+        'Gateway URL: ${gatewayBot.url}, Recommended Shards: ${gatewayBot.shards}, Max Concurrency: ${gatewayBot.sessionStartLimit.maxConcurrency},'
+        ' Remaining Session Starts: ${gatewayBot.sessionStartLimit.remaining}, Reset After: ${gatewayBot.sessionStartLimit.resetAfter}',
+      );
+
+    if (gatewayBot.sessionStartLimit.remaining < 50) {
+      logger.warning('${gatewayBot.sessionStartLimit.remaining} session starts remaining');
+    }
+
+    if (gatewayBot.sessionStartLimit.remaining < client.options.minimumSessionStarts) {
+      throw OutOfRemainingSessionsError(gatewayBot);
+    }
 
     assert(
       shardIds.every((element) => element < totalShards),
@@ -450,15 +469,18 @@ class Gateway extends GatewayManager with EventParser {
     final guild = client.guilds.parse(raw);
 
     return GuildCreateEvent(
-        guild: guild,
-        joinedAt: DateTime.parse(raw['joined_at'] as String),
-        isLarge: raw['large'] as bool,
-        memberCount: raw['member_count'] as int,
-        voiceStates: parseMany(raw['voice_states'] as List<Object?>, client.voice.parseVoiceState),
-        members: parseMany(raw['members'] as List<Object?>, client.guilds[guild.id].members.parse),
-        channels: parseMany(raw['channels'] as List<Object?>, (Map<String, Object?> raw) => client.channels.parse(raw, guildId: guild.id) as GuildChannel),
-        threads: parseMany(raw['threads'] as List<Object?>, (Map<String, Object?> raw) => client.channels.parse(raw, guildId: guild.id) as Thread),
-        scheduledEvents: parseMany(raw['guild_scheduled_events'] as List<Object?>, client.guilds[guild.id].scheduledEvents.parse));
+      guild: guild,
+      joinedAt: DateTime.parse(raw['joined_at'] as String),
+      isLarge: raw['large'] as bool,
+      memberCount: raw['member_count'] as int,
+      voiceStates: parseMany(raw['voice_states'] as List<Object?>, client.voice.parseVoiceState),
+      members: parseMany(raw['members'] as List<Object?>, client.guilds[guild.id].members.parse),
+      channels: parseMany(raw['channels'] as List<Object?>, (Map<String, Object?> raw) => client.channels.parse(raw, guildId: guild.id) as GuildChannel),
+      threads: parseMany(raw['threads'] as List<Object?>, (Map<String, Object?> raw) => client.channels.parse(raw, guildId: guild.id) as Thread),
+      presences: parseMany(raw['presences'] as List<Object?>, parsePresenceUpdate),
+      stageInstances: parseMany(raw['stage_instances'] as List<Object?>, client.channels.parseStageInstance),
+      scheduledEvents: parseMany(raw['guild_scheduled_events'] as List<Object?>, client.guilds[guild.id].scheduledEvents.parse),
+    );
   }
 
   GuildUpdateEvent parseGuildUpdate(Map<String, Object?> raw) {
@@ -501,8 +523,11 @@ class Gateway extends GatewayManager with EventParser {
   }
 
   GuildEmojisUpdateEvent parseGuildEmojisUpdate(Map<String, Object?> raw) {
+    final guildId = Snowflake.parse(raw['guild_id']!);
+
     return GuildEmojisUpdateEvent(
-      guildId: Snowflake.parse(raw['guild_id']!),
+      guildId: guildId,
+      emojis: parseMany(raw['emojis'] as List<Object?>, client.guilds[guildId].emojis.parse),
     );
   }
 
@@ -555,6 +580,7 @@ class Gateway extends GatewayManager with EventParser {
       chunkIndex: raw['chunk_index'] as int,
       chunkCount: raw['chunk_count'] as int,
       notFound: maybeParseMany(raw['not_found'], Snowflake.parse),
+      presences: maybeParseMany(raw['presences'], parsePresenceUpdate),
       nonce: raw['nonce'] as String?,
     );
   }
@@ -629,16 +655,22 @@ class Gateway extends GatewayManager with EventParser {
   }
 
   IntegrationCreateEvent parseIntegrationCreate(Map<String, Object?> raw) {
+    final guildId = Snowflake.parse(raw['guild_id']!);
+
     return IntegrationCreateEvent(
-      guildId: Snowflake.parse(raw['guild_id']!),
-      integration: client.guilds.parseIntegration(raw),
+      guildId: guildId,
+      integration: client.guilds[guildId].integrations.parse(raw),
     );
   }
 
   IntegrationUpdateEvent parseIntegrationUpdate(Map<String, Object?> raw) {
+    final guildId = Snowflake.parse(raw['guild_id']!);
+    final integration = client.guilds[guildId].integrations.parse(raw);
+
     return IntegrationUpdateEvent(
-      guildId: Snowflake.parse(raw['guild_id']!),
-      integration: client.guilds.parseIntegration(raw),
+      guildId: guildId,
+      oldIntegration: client.guilds[guildId].integrations.cache[integration.id],
+      integration: integration,
     );
   }
 
@@ -651,7 +683,13 @@ class Gateway extends GatewayManager with EventParser {
   }
 
   InviteCreateEvent parseInviteCreate(Map<String, Object?> raw) {
-    return InviteCreateEvent();
+    return InviteCreateEvent(
+      invite: client.invites.parseWithMetadata({
+        'channel': {'id': raw['channel_id']},
+        'guild': {'id': raw['guild_id']},
+        ...raw,
+      }),
+    );
   }
 
   InviteDeleteEvent parseInviteDelete(Map<String, Object?> raw) {
@@ -797,8 +835,11 @@ class Gateway extends GatewayManager with EventParser {
   }
 
   VoiceStateUpdateEvent parseVoiceStateUpdate(Map<String, Object?> raw) {
+    final voiceState = client.voice.parseVoiceState(raw);
+
     return VoiceStateUpdateEvent(
-      state: client.voice.parseVoiceState(raw),
+      oldState: client.voice.cache[voiceState.cacheKey],
+      state: voiceState,
     );
   }
 

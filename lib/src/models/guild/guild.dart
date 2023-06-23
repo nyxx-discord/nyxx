@@ -10,6 +10,7 @@ import 'package:nyxx/src/http/managers/audit_log_manager.dart';
 import 'package:nyxx/src/http/managers/auto_moderation_manager.dart';
 import 'package:nyxx/src/http/managers/emoji_manager.dart';
 import 'package:nyxx/src/http/managers/guild_manager.dart';
+import 'package:nyxx/src/http/managers/integration_manager.dart';
 import 'package:nyxx/src/http/managers/member_manager.dart';
 import 'package:nyxx/src/http/managers/role_manager.dart';
 import 'package:nyxx/src/http/managers/scheduled_event_manager.dart';
@@ -20,7 +21,7 @@ import 'package:nyxx/src/models/emoji.dart';
 import 'package:nyxx/src/models/guild/ban.dart';
 import 'package:nyxx/src/models/guild/guild_preview.dart';
 import 'package:nyxx/src/models/guild/guild_widget.dart';
-import 'package:nyxx/src/models/guild/integration.dart';
+import 'package:nyxx/src/models/guild/member.dart';
 import 'package:nyxx/src/models/guild/onboarding.dart';
 import 'package:nyxx/src/models/guild/template.dart';
 import 'package:nyxx/src/models/guild/welcome_screen.dart';
@@ -49,6 +50,9 @@ class PartialGuild extends WritableSnowflakeEntity<Guild> {
 
   /// An [AutoModerationManager] for the auto moderation rules of this guild.
   AutoModerationManager get autoModerationRules => AutoModerationManager(manager.client.options.autoModerationRuleConfig, manager.client, guildId: id);
+
+  /// An [IntegrationManager] for the integrations of this guild.
+  IntegrationManager get integrations => IntegrationManager(manager.client.options.integrationConfig, manager.client, guildId: id);
 
   /// An [EmojiManager] for the emojis of this guild.
   EmojiManager get emojis => EmojiManager(manager.client.options.emojiCacheConfig, manager.client, guildId: id);
@@ -110,12 +114,6 @@ class PartialGuild extends WritableSnowflakeEntity<Guild> {
   /// List the voice regions available in the guild.
   Future<List<VoiceRegion>> listVoiceRegions() => manager.listVoiceRegions(id);
 
-  /// List the integrations in this guild.
-  Future<List<Integration>> listIntegrations() => manager.listIntegrations(id);
-
-  /// Remove an integration from this guild.
-  Future<void> deleteIntegration(Snowflake integrationId, {String? auditLogReason}) => manager.deleteIntegration(id, integrationId);
-
   /// Fetch this guild's widget settings.
   Future<WidgetSettings> fetchWidgetSettings() => manager.fetchWidgetSettings(id);
 
@@ -164,6 +162,15 @@ class PartialGuild extends WritableSnowflakeEntity<Guild> {
 
   /// List the invites to this guild.
   Future<List<Invite>> listInvites() => manager.listInvites(id);
+
+  /// Fetch the current user's member in this guild.
+  Future<Member> fetchCurrentMember() => manager.client.users.fetchCurrentUserMember(id);
+
+  /// Leave this guild.
+  Future<void> leave() => manager.client.users.leaveGuild(id);
+
+  /// Fetch this guild's vanity invite code.
+  Future<String?> fetchVanityCode() => manager.fetchVanityCode(id);
 }
 
 /// {@template guild}

@@ -1,7 +1,15 @@
 export 'src/api_options.dart' show ApiOptions, RestApiOptions, GatewayApiOptions, GatewayCompression, GatewayPayloadFormat;
 export 'src/client.dart' show Nyxx, NyxxRest, NyxxGateway;
 export 'src/client_options.dart' show ClientOptions, RestClientOptions, GatewayClientOptions;
-export 'src/errors.dart' show NyxxException, InvalidEventException;
+export 'src/errors.dart'
+    show
+        NyxxException,
+        InvalidEventException,
+        MemberAlreadyExistsException,
+        ShardDisconnectedError,
+        RoleNotFoundException,
+        AuditLogEntryNotFoundException,
+        OutOfRemainingSessionsError;
 
 export 'src/builders/builder.dart' show Builder, CreateBuilder, UpdateBuilder;
 export 'src/builders/image.dart' show ImageBuilder;
@@ -42,8 +50,10 @@ export 'src/builders/guild/auto_moderation.dart' show AutoModerationRuleBuilder,
 export 'src/builders/role.dart' show RoleBuilder, RoleUpdateBuilder;
 export 'src/builders/voice.dart' show CurrentUserVoiceStateUpdateBuilder, VoiceStateUpdateBuilder, GatewayVoiceStateBuilder;
 export 'src/builders/presence.dart' show PresenceBuilder, CurrentUserStatus;
+export 'src/builders/application_role_connection.dart' show ApplicationRoleConnectionUpdateBuilder;
 export 'src/builders/emoji/emoji.dart' show EmojiBuilder, EmojiUpdateBuilder;
 export 'src/builders/emoji/reaction.dart' show ReactionBuilder;
+export 'src/builders/invite.dart' show InviteBuilder;
 
 export 'src/cache/cache.dart' show Cache, CacheConfig;
 
@@ -66,6 +76,7 @@ export 'src/http/managers/role_manager.dart' show RoleManager;
 export 'src/http/managers/gateway_manager.dart' show GatewayManager;
 export 'src/http/managers/scheduled_event_manager.dart' show ScheduledEventManager;
 export 'src/http/managers/auto_moderation_manager.dart' show AutoModerationManager;
+export 'src/http/managers/integration_manager.dart' show IntegrationManager;
 export 'src/http/managers/emoji_manager.dart' show EmojiManager;
 export 'src/http/managers/audit_log_manager.dart' show AuditLogManager;
 export 'src/http/managers/sticker_manager.dart' show GuildStickerManager, GlobalStickerManager;
@@ -114,8 +125,8 @@ export 'src/models/message/reaction.dart' show Reaction;
 export 'src/models/message/reference.dart' show MessageReference;
 export 'src/models/message/role_subscription_data.dart' show RoleSubscriptionData;
 export 'src/models/invite/invite.dart' show Invite, TargetType;
-export 'src/models/invite/invite_metadata.dart' show InviteMetadata;
-export 'src/models/webhook.dart' show PartialWebhook, Webhook, WebhookType;
+export 'src/models/invite/invite_metadata.dart' show InviteWithMetadata;
+export 'src/models/webhook.dart' show PartialWebhook, Webhook, WebhookType, WebhookAuthor;
 export 'src/models/guild/ban.dart' show Ban;
 export 'src/models/guild/guild_preview.dart' show GuildPreview;
 export 'src/models/guild/guild_widget.dart' show GuildWidget, WidgetSettings, WidgetImageStyle;
@@ -131,7 +142,7 @@ export 'src/models/guild/guild.dart'
         NsfwLevel,
         PremiumTier,
         VerificationLevel;
-export 'src/models/guild/integration.dart' show Integration, IntegrationAccount, IntegrationApplication, IntegrationExpireBehavior;
+export 'src/models/guild/integration.dart' show PartialIntegration, Integration, IntegrationAccount, IntegrationApplication, IntegrationExpireBehavior;
 export 'src/models/guild/member.dart' show Member, MemberFlags, PartialMember;
 export 'src/models/guild/onboarding.dart' show Onboarding, OnboardingPrompt, OnboardingPromptOption, OnboardingPromptType;
 export 'src/models/guild/welcome_screen.dart' show WelcomeScreen, WelcomeScreenChannel;

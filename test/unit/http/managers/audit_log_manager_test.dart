@@ -5,7 +5,7 @@ import '../../../test_manager.dart';
 
 final sampleAuditLogEntry = {
   'target_id': '1',
-  'id': '0',
+  'id': '1',
   'action_type': 1,
   'reason': 'Test reason',
 };
@@ -27,8 +27,8 @@ void main() {
   testReadOnlyManager<AuditLogEntry, AuditLogManager>(
     'AuditLogManager',
     (config, client) => AuditLogManager(config, client, guildId: Snowflake.zero),
-    // fetch() artificially creates a "before" field
-    '/guilds/0/audit-logs?before=${Snowflake.zero + const Duration(milliseconds: 1)}',
+    // fetch() artificially creates a before field as before = id + 1 - testing ID is 1 so before is 2
+    '/guilds/0/audit-logs?before=2',
     sampleObject: sampleAuditLogEntry,
     sampleMatches: checkAuditLogEntry,
     // Fetch implementation internally uses `list()`, so we return a full audit log

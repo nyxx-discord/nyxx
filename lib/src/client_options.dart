@@ -6,8 +6,8 @@ import 'package:nyxx/src/models/emoji.dart';
 import 'package:nyxx/src/models/channel/stage_instance.dart';
 import 'package:nyxx/src/models/guild/audit_log.dart';
 import 'package:nyxx/src/models/guild/auto_moderation.dart';
-import 'package:nyxx/src/models/guild/ban.dart';
 import 'package:nyxx/src/models/guild/guild.dart';
+import 'package:nyxx/src/models/guild/integration.dart';
 import 'package:nyxx/src/models/guild/member.dart';
 import 'package:nyxx/src/models/guild/scheduled_event.dart';
 import 'package:nyxx/src/models/message/message.dart';
@@ -15,6 +15,7 @@ import 'package:nyxx/src/models/role.dart';
 import 'package:nyxx/src/models/sticker/global_sticker.dart';
 import 'package:nyxx/src/models/sticker/guild_sticker.dart';
 import 'package:nyxx/src/models/user/user.dart';
+import 'package:nyxx/src/models/voice/voice_state.dart';
 import 'package:nyxx/src/models/webhook.dart';
 import 'package:nyxx/src/plugin/plugin.dart';
 
@@ -56,9 +57,6 @@ class RestClientOptions extends ClientOptions {
   /// The [CacheConfig] to use for the [Guild.roles] manager.
   final CacheConfig<Role> roleCacheConfig;
 
-  /// The [CacheConfig] to use for [Ban]s in the [NyxxRest.guilds] manager.
-  final CacheConfig<Ban> banCacheConfig;
-
   /// The [CacheConfig] to use for the [Emoji]s in the [Guild.emojis] manager.
   final CacheConfig<Emoji> emojiCacheConfig;
 
@@ -77,8 +75,14 @@ class RestClientOptions extends ClientOptions {
   /// The [CacheConfig] to use for the [Guild.autoModerationRules] manager.
   final CacheConfig<AutoModerationRule> autoModerationRuleConfig;
 
+  /// The [CacheConfig] to use for the [Guild.integrations] manager.
+  final CacheConfig<Integration> integrationConfig;
+
   /// The [CacheConfig] to use for the [Guild.auditLogs] manager.
   final CacheConfig<AuditLogEntry> auditLogEntryConfig;
+
+  /// The [CacheConfig] to use for the [NyxxRest.voice] manager.
+  final CacheConfig<VoiceState> voiceStateConfig;
 
   /// Create a new [RestClientOptions].
   const RestClientOptions({
@@ -91,12 +95,13 @@ class RestClientOptions extends ClientOptions {
     this.guildCacheConfig = const CacheConfig(),
     this.memberCacheConfig = const CacheConfig(),
     this.roleCacheConfig = const CacheConfig(),
-    this.banCacheConfig = const CacheConfig(),
     this.emojiCacheConfig = const CacheConfig(),
     this.stageInstanceCacheConfig = const CacheConfig(),
     this.scheduledEventCacheConfig = const CacheConfig(),
     this.autoModerationRuleConfig = const CacheConfig(),
+    this.integrationConfig = const CacheConfig(),
     this.auditLogEntryConfig = const CacheConfig(),
+    this.voiceStateConfig = const CacheConfig(),
     this.stickerCacheConfig = const CacheConfig(),
     this.globalStickerCacheConfig = const CacheConfig(),
   });
@@ -104,7 +109,15 @@ class RestClientOptions extends ClientOptions {
 
 /// Options for controlling the behavior of a [NyxxWebsocket] client.
 class GatewayClientOptions extends RestClientOptions {
+  /// The minimum number of session starts this client needs to connect.
+  ///
+  /// This is a safety feature to avoid API bans due to excessive connection starts.
+  ///
+  /// If the remaining number of session starts is below this number, an error will be thrown when connecting.
+  final int minimumSessionStarts;
+
   const GatewayClientOptions({
+    this.minimumSessionStarts = 10,
     super.plugins,
     super.loggerName,
     super.userCacheConfig,
@@ -114,10 +127,11 @@ class GatewayClientOptions extends RestClientOptions {
     super.guildCacheConfig,
     super.memberCacheConfig,
     super.roleCacheConfig,
-    super.banCacheConfig,
     super.stageInstanceCacheConfig,
     super.scheduledEventCacheConfig,
     super.autoModerationRuleConfig,
+    super.integrationConfig,
     super.auditLogEntryConfig,
+    super.voiceStateConfig,
   });
 }

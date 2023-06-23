@@ -1,3 +1,4 @@
+import 'package:nyxx/src/models/emoji.dart';
 import 'package:nyxx/src/models/snowflake.dart';
 import 'package:nyxx/src/utils/flags.dart';
 import 'package:nyxx/src/utils/to_string_helper/to_string_helper.dart';
@@ -71,8 +72,8 @@ class Activity with ToStringHelper {
   /// The current state of this activity.
   final String? state;
 
-  // TODO
-  //final Emoji? emoji;
+  /// The custom emoji for this activity.
+  final Emoji? emoji;
 
   /// Information about this activity's party.
   final ActivityParty? party;
@@ -102,6 +103,7 @@ class Activity with ToStringHelper {
     required this.applicationId,
     required this.details,
     required this.state,
+    required this.emoji,
     required this.party,
     required this.assets,
     required this.secrets,

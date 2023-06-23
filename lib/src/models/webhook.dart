@@ -2,6 +2,7 @@ import 'package:nyxx/src/builders/message/message.dart';
 import 'package:nyxx/src/builders/webhook.dart';
 import 'package:nyxx/src/models/channel/channel.dart';
 import 'package:nyxx/src/models/guild/guild.dart';
+import 'package:nyxx/src/models/message/author.dart';
 import 'package:nyxx/src/models/message/message.dart';
 import 'package:nyxx/src/models/snowflake.dart';
 import 'package:nyxx/src/models/snowflake_entity/snowflake_entity.dart';
@@ -73,6 +74,18 @@ class PartialWebhook extends WritableSnowflakeEntity<Webhook> {
   /// * Discord API Reference: https://discord.com/developers/docs/resources/webhook#delete-webhook-message
   Future<void> deleteMessage(Snowflake messageId, {required String token, Snowflake? threadId}) =>
       manager.deleteWebhookMessage(id, messageId, token: token, threadId: threadId);
+}
+
+/// A partial [Webhook] sent as part of a [Message].
+class WebhookAuthor extends PartialWebhook implements MessageAuthor {
+  @override
+  final String? avatarHash;
+
+  @override
+  final String username;
+
+  /// Create a new [WebhookAuthor].
+  WebhookAuthor({required super.id, required super.manager, required this.avatarHash, required this.username});
 }
 
 /// {@template webhook}

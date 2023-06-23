@@ -87,7 +87,6 @@ void main() {
         ],
         'allowed_mentions': {
           'users': ['0'],
-          'replied_user': false,
         },
         'sticker_ids': ['0'],
         'attachments': [
@@ -178,7 +177,6 @@ void main() {
         ],
         'allowed_mentions': {
           'users': ['0'],
-          'replied_user': false,
         },
         'attachments': [
           {

@@ -52,6 +52,7 @@ abstract class GatewayManager {
       applicationId: tryParse(raw['application_id'], Snowflake.parse),
       details: tryParse(raw['details']),
       state: tryParse(raw['state']),
+      emoji: tryParse(raw['emoji'], client.guilds[Snowflake.zero].emojis.parse),
       party: tryParse(raw['party'], parseActivityParty),
       assets: tryParse(raw['assets'], parseActivityAssets),
       secrets: tryParse(raw['secrets'], parseActivitySecrets),

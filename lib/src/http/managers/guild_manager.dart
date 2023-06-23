@@ -9,18 +9,17 @@ import 'package:nyxx/src/builders/guild/welcome_screen.dart';
 import 'package:nyxx/src/builders/guild/widget.dart';
 import 'package:nyxx/src/builders/image.dart';
 import 'package:nyxx/src/builders/voice.dart';
-import 'package:nyxx/src/cache/cache.dart';
 import 'package:nyxx/src/http/managers/manager.dart';
 import 'package:nyxx/src/http/request.dart';
 import 'package:nyxx/src/http/route.dart';
 import 'package:nyxx/src/models/channel/channel.dart';
 import 'package:nyxx/src/models/channel/guild_channel.dart';
 import 'package:nyxx/src/models/channel/thread_list.dart';
+import 'package:nyxx/src/models/emoji.dart';
 import 'package:nyxx/src/models/guild/ban.dart';
 import 'package:nyxx/src/models/guild/guild.dart';
 import 'package:nyxx/src/models/guild/guild_preview.dart';
 import 'package:nyxx/src/models/guild/guild_widget.dart';
-import 'package:nyxx/src/models/guild/integration.dart';
 import 'package:nyxx/src/models/guild/onboarding.dart';
 import 'package:nyxx/src/models/guild/template.dart';
 import 'package:nyxx/src/models/guild/welcome_screen.dart';
@@ -35,13 +34,8 @@ import 'package:nyxx/src/utils/parsing_helpers.dart';
 
 /// A manager for [Guild]s.
 class GuildManager extends Manager<Guild> {
-  /// A cache for [Ban]s in this manager.
-  final Cache<Ban> banCache;
-
   /// Create a new [GuildManager].
-  GuildManager(super.config, super.client, {required CacheConfig<Ban> banConfig})
-      : banCache = Cache(client, 'guilds.bans', banConfig),
-        super(identifier: 'guilds');
+  GuildManager(super.config, super.client) : super(identifier: 'guilds');
 
   @override
   PartialGuild operator [](Snowflake id) => PartialGuild(id: id, manager: this);
@@ -170,13 +164,16 @@ class GuildManager extends Manager<Guild> {
 
   /// Parse a [GuildPreview] from [raw].
   GuildPreview parseGuildPreview(Map<String, Object?> raw) {
+    final id = Snowflake.parse(raw['id']!);
+
     return GuildPreview(
-      id: Snowflake.parse(raw['id']!),
+      id: id,
       manager: this,
       name: raw['name'] as String,
       iconHash: raw['icon'] as String?,
       splashHash: raw['splash'] as String?,
       discoverySplashHash: raw['discovery_splash'] as String?,
+      emojiList: parseMany(raw['emojis'] as List, this[id].emojis.parse),
       features: parseGuildFeatures(raw['features'] as List),
       description: raw['description'] as String?,
       approximateMemberCount: raw['approximate_member_count'] as int,
@@ -189,47 +186,6 @@ class GuildManager extends Manager<Guild> {
     return Ban(
       reason: raw['reason'] as String,
       user: client.users.parse(raw['user'] as Map<String, Object?>),
-    );
-  }
-
-  /// Parse an [Integration] from [raw].
-  Integration parseIntegration(Map<String, Object?> raw) {
-    return Integration(
-      id: Snowflake.parse(raw['id']!),
-      name: raw['name'] as String,
-      type: raw['type'] as String,
-      isEnabled: raw['enabled'] as bool,
-      isSyncing: raw['syncing'] as bool?,
-      roleId: maybeParse(raw['role_id'], Snowflake.parse),
-      enableEmoticons: raw['enable_emoticons'] as bool?,
-      expireBehavior: maybeParse(raw['expire_behavior'], IntegrationExpireBehavior.parse),
-      expireGracePeriod: maybeParse(raw['expire_grace_period'], (int value) => Duration(days: value)),
-      user: maybeParse(raw['user'], client.users.parse),
-      account: parseIntegrationAccount(raw['account'] as Map<String, Object?>),
-      syncedAt: maybeParse(raw['synced_at'], DateTime.parse),
-      subscriberCount: raw['subscriber_count'] as int?,
-      isRevoked: raw['revoked'] as bool?,
-      application: maybeParse(raw['application'], parseIntegrationApplication),
-      scopes: maybeParseMany(raw['scopes']),
-    );
-  }
-
-  /// Parse an [IntegrationAccount] from [raw].
-  IntegrationAccount parseIntegrationAccount(Map<String, Object?> raw) {
-    return IntegrationAccount(
-      id: Snowflake.parse(raw['id']!),
-      name: raw['name'] as String,
-    );
-  }
-
-  /// Parse an [IntegrationApplication] from [raw].
-  IntegrationApplication parseIntegrationApplication(Map<String, Object?> raw) {
-    return IntegrationApplication(
-      id: Snowflake.parse(raw['id']!),
-      name: raw['name'] as String,
-      iconHash: raw['icon'] as String?,
-      description: raw['description'] as String,
-      bot: maybeParse(raw['bot'], client.users.parse),
     );
   }
 
@@ -261,20 +217,22 @@ class GuildManager extends Manager<Guild> {
 
   /// Parse an [Onboarding] from [raw].
   Onboarding parseOnboarding(Map<String, Object?> raw) {
+    final guildId = Snowflake.parse(raw['guild_id']!);
+
     return Onboarding(
-      guildId: Snowflake.parse(raw['guild_id']!),
-      prompts: parseMany(raw['prompts'] as List, parseOnboardingPrompt),
+      guildId: guildId,
+      prompts: parseMany(raw['prompts'] as List, (Map<String, Object?> raw) => parseOnboardingPrompt(raw, guildId: guildId)),
       defaultChannelIds: parseMany(raw['default_channel_ids'] as List, Snowflake.parse),
       isEnabled: raw['enabled'] as bool,
     );
   }
 
   /// Parse an [OnboardingPrompt] from [raw].
-  OnboardingPrompt parseOnboardingPrompt(Map<String, Object?> raw) {
+  OnboardingPrompt parseOnboardingPrompt(Map<String, Object?> raw, {Snowflake? guildId}) {
     return OnboardingPrompt(
       id: Snowflake.parse(raw['id']!),
       type: OnboardingPromptType.parse(raw['type'] as int),
-      options: parseMany(raw['options'] as List, parseOnboardingPromptOption),
+      options: parseMany(raw['options'] as List, (Map<String, Object?> raw) => parseOnboardingPromptOption(raw, guildId: guildId)),
       title: raw['title'] as String,
       isSingleSelect: raw['single_select'] as bool,
       isRequired: raw['required'] as bool,
@@ -283,11 +241,20 @@ class GuildManager extends Manager<Guild> {
   }
 
   /// Parse an [OnboardingPromptOption] from [raw].
-  OnboardingPromptOption parseOnboardingPromptOption(Map<String, Object?> raw) {
+  OnboardingPromptOption parseOnboardingPromptOption(Map<String, Object?> raw, {Snowflake? guildId}) {
+    Emoji? emoji;
+    final rawEmoji = raw['emoji'] as Map<String, Object?>;
+
+    // Discord passes an "empty" emoji object when unset instead of null
+    if (rawEmoji['id'] != null || rawEmoji['name'] != null) {
+      emoji = this[guildId ?? Snowflake.zero].emojis.parse(raw['emoji'] as Map<String, Object?>);
+    }
+
     return OnboardingPromptOption(
       id: Snowflake.parse(raw['id']!),
       channelIds: parseMany(raw['channel_ids'] as List, Snowflake.parse),
       roleIds: parseMany(raw['role_ids'] as List, Snowflake.parse),
+      emoji: emoji,
       title: raw['title'] as String,
       description: raw['description'] as String?,
     );
@@ -318,6 +285,13 @@ class GuildManager extends Manager<Guild> {
         'premium_progress_bar_enabled': false,
         'emojis': [],
         ...(raw['serialized_source_guild'] as Map<String, Object?>),
+        'roles': [
+          for (final role in ((raw['serialized_source_guild'] as Map<String, Object?>)['roles'] as List).cast<Map<String, Object?>>())
+            {
+              'position': 0,
+              ...role,
+            },
+        ],
       }),
       isDirty: raw['is_dirty'] as bool?,
     );
@@ -440,10 +414,7 @@ class GuildManager extends Manager<Guild> {
     final request = BasicRequest(route);
 
     final response = await client.httpHandler.executeSafe(request);
-    final bans = parseMany(response.jsonBody as List, parseBan);
-
-    banCache.addEntries(bans.map((e) => MapEntry(e.user.id, e)));
-    return bans;
+    return parseMany(response.jsonBody as List, parseBan);
   }
 
   /// Fetch a ban in a guild.
@@ -454,10 +425,7 @@ class GuildManager extends Manager<Guild> {
     final request = BasicRequest(route);
 
     final response = await client.httpHandler.executeSafe(request);
-    final ban = parseBan(response.jsonBody as Map<String, Object?>);
-
-    banCache[ban.user.id] = ban;
-    return ban;
+    return parseBan(response.jsonBody as Map<String, Object?>);
   }
 
   /// Create a ban in a guild.
@@ -565,27 +533,6 @@ class GuildManager extends Manager<Guild> {
     return parseMany(response.jsonBody as List, client.invites.parse);
   }
 
-  /// List the integrations in a guild.
-  Future<List<Integration>> listIntegrations(Snowflake id) async {
-    final route = HttpRoute()
-      ..guilds(id: id.toString())
-      ..integrations();
-    final request = BasicRequest(route);
-
-    final response = await client.httpHandler.executeSafe(request);
-    return parseMany(response.jsonBody as List, parseIntegration);
-  }
-
-  /// Delete an integration from a guild.
-  Future<void> deleteIntegration(Snowflake id, Snowflake integrationId, {String? auditLogReason}) async {
-    final route = HttpRoute()
-      ..guilds(id: id.toString())
-      ..integrations(id: integrationId.toString());
-    final request = BasicRequest(route, method: 'DELETE', auditLogReason: auditLogReason);
-
-    await client.httpHandler.executeSafe(request);
-  }
-
   /// Fetch a guild's widget settings.
   Future<WidgetSettings> fetchWidgetSettings(Snowflake id) async {
     final route = HttpRoute()
@@ -619,8 +566,16 @@ class GuildManager extends Manager<Guild> {
     return parseGuildWidget(response.jsonBody as Map<String, Object?>);
   }
 
-  // TODO
-  //Future<PartialInvite> fetchVanityUrl(Snowflake id) async { ... }
+  /// Fetch a guild's vanity invite code.
+  Future<String?> fetchVanityCode(Snowflake id) async {
+    final route = HttpRoute()
+      ..guilds(id: id.toString())
+      ..vanityUrl();
+    final request = BasicRequest(route);
+
+    final response = await client.httpHandler.executeSafe(request);
+    return (response.jsonBody as Map<String, Object?>)['code'] as String?;
+  }
 
   /// Fetch the image for a guild's widget.
   Future<Uint8List> fetchGuildWidgetImage(Snowflake id, {WidgetImageStyle? style}) async {

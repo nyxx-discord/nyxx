@@ -69,4 +69,7 @@ class VoiceState with ToStringHelper {
 
   /// Whether this user is muted.
   bool get isMuted => isServerMuted || isSelfMuted;
+
+  /// The key this voice state will have in the [NyxxRest.voice] cache.
+  Snowflake get cacheKey => Snowflake(Object.hash(guildId, userId));
 }

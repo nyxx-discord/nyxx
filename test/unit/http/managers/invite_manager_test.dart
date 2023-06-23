@@ -37,6 +37,25 @@ void checkInvite(Invite invite) {
   expect(invite.expiresAt, equals(DateTime.utc(2017, 07, 11, 17, 27, 07, 299)));
 }
 
+final sampleInviteWithMetadata = {
+  ...sampleInvite,
+  "uses": 0,
+  "max_uses": 0,
+  "max_age": 0,
+  "temporary": false,
+  "created_at": "2016-03-31T19:15:39.954000+00:00",
+};
+
+void checkInviteWithMetadata(InviteWithMetadata invite) {
+  checkInvite(invite);
+
+  expect(invite.uses, equals(0));
+  expect(invite.maxUses, equals(0));
+  expect(invite.maxAge, equals(Duration.zero));
+  expect(invite.isTemporary, isFalse);
+  expect(invite.createdAt, equals(DateTime.utc(2016, 3, 31, 19, 15, 39, 954)));
+}
+
 void main() {
   group('InviteManager', () {
     late MockNyxx client;
@@ -56,6 +75,15 @@ void main() {
         check: checkInvite,
         parse: (m) => m.parse,
         source: sampleInvite,
+      ).runWithManager(manager);
+    });
+
+    test('parseWithMetadata', () {
+      ParsingTest<InviteManager, InviteWithMetadata, Map<String, Object?>>(
+        name: 'parseWithMetadata',
+        check: checkInviteWithMetadata,
+        parse: (m) => m.parseWithMetadata,
+        source: sampleInviteWithMetadata,
       ).runWithManager(manager);
     });
 

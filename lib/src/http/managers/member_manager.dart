@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:nyxx/src/builders/guild/member.dart';
+import 'package:nyxx/src/errors.dart';
 import 'package:nyxx/src/http/managers/manager.dart';
 import 'package:nyxx/src/http/request.dart';
 import 'package:nyxx/src/http/route.dart';
@@ -78,8 +79,10 @@ class MemberManager extends Manager<Member> {
     final request = BasicRequest(route, method: 'PUT', body: jsonEncode(builder.build()));
 
     final response = await client.httpHandler.executeSafe(request);
-    // TODO: This fails when the member already exists in the guild.
-    // The response in that case is a 204 no content, which doesn't throw but has no body.
+    if (response.statusCode == 204) {
+      throw MemberAlreadyExistsException(guildId, builder.userId);
+    }
+
     final member = parse(response.jsonBody as Map<String, Object?>);
 
     cache[member.id] = member;

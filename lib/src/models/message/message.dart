@@ -1,6 +1,7 @@
 import 'package:nyxx/src/builders/emoji/reaction.dart';
 import 'package:nyxx/src/builders/message/message.dart';
 import 'package:nyxx/src/http/managers/message_manager.dart';
+import 'package:nyxx/src/models/application.dart';
 import 'package:nyxx/src/models/channel/thread.dart';
 import 'package:nyxx/src/models/message/activity.dart';
 import 'package:nyxx/src/models/message/attachment.dart';
@@ -137,8 +138,8 @@ class Message extends PartialMessage {
   /// Activity information if this message is related to Rich Presence, `null` otherwise.
   final MessageActivity? activity;
 
-  // TODO
-  //final PartialApplication? application;
+  /// The application associated with this message if this messages is related to Rich Presence, `null` otherwise.
+  final PartialApplication? application;
 
   /// The ID of the [Application] that sent this message if it is an interaction or a webhook, `null` otherwise.
   final Snowflake? applicationId;
@@ -192,6 +193,7 @@ class Message extends PartialMessage {
     required this.webhookId,
     required this.type,
     required this.activity,
+    required this.application,
     required this.applicationId,
     required this.reference,
     required this.flags,

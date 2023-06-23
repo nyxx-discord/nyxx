@@ -1,14 +1,25 @@
+import 'package:nyxx/src/http/managers/integration_manager.dart';
 import 'package:nyxx/src/models/snowflake.dart';
+import 'package:nyxx/src/models/snowflake_entity/snowflake_entity.dart';
 import 'package:nyxx/src/models/user/user.dart';
 import 'package:nyxx/src/utils/to_string_helper/to_string_helper.dart';
+
+/// A partial [Integration].
+class PartialIntegration extends ManagedSnowflakeEntity<Integration> {
+  @override
+  final IntegrationManager manager;
+
+  /// Create a new [PartialIntegration].
+  PartialIntegration({required super.id, required this.manager});
+
+  /// Delete this integration.
+  Future<void> delete({String? auditLogReason}) => manager.delete(id, auditLogReason: auditLogReason);
+}
 
 /// {@template integration}
 /// An integration in a [Guild].
 /// {@endtemplate}
-class Integration with ToStringHelper {
-  /// The ID of this integration.
-  final Snowflake id;
-
+class Integration extends PartialIntegration {
   /// The name of this integration.
   final String name;
 
@@ -56,7 +67,8 @@ class Integration with ToStringHelper {
 
   /// {@macro integration}
   Integration({
-    required this.id,
+    required super.id,
+    required super.manager,
     required this.name,
     required this.type,
     required this.isEnabled,
