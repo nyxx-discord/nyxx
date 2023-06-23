@@ -1,6 +1,12 @@
+import 'package:nyxx/src/models/channel/channel.dart';
+import 'package:nyxx/src/models/channel/text_channel.dart';
 import 'package:nyxx/src/models/gateway/event.dart';
 import 'package:nyxx/src/models/guild/auto_moderation.dart';
+import 'package:nyxx/src/models/guild/guild.dart';
+import 'package:nyxx/src/models/guild/member.dart';
+import 'package:nyxx/src/models/message/message.dart';
 import 'package:nyxx/src/models/snowflake.dart';
+import 'package:nyxx/src/models/user/user.dart';
 
 /// {@template auto_moderation_rule_create_event}
 /// Emitted when an auto moderation rule is created.
@@ -10,7 +16,7 @@ class AutoModerationRuleCreateEvent extends DispatchEvent {
   final AutoModerationRule rule;
 
   /// {@macro auto_moderation_rule_create_event}
-  AutoModerationRuleCreateEvent({required this.rule});
+  AutoModerationRuleCreateEvent({required super.gateway, required this.rule});
 }
 
 /// {@template auto_moderation_rule_update_event}
@@ -24,7 +30,7 @@ class AutoModerationRuleUpdateEvent extends DispatchEvent {
   final AutoModerationRule rule;
 
   /// {@macro auto_moderation_rule_update_event}
-  AutoModerationRuleUpdateEvent({required this.oldRule, required this.rule});
+  AutoModerationRuleUpdateEvent({required super.gateway, required this.oldRule, required this.rule});
 }
 
 /// {@template auto_moderation_rule_delete_event}
@@ -35,7 +41,7 @@ class AutoModerationRuleDeleteEvent extends DispatchEvent {
   final AutoModerationRule rule;
 
   /// {@macro auto_moderation_rule_delete_event}
-  AutoModerationRuleDeleteEvent({required this.rule});
+  AutoModerationRuleDeleteEvent({required super.gateway, required this.rule});
 }
 
 /// {@template auto_moderation_action_execution_event}
@@ -77,6 +83,7 @@ class AutoModerationActionExecutionEvent extends DispatchEvent {
 
   /// {@macro auto_moderation_action_execution_event}
   AutoModerationActionExecutionEvent({
+    required super.gateway,
     required this.guildId,
     required this.action,
     required this.ruleId,
@@ -89,4 +96,22 @@ class AutoModerationActionExecutionEvent extends DispatchEvent {
     required this.matchedKeyword,
     required this.matchedContent,
   });
+
+  /// The guild the rule was triggered in.
+  PartialGuild get guild => gateway.client.guilds[guildId];
+
+  /// The rule that was triggered.
+  PartialAutoModerationRule get rule => guild.autoModerationRules[ruleId];
+
+  /// The user that triggered the rule.
+  PartialUser get user => gateway.client.users[userId];
+
+  /// The member that triggered the rule.
+  PartialMember get member => guild.members[userId];
+
+  /// The channel in which the rule was triggered.
+  PartialChannel? get channel => channelId == null ? null : gateway.client.channels[channelId!];
+
+  /// The message that triggered the rule.
+  PartialMessage? get message => messageId == null ? null : (channel as PartialTextChannel?)?.messages[messageId!];
 }

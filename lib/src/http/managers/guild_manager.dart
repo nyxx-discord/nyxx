@@ -155,6 +155,7 @@ class GuildManager extends Manager<Guild> {
   /// Parse a [WelcomeScreenChannel] from [raw].
   WelcomeScreenChannel parseWelcomeScreenChannel(Map<String, Object?> raw) {
     return WelcomeScreenChannel(
+      manager: this,
       channelId: Snowflake.parse(raw['channel_id']!),
       description: raw['description'] as String,
       emojiId: maybeParse(raw['emoji_id'], Snowflake.parse),
@@ -192,6 +193,7 @@ class GuildManager extends Manager<Guild> {
   /// Parse a [WidgetSettings] from [raw].
   WidgetSettings parseWidgetSettings(Map<String, Object?> raw) {
     return WidgetSettings(
+      manager: this,
       isEnabled: raw['enabled'] as bool,
       channelId: maybeParse(raw['channel_id'], Snowflake.parse),
     );
@@ -200,6 +202,7 @@ class GuildManager extends Manager<Guild> {
   /// Parse a [GuildWidget] from [raw].
   GuildWidget parseGuildWidget(Map<String, Object?> raw) {
     return GuildWidget(
+      manager: this,
       guildId: Snowflake.parse(raw['id']!),
       name: raw['name'] as String,
       invite: raw['instant_invite'] as String?,
@@ -220,6 +223,7 @@ class GuildManager extends Manager<Guild> {
     final guildId = Snowflake.parse(raw['guild_id']!);
 
     return Onboarding(
+      manager: this,
       guildId: guildId,
       prompts: parseMany(raw['prompts'] as List, (Map<String, Object?> raw) => parseOnboardingPrompt(raw, guildId: guildId)),
       defaultChannelIds: parseMany(raw['default_channel_ids'] as List, Snowflake.parse),
@@ -251,6 +255,7 @@ class GuildManager extends Manager<Guild> {
     }
 
     return OnboardingPromptOption(
+      manager: this,
       id: Snowflake.parse(raw['id']!),
       channelIds: parseMany(raw['channel_ids'] as List, Snowflake.parse),
       roleIds: parseMany(raw['role_ids'] as List, Snowflake.parse),

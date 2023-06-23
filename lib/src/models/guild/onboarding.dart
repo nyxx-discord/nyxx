@@ -1,4 +1,7 @@
+import 'package:nyxx/src/http/managers/guild_manager.dart';
+import 'package:nyxx/src/models/channel/channel.dart';
 import 'package:nyxx/src/models/emoji.dart';
+import 'package:nyxx/src/models/guild/guild.dart';
 import 'package:nyxx/src/models/snowflake.dart';
 import 'package:nyxx/src/utils/to_string_helper/to_string_helper.dart';
 
@@ -6,6 +9,9 @@ import 'package:nyxx/src/utils/to_string_helper/to_string_helper.dart';
 /// The configuration for a [Guild]'s onboarding process.
 /// {@endtemplate}
 class Onboarding with ToStringHelper {
+  /// The manager for this [onboarding].
+  final GuildManager manager;
+
   /// The ID of the guild this onboarding is for.
   final Snowflake guildId;
 
@@ -20,11 +26,18 @@ class Onboarding with ToStringHelper {
 
   /// {@macro onboarding}
   Onboarding({
+    required this.manager,
     required this.guildId,
     required this.prompts,
     required this.defaultChannelIds,
     required this.isEnabled,
   });
+
+  /// The guild this onboarding is for.
+  PartialGuild get guild => manager.client.guilds[guildId];
+
+  /// A list of channels that get opted into automatically.
+  List<PartialChannel> get channels => defaultChannelIds.map((e) => manager.client.channels[e]).toList();
 }
 
 /// {@template onboarding_prompt}
@@ -92,6 +105,9 @@ enum OnboardingPromptType {
 /// An option in an [OnboardingPrompt].
 /// {@endtemplate}
 class OnboardingPromptOption with ToStringHelper {
+  /// The manager for this [OnboardingPromptOption].
+  final GuildManager manager;
+
   /// The ID of this option.
   final Snowflake id;
 
@@ -112,6 +128,7 @@ class OnboardingPromptOption with ToStringHelper {
 
   /// {@macro onboarding_prompt_option}
   OnboardingPromptOption({
+    required this.manager,
     required this.id,
     required this.channelIds,
     required this.roleIds,
@@ -119,4 +136,7 @@ class OnboardingPromptOption with ToStringHelper {
     required this.title,
     required this.description,
   });
+
+  /// The channels the user is granted access to.
+  List<PartialChannel> get channels => channelIds.map((e) => manager.client.channels[e]).toList();
 }

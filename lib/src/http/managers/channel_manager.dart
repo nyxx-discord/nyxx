@@ -367,6 +367,7 @@ class ChannelManager extends ReadOnlyManager<Channel> {
 
   FollowedChannel parseFollowedChannel(Map<String, Object?> raw) {
     return FollowedChannel(
+      manager: this,
       channelId: Snowflake.parse(raw['channel_id']!),
       webhookId: Snowflake.parse(raw['webhook_id']!),
     );
@@ -374,6 +375,7 @@ class ChannelManager extends ReadOnlyManager<Channel> {
 
   ThreadMember parseThreadMember(Map<String, Object?> raw) {
     return ThreadMember(
+      manager: this,
       joinTimestamp: DateTime.parse(raw['join_timestamp'] as String),
       flags: Flags<Never>(raw['flags'] as int),
       threadId: Snowflake.parse(raw['id']!),

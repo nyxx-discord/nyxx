@@ -10,11 +10,13 @@ import 'package:nyxx/src/models/message/embed.dart';
 import 'package:nyxx/src/models/message/author.dart';
 import 'package:nyxx/src/models/message/reference.dart';
 import 'package:nyxx/src/models/message/reaction.dart';
+import 'package:nyxx/src/models/channel/text_channel.dart';
 import 'package:nyxx/src/models/message/role_subscription_data.dart';
 import 'package:nyxx/src/models/role.dart';
 import 'package:nyxx/src/models/snowflake.dart';
 import 'package:nyxx/src/models/snowflake_entity/snowflake_entity.dart';
 import 'package:nyxx/src/models/user/user.dart';
+import 'package:nyxx/src/models/webhook.dart';
 import 'package:nyxx/src/utils/flags.dart';
 
 /// {@template partial_message}
@@ -29,6 +31,9 @@ class PartialMessage extends WritableSnowflakeEntity<Message> {
 
   /// {@macro partial_message}
   PartialMessage({required super.id, required this.manager});
+
+  /// The channel this message was sent in.
+  PartialTextChannel get channel => manager.client.channels[channelId] as PartialTextChannel;
 
   /// Update this message.
   // An often-used alias to update
@@ -202,6 +207,9 @@ class Message extends PartialMessage {
     required this.position,
     required this.roleSubscriptionData,
   });
+
+  /// The webhook that sent this message if it was sent by a webhook, `null` otherwise.
+  PartialWebhook? get webhook => webhookId == null ? null : manager.client.webhooks[webhookId!];
 }
 
 /// The type of a message.

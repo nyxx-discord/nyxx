@@ -1,3 +1,4 @@
+import 'package:nyxx/src/http/managers/application_manager.dart';
 import 'package:nyxx/src/models/snowflake.dart';
 import 'package:nyxx/src/models/user/user.dart';
 import 'package:nyxx/src/utils/to_string_helper/to_string_helper.dart';
@@ -9,6 +10,9 @@ import 'package:nyxx/src/utils/to_string_helper/to_string_helper.dart';
 /// * Discord API Reference: https://discord.com/developers/docs/topics/teams#data-models-team-object
 /// {@endtemplate}
 class Team with ToStringHelper {
+  /// The manager for this team.
+  final ApplicationManager manager;
+
   /// The hash of this team's icon.
   final String? iconHash;
 
@@ -26,12 +30,15 @@ class Team with ToStringHelper {
 
   /// {@macro team}
   Team({
+    required this.manager,
     required this.iconHash,
     required this.id,
     required this.members,
     required this.name,
     required this.ownerId,
   });
+
+  PartialUser get owner => manager.client.users[ownerId];
 }
 
 /// {@template team_member}

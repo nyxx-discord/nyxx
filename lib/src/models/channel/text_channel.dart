@@ -41,4 +41,7 @@ abstract class TextChannel extends PartialTextChannel implements Channel {
   DateTime? get lastPinTimestamp;
 
   TextChannel({required super.id, required super.manager});
+
+  /// The last message sent in this channel, or `null` if no messages have been sent.
+  PartialMessage? get lastMessage;
 }

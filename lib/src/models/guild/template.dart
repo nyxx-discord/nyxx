@@ -62,6 +62,9 @@ class GuildTemplate with ToStringHelper {
     required this.isDirty,
   });
 
+  /// The guild this template was created from.
+  PartialGuild get sourceGuild => manager.client.guilds[sourceGuildId];
+
   /// Create a guild from this template.
   Future<Guild> use({required String name, ImageBuilder? icon}) => manager.createGuildFromTemplate(code, name: name, icon: icon);
 

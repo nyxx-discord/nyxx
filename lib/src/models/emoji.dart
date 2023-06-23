@@ -1,4 +1,5 @@
 import 'package:nyxx/src/http/managers/emoji_manager.dart';
+import 'package:nyxx/src/models/role.dart';
 import 'package:nyxx/src/models/snowflake.dart';
 import 'package:nyxx/src/models/snowflake_entity/snowflake_entity.dart';
 import 'package:nyxx/src/models/user/user.dart';
@@ -73,4 +74,7 @@ class GuildEmoji extends Emoji {
     required this.isAnimated,
     required this.isAvailable,
   });
+
+  /// The roles allowed to use this emoji.
+  List<PartialRole>? get roles => roleIds?.map((e) => manager.client.guilds[manager.guildId].roles[e]).toList();
 }

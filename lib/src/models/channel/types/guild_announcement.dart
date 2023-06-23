@@ -7,8 +7,10 @@ import 'package:nyxx/src/models/channel/text_channel.dart';
 import 'package:nyxx/src/models/channel/has_threads_channel.dart';
 import 'package:nyxx/src/models/channel/thread.dart';
 import 'package:nyxx/src/models/channel/thread_list.dart';
+import 'package:nyxx/src/models/guild/guild.dart';
 import 'package:nyxx/src/models/invite/invite.dart';
 import 'package:nyxx/src/models/invite/invite_metadata.dart';
+import 'package:nyxx/src/models/message/message.dart';
 import 'package:nyxx/src/models/permission_overwrite.dart';
 import 'package:nyxx/src/models/snowflake.dart';
 import 'package:nyxx/src/models/webhook.dart';
@@ -73,6 +75,15 @@ class GuildAnnouncementChannel extends TextChannel implements GuildChannel, HasT
     required this.position,
     required this.rateLimitPerUser,
   });
+
+  @override
+  PartialGuild get guild => manager.client.guilds[guildId];
+
+  @override
+  PartialMessage? get lastMessage => lastMessageId == null ? null : messages[lastMessageId!];
+
+  @override
+  PartialChannel? get parent => parentId == null ? null : manager.client.channels[parentId!];
 
   @override
   Future<Thread> createThread(ThreadBuilder builder) => manager.createThread(id, builder);

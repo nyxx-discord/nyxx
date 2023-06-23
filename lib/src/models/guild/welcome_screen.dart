@@ -1,3 +1,5 @@
+import 'package:nyxx/src/http/managers/guild_manager.dart';
+import 'package:nyxx/src/models/channel/channel.dart';
 import 'package:nyxx/src/models/snowflake.dart';
 import 'package:nyxx/src/utils/to_string_helper/to_string_helper.dart';
 
@@ -19,6 +21,9 @@ class WelcomeScreen with ToStringHelper {
 /// A channel shown in a [WelcomeScreen].
 /// {@endtemplate}
 class WelcomeScreenChannel with ToStringHelper {
+  /// The manager for this [WelcomeScreenChannel].
+  final GuildManager manager;
+
   /// The ID of the channel this welcome screen channel represents.
   final Snowflake channelId;
 
@@ -33,9 +38,13 @@ class WelcomeScreenChannel with ToStringHelper {
 
   /// {@macro welcome_screen_channel}
   WelcomeScreenChannel({
+    required this.manager,
     required this.channelId,
     required this.description,
     required this.emojiId,
     required this.emojiName,
   });
+
+  /// The channel this welcome screen channel represents.
+  PartialChannel get channel => manager.client.channels[channelId];
 }

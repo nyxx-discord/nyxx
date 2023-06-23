@@ -39,6 +39,7 @@ class AuditLogManager extends ReadOnlyManager<AuditLogEntry> {
 
   AuditLogEntryInfo parseAuditLogEntryInfo(Map<String, Object?> raw) {
     return AuditLogEntryInfo(
+      manager: this,
       applicationId: maybeParse(raw['application_id'], Snowflake.parse),
       autoModerationRuleName: raw['auto_moderation_rule_name'] as String?,
       autoModerationTriggerType: raw['auto_moderation_rule_trigger_type'] as String?,

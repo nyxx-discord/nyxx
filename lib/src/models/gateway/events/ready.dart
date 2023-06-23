@@ -33,6 +33,7 @@ class ReadyEvent extends DispatchEvent {
 
   /// {@macro ready_event}
   ReadyEvent({
+    required super.gateway,
     required this.version,
     required this.user,
     required this.guilds,
@@ -47,4 +48,7 @@ class ReadyEvent extends DispatchEvent {
 /// {@template resumed_event}
 /// Emitted when
 /// {@endtemplate}
-class ResumedEvent extends DispatchEvent {}
+class ResumedEvent extends DispatchEvent {
+  /// {@macro resumed_event}
+  ResumedEvent({required super.gateway});
+}

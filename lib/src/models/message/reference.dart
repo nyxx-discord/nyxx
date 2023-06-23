@@ -1,3 +1,8 @@
+import 'package:nyxx/src/http/managers/message_manager.dart';
+import 'package:nyxx/src/models/channel/channel.dart';
+import 'package:nyxx/src/models/channel/text_channel.dart';
+import 'package:nyxx/src/models/guild/guild.dart';
+import 'package:nyxx/src/models/message/message.dart';
 import 'package:nyxx/src/models/snowflake.dart';
 import 'package:nyxx/src/utils/to_string_helper/to_string_helper.dart';
 
@@ -40,6 +45,9 @@ import 'package:nyxx/src/utils/to_string_helper/to_string_helper.dart';
 /// * Discord API Reference: https://discord.com/developers/docs/resources/channel#message-reference-object
 /// {@endtemplate}
 class MessageReference with ToStringHelper {
+  /// The manager for this [MessageReference].
+  final MessageManager manager;
+
   /// The ID of the originating [Message].
   final Snowflake? messageId;
 
@@ -51,8 +59,18 @@ class MessageReference with ToStringHelper {
 
   /// {@macro message_reference}
   MessageReference({
+    required this.manager,
     required this.messageId,
     required this.channelId,
     required this.guildId,
   });
+
+  /// The originating message's channel.
+  PartialChannel get channel => manager.client.channels[channelId];
+
+  /// The originating message.
+  PartialMessage? get message => messageId == null ? null : (channel as PartialTextChannel).messages[messageId!];
+
+  /// The guild of the originating message.
+  PartialGuild? get guild => guildId == null ? null : manager.client.guilds[guildId!];
 }

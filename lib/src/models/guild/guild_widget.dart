@@ -1,4 +1,6 @@
+import 'package:nyxx/src/http/managers/guild_manager.dart';
 import 'package:nyxx/src/models/channel/channel.dart';
+import 'package:nyxx/src/models/guild/guild.dart';
 import 'package:nyxx/src/models/snowflake.dart';
 import 'package:nyxx/src/models/user/user.dart';
 import 'package:nyxx/src/utils/to_string_helper/to_string_helper.dart';
@@ -7,6 +9,9 @@ import 'package:nyxx/src/utils/to_string_helper/to_string_helper.dart';
 /// A [Guild]'s widget.
 /// {@endtemplate}
 class GuildWidget with ToStringHelper {
+  /// The manager for this [GuildWidget].
+  final GuildManager manager;
+
   /// The ID of the guild this widget is for.
   final Snowflake guildId;
 
@@ -27,6 +32,7 @@ class GuildWidget with ToStringHelper {
 
   /// {@macro guild_widget}
   GuildWidget({
+    required this.manager,
     required this.guildId,
     required this.name,
     required this.invite,
@@ -34,12 +40,18 @@ class GuildWidget with ToStringHelper {
     required this.users,
     required this.presenceCount,
   });
+
+  /// The guild this widget is for.
+  PartialGuild get guild => manager.client.guilds[guildId];
 }
 
 /// {@template widget_settings}
 /// The settings for a [Guild]'s widget.
 /// {@endtemplate}
 class WidgetSettings with ToStringHelper {
+  /// The manager for this [WidgetSettings].
+  final GuildManager manager;
+
   /// Whether the widget is enabled in this guild.
   final bool isEnabled;
 
@@ -48,14 +60,18 @@ class WidgetSettings with ToStringHelper {
 
   /// {@macro widget_settings}
   WidgetSettings({
+    required this.manager,
     required this.isEnabled,
     required this.channelId,
   });
+
+  /// The channel the widget should send users to.
+  PartialChannel? get channel => channelId == null ? null : manager.client.channels[channelId!];
 }
 
 /// The style of a guild widget image.
 enum WidgetImageStyle {
-  sheild._('shield'),
+  shield._('shield'),
   banner1._('banner1'),
   banner2._('banner2'),
   banner3._('banner3'),

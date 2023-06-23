@@ -1,5 +1,7 @@
 import 'package:nyxx/src/http/managers/scheduled_event_manager.dart';
+import 'package:nyxx/src/models/channel/channel.dart';
 import 'package:nyxx/src/models/channel/stage_instance.dart';
+import 'package:nyxx/src/models/guild/guild.dart';
 import 'package:nyxx/src/models/guild/member.dart';
 import 'package:nyxx/src/models/snowflake.dart';
 import 'package:nyxx/src/models/snowflake_entity/snowflake_entity.dart';
@@ -90,6 +92,15 @@ class ScheduledEvent extends PartialScheduledEvent {
     required this.userCount,
     required this.coverImageHash,
   });
+
+  /// The guild this event is in.
+  PartialGuild get guild => manager.client.guilds[guildId];
+
+  /// The channel this event will be hosted in.
+  PartialChannel? get channel => channelId == null ? null : manager.client.channels[channelId!];
+
+  /// The member for the user that created this event.
+  PartialMember? get creatorMember => creatorId == null ? null : guild.members[creatorId!];
 }
 
 /// The status of a [ScheduledEvent].
@@ -154,6 +165,8 @@ class EntityMetadata with ToStringHelper {
 /// A user that has followed a [ScheduledEvent].
 /// {@endtemplate}
 class ScheduledEventUser with ToStringHelper {
+  final ScheduledEventManager manager;
+
   /// The ID of the event the user followed.
   final Snowflake scheduledEventId;
 
@@ -165,8 +178,12 @@ class ScheduledEventUser with ToStringHelper {
 
   /// {@macro scheduled_event_user}
   ScheduledEventUser({
+    required this.manager,
     required this.scheduledEventId,
     required this.user,
     required this.member,
   });
+
+  /// The event the user followed.
+  PartialScheduledEvent get scheduledEvent => manager[scheduledEventId];
 }
