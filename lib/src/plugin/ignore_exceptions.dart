@@ -32,6 +32,9 @@ class IgnoreExceptions extends NyxxPlugin {
 
       logger.shout('Unhandled exception was thrown', message, stackTrace);
     });
+
+    Isolate.current.setErrorsFatal(false);
+    Isolate.current.addErrorListener(_errorPort!.sendPort);
   }
 
   void _stopListeningIfNeeded() {
@@ -43,6 +46,9 @@ class IgnoreExceptions extends NyxxPlugin {
   }
 
   void _stopListening() {
+    Isolate.current.removeErrorListener(_errorPort!.sendPort);
+    Isolate.current.setErrorsFatal(true);
+
     _errorPort?.close();
   }
 

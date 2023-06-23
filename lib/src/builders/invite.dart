@@ -8,9 +8,9 @@ class InviteBuilder extends CreateBuilder<Invite> {
 
   final int? maxUses;
 
-  final bool? temporary;
+  final bool? isTemporary;
 
-  final bool? unique;
+  final bool? isUnique;
 
   final TargetType? targetType;
 
@@ -21,8 +21,8 @@ class InviteBuilder extends CreateBuilder<Invite> {
   InviteBuilder({
     this.maxAge = sentinelDuration,
     this.maxUses,
-    this.temporary,
-    this.unique,
+    this.isTemporary,
+    this.isUnique,
     this.targetType,
     this.targetUserId,
     this.targetApplicationId,
@@ -32,8 +32,8 @@ class InviteBuilder extends CreateBuilder<Invite> {
   Map<String, Object?> build() => {
         if (!identical(maxAge, sentinelDuration)) 'max_age': maxAge == null ? 0 : maxAge?.inSeconds,
         if (maxUses != null) 'max_uses': maxUses,
-        if (temporary != null) 'temporary': temporary,
-        if (unique != null) 'unique': unique,
+        if (isTemporary != null) 'temporary': isTemporary,
+        if (isUnique != null) 'unique': isUnique,
         if (targetType != null) 'target_type': targetType!.value,
         if (targetUserId != null) 'target_user_id': targetUserId!.toString(),
         if (targetApplicationId != null) 'target_application_id': targetApplicationId!.toString(),

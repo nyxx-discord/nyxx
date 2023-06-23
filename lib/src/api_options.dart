@@ -80,7 +80,7 @@ class GatewayApiOptions extends RestApiOptions {
   /// The threshold after which guilds are considered large in the Gateway.
   final int? largeThreshold;
 
-  /// The presence the client will set after first connecting to the gatewayy.
+  /// The presence the client will set after first connecting to the Gateway.
   final PresenceBuilder? initialPresence;
 
   /// The query parameters to append to the Gateway connection URL.
