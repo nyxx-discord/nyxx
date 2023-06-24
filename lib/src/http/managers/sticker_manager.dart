@@ -129,19 +129,32 @@ class GlobalStickerManager extends ReadOnlyManager<GlobalSticker> {
   }
 
   Future<StickerPack> fetchStickerPack(Snowflake id) async {
-    final route = HttpRoute()..stickers(id: id.toString());
+    final route = HttpRoute()..stickerPacks(id: id.toString());
 
     final request = BasicRequest(route);
     final response = (await client.httpHandler.executeSafe(request)).jsonBody as Map<String, Object?>;
 
+    return parseStickerPack(response);
+  }
+
+  Future<List<StickerPack>> fetchNitroStickerPacks() async {
+    final route = HttpRoute()..stickerPacks();
+
+    final request = BasicRequest(route);
+    final response = (await client.httpHandler.executeSafe(request)).jsonBody as Map<String, Object?>;
+
+    return (response['sticker_packs'] as List).map((e) => parseStickerPack(e as Map<String, Object?>)).toList();
+  }
+
+  StickerPack parseStickerPack(Map<String, Object?> raw) {
     return StickerPack(
-      id: Snowflake.parse(response['id'] as String),
-      stickers: (response['stickers'] as List).map((e) => parse(e as Map<String, Object?>)).toList(),
-      name: response['name'] as String,
-      skuId: Snowflake.parse(response['sku_id'] as String),
-      coverStickerId: response['cover_sticker_id'] != null ? Snowflake.parse(response['cover_sticker_id'] as String) : null,
-      description: response['description'] as String,
-      bannerAssetId: response['banner_asset_id'] != null ? Snowflake.parse(response['banner_asset_id'] as String) : null,
+      id: Snowflake.parse(raw['id'] as String),
+      stickers: (raw['stickers'] as List).map((e) => parse(e as Map<String, Object?>)).toList(),
+      name: raw['name'] as String,
+      skuId: Snowflake.parse(raw['sku_id'] as String),
+      coverStickerId: raw['cover_sticker_id'] != null ? Snowflake.parse(raw['cover_sticker_id'] as String) : null,
+      description: raw['description'] as String,
+      bannerAssetId: raw['banner_asset_id'] != null ? Snowflake.parse(raw['banner_asset_id'] as String) : null,
     );
   }
 

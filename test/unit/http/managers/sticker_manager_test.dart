@@ -30,6 +30,31 @@ final sampleGlobalSticker = {
   "pack_id": "0",
 };
 
+final sampleStickerPack = {
+  "id": "0",
+  "stickers": [{
+    "id": "0",
+    "name": "sampleGuildSticker",
+    "description": "Example description",
+    "tags": "first,second,third",
+    "type": 2,
+    "format_type": 1,
+    "available": true,
+    "sort_value": 1,
+    "pack_id": "0",
+  }],
+  "name": "sticker-pack",
+  "sku_id": "0",
+  "cover_sticker_id": "0",
+  "description": "Example description",
+};
+
+final sampleNitroStickerPacks = {
+  "sticker_packs": [
+    sampleStickerPack,
+  ],
+};
+
 void main() {
   testManager<GuildSticker, GuildStickerManager>(
       "GuildStickerManager",
@@ -55,7 +80,7 @@ void main() {
   );
 
   testReadOnlyManager<GlobalSticker, GlobalStickerManager>(
-      "GuildStickerManager",
+      "GlobalStickerManger",
       (config, client) => GlobalStickerManager(config, client),
       RegExp(r'/stickers/\d+'),
       sampleObject: sampleGlobalSticker,
@@ -71,6 +96,25 @@ void main() {
         expect(sticker.getTags(), equals(["first", "second", "third"]));
       },
       additionalParsingTests: [],
-      additionalEndpointTests: [],
+      additionalEndpointTests: [
+        EndpointTest<GlobalStickerManager, StickerPack, Map<String, Object?>>(
+          name: 'sticker-packs',
+          source: sampleStickerPack,
+          urlMatcher: '/sticker-packs/0',
+          execute: (manager) => manager.fetchStickerPack(Snowflake.zero),
+          check: (stickerPack) {
+            expect(stickerPack.stickers, hasLength(1));
+          },
+        ),
+        EndpointTest<GlobalStickerManager, List<StickerPack>, Map<String, Object?>>(
+          name: 'nitro-sticker-packs',
+          source: sampleNitroStickerPacks,
+          urlMatcher: '/sticker-packs',
+          execute: (manager) => manager.fetchNitroStickerPacks(),
+          check: (stickerPacks) {
+            expect(stickerPacks, hasLength(1));
+          },
+        )
+      ],
   );
 }
