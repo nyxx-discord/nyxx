@@ -57,6 +57,7 @@ class ApplicationManager {
 
   Team parseTeam(Map<String, Object?> raw) {
     return Team(
+      manager: this,
       iconHash: raw['icon'] as String?,
       id: Snowflake.parse(raw['id']!),
       members: parseMany(raw['members'] as List, parseTeamMember),

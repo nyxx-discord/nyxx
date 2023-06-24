@@ -1,4 +1,5 @@
 import 'package:nyxx/src/http/managers/application_manager.dart';
+import 'package:nyxx/src/models/guild/guild.dart';
 import 'package:nyxx/src/models/locale.dart';
 import 'package:nyxx/src/models/permissions.dart';
 import 'package:nyxx/src/models/snowflake.dart';
@@ -118,6 +119,9 @@ class Application extends PartialApplication {
     required this.customInstallUrl,
     required this.roleConnectionsVerificationUrl,
   });
+
+  /// If this application is a game sold on Discord, the guild it was linked to.
+  PartialGuild? get guild => guildId == null ? null : manager.client.guilds[guildId!];
 }
 
 /// Flags for an [Application].

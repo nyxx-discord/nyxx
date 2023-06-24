@@ -1,4 +1,5 @@
 import 'package:nyxx/src/models/gateway/event.dart';
+import 'package:nyxx/src/models/guild/guild.dart';
 import 'package:nyxx/src/models/snowflake.dart';
 import 'package:nyxx/src/models/voice/voice_state.dart';
 
@@ -13,7 +14,7 @@ class VoiceStateUpdateEvent extends DispatchEvent {
   final VoiceState? oldState;
 
   /// {@macro voice_state_update_event}
-  VoiceStateUpdateEvent({required this.oldState, required this.state});
+  VoiceStateUpdateEvent({required super.gateway, required this.oldState, required this.state});
 }
 
 /// {@template voice_server_update_event}
@@ -30,5 +31,8 @@ class VoiceServerUpdateEvent extends DispatchEvent {
   final String? endpoint;
 
   /// {@macro voice_server_update_event}
-  VoiceServerUpdateEvent({required this.token, required this.guildId, required this.endpoint});
+  VoiceServerUpdateEvent({required super.gateway, required this.token, required this.guildId, required this.endpoint});
+
+  /// The guild.
+  PartialGuild get guild => gateway.client.guilds[guildId];
 }

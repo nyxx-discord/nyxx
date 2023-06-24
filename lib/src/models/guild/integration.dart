@@ -1,4 +1,5 @@
 import 'package:nyxx/src/http/managers/integration_manager.dart';
+import 'package:nyxx/src/models/role.dart';
 import 'package:nyxx/src/models/snowflake.dart';
 import 'package:nyxx/src/models/snowflake_entity/snowflake_entity.dart';
 import 'package:nyxx/src/models/user/user.dart';
@@ -85,6 +86,9 @@ class Integration extends PartialIntegration {
     required this.application,
     required this.scopes,
   });
+
+  /// The role this integration uses for subscribers.
+  PartialRole? get role => roleId == null ? null : manager.client.guilds[manager.guildId].roles[roleId!];
 }
 
 /// The behavior of an integration when a member's subscription expires.

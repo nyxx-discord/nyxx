@@ -1,6 +1,12 @@
 import 'package:nyxx/src/http/managers/auto_moderation_manager.dart';
+import 'package:nyxx/src/models/channel/channel.dart';
+import 'package:nyxx/src/models/channel/text_channel.dart';
+import 'package:nyxx/src/models/guild/guild.dart';
+import 'package:nyxx/src/models/guild/member.dart';
+import 'package:nyxx/src/models/role.dart';
 import 'package:nyxx/src/models/snowflake.dart';
 import 'package:nyxx/src/models/snowflake_entity/snowflake_entity.dart';
+import 'package:nyxx/src/models/user/user.dart';
 import 'package:nyxx/src/utils/to_string_helper/to_string_helper.dart';
 
 /// A partial [AutoModerationRule].
@@ -61,6 +67,16 @@ class AutoModerationRule extends PartialAutoModerationRule {
     required this.exemptRoleIds,
     required this.exemptChannelIds,
   });
+
+  PartialGuild get guild => manager.client.guilds[guildId];
+
+  PartialUser get creator => manager.client.users[creatorId];
+
+  PartialMember get creatorMember => guild.members[creatorId];
+
+  List<PartialRole> get exemptRoles => exemptRoleIds.map((e) => guild.roles[e]).toList();
+
+  List<PartialChannel> get exemptChannels => exemptChannelIds.map((e) => manager.client.channels[e]).toList();
 }
 
 /// The type of event on which an [AutoModerationRule] triggers.
@@ -209,6 +225,8 @@ enum ActionType {
 /// Additional metadata associated with an [AutoModerationAction].
 /// {@endtemplate}
 class ActionMetadata with ToStringHelper {
+  final AutoModerationManager manager;
+
   /// The ID of the channel to send the alert message to.
   final Snowflake? channelId;
 
@@ -220,8 +238,12 @@ class ActionMetadata with ToStringHelper {
 
   /// {@macro action_metadata}
   ActionMetadata({
+    required this.manager,
     required this.channelId,
     required this.duration,
     required this.customMessage,
   });
+
+  /// The channel to send the alert message to.
+  PartialTextChannel? get channel => channelId == null ? null : manager.client.channels[channelId!] as PartialTextChannel?;
 }

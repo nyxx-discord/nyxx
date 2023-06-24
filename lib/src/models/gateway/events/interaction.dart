@@ -7,4 +7,7 @@ import 'package:nyxx/src/models/gateway/event.dart';
 class InteractionCreateEvent extends DispatchEvent {
   // TODO
   //final Interaction interaction;
+
+  /// {@macro interaction_create_event}
+  InteractionCreateEvent({required super.gateway});
 }

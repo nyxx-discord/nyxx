@@ -1,3 +1,4 @@
+import 'package:nyxx/src/gateway/gateway.dart';
 import 'package:nyxx/src/models/gateway/opcode.dart';
 import 'package:nyxx/src/utils/to_string_helper/to_string_helper.dart';
 
@@ -33,8 +34,11 @@ class RawDispatchEvent extends GatewayEvent {
 /// The base class for all events sent by dispatch.
 /// {@endtemplate}
 abstract class DispatchEvent extends GatewayEvent {
+  /// The gateway that handled this event.
+  final Gateway gateway;
+
   /// {@macro dispatch_event}
-  DispatchEvent() : super(opcode: Opcode.dispatch);
+  DispatchEvent({required this.gateway}) : super(opcode: Opcode.dispatch);
 }
 
 /// {@template unknown_dispatch_event}
@@ -47,7 +51,7 @@ class UnknownDispatchEvent extends DispatchEvent {
   final RawDispatchEvent raw;
 
   /// {@macro unknown_dispatch_event}
-  UnknownDispatchEvent({required this.raw});
+  UnknownDispatchEvent({required super.gateway, required this.raw});
 }
 
 /// {@template heartbeat_event}

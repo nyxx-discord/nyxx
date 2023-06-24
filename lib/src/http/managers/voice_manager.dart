@@ -23,6 +23,7 @@ class VoiceManager {
     final guildId = maybeParse(raw['guild_id'], Snowflake.parse);
 
     return VoiceState(
+      manager: this,
       guildId: guildId,
       channelId: maybeParse(raw['channel_id'], Snowflake.parse),
       userId: Snowflake.parse(raw['user_id'] as String),

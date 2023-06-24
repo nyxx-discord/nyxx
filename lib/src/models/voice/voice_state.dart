@@ -1,5 +1,9 @@
+import 'package:nyxx/src/http/managers/voice_manager.dart';
+import 'package:nyxx/src/models/channel/channel.dart';
+import 'package:nyxx/src/models/guild/guild.dart';
 import 'package:nyxx/src/models/guild/member.dart';
 import 'package:nyxx/src/models/snowflake.dart';
+import 'package:nyxx/src/models/user/user.dart';
 import 'package:nyxx/src/utils/to_string_helper/to_string_helper.dart';
 
 /// {@template voice_state}
@@ -9,6 +13,9 @@ import 'package:nyxx/src/utils/to_string_helper/to_string_helper.dart';
 /// * Discord API Reference: https://discord.com/developers/docs/resources/voice#voice-state-object
 /// {@endtemplate}
 class VoiceState with ToStringHelper {
+  /// The manager for this [VoiceState].
+  final VoiceManager manager;
+
   /// The ID of the guild this state is in.
   final Snowflake? guildId;
 
@@ -49,6 +56,7 @@ class VoiceState with ToStringHelper {
 
   /// {@macro voice_state}
   VoiceState({
+    required this.manager,
     required this.guildId,
     required this.channelId,
     required this.userId,
@@ -72,4 +80,13 @@ class VoiceState with ToStringHelper {
 
   /// The key this voice state will have in the [NyxxRest.voice] cache.
   Snowflake get cacheKey => Snowflake(Object.hash(guildId, userId));
+
+  /// The guild this voice state is in.
+  PartialGuild? get guild => guildId == null ? null : manager.client.guilds[guildId!];
+
+  /// The channel this voice state is in.
+  PartialChannel? get channel => channelId == null ? null : manager.client.channels[channelId!];
+
+  /// The user this voice state is for.
+  PartialUser get user => manager.client.users[userId];
 }
