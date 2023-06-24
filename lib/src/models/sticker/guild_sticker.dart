@@ -40,7 +40,7 @@ class GuildSticker extends PartialGuildSticker with Sticker {
   final bool available;
 
   /// Id of the guild that owns this sticker
-  final Snowflake? guildId;
+  final Snowflake guildId;
 
   /// The user that uploaded the guild sticker
   @override

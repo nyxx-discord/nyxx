@@ -27,20 +27,20 @@ class StickerCreateBuilder implements CreateBuilder<GuildSticker> {
 
 class StickerUpdateBuilder implements UpdateBuilder<GuildSticker> {
   /// Name of the sticker (2-30 characters)
-  final String name;
+  final String? name;
 
   /// Description of the sticker (empty or 2-100 characters)
   final String? description;
 
   /// Autocomplete/suggestion tags for the sticker (max 200 characters)
-  final String tags;
+  final String? tags;
 
-  StickerUpdateBuilder({required this.name, this.description = '', required this.tags});
+  StickerUpdateBuilder({this.name, this.description = '', this.tags});
 
   @override
   Map<String, Object?> build() => {
-        "name": name,
+        if (name != null) "name": name,
         if (description?.isNotEmpty ?? true) "description": description,
-        "tags": tags,
+        if (tags != null) "tags": tags,
       };
 }

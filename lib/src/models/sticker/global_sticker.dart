@@ -1,4 +1,5 @@
 import 'package:nyxx/src/http/managers/sticker_manager.dart';
+import 'package:nyxx/src/models/snowflake.dart';
 import 'package:nyxx/src/models/snowflake_entity/snowflake_entity.dart';
 import 'package:nyxx/src/models/sticker/sticker.dart';
 import 'package:nyxx/src/models/user/user.dart';
@@ -44,7 +45,7 @@ class GlobalSticker extends PartialGlobalSticker with Sticker {
   final int? sortValue;
 
   /// For standard stickers, id of the pack the sticker is from
-  final String? packId;
+  final Snowflake packId;
 
   /// {@macro application}
   GlobalSticker(

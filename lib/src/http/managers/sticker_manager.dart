@@ -87,7 +87,7 @@ class GuildStickerManager extends Manager<GuildSticker> {
       type: StickerType.parse(raw['type'] as int),
       formatType: StickerFormatType.parse(raw['format_type'] as int),
       available: raw['available'] as bool? ?? false,
-      guildId: raw['guild_id'] != null ? Snowflake.parse(raw['guild_id'] as String) : null,
+      guildId: Snowflake.parse(raw['guild_id'] as String),
       user: ((raw['user'] ?? {}) as Map)['id'] != null ? client.users[Snowflake.parse((raw['user'] as Map)['id'] as String)] : null,
       sortValue: raw['sort_value'] as int?,
     );
@@ -150,7 +150,7 @@ class GlobalStickerManager extends ReadOnlyManager<GlobalSticker> {
     return GlobalSticker(
       manager: this,
       id: Snowflake.parse(raw['id'] as String),
-      packId: raw['pack_id'] as String?,
+      packId: Snowflake.parse(raw['pack_id'] as String),
       name: raw['name'] as String,
       description: raw['description'] as String,
       tags: raw['tags'] as String,
