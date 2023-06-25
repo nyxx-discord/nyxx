@@ -15,7 +15,7 @@ abstract class SnowflakeEntity<T extends SnowflakeEntity<T>> with ToStringHelper
 
   /// If this entity exists in the manager's cache, return the cached instance. Otherwise, [fetch]
   /// this entity and return it.
-  FutureOr<T> get();
+  Future<T> get();
 
   /// Fetch this entity from the API.
   Future<T> fetch();
@@ -39,7 +39,7 @@ abstract class ManagedSnowflakeEntity<T extends ManagedSnowflakeEntity<T>> exten
   ManagedSnowflakeEntity({required super.id});
 
   @override
-  FutureOr<T> get() => manager.get(id);
+  Future<T> get() => manager.get(id);
 
   @override
   Future<T> fetch() => manager.fetch(id);
