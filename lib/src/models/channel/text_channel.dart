@@ -27,6 +27,12 @@ class PartialTextChannel extends PartialChannel {
   /// * [ChannelManager.triggerTyping]
   /// * Discord API Reference: https://discord.com/developers/docs/resources/channel#trigger-typing-indicator
   Future<void> triggerTyping() => manager.triggerTyping(id);
+
+  @override
+  Future<TextChannel> get() async => await super.get() as TextChannel;
+
+  @override
+  Future<TextChannel> fetch() async => await super.get() as TextChannel;
 }
 
 //// A text channel
