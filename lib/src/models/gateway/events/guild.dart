@@ -10,6 +10,7 @@ import 'package:nyxx/src/models/guild/member.dart';
 import 'package:nyxx/src/models/guild/scheduled_event.dart';
 import 'package:nyxx/src/models/role.dart';
 import 'package:nyxx/src/models/snowflake.dart';
+import 'package:nyxx/src/models/sticker/guild_sticker.dart';
 import 'package:nyxx/src/models/user/user.dart';
 import 'package:nyxx/src/models/voice/voice_state.dart';
 
@@ -181,11 +182,11 @@ class GuildStickersUpdateEvent extends DispatchEvent {
   /// The ID ot the guild.
   final Snowflake guildId;
 
-  // TODO
-  //final List<Sticker> emojis;
+  /// Array of updated stickers.
+  final List<GuildSticker> stickers;
 
   /// {@macro guild_stickers_update_event}
-  GuildStickersUpdateEvent({required super.gateway, required this.guildId});
+  GuildStickersUpdateEvent({required super.gateway, required this.guildId, required this.stickers});
 
   /// The guild in which the stickers were updated.
   PartialGuild get guild => gateway.client.guilds[guildId];
