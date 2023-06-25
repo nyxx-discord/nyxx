@@ -558,9 +558,12 @@ class Gateway extends GatewayManager with EventParser {
   }
 
   GuildStickersUpdateEvent parseGuildStickersUpdate(Map<String, Object?> raw) {
+    final guildId = Snowflake.parse(raw['guild_id'] as String);
+
     return GuildStickersUpdateEvent(
       gateway: this,
-      guildId: Snowflake.parse(raw['guild_id']!),
+      guildId: guildId,
+      stickers: (raw['stickers'] as List).map((e) => client.guilds[guildId].stickers.parse(e as Map<String, Object?>)).toList(),
     );
   }
 
