@@ -563,7 +563,7 @@ class Gateway extends GatewayManager with EventParser {
     return GuildStickersUpdateEvent(
       gateway: this,
       guildId: guildId,
-      stickers: (raw['stickers'] as List).map((e) => client.guilds[guildId].stickers.parse(e as Map<String, Object?>)).toList(),
+      stickers: parseMany(raw['stickers'] as List, client.guilds[guildId].stickers.parse),
     );
   }
 
