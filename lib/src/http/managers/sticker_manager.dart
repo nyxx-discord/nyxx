@@ -146,6 +146,14 @@ class GlobalStickerManager extends ReadOnlyManager<GlobalSticker> {
     return (response['sticker_packs'] as List).map((e) => parseStickerPack(e as Map<String, Object?>)).toList();
   }
 
+  StickerItem parseStickerItem(Map<String, Object?> raw) {
+    return StickerItem(
+      id: Snowflake.parse(raw['id'] as String),
+      name: raw['name'] as String,
+      formatType: StickerFormatType.parse(raw['format_type'] as int),
+    );
+  }
+
   StickerPack parseStickerPack(Map<String, Object?> raw) {
     return StickerPack(
       id: Snowflake.parse(raw['id'] as String),

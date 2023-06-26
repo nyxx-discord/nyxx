@@ -32,9 +32,6 @@ class GuildPreview extends PartialGuild {
   /// The guild's description.
   final String? description;
 
-  // TODO
-  //final List<Sticker> stickers;
-
   /// {@macro guild_preview}
   GuildPreview({
     required super.id,

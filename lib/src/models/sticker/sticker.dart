@@ -1,3 +1,4 @@
+import 'package:nyxx/src/models/snowflake_entity/snowflake_entity.dart';
 import 'package:nyxx/src/models/user/user.dart';
 
 enum StickerType {
@@ -44,6 +45,7 @@ enum StickerFormatType {
   String toString() => 'StickerFormatType($value)';
 }
 
+/// Mixin with shared properties with stickers
 mixin Sticker {
   /// Name of the sticker
   String get name;
@@ -71,4 +73,24 @@ mixin Sticker {
 
   /// Returns tags in list format since [tags] field is comma-separated string
   List<String> getTags() => tags.split(',');
+}
+
+/// {@template sticker_item}
+/// A representation of a sticker with minimal information
+/// {@endtemplate}
+class StickerItem extends SnowflakeEntity<StickerItem> {
+  /// Name of sticker
+  final String name;
+
+  /// Format type of sticker
+  final StickerFormatType formatType;
+
+  /// {@macro sticker_item}
+  StickerItem({required super.id, required this.name, required this.formatType});
+
+  @override
+  Future<StickerItem> fetch() => get();
+
+  @override
+  Future<StickerItem> get() async => this;
 }

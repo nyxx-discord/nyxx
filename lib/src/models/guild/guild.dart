@@ -309,9 +309,6 @@ class Guild extends PartialGuild {
   /// This guild's NSFW level.
   final NsfwLevel nsfwLevel;
 
-  // TODO
-  //final List<Sticker> stickers;
-
   /// Whether this guild has the premium progress bar enabled.
   final bool hasPremiumProgressBarEnabled;
 
