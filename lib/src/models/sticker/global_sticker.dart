@@ -11,6 +11,9 @@ class PartialGlobalSticker extends ManagedSnowflakeEntity<GlobalSticker> {
   PartialGlobalSticker({required super.id, required this.manager});
 }
 
+/// {@template global_sticker}
+/// A sticker that can be sent in messages. Represents global stickers (default stickers)
+/// {@endtemplate}
 class GlobalSticker extends PartialGlobalSticker with Sticker {
   /// Name of the sticker
   @override
@@ -47,7 +50,7 @@ class GlobalSticker extends PartialGlobalSticker with Sticker {
   /// For standard stickers, id of the pack the sticker is from
   final Snowflake packId;
 
-  /// {@macro application}
+  /// {@macro global_sticker}
   GlobalSticker(
       {required super.id,
       required super.manager,

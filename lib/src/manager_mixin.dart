@@ -39,6 +39,6 @@ mixin ManagerMixin implements Nyxx {
   /// A [GatewayManager] that manages gateway metadata for this client.
   GatewayManager get gateway => GatewayManager(this as NyxxRest);
 
-  /// A [GatewayManager] that manages gateway metadata for this client.
+  /// A [GlobalStickerManager] that manages global stickers.
   GlobalStickerManager get stickers => GlobalStickerManager(options.globalStickerCacheConfig, this as NyxxRest);
 }

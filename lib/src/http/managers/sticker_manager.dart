@@ -21,7 +21,7 @@ class GuildStickerManager extends Manager<GuildSticker> {
   PartialGuildSticker operator [](Snowflake id) => PartialGuildSticker(id: id, manager: this);
 
   @override
-  Future<GuildSticker> create(StickerCreateBuilder builder) async {
+  Future<GuildSticker> create(StickerBuilder builder) async {
     final route = HttpRoute()
       ..guilds(id: guildId.toString())
       ..stickers();

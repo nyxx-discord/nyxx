@@ -54,7 +54,7 @@ export 'src/builders/application_role_connection.dart' show ApplicationRoleConne
 export 'src/builders/emoji/emoji.dart' show EmojiBuilder, EmojiUpdateBuilder;
 export 'src/builders/emoji/reaction.dart' show ReactionBuilder;
 export 'src/builders/invite.dart' show InviteBuilder;
-export 'src/builders/sticker.dart' show StickerCreateBuilder, StickerUpdateBuilder;
+export 'src/builders/sticker.dart' show StickerBuilder, StickerUpdateBuilder;
 
 export 'src/cache/cache.dart' show Cache, CacheConfig;
 

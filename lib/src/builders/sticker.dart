@@ -1,13 +1,14 @@
 import 'package:nyxx/src/builders/builder.dart';
 import 'package:nyxx/src/builders/image.dart';
+import 'package:nyxx/src/builders/sentinels.dart';
 import 'package:nyxx/src/models/sticker/guild_sticker.dart';
 
-class StickerCreateBuilder implements CreateBuilder<GuildSticker> {
+class StickerBuilder implements CreateBuilder<GuildSticker> {
   /// Name of the sticker (2-30 characters)
   final String name;
 
   /// Description of the sticker (empty or 2-100 characters)
-  final String? description;
+  final String description;
 
   /// Autocomplete/suggestion tags for the sticker (max 200 characters)
   final String tags;
@@ -15,12 +16,12 @@ class StickerCreateBuilder implements CreateBuilder<GuildSticker> {
   /// The sticker file to upload
   final ImageBuilder file;
 
-  StickerCreateBuilder({required this.name, required this.description, required this.tags, required this.file});
+  StickerBuilder({required this.name, this.description = '', required this.tags, required this.file});
 
   @override
-  Map<String, Object?> build() => {
+  Map<String, String> build() => {
         "name": name,
-        "description": description ?? '',
+        "description": description,
         "tags": tags,
       };
 }
@@ -30,17 +31,17 @@ class StickerUpdateBuilder implements UpdateBuilder<GuildSticker> {
   final String? name;
 
   /// Description of the sticker (empty or 2-100 characters)
-  final String? description;
+  final String description;
 
   /// Autocomplete/suggestion tags for the sticker (max 200 characters)
   final String? tags;
 
-  StickerUpdateBuilder({this.name, this.description = '', this.tags});
+  StickerUpdateBuilder({this.name, this.description = sentinelString, this.tags});
 
   @override
   Map<String, Object?> build() => {
+        if (!identical(description, sentinelString)) "description": description,
         if (name != null) "name": name,
-        if (description?.isNotEmpty ?? true) "description": description,
         if (tags != null) "tags": tags,
       };
 }

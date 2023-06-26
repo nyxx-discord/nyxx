@@ -11,8 +11,8 @@ class PartialGuildSticker extends WritableSnowflakeEntity<GuildSticker> {
   PartialGuildSticker({required super.id, required this.manager});
 }
 
-/// {@template sticker}
-/// A sticker that can be sent in messages.
+/// {@template guild_sticker}
+/// A sticker that can be sent in messages. Represent stickers added to guild
 /// {@endtemplate}
 class GuildSticker extends PartialGuildSticker with Sticker {
   /// Name of the sticker
@@ -50,7 +50,7 @@ class GuildSticker extends PartialGuildSticker with Sticker {
   @override
   final int? sortValue;
 
-  /// {@macro application}
+  /// {@macro guild_sticker}
   GuildSticker(
       {required super.id,
       required super.manager,

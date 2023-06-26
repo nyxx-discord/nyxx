@@ -61,6 +61,7 @@ class PartialGuild extends WritableSnowflakeEntity<Guild> {
   /// An [EmojiManager] for the emojis of this guild.
   EmojiManager get emojis => EmojiManager(manager.client.options.emojiCacheConfig, manager.client, guildId: id);
 
+  /// An [GuildStickerManager] for the stickers of this guild.
   GuildStickerManager get stickers => GuildStickerManager(manager.client.options.stickerCacheConfig, manager.client, guildId: id);
 
   /// An [AuditLogManager] for the audit log of this guild.
