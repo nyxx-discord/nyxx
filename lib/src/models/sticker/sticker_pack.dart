@@ -40,5 +40,5 @@ class StickerPack extends SnowflakeEntity<StickerPack> {
   Future<StickerPack> fetch() async => get();
 
   @override
-  FutureOr<StickerPack> get() => this;
+  Future<StickerPack> get() async => this;
 }
