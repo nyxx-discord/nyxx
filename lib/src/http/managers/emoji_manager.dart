@@ -54,7 +54,7 @@ class EmojiManager extends Manager<Emoji> {
   }
 
   @override
-  FutureOr<GuildEmoji> get(Snowflake id) async => await super.get(id) as GuildEmoji;
+  Future<GuildEmoji> get(Snowflake id) async => await super.get(id) as GuildEmoji;
 
   @override
   Future<GuildEmoji> fetch(Snowflake id) async {

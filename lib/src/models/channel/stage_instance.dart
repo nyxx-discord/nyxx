@@ -53,7 +53,7 @@ class StageInstance extends SnowflakeEntity<StageInstance> {
   Future<StageInstance> fetch() => manager.fetchStageInstance(channelId);
 
   @override
-  FutureOr<StageInstance> get() async => manager.stageInstanceCache[channelId] ?? await fetch();
+  Future<StageInstance> get() async => manager.stageInstanceCache[channelId] ?? await fetch();
 }
 
 /// The privacy level of a [StageInstance].

@@ -21,7 +21,7 @@ abstract class ReadOnlyManager<T extends ManagedSnowflakeEntity<T>> {
   T parse(Map<String, Object?> raw);
 
   /// Get an item by its [id] from the cache if it exists, else [fetch] it from the API.
-  FutureOr<T> get(Snowflake id) async => cache[id] ?? await fetch(id);
+  Future<T> get(Snowflake id) async => cache[id] ?? await fetch(id);
 
   /// Fetch the item with the given [id] from the API.
   ///
