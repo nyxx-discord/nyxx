@@ -75,8 +75,7 @@ void main() {
     },
     additionalParsingTests: [],
     additionalEndpointTests: [],
-    createBuilder:
-        StickerBuilder(name: "cool_sticker", description: "cool description", tags: "cool,new,tags", file: ImageBuilder(data: [], format: 'png')),
+    createBuilder: StickerBuilder(name: "cool_sticker", description: "cool description", tags: "cool,new,tags", file: ImageBuilder(data: [], format: 'png')),
     updateBuilder: StickerUpdateBuilder(name: "cool_new_name", tags: "cool,new,tags"),
   );
 
