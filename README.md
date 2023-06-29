@@ -38,7 +38,7 @@ void main() async {
 ## More examples
 
 - More examples can be found in our GitHub repository [here](https://github.com/nyxx-discord/nyxx/tree/main/example).
-- [Running on Dart](https://github.com/nyxx-discord/running_on_dart) is a complete example of a bot written in nyxx.
+- [Running on Dart](https://github.com/nyxx-discord/running_on_dart) is a complete example of a bot written with nyxx.
 
 ## Additional documentation & help
 
