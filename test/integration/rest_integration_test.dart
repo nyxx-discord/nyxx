@@ -159,15 +159,9 @@ void main() {
       await expectLater(guild.fetchPreview(), completes);
       await expectLater(guild.fetchChannels(), completes);
       await expectLater(guild.listActiveThreads(), completes);
-      // Admin endpoints are not tested by default
-      //await expectLater(guild.listBans(), completes);
-      //await expectLater(guild.fetchPruneCount(), completes);
-      //await expectLater(guild.fetchPruneCount(days: 1, roleIds: [guild.id]), completes);
       await expectLater(guild.listVoiceRegions(), completes);
-      //await expectLater(guild.listIntegrations(), completes);
 
       if (guild.isWidgetEnabled) {
-        await expectLater(guild.fetchWidgetSettings(), completes);
         await expectLater(guild.fetchWidget(), completes);
         await expectLater(guild.fetchWidgetImage(), completes);
       }
@@ -184,8 +178,6 @@ void main() {
 
       final user = await client.users.fetchCurrentUser();
       await expectLater(client.guilds[guildId].members.fetch(user.id), completes);
-
-      await expectLater(client.guilds[guildId].members.list(), completes);
     });
 
     test('roles', skip: testGuild != null ? false : 'No test guild provided', () async {

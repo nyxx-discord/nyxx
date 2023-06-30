@@ -1,4 +1,4 @@
-name: deploy dev docs
+name: Deploy dev docs to nyxx.l7ssha.xyz
 
 on:
   push:
