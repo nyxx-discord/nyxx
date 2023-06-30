@@ -56,7 +56,7 @@ Discord's API documentation details what nyxx implements & provides more detaile
 ### [Discord API Server](https://discord.gg/discord-api)
 The unofficial guild for Discord Bot developers. To get help with nyxx check `#dart_nyxx` channel.
 
-#### [Pub.dev docs](https://pub.dev/documentation/nyxx)
+### [Pub.dev docs](https://pub.dev/documentation/nyxx)
 The dartdocs page will always have the documentation for the latest release.
 
 ## Contributing to Nyxx
