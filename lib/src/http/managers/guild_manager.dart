@@ -85,6 +85,7 @@ class GuildManager extends Manager<Guild> {
       nsfwLevel: NsfwLevel.parse(raw['nsfw_level'] as int),
       hasPremiumProgressBarEnabled: raw['premium_progress_bar_enabled'] as bool,
       emojiList: parseMany(raw['emojis'] as List, this[id].emojis.parse),
+      stickerList: parseMany(raw['stickers'] as List? ?? [], this[id].stickers.parse),
     );
   }
 
@@ -179,6 +180,7 @@ class GuildManager extends Manager<Guild> {
       description: raw['description'] as String?,
       approximateMemberCount: raw['approximate_member_count'] as int,
       approximatePresenceCount: raw['approximate_presence_count'] as int,
+      stickerList: parseMany(raw['stickers'] as List? ?? [], this[id].stickers.parse),
     );
   }
 
@@ -666,7 +668,7 @@ class GuildManager extends Manager<Guild> {
     final route = HttpRoute()
       ..guilds()
       ..templates(code: code);
-    final request = BasicRequest(route, method: 'POST', body: jsonEncode({'name': name, if (icon != null) 'icon': icon.build()}));
+    final request = BasicRequest(route, method: 'POST', body: jsonEncode({'name': name, if (icon != null) 'icon': icon.buildDataString()}));
 
     final response = await client.httpHandler.executeSafe(request);
     final guild = parse(response.jsonBody as Map<String, Object?>);

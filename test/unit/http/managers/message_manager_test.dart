@@ -24,7 +24,14 @@ final sampleMessage = {
   "content": "Supa Hot",
   "channel_id": "290926798999357250",
   "mentions": [],
-  "type": 0
+  "type": 0,
+  "sticker_items": [
+    {
+      "id": "0",
+      "name": "example sticker",
+      "format_type": 1,
+    }
+  ]
 };
 
 void checkMessage(Message message) {
@@ -54,6 +61,7 @@ void checkMessage(Message message) {
   expect(message.thread, isNull);
   expect(message.position, isNull);
   expect(message.roleSubscriptionData, isNull);
+  expect(message.stickers, hasLength(1));
 }
 
 final sampleCrosspostedMessage = {

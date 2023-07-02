@@ -15,6 +15,7 @@ import 'package:nyxx/src/models/message/role_subscription_data.dart';
 import 'package:nyxx/src/models/role.dart';
 import 'package:nyxx/src/models/snowflake.dart';
 import 'package:nyxx/src/models/snowflake_entity/snowflake_entity.dart';
+import 'package:nyxx/src/models/sticker/sticker.dart';
 import 'package:nyxx/src/models/user/user.dart';
 import 'package:nyxx/src/models/webhook.dart';
 import 'package:nyxx/src/utils/flags.dart';
@@ -166,8 +167,8 @@ class Message extends PartialMessage {
   // TODO
   //final List<MessageComponent> components;
 
-  //TODO (the sticker_items field).
-  //final List<Sticker>? stickers;
+  /// List of sticker attached to message
+  final List<StickerItem> stickers;
 
   /// A generally increasing integer (there may be gaps or duplicates) that represents the approximate position of this message in a thread.
   ///
@@ -206,6 +207,7 @@ class Message extends PartialMessage {
     required this.thread,
     required this.position,
     required this.roleSubscriptionData,
+    required this.stickers,
   });
 
   /// The webhook that sent this message if it was sent by a webhook, `null` otherwise.

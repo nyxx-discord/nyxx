@@ -1,5 +1,6 @@
 import 'package:nyxx/src/models/emoji.dart';
 import 'package:nyxx/src/models/guild/guild.dart';
+import 'package:nyxx/src/models/sticker/guild_sticker.dart';
 
 /// {@template guild_preview}
 /// A preview of a [Guild].
@@ -32,8 +33,8 @@ class GuildPreview extends PartialGuild {
   /// The guild's description.
   final String? description;
 
-  // TODO
-  //final List<Sticker> stickers;
+  /// A list of stickers in this guild.
+  final List<GuildSticker> stickerList;
 
   /// {@macro guild_preview}
   GuildPreview({
@@ -48,5 +49,6 @@ class GuildPreview extends PartialGuild {
     required this.approximateMemberCount,
     required this.approximatePresenceCount,
     required this.description,
+    required this.stickerList,
   });
 }

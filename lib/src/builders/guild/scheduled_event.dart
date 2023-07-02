@@ -46,7 +46,7 @@ class ScheduledEventBuilder extends CreateBuilder<ScheduledEvent> {
         if (scheduledEndTime != null) 'scheduled_end_time': scheduledEndTime!.toIso8601String(),
         if (description != null) 'description': description,
         'entity_type': type.value,
-        if (image != null) 'image': image!.build(),
+        if (image != null) 'image': image!.buildDataString(),
       };
 }
 
@@ -95,6 +95,6 @@ class ScheduledEventUpdateBuilder extends UpdateBuilder<ScheduledEvent> {
         if (!identical(description, sentinelString)) 'description': description,
         if (type != null) 'entity_type': type!.value,
         if (status != null) 'status': status!.value,
-        if (image != null) 'image': image!.build(),
+        if (image != null) 'image': image!.buildDataString(),
       };
 }

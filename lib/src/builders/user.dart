@@ -11,6 +11,6 @@ class UserUpdateBuilder extends UpdateBuilder<User> {
   @override
   Map<String, Object?> build() => {
         if (username != null) 'username': username!,
-        if (avatar != null) 'avatar': avatar!.build(),
+        if (avatar != null) 'avatar': avatar!.buildDataString(),
       };
 }

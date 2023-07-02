@@ -104,7 +104,7 @@ class Gateway extends GatewayManager with EventParser {
       );
     }
 
-    // TODO: GuildStickersUpdateEvent, ApplicationCommandPermissionsUpdateEvent
+    // TODO: ApplicationCommandPermissionsUpdateEvent
 
     // Handle all events which should update cache.
     events.listen((event) => switch (event) {
@@ -163,6 +163,8 @@ class Gateway extends GatewayManager with EventParser {
           GuildEmojisUpdateEvent(:final guildId, :final emojis) => client.guilds[guildId].emojis.cache
             ..clear()
             ..addEntries(emojis.map((emoji) => MapEntry(emoji.id, emoji))),
+          GuildStickersUpdateEvent(:final guildId, :final stickers) =>
+            client.guilds[guildId].stickers.cache.addEntries(stickers.map((sticker) => MapEntry(sticker.id, sticker))),
           _ => null,
         });
   }
@@ -558,9 +560,12 @@ class Gateway extends GatewayManager with EventParser {
   }
 
   GuildStickersUpdateEvent parseGuildStickersUpdate(Map<String, Object?> raw) {
+    final guildId = Snowflake.parse(raw['guild_id'] as String);
+
     return GuildStickersUpdateEvent(
       gateway: this,
-      guildId: Snowflake.parse(raw['guild_id']!),
+      guildId: guildId,
+      stickers: parseMany(raw['stickers'] as List, client.guilds[guildId].stickers.parse),
     );
   }
 

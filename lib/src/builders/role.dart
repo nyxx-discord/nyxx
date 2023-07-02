@@ -37,7 +37,7 @@ class RoleBuilder extends CreateBuilder<Role> {
         if (permissions != null) 'permissions': permissions!.value.toString(),
         if (color != null) 'color': color!.value,
         if (isHoisted != null) 'hoisted': isHoisted,
-        if (icon != null) 'icon': icon!.build(),
+        if (icon != null) 'icon': icon!.buildDataString(),
         if (unicodeEmoji != null) 'unicode_emoji': unicodeEmoji,
         if (isMentionable != null) 'mentionable': isMentionable,
       };
@@ -74,7 +74,7 @@ class RoleUpdateBuilder extends UpdateBuilder<Role> {
         if (permissions != null) 'permissions': permissions!.value.toString(),
         if (color != null) 'color': color!.value,
         if (isHoisted != null) 'hoisted': isHoisted,
-        if (!identical(icon, sentinelImageBuilder)) 'icon': icon?.build(),
+        if (!identical(icon, sentinelImageBuilder)) 'icon': icon?.buildDataString(),
         if (!identical(unicodeEmoji, sentinelString)) 'unicode_emoji': unicodeEmoji,
         if (isMentionable != null) 'mentionable': isMentionable,
       };

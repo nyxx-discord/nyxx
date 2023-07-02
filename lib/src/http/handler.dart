@@ -68,8 +68,8 @@ class HttpHandler {
 
     if (request is BasicRequest) {
       logger.finer('Query Parameters: ${request.queryParameters}, Body: ${request.body}');
-    } else if (request is MultipartRequest) {
-      logger.finer('Query parameters: ${request.queryParameters}, Payload: ${request.jsonPayload}, Files: ${request.files.map((e) => e.filename).join(', ')}');
+    } else if (request is FormDataRequest) {
+      logger.finer('Query parameters: ${request.queryParameters}, Payload: ${request.formParams}, Files: ${request.files.map((e) => e.filename).join(', ')}');
     } else {
       logger.finer('Query parameters: ${request.queryParameters}');
     }
