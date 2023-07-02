@@ -34,6 +34,7 @@ import 'package:nyxx/src/models/permissions.dart';
 import 'package:nyxx/src/models/role.dart';
 import 'package:nyxx/src/models/snowflake.dart';
 import 'package:nyxx/src/models/snowflake_entity/snowflake_entity.dart';
+import 'package:nyxx/src/models/sticker/guild_sticker.dart';
 import 'package:nyxx/src/models/user/user.dart';
 import 'package:nyxx/src/models/voice/voice_region.dart';
 import 'package:nyxx/src/utils/flags.dart';
@@ -312,6 +313,10 @@ class Guild extends PartialGuild {
   /// Whether this guild has the premium progress bar enabled.
   final bool hasPremiumProgressBarEnabled;
 
+  /// A list of stickers in this guild.
+  // Renamed to avoid conflict with the stickers manager.
+  final List<GuildSticker> stickerList;
+
   /// {@macro guild}
   Guild({
     required super.id,
@@ -354,6 +359,7 @@ class Guild extends PartialGuild {
     required this.nsfwLevel,
     required this.hasPremiumProgressBarEnabled,
     required this.emojiList,
+    required this.stickerList,
   });
 
   /// The owner of the guild.
