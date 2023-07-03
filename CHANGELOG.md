@@ -1,3 +1,10 @@
+## 6.0.0-dev.1
+__03.07.2023__
+
+- rewrite: The entire library has been rewritten from the ground up. No pre-`6.0.0-dev.1` code is compatible.
+  Join our Discord server for updates concerning the migration path and help upgrading.
+  For now, check out the new examples and play around with the rewrite to get a feel for it.
+
 ## 5.0.1
 __18.03.2023__
 
