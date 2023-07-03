@@ -46,13 +46,18 @@ class HttpBucket {
 
   final Set<HttpRequest> _inflightRequests = {};
 
+  /// The number of in-flight requests in this bucket.
+  ///
+  /// {@macro in_flight_requests}
+  int get inflightRequests => _inflightRequests.length;
+
   int _remaining;
 
   /// The remaining number of requests that can be made in this reset period.
   ///
   /// This value accounts for in-flight requests, see [addInflightRequest] and
   /// [removeInflightRequest] for more information.
-  int get remaining => _remaining - _inflightRequests.length;
+  int get remaining => _remaining - inflightRequests;
 
   DateTime _resetAt;
 
@@ -124,7 +129,7 @@ class HttpBucket {
   /// Add [request] to this bucket's in-flight requests.
   ///
   /// {@template in_flight_requests}
-  /// In flight requests are requets that have been sent by the client but have not yet received a
+  /// In flight requests are requests that have been sent by the client but have not yet received a
   /// response from the API. These requests count towards the [remaining] count to avoid sending too
   /// many requests at once.
   /// {@endtemplate}

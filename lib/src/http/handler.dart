@@ -74,20 +74,40 @@ class HttpHandler {
       logger.finer('Query parameters: ${request.queryParameters}');
     }
 
-    final bucket = _buckets[request.rateLimitId];
+    Duration waitTime;
+    HttpBucket? bucket;
 
-    final now = DateTime.now();
+    do {
+      bucket = _buckets[request.rateLimitId];
 
-    final globalWaitTime = globalReset?.difference(now) ?? Duration.zero;
-    final bucketNeedsWait = bucket != null && bucket.remaining <= 0;
-    final bucketWaitTime = bucketNeedsWait ? bucket.resetAt.difference(now) : Duration.zero;
+      final now = DateTime.now();
 
-    final waitTime = globalWaitTime > bucketWaitTime ? globalWaitTime : bucketWaitTime;
+      final globalWaitTime = globalReset?.difference(now) ?? Duration.zero;
 
-    if (waitTime > Duration.zero) {
-      logger.finer('Holding ${request.loggingId} for $waitTime');
-      await Future.delayed(waitTime);
-    }
+      Duration bucketWaitTime = Duration.zero;
+      if (bucket != null && bucket.remaining <= 0) {
+        if (bucket.resetAt.isAfter(now)) {
+          bucketWaitTime = bucket.resetAt.difference(now);
+        } else if (bucket.inflightRequests > 0) {
+          // This occurs when the bucket has many in flight requests
+          // (which take all the remaining request slots) but has not
+          // yet received a response to update its reset after time.
+          //
+          // This would mean the bucket reset time would be negative,
+          // when we actually want to wait for an updated reset time.
+          //
+          // We just wait for one of those requests to complete.
+          bucketWaitTime = const Duration(seconds: 1);
+        }
+      }
+
+      waitTime = globalWaitTime > bucketWaitTime ? globalWaitTime : bucketWaitTime;
+
+      if (waitTime > Duration.zero) {
+        logger.finer('Holding ${request.loggingId} for $waitTime');
+        await Future.delayed(waitTime);
+      }
+    } while (waitTime > Duration.zero);
 
     try {
       logger.finer('Sending ${request.loggingId}');
