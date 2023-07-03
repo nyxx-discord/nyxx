@@ -69,9 +69,12 @@ class CdnAsset {
   }) : isAnimated = isAnimated ?? hash.startsWith('a_');
 
   CdnRequest _getRequest(CdnFormat format) {
-    final route = HttpRoute()
-      ..parts.addAll(base.parts)
-      ..add(HttpRoutePart('$hash.${format.extension}'));
+    final route = HttpRoute();
+
+    for (final part in base.parts) {
+      route.add(part);
+    }
+    route.add(HttpRoutePart('$hash.${format.extension}'));
 
     return CdnRequest(route);
   }
