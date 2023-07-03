@@ -245,6 +245,50 @@ void main() {
 
         expect(handler.globalReset, isNot(isNull));
       });
+
+      test('handles batch request rate limits', () async {
+        final client = MockNyxx();
+        final handler = HttpHandler(client);
+        when(() => client.apiOptions).thenReturn(RestApiOptions(token: 'test token'));
+        when(() => client.options).thenReturn(RestClientOptions());
+
+        for (final duration in [Duration.zero, Duration(seconds: 4), Duration(seconds: 9)]) {
+          Timer(duration, () {
+            // Accept 5 requests
+            for (int i = 0; i < 5; i++) {
+              nock('https://discord.com/api/v${client.apiOptions.apiVersion}').get('/test').reply(
+                200,
+                jsonEncode({'message': 'success'}),
+                headers: {
+                  HttpBucket.xRateLimitBucket: 'testBucketId',
+                  HttpBucket.xRateLimitLimit: '5',
+                  HttpBucket.xRateLimitRemaining: (4 - i).toString(),
+                  HttpBucket.xRateLimitReset: '10005',
+                  HttpBucket.xRateLimitResetAfter: '5',
+                },
+              );
+            }
+          });
+        }
+
+        // First 0-duration timer needs to trigger to register the initial handlers
+        await Future.delayed(Duration(milliseconds: 1));
+
+        // One request to populate bucket information
+        await handler.executeSafe(BasicRequest(HttpRoute()..test(), headers: {'count': 'first'}));
+
+        for (int i = 0; i < 14; i++) {
+          handler.executeSafe(BasicRequest(HttpRoute()..test(), headers: {'count': i.toString()}));
+        }
+
+        // Test should take 15 seconds (3 batches of 5 second limits) + some small amount of processing time.
+        // We need to close the handler so the call to toList below completes.
+        Timer(Duration(seconds: 16), () => handler.close());
+
+        final list = await handler.onResponse.where((event) => event.statusCode == 429).toList();
+
+        expect(list, isEmpty);
+      });
     });
   });
 }

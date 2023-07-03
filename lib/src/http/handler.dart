@@ -150,7 +150,7 @@ class HttpHandler {
   }
 
   void _updateRatelimitBucket(HttpRequest request, BaseResponse response) {
-    final bucket = _buckets.values.firstWhereSafe(
+    HttpBucket? bucket = _buckets.values.firstWhereSafe(
       (bucket) => bucket.contains(response),
       orElse: () => HttpBucket.fromResponse(this, response),
     );
@@ -159,6 +159,7 @@ class HttpHandler {
       return;
     }
 
+    bucket.updateWith(response);
     _buckets[request.rateLimitId] = bucket;
   }
 
@@ -195,5 +196,11 @@ class HttpHandler {
     }
 
     return parsedResponse;
+  }
+
+  void close() {
+    httpClient.close();
+    _onRequestController.close();
+    _onResponseController.close();
   }
 }
