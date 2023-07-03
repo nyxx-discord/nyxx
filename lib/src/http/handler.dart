@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:collection';
 
 import 'package:http/http.dart' hide MultipartRequest;
@@ -40,6 +41,21 @@ class HttpHandler {
 
   Logger get logger => Logger('${client.options.loggerName}.Http');
 
+  final StreamController<HttpRequest> _onRequestController = StreamController.broadcast();
+  final StreamController<HttpResponse> _onResponseController = StreamController.broadcast();
+
+  /// A stream of requests executed by this handler.
+  ///
+  /// Requests are emitted before they are sent.
+  Stream<HttpRequest> get onRequest => _onRequestController.stream;
+
+  /// A stream of responses received by this handler.
+  ///
+  /// This includes error & rate limit responses. Since rate limit responses trigger the request
+  /// to be retried, this means you may receive multiple responses for a single request on this
+  /// stream.
+  Stream<HttpResponse> get onResponse => _onResponseController.stream;
+
   /// Create a new [HttpHandler].
   ///
   /// {@macro http_handler}
@@ -73,6 +89,8 @@ class HttpHandler {
     } else {
       logger.finer('Query parameters: ${request.queryParameters}');
     }
+
+    _onRequestController.add(request);
 
     Duration waitTime;
     HttpBucket? bucket;
@@ -157,6 +175,8 @@ class HttpHandler {
     logger
       ..fine('${response.statusCode} ${request.loggingId}')
       ..finer('Headers: ${parsedResponse.headers}, Body: ${parsedResponse.textBody ?? parsedResponse.body.map((e) => e.toRadixString(16)).join(' ')}');
+
+    _onResponseController.add(parsedResponse);
 
     if (parsedResponse.statusCode == 429) {
       try {
