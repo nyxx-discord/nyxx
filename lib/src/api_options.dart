@@ -29,6 +29,11 @@ abstract class ApiOptions {
 
   /// The value of the `User-Agent` header to send with each request.
   String get userAgent;
+
+  /// The host at which the CDN can be found.
+  ///
+  /// This is always `cdn.discordapp.com`.
+  String get cdnHost;
 }
 
 /// Options for connecting to the Discord API to make HTTP requests with a bot token.
@@ -50,6 +55,9 @@ class RestApiOptions implements ApiOptions {
 
   @override
   final String userAgent;
+
+  @override
+  String get cdnHost => 'cdn.discordapp.com';
 
   /// Create a new [RestApiOptions].
   RestApiOptions({required this.token, this.userAgent = ApiOptions.defaultUserAgent});

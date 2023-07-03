@@ -1,4 +1,6 @@
+import 'package:nyxx/src/http/cdn/cdn_asset.dart';
 import 'package:nyxx/src/http/managers/application_manager.dart';
+import 'package:nyxx/src/http/route.dart';
 import 'package:nyxx/src/models/guild/guild.dart';
 import 'package:nyxx/src/models/locale.dart';
 import 'package:nyxx/src/models/permissions.dart';
@@ -122,6 +124,24 @@ class Application extends PartialApplication {
 
   /// If this application is a game sold on Discord, the guild it was linked to.
   PartialGuild? get guild => guildId == null ? null : manager.client.guilds[guildId!];
+
+  /// This application's icon.
+  CdnAsset? get icon => iconHash == null
+      ? null
+      : CdnAsset(
+          client: manager.client,
+          base: HttpRoute()..appIcons(id: id.toString()),
+          hash: iconHash!,
+        );
+
+  /// This application's cover image.
+  CdnAsset? get coverImage => coverImageHash == null
+      ? null
+      : CdnAsset(
+          client: manager.client,
+          base: HttpRoute()..appIcons(id: id.toString()),
+          hash: coverImageHash!,
+        );
 }
 
 /// Flags for an [Application].

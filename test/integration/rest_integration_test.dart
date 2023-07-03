@@ -203,5 +203,51 @@ void main() {
 
       await expectLater(client.guilds[guildId].emojis.list(), completes);
     });
+
+    test('CDN assets', () async {
+      final user = await client.users.fetchCurrentUser();
+
+      await expectLater(user.avatar.fetch(), completes);
+
+      if (user.banner != null) {
+        await expectLater(user.banner!.fetch(), completes);
+      }
+
+      if (testGuild != null) {
+        final guildId = Snowflake.parse(testGuild);
+        final guild = await client.guilds[guildId].get();
+
+        final emoji = guild.emojiList.firstOrNull as GuildEmoji?;
+        if (emoji != null) {
+          await expectLater(emoji.image.fetch(), completes);
+        }
+
+        final role = guild.roleList.firstOrNull;
+        if (role != null && role.icon != null) {
+          await expectLater(role.icon!.fetch(), completes);
+        }
+
+        if (guild.icon != null) {
+          await expectLater(guild.icon!.fetch(), completes);
+        }
+
+        if (guild.splash != null) {
+          await expectLater(guild.splash!.fetch(), completes);
+        }
+
+        if (guild.discoverySplash != null) {
+          await expectLater(guild.discoverySplash!.fetch(), completes);
+        }
+
+        if (guild.banner != null) {
+          await expectLater(guild.banner!.fetch(), completes);
+        }
+
+        final member = await guild.members[user.id].get();
+        if (member.avatar != null) {
+          await expectLater(member.avatar!.fetch(), completes);
+        }
+      }
+    });
   });
 }

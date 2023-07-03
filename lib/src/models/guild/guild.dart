@@ -6,6 +6,7 @@ import 'package:nyxx/src/builders/guild/template.dart';
 import 'package:nyxx/src/builders/guild/welcome_screen.dart';
 import 'package:nyxx/src/builders/guild/widget.dart';
 import 'package:nyxx/src/builders/voice.dart';
+import 'package:nyxx/src/http/cdn/cdn_asset.dart';
 import 'package:nyxx/src/http/managers/audit_log_manager.dart';
 import 'package:nyxx/src/http/managers/auto_moderation_manager.dart';
 import 'package:nyxx/src/http/managers/emoji_manager.dart';
@@ -14,6 +15,7 @@ import 'package:nyxx/src/http/managers/integration_manager.dart';
 import 'package:nyxx/src/http/managers/member_manager.dart';
 import 'package:nyxx/src/http/managers/role_manager.dart';
 import 'package:nyxx/src/http/managers/scheduled_event_manager.dart';
+import 'package:nyxx/src/http/route.dart';
 import 'package:nyxx/src/models/application.dart';
 import 'package:nyxx/src/models/channel/channel.dart';
 import 'package:nyxx/src/http/managers/sticker_manager.dart';
@@ -386,6 +388,42 @@ class Guild extends PartialGuild {
   /// The public updates channel in a community server.
   PartialTextChannel? get publicUpdatesChannel =>
       publicUpdatesChannelId == null ? null : manager.client.channels[publicUpdatesChannelId!] as PartialTextChannel?;
+
+  /// This guild's icon.
+  CdnAsset? get icon => iconHash == null
+      ? null
+      : CdnAsset(
+          client: manager.client,
+          base: HttpRoute()..icons(id: id.toString()),
+          hash: iconHash!,
+        );
+
+  /// This guild's splash image.
+  CdnAsset? get splash => splashHash == null
+      ? null
+      : CdnAsset(
+          client: manager.client,
+          base: HttpRoute()..splashes(id: id.toString()),
+          hash: splashHash!,
+        );
+
+  /// This guild's discovery splash image.
+  CdnAsset? get discoverySplash => discoverySplashHash == null
+      ? null
+      : CdnAsset(
+          client: manager.client,
+          base: HttpRoute()..discoverySplashes(id: id.toString()),
+          hash: discoverySplashHash!,
+        );
+
+  /// This guild's banner.
+  CdnAsset? get banner => bannerHash == null
+      ? null
+      : CdnAsset(
+          client: manager.client,
+          base: HttpRoute()..banners(id: id.toString()),
+          hash: bannerHash!,
+        );
 }
 
 /// The verification level for a guild.
