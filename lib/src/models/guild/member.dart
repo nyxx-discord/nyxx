@@ -90,6 +90,7 @@ class Member extends PartialMember {
   /// The roles this member has.
   List<PartialRole> get roles => roleIds.map((e) => manager.client.guilds[manager.guildId].roles[e]).toList();
 
+  /// This member's avatar.
   CdnAsset? get avatar => avatarHash == null
       ? null
       : CdnAsset(

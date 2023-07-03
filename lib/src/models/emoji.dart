@@ -80,6 +80,7 @@ class GuildEmoji extends Emoji {
   /// The roles allowed to use this emoji.
   List<PartialRole>? get roles => roleIds?.map((e) => manager.client.guilds[manager.guildId].roles[e]).toList();
 
+  /// This emoji's image.
   CdnAsset get image => CdnAsset(
         client: manager.client,
         base: HttpRoute()..emojis(),

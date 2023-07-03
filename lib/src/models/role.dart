@@ -67,6 +67,7 @@ class Role extends PartialRole {
     required this.tags,
   });
 
+  /// This role's icon.
   CdnAsset? get icon => iconHash == null
       ? null
       : CdnAsset(

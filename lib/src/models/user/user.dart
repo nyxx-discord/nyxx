@@ -86,6 +86,7 @@ class User extends PartialUser implements MessageAuthor {
     required this.publicFlags,
   });
 
+  /// This user's banner.
   CdnAsset? get banner => bannerHash == null
       ? null
       : CdnAsset(
@@ -94,6 +95,7 @@ class User extends PartialUser implements MessageAuthor {
           hash: bannerHash!,
         );
 
+  /// This user's default avatar.
   CdnAsset get defaultAvatar => CdnAsset(
         client: manager.client,
         base: HttpRoute()

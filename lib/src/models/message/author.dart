@@ -8,11 +8,12 @@ abstract class MessageAuthor {
   /// The ID of this entity.
   Snowflake get id;
 
-  /// The username of the entity that sent the message.
+  /// The username of this entity.
   String get username;
 
-  /// The avatar hash of the entity that sent the message.
+  /// The avatar hash of this entity.
   String? get avatarHash;
 
+  /// The avatar of this entity.
   CdnAsset? get avatar;
 }

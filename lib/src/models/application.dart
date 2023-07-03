@@ -125,6 +125,7 @@ class Application extends PartialApplication {
   /// If this application is a game sold on Discord, the guild it was linked to.
   PartialGuild? get guild => guildId == null ? null : manager.client.guilds[guildId!];
 
+  /// This application's icon.
   CdnAsset? get icon => iconHash == null
       ? null
       : CdnAsset(
@@ -133,6 +134,7 @@ class Application extends PartialApplication {
           hash: iconHash!,
         );
 
+  /// This application's cover image.
   CdnAsset? get coverImage => coverImageHash == null
       ? null
       : CdnAsset(

@@ -104,6 +104,7 @@ class ScheduledEvent extends PartialScheduledEvent {
   /// The member for the user that created this event.
   PartialMember? get creatorMember => creatorId == null ? null : guild.members[creatorId!];
 
+  /// This scheduled event's cover image.
   CdnAsset? get coverImage => coverImageHash == null
       ? null
       : CdnAsset(

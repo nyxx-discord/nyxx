@@ -389,6 +389,7 @@ class Guild extends PartialGuild {
   PartialTextChannel? get publicUpdatesChannel =>
       publicUpdatesChannelId == null ? null : manager.client.channels[publicUpdatesChannelId!] as PartialTextChannel?;
 
+  /// This guild's icon.
   CdnAsset? get icon => iconHash == null
       ? null
       : CdnAsset(
@@ -397,6 +398,7 @@ class Guild extends PartialGuild {
           hash: iconHash!,
         );
 
+  /// This guild's splash image.
   CdnAsset? get splash => splashHash == null
       ? null
       : CdnAsset(
@@ -405,6 +407,7 @@ class Guild extends PartialGuild {
           hash: splashHash!,
         );
 
+  /// This guild's discovery splash image.
   CdnAsset? get discoverySplash => discoverySplashHash == null
       ? null
       : CdnAsset(
@@ -413,6 +416,7 @@ class Guild extends PartialGuild {
           hash: discoverySplashHash!,
         );
 
+  /// This guild's banner.
   CdnAsset? get banner => bannerHash == null
       ? null
       : CdnAsset(

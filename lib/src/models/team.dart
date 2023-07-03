@@ -40,8 +40,10 @@ class Team with ToStringHelper {
     required this.ownerId,
   });
 
+  /// The owner of this team.
   PartialUser get owner => manager.client.users[ownerId];
 
+  /// This team's icon.
   CdnAsset? get icon => iconHash == null
       ? null
       : CdnAsset(
