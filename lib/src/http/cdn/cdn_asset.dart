@@ -15,6 +15,9 @@ enum CdnFormat {
   final String extension;
 
   const CdnFormat._(this.extension);
+
+  @override
+  String toString() => 'CdnFormat($extension)';
 }
 
 class CdnAsset {
@@ -69,4 +72,7 @@ class CdnAsset {
 
     yield* rawResponse.stream;
   }
+
+  @override
+  String toString() => 'CdnAsset($url)';
 }
