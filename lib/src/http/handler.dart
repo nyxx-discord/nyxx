@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:collection';
 
 import 'package:http/http.dart' hide MultipartRequest;
@@ -40,6 +41,21 @@ class HttpHandler {
 
   Logger get logger => Logger('${client.options.loggerName}.Http');
 
+  final StreamController<HttpRequest> _onRequestController = StreamController.broadcast();
+  final StreamController<HttpResponse> _onResponseController = StreamController.broadcast();
+
+  /// A stream of requests executed by this handler.
+  ///
+  /// Requests are emitted before they are sent.
+  Stream<HttpRequest> get onRequest => _onRequestController.stream;
+
+  /// A stream of responses received by this handler.
+  ///
+  /// This includes error & rate limit responses. Since rate limit responses trigger the request
+  /// to be retried, this means you may receive multiple responses for a single request on this
+  /// stream.
+  Stream<HttpResponse> get onResponse => _onResponseController.stream;
+
   /// Create a new [HttpHandler].
   ///
   /// {@macro http_handler}
@@ -74,20 +90,42 @@ class HttpHandler {
       logger.finer('Query parameters: ${request.queryParameters}');
     }
 
-    final bucket = _buckets[request.rateLimitId];
+    _onRequestController.add(request);
 
-    final now = DateTime.now();
+    Duration waitTime;
+    HttpBucket? bucket;
 
-    final globalWaitTime = globalReset?.difference(now) ?? Duration.zero;
-    final bucketNeedsWait = bucket != null && bucket.remaining <= 0;
-    final bucketWaitTime = bucketNeedsWait ? bucket.resetAt.difference(now) : Duration.zero;
+    do {
+      bucket = _buckets[request.rateLimitId];
 
-    final waitTime = globalWaitTime > bucketWaitTime ? globalWaitTime : bucketWaitTime;
+      final now = DateTime.now();
 
-    if (waitTime > Duration.zero) {
-      logger.finer('Holding ${request.loggingId} for $waitTime');
-      await Future.delayed(waitTime);
-    }
+      final globalWaitTime = globalReset?.difference(now) ?? Duration.zero;
+
+      Duration bucketWaitTime = Duration.zero;
+      if (bucket != null && bucket.remaining <= 0) {
+        if (bucket.resetAt.isAfter(now)) {
+          bucketWaitTime = bucket.resetAt.difference(now);
+        } else if (bucket.inflightRequests > 0) {
+          // This occurs when the bucket has many in flight requests
+          // (which take all the remaining request slots) but has not
+          // yet received a response to update its reset after time.
+          //
+          // This would mean the bucket reset time would be negative,
+          // when we actually want to wait for an updated reset time.
+          //
+          // We just wait for one of those requests to complete.
+          bucketWaitTime = const Duration(seconds: 1);
+        }
+      }
+
+      waitTime = globalWaitTime > bucketWaitTime ? globalWaitTime : bucketWaitTime;
+
+      if (waitTime > Duration.zero) {
+        logger.finer('Holding ${request.loggingId} for $waitTime');
+        await Future.delayed(waitTime);
+      }
+    } while (waitTime > Duration.zero);
 
     try {
       logger.finer('Sending ${request.loggingId}');
@@ -112,7 +150,7 @@ class HttpHandler {
   }
 
   void _updateRatelimitBucket(HttpRequest request, BaseResponse response) {
-    final bucket = _buckets.values.firstWhereSafe(
+    HttpBucket? bucket = _buckets.values.firstWhereSafe(
       (bucket) => bucket.contains(response),
       orElse: () => HttpBucket.fromResponse(this, response),
     );
@@ -121,6 +159,7 @@ class HttpHandler {
       return;
     }
 
+    bucket.updateWith(response);
     _buckets[request.rateLimitId] = bucket;
   }
 
@@ -137,6 +176,8 @@ class HttpHandler {
     logger
       ..fine('${response.statusCode} ${request.loggingId}')
       ..finer('Headers: ${parsedResponse.headers}, Body: ${parsedResponse.textBody ?? parsedResponse.body.map((e) => e.toRadixString(16)).join(' ')}');
+
+    _onResponseController.add(parsedResponse);
 
     if (parsedResponse.statusCode == 429) {
       try {
@@ -155,5 +196,11 @@ class HttpHandler {
     }
 
     return parsedResponse;
+  }
+
+  void close() {
+    httpClient.close();
+    _onRequestController.close();
+    _onResponseController.close();
   }
 }

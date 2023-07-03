@@ -129,7 +129,7 @@ class NyxxRest with ManagerMixin implements Nyxx {
   @override
   Future<void> close() {
     logger.info('Closing client');
-    return _doClose(this, () async => httpHandler.httpClient.close(), options.plugins);
+    return _doClose(this, () async => httpHandler.close(), options.plugins);
   }
 }
 
@@ -175,7 +175,7 @@ class NyxxGateway with ManagerMixin, EventMixin implements NyxxRest {
     logger.info('Closing client');
     return _doClose(this, () async {
       await gateway.close();
-      httpHandler.httpClient.close();
+      httpHandler.close();
     }, options.plugins);
   }
 }
