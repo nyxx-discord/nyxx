@@ -1,4 +1,6 @@
+import 'package:nyxx/src/http/cdn/cdn_asset.dart';
 import 'package:nyxx/src/http/managers/user_manager.dart';
+import 'package:nyxx/src/http/route.dart';
 import 'package:nyxx/src/models/discord_color.dart';
 import 'package:nyxx/src/models/locale.dart';
 import 'package:nyxx/src/models/message/author.dart';
@@ -83,6 +85,31 @@ class User extends PartialUser implements MessageAuthor {
     required this.nitroType,
     required this.publicFlags,
   });
+
+  CdnAsset? get banner => bannerHash == null
+      ? null
+      : CdnAsset(
+          client: manager.client,
+          base: HttpRoute()..banners(id: id.toString()),
+          hash: bannerHash!,
+        );
+
+  CdnAsset get defaultAvatar => CdnAsset(
+        client: manager.client,
+        base: HttpRoute()
+          ..embed()
+          ..avatars(),
+        hash: ((id.value >> 22) % 6).toString(),
+      );
+
+  @override
+  CdnAsset get avatar => avatarHash == null
+      ? defaultAvatar
+      : CdnAsset(
+          client: manager.client,
+          base: HttpRoute()..avatars(id: id.toString()),
+          hash: avatarHash!,
+        );
 }
 
 /// A set of [Flags] a user can have.

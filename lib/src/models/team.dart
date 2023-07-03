@@ -1,4 +1,6 @@
+import 'package:nyxx/src/http/cdn/cdn_asset.dart';
 import 'package:nyxx/src/http/managers/application_manager.dart';
+import 'package:nyxx/src/http/route.dart';
 import 'package:nyxx/src/models/snowflake.dart';
 import 'package:nyxx/src/models/user/user.dart';
 import 'package:nyxx/src/utils/to_string_helper/to_string_helper.dart';
@@ -39,6 +41,14 @@ class Team with ToStringHelper {
   });
 
   PartialUser get owner => manager.client.users[ownerId];
+
+  CdnAsset? get icon => iconHash == null
+      ? null
+      : CdnAsset(
+          client: manager.client,
+          base: HttpRoute()..teamIcons(id: id.toString()),
+          hash: iconHash!,
+        );
 }
 
 /// {@template team_member}

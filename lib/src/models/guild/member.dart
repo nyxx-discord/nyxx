@@ -1,4 +1,6 @@
+import 'package:nyxx/src/http/cdn/cdn_asset.dart';
 import 'package:nyxx/src/http/managers/member_manager.dart';
+import 'package:nyxx/src/http/route.dart';
 import 'package:nyxx/src/models/permissions.dart';
 import 'package:nyxx/src/models/role.dart';
 import 'package:nyxx/src/models/snowflake.dart';
@@ -87,6 +89,17 @@ class Member extends PartialMember {
 
   /// The roles this member has.
   List<PartialRole> get roles => roleIds.map((e) => manager.client.guilds[manager.guildId].roles[e]).toList();
+
+  CdnAsset? get avatar => avatarHash == null
+      ? null
+      : CdnAsset(
+          client: manager.client,
+          base: HttpRoute()
+            ..guilds(id: manager.guildId.toString())
+            ..users(id: id.toString())
+            ..avatars(),
+          hash: avatarHash!,
+        );
 }
 
 /// Flags that can be applied to a [Member].

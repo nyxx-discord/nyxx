@@ -262,4 +262,34 @@ extension RouteHelpers on HttpRoute {
 
   /// Adds the [`vanity-url`](https://discord.com/developers/docs/resources/guild#get-guild-vanity-url) part to this [HttpRoute].
   void vanityUrl() => add(HttpRoutePart('vanity-url'));
+
+  /// Adds the [`icons`](https://discord.com/developers/docs/reference#image-formatting-cdn-endpoints) part to this [HttpRoute].
+  void icons({String? id}) => add(HttpRoutePart('icons', [if (id != null) HttpRouteParam(id)]));
+
+  /// Adds the [`splashes`](https://discord.com/developers/docs/reference#image-formatting-cdn-endpoints) part to this [HttpRoute].
+  void splashes({String? id}) => add(HttpRoutePart('splashes', [if (id != null) HttpRouteParam(id)]));
+
+  /// Adds the [`discovery-splashes`](https://discord.com/developers/docs/reference#image-formatting-cdn-endpoints) part to this [HttpRoute].
+  void discoverySplashes({String? id}) => add(HttpRoutePart('discovery-splashes', [if (id != null) HttpRouteParam(id)]));
+
+  /// Adds the [`banners`](https://discord.com/developers/docs/reference#image-formatting-cdn-endpoints) part to this [HttpRoute].
+  void banners({String? id}) => add(HttpRoutePart('banners', [if (id != null) HttpRouteParam(id)]));
+
+  /// Adds the [`embed`](https://discord.com/developers/docs/reference#image-formatting-cdn-endpoints) part to this [HttpRoute].
+  void embed({String? id}) => add(HttpRoutePart('embed', [if (id != null) HttpRouteParam(id)]));
+
+  /// Adds the [`avatars`](https://discord.com/developers/docs/reference#image-formatting-cdn-endpoints) part to this [HttpRoute].
+  void avatars({String? id}) => add(HttpRoutePart('avatars', [if (id != null) HttpRouteParam(id)]));
+
+  /// Adds the [`app-icons`](https://discord.com/developers/docs/reference#image-formatting-cdn-endpoints) part to this [HttpRoute].
+  void appIcons({String? id}) => add(HttpRoutePart('app-icons', [if (id != null) HttpRouteParam(id)]));
+
+  /// Adds the [`team-icons`](https://discord.com/developers/docs/reference#image-formatting-cdn-endpoints) part to this [HttpRoute].
+  void teamIcons({String? id}) => add(HttpRoutePart('team-icons', [if (id != null) HttpRouteParam(id)]));
+
+  /// Adds the [`role-icons`](https://discord.com/developers/docs/reference#image-formatting-cdn-endpoints) part to this [HttpRoute].
+  void roleIcons({String? id}) => add(HttpRoutePart('role-icons', [if (id != null) HttpRouteParam(id)]));
+
+  /// Adds the [`guild-events`](https://discord.com/developers/docs/reference#image-formatting-cdn-endpoints) part to this [HttpRoute].
+  void guildEvents({String? id}) => add(HttpRoutePart('guild-events', [if (id != null) HttpRouteParam(id)]));
 }

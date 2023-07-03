@@ -1,5 +1,7 @@
 import 'package:nyxx/src/builders/message/message.dart';
 import 'package:nyxx/src/builders/webhook.dart';
+import 'package:nyxx/src/http/cdn/cdn_asset.dart';
+import 'package:nyxx/src/http/route.dart';
 import 'package:nyxx/src/models/application.dart';
 import 'package:nyxx/src/models/channel/channel.dart';
 import 'package:nyxx/src/models/guild/guild.dart';
@@ -87,6 +89,15 @@ class WebhookAuthor extends PartialWebhook implements MessageAuthor {
 
   /// Create a new [WebhookAuthor].
   WebhookAuthor({required super.id, required super.manager, required this.avatarHash, required this.username});
+
+  @override
+  CdnAsset? get avatar => avatarHash == null
+      ? null
+      : CdnAsset(
+          client: manager.client,
+          base: HttpRoute()..avatars(id: id.toString()),
+          hash: avatarHash!,
+        );
 }
 
 /// {@template webhook}

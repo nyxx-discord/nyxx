@@ -1,4 +1,6 @@
+import 'package:nyxx/src/http/cdn/cdn_asset.dart';
 import 'package:nyxx/src/http/managers/scheduled_event_manager.dart';
+import 'package:nyxx/src/http/route.dart';
 import 'package:nyxx/src/models/channel/channel.dart';
 import 'package:nyxx/src/models/channel/stage_instance.dart';
 import 'package:nyxx/src/models/guild/guild.dart';
@@ -101,6 +103,14 @@ class ScheduledEvent extends PartialScheduledEvent {
 
   /// The member for the user that created this event.
   PartialMember? get creatorMember => creatorId == null ? null : guild.members[creatorId!];
+
+  CdnAsset? get coverImage => coverImageHash == null
+      ? null
+      : CdnAsset(
+          client: manager.client,
+          base: HttpRoute()..guildEvents(id: id.toString()),
+          hash: coverImageHash!,
+        );
 }
 
 /// The status of a [ScheduledEvent].

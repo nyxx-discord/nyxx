@@ -1,4 +1,6 @@
+import 'package:nyxx/src/http/cdn/cdn_asset.dart';
 import 'package:nyxx/src/http/managers/role_manager.dart';
+import 'package:nyxx/src/http/route.dart';
 import 'package:nyxx/src/models/discord_color.dart';
 import 'package:nyxx/src/models/permissions.dart';
 import 'package:nyxx/src/models/snowflake.dart';
@@ -64,6 +66,14 @@ class Role extends PartialRole {
     required this.isMentionable,
     required this.tags,
   });
+
+  CdnAsset? get icon => iconHash == null
+      ? null
+      : CdnAsset(
+          client: manager.client,
+          base: HttpRoute()..roleIcons(id: id.toString()),
+          hash: iconHash!,
+        );
 }
 
 /// {@template role_tags}
