@@ -18,6 +18,7 @@ import 'package:nyxx/src/http/managers/scheduled_event_manager.dart';
 import 'package:nyxx/src/http/route.dart';
 import 'package:nyxx/src/models/application.dart';
 import 'package:nyxx/src/models/channel/channel.dart';
+import 'package:nyxx/src/http/managers/sticker_manager.dart';
 import 'package:nyxx/src/models/channel/guild_channel.dart';
 import 'package:nyxx/src/models/channel/text_channel.dart';
 import 'package:nyxx/src/models/channel/thread_list.dart';
@@ -35,6 +36,7 @@ import 'package:nyxx/src/models/permissions.dart';
 import 'package:nyxx/src/models/role.dart';
 import 'package:nyxx/src/models/snowflake.dart';
 import 'package:nyxx/src/models/snowflake_entity/snowflake_entity.dart';
+import 'package:nyxx/src/models/sticker/guild_sticker.dart';
 import 'package:nyxx/src/models/user/user.dart';
 import 'package:nyxx/src/models/voice/voice_region.dart';
 import 'package:nyxx/src/utils/flags.dart';
@@ -61,6 +63,9 @@ class PartialGuild extends WritableSnowflakeEntity<Guild> {
 
   /// An [EmojiManager] for the emojis of this guild.
   EmojiManager get emojis => EmojiManager(manager.client.options.emojiCacheConfig, manager.client, guildId: id);
+
+  /// An [GuildStickerManager] for the stickers of this guild.
+  GuildStickerManager get stickers => GuildStickerManager(manager.client.options.stickerCacheConfig, manager.client, guildId: id);
 
   /// An [AuditLogManager] for the audit log of this guild.
   AuditLogManager get auditLogs => AuditLogManager(manager.client.options.auditLogEntryConfig, manager.client, guildId: id);
@@ -307,11 +312,12 @@ class Guild extends PartialGuild {
   /// This guild's NSFW level.
   final NsfwLevel nsfwLevel;
 
-  // TODO
-  //final List<Sticker> stickers;
-
   /// Whether this guild has the premium progress bar enabled.
   final bool hasPremiumProgressBarEnabled;
+
+  /// A list of stickers in this guild.
+  // Renamed to avoid conflict with the stickers manager.
+  final List<GuildSticker> stickerList;
 
   /// {@macro guild}
   Guild({
@@ -355,6 +361,7 @@ class Guild extends PartialGuild {
     required this.nsfwLevel,
     required this.hasPremiumProgressBarEnabled,
     required this.emojiList,
+    required this.stickerList,
   });
 
   /// The owner of the guild.

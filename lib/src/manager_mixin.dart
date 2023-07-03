@@ -4,6 +4,7 @@ import 'package:nyxx/src/http/managers/channel_manager.dart';
 import 'package:nyxx/src/http/managers/invite_manager.dart';
 import 'package:nyxx/src/http/managers/gateway_manager.dart';
 import 'package:nyxx/src/http/managers/guild_manager.dart';
+import 'package:nyxx/src/http/managers/sticker_manager.dart';
 import 'package:nyxx/src/http/managers/user_manager.dart';
 import 'package:nyxx/src/http/managers/webhook_manager.dart';
 import 'package:nyxx/src/http/managers/application_manager.dart';
@@ -37,4 +38,7 @@ mixin ManagerMixin implements Nyxx {
 
   /// A [GatewayManager] that manages gateway metadata for this client.
   GatewayManager get gateway => GatewayManager(this as NyxxRest);
+
+  /// A [GlobalStickerManager] that manages global stickers.
+  GlobalStickerManager get stickers => GlobalStickerManager(options.globalStickerCacheConfig, this as NyxxRest);
 }

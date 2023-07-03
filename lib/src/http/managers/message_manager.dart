@@ -72,6 +72,7 @@ class MessageManager extends Manager<Message> {
       thread: maybeParse(raw['thread'], client.channels.parse) as Thread?,
       position: raw['position'] as int?,
       roleSubscriptionData: maybeParse(raw['role_subscription_data'], parseRoleSubscriptionData),
+      stickers: parseMany(raw['sticker_items'] as List? ?? [], client.stickers.parseStickerItem),
     );
   }
 
