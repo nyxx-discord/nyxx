@@ -63,6 +63,8 @@ export 'src/http/handler.dart' show HttpHandler;
 export 'src/http/request.dart' show BasicRequest, HttpRequest, MultipartRequest;
 export 'src/http/response.dart' show FieldError, HttpErrorData, HttpResponse, HttpResponseError, HttpResponseSuccess;
 export 'src/http/route.dart' show HttpRoute, HttpRouteParam, HttpRoutePart;
+export 'src/http/cdn/cdn_asset.dart' show CdnAsset, CdnFormat;
+export 'src/http/cdn/cdn_request.dart' show CdnRequest;
 export 'src/http/managers/manager.dart' show Manager, ReadOnlyManager;
 export 'src/http/managers/channel_manager.dart' show ChannelManager;
 export 'src/http/managers/message_manager.dart' show MessageManager;
