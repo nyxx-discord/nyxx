@@ -51,16 +51,17 @@ class GuildSticker extends PartialGuildSticker with Sticker {
   final int? sortValue;
 
   /// {@macro guild_sticker}
-  GuildSticker(
-      {required super.id,
-      required super.manager,
-      required this.name,
-      required this.description,
-      required this.tags,
-      required this.type,
-      required this.formatType,
-      required this.available,
-      required this.guildId,
-      required this.user,
-      required this.sortValue});
+  GuildSticker({
+    required super.id,
+    required super.manager,
+    required this.name,
+    required this.description,
+    required this.tags,
+    required this.type,
+    required this.formatType,
+    required this.available,
+    required this.guildId,
+    required this.user,
+    required this.sortValue,
+  });
 }
