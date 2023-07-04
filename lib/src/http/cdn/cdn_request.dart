@@ -6,7 +6,7 @@ import 'package:nyxx/src/http/request.dart';
 /// A request to Discord's CDN.
 class CdnRequest extends HttpRequest {
   /// Create a new [CdnRequest].
-  CdnRequest(super.route) : super(method: 'GET', authenticated: false, applyGlobalRateLimit: false);
+  CdnRequest(super.route, {super.queryParameters}) : super(method: 'GET', authenticated: false, applyGlobalRateLimit: false);
 
   @override
   BaseRequest prepare(Nyxx client) {

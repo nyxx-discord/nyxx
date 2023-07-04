@@ -57,18 +57,19 @@ class CdnAsset {
   final bool isAnimated;
 
   /// The URL at which this asset can be fetched from.
-  Uri get url => _getRequest(defaultFormat).prepare(client).url;
+  Uri get url => _getRequest(defaultFormat, null).prepare(client).url;
 
   /// {@macro cdn_asset}
   CdnAsset({
     required this.client,
     required this.base,
     required this.hash,
-    this.defaultFormat = CdnFormat.png,
+    CdnFormat? defaultFormat,
     bool? isAnimated,
-  }) : isAnimated = isAnimated ?? hash.startsWith('a_');
+  })  : isAnimated = isAnimated ?? hash.startsWith('a_'),
+        defaultFormat = defaultFormat ?? ((isAnimated ?? hash.startsWith('a_')) ? CdnFormat.gif : CdnFormat.png);
 
-  CdnRequest _getRequest(CdnFormat format) {
+  CdnRequest _getRequest(CdnFormat format, int? size) {
     final route = HttpRoute();
 
     for (final part in base.parts) {
@@ -76,24 +77,24 @@ class CdnAsset {
     }
     route.add(HttpRoutePart('$hash.${format.extension}'));
 
-    return CdnRequest(route);
+    return CdnRequest(route, queryParameters: {if (size != null) 'size': size.toString()});
   }
 
   /// Fetch this asset and return its binary data.
-  Future<Uint8List> fetch({CdnFormat? format}) async {
+  Future<Uint8List> fetch({CdnFormat? format, int? size}) async {
     assert(format != CdnFormat.gif || isAnimated, 'Asset must be animated to fetch as GIF');
 
-    final request = _getRequest(format ?? defaultFormat);
+    final request = _getRequest(format ?? defaultFormat, size);
 
     final response = await client.httpHandler.executeSafe(request);
     return response.body;
   }
 
   /// Fetch this asset and return a stream of its binary data.
-  Stream<List<int>> fetchStreamed({CdnFormat? format}) async* {
+  Stream<List<int>> fetchStreamed({CdnFormat? format, int? size}) async* {
     assert(format != CdnFormat.gif || isAnimated, 'Asset must be animated to fetch as GIF');
 
-    final request = _getRequest(format ?? defaultFormat);
+    final request = _getRequest(format ?? defaultFormat, size);
     final rawRequest = request.prepare(client);
 
     final rawResponse = await client.httpHandler.httpClient.send(rawRequest);
