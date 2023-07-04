@@ -100,7 +100,7 @@ class HttpHandler {
 
       final now = DateTime.now();
 
-      final globalWaitTime = globalReset?.difference(now) ?? Duration.zero;
+      final globalWaitTime = (request.applyGlobalRateLimit ? globalReset?.difference(now) : null) ?? Duration.zero;
 
       Duration bucketWaitTime = Duration.zero;
       if (bucket != null && bucket.remaining <= 0) {
