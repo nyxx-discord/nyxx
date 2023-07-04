@@ -22,6 +22,12 @@ class Flags<T extends Flags<T>> extends IterableBase<Flag<T>> with ToStringHelpe
   /// Return a set of flags that has all the flags set in both `this` and [other].
   Flags<T> operator &(Flags<T> other) => Flags(value & other.value);
 
+  /// Return a set of flags that has all the flags set in `this` but not in [other].
+  Flags<T> operator ^(Flags<T> other) => Flags(value ^ other.value);
+
+  /// Returns the opposite of this set of flags.
+  Flags<T> operator ~() => Flags(~value);
+
   @override
   bool operator ==(Object other) => identical(this, other) || (other is Flags<T> && other.value == value);
 
