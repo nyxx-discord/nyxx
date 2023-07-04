@@ -51,16 +51,17 @@ class GlobalSticker extends PartialGlobalSticker with Sticker {
   final Snowflake packId;
 
   /// {@macro global_sticker}
-  GlobalSticker(
-      {required super.id,
-      required super.manager,
-      required this.name,
-      required this.description,
-      required this.tags,
-      required this.type,
-      required this.formatType,
-      required this.available,
-      required this.packId,
-      required this.user,
-      required this.sortValue});
+  GlobalSticker({
+    required super.id,
+    required super.manager,
+    required this.name,
+    required this.description,
+    required this.tags,
+    required this.type,
+    required this.formatType,
+    required this.available,
+    required this.packId,
+    required this.user,
+    required this.sortValue,
+  });
 }

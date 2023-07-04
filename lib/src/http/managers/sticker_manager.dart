@@ -174,7 +174,7 @@ class GlobalStickerManager extends ReadOnlyManager<GlobalSticker> {
       id: Snowflake.parse(raw['id'] as String),
       packId: Snowflake.parse(raw['pack_id'] as String),
       name: raw['name'] as String,
-      description: raw['description'] as String,
+      description: raw['description'] as String?,
       tags: raw['tags'] as String,
       type: StickerType.parse(raw['type'] as int),
       formatType: StickerFormatType.parse(raw['format_type'] as int),
