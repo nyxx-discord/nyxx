@@ -292,4 +292,7 @@ extension RouteHelpers on HttpRoute {
 
   /// Adds the [`guild-events`](https://discord.com/developers/docs/reference#image-formatting-cdn-endpoints) part to this [HttpRoute].
   void guildEvents({String? id}) => add(HttpRoutePart('guild-events', [if (id != null) HttpRouteParam(id)]));
+
+  /// Adds the [`commands`](https://discord.com/developers/docs/interactions/application-commands#get-global-application-commands) part to this [HttpRoute].
+  void commands({String? id}) => add(HttpRoutePart('commands', [if (id != null) HttpRouteParam(id)]));
 }

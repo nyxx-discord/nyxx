@@ -1,5 +1,6 @@
 import 'package:nyxx/src/client.dart';
 import 'package:nyxx/src/client_options.dart';
+import 'package:nyxx/src/http/managers/application_command_manager.dart';
 import 'package:nyxx/src/http/managers/channel_manager.dart';
 import 'package:nyxx/src/http/managers/invite_manager.dart';
 import 'package:nyxx/src/http/managers/gateway_manager.dart';
@@ -41,4 +42,8 @@ mixin ManagerMixin implements Nyxx {
 
   /// A [GlobalStickerManager] that manages global stickers.
   GlobalStickerManager get stickers => GlobalStickerManager(options.globalStickerCacheConfig, this as NyxxRest);
+
+  /// A [GlobalApplicationCommandManager] that manages global application commands.
+  GlobalApplicationCommandManager get commands =>
+      GlobalApplicationCommandManager(options.applicationCommandConfig, this as NyxxRest, applicationId: (this as NyxxRest).application.id);
 }

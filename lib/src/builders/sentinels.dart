@@ -2,6 +2,7 @@ import 'package:nyxx/src/builders/image.dart';
 import 'package:nyxx/src/models/channel/types/forum.dart';
 import 'package:nyxx/src/models/guild/scheduled_event.dart';
 import 'package:nyxx/src/models/snowflake.dart';
+import 'package:nyxx/src/utils/flags.dart';
 
 // ASCII encoded "nyxx"
 const sentinelInteger = 0x6E797878;
@@ -67,6 +68,24 @@ const sentinelEntityMetadata = _SentinelEntityMetadata();
 
 class _SentinelEntityMetadata implements EntityMetadata {
   const _SentinelEntityMetadata();
+
+  @override
+  void noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
+}
+
+const sentinelMap = _SentinelMap();
+
+class _SentinelMap implements Map<Never, Never> {
+  const _SentinelMap();
+
+  @override
+  void noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
+}
+
+const sentinelFlags = _SentinelFlags();
+
+class _SentinelFlags implements Flags<Never> {
+  const _SentinelFlags();
 
   @override
   void noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
