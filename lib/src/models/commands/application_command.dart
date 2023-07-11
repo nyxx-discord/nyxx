@@ -1,5 +1,8 @@
 import 'package:nyxx/src/http/managers/application_command_manager.dart';
+import 'package:nyxx/src/models/application.dart';
 import 'package:nyxx/src/models/commands/application_command_option.dart';
+import 'package:nyxx/src/models/commands/application_command_permissions.dart';
+import 'package:nyxx/src/models/guild/guild.dart';
 import 'package:nyxx/src/models/locale.dart';
 import 'package:nyxx/src/models/permissions.dart';
 import 'package:nyxx/src/models/snowflake.dart';
@@ -10,6 +13,9 @@ class PartialApplicationCommand extends WritableSnowflakeEntity<ApplicationComma
   final ApplicationCommandManager manager;
 
   PartialApplicationCommand({required super.id, required this.manager});
+
+  Future<CommandPermissions>? fetchPermissions() =>
+      manager is! GuildApplicationCommandManager ? null : (manager as GuildApplicationCommandManager).fetchPermissions(id);
 }
 
 class ApplicationCommand extends PartialApplicationCommand {
@@ -53,6 +59,10 @@ class ApplicationCommand extends PartialApplicationCommand {
     required this.isNsfw,
     required this.version,
   });
+
+  PartialApplication get application => manager.client.applications[applicationId];
+
+  PartialGuild? get guild => guildId == null ? null : manager.client.guilds[guildId!];
 }
 
 enum ApplicationCommandType {

@@ -1,7 +1,13 @@
+import 'package:nyxx/src/http/managers/application_command_manager.dart';
+import 'package:nyxx/src/models/application.dart';
+import 'package:nyxx/src/models/commands/application_command.dart';
+import 'package:nyxx/src/models/guild/guild.dart';
 import 'package:nyxx/src/models/snowflake.dart';
 import 'package:nyxx/src/utils/to_string_helper/to_string_helper.dart';
 
 class CommandPermissions with ToStringHelper {
+  final ApplicationCommandManager manager;
+
   final Snowflake id;
 
   final Snowflake applicationId;
@@ -11,11 +17,18 @@ class CommandPermissions with ToStringHelper {
   final List<CommandPermission> permissions;
 
   CommandPermissions({
+    required this.manager,
     required this.id,
     required this.applicationId,
     required this.guildId,
     required this.permissions,
   });
+
+  PartialApplicationCommand? get command => id == applicationId ? null : manager.client.guilds[guildId].commands[id];
+
+  PartialApplication get application => manager.client.applications[applicationId];
+
+  PartialGuild get guild => manager.client.guilds[guildId];
 }
 
 class CommandPermission with ToStringHelper {

@@ -137,7 +137,7 @@ void main() {
         name: 'listCommandPermissions',
         source: [sampleCommandPermissions],
         urlMatcher: '/applications/0/guilds/1/commands/permissions',
-        execute: (manager) => manager.listCommandPermissions(),
+        execute: (manager) => manager.listPermissions(),
         check: (list) {
           expect(list, hasLength(1));
           checkCommandPermissions(list.single);
@@ -147,7 +147,7 @@ void main() {
         name: 'fetchCommandPermissions',
         source: sampleCommandPermissions,
         urlMatcher: '/applications/0/guilds/1/commands/2/permissions',
-        execute: (manager) => manager.fetchCommandPermissions(Snowflake(2)),
+        execute: (manager) => manager.fetchPermissions(Snowflake(2)),
         check: checkCommandPermissions,
       ),
     ],

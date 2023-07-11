@@ -193,6 +193,7 @@ class GuildApplicationCommandManager extends ApplicationCommandManager {
 
   CommandPermissions parseCommandPermissions(Map<String, Object?> raw) {
     return CommandPermissions(
+      manager: this,
       id: Snowflake.parse(raw['id']!),
       applicationId: Snowflake.parse(raw['application_id']!),
       guildId: Snowflake.parse(raw['guild_id']!),
@@ -208,7 +209,7 @@ class GuildApplicationCommandManager extends ApplicationCommandManager {
     );
   }
 
-  Future<List<CommandPermissions>> listCommandPermissions() async {
+  Future<List<CommandPermissions>> listPermissions() async {
     final route = HttpRoute()
       ..applications(id: applicationId.toString())
       ..guilds(id: guildId.toString())
@@ -220,7 +221,7 @@ class GuildApplicationCommandManager extends ApplicationCommandManager {
     return parseMany(response.jsonBody as List, parseCommandPermissions);
   }
 
-  Future<CommandPermissions> fetchCommandPermissions(Snowflake id) async {
+  Future<CommandPermissions> fetchPermissions(Snowflake id) async {
     final route = HttpRoute()
       ..applications(id: applicationId.toString())
       ..guilds(id: guildId.toString())
