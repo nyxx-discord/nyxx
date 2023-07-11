@@ -9,6 +9,7 @@ import 'package:nyxx/src/http/managers/gateway_manager.dart';
 import 'package:nyxx/src/intents.dart';
 import 'package:nyxx/src/manager_mixin.dart';
 import 'package:nyxx/src/api_options.dart';
+import 'package:nyxx/src/models/application.dart';
 import 'package:nyxx/src/models/guild/guild.dart';
 import 'package:nyxx/src/models/snowflake.dart';
 import 'package:nyxx/src/plugin/plugin.dart';
@@ -52,7 +53,15 @@ abstract class Nyxx {
       ..fine('Token: ${apiOptions.token}, Authorization: ${apiOptions.authorizationHeader}, User-Agent: ${apiOptions.userAgent}')
       ..fine('Plugins: ${clientOptions.plugins.map((plugin) => plugin.name).join(', ')}');
 
-    return _doConnect(apiOptions, clientOptions, () async => NyxxRest._(apiOptions, clientOptions), clientOptions.plugins);
+    return _doConnect(apiOptions, clientOptions, () async {
+      final client = NyxxRest._(apiOptions, clientOptions);
+
+      if (clientOptions.applicationId != null) {
+        return client..application = client.applications[clientOptions.applicationId!];
+      }
+
+      return client..application = await client.applications.fetchCurrentApplication();
+    }, clientOptions.plugins);
   }
 
   /// Create an instance of [NyxxGateway] that can perform requests to the HTTP API, connects
@@ -76,13 +85,18 @@ abstract class Nyxx {
 
     return _doConnect(apiOptions, clientOptions, () async {
       final client = NyxxGateway._(apiOptions, clientOptions);
+
+      if (clientOptions.applicationId != null) {
+        client.application = client.applications[clientOptions.applicationId!];
+      } else {
+        client.application = await client.applications.fetchCurrentApplication();
+      }
+
       // We can't use client.gateway as it is not initialized yet
       final gatewayManager = GatewayManager(client);
 
       final gatewayBot = await gatewayManager.fetchGatewayBot();
-      final gateway = await Gateway.connect(client, gatewayBot);
-
-      return client..gateway = gateway;
+      return client..gateway = await Gateway.connect(client, gatewayBot);
     }, clientOptions.plugins);
   }
 
@@ -102,6 +116,9 @@ class NyxxRest with ManagerMixin implements Nyxx {
 
   @override
   late final HttpHandler httpHandler = HttpHandler(this);
+
+  /// The application associated with this client.
+  late final PartialApplication application;
 
   @override
   Logger get logger => options.logger;
@@ -143,6 +160,9 @@ class NyxxGateway with ManagerMixin, EventMixin implements NyxxRest {
 
   @override
   late final HttpHandler httpHandler = HttpHandler(this);
+
+  @override
+  late final PartialApplication application;
 
   /// The [Gateway] used by this client to send and receive Gateway events.
   // Initialized in connectGateway due to a circular dependency
