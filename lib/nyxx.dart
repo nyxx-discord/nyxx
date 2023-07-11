@@ -9,7 +9,8 @@ export 'src/errors.dart'
         ShardDisconnectedError,
         RoleNotFoundException,
         AuditLogEntryNotFoundException,
-        OutOfRemainingSessionsError;
+        OutOfRemainingSessionsError,
+        IntegrationNotFoundException;
 
 export 'src/builders/builder.dart' show Builder, CreateBuilder, UpdateBuilder;
 export 'src/builders/image.dart' show ImageBuilder;
@@ -49,7 +50,7 @@ export 'src/builders/guild/template.dart' show GuildTemplateBuilder, GuildTempla
 export 'src/builders/guild/auto_moderation.dart' show AutoModerationRuleBuilder, AutoModerationRuleUpdateBuilder;
 export 'src/builders/role.dart' show RoleBuilder, RoleUpdateBuilder;
 export 'src/builders/voice.dart' show CurrentUserVoiceStateUpdateBuilder, VoiceStateUpdateBuilder, GatewayVoiceStateBuilder;
-export 'src/builders/presence.dart' show PresenceBuilder, CurrentUserStatus;
+export 'src/builders/presence.dart' show PresenceBuilder, CurrentUserStatus, ActivityBuilder;
 export 'src/builders/application_role_connection.dart' show ApplicationRoleConnectionUpdateBuilder;
 export 'src/builders/emoji/emoji.dart' show EmojiBuilder, EmojiUpdateBuilder;
 export 'src/builders/emoji/reaction.dart' show ReactionBuilder;
@@ -62,9 +63,11 @@ export 'src/cache/cache.dart' show Cache, CacheConfig;
 
 export 'src/http/bucket.dart' show HttpBucket;
 export 'src/http/handler.dart' show HttpHandler;
-export 'src/http/request.dart' show BasicRequest, HttpRequest, MultipartRequest;
+export 'src/http/request.dart' show BasicRequest, HttpRequest, MultipartRequest, FormDataRequest;
 export 'src/http/response.dart' show FieldError, HttpErrorData, HttpResponse, HttpResponseError, HttpResponseSuccess;
 export 'src/http/route.dart' show HttpRoute, HttpRouteParam, HttpRoutePart;
+export 'src/http/cdn/cdn_asset.dart' show CdnAsset, CdnFormat;
+export 'src/http/cdn/cdn_request.dart' show CdnRequest;
 export 'src/http/managers/manager.dart' show Manager, ReadOnlyManager;
 export 'src/http/managers/channel_manager.dart' show ChannelManager;
 export 'src/http/managers/message_manager.dart' show MessageManager;
@@ -166,7 +169,6 @@ export 'src/models/guild/auto_moderation.dart'
         AutoModerationEventType,
         KeywordPresetType,
         TriggerType;
-export 'src/models/application.dart' show Application, ApplicationFlags, InstallationParameters, PartialApplication;
 export 'src/models/voice/voice_state.dart' show VoiceState;
 export 'src/models/voice/voice_region.dart' show VoiceRegion;
 export 'src/models/role.dart' show PartialRole, Role, RoleTags;
@@ -245,11 +247,12 @@ export 'src/models/presence.dart'
 export 'src/models/emoji.dart' show Emoji, GuildEmoji, PartialEmoji, TextEmoji;
 export 'src/models/sticker/guild_sticker.dart' show GuildSticker, PartialGuildSticker;
 export 'src/models/sticker/global_sticker.dart' show GlobalSticker, PartialGlobalSticker;
-export 'src/models/sticker/sticker.dart' show Sticker, StickerType, StickerFormatType;
+export 'src/models/sticker/sticker.dart' show Sticker, StickerType, StickerFormatType, StickerItem;
 export 'src/models/sticker/sticker_pack.dart' show StickerPack;
 export 'src/models/commands/application_command.dart' show ApplicationCommand, PartialApplicationCommand, ApplicationCommandType;
 export 'src/models/commands/application_command_option.dart' show CommandOption, CommandOptionChoice, CommandOptionType;
 export 'src/models/commands/application_command_permissions.dart' show CommandPermission, CommandPermissions, CommandPermissionType;
+export 'src/models/team.dart' show Team, TeamMember, TeamMembershipState;
 
 export 'src/utils/flags.dart' show Flag, Flags;
 export 'src/intents.dart' show GatewayIntents;
