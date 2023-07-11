@@ -220,7 +220,7 @@ class GuildApplicationCommandManager extends ApplicationCommandManager {
     return parseMany(response.jsonBody as List, parseCommandPermissions);
   }
 
-  Future<List<CommandPermissions>> fetchCommandPermissions(Snowflake id) async {
+  Future<CommandPermissions> fetchCommandPermissions(Snowflake id) async {
     final route = HttpRoute()
       ..applications(id: applicationId.toString())
       ..guilds(id: guildId.toString())
@@ -229,7 +229,7 @@ class GuildApplicationCommandManager extends ApplicationCommandManager {
     final request = BasicRequest(route);
 
     final response = await client.httpHandler.executeSafe(request);
-    return parseMany(response.jsonBody as List, parseCommandPermissions);
+    return parseCommandPermissions(response.jsonBody as Map<String, Object?>);
   }
 
   // TODO: Do we add the command permission endpoints?

@@ -55,6 +55,8 @@ export 'src/builders/emoji/emoji.dart' show EmojiBuilder, EmojiUpdateBuilder;
 export 'src/builders/emoji/reaction.dart' show ReactionBuilder;
 export 'src/builders/invite.dart' show InviteBuilder;
 export 'src/builders/sticker.dart' show StickerBuilder, StickerUpdateBuilder;
+export 'src/builders/application_command.dart'
+    show ApplicationCommandBuilder, ApplicationCommandUpdateBuilder, CommandOptionBuilder, CommandOptionChoiceBuilder;
 
 export 'src/cache/cache.dart' show Cache, CacheConfig;
 
@@ -81,6 +83,7 @@ export 'src/http/managers/integration_manager.dart' show IntegrationManager;
 export 'src/http/managers/emoji_manager.dart' show EmojiManager;
 export 'src/http/managers/audit_log_manager.dart' show AuditLogManager;
 export 'src/http/managers/sticker_manager.dart' show GuildStickerManager, GlobalStickerManager;
+export 'src/http/managers/application_command_manager.dart' show ApplicationCommandManager, GlobalApplicationCommandManager, GuildApplicationCommandManager;
 
 export 'src/gateway/gateway.dart' show Gateway;
 export 'src/gateway/message.dart' show Disconnecting, Dispose, ErrorReceived, EventReceived, GatewayMessage, Send, ShardData, ShardMessage;
@@ -244,6 +247,9 @@ export 'src/models/sticker/guild_sticker.dart' show GuildSticker, PartialGuildSt
 export 'src/models/sticker/global_sticker.dart' show GlobalSticker, PartialGlobalSticker;
 export 'src/models/sticker/sticker.dart' show Sticker, StickerType, StickerFormatType;
 export 'src/models/sticker/sticker_pack.dart' show StickerPack;
+export 'src/models/commands/application_command.dart' show ApplicationCommand, PartialApplicationCommand, ApplicationCommandType;
+export 'src/models/commands/application_command_option.dart' show CommandOption, CommandOptionChoice, CommandOptionType;
+export 'src/models/commands/application_command_permissions.dart' show CommandPermission, CommandPermissions, CommandPermissionType;
 
 export 'src/utils/flags.dart' show Flag, Flags;
 export 'src/intents.dart' show GatewayIntents;
