@@ -98,7 +98,13 @@ void main() {
 
   testManager<ApplicationCommand, GuildApplicationCommandManager>(
     'GuildApplicationCommandManager',
-    (config, client) => GuildApplicationCommandManager(config, client, applicationId: Snowflake.zero, guildId: Snowflake(1)),
+    (config, client) => GuildApplicationCommandManager(
+      config,
+      client,
+      applicationId: Snowflake.zero,
+      guildId: Snowflake(1),
+      permissionsConfig: const CacheConfig(),
+    ),
     RegExp(r'/applications/0/guilds/1/commands/\d+'),
     '/applications/0/guilds/1/commands',
     sampleObject: sampleCommand,

@@ -81,7 +81,22 @@ class AuditLogManager extends ReadOnlyManager<AuditLogEntry> {
     final responseBody = response.jsonBody as Map<String, Object?>;
     final entries = parseMany(responseBody['audit_log_entries'] as List<Object?>, parse);
 
-    // TODO: application commands
+    final applicationCommands = parseMany(responseBody['application_commands'] as List<Object?>, (Map<String, Object?> raw) {
+      final guildId = maybeParse(raw['guild_id'], Snowflake.parse);
+
+      if (guildId == null) {
+        return client.commands.parse(raw);
+      }
+
+      return client.guilds[guildId].commands.parse(raw);
+    });
+    for (final command in applicationCommands) {
+      if (command.guild == null) {
+        client.commands.cache[command.id] = command;
+      } else {
+        client.guilds[command.guildId!].commands.cache[command.id] = command;
+      }
+    }
 
     final autoModerationRules = parseMany(responseBody['auto_moderation_rules'] as List<Object?>, client.guilds[guildId].autoModerationRules.parse);
     client.guilds[guildId].autoModerationRules.cache.addEntries(autoModerationRules.map((rule) => MapEntry(rule.id, rule)));

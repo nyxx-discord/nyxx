@@ -3,17 +3,15 @@ import 'package:nyxx/src/models/application.dart';
 import 'package:nyxx/src/models/commands/application_command.dart';
 import 'package:nyxx/src/models/guild/guild.dart';
 import 'package:nyxx/src/models/snowflake.dart';
+import 'package:nyxx/src/models/snowflake_entity/snowflake_entity.dart';
 import 'package:nyxx/src/utils/to_string_helper/to_string_helper.dart';
 
 /// {@template command_permissions}
 /// The permissions for an [ApplicationCommand] in a guild.
 /// {@endtemplate}
-class CommandPermissions with ToStringHelper {
+class CommandPermissions extends SnowflakeEntity<CommandPermissions> {
   /// The manager for this [CommandPermissions].
-  final ApplicationCommandManager manager;
-
-  /// The ID of the application or command these permissions apply to.
-  final Snowflake id;
+  final GuildApplicationCommandManager manager;
 
   /// The ID of the application these permissions apply to.
   final Snowflake applicationId;
@@ -27,7 +25,7 @@ class CommandPermissions with ToStringHelper {
   /// {@macro command_permissions}
   CommandPermissions({
     required this.manager,
-    required this.id,
+    required super.id,
     required this.applicationId,
     required this.guildId,
     required this.permissions,
@@ -41,6 +39,19 @@ class CommandPermissions with ToStringHelper {
 
   /// The guild these permissions apply in.
   PartialGuild get guild => manager.client.guilds[guildId];
+
+  @override
+  Future<CommandPermissions> fetch() async {
+    if (command != null) {
+      return await command!.fetchPermissions(guildId);
+    }
+
+    final permissions = await guild.commands.listPermissions();
+    return permissions.firstWhere((element) => element.id == id);
+  }
+
+  @override
+  Future<CommandPermissions> get() async => manager.permissionsCache[id] ?? await fetch();
 }
 
 /// {@template command_permission}

@@ -3,6 +3,7 @@ import 'package:nyxx/src/cache/cache.dart';
 import 'package:nyxx/src/client.dart';
 import 'package:nyxx/src/models/channel/channel.dart';
 import 'package:nyxx/src/models/commands/application_command.dart';
+import 'package:nyxx/src/models/commands/application_command_permissions.dart';
 import 'package:nyxx/src/models/emoji.dart';
 import 'package:nyxx/src/models/channel/stage_instance.dart';
 import 'package:nyxx/src/models/guild/audit_log.dart';
@@ -89,6 +90,9 @@ class RestClientOptions extends ClientOptions {
   /// The [CacheConfig] to use for the [NyxxRest.commands] manager.
   final CacheConfig<ApplicationCommand> applicationCommandConfig;
 
+  /// The [CacheConfig] to use for the [GuildApplicationCommandManager.permissionsCache] cache.
+  final CacheConfig<CommandPermissions> commandPermissionsConfig;
+
   /// The ID of the application the client is authenticating for.
   final Snowflake? applicationId;
 
@@ -113,6 +117,7 @@ class RestClientOptions extends ClientOptions {
     this.stickerCacheConfig = const CacheConfig(),
     this.globalStickerCacheConfig = const CacheConfig(),
     this.applicationCommandConfig = const CacheConfig(),
+    this.commandPermissionsConfig = const CacheConfig(),
     this.applicationId,
   });
 }
@@ -144,6 +149,7 @@ class GatewayClientOptions extends RestClientOptions {
     super.auditLogEntryConfig,
     super.voiceStateConfig,
     super.applicationCommandConfig,
+    super.commandPermissionsConfig,
     super.applicationId,
   });
 }

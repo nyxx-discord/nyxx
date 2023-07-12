@@ -104,8 +104,6 @@ class Gateway extends GatewayManager with EventParser {
       );
     }
 
-    // TODO: ApplicationCommandPermissionsUpdateEvent
-
     // Handle all events which should update cache.
     events.listen((event) => switch (event) {
           ReadyEvent(:final user) => client.users.cache[user.id] = user,
@@ -165,6 +163,8 @@ class Gateway extends GatewayManager with EventParser {
             ..addEntries(emojis.map((emoji) => MapEntry(emoji.id, emoji))),
           GuildStickersUpdateEvent(:final guildId, :final stickers) =>
             client.guilds[guildId].stickers.cache.addEntries(stickers.map((sticker) => MapEntry(sticker.id, sticker))),
+          ApplicationCommandPermissionsUpdateEvent(:final permissions) => client.guilds[permissions.guildId].commands.permissionsCache[permissions.id] =
+              permissions,
           _ => null,
         });
   }
@@ -336,8 +336,13 @@ class Gateway extends GatewayManager with EventParser {
   }
 
   ApplicationCommandPermissionsUpdateEvent parseApplicationCommandPermissionsUpdate(Map<String, Object?> raw) {
+    final guildId = Snowflake.parse(raw['guild_id']!);
+    final permissions = client.guilds[guildId].commands.parseCommandPermissions(raw);
+
     return ApplicationCommandPermissionsUpdateEvent(
       gateway: this,
+      permissions: permissions,
+      oldPermissions: client.guilds[guildId].commands.permissionsCache[permissions.id],
     );
   }
 

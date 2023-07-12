@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:nyxx/src/builders/application_command.dart';
+import 'package:nyxx/src/cache/cache.dart';
 import 'package:nyxx/src/http/managers/manager.dart';
 import 'package:nyxx/src/http/request.dart';
 import 'package:nyxx/src/http/route.dart';
@@ -197,11 +198,21 @@ class GuildApplicationCommandManager extends ApplicationCommandManager {
   /// The ID of the guild this manager is for.
   final Snowflake guildId;
 
+  /// A cache for the command permissions in this guild.
+  final Cache<CommandPermissions> permissionsCache;
+
   @override
   Snowflake get _guildId => guildId;
 
   /// Create a new [GuildApplicationCommandManager].
-  GuildApplicationCommandManager(super.config, super.client, {required super.applicationId, required this.guildId}) : super(identifier: '$guildId.commands');
+  GuildApplicationCommandManager(
+    super.config,
+    super.client, {
+    required super.applicationId,
+    required this.guildId,
+    required CacheConfig<CommandPermissions> permissionsConfig,
+  })  : permissionsCache = Cache(client, '$guildId.commandPermissions', permissionsConfig),
+        super(identifier: '$guildId.commands');
 
   /// Parse a [CommandPermissions] from [raw].
   CommandPermissions parseCommandPermissions(Map<String, Object?> raw) {
@@ -233,7 +244,10 @@ class GuildApplicationCommandManager extends ApplicationCommandManager {
     final request = BasicRequest(route);
 
     final response = await client.httpHandler.executeSafe(request);
-    return parseMany(response.jsonBody as List, parseCommandPermissions);
+    final permissions = parseMany(response.jsonBody as List, parseCommandPermissions);
+
+    permissionsCache.addEntries(permissions.map((permissions) => MapEntry(permissions.id, permissions)));
+    return permissions;
   }
 
   /// Fetch the permissions for a command.
@@ -246,7 +260,10 @@ class GuildApplicationCommandManager extends ApplicationCommandManager {
     final request = BasicRequest(route);
 
     final response = await client.httpHandler.executeSafe(request);
-    return parseCommandPermissions(response.jsonBody as Map<String, Object?>);
+    final permissions = parseCommandPermissions(response.jsonBody as Map<String, Object?>);
+
+    permissionsCache[permissions.id] = permissions;
+    return permissions;
   }
 
   // TODO: Do we add the command permission endpoints?

@@ -77,6 +77,7 @@ class PartialGuild extends WritableSnowflakeEntity<Guild> {
         manager.client,
         applicationId: manager.client.application.id,
         guildId: id,
+        permissionsConfig: manager.client.options.commandPermissionsConfig,
       );
 
   /// Create a new [PartialGuild].
