@@ -4,6 +4,7 @@ import 'package:http/http.dart' show MultipartFile;
 import 'package:nyxx/src/builders/emoji/reaction.dart';
 import 'package:nyxx/src/builders/message/message.dart';
 import 'package:nyxx/src/builders/sentinels.dart';
+import 'package:nyxx/src/cache/cache.dart';
 import 'package:nyxx/src/http/managers/manager.dart';
 import 'package:nyxx/src/http/request.dart';
 import 'package:nyxx/src/http/route.dart';
@@ -332,7 +333,7 @@ class MessageManager extends Manager<Message> {
     final response = await client.httpHandler.executeSafe(request);
     final messages = parseMany(response.jsonBody as List, parse);
 
-    cache.addEntries(messages.map((message) => MapEntry(message.id, message)));
+    cache.addEntities(messages);
     return messages;
   }
 
@@ -374,7 +375,7 @@ class MessageManager extends Manager<Message> {
     final response = await client.httpHandler.executeSafe(request);
     final messages = parseMany(response.jsonBody as List, parse);
 
-    cache.addEntries(messages.map((message) => MapEntry(message.id, message)));
+    cache.addEntities(messages);
     return messages;
   }
 

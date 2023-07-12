@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:nyxx/src/builders/guild/member.dart';
+import 'package:nyxx/src/cache/cache.dart';
 import 'package:nyxx/src/errors.dart';
 import 'package:nyxx/src/http/managers/manager.dart';
 import 'package:nyxx/src/http/request.dart';
@@ -67,7 +68,7 @@ class MemberManager extends Manager<Member> {
     final response = await client.httpHandler.executeSafe(request);
     final members = parseMany(response.jsonBody as List, parse);
 
-    cache.addEntries(members.map((e) => MapEntry(e.id, e)));
+    cache.addEntities(members);
     return members;
   }
 

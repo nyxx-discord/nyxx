@@ -5,6 +5,7 @@ import 'package:http/http.dart' hide MultipartRequest;
 import 'package:nyxx/src/builders/message/message.dart';
 import 'package:nyxx/src/builders/sentinels.dart';
 import 'package:nyxx/src/builders/webhook.dart';
+import 'package:nyxx/src/cache/cache.dart';
 import 'package:nyxx/src/http/managers/manager.dart';
 import 'package:nyxx/src/http/request.dart';
 import 'package:nyxx/src/http/route.dart';
@@ -131,7 +132,7 @@ class WebhookManager extends Manager<Webhook> {
     final response = await client.httpHandler.executeSafe(request);
     final webhooks = parseMany(response.jsonBody as List, parse);
 
-    cache.addEntries(webhooks.map((webhook) => MapEntry(webhook.id, webhook)));
+    cache.addEntities(webhooks);
     return webhooks;
   }
 
@@ -145,7 +146,7 @@ class WebhookManager extends Manager<Webhook> {
     final response = await client.httpHandler.executeSafe(request);
     final webhooks = parseMany(response.jsonBody as List, parse);
 
-    cache.addEntries(webhooks.map((webhook) => MapEntry(webhook.id, webhook)));
+    cache.addEntities(webhooks);
     return webhooks;
   }
 

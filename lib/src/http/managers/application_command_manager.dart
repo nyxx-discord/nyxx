@@ -114,7 +114,7 @@ abstract class ApplicationCommandManager extends Manager<ApplicationCommand> {
     final response = await client.httpHandler.executeSafe(request);
     final commands = parseMany(response.jsonBody as List, parse);
 
-    cache.addEntries(commands.map((command) => MapEntry(command.id, command)));
+    cache.addEntities(commands);
     return commands;
   }
 
@@ -188,7 +188,7 @@ abstract class ApplicationCommandManager extends Manager<ApplicationCommand> {
 
     cache
       ..clear()
-      ..addEntries(commands.map((command) => MapEntry(command.id, command)));
+      ..addEntities(commands);
     return commands;
   }
 }
@@ -246,7 +246,7 @@ class GuildApplicationCommandManager extends ApplicationCommandManager {
     final response = await client.httpHandler.executeSafe(request);
     final permissions = parseMany(response.jsonBody as List, parseCommandPermissions);
 
-    permissionsCache.addEntries(permissions.map((permissions) => MapEntry(permissions.id, permissions)));
+    permissionsCache.addEntities(permissions);
     return permissions;
   }
 

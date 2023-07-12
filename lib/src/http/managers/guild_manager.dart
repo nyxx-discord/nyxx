@@ -9,6 +9,7 @@ import 'package:nyxx/src/builders/guild/welcome_screen.dart';
 import 'package:nyxx/src/builders/guild/widget.dart';
 import 'package:nyxx/src/builders/image.dart';
 import 'package:nyxx/src/builders/voice.dart';
+import 'package:nyxx/src/cache/cache.dart';
 import 'package:nyxx/src/http/managers/manager.dart';
 import 'package:nyxx/src/http/request.dart';
 import 'package:nyxx/src/http/route.dart';
@@ -370,7 +371,7 @@ class GuildManager extends Manager<Guild> {
     final response = await client.httpHandler.executeSafe(request);
     final channels = parseMany(response.jsonBody as List, client.channels.parse).cast<GuildChannel>();
 
-    client.channels.cache.addEntries(channels.map((channel) => MapEntry(channel.id, channel)));
+    client.channels.cache.addEntities(channels);
     return channels;
   }
 
@@ -409,7 +410,7 @@ class GuildManager extends Manager<Guild> {
     final response = await client.httpHandler.executeSafe(request);
     final list = client.channels.parseThreadList(response.jsonBody as Map<String, Object?>);
 
-    client.channels.cache.addEntries(list.threads.map((e) => MapEntry(e.id, e)));
+    client.channels.cache.addEntities(list.threads);
     return list;
   }
 

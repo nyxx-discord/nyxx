@@ -4,6 +4,7 @@ import 'package:logging/logging.dart';
 import 'package:nyxx/src/api_options.dart';
 import 'package:nyxx/src/builders/presence.dart';
 import 'package:nyxx/src/builders/voice.dart';
+import 'package:nyxx/src/cache/cache.dart';
 import 'package:nyxx/src/client.dart';
 import 'package:nyxx/src/errors.dart';
 import 'package:nyxx/src/gateway/event_parser.dart';
@@ -111,16 +112,16 @@ class Gateway extends GatewayManager with EventParser {
           ChannelDeleteEvent(:final channel) => client.channels.cache.remove(channel.id),
           ThreadCreateEvent(:final thread) || ThreadUpdateEvent(:final thread) => client.channels.cache[thread.id] = thread,
           ThreadDeleteEvent(:final thread) => client.channels.cache.remove(thread.id),
-          ThreadListSyncEvent(:final threads) => client.channels.cache..addEntries(threads.map((thread) => MapEntry(thread.id, thread))),
+          ThreadListSyncEvent(:final threads) => client.channels.cache..addEntities(threads),
           final GuildCreateEvent event => () {
               client.guilds.cache[event.guild.id] = event.guild;
 
-              event.guild.members.cache.addEntries(event.members.map((member) => MapEntry(member.id, member)));
-              client.channels.cache.addEntries(event.channels.map((channel) => MapEntry(channel.id, channel)));
-              client.channels.cache.addEntries(event.threads.map((thread) => MapEntry(thread.id, thread)));
-              client.channels.stageInstanceCache.addEntries(event.stageInstances.map((instance) => MapEntry(instance.id, instance)));
-              event.guild.scheduledEvents.cache.addEntries(event.scheduledEvents.map((event) => MapEntry(event.id, event)));
-              client.voice.cache.addEntries(event.voiceStates.map((state) => MapEntry(state.cacheKey, state)));
+              event.guild.members.cache.addEntities(event.members);
+              client.channels.cache.addEntities(event.channels);
+              client.channels.cache.addEntities(event.threads);
+              client.channels.stageInstanceCache.addEntities(event.stageInstances);
+              event.guild.scheduledEvents.cache.addEntities(event.scheduledEvents);
+              client.voice.cache.addEntries(event.voiceStates.map((e) => MapEntry(e.cacheKey, e)));
             }(),
           GuildUpdateEvent(:final guild) => client.guilds.cache[guild.id] = guild,
           GuildDeleteEvent(:final guild, isUnavailable: false) => client.guilds.cache.remove(guild.id),
@@ -128,8 +129,7 @@ class Gateway extends GatewayManager with EventParser {
           GuildMemberUpdateEvent(:final guildId, :final member) =>
             client.guilds[guildId].members.cache[member.id] = member,
           GuildMemberRemoveEvent(:final guildId, :final user) => client.guilds[guildId].members.cache.remove(user.id),
-          GuildMembersChunkEvent(:final guildId, :final members) => client.guilds[guildId].members.cache
-            ..addEntries(members.map((member) => MapEntry(member.id, member))),
+          GuildMembersChunkEvent(:final guildId, :final members) => client.guilds[guildId].members.cache..addEntities(members),
           GuildRoleCreateEvent(:final guildId, :final role) ||
           GuildRoleUpdateEvent(:final guildId, :final role) =>
             client.guilds[guildId].roles.cache[role.id] = role,
@@ -160,9 +160,8 @@ class Gateway extends GatewayManager with EventParser {
           VoiceStateUpdateEvent(:final state) => client.voice.cache[state.cacheKey] = state,
           GuildEmojisUpdateEvent(:final guildId, :final emojis) => client.guilds[guildId].emojis.cache
             ..clear()
-            ..addEntries(emojis.map((emoji) => MapEntry(emoji.id, emoji))),
-          GuildStickersUpdateEvent(:final guildId, :final stickers) =>
-            client.guilds[guildId].stickers.cache.addEntries(stickers.map((sticker) => MapEntry(sticker.id, sticker))),
+            ..addEntities(emojis),
+          GuildStickersUpdateEvent(:final guildId, :final stickers) => client.guilds[guildId].stickers.cache.addEntities(stickers),
           ApplicationCommandPermissionsUpdateEvent(:final permissions) => client.guilds[permissions.guildId].commands.permissionsCache[permissions.id] =
               permissions,
           _ => null,

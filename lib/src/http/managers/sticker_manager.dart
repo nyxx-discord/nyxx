@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:http/http.dart';
 import 'package:nyxx/src/builders/sticker.dart';
+import 'package:nyxx/src/cache/cache.dart';
 import 'package:nyxx/src/http/managers/manager.dart';
 import 'package:nyxx/src/http/request.dart';
 import 'package:nyxx/src/http/route.dart';
@@ -45,7 +46,7 @@ class GuildStickerManager extends Manager<GuildSticker> {
     final response = await client.httpHandler.executeSafe(request);
 
     final stickers = parseMany(response.jsonBody as List<Object?>, (Map<String, Object?> raw) => parse(raw));
-    cache.addEntries(stickers.map((sticker) => MapEntry(sticker.id, sticker)));
+    cache.addEntities(stickers);
 
     return stickers;
   }

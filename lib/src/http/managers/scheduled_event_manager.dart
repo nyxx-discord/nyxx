@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:nyxx/src/builders/guild/scheduled_event.dart';
+import 'package:nyxx/src/cache/cache.dart';
 import 'package:nyxx/src/http/managers/manager.dart';
 import 'package:nyxx/src/http/request.dart';
 import 'package:nyxx/src/http/route.dart';
@@ -81,7 +82,7 @@ class ScheduledEventManager extends Manager<ScheduledEvent> {
     final response = await client.httpHandler.executeSafe(request);
     final events = parseMany(response.jsonBody as List<Object?>, parse);
 
-    cache.addEntries(events.map((event) => MapEntry(event.id, event)));
+    cache.addEntities(events);
     return events;
   }
 
