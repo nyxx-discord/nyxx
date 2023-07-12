@@ -13,11 +13,16 @@ import 'package:nyxx/src/models/permissions.dart';
 import 'package:nyxx/src/models/snowflake.dart';
 import 'package:nyxx/src/utils/parsing_helpers.dart';
 
+/// A [Manager] for [ApplicationCommand]s.
+///
+/// [GlobalApplicationCommandManager] or [GuildApplicationCommandManager] will be used as concrete classes instead of this one depending on the circumstances.
 abstract class ApplicationCommandManager extends Manager<ApplicationCommand> {
   Snowflake? get _guildId;
 
+  /// The ID of the application this manager is for.
   final Snowflake applicationId;
 
+  /// Create a new [ApplicationCommandManager].
   ApplicationCommandManager(super.config, super.client, {required this.applicationId, required super.identifier});
 
   @override
@@ -53,6 +58,7 @@ abstract class ApplicationCommandManager extends Manager<ApplicationCommand> {
     );
   }
 
+  /// Parse a [CommandOption] from [raw].
   CommandOption parseApplicationCommandOption(Map<String, Object?> raw) {
     return CommandOption(
       type: CommandOptionType.parse(raw['type'] as int),
@@ -82,6 +88,7 @@ abstract class ApplicationCommandManager extends Manager<ApplicationCommand> {
     );
   }
 
+  /// Parse a [CommandOptionChoice] from [raw].
   CommandOptionChoice parseOptionChoice(Map<String, Object?> raw) {
     return CommandOptionChoice(
       name: raw['name'] as String,
@@ -95,6 +102,7 @@ abstract class ApplicationCommandManager extends Manager<ApplicationCommand> {
     );
   }
 
+  /// List the commands belonging to the application.
   Future<List<ApplicationCommand>> list({bool? withLocalizations}) async {
     final route = HttpRoute()..applications(id: applicationId.toString());
     if (_guildId != null) route.guilds(id: _guildId!.toString());
@@ -166,6 +174,7 @@ abstract class ApplicationCommandManager extends Manager<ApplicationCommand> {
     cache.remove(id);
   }
 
+  /// Remove all existing commands and replace them with the commands defined in [builders].
   Future<List<ApplicationCommand>> bulkOverride(List<ApplicationCommandBuilder> builders) async {
     final route = HttpRoute()..applications(id: applicationId.toString());
     if (_guildId != null) route.guilds(id: _guildId!.toString());
@@ -183,14 +192,18 @@ abstract class ApplicationCommandManager extends Manager<ApplicationCommand> {
   }
 }
 
+/// An [ApplicationCommandManager] for the commands in a guild.
 class GuildApplicationCommandManager extends ApplicationCommandManager {
+  /// The ID of the guild this manager is for.
   final Snowflake guildId;
 
   @override
   Snowflake get _guildId => guildId;
 
+  /// Create a new [GuildApplicationCommandManager].
   GuildApplicationCommandManager(super.config, super.client, {required super.applicationId, required this.guildId}) : super(identifier: '$guildId.commands');
 
+  /// Parse a [CommandPermissions] from [raw].
   CommandPermissions parseCommandPermissions(Map<String, Object?> raw) {
     return CommandPermissions(
       manager: this,
@@ -201,6 +214,7 @@ class GuildApplicationCommandManager extends ApplicationCommandManager {
     );
   }
 
+  /// Parse a [CommandPermission] from [raw].
   CommandPermission parseCommandPermission(Map<String, Object?> raw) {
     return CommandPermission(
       id: Snowflake.parse(raw['id']!),
@@ -209,6 +223,7 @@ class GuildApplicationCommandManager extends ApplicationCommandManager {
     );
   }
 
+  /// List all the [CommandPermissions] in this guild.
   Future<List<CommandPermissions>> listPermissions() async {
     final route = HttpRoute()
       ..applications(id: applicationId.toString())
@@ -221,6 +236,7 @@ class GuildApplicationCommandManager extends ApplicationCommandManager {
     return parseMany(response.jsonBody as List, parseCommandPermissions);
   }
 
+  /// Fetch the permissions for a command.
   Future<CommandPermissions> fetchPermissions(Snowflake id) async {
     final route = HttpRoute()
       ..applications(id: applicationId.toString())
@@ -236,9 +252,11 @@ class GuildApplicationCommandManager extends ApplicationCommandManager {
   // TODO: Do we add the command permission endpoints?
 }
 
+/// An [ApplicationCommandManager] for an application's global commands.
 class GlobalApplicationCommandManager extends ApplicationCommandManager {
   @override
   Null get _guildId => null;
 
+  /// Create a new [GlobalApplicationCommandManager].
   GlobalApplicationCommandManager(super.config, super.client, {required super.applicationId}) : super(identifier: 'commands');
 }
