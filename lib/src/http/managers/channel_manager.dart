@@ -75,7 +75,7 @@ class ChannelManager extends ReadOnlyManager<Channel> {
       ChannelType.privateThread: parsePrivateThread,
       ChannelType.guildStageVoice: parseGuildStageChannel,
       ChannelType.guildDirectory: parseDirectoryChannel,
-      ChannelType.guildForum: parseForumChanel,
+      ChannelType.guildForum: parseForumChannel,
     };
 
     return parsers[type]!(raw, guildId: guildId);
@@ -314,8 +314,8 @@ class ChannelManager extends ReadOnlyManager<Channel> {
     );
   }
 
-  ForumChannel parseForumChanel(Map<String, Object?> raw, {Snowflake? guildId}) {
-    assert(raw['type'] == ChannelType.guildForum.value, 'Invalid type for ForumChanel');
+  ForumChannel parseForumChannel(Map<String, Object?> raw, {Snowflake? guildId}) {
+    assert(raw['type'] == ChannelType.guildForum.value, 'Invalid type for ForumChannel');
 
     return ForumChannel(
       id: Snowflake.parse(raw['id']!),
