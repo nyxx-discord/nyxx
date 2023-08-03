@@ -36,7 +36,7 @@ class InteractionManager {
     final channelId = maybeParse(raw['channel_id'], Snowflake.parse);
     final id = Snowflake.parse(raw['id']!);
     final applicationId = Snowflake.parse(raw['application_id']!);
-    final channel = PartialChannel(id: Snowflake.parse((raw['channel'] as Map<String, Object?>)['id']!), manager: client.channels);
+    final channel = maybeParse(raw['channel'], (Map<String, Object?> raw) => client.channels[Snowflake.parse(raw['id']!)]);
     final member = maybeParse(raw['member'], client.guilds[guildId ?? Snowflake.zero].members.parse);
     final user = maybeParse(raw['user'], client.users.parse);
     final token = raw['token'] as String;

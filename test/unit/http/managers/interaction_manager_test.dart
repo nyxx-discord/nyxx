@@ -18,7 +18,10 @@ final sampleCommandInteraction = {
     "mute": false,
     "joined_at": "2017-03-13T19:19:14.040000+00:00",
     "is_pending": false,
-    "deaf": false
+    "deaf": false,
+
+    // Fields not present in the example but documented
+    "flags": 0,
   },
   "id": "786008729715212338",
   "guild_id": "290926798626357999",
@@ -37,7 +40,6 @@ final sampleCommandInteraction = {
 
   // Fields not present in the example but documented
   "application_id": "0",
-  "channel": {"id": "645027906669510667"},
   "version": 1,
 };
 
