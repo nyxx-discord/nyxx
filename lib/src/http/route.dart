@@ -295,4 +295,11 @@ extension RouteHelpers on HttpRoute {
 
   /// Adds the [`commands`](https://discord.com/developers/docs/interactions/application-commands#get-global-application-commands) part to this [HttpRoute].
   void commands({String? id}) => add(HttpRoutePart('commands', [if (id != null) HttpRouteParam(id)]));
+
+  /// Adds the [`interactions`](https://discord.com/developers/docs/interactions/receiving-and-responding#create-interaction-response) part to this [HttpRoute].
+  void interactions({String? id, String? token}) =>
+      add(HttpRoutePart('interactions', [if (id != null) HttpRouteParam(id), if (token != null) HttpRouteParam(token)]));
+
+  /// Adds the [`callback`](https://discord.com/developers/docs/interactions/receiving-and-responding#create-interaction-response) part to this [HttpRoute].
+  void callback() => add(HttpRoutePart('callback'));
 }

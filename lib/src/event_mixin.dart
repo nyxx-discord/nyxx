@@ -15,6 +15,7 @@ import 'package:nyxx/src/models/gateway/events/ready.dart';
 import 'package:nyxx/src/models/gateway/events/stage_instance.dart';
 import 'package:nyxx/src/models/gateway/events/voice.dart';
 import 'package:nyxx/src/models/gateway/events/webhook.dart';
+import 'package:nyxx/src/models/interaction.dart';
 import 'package:nyxx/src/utils/iterable_extension.dart';
 
 /// An internal mixin to add event streams to a NyxxGateway client.
@@ -223,4 +224,25 @@ mixin EventMixin implements Nyxx {
 
   /// A [Stream] of [StageInstanceDeleteEvent]s received by this client.
   Stream<StageInstanceDeleteEvent> get onStageInstanceDelete => onEvent.whereType<StageInstanceDeleteEvent>();
+
+  // Specializations of [onInteractionCreate] for convenience.
+
+  /// A [Stream] of [PingInteraction]s received by this client.
+  Stream<InteractionCreateEvent<PingInteraction>> get onPingInteraction => onInteractionCreate.whereType<InteractionCreateEvent<PingInteraction>>();
+
+  /// A [Stream] of [ApplicationCommandInteraction]s received by this client.
+  Stream<InteractionCreateEvent<ApplicationCommandInteraction>> get onApplicationCommandInteraction =>
+      onInteractionCreate.whereType<InteractionCreateEvent<ApplicationCommandInteraction>>();
+
+  /// A [Stream] of [MessageComponentInteraction]s received by this client.
+  Stream<InteractionCreateEvent<MessageComponentInteraction>> get onMessageComponentInteraction =>
+      onInteractionCreate.whereType<InteractionCreateEvent<MessageComponentInteraction>>();
+
+  /// A [Stream] of [ModalSubmitInteraction]s received by this client.
+  Stream<InteractionCreateEvent<ModalSubmitInteraction>> get onModalSubmitInteraction =>
+      onInteractionCreate.whereType<InteractionCreateEvent<ModalSubmitInteraction>>();
+
+  /// A [Stream] of [ApplicationCommandAutocompleteInteraction]s received by this client.
+  Stream<InteractionCreateEvent<ApplicationCommandAutocompleteInteraction>> get onApplicationCommandAutocompleteInteraction =>
+      onInteractionCreate.whereType<InteractionCreateEvent<ApplicationCommandAutocompleteInteraction>>();
 }

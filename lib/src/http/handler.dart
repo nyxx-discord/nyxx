@@ -119,7 +119,7 @@ class HttpHandler {
         }
       }
 
-      waitTime = globalWaitTime > bucketWaitTime ? globalWaitTime : bucketWaitTime;
+      waitTime = globalWaitTime > bucketWaitTime && request.applyGlobalRateLimit ? globalWaitTime : bucketWaitTime;
 
       if (waitTime > Duration.zero) {
         logger.finer('Holding ${request.loggingId} for $waitTime');

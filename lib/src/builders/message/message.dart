@@ -1,36 +1,44 @@
 import 'package:nyxx/src/builders/builder.dart';
 import 'package:nyxx/src/builders/message/allowed_mentions.dart';
 import 'package:nyxx/src/builders/message/attachment.dart';
+import 'package:nyxx/src/builders/message/component.dart';
 import 'package:nyxx/src/builders/sentinels.dart';
 import 'package:nyxx/src/models/message/embed.dart';
 import 'package:nyxx/src/models/message/message.dart';
 import 'package:nyxx/src/models/snowflake.dart';
 
-class MessageBuilder extends CreateBuilder<Message> {
+class MessageBuilder extends CreateBuilder<Message> implements MessageUpdateBuilder {
+  @override
   final String? content;
 
   final dynamic /* int | String */ nonce;
 
   final bool? tts;
 
+  @override
   final List<Embed>? embeds;
 
+  @override
   final AllowedMentions? allowedMentions;
 
   final Snowflake? replyId;
 
   final bool? requireReplyToExist;
 
-  // TODO
-  //final List<ComponentBuilder>?> components;
+  @override
+  final List<ActionRowBuilder>? components;
 
   final List<Snowflake>? stickerIds;
 
+  @override
   final List<AttachmentBuilder>? attachments;
 
+  @override
   final bool? suppressEmbeds;
 
   final bool? suppressNotifications;
+
+  final bool? isEphemeral;
 
   MessageBuilder({
     this.content,
@@ -40,10 +48,12 @@ class MessageBuilder extends CreateBuilder<Message> {
     this.allowedMentions,
     this.replyId,
     this.requireReplyToExist,
+    this.components,
     this.stickerIds,
     this.attachments,
     this.suppressEmbeds,
     this.suppressNotifications,
+    this.isEphemeral,
   });
 
   @override
@@ -122,11 +132,13 @@ class MessageBuilder extends CreateBuilder<Message> {
           'message_id': replyId.toString(),
           if (requireReplyToExist != null) 'fail_if_not_exists': requireReplyToExist,
         },
+      if (components != null) 'components': components!.map((e) => e.build()).toList(),
       if (stickerIds != null) 'sticker_ids': stickerIds!.map((e) => e.toString()).toList(),
       if (attachments != null) 'attachments': attachments!.map((e) => e.build()).toList(),
-      if (suppressEmbeds != null || suppressNotifications != null)
-        'flags':
-            (suppressEmbeds == true ? MessageFlags.suppressEmbeds.value : 0) | (suppressNotifications == true ? MessageFlags.suppressNotifications.value : 0),
+      if (suppressEmbeds != null || suppressNotifications != null || isEphemeral != null)
+        'flags': (suppressEmbeds == true ? MessageFlags.suppressEmbeds.value : 0) |
+            (suppressNotifications == true ? MessageFlags.suppressNotifications.value : 0) |
+            (isEphemeral == true ? MessageFlags.ephemeral.value : 0),
     };
   }
 }
@@ -140,8 +152,7 @@ class MessageUpdateBuilder extends UpdateBuilder<Message> {
 
   final AllowedMentions? allowedMentions;
 
-  // TODO
-  //final List<ComponentBuilder>? components;
+  final List<ActionRowBuilder>? components;
 
   final List<AttachmentBuilder>? attachments;
 
@@ -150,8 +161,10 @@ class MessageUpdateBuilder extends UpdateBuilder<Message> {
     this.embeds = sentinelList,
     this.suppressEmbeds,
     this.allowedMentions,
+    this.components,
     this.attachments = sentinelList,
   });
+
   @override
   Map<String, Object?> build() {
     List<Map<String, Object?>>? embeds = sentinelList;
@@ -225,6 +238,7 @@ class MessageUpdateBuilder extends UpdateBuilder<Message> {
       if (!identical(content, sentinelString)) 'content': content,
       if (!identical(embeds, sentinelList)) 'embeds': embeds,
       if (allowedMentions != null) 'allowed_mentions': allowedMentions!.build(),
+      if (components != null) 'components': components!.map((e) => e.build()).toList(),
       if (!identical(attachments, sentinelList)) 'attachments': attachments!.map((e) => e.build()).toList(),
       if (suppressEmbeds != null) 'flags': (suppressEmbeds == true ? MessageFlags.suppressEmbeds.value : 0),
     };

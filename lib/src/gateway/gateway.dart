@@ -37,6 +37,7 @@ import 'package:nyxx/src/models/gateway/opcode.dart';
 import 'package:nyxx/src/models/guild/auto_moderation.dart';
 import 'package:nyxx/src/models/guild/guild.dart';
 import 'package:nyxx/src/models/guild/member.dart';
+import 'package:nyxx/src/models/interaction.dart';
 import 'package:nyxx/src/models/presence.dart';
 import 'package:nyxx/src/models/snowflake.dart';
 import 'package:nyxx/src/models/user/user.dart';
@@ -164,6 +165,19 @@ class Gateway extends GatewayManager with EventParser {
           GuildStickersUpdateEvent(:final guildId, :final stickers) => client.guilds[guildId].stickers.cache.addEntities(stickers),
           ApplicationCommandPermissionsUpdateEvent(:final permissions) => client.guilds[permissions.guildId].commands.permissionsCache[permissions.id] =
               permissions,
+          InteractionCreateEvent(interaction: Interaction(:final guildId, data: ApplicationCommandInteractionData(resolved: final data?))) => () {
+              if (data.users != null) {
+                client.users.cache.addAll(data.users!);
+              }
+
+              if (data.members != null && guildId != null) {
+                client.guilds[guildId].members.cache.addAll(data.members!);
+              }
+
+              if (data.roles != null && guildId != null) {
+                client.guilds[guildId].roles.cache.addAll(data.roles!);
+              }
+            }(),
           _ => null,
         });
   }
@@ -600,7 +614,6 @@ class Gateway extends GatewayManager with EventParser {
 
   GuildMemberUpdateEvent parseGuildMemberUpdate(Map<String, Object?> raw) {
     final guildId = Snowflake.parse(raw['guild_id']!);
-    // TODO: The member received from the update has mute and deaf as nullable fields, which this parser does not.
     final member = client.guilds[guildId].members.parse(raw);
 
     return GuildMemberUpdateEvent(
@@ -926,10 +939,20 @@ class Gateway extends GatewayManager with EventParser {
     );
   }
 
-  InteractionCreateEvent parseInteractionCreate(Map<String, Object?> raw) {
-    return InteractionCreateEvent(
-      gateway: this,
-    );
+  InteractionCreateEvent<Interaction<dynamic>> parseInteractionCreate(Map<String, Object?> raw) {
+    final interaction = client.interactions.parse(raw);
+
+    // Needed to get proper type promotion.
+    return switch (interaction.type) {
+      InteractionType.ping => InteractionCreateEvent<PingInteraction>(gateway: this, interaction: interaction as PingInteraction),
+      InteractionType.applicationCommand =>
+        InteractionCreateEvent<ApplicationCommandInteraction>(gateway: this, interaction: interaction as ApplicationCommandInteraction),
+      InteractionType.messageComponent =>
+        InteractionCreateEvent<MessageComponentInteraction>(gateway: this, interaction: interaction as MessageComponentInteraction),
+      InteractionType.modalSubmit => InteractionCreateEvent<ModalSubmitInteraction>(gateway: this, interaction: interaction as ModalSubmitInteraction),
+      InteractionType.applicationCommandAutocomplete =>
+        InteractionCreateEvent<ApplicationCommandAutocompleteInteraction>(gateway: this, interaction: interaction as ApplicationCommandAutocompleteInteraction),
+    } as InteractionCreateEvent<Interaction<dynamic>>;
   }
 
   StageInstanceCreateEvent parseStageInstanceCreate(Map<String, Object?> raw) {

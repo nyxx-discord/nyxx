@@ -235,8 +235,7 @@ class WebhookManager extends Manager<Webhook> {
     Snowflake? threadId,
   }) async {
     final route = HttpRoute()
-      ..webhooks(id: webhookId.toString())
-      ..add(HttpRoutePart(token))
+      ..webhooks(id: webhookId.toString(), token: token)
       ..messages(id: messageId.toString());
 
     final queryParameters = {if (threadId != null) 'thread_id': threadId.toString()};

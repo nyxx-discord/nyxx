@@ -2,6 +2,7 @@ import 'package:nyxx/src/client.dart';
 import 'package:nyxx/src/client_options.dart';
 import 'package:nyxx/src/http/managers/application_command_manager.dart';
 import 'package:nyxx/src/http/managers/channel_manager.dart';
+import 'package:nyxx/src/http/managers/interaction_manager.dart';
 import 'package:nyxx/src/http/managers/invite_manager.dart';
 import 'package:nyxx/src/http/managers/gateway_manager.dart';
 import 'package:nyxx/src/http/managers/guild_manager.dart';
@@ -46,4 +47,6 @@ mixin ManagerMixin implements Nyxx {
   /// A [GlobalApplicationCommandManager] that manages global application commands.
   GlobalApplicationCommandManager get commands =>
       GlobalApplicationCommandManager(options.applicationCommandConfig, this as NyxxRest, applicationId: (this as NyxxRest).application.id);
+
+  InteractionManager get interactions => InteractionManager(this as NyxxRest, applicationId: (this as NyxxRest).application.id);
 }
