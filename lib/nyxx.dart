@@ -49,7 +49,7 @@ export 'src/builders/guild/template.dart' show GuildTemplateBuilder, GuildTempla
 export 'src/builders/guild/auto_moderation.dart' show AutoModerationRuleBuilder, AutoModerationRuleUpdateBuilder;
 export 'src/builders/role.dart' show RoleBuilder, RoleUpdateBuilder;
 export 'src/builders/voice.dart' show CurrentUserVoiceStateUpdateBuilder, VoiceStateUpdateBuilder, GatewayVoiceStateBuilder;
-export 'src/builders/presence.dart' show PresenceBuilder, CurrentUserStatus;
+export 'src/builders/presence.dart' show PresenceBuilder, CurrentUserStatus, ActivityBuilder;
 export 'src/builders/application_role_connection.dart' show ApplicationRoleConnectionUpdateBuilder;
 export 'src/builders/emoji/emoji.dart' show EmojiBuilder, EmojiUpdateBuilder;
 export 'src/builders/emoji/reaction.dart' show ReactionBuilder;
