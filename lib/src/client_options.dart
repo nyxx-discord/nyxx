@@ -2,6 +2,8 @@ import 'package:logging/logging.dart';
 import 'package:nyxx/src/cache/cache.dart';
 import 'package:nyxx/src/client.dart';
 import 'package:nyxx/src/models/channel/channel.dart';
+import 'package:nyxx/src/models/commands/application_command.dart';
+import 'package:nyxx/src/models/commands/application_command_permissions.dart';
 import 'package:nyxx/src/models/emoji.dart';
 import 'package:nyxx/src/models/channel/stage_instance.dart';
 import 'package:nyxx/src/models/guild/audit_log.dart';
@@ -12,6 +14,7 @@ import 'package:nyxx/src/models/guild/member.dart';
 import 'package:nyxx/src/models/guild/scheduled_event.dart';
 import 'package:nyxx/src/models/message/message.dart';
 import 'package:nyxx/src/models/role.dart';
+import 'package:nyxx/src/models/snowflake.dart';
 import 'package:nyxx/src/models/sticker/global_sticker.dart';
 import 'package:nyxx/src/models/sticker/guild_sticker.dart';
 import 'package:nyxx/src/models/user/user.dart';
@@ -84,6 +87,15 @@ class RestClientOptions extends ClientOptions {
   /// The [CacheConfig] to use for the [NyxxRest.voice] manager.
   final CacheConfig<VoiceState> voiceStateConfig;
 
+  /// The [CacheConfig] to use for the [NyxxRest.commands] manager.
+  final CacheConfig<ApplicationCommand> applicationCommandConfig;
+
+  /// The [CacheConfig] to use for the [GuildApplicationCommandManager.permissionsCache] cache.
+  final CacheConfig<CommandPermissions> commandPermissionsConfig;
+
+  /// The ID of the application the client is authenticating for.
+  final Snowflake? applicationId;
+
   /// Create a new [RestClientOptions].
   const RestClientOptions({
     super.plugins,
@@ -104,6 +116,9 @@ class RestClientOptions extends ClientOptions {
     this.voiceStateConfig = const CacheConfig(),
     this.stickerCacheConfig = const CacheConfig(),
     this.globalStickerCacheConfig = const CacheConfig(),
+    this.applicationCommandConfig = const CacheConfig(),
+    this.commandPermissionsConfig = const CacheConfig(),
+    this.applicationId,
   });
 }
 
@@ -133,5 +148,8 @@ class GatewayClientOptions extends RestClientOptions {
     super.integrationConfig,
     super.auditLogEntryConfig,
     super.voiceStateConfig,
+    super.applicationCommandConfig,
+    super.commandPermissionsConfig,
+    super.applicationId,
   });
 }

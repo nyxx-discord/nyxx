@@ -1,3 +1,4 @@
+import 'package:nyxx/src/cache/cache.dart';
 import 'package:nyxx/src/errors.dart';
 import 'package:nyxx/src/http/managers/manager.dart';
 import 'package:nyxx/src/http/request.dart';
@@ -79,7 +80,7 @@ class IntegrationManager extends ReadOnlyManager<Integration> {
     final response = await client.httpHandler.executeSafe(request);
     final integrations = parseMany(response.jsonBody as List, parse);
 
-    cache.addEntries(integrations.map((e) => MapEntry(e.id, e)));
+    cache.addEntities(integrations);
     return integrations;
   }
 

@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:nyxx/src/builders/role.dart';
+import 'package:nyxx/src/cache/cache.dart';
 import 'package:nyxx/src/errors.dart';
 import 'package:nyxx/src/http/managers/manager.dart';
 import 'package:nyxx/src/http/request.dart';
@@ -58,7 +59,7 @@ class RoleManager extends Manager<Role> {
     final response = await client.httpHandler.executeSafe(request);
     final roles = parseMany(response.jsonBody as List, parse);
 
-    cache.addEntries(roles.map((e) => MapEntry(e.id, e)));
+    cache.addEntities(roles);
     return roles;
   }
 
@@ -128,7 +129,7 @@ class RoleManager extends Manager<Role> {
     final response = await client.httpHandler.executeSafe(request);
     final roles = parseMany(response.jsonBody as List, parse);
 
-    cache.addEntries(roles.map((e) => MapEntry(e.id, e)));
+    cache.addEntities(roles);
     return roles;
   }
 }

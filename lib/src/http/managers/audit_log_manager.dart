@@ -1,3 +1,4 @@
+import 'package:nyxx/src/cache/cache.dart';
 import 'package:nyxx/src/errors.dart';
 import 'package:nyxx/src/http/managers/manager.dart';
 import 'package:nyxx/src/http/request.dart';
@@ -81,24 +82,39 @@ class AuditLogManager extends ReadOnlyManager<AuditLogEntry> {
     final responseBody = response.jsonBody as Map<String, Object?>;
     final entries = parseMany(responseBody['audit_log_entries'] as List<Object?>, parse);
 
-    // TODO: application commands
+    final applicationCommands = parseMany(responseBody['application_commands'] as List<Object?>, (Map<String, Object?> raw) {
+      final guildId = maybeParse(raw['guild_id'], Snowflake.parse);
+
+      if (guildId == null) {
+        return client.commands.parse(raw);
+      }
+
+      return client.guilds[guildId].commands.parse(raw);
+    });
+    for (final command in applicationCommands) {
+      if (command.guild == null) {
+        client.commands.cache[command.id] = command;
+      } else {
+        client.guilds[command.guildId!].commands.cache[command.id] = command;
+      }
+    }
 
     final autoModerationRules = parseMany(responseBody['auto_moderation_rules'] as List<Object?>, client.guilds[guildId].autoModerationRules.parse);
-    client.guilds[guildId].autoModerationRules.cache.addEntries(autoModerationRules.map((rule) => MapEntry(rule.id, rule)));
+    client.guilds[guildId].autoModerationRules.cache.addEntities(autoModerationRules);
 
     final scheduledEvents = parseMany(responseBody['guild_scheduled_events'] as List<Object?>, client.guilds[guildId].scheduledEvents.parse);
-    client.guilds[guildId].scheduledEvents.cache.addEntries(scheduledEvents.map((event) => MapEntry(event.id, event)));
+    client.guilds[guildId].scheduledEvents.cache.addEntities(scheduledEvents);
 
     final threads = parseMany(responseBody['threads'] as List<Object?>, client.channels.parse);
-    client.channels.cache.addEntries(threads.map((thread) => MapEntry(thread.id, thread)));
+    client.channels.cache.addEntities(threads);
 
     final users = parseMany(responseBody['users'] as List<Object?>, client.users.parse);
-    client.users.cache.addEntries(users.map((user) => MapEntry(user.id, user)));
+    client.users.cache.addEntities(users);
 
     final webhooks = parseMany(responseBody['webhooks'] as List<Object?>, client.webhooks.parse);
-    client.webhooks.cache.addEntries(webhooks.map((webhook) => MapEntry(webhook.id, webhook)));
+    client.webhooks.cache.addEntities(webhooks);
 
-    cache.addEntries(entries.map((entry) => MapEntry(entry.id, entry)));
+    cache.addEntities(entries);
     return entries;
   }
 }

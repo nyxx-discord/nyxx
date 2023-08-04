@@ -4,6 +4,7 @@ import 'package:http/http.dart' show MultipartFile;
 import 'package:nyxx/src/builders/emoji/reaction.dart';
 import 'package:nyxx/src/builders/message/message.dart';
 import 'package:nyxx/src/builders/sentinels.dart';
+import 'package:nyxx/src/cache/cache.dart';
 import 'package:nyxx/src/http/managers/manager.dart';
 import 'package:nyxx/src/http/request.dart';
 import 'package:nyxx/src/http/route.dart';
@@ -11,10 +12,12 @@ import 'package:nyxx/src/models/application.dart';
 import 'package:nyxx/src/models/channel/channel.dart';
 import 'package:nyxx/src/models/channel/thread.dart';
 import 'package:nyxx/src/models/discord_color.dart';
+import 'package:nyxx/src/models/interaction.dart';
 import 'package:nyxx/src/models/message/activity.dart';
 import 'package:nyxx/src/models/message/attachment.dart';
 import 'package:nyxx/src/models/message/author.dart';
 import 'package:nyxx/src/models/message/channel_mention.dart';
+import 'package:nyxx/src/models/message/component.dart';
 import 'package:nyxx/src/models/message/embed.dart';
 import 'package:nyxx/src/models/message/message.dart';
 import 'package:nyxx/src/models/message/reaction.dart';
@@ -69,7 +72,12 @@ class MessageManager extends Manager<Message> {
       reference: maybeParse(raw['message_reference'], parseMessageReference),
       flags: MessageFlags(raw['flags'] as int? ?? 0),
       referencedMessage: maybeParse(raw['referenced_message'], parse),
+      interaction: maybeParse(
+        raw['interaction'],
+        (Map<String, Object?> raw) => parseMessageInteraction(raw),
+      ),
       thread: maybeParse(raw['thread'], client.channels.parse) as Thread?,
+      components: maybeParseMany(raw['components'], parseMessageComponent),
       position: raw['position'] as int?,
       roleSubscriptionData: maybeParse(raw['role_subscription_data'], parseRoleSubscriptionData),
       stickers: parseMany(raw['sticker_items'] as List? ?? [], client.stickers.parseStickerItem),
@@ -210,6 +218,75 @@ class MessageManager extends Manager<Message> {
     );
   }
 
+  MessageComponent parseMessageComponent(Map<String, Object?> raw) {
+    final type = MessageComponentType.parse(raw['type'] as int);
+
+    return switch (type) {
+      MessageComponentType.actionRow => ActionRowComponent(
+          components: parseMany(raw['components'] as List, parseMessageComponent),
+        ),
+      MessageComponentType.button => ButtonComponent(
+          style: ButtonStyle.parse(raw['style'] as int),
+          label: raw['label'] as String,
+          emoji: maybeParse(raw['emoji'], client.guilds[Snowflake.zero].emojis.parse),
+          customId: raw['custom_id'] as String?,
+          url: maybeParse(raw['url'], Uri.parse),
+          isDisabled: raw['disabled'] as bool?,
+        ),
+      MessageComponentType.textInput => TextInputComponent(
+          customId: raw['custom_id'] as String,
+          style: TextInputStyle.parse(raw['style'] as int),
+          label: raw['label'] as String,
+          minLength: raw['min_length'] as int?,
+          maxLength: raw['max_length'] as int?,
+          isRequired: raw['required'] as bool?,
+          value: raw['value'] as String?,
+          placeholder: raw['placeholder'] as String?,
+        ),
+      MessageComponentType.stringSelect ||
+      MessageComponentType.userSelect ||
+      MessageComponentType.roleSelect ||
+      MessageComponentType.mentionableSelect ||
+      MessageComponentType.channelSelect =>
+        SelectMenuComponent(
+          type: type,
+          customId: raw['custom_id'] as String,
+          options: maybeParseMany(raw['options'], parseSelectMenuOption),
+          channelTypes: maybeParseMany(raw['channel_types'], ChannelType.parse),
+          placeholder: raw['placeholder'] as String?,
+          minValues: raw['min_values'] as int?,
+          maxValues: raw['max_values'] as int?,
+          isDisabled: raw['disabled'] as bool?,
+        ),
+    };
+  }
+
+  SelectMenuOption parseSelectMenuOption(Map<String, Object?> raw) {
+    return SelectMenuOption(
+      label: raw['label'] as String,
+      value: raw['value'] as String,
+      description: raw['description'] as String?,
+      emoji: maybeParse(raw['emoji'], client.guilds[Snowflake.zero].emojis.parse),
+      isDefault: raw['default'] as bool?,
+    );
+  }
+
+  MessageInteraction parseMessageInteraction(Map<String, Object?> raw) {
+    final user = client.users.parse(raw['user'] as Map<String, Object?>);
+
+    return MessageInteraction(
+      id: Snowflake.parse(raw['id']!),
+      type: InteractionType.parse(raw['type'] as int),
+      name: raw['name'] as String,
+      user: user,
+      // TODO: Find a way to get the guild ID.
+      member: maybeParse(
+        raw['member'],
+        (Map<String, Object?> raw) => client.guilds[Snowflake.zero].members[user.id],
+      ),
+    );
+  }
+
   @override
   Future<Message> create(MessageBuilder builder) async {
     final route = HttpRoute()
@@ -332,7 +409,7 @@ class MessageManager extends Manager<Message> {
     final response = await client.httpHandler.executeSafe(request);
     final messages = parseMany(response.jsonBody as List, parse);
 
-    cache.addEntries(messages.map((message) => MapEntry(message.id, message)));
+    cache.addEntities(messages);
     return messages;
   }
 
@@ -374,7 +451,7 @@ class MessageManager extends Manager<Message> {
     final response = await client.httpHandler.executeSafe(request);
     final messages = parseMany(response.jsonBody as List, parse);
 
-    cache.addEntries(messages.map((message) => MapEntry(message.id, message)));
+    cache.addEntities(messages);
     return messages;
   }
 

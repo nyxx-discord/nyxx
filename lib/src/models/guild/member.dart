@@ -52,10 +52,10 @@ class Member extends PartialMember {
   final DateTime? premiumSince;
 
   /// Whether this member is deafened in voice channels.
-  final bool isDeaf;
+  final bool? isDeaf;
 
   /// Whether this member is muted in voice channels.
-  final bool isMute;
+  final bool? isMute;
 
   /// A set of flags associated with this member.
   final MemberFlags flags;

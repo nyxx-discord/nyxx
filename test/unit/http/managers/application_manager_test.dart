@@ -120,5 +120,11 @@ void main() {
       (client) => client.applications.updateApplicationRoleConnectionMetadata(Snowflake.zero),
       response: [sampleRoleConnectionMetadata],
     );
+
+    testEndpoint(
+      '/oauth2/applications/@me',
+      (client) => client.applications.fetchCurrentApplication(),
+      response: sampleApplication,
+    );
   });
 }

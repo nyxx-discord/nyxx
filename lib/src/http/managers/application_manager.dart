@@ -121,4 +121,14 @@ class ApplicationManager {
     final response = await client.httpHandler.executeSafe(request);
     return parseMany(response.jsonBody as List<Object?>, parseApplicationRoleConnectionMetadata);
   }
+
+  Future<Application> fetchCurrentApplication() async {
+    final route = HttpRoute()
+      ..oauth2()
+      ..applications(id: '@me');
+    final request = BasicRequest(route);
+
+    final response = await client.httpHandler.executeSafe(request);
+    return parse(response.jsonBody as Map<String, Object?>);
+  }
 }

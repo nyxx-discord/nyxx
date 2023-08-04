@@ -120,3 +120,7 @@ class Cache<T> with MapMixin<Snowflake, T> {
     return _store.remove(key);
   }
 }
+
+extension SnowflakeCache<T extends SnowflakeEntity<T>> on Cache<T> {
+  void addEntities(Iterable<T> entities) => addEntries(entities.map((e) => MapEntry(e.id, e)));
+}

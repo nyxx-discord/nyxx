@@ -9,7 +9,8 @@ export 'src/errors.dart'
         ShardDisconnectedError,
         RoleNotFoundException,
         AuditLogEntryNotFoundException,
-        OutOfRemainingSessionsError;
+        OutOfRemainingSessionsError,
+        IntegrationNotFoundException;
 
 export 'src/builders/builder.dart' show Builder, CreateBuilder, UpdateBuilder;
 export 'src/builders/image.dart' show ImageBuilder;
@@ -39,6 +40,8 @@ export 'src/builders/channel/thread.dart' show ThreadUpdateBuilder, ForumThreadB
 export 'src/builders/message/allowed_mentions.dart' show AllowedMentions;
 export 'src/builders/message/attachment.dart' show AttachmentBuilder;
 export 'src/builders/message/message.dart' show MessageBuilder, MessageUpdateBuilder;
+export 'src/builders/message/component.dart'
+    show ActionRowBuilder, ButtonBuilder, MessageComponentBuilder, SelectMenuBuilder, SelectMenuOptionBuilder, TextInputBuilder;
 export 'src/builders/webhook.dart' show WebhookBuilder, WebhookUpdateBuilder;
 export 'src/builders/guild/guild.dart' show GuildBuilder, GuildUpdateBuilder;
 export 'src/builders/guild/member.dart' show CurrentMemberUpdateBuilder, MemberBuilder, MemberUpdateBuilder;
@@ -55,12 +58,15 @@ export 'src/builders/emoji/emoji.dart' show EmojiBuilder, EmojiUpdateBuilder;
 export 'src/builders/emoji/reaction.dart' show ReactionBuilder;
 export 'src/builders/invite.dart' show InviteBuilder;
 export 'src/builders/sticker.dart' show StickerBuilder, StickerUpdateBuilder;
+export 'src/builders/application_command.dart'
+    show ApplicationCommandBuilder, ApplicationCommandUpdateBuilder, CommandOptionBuilder, CommandOptionChoiceBuilder;
+export 'src/builders/interaction_response.dart' show InteractionResponseBuilder, ModalBuilder, InteractionCallbackType;
 
 export 'src/cache/cache.dart' show Cache, CacheConfig;
 
 export 'src/http/bucket.dart' show HttpBucket;
 export 'src/http/handler.dart' show HttpHandler;
-export 'src/http/request.dart' show BasicRequest, HttpRequest, MultipartRequest;
+export 'src/http/request.dart' show BasicRequest, HttpRequest, MultipartRequest, FormDataRequest;
 export 'src/http/response.dart' show FieldError, HttpErrorData, HttpResponse, HttpResponseError, HttpResponseSuccess;
 export 'src/http/route.dart' show HttpRoute, HttpRouteParam, HttpRoutePart;
 export 'src/http/cdn/cdn_asset.dart' show CdnAsset, CdnFormat;
@@ -83,6 +89,8 @@ export 'src/http/managers/integration_manager.dart' show IntegrationManager;
 export 'src/http/managers/emoji_manager.dart' show EmojiManager;
 export 'src/http/managers/audit_log_manager.dart' show AuditLogManager;
 export 'src/http/managers/sticker_manager.dart' show GuildStickerManager, GlobalStickerManager;
+export 'src/http/managers/application_command_manager.dart' show ApplicationCommandManager, GlobalApplicationCommandManager, GuildApplicationCommandManager;
+export 'src/http/managers/interaction_manager.dart' show InteractionManager;
 
 export 'src/gateway/gateway.dart' show Gateway;
 export 'src/gateway/message.dart' show Disconnecting, Dispose, ErrorReceived, EventReceived, GatewayMessage, Send, ShardData, ShardMessage;
@@ -123,10 +131,21 @@ export 'src/models/message/attachment.dart' show Attachment;
 export 'src/models/message/author.dart' show MessageAuthor;
 export 'src/models/message/channel_mention.dart' show ChannelMention;
 export 'src/models/message/embed.dart' show Embed, EmbedAuthor, EmbedField, EmbedFooter, EmbedImage, EmbedProvider, EmbedThumbnail, EmbedVideo;
-export 'src/models/message/message.dart' show Message, MessageFlags, PartialMessage, MessageType;
+export 'src/models/message/message.dart' show Message, MessageFlags, PartialMessage, MessageType, MessageInteraction;
 export 'src/models/message/reaction.dart' show Reaction;
 export 'src/models/message/reference.dart' show MessageReference;
 export 'src/models/message/role_subscription_data.dart' show RoleSubscriptionData;
+export 'src/models/message/component.dart'
+    show
+        ActionRowComponent,
+        ButtonComponent,
+        MessageComponent,
+        SelectMenuComponent,
+        SelectMenuOption,
+        TextInputComponent,
+        ButtonStyle,
+        MessageComponentType,
+        TextInputStyle;
 export 'src/models/invite/invite.dart' show Invite, TargetType;
 export 'src/models/invite/invite_metadata.dart' show InviteWithMetadata;
 export 'src/models/webhook.dart' show PartialWebhook, Webhook, WebhookType, WebhookAuthor;
@@ -165,7 +184,6 @@ export 'src/models/guild/auto_moderation.dart'
         AutoModerationEventType,
         KeywordPresetType,
         TriggerType;
-export 'src/models/application.dart' show Application, ApplicationFlags, InstallationParameters, PartialApplication;
 export 'src/models/voice/voice_state.dart' show VoiceState;
 export 'src/models/voice/voice_region.dart' show VoiceRegion;
 export 'src/models/role.dart' show PartialRole, Role, RoleTags;
@@ -244,8 +262,28 @@ export 'src/models/presence.dart'
 export 'src/models/emoji.dart' show Emoji, GuildEmoji, PartialEmoji, TextEmoji;
 export 'src/models/sticker/guild_sticker.dart' show GuildSticker, PartialGuildSticker;
 export 'src/models/sticker/global_sticker.dart' show GlobalSticker, PartialGlobalSticker;
-export 'src/models/sticker/sticker.dart' show Sticker, StickerType, StickerFormatType;
+export 'src/models/sticker/sticker.dart' show Sticker, StickerType, StickerFormatType, StickerItem;
 export 'src/models/sticker/sticker_pack.dart' show StickerPack;
+export 'src/models/commands/application_command.dart' show ApplicationCommand, PartialApplicationCommand, ApplicationCommandType;
+export 'src/models/commands/application_command_option.dart' show CommandOption, CommandOptionChoice, CommandOptionType;
+export 'src/models/commands/application_command_permissions.dart' show CommandPermission, CommandPermissions, CommandPermissionType;
+export 'src/models/team.dart' show Team, TeamMember, TeamMembershipState;
+export 'src/models/interaction.dart'
+    show
+        ApplicationCommandInteractionData,
+        Interaction,
+        InteractionOption,
+        MessageComponentInteractionData,
+        MessageResponse,
+        ModalResponse,
+        ModalSubmitInteractionData,
+        ResolvedData,
+        InteractionType,
+        ApplicationCommandAutocompleteInteraction,
+        ApplicationCommandInteraction,
+        MessageComponentInteraction,
+        ModalSubmitInteraction,
+        PingInteraction;
 
 export 'src/utils/flags.dart' show Flag, Flags;
 export 'src/intents.dart' show GatewayIntents;

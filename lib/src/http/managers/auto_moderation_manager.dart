@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:nyxx/src/builders/guild/auto_moderation.dart';
+import 'package:nyxx/src/cache/cache.dart';
 import 'package:nyxx/src/http/managers/manager.dart';
 import 'package:nyxx/src/http/request.dart';
 import 'package:nyxx/src/http/route.dart';
@@ -86,7 +87,7 @@ class AutoModerationManager extends Manager<AutoModerationRule> {
     final response = await client.httpHandler.executeSafe(request);
     final rules = parseMany(response.jsonBody as List<Object?>, parse);
 
-    cache.addEntries(rules.map((rule) => MapEntry(rule.id, rule)));
+    cache.addEntities(rules);
     return rules;
   }
 

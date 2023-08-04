@@ -3,9 +3,12 @@ import 'package:nyxx/src/builders/message/message.dart';
 import 'package:nyxx/src/http/managers/message_manager.dart';
 import 'package:nyxx/src/models/application.dart';
 import 'package:nyxx/src/models/channel/thread.dart';
+import 'package:nyxx/src/models/guild/member.dart';
+import 'package:nyxx/src/models/interaction.dart';
 import 'package:nyxx/src/models/message/activity.dart';
 import 'package:nyxx/src/models/message/attachment.dart';
 import 'package:nyxx/src/models/message/channel_mention.dart';
+import 'package:nyxx/src/models/message/component.dart';
 import 'package:nyxx/src/models/message/embed.dart';
 import 'package:nyxx/src/models/message/author.dart';
 import 'package:nyxx/src/models/message/reference.dart';
@@ -19,6 +22,7 @@ import 'package:nyxx/src/models/sticker/sticker.dart';
 import 'package:nyxx/src/models/user/user.dart';
 import 'package:nyxx/src/models/webhook.dart';
 import 'package:nyxx/src/utils/flags.dart';
+import 'package:nyxx/src/utils/to_string_helper/to_string_helper.dart';
 
 /// {@template partial_message}
 /// A partial [Message] object.
@@ -159,13 +163,14 @@ class Message extends PartialMessage {
   /// The message associated with [reference].
   final Message? referencedMessage;
 
-  // TODO: Do we want to include the interaction field?
+  /// Information about the interaction related to this message.
+  final MessageInteraction? interaction;
 
   /// The thread that was started from this message if any, `null` otherwise.
   final Thread? thread;
 
-  // TODO
-  //final List<MessageComponent> components;
+  /// A list of components in this message.
+  final List<MessageComponent>? components;
 
   /// List of sticker attached to message
   final List<StickerItem> stickers;
@@ -204,7 +209,9 @@ class Message extends PartialMessage {
     required this.reference,
     required this.flags,
     required this.referencedMessage,
+    required this.interaction,
     required this.thread,
+    required this.components,
     required this.position,
     required this.roleSubscriptionData,
     required this.stickers,
@@ -335,4 +342,33 @@ class MessageFlags extends Flags<MessageFlags> {
 
   /// Create a new [MessageFlags].
   const MessageFlags(super.value);
+}
+
+/// {@template message_interaction}
+/// Information about an interaction associated with a message.
+/// {@endtemplate}
+class MessageInteraction with ToStringHelper {
+  /// The ID of the interaction.
+  final Snowflake id;
+
+  /// The type of the interaction.
+  final InteractionType type;
+
+  /// The name of the command.
+  final String name;
+
+  /// The user that triggered the interaction.
+  final User user;
+
+  /// The member that triggered the interaction.
+  final PartialMember? member;
+
+  /// {@macro message_interaction}
+  MessageInteraction({
+    required this.id,
+    required this.type,
+    required this.name,
+    required this.user,
+    required this.member,
+  });
 }

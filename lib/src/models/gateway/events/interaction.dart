@@ -1,13 +1,13 @@
 import 'package:nyxx/src/models/gateway/event.dart';
+import 'package:nyxx/src/models/interaction.dart';
 
 /// {@template interaction_create_event}
 /// Emitted when an interaction is received by the client.
 /// {@endtemplate}
-// TODO: Are we moving this from nyxx_interactions to nyxx?
-class InteractionCreateEvent extends DispatchEvent {
-  // TODO
-  //final Interaction interaction;
+class InteractionCreateEvent<T extends Interaction<dynamic>> extends DispatchEvent {
+  // The created interaction.
+  final T interaction;
 
   /// {@macro interaction_create_event}
-  InteractionCreateEvent({required super.gateway});
+  InteractionCreateEvent({required super.gateway, required this.interaction});
 }

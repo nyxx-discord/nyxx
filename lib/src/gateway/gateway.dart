@@ -4,6 +4,7 @@ import 'package:logging/logging.dart';
 import 'package:nyxx/src/api_options.dart';
 import 'package:nyxx/src/builders/presence.dart';
 import 'package:nyxx/src/builders/voice.dart';
+import 'package:nyxx/src/cache/cache.dart';
 import 'package:nyxx/src/client.dart';
 import 'package:nyxx/src/errors.dart';
 import 'package:nyxx/src/gateway/event_parser.dart';
@@ -36,6 +37,7 @@ import 'package:nyxx/src/models/gateway/opcode.dart';
 import 'package:nyxx/src/models/guild/auto_moderation.dart';
 import 'package:nyxx/src/models/guild/guild.dart';
 import 'package:nyxx/src/models/guild/member.dart';
+import 'package:nyxx/src/models/interaction.dart';
 import 'package:nyxx/src/models/presence.dart';
 import 'package:nyxx/src/models/snowflake.dart';
 import 'package:nyxx/src/models/user/user.dart';
@@ -104,8 +106,6 @@ class Gateway extends GatewayManager with EventParser {
       );
     }
 
-    // TODO: ApplicationCommandPermissionsUpdateEvent
-
     // Handle all events which should update cache.
     events.listen((event) => switch (event) {
           ReadyEvent(:final user) => client.users.cache[user.id] = user,
@@ -113,16 +113,16 @@ class Gateway extends GatewayManager with EventParser {
           ChannelDeleteEvent(:final channel) => client.channels.cache.remove(channel.id),
           ThreadCreateEvent(:final thread) || ThreadUpdateEvent(:final thread) => client.channels.cache[thread.id] = thread,
           ThreadDeleteEvent(:final thread) => client.channels.cache.remove(thread.id),
-          ThreadListSyncEvent(:final threads) => client.channels.cache..addEntries(threads.map((thread) => MapEntry(thread.id, thread))),
+          ThreadListSyncEvent(:final threads) => client.channels.cache..addEntities(threads),
           final GuildCreateEvent event => () {
               client.guilds.cache[event.guild.id] = event.guild;
 
-              event.guild.members.cache.addEntries(event.members.map((member) => MapEntry(member.id, member)));
-              client.channels.cache.addEntries(event.channels.map((channel) => MapEntry(channel.id, channel)));
-              client.channels.cache.addEntries(event.threads.map((thread) => MapEntry(thread.id, thread)));
-              client.channels.stageInstanceCache.addEntries(event.stageInstances.map((instance) => MapEntry(instance.id, instance)));
-              event.guild.scheduledEvents.cache.addEntries(event.scheduledEvents.map((event) => MapEntry(event.id, event)));
-              client.voice.cache.addEntries(event.voiceStates.map((state) => MapEntry(state.cacheKey, state)));
+              event.guild.members.cache.addEntities(event.members);
+              client.channels.cache.addEntities(event.channels);
+              client.channels.cache.addEntities(event.threads);
+              client.channels.stageInstanceCache.addEntities(event.stageInstances);
+              event.guild.scheduledEvents.cache.addEntities(event.scheduledEvents);
+              client.voice.cache.addEntries(event.voiceStates.map((e) => MapEntry(e.cacheKey, e)));
             }(),
           GuildUpdateEvent(:final guild) => client.guilds.cache[guild.id] = guild,
           GuildDeleteEvent(:final guild, isUnavailable: false) => client.guilds.cache.remove(guild.id),
@@ -130,8 +130,7 @@ class Gateway extends GatewayManager with EventParser {
           GuildMemberUpdateEvent(:final guildId, :final member) =>
             client.guilds[guildId].members.cache[member.id] = member,
           GuildMemberRemoveEvent(:final guildId, :final user) => client.guilds[guildId].members.cache.remove(user.id),
-          GuildMembersChunkEvent(:final guildId, :final members) => client.guilds[guildId].members.cache
-            ..addEntries(members.map((member) => MapEntry(member.id, member))),
+          GuildMembersChunkEvent(:final guildId, :final members) => client.guilds[guildId].members.cache..addEntities(members),
           GuildRoleCreateEvent(:final guildId, :final role) ||
           GuildRoleUpdateEvent(:final guildId, :final role) =>
             client.guilds[guildId].roles.cache[role.id] = role,
@@ -162,9 +161,23 @@ class Gateway extends GatewayManager with EventParser {
           VoiceStateUpdateEvent(:final state) => client.voice.cache[state.cacheKey] = state,
           GuildEmojisUpdateEvent(:final guildId, :final emojis) => client.guilds[guildId].emojis.cache
             ..clear()
-            ..addEntries(emojis.map((emoji) => MapEntry(emoji.id, emoji))),
-          GuildStickersUpdateEvent(:final guildId, :final stickers) =>
-            client.guilds[guildId].stickers.cache.addEntries(stickers.map((sticker) => MapEntry(sticker.id, sticker))),
+            ..addEntities(emojis),
+          GuildStickersUpdateEvent(:final guildId, :final stickers) => client.guilds[guildId].stickers.cache.addEntities(stickers),
+          ApplicationCommandPermissionsUpdateEvent(:final permissions) => client.guilds[permissions.guildId].commands.permissionsCache[permissions.id] =
+              permissions,
+          InteractionCreateEvent(interaction: Interaction(:final guildId, data: ApplicationCommandInteractionData(resolved: final data?))) => () {
+              if (data.users != null) {
+                client.users.cache.addAll(data.users!);
+              }
+
+              if (data.members != null && guildId != null) {
+                client.guilds[guildId].members.cache.addAll(data.members!);
+              }
+
+              if (data.roles != null && guildId != null) {
+                client.guilds[guildId].roles.cache.addAll(data.roles!);
+              }
+            }(),
           _ => null,
         });
   }
@@ -336,8 +349,13 @@ class Gateway extends GatewayManager with EventParser {
   }
 
   ApplicationCommandPermissionsUpdateEvent parseApplicationCommandPermissionsUpdate(Map<String, Object?> raw) {
+    final guildId = Snowflake.parse(raw['guild_id']!);
+    final permissions = client.guilds[guildId].commands.parseCommandPermissions(raw);
+
     return ApplicationCommandPermissionsUpdateEvent(
       gateway: this,
+      permissions: permissions,
+      oldPermissions: client.guilds[guildId].commands.permissionsCache[permissions.id],
     );
   }
 
@@ -596,7 +614,6 @@ class Gateway extends GatewayManager with EventParser {
 
   GuildMemberUpdateEvent parseGuildMemberUpdate(Map<String, Object?> raw) {
     final guildId = Snowflake.parse(raw['guild_id']!);
-    // TODO: The member received from the update has mute and deaf as nullable fields, which this parser does not.
     final member = client.guilds[guildId].members.parse(raw);
 
     return GuildMemberUpdateEvent(
@@ -922,10 +939,20 @@ class Gateway extends GatewayManager with EventParser {
     );
   }
 
-  InteractionCreateEvent parseInteractionCreate(Map<String, Object?> raw) {
-    return InteractionCreateEvent(
-      gateway: this,
-    );
+  InteractionCreateEvent<Interaction<dynamic>> parseInteractionCreate(Map<String, Object?> raw) {
+    final interaction = client.interactions.parse(raw);
+
+    // Needed to get proper type promotion.
+    return switch (interaction.type) {
+      InteractionType.ping => InteractionCreateEvent<PingInteraction>(gateway: this, interaction: interaction as PingInteraction),
+      InteractionType.applicationCommand =>
+        InteractionCreateEvent<ApplicationCommandInteraction>(gateway: this, interaction: interaction as ApplicationCommandInteraction),
+      InteractionType.messageComponent =>
+        InteractionCreateEvent<MessageComponentInteraction>(gateway: this, interaction: interaction as MessageComponentInteraction),
+      InteractionType.modalSubmit => InteractionCreateEvent<ModalSubmitInteraction>(gateway: this, interaction: interaction as ModalSubmitInteraction),
+      InteractionType.applicationCommandAutocomplete =>
+        InteractionCreateEvent<ApplicationCommandAutocompleteInteraction>(gateway: this, interaction: interaction as ApplicationCommandAutocompleteInteraction),
+    } as InteractionCreateEvent<Interaction<dynamic>>;
   }
 
   StageInstanceCreateEvent parseStageInstanceCreate(Map<String, Object?> raw) {

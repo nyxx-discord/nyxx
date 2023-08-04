@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:nyxx/src/builders/emoji/emoji.dart';
+import 'package:nyxx/src/cache/cache.dart';
 import 'package:nyxx/src/http/request.dart';
 import 'package:nyxx/src/http/route.dart';
 import 'package:nyxx/src/models/emoji.dart';
@@ -83,7 +84,7 @@ class EmojiManager extends Manager<Emoji> {
     final response = await client.httpHandler.executeSafe(request);
     final emojis = parseMany(response.jsonBody as List<Object?>, (Map<String, Object?> raw) => parse(raw) as GuildEmoji);
 
-    cache.addEntries(emojis.map((emoji) => MapEntry(emoji.id, emoji)));
+    cache.addEntities(emojis);
     return emojis;
   }
 

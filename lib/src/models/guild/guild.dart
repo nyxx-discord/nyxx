@@ -7,6 +7,7 @@ import 'package:nyxx/src/builders/guild/welcome_screen.dart';
 import 'package:nyxx/src/builders/guild/widget.dart';
 import 'package:nyxx/src/builders/voice.dart';
 import 'package:nyxx/src/http/cdn/cdn_asset.dart';
+import 'package:nyxx/src/http/managers/application_command_manager.dart';
 import 'package:nyxx/src/http/managers/audit_log_manager.dart';
 import 'package:nyxx/src/http/managers/auto_moderation_manager.dart';
 import 'package:nyxx/src/http/managers/emoji_manager.dart';
@@ -69,6 +70,15 @@ class PartialGuild extends WritableSnowflakeEntity<Guild> {
 
   /// An [AuditLogManager] for the audit log of this guild.
   AuditLogManager get auditLogs => AuditLogManager(manager.client.options.auditLogEntryConfig, manager.client, guildId: id);
+
+  /// A [GuildApplicationCommandManager] for the application commands of this guild.
+  GuildApplicationCommandManager get commands => GuildApplicationCommandManager(
+        manager.client.options.applicationCommandConfig,
+        manager.client,
+        applicationId: manager.client.application.id,
+        guildId: id,
+        permissionsConfig: manager.client.options.commandPermissionsConfig,
+      );
 
   /// Create a new [PartialGuild].
   PartialGuild({required super.id, required this.manager});

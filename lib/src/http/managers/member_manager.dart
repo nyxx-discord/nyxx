@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:nyxx/src/builders/guild/member.dart';
+import 'package:nyxx/src/cache/cache.dart';
 import 'package:nyxx/src/errors.dart';
 import 'package:nyxx/src/http/managers/manager.dart';
 import 'package:nyxx/src/http/request.dart';
@@ -31,8 +32,8 @@ class MemberManager extends Manager<Member> {
       roleIds: parseMany(raw['roles'] as List, Snowflake.parse),
       joinedAt: DateTime.parse(raw['joined_at'] as String),
       premiumSince: maybeParse(raw['premium_since'], DateTime.parse),
-      isDeaf: raw['deaf'] as bool,
-      isMute: raw['mute'] as bool,
+      isDeaf: raw['deaf'] as bool?,
+      isMute: raw['mute'] as bool?,
       flags: MemberFlags(raw['flags'] as int),
       isPending: raw['pending'] as bool? ?? false,
       permissions: maybeParse(raw['permissions'], (String raw) => Permissions(int.parse(raw))),
@@ -67,7 +68,7 @@ class MemberManager extends Manager<Member> {
     final response = await client.httpHandler.executeSafe(request);
     final members = parseMany(response.jsonBody as List, parse);
 
-    cache.addEntries(members.map((e) => MapEntry(e.id, e)));
+    cache.addEntities(members);
     return members;
   }
 

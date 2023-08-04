@@ -25,11 +25,15 @@ void main() {
     // refer to the same variable if we use setUp and tearDown. use the All variants
     // to mitigate this.
     setUpAll(() async {
-      client = await Nyxx.connectRest(testToken!);
+      client = await Nyxx.connectRest(testToken!, options: RestClientOptions(applicationId: Snowflake.zero));
     });
 
     tearDownAll(() async {
       await client.close();
+    });
+
+    test('applications', () async {
+      await expectLater(client.applications.fetchCurrentApplication(), completes);
     });
 
     test('users', () async {
