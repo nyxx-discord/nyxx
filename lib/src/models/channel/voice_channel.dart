@@ -11,7 +11,7 @@ abstract class VoiceChannel implements Channel {
   /// The ID of the voice region for this channel, or automatic if `null`.
   String? get rtcRegion;
 
-  /// The [VideoQualityMode] for cameras in this chanel.
+  /// The [VideoQualityMode] for cameras in this channel.
   VideoQualityMode get videoQualityMode;
 }
 

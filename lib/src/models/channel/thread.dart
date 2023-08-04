@@ -55,7 +55,7 @@ abstract class Thread implements TextChannel, GuildChannel {
   /// Add a member to this thread.
   ///
   /// External references:
-  /// * [ChanelManager.addThreadMember]
+  /// * [ChannelManager.addThreadMember]
   /// * Discord API Reference: https://discord.com/developers/docs/resources/channel#add-thread-member
   Future<void> addThreadMember(Snowflake memberId);
 
