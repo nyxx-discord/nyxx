@@ -28,13 +28,13 @@ class ApplicationCommandBuilder extends CreateBuilder<ApplicationCommand> {
 
   ApplicationCommandBuilder({
     required this.name,
+    required this.type,
     this.nameLocalizations,
     this.description,
     this.descriptionLocalizations,
     this.options,
     this.defaultMemberPermissions,
     this.hasDmPermission,
-    required this.type,
     this.isNsfw,
   });
 
