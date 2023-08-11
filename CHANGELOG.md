@@ -1,3 +1,8 @@
+## 5.1.1
+__11.08.2023__
+
+- bug: Error on ThreadMemberUpdateEvent due invalid event deserialization
+
 ## 5.1.0
 __16.06.2023__
 
