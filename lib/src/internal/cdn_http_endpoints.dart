@@ -86,7 +86,7 @@ abstract class ICdnHttpEndpoints {
 }
 
 class CdnHttpEndpoints implements ICdnHttpEndpoints {
-  String _makeAnimatedCdnUrl(ICdnHttpRoute fragment, String hash, {String format = 'webp', int? size, bool animated = true}) {
+  String _makeAnimatedCdnUrl(ICdnHttpRoute fragment, String hash, {String format = 'webp', int? size, bool animated = false}) {
     final isAnimated = animated && hash.startsWith('a_');
 
     return _makeCdnUrl(fragment, format: format, size: size, animated: isAnimated);
