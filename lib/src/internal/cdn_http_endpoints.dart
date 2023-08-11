@@ -86,13 +86,13 @@ abstract class ICdnHttpEndpoints {
 }
 
 class CdnHttpEndpoints implements ICdnHttpEndpoints {
-  String _makeAnimatedCdnUrl(ICdnHttpRoute fragment, String hash, {String format = 'webp', int? size, bool animated = false}) {
+  String _makeAnimatedCdnUrl(ICdnHttpRoute fragment, String hash, {String format = 'webp', int? size, bool animated = true}) {
     final isAnimated = animated && hash.startsWith('a_');
 
     return _makeCdnUrl(fragment, format: format, size: size, animated: isAnimated);
   }
 
-  String _makeCdnUrl(ICdnHttpRoute fragments, {String format = 'webp', int? size, bool animated = true}) {
+  String _makeCdnUrl(ICdnHttpRoute fragments, {String format = 'webp', int? size, bool animated = false}) {
     if (!CdnConstants.allowedExtensions.contains(format)) {
       throw Exception('Invalid extension provided, must be one of ${CdnConstants.allowedExtensions.and()}; given: $format');
     }
