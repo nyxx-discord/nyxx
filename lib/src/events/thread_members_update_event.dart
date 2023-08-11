@@ -77,10 +77,12 @@ class ThreadMemberUpdateEvent implements IThreadMemberUpdateEvent {
   late final ThreadMember member;
 
   ThreadMemberUpdateEvent(RawApiMap raw, INyxx client) {
+    final data = raw["d"] as RawApiMap;
+
     member = ThreadMember(
       client,
-      raw,
-      GuildCacheable(client, Snowflake(raw['guild_id'])),
+      data,
+      GuildCacheable(client, Snowflake(data['guild_id'])),
     );
   }
 }
