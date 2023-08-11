@@ -1,3 +1,19 @@
+## 5.1.0
+__16.06.2023__
+
+- feature: Support the new unique username system with global display names.
+- bug: remove the `!` in the mention string as it has been deprecated.
+
+## 5.0.4
+__04.06.2023__
+
+- bug: Fix invalid casts
+
+## 5.0.3
+__11.04.2023__
+
+- bug: Always initialize guild caches
+
 ## 5.0.2
 __08.04.2023__
 

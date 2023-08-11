@@ -23,7 +23,15 @@ class CacheableTextChannel<S extends ITextChannel> extends Channel implements IC
   CacheableTextChannel(INyxx client, Snowflake id, [ChannelType type = ChannelType.unknown]) : super.raw(client, id, type);
 
   @override
-  S? getFromCache() => client.channels[id] as S?;
+  S? getFromCache() {
+    final cached = client.channels[id];
+
+    if (cached is S) {
+      return cached;
+    }
+
+    return null;
+  }
 
   @override
   Future<S> download() => client.httpEndpoints.fetchChannel(id);

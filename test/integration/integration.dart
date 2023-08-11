@@ -138,7 +138,7 @@ main() async {
     expect(userBot.discriminator, equals(1759));
     expect(userBot.formattedDiscriminator, equals("1759"));
     expect(userBot.bot, isTrue);
-    expect(userBot.mention, "<@!${testUserBotSnowflake.toString()}>");
+    expect(userBot.mention, "<@${testUserBotSnowflake.toString()}>");
     expect(userBot.tag, equals("Running on Dart#1759"));
     expect(userBot.avatarUrl(), equals('https://cdn.discordapp.com/avatars/476603965396746242/be6107505d7b9d15292da4e54d88836e.webp'));
   });

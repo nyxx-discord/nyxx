@@ -678,6 +678,9 @@ class Guild extends SnowflakeEntity implements IGuild {
         for (final rawSticker in raw["stickers"] as RawApiList) GuildSticker(rawSticker as RawApiMap, client)
     ];
 
+    autoModerationRules = SnowflakeCache<IAutoModerationRule>();
+    scheduledEvents = SnowflakeCache<IGuildEvent>();
+
     if (!guildCreate) return;
 
     raw["channels"].forEach((o) {
@@ -722,9 +725,6 @@ class Guild extends SnowflakeEntity implements IGuild {
       if (raw["stage_instances"] != null)
         for (final rawInstance in raw["stage_instances"] as RawApiList) StageChannelInstance(client, rawInstance as RawApiMap)
     ];
-
-    autoModerationRules = SnowflakeCache<IAutoModerationRule>();
-    scheduledEvents = SnowflakeCache<IGuildEvent>();
   }
 
   /// The guild's icon, represented as URL.
