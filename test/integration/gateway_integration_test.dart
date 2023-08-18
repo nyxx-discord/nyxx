@@ -101,5 +101,16 @@ void main() {
       client.updatePresence(PresenceBuilder(status: CurrentUserStatus.online, isAfk: false));
       await Future.delayed(const Duration(seconds: 5));
     });
+
+    group('Gateway', () {
+      test('latency', timeout: Timeout(Duration(minutes: 2)), () async {
+        // Only wait if the client hasn't yet received a heartbeat ack.
+        if (client.gateway.latency == Duration.zero) {
+          await client.gateway.messages.firstWhere((element) => element is EventReceived && element.event is HeartbeatAckEvent);
+        }
+
+        expect(client.gateway.latency, greaterThan(Duration.zero));
+      });
+    });
   });
 }

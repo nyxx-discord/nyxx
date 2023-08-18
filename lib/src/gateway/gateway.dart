@@ -82,6 +82,11 @@ class Gateway extends GatewayManager with EventParser {
 
   bool _closing = false;
 
+  /// The average latency across all shards in this [Gateway].
+  ///
+  /// See [Shard.latency] for details on how the latency is calculated.
+  Duration get latency => shards.fold(Duration.zero, (previousValue, element) => previousValue + (element.latency ~/ shards.length));
+
   /// Create a new [Gateway].
   Gateway(this.client, this.gatewayBot, this.shards, this.totalShards, this.shardIds) : super.create() {
     for (final shard in shards) {
