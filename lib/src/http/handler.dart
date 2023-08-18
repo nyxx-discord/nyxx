@@ -56,6 +56,31 @@ class HttpHandler {
   /// stream.
   Stream<HttpResponse> get onResponse => _onResponseController.stream;
 
+  final Queue<Duration> _realLatencies = DoubleLinkedQueue();
+  final Queue<Duration> _latencies = DoubleLinkedQueue();
+
+  final Expando<Stopwatch> _latencyStopwatches = Expando();
+
+  static const _latencyRequestCount = 10;
+
+  /// The average time taken by the last 10 requests to get a response.
+  ///
+  /// This time includes the time requests are held or retried due to rate limits. It is an indicator of how long the [Future] returned by [execute] is likely
+  /// to take to complete.
+  ///
+  /// If no requests have been completed, this getter returns [Duration.zero].
+  ///
+  /// To get the network latency for this [HttpHandler], see [realLatency].
+  Duration get latency => _latencies.isEmpty ? Duration.zero : (_latencies.reduce((a, b) => a + b) ~/ _latencies.length);
+
+  /// The average network latency of the last 10 requests.
+  ///
+  /// This time measures how long each request takes to get a response from Discord's API, regardless of holding or retries due to rate limiting. This is not an
+  /// indicator of how long each call to [execute] takes to complete.
+  ///
+  /// If no requests have been completed, this getter returns [Duration.zero].
+  Duration get realLatency => _realLatencies.isEmpty ? Duration.zero : (_realLatencies.reduce((a, b) => a + b) ~/ _realLatencies.length);
+
   /// Create a new [HttpHandler].
   ///
   /// {@macro http_handler}
@@ -91,6 +116,10 @@ class HttpHandler {
     }
 
     _onRequestController.add(request);
+
+    // Use ??= instead of = as the request might already exist if it was retried
+    // due to a rate limit.
+    _latencyStopwatches[request] ??= Stopwatch()..start();
 
     Duration waitTime;
     HttpBucket? bucket;
@@ -130,8 +159,18 @@ class HttpHandler {
     try {
       logger.finer('Sending ${request.loggingId}');
 
+      final realLatencyStopwatch = Stopwatch()..start();
+
       bucket?.addInflightRequest(request);
       final response = await httpClient.send(request.prepare(client));
+
+      final realLatency = (realLatencyStopwatch..stop()).elapsed;
+
+      _realLatencies.addLast(realLatency);
+      if (_realLatencies.length > _latencyRequestCount) {
+        _realLatencies.removeFirst();
+      }
+
       return _handle(request, response);
     } finally {
       bucket?.removeInflightRequest(request);
@@ -192,6 +231,17 @@ class HttpHandler {
         return Future.delayed(retryAfter, () => execute(request));
       } on TypeError {
         logger.shout('Invalid rate limit body for ${request.loggingId}! Your client is probably cloudflare banned!');
+      }
+    }
+
+    final latency = (_latencyStopwatches[request]?..stop())?.elapsed;
+    _latencyStopwatches[request] = null;
+
+    if (latency != null) {
+      _latencies.addLast(latency);
+
+      if (_latencies.length > _latencyRequestCount) {
+        _latencies.removeFirst();
       }
     }
 
