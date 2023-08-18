@@ -73,7 +73,7 @@ class HttpHandler {
   /// To get the network latency for this [HttpHandler], see [realLatency].
   Duration get latency => _latencies.isEmpty ? Duration.zero : (_latencies.reduce((a, b) => a + b) ~/ _latencies.length);
 
-  /// The average network latency of the last 10 requests.
+  /// The average network and API latency of the last 10 requests.
   ///
   /// This time measures how long each request takes to get a response from Discord's API, regardless of holding or retries due to rate limiting. This is not an
   /// indicator of how long each call to [execute] takes to complete.
