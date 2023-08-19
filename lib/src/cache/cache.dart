@@ -25,7 +25,7 @@ class CacheConfig<T> {
 typedef _CacheKey = ({String identifier, Snowflake key});
 
 class _CacheEntry {
-  dynamic value;
+  Object? value;
   int accessCount;
 
   _CacheEntry(this.value) : accessCount = 0;
@@ -128,6 +128,22 @@ class Cache<T> with MapMixin<Snowflake, T> {
   @override
   T? remove(Object? key) {
     return _store.remove((identifier: identifier, key: key))?.value as T?;
+  }
+
+  /// Return a mapping of identifier to cache contents for all caches associated with [client].
+  static Map<String, Map<Snowflake, Object?>> cachesFor(Nyxx client) {
+    final store = _stores[client];
+    if (store == null) {
+      return {};
+    }
+
+    final result = <String, Map<Snowflake, Object?>>{};
+
+    for (final entry in store.entries) {
+      (result[entry.key.identifier] ??= {})[entry.key.key] = entry.value.value;
+    }
+
+    return result;
   }
 }
 
