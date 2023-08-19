@@ -22,14 +22,20 @@ class CacheConfig<T> {
   const CacheConfig({this.maxSize, this.shouldCache});
 }
 
+typedef _CacheKey = ({String identifier, Snowflake key});
+
+class _CacheEntry {
+  dynamic value;
+  int accessCount;
+
+  _CacheEntry(this.value) : accessCount = 0;
+}
+
 /// A simple cache for [SnowflakeEntity]s.
 class Cache<T> with MapMixin<Snowflake, T> {
-  static final Expando<Map<String, Map<Snowflake, dynamic>>> _stores = Expando('Cache stores');
-  static final Expando<Map<String, Map<Snowflake, int>>> _counts = Expando('Cache counts');
+  static final Expando<Map<_CacheKey, _CacheEntry>> _stores = Expando('Cache store');
 
-  // References to the backing store for this Cache instance to avoid looking up the client & identifier every time.
-  late final Map<Snowflake, T> _store = ((_stores[client] ??= {})[identifier] ??= <Snowflake, T>{}) as Map<Snowflake, T>;
-  late final Map<Snowflake, int> _count = (_counts[client] ??= {})[identifier] ??= {};
+  Map<_CacheKey, _CacheEntry> get _store => _stores[client] ??= {};
 
   /// The configuration for this cache.
   final CacheConfig<T> config;
@@ -50,15 +56,15 @@ class Cache<T> with MapMixin<Snowflake, T> {
   /// Items are retained based on the number of accesses they have until the [CacheConfig.maxSize]
   /// is respected.
   void filterItems() {
-    if (config.maxSize != null && _store.length > config.maxSize!) {
-      final items = List.of(_store.keys);
-      items.sort((a, b) => _count[a]!.compareTo(_count[b]!));
+    final keys = List.of(_store.keys.where((element) => element.identifier == identifier));
 
-      final overflow = _store.length - config.maxSize!;
+    if (config.maxSize != null && keys.length > config.maxSize!) {
+      keys.sort((a, b) => _store[a]!.accessCount.compareTo(_store[b]!.accessCount));
 
-      for (final item in items.take(overflow)) {
-        _store.remove(item);
-        _count.remove(item);
+      final overflow = keys.length - config.maxSize!;
+
+      for (final key in keys.take(overflow)) {
+        _store.remove(key);
       }
     }
   }
@@ -83,11 +89,15 @@ class Cache<T> with MapMixin<Snowflake, T> {
     assert(value is! ManagedSnowflakeEntity || value.id == key, 'Mismatched entity key in cache');
 
     if (config.shouldCache?.call(value) == false) {
+      remove(key);
       return;
     }
 
-    _store[key] = value;
-    _count[key] ??= 0;
+    _store.update(
+      (identifier: identifier, key: key),
+      (entry) => entry..value = value,
+      ifAbsent: () => _CacheEntry(value),
+    );
 
     scheduleFilterItems();
   }
@@ -98,26 +108,26 @@ class Cache<T> with MapMixin<Snowflake, T> {
       return null;
     }
 
-    final value = _store[key];
-    if (value != null) {
-      _count.update(key, (value) => value + 1);
+    final entry = _store[(identifier: identifier, key: key)];
+    if (entry == null) {
+      return null;
     }
-    return value;
+
+    entry.accessCount++;
+    return entry.value as T;
   }
 
   @override
   void clear() {
-    _store.clear();
-    _count.clear();
+    _store.removeWhere((key, value) => key.identifier == identifier);
   }
 
   @override
-  Iterable<Snowflake> get keys => _store.keys;
+  Iterable<Snowflake> get keys => _store.keys.where((element) => element.identifier == identifier).map((e) => e.key);
 
   @override
   T? remove(Object? key) {
-    _count.remove(key);
-    return _store.remove(key);
+    return _store.remove((identifier: identifier, key: key))?.value as T?;
   }
 }
 
