@@ -27,11 +27,20 @@ class Shard extends Stream<ShardMessage> implements StreamSink<GatewayMessage> {
   /// The port on which events are sent to the runner.
   final SendPort sendPort;
 
+  /// The client this [Shard] is for.
   final NyxxGateway client;
 
+  /// The logger used by this shard.
   Logger get logger => Logger('${client.options.loggerName}.Shards[$id]');
 
   final Completer<void> _doneCompleter = Completer();
+
+  Duration _latency = Duration.zero;
+
+  /// The latency on this shard's connection.
+  ///
+  /// This is updated for each [HeartbeatAckEvent] received. If no [HeartbeatAckEvent] has been received, this will be [Duration.zero].
+  Duration get latency => _latency;
 
   /// Create a new [Shard].
   Shard(this.id, this.isolate, this.receiveStream, this.sendPort, this.client) {
@@ -47,17 +56,19 @@ class Shard extends Stream<ShardMessage> implements StreamSink<GatewayMessage> {
           logger.finer('Receive: ${event.opcode.name}');
 
           switch (event) {
-            case InvalidSessionEvent():
-              logger.finest('Resumable: ${event.isResumable}');
-              if (event.isResumable) {
+            case InvalidSessionEvent(:final isResumable):
+              logger.finest('Resumable: $isResumable');
+              if (isResumable) {
                 logger.info('Reconnecting: invalid session');
               } else {
                 logger.severe('Unresumable invalid session, disconnecting');
               }
-            case HelloEvent():
-              logger.finest('Heartbeat Interval: ${event.heartbeatInterval}');
+            case HelloEvent(:final heartbeatInterval):
+              logger.finest('Heartbeat Interval: $heartbeatInterval');
             case ReconnectEvent():
               logger.info('Reconnecting: reconnect requested');
+            case HeartbeatAckEvent(:final latency):
+              _latency = latency;
             default:
               break;
           }

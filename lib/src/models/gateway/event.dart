@@ -96,6 +96,9 @@ class HelloEvent extends GatewayEvent {
 /// Emitted when the server acknowledges the client's heartbeat.
 /// {@endtemplate}
 class HeartbeatAckEvent extends GatewayEvent {
+  /// The time taken for this event to be sent in response to the last [Opcode.heartbeat] message.
+  final Duration latency;
+
   /// {@macro heartbeat_ack_event}
-  HeartbeatAckEvent() : super(opcode: Opcode.heartbeatAck);
+  HeartbeatAckEvent({required this.latency}) : super(opcode: Opcode.heartbeatAck);
 }

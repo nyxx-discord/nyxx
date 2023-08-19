@@ -1,9 +1,11 @@
 import 'dart:io';
 
+import 'package:mocktail/mocktail.dart';
 import 'package:nyxx/nyxx.dart';
 import 'package:test/test.dart' hide completes;
 
 import '../function_completes.dart';
+import '../mocks/client.dart';
 
 void main() {
   final testToken = Platform.environment['TEST_TOKEN'];
@@ -15,6 +17,24 @@ void main() {
 
     await expectLater(() async => client = await Nyxx.connectRest(testToken!), completes);
     await expectLater(client.close(), completes);
+  });
+
+  group('HttpHandler', () {
+    test('latency & realLatency', () async {
+      final client = MockNyxx();
+      when(() => client.apiOptions).thenReturn(RestApiOptions(token: 'TEST_TOKEN'));
+      when(() => client.options).thenReturn(RestClientOptions());
+
+      final handler = HttpHandler(client);
+      final request = BasicRequest(HttpRoute(), method: 'HEAD');
+
+      for (int i = 0; i < 5; i++) {
+        await handler.execute(request);
+      }
+
+      expect(handler.latency, greaterThan(Duration.zero));
+      expect(handler.realLatency, greaterThan(Duration.zero));
+    });
   });
 
   group('NyxxRest', skip: testToken != null ? false : 'No test token provided', () {

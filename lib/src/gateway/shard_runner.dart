@@ -33,6 +33,9 @@ class ShardRunner {
   /// Whether the last heartbeat was ACKed.
   bool lastHeartbeatAcked = true;
 
+  /// The stopwatch timing the interval between a heartbeat being sent and a heartbeat ACK being received.
+  Stopwatch? heartbeatStopwatch;
+
   /// Whether the current connection can be resumed.
   bool canResume = false;
 
@@ -136,6 +139,7 @@ class ShardRunner {
               connection!.close();
             } else if (event is HeartbeatAckEvent) {
               lastHeartbeatAcked = true;
+              heartbeatStopwatch = null;
             } else if (event is HeartbeatEvent) {
               connection!.add(Send(opcode: Opcode.heartbeat, data: seq));
             }
@@ -173,6 +177,7 @@ class ShardRunner {
           connection = null;
           heartbeatTimer?.cancel();
           heartbeatTimer = null;
+          heartbeatStopwatch = null;
         }
       }
     }
@@ -193,6 +198,7 @@ class ShardRunner {
 
     connection!.add(Send(opcode: Opcode.heartbeat, data: seq));
     lastHeartbeatAcked = false;
+    heartbeatStopwatch = Stopwatch()..start();
   }
 
   void startHeartbeat(Duration heartbeatInterval) {
@@ -258,7 +264,8 @@ class ShardConnection extends Stream<GatewayEvent> implements StreamSink<Send> {
     };
 
     final parser = EventParser();
-    final eventStream = dataStream.cast<Map<String, Object?>>().map(parser.parseGatewayEvent);
+    final eventStream =
+        dataStream.cast<Map<String, Object?>>().map((event) => parser.parseGatewayEvent(event, heartbeatLatency: runner.heartbeatStopwatch?.elapsed));
 
     return ShardConnection(connection, eventStream.asBroadcastStream(), runner);
   }
