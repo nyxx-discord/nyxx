@@ -7,38 +7,30 @@ import 'package:nyxx/src/models/message/embed.dart';
 import 'package:nyxx/src/models/message/message.dart';
 import 'package:nyxx/src/models/snowflake.dart';
 
-class MessageBuilder extends CreateBuilder<Message> implements MessageUpdateBuilder {
-  @override
+class MessageBuilder extends CreateBuilder<Message> {
   final String? content;
 
   final dynamic /* int | String */ nonce;
 
   final bool? tts;
 
-  @override
   final List<Embed>? embeds;
 
-  @override
   final AllowedMentions? allowedMentions;
 
   final Snowflake? replyId;
 
   final bool? requireReplyToExist;
 
-  @override
   final List<ActionRowBuilder>? components;
 
   final List<Snowflake>? stickerIds;
 
-  @override
   final List<AttachmentBuilder>? attachments;
 
-  @override
   final bool? suppressEmbeds;
 
   final bool? suppressNotifications;
-
-  final bool? isEphemeral;
 
   MessageBuilder({
     this.content,
@@ -53,7 +45,6 @@ class MessageBuilder extends CreateBuilder<Message> implements MessageUpdateBuil
     this.attachments,
     this.suppressEmbeds,
     this.suppressNotifications,
-    this.isEphemeral,
   });
 
   @override
@@ -135,10 +126,9 @@ class MessageBuilder extends CreateBuilder<Message> implements MessageUpdateBuil
       if (components != null) 'components': components!.map((e) => e.build()).toList(),
       if (stickerIds != null) 'sticker_ids': stickerIds!.map((e) => e.toString()).toList(),
       if (attachments != null) 'attachments': attachments!.map((e) => e.build()).toList(),
-      if (suppressEmbeds != null || suppressNotifications != null || isEphemeral != null)
-        'flags': (suppressEmbeds == true ? MessageFlags.suppressEmbeds.value : 0) |
-            (suppressNotifications == true ? MessageFlags.suppressNotifications.value : 0) |
-            (isEphemeral == true ? MessageFlags.ephemeral.value : 0),
+      if (suppressEmbeds != null || suppressNotifications != null)
+        'flags':
+            (suppressEmbeds == true ? MessageFlags.suppressEmbeds.value : 0) | (suppressNotifications == true ? MessageFlags.suppressNotifications.value : 0),
     };
   }
 }

@@ -13,9 +13,23 @@ class InteractionResponseBuilder extends CreateBuilder<InteractionResponseBuilde
 
   factory InteractionResponseBuilder.pong() => InteractionResponseBuilder(type: InteractionCallbackType.pong, data: null);
 
-  factory InteractionResponseBuilder.channelMessage(MessageBuilder message) => InteractionResponseBuilder(
+  factory InteractionResponseBuilder.channelMessage(MessageBuilder message, {bool? isEphemeral}) => InteractionResponseBuilder(
         type: InteractionCallbackType.channelMessageWithSource,
-        data: message,
+        data: _EphemeralMessageBuilder(
+          content: message.content,
+          nonce: message.nonce,
+          tts: message.tts,
+          embeds: message.embeds,
+          allowedMentions: message.allowedMentions,
+          replyId: message.replyId,
+          requireReplyToExist: message.requireReplyToExist,
+          components: message.components,
+          stickerIds: message.stickerIds,
+          attachments: message.attachments,
+          suppressEmbeds: message.suppressEmbeds,
+          suppressNotifications: message.suppressNotifications,
+          isEphemeral: isEphemeral,
+        ),
       );
 
   factory InteractionResponseBuilder.deferredChannelMessage({bool? isEphemeral}) => InteractionResponseBuilder(
@@ -53,6 +67,37 @@ class InteractionResponseBuilder extends CreateBuilder<InteractionResponseBuilde
       'type': type.value,
       'data': builtData,
     };
+  }
+}
+
+class _EphemeralMessageBuilder extends MessageBuilder {
+  final bool? isEphemeral;
+
+  _EphemeralMessageBuilder({
+    required super.content,
+    required super.nonce,
+    required super.tts,
+    required super.embeds,
+    required super.allowedMentions,
+    required super.replyId,
+    required super.requireReplyToExist,
+    required super.components,
+    required super.stickerIds,
+    required super.attachments,
+    required super.suppressEmbeds,
+    required super.suppressNotifications,
+    required this.isEphemeral,
+  });
+
+  @override
+  Map<String, Object?> build() {
+    final built = super.build();
+
+    if (isEphemeral != null) {
+      built['flags'] = (built['flags'] as int? ?? 0) | (isEphemeral == true ? MessageFlags.ephemeral.value : 0);
+    }
+
+    return built;
   }
 }
 
