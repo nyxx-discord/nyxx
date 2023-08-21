@@ -65,15 +65,7 @@ String stringifyInstance(InstanceMirror mirror) {
   for (final identifier in outputtedGetters.map((getter) => getter.simpleName)) {
     late final String representation;
     try {
-      final value = mirror.getField(identifier);
-
-      // If the value has a custom `toString` implementation, call that. Otherwise recursively
-      // stringify the value.
-      if (value.type.instanceMembers[#toString]!.owner != reflectClass(Object)) {
-        representation = value.reflectee.toString();
-      } else {
-        representation = stringifyInstance(value);
-      }
+      representation = mirror.getField(identifier).reflectee.toString();
     } catch (e) {
       representation = '<$e>';
     }
