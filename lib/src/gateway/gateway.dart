@@ -805,7 +805,7 @@ class Gateway extends GatewayManager with EventParser {
       guildId: guildId,
       member: maybeParse(
         raw['member'],
-        (Map<String, Object?> raw) => PartialMember(
+        (Map<String, Object?> _) => PartialMember(
           id: Snowflake.parse((raw['author'] as Map<String, Object?>)['id']!),
           manager: client.guilds[guildId ?? Snowflake.zero].members,
         ),
