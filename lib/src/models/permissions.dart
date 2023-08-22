@@ -134,6 +134,9 @@ class Permissions extends Flags<Permissions> {
   /// Allows for using soundboard in a voice channel.
   static const useSoundboard = Flag<Permissions>.fromOffset(42);
 
+  /// A [Permissions] with all permissions enabled.
+  static const allPermissions = Permissions(1099511627775);
+
   /// Whether this set of permissions has the [createInstantInvite] permission.
   bool get canCreateInstantInvite => has(createInstantInvite);
 
