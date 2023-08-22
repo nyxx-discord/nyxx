@@ -1,4 +1,5 @@
 import 'package:nyxx/src/builders/application_command.dart';
+import 'package:nyxx/src/builders/builder.dart';
 import 'package:nyxx/src/builders/interaction_response.dart';
 import 'package:nyxx/src/builders/message/message.dart';
 import 'package:nyxx/src/http/managers/interaction_manager.dart';
@@ -111,19 +112,19 @@ mixin MessageResponse<T> on Interaction<T> {
   }
 
   /// Send a response to this interaction.
-  Future<void> respond(MessageBuilder builder) async {
+  Future<void> respond(MessageBuilder builder, {bool? isEphemeral}) async {
     assert(!_didRespond, 'Can only respond to an interaction once');
 
     if (!_didAcknowledge) {
       _didAcknowledge = true;
       _didRespond = true;
-      _wasEphemeral = builder.isEphemeral;
+      _wasEphemeral = isEphemeral;
 
-      await manager.createResponse(id, token, InteractionResponseBuilder.channelMessage(builder));
+      await manager.createResponse(id, token, InteractionResponseBuilder.channelMessage(builder, isEphemeral: isEphemeral));
     } else {
-      assert(builder.isEphemeral == _wasEphemeral || builder.isEphemeral == null, 'Cannot change the value of isEphemeral between acknowledge and respond');
+      assert(isEphemeral == _wasEphemeral || isEphemeral == null, 'Cannot change the value of isEphemeral between acknowledge and respond');
 
-      await manager.updateOriginalResponse(token, builder);
+      await manager.createFollowup(token, builder);
     }
   }
 
@@ -261,27 +262,33 @@ class MessageComponentInteraction extends Interaction<MessageComponentInteractio
   }
 
   @override
-  Future<void> respond(MessageBuilder builder, {bool? updateMessage}) async {
+  Future<void> respond(Builder<Message> builder, {bool? updateMessage, bool? isEphemeral}) async {
     assert(updateMessage == null || type == InteractionType.messageComponent, 'Cannot set updateMessage for non-component interactions');
-    assert(updateMessage != true || builder.isEphemeral != true, 'Cannot set isEphemeral to true if updateMessage is set to true');
+    assert(updateMessage != true || isEphemeral != true, 'Cannot set isEphemeral to true if updateMessage is set to true');
+    assert(builder is MessageUpdateBuilder == updateMessage, 'builder must be a MessageUpdateBuilder if updateMessage is true');
+    assert(builder is MessageBuilder != updateMessage, 'builder must be a MessageBuilder if updateMessage is null or false');
 
     if (!_didRespond) {
-      assert(updateMessage != true || builder.isEphemeral != true, 'Cannot set isEphemeral to true if updateMessage is set to true');
+      assert(updateMessage != true || isEphemeral != true, 'Cannot set isEphemeral to true if updateMessage is set to true');
 
       _didRespond = true;
       _didUpdateMessage = updateMessage;
-      _wasEphemeral = builder.isEphemeral;
+      _wasEphemeral = isEphemeral;
 
       if (updateMessage == true) {
-        await manager.createResponse(id, token, InteractionResponseBuilder.updateMessage(builder));
+        await manager.createResponse(id, token, InteractionResponseBuilder.updateMessage(builder as MessageUpdateBuilder));
       } else {
-        await manager.createResponse(id, token, InteractionResponseBuilder.channelMessage(builder));
+        await manager.createResponse(id, token, InteractionResponseBuilder.channelMessage(builder as MessageBuilder));
       }
     } else {
       assert(updateMessage == _didUpdateMessage || updateMessage == null, 'Cannot change the value of updateMessage between acknowledge and respond');
-      assert(builder.isEphemeral == _wasEphemeral || builder.isEphemeral == null, 'Cannot change the value of isEphemeral between acknowledge and respond');
+      assert(isEphemeral == _wasEphemeral || isEphemeral == null, 'Cannot change the value of isEphemeral between acknowledge and respond');
 
-      await manager.updateOriginalResponse(token, builder);
+      if (updateMessage == true) {
+        await manager.updateOriginalResponse(token, builder as MessageUpdateBuilder);
+      } else {
+        await manager.createFollowup(token, builder as MessageBuilder);
+      }
     }
   }
 }
