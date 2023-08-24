@@ -10,30 +10,22 @@ void main() {
       ],
       content: 'test content',
       embeds: [
-        Embed(
+        EmbedBuilder(
           title: 'test embed title',
           description: 'A test embed description',
           url: Uri.https('discord.com', '/channels/@me'),
           timestamp: DateTime.utc(2022),
           color: DiscordColor.fromRgb(0, 0, 0),
-          footer: EmbedFooter(text: 'footer text', iconUrl: null, proxiedIconUrl: null),
-          image: EmbedImage(
+          footer: EmbedFooterBuilder(text: 'footer text'),
+          image: EmbedImageBuilder(
             url: Uri.parse('https://github.com/dart-lang/sdk/raw/main/docs/assets/Dart-platforms.svg'),
-            proxiedUrl: null,
-            height: null,
-            width: null,
           ),
-          thumbnail: EmbedThumbnail(
+          thumbnail: EmbedThumbnailBuilder(
             url: Uri.parse('https://github.com/dart-lang/sdk/raw/main/docs/assets/Dart-platforms.svg'),
-            proxiedUrl: null,
-            height: null,
-            width: null,
           ),
-          video: EmbedVideo(url: Uri.https('example.com'), proxiedUrl: null, height: null, width: null),
-          provider: EmbedProvider(name: 'nyxx', url: null),
-          author: EmbedAuthor(name: 'test embed author', url: null, iconUrl: null, proxyIconUrl: null),
+          author: EmbedAuthorBuilder(name: 'test embed author'),
           fields: [
-            EmbedField(name: 'whoops', value: 'no error here', inline: false),
+            EmbedFieldBuilder(name: 'whoops', value: 'no error here', isInline: false),
           ],
         ),
       ],
@@ -66,12 +58,6 @@ void main() {
             },
             'thumbnail': {
               'url': 'https://github.com/dart-lang/sdk/raw/main/docs/assets/Dart-platforms.svg',
-            },
-            'video': {
-              'url': 'https://example.com',
-            },
-            'provider': {
-              'name': 'nyxx',
             },
             'author': {
               'name': 'test embed author',
@@ -107,30 +93,22 @@ void main() {
       ],
       content: 'test content',
       embeds: [
-        Embed(
+        EmbedBuilder(
           title: 'test embed title',
           description: 'A test embed description',
           url: Uri.https('discord.com', '/channels/@me'),
           timestamp: DateTime.utc(2022),
           color: DiscordColor.fromRgb(0, 0, 0),
-          footer: EmbedFooter(text: 'footer text', iconUrl: null, proxiedIconUrl: null),
-          image: EmbedImage(
+          footer: EmbedFooterBuilder(text: 'footer text'),
+          image: EmbedImageBuilder(
             url: Uri.parse('https://github.com/dart-lang/sdk/raw/main/docs/assets/Dart-platforms.svg'),
-            proxiedUrl: null,
-            height: null,
-            width: null,
           ),
-          thumbnail: EmbedThumbnail(
+          thumbnail: EmbedThumbnailBuilder(
             url: Uri.parse('https://github.com/dart-lang/sdk/raw/main/docs/assets/Dart-platforms.svg'),
-            proxiedUrl: null,
-            height: null,
-            width: null,
           ),
-          video: EmbedVideo(url: Uri.https('example.com'), proxiedUrl: null, height: null, width: null),
-          provider: EmbedProvider(name: 'nyxx', url: null),
-          author: EmbedAuthor(name: 'test embed author', url: null, iconUrl: null, proxyIconUrl: null),
+          author: EmbedAuthorBuilder(name: 'test embed author'),
           fields: [
-            EmbedField(name: 'whoops', value: 'no error here', inline: false),
+            EmbedFieldBuilder(name: 'whoops', value: 'no error here', isInline: false),
           ],
         ),
       ],
@@ -156,12 +134,6 @@ void main() {
             },
             'thumbnail': {
               'url': 'https://github.com/dart-lang/sdk/raw/main/docs/assets/Dart-platforms.svg',
-            },
-            'video': {
-              'url': 'https://example.com',
-            },
-            'provider': {
-              'name': 'nyxx',
             },
             'author': {
               'name': 'test embed author',
