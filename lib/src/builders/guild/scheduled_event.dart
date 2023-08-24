@@ -6,23 +6,23 @@ import 'package:nyxx/src/models/guild/scheduled_event.dart';
 import 'package:nyxx/src/models/snowflake.dart';
 
 class ScheduledEventBuilder extends CreateBuilder<ScheduledEvent> {
-  final Snowflake? channelId;
+  Snowflake? channelId;
 
-  final EntityMetadata? metadata;
+  EntityMetadata? metadata;
 
-  final String name;
+  String name;
 
-  final PrivacyLevel privacyLevel;
+  PrivacyLevel privacyLevel;
 
-  final DateTime scheduledStartTime;
+  DateTime scheduledStartTime;
 
-  final DateTime? scheduledEndTime;
+  DateTime? scheduledEndTime;
 
-  final String? description;
+  String? description;
 
-  final ScheduledEntityType type;
+  ScheduledEntityType type;
 
-  final ImageBuilder? image;
+  ImageBuilder? image;
 
   ScheduledEventBuilder({
     required this.channelId,
@@ -51,25 +51,25 @@ class ScheduledEventBuilder extends CreateBuilder<ScheduledEvent> {
 }
 
 class ScheduledEventUpdateBuilder extends UpdateBuilder<ScheduledEvent> {
-  final Snowflake? channelId;
+  Snowflake? channelId;
 
-  final EntityMetadata? metadata;
+  EntityMetadata? metadata;
 
-  final String? name;
+  String? name;
 
-  final PrivacyLevel? privacyLevel;
+  PrivacyLevel? privacyLevel;
 
-  final DateTime? scheduledStartTime;
+  DateTime? scheduledStartTime;
 
-  final DateTime? scheduledEndTime;
+  DateTime? scheduledEndTime;
 
-  final String? description;
+  String? description;
 
-  final ScheduledEntityType? type;
+  ScheduledEntityType? type;
 
-  final EventStatus? status;
+  EventStatus? status;
 
-  final ImageBuilder? image;
+  ImageBuilder? image;
 
   ScheduledEventUpdateBuilder({
     this.channelId = sentinelSnowflake,

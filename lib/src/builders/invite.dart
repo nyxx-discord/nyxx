@@ -4,19 +4,19 @@ import 'package:nyxx/src/models/invite/invite.dart';
 import 'package:nyxx/src/models/snowflake.dart';
 
 class InviteBuilder extends CreateBuilder<Invite> {
-  final Duration? maxAge;
+  Duration? maxAge;
 
-  final int? maxUses;
+  int? maxUses;
 
-  final bool? isTemporary;
+  bool? isTemporary;
 
-  final bool? isUnique;
+  bool? isUnique;
 
-  final TargetType? targetType;
+  TargetType? targetType;
 
-  final Snowflake? targetUserId;
+  Snowflake? targetUserId;
 
-  final Snowflake? targetApplicationId;
+  Snowflake? targetApplicationId;
 
   InviteBuilder({
     this.maxAge = sentinelDuration,

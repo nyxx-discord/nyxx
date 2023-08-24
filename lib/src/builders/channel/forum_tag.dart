@@ -3,13 +3,13 @@ import 'package:nyxx/src/models/channel/types/forum.dart';
 import 'package:nyxx/src/models/snowflake.dart';
 
 class ForumTagBuilder extends CreateBuilder<ForumTag> {
-  final String name;
+  String name;
 
-  final bool? isModerated;
+  bool? isModerated;
 
-  final Snowflake? emojiId;
+  Snowflake? emojiId;
 
-  final String? emojiName;
+  String? emojiName;
 
   ForumTagBuilder({required this.name, this.isModerated, this.emojiId, this.emojiName});
 

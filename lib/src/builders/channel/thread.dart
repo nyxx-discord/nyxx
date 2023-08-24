@@ -7,11 +7,11 @@ import 'package:nyxx/src/models/snowflake.dart';
 import 'package:nyxx/src/utils/flags.dart';
 
 class ThreadFromMessageBuilder extends CreateBuilder<Thread> {
-  final String name;
+  String name;
 
-  final Duration? autoArchiveDuration;
+  Duration? autoArchiveDuration;
 
-  final Duration? rateLimitPerUser;
+  Duration? rateLimitPerUser;
 
   ThreadFromMessageBuilder({required this.name, this.autoArchiveDuration, this.rateLimitPerUser});
 
@@ -29,15 +29,15 @@ class ThreadBuilder extends CreateBuilder<Thread> {
   static const archiveThreeDays = Duration(minutes: 4320);
   static const archiveOneWeek = Duration(minutes: 10080);
 
-  final String name;
+  String name;
 
-  final Duration? autoArchiveDuration;
+  Duration? autoArchiveDuration;
 
-  final ChannelType type;
+  ChannelType type;
 
-  final bool? invitable;
+  bool? invitable;
 
-  final Duration? rateLimitPerUser;
+  Duration? rateLimitPerUser;
 
   ThreadBuilder({required this.name, this.autoArchiveDuration, required this.type, this.invitable, this.rateLimitPerUser});
 
@@ -52,15 +52,15 @@ class ThreadBuilder extends CreateBuilder<Thread> {
 }
 
 class ForumThreadBuilder extends CreateBuilder<Thread> {
-  final String name;
+  String name;
 
-  final Duration? autoArchiveDuration;
+  Duration? autoArchiveDuration;
 
-  final Duration? rateLimitPerUser;
+  Duration? rateLimitPerUser;
 
-  final MessageBuilder message;
+  MessageBuilder message;
 
-  final List<Snowflake>? appliedTags;
+  List<Snowflake>? appliedTags;
 
   ForumThreadBuilder({required this.name, this.autoArchiveDuration, this.rateLimitPerUser, required this.message, this.appliedTags});
 
@@ -75,21 +75,21 @@ class ForumThreadBuilder extends CreateBuilder<Thread> {
 }
 
 class ThreadUpdateBuilder extends UpdateBuilder<Thread> {
-  final String? name;
+  String? name;
 
-  final bool? isArchived;
+  bool? isArchived;
 
-  final Duration? autoArchiveDuration;
+  Duration? autoArchiveDuration;
 
-  final bool? isLocked;
+  bool? isLocked;
 
-  final bool? isInvitable;
+  bool? isInvitable;
 
-  final Duration? rateLimitPerUser;
+  Duration? rateLimitPerUser;
 
-  final Flags<ChannelFlags>? flags;
+  Flags<ChannelFlags>? flags;
 
-  final List<Snowflake>? appliedTags;
+  List<Snowflake>? appliedTags;
 
   ThreadUpdateBuilder({
     this.name,

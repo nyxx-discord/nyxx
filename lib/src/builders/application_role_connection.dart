@@ -3,11 +3,11 @@ import 'package:nyxx/src/builders/sentinels.dart';
 import 'package:nyxx/src/models/user/application_role_connection.dart';
 
 class ApplicationRoleConnectionUpdateBuilder extends UpdateBuilder<ApplicationRoleConnection> {
-  final String? platformName;
+  String? platformName;
 
-  final String? platformUsername;
+  String? platformUsername;
 
-  final Map<String, String>? metadata;
+  Map<String, String>? metadata;
 
   ApplicationRoleConnectionUpdateBuilder({this.platformName = sentinelString, this.platformUsername = sentinelString, this.metadata});
 

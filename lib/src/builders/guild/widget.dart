@@ -4,9 +4,9 @@ import 'package:nyxx/src/models/guild/guild_widget.dart';
 import 'package:nyxx/src/models/snowflake.dart';
 
 class WidgetSettingsUpdateBuilder extends UpdateBuilder<WidgetSettings> {
-  final bool? isEnabled;
+  bool? isEnabled;
 
-  final Snowflake? channelId;
+  Snowflake? channelId;
 
   WidgetSettingsUpdateBuilder({this.isEnabled, this.channelId = sentinelSnowflake});
 

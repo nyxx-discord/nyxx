@@ -4,7 +4,7 @@ import 'package:nyxx/src/models/emoji.dart';
 import 'package:nyxx/src/models/message/component.dart';
 
 abstract class MessageComponentBuilder extends CreateBuilder<MessageComponent> {
-  final MessageComponentType type;
+  MessageComponentType type;
 
   MessageComponentBuilder({required this.type});
 
@@ -13,7 +13,7 @@ abstract class MessageComponentBuilder extends CreateBuilder<MessageComponent> {
 }
 
 class ActionRowBuilder extends MessageComponentBuilder {
-  final List<MessageComponentBuilder> components;
+  List<MessageComponentBuilder> components;
 
   ActionRowBuilder({required this.components}) : super(type: MessageComponentType.actionRow);
 
@@ -25,17 +25,17 @@ class ActionRowBuilder extends MessageComponentBuilder {
 }
 
 class ButtonBuilder extends MessageComponentBuilder {
-  final ButtonStyle style;
+  ButtonStyle style;
 
-  final String? label;
+  String? label;
 
-  final Emoji? emoji;
+  Emoji? emoji;
 
-  final String? customId;
+  String? customId;
 
-  final Uri? url;
+  Uri? url;
 
-  final bool? isDisabled;
+  bool? isDisabled;
 
   ButtonBuilder({
     required this.style,
@@ -64,19 +64,19 @@ class ButtonBuilder extends MessageComponentBuilder {
 }
 
 class SelectMenuBuilder extends MessageComponentBuilder {
-  final String customId;
+  String customId;
 
-  final List<SelectMenuOptionBuilder>? options;
+  List<SelectMenuOptionBuilder>? options;
 
-  final List<ChannelType>? channelTypes;
+  List<ChannelType>? channelTypes;
 
-  final String? placeholder;
+  String? placeholder;
 
-  final int? minValues;
+  int? minValues;
 
-  final int? maxValues;
+  int? maxValues;
 
-  final bool? isDisabled;
+  bool? isDisabled;
 
   SelectMenuBuilder({
     required super.type,
@@ -103,15 +103,15 @@ class SelectMenuBuilder extends MessageComponentBuilder {
 }
 
 class SelectMenuOptionBuilder extends CreateBuilder<SelectMenuOption> {
-  final String label;
+  String label;
 
-  final String value;
+  String value;
 
-  final String? description;
+  String? description;
 
-  final Emoji? emoji;
+  Emoji? emoji;
 
-  final bool? isDefault;
+  bool? isDefault;
 
   SelectMenuOptionBuilder({
     required this.label,
@@ -137,21 +137,21 @@ class SelectMenuOptionBuilder extends CreateBuilder<SelectMenuOption> {
 }
 
 class TextInputBuilder extends MessageComponentBuilder {
-  final String customId;
+  String customId;
 
-  final TextInputStyle style;
+  TextInputStyle style;
 
-  final String label;
+  String label;
 
-  final int? minLength;
+  int? minLength;
 
-  final int? maxLength;
+  int? maxLength;
 
-  final bool? isRequired;
+  bool? isRequired;
 
-  final String? value;
+  String? value;
 
-  final String? placeholder;
+  String? placeholder;
 
   TextInputBuilder({
     required this.customId,

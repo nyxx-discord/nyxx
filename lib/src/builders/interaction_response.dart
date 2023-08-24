@@ -5,9 +5,9 @@ import 'package:nyxx/src/builders/message/message.dart';
 import 'package:nyxx/src/models/message/message.dart';
 
 class InteractionResponseBuilder extends CreateBuilder<InteractionResponseBuilder> {
-  final InteractionCallbackType type;
+  InteractionCallbackType type;
 
-  final dynamic data;
+  dynamic data;
 
   InteractionResponseBuilder({required this.type, required this.data});
 
@@ -71,7 +71,7 @@ class InteractionResponseBuilder extends CreateBuilder<InteractionResponseBuilde
 }
 
 class _EphemeralMessageBuilder extends MessageBuilder {
-  final bool? isEphemeral;
+  bool? isEphemeral;
 
   _EphemeralMessageBuilder({
     required super.content,
@@ -116,11 +116,11 @@ enum InteractionCallbackType {
 }
 
 class ModalBuilder extends CreateBuilder<ModalBuilder> {
-  final String customId;
+  String customId;
 
-  final String title;
+  String title;
 
-  final List<TextInputBuilder> components;
+  List<TextInputBuilder> components;
 
   ModalBuilder({required this.customId, required this.title, required this.components});
 

@@ -1,13 +1,13 @@
 import 'package:nyxx/src/models/snowflake.dart';
 
 class AllowedMentions {
-  final List<String>? parse;
+  List<String>? parse;
 
-  final List<Snowflake>? users;
+  List<Snowflake>? users;
 
-  final List<Snowflake>? roles;
+  List<Snowflake>? roles;
 
-  final bool? repliedUser;
+  bool? repliedUser;
 
   AllowedMentions({this.parse, this.users, this.roles, this.repliedUser});
 

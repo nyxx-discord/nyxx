@@ -4,9 +4,9 @@ import 'package:nyxx/src/builders/builder.dart';
 import 'package:nyxx/src/models/channel/types/group_dm.dart';
 
 class GroupDmUpdateBuilder extends UpdateBuilder<GroupDmChannel> {
-  final String? name;
+  String? name;
 
-  final List<int>? icon;
+  List<int>? icon;
 
   GroupDmUpdateBuilder({this.name, this.icon});
 

@@ -5,17 +5,17 @@ import 'package:nyxx/src/models/snowflake.dart';
 import 'package:nyxx/src/utils/flags.dart';
 
 class MemberBuilder extends CreateBuilder<Member> {
-  final String accessToken;
+  String accessToken;
 
-  final Snowflake userId;
+  Snowflake userId;
 
-  final String? nick;
+  String? nick;
 
-  final List<Snowflake>? roleIds;
+  List<Snowflake>? roleIds;
 
-  final bool? isMute;
+  bool? isMute;
 
-  final bool? isDeaf;
+  bool? isDeaf;
 
   MemberBuilder({
     required this.accessToken,
@@ -37,19 +37,19 @@ class MemberBuilder extends CreateBuilder<Member> {
 }
 
 class MemberUpdateBuilder extends UpdateBuilder<Member> {
-  final String? nick;
+  String? nick;
 
-  final List<Snowflake>? roleIds;
+  List<Snowflake>? roleIds;
 
-  final bool? isMute;
+  bool? isMute;
 
-  final bool? isDeaf;
+  bool? isDeaf;
 
-  final Snowflake? voiceChannelId;
+  Snowflake? voiceChannelId;
 
-  final DateTime? communicationDisabledUntil;
+  DateTime? communicationDisabledUntil;
 
-  final Flags<MemberFlags>? flags;
+  Flags<MemberFlags>? flags;
 
   MemberUpdateBuilder({
     this.nick = sentinelString,
@@ -74,7 +74,7 @@ class MemberUpdateBuilder extends UpdateBuilder<Member> {
 }
 
 class CurrentMemberUpdateBuilder extends UpdateBuilder<Member> {
-  final String? nick;
+  String? nick;
 
   CurrentMemberUpdateBuilder({this.nick = sentinelString});
 

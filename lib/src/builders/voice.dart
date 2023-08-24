@@ -4,9 +4,9 @@ import 'package:nyxx/src/models/snowflake.dart';
 import 'package:nyxx/src/models/voice/voice_state.dart';
 
 class VoiceStateUpdateBuilder extends UpdateBuilder<VoiceState> {
-  final Snowflake? channelId;
+  Snowflake? channelId;
 
-  final bool? suppress;
+  bool? suppress;
 
   VoiceStateUpdateBuilder({this.channelId, this.suppress});
 
@@ -18,7 +18,7 @@ class VoiceStateUpdateBuilder extends UpdateBuilder<VoiceState> {
 }
 
 class CurrentUserVoiceStateUpdateBuilder extends VoiceStateUpdateBuilder {
-  final DateTime? requestToSpeakTimeStamp;
+  DateTime? requestToSpeakTimeStamp;
 
   CurrentUserVoiceStateUpdateBuilder({super.channelId, super.suppress, this.requestToSpeakTimeStamp = sentinelDateTime});
 
@@ -30,11 +30,11 @@ class CurrentUserVoiceStateUpdateBuilder extends VoiceStateUpdateBuilder {
 }
 
 class GatewayVoiceStateBuilder extends CreateBuilder<VoiceState> {
-  final Snowflake? channelId;
+  Snowflake? channelId;
 
-  final bool isMuted;
+  bool isMuted;
 
-  final bool isDeafened;
+  bool isDeafened;
 
   GatewayVoiceStateBuilder({required this.channelId, required this.isMuted, required this.isDeafened});
 

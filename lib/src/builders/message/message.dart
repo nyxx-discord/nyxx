@@ -8,29 +8,29 @@ import 'package:nyxx/src/models/message/message.dart';
 import 'package:nyxx/src/models/snowflake.dart';
 
 class MessageBuilder extends CreateBuilder<Message> {
-  final String? content;
+  String? content;
 
-  final dynamic /* int | String */ nonce;
+  dynamic /* int | String */ nonce;
 
-  final bool? tts;
+  bool? tts;
 
-  final List<Embed>? embeds;
+  List<Embed>? embeds;
 
-  final AllowedMentions? allowedMentions;
+  AllowedMentions? allowedMentions;
 
-  final Snowflake? replyId;
+  Snowflake? replyId;
 
-  final bool? requireReplyToExist;
+  bool? requireReplyToExist;
 
-  final List<ActionRowBuilder>? components;
+  List<ActionRowBuilder>? components;
 
-  final List<Snowflake>? stickerIds;
+  List<Snowflake>? stickerIds;
 
-  final List<AttachmentBuilder>? attachments;
+  List<AttachmentBuilder>? attachments;
 
-  final bool? suppressEmbeds;
+  bool? suppressEmbeds;
 
-  final bool? suppressNotifications;
+  bool? suppressNotifications;
 
   MessageBuilder({
     this.content,
@@ -134,17 +134,17 @@ class MessageBuilder extends CreateBuilder<Message> {
 }
 
 class MessageUpdateBuilder extends UpdateBuilder<Message> {
-  final String? content;
+  String? content;
 
-  final List<Embed>? embeds;
+  List<Embed>? embeds;
 
-  final bool? suppressEmbeds;
+  bool? suppressEmbeds;
 
-  final AllowedMentions? allowedMentions;
+  AllowedMentions? allowedMentions;
 
-  final List<ActionRowBuilder>? components;
+  List<ActionRowBuilder>? components;
 
-  final List<AttachmentBuilder>? attachments;
+  List<AttachmentBuilder>? attachments;
 
   MessageUpdateBuilder({
     this.content = sentinelString,

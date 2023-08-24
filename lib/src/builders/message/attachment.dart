@@ -6,11 +6,11 @@ import 'package:nyxx/src/builders/builder.dart';
 import 'package:nyxx/src/models/message/attachment.dart';
 
 class AttachmentBuilder extends Builder<Attachment> {
-  final List<int> data;
+  List<int> data;
 
-  final String? fileName;
+  String? fileName;
 
-  final String? description;
+  String? description;
 
   AttachmentBuilder({required this.data, this.fileName, this.description});
 
