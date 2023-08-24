@@ -280,7 +280,7 @@ class InteractionManager {
       ..webhooks(id: applicationId.toString())
       ..add(HttpRoutePart(token));
 
-    final built = builder.build();
+    final builtMessagePayload = builder.build();
     if (isEphemeral != null) {
       built['flags'] = (built['flags'] as int? ?? 0) | (isEphemeral ? MessageFlags.ephemeral.value : 0);
     }
