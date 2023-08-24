@@ -138,7 +138,7 @@ mixin MessageResponse<T> on Interaction<T> {
   Future<void> deleteOriginalResponse() => manager.deleteOriginalResponse(token);
 
   /// Create a followup to this interaction.
-  Future<Message> createFollowup(MessageBuilder builder) => manager.createFollowup(token, builder);
+  Future<Message> createFollowup(MessageBuilder builder, {bool? isEphemeral}) => manager.createFollowup(token, builder, isEphemeral: isEphemeral);
 
   /// Fetch a followup to this interaction.
   Future<Message> fetchFollowup(Snowflake id) => manager.fetchFollowup(token, id);
