@@ -160,6 +160,8 @@ void main() {
         ),
         completes,
       );
+
+      await expectLater(message.delete(), completes);
     });
 
     test('webhooks', skip: testTextChannel != null ? false : 'No test channel provided', () async {
