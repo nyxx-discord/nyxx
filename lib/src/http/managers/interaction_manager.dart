@@ -275,15 +275,19 @@ class InteractionManager {
   Future<void> deleteOriginalResponse(String token) => _deleteResponse(token, '@original');
 
   /// Create a followup to an interaction.
-  Future<Message> createFollowup(String token, MessageBuilder builder) async {
+  Future<Message> createFollowup(String token, MessageBuilder builder, {bool? isEphemeral}) async {
     final route = HttpRoute()
       ..webhooks(id: applicationId.toString())
       ..add(HttpRoutePart(token));
 
+    final builtMessagePayload = builder.build();
+    if (isEphemeral != null) {
+      builtMessagePayload['flags'] = (builtMessagePayload['flags'] as int? ?? 0) | (isEphemeral ? MessageFlags.ephemeral.value : 0);
+    }
+
     final HttpRequest request;
     if (!identical(builder.attachments, sentinelList) && builder.attachments?.isNotEmpty == true) {
       final attachments = builder.attachments!;
-      final payload = builder.build();
 
       final files = <MultipartFile>[];
       for (int i = 0; i < attachments.length; i++) {
@@ -293,13 +297,13 @@ class InteractionManager {
           filename: attachments[i].fileName,
         ));
 
-        ((payload['attachments'] as List)[i] as Map)['id'] = i.toString();
+        ((builtMessagePayload['attachments'] as List)[i] as Map)['id'] = i.toString();
       }
 
       request = MultipartRequest(
         route,
         method: 'POST',
-        jsonPayload: jsonEncode(payload),
+        jsonPayload: jsonEncode(builtMessagePayload),
         files: files,
         applyGlobalRateLimit: false,
       );
@@ -307,7 +311,7 @@ class InteractionManager {
       request = BasicRequest(
         route,
         method: 'POST',
-        body: jsonEncode(builder.build()),
+        body: jsonEncode(builtMessagePayload),
         applyGlobalRateLimit: false,
       );
     }
