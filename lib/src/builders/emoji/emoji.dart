@@ -5,15 +5,15 @@ import 'package:nyxx/src/models/snowflake.dart';
 
 class EmojiBuilder implements CreateBuilder<GuildEmoji> {
   /// The name of the emoji.
-  final String name;
+  String name;
 
   /// The 128x128 emoji image.
-  final ImageBuilder image;
+  ImageBuilder image;
 
   /// The roles allowed to use this emoji.
-  final Iterable<Snowflake> roles;
+  Iterable<Snowflake> roles;
 
-  const EmojiBuilder({
+  EmojiBuilder({
     required this.name,
     required this.image,
     required this.roles,
@@ -29,12 +29,12 @@ class EmojiBuilder implements CreateBuilder<GuildEmoji> {
 
 class EmojiUpdateBuilder implements UpdateBuilder<GuildEmoji> {
   /// The name of the emoji.
-  final String? name;
+  String? name;
 
   /// The roles allowed to use this emoji.
-  final Iterable<Snowflake>? roles;
+  Iterable<Snowflake>? roles;
 
-  const EmojiUpdateBuilder({
+  EmojiUpdateBuilder({
     this.name,
     this.roles,
   });

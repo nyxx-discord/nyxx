@@ -4,16 +4,16 @@ import 'dart:io';
 import 'package:path/path.dart' as p;
 
 class ImageBuilder {
-  final List<int> data;
-  final String format;
+  List<int> data;
+  String format;
 
-  const ImageBuilder({required this.data, required this.format});
+  ImageBuilder({required this.data, required this.format});
 
-  const ImageBuilder.png(this.data) : format = 'png';
+  ImageBuilder.png(this.data) : format = 'png';
 
-  const ImageBuilder.jpeg(this.data) : format = 'jpeg';
+  ImageBuilder.jpeg(this.data) : format = 'jpeg';
 
-  const ImageBuilder.gif(this.data) : format = 'gif';
+  ImageBuilder.gif(this.data) : format = 'gif';
 
   static Future<ImageBuilder> fromFile(File file, {String? format}) async {
     format ??= p.extension(file.path);

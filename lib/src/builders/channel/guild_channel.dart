@@ -14,13 +14,13 @@ import 'package:nyxx/src/models/snowflake.dart';
 import 'package:nyxx/src/utils/flags.dart';
 
 class GuildChannelBuilder<T extends GuildChannel> extends CreateBuilder<T> {
-  final String name;
+  String name;
 
-  final ChannelType type;
+  ChannelType type;
 
-  final int? position;
+  int? position;
 
-  final List<CreateBuilder<PermissionOverwrite>>? permissionOverwrites;
+  List<CreateBuilder<PermissionOverwrite>>? permissionOverwrites;
 
   GuildChannelBuilder({
     required this.name,
@@ -39,11 +39,11 @@ class GuildChannelBuilder<T extends GuildChannel> extends CreateBuilder<T> {
 }
 
 class GuildChannelUpdateBuilder<T extends GuildChannel> extends UpdateBuilder<T> {
-  final String? name;
+  String? name;
 
-  final int? position;
+  int? position;
 
-  final List<CreateBuilder<PermissionOverwrite>>? permissionOverwrites;
+  List<CreateBuilder<PermissionOverwrite>>? permissionOverwrites;
 
   GuildChannelUpdateBuilder({this.name, this.position = sentinelInteger, this.permissionOverwrites});
 
@@ -56,15 +56,15 @@ class GuildChannelUpdateBuilder<T extends GuildChannel> extends UpdateBuilder<T>
 }
 
 class GuildTextChannelBuilder extends GuildChannelBuilder<GuildTextChannel> {
-  final String? topic;
+  String? topic;
 
-  final Duration? rateLimitPerUser;
+  Duration? rateLimitPerUser;
 
-  final Snowflake? parentId;
+  Snowflake? parentId;
 
-  final bool? isNsfw;
+  bool? isNsfw;
 
-  final Duration? defaultAutoArchiveDuration;
+  Duration? defaultAutoArchiveDuration;
 
   GuildTextChannelBuilder({
     required super.name,
@@ -89,19 +89,19 @@ class GuildTextChannelBuilder extends GuildChannelBuilder<GuildTextChannel> {
 }
 
 class GuildTextChannelUpdateBuilder extends GuildChannelUpdateBuilder<GuildTextChannel> {
-  final ChannelType? type;
+  ChannelType? type;
 
-  final String? topic;
+  String? topic;
 
-  final bool? isNsfw;
+  bool? isNsfw;
 
-  final Duration? rateLimitPerUser;
+  Duration? rateLimitPerUser;
 
-  final Snowflake? parentId;
+  Snowflake? parentId;
 
-  final Duration? defaultAutoArchiveDuration;
+  Duration? defaultAutoArchiveDuration;
 
-  final Duration? defaultThreadRateLimitPerUser;
+  Duration? defaultThreadRateLimitPerUser;
 
   GuildTextChannelUpdateBuilder({
     super.name,
@@ -130,13 +130,13 @@ class GuildTextChannelUpdateBuilder extends GuildChannelUpdateBuilder<GuildTextC
 }
 
 class GuildAnnouncementChannelBuilder extends GuildChannelBuilder<GuildAnnouncementChannel> {
-  final String? topic;
+  String? topic;
 
-  final Snowflake? parentId;
+  Snowflake? parentId;
 
-  final bool? isNsfw;
+  bool? isNsfw;
 
-  final Duration? defaultAutoArchiveDuration;
+  Duration? defaultAutoArchiveDuration;
 
   GuildAnnouncementChannelBuilder({
     required super.name,
@@ -159,15 +159,15 @@ class GuildAnnouncementChannelBuilder extends GuildChannelBuilder<GuildAnnouncem
 }
 
 class GuildAnnouncementChannelUpdateBuilder extends GuildChannelUpdateBuilder<GuildAnnouncementChannel> {
-  final ChannelType? type;
+  ChannelType? type;
 
-  final String? topic;
+  String? topic;
 
-  final bool? isNsfw;
+  bool? isNsfw;
 
-  final Snowflake? parentId;
+  Snowflake? parentId;
 
-  final Duration? defaultAutoArchiveDuration;
+  Duration? defaultAutoArchiveDuration;
 
   GuildAnnouncementChannelUpdateBuilder({
     super.name,
@@ -192,21 +192,21 @@ class GuildAnnouncementChannelUpdateBuilder extends GuildChannelUpdateBuilder<Gu
 }
 
 class ForumChannelBuilder extends GuildChannelBuilder<ForumChannel> {
-  final String? topic;
+  String? topic;
 
-  final Duration? rateLimitPerUser;
+  Duration? rateLimitPerUser;
 
-  final Snowflake? parentId;
+  Snowflake? parentId;
 
-  final bool? isNsfw;
+  bool? isNsfw;
 
-  final Duration? defaultAutoArchiveDuration;
+  Duration? defaultAutoArchiveDuration;
 
-  final DefaultReaction? defaultReaction;
+  DefaultReaction? defaultReaction;
 
-  final List<CreateBuilder<ForumTag>>? tags;
+  List<CreateBuilder<ForumTag>>? tags;
 
-  final ForumSort? defaultSortOrder;
+  ForumSort? defaultSortOrder;
 
   ForumChannelBuilder({
     required super.name,
@@ -243,27 +243,27 @@ class ForumChannelBuilder extends GuildChannelBuilder<ForumChannel> {
 }
 
 class ForumChannelUpdateBuilder extends GuildChannelUpdateBuilder<ForumChannel> {
-  final String? topic;
+  String? topic;
 
-  final bool? isNsfw;
+  bool? isNsfw;
 
-  final Duration? rateLimitPerUser;
+  Duration? rateLimitPerUser;
 
-  final Snowflake? parentId;
+  Snowflake? parentId;
 
-  final Duration? defaultAutoArchiveDuration;
+  Duration? defaultAutoArchiveDuration;
 
-  final Flags<ChannelFlags>? flags;
+  Flags<ChannelFlags>? flags;
 
-  final List<CreateBuilder<ForumTag>>? tags;
+  List<CreateBuilder<ForumTag>>? tags;
 
-  final DefaultReaction? defaultReaction;
+  DefaultReaction? defaultReaction;
 
-  final Duration? defaultThreadRateLimitPerUser;
+  Duration? defaultThreadRateLimitPerUser;
 
-  final ForumSort? defaultSortOrder;
+  ForumSort? defaultSortOrder;
 
-  final ForumLayout? defaultLayout;
+  ForumLayout? defaultLayout;
 
   ForumChannelUpdateBuilder({
     super.name,
@@ -306,17 +306,17 @@ class ForumChannelUpdateBuilder extends GuildChannelUpdateBuilder<ForumChannel> 
 }
 
 abstract class _GuildVoiceOrStageChannelBuilder<T extends GuildChannel> extends GuildChannelBuilder<T> {
-  final int? bitRate;
+  int? bitRate;
 
-  final int? userLimit;
+  int? userLimit;
 
-  final Snowflake? parentId;
+  Snowflake? parentId;
 
-  final bool? isNsfw;
+  bool? isNsfw;
 
-  final String? rtcRegion;
+  String? rtcRegion;
 
-  final VideoQualityMode? videoQualityMode;
+  VideoQualityMode? videoQualityMode;
 
   _GuildVoiceOrStageChannelBuilder({
     required super.name,
@@ -372,17 +372,17 @@ class GuildStageChannelBuilder extends _GuildVoiceOrStageChannelBuilder<GuildSta
 }
 
 class _GuildVoiceOrStageChannelUpdateBuilder<T extends GuildChannel> extends GuildChannelUpdateBuilder<T> {
-  final bool? isNsfw;
+  bool? isNsfw;
 
-  final int? bitRate;
+  int? bitRate;
 
-  final int? userLimit;
+  int? userLimit;
 
-  final Snowflake? parentId;
+  Snowflake? parentId;
 
-  final String? rtcRegion;
+  String? rtcRegion;
 
-  final VideoQualityMode? videoQualityMode;
+  VideoQualityMode? videoQualityMode;
 
   _GuildVoiceOrStageChannelUpdateBuilder({
     super.name,

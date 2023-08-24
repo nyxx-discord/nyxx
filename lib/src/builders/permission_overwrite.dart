@@ -5,13 +5,13 @@ import 'package:nyxx/src/models/snowflake.dart';
 import 'package:nyxx/src/utils/flags.dart';
 
 class PermissionOverwriteBuilder extends CreateBuilder<PermissionOverwrite> {
-  final Snowflake id;
+  Snowflake id;
 
-  final PermissionOverwriteType type;
+  PermissionOverwriteType type;
 
-  final Flags<Permissions>? allow;
+  Flags<Permissions>? allow;
 
-  final Flags<Permissions>? deny;
+  Flags<Permissions>? deny;
 
   PermissionOverwriteBuilder({required this.id, required this.type, this.allow, this.deny});
 

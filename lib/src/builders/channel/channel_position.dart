@@ -3,13 +3,13 @@ import 'package:nyxx/src/models/channel/guild_channel.dart';
 import 'package:nyxx/src/models/snowflake.dart';
 
 class ChannelPositionBuilder extends UpdateBuilder<GuildChannel> {
-  final Snowflake channelId;
+  Snowflake channelId;
 
-  final int? position;
+  int? position;
 
-  final bool? lockPermissions;
+  bool? lockPermissions;
 
-  final Snowflake? parentId;
+  Snowflake? parentId;
 
   ChannelPositionBuilder({
     required this.channelId,

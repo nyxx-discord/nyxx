@@ -2,9 +2,9 @@ import 'package:nyxx/src/models/emoji.dart';
 import 'package:nyxx/src/models/snowflake.dart';
 
 class ReactionBuilder {
-  final String name;
+  String name;
 
-  final Snowflake? id;
+  Snowflake? id;
 
   ReactionBuilder({required this.name, required this.id});
 
