@@ -3,21 +3,21 @@ import 'package:nyxx/src/models/guild/auto_moderation.dart';
 import 'package:nyxx/src/models/snowflake.dart';
 
 class AutoModerationRuleBuilder extends CreateBuilder<AutoModerationRule> {
-  final String name;
+  String name;
 
-  final AutoModerationEventType eventType;
+  AutoModerationEventType eventType;
 
-  final TriggerType triggerType;
+  TriggerType triggerType;
 
-  final TriggerMetadata? metadata;
+  TriggerMetadata? metadata;
 
-  final List<AutoModerationAction> actions;
+  List<AutoModerationAction> actions;
 
-  final bool? isEnabled;
+  bool? isEnabled;
 
-  final List<Snowflake>? exemptRoleIds;
+  List<Snowflake>? exemptRoleIds;
 
-  final List<Snowflake>? exemptChannelIds;
+  List<Snowflake>? exemptChannelIds;
 
   AutoModerationRuleBuilder({
     required this.name,
@@ -63,19 +63,19 @@ class AutoModerationRuleBuilder extends CreateBuilder<AutoModerationRule> {
 }
 
 class AutoModerationRuleUpdateBuilder extends UpdateBuilder<AutoModerationRule> {
-  final String? name;
+  String? name;
 
-  final AutoModerationEventType? eventType;
+  AutoModerationEventType? eventType;
 
-  final TriggerMetadata? metadata;
+  TriggerMetadata? metadata;
 
-  final List<AutoModerationAction>? actions;
+  List<AutoModerationAction>? actions;
 
-  final bool? isEnabled;
+  bool? isEnabled;
 
-  final List<Snowflake>? exemptRoleIds;
+  List<Snowflake>? exemptRoleIds;
 
-  final List<Snowflake>? exemptChannelIds;
+  List<Snowflake>? exemptChannelIds;
 
   AutoModerationRuleUpdateBuilder({
     this.name,

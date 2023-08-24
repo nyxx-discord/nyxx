@@ -3,9 +3,9 @@ import 'package:nyxx/src/builders/sentinels.dart';
 import 'package:nyxx/src/models/guild/template.dart';
 
 class GuildTemplateBuilder extends CreateBuilder<GuildTemplate> {
-  final String name;
+  String name;
 
-  final String? description;
+  String? description;
 
   GuildTemplateBuilder({required this.name, this.description});
 
@@ -17,9 +17,9 @@ class GuildTemplateBuilder extends CreateBuilder<GuildTemplate> {
 }
 
 class GuildTemplateUpdateBuilder extends UpdateBuilder<GuildTemplate> {
-  final String? name;
+  String? name;
 
-  final String? description;
+  String? description;
 
   GuildTemplateUpdateBuilder({this.name, this.description = sentinelString});
 

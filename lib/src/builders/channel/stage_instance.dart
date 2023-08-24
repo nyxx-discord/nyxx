@@ -2,11 +2,11 @@ import 'package:nyxx/src/builders/builder.dart';
 import 'package:nyxx/src/models/channel/stage_instance.dart';
 
 class StageInstanceBuilder extends CreateBuilder<StageInstance> {
-  final String topic;
+  String topic;
 
-  final PrivacyLevel? privacyLevel;
+  PrivacyLevel? privacyLevel;
 
-  final bool? sendStartNotification;
+  bool? sendStartNotification;
 
   StageInstanceBuilder({
     required this.topic,
@@ -23,9 +23,9 @@ class StageInstanceBuilder extends CreateBuilder<StageInstance> {
 }
 
 class StageInstanceUpdateBuilder extends UpdateBuilder<StageInstance> {
-  final String? topic;
+  String? topic;
 
-  final PrivacyLevel? privacyLevel;
+  PrivacyLevel? privacyLevel;
 
   StageInstanceUpdateBuilder({this.topic, this.privacyLevel});
 

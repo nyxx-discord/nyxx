@@ -5,16 +5,16 @@ import 'package:nyxx/src/models/sticker/guild_sticker.dart';
 
 class StickerBuilder implements CreateBuilder<GuildSticker> {
   /// Name of the sticker (2-30 characters)
-  final String name;
+  String name;
 
   /// Description of the sticker (empty or 2-100 characters)
-  final String description;
+  String description;
 
   /// Autocomplete/suggestion tags for the sticker (max 200 characters)
-  final String tags;
+  String tags;
 
   /// The sticker file to upload
-  final ImageBuilder file;
+  ImageBuilder file;
 
   StickerBuilder({required this.name, this.description = '', required this.tags, required this.file});
 
@@ -28,13 +28,13 @@ class StickerBuilder implements CreateBuilder<GuildSticker> {
 
 class StickerUpdateBuilder implements UpdateBuilder<GuildSticker> {
   /// Name of the sticker (2-30 characters)
-  final String? name;
+  String? name;
 
   /// Description of the sticker (empty or 2-100 characters)
-  final String description;
+  String description;
 
   /// Autocomplete/suggestion tags for the sticker (max 200 characters)
-  final String? tags;
+  String? tags;
 
   StickerUpdateBuilder({this.name, this.description = sentinelString, this.tags});
 

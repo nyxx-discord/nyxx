@@ -7,19 +7,19 @@ import 'package:nyxx/src/models/role.dart';
 import 'package:nyxx/src/utils/flags.dart';
 
 class RoleBuilder extends CreateBuilder<Role> {
-  final String? name;
+  String? name;
 
-  final Flags<Permissions>? permissions;
+  Flags<Permissions>? permissions;
 
-  final DiscordColor? color;
+  DiscordColor? color;
 
-  final bool? isHoisted;
+  bool? isHoisted;
 
-  final ImageBuilder? icon;
+  ImageBuilder? icon;
 
-  final String? unicodeEmoji;
+  String? unicodeEmoji;
 
-  final bool? isMentionable;
+  bool? isMentionable;
 
   RoleBuilder({
     this.name,
@@ -44,19 +44,19 @@ class RoleBuilder extends CreateBuilder<Role> {
 }
 
 class RoleUpdateBuilder extends UpdateBuilder<Role> {
-  final String? name;
+  String? name;
 
-  final Permissions? permissions;
+  Permissions? permissions;
 
-  final DiscordColor? color;
+  DiscordColor? color;
 
-  final bool? isHoisted;
+  bool? isHoisted;
 
-  final ImageBuilder? icon;
+  ImageBuilder? icon;
 
-  final String? unicodeEmoji;
+  String? unicodeEmoji;
 
-  final bool? isMentionable;
+  bool? isMentionable;
 
   RoleUpdateBuilder({
     this.name,

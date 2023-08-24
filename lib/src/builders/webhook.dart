@@ -5,12 +5,12 @@ import 'package:nyxx/src/models/snowflake.dart';
 import 'package:nyxx/src/models/webhook.dart';
 
 class WebhookBuilder extends CreateBuilder<Webhook> {
-  final String name;
+  String name;
 
   // Not used in build, but used to determine the proper route when creating webhooks.
-  final Snowflake channelId;
+  Snowflake channelId;
 
-  final ImageBuilder? avatar;
+  ImageBuilder? avatar;
 
   WebhookBuilder({required this.name, required this.channelId, this.avatar});
 
@@ -22,11 +22,11 @@ class WebhookBuilder extends CreateBuilder<Webhook> {
 }
 
 class WebhookUpdateBuilder extends UpdateBuilder<Webhook> {
-  final String? name;
+  String? name;
 
-  final ImageBuilder? avatar;
+  ImageBuilder? avatar;
 
-  final Snowflake? channelId;
+  Snowflake? channelId;
 
   WebhookUpdateBuilder({
     this.name,

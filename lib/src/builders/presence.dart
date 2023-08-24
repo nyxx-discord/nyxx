@@ -3,13 +3,13 @@ import 'package:nyxx/src/models/gateway/events/presence.dart';
 import 'package:nyxx/src/models/presence.dart';
 
 class PresenceBuilder extends CreateBuilder<PresenceUpdateEvent> {
-  final DateTime? since;
+  DateTime? since;
 
-  final List<ActivityBuilder>? activities;
+  List<ActivityBuilder>? activities;
 
-  final CurrentUserStatus status;
+  CurrentUserStatus status;
 
-  final bool isAfk;
+  bool isAfk;
 
   PresenceBuilder({this.since, this.activities, required this.status, required this.isAfk});
 
@@ -38,11 +38,11 @@ enum CurrentUserStatus {
 }
 
 class ActivityBuilder extends CreateBuilder<Activity> {
-  final String name;
+  String name;
 
-  final ActivityType type;
+  ActivityType type;
 
-  final Uri? url;
+  Uri? url;
 
   ActivityBuilder({required this.name, required this.type, this.url});
 

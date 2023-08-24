@@ -10,27 +10,27 @@ import 'package:nyxx/src/models/snowflake.dart';
 import 'package:nyxx/src/utils/flags.dart';
 
 class GuildBuilder extends CreateBuilder<Guild> {
-  final String name;
+  String name;
 
-  final ImageBuilder? icon;
+  ImageBuilder? icon;
 
-  final VerificationLevel? verificationLevel;
+  VerificationLevel? verificationLevel;
 
-  final MessageNotificationLevel? defaultMessageNotificationLevel;
+  MessageNotificationLevel? defaultMessageNotificationLevel;
 
-  final ExplicitContentFilterLevel? explicitContentFilterLevel;
+  ExplicitContentFilterLevel? explicitContentFilterLevel;
 
-  final List<RoleBuilder>? roles;
+  List<RoleBuilder>? roles;
 
-  final List<GuildChannelBuilder>? channels;
+  List<GuildChannelBuilder>? channels;
 
-  final Snowflake? afkChannelId;
+  Snowflake? afkChannelId;
 
-  final Duration? afkTimeout;
+  Duration? afkTimeout;
 
-  final Snowflake? systemChannelId;
+  Snowflake? systemChannelId;
 
-  final Flags<SystemChannelFlags>? systemChannelFlags;
+  Flags<SystemChannelFlags>? systemChannelFlags;
 
   GuildBuilder({
     required this.name,
@@ -63,43 +63,43 @@ class GuildBuilder extends CreateBuilder<Guild> {
 }
 
 class GuildUpdateBuilder extends UpdateBuilder<Guild> {
-  final String? name;
+  String? name;
 
-  final VerificationLevel? verificationLevel;
+  VerificationLevel? verificationLevel;
 
-  final MessageNotificationLevel? defaultMessageNotificationLevel;
+  MessageNotificationLevel? defaultMessageNotificationLevel;
 
-  final ExplicitContentFilterLevel? explicitContentFilterLevel;
+  ExplicitContentFilterLevel? explicitContentFilterLevel;
 
-  final Snowflake? afkChannelId;
+  Snowflake? afkChannelId;
 
-  final Duration? afkTimeout;
+  Duration? afkTimeout;
 
-  final ImageBuilder? icon;
+  ImageBuilder? icon;
 
-  final Snowflake? newOwnerId;
+  Snowflake? newOwnerId;
 
-  final ImageBuilder? splash;
+  ImageBuilder? splash;
 
-  final ImageBuilder? discoverySplash;
+  ImageBuilder? discoverySplash;
 
-  final ImageBuilder? banner;
+  ImageBuilder? banner;
 
-  final Snowflake? systemChannelId;
+  Snowflake? systemChannelId;
 
-  final Flags<SystemChannelFlags>? systemChannelFlags;
+  Flags<SystemChannelFlags>? systemChannelFlags;
 
-  final Snowflake? rulesChannelId;
+  Snowflake? rulesChannelId;
 
-  final Snowflake? publicUpdatesChannelId;
+  Snowflake? publicUpdatesChannelId;
 
-  final Locale? preferredLocale;
+  Locale? preferredLocale;
 
-  final Flags<GuildFeatures>? features;
+  Flags<GuildFeatures>? features;
 
-  final String? description;
+  String? description;
 
-  final bool? premiumProgressBarEnabled;
+  bool? premiumProgressBarEnabled;
 
   GuildUpdateBuilder({
     this.name,

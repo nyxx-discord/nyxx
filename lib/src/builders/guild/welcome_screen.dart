@@ -3,11 +3,11 @@ import 'package:nyxx/src/builders/sentinels.dart';
 import 'package:nyxx/src/models/guild/welcome_screen.dart';
 
 class WelcomeScreenUpdateBuilder extends UpdateBuilder<WelcomeScreen> {
-  final bool? isEnabled;
+  bool? isEnabled;
 
-  final List<WelcomeScreenChannel>? channels;
+  List<WelcomeScreenChannel>? channels;
 
-  final String? description;
+  String? description;
 
   WelcomeScreenUpdateBuilder({this.isEnabled, this.channels, this.description = sentinelString});
 

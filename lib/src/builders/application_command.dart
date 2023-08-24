@@ -8,23 +8,23 @@ import 'package:nyxx/src/models/permissions.dart';
 import 'package:nyxx/src/utils/flags.dart';
 
 class ApplicationCommandBuilder extends CreateBuilder<ApplicationCommand> {
-  final String name;
+  String name;
 
-  final Map<Locale, String>? nameLocalizations;
+  Map<Locale, String>? nameLocalizations;
 
-  final String? description;
+  String? description;
 
-  final Map<Locale, String>? descriptionLocalizations;
+  Map<Locale, String>? descriptionLocalizations;
 
-  final List<CommandOptionBuilder>? options;
+  List<CommandOptionBuilder>? options;
 
-  final Flags<Permissions>? defaultMemberPermissions;
+  Flags<Permissions>? defaultMemberPermissions;
 
-  final bool? hasDmPermission;
+  bool? hasDmPermission;
 
-  final ApplicationCommandType type;
+  ApplicationCommandType type;
 
-  final bool? isNsfw;
+  bool? isNsfw;
 
   ApplicationCommandBuilder({
     required this.name,
@@ -87,21 +87,21 @@ class ApplicationCommandBuilder extends CreateBuilder<ApplicationCommand> {
 }
 
 class ApplicationCommandUpdateBuilder extends UpdateBuilder<ApplicationCommand> {
-  final String? name;
+  String? name;
 
-  final Map<Locale, String>? nameLocalizations;
+  Map<Locale, String>? nameLocalizations;
 
-  final String? description;
+  String? description;
 
-  final Map<Locale, String>? descriptionLocalizations;
+  Map<Locale, String>? descriptionLocalizations;
 
-  final List<CommandOptionBuilder>? options;
+  List<CommandOptionBuilder>? options;
 
-  final Flags<Permissions>? defaultMemberPermissions;
+  Flags<Permissions>? defaultMemberPermissions;
 
-  final bool? hasDmPermission;
+  bool? hasDmPermission;
 
-  final bool? isNsfw;
+  bool? isNsfw;
 
   ApplicationCommandUpdateBuilder({
     this.name,
@@ -160,33 +160,33 @@ class ApplicationCommandUpdateBuilder extends UpdateBuilder<ApplicationCommand> 
 }
 
 class CommandOptionBuilder extends CreateBuilder<CommandOption> {
-  final CommandOptionType type;
+  CommandOptionType type;
 
-  final String name;
+  String name;
 
-  final Map<Locale, String>? nameLocalizations;
+  Map<Locale, String>? nameLocalizations;
 
-  final String description;
+  String description;
 
-  final Map<Locale, String>? descriptionLocalizations;
+  Map<Locale, String>? descriptionLocalizations;
 
-  final bool? isRequired;
+  bool? isRequired;
 
-  final List<CommandOptionChoiceBuilder<dynamic>>? choices;
+  List<CommandOptionChoiceBuilder<dynamic>>? choices;
 
-  final List<CommandOptionBuilder>? options;
+  List<CommandOptionBuilder>? options;
 
-  final List<ChannelType>? channelTypes;
+  List<ChannelType>? channelTypes;
 
-  final num? minValue;
+  num? minValue;
 
-  final num? maxValue;
+  num? maxValue;
 
-  final int? minLength;
+  int? minLength;
 
-  final int? maxLength;
+  int? maxLength;
 
-  final bool? hasAutocomplete;
+  bool? hasAutocomplete;
 
   CommandOptionBuilder({
     required this.type,
@@ -402,11 +402,11 @@ class CommandOptionBuilder extends CreateBuilder<CommandOption> {
 }
 
 class CommandOptionChoiceBuilder<T> extends CreateBuilder<CommandOptionChoice> {
-  final String name;
+  String name;
 
-  final Map<Locale, String>? nameLocalizations;
+  Map<Locale, String>? nameLocalizations;
 
-  final T value;
+  T value;
 
   CommandOptionChoiceBuilder({required this.name, this.nameLocalizations, required this.value});
 
