@@ -266,7 +266,7 @@ export 'src/models/sticker/global_sticker.dart' show GlobalSticker, PartialGloba
 export 'src/models/sticker/sticker.dart' show Sticker, StickerType, StickerFormatType, StickerItem;
 export 'src/models/sticker/sticker_pack.dart' show StickerPack;
 export 'src/models/commands/application_command.dart' show ApplicationCommand, PartialApplicationCommand, ApplicationCommandType;
-export 'src/models/commands/application_command_option.dart' show CommandOption, CommandOptionChoice, CommandOptionType;
+export 'src/models/commands/application_command_option.dart' show CommandOption, CommandOptionChoice, CommandOptionType, CommandOptionMentionable;
 export 'src/models/commands/application_command_permissions.dart' show CommandPermission, CommandPermissions, CommandPermissionType;
 export 'src/models/team.dart' show Team, TeamMember, TeamMembershipState;
 export 'src/models/interaction.dart'
