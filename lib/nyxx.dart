@@ -39,7 +39,7 @@ export 'src/builders/channel/stage_instance.dart' show StageInstanceBuilder, Sta
 export 'src/builders/channel/thread.dart' show ThreadUpdateBuilder, ForumThreadBuilder, ThreadBuilder, ThreadFromMessageBuilder;
 export 'src/builders/message/allowed_mentions.dart' show AllowedMentions;
 export 'src/builders/message/attachment.dart' show AttachmentBuilder;
-export 'src/builders/message/embed.dart' show EmbedBuilder;
+export 'src/builders/message/embed.dart' show EmbedBuilder, EmbedAuthorBuilder, EmbedFieldBuilder, EmbedFooterBuilder, EmbedImageBuilder, EmbedThumbnailBuilder;
 export 'src/builders/message/message.dart' show MessageBuilder, MessageUpdateBuilder;
 export 'src/builders/message/component.dart'
     show ActionRowBuilder, ButtonBuilder, MessageComponentBuilder, SelectMenuBuilder, SelectMenuOptionBuilder, TextInputBuilder;
