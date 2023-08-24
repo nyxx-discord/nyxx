@@ -282,7 +282,7 @@ class InteractionManager {
 
     final builtMessagePayload = builder.build();
     if (isEphemeral != null) {
-      built['flags'] = (built['flags'] as int? ?? 0) | (isEphemeral ? MessageFlags.ephemeral.value : 0);
+      builtMessagePayload['flags'] = (builtMessagePayload['flags'] as int? ?? 0) | (isEphemeral ? MessageFlags.ephemeral.value : 0);
     }
 
     final HttpRequest request;
@@ -297,13 +297,13 @@ class InteractionManager {
           filename: attachments[i].fileName,
         ));
 
-        ((built['attachments'] as List)[i] as Map)['id'] = i.toString();
+        ((builtMessagePayload['attachments'] as List)[i] as Map)['id'] = i.toString();
       }
 
       request = MultipartRequest(
         route,
         method: 'POST',
-        jsonPayload: jsonEncode(built),
+        jsonPayload: jsonEncode(builtMessagePayload),
         files: files,
         applyGlobalRateLimit: false,
       );
@@ -311,7 +311,7 @@ class InteractionManager {
       request = BasicRequest(
         route,
         method: 'POST',
-        body: jsonEncode(built),
+        body: jsonEncode(builtMessagePayload),
         applyGlobalRateLimit: false,
       );
     }
