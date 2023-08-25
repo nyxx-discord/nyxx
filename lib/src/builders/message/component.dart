@@ -1,3 +1,4 @@
+import 'package:nyxx/nyxx.dart';
 import 'package:nyxx/src/builders/builder.dart';
 import 'package:nyxx/src/models/channel/channel.dart';
 import 'package:nyxx/src/models/emoji.dart';
@@ -53,9 +54,9 @@ class ButtonBuilder extends MessageComponentBuilder {
         if (label != null) 'label': label,
         if (emoji != null)
           'emoji': {
-            'id': emoji!.id,
+            'id': emoji!.id == Snowflake.zero ? null : emoji!.id,
             'name': emoji!.name,
-            'animated': emoji is GuildEmoji && (emoji as GuildEmoji).isAnimated == true,
+            if (emoji is GuildEmoji) 'animated': (emoji as GuildEmoji).isAnimated == true,
           },
         if (customId != null) 'custom_id': customId,
         if (url != null) 'url': url!.toString(),
@@ -128,7 +129,7 @@ class SelectMenuOptionBuilder extends CreateBuilder<SelectMenuOption> {
         if (description != null) 'description': description,
         if (emoji != null)
           'emoji': {
-            'id': emoji!.id,
+            'id': emoji!.id.value,
             'name': emoji!.name,
             'animated': emoji is GuildEmoji && (emoji as GuildEmoji).isAnimated == true,
           },

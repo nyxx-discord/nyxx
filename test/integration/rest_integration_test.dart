@@ -116,6 +116,52 @@ void main() {
       expect(message.attachments.first.fileName, equals('1.png'));
 
       await expectLater(message.delete(), completes);
+
+      await expectLater(
+        () async => message = await channel.sendMessage(
+          MessageBuilder(
+            content: 'Components test',
+            components: [
+              ActionRowBuilder(components: [
+                ButtonBuilder(style: ButtonStyle.primary, label: 'Primary', customId: 'a'),
+                ButtonBuilder(style: ButtonStyle.secondary, label: 'Secondary', customId: 'b'),
+                ButtonBuilder(style: ButtonStyle.success, label: 'Success', customId: 'c'),
+                ButtonBuilder(style: ButtonStyle.danger, label: 'Danger', customId: 'd'),
+                ButtonBuilder(style: ButtonStyle.link, label: 'Primary', url: Uri.https('pub.dev', '/packages/nyxx')),
+              ]),
+              ActionRowBuilder(components: [
+                ButtonBuilder(style: ButtonStyle.primary, label: 'Primary', customId: 'e', isDisabled: true),
+                ButtonBuilder(style: ButtonStyle.secondary, label: 'Secondary', customId: 'f', isDisabled: true),
+                ButtonBuilder(style: ButtonStyle.success, label: 'Success', customId: 'g', isDisabled: true),
+                ButtonBuilder(style: ButtonStyle.danger, label: 'Danger', customId: 'h', isDisabled: true),
+                ButtonBuilder(style: ButtonStyle.link, label: 'Primary', url: Uri.https('pub.dev', '/packages/nyxx'), isDisabled: true),
+              ]),
+              ActionRowBuilder(components: [
+                SelectMenuBuilder(
+                  type: MessageComponentType.stringSelect,
+                  customId: 'i',
+                  options: [
+                    SelectMenuOptionBuilder(label: 'One', value: '1'),
+                    SelectMenuOptionBuilder(
+                      label: 'Two',
+                      value: '2',
+                      emoji: TextEmoji(
+                        id: Snowflake.zero,
+                        manager: client.guilds[Snowflake.zero].emojis,
+                        name: '❤️',
+                      ),
+                    ),
+                    SelectMenuOptionBuilder(label: 'Three', value: '3'),
+                  ],
+                ),
+              ]),
+            ],
+          ),
+        ),
+        completes,
+      );
+
+      await expectLater(message.delete(), completes);
     });
 
     test('webhooks', skip: testTextChannel != null ? false : 'No test channel provided', () async {
