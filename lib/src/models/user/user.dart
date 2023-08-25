@@ -1,6 +1,7 @@
 import 'package:nyxx/src/http/cdn/cdn_asset.dart';
 import 'package:nyxx/src/http/managers/user_manager.dart';
 import 'package:nyxx/src/http/route.dart';
+import 'package:nyxx/src/models/commands/application_command_option.dart';
 import 'package:nyxx/src/models/discord_color.dart';
 import 'package:nyxx/src/models/locale.dart';
 import 'package:nyxx/src/models/message/author.dart';
@@ -25,7 +26,7 @@ class PartialUser extends ManagedSnowflakeEntity<User> {
 /// External references:
 /// * Discord API Reference: https://discord.com/developers/docs/resources/user#users-resource
 /// {@endtemplate}
-class User extends PartialUser implements MessageAuthor {
+class User extends PartialUser implements MessageAuthor, CommandOptionMentionable<User> {
   /// The user's username.
   @override
   final String username;

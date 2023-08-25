@@ -1,6 +1,7 @@
 import 'package:nyxx/src/http/cdn/cdn_asset.dart';
 import 'package:nyxx/src/http/managers/role_manager.dart';
 import 'package:nyxx/src/http/route.dart';
+import 'package:nyxx/src/models/commands/application_command_option.dart';
 import 'package:nyxx/src/models/discord_color.dart';
 import 'package:nyxx/src/models/permissions.dart';
 import 'package:nyxx/src/models/snowflake.dart';
@@ -22,7 +23,7 @@ class PartialRole extends WritableSnowflakeEntity<Role> {
 /// External references:
 /// * Discord API Reference: https://discord.com/developers/docs/topics/permissions#role-object
 /// {@endtemplate}
-class Role extends PartialRole {
+class Role extends PartialRole implements CommandOptionMentionable<Role> {
   /// The name of this role.
   final String name;
 

@@ -1,5 +1,6 @@
 import 'package:nyxx/src/models/channel/channel.dart';
 import 'package:nyxx/src/models/locale.dart';
+import 'package:nyxx/src/models/snowflake_entity/snowflake_entity.dart';
 import 'package:nyxx/src/utils/to_string_helper/to_string_helper.dart';
 
 /// {@template command_option}
@@ -114,3 +115,8 @@ class CommandOptionChoice {
   /// {@macro command_option_choice}
   CommandOptionChoice({required this.name, required this.nameLocalizations, required this.value});
 }
+
+/// A common superclass for entities that can be passed in options of type [CommandOptionType.mentionable].
+///
+/// The only subtypes are [User] and [Role].
+abstract interface class CommandOptionMentionable<T extends CommandOptionMentionable<T>> implements SnowflakeEntity<T> {}
