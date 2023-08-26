@@ -1,5 +1,6 @@
 import 'package:nyxx/src/gateway/shard.dart';
 import 'package:nyxx/src/models/gateway/gateway.dart';
+import 'package:nyxx/src/models/interaction.dart';
 import 'package:nyxx/src/models/snowflake.dart';
 
 /// The base class for all exceptions thrown by nyxx.
@@ -92,4 +93,25 @@ class OutOfRemainingSessionsError extends Error {
 
   @override
   String toString() => 'Out of remaining session starts (${gatewayBot.sessionStartLimit.remaining} left)';
+}
+
+/// An error thrown when [MessageResponse.acknowledge] is called on an already acknowledged interaction.
+class AlreadyAcknowledgedError extends Error {
+  /// The interaction that was acknowledged.
+  final MessageResponse<dynamic> interaction;
+
+  /// Create a new [AlreadyAcknowledgedError].
+  AlreadyAcknowledgedError(this.interaction);
+
+  @override
+  String toString() => 'Interaction has already been acknowledged';
+}
+
+/// An error thrown when [MessageResponse.respond] is called on an interaction that has already been responded to.
+class AlreadyRespondedError extends AlreadyAcknowledgedError {
+  /// Create a new [AlreadyRespondedError].
+  AlreadyRespondedError(super.interaction);
+
+  @override
+  String toString() => 'Interaction has already been responded to';
 }
