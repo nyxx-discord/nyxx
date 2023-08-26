@@ -10,7 +10,9 @@ export 'src/errors.dart'
         RoleNotFoundException,
         AuditLogEntryNotFoundException,
         OutOfRemainingSessionsError,
-        IntegrationNotFoundException;
+        IntegrationNotFoundException,
+        AlreadyAcknowledgedError,
+        AlreadyRespondedError;
 
 export 'src/builders/builder.dart' show Builder, CreateBuilder, UpdateBuilder;
 export 'src/builders/image.dart' show ImageBuilder;

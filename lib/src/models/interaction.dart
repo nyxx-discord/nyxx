@@ -2,6 +2,7 @@ import 'package:nyxx/src/builders/application_command.dart';
 import 'package:nyxx/src/builders/builder.dart';
 import 'package:nyxx/src/builders/interaction_response.dart';
 import 'package:nyxx/src/builders/message/message.dart';
+import 'package:nyxx/src/errors.dart';
 import 'package:nyxx/src/http/managers/interaction_manager.dart';
 import 'package:nyxx/src/models/channel/channel.dart';
 import 'package:nyxx/src/models/commands/application_command.dart';
@@ -103,7 +104,9 @@ mixin MessageResponse<T> on Interaction<T> {
 
   /// Acknowledge this interaction.
   Future<void> acknowledge({bool? isEphemeral}) async {
-    assert(!_didAcknowledge, 'Cannot acknowledge an interaction after a response or acknowledge has been sent');
+    if (_didAcknowledge) {
+      throw AlreadyAcknowledgedError(this);
+    }
 
     _didAcknowledge = true;
     _wasEphemeral = isEphemeral;
@@ -113,7 +116,9 @@ mixin MessageResponse<T> on Interaction<T> {
 
   /// Send a response to this interaction.
   Future<void> respond(MessageBuilder builder, {bool? isEphemeral}) async {
-    assert(!_didRespond, 'Can only respond to an interaction once');
+    if (_didRespond) {
+      throw AlreadyRespondedError(this);
+    }
 
     if (!_didAcknowledge) {
       _didAcknowledge = true;
@@ -247,10 +252,13 @@ class MessageComponentInteraction extends Interaction<MessageComponentInteractio
 
   @override
   Future<void> acknowledge({bool? updateMessage, bool? isEphemeral}) async {
-    assert(updateMessage != true || isEphemeral != true, 'Cannot set isEphemeral to true if updateMessage is set to true');
-    assert(!_didRespond, 'Cannot acknowledge an interaction after a response or acknowledge has been sent');
+    if (_didAcknowledge) {
+      throw AlreadyAcknowledgedError(this);
+    }
 
-    _didRespond = true;
+    assert(updateMessage != true || isEphemeral != true, 'Cannot set isEphemeral to true if updateMessage is set to true');
+
+    _didAcknowledge = true;
     _didUpdateMessage = updateMessage;
     _wasEphemeral = isEphemeral;
 
@@ -268,9 +276,10 @@ class MessageComponentInteraction extends Interaction<MessageComponentInteractio
     assert(builder is MessageUpdateBuilder == updateMessage, 'builder must be a MessageUpdateBuilder if updateMessage is true');
     assert(builder is MessageBuilder != updateMessage, 'builder must be a MessageBuilder if updateMessage is null or false');
 
-    if (!_didRespond) {
+    if (!_didAcknowledge) {
       assert(updateMessage != true || isEphemeral != true, 'Cannot set isEphemeral to true if updateMessage is set to true');
 
+      _didAcknowledge = true;
       _didRespond = true;
       _didUpdateMessage = updateMessage;
       _wasEphemeral = isEphemeral;
@@ -283,6 +292,12 @@ class MessageComponentInteraction extends Interaction<MessageComponentInteractio
     } else {
       assert(updateMessage == _didUpdateMessage || updateMessage == null, 'Cannot change the value of updateMessage between acknowledge and respond');
       assert(isEphemeral == _wasEphemeral || isEphemeral == null, 'Cannot change the value of isEphemeral between acknowledge and respond');
+
+      if (_didRespond) {
+        throw AlreadyRespondedError(this);
+      }
+
+      _didRespond = true;
 
       if (updateMessage == true) {
         await manager.updateOriginalResponse(token, builder as MessageUpdateBuilder);
