@@ -22,9 +22,9 @@ class MemberManager extends Manager<Member> {
   PartialMember operator [](Snowflake id) => PartialMember(id: id, manager: this);
 
   @override
-  Member parse(Map<String, Object?> raw) {
+  Member parse(Map<String, Object?> raw, {Snowflake? userId}) {
     return Member(
-      id: Snowflake.parse((raw['user'] as Map<String, Object?>)['id']!),
+      id: userId ?? Snowflake.parse((raw['user'] as Map<String, Object?>)['id']!),
       manager: this,
       user: maybeParse(raw['user'], client.users.parse),
       nick: raw['nick'] as String?,
