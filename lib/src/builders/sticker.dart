@@ -31,7 +31,7 @@ class StickerUpdateBuilder implements UpdateBuilder<GuildSticker> {
   String? name;
 
   /// Description of the sticker (empty or 2-100 characters)
-  String description;
+  String? description;
 
   /// Autocomplete/suggestion tags for the sticker (max 200 characters)
   String? tags;
@@ -40,7 +40,7 @@ class StickerUpdateBuilder implements UpdateBuilder<GuildSticker> {
 
   @override
   Map<String, Object?> build() => {
-        if (!identical(description, sentinelString)) "description": description,
+        if (!identical(description, sentinelString)) "description": description ?? '',
         if (name != null) "name": name,
         if (tags != null) "tags": tags,
       };

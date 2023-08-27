@@ -41,6 +41,10 @@ class ThreadBuilder extends CreateBuilder<Thread> {
 
   ThreadBuilder({required this.name, this.autoArchiveDuration, required this.type, this.invitable, this.rateLimitPerUser});
 
+  ThreadBuilder.publicThread({required this.name, this.autoArchiveDuration, this.rateLimitPerUser}) : type = ChannelType.publicThread;
+
+  ThreadBuilder.privateThread({required this.name, this.autoArchiveDuration, this.invitable, this.rateLimitPerUser}) : type = ChannelType.privateThread;
+
   @override
   Map<String, Object?> build() => {
         'name': name,

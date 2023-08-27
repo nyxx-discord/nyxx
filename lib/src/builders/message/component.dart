@@ -1,8 +1,8 @@
-import 'package:nyxx/nyxx.dart';
 import 'package:nyxx/src/builders/builder.dart';
 import 'package:nyxx/src/models/channel/channel.dart';
 import 'package:nyxx/src/models/emoji.dart';
 import 'package:nyxx/src/models/message/component.dart';
+import 'package:nyxx/src/models/snowflake.dart';
 
 abstract class MessageComponentBuilder extends CreateBuilder<MessageComponent> {
   MessageComponentType type;
@@ -47,6 +47,46 @@ class ButtonBuilder extends MessageComponentBuilder {
     this.isDisabled,
   }) : super(type: MessageComponentType.button);
 
+  ButtonBuilder.primary({
+    this.label,
+    this.emoji,
+    required String customId,
+    this.isDisabled,
+  })  : style = ButtonStyle.primary,
+        super(type: MessageComponentType.button);
+
+  ButtonBuilder.secondary({
+    this.label,
+    this.emoji,
+    required String customId,
+    this.isDisabled,
+  })  : style = ButtonStyle.secondary,
+        super(type: MessageComponentType.button);
+
+  ButtonBuilder.success({
+    this.label,
+    this.emoji,
+    required String customId,
+    this.isDisabled,
+  })  : style = ButtonStyle.success,
+        super(type: MessageComponentType.button);
+
+  ButtonBuilder.danger({
+    this.label,
+    this.emoji,
+    required String customId,
+    this.isDisabled,
+  })  : style = ButtonStyle.danger,
+        super(type: MessageComponentType.button);
+
+  ButtonBuilder.link({
+    this.label,
+    this.emoji,
+    required Uri this.url,
+    this.isDisabled,
+  })  : style = ButtonStyle.link,
+        super(type: MessageComponentType.button);
+
   @override
   Map<String, Object?> build() => {
         ...super.build(),
@@ -89,6 +129,48 @@ class SelectMenuBuilder extends MessageComponentBuilder {
     this.maxValues,
     this.isDisabled,
   });
+
+  SelectMenuBuilder.stringSelect({
+    required this.customId,
+    required List<SelectMenuOptionBuilder> this.options,
+    this.placeholder,
+    this.minValues,
+    this.maxValues,
+    this.isDisabled,
+  }) : super(type: MessageComponentType.stringSelect);
+
+  SelectMenuBuilder.userSelect({
+    required this.customId,
+    this.placeholder,
+    this.minValues,
+    this.maxValues,
+    this.isDisabled,
+  }) : super(type: MessageComponentType.userSelect);
+
+  SelectMenuBuilder.roleSelect({
+    required this.customId,
+    this.placeholder,
+    this.minValues,
+    this.maxValues,
+    this.isDisabled,
+  }) : super(type: MessageComponentType.roleSelect);
+
+  SelectMenuBuilder.mentionableSelect({
+    required this.customId,
+    this.channelTypes,
+    this.placeholder,
+    this.minValues,
+    this.maxValues,
+    this.isDisabled,
+  }) : super(type: MessageComponentType.mentionableSelect);
+
+  SelectMenuBuilder.channelSelect({
+    required this.customId,
+    this.placeholder,
+    this.minValues,
+    this.maxValues,
+    this.isDisabled,
+  }) : super(type: MessageComponentType.channelSelect);
 
   @override
   Map<String, Object?> build() => {
