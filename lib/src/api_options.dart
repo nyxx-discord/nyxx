@@ -1,6 +1,7 @@
 import 'package:nyxx/src/builders/presence.dart';
 import 'package:nyxx/src/intents.dart';
 import 'package:nyxx/src/utils/flags.dart';
+import 'package:oauth2/oauth2.dart';
 
 /// Options for connecting to the Discord API.
 abstract class ApiOptions {
@@ -16,51 +17,54 @@ abstract class ApiOptions {
   /// The host at which the API can be found.
   ///
   /// This is always `discord.com`.
-  String get host;
+  String get host => 'discord.com';
 
   /// The base URI relative to the [host] where the API can be found.
-  String get baseUri;
+  String get baseUri => '/api/v$apiVersion';
 
   /// The version of the API to use.
-  int get apiVersion;
+  int get apiVersion => 10;
 
   /// The value of the `Authorization` header to use when authenticating requests.
   String get authorizationHeader;
 
   /// The value of the `User-Agent` header to send with each request.
-  String get userAgent;
+  final String userAgent;
 
   /// The host at which the CDN can be found.
   ///
   /// This is always `cdn.discordapp.com`.
-  String get cdnHost;
+  String get cdnHost => 'cdn.discordapp.com';
+
+  /// Create a new [ApiOptions].
+  ApiOptions({this.userAgent = defaultUserAgent});
 }
 
 /// Options for connecting to the Discord API to make HTTP requests with a bot token.
-class RestApiOptions implements ApiOptions {
+class RestApiOptions extends ApiOptions {
   /// The token to use.
   final String token;
 
   @override
-  final String host = 'discord.com';
-
-  @override
-  final int apiVersion = 10;
-
-  @override
-  String get baseUri => '/api/v$apiVersion';
-
-  @override
   String get authorizationHeader => 'Bot $token';
 
-  @override
-  final String userAgent;
-
-  @override
-  String get cdnHost => 'cdn.discordapp.com';
-
   /// Create a new [RestApiOptions].
-  RestApiOptions({required this.token, this.userAgent = ApiOptions.defaultUserAgent});
+  RestApiOptions({required this.token, super.userAgent});
+}
+
+/// Options for connecting the the Discord API using credentials from an OAuth2 flow.
+class OAuth2ApiOptions extends ApiOptions implements RestApiOptions {
+  /// The credentials to use when connecting to the API.
+  Credentials credentials;
+
+  @override
+  String get token => credentials.accessToken;
+
+  @override
+  String get authorizationHeader => 'Bearer ${credentials.accessToken}';
+
+  /// Create a new [OAuth2ApiOptions].
+  OAuth2ApiOptions({required this.credentials, super.userAgent});
 }
 
 /// Options for connecting to the Discord API for making HTTP requests and connecting to the Gateway

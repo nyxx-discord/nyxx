@@ -1,5 +1,5 @@
-export 'src/api_options.dart' show ApiOptions, RestApiOptions, GatewayApiOptions, GatewayCompression, GatewayPayloadFormat;
-export 'src/client.dart' show Nyxx, NyxxRest, NyxxGateway;
+export 'src/api_options.dart' show ApiOptions, RestApiOptions, GatewayApiOptions, GatewayCompression, GatewayPayloadFormat, OAuth2ApiOptions;
+export 'src/client.dart' show Nyxx, NyxxRest, NyxxGateway, NyxxOAuth2;
 export 'src/client_options.dart' show ClientOptions, RestClientOptions, GatewayClientOptions;
 export 'src/errors.dart'
     show
@@ -68,7 +68,7 @@ export 'src/builders/interaction_response.dart' show InteractionResponseBuilder,
 export 'src/cache/cache.dart' show Cache, CacheConfig;
 
 export 'src/http/bucket.dart' show HttpBucket;
-export 'src/http/handler.dart' show HttpHandler;
+export 'src/http/handler.dart' show HttpHandler, Oauth2HttpHandler;
 export 'src/http/request.dart' show BasicRequest, HttpRequest, MultipartRequest, FormDataRequest;
 export 'src/http/response.dart' show FieldError, HttpErrorData, HttpResponse, HttpResponseError, HttpResponseSuccess;
 export 'src/http/route.dart' show HttpRoute, HttpRouteParam, HttpRoutePart;

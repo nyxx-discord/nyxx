@@ -3,6 +3,7 @@ import 'dart:collection';
 
 import 'package:http/http.dart' hide MultipartRequest;
 import 'package:logging/logging.dart';
+import 'package:nyxx/src/api_options.dart';
 import 'package:nyxx/src/client.dart';
 import 'package:nyxx/src/http/bucket.dart';
 import 'package:nyxx/src/http/request.dart';
@@ -252,5 +253,23 @@ class HttpHandler {
     httpClient.close();
     _onRequestController.close();
     _onResponseController.close();
+  }
+}
+
+/// An [HttpHandler] that refreshes the OAuth2 access token if needed.
+class Oauth2HttpHandler extends HttpHandler {
+  /// The options containing the credentials that may be refreshed.
+  final OAuth2ApiOptions apiOptions;
+
+  /// Create a new [Oauth2HttpHandler].
+  Oauth2HttpHandler(NyxxOAuth2 super.client) : apiOptions = client.apiOptions;
+
+  @override
+  Future<HttpResponse> execute(HttpRequest request) async {
+    if (apiOptions.credentials.isExpired && request.authenticated) {
+      apiOptions.credentials = await apiOptions.credentials.refresh();
+    }
+
+    return await super.execute(request);
   }
 }

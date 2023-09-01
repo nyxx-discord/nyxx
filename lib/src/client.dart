@@ -14,6 +14,7 @@ import 'package:nyxx/src/models/guild/guild.dart';
 import 'package:nyxx/src/models/snowflake.dart';
 import 'package:nyxx/src/plugin/plugin.dart';
 import 'package:nyxx/src/utils/flags.dart';
+import 'package:oauth2/oauth2.dart';
 
 /// A helper function to nest and execute calls to plugin connect methods.
 Future<T> _doConnect<T extends Nyxx>(ApiOptions apiOptions, ClientOptions clientOptions, Future<T> Function() connect, List<NyxxPlugin> plugins) {
@@ -55,6 +56,29 @@ abstract class Nyxx {
 
     return _doConnect(apiOptions, clientOptions, () async {
       final client = NyxxRest._(apiOptions, clientOptions);
+
+      if (clientOptions.applicationId != null) {
+        return client..application = client.applications[clientOptions.applicationId!];
+      }
+
+      return client..application = await client.applications.fetchCurrentApplication();
+    }, clientOptions.plugins);
+  }
+
+  /// Create an instance of [NyxxOAuth2] that can perform requests to the HTTP API and is
+  /// authenticated with OAuth2 [Credentials].
+  static Future<NyxxOAuth2> connectOAuth2(Credentials credentials, {RestClientOptions options = const RestClientOptions()}) =>
+      connectOAuth2WithOptions(OAuth2ApiOptions(credentials: credentials), options);
+
+  /// Create an instance of [NyxxOAuth2] using the provided options.
+  static Future<NyxxOAuth2> connectOAuth2WithOptions(OAuth2ApiOptions apiOptions, [RestClientOptions clientOptions = const RestClientOptions()]) async {
+    clientOptions.logger
+      ..info('Connecting to the REST API via OAuth2')
+      ..fine('Token: ${apiOptions.token}, Authorization: ${apiOptions.authorizationHeader}, User-Agent: ${apiOptions.userAgent}')
+      ..fine('Plugins: ${clientOptions.plugins.map((plugin) => plugin.name).join(', ')}');
+
+    return _doConnect(apiOptions, clientOptions, () async {
+      final client = NyxxOAuth2._(apiOptions, clientOptions);
 
       if (clientOptions.applicationId != null) {
         return client..application = client.applications[clientOptions.applicationId!];
@@ -140,6 +164,41 @@ class NyxxRest with ManagerMixin implements Nyxx {
   Future<void> leaveThread(Snowflake id) => channels.leaveThread(id);
 
   /// List the guilds the current user is a member of.
+  Future<List<PartialGuild>> listGuilds({Snowflake? before, Snowflake? after, int? limit}) =>
+      users.listCurrentUserGuilds(before: before, after: after, limit: limit);
+
+  @override
+  Future<void> close() {
+    logger.info('Closing client');
+    return _doClose(this, () async => httpHandler.close(), options.plugins);
+  }
+}
+
+class NyxxOAuth2 with ManagerMixin implements NyxxRest {
+  @override
+  final OAuth2ApiOptions apiOptions;
+
+  @override
+  final RestClientOptions options;
+
+  @override
+  late final HttpHandler httpHandler = Oauth2HttpHandler(this);
+
+  @override
+  Logger get logger => options.logger;
+
+  @override
+  late final PartialApplication application;
+
+  NyxxOAuth2._(this.apiOptions, this.options);
+
+  @override
+  Future<void> joinThread(Snowflake id) => channels.joinThread(id);
+
+  @override
+  Future<void> leaveThread(Snowflake id) => channels.leaveThread(id);
+
+  @override
   Future<List<PartialGuild>> listGuilds({Snowflake? before, Snowflake? after, int? limit}) =>
       users.listCurrentUserGuilds(before: before, after: after, limit: limit);
 
