@@ -149,6 +149,7 @@ void main() {
           );
         });
 
+        expect(handler.onRateLimit.where((event) => event.isAnticipated), emits(predicate((_) => true)));
         expect(handler.execute(request), completes);
       });
 
@@ -185,6 +186,8 @@ void main() {
             },
           );
         });
+
+        expect(handler.onRateLimit.where((event) => !event.isAnticipated), emits(predicate((_) => true)));
 
         await expectLater(
           handler.execute(request),
@@ -232,6 +235,8 @@ void main() {
             },
           );
         });
+
+        expect(handler.onRateLimit.where((event) => event.isGlobal), emits(predicate((_) => true)));
 
         await expectLater(
           handler.execute(request),
