@@ -68,7 +68,7 @@ export 'src/builders/interaction_response.dart' show InteractionResponseBuilder,
 export 'src/cache/cache.dart' show Cache, CacheConfig;
 
 export 'src/http/bucket.dart' show HttpBucket;
-export 'src/http/handler.dart' show HttpHandler, Oauth2HttpHandler;
+export 'src/http/handler.dart' show HttpHandler, Oauth2HttpHandler, RateLimitInfo;
 export 'src/http/request.dart' show BasicRequest, HttpRequest, MultipartRequest, FormDataRequest;
 export 'src/http/response.dart' show FieldError, HttpErrorData, HttpResponse, HttpResponseError, HttpResponseSuccess;
 export 'src/http/route.dart' show HttpRoute, HttpRouteParam, HttpRoutePart;
