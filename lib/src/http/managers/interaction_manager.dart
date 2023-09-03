@@ -159,8 +159,12 @@ class InteractionManager {
       ),
       members: maybeParse(
         raw['members'],
-        (Map<String, Object?> raw) =>
-            raw.map((key, value) => MapEntry(Snowflake.parse(key), client.guilds[guildId ?? Snowflake.zero].members.parse(value as Map<String, Object?>))),
+        (Map<String, Object?> raw) => raw.map(
+          (key, value) => MapEntry(
+            Snowflake.parse(key),
+            client.guilds[guildId ?? Snowflake.zero].members.parse(value as Map<String, Object?>, userId: Snowflake.parse(key)),
+          ),
+        ),
       ),
       roles: maybeParse(
         raw['roles'],

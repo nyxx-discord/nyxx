@@ -63,6 +63,104 @@ void checkCommandInteraction(Interaction<dynamic> interaction) {
   expect(interaction.guildLocale, equals(Locale.enUs));
 }
 
+final sampleCommandInteraction2 = {
+  "version": 1,
+  "type": 2,
+  "token": "REDACTED",
+  "member": {
+    "user": {
+      "username": "abitofevrything",
+      "public_flags": 128,
+      "id": "506759329068613643",
+      "global_name": "Abitofevrything",
+      "discriminator": "0",
+      "avatar_decoration_data": null,
+      "avatar": "b591ea8a9d057669ea2a6cd3ab450301"
+    },
+    "unusual_dm_activity_until": null,
+    "roles": ["1034762811726901269"],
+    "premium_since": null,
+    "permissions": "562949953421311",
+    "pending": false,
+    "nick": null,
+    "mute": false,
+    "joined_at": "2022-10-23T10:03:13.019000+00:00",
+    "flags": 2,
+    "deaf": false,
+    "communication_disabled_until": null,
+    "avatar": null
+  },
+  "locale": "en-GB",
+  "id": "1145002345244135444",
+  "guild_locale": "en-US",
+  "guild_id": "1033681997136146462",
+  "guild": {
+    "locale": "en-US",
+    "id": "1033681997136146462",
+    "features": ["GUILD_ONBOARDING_EVER_ENABLED", "GUILD_ONBOARDING_HAS_PROMPTS", "NEWS", "GUILD_ONBOARDING", "COMMUNITY"]
+  },
+  "entitlements": [],
+  "entitlement_sku_ids": [],
+  "data": {
+    "type": 1,
+    "resolved": {
+      "users": {
+        "1033681843708510238": {
+          "username": "Abitofbot",
+          "public_flags": 0,
+          "id": "1033681843708510238",
+          "global_name": null,
+          "discriminator": "8969",
+          "bot": true,
+          "avatar_decoration_data": null,
+          "avatar": null
+        }
+      },
+      "members": {
+        "1033681843708510238": {
+          "unusual_dm_activity_until": null,
+          "roles": ["1123231366734168107"],
+          "premium_since": null,
+          "permissions": "562949953421311",
+          "pending": false,
+          "nick": null,
+          "joined_at": "2023-06-27T12:40:26.840000+00:00",
+          "flags": 10,
+          "communication_disabled_until": null,
+          "avatar": null
+        }
+      }
+    },
+    "options": [
+      {"value": "1033681843708510238", "type": 6, "name": "target"},
+      {"value": "erfhi", "type": 3, "name": "new-nick"}
+    ],
+    "name": "nick",
+    "id": "1144994260677050489"
+  },
+  "channel_id": "1038831656682930227",
+  "channel": {
+    "type": 0,
+    "topic": null,
+    "rate_limit_per_user": 0,
+    "position": 3,
+    "permissions": "562949953421311",
+    "parent_id": "1038831638836162580",
+    "nsfw": false,
+    "name": "testing",
+    "last_message_id": "1145000144400552047",
+    "id": "1038831656682930227",
+    "guild_id": "1033681997136146462",
+    "flags": 0
+  },
+  "application_id": "1033681843708510238",
+  "app_permissions": "562949953421311",
+};
+
+void checkCommandInteraction2(Interaction<dynamic> interaction) {
+  expect(interaction, isA<ApplicationCommandInteraction>());
+}
+
 void main() {
   group('InteractionManager', () {
     test('parse', () {
@@ -71,10 +169,17 @@ void main() {
       when(() => client.options).thenReturn(RestClientOptions());
 
       ParsingTest<InteractionManager, Interaction<dynamic>, Map<String, Object?>>(
-        name: 'parse',
+        name: 'parse (1)',
         source: sampleCommandInteraction,
         parse: (manager) => manager.parse,
         check: checkCommandInteraction,
+      ).runWithManager(InteractionManager(client, applicationId: Snowflake.zero));
+
+      ParsingTest<InteractionManager, Interaction<dynamic>, Map<String, Object?>>(
+        name: 'parse (2)',
+        source: sampleCommandInteraction2,
+        parse: (manager) => manager.parse,
+        check: checkCommandInteraction2,
       ).runWithManager(InteractionManager(client, applicationId: Snowflake.zero));
     });
 
