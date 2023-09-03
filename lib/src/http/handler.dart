@@ -14,6 +14,13 @@ extension on HttpRequest {
   String get loggingId => '$method $route';
 }
 
+/// Information about a [delay] applied to [request] because of a rate limit.
+///
+/// [isGlobal] indicates if the delay applied is due to the global rate limit.
+/// [isAnticipated] will be true if the request was delayed before it was sent. If [isAnticipated] is `false`,
+/// a response with the status code 429 was received from the API.
+typedef RateLimitInfo = ({HttpRequest request, Duration delay, bool isGlobal, bool isAnticipated});
+
 /// A handler for making HTTP requests to the Discord API.
 ///
 /// {@template http_handler}
@@ -44,6 +51,7 @@ class HttpHandler {
 
   final StreamController<HttpRequest> _onRequestController = StreamController.broadcast();
   final StreamController<HttpResponse> _onResponseController = StreamController.broadcast();
+  final StreamController<RateLimitInfo> _onRateLimitController = StreamController.broadcast();
 
   /// A stream of requests executed by this handler.
   ///
@@ -56,6 +64,9 @@ class HttpHandler {
   /// to be retried, this means you may receive multiple responses for a single request on this
   /// stream.
   Stream<HttpResponse> get onResponse => _onResponseController.stream;
+
+  /// A stream that emits an event when a request is delayed because of a rate limit.
+  Stream<RateLimitInfo> get onRateLimit => _onRateLimitController.stream;
 
   final Queue<Duration> _realLatencies = DoubleLinkedQueue();
   final Queue<Duration> _latencies = DoubleLinkedQueue();
@@ -149,10 +160,12 @@ class HttpHandler {
         }
       }
 
-      waitTime = globalWaitTime > bucketWaitTime && request.applyGlobalRateLimit ? globalWaitTime : bucketWaitTime;
+      final isGlobal = globalWaitTime > bucketWaitTime && request.applyGlobalRateLimit;
+      waitTime = isGlobal ? globalWaitTime : bucketWaitTime;
 
       if (waitTime > Duration.zero) {
         logger.finer('Holding ${request.loggingId} for $waitTime');
+        _onRateLimitController.add((request: request, delay: waitTime, isGlobal: isGlobal, isAnticipated: true));
         await Future.delayed(waitTime);
       }
     } while (waitTime > Duration.zero);
@@ -229,6 +242,7 @@ class HttpHandler {
           _globalReset = DateTime.now().add(retryAfter);
         }
 
+        _onRateLimitController.add((request: request, delay: retryAfter, isGlobal: isGlobal, isAnticipated: false));
         return Future.delayed(retryAfter, () => execute(request));
       } on TypeError {
         logger.shout('Invalid rate limit body for ${request.loggingId}! Your client is probably cloudflare banned!');
