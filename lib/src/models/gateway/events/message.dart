@@ -129,7 +129,7 @@ class MessageReactionAddEvent extends DispatchEvent {
   final Member? member;
 
   /// The emoji that was added.
-  final PartialEmoji emoji;
+  final Emoji emoji;
 
   /// {@macro message_reaction_add_event}
   MessageReactionAddEvent({
@@ -172,7 +172,7 @@ class MessageReactionRemoveEvent extends DispatchEvent {
   final Snowflake? guildId;
 
   /// The emoji that was removed.
-  final PartialEmoji emoji;
+  final Emoji emoji;
 
   /// {@macro message_reaction_remove_event}
   MessageReactionRemoveEvent({
