@@ -1,17 +1,19 @@
-import 'dart:async';
+import 'package:nyxx/src/api_options.dart';
+import 'package:nyxx/src/client.dart';
+import 'package:nyxx/src/client_options.dart';
 
-import 'package:logging/logging.dart';
-import 'package:nyxx/nyxx.dart';
+/// Provides access to the connection and closing process for implementing plugins.
+abstract class NyxxPlugin {
+  /// The name of this plugin.
+  String get name;
 
-abstract class BasePlugin {
-  Logger get logger => Logger(name);
-  String get name => runtimeType.toString();
+  /// Perform the connection operation.
+  ///
+  /// The function passed as an argument should be called to obtain the underlying client.
+  Future<ClientType> connect<ClientType extends Nyxx>(ApiOptions apiOptions, ClientOptions clientOptions, Future<ClientType> Function() connect) => connect();
 
-  FutureOr<void> onRegister(INyxx nyxx, Logger logger) async {}
-
-  FutureOr<void> onBotStart(INyxx nyxx, Logger logger) async {}
-  FutureOr<void> onBotStop(INyxx nyxx, Logger logger) async {}
-
-  FutureOr<void> onConnectionClose(INyxx nyxx, Logger logger, int closeCode, String? closeReason) async {}
-  FutureOr<void> onConnectionError(INyxx nyxx, Logger logger, String errorMessage) async {}
+  /// Perform the close operation.
+  ///
+  /// The function passed as an argument should be called to close the underlying client.
+  Future<void> close(Nyxx client, Future<void> Function() close) => close();
 }

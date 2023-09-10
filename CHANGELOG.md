@@ -1,3 +1,41 @@
+## 6.0.0-dev.2
+__24.08.2023__
+
+- rewrite: Changed `MessageBuilder.embeds` and `MessageUpdateBuilder.embeds` to use a new `EmbedBuilder` instead of `Embed` objects.
+- rewrite: Changed all builders to be mutable.
+- rewrite: Implement the interactions & message components API.
+- rewrite: `ActivityBuilder` is now exported.
+- rewrite: Fixed some typos: `ChannelManager.parseForumChanel` -> `ChannelManager.parseForumChannel` and `chanel` -> `channel` in the docs for `VoiceChannel.videoQualityMode`.
+- rewrite: Added wrappers around CDN endpoints and assets.
+- feat: Added `Permissions.allPermissions`, the set of permission flags with all permissions.
+- feat: Added `HttpHandler.latency`, `HttpHandler.realLatency`, `Gateway.latency` and `Shard.latency` for tracking the client's latency.
+- feat: `Flags` now has the `~` and the `^` operators.
+- feat: Added `HttpHandler.onRequest` and `HttpHandler.onResponse` streams for tracking HTTP requests and responses.
+- bug: Fixed `MessageUpdateEvent`s causing a parsing error.
+- bug: Fixed classes creating uncaught async errors when `toString()` was invoked on them.
+- bug: Empty caches are no longer stored.
+- bug: Fixed stickers causing a parsing error.
+- bug: Fixed rate limits not applying correctly when multiple requests were queued.
+- bug: Fixed `applyGlobalRatelimit` in `HttpRequest` not doing anything.
+
+## 6.0.0-dev.1
+__03.07.2023__
+
+- rewrite: The entire library has been rewritten from the ground up. No pre-`6.0.0-dev.1` code is compatible.
+  Join our Discord server for updates concerning the migration path and help upgrading.
+  For now, check out the new examples and play around with the rewrite to get a feel for it.
+
+## 5.0.1
+__18.03.2023__
+
+- documentation: Channel invites (#448)
+- bug: Correctly dispose all resources on bot stop (#451)
+
+## 4.5.1
+__19.03.2023__
+
+- bug: Correctly dispose all resources on bot stop (#451)
+
 ## 5.0.0
 __04.03.2023__
 
