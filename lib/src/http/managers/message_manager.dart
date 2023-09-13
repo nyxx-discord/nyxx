@@ -235,8 +235,8 @@ class MessageManager extends Manager<Message> {
         ),
       MessageComponentType.textInput => TextInputComponent(
           customId: raw['custom_id'] as String,
-          style: TextInputStyle.parse(raw['style'] as int),
-          label: raw['label'] as String,
+          style: raw['style'] != null ? TextInputStyle.parse(raw['style'] as int) : null,
+          label: raw['label'] as String?,
           minLength: raw['min_length'] as int?,
           maxLength: raw['max_length'] as int?,
           isRequired: raw['required'] as bool?,

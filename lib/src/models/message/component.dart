@@ -140,9 +140,9 @@ class TextInputComponent extends MessageComponent {
 
   final String customId;
 
-  final TextInputStyle style;
+  final TextInputStyle? style;
 
-  final String label;
+  final String? label;
 
   final int? minLength;
 
