@@ -1,3 +1,21 @@
+## 6.0.0-dev.3
+__16.09.2023__
+
+- rewrite: Interaction responses now throw errors instead of using assertions.
+- rewrite: Improved plugin interface with support for plugin state and a simpler API.
+- feat: Added constructors to most builders with multiple configurations.
+- feat: Added support for authenticating via OAuth2.
+- feat: Added `HttpHandler.onRateLimit` for tracking client rate limiting.
+- feat: Parse emoji in reaction events.
+- feat: Allow specifying `stdout` and `stderr` in `Logging`.
+- feat: Add `NyxxRest.user` to get the current user.
+- feat: `Attachment` now implements `CdnAsset` for easier fetching.
+- bug: Fixed emoji in SelectMenuBuilder not being sent correctly.
+- bug: Fixed parsing members in interaction data.
+- bug: `DiscordColor` did not allow a value of `0xffffff` (white).
+- bug: Fixed parsing role mentions as role objects in messages.
+
+
 ## 6.0.0-dev.2
 __24.08.2023__
 
