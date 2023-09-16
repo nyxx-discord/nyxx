@@ -14,7 +14,6 @@ import 'package:nyxx/src/models/guild/member.dart';
 import 'package:nyxx/src/models/guild/scheduled_event.dart';
 import 'package:nyxx/src/models/message/message.dart';
 import 'package:nyxx/src/models/role.dart';
-import 'package:nyxx/src/models/snowflake.dart';
 import 'package:nyxx/src/models/sticker/global_sticker.dart';
 import 'package:nyxx/src/models/sticker/guild_sticker.dart';
 import 'package:nyxx/src/models/user/user.dart';
@@ -93,9 +92,6 @@ class RestClientOptions extends ClientOptions {
   /// The [CacheConfig] to use for the [GuildApplicationCommandManager.permissionsCache] cache.
   final CacheConfig<CommandPermissions> commandPermissionsConfig;
 
-  /// The ID of the application the client is authenticating for.
-  final Snowflake? applicationId;
-
   /// Create a new [RestClientOptions].
   const RestClientOptions({
     super.plugins,
@@ -118,7 +114,6 @@ class RestClientOptions extends ClientOptions {
     this.globalStickerCacheConfig = const CacheConfig(),
     this.applicationCommandConfig = const CacheConfig(),
     this.commandPermissionsConfig = const CacheConfig(),
-    this.applicationId,
   });
 }
 
@@ -150,6 +145,5 @@ class GatewayClientOptions extends RestClientOptions {
     super.voiceStateConfig,
     super.applicationCommandConfig,
     super.commandPermissionsConfig,
-    super.applicationId,
   });
 }

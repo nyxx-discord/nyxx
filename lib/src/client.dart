@@ -12,6 +12,7 @@ import 'package:nyxx/src/api_options.dart';
 import 'package:nyxx/src/models/application.dart';
 import 'package:nyxx/src/models/guild/guild.dart';
 import 'package:nyxx/src/models/snowflake.dart';
+import 'package:nyxx/src/models/user/user.dart';
 import 'package:nyxx/src/plugin/plugin.dart';
 import 'package:nyxx/src/utils/flags.dart';
 import 'package:oauth2/oauth2.dart';
@@ -63,11 +64,9 @@ abstract class Nyxx {
     return _doConnect(apiOptions, clientOptions, () async {
       final client = NyxxRest._(apiOptions, clientOptions);
 
-      if (clientOptions.applicationId != null) {
-        return client..application = client.applications[clientOptions.applicationId!];
-      }
-
-      return client..application = await client.applications.fetchCurrentApplication();
+      return client
+        .._application = await client.applications.fetchCurrentApplication()
+        .._user = await client.users.fetchCurrentUser();
     }, clientOptions.plugins);
   }
 
@@ -86,11 +85,9 @@ abstract class Nyxx {
     return _doConnect(apiOptions, clientOptions, () async {
       final client = NyxxOAuth2._(apiOptions, clientOptions);
 
-      if (clientOptions.applicationId != null) {
-        return client..application = client.applications[clientOptions.applicationId!];
-      }
-
-      return client..application = await client.applications.fetchCurrentApplication();
+      return client
+        .._application = await client.applications.fetchCurrentApplication()
+        .._user = await client.users.fetchCurrentUser();
     }, clientOptions.plugins);
   }
 
@@ -116,11 +113,9 @@ abstract class Nyxx {
     return _doConnect(apiOptions, clientOptions, () async {
       final client = NyxxGateway._(apiOptions, clientOptions);
 
-      if (clientOptions.applicationId != null) {
-        client.application = client.applications[clientOptions.applicationId!];
-      } else {
-        client.application = await client.applications.fetchCurrentApplication();
-      }
+      client
+        .._application = await client.applications.fetchCurrentApplication()
+        .._user = await client.users.fetchCurrentUser();
 
       // We can't use client.gateway as it is not initialized yet
       final gatewayManager = GatewayManager(client);
@@ -148,7 +143,12 @@ class NyxxRest with ManagerMixin implements Nyxx {
   late final HttpHandler httpHandler = HttpHandler(this);
 
   /// The application associated with this client.
-  late final PartialApplication application;
+  PartialApplication get application => _application;
+  late final PartialApplication _application;
+
+  /// The user associated with this client.
+  PartialUser get user => _user;
+  late final PartialUser _user;
 
   @override
   Logger get logger => options.logger;
@@ -194,7 +194,16 @@ class NyxxOAuth2 with ManagerMixin implements NyxxRest {
   Logger get logger => options.logger;
 
   @override
-  late final PartialApplication application;
+  PartialApplication get application => _application;
+
+  @override
+  late final PartialApplication _application;
+
+  @override
+  PartialUser get user => _user;
+
+  @override
+  late final PartialUser _user;
 
   NyxxOAuth2._(this.apiOptions, this.options);
 
@@ -227,7 +236,16 @@ class NyxxGateway with ManagerMixin, EventMixin implements NyxxRest {
   late final HttpHandler httpHandler = HttpHandler(this);
 
   @override
-  late final PartialApplication application;
+  PartialApplication get application => _application;
+
+  @override
+  late final PartialApplication _application;
+
+  @override
+  PartialUser get user => _user;
+
+  @override
+  late final PartialUser _user;
 
   /// The [Gateway] used by this client to send and receive Gateway events.
   // Initialized in connectGateway due to a circular dependency
