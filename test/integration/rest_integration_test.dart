@@ -123,6 +123,9 @@ void main() {
       expect(message.attachments, hasLength(1));
       expect(message.attachments.first.fileName, equals('1.png'));
 
+      await expectLater(message.attachments.first.fetch(), completes);
+      await expectLater(message.attachments.first.fetchStreamed().drain(), completes);
+
       await expectLater(message.delete(), completes);
 
       await expectLater(

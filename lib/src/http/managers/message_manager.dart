@@ -97,6 +97,7 @@ class MessageManager extends Manager<Message> {
   Attachment parseAttachment(Map<String, Object?> raw) {
     return Attachment(
       id: Snowflake.parse(raw['id']!),
+      manager: this,
       fileName: raw['filename'] as String,
       description: raw['description'] as String?,
       contentType: raw['content_type'] as String?,
