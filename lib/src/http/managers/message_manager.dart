@@ -54,7 +54,7 @@ class MessageManager extends Manager<Message> {
       isTts: raw['tts'] as bool,
       mentionsEveryone: raw['mention_everyone'] as bool,
       mentions: parseMany(raw['mentions'] as List, client.users.parse),
-      roleMentions: parseMany(raw['mention_roles'] as List, client.guilds[Snowflake.zero].roles.parse),
+      roleMentionIds: parseMany(raw['mention_roles'] as List, Snowflake.parse),
       channelMentions: maybeParseMany(raw['mention_channels'], parseChannelMention) ?? [],
       attachments: parseMany(raw['attachments'] as List, parseAttachment),
       embeds: parseMany(raw['embeds'] as List, parseEmbed),

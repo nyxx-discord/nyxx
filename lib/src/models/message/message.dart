@@ -15,7 +15,6 @@ import 'package:nyxx/src/models/message/reference.dart';
 import 'package:nyxx/src/models/message/reaction.dart';
 import 'package:nyxx/src/models/channel/text_channel.dart';
 import 'package:nyxx/src/models/message/role_subscription_data.dart';
-import 'package:nyxx/src/models/role.dart';
 import 'package:nyxx/src/models/snowflake.dart';
 import 'package:nyxx/src/models/snowflake_entity/snowflake_entity.dart';
 import 'package:nyxx/src/models/sticker/sticker.dart';
@@ -113,7 +112,7 @@ class Message extends PartialMessage {
   /// A list of users specifically mentioned in this message.
   final List<User> mentions;
 
-  final List<Role> roleMentions;
+  final List<Snowflake> roleMentionIds;
 
   /// A list of channels specifically mentioned in this message.
   final List<ChannelMention> channelMentions;
@@ -194,7 +193,7 @@ class Message extends PartialMessage {
     required this.isTts,
     required this.mentionsEveryone,
     required this.mentions,
-    required this.roleMentions,
+    required this.roleMentionIds,
     required this.channelMentions,
     required this.attachments,
     required this.embeds,
@@ -219,6 +218,8 @@ class Message extends PartialMessage {
 
   /// The webhook that sent this message if it was sent by a webhook, `null` otherwise.
   PartialWebhook? get webhook => webhookId == null ? null : manager.client.webhooks[webhookId!];
+
+  // Cannot provide roleMentions as we do not have access to the guild.
 }
 
 /// The type of a message.
