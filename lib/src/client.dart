@@ -18,13 +18,19 @@ import 'package:oauth2/oauth2.dart';
 
 /// A helper function to nest and execute calls to plugin connect methods.
 Future<T> _doConnect<T extends Nyxx>(ApiOptions apiOptions, ClientOptions clientOptions, Future<T> Function() connect, List<NyxxPlugin> plugins) {
-  connect = plugins.fold(connect, (previousConnect, plugin) => () => plugin.connect(apiOptions, clientOptions, previousConnect));
+  connect = plugins.fold(
+    connect,
+    (previousConnect, plugin) => () async => (await plugin.doConnect(apiOptions, clientOptions, previousConnect)) as T,
+  );
   return connect();
 }
 
 /// A helper function to nest and execute calls to plugin close methods.
 Future<void> _doClose(Nyxx client, Future<void> Function() close, List<NyxxPlugin> plugins) {
-  close = plugins.fold(close, (previousClose, plugin) => () => plugin.close(client, previousClose));
+  close = plugins.fold(
+    close,
+    (previousClose, plugin) => () => plugin.doClose(client, previousClose),
+  );
   return close();
 }
 

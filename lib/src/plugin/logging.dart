@@ -111,19 +111,19 @@ class Logging extends NyxxPlugin {
   }
 
   @override
-  Future<ClientType> connect<ClientType extends Nyxx>(ApiOptions apiOptions, ClientOptions clientOptions, Future<ClientType> Function() connect) async {
+  void beforeConnect(ApiOptions apiOptions, ClientOptions clientOptions) {
     if (apiOptions is RestApiOptions) {
       _tokens.add(apiOptions.token);
     }
 
     _clients++;
     _listenIfNeeded();
-    return await connect();
   }
 
   @override
-  Future<void> close(Nyxx client, Future<void> Function() close) async {
-    await close();
+  Future<void> doClose(Nyxx client, Future<void> Function() close) async {
+    await super.doClose(client, close);
+
     _clients--;
     _stopListeningIfNeeded();
 
