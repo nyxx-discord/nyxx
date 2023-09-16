@@ -45,5 +45,11 @@ void main() {
 
       expect(color, equals(DiscordColor(0xffed12)));
     });
+
+    test('max value', () {
+      final color = DiscordColor(0xffffff);
+
+      expect(color.value, equals(0xffffff));
+    });
   });
 }
