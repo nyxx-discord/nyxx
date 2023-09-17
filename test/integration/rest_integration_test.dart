@@ -45,11 +45,19 @@ void main() {
     // refer to the same variable if we use setUp and tearDown. use the All variants
     // to mitigate this.
     setUpAll(() async {
-      client = await Nyxx.connectRest(testToken!, options: RestClientOptions(applicationId: Snowflake.zero));
+      client = await Nyxx.connectRest(testToken!);
     });
 
     tearDownAll(() async {
       await client.close();
+    });
+
+    test('client.user', () async {
+      await expectLater(client.user.get(), completes);
+    });
+
+    test('client.application', () {
+      expect(client.application.id, isNot(Snowflake.zero));
     });
 
     test('applications', () async {
@@ -114,6 +122,9 @@ void main() {
 
       expect(message.attachments, hasLength(1));
       expect(message.attachments.first.fileName, equals('1.png'));
+
+      await expectLater(message.attachments.first.fetch(), completes);
+      await expectLater(message.attachments.first.fetchStreamed().drain(), completes);
 
       await expectLater(message.delete(), completes);
 

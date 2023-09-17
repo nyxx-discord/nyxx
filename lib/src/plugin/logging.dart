@@ -1,5 +1,5 @@
 import 'dart:async';
-import 'dart:io';
+import 'dart:io' as io;
 
 import 'package:logging/logging.dart';
 import 'package:nyxx/src/api_options.dart';
@@ -30,6 +30,16 @@ class Logging extends NyxxPlugin {
   /// Whether to censor the token of clients this plugin is attached to.
   final bool censorToken;
 
+  /// The sink normal messages are sent to.
+  ///
+  /// Defaults to [io.stdout].
+  final StringSink stdout;
+
+  /// The sink error messages are sent to.
+  ///
+  /// Defaults to [io.stderr].
+  final StringSink stderr;
+
   /// Create a new instance of the [Logging] plugin.
   Logging({
     this.stderrLevel = Level.WARNING,
@@ -37,7 +47,10 @@ class Logging extends NyxxPlugin {
     this.logLevel = Level.INFO,
     this.truncateLogsAt = 1000,
     this.censorToken = true,
-  });
+    StringSink? stdout,
+    StringSink? stderr,
+  })  : stdout = stdout ?? io.stdout,
+        stderr = stderr ?? io.stderr;
 
   static int _clients = 0;
 
@@ -111,19 +124,19 @@ class Logging extends NyxxPlugin {
   }
 
   @override
-  Future<ClientType> connect<ClientType extends Nyxx>(ApiOptions apiOptions, ClientOptions clientOptions, Future<ClientType> Function() connect) async {
+  void beforeConnect(ApiOptions apiOptions, ClientOptions clientOptions) {
     if (apiOptions is RestApiOptions) {
       _tokens.add(apiOptions.token);
     }
 
     _clients++;
     _listenIfNeeded();
-    return await connect();
   }
 
   @override
-  Future<void> close(Nyxx client, Future<void> Function() close) async {
-    await close();
+  Future<void> doClose(Nyxx client, Future<void> Function() close) async {
+    await super.doClose(client, close);
+
     _clients--;
     _stopListeningIfNeeded();
 

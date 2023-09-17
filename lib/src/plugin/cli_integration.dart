@@ -1,9 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:nyxx/src/api_options.dart';
 import 'package:nyxx/src/client.dart';
-import 'package:nyxx/src/client_options.dart';
 import 'package:nyxx/src/plugin/plugin.dart';
 
 /// A global instance of the [CliIntegration] plugin.
@@ -44,26 +42,20 @@ class CliIntegration extends NyxxPlugin {
     for (final subscription in _subscriptions!) {
       subscription.cancel();
     }
+    _subscriptions = null;
   }
 
   @override
-  Future<ClientType> connect<ClientType extends Nyxx>(ApiOptions apiOptions, ClientOptions clientOptions, Future<ClientType> Function() connect) async {
+  void afterConnect(Nyxx client) {
     _ensureListening();
 
-    try {
-      final client = await connect();
-      _watchedClients.add(client);
-      client.logger.info('Listening for SIGINT or SIGTERM to safely close');
-      return client;
-    } finally {
-      _removeListenersIfNeeded();
-    }
+    _watchedClients.add(client);
+    client.logger.info('Listening for SIGINT or SIGTERM to safely close');
   }
 
   @override
-  Future<void> close(Nyxx client, Future<void> Function() close) async {
+  void beforeClose(Nyxx client) {
     _watchedClients.remove(client);
     _removeListenersIfNeeded();
-    await close();
   }
 }

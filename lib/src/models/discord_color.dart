@@ -19,7 +19,7 @@ class DiscordColor {
   int get b => value & 0xff;
 
   /// Create a [DiscordColor] from a 24 bit encoded [value].
-  const DiscordColor(this.value) : assert(value >= 0 && value < 0xffffff, 'value must be between 0 and ${0xffffff}');
+  const DiscordColor(this.value) : assert(value >= 0 && value <= 0xffffff, 'value must be between 0 and ${0xffffff}');
 
   /// Create a [DiscordColor] from [r], [g] and [b] channels ranging from 0 to 255 combined.
   ///

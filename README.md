@@ -13,7 +13,7 @@ If you're already familiar with Discord's API, here's a quick example to get you
 import 'package:nyxx/nyxx.dart';
 
 void main() async {
-  final client = await Nyxx.connectWebsocket('<TOKEN>', GatewayIntents.allUnprivileged);
+  final client = await Nyxx.connectGateway('<TOKEN>', GatewayIntents.allUnprivileged);
 
   final botUser = await client.users.fetchCurrentUser();
 

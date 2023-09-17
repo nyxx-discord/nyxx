@@ -1,9 +1,7 @@
 import 'dart:isolate';
 
 import 'package:logging/logging.dart';
-import 'package:nyxx/src/api_options.dart';
 import 'package:nyxx/src/client.dart';
-import 'package:nyxx/src/client_options.dart';
 import 'package:nyxx/src/plugin/plugin.dart';
 
 /// A global instance of the [IgnoreExceptions] plugin.
@@ -53,18 +51,13 @@ class IgnoreExceptions extends NyxxPlugin {
   }
 
   @override
-  Future<ClientType> connect<ClientType extends Nyxx>(ApiOptions apiOptions, ClientOptions clientOptions, Future<ClientType> Function() connect) async {
-    final client = await connect();
-
+  void afterConnect(Nyxx client) {
     _clients++;
     _listenIfNeeded();
-
-    return client;
   }
 
   @override
-  Future<void> close(Nyxx client, Future<void> Function() close) async {
-    await close();
+  void afterClose() {
     _clients--;
     _stopListeningIfNeeded();
   }
