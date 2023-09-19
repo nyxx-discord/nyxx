@@ -120,7 +120,7 @@ class ModalBuilder extends CreateBuilder<ModalBuilder> {
 
   String title;
 
-  List<TextInputBuilder> components;
+  List<ActionRowBuilder> components;
 
   ModalBuilder({required this.customId, required this.title, required this.components});
 
@@ -128,8 +128,6 @@ class ModalBuilder extends CreateBuilder<ModalBuilder> {
   Map<String, Object?> build() => {
         'custom_id': customId,
         'title': title,
-        'components': [
-          for (TextInputBuilder component in components) ActionRowBuilder(components: [component]).build()
-        ],
+        'components': components.map((e) => e.build()).toList(),
       };
 }
