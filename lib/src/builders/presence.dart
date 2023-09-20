@@ -40,16 +40,19 @@ enum CurrentUserStatus {
 class ActivityBuilder extends CreateBuilder<Activity> {
   String name;
 
+  String? state;
+
   ActivityType type;
 
   Uri? url;
 
-  ActivityBuilder({required this.name, required this.type, this.url});
+  ActivityBuilder({required this.name, required this.type, this.state, this.url});
 
   @override
   Map<String, Object?> build() => {
         'name': name,
         'type': type.value,
+        if (state != null) 'state': state!,
         if (url != null) 'url': url!.toString(),
       };
 }
