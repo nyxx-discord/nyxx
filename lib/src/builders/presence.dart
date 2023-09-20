@@ -16,7 +16,7 @@ class PresenceBuilder extends CreateBuilder<PresenceUpdateEvent> {
   @override
   Map<String, Object?> build() => {
         'since': since?.millisecondsSinceEpoch,
-        if (activities != null) 'activities': activities!.map((e) => e.build()).toList(),
+        'activities': activities?.map((e) => e.build()).toList(),
         'status': status.value,
         'afk': isAfk,
       };
