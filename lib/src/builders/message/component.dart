@@ -252,6 +252,7 @@ class TextInputBuilder extends MessageComponentBuilder {
         ...super.build(),
         'custom_id': customId,
         'style': style.value,
+        'label': label,
         if (minLength != null) 'min_length': minLength,
         if (maxLength != null) 'max_length': maxLength,
         if (isRequired != null) 'required': isRequired,
