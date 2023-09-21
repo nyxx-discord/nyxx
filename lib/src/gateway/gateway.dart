@@ -547,7 +547,7 @@ class Gateway extends GatewayManager with EventParser {
   }
 
   GuildAuditLogCreateEvent parseGuildAuditLogCreate(Map<String, Object?> raw) {
-    final guildId = Snowflake.parse(raw['guild_id'] as String);
+    final guildId = Snowflake.parse(raw['guild_id']!);
 
     return GuildAuditLogCreateEvent(
       gateway: this,
@@ -583,7 +583,7 @@ class Gateway extends GatewayManager with EventParser {
   }
 
   GuildStickersUpdateEvent parseGuildStickersUpdate(Map<String, Object?> raw) {
-    final guildId = Snowflake.parse(raw['guild_id'] as String);
+    final guildId = Snowflake.parse(raw['guild_id']!);
 
     return GuildStickersUpdateEvent(
       gateway: this,
@@ -600,7 +600,7 @@ class Gateway extends GatewayManager with EventParser {
   }
 
   GuildMemberAddEvent parseGuildMemberAdd(Map<String, Object?> raw) {
-    final guildId = Snowflake.parse(raw['guild_id'] as String);
+    final guildId = Snowflake.parse(raw['guild_id']!);
 
     return GuildMemberAddEvent(
       gateway: this,
@@ -853,9 +853,9 @@ class Gateway extends GatewayManager with EventParser {
 
     return MessageReactionRemoveEvent(
       gateway: this,
-      userId: Snowflake.parse(raw['user_id'] as String),
-      channelId: Snowflake.parse(raw['channel_id'] as String),
-      messageId: Snowflake.parse(raw['message_id'] as String),
+      userId: Snowflake.parse(raw['user_id']!),
+      channelId: Snowflake.parse(raw['channel_id']!),
+      messageId: Snowflake.parse(raw['message_id']!),
       guildId: guildId,
       emoji: client.guilds[Snowflake.zero].emojis.parse(raw['emoji'] as Map<String, Object?>),
     );

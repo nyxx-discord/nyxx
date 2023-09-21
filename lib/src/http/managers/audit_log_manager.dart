@@ -19,7 +19,7 @@ class AuditLogManager extends ReadOnlyManager<AuditLogEntry> {
   @override
   AuditLogEntry parse(Map<String, Object?> raw) {
     return AuditLogEntry(
-      id: Snowflake.parse(raw['id'] as String),
+      id: Snowflake.parse(raw['id']!),
       manager: this,
       targetId: maybeParse(raw['target_id'], Snowflake.parse),
       changes: maybeParseMany(raw['changes'], parseAuditLogChange),
