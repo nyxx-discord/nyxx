@@ -66,7 +66,7 @@ class MessageManager extends Manager<Message> {
       activity: maybeParse(raw['activity'], parseMessageActivity),
       application: maybeParse(
         raw['application'],
-        (Map<String, Object?> raw) => PartialApplication(id: Snowflake.parse(raw['id'] as String), manager: client.applications),
+        (Map<String, Object?> raw) => PartialApplication(id: Snowflake.parse(raw['id']!), manager: client.applications),
       ),
       applicationId: maybeParse(raw['application_id'], Snowflake.parse),
       reference: maybeParse(raw['message_reference'], parseMessageReference),

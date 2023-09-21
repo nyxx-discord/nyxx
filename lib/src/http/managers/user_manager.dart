@@ -63,7 +63,7 @@ class UserManager extends ReadOnlyManager<User> {
       integrations: maybeParseMany(
         raw['integrations'],
         (Map<String, Object?> raw) => PartialIntegration(
-          id: Snowflake.parse(raw['id'] as String),
+          id: Snowflake.parse(raw['id']!),
           // TODO: Can we know what guild the integrations are from?
           manager: client.guilds[Snowflake.zero].integrations,
         ),
@@ -138,7 +138,7 @@ class UserManager extends ReadOnlyManager<User> {
     final response = await client.httpHandler.executeSafe(request);
     return parseMany(
       response.jsonBody as List,
-      (Map<String, Object?> raw) => PartialGuild(id: Snowflake.parse(raw['id'] as String), manager: client.guilds),
+      (Map<String, Object?> raw) => PartialGuild(id: Snowflake.parse(raw['id']!), manager: client.guilds),
     );
   }
 

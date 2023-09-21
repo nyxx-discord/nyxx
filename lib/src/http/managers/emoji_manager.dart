@@ -32,7 +32,7 @@ class EmojiManager extends Manager<Emoji> {
     }
 
     return GuildEmoji(
-      id: Snowflake.parse(raw['id'] as String),
+      id: Snowflake.parse(raw['id']!),
       manager: this,
       user: maybeParse(raw['user'], client.users.parse),
       isAnimated: raw['animated'] as bool?,

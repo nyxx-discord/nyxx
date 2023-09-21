@@ -81,15 +81,15 @@ class GuildStickerManager extends Manager<GuildSticker> {
   GuildSticker parse(Map<String, Object?> raw) {
     return GuildSticker(
       manager: this,
-      id: Snowflake.parse(raw['id'] as String),
+      id: Snowflake.parse(raw['id']!),
       name: raw['name'] as String,
       description: raw['description'] as String?,
       tags: raw['tags'] as String,
       type: StickerType.parse(raw['type'] as int),
       formatType: StickerFormatType.parse(raw['format_type'] as int),
       available: raw['available'] as bool? ?? false,
-      guildId: Snowflake.parse(raw['guild_id'] as String),
-      user: ((raw['user'] ?? {}) as Map)['id'] != null ? client.users[Snowflake.parse((raw['user'] as Map)['id'] as String)] : null,
+      guildId: Snowflake.parse(raw['guild_id']!),
+      user: ((raw['user'] ?? {}) as Map)['id'] != null ? client.users[Snowflake.parse((raw['user'] as Map<String, Object?>)['id']!)] : null,
       sortValue: raw['sort_value'] as int?,
     );
   }
@@ -149,7 +149,7 @@ class GlobalStickerManager extends ReadOnlyManager<GlobalSticker> {
 
   StickerItem parseStickerItem(Map<String, Object?> raw) {
     return StickerItem(
-      id: Snowflake.parse(raw['id'] as String),
+      id: Snowflake.parse(raw['id']!),
       name: raw['name'] as String,
       formatType: StickerFormatType.parse(raw['format_type'] as int),
     );
@@ -157,14 +157,14 @@ class GlobalStickerManager extends ReadOnlyManager<GlobalSticker> {
 
   StickerPack parseStickerPack(Map<String, Object?> raw) {
     return StickerPack(
-      id: Snowflake.parse(raw['id'] as String),
+      id: Snowflake.parse(raw['id']!),
       manager: this,
       stickers: (raw['stickers'] as List).map((e) => parse(e as Map<String, Object?>)).toList(),
       name: raw['name'] as String,
-      skuId: Snowflake.parse(raw['sku_id'] as String),
-      coverStickerId: raw['cover_sticker_id'] != null ? Snowflake.parse(raw['cover_sticker_id'] as String) : null,
+      skuId: Snowflake.parse(raw['sku_id']!),
+      coverStickerId: raw['cover_sticker_id'] != null ? Snowflake.parse(raw['cover_sticker_id']!) : null,
       description: raw['description'] as String,
-      bannerAssetId: raw['banner_asset_id'] != null ? Snowflake.parse(raw['banner_asset_id'] as String) : null,
+      bannerAssetId: raw['banner_asset_id'] != null ? Snowflake.parse(raw['banner_asset_id']!) : null,
     );
   }
 
@@ -172,15 +172,15 @@ class GlobalStickerManager extends ReadOnlyManager<GlobalSticker> {
   GlobalSticker parse(Map<String, Object?> raw) {
     return GlobalSticker(
       manager: this,
-      id: Snowflake.parse(raw['id'] as String),
-      packId: Snowflake.parse(raw['pack_id'] as String),
+      id: Snowflake.parse(raw['id']!),
+      packId: Snowflake.parse(raw['pack_id']!),
       name: raw['name'] as String,
       description: raw['description'] as String?,
       tags: raw['tags'] as String,
       type: StickerType.parse(raw['type'] as int),
       formatType: StickerFormatType.parse(raw['format_type'] as int),
       available: raw['available'] as bool? ?? false,
-      user: ((raw['user'] ?? {}) as Map)['id'] != null ? client.users[Snowflake.parse((raw['user'] as Map)['id'] as String)] : null,
+      user: ((raw['user'] ?? {}) as Map)['id'] != null ? client.users[Snowflake.parse((raw['user'] as Map<String, Object?>)['id']!)] : null,
       sortValue: raw['sort_value'] as int?,
     );
   }

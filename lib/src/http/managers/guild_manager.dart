@@ -43,7 +43,7 @@ class GuildManager extends Manager<Guild> {
 
   @override
   Guild parse(Map<String, Object?> raw) {
-    final id = Snowflake.parse(raw['id'] as String);
+    final id = Snowflake.parse(raw['id']!);
 
     return Guild(
       id: id,
