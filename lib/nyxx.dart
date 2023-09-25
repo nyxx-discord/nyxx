@@ -291,7 +291,7 @@ export 'src/models/interaction.dart'
 export 'src/utils/flags.dart' show Flag, Flags;
 export 'src/intents.dart' show GatewayIntents;
 
-export 'src/plugin/plugin.dart' show NyxxPlugin;
+export 'src/plugin/plugin.dart' show NyxxPlugin, NyxxPluginState;
 export 'src/plugin/logging.dart' show Logging, logging;
 export 'src/plugin/cli_integration.dart' show CliIntegration, cliIntegration;
 export 'src/plugin/ignore_exceptions.dart' show IgnoreExceptions, ignoreExceptions;

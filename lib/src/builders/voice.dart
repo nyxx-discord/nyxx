@@ -41,7 +41,7 @@ class GatewayVoiceStateBuilder extends CreateBuilder<VoiceState> {
   @override
   Map<String, Object?> build() => {
         'channel_id': channelId?.toString(),
-        'mute': isMuted,
-        'deaf': isDeafened,
+        'self_mute': isMuted,
+        'self_deaf': isDeafened,
       };
 }
