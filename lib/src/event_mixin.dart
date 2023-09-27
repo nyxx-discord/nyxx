@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:meta/meta.dart';
 import 'package:nyxx/src/client.dart';
 import 'package:nyxx/src/models/gateway/event.dart';
 import 'package:nyxx/src/models/gateway/events/application_command.dart';
@@ -18,9 +19,20 @@ import 'package:nyxx/src/models/gateway/events/webhook.dart';
 import 'package:nyxx/src/models/interaction.dart';
 import 'package:nyxx/src/utils/iterable_extension.dart';
 
+mixin EventRestMixin implements Nyxx {
+  @internal
+  StreamController<DispatchEvent> onEventController = StreamController.broadcast();
+
+  Stream<DispatchEvent> get onEvent => onEventController.stream;
+
+  /// A [Stream] of [InteractionCreateEvent]s received by this client.
+  Stream<InteractionCreateEvent> get onInteractionCreate => onEvent.whereType<InteractionCreateEvent>();
+}
+
 /// An internal mixin to add event streams to a NyxxGateway client.
-mixin EventMixin implements Nyxx {
+mixin EventMixin implements Nyxx, EventRestMixin {
   /// A [Stream] of gateway dispatch events received by this client.
+  @override
   Stream<DispatchEvent> get onEvent => (this as NyxxGateway).gateway.events;
 
   /// A [Stream] of [DispatchEvent]s which are unknown to the current version of nyxx.
@@ -212,9 +224,6 @@ mixin EventMixin implements Nyxx {
 
   /// A [Stream] of [WebhooksUpdateEvent]s received by this client.
   Stream<WebhooksUpdateEvent> get onWebhooksUpdate => onEvent.whereType<WebhooksUpdateEvent>();
-
-  /// A [Stream] of [InteractionCreateEvent]s received by this client.
-  Stream<InteractionCreateEvent> get onInteractionCreate => onEvent.whereType<InteractionCreateEvent>();
 
   /// A [Stream] of [StageInstanceCreateEvent]s received by this client.
   Stream<StageInstanceCreateEvent> get onStageInstanceCreate => onEvent.whereType<StageInstanceCreateEvent>();

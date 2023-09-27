@@ -1,6 +1,6 @@
 .PHONY: help
-help: ## display help
-	@grep -F -h "##" $(MAKEFILE_LIST) | sed -e 's/\(\:.*\#\#\)/\:\ /' | grep -F -v fgrep | sed -e 's/\\$$//' | sed -e 's/##//'
+help:
+	@grep -Fh "##" $(MAKEFILE_LIST) | sed -e 's/\(\:.*\#\#\)/\:\ /' | grep -Fv grep -F | sed -e 's/\\$$//' | sed -e 's/##//'
 
 .PHONY: app-check
 app-check: format-check generate-coverage  ## Run basic format checks and then generate code coverage

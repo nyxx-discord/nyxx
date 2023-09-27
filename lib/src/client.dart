@@ -132,7 +132,7 @@ abstract class Nyxx {
 }
 
 /// A client that can make requests to the HTTP API and is authenticated with a bot token.
-class NyxxRest with ManagerMixin implements Nyxx {
+class NyxxRest with ManagerMixin, EventRestMixin implements Nyxx {
   @override
   final RestApiOptions apiOptions;
 
@@ -180,7 +180,7 @@ class NyxxRest with ManagerMixin implements Nyxx {
   }
 }
 
-class NyxxOAuth2 with ManagerMixin implements NyxxRest {
+class NyxxOAuth2 with ManagerMixin, EventRestMixin implements NyxxRest {
   @override
   final OAuth2ApiOptions apiOptions;
 
@@ -225,7 +225,7 @@ class NyxxOAuth2 with ManagerMixin implements NyxxRest {
 }
 
 /// A client that can make requests to the HTTP API, connects to the Gateway and is authenticated with a bot token.
-class NyxxGateway with ManagerMixin, EventMixin implements NyxxRest {
+class NyxxGateway with ManagerMixin, EventMixin, EventRestMixin implements NyxxRest {
   @override
   final GatewayApiOptions apiOptions;
 
