@@ -192,16 +192,7 @@ export 'src/models/voice/voice_region.dart' show VoiceRegion;
 export 'src/models/role.dart' show PartialRole, Role, RoleTags;
 export 'src/models/gateway/gateway.dart' show GatewayBot, GatewayConfiguration, SessionStartLimit;
 export 'src/models/gateway/event.dart'
-    show
-        DispatchEvent,
-        GatewayEvent,
-        HeartbeatAckEvent,
-        HeartbeatEvent,
-        HelloEvent,
-        InvalidSessionEvent,
-        RawDispatchEvent,
-        ReconnectEvent,
-        UnknownDispatchEvent;
+    show DispatchEvent, Event, HeartbeatAckEvent, HeartbeatEvent, HelloEvent, InvalidSessionEvent, RawDispatchEvent, ReconnectEvent, UnknownDispatchEvent;
 export 'src/models/gateway/opcode.dart' show Opcode;
 export 'src/models/gateway/events/application_command.dart' show ApplicationCommandPermissionsUpdateEvent;
 export 'src/models/gateway/events/auto_moderation.dart'

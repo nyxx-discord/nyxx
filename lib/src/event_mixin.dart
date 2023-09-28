@@ -21,9 +21,9 @@ import 'package:nyxx/src/utils/iterable_extension.dart';
 
 mixin EventRestMixin implements Nyxx {
   @internal
-  StreamController<DispatchEvent> onEventController = StreamController.broadcast();
+  StreamController<Event> onEventController = StreamController.broadcast();
 
-  Stream<DispatchEvent> get onEvent => onEventController.stream;
+  Stream<Event> get onEvent => onEventController.stream;
 
   /// A [Stream] of [InteractionCreateEvent]s received by this client.
   Stream<InteractionCreateEvent> get onInteractionCreate => onEvent.whereType<InteractionCreateEvent>();
@@ -33,7 +33,7 @@ mixin EventRestMixin implements Nyxx {
 mixin EventMixin implements Nyxx, EventRestMixin {
   /// A [Stream] of gateway dispatch events received by this client.
   @override
-  Stream<DispatchEvent> get onEvent => (this as NyxxGateway).gateway.events;
+  Stream<Event> get onEvent => (this as NyxxGateway).gateway.events;
 
   /// A [Stream] of [DispatchEvent]s which are unknown to the current version of nyxx.
   Stream<UnknownDispatchEvent> get onUnknownEvent => onEvent.whereType<UnknownDispatchEvent>();

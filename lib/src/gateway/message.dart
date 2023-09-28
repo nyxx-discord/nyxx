@@ -34,7 +34,7 @@ abstract class ShardMessage with ToStringHelper {}
 /// A shard message sent when an event is received on the Gateway.
 class EventReceived extends ShardMessage {
   /// The event that was received.
-  final GatewayEvent event;
+  final Event event;
 
   /// Create a new [EventReceived].
   EventReceived({required this.event});

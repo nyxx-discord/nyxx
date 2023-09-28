@@ -5,11 +5,12 @@ import 'package:nyxx/src/utils/to_string_helper/to_string_helper.dart';
 /// {@template gateway_event}
 /// The base class for all events received from the Gateway.
 /// {@endtemplate}
-abstract class GatewayEvent with ToStringHelper {
+abstract class Event with ToStringHelper {}
+
+abstract class GatewayEvent extends Event {
   /// The opcode of this event.
   final Opcode opcode;
 
-  /// {@macro gateway_event}
   GatewayEvent({required this.opcode});
 }
 

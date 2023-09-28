@@ -52,7 +52,7 @@ class Shard extends Stream<ShardMessage> implements StreamSink<GatewayMessage> {
       } else if (message is EventReceived) {
         final event = message.event;
 
-        if (event is! RawDispatchEvent) {
+        if (event is GatewayEvent) {
           logger.finer('Receive: ${event.opcode.name}');
 
           switch (event) {
@@ -72,7 +72,7 @@ class Shard extends Stream<ShardMessage> implements StreamSink<GatewayMessage> {
             default:
               break;
           }
-        } else {
+        } else if (event is RawDispatchEvent) {
           logger
             ..fine('Receive event: ${event.name}')
             ..finer('Seq: ${event.seq}, Data: ${event.payload}');
@@ -82,6 +82,8 @@ class Shard extends Stream<ShardMessage> implements StreamSink<GatewayMessage> {
           } else if (event.name == 'RESUMED') {
             logger.info('Reconnected to Gateway');
           }
+        } else {
+          logger.fine('Receive event: ${event.runtimeType}'); // TODO: Proper logging
         }
       }
     });

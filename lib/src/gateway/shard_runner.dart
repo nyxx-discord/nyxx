@@ -241,9 +241,9 @@ class ShardRunner {
   }
 }
 
-class ShardConnection extends Stream<GatewayEvent> implements StreamSink<Send> {
+class ShardConnection extends Stream<Event> implements StreamSink<Send> {
   final WebSocket websocket;
-  final Stream<GatewayEvent> events;
+  final Stream<Event> events;
   final ShardRunner runner;
 
   ShardConnection(this.websocket, this.events, this.runner);
@@ -271,8 +271,8 @@ class ShardConnection extends Stream<GatewayEvent> implements StreamSink<Send> {
   }
 
   @override
-  StreamSubscription<GatewayEvent> listen(
-    void Function(GatewayEvent event)? onData, {
+  StreamSubscription<Event> listen(
+    void Function(Event event)? onData, {
     Function? onError,
     void Function()? onDone,
     bool? cancelOnError,

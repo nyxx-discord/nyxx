@@ -67,7 +67,7 @@ class Gateway extends GatewayManager with EventParser {
   final StreamController<ShardMessage> _messagesController = StreamController.broadcast();
 
   /// A stream of dispatch events received from all shards.
-  Stream<DispatchEvent> get events => messages.map((message) {
+  Stream<Event> get events => messages.map((message) {
         if (message is! EventReceived) {
           return null;
         }
@@ -259,7 +259,7 @@ class Gateway extends GatewayManager with EventParser {
   /// Throws an error if the shard handling events for [guildId] is not in this [Gateway] instance.
   Shard shardFor(Snowflake guildId) => shards.singleWhere((shard) => shard.id == shardIdFor(guildId));
 
-  DispatchEvent parseDispatchEvent(RawDispatchEvent raw) {
+  Event parseDispatchEvent(RawDispatchEvent raw) {
     final mapping = {
       'READY': parseReady,
       'RESUMED': parseResumed,
@@ -949,14 +949,12 @@ class Gateway extends GatewayManager with EventParser {
 
     // Needed to get proper type promotion.
     return switch (interaction.type) {
-      InteractionType.ping => InteractionCreateEvent<PingInteraction>(gateway: this, interaction: interaction as PingInteraction),
-      InteractionType.applicationCommand =>
-        InteractionCreateEvent<ApplicationCommandInteraction>(gateway: this, interaction: interaction as ApplicationCommandInteraction),
-      InteractionType.messageComponent =>
-        InteractionCreateEvent<MessageComponentInteraction>(gateway: this, interaction: interaction as MessageComponentInteraction),
-      InteractionType.modalSubmit => InteractionCreateEvent<ModalSubmitInteraction>(gateway: this, interaction: interaction as ModalSubmitInteraction),
+      InteractionType.ping => InteractionCreateEvent<PingInteraction>(interaction: interaction as PingInteraction),
+      InteractionType.applicationCommand => InteractionCreateEvent<ApplicationCommandInteraction>(interaction: interaction as ApplicationCommandInteraction),
+      InteractionType.messageComponent => InteractionCreateEvent<MessageComponentInteraction>(interaction: interaction as MessageComponentInteraction),
+      InteractionType.modalSubmit => InteractionCreateEvent<ModalSubmitInteraction>(interaction: interaction as ModalSubmitInteraction),
       InteractionType.applicationCommandAutocomplete =>
-        InteractionCreateEvent<ApplicationCommandAutocompleteInteraction>(gateway: this, interaction: interaction as ApplicationCommandAutocompleteInteraction),
+        InteractionCreateEvent<ApplicationCommandAutocompleteInteraction>(interaction: interaction as ApplicationCommandAutocompleteInteraction),
     } as InteractionCreateEvent<Interaction<dynamic>>;
   }
 
