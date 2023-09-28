@@ -1,8 +1,9 @@
-import 'package:nyxx/nyxx.dart';
 import 'package:nyxx/src/builders/builder.dart';
 import 'package:nyxx/src/models/channel/channel.dart';
+import 'package:nyxx/src/models/commands/application_command_option.dart';
 import 'package:nyxx/src/models/emoji.dart';
 import 'package:nyxx/src/models/message/component.dart';
+import 'package:nyxx/src/models/role.dart';
 import 'package:nyxx/src/models/snowflake.dart';
 import 'package:nyxx/src/models/snowflake_entity/snowflake_entity.dart';
 import 'package:nyxx/src/models/user/user.dart';
