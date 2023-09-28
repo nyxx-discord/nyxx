@@ -6,6 +6,7 @@ import 'package:nyxx/src/models/commands/application_command.dart';
 import 'package:nyxx/src/models/commands/application_command_permissions.dart';
 import 'package:nyxx/src/models/emoji.dart';
 import 'package:nyxx/src/models/channel/stage_instance.dart';
+import 'package:nyxx/src/models/entitlement.dart';
 import 'package:nyxx/src/models/guild/audit_log.dart';
 import 'package:nyxx/src/models/guild/auto_moderation.dart';
 import 'package:nyxx/src/models/guild/guild.dart';
@@ -92,6 +93,9 @@ class RestClientOptions extends ClientOptions {
   /// The [CacheConfig] to use for the [GuildApplicationCommandManager.permissionsCache] cache.
   final CacheConfig<CommandPermissions> commandPermissionsConfig;
 
+  /// The [CacheConfig] to use for the [Application.entitlements] manager.
+  final CacheConfig<Entitlement> entitlementConfig;
+
   /// Create a new [RestClientOptions].
   const RestClientOptions({
     super.plugins,
@@ -114,6 +118,7 @@ class RestClientOptions extends ClientOptions {
     this.globalStickerCacheConfig = const CacheConfig(),
     this.applicationCommandConfig = const CacheConfig(),
     this.commandPermissionsConfig = const CacheConfig(),
+    this.entitlementConfig = const CacheConfig(),
   });
 }
 
@@ -126,6 +131,7 @@ class GatewayClientOptions extends RestClientOptions {
   /// If the remaining number of session starts is below this number, an error will be thrown when connecting.
   final int minimumSessionStarts;
 
+  /// Create a new [GatewayClientOptions].
   const GatewayClientOptions({
     this.minimumSessionStarts = 10,
     super.plugins,
@@ -145,5 +151,6 @@ class GatewayClientOptions extends RestClientOptions {
     super.voiceStateConfig,
     super.applicationCommandConfig,
     super.commandPermissionsConfig,
+    super.entitlementConfig,
   });
 }
