@@ -9,6 +9,7 @@ export 'src/errors.dart'
         ShardDisconnectedError,
         RoleNotFoundException,
         AuditLogEntryNotFoundException,
+        EntitlementNotFoundException,
         OutOfRemainingSessionsError,
         IntegrationNotFoundException,
         AlreadyAcknowledgedError,
@@ -64,6 +65,7 @@ export 'src/builders/sticker.dart' show StickerBuilder, StickerUpdateBuilder;
 export 'src/builders/application_command.dart'
     show ApplicationCommandBuilder, ApplicationCommandUpdateBuilder, CommandOptionBuilder, CommandOptionChoiceBuilder;
 export 'src/builders/interaction_response.dart' show InteractionResponseBuilder, ModalBuilder, InteractionCallbackType;
+export 'src/builders/entitlement.dart' show TestEntitlementBuilder, TestEntitlementType;
 
 export 'src/cache/cache.dart' show Cache, CacheConfig;
 
@@ -94,6 +96,7 @@ export 'src/http/managers/audit_log_manager.dart' show AuditLogManager;
 export 'src/http/managers/sticker_manager.dart' show GuildStickerManager, GlobalStickerManager;
 export 'src/http/managers/application_command_manager.dart' show ApplicationCommandManager, GlobalApplicationCommandManager, GuildApplicationCommandManager;
 export 'src/http/managers/interaction_manager.dart' show InteractionManager;
+export 'src/http/managers/entitlement_manager.dart' show EntitlementManager;
 
 export 'src/gateway/gateway.dart' show Gateway;
 export 'src/gateway/message.dart' show Disconnecting, Dispose, ErrorReceived, EventReceived, GatewayMessage, Send, ShardData, ShardMessage;
@@ -260,6 +263,7 @@ export 'src/models/gateway/events/ready.dart' show ReadyEvent, ResumedEvent;
 export 'src/models/gateway/events/stage_instance.dart' show StageInstanceCreateEvent, StageInstanceDeleteEvent, StageInstanceUpdateEvent;
 export 'src/models/gateway/events/voice.dart' show VoiceServerUpdateEvent, VoiceStateUpdateEvent;
 export 'src/models/gateway/events/webhook.dart' show WebhooksUpdateEvent;
+export 'src/models/gateway/events/entitlement.dart' show EntitlementCreateEvent, EntitlementDeleteEvent, EntitlementUpdateEvent;
 export 'src/models/presence.dart'
     show Activity, ActivityAssets, ActivityButton, ActivityFlags, ActivityParty, ActivitySecrets, ActivityTimestamps, ClientStatus, ActivityType, UserStatus;
 export 'src/models/emoji.dart' show Emoji, GuildEmoji, PartialEmoji, TextEmoji;
@@ -287,6 +291,7 @@ export 'src/models/interaction.dart'
         MessageComponentInteraction,
         ModalSubmitInteraction,
         PingInteraction;
+export 'src/models/entitlement.dart' show Entitlement, PartialEntitlement, EntitlementType;
 
 export 'src/utils/flags.dart' show Flag, Flags;
 export 'src/intents.dart' show GatewayIntents;
