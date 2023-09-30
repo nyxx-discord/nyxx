@@ -87,6 +87,7 @@ class GuildManager extends Manager<Guild> {
       hasPremiumProgressBarEnabled: raw['premium_progress_bar_enabled'] as bool,
       emojiList: parseMany(raw['emojis'] as List, this[id].emojis.parse),
       stickerList: parseMany(raw['stickers'] as List? ?? [], this[id].stickers.parse),
+      safetyAlertsChannelId: maybeParse(raw['safety_alerts_channel_id'], Snowflake.parse),
     );
   }
 
