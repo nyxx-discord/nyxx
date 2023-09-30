@@ -6,6 +6,7 @@ import 'package:nyxx/src/http/cdn/cdn_asset.dart';
 import 'package:nyxx/src/http/managers/message_manager.dart';
 import 'package:nyxx/src/http/route.dart';
 import 'package:nyxx/src/models/snowflake.dart';
+import 'package:nyxx/src/utils/flags.dart';
 import 'package:nyxx/src/utils/to_string_helper/to_string_helper.dart';
 
 /// {@template attachment}
@@ -51,6 +52,15 @@ class Attachment with ToStringHelper implements CdnAsset {
   /// Whether this attachment is ephemeral.
   final bool isEphemeral;
 
+  /// The duration of this audio file for voice messages.
+  final Duration? duration;
+
+  /// A sampled waveform for voice messages.
+  final List<int>? waveform;
+
+  /// This attachment's flags.
+  final AttachmentFlags? flags;
+
   @override
   Nyxx get client => manager.client;
 
@@ -79,6 +89,9 @@ class Attachment with ToStringHelper implements CdnAsset {
     required this.height,
     required this.width,
     required this.isEphemeral,
+    required this.duration,
+    required this.waveform,
+    required this.flags,
   });
 
   @override
@@ -100,4 +113,16 @@ class Attachment with ToStringHelper implements CdnAsset {
     final response = await client.httpHandler.httpClient.send(Request('GET', url));
     yield* response.stream;
   }
+}
+
+/// The flags for an [Attachment].
+class AttachmentFlags extends Flags<AttachmentFlags> {
+  /// The attachment is a remix.
+  static const isRemix = Flag<AttachmentFlags>.fromOffset(2);
+
+  /// Whether this set of flags has the [isRemix] flag.
+  bool get isARemix => has(isRemix);
+
+  /// Create a new [AttachmentFlags].
+  const AttachmentFlags(super.value);
 }

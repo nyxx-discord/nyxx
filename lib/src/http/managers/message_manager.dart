@@ -108,6 +108,9 @@ class MessageManager extends Manager<Message> {
       height: raw['height'] as int?,
       width: raw['width'] as int?,
       isEphemeral: raw['ephemeral'] as bool? ?? false,
+      duration: maybeParse(raw['duration_secs'], (double value) => Duration(microseconds: (value * Duration.microsecondsPerSecond).floor())),
+      waveform: maybeParse(raw['waveform'], base64.decode),
+      flags: maybeParse(raw['flags'], AttachmentFlags.new),
     );
   }
 
