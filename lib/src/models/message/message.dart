@@ -182,6 +182,9 @@ class Message extends PartialMessage {
   /// Data about the role subscription purchase that prompted this message if this is a [MessageType.roleSubscriptionPurchase] message.
   final RoleSubscriptionData? roleSubscriptionData;
 
+  /// Data about entities in this message's auto-populated select menus.
+  final ResolvedData? resolved;
+
   /// {@macro message}
   Message({
     required super.id,
@@ -214,6 +217,7 @@ class Message extends PartialMessage {
     required this.position,
     required this.roleSubscriptionData,
     required this.stickers,
+    required this.resolved,
   });
 
   /// The webhook that sent this message if it was sent by a webhook, `null` otherwise.
