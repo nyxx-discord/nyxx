@@ -2,6 +2,7 @@ import 'package:nyxx/src/client.dart';
 import 'package:nyxx/src/http/request.dart';
 import 'package:nyxx/src/http/route.dart';
 import 'package:nyxx/src/models/application.dart';
+import 'package:nyxx/src/models/guild/guild.dart';
 import 'package:nyxx/src/models/locale.dart';
 import 'package:nyxx/src/models/permissions.dart';
 import 'package:nyxx/src/models/sku.dart';
@@ -33,6 +34,7 @@ class ApplicationManager {
       rpcOrigins: maybeParseMany(raw['rpc_origins']),
       isBotPublic: raw['bot_public'] as bool,
       botRequiresCodeGrant: raw['bot_require_code_grant'] as bool,
+      bot: maybeParse(raw['bot'], (Map<String, Object?> raw) => PartialUser(id: Snowflake.parse(raw['id']!), manager: client.users)),
       termsOfServiceUrl: maybeParse(raw['terms_of_service_url'], Uri.parse),
       privacyPolicyUrl: maybeParse(raw['privacy_policy_url'], Uri.parse),
       owner: maybeParse(
@@ -45,10 +47,14 @@ class ApplicationManager {
       verifyKey: raw['verify_key'] as String,
       team: maybeParse(raw['team'], parseTeam),
       guildId: maybeParse(raw['guild_id'], Snowflake.parse),
+      guild: maybeParse(raw['guild'], (Map<String, Object?> raw) => PartialGuild(id: Snowflake.parse(raw['id']!), manager: client.guilds)),
       primarySkuId: maybeParse(raw['primary_sku_id'], Snowflake.parse),
       slug: raw['slug'] as String?,
       coverImageHash: raw['cover_image'] as String?,
       flags: ApplicationFlags(raw['flags'] as int? ?? 0),
+      approximateGuildCount: raw['approximate_guild_count'] as int?,
+      redirectUris: maybeParseMany(raw['redirect_uris'], Uri.parse),
+      interactionsEndpointUrl: maybeParse(raw['interactions_endpoint_url'], Uri.parse),
       tags: maybeParseMany(raw['tags']),
       installationParameters: maybeParse(raw['install_params'], parseInstallationParameters),
       customInstallUrl: maybeParse(raw['custom_install_url'], Uri.parse),
