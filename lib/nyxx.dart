@@ -66,6 +66,7 @@ export 'src/builders/application_command.dart'
     show ApplicationCommandBuilder, ApplicationCommandUpdateBuilder, CommandOptionBuilder, CommandOptionChoiceBuilder;
 export 'src/builders/interaction_response.dart' show InteractionResponseBuilder, ModalBuilder, InteractionCallbackType;
 export 'src/builders/entitlement.dart' show TestEntitlementBuilder, TestEntitlementType;
+export 'src/builders/application.dart' show ApplicationUpdateBuilder;
 
 export 'src/cache/cache.dart' show Cache, CacheConfig;
 

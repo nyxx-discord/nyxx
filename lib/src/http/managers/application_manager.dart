@@ -1,3 +1,6 @@
+import 'dart:convert';
+
+import 'package:nyxx/src/builders/application.dart';
 import 'package:nyxx/src/client.dart';
 import 'package:nyxx/src/http/request.dart';
 import 'package:nyxx/src/http/route.dart';
@@ -141,10 +144,16 @@ class ApplicationManager {
   }
 
   Future<Application> fetchCurrentApplication() async {
-    final route = HttpRoute()
-      ..oauth2()
-      ..applications(id: '@me');
+    final route = HttpRoute()..applications(id: '@me');
     final request = BasicRequest(route);
+
+    final response = await client.httpHandler.executeSafe(request);
+    return parse(response.jsonBody as Map<String, Object?>);
+  }
+
+  Future<Application> updateCurrentApplication(ApplicationUpdateBuilder builder) async {
+    final route = HttpRoute()..applications(id: '@me');
+    final request = BasicRequest(route, method: 'PATCH', body: jsonEncode(builder.build()));
 
     final response = await client.httpHandler.executeSafe(request);
     return parse(response.jsonBody as Map<String, Object?>);

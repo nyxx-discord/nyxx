@@ -65,6 +65,7 @@ void main() {
 
       await expectLater(() async => application = await client.applications.fetchCurrentApplication(), completes);
       await expectLater(application.listSkus(), completes);
+      await expectLater(client.applications.updateCurrentApplication(ApplicationUpdateBuilder(description: application.description)), completes);
     });
 
     test('users', () async {
