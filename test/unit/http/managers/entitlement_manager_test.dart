@@ -23,7 +23,7 @@ void checkEntitlement(Entitlement entitlement) {
   expect(entitlement.id, equals(Snowflake(1019653849998299136)));
   expect(entitlement.skuId, equals(Snowflake(1019475255913222144)));
   expect(entitlement.userId, equals(Snowflake(771129655544643584)));
-  expect(entitlement.guildId, isNull);
+  expect(entitlement.guildId, equals(Snowflake(1015034326372454400)));
   expect(entitlement.applicationId, equals(Snowflake(1019370614521200640)));
   expect(entitlement.type, equals(EntitlementType.applicationSubscription));
   expect(entitlement.isConsumed, isFalse);
