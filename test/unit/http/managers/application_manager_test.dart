@@ -25,9 +25,9 @@ final sampleApplication = {
     "members": [
       {
         "membership_state": 2,
-        "permissions": ["*"],
         "team_id": "531992624043786253",
-        "user": {"avatar": "d9e261cd35999608eb7e3de1fae3688b", "discriminator": "0001", "id": "511972282709709995", "username": "Mr Owner"}
+        "user": {"avatar": "d9e261cd35999608eb7e3de1fae3688b", "discriminator": "0001", "id": "511972282709709995", "username": "Mr Owner"},
+        "role": "admin",
       }
     ],
 
