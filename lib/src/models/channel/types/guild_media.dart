@@ -17,7 +17,7 @@ import 'package:nyxx/src/models/webhook.dart';
 /// {@template guild_media_channel}
 /// A channel in a guild in which threads can be posted, similarly to a [ForumChannel].
 /// {@endtemplate}
-class GuildMediaChannel extends Channel implements GuildChannel, ThreadAggregate {
+class GuildMediaChannel extends Channel implements GuildChannel, ThreadsOnlyChannel {
   @override
   final String? topic;
 

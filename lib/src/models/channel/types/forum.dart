@@ -17,7 +17,7 @@ import 'package:nyxx/src/utils/to_string_helper/to_string_helper.dart';
 /// {@template forum_channel}
 /// A forum channel.
 /// {@endtemplate}
-class ForumChannel extends Channel implements GuildChannel, ThreadAggregate {
+class ForumChannel extends Channel implements GuildChannel, ThreadsOnlyChannel {
   /// The default layout in this channel
   final ForumLayout? defaultLayout;
 

@@ -1,6 +1,6 @@
 import 'package:nyxx/nyxx.dart';
 
-abstract class ThreadAggregate implements HasThreadsChannel {
+abstract class ThreadsOnlyChannel implements HasThreadsChannel {
   /// The topic of this channel.
   String? get topic;
 

@@ -116,7 +116,7 @@ export 'src/models/channel/channel.dart' show Channel, ChannelFlags, PartialChan
 export 'src/models/channel/followed_channel.dart' show FollowedChannel;
 export 'src/models/channel/guild_channel.dart' show GuildChannel;
 export 'src/models/channel/has_threads_channel.dart' show HasThreadsChannel;
-export 'src/models/channel/thread_aggregate.dart' show ThreadAggregate;
+export 'src/models/channel/thread_aggregate.dart' show ThreadsOnlyChannel;
 export 'src/models/channel/text_channel.dart' show PartialTextChannel, TextChannel;
 export 'src/models/channel/thread_list.dart' show ThreadList;
 export 'src/models/channel/thread.dart' show PartialThreadMember, Thread, ThreadMember;
