@@ -315,6 +315,9 @@ class MessageFlags extends Flags<MessageFlags> {
   /// This message will not trigger push and desktop notifications.
   static const suppressNotifications = Flag<MessageFlags>.fromOffset(12);
 
+  /// This message is a voice message.
+  static const isVoiceMessage = Flag<MessageFlags>.fromOffset(13);
+
   /// Whether this set of flags has the [crossposted] flag set.
   bool get wasCrossposted => has(crossposted);
 
@@ -344,6 +347,9 @@ class MessageFlags extends Flags<MessageFlags> {
 
   /// Whether this set of flags has the [suppressNotifications] flag set.
   bool get suppressesNotifications => has(suppressNotifications);
+
+  /// Whether this set of flags has the [isVoiceMessage] flag set.
+  bool get isAVoiceMessage => has(isVoiceMessage);
 
   /// Create a new [MessageFlags].
   const MessageFlags(super.value);
