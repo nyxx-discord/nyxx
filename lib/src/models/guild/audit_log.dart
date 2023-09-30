@@ -193,6 +193,9 @@ class AuditLogEntryInfo with ToStringHelper {
   // The type of overwrite that was targeted.
   final PermissionOverwriteType? overwriteType;
 
+  /// The type of integration that performed the action.
+  final String? integrationType;
+
   /// {@macro audit_log_entry_info}
   AuditLogEntryInfo({
     required this.manager,
@@ -207,6 +210,7 @@ class AuditLogEntryInfo with ToStringHelper {
     required this.messageId,
     required this.roleName,
     required this.overwriteType,
+    required this.integrationType,
   });
 
   /// The application whose permissions were targeted.

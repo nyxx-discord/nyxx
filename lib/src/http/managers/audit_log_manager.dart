@@ -52,6 +52,7 @@ class AuditLogManager extends ReadOnlyManager<AuditLogEntry> {
       messageId: maybeParse(raw['message_id'], Snowflake.parse),
       roleName: raw['role_name'] as String?,
       overwriteType: maybeParse(raw['type'], (String raw) => PermissionOverwriteType.parse(int.parse(raw))),
+      integrationType: raw['integration_type'] as String?,
     );
   }
 
