@@ -7,6 +7,7 @@ import 'package:nyxx/src/http/managers/interaction_manager.dart';
 import 'package:nyxx/src/models/channel/channel.dart';
 import 'package:nyxx/src/models/commands/application_command.dart';
 import 'package:nyxx/src/models/commands/application_command_option.dart';
+import 'package:nyxx/src/models/entitlement.dart';
 import 'package:nyxx/src/models/guild/guild.dart';
 import 'package:nyxx/src/models/guild/member.dart';
 import 'package:nyxx/src/models/locale.dart';
@@ -72,6 +73,9 @@ abstract class Interaction<T> with ToStringHelper {
   /// The preferred locale of the guild in which this interaction was triggered.
   final Locale? guildLocale;
 
+  /// The entitlements for the user and guild of this interaction.
+  final List<Entitlement> entitlements;
+
   /// {@macro interaction}
   Interaction({
     required this.manager,
@@ -90,6 +94,7 @@ abstract class Interaction<T> with ToStringHelper {
     required this.appPermissions,
     required this.locale,
     required this.guildLocale,
+    required this.entitlements,
   });
 
   /// The guild in which this interaction was triggered.
@@ -191,6 +196,7 @@ class PingInteraction extends Interaction<void> {
     required super.appPermissions,
     required super.locale,
     required super.guildLocale,
+    required super.entitlements,
   }) : super(data: null);
 
   /// Send a pong response to this interaction.
@@ -220,6 +226,7 @@ class ApplicationCommandInteraction extends Interaction<ApplicationCommandIntera
     required super.appPermissions,
     required super.locale,
     required super.guildLocale,
+    required super.entitlements,
   });
 }
 
@@ -246,6 +253,7 @@ class MessageComponentInteraction extends Interaction<MessageComponentInteractio
     required super.appPermissions,
     required super.locale,
     required super.guildLocale,
+    required super.entitlements,
   });
 
   bool? _didUpdateMessage;
@@ -330,6 +338,7 @@ class ModalSubmitInteraction extends Interaction<ModalSubmitInteractionData> wit
     required super.appPermissions,
     required super.locale,
     required super.guildLocale,
+    required super.entitlements,
   });
 }
 
@@ -355,6 +364,7 @@ class ApplicationCommandAutocompleteInteraction extends Interaction<ApplicationC
     required super.appPermissions,
     required super.locale,
     required super.guildLocale,
+    required super.entitlements,
   });
 
   /// Send a response to this interaction.
@@ -499,8 +509,11 @@ class MessageComponentInteractionData with ToStringHelper {
   /// A list of values provided if the component was a [SelectMenuComponent].
   final List<String>? values;
 
+  /// Additional data about entities in the payload.
+  final ResolvedData? resolved;
+
   /// {@macro message_component_interaction_data}
-  MessageComponentInteractionData({required this.customId, required this.type, required this.values});
+  MessageComponentInteractionData({required this.customId, required this.type, required this.values, required this.resolved});
 }
 
 /// {@template modal_submit_interaction_data}

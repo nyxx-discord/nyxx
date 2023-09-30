@@ -81,7 +81,10 @@ enum ChannelType {
   guildDirectory._(14),
 
   /// A forum channel in a [Guild].
-  guildForum._(15);
+  guildForum._(15),
+
+  /// A media channel in a [Guild].
+  guildMedia._(16);
 
   /// The value of this [ChannelType].
   final int value;
@@ -109,11 +112,17 @@ class ChannelFlags extends Flags<ChannelFlags> {
   /// The forum channel requires threads to have tags.
   static const requireTag = Flag<ChannelFlags>.fromOffset(4);
 
+  /// The media channel hides embedded media download options.
+  static const hideMediaDownloadOptions = Flag<ChannelFlags>.fromOffset(15);
+
   /// Whether this channel has the [pinned] flag set.
   bool get isPinned => has(pinned);
 
   /// Whether this channel has the [requireTag] flag set.
   bool get requiresTag => has(requireTag);
+
+  /// Whether this channel has the [hideMediaDownloadOptions] flag set.
+  bool get hidesMediaDownloadOptions => has(hideMediaDownloadOptions);
 
   /// Create a new [ChannelFlags].
   const ChannelFlags(super.value);

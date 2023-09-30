@@ -81,6 +81,7 @@ class MessageManager extends Manager<Message> {
       position: raw['position'] as int?,
       roleSubscriptionData: maybeParse(raw['role_subscription_data'], parseRoleSubscriptionData),
       stickers: parseMany(raw['sticker_items'] as List? ?? [], client.stickers.parseStickerItem),
+      resolved: maybeParse(raw['resolved'], client.interactions.parseResolvedData),
     );
   }
 
@@ -107,6 +108,9 @@ class MessageManager extends Manager<Message> {
       height: raw['height'] as int?,
       width: raw['width'] as int?,
       isEphemeral: raw['ephemeral'] as bool? ?? false,
+      duration: maybeParse(raw['duration_secs'], (double value) => Duration(microseconds: (value * Duration.microsecondsPerSecond).floor())),
+      waveform: maybeParse(raw['waveform'], base64.decode),
+      flags: maybeParse(raw['flags'], AttachmentFlags.new),
     );
   }
 
@@ -189,8 +193,18 @@ class MessageManager extends Manager<Message> {
   Reaction parseReaction(Map<String, Object?> raw) {
     return Reaction(
       count: raw['count'] as int,
+      countDetails: parseReactionCountDetails(raw['count_details'] as Map<String, Object?>),
       me: raw['me'] as bool,
+      meBurst: raw['me_burst'] as bool,
       emoji: client.guilds[Snowflake.zero].emojis.parse(raw['emoji'] as Map<String, Object?>),
+      burstColors: parseMany(raw['burst_colors'] as List, DiscordColor.parseHexString),
+    );
+  }
+
+  ReactionCountDetails parseReactionCountDetails(Map<String, Object?> raw) {
+    return ReactionCountDetails(
+      burst: raw['burst'] as int,
+      normal: raw['normal'] as int,
     );
   }
 

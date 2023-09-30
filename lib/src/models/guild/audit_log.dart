@@ -132,7 +132,9 @@ enum AuditLogEvent {
   autoModerationRuleDelete._(142),
   autoModerationBlockMessage._(143),
   autoModerationFlagToChannel._(144),
-  autoModerationUserCommunicationDisabled._(145);
+  autoModerationUserCommunicationDisabled._(145),
+  creatorMonetizationRequestCreated._(150),
+  creatorMonetizationTermsAccepted._(151);
 
   /// The value of this [AuditLogEvent].
   final int value;
@@ -191,6 +193,9 @@ class AuditLogEntryInfo with ToStringHelper {
   // The type of overwrite that was targeted.
   final PermissionOverwriteType? overwriteType;
 
+  /// The type of integration that performed the action.
+  final String? integrationType;
+
   /// {@macro audit_log_entry_info}
   AuditLogEntryInfo({
     required this.manager,
@@ -205,6 +210,7 @@ class AuditLogEntryInfo with ToStringHelper {
     required this.messageId,
     required this.roleName,
     required this.overwriteType,
+    required this.integrationType,
   });
 
   /// The application whose permissions were targeted.

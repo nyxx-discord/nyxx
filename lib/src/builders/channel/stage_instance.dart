@@ -1,5 +1,6 @@
 import 'package:nyxx/src/builders/builder.dart';
 import 'package:nyxx/src/models/channel/stage_instance.dart';
+import 'package:nyxx/src/models/snowflake.dart';
 
 class StageInstanceBuilder extends CreateBuilder<StageInstance> {
   String topic;
@@ -8,10 +9,13 @@ class StageInstanceBuilder extends CreateBuilder<StageInstance> {
 
   bool? sendStartNotification;
 
+  Snowflake? guildScheduledEventId;
+
   StageInstanceBuilder({
     required this.topic,
     this.privacyLevel,
     this.sendStartNotification,
+    this.guildScheduledEventId,
   });
 
   @override
@@ -19,6 +23,7 @@ class StageInstanceBuilder extends CreateBuilder<StageInstance> {
         'topic': topic,
         if (privacyLevel != null) 'privacy_level': privacyLevel!.value,
         if (sendStartNotification != null) 'send_start_notification': sendStartNotification,
+        if (guildScheduledEventId != null) 'guild_scheduled_event_id': guildScheduledEventId!.toString(),
       };
 }
 

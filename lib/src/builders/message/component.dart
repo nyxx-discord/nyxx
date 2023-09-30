@@ -1,8 +1,12 @@
 import 'package:nyxx/src/builders/builder.dart';
 import 'package:nyxx/src/models/channel/channel.dart';
+import 'package:nyxx/src/models/commands/application_command_option.dart';
 import 'package:nyxx/src/models/emoji.dart';
 import 'package:nyxx/src/models/message/component.dart';
+import 'package:nyxx/src/models/role.dart';
 import 'package:nyxx/src/models/snowflake.dart';
+import 'package:nyxx/src/models/snowflake_entity/snowflake_entity.dart';
+import 'package:nyxx/src/models/user/user.dart';
 
 abstract class MessageComponentBuilder extends CreateBuilder<MessageComponent> {
   MessageComponentType type;
@@ -111,6 +115,8 @@ class SelectMenuBuilder extends MessageComponentBuilder {
 
   List<ChannelType>? channelTypes;
 
+  List<DefaultValue>? defaultValues;
+
   String? placeholder;
 
   int? minValues;
@@ -125,6 +131,7 @@ class SelectMenuBuilder extends MessageComponentBuilder {
     this.options,
     this.channelTypes,
     this.placeholder,
+    this.defaultValues,
     this.minValues,
     this.maxValues,
     this.isDisabled,
@@ -142,6 +149,7 @@ class SelectMenuBuilder extends MessageComponentBuilder {
   SelectMenuBuilder.userSelect({
     required this.customId,
     this.placeholder,
+    List<DefaultValue<User>>? this.defaultValues,
     this.minValues,
     this.maxValues,
     this.isDisabled,
@@ -150,6 +158,7 @@ class SelectMenuBuilder extends MessageComponentBuilder {
   SelectMenuBuilder.roleSelect({
     required this.customId,
     this.placeholder,
+    List<DefaultValue<Role>>? this.defaultValues,
     this.minValues,
     this.maxValues,
     this.isDisabled,
@@ -159,6 +168,7 @@ class SelectMenuBuilder extends MessageComponentBuilder {
     required this.customId,
     this.channelTypes,
     this.placeholder,
+    List<DefaultValue<CommandOptionMentionable>>? this.defaultValues,
     this.minValues,
     this.maxValues,
     this.isDisabled,
@@ -167,6 +177,7 @@ class SelectMenuBuilder extends MessageComponentBuilder {
   SelectMenuBuilder.channelSelect({
     required this.customId,
     this.placeholder,
+    List<DefaultValue<Channel>>? this.defaultValues,
     this.minValues,
     this.maxValues,
     this.isDisabled,
@@ -179,6 +190,7 @@ class SelectMenuBuilder extends MessageComponentBuilder {
         if (options != null) 'options': options?.map((e) => e.build()).toList(),
         if (channelTypes != null) 'channel_types': channelTypes?.map((e) => e.value).toList(),
         if (placeholder != null) 'placeholder': placeholder,
+        if (defaultValues != null) 'default_values': defaultValues!.map((e) => e.build()).toList(),
         if (minValues != null) 'min_values': minValues,
         if (maxValues != null) 'max_values': maxValues,
         if (isDisabled != null) 'disabled': isDisabled,
@@ -216,6 +228,29 @@ class SelectMenuOptionBuilder extends CreateBuilder<SelectMenuOption> {
             'animated': emoji is GuildEmoji && (emoji as GuildEmoji).isAnimated == true,
           },
         if (isDefault != null) 'default': isDefault,
+      };
+}
+
+class DefaultValue<T extends SnowflakeEntity<T>> extends CreateBuilder<DefaultValue<T>> {
+  Snowflake id;
+
+  String type;
+
+  DefaultValue({
+    required this.id,
+    required this.type,
+  });
+
+  static DefaultValue<User> user({required Snowflake id}) => DefaultValue(id: id, type: 'user');
+
+  static DefaultValue<Role> role({required Snowflake id}) => DefaultValue(id: id, type: 'role');
+
+  static DefaultValue<Channel> channel({required Snowflake id}) => DefaultValue(id: id, type: 'channel');
+
+  @override
+  Map<String, Object?> build() => {
+        'id': id.toString(),
+        'type': type,
       };
 }
 

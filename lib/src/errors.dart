@@ -69,6 +69,18 @@ class AuditLogEntryNotFoundException extends NyxxException {
   AuditLogEntryNotFoundException(this.guildId, this.auditLogEntryId) : super('Audit log entry $auditLogEntryId not found in guild $guildId');
 }
 
+/// An exception thrown when an entitlement is not found for an application.
+class EntitlementNotFoundException extends NyxxException {
+  /// The ID of the application.
+  final Snowflake applicationId;
+
+  /// The ID of the entitlement.
+  final Snowflake entitlementId;
+
+  /// Create a new [EntitlementNotFoundException].
+  EntitlementNotFoundException(this.applicationId, this.entitlementId) : super('Entitlement $entitlementId not found for application $applicationId');
+}
+
 /// An error thrown when a shard disconnects unexpectedly.
 class ShardDisconnectedError extends Error {
   /// The shard that was disconnected.

@@ -66,11 +66,15 @@ class TeamMember with ToStringHelper {
   /// The user associated with this team member.
   final PartialUser user;
 
+  /// This team member's role.
+  final TeamMemberRole role;
+
   /// {@macro team_member}
   TeamMember({
     required this.membershipState,
     required this.teamId,
     required this.user,
+    required this.role,
   });
 }
 
@@ -94,4 +98,27 @@ enum TeamMembershipState {
 
   @override
   String toString() => 'TeamMembershipState($value)';
+}
+
+/// The role of a [TeamMember].
+enum TeamMemberRole {
+  admin._('admin'),
+  developer._('developer'),
+  readOnly._('read_only');
+
+  /// The value of this [TeamMemberRole].
+  final String value;
+
+  const TeamMemberRole._(this.value);
+
+  /// Parse a [TeamMemberRole] from a [String].
+  ///
+  /// The [value] must be a valid team member role.
+  factory TeamMemberRole.parse(String value) => TeamMemberRole.values.firstWhere(
+        (role) => role.value == value,
+        orElse: () => throw FormatException('Unknown team member role', value),
+      );
+
+  @override
+  String toString() => 'TeamMemberRole($value)';
 }

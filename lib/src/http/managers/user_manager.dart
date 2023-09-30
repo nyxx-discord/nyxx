@@ -51,6 +51,7 @@ class UserManager extends ReadOnlyManager<User> {
       flags: hasFlags ? UserFlags(raw['flags'] as int) : null,
       nitroType: hasPremiumType ? NitroType.parse(raw['premium_type'] as int) : NitroType.none,
       publicFlags: hasPublicFlags ? UserFlags(raw['public_flags'] as int) : null,
+      avatarDecorationHash: raw['avatar_decoration'] as String?,
     );
   }
 
@@ -125,7 +126,7 @@ class UserManager extends ReadOnlyManager<User> {
   }
 
   /// List the guilds the current user is a member of.
-  Future<List<PartialGuild>> listCurrentUserGuilds({Snowflake? after, Snowflake? before, int? limit}) async {
+  Future<List<PartialGuild>> listCurrentUserGuilds({Snowflake? after, Snowflake? before, int? limit, bool? withCounts}) async {
     final route = HttpRoute()
       ..users(id: '@me')
       ..guilds();
@@ -133,6 +134,7 @@ class UserManager extends ReadOnlyManager<User> {
       if (before != null) 'before': before.toString(),
       if (after != null) 'after': after.toString(),
       if (limit != null) 'limit': limit.toString(),
+      if (withCounts != null) 'with_counts': withCounts.toString(),
     });
 
     final response = await client.httpHandler.executeSafe(request);

@@ -302,4 +302,13 @@ extension RouteHelpers on HttpRoute {
 
   /// Adds the [`callback`](https://discord.com/developers/docs/interactions/receiving-and-responding#create-interaction-response) part to this [HttpRoute].
   void callback() => add(HttpRoutePart('callback'));
+
+  /// Adds the [`entitlements`](https://discord.com/developers/docs/monetization/entitlements#list-entitlements) part to this [HttpRoute].
+  void entitlements({String? id}) => add(HttpRoutePart('entitlements', [if (id != null) HttpRouteParam(id)]));
+
+  /// Adds the [`skus`](https://discord.com/developers/docs/monetization/skus#list-skus) part to this [HttpRoute].
+  void skus() => add(HttpRoutePart('skus'));
+
+  /// Adds the [`avatar-decorations`](https://discord.com/developers/docs/reference#image-formatting-cdn-endpoints) part to this [HttpRoute].
+  void avatarDecorations({String? id}) => add(HttpRoutePart('avatar-decorations', [if (id != null) HttpRouteParam(id)]));
 }

@@ -6,6 +6,7 @@ import 'package:nyxx/src/models/discord_color.dart';
 import 'package:nyxx/src/models/permissions.dart';
 import 'package:nyxx/src/models/snowflake.dart';
 import 'package:nyxx/src/models/snowflake_entity/snowflake_entity.dart';
+import 'package:nyxx/src/utils/flags.dart';
 import 'package:nyxx/src/utils/to_string_helper/to_string_helper.dart';
 
 /// A partial [Role].
@@ -53,6 +54,9 @@ class Role extends PartialRole implements CommandOptionMentionable<Role> {
   /// The tags associated with this role.
   final RoleTags? tags;
 
+  /// This role's flags.
+  final RoleFlags flags;
+
   /// {@macro role}
   Role({
     required super.id,
@@ -66,6 +70,7 @@ class Role extends PartialRole implements CommandOptionMentionable<Role> {
     required this.permissions,
     required this.isMentionable,
     required this.tags,
+    required this.flags,
   });
 
   /// This role's icon.
@@ -97,4 +102,16 @@ class RoleTags with ToStringHelper {
     required this.integrationId,
     required this.subscriptionListingId,
   });
+}
+
+/// The flags for a [Role].
+class RoleFlags extends Flags<RoleFlags> {
+  /// Whether the role is in an [Onboarding] prompt.
+  static const inPrompt = Flag<RoleFlags>.fromOffset(0);
+
+  /// Whether this set of flags has the [inPrompt] flag set.
+  bool get isInPrompt => has(inPrompt);
+
+  /// Create a new [RoleFlags].
+  const RoleFlags(super.value);
 }

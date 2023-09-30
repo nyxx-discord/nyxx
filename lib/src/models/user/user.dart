@@ -68,6 +68,9 @@ class User extends PartialUser implements MessageAuthor, CommandOptionMentionabl
   /// The public [UserFlags] on the user's account.
   final UserFlags? publicFlags;
 
+  /// The hash of this user's avatar decoration.
+  final String? avatarDecorationHash;
+
   /// {@macro user}
   User({
     required super.manager,
@@ -85,6 +88,7 @@ class User extends PartialUser implements MessageAuthor, CommandOptionMentionabl
     required this.flags,
     required this.nitroType,
     required this.publicFlags,
+    required this.avatarDecorationHash,
   });
 
   /// This user's banner.
@@ -112,6 +116,14 @@ class User extends PartialUser implements MessageAuthor, CommandOptionMentionabl
           client: manager.client,
           base: HttpRoute()..avatars(id: id.toString()),
           hash: avatarHash!,
+        );
+
+  CdnAsset? get avatarDecoration => avatarDecorationHash == null
+      ? null
+      : CdnAsset(
+          client: manager.client,
+          base: HttpRoute()..avatarDecorations(id: id.toString()),
+          hash: avatarDecorationHash!,
         );
 }
 

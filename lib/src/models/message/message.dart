@@ -182,6 +182,9 @@ class Message extends PartialMessage {
   /// Data about the role subscription purchase that prompted this message if this is a [MessageType.roleSubscriptionPurchase] message.
   final RoleSubscriptionData? roleSubscriptionData;
 
+  /// Data about entities in this message's auto-populated select menus.
+  final ResolvedData? resolved;
+
   /// {@macro message}
   Message({
     required super.id,
@@ -214,6 +217,7 @@ class Message extends PartialMessage {
     required this.position,
     required this.roleSubscriptionData,
     required this.stickers,
+    required this.resolved,
   });
 
   /// The webhook that sent this message if it was sent by a webhook, `null` otherwise.
@@ -311,6 +315,9 @@ class MessageFlags extends Flags<MessageFlags> {
   /// This message will not trigger push and desktop notifications.
   static const suppressNotifications = Flag<MessageFlags>.fromOffset(12);
 
+  /// This message is a voice message.
+  static const isVoiceMessage = Flag<MessageFlags>.fromOffset(13);
+
   /// Whether this set of flags has the [crossposted] flag set.
   bool get wasCrossposted => has(crossposted);
 
@@ -340,6 +347,9 @@ class MessageFlags extends Flags<MessageFlags> {
 
   /// Whether this set of flags has the [suppressNotifications] flag set.
   bool get suppressesNotifications => has(suppressNotifications);
+
+  /// Whether this set of flags has the [isVoiceMessage] flag set.
+  bool get isAVoiceMessage => has(isVoiceMessage);
 
   /// Create a new [MessageFlags].
   const MessageFlags(super.value);

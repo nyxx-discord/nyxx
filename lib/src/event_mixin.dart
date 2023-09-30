@@ -5,6 +5,7 @@ import 'package:nyxx/src/models/gateway/event.dart';
 import 'package:nyxx/src/models/gateway/events/application_command.dart';
 import 'package:nyxx/src/models/gateway/events/auto_moderation.dart';
 import 'package:nyxx/src/models/gateway/events/channel.dart';
+import 'package:nyxx/src/models/gateway/events/entitlement.dart';
 import 'package:nyxx/src/models/gateway/events/guild.dart';
 import 'package:nyxx/src/models/gateway/events/integration.dart';
 import 'package:nyxx/src/models/gateway/events/interaction.dart';
@@ -224,6 +225,15 @@ mixin EventMixin implements Nyxx {
 
   /// A [Stream] of [StageInstanceDeleteEvent]s received by this client.
   Stream<StageInstanceDeleteEvent> get onStageInstanceDelete => onEvent.whereType<StageInstanceDeleteEvent>();
+
+  /// A [Stream] of [EntitlementCreateEvent]s received by this client.
+  Stream<EntitlementCreateEvent> get onEntitlementCreate => onEvent.whereType<EntitlementCreateEvent>();
+
+  /// A [Stream] of [EntitlementUpdateEvent]s received by this client.
+  Stream<EntitlementUpdateEvent> get onEntitlementUpdate => onEvent.whereType<EntitlementUpdateEvent>();
+
+  /// A [Stream] of [EntitlementDeleteEvent]s received by this client.
+  Stream<EntitlementDeleteEvent> get onEntitlementDelete => onEvent.whereType<EntitlementDeleteEvent>();
 
   // Specializations of [onInteractionCreate] for convenience.
 

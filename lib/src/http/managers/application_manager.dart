@@ -1,9 +1,14 @@
+import 'dart:convert';
+
+import 'package:nyxx/src/builders/application.dart';
 import 'package:nyxx/src/client.dart';
 import 'package:nyxx/src/http/request.dart';
 import 'package:nyxx/src/http/route.dart';
 import 'package:nyxx/src/models/application.dart';
+import 'package:nyxx/src/models/guild/guild.dart';
 import 'package:nyxx/src/models/locale.dart';
 import 'package:nyxx/src/models/permissions.dart';
+import 'package:nyxx/src/models/sku.dart';
 import 'package:nyxx/src/models/snowflake.dart';
 import 'package:nyxx/src/models/team.dart';
 import 'package:nyxx/src/models/user/user.dart';
@@ -32,6 +37,7 @@ class ApplicationManager {
       rpcOrigins: maybeParseMany(raw['rpc_origins']),
       isBotPublic: raw['bot_public'] as bool,
       botRequiresCodeGrant: raw['bot_require_code_grant'] as bool,
+      bot: maybeParse(raw['bot'], (Map<String, Object?> raw) => PartialUser(id: Snowflake.parse(raw['id']!), manager: client.users)),
       termsOfServiceUrl: maybeParse(raw['terms_of_service_url'], Uri.parse),
       privacyPolicyUrl: maybeParse(raw['privacy_policy_url'], Uri.parse),
       owner: maybeParse(
@@ -44,10 +50,14 @@ class ApplicationManager {
       verifyKey: raw['verify_key'] as String,
       team: maybeParse(raw['team'], parseTeam),
       guildId: maybeParse(raw['guild_id'], Snowflake.parse),
+      guild: maybeParse(raw['guild'], (Map<String, Object?> raw) => PartialGuild(id: Snowflake.parse(raw['id']!), manager: client.guilds)),
       primarySkuId: maybeParse(raw['primary_sku_id'], Snowflake.parse),
       slug: raw['slug'] as String?,
       coverImageHash: raw['cover_image'] as String?,
       flags: ApplicationFlags(raw['flags'] as int? ?? 0),
+      approximateGuildCount: raw['approximate_guild_count'] as int?,
+      redirectUris: maybeParseMany(raw['redirect_uris'], Uri.parse),
+      interactionsEndpointUrl: maybeParse(raw['interactions_endpoint_url'], Uri.parse),
       tags: maybeParseMany(raw['tags']),
       installationParameters: maybeParse(raw['install_params'], parseInstallationParameters),
       customInstallUrl: maybeParse(raw['custom_install_url'], Uri.parse),
@@ -71,6 +81,7 @@ class ApplicationManager {
       membershipState: TeamMembershipState.parse(raw['membership_state'] as int),
       teamId: Snowflake.parse(raw['team_id']!),
       user: PartialUser(id: Snowflake.parse((raw['user'] as Map<String, Object?>)['id']!), manager: client.users),
+      role: TeamMemberRole.parse(raw['role'] as String),
     );
   }
 
@@ -95,6 +106,17 @@ class ApplicationManager {
         raw['description_localizations'],
         (Map<String, Object?> raw) => raw.map((key, value) => MapEntry(Locale.parse(key), value as String)),
       ),
+    );
+  }
+
+  Sku parseSku(Map<String, Object?> raw) {
+    return Sku(
+      manager: this,
+      id: Snowflake.parse(raw['id']!),
+      type: SkuType.parse(raw['type'] as int),
+      applicationId: Snowflake.parse(raw['application_id']!),
+      name: raw['name'] as String,
+      slug: raw['slug'] as String,
     );
   }
 
@@ -123,12 +145,28 @@ class ApplicationManager {
   }
 
   Future<Application> fetchCurrentApplication() async {
-    final route = HttpRoute()
-      ..oauth2()
-      ..applications(id: '@me');
+    final route = HttpRoute()..applications(id: '@me');
     final request = BasicRequest(route);
 
     final response = await client.httpHandler.executeSafe(request);
     return parse(response.jsonBody as Map<String, Object?>);
+  }
+
+  Future<Application> updateCurrentApplication(ApplicationUpdateBuilder builder) async {
+    final route = HttpRoute()..applications(id: '@me');
+    final request = BasicRequest(route, method: 'PATCH', body: jsonEncode(builder.build()));
+
+    final response = await client.httpHandler.executeSafe(request);
+    return parse(response.jsonBody as Map<String, Object?>);
+  }
+
+  Future<List<Sku>> listSkus(Snowflake id) async {
+    final route = HttpRoute()
+      ..applications(id: id.toString())
+      ..skus();
+    final request = BasicRequest(route);
+
+    final response = await client.httpHandler.executeSafe(request);
+    return parseMany(response.jsonBody as List, parseSku);
   }
 }

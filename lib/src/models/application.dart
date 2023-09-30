@@ -1,9 +1,11 @@
 import 'package:nyxx/src/http/cdn/cdn_asset.dart';
 import 'package:nyxx/src/http/managers/application_manager.dart';
+import 'package:nyxx/src/http/managers/entitlement_manager.dart';
 import 'package:nyxx/src/http/route.dart';
 import 'package:nyxx/src/models/guild/guild.dart';
 import 'package:nyxx/src/models/locale.dart';
 import 'package:nyxx/src/models/permissions.dart';
+import 'package:nyxx/src/models/sku.dart';
 import 'package:nyxx/src/models/snowflake.dart';
 import 'package:nyxx/src/models/team.dart';
 import 'package:nyxx/src/models/user/user.dart';
@@ -20,6 +22,9 @@ class PartialApplication with ToStringHelper {
   /// The manager for this application.
   final ApplicationManager manager;
 
+  /// An [EntitlementManager] for this application's [Entitlement]s.
+  EntitlementManager get entitlements => EntitlementManager(manager.client.options.entitlementConfig, manager.client, applicationId: id);
+
   /// Create a new [PartialApplication].
   PartialApplication({required this.id, required this.manager});
 
@@ -28,6 +33,9 @@ class PartialApplication with ToStringHelper {
 
   /// Update and fetch this application's role connection metadata.
   Future<List<ApplicationRoleConnectionMetadata>> updateRoleConnectionMetadata() => manager.updateApplicationRoleConnectionMetadata(id);
+
+  /// List this application's SKUs.
+  Future<List<Sku>> listSkus() => manager.listSkus(id);
 }
 
 /// {@template application}
@@ -52,6 +60,9 @@ class Application extends PartialApplication {
   /// Whether the bot account associated with this application requires the OAuth2 code grant to be completed before joining a guild.
   final bool botRequiresCodeGrant;
 
+  /// The bot user associated with the application.
+  final PartialUser? bot;
+
   /// The URL of this application's Terms of Service.
   final Uri? termsOfServiceUrl;
 
@@ -67,8 +78,11 @@ class Application extends PartialApplication {
   /// If this application belongs to a team, the team which owns this app.
   final Team? team;
 
-  /// If this application is a game sold on Discord, the ID of the guild it was linked to.
+  /// The ID of the guild associated with this application.
   final Snowflake? guildId;
+
+  /// The guild associated with this application.
+  final PartialGuild? guild;
 
   /// If this application is a game sold on Discord, the ID of the "Game SKU" that is created, if it exists.
   final Snowflake? primarySkuId;
@@ -81,6 +95,15 @@ class Application extends PartialApplication {
 
   /// The public flags for this application.
   final ApplicationFlags flags;
+
+  /// The approximate number of guilds this bot has been added to.
+  final int? approximateGuildCount;
+
+  /// The list of redirect URIs for this application.
+  final List<Uri>? redirectUris;
+
+  /// The interactions endpoint URL for this application.
+  final Uri? interactionsEndpointUrl;
 
   /// Up to 5 tags describing this application.
   final List<String>? tags;
@@ -106,24 +129,26 @@ class Application extends PartialApplication {
     required this.rpcOrigins,
     required this.isBotPublic,
     required this.botRequiresCodeGrant,
+    required this.bot,
     required this.termsOfServiceUrl,
     required this.privacyPolicyUrl,
     required this.owner,
     required this.verifyKey,
     required this.team,
     required this.guildId,
+    required this.guild,
     required this.primarySkuId,
     required this.slug,
     required this.coverImageHash,
     required this.flags,
+    required this.approximateGuildCount,
+    required this.redirectUris,
+    required this.interactionsEndpointUrl,
     required this.tags,
     required this.installationParameters,
     required this.customInstallUrl,
     required this.roleConnectionsVerificationUrl,
   });
-
-  /// If this application is a game sold on Discord, the guild it was linked to.
-  PartialGuild? get guild => guildId == null ? null : manager.client.guilds[guildId!];
 
   /// This application's icon.
   CdnAsset? get icon => iconHash == null

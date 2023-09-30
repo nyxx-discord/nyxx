@@ -9,6 +9,7 @@ export 'src/errors.dart'
         ShardDisconnectedError,
         RoleNotFoundException,
         AuditLogEntryNotFoundException,
+        EntitlementNotFoundException,
         OutOfRemainingSessionsError,
         IntegrationNotFoundException,
         AlreadyAcknowledgedError,
@@ -64,6 +65,8 @@ export 'src/builders/sticker.dart' show StickerBuilder, StickerUpdateBuilder;
 export 'src/builders/application_command.dart'
     show ApplicationCommandBuilder, ApplicationCommandUpdateBuilder, CommandOptionBuilder, CommandOptionChoiceBuilder;
 export 'src/builders/interaction_response.dart' show InteractionResponseBuilder, ModalBuilder, InteractionCallbackType;
+export 'src/builders/entitlement.dart' show TestEntitlementBuilder, TestEntitlementType;
+export 'src/builders/application.dart' show ApplicationUpdateBuilder;
 
 export 'src/cache/cache.dart' show Cache, CacheConfig;
 
@@ -94,6 +97,7 @@ export 'src/http/managers/audit_log_manager.dart' show AuditLogManager;
 export 'src/http/managers/sticker_manager.dart' show GuildStickerManager, GlobalStickerManager;
 export 'src/http/managers/application_command_manager.dart' show ApplicationCommandManager, GlobalApplicationCommandManager, GuildApplicationCommandManager;
 export 'src/http/managers/interaction_manager.dart' show InteractionManager;
+export 'src/http/managers/entitlement_manager.dart' show EntitlementManager;
 
 export 'src/gateway/gateway.dart' show Gateway;
 export 'src/gateway/message.dart' show Disconnecting, Dispose, ErrorReceived, EventReceived, GatewayMessage, Send, ShardData, ShardMessage;
@@ -112,6 +116,7 @@ export 'src/models/channel/channel.dart' show Channel, ChannelFlags, PartialChan
 export 'src/models/channel/followed_channel.dart' show FollowedChannel;
 export 'src/models/channel/guild_channel.dart' show GuildChannel;
 export 'src/models/channel/has_threads_channel.dart' show HasThreadsChannel;
+export 'src/models/channel/thread_aggregate.dart' show ThreadsOnlyChannel;
 export 'src/models/channel/text_channel.dart' show PartialTextChannel, TextChannel;
 export 'src/models/channel/thread_list.dart' show ThreadList;
 export 'src/models/channel/thread.dart' show PartialThreadMember, Thread, ThreadMember;
@@ -129,13 +134,14 @@ export 'src/models/channel/types/guild_text.dart' show GuildTextChannel;
 export 'src/models/channel/types/guild_voice.dart' show GuildVoiceChannel;
 export 'src/models/channel/types/private_thread.dart' show PrivateThread;
 export 'src/models/channel/types/public_thread.dart' show PublicThread;
+export 'src/models/channel/types/guild_media.dart' show GuildMediaChannel;
 export 'src/models/message/activity.dart' show MessageActivity, MessageActivityType;
-export 'src/models/message/attachment.dart' show Attachment;
+export 'src/models/message/attachment.dart' show Attachment, AttachmentFlags;
 export 'src/models/message/author.dart' show MessageAuthor;
 export 'src/models/message/channel_mention.dart' show ChannelMention;
 export 'src/models/message/embed.dart' show Embed, EmbedAuthor, EmbedField, EmbedFooter, EmbedImage, EmbedProvider, EmbedThumbnail, EmbedVideo;
 export 'src/models/message/message.dart' show Message, MessageFlags, PartialMessage, MessageType, MessageInteraction;
-export 'src/models/message/reaction.dart' show Reaction;
+export 'src/models/message/reaction.dart' show Reaction, ReactionCountDetails;
 export 'src/models/message/reference.dart' show MessageReference;
 export 'src/models/message/role_subscription_data.dart' show RoleSubscriptionData;
 export 'src/models/message/component.dart'
@@ -189,7 +195,7 @@ export 'src/models/guild/auto_moderation.dart'
         TriggerType;
 export 'src/models/voice/voice_state.dart' show VoiceState;
 export 'src/models/voice/voice_region.dart' show VoiceRegion;
-export 'src/models/role.dart' show PartialRole, Role, RoleTags;
+export 'src/models/role.dart' show PartialRole, Role, RoleTags, RoleFlags;
 export 'src/models/gateway/gateway.dart' show GatewayBot, GatewayConfiguration, SessionStartLimit;
 export 'src/models/gateway/event.dart'
     show
@@ -260,6 +266,7 @@ export 'src/models/gateway/events/ready.dart' show ReadyEvent, ResumedEvent;
 export 'src/models/gateway/events/stage_instance.dart' show StageInstanceCreateEvent, StageInstanceDeleteEvent, StageInstanceUpdateEvent;
 export 'src/models/gateway/events/voice.dart' show VoiceServerUpdateEvent, VoiceStateUpdateEvent;
 export 'src/models/gateway/events/webhook.dart' show WebhooksUpdateEvent;
+export 'src/models/gateway/events/entitlement.dart' show EntitlementCreateEvent, EntitlementDeleteEvent, EntitlementUpdateEvent;
 export 'src/models/presence.dart'
     show Activity, ActivityAssets, ActivityButton, ActivityFlags, ActivityParty, ActivitySecrets, ActivityTimestamps, ClientStatus, ActivityType, UserStatus;
 export 'src/models/emoji.dart' show Emoji, GuildEmoji, PartialEmoji, TextEmoji;
@@ -270,7 +277,7 @@ export 'src/models/sticker/sticker_pack.dart' show StickerPack;
 export 'src/models/commands/application_command.dart' show ApplicationCommand, PartialApplicationCommand, ApplicationCommandType;
 export 'src/models/commands/application_command_option.dart' show CommandOption, CommandOptionChoice, CommandOptionType, CommandOptionMentionable;
 export 'src/models/commands/application_command_permissions.dart' show CommandPermission, CommandPermissions, CommandPermissionType;
-export 'src/models/team.dart' show Team, TeamMember, TeamMembershipState;
+export 'src/models/team.dart' show Team, TeamMember, TeamMembershipState, TeamMemberRole;
 export 'src/models/interaction.dart'
     show
         ApplicationCommandInteractionData,
@@ -287,6 +294,8 @@ export 'src/models/interaction.dart'
         MessageComponentInteraction,
         ModalSubmitInteraction,
         PingInteraction;
+export 'src/models/entitlement.dart' show Entitlement, PartialEntitlement, EntitlementType;
+export 'src/models/sku.dart' show Sku, SkuType;
 
 export 'src/utils/flags.dart' show Flag, Flags;
 export 'src/intents.dart' show GatewayIntents;

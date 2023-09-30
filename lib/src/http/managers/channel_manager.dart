@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:http/http.dart' show MultipartFile;
+import 'package:nyxx/nyxx.dart';
 import 'package:nyxx/src/builders/builder.dart';
 import 'package:nyxx/src/builders/channel/stage_instance.dart';
 import 'package:nyxx/src/builders/channel/thread.dart';
@@ -76,6 +77,7 @@ class ChannelManager extends ReadOnlyManager<Channel> {
       ChannelType.guildStageVoice: parseGuildStageChannel,
       ChannelType.guildDirectory: parseDirectoryChannel,
       ChannelType.guildForum: parseForumChannel,
+      ChannelType.guildMedia: parseGuildMediaChannel,
     };
 
     return parsers[type]!(raw, guildId: guildId);
@@ -320,12 +322,42 @@ class ChannelManager extends ReadOnlyManager<Channel> {
     return ForumChannel(
       id: Snowflake.parse(raw['id']!),
       manager: this,
+      defaultLayout: maybeParse(raw['default_forum_layout'], ForumLayout.parse),
       topic: raw['topic'] as String?,
+      rateLimitPerUser: maybeParse<Duration?, int>(raw['rate_limit_per_user'], (value) => value == 0 ? null : Duration(seconds: value)),
       lastThreadId: maybeParse(raw['last_message_id'], Snowflake.parse),
       lastPinTimestamp: maybeParse(raw['last_pin_timestamp'], DateTime.parse),
       flags: ChannelFlags(raw['flags'] as int),
       availableTags: parseMany(raw['available_tags'] as List, parseForumTag),
       defaultReaction: maybeParse(raw['default_reaction_emoji'], parseDefaultReaction),
+      defaultSortOrder: maybeParse(raw['default_sort_order'], ForumSort.parse),
+      // Discord doesn't seem to include this field if the default 3 day expiration is used (3 days = 4320 minutes)
+      defaultAutoArchiveDuration: Duration(minutes: raw['default_auto_archive_duration'] as int? ?? 4320),
+      defaultThreadRateLimitPerUser:
+          maybeParse<Duration?, int>(raw['default_thread_rate_limit_per_user'], (value) => value == 0 ? null : Duration(seconds: value)),
+      guildId: guildId ?? Snowflake.parse(raw['guild_id']!),
+      isNsfw: raw['nsfw'] as bool? ?? false,
+      name: raw['name'] as String,
+      parentId: maybeParse(raw['parent_id'], Snowflake.parse),
+      permissionOverwrites: maybeParseMany(raw['permission_overwrites'], parsePermissionOverwrite) ?? [],
+      position: raw['position'] as int,
+    );
+  }
+
+  GuildMediaChannel parseGuildMediaChannel(Map<String, Object?> raw, {Snowflake? guildId}) {
+    assert(raw['type'] == ChannelType.guildMedia.value, 'Invalid type for GuildMediaChannel');
+
+    return GuildMediaChannel(
+      id: Snowflake.parse(raw['id']!),
+      manager: this,
+      topic: raw['topic'] as String?,
+      rateLimitPerUser: maybeParse<Duration?, int>(raw['rate_limit_per_user'], (value) => value == 0 ? null : Duration(seconds: value)),
+      lastThreadId: maybeParse(raw['last_message_id'], Snowflake.parse),
+      lastPinTimestamp: maybeParse(raw['last_pin_timestamp'], DateTime.parse),
+      flags: ChannelFlags(raw['flags'] as int),
+      availableTags: parseMany(raw['available_tags'] as List, parseForumTag),
+      defaultReaction: maybeParse(raw['default_reaction_emoji'], parseDefaultReaction),
+      defaultSortOrder: maybeParse(raw['default_sort_order'], ForumSort.parse),
       // Discord doesn't seem to include this field if the default 3 day expiration is used (3 days = 4320 minutes)
       defaultAutoArchiveDuration: Duration(minutes: raw['default_auto_archive_duration'] as int? ?? 4320),
       defaultThreadRateLimitPerUser:

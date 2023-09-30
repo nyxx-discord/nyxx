@@ -25,9 +25,9 @@ final sampleApplication = {
     "members": [
       {
         "membership_state": 2,
-        "permissions": ["*"],
         "team_id": "531992624043786253",
-        "user": {"avatar": "d9e261cd35999608eb7e3de1fae3688b", "discriminator": "0001", "id": "511972282709709995", "username": "Mr Owner"}
+        "user": {"avatar": "d9e261cd35999608eb7e3de1fae3688b", "discriminator": "0001", "id": "511972282709709995", "username": "Mr Owner"},
+        "role": "admin",
       }
     ],
 
@@ -78,6 +78,30 @@ void checkRoleConnectionMetadata(ApplicationRoleConnectionMetadata metadata) {
   expect(metadata.localizedDescriptions, isNull);
 }
 
+final sampleSku = {
+  "id": "1088510058284990888",
+  "type": 5,
+  "dependent_sku_id": null,
+  "application_id": "788708323867885999",
+  "manifest_labels": null,
+  "access_type": 1,
+  "name": "Test Premium",
+  "features": [],
+  "release_date": null,
+  "premium": false,
+  "slug": "test-premium",
+  "flags": 128,
+  "show_age_gate": false
+};
+
+void checkSku(Sku sku) {
+  expect(sku.id, equals(Snowflake(1088510058284990888)));
+  expect(sku.type, equals(SkuType.subscription));
+  expect(sku.applicationId, equals(Snowflake(788708323867885999)));
+  expect(sku.name, equals('Test Premium'));
+  expect(sku.slug, equals('test-premium'));
+}
+
 void main() {
   group('ApplicationManager', () {
     test('parse', () {
@@ -106,6 +130,19 @@ void main() {
       ).runWithManager(ApplicationManager(client));
     });
 
+    test('parseSku', () {
+      final client = MockNyxx();
+      when(() => client.apiOptions).thenReturn(RestApiOptions(token: 'TEST_TOKEN'));
+      when(() => client.options).thenReturn(RestClientOptions());
+
+      ParsingTest<ApplicationManager, Sku, Map<String, Object?>>(
+        name: 'parseSku',
+        source: sampleSku,
+        parse: (manager) => manager.parseSku,
+        check: checkSku,
+      ).runWithManager(ApplicationManager(client));
+    });
+
     testEndpoint(
       '/applications/0/role-connections/metadata',
       name: 'fetchApplicationRoleConnectionMetadata',
@@ -122,9 +159,22 @@ void main() {
     );
 
     testEndpoint(
-      '/oauth2/applications/@me',
+      '/applications/@me',
       (client) => client.applications.fetchCurrentApplication(),
       response: sampleApplication,
+    );
+
+    testEndpoint(
+      '/applications/@me',
+      method: 'PATCH',
+      (client) => client.applications.updateCurrentApplication(ApplicationUpdateBuilder()),
+      response: sampleApplication,
+    );
+
+    testEndpoint(
+      '/applications/0/skus',
+      (client) => client.applications.listSkus(Snowflake.zero),
+      response: [sampleSku],
     );
   });
 }

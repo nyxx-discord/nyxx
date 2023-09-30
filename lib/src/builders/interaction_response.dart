@@ -54,6 +54,8 @@ class InteractionResponseBuilder extends CreateBuilder<InteractionResponseBuilde
 
   factory InteractionResponseBuilder.modal(ModalBuilder modal) => InteractionResponseBuilder(type: InteractionCallbackType.modal, data: modal);
 
+  factory InteractionResponseBuilder.premiumRequired() => InteractionResponseBuilder(type: InteractionCallbackType.premiumRequired, data: null);
+
   @override
   Map<String, Object?> build() {
     final builtData = switch (data) {
@@ -108,7 +110,8 @@ enum InteractionCallbackType {
   deferredUpdateMessage._(6),
   updateMessage._(7),
   applicationCommandAutocompleteResult._(8),
-  modal._(9);
+  modal._(9),
+  premiumRequired._(10);
 
   final int value;
 

@@ -7,8 +7,14 @@ final sampleMessage = {
   "reactions": [
     {
       "count": 1,
+      "count_details": {
+        "burst": 0,
+        "normal": 1,
+      },
       "me": false,
-      "emoji": {"id": null, "name": "🔥"}
+      "me_burst": false,
+      "emoji": {"id": null, "name": "🔥"},
+      "burst_colors": [],
     }
   ],
   "attachments": [],
@@ -68,8 +74,14 @@ final sampleCrosspostedMessage = {
   "reactions": [
     {
       "count": 1,
+      "count_details": {
+        "burst": 0,
+        "normal": 1,
+      },
       "me": false,
-      "emoji": {"id": null, "name": "🔥"}
+      "me_burst": false,
+      "emoji": {"id": null, "name": "🔥"},
+      "burst_colors": [],
     }
   ],
   "attachments": [],

@@ -131,6 +131,9 @@ class MessageReactionAddEvent extends DispatchEvent {
   /// The emoji that was added.
   final Emoji emoji;
 
+  /// The ID of the user that sent the message the reaction was added to.
+  final Snowflake? messageAuthorId;
+
   /// {@macro message_reaction_add_event}
   MessageReactionAddEvent({
     required super.gateway,
@@ -140,6 +143,7 @@ class MessageReactionAddEvent extends DispatchEvent {
     required this.guildId,
     required this.member,
     required this.emoji,
+    required this.messageAuthorId,
   });
 
   /// The guild the message is in.
@@ -153,6 +157,9 @@ class MessageReactionAddEvent extends DispatchEvent {
 
   /// The message the reaction was added to.
   PartialMessage get message => channel.messages[messageId];
+
+  /// The user that sent the message the reaction was added to
+  PartialUser? get messageAuthor => messageAuthorId == null ? null : gateway.client.users[messageAuthorId!];
 }
 
 /// {@template message_reaction_remove_event}

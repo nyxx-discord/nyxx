@@ -329,6 +329,9 @@ class Guild extends PartialGuild {
   // Renamed to avoid conflict with the stickers manager.
   final List<GuildSticker> stickerList;
 
+  /// The ID of the channel safety alerts are sent to.
+  final Snowflake? safetyAlertsChannelId;
+
   /// {@macro guild}
   Guild({
     required super.id,
@@ -372,6 +375,7 @@ class Guild extends PartialGuild {
     required this.hasPremiumProgressBarEnabled,
     required this.emojiList,
     required this.stickerList,
+    required this.safetyAlertsChannelId,
   });
 
   /// The owner of the guild.
@@ -398,6 +402,9 @@ class Guild extends PartialGuild {
   /// The public updates channel in a community server.
   PartialTextChannel? get publicUpdatesChannel =>
       publicUpdatesChannelId == null ? null : manager.client.channels[publicUpdatesChannelId!] as PartialTextChannel?;
+
+  /// The channel safety alerts are sent to.
+  PartialTextChannel? get safetyAlertsChannel => safetyAlertsChannelId == null ? null : manager.client.channels[safetyAlertsChannelId!] as PartialTextChannel;
 
   /// This guild's icon.
   CdnAsset? get icon => iconHash == null
