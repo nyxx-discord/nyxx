@@ -81,6 +81,7 @@ class ApplicationManager {
       membershipState: TeamMembershipState.parse(raw['membership_state'] as int),
       teamId: Snowflake.parse(raw['team_id']!),
       user: PartialUser(id: Snowflake.parse((raw['user'] as Map<String, Object?>)['id']!), manager: client.users),
+      role: TeamMemberRole.parse(raw['role'] as String),
     );
   }
 

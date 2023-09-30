@@ -277,7 +277,7 @@ export 'src/models/sticker/sticker_pack.dart' show StickerPack;
 export 'src/models/commands/application_command.dart' show ApplicationCommand, PartialApplicationCommand, ApplicationCommandType;
 export 'src/models/commands/application_command_option.dart' show CommandOption, CommandOptionChoice, CommandOptionType, CommandOptionMentionable;
 export 'src/models/commands/application_command_permissions.dart' show CommandPermission, CommandPermissions, CommandPermissionType;
-export 'src/models/team.dart' show Team, TeamMember, TeamMembershipState;
+export 'src/models/team.dart' show Team, TeamMember, TeamMembershipState, TeamMemberRole;
 export 'src/models/interaction.dart'
     show
         ApplicationCommandInteractionData,
