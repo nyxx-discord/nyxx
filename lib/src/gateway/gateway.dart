@@ -895,14 +895,14 @@ class Gateway extends GatewayManager with EventParser {
     final guildId = maybeParse(raw['guild_id'], Snowflake.parse);
 
     return MessageReactionAddEvent(
-      gateway: this,
-      userId: Snowflake.parse(raw['user_id']!),
-      channelId: Snowflake.parse(raw['channel_id']!),
-      messageId: Snowflake.parse(raw['message_id']!),
-      guildId: guildId,
-      member: maybeParse(raw['member'], client.guilds[guildId ?? Snowflake.zero].members.parse),
-      emoji: client.guilds[Snowflake.zero].emojis.parse(raw['emoji'] as Map<String, Object?>),
-    );
+        gateway: this,
+        userId: Snowflake.parse(raw['user_id']!),
+        channelId: Snowflake.parse(raw['channel_id']!),
+        messageId: Snowflake.parse(raw['message_id']!),
+        guildId: guildId,
+        member: maybeParse(raw['member'], client.guilds[guildId ?? Snowflake.zero].members.parse),
+        emoji: client.guilds[Snowflake.zero].emojis.parse(raw['emoji'] as Map<String, Object?>),
+        messageAuthorId: maybeParse(raw['message_author_id'], Snowflake.parse));
   }
 
   /// Parse a [MessageReactionRemoveEvent] from [raw].
