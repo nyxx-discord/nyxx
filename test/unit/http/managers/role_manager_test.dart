@@ -14,7 +14,8 @@ final sampleRole = {
   "position": 1,
   "permissions": "66321471",
   "managed": false,
-  "mentionable": false
+  "mentionable": false,
+  "flags": 0,
 };
 
 void checkRole(Role role) {
