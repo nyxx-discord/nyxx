@@ -129,7 +129,16 @@ final sampleGuild2 = {
     "VIP_REGIONS",
   ],
   "emojis": [
-    {"name": "ultrafastparrot", "roles": [], "id": "393564762228785161", "require_colons": true, "managed": false, "animated": true, "available": true}
+    {
+      "name": "ultrafastparrot",
+      "roles": [],
+      "id": "393564762228785161",
+      "require_colons": true,
+      "managed": false,
+      "animated": true,
+      "available": true,
+      "flags": 0,
+    }
   ],
   "banner": "5c3cb8d1bc159937fffe7e641ec96ca7",
   "owner_id": "53908232506183680",
@@ -150,7 +159,8 @@ final sampleGuild2 = {
       "color": 0,
       "hoist": false,
       "managed": false,
-      "mentionable": false
+      "mentionable": false,
+      "flags": 0,
     }
   ],
   "default_message_notifications": 1,
@@ -447,6 +457,7 @@ final sampleGuildTemplate = {
         "color": 0,
         "hoist": false,
         "mentionable": false,
+        "flags": 0,
       }
     ],
     "channels": [
