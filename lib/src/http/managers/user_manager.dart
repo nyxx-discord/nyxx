@@ -51,6 +51,7 @@ class UserManager extends ReadOnlyManager<User> {
       flags: hasFlags ? UserFlags(raw['flags'] as int) : null,
       nitroType: hasPremiumType ? NitroType.parse(raw['premium_type'] as int) : NitroType.none,
       publicFlags: hasPublicFlags ? UserFlags(raw['public_flags'] as int) : null,
+      avatarDecorationHash: raw['avatar_decoration'] as String?,
     );
   }
 

@@ -308,4 +308,7 @@ extension RouteHelpers on HttpRoute {
 
   /// Adds the [`skus`](https://discord.com/developers/docs/monetization/skus#list-skus) part to this [HttpRoute].
   void skus() => add(HttpRoutePart('skus'));
+
+  /// Adds the [`avatar-decorations`](https://discord.com/developers/docs/reference#image-formatting-cdn-endpoints) part to this [HttpRoute].
+  void avatarDecorations({String? id}) => add(HttpRoutePart('avatar-decorations', [if (id != null) HttpRouteParam(id)]));
 }
