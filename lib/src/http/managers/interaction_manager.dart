@@ -224,6 +224,7 @@ class InteractionManager {
       customId: raw['custom_id'] as String,
       type: MessageComponentType.parse(raw['component_type'] as int),
       values: maybeParseMany(raw['values']),
+      resolved: maybeParse(raw['resolved'], parseResolvedData),
     );
   }
 

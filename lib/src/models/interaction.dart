@@ -509,8 +509,11 @@ class MessageComponentInteractionData with ToStringHelper {
   /// A list of values provided if the component was a [SelectMenuComponent].
   final List<String>? values;
 
+  /// Additional data about entities in the payload.
+  final ResolvedData? resolved;
+
   /// {@macro message_component_interaction_data}
-  MessageComponentInteractionData({required this.customId, required this.type, required this.values});
+  MessageComponentInteractionData({required this.customId, required this.type, required this.values, required this.resolved});
 }
 
 /// {@template modal_submit_interaction_data}
