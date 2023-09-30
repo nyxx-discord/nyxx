@@ -61,7 +61,10 @@ void main() {
     });
 
     test('applications', () async {
-      await expectLater(client.applications.fetchCurrentApplication(), completes);
+      late Application application;
+
+      await expectLater(() async => application = await client.applications.fetchCurrentApplication(), completes);
+      await expectLater(application.listSkus(), completes);
     });
 
     test('users', () async {

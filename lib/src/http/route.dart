@@ -305,4 +305,7 @@ extension RouteHelpers on HttpRoute {
 
   /// Adds the [`entitlements`](https://discord.com/developers/docs/monetization/entitlements#list-entitlements) part to this [HttpRoute].
   void entitlements({String? id}) => add(HttpRoutePart('entitlements', [if (id != null) HttpRouteParam(id)]));
+
+  /// Adds the [`skus`](https://discord.com/developers/docs/monetization/skus#list-skus) part to this [HttpRoute].
+  void skus() => add(HttpRoutePart('skus'));
 }

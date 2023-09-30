@@ -4,7 +4,7 @@ import 'package:test/test.dart';
 import '../../../test_manager.dart';
 
 final sampleEntitlement = {
-  "id": "1019653849998299136",
+  "id": "1",
   "sku_id": "1019475255913222144",
   "application_id": "1019370614521200640",
   "user_id": "771129655544643584",
@@ -20,7 +20,7 @@ final sampleEntitlement = {
 };
 
 void checkEntitlement(Entitlement entitlement) {
-  expect(entitlement.id, equals(Snowflake(1019653849998299136)));
+  expect(entitlement.id, equals(Snowflake(1)));
   expect(entitlement.skuId, equals(Snowflake(1019475255913222144)));
   expect(entitlement.userId, equals(Snowflake(771129655544643584)));
   expect(entitlement.guildId, equals(Snowflake(1015034326372454400)));

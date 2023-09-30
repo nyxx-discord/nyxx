@@ -5,6 +5,7 @@ import 'package:nyxx/src/http/route.dart';
 import 'package:nyxx/src/models/guild/guild.dart';
 import 'package:nyxx/src/models/locale.dart';
 import 'package:nyxx/src/models/permissions.dart';
+import 'package:nyxx/src/models/sku.dart';
 import 'package:nyxx/src/models/snowflake.dart';
 import 'package:nyxx/src/models/team.dart';
 import 'package:nyxx/src/models/user/user.dart';
@@ -32,6 +33,9 @@ class PartialApplication with ToStringHelper {
 
   /// Update and fetch this application's role connection metadata.
   Future<List<ApplicationRoleConnectionMetadata>> updateRoleConnectionMetadata() => manager.updateApplicationRoleConnectionMetadata(id);
+
+  /// List this application's SKUs.
+  Future<List<Sku>> listSkus() => manager.listSkus(id);
 }
 
 /// {@template application}

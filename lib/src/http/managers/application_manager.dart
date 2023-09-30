@@ -4,6 +4,7 @@ import 'package:nyxx/src/http/route.dart';
 import 'package:nyxx/src/models/application.dart';
 import 'package:nyxx/src/models/locale.dart';
 import 'package:nyxx/src/models/permissions.dart';
+import 'package:nyxx/src/models/sku.dart';
 import 'package:nyxx/src/models/snowflake.dart';
 import 'package:nyxx/src/models/team.dart';
 import 'package:nyxx/src/models/user/user.dart';
@@ -98,6 +99,17 @@ class ApplicationManager {
     );
   }
 
+  Sku parseSku(Map<String, Object?> raw) {
+    return Sku(
+      manager: this,
+      id: Snowflake.parse(raw['id']!),
+      type: SkuType.parse(raw['type'] as int),
+      applicationId: Snowflake.parse(raw['application_id']!),
+      name: raw['name'] as String,
+      slug: raw['slug'] as String,
+    );
+  }
+
   /// Fetch an application's role connection metadata.
   Future<List<ApplicationRoleConnectionMetadata>> fetchApplicationRoleConnectionMetadata(Snowflake id) async {
     final route = HttpRoute()
@@ -130,5 +142,15 @@ class ApplicationManager {
 
     final response = await client.httpHandler.executeSafe(request);
     return parse(response.jsonBody as Map<String, Object?>);
+  }
+
+  Future<List<Sku>> listSkus(Snowflake id) async {
+    final route = HttpRoute()
+      ..applications(id: id.toString())
+      ..skus();
+    final request = BasicRequest(route);
+
+    final response = await client.httpHandler.executeSafe(request);
+    return parseMany(response.jsonBody as List, parseSku);
   }
 }
