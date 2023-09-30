@@ -1,3 +1,5 @@
+import 'dart:collection';
+
 import 'package:runtime_type/runtime_type.dart';
 
 /// An internal helper which parses [object] using [parse] if it is not null.
@@ -29,8 +31,9 @@ List<T> parseMany<T, U>(List<dynamic> objects, [T Function(U)? parse]) {
     parse = (value) => value as T;
   }
 
-  return List.generate(
+  return UnmodifiableListView(List.generate(
     objects.length,
+    growable: false,
     (index) {
       final raw = objects[index];
 
@@ -40,7 +43,7 @@ List<T> parseMany<T, U>(List<dynamic> objects, [T Function(U)? parse]) {
 
       return parse!(raw);
     },
-  );
+  ));
 }
 
 /// An internal helper which parses each element of [object] using [parse] if it is not null.

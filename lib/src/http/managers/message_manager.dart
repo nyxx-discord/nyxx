@@ -190,8 +190,18 @@ class MessageManager extends Manager<Message> {
   Reaction parseReaction(Map<String, Object?> raw) {
     return Reaction(
       count: raw['count'] as int,
+      countDetails: parseReactionCountDetails(raw['count_details'] as Map<String, Object?>),
       me: raw['me'] as bool,
+      meBurst: raw['me_burst'] as bool,
       emoji: client.guilds[Snowflake.zero].emojis.parse(raw['emoji'] as Map<String, Object?>),
+      burstColors: parseMany(raw['burst_colors'] as List, DiscordColor.parseHexString),
+    );
+  }
+
+  ReactionCountDetails parseReactionCountDetails(Map<String, Object?> raw) {
+    return ReactionCountDetails(
+      burst: raw['burst'] as int,
+      normal: raw['normal'] as int,
     );
   }
 
