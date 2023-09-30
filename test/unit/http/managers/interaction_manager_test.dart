@@ -37,6 +37,7 @@ final sampleCommandInteraction = {
     "id": "771825006014889984"
   },
   "channel_id": "645027906669510667",
+  "entitlements": [],
 
   // Fields not present in the example but documented
   "application_id": "0",
@@ -61,6 +62,7 @@ void checkCommandInteraction(Interaction<dynamic> interaction) {
   expect(interaction.appPermissions, equals(Permissions(442368)));
   expect(interaction.locale, equals(Locale.enUs));
   expect(interaction.guildLocale, equals(Locale.enUs));
+  expect(interaction.entitlements, equals([]));
 }
 
 final sampleCommandInteraction2 = {

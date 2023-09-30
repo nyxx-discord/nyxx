@@ -45,6 +45,7 @@ class InteractionManager {
     final appPermissions = maybeParse(raw['app_permissions'], (String raw) => Permissions(int.parse(raw)));
     final locale = maybeParse(raw['locale'], Locale.parse);
     final guildLocale = maybeParse(raw['guild_locale'], Locale.parse);
+    final entitlements = parseMany(raw['entitlements'] as List, client.applications[applicationId].entitlements.parse);
 
     return switch (type) {
       InteractionType.ping => PingInteraction(
@@ -63,6 +64,7 @@ class InteractionManager {
           appPermissions: appPermissions,
           locale: locale,
           guildLocale: guildLocale,
+          entitlements: entitlements,
         ),
       InteractionType.applicationCommand => ApplicationCommandInteraction(
           manager: this,
@@ -81,6 +83,7 @@ class InteractionManager {
           appPermissions: appPermissions,
           locale: locale,
           guildLocale: guildLocale,
+          entitlements: entitlements,
         ),
       InteractionType.messageComponent => MessageComponentInteraction(
           manager: this,
@@ -99,6 +102,7 @@ class InteractionManager {
           appPermissions: appPermissions,
           locale: locale,
           guildLocale: guildLocale,
+          entitlements: entitlements,
         ),
       InteractionType.modalSubmit => ModalSubmitInteraction(
           manager: this,
@@ -117,6 +121,7 @@ class InteractionManager {
           appPermissions: appPermissions,
           locale: locale,
           guildLocale: guildLocale,
+          entitlements: entitlements,
         ),
       InteractionType.applicationCommandAutocomplete => ApplicationCommandAutocompleteInteraction(
           manager: this,
@@ -135,6 +140,7 @@ class InteractionManager {
           appPermissions: appPermissions,
           locale: locale,
           guildLocale: guildLocale,
+          entitlements: entitlements,
         ),
     } as Interaction;
   }
