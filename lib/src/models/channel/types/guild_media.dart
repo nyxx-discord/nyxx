@@ -6,21 +6,18 @@ import 'package:nyxx/src/models/channel/guild_channel.dart';
 import 'package:nyxx/src/models/channel/thread.dart';
 import 'package:nyxx/src/models/channel/thread_aggregate.dart';
 import 'package:nyxx/src/models/channel/thread_list.dart';
+import 'package:nyxx/src/models/channel/types/forum.dart';
 import 'package:nyxx/src/models/guild/guild.dart';
 import 'package:nyxx/src/models/invite/invite.dart';
 import 'package:nyxx/src/models/invite/invite_metadata.dart';
 import 'package:nyxx/src/models/permission_overwrite.dart';
 import 'package:nyxx/src/models/snowflake.dart';
 import 'package:nyxx/src/models/webhook.dart';
-import 'package:nyxx/src/utils/to_string_helper/to_string_helper.dart';
 
-/// {@template forum_channel}
-/// A forum channel.
+/// {@template guild_media_channel}
+/// A channel in a guild in which threads can be posted, similarly to a [ForumChannel].
 /// {@endtemplate}
-class ForumChannel extends Channel implements GuildChannel, ThreadAggregate {
-  /// The default layout in this channel
-  final ForumLayout? defaultLayout;
-
+class GuildMediaChannel extends Channel implements GuildChannel, ThreadAggregate {
   @override
   final String? topic;
 
@@ -72,11 +69,10 @@ class ForumChannel extends Channel implements GuildChannel, ThreadAggregate {
   @override
   ChannelType get type => ChannelType.guildForum;
 
-  /// {@macro forum_channel}
-  ForumChannel({
+  /// {@macro guild_media_channel}
+  GuildMediaChannel({
     required super.id,
     required super.manager,
-    required this.defaultLayout,
     required this.topic,
     required this.rateLimitPerUser,
     required this.lastThreadId,
@@ -135,92 +131,4 @@ class ForumChannel extends Channel implements GuildChannel, ThreadAggregate {
 
   @override
   Future<Invite> createInvite(InviteBuilder builder, {String? auditLogReason}) => manager.createInvite(id, builder, auditLogReason: auditLogReason);
-}
-
-/// {@template forum_tag}
-/// A tag in a forum channel.
-/// {@endtemplate}
-class ForumTag with ToStringHelper {
-  /// The ID of this tag.
-  final Snowflake id;
-
-  /// The name of this tag.
-  final String name;
-
-  /// Whether this tag is moderated.
-  final bool isModerated;
-
-  /// The ID of the emoji for this tag.
-  final Snowflake? emojiId;
-
-  /// The name of the emoji for this tag.
-  final String? emojiName;
-
-  /// {@macro forum_tag}
-  ForumTag({
-    required this.id,
-    required this.name,
-    required this.isModerated,
-    required this.emojiId,
-    required this.emojiName,
-  });
-}
-
-/// {@template default_reaction}
-/// A default reaction in a [ForumChannel].
-/// {@endtemplate}
-class DefaultReaction with ToStringHelper {
-  /// The ID of the emoji.
-  final Snowflake? emojiId;
-
-  /// The name of the emoji.
-  final String? emojiName;
-
-  /// {@macro default_reaction}
-  DefaultReaction({required this.emojiId, required this.emojiName});
-}
-
-/// The sorting order in a [ForumChannel].
-enum ForumSort {
-  latestActivity._(0),
-  creationDate._(1);
-
-  /// The value of this forum sort.
-  final int value;
-
-  const ForumSort._(this.value);
-
-  /// Parse a [ForumSort] from an [int].
-  ///
-  /// The [value] must be a valid forum sort.
-  factory ForumSort.parse(int value) => ForumSort.values.firstWhere(
-        (sort) => sort.value == value,
-        orElse: () => throw FormatException('Unknown forum sort', value),
-      );
-
-  @override
-  String toString() => 'ForumSort($value)';
-}
-
-/// The layout in a [ForumChannel].
-enum ForumLayout {
-  notSet._(0),
-  listView._(1),
-  galleryView._(2);
-
-  /// The value of this forum layout.
-  final int value;
-
-  const ForumLayout._(this.value);
-
-  /// Parse a [ForumLayout] from an [int].
-  ///
-  /// The [value] must be a valid forum layout.
-  factory ForumLayout.parse(int value) => ForumLayout.values.firstWhere(
-        (layout) => layout.value == value,
-        orElse: () => throw FormatException('Unknown forum layout', value),
-      );
-
-  @override
-  String toString() => 'ForumLayout($value)';
 }
