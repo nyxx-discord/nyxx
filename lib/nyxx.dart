@@ -195,7 +195,7 @@ export 'src/models/guild/auto_moderation.dart'
         TriggerType;
 export 'src/models/voice/voice_state.dart' show VoiceState;
 export 'src/models/voice/voice_region.dart' show VoiceRegion;
-export 'src/models/role.dart' show PartialRole, Role, RoleTags;
+export 'src/models/role.dart' show PartialRole, Role, RoleTags, RoleFlags;
 export 'src/models/gateway/gateway.dart' show GatewayBot, GatewayConfiguration, SessionStartLimit;
 export 'src/models/gateway/event.dart'
     show

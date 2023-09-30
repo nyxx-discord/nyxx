@@ -37,6 +37,7 @@ class RoleManager extends Manager<Role> {
       permissions: Permissions(int.parse(raw['permissions'] as String)),
       isMentionable: raw['mentionable'] as bool,
       tags: maybeParse(raw['tags'], parseRoleTags),
+      flags: RoleFlags(raw['flags'] as int),
     );
   }
 
