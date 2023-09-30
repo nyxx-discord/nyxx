@@ -132,7 +132,9 @@ enum AuditLogEvent {
   autoModerationRuleDelete._(142),
   autoModerationBlockMessage._(143),
   autoModerationFlagToChannel._(144),
-  autoModerationUserCommunicationDisabled._(145);
+  autoModerationUserCommunicationDisabled._(145),
+  creatorMonetizationRequestCreated._(150),
+  creatorMonetizationTermsAccepted._(151);
 
   /// The value of this [AuditLogEvent].
   final int value;
