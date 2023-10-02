@@ -41,7 +41,7 @@ class MessageUpdateEvent extends DispatchEvent {
   final PartialMember? member;
 
   /// A list of users explicitly mentioned in the message.
-  final List<User> mentions;
+  final List<User>? mentions;
 
   /// The updated message.
   final PartialMessage message;

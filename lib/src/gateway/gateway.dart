@@ -864,7 +864,7 @@ class Gateway extends GatewayManager with EventParser {
           manager: client.guilds[guildId ?? Snowflake.zero].members,
         ),
       ),
-      mentions: parseMany(raw['mentions'] as List<Object?>, client.users.parse),
+      mentions: maybeParseMany(raw['mentions'], client.users.parse),
       message: (client.channels[channelId] as PartialTextChannel).messages[id],
       oldMessage: (client.channels[channelId] as PartialTextChannel).messages.cache[id],
     );
