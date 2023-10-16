@@ -1,3 +1,21 @@
+## 6.0.0
+__16.10.2023__
+
+- rewrite: The entire library has been rewritten from the ground up. No pre-`6.0.0` code is compatible.
+  To explore the rewrite, check out [the API documentation](https://pub.dev/documentation/nyxx) or the [documentation website](https://nyxx.l7ssha.xyz).
+  For help migrating, use the [migration tool](https://github.com/abitofevrything/nyxx-migration-script) or join [our Discord server](https://discord.gg/nyxx) for additional help.
+
+#### Changes since 6.0.0-dev.3
+- bug: Fix `ModalBuilder` having the incorrect data type.
+- feat: Add the new `state` field to `ActivityBuilder`.
+- bug: Fix `activities` not being sent in the presence update payload.
+- bug: Fix casts when parsing `Snowflake`s triggering errors when using ETF.
+- bug: Fix incorrect payload preventing the client from muting/deafening itself.
+- bug: Correctly export `NyxxPluginState`.
+- feat: Implement all new features since the start of the rewrite (including premium subscriptions).
+- bug: Fix incorrect parsing of `MessageUpdateEvent`s.
+- feat: Add `logger` to plugins and make `name` inferred from `runtimeType` by default.
+
 ## 6.0.0-dev.3
 __16.09.2023__
 

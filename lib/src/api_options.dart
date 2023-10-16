@@ -6,7 +6,7 @@ import 'package:oauth2/oauth2.dart';
 /// Options for connecting to the Discord API.
 abstract class ApiOptions {
   /// The version of nyxx used in [defaultUserAgent].
-  static const nyxxVersion = '6.0.0-dev.3';
+  static const nyxxVersion = '6.0.0';
 
   /// The URL to the nyxx repository used in [defaultUserAgent].
   static const nyxxRepositoryUrl = 'https://github.com/nyxx-discord/nyxx';
