@@ -1,42 +1,28 @@
 # nyxx
 
-[![Discord Shield](https://discordapp.com/api/guilds/846136758470443069/widget.png?style=shield)](https://discord.gg/nyxx)
-[![pub](https://img.shields.io/pub/v/nyxx.svg)](https://pub.dartlang.org/packages/nyxx)
-[![documentation](https://img.shields.io/badge/Documentation-nyxx-yellow.svg)](https://www.dartdocs.org/documentation/nyxx/latest/)
+[![Discord](https://discordapp.com/api/guilds/846136758470443069/widget.png?style=shield)](https://discord.gg/nyxx)
+[![pub](https://img.shields.io/pub/v/nyxx.svg)](https://pub.dev/packages/nyxx)
+[![documentation](https://img.shields.io/badge/Documentation-nyxx-yellow.svg)](https://pub.dev/documentation/nyxx/latest/)
 
-Simple, robust framework for creating discord bots for Dart language.
+A complete, robust and efficient wrapper around Discord's API for bots & applications.
 
-<hr />
+To get started using nyxx, follow our [getting started guide](https://nyxx.l7ssha.xyz/docs/guides/writing_your_first_bot) to write your first bot.
 
-### Features
-
-- **Slash commands support** <br>
-  Supports and provides easy API for creating and handling slash commands
-- **Commands framework included** <br>
-  A fast way to create a bot with command support. Implementing the framework is simple - and everything is done automatically.
-- **Cross Platform** <br>
-  Nyxx works on the command line, in the browser, and on mobile devices.
-- **Fine Control** <br>
-  Nyxx allows you to control every outgoing HTTP request or WebSocket message.
-- **Complete** <br>
-  Nyxx supports nearly all Discord API endpoints.
-
-
-## Quick example
-
-Basic usage:
+If you're already familiar with Discord's API, here's a quick example to get you started:
 ```dart
-void main() {
-  final bot = NyxxFactory.createNyxxWebsocket("<TOKEN>", GatewayIntents.allUnprivileged | GatewayIntents.messageContent)
-    ..registerPlugin(Logging()) // Default logging plugin
-    ..registerPlugin(CliIntegration()) // Cli integration for nyxx allows stopping application via SIGTERM and SIGKILl
-    ..registerPlugin(IgnoreExceptions()) // Plugin that handles uncaught exceptions that may occur
-    ..connect();
-  
-  // Listen for message events
-  bot.eventsWs.onMessageReceived.listen((event) async {
-    if (event.message.content == "!ping") {
-      await  event.message.channel.sendMessage(MessageBuilder.content("Pong!"));
+import 'package:nyxx/nyxx.dart';
+
+void main() async {
+  final client = await Nyxx.connectGateway('<TOKEN>', GatewayIntents.allUnprivileged);
+
+  final botUser = await client.users.fetchCurrentUser();
+
+  client.onMessageCreate.listen((event) async {
+    if (event.mentions.contains(botUser)) {
+      await event.message.channel.sendMessage(MessageBuilder(
+        content: 'You mentioned me!',
+        replyId: event.message.id,
+      ));
     }
   });
 }
@@ -44,43 +30,39 @@ void main() {
 
 ## Other nyxx packages
 
-- [nyxx_interactions](https://github.com/nyxx-discord/nyxx_interactions)
-- [nyxx_commander](https://github.com/nyxx-discord/nyxx_commander)
-- [nyxx_extensions](https://github.com/nyxx-discord/nyxx_extensions)
-- [nyxx_lavalink](https://github.com/nyxx-discord/nyxx_lavalink)
-- [nyxx_pagination](https://github.com/nyxx-discord/nyxx_pagination)
+- [nyxx_commands](https://pub.dev/packages/nyxx_commands): A command framework for handling both simple & complex commands.
+- [nyxx_pagination](https://pub.dev/packages/nyxx_pagination): Pagination support for nyxx.
+- [nyxx_lavalink](https://pub.dev/packages/nyxx_lavalink): Lavalink support for playing audio in voice channels.
+- [nyxx_extensions](https://pub.dev/packages/nyxx_extensions): Miscellaneous helpers for common situations when developing bots.
 
 ## More examples
 
-Nyxx examples can be found [here](https://github.com/nyxx-discord/nyxx/tree/dev/example).
+- More examples can be found in our GitHub repository [here](https://github.com/nyxx-discord/nyxx/tree/main/example).
+- [Running on Dart](https://github.com/nyxx-discord/running_on_dart) is a complete example of a bot written with nyxx.
 
-### Example bots
-- [Running on Dart](https://github.com/l7ssha/running_on_dart)
+## Additional documentation & help
 
-## Documentation, help and examples
+The API documentation for the latest stable version can be found on [pub](https://pub.dev/documentation/nyxx).
 
-**Dartdoc documentation for latest stable version is hosted on [pub](https://www.dartdocs.org/documentation/nyxx/latest/)**
+### [Docs and wiki](https://nyxx.l7ssha.xyz)
+Tutorials and wiki articles are hosted here, as well as API documentation for development versions from GitHub.
 
-#### [Docs and wiki](https://nyxx.l7ssha.xyz)
-You can read docs and wiki articles for latest stable version on my website. This website also hosts docs for latest
-dev changes to framework (`dev` branch)
+### [Official nyxx Discord server](https://discord.gg/nyxx)
+Our Discord server is where you can get help for any nyxx packages, as well as release announcements and discussions about the library.
 
-#### [Official nyxx discord server](https://discord.gg/nyxx)
-If you need assistance in developing bot using nyxx you can join official nyxx discord guild.
+### [Discord API docs](https://discord.dev/)
+Discord's API documentation details what nyxx implements & provides more detailed explanations of certain topics.
 
-#### [Discord API docs](https://discordapp.com/developers/docs/intro)
-Discord API documentation features rich descriptions about all topics that nyxx covers.
-
-#### [Discord API Guild](https://discord.gg/discord-api)
+### [Discord API Server](https://discord.gg/discord-api)
 The unofficial guild for Discord Bot developers. To get help with nyxx check `#dart_nyxx` channel.
 
-#### [Dartdocs](https://www.dartdocs.org/documentation/nyxx/latest/)
+### [Pub.dev docs](https://pub.dev/documentation/nyxx)
 The dartdocs page will always have the documentation for the latest release.
 
 ## Contributing to Nyxx
 
-Read [contributing document](https://github.com/nyxx-discord/nyxx/blob/dev/CONTRIBUTING.md)
+Read the [contributing document](https://github.com/nyxx-discord/nyxx/blob/dev/CONTRIBUTING.md)
 
 ## Credits 
 
- * [Hackzzila's](https://github.com/Hackzzila) for [nyx](https://github.com/Hackzzila/nyx).
+- Thanks to [Hackzzila's](https://github.com/Hackzzila) for [nyx](https://github.com/Hackzzila/nyx), the original project nyxx was forked from.

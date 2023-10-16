@@ -21,6 +21,11 @@ All issues marked with 'help-needed' badge are free to be picked up by any membe
 Pull requests should be descriptive about changes that are made. 
 If adding new functionality or modifying existing, documentation should be added/modified to reflect changes.
 
+When submitting a pull request, please, always create a new branch with the following format; `[scope]/name`.
+`[scope]` must be the type of changes your PR alter. E.g, when adding a new feature, it must be `feat/`, for a bugfix, `bug/` or `fix/`, etc..
+
+Do not push your changes on the three main branches, it can messes up with rebases.
+
 ## Coding style
 
 We attempt to conform [Effective Dart Coding Style](https://dart.dev/guides/language/effective-dart/style) where possible.

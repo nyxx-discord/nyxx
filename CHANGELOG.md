@@ -1,3 +1,66 @@
+## 6.0.0
+__16.10.2023__
+
+- rewrite: The entire library has been rewritten from the ground up. No pre-`6.0.0` code is compatible.
+  To explore the rewrite, check out [the API documentation](https://pub.dev/documentation/nyxx) or the [documentation website](https://nyxx.l7ssha.xyz).
+  For help migrating, use the [migration tool](https://github.com/abitofevrything/nyxx-migration-script) or join [our Discord server](https://discord.gg/nyxx) for additional help.
+
+#### Changes since 6.0.0-dev.3
+- bug: Fix `ModalBuilder` having the incorrect data type.
+- feat: Add the new `state` field to `ActivityBuilder`.
+- bug: Fix `activities` not being sent in the presence update payload.
+- bug: Fix casts when parsing `Snowflake`s triggering errors when using ETF.
+- bug: Fix incorrect payload preventing the client from muting/deafening itself.
+- bug: Correctly export `NyxxPluginState`.
+- feat: Implement all new features since the start of the rewrite (including premium subscriptions).
+- bug: Fix incorrect parsing of `MessageUpdateEvent`s.
+- feat: Add `logger` to plugins and make `name` inferred from `runtimeType` by default.
+
+## 6.0.0-dev.3
+__16.09.2023__
+
+- rewrite: Interaction responses now throw errors instead of using assertions.
+- rewrite: Improved plugin interface with support for plugin state and a simpler API.
+- feat: Added constructors to most builders with multiple configurations.
+- feat: Added support for authenticating via OAuth2.
+- feat: Added `HttpHandler.onRateLimit` for tracking client rate limiting.
+- feat: Parse emoji in reaction events.
+- feat: Allow specifying `stdout` and `stderr` in `Logging`.
+- feat: Add `NyxxRest.user` to get the current user.
+- feat: `Attachment` now implements `CdnAsset` for easier fetching.
+- bug: Fixed emoji in SelectMenuBuilder not being sent correctly.
+- bug: Fixed parsing members in interaction data.
+- bug: `DiscordColor` did not allow a value of `0xffffff` (white).
+- bug: Fixed parsing role mentions as role objects in messages.
+
+
+## 6.0.0-dev.2
+__24.08.2023__
+
+- rewrite: Changed `MessageBuilder.embeds` and `MessageUpdateBuilder.embeds` to use a new `EmbedBuilder` instead of `Embed` objects.
+- rewrite: Changed all builders to be mutable.
+- rewrite: Implement the interactions & message components API.
+- rewrite: `ActivityBuilder` is now exported.
+- rewrite: Fixed some typos: `ChannelManager.parseForumChanel` -> `ChannelManager.parseForumChannel` and `chanel` -> `channel` in the docs for `VoiceChannel.videoQualityMode`.
+- rewrite: Added wrappers around CDN endpoints and assets.
+- feat: Added `Permissions.allPermissions`, the set of permission flags with all permissions.
+- feat: Added `HttpHandler.latency`, `HttpHandler.realLatency`, `Gateway.latency` and `Shard.latency` for tracking the client's latency.
+- feat: `Flags` now has the `~` and the `^` operators.
+- feat: Added `HttpHandler.onRequest` and `HttpHandler.onResponse` streams for tracking HTTP requests and responses.
+- bug: Fixed `MessageUpdateEvent`s causing a parsing error.
+- bug: Fixed classes creating uncaught async errors when `toString()` was invoked on them.
+- bug: Empty caches are no longer stored.
+- bug: Fixed stickers causing a parsing error.
+- bug: Fixed rate limits not applying correctly when multiple requests were queued.
+- bug: Fixed `applyGlobalRatelimit` in `HttpRequest` not doing anything.
+
+## 6.0.0-dev.1
+__03.07.2023__
+
+- rewrite: The entire library has been rewritten from the ground up. No pre-`6.0.0-dev.1` code is compatible.
+  Join our Discord server for updates concerning the migration path and help upgrading.
+  For now, check out the new examples and play around with the rewrite to get a feel for it.
+
 ## 5.1.1
 __11.08.2023__
 
