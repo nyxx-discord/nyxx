@@ -1,4 +1,4 @@
-name: publish
+name: Publish nyxx to pub.dev
 
 on:
   push:

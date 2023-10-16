@@ -1,208 +1,318 @@
-/// Nyxx Discord API wrapper for Dart
-///
-/// Main library which contains all stuff needed to connect and interact with Discord API.
-library nyxx;
-
-export 'src/client_options.dart' show CacheOptions, ClientOptions, GatewayIntents;
-export 'src/nyxx.dart' show INyxx, INyxxRest, INyxxWebsocket, NyxxFactory;
-export 'src/typedefs.dart' show RawApiMap, RawApiList, RawApiListOfMaps;
-export 'src/core/allowed_mentions.dart' show AllowedMentions;
-export 'src/core/discord_color.dart' show DiscordColor;
-export 'src/core/snowflake.dart' show Snowflake;
-export 'src/core/snowflake_entity.dart' show SnowflakeEntity;
-export "src/core/application/app_team.dart" show IAppTeam;
-export "src/core/application/app_team_member.dart" show IAppTeamMember;
-export "src/core/application/app_team_user.dart" show IAppTeamUser;
-export "src/core/application/client_oauth2_application.dart" show IClientOAuth2Application;
-export "src/core/application/oauth2_application.dart" show IOAuth2Application;
-export 'src/core/audit_logs/audit_log.dart' show IAuditLog;
-export 'src/core/audit_logs/audit_log_change.dart' show ChangeKeyType, IAuditLogChange;
-export 'src/core/audit_logs/audit_log_entry.dart' show IAuditLogEntry, AuditLogEntryType;
-export 'src/core/audit_logs/audit_log_options.dart' show IAuditLogOptions;
-export 'src/core/channel/cacheable_text_channel.dart' show ICacheableTextChannel;
-export 'src/core/channel/channel.dart' show IChannel, ChannelType;
-export 'src/core/channel/dm_channel.dart' show IDMChannel;
-export 'src/core/channel/invite.dart' show IInviteWithMeta, IInvite;
-export 'src/core/channel/text_channel.dart' show ITextChannel;
-export 'src/core/channel/thread_channel.dart' show IThreadMember, IThreadChannel, IThreadMemberWithMember;
-export 'src/core/channel/thread_preview_channel.dart' show IThreadPreviewChannel;
-export 'src/core/channel/guild/activity_types.dart' show VoiceActivityType;
-export 'src/core/channel/guild/category_guild_channel.dart' show ICategoryGuildChannel;
-export 'src/core/channel/guild/guild_channel.dart' show IGuildChannel, IMinimalGuildChannel;
-export 'src/core/channel/guild/text_guild_channel.dart' show ITextGuildChannel;
-export 'src/core/channel/guild/voice_channel.dart'
-    show IVoiceGuildChannel, IStageChannelInstance, IStageVoiceGuildChannel, ITextVoiceTextChannel, StageChannelInstancePrivacyLevel, VideoQualityMode;
-export 'src/core/channel/guild/forum/forum_channel.dart' show IForumChannel, ForumSortOrder, ForumLayout;
-export 'src/core/channel/guild/forum/forum_channel_tags.dart' show IForumChannelTags;
-export 'src/core/channel/guild/forum/forum_tag.dart' show IForumTag;
-export 'src/core/embed/embed.dart' show IEmbed;
-export 'src/core/embed/embed_author.dart' show IEmbedAuthor;
-export 'src/core/embed/embed_field.dart' show IEmbedField;
-export 'src/core/embed/embed_footer.dart' show IEmbedFooter;
-export 'src/core/embed/embed_provider.dart' show IEmbedProvider;
-export 'src/core/embed/embed_thumbnail.dart' show IEmbedThumbnail;
-export 'src/core/embed/embed_video.dart' show IEmbedVideo;
-export 'src/core/guild/ban.dart' show IBan;
-export 'src/core/guild/auto_moderation.dart'
-    show IActionMetadata, IActionStructure, IAutoModerationRule, ITriggerMetadata, ActionTypes, EventTypes, TriggerTypes, KeywordPresets;
-export 'src/core/guild/client_user.dart' show IClientUser;
-export 'src/core/guild/guild.dart' show IGuild;
-export 'src/core/guild/guild_feature.dart' show GuildFeature;
-export 'src/core/guild/guild_nsfw_level.dart' show GuildNsfwLevel;
-export 'src/core/guild/guild_preview.dart' show IGuildPreview;
-export 'src/core/guild/premium_tier.dart' show PremiumTier;
-export 'src/core/guild/role.dart' show IRole, IRoleTags;
-export 'src/core/guild/scheduled_event.dart' show IEntityMetadata, IGuildEvent, IGuildEventUser, GuildEventPrivacyLevel, GuildEventStatus, GuildEventType;
-export 'src/core/guild/status.dart' show IClientStatus, UserStatus;
-export 'src/core/guild/webhook.dart' show IWebhook, WebhookType;
-export 'src/core/guild/guild_welcome_screen.dart' show IGuildWelcomeScreen, IGuildWelcomeChannel;
-export 'src/core/guild/system_channel_flags.dart' show SystemChannelFlags;
-export 'src/core/message/attachment.dart' show IAttachment;
-export 'src/core/message/emoji.dart' show IEmoji;
-export 'src/core/message/guild_emoji.dart' show IBaseGuildEmoji, IGuildEmoji, IGuildEmojiPartial, IResolvableGuildEmojiPartial;
-export 'src/core/message/message.dart' show IMessage;
-export 'src/core/message/message_flags.dart' show MessageFlags;
-export 'src/core/message/message_reference.dart' show IMessageReference;
-export 'src/core/message/message_time_stamp.dart' show IMessageTimestamp, TimeStampStyle;
-export 'src/core/message/message_type.dart' show MessageType;
-export 'src/core/message/reaction.dart' show IReaction;
-export 'src/core/message/referenced_message.dart' show IReferencedMessage;
-export 'src/core/message/sticker.dart' show IStandardSticker, IStickerPack, ISticker, IGuildSticker, IPartialSticker;
-export 'src/core/message/unicode_emoji.dart' show IUnicodeEmoji, UnicodeEmoji;
-export 'src/core/message/components/component_style.dart' show ButtonStyle;
-export 'src/core/message/components/message_component.dart'
+export 'src/api_options.dart' show ApiOptions, RestApiOptions, GatewayApiOptions, GatewayCompression, GatewayPayloadFormat, OAuth2ApiOptions;
+export 'src/client.dart' show Nyxx, NyxxRest, NyxxGateway, NyxxOAuth2;
+export 'src/client_options.dart' show ClientOptions, RestClientOptions, GatewayClientOptions;
+export 'src/errors.dart'
     show
-        IMessageButton,
-        ILinkMessageButton,
-        IMessageComponent,
-        IMessageComponentEmoji,
-        IMessageMultiselect,
-        IMessageMultiselectOption,
-        MessageComponentEmoji,
-        ComponentType,
-        IMessageTextInput,
-        IMessageUserMultiSelect,
-        IMessageRoleMultiSelect,
-        IMessageMentionableMultiSelect,
-        IMessageChannelMultiSelect;
-export 'src/core/permissions/permission_overrides.dart' show IPermissionsOverrides;
-export 'src/core/permissions/permissions.dart' show IPermissions;
-export 'src/core/permissions/permissions_constants.dart' show PermissionsConstants;
-export 'src/core/user/member.dart' show IMember;
-export 'src/core/user/nitro_type.dart' show NitroType;
-export 'src/core/user/presence.dart'
-    show IActivity, IActivityEmoji, IActivityFlags, IActivityParty, IActivityTimestamps, IGameAssets, IGameSecrets, ActivityType, IPartialPresence;
-export 'src/core/user/user.dart' show IUser;
-export 'src/core/user/user_flags.dart' show IUserFlags;
-export 'src/core/user/member_flags.dart' show IMemberFlags;
-export 'src/core/voice/voice_region.dart' show IVoiceRegion;
-export 'src/core/voice/voice_state.dart' show IVoiceState;
-export 'src/events/channel_events.dart' show IChannelCreateEvent, IChannelDeleteEvent, IChannelPinsUpdateEvent, IChannelUpdateEvent, IStageInstanceEvent;
-export 'src/events/disconnect_event.dart' show IDisconnectEvent, DisconnectEventReason;
-export 'src/events/guild_events.dart'
-    show
-        IGuildBanAddEvent,
-        IGuildBanRemoveEvent,
-        IGuildCreateEvent,
-        IGuildDeleteEvent,
-        IGuildEmojisUpdateEvent,
-        IGuildMemberAddEvent,
-        IGuildMemberRemoveEvent,
-        IGuildMemberUpdateEvent,
-        IGuildStickerUpdate,
-        IGuildUpdateEvent,
-        IRoleCreateEvent,
-        IRoleDeleteEvent,
-        IRoleUpdateEvent,
-        IAutoModerationRuleCreateEvent,
-        IAutoModerationRuleUpdateEvent,
-        IAutoModerationRuleDeleteEvent,
-        IAutoModerationActionExecutionEvent,
-        IGuildEventCreateEvent,
-        IGuildEventUpdateEvent,
-        IGuildEventDeleteEvent,
-        IWebhookUpdateEvent;
-export 'src/events/http_events.dart' show IHttpResponseEvent, IHttpErrorEvent;
-export 'src/events/invite_events.dart' show IInviteCreatedEvent, IInviteDeletedEvent;
-export 'src/events/member_chunk_event.dart' show IMemberChunkEvent;
-export 'src/events/message_events.dart'
-    show
-        IMessageReactionEvent,
-        IMessageDeleteBulkEvent,
-        IMessageDeleteEvent,
-        IMessageReactionAddedEvent,
-        IMessageReactionRemovedEvent,
-        IMessageReactionRemoveEmojiEvent,
-        IMessageReactionsRemovedEvent,
-        IMessageReceivedEvent,
-        IMessageUpdateEvent;
-export 'src/events/presence_update_event.dart' show IPresenceUpdateEvent;
-export 'src/events/ratelimit_event.dart' show IRatelimitEvent;
-export 'src/events/raw_event.dart' show IRawEvent;
-export 'src/events/ready_event.dart' show IReadyEvent;
-export 'src/events/thread_create_event.dart' show IThreadCreateEvent, IThreadUpdateEvent;
-export 'src/events/thread_deleted_event.dart' show IThreadDeletedEvent;
-export 'src/events/thread_list_sync_event.dart' show IThreadListSyncEvent;
-export 'src/events/thread_members_update_event.dart' show IThreadMembersUpdateEvent, IThreadMemberUpdateEvent;
-export 'src/events/typing_event.dart' show ITypingEvent;
-export 'src/events/user_update_event.dart' show IUserUpdateEvent;
-export 'src/events/voice_server_update_event.dart' show IVoiceServerUpdateEvent;
-export 'src/events/voice_state_update_event.dart' show IVoiceStateUpdateEvent;
-export 'src/internal/constants.dart' show Constants, OPCodes, Encoding, CdnConstants;
-export 'src/internal/event_controller.dart' show IWebsocketEventController, IRestEventController;
-export 'src/internal/http_endpoints.dart' show IHttpEndpoints;
-export 'src/internal/cdn_http_endpoints.dart' show ICdnHttpEndpoints;
-export 'src/internal/cache/cache.dart' show SnowflakeCache, ICache, InMemoryCache;
-export 'src/internal/cache/cache_policy.dart'
-    show CachePolicyPredicate, CachePolicyLocation, CachePolicy, ChannelCachePolicy, MemberCachePolicy, MessageCachePolicy;
-export 'src/internal/cache/cacheable.dart' show Cacheable;
-export 'src/internal/exceptions/embed_builder_argument_exception.dart' show EmbedBuilderArgumentException;
-export 'src/internal/exceptions/invalid_shard_exception.dart' show InvalidShardException;
-export 'src/internal/exceptions/invalid_snowflake_exception.dart' show InvalidSnowflakeException;
-export 'src/internal/exceptions/missing_token_error.dart' show MissingTokenError;
-export 'src/internal/exceptions/unrecoverable_nyxx_error.dart' show UnrecoverableNyxxError;
-export 'src/internal/http/http_route_param.dart' show HttpRouteParam, CdnHttpRouteParam;
-export 'src/internal/http/http_route_part.dart' show HttpRoutePart, CdnHttpRoutePart;
-export 'src/internal/http/http_route.dart' show IHttpRoute, ICdnHttpRoute;
-export 'src/internal/http/http_response.dart' show IHttpResponse, IHttpResponseError, IHttpResponseSuccess;
-export 'src/internal/interfaces/convertable.dart' show Convertable;
-export 'src/internal/interfaces/disposable.dart' show Disposable;
-export 'src/internal/interfaces/message_author.dart' show IMessageAuthor;
-export 'src/internal/interfaces/send.dart' show ISend;
-export 'src/internal/interfaces/mentionable.dart' show Mentionable;
-export 'src/internal/response_wrapper/error_response_wrapper.dart' show IHttpErrorData, IFieldError;
-export 'src/internal/response_wrapper/thread_list_result_wrapper.dart' show IThreadListResultWrapper;
-export 'src/internal/shard/shard.dart' show IShard;
-export 'src/internal/shard/shard_manager.dart' show IShardManager;
-export 'src/utils/enum.dart' show IEnum;
-export 'src/utils/builders/attachment_builder.dart' show AttachmentBuilder, AttachmentMetadataBuilder;
-export 'src/utils/builders/builder.dart' show Builder;
-export 'src/utils/builders/embed_author_builder.dart' show EmbedAuthorBuilder;
-export 'src/utils/builders/embed_builder.dart' show EmbedBuilder;
-export 'src/utils/builders/embed_field_builder.dart' show EmbedFieldBuilder;
-export 'src/utils/builders/embed_footer_builder.dart' show EmbedFooterBuilder;
-export 'src/utils/builders/guild_builder.dart' show GuildBuilder, RoleBuilder;
-export 'src/utils/builders/channel_builder.dart' show ChannelBuilder, TextChannelBuilder, VoiceChannelBuilder, ForumChannelBuilder;
-export 'src/utils/builders/message_builder.dart' show MessageBuilder, MessageDecoration, MessageFlagBuilder;
-export 'src/utils/builders/member_builder.dart' show MemberBuilder, MemberFlagsBuilder;
-export 'src/utils/builders/permissions_builder.dart' show PermissionOverrideBuilder, PermissionsBuilder;
-export 'src/utils/builders/presence_builder.dart' show PresenceBuilder, ActivityBuilder;
-export 'src/utils/builders/reply_builder.dart' show ReplyBuilder;
-export 'src/utils/builders/sticker_builder.dart' show StickerBuilder;
-export 'src/utils/builders/thread_builder.dart' show ThreadArchiveTime, ThreadBuilder;
-export 'src/utils/builders/guild_event_builder.dart' show GuildEventBuilder, EntityMetadataBuilder;
-export 'src/utils/builders/forum_thread_builder.dart' show ForumThreadBuilder, ForumTagBuilder, AvailableTagBuilder;
-export 'src/utils/builders/auto_moderation_builder.dart' show ActionMetadataBuilder, ActionStructureBuilder, AutoModerationRuleBuilder, TriggerMetadataBuilder;
-export 'src/utils/extensions.dart' show IntExtensions, SnowflakeEntityListExtensions, StringExtensions;
-export 'src/utils/permissions.dart' show PermissionsUtils;
-export 'src/utils/utils.dart' show ListSafeFirstWhere;
+        NyxxException,
+        InvalidEventException,
+        MemberAlreadyExistsException,
+        ShardDisconnectedError,
+        RoleNotFoundException,
+        AuditLogEntryNotFoundException,
+        EntitlementNotFoundException,
+        OutOfRemainingSessionsError,
+        IntegrationNotFoundException,
+        AlreadyAcknowledgedError,
+        AlreadyRespondedError;
 
-export 'src/plugin/plugin.dart' show BasePlugin;
-export 'src/plugin/plugin_manager.dart' show IPluginManager;
-export 'src/plugin/plugins/cli_integration.dart' show CliIntegration;
-export 'src/plugin/plugins/ignore_exception.dart' show IgnoreExceptions;
-export 'src/plugin/plugins/logging.dart' show Logging;
+export 'src/builders/builder.dart' show Builder, CreateBuilder, UpdateBuilder;
+export 'src/builders/image.dart' show ImageBuilder;
+export 'src/builders/user.dart' show UserUpdateBuilder;
+export 'src/builders/permission_overwrite.dart' show PermissionOverwriteBuilder;
+export 'src/builders/channel/channel_position.dart' show ChannelPositionBuilder;
+export 'src/builders/channel/forum_tag.dart' show ForumTagBuilder;
+export 'src/builders/channel/group_dm.dart' show GroupDmUpdateBuilder;
+export 'src/builders/channel/guild_channel.dart'
+    show
+        ForumChannelUpdateBuilder,
+        GuildAnnouncementChannelUpdateBuilder,
+        GuildChannelUpdateBuilder,
+        GuildTextChannelUpdateBuilder,
+        GuildVoiceChannelUpdateBuilder,
+        GuildStageChannelUpdateBuilder,
+        ForumChannelBuilder,
+        GuildAnnouncementChannelBuilder,
+        GuildCategoryBuilder,
+        GuildCategoryUpdateBuilder,
+        GuildChannelBuilder,
+        GuildStageChannelBuilder,
+        GuildTextChannelBuilder,
+        GuildVoiceChannelBuilder;
+export 'src/builders/channel/stage_instance.dart' show StageInstanceBuilder, StageInstanceUpdateBuilder;
+export 'src/builders/channel/thread.dart' show ThreadUpdateBuilder, ForumThreadBuilder, ThreadBuilder, ThreadFromMessageBuilder;
+export 'src/builders/message/allowed_mentions.dart' show AllowedMentions;
+export 'src/builders/message/attachment.dart' show AttachmentBuilder;
+export 'src/builders/message/embed.dart' show EmbedBuilder, EmbedAuthorBuilder, EmbedFieldBuilder, EmbedFooterBuilder, EmbedImageBuilder, EmbedThumbnailBuilder;
+export 'src/builders/message/message.dart' show MessageBuilder, MessageUpdateBuilder;
+export 'src/builders/message/component.dart'
+    show ActionRowBuilder, ButtonBuilder, MessageComponentBuilder, SelectMenuBuilder, SelectMenuOptionBuilder, TextInputBuilder;
+export 'src/builders/webhook.dart' show WebhookBuilder, WebhookUpdateBuilder;
+export 'src/builders/guild/guild.dart' show GuildBuilder, GuildUpdateBuilder;
+export 'src/builders/guild/member.dart' show CurrentMemberUpdateBuilder, MemberBuilder, MemberUpdateBuilder;
+export 'src/builders/guild/welcome_screen.dart' show WelcomeScreenUpdateBuilder;
+export 'src/builders/guild/widget.dart' show WidgetSettingsUpdateBuilder;
+export 'src/builders/guild/scheduled_event.dart' show ScheduledEventBuilder, ScheduledEventUpdateBuilder;
+export 'src/builders/guild/template.dart' show GuildTemplateBuilder, GuildTemplateUpdateBuilder;
+export 'src/builders/guild/auto_moderation.dart' show AutoModerationRuleBuilder, AutoModerationRuleUpdateBuilder;
+export 'src/builders/role.dart' show RoleBuilder, RoleUpdateBuilder;
+export 'src/builders/voice.dart' show CurrentUserVoiceStateUpdateBuilder, VoiceStateUpdateBuilder, GatewayVoiceStateBuilder;
+export 'src/builders/presence.dart' show PresenceBuilder, CurrentUserStatus, ActivityBuilder;
+export 'src/builders/application_role_connection.dart' show ApplicationRoleConnectionUpdateBuilder;
+export 'src/builders/emoji/emoji.dart' show EmojiBuilder, EmojiUpdateBuilder;
+export 'src/builders/emoji/reaction.dart' show ReactionBuilder;
+export 'src/builders/invite.dart' show InviteBuilder;
+export 'src/builders/sticker.dart' show StickerBuilder, StickerUpdateBuilder;
+export 'src/builders/application_command.dart'
+    show ApplicationCommandBuilder, ApplicationCommandUpdateBuilder, CommandOptionBuilder, CommandOptionChoiceBuilder;
+export 'src/builders/interaction_response.dart' show InteractionResponseBuilder, ModalBuilder, InteractionCallbackType;
+export 'src/builders/entitlement.dart' show TestEntitlementBuilder, TestEntitlementType;
+export 'src/builders/application.dart' show ApplicationUpdateBuilder;
 
-// Export classes used in the nyxx API to avoid users having to import the package themselves
-export 'package:retry/retry.dart' show RetryOptions;
-export 'package:logging/logging.dart' show Level;
+export 'src/cache/cache.dart' show Cache, CacheConfig;
+
+export 'src/http/bucket.dart' show HttpBucket;
+export 'src/http/handler.dart' show HttpHandler, Oauth2HttpHandler, RateLimitInfo;
+export 'src/http/request.dart' show BasicRequest, HttpRequest, MultipartRequest, FormDataRequest;
+export 'src/http/response.dart' show FieldError, HttpErrorData, HttpResponse, HttpResponseError, HttpResponseSuccess;
+export 'src/http/route.dart' show HttpRoute, HttpRouteParam, HttpRoutePart;
+export 'src/http/cdn/cdn_asset.dart' show CdnAsset, CdnFormat;
+export 'src/http/cdn/cdn_request.dart' show CdnRequest;
+export 'src/http/managers/manager.dart' show Manager, ReadOnlyManager;
+export 'src/http/managers/channel_manager.dart' show ChannelManager;
+export 'src/http/managers/message_manager.dart' show MessageManager;
+export 'src/http/managers/user_manager.dart' show UserManager;
+export 'src/http/managers/webhook_manager.dart' show WebhookManager;
+export 'src/http/managers/guild_manager.dart' show GuildManager;
+export 'src/http/managers/application_manager.dart' show ApplicationManager;
+export 'src/http/managers/voice_manager.dart' show VoiceManager;
+export 'src/http/managers/invite_manager.dart' show InviteManager;
+export 'src/http/managers/member_manager.dart' show MemberManager;
+export 'src/http/managers/role_manager.dart' show RoleManager;
+export 'src/http/managers/gateway_manager.dart' show GatewayManager;
+export 'src/http/managers/scheduled_event_manager.dart' show ScheduledEventManager;
+export 'src/http/managers/auto_moderation_manager.dart' show AutoModerationManager;
+export 'src/http/managers/integration_manager.dart' show IntegrationManager;
+export 'src/http/managers/emoji_manager.dart' show EmojiManager;
+export 'src/http/managers/audit_log_manager.dart' show AuditLogManager;
+export 'src/http/managers/sticker_manager.dart' show GuildStickerManager, GlobalStickerManager;
+export 'src/http/managers/application_command_manager.dart' show ApplicationCommandManager, GlobalApplicationCommandManager, GuildApplicationCommandManager;
+export 'src/http/managers/interaction_manager.dart' show InteractionManager;
+export 'src/http/managers/entitlement_manager.dart' show EntitlementManager;
+
+export 'src/gateway/gateway.dart' show Gateway;
+export 'src/gateway/message.dart' show Disconnecting, Dispose, ErrorReceived, EventReceived, GatewayMessage, Send, ShardData, ShardMessage;
+export 'src/gateway/shard.dart' show Shard;
+
+export 'src/models/discord_color.dart' show DiscordColor;
+export 'src/models/locale.dart' show Locale;
+export 'src/models/permission_overwrite.dart' show PermissionOverwrite, PermissionOverwriteType;
+export 'src/models/snowflake.dart' show Snowflake;
+export 'src/models/permissions.dart' show Permissions;
+export 'src/models/snowflake_entity/snowflake_entity.dart' show SnowflakeEntity, ManagedSnowflakeEntity, WritableSnowflakeEntity;
+export 'src/models/user/application_role_connection.dart' show ApplicationRoleConnection;
+export 'src/models/user/connection.dart' show Connection, ConnectionType, ConnectionVisibility;
+export 'src/models/user/user.dart' show PartialUser, User, UserFlags, NitroType;
+export 'src/models/channel/channel.dart' show Channel, ChannelFlags, PartialChannel, ChannelType;
+export 'src/models/channel/followed_channel.dart' show FollowedChannel;
+export 'src/models/channel/guild_channel.dart' show GuildChannel;
+export 'src/models/channel/has_threads_channel.dart' show HasThreadsChannel;
+export 'src/models/channel/thread_aggregate.dart' show ThreadsOnlyChannel;
+export 'src/models/channel/text_channel.dart' show PartialTextChannel, TextChannel;
+export 'src/models/channel/thread_list.dart' show ThreadList;
+export 'src/models/channel/thread.dart' show PartialThreadMember, Thread, ThreadMember;
+export 'src/models/channel/voice_channel.dart' show VoiceChannel, VideoQualityMode;
+export 'src/models/channel/stage_instance.dart' show StageInstance, PrivacyLevel;
+export 'src/models/channel/types/announcement_thread.dart' show AnnouncementThread;
+export 'src/models/channel/types/directory.dart' show DirectoryChannel;
+export 'src/models/channel/types/dm.dart' show DmChannel;
+export 'src/models/channel/types/forum.dart' show DefaultReaction, ForumChannel, ForumTag, ForumLayout, ForumSort;
+export 'src/models/channel/types/group_dm.dart' show GroupDmChannel;
+export 'src/models/channel/types/guild_announcement.dart' show GuildAnnouncementChannel;
+export 'src/models/channel/types/guild_category.dart' show GuildCategory;
+export 'src/models/channel/types/guild_stage.dart' show GuildStageChannel;
+export 'src/models/channel/types/guild_text.dart' show GuildTextChannel;
+export 'src/models/channel/types/guild_voice.dart' show GuildVoiceChannel;
+export 'src/models/channel/types/private_thread.dart' show PrivateThread;
+export 'src/models/channel/types/public_thread.dart' show PublicThread;
+export 'src/models/channel/types/guild_media.dart' show GuildMediaChannel;
+export 'src/models/message/activity.dart' show MessageActivity, MessageActivityType;
+export 'src/models/message/attachment.dart' show Attachment, AttachmentFlags;
+export 'src/models/message/author.dart' show MessageAuthor;
+export 'src/models/message/channel_mention.dart' show ChannelMention;
+export 'src/models/message/embed.dart' show Embed, EmbedAuthor, EmbedField, EmbedFooter, EmbedImage, EmbedProvider, EmbedThumbnail, EmbedVideo;
+export 'src/models/message/message.dart' show Message, MessageFlags, PartialMessage, MessageType, MessageInteraction;
+export 'src/models/message/reaction.dart' show Reaction, ReactionCountDetails;
+export 'src/models/message/reference.dart' show MessageReference;
+export 'src/models/message/role_subscription_data.dart' show RoleSubscriptionData;
+export 'src/models/message/component.dart'
+    show
+        ActionRowComponent,
+        ButtonComponent,
+        MessageComponent,
+        SelectMenuComponent,
+        SelectMenuOption,
+        TextInputComponent,
+        ButtonStyle,
+        MessageComponentType,
+        TextInputStyle;
+export 'src/models/invite/invite.dart' show Invite, TargetType;
+export 'src/models/invite/invite_metadata.dart' show InviteWithMetadata;
+export 'src/models/webhook.dart' show PartialWebhook, Webhook, WebhookType, WebhookAuthor;
+export 'src/models/guild/ban.dart' show Ban;
+export 'src/models/guild/guild_preview.dart' show GuildPreview;
+export 'src/models/guild/guild_widget.dart' show GuildWidget, WidgetSettings, WidgetImageStyle;
+export 'src/models/guild/guild.dart'
+    show
+        Guild,
+        GuildFeatures,
+        PartialGuild,
+        SystemChannelFlags,
+        ExplicitContentFilterLevel,
+        MessageNotificationLevel,
+        MfaLevel,
+        NsfwLevel,
+        PremiumTier,
+        VerificationLevel;
+export 'src/models/guild/integration.dart' show PartialIntegration, Integration, IntegrationAccount, IntegrationApplication, IntegrationExpireBehavior;
+export 'src/models/guild/member.dart' show Member, MemberFlags, PartialMember;
+export 'src/models/guild/onboarding.dart' show Onboarding, OnboardingPrompt, OnboardingPromptOption, OnboardingPromptType;
+export 'src/models/guild/welcome_screen.dart' show WelcomeScreen, WelcomeScreenChannel;
+export 'src/models/guild/scheduled_event.dart' show EntityMetadata, PartialScheduledEvent, ScheduledEvent, ScheduledEventUser, EventStatus, ScheduledEntityType;
+export 'src/models/guild/audit_log.dart' show AuditLogChange, AuditLogEntry, AuditLogEntryInfo, PartialAuditLogEntry, AuditLogEvent;
+export 'src/models/application.dart'
+    show Application, ApplicationFlags, InstallationParameters, PartialApplication, ApplicationRoleConnectionMetadata, ConnectionMetadataType;
+export 'src/models/guild/template.dart' show GuildTemplate;
+export 'src/models/guild/auto_moderation.dart'
+    show
+        ActionMetadata,
+        AutoModerationAction,
+        AutoModerationRule,
+        PartialAutoModerationRule,
+        TriggerMetadata,
+        ActionType,
+        AutoModerationEventType,
+        KeywordPresetType,
+        TriggerType;
+export 'src/models/voice/voice_state.dart' show VoiceState;
+export 'src/models/voice/voice_region.dart' show VoiceRegion;
+export 'src/models/role.dart' show PartialRole, Role, RoleTags, RoleFlags;
+export 'src/models/gateway/gateway.dart' show GatewayBot, GatewayConfiguration, SessionStartLimit;
+export 'src/models/gateway/event.dart'
+    show
+        DispatchEvent,
+        GatewayEvent,
+        HeartbeatAckEvent,
+        HeartbeatEvent,
+        HelloEvent,
+        InvalidSessionEvent,
+        RawDispatchEvent,
+        ReconnectEvent,
+        UnknownDispatchEvent;
+export 'src/models/gateway/opcode.dart' show Opcode;
+export 'src/models/gateway/events/application_command.dart' show ApplicationCommandPermissionsUpdateEvent;
+export 'src/models/gateway/events/auto_moderation.dart'
+    show AutoModerationActionExecutionEvent, AutoModerationRuleCreateEvent, AutoModerationRuleDeleteEvent, AutoModerationRuleUpdateEvent;
+export 'src/models/gateway/events/channel.dart'
+    show
+        ChannelCreateEvent,
+        ChannelDeleteEvent,
+        ChannelPinsUpdateEvent,
+        ChannelUpdateEvent,
+        ThreadCreateEvent,
+        ThreadDeleteEvent,
+        ThreadListSyncEvent,
+        ThreadMemberUpdateEvent,
+        ThreadMembersUpdateEvent,
+        ThreadUpdateEvent;
+export 'src/models/gateway/events/guild.dart'
+    show
+        GuildBanAddEvent,
+        GuildBanRemoveEvent,
+        GuildCreateEvent,
+        GuildDeleteEvent,
+        GuildAuditLogCreateEvent,
+        GuildEmojisUpdateEvent,
+        GuildIntegrationsUpdateEvent,
+        GuildMemberAddEvent,
+        GuildMemberRemoveEvent,
+        GuildMemberUpdateEvent,
+        GuildMembersChunkEvent,
+        GuildRoleCreateEvent,
+        GuildRoleDeleteEvent,
+        GuildRoleUpdateEvent,
+        GuildScheduledEventCreateEvent,
+        GuildScheduledEventDeleteEvent,
+        GuildScheduledEventUpdateEvent,
+        GuildScheduledEventUserAddEvent,
+        GuildScheduledEventUserRemoveEvent,
+        GuildStickersUpdateEvent,
+        GuildUpdateEvent,
+        UnavailableGuildCreateEvent;
+export 'src/models/gateway/events/integration.dart' show IntegrationCreateEvent, IntegrationDeleteEvent, IntegrationUpdateEvent;
+export 'src/models/gateway/events/interaction.dart' show InteractionCreateEvent;
+export 'src/models/gateway/events/invite.dart' show InviteCreateEvent, InviteDeleteEvent;
+export 'src/models/gateway/events/message.dart'
+    show
+        MessageBulkDeleteEvent,
+        MessageCreateEvent,
+        MessageDeleteEvent,
+        MessageReactionAddEvent,
+        MessageReactionRemoveAllEvent,
+        MessageReactionRemoveEmojiEvent,
+        MessageReactionRemoveEvent,
+        MessageUpdateEvent;
+export 'src/models/gateway/events/presence.dart' show PresenceUpdateEvent, TypingStartEvent, UserUpdateEvent;
+export 'src/models/gateway/events/ready.dart' show ReadyEvent, ResumedEvent;
+export 'src/models/gateway/events/stage_instance.dart' show StageInstanceCreateEvent, StageInstanceDeleteEvent, StageInstanceUpdateEvent;
+export 'src/models/gateway/events/voice.dart' show VoiceServerUpdateEvent, VoiceStateUpdateEvent;
+export 'src/models/gateway/events/webhook.dart' show WebhooksUpdateEvent;
+export 'src/models/gateway/events/entitlement.dart' show EntitlementCreateEvent, EntitlementDeleteEvent, EntitlementUpdateEvent;
+export 'src/models/presence.dart'
+    show Activity, ActivityAssets, ActivityButton, ActivityFlags, ActivityParty, ActivitySecrets, ActivityTimestamps, ClientStatus, ActivityType, UserStatus;
+export 'src/models/emoji.dart' show Emoji, GuildEmoji, PartialEmoji, TextEmoji;
+export 'src/models/sticker/guild_sticker.dart' show GuildSticker, PartialGuildSticker;
+export 'src/models/sticker/global_sticker.dart' show GlobalSticker, PartialGlobalSticker;
+export 'src/models/sticker/sticker.dart' show Sticker, StickerType, StickerFormatType, StickerItem;
+export 'src/models/sticker/sticker_pack.dart' show StickerPack;
+export 'src/models/commands/application_command.dart' show ApplicationCommand, PartialApplicationCommand, ApplicationCommandType;
+export 'src/models/commands/application_command_option.dart' show CommandOption, CommandOptionChoice, CommandOptionType, CommandOptionMentionable;
+export 'src/models/commands/application_command_permissions.dart' show CommandPermission, CommandPermissions, CommandPermissionType;
+export 'src/models/team.dart' show Team, TeamMember, TeamMembershipState, TeamMemberRole;
+export 'src/models/interaction.dart'
+    show
+        ApplicationCommandInteractionData,
+        Interaction,
+        InteractionOption,
+        MessageComponentInteractionData,
+        MessageResponse,
+        ModalResponse,
+        ModalSubmitInteractionData,
+        ResolvedData,
+        InteractionType,
+        ApplicationCommandAutocompleteInteraction,
+        ApplicationCommandInteraction,
+        MessageComponentInteraction,
+        ModalSubmitInteraction,
+        PingInteraction;
+export 'src/models/entitlement.dart' show Entitlement, PartialEntitlement, EntitlementType;
+export 'src/models/sku.dart' show Sku, SkuType;
+
+export 'src/utils/flags.dart' show Flag, Flags;
+export 'src/intents.dart' show GatewayIntents;
+
+export 'src/plugin/plugin.dart' show NyxxPlugin, NyxxPluginState;
+export 'src/plugin/logging.dart' show Logging, logging;
+export 'src/plugin/cli_integration.dart' show CliIntegration, cliIntegration;
+export 'src/plugin/ignore_exceptions.dart' show IgnoreExceptions, ignoreExceptions;
+
+// Types also used in the nyxx API from other packages
+export 'package:http/http.dart'
+    // Don't export MultipartRequest as it conflicts with our MultipartRequest
+    show
+        BaseRequest,
+        Request,
+        MultipartFile,
+        BaseResponse,
+        StreamedResponse;
+export 'package:logging/logging.dart' show Logger, Level;
+export 'package:runtime_type/runtime_type.dart' show RuntimeType;

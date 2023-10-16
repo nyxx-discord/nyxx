@@ -1,212 +1,156 @@
-import 'package:nyxx/src/core/allowed_mentions.dart';
-import 'package:nyxx/src/core/channel/channel.dart';
-import 'package:nyxx/src/core/message/message.dart';
-import 'package:nyxx/src/core/user/member.dart';
-import 'package:nyxx/src/internal/cache/cache_policy.dart';
-import 'package:nyxx/src/internal/constants.dart';
-import 'package:nyxx/src/nyxx.dart';
-import 'package:nyxx/src/internal/shard/shard.dart';
-import 'package:nyxx/src/utils/builders/presence_builder.dart';
-import 'package:retry/retry.dart';
+import 'package:logging/logging.dart';
+import 'package:nyxx/src/cache/cache.dart';
+import 'package:nyxx/src/client.dart';
+import 'package:nyxx/src/models/channel/channel.dart';
+import 'package:nyxx/src/models/commands/application_command.dart';
+import 'package:nyxx/src/models/commands/application_command_permissions.dart';
+import 'package:nyxx/src/models/emoji.dart';
+import 'package:nyxx/src/models/channel/stage_instance.dart';
+import 'package:nyxx/src/models/entitlement.dart';
+import 'package:nyxx/src/models/guild/audit_log.dart';
+import 'package:nyxx/src/models/guild/auto_moderation.dart';
+import 'package:nyxx/src/models/guild/guild.dart';
+import 'package:nyxx/src/models/guild/integration.dart';
+import 'package:nyxx/src/models/guild/member.dart';
+import 'package:nyxx/src/models/guild/scheduled_event.dart';
+import 'package:nyxx/src/models/message/message.dart';
+import 'package:nyxx/src/models/role.dart';
+import 'package:nyxx/src/models/sticker/global_sticker.dart';
+import 'package:nyxx/src/models/sticker/guild_sticker.dart';
+import 'package:nyxx/src/models/user/user.dart';
+import 'package:nyxx/src/models/voice/voice_state.dart';
+import 'package:nyxx/src/models/webhook.dart';
+import 'package:nyxx/src/plugin/plugin.dart';
 
-/// Options for configuring cache. Allows to specify where and which entities should be cached and preserved in cache
-class CacheOptions {
-  /// Defines in which locations members will be cached
-  CachePolicyLocation memberCachePolicyLocation = CachePolicyLocation();
+/// Options for controlling the behavior of a [Nyxx] client.
+abstract class ClientOptions {
+  /// The plugins to use for this client.
+  final List<NyxxPlugin> plugins;
 
-  /// Defines which members are preserved in cache
-  CachePolicy<IMember> memberCachePolicy = MemberCachePolicy.def;
+  /// The name of the logger to use for this client.
+  final String loggerName;
 
-  /// Defines where channel entities are preserved cache. Defaults to [CachePolicyLocation] with additional objectConstructor set to true
-  CachePolicyLocation channelCachePolicyLocation = CachePolicyLocation()..objectConstructor = true;
+  /// The logger to use for this client.
+  Logger get logger => Logger(loggerName);
 
-  /// Defines which channel entities are preserved in cache.
-  CachePolicy<IChannel> channelCachePolicy = ChannelCachePolicy.def;
-
-  /// Defines in which places user can be cached
-  CachePolicyLocation userCachePolicyLocation = CachePolicyLocation();
-
-  /// Defines in which locations members will be cached
-  CachePolicyLocation messageCachePolicyLocation = CachePolicyLocation();
-
-  /// Defines which members are preserved in cache
-  CachePolicy<IMessage> messageCachePolicy = MessageCachePolicy.def;
+  /// Create a new [ClientOptions].
+  const ClientOptions({this.plugins = const [], this.loggerName = 'Nyxx'});
 }
 
-/// Optional client settings which can be used when creating new instance
-/// of client. It allows to tune up client to your needs.
-class ClientOptions {
-  /// Whether or not to disable @everyone and @here mentions at a global level.
-  /// **It means client won't send any of these. It doesn't mean filtering guild messages.**
-  AllowedMentions? allowedMentions;
+/// Options for controlling the behavior of a [NyxxRest] client.
+class RestClientOptions extends ClientOptions {
+  /// The [CacheConfig] to use for the cache of the [NyxxRest.users] manager.
+  final CacheConfig<User> userCacheConfig;
 
-  /// The total number of shards.
-  int? shardCount;
+  /// The [CacheConfig] to use for the cache of the [NyxxRest.channels] manager.
+  final CacheConfig<Channel> channelCacheConfig;
 
-  /// A list of shards to spawn on this instance of nyxx.
-  List<int>? shardIds;
+  /// The [CacheConfig] to use for the cache of [TextChannel.messages] managers.
+  final CacheConfig<Message> messageCacheConfig;
 
-  /// The number of messages to cache for each channel.
-  int messageCacheSize;
+  /// The [CacheConfig] to use for the cache of the [NyxxRest.webhooks] manager.
+  final CacheConfig<Webhook> webhookCacheConfig;
 
-  /// Maximum size of guild for which offline member will be sent
-  int largeThreshold;
+  /// The [CacheConfig] to use for the cache of the [NyxxRest.guilds] manager.
+  final CacheConfig<Guild> guildCacheConfig;
 
-  /// Allows to receive compressed payloads from gateway
-  bool compressedGatewayPayloads;
+  /// The [CacheConfig] to use for the [Guild.members] manager.
+  final CacheConfig<Member> memberCacheConfig;
 
-  /// Initial bot presence
-  PresenceBuilder? initialPresence;
+  /// The [CacheConfig] to use for the [Guild.roles] manager.
+  final CacheConfig<Role> roleCacheConfig;
 
-  /// Hook executed when disposing bots process.
-  ///
-  /// Most likely by when process receives SIGINT (*nix) or SIGTERM (*nix and windows).
-  /// Not guaranteed to be completed or executed at all.
-  ShutdownHook? shutdownHook;
+  /// The [CacheConfig] to use for the [Emoji]s in the [Guild.emojis] manager.
+  final CacheConfig<Emoji> emojiCacheConfig;
 
-  /// Hook executed when shard is disposing.
-  ///
-  /// It could be either when shards disconnects or when bots process shuts down (look [shutdownHook].
-  ShutdownShardHook? shutdownShardHook;
+  /// The [CacheConfig] to use for the [GuildSticker]s in the [Guild.stickers] manager.
+  final CacheConfig<GuildSticker> stickerCacheConfig;
 
-  /// Allows to enable receiving raw gateway event
-  bool dispatchRawShardEvent;
+  /// The [CacheConfig] to use for the [GlobalSticker]s in the [NyxxRest.stickers] manager.
+  final CacheConfig<GlobalSticker> globalStickerCacheConfig;
 
-  /// The [RetryOptions] to use when a shard fails to connect to the gateway.
-  RetryOptions shardReconnectOptions;
+  /// The [CacheConfig] to use for [StageInstance]s in the [NyxxRest.channels] manager.
+  final CacheConfig<StageInstance> stageInstanceCacheConfig;
 
-  /// The [RetryOptions] to use when a HTTP request fails.
-  ///
-  /// Note that this will not retry requests that fail because of their HTTP response code (e.g  a 4xx response) but rather requests that fail due to native
-  /// errors (e.g failed host lookup) which can occur if there is no internet.
-  RetryOptions httpRetryOptions;
+  /// The [CacheConfig] to use for the [Guild.scheduledEvents] manager.
+  final CacheConfig<ScheduledEvent> scheduledEventCacheConfig;
 
-  /// The encoding protocol to use when receiving/sending payloads.
-  Encoding payloadEncoding;
+  /// The [CacheConfig] to use for the [Guild.autoModerationRules] manager.
+  final CacheConfig<AutoModerationRule> autoModerationRuleConfig;
 
-  /// Enable payload compression.
-  /// This cannot be used with the [Encoding.etf] encoding.
-  /// This will also be disabled if [compressedGatewayPayloads] is used.
-  bool payloadCompression;
+  /// The [CacheConfig] to use for the [Guild.integrations] manager.
+  final CacheConfig<Integration> integrationConfig;
 
-  /// Makes a new `ClientOptions` object.
-  ClientOptions({
-    this.allowedMentions,
-    this.shardCount,
-    this.messageCacheSize = 100,
-    this.largeThreshold = 50,
-    this.compressedGatewayPayloads = true,
-    this.initialPresence,
-    this.shutdownHook,
-    this.shutdownShardHook,
-    this.dispatchRawShardEvent = false,
-    this.shardIds,
-    this.shardReconnectOptions = const RetryOptions(),
-    this.httpRetryOptions = const RetryOptions(),
-    this.payloadEncoding = Encoding.json,
-    this.payloadCompression = false,
+  /// The [CacheConfig] to use for the [Guild.auditLogs] manager.
+  final CacheConfig<AuditLogEntry> auditLogEntryConfig;
+
+  /// The [CacheConfig] to use for the [NyxxRest.voice] manager.
+  final CacheConfig<VoiceState> voiceStateConfig;
+
+  /// The [CacheConfig] to use for the [NyxxRest.commands] manager.
+  final CacheConfig<ApplicationCommand> applicationCommandConfig;
+
+  /// The [CacheConfig] to use for the [GuildApplicationCommandManager.permissionsCache] cache.
+  final CacheConfig<CommandPermissions> commandPermissionsConfig;
+
+  /// The [CacheConfig] to use for the [Application.entitlements] manager.
+  final CacheConfig<Entitlement> entitlementConfig;
+
+  /// Create a new [RestClientOptions].
+  const RestClientOptions({
+    super.plugins,
+    super.loggerName,
+    this.userCacheConfig = const CacheConfig(),
+    this.channelCacheConfig = const CacheConfig(),
+    this.messageCacheConfig = const CacheConfig(),
+    this.webhookCacheConfig = const CacheConfig(),
+    this.guildCacheConfig = const CacheConfig(),
+    this.memberCacheConfig = const CacheConfig(),
+    this.roleCacheConfig = const CacheConfig(),
+    this.emojiCacheConfig = const CacheConfig(),
+    this.stageInstanceCacheConfig = const CacheConfig(),
+    this.scheduledEventCacheConfig = const CacheConfig(),
+    this.autoModerationRuleConfig = const CacheConfig(),
+    this.integrationConfig = const CacheConfig(),
+    this.auditLogEntryConfig = const CacheConfig(),
+    this.voiceStateConfig = const CacheConfig(),
+    this.stickerCacheConfig = const CacheConfig(),
+    this.globalStickerCacheConfig = const CacheConfig(),
+    this.applicationCommandConfig = const CacheConfig(),
+    this.commandPermissionsConfig = const CacheConfig(),
+    this.entitlementConfig = const CacheConfig(),
   });
 }
 
-/// When identifying to the gateway, you can specify an intents parameter which
-/// allows you to conditionally subscribe to pre-defined "intents", groups of events defined by Discord.
-/// If you do not specify a certain intent, you will not receive any of the gateway events that are batched into that group.
-/// [Reference](https://discordapp.com/developers/docs/topics/gateway#gateway-intents)
-class GatewayIntents {
-  /// Includes events: `GUILD_CREATE, GUILD_UPDATE, GUILD_DELETE, GUILD_ROLE_CREATE, GUILD_ROLE_UPDATE, GUILD_ROLE_DELETE, CHANNEL_DELETE, CHANNEL_CREATE, CHANNEL_UPDATE, CHANNEL_PINS_UPDATE`
-  static const int guilds = 1 << 0;
+/// Options for controlling the behavior of a [NyxxWebsocket] client.
+class GatewayClientOptions extends RestClientOptions {
+  /// The minimum number of session starts this client needs to connect.
+  ///
+  /// This is a safety feature to avoid API bans due to excessive connection starts.
+  ///
+  /// If the remaining number of session starts is below this number, an error will be thrown when connecting.
+  final int minimumSessionStarts;
 
-  /// Includes events: `GUILD_MEMBER_ADD, GUILD_MEMBER_UPDATE, GUILD_MEMBER_REMOVE`
-  static const int guildMembers = 1 << 1;
-
-  /// Includes events: `GUILD_BAN_ADD, GUILD_BAN_REMOVE`
-  static const int guildBans = 1 << 2;
-
-  /// Includes event: `GUILD_EMOJIS_UPDATE`
-  static const int guildEmojis = 1 << 3;
-
-  /// Includes events: `GUILD_INTEGRATIONS_UPDATE`
-  static const int guildIntegrations = 1 << 4;
-
-  /// Includes events: `WEBHOOKS_UPDATE`
-  static const int guildWebhooks = 1 << 5;
-
-  /// Includes events: `INVITE_CREATE, INVITE_DELETE`
-  static const int guildInvites = 1 << 6;
-
-  /// Includes events: `VOICE_STATE_UPDATE`
-  static const int guildVoiceState = 1 << 7;
-
-  /// Includes events: `PRESENCE_UPDATE`
-  static const int guildPresences = 1 << 8;
-
-  /// Include events: `MESSAGE_CREATE, MESSAGE_UPDATE, MESSAGE_DELETE, MESSAGE_DELETE_BULK`
-  static const int guildMessages = 1 << 9;
-
-  /// Includes events: `MESSAGE_REACTION_ADD, MESSAGE_REACTION_REMOVE, MESSAGE_REACTION_REMOVE_ALL, MESSAGE_REACTION_REMOVE_EMOJI`
-  static const int guildMessageReactions = 1 << 10;
-
-  /// Includes events: `TYPING_START`
-  static const int guildMessageTyping = 1 << 11;
-
-  /// Includes events: `CHANNEL_CREATE, MESSAGE_CREATE, MESSAGE_UPDATE, MESSAGE_DELETE, CHANNEL_PINS_UPDATE`
-  static const int directMessages = 1 << 12;
-
-  /// Includes events: `MESSAGE_REACTION_ADD, MESSAGE_REACTION_REMOVE, MESSAGE_REACTION_REMOVE_ALL, MESSAGE_REACTION_REMOVE_EMOJI`
-  static const int directMessageReactions = 1 << 13;
-
-  /// Includes events: `TYPING_START`
-  static const int directMessageTyping = 1 << 14;
-
-  /// Includes public content of messages in guilds (content, embeds, attachments, components)
-  /// If your bot is mentioned it will always receive full message
-  /// If you are not opted in for message content intent you will receive empty fields
-  static const int messageContent = 1 << 15;
-
-  /// Includes events: `GUILD_SCHEDULED_EVENT_CREATE`, `GUILD_SCHEDULED_EVENT_DELETE`, `GUILD_SCHEDULED_EVENT_UPDATE`, `GUILD_SCHEDULED_EVENT_USER_ADD`, `GUILD_SCHEDULED_EVENT_USER_REMOVE`
-  static const int guildScheduledEvents = 1 << 16;
-
-  /// Includes events: `AUTO_MODERATION_RULE_CREATE`, `AUTO_MODERATION_RULE_UPDATE`, `AUTO_MODERATION_RULE_DELETE`
-  static const int autoModerationConfiguration = 1 << 20;
-
-  /// Includes events: `AUTO_MODERATION_ACTION_EXECUTION`
-  static const int autoModerationExecution = 1 << 21;
-
-  /// All unprivileged intents
-  static const int allUnprivileged = guilds |
-      guildBans |
-      guildEmojis |
-      guildIntegrations |
-      guildWebhooks |
-      guildInvites |
-      guildVoiceState |
-      guildMessages |
-      guildMessageReactions |
-      guildMessageTyping |
-      directMessages |
-      directMessageReactions |
-      directMessageTyping |
-      guildScheduledEvents |
-      autoModerationConfiguration |
-      autoModerationExecution;
-
-  /// All privileged intents
-  static const int allPrivileged = guildMembers | guildPresences | messageContent;
-
-  /// All intents
-  static const int all = allUnprivileged | allPrivileged;
-
-  /// No intents. Client shouldn't receive any events.
-  static const int none = 0;
+  /// Create a new [GatewayClientOptions].
+  const GatewayClientOptions({
+    this.minimumSessionStarts = 10,
+    super.plugins,
+    super.loggerName,
+    super.userCacheConfig,
+    super.channelCacheConfig,
+    super.messageCacheConfig,
+    super.webhookCacheConfig,
+    super.guildCacheConfig,
+    super.memberCacheConfig,
+    super.roleCacheConfig,
+    super.stageInstanceCacheConfig,
+    super.scheduledEventCacheConfig,
+    super.autoModerationRuleConfig,
+    super.integrationConfig,
+    super.auditLogEntryConfig,
+    super.voiceStateConfig,
+    super.applicationCommandConfig,
+    super.commandPermissionsConfig,
+    super.entitlementConfig,
+  });
 }
-
-/// Hook executed when disposing bots process.
-///
-/// Executed most likely when process receives SIGINT (*nix) or SIGTERM (*nix and windows).
-/// Not guaranteed to be completed or executed at all.
-typedef ShutdownHook = Future<void> Function(NyxxWebsocket client);
-
-/// Hook executed when shard is disposing.
-///
-/// It could be either when shards disconnects or when bots process shuts down (look [ShutdownHook].
-typedef ShutdownShardHook = Future<void> Function(NyxxWebsocket client, Shard shard);
