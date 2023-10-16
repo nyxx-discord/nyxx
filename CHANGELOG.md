@@ -61,6 +61,33 @@ __03.07.2023__
   Join our Discord server for updates concerning the migration path and help upgrading.
   For now, check out the new examples and play around with the rewrite to get a feel for it.
 
+## 5.1.1
+__11.08.2023__
+
+- bug: Error on ThreadMemberUpdateEvent due invalid event deserialization
+
+## 5.1.0
+__16.06.2023__
+
+- feature: Support the new unique username system with global display names.
+- bug: remove the `!` in the mention string as it has been deprecated.
+
+## 5.0.4
+__04.06.2023__
+
+- bug: Fix invalid casts
+
+## 5.0.3
+__11.04.2023__
+
+- bug: Always initialize guild caches
+
+## 5.0.2
+__08.04.2023__
+
+- bug: TextChannelBuilder and VoiceChannel builder had rateLimitPerUser and videoQualityMode swapped (#471)
+- documentation: Guild members (#470)
+
 ## 5.0.1
 __18.03.2023__
 
