@@ -97,7 +97,7 @@ class PartialThreadMember {
 
 /// {@template thread_member}
 /// Additional information associated with a [Member] in a [Thread].
-/// {@endtemplate thread_member}
+/// {@endtemplate}
 class ThreadMember extends PartialThreadMember {
   /// The manager for this [ThreadMember].
   final ChannelManager manager;

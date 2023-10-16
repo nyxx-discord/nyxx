@@ -1,14 +1,22 @@
 import 'dart:async';
 
+import 'package:logging/logging.dart';
 import 'package:meta/meta.dart';
 import 'package:nyxx/src/api_options.dart';
 import 'package:nyxx/src/client.dart';
 import 'package:nyxx/src/client_options.dart';
+import 'package:runtime_type/runtime_type.dart';
 
 /// Provides access to the connection and closing process for implementing plugins.
 abstract class NyxxPlugin<ClientType extends Nyxx> {
   /// The name of this plugin.
-  String get name;
+  String get name => runtimeType.toString();
+
+  /// A logger that can be used to log messages from this plugin.
+  Logger get logger => Logger(name);
+
+  /// The type of client this plugin requires.
+  RuntimeType<ClientType> get clientType => RuntimeType<ClientType>();
 
   late final Expando<NyxxPluginState<ClientType, NyxxPlugin<ClientType>>> _states = Expando('$name plugin states');
 
@@ -63,6 +71,9 @@ abstract class NyxxPlugin<ClientType extends Nyxx> {
 class NyxxPluginState<ClientType extends Nyxx, PluginType extends NyxxPlugin<ClientType>> {
   /// The plugin this state belongs to.
   final PluginType plugin;
+
+  /// A logger that can be used to log messages from this plugin.
+  Logger get logger => plugin.logger;
 
   /// Create a new plugin state.
   NyxxPluginState(this.plugin);
