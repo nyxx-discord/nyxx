@@ -2,6 +2,7 @@ import 'package:logging/logging.dart';
 import 'package:nyxx/src/builders/presence.dart';
 import 'package:nyxx/src/builders/voice.dart';
 import 'package:nyxx/src/client_options.dart';
+import 'package:nyxx/src/errors.dart';
 import 'package:nyxx/src/event_mixin.dart';
 import 'package:nyxx/src/gateway/gateway.dart';
 import 'package:nyxx/src/http/handler.dart';
@@ -16,12 +17,21 @@ import 'package:nyxx/src/models/user/user.dart';
 import 'package:nyxx/src/plugin/plugin.dart';
 import 'package:nyxx/src/utils/flags.dart';
 import 'package:oauth2/oauth2.dart';
+import 'package:runtime_type/runtime_type.dart';
 
 /// A helper function to nest and execute calls to plugin connect methods.
 Future<T> _doConnect<T extends Nyxx>(ApiOptions apiOptions, ClientOptions clientOptions, Future<T> Function() connect, List<NyxxPlugin> plugins) {
+  final actualClientType = RuntimeType<T>();
+
+  for (final plugin in plugins) {
+    if (!actualClientType.isSubtypeOf(plugin.clientType)) {
+      throw PluginError('Unsupported client type: plugin needs ${plugin.clientType.internalType}, client was ${actualClientType.internalType}');
+    }
+  }
+
   connect = plugins.fold(
     connect,
-    (previousConnect, plugin) => () async => (await plugin.doConnect(apiOptions, clientOptions, previousConnect)) as T,
+    (previousConnect, plugin) => () async => actualClientType.castInstance(await plugin.doConnect(apiOptions, clientOptions, previousConnect)),
   );
   return connect();
 }

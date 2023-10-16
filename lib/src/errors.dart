@@ -127,3 +127,15 @@ class AlreadyRespondedError extends AlreadyAcknowledgedError {
   @override
   String toString() => 'Interaction has already been responded to';
 }
+
+/// An error thrown when an issue with a client's plugin is encountered.
+class PluginError extends Error {
+  /// The message for this [PluginError].
+  final String message;
+
+  /// Create a new [PluginError].
+  PluginError(this.message);
+
+  @override
+  String toString() => message;
+}

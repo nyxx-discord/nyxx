@@ -315,3 +315,4 @@ export 'package:http/http.dart'
         BaseResponse,
         StreamedResponse;
 export 'package:logging/logging.dart' show Logger, Level;
+export 'package:runtime_type/runtime_type.dart' show RuntimeType;
