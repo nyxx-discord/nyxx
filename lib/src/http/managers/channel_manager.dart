@@ -1,7 +1,6 @@
 import 'dart:convert';
 
 import 'package:http/http.dart' show MultipartFile;
-import 'package:nyxx/nyxx.dart';
 import 'package:nyxx/src/builders/builder.dart';
 import 'package:nyxx/src/builders/channel/stage_instance.dart';
 import 'package:nyxx/src/builders/channel/thread.dart';
@@ -24,6 +23,7 @@ import 'package:nyxx/src/models/channel/types/forum.dart';
 import 'package:nyxx/src/models/channel/types/group_dm.dart';
 import 'package:nyxx/src/models/channel/types/guild_announcement.dart';
 import 'package:nyxx/src/models/channel/types/guild_category.dart';
+import 'package:nyxx/src/models/channel/types/guild_media.dart';
 import 'package:nyxx/src/models/channel/types/guild_stage.dart';
 import 'package:nyxx/src/models/channel/types/guild_text.dart';
 import 'package:nyxx/src/models/channel/types/guild_voice.dart';
