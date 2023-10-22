@@ -388,7 +388,7 @@ class CommandOptionBuilder extends CreateBuilder<CommandOption> {
         if (nameLocalizations != null) 'name_localizations': {for (final MapEntry(:key, :value) in nameLocalizations!.entries) key.identifier: value},
         'description': description,
         if (descriptionLocalizations != null)
-          'description_localizations': {for (final MapEntry(:key, :value) in nameLocalizations!.entries) key.identifier: value},
+          'description_localizations': {for (final MapEntry(:key, :value) in descriptionLocalizations!.entries) key.identifier: value},
         if (isRequired != null) 'required': isRequired,
         if (choices != null) 'choices': choices!.map((e) => e.build()).toList(),
         if (options != null) 'options': options!.map((e) => e.build()).toList(),
