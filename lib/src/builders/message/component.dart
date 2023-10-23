@@ -54,7 +54,7 @@ class ButtonBuilder extends MessageComponentBuilder {
   ButtonBuilder.primary({
     this.label,
     this.emoji,
-    required this.customId,
+    required String this.customId,
     this.isDisabled,
   })  : style = ButtonStyle.primary,
         super(type: MessageComponentType.button);
@@ -62,7 +62,7 @@ class ButtonBuilder extends MessageComponentBuilder {
   ButtonBuilder.secondary({
     this.label,
     this.emoji,
-    required this.customId,
+    required String this.customId,
     this.isDisabled,
   })  : style = ButtonStyle.secondary,
         super(type: MessageComponentType.button);
@@ -70,7 +70,7 @@ class ButtonBuilder extends MessageComponentBuilder {
   ButtonBuilder.success({
     this.label,
     this.emoji,
-    required this.customId,
+    required String this.customId,
     this.isDisabled,
   })  : style = ButtonStyle.success,
         super(type: MessageComponentType.button);
@@ -78,7 +78,7 @@ class ButtonBuilder extends MessageComponentBuilder {
   ButtonBuilder.danger({
     this.label,
     this.emoji,
-    required this.customId,
+    required String this.customId,
     this.isDisabled,
   })  : style = ButtonStyle.danger,
         super(type: MessageComponentType.button);
