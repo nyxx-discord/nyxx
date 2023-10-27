@@ -42,6 +42,7 @@ import 'package:nyxx/src/models/interaction.dart';
 import 'package:nyxx/src/models/presence.dart';
 import 'package:nyxx/src/models/snowflake.dart';
 import 'package:nyxx/src/models/user/user.dart';
+import 'package:nyxx/src/models/voice/voice_state.dart';
 import 'package:nyxx/src/utils/iterable_extension.dart';
 import 'package:nyxx/src/utils/parsing_helpers.dart';
 
@@ -128,7 +129,26 @@ class Gateway extends GatewayManager with EventParser {
               client.channels.cache.addEntities(event.threads);
               client.channels.stageInstanceCache.addEntities(event.stageInstances);
               event.guild.scheduledEvents.cache.addEntities(event.scheduledEvents);
-              client.voice.cache.addEntries(event.voiceStates.map((e) => MapEntry(e.cacheKey, e)));
+
+              client.voice.cache.addEntries(event.voiceStates.map((e) {
+                final voiceState = VoiceState(
+                    manager: client.voice,
+                    guildId: event.guild.id,
+                    channelId: e.channelId,
+                    userId: e.userId,
+                    member: event.guild.members.cache[e.userId],
+                    sessionId: e.sessionId,
+                    isServerDeafened: e.isServerDeafened,
+                    isServerMuted: e.isServerMuted,
+                    isSelfDeafened: e.isSelfDeafened,
+                    isSelfMuted: e.isSelfMuted,
+                    isStreaming: e.isStreaming,
+                    isVideoEnabled: e.isVideoEnabled,
+                    isSuppressed: e.isSuppressed,
+                    requestedToSpeakAt: e.requestedToSpeakAt);
+
+                return MapEntry(voiceState.cacheKey, voiceState);
+              }));
             }(),
           GuildUpdateEvent(:final guild) => client.guilds.cache[guild.id] = guild,
           GuildDeleteEvent(:final guild, isUnavailable: false) => client.guilds.cache.remove(guild.id),
