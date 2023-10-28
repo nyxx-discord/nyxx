@@ -6,6 +6,7 @@ import 'package:nyxx/src/builders/guild/template.dart';
 import 'package:nyxx/src/builders/guild/welcome_screen.dart';
 import 'package:nyxx/src/builders/guild/widget.dart';
 import 'package:nyxx/src/builders/voice.dart';
+import 'package:nyxx/src/cache/cache.dart';
 import 'package:nyxx/src/http/cdn/cdn_asset.dart';
 import 'package:nyxx/src/http/managers/application_command_manager.dart';
 import 'package:nyxx/src/http/managers/audit_log_manager.dart';
@@ -40,6 +41,7 @@ import 'package:nyxx/src/models/snowflake_entity/snowflake_entity.dart';
 import 'package:nyxx/src/models/sticker/guild_sticker.dart';
 import 'package:nyxx/src/models/user/user.dart';
 import 'package:nyxx/src/models/voice/voice_region.dart';
+import 'package:nyxx/src/models/voice/voice_state.dart';
 import 'package:nyxx/src/utils/flags.dart';
 
 /// A partial [Guild].
@@ -70,6 +72,9 @@ class PartialGuild extends WritableSnowflakeEntity<Guild> {
 
   /// An [AuditLogManager] for the audit log of this guild.
   AuditLogManager get auditLogs => AuditLogManager(manager.client.options.auditLogEntryConfig, manager.client, guildId: id);
+
+  /// A [Cache] for [VoiceState]s in this guild.
+  Cache<VoiceState> get voiceStates => Cache(manager.client, '$id.voiceStates', manager.client.options.voiceStateConfig);
 
   /// A [GuildApplicationCommandManager] for the application commands of this guild.
   GuildApplicationCommandManager get commands => GuildApplicationCommandManager(

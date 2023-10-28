@@ -13,9 +13,11 @@ class VoiceManager {
   final NyxxRest client;
 
   /// The cache for voice states.
+  @Deprecated('Use PartialGuild.voiceStates instead')
   final Cache<VoiceState> cache;
 
   /// Create a new [VoiceManager].
+  // ignore: deprecated_member_use_from_same_package
   VoiceManager(this.client) : cache = Cache(client, 'voiceStates', client.options.voiceStateConfig);
 
   /// Parse a [VoiceState] from a [Map].
