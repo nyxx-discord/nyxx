@@ -545,7 +545,10 @@ class Gateway extends GatewayManager with EventParser {
       joinedAt: DateTime.parse(raw['joined_at'] as String),
       isLarge: raw['large'] as bool,
       memberCount: raw['member_count'] as int,
-      voiceStates: parseMany(raw['voice_states'] as List<Object?>, client.voice.parseVoiceState),
+      voiceStates: parseMany(
+        raw['voice_states'] as List<Object?>,
+        (Map<String, Object?> raw) => client.voice.parseVoiceState(raw, guildId: guild.id),
+      ),
       members: parseMany(raw['members'] as List<Object?>, client.guilds[guild.id].members.parse),
       channels: parseMany(raw['channels'] as List<Object?>, (Map<String, Object?> raw) => client.channels.parse(raw, guildId: guild.id) as GuildChannel),
       threads: parseMany(raw['threads'] as List<Object?>, (Map<String, Object?> raw) => client.channels.parse(raw, guildId: guild.id) as Thread),

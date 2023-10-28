@@ -19,8 +19,8 @@ class VoiceManager {
   VoiceManager(this.client) : cache = Cache(client, 'voiceStates', client.options.voiceStateConfig);
 
   /// Parse a [VoiceState] from a [Map].
-  VoiceState parseVoiceState(Map<String, Object?> raw) {
-    final guildId = maybeParse(raw['guild_id'], Snowflake.parse);
+  VoiceState parseVoiceState(Map<String, Object?> raw, {Snowflake? guildId}) {
+    guildId ??= maybeParse(raw['guild_id'], Snowflake.parse);
 
     return VoiceState(
       manager: this,
