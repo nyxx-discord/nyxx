@@ -291,6 +291,7 @@ class TextInputBuilder extends MessageComponentBuilder {
         if (minLength != null) 'min_length': minLength,
         if (maxLength != null) 'max_length': maxLength,
         if (isRequired != null) 'required': isRequired,
+        if (value != null) 'value': value,
         if (placeholder != null) 'placeholder': placeholder,
       };
 }
