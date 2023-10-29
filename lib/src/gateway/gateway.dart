@@ -128,7 +128,9 @@ class Gateway extends GatewayManager with EventParser {
               client.channels.cache.addEntities(event.threads);
               client.channels.stageInstanceCache.addEntities(event.stageInstances);
               event.guild.scheduledEvents.cache.addEntities(event.scheduledEvents);
+              // ignore: deprecated_member_use_from_same_package
               client.voice.cache.addEntries(event.voiceStates.map((e) => MapEntry(e.cacheKey, e)));
+              event.guild.voiceStates.addEntries(event.voiceStates.map((e) => MapEntry(e.userId, e)));
             }(),
           GuildUpdateEvent(:final guild) => client.guilds.cache[guild.id] = guild,
           GuildDeleteEvent(:final guild, isUnavailable: false) => client.guilds.cache.remove(guild.id),
@@ -164,7 +166,13 @@ class Gateway extends GatewayManager with EventParser {
             client.guilds[guildId].integrations.cache[integration.id] = integration,
           IntegrationDeleteEvent(:final id, :final guildId) => client.guilds[guildId].integrations.cache.remove(id),
           GuildAuditLogCreateEvent(:final entry, :final guildId) => client.guilds[guildId].auditLogs.cache[entry.id] = entry,
-          VoiceStateUpdateEvent(:final state) => client.voice.cache[state.cacheKey] = state,
+          VoiceStateUpdateEvent(:final state) => () {
+              // ignore: deprecated_member_use_from_same_package
+              client.voice.cache[state.cacheKey] = state;
+              if (state.guildId case final guildId?) {
+                client.guilds[guildId].voiceStates[state.userId] = state;
+              }
+            }(),
           GuildEmojisUpdateEvent(:final guildId, :final emojis) => client.guilds[guildId].emojis.cache
             ..clear()
             ..addEntities(emojis),
@@ -545,7 +553,10 @@ class Gateway extends GatewayManager with EventParser {
       joinedAt: DateTime.parse(raw['joined_at'] as String),
       isLarge: raw['large'] as bool,
       memberCount: raw['member_count'] as int,
-      voiceStates: parseMany(raw['voice_states'] as List<Object?>, client.voice.parseVoiceState),
+      voiceStates: parseMany(
+        raw['voice_states'] as List<Object?>,
+        (Map<String, Object?> raw) => client.voice.parseVoiceState(raw, guildId: guild.id),
+      ),
       members: parseMany(raw['members'] as List<Object?>, client.guilds[guild.id].members.parse),
       channels: parseMany(raw['channels'] as List<Object?>, (Map<String, Object?> raw) => client.channels.parse(raw, guildId: guild.id) as GuildChannel),
       threads: parseMany(raw['threads'] as List<Object?>, (Map<String, Object?> raw) => client.channels.parse(raw, guildId: guild.id) as Thread),
@@ -986,7 +997,7 @@ class Gateway extends GatewayManager with EventParser {
 
     return VoiceStateUpdateEvent(
       gateway: this,
-      oldState: client.voice.cache[voiceState.cacheKey],
+      oldState: client.guilds[voiceState.guildId ?? Snowflake.zero].voiceStates[voiceState.userId],
       state: voiceState,
     );
   }
