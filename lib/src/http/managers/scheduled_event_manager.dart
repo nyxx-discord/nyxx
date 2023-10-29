@@ -26,7 +26,7 @@ class ScheduledEventManager extends Manager<ScheduledEvent> {
       id: Snowflake.parse(raw['id']!),
       manager: this,
       guildId: Snowflake.parse(raw['guild_id']!),
-      channelId: Snowflake.parse(raw['channel_id']!),
+      channelId: maybeParse(raw['channel_id'], Snowflake.parse),
       creatorId: maybeParse(raw['creator_id'], Snowflake.parse),
       name: raw['name'] as String,
       description: raw['description'] as String?,
