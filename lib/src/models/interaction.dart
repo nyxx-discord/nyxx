@@ -295,7 +295,7 @@ class MessageComponentInteraction extends Interaction<MessageComponentInteractio
       if (updateMessage == true) {
         await manager.createResponse(id, token, InteractionResponseBuilder.updateMessage(builder as MessageUpdateBuilder));
       } else {
-        await manager.createResponse(id, token, InteractionResponseBuilder.channelMessage(builder as MessageBuilder));
+        await manager.createResponse(id, token, InteractionResponseBuilder.channelMessage(builder as MessageBuilder, isEphemeral: isEphemeral));
       }
     } else {
       assert(updateMessage == _didUpdateMessage || updateMessage == null, 'Cannot change the value of updateMessage between acknowledge and respond');
@@ -310,7 +310,7 @@ class MessageComponentInteraction extends Interaction<MessageComponentInteractio
       if (updateMessage == true) {
         await manager.updateOriginalResponse(token, builder as MessageUpdateBuilder);
       } else {
-        await manager.createFollowup(token, builder as MessageBuilder);
+        await manager.createFollowup(token, builder as MessageBuilder, isEphemeral: isEphemeral);
       }
     }
   }
