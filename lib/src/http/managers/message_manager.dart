@@ -242,7 +242,7 @@ class MessageManager extends Manager<Message> {
         ),
       MessageComponentType.button => ButtonComponent(
           style: ButtonStyle.parse(raw['style'] as int),
-          label: raw['label'] as String,
+          label: raw['label'] as String?,
           emoji: maybeParse(raw['emoji'], client.guilds[Snowflake.zero].emojis.parse),
           customId: raw['custom_id'] as String?,
           url: maybeParse(raw['url'], Uri.parse),
