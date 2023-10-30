@@ -37,7 +37,7 @@ class PartialTextChannel extends PartialChannel {
 
 //// A text channel
 abstract class TextChannel extends PartialTextChannel implements Channel {
-  /// The ID of the last [Message] snt in this channel, or `null` if no messages have been sent.
+  /// The ID of the last [Message] sent in this channel, or `null` if no messages have been sent.
   Snowflake? get lastMessageId;
 
   /// The rate limit duration per user.

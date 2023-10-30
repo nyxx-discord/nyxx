@@ -1,0 +1,3 @@
+linkToSource:
+  root: '.'
+  uriTemplate: 'https://github.com/nyxx-discord/nyxx/blob/main/%f#L%l'

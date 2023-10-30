@@ -3,20 +3,42 @@ import 'package:nyxx/src/models/guild/auto_moderation.dart';
 import 'package:nyxx/src/models/snowflake.dart';
 
 class AutoModerationRuleBuilder extends CreateBuilder<AutoModerationRule> {
+  /// {@template auto_moderation_rule_name}
+  /// The rule name.
+  /// {@endtemplate}
   String name;
 
+  /// {@ŧemplate auto_moderation_rule_event_type}
+  /// The event type that will trigger this rule.
+  /// {@endtemplate}
   AutoModerationEventType eventType;
 
+  /// The trigger type that will trigger this rule.
   TriggerType triggerType;
 
+  /// {@template auto_moderation_rule_trigger_metadata}
+  /// The trigger metadata.
+  /// {@endtemplate}
   TriggerMetadata? metadata;
 
+  /// {@template auto_moderation_rule_actions}
+  /// The actions that will be executed when this rule is triggered.
+  /// {@endtemplate}
   List<AutoModerationAction> actions;
 
+  /// {@template auto_moderation_rule_is_enabled}
+  /// Whether this rule is enabled.
+  /// {@endtemplate}
   bool? isEnabled;
 
+  /// {@template auto_moderation_rule_exempt_role_ids}
+  /// The role ids that are exempt from this rule.
+  /// {@endtemplate}
   List<Snowflake>? exemptRoleIds;
 
+  /// {@template auto_moderation_rule_exempt_channel_ids}
+  /// The channel ids that are exempt from this rule.
+  /// {@endtemplate}
   List<Snowflake>? exemptChannelIds;
 
   AutoModerationRuleBuilder({
@@ -63,18 +85,25 @@ class AutoModerationRuleBuilder extends CreateBuilder<AutoModerationRule> {
 }
 
 class AutoModerationRuleUpdateBuilder extends UpdateBuilder<AutoModerationRule> {
+  /// {@macro auto_moderation_rule_name}
   String? name;
 
+  /// {@macro auto_moderation_rule_event_type}
   AutoModerationEventType? eventType;
 
+  /// {@macro auto_moderation_rule_trigger_metadata}
   TriggerMetadata? metadata;
 
+  /// {@macro auto_moderation_rule_actions}
   List<AutoModerationAction>? actions;
 
+  /// {@macro auto_moderation_rule_is_enabled}
   bool? isEnabled;
 
+  /// {@macro auto_moderation_rule_exempt_role_ids}
   List<Snowflake>? exemptRoleIds;
 
+  /// {@macro auto_moderation_rule_exempt_channel_ids}
   List<Snowflake>? exemptChannelIds;
 
   AutoModerationRuleUpdateBuilder({
