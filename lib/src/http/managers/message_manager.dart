@@ -9,6 +9,7 @@ import 'package:nyxx/src/http/request.dart';
 import 'package:nyxx/src/http/route.dart';
 import 'package:nyxx/src/models/application.dart';
 import 'package:nyxx/src/models/channel/channel.dart';
+import 'package:nyxx/src/models/channel/guild_channel.dart';
 import 'package:nyxx/src/models/channel/thread.dart';
 import 'package:nyxx/src/models/discord_color.dart';
 import 'package:nyxx/src/models/interaction.dart';
@@ -39,7 +40,11 @@ class MessageManager extends Manager<Message> {
   PartialMessage operator [](Snowflake id) => PartialMessage(id: id, manager: this);
 
   @override
-  Message parse(Map<String, Object?> raw) {
+  Message parse(Map<String, Object?> raw, {Snowflake? guildId}) {
+    if (client.channels.cache[channelId] case GuildChannel(guildId: final guildIdFromChannel)) {
+      guildId ??= guildIdFromChannel;
+    }
+
     final webhookId = maybeParse(raw['webhook_id'], Snowflake.parse);
 
     return Message(
@@ -81,7 +86,7 @@ class MessageManager extends Manager<Message> {
       position: raw['position'] as int?,
       roleSubscriptionData: maybeParse(raw['role_subscription_data'], parseRoleSubscriptionData),
       stickers: parseMany(raw['sticker_items'] as List? ?? [], client.stickers.parseStickerItem),
-      resolved: maybeParse(raw['resolved'], client.interactions.parseResolvedData),
+      resolved: maybeParse(raw['resolved'], (Map<String, Object?> raw) => client.interactions.parseResolvedData(raw, guildId: guildId, channelId: channelId)),
     );
   }
 

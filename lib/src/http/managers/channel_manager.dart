@@ -406,21 +406,23 @@ class ChannelManager extends ReadOnlyManager<Channel> {
     );
   }
 
-  ThreadMember parseThreadMember(Map<String, Object?> raw) {
+  ThreadMember parseThreadMember(Map<String, Object?> raw, {Snowflake? guildId}) {
+    final userId = Snowflake.parse(raw['user_id']!);
+
     return ThreadMember(
       manager: this,
       joinTimestamp: DateTime.parse(raw['join_timestamp'] as String),
       flags: Flags<Never>(raw['flags'] as int),
       threadId: Snowflake.parse(raw['id']!),
-      userId: Snowflake.parse(raw['user_id']!),
-      member: maybeParse(raw['member'], client.guilds[Snowflake.zero].members.parse),
+      userId: userId,
+      member: maybeParse(raw['member'], (Map<String, Object?> raw) => client.guilds[guildId ?? Snowflake.zero].members.parse(raw, userId: userId)),
     );
   }
 
-  ThreadList parseThreadList(Map<String, Object?> raw) {
+  ThreadList parseThreadList(Map<String, Object?> raw, {Snowflake? guildId}) {
     return ThreadList(
       threads: parseMany(raw['threads'] as List, parse).cast<Thread>(),
-      members: parseMany(raw['members'] as List, parseThreadMember),
+      members: parseMany(raw['members'] as List, (Map<String, Object?> raw) => parseThreadMember(raw, guildId: guildId)),
       hasMore: raw['has_more'] as bool? ?? false,
     );
   }
@@ -667,6 +669,7 @@ class ChannelManager extends ReadOnlyManager<Channel> {
     );
 
     final response = await client.httpHandler.executeSafe(request);
+    // TODO: Can we provide the guildId?
     return parseThreadMember(response.jsonBody as Map<String, Object?>);
   }
 
@@ -685,6 +688,7 @@ class ChannelManager extends ReadOnlyManager<Channel> {
     );
 
     final response = await client.httpHandler.executeSafe(request);
+    // TODO: Can we provide the guildId?
     return parseMany(response.jsonBody as List, parseThreadMember);
   }
 
@@ -704,6 +708,7 @@ class ChannelManager extends ReadOnlyManager<Channel> {
     );
 
     final response = await client.httpHandler.executeSafe(request);
+    // TODO: Can we provide the guild ID?
     return parseThreadList(response.jsonBody as Map<String, Object?>);
   }
 
@@ -723,6 +728,7 @@ class ChannelManager extends ReadOnlyManager<Channel> {
     );
 
     final response = await client.httpHandler.executeSafe(request);
+    // TODO: Can we provide the guild ID?
     return parseThreadList(response.jsonBody as Map<String, Object?>);
   }
 
@@ -743,6 +749,7 @@ class ChannelManager extends ReadOnlyManager<Channel> {
     );
 
     final response = await client.httpHandler.executeSafe(request);
+    // TODO: Can we provide the guild ID?
     return parseThreadList(response.jsonBody as Map<String, Object?>);
   }
 

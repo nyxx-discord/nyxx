@@ -49,7 +49,7 @@ class MemberManager extends Manager<Member> {
     final request = BasicRequest(route);
 
     final response = await client.httpHandler.executeSafe(request);
-    final member = parse(response.jsonBody as Map<String, Object?>);
+    final member = parse(response.jsonBody as Map<String, Object?>, userId: id);
 
     client.updateCacheWith(member);
     return member;
@@ -84,7 +84,7 @@ class MemberManager extends Manager<Member> {
       throw MemberAlreadyExistsException(guildId, builder.userId);
     }
 
-    final member = parse(response.jsonBody as Map<String, Object?>);
+    final member = parse(response.jsonBody as Map<String, Object?>, userId: builder.userId);
 
     client.updateCacheWith(member);
     return member;
@@ -98,7 +98,7 @@ class MemberManager extends Manager<Member> {
     final request = BasicRequest(route, method: 'PATCH', auditLogReason: auditLogReason, body: jsonEncode(builder.build()));
 
     final response = await client.httpHandler.executeSafe(request);
-    final member = parse(response.jsonBody as Map<String, Object?>);
+    final member = parse(response.jsonBody as Map<String, Object?>, userId: id);
 
     client.updateCacheWith(member);
     return member;
@@ -135,7 +135,7 @@ class MemberManager extends Manager<Member> {
     final request = BasicRequest(route, method: 'PATCH', body: jsonEncode(builder.build()));
 
     final response = await client.httpHandler.executeSafe(request);
-    final member = parse(response.jsonBody as Map<String, Object?>);
+    final member = parse(response.jsonBody as Map<String, Object?>, userId: client.user.id);
 
     client.updateCacheWith(member);
     return member;

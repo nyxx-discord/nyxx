@@ -255,7 +255,7 @@ class GuildManager extends Manager<Guild> {
 
     // Discord passes an "empty" emoji object when unset instead of null
     if (rawEmoji['id'] != null || rawEmoji['name'] != null) {
-      emoji = this[guildId ?? Snowflake.zero].emojis.parse(raw['emoji'] as Map<String, Object?>);
+      emoji = client.guilds[guildId ?? Snowflake.zero].emojis.parse(raw['emoji'] as Map<String, Object?>);
     }
 
     return OnboardingPromptOption(
@@ -384,7 +384,7 @@ class GuildManager extends Manager<Guild> {
     final request = BasicRequest(route, method: 'POST', auditLogReason: auditLogReason, body: jsonEncode(builder.build()));
 
     final response = await client.httpHandler.executeSafe(request);
-    final channel = client.channels.parse(response.jsonBody as Map<String, Object?>) as T;
+    final channel = client.channels.parse(response.jsonBody as Map<String, Object?>, guildId: id) as T;
 
     client.updateCacheWith(channel);
     return channel;
@@ -409,7 +409,7 @@ class GuildManager extends Manager<Guild> {
     final request = BasicRequest(route);
 
     final response = await client.httpHandler.executeSafe(request);
-    final list = client.channels.parseThreadList(response.jsonBody as Map<String, Object?>);
+    final list = client.channels.parseThreadList(response.jsonBody as Map<String, Object?>, guildId: id);
 
     client.updateCacheWith(list);
     return list;

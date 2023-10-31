@@ -38,7 +38,8 @@ class InviteManager {
       approximatePresenceCount: raw['approximate_presence_count'] as int?,
       approximateMemberCount: raw['approximate_member_count'] as int?,
       expiresAt: maybeParse(raw['expires_at'], DateTime.parse),
-      guildScheduledEvent: maybeParse(raw['guild_scheduled_event'], client.guilds[guild?.id ?? Snowflake.zero].scheduledEvents.parse),
+      // Don't use a tearoff so we don't evaluate `guild!.id` unless guild_scheduled_event is set.
+      guildScheduledEvent: maybeParse(raw['guild_scheduled_event'], (Map<String, Object?> raw) => client.guilds[guild!.id].scheduledEvents.parse(raw)),
     );
   }
 

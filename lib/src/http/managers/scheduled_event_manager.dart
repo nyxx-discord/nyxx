@@ -50,11 +50,13 @@ class ScheduledEventManager extends Manager<ScheduledEvent> {
   }
 
   ScheduledEventUser parseScheduledEventUser(Map<String, Object?> raw) {
+    final user = client.users.parse(raw['user'] as Map<String, Object?>);
+
     return ScheduledEventUser(
       manager: this,
       scheduledEventId: Snowflake.parse(raw['guild_scheduled_event_id']!),
-      user: client.users.parse(raw['user'] as Map<String, Object?>),
-      member: maybeParse(raw['member'], client.guilds[guildId].members.parse),
+      user: user,
+      member: maybeParse(raw['member'], (Map<String, Object?> raw) => client.guilds[guildId].members.parse(raw, userId: user.id)),
     );
   }
 

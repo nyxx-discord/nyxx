@@ -116,8 +116,14 @@ class ThreadMemberUpdateEvent extends DispatchEvent {
   /// The updated member.
   final ThreadMember member;
 
+  /// The ID of the guild in which the member was updated.
+  final Snowflake guildId;
+
   /// {@macro thread_member_update_event}
-  ThreadMemberUpdateEvent({required super.gateway, required this.member});
+  ThreadMemberUpdateEvent({required super.gateway, required this.member, required this.guildId});
+
+  /// The guild in which the member was updated.
+  PartialGuild get guild => gateway.client.guilds[guildId];
 }
 
 /// {@template thread_members_update_event}
