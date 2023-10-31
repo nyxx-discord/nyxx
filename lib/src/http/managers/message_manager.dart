@@ -4,7 +4,6 @@ import 'package:http/http.dart' show MultipartFile;
 import 'package:nyxx/src/builders/emoji/reaction.dart';
 import 'package:nyxx/src/builders/message/message.dart';
 import 'package:nyxx/src/builders/sentinels.dart';
-import 'package:nyxx/src/cache/cache.dart';
 import 'package:nyxx/src/http/managers/manager.dart';
 import 'package:nyxx/src/http/request.dart';
 import 'package:nyxx/src/http/route.dart';
@@ -25,6 +24,7 @@ import 'package:nyxx/src/models/message/reference.dart';
 import 'package:nyxx/src/models/message/role_subscription_data.dart';
 import 'package:nyxx/src/models/snowflake.dart';
 import 'package:nyxx/src/models/user/user.dart';
+import 'package:nyxx/src/utils/cache_helpers.dart';
 import 'package:nyxx/src/utils/parsing_helpers.dart';
 
 /// A manager for [Message]s in a [TextChannel].
@@ -337,7 +337,7 @@ class MessageManager extends Manager<Message> {
     final response = await client.httpHandler.executeSafe(request);
     final message = parse(response.jsonBody as Map<String, Object?>);
 
-    cache[message.id] = message;
+    client.updateCacheWith(message);
     return message;
   }
 
@@ -351,7 +351,7 @@ class MessageManager extends Manager<Message> {
     final response = await client.httpHandler.executeSafe(request);
     final message = parse(response.jsonBody as Map<String, Object?>);
 
-    cache[message.id] = message;
+    client.updateCacheWith(message);
     return message;
   }
 
@@ -390,7 +390,7 @@ class MessageManager extends Manager<Message> {
     final response = await client.httpHandler.executeSafe(request);
     final message = parse(response.jsonBody as Map<String, Object?>);
 
-    cache[message.id] = message;
+    client.updateCacheWith(message);
     return message;
   }
 
@@ -424,7 +424,7 @@ class MessageManager extends Manager<Message> {
     final response = await client.httpHandler.executeSafe(request);
     final messages = parseMany(response.jsonBody as List, parse);
 
-    cache.addEntities(messages);
+    messages.forEach(client.updateCacheWith);
     return messages;
   }
 
@@ -439,7 +439,7 @@ class MessageManager extends Manager<Message> {
     final response = await client.httpHandler.executeSafe(request);
     final message = parse(response.jsonBody as Map<String, Object?>);
 
-    cache[message.id] = message;
+    client.updateCacheWith(message);
     return message;
   }
 
@@ -466,7 +466,7 @@ class MessageManager extends Manager<Message> {
     final response = await client.httpHandler.executeSafe(request);
     final messages = parseMany(response.jsonBody as List, parse);
 
-    cache.addEntities(messages);
+    messages.forEach(client.updateCacheWith);
     return messages;
   }
 

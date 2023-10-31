@@ -4,7 +4,6 @@ import 'package:logging/logging.dart';
 import 'package:nyxx/src/api_options.dart';
 import 'package:nyxx/src/builders/presence.dart';
 import 'package:nyxx/src/builders/voice.dart';
-import 'package:nyxx/src/cache/cache.dart';
 import 'package:nyxx/src/client.dart';
 import 'package:nyxx/src/errors.dart';
 import 'package:nyxx/src/gateway/event_parser.dart';
@@ -42,6 +41,7 @@ import 'package:nyxx/src/models/interaction.dart';
 import 'package:nyxx/src/models/presence.dart';
 import 'package:nyxx/src/models/snowflake.dart';
 import 'package:nyxx/src/models/user/user.dart';
+import 'package:nyxx/src/utils/cache_helpers.dart';
 import 'package:nyxx/src/utils/iterable_extension.dart';
 import 'package:nyxx/src/utils/parsing_helpers.dart';
 
@@ -113,91 +113,7 @@ class Gateway extends GatewayManager with EventParser {
     }
 
     // Handle all events which should update cache.
-    events.listen((event) => switch (event) {
-          ReadyEvent(:final user) => client.users.cache[user.id] = user,
-          ChannelCreateEvent(:final channel) || ChannelUpdateEvent(:final channel) => client.channels.cache[channel.id] = channel,
-          ChannelDeleteEvent(:final channel) => client.channels.cache.remove(channel.id),
-          ThreadCreateEvent(:final thread) || ThreadUpdateEvent(:final thread) => client.channels.cache[thread.id] = thread,
-          ThreadDeleteEvent(:final thread) => client.channels.cache.remove(thread.id),
-          ThreadListSyncEvent(:final threads) => client.channels.cache..addEntities(threads),
-          final GuildCreateEvent event => () {
-              client.guilds.cache[event.guild.id] = event.guild;
-
-              event.guild.members.cache.addEntities(event.members);
-              client.channels.cache.addEntities(event.channels);
-              client.channels.cache.addEntities(event.threads);
-              client.channels.stageInstanceCache.addEntities(event.stageInstances);
-              event.guild.scheduledEvents.cache.addEntities(event.scheduledEvents);
-              // ignore: deprecated_member_use_from_same_package
-              client.voice.cache.addEntries(event.voiceStates.map((e) => MapEntry(e.cacheKey, e)));
-              event.guild.voiceStates.addEntries(event.voiceStates.map((e) => MapEntry(e.userId, e)));
-            }(),
-          GuildUpdateEvent(:final guild) => client.guilds.cache[guild.id] = guild,
-          GuildDeleteEvent(:final guild, isUnavailable: false) => client.guilds.cache.remove(guild.id),
-          GuildMemberAddEvent(:final guildId, :final member) ||
-          GuildMemberUpdateEvent(:final guildId, :final member) =>
-            client.guilds[guildId].members.cache[member.id] = member,
-          GuildMemberRemoveEvent(:final guildId, :final user) => client.guilds[guildId].members.cache.remove(user.id),
-          GuildMembersChunkEvent(:final guildId, :final members) => client.guilds[guildId].members.cache..addEntities(members),
-          GuildRoleCreateEvent(:final guildId, :final role) ||
-          GuildRoleUpdateEvent(:final guildId, :final role) =>
-            client.guilds[guildId].roles.cache[role.id] = role,
-          GuildRoleDeleteEvent(:final guildId, :final roleId) => client.guilds[guildId].roles.cache.remove(roleId),
-          MessageCreateEvent(:final message) => (client.channels[message.channelId] as PartialTextChannel).messages.cache[message.id] = message,
-          MessageDeleteEvent(id: final messageId, :final channelId) =>
-            MessageManager(client.options.messageCacheConfig, client, channelId: channelId).cache.remove(messageId),
-          MessageBulkDeleteEvent(ids: final messageIds, :final channelId) =>
-            // ignore: avoid_function_literals_in_foreach_calls
-            messageIds..forEach((messageId) => MessageManager(client.options.messageCacheConfig, client, channelId: channelId).cache.remove(messageId)),
-          UserUpdateEvent(:final user) => client.users.cache[user.id] = user,
-          StageInstanceCreateEvent(:final instance) || StageInstanceUpdateEvent(:final instance) => client.channels.stageInstanceCache[instance.channelId] =
-              instance,
-          StageInstanceDeleteEvent(:final instance) => client.channels.stageInstanceCache.remove(instance.channelId),
-          GuildScheduledEventCreateEvent(:final event) ||
-          GuildScheduledEventUpdateEvent(:final event) =>
-            client.guilds[event.guildId].scheduledEvents.cache[event.id] = event,
-          GuildScheduledEventDeleteEvent(:final event) => client.guilds[event.guildId].scheduledEvents.cache.remove(event.id),
-          AutoModerationRuleCreateEvent(:final rule) ||
-          AutoModerationRuleUpdateEvent(:final rule) =>
-            client.guilds[rule.guildId].autoModerationRules.cache[rule.id] = rule,
-          AutoModerationRuleDeleteEvent(:final rule) => client.guilds[rule.guildId].autoModerationRules.cache.remove(rule.id),
-          IntegrationCreateEvent(:final guildId, :final integration) ||
-          IntegrationUpdateEvent(:final guildId, :final integration) =>
-            client.guilds[guildId].integrations.cache[integration.id] = integration,
-          IntegrationDeleteEvent(:final id, :final guildId) => client.guilds[guildId].integrations.cache.remove(id),
-          GuildAuditLogCreateEvent(:final entry, :final guildId) => client.guilds[guildId].auditLogs.cache[entry.id] = entry,
-          VoiceStateUpdateEvent(:final state) => () {
-              // ignore: deprecated_member_use_from_same_package
-              client.voice.cache[state.cacheKey] = state;
-              if (state.guildId case final guildId?) {
-                client.guilds[guildId].voiceStates[state.userId] = state;
-              }
-            }(),
-          GuildEmojisUpdateEvent(:final guildId, :final emojis) => client.guilds[guildId].emojis.cache
-            ..clear()
-            ..addEntities(emojis),
-          GuildStickersUpdateEvent(:final guildId, :final stickers) => client.guilds[guildId].stickers.cache.addEntities(stickers),
-          ApplicationCommandPermissionsUpdateEvent(:final permissions) => client.guilds[permissions.guildId].commands.permissionsCache[permissions.id] =
-              permissions,
-          InteractionCreateEvent(interaction: Interaction(:final guildId, data: ApplicationCommandInteractionData(resolved: final data?))) => () {
-              if (data.users != null) {
-                client.users.cache.addAll(data.users!);
-              }
-
-              if (data.members != null && guildId != null) {
-                client.guilds[guildId].members.cache.addAll(data.members!);
-              }
-
-              if (data.roles != null && guildId != null) {
-                client.guilds[guildId].roles.cache.addAll(data.roles!);
-              }
-            }(),
-          EntitlementCreateEvent(:final entitlement) ||
-          EntitlementUpdateEvent(:final entitlement) =>
-            client.applications[entitlement.applicationId].entitlements.cache[entitlement.id] = entitlement,
-          EntitlementDeleteEvent() => null, // TODO
-          _ => null,
-        });
+    events.listen(client.updateCacheWith);
   }
 
   /// Connect to the gateway using the provided [client] and [gatewayBot] configuration.

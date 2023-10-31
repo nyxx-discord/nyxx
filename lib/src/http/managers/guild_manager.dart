@@ -9,7 +9,6 @@ import 'package:nyxx/src/builders/guild/welcome_screen.dart';
 import 'package:nyxx/src/builders/guild/widget.dart';
 import 'package:nyxx/src/builders/image.dart';
 import 'package:nyxx/src/builders/voice.dart';
-import 'package:nyxx/src/cache/cache.dart';
 import 'package:nyxx/src/http/managers/manager.dart';
 import 'package:nyxx/src/http/request.dart';
 import 'package:nyxx/src/http/route.dart';
@@ -30,6 +29,7 @@ import 'package:nyxx/src/models/permissions.dart';
 import 'package:nyxx/src/models/snowflake.dart';
 import 'package:nyxx/src/models/user/user.dart';
 import 'package:nyxx/src/models/voice/voice_region.dart';
+import 'package:nyxx/src/utils/cache_helpers.dart';
 import 'package:nyxx/src/utils/flags.dart';
 import 'package:nyxx/src/utils/parsing_helpers.dart';
 
@@ -314,7 +314,7 @@ class GuildManager extends Manager<Guild> {
     final response = await client.httpHandler.executeSafe(request);
     final guild = parse(response.jsonBody as Map<String, Object?>);
 
-    cache[guild.id] = guild;
+    client.updateCacheWith(guild);
     return guild;
   }
 
@@ -326,7 +326,7 @@ class GuildManager extends Manager<Guild> {
     final response = await client.httpHandler.executeSafe(request);
     final guild = parse(response.jsonBody as Map<String, Object?>);
 
-    cache[guild.id] = guild;
+    client.updateCacheWith(guild);
     return guild;
   }
 
@@ -338,7 +338,7 @@ class GuildManager extends Manager<Guild> {
     final response = await client.httpHandler.executeSafe(request);
     final guild = parse(response.jsonBody as Map<String, Object?>);
 
-    cache[guild.id] = guild;
+    client.updateCacheWith(guild);
     return guild;
   }
 
@@ -372,7 +372,7 @@ class GuildManager extends Manager<Guild> {
     final response = await client.httpHandler.executeSafe(request);
     final channels = parseMany(response.jsonBody as List, client.channels.parse).cast<GuildChannel>();
 
-    client.channels.cache.addEntities(channels);
+    channels.forEach(client.updateCacheWith);
     return channels;
   }
 
@@ -386,7 +386,7 @@ class GuildManager extends Manager<Guild> {
     final response = await client.httpHandler.executeSafe(request);
     final channel = client.channels.parse(response.jsonBody as Map<String, Object?>) as T;
 
-    client.channels.cache[channel.id] = channel;
+    client.updateCacheWith(channel);
     return channel;
   }
 
@@ -411,7 +411,7 @@ class GuildManager extends Manager<Guild> {
     final response = await client.httpHandler.executeSafe(request);
     final list = client.channels.parseThreadList(response.jsonBody as Map<String, Object?>);
 
-    client.channels.cache.addEntities(list.threads);
+    client.updateCacheWith(list);
     return list;
   }
 
@@ -675,7 +675,7 @@ class GuildManager extends Manager<Guild> {
     final response = await client.httpHandler.executeSafe(request);
     final guild = parse(response.jsonBody as Map<String, Object?>);
 
-    cache[guild.id] = guild;
+    client.updateCacheWith(guild);
     return guild;
   }
 

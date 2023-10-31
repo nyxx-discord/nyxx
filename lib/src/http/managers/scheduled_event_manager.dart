@@ -1,13 +1,13 @@
 import 'dart:convert';
 
 import 'package:nyxx/src/builders/guild/scheduled_event.dart';
-import 'package:nyxx/src/cache/cache.dart';
 import 'package:nyxx/src/http/managers/manager.dart';
 import 'package:nyxx/src/http/request.dart';
 import 'package:nyxx/src/http/route.dart';
 import 'package:nyxx/src/models/channel/stage_instance.dart';
 import 'package:nyxx/src/models/guild/scheduled_event.dart';
 import 'package:nyxx/src/models/snowflake.dart';
+import 'package:nyxx/src/utils/cache_helpers.dart';
 import 'package:nyxx/src/utils/parsing_helpers.dart';
 
 /// A [Manager] for [ScheduledEvent]s.
@@ -68,7 +68,7 @@ class ScheduledEventManager extends Manager<ScheduledEvent> {
     final response = await client.httpHandler.executeSafe(request);
     final event = parse(response.jsonBody as Map<String, Object?>);
 
-    cache[event.id] = event;
+    client.updateCacheWith(event);
     return event;
   }
 
@@ -82,7 +82,7 @@ class ScheduledEventManager extends Manager<ScheduledEvent> {
     final response = await client.httpHandler.executeSafe(request);
     final events = parseMany(response.jsonBody as List<Object?>, parse);
 
-    cache.addEntities(events);
+    events.forEach(client.updateCacheWith);
     return events;
   }
 
@@ -96,7 +96,7 @@ class ScheduledEventManager extends Manager<ScheduledEvent> {
     final response = await client.httpHandler.executeSafe(request);
     final event = parse(response.jsonBody as Map<String, Object?>);
 
-    cache[event.id] = event;
+    client.updateCacheWith(event);
     return event;
   }
 
@@ -110,7 +110,7 @@ class ScheduledEventManager extends Manager<ScheduledEvent> {
     final response = await client.httpHandler.executeSafe(request);
     final event = parse(response.jsonBody as Map<String, Object?>);
 
-    cache[event.id] = event;
+    client.updateCacheWith(event);
     return event;
   }
 

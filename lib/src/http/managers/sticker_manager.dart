@@ -2,7 +2,6 @@ import 'dart:convert';
 
 import 'package:http/http.dart';
 import 'package:nyxx/src/builders/sticker.dart';
-import 'package:nyxx/src/cache/cache.dart';
 import 'package:nyxx/src/http/managers/manager.dart';
 import 'package:nyxx/src/http/request.dart';
 import 'package:nyxx/src/http/route.dart';
@@ -11,6 +10,7 @@ import 'package:nyxx/src/models/sticker/global_sticker.dart';
 import 'package:nyxx/src/models/sticker/guild_sticker.dart';
 import 'package:nyxx/src/models/sticker/sticker.dart';
 import 'package:nyxx/src/models/sticker/sticker_pack.dart';
+import 'package:nyxx/src/utils/cache_helpers.dart';
 import 'package:nyxx/src/utils/parsing_helpers.dart';
 
 class GuildStickerManager extends Manager<GuildSticker> {
@@ -32,8 +32,8 @@ class GuildStickerManager extends Manager<GuildSticker> {
     final response = await client.httpHandler.executeSafe(request);
 
     final sticker = parse(response.jsonBody as Map<String, Object?>);
-    cache[sticker.id] = sticker;
 
+    client.updateCacheWith(sticker);
     return sticker;
   }
 
@@ -46,7 +46,7 @@ class GuildStickerManager extends Manager<GuildSticker> {
     final response = await client.httpHandler.executeSafe(request);
 
     final stickers = parseMany(response.jsonBody as List<Object?>, (Map<String, Object?> raw) => parse(raw));
-    cache.addEntities(stickers);
+    stickers.forEach(client.updateCacheWith);
 
     return stickers;
   }
@@ -73,7 +73,7 @@ class GuildStickerManager extends Manager<GuildSticker> {
 
     final sticker = parse(response.jsonBody as Map<String, Object?>);
 
-    cache[sticker.id] = sticker;
+    client.updateCacheWith(sticker);
     return sticker;
   }
 
@@ -105,7 +105,7 @@ class GuildStickerManager extends Manager<GuildSticker> {
 
     final sticker = parse(response.jsonBody as Map<String, Object?>);
 
-    cache[sticker.id] = sticker;
+    client.updateCacheWith(sticker);
     return sticker;
   }
 }
@@ -125,7 +125,7 @@ class GlobalStickerManager extends ReadOnlyManager<GlobalSticker> {
 
     final sticker = parse(response.jsonBody as Map<String, Object?>);
 
-    cache[sticker.id] = sticker;
+    client.updateCacheWith(sticker);
     return sticker;
   }
 

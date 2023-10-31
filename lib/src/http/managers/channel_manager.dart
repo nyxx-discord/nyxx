@@ -35,6 +35,7 @@ import 'package:nyxx/src/models/invite/invite_metadata.dart';
 import 'package:nyxx/src/models/permission_overwrite.dart';
 import 'package:nyxx/src/models/permissions.dart';
 import 'package:nyxx/src/models/snowflake.dart';
+import 'package:nyxx/src/utils/cache_helpers.dart';
 import 'package:nyxx/src/utils/flags.dart';
 import 'package:nyxx/src/utils/parsing_helpers.dart';
 
@@ -444,7 +445,7 @@ class ChannelManager extends ReadOnlyManager<Channel> {
     final response = await client.httpHandler.executeSafe(request);
     final channel = parse(response.jsonBody as Map<String, Object?>);
 
-    cache[channel.id] = channel;
+    client.updateCacheWith(channel);
     return channel;
   }
 
@@ -461,7 +462,7 @@ class ChannelManager extends ReadOnlyManager<Channel> {
     final response = await client.httpHandler.executeSafe(request);
     final channel = parse(response.jsonBody as Map<String, Object?>);
 
-    cache[channel.id] = channel;
+    client.updateCacheWith(channel);
     return channel;
   }
 
@@ -556,7 +557,7 @@ class ChannelManager extends ReadOnlyManager<Channel> {
     final response = await client.httpHandler.executeSafe(request);
     final thread = parse(response.jsonBody as Map<String, Object?>) as Thread;
 
-    cache[thread.id] = thread;
+    client.updateCacheWith(thread);
     return thread;
   }
 
@@ -570,7 +571,7 @@ class ChannelManager extends ReadOnlyManager<Channel> {
     final response = await client.httpHandler.executeSafe(request);
     final thread = parse(response.jsonBody as Map<String, Object?>) as Thread;
 
-    cache[thread.id] = thread;
+    client.updateCacheWith(thread);
     return thread;
   }
 
@@ -609,7 +610,7 @@ class ChannelManager extends ReadOnlyManager<Channel> {
     final response = await client.httpHandler.executeSafe(request);
     final thread = parse(response.jsonBody as Map<String, Object?>) as Thread;
 
-    cache[thread.id] = thread;
+    client.updateCacheWith(thread);
     return thread;
   }
 
@@ -758,7 +759,7 @@ class ChannelManager extends ReadOnlyManager<Channel> {
     final response = await client.httpHandler.executeSafe(request);
     final stageInstance = parseStageInstance(response.jsonBody as Map<String, Object?>);
 
-    stageInstanceCache[stageInstance.channelId] = stageInstance;
+    client.updateCacheWith(stageInstance);
     return stageInstance;
   }
 
@@ -770,7 +771,7 @@ class ChannelManager extends ReadOnlyManager<Channel> {
     final response = await client.httpHandler.executeSafe(request);
     final stageInstance = parseStageInstance(response.jsonBody as Map<String, Object?>);
 
-    stageInstanceCache[stageInstance.channelId] = stageInstance;
+    client.updateCacheWith(stageInstance);
     return stageInstance;
   }
 
@@ -787,7 +788,7 @@ class ChannelManager extends ReadOnlyManager<Channel> {
     final response = await client.httpHandler.executeSafe(request);
     final stageInstance = parseStageInstance(response.jsonBody as Map<String, Object?>);
 
-    stageInstanceCache[stageInstance.channelId] = stageInstance;
+    client.updateCacheWith(stageInstance);
     return stageInstance;
   }
 

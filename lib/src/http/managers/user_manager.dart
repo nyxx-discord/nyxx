@@ -17,6 +17,7 @@ import 'package:nyxx/src/models/snowflake.dart';
 import 'package:nyxx/src/models/user/application_role_connection.dart';
 import 'package:nyxx/src/models/user/connection.dart';
 import 'package:nyxx/src/models/user/user.dart';
+import 'package:nyxx/src/utils/cache_helpers.dart';
 import 'package:nyxx/src/utils/parsing_helpers.dart';
 
 /// A manager for [User]s.
@@ -93,7 +94,7 @@ class UserManager extends ReadOnlyManager<User> {
     final response = await client.httpHandler.executeSafe(request);
     final user = parse(response.jsonBody as Map<String, Object?>);
 
-    cache[user.id] = user;
+    client.updateCacheWith(user);
     return user;
   }
 
@@ -105,7 +106,7 @@ class UserManager extends ReadOnlyManager<User> {
     final response = await client.httpHandler.executeSafe(request);
     final user = parse(response.jsonBody as Map<String, Object?>);
 
-    cache[user.id] = user;
+    client.updateCacheWith(user);
     return user;
   }
 
@@ -121,7 +122,7 @@ class UserManager extends ReadOnlyManager<User> {
     final response = await client.httpHandler.executeSafe(request);
     final user = parse(response.jsonBody as Map<String, Object?>);
 
-    cache[user.id] = user;
+    client.updateCacheWith(user);
     return user;
   }
 
@@ -176,7 +177,7 @@ class UserManager extends ReadOnlyManager<User> {
     final response = await client.httpHandler.executeSafe(request);
     final channel = client.channels.parse(response.jsonBody as Map<String, Object?>) as DmChannel;
 
-    client.channels.cache[channel.id] = channel;
+    client.updateCacheWith(channel);
     return channel;
   }
 
@@ -199,7 +200,7 @@ class UserManager extends ReadOnlyManager<User> {
     final response = await client.httpHandler.executeSafe(request);
     final channel = client.channels.parse(response.jsonBody as Map<String, Object?>) as GroupDmChannel;
 
-    client.channels.cache[channel.id] = channel;
+    client.updateCacheWith(channel);
     return channel;
   }
 

@@ -1,7 +1,6 @@
 import 'dart:convert';
 
 import 'package:nyxx/src/builders/guild/member.dart';
-import 'package:nyxx/src/cache/cache.dart';
 import 'package:nyxx/src/errors.dart';
 import 'package:nyxx/src/http/managers/manager.dart';
 import 'package:nyxx/src/http/request.dart';
@@ -9,6 +8,7 @@ import 'package:nyxx/src/http/route.dart';
 import 'package:nyxx/src/models/guild/member.dart';
 import 'package:nyxx/src/models/permissions.dart';
 import 'package:nyxx/src/models/snowflake.dart';
+import 'package:nyxx/src/utils/cache_helpers.dart';
 import 'package:nyxx/src/utils/parsing_helpers.dart';
 
 /// A manager for [Member]s.
@@ -51,7 +51,7 @@ class MemberManager extends Manager<Member> {
     final response = await client.httpHandler.executeSafe(request);
     final member = parse(response.jsonBody as Map<String, Object?>);
 
-    cache[member.id] = member;
+    client.updateCacheWith(member);
     return member;
   }
 
@@ -68,7 +68,7 @@ class MemberManager extends Manager<Member> {
     final response = await client.httpHandler.executeSafe(request);
     final members = parseMany(response.jsonBody as List, parse);
 
-    cache.addEntities(members);
+    members.forEach(client.updateCacheWith);
     return members;
   }
 
@@ -86,7 +86,7 @@ class MemberManager extends Manager<Member> {
 
     final member = parse(response.jsonBody as Map<String, Object?>);
 
-    cache[member.id] = member;
+    client.updateCacheWith(member);
     return member;
   }
 
@@ -100,7 +100,7 @@ class MemberManager extends Manager<Member> {
     final response = await client.httpHandler.executeSafe(request);
     final member = parse(response.jsonBody as Map<String, Object?>);
 
-    cache[member.id] = member;
+    client.updateCacheWith(member);
     return member;
   }
 
@@ -137,7 +137,7 @@ class MemberManager extends Manager<Member> {
     final response = await client.httpHandler.executeSafe(request);
     final member = parse(response.jsonBody as Map<String, Object?>);
 
-    cache[member.id] = member;
+    client.updateCacheWith(member);
     return member;
   }
 
