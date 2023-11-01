@@ -1,5 +1,5 @@
 name: nyxx
-version: 6.0.0
+version: 6.0.1
 description: A complete, robust and efficient wrapper around Discord's API for bots & applications.
 homepage: https://github.com/nyxx-discord/nyxx
 repository: https://github.com/nyxx-discord/nyxx

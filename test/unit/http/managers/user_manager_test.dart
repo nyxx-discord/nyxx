@@ -1,6 +1,8 @@
+import 'package:mocktail/mocktail.dart';
 import 'package:nyxx/nyxx.dart';
 import 'package:test/test.dart';
 
+import '../../../mocks/client.dart';
 import '../../../test_manager.dart';
 import 'channel_manager_test.dart';
 import 'member_manager_test.dart';
@@ -116,10 +118,15 @@ void main() {
       ),
       EndpointTest<UserManager, Member, Map<String, Object?>>(
         name: 'fetchCurrentUserMember',
-        source: sampleMember,
+        source: sampleMemberNoUser,
         urlMatcher: '/users/@me/guilds/0/member',
         execute: (manager) => manager.fetchCurrentUserMember(Snowflake.zero),
-        check: checkMember,
+        check: (member) {
+          final client = MockNyxx();
+          when(() => client.options).thenReturn(RestClientOptions());
+
+          checkMemberNoUser(member, expectedUserId: client.user.id);
+        },
       ),
       EndpointTest<UserManager, void, void>(
         name: 'leaveGuild',

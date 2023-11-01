@@ -25,6 +25,7 @@ class VoiceState with ToStringHelper {
   /// The ID of the user this state is for.
   final Snowflake userId;
 
+  /// The member this voice state is for.
   final Member? member;
 
   /// This state's session ID.
@@ -79,6 +80,7 @@ class VoiceState with ToStringHelper {
   bool get isMuted => isServerMuted || isSelfMuted;
 
   /// The key this voice state will have in the [NyxxRest.voice] cache.
+  @Deprecated('Use PartialGuild.voiceStates instead')
   Snowflake get cacheKey => Snowflake(Object.hash(guildId, userId));
 
   /// The guild this voice state is in.

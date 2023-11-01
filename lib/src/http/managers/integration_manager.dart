@@ -1,10 +1,10 @@
-import 'package:nyxx/src/cache/cache.dart';
 import 'package:nyxx/src/errors.dart';
 import 'package:nyxx/src/http/managers/manager.dart';
 import 'package:nyxx/src/http/request.dart';
 import 'package:nyxx/src/http/route.dart';
 import 'package:nyxx/src/models/guild/integration.dart';
 import 'package:nyxx/src/models/snowflake.dart';
+import 'package:nyxx/src/utils/cache_helpers.dart';
 import 'package:nyxx/src/utils/parsing_helpers.dart';
 
 /// A [Manager] for [Integration]s.
@@ -80,7 +80,7 @@ class IntegrationManager extends ReadOnlyManager<Integration> {
     final response = await client.httpHandler.executeSafe(request);
     final integrations = parseMany(response.jsonBody as List, parse);
 
-    cache.addEntities(integrations);
+    integrations.forEach(client.updateCacheWith);
     return integrations;
   }
 

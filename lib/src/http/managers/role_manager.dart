@@ -1,7 +1,6 @@
 import 'dart:convert';
 
 import 'package:nyxx/src/builders/role.dart';
-import 'package:nyxx/src/cache/cache.dart';
 import 'package:nyxx/src/errors.dart';
 import 'package:nyxx/src/http/managers/manager.dart';
 import 'package:nyxx/src/http/request.dart';
@@ -10,6 +9,7 @@ import 'package:nyxx/src/models/discord_color.dart';
 import 'package:nyxx/src/models/permissions.dart';
 import 'package:nyxx/src/models/role.dart';
 import 'package:nyxx/src/models/snowflake.dart';
+import 'package:nyxx/src/utils/cache_helpers.dart';
 import 'package:nyxx/src/utils/parsing_helpers.dart';
 
 /// A manager for [Role]s.
@@ -60,7 +60,7 @@ class RoleManager extends Manager<Role> {
     final response = await client.httpHandler.executeSafe(request);
     final roles = parseMany(response.jsonBody as List, parse);
 
-    cache.addEntities(roles);
+    roles.forEach(client.updateCacheWith);
     return roles;
   }
 
@@ -86,7 +86,7 @@ class RoleManager extends Manager<Role> {
     final response = await client.httpHandler.executeSafe(request);
     final role = parse(response.jsonBody as Map<String, Object?>);
 
-    cache[role.id] = role;
+    client.updateCacheWith(role);
     return role;
   }
 
@@ -100,7 +100,7 @@ class RoleManager extends Manager<Role> {
     final response = await client.httpHandler.executeSafe(request);
     final role = parse(response.jsonBody as Map<String, Object?>);
 
-    cache[role.id] = role;
+    client.updateCacheWith(role);
     return role;
   }
 
@@ -130,7 +130,7 @@ class RoleManager extends Manager<Role> {
     final response = await client.httpHandler.executeSafe(request);
     final roles = parseMany(response.jsonBody as List, parse);
 
-    cache.addEntities(roles);
+    roles.forEach(client.updateCacheWith);
     return roles;
   }
 }

@@ -13,21 +13,24 @@ class VoiceManager {
   final NyxxRest client;
 
   /// The cache for voice states.
+  @Deprecated('Use PartialGuild.voiceStates instead')
   final Cache<VoiceState> cache;
 
   /// Create a new [VoiceManager].
+  // ignore: deprecated_member_use_from_same_package
   VoiceManager(this.client) : cache = Cache(client, 'voiceStates', client.options.voiceStateConfig);
 
   /// Parse a [VoiceState] from a [Map].
-  VoiceState parseVoiceState(Map<String, Object?> raw) {
-    final guildId = maybeParse(raw['guild_id'], Snowflake.parse);
+  VoiceState parseVoiceState(Map<String, Object?> raw, {Snowflake? guildId}) {
+    guildId ??= maybeParse(raw['guild_id'], Snowflake.parse);
+    final userId = Snowflake.parse(raw['user_id']!);
 
     return VoiceState(
       manager: this,
       guildId: guildId,
       channelId: maybeParse(raw['channel_id'], Snowflake.parse),
-      userId: Snowflake.parse(raw['user_id']!),
-      member: maybeParse(raw['member'], client.guilds[guildId ?? Snowflake.zero].members.parse),
+      userId: userId,
+      member: maybeParse(raw['member'], (Map<String, Object?> raw) => client.guilds[guildId ?? Snowflake.zero].members.parse(raw, userId: userId)),
       sessionId: raw['session_id'] as String,
       isServerDeafened: raw['deaf'] as bool,
       isServerMuted: raw['mute'] as bool,

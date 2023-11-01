@@ -295,7 +295,7 @@ class MessageComponentInteraction extends Interaction<MessageComponentInteractio
       if (updateMessage == true) {
         await manager.createResponse(id, token, InteractionResponseBuilder.updateMessage(builder as MessageUpdateBuilder));
       } else {
-        await manager.createResponse(id, token, InteractionResponseBuilder.channelMessage(builder as MessageBuilder));
+        await manager.createResponse(id, token, InteractionResponseBuilder.channelMessage(builder as MessageBuilder, isEphemeral: isEphemeral));
       }
     } else {
       assert(updateMessage == _didUpdateMessage || updateMessage == null, 'Cannot change the value of updateMessage between acknowledge and respond');
@@ -310,7 +310,7 @@ class MessageComponentInteraction extends Interaction<MessageComponentInteractio
       if (updateMessage == true) {
         await manager.updateOriginalResponse(token, builder as MessageUpdateBuilder);
       } else {
-        await manager.createFollowup(token, builder as MessageBuilder);
+        await manager.createFollowup(token, builder as MessageBuilder, isEphemeral: isEphemeral);
       }
     }
   }
@@ -416,7 +416,7 @@ class ApplicationCommandInteractionData with ToStringHelper {
   /// A list of provided options.
   final List<InteractionOption>? options;
 
-  /// The ID of the guild the command was invoked in.
+  /// The ID of the guild the command was registered in, or `null` if it was a global command.
   final Snowflake? guildId;
 
   /// The ID of the entity the command was invoked on.

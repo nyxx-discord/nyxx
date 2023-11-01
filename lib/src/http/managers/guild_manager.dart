@@ -9,7 +9,6 @@ import 'package:nyxx/src/builders/guild/welcome_screen.dart';
 import 'package:nyxx/src/builders/guild/widget.dart';
 import 'package:nyxx/src/builders/image.dart';
 import 'package:nyxx/src/builders/voice.dart';
-import 'package:nyxx/src/cache/cache.dart';
 import 'package:nyxx/src/http/managers/manager.dart';
 import 'package:nyxx/src/http/request.dart';
 import 'package:nyxx/src/http/route.dart';
@@ -30,6 +29,7 @@ import 'package:nyxx/src/models/permissions.dart';
 import 'package:nyxx/src/models/snowflake.dart';
 import 'package:nyxx/src/models/user/user.dart';
 import 'package:nyxx/src/models/voice/voice_region.dart';
+import 'package:nyxx/src/utils/cache_helpers.dart';
 import 'package:nyxx/src/utils/flags.dart';
 import 'package:nyxx/src/utils/parsing_helpers.dart';
 
@@ -125,7 +125,7 @@ class GuildManager extends Manager<Guild> {
     for (final entry in _nameToGuildFeature.entries) entry.value: entry.key,
   };
 
-  /// Parse an [GuildFeatures] from [raw]./// Parse [GuildFeatures] from [raw].
+  /// Parse an [GuildFeatures] from [raw].
   GuildFeatures parseGuildFeatures(List<Object?> raw) {
     final featureFlags = parseMany(raw, parseGuildFeature);
 
@@ -255,7 +255,7 @@ class GuildManager extends Manager<Guild> {
 
     // Discord passes an "empty" emoji object when unset instead of null
     if (rawEmoji['id'] != null || rawEmoji['name'] != null) {
-      emoji = this[guildId ?? Snowflake.zero].emojis.parse(raw['emoji'] as Map<String, Object?>);
+      emoji = client.guilds[guildId ?? Snowflake.zero].emojis.parse(raw['emoji'] as Map<String, Object?>);
     }
 
     return OnboardingPromptOption(
@@ -314,7 +314,7 @@ class GuildManager extends Manager<Guild> {
     final response = await client.httpHandler.executeSafe(request);
     final guild = parse(response.jsonBody as Map<String, Object?>);
 
-    cache[guild.id] = guild;
+    client.updateCacheWith(guild);
     return guild;
   }
 
@@ -326,7 +326,7 @@ class GuildManager extends Manager<Guild> {
     final response = await client.httpHandler.executeSafe(request);
     final guild = parse(response.jsonBody as Map<String, Object?>);
 
-    cache[guild.id] = guild;
+    client.updateCacheWith(guild);
     return guild;
   }
 
@@ -338,7 +338,7 @@ class GuildManager extends Manager<Guild> {
     final response = await client.httpHandler.executeSafe(request);
     final guild = parse(response.jsonBody as Map<String, Object?>);
 
-    cache[guild.id] = guild;
+    client.updateCacheWith(guild);
     return guild;
   }
 
@@ -359,7 +359,10 @@ class GuildManager extends Manager<Guild> {
     final request = BasicRequest(route);
 
     final response = await client.httpHandler.executeSafe(request);
-    return parseGuildPreview(response.jsonBody as Map<String, Object?>);
+    final preview = parseGuildPreview(response.jsonBody as Map<String, Object?>);
+
+    client.updateCacheWith(preview);
+    return preview;
   }
 
   /// Fetch the channels in a guild.
@@ -372,7 +375,7 @@ class GuildManager extends Manager<Guild> {
     final response = await client.httpHandler.executeSafe(request);
     final channels = parseMany(response.jsonBody as List, client.channels.parse).cast<GuildChannel>();
 
-    client.channels.cache.addEntities(channels);
+    channels.forEach(client.updateCacheWith);
     return channels;
   }
 
@@ -386,7 +389,7 @@ class GuildManager extends Manager<Guild> {
     final response = await client.httpHandler.executeSafe(request);
     final channel = client.channels.parse(response.jsonBody as Map<String, Object?>) as T;
 
-    client.channels.cache[channel.id] = channel;
+    client.updateCacheWith(channel);
     return channel;
   }
 
@@ -409,9 +412,9 @@ class GuildManager extends Manager<Guild> {
     final request = BasicRequest(route);
 
     final response = await client.httpHandler.executeSafe(request);
-    final list = client.channels.parseThreadList(response.jsonBody as Map<String, Object?>);
+    final list = client.channels.parseThreadList(response.jsonBody as Map<String, Object?>, guildId: id);
 
-    client.channels.cache.addEntities(list.threads);
+    client.updateCacheWith(list);
     return list;
   }
 
@@ -423,7 +426,10 @@ class GuildManager extends Manager<Guild> {
     final request = BasicRequest(route);
 
     final response = await client.httpHandler.executeSafe(request);
-    return parseMany(response.jsonBody as List, parseBan);
+    final bans = parseMany(response.jsonBody as List, parseBan);
+
+    bans.forEach(client.updateCacheWith);
+    return bans;
   }
 
   /// Fetch a ban in a guild.
@@ -434,7 +440,10 @@ class GuildManager extends Manager<Guild> {
     final request = BasicRequest(route);
 
     final response = await client.httpHandler.executeSafe(request);
-    return parseBan(response.jsonBody as Map<String, Object?>);
+    final ban = parseBan(response.jsonBody as Map<String, Object?>);
+
+    client.updateCacheWith(ban);
+    return ban;
   }
 
   /// Create a ban in a guild.
@@ -539,7 +548,10 @@ class GuildManager extends Manager<Guild> {
     final request = BasicRequest(route);
 
     final response = await client.httpHandler.executeSafe(request);
-    return parseMany(response.jsonBody as List, client.invites.parse);
+    final invites = parseMany(response.jsonBody as List, client.invites.parse);
+
+    invites.forEach(client.updateCacheWith);
+    return invites;
   }
 
   /// Fetch a guild's widget settings.
@@ -662,7 +674,10 @@ class GuildManager extends Manager<Guild> {
     final request = BasicRequest(route);
 
     final response = await client.httpHandler.executeSafe(request);
-    return parseGuildTemplate(response.jsonBody as Map<String, Object?>);
+    final template = parseGuildTemplate(response.jsonBody as Map<String, Object?>);
+
+    client.updateCacheWith(template);
+    return template;
   }
 
   /// Create a guild from a guild template.
@@ -675,7 +690,7 @@ class GuildManager extends Manager<Guild> {
     final response = await client.httpHandler.executeSafe(request);
     final guild = parse(response.jsonBody as Map<String, Object?>);
 
-    cache[guild.id] = guild;
+    client.updateCacheWith(guild);
     return guild;
   }
 
@@ -687,7 +702,10 @@ class GuildManager extends Manager<Guild> {
     final request = BasicRequest(route);
 
     final response = await client.httpHandler.executeSafe(request);
-    return parseMany(response.jsonBody as List<Object?>, parseGuildTemplate);
+    final templates = parseMany(response.jsonBody as List<Object?>, parseGuildTemplate);
+
+    templates.forEach(client.updateCacheWith);
+    return templates;
   }
 
   /// Create a guild template from a guild.
@@ -698,7 +716,10 @@ class GuildManager extends Manager<Guild> {
     final request = BasicRequest(route, method: 'POST', body: jsonEncode(builder.build()));
 
     final response = await client.httpHandler.executeSafe(request);
-    return parseGuildTemplate(response.jsonBody as Map<String, Object?>);
+    final template = parseGuildTemplate(response.jsonBody as Map<String, Object?>);
+
+    client.updateCacheWith(template);
+    return template;
   }
 
   /// Sync a guild template to the source guild.
@@ -709,7 +730,10 @@ class GuildManager extends Manager<Guild> {
     final request = BasicRequest(route, method: 'PUT');
 
     final response = await client.httpHandler.executeSafe(request);
-    return parseGuildTemplate(response.jsonBody as Map<String, Object?>);
+    final template = parseGuildTemplate(response.jsonBody as Map<String, Object?>);
+
+    client.updateCacheWith(template);
+    return template;
   }
 
   /// Update a guild template.
@@ -720,7 +744,10 @@ class GuildManager extends Manager<Guild> {
     final request = BasicRequest(route, method: 'PATCH', body: jsonEncode(builder.build()));
 
     final response = await client.httpHandler.executeSafe(request);
-    return parseGuildTemplate(response.jsonBody as Map<String, Object?>);
+    final template = parseGuildTemplate(response.jsonBody as Map<String, Object?>);
+
+    client.updateCacheWith(template);
+    return template;
   }
 
   /// Delete a guild template.
@@ -731,6 +758,10 @@ class GuildManager extends Manager<Guild> {
     final request = BasicRequest(route, method: 'DELETE');
 
     final response = await client.httpHandler.executeSafe(request);
-    return parseGuildTemplate(response.jsonBody as Map<String, Object?>);
+    final template = parseGuildTemplate(response.jsonBody as Map<String, Object?>);
+
+    // Templates aren't cached, so we don't need to remove it from any cache, but it still contains a nested user object we can cache.
+    client.updateCacheWith(template);
+    return template;
   }
 }

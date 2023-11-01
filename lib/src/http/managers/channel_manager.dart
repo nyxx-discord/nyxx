@@ -1,7 +1,6 @@
 import 'dart:convert';
 
 import 'package:http/http.dart' show MultipartFile;
-import 'package:nyxx/nyxx.dart';
 import 'package:nyxx/src/builders/builder.dart';
 import 'package:nyxx/src/builders/channel/stage_instance.dart';
 import 'package:nyxx/src/builders/channel/thread.dart';
@@ -24,6 +23,7 @@ import 'package:nyxx/src/models/channel/types/forum.dart';
 import 'package:nyxx/src/models/channel/types/group_dm.dart';
 import 'package:nyxx/src/models/channel/types/guild_announcement.dart';
 import 'package:nyxx/src/models/channel/types/guild_category.dart';
+import 'package:nyxx/src/models/channel/types/guild_media.dart';
 import 'package:nyxx/src/models/channel/types/guild_stage.dart';
 import 'package:nyxx/src/models/channel/types/guild_text.dart';
 import 'package:nyxx/src/models/channel/types/guild_voice.dart';
@@ -35,6 +35,7 @@ import 'package:nyxx/src/models/invite/invite_metadata.dart';
 import 'package:nyxx/src/models/permission_overwrite.dart';
 import 'package:nyxx/src/models/permissions.dart';
 import 'package:nyxx/src/models/snowflake.dart';
+import 'package:nyxx/src/utils/cache_helpers.dart';
 import 'package:nyxx/src/utils/flags.dart';
 import 'package:nyxx/src/utils/parsing_helpers.dart';
 
@@ -405,21 +406,23 @@ class ChannelManager extends ReadOnlyManager<Channel> {
     );
   }
 
-  ThreadMember parseThreadMember(Map<String, Object?> raw) {
+  ThreadMember parseThreadMember(Map<String, Object?> raw, {Snowflake? guildId}) {
+    final userId = Snowflake.parse(raw['user_id']!);
+
     return ThreadMember(
       manager: this,
       joinTimestamp: DateTime.parse(raw['join_timestamp'] as String),
       flags: Flags<Never>(raw['flags'] as int),
       threadId: Snowflake.parse(raw['id']!),
-      userId: Snowflake.parse(raw['user_id']!),
-      member: maybeParse(raw['member'], client.guilds[Snowflake.zero].members.parse),
+      userId: userId,
+      member: maybeParse(raw['member'], (Map<String, Object?> raw) => client.guilds[guildId ?? Snowflake.zero].members.parse(raw, userId: userId)),
     );
   }
 
-  ThreadList parseThreadList(Map<String, Object?> raw) {
+  ThreadList parseThreadList(Map<String, Object?> raw, {Snowflake? guildId}) {
     return ThreadList(
       threads: parseMany(raw['threads'] as List, parse).cast<Thread>(),
-      members: parseMany(raw['members'] as List, parseThreadMember),
+      members: parseMany(raw['members'] as List, (Map<String, Object?> raw) => parseThreadMember(raw, guildId: guildId)),
       hasMore: raw['has_more'] as bool? ?? false,
     );
   }
@@ -444,7 +447,7 @@ class ChannelManager extends ReadOnlyManager<Channel> {
     final response = await client.httpHandler.executeSafe(request);
     final channel = parse(response.jsonBody as Map<String, Object?>);
 
-    cache[channel.id] = channel;
+    client.updateCacheWith(channel);
     return channel;
   }
 
@@ -461,7 +464,7 @@ class ChannelManager extends ReadOnlyManager<Channel> {
     final response = await client.httpHandler.executeSafe(request);
     final channel = parse(response.jsonBody as Map<String, Object?>);
 
-    cache[channel.id] = channel;
+    client.updateCacheWith(channel);
     return channel;
   }
 
@@ -509,7 +512,10 @@ class ChannelManager extends ReadOnlyManager<Channel> {
     final request = BasicRequest(route);
 
     final response = await client.httpHandler.executeSafe(request);
-    return parseMany(response.jsonBody as List<Object?>, client.invites.parseWithMetadata);
+    final invites = parseMany(response.jsonBody as List<Object?>, client.invites.parseWithMetadata);
+
+    invites.forEach(client.updateCacheWith);
+    return invites;
   }
 
   /// Create an invite in a guild channel.
@@ -520,7 +526,10 @@ class ChannelManager extends ReadOnlyManager<Channel> {
     final request = BasicRequest(route, method: 'POST', auditLogReason: auditLogReason, body: jsonEncode(builder.build()));
 
     final response = await client.httpHandler.executeSafe(request);
-    return client.invites.parse(response.jsonBody as Map<String, Object?>);
+    final invite = client.invites.parse(response.jsonBody as Map<String, Object?>);
+
+    client.updateCacheWith(invite);
+    return invite;
   }
 
   /// Add a channel to another channel's followers.
@@ -556,7 +565,7 @@ class ChannelManager extends ReadOnlyManager<Channel> {
     final response = await client.httpHandler.executeSafe(request);
     final thread = parse(response.jsonBody as Map<String, Object?>) as Thread;
 
-    cache[thread.id] = thread;
+    client.updateCacheWith(thread);
     return thread;
   }
 
@@ -570,7 +579,7 @@ class ChannelManager extends ReadOnlyManager<Channel> {
     final response = await client.httpHandler.executeSafe(request);
     final thread = parse(response.jsonBody as Map<String, Object?>) as Thread;
 
-    cache[thread.id] = thread;
+    client.updateCacheWith(thread);
     return thread;
   }
 
@@ -609,7 +618,7 @@ class ChannelManager extends ReadOnlyManager<Channel> {
     final response = await client.httpHandler.executeSafe(request);
     final thread = parse(response.jsonBody as Map<String, Object?>) as Thread;
 
-    cache[thread.id] = thread;
+    client.updateCacheWith(thread);
     return thread;
   }
 
@@ -666,6 +675,8 @@ class ChannelManager extends ReadOnlyManager<Channel> {
     );
 
     final response = await client.httpHandler.executeSafe(request);
+    // TODO: Can we provide the guildId?
+    // Don't update the cache since the guildId for the member will be Snowflake.zero
     return parseThreadMember(response.jsonBody as Map<String, Object?>);
   }
 
@@ -684,6 +695,8 @@ class ChannelManager extends ReadOnlyManager<Channel> {
     );
 
     final response = await client.httpHandler.executeSafe(request);
+    // TODO: Can we provide the guildId?
+    // Don't update the cache since the guildId for the member will be Snowflake.zero
     return parseMany(response.jsonBody as List, parseThreadMember);
   }
 
@@ -703,7 +716,11 @@ class ChannelManager extends ReadOnlyManager<Channel> {
     );
 
     final response = await client.httpHandler.executeSafe(request);
-    return parseThreadList(response.jsonBody as Map<String, Object?>);
+    // TODO: Can we provide the guild ID?
+    final threadList = parseThreadList(response.jsonBody as Map<String, Object?>);
+
+    client.updateCacheWith(threadList);
+    return threadList;
   }
 
   /// List the private archived threads in a channel.
@@ -722,7 +739,11 @@ class ChannelManager extends ReadOnlyManager<Channel> {
     );
 
     final response = await client.httpHandler.executeSafe(request);
-    return parseThreadList(response.jsonBody as Map<String, Object?>);
+    // TODO: Can we provide the guild ID?
+    final threadList = parseThreadList(response.jsonBody as Map<String, Object?>);
+
+    client.updateCacheWith(threadList);
+    return threadList;
   }
 
   /// List the private archived threads the current user has joined in a channel.
@@ -742,7 +763,11 @@ class ChannelManager extends ReadOnlyManager<Channel> {
     );
 
     final response = await client.httpHandler.executeSafe(request);
-    return parseThreadList(response.jsonBody as Map<String, Object?>);
+    // TODO: Can we provide the guild ID?
+    final threadList = parseThreadList(response.jsonBody as Map<String, Object?>);
+
+    client.updateCacheWith(threadList);
+    return threadList;
   }
 
   /// Start a stage instance in a channel.
@@ -758,7 +783,7 @@ class ChannelManager extends ReadOnlyManager<Channel> {
     final response = await client.httpHandler.executeSafe(request);
     final stageInstance = parseStageInstance(response.jsonBody as Map<String, Object?>);
 
-    stageInstanceCache[stageInstance.channelId] = stageInstance;
+    client.updateCacheWith(stageInstance);
     return stageInstance;
   }
 
@@ -770,7 +795,7 @@ class ChannelManager extends ReadOnlyManager<Channel> {
     final response = await client.httpHandler.executeSafe(request);
     final stageInstance = parseStageInstance(response.jsonBody as Map<String, Object?>);
 
-    stageInstanceCache[stageInstance.channelId] = stageInstance;
+    client.updateCacheWith(stageInstance);
     return stageInstance;
   }
 
@@ -787,7 +812,7 @@ class ChannelManager extends ReadOnlyManager<Channel> {
     final response = await client.httpHandler.executeSafe(request);
     final stageInstance = parseStageInstance(response.jsonBody as Map<String, Object?>);
 
-    stageInstanceCache[stageInstance.channelId] = stageInstance;
+    client.updateCacheWith(stageInstance);
     return stageInstance;
   }
 
