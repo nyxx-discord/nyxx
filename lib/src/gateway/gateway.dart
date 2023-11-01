@@ -4,7 +4,6 @@ import 'package:logging/logging.dart';
 import 'package:nyxx/src/api_options.dart';
 import 'package:nyxx/src/builders/presence.dart';
 import 'package:nyxx/src/builders/voice.dart';
-import 'package:nyxx/src/cache/cache.dart';
 import 'package:nyxx/src/client.dart';
 import 'package:nyxx/src/errors.dart';
 import 'package:nyxx/src/gateway/event_parser.dart';
@@ -42,6 +41,7 @@ import 'package:nyxx/src/models/interaction.dart';
 import 'package:nyxx/src/models/presence.dart';
 import 'package:nyxx/src/models/snowflake.dart';
 import 'package:nyxx/src/models/user/user.dart';
+import 'package:nyxx/src/utils/cache_helpers.dart';
 import 'package:nyxx/src/utils/iterable_extension.dart';
 import 'package:nyxx/src/utils/parsing_helpers.dart';
 
@@ -113,91 +113,7 @@ class Gateway extends GatewayManager with EventParser {
     }
 
     // Handle all events which should update cache.
-    events.listen((event) => switch (event) {
-          ReadyEvent(:final user) => client.users.cache[user.id] = user,
-          ChannelCreateEvent(:final channel) || ChannelUpdateEvent(:final channel) => client.channels.cache[channel.id] = channel,
-          ChannelDeleteEvent(:final channel) => client.channels.cache.remove(channel.id),
-          ThreadCreateEvent(:final thread) || ThreadUpdateEvent(:final thread) => client.channels.cache[thread.id] = thread,
-          ThreadDeleteEvent(:final thread) => client.channels.cache.remove(thread.id),
-          ThreadListSyncEvent(:final threads) => client.channels.cache..addEntities(threads),
-          final GuildCreateEvent event => () {
-              client.guilds.cache[event.guild.id] = event.guild;
-
-              event.guild.members.cache.addEntities(event.members);
-              client.channels.cache.addEntities(event.channels);
-              client.channels.cache.addEntities(event.threads);
-              client.channels.stageInstanceCache.addEntities(event.stageInstances);
-              event.guild.scheduledEvents.cache.addEntities(event.scheduledEvents);
-              // ignore: deprecated_member_use_from_same_package
-              client.voice.cache.addEntries(event.voiceStates.map((e) => MapEntry(e.cacheKey, e)));
-              event.guild.voiceStates.addEntries(event.voiceStates.map((e) => MapEntry(e.userId, e)));
-            }(),
-          GuildUpdateEvent(:final guild) => client.guilds.cache[guild.id] = guild,
-          GuildDeleteEvent(:final guild, isUnavailable: false) => client.guilds.cache.remove(guild.id),
-          GuildMemberAddEvent(:final guildId, :final member) ||
-          GuildMemberUpdateEvent(:final guildId, :final member) =>
-            client.guilds[guildId].members.cache[member.id] = member,
-          GuildMemberRemoveEvent(:final guildId, :final user) => client.guilds[guildId].members.cache.remove(user.id),
-          GuildMembersChunkEvent(:final guildId, :final members) => client.guilds[guildId].members.cache..addEntities(members),
-          GuildRoleCreateEvent(:final guildId, :final role) ||
-          GuildRoleUpdateEvent(:final guildId, :final role) =>
-            client.guilds[guildId].roles.cache[role.id] = role,
-          GuildRoleDeleteEvent(:final guildId, :final roleId) => client.guilds[guildId].roles.cache.remove(roleId),
-          MessageCreateEvent(:final message) => (client.channels[message.channelId] as PartialTextChannel).messages.cache[message.id] = message,
-          MessageDeleteEvent(id: final messageId, :final channelId) =>
-            MessageManager(client.options.messageCacheConfig, client, channelId: channelId).cache.remove(messageId),
-          MessageBulkDeleteEvent(ids: final messageIds, :final channelId) =>
-            // ignore: avoid_function_literals_in_foreach_calls
-            messageIds..forEach((messageId) => MessageManager(client.options.messageCacheConfig, client, channelId: channelId).cache.remove(messageId)),
-          UserUpdateEvent(:final user) => client.users.cache[user.id] = user,
-          StageInstanceCreateEvent(:final instance) || StageInstanceUpdateEvent(:final instance) => client.channels.stageInstanceCache[instance.channelId] =
-              instance,
-          StageInstanceDeleteEvent(:final instance) => client.channels.stageInstanceCache.remove(instance.channelId),
-          GuildScheduledEventCreateEvent(:final event) ||
-          GuildScheduledEventUpdateEvent(:final event) =>
-            client.guilds[event.guildId].scheduledEvents.cache[event.id] = event,
-          GuildScheduledEventDeleteEvent(:final event) => client.guilds[event.guildId].scheduledEvents.cache.remove(event.id),
-          AutoModerationRuleCreateEvent(:final rule) ||
-          AutoModerationRuleUpdateEvent(:final rule) =>
-            client.guilds[rule.guildId].autoModerationRules.cache[rule.id] = rule,
-          AutoModerationRuleDeleteEvent(:final rule) => client.guilds[rule.guildId].autoModerationRules.cache.remove(rule.id),
-          IntegrationCreateEvent(:final guildId, :final integration) ||
-          IntegrationUpdateEvent(:final guildId, :final integration) =>
-            client.guilds[guildId].integrations.cache[integration.id] = integration,
-          IntegrationDeleteEvent(:final id, :final guildId) => client.guilds[guildId].integrations.cache.remove(id),
-          GuildAuditLogCreateEvent(:final entry, :final guildId) => client.guilds[guildId].auditLogs.cache[entry.id] = entry,
-          VoiceStateUpdateEvent(:final state) => () {
-              // ignore: deprecated_member_use_from_same_package
-              client.voice.cache[state.cacheKey] = state;
-              if (state.guildId case final guildId?) {
-                client.guilds[guildId].voiceStates[state.userId] = state;
-              }
-            }(),
-          GuildEmojisUpdateEvent(:final guildId, :final emojis) => client.guilds[guildId].emojis.cache
-            ..clear()
-            ..addEntities(emojis),
-          GuildStickersUpdateEvent(:final guildId, :final stickers) => client.guilds[guildId].stickers.cache.addEntities(stickers),
-          ApplicationCommandPermissionsUpdateEvent(:final permissions) => client.guilds[permissions.guildId].commands.permissionsCache[permissions.id] =
-              permissions,
-          InteractionCreateEvent(interaction: Interaction(:final guildId, data: ApplicationCommandInteractionData(resolved: final data?))) => () {
-              if (data.users != null) {
-                client.users.cache.addAll(data.users!);
-              }
-
-              if (data.members != null && guildId != null) {
-                client.guilds[guildId].members.cache.addAll(data.members!);
-              }
-
-              if (data.roles != null && guildId != null) {
-                client.guilds[guildId].roles.cache.addAll(data.roles!);
-              }
-            }(),
-          EntitlementCreateEvent(:final entitlement) ||
-          EntitlementUpdateEvent(:final entitlement) =>
-            client.applications[entitlement.applicationId].entitlements.cache[entitlement.id] = entitlement,
-          EntitlementDeleteEvent() => null, // TODO
-          _ => null,
-        });
+    events.listen(client.updateCacheWith);
   }
 
   /// Connect to the gateway using the provided [client] and [gatewayBot] configuration.
@@ -505,26 +421,31 @@ class Gateway extends GatewayManager with EventParser {
         raw['threads'] as List<Object?>,
         (Map<String, Object?> raw) => client.channels.parse(raw, guildId: guildId) as Thread,
       ),
-      members: parseMany(raw['members'] as List<Object?>, client.channels.parseThreadMember),
+      members: parseMany(raw['members'] as List<Object?>, (Map<String, Object?> raw) => client.channels.parseThreadMember(raw, guildId: guildId)),
     );
   }
 
   /// Parse a [ThreadMemberUpdateEvent] from [raw].
   ThreadMemberUpdateEvent parseThreadMemberUpdate(Map<String, Object?> raw) {
+    final guildId = Snowflake.parse(raw['guild_id']!);
+
     return ThreadMemberUpdateEvent(
       gateway: this,
-      member: client.channels.parseThreadMember(raw),
+      member: client.channels.parseThreadMember(raw, guildId: guildId),
+      guildId: guildId,
     );
   }
 
   /// Parse a [ThreadMembersUpdateEvent] from [raw].
   ThreadMembersUpdateEvent parseThreadMembersUpdate(Map<String, Object?> raw) {
+    final guildId = Snowflake.parse(raw['guild_id']!);
+
     return ThreadMembersUpdateEvent(
       gateway: this,
       id: Snowflake.parse(raw['id']!),
-      guildId: Snowflake.parse(raw['guild_id']!),
+      guildId: guildId,
       memberCount: raw['member_count'] as int,
-      addedMembers: maybeParseMany(raw['added_members'], client.channels.parseThreadMember),
+      addedMembers: maybeParseMany(raw['added_members'], (Map<String, Object?> raw) => client.channels.parseThreadMember(raw, guildId: guildId)),
       removedMemberIds: maybeParseMany(raw['removed_member_ids'], Snowflake.parse),
     );
   }
@@ -872,7 +793,7 @@ class Gateway extends GatewayManager with EventParser {
         raw['member'],
         (Map<String, Object?> _) => PartialMember(
           id: Snowflake.parse((raw['author'] as Map<String, Object?>)['id']!),
-          manager: client.guilds[guildId ?? Snowflake.zero].members,
+          manager: client.guilds[guildId!].members,
         ),
       ),
       mentions: maybeParseMany(raw['mentions'], client.users.parse),
@@ -904,16 +825,19 @@ class Gateway extends GatewayManager with EventParser {
   /// Parse a [MessageReactionAddEvent] from [raw].
   MessageReactionAddEvent parseMessageReactionAdd(Map<String, Object?> raw) {
     final guildId = maybeParse(raw['guild_id'], Snowflake.parse);
+    final userId = Snowflake.parse(raw['user_id']!);
 
     return MessageReactionAddEvent(
-        gateway: this,
-        userId: Snowflake.parse(raw['user_id']!),
-        channelId: Snowflake.parse(raw['channel_id']!),
-        messageId: Snowflake.parse(raw['message_id']!),
-        guildId: guildId,
-        member: maybeParse(raw['member'], client.guilds[guildId ?? Snowflake.zero].members.parse),
-        emoji: client.guilds[Snowflake.zero].emojis.parse(raw['emoji'] as Map<String, Object?>),
-        messageAuthorId: maybeParse(raw['message_author_id'], Snowflake.parse));
+      gateway: this,
+      userId: userId,
+      channelId: Snowflake.parse(raw['channel_id']!),
+      messageId: Snowflake.parse(raw['message_id']!),
+      guildId: guildId,
+      // Don't use a tearoff so we don't evaluate `guildId!` unless member is set.
+      member: maybeParse(raw['member'], (Map<String, Object?> raw) => client.guilds[guildId!].members.parse(raw, userId: userId)),
+      emoji: client.guilds[Snowflake.zero].emojis.parse(raw['emoji'] as Map<String, Object?>),
+      messageAuthorId: maybeParse(raw['message_author_id'], Snowflake.parse),
+    );
   }
 
   /// Parse a [MessageReactionRemoveEvent] from [raw].
@@ -969,14 +893,16 @@ class Gateway extends GatewayManager with EventParser {
   /// Parse a [TypingStartEvent] from [raw].
   TypingStartEvent parseTypingStart(Map<String, Object?> raw) {
     var guildId = maybeParse(raw['guild_id'], Snowflake.parse);
+    final userId = Snowflake.parse(raw['user_id']!);
 
     return TypingStartEvent(
       gateway: this,
       channelId: Snowflake.parse(raw['channel_id']!),
       guildId: guildId,
-      userId: Snowflake.parse(raw['user_id']!),
+      userId: userId,
       timestamp: DateTime.fromMillisecondsSinceEpoch((raw['timestamp'] as int) * Duration.millisecondsPerSecond),
-      member: maybeParse(raw['member'], client.guilds[guildId ?? Snowflake.zero].members.parse),
+      // Don't use a tearoff so we don't evaluate `guildId!` unless member is set.
+      member: maybeParse(raw['member'], (Map<String, Object?> raw) => client.guilds[guildId!].members.parse(raw, userId: userId)),
     );
   }
 
@@ -997,7 +923,8 @@ class Gateway extends GatewayManager with EventParser {
 
     return VoiceStateUpdateEvent(
       gateway: this,
-      oldState: client.guilds[voiceState.guildId ?? Snowflake.zero].voiceStates[voiceState.userId],
+      // guildId should never be null in VOICE_STATE_UPDATE.
+      oldState: client.guilds[voiceState.guildId!].voiceStates[voiceState.userId],
       state: voiceState,
     );
   }

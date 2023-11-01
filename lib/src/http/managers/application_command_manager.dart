@@ -12,6 +12,7 @@ import 'package:nyxx/src/models/commands/application_command_permissions.dart';
 import 'package:nyxx/src/models/locale.dart';
 import 'package:nyxx/src/models/permissions.dart';
 import 'package:nyxx/src/models/snowflake.dart';
+import 'package:nyxx/src/utils/cache_helpers.dart';
 import 'package:nyxx/src/utils/parsing_helpers.dart';
 
 /// A [Manager] for [ApplicationCommand]s.
@@ -114,7 +115,7 @@ abstract class ApplicationCommandManager extends Manager<ApplicationCommand> {
     final response = await client.httpHandler.executeSafe(request);
     final commands = parseMany(response.jsonBody as List, parse);
 
-    cache.addEntities(commands);
+    commands.forEach(client.updateCacheWith);
     return commands;
   }
 
@@ -129,7 +130,7 @@ abstract class ApplicationCommandManager extends Manager<ApplicationCommand> {
     final response = await client.httpHandler.executeSafe(request);
     final command = parse(response.jsonBody as Map<String, Object?>);
 
-    cache[command.id] = command;
+    client.updateCacheWith(command);
     return command;
   }
 
@@ -144,7 +145,7 @@ abstract class ApplicationCommandManager extends Manager<ApplicationCommand> {
     final response = await client.httpHandler.executeSafe(request);
     final command = parse(response.jsonBody as Map<String, Object?>);
 
-    cache[command.id] = command;
+    client.updateCacheWith(command);
     return command;
   }
 
@@ -159,7 +160,7 @@ abstract class ApplicationCommandManager extends Manager<ApplicationCommand> {
     final response = await client.httpHandler.executeSafe(request);
     final command = parse(response.jsonBody as Map<String, Object?>);
 
-    cache[command.id] = command;
+    client.updateCacheWith(command);
     return command;
   }
 
@@ -186,9 +187,8 @@ abstract class ApplicationCommandManager extends Manager<ApplicationCommand> {
     final response = await client.httpHandler.executeSafe(request);
     final commands = parseMany(response.jsonBody as List, parse);
 
-    cache
-      ..clear()
-      ..addEntities(commands);
+    cache.clear();
+    commands.forEach(client.updateCacheWith);
     return commands;
   }
 }
@@ -246,7 +246,7 @@ class GuildApplicationCommandManager extends ApplicationCommandManager {
     final response = await client.httpHandler.executeSafe(request);
     final permissions = parseMany(response.jsonBody as List, parseCommandPermissions);
 
-    permissionsCache.addEntities(permissions);
+    permissions.forEach(client.updateCacheWith);
     return permissions;
   }
 
@@ -262,7 +262,7 @@ class GuildApplicationCommandManager extends ApplicationCommandManager {
     final response = await client.httpHandler.executeSafe(request);
     final permissions = parseCommandPermissions(response.jsonBody as Map<String, Object?>);
 
-    permissionsCache[permissions.id] = permissions;
+    client.updateCacheWith(permissions);
     return permissions;
   }
 

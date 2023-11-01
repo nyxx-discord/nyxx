@@ -1,7 +1,6 @@
 import 'dart:convert';
 
 import 'package:nyxx/src/builders/guild/member.dart';
-import 'package:nyxx/src/cache/cache.dart';
 import 'package:nyxx/src/errors.dart';
 import 'package:nyxx/src/http/managers/manager.dart';
 import 'package:nyxx/src/http/request.dart';
@@ -9,6 +8,7 @@ import 'package:nyxx/src/http/route.dart';
 import 'package:nyxx/src/models/guild/member.dart';
 import 'package:nyxx/src/models/permissions.dart';
 import 'package:nyxx/src/models/snowflake.dart';
+import 'package:nyxx/src/utils/cache_helpers.dart';
 import 'package:nyxx/src/utils/parsing_helpers.dart';
 
 /// A manager for [Member]s.
@@ -24,7 +24,7 @@ class MemberManager extends Manager<Member> {
   @override
   Member parse(Map<String, Object?> raw, {Snowflake? userId}) {
     return Member(
-      id: userId ?? Snowflake.parse((raw['user'] as Map<String, Object?>)['id']!),
+      id: maybeParse((raw['user'] as Map<String, Object?>?)?['id'], Snowflake.parse) ?? userId ?? Snowflake.zero,
       manager: this,
       user: maybeParse(raw['user'], client.users.parse),
       nick: raw['nick'] as String?,
@@ -49,9 +49,9 @@ class MemberManager extends Manager<Member> {
     final request = BasicRequest(route);
 
     final response = await client.httpHandler.executeSafe(request);
-    final member = parse(response.jsonBody as Map<String, Object?>);
+    final member = parse(response.jsonBody as Map<String, Object?>, userId: id);
 
-    cache[member.id] = member;
+    client.updateCacheWith(member);
     return member;
   }
 
@@ -68,7 +68,7 @@ class MemberManager extends Manager<Member> {
     final response = await client.httpHandler.executeSafe(request);
     final members = parseMany(response.jsonBody as List, parse);
 
-    cache.addEntities(members);
+    members.forEach(client.updateCacheWith);
     return members;
   }
 
@@ -84,9 +84,9 @@ class MemberManager extends Manager<Member> {
       throw MemberAlreadyExistsException(guildId, builder.userId);
     }
 
-    final member = parse(response.jsonBody as Map<String, Object?>);
+    final member = parse(response.jsonBody as Map<String, Object?>, userId: builder.userId);
 
-    cache[member.id] = member;
+    client.updateCacheWith(member);
     return member;
   }
 
@@ -98,9 +98,9 @@ class MemberManager extends Manager<Member> {
     final request = BasicRequest(route, method: 'PATCH', auditLogReason: auditLogReason, body: jsonEncode(builder.build()));
 
     final response = await client.httpHandler.executeSafe(request);
-    final member = parse(response.jsonBody as Map<String, Object?>);
+    final member = parse(response.jsonBody as Map<String, Object?>, userId: id);
 
-    cache[member.id] = member;
+    client.updateCacheWith(member);
     return member;
   }
 
@@ -124,7 +124,10 @@ class MemberManager extends Manager<Member> {
     final request = BasicRequest(route, queryParameters: {'query': query, if (limit != null) 'limit': limit.toString()});
 
     final response = await client.httpHandler.executeSafe(request);
-    return parseMany(response.jsonBody as List, parse);
+    final members = parseMany(response.jsonBody as List, parse);
+
+    members.forEach(client.updateCacheWith);
+    return members;
   }
 
   /// Update the current member in the guild.
@@ -135,9 +138,9 @@ class MemberManager extends Manager<Member> {
     final request = BasicRequest(route, method: 'PATCH', body: jsonEncode(builder.build()));
 
     final response = await client.httpHandler.executeSafe(request);
-    final member = parse(response.jsonBody as Map<String, Object?>);
+    final member = parse(response.jsonBody as Map<String, Object?>, userId: client.user.id);
 
-    cache[member.id] = member;
+    client.updateCacheWith(member);
     return member;
   }
 

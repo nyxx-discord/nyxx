@@ -2,11 +2,11 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:nyxx/src/builders/emoji/emoji.dart';
-import 'package:nyxx/src/cache/cache.dart';
 import 'package:nyxx/src/http/request.dart';
 import 'package:nyxx/src/http/route.dart';
 import 'package:nyxx/src/models/emoji.dart';
 import 'package:nyxx/src/models/snowflake.dart';
+import 'package:nyxx/src/utils/cache_helpers.dart';
 import 'package:nyxx/src/utils/parsing_helpers.dart';
 
 import 'manager.dart';
@@ -69,7 +69,7 @@ class EmojiManager extends Manager<Emoji> {
     final response = await client.httpHandler.executeSafe(request);
     final emoji = parse(response.jsonBody as Map<String, Object?>) as GuildEmoji;
 
-    cache[emoji.id] = emoji;
+    client.updateCacheWith(emoji);
     return emoji;
   }
 
@@ -84,7 +84,7 @@ class EmojiManager extends Manager<Emoji> {
     final response = await client.httpHandler.executeSafe(request);
     final emojis = parseMany(response.jsonBody as List<Object?>, (Map<String, Object?> raw) => parse(raw) as GuildEmoji);
 
-    cache.addEntities(emojis);
+    emojis.forEach(client.updateCacheWith);
     return emojis;
   }
 
@@ -100,7 +100,7 @@ class EmojiManager extends Manager<Emoji> {
     final response = await client.httpHandler.executeSafe(request);
     final emoji = parse(response.jsonBody as Map<String, Object?>) as GuildEmoji;
 
-    cache[emoji.id] = emoji;
+    client.updateCacheWith(emoji);
     return emoji;
   }
 
@@ -116,7 +116,7 @@ class EmojiManager extends Manager<Emoji> {
     final response = await client.httpHandler.executeSafe(request);
     final emoji = parse(response.jsonBody as Map<String, Object?>) as GuildEmoji;
 
-    cache[emoji.id] = emoji;
+    client.updateCacheWith(emoji);
     return emoji;
   }
 

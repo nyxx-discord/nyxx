@@ -4,12 +4,12 @@ import 'package:http/http.dart' show MultipartFile;
 import 'package:nyxx/src/builders/emoji/reaction.dart';
 import 'package:nyxx/src/builders/message/message.dart';
 import 'package:nyxx/src/builders/sentinels.dart';
-import 'package:nyxx/src/cache/cache.dart';
 import 'package:nyxx/src/http/managers/manager.dart';
 import 'package:nyxx/src/http/request.dart';
 import 'package:nyxx/src/http/route.dart';
 import 'package:nyxx/src/models/application.dart';
 import 'package:nyxx/src/models/channel/channel.dart';
+import 'package:nyxx/src/models/channel/guild_channel.dart';
 import 'package:nyxx/src/models/channel/thread.dart';
 import 'package:nyxx/src/models/discord_color.dart';
 import 'package:nyxx/src/models/interaction.dart';
@@ -25,6 +25,7 @@ import 'package:nyxx/src/models/message/reference.dart';
 import 'package:nyxx/src/models/message/role_subscription_data.dart';
 import 'package:nyxx/src/models/snowflake.dart';
 import 'package:nyxx/src/models/user/user.dart';
+import 'package:nyxx/src/utils/cache_helpers.dart';
 import 'package:nyxx/src/utils/parsing_helpers.dart';
 
 /// A manager for [Message]s in a [TextChannel].
@@ -39,7 +40,11 @@ class MessageManager extends Manager<Message> {
   PartialMessage operator [](Snowflake id) => PartialMessage(id: id, manager: this);
 
   @override
-  Message parse(Map<String, Object?> raw) {
+  Message parse(Map<String, Object?> raw, {Snowflake? guildId}) {
+    if (client.channels.cache[channelId] case GuildChannel(guildId: final guildIdFromChannel)) {
+      guildId ??= guildIdFromChannel;
+    }
+
     final webhookId = maybeParse(raw['webhook_id'], Snowflake.parse);
 
     return Message(
@@ -81,7 +86,7 @@ class MessageManager extends Manager<Message> {
       position: raw['position'] as int?,
       roleSubscriptionData: maybeParse(raw['role_subscription_data'], parseRoleSubscriptionData),
       stickers: parseMany(raw['sticker_items'] as List? ?? [], client.stickers.parseStickerItem),
-      resolved: maybeParse(raw['resolved'], client.interactions.parseResolvedData),
+      resolved: maybeParse(raw['resolved'], (Map<String, Object?> raw) => client.interactions.parseResolvedData(raw, guildId: guildId, channelId: channelId)),
     );
   }
 
@@ -337,7 +342,7 @@ class MessageManager extends Manager<Message> {
     final response = await client.httpHandler.executeSafe(request);
     final message = parse(response.jsonBody as Map<String, Object?>);
 
-    cache[message.id] = message;
+    client.updateCacheWith(message);
     return message;
   }
 
@@ -351,7 +356,7 @@ class MessageManager extends Manager<Message> {
     final response = await client.httpHandler.executeSafe(request);
     final message = parse(response.jsonBody as Map<String, Object?>);
 
-    cache[message.id] = message;
+    client.updateCacheWith(message);
     return message;
   }
 
@@ -390,7 +395,7 @@ class MessageManager extends Manager<Message> {
     final response = await client.httpHandler.executeSafe(request);
     final message = parse(response.jsonBody as Map<String, Object?>);
 
-    cache[message.id] = message;
+    client.updateCacheWith(message);
     return message;
   }
 
@@ -424,7 +429,7 @@ class MessageManager extends Manager<Message> {
     final response = await client.httpHandler.executeSafe(request);
     final messages = parseMany(response.jsonBody as List, parse);
 
-    cache.addEntities(messages);
+    messages.forEach(client.updateCacheWith);
     return messages;
   }
 
@@ -439,7 +444,7 @@ class MessageManager extends Manager<Message> {
     final response = await client.httpHandler.executeSafe(request);
     final message = parse(response.jsonBody as Map<String, Object?>);
 
-    cache[message.id] = message;
+    client.updateCacheWith(message);
     return message;
   }
 
@@ -466,7 +471,7 @@ class MessageManager extends Manager<Message> {
     final response = await client.httpHandler.executeSafe(request);
     final messages = parseMany(response.jsonBody as List, parse);
 
-    cache.addEntities(messages);
+    messages.forEach(client.updateCacheWith);
     return messages;
   }
 
@@ -558,8 +563,10 @@ class MessageManager extends Manager<Message> {
     final request = BasicRequest(route);
 
     final response = await client.httpHandler.executeSafe(request);
+    final users = parseMany(response.jsonBody as List, client.users.parse);
 
-    return parseMany(response.jsonBody as List, client.users.parse);
+    users.forEach(client.updateCacheWith);
+    return users;
   }
 
   // TODO once oauth2 is implemented: Group DM control endpoints

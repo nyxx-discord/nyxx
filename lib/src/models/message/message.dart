@@ -87,7 +87,7 @@ class PartialMessage extends WritableSnowflakeEntity<Message> {
 class Message extends PartialMessage {
   /// The author of this message.
   ///
-  /// This could be a [User] or a [Webhook].
+  /// This could be a [User] or a [WebhookAuthor].
   final MessageAuthor author;
 
   /// The content of the message.

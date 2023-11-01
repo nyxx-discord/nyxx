@@ -81,13 +81,13 @@ void checkScheduledEvent2(ScheduledEvent event) {
 final sampleScheduledEventUser = {
   'guild_scheduled_event_id': '0',
   'user': sampleUser,
-  'member': sampleMember,
+  'member': sampleMemberNoUser,
 };
 
 void checkScheduledEventUser(ScheduledEventUser user) {
   expect(user.scheduledEventId, equals(Snowflake.zero));
   checkSampleUser(user.user);
-  checkMember(user.member!);
+  checkMemberNoUser(user.member!);
 }
 
 void main() {

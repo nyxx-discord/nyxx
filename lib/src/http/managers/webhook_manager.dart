@@ -5,7 +5,6 @@ import 'package:http/http.dart' hide MultipartRequest;
 import 'package:nyxx/src/builders/message/message.dart';
 import 'package:nyxx/src/builders/sentinels.dart';
 import 'package:nyxx/src/builders/webhook.dart';
-import 'package:nyxx/src/cache/cache.dart';
 import 'package:nyxx/src/http/managers/manager.dart';
 import 'package:nyxx/src/http/request.dart';
 import 'package:nyxx/src/http/route.dart';
@@ -15,6 +14,7 @@ import 'package:nyxx/src/models/guild/guild.dart';
 import 'package:nyxx/src/models/message/message.dart';
 import 'package:nyxx/src/models/snowflake.dart';
 import 'package:nyxx/src/models/webhook.dart';
+import 'package:nyxx/src/utils/cache_helpers.dart';
 import 'package:nyxx/src/utils/parsing_helpers.dart';
 
 /// A manager for [Webhook]s.
@@ -76,7 +76,7 @@ class WebhookManager extends Manager<Webhook> {
     final response = await client.httpHandler.executeSafe(request);
     final webhook = parse(response.jsonBody as Map<String, Object?>);
 
-    cache[webhook.id] = webhook;
+    client.updateCacheWith(webhook);
     return webhook;
   }
 
@@ -90,7 +90,7 @@ class WebhookManager extends Manager<Webhook> {
     final response = await client.httpHandler.executeSafe(request);
     final webhook = parse(response.jsonBody as Map<String, Object?>);
 
-    cache[webhook.id] = webhook;
+    client.updateCacheWith(webhook);
     return webhook;
   }
 
@@ -105,7 +105,7 @@ class WebhookManager extends Manager<Webhook> {
     final response = await client.httpHandler.executeSafe(request);
     final webhook = parse(response.jsonBody as Map<String, Object?>);
 
-    cache[webhook.id] = webhook;
+    client.updateCacheWith(webhook);
     return webhook;
   }
 
@@ -132,7 +132,7 @@ class WebhookManager extends Manager<Webhook> {
     final response = await client.httpHandler.executeSafe(request);
     final webhooks = parseMany(response.jsonBody as List, parse);
 
-    cache.addEntities(webhooks);
+    webhooks.forEach(client.updateCacheWith);
     return webhooks;
   }
 
@@ -146,7 +146,7 @@ class WebhookManager extends Manager<Webhook> {
     final response = await client.httpHandler.executeSafe(request);
     final webhooks = parseMany(response.jsonBody as List, parse);
 
-    cache.addEntities(webhooks);
+    webhooks.forEach(client.updateCacheWith);
     return webhooks;
   }
 
@@ -201,7 +201,7 @@ class WebhookManager extends Manager<Webhook> {
     final messageManager = (client.channels[channelId] as PartialTextChannel).messages;
     final message = messageManager.parse(response.jsonBody as Map<String, Object?>);
 
-    messageManager.cache[message.id] = message;
+    client.updateCacheWith(message);
     return message;
   }
 
@@ -222,7 +222,7 @@ class WebhookManager extends Manager<Webhook> {
     final messageManager = (client.channels[channelId] as PartialTextChannel).messages;
     final message = messageManager.parse(response.jsonBody as Map<String, Object?>);
 
-    messageManager.cache[message.id] = message;
+    client.updateCacheWith(message);
     return message;
   }
 
@@ -278,7 +278,7 @@ class WebhookManager extends Manager<Webhook> {
     final messageManager = (client.channels[channelId] as PartialTextChannel).messages;
     final message = messageManager.parse(response.jsonBody as Map<String, Object?>);
 
-    messageManager.cache[message.id] = message;
+    client.updateCacheWith(message);
     return message;
   }
 
