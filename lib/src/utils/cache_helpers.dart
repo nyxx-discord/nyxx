@@ -143,7 +143,7 @@ extension CacheUpdates on NyxxRest {
             entitlements.forEach(updateCacheWith);
 
             if (data case ApplicationCommandInteractionData(:final resolved) || MessageComponentInteractionData(:final resolved)) {
-                updateCacheWith(resolved);
+              updateCacheWith(resolved);
             }
           }(),
         Invite(:final inviter, :final targetUser, :final guildScheduledEvent) => () {
