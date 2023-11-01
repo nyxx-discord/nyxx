@@ -107,14 +107,13 @@ extension CacheUpdates on NyxxRest {
             updateCacheWith(entity.referencedMessage);
             updateCacheWith(entity.interaction);
             updateCacheWith(entity.thread);
-            entity.stickers.forEach(updateCacheWith);
             updateCacheWith(entity.resolved);
           }(),
         Role() => entity.manager.cache[entity.id] = entity,
-        ScheduledEvent(:final creator) => () {
+        ScheduledEvent() => () {
             entity.manager.cache[entity.id] = entity;
 
-            updateCacheWith(creator);
+            updateCacheWith(entity.creator);
           }(),
         GuildSticker() => entity.manager.cache[entity.id] = entity,
         Webhook() => () {
@@ -143,10 +142,7 @@ extension CacheUpdates on NyxxRest {
             updateCacheWith(message);
             entitlements.forEach(updateCacheWith);
 
-            switch (data) {
-              case ApplicationCommandInteractionData(:final resolved):
-                updateCacheWith(resolved);
-              case MessageComponentInteractionData(:final resolved):
+            if (data case ApplicationCommandInteractionData(:final resolved) || MessageComponentInteractionData(:final resolved)) {
                 updateCacheWith(resolved);
             }
           }(),
@@ -286,6 +282,7 @@ extension CacheUpdates on NyxxRest {
         EntitlementDeleteEvent() => null,
 
         // null and unhandled entity types
+        WebhookAuthor() => null,
         UnknownDispatchEvent() => null,
         null => null,
         _ => () {
