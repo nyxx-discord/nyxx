@@ -1,3 +1,17 @@
+## 6.0.1
+__01.10.2023__
+
+- bug: Fix incorrect serialization of CommandOptionBuilder.
+- bug: Fix customId missing from ButtonBuilder constructor.
+- bug: Fix voice states not being cached correctly.
+- bug: Fix incorrect parsing of scheduled events.
+- bug: Fix `ephemeral` parameter not working when responding to message component interactions.
+- bug: Fix parsing button labels when they are not set.
+- bug: Fix incorrect serialization of TextInputBuilder.
+- bug: Fix some entities not being cached.
+- bug: Fix entities getting "stuck" in cache due to momentary high use.
+- feat: Add more places entities can be cached from.
+
 ## 6.0.0
 __16.10.2023__
 
