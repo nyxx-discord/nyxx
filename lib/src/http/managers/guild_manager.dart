@@ -387,7 +387,7 @@ class GuildManager extends Manager<Guild> {
     final request = BasicRequest(route, method: 'POST', auditLogReason: auditLogReason, body: jsonEncode(builder.build()));
 
     final response = await client.httpHandler.executeSafe(request);
-    final channel = client.channels.parse(response.jsonBody as Map<String, Object?>, guildId: id) as T;
+    final channel = client.channels.parse(response.jsonBody as Map<String, Object?>) as T;
 
     client.updateCacheWith(channel);
     return channel;

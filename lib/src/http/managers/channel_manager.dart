@@ -512,10 +512,10 @@ class ChannelManager extends ReadOnlyManager<Channel> {
     final request = BasicRequest(route);
 
     final response = await client.httpHandler.executeSafe(request);
-    final invite = parseMany(response.jsonBody as List<Object?>, client.invites.parseWithMetadata);
+    final invites = parseMany(response.jsonBody as List<Object?>, client.invites.parseWithMetadata);
 
-    client.updateCacheWith(invite);
-    return invite;
+    invites.forEach(client.updateCacheWith);
+    return invites;
   }
 
   /// Create an invite in a guild channel.
