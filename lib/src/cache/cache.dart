@@ -95,7 +95,9 @@ class Cache<T> with MapMixin<Snowflake, T> {
 
     _store.update(
       (identifier: identifier, key: key),
-      (entry) => entry..value = value,
+      (entry) => entry
+        ..value = value
+        ..accessCount ~/= 2,
       ifAbsent: () => _CacheEntry(value),
     );
 
