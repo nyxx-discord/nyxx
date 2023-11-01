@@ -563,8 +563,10 @@ class MessageManager extends Manager<Message> {
     final request = BasicRequest(route);
 
     final response = await client.httpHandler.executeSafe(request);
+    final users = parseMany(response.jsonBody as List, client.users.parse);
 
-    return parseMany(response.jsonBody as List, client.users.parse);
+    users.forEach(client.updateCacheWith);
+    return users;
   }
 
   // TODO once oauth2 is implemented: Group DM control endpoints

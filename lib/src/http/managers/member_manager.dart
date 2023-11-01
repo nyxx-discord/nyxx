@@ -124,7 +124,10 @@ class MemberManager extends Manager<Member> {
     final request = BasicRequest(route, queryParameters: {'query': query, if (limit != null) 'limit': limit.toString()});
 
     final response = await client.httpHandler.executeSafe(request);
-    return parseMany(response.jsonBody as List, parse);
+    final members = parseMany(response.jsonBody as List, parse);
+
+    members.forEach(client.updateCacheWith);
+    return members;
   }
 
   /// Update the current member in the guild.

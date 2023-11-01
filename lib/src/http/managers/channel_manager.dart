@@ -512,7 +512,10 @@ class ChannelManager extends ReadOnlyManager<Channel> {
     final request = BasicRequest(route);
 
     final response = await client.httpHandler.executeSafe(request);
-    return parseMany(response.jsonBody as List<Object?>, client.invites.parseWithMetadata);
+    final invite = parseMany(response.jsonBody as List<Object?>, client.invites.parseWithMetadata);
+
+    client.updateCacheWith(invite);
+    return invite;
   }
 
   /// Create an invite in a guild channel.
@@ -523,7 +526,10 @@ class ChannelManager extends ReadOnlyManager<Channel> {
     final request = BasicRequest(route, method: 'POST', auditLogReason: auditLogReason, body: jsonEncode(builder.build()));
 
     final response = await client.httpHandler.executeSafe(request);
-    return client.invites.parse(response.jsonBody as Map<String, Object?>);
+    final invite = client.invites.parse(response.jsonBody as Map<String, Object?>);
+
+    client.updateCacheWith(invite);
+    return invite;
   }
 
   /// Add a channel to another channel's followers.
@@ -670,6 +676,7 @@ class ChannelManager extends ReadOnlyManager<Channel> {
 
     final response = await client.httpHandler.executeSafe(request);
     // TODO: Can we provide the guildId?
+    // Don't update the cache since the guildId for the member will be Snowflake.zero
     return parseThreadMember(response.jsonBody as Map<String, Object?>);
   }
 
@@ -689,6 +696,7 @@ class ChannelManager extends ReadOnlyManager<Channel> {
 
     final response = await client.httpHandler.executeSafe(request);
     // TODO: Can we provide the guildId?
+    // Don't update the cache since the guildId for the member will be Snowflake.zero
     return parseMany(response.jsonBody as List, parseThreadMember);
   }
 
@@ -709,7 +717,10 @@ class ChannelManager extends ReadOnlyManager<Channel> {
 
     final response = await client.httpHandler.executeSafe(request);
     // TODO: Can we provide the guild ID?
-    return parseThreadList(response.jsonBody as Map<String, Object?>);
+    final threadList = parseThreadList(response.jsonBody as Map<String, Object?>);
+
+    client.updateCacheWith(threadList);
+    return threadList;
   }
 
   /// List the private archived threads in a channel.
@@ -729,7 +740,10 @@ class ChannelManager extends ReadOnlyManager<Channel> {
 
     final response = await client.httpHandler.executeSafe(request);
     // TODO: Can we provide the guild ID?
-    return parseThreadList(response.jsonBody as Map<String, Object?>);
+    final threadList = parseThreadList(response.jsonBody as Map<String, Object?>);
+
+    client.updateCacheWith(threadList);
+    return threadList;
   }
 
   /// List the private archived threads the current user has joined in a channel.
@@ -750,7 +764,10 @@ class ChannelManager extends ReadOnlyManager<Channel> {
 
     final response = await client.httpHandler.executeSafe(request);
     // TODO: Can we provide the guild ID?
-    return parseThreadList(response.jsonBody as Map<String, Object?>);
+    final threadList = parseThreadList(response.jsonBody as Map<String, Object?>);
+
+    client.updateCacheWith(threadList);
+    return threadList;
   }
 
   /// Start a stage instance in a channel.

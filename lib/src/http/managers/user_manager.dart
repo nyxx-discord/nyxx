@@ -154,7 +154,10 @@ class UserManager extends ReadOnlyManager<User> {
     final request = BasicRequest(route);
 
     final response = await client.httpHandler.executeSafe(request);
-    return client.guilds[guildId].members.parse(response.jsonBody as Map<String, Object?>, userId: client.user.id);
+    final member = client.guilds[guildId].members.parse(response.jsonBody as Map<String, Object?>, userId: client.user.id);
+
+    client.updateCacheWith(member);
+    return member;
   }
 
   /// Leave a guild.

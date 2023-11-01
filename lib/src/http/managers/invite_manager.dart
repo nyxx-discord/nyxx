@@ -7,6 +7,7 @@ import 'package:nyxx/src/models/guild/guild.dart';
 import 'package:nyxx/src/models/invite/invite.dart';
 import 'package:nyxx/src/models/invite/invite_metadata.dart';
 import 'package:nyxx/src/models/snowflake.dart';
+import 'package:nyxx/src/utils/cache_helpers.dart';
 import 'package:nyxx/src/utils/parsing_helpers.dart';
 
 /// A manager for [Invite]s.
@@ -76,7 +77,10 @@ class InviteManager {
     });
 
     final response = await client.httpHandler.executeSafe(request);
-    return parse(response.jsonBody as Map<String, Object?>);
+    final invite = parse(response.jsonBody as Map<String, Object?>);
+
+    client.updateCacheWith(invite);
+    return invite;
   }
 
   /// Delete an invite.
@@ -85,6 +89,10 @@ class InviteManager {
     final request = BasicRequest(route, method: 'DELETE');
 
     final response = await client.httpHandler.executeSafe(request);
-    return parse(response.jsonBody as Map<String, Object?>);
+    final invite = parse(response.jsonBody as Map<String, Object?>);
+
+    // Invites aren't cached, so we don't need to remove it, but it still contains nested objects we can cache.
+    client.updateCacheWith(invite);
+    return invite;
   }
 }

@@ -17,6 +17,7 @@ import 'package:nyxx/src/models/message/component.dart';
 import 'package:nyxx/src/models/message/message.dart';
 import 'package:nyxx/src/models/permissions.dart';
 import 'package:nyxx/src/models/snowflake.dart';
+import 'package:nyxx/src/utils/cache_helpers.dart';
 import 'package:nyxx/src/utils/parsing_helpers.dart';
 
 /// A [Manager] for [Interaction]s.
@@ -337,7 +338,10 @@ class InteractionManager {
     final response = await client.httpHandler.executeSafe(request);
 
     final channelId = Snowflake.parse((response.jsonBody as Map<String, Object?>)['channel_id']!);
-    return (client.channels[channelId] as PartialTextChannel).messages.parse(response.jsonBody as Map<String, Object?>);
+    final message = (client.channels[channelId] as PartialTextChannel).messages.parse(response.jsonBody as Map<String, Object?>);
+
+    client.updateCacheWith(message);
+    return message;
   }
 
   /// Fetch a followup to an interaction.
@@ -358,7 +362,10 @@ class InteractionManager {
     final response = await client.httpHandler.executeSafe(request);
 
     final channelId = Snowflake.parse((response.jsonBody as Map<String, Object?>)['channel_id']!);
-    return (client.channels[channelId] as PartialTextChannel).messages.parse(response.jsonBody as Map<String, Object?>);
+    final message = (client.channels[channelId] as PartialTextChannel).messages.parse(response.jsonBody as Map<String, Object?>);
+
+    client.updateCacheWith(message);
+    return message;
   }
 
   Future<Message> _updateResponse(String token, String messageId, MessageUpdateBuilder builder) async {
@@ -400,7 +407,10 @@ class InteractionManager {
 
     final response = await client.httpHandler.executeSafe(request);
     final channelId = Snowflake.parse((response.jsonBody as Map<String, Object?>)['channel_id']!);
-    return (client.channels[channelId] as PartialTextChannel).messages.parse(response.jsonBody as Map<String, Object?>);
+    final message = (client.channels[channelId] as PartialTextChannel).messages.parse(response.jsonBody as Map<String, Object?>);
+
+    client.updateCacheWith(message);
+    return message;
   }
 
   Future<void> _deleteResponse(String token, String messageId) async {

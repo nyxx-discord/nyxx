@@ -142,6 +142,9 @@ class ScheduledEventManager extends Manager<ScheduledEvent> {
     });
 
     final response = await client.httpHandler.executeSafe(request);
-    return parseMany(response.jsonBody as List<Object?>, parseScheduledEventUser);
+    final users = parseMany(response.jsonBody as List<Object?>, parseScheduledEventUser);
+
+    users.forEach(client.updateCacheWith);
+    return users;
   }
 }

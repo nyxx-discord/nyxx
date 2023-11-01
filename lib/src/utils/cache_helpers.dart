@@ -26,16 +26,21 @@ import 'package:nyxx/src/models/gateway/events/voice.dart';
 import 'package:nyxx/src/models/gateway/events/webhook.dart';
 import 'package:nyxx/src/models/guild/audit_log.dart';
 import 'package:nyxx/src/models/guild/auto_moderation.dart';
+import 'package:nyxx/src/models/guild/ban.dart';
 import 'package:nyxx/src/models/guild/guild.dart';
+import 'package:nyxx/src/models/guild/guild_preview.dart';
 import 'package:nyxx/src/models/guild/integration.dart';
 import 'package:nyxx/src/models/guild/member.dart';
 import 'package:nyxx/src/models/guild/scheduled_event.dart';
+import 'package:nyxx/src/models/guild/template.dart';
 import 'package:nyxx/src/models/interaction.dart';
+import 'package:nyxx/src/models/invite/invite.dart';
 import 'package:nyxx/src/models/message/message.dart';
 import 'package:nyxx/src/models/presence.dart';
 import 'package:nyxx/src/models/role.dart';
 import 'package:nyxx/src/models/sticker/global_sticker.dart';
 import 'package:nyxx/src/models/sticker/guild_sticker.dart';
+import 'package:nyxx/src/models/sticker/sticker_pack.dart';
 import 'package:nyxx/src/models/user/user.dart';
 import 'package:nyxx/src/models/voice/voice_state.dart';
 import 'package:nyxx/src/models/webhook.dart';
@@ -145,6 +150,23 @@ extension CacheUpdates on NyxxRest {
                 updateCacheWith(resolved);
             }
           }(),
+        Invite(:final inviter, :final targetUser, :final guildScheduledEvent) => () {
+            updateCacheWith(inviter);
+            updateCacheWith(targetUser);
+            updateCacheWith(guildScheduledEvent);
+          }(),
+        GuildPreview(:final emojiList, :final stickerList) => () {
+            emojiList.forEach(updateCacheWith);
+            stickerList.forEach(updateCacheWith);
+          }(),
+        Ban(:final user) => updateCacheWith(user),
+        // Don't update cache for serializedSourceGuild since it is populated with some fake data.
+        GuildTemplate(:final creator) => updateCacheWith(creator),
+        ScheduledEventUser(:final user, :final member) => () {
+            updateCacheWith(user);
+            updateCacheWith(member);
+          }(),
+        StickerPack(:final stickers) => stickers.forEach(updateCacheWith),
 
         // Events
 
@@ -228,7 +250,7 @@ extension CacheUpdates on NyxxRest {
         IntegrationCreateEvent(:final integration) => updateCacheWith(integration),
         IntegrationUpdateEvent(:final integration) => updateCacheWith(integration),
         IntegrationDeleteEvent(:final id, :final guild) => guild.integrations.cache.remove(id),
-        InviteCreateEvent() => null,
+        InviteCreateEvent(:final invite) => updateCacheWith(invite),
         InviteDeleteEvent() => null,
         MessageCreateEvent(:final message, :final mentions) => () {
             updateCacheWith(message);
