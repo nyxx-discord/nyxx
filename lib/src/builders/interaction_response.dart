@@ -49,7 +49,7 @@ class InteractionResponseBuilder extends CreateBuilder<InteractionResponseBuilde
 
   factory InteractionResponseBuilder.autocompleteResult(List<CommandOptionChoiceBuilder<dynamic>> choices) => InteractionResponseBuilder(
         type: InteractionCallbackType.applicationCommandAutocompleteResult,
-        data: choices,
+        data: {'choices': choices},
       );
 
   factory InteractionResponseBuilder.modal(ModalBuilder modal) => InteractionResponseBuilder(type: InteractionCallbackType.modal, data: modal);
