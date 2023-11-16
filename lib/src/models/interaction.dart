@@ -133,6 +133,7 @@ mixin MessageResponse<T> on Interaction<T> {
       await manager.createResponse(id, token, InteractionResponseBuilder.channelMessage(builder, isEphemeral: isEphemeral));
     } else {
       assert(isEphemeral == _wasEphemeral || isEphemeral == null, 'Cannot change the value of isEphemeral between acknowledge and respond');
+      _didRespond = true;
 
       await manager.createFollowup(token, builder);
     }
@@ -260,11 +261,11 @@ class MessageComponentInteraction extends Interaction<MessageComponentInteractio
 
   @override
   Future<void> acknowledge({bool? updateMessage, bool? isEphemeral}) async {
+    assert(updateMessage != true || isEphemeral != true, 'Cannot set isEphemeral to true if updateMessage is set to true');
+
     if (_didAcknowledge) {
       throw AlreadyAcknowledgedError(this);
     }
-
-    assert(updateMessage != true || isEphemeral != true, 'Cannot set isEphemeral to true if updateMessage is set to true');
 
     _didAcknowledge = true;
     _didUpdateMessage = updateMessage;
@@ -279,14 +280,15 @@ class MessageComponentInteraction extends Interaction<MessageComponentInteractio
 
   @override
   Future<void> respond(Builder<Message> builder, {bool? updateMessage, bool? isEphemeral}) async {
-    assert(updateMessage == null || type == InteractionType.messageComponent, 'Cannot set updateMessage for non-component interactions');
     assert(updateMessage != true || isEphemeral != true, 'Cannot set isEphemeral to true if updateMessage is set to true');
-    assert(builder is MessageUpdateBuilder == updateMessage, 'builder must be a MessageUpdateBuilder if updateMessage is true');
-    assert(builder is MessageBuilder != updateMessage, 'builder must be a MessageBuilder if updateMessage is null or false');
+    assert(updateMessage != true || builder is MessageUpdateBuilder, 'builder must be a MessageUpdateBuilder if updateMessage is true');
+    assert(updateMessage == true || builder is MessageBuilder, 'builder must be a MessageBuilder if updateMessage is null or false');
+
+    if (_didRespond) {
+      throw AlreadyRespondedError(this);
+    }
 
     if (!_didAcknowledge) {
-      assert(updateMessage != true || isEphemeral != true, 'Cannot set isEphemeral to true if updateMessage is set to true');
-
       _didAcknowledge = true;
       _didRespond = true;
       _didUpdateMessage = updateMessage;
@@ -301,16 +303,12 @@ class MessageComponentInteraction extends Interaction<MessageComponentInteractio
       assert(updateMessage == _didUpdateMessage || updateMessage == null, 'Cannot change the value of updateMessage between acknowledge and respond');
       assert(isEphemeral == _wasEphemeral || isEphemeral == null, 'Cannot change the value of isEphemeral between acknowledge and respond');
 
-      if (_didRespond) {
-        throw AlreadyRespondedError(this);
-      }
-
       _didRespond = true;
 
-      if (updateMessage == true) {
+      if (_didUpdateMessage == true) {
         await manager.updateOriginalResponse(token, builder as MessageUpdateBuilder);
       } else {
-        await manager.createFollowup(token, builder as MessageBuilder, isEphemeral: isEphemeral);
+        await manager.createFollowup(token, builder as MessageBuilder);
       }
     }
   }
