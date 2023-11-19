@@ -95,7 +95,7 @@ class Permissions extends Flags<Permissions> {
   /// Allows management and editing of webhooks.
   static const manageWebhooks = Flag<Permissions>.fromOffset(29);
 
-  /// Allows management and editing of emojis, stickers, and soundboard sounds.
+  /// Allows for editing and deleting emojis, stickers, and soundboard sounds created by all users.
   static const manageEmojisAndStickers = Flag<Permissions>.fromOffset(30);
 
   /// Allows members to use application commands, including slash commands and context menu commands..
@@ -104,7 +104,7 @@ class Permissions extends Flags<Permissions> {
   /// Allows for requesting to speak in stage channels. (This permission is under active development and may be changed or removed.).
   static const requestToSpeak = Flag<Permissions>.fromOffset(32);
 
-  /// Allows for creating, editing, and deleting scheduled events.
+  /// Allows for editing and deleting scheduled events created by all users.
   static const manageEvents = Flag<Permissions>.fromOffset(33);
 
   /// Allows for deleting and archiving threads, and viewing all private threads.
@@ -134,8 +134,20 @@ class Permissions extends Flags<Permissions> {
   /// Allows for using soundboard in a voice channel.
   static const useSoundboard = Flag<Permissions>.fromOffset(42);
 
+  /// Allows for creating emojis, stickers, and soundboard sounds, and editing and deleting those created by the current user.
+  static const createEmojiAndStickers = Flag<Permissions>.fromOffset(43);
+
+  /// Allows for creating scheduled events, and editing and deleting those created by the current user.
+  static const createEvents = Flag<Permissions>.fromOffset(44);
+
+  /// Allows the usage of custom soundboard sounds from other servers.
+  static const useExternalSounds = Flag<Permissions>.fromOffset(45);
+
+  /// Allows sending voice messages.
+  static const sendVoiceMessages = Flag<Permissions>.fromOffset(46);
+
   /// A [Permissions] with all permissions enabled.
-  static const allPermissions = Permissions(1099511627775);
+  static const allPermissions = Permissions(140737488355327);
 
   /// Whether this set of permissions has the [createInstantInvite] permission.
   bool get canCreateInstantInvite => has(createInstantInvite);
@@ -265,6 +277,18 @@ class Permissions extends Flags<Permissions> {
 
   /// Whether this set of permissions has the [useSoundboard] permission.
   bool get canUseSoundboard => has(useSoundboard);
+
+  /// Whether this set of permissions has the [createEmojiAndStickers] permission.
+  bool get canCreateEmojiAndStickers => has(createEmojiAndStickers);
+
+  /// Whether this set of permissions has the [createEvents] permission.
+  bool get canCreateEvents => has(createEvents);
+
+  /// Whether this set of permissions has the [useExternalSounds] permission.
+  bool get canUseExternalSounds => has(useExternalSounds);
+
+  /// Whether this set of permissions has the [sendVoiceMessages] permission.
+  bool get canSendVoiceMessages => has(sendVoiceMessages);
 
   /// Create a new [Permissions] from a permissions value.
   const Permissions(super.value);
