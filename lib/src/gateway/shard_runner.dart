@@ -87,6 +87,7 @@ class ShardRunner {
 
           // Open the websocket connection.
           connection = await ShardConnection.connect(gatewayUri.toString(), this);
+          connection!.onSent.listen(controller.add);
 
           // Obtain the heartbeat interval from the HELLO event and start heartbeating.
           final hello = await connection!.first;
@@ -248,6 +249,9 @@ class ShardConnection extends Stream<GatewayEvent> implements StreamSink<Send> {
   final Stream<GatewayEvent> events;
   final ShardRunner runner;
 
+  final StreamController<Sent> _sentController = StreamController();
+  Stream<Sent> get onSent => _sentController.stream;
+
   ShardConnection(this.websocket, this.events, this.runner);
 
   static Future<ShardConnection> connect(String gatewayUri, ShardRunner runner) async {
@@ -295,6 +299,7 @@ class ShardConnection extends Stream<GatewayEvent> implements StreamSink<Send> {
     };
 
     websocket.add(encoded);
+    _sentController.add(Sent(payload: event));
   }
 
   @override
@@ -304,10 +309,13 @@ class ShardConnection extends Stream<GatewayEvent> implements StreamSink<Send> {
   Future<void> addStream(Stream<Send> stream) => stream.forEach(add);
 
   @override
-  Future<void> close([int? code]) => websocket.close(code ?? 1000);
+  Future<void> close([int? code]) async {
+    await websocket.close(code ?? 1000);
+    await _sentController.close();
+  }
 
   @override
-  Future<void> get done => websocket.done;
+  Future<void> get done => websocket.done.then((_) => _sentController.done);
 }
 
 Stream<dynamic> decompressTransport(Stream<List<int>> raw) {

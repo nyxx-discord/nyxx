@@ -45,7 +45,11 @@ class Shard extends Stream<ShardMessage> implements StreamSink<GatewayMessage> {
   /// Create a new [Shard].
   Shard(this.id, this.isolate, this.receiveStream, this.sendPort, this.client) {
     final subscription = listen((message) {
-      if (message is ErrorReceived) {
+      if (message is Sent) {
+        logger
+          ..fine('Sent payload: ${message.payload.opcode.name}')
+          ..finer('Opcode: ${message.payload.opcode.value}, Data: ${message.payload.data}');
+      } else if (message is ErrorReceived) {
         logger.warning('Error: ${message.error}', message.error, message.stackTrace);
       } else if (message is Disconnecting) {
         logger.info('Disconnecting: ${message.reason}');
@@ -141,7 +145,7 @@ class Shard extends Stream<ShardMessage> implements StreamSink<GatewayMessage> {
   void add(GatewayMessage event) {
     if (event is Send) {
       logger
-        ..fine('Send: ${event.opcode.name}')
+        ..fine('Sending: ${event.opcode.name}')
         ..finer('Opcode: ${event.opcode.value}, Data: ${event.data}');
     } else if (event is Dispose) {
       logger.info('Disposing');
