@@ -92,13 +92,7 @@ class Gateway extends GatewayManager with EventParser {
   Gateway(this.client, this.gatewayBot, this.shards, this.totalShards, this.shardIds) : super.create() {
     for (final shard in shards) {
       shard.listen(
-        (message) {
-          if (message is ErrorReceived) {
-            shard.logger.warning('Received error: ${message.error}', message.error, message.stackTrace);
-          }
-
-          _messagesController.add(message);
-        },
+        _messagesController.add,
         onError: _messagesController.addError,
         onDone: () async {
           if (_closing) {
@@ -109,6 +103,7 @@ class Gateway extends GatewayManager with EventParser {
 
           throw ShardDisconnectedError(shard);
         },
+        cancelOnError: false,
       );
     }
 

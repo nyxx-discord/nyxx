@@ -1,3 +1,9 @@
+## 6.0.3
+__26.11.2023__
+
+- bug: Fix incorrect serialization of autocompletion interaction responses (again)
+- bug: Try to fix invalid sessions triggered by Gateway reconnects
+
 ## 6.0.2
 __16.11.2023__
 
