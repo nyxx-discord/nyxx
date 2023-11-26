@@ -171,6 +171,8 @@ class ShardRunner {
           }
         } catch (error, stackTrace) {
           controller.add(ErrorReceived(error: error, stackTrace: stackTrace));
+          // Prevents the while-true loop from looping too often when no internet is available.
+          await Future.delayed(Duration(milliseconds: 100));
         } finally {
           // Reset connection properties.
           connection?.close();
